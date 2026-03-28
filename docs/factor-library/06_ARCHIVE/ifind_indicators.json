@@ -1,0 +1,306 @@
+[
+  {
+    "code": "open",
+    "name": "开盘价"
+  },
+  {
+    "code": "high",
+    "name": "最高价"
+  },
+  {
+    "code": "low",
+    "name": "最低价"
+  },
+  {
+    "code": "close",
+    "name": "收盘价"
+  },
+  {
+    "code": "volume",
+    "name": "成交量"
+  },
+  {
+    "code": "amount",
+    "name": "成交额"
+  },
+  {
+    "code": "pctChg",
+    "name": "涨跌幅"
+  },
+  {
+    "code": "change",
+    "name": "涨跌额"
+  },
+  {
+    "code": "preclose",
+    "name": "前收价"
+  },
+  {
+    "code": "turnover",
+    "name": "换手率"
+  },
+  {
+    "code": "qrr",
+    "name": "量比"
+  },
+  {
+    "code": "peTTM",
+    "name": "市盈率TTM"
+  },
+  {
+    "code": "peLYR",
+    "name": "市盈率LYR"
+  },
+  {
+    "code": "pbMRQ",
+    "name": "市净率MRQ"
+  },
+  {
+    "code": "psTTM",
+    "name": "市销率TTM"
+  },
+  {
+    "code": "pcfNcfTTM",
+    "name": "现金流市值比"
+  },
+  {
+    "code": "ths_income_total",
+    "name": "营业总收入"
+  },
+  {
+    "code": "ths_income",
+    "name": "营业收入"
+  },
+  {
+    "code": "ths_interest_income",
+    "name": "利息收入"
+  },
+  {
+    "code": "ths_premium_earned",
+    "name": "已赚保费"
+  },
+  {
+    "code": "ths_commission_income",
+    "name": "手续费及佣金收入"
+  },
+  {
+    "code": "ths_operating_cost",
+    "name": "营业成本"
+  },
+  {
+    "code": "ths_selling_expense",
+    "name": "销售费用"
+  },
+  {
+    "code": "ths_management_expense",
+    "name": "管理费用"
+  },
+  {
+    "code": "ths_research_expense",
+    "name": "研发费用"
+  },
+  {
+    "code": "ths_financial_expense",
+    "name": "财务费用"
+  },
+  {
+    "code": "ths_asset_impairment_loss",
+    "name": "资产减值损失"
+  },
+  {
+    "code": "ths_invest_income",
+    "name": "投资收益"
+  },
+  {
+    "code": "ths_non_operating_income",
+    "name": "营业外收入"
+  },
+  {
+    "code": "ths_non_operating_expense",
+    "name": "营业外支出"
+  },
+  {
+    "code": "ths_profit_total",
+    "name": "利润总额"
+  },
+  {
+    "code": "ths_net_profit",
+    "name": "净利润"
+  },
+  {
+    "code": "ths_net_profit_parent",
+    "name": "归母净利润"
+  },
+  {
+    "code": "ths_basic_eps",
+    "name": "基本每股收益"
+  },
+  {
+    "code": "ths_diluted_eps",
+    "name": "稀释每股收益"
+  },
+  {
+    "code": "ths_asset_total",
+    "name": "资产总计"
+  },
+  {
+    "code": "ths_current_asset",
+    "name": "流动资产"
+  },
+  {
+    "code": "ths_non_current_asset",
+    "name": "非流动资产"
+  },
+  {
+    "code": "ths_monetary_fund",
+    "name": "货币资金"
+  },
+  {
+    "code": "ths_account_receivable",
+    "name": "应收账款"
+  },
+  {
+    "code": "ths_inventory",
+    "name": "存货"
+  },
+  {
+    "code": "ths_fixed_asset",
+    "name": "固定资产"
+  },
+  {
+    "code": "ths_intangible_asset",
+    "name": "无形资产"
+  },
+  {
+    "code": "ths_goodwill",
+    "name": "商誉"
+  },
+  {
+    "code": "ths_liability_total",
+    "name": "负债总计"
+  },
+  {
+    "code": "ths_current_liability",
+    "name": "流动负债"
+  },
+  {
+    "code": "ths_non_current_liability",
+    "name": "非流动负债"
+  },
+  {
+    "code": "ths_short_loan",
+    "name": "短期借款"
+  },
+  {
+    "code": "ths_long_loan",
+    "name": "长期借款"
+  },
+  {
+    "code": "ths_account_payable",
+    "name": "应付账款"
+  },
+  {
+    "code": "ths_equity_total",
+    "name": "股东权益"
+  },
+  {
+    "code": "ths_parent_equity",
+    "name": "归属母公司股东权益"
+  },
+  {
+    "code": "ths_cash_flow_operate",
+    "name": "经营活动现金流"
+  },
+  {
+    "code": "ths_cash_flow_invest",
+    "name": "投资活动现金流"
+  },
+  {
+    "code": "ths_cash_flow_finance",
+    "name": "筹资活动现金流"
+  },
+  {
+    "code": "ths_net_cash_flow",
+    "name": "现金及现金等价物净增加额"
+  },
+  {
+    "code": "ths_roe",
+    "name": "ROE"
+  },
+  {
+    "code": "ths_roa",
+    "name": "ROA"
+  },
+  {
+    "code": "ths_gross_margin",
+    "name": "毛利率"
+  },
+  {
+    "code": "ths_net_margin",
+    "name": "净利率"
+  },
+  {
+    "code": "ths_debt_asset_ratio",
+    "name": "资产负债率"
+  },
+  {
+    "code": "ths_money_flow_main",
+    "name": "主力净流入"
+  },
+  {
+    "code": "ths_money_flow_super",
+    "name": "超大单净流入"
+  },
+  {
+    "code": "ths_money_flow_large",
+    "name": "大单净流入"
+  },
+  {
+    "code": "ths_money_flow_medium",
+    "name": "中单净流入"
+  },
+  {
+    "code": "ths_money_flow_small",
+    "name": "小单净流入"
+  },
+  {
+    "code": "ths_MA5",
+    "name": "MA5"
+  },
+  {
+    "code": "ths_MA10",
+    "name": "MA10"
+  },
+  {
+    "code": "ths_MA20",
+    "name": "MA20"
+  },
+  {
+    "code": "ths_MA30",
+    "name": "MA30"
+  },
+  {
+    "code": "ths_MA60",
+    "name": "MA60"
+  },
+  {
+    "code": "ths_MACD",
+    "name": "MACD"
+  },
+  {
+    "code": "ths_KDJ",
+    "name": "KDJ"
+  },
+  {
+    "code": "ths_RSI",
+    "name": "RSI"
+  },
+  {
+    "code": "ths_BOLL",
+    "name": "布林线"
+  },
+  {
+    "code": "ths_WR",
+    "name": "威廉指标"
+  }
+]

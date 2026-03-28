@@ -1,0 +1,1012 @@
+[
+  {
+    "category": "基本指标",
+    "name": "总市值",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "流通市值",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "市盈率(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "市盈率(静)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "市净率(MRQ)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "市销率(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "股息率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "ROE(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "ROA(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "毛利率(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "净利率(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "资产负债率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "存货周转率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "应收账款周转率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "总资产周转率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "固定资产周转率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "每股净资产",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "每股收益(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "每股经营现金流",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "每股现金流",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "净利润(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "营业收入(TTM)",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "净利润增长率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "营业收入增长率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "总资产增长率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "基本指标",
+    "name": "股东权益增长率",
+    "source": "iFind-THS_BasicData"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业总收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "利息收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "已赚保费",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "手续费及佣金收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "其他业务收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业总成本",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业成本",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "利息支出",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "手续费及佣金支出",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "赔付支出",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "提取保险合同准备金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "保单红利支出",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "分保费收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "税金及附加",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "销售费用",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "管理费用",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "财务费用",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "研发费用",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "资产减值损失",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "公允价值变动收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "投资收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "汇兑收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "资产处置收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "其他收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业外收入",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "营业外支出",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "利润总额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "所得税费用",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "净利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "持续经营净利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "终止经营净利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "少数股东损益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "归属于母公司所有者的净利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "基本每股收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "利润表指标",
+    "name": "稀释每股收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "货币资金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "结算备付金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "拆出资金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "交易性金融资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "衍生金融资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收票据",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收账款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收款项融资",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "预付款项",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收保费",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收分保账款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收利息",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应收股利",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他应收款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "买入返售金融资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "存货",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "合同资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "持有待售资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "一年内到期的非流动资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他流动资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "流动资产合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "发放贷款及垫款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "可供出售金融资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "持有至到期投资",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "长期股权投资",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "长期应收款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他权益工具投资",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他非流动金融资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "投资性房地产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "固定资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "在建工程",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "工程物资",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "固定资产清理",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "生产性生物资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "油气资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "使用权资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "无形资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "开发支出",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "商誉",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "长期待摊费用",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "递延所得税资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他非流动资产",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "非流动资产合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "资产总计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "短期借款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "向中央银行借款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "吸收存款及同业存放",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "拆入资金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "交易性金融负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "衍生金融负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付票据",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付账款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "预收款项",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "合同负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "卖出回购金融资产款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付手续费及佣金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付职工薪酬",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应交税费",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付利息",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付股利",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他应付款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付分保账款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "保险合同准备金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "代理买卖证券款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "代理承销证券款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "持有待售负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "一年内到期的非流动负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他流动负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "流动负债合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "长期借款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "应付债券",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "租赁负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "长期应付款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "专项应付款",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "预计负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "递延收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "递延所得税负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他非流动负债",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "非流动负债合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "负债合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "实收资本(或股本)",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "资本公积",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "减:库存股",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "其他综合收益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "专项储备",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "盈余公积",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "一般风险准备",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "未分配利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "外币报表折算差额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "归属于母公司股东权益合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "少数股东权益",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "股东权益合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "资产负债表指标",
+    "name": "负债和股东权益合计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "销售商品、提供劳务收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "客户存款和同业存放款项净增加额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "收取利息、手续费及佣金的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "收到原保险合同保费取得的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "收到其他与经营活动有关的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "经营活动现金流入小计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "购买商品、接受劳务支付的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "客户贷款及垫款净增加额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "存放中央银行和同业款项净增加额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付原保险合同赔付款项的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付利息、手续费及佣金的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付保单红利的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付给职工以及为职工支付的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付的各项税费",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付其他与经营活动有关的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "经营活动现金流出小计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "经营活动产生的现金流量净额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "收回投资收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "取得投资收益收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "处置固定资产、无形资产收回的现金净额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "处置子公司及其他营业单位收到的现金净额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "收到其他与投资活动有关的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "投资活动现金流入小计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "购建固定资产、无形资产支付的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "投资支付的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "质押贷款净增加额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "取得子公司及其他营业单位支付的现金净额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付其他与投资活动有关的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "投资活动现金流出小计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "投资活动产生的现金流量净额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "吸收投资收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "子公司吸收少数股东投资收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "取得借款收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "发行债券收到的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "收到其他与筹资活动有关的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "筹资活动现金流入小计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "偿还债务支付的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "分配股利、利润或偿付利息支付的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "子公司支付给少数股东的股利利润",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "支付其他与筹资活动有关的现金",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "筹资活动现金流出小计",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "筹资活动产生的现金流量净额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "汇率变动对现金的影响",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "现金及现金等价物净增加额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "期初现金及现金等价物余额",
+    "source": "iFind-THS_ReportQuery"
+  },
+  {
+    "category": "现金流量表指标",
+    "name": "期末现金及现金等价物余额",
+    "source": "iFind-THS_ReportQuery"
+  }
+]

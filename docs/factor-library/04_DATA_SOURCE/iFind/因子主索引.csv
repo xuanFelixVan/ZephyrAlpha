@@ -1,0 +1,13 @@
+因子ID,因子名,THS代码,类别,频度,状态,IC验证文件,回测报告文件,版本记录文件,血缘记录文件,备注
+FAC_0001,PE_TTM,ths_pe_ttm_stock,价值,年频,待验证,,,,,示例因子
+FAC_0002,PB_MRQ,ths_pb_mrq_stock,价值,年频,待验证,,,,,
+FAC_0003,ROE_ANNUAL,ths_roe_annual_stock,质量,年频,待验证,,,,,
+FAC_0004,ROA,ths_roa_stock,质量,年频,待验证,,,,,
+FAC_0005,营收增速,ths_revenue_yoy_stock,成长,年频,待验证,,,,,
+FAC_0006,净利润增速,ths_np_yoy_stock,成长,年频,待验证,,,,,
+FAC_0007,毛利率,ths_gross_margin_stock,质量,年频,待验证,,,,,
+FAC_0008,资产负债率,ths_debt_asset_ratio_stock,杠杆,年频,待验证,,,,,
+FAC_0009,流动比率,ths_current_ratio_stock,杠杆,年频,待验证,,,,,
+FAC_0010,换手率,ths_turnover_rate_stock,情绪,日频,待验证,,,,,
+FAC_0011,北向资金,ths_north_money_stock,情绪,日频,待验证,,,,,
+FAC_0012,融资余额,ths_margin_balance_stock,情绪,日频,待验证,,,,,
