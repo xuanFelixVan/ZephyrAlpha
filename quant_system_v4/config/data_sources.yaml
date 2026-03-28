@@ -1,0 +1,25 @@
+# 数据源配置
+# TODO: 阶段1实现
+
+data_sources:
+  akshare:
+    enabled: true
+    rate_limit: 10
+    retry: 3
+
+  tushare:
+    enabled: false  # 需要token
+    token: "${TUSHARE_TOKEN}"
+    retry: 3
+
+  baostock:
+    enabled: true
+    retry: 3
+
+  efinance:
+    enabled: true
+
+  update_schedule:
+    daily_price: "18:00"    # 每天18:00更新日线
+    minute_data: "16:00"     # 收盘后更新分钟
+    financial: "20:00"       # 20:00更新财务

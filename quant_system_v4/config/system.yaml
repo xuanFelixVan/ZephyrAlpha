@@ -1,0 +1,24 @@
+# 系统配置文件
+# TODO: 阶段1实现
+
+system:
+  name: "清风量化交易系统v4.0"
+  version: "4.0.0"
+  mode: "backtest"  # backtest | simulation | paper | live
+
+  paths:
+    data_dir: "./data"
+    log_dir: "./logs"
+    output_dir: "./output"
+    config_dir: "./config"
+
+  defaults:
+    initial_capital: 1000000  # 初始资金100万
+    commission_rate: 0.0003  # 万三佣金
+    stamp_tax: 0.001        # 千一印花税
+
+  logging:
+    level: "INFO"
+    format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name} | {message}"
+    rotation: "00:00"       # 每天零点轮转
+    retention: "30 days"

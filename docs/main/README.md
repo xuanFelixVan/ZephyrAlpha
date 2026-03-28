@@ -1,53 +1,78 @@
-# ⚠️ main目录 - 已废弃
+# main - 战术模块
 
-> **本目录已废弃，仅保留作为参考**
+> Layer 0-7 战术实现
 >
-> **状态**：已废弃
-> **废弃日期**：2026-03-28
-> **原因**：已被新架构取代
+> **版本**：v4.0
+> **更新日期**：2026-03-28
+> **状态**：✅ 活跃
 
 ---
 
-## 废弃说明
+## 1. 概述
 
-本目录包含清风量化系统的旧版（v3.x）框架文档，已被以下新架构取代：
-
-- **technical-specs/** - 技术规格
-- **trading-tactics/** - 交易战术
-- **factor-library/** - 因子库
+`main/` 目录是清风量化交易系统 4.0 的**战术实现模块**，包含 Layer 0-7 分层架构中各层的具体战术实现文档。
 
 ---
 
-## 迁移指南
+## 2. 目录结构
 
-| 旧目录 | 新目录 | 状态 |
-|--------|--------|------|
-| main/01_FRAMEWORK/量化策略框架_v3.1.md | archive/main/量化策略框架_v3.1.md | ✅ 已归档 |
-| main/02_TACTICS/ | trading-tactics/ | ⚠️ 战术可参考，逻辑已迁移 |
-| main/03_ARCHIVE/ | archive/main/ | ✅ 已迁移删除 |
-
----
-
-## 当前开发阶段
-
-**当前阶段**：研究/策略设计阶段
-
-- 所有代码均为**示例代码/框架代码**
-- 不可直接运行
-- 详细说明见 [../SPEC.md](../SPEC.md)
+```
+main/
+└── 02_TACTICS/          # 战术手册（Layer 0-7 实现）
+    ├── README.md
+    ├── 01_MARKET_REGIME/    # Layer 1: 市场状态
+    ├── 02_ALPHA_FACTORS/   # Layer 2: Alpha 因子
+    ├── 03_RISK_MANAGEMENT/ # Layer 3: 风险管理
+    ├── 04_EXECUTION/        # Layer 4-5: 执行
+    ├── 05_RISK_CONTROL/     # Layer 6: 风控监控
+    ├── 06_PERFORMANCE/      # Layer 7: 绩效归因
+    └── 07_ITERATION/       # Layer 7: 策略迭代
+```
 
 ---
 
-## 不要做什么
+## 3. 与框架的关系
 
-- ❌ 不要在本目录添加新内容
-- ❌ 不要基于本目录进行开发
-- ❌ 不要修改本目录内容
+```
+docs/01_FRAMEWORK/README.md   ← 📐 框架说明（Layer 0-7 架构定义）
+      ↓
+docs/main/02_TACTICS/         ← 🎯 战术实现（具体实现文档）
+```
+
+- **01_FRAMEWORK**: 定义 Layer 0-7 分层架构的职责和输入输出
+- **main/02_TACTICS**: 提供各 Layer 的具体战术实现文档
 
 ---
 
-## 可以做什么
+## 4. 模块导航
 
-- ✅ 查阅历史版本
-- ✅ 参考旧版设计思路
-- ✅ 了解系统演进历程
+| 模块 | Layer | 描述 | 战术数 | 状态 |
+|------|-------|------|--------|------|
+| [02_TACTICS/01_MARKET_REGIME/](./02_TACTICS/01_MARKET_REGIME/) | Layer 1 | 市场状态识别 | 5 | ✅ 活跃 |
+| [02_TACTICS/02_ALPHA_FACTORS/](./02_TACTICS/02_ALPHA_FACTORS/) | Layer 2 | Alpha 因子战术 | 20+ | ✅ 活跃 |
+| [02_TACTICS/03_RISK_MANAGEMENT/](./02_TACTICS/03_RISK_MANAGEMENT/) | Layer 3 | 风险管理 | 2 | ✅ 活跃 |
+| [02_TACTICS/04_EXECUTION/](./02_TACTICS/04_EXECUTION/) | Layer 4-5 | 交易执行 | 7 | ✅ 活跃 |
+| [02_TACTICS/05_RISK_CONTROL/](./02_TACTICS/05_RISK_CONTROL/) | Layer 6 | 风控监控 | 2 | ✅ 活跃 |
+| [02_TACTICS/06_PERFORMANCE/](./02_TACTICS/06_PERFORMANCE/) | Layer 7 | 绩效归因 | 1 | ✅ 活跃 |
+| [02_TACTICS/07_ITERATION/](./02_TACTICS/07_ITERATION/) | Layer 7 | 策略迭代 | 1 | ✅ 活跃 |
+
+---
+
+## 5. 关联文档
+
+| 文档 | 说明 |
+|------|------|
+| [../SPEC.md](../SPEC.md) | 主规格文档 |
+| [../01_FRAMEWORK/README.md](../01_FRAMEWORK/README.md) | Layer 0-7 框架说明 |
+| [../02_FACTOR_LIBRARY/](../02_FACTOR_LIBRARY/) | 因子库 |
+| [../03_TRADING_TACTICS/](../03_TRADING_TACTICS/) | 交易策略池 |
+| [../04_TECHNICAL_SPECS/](../04_TECHNICAL_SPECS/) | 技术规格 |
+
+---
+
+## 6. 版本信息
+
+| 版本 | 日期 | 变更内容 |
+|------|------|----------|
+| v4.0 | 2026-03-28 | 初始版本，基于 Layer 0-7 架构 |
+| v4.0.1 | 2026-03-28 | 目录重组，从 01_FRAMEWORK 迁移战术模块 |

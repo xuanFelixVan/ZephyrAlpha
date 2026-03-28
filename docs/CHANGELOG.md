@@ -1,170 +1,159 @@
-# CHANGELOG - 项目变更记录
+---
+module_id: CHANGELOG_001
+version: 1.0
+status: Active
+last_updated: 2026-03-28
+---
 
-> 清风量化交易系统版本变更历史
->
-> **版本**：v1.0
-> **更新日期**：2026-03-28
-> **维护者**：清风量化
+# CHANGELOG.md - 变更日志
+
+> 清风量化系统 v4.0 版本变更记录
 
 ---
 
-## 变更记录规范
+## [v4.0.2] - 2026-03-28
 
-### 格式说明
+### 🎯 主要改进
 
-```
-## [版本号] - YYYY-MM-DD
+#### 阶段一交付完成
+- ✅ 创建 `System_Manifest.md` - 系统清单
+- ✅ 创建 `CONTEXT_SNAPSHOT.json` - 上下文快照
+- ✅ 创建 `API_Contract.md` - 接口契约
+- ✅ 创建 `Strategy_Spec_S001.md` - 策略逻辑白皮书
+- ✅ 创建 `AI_Permissions.md` - AI权限清单
 
-### 新增
-- 新增内容
+#### 因子库重组
+- ✅ 创建 `02_ALPHA_FACTORS_INDEX.md` - 单一索引表（87个因子）
+- ✅ 删除7个重复的因子分类文件
+- ✅ 备份旧文件到 `archives/02_ALPHA_FACTORS_OLD/`
 
-### 优化
-- 优化内容
+#### 回测报告分离
+- ✅ 创建 `05_BACKTEST/ic_reports/` - 因子IC验证报告
+- ✅ 创建 `05_BACKTEST/strategy_reports/` - 策略回测报告
+- ✅ 分离因子IC验证 vs 策略回测
 
-### 修复
-- 修复内容
+### 📝 新增文件
 
-### 废弃
-- 废弃内容
-```
-
-### 类型标签
-
-| 标签 | 说明 |
+| 文件 | 说明 |
 |------|------|
-| `### 新增` | 新功能、新文档 |
-| `### 优化` | 改进、重构、结构优化 |
-| `### 修复` | Bug修复、错误修正 |
-| `### 废弃` | 废弃功能、废弃文档 |
+| `System_Manifest.md` | 系统清单（目录树、模块映射、接口版本、权限矩阵） |
+| `CONTEXT_SNAPSHOT.json` | 上下文快照（系统版本、文件哈希、依赖矩阵） |
+| `API_Contract.md` | 接口契约（4个核心接口定义、错误码、数据类型） |
+| `Strategy_Spec_S001.md` | 策略逻辑白皮书（赚钱逻辑、公式、伪代码、异常处理） |
+| `AI_Permissions.md` | AI权限清单（✅/🔒/❌权限矩阵） |
+| `02_ALPHA_FACTORS_INDEX.md` | Alpha因子索引表（87个因子按ID排序） |
+| `05_BACKTEST_REORGANIZATION.md` | 回测报告重组方案 |
+| `DUPLICATION_ANALYSIS.md` | 重复性分析报告 |
+| `ic_reports/README.md` | 因子IC报告说明 |
+| `strategy_reports/README.md` | 策略回测报告说明 |
 
----
+### 🗑️ 删除文件
 
-## 版本历史
-
-### [v4.0] - 2026-03-28
-
-> 本次更新完成了文档结构的重大重构，建立了清晰的模块化架构。
-
-#### 新增
-
-- 新增 `SPEC.md` - 统一入口规格文档
-- 新增 `CODE_STATUS.md` - 代码状态标记规范
-- 新增 `archive/main/README.md` - main模块归档索引
-- 新增 `archive/factor-library/README.md` - 因子库归档索引
-- 新增 `docs/technical-specs/architecture/` - 系统架构模块
-  - `json-schemas.md` - JSON接口定义
-  - `distributed-system.md` - 分布式计算
-  - `barra-optimizer.md` - Barra优化器
-  - `low-latency.md` - 低延迟架构
-  - `disaster-recovery.md` - 容灾备份
-- 新增 `docs/technical-specs/modules/` - 核心模块
-  - `cost-model.md` - 全成本模型
-  - `backtest-engine.md` - 回测引擎
-  - `risk-management.md` - 风险管理
-  - `order-routing.md` - 订单路由
-  - `trading-monitor.md` - 交易监控
-  - `trading-api.md` - 交易API
-  - `trading-auditor.md` - 日志审计
-- 新增 `docs/technical-specs/trading-rules/` - 交易规则
-  - `a-share-rules.md` - A股规则
-- 新增 `docs/technical-specs/ai-optimization/` - AI优化
-  - `self-optimization.md` - AI自我优化
-  - `monitoring.md` - 市场监控
-  - `stock-strength.md` - 股票强度
-- 新增 `docs/trading-tactics/strategy-pool/` - 策略池
-  - `index.md` - 策略池概述
-  - `classification.md` - 策略分类
-  - `interface-standard.md` - 策略接口
-  - `manager.md` - 策略管理器
-  - `retail-strategies-a.md` - 游资策略（上）
-  - `retail-strategies-b.md` - 游资策略（下）
-- 新增 `docs/trading-tactics/tactics/` - 战术库
-  - `technical-indicators.md` - 技术指标
-  - `pattern-recognition.md` - 形态识别
-  - `limit-up-analysis.md` - 涨停板分析
-  - `market-cycles.md` - 市场周期
-  - `ai-integration.md` - AI策略整合
-  - `wave-trading.md` - 波段战法
-- 新增 `docs/factor-library/01_METHODOLOGY/` - 研究方法论
-  - `factor_definition.md` - 因子定义标准
-  - `ic_analysis.md` - IC分析体系
-  - `factor_preprocessing.md` - 因子预处理
-  - `factor_synthesis.md` - 因子合成
-  - `backtest_standards.md` - 回测标准
-- 新增 `docs/factor-library/05_BACKTEST/` - 回测报告目录
-  - 价值类/PE_TTM_IC_20260328.md
-  - 价值类/PE_TTM_BACKTEST_20260328.md
-  - 相关性矩阵_20260328.md
-
-#### 优化
-
-- 优化目录结构：从4个大型文档拆分为34个模块化文件
-- 优化归档策略：统一归档到 `docs/archive/`
-- 优化代码状态：明确示例代码/框架代码/可执行代码三级分离
-- 优化文档引用：建立完整的交叉引用体系
-- 优化因子库结构：扁平化目录层级
-
-#### 废弃
-
-- 废弃 `main/01_FRAMEWORK/` - 框架已迁移
-- 废弃 `main/03_ARCHIVE/` - 归档已迁移
-- 废弃 `factor-library/05_RAW_DATA/` - 目录重复，已合并
-- 废弃 `factor-library/06_ARCHIVE/` - 归档已迁移
-
----
-
-### [v3.1] - 2026-03-28
-
-> 本次更新完成了main模块的机构级升级。
-
-#### 新增
-
-- 新增 `main/01_FRAMEWORK/量化策略框架_v3.1.md` - v3.1框架
-- 新增 `main/CHANGELOG.md` - 版本变更记录
-
-#### 优化
-
-- 优化性能目标：年化收益目标从15%提升到18%
-- 优化风险控制：最大回撤从15%降到12%
-- 优化架构设计：8层Layer 0-7架构
-
----
-
-### [v3.0] - 2026-03-26
-
-> 初始重构版本，建立专业机构标准框架。
-
-#### 新增
-
-- 新增7层量化策略框架
-- 新增因子库5723+指标
-- 新增战术库CD.1-CD.89
-
----
-
-## 项目阶段
-
-| 阶段 | 状态 | 说明 |
-|------|------|------|
-| 研究/策略设计 | ✅ 当前 | 验证策略想法，建立方法论 |
-| 回测验证 | 🔜 下一阶段 | 用历史数据验证策略 |
-| 模拟交易 | ⏳ 未来 | 真实环境验证 |
-| 实盘交易 | ⏳ 未来 | 实际资金验证 |
-
----
-
-## 相关文档
-
-| 文档 | 说明 |
+| 文件 | 原因 |
 |------|------|
-| [SPEC.md](./SPEC.md) | 主规格文档 |
-| [CODE_STATUS.md](./CODE_STATUS.md) | 代码状态规范 |
-| [README.md](./README.md) | 项目README |
+| `02_ALPHA_FACTORS/1_趋势跟踪因子.md` | 内容重复，已整合到索引表 |
+| `02_ALPHA_FACTORS/2_均值回归因子.md` | 内容重复，已整合到索引表 |
+| `02_ALPHA_FACTORS/3_价值因子.md` | 内容重复，已整合到索引表 |
+| `02_ALPHA_FACTORS/4_成长因子.md` | 内容重复，已整合到索引表 |
+| `02_ALPHA_FACTORS/5_质量因子.md` | 内容重复，已整合到索引表 |
+| `02_ALPHA_FACTORS/6_动量因子.md` | 内容重复，已整合到索引表 |
+| `02_ALPHA_FACTORS/7_情绪因子.md` | 内容重复，已整合到索引表 |
+
+### 📁 目录结构变更
+
+**新增目录**:
+```
+docs/
+├── System_Manifest.md                    # 新增
+├── CONTEXT_SNAPSHOT.json                 # 新增
+├── API_Contract.md                       # 新增
+├── AI_Permissions.md                     # 新增
+├── Strategy_Spec_S001.md                 # 新增
+├── DUPLICATION_ANALYSIS.md               # 新增
+│
+└── 02_FACTOR_LIBRARY/
+    ├── 02_ALPHA_FACTORS_INDEX.md         # 新增
+    ├── 05_BACKTEST_REORGANIZATION.md     # 新增
+    └── 05_BACKTEST/
+        ├── ic_reports/                   # 新增
+        │   └── README.md
+        └── strategy_reports/             # 新增
+            └── README.md
+```
+
+**删除目录**:
+```
+02_ALPHA_FACTORS/
+├── 1_趋势跟踪因子.md                    # 已删除
+├── 2_均值回归因子.md                    # 已删除
+├── 3_价值因子.md                        # 已删除
+├── 4_成长因子.md                        # 已删除
+├── 5_质量因子.md                        # 已删除
+├── 6_动量因子.md                        # 已删除
+└── 7_情绪因子.md                        # 已删除
+```
+
+### 🔄 优化改进
+
+| 项目 | 改进 |
+|------|------|
+| 因子库维护 | 从7个分散文件 → 单一索引表 |
+| 回测报告 | 从混乱结构 → 分离IC报告和策略报告 |
+| 系统状态 | 无版本锁定 → CONTEXT_SNAPSHOT.json |
+| 接口定义 | 无明确规范 → API_Contract.md |
+| AI权限 | 无明确清单 → AI_Permissions.md |
+
+### 📊 统计数据
+
+| 指标 | 数值 |
+|------|------|
+| 新增文件 | 10个 |
+| 删除文件 | 7个 |
+| 新增目录 | 2个 |
+| 因子总数 | 87个 |
+| 策略总数 | 1个（S001） |
 
 ---
 
-## 更新记录
+## [v4.0.1] - 2026-03-28
 
-| 版本 | 日期 | 变更内容 |
-|------|------|----------|
-| v1.0 | 2026-03-28 | 初始版本，建立变更记录规范 |
+### 📋 初始版本
+
+- 完成系统架构设计（Layer 0-7）
+- 完成因子库建设（87+个因子）
+- 完成策略池设计（120个策略框架）
+- 完成技术规格文档
+
+---
+
+## [v4.0] - 2026-03-28
+
+### 🚀 首次发布
+
+- 清风量化交易系统 v4.0 正式发布
+- 采用Layer 0-7分层架构
+- 支持30-50种策略动态管理
+- 支持AI因子挖掘和参数优化
+
+---
+
+## 版本管理规则
+
+### 主版本升级（v4.0 → v5.0）
+- 架构改变（Layer 0-7重组）
+- 核心模块替换
+- 数据格式不兼容
+
+### 次版本升级（v4.0 → v4.1）
+- 新增模块
+- 新增因子库
+- 新增策略
+
+### 补丁版本升级（v4.0 → v4.0.1）
+- Bug修复
+- 文档更新
+- 性能优化
+
+---
+
+**最后更新**: 2026-03-28 | **维护者**: 清风量化研究部

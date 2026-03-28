@@ -1,0 +1,38 @@
+# 风险规则配置
+# TODO: 阶段3实现
+
+risk_rules:
+  position_limits:
+    max_single_position: 0.20      # 单股最大20%
+    max_same_sector: 0.40          # 同板块最大40%
+    max_total_position: 0.90       # 总仓位最大90%
+    min_cash_ratio: 0.10            # 最小现金比例10%
+
+  stop_loss:
+    enabled: true
+    hard_stop_loss: -0.08           # 硬止损8%
+    time_stop_days: 5               # 时间止损5天
+    trailing_stop:
+      enabled: true
+      activation_profit: 0.05        # 盈利5%后激活
+      trail_distance: 0.03          # 追踪距离3%
+
+  take_profit:
+    enabled: true
+    targets:
+      - level: 1
+        profit: 0.05                # 第一止盈5%
+        exit_ratio: 0.50            # 卖出50%
+      - level: 2
+        profit: 0.10               # 第二止盈10%
+        exit_ratio: 1.00            # 全部卖出
+
+  var_limits:
+    enabled: true
+    confidence: 0.95
+    max_var: 0.15                  # VaR最大15%
+
+  drawdown_limits:
+    enabled: true
+    max_drawdown: 0.20             # 最大回撤20%
+    warning_threshold: 0.15         # 预警阈值15%
