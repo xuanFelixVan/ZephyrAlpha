@@ -3,7 +3,7 @@
 > 系统核心规格与架构定义
 >
 > **版本**：v4.0
-> **更新日期**：2026-03-26
+> **更新日期**：2026-03-28
 > **状态**：已完成
 
 ---
@@ -14,234 +14,170 @@
 
 清风量化交易系统是一套面向A股市场的多策略量化交易平台，采用Layer 0-7分层架构，支持30-50种策略的动态管理和市场状态自适应。
 
-### 1.2 核心目标
+### 1.2 开发阶段说明
 
-- 实现多策略、多市场状态的动态适配
-- 建立标准化的策略开发和回测框架
-- 支持AI驱动的参数自动优化
-- 提供完整的风险管理和合规审计
+| 阶段 | 目标 | 文档状态 | 代码状态 |
+|------|------|----------|----------|
+| **当前：研究/策略设计** | 验证策略想法，建立方法论 | 完善中 | 框架+示例代码 |
+| **下一步：回测验证** | 用历史数据验证策略 | - | 可执行代码 |
+| **未来：模拟交易** | 真实环境验证 | - | 生产级代码 |
+| **未来：实盘交易** | 实际资金验证 | - | 交易级代码 |
+
+> **重要说明**：当前所有代码均为**示例代码/框架代码**，用于说明逻辑，**不可直接运行**。
+> 详见：[CODE_STATUS.md](./CODE_STATUS.md)
 
 ---
 
-## 2. 系统架构
-
-### 2.1 Layer 0-7 分层架构
-
-| Layer | 名称 | 功能 | 核心模块 |
-|-------|------|------|----------|
-| Layer 0 | 数据层 | 数据采集、清洗、存储 | Tick引擎、因子库 |
-| Layer 1 | 前置层 | 市场状态识别、信号预处理 | 状态分类器 |
-| Layer 2 | Alpha层 | Alpha因子生成、预测 | 因子挖掘、模型预测 |
-| Layer 3 | 风险层 | 风险因子建模、归因 | Barra模型、VaR计算 |
-| Layer 4 | 组合层 | 组合优化、权重分配 | 优化器、信号聚合 |
-| Layer 5 | 执行层 | 订单生成、路由、执行 | 订单管理器 |
-| Layer 6 | 监控层 | 实时监控、告警 | 监控系统 |
-| Layer 7 | 归因层 | 绩效归因、分析 | 归因引擎 |
-
-### 2.2 目录结构
+## 2. 目录结构
 
 ```
 docs/
-├── SPEC.md                          # 本文档
-├── technical-specs/                 # 技术规格
-│   ├── architecture/                # 系统架构
-│   │   ├── json-schemas.md         # JSON接口定义
-│   │   ├── distributed-system.md   # 分布式计算
-│   │   ├── barra-optimizer.md      # Barra优化器
-│   │   ├── low-latency.md          # 低延迟架构
-│   │   └── disaster-recovery.md    # 容灾备份
-│   ├── modules/                     # 核心模块
-│   │   ├── cost-model.md           # 全成本模型
-│   │   ├── backtest-engine.md      # 回测引擎
-│   │   ├── risk-management.md      # 风险管理
-│   │   ├── order-routing.md        # 订单路由
-│   │   ├── trading-monitor.md      # 交易监控
-│   │   ├── trading-api.md          # 交易API
-│   │   └── trading-auditor.md      # 日志审计
-│   ├── trading-rules/               # 交易规则
-│   │   └── a-share-rules.md        # A股规则
-│   └── ai-optimization/             # AI优化
-│       ├── self-optimization.md    # AI自我优化
-│       ├── monitoring.md            # 市场监控
-│       └── stock-strength.md        # 股票强度
-├── trading-tactics/                # 交易战术
-│   ├── strategy-pool/               # 策略池
-│   │   ├── index.md                # 策略池概述
-│   │   ├── classification.md       # 策略分类
-│   │   ├── interface-standard.md   # 策略接口
-│   │   ├── manager.md              # 策略管理器
-│   │   ├── retail-strategies-a.md  # 游资策略(上)
-│   │   └── retail-strategies-b.md  # 游资策略(下)
-│   └── tactics/                     # 战术库
-│       ├── technical-indicators.md # 技术指标
-│       ├── pattern-recognition.md  # 形态识别
-│       ├── limit-up-analysis.md    # 涨停板分析
-│       ├── market-cycles.md        # 市场周期
-│       ├── ai-integration.md       # AI策略整合
-│       └── wave-trading.md         # 波段战法
-└── archive/                         # 归档文件
-    ├── 技术文档_v1.0.md             # 原技术文档
-    ├── 系统增强手册_v1.0.md        # 原系统增强手册
-    ├── 策略池_v1.0.md              # 原策略池
-    └── 战术手册_v1.0.md            # 原战术手册
+├── SPEC.md                    # ⭐ 统一入口文档（本文档）
+├── CODE_STATUS.md             # 代码状态标记规范
+├── README.md                  # 项目README
+│
+├── technical-specs/           # 技术规格（系统架构）
+│   ├── architecture/          # 系统架构
+│   ├── modules/              # 核心模块
+│   ├── trading-rules/        # 交易规则
+│   └── ai-optimization/      # AI优化
+│
+├── trading-tactics/          # 交易战术
+│   ├── strategy-pool/        # 策略池
+│   └── tactics/             # 战术库
+│
+├── factor-library/           # 因子库（独立模块）
+│   ├── 00_INDEX/            # 索引导航
+│   ├── 01_METHODOLOGY/       # 研究方法论
+│   ├── 02_ALPHA_FACTORS/    # Alpha因子
+│   ├── 03_RISK_FACTORS/    # 风险因子
+│   ├── 04_DATA_SOURCE/      # 数据源
+│   ├── 05_BACKTEST/         # 回测报告
+│   ├── 06_ARCHIVE/         # 归档
+│   └── 10_MANUAL/          # 手册
+│
+├── main/                     # ⚠️ 旧版框架（保留参考）
+│   ├── 01_FRAMEWORK/       # 旧版框架
+│   ├── 02_TACTICS/         # 旧版战术
+│   └── 03_ARCHIVE/         # 旧版归档
+│
+└── archive/                  # 统一归档
+    ├── 技术文档_v1.0.md
+    ├── 系统增强手册_v1.0.md
+    ├── 策略池_v1.0.md
+    └── 战术手册_v1.0.md
 ```
 
 ---
 
-## 3. 核心模块规格
+## 3. Layer 0-7 分层架构
 
-### 3.1 数据层（Layer 0）
-
-| 模块 | 功能 | 技术指标 |
-|------|------|----------|
-| Tick数据引擎 | 高速Tick数据处理 | <1ms延迟 |
-| 因子库 | 5700+ THS_BD指标 | 实时计算 |
-| 数据仓库 | 历史数据存储 | ClickHouse |
-
-### 3.2 前置层（Layer 1）
-
-| 模块 | 功能 | 输出 |
-|------|------|------|
-| 市场状态分类 | 5状态分类 | 牛市/熊市/震荡/妖股/混沌 |
-| 维度评分 | 5维度评分 | 技术/资金/情绪/风格/全球 |
-| 流动性评估 | 流动性状态 | 高/正常/低 |
-| 风险评级 | 综合风险 | 高/中/低 |
-
-### 3.3 Alpha层（Layer 2）
-
-| 模块 | 功能 | 方法 |
-|------|------|------|
-| 因子挖掘 | 自动发现Alpha因子 | 遗传算法 |
-| 预测模型 | 收益率预测 | 机器学习/深度学习 |
-| 因子组合 | 多因子组合 | 嵌套Bootstrap |
-
-### 3.4 风险层（Layer 3）
-
-| 模块 | 功能 | 模型 |
-|------|------|------|
-| Barra模型 | 风险因子建模 | 10风格+28行业 |
-| VaR计算 | 风险价值 | 99%置信度 |
-| 压力测试 | 场景分析 | 10+预设场景 |
-
-### 3.5 组合层（Layer 4）
-
-| 模块 | 功能 | 算法 |
-|------|------|------|
-| 组合优化 | 权重优化 | 最大化夏普 |
-| 信号聚合 | 多策略信号 | 加权投票 |
-| 仓位分配 | 风险平价 | 等风险贡献 |
-
-### 3.6 执行层（Layer 5）
-
-| 模块 | 功能 | 要求 |
-|------|------|------|
-| 订单生成 | 交易信号转订单 | - |
-| 订单路由 | 智能路由 | <10ms |
-| 交易执行 | 订单执行 | <50ms |
-
-### 3.7 监控层（Layer 6）
-
-| 模块 | 功能 | 告警 |
-|------|------|------|
-| 系统监控 | CPU/内存/网络 | 即时 |
-| 交易监控 | 订单/成交 | 即时 |
-| 风控监控 | 仓位/亏损 | 即时 |
-
-### 3.8 归因层（Layer 7）
-
-| 模块 | 功能 | 指标 |
-|------|------|------|
-| 收益归因 | 收益分解 | Brinson模型 |
-| 风险归因 | 风险分解 | 因子暴露 |
-| 策略分析 | 策略表现 | 多维度 |
+| Layer | 名称 | 功能 | 状态 |
+|-------|------|------|------|
+| Layer 0 | 数据层 | 数据采集、清洗、存储 | 研究阶段 |
+| Layer 1 | 前置层 | 市场状态识别、信号预处理 | 研究阶段 |
+| Layer 2 | Alpha层 | Alpha因子生成、预测 | 研究阶段 |
+| Layer 3 | 风险层 | 风险因子建模、归因 | 研究阶段 |
+| Layer 4 | 组合层 | 组合优化、权重分配 | 研究阶段 |
+| Layer 5 | 执行层 | 订单生成、路由、执行 | 回测阶段 |
+| Layer 6 | 监控层 | 实时监控、告警 | 回测阶段 |
+| Layer 7 | 归因层 | 绩效归因、分析 | 回测阶段 |
 
 ---
 
-## 4. 策略池规格
+## 4. 模块说明
 
-### 4.1 策略容量
+### 4.1 technical-specs（技术规格）
 
-| 类型 | 数量 | 占比 |
+> 系统级技术文档，描述**如何构建系统**
+
+| 目录 | 内容 | 状态 |
 |------|------|------|
-| 趋势跟踪类 | 8-10种 | 25% |
-| 均值回归类 | 6-8种 | 20% |
-| 动量类 | 6-8种 | 20% |
-| 短线交易类 | 8-10种 | 25% |
-| 套利类 | 3-5种 | 10% |
-| **合计** | **30-50种** | 100% |
+| architecture/ | 系统架构设计 | 框架设计 |
+| modules/ | 核心功能模块 | 框架设计 |
+| trading-rules/ | A股交易规则 | 参考文档 |
+| ai-optimization/ | AI参数优化 | 框架设计 |
 
-### 4.2 策略分类编号
+### 4.2 trading-tactics（交易战术）
 
-| 前缀 | 类型 | 示例 |
+> 策略级业务文档，描述**做什么策略**
+
+| 目录 | 内容 | 状态 |
 |------|------|------|
-| T | 趋势跟踪 | T001-T010 |
-| M | 均值回归 | M001-M010 |
-| P | 动量类 | P001-P010 |
-| S | 短线交易 | S001-S020 |
-| A | 套利类 | A001-A005 |
-| R | 风控策略 | R001-R002 |
+| strategy-pool/ | 策略池管理 | 研究阶段 |
+| tactics/ | 战术库 | 研究阶段 |
 
-### 4.3 市场状态适配
+### 4.3 factor-library（因子库）
 
-| 市场状态 | 适配策略类型 |
-|----------|--------------|
-| 牛市 | 趋势(T)、动量(P) |
-| 熊市 | 短线(S)、风控(R) |
-| 震荡市 | 均值回归(M)、套利(A) |
-| 妖股周期 | 短线(S) |
-| 混沌状态 | 套利(A)、风控(R) |
+> 独立模块，专注于因子研究
+
+详见：[factor-library/00_INDEX/README.md](./factor-library/00_INDEX/README.md)
+
+### 4.4 main（旧版框架）
+
+> ⚠️ **已废弃，仅保留参考**
+>
+> 本目录包含旧版（v3.x）框架文档，已被新架构取代。
+> 新开发请使用 technical-specs 和 trading-tactics。
 
 ---
 
-## 5. 风险管理规格
+## 5. 代码状态管理
 
-### 5.1 风控指标
+### 5.1 三种代码状态
 
-| 类型 | 指标 | 阈值 |
+| 状态 | 标记 | 含义 |
 |------|------|------|
-| 市场风险 | VaR (99%, 1日) | 组合2% |
-| 市场风险 | 最大回撤 | 10% |
-| 流动性风险 | 持仓集中度 | 单票20% |
-| 交易风险 | 单笔亏损 | 2% |
-| 交易风险 | 日内交易频率 | 100次 |
+| 待实现 | `{# TODO: 回测阶段实现}` | 逻辑已设计，代码待实现 |
+| 示例代码 | `{# EXAMPLE: 研究阶段示例}` | 用于说明逻辑，不可运行 |
+| 可执行 | `{# EXECUTABLE: 已验证可运行}` | 代码已验证，可执行 |
 
-### 5.2 AI参数管理
+### 5.2 当前状态
 
-| 类型 | 占比 | 管理方式 |
-|------|------|----------|
-| 完全AI优化 | 60-70% | 贝叶斯/遗传算法 |
-| 半自动优化 | 20-30% | AI建议+人工确认 |
-| 人工设定 | 10-20% | 完全人工 |
+| 目录 | 代码状态 | 说明 |
+|------|----------|------|
+| technical-specs/ | 框架代码 | 系统架构说明 |
+| trading-tactics/ | 示例代码 | 策略逻辑示例 |
+| factor-library/01_METHODOLOGY/ | 参考代码 | 方法论参考 |
+
+> ⚠️ **当前所有代码均为示例代码，不可直接运行**
+
+详见：[CODE_STATUS.md](./CODE_STATUS.md)
 
 ---
 
-## 6. 接口规格
+## 6. 核心规格
 
-### 6.1 JSON Schema
+### 6.1 策略池规格
+
+详见：[trading-tactics/strategy-pool/index.md](./trading-tactics/strategy-pool/index.md)
+
+### 6.2 风险管理规格
+
+详见：[technical-specs/modules/risk-management.md](./technical-specs/modules/risk-management.md)
+
+### 6.3 接口规格
 
 详见：[technical-specs/architecture/json-schemas.md](./technical-specs/architecture/json-schemas.md)
 
-### 6.2 策略接口
+---
 
-详见：[trading-tactics/strategy-pool/interface-standard.md](./trading-tactics/strategy-pool/interface-standard.md)
+## 7. 相关文档索引
+
+| 类型 | 文档 | 说明 |
+|------|------|------|
+| **入门** | [README.md](./README.md) | 项目简介 |
+| **规范** | [CODE_STATUS.md](./CODE_STATUS.md) | 代码状态规范 |
+| **策略** | [trading-tactics/strategy-pool/index.md](./trading-tactics/strategy-pool/index.md) | 策略池 |
+| **因子** | [factor-library/00_INDEX/README.md](./factor-library/00_INDEX/README.md) | 因子库 |
+| **架构** | [technical-specs/architecture/json-schemas.md](./technical-specs/architecture/json-schemas.md) | 技术架构 |
 
 ---
 
-## 7. 更新记录
+## 8. 更新记录
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v4.0 | 2026-03-26 | 全面重构，采用Layer 0-7分层架构，策略池标准化 |
-| v3.0 | 2026-01-01 | 初始版本 |
-
----
-
-## 8. 相关文档
-
-| 文档 | 说明 |
-|------|------|
-| [技术指标体系](./trading-tactics/tactics/technical-indicators.md) | 核心技术指标定义 |
-| [策略池索引](./trading-tactics/strategy-pool/index.md) | 策略池概述 |
-| [AI优化体系](./technical-specs/ai-optimization/self-optimization.md) | AI参数优化 |
-| [全成本模型](./technical-specs/modules/cost-model.md) | 交易成本计算 |
-| [Barra优化器](./technical-specs/architecture/barra-optimizer.md) | 风险模型 |
+| v4.0 | 2026-03-28 | 增加代码状态说明，明确开发阶段，更新目录结构 |
+| v3.2 | 2026-03-26 | 因子库手册v3.2 |
+| v3.1 | 2026-03-01 | 因子分类体系建立 |
