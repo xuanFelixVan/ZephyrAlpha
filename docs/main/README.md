@@ -20,11 +20,11 @@
 
 ## 迁移指南
 
-| 旧目录 | 新目录 | 说明 |
+| 旧目录 | 新目录 | 状态 |
 |--------|--------|------|
-| main/01_FRAMEWORK/量化策略框架_v3.1.md | trading-tactics/ | 策略相关 |
-| main/02_TACTICS/ | trading-tactics/ | 战术相关 |
-| main/03_ARCHIVE/ | archive/ | 归档 |
+| main/01_FRAMEWORK/量化策略框架_v3.1.md | archive/main/量化策略框架_v3.1.md | ✅ 已归档 |
+| main/02_TACTICS/ | trading-tactics/ | ⚠️ 战术可参考，逻辑已迁移 |
+| main/03_ARCHIVE/ | archive/main/ | ✅ 已迁移删除 |
 
 ---
 
