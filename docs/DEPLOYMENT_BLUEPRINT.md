@@ -425,17 +425,37 @@ spec:
 
 **告警规则**:
 ```yaml
-- alert: HighCPUUsage
-  expr: cpu_usage > 80
-  for: 5m
-  annotations:
-    summary: "CPU使用率过高"
-
-- alert: HighMemoryUsage
-  expr: memory_usage > 85
-  for: 5m
-  annotations:
-    summary: "内存使用率过高"
+groups:
+  - name: system_alerts
+    rules:
+    - alert: HighCPUUsage
+      expr: cpu_usage > 80
+      for: 5m
+      annotations:
+        summary: "CPU使用率过高 ({{ $value }}%)"
+        description: "主机 {{ $labels.instance }} CPU使用率超过80%"
+        severity: warning
+      
+    - alert: CriticalCPUUsage
+      expr: cpu_usage > 95
+      for: 2m
+      annotations:
+        summary: "CPU使用率严重过高 ({{ $value }}%)"
+        severity: critical
+      
+    - alert: HighMemoryUsage
+      expr: memory_usage > 85
+      for: 5m
+      annotations:
+        summary: "内存使用率过高 ({{ $value }}%)"
+        severity: warning
+      
+    - alert: DiskSpaceLow
+      expr: disk_free_percent < 10
+      for: 5m
+      annotations:
+        summary: "磁盘空间不足 ({{ $value }}%)"
+        severity: critical
 ```
 
 ---
@@ -443,24 +463,47 @@ spec:
 ### 4.2 性能监控
 
 **指标**:
-- 请求延迟
-- 吞吐量
+- 请求延迟（p50、p95、p99）
+- 吞吐量（QPS）
 - 错误率
 - 缓存命中率
 
 **告警规则**:
 ```yaml
-- alert: HighLatency
-  expr: request_latency_p99 > 1000
-  for: 5m
-  annotations:
-    summary: "请求延迟过高"
-
-- alert: HighErrorRate
-  expr: error_rate > 1%
-  for: 5m
-  annotations:
-    summary: "错误率过高"
+groups:
+  - name: performance_alerts
+    rules:
+    - alert: HighLatency
+      expr: request_latency_p99 > 1000
+      for: 5m
+      annotations:
+        summary: "请求延迟过高 ({{ $value }}ms)"
+        description: "P99延迟超过1秒，可能影响用户体验"
+        severity: warning
+      
+    - alert: LowThroughput
+      expr: qps < 100
+      for: 10m
+      annotations:
+        summary: "吞吐量过低 ({{ $value }} QPS)"
+        description: "系统吞吐量低于预期，可能存在故障"
+        severity: warning
+      
+    - alert: HighErrorRate
+      expr: error_rate > 1
+      for: 5m
+      annotations:
+        summary: "错误率过高 ({{ $value }}%)"
+        description: "错误率超过1%，需要立即调查"
+        severity: critical
+      
+    - alert: LowCacheHitRate
+      expr: cache_hit_rate < 80
+      for: 10m
+      annotations:
+        summary: "缓存命中率过低 ({{ $value }}%)"
+        description: "缓存命中率低于80%，性能可能下降"
+        severity: warning
 ```
 
 ---
@@ -471,21 +514,123 @@ spec:
 - 策略信号数
 - 交易成交数
 - 投资组合收益
-- 风险指标
+- 风险指标（最大回撤、夏普比率）
 
 **告警规则**:
 ```yaml
-- alert: NoSignal
-  expr: signal_count == 0
-  for: 1h
-  annotations:
-    summary: "1小时内无交易信号"
+groups:
+  - name: business_alerts
+    rules:
+    - alert: NoSignal
+      expr: signal_count == 0
+      for: 1h
+      annotations:
+        summary: "1小时内无交易信号"
+        description: "策略未生成任何交易信号，可能存在问题"
+        severity: warning
+      
+    - alert: HighDrawdown
+      expr: max_drawdown > 20
+      for: 1d
+      annotations:
+        summary: "最大回撤超过20%"
+        description: "投资组合最大回撤 {{ $value }}%，风险过高"
+        severity: critical
+      
+    - alert: LowSharpeRatio
+      expr: sharpe_ratio < 0.5
+      for: 7d
+      annotations:
+        summary: "夏普比率过低 ({{ $value }})"
+        description: "风险调整后收益不理想，需要优化策略"
+        severity: warning
+      
+    - alert: NoTrades
+      expr: trade_count == 0
+      for: 2h
+      annotations:
+        summary: "2小时内无交易执行"
+        description: "交易执行模块可能故障"
+        severity: warning
+```
 
-- alert: HighDrawdown
-  expr: max_drawdown > 20%
-  for: 1d
-  annotations:
-    summary: "最大回撤超过20%"
+---
+
+### 4.4 告警通知
+
+**通知渠道**:
+```yaml
+# 告警通知配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093
+
+# AlertManager配置
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'default'
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+  
+  routes:
+    - match:
+        severity: critical
+      receiver: 'critical'
+      continue: true
+    
+    - match:
+        severity: warning
+      receiver: 'warning'
+
+receivers:
+  - name: 'default'
+    webhook_configs:
+      - url: 'http://localhost:5001/'
+  
+  - name: 'critical'
+    email_configs:
+      - to: 'admin@example.com'
+        from: 'alerting@example.com'
+        smarthost: 'smtp.example.com:587'
+        auth_username: 'alerting@example.com'
+        auth_password: 'password'
+    pagerduty_configs:
+      - service_key: 'YOUR_SERVICE_KEY'
+  
+  - name: 'warning'
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#alerts'
+```
+
+---
+
+### 4.5 告警响应流程
+
+```
+告警触发
+    ↓
+告警分类（严重/警告/信息）
+    ↓
+    ├→ 严重告警 → 立即通知 → 人工介入
+    ├→ 警告告警 → 记录日志 → 定期检查
+    └→ 信息告警 → 记录日志 → 定期分析
+    ↓
+告警处理
+    ↓
+    ├→ 自动恢复（如可能）
+    ├→ 人工处理
+    └→ 升级处理
+    ↓
+告警关闭
+    ↓
+事后分析
 ```
 
 ---

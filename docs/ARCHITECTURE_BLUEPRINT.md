@@ -280,10 +280,23 @@ FactorCalculator → Cache: 缓存因子值
 ```python
 # 因子并行计算
 from multiprocessing import Pool
+import numpy as np
 
-factors = [f1, f2, ..., f87]
+def calculate_factor(factor_id):
+    """计算单个因子"""
+    data = load_market_data()
+    if factor_id in TREND_FACTORS:
+        return calculate_trend_factor(data, factor_id)
+    elif factor_id in VALUE_FACTORS:
+        return calculate_value_factor(data, factor_id)
+    else:
+        return calculate_other_factor(data, factor_id)
+
+# 并行计算所有因子
+factors = [f"ALPHA_{i:03d}" for i in range(1, 88)]
 with Pool(8) as p:
     results = p.map(calculate_factor, factors)
+    factor_matrix = np.column_stack(results)
 ```
 
 ---
@@ -296,19 +309,62 @@ with Pool(8) as p:
 - 大规模因子计算
 - 高频数据处理
 
+**配置示例**:
+```yaml
+# 高性能配置
+resources:
+  cpu: 32核
+  memory: 256GB
+  storage: 10TB SSD
+  network: 10Gbps
+```
+
 ---
 
 ### 5.3 性能优化
 
 **缓存策略**:
-- L1缓存：内存缓存（热数据）
-- L2缓存：Redis缓存（中温数据）
-- L3缓存：磁盘缓存（冷数据）
+```python
+# L1缓存：内存缓存（热数据）
+from functools import lru_cache
+
+@lru_cache(maxsize=10000)
+def get_ohlcv(symbol, date):
+    return load_from_db(symbol, date)
+
+# L2缓存：Redis缓存（中温数据）
+import redis
+cache = redis.Redis(host='localhost', port=6379)
+cache.set(f"ohlcv:{symbol}:{date}", data, ex=3600)
+
+# L3缓存：磁盘缓存（冷数据）
+import pickle
+with open(f"cache/{symbol}_{date}.pkl", 'wb') as f:
+    pickle.dump(data, f)
+```
 
 **计算优化**:
-- 向量化计算（NumPy）
-- JIT编译（Numba）
-- GPU加速（CuPy）
+```python
+# 向量化计算（NumPy）
+import numpy as np
+prices = np.array([100, 101, 102, 103])
+returns = np.diff(prices) / prices[:-1]  # 快速计算收益率
+
+# JIT编译（Numba）
+from numba import jit
+
+@jit(nopython=True)
+def fast_ma(prices, window):
+    result = np.zeros(len(prices))
+    for i in range(window, len(prices)):
+        result[i] = np.mean(prices[i-window:i])
+    return result
+
+# GPU加速（CuPy）
+import cupy as cp
+gpu_prices = cp.array(prices)
+gpu_returns = cp.diff(gpu_prices) / gpu_prices[:-1]
+```
 
 ---
 

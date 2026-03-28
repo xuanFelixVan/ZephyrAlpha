@@ -65,6 +65,30 @@ class DataError(Exception):
     code: int              # 错误代码
     message: str           # 错误信息
     retry_count: int       # 重试次数
+    
+    def __init__(self, code, message, retry_count=0):
+        self.code = code
+        self.message = message
+        self.retry_count = retry_count
+        super().__init__(f"[{code}] {message}")
+
+# 错误代码定义
+ERROR_CODES = {
+    1001: "数据源连接失败",
+    1002: "数据不存在",
+    1003: "数据格式错误",
+    1004: "超时",
+    1005: "权限不足"
+}
+
+# 使用示例
+try:
+    data = datahub.get_ohlcv("000001.SZ", "2026-01-01", "2026-03-28")
+except DataError as e:
+    if e.code == 1004:  # 超时
+        logger.warning(f"数据获取超时，重试第{e.retry_count}次")
+    elif e.code == 1002:  # 数据不存在
+        logger.error(f"数据不存在: {e.message}")
 ```
 
 ### 性能指标
