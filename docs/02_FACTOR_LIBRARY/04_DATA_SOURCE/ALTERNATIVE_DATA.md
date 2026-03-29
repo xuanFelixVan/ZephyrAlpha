@@ -1259,7 +1259,213 @@ REDIS_CONFIG = {
 
 ---
 
-## 8. 数据源配置
+## 8. 另类因子体系（免费数据源）
+
+> **版本**: v1.0
+> **更新日期**: 2026-03-30
+> **数据源分工**: iFinD（主，5900因子）+ 另类因子（免费API补充）
+
+### 8.1 因子分类体系
+
+| 类别 | 数据源 | 更新频率 | 说明 |
+|------|--------|----------|------|
+| **iFinD因子** | iFinD | 分钟/日 | 5900+量化因子（付费订阅） |
+| **另类因子** | 免费API | 日频 | 天气/搜索/资金流等 |
+| **舆情因子** | AkShare等 | 实时 | 新闻情感/事件驱动 |
+
+### 8.2 免费另类因子获取渠道
+
+#### 8.2.1 资金流因子（⭐推荐 - 免费且稳定）
+
+| 因子 | 获取方式 | 免费额度 | 实现难度 |
+|------|----------|----------|----------|
+| 北向资金 | 东方财富 | 无限制 | ⭐ |
+| 融资融券 | 东方财富 | 无限制 | ⭐ |
+| 龙虎榜 | 上交所/深交所 | 无限制 | ⭐ |
+| 大宗交易 | 东方财富 | 无限制 | ⭐ |
+
+```python
+import akshare as ak
+
+# 北向资金（沪深港通）
+df = ak.stock_board_em()  # 概念板块资金流
+df = ak.stock_individual_em()  # 个股资金流
+
+# 融资融券
+df = ak.stock_margin_detail_sz()  # 深圳融资融券
+df = ak.stock_margin_detail_sh()  # 上海融资融券
+
+# 龙虎榜
+df = ak.stock_lhb_detail_em()  # 龙虎榜明细
+```
+
+#### 8.2.2 天气/气候因子（⭐推荐 - 免费API）
+
+| 因子 | 免费API | 日额度 | 适用场景 |
+|------|---------|--------|----------|
+| 温度/天气 | 心知天气 | 400次/天 | 消费/农业股票 |
+| 空气质量AQI | PM25.in | 1000次/天 | 环保/医药 |
+| 台风/极端天气 | 国家气象局 | 公开数据 | 农业/保险 |
+
+```python
+# 心知天气API（免费注册）
+import requests
+
+def get_weather(city="beijing"):
+    """获取城市天气数据"""
+    api_key = "your_api_key"  # 免费注册获取
+    url = f"https://api.seniverse.com/v3/weather/daily.json"
+    params = {
+        "key": api_key,
+        "location": city,
+        "language": "zh-Hans",
+        "unit": "c"
+    }
+    response = requests.get(url, params=params)
+    return response.json()
+
+# PM25.in（免费，无需注册）
+def get_aqi(city="beijing"):
+    """获取AQI数据"""
+    url = f"https://api.waqi.info/feed/{city}/"
+    params = {"token": "your_token"}  # 免费注册获取
+    response = requests.get(url, params=params)
+    return response.json()
+```
+
+#### 8.2.3 搜索指数因子（⭐推荐 - 百度/Google）
+
+| 因子 | API | 免费额度 | 说明 |
+|------|-----|----------|------|
+| 百度搜索指数 | AkShare | 无限制 | 关键词搜索热度 |
+| 百度资讯指数 | AkShare | 无限制 | 新闻关注度 |
+| 百度需求图谱 | AkShare | 无限制 | 用户意图 |
+
+```python
+import akshare as ak
+
+# 百度搜索指数（关键词）
+df = ak.baidu_search_index(keyword="茅台", start_date="20230101", end_date="20230331")
+
+# 百度资讯指数
+df = ak.baidu_info_index(keyword="新能源汽车", start_date="20230101", end_date="20230331")
+```
+
+#### 8.2.4 社交媒体因子（免费）
+
+| 因子 | API | 免费额度 | 说明 |
+|------|-----|----------|------|
+| 微博讨论 | 微博API | 部分免费 | 社交情绪 |
+| 雪球评论 | 雪球 | 需要爬虫 | 投资者情绪 |
+| 东方财富股吧 | AkShare | 免费 | 散户情绪 |
+
+```python
+import akshare as ak
+
+# 东方财富股吧帖子
+df = ak.stock_guba_sina()  # 股吧帖子列表
+
+# 东方财富个股评论
+df = ak.stock_comment_sina()  # 个股评论情绪
+```
+
+#### 8.2.5 宏观经济因子（⭐官方免费）
+
+| 因子 | 数据源 | 获取方式 | 更新频率 |
+|------|--------|----------|----------|
+| GDP | 国家统计局 | 公开数据 | 季度 |
+| CPI/PPI | 国家统计局 | 公开数据 | 月度 |
+| 央行利率 | 中国人民银行 | 公开数据 | 不定期 |
+| 社融数据 | 央行 | 公开数据 | 月度 |
+
+```python
+import akshare as ak
+
+# CPI数据
+df = ak.macro_china_cpi()
+
+# 社融数据
+df = ak.macro_china_shrzgm()
+
+# 央行公开市场操作
+df = ak.macro_china_central_bank()
+```
+
+#### 8.2.6 政策事件因子（⭐免费）
+
+| 因子 | 获取方式 | 更新频率 |
+|------|----------|----------|
+| 政策公告 | 政府网站RSS | 实时 |
+| 监管函 | 东方财富 | 日更 |
+| 研报发布 | 东方财富 | 日更 |
+
+```python
+import akshare as ak
+import feedparser
+
+# 监管函
+df = ak.stock_regulatory_notice_em()
+
+# 研报
+df = ak.stock_research_report_em()
+
+# 政府RSS
+def fetch_gov_rss():
+    """获取政府网站政策"""
+    feeds = {
+        '国务院': 'http://www.gov.cn/xxgk/gmxbmmrdf/servlexml/xxgkml.xml',
+        '证监会': 'http://www.csrc.gov.cn/csrc/cxxw/rss.xml',
+    }
+    for name, url in feeds.items():
+        feed = feedparser.parse(url)
+        print(f"{name}: {len(feed.entries)} 条")
+```
+
+### 8.3 免费另类因子汇总表
+
+| 优先级 | 因子类别 | 具体因子 | 免费程度 | 实现难度 |
+|--------|----------|----------|----------|----------|
+| 🔴 高 | 资金流 | 北向/融资融券/龙虎榜 | ⭐⭐⭐⭐⭐ | ⭐ |
+| 🔴 高 | 交易行为 | 大宗/杠杆资金 | ⭐⭐⭐⭐⭐ | ⭐ |
+| 🟡 中 | 搜索指数 | 百度搜索/资讯指数 | ⭐⭐⭐⭐ | ⭐ |
+| 🟡 中 | 天气AQI | 温度/空气质量 | ⭐⭐⭐⭐ | ⭐⭐ |
+| 🟢 低 | 社交媒体 | 微博/股吧情绪 | ⭐⭐⭐ | ⭐⭐ |
+| 🟢 低 | 宏观经济 | GDP/CPI/利率 | ⭐⭐⭐⭐⭐ | ⭐ |
+
+### 8.4 数据更新频率策略
+
+| 场景 | 更新频率 | 数据类型 |
+|------|----------|----------|
+| **实盘交易** | 分钟级 | iFinD行情数据 |
+| **盘前准备** | 日级 | 北向资金/融资融券 |
+| **另类因子** | 日级 | 天气/搜索指数 |
+| **舆情因子** | 实时 | 新闻/公告 |
+
+### 8.5 快速实现路径
+
+```python
+# Phase 1: 资金流因子（1天）
+fund_flow = {
+    'north_flow': ak.stock_em_hsgt_north_net_flow_in(),  # 北向资金
+    'margin': ak.stock_margin_detail_sz(),  # 融资融券
+    'lhb': ak.stock_lhb_detail_em(),  # 龙虎榜
+}
+
+# Phase 2: 搜索因子（1天）
+search_index = {
+    'baidu_search': ak.baidu_search_index(keyword="茅台"),
+}
+
+# Phase 3: 天气因子（2天）
+weather = {
+    'temperature': get_weather(city="shanghai"),
+    'aqi': get_aqi(city="beijing"),
+}
+```
+
+---
+
+## 9. 数据源配置
 
 ```yaml
 alternative_data_sources:
