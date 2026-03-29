@@ -1,0 +1,594 @@
+# 因子计算框架
+
+> **版本**: v1.0
+> **创建日期**: 2026-03-30
+> **Layer**: Layer 2 (因子计算层)
+> **专业机构标准**: 完整因子生命周期管理
+
+---
+
+## 1. 框架概述
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              专业机构因子计算框架                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    Factor Registry (因子注册表)               │   │
+│  │  ├── 因子ID/名称/分类                                      │   │
+│  │  ├── 计算公式/依赖关系                                     │   │
+│  │  ├── 更新频率/数据源                                       │   │
+│  │  └── 负责人/状态                                           │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                              ↓                                      │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    Factor Scheduler (调度器)                  │   │
+│  │  ├── 依赖拓扑排序                                          │   │
+│  │  ├── 并行计算优化                                          │   │
+│  │  └── 失败重试/报警                                         │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                              ↓                                      │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    Factor Engine (计算引擎)                  │   │
+│  │  ├── 日频计算 (盘后批量)                                   │   │
+│  │  ├── 分钟计算 (盘中增量)                                   │   │
+│  │  └── 因子验证 (IC/IR)                                     │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                              ↓                                      │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │                    Factor Storage (存储)                     │   │
+│  │  ├── ClickHouse (历史)                                     │   │
+│  │  └── Redis (实时)                                          │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. 因子注册表 (Factor Registry)
+
+### 2.1 因子定义结构
+
+```python
+class FactorDefinition:
+    """因子定义 - 专业机构标准"""
+
+    def __init__(self):
+        self.factor_id: str           # 唯一标识 THS_001 / custom_001
+        self.factor_name: str        # 因子名称 动量因子_20日
+        self.category: str            # 分类 momentum/valuation/growth/technical
+        self.formula: str             # 计算公式 return_20d
+        self.dependencies: List[str]  # 依赖因子 [close_price]
+        self.update_freq: str         # 更新频率 daily/hourly/minute
+        self.data_source: str         # 数据源 iFinD/Local/AKShare
+        self.status: str              # 状态 active/deprecated
+        self.owner: str               # 负责人 researcher_001
+        self.description: str         # 因子描述
+        self.metadata: Dict            # 元数据
+        self.version: str             # 版本号 v1.0
+        self.created_at: datetime     # 创建时间
+        self.updated_at: datetime     # 更新时间
+```
+
+### 2.2 因子分类
+
+| 分类 | 说明 | 示例 | 更新频率 |
+|------|------|------|----------|
+| **technical** | 技术指标 | MA, RSI, MACD | 分钟/日 |
+| **valuation** | 估值因子 | PE, PB, PCF | 日/季 |
+| **growth** | 成长因子 | 营收增速, 利润增速 | 季 |
+| **momentum** | 动量因子 | 20日收益, 动量得分 | 日 |
+| **quality** | 质量因子 | ROE, 资产负债率 | 季 |
+| **liquidity** | 流动性因子 | 换手率, 成交额 | 日 |
+| **sentiment** | 情绪因子 | 舆情得分, 北向资金 | 日 |
+
+### 2.3 因子注册表示例
+
+| factor_id | factor_name | category | dependencies | update_freq |
+|-----------|-------------|----------|-------------|-------------|
+| THS_DP | 总市值 | valuation | close_price, share_count | daily |
+| THS_TURNING | 换手率 | liquidity | volume, float_share | daily |
+| MA_5 | 5日均线 | technical | close_price | daily |
+| MA_20 | 20日均线 | technical | close_price | daily |
+| RSI_14 | 14日RSI | technical | close_price | minute |
+| ROE_QA | 季度ROE | quality | financial_data | quarterly |
+| MOM_20_5 | 动量因子 | momentum | ma_5, ma_20 | daily |
+
+---
+
+## 3. 因子依赖管理 (Dependency Graph)
+
+### 3.1 分层架构
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    因子依赖拓扑图                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│    原始数据 (Layer 0)                                              │
+│    ├── close_price (收盘价)                                   │
+│    ├── volume (成交量)                                          │
+│    ├── float_share (流通股本)                                   │
+│    └── financial_data (财务数据)                               │
+│                                                                     │
+│         ↓                                                          │
+│    Layer 1: 基础因子 (可直接计算)                                 │
+│    ├── price_return (收益率) ← close_price                       │
+│    ├── log_volume (对数成交量) ← volume                         │
+│    ├── market_cap (市值) ← close_price * share_count           │
+│    └── turnover_rate (换手率) ← volume / float_share          │
+│                                                                     │
+│         ↓                                                          │
+│    Layer 2: 技术因子 (依赖Layer 1)                                │
+│    ├── ma_5 (5日均线) ← price_return                           │
+│    ├── ma_20 (20日均线) ← price_return                         │
+│    ├── volatility_20 (波动率) ← price_return                   │
+│    └── rsi_14 (RSI) ← price_return                             │
+│                                                                     │
+│         ↓                                                          │
+│    Layer 3: 复合因子 (依赖Layer 2)                               │
+│    ├── momentum_score ← ma_5, ma_20, volatility_20            │
+│    ├── value_score ← pe, pb, pc                              │
+│    └── combined_score ← momentum_score + value_score           │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.2 DAG构建代码
+
+```python
+import networkx as nx
+
+class FactorDependencyGraph:
+    """因子依赖图"""
+
+    def __init__(self, registry):
+        self.registry = registry
+        self.graph = nx.DiGraph()
+
+    def build(self):
+        """构建因子依赖DAG"""
+        for factor in self.registry.get_all_factors():
+            self.graph.add_node(factor.factor_id)
+
+            for dep in factor.dependencies:
+                self.graph.add_node(dep)
+                self.graph.add_edge(dep, factor.factor_id)
+
+        return self.graph
+
+    def get_layers(self) -> List[List[str]]:
+        """获取分层执行顺序
+
+        同一层内因子可并行计算
+        """
+        return list(nx.topological_generations(self.graph))
+
+    def get_dependencies(self, factor_id: str) -> List[str]:
+        """获取因子的所有依赖"""
+        return list(nx.ancestors(self.graph, factor_id))
+
+    def validate_no_cycle(self) -> bool:
+        """验证无循环依赖"""
+        return nx.is_directed_acyclic_graph(self.graph)
+```
+
+---
+
+## 4. 因子调度器 (Factor Scheduler)
+
+### 4.1 调度器代码
+
+```python
+class FactorScheduler:
+    """因子调度器 - 专业机构标准"""
+
+    def __init__(self, registry: FactorRegistry, dag: FactorDependencyGraph):
+        self.registry = registry
+        self.dag = dag
+
+    def get_execution_order(self) -> List[List[str]]:
+        """获取分层执行顺序
+
+        返回: [[layer1_factors], [layer2_factors], ...]
+        """
+        return self.dag.get_layers()
+
+    def schedule_daily(self) -> Dict:
+        """日频因子调度计划"""
+        order = self.get_execution_order()
+
+        return {
+            '18:00': {
+                'task': 'fetch_raw_data',
+                'description': '获取原始行情数据',
+                'factors': ['close_price', 'volume', 'financial_data'],
+                'parallel': True
+            },
+            '18:30': {
+                'task': 'calculate_layer1',
+                'description': '计算基础因子',
+                'factors': order[0] if len(order) > 0 else [],
+                'parallel': True
+            },
+            '19:00': {
+                'task': 'calculate_layer2',
+                'description': '计算技术因子',
+                'factors': order[1] if len(order) > 1 else [],
+                'parallel': True
+            },
+            '19:30': {
+                'task': 'calculate_layer3',
+                'description': '计算复合因子',
+                'factors': order[2] if len(order) > 2 else [],
+                'parallel': True
+            },
+            '20:00': {
+                'task': 'validate_factors',
+                'description': '因子验证与存储',
+                'factors': 'all',
+                'parallel': False
+            }
+        }
+
+    def schedule_minute(self) -> Dict:
+        """分钟因子调度计划"""
+        minute_factors = self.registry.get_factors_by_freq('minute')
+
+        return {
+            '09:30': {'task': 'market_open_init', 'factors': minute_factors},
+            '10:00': {'task': 'hourly_update', 'factors': minute_factors},
+            '11:00': {'task': 'hourly_update', 'factors': minute_factors},
+            '13:00': {'task': 'hourly_update', 'factors': minute_factors},
+            '14:00': {'task': 'hourly_update', 'factors': minute_factors},
+            '14:30': {'task': 'pre_close_update', 'factors': minute_factors},
+            '15:00': {'task': 'market_close', 'factors': minute_factors}
+        }
+```
+
+---
+
+## 5. 因子计算引擎 (Factor Engine)
+
+### 5.1 计算引擎代码
+
+```python
+class FactorEngine:
+    """因子计算引擎 - 专业机构标准"""
+
+    def __init__(self, scheduler: FactorScheduler, registry: FactorRegistry):
+        self.scheduler = scheduler
+        self.registry = registry
+        self.cache = RedisClient()
+        self.storage = ClickHouseClient()
+
+    def calculate_factor(self, factor_id: str, date: str,
+                        symbols: List[str] = None) -> pd.DataFrame:
+        """计算单个因子
+
+        参数:
+            factor_id: 因子ID
+            date: 计算日期
+            symbols: 股票列表 (None = 全市场)
+
+        返回:
+            DataFrame: columns = [symbol, value, timestamp]
+        """
+        factor_def = self.registry.get_factor(factor_id)
+
+        # 检查缓存
+        cached = self.cache.get(f"factor:{factor_id}:{date}")
+        if cached is not None:
+            return cached
+
+        # 递归计算依赖
+        for dep in factor_def.dependencies:
+            if not self._factor_exists(dep, date):
+                self.calculate_factor(dep, date, symbols)
+
+        # 执行计算
+        result = self._execute_formula(factor_def, date, symbols)
+
+        # 存储
+        self.cache.set(f"factor:{factor_id}:{date}", result, ttl=86400)
+        self.storage.insert('factors', factor_id, date, result)
+
+        return result
+
+    def batch_calculate(self, date: str, layer: str = None,
+                        max_workers: int = 8) -> Dict:
+        """批量计算某日所有因子
+
+        参数:
+            date: 计算日期
+            layer: 指定Layer (None = 全部)
+            max_workers: 并行线程数
+        """
+        results = {}
+        order = self.scheduler.get_execution_order()
+
+        for layer_idx, factor_batch in enumerate(order):
+            # 跳过非指定layer
+            if layer is not None and layer_idx + 1 != int(layer.replace('layer', '')):
+                continue
+
+            print(f"计算 Layer {layer_idx + 1}: {len(factor_batch)} 个因子")
+
+            # 并行计算同层因子
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = {
+                    executor.submit(self.calculate_factor, f, date): f
+                    for f in factor_batch
+                }
+
+                for future in as_completed(futures):
+                    factor_id = futures[future]
+                    try:
+                        results[factor_id] = future.result()
+                    except Exception as e:
+                        print(f"因子 {factor_id} 计算失败: {e}")
+                        results[factor_id] = None
+
+        return results
+
+    def _execute_formula(self, factor_def: FactorDefinition,
+                        date: str, symbols: List[str]) -> pd.DataFrame:
+        """执行因子计算公式"""
+        # 根据因子类型选择计算方法
+        if factor_def.category == 'technical':
+            return self._calculate_technical_factor(factor_def, date, symbols)
+        elif factor_def.category == 'momentum':
+            return self._calculate_momentum_factor(factor_def, date, symbols)
+        elif factor_def.category == 'valuation':
+            return self._calculate_valuation_factor(factor_def, date, symbols)
+        else:
+            return self._calculate_generic_factor(factor_def, date, symbols)
+```
+
+### 5.2 技术因子计算示例
+
+```python
+def _calculate_technical_factor(self, factor_def, date, symbols):
+    """计算技术因子"""
+    close = self._get_data('close_price', date, symbols)
+
+    if 'ma' in factor_def.factor_id.lower():
+        # 移动平均线
+        window = int(factor_def.factor_id.split('_')[1])
+        return close.rolling(window).mean()
+
+    elif 'rsi' in factor_def.factor_id.lower():
+        # RSI
+        delta = close.diff()
+        gain = delta.where(delta > 0, 0)
+        loss = (-delta).where(delta < 0, 0)
+        avg_gain = gain.rolling(14).mean()
+        avg_loss = loss.rolling(14).mean()
+        rs = avg_gain / avg_loss
+        return 100 - (100 / (1 + rs))
+
+    elif 'volatility' in factor_def.factor_id.lower():
+        # 波动率
+        returns = close.pct_change()
+        return returns.rolling(20).std() * np.sqrt(252)
+
+    return close
+```
+
+---
+
+## 6. 因子验证 (Factor Validation)
+
+### 6.1 验证器代码
+
+```python
+class FactorValidator:
+    """因子验证 - 专业机构标准"""
+
+    def __init__(self, storage: ClickHouseClient):
+        self.storage = storage
+
+    def validate(self, factor_id: str, start_date: str,
+                end_date: str) -> Dict:
+        """因子验证
+
+        返回:
+            Dict: 验证结果
+        """
+        results = {
+            'factor_id': factor_id,
+            'date_range': f"{start_date} ~ {end_date}",
+            'checks': {},
+            'status': 'pass'
+        }
+
+        # 1. 完整性检查
+        completeness = self._check_completeness(factor_id, start_date, end_date)
+        results['checks']['completeness'] = completeness
+
+        # 2. IC/IR分析
+        ic_ir = self._calculate_ic_ir(factor_id, start_date, end_date)
+        results['checks']['ic_ir'] = ic_ir
+
+        # 3. 因子自相关
+        autocorr = self._check_autocorrelation(factor_id, start_date, end_date)
+        results['checks']['autocorr'] = autocorr
+
+        # 4. 分位数分布
+        distribution = self._check_distribution(factor_id, start_date, end_date)
+        results['checks']['distribution'] = distribution
+
+        # 判断状态
+        if ic_ir['ICIR'] < 0.3 or completeness['missing_ratio'] > 0.1:
+            results['status'] = 'warning'
+
+        if ic_ir['ICIR'] < 0.1:
+            results['status'] = 'fail'
+
+        return results
+
+    def _check_completeness(self, factor_id, start, end) -> Dict:
+        """检查数据完整性"""
+        factor_data = self.storage.get_factor(factor_id, start, end)
+        total_expected = len(self.storage.get_symbols()) * len(self.storage.get_dates(start, end))
+        total_actual = len(factor_data.dropna())
+
+        return {
+            'total_expected': total_expected,
+            'total_actual': total_actual,
+            'missing_ratio': 1 - total_actual / total_expected,
+            'pass': (1 - total_actual / total_expected) < 0.05
+        }
+
+    def _calculate_ic_ir(self, factor_id, start, end) -> Dict:
+        """计算IC/IR"""
+        factor_data = self.storage.get_factor(factor_id, start, end)
+        return_data = self.storage.get_returns(factor_data.symbols, start, end)
+
+        # 计算日频IC
+        ic_series = []
+        for date in factor_data.index:
+            if date in return_data.index:
+                ic = factor_data.loc[date].corr(return_data.loc[date])
+                ic_series.append(ic)
+
+        ic_series = pd.Series(ic_series)
+
+        return {
+            'IC_mean': ic_series.mean(),
+            'IC_std': ic_series.std(),
+            'ICIR': ic_series.mean() / ic_series.std() if ic_series.std() > 0 else 0,
+            'IC_positive_ratio': (ic_series > 0).mean(),
+            'pass': ic_series.mean() / ic_series.std() > 0.3 if ic_series.std() > 0 else False
+        }
+
+    def _check_autocorrelation(self, factor_id, start, end) -> Dict:
+        """检查因子自相关"""
+        factor_data = self.storage.get_factor(factor_id, start, end)
+        avg_autocorr = factor_data.apply(lambda x: x.autocorr(lag=1)).mean()
+
+        return {
+            'avg_autocorr_lag1': avg_autocorr,
+            'pass': avg_autocorr < 0.95  # 自相关过高说明因子冗余
+        }
+
+    def _check_distribution(self, factor_id, start, end) -> Dict:
+        """检查分位数分布"""
+        factor_data = self.storage.get_factor(factor_id, start, end)
+
+        # 计算横截面分位数
+        quantile_25 = factor_data.quantile(0.25, axis=1).mean()
+        quantile_50 = factor_data.quantile(0.50, axis=1).mean()
+        quantile_75 = factor_data.quantile(0.75, axis=1).mean()
+
+        return {
+            'avg_q25': quantile_25,
+            'avg_q50': quantile_50,
+            'avg_q75': quantile_75,
+            'q75_q25_ratio': quantile_75 / quantile_25 if quantile_25 != 0 else None,
+            'pass': True  # 分布检查主观性较强
+        }
+```
+
+---
+
+## 7. 专业机构日频因子计算流程
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              专业机构日频因子计算流程                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ═══════════════════════════════════════════════════════════════   │
+│  18:00 - 数据获取阶段                                             ═══
+│  ═══════════════════════════════════════════════════════════════   │
+│                                                                     │
+│  ├── 连接iFinD获取今日行情数据                                      │
+│  ├── 获取AkShare资金流数据                                        │
+│  └── 下载财务数据 (如需)                                          │
+│                              ↓                                      │
+│  ═══════════════════════════════════════════════════════════════   │
+│  18:30 - Layer 1 基础因子 (可并行)                                ═══
+│  ═══════════════════════════════════════════════════════════════   │
+│                                                                     │
+│  ├── price_return (收益率)                                        │
+│  ├── log_price (对数价格)                                         │
+│  ├── volume_ratio (量比)                                         │
+│  ├── market_cap (市值)                                           │
+│  └── turnover (换手率)                                           │
+│                              ↓                                      │
+│  ═══════════════════════════════════════════════════════════════   │
+│  19:00 - Layer 2 技术因子 (可并行)                                ═══
+│  ═══════════════════════════════════════════════════════════════   │
+│                                                                     │
+│  ├── ma_5, ma_10, ma_20 (均线)                                   │
+│  ├── volatility_20 (波动率)                                       │
+│  ├── rsi_14 (RSI)                                                │
+│  └── macd (MACD)                                                  │
+│                              ↓                                      │
+│  ═══════════════════════════════════════════════════════════════   │
+│  19:30 - Layer 3 复合因子 (可并行)                                 ═══
+│  ═══════════════════════════════════════════════════════════════   │
+│                                                                     │
+│  ├── momentum_score (动量得分)                                    │
+│  ├── value_score (价值得分)                                      │
+│  ├── quality_score (质量得分)                                     │
+│  └── combined_score (综合得分)                                     │
+│                              ↓                                      │
+│  ═══════════════════════════════════════════════════════════════   │
+│  20:00 - 因子验证与存储                                           ═══
+│  ═══════════════════════════════════════════════════════════════   │
+│                                                                     │
+│  ├── IC/IR计算                                                    │
+│  ├── 异常值检测                                                   │
+│  ├── 存储ClickHouse                                              │
+│  └── 发送日报 (如有异常)                                           │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 8. 因子管理系统总结
+
+| 组件 | 功能 | 专业机构标准 |
+|------|------|-------------|
+| **注册表** | 因子元数据管理 | 完整字段+版本控制 |
+| **依赖图** | 拓扑排序+并行优化 | DAG+分层执行 |
+| **调度器** | 计算任务调度 | 定时任务+失败重试 |
+| **计算引擎** | 因子计算执行 | 多线程+缓存 |
+| **验证器** | 因子质量检查 | IC/IR+分布检测 |
+
+---
+
+## 9. 与现有系统的关系
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    因子计算框架与现有文档关系                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  本文档 (FACTOR_CALCULATION_FRAMEWORK.md)                          │
+│  ├── 定义: 因子注册表、依赖图、调度器、引擎、验证器                   │
+│  └── 位置: 02_FACTOR_LIBRARY/01_METHODOLOGY/                      │
+│                                                                     │
+│  相关文档:                                                          │
+│  ├── ALTERNATIVE_DATA.md - 数据源定义                              │
+│  ├── TECHNICAL_INDICATORS.md - 技术指标计算公式                     │
+│  ├── FACTOR_REGISTRY.md - 因子注册表格式                          │
+│  ├── ic_analysis.md - IC/IR分析方法                                │
+│  └── factor_preprocessing.md - 因子预处理方法                      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 索引
+
+- 父目录: [01_METHODOLOGY/README.md](./README.md)
+- 相关: [FACTOR_REGISTRY.md](./FACTOR_REGISTRY.md)
+- 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
+- 相关: [ic_analysis.md](./ic_analysis.md)
