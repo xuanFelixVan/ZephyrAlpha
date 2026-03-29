@@ -9,7 +9,7 @@
 ## 1. 配置文件目录结构
 
 ```
-quant_system_v4/
+ZephyrAlpha/
 ├── config/                    # 配置文件根目录
 │   ├── system.yaml         # 系统配置
 │   ├── data_sources.yaml   # 数据源配置

@@ -87,7 +87,7 @@
 
 | 目录 | 说明 |
 |------|------|
-| [quant_system_v4/](../../quant_system_v4/) | 代码项目（src/config/tests） |
+| [ZephyrAlpha/](../ZephyrAlpha/) | 代码项目（src/config/tests） |
 
 ---
 

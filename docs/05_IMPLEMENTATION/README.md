@@ -1,4 +1,4 @@
-﻿# 实施指南 (个人开发者版)
+# 实施指南 (个人开发者版)
 
 > **版本**: v2.0 (个人简化版)  
 > **更新日期**: 2026-03-28  
@@ -169,7 +169,7 @@
 git clone <your-repo-url>
 
 # 2. 创建虚拟环境
-cd quant_system_v4
+cd ZephyrAlpha
 python -m venv venv
 venv\Scripts\activate
 

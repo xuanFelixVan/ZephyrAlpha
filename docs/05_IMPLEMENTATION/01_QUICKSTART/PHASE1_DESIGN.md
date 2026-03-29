@@ -41,7 +41,7 @@ DataLoader → Strategy → Cerebro → Broker → Analyzer → Report
 ## 2. 目录结构
 
 ```
-quant_system_v5/
+ZephyrAlpha/
 ├── config/
 │   └── backtest.yaml              # 回测配置
 ├── src/

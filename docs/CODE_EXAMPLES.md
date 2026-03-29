@@ -107,7 +107,7 @@ if __name__ == "__main__":
 ### ALPHA_001: 动量因子
 
 ```python
-# quant_system_v5/src/modules/factors/alpha_001_momentum.py
+# ZephyrAlpha/src/modules/factors/alpha_001_momentum.py
 
 import numpy as np
 import pandas as pd

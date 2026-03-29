@@ -41,7 +41,7 @@ python3 --version
 
 ```bash
 git clone <your-repo-url>
-cd quant_system_v5
+cd ZephyrAlpha
 ```
 
 ### Step 3: 创建虚拟环境

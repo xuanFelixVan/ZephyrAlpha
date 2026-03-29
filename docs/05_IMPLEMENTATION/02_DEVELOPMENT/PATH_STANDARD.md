@@ -81,13 +81,13 @@ PROJECT_ROOT = Path(__file__).parent.parent
 DOCS_DIR = PROJECT_ROOT / "docs"
 
 # 配置文件
-CONFIG_DIR = PROJECT_ROOT / "quant_system_v4" / "config"
+CONFIG_DIR = PROJECT_ROOT / "ZephyrAlpha" / "config"
 
 # 组合路径
 config_path = CONFIG_DIR / "system.yaml"
 
 # ❌ 错误：硬编码路径
-config_path = "D:\\清风量化交易系统4.0\\quant_system_v4\\config\\system.yaml"
+config_path = "D:\\清风量化交易系统4.0\\ZephyrAlpha\\config\\system.yaml"
 ```
 
 ---

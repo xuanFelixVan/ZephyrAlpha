@@ -20,7 +20,7 @@
 ```bash
 # 1. 克隆项目
 git clone <your-repo-url>
-cd quant_system_v5
+cd ZephyrAlpha
 
 # 2. 创建虚拟环境
 python -m venv venv

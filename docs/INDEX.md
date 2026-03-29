@@ -40,11 +40,15 @@ last_updated: 2026-03-29
 
 | 文档 | 用途 | 阅读时间 |
 |------|------|----------|
-| [System_Manifest.md](System_Manifest.md) | 系统清单、架构、模块映射 | 15分钟 |
+| [System_Manifest.md](System_Manifest.md) | ⭐ 系统清单（主入口） | 15分钟 |
+| [UNIFIED_ARCHITECTURE.md](UNIFIED_ARCHITECTURE.md) | 📖 技术架构详细 | 30分钟 |
+| [ULTIMATE_BLUEPRINT.md](ULTIMATE_BLUEPRINT.md) | 🎯 终极愿景规划 | 20分钟 |
 | [AI_Research_Framework.md](AI_Research_Framework.md) | AI主力模式架构决策 | 15分钟 |
 | [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | 策略逻辑白皮书 | 30分钟 |
 | [AI_Permissions.md](AI_Permissions.md) | AI权限清单 | 10分钟 |
 | [API_Contract.md](API_Contract.md) | 模块接口契约 | 15分钟 |
+
+> **说明**: 三个架构文档职责已明确区分 - System_Manifest是入口，UNIFIED_ARCHITECTURE是技术细节，ULTIMATE_BLUEPRINT是愿景
 
 ---
 
@@ -64,12 +68,12 @@ last_updated: 2026-03-29
 
 | 模块 | 文件位置 | 状态 |
 |------|----------|------|
-| A01 市场状态识别 | `quant_system_v5/src/ai/market_regime.py` | 📋 规划 |
-| A02 策略路由器 | `quant_system_v5/src/ai/strategy_router.py` | 📋 规划 |
-| A03 动态风控 | `quant_system_v5/src/ai/dynamic_risk.py` | 📋 规划 |
-| A04 策略优化器 | `quant_system_v5/src/ai/strategy_optimizer.py` | 📋 规划 |
-| A05 反馈学习闭环 | `quant_system_v5/src/ai/feedback_loop.py` | 📋 规划 |
-| A06 授权确认界面 | `quant_system_v5/src/ai/approval_ui.py` | 📋 规划 |
+| A01 市场状态识别 | `ZephyrAlpha/src/ai/market_regime.py` | 📋 规划 |
+| A02 策略路由器 | `ZephyrAlpha/src/ai/strategy_router.py` | 📋 规划 |
+| A03 动态风控 | `ZephyrAlpha/src/ai/dynamic_risk.py` | 📋 规划 |
+| A04 策略优化器 | `ZephyrAlpha/src/ai/strategy_optimizer.py` | 📋 规划 |
+| A05 反馈学习闭环 | `ZephyrAlpha/src/ai/feedback_loop.py` | 📋 规划 |
+| A06 授权确认界面 | `ZephyrAlpha/src/ai/approval_ui.py` | 📋 规划 |
 
 ---
 

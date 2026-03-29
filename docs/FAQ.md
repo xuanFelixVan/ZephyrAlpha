@@ -230,14 +230,14 @@ last_updated: 2026-03-28
 **✅ 可写**:
 - `docs/02_FACTOR_LIBRARY/02_ALPHA_FACTORS/`
 - `docs/03_TRADING_TACTICS/`
-- `quant_system_v4/src/modules/`
-- `quant_system_v4/tests/`
+- `ZephyrAlpha/src/modules/`
+- `ZephyrAlpha/tests/`
 
 **🔒 只读**:
 - `docs/00_OVERVIEW/`
 - `docs/01_FRAMEWORK/`
-- `quant_system_v4/config/`
-- `quant_system_v4/src/core/`
+- `ZephyrAlpha/config/`
+- `ZephyrAlpha/src/core/`
 
 **❌ 禁止**:
 - `.env`

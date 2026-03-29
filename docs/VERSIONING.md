@@ -196,7 +196,7 @@ def negotiate_interface_version():
 | `CONTEXT_SNAPSHOT.json` | `system_version` | `4.0.2` |
 | `CONTEXT_SNAPSHOT.json` | `interface_version` | `1.0` |
 | `CHANGELOG.md` | 标题 | `[v4.0.2]` |
-| `quant_system_v4/pyproject.toml` | `version` | `4.0.2` |
+| `ZephyrAlpha/pyproject.toml` | `version` | `4.0.2` |
 
 ---
 

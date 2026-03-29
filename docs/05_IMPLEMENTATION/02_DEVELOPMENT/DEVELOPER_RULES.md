@@ -40,10 +40,10 @@ D:\ZephyrAlpha\
     └── ...                        # 已废弃内容
 ```
 
-### 1.2 quant_system_v4/ 详细结构
+### 1.2 ZephyrAlpha/ 详细结构
 
 ```
-quant_system_v4/
+ZephyrAlpha/
 ├── config/                        # 配置（所有可修改配置）
 │   ├── system.yaml               # 系统级配置
 │   ├── data_sources.yaml         # 数据源配置
@@ -384,10 +384,10 @@ git commit -m "WIP"
 
 | 问题 | 如果是 | 放这里 |
 |------|--------|--------|
-| 代码文件？ | 是 | `quant_system_v4/src/` |
-| 测试代码？ | 是 | `quant_system_v4/tests/` |
-| 配置文件？ | 是 | `quant_system_v4/config/` |
-| 工具脚本？ | 是 | `quant_system_v4/scripts/` |
+| 代码文件？ | 是 | `ZephyrAlpha/src/` |
+| 测试代码？ | 是 | `ZephyrAlpha/tests/` |
+| 配置文件？ | 是 | `ZephyrAlpha/config/` |
+| 工具脚本？ | 是 | `ZephyrAlpha/scripts/` |
 | 文档参考？ | 是 | `docs/` |
 | 临时数据？ | 是 | `data/cache/` |
 | 分析笔记本？ | 是 | `notebooks/` |
