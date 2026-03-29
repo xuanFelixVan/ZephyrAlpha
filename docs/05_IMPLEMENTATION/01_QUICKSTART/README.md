@@ -4,12 +4,16 @@
 
 ---
 
-##  文档导航
+##  📖 文档导航
 
 | 文档 | 说明 | 预计时间 |
 |------|------|----------|
 | [dev-setup.md](./dev-setup.md) | 开发环境搭建 | 5 分钟 |
 | [first-backtest.md](./first-backtest.md) | 第一次回测 | 10 分钟 |
+| [ROADMAP.md](./ROADMAP.md) | 务实开发路线图 | 5 分钟 |
+| [LEARNING_PATH.md](./LEARNING_PATH.md) | 学习路径规划 | 3 分钟 |
+| [PHASE1_DESIGN.md](./PHASE1_DESIGN.md) | Phase 1 技术设计 | 10 分钟 |
+| [factor_design.md](./factor_design.md) | 因子设计文档 | 5 分钟 |
 
 ---
 
