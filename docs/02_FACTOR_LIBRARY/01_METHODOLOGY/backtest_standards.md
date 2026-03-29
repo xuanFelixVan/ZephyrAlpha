@@ -131,8 +131,209 @@ BACKTEST_CONFIG = {
 
 ---
 
-## 更新记录
+### 5.2 验证标准
+
+- 样本外ICIR > 0.3
+- 样本内外IC衰减 < 30%
+- 最大回撤 < 15%
+- 交易频率合理（避免过度交易）
+
+---
+
+## 6. 过拟合检验
+
+### 6.1 样本外验证 (Out-of-Sample Testing)
+
+```python
+class OutOfSampleValidator:
+    """样本外验证器"""
+
+    def __init__(self, train_ratio: float = 0.7):
+        self.train_ratio = train_ratio
+
+    def split_data(self, data: pd.DataFrame) -> tuple:
+        """分割训练集和测试集
+
+        参数:
+            data: 原始数据
+
+        返回:
+            (train_data, test_data)
+        """
+        split_idx = int(len(data) * self.train_ratio)
+        return data[:split_idx], data[split_idx:]
+
+    def compare_performance(self, train_result: dict, test_result: dict) -> dict:
+        """比较样本内外表现
+
+        返回:
+            {
+                'decay_ratio': IC衰减比例,
+                'is_overfit': 是否过拟合,
+                'recommendation': 建议
+            }
+        """
+        train_ic = train_result.get('ic_ir', 0)
+        test_ic = test_result.get('ic_ir', 0)
+
+        decay_ratio = (train_ic - test_ic) / train_ic if train_ic > 0 else 1.0
+
+        return {
+            'train_ic': train_ic,
+            'test_ic': test_ic,
+            'decay_ratio': decay_ratio,
+            'is_overfit': decay_ratio > 0.3,  # 衰减超过30%判定为过拟合
+            'recommendation': '通过' if decay_ratio <= 0.3 else '需优化参数'
+        }
+```
+
+### 6.2 滚动窗口验证 (Walk-Forward Testing)
+
+```python
+class WalkForwardValidator:
+    """滚动向前验证"""
+
+    def __init__(self, train_window: int = 252, test_window: int = 63):
+        """
+        参数:
+            train_window: 训练窗口（交易日）
+            test_window: 测试窗口（交易日）
+        """
+        self.train_window = train_window
+        self.test_window = test_window
+
+    def validate(self, data: pd.DataFrame) -> list:
+        """滚动验证
+
+        返回:
+            各窗口的验证结果列表
+        """
+        results = []
+        total_len = len(data)
+
+        for i in range(self.train_window, total_len - self.test_window, self.test_window):
+            train_data = data[i - self.train_window:i]
+            test_data = data[i:i + self.test_window]
+
+            train_result = self._backtest(train_data)
+            test_result = self._backtest(test_data)
+
+            results.append({
+                'train_period': (train_data.index[0], train_data.index[-1]),
+                'test_period': (test_data.index[0], test_data.index[-1]),
+                'train_ic': train_result.get('ic', 0),
+                'test_ic': test_result.get('ic', 0),
+                'train_return': train_result.get('return', 0),
+                'test_return': test_result.get('return', 0)
+            })
+
+        return results
+
+    def analyze_stability(self, results: list) -> dict:
+        """分析稳定性
+
+        返回:
+            {
+                'ic_std': IC标准差,
+                'return_std': 收益标准差,
+                'win_rate': 样本外正收益比例,
+                'is_stable': 是否稳定
+            }
+        """
+        test_ics = [r['test_ic'] for r in results]
+        test_returns = [r['test_return'] for r in results]
+
+        ic_std = np.std(test_ics)
+        return_std = np.std(test_returns)
+        win_rate = sum(1 for r in test_returns if r > 0) / len(test_returns)
+
+        return {
+            'ic_std': ic_std,
+            'return_std': return_std,
+            'win_rate': win_rate,
+            'is_stable': win_rate >= 0.6 and ic_std < 0.1
+        }
+```
+
+### 6.3 参数敏感性分析
+
+```python
+class ParameterSensitivityAnalyzer:
+    """参数敏感性分析"""
+
+    def __init__(self, param_ranges: dict):
+        """
+        参数:
+            param_ranges: 参数范围字典
+            {
+                'period': [10, 20, 30, 40, 50],
+                'threshold': [0.5, 1.0, 1.5, 2.0]
+            }
+        """
+        self.param_ranges = param_ranges
+
+    def grid_search(self, data: pd.DataFrame) -> pd.DataFrame:
+        """网格搜索分析
+
+        返回:
+            各参数组合的结果DataFrame
+        """
+        results = []
+        param_names = list(self.param_ranges.keys())
+
+        for values in self._generate_combinations(param_names, 0):
+            params = dict(zip(param_names, values))
+            result = self._backtest_with_params(data, params)
+            result.update(params)
+            results.append(result)
+
+        return pd.DataFrame(results)
+
+    def identify_robust_params(self, results: pd.DataFrame, metric: str = 'ic') -> dict:
+        """识别稳健参数
+
+        参数:
+            results: 网格搜索结果
+            metric: 评估指标
+
+        返回:
+            {
+                'best_params': 最优参数,
+                'robust_params': 稳健参数（表现稳定）,
+                'sensitivity_score': 敏感度得分
+            }
+        """
+        best_idx = results[metric].idxmax()
+        best_params = results.loc[best_idx, results.columns[:-len(self.param_ranges)]].to_dict()
+
+        param_cols = list(self.param_ranges.keys())
+        param_std = {col: results[col].std() for col in param_cols}
+
+        most_sensitive = max(param_std, key=param_std.get)
+        sensitivity_score = param_std[most_sensitive] / results[metric].mean()
+
+        return {
+            'best_params': best_params,
+            'most_sensitive_param': most_sensitive,
+            'sensitivity_score': sensitivity_score,
+            'is_robust': sensitivity_score < 0.1
+        }
+```
+
+### 6.4 过拟合判定标准
+
+| 指标 | 合格 | 警告 | 过拟合 |
+|------|------|------|--------|
+| IC衰减率 | <15% | 15-30% | >30% |
+| 样本外胜率 | >60% | 50-60% | <50% |
+| 参数敏感度 | <0.05 | 0.05-0.1 | >0.1 |
+| 滚动IC标准差 | <0.05 | 0.05-0.1 | >0.1 |
+
+---
+
+## 7. 更新记录
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
+| v1.1 | 2026-03-28 | 增加过拟合检验、滚动验证、敏感性分析 |
 | v1.0 | 2026-03-28 | 初始版本 |

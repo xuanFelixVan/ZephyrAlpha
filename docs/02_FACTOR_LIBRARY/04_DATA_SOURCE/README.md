@@ -13,6 +13,9 @@
 |------|------|------|
 | [./iFind/](./iFind/) | iFind数据 | iFind数据接口文档 |
 | [T.01.DS001.免费数据源整合.md](./T.01.DS001.免费数据源整合.md) | 免费数据源 | Baostock/AkShare/Efinance整合 |
+| [DATA_QUALITY.md](./DATA_QUALITY.md) | 数据质量控制 | 缺失值、异常值、重复检测 |
+| [STATISTICAL_TOOLS.md](./STATISTICAL_TOOLS.md) | 统计分析工具 | 描述性统计、分布分析、相关性 |
+| [CORRELATION_ANALYSIS.md](./CORRELATION_ANALYSIS.md) | 高级相关性 | 偏相关、协整、配对交易 |
 
 ---
 
@@ -22,6 +25,9 @@
 04_DATA_SOURCE/
 ├── README.md                 # 本文档（数据源导航）
 ├── T.01.DS001.免费数据源整合.md  # 免费数据源整合文档
+├── DATA_QUALITY.md           # 数据质量控制 [P0] ✅
+├── STATISTICAL_TOOLS.md      # 统计分析工具 [P1] ✅
+├── CORRELATION_ANALYSIS.md   # 高级相关性分析 [P1] ✅
 └── iFind/                    # iFind数据
     ├── 因子主索引.md
     ├── 因子主索引.csv

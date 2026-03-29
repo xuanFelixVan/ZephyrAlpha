@@ -34,6 +34,9 @@ logs/
 # Trae AI
 .qoder/
 
+# 归档目录 (历史遗留，不再使用)
+archives/
+
 # Temporary files
 *.tmp
 *.bak
@@ -41,3 +44,37 @@ logs/
 
 # Charts/Diagrams (generated)
 *.xmindbkp
+
+# ============ 量化系统特定 ============
+
+# 数据文件 (敏感)
+data/
+!data/.gitkeep
+
+# 缓存
+*.cache
+*.pkl
+*.parquet
+*.csv
+
+# Jupyter
+.ipynb_checkpoints/
+
+# 模型文件
+*.h5
+*.pkl
+*.model
+*.onnx
+
+# 环境变量 (敏感)
+.env
+*.pem
+*.key
+
+# AI模型缓存
+model_cache/
+.cache/
+
+# 回测结果
+backtest_results/
+*.bt.csv

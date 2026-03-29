@@ -1,4 +1,4 @@
-﻿# 开发环境搭建 (5 分钟)
+# 开发环境搭建 (5 分钟)
 
 > **适用**: Windows/Linux/Mac  
 > **时间**: 5 分钟  
@@ -41,7 +41,7 @@ python3 --version
 
 ```bash
 git clone <your-repo-url>
-cd quant_system_v4
+cd quant_system_v5
 ```
 
 ### Step 3: 创建虚拟环境

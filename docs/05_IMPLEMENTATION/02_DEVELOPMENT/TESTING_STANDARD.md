@@ -492,5 +492,116 @@ pytest tests/ --cov=src --cov-fail-under=70
 
 ---
 
-**版本**: v1.0
+## 10. 系统验证标准
+
+### 10.1 目录结构一致性验证
+
+```python
+# tests/validation/test_directory_structure.py
+
+import pytest
+from pathlib import Path
+
+class DirectoryStructureValidator:
+    """目录结构一致性验证器"""
+
+    EXPECTED_DIRS = [
+        "src/core",
+        "src/modules",
+        "src/utils",
+        "config",
+        "tests/unit",
+        "tests/integration",
+        "tests/fixtures",
+        "docs",
+        "data/cache",
+        "logs",
+    ]
+
+    EXPECTED_FILES = [
+        "src/__init__.py",
+        "src/main.py",
+        "config/system.yaml",
+        "requirements.txt",
+        ".gitignore",
+    ]
+
+    @staticmethod
+    def validate_structure(root_path: Path) -> ValidationReport:
+        """验证目录结构是否符合规范"""
+        checks = []
+
+        for dir_path in DirectoryStructureValidator.EXPECTED_DIRS:
+            full_path = root_path / dir_path
+            checks.append(ValidationCheck(
+                name=f"目录存在: {dir_path}",
+                passed=full_path.exists() and full_path.is_dir(),
+                message=f"{dir_path} {'✓ 存在' if full_path.exists() else '✗ 缺失'}"
+            ))
+
+        for file_path in DirectoryStructureValidator.EXPECTED_FILES:
+            full_path = root_path / file_path
+            checks.append(ValidationCheck(
+                name=f"文件存在: {file_path}",
+                passed=full_path.exists() and full_path.is_file(),
+                message=f"{file_path} {'✓ 存在' if full_path.exists() else '✗ 缺失'}"
+            ))
+
+        return ValidationReport(checks=checks)
+```
+
+### 10.2 功能验证清单
+
+```markdown
+## 功能验证检查清单
+
+### P0 - 必须通过
+
+- [ ] **系统启动测试**: `python src/main.py --mode dev` 无报错退出
+- [ ] **配置加载测试**: 所有 `config/*.yaml` 可正常解析
+- [ ] **数据目录测试**: `data/` 和 `logs/` 目录可写
+- [ ] **依赖完整性测试**: `pip install -r requirements.txt` 成功
+- [ ] **单元测试**: `pytest tests/unit/ -v` 覆盖率 > 70%
+
+### P1 - 核心功能
+
+- [ ] **回测流水线测试**: 完整回测可执行并产出结果
+- [ ] **因子计算测试**: 因子计算模块返回有效输出
+- [ ] **风控模块测试**: 风控规则正确触发
+- [ ] **日志系统测试**: 日志正常写入 `logs/`
+
+### P2 - 集成功能
+
+- [ ] **目录结构一致性**: 验证 docs/ 目录结构完整
+- [ ] **文档链接检查**: 文档内交叉引用有效
+- [ ] **API接口测试**: 核心模块接口可调用
+```
+
+### 10.3 验证执行标准
+
+```bash
+# 完整验证命令
+python src/main.py --mode dev  # 启动验证
+pytest tests/ -v --cov=src     # 单元测试
+pytest tests/integration/ -v   # 集成测试
+
+# 目录结构验证
+python -c "
+from pathlib import Path
+import sys
+
+root = Path('.')
+expected = ['src/core', 'src/modules', 'config', 'tests/unit']
+missing = [d for d in expected if not (root / d).exists()]
+if missing:
+    print(f'缺失目录: {missing}')
+    sys.exit(1)
+print('目录结构验证通过')
+"
+```
+
+---
+
+**版本**: v1.1
 **最后更新**: 2026-03-28
+**更新内容**: 新增第10章系统验证标准

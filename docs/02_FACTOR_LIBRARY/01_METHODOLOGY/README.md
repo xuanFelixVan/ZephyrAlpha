@@ -26,7 +26,8 @@
 ├── ic_analysis.md              # IC分析体系
 ├── factor_preprocessing.md      # 因子预处理方法
 ├── factor_synthesis.md         # 因子合成方法
-└── backtest_standards.md       # 回测标准
+├── backtest_standards.md       # 回测标准
+└── research_management.md       # 研究项目管理（新增）
 ```
 
 ---

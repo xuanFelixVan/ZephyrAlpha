@@ -1,0 +1,99 @@
+# 风险规则配置
+# TODO: 阶段3实现
+
+risk_rules:
+  position_limits:
+    max_single_position: 0.20      # 单股最大20%
+    max_same_sector: 0.40          # 同板块最大40%
+    max_total_position: 0.90       # 总仓位最大90%
+    min_cash_ratio: 0.10            # 最小现金比例10%
+
+  stop_loss:
+    enabled: true
+    hard_stop_loss: -0.08           # 硬止损8%
+    time_stop_days: 5               # 时间止损5天
+    trailing_stop:
+      enabled: true
+      activation_profit: 0.05        # 盈利5%后激活
+      trail_distance: 0.03          # 追踪距离3%
+
+  take_profit:
+    enabled: true
+    targets:
+      - level: 1
+        profit: 0.05                # 第一止盈5%
+        exit_ratio: 0.50            # 卖出50%
+      - level: 2
+        profit: 0.10               # 第二止盈10%
+        exit_ratio: 1.00            # 全部卖出
+
+  var_limits:
+    enabled: true
+    confidence: 0.95
+    max_var: 0.15                  # VaR最大15%
+
+  drawdown_limits:
+    enabled: true
+    max_drawdown: 0.20             # 最大回撤20%
+    warning_threshold: 0.15         # 预警阈值15%
+
+  # 事前风控补充
+  trading_frequency:
+    enabled: true
+    max_trades_per_minute: 5        # 每分钟最多5笔交易
+    max_trades_per_day: 50         # 每日最多50笔交易
+    delay_on_exceed: 10             # 超限延迟秒数
+
+  price_deviation:
+    enabled: true
+    max_price_deviation: 0.02      # 价格偏离超过2%拒绝
+    lookback_minutes: 5             # 回溯5分钟
+
+  strategy_validation:
+    enabled: true
+    min_historical_return: 0.0     # 历史回测收益率必须>0
+    min_live_days: 30               # 实盘最少运行30天
+
+  # 事中风控补充
+  floating_pnl:
+    enabled: true
+    warning_threshold: 0.10         # 浮动盈亏预警10%
+    stop_threshold: -0.15          # 浮动亏损15%强制止损
+
+  market_volatility:
+    enabled: true
+    price_change_threshold: 0.05   # 5分钟涨跌幅超5%
+    pause_trading: true            # 暂停交易
+
+  liquidity:
+    enabled: true
+    min_volume: 1000               # 最小成交量
+    max_spread: 0.02               # 最大买卖价差2%
+
+  system_status:
+    enabled: true
+    heartbeat_interval: 60         # 心跳间隔秒
+    max_downtime: 300              # 最大 downtime 秒
+    auto_pause: true               # 断开自动暂停
+
+  # 事后风控补充
+  profit_loss_ratio:
+    enabled: true
+    min_ratio: 1.5                # 最小盈亏比
+    warning_threshold: 1.8         # 预警阈值
+
+  win_rate:
+    enabled: true
+    min_rate: 0.40                # 最低胜率40%
+    warning_threshold: 0.45        # 预警阈值
+
+  audit:
+    enabled: true
+    log_all_trades: true          # 记录所有交易
+    flag_anomalies: true          # 标记异常交易
+    retention_days: 90            # 保留天数
+
+  risk_assessment:
+    enabled: true
+    evaluation_interval: '1d'      # 每日评估
+    min_risk_reduction: 0.05     # 风控效果最小需降低5%风险

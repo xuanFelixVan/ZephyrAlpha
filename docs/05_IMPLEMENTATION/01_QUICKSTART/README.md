@@ -1,4 +1,4 @@
-﻿# 快速开始 (Quick Start)
+# 快速开始 (Quick Start)
 
 > **目标**: 5-10 分钟快速上手，开始你的第一次回测
 
@@ -20,7 +20,7 @@
 ```bash
 # 1. 克隆项目
 git clone <your-repo-url>
-cd quant_system_v4
+cd quant_system_v5
 
 # 2. 创建虚拟环境
 python -m venv venv

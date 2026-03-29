@@ -7,7 +7,7 @@ last_updated: 2026-03-28
 
 # 代码示例
 
-> 清风量化系统 v4.0 的策略开发、因子计算、部署脚本示例
+> 清风量化系统 v5.0 的策略开发、因子计算、部署脚本示例
 
 ---
 
@@ -16,7 +16,7 @@ last_updated: 2026-03-28
 ### S001: 均线趋势跟踪策略
 
 ```python
-# quant_system_v4/src/modules/strategies/s001_trend_follow.py
+# ZephyrAlpha/src/modules/strategies/s001_trend_follow.py
 
 import numpy as np
 import pandas as pd
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 ### ALPHA_001: 动量因子
 
 ```python
-# quant_system_v4/src/modules/factors/alpha_001_momentum.py
+# quant_system_v5/src/modules/factors/alpha_001_momentum.py
 
 import numpy as np
 import pandas as pd

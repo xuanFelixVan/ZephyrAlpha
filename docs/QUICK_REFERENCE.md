@@ -7,7 +7,7 @@ last_updated: 2026-03-28
 
 # 快速参考
 
-> 清风量化系统 v4.0 的常用命令、API和配置速查表
+> 清风量化系统 v5.0 的常用命令、API和配置速查表
 
 ---
 
@@ -331,7 +331,7 @@ factor_weights:
 ### Q: 如何启动系统？
 
 ```bash
-cd quant_system_v4
+cd ZephyrAlpha
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt

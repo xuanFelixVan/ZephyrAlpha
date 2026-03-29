@@ -1,8 +1,8 @@
 ---
 module_id: API_CONTRACT_001
-version: 1.0
+version: 1.1
 status: Approved
-last_updated: 2026-03-28
+last_updated: 2026-03-29
 ---
 
 # API_Contract.md - 接口契约
@@ -332,4 +332,207 @@ class TradeSignal:
 
 ---
 
-**版本**: 1.0 | **更新**: 2026-03-28 | **状态**: ✅ 活跃
+## 9. 模块接口定义
+
+### 9.1 DataHub接口
+
+```python
+class IDataHub(ABC):
+    """数据中心接口
+
+    索引: API.DH.001
+    Layer: Layer 0
+    上游: 数据源(AKShare/Tushare)
+    下游: FactorCalculator, Monitor
+    """
+
+    @abstractmethod
+    def get_ohlcv(
+        self,
+        symbol: str,
+        start_date: str,
+        end_date: str,
+        fields: Optional[List[str]] = None
+    ) -> pd.DataFrame:
+        """获取OHLCV数据"""
+        pass
+
+    @abstractmethod
+    def get_fundamental(
+        self,
+        symbol: str,
+        fields: Optional[List[str]] = None
+    ) -> Dict[str, Any]:
+        """获取基本面数据"""
+        pass
+
+    @abstractmethod
+    def list_symbols(self, market: str = "A") -> List[str]:
+        """获取股票列表"""
+        pass
+```
+
+### 9.2 FactorCalculator接口
+
+```python
+class IFactorCalculator(ABC):
+    """因子计算器接口
+
+    索引: API.FC.001
+    Layer: Layer 2
+    上游: DataHub
+    下游: StrategyEngine
+    """
+
+    @abstractmethod
+    def calculate(
+        self,
+        factor_name: str,
+        symbol: str,
+        date: str,
+        params: Optional[Dict[str, Any]] = None
+    ) -> Optional[float]:
+        """计算单个因子值"""
+        pass
+
+    @abstractmethod
+    def batch_calculate(
+        self,
+        factor_name: str,
+        symbols: List[str],
+        start_date: str,
+        end_date: str,
+        params: Optional[Dict[str, Any]] = None
+    ) -> pd.DataFrame:
+        """批量计算因子"""
+        pass
+```
+
+### 9.3 StrategyEngine接口
+
+```python
+class IStrategyEngine(ABC):
+    """策略引擎接口
+
+    索引: API.SE.001
+    Layer: Layer 3
+    上游: FactorCalculator, RiskManager
+    下游: RiskManager, TradeExecutor
+    """
+
+    @abstractmethod
+    def generate_signals(
+        self,
+        strategy_id: str,
+        symbols: List[str],
+        date: str
+    ) -> List[Signal]:
+        """生成交易信号"""
+        pass
+
+    @abstractmethod
+    def get_position(
+        self,
+        strategy_id: str,
+        symbol: str
+    ) -> Position:
+        """获取持仓"""
+        pass
+```
+
+### 9.4 RiskManager接口
+
+```python
+class IRiskManager(ABC):
+    """风险管理器接口
+
+    索引: API.RM.001
+    Layer: Layer 3
+    上游: StrategyEngine, TradeExecutor
+    下游: StrategyEngine, TradeExecutor
+    """
+
+    @abstractmethod
+    def check_order(
+        self,
+        order: Order,
+        current_positions: List[Position]
+    ) -> OrderCheckResult:
+        """检查订单是否通过风控"""
+        pass
+
+    @abstractmethod
+    def calculate_risk_metrics(
+        self,
+        positions: List[Position],
+        portfolio_value: float
+    ) -> RiskMetrics:
+        """计算风险指标"""
+        pass
+```
+
+### 9.5 模块依赖关系图
+
+```
+                    ┌─────────────┐
+                    │   DataHub   │◄────────── 数据源 (AKShare/Tushare)
+                    └──────┬──────┘
+                           │ push/pull
+                           ▼
+                    ┌─────────────┐
+                    │FactorCalc   │
+                    └──────┬──────┘
+                           │ push
+                           ▼
+                    ┌─────────────┐
+                    │StrategyEng  │
+                    └──────┬──────┘
+                           │ push
+                           ▼
+                    ┌─────────────┐
+                    │RiskManager  │
+                    └──────┬──────┘
+                           │ callback/block
+                           ▼
+                    ┌─────────────┐
+                    │TradeExecutor│
+                    └──────┬──────┘
+                           │ report
+                           ▼
+                    ┌─────────────┐
+                    │   Monitor   │
+                    └──────┬──────┘
+                           │ alert
+                           ▼
+                    ┌─────────────┐
+                    │   人(监督)  │
+                    └─────────────┘
+```
+
+### 9.6 版本管理
+
+| 模块 | 版本 | 状态 | 最后更新 |
+|------|------|------|----------|
+| DataHub | 1.0 | ✅ 稳定 | 2026-03-28 |
+| FactorCalculator | 1.0 | ✅ 稳定 | 2026-03-28 |
+| StrategyEngine | 1.0 | ✅ 稳定 | 2026-03-28 |
+| RiskManager | 1.0 | ✅ 稳定 | 2026-03-28 |
+| TradeExecutor | 1.0 | ✅ 稳定 | 2026-03-28 |
+| Monitor | 1.0 | ✅ 稳定 | 2026-03-28 |
+
+---
+
+## 10. 索引清单
+
+| 索引 | 模块/接口 | Layer | 状态 |
+|------|-----------|-------|------|
+| API.DH.001 | DataHub接口 | 0 | ✅ |
+| API.FC.001 | FactorCalculator接口 | 2 | ✅ |
+| API.SE.001 | StrategyEngine接口 | 3 | ✅ |
+| API.RM.001 | RiskManager接口 | 3 | ✅ |
+| API.TE.001 | TradeExecutor接口 | 4 | ✅ |
+| API.MO.001 | Monitor接口 | 6 | ✅ |
+
+---
+
+**版本**: 1.1 | **更新**: 2026-03-29 | **状态**: ✅ 活跃

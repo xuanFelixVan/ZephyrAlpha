@@ -1,13 +1,52 @@
 ---
 module_id: CHANGELOG_001
-version: 1.0
+version: 1.1
 status: Active
-last_updated: 2026-03-28
+last_updated: 2026-03-29
 ---
 
 # CHANGELOG.md - 变更日志
 
-> 清风量化系统 v4.0 版本变更记录
+> 清风量化系统 v5.0 版本变更记录
+
+---
+
+## [v5.0.0] - 2026-03-29
+
+### 🚀 重大升级: v4.0 → v5.0
+
+#### 版本标识统一
+- ✅ 统一版本标识为 v5.0.0
+- ✅ 更新 quant_system_v4/README.md
+- ✅ 更新 quant_system_v4/config/system.yaml
+- ✅ 更新 CHANGELOG.md
+
+#### 文档结构更新
+- ✅ 重写 System_Manifest.md 以反映 v5.0 实际结构
+- ✅ 标记模块实现状态（✅已实现 / 🔄规划中 / ❌待开发）
+- ✅ 归档旧文件到 06_ARCHIVE/
+
+#### v5.0 目录结构
+```
+docs/
+├── 00_OVERVIEW/              # 系统总览
+├── 01_FRAMEWORK/             # 框架定义
+├── 02_FACTOR_LIBRARY/        # 因子库 (含治理框架)
+│   ├── 00_GOVERNANCE/       # 治理框架
+│   ├── 00_INDEX/            # 索引导航
+│   ├── 01_METHODOLOGY/       # 研究方法论
+│   ├── 02_ALPHA_FACTORS/     # Alpha因子
+│   ├── 03_RISK_FACTORS/      # 风险因子
+│   ├── 04_DATA_SOURCE/        # 数据源
+│   ├── 05_BACKTEST/          # 回测
+│   ├── 06_FACTOR_REGISTRY/   # 因子注册
+│   └── 07_MONITORING/        # 监控中心
+├── 03_TRADING_TACTICS/       # 交易策略
+├── 04_EXECUTION/             # 执行引擎
+├── 05_IMPLEMENTATION/        # 实施指南
+├── 06_ARCHIVE/               # 归档
+└── 07_RESEARCH/              # AI研究
+```
 
 ---
 
