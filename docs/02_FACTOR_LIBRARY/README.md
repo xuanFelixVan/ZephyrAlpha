@@ -19,7 +19,17 @@
 | **数据宇宙** | 数据源、数据质量 | [04_DATA_SOURCE](../04_DATA_SOURCE/) |
 | **回测结果** | IC 报告、回测报告 | [05_BACKTEST](../05_BACKTEST/) |
 | **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](../06_FACTOR_REGISTRY/) |
-| **监控中心** | 实时监控、月度报告 | [07_MONITORING](../07_MONITORING/) |
+| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_MONITORING](../07_FACTOR_MONITORING/) |
+
+---
+
+## 新增内容 (2026-03-30)
+
+| 文档 | 说明 | 链接 |
+|------|------|------|
+| **因子管理标准** | 专业机构做法（分层/IC阈值/生命周期） | [01_METHODOLOGY](01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) |
+| **因子筛选策略** | 5900因子筛选到20-30个有效因子 | [01_METHODOLOGY](01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md) |
+| **AI因子管家** | 全自动因子管理（发现/淘汰/报告） | [07_FACTOR_MONITORING](07_FACTOR_MONITORING/AI_FACTOR_AGENT.md) |
 
 ---
 
@@ -36,6 +46,8 @@
 │   └── 因子分类总表.md
 ├── 01_METHODOLOGY/          # 研究方法论
 │   ├── README.md
+│   ├── FACTOR_MANAGEMENT_STANDARD.md  # ⭐ 专业机构做法 (v1.0)
+│   ├── FACTOR_SCREENING_STRATEGY.md  # ⭐ 5900因子筛选 (v1.0)
 │   ├── ic_analysis.md
 │   ├── factor_definition.md
 │   ├── factor_preprocessing.md
@@ -61,8 +73,9 @@
 │   └── ...
 ├── 06_FACTOR_REGISTRY/      # 因子注册 (新增)
 │   └── factor_catalog.md
-└── 07_MONITORING/           # 监控中心 (新增)
-    └── factor_monitoring.md
+└── 07_FACTOR_MONITORING/           # 监控中心
+    ├── factor_monitoring.md
+    └── AI_FACTOR_AGENT.md          # ⭐ AI因子管家 (v1.0)
 ```
 
 ---
