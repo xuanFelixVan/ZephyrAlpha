@@ -1,8 +1,8 @@
 ---
 module_id: SITEMAP_001
-version: 1.1
+version: 2.0
 status: Active
-last_updated: 2026-03-29
+last_updated: 2026-03-30
 ---
 
 # 文档地图 (SITEMAP)
