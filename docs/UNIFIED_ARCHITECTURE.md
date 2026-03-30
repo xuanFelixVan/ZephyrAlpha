@@ -2,8 +2,24 @@
 
 > **文档版本**: v2.0
 > **创建日期**: 2026-03-29
+> **更新日期**: 2026-03-30
 > **目标**: AI时代个人量化（1人+AI）
 > **最终愿景**: 人(决策) → AI(执行) → AI(优化) → 人(监督) → AI(报告)
+
+---
+
+## ⚠️ 文档已迁移
+
+**本文档已拆分为以下独立文档**：
+
+| 新文档 | 说明 |
+|--------|------|
+| [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 |
+| [01_FRAMEWORK/MARKET_REGIME.md](01_FRAMEWORK/MARKET_REGIME.md) | 市场状态识别 |
+| [01_FRAMEWORK/HUMAN_AI_FLOW.md](01_FRAMEWORK/HUMAN_AI_FLOW.md) | 人机协作流程 |
+| [01_FRAMEWORK/TECH_STACK.md](01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 |
+
+**请查阅新文档获取最新内容**。
 
 ---
 

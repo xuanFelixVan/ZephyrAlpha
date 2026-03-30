@@ -91,7 +91,11 @@ last_updated: 2026-03-29
 
 | 文档 | 说明 |
 |------|------|
-| [README.md](01_FRAMEWORK/README.md) | Layer 0-7架构定义 |
+| [README.md](01_FRAMEWORK/README.md) | 框架文档索引 |
+| [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 |
+| [MARKET_REGIME.md](01_FRAMEWORK/MARKET_REGIME.md) | 市场状态识别 |
+| [HUMAN_AI_FLOW.md](01_FRAMEWORK/HUMAN_AI_FLOW.md) | 人机协作流程 |
+| [TECH_STACK.md](01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 |
 
 ### 02_FACTOR_LIBRARY - 因子库 (v5.0架构)
 
