@@ -16,7 +16,7 @@ last_updated: 2026-03-28
 ### S001: 均线趋势跟踪策略
 
 ```python
-# ZephyrAlpha/src/modules/strategies/s001_trend_follow.py
+# src/modules/strategies/s001_trend_follow.py
 
 import numpy as np
 import pandas as pd
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 ### ALPHA_001: 动量因子
 
 ```python
-# ZephyrAlpha/src/modules/factors/alpha_001_momentum.py
+# src/modules/factors/alpha_001_momentum.py
 
 import numpy as np
 import pandas as pd

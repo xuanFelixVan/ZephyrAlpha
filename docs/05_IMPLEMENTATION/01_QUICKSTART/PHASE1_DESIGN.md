@@ -47,16 +47,16 @@ ZephyrAlpha/
 ├── src/
 │   ├── __init__.py
 │   ├── main.py                    # 主入口
-│   └── modules/
-│       ├── __init__.py
-│       ├── dataloader.py          # 数据加载器 ⭐
-│       ├── strategies/
-│       │   ├── __init__.py
-│       │   └── s001_ma_cross.py   # 均线交叉策略 ⭐
-│       ├── analyzers/
-│       │   ├── __init__.py
-│       │   └── performance.py     # 绩效分析 ⭐
-│       └── risk/
+│   ├── modules/
+│   │   ├── __init__.py
+│   │   ├── dataloader.py          # 数据加载器 ⭐
+│   │   ├── strategies/
+│   │   │   ├── __init__.py
+│   │   │   └── s001_ma_cross.py   # 均线交叉策略 ⭐
+│   │   ├── analyzers/
+│   │   │   ├── __init__.py
+│   │   │   └── performance.py     # 绩效分析 ⭐
+│   │   └── risk/
 │           ├── __init__.py
 │           └── rules.py           # 风控规则 ⭐
 ├── data/

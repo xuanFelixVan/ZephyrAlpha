@@ -20,9 +20,9 @@ last_updated: 2026-03-28
 | `docs/02_FACTOR_LIBRARY/02_ALPHA_FACTORS/` | Alpha因子定义 | 新增因子、更新因子公式 |
 | `docs/02_FACTOR_LIBRARY/05_BACKTEST/` | 回测报告 | 新增回测结果、IC分析 |
 | `docs/03_TRADING_TACTICS/` | 交易策略文档 | 新增策略、更新策略说明 |
-| `ZephyrAlpha/src/modules/` | 模块实现代码 | 编写模块代码、单元测试 |
-| `ZephyrAlpha/tests/` | 测试代码 | 编写测试用例 |
-| `ZephyrAlpha/notebooks/` | Jupyter分析 | 创建分析笔记本 |
+| `src/modules/` | 模块实现代码 | 编写模块代码、单元测试 |
+| `tests/` | 测试代码 | 编写测试用例 |
+| `notebooks/` | Jupyter分析 | 创建分析笔记本 |
 | `docs/CHANGELOG.md` | 变更日志 | 记录修改内容 |
 | `docs/05_IMPLEMENTATION/` | 实施指南 | 更新实施文档 |
 
@@ -35,12 +35,11 @@ last_updated: 2026-03-28
 | `docs/02_FACTOR_LIBRARY/00_INDEX/` | 因子索引 | 索引表，由系统维护 |
 | `docs/02_FACTOR_LIBRARY/01_METHODOLOGY/` | 研究方法论 | 研究标准，不可修改 |
 | `docs/04_TECHNICAL_SPECS/` | 技术规格 | 技术规范，不可修改 |
-| `ZephyrAlpha/config/` | 配置文件 | 系统配置，不可修改 |
-| `ZephyrAlpha/src/core/` | 核心基础类 | 核心基础，不可修改 |
-| `System_Manifest.md` | 系统清单 | 系统状态，由人工维护 |
+| `config/` | 配置文件 | 系统配置，不可修改 |
+| `src/core/` | 核心基础类 | 核心基础，不可修改 |
+| `BLUEPRINT.md` | 系统蓝图 | 系统状态，由人工维护 |
 | `API_Contract.md` | 接口契约 | 接口规范，不可修改 |
 | `AI_Permissions.md` | 权限清单 | 权限规范，不可修改 |
-| `CONTEXT_SNAPSHOT.json` | 上下文快照 | 系统快照，由人工维护 |
 
 ### ❌ 禁止权限（AI严禁修改）
 
@@ -48,9 +47,9 @@ last_updated: 2026-03-28
 |------|------|------|
 | `.env` | API密钥 | 安全敏感 |
 | `secrets/` | 私钥存放 | 安全敏感 |
-| `ZephyrAlpha/.gitignore` | Git配置 | 系统配置 |
-| `ZephyrAlpha/pyproject.toml` | 项目配置 | 系统配置 |
-| `ZephyrAlpha/requirements.txt` | 依赖清单 | 系统配置 |
+| `.gitignore` | Git配置 | 系统配置 |
+| `pyproject.toml` | 项目配置 | 系统配置 |
+| `requirements.txt` | 依赖清单 | 系统配置 |
 | `README.md` | 项目总入口 | 系统文档 |
 | `.git/` | Git仓库 | 版本控制 |
 

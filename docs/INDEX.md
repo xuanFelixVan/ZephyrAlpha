@@ -9,7 +9,7 @@ last_updated: 2026-03-29
 
 > 清风量化系统 v5.0 精简文档导航（个人开发版）
 >
-> **快速入口**: ⭐ 推荐阅读 [System_Manifest.md](System_Manifest.md) 了解完整系统架构
+> **快速入口**: ⭐ 推荐阅读 [BLUEPRINT.md](BLUEPRINT.md) 了解完整系统蓝图
 
 ---
 
@@ -19,8 +19,8 @@ last_updated: 2026-03-29
 → [00_OVERVIEW/README.md](00_OVERVIEW/README.md) - 系统总览（5分钟）
 
 ### 我要理解架构
-→ [System_Manifest.md](System_Manifest.md) - 系统清单（15分钟）
-→ [UNIFIED_ARCHITECTURE.md](UNIFIED_ARCHITECTURE.md) - Layer 0-8统一架构
+→ [BLUEPRINT.md](BLUEPRINT.md) - 清风量化系统蓝图（推荐）
+→ [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-8统一架构
 
 ### 我要开发策略
 → [Strategy_Spec_S001.md](Strategy_Spec_S001.md) - 策略模板（30分钟）
@@ -40,15 +40,14 @@ last_updated: 2026-03-29
 
 | 文档 | 用途 | 阅读时间 |
 |------|------|----------|
-| [System_Manifest.md](System_Manifest.md) | ⭐ 系统清单（主入口） | 15分钟 |
-| [UNIFIED_ARCHITECTURE.md](UNIFIED_ARCHITECTURE.md) | 📖 技术架构详细 | 30分钟 |
-| [ULTIMATE_BLUEPRINT.md](ULTIMATE_BLUEPRINT.md) | 🎯 终极愿景规划 | 20分钟 |
-| [AI_Research_Framework.md](AI_Research_Framework.md) | AI主力模式架构决策 | 15分钟 |
-| [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | 策略逻辑白皮书 | 30分钟 |
+| [BLUEPRINT.md](BLUEPRINT.md) | ⭐ 清风量化系统蓝图（合并版） | 30分钟 |
+| [System_Manifest.md](06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md) | 系统清单（归档） | - |
+| [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 | 30分钟 |
 | [AI_Permissions.md](AI_Permissions.md) | AI权限清单 | 10分钟 |
 | [API_Contract.md](API_Contract.md) | 模块接口契约 | 15分钟 |
+| [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | 策略逻辑白皮书 | 30分钟 |
 
-> **说明**: 三个架构文档职责已明确区分 - System_Manifest是入口，UNIFIED_ARCHITECTURE是技术细节，ULTIMATE_BLUEPRINT是愿景
+> **说明**: 7个蓝图文档已合并为 [BLUEPRINT.md](BLUEPRINT.md)，原始文档归档于 [06_ARCHIVE/main/BLUEPRINTS/](06_ARCHIVE/main/BLUEPRINTS/)
 
 ---
 
@@ -60,20 +59,20 @@ last_updated: 2026-03-29
 
 | 文档 | 用途 | 索引 |
 |------|------|------|
-| [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md) | 阶段性开发路线图 (Phase 0-6) | DEV.001 |
-| [ULTIMATE_BLUEPRINT.md](ULTIMATE_BLUEPRINT.md) | 终极蓝图 | DEV.002 |
-| [AI_RESEARCH_FRAMEWORK.md](AI_RESEARCH_FRAMEWORK.md) | AI研究Agent核心架构 | AI.AGENT.001 |
+| [BLUEPRINT.md](BLUEPRINT.md) | 清风量化系统蓝图 | - |
+| [06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md](06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md) | 阶段性开发路线图 (Phase 0-6) | DEV.001 |
+| [06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md](06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md) | AI研究Agent核心架构 | AI.AGENT.001 |
 
 ### AI模块详细设计
 
 | 模块 | 文件位置 | 状态 |
 |------|----------|------|
-| A01 市场状态识别 | `ZephyrAlpha/src/ai/market_regime.py` | 📋 规划 |
-| A02 策略路由器 | `ZephyrAlpha/src/ai/strategy_router.py` | 📋 规划 |
-| A03 动态风控 | `ZephyrAlpha/src/ai/dynamic_risk.py` | 📋 规划 |
-| A04 策略优化器 | `ZephyrAlpha/src/ai/strategy_optimizer.py` | 📋 规划 |
-| A05 反馈学习闭环 | `ZephyrAlpha/src/ai/feedback_loop.py` | 📋 规划 |
-| A06 授权确认界面 | `ZephyrAlpha/src/ai/approval_ui.py` | 📋 规划 |
+| A01 市场状态识别 | `src/ai/market_regime.py` | 📋 规划 |
+| A02 策略路由器 | `src/ai/strategy_router.py` | 📋 规划 |
+| A03 动态风控 | `src/ai/dynamic_risk.py` | 📋 规划 |
+| A04 策略优化器 | `src/ai/strategy_optimizer.py` | 📋 规划 |
+| A05 反馈学习闭环 | `src/ai/feedback_loop.py` | 📋 规划 |
+| A06 授权确认界面 | `src/ai/approval_ui.py` | 📋 规划 |
 
 ---
 
@@ -168,8 +167,8 @@ last_updated: 2026-03-29
 4. [05_IMPLEMENTATION/02_DEVELOPMENT/](05_IMPLEMENTATION/02_DEVELOPMENT/) - 开发规范
 
 ### 系统构建
-1. [System_Manifest.md](System_Manifest.md) - 系统清单
-2. [UNIFIED_ARCHITECTURE.md](UNIFIED_ARCHITECTURE.md) - 统一架构
+1. [BLUEPRINT.md](BLUEPRINT.md) - 清风量化系统蓝图
+2. [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) - 统一架构
 3. [05_IMPLEMENTATION/01_QUICKSTART/](05_IMPLEMENTATION/01_QUICKSTART/) - 快速开始
 
 ### 运维
@@ -178,7 +177,7 @@ last_updated: 2026-03-29
 3. [FAQ.md](FAQ.md) - 常见问题
 
 ### AI研究
-1. [AI_Research_Framework.md](AI_Research_Framework.md) - AI研究框架
+1. [BLUEPRINT.md](BLUEPRINT.md) - AI研究框架（见第六章）
 2. [07_RESEARCH/04_EXPERIMENT_TRACKING/](07_RESEARCH/04_EXPERIMENT_TRACKING/) - 实验追踪
 3. [KNOWLEDGE_MANAGEMENT.md](KNOWLEDGE_MANAGEMENT.md) - 知识管理
 
@@ -198,13 +197,24 @@ last_updated: 2026-03-29
 
 | 文档 | 说明 | 用途 |
 |------|------|------|
-| [FINAL_SYSTEM_AUDIT.md](FINAL_SYSTEM_AUDIT.md) | 最终系统审计报告 | 系统完整性检查 |
-| [SYSTEM_AUDIT_REPORT.md](SYSTEM_AUDIT_REPORT.md) | 系统审计报告 | 审计记录 |
-| [DOCUMENT_AUDIT_REPORT.md](DOCUMENT_AUDIT_REPORT.md) | 文档审查报告 | 文档质量检查 |
-| [LEGACY_DOC_ANALYSIS.md](LEGACY_DOC_ANALYSIS.md) | 遗留文档分析 | v4迁移参考 |
-| [CODE_STATUS.md](CODE_STATUS.md) | 代码状态 | 代码完整性跟踪 |
+| [BLUEPRINT.md](BLUEPRINT.md) | 清风量化系统蓝图（合并版） | 完整蓝图参考 |
+| [VERSIONING.md](VERSIONING.md) | 版本管理规范 | 版本控制参考 |
 | [CODE_EXAMPLES.md](CODE_EXAMPLES.md) | 代码示例 | 开发参考 |
-| [RESEARCH_PIPELINE.md](RESEARCH_PIPELINE.md) | 研究流程 | 研究方法论 |
+| [KNOWLEDGE_MANAGEMENT.md](KNOWLEDGE_MANAGEMENT.md) | 知识管理 | AI知识库管理 |
+
+### 已归档文档
+
+| 原文档 | 归档位置 | 说明 |
+|--------|----------|------|
+| System_Manifest.md | [06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md](06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md) | 已并入BLUEPRINT |
+| UNIFIED_ARCHITECTURE.md | [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | 已拆分 |
+| ULTIMATE_BLUEPRINT.md | [06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md](06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md) | 已并入BLUEPRINT |
+| DEPLOYMENT_BLUEPRINT.md | [06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md](06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md) | 已并入BLUEPRINT |
+| SECURITY_BLUEPRINT.md | [06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md](06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md) | 已并入BLUEPRINT |
+| AI_RESEARCH_FRAMEWORK.md | [06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md](06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md) | 已并入BLUEPRINT |
+| DEVELOPMENT_ROADMAP.md | [06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md](06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md) | 已并入BLUEPRINT |
+| FINAL_SYSTEM_AUDIT.md | [06_ARCHIVE/main/](06_ARCHIVE/main/) | 已归档 |
+| RESEARCH_PIPELINE.md | [06_ARCHIVE/main/](06_ARCHIVE/main/) | 已归档 |
 
 ---
 
@@ -214,6 +224,6 @@ last_updated: 2026-03-29
 
 ---
 
-**最后更新**: 2026-03-30
+**最后更新**: 2026-03-31
 **维护者**: 清风量化系统
 **版本**: v5.0 个人开发精简版

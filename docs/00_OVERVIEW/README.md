@@ -87,7 +87,9 @@
 
 | 目录 | 说明 |
 |------|------|
-| [ZephyrAlpha/](../ZephyrAlpha/) | 代码项目（src/config/tests） |
+| [src/](../src/) | 源代码 |
+| [tests/](../tests/) | 测试 |
+| [config/](../config/) | 配置 |
 
 ---
 

@@ -275,7 +275,7 @@ last_updated: 2026-03-28
 ## 策略文档位置
 
 - 策略规格: `03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/`
-- 策略代码: `ZephyrAlpha/src/modules/strategies/`
+- 策略代码: `src/modules/strategies/`
 - 回测报告: `02_FACTOR_LIBRARY/05_BACKTEST/strategy_reports/`
 - 实盘记录: `logs/trading/`
 

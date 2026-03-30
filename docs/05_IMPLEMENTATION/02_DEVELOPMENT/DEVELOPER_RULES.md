@@ -27,17 +27,13 @@ D:\ZephyrAlpha\
 │   ├── API_Contract.md            # 模块间接口契约
 │   └── ...                        # 其他文档
 │
-├── ZephyrAlpha/                    # 代码项目（可写）
-│   ├── config/                    # 配置文件
-│   ├── src/                       # 源代码
-│   ├── tests/                     # 测试代码
-│   ├── scripts/                   # 工具脚本
-│   ├── data/                      # 数据存储
-│   ├── logs/                      # 日志输出
-│   └── notebooks/                 # Jupyter分析
-│
-└── archives/                      # 历史归档
-    └── ...                        # 已废弃内容
+├── src/                           # 源代码
+├── tests/                         # 测试
+├── config/                         # 配置
+├── scripts/                         # 脚本
+├── data/                          # 数据
+├── logs/                          # 日志
+└── notebooks/                      # Jupyter
 ```
 
 ### 1.2 ZephyrAlpha/ 详细结构
@@ -384,10 +380,10 @@ git commit -m "WIP"
 
 | 问题 | 如果是 | 放这里 |
 |------|--------|--------|
-| 代码文件？ | 是 | `ZephyrAlpha/src/` |
-| 测试代码？ | 是 | `ZephyrAlpha/tests/` |
-| 配置文件？ | 是 | `ZephyrAlpha/config/` |
-| 工具脚本？ | 是 | `ZephyrAlpha/scripts/` |
+| 代码文件？ | 是 | `src/` |
+| 测试代码？ | 是 | `tests/` |
+| 配置文件？ | 是 | `config/` |
+| 工具脚本？ | 是 | `scripts/` |
 | 文档参考？ | 是 | `docs/` |
 | 临时数据？ | 是 | `data/cache/` |
 | 分析笔记本？ | 是 | `notebooks/` |

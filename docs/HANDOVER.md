@@ -58,13 +58,13 @@ D:\ZephyrAlpha\                    # 项目根目录
 │   ├── 06_ARCHIVE/               # 归档
 │   └── 08_USER_EXPERIENCE/      # 用户体验
 │
-├── ZephyrAlpha/                    # 代码项目 (原quant_system_v5)
-│   ├── src/                       # 源代码
-│   ├── tests/                     # 测试
-│   ├── config/                   # 配置
-│   └── notebooks/                 # Jupyter
-│
-├── 旧文件/                        # 历史版本
+├── src/                           # 源代码
+├── tests/                         # 测试
+├── config/                         # 配置
+├── scripts/                        # 脚本
+├── data/                          # 数据
+├── notebooks/                      # Jupyter
+└── docs/                          # 文档
 ```
 
 ---

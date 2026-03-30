@@ -230,14 +230,14 @@ last_updated: 2026-03-28
 **✅ 可写**:
 - `docs/02_FACTOR_LIBRARY/02_ALPHA_FACTORS/`
 - `docs/03_TRADING_TACTICS/`
-- `ZephyrAlpha/src/modules/`
-- `ZephyrAlpha/tests/`
+- `src/modules/`
+- `tests/`
 
 **🔒 只读**:
 - `docs/00_OVERVIEW/`
 - `docs/01_FRAMEWORK/`
-- `ZephyrAlpha/config/`
-- `ZephyrAlpha/src/core/`
+- `config/`
+- `src/core/`
 
 **❌ 禁止**:
 - `.env`
