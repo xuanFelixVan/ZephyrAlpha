@@ -1,8 +1,8 @@
 ---
 module_id: INDEX_001
-version: 2.1
+version: 2.2
 status: Active
-last_updated: 2026-03-29
+last_updated: 2026-03-31
 ---
 
 # 文档主索引

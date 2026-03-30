@@ -8,9 +8,9 @@
 
 ### 1. 环境配置
 ```bash
-cd quant_system_v5
-python -m venv venv
-.\venv\Scripts\activate
+cd ZephyrAlpha
+python -m venv .venv
+.\.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -31,10 +31,11 @@ python -m src.main
 
 | 文档 | 说明 |
 |------|------|
-| [System_Manifest.md](../docs/System_Manifest.md) | 系统清单 |
-| [API_Contract.md](../docs/API_Contract.md) | 接口规范 |
-| [Strategy_Spec_S001.md](../docs/Strategy_Spec_S001.md) | 策略定义 |
-| [FAQ.md](../docs/FAQ.md) | 常见问题 |
+| [docs/BLUEPRINT.md](docs/BLUEPRINT.md) | 系统蓝图 |
+| [docs/INDEX.md](docs/INDEX.md) | 文档索引 |
+| [docs/API_Contract.md](docs/API_Contract.md) | 接口规范 |
+| [docs/Strategy_Spec_S001.md](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略定义 |
+| [docs/FAQ.md](docs/FAQ.md) | 常见问题 |
 
 ---
 
@@ -46,20 +47,22 @@ Layer 0: 数据层 → Layer 1: 前置层 → Layer 2: Alpha层 → Layer 3: 风
 Layer 4: 组合层 → Layer 5: 执行层 → Layer 6: 监控层 → Layer 7: 归因层
 ```
 
-详见: [01_FRAMEWORK/README.md](../docs/01_FRAMEWORK/README.md)
+详见: [docs/01_FRAMEWORK/ARCHITECTURE.md](docs/01_FRAMEWORK/ARCHITECTURE.md)
 
 ---
 
 ## 项目结构
 
 ```
-quant_system_v4/
+ZephyrAlpha/
 ├── config/          # 配置文件
 ├── src/            # 源代码
 ├── data/           # 数据存储
 ├── logs/           # 日志文件
 ├── tests/          # 测试代码
-├── docs/           # 项目级快速参考
+├── docs/           # 完整文档
+├── scripts/        # 脚本工具
+├── notebooks/      # Jupyter笔记本
 ├── requirements.txt
 └── .env.example
 ```
@@ -78,11 +81,11 @@ quant_system_v4/
 
 ## 相关资源
 
-- **文档中心**: [../docs/](../docs/)
-- **因子库**: [../docs/02_FACTOR_LIBRARY/](../docs/02_FACTOR_LIBRARY/)
-- **策略池**: [../docs/03_TRADING_TACTICS/](../docs/03_TRADING_TACTICS/)
-- **变更日志**: [../docs/CHANGELOG.md](../docs/CHANGELOG.md)
+- **文档中心**: [docs/](docs/)
+- **因子库**: [docs/02_FACTOR_LIBRARY/](docs/02_FACTOR_LIBRARY/)
+- **策略池**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
+- **变更日志**: [docs/CHANGELOG.md](docs/CHANGELOG.md)
 
 ---
 
-**版本**: v5.0.0 | **更新**: 2026-03-29
+**版本**: v5.0 | **更新**: 2026-03-31

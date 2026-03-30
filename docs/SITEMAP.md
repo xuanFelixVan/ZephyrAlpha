@@ -1,8 +1,8 @@
 ---
 module_id: SITEMAP_001
-version: 2.0
+version: 2.1
 status: Active
-last_updated: 2026-03-30
+last_updated: 2026-03-31
 ---
 
 # 文档地图 (SITEMAP)
@@ -21,16 +21,15 @@ last_updated: 2026-03-30
 
 ```
 docs/
-├── 核心文档 (6个)
+├── 核心文档 (5个)
 │   ├── INDEX.md                   # 快速入口 ←──────────────┐
-│   ├── System_Manifest.md         # 系统清单                  │
+│   ├── BLUEPRINT.md               # 蓝图总览                  │
 │   ├── API_Contract.md            # 接口契约                  │
-│   ├── AI_Research_Framework.md   # AI研究框架               │
 │   ├── AI_Permissions.md          # AI权限清单               │
 │   └── CHANGELOG.md               # 变更日志                   │
 │                                                            │
 ├── 00_OVERVIEW/                   # 系统总览                  │
-├── 01_FRAMEWORK/                   # 框架定义 (Layer 0-7)     │
+├── 01_FRAMEWORK/                   # 框架定义 (Layer 0-8)    │
 ├── 02_FACTOR_LIBRARY/            # 因子库 (128+因子)         │
 ├── 03_TRADING_TACTICS/           # 交易策略池                 │
 ├── 04_EXECUTION/                   # 执行引擎                  │
@@ -57,28 +56,29 @@ docs/
 ### 我要理解架构
 
 **架构学习路线** (2小时):
-1. 阅读 [System_Manifest.md](./System_Manifest.md) - 系统清单 (20分钟)
-2. 阅读 [UNIFIED_ARCHITECTURE.md](./UNIFIED_ARCHITECTURE.md) - 统一架构 (30分钟)
-3. 阅读 [01_FRAMEWORK/README.md](./01_FRAMEWORK/README.md) - Layer 0-8框架 (30分钟)
-4. 阅读 [AI_Research_Framework.md](./AI_Research_FRAMEWORK.md) - AI研究框架 (40分钟)
+1. 阅读 [BLUEPRINT.md](./BLUEPRINT.md) - 系统蓝图 (30分钟)
+2. 阅读 [01_FRAMEWORK/ARCHITECTURE.md](./01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-8统一架构 (30分钟)
+3. 阅读 [01_FRAMEWORK/README.md](./01_FRAMEWORK/README.md) - 框架文档索引 (20分钟)
+4. 阅读 [AI_Permissions.md](./AI_Permissions.md) - AI权限清单 (20分钟)
 
 ---
 
 ### 我要开发策略
 
 **策略开发路线** (4小时):
-1. 阅读 [Strategy_Spec_S001.md](./Strategy_Spec_S001.md) - 策略模板 (30分钟)
-2. 阅读 [03_TRADING_TACTICS/INDEX.md](./03_TRADING_TACTICS/INDEX.md) - 策略索引 (20分钟)
-3. 阅读 [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](./02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - 因子库 (30分钟)
-4. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/](./05_IMPLEMENTATION/02_DEVELOPMENT/) - 开发规范 (1小时)
-5. 实践编写策略代码 (1.5小时)
+1. 阅读 [BLUEPRINT.md](./BLUEPRINT.md) - 系统蓝图 (30分钟)
+2. 阅读 [Strategy_Spec_S001.md](./03_TRADING_TACTICS/Strategy_Spec_S001.md) - 策略模板 (30分钟)
+3. 阅读 [03_TRADING_TACTICS/INDEX.md](./03_TRADING_TACTICS/INDEX.md) - 策略索引 (20分钟)
+4. 阅读 [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](./02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - 因子库 (30分钟)
+5. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/](./05_IMPLEMENTATION/02_DEVELOPMENT/) - 开发规范 (1小时)
+6. 实践编写策略代码 (1.5小时)
 
 ---
 
 ### 我要部署系统
 
 **部署路线** (3小时):
-1. 阅读 [DEPLOYMENT_BLUEPRINT.md](./DEPLOYMENT_BLUEPRINT.md) - 部署蓝图 (30分钟)
+1. 阅读 [BLUEPRINT.md](./BLUEPRINT.md) - 系统蓝图 (30分钟)
 2. 阅读 [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署方案 (30分钟)
 3. 执行部署脚本 (2小时)
 
@@ -87,9 +87,9 @@ docs/
 ### 我要理解安全
 
 **安全学习路线** (1.5小时):
-1. 阅读 [SECURITY_BLUEPRINT.md](./SECURITY_BLUEPRINT.md) - 安全蓝图 (45分钟)
-2. 阅读 [AI_Permissions.md](./AI_Permissions.md) - AI权限清单 (20分钟)
-3. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](./05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - 安全规范 (25分钟)
+1. 阅读 [AI_Permissions.md](./AI_Permissions.md) - AI权限清单 (20分钟)
+2. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](./05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - 安全规范 (25分钟)
+3. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](./05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - 认证授权 (20分钟)
 
 ---
 
@@ -119,7 +119,11 @@ docs/
 
 | 文件 | 说明 | 阅读时间 |
 |------|------|----------|
-| README.md | Layer 0-7架构说明 | 30分钟 |
+| README.md | 框架文档索引 | 10分钟 |
+| ARCHITECTURE.md | Layer 0-8统一架构 | 30分钟 |
+| MARKET_REGIME.md | 市场状态识别 | 20分钟 |
+| HUMAN_AI_FLOW.md | 人机协作流程 | 15分钟 |
+| TECH_STACK.md | 技术栈选择 | 15分钟 |
 
 ---
 
@@ -130,13 +134,13 @@ docs/
 | 00_GOVERNANCE/ | 因子治理框架 |
 | 00_INDEX/ | 因子分类导航 |
 | 01_METHODOLOGY/ | 因子研究方法论 |
-| 02_ALPHA_FACTORS/ | Alpha因子 |
-| 03_RISK_FACTORS/ | 46个风险因子 |
+| 02_ALPHA_FACTORS_INDEX.md | Alpha因子索引 |
+| 03_RISK_FACTORS/ | 风险因子 |
 | 04_DATA_SOURCE/ | 数据源说明 |
 | 05_BACKTEST/ | 回测报告 |
 | 06_FACTOR_REGISTRY/ | 因子注册 |
-| 07_MONITORING/ | 监控中心 |
-| 02_ALPHA_FACTORS_INDEX.md | 87个Alpha因子索引 |
+| 07_FACTOR_MONITORING/ | 监控中心 |
+| 10_MANUAL/ | 因子库手册 |
 
 ---
 
@@ -144,11 +148,16 @@ docs/
 
 | 文件/目录 | 说明 |
 |------|------|
-| INDEX.md | 120个策略导航 |
+| INDEX.md | 策略导航 |
+| README.md | 策略文档索引 |
+| Strategy_Spec_S001.md | 策略模板 |
 | 01_STRATEGY_FRAMEWORK/ | 策略框架 |
 | 03_ADVANCED_TACTICS/ | 高级战术 |
 | 04_YOUZI_STRATEGIES/ | 游资策略 |
 | 05_STRATEGY_POOL/ | 策略池索引 |
+| 06_POSITION_MANAGEMENT/ | 仓位管理 |
+| 07_ORDER_GENERATION/ | 订单生成 |
+| 09_RISK_RULES/ | 风险规则 |
 
 ---
 
@@ -157,10 +166,12 @@ docs/
 | 目录 | 说明 |
 |------|------|
 | 01_EVENT_ENGINE/ | 事件驱动引擎 |
+| 01_ORDER_EXECUTION/ | 订单执行 |
 | 02_TRADE_EXECUTOR/ | 交易执行 |
 | 03_MONITORING/ | 实时监控 |
 | 04_AI_COMMITTEE/ | AI委员会 |
 | 05_RISK_ENGINE/ | 风险引擎 |
+| 06_SIMULATION/ | 仿真测试 |
 
 ---
 
@@ -171,7 +182,9 @@ docs/
 | 01_QUICKSTART/ | 快速开始 |
 | 02_DEVELOPMENT/ | 开发规范 |
 | 03_DEPLOYMENT/ | 部署指南 |
+| 04_INFRASTRUCTURE/ | 基础设施 |
 | 04_OPERATIONS/ | 运维手册 |
+| 99_ARCHIVE/ | 归档 |
 
 ---
 
@@ -180,10 +193,11 @@ docs/
 | 目录/文件 | 说明 |
 |------|------|
 | README.md | 归档说明 |
-| main/ | 主文档历史 |
+| main/BLUEPRINTS/ | 蓝图历史归档 |
 | main/v4_development/ | v4.0开发文档 |
 | factor-library/ | 因子库历史 |
-| over_engineered/ | 过度工程化文档 |
+| 战术手册_v1.0.md | v1.0战术手册 |
+| 技术文档_v1.0.md | v1.0技术文档 |
 
 ---
 
@@ -202,49 +216,50 @@ docs/
 
 ### 架构相关
 
-- System_Manifest.md - 系统清单
-- UNIFIED_ARCHITECTURE.md - 统一架构
-- AI_Research_Framework.md - AI研究框架
-- 01_FRAMEWORK/README.md - 框架定义
+- [BLUEPRINT.md](./BLUEPRINT.md) - 系统蓝图
+- [01_FRAMEWORK/ARCHITECTURE.md](./01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-8架构
+- [01_FRAMEWORK/MARKET_REGIME.md](./01_FRAMEWORK/MARKET_REGIME.md) - 市场状态识别
 
 ### 模块相关
 
-- MODULE_BLUEPRINT.md - 模块蓝图
-- API_Contract.md - 接口契约
-- System_Manifest.md - 模块映射表
+- [API_Contract.md](./API_Contract.md) - 接口契约
+- [BLUEPRINT.md](./BLUEPRINT.md) - 模块蓝图
+- [AI_Permissions.md](./AI_Permissions.md) - AI权限
 
 ### 策略相关
 
-- Strategy_Spec_S001.md - 策略模板
-- 03_TRADING_TACTICS/INDEX.md - 策略索引
-- 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - 因子库
+- [Strategy_Spec_S001.md](./03_TRADING_TACTICS/Strategy_Spec_S001.md) - 策略模板
+- [03_TRADING_TACTICS/INDEX.md](./03_TRADING_TACTICS/INDEX.md) - 策略索引
+- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](./02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - 因子库
 
 ### 因子相关
 
-- 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - Alpha因子
-- 02_FACTOR_LIBRARY/03_RISK_FACTORS/ - 风险因子
-- 02_FACTOR_LIBRARY/01_METHODOLOGY/ - 因子方法论
+- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](./02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - Alpha因子
+- [02_FACTOR_LIBRARY/03_RISK_FACTORS/](./02_FACTOR_LIBRARY/03_RISK_FACTORS/) - 风险因子
+- [02_FACTOR_LIBRARY/01_METHODOLOGY/](./02_FACTOR_LIBRARY/01_METHODOLOGY/) - 因子方法论
+- [02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md](./02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) - 因子管理标准
+- [02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md](./02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md) - 因子筛选策略
 
 ### 部署相关
 
-- DEPLOYMENT_BLUEPRINT.md - 部署蓝图
-- 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md - 部署方案
+- [BLUEPRINT.md](./BLUEPRINT.md) - 系统蓝图
+- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署方案
 
 ### 开发相关
 
-- 05_IMPLEMENTATION/02_DEVELOPMENT/ - 开发规范
-- CHANGELOG.md - 变更日志
+- [05_IMPLEMENTATION/02_DEVELOPMENT/](./05_IMPLEMENTATION/02_DEVELOPMENT/) - 开发规范
+- [CHANGELOG.md](./CHANGELOG.md) - 变更日志
 
 ### AI研究相关
 
-- AI_Research_Framework.md - AI研究框架
-- EXPERIMENT_TRACKING.md - 实验追踪
-- KNOWLEDGE_MANAGEMENT.md - 知识管理
+- [BLUEPRINT.md](./BLUEPRINT.md) - AI研究框架（见附录）
+- [EXPERIMENT_TRACKING.md](./EXPERIMENT_TRACKING.md) - 实验追踪
+- [KNOWLEDGE_MANAGEMENT.md](./KNOWLEDGE_MANAGEMENT.md) - 知识管理
 
 ### 运维相关
 
-- 05_IMPLEMENTATION/04_OPERATIONS/ - 运维手册
-- FAQ.md - 常见问题
+- [05_IMPLEMENTATION/04_OPERATIONS/](./05_IMPLEMENTATION/04_OPERATIONS/) - 运维手册
+- [FAQ.md](./FAQ.md) - 常见问题
 
 ---
 
@@ -252,10 +267,10 @@ docs/
 
 | 类型 | 数量 | 说明 |
 |------|------|------|
-| 核心文档 | 6个 | 必读 |
+| 核心文档 | 5个 | 必读 |
 | 索引文件 | 2个 | 导航 |
 | 一级目录 | 8个 | 分类 |
-| **总计** | **16个+** | - |
+| **总计** | **15个+** | - |
 
 ---
 
@@ -265,13 +280,13 @@ docs/
 
 1. INDEX.md (5分钟)
 2. 00_OVERVIEW/README.md (10分钟)
-3. System_Manifest.md (20分钟)
-4. UNIFIED_ARCHITECTURE.md (30分钟)
+3. BLUEPRINT.md (30分钟)
+4. 01_FRAMEWORK/ARCHITECTURE.md (30分钟)
 5. 05_IMPLEMENTATION/01_QUICKSTART/README.md (15分钟)
 
 ### 第2天 (2小时)
 
-1. AI_Research_Framework.md (40分钟)
+1. AI_Permissions.md (20分钟)
 2. API_Contract.md (15分钟)
 3. Strategy_Spec_S001.md (30分钟)
 4. 03_TRADING_TACTICS/INDEX.md (20分钟)
@@ -279,9 +294,9 @@ docs/
 
 ### 第3天 (2小时)
 
-1. DEPLOYMENT_BLUEPRINT.md (30分钟)
-2. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30分钟)
-3. SECURITY_BLUEPRINT.md (45分钟)
+1. 02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md (30分钟)
+2. 02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md (30分钟)
+3. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30分钟)
 4. CHANGELOG.md (15分钟)
 
 ---
@@ -292,17 +307,16 @@ docs/
 INDEX.md (快速入口)
     ↓
     ├→ 00_OVERVIEW/ (系统总览)
-    │   └→ System_Manifest.md (系统清单)
-    │       ↓
-    │       ├→ UNIFIED_ARCHITECTURE.md (统一架构)
-    │       │
-    │       ├→ AI_Research_Framework.md (AI研究框架)
-    │       │
-    │       └→ API_Contract.md (接口契约)
     │
     ├→ 01_FRAMEWORK/ (框架定义)
+    │   └→ ARCHITECTURE.md (Layer 0-8)
+    │
+    ├→ BLUEPRINT.md (系统蓝图)
     │
     ├→ 02_FACTOR_LIBRARY/ (因子库)
+    │   ├→ 01_METHODOLOGY/ (方法论)
+    │   │   ├→ FACTOR_MANAGEMENT_STANDARD.md (因子管理标准)
+    │   │   └→ FACTOR_SCREENING_STRATEGY.md (筛选策略)
     │   └→ 02_ALPHA_FACTORS_INDEX.md (因子索引)
     │
     ├→ 03_TRADING_TACTICS/ (交易策略)
@@ -316,7 +330,10 @@ INDEX.md (快速入口)
     │   ├→ 03_DEPLOYMENT/
     │   └→ 04_OPERATIONS/
     │
-    └→ 06_ARCHIVE/ (归档)
+    ├→ 06_ARCHIVE/ (归档)
+    │   └→ main/BLUEPRINTS/ (历史蓝图)
+    │
+    └→ 07_RESEARCH/ (AI研究)
 ```
 
 ---
@@ -331,6 +348,6 @@ INDEX.md (快速入口)
 
 ---
 
-**最后更新**: 2026-03-29
+**最后更新**: 2026-03-31
 **维护者**: 清风量化系统
 **版本**: v5.0
