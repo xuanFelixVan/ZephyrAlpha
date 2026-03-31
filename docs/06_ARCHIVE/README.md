@@ -2,8 +2,8 @@
 
 > 历史版本文档和过度工程化文档集中管理
 
-**版本**: v5.0
-**更新日期**: 2026-03-29
+**版本**: v5.1
+**更新日期**: 2026-03-31
 
 ---
 
@@ -15,86 +15,93 @@
 │
 ├── main/                       # 主文档历史归档
 │   ├── README.md
-│   ├── CHANGELOG.md
-│   ├── NOZYIO_REFERENCE.md
-│   ├── 量化策略框架_v3.1.md
-│   ├── v4_development/         # v4.0 开发文档 (新增)
-│   │   ├── 清风量化交易系统4.0开发粗稿.md
-│   │   ├── 清风量化交易系统4.0开发细稿.md
-│   │   └── ... (更多v4.0文档)
-│   └── ...
+│   ├── CHANGELOG.md            # 版本变更历史
+│   ├── NOZYIO_REFERENCE.md     # NozyIO参考
+│   ├── 量化策略框架_v3.1.md    # v3.1策略框架
+│   ├── SYSTEM_AUDIT_REPORT.md  # 系统审计报告
+│   ├── UPGRADE_REPORT.md       # 升级报告
+│   ├── FINAL_AUDIT_REPORT_V5.md # 最终审计报告v5
+│   ├── COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md # 完整文档审计
+│   │
+│   ├── v4_development/         # v4.0 开发文档
+│   │   ├── 清风量化交易系统4.0开发粗稿.md   # 初始设计
+│   │   └── 清风量化交易系统4.0开发方案.md   # 开发方案
+│   │
+│   └── BLUEPRINTS/            # 原始蓝图文档(已合并)
+│       ├── 01_ULTIMATE_BLUEPRINT.md
+│       ├── 02_DEPLOYMENT_BLUEPRINT.md
+│       ├── 03_SECURITY_BLUEPRINT.md
+│       ├── 04_API_INTEGRATION_BLUEPRINT.md
+│       ├── 05_AI_RESEARCH_FRAMEWORK.md
+│       ├── 06_DEVELOPMENT_ROADMAP.md
+│       └── 07_SYSTEM_MANIFEST.md
 │
 ├── factor-library/             # 因子库历史归档
 │   ├── README.md
 │   ├── ifind_factors_list.md
 │   ├── ifind_factors_raw.json
-│   ├── ifind_indicators.json
-│   └── v4_reports/             # v4.0 报告 (新增)
+│   └── ifind_indicators.json
 │
-├── over_engineered/            # 仍需归档的过度工程化文档
+├── over_engineered/            # 过度工程化文档(归档)
 │   ├── README.md
-│   ├── METADATA_MANAGEMENT.md  # 元数据管理 - 过于复杂
-│   └── STORAGE_ARCHITECTURE.md # 多级存储 - 个人不需要
+│   ├── METADATA_MANAGEMENT.md
+│   └── STORAGE_ARCHITECTURE.md
 │
-├── old_v4_plan_archive.md       # v4.0 开发方案归档
-├── 战术手册_v1.0.md
-├── 技术文档_v1.0.md
-├── 策略池_v1.0.md
-├── 系统增强手册_v1.0.md
-└── 旧文档分析报告_清风量化交易系统4.0开发粗稿_backup.md
+├── 战术手册_v1.0.md            # v1.0战术手册
+├── 技术文档_v1.0.md            # v1.0技术文档
+├── 策略池_v1.0.md             # v1.0策略池
+└── 系统增强手册_v1.0.md        # v1.0系统增强
 ```
 
 ---
 
-## v5.0 归档原则
+## v5.1 归档原则
 
 | 原则 | 说明 |
 |------|------|
 | **统一归档** | 所有模块的历史文档统一到 06_ARCHIVE/ |
 | **分类存储** | 按模块分子目录 (main/, factor-library/, over_engineered/) |
-| **永久保留** | 所有历史版本永久保留 |
+| **精简保留** | 同一文档只保留最新版本+必要历史版本 |
 | **索引完备** | 每个归档有说明归档原因 |
 | **版本隔离** | v4.0 开发文档隔离到 v4_development/ |
 
 ---
 
-## v5.0 变更记录
+## v5.1 变更记录 (2026-03-31)
 
-### v5.0.0 (2026-03-29)
+### 清理冗余文件
 
-- ✅ 新增 `main/v4_development/` 目录
-- ✅ 归档核心 v4.0 开发文档
-- ✅ 创建 `factor-library/v4_reports/` 目录
-- ✅ 更新本文档以反映 v5.0 结构
+已删除以下冗余文件：
 
-### v4.0 (2026-03-28)
+| 删除文件 | 删除原因 |
+|----------|----------|
+| `old_v4_plan_archive.md` | 已废弃的计划文档 |
+| `旧文档务实评估_1人AI_一个月.md` | 临时评估文档 |
+| `旧文档分析报告_*.md` | 分析报告，已过期 |
+| `v4_development/` 下的副本和备份 | 冗余版本 |
+| `FINAL_SYSTEM_AUDIT_archived.md` | 旧版本审计 |
+| `DOCUMENT_AUDIT_REPORT_v1.md` | 旧版本审计 |
+| `FINAL_DOCUMENT_AUDIT_REPORT_*.md` (2个) | 旧版本审计 |
+| `CODE_STATUS_archived.md` | 过时状态文档 |
+| `TEST_PLAN_archived.md` | 过时测试计划 |
+| `DEVELOPMENT_SEQUENCE_archived.md` | 过时开发序列 |
+| `RESEARCH_PIPELINE_archived.md` | 过时研究流程 |
+| `LEGACY_DOC_ANALYSIS_archived.md` | 过时文档分析 |
+| `README_v1.1_archived.md` | 极旧版本 |
+| `BLUEPRINTS/00_UNIFIED_ARCHITECTURE_archived.md` | 已合并到其他蓝图 |
 
-- 初始归档结构
+### 当前 v4_development 保留文件
 
----
-
-## 归档文件清单
-
-### main/v4_development/ - v4.0 开发文档
-
-| 文件 | 说明 | 归档日期 |
-|------|------|----------|
-| 清风量化交易系统4.0开发粗稿.md | v4.0 初始设计 | 2026-03-29 |
-| 清风量化交易系统4.0开发细稿.md | v4.0 详细设计 | 2026-03-29 |
-| 清风量化交易系统4.0开发方案.md | v4.0 开发方案 | 2026-03-29 |
-| 清风量化交易系统4.0详细执行方案.md | v4.0 执行方案 | 2026-03-29 |
-| 清风量化交易系统4.0_合并.md | v4.0 合并版 | 2026-03-29 |
-| 清风量化交易系统4.0_归档说明.md | v4.0 归档说明 | 2026-03-29 |
-| 清风量化交易系统4.0_设计文档归档.md | v4.0 设计归档 | 2026-03-29 |
-| 清风量化交易系统4.0.txt | v4.0 文本版 | 2026-03-29 |
-| 清风量化交易系统4.0开发粗稿 - 副本.md | v4.0 副本 | 2026-03-29 |
-| 清风量化交易系统4.0开发粗稿_backup.md | v4.0 备份 | 2026-03-29 |
+| 文件 | 说明 |
+|------|------|
+| 清风量化交易系统4.0开发粗稿.md | v4.0 初始设计 |
+| 清风量化交易系统4.0开发方案.md | v4.0 开发方案 |
 
 ---
 
 ## 过度工程化文档 (over_engineered/)
 
-这些文档对**1人+AI**模式来说**仍然过于复杂**：
+这些文档对**1人+AI**模式来说**过于复杂**：
 
 | 文档 | 归档原因 |
 |------|----------|
@@ -130,6 +137,7 @@
 - [ ] 当前系统是否不再使用此文档？
 - [ ] 是否有更优位置放置此文档？
 - [ ] 归档原因是否明确记录？
+- [ ] 是否已有相同文档的更完整版本？
 
 ---
 
@@ -137,6 +145,7 @@
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
+| v5.1 | 2026-03-31 | 清理冗余文件，精简归档目录 |
 | v5.0 | 2026-03-29 | 新增 v4_development/ 目录和归档清单 |
 | v3.0 | 2026-03-29 | 恢复大部分文档（1人+AI目标） |
 | v2.0 | 2026-03-28 | 新增over_engineered/目录 |

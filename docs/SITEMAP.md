@@ -1,13 +1,13 @@
 ---
 module_id: SITEMAP_001
-version: 2.1
+version: 2.2
 status: Active
 last_updated: 2026-03-31
 ---
 
 # 文档地图 (SITEMAP)
 
-> 清风量化系统 v5.0 的完整文档导航地图
+> 清风量化系统 v5.1 的完整文档导航地图
 >
 > **职责区分**:
 > - [INDEX.md](INDEX.md) = 快速入口（5分钟导航）
@@ -15,7 +15,7 @@ last_updated: 2026-03-31
 
 ---
 
-## 📍 文档位置导航 (v5.0)
+## 📍 文档位置导航 (v5.1)
 
 ### 一级导航
 
@@ -84,7 +84,7 @@ docs/
 
 ---
 
-### 我要理解安全
+### 我理解安全
 
 **安全学习路线** (1.5小时):
 1. 阅读 [AI_Permissions.md](./AI_Permissions.md) - AI权限清单 (20分钟)
@@ -97,13 +97,13 @@ docs/
 
 **故障排查路线** (30分钟):
 1. 查看 [FAQ.md](./FAQ.md) - 常见问题 (10分钟)
-2. 查看 [05_IMPLEMENTATION/04_OPERATIONS/faq.md](./05_IMPLEMENTATION/04_OPERATIONS/faq.md) - 运维FAQ (10分钟)
+2. 查看 [05_IMPLEMENTATION/04_OPERATIONS/README.md](./05_IMPLEMENTATION/04_OPERATIONS/README.md) - 运维手册 (10分钟)
 3. 查看 [CHANGELOG.md](./CHANGELOG.md) - 版本变更 (5分钟)
 4. 查看系统日志 (5分钟)
 
 ---
 
-## 📂 按目录查找 (v5.0)
+## 📂 按目录查找 (v5.1)
 
 ### 00_OVERVIEW/ - 系统总览
 
@@ -111,7 +111,7 @@ docs/
 |------|------|----------|
 | README.md | 系统简介 | 10分钟 |
 | DATA_FLOW.md | 数据流与模块依赖 | 15分钟 |
-| VERSION_HISTORY.md | 版本演进 | 5分钟 |
+| CHANGELOG.md | 版本历史（已合并） | 5分钟 |
 
 ---
 
@@ -192,9 +192,9 @@ docs/
 
 | 目录/文件 | 说明 |
 |------|------|
-| README.md | 归档说明 |
-| main/BLUEPRINTS/ | 蓝图历史归档 |
-| main/v4_development/ | v4.0开发文档 |
+| README.md | 归档说明（v5.1精简版） |
+| main/BLUEPRINTS/ | 蓝图历史归档（7个） |
+| main/v4_development/ | v4.0开发文档（精简为2个） |
 | factor-library/ | 因子库历史 |
 | 战术手册_v1.0.md | v1.0战术手册 |
 | 技术文档_v1.0.md | v1.0技术文档 |
@@ -263,14 +263,14 @@ docs/
 
 ---
 
-## 📊 文档统计 (v5.0)
+## 📊 文档统计 (v5.1)
 
 | 类型 | 数量 | 说明 |
 |------|------|------|
 | 核心文档 | 5个 | 必读 |
 | 索引文件 | 2个 | 导航 |
 | 一级目录 | 8个 | 分类 |
-| **总计** | **15个+** | - |
+| **精简后** | **~80+文档** | 较v5.0减少约70个 |
 
 ---
 
@@ -350,4 +350,4 @@ INDEX.md (快速入口)
 
 **最后更新**: 2026-03-31
 **维护者**: 清风量化系统
-**版本**: v5.0
+**版本**: v5.1

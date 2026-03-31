@@ -1,13 +1,13 @@
 ---
 module_id: INDEX_001
-version: 2.2
+version: 2.3
 status: Active
 last_updated: 2026-03-31
 ---
 
 # 文档主索引
 
-> 清风量化系统 v5.0 精简文档导航（个人开发版）
+> 清风量化系统 v5.1 精简文档导航（个人开发版）
 >
 > **快速入口**: ⭐ 推荐阅读 [BLUEPRINT.md](BLUEPRINT.md) 了解完整系统蓝图
 
@@ -41,7 +41,6 @@ last_updated: 2026-03-31
 | 文档 | 用途 | 阅读时间 |
 |------|------|----------|
 | [BLUEPRINT.md](BLUEPRINT.md) | ⭐ 清风量化系统蓝图（合并版） | 30分钟 |
-| [System_Manifest.md](06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md) | 系统清单（归档） | - |
 | [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 | 30分钟 |
 | [AI_Permissions.md](AI_Permissions.md) | AI权限清单 | 10分钟 |
 | [API_Contract.md](API_Contract.md) | 模块接口契约 | 15分钟 |
@@ -84,7 +83,7 @@ last_updated: 2026-03-31
 |------|------|
 | [README.md](00_OVERVIEW/README.md) | 系统总览 |
 | [DATA_FLOW.md](00_OVERVIEW/DATA_FLOW.md) | 数据流图 |
-| [VERSION_HISTORY.md](00_OVERVIEW/VERSION_HISTORY.md) | 版本历史 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本历史（已合并） |
 
 ### 01_FRAMEWORK - 框架定义
 
@@ -144,13 +143,14 @@ last_updated: 2026-03-31
 | 目录/文档 | 说明 |
 |------|------|
 | [README.md](06_ARCHIVE/README.md) | 归档说明 |
-| [main/v4_development/](06_ARCHIVE/main/v4_development/) | v4.0开发文档 |
+| [main/v4_development/](06_ARCHIVE/main/v4_development/) | v4.0开发文档（精简后2个） |
 | [over_engineered/](06_ARCHIVE/over_engineered/) | 过度工程化文档 |
 
 ### 07_RESEARCH - AI研究
 
 | 目录/文档 | 说明 |
 |------|------|
+| [README.md](07_RESEARCH/README.md) | 研究总览 |
 | [01_ENVIRONMENT/](07_RESEARCH/01_ENVIRONMENT/) | 研究环境 |
 | [02_EXPLORATORY_ANALYSIS/](07_RESEARCH/02_EXPLORATORY_ANALYSIS/) | 探索性分析 |
 | [03_PATTERN_RECOGNITION/](07_RESEARCH/03_PATTERN_RECOGNITION/) | 模式识别 |
@@ -185,7 +185,7 @@ last_updated: 2026-03-31
 
 ## 📊 文档统计
 
-- **总文档数**: ~100+（精简后）
+- **总文档数**: ~80+（精简后）
 - **核心文档**: 5个（必读）
 - **一级目录**: 8个
 - **因子数**: 133个（87 Alpha + 46 Risk）
@@ -198,23 +198,26 @@ last_updated: 2026-03-31
 | 文档 | 说明 | 用途 |
 |------|------|------|
 | [BLUEPRINT.md](BLUEPRINT.md) | 清风量化系统蓝图（合并版） | 完整蓝图参考 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本变更日志 | 版本控制参考 |
 | [VERSIONING.md](VERSIONING.md) | 版本管理规范 | 版本控制参考 |
 | [CODE_EXAMPLES.md](CODE_EXAMPLES.md) | 代码示例 | 开发参考 |
-| [KNOWLEDGE_MANAGEMENT.md](KNOWLEDGE_MANAGEMENT.md) | 知识管理 | AI知识库管理 |
+| [HANDOVER.md](HANDOVER.md) | 交接文档 | 项目交接参考 |
+| [EXPERIMENT_TRACKING.md](EXPERIMENT_TRACKING.md) | 实验追踪 | AI研究参考 |
+| [DOCUMENT_AUDIT_v5.1.md](DOCUMENT_AUDIT_v5.1.md) | 文档审查报告 | 文档治理参考 |
 
-### 已归档文档
+### 因子库补充文档
 
-| 原文档 | 归档位置 | 说明 |
-|--------|----------|------|
-| System_Manifest.md | [06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md](06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md) | 已并入BLUEPRINT |
-| UNIFIED_ARCHITECTURE.md | [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | 已拆分 |
-| ULTIMATE_BLUEPRINT.md | [06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md](06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md) | 已并入BLUEPRINT |
-| DEPLOYMENT_BLUEPRINT.md | [06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md](06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md) | 已并入BLUEPRINT |
-| SECURITY_BLUEPRINT.md | [06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md](06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md) | 已并入BLUEPRINT |
-| AI_RESEARCH_FRAMEWORK.md | [06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md](06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md) | 已并入BLUEPRINT |
-| DEVELOPMENT_ROADMAP.md | [06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md](06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md) | 已并入BLUEPRINT |
-| FINAL_SYSTEM_AUDIT.md | [06_ARCHIVE/main/](06_ARCHIVE/main/) | 已归档 |
-| RESEARCH_PIPELINE.md | [06_ARCHIVE/main/](06_ARCHIVE/main/) | 已归档 |
+| 文档 | 说明 |
+|------|------|
+| [02_FACTOR_LIBRARY/99_AUDIT_REPORT.md](02_FACTOR_LIBRARY/99_AUDIT_REPORT.md) | 因子库审计报告 |
+| [02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md](02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md) | 因子优化总结 |
+
+### 交易策略补充文档
+
+| 文档 | 说明 |
+|------|------|
+| [03_TRADING_TACTICS/OPTIMIZATION_REPORT.md](03_TRADING_TACTICS/OPTIMIZATION_REPORT.md) | 策略优化报告 |
+| [03_TRADING_TACTICS/REFACTOR_COMPLETE.md](03_TRADING_TACTICS/REFACTOR_COMPLETE.md) | 重构完成报告 |
 
 ---
 
@@ -226,4 +229,4 @@ last_updated: 2026-03-31
 
 **最后更新**: 2026-03-31
 **维护者**: 清风量化系统
-**版本**: v5.0 个人开发精简版
+**版本**: v5.1 个人开发精简版
