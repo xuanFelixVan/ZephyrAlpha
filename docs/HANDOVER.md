@@ -205,7 +205,7 @@ QMT安装路径: `D:\国金证券QMT交易端`
 | 文档 | 路径 | 说明 |
 |------|------|------|
 | 统一架构 | `docs/UNIFIED_ARCHITECTURE.md` | Layer 0-8架构 |
-| 系统清单 | `docs/System_Manifest.md` | 系统模块清单 |
+| 系统清单 | `System_Manifest.md` | 系统模块清单 |
 | 舆情方案 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/ALTERNATIVE_DATA.md` | 新闻+LLM方案 |
 | 数据存储 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/ALTERNATIVE_DATA.md` | ClickHouse方案 |
 | 快速参考 | `docs/QUICK_REFERENCE.md` | 命令速查 |
