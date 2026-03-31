@@ -33,7 +33,7 @@ def main():
     print("  🔄 strategy_engine   - 策略引擎 (规划中)")
     print("  🔄 trade_executor    - 交易执行 (规划中)")
     print()
-    print("详见: docs/System_Manifest.md")
+    print("详见: ../docs/System_Manifest.md")
     print()
 
     return Result(success=True, data={"version": "5.0.0"})

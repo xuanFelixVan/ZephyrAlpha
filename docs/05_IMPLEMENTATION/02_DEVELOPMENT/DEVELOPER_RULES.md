@@ -919,7 +919,7 @@ def fetch_data(symbol: str):
 |------|------|
 | [INDEX.md](./docs/INDEX.md) | 完整文档导航 |
 | [QUICK_REFERENCE.md](./docs/QUICK_REFERENCE.md) | 命令速查表 |
-| [System_Manifest.md](./docs/System_Manifest.md) | 系统清单、模块、权限 |
+| [System_Manifest.md](../../System_Manifest.md) | 系统清单、模块、权限 |
 | [API_Contract.md](./docs/API_Contract.md) | 模块接口定义 |
 
 ---

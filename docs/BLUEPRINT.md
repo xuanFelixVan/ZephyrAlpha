@@ -30,7 +30,7 @@
 | 第五章：API蓝图 | API_INTEGRATION_BLUEPRINT.md | [查看完整](./06_ARCHIVE/main/BLUEPRINTS/04_API_INTEGRATION_BLUEPRINT.md) |
 | 第六章：AI研究框架 | AI_RESEARCH_FRAMEWORK.md | [查看完整](./06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md) |
 | 第七章：开发路线图 | DEVELOPMENT_ROADMAP.md | [查看完整](./06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md) |
-| 第八章：系统架构 | System_Manifest.md | [查看完整](./06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md) |
+| 第八章：系统架构 | System_Manifest.md | [查看完整](./System_Manifest.md) |
 
 ---
 
