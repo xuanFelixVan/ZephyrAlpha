@@ -26,11 +26,11 @@ last_updated: 2026-04-03
 - **[预留目录结构](#-目录结构)** - 各研究领域目录
 
 ### 按研究领域
-1. **[探索性分析](./01_EXPLORATORY_ANALYSIS/)** - 数据质量检查、分布分析
-2. **[因子开发](./02_FACTOR_DEVELOPMENT/)** - 新因子计算、IC分析
-3. **[策略研究](./03_STRATEGY_RESEARCH/)** - 策略原型、回测验证
-4. **[模型实验](./04_MODEL_EXPERIMENTS/)** - 机器学习模型训练
-5. **[报告生成](./05_REPORTS/)** - 自动化报告与可视化
+1. **[探索性分析](./01_EXPLORATORY_ANALYSIS/INDEX.md)** - 数据质量检查、分布分析
+2. **[因子开发](./02_FACTOR_DEVELOPMENT/INDEX.md)** - 新因子计算、IC分析
+3. **[策略研究](./03_STRATEGY_RESEARCH/INDEX.md)** - 策略原型、回测验证
+4. **[模型实验](./04_MODEL_EXPERIMENTS/INDEX.md)** - 机器学习模型训练
+5. **[报告生成](./05_REPORTS/INDEX.md)** - 自动化报告与可视化
 
 ---
 
