@@ -503,9 +503,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 | 位置 | 描述内容 | 重叠度 |
 |------|----------|--------|
-| `BLUEPRINT.md` 第一章 | 终极愿景、人机协作模式、Layer 0-8架构 | 高 |
-| `00_OVERVIEW/README.md` | 系统简介、Layer 0-7架构 | 高 |
-| `01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-8统一架构 | 中 |
+| `BLUEPRINT.md` 第一章 | 终极愿景、人机协作模式、Layer 0-11架构 | 高 |
+| `00_OVERVIEW/README.md` | 系统简介、Layer 0-11架构 | 高 |
+| `01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-11统一架构 | 中 |
 | `docs/README.md` | 项目定位、快速开始 | 低 |
 
 ---
