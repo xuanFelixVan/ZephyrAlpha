@@ -315,6 +315,12 @@ Layer 11: 战略决策层 (Strategic Decision) 🆕
 | **[GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)** | **🆕 Layer 10** 治理与合规层蓝图 - 内部控制体系+合规监控 |
 | **[STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md)** | **🆕 Layer 11** 战略决策层蓝图 - 战略资产配置+风险预算分配 |
 
+#### 横向支撑体系
+
+| 文档 | 说明 |
+|------|------|
+| **[DISASTER_RECOVERY_BLUEPRINT.md](./DISASTER_RECOVERY_BLUEPRINT.md)** | **📋 规划中** 灾备体系蓝图 - 数据备份+故障恢复+异地容灾 |
+
 ---
 
 **版本**: v5.3 | **更新**: 2026-04-03 | **状态**: ✅ 活跃
