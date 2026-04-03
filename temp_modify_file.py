@@ -1,25 +1,10 @@
 import re
+import codecs
 
 file_path = r'D:\ZephyrAlpha\docs\01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md'
 
-with open(file_path, 'rb') as f:
-    raw_bytes = f.read()
-
-encodings = ['utf-8', 'utf-16-le', 'utf-16-be', 'gbk', 'gb18030', 'latin-1']
-
-content = None
-for encoding in encodings:
-    try:
-        content = raw_bytes.decode(encoding)
-        print(f"Successfully decoded with encoding: {encoding}")
-        break
-    except Exception as e:
-        print(f"Failed with encoding {encoding}: {str(e)[:50]}")
-        continue
-
-if content is None:
-    content = raw_bytes.decode('utf-8', errors='replace')
-    print("Used utf-8 with replacement characters")
+with codecs.open(file_path, 'r', encoding='utf-16-le') as f:
+    content = f.read()
 
 new_section = '''---
 
@@ -78,7 +63,8 @@ pattern = r'## 🛡️ 二、AI治理框架.*?(?=\n---\n\n## ⚠️ 三、风险
 
 content = re.sub(pattern, new_section.strip(), content, flags=re.DOTALL)
 
-with open(file_path, 'w', encoding='utf-8') as f:
+with codecs.open(file_path, 'w', encoding='utf-16-le') as f:
     f.write(content)
 
 print("File modified successfully!")
+print(f"Content length: {len(content)} characters")
