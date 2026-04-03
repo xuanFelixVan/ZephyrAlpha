@@ -4,20 +4,20 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 因子分类�?(Factor Taxonomy)
+# 因子分类�?(Factor Taxonomy)
 
-> 因子分类体系与参数配置标�?
+> 因子分类体系与参数配置标�?
 >
-> **职责**: 定义因子分类体系和参数配�?
-> **注册�?*: [../06_REGISTRY/factor_catalog.md](../06_REGISTRY/factor_catalog.md) - 因子清单和元数据
+> **职责**: 定义因子分类体系和参数配�?
+> **注册�?*: [../06_REGISTRY/factor_catalog.md](../06_REGISTRY/factor_catalog.md) - 因子清单和元数据
 > **计算框架**: [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 计算引擎和调度器
 
 ---
@@ -26,16 +26,16 @@ implementation_status: 进行�?
 
 ```python
 FACTOR_TAXONOMY = {
-    '技术指�?: {
-        '趋势�?: {
+    '技术指�?: {
+        '趋势�?: {
             'indicators': ['MA', 'EMA', 'SMA', 'DEMA', 'TEMA'],
             'sub_indicators': ['MACD', 'ADX', 'SAR', 'AROON']
         },
-        '动量�?: {
+        '动量�?: {
             'indicators': ['RSI', 'KDJ', 'WR', 'CCI', 'ROC'],
             'sub_indicators': ['MOM', 'CMF']
         },
-        '波动�?: {
+        '波动�?: {
             'indicators': ['ATR', 'STDDEV', 'BBANDS_WIDTH'],
             'sub_indicators': ['NATR']
         },
@@ -44,24 +44,24 @@ FACTOR_TAXONOMY = {
             'sub_indicators': ['VWAP', 'EMV']
         }
     },
-    '基本�?: {
+    '基本�?: {
         '估值类': {
             'indicators': ['PE', 'PB', 'PS', 'PCF', 'DY'],
             'sub_indicators': ['SP', 'EV_EBITDA']
         },
-        '成长�?: {
+        '成长�?: {
             'indicators': ['REVENUE_GROWTH', 'PROFIT_GROWTH', 'ROE_GROWTH'],
             'sub_indicators': ['OPERATING_INCOME_GROWTH', 'GROSS_MARGIN_GROWTH']
         },
-        '质量�?: {
+        '质量�?: {
             'indicators': ['ROE', 'ROA', 'ROIC', 'GROSS_MARGIN'],
             'sub_indicators': ['NET_MARGIN', 'EBIT_MARGIN']
         },
-        '规模�?: {
+        '规模�?: {
             'indicators': ['TOTAL_MARKET_CAP', 'FREE_MARKET_CAP'],
             'sub_indicators': ['LOG_MARKET_CAP']
         },
-        '杠杆�?: {
+        '杠杆�?: {
             'indicators': ['DEBT_RATIO', 'CURRENT_RATIO', 'QUICK_RATIO'],
             'sub_indicators': ['NET_DEBT_TO_EBITDA']
         }
@@ -95,15 +95,15 @@ FACTOR_TAXONOMY = {
         }
     },
     '市场结构': {
-        '动量�?: {
+        '动量�?: {
             'indicators': ['PRICE_MOMENTUM', 'SECTOR_MOMENTUM'],
             'sub_indicators': ['RELATIVE_STRENGTH']
         },
-        '趋势�?: {
+        '趋势�?: {
             'indicators': ['TREND_STRENGTH', 'TREND_DIRECTION'],
             'sub_indicators': ['TREND_PERSISTENCE']
         },
-        '反转�?: {
+        '反转�?: {
             'indicators': ['MEAN_REVERSION', 'SHORT_TERM_REVERSAL'],
             'sub_indicators': ['LONG_TERM_REVERSAL']
         }
@@ -118,8 +118,8 @@ FACTOR_TAXONOMY = {
 ```python
 FACTOR_PARAMETERS = {
     'MA': {
-        'description': '移动平均�?,
-        'category': '技术指�?趋势�?,
+        'description': '移动平均�?,
+        'category': '技术指�?趋势�?,
         'parameters': {
             'periods': {
                 'type': 'list[int]',
@@ -139,7 +139,7 @@ FACTOR_PARAMETERS = {
 
     'RSI': {
         'description': '相对强弱指数',
-        'category': '技术指�?动量�?,
+        'category': '技术指�?动量�?,
         'parameters': {
             'periods': {
                 'type': 'list[int]',
@@ -152,8 +152,8 @@ FACTOR_PARAMETERS = {
     },
 
     'MACD': {
-        'description': '指数平滑异同移动平均�?,
-        'category': '技术指�?趋势�?,
+        'description': '指数平滑异同移动平均�?,
+        'category': '技术指�?趋势�?,
         'parameters': {
             'fast_period': {
                 'type': 'int',
@@ -176,8 +176,8 @@ FACTOR_PARAMETERS = {
     },
 
     'BBANDS': {
-        'description': '布林�?,
-        'category': '技术指�?波动�?,
+        'description': '布林�?,
+        'category': '技术指�?波动�?,
         'parameters': {
             'period': {
                 'type': 'int',
@@ -195,8 +195,8 @@ FACTOR_PARAMETERS = {
     },
 
     'PE': {
-        'description': '市盈�?,
-        'category': '基本�?估值类',
+        'description': '市盈�?,
+        'category': '基本�?估值类',
         'parameters': {
             'type': {
                 'type': 'enum',
@@ -210,8 +210,8 @@ FACTOR_PARAMETERS = {
     },
 
     'ROE': {
-        'description': '净资产收益�?,
-        'category': '基本�?质量�?,
+        'description': '净资产收益�?,
+        'category': '基本�?质量�?,
         'parameters': {
             'period': {
                 'type': 'enum',
@@ -228,7 +228,7 @@ FACTOR_PARAMETERS = {
 
 ---
 
-## 3. 因子依赖关系�?
+## 3. 因子依赖关系�?
 
 ```python
 FACTOR_DEPENDENCY_GRAPH = {
@@ -254,7 +254,7 @@ FACTOR_DEPENDENCY_GRAPH = {
     },
     'KDJ': {
         'dependencies': ['RSV'],
-        'description': '依赖原始随机�?
+        'description': '依赖原始随机�?
     },
     'WR': {
         'dependencies': ['HHV', 'LLV'],
@@ -268,11 +268,11 @@ FACTOR_DEPENDENCY_GRAPH = {
     # 复合因子
     'COMPOSITE_MOMENTUM': {
         'dependencies': ['RSI', 'MACD', 'ROC'],
-        'description': '多动量因子组�?
+        'description': '多动量因子组�?
     },
     'VALUE_QUALITY': {
         'dependencies': ['PE', 'PB', 'ROE', 'GROSS_MARGIN'],
-        'description': '价值质量因子组�?
+        'description': '价值质量因子组�?
     },
     'CAPITAL_FLOW': {
         'dependencies': ['MAIN_NET_BUY', 'NORTH_NET_BUY', 'MARGIN_NET_BUY'],
@@ -285,12 +285,12 @@ FACTOR_DEPENDENCY_GRAPH = {
 
 ```python
 def resolve_dependency_chain(target_factor: str) -> list:
-    """解析因子的完整依赖链（按计算顺序�?
+    """解析因子的完整依赖链（按计算顺序�?
 
-    使用拓扑排序确保按正确顺序计�?
+    使用拓扑排序确保按正确顺序计�?
 
     返回:
-        依赖链列表，从最底层依赖到目标因�?
+        依赖链列表，从最底层依赖到目标因�?
     """
     visited = set()
     chain = []
@@ -315,14 +315,14 @@ def resolve_dependency_chain(target_factor: str) -> list:
 ## 4. 因子元数据表结构
 
 ```sql
--- 因子定义�?
+-- 因子定义�?
 CREATE TABLE factor_definitions (
     factor_id VARCHAR(50) PRIMARY KEY,
     factor_name VARCHAR(100),
     factor_type ENUM('technical', 'fundamental', 'flow', 'alternative', 'macro'),
-    category_path VARCHAR(100),  -- e.g., '技术指�?趋势�?
+    category_path VARCHAR(100),  -- e.g., '技术指�?趋势�?
     description TEXT,
-    formula_expression TEXT,     -- 数学表达�?
+    formula_expression TEXT,     -- 数学表达�?
     parameters JSON,             -- 参数配置
     dependencies JSON,           -- 依赖列表
     created_time DATETIME,
@@ -330,10 +330,10 @@ CREATE TABLE factor_definitions (
     version INT DEFAULT 1,
     status ENUM('active', 'deprecated', 'testing', 'failed') DEFAULT 'testing',
     created_by VARCHAR(50),
-    tags JSON                   -- 自定义标�?
+    tags JSON                   -- 自定义标�?
 );
 
--- 因子参数�?
+-- 因子参数�?
 CREATE TABLE factor_parameters (
     param_id VARCHAR(50) PRIMARY KEY,
     factor_id VARCHAR(50),
@@ -346,7 +346,7 @@ CREATE TABLE factor_parameters (
     FOREIGN KEY (factor_id) REFERENCES factor_definitions(factor_id)
 );
 
--- 因子计算结果�?
+-- 因子计算结果�?
 CREATE TABLE factor_values (
     stock_code VARCHAR(20),
     trade_date DATE,
@@ -361,7 +361,7 @@ CREATE TABLE factor_values (
     INDEX idx_date (trade_date)
 );
 
--- 因子绩效�?
+-- 因子绩效�?
 CREATE TABLE factor_performance (
     factor_id VARCHAR(50),
     calc_date DATE,
@@ -389,7 +389,7 @@ CREATE TABLE factor_version_history (
 
 ---
 
-## 5. 因子质量检�?
+## 5. 因子质量检�?
 
 ```python
 class FactorQualityChecker:
@@ -400,7 +400,7 @@ class FactorQualityChecker:
         factor_values: pd.DataFrame,
         factor_id: str
     ) -> dict:
-        """执行完整质量检�?
+        """执行完整质量检�?
 
         返回:
             质量报告
@@ -462,11 +462,11 @@ class FactorQualityChecker:
 
 ---
 
-## 6. 因子流水�?
+## 6. 因子流水�?
 
 ```python
 class FactorPipeline:
-    """因子计算流水�?""
+    """因子计算流水�?""
 
     def __init__(self, factor_ids: list):
         self.factor_ids = factor_ids
@@ -480,22 +480,22 @@ class FactorPipeline:
         end_date: str,
         stock_list: list = None
     ) -> dict:
-        """执行因子计算流水�?""
+        """执行因子计算流水�?""
 
-        # 阶段1: 解析依赖�?
+        # 阶段1: 解析依赖�?
         all_factors = self._resolve_all_dependencies(self.factor_ids)
 
         # 阶段2: 获取基础数据
         raw_data = self._fetch_raw_data(all_factors, start_date, end_date, stock_list)
 
-        # 阶段3: 按依赖顺序计�?
+        # 阶段3: 按依赖顺序计�?
         for factor_id in all_factors:
             config = FACTOR_PARAMETERS.get(factor_id, {})
             self.results[factor_id] = self._calculate_factor(
                 factor_id, config, raw_data
             )
 
-        # 阶段4: 质量检�?
+        # 阶段4: 质量检�?
         quality_reports = {}
         for factor_id, values in self.results.items():
             quality_reports[factor_id] = self.quality_checker.check_factor_quality(
@@ -511,7 +511,7 @@ class FactorPipeline:
         }
 
     def _resolve_all_dependencies(self, factor_ids: list) -> list:
-        """解析所有因子的依赖�?""
+        """解析所有因子的依赖�?""
         all_factors = []
         for fid in factor_ids:
             chain = self.dependency_resolver.resolve_dependency_chain(fid)
@@ -523,7 +523,7 @@ class FactorPipeline:
 
 ---
 
-## 7. 因子监控与预�?
+## 7. 因子监控与预�?
 
 ```python
 FACTOR_ALERT_RULES = {
@@ -548,11 +548,11 @@ FACTOR_ALERT_RULES = {
 }
 
 class FactorMonitor:
-    """因子有效性监�?""
+    """因子有效性监�?""
 
     def check_alerts(self, factor_id: str, recent_icir: float,
                      recent_turnover: float) -> list:
-        """检查是否触发告�?""
+        """检查是否触发告�?""
         alerts = []
 
         if recent_icir < FACTOR_ALERT_RULES['icir_threshold']['critical']:
@@ -560,7 +560,7 @@ class FactorMonitor:
                 'type': 'icir_critical',
                 'factor_id': factor_id,
                 'icir': recent_icir,
-                'message': f'因子{factor_id}的ICIR持续低迷，建议暂停使�?
+                'message': f'因子{factor_id}的ICIR持续低迷，建议暂停使�?
             })
         elif recent_icir < FACTOR_ALERT_RULES['icir_threshold']['warning']:
             alerts.append({
@@ -575,7 +575,7 @@ class FactorMonitor:
                 'type': 'turnover_critical',
                 'factor_id': factor_id,
                 'turnover': recent_turnover,
-                'message': f'因子{factor_id}换手率过高，交易成本�?
+                'message': f'因子{factor_id}换手率过高，交易成本�?
             })
 
         return alerts
@@ -588,8 +588,8 @@ class FactorMonitor:
 | 因子类别 | 因子数量 | 文档位置 |
 |----------|----------|----------|
 | Alpha趋势 | 14+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha均值回归 | 12+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha价值 | 11+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
+| Alpha均值回�?| 12+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
+| Alpha价�?| 11+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | Alpha成长 | 10+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | Alpha质量 | 17+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | Alpha动量 | 9+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
@@ -597,21 +597,21 @@ class FactorMonitor:
 | Barra风格 | 10 | [T.03.RF001.barra_style_factors.md](../03_RISK_FACTORS/T.03.RF001.barra_style_factors.md) |
 | 行业因子 | 28+ | [T.03.RF002.industry_factors.md](../03_RISK_FACTORS/T.03.RF002.industry_factors.md) |
 | 尾部风险 | 8+ | [T.03.RF003.tail_risk_factors.md](../03_RISK_FACTORS/T.03.RF003.tail_risk_factors.md) |
-| THS_BD数据源 | 5700+ | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
+| THS_BD数据�?| 5700+ | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
 | **合计** | **5900+** | |
 
 ---
 
-## 9. 快速导航
+## 9. 快速导�?
 
-| 需求 | 路径 |
+| 需�?| 路径 |
 |------|------|
 | Alpha因子列表 | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | 风险因子列表 | [03_RISK_FACTORS/](../03_RISK_FACTORS/) |
 | THS_BD完整指标 | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
-| 因子注册表 | [factor_catalog.md](../06_REGISTRY/factor_catalog.md) |
+| 因子注册�?| [factor_catalog.md](../06_REGISTRY/factor_catalog.md) |
 | 因子计算框架 | [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) |
 
 ---
 
-**版本**: 2.0 | **更新**: 2026-04-03 | **合并**: factor_classification_summary.md
+**版本**: 2.0 | **更新**: 2026-04-03 | **合并**: FACTOR_TAXONOMY.md

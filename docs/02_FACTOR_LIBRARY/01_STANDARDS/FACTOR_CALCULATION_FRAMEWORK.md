@@ -548,7 +548,7 @@ class FactorValidator:
 �? 相关文档:                                                          �?
 �? ├── NEWS_SENTIMENT_DATA_SOURCE.md - 新闻舆情数据源定�?                             �?
 �? ├── TECHNICAL_INDICATORS.md - 技术指标计算公�?                    �?
-�? ├── FACTOR_REGISTRY.md - 因子注册表格�?                         �?
+�? ├── FACTOR_TAXONOMY.md - 因子注册表格�?                         �?
 �? ├── ic_analysis.md - IC/IR分析方法                                �?
 �? └── factor_preprocessing.md - 因子预处理方�?                     �?
 �?                                                                    �?
@@ -560,6 +560,6 @@ class FactorValidator:
 ## 索引
 
 - 父目�? [01_STANDARDS/README.md](./README.md)
-- 相关: [FACTOR_REGISTRY.md](./FACTOR_REGISTRY.md)
+- 相关: [FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)
 - 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
 - 相关: [ic_analysis.md](./ic_analysis.md)

@@ -96,7 +96,7 @@ implementation_status: 进行�?
 
 **问题描述**:
 1. **factor_library_manual_v3.2.md** 与其他文档内容大量重�?
-2. **factor_classification_summary.md** �?README.md 内容重复
+2. **FACTOR_TAXONOMY.md** �?README.md 内容重复
 3. 方法论文档分散在多个文件�?
 
 **影响**:
@@ -312,7 +312,7 @@ performance:
 
 | 原文�?| 新位�?| 状�?|
 |--------|--------|------|
-| factor_classification_summary.md | 06_REGISTRY/factor_catalog.md |  |
+| FACTOR_TAXONOMY.md | 06_REGISTRY/factor_catalog.md |  |
 | factor_library_manual_v3.2.md (治理部分) | 00_GOVERNANCE/README.md |  |
 | factor_library_manual_v3.2.md (方法论部�? | 01_STANDARDS/ |  |
 | 趋势跟踪因子.md | 02_ALPHA_FACTORY/01_trend_factors.md |  |

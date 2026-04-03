@@ -4,33 +4,30 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构师
-standard_type: 分析工具文档
-applicable_scope: 相关性分析
-compliance_level: 专业标准
+owner: 首席文档架构�?standard_type: 分析工具文档
+applicable_scope: 相关性分�?compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行中
----
+implementation_status: 进行�?---
 
-# 相关性分�?
+# 相关性分�?
 
 > **模块编号**: M-CORR-001 (Correlation Analysis)
 > **版本**: 1.0
 > **创建日期**: 2026-03-28
-> **优先�?*: P1
+> **优先�?*: P1
 > **依赖**: STATISTICAL_TOOLS.md
 
 ---
 
 ## 1. 概述
 
-本文档是统计分析工具的补充，专注�?*深入的相关性分�?*方法，包括偏相关、条件相关、协整检验等高级主题�?
+本文档是统计分析工具的补充，专注�?*深入的相关性分�?*方法，包括偏相关、条件相关、协整检验等高级主题�?
 
-> 基础相关系数计算请参�?[STATISTICAL_TOOLS.md](STATISTICAL_TOOLS.md) 中的 `CorrelationAnalysis` 类�?
+> 基础相关系数计算请参�?[STATISTICAL_TOOLS.md](STATISTICAL_TOOLS.md) 中的 `CorrelationAnalysis` 类�?
 
 ---
 
-## 2. 偏相关分�?
+## 2. 偏相关分�?
 
 ### 2.1 概念
 
@@ -48,14 +45,14 @@ import pandas as pd
 import numpy as np
 
 class PartialCorrelation:
-    """偏相关分�?""
+    """偏相关分�?""
 
     @staticmethod
     def compute(x: pd.Series,
                y: pd.Series,
                control_vars: List[pd.Series]) -> float:
         """
-        计算偏相关系�?
+        计算偏相关系�?
 
         参数:
             x: 变量X
@@ -63,7 +60,7 @@ class PartialCorrelation:
             control_vars: 控制变量列表
 
         返回:
-            偏相关系�?
+            偏相关系�?
         """
         from scipy import stats
 
@@ -76,7 +73,7 @@ class PartialCorrelation:
         # 构建设计矩阵
         X = np.column_stack([x.values] + [c.values for c in control_vars])
 
-        # 残差�?
+        # 残差�?
         def residualize(series):
             from sklearn.linear_model import LinearRegression
             reg = LinearRegression()
@@ -86,7 +83,7 @@ class PartialCorrelation:
         x_resid = residualize(x)
         y_resid = residualize(y)
 
-        # 计算残差的相�?
+        # 计算残差的相�?
         return np.corrcoef(x_resid, y_resid)[0, 1]
 
     @classmethod
@@ -94,11 +91,11 @@ class PartialCorrelation:
                       data: pd.DataFrame,
                       control_cols: List[str] = None) -> pd.DataFrame:
         """
-        计算偏相关矩�?
+        计算偏相关矩�?
 
         参数:
             data: 数据DataFrame
-            control_cols: 控制变量列表，None表示计算简单相�?
+            control_cols: 控制变量列表，None表示计算简单相�?
         """
         cols = data.columns.tolist()
         n = len(cols)
@@ -122,17 +119,17 @@ class PartialCorrelation:
 
 ---
 
-## 3. 条件相关�?
+## 3. 条件相关�?
 
 ### 3.1 概念
 
-条件相关性（Conditional Correlation）分析在不同条件（或分组）下相关性的变化�?
+条件相关性（Conditional Correlation）分析在不同条件（或分组）下相关性的变化�?
 
 ### 3.2 实现
 
 ```python
 class ConditionalCorrelation:
-    """条件相关性分�?""
+    """条件相关性分�?""
 
     @staticmethod
     def by_quantile(data: pd.DataFrame,
@@ -141,16 +138,16 @@ class ConditionalCorrelation:
                    condition_var: str,
                    n_quantiles: int = 3) -> pd.DataFrame:
         """
-        按分位数分组计算相关�?
+        按分位数分组计算相关�?
 
         参数:
             data: 数据
             x, y: 相关变量
             condition_var: 条件变量
-            n_quantiles: 分组�?
+            n_quantiles: 分组�?
 
         返回:
-            各分位数组的相关�?
+            各分位数组的相关�?
         """
         results = []
         labels = [f'Q{i+1}' for i in range(n_quantiles)]
@@ -174,7 +171,7 @@ class ConditionalCorrelation:
                                       y: pd.Series,
                                       window: int = 60) -> Dict:
         """
-        滚动相关性稳定性分�?
+        滚动相关性稳定性分�?
 
         返回:
             {mean_corr, std_corr, stability_ratio, cv}
@@ -198,21 +195,21 @@ class ConditionalCorrelation:
 
 ---
 
-## 4. 相关性检�?
+## 4. 相关性检�?
 
-### 4.1 相关系数显著性检�?
+### 4.1 相关系数显著性检�?
 
 ```python
 class CorrelationTest:
-    """相关性统计检�?""
+    """相关性统计检�?""
 
     @staticmethod
     def pearson_test(x: pd.Series,
                     y: pd.Series) -> Dict:
         """
-        Pearson相关性的t检�?
+        Pearson相关性的t检�?
 
-        H0: ρ = 0 (无线性相�?
+        H0: ρ = 0 (无线性相�?
         """
         n = len(x)
         r = x.corr(y)
@@ -236,7 +233,7 @@ class CorrelationTest:
     def spearman_test(x: pd.Series,
                      y: pd.Series) -> Dict:
         """
-        Spearman相关的符号检�?
+        Spearman相关的符号检�?
         """
         from scipy import stats
         corr, p_value = stats.spearmanr(x, y)
@@ -253,11 +250,11 @@ class CorrelationTest:
                                        n: int,
                                        confidence: float = 0.95) -> Tuple[float, float]:
         """
-        Pearson相关系数的置信区�?(Fisher Z变换)
+        Pearson相关系数的置信区�?(Fisher Z变换)
 
         参数:
             r: 相关系数
-            n: 样本�?
+            n: 样本�?
             confidence: 置信水平
         """
         from scipy import stats
@@ -271,18 +268,18 @@ class CorrelationTest:
         z_lower = z - z_alpha * se
         z_upper = z + z_alpha * se
 
-        # 逆变�?
+        # 逆变�?
         r_lower = (np.exp(2 * z_lower) - 1) / (np.exp(2 * z_lower) + 1)
         r_upper = (np.exp(2 * z_upper) - 1) / (np.exp(2 * z_upper) + 1)
 
         return r_lower, r_upper
 ```
 
-### 4.2 相关性差异检�?
+### 4.2 相关性差异检�?
 
 ```python
 class CorrelationDifferenceTest:
-    """两个相关系数的差异检�?""
+    """两个相关系数的差异检�?""
 
     @staticmethod
     def compare_correlations(r1: float,
@@ -300,7 +297,7 @@ class CorrelationDifferenceTest:
         z1 = 0.5 * np.log((1 + r1) / (1 - r1))
         z2 = 0.5 * np.log((1 + r2) / (1 - r2))
 
-        # Z统计�?
+        # Z统计�?
         se = np.sqrt(1 / (n1 - 3) + 1 / (n2 - 3))
         z_stat = (z1 - z2) / se
         p_value = 2 * (1 - stats.norm.cdf(abs(z_stat)))
@@ -310,32 +307,32 @@ class CorrelationDifferenceTest:
             'p_value': p_value,
             'significant_005': p_value < 0.05,
             'significant_001': p_value < 0.01,
-            'interpretation': '相关系数显著不同' if p_value < 0.05 else '相关系数无显著差�?
+            'interpretation': '相关系数显著不同' if p_value < 0.05 else '相关系数无显著差�?
         }
 ```
 
 ---
 
-## 5. 协整检�?
+## 5. 协整检�?
 
 ### 5.1 概念
 
-协整（Cointegration）检验两个非平稳时间序列之间是否存在长期均衡关系�?
+协整（Cointegration）检验两个非平稳时间序列之间是否存在长期均衡关系�?
 
 ### 5.2 实现
 
 ```python
 class CointegrationTest:
-    """协整检�?""
+    """协整检�?""
 
     @staticmethod
     def engle_granger(y: pd.Series,
                      x: pd.Series) -> Dict:
         """
-        Engle-Granger两步法协整检�?
+        Engle-Granger两步法协整检�?
 
         步骤1: OLS回归 y = α + βx + ε
-        步骤2: 检验ε的平稳�?ADF)
+        步骤2: 检验ε的平稳�?ADF)
         """
         from statsmodels.tsa.stattools import adfuller
 
@@ -344,12 +341,12 @@ class CointegrationTest:
         X = sm.add_constant(x)
         model = sm.OLS(y, X).fit()
 
-        # 步骤2: 残差平稳�?
+        # 步骤2: 残差平稳�?
         residuals = model.resid
         adf_result = adfuller(residuals, autolag='AIC')
 
-        # 计算t统计�?
-        # H0: β = 1 (不存在协�?
+        # 计算t统计�?
+        # H0: β = 1 (不存在协�?
         beta = model.params[x.name]
         se = model.bse[x.name]
         t_stat = (beta - 1) / se
@@ -369,15 +366,15 @@ class CointegrationTest:
                 det_order: int = 0,
                 k_ar_diff: int = 1) -> Dict:
         """
-        Johansen协整检�?
+        Johansen协整检�?
 
         参数:
-            data: 多变量时间序�?
+            data: 多变量时间序�?
             det_order: 确定性项 (0=none, 1=constant, 2=trend)
             k_ar_diff: 差分滞后阶数
 
         返回:
-            特征值迹检验和最大特征值检验结�?
+            特征值迹检验和最大特征值检验结�?
         """
         from statsmodels.tsa.vector_ar.vecm import coint_johansen
 
@@ -386,15 +383,15 @@ class CointegrationTest:
         return {
             'eigenvalues': result.eig,
             'trace_stat': result.lr1,
-            'trace_cvt': result.cvt[:, 1],  # 5%临界�?
+            'trace_cvt': result.cvt[:, 1],  # 5%临界�?
             'max_eigen_stat': result.lr2,
-            'max_eigen_cvt': result.cvm[:, 1],  # 5%临界�?
+            'max_eigen_cvt': result.cvm[:, 1],  # 5%临界�?
             'trace_reject': result.lr1 > result.cvt[:, 1],  # 是否拒绝H0
             'eigen_reject': result.lr2 > result.cvm[:, 1]
         }
 ```
 
-### 5.3 协整对交�?
+### 5.3 协整对交�?
 
 ```python
 class CointegrationPairTrading:
@@ -423,7 +420,7 @@ class CointegrationPairTrading:
         """
         生成交易信号
 
-        基于Z-Score均值回�?
+        基于Z-Score均值回�?
         """
         spread = price1 - self.hedge_ratio * price2
         zscore = (spread - spread.rolling(window).mean()) / spread.rolling(window).std()
@@ -433,8 +430,8 @@ class CointegrationPairTrading:
         signals['zscore'] = zscore
         signals['signal'] = 0
 
-        # Z-Score均值回归策�?
-        signals.loc[zscore < -2, 'signal'] = 1   # 做多价差 (spread被低�?
+        # Z-Score均值回归策�?
+        signals.loc[zscore < -2, 'signal'] = 1   # 做多价差 (spread被低�?
         signals.loc[zscore > 2, 'signal'] = -1  # 做空价差
         signals.loc[abs(zscore) < 0.5, 'signal'] = 0  # 平仓
 
@@ -443,27 +440,27 @@ class CointegrationPairTrading:
 
 ---
 
-## 6. 相关性衰减分�?
+## 6. 相关性衰减分�?
 
-### 6.1 相关性衰减检�?
+### 6.1 相关性衰减检�?
 
 ```python
 class CorrelationDecayAnalysis:
-    """相关性衰减分�?""
+    """相关性衰减分�?""
 
     @staticmethod
     def decay_over_lags(x: pd.Series,
                        y: pd.Series,
                        max_lag: int = 20) -> pd.DataFrame:
         """
-        分析不同滞后期的相关�?
+        分析不同滞后期的相关�?
 
         参数:
             x, y: 时间序列
             max_lag: 最大滞后期
 
         返回:
-            各滞后期的相关系�?
+            各滞后期的相关系�?
         """
         results = []
 
@@ -493,18 +490,18 @@ class CorrelationDecayAnalysis:
         return decay.loc[optimal_idx, 'lag']
 ```
 
-### 6.2 相关性预�?
+### 6.2 相关性预�?
 
 ```python
 class CorrelationForecasting:
-    """相关性预�?""
+    """相关性预�?""
 
     @staticmethod
     def predict_next_correlation(roll_corr: pd.Series,
                                  horizon: int = 1) -> float:
         """
-        基于历史滚动相关预测未来相关�?
-        使用简单指数平�?
+        基于历史滚动相关预测未来相关�?
+        使用简单指数平�?
         """
         return roll_corr.ewm(span=20).mean().iloc[-1]
 
@@ -512,8 +509,8 @@ class CorrelationForecasting:
     def correlation regimes(roll_corr: pd.Series,
                            threshold: float = 0.5) -> pd.Series:
         """
-        识别相关�?regime
-        高相�?vs 低相�?
+        识别相关�?regime
+        高相�?vs 低相�?
         """
         return pd.Series(
             ['high' if c > threshold else 'low' for c in roll_corr],
@@ -523,7 +520,7 @@ class CorrelationForecasting:
 
 ---
 
-## 7. 高维相关�?
+## 7. 高维相关�?
 
 ### 7.1 相关矩阵分解
 
@@ -534,10 +531,10 @@ class CorrelationDecomposition:
     @staticmethod
     def eigen_decomposition(corr_matrix: pd.DataFrame) -> Dict:
         """
-        相关矩阵的特征值分�?
+        相关矩阵的特征值分�?
 
         返回:
-            特征值、方差解释比例、因子载�?
+            特征值、方差解释比例、因子载�?
         """
         eigenvalues, eigenvectors = np.linalg.eigh(corr_matrix)
 
@@ -554,7 +551,7 @@ class CorrelationDecomposition:
             'variance_explained': variance_explained,
             'cumulative_variance': cumulative_variance,
             'eigenvectors': eigenvectors,
-            'n_factors_90': np.argmax(cumulative_variance >= 0.9) + 1,  # 解释90%方差所需因子�?
+            'n_factors_90': np.argmax(cumulative_variance >= 0.9) + 1,  # 解释90%方差所需因子�?
             'n_factors_95': np.argmax(cumulative_variance >= 0.95) + 1
         }
 
@@ -562,7 +559,7 @@ class CorrelationDecomposition:
     def clustering_by_correlation(data: pd.DataFrame,
                                   n_clusters: int = 3) -> pd.Series:
         """
-        基于相关性聚�?
+        基于相关性聚�?
         """
         from sklearn.cluster import AgglomerativeClustering
 
@@ -585,10 +582,10 @@ class CorrelationDecomposition:
 ## 8. 使用示例
 
 ```python
-# 1. 偏相关分�?
+# 1. 偏相关分�?
 from statsmodels.regression.linear_model import OLS
 
-# 计算控制GDP后的 PE与收益率偏相�?
+# 计算控制GDP后的 PE与收益率偏相�?
 partial_corr = PartialCorrelation.compute(
     df['pe_ratio'],
     df['return'],
@@ -600,7 +597,7 @@ pair = CointegrationPairTrading()
 test = pair.fit(price_a, price_b)
 signals = pair.generate_signals(price_a, price_b)
 
-# 3. 相关性衰�?
+# 3. 相关性衰�?
 decay = CorrelationDecayAnalysis.decay_over_lags(factor1, returns, max_lag=20)
 optimal_lag = CorrelationDecayAnalysis.optimal_lag(factor1, returns)
 

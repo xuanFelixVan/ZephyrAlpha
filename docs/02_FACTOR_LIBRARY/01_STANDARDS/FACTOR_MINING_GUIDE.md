@@ -411,7 +411,7 @@ def calculate_sentiment_factor(stock_code, date, window=7):
 |------|------|------|
 | **AI因子挖掘�?* | 自动挖掘因子 | [AI_FACTOR_MINER](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md) |
 | **因子计算框架** | 因子计算引擎 | [FACTOR_CALCULATION_FRAMEWORK](./FACTOR_CALCULATION_FRAMEWORK.md) |
-| **因子注册�?* | 因子管理 | [FACTOR_REGISTRY](./FACTOR_REGISTRY.md) |
+| **因子注册�?* | 因子管理 | [FACTOR_REGISTRY](./FACTOR_TAXONOMY.md) |
 | **IC分析工具** | IC计算与分�?| [ic_analysis](./ic_analysis.md) |
 
 ### 9.2 数据�?
@@ -437,7 +437,7 @@ def calculate_sentiment_factor(stock_code, date, window=7):
 | [因子管理标准](./FACTOR_MANAGEMENT_STANDARD.md) | 因子生命周期管理 |
 | [因子验证指南](./FACTOR_VALIDATION_GUIDE.md) | 因子验证方法 |
 | [因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算引擎 |
-| [因子注册表](./FACTOR_REGISTRY.md) | 因子分类体系 |
+| [因子注册表](./FACTOR_TAXONOMY.md) | 因子分类体系 |
 
 ---
 

@@ -4,58 +4,54 @@ version: 3.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构师
-standard_type: 数据源文档
-applicable_scope: 数据源整合
-compliance_level: 专业标准
+owner: 首席文档架构�?standard_type: 数据源文�?applicable_scope: 数据源整�?compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行中
---- 进行�?
+implementation_status: 进行�?--- 进行�?
 ---
 
-# T.01.DS001.免费数据源整�?
+# T.01.DS001.免费数据源整�?
 
 > 数据源类Alpha因子
 >
-> **配套文档**�?
+> **配套文档**�?
 > - 主文档：[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 > - 因子库索引：[factor_master_index.md](iFind/factor_master_index.md)
-> - 数据源索引：[数据�?README](./README.md)
+> - 数据源索引：[数据�?README](./README.md)
 
 ***
 
-## 1. 数据源概�?
+## 1. 数据源概�?
 
 | 属�?| 内容 |
 |------|------|
 | 因子编号 | T.01.DS001 |
-| 因子名称 | 免费数据源整�?|
+| 因子名称 | 免费数据源整�?|
 | 因子类型 | 数据源类 |
-| 数据�?| Baostock / AkShare / Efinance / Tushare / 新浪 / 腾讯 |
+| 数据�?| Baostock / AkShare / Efinance / Tushare / 新浪 / 腾讯 |
 | 更新频率 | 日频/实时 |
 
 **核心理念**：整合多个免费数据源，构建完整的A股数据体系，覆盖行情、财务、资金、舆情等维度
 
-**适用场景**：个人量化交易、因子研究、回测数据准�?
+**适用场景**：个人量化交易、因子研究、回测数据准�?
 
 ***
 
 ## 2. 数据源总览
 
-| 数据�?| 因子数量 | 评级 | 核心优势 | 费用 |
+| 数据�?| 因子数量 | 评级 | 核心优势 | 费用 |
 |--------|----------|------|----------|------|
-| Baostock | 28+ | ⭐⭐⭐⭐�?| 财务数据全面、历史长 | 免费 |
-| AkShare | 115+ | ⭐⭐⭐⭐�?| 覆盖全面、实时性好 | 免费 |
-| Efinance | 65+ | ⭐⭐⭐⭐ | 资金流数据独�?| 免费 |
-| Tushare | 35+ | ⭐⭐�?| 需积分、深度数�?| 需积分 |
-| 新浪财经 | 28+ | ⭐⭐�?| 实时行情 | 免费 |
+| Baostock | 28+ | ⭐⭐⭐⭐�?| 财务数据全面、历史长 | 免费 |
+| AkShare | 115+ | ⭐⭐⭐⭐�?| 覆盖全面、实时性好 | 免费 |
+| Efinance | 65+ | ⭐⭐⭐⭐ | 资金流数据独�?| 免费 |
+| Tushare | 35+ | ⭐⭐�?| 需积分、深度数�?| 需积分 |
+| 新浪财经 | 28+ | ⭐⭐�?| 实时行情 | 免费 |
 | 腾讯财经 | 21+ | ⭐⭐ | 基础数据 | 免费 |
 
 ***
 
-## 3. Baostock数据源（28+因子�?
+## 3. Baostock数据源（28+因子�?
 
-### 3.1 行情数据�?4个）
+### 3.1 行情数据�?4个）
 
 ```python
 class BaostockQuote:
@@ -64,8 +60,8 @@ class BaostockQuote:
     COLUMNS = {
         '基础行情': ['date', 'code', 'open', 'high', 'low', 'close', 'preclose'],
         '交易数据': ['volume', 'amount', 'turn', 'pctChg'],
-        '估值数�?: ['peTTM', 'psTTM', 'pcfNcfTTM', 'pbMRQ'],
-        '状态数�?: ['isST']
+        '估值数�?: ['peTTM', 'psTTM', 'pcfNcfTTM', 'pbMRQ'],
+        '状态数�?: ['isST']
     }
 
     def get_daily(self, code, start_date, end_date):
@@ -74,7 +70,7 @@ class BaostockQuote:
 
         Parameters:
             code: 股票代码，如 'sh.600000'
-            start_date: 开始日期，�?'2024-01-01'
+            start_date: 开始日期，�?'2024-01-01'
             end_date: 结束日期，如 '2024-12-31'
 
         Returns:
@@ -95,26 +91,26 @@ class BaostockQuote:
         pass
 ```
 
-### 3.2 财务数据�?1个）
+### 3.2 财务数据�?1个）
 
 ```python
 class BaostockFinance:
     """Baostock财务数据"""
 
     INDICATORS = {
-        '利润�?�?: [
+        '利润�?�?: [
             '营业收入', '营业成本', '营业利润',
             '利润总额', '净利润', '每股收益', 'ROE'
         ],
-        '资产负债表7�?: [
-            '总资�?, '流动资产', '固定资产',
-            '总负�?, '流动负�?, '股东权益', '资产负债率'
+        '资产负债表7�?: [
+            '总资�?, '流动资产', '固定资产',
+            '总负�?, '流动负�?, '股东权益', '资产负债率'
         ],
-        '现金流量�?�?: [
-            '经营活动现金�?, '投资活动现金�?,
-            '筹资活动现金�?, '现金净增加�?
+        '现金流量�?�?: [
+            '经营活动现金�?, '投资活动现金�?,
+            '筹资活动现金�?, '现金净增加�?
         ],
-        '业绩预告3�?: [
+        '业绩预告3�?: [
             '业绩变动类型', '预测净利润下限', '预测净利润上限'
         ]
     }
@@ -125,7 +121,7 @@ class BaostockFinance:
 
         Parameters:
             code: 股票代码
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
             statements: 'all'/'income'/'balance'/'cash'
 
@@ -139,7 +135,7 @@ class BaostockFinance:
         获取业绩预告/快报
 
         Parameters:
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
 
         Returns:
@@ -182,7 +178,7 @@ print(df.head())
 
 ***
 
-## 4. AkShare数据源（115+因子�?
+## 4. AkShare数据源（115+因子�?
 
 ### 4.1 A股行情（45个）
 
@@ -192,11 +188,11 @@ class AkShareQuote:
 
     def stock_zh_a_spot_em(self):
         """
-        获取A股实时行�?
+        获取A股实时行�?
 
         Returns:
-            DataFrame with columns: 代码, 名称, 最新价, 涨跌�? 涨跌�?
-            成交�? 成交�? 振幅, 最�? 最�? 今开, 昨收, 量比, 换手率等
+            DataFrame with columns: 代码, 名称, 最新价, 涨跌�? 涨跌�?
+            成交�? 成交�? 振幅, 最�? 最�? 今开, 昨收, 量比, 换手率等
         """
         pass
 
@@ -209,12 +205,12 @@ class AkShareQuote:
         adjust: str = "qfq"
     ):
         """
-        获取A股历史行�?
+        获取A股历史行�?
 
         Parameters:
             symbol: 股票代码
             period: 'daily'/'weekly'/'monthly'
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
             adjust: 'qfq'/'hfq'/'none'
 
@@ -230,7 +226,7 @@ class AkShareQuote:
         adjust: str = "qfq"
     ):
         """
-        获取分钟K线数�?
+        获取分钟K线数�?
 
         Parameters:
             symbol: 股票代码
@@ -243,19 +239,19 @@ class AkShareQuote:
         pass
 ```
 
-### 4.2 财务数据�?4个）
+### 4.2 财务数据�?4个）
 
 ```python
 class AkShareFinance:
     """AkShare财务数据"""
 
-    def stock_financial_report_sina(self, stock: str, symbol: str = "利润�?):
+    def stock_financial_report_sina(self, stock: str, symbol: str = "利润�?):
         """
         获取财务报表
 
         Parameters:
             stock: 股票代码
-            symbol: '利润�?/'资产负债表'/'现金流量�?
+            symbol: '利润�?/'资产负债表'/'现金流量�?
 
         Returns:
             DataFrame with financial report
@@ -277,7 +273,7 @@ class AkShareFinance:
         pass
 ```
 
-### 4.3 市场数据�?9个）
+### 4.3 市场数据�?9个）
 
 ```python
 class AkShareMarket:
@@ -285,14 +281,14 @@ class AkShareMarket:
 
     def stock_lhb_detail_em(self, date: str = None):
         """
-        获取龙虎榜明�?
+        获取龙虎榜明�?
 
         Parameters:
             date: 上榜日期，如 '2024-01-15'
 
         Returns:
             DataFrame with columns: 代码, 名称, 上榜日期, 上榜原因,
-            买入金额, 卖出金额, 净�? 买入席位, 卖出席位
+            买入金额, 卖出金额, 净�? 买入席位, 卖出席位
         """
         pass
 
@@ -301,7 +297,7 @@ class AkShareMarket:
         获取融资融券明细
 
         Returns:
-            DataFrame with 融资余额, 融资买入�? 融券余额�?
+            DataFrame with 融资余额, 融资买入�? 融券余额�?
         """
         pass
 
@@ -310,12 +306,12 @@ class AkShareMarket:
         获取大宗交易数据
 
         Returns:
-            DataFrame with 成交�? 成交�? 成交金额, 溢价�?
+            DataFrame with 成交�? 成交�? 成交金额, 溢价�?
         """
         pass
 ```
 
-### 4.4 指数与板块数�?
+### 4.4 指数与板块数�?
 
 ```python
 class AkShareIndex:
@@ -348,7 +344,7 @@ class AkShareIndex:
         获取行业板块列表
 
         Returns:
-            DataFrame with 行业板块成分�?
+            DataFrame with 行业板块成分�?
         """
         pass
 
@@ -357,7 +353,7 @@ class AkShareIndex:
         获取概念板块列表
 
         Returns:
-            DataFrame with 概念板块成分�?
+            DataFrame with 概念板块成分�?
         """
         pass
 ```
@@ -370,9 +366,9 @@ import pandas as pd
 
 # 获取实时行情
 df_spot = ak.stock_zh_a_spot_em()
-print(df_spot[['代码', '名称', '最新价', '涨跌�?]].head())
+print(df_spot[['代码', '名称', '最新价', '涨跌�?]].head())
 
-# 获取历史K�?
+# 获取历史K�?
 df_hist = ak.stock_zh_a_hist(
     symbol="000001",
     period="daily",
@@ -382,7 +378,7 @@ df_hist = ak.stock_zh_a_hist(
 )
 print(df_hist.head())
 
-# 获取龙虎�?
+# 获取龙虎�?
 df_lhb = ak.stock_lhb_detail_em(date="20240115")
 print(df_lhb.head())
 
@@ -393,9 +389,9 @@ print(df_industry.head())
 
 ***
 
-## 5. Efinance数据源（65+因子�?
+## 5. Efinance数据源（65+因子�?
 
-### 5.1 股票行情�?8个）
+### 5.1 股票行情�?8个）
 
 ```python
 class EFinanceQuote:
@@ -415,11 +411,11 @@ class EFinanceQuote:
 
     def get_kline(self, code, start_date=None, end_date=None, klt='101'):
         """
-        获取K线数�?
+        获取K线数�?
 
         Parameters:
             code: 股票代码
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
             klt:  Kline type, '101'=日线, '102'=周线, '103'=月线
 
@@ -429,11 +425,11 @@ class EFinanceQuote:
         pass
 ```
 
-### 5.2 资金流向�?3个）✨独家优�?
+### 5.2 资金流向�?3个）✨独家优�?
 
 ```python
 class EFinanceMoneyFlow:
-    """EFinance资金流数�?- 独家优势"""
+    """EFinance资金流数�?- 独家优势"""
 
     def get_individual_money_flow(self, stock: str, date: str = None):
         """
@@ -465,8 +461,8 @@ class EFinanceMoneyFlow:
             DataFrame with columns:
             - 板块名称
             - 机构净流入
-            - 涨跌�?
-            - 领涨�?
+            - 涨跌�?
+            - 领涨�?
         """
         pass
 
@@ -492,7 +488,7 @@ import pandas as pd
 
 # 获取实时行情
 df = stock.get_quote(['000001', '000002'])
-print(df[['代码', '名称', '最新价', '涨跌�?]].head())
+print(df[['代码', '名称', '最新价', '涨跌�?]].head())
 
 # 获取个股资金流向
 df_mf = stock.get_individual_money_flow('000001', '20240115')
@@ -505,9 +501,9 @@ print(df_north)
 
 ***
 
-## 6. Tushare数据源（35+因子�?
+## 6. Tushare数据源（35+因子�?
 
-### 6.1 基础数据�?5个）
+### 6.1 基础数据�?5个）
 
 ```python
 class TushareData:
@@ -532,7 +528,7 @@ class TushareData:
 
     def get_restricted_shares(self, start_date, end_date):
         """
-        获取限售股解禁数�?
+        获取限售股解禁数�?
 
         Returns:
             DataFrame with 股票代码, 解禁日期, 解禁数量, 解禁比例
@@ -540,11 +536,11 @@ class TushareData:
         pass
 ```
 
-### 6.2 进阶数据（需2000积分�?
+### 6.2 进阶数据（需2000积分�?
 
 ```python
 class TusharePro:
-    """Tushare Pro进阶数据（需积分�?""
+    """Tushare Pro进阶数据（需积分�?""
 
     def get_minute_data(self, ts_code, trade_date, freq='5min'):
         """
@@ -569,7 +565,7 @@ class TusharePro:
             period_type: 'annual'/'quarter'
 
         Returns:
-            DataFrame with 利润�? 资产负债表, 现金流量�?
+            DataFrame with 利润�? 资产负债表, 现金流量�?
         """
         pass
 
@@ -623,24 +619,24 @@ DATA_STORAGE_STRUCTURE = {
         '60分钟': 'data/quotes/60min/{stock_code}_{date}.parquet',
     },
     '财务数据': {
-        '利润�?: 'data/financial/income/{stock_code}_{period}.parquet',
+        '利润�?: 'data/financial/income/{stock_code}_{period}.parquet',
         '资产负债表': 'data/financial/balance/{stock_code}_{period}.parquet',
-        '现金流量�?: 'data/financial/cashflow/{stock_code}_{period}.parquet',
+        '现金流量�?: 'data/financial/cashflow/{stock_code}_{period}.parquet',
         '业绩预告': 'data/financial/performance/{stock_code}_{date}.parquet',
     },
-    '估值数�?: {
+    '估值数�?: {
         '每日估�?: 'data/valuation/daily/{date}.parquet',
         '历史估�?: 'data/valuation/history/{stock_code}.parquet',
     },
     '资金数据': {
-        '个股资金�?: 'data/money_flow/individual/{stock_code}_{date}.parquet',
-        '板块资金�?: 'data/money_flow/sector/{sector}_{date}.parquet',
+        '个股资金�?: 'data/money_flow/individual/{stock_code}_{date}.parquet',
+        '板块资金�?: 'data/money_flow/sector/{sector}_{date}.parquet',
         '北向资金': 'data/money_flow/north/{date}.parquet',
     },
     '市场数据': {
         '融资融券': 'data/market/margin/{date}.parquet',
         '大宗交易': 'data/market/block/{date}.parquet',
-        '龙虎�?: 'data/market/lhb/{date}.parquet',
+        '龙虎�?: 'data/market/lhb/{date}.parquet',
         '限售解禁': 'data/market/restricted/{date}.parquet',
     }
 }
@@ -651,11 +647,11 @@ DATA_STORAGE_STRUCTURE = {
 | 数据类型 | 更新频率 | 获取方式 |
 |----------|----------|----------|
 | 实时行情 | 实时 | 新浪/腾讯API |
-| 日线行情 | 收盘�?| Baostock/AkShare |
-| 分钟K�?| 盘中 | AkShare/EFinance |
+| 日线行情 | 收盘�?| Baostock/AkShare |
+| 分钟K�?| 盘中 | AkShare/EFinance |
 | 财务数据 | 季报/年报 | Baostock/AkShare |
 | 资金流向 | 日频 | EFinance（独家） |
-| 龙虎�?| 次日 | AkShare |
+| 龙虎�?| 次日 | AkShare |
 | 融资融券 | 日频 | AkShare |
 
 ***
@@ -675,16 +671,16 @@ RECOMMENDED_FREE_SETUP = {
 }
 ```
 
-### 8.2 因子优先�?
+### 8.2 因子优先�?
 
-| 优先�?| 因子类别 | 推荐数据�?| 重要�?|
+| 优先�?| 因子类别 | 推荐数据�?| 重要�?|
 |--------|----------|------------|--------|
-| P0 | 价格/成交�?| Baostock/AkShare | ⭐⭐⭐⭐�?|
-| P0 | 财务数据 | Baostock | ⭐⭐⭐⭐�?|
-| P1 | 资金流向 | EFinance | ⭐⭐⭐⭐�?|
-| P1 | 龙虎�?| AkShare | ⭐⭐⭐⭐ |
-| P2 | 融资融券 | AkShare | ⭐⭐�?|
-| P2 | 指数成分 | AkShare | ⭐⭐�?|
+| P0 | 价格/成交�?| Baostock/AkShare | ⭐⭐⭐⭐�?|
+| P0 | 财务数据 | Baostock | ⭐⭐⭐⭐�?|
+| P1 | 资金流向 | EFinance | ⭐⭐⭐⭐�?|
+| P1 | 龙虎�?| AkShare | ⭐⭐⭐⭐ |
+| P2 | 融资融券 | AkShare | ⭐⭐�?|
+| P2 | 指数成分 | AkShare | ⭐⭐�?|
 | P3 | 宏观数据 | AkShare | ⭐⭐ |
 
 ***
@@ -727,7 +723,7 @@ class DataSourceIntegrator:
         try:
             import akshare as ak
             self.akshare = ak
-            print(f"AkShare初始化成�?)
+            print(f"AkShare初始化成�?)
         except ImportError:
             print("请安装akshare: pip install akshare")
 
@@ -736,17 +732,17 @@ class DataSourceIntegrator:
         try:
             from efinance import stock
             self.efinance = stock
-            print(f"EFinance初始化成�?)
+            print(f"EFinance初始化成�?)
         except ImportError:
             print("请安装efinance: pip install efinance")
 
     def get_daily_quote(self, code: str, start_date: str, end_date: str) -> pd.DataFrame:
         """
-        获取日线行情（优先Baostock，失败用AkShare�?
+        获取日线行情（优先Baostock，失败用AkShare�?
 
         Parameters:
             code: 股票代码，如 '000001'
-            start_date: 开始日期，�?'2024-01-01'
+            start_date: 开始日期，�?'2024-01-01'
             end_date: 结束日期，如 '2024-12-31'
 
         Returns:
@@ -789,14 +785,14 @@ class DataSourceIntegrator:
 
     def get_money_flow(self, code: str, date: str) -> Optional[pd.DataFrame]:
         """
-        获取资金流向（EFinance独家�?
+        获取资金流向（EFinance独家�?
 
         Parameters:
             code: 股票代码
             date: 日期
 
         Returns:
-            DataFrame with 机构/超大�?大单/中单/小单净流入
+            DataFrame with 机构/超大�?大单/中单/小单净流入
         """
         if self.efinance:
             try:
@@ -809,20 +805,20 @@ class DataSourceIntegrator:
 
     def get_lhb(self, date: str) -> Optional[pd.DataFrame]:
         """
-        获取龙虎榜数�?
+        获取龙虎榜数�?
 
         Parameters:
             date: 日期
 
         Returns:
-            DataFrame with 龙虎榜明�?
+            DataFrame with 龙虎榜明�?
         """
         if self.akshare:
             try:
                 df = self.akshare.stock_lhb_detail_em(date=date)
                 return df
             except Exception as e:
-                print(f"获取龙虎榜失�? {e}")
+                print(f"获取龙虎榜失�? {e}")
 
         return None
 
@@ -834,7 +830,7 @@ class DataSourceIntegrator:
             date: 日期
 
         Returns:
-            DataFrame with 沪股�?深股通净流入
+            DataFrame with 沪股�?深股通净流入
         """
         if self.efinance:
             try:
@@ -871,15 +867,15 @@ integrator.init_efinance()
 
 # 获取日线行情
 df_quote = integrator.get_daily_quote('000001', '2024-01-01', '2024-12-31')
-print(f"获取行情: {len(df_quote)} �?)
+print(f"获取行情: {len(df_quote)} �?)
 
 # 获取资金流向
 df_mf = integrator.get_money_flow('000001', '2024-01-15')
 print(f"资金流向: {df_mf}")
 
-# 获取龙虎�?
+# 获取龙虎�?
 df_lhb = integrator.get_lhb('2024-01-15')
-print(f"龙虎�? {len(df_lhb)} �?)
+print(f"龙虎�? {len(df_lhb)} �?)
 
 # 获取北向资金
 df_north = integrator.get_north_money('2024-01-15')
@@ -892,8 +888,8 @@ print(f"北向资金: {df_north}")
 
 1. **API限制**：免费数据源有访问频率限制，需添加延时
 2. **数据质量**：免费数据可能存在缺失或延迟，需校验
-3. **合规使用**：请遵守各数据源的使用条�?
-4. **数据备份**：重要数据建议本地备�?
+3. **合规使用**：请遵守各数据源的使用条�?
+4. **数据备份**：重要数据建议本地备�?
 
 ***
 
@@ -905,21 +901,21 @@ print(f"北向资金: {df_north}")
 
 ### 12.1 另类数据类型
 
-| 数据类型 | 数据�?| 更新频率 | Alpha潜力 | 个人可获取�?|
+| 数据类型 | 数据�?| 更新频率 | Alpha潜力 | 个人可获取�?|
 |:---------|:-------|:---------|:---------|:------------|
-| **舆情数据** | 新闻/社交媒体 | 实时 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?免费 |
-| **消费数据** | 电商/支付 | 每日 | ⭐⭐�?| ⭐⭐�?付费 |
+| **舆情数据** | 新闻/社交媒体 | 实时 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?免费 |
+| **消费数据** | 电商/支付 | 每日 | ⭐⭐�?| ⭐⭐�?付费 |
 | **物流数据** | 货运/快�?| 每周 | ⭐⭐⭐⭐ | ⭐⭐ 付费 |
-| **能源数据** | 电网/工业用电 | 每日 | ⭐⭐�?| ⭐⭐ 付费 |
-| **气象数据** | 天气/气温 | 实时 | ⭐⭐�?| ⭐⭐⭐⭐�?免费 |
-| **卫星数据** | 停车�?商铺人流 | 每日 | ⭐⭐⭐⭐�?| �?昂贵 |
+| **能源数据** | 电网/工业用电 | 每日 | ⭐⭐�?| ⭐⭐ 付费 |
+| **气象数据** | 天气/气温 | 实时 | ⭐⭐�?| ⭐⭐⭐⭐�?免费 |
+| **卫星数据** | 停车�?商铺人流 | 每日 | ⭐⭐⭐⭐�?| �?昂贵 |
 
-### 12.2 舆情数据处理（个人可获取�?
+### 12.2 舆情数据处理（个人可获取�?
 
 ```python
 class NewsSentimentProvider:
     """
-    舆情数据提供�?
+    舆情数据提供�?
     个人开发者可使用Tushare/akshare获取新闻数据
     """
 
@@ -970,7 +966,7 @@ class NewsSentimentProvider:
         if news_df.empty:
             return 0.0
 
-        positive_keywords = ['增长', '盈利', '突破', '合作', '中标', '超预�?]
+        positive_keywords = ['增长', '盈利', '突破', '合作', '中标', '超预�?]
         negative_keywords = ['亏损', '下跌', '风险', '调查', '违规', '预警']
 
         sentiment = 0.0
@@ -986,13 +982,13 @@ class NewsSentimentProvider:
         return max(-1.0, min(1.0, sentiment / max(len(news_df), 1)))
 ```
 
-### 12.3 另类数据适配�?
+### 12.3 另类数据适配�?
 
 ```python
 class AlternativeDataAdapter:
     """
-    另类数据适配�?
-    整合多种另类数据源计算综合信�?
+    另类数据适配�?
+    整合多种另类数据源计算综合信�?
     """
 
     def __init__(self):
@@ -1000,7 +996,7 @@ class AlternativeDataAdapter:
         self.data_sources = {}
 
     def add_provider(self, name: str, provider):
-        """添加数据提供�?""
+        """添加数据提供�?""
         self.data_sources[name] = provider
 
     def calc_alternative_signal(self, stock_code: str) -> dict:
@@ -1041,17 +1037,17 @@ class AlternativeDataAdapter:
         return signals
 
     def process_data(self, name: str, data) -> float:
-        """处理各类数据返回信号�?""
+        """处理各类数据返回信号�?""
         return 0.0
 ```
 
-### 12.4 气象数据（免费可获取�?
+### 12.4 气象数据（免费可获取�?
 
 ```python
 class WeatherDataProvider:
     """
-    气象数据提供�?
-    天气数据对农�?能源/消费等板块有影响
+    气象数据提供�?
+    天气数据对农�?能源/消费等板块有影响
     """
 
     def get_weather(self, city: str, date: str) -> dict:
@@ -1061,14 +1057,14 @@ class WeatherDataProvider:
         Returns:
             dict: {
                 'temperature': float,    # 温度
-                'precipitation': float,  # 降水�?
+                'precipitation': float,  # 降水�?
                 'weather_type': str      # 天气类型
             }
         """
         return {
             'temperature': 25.0,
             'precipitation': 0.0,
-            'weather_type': '�?
+            'weather_type': '�?
         }
 
     def calc_weather_factor(self, sector: str, weather_data: dict) -> float:
@@ -1080,7 +1076,7 @@ class WeatherDataProvider:
             weather_data: 天气数据
 
         Returns:
-            float: 影响因子，范�?-1.0 ~ 1.0
+            float: 影响因子，范�?-1.0 ~ 1.0
         """
         sector_weather_map = {
             '农业': ['precipitation', 'temperature'],
@@ -1109,15 +1105,15 @@ class WeatherDataProvider:
         return max(-1.0, min(1.0, factor))
 ```
 
-### 12.5 个人开发者建�?
+### 12.5 个人开发者建�?
 
 | 数据类型 | 获取难度 | 成本 | 建议 |
 |---------|---------|------|------|
-| 新闻舆情 | �?| 免费 | 优先实现 |
-| 社交媒体 | �?| 免费/付费 | Tushare爬虫 |
-| 天气数据 | �?| 免费 | OpenWeatherMap |
-| 电商数据 | �?| 付费 | 暂缓 |
-| 卫星数据 | 极高 | 昂贵 | 不建�?|
+| 新闻舆情 | �?| 免费 | 优先实现 |
+| 社交媒体 | �?| 免费/付费 | Tushare爬虫 |
+| 天气数据 | �?| 免费 | OpenWeatherMap |
+| 电商数据 | �?| 付费 | 暂缓 |
+| 卫星数据 | 极高 | 昂贵 | 不建�?|
 
 ***
 
@@ -1125,5 +1121,5 @@ class WeatherDataProvider:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.0 | 2026-03-28 | 初始版本，整合附录AA数据源因子体�?|
-| v1.1 | 2026-03-28 | 整合附录AK另类数据框架，补充舆�?气象数据处理 |
+| v1.0 | 2026-03-28 | 初始版本，整合附录AA数据源因子体�?|
+| v1.1 | 2026-03-28 | 整合附录AK另类数据框架，补充舆�?气象数据处理 |

@@ -27,7 +27,7 @@ implementation_status: 进行�?---
 ## 🚀 快速开�?
 ### 新用�?
 1. 阅读 [因子库目录索引](./INDEX.md) 了解整体结构
-2. 查看 [因子分类总表](./00_INDEX/factor_classification_summary.md) 了解因子分类
+2. 查看 [因子分类总表](./00_INDEX/FACTOR_TAXONOMY.md) 了解因子分类
 3. 参�?[因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) 了解管理规范
 
 ### 研究人员

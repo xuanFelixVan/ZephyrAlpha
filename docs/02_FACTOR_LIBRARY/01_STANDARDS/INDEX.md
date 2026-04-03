@@ -16,7 +16,7 @@ implementation_status: 已完�?---
 | 文件 | 职责 | 状�?|
 |------|------|------|
 | [README.md](README.md) | 方法论概�?| Active |
-| [FACTOR_REGISTRY.md](FACTOR_REGISTRY.md) | 因子注册�?| Active |
+| [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) | 因子注册�?| Active |
 | [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | Active |
 | [FACTOR_MANAGEMENT_STANDARD.md](FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准（含筛选策略） | Active |
 | [FACTOR_MINING_GUIDE.md](FACTOR_MINING_GUIDE.md) | 因子挖掘指南 | Active |
@@ -35,7 +35,7 @@ implementation_status: 已完�?---
 ## 📖 核心文档
 
 ### 因子框架
-- [FACTOR_REGISTRY.md](FACTOR_REGISTRY.md) - 因子分类�?- [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 因子计算框架
+- [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) - 因子分类�?- [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 因子计算框架
 - [FACTOR_MANAGEMENT_STANDARD.md](FACTOR_MANAGEMENT_STANDARD.md) - 因子管理标准
 
 ### 因子研究与验�?- [FACTOR_MINING_GUIDE.md](FACTOR_MINING_GUIDE.md) - 因子挖掘指南

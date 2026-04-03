@@ -38,7 +38,7 @@ implementation_status: 活跃维护
 ### 因子方法�?
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子注册表](./01_STANDARDS/FACTOR_REGISTRY.md) | 因子注册�?| ⭐⭐⭐⭐�?|
+| [因子注册表](./01_STANDARDS/FACTOR_TAXONOMY.md) | 因子注册�?| ⭐⭐⭐⭐�?|
 | [因子计算框架](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | ⭐⭐⭐⭐�?|
 | [因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准（含筛选策略） | ⭐⭐⭐⭐ |
 
@@ -93,7 +93,7 @@ implementation_status: 活跃维护
 ## 📖 快速导�?
 ### 新手入门
 
-1. 阅读 [README.md](./README.md) - 因子库概�?2. 阅读 [系统清单](../System_Manifest.md) - 系统清单（全局�?3. 阅读 [因子分类学](./01_STANDARDS/FACTOR_REGISTRY.md) - 因子分类体系
+1. 阅读 [README.md](./README.md) - 因子库概�?2. 阅读 [系统清单](../System_Manifest.md) - 系统清单（全局�?3. 阅读 [因子分类学](./01_STANDARDS/FACTOR_TAXONOMY.md) - 因子分类体系
 
 ### 因子开�?
 1. 阅读 [01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) - 因子计算框架
