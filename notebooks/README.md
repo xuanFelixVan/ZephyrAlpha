@@ -53,11 +53,11 @@ notebooks/
 
 ### 文件名格式
 ```
-YYYYMMDD_描述性名称_版本.ipynb
+YYYYMMDD_描述性名称_版本.py   # 使用.py扩展名 (Python脚本格式)
 ```
 **示例**:
-- `20260331_market_data_quality_check_v1.ipynb`
-- `20260401_new_alpha_factor_development_v2.ipynb`
+- `20260331_market_data_quality_check_v1.py`
+- `20260401_new_alpha_factor_development_v2.py`
 
 ### 命名规则
 1. **日期前缀**: 8位数字日期 (YYYYMMDD)
