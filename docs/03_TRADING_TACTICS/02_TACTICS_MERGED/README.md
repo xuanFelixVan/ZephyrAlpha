@@ -14,7 +14,7 @@ implementation_status: 进行中
 
 # main/02_TACTICS - 战术模块
 
-> Layer 0-7 战术实现文档
+> Layer 0-11 战术实现文档
 >
 > **版本**：v4.0
 > **更新日期**：2026-03-28
@@ -24,12 +24,12 @@ implementation_status: 进行中
 
 ## 1. 概述
 
-本目录是清风量化交易系统 4.0 的**战术实现模块**，包含 Layer 0-7 分层架构中各层的具体战术实现文档。
+本目录是清风量化交易系统 4.0 的**战术实现模块**，包含 Layer 0-11 分层架构中各层的具体战术实现文档。
 
 ### 1.1 与框架的关系
 
 ```
-01_FRAMEWORK/README.md    ← 📐 框架说明（Layer 0-7 架构定义）
+01_FRAMEWORK/README.md    ← 📐 框架说明（Layer 0-11 架构定义）
       ↓
 main/02_TACTICS/          ← 🎯 战术实现（具体实现文档）
 ```
@@ -194,7 +194,7 @@ T.{Layer 编号}.{分类代码}.{序号}.{战术名称}.md
 |------|------|
 | [../../INDEX.md](../INDEX.md) | 主规格文档 |
 | [../../CHANGELOG.md](../../06_ARCHIVE/CHANGELOG.md) | 变更日志 |
-| [../../01_FRAMEWORK/README.md](../../01_FRAMEWORK/README.md) | Layer 0-8 框架说明 |
+| [../../01_FRAMEWORK/README.md](../../01_FRAMEWORK/README.md) | Layer 0-11 框架说明 |
 | [../../02_FACTOR_LIBRARY/](../../02_FACTOR_LIBRARY/) | 因子库 |
 | [../../04_EXECUTION/](../../04_EXECUTION/) | 执行引擎 |
 
@@ -204,5 +204,5 @@ T.{Layer 编号}.{分类代码}.{序号}.{战术名称}.md
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v4.0 | 2026-03-28 | 初始版本，基于 Layer 0-7 架构 |
+| v4.0 | 2026-03-28 | 初始版本，基于 Layer 0-11 架构 |
 | v4.0.1 | 2026-03-28 | 目录重组，从 01_FRAMEWORK 迁移到 main/ |

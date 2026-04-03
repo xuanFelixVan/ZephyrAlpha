@@ -15,49 +15,49 @@ implementation_progress: 0%
 
 # 实时告警系统增强蓝图
 
-> 清风量化系统 v5.2 - 实时告警系统增强详细设计
+> 清风量化系统 v5.3 - 实时告警系统增强详细设计
 > **模块ID**: `ENHANCED_ALERT_SYSTEM_001`
-> **实施周期**: Week 12�?周）
-> **优先�?*: P1（核心）
+> **实施周期**: Week 12?周）
+> **优先?*: P1（核心）
 > **预期收益**: 提高告警覆盖率，减少告警噪音
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需�?
+### 1.1 业务需?
 **当前痛点**:
-- �?告警渠道单一
-- �?告警噪音�?- �?缺少告警聚合和抑�?
+- ?告警渠道单一
+- ?告警噪音?- ?缺少告警聚合和抑?
 **业务目标**:
-- �?多渠道告警（邮件、短信、Slack、Webhook�?- �?告警聚合和抑�?- �?告警趋势分析
+- ?多渠道告警（邮件、短信、Slack、Webhook?- ?告警聚合和抑?- ?告警趋势分析
 
-### 1.2 技术目�?
-| 指标 | 目标�?| 说明 |
+### 1.2 技术目?
+| 指标 | 目标?| 说明 |
 |------|--------|------|
-| **告警覆盖�?* | �?5% | 95%以上的问题能触发告警 |
-| **告警聚合准确�?* | �?0% | 相似告警聚合准确率≥90% |
+| **告警覆盖?* | ?5% | 95%以上的问题能触发告警 |
+| **告警聚合准确?* | ?0% | 相似告警聚合准确率≥90% |
 | **告警响应时间** | <1分钟 | 告警响应时间<1分钟 |
 
 ---
 
-## 二、系统架构设�?
-### 2.1 整体架构�?
+## 二、系统架构设?
+### 2.1 整体架构?
 ```
-┌─────────────────────────────────────────────────────────────�?�?             实时告警系统增强架构                              �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           告警接收�?(Alert Reception)               �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?Prometheus  �? �?自定义告�?  �? �?第三方集�?  �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           告警处理�?(Alert Processing)              �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?告警聚合     �? �?告警抑制     �? �?告警路由     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           告警分发�?(Alert Distribution)            �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?邮件通知     �? �?短信通知     �? �?Slack通知    �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           告警分析�?(Alert Analysis)                �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?趋势分析     �? �?统计分析     �? �?告警优化     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────??             实时告警系统增强架构                              ?├─────────────────────────────────────────────────────────────??                                                            ?? ┌──────────────────────────────────────────────────────? ?? ?           告警接收?(Alert Reception)               ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?Prometheus  ? ?自定义告?  ? ?第三方集?  ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           告警处理?(Alert Processing)              ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?告警聚合     ? ?告警抑制     ? ?告警路由     ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           告警分发?(Alert Distribution)            ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?邮件通知     ? ?短信通知     ? ?Slack通知    ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           告警分析?(Alert Analysis)                ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?趋势分析     ? ?统计分析     ? ?告警优化     ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
 ### 2.2 技术选型
 
-| 组件 | 技术方�?| 版本要求 | 选型理由 |
+| 组件 | 技术方?| 版本要求 | 选型理由 |
 |------|---------|---------|---------|
-| **告警管理** | Alertmanager | �?.26.0 | Prometheus官方告警管理�?|
+| **告警管理** | Alertmanager | ?.26.0 | Prometheus官方告警管理?|
 | **Slack集成** | Slack API | - | 官方API |
 | **短信集成** | Twilio API | - | 专业短信服务 |
-| **Webhook** | 自定�?| - | 灵活集成 |
+| **Webhook** | 自定?| - | 灵活集成 |
 
 ---
 
-## 三、核心模块设�?
-### 3.1 告警聚合�?(AlertAggregator)
+## 三、核心模块设?
+### 3.1 告警聚合?(AlertAggregator)
 
 ```python
 from dataclasses import dataclass, field
@@ -93,7 +93,7 @@ class AggregatedAlert:
     message: str = ""
 
 class AlertAggregator:
-    """告警聚合�?""
+    """告警聚合?""
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -110,9 +110,9 @@ class AlertAggregator:
         # 聚合字段
         self.group_by = config.get('group_by', ['alertname', 'severity'])
         
-        # 聚合等待时间（秒�?        self.group_wait = config.get('group_wait', 30)
+        # 聚合等待时间（秒?        self.group_wait = config.get('group_wait', 30)
         
-        # 聚合间隔（秒�?        self.group_interval = config.get('group_interval', 300)
+        # 聚合间隔（秒?        self.group_interval = config.get('group_interval', 300)
         
         # 聚合缓存
         self.aggregation_cache: Dict[str, AggregatedAlert] = {}
@@ -130,7 +130,7 @@ class AlertAggregator:
         Returns:
             Optional[AggregatedAlert]: 聚合告警（如果达到聚合条件）
         """
-        # 生成聚合�?        aggregation_key = self._generate_aggregation_key(alert)
+        # 生成聚合?        aggregation_key = self._generate_aggregation_key(alert)
         
         # 检查是否已存在聚合
         if aggregation_key in self.aggregation_cache:
@@ -140,10 +140,10 @@ class AlertAggregator:
             aggregated.last_occurrence = alert.starts_at
             aggregated.alerts.append(alert)
             
-            # 检查是否达到聚合条�?            if self._should_send_aggregated_alert(aggregated):
+            # 检查是否达到聚合条?            if self._should_send_aggregated_alert(aggregated):
                 return aggregated
         else:
-            # 创建新聚�?            aggregated = AggregatedAlert(
+            # 创建新聚?            aggregated = AggregatedAlert(
                 aggregation_id=aggregation_key,
                 alert_name=alert.alert_name,
                 severity=alert.severity,
@@ -157,7 +157,7 @@ class AlertAggregator:
             
             self.aggregation_cache[aggregation_key] = aggregated
             
-            # 检查是否达到聚合条�?            if self._should_send_aggregated_alert(aggregated):
+            # 检查是否达到聚合条?            if self._should_send_aggregated_alert(aggregated):
                 return aggregated
         
         return None
@@ -167,12 +167,12 @@ class AlertAggregator:
         alert: Alert
     ) -> str:
         """
-        生成聚合�?        
+        生成聚合?        
         Args:
             alert: 告警
             
         Returns:
-            str: 聚合�?        """
+            str: 聚合?        """
         key_parts = []
         
         for field in self.group_by:
@@ -190,18 +190,18 @@ class AlertAggregator:
         aggregated: AggregatedAlert
     ) -> bool:
         """
-        判断是否应该发送聚合告�?        
+        判断是否应该发送聚合告?        
         Args:
             aggregated: 聚合告警
             
         Returns:
-            bool: 是否应该发�?        """
-        # 检查聚合等待时�?        time_since_first = (datetime.now() - aggregated.first_occurrence).total_seconds()
+            bool: 是否应该发?        """
+        # 检查聚合等待时?        time_since_first = (datetime.now() - aggregated.first_occurrence).total_seconds()
         
         if time_since_first >= self.group_wait:
             return True
         
-        # 检查聚合间�?        if aggregated.count > 1:
+        # 检查聚合间?        if aggregated.count > 1:
             time_since_last = (datetime.now() - aggregated.last_occurrence).total_seconds()
             if time_since_last >= self.group_interval:
                 return True
@@ -209,13 +209,13 @@ class AlertAggregator:
         return False
 ```
 
-### 3.2 告警抑制�?(AlertInhibitor)
+### 3.2 告警抑制?(AlertInhibitor)
 
 ```python
 from typing import Dict, List, Any
 
 class AlertInhibitor:
-    """告警抑制�?""
+    """告警抑制?""
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -261,10 +261,10 @@ class AlertInhibitor:
         source_match: Dict[str, str]
     ) -> bool:
         """
-        匹配源告�?        
+        匹配源告?        
         Args:
             alert: 告警
-            source_match: 源匹配规�?            
+            source_match: 源匹配规?            
         Returns:
             bool: 是否匹配
         """
@@ -301,18 +301,18 @@ class AlertInhibitor:
         return self._match_source(alert, target_match)
 ```
 
-### 3.3 多渠道通知�?(MultiChannelNotifier)
+### 3.3 多渠道通知?(MultiChannelNotifier)
 
 ```python
 import requests
 from typing import Dict, List, Any
 
 class MultiChannelNotifier:
-    """多渠道通知�?""
+    """多渠道通知?""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        初始化多渠道通知�?        
+        初始化多渠道通知?        
         Args:
             config: 配置信息
                 - email: 邮件配置
@@ -332,13 +332,13 @@ class MultiChannelNotifier:
         发送邮件通知
         
         Args:
-            to_addresses: 收件人列�?            subject: 邮件主题
+            to_addresses: 收件人列?            subject: 邮件主题
             content: 邮件内容
             
         Returns:
             bool: 是否成功
         """
-        # 使用SMTP发送邮�?        pass
+        # 使用SMTP发送邮?        pass
     
     def send_sms(
         self,
@@ -349,12 +349,12 @@ class MultiChannelNotifier:
         发送短信通知
         
         Args:
-            phone_numbers: 手机号列�?            message: 短信内容
+            phone_numbers: 手机号列?            message: 短信内容
             
         Returns:
             bool: 是否成功
         """
-        # 使用Twilio API发送短�?        twilio_config = self.config.get('sms', {})
+        # 使用Twilio API发送短?        twilio_config = self.config.get('sms', {})
         
         try:
             from twilio.rest import Client
@@ -373,7 +373,7 @@ class MultiChannelNotifier:
             
             return True
         except Exception as e:
-            print(f"发送短信失�? {e}")
+            print(f"发送短信失? {e}")
             return False
     
     def send_slack(
@@ -446,7 +446,7 @@ class MultiChannelNotifier:
             channels: 通知渠道列表
             
         Returns:
-            Dict[str, bool]: 各渠道发送结�?        """
+            Dict[str, bool]: 各渠道发送结?        """
         results = {}
         
         for channel in channels:
@@ -490,20 +490,20 @@ class MultiChannelNotifier:
 
 ---
 
-## 四、实施步�?
+## 四、实施步?
 ### 4.1 Week 12: 实时告警系统增强实施
 
-#### Day 1-2: 告警聚合和抑�?
+#### Day 1-2: 告警聚合和抑?
 **任务**:
-1. 实现AlertAggregator告警聚合�?2. 实现AlertInhibitor告警抑制�?3. 编写单元测试
+1. 实现AlertAggregator告警聚合?2. 实现AlertInhibitor告警抑制?3. 编写单元测试
 
 #### Day 3-4: 多渠道通知
 
 **任务**:
-1. 实现MultiChannelNotifier多渠道通知�?2. 集成邮件、短信、Slack、Webhook
+1. 实现MultiChannelNotifier多渠道通知?2. 集成邮件、短信、Slack、Webhook
 3. 测试通知功能
 
-#### Day 5: 告警分析和优�?
+#### Day 5: 告警分析和优?
 **任务**:
 1. 实现告警趋势分析
 2. 实现告警统计分析
@@ -511,20 +511,20 @@ class MultiChannelNotifier:
 
 ---
 
-## 五、验收标�?
+## 五、验收标?
 ### 5.1 功能验收
 
-| 验收�?| 验收标准 | 验收方法 |
+| 验收?| 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **告警覆盖�?* | �?5% | 功能测试 |
-| **告警聚合准确�?* | �?0% | 功能测试 |
+| **告警覆盖?* | ?5% | 功能测试 |
+| **告警聚合准确?* | ?0% | 功能测试 |
 | **告警响应时间** | <1分钟 | 性能测试 |
 
 ---
 
-## 六、文档治�?
+## 六、文档治?
 **版本历史**:
-- v1.0.0 (2026-04-02): 初始版本，完成实时告警系统增强设�?
+- v1.0.0 (2026-04-02): 初始版本，完成实时告警系统增强设?
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状�?*: �?正式 | **维护�?*: ZephyrAlpha技术团�?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状?*: ?正式 | **维护?*: ZephyrAlpha技术团?

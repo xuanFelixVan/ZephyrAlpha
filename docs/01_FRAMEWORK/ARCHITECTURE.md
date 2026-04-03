@@ -36,7 +36,7 @@ implementation_status: 进行中
 > - **实施指导**：[PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](./PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) - 6个月实施路线图、开源集成策略
 > 
 > **架构选择建议**：
-> - **技术实现**：继续使用本文档（Layer 0-8架构）
+> - **技术实现**：继续使用本文档（Layer 0-11架构）
 > - **业务决策**：使用专业多时间框架架构
 > - **项目实施**：使用专业实施蓝图
 
@@ -119,7 +119,7 @@ Layer 11: 战略决策层 (Strategic Decision) 🆕
 
 ## 3. 详细分层架构
 
-### Layer 0-8: 技术实现层
+### Layer 0-11: 技术实现层
 
 详细内容请参考文档前半部分。
 

@@ -1,6 +1,6 @@
 ﻿---
 module_id: DOC_SYSTEM_MANIFEST_001
-version: 5.2.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
@@ -15,7 +15,7 @@ implementation_status: 进行�?
 
 # System_Manifest.md - 系统清单
 
-> 清风量化系统 v5.2.0 的完整系统状态快�?
+> 清风量化系统 v5.3.0 的完整系统状态快�?
 > 
 > **📝 恢复说明**: 本文档于 2026-03-31 从归档文�?`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` 恢复，作为系统主入口文档�?
 
@@ -42,7 +42,7 @@ implementation_status: 进行�?
 > **重要说明**：当前所有代码均�?*示例代码/框架代码**，用于说明逻辑�?*不可直接运行**�?
 
 
-## 1. 物理架构 (v5.1.0)
+## 1. 物理架构 (v5.3.0)
 
 ```
 D:\ZephyrAlpha\
@@ -91,7 +91,7 @@ D:\ZephyrAlpha\
 �?  └── fixtures/                    # 测试夹具
 ├── .env.example                      # 环境变量模板
 ├── .gitignore                        # Git忽略配置
-├── DOCUMENT_AUDIT_v5.1.md           # 文档审计报告
+├── DOCUMENT_AUDIT_v5.3.md           # 文档审计报告
 ├── pyproject.toml                    # Python项目配置
 ├── README.md                         # 项目总入�?
 └── requirements.txt                  # 依赖清单
@@ -228,11 +228,11 @@ config/
 ## 8. 版本管理规则
 
 ### 主版本升级（v5.0 �?v6.0�?
-- 架构改变（Layer 0-7重组�?
+- 架构改变（Layer 0-11重组�?
 - 核心模块替换
 - 数据格式不兼�?
 
-### 次版本升级（v5.0 �?v5.1�?
+### 次版本升级（v5.0 �?v5.3�?
 - 新增模块
 - 新增因子�?
 - 新增策略
@@ -350,5 +350,5 @@ AI启动前必读顺序：
 | [数据库设计评审报告](../design/database/P0-01_Database_Design_Review_Report.md) | `docs/design/database/P0-01_Database_Design_Review_Report.md` | DB_REVIEW_001 | 1.0 | Active | 专业量化机构数据库设计评�?|
 
 
-**版本**: v5.2.0 | **更新**: 2026-04-03 | **状�?*: �?活跃
+**版本**: v5.3.0 | **更新**: 2026-04-03 | **状�?*: �?活跃
 

@@ -13,65 +13,65 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 ---
 
-# 实时数据湖架构蓝�?
-> 清风量化系统 v5.2 - 实时数据湖架构详细设�?> **模块ID**: `REALTIME_DATA_LAKE_001`
-> **实施周期**: Week 1-4�?周）
-> **优先�?*: P1（中期优化）
-> **预期收益**: 数据查询性能提升5倍，支持流批一体架�?
+# 实时数据湖架构蓝?
+> 清风量化系统 v5.3 - 实时数据湖架构详细设?> **模块ID**: `REALTIME_DATA_LAKE_001`
+> **实施周期**: Week 1-4?周）
+> **优先?*: P1（中期优化）
+> **预期收益**: 数据查询性能提升5倍，支持流批一体架?
 
 ## 一、设计背景与目标
 
-### 1.1 业务需�?
+### 1.1 业务需?
 **当前痛点**:
-- �?数据存储分散，缺少统一的数据湖架构
-- �?流式数据和批式数据分离，无法统一查询
-- �?数据查询性能低，无法满足实时分析需�?- �?缺少数据版本管理和时间旅行功�?
+- ?数据存储分散，缺少统一的数据湖架构
+- ?流式数据和批式数据分离，无法统一查询
+- ?数据查询性能低，无法满足实时分析需?- ?缺少数据版本管理和时间旅行功?
 **业务目标**:
-- �?构建统一的实时数据湖，支持流批一体架�?- �?提供高性能的数据查询能力（5倍性能提升�?- �?支持数据版本管理和时间旅�?- �?实现ACID事务保证，确保数据一致�?
-### 1.2 技术目�?
-| 指标 | 目标�?| 说明 |
+- ?构建统一的实时数据湖，支持流批一体架?- ?提供高性能的数据查询能力（5倍性能提升?- ?支持数据版本管理和时间旅?- ?实现ACID事务保证，确保数据一致?
+### 1.2 技术目?
+| 指标 | 目标?| 说明 |
 |------|--------|------|
-| **查询性能** | 5倍提�?| 相比传统数据仓库查询性能提升5�?|
-| **写入延迟** | <1�?| 数据从产生到可查�?1�?|
-| **数据一致�?* | 100% | ACID事务保证数据一致�?|
-| **存储成本** | 降低50% | 通过压缩和分层存储降低成�?|
-| **并发查询** | �?00 | 支持100+并发查询 |
+| **查询性能** | 5倍提?| 相比传统数据仓库查询性能提升5?|
+| **写入延迟** | <1?| 数据从产生到可查?1?|
+| **数据一致?* | 100% | ACID事务保证数据一致?|
+| **存储成本** | 降低50% | 通过压缩和分层存储降低成?|
+| **并发查询** | ?00 | 支持100+并发查询 |
 
 ---
 
-## 二、系统架构设�?
-### 2.1 整体架构�?
+## 二、系统架构设?
+### 2.1 整体架构?
 ```
-┌─────────────────────────────────────────────────────────────�?�?                实时数据湖架�?                               �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据接入�?(Data Ingestion)                �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?流式数据接入 �? �?批量数据导入 �? �?CDC数据同步  �? �? �?�? �? �?(Kafka)     �? �?(Spark)     �? �?(Debezium)  �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据湖存储层 (Lake Storage)                �? �?�? �? ┌─────────────────────────────────────────────────�?�? �?�? �? �?        Delta Lake / Apache Iceberg              �?�? �?�? �? �? ┌──────────�? ┌──────────�? ┌──────────�?     �?�? �?�? �? �? �?Bronze�? �? �?Silver�?�? �?Gold�?  �?     �?�? �?�? �? �? �?(原始数据) �? �?(清洗数据) �? �?(聚合数据) �?     �?�? �?�? �? �? └──────────�? └──────────�? └──────────�?     �?�? �?�? �? └─────────────────────────────────────────────────�?�? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据处理�?(Data Processing)               �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?流式处理     �? �?批量处理     �? �?实时ETL     �? �? �?�? �? �?(Spark      �? �?(Spark      �? �?(dbt)       �? �? �?�? �? �? Streaming) �? �? Batch)     �? �?            �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据服务�?(Data Service)                  �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?SQL查询引擎  �? �?数据API服务  �? �?数据订阅服务 �? �? �?�? �? �?(Trino)     �? �?(FastAPI)   �? �?(Kafka)     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────??                实时数据湖架?                               ?├─────────────────────────────────────────────────────────────??                                                            ?? ┌──────────────────────────────────────────────────────? ?? ?           数据接入?(Data Ingestion)                ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?流式数据接入 ? ?批量数据导入 ? ?CDC数据同步  ? ? ?? ? ?(Kafka)     ? ?(Spark)     ? ?(Debezium)  ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           数据湖存储层 (Lake Storage)                ? ?? ? ┌─────────────────────────────────────────────────?? ?? ? ?        Delta Lake / Apache Iceberg              ?? ?? ? ? ┌──────────? ┌──────────? ┌──────────?     ?? ?? ? ? ?Bronze? ? ?Silver?? ?Gold?  ?     ?? ?? ? ? ?(原始数据) ? ?(清洗数据) ? ?(聚合数据) ?     ?? ?? ? ? └──────────? └──────────? └──────────?     ?? ?? ? └─────────────────────────────────────────────────?? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           数据处理?(Data Processing)               ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?流式处理     ? ?批量处理     ? ?实时ETL     ? ? ?? ? ?(Spark      ? ?(Spark      ? ?(dbt)       ? ? ?? ? ? Streaming) ? ? Batch)     ? ?            ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           数据服务?(Data Service)                  ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?SQL查询引擎  ? ?数据API服务  ? ?数据订阅服务 ? ? ?? ? ?(Trino)     ? ?(FastAPI)   ? ?(Kafka)     ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
 ### 2.2 技术选型
 
-| 组件 | 技术方�?| 版本要求 | 选型理由 |
+| 组件 | 技术方?| 版本要求 | 选型理由 |
 |------|---------|---------|---------|
-| **数据湖存�?* | Delta Lake | �?.0.0 | ACID事务、时间旅行、模式演�?|
-| **流式消息队列** | Apache Kafka | �?.8.0 | 高吞吐、低延迟、持久化 |
-| **流式处理** | Spark Streaming | �?.3.0 | 流批一体、生态完�?|
-| **批量处理** | Apache Spark | �?.3.0 | 高性能批处理引�?|
-| **SQL查询引擎** | Trino | �?00 | 分布式SQL查询，联邦查�?|
-| **CDC工具** | Debezium | �?.9.0 | 数据库变更捕�?|
+| **数据湖存?* | Delta Lake | ?.0.0 | ACID事务、时间旅行、模式演?|
+| **流式消息队列** | Apache Kafka | ?.8.0 | 高吞吐、低延迟、持久化 |
+| **流式处理** | Spark Streaming | ?.3.0 | 流批一体、生态完?|
+| **批量处理** | Apache Spark | ?.3.0 | 高性能批处理引?|
+| **SQL查询引擎** | Trino | ?00 | 分布式SQL查询，联邦查?|
+| **CDC工具** | Debezium | ?.9.0 | 数据库变更捕?|
 | **对象存储** | MinIO | ≥RELEASE.2023 | S3兼容，高性能对象存储 |
 
-### 2.3 数据湖分层设�?
+### 2.3 数据湖分层设?
 #### 2.3.1 Bronze层（原始数据层）
 
 **特点**:
-- 存储原始数据，不做任何处�?- 保留数据原始格式和完整�?- 支持数据回溯和重�?
+- 存储原始数据，不做任何处?- 保留数据原始格式和完整?- 支持数据回溯和重?
 **数据保留策略**:
-- 行情数据：保�?�?- 财务数据：永久保�?- 日志数据：保�?个月
+- 行情数据：保??- 财务数据：永久保?- 日志数据：保?个月
 
 #### 2.3.2 Silver层（清洗数据层）
 
 **特点**:
 - 数据清洗和标准化
 - 数据质量校验
-- 数据去重和合�?
+- 数据去重和合?
 **处理规则**:
-- 缺失值处理：标记或填�?- 异常值处理：裁剪或修�?- 格式标准化：统一数据格式
+- 缺失值处理：标记或填?- 异常值处理：裁剪或修?- 格式标准化：统一数据格式
 
 #### 2.3.3 Gold层（聚合数据层）
 
@@ -83,10 +83,10 @@ implementation_progress: 0%
 **数据模型**:
 - 因子数据宽表
 - 策略表现汇总表
-- 风险指标聚合�?
+- 风险指标聚合?
 ---
 
-## 三、核心模块设�?
+## 三、核心模块设?
 ### 3.1 数据接入模块
 
 #### 3.1.1 流式数据接入
@@ -112,9 +112,9 @@ class StreamDataIngestion:
     
     def ingest_market_data(self):
         """
-        接入行情数据�?        
-        数据�?
-        Kafka -> Bronze�?(Delta Lake)
+        接入行情数据?        
+        数据?
+        Kafka -> Bronze?(Delta Lake)
         """
         # 从Kafka读取行情数据
         market_stream = self.spark \
@@ -133,7 +133,7 @@ class StreamDataIngestion:
             .withColumn('ingestion_time', current_timestamp()) \
             .withColumn('source', lit('kafka'))
         
-        # 写入Bronze�?        query = parsed_stream \
+        # 写入Bronze?        query = parsed_stream \
             .writeStream \
             .format('delta') \
             .option('checkpointLocation', '/delta/checkpoints/market_data_bronze') \
@@ -158,9 +158,9 @@ class StreamDataIngestion:
     
     def ingest_factor_data(self):
         """
-        接入因子数据�?        
-        数据�?
-        Kafka -> Bronze�?(Delta Lake)
+        接入因子数据?        
+        数据?
+        Kafka -> Bronze?(Delta Lake)
         """
         # 从Kafka读取因子数据
         factor_stream = self.spark \
@@ -179,7 +179,7 @@ class StreamDataIngestion:
             .withColumn('ingestion_time', current_timestamp()) \
             .withColumn('source', lit('kafka'))
         
-        # 写入Bronze�?        query = parsed_stream \
+        # 写入Bronze?        query = parsed_stream \
             .writeStream \
             .format('delta') \
             .option('checkpointLocation', '/delta/checkpoints/factor_data_bronze') \
@@ -219,8 +219,8 @@ class BatchDataIngestion:
         导入历史数据
         
         Args:
-            source_path: 数据源路�?            table_name: 目标表名
-            partition_columns: 分区�?        """
+            source_path: 数据源路?            table_name: 目标表名
+            partition_columns: 分区?        """
         # 读取数据
         df = self.spark.read \
             .format('parquet') \
@@ -231,7 +231,7 @@ class BatchDataIngestion:
             .withColumn('ingestion_time', current_timestamp()) \
             .withColumn('source', lit('batch_import'))
         
-        # 写入Delta�?        writer = df.write.format('delta')
+        # 写入Delta?        writer = df.write.format('delta')
         
         if partition_columns:
             writer = writer.partitionBy(*partition_columns)
@@ -241,7 +241,7 @@ class BatchDataIngestion:
             .option('overwriteSchema', 'true') \
             .save(f'/delta/tables/bronze/{table_name}')
         
-        # 创建Delta�?        self.spark.sql(f"""
+        # 创建Delta?        self.spark.sql(f"""
             CREATE TABLE IF NOT EXISTS delta.{table_name}
             USING DELTA
             LOCATION '/delta/tables/bronze/{table_name}'
@@ -259,15 +259,15 @@ class BatchDataIngestion:
         Args:
             jdbc_url: JDBC连接URL
             table_name: 表名
-            properties: 连接属�?        """
-        # 读取数据库数�?        df = self.spark.read \
+            properties: 连接属?        """
+        # 读取数据库数?        df = self.spark.read \
             .format('jdbc') \
             .option('url', jdbc_url) \
             .option('dbtable', table_name) \
             .options(**properties) \
             .load()
         
-        # 写入Delta�?        df.write \
+        # 写入Delta?        df.write \
             .format('delta') \
             .mode('overwrite') \
             .save(f'/delta/tables/bronze/{table_name}')
@@ -275,22 +275,22 @@ class BatchDataIngestion:
 
 ### 3.2 数据处理模块
 
-#### 3.2.1 流批一体处�?
+#### 3.2.1 流批一体处?
 ```python
 class UnifiedDataProcessing:
-    """流批一体数据处�?""
+    """流批一体数据处?""
     
     def __init__(self, spark: SparkSession):
         self.spark = spark
     
     def process_bronze_to_silver(self):
         """
-        Bronze�?-> Silver层处�?        
+        Bronze?-> Silver层处?        
         处理逻辑:
         1. 数据清洗
-        2. 数据标准�?        3. 数据质量校验
+        2. 数据标准?        3. 数据质量校验
         """
-        # 读取Bronze层数�?        bronze_df = self.spark.readStream \
+        # 读取Bronze层数?        bronze_df = self.spark.readStream \
             .format('delta') \
             .load('/delta/tables/bronze/market_data')
         
@@ -301,7 +301,7 @@ class UnifiedDataProcessing:
             .withColumn('date', to_date(col('timestamp'))) \
             .withColumn('hour', hour(col('timestamp')))
         
-        # 数据标准�?        silver_df = silver_df \
+        # 数据标准?        silver_df = silver_df \
             .withColumn('symbol', trim(upper(col('symbol')))) \
             .withColumn('close', round(col('close'), 2))
         
@@ -317,7 +317,7 @@ class UnifiedDataProcessing:
                 ).otherwise('invalid')
             )
         
-        # 写入Silver�?        query = silver_df \
+        # 写入Silver?        query = silver_df \
             .writeStream \
             .format('delta') \
             .option('checkpointLocation', '/delta/checkpoints/market_data_silver') \
@@ -329,13 +329,13 @@ class UnifiedDataProcessing:
     
     def process_silver_to_gold(self):
         """
-        Silver�?-> Gold层处�?        
+        Silver?-> Gold层处?        
         处理逻辑:
         1. 数据聚合
         2. 指标计算
         3. 数据优化
         """
-        # 读取Silver层数�?        silver_df = self.spark.read \
+        # 读取Silver层数?        silver_df = self.spark.read \
             .format('delta') \
             .load('/delta/tables/silver/market_data')
         
@@ -352,11 +352,11 @@ class UnifiedDataProcessing:
                 count('*').alias('tick_count')
             )
         
-        # 计算技术指�?        gold_df = gold_df \
+        # 计算技术指?        gold_df = gold_df \
             .withColumn('vwap', col('amount') / col('volume')) \
             .withColumn('amplitude', (col('high') - col('low')) / col('open'))
         
-        # 写入Gold�?        gold_df.write \
+        # 写入Gold?        gold_df.write \
             .format('delta') \
             .mode('overwrite') \
             .partitionBy('date') \
@@ -377,8 +377,8 @@ class DataQualityValidator:
         校验行情数据质量
         
         校验规则:
-        1. 完整性检�?        2. 准确性检�?        3. 一致性检�?        """
-        # 完整性检�?        completeness_check = df \
+        1. 完整性检?        2. 准确性检?        3. 一致性检?        """
+        # 完整性检?        completeness_check = df \
             .withColumn(
                 'completeness_score',
                 (
@@ -390,7 +390,7 @@ class DataQualityValidator:
                 ) / 5
             )
         
-        # 准确性检�?        accuracy_check = completeness_check \
+        # 准确性检?        accuracy_check = completeness_check \
             .withColumn(
                 'accuracy_score',
                 when(
@@ -402,7 +402,7 @@ class DataQualityValidator:
                 ).otherwise(0.0)
             )
         
-        # 一致性检�?        consistency_check = accuracy_check \
+        # 一致性检?        consistency_check = accuracy_check \
             .withColumn(
                 'consistency_score',
                 when(
@@ -456,7 +456,7 @@ class TrinoQueryService:
         
         Args:
             symbols: 股票代码列表
-            start_date: 开始日�?            end_date: 结束日期
+            start_date: 开始日?            end_date: 结束日期
         
         Returns:
             DataFrame: 查询结果
@@ -501,7 +501,7 @@ class TrinoQueryService:
         Args:
             factor_ids: 因子ID列表
             symbols: 股票代码列表
-            start_date: 开始日�?            end_date: 结束日期
+            start_date: 开始日?            end_date: 结束日期
         """
         query = f"""
         SELECT 
@@ -546,7 +546,7 @@ class TimeTravelService:
         
         Args:
             table_name: 表名
-            timestamp: 时间�?            filters: 过滤条件
+            timestamp: 时间?            filters: 过滤条件
         
         Returns:
             DataFrame: 历史数据
@@ -593,7 +593,7 @@ class TimeTravelService:
         version2: int
     ):
         """
-        比较两个版本的数据差�?        
+        比较两个版本的数据差?        
         Args:
             table_name: 表名
             version1: 版本1
@@ -602,7 +602,7 @@ class TimeTravelService:
         Returns:
             DataFrame: 数据差异
         """
-        # 读取两个版本的数�?        df1 = self.spark.read \
+        # 读取两个版本的数?        df1 = self.spark.read \
             .format('delta') \
             .option('versionAsOf', version1) \
             .load(f'/delta/tables/{table_name}')
@@ -631,18 +631,18 @@ class PartitionStrategy:
     @staticmethod
     def optimize_partitioning(table_name: str, spark: SparkSession):
         """
-        优化表分�?        
+        优化表分?        
         分区策略:
-        - 行情数据: 按日期分�?        - 因子数据: 按因子ID和日期分�?        - 财务数据: 按报告期分区
+        - 行情数据: 按日期分?        - 因子数据: 按因子ID和日期分?        - 财务数据: 按报告期分区
         """
         if table_name == 'market_data':
-            # 行情数据按日期分�?            spark.sql(f"""
+            # 行情数据按日期分?            spark.sql(f"""
                 OPTIMIZE delta.gold.{table_name}
                 ZORDER BY (symbol, date)
             """)
         
         elif table_name == 'factor_data':
-            # 因子数据按因子ID和日期分�?            spark.sql(f"""
+            # 因子数据按因子ID和日期分?            spark.sql(f"""
                 OPTIMIZE delta.silver.{table_name}
                 ZORDER BY (factor_id, symbol, date)
             """)
@@ -671,7 +671,7 @@ class CacheStrategy:
         Args:
             table_name: 表名
         """
-        # 缓存最�?0天的数据
+        # 缓存最?0天的数据
         df = self.spark.read \
             .format('delta') \
             .load(f'/delta/tables/{table_name}') \
@@ -705,7 +705,7 @@ class CompressionStrategy:
     @staticmethod
     def compact_small_files(table_name: str, spark: SparkSession):
         """
-        压缩小文�?        
+        压缩小文?        
         Args:
             table_name: 表名
         """
@@ -717,7 +717,7 @@ class CompressionStrategy:
     @staticmethod
     def vacuum_old_files(table_name: str, retention_hours: int = 168):
         """
-        清理旧文�?        
+        清理旧文?        
         Args:
             table_name: 表名
             retention_hours: 保留时间（小时）
@@ -743,7 +743,7 @@ class PerformanceMonitor:
     
     def get_table_stats(self, table_name: str):
         """
-        获取表统计信�?        
+        获取表统计信?        
         Args:
             table_name: 表名
         
@@ -789,14 +789,14 @@ class DataGovernance:
             table_name: 表名
             retention_days: 保留天数
         """
-        # 删除旧数�?        self.spark.sql(f"""
+        # 删除旧数?        self.spark.sql(f"""
             DELETE FROM delta.bronze.{table_name}
             WHERE date < date_sub(current_date(), {retention_days})
         """)
     
     def archive_old_data(self, table_name: str, archive_path: str):
         """
-        归档旧数�?        
+        归档旧数?        
         Args:
             table_name: 表名
             archive_path: 归档路径
@@ -815,7 +815,7 @@ class DataGovernance:
 
 ---
 
-## 六、实施步�?
+## 六、实施步?
 ### 6.1 Week 1: 基础架构搭建
 
 #### Day 1-2: 环境准备
@@ -825,33 +825,33 @@ class DataGovernance:
 2. 配置MinIO对象存储
 3. 配置Kafka集群
 
-**交付�?*:
-- �?Delta Lake环境
-- �?MinIO配置
-- �?Kafka集群
+**交付?*:
+- ?Delta Lake环境
+- ?MinIO配置
+- ?Kafka集群
 
-#### Day 3-5: 数据接入开�?
+#### Day 3-5: 数据接入开?
 **任务**:
 1. 实现流式数据接入
 2. 实现批量数据导入
 3. 测试数据接入
 
-**交付�?*:
-- �?StreamDataIngestion
-- �?BatchDataIngestion
-- �?测试报告
+**交付?*:
+- ?StreamDataIngestion
+- ?BatchDataIngestion
+- ?测试报告
 
-### 6.2 Week 2: 数据处理开�?
-#### Day 1-3: 流批一体处�?
+### 6.2 Week 2: 数据处理开?
+#### Day 1-3: 流批一体处?
 **任务**:
 1. 实现Bronze->Silver处理
 2. 实现Silver->Gold处理
 3. 实现数据质量校验
 
-**交付�?*:
-- �?UnifiedDataProcessing
-- �?DataQualityValidator
-- �?测试报告
+**交付?*:
+- ?UnifiedDataProcessing
+- ?DataQualityValidator
+- ?测试报告
 
 #### Day 4-5: 性能优化
 
@@ -860,44 +860,44 @@ class DataGovernance:
 2. 实现缓存策略
 3. 实现压缩策略
 
-**交付�?*:
-- �?PartitionStrategy
-- �?CacheStrategy
-- �?CompressionStrategy
+**交付?*:
+- ?PartitionStrategy
+- ?CacheStrategy
+- ?CompressionStrategy
 
-### 6.3 Week 3: 数据服务开�?
-#### Day 1-3: 查询服务开�?
+### 6.3 Week 3: 数据服务开?
+#### Day 1-3: 查询服务开?
 **任务**:
 1. 实现Trino查询服务
 2. 实现时间旅行查询
 3. 测试查询性能
 
-**交付�?*:
-- �?TrinoQueryService
-- �?TimeTravelService
-- �?性能测试报告
+**交付?*:
+- ?TrinoQueryService
+- ?TimeTravelService
+- ?性能测试报告
 
-#### Day 4-5: 监控与运�?
+#### Day 4-5: 监控与运?
 **任务**:
 1. 实现性能监控
 2. 实现数据治理
 3. 部署监控告警
 
-**交付�?*:
-- �?PerformanceMonitor
-- �?DataGovernance
-- �?Grafana仪表�?
-### 6.4 Week 4: 集成测试与上�?
+**交付?*:
+- ?PerformanceMonitor
+- ?DataGovernance
+- ?Grafana仪表?
+### 6.4 Week 4: 集成测试与上?
 #### Day 1-3: 集成测试
 
 **任务**:
-1. 端到端集成测�?2. 性能压力测试
+1. 端到端集成测?2. 性能压力测试
 3. 故障恢复测试
 
-**交付�?*:
-- �?集成测试报告
-- �?性能测试报告
-- �?故障恢复测试报告
+**交付?*:
+- ?集成测试报告
+- ?性能测试报告
+- ?故障恢复测试报告
 
 #### Day 4-5: 上线部署
 
@@ -906,60 +906,60 @@ class DataGovernance:
 2. 数据迁移
 3. 用户培训
 
-**交付�?*:
-- �?生产环境
-- �?数据迁移报告
-- �?用户手册
+**交付?*:
+- ?生产环境
+- ?数据迁移报告
+- ?用户手册
 
 ---
 
-## 七、验收标�?
+## 七、验收标?
 ### 7.1 功能验收
 
-| 验收�?| 验收标准 | 验收方法 |
+| 验收?| 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **数据接入** | 流式和批量数据正常接�?| 功能测试 |
+| **数据接入** | 流式和批量数据正常接?| 功能测试 |
 | **数据处理** | Bronze->Silver->Gold处理正常 | 功能测试 |
 | **数据查询** | SQL查询正常返回结果 | 功能测试 |
 | **时间旅行** | 历史数据查询正常 | 功能测试 |
-| **ACID事务** | 事务保证数据一致�?| 事务测试 |
+| **ACID事务** | 事务保证数据一致?| 事务测试 |
 
 ### 7.2 性能验收
 
-| 指标 | 目标�?| 测试方法 |
+| 指标 | 目标?| 测试方法 |
 |------|--------|---------|
-| **查询性能** | 5倍提�?| 性能测试 |
-| **写入延迟** | <1�?| 性能测试 |
-| **并发查询** | �?00 | 压力测试 |
+| **查询性能** | 5倍提?| 性能测试 |
+| **写入延迟** | <1?| 性能测试 |
+| **并发查询** | ?00 | 压力测试 |
 | **存储成本** | 降低50% | 成本分析 |
 
 ---
 
 ## 八、风险评估与缓解
 
-### 8.1 技术风�?
-| 风险�?| 风险等级 | 影响 | 缓解措施 |
+### 8.1 技术风?
+| 风险?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| **Delta Lake学习曲线** | �?| 开发效�?| 提前学习，准备示例代�?|
-| **Kafka集群稳定�?* | �?| 数据接入 | 配置监控告警，准备备用方�?|
-| **查询性能不达�?* | �?| 用户体验 | 优化分区和索引，增加缓存 |
+| **Delta Lake学习曲线** | ?| 开发效?| 提前学习，准备示例代?|
+| **Kafka集群稳定?* | ?| 数据接入 | 配置监控告警，准备备用方?|
+| **查询性能不达?* | ?| 用户体验 | 优化分区和索引，增加缓存 |
 
 ### 8.2 实施风险
 
-| 风险�?| 风险等级 | 影响 | 缓解措施 |
+| 风险?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| **数据迁移风险** | �?| 数据丢失 | 制定详细迁移计划，备份原数据 |
-| **性能调优复杂** | �?| 延期风险 | 预留缓冲时间，分阶段优化 |
+| **数据迁移风险** | ?| 数据丢失 | 制定详细迁移计划，备份原数据 |
+| **性能调优复杂** | ?| 延期风险 | 预留缓冲时间，分阶段优化 |
 
 ---
 
-## 九、文档治�?
+## 九、文档治?
 ### 9.1 文档索引
 
 **本文档在系统中的位置**:
 - 架构文档: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - Layer 1文档: [Layer_1_Data_Preprocessing.md](../../../01_FRAMEWORK/layers/Layer_1_Data_Preprocessing.md)
-- 数据源清�? [DATA_SOURCE_INVENTORY.md](./DATA_SOURCE_INVENTORY.md)
+- 数据源清? [DATA_SOURCE_INVENTORY.md](./DATA_SOURCE_INVENTORY.md)
 
 ### 9.2 版本管理
 
@@ -968,6 +968,6 @@ class DataGovernance:
 
 ---
 
-**最后更�?*: 2026-04-03
-**维护�?*: 首席技术评审官
-**审核状�?*: �?已审�?
+**最后更?*: 2026-04-03
+**维护?*: 首席技术评审官
+**审核状?*: ?已审?

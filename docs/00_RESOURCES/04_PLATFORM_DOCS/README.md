@@ -1,6 +1,6 @@
 ---
 module_id: DOC_README_001
-version: 5.1.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -14,7 +14,7 @@ implementation_status: 进行中
 
 # 04_PLATFORM_DOCS - 交易平台文档
 
-> 清风量化系统 v5.1 交易平台参考文档库
+> 清风量化系统 v5.3 交易平台参考文档库
 > 
 > **版本**: v1.0
 > **创建日期**: 2026-04-01

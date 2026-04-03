@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (组合优化?
 index: MULTI_ASSET_001
 estimated_hours: 120h
 review_status: Pending
@@ -14,72 +14,72 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系�?compliance_level: 专业标准
+applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 personal_development: true
 ai_maintenance: true
 ---
 
-# 多资产类别配置蓝�?v1.0
+# 多资产类别配置蓝?v1.0
 
-> 清风量化系统 v5.2 - 多资产类别配置详细设�?> **索引**: `MULTI_ASSET_001`
-> **开发时�?*: 120h（约3周）
-> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资�?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略�?> **个人开发可行�?*: ⭐⭐⭐⭐ 完全可行
-> **AI维护难度**: �?
+> 清风量化系统 v5.3 - 多资产类别配置详细设?> **索引**: `MULTI_ASSET_001`
+> **开发时?*: 120h（约3周）
+> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可行?*: ⭐⭐⭐⭐ 完全可行
+> **AI维护难度**: ?
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目�?
-**业务需�?*�?- 当前系统仅支持股票资产配置，缺乏跨资产类别配置能�?- 无法实现桥水全天候策略（股票、债券、商品、外汇配置）
+### 1.1 设计背景与业务目?
+**业务需?*?- 当前系统仅支持股票资产配置，缺乏跨资产类别配置能?- 无法实现桥水全天候策略（股票、债券、商品、外汇配置）
 - 无法实现真正的风险平价（跨资产风险分散）
-- 资产配置多样性不足，系统性风险较�?
-**技术痛�?*�?- 无多资产数据接入能力
-- 无跨资产相关性建�?- 无跨资产风险平价优化
+- 资产配置多样性不足，系统性风险较?
+**技术痛?*?- 无多资产数据接入能力
+- 无跨资产相关性建?- 无跨资产风险平价优化
 - 无跨资产风险预算分配
 
-**预期价�?*�?- 资产配置多样性：提升50%
+**预期价?*?- 资产配置多样性：提升50%
 - 系统性风险分散：提升40%
-- 实现桥水全天候策略核心能�?- 为多策略配置提供基础
+- 实现桥水全天候策略核心能?- 为多策略配置提供基础
 
-### 1.2 技术定位与架构层归�?
-**Layer定位**: Layer 6 - 组合优化层（资产配置子层�?
+### 1.2 技术定位与架构层归?
+**Layer定位**: Layer 6 - 组合优化层（资产配置子层?
 **模块类别**: 核心模块（P1级）
 
 **架构角色**: 
-- 作为桥水模式的核心组件，实现跨资产配�?- 作为风险平价的基础，实现跨资产风险分散
+- 作为桥水模式的核心组件，实现跨资产配?- 作为风险平价的基础，实现跨资产风险分散
 - 作为多策略配置的基础，提供资产类别层面的配置
 
 ### 1.3 核心功能清单
 
-1. **多资产数据管�?*: 股票、债券、商品、外汇数据接�?2. **跨资产相关性建�?*: 动态相关性矩阵估�?3. **跨资产风险平�?*: 跨资产风险预算分�?4. **资产类别权重优化**: 资产类别层面的权重优�?5. **跨资产风险监�?*: 跨资产风险监控与预警
+1. **多资产数据管?*: 股票、债券、商品、外汇数据接?2. **跨资产相关性建?*: 动态相关性矩阵估?3. **跨资产风险平?*: 跨资产风险预算分?4. **资产类别权重优化**: 资产类别层面的权重优?5. **跨资产风险监?*: 跨资产风险监控与预警
 
 ---
 
 ## 2. 架构设计
 
-### 2.1 系统架构�?
+### 2.1 系统架构?
 ```
-┌─────────────────────────────────────────────────────────────────�?�?                   多资产类别配置系统架�?                       �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             数据�?                                       �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?股票数据 �? �?债券数据 �? �?商品数据 �? �?外汇数据 �?�? �?�? �? �?         �? �?         �? �?         �? �?         �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             相关性建模层                                  �? �?�? �? ┌────────────────────────────────────────────────────�? �? �?�? �? �? Cross-Asset Correlation Model                     �? �? �?�? �? �? - 动态相关性矩阵估�?                              �? �? �?�? �? �? - DCC-GARCH模型                                   �? �? �?�? �? �? - 相关性预�?                                      �? �? �?�? �? └────────────────────────────────────────────────────�? �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             配置优化�?                                   �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?风险平价 �? �?均值方�?�? �?黑箱优化 �?              �? �?�? �? �?优化     �? �?优化     �? �?         �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             风险监控�?                                   �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?风险预算 �? �?风险归因 �? �?预警系统 �?              �? �?�? �? �?监控     �? �?         �? �?         �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?└─────────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────────??                   多资产类别配置系统架?                       ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             数据?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?股票数据 ? ?债券数据 ? ?商品数据 ? ?外汇数据 ?? ?? ? ?         ? ?         ? ?         ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             相关性建模层                                  ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Cross-Asset Correlation Model                     ? ? ?? ? ? - 动态相关性矩阵估?                              ? ? ?? ? ? - DCC-GARCH模型                                   ? ? ?? ? ? - 相关性预?                                      ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             配置优化?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?风险平价 ? ?均值方?? ?黑箱优化 ?              ? ?? ? ?优化     ? ?优化     ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             风险监控?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?风险预算 ? ?风险归因 ? ?预警系统 ?              ? ?? ? ?监控     ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
 
-### 2.2 核心数据�?
+### 2.2 核心数据?
 ```
-多资产数据（股票/债券/商品/外汇�?    �?跨资产相关性建模（DCC-GARCH�?    �?资产类别权重优化（风险平�?均值方差）
-    �?跨资产风险监�?    �?输出：资产配置权重、风险预算、监控报�?```
+多资产数据（股票/债券/商品/外汇?    ?跨资产相关性建模（DCC-GARCH?    ?资产类别权重优化（风险平?均值方差）
+    ?跨资产风险监?    ?输出：资产配置权重、风险预算、监控报?```
 
 ---
 
 ## 3. 核心模块设计
 
-### 3.1 多资产配置系统核心类（MultiAssetAllocator�?
+### 3.1 多资产配置系统核心类（MultiAssetAllocator?
 ```python
 class MultiAssetAllocator:
     """
     多资产配置系统核心类
     
     索引: MULTI_ASSET_001-M01
-    职责: 跨资产类别配置优�?    输入: 多资产数据、风险模�?    输出: 资产配置权重、风险预�?    """
+    职责: 跨资产类别配置优?    输入: 多资产数据、风险模?    输出: 资产配置权重、风险预?    """
     
     def __init__(self, config: MultiAssetConfig):
         self.config = config
@@ -94,17 +94,17 @@ class MultiAssetAllocator:
                 optimization_method: str = 'risk_parity',
                 risk_budget: Optional[Dict[str, float]] = None) -> AllocationResult:
         """
-        执行多资产配�?        
+        执行多资产配?        
         Args:
             asset_classes: 资产类别列表
-            optimization_method: 优化方法�?risk_parity', 'mean_variance', 'black_litterman'�?            risk_budget: 风险预算分配（可选）
+            optimization_method: 优化方法?risk_parity', 'mean_variance', 'black_litterman'?            risk_budget: 风险预算分配（可选）
             
         Returns:
             AllocationResult: 配置结果
         """
-        # 1. 获取多资产数�?        asset_data = self.data_manager.get_asset_data(asset_classes)
+        # 1. 获取多资产数?        asset_data = self.data_manager.get_asset_data(asset_classes)
         
-        # 2. 估计跨资产相关�?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
+        # 2. 估计跨资产相关?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
         
         # 3. 选择优化方法
         if optimization_method == 'risk_parity':
@@ -132,14 +132,14 @@ class MultiAssetAllocator:
                                economic_regime: str,
                                regime_probability: float) -> AllocationResult:
         """
-        桥水全天候配�?        
+        桥水全天候配?        
         Args:
-            economic_regime: 经济范式�?expansion', 'stagflation', 'recession', 'recovery'�?            regime_probability: 范式概率
+            economic_regime: 经济范式?expansion', 'stagflation', 'recession', 'recovery'?            regime_probability: 范式概率
             
         Returns:
             AllocationResult: 配置结果
         """
-        # 1. 定义全天候资产类�?        asset_classes = ['equity', 'bond', 'commodity', 'currency']
+        # 1. 定义全天候资产类?        asset_classes = ['equity', 'bond', 'commodity', 'currency']
         
         # 2. 根据经济范式调整风险预算
         risk_budget = self._adjust_risk_budget_by_regime(
@@ -153,7 +153,7 @@ class MultiAssetAllocator:
                                       economic_regime: str,
                                       regime_probability: float) -> Dict[str, float]:
         """根据经济范式调整风险预算"""
-        # 桥水全天候风险预算模�?        base_budget = {
+        # 桥水全天候风险预算模?        base_budget = {
             'equity': 0.30,
             'bond': 0.40,
             'commodity': 0.20,
@@ -175,20 +175,20 @@ class MultiAssetAllocator:
             adj_factor = adjustment.get(asset, 1.0)
             adjusted_budget[asset] = budget * adj_factor
         
-        # 归一�?        total = sum(adjusted_budget.values())
+        # 归一?        total = sum(adjusted_budget.values())
         adjusted_budget = {k: v/total for k, v in adjusted_budget.items()}
         
         return adjusted_budget
 ```
 
-### 3.2 多资产数据管理器（MultiAssetDataManager�?
+### 3.2 多资产数据管理器（MultiAssetDataManager?
 ```python
 class MultiAssetDataManager:
     """
     多资产数据管理器
     
     索引: MULTI_ASSET_001-M02
-    职责: 管理股票、债券、商品、外汇数�?    """
+    职责: 管理股票、债券、商品、外汇数?    """
     
     def __init__(self, config: DataConfig):
         self.config = config
@@ -201,7 +201,7 @@ class MultiAssetDataManager:
         
     def get_asset_data(self, asset_classes: List[str]) -> Dict[str, AssetData]:
         """
-        获取多资产数�?        
+        获取多资产数?        
         Args:
             asset_classes: 资产类别列表
             
@@ -237,14 +237,14 @@ class MultiAssetDataManager:
         return volatility
 ```
 
-### 3.3 跨资产相关性建模器（CrossAssetCorrelationModeler�?
+### 3.3 跨资产相关性建模器（CrossAssetCorrelationModeler?
 ```python
 class CrossAssetCorrelationModeler:
     """
     跨资产相关性建模器
     
     索引: MULTI_ASSET_001-M03
-    职责: 估计跨资产动态相关�?    """
+    职责: 估计跨资产动态相关?    """
     
     def __init__(self, config: CorrelationConfig):
         self.config = config
@@ -252,20 +252,20 @@ class CrossAssetCorrelationModeler:
         
     def estimate_correlation(self, asset_data: Dict[str, AssetData]) -> pd.DataFrame:
         """
-        估计跨资产相关性矩�?        
+        估计跨资产相关性矩?        
         Args:
             asset_data: 资产数据字典
             
         Returns:
-            pd.DataFrame: 相关性矩�?        """
-        # 1. 提取收益�?        returns = pd.DataFrame()
+            pd.DataFrame: 相关性矩?        """
+        # 1. 提取收益?        returns = pd.DataFrame()
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
         
-        # 2. 使用DCC-GARCH估计动态相关�?        if self.config.use_dcc_garch:
+        # 2. 使用DCC-GARCH估计动态相关?        if self.config.use_dcc_garch:
             correlation_matrix = self.dcc_garch.estimate(returns)
         else:
-            # 使用历史相关�?            correlation_matrix = returns.corr()
+            # 使用历史相关?            correlation_matrix = returns.corr()
         
         return correlation_matrix
     
@@ -273,13 +273,13 @@ class CrossAssetCorrelationModeler:
                            asset_data: Dict[str, AssetData],
                            horizon: int = 1) -> pd.DataFrame:
         """
-        预测未来相关�?        
+        预测未来相关?        
         Args:
             asset_data: 资产数据字典
             horizon: 预测期数
             
         Returns:
-            pd.DataFrame: 预测相关性矩�?        """
+            pd.DataFrame: 预测相关性矩?        """
         returns = pd.DataFrame()
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
@@ -290,13 +290,13 @@ class CrossAssetCorrelationModeler:
             return returns.corr()
 ```
 
-### 3.4 风险平价优化器（RiskParityOptimizer�?
+### 3.4 风险平价优化器（RiskParityOptimizer?
 ```python
 class RiskParityOptimizer:
     """
-    风险平价优化�?    
+    风险平价优化?    
     索引: MULTI_ASSET_001-M04
-    职责: 实现跨资产风险平价配�?    """
+    职责: 实现跨资产风险平价配?    """
     
     def __init__(self, config: RiskParityConfig):
         self.config = config
@@ -310,18 +310,18 @@ class RiskParityOptimizer:
         
         Args:
             asset_data: 资产数据字典
-            correlation_matrix: 相关性矩�?            risk_budget: 风险预算分配
+            correlation_matrix: 相关性矩?            risk_budget: 风险预算分配
             
         Returns:
             pd.Series: 资产配置权重
         """
-        # 1. 提取波动�?        volatility = pd.Series()
+        # 1. 提取波动?        volatility = pd.Series()
         for asset_class, data in asset_data.items():
             volatility[asset_class] = data.volatility
         
-        # 2. 构建协方差矩�?        covariance_matrix = self._build_covariance_matrix(volatility, correlation_matrix)
+        # 2. 构建协方差矩?        covariance_matrix = self._build_covariance_matrix(volatility, correlation_matrix)
         
-        # 3. 设置风险预算（默认等风险预算�?        if risk_budget is None:
+        # 3. 设置风险预算（默认等风险预算?        if risk_budget is None:
             risk_budget = {asset: 1.0/len(asset_data) for asset in asset_data.keys()}
         
         # 4. 求解风险平价权重
@@ -332,7 +332,7 @@ class RiskParityOptimizer:
     def _build_covariance_matrix(self,
                                  volatility: pd.Series,
                                  correlation_matrix: pd.DataFrame) -> pd.DataFrame:
-        """构建协方差矩�?""
+        """构建协方差矩?""
         # Σ = D * C * D
         # D = diag(σ)
         D = np.diag(volatility.values)
@@ -365,7 +365,7 @@ class RiskParityOptimizer:
         marginal_risk_contribution = Sigma @ w
         risk_contribution = cp.multiply(w, marginal_risk_contribution) / portfolio_risk
         
-        # 目标：风险贡献与风险预算一�?        objective = cp.Minimize(
+        # 目标：风险贡献与风险预算一?        objective = cp.Minimize(
             cp.sum_squares(risk_contribution / b - portfolio_risk / np.sum(b))
         )
         
@@ -382,14 +382,14 @@ class RiskParityOptimizer:
         return w.value
 ```
 
-### 3.5 跨资产风险监控器（CrossAssetRiskMonitor�?
+### 3.5 跨资产风险监控器（CrossAssetRiskMonitor?
 ```python
 class CrossAssetRiskMonitor:
     """
     跨资产风险监控器
     
     索引: MULTI_ASSET_001-M05
-    职责: 监控跨资产风�?    """
+    职责: 监控跨资产风?    """
     
     def __init__(self, config: MonitorConfig):
         self.config = config
@@ -398,10 +398,10 @@ class CrossAssetRiskMonitor:
                allocation: pd.Series,
                correlation_matrix: pd.DataFrame) -> RiskReport:
         """
-        监控跨资产风�?        
+        监控跨资产风?        
         Args:
             allocation: 资产配置权重
-            correlation_matrix: 相关性矩�?            
+            correlation_matrix: 相关性矩?            
         Returns:
             RiskReport: 风险报告
         """
@@ -411,7 +411,7 @@ class CrossAssetRiskMonitor:
         # 2. 计算风险贡献
         risk_contribution = self._calculate_risk_contribution(allocation, correlation_matrix)
         
-        # 3. 检测相关性突�?        correlation_breakdown = self._detect_correlation_breakdown(correlation_matrix)
+        # 3. 检测相关性突?        correlation_breakdown = self._detect_correlation_breakdown(correlation_matrix)
         
         # 4. 生成预警信号
         alerts = self._generate_alerts(risk_contribution, correlation_breakdown)
@@ -428,7 +428,7 @@ class CrossAssetRiskMonitor:
                                   allocation: pd.Series,
                                   correlation_matrix: pd.DataFrame) -> float:
         """计算组合风险"""
-        # 简化实现：假设波动率已�?        # 实际应从数据中获�?        volatility = pd.Series({
+        # 简化实现：假设波动率已?        # 实际应从数据中获?        volatility = pd.Series({
             'equity': 0.20,
             'bond': 0.08,
             'commodity': 0.25,
@@ -466,9 +466,9 @@ class CrossAssetRiskMonitor:
         return pd.Series(risk_contribution, index=allocation.index)
     
     def _detect_correlation_breakdown(self, correlation_matrix: pd.DataFrame) -> bool:
-        """检测相关性突�?""
+        """检测相关性突?""
         # 简化实现：检查相关性是否异常高
-        # 实际应使用历史相关性对�?        mean_correlation = correlation_matrix.values[np.triu_indices(len(correlation_matrix), k=1)].mean()
+        # 实际应使用历史相关性对?        mean_correlation = correlation_matrix.values[np.triu_indices(len(correlation_matrix), k=1)].mean()
         
         return mean_correlation > 0.8
     
@@ -487,21 +487,21 @@ class CrossAssetRiskMonitor:
                 'message': f'风险过度集中：{risk_contribution.idxmax()}贡献{max_risk_contribution:.2%}风险'
             })
         
-        # 2. 相关性突变预�?        if correlation_breakdown:
+        # 2. 相关性突变预?        if correlation_breakdown:
             alerts.append({
                 'type': 'correlation_breakdown',
                 'severity': 'medium',
-                'message': '资产相关性异常升高，分散化效果下�?
+                'message': '资产相关性异常升高，分散化效果下?
             })
         
         return alerts
 ```
 
-### 3.6 配置类定�?
+### 3.6 配置类定?
 ```python
 @dataclass
 class MultiAssetConfig:
-    """多资产配�?""
+    """多资产配?""
     data_config: DataConfig
     corr_config: CorrelationConfig
     rp_config: RiskParityConfig
@@ -518,14 +518,14 @@ class DataConfig:
     
 @dataclass
 class CorrelationConfig:
-    """相关性配�?""
+    """相关性配?""
     use_dcc_garch: bool = True
     dcc_config: DCCGARCHConfig = None
     
 @dataclass
 class RiskParityConfig:
     """风险平价配置"""
-    max_weight: float = 0.60  # 单资产最大权�?    min_weight: float = 0.05  # 单资产最小权�?```
+    max_weight: float = 0.60  # 单资产最大权?    min_weight: float = 0.05  # 单资产最小权?```
 
 ---
 
@@ -538,7 +538,7 @@ class RiskParityConfig:
 class AssetData:
     """资产数据"""
     asset_class: str  # 资产类别
-    returns: pd.Series  # 收益率序�?    volatility: float  # 波动�?    liquidity: float  # 流动�?```
+    returns: pd.Series  # 收益率序?    volatility: float  # 波动?    liquidity: float  # 流动?```
 
 ### 4.2 输出数据模型
 
@@ -547,7 +547,7 @@ class AssetData:
 class AllocationResult:
     """配置结果"""
     allocation: pd.Series  # 资产配置权重
-    correlation_matrix: pd.DataFrame  # 相关性矩�?    risk_report: RiskReport  # 风险报告
+    correlation_matrix: pd.DataFrame  # 相关性矩?    risk_report: RiskReport  # 风险报告
     timestamp: datetime
     
 @dataclass
@@ -555,7 +555,7 @@ class RiskReport:
     """风险报告"""
     portfolio_risk: float  # 组合风险
     risk_contribution: pd.Series  # 风险贡献
-    correlation_breakdown: bool  # 相关性突�?    alerts: List[Dict]  # 预警信号
+    correlation_breakdown: bool  # 相关性突?    alerts: List[Dict]  # 预警信号
     timestamp: datetime
 ```
 
@@ -563,10 +563,10 @@ class RiskReport:
 
 ## 5. 集成方案
 
-### 5.1 与经济范式引擎集�?
+### 5.1 与经济范式引擎集?
 ```python
 class EconomicRegimeEngine:
-    """经济范式引擎（集成多资产配置�?""
+    """经济范式引擎（集成多资产配置?""
     
     def __init__(self, multi_asset_allocator: MultiAssetAllocator):
         self.multi_asset_allocator = multi_asset_allocator
@@ -576,21 +576,21 @@ class EconomicRegimeEngine:
         # 1. 识别经济范式
         regime, probability = self.identify_regime(market_data)
         
-        # 2. 执行全天候配�?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
+        # 2. 执行全天候配?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
 ```
 
 ### 5.2 与Barra风险模型集成
 
 ```python
 class BarraRiskModel:
-    """Barra风险模型（集成多资产配置�?""
+    """Barra风险模型（集成多资产配置?""
     
     def __init__(self, multi_asset_allocator: MultiAssetAllocator):
         self.multi_asset_allocator = multi_asset_allocator
         
     def multi_asset_risk_budget(self,
                                 asset_classes: List[str]) -> Dict[str, float]:
-        """跨资产风险预�?""
+        """跨资产风险预?""
         # 1. 执行风险平价配置
         allocation_result = self.multi_asset_allocator.allocate(
             asset_classes, 'risk_parity'
@@ -604,30 +604,30 @@ class BarraRiskModel:
 
 ---
 
-## 6. 实施路线�?
+## 6. 实施路线?
 ### 6.1 开发阶段（3周）
 
-**Week 1: 数据层开�?*
+**Week 1: 数据层开?*
 - Day 1-2: 多资产数据管理器
 - Day 3-4: 数据源接入（股票、债券、商品、外汇）
 - Day 5: 数据测试
 
-**Week 2: 核心算法开�?*
+**Week 2: 核心算法开?*
 - Day 1-2: 跨资产相关性建模器
-- Day 3-4: 风险平价优化�?- Day 5: 优化器测�?
-**Week 3: 集成与测�?*
+- Day 3-4: 风险平价优化?- Day 5: 优化器测?
+**Week 3: 集成与测?*
 - Day 1-2: 跨资产风险监控器
 - Day 3: 系统集成
 - Day 4: 集成测试
 - Day 5: 文档编写
 
-### 6.2 里程�?
-| 里程�?| 时间 | 交付�?| 验收标准 |
+### 6.2 里程?
+| 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
-| **M1: 数据层完�?* | Week 1 | 多资产数据管理器 | 数据接入正常 |
-| **M2: 相关性建模完�?* | Week 2 Day 2 | 跨资产相关性建模器 | 相关性估计准�?|
-| **M3: 优化器完�?* | Week 2 Day 4 | 风险平价优化�?| 优化结果合理 |
-| **M4: 监控器完�?* | Week 3 Day 2 | 跨资产风险监控器 | 监控有效 |
+| **M1: 数据层完?* | Week 1 | 多资产数据管理器 | 数据接入正常 |
+| **M2: 相关性建模完?* | Week 2 Day 2 | 跨资产相关性建模器 | 相关性估计准?|
+| **M3: 优化器完?* | Week 2 Day 4 | 风险平价优化?| 优化结果合理 |
+| **M4: 监控器完?* | Week 3 Day 2 | 跨资产风险监控器 | 监控有效 |
 | **M5: 测试通过** | Week 3 Day 4 | 测试报告 | 所有测试通过 |
 
 ---
@@ -638,27 +638,27 @@ class BarraRiskModel:
 
 | 指标 | 当前水平 | 目标水平 | 提升幅度 |
 |------|---------|---------|---------|
-| **资产配置多样�?* | 50% | 100% | +50% |
-| **系统性风险分�?* | 60% | 100% | +40% |
-| **桥水模式完整�?* | 85% | 95% | +10% |
-| **跨资产配置能�?* | �?| �?| 新增能力 |
+| **资产配置多样?* | 50% | 100% | +50% |
+| **系统性风险分?* | 60% | 100% | +40% |
+| **桥水模式完整?* | 85% | 95% | +10% |
+| **跨资产配置能?* | ?| ?| 新增能力 |
 
-### 7.2 定性收�?
-- �?实现桥水全天候策略核心能�?- �?支持股票、债券、商品、外汇四大资产类�?- �?实现真正的跨资产风险平价
-- �?提升系统性风险分散能�?- �?为多策略配置提供基础
+### 7.2 定性收?
+- ?实现桥水全天候策略核心能?- ?支持股票、债券、商品、外汇四大资产类?- ?实现真正的跨资产风险平价
+- ?提升系统性风险分散能?- ?为多策略配置提供基础
 
 ---
 
 ## 8. 技术栈选择
 
-### 8.1 核心依赖�?
-| 库名 | 版本 | 用�?| 必要�?|
+### 8.1 核心依赖?
+| 库名 | 版本 | 用?| 必要?|
 |------|------|------|--------|
-| **pandas** | �?.5 | 数据处理 | 必需 |
-| **numpy** | �?.21 | 数值计�?| 必需 |
-| **cvxpy** | �?.3 | 凸优�?| 必需 |
-| **scipy** | �?.7 | 科学计算 | 必需 |
-| **arch** | �?.0 | GARCH模型 | 必需 |
+| **pandas** | ?.5 | 数据处理 | 必需 |
+| **numpy** | ?.21 | 数值计?| 必需 |
+| **cvxpy** | ?.3 | 凸优?| 必需 |
+| **scipy** | ?.7 | 科学计算 | 必需 |
+| **arch** | ?.0 | GARCH模型 | 必需 |
 
 ### 8.2 安装命令
 
@@ -674,20 +674,20 @@ pip install arch>=5.0
 
 ## 9. 风险评估
 
-### 9.1 技术风�?
-| 风险�?| 风险等级 | 缓解措施 |
+### 9.1 技术风?
+| 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **数据源接入困�?* | �?| 使用成熟数据源API |
-| **相关性建模精�?* | �?| 使用DCC-GARCH等先进模�?|
-| **优化求解稳定�?* | �?| 使用成熟优化�?|
+| **数据源接入困?* | ?| 使用成熟数据源API |
+| **相关性建模精?* | ?| 使用DCC-GARCH等先进模?|
+| **优化求解稳定?* | ?| 使用成熟优化?|
 
 ### 9.2 实施风险
 
-| 风险�?| 风险等级 | 缓解措施 |
+| 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **开发时间超�?* | �?| 分阶段实施、里程碑管理 |
-| **数据质量问题** | �?| 数据清洗和验�?|
-| **性能不达�?* | �?| 性能优化 |
+| **开发时间超?* | ?| 分阶段实施、里程碑管理 |
+| **数据质量问题** | ?| 数据清洗和验?|
+| **性能不达?* | ?| 性能优化 |
 
 ---
 
@@ -696,46 +696,46 @@ pip install arch>=5.0
 ### 10.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化�?
-##### 6.7 多资产类别配�?- **模块ID**: MULTI_ASSET_001
+#### Layer 6: 组合优化?
+##### 6.7 多资产类别配?- **模块ID**: MULTI_ASSET_001
 - **蓝图文档**: [MULTI_ASSET_ALLOCATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md)
-- **技术规格书**: 待创�?- **职责**: 跨资产配置、风险平价优化、跨资产风险监控
-- **状�?*: 设计阶段
+- **技术规格书**: 待创?- **职责**: 跨资产配置、风险平价优化、跨资产风险监控
+- **状?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **多资产配置系�?* | 跨资产配置优�?| **资产类别层面** |
+| **多资产配置系?* | 跨资产配置优?| **资产类别层面** |
 | **经济范式引擎** | 经济范式识别 | 提供经济范式信号 |
 | **Barra风险模型** | 风险模型 | 提供风险模型数据 |
-| **组合优化�?* | 单资产优�?| 资产内部优化 |
+| **组合优化?* | 单资产优?| 资产内部优化 |
 
 ---
 
 ## 附录
 
-### A. 参考文�?
+### A. 参考文?
 1. **风险平价理论**:
    - Qian, E. (2005). "Risk Parity Portfolios"
    - Asness, C., Frazzini, A., and Pedersen, L.H. (2012). "Leverage Aversion and Risk Parity"
 
-2. **全天候策�?*:
+2. **全天候策?*:
    - Bridgewater Associates. "The All Weather Story"
    - Dalio, R. (2017). "Principles for Dealing with the Changing World Order"
 
-3. **多资产配�?*:
+3. **多资产配?*:
    - Ang, A. (2014). "Asset Management: A Systematic Approach to Factor Investing"
 
-### B. 术语�?
-| 术语 | 定义 | 上下�?|
+### B. 术语?
+| 术语 | 定义 | 上下?|
 |------|------|--------|
 | **风险平价** | 基于风险贡献度的资产配置方法 | 配置策略 |
-| **全天候策�?* | 桥水基金的风险平价策�?| 资产配置 |
-| **跨资产相关�?* | 不同资产类别之间的相关�?| 相关性建�?|
+| **全天候策?* | 桥水基金的风险平价策?| 资产配置 |
+| **跨资产相关?* | 不同资产类别之间的相关?| 相关性建?|
 | **资产类别** | 股票、债券、商品、外汇等大类资产 | 资产分类 |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 技术规格书编写

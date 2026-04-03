@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-03
 owner: 首席技术评审官
 standard_type: 文档索引
-applicable_scope: 全系统技术规格书（Layer 0-8）
+applicable_scope: 全系统技术规格书（Layer 0-11）
 compliance_level: 专业标准
 ---
 
@@ -19,7 +19,7 @@ compliance_level: 专业标准
 
 ## 1. 索引说明
 
-本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-8架构组织，包括文档名称、module_id、版本、状态和最后更新日期。
+本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-11架构组织，包括文档名称、module_id、版本、状态和最后更新日期。
 ---
 
 ## 2. 核心模块技术规格书

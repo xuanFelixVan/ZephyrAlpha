@@ -1,6 +1,6 @@
 ---
 module_id: DOC_API_CONTRACT_001
-version: 5.1.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -340,7 +340,7 @@ class IDataHub(ABC):
     Layer: Layer 0
     上游: 数据源(AKShare/Tushare)
     下游: FactorCalculator, Monitor
-    状态: 规划中 (v5.1阶段尚未实现)
+    状态: 规划中 (v5.3阶段尚未实现)
     """
 
     @abstractmethod

@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (组合优化?
 index: RISK_ATTRIBUTION_SPEC_001
 estimated_hours: 50h
 review_status: Pending
@@ -14,15 +14,15 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构技术规格书
-applicable_scope: 全系�?compliance_level: 专业标准
+applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 # 风险归因系统技术规格书 v1.0
 
-> 清风量化系统 v5.2 - 风险归因系统详细技术设�?> **索引**: `RISK_ATTRIBUTION_SPEC_001`
-> **开发时�?*: 50h
+> 清风量化系统 v5.3 - 风险归因系统详细技术设?> **索引**: `RISK_ATTRIBUTION_SPEC_001`
+> **开发时?*: 50h
 > **核心定位**: 多维度风险归因分析，识别风险来源
 
 ---
@@ -35,21 +35,21 @@ implementation_status: 设计阶段
 - 因子风险归因
 - 行业风险归因
 - 资产风险归因
-- 风险贡献度分�?
+- 风险贡献度分?
 ---
 
 ## 2. 接口定义
 
-### 2.1 核心类接�?
+### 2.1 核心类接?
 ```python
 class RiskAttributionSystem:
     """
-    风险归因系统核心�?    
-    职责: 多维度风险归因分�?    """
+    风险归因系统核心?    
+    职责: 多维度风险归因分?    """
     
     def __init__(self, barra_model: BarraRiskModel):
         """
-        初始化风险归因系�?        
+        初始化风险归因系?        
         Args:
             barra_model: Barra风险模型实例
         """
@@ -63,7 +63,7 @@ class RiskAttributionSystem:
         
         Args:
             portfolio_weights: 组合权重
-            returns_data: 收益率数�?            
+            returns_data: 收益率数?            
         Returns:
             AttributionResult: 归因结果
         """
@@ -145,8 +145,8 @@ def attribute_risk(
     
     Args:
         portfolio_weights: 组合权重
-        covariance_matrix: 协方差矩�?        factor_loadings: 因子载荷
-        factor_covariance: 因子协方�?        
+        covariance_matrix: 协方差矩?        factor_loadings: 因子载荷
+        factor_covariance: 因子协方?        
     Returns:
         AttributionResult: 归因结果
     """
@@ -195,7 +195,7 @@ class TestRiskAttribution:
         
         # 验证
         assert attribution.factor_contributions.sum() > 0
-        assert len(attribution.factor_exposures) == 10  # 10个因�?    
+        assert len(attribution.factor_exposures) == 10  # 10个因?    
     def test_industry_attribution(self):
         """测试行业归因"""
         weights = pd.Series([0.3, 0.3, 0.4], index=['A', 'B', 'C'])
@@ -218,4 +218,4 @@ class TestRiskAttribution:
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 实施开�?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开?

@@ -13,7 +13,7 @@ implementation_status: 活跃维护
 
 # 框架设计目录索引
 
-> **版本**: v5.1  
+> **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
 > **最后更�?*: 2026-04-03  
 > **维护�?*: 系统架构�?
@@ -32,7 +32,7 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [专业多时间框架架构](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构设计 | ⭐⭐⭐⭐�?|
 | [架构文档](./ARCHITECTURE.md) | 系统架构详细说明 | ⭐⭐⭐⭐�?|
-| [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md) | Layer 0-8迁移到三级时间框�?| ⭐⭐⭐⭐ |
+| [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md) | Layer 0-11迁移到三级时间框�?| ⭐⭐⭐⭐ |
 | [技术栈](./TECH_STACK.md) | 技术栈选择 | ⭐⭐⭐⭐ |
 
 ### 实施蓝图

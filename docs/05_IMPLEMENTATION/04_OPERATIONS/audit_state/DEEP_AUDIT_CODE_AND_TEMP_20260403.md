@@ -14,7 +14,7 @@ implementation_status: 已完成
 
 # 深度审计报告：代码目录与临时文件
 
-> 清风量化系统 v5.1 代码目录与临时文件审计
+> 清风量化系统 v5.3 代码目录与临时文件审计
 >
 > **审计日期**: 2026-04-03
 > **审计类型**: 深度审计
@@ -170,7 +170,7 @@ QMT_LIVE_PASSWORD=***（已脱敏）
 
 | 属性 | 详情 |
 |------|------|
-| **文件** | `DOCUMENT_AUDIT_v5.1.md` |
+| **文件** | `DOCUMENT_AUDIT_v5.3.md` |
 | **位置** | 根目录 |
 | **现状** | 与 `docs/09_AUDIT/` 目录功能重叠 |
 | **建议** | 移动到 `docs/09_AUDIT/REPORTS/` 或保持现状 |
@@ -342,7 +342,7 @@ QMT_LIVE_PASSWORD=***（已脱敏）
 | `temp_a_stock_blueprint.md` | `docs/06_CONSTRUCTION_DOCS/` | P1 |
 | `review_materials_package.zip` | `data/archive/` | P1 |
 | `迅投QMT极速策略交易系统说明文档.pdf` | `docs/09_EXTERNAL_DOCS/` | P1 |
-| `DOCUMENT_AUDIT_v5.1.md` | `docs/09_AUDIT/REPORTS/` | P2 |
+| `DOCUMENT_AUDIT_v5.3.md` | `docs/09_AUDIT/REPORTS/` | P2 |
 
 
 ## 8. 审计质量声明

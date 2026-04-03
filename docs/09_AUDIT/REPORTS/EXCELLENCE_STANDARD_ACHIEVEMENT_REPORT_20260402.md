@@ -69,7 +69,7 @@ tags: ["卓越标准", "改进报告", "最终成果"]
 **文档**: [SYSTEM_ARCHITECTURE_DIAGRAM.md](../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_DIAGRAM.md)
 
 **核心内容**:
-- 整体架构图：Layer 0-8完整分层架构
+- 整体架构图：Layer 0-11完整分层架构
 - 核心引擎架构图：因子引擎、策略引擎、组合引擎、风控引擎
 - 部署架构图：生产环境部署架构
 

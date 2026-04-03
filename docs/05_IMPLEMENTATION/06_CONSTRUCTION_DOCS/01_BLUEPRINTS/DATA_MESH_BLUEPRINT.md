@@ -15,47 +15,47 @@ implementation_progress: 0%
 
 # 数据网格架构蓝图
 
-> 清风量化系统 v5.2 - 数据网格（Data Mesh）架构详细设�?> **模块ID**: `DATA_MESH_001`
+> 清风量化系统 v5.3 - 数据网格（Data Mesh）架构详细设?> **模块ID**: `DATA_MESH_001`
 > **实施周期**: 6-12个月（未来规划）
-> **优先�?*: P2（长期优化）
+> **优先?*: P2（长期优化）
 > **预期收益**: 领域驱动的数据所有权、联邦式数据治理、规模化数据管理
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需�?
+### 1.1 业务需?
 **当前痛点**:
-- �?数据集中管理，扩展性差
-- �?数据团队成为瓶颈，响应慢
-- �?数据质量难以保证，职责不�?- �?跨团队协作困难，治理效率�?
+- ?数据集中管理，扩展性差
+- ?数据团队成为瓶颈，响应慢
+- ?数据质量难以保证，职责不?- ?跨团队协作困难，治理效率?
 **业务目标**:
-- �?实现领域驱动的数据所有权
-- �?建立联邦式数据治理架�?- �?实现规模化数据管理和交付
-- �?提高数据团队自治能力
+- ?实现领域驱动的数据所有权
+- ?建立联邦式数据治理架?- ?实现规模化数据管理和交付
+- ?提高数据团队自治能力
 
-### 1.2 技术目�?
-| 指标 | 目标�?| 说明 |
+### 1.2 技术目?
+| 指标 | 目标?| 说明 |
 |------|--------|------|
-| **数据域数�?* | 5-8�?| 划分数据域数�?|
-| **数据产品数量** | �?0�?| 自助服务数据产品 |
+| **数据域数?* | 5-8?| 划分数据域数?|
+| **数据产品数量** | ?0?| 自助服务数据产品 |
 | **数据交付周期** | 从周→天 | 缩短数据交付周期 |
-| **数据治理效率** | 提升3�?| 联邦治理效率 |
+| **数据治理效率** | 提升3?| 联邦治理效率 |
 
 
-## 二、系统架构设�?
-### 2.1 整体架构�?
+## 二、系统架构设?
+### 2.1 整体架构?
 ```
-┌─────────────────────────────────────────────────────────────�?�?                   数据网格架构                               �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据产品�?(Data Products)                 �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?行情域数�?  �? �?因子域数�?  �? �?风险域数�?  �? �? �?�? �? �?产品        �? �?产品        �? �?产品        �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?组合域数�?  �? �?财务域数�?  �? �?交易域数�?  �? �? �?�? �? �?产品        �? �?产品        �? �?产品        �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           平台能力�?(Platform Capabilities)         �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?数据目录     �? �?数据质量     �? �?数据安全     �? �? �?�? �? �?发现服务    �? �?治理服务    �? �?治理服务    �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?数据共享     �? �?元数�?    �? �?数据监控     �? �? �?�? �? �?协调服务    �? �?管理服务    �? �?服务        �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           基础设施�?(Infrastructure)               �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?数据�?     �? �?流处�?    �? �?存储�?     �? �? �?�? �? �?(Delta Lake)�? �?(Kafka)    �? �?(MinIO/S3)  �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────??                   数据网格架构                               ?├─────────────────────────────────────────────────────────────??                                                            ?? ┌──────────────────────────────────────────────────────? ?? ?           数据产品?(Data Products)                 ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?行情域数?  ? ?因子域数?  ? ?风险域数?  ? ? ?? ? ?产品        ? ?产品        ? ?产品        ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?组合域数?  ? ?财务域数?  ? ?交易域数?  ? ? ?? ? ?产品        ? ?产品        ? ?产品        ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           平台能力?(Platform Capabilities)         ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?数据目录     ? ?数据质量     ? ?数据安全     ? ? ?? ? ?发现服务    ? ?治理服务    ? ?治理服务    ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?数据共享     ? ?元数?    ? ?数据监控     ? ? ?? ? ?协调服务    ? ?管理服务    ? ?服务        ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           基础设施?(Infrastructure)               ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?数据?     ? ?流处?    ? ?存储?     ? ? ?? ? ?(Delta Lake)? ?(Kafka)    ? ?(MinIO/S3)  ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
-### 2.2 数据域划�?
-#### 2.2.1 量化系统数据域设�?
+### 2.2 数据域划?
+#### 2.2.1 量化系统数据域设?
 ```python
 from enum import Enum
 
 class DataDomain(Enum):
-    """数据域枚�?""
+    """数据域枚?""
     
-    MARKET_DATA = "market_data"  # 行情数据�?    FACTOR_DATA = "factor_data"  # 因子数据�?    RISK_DATA = "risk_data"      # 风险数据�?    PORTFOLIO_DATA = "portfolio_data"  # 组合数据�?    FINANCIAL_DATA = "financial_data"  # 财务数据�?    TRADING_DATA = "trading_data"  # 交易数据�?    ALERT_DATA = "alert_data"      # 告警数据�?    USER_DATA = "user_data"        # 用户数据�?
+    MARKET_DATA = "market_data"  # 行情数据?    FACTOR_DATA = "factor_data"  # 因子数据?    RISK_DATA = "risk_data"      # 风险数据?    PORTFOLIO_DATA = "portfolio_data"  # 组合数据?    FINANCIAL_DATA = "financial_data"  # 财务数据?    TRADING_DATA = "trading_data"  # 交易数据?    ALERT_DATA = "alert_data"      # 告警数据?    USER_DATA = "user_data"        # 用户数据?
 class DomainOwnership:
     """数据域所有权"""
     
@@ -63,49 +63,49 @@ class DomainOwnership:
         self.domain_ownership = {
             DataDomain.MARKET_DATA: {
                 "owner_team": "数据工程团队",
-                "owner_role": "数据产品负责�?,
+                "owner_role": "数据产品负责?,
                 "responsibilities": [
-                    "行情数据采集和清�?,
+                    "行情数据采集和清?,
                     "行情数据质量保证",
                     "行情数据API服务"
                 ],
                 "slas": {
-                    "datafreshness": "5分钟�?,
+                    "datafreshness": "5分钟?,
                     "data_quality": "99%",
                     "availability": "99.9%"
                 }
             },
             DataDomain.FACTOR_DATA: {
                 "owner_team": "因子研究团队",
-                "owner_role": "因子产品负责�?,
+                "owner_role": "因子产品负责?,
                 "responsibilities": [
-                    "因子计算和存�?,
+                    "因子计算和存?,
                     "因子数据质量保证",
                     "因子数据API服务"
                 ],
                 "slas": {
-                    "datafreshness": "30分钟�?,
+                    "datafreshness": "30分钟?,
                     "data_quality": "98%",
                     "availability": "99.5%"
                 }
             },
             DataDomain.RISK_DATA: {
                 "owner_team": "风控团队",
-                "owner_role": "风险产品负责�?,
+                "owner_role": "风险产品负责?,
                 "responsibilities": [
                     "风险指标计算",
                     "风险数据质量保证",
                     "风险数据API服务"
                 ],
                 "slas": {
-                    "datafreshness": "15分钟�?,
+                    "datafreshness": "15分钟?,
                     "data_quality": "99.5%",
                     "availability": "99.9%"
                 }
             },
             DataDomain.PORTFOLIO_DATA: {
                 "owner_team": "组合管理团队",
-                "owner_role": "组合产品负责�?,
+                "owner_role": "组合产品负责?,
                 "responsibilities": [
                     "组合持仓数据管理",
                     "组合绩效计算",
@@ -119,21 +119,21 @@ class DomainOwnership:
             },
             DataDomain.FINANCIAL_DATA: {
                 "owner_team": "数据工程团队",
-                "owner_role": "财务产品负责�?,
+                "owner_role": "财务产品负责?,
                 "responsibilities": [
                     "财务数据采集",
                     "财务数据清洗",
                     "财务数据API服务"
                 ],
                 "slas": {
-                    "datafreshness": "1小时�?,
+                    "datafreshness": "1小时?,
                     "data_quality": "98%",
                     "availability": "99%"
                 }
             },
             DataDomain.TRADING_DATA: {
                 "owner_team": "交易团队",
-                "owner_role": "交易产品负责�?,
+                "owner_role": "交易产品负责?,
                 "responsibilities": [
                     "交易记录管理",
                     "交易数据分析",
@@ -148,7 +148,7 @@ class DomainOwnership:
         }
     
     def get_domain_info(self, domain: DataDomain) -> dict:
-        """获取数据域信�?""
+        """获取数据域信?""
         return self.domain_ownership.get(domain, {})
     
     def register_domain_product(
@@ -160,17 +160,17 @@ class DomainOwnership:
         注册数据产品
         
         Args:
-            domain: 数据�?            product: 数据产品信息
+            domain: 数据?            product: 数据产品信息
                 {
                     'product_id': 'product_001',
                     'product_name': '股票行情数据',
-                    'description': 'A股市场股票行情数�?,
+                    'description': 'A股市场股票行情数?,
                     'data_format': 'parquet',
                     'update_frequency': '5min',
                     'owner': '数据工程团队'
                 }
         """
-        # 注册数据产品到目�?        pass
+        # 注册数据产品到目?        pass
 ```
 
 ### 2.3 数据产品设计
@@ -252,7 +252,7 @@ class DataProduct:
     
     def publish_product(self, catalog_service):
         """
-        发布数据产品到目�?        
+        发布数据产品到目?        
         Args:
             catalog_service: 数据目录服务
         """
@@ -348,7 +348,7 @@ class QuantDataProducts:
         )
         
         product.define_product(
-            description="Alpha158因子库的因子值数�?,
+            description="Alpha158因子库的因子值数?,
             domain=DataDomain.FACTOR_DATA,
             data_format="parquet",
             update_frequency="30min",
@@ -387,7 +387,7 @@ class QuantDataProducts:
         )
         
         product.define_product(
-            description="组合的风险指标数据，包括VaR、CVaR、波动率�?,
+            description="组合的风险指标数据，包括VaR、CVaR、波动率?,
             domain=DataDomain.RISK_DATA,
             data_format="parquet",
             update_frequency="15min",
@@ -420,22 +420,22 @@ class QuantDataProducts:
         return product
 ```
 
-### 2.4 联邦式数据治�?
+### 2.4 联邦式数据治?
 #### 2.4.1 治理架构
 
 ```python
 class FederatedDataGovernance:
-    """联邦式数据治�?""
+    """联邦式数据治?""
     
     def __init__(self):
-        self.governance_council = []  # 治理委员�?        self.domain_governors = {}    # 域治理�?        self.global_policies = {}     # 全局策略
-        self.domain_policies = {}     # 域策�?    
+        self.governance_council = []  # 治理委员?        self.domain_governors = {}    # 域治理?        self.global_policies = {}     # 全局策略
+        self.domain_policies = {}     # 域策?    
     def setup_governance_structure(self):
         """设置治理结构"""
-        # 治理委员会成�?        self.governance_council = [
-            {"role": "首席数据�?, "responsibility": "全局数据战略"},
+        # 治理委员会成?        self.governance_council = [
+            {"role": "首席数据?, "responsibility": "全局数据战略"},
             {"role": "数据域负责人", "responsibility": "域内数据治理"},
-            {"role": "数据产品负责�?, "responsibility": "数据产品管理"}
+            {"role": "数据产品负责?, "responsibility": "数据产品管理"}
         ]
     
     def define_global_policies(self):
@@ -469,9 +469,9 @@ class FederatedDataGovernance:
         governor: dict
     ):
         """
-        任命域治理�?        
+        任命域治理?        
         Args:
-            domain: 数据�?            governor: 治理者信�?                {
+            domain: 数据?            governor: 治理者信?                {
                     'name': '张三',
                     'role': '域治理负责人',
                     'team': '数据工程团队'
@@ -485,9 +485,9 @@ class FederatedDataGovernance:
         policy: dict
     ):
         """
-        创建域策�?        
+        创建域策?        
         Args:
-            domain: 数据�?            policy: 域策�?        """
+            domain: 数据?            policy: 域策?        """
         if domain.value not in self.domain_policies:
             self.domain_policies[domain.value] = {}
         
@@ -500,19 +500,19 @@ class FederatedDataGovernance:
         check_function
     ):
         """
-        执行策略检�?        
+        执行策略检?        
         Args:
-            domain: 数据�?            policy_type: 策略类型
-            check_function: 检查函�?        """
+            domain: 数据?            policy_type: 策略类型
+            check_function: 检查函?        """
         # 检查全局策略
         global_policy = self.global_policies.get(policy_type, {})
         
         # 检查域策略
         domain_policy = self.domain_policies.get(domain.value, {}).get(policy_type, {})
         
-        # 合并策略（域策略优先�?        effective_policy = {**global_policy, **domain_policy}
+        # 合并策略（域策略优先?        effective_policy = {**global_policy, **domain_policy}
         
-        # 执行策略检�?        return check_function(effective_policy)
+        # 执行策略检?        return check_function(effective_policy)
 ```
 
 ### 2.5 自助服务数据平台
@@ -550,10 +550,10 @@ class DataProductCatalog:
         搜索数据产品
         
         Args:
-            query: 搜索关键�?            filters: 过滤条件
+            query: 搜索关键?            filters: 过滤条件
         
         Returns:
-            匹配的产品列�?        """
+            匹配的产品列?        """
         results = []
         
         for product_id, product in self.products.items():
@@ -571,7 +571,7 @@ class DataProductCatalog:
     
     def _update_search_index(self, product_id: str, product_data: dict):
         """更新搜索索引"""
-        # 提取关键�?        keywords = [
+        # 提取关键?        keywords = [
             product_data.get('product_name', ''),
             product_data.get('metadata', {}).get('description', ''),
             product_data.get('metadata', {}).get('domain', '')
@@ -640,7 +640,7 @@ class DataProductAccessService:
         # 获取产品信息
         product = self.catalog.get_product_details(product_id)
         
-        # 检查访问策�?        policy = product.get('access_policies', {})
+        # 检查访问策?        policy = product.get('access_policies', {})
         
         # 审批流程
         if self._auto_approve(user_id, policy):
@@ -656,7 +656,7 @@ class DataProductAccessService:
             return {
                 'request_id': f"req_{len(self.access_logs) + 1}",
                 'status': 'pending',
-                'message': '需要人工审�?
+                'message': '需要人工审?
             }
     
     def _auto_approve(self, user_id: str, policy: dict) -> bool:
@@ -681,57 +681,57 @@ class DataProductAccessService:
         return hashlib.sha256(token_data.encode()).hexdigest()
     
     def _get_user_groups(self, user_id: str) -> List[str]:
-        """获取用户�?""
-        # 从用户管理系统获�?        return ['research_team']
+        """获取用户?""
+        # 从用户管理系统获?        return ['research_team']
 ```
 
 ---
 
 ## 三、实施路线图
 
-### 3.1 Phase 1: 域划分与所有权（Month 1-2�?
+### 3.1 Phase 1: 域划分与所有权（Month 1-2?
 **任务**:
 1. 识别和定义数据域
 2. 分配数据域所有权
 3. 定义数据产品边界
 
-**交付�?*:
-- �?数据域划分方�?- �?域所有权定义
-- �?数据产品清单
+**交付?*:
+- ?数据域划分方?- ?域所有权定义
+- ?数据产品清单
 
-### 3.2 Phase 2: 平台能力建设（Month 3-6�?
+### 3.2 Phase 2: 平台能力建设（Month 3-6?
 **任务**:
 1. 构建数据目录服务
 2. 实现数据质量治理服务
 3. 实现数据安全管理服务
 4. 实现数据共享协调服务
 
-**交付�?*:
-- �?数据产品目录
-- �?质量监控仪表�?- �?权限管理服务
-- �?数据共享协议
+**交付?*:
+- ?数据产品目录
+- ?质量监控仪表?- ?权限管理服务
+- ?数据共享协议
 
-### 3.3 Phase 3: 治理运营（Month 7-12�?
+### 3.3 Phase 3: 治理运营（Month 7-12?
 **任务**:
-1. 建立治理委员�?2. 制定治理流程
-3. 持续优化和改�?
-**交付�?*:
-- �?治理运营流程
-- �?治理仪表�?- �?优化建议报告
+1. 建立治理委员?2. 制定治理流程
+3. 持续优化和改?
+**交付?*:
+- ?治理运营流程
+- ?治理仪表?- ?优化建议报告
 
 ---
 
-## 四、预期收�?
-| 收益�?| 当前状�?| 数据网格实施�?| 提升幅度 |
+## 四、预期收?
+| 收益?| 当前状?| 数据网格实施?| 提升幅度 |
 |--------|---------|--------------|---------|
-| **数据交付周期** | 2-4�?| 1-3�?| -90% |
-| **数据团队效率** | �?| �?| +200% |
+| **数据交付周期** | 2-4?| 1-3?| -90% |
+| **数据团队效率** | ?| ?| +200% |
 | **数据质量** | 90% | 98% | +8% |
-| **数据治理成本** | �?| �?| -50% |
-| **业务满意�?* | 70% | 90% | +20% |
+| **数据治理成本** | ?| ?| -50% |
+| **业务满意?* | 70% | 90% | +20% |
 
 
-## 五、文档治�?
+## 五、文档治?
 ### 5.1 文档索引
 
 **本文档在系统中的位置**:
@@ -741,9 +741,9 @@ class DataProductAccessService:
 ### 5.2 版本管理
 
 **版本历史**:
-- v1.0.0 (2026-04-03): 初始版本，完成数据网格架构设�?
+- v1.0.0 (2026-04-03): 初始版本，完成数据网格架构设?
 ---
 
-**最后更�?*: 2026-04-03
-**维护�?*: 首席技术评审官
-**审核状�?*: �?已审�?**实施状�?*: 未来规划�?-12个月�?
+**最后更?*: 2026-04-03
+**维护?*: 首席技术评审官
+**审核状?*: ?已审?**实施状?*: 未来规划?-12个月?

@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (组合优化?
 index: MULTI_ASSET_SPEC_001
 estimated_hours: 80h
 review_status: Pending
@@ -14,16 +14,16 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构技术规格书
-applicable_scope: 全系�?compliance_level: 专业标准
+applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 # 多资产类别配置技术规格书 v1.0
 
-> 清风量化系统 v5.2 - 多资产类别配置详细技术设�?> **索引**: `MULTI_ASSET_SPEC_001`
-> **开发时�?*: 80h
-> **核心定位**: 跨资产风险平价配置，全天候策略实�?
+> 清风量化系统 v5.3 - 多资产类别配置详细技术设?> **索引**: `MULTI_ASSET_SPEC_001`
+> **开发时?*: 80h
+> **核心定位**: 跨资产风险平价配置，全天候策略实?
 ---
 
 ## 1. 概述
@@ -31,21 +31,21 @@ implementation_status: 设计阶段
 ### 1.1 模块定位
 
 多资产类别配置是Layer 6组合优化层的配置模块，负责：
-- 跨资产风险平�?- 全天候策略实�?- 动态资产配�?- 相关性管�?
+- 跨资产风险平?- 全天候策略实?- 动态资产配?- 相关性管?
 ---
 
 ## 2. 接口定义
 
-### 2.1 核心类接�?
+### 2.1 核心类接?
 ```python
 class MultiAssetAllocator:
     """
-    多资产配置器核心�?    
-    职责: 跨资产类别配置优�?    """
+    多资产配置器核心?    
+    职责: 跨资产类别配置优?    """
     
     def __init__(self, config: AllocationConfig):
         """
-        初始化多资产配置�?        
+        初始化多资产配置?        
         Args:
             config: 配置参数
         """
@@ -61,7 +61,7 @@ class MultiAssetAllocator:
         Args:
             asset_classes: 资产类别列表
             risk_budget: 风险预算
-            correlation_matrix: 相关性矩�?            
+            correlation_matrix: 相关性矩?            
         Returns:
             AllocationResult: 配置结果
         """
@@ -75,7 +75,7 @@ class MultiAssetAllocator:
         
         Args:
             asset_classes: 资产类别列表
-            covariance_matrix: 协方差矩�?            
+            covariance_matrix: 协方差矩?            
         Returns:
             pd.Series: 配置权重
         """
@@ -85,7 +85,7 @@ class MultiAssetAllocator:
                                regimes: List[str],
                                regime_probabilities: pd.Series) -> pd.Series:
         """
-        全天候配�?        
+        全天候配?        
         Args:
             regimes: 经济范式列表
             regime_probabilities: 范式概率
@@ -113,7 +113,7 @@ class AllocationResult:
 class AllocationConfig:
     """配置参数"""
     target_risk: float = 0.10  # 目标风险
-    max_weight: float = 0.40  # 最大权�?    min_weight: float = 0.05  # 最小权�?    rebalance_threshold: float = 0.05  # 再平衡阈�?```
+    max_weight: float = 0.40  # 最大权?    min_weight: float = 0.05  # 最小权?    rebalance_threshold: float = 0.05  # 再平衡阈?```
 
 ---
 
@@ -129,13 +129,13 @@ def risk_parity_allocation(
     """
     风险平价配置算法
     
-    目标: 每个资产的风险贡献相�?    
+    目标: 每个资产的风险贡献相?    
     优化问题:
     min Σ (RC_i - target_RC_i)^2
     s.t. Σ w_i = 1, w_i >= 0
     
     Args:
-        covariance_matrix: 协方差矩�?        target_risk_contributions: 目标风险贡献
+        covariance_matrix: 协方差矩?        target_risk_contributions: 目标风险贡献
         
     Returns:
         pd.Series: 配置权重
@@ -176,11 +176,11 @@ def risk_parity_allocation(
 
 ```python
 class TestMultiAssetAllocation:
-    """多资产配置测�?""
+    """多资产配置测?""
     
     def test_risk_parity(self):
         """测试风险平价"""
-        # 创建协方差矩�?        cov_matrix = create_test_covariance_matrix()
+        # 创建协方差矩?        cov_matrix = create_test_covariance_matrix()
         
         # 执行风险平价
         weights = allocator.risk_parity_allocation(['股票', '债券', '商品'], cov_matrix)
@@ -194,7 +194,7 @@ class TestMultiAssetAllocation:
         assert all(abs(rc - 1/3) < 0.01 for rc in risk_contribs)
     
     def test_all_weather(self):
-        """测试全天候策�?""
+        """测试全天候策?""
         regime_probs = pd.Series([0.25, 0.25, 0.25, 0.25],
                                 index=['扩张', '滞胀', '衰退', '复苏'])
         
@@ -214,9 +214,9 @@ class TestMultiAssetAllocation:
 | 操作 | 数据规模 | 性能要求 |
 |------|---------|---------|
 | **风险平价优化** | 4资产 | < 500ms |
-| **全天候配�?* | 4范式 | < 1�?|
-| **动态配�?* | 10资产 | < 2�?|
+| **全天候配?* | 4范式 | < 1?|
+| **动态配?* | 10资产 | < 2?|
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 实施开�?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开?

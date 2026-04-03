@@ -4,8 +4,8 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构�?standard_type: 专业量化机构新人入职指南
-applicable_scope: 所有新加入团队的开发人员和AI智能�?compliance_level: 强制执行
+owner: 首席架构?standard_type: 专业量化机构新人入职指南
+applicable_scope: 所有新加入团队的开发人员和AI智能?compliance_level: 强制执行
 parent_document: ../README.md
 implementation_status: Active
 ---
@@ -16,20 +16,20 @@ implementation_status: Active
 > **创建日期**: 2026-04-02
 > **职责**: 帮助新成员快速了解系统架构、开发流程和文档规范
 > **适用对象**: 新加入的开发人员、AI智能体、实习生
-> **完成时间**: 建议2周内完成所有必读内�?
+> **完成时间**: 建议2周内完成所有必读内?
 ---
 
 ## 🎯 **入职目标**
 
-### **�?周目�?*
+### **?周目?*
 
-- [ ] 了解系统整体架构和设计理�?- [ ] 熟悉文档治理规范
-- [ ] 掌握开发环境配�?- [ ] 完成第一个简单任�?
-### **�?周目�?*
+- [ ] 了解系统整体架构和设计理?- [ ] 熟悉文档治理规范
+- [ ] 掌握开发环境配?- [ ] 完成第一个简单任?
+### **?周目?*
 
 - [ ] 深入理解核心模块设计
-- [ ] 熟悉施工规范和质量门�?- [ ] 参与代码审查
-- [ ] 完成第一个完整功�?
+- [ ] 熟悉施工规范和质量门?- [ ] 参与代码审查
+- [ ] 完成第一个完整功?
 ---
 
 ## 📚 **必读文档清单**
@@ -41,11 +41,11 @@ implementation_status: Active
 | 文档名称 | 路径 | 阅读时间 | 重要程度 |
 |---------|------|---------|---------|
 | **系统架构总览** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30分钟 | 🔴 必读 |
-| **多时间框架架�?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45分钟 | 🔴 必读 |
+| **多时间框架架?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45分钟 | 🔴 必读 |
 | **实施蓝图** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60分钟 | 🔴 必读 |
 
 **学习目标**:
-- 理解Layer 0-8技术管道架�?- 了解宏观配置层、中观策略层、微观执行层的设�?- 掌握系统的整体实施计�?
+- 理解Layer 0-11技术管道架?- 了解宏观配置层、中观策略层、微观执行层的设?- 掌握系统的整体实施计?
 ---
 
 #### **2. 模块职责边界**
@@ -55,29 +55,29 @@ implementation_status: Active
 | **模块职责边界定义** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30分钟 | 🔴 必读 |
 
 **学习目标**:
-- 理解每个模块的职责范�?- 了解模块间的依赖关系
-- 掌握模块设计的原�?
+- 理解每个模块的职责范?- 了解模块间的依赖关系
+- 掌握模块设计的原?
 ---
 
-### **Day 3-4: 开发规�?*
+### **Day 3-4: 开发规?*
 
 #### **3. 施工规范文档**
 
 | 文档名称 | 路径 | 阅读时间 | 重要程度 |
 |---------|------|---------|---------|
-| **蓝图施工说明�?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](../CONSTRUCTION_SPECIFICATION.md) | 45分钟 | 🔴 必读 |
-| **AI施工快速参�?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](../AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15分钟 | 🔴 必读 |
+| **蓝图施工说明?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](../CONSTRUCTION_SPECIFICATION.md) | 45分钟 | 🔴 必读 |
+| **AI施工快速参?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](../AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15分钟 | 🔴 必读 |
 
 **学习目标**:
-- 掌握文件夹结构规�?- 熟悉命名规范
-- 了解施工流程和质量门�?
+- 掌握文件夹结构规?- 熟悉命名规范
+- 了解施工流程和质量门?
 ---
 
-#### **4. 开发标准文�?*
+#### **4. 开发标准文?*
 
 | 文档名称 | 路径 | 阅读时间 | 重要程度 |
 |---------|------|---------|---------|
-| **开发规�?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30分钟 | 🔴 必读 |
+| **开发规?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30分钟 | 🔴 必读 |
 | **代码质量标准** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](../02_DEVELOPMENT/CODE_QUALITY.md) | 20分钟 | 🔴 必读 |
 | **测试标准** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](../02_DEVELOPMENT/TESTING_STANDARD.md) | 20分钟 | 🟡 重要 |
 
@@ -100,7 +100,7 @@ implementation_status: Active
 **学习目标**:
 - 理解策略工厂设计模式
 - 掌握BaseStrategy基类设计
-- 了解策略注册和加载机�?
+- 了解策略注册和加载机?
 ---
 
 #### **6. 事件总线系统**
@@ -124,7 +124,7 @@ implementation_status: Active
 
 **学习目标**:
 - 理解Backtesting.py集成方案
-- 掌握策略适配器设�?- 了解数据转换和结果格式化
+- 掌握策略适配器设?- 了解数据转换和结果格式化
 
 ---
 
@@ -135,13 +135,13 @@ implementation_status: Active
 | 文档名称 | 路径 | 阅读时间 | 重要程度 |
 |---------|------|---------|---------|
 | **文档质量门禁** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](../06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30分钟 | 🔴 必读 |
-| **代码审查检查清�?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20分钟 | 🔴 必读 |
-| **部署前检查清�?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20分钟 | 🟡 重要 |
+| **代码审查检查清?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20分钟 | 🔴 必读 |
+| **部署前检查清?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20分钟 | 🟡 重要 |
 
 **学习目标**:
 - 理解质量门禁机制
 - 掌握代码审查标准
-- 了解部署前检查要�?
+- 了解部署前检查要?
 ---
 
 ### **Day 11-14: 实践任务**
@@ -161,9 +161,9 @@ implementation_status: Active
 
 ---
 
-## 🛠�?**环境配置指南**
+## 🛠?**环境配置指南**
 
-### **1. 开发环境要�?*
+### **1. 开发环境要?*
 
 ```yaml
 操作系统:
@@ -178,14 +178,14 @@ Python版本:
 必需工具:
   - Git
   - VS Code (推荐)
-  - Docker (可�?
+  - Docker (可?
 
-Python包管�?
+Python包管?
   - pip
   - conda (推荐)
 ```
 
-### **2. 开发环境配置步�?*
+### **2. 开发环境配置步?*
 
 #### **Step 1: 克隆代码仓库**
 
@@ -203,13 +203,13 @@ cd ZephyrAlpha
 # 使用conda创建虚拟环境
 conda create -n zephyr python=3.10
 
-# 激活虚拟环�?conda activate zephyr
+# 激活虚拟环?conda activate zephyr
 ```
 
-#### **Step 3: 安装依赖�?*
+#### **Step 3: 安装依赖?*
 
 ```bash
-# 安装开发依�?pip install -r requirements-dev.txt
+# 安装开发依?pip install -r requirements-dev.txt
 
 # 安装项目依赖
 pip install -r requirements.txt
@@ -237,11 +237,11 @@ pip install -r requirements.txt
 
 ---
 
-## 📝 **第一个任务指�?*
+## 📝 **第一个任务指?*
 
 ### **任务1: 创建一个简单的策略**
 
-**目标**: 创建一个简单的均线策略，熟悉策略开发流�?
+**目标**: 创建一个简单的均线策略，熟悉策略开发流?
 **步骤**:
 
 1. **阅读策略基类文档**
@@ -258,8 +258,8 @@ pip install -r requirements.txt
    from typing import Dict, Any, Optional
    
    class SimpleMAStrategy(BaseStrategy):
-       """简单均线策�?       
-       使用快速均线和慢速均线交叉作为交易信�?       """
+       """简单均线策?       
+       使用快速均线和慢速均线交叉作为交易信?       """
        
        def __init__(self, strategy_id: str, config: Optional[Dict[str, Any]] = None):
            super().__init__(strategy_id, config)
@@ -267,13 +267,13 @@ pip install -r requirements.txt
            self.slow_period = self.config.get('slow_period', 30)
        
        def initialize(self, context: Dict[str, Any]) -> None:
-           """初始化策�?""
-           self.logger.info(f"初始化策�? {self.strategy_id}")
-           self.logger.info(f"快速均线周�? {self.fast_period}")
-           self.logger.info(f"慢速均线周�? {self.slow_period}")
+           """初始化策?""
+           self.logger.info(f"初始化策? {self.strategy_id}")
+           self.logger.info(f"快速均线周? {self.fast_period}")
+           self.logger.info(f"慢速均线周? {self.slow_period}")
        
        def on_bar(self, bar: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-           """处理K线数�?""
+           """处理K线数?""
            # 实现策略逻辑
            pass
    ```
@@ -283,7 +283,7 @@ pip install -r requirements.txt
    # 文件位置: config/strategies/simple_ma_strategy.yaml
    
    strategy_id: simple_ma_strategy_v1
-   strategy_name: 简单均线策�?   strategy_type: trend_following
+   strategy_name: 简单均线策?   strategy_type: trend_following
    
    parameters:
      fast_period: 10
@@ -302,7 +302,7 @@ pip install -r requirements.txt
    from strategy.simple_ma_strategy import SimpleMAStrategy
    
    def test_strategy_initialization():
-       """测试策略初始�?""
+       """测试策略初始?""
        config = {
            'fast_period': 10,
            'slow_period': 30
@@ -322,31 +322,31 @@ pip install -r requirements.txt
 
 ## 🔍 **常见问题FAQ**
 
-### **Q1: 如何找到相关文档�?*
+### **Q1: 如何找到相关文档?*
 
-**A**: 使用文档索引�?- 施工文档总索�? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](../README.md)
-- 系统总索�? [docs/INDEX.md](../../INDEX.md)
+**A**: 使用文档索引?- 施工文档总索? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](../README.md)
+- 系统总索? [docs/INDEX.md](../../INDEX.md)
 
 ### **Q2: 如何创建新模块？**
 
-**A**: 遵循施工规范�?1. 阅读[蓝图施工说明书](../CONSTRUCTION_SPECIFICATION.md)
+**A**: 遵循施工规范?1. 阅读[蓝图施工说明书](../CONSTRUCTION_SPECIFICATION.md)
 2. 使用LS命令检查现有文件夹结构
-3. 确认目标位置和命�?4. 使用标准模板创建文件
-5. 通过质量门禁检�?
-### **Q3: 如何参与代码审查�?*
+3. 确认目标位置和命?4. 使用标准模板创建文件
+5. 通过质量门禁检?
+### **Q3: 如何参与代码审查?*
 
-**A**: 遵循代码审查流程�?1. 阅读[代码审查检查清单](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
+**A**: 遵循代码审查流程?1. 阅读[代码审查检查清单](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
 2. 检查代码规范、安全性、性能
-3. 提出建设性意�?4. 确保所有阻断项通过
+3. 提出建设性意?4. 确保所有阻断项通过
 
-### **Q4: 如何运行回测�?*
+### **Q4: 如何运行回测?*
 
-**A**: 使用回测引擎�?1. 阅读[回测引擎集成指南](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
-2. 准备策略和数�?3. 配置回测参数
-4. 运行回测并分析结�?
-### **Q5: 如何报告问题�?*
+**A**: 使用回测引擎?1. 阅读[回测引擎集成指南](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
+2. 准备策略和数?3. 配置回测参数
+4. 运行回测并分析结?
+### **Q5: 如何报告问题?*
 
-**A**: 使用问题跟踪系统�?1. 在Git仓库创建Issue
+**A**: 使用问题跟踪系统?1. 在Git仓库创建Issue
 2. 描述问题详细信息
 3. 提供复现步骤
 4. 标记优先级和类型
@@ -355,23 +355,23 @@ pip install -r requirements.txt
 
 ## 📊 **学习进度跟踪**
 
-### **�?周进度检�?*
+### **?周进度检?*
 
-| 任务 | 完成状�?| 验证方式 |
+| 任务 | 完成状?| 验证方式 |
 |------|---------|---------|
-| 阅读系统架构文档 | �?| 能描述Layer 0-8架构 |
-| 阅读施工规范文档 | �?| 能说出文件夹结构规范 |
-| 配置开发环�?| �?| 能运行pytest测试 |
-| 完成第一个策�?| �?| 代码通过审查 |
+| 阅读系统架构文档 | ?| 能描述Layer 0-11架构 |
+| 阅读施工规范文档 | ?| 能说出文件夹结构规范 |
+| 配置开发环?| ?| 能运行pytest测试 |
+| 完成第一个策?| ?| 代码通过审查 |
 
-### **�?周进度检�?*
+### **?周进度检?*
 
-| 任务 | 完成状�?| 验证方式 |
+| 任务 | 完成状?| 验证方式 |
 |------|---------|---------|
-| 阅读核心模块文档 | �?| 能描述策略工厂设�?|
-| 参与代码审查 | �?| 完成1次代码审�?|
-| 完成第一个功�?| �?| 功能通过测试 |
-| 通过质量门禁 | �?| 所有检查项通过 |
+| 阅读核心模块文档 | ?| 能描述策略工厂设?|
+| 参与代码审查 | ?| 完成1次代码审?|
+| 完成第一个功?| ?| 功能通过测试 |
+| 通过质量门禁 | ?| 所有检查项通过 |
 
 ---
 
@@ -379,9 +379,9 @@ pip install -r requirements.txt
 
 ### **内部资源**
 
-- **知识�?*: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/](../04_OPERATIONS/knowledge_base/)
+- **知识?*: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/](../04_OPERATIONS/knowledge_base/)
 - **案例研究**: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/case_studies/](../04_OPERATIONS/knowledge_base/case_studies/)
-- **最佳实�?*: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/best_practices/](../04_OPERATIONS/knowledge_base/best_practices/)
+- **最佳实?*: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/best_practices/](../04_OPERATIONS/knowledge_base/best_practices/)
 
 ### **外部资源**
 
@@ -391,41 +391,41 @@ pip install -r requirements.txt
 
 ---
 
-## 📞 **支持与帮�?*
+## 📞 **支持与帮?*
 
 ### **遇到问题怎么办？**
 
-1. **查阅文档**: 先查阅相关文档，大部分问题都有答�?2. **搜索Issue**: 在Git仓库搜索是否有类似问�?3. **提问**: 创建新Issue，详细描述问�?4. **寻求帮助**: 联系导师或团队成�?
+1. **查阅文档**: 先查阅相关文档，大部分问题都有答?2. **搜索Issue**: 在Git仓库搜索是否有类似问?3. **提问**: 创建新Issue，详细描述问?4. **寻求帮助**: 联系导师或团队成?
 ### **联系方式**
 
-- **技术问�?*: 创建Git Issue
-- **文档问题**: 联系文档维护�?- **流程问题**: 联系项目经理
+- **技术问?*: 创建Git Issue
+- **文档问题**: 联系文档维护?- **流程问题**: 联系项目经理
 
 ---
 
 ## 📝 **更新记录**
 
-| 日期 | 版本 | 更新内容 | 更新�?|
+| 日期 | 版本 | 更新内容 | 更新?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建新人入职指南 | 首席架构�?|
+| 2026-04-02 | v1.0 | 创建新人入职指南 | 首席架构?|
 
 ---
 
 ## 📞 **联系方式**
 
-**文档维护�?*: 首席架构�? 
+**文档维护?*: 首席架构? 
 **创建日期**: 2026-04-02  
-**最后更�?*: 2026-04-02  
+**最后更?*: 2026-04-02  
 **版本**: v1.0
 
 ---
 
-## 🎉 **欢迎加入�?*
+## 🎉 **欢迎加入?*
 
-欢迎加入清风量化团队！我们相信，通过系统的学习和实践，你将快速成长为一名优秀的量化开发工程师�?
+欢迎加入清风量化团队！我们相信，通过系统的学习和实践，你将快速成长为一名优秀的量化开发工程师?
 **记住**: 
 - 📚 文档是最好的老师
-- 🛠�?实践是最好的学习
+- 🛠?实践是最好的学习
 - 🤝 团队是最好的支持
 
-**祝你学习顺利�?* 🚀
+**祝你学习顺利?* 🚀

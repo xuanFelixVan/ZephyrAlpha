@@ -6,38 +6,38 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 4 机器学习�?| 业务架构: 三级时间框架融合架构
+applicable_scope: Layer 4 机器学习?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 待实�?risk_level: P1
+implementation_status: 待实?risk_level: P1
 ---
 
 # 模型训练流水线技术规格书
 
-> 清风量化系统 v5.2 - 模型训练流水线详细技术设�?> **模块ID**: `MODEL_TRAINING_PIPELINE_001`
+> 清风量化系统 v5.3 - 模型训练流水线详细技术设?> **模块ID**: `MODEL_TRAINING_PIPELINE_001`
 > **版本**: v1.0.0
-> **状�?*: �?正式
-> **风险等级**: P1(高风�?
+> **状?*: ?正式
+> **风险等级**: P1(高风?
 
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目�?- **业务需�?*: 建立标准化的模型训练流程,提升模型迭代效率和质�?- **技术痛�?*: 
-  - 缺乏数据版本管理: 训练数据无版本控�?难以复现
-  - 缺乏超参数优�? 依赖人工调参,效率�?  - 缺乏模型注册中心: 模型版本混乱,难以管理
-  - 缺乏实验跟踪: 实验结果无记�?难以对比
-- **预期价�?*: 
-  - 提供端到端的模型训练流水�?  - 自动化超参数优化
-  - 标准化模型版本管�?  - 提升模型迭代效率10倍以�?
-### 1.2 技术定位与架构层归�?- **Layer定位**: Layer 4 - 机器学习�?- **模块类别**: 核心训练基础设施
-- **架构角色**: 为所有机器学习模型提供统一的训练框�?
+### 1.1 设计背景与业务目?- **业务需?*: 建立标准化的模型训练流程,提升模型迭代效率和质?- **技术痛?*: 
+  - 缺乏数据版本管理: 训练数据无版本控?难以复现
+  - 缺乏超参数优? 依赖人工调参,效率?  - 缺乏模型注册中心: 模型版本混乱,难以管理
+  - 缺乏实验跟踪: 实验结果无记?难以对比
+- **预期价?*: 
+  - 提供端到端的模型训练流水?  - 自动化超参数优化
+  - 标准化模型版本管?  - 提升模型迭代效率10倍以?
+### 1.2 技术定位与架构层归?- **Layer定位**: Layer 4 - 机器学习?- **模块类别**: 核心训练基础设施
+- **架构角色**: 为所有机器学习模型提供统一的训练框?
 ---
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构�?```
-┌─────────────────────────────────────────────────────────────�?�?                   Layer 4: 机器学习�?                      �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?         ModelTrainingPipeline (模型训练流水�?        �? �?�? �? - 数据版本管理                                        �? �?�? �? - 超参数优�?                                         �? �?�? �? - 模型训练                                            �? �?�? �? - 模型验证                                            �? �?�? �? - 模型注册                                            �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?         支撑服务                                      �? �?�? �? - MLflow (实验跟踪与模型注�?                        �? �?�? �? - Optuna (超参数优�?                                �? �?�? �? - DVC (数据版本管理)                                 �? �?�? �? - Weights & Biases (可视�?                          �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
+### 2.1 系统架构?```
+┌─────────────────────────────────────────────────────────────??                   Layer 4: 机器学习?                      ?├─────────────────────────────────────────────────────────────??                                                            ?? ┌──────────────────────────────────────────────────────? ?? ?         ModelTrainingPipeline (模型训练流水?        ? ?? ? - 数据版本管理                                        ? ?? ? - 超参数优?                                         ? ?? ? - 模型训练                                            ? ?? ? - 模型验证                                            ? ?? ? - 模型注册                                            ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?         支撑服务                                      ? ?? ? - MLflow (实验跟踪与模型注?                        ? ?? ? - Optuna (超参数优?                                ? ?? ? - DVC (数据版本管理)                                 ? ?? ? - Weights & Biases (可视?                          ? ?? └──────────────────────────────────────────────────────? ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
 ---
 
@@ -76,7 +76,7 @@ class TrainingResult:
 
 
 class ModelTrainingPipeline:
-    """模型训练流水�?""
+    """模型训练流水?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -95,16 +95,16 @@ class ModelTrainingPipeline:
         import time
         start_time = time.time()
         
-        # 1. 加载指定版本的数�?        data = self._load_data_version(training_config.data_version)
+        # 1. 加载指定版本的数?        data = self._load_data_version(training_config.data_version)
         
-        # 2. 超参数优�?        with mlflow.start_run():
+        # 2. 超参数优?        with mlflow.start_run():
             best_params = self._optimize_hyperparameters(
                 data=data,
                 model_type=training_config.model_type,
                 n_trials=training_config.optimization_trials
             )
             
-            # 3. 使用最佳参数训练模�?            model = self._train_with_params(
+            # 3. 使用最佳参数训练模?            model = self._train_with_params(
                 data=data,
                 params=best_params,
                 model_type=training_config.model_type
@@ -132,7 +132,7 @@ class ModelTrainingPipeline:
             )
     
     def _load_data_version(self, data_version: str):
-        """加载指定版本的数�?""
+        """加载指定版本的数?""
         import pandas as pd
         
         # 使用DVC加载指定版本数据
@@ -145,10 +145,10 @@ class ModelTrainingPipeline:
         return pd.read_csv(data_path)
     
     def _optimize_hyperparameters(self, data, model_type: str, n_trials: int) -> Dict[str, Any]:
-        """超参数优�?""
+        """超参数优?""
         
         def objective(trial):
-            # 定义超参数搜索空�?            params = {
+            # 定义超参数搜索空?            params = {
                 'learning_rate': trial.suggest_loguniform('learning_rate', 1e-5, 1e-1),
                 'n_estimators': trial.suggest_int('n_estimators', 50, 500),
                 'max_depth': trial.suggest_int('max_depth', 3, 10),
@@ -156,7 +156,7 @@ class ModelTrainingPipeline:
                 'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10)
             }
             
-            # 训练和验�?            score = self._cross_validate(data, params, model_type)
+            # 训练和验?            score = self._cross_validate(data, params, model_type)
             return score
         
         # 使用Optuna进行优化
@@ -221,10 +221,10 @@ class ModelTrainingPipeline:
 
 ---
 
-## 4. 数据模型与存�?
+## 4. 数据模型与存?
 ### 4.1 数据库表结构设计
 ```sql
--- 实验记录�?CREATE TABLE IF NOT EXISTS experiments (
+-- 实验记录?CREATE TABLE IF NOT EXISTS experiments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     experiment_id VARCHAR(50) UNIQUE NOT NULL,
     experiment_name VARCHAR(100),
@@ -235,7 +235,7 @@ class ModelTrainingPipeline:
     INDEX idx_experiment_id (experiment_id)
 );
 
--- 模型注册�?CREATE TABLE IF NOT EXISTS model_registry (
+-- 模型注册?CREATE TABLE IF NOT EXISTS model_registry (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     model_id VARCHAR(50) NOT NULL,
     model_version VARCHAR(50) NOT NULL,
@@ -252,12 +252,12 @@ class ModelTrainingPipeline:
 
 ## 5. 实施技术栈
 
-### 5.1 核心技术组�?| 技术组�?| 版本 | 选择理由 | 替代方案 |
+### 5.1 核心技术组?| 技术组?| 版本 | 选择理由 | 替代方案 |
 |----------|------|----------|----------|
-| MLflow | 2.0+ | 实验跟踪与模型注�?| Weights & Biases |
-| Optuna | 3.0+ | 超参数优�?| Hyperopt |
+| MLflow | 2.0+ | 实验跟踪与模型注?| Weights & Biases |
+| Optuna | 3.0+ | 超参数优?| Hyperopt |
 | DVC | 2.0+ | 数据版本管理 | Git LFS |
-| scikit-learn | 1.0+ | 机器学习基础�?| - |
+| scikit-learn | 1.0+ | 机器学习基础?| - |
 
 ---
 
@@ -266,7 +266,7 @@ class ModelTrainingPipeline:
 ### 6.1 单元测试范围
 ```python
 def test_training_pipeline():
-    """测试训练流水�?""
+    """测试训练流水?""
     pipeline = ModelTrainingPipeline(config={})
     
     config = TrainingConfig(
@@ -288,23 +288,23 @@ def test_training_pipeline():
 ## 7. 验收标准
 
 ### 7.1 功能验收标准
-- �?支持数据版本管理
-- �?支持自动化超参数优化
-- �?支持模型注册和版本管�?- �?支持实验跟踪和对�?
+- ?支持数据版本管理
+- ?支持自动化超参数优化
+- ?支持模型注册和版本管?- ?支持实验跟踪和对?
 ### 7.2 性能验收标准
-- �?超参数优化效率提�?0�?- �?模型迭代周期�?周缩短到1�?- �?实验可复现率100%
+- ?超参数优化效率提?0?- ?模型迭代周期?周缩短到1?- ?实验可复现率100%
 
 ---
 
-## 8. 实施路线�?
-### Phase 1: 基础功能开�?(2�?
-- Week 1: MLflow集成与实验跟�?- Week 2: Optuna超参数优化集�?
-### Phase 2: 高级功能 (2�?
+## 8. 实施路线?
+### Phase 1: 基础功能开?(2?
+- Week 1: MLflow集成与实验跟?- Week 2: Optuna超参数优化集?
+### Phase 2: 高级功能 (2?
 - Week 3: DVC数据版本管理集成
 - Week 4: 模型注册中心建设
 
 ---
 
-**评审结论**: �?批准实施  
+**评审结论**: ?批准实施  
 **评审日期**: 2026-04-02  
-**评审�?*: 首席技术评审官
+**评审?*: 首席技术评审官

@@ -18,7 +18,7 @@ audit_duration: 30分钟
 
 # 专业文档治理深度审计报告
 
-> **清风量化系统 v5.2 - 文档治理深度审计**
+> **清风量化系统 v5.3 - 文档治理深度审计**
 > **审计日期**: 2026-04-03
 > **审计范围**: D:\ZephyrAlpha\docs 全目录
 > **审计标准**: 专业量化机构五大原则 + 三层审计标准
@@ -457,7 +457,7 @@ Move-Item "D:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\design\dat
 
 1. [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 2. [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+3. [审计质量标准v5.3](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 4. [文档治理长效机制](../../09_AUDIT/STANDARDS/DOC_GOVERNANCE_MECHANISM.md)
 
 ### C. 术语表

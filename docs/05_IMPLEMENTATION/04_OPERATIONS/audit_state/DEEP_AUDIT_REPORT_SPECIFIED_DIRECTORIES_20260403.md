@@ -14,7 +14,7 @@ implementation_status: 已完成
 
 # 专业文档治理深度审计报告
 
-> 清风量化系统 v5.1 指定目录深度审计
+> 清风量化系统 v5.3 指定目录深度审计
 >
 > **审计日期**: 2026-04-03
 > **审计范围**: .github, .qoder, .trae, .venv, 8886156677, 8887871993, assessments_*, config, data, database
@@ -527,7 +527,7 @@ EOF
 
 1. 专业文档治理审计指南 (docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 2. 文档治理审计检查清单 (docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. 审计质量标准v5.1 (docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+3. 审计质量标准v5.3 (docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.3.md)
 
 ### 附录C: 术语表
 

@@ -1,6 +1,6 @@
 ---
 module_id: OVERVIEW_README_001
-version: 5.1.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -12,9 +12,9 @@ parent_document: ../INDEX.md
 implementation_status: 进行中
 ---
 
-# 清风量化交易系统 v5.1 - 系统总览
+# 清风量化交易系统 v5.3 - 系统总览
 
-> **版本**：v5.1
+> **版本**：v5.3
 > **更新日期**：2026-03-31
 > **状态**：已完成
 
@@ -22,7 +22,7 @@ implementation_status: 进行中
 
 ## 1. 系统简介
 
-清风量化交易系统是一套面向A股市场的专业级多策略量化交易平台，采用**Layer 0-8分层架构**，支持30-50种策略的动态管理和市场状态自适应。
+清风量化交易系统是一套面向A股市场的专业级多策略量化交易平台，采用**Layer 0-11分层架构**，支持30-50种策略的动态管理和市场状态自适应。
 
 ### 1.1 系统特点
 
@@ -49,7 +49,7 @@ implementation_status: 进行中
 
 | 目录 | 说明 |
 |------|------|
-| [01_FRAMEWORK/](../01_FRAMEWORK/) | 核心框架（Layer 0-8战术实现） |
+| [01_FRAMEWORK/](../01_FRAMEWORK/) | 核心框架（Layer 0-11战术实现） |
 | [02_FACTOR_LIBRARY/](../02_FACTOR_LIBRARY/) | 因子库（87 Alpha + 46 Risk） |
 | [03_TRADING_TACTICS/](../03_TRADING_TACTICS/) | 交易策略池（S001-S120） |
 | [04_EXECUTION/](../04_EXECUTION/) | 执行引擎 |
@@ -57,7 +57,7 @@ implementation_status: 进行中
 
 ---
 
-## 3. Layer 0-8 分层架构（概览）
+## 3. Layer 0-11 分层架构（概览）
 
 | Layer | 名称 | 功能 |
 |-------|------|------|

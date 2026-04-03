@@ -15,7 +15,7 @@ implementation_status: 进行中
 
 # 审计体系目录
 
-> 清风量化系统 v5.1 专业审计框架（个人+AI场景优化版）
+> 清风量化系统 v5.3 专业审计框架（个人+AI场景优化版）
 >
 > **核心使命**: 建立可持续、可扩展的自我审计机制，支持系统架构不断升级
 > **核心用户**: 个人开发者 + 未来不同AI模型审计助手
@@ -44,7 +44,7 @@ implementation_status: 进行中
 │   └── AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md           # AI文档治理审计提示词
 ├── REPORTS/                          # 审计报告库
 │   ├── AUDIT_REPORT_TEMPLATE.md      # 审计报告模板
-│   └── DOCUMENT_AUDIT_v5.1.md        # 当前审计报告（链接）
+│   └── DOCUMENT_AUDIT_v5.3.md        # 当前审计报告（链接）
 ├── TOOLS/                            # 审计工具库
 │   ├── AUDIT_TOOLS_OVERVIEW.md       # 审计工具总览
 │   └── scripts/                      # 审计脚本

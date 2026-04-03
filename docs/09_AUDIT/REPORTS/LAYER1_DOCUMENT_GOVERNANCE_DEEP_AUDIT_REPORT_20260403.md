@@ -208,7 +208,7 @@ compliance_level: 专业标准
 
 **具体表现**:
 - `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/INDEX.md` 标题是"Layer 5策略执行层技术规格书"
-- 但实际包含了Layer 0-8的所有技术规格文档
+- 但实际包含了Layer 0-11的所有技术规格文档
 - 索引层级与目录层级不匹配
 
 **影响分析**:

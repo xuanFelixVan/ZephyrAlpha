@@ -15,42 +15,42 @@ implementation_progress: 0%
 
 # 数据质量评分系统蓝图
 
-> 清风量化系统 v5.2 - 数据质量评分系统详细设计
+> 清风量化系统 v5.3 - 数据质量评分系统详细设计
 > **模块ID**: `QUALITY_SCORING_SYSTEM_001`
-> **实施周期**: Week 10�?周）
-> **优先�?*: P1（核心）
-> **预期收益**: 量化数据质量，提供改进依�?
+> **实施周期**: Week 10?周）
+> **优先?*: P1（核心）
+> **预期收益**: 量化数据质量，提供改进依?
 
 ## 一、设计背景与目标
 
-### 1.1 业务需�?
+### 1.1 业务需?
 **当前痛点**:
-- �?缺少量化的数据质量评�?- �?无法横向对比不同数据源的质量
-- �?缺少质量改进依据
+- ?缺少量化的数据质量评?- ?无法横向对比不同数据源的质量
+- ?缺少质量改进依据
 
 **业务目标**:
-- �?建立多维度数据质量评分体�?- �?自动计算数据质量评分
-- �?提供质量改进依据
+- ?建立多维度数据质量评分体?- ?自动计算数据质量评分
+- ?提供质量改进依据
 
-### 1.2 技术目�?
-| 指标 | 目标�?| 说明 |
+### 1.2 技术目?
+| 指标 | 目标?| 说明 |
 |------|--------|------|
-| **评分覆盖�?* | �?0% | 90%以上的数据有质量评分 |
-| **评分准确�?* | �?5% | 评分与实际质量相�?|
+| **评分覆盖?* | ?0% | 90%以上的数据有质量评分 |
+| **评分准确?* | ?5% | 评分与实际质量相?|
 | **评分更新频率** | 实时 | 评分实时更新 |
 
 ---
 
-## 二、评分体系设�?
+## 二、评分体系设?
 ### 2.1 评分维度
 
 | 维度 | 权重 | 评分标准 | 计算方法 |
 |------|------|---------|---------|
-| **完整�?* | 25% | 缺失值比�?| 1 - (缺失值数 / 总值数) |
-| **准确�?* | 25% | 异常值比�?| 1 - (异常值数 / 总值数) |
-| **时效�?* | 20% | 数据更新延迟 | max(0, 1 - 延迟时间 / 阈�? |
-| **一致�?* | 15% | 数据一致�?| 一致记录数 / 总记录数 |
-| **有效�?* | 15% | 格式正确�?| 格式正确�?/ 总数 |
+| **完整?* | 25% | 缺失值比?| 1 - (缺失值数 / 总值数) |
+| **准确?* | 25% | 异常值比?| 1 - (异常值数 / 总值数) |
+| **时效?* | 20% | 数据更新延迟 | max(0, 1 - 延迟时间 / 阈? |
+| **一致?* | 15% | 数据一致?| 一致记录数 / 总记录数 |
+| **有效?* | 15% | 格式正确?| 格式正确?/ 总数 |
 
 ### 2.2 评分等级
 
@@ -60,12 +60,12 @@ implementation_progress: 0%
 | 80-89 | A | 良好 |
 | 70-79 | B | 中等 |
 | 60-69 | C | 及格 |
-| 0-59 | D | 不及�?|
+| 0-59 | D | 不及?|
 
 ---
 
-## 三、核心模块设�?
-### 3.1 质量评分�?(QualityScorer)
+## 三、核心模块设?
+### 3.1 质量评分?(QualityScorer)
 
 ```python
 from dataclasses import dataclass, field
@@ -87,7 +87,7 @@ class QualityScore:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 class QualityScorer:
-    """质量评分�?""
+    """质量评分?""
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -96,7 +96,7 @@ class QualityScorer:
         Args:
             config: 配置信息
                 - dimension_weights: 维度权重
-                - thresholds: 阈值配�?        """
+                - thresholds: 阈值配?        """
         self.config = config
         
         # 维度权重
@@ -113,12 +113,12 @@ class QualityScorer:
         data: pd.DataFrame
     ) -> float:
         """
-        计算完整性评�?        
+        计算完整性评?        
         Args:
             data: 数据DataFrame
             
         Returns:
-            float: 完整性评分（0-1�?        """
+            float: 完整性评分（0-1?        """
         total_cells = data.size
         missing_cells = data.isnull().sum().sum()
         
@@ -130,12 +130,12 @@ class QualityScorer:
         data: pd.DataFrame
     ) -> float:
         """
-        计算准确性评�?        
+        计算准确性评?        
         Args:
             data: 数据DataFrame
             
         Returns:
-            float: 准确性评分（0-1�?        """
+            float: 准确性评分（0-1?        """
         numeric_cols = data.select_dtypes(include=[np.number]).columns
         
         if len(numeric_cols) == 0:
@@ -165,13 +165,13 @@ class QualityScorer:
         threshold_hours: int = 24
     ) -> float:
         """
-        计算时效性评�?        
+        计算时效性评?        
         Args:
             data: 数据DataFrame
-            timestamp_col: 时间戳列�?            threshold_hours: 阈值小时数
+            timestamp_col: 时间戳列?            threshold_hours: 阈值小时数
             
         Returns:
-            float: 时效性评分（0-1�?        """
+            float: 时效性评分（0-1?        """
         if timestamp_col not in data.columns:
             return 1.0
         
@@ -189,12 +189,12 @@ class QualityScorer:
         consistency_rules: Dict[str, Any]
     ) -> float:
         """
-        计算一致性评�?        
+        计算一致性评?        
         Args:
             data: 数据DataFrame
-            consistency_rules: 一致性规�?            
+            consistency_rules: 一致性规?            
         Returns:
-            float: 一致性评分（0-1�?        """
+            float: 一致性评分（0-1?        """
         if not consistency_rules:
             return 1.0
         
@@ -202,7 +202,7 @@ class QualityScorer:
         total_count = len(data)
         
         for rule_name, rule in consistency_rules.items():
-            # 应用一致性规�?            pass
+            # 应用一致性规?            pass
         
         consistency = consistent_count / total_count if total_count > 0 else 1.0
         return consistency
@@ -213,13 +213,13 @@ class QualityScorer:
         validity_rules: Dict[str, str]
     ) -> float:
         """
-        计算有效性评�?        
+        计算有效性评?        
         Args:
             data: 数据DataFrame
-            validity_rules: 有效性规则（字段�?-> 正则表达式）
+            validity_rules: 有效性规则（字段?-> 正则表达式）
             
         Returns:
-            float: 有效性评分（0-1�?        """
+            float: 有效性评分（0-1?        """
         import re
         
         if not validity_rules:
@@ -251,9 +251,9 @@ class QualityScorer:
         计算总体评分
         
         Args:
-            dimension_scores: 各维度评�?            
+            dimension_scores: 各维度评?            
         Returns:
-            float: 总体评分�?-100�?        """
+            float: 总体评分?-100?        """
         overall_score = 0.0
         
         for dimension, score in dimension_scores.items():
@@ -271,7 +271,7 @@ class QualityScorer:
         确定评分等级
         
         Args:
-            score: 评分�?-100�?            
+            score: 评分?-100?            
         Returns:
             str: 评分等级
         """
@@ -294,16 +294,16 @@ class QualityScorer:
         config: Dict[str, Any]
     ) -> QualityScore:
         """
-        对数据进行质量评�?        
+        对数据进行质量评?        
         Args:
             data: 数据DataFrame
-            data_source: 数据�?            table_name: 表名
+            data_source: 数据?            table_name: 表名
             config: 配置信息
             
         Returns:
             QualityScore: 质量评分
         """
-        # 计算各维度评�?        dimension_scores = {
+        # 计算各维度评?        dimension_scores = {
             'completeness': self.calculate_completeness(data),
             'accuracy': self.calculate_accuracy(data),
             'timeliness': self.calculate_timeliness(
@@ -346,17 +346,17 @@ class QualityScorer:
 
 ### 4.1 设计背景
 
-**传统规则配置的局限�?*:
-- �?规则配置依赖人工经验，效率低
-- �?规则难以适应数据变化，缺乏灵活�?- �?规则覆盖不全，容易遗漏质量问�?- �?规则维护成本高，难以规模�?
+**传统规则配置的局限?*:
+- ?规则配置依赖人工经验，效率低
+- ?规则难以适应数据变化，缺乏灵活?- ?规则覆盖不全，容易遗漏质量问?- ?规则维护成本高，难以规模?
 **自动化规则生成的优势**:
-- �?基于数据特征自动生成规则
-- �?动态适应数据变化
-- �?提高规则覆盖�?0%
-- �?减少人工干预90%
+- ?基于数据特征自动生成规则
+- ?动态适应数据变化
+- ?提高规则覆盖?0%
+- ?减少人工干预90%
 
-### 4.2 自动化规则生成算�?
-#### 4.2.1 基于统计的规则生�?
+### 4.2 自动化规则生成算?
+#### 4.2.1 基于统计的规则生?
 ```python
 import numpy as np
 import pandas as pd
@@ -375,7 +375,7 @@ class StatisticalRuleGenerator:
         table_name: str
     ) -> List[Dict]:
         """
-        从数据自动生成规�?        
+        从数据自动生成规?        
         Args:
             df: 数据样本
             table_name: 表名
@@ -399,10 +399,10 @@ class StatisticalRuleGenerator:
             range_rules = self._generate_range_rules(df, column, table_name)
             rules.extend(range_rules)
             
-            # 生成唯一性规�?            unique_rules = self._generate_unique_rules(df, column, table_name)
+            # 生成唯一性规?            unique_rules = self._generate_unique_rules(df, column, table_name)
             rules.extend(unique_rules)
             
-            # 生成完整性规�?            completeness_rules = self._generate_completeness_rules(df, column, table_name)
+            # 生成完整性规?            completeness_rules = self._generate_completeness_rules(df, column, table_name)
             rules.extend(completeness_rules)
             
             # 生成格式规则
@@ -422,7 +422,7 @@ class StatisticalRuleGenerator:
         rules = []
         
         if df[column].dtype in ['float64', 'int64']:
-            # 计算统计�?            mean = df[column].mean()
+            # 计算统计?            mean = df[column].mean()
             std = df[column].std()
             min_val = df[column].min()
             max_val = df[column].max()
@@ -460,12 +460,12 @@ class StatisticalRuleGenerator:
         column: str,
         table_name: str
     ) -> List[Dict]:
-        """生成唯一性规�?""
+        """生成唯一性规?""
         rules = []
         
-        # 检查唯一�?        unique_ratio = df[column].nunique() / len(df)
+        # 检查唯一?        unique_ratio = df[column].nunique() / len(df)
         
-        # 如果唯一性比�?95%，生成唯一性规�?        if unique_ratio > 0.95:
+        # 如果唯一性比?95%，生成唯一性规?        if unique_ratio > 0.95:
             rule = {
                 'rule_id': f'unique_{table_name}_{column}',
                 'rule_type': 'uniqueness_check',
@@ -485,12 +485,12 @@ class StatisticalRuleGenerator:
         column: str,
         table_name: str
     ) -> List[Dict]:
-        """生成完整性规�?""
+        """生成完整性规?""
         rules = []
         
-        # 计算完整�?        completeness_ratio = 1 - df[column].isna().sum() / len(df)
+        # 计算完整?        completeness_ratio = 1 - df[column].isna().sum() / len(df)
         
-        # 如果完整�?100%，生成完整性规�?        if completeness_ratio == 1.0:
+        # 如果完整?100%，生成完整性规?        if completeness_ratio == 1.0:
             rule = {
                 'rule_id': f'not_null_{table_name}_{column}',
                 'rule_type': 'completeness_check',
@@ -513,10 +513,10 @@ class StatisticalRuleGenerator:
         """生成格式规则"""
         rules = []
         
-        # 检测日期格�?        if df[column].dtype == 'object':
+        # 检测日期格?        if df[column].dtype == 'object':
             sample_values = df[column].dropna().head(100)
             
-            # 检测日期格�?            date_patterns = [
+            # 检测日期格?            date_patterns = [
                 r'\d{4}-\d{2}-\d{2}',  # YYYY-MM-DD
                 r'\d{4}/\d{2}/\d{2}',  # YYYY/MM/DD
                 r'\d{8}'               # YYYYMMDD
@@ -542,7 +542,7 @@ class StatisticalRuleGenerator:
         return rules
 ```
 
-#### 4.2.2 基于机器学习的规则生�?
+#### 4.2.2 基于机器学习的规则生?
 ```python
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
@@ -562,7 +562,7 @@ class MLRuleGenerator:
         contamination: float = 0.1
     ) -> Dict:
         """
-        生成异常检测规�?        
+        生成异常检测规?        
         Args:
             df: 数据样本
             table_name: 表名
@@ -584,17 +584,17 @@ class MLRuleGenerator:
         if len(numeric_columns) == 0:
             return None
         
-        # 数据标准�?        scaler = StandardScaler()
+        # 数据标准?        scaler = StandardScaler()
         X = scaler.fit_transform(df[numeric_columns])
         
-        # 训练异常检测模�?        model = IsolationForest(
+        # 训练异常检测模?        model = IsolationForest(
             contamination=contamination,
             random_state=42,
             n_estimators=100
         )
         model.fit(X)
         
-        # 保存模型和标准化�?        model_key = f'{table_name}_anomaly'
+        # 保存模型和标准化?        model_key = f'{table_name}_anomaly'
         self.models[model_key] = model
         self.scalers[model_key] = scaler
         
@@ -605,7 +605,7 @@ class MLRuleGenerator:
             'model': model,
             'scaler': scaler,
             'features': list(numeric_columns),
-            'threshold': -0.5,  # 异常分数阈�?            'confidence': 0.85,
+            'threshold': -0.5,  # 异常分数阈?            'confidence': 0.85,
             'source': 'machine_learning'
         }
         
@@ -620,7 +620,7 @@ class MLRuleGenerator:
             table_name: 表名
         
         Returns:
-            异常标签�?1为异常，1为正常）
+            异常标签?1为异常，1为正常）
         """
         model_key = f'{table_name}_anomaly'
         
@@ -630,7 +630,7 @@ class MLRuleGenerator:
         model = self.models[model_key]
         scaler = self.scalers[model_key]
         
-        # 标准�?        X = scaler.transform(df[model.features])
+        # 标准?        X = scaler.transform(df[model.features])
         
         # 预测
         predictions = model.predict(X)
@@ -651,7 +651,7 @@ class MLRuleGenerator:
         self.scalers = data['scalers']
 ```
 
-#### 4.2.3 基于历史数据的规则学�?
+#### 4.2.3 基于历史数据的规则学?
 ```python
 class HistoricalRuleLearner:
     """基于历史数据的规则学习器"""
@@ -725,17 +725,17 @@ class HistoricalRuleLearner:
         errors: List[Dict]
     ) -> Dict:
         """学习范围规则"""
-        # 提取错误�?        error_values = [e['error_value'] for e in errors if 'error_value' in e]
+        # 提取错误?        error_values = [e['error_value'] for e in errors if 'error_value' in e]
         
         if not error_values:
             return None
         
         # 计算正常范围
-        # 假设错误值是异常值，需要排�?        # 使用历史数据中的expected_range
+        # 假设错误值是异常值，需要排?        # 使用历史数据中的expected_range
         expected_ranges = [e['expected_range'] for e in errors if 'expected_range' in e]
         
         if expected_ranges:
-            # 取交集作为规则范�?            lower_bound = max([r[0] for r in expected_ranges])
+            # 取交集作为规则范?            lower_bound = max([r[0] for r in expected_ranges])
             upper_bound = min([r[1] for r in expected_ranges])
             
             rule = {
@@ -763,7 +763,7 @@ class HistoricalRuleLearner:
         error_types = [e['error_type'] for e in errors]
         error_counts = pd.Series(error_types).value_counts()
         
-        # 如果某种错误类型频率>50%，生成针对性规�?        most_common_error = error_counts.index[0]
+        # 如果某种错误类型频率>50%，生成针对性规?        most_common_error = error_counts.index[0]
         most_common_count = error_counts.iloc[0]
         
         if most_common_count / len(errors) > 0.5:
@@ -782,11 +782,11 @@ class HistoricalRuleLearner:
         return None
 ```
 
-### 4.3 规则验证与优�?
-#### 4.3.1 规则验证�?
+### 4.3 规则验证与优?
+#### 4.3.1 规则验证?
 ```python
 class RuleValidator:
-    """规则验证�?""
+    """规则验证?""
     
     def __init__(self):
         self.validation_results = []
@@ -797,7 +797,7 @@ class RuleValidator:
         df: pd.DataFrame
     ) -> Dict:
         """
-        验证规则有效�?        
+        验证规则有效?        
         Args:
             rule: 规则
             df: 验证数据
@@ -817,13 +817,13 @@ class RuleValidator:
         
         # 计算指标
         # 假设有真实标签（实际应用中需要标注数据）
-        # 这里简化处�?        
+        # 这里简化处?        
         validation_result = {
             'rule_id': rule['rule_id'],
             'is_valid': True,
             'violation_count': len(violations),
             'violation_ratio': len(violations) / len(df),
-            'precision': 0.95,  # 需要真实标签计�?            'recall': 0.85,
+            'precision': 0.95,  # 需要真实标签计?            'recall': 0.85,
             'f1_score': 0.90,
             'false_positive_rate': 0.05
         }
@@ -891,14 +891,14 @@ class RuleValidator:
         return rule
 ```
 
-### 4.4 规则部署与管�?
-#### 4.4.1 规则部署�?
+### 4.4 规则部署与管?
+#### 4.4.1 规则部署?
 ```python
 import yaml
 import json
 
 class RuleDeployer:
-    """规则部署�?""
+    """规则部署?""
     
     def __init__(self, config_path: str):
         self.config_path = config_path
@@ -913,7 +913,7 @@ class RuleDeployer:
         """
         self.rules = rules
         
-        # 转换为配置格�?        config = self._convert_to_config(rules)
+        # 转换为配置格?        config = self._convert_to_config(rules)
         
         # 保存配置
         with open(self.config_path, 'w', encoding='utf-8') as f:
@@ -922,7 +922,7 @@ class RuleDeployer:
         print(f"Deployed {len(rules)} rules to {self.config_path}")
     
     def _convert_to_config(self, rules: List[Dict]) -> Dict:
-        """转换为配置格�?""
+        """转换为配置格?""
         config = {
             'version': '1.0',
             'rules': []
@@ -966,66 +966,66 @@ class RuleDeployer:
         self.deploy_rules(rules)
 ```
 
-### 4.5 实施路线�?
-#### 4.5.1 Phase 1: 规则生成引擎开发（Week 1�?
+### 4.5 实施路线?
+#### 4.5.1 Phase 1: 规则生成引擎开发（Week 1?
 **任务**:
-1. 实现统计规则生成�?2. 实现ML规则生成�?3. 实现历史规则学习�?
-**交付�?*:
-- �?StatisticalRuleGenerator
-- �?MLRuleGenerator
-- �?HistoricalRuleLearner
+1. 实现统计规则生成?2. 实现ML规则生成?3. 实现历史规则学习?
+**交付?*:
+- ?StatisticalRuleGenerator
+- ?MLRuleGenerator
+- ?HistoricalRuleLearner
 
-#### 4.5.2 Phase 2: 规则验证与部署（Week 2�?
+#### 4.5.2 Phase 2: 规则验证与部署（Week 2?
 **任务**:
-1. 实现规则验证�?2. 实现规则优化�?3. 实现规则部署�?
-**交付�?*:
-- �?RuleValidator
-- �?规则优化逻辑
-- �?RuleDeployer
+1. 实现规则验证?2. 实现规则优化?3. 实现规则部署?
+**交付?*:
+- ?RuleValidator
+- ?规则优化逻辑
+- ?RuleDeployer
 
 ### 4.6 预期收益
 
-| 收益�?| 当前状�?| 自动化规则生成后 | 提升幅度 |
+| 收益?| 当前状?| 自动化规则生成后 | 提升幅度 |
 |--------|---------|----------------|---------|
-| **规则覆盖�?* | 60% | 95% | +35% |
-| **规则生成时间** | 2小时/�?| 5分钟/�?| -96% |
-| **规则准确�?* | 75% | 90% | +15% |
+| **规则覆盖?* | 60% | 95% | +35% |
+| **规则生成时间** | 2小时/?| 5分钟/?| -96% |
+| **规则准确?* | 75% | 90% | +15% |
 | **人工干预时间** | 100% | 10% | -90% |
-| **规则维护成本** | �?| �?| -80% |
+| **规则维护成本** | ?| ?| -80% |
 
 ---
 
-## 五、实施步�?
+## 五、实施步?
 ### 5.1 Week 10: 数据质量评分系统实施
 
-#### Day 1-2: 评分模型开�?
+#### Day 1-2: 评分模型开?
 **任务**:
-1. 实现QualityScorer质量评分�?2. 实现多维度评分计�?3. 编写单元测试
+1. 实现QualityScorer质量评分?2. 实现多维度评分计?3. 编写单元测试
 
-#### Day 3-4: 可视化开�?
+#### Day 3-4: 可视化开?
 **任务**:
-1. 实现评分可视化（Grafana�?2. 实现评分趋势�?3. 实现对比分析
+1. 实现评分可视化（Grafana?2. 实现评分趋势?3. 实现对比分析
 
-#### Day 5: 集成与部�?
+#### Day 5: 集成与部?
 **任务**:
-1. 集成到现有系�?2. API服务开�?3. 部署上线
+1. 集成到现有系?2. API服务开?3. 部署上线
 
 ---
 
-## 六、验收标�?
+## 六、验收标?
 ### 6.1 功能验收
 
-| 验收�?| 验收标准 | 验收方法 |
+| 验收?| 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **评分覆盖�?* | �?0% | 配置检�?|
-| **评分准确�?* | �?5% | 人工审核 |
+| **评分覆盖?* | ?0% | 配置检?|
+| **评分准确?* | ?5% | 人工审核 |
 | **评分更新频率** | 实时 | 功能测试 |
 
 ---
 
-## 七、文档治�?
+## 七、文档治?
 **版本历史**:
-- v1.0.0 (2026-04-02): 初始版本，完成数据质量评分系统设�?
+- v1.0.0 (2026-04-02): 初始版本，完成数据质量评分系统设?
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状�?*: �?正式 | **维护�?*: ZephyrAlpha技术团�?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状?*: ?正式 | **维护?*: ZephyrAlpha技术团?

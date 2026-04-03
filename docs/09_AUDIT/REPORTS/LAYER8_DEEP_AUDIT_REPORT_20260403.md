@@ -17,7 +17,7 @@ audit_date: 2026-04-03
 
 > **审计时间**: 2026-04-03
 > **审计范围**: docs/01_FRAMEWORK/ 下所有Layer 8相关文档
-> **审计标准**: 专业量化机构五大原则 + 三层审计标准 v5.1
+> **审计标准**: 专业量化机构五大原则 + 三层审计标准 v5.3
 > **审计方法**: L1文件系统层 + L2文档内容层 + L3专业标准层
 > **Git备份**: commit 84091f4
 
@@ -275,7 +275,7 @@ INDEX.md 缺少以下重要文档的索引：
 
 ### 8.2 参考标准文档
 
-1. docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md
+1. docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.3.md
 2. docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md
 3. docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md
 

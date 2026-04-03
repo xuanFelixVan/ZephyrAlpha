@@ -15,7 +15,7 @@ implementation_status: 进行中
 
 # 专业量化机构文档治理审计指南 v1.1
 
-> 清风量化系统 v5.1 文档治理专业标准与审计方法
+> 清风量化系统 v5.3 文档治理专业标准与审计方法
 >
 > **核心使命**: 确保系统文档治理达到专业量化机构标准水平
 > **设计原则**: 职责驱动、索引完备、版本隔离、文档代码对应、命名规范
@@ -199,7 +199,7 @@ implementation_status: 进行中
 {分类前缀}_{编号}_{职责描述}_{版本}.{后缀}
 
 示例:
-  - framework_architecture_v5.1.md
+  - framework_architecture_v5.3.md
   - factor_alpha_001_momentum_v1.0.md
   - strategy_s001_trend_follow_v2.3.md
   - audit_governance_standard_v1.0.md
@@ -247,7 +247,7 @@ S{三位序号}_{策略类型}
 v{主版本}.{次版本}.{修订版本}
 
 示例:
-  - v5.1.0    # 主版本5，次版本1，修订版本0
+  - v5.3.0    # 主版本5，次版本1，修订版本0
   - v2.3.1    # 主版本2，次版本3，修订版本1
 ```
 

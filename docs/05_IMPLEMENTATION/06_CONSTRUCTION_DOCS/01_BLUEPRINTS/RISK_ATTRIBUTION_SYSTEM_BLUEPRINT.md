@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (组合优化?
 index: RISK_ATTRIBUTION_001
 estimated_hours: 80h
 review_status: Pending
@@ -14,7 +14,7 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系�?compliance_level: 专业标准
+applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 personal_development: true
@@ -23,35 +23,35 @@ ai_maintenance: true
 
 # 风险归因系统蓝图 v1.0
 
-> 清风量化系统 v5.2 - 风险归因系统详细设计
+> 清风量化系统 v5.3 - 风险归因系统详细设计
 > **索引**: `RISK_ATTRIBUTION_001`
-> **开发时�?*: 80h（约2周）
-> **核心定位**: 多维度风险分解与归因分析，识别风险驱动因�?> **对标机构**: Two Sigma
-> **个人开发可行�?*: ⭐⭐⭐⭐ 完全可行
-> **AI维护难度**: �?
+> **开发时?*: 80h（约2周）
+> **核心定位**: 多维度风险分解与归因分析，识别风险驱动因?> **对标机构**: Two Sigma
+> **个人开发可行?*: ⭐⭐⭐⭐ 完全可行
+> **AI维护难度**: ?
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目�?
-**业务需�?*�?- 当前系统仅有绩效归因（在Layer 7），缺乏风险归因
+### 1.1 设计背景与业务目?
+**业务需?*?- 当前系统仅有绩效归因（在Layer 7），缺乏风险归因
 - 无法分解组合风险来源（因子风险、行业风险、特质风险）
-- 无法识别风险驱动因素，导致风险管理缺乏针对�?- 无法评估风险预算执行情况
+- 无法识别风险驱动因素，导致风险管理缺乏针对?- 无法评估风险预算执行情况
 
-**技术痛�?*�?- 无多维度风险归因能力
+**技术痛?*?- 无多维度风险归因能力
 - 无风险分解与归因报告生成
-- 无风险预算执行监�?- 无风险贡献度分析
+- 无风险预算执行监?- 无风险贡献度分析
 
-**预期价�?*�?- 风险透明度：提升60%
+**预期价?*?- 风险透明度：提升60%
 - 风险管理精细化：提升40%
-- 风险决策支持：新增能�?- 为Two Sigma模式提供核心能力支撑
+- 风险决策支持：新增能?- 为Two Sigma模式提供核心能力支撑
 
-### 1.2 技术定位与架构层归�?
-**Layer定位**: Layer 6 - 组合优化层（风险管理子层�?
+### 1.2 技术定位与架构层归?
+**Layer定位**: Layer 6 - 组合优化层（风险管理子层?
 **模块类别**: 核心模块（P1级）
 
 **架构角色**: 
-- 作为Two Sigma模式的核心组件，提供多维度风险归�?- 作为风险管理的分析工具，识别风险驱动因素
+- 作为Two Sigma模式的核心组件，提供多维度风险归?- 作为风险管理的分析工具，识别风险驱动因素
 - 作为风险预算的监控工具，评估风险预算执行情况
 
 ### 1.3 核心功能清单
@@ -60,33 +60,33 @@ ai_maintenance: true
 2. **行业风险归因**: 分解行业风险贡献
 3. **资产风险归因**: 分解资产风险贡献
 4. **风险预算执行监控**: 监控风险预算执行情况
-5. **风险归因报告生成**: 生成可视化归因报�?
+5. **风险归因报告生成**: 生成可视化归因报?
 ---
 
 ## 2. 架构设计
 
-### 2.1 系统架构�?
+### 2.1 系统架构?
 ```
-┌─────────────────────────────────────────────────────────────────�?�?                   风险归因系统架构                              �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             输入�?                                       �? �?�? �? ┌──────────────────────�? ┌──────────────────────�?    �? �?�? �? �?组合数据              �? �?风险模型              �?    �? �?�? �? �?- 组合权重            �? �?- 因子载荷            �?    �? �?�? �? �?- 基准权重            �? �?- 因子协方�?         �?    �? �?�? �? �?- 历史收益            �? �?- 特质风险            �?    �? �?�? �? └──────────────────────�? └──────────────────────�?    �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             风险分解�?                                   �? �?�? �? ┌────────────────────────────────────────────────────�? �? �?�? �? �? Risk Decomposition Engine                         �? �? �?�? �? �? - 因子风险分解                                     �? �? �?�? �? �? - 行业风险分解                                     �? �? �?�? �? �? - 资产风险分解                                     �? �? �?�? �? └────────────────────────────────────────────────────�? �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             归因分析�?                                   �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?因子归因 �? �?行业归因 �? �?资产归因 �?              �? �?�? �? �?         �? �?         �? �?         �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             报告生成�?                                   �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?归因报告 �? �?可视�?  �? �?预警信号 �?              �? �?�? �? �?         �? �?图表     �? �?         �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?└─────────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────────??                   风险归因系统架构                              ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             输入?                                       ? ?? ? ┌──────────────────────? ┌──────────────────────?    ? ?? ? ?组合数据              ? ?风险模型              ?    ? ?? ? ?- 组合权重            ? ?- 因子载荷            ?    ? ?? ? ?- 基准权重            ? ?- 因子协方?         ?    ? ?? ? ?- 历史收益            ? ?- 特质风险            ?    ? ?? ? └──────────────────────? └──────────────────────?    ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             风险分解?                                   ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Risk Decomposition Engine                         ? ? ?? ? ? - 因子风险分解                                     ? ? ?? ? ? - 行业风险分解                                     ? ? ?? ? ? - 资产风险分解                                     ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             归因分析?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?因子归因 ? ?行业归因 ? ?资产归因 ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             报告生成?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?归因报告 ? ?可视?  ? ?预警信号 ?              ? ?? ? ?         ? ?图表     ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
 
-### 2.2 核心数据�?
+### 2.2 核心数据?
 ```
 组合数据 + 风险模型
-    �?风险分解（因�?行业/资产�?    �?归因分析（贡献度计算�?    �?风险预算执行监控
-    �?输出：归因报告、可视化图表、预警信�?```
+    ?风险分解（因?行业/资产?    ?归因分析（贡献度计算?    ?风险预算执行监控
+    ?输出：归因报告、可视化图表、预警信?```
 
 ---
 
 ## 3. 核心模块设计
 
-### 3.1 风险归因系统核心类（RiskAttributionSystem�?
+### 3.1 风险归因系统核心类（RiskAttributionSystem?
 ```python
 class RiskAttributionSystem:
     """
-    风险归因系统核心�?    
+    风险归因系统核心?    
     索引: RISK_ATTRIBUTION_001-M01
     职责: 多维度风险分解与归因分析
-    输入: 组合数据、风险模�?    输出: 归因报告、可视化图表
+    输入: 组合数据、风险模?    输出: 归因报告、可视化图表
     """
     
     def __init__(self, config: AttributionConfig):
@@ -126,7 +126,7 @@ class RiskAttributionSystem:
             portfolio_weights, benchmark_weights, barra_model
         )
         
-        # 4. 汇总归因结�?        total_attribution = self._aggregate_attribution(
+        # 4. 汇总归因结?        total_attribution = self._aggregate_attribution(
             factor_attribution, industry_attribution, asset_attribution
         )
         
@@ -161,7 +161,7 @@ class RiskAttributionSystem:
             risk_decomposition, risk_budget
         )
         
-        # 3. 识别超预算风�?        over_budget_risks = self._identify_over_budget(budget_utilization)
+        # 3. 识别超预算风?        over_budget_risks = self._identify_over_budget(budget_utilization)
         
         # 4. 生成预警信号
         alerts = self._generate_alerts(over_budget_risks)
@@ -181,7 +181,7 @@ class RiskAttributionSystem:
         
         Args:
             attribution_result: 归因结果
-            output_format: 输出格式�?html', 'pdf', 'markdown'�?            
+            output_format: 输出格式?html', 'pdf', 'markdown'?            
         Returns:
             str: 报告文件路径
         """
@@ -193,7 +193,7 @@ class RiskAttributionSystem:
                                factor_attr: pd.DataFrame,
                                industry_attr: pd.DataFrame,
                                asset_attr: pd.DataFrame) -> pd.DataFrame:
-        """汇总归因结�?""
+        """汇总归因结?""
         total = pd.concat([
             factor_attr.sum().to_frame('Factor'),
             industry_attr.sum().to_frame('Industry'),
@@ -203,11 +203,11 @@ class RiskAttributionSystem:
         return total
 ```
 
-### 3.2 因子风险归因器（FactorRiskAttributor�?
+### 3.2 因子风险归因器（FactorRiskAttributor?
 ```python
 class FactorRiskAttributor:
     """
-    因子风险归因�?    
+    因子风险归因?    
     索引: RISK_ATTRIBUTION_001-M02
     职责: 分解因子风险贡献
     """
@@ -254,7 +254,7 @@ class FactorRiskAttributor:
         else:
             active_risk_contribution = None
         
-        # 5. 构建归因�?        attribution = pd.DataFrame({
+        # 5. 构建归因?        attribution = pd.DataFrame({
             'Portfolio_Exposure': portfolio_exposure,
             'Benchmark_Exposure': benchmark_exposure if benchmark_weights is not None else 0,
             'Active_Exposure': active_exposure if benchmark_weights is not None else portfolio_exposure,
@@ -280,7 +280,7 @@ class FactorRiskAttributor:
         # 计算边际风险贡献
         marginal_risk_contribution = factor_exposure * F_f / portfolio_risk
         
-        # 计算风险贡献百分�?        risk_contribution = marginal_risk_contribution / portfolio_risk
+        # 计算风险贡献百分?        risk_contribution = marginal_risk_contribution / portfolio_risk
         
         return risk_contribution
     
@@ -291,11 +291,11 @@ class FactorRiskAttributor:
         return self._calculate_factor_risk_contribution(active_exposure, factor_covariance)
 ```
 
-### 3.3 行业风险归因器（IndustryRiskAttributor�?
+### 3.3 行业风险归因器（IndustryRiskAttributor?
 ```python
 class IndustryRiskAttributor:
     """
-    行业风险归因�?    
+    行业风险归因?    
     索引: RISK_ATTRIBUTION_001-M03
     职责: 分解行业风险贡献
     """
@@ -338,7 +338,7 @@ class IndustryRiskAttributor:
             portfolio_industry_exposure, industry_covariance
         )
         
-        # 4. 构建归因�?        attribution = pd.DataFrame({
+        # 4. 构建归因?        attribution = pd.DataFrame({
             'Portfolio_Weight': portfolio_industry_exposure,
             'Benchmark_Weight': benchmark_industry_exposure if benchmark_weights is not None else 0,
             'Active_Weight': active_industry_exposure,
@@ -360,11 +360,11 @@ class IndustryRiskAttributor:
         return risk_contribution
 ```
 
-### 3.4 资产风险归因器（AssetRiskAttributor�?
+### 3.4 资产风险归因器（AssetRiskAttributor?
 ```python
 class AssetRiskAttributor:
     """
-    资产风险归因�?    
+    资产风险归因?    
     索引: RISK_ATTRIBUTION_001-M04
     职责: 分解资产风险贡献
     """
@@ -398,7 +398,7 @@ class AssetRiskAttributor:
         else:
             active_weights = portfolio_weights
         
-        # 3. 构建归因�?        attribution = pd.DataFrame({
+        # 3. 构建归因?        attribution = pd.DataFrame({
             'Portfolio_Weight': portfolio_weights,
             'Benchmark_Weight': benchmark_weights if benchmark_weights is not None else 0,
             'Active_Weight': active_weights,
@@ -423,18 +423,18 @@ class AssetRiskAttributor:
         # 计算边际风险贡献
         marginal_risk_contribution = weights * Sigma_w / portfolio_risk
         
-        # 计算风险贡献百分�?        risk_contribution = marginal_risk_contribution / portfolio_risk
+        # 计算风险贡献百分?        risk_contribution = marginal_risk_contribution / portfolio_risk
         
         return risk_contribution
 ```
 
-### 3.5 归因报告生成器（AttributionReportGenerator�?
+### 3.5 归因报告生成器（AttributionReportGenerator?
 ```python
 class AttributionReportGenerator:
     """
-    归因报告生成�?    
+    归因报告生成?    
     索引: RISK_ATTRIBUTION_001-M05
-    职责: 生成可视化归因报�?    """
+    职责: 生成可视化归因报?    """
     
     def __init__(self):
         self.template_dir = 'templates/attribution/'
@@ -452,7 +452,7 @@ class AttributionReportGenerator:
         Returns:
             str: 报告文件路径
         """
-        # 1. 生成可视化图�?        charts = self._generate_charts(attribution_result)
+        # 1. 生成可视化图?        charts = self._generate_charts(attribution_result)
         
         # 2. 生成报告内容
         report_content = self._generate_content(attribution_result, charts)
@@ -463,25 +463,25 @@ class AttributionReportGenerator:
         return report_path
     
     def _generate_charts(self, attribution_result: AttributionResult) -> Dict[str, str]:
-        """生成可视化图�?""
+        """生成可视化图?""
         charts = {}
         
-        # 1. 因子风险贡献�?        charts['factor_risk'] = self._plot_factor_risk_contribution(
+        # 1. 因子风险贡献?        charts['factor_risk'] = self._plot_factor_risk_contribution(
             attribution_result.factor_attribution
         )
         
-        # 2. 行业风险贡献�?        charts['industry_risk'] = self._plot_industry_risk_contribution(
+        # 2. 行业风险贡献?        charts['industry_risk'] = self._plot_industry_risk_contribution(
             attribution_result.industry_attribution
         )
         
-        # 3. 资产风险贡献图（Top 20�?        charts['asset_risk'] = self._plot_asset_risk_contribution(
+        # 3. 资产风险贡献图（Top 20?        charts['asset_risk'] = self._plot_asset_risk_contribution(
             attribution_result.asset_attribution
         )
         
         return charts
     
     def _plot_factor_risk_contribution(self, factor_attr: pd.DataFrame) -> str:
-        """绘制因子风险贡献�?""
+        """绘制因子风险贡献?""
         import matplotlib.pyplot as plt
         
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -499,7 +499,7 @@ class AttributionReportGenerator:
         return chart_path
     
     def _plot_industry_risk_contribution(self, industry_attr: pd.DataFrame) -> str:
-        """绘制行业风险贡献�?""
+        """绘制行业风险贡献?""
         import matplotlib.pyplot as plt
         
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -517,7 +517,7 @@ class AttributionReportGenerator:
         return chart_path
     
     def _plot_asset_risk_contribution(self, asset_attr: pd.DataFrame) -> str:
-        """绘制资产风险贡献图（Top 20�?""
+        """绘制资产风险贡献图（Top 20?""
         import matplotlib.pyplot as plt
         
         # 取Top 20
@@ -582,7 +582,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         return report_path
 ```
 
-### 3.6 配置类定�?
+### 3.6 配置类定?
 ```python
 @dataclass
 class AttributionConfig:
@@ -620,7 +620,7 @@ class PortfolioData:
     """组合数据"""
     weights: pd.Series  # 组合权重
     benchmark_weights: Optional[pd.Series]  # 基准权重
-    returns: pd.DataFrame  # 历史收益�?```
+    returns: pd.DataFrame  # 历史收益?```
 
 ### 4.2 输出数据模型
 
@@ -631,13 +631,13 @@ class AttributionResult:
     factor_attribution: pd.DataFrame  # 因子归因
     industry_attribution: pd.DataFrame  # 行业归因
     asset_attribution: pd.DataFrame  # 资产归因
-    total_attribution: pd.DataFrame  # 总归�?    timestamp: datetime
+    total_attribution: pd.DataFrame  # 总归?    timestamp: datetime
     
 @dataclass
 class RiskBudgetMonitorResult:
     """风险预算监控结果"""
     budget_utilization: pd.DataFrame  # 预算使用情况
-    over_budget_risks: List[Dict]  # 超预算风�?    alerts: List[Dict]  # 预警信号
+    over_budget_risks: List[Dict]  # 超预算风?    alerts: List[Dict]  # 预警信号
     timestamp: datetime
 ```
 
@@ -667,7 +667,7 @@ class BarraRiskModel:
 
 ```python
 class PortfolioOptimizer:
-    """组合优化器（集成风险归因�?""
+    """组合优化器（集成风险归因?""
     
     def __init__(self, 
                  barra_model: BarraRiskModel,
@@ -678,7 +678,7 @@ class PortfolioOptimizer:
     def optimize_and_attribute(self,
                               expected_returns: pd.Series,
                               constraints: List[Constraint]) -> Tuple[pd.Series, AttributionResult]:
-        """优化并归�?""
+        """优化并归?""
         # 1. 优化组合
         optimal_weights = self.optimize(expected_returns, constraints)
         
@@ -692,22 +692,22 @@ class PortfolioOptimizer:
 
 ---
 
-## 6. 实施路线�?
+## 6. 实施路线?
 ### 6.1 开发阶段（2周）
 
-**Week 1: 核心模块开�?*
-- Day 1-2: 因子风险归因�?- Day 3-4: 行业风险归因�?- Day 5: 资产风险归因�?
-**Week 2: 集成与测�?*
-- Day 1-2: 归因报告生成�?- Day 3: 与Barra模型集成
-- Day 4: 测试与优�?- Day 5: 文档编写
+**Week 1: 核心模块开?*
+- Day 1-2: 因子风险归因?- Day 3-4: 行业风险归因?- Day 5: 资产风险归因?
+**Week 2: 集成与测?*
+- Day 1-2: 归因报告生成?- Day 3: 与Barra模型集成
+- Day 4: 测试与优?- Day 5: 文档编写
 
-### 6.2 里程�?
-| 里程�?| 时间 | 交付�?| 验收标准 |
+### 6.2 里程?
+| 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
-| **M1: 因子归因完成** | Day 2 | 因子风险归因�?| 归因正确 |
-| **M2: 行业归因完成** | Day 4 | 行业风险归因�?| 归因正确 |
-| **M3: 资产归因完成** | Day 5 | 资产风险归因�?| 归因正确 |
-| **M4: 报告生成完成** | Day 7 | 归因报告生成�?| 报告完整 |
+| **M1: 因子归因完成** | Day 2 | 因子风险归因?| 归因正确 |
+| **M2: 行业归因完成** | Day 4 | 行业风险归因?| 归因正确 |
+| **M3: 资产归因完成** | Day 5 | 资产风险归因?| 归因正确 |
+| **M4: 报告生成完成** | Day 7 | 归因报告生成?| 报告完整 |
 | **M5: 测试通过** | Day 10 | 测试报告 | 所有测试通过 |
 
 ---
@@ -718,26 +718,26 @@ class PortfolioOptimizer:
 
 | 指标 | 当前水平 | 目标水平 | 提升幅度 |
 |------|---------|---------|---------|
-| **风险透明�?* | 40% | 90% | +50% |
-| **风险管理精细�?* | 60% | 90% | +30% |
-| **风险决策支持** | �?| �?| 新增能力 |
-| **Two Sigma模式完整�?* | 69% | 85% | +16% |
+| **风险透明?* | 40% | 90% | +50% |
+| **风险管理精细?* | 60% | 90% | +30% |
+| **风险决策支持** | ?| ?| 新增能力 |
+| **Two Sigma模式完整?* | 69% | 85% | +16% |
 
-### 7.2 定性收�?
-- �?实现Two Sigma核心能力：风险归�?- �?多维度风险分解（因子/行业/资产�?- �?风险预算执行监控
-- �?可视化归因报�?- �?风险预警机制
+### 7.2 定性收?
+- ?实现Two Sigma核心能力：风险归?- ?多维度风险分解（因子/行业/资产?- ?风险预算执行监控
+- ?可视化归因报?- ?风险预警机制
 
 ---
 
 ## 8. 技术栈选择
 
-### 8.1 核心依赖�?
-| 库名 | 版本 | 用�?| 必要�?|
+### 8.1 核心依赖?
+| 库名 | 版本 | 用?| 必要?|
 |------|------|------|--------|
-| **pandas** | �?.5 | 数据处理 | 必需 |
-| **numpy** | �?.21 | 数值计�?| 必需 |
-| **matplotlib** | �?.5 | 可视�?| 必需 |
-| **jinja2** | �?.0 | 报告模板 | 必需 |
+| **pandas** | ?.5 | 数据处理 | 必需 |
+| **numpy** | ?.21 | 数值计?| 必需 |
+| **matplotlib** | ?.5 | 可视?| 必需 |
+| **jinja2** | ?.0 | 报告模板 | 必需 |
 
 ### 8.2 安装命令
 
@@ -752,20 +752,20 @@ pip install jinja2>=3.0
 
 ## 9. 风险评估
 
-### 9.1 技术风�?
-| 风险�?| 风险等级 | 缓解措施 |
+### 9.1 技术风?
+| 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **归因计算精度** | �?| 使用标准归因方法 |
-| **报告生成性能** | �?| 使用模板缓存 |
-| **可视化质�?* | �?| 使用成熟绘图�?|
+| **归因计算精度** | ?| 使用标准归因方法 |
+| **报告生成性能** | ?| 使用模板缓存 |
+| **可视化质?* | ?| 使用成熟绘图?|
 
 ### 9.2 实施风险
 
-| 风险�?| 风险等级 | 缓解措施 |
+| 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **开发时间超�?* | �?| 分阶段实�?|
-| **集成困难** | �?| 充分测试 |
-| **性能不达�?* | �?| 性能优化 |
+| **开发时间超?* | ?| 分阶段实?|
+| **集成困难** | ?| 充分测试 |
+| **性能不达?* | ?| 性能优化 |
 
 ---
 
@@ -774,26 +774,26 @@ pip install jinja2>=3.0
 ### 10.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: 组合优化?
 ##### 6.6 风险归因系统
 - **模块ID**: RISK_ATTRIBUTION_001
 - **蓝图文档**: [RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md)
-- **技术规格书**: 待创�?- **职责**: 多维度风险归因、风险预算监控、归因报告生�?- **状�?*: 设计阶段
+- **技术规格书**: 待创?- **职责**: 多维度风险归因、风险预算监控、归因报告生?- **状?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **风险归因系统** | 风险分解、归因分析、报告生�?| **归因层面** |
-| **Barra风险模型** | 风险模型、风险分�?| 提供风险模型数据 |
-| **组合优化�?* | 组合权重优化 | 使用归因结果优化 |
+| **风险归因系统** | 风险分解、归因分析、报告生?| **归因层面** |
+| **Barra风险模型** | 风险模型、风险分?| 提供风险模型数据 |
+| **组合优化?* | 组合权重优化 | 使用归因结果优化 |
 
 ---
 
 ## 附录
 
-### A. 参考文�?
+### A. 参考文?
 1. **风险归因理论**:
    - Grinold, R.C. and Kahn, R.N. (2000). "Active Portfolio Management"
    - Menchero, J. (2010). "The Characteristics of Factor Attribution"
@@ -801,18 +801,18 @@ pip install jinja2>=3.0
 2. **Brinson模型**:
    - Brinson, G.P., Hood, L.R., and Beebower, G.L. (1986). "Determinants of Portfolio Performance"
 
-3. **开源项目参�?*:
+3. **开源项目参?*:
    - pyfolio: https://github.com/quantopian/pyfolio
    - empyrical: https://github.com/quantopian/empyrical
 
-### B. 术语�?
-| 术语 | 定义 | 上下�?|
+### B. 术语?
+| 术语 | 定义 | 上下?|
 |------|------|--------|
 | **风险归因** | 分析风险来源 | 风险分解 |
-| **边际风险贡献** | 单位权重增加带来的风险增�?| 风险度量 |
-| **主动风险** | 组合相对基准的风�?| 相对风险 |
-| **风险预算** | 分配给各因子的风险限�?| 风险管理 |
+| **边际风险贡献** | 单位权重增加带来的风险增?| 风险度量 |
+| **主动风险** | 组合相对基准的风?| 相对风险 |
+| **风险预算** | 分配给各因子的风险限?| 风险管理 |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 技术规格书编写

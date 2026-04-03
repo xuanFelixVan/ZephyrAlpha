@@ -1,6 +1,6 @@
 ---
 module_id: DOC_DOC_001
-version: 5.1.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -15,7 +15,7 @@ implementation_status: 进行中
 
 # 文档主索引
 
-> 清风量化系统 v5.1 精简文档导航（个人开发版）
+> 清风量化系统 v5.3 精简文档导航（个人开发版）
 >
 > **文档职责说明**:
 > - **INDEX.md**: 快速入口（5分钟导航），聚焦核心文档和常用路径
@@ -33,7 +33,7 @@ implementation_status: 进行中
 
 ### 我要理解架构
 → [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 清风量化系统蓝图（推荐）
-→ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-8统一架构
+→ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11统一架构
 
 ### 我要开发策略
 → [Strategy_Spec_S001.md](Strategy_Spec_S001.md) - 策略模板（30分钟）
@@ -56,7 +56,7 @@ implementation_status: 进行中
 | 文档 | 用途 | 阅读时间 |
 |------|------|----------|
 | [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | ⭐ 清风量化系统蓝图（合并版） | 30分钟 |
-| [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 | 30分钟 |
+| [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11统一架构 | 30分钟 |
 | [AI_Permissions.md](../08_AI_GOVERNANCE/AI_Permissions.md) | AI权限清单 | 10分钟 |
 | [API_Contract.md](API_Contract.md) | 模块接口契约 | 15分钟 |
 | [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | 策略逻辑白皮书 | 30分钟 |
@@ -95,7 +95,7 @@ implementation_status: 进行中
 | 文档 | 说明 |
 |------|------|
 | [README.md](../../README.md) | 框架文档索引 |
-| [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 |
+| [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11统一架构 |
 | [MODULE_DESIGN_TEMPLATE.md](../05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) | 模块设计模板 |
 | [MODULE_DESIGN_PLAN.md](../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md) | 模块设计计划 |
 | [MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) | 市场状态识别 |
@@ -222,7 +222,7 @@ implementation_status: 进行中
 | [CODE_EXAMPLES.md](../05_IMPLEMENTATION/CODE_EXAMPLES.md) | 代码示例 | 开发参考 |
 | [HANDOVER.md](../02_FACTOR_LIBRARY/HANDOVER.md) | 交接文档 | 项目交接参考 |
 | [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) | 实验追踪 | AI研究参考 |
-| [DOCUMENT_AUDIT_v5.1.md](../../DOCUMENT_AUDIT_v5.1.md) | 文档审查报告 | 文档治理参考 |
+| [DOCUMENT_AUDIT_v5.3.md](../../DOCUMENT_AUDIT_v5.3.md) | 文档审查报告 | 文档治理参考 |
 
 ### 因子库补充文档
 
@@ -246,4 +246,4 @@ implementation_status: 进行中
 
 **最后更新**: 2026-03-31
 **维护者**: 清风量化系统
-**版本**: v5.1 个人开发精简版
+**版本**: v5.3 个人开发精简版

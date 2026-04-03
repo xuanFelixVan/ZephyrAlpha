@@ -1,6 +1,6 @@
 ---
 module_id: TACTICS_README_001
-version: 5.1.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -14,9 +14,9 @@ implementation_status: 进行中
 
 # 03_TRADING_TACTICS - 交易战术库
 
-> 清风量化交易系统 v5.1 核心交易策略与战术文档
+> 清风量化交易系统 v5.3 核心交易策略与战术文档
 >
-> **版本**: v5.1
+> **版本**: v5.3
 > **更新日期**: 2026-03-31
 > **维护者**: 策略研发团队
 > **Layer**: Layer 5 (策略执行层)
@@ -84,7 +84,7 @@ Layer 5: 策略执行层
 
 | 文档 | 说明 |
 |------|------|
-| [../01_FRAMEWORK/README.md](../01_FRAMEWORK/README.md) | Layer 0-8 框架说明 |
+| [../01_FRAMEWORK/README.md](../01_FRAMEWORK/README.md) | Layer 0-11 框架说明 |
 | [../02_FACTOR_LIBRARY/](../02_FACTOR_LIBRARY/) | 因子库 (87 Alpha + 46 Risk) |
 | [../04_EXECUTION/README.md](../04_EXECUTION/README.md) | 执行引擎 |
 | [../05_IMPLEMENTATION/](../05_IMPLEMENTATION/) | 实施指南 |
@@ -95,7 +95,7 @@ Layer 5: 策略执行层
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v5.1 | 2026-03-31 | 版本同步至v5.1 |
+| v5.3 | 2026-03-31 | 版本同步至v5.3 |
 | v2.0 | 2026-03-28 | 专业机构版重构 |
 | v1.0 | 2026-03-01 | 初始版本 |
 

@@ -8,7 +8,7 @@ auditor: Audit Sentinel
 standard_type: 专业文档治理深度审计报告
 compliance_level: 专业标准
 applicable_scope: Layer 5策略执行层全系统文档
-parent_document: ../AUDIT_STANDARDS_v5.1.md
+parent_document: ../AUDIT_STANDARDS_v5.3.md
 implementation_status: 已完成
 ---
 
@@ -17,7 +17,7 @@ implementation_status: 已完成
 > **审计编号**: `LAYER5_DEEP_AUDIT_V3_001`
 > **审计日期**: 2026-04-03
 > **审计范围**: Layer 5策略执行层全部文档
-> **审计标准**: 专业量化机构五大原则 + 三层审计标准 v5.1
+> **审计标准**: 专业量化机构五大原则 + 三层审计标准 v5.3
 
 ---
 
@@ -376,7 +376,7 @@ _001 格式: 60个 (通用格式)
 
 ### B. 参考标准文档
 
-1. [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+1. [审计质量标准v5.3](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.3.md)
 2. [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 3. [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 

@@ -18,7 +18,7 @@ fix_duration: 15分钟
 
 # 文档治理审计修复完成报告
 
-> **清风量化系统 v5.2 - 文档治理修复完成**
+> **清风量化系统 v5.3 - 文档治理修复完成**
 > **修复日期**: 2026-04-03
 > **修复范围**: D:\ZephyrAlpha\docs 全目录
 > **修复标准**: 专业量化机构五大原则 + 三层审计标准
@@ -303,7 +303,7 @@ git checkout backup-before-audit-cleanup-20260403
 1. [完整审计报告](./COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md)
 2. [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 3. [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-4. [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+4. [审计质量标准v5.3](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 
 ### C. 修复命令参考
 

@@ -525,7 +525,7 @@ class AutoHedger:
 ## 七、相关文档索�?
 | 文档 | 说明 | 相关�?|
 |------|------|--------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-8主架�?| ⭐⭐⭐⭐�?|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11主架�?| ⭐⭐⭐⭐�?|
 | [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架�?| ⭐⭐⭐⭐�?|
 | [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 压力测试系统 | ⭐⭐⭐⭐�?|
 | [DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控 | ⭐⭐⭐⭐ |

@@ -15,63 +15,63 @@ implementation_progress: 0%
 
 # 实时数据质量监控系统蓝图
 
-> 清风量化系统 v5.2 - 实时数据质量监控系统详细设计
+> 清风量化系统 v5.3 - 实时数据质量监控系统详细设计
 > **模块ID**: `REALTIME_QUALITY_MONITOR_001`
-> **实施周期**: Week 3-4�?周）
-> **优先�?*: P0（核心）
-> **预期收益**: 秒级发现数据问题，提高系统稳定�?0%
+> **实施周期**: Week 3-4?周）
+> **优先?*: P0（核心）
+> **预期收益**: 秒级发现数据问题，提高系统稳定?0%
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需�?
+### 1.1 业务需?
 **当前痛点**:
-- �?数据质量问题发现不及时，影响上层分析
-- �?缺少实时监控，问题发现滞�?- �?缺少多维度质量指标监�?- �?缺少实时告警机制
+- ?数据质量问题发现不及时，影响上层分析
+- ?缺少实时监控，问题发现滞?- ?缺少多维度质量指标监?- ?缺少实时告警机制
 
 **业务目标**:
-- �?实时监控数据质量，秒级发现数据问�?- �?多维度质量指标监控（完整性、准确性、时效性、一致性）
-- �?实时告警，多渠道通知
-- �?可视化质量仪表板
+- ?实时监控数据质量，秒级发现数据问?- ?多维度质量指标监控（完整性、准确性、时效性、一致性）
+- ?实时告警，多渠道通知
+- ?可视化质量仪表板
 
-### 1.2 技术目�?
-| 指标 | 目标�?| 说明 |
+### 1.2 技术目?
+| 指标 | 目标?| 说明 |
 |------|--------|------|
-| **监控覆盖�?* | �?0% | 90%以上的数据有实时监控 |
-| **告警及时�?* | <30�?| 数据问题发生�?0秒内告警 |
-| **告警准确�?* | �?5% | 95%以上的告警为真实问题 |
-| **监控延迟** | <5�?| 监控指标采集延迟<5�?|
+| **监控覆盖?* | ?0% | 90%以上的数据有实时监控 |
+| **告警及时?* | <30?| 数据问题发生?0秒内告警 |
+| **告警准确?* | ?5% | 95%以上的告警为真实问题 |
+| **监控延迟** | <5?| 监控指标采集延迟<5?|
 
 ---
 
-## 二、系统架构设�?
-### 2.1 整体架构�?
+## 二、系统架构设?
+### 2.1 整体架构?
 ```
-┌─────────────────────────────────────────────────────────────�?�?             实时数据质量监控系统架构                          �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据采集�?(Metrics Collection)            �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?完整性采�?  �? �?准确性采�?  �? �?时效性采�?  �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?一致性采�?  �? �?异常检�?    �? �?质量评分     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           指标存储�?(Metrics Storage)               �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?Prometheus  �? �?时序数据�?  �? �?历史数据     �? �? �?�? �? �?(实时指标)  �? �?(InfluxDB)  �? �?(PostgreSQL)�? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           告警引擎�?(Alert Engine)                  �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?规则引擎     �? �?告警路由     �? �?告警通知     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           可视化层 (Visualization)                   �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?Grafana仪表板│  �?质量报告     �? �?告警历史     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────??             实时数据质量监控系统架构                          ?├─────────────────────────────────────────────────────────────??                                                            ?? ┌──────────────────────────────────────────────────────? ?? ?           数据采集?(Metrics Collection)            ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?完整性采?  ? ?准确性采?  ? ?时效性采?  ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?一致性采?  ? ?异常检?    ? ?质量评分     ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           指标存储?(Metrics Storage)               ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?Prometheus  ? ?时序数据?  ? ?历史数据     ? ? ?? ? ?(实时指标)  ? ?(InfluxDB)  ? ?(PostgreSQL)? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           告警引擎?(Alert Engine)                  ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?规则引擎     ? ?告警路由     ? ?告警通知     ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                          ?                                 ?? ┌──────────────────────────────────────────────────────? ?? ?           可视化层 (Visualization)                   ? ?? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?? ? ?Grafana仪表板│  ?质量报告     ? ?告警历史     ? ? ?? ? └─────────────? └─────────────? └─────────────? ? ?? └──────────────────────────────────────────────────────? ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
 ### 2.2 技术选型
 
-| 组件 | 技术方�?| 版本要求 | 选型理由 |
+| 组件 | 技术方?| 版本要求 | 选型理由 |
 |------|---------|---------|---------|
-| **指标采集** | Prometheus | �?.40.0 | 成熟的监控指标采集方�?|
-| **时序数据�?* | InfluxDB | �?.7.0 | 高性能时序数据�?|
-| **可视�?* | Grafana | �?0.0.0 | 强大的可视化能力 |
-| **告警管理** | Alertmanager | �?.26.0 | Prometheus生态告警组�?|
-| **质量检�?* | Great Expectations | �?.18.0 | 数据质量检查框�?|
+| **指标采集** | Prometheus | ?.40.0 | 成熟的监控指标采集方?|
+| **时序数据?* | InfluxDB | ?.7.0 | 高性能时序数据?|
+| **可视?* | Grafana | ?0.0.0 | 强大的可视化能力 |
+| **告警管理** | Alertmanager | ?.26.0 | Prometheus生态告警组?|
+| **质量检?* | Great Expectations | ?.18.0 | 数据质量检查框?|
 
 ### 2.3 Layer定位
 
 - **Layer归属**: Layer 1 - 数据预处理层
 - **职责范围**: 实时数据质量监控、告警、可视化
-- **上下层接�?*:
+- **上下层接?*:
   - 上层依赖: Layer 2-8（提供质量监控服务）
-  - 下层依赖: Layer 0-1（监控数据源和预处理质量�?
+  - 下层依赖: Layer 0-1（监控数据源和预处理质量?
 ---
 
-## 三、核心模块设�?
-### 3.1 质量指标采集�?(QualityMetricsCollector)
+## 三、核心模块设?
+### 3.1 质量指标采集?(QualityMetricsCollector)
 
-**职责**: 采集多维度数据质量指�?
+**职责**: 采集多维度数据质量指?
 ```python
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, Optional
@@ -83,7 +83,7 @@ from prometheus_client import Counter, Gauge, Histogram
 
 class QualityDimension(Enum):
     """质量维度"""
-    COMPLETENESS = "completeness"      # 完整�?    ACCURACY = "accuracy"              # 准确�?    TIMELINESS = "timeliness"          # 时效�?    CONSISTENCY = "consistency"        # 一致�?    VALIDITY = "validity"              # 有效�?    UNIQUENSS = "uniqueness"           # 唯一�?
+    COMPLETENESS = "completeness"      # 完整?    ACCURACY = "accuracy"              # 准确?    TIMELINESS = "timeliness"          # 时效?    CONSISTENCY = "consistency"        # 一致?    VALIDITY = "validity"              # 有效?    UNIQUENSS = "uniqueness"           # 唯一?
 @dataclass
 class QualityMetric:
     """质量指标"""
@@ -98,7 +98,7 @@ class QualityMetric:
 
 @dataclass
 class QualityCheckResult:
-    """质量检查结�?""
+    """质量检查结?""
     check_id: str
     check_name: str
     dimension: QualityDimension
@@ -108,7 +108,7 @@ class QualityCheckResult:
     timestamp: datetime = field(default_factory=datetime.now)
 
 class QualityMetricsCollector:
-    """质量指标采集�?""
+    """质量指标采集?""
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -124,25 +124,25 @@ class QualityMetricsCollector:
         # Prometheus指标定义
         self.completeness_gauge = Gauge(
             'data_completeness',
-            '数据完整性指�?,
+            '数据完整性指?,
             ['data_source', 'table']
         )
         
         self.accuracy_gauge = Gauge(
             'data_accuracy',
-            '数据准确性指�?,
+            '数据准确性指?,
             ['data_source', 'table']
         )
         
         self.timeliness_gauge = Gauge(
             'data_timeliness',
-            '数据时效性指�?,
+            '数据时效性指?,
             ['data_source', 'table']
         )
         
         self.consistency_gauge = Gauge(
             'data_consistency',
-            '数据一致性指�?,
+            '数据一致性指?,
             ['data_source', 'table']
         )
         
@@ -154,7 +154,7 @@ class QualityMetricsCollector:
         
         self.check_counter = Counter(
             'quality_checks_total',
-            '质量检查总次�?,
+            '质量检查总次?,
             ['data_source', 'dimension', 'status']
         )
         
@@ -165,14 +165,14 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        采集完整性指�?        
+        采集完整性指?        
         Args:
             data: 数据DataFrame
-            data_source: 数据�?            table: 表名
+            data_source: 数据?            table: 表名
             
         Returns:
-            QualityMetric: 完整性指�?        """
-        # 计算完整�?        total_cells = data.size
+            QualityMetric: 完整性指?        """
+        # 计算完整?        total_cells = data.size
         missing_cells = data.isnull().sum().sum()
         completeness = 1 - (missing_cells / total_cells)
         
@@ -182,7 +182,7 @@ class QualityMetricsCollector:
             table=table
         ).set(completeness)
         
-        # 判断状�?        if completeness >= 0.95:
+        # 判断状?        if completeness >= 0.95:
             status = "normal"
         elif completeness >= 0.90:
             status = "warning"
@@ -192,7 +192,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_completeness",
             dimension=QualityDimension.COMPLETENESS,
-            metric_name="数据完整�?,
+            metric_name="数据完整?,
             metric_value=completeness,
             threshold=0.95,
             status=status,
@@ -212,14 +212,14 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        采集准确性指�?        
+        采集准确性指?        
         Args:
             data: 数据DataFrame
-            rules: 准确性规则列�?            data_source: 数据�?            table: 表名
+            rules: 准确性规则列?            data_source: 数据?            table: 表名
             
         Returns:
-            QualityMetric: 准确性指�?        """
-        # 应用准确性规�?        total_checks = len(rules)
+            QualityMetric: 准确性指?        """
+        # 应用准确性规?        total_checks = len(rules)
         passed_checks = 0
         
         for rule in rules:
@@ -243,7 +243,7 @@ class QualityMetricsCollector:
                     passed_checks += 1
                     
             elif rule_type == 'custom':
-                # 自定义规则检�?                pass
+                # 自定义规则检?                pass
         
         accuracy = passed_checks / total_checks if total_checks > 0 else 1.0
         
@@ -253,7 +253,7 @@ class QualityMetricsCollector:
             table=table
         ).set(accuracy)
         
-        # 判断状�?        if accuracy >= 0.95:
+        # 判断状?        if accuracy >= 0.95:
             status = "normal"
         elif accuracy >= 0.90:
             status = "warning"
@@ -263,7 +263,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_accuracy",
             dimension=QualityDimension.ACCURACY,
-            metric_name="数据准确�?,
+            metric_name="数据准确?,
             metric_value=accuracy,
             threshold=0.95,
             status=status,
@@ -284,14 +284,14 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        采集时效性指�?        
+        采集时效性指?        
         Args:
             data: 数据DataFrame
-            timestamp_field: 时间戳字�?            expected_delay: 预期延迟（秒�?            data_source: 数据�?            table: 表名
+            timestamp_field: 时间戳字?            expected_delay: 预期延迟（秒?            data_source: 数据?            table: 表名
             
         Returns:
-            QualityMetric: 时效性指�?        """
-        # 计算时效�?        latest_timestamp = pd.to_datetime(data[timestamp_field].max())
+            QualityMetric: 时效性指?        """
+        # 计算时效?        latest_timestamp = pd.to_datetime(data[timestamp_field].max())
         current_time = datetime.now()
         actual_delay = (current_time - latest_timestamp).total_seconds()
         
@@ -303,7 +303,7 @@ class QualityMetricsCollector:
             table=table
         ).set(timeliness)
         
-        # 判断状�?        if timeliness >= 0.95:
+        # 判断状?        if timeliness >= 0.95:
             status = "normal"
         elif timeliness >= 0.90:
             status = "warning"
@@ -313,7 +313,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_timeliness",
             dimension=QualityDimension.TIMELINESS,
-            metric_name="数据时效�?,
+            metric_name="数据时效?,
             metric_value=timeliness,
             threshold=0.95,
             status=status,
@@ -335,16 +335,16 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        采集一致性指�?        
+        采集一致性指?        
         Args:
             data: 数据DataFrame
             reference_data: 参考数据DataFrame
             key_fields: 关键字段列表
-            data_source: 数据�?            table: 表名
+            data_source: 数据?            table: 表名
             
         Returns:
-            QualityMetric: 一致性指�?        """
-        # 计算一致�?        merged = data.merge(
+            QualityMetric: 一致性指?        """
+        # 计算一致?        merged = data.merge(
             reference_data,
             on=key_fields,
             how='left',
@@ -361,7 +361,7 @@ class QualityMetricsCollector:
             table=table
         ).set(consistency)
         
-        # 判断状�?        if consistency >= 0.95:
+        # 判断状?        if consistency >= 0.95:
             status = "normal"
         elif consistency >= 0.90:
             status = "warning"
@@ -371,7 +371,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_consistency",
             dimension=QualityDimension.CONSISTENCY,
-            metric_name="数据一致�?,
+            metric_name="数据一致?,
             metric_value=consistency,
             threshold=0.95,
             status=status,
@@ -452,7 +452,7 @@ class AlertRule:
     severity: AlertSeverity
     channels: List[AlertChannel]
     enabled: bool = True
-    cooldown: int = 300  # 冷却时间（秒�?
+    cooldown: int = 300  # 冷却时间（秒?
 @dataclass
 class Alert:
     """告警"""
@@ -472,7 +472,7 @@ class AlertEngine:
     
     def __init__(self, config: Dict[str, Any]):
         """
-        初始化告警引�?        
+        初始化告警引?        
         Args:
             config: 配置信息
                 - email_config: 邮件配置
@@ -495,28 +495,28 @@ class AlertEngine:
         
     def check_metric(self, metric: QualityMetric) -> Optional[Alert]:
         """
-        检查指标是否触发告�?        
+        检查指标是否触发告?        
         Args:
             metric: 质量指标
             
         Returns:
             Optional[Alert]: 告警（如果触发）
         """
-        # 查找匹配的规�?        for rule in self.rules.values():
+        # 查找匹配的规?        for rule in self.rules.values():
             if not rule.enabled:
                 continue
                 
             if rule.metric_name != metric.metric_name:
                 continue
             
-            # 检查冷却时�?            if rule.rule_id in self.last_alert_time:
+            # 检查冷却时?            if rule.rule_id in self.last_alert_time:
                 time_since_last = (
                     datetime.now() - self.last_alert_time[rule.rule_id]
                 ).total_seconds()
                 if time_since_last < rule.cooldown:
                     continue
             
-            # 检查条�?            triggered = False
+            # 检查条?            triggered = False
             if rule.condition == '>' and metric.metric_value > rule.threshold:
                 triggered = True
             elif rule.condition == '<' and metric.metric_value < rule.threshold:
@@ -534,7 +534,7 @@ class AlertEngine:
                     metric_value=metric.metric_value,
                     threshold=rule.threshold,
                     severity=rule.severity,
-                    message=f"指标 {metric.metric_name} 触发告警：当前�?{metric.metric_value:.2f}，阈�?{rule.threshold:.2f}"
+                    message=f"指标 {metric.metric_name} 触发告警：当前?{metric.metric_value:.2f}，阈?{rule.threshold:.2f}"
                 )
                 
                 self.alerts.append(alert)
@@ -567,7 +567,7 @@ class AlertEngine:
     
     def _send_email(self, alert: Alert):
         """
-        发送邮件告�?        
+        发送邮件告?        
         Args:
             alert: 告警
         """
@@ -607,12 +607,12 @@ class AlertEngine:
                             'short': True
                         },
                         {
-                            'title': '当前�?,
+                            'title': '当前?,
                             'value': f"{alert.metric_value:.2f}",
                             'short': True
                         },
                         {
-                            'title': '阈�?,
+                            'title': '阈?,
                             'value': f"{alert.threshold:.2f}",
                             'short': True
                         },
@@ -630,7 +630,7 @@ class AlertEngine:
     
     def _send_sms(self, alert: Alert):
         """
-        发送短信告�?        
+        发送短信告?        
         Args:
             alert: 告警
         """
@@ -674,13 +674,13 @@ from datetime import datetime
 app = FastAPI(title="实时数据质量监控系统API")
 
 class QualityCheckRequest(BaseModel):
-    """质量检查请�?""
+    """质量检查请?""
     data_source: str
     table: str
     check_types: List[str]  # completeness, accuracy, timeliness, consistency
 
 class QualityCheckResponse(BaseModel):
-    """质量检查响�?""
+    """质量检查响?""
     success: bool
     metrics: List[Dict[str, Any]]
     quality_score: float
@@ -698,11 +698,11 @@ class AlertRuleRequest(BaseModel):
 @app.post("/quality/check")
 async def check_quality(request: QualityCheckRequest):
     """
-    执行质量检�?    
+    执行质量检?    
     Args:
-        request: 质量检查请�?        
+        request: 质量检查请?        
     Returns:
-        质量检查结�?    """
+        质量检查结?    """
     pass
 
 @app.get("/quality/metrics/{data_source}/{table}")
@@ -716,8 +716,8 @@ async def get_quality_metrics(
     获取质量指标历史数据
     
     Args:
-        data_source: 数据�?        table: 表名
-        start_time: 开始时�?        end_time: 结束时间
+        data_source: 数据?        table: 表名
+        start_time: 开始时?        end_time: 结束时间
         
     Returns:
         质量指标历史数据
@@ -747,7 +747,7 @@ async def get_alert_history(
     获取告警历史
     
     Args:
-        start_time: 开始时�?        end_time: 结束时间
+        start_time: 开始时?        end_time: 结束时间
         severity: 严重级别
         
     Returns:
@@ -758,24 +758,24 @@ async def get_alert_history(
 @app.get("/quality/dashboard")
 async def get_dashboard_data():
     """
-    获取仪表板数�?    
+    获取仪表板数?    
     Returns:
-        仪表板数�?    """
+        仪表板数?    """
     pass
 ```
 
 ---
 
-## 四、监控指标体�?
+## 四、监控指标体?
 ### 4.1 核心监控指标
 
-| 指标类别 | 指标名称 | 说明 | 阈�?|
+| 指标类别 | 指标名称 | 说明 | 阈?|
 |---------|---------|------|------|
-| **完整�?* | data_completeness | 数据完整�?| �?5% |
-| **准确�?* | data_accuracy | 数据准确�?| �?5% |
-| **时效�?* | data_timeliness | 数据时效�?| �?5% |
-| **一致�?* | data_consistency | 数据一致�?| �?5% |
-| **综合评分** | data_quality_score | 数据质量综合评分 | �?0% |
+| **完整?* | data_completeness | 数据完整?| ?5% |
+| **准确?* | data_accuracy | 数据准确?| ?5% |
+| **时效?* | data_timeliness | 数据时效?| ?5% |
+| **一致?* | data_consistency | 数据一致?| ?5% |
+| **综合评分** | data_quality_score | 数据质量综合评分 | ?0% |
 
 ### 4.2 告警规则配置
 
@@ -783,7 +783,7 @@ async def get_dashboard_data():
 # 告警规则配置文件
 rules:
   - rule_id: "completeness_critical"
-    rule_name: "完整性严重告�?
+    rule_name: "完整性严重告?
     metric_name: "data_completeness"
     condition: "<"
     threshold: 0.90
@@ -794,7 +794,7 @@ rules:
     cooldown: 300
     
   - rule_id: "completeness_warning"
-    rule_name: "完整性警�?
+    rule_name: "完整性警?
     metric_name: "data_completeness"
     condition: "<"
     threshold: 0.95
@@ -804,7 +804,7 @@ rules:
     cooldown: 600
     
   - rule_id: "accuracy_critical"
-    rule_name: "准确性严重告�?
+    rule_name: "准确性严重告?
     metric_name: "data_accuracy"
     condition: "<"
     threshold: 0.90
@@ -815,7 +815,7 @@ rules:
     cooldown: 300
     
   - rule_id: "timeliness_critical"
-    rule_name: "时效性严重告�?
+    rule_name: "时效性严重告?
     metric_name: "data_timeliness"
     condition: "<"
     threshold: 0.90
@@ -829,16 +829,16 @@ rules:
 
 ---
 
-## 五、Grafana仪表板设�?
+## 五、Grafana仪表板设?
 ### 5.1 仪表板布局
 
 ```
-┌─────────────────────────────────────────────────────────────�?�?                 数据质量监控仪表�?                           �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌─────────────�? ┌─────────────�? ┌─────────────�?        �?�? �?完整性评�?  �? �?准确性评�?  �? �?时效性评�?  �?        �?�? �?  95.2%     �? �?  96.8%     �? �?  94.5%     �?        �?�? └─────────────�? └─────────────�? └─────────────�?        �?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据质量趋势图（24小时�?                   �? �?�? �? [折线图：完整性、准确性、时效性、一致性]              �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?�? ┌─────────────────────�? ┌─────────────────────�?        �?�? �? 告警历史（最�?小时）│  �? 数据源质量排�?     �?        �?�? �? [表格：时间、级别、消息]�? [柱状图：各数据源评分]�?        �?�? └─────────────────────�? └─────────────────────�?        �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────??                 数据质量监控仪表?                           ?├─────────────────────────────────────────────────────────────??                                                            ?? ┌─────────────? ┌─────────────? ┌─────────────?        ?? ?完整性评?  ? ?准确性评?  ? ?时效性评?  ?        ?? ?  95.2%     ? ?  96.8%     ? ?  94.5%     ?        ?? └─────────────? └─────────────? └─────────────?        ??                                                            ?? ┌──────────────────────────────────────────────────────? ?? ?           数据质量趋势图（24小时?                   ? ?? ? [折线图：完整性、准确性、时效性、一致性]              ? ?? └──────────────────────────────────────────────────────? ??                                                            ?? ┌─────────────────────? ┌─────────────────────?        ?? ? 告警历史（最?小时）│  ? 数据源质量排?     ?        ?? ? [表格：时间、级别、消息]? [柱状图：各数据源评分]?        ?? └─────────────────────? └─────────────────────?        ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
 ### 5.2 Grafana配置
 
 ```yaml
-# Grafana仪表板配�?apiVersion: 1
+# Grafana仪表板配?apiVersion: 1
 providers:
   - name: 'Data Quality Dashboard'
     orgId: 1
@@ -851,7 +851,7 @@ providers:
 
 dashboards:
   - uid: 'data-quality'
-    title: '数据质量监控仪表�?
+    title: '数据质量监控仪表?
     tags: ['quality', 'monitoring']
     timezone: 'browser'
     schemaVersion: 16
@@ -859,7 +859,7 @@ dashboards:
     refresh: '10s'
     panels:
       - id: 1
-        title: '完整性评�?
+        title: '完整性评?
         type: 'gauge'
         gridPos:
           x: 0
@@ -868,7 +868,7 @@ dashboards:
           h: 6
         targets:
           - expr: 'data_completeness'
-            legendFormat: '完整�?
+            legendFormat: '完整?
         options:
           thresholds:
             - value: 0
@@ -883,19 +883,19 @@ dashboards:
 
 ## 六、AI增强数据质量监控
 
-### 6.1 AI驱动的异常检�?
+### 6.1 AI驱动的异常检?
 #### 6.1.1 设计背景
 
-**传统监控的局限�?*:
-- �?基于固定阈值，无法适应数据分布变化
-- �?无法检测未知异常模�?- �?误报率高，告警疲�?- �?缺少预测性能�?
-**AI增强的优�?*:
-- �?自动学习数据正常模式
-- �?检测未知异常模�?- �?降低误报�?0%
-- �?预测性告警，提前发现问题
+**传统监控的局限?*:
+- ?基于固定阈值，无法适应数据分布变化
+- ?无法检测未知异常模?- ?误报率高，告警疲?- ?缺少预测性能?
+**AI增强的优?*:
+- ?自动学习数据正常模式
+- ?检测未知异常模?- ?降低误报?0%
+- ?预测性告警，提前发现问题
 
-#### 6.1.2 技术方�?
-**深度学习异常检测模�?*:
+#### 6.1.2 技术方?
+**深度学习异常检测模?*:
 
 ```python
 import torch
@@ -903,12 +903,12 @@ import torch.nn as nn
 from transformers import AutoModel, AutoTokenizer
 
 class DataQualityAnomalyDetector(nn.Module):
-    """数据质量异常检测模�?""
+    """数据质量异常检测模?""
     
     def __init__(self, input_dim: int = 128, hidden_dim: int = 256):
         super().__init__()
         
-        # 时序编码�?        self.temporal_encoder = nn.LSTM(
+        # 时序编码?        self.temporal_encoder = nn.LSTM(
             input_size=input_dim,
             hidden_size=hidden_dim,
             num_layers=2,
@@ -926,7 +926,7 @@ class DataQualityAnomalyDetector(nn.Module):
             nn.Linear(64, 2)  # 正常/异常
         )
         
-        # 置信度估�?        self.confidence_head = nn.Sequential(
+        # 置信度估?        self.confidence_head = nn.Sequential(
             nn.Linear(hidden_dim, 64),
             nn.ReLU(),
             nn.Linear(64, 1),
@@ -943,10 +943,10 @@ class DataQualityAnomalyDetector(nn.Module):
         """
         # 时序编码
         temporal_out, _ = self.temporal_encoder(x)
-        temporal_features = temporal_out[:, -1, :]  # 取最后时�?        
-        # 异常检�?        anomaly_logits = self.anomaly_head(temporal_features)
+        temporal_features = temporal_out[:, -1, :]  # 取最后时?        
+        # 异常检?        anomaly_logits = self.anomaly_head(temporal_features)
         
-        # 置信度估�?        confidence = self.confidence_head(temporal_features)
+        # 置信度估?        confidence = self.confidence_head(temporal_features)
         
         return anomaly_logits, confidence
 
@@ -959,7 +959,7 @@ class MultivariateAnomalyDetector:
             self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
         
-        # 特征标准�?        self.scaler = StandardScaler()
+        # 特征标准?        self.scaler = StandardScaler()
         
         # 历史数据缓存
         self.history_buffer = []
@@ -967,7 +967,7 @@ class MultivariateAnomalyDetector:
     
     def detect_anomaly(self, metrics: dict) -> dict:
         """
-        实时异常检�?        
+        实时异常检?        
         Args:
             metrics: 质量指标字典
                 {
@@ -991,7 +991,7 @@ class MultivariateAnomalyDetector:
         # 特征提取
         features = self._extract_features(metrics)
         
-        # 标准�?        features_scaled = self.scaler.transform([features])
+        # 标准?        features_scaled = self.scaler.transform([features])
         
         # 模型推理
         with torch.no_grad():
@@ -1026,7 +1026,7 @@ class MultivariateAnomalyDetector:
             metrics.get('accuracy', 0),
             metrics.get('timeliness', 0),
             metrics.get('consistency', 0),
-            metrics.get('volume', 0) / 10000,  # 归一�?            metrics.get('error_rate', 0),
+            metrics.get('volume', 0) / 10000,  # 归一?            metrics.get('error_rate', 0),
             # 统计特征
             np.mean(list(metrics.values())),
             np.std(list(metrics.values())),
@@ -1053,12 +1053,12 @@ class MultivariateAnomalyDetector:
     def _generate_description(self, anomaly_type: str, metrics: dict) -> str:
         """生成异常描述"""
         descriptions = {
-            'completeness_anomaly': f"数据完整性异常，当前值{metrics.get('completeness', 0):.2%}，低于阈�?0%",
-            'accuracy_anomaly': f"数据准确性异常，当前值{metrics.get('accuracy', 0):.2%}，低于阈�?5%",
-            'timeliness_anomaly': f"数据时效性异常，当前值{metrics.get('timeliness', 0):.2%}，低于阈�?0%",
-            'consistency_anomaly': f"数据一致性异常，当前值{metrics.get('consistency', 0):.2%}，低于阈�?5%",
-            'error_rate_anomaly': f"错误率异常，当前值{metrics.get('error_rate', 0):.2%}，高于阈�?%",
-            'unknown_anomaly': "检测到未知异常模式，需要人工确�?
+            'completeness_anomaly': f"数据完整性异常，当前值{metrics.get('completeness', 0):.2%}，低于阈?0%",
+            'accuracy_anomaly': f"数据准确性异常，当前值{metrics.get('accuracy', 0):.2%}，低于阈?5%",
+            'timeliness_anomaly': f"数据时效性异常，当前值{metrics.get('timeliness', 0):.2%}，低于阈?0%",
+            'consistency_anomaly': f"数据一致性异常，当前值{metrics.get('consistency', 0):.2%}，低于阈?5%",
+            'error_rate_anomaly': f"错误率异常，当前值{metrics.get('error_rate', 0):.2%}，高于阈?%",
+            'unknown_anomaly': "检测到未知异常模式，需要人工确?
         }
         return descriptions.get(anomaly_type, "未知异常")
 ```
@@ -1079,7 +1079,7 @@ class AnomalyDetectionTrainer:
         # 损失函数
         self.criterion = nn.CrossEntropyLoss()
         
-        # 优化�?        self.optimizer = torch.optim.Adam(
+        # 优化?        self.optimizer = torch.optim.Adam(
             model.parameters(),
             lr=0.001,
             weight_decay=1e-5
@@ -1129,13 +1129,13 @@ class AnomalyDetectionTrainer:
                     loss = self.criterion(anomaly_logits, batch_y)
                     val_loss += loss.item()
                     
-                    # 计算准确�?                    _, predicted = torch.max(anomaly_logits, 1)
+                    # 计算准确?                    _, predicted = torch.max(anomaly_logits, 1)
                     total += batch_y.size(0)
                     correct += (predicted == batch_y).sum().item()
             
-            # 学习率调�?            self.scheduler.step(val_loss)
+            # 学习率调?            self.scheduler.step(val_loss)
             
-            # 保存最佳模�?            if val_loss < best_val_loss:
+            # 保存最佳模?            if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 torch.save(self.model.state_dict(), 'best_anomaly_detector.pth')
             
@@ -1147,18 +1147,18 @@ class AnomalyDetectionTrainer:
                 print(f"  Val Accuracy: {100*correct/total:.2f}%")
 ```
 
-### 6.2 预测性质量告�?
+### 6.2 预测性质量告?
 #### 6.2.1 设计思路
 
-**预测性告警流�?*:
+**预测性告警流?*:
 ```
-历史数据 �?时序预测模型 �?未来质量预测 �?提前告警
+历史数据 ?时序预测模型 ?未来质量预测 ?提前告警
 ```
 
-**技术方�?*:
+**技术方?*:
 - 使用LSTM/Transformer预测未来质量指标
 - 提前30分钟预测质量下降
-- 提前发出预警，避免问题发�?
+- 提前发出预警，避免问题发?
 #### 6.2.2 预测模型
 
 ```python
@@ -1170,12 +1170,12 @@ class QualityPredictor:
         
         # 时序预测模型
         self.forecast_model = nn.LSTM(
-            input_size=6,  # 6个质量指�?            hidden_size=128,
+            input_size=6,  # 6个质量指?            hidden_size=128,
             num_layers=2,
             batch_first=True
         )
         
-        # 预测�?        self.predict_head = nn.Linear(128, 6)
+        # 预测?        self.predict_head = nn.Linear(128, 6)
     
     def predict_future_quality(self, history_metrics: list) -> dict:
         """
@@ -1218,7 +1218,7 @@ class QualityPredictor:
         # 分析趋势
         quality_trend = self._analyze_trend(history_metrics, predicted_metrics)
         
-        # 判断是否需要告�?        alert_needed = self._check_alert_needed(predicted_metrics)
+        # 判断是否需要告?        alert_needed = self._check_alert_needed(predicted_metrics)
         
         # 生成告警消息
         alert_message = self._generate_alert_message(predicted_metrics, quality_trend)
@@ -1232,9 +1232,9 @@ class QualityPredictor:
     
     def _analyze_trend(self, history: list, predicted: dict) -> str:
         """分析质量趋势"""
-        # 计算历史平均�?        avg_completeness = np.mean([h['completeness'] for h in history[-10:]])
+        # 计算历史平均?        avg_completeness = np.mean([h['completeness'] for h in history[-10:]])
         
-        # 比较预测�?        if predicted['completeness'] < avg_completeness - 0.05:
+        # 比较预测?        if predicted['completeness'] < avg_completeness - 0.05:
             return 'declining'
         elif predicted['completeness'] > avg_completeness + 0.05:
             return 'improving'
@@ -1242,7 +1242,7 @@ class QualityPredictor:
             return 'stable'
     
     def _check_alert_needed(self, predicted: dict) -> bool:
-        """检查是否需要告�?""
+        """检查是否需要告?""
         thresholds = {
             'completeness': 0.90,
             'accuracy': 0.95,
@@ -1267,10 +1267,10 @@ class QualityPredictor:
             return f"⚠️ 预测未来{self.forecast_horizon}分钟数据质量将下降，" \
                    f"完整性预计降至{predicted['completeness']:.2%}，请提前关注"
         elif trend == 'improving':
-            return f"�?预测未来{self.forecast_horizon}分钟数据质量将提升，" \
+            return f"?预测未来{self.forecast_horizon}分钟数据质量将提升，" \
                    f"完整性预计升至{predicted['completeness']:.2%}"
         else:
-            return f"📊 预测未来{self.forecast_horizon}分钟数据质量保持稳定�? \
+            return f"📊 预测未来{self.forecast_horizon}分钟数据质量保持稳定? \
                    f"完整性预计为{predicted['completeness']:.2%}"
 ```
 
@@ -1278,35 +1278,35 @@ class QualityPredictor:
 
 #### 6.3.1 新增监控指标
 
-| 指标名称 | 指标说明 | 目标�?| 告警阈�?|
+| 指标名称 | 指标说明 | 目标?| 告警阈?|
 |---------|---------|--------|---------|
-| **AI异常检测准确率** | AI模型检测异常的准确�?| �?5% | <90% |
-| **AI异常检测召回率** | AI模型检测异常的召回�?| �?0% | <85% |
-| **预测性告警准确率** | 预测性告警的准确�?| �?5% | <80% |
-| **AI误报�?* | AI模型的误报率 | �?% | >10% |
+| **AI异常检测准确率** | AI模型检测异常的准确?| ?5% | <90% |
+| **AI异常检测召回率** | AI模型检测异常的召回?| ?0% | <85% |
+| **预测性告警准确率** | 预测性告警的准确?| ?5% | <80% |
+| **AI误报?* | AI模型的误报率 | ?% | >10% |
 | **模型推理延迟** | AI模型推理延迟 | <100ms | >200ms |
 
-#### 6.3.2 AI监控仪表�?
+#### 6.3.2 AI监控仪表?
 ```yaml
-# Grafana AI监控仪表板配�?dashboard:
+# Grafana AI监控仪表板配?dashboard:
   title: "AI增强数据质量监控"
   panels:
     - title: "AI异常检测准确率"
       type: graph
       targets:
         - expr: 'ai_anomaly_detection_accuracy'
-          legendFormat: '准确�?
+          legendFormat: '准确?
       thresholds:
         - value: 0.90
           color: 'yellow'
         - value: 0.95
           color: 'green'
     
-    - title: "预测性告警统�?
+    - title: "预测性告警统?
       type: stat
       targets:
         - expr: 'predictive_alerts_total'
-          legendFormat: '总预测告�?
+          legendFormat: '总预测告?
         - expr: 'predictive_alerts_correct'
           legendFormat: '准确预测'
       options:
@@ -1324,56 +1324,56 @@ class QualityPredictor:
           color: 'green'
 ```
 
-### 6.4 实施路线�?
-#### 6.4.1 Phase 1: AI模型开发（Week 1-2�?
+### 6.4 实施路线?
+#### 6.4.1 Phase 1: AI模型开发（Week 1-2?
 **任务**:
 1. 收集历史质量数据
 2. 标注异常样本
-3. 训练异常检测模�?4. 训练预测模型
+3. 训练异常检测模?4. 训练预测模型
 
-**交付�?*:
-- �?异常检测模型（准确率≥95%�?- �?预测模型（准确率�?5%�?- �?模型评估报告
+**交付?*:
+- ?异常检测模型（准确率≥95%?- ?预测模型（准确率?5%?- ?模型评估报告
 
-#### 6.4.2 Phase 2: AI模型集成（Week 3�?
+#### 6.4.2 Phase 2: AI模型集成（Week 3?
 **任务**:
-1. 集成AI模型到监控系�?2. 实现实时推理接口
-3. 配置预测性告�?4. 部署AI监控仪表�?
-**交付�?*:
-- �?AI增强监控系统上线
-- �?预测性告警功能上�?- �?AI监控仪表板上�?
-#### 6.4.3 Phase 3: 优化与迭代（Week 4�?
+1. 集成AI模型到监控系?2. 实现实时推理接口
+3. 配置预测性告?4. 部署AI监控仪表?
+**交付?*:
+- ?AI增强监控系统上线
+- ?预测性告警功能上?- ?AI监控仪表板上?
+#### 6.4.3 Phase 3: 优化与迭代（Week 4?
 **任务**:
 1. 监控AI模型性能
 2. 收集反馈数据
 3. 优化模型参数
 4. 持续迭代改进
 
-**交付�?*:
-- �?AI模型性能报告
-- �?优化建议文档
-- �?迭代改进计划
+**交付?*:
+- ?AI模型性能报告
+- ?优化建议文档
+- ?迭代改进计划
 
 ### 6.5 预期收益
 
-| 收益�?| 当前状�?| AI增强�?| 提升幅度 |
+| 收益?| 当前状?| AI增强?| 提升幅度 |
 |--------|---------|---------|---------|
 | **异常检测准确率** | 85% | 95% | +10% |
 | **异常检测召回率** | 80% | 90% | +10% |
-| **误报�?* | 15% | 5% | -10% |
+| **误报?* | 15% | 5% | -10% |
 | **告警提前时间** | 0分钟 | 30分钟 | +30分钟 |
-| **问题发现�?* | 70% | 95% | +25% |
+| **问题发现?* | 70% | 95% | +25% |
 | **人工干预时间** | 100% | 20% | -80% |
 
 ---
 
-## 七、实施步�?
+## 七、实施步?
 ### 7.1 Week 3: 基础架构搭建
 
 #### Day 1-2: 环境准备
 
 **任务**:
-1. 安装Prometheus（Docker方式�?2. 安装Grafana（Docker方式�?3. 安装InfluxDB（可选）
-4. 配置Python开发环�?
+1. 安装Prometheus（Docker方式?2. 安装Grafana（Docker方式?3. 安装InfluxDB（可选）
+4. 配置Python开发环?
 **命令**:
 ```bash
 # 安装Prometheus
@@ -1396,52 +1396,52 @@ docker run -d \
     influxdb:2.7
 ```
 
-#### Day 3-4: 核心模块开�?
+#### Day 3-4: 核心模块开?
 **任务**:
-1. 实现QualityMetricsCollector质量指标采集�?2. 实现AlertEngine告警引擎
+1. 实现QualityMetricsCollector质量指标采集?2. 实现AlertEngine告警引擎
 3. 编写单元测试
 
-**交付�?*:
+**交付?*:
 ```
 src/
 ├── quality_monitor/
-�?  ├── __init__.py
-�?  ├── collector.py          # QualityMetricsCollector
-�?  ├── alert_engine.py       # AlertEngine
-�?  ├── models.py             # 数据模型
-�?  └── tests/
-�?      ├── test_collector.py
-�?      └── test_alert_engine.py
+?  ├── __init__.py
+?  ├── collector.py          # QualityMetricsCollector
+?  ├── alert_engine.py       # AlertEngine
+?  ├── models.py             # 数据模型
+?  └── tests/
+?      ├── test_collector.py
+?      └── test_alert_engine.py
 ```
 
 #### Day 5: 集成测试
 
 **任务**:
 1. 集成Prometheus和Grafana
-2. 测试质量指标采集和告警功�?3. 性能测试
+2. 测试质量指标采集和告警功?3. 性能测试
 
 ### 7.2 Week 4: 功能完善与可视化
 
-#### Day 6-7: API服务开�?
+#### Day 6-7: API服务开?
 **任务**:
 1. 实现QualityMonitorService API
 2. 实现RESTful接口
 3. 编写API文档
 
-**交付�?*:
+**交付?*:
 ```
 src/
 ├── quality_monitor/
-�?  ├── api.py                # FastAPI服务
-�?  └── tests/
-�?      └── test_api.py
+?  ├── api.py                # FastAPI服务
+?  └── tests/
+?      └── test_api.py
 ```
 
-#### Day 8-9: Grafana仪表板配�?
+#### Day 8-9: Grafana仪表板配?
 **任务**:
-1. 配置Grafana数据�?2. 创建数据质量仪表�?3. 配置告警规则
+1. 配置Grafana数据?2. 创建数据质量仪表?3. 配置告警规则
 
-#### Day 10: 用户培训与文�?
+#### Day 10: 用户培训与文?
 **任务**:
 1. 编写用户使用手册
 2. 录制培训视频
@@ -1449,43 +1449,43 @@ src/
 
 ---
 
-## 八、验收标�?
+## 八、验收标?
 ### 8.1 功能验收
 
-| 验收�?| 验收标准 | 验收方法 |
+| 验收?| 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **质量指标采集** | �?0%数据有实时监�?| 配置检�?|
-| **告警及时�?* | <30秒发现数据问�?| 模拟测试 |
-| **告警准确�?* | �?5%告警为真实问�?| 历史数据验证 |
-| **可视化展�?* | Grafana仪表板正常显�?| 功能测试 |
+| **质量指标采集** | ?0%数据有实时监?| 配置检?|
+| **告警及时?* | <30秒发现数据问?| 模拟测试 |
+| **告警准确?* | ?5%告警为真实问?| 历史数据验证 |
+| **可视化展?* | Grafana仪表板正常显?| 功能测试 |
 
 ### 8.2 性能验收
 
-| 指标 | 目标�?| 测试方法 |
+| 指标 | 目标?| 测试方法 |
 |------|--------|---------|
-| **监控延迟** | <5�?| 性能测试 |
-| **告警延迟** | <30�?| 功能测试 |
-| **指标采集吞吐�?* | >1000�?�?| 压力测试 |
-| **系统可用�?* | >99.9% | 监控统计 |
+| **监控延迟** | <5?| 性能测试 |
+| **告警延迟** | <30?| 功能测试 |
+| **指标采集吞吐?* | >1000??| 压力测试 |
+| **系统可用?* | >99.9% | 监控统计 |
 
 ---
 
 ## 九、风险评估与缓解
 
-### 9.1 技术风�?
-| 风险�?| 风险等级 | 影响 | 缓解措施 |
+### 9.1 技术风?
+| 风险?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| Prometheus学习曲线 | P2 | 延期2-3�?| 提前学习，参考官方文�?|
-| 告警规则配置复杂 | P2 | 配置错误 | 提供配置模板和验证工�?|
-| Grafana仪表板设计复�?| P2 | 开发延�?| 使用现成模板 |
+| Prometheus学习曲线 | P2 | 延期2-3?| 提前学习，参考官方文?|
+| 告警规则配置复杂 | P2 | 配置错误 | 提供配置模板和验证工?|
+| Grafana仪表板设计复?| P2 | 开发延?| 使用现成模板 |
 
 ---
 
-## 十、文档治�?
+## 十、文档治?
 ### 10.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文�?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
+- **父文?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
 - **关联文档**:
   - [DATA_LINEAGE_TRACKING_BLUEPRINT.md](./DATA_LINEAGE_TRACKING_BLUEPRINT.md)
   - [DATA_QUALITY.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_QUALITY.md)
@@ -1493,7 +1493,7 @@ src/
 ### 10.2 版本管理
 
 **版本历史**:
-- v1.0.0 (2026-04-02): 初始版本，完成实时数据质量监控系统设�?
+- v1.0.0 (2026-04-02): 初始版本，完成实时数据质量监控系统设?
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状�?*: �?正式 | **维护�?*: ZephyrAlpha技术团�?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状?*: ?正式 | **维护?*: ZephyrAlpha技术团?

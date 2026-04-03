@@ -1,6 +1,6 @@
 ---
 module_id: OVERVIEW_DOC_001
-version: 5.1.0
+version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -14,7 +14,7 @@ implementation_status: 进行中
 
 # DATA_FLOW.md - 数据流与模块依赖
 
-> **版本**：v5.1
+> **版本**：v5.3
 > **更新日期**：2026-03-31
 > **状态**：已完成
 

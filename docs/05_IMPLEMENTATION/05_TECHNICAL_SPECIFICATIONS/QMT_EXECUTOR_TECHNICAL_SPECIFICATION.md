@@ -18,7 +18,7 @@ regulatory_compliance:
 
 # QMTExecutor交易执行器模块技术规格书
 
-> 清风量化系统 v5.2 - QMTExecutor交易执行器模块详细技术设�?
+> 清风量化系统 v5.3 - QMTExecutor交易执行器模块详细技术设�?
 > **模块ID**: `QMT_EXECUTOR_001`
 > **版本**: v1.0.0
 > **状�?*: �?正式

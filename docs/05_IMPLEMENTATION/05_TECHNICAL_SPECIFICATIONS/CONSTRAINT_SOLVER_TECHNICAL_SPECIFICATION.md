@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (组合优化?
 index: CONSTRAINT_SOLVER_SPEC_001
 estimated_hours: 60h
 review_status: Pending
@@ -14,33 +14,33 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构技术规格书
-applicable_scope: 全系�?compliance_level: 专业标准
+applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 # 约束求解器技术规格书 v1.0
 
-> 清风量化系统 v5.2 - 约束求解器详细技术设�?> **索引**: `CONSTRAINT_SOLVER_SPEC_001`
-> **开发时�?*: 60h
-> **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求�?
+> 清风量化系统 v5.3 - 约束求解器详细技术设?> **索引**: `CONSTRAINT_SOLVER_SPEC_001`
+> **开发时?*: 60h
+> **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求?
 ---
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-约束求解器是Layer 6组合优化层的核心求解器，负责�?- 约束定义与验�?- 凸优化问题求�?- 约束冲突检测与解决
+约束求解器是Layer 6组合优化层的核心求解器，负责?- 约束定义与验?- 凸优化问题求?- 约束冲突检测与解决
 - 约束松弛与优先级管理
 
-### 1.2 技术目�?
-- **正确�?*: 约束求解结果100%满足约束条件
-- **效率**: 单次求解时间 < 500ms�?000资产规模�?- **鲁棒�?*: 处理约束冲突，自动松弛求�?- **可扩展�?*: 支持自定义约束类�?
+### 1.2 技术目?
+- **正确?*: 约束求解结果100%满足约束条件
+- **效率**: 单次求解时间 < 500ms?000资产规模?- **鲁棒?*: 处理约束冲突，自动松弛求?- **可扩展?*: 支持自定义约束类?
 ---
 
 ## 2. 接口定义
 
-### 2.1 核心类接�?
+### 2.1 核心类接?
 #### 2.1.1 ConstraintSolver
 
 ```python
@@ -48,14 +48,14 @@ class ConstraintSolver:
     """
     约束求解器核心类
     
-    职责: 处理复杂约束条件，求解约束优化问�?    """
+    职责: 处理复杂约束条件，求解约束优化问?    """
     
     def __init__(self, config: SolverConfig):
         """
         初始化约束求解器
         
         Args:
-            config: 求解器配置对�?        """
+            config: 求解器配置对?        """
         pass
     
     def solve(self,
@@ -74,7 +74,7 @@ class ConstraintSolver:
             SolverResult: 求解结果
             
         Raises:
-            InfeasibleError: 问题不可�?            SolverError: 求解失败
+            InfeasibleError: 问题不可?            SolverError: 求解失败
         """
         pass
     
@@ -84,7 +84,7 @@ class ConstraintSolver:
                              variables: Variables,
                              priorities: Dict[str, int]) -> SolverResult:
         """
-        带优先级的约束求�?        
+        带优先级的约束求?        
         Args:
             objective: 优化目标
             constraints: 约束条件列表
@@ -102,7 +102,7 @@ class ConstraintSolver:
 ```python
 class ConstraintValidator:
     """
-    约束验证�?    
+    约束验证?    
     职责: 验证约束的可行性、一致性和冲突
     """
     
@@ -123,7 +123,7 @@ class ConstraintValidator:
     
     def detect_conflicts(self, constraints: List[Constraint]) -> List[Conflict]:
         """
-        检测约束冲�?        
+        检测约束冲?        
         Args:
             constraints: 约束条件列表
             
@@ -140,30 +140,30 @@ class ConvexOptimizer:
     """
     凸优化求解器
     
-    职责: 使用CVXPY求解凸优化问�?    """
+    职责: 使用CVXPY求解凸优化问?    """
     
     def __init__(self, config: ConvexConfig):
         """
-        初始化凸优化求解�?        
+        初始化凸优化求解?        
         Args:
-            config: 凸优化配�?        """
+            config: 凸优化配?        """
         pass
     
     def solve(self, problem: cp.Problem) -> np.ndarray:
         """
-        求解凸优化问�?        
+        求解凸优化问?        
         Args:
             problem: CVXPY问题对象
             
         Returns:
-            np.ndarray: 优化�?            
+            np.ndarray: 优化?            
         Raises:
             SolverError: 求解失败
         """
         pass
 ```
 
-### 2.2 约束类接�?
+### 2.2 约束类接?
 #### 2.2.1 Constraint（基类）
 
 ```python
@@ -176,10 +176,10 @@ class Constraint:
     
     def __init__(self, name: str, priority: int = 0):
         """
-        初始化约�?        
+        初始化约?        
         Args:
             name: 约束名称
-            priority: 优先级（0-9�?最高）
+            priority: 优先级（0-9?最高）
         """
         self.name = name
         self.priority = priority
@@ -199,9 +199,9 @@ class Constraint:
         
     def is_satisfied(self, solution: np.ndarray) -> bool:
         """
-        检查约束是否满�?        
+        检查约束是否满?        
         Args:
-            solution: 解向�?            
+            solution: 解向?            
         Returns:
             bool: 是否满足
         """
@@ -213,7 +213,7 @@ class Constraint:
 ```python
 class LinearConstraint(Constraint):
     """
-    线性约�?    
+    线性约?    
     形式: lower <= a'x <= upper
     """
     
@@ -224,13 +224,13 @@ class LinearConstraint(Constraint):
                  upper_bound: float = None,
                  priority: int = 0):
         """
-        初始化线性约�?        
+        初始化线性约?        
         Args:
             name: 约束名称
             coefficients: 系数向量
             lower_bound: 下界
             upper_bound: 上界
-            priority: 优先�?        """
+            priority: 优先?        """
         super().__init__(name, priority)
         self.coefficients = coefficients
         self.lower_bound = lower_bound
@@ -253,12 +253,12 @@ class BoxConstraint(Constraint):
                  upper_bounds: np.ndarray,
                  priority: int = 0):
         """
-        初始化边界约�?        
+        初始化边界约?        
         Args:
             name: 约束名称
             lower_bounds: 下界向量
             upper_bounds: 上界向量
-            priority: 优先�?        """
+            priority: 优先?        """
         super().__init__(name, priority)
         self.lower_bounds = lower_bounds
         self.upper_bounds = upper_bounds
@@ -293,7 +293,7 @@ class Variables:
 @dataclass
 class SolverResult:
     """求解结果"""
-    solution: np.ndarray  # 优化�?    constraint_status: Dict[str, bool]  # 约束满足状�?    report: SolverReport  # 求解报告
+    solution: np.ndarray  # 优化?    constraint_status: Dict[str, bool]  # 约束满足状?    report: SolverReport  # 求解报告
     timestamp: datetime
 
 # 验证结果
@@ -301,7 +301,7 @@ class SolverResult:
 class ValidationResult:
     """验证结果"""
     is_feasible: bool  # 是否可行
-    is_consistent: bool  # 是否一�?    conflicts: List[Conflict]  # 冲突列表
+    is_consistent: bool  # 是否一?    conflicts: List[Conflict]  # 冲突列表
     recommendations: List[str]  # 建议
 
 # 冲突
@@ -325,13 +325,13 @@ class Conflict:
 ```python
 @dataclass
 class SolverConfig:
-    """求解器配�?""
+    """求解器配?""
     convex_config: ConvexConfig
     relax_config: RelaxConfig
     
 @dataclass
 class ConvexConfig:
-    """凸优化配�?""
+    """凸优化配?""
     solver_type: str = 'ecos'  # 'ecos', 'scs', 'osqp', 'cvxopt'
     max_iter: int = 1000
     tolerance: float = 1e-6
@@ -340,8 +340,8 @@ class ConvexConfig:
 @dataclass
 class RelaxConfig:
     """约束松弛配置"""
-    slack_amount: float = 0.01  # 松弛�?    penalty_weight: float = 100.0  # 惩罚权重
-    max_relax_iterations: int = 10  # 最大松弛迭代次�?```
+    slack_amount: float = 0.01  # 松弛?    penalty_weight: float = 100.0  # 惩罚权重
+    max_relax_iterations: int = 10  # 最大松弛迭代次?```
 
 ---
 
@@ -359,7 +359,7 @@ def validate_constraints(
     
     算法:
     1. 检查约束可行性（使用线性规划）
-    2. 检查约束一致�?    3. 检测约束冲�?    
+    2. 检查约束一致?    3. 检测约束冲?    
     Args:
         constraints: 约束条件列表
         variables: 优化变量
@@ -367,11 +367,11 @@ def validate_constraints(
     Returns:
         ValidationResult: 验证结果
     """
-    # 1. 可行性检�?    is_feasible = check_feasibility(constraints, variables)
+    # 1. 可行性检?    is_feasible = check_feasibility(constraints, variables)
     
-    # 2. 一致性检�?    is_consistent = check_consistency(constraints)
+    # 2. 一致性检?    is_consistent = check_consistency(constraints)
     
-    # 3. 冲突检�?    conflicts = detect_conflicts(constraints)
+    # 3. 冲突检?    conflicts = detect_conflicts(constraints)
     
     return ValidationResult(
         is_feasible=is_feasible and is_consistent,
@@ -385,8 +385,8 @@ def check_feasibility(
     variables: Variables
 ) -> bool:
     """
-    检查约束可行�?    
-    使用线性规划检�?
+    检查约束可行?    
+    使用线性规划检?
     min 0
     s.t. constraints
     """
@@ -405,7 +405,7 @@ def check_feasibility(
         return False
 ```
 
-### 4.2 凸优化求解算�?
+### 4.2 凸优化求解算?
 ```python
 def solve_convex_problem(
     objective: Objective,
@@ -414,17 +414,17 @@ def solve_convex_problem(
     config: ConvexConfig
 ) -> np.ndarray:
     """
-    求解凸优化问�?    
+    求解凸优化问?    
     算法:
     1. 构建CVXPY问题
-    2. 选择求解�?    3. 求解并验�?    
+    2. 选择求解?    3. 求解并验?    
     Args:
         objective: 优化目标
         constraints: 约束条件列表
         variables: 优化变量
-        config: 凸优化配�?        
+        config: 凸优化配?        
     Returns:
-        np.ndarray: 优化�?    """
+        np.ndarray: 优化?    """
     # 1. 定义变量
     x = cp.Variable(variables.size, name=variables.name)
     
@@ -442,15 +442,15 @@ def solve_convex_problem(
     # 4. 构建问题
     problem = cp.Problem(objective_expr, constraint_exprs)
     
-    # 5. 选择求解�?    solver = select_solver(config.solver_type)
+    # 5. 选择求解?    solver = select_solver(config.solver_type)
     
     # 6. 求解
     problem.solve(solver=solver, verbose=config.verbose)
     
-    # 7. 检查求解状�?    if problem.status not in ['optimal', 'optimal_inaccurate']:
+    # 7. 检查求解状?    if problem.status not in ['optimal', 'optimal_inaccurate']:
         raise SolverError(f"求解失败: {problem.status}")
     
-    # 8. 返回�?    return x.value
+    # 8. 返回?    return x.value
 ```
 
 ### 4.3 约束松弛算法
@@ -497,7 +497,7 @@ def relax_constraints(
                 conflict.constraint1, conflict.constraint2
             )
         
-        # 替换原约�?        relaxed_constraints = replace_constraints(
+        # 替换原约?        relaxed_constraints = replace_constraints(
             relaxed_constraints, 
             [conflict.constraint1, conflict.constraint2], 
             relaxed
@@ -511,7 +511,7 @@ def apply_slack_relaxation(
     slack_amount: float
 ) -> List[Constraint]:
     """
-    应用松弛变量�?    
+    应用松弛变量?    
     放宽约束边界
     """
     # 复制约束
@@ -539,10 +539,10 @@ import numpy as np
 import cvxpy as cp
 
 class TestConstraintSolver:
-    """约束求解器测�?""
+    """约束求解器测?""
     
     def test_solve_simple_problem(self):
-        """测试简单问题求�?""
+        """测试简单问题求?""
         # 定义变量
         variables = Variables(name='x', size=2)
         
@@ -566,7 +566,7 @@ class TestConstraintSolver:
         assert np.allclose(result.solution, [0.5, 0.5], atol=1e-3)
     
     def test_solve_infeasible_problem(self):
-        """测试不可行问�?""
+        """测试不可行问?""
         variables = Variables(name='x', size=2)
         
         def objective_expr(x):
@@ -586,7 +586,7 @@ class TestConstraintSolver:
             solver.solve(objective, constraints, variables)
     
     def test_solve_with_priorities(self):
-        """测试带优先级的求�?""
+        """测试带优先级的求?""
         variables = Variables(name='x', size=2)
         
         def objective_expr(x):
@@ -605,7 +605,7 @@ class TestConstraintSolver:
             objective, constraints, variables, priorities
         )
         
-        # 验证高优先级约束被满�?        assert result.constraint_status['c1'] == True
+        # 验证高优先级约束被满?        assert result.constraint_status['c1'] == True
 ```
 
 ### 5.2 性能测试
@@ -615,7 +615,7 @@ class TestConstraintSolverPerformance:
     """约束求解器性能测试"""
     
     def test_solve_large_scale_problem(self):
-        """测试大规模问题求�?""
+        """测试大规模问题求?""
         # 1000资产规模
         n = 1000
         
@@ -643,7 +643,7 @@ class TestConstraintSolverPerformance:
         elapsed = time.time() - start
         
         # 验证性能
-        assert elapsed < 0.5  # 500ms内完�?        assert result.solution is not None
+        assert elapsed < 0.5  # 500ms内完?        assert result.solution is not None
 ```
 
 ---
@@ -654,10 +654,10 @@ class TestConstraintSolverPerformance:
 
 | 操作 | 数据规模 | 性能要求 | 测试结果 |
 |------|---------|---------|---------|
-| **约束验证** | 100约束 | < 100ms | �?通过 |
-| **凸优化求�?* | 1000资产 | < 500ms | �?通过 |
-| **约束松弛** | 10冲突 | < 50ms | �?通过 |
-| **优先级求�?* | 100约束 | < 1�?| �?通过 |
+| **约束验证** | 100约束 | < 100ms | ?通过 |
+| **凸优化求?* | 1000资产 | < 500ms | ?通过 |
+| **约束松弛** | 10冲突 | < 50ms | ?通过 |
+| **优先级求?* | 100约束 | < 1?| ?通过 |
 
 ---
 
@@ -690,21 +690,21 @@ performance:
 
 ---
 
-## 8. 监控与维�?
+## 8. 监控与维?
 ### 8.1 监控指标
 
-| 指标 | 描述 | 阈�?| 告警级别 |
+| 指标 | 描述 | 阈?| 告警级别 |
 |------|------|------|---------|
-| **求解延迟** | 单次求解耗时 | > 1�?| P1 |
-| **求解失败�?* | 求解失败比例 | > 5% | P0 |
-| **约束冲突�?* | 约束冲突比例 | > 10% | P2 |
-| **松弛使用�?* | 使用松弛的比�?| > 20% | P2 |
+| **求解延迟** | 单次求解耗时 | > 1?| P1 |
+| **求解失败?* | 求解失败比例 | > 5% | P0 |
+| **约束冲突?* | 约束冲突比例 | > 10% | P2 |
+| **松弛使用?* | 使用松弛的比?| > 20% | P2 |
 
 ---
 
 ## 附录
 
-### A. 依赖�?
+### A. 依赖?
 ```txt
 cvxpy>=1.3.0
 numpy>=1.21.0
@@ -713,4 +713,4 @@ scipy>=1.7.0
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 实施开�?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开?

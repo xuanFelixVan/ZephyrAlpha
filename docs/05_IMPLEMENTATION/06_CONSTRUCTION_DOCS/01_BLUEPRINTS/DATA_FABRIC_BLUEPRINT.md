@@ -15,7 +15,7 @@ implementation_progress: 0%
 
 # 数据编织架构蓝图
 
-> 清风量化系统 v5.2 - 数据编织（Data Fabric）架构详细设计
+> 清风量化系统 v5.3 - 数据编织（Data Fabric）架构详细设计
 > **模块ID**: `DATA_FABRIC_001`
 > **实施周期**: 6-12个月（未来规划）
 > **优先级**: P2（长期优化）
