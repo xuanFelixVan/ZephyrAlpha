@@ -6,7 +6,7 @@ status: Active
 parent_doc: docs/01_FRAMEWORK/REINFORCEMENT_LEARNING_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (模型层) | 业务架构: AI模型服务
+layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
 index: RL-001
 estimated_hours: 80
 review_status: Pending
@@ -50,7 +50,7 @@ implementation_status: 技术规格设计完成
 
 ### 1.2 技术定位与架构层归属
 
-- **Layer定位**: Layer 6 - 模型层 (AI模型服务)
+- **Layer定位**: Layer 4 - 机器学习层 (AI模型服务)
 - **模块类别**: 核心AI模块
 - **架构角色**: 提供基于强化学习的交易决策能力
 
@@ -105,7 +105,7 @@ implementation_status: 技术规格设计完成
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 6 - 模型层
+- **Layer归属**: Layer 4 - 机器学习层
 - **职责范围**: 强化学习环境、智能体、训练、应用
 - **上下层接口**: 
   - 上层依赖: Layer 7 (策略层) - 决策请求

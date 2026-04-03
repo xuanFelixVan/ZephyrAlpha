@@ -162,7 +162,13 @@ class FactorBacktester:
         forward_returns: pd.Series,
         method: str = "spearman"
     ) -> Tuple[float, float, float]:
-        """计算因子IC"""
+        """计算因子IC
+        
+        职责边界说明:
+        - 本方法为回测流程中的便捷方法，调用FactorIC模块进行计算
+        - 标准化IC计算请直接使用FactorIC模块
+        - 参考: [FACTOR_IC](./FACTOR_IC_TECHNICAL_SPECIFICATION.md)
+        """
         pass
     
     def run_layered_backtest(

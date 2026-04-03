@@ -495,25 +495,23 @@ class AlphaFactorFactory:
 
 ```python
 class FactorScreener:
-    """因子筛选器"""
+    """因子筛选器
+    
+    职责边界说明:
+    - IC计算调用FactorIC模块，本模块不重复实现
+    - 参考: [FACTOR_IC](./FACTOR_IC_TECHNICAL_SPECIFICATION.md)
+    """
     
     def calculate_ic(self, factor_values: pd.Series,
                     forward_returns: pd.Series) -> float:
         """计算因子IC值
         
-        Args:
-            factor_values: 因子值
-            forward_returns: 未来收益
-            
-        Returns:
-            float: IC值
+        职责边界: 调用FactorIC模块进行计算
         """
-        # Spearman相关系数
-        from scipy.stats import spearmanr
-        
-        ic, pvalue = spearmanr(factor_values, forward_returns)
-        
-        return ic
+        from factor_ic import ICAnalyzer
+        ic_analyzer = ICAnalyzer()
+        result = ic_analyzer.calculate_ic(factor_values, forward_returns)
+        return result.ic_mean
     
     def filter_factors_by_ic(self, factor_values: pd.DataFrame,
                             forward_returns: pd.Series,

@@ -61,58 +61,15 @@ implementation_status: 进行中
 
 ---
 
-## 2. 因子注册表 (Factor Registry)
+## 2. 核心组件
 
-### 2.1 因子定义结构
+> **注意**: 因子定义和分类请参考以下文档：
+> - **因子分类学**: [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) - 因子分类体系和参数配置
+> - **因子注册表**: [../06_FACTOR_REGISTRY/factor_catalog.md](../06_FACTOR_REGISTRY/factor_catalog.md) - 因子清单和元数据
 
-```python
-class FactorDefinition:
-    """因子定义 - 专业机构标准"""
+### 2.1 因子依赖管理
 
-    def __init__(self):
-        self.factor_id: str           # 唯一标识 THS_001 / custom_001
-        self.factor_name: str        # 因子名称 动量因子_20日
-        self.category: str            # 分类 momentum/valuation/growth/technical
-        self.formula: str             # 计算公式 return_20d
-        self.dependencies: List[str]  # 依赖因子 [close_price]
-        self.update_freq: str         # 更新频率 daily/hourly/minute
-        self.data_source: str         # 数据源 iFinD/Local/AKShare
-        self.status: str              # 状态 active/deprecated
-        self.owner: str               # 负责人 researcher_001
-        self.description: str         # 因子描述
-        self.metadata: Dict            # 元数据
-        self.version: str             # 版本号 v1.0
-        self.created_at: datetime     # 创建时间
-        self.updated_at: datetime     # 更新时间
-```
-
-### 2.2 因子分类
-
-| 分类 | 说明 | 示例 | 更新频率 |
-|------|------|------|----------|
-| **technical** | 技术指标 | MA, RSI, MACD | 分钟/日 |
-| **valuation** | 估值因子 | PE, PB, PCF | 日/季 |
-| **growth** | 成长因子 | 营收增速, 利润增速 | 季 |
-| **momentum** | 动量因子 | 20日收益, 动量得分 | 日 |
-| **quality** | 质量因子 | ROE, 资产负债率 | 季 |
-| **liquidity** | 流动性因子 | 换手率, 成交额 | 日 |
-| **sentiment** | 情绪因子 | 舆情得分, 北向资金 | 日 |
-
-### 2.3 因子注册表示例
-
-| factor_id | factor_name | category | dependencies | update_freq |
-|-----------|-------------|----------|-------------|-------------|
-| THS_DP | 总市值 | valuation | close_price, share_count | daily |
-| THS_TURNING | 换手率 | liquidity | volume, float_share | daily |
-| MA_5 | 5日均线 | technical | close_price | daily |
-| MA_20 | 20日均线 | technical | close_price | daily |
-| RSI_14 | 14日RSI | technical | close_price | minute |
-| ROE_QA | 季度ROE | quality | financial_data | quarterly |
-| MOM_20_5 | 动量因子 | momentum | ma_5, ma_20 | daily |
-
----
-
-## 3. 因子依赖管理 (Dependency Graph)
+因子计算采用分层依赖架构，确保计算顺序正确性和并行优化。
 
 ### 3.1 分层架构
 
