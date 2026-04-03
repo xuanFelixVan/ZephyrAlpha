@@ -513,4 +513,126 @@ institutional_reward_function:
     risk_limit_violation: 20.0  # 风险违规惩罚
 ```
 
-#### 4.1.3
+#### 4.1.3 奖励函数验证
+
+| 验证项 | 验证标准 | 验证方法 |
+|--------|---------|---------|
+| **奖励范围** | [-10, 10] | 统计分析 |
+| **奖励分布** | 均值 > 0 | 分布检验 |
+| **奖励稀疏性** | 非零奖励比例 > 50% | 稀疏性检验 |
+| **奖励一致性** | 相同状态相同奖励 | 一致性检验 |
+
+### 4.2 其他智能体奖励函数
+
+#### 4.2.1 国家队智能体奖励函数
+
+```python
+class NationalTeamRewardFunction:
+    """国家队智能体奖励函数
+    
+    目标: 市场稳定 + 政策配合
+    """
+    
+    def calculate_reward(self, state, action, next_state) -> float:
+        """
+        R = R_stability + R_policy + R_long_term
+        
+        - R_stability: 市场稳定性奖励
+        - R_policy: 政策配合奖励
+        - R_long_term: 长期持有奖励
+        """
+        stability_reward = self._calculate_stability_reward(state, next_state)
+        policy_reward = self._calculate_policy_reward(action)
+        long_term_reward = self._calculate_long_term_reward(state, action)
+        
+        return stability_reward + policy_reward + long_term_reward
+```
+
+#### 4.2.2 散户智能体奖励函数
+
+```python
+class RetailRewardFunction:
+    """散户智能体奖励函数
+    
+    目标: 模拟真实散户行为（非理性）
+    """
+    
+    def calculate_reward(self, state, action, next_state) -> float:
+        """
+        R = R_behavior + R_emotion + R_herd
+        
+        - R_behavior: 行为金融学奖励（羊群效应）
+        - R_emotion: 情绪驱动奖励
+        - R_herd: 从众奖励
+        """
+        behavior_reward = self._calculate_behavior_reward(action)
+        emotion_reward = self._calculate_emotion_reward(state, action)
+        herd_reward = self._calculate_herd_reward(state, action)
+        
+        return behavior_reward + emotion_reward + herd_reward
+```
+
+---
+
+## 📝 五、实施优先级与时间表
+
+### 5.1 实施优先级
+
+| 改进项 | 优先级 | 预计工作量 | 完成时间 |
+|--------|--------|-----------|---------|
+| **IMP-005** | P0 | 4小时 | 24小时内 |
+| **IMP-006** | P1 | 3小时 | 1周内 |
+| **IMP-007** | P1 | 3小时 | 1周内 |
+| **IMP-008** | P1 | 2小时 | 1周内 |
+
+### 5.2 实施路线图
+
+```
+Week 1 (立即行动):
+├─ Day 1: IMP-005 (Layer间职责边界定义)
+├─ Day 2: IMP-006 (数据质量检查流程设计)
+├─ Day 3: IMP-007 (性能测试策略定义)
+└─ Day 4: IMP-008 (奖励函数设计补充)
+
+Week 2-4 (短期行动):
+├─ 代码实现
+├─ 单元测试
+└─ 集成测试
+
+Month 2-3 (中期行动):
+├─ 系统集成
+├─ 性能优化
+└─ 回测验证
+```
+
+---
+
+## ✅ 六、验收标准
+
+### 6.1 文档验收标准
+
+| 验收项 | 验收标准 | 验证方法 |
+|--------|---------|---------|
+| **完整性** | 所有改进项已补充 | 文档审查 |
+| **一致性** | 与主文档无冲突 | 一致性检查 |
+| **可实施性** | 设计可落地实施 | 可行性评估 |
+
+### 6.2 设计验收标准
+
+| 验收项 | 验收标准 | 验证方法 |
+|--------|---------|---------|
+| **职责边界清晰度** | 100%清晰 | 专家评审 |
+| **数据质量标准** | 量化指标明确 | 标准审查 |
+| **性能测试覆盖** | 覆盖所有关键指标 | 测试审查 |
+| **奖励函数合理性** | 符合强化学习原理 | 算法审查 |
+
+---
+
+**文档完成时间**: 2026-04-03  
+**文档维护者**: Spec-Approver (审批智能体)  
+**文档状态**: ✅ 完成  
+**下一步**: 进入施工阶段
+
+---
+
+**文档结束**

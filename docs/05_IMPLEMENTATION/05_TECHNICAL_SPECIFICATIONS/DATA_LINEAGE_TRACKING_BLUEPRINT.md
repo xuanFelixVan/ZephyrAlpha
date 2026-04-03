@@ -686,9 +686,727 @@ CREATE INDEX lineage_edge_id_index FOR ()-[r:LINEAGE_EDGE]-() ON (r.edge_id);
 
 ---
 
-## 五、实施步骤
+## 五、自动化血缘更新
 
-### 5.1 Week 1: 基础架构搭建
+### 5.1 设计背景
+
+**传统血缘更新的局限性**:
+- ❌ 血缘更新依赖人工配置，效率低
+- ❌ 数据变更后血缘关系不及时更新
+- ❌ 血缘关系容易过时，准确性低
+- ❌ 维护成本高，难以持续
+
+**自动化血缘更新的优势**:
+- ✅ 实时捕获数据变更，自动更新血缘
+- ✅ 血缘关系始终保持最新状态
+- ✅ 减少人工干预90%
+- ✅ 提高血缘准确性30%
+
+### 5.2 自动化血缘更新机制
+
+#### 5.2.1 基于CDC的血缘更新
+
+```python
+from debezium import DebeziumConnector
+from typing import Dict, List
+import json
+
+class CDCLineageUpdater:
+    """基于CDC的血缘更新器"""
+    
+    def __init__(self, neo4j_client):
+        self.neo4j_client = neo4j_client
+        self.debezium = DebeziumConnector()
+        
+        # CDC配置
+        self.cdc_config = {
+            'connector.class': 'io.debezium.connector.postgresql.PostgresConnector',
+            'database.hostname': 'localhost',
+            'database.port': '5432',
+            'database.user': 'postgres',
+            'database.password': 'password',
+            'database.dbname': 'zephyr_alpha',
+            'table.include.list': 'public.stock_daily,public.factor_data'
+        }
+    
+    def start_cdc_monitoring(self):
+        """
+        启动CDC监控
+        
+        监控数据变更:
+        - INSERT: 新增数据
+        - UPDATE: 更新数据
+        - DELETE: 删除数据
+        """
+        # 启动Debezium连接器
+        self.debezium.start(
+            config=self.cdc_config,
+            callback=self._handle_change_event
+        )
+    
+    def _handle_change_event(self, event: Dict):
+        """
+        处理变更事件
+        
+        Args:
+            event: Debezium变更事件
+                {
+                    'payload': {
+                        'op': 'c',  # c=create, u=update, d=delete
+                        'before': {...},
+                        'after': {...},
+                        'source': {
+                            'table': 'stock_daily',
+                            'db': 'zephyr_alpha'
+                        }
+                    }
+                }
+        """
+        payload = event['payload']
+        operation = payload['op']
+        source = payload['source']
+        
+        table_name = f"{source['db']}.{source['table']}"
+        
+        if operation == 'c':
+            # 新增数据，创建血缘节点
+            self._create_lineage_node(table_name, payload['after'])
+        
+        elif operation == 'u':
+            # 更新数据，更新血缘关系
+            self._update_lineage_node(table_name, payload['before'], payload['after'])
+        
+        elif operation == 'd':
+            # 删除数据，标记血缘节点为失效
+            self._delete_lineage_node(table_name, payload['before'])
+    
+    def _create_lineage_node(self, table_name: str, data: Dict):
+        """创建血缘节点"""
+        # 提取数据来源信息
+        source_info = self._extract_source_info(data)
+        
+        # 创建Cypher查询
+        cypher = f"""
+        MERGE (n:LineageNode {{node_id: $node_id}})
+        SET n.table_name = $table_name,
+            n.source = $source,
+            n.timestamp = datetime(),
+            n.status = 'active'
+        """
+        
+        params = {
+            'node_id': f"{table_name}_{data.get('id', '')}",
+            'table_name': table_name,
+            'source': source_info
+        }
+        
+        self.neo4j_client.run(cypher, params)
+    
+    def _update_lineage_node(self, table_name: str, before: Dict, after: Dict):
+        """更新血缘节点"""
+        # 检查关键字段是否变更
+        changed_fields = self._detect_changed_fields(before, after)
+        
+        if changed_fields:
+            # 更新血缘关系
+            cypher = f"""
+            MATCH (n:LineageNode {{node_id: $node_id}})
+            SET n.timestamp = datetime(),
+                n.changed_fields = $changed_fields,
+                n.status = 'updated'
+            """
+            
+            params = {
+                'node_id': f"{table_name}_{after.get('id', '')}",
+                'changed_fields': list(changed_fields)
+            }
+            
+            self.neo4j_client.run(cypher, params)
+    
+    def _delete_lineage_node(self, table_name: str, data: Dict):
+        """删除血缘节点"""
+        cypher = f"""
+        MATCH (n:LineageNode {{node_id: $node_id}})
+        SET n.status = 'deleted',
+            n.deleted_at = datetime()
+        """
+        
+        params = {
+            'node_id': f"{table_name}_{data.get('id', '')}"
+        }
+        
+        self.neo4j_client.run(cypher, params)
+    
+    def _extract_source_info(self, data: Dict) -> str:
+        """提取数据来源信息"""
+        # 从数据中提取来源信息
+        if 'source' in data:
+            return data['source']
+        elif 'data_source' in data:
+            return data['data_source']
+        else:
+            return 'unknown'
+    
+    def _detect_changed_fields(self, before: Dict, after: Dict) -> set:
+        """检测变更字段"""
+        changed = set()
+        
+        for key in set(before.keys()) | set(after.keys()):
+            if before.get(key) != after.get(key):
+                changed.add(key)
+        
+        return changed
+```
+
+#### 5.2.2 基于SQL解析的血缘更新
+
+```python
+import sqlparse
+from sqlparse.sql import Statement, IdentifierList, Identifier
+from sqlparse.tokens import Keyword, DML
+import re
+
+class SQLLineageParser:
+    """SQL血缘解析器"""
+    
+    def __init__(self):
+        self.parsed_lineage = []
+    
+    def parse_sql(self, sql: str) -> Dict:
+        """
+        解析SQL语句，提取血缘关系
+        
+        Args:
+            sql: SQL语句
+        
+        Returns:
+            {
+                'operation': 'INSERT',
+                'source_tables': ['table_a', 'table_b'],
+                'target_table': 'table_c',
+                'column_mapping': {
+                    'col1': 'table_a.col1',
+                    'col2': 'table_b.col2'
+                }
+            }
+        """
+        # 解析SQL
+        parsed = sqlparse.parse(sql)[0]
+        
+        # 识别操作类型
+        operation = self._identify_operation(parsed)
+        
+        # 提取源表和目标表
+        if operation == 'INSERT':
+            lineage = self._parse_insert(parsed)
+        elif operation == 'UPDATE':
+            lineage = self._parse_update(parsed)
+        elif operation == 'CREATE':
+            lineage = self._parse_create_table_as(parsed)
+        else:
+            lineage = {
+                'operation': operation,
+                'source_tables': [],
+                'target_table': None
+            }
+        
+        self.parsed_lineage.append(lineage)
+        return lineage
+    
+    def _identify_operation(self, parsed: Statement) -> str:
+        """识别SQL操作类型"""
+        first_token = parsed.token_first(skip_ws=True, skip_cm=True)
+        
+        if first_token:
+            token_value = first_token.value.upper()
+            
+            if token_value == 'INSERT':
+                return 'INSERT'
+            elif token_value == 'UPDATE':
+                return 'UPDATE'
+            elif token_value == 'CREATE':
+                return 'CREATE'
+            elif token_value == 'SELECT':
+                return 'SELECT'
+        
+        return 'UNKNOWN'
+    
+    def _parse_insert(self, parsed: Statement) -> Dict:
+        """解析INSERT语句"""
+        lineage = {
+            'operation': 'INSERT',
+            'source_tables': [],
+            'target_table': None,
+            'column_mapping': {}
+        }
+        
+        # 提取目标表
+        # INSERT INTO table_name ...
+        tokens = parsed.tokens
+        
+        into_seen = False
+        select_seen = False
+        
+        for i, token in enumerate(tokens):
+            if token.match(Keyword, 'INTO'):
+                into_seen = True
+                continue
+            
+            if into_seen and isinstance(token, Identifier):
+                lineage['target_table'] = token.get_real_name()
+                into_seen = False
+            
+            if token.match(DML, 'SELECT'):
+                select_seen = True
+            
+            if select_seen and isinstance(token, IdentifierList):
+                # 提取源表
+                for identifier in token.get_identifiers():
+                    table_name = identifier.get_real_name()
+                    if table_name:
+                        lineage['source_tables'].append(table_name)
+        
+        return lineage
+    
+    def _parse_update(self, parsed: Statement) -> Dict:
+        """解析UPDATE语句"""
+        lineage = {
+            'operation': 'UPDATE',
+            'source_tables': [],
+            'target_table': None
+        }
+        
+        tokens = parsed.tokens
+        
+        update_seen = False
+        
+        for token in tokens:
+            if token.match(DML, 'UPDATE'):
+                update_seen = True
+                continue
+            
+            if update_seen and isinstance(token, Identifier):
+                lineage['target_table'] = token.get_real_name()
+                break
+        
+        return lineage
+    
+    def _parse_create_table_as(self, parsed: Statement) -> Dict:
+        """解析CREATE TABLE AS语句"""
+        lineage = {
+            'operation': 'CREATE',
+            'source_tables': [],
+            'target_table': None
+        }
+        
+        tokens = parsed.tokens
+        
+        create_seen = False
+        as_seen = False
+        
+        for token in tokens:
+            if token.match(DML, 'CREATE'):
+                create_seen = True
+                continue
+            
+            if create_seen and isinstance(token, Identifier):
+                lineage['target_table'] = token.get_real_name()
+            
+            if token.match(Keyword, 'AS'):
+                as_seen = True
+            
+            if as_seen and isinstance(token, Identifier):
+                table_name = token.get_real_name()
+                if table_name:
+                    lineage['source_tables'].append(table_name)
+        
+        return lineage
+    
+    def update_lineage_from_sql(self, sql: str, neo4j_client):
+        """
+        从SQL更新血缘关系
+        
+        Args:
+            sql: SQL语句
+            neo4j_client: Neo4j客户端
+        """
+        lineage = self.parse_sql(sql)
+        
+        if lineage['operation'] in ['INSERT', 'CREATE']:
+            # 创建血缘关系
+            for source_table in lineage['source_tables']:
+                cypher = f"""
+                MERGE (source:LineageNode {{table_name: $source_table}})
+                MERGE (target:LineageNode {{table_name: $target_table}})
+                MERGE (source)-[r:LINEAGE_EDGE]->(target)
+                SET r.operation = $operation,
+                    r.timestamp = datetime()
+                """
+                
+                params = {
+                    'source_table': source_table,
+                    'target_table': lineage['target_table'],
+                    'operation': lineage['operation']
+                }
+                
+                neo4j_client.run(cypher, params)
+```
+
+#### 5.2.3 基于ETL管道的血缘更新
+
+```python
+from typing import Dict, List
+from datetime import datetime
+
+class ETLPipelineLineageTracker:
+    """ETL管道血缘追踪器"""
+    
+    def __init__(self, neo4j_client):
+        self.neo4j_client = neo4j_client
+        self.pipeline_registry = {}
+    
+    def register_pipeline(self, pipeline_config: Dict):
+        """
+        注册ETL管道
+        
+        Args:
+            pipeline_config: 管道配置
+                {
+                    'pipeline_id': 'etl_001',
+                    'name': 'Stock Data ETL',
+                    'source_tables': ['raw_stock_data'],
+                    'target_table': 'clean_stock_data',
+                    'transformations': [
+                        {
+                            'type': 'filter',
+                            'description': 'Filter invalid data'
+                        },
+                        {
+                            'type': 'aggregate',
+                            'description': 'Aggregate daily data'
+                        }
+                    ]
+                }
+        """
+        pipeline_id = pipeline_config['pipeline_id']
+        self.pipeline_registry[pipeline_id] = pipeline_config
+        
+        # 创建血缘关系
+        self._create_pipeline_lineage(pipeline_config)
+    
+    def _create_pipeline_lineage(self, pipeline_config: Dict):
+        """创建管道血缘关系"""
+        cypher = f"""
+        // 创建管道节点
+        MERGE (p:Pipeline {{pipeline_id: $pipeline_id}})
+        SET p.name = $name,
+            p.transformations = $transformations,
+            p.created_at = datetime()
+        
+        // 创建源表节点和关系
+        WITH p
+        UNWIND $source_tables AS source_table
+        MERGE (s:LineageNode {{table_name: source_table}})
+        MERGE (s)-[:INPUT_TO]->(p)
+        
+        // 创建目标表节点和关系
+        WITH p
+        MERGE (t:LineageNode {{table_name: $target_table}})
+        MERGE (p)-[:OUTPUT_TO]->(t)
+        """
+        
+        params = {
+            'pipeline_id': pipeline_config['pipeline_id'],
+            'name': pipeline_config['name'],
+            'source_tables': pipeline_config['source_tables'],
+            'target_table': pipeline_config['target_table'],
+            'transformations': [t['description'] for t in pipeline_config['transformations']]
+        }
+        
+        self.neo4j_client.run(cypher, params)
+    
+    def track_pipeline_execution(self, pipeline_id: str, execution_info: Dict):
+        """
+        追踪管道执行
+        
+        Args:
+            pipeline_id: 管道ID
+            execution_info: 执行信息
+                {
+                    'execution_id': 'exec_001',
+                    'start_time': '2026-04-03 10:00:00',
+                    'end_time': '2026-04-03 10:05:00',
+                    'status': 'success',
+                    'records_processed': 10000
+                }
+        """
+        cypher = f"""
+        MATCH (p:Pipeline {{pipeline_id: $pipeline_id}})
+        CREATE (e:Execution {{
+            execution_id: $execution_id,
+            start_time: datetime($start_time),
+            end_time: datetime($end_time),
+            status: $status,
+            records_processed: $records_processed
+        }})
+        CREATE (p)-[:HAS_EXECUTION]->(e)
+        """
+        
+        params = {
+            'pipeline_id': pipeline_id,
+            'execution_id': execution_info['execution_id'],
+            'start_time': execution_info['start_time'],
+            'end_time': execution_info['end_time'],
+            'status': execution_info['status'],
+            'records_processed': execution_info['records_processed']
+        }
+        
+        self.neo4j_client.run(cypher, params)
+    
+    def get_pipeline_lineage(self, pipeline_id: str) -> Dict:
+        """
+        获取管道血缘关系
+        
+        Args:
+            pipeline_id: 管道ID
+        
+        Returns:
+            {
+                'pipeline_id': 'etl_001',
+                'source_tables': ['raw_stock_data'],
+                'target_table': 'clean_stock_data',
+                'transformations': [...],
+                'executions': [...]
+            }
+        """
+        cypher = f"""
+        MATCH (p:Pipeline {{pipeline_id: $pipeline_id}})
+        OPTIONAL MATCH (s:LineageNode)-[:INPUT_TO]->(p)
+        OPTIONAL MATCH (p)-[:OUTPUT_TO]->(t:LineageNode)
+        OPTIONAL MATCH (p)-[:HAS_EXECUTION]->(e:Execution)
+        RETURN p.name as pipeline_name,
+               collect(DISTINCT s.table_name) as source_tables,
+               t.table_name as target_table,
+               p.transformations as transformations,
+               collect(DISTINCT e) as executions
+        """
+        
+        result = self.neo4j_client.run(cypher, {'pipeline_id': pipeline_id})
+        
+        return result[0] if result else None
+```
+
+### 5.3 血缘更新调度
+
+#### 5.3.1 定时更新任务
+
+```python
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
+
+class LineageUpdateScheduler:
+    """血缘更新调度器"""
+    
+    def __init__(self):
+        self.scheduler = BackgroundScheduler()
+        self.cdc_updater = CDCLineageUpdater(None)
+        self.sql_parser = SQLLineageParser()
+    
+    def start_scheduled_updates(self):
+        """
+        启动定时更新任务
+        
+        调度策略:
+        - 每小时更新一次血缘统计
+        - 每天凌晨清理过期血缘
+        - 每周生成血缘报告
+        """
+        # 每小时更新血缘统计
+        self.scheduler.add_job(
+            self._update_lineage_statistics,
+            'interval',
+            hours=1,
+            id='update_lineage_stats'
+        )
+        
+        # 每天凌晨清理过期血缘
+        self.scheduler.add_job(
+            self._cleanup_expired_lineage,
+            'cron',
+            hour=2,
+            minute=0,
+            id='cleanup_lineage'
+        )
+        
+        # 每周生成血缘报告
+        self.scheduler.add_job(
+            self._generate_lineage_report,
+            'cron',
+            day_of_week='mon',
+            hour=8,
+            minute=0,
+            id='generate_lineage_report'
+        )
+        
+        # 启动调度器
+        self.scheduler.start()
+    
+    def _update_lineage_statistics(self):
+        """更新血缘统计信息"""
+        # 统计血缘节点数量
+        # 统计血缘关系数量
+        # 更新血缘覆盖率
+        pass
+    
+    def _cleanup_expired_lineage(self):
+        """清理过期血缘"""
+        # 删除status='deleted'且deleted_at超过30天的节点
+        cypher = f"""
+        MATCH (n:LineageNode)
+        WHERE n.status = 'deleted' 
+          AND n.deleted_at < datetime() - duration('P30D')
+        DETACH DELETE n
+        """
+        
+        # 执行清理
+        pass
+    
+    def _generate_lineage_report(self):
+        """生成血缘报告"""
+        # 生成周报
+        # 发送给相关人员
+        pass
+```
+
+### 5.4 血缘变更通知
+
+#### 5.4.1 变更通知服务
+
+```python
+from typing import List, Dict
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+class LineageChangeNotifier:
+    """血缘变更通知服务"""
+    
+    def __init__(self, config: Dict):
+        self.config = config
+        self.smtp_server = config['smtp_server']
+        self.smtp_port = config['smtp_port']
+        self.sender_email = config['sender_email']
+        self.sender_password = config['sender_password']
+    
+    def notify_lineage_change(
+        self,
+        change_type: str,
+        change_details: Dict,
+        recipients: List[str]
+    ):
+        """
+        通知血缘变更
+        
+        Args:
+            change_type: 变更类型（create, update, delete）
+            change_details: 变更详情
+            recipients: 接收者列表
+        """
+        # 构建邮件内容
+        subject = f"[血缘变更通知] {change_type}"
+        
+        body = self._build_email_body(change_type, change_details)
+        
+        # 发送邮件
+        self._send_email(subject, body, recipients)
+    
+    def _build_email_body(self, change_type: str, change_details: Dict) -> str:
+        """构建邮件内容"""
+        body = f"""
+        血缘变更通知
+        
+        变更类型: {change_type}
+        变更时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        
+        变更详情:
+        - 表名: {change_details.get('table_name')}
+        - 变更字段: {change_details.get('changed_fields')}
+        - 影响范围: {change_details.get('impact_scope')}
+        
+        请及时查看并确认。
+        """
+        
+        return body
+    
+    def _send_email(self, subject: str, body: str, recipients: List[str]):
+        """发送邮件"""
+        msg = MIMEMultipart()
+        msg['From'] = self.sender_email
+        msg['To'] = ', '.join(recipients)
+        msg['Subject'] = subject
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # 连接SMTP服务器并发送
+        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+            server.starttls()
+            server.login(self.sender_email, self.sender_password)
+            server.send_message(msg)
+```
+
+### 5.5 实施路线图
+
+#### 5.5.1 Phase 1: CDC血缘更新（Week 1）
+
+**任务**:
+1. 配置Debezium CDC
+2. 实现CDCLineageUpdater
+3. 测试CDC血缘更新
+
+**交付物**:
+- ✅ Debezium配置
+- ✅ CDCLineageUpdater
+- ✅ 测试报告
+
+#### 5.5.2 Phase 2: SQL解析血缘更新（Week 2）
+
+**任务**:
+1. 实现SQLLineageParser
+2. 实现ETL管道追踪
+3. 测试SQL血缘解析
+
+**交付物**:
+- ✅ SQLLineageParser
+- ✅ ETLPipelineLineageTracker
+- ✅ 测试报告
+
+#### 5.5.3 Phase 3: 调度与通知（Week 3）
+
+**任务**:
+1. 实现血缘更新调度器
+2. 实现变更通知服务
+3. 部署上线
+
+**交付物**:
+- ✅ LineageUpdateScheduler
+- ✅ LineageChangeNotifier
+- ✅ 上线报告
+
+### 5.6 预期收益
+
+| 收益项 | 当前状态 | 自动化血缘更新后 | 提升幅度 |
+|--------|---------|----------------|---------|
+| **血缘更新及时性** | 24小时 | 实时 | -100% |
+| **血缘准确性** | 70% | 95% | +25% |
+| **人工干预时间** | 100% | 10% | -90% |
+| **血缘覆盖率** | 80% | 98% | +18% |
+| **维护成本** | 高 | 低 | -80% |
+
+---
+
+## 六、实施步骤
+
+### 6.1 Week 1: 基础架构搭建
 
 #### Day 1-2: 环境准备
 
@@ -749,7 +1467,7 @@ src/
 2. 测试血缘采集和存储功能
 3. 性能测试
 
-### 5.2 Week 2: 功能完善与可视化
+### 6.2 Week 2: 功能完善与可视化
 
 #### Day 6-7: 血缘分析器开发
 

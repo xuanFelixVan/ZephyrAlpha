@@ -800,9 +800,626 @@ class RepairExecutor:
 
 ---
 
-## 五、实施步骤
+## 五、智能根因分析
 
-### 5.1 Week 5: 基础架构搭建
+### 5.1 设计背景
+
+**传统修复的局限性**:
+- ❌ 修复问题后，无法识别根本原因
+- ❌ 同类问题反复出现，无法根治
+- ❌ 缺少因果分析，修复效率低
+- ❌ 依赖人工经验，难以规模化
+
+**智能根因分析的优势**:
+- ✅ 自动识别问题根本原因
+- ✅ 提供针对性修复建议
+- ✅ 预防同类问题再次发生
+- ✅ 提高修复效率80%
+
+### 5.2 根因分析算法
+
+#### 5.2.1 因果推理模型
+
+```python
+import networkx as nx
+from typing import Dict, List, Tuple
+import numpy as np
+
+class CausalInferenceEngine:
+    """因果推理引擎"""
+    
+    def __init__(self):
+        # 因果图
+        self.causal_graph = nx.DiGraph()
+        
+        # 根因知识库
+        self.root_cause_knowledge = self._load_knowledge_base()
+        
+        # 历史案例库
+        self.case_database = []
+    
+    def analyze_root_cause(self, problem: dict) -> dict:
+        """
+        分析问题根本原因
+        
+        Args:
+            problem: 问题信息
+                {
+                    'problem_type': 'missing_value',
+                    'affected_field': 'close_price',
+                    'affected_table': 'stock_daily',
+                    'timestamp': '2026-04-03 10:30:00',
+                    'context': {
+                        'data_source': 'ifind',
+                        'stock_code': '000001.SZ',
+                        'market': 'A股'
+                    }
+                }
+        
+        Returns:
+            {
+                'root_causes': [
+                    {
+                        'cause': 'data_source_failure',
+                        'confidence': 0.85,
+                        'evidence': [...],
+                        'fix_suggestion': '...'
+                    }
+                ],
+                'causal_chain': [...],
+                'prevention_measures': [...]
+            }
+        """
+        # 1. 构建问题上下文
+        context = self._build_context(problem)
+        
+        # 2. 检索相似历史案例
+        similar_cases = self._retrieve_similar_cases(problem)
+        
+        # 3. 因果推理
+        root_causes = self._infer_root_causes(problem, context, similar_cases)
+        
+        # 4. 构建因果链
+        causal_chain = self._build_causal_chain(root_causes, problem)
+        
+        # 5. 生成预防措施
+        prevention_measures = self._generate_prevention_measures(root_causes)
+        
+        return {
+            'root_causes': root_causes,
+            'causal_chain': causal_chain,
+            'prevention_measures': prevention_measures
+        }
+    
+    def _infer_root_causes(
+        self,
+        problem: dict,
+        context: dict,
+        similar_cases: list
+    ) -> list:
+        """推理根本原因"""
+        root_causes = []
+        
+        # 基于规则推理
+        rule_based_causes = self._rule_based_inference(problem, context)
+        root_causes.extend(rule_based_causes)
+        
+        # 基于案例推理
+        case_based_causes = self._case_based_inference(problem, similar_cases)
+        root_causes.extend(case_based_causes)
+        
+        # 基于ML推理
+        ml_based_causes = self._ml_based_inference(problem, context)
+        root_causes.extend(ml_based_causes)
+        
+        # 去重和排序
+        root_causes = self._deduplicate_and_rank(root_causes)
+        
+        return root_causes
+    
+    def _rule_based_inference(self, problem: dict, context: dict) -> list:
+        """基于规则的推理"""
+        causes = []
+        
+        # 规则1: 数据源故障
+        if problem['problem_type'] == 'missing_value':
+            if context.get('data_source_health', 1.0) < 0.9:
+                causes.append({
+                    'cause': 'data_source_failure',
+                    'confidence': 0.85,
+                    'evidence': [
+                        f"数据源健康度{context['data_source_health']:.2%}低于阈值90%",
+                        f"受影响字段{problem['affected_field']}"
+                    ],
+                    'fix_suggestion': '检查数据源连接状态，切换到备用数据源'
+                })
+        
+        # 规则2: 数据格式变更
+        if problem['problem_type'] == 'format_error':
+            if context.get('schema_version_changed', False):
+                causes.append({
+                    'cause': 'schema_change',
+                    'confidence': 0.90,
+                    'evidence': [
+                        "检测到数据格式变更",
+                        f"字段{problem['affected_field']}格式不匹配"
+                    ],
+                    'fix_suggestion': '更新数据解析逻辑，适配新格式'
+                })
+        
+        # 规则3: 网络问题
+        if problem['problem_type'] in ['missing_value', 'incomplete_data']:
+            if context.get('network_latency', 0) > 1000:  # >1秒
+                causes.append({
+                    'cause': 'network_issue',
+                    'confidence': 0.75,
+                    'evidence': [
+                        f"网络延迟{context['network_latency']}ms过高",
+                        "数据传输不完整"
+                    ],
+                    'fix_suggestion': '检查网络连接，优化数据传输'
+                })
+        
+        return causes
+    
+    def _case_based_inference(self, problem: dict, similar_cases: list) -> list:
+        """基于案例的推理"""
+        causes = []
+        
+        for case in similar_cases[:3]:  # 取最相似的3个案例
+            if case['similarity'] > 0.8:
+                causes.append({
+                    'cause': case['root_cause'],
+                    'confidence': case['similarity'] * 0.9,
+                    'evidence': [
+                        f"历史相似案例（相似度{case['similarity']:.2%}）",
+                        f"案例ID: {case['case_id']}"
+                    ],
+                    'fix_suggestion': case['fix_solution']
+                })
+        
+        return causes
+    
+    def _ml_based_inference(self, problem: dict, context: dict) -> list:
+        """基于ML的推理"""
+        # 特征提取
+        features = self._extract_features(problem, context)
+        
+        # ML模型推理（这里简化处理）
+        # 实际应用中可以使用训练好的模型
+        ml_prediction = self._ml_model_predict(features)
+        
+        causes = []
+        if ml_prediction['confidence'] > 0.7:
+            causes.append({
+                'cause': ml_prediction['cause'],
+                'confidence': ml_prediction['confidence'],
+                'evidence': ml_prediction['evidence'],
+                'fix_suggestion': ml_prediction['fix_suggestion']
+            })
+        
+        return causes
+    
+    def _build_causal_chain(self, root_causes: list, problem: dict) -> list:
+        """构建因果链"""
+        causal_chain = []
+        
+        for cause in root_causes:
+            chain = [
+                {
+                    'level': 0,
+                    'event': cause['cause'],
+                    'description': self._get_cause_description(cause['cause'])
+                }
+            ]
+            
+            # 添加中间事件
+            intermediate_events = self._get_intermediate_events(cause['cause'])
+            for i, event in enumerate(intermediate_events):
+                chain.append({
+                    'level': i + 1,
+                    'event': event,
+                    'description': self._get_event_description(event)
+                })
+            
+            # 添加最终问题
+            chain.append({
+                'level': len(intermediate_events) + 1,
+                'event': problem['problem_type'],
+                'description': f"最终问题: {problem['affected_field']}"
+            })
+            
+            causal_chain.append(chain)
+        
+        return causal_chain
+    
+    def _generate_prevention_measures(self, root_causes: list) -> list:
+        """生成预防措施"""
+        measures = []
+        
+        for cause in root_causes:
+            measure = {
+                'target_cause': cause['cause'],
+                'measures': self._get_prevention_measures(cause['cause']),
+                'priority': 'high' if cause['confidence'] > 0.8 else 'medium'
+            }
+            measures.append(measure)
+        
+        return measures
+```
+
+#### 5.2.2 根因知识库
+
+```python
+class RootCauseKnowledgeBase:
+    """根因知识库"""
+    
+    def __init__(self):
+        self.knowledge = {
+            # 数据源问题
+            'data_source_failure': {
+                'description': '数据源故障或不可用',
+                'symptoms': [
+                    'missing_value',
+                    'incomplete_data',
+                    'delayed_data'
+                ],
+                'causes': [
+                    'api_down',
+                    'authentication_failure',
+                    'rate_limit_exceeded'
+                ],
+                'fix_solutions': [
+                    '切换到备用数据源',
+                    '检查API密钥和认证信息',
+                    '调整请求频率，避免限流'
+                ],
+                'prevention': [
+                    '实施主备数据源切换机制',
+                    '定期检查数据源健康状态',
+                    '设置合理的请求频率限制'
+                ]
+            },
+            
+            # 数据格式变更
+            'schema_change': {
+                'description': '数据格式或结构发生变更',
+                'symptoms': [
+                    'format_error',
+                    'parsing_error',
+                    'field_missing'
+                ],
+                'causes': [
+                    'upstream_schema_update',
+                    'api_version_change',
+                    'data_provider_change'
+                ],
+                'fix_solutions': [
+                    '更新数据解析逻辑',
+                    '适配新的数据格式',
+                    '联系数据提供方确认变更'
+                ],
+                'prevention': [
+                    '监控数据格式变更',
+                    '建立格式变更告警机制',
+                    '保持与数据提供方的沟通'
+                ]
+            },
+            
+            # 网络问题
+            'network_issue': {
+                'description': '网络连接问题导致数据传输异常',
+                'symptoms': [
+                    'missing_value',
+                    'incomplete_data',
+                    'timeout_error'
+                ],
+                'causes': [
+                    'network_congestion',
+                    'firewall_block',
+                    'dns_resolution_failure'
+                ],
+                'fix_solutions': [
+                    '检查网络连接状态',
+                    '优化网络配置',
+                    '使用更稳定的网络路径'
+                ],
+                'prevention': [
+                    '实施网络监控',
+                    '建立网络故障告警',
+                    '准备备用网络路径'
+                ]
+            },
+            
+            # 数据质量问题
+            'data_quality_issue': {
+                'description': '数据本身存在质量问题',
+                'symptoms': [
+                    'outlier',
+                    'inconsistent_data',
+                    'duplicate_data'
+                ],
+                'causes': [
+                    'upstream_data_error',
+                    'data_integration_issue',
+                    'etl_process_error'
+                ],
+                'fix_solutions': [
+                    '实施数据清洗',
+                    '修正数据集成逻辑',
+                    '优化ETL流程'
+                ],
+                'prevention': [
+                    '建立数据质量监控',
+                    '实施自动化数据校验',
+                    '定期审查数据质量'
+                ]
+            }
+        }
+    
+    def get_knowledge(self, cause: str) -> dict:
+        """获取根因知识"""
+        return self.knowledge.get(cause, {})
+    
+    def add_knowledge(self, cause: str, knowledge: dict):
+        """添加根因知识"""
+        self.knowledge[cause] = knowledge
+    
+    def search_by_symptom(self, symptom: str) -> list:
+        """根据症状搜索可能的根因"""
+        possible_causes = []
+        
+        for cause, knowledge in self.knowledge.items():
+            if symptom in knowledge.get('symptoms', []):
+                possible_causes.append({
+                    'cause': cause,
+                    'description': knowledge['description'],
+                    'confidence': 0.8  # 基于症状匹配的置信度
+                })
+        
+        return possible_causes
+```
+
+### 5.3 智能修复建议生成
+
+#### 5.3.1 修复建议引擎
+
+```python
+class FixSuggestionEngine:
+    """修复建议引擎"""
+    
+    def __init__(self):
+        self.knowledge_base = RootCauseKnowledgeBase()
+        self.repair_history = []
+    
+    def generate_fix_suggestions(self, root_causes: list) -> list:
+        """
+        生成修复建议
+        
+        Args:
+            root_causes: 根因列表
+        
+        Returns:
+            [
+                {
+                    'suggestion_id': 'fix_001',
+                    'target_cause': 'data_source_failure',
+                    'priority': 'P0',
+                    'action': '切换到备用数据源',
+                    'steps': [...],
+                    'estimated_time': '5分钟',
+                    'success_rate': 0.95
+                }
+            ]
+        """
+        suggestions = []
+        
+        for cause in root_causes:
+            # 获取知识库中的解决方案
+            knowledge = self.knowledge_base.get_knowledge(cause['cause'])
+            
+            # 生成修复建议
+            suggestion = {
+                'suggestion_id': f"fix_{len(suggestions) + 1:03d}",
+                'target_cause': cause['cause'],
+                'priority': self._determine_priority(cause),
+                'action': knowledge.get('fix_solutions', ['手动修复'])[0],
+                'steps': self._generate_fix_steps(cause, knowledge),
+                'estimated_time': self._estimate_fix_time(cause),
+                'success_rate': self._estimate_success_rate(cause)
+            }
+            
+            suggestions.append(suggestion)
+        
+        # 按优先级排序
+        suggestions.sort(key=lambda x: x['priority'])
+        
+        return suggestions
+    
+    def _generate_fix_steps(self, cause: dict, knowledge: dict) -> list:
+        """生成修复步骤"""
+        steps = []
+        
+        # 通用步骤
+        steps.append({
+            'step': 1,
+            'action': '确认问题',
+            'description': f"确认根因: {cause['cause']}"
+        })
+        
+        # 根据根因类型添加特定步骤
+        if cause['cause'] == 'data_source_failure':
+            steps.extend([
+                {
+                    'step': 2,
+                    'action': '检查数据源状态',
+                    'description': '检查主数据源健康状态'
+                },
+                {
+                    'step': 3,
+                    'action': '切换数据源',
+                    'description': '切换到备用数据源（Tushare/AKShare）'
+                },
+                {
+                    'step': 4,
+                    'action': '验证数据',
+                    'description': '验证切换后数据完整性'
+                }
+            ])
+        
+        elif cause['cause'] == 'schema_change':
+            steps.extend([
+                {
+                    'step': 2,
+                    'action': '分析格式变更',
+                    'description': '分析新旧格式差异'
+                },
+                {
+                    'step': 3,
+                    'action': '更新解析逻辑',
+                    'description': '更新数据解析代码'
+                },
+                {
+                    'step': 4,
+                    'action': '测试验证',
+                    'description': '测试新格式解析正确性'
+                }
+            ])
+        
+        # 最后一步
+        steps.append({
+            'step': len(steps) + 1,
+            'action': '记录修复',
+            'description': '记录修复过程和结果'
+        })
+        
+        return steps
+    
+    def _determine_priority(self, cause: dict) -> str:
+        """确定优先级"""
+        if cause['confidence'] > 0.9:
+            return 'P0'
+        elif cause['confidence'] > 0.8:
+            return 'P1'
+        else:
+            return 'P2'
+    
+    def _estimate_fix_time(self, cause: dict) -> str:
+        """估算修复时间"""
+        time_estimates = {
+            'data_source_failure': '5分钟',
+            'schema_change': '30分钟',
+            'network_issue': '10分钟',
+            'data_quality_issue': '15分钟'
+        }
+        return time_estimates.get(cause['cause'], '20分钟')
+    
+    def _estimate_success_rate(self, cause: dict) -> float:
+        """估算成功率"""
+        # 基于历史数据估算
+        historical_success = self._get_historical_success_rate(cause['cause'])
+        
+        # 结合置信度调整
+        success_rate = historical_success * cause['confidence']
+        
+        return min(success_rate, 0.99)  # 最高99%
+```
+
+### 5.4 根因分析可视化
+
+#### 5.4.1 因果链可视化
+
+```python
+import matplotlib.pyplot as plt
+import networkx as nx
+
+class CausalChainVisualizer:
+    """因果链可视化"""
+    
+    def visualize_causal_chain(self, causal_chain: list, output_path: str):
+        """
+        可视化因果链
+        
+        Args:
+            causal_chain: 因果链数据
+            output_path: 输出图片路径
+        """
+        # 创建有向图
+        G = nx.DiGraph()
+        
+        # 添加节点和边
+        for chain in causal_chain:
+            for i in range(len(chain) - 1):
+                source = chain[i]['event']
+                target = chain[i + 1]['event']
+                
+                G.add_node(source, level=chain[i]['level'])
+                G.add_node(target, level=chain[i + 1]['level'])
+                G.add_edge(source, target)
+        
+        # 设置布局
+        pos = nx.multipartite_layout(G, subset_key="level")
+        
+        # 绘制图形
+        plt.figure(figsize=(12, 8))
+        nx.draw(
+            G,
+            pos,
+            with_labels=True,
+            node_color='lightblue',
+            node_size=3000,
+            font_size=10,
+            font_weight='bold',
+            arrows=True,
+            arrowsize=20
+        )
+        
+        plt.title("问题因果链分析")
+        plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        plt.close()
+```
+
+### 5.5 实施路线图
+
+#### 5.5.1 Phase 1: 根因分析引擎开发（Week 1-2）
+
+**任务**:
+1. 实现因果推理引擎
+2. 构建根因知识库
+3. 实现修复建议引擎
+
+**交付物**:
+- ✅ 因果推理引擎
+- ✅ 根因知识库
+- ✅ 修复建议引擎
+
+#### 5.5.2 Phase 2: 集成与测试（Week 3）
+
+**任务**:
+1. 集成到修复引擎
+2. 实现可视化功能
+3. 测试和优化
+
+**交付物**:
+- ✅ 集成后的修复引擎
+- ✅ 因果链可视化
+- ✅ 测试报告
+
+### 5.6 预期收益
+
+| 收益项 | 当前状态 | 智能根因分析后 | 提升幅度 |
+|--------|---------|--------------|---------|
+| **根因识别准确率** | 60% | 90% | +30% |
+| **修复时间** | 30分钟 | 5分钟 | -83% |
+| **问题复发率** | 20% | 5% | -75% |
+| **修复成功率** | 75% | 95% | +20% |
+| **人工干预时间** | 100% | 20% | -80% |
+
+---
+
+## 六、实施步骤
+
+### 6.1 Week 5: 基础架构搭建
 
 #### Day 1-2: 问题检测器开发
 
@@ -920,9 +1537,9 @@ src/
 
 ---
 
-## 六、验收标准
+## 七、验收标准
 
-### 6.1 功能验收
+### 7.1 功能验收
 
 | 验收项 | 验收标准 | 验收方法 |
 |--------|---------|---------|
@@ -931,7 +1548,7 @@ src/
 | **修复准确率** | ≥85%修复正确 | 人工审核 |
 | **修复时间** | <5秒完成修复 | 性能测试 |
 
-### 6.2 性能验收
+### 7.2 性能验收
 
 | 指标 | 目标值 | 测试方法 |
 |------|--------|---------|
@@ -942,9 +1559,9 @@ src/
 
 ---
 
-## 七、风险评估与缓解
+## 八、风险评估与缓解
 
-### 7.1 技术风险
+### 8.1 技术风险
 
 | 风险项 | 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
@@ -954,9 +1571,9 @@ src/
 
 ---
 
-## 八、文档治理
+## 九、文档治理
 
-### 8.1 文档索引
+### 9.1 文档索引
 
 **本文档在系统中的位置**:
 - **父文档**: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
@@ -964,7 +1581,7 @@ src/
   - [DATACLEANER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md)
   - [REALTIME_QUALITY_MONITOR_BLUEPRINT.md](./REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
 
-### 8.2 版本管理
+### 9.2 版本管理
 
 **版本历史**:
 - v1.0.0 (2026-04-02): 初始版本，完成自动化数据修复引擎设计
