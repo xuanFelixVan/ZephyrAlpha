@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "safety-dependency-checker": {
-      "command": "safety",
-      "args": ["check", "--json"],
-      "description": "Python依赖安全扫描工具，检查第三方包的安全漏洞"
-    }
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "yamllint-config-checker": {
-      "command": "yamllint",
-      "args": ["-f", "parsable"],
-      "description": "YAML配置检查工具，验证配置文件格式和规范"
-    }
-  }
-}

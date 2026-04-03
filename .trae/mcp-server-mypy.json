@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "mypy-type-checker": {
-      "command": "mypy",
-      "args": [],
-      "description": "Python类型检查工具，验证代码类型注解的正确性"
-    }
-  }
-}
