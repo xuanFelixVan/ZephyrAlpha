@@ -3,23 +3,23 @@ index_id: TECHNICAL_SPECIFICATIONS_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-03
 owner: 首席技术评审官
 standard_type: 文档索引
-applicable_scope: Layer 5策略执行层技术规格书
+applicable_scope: 全系统技术规格书（Layer 0-8）
 compliance_level: 专业标准
 ---
 
-# 技术规格书索引
+# 技术规格书总索引
 
 > **索引编号**: `TECH_SPEC_INDEX_001`
-> **最后更�?*: 2026-04-02
-> **文档总数**: 97�?
+> **最后更新**: 2026-04-03
+> **文档总数**: 97个
 ---
 
 ## 1. 索引说明
 
-本索引列出了Layer 5策略执行层的所有技术规格书文档，包括文档名称、module_id、版本、状态和最后更新日期�?
+本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-8架构组织，包括文档名称、module_id、版本、状态和最后更新日期。
 ---
 
 ## 2. 核心模块技术规格书
@@ -154,6 +154,30 @@ compliance_level: 专业标准
 | 数据漂移检测技术规格书 | DRIFT_DETECTION_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DRIFT_DETECTION_TECHNICAL_SPECIFICATION.md) |
 | 在线学习技术规格书 | ONLINE_LEARNING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ONLINE_LEARNING_TECHNICAL_SPECIFICATION.md) |
 
+### 5.5 模型治理与合规 (新增 P0级)
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 | 备注 |
+|----------|-----------|------|------|----------|----------|------|
+| 模型治理与合规技术规格书 | MODEL_GOVERNANCE_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MODEL_GOVERNANCE_TECHNICAL_SPECIFICATION.md) | P0级核心模块 |
+
+### 5.6 模型可解释性 (新增 P0级)
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 | 备注 |
+|----------|-----------|------|------|----------|----------|------|
+| 模型可解释性技术规格书 | MODEL_INTERPRETABILITY_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MODEL_INTERPRETABILITY_TECHNICAL_SPECIFICATION.md) | P0级核心模块 |
+
+### 5.7 因果推断 (新增 P0级)
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 | 备注 |
+|----------|-----------|------|------|----------|----------|------|
+| 因果推断技术规格书 | CAUSAL_INFERENCE_001 | v1.0.0 | Active | 2026-04-03 | [链接](./CAUSAL_INFERENCE_TECHNICAL_SPECIFICATION.md) | P0级核心模块 |
+
+### 5.8 概率预测 (新增 P0级)
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 | 备注 |
+|----------|-----------|------|------|----------|----------|------|
+| 概率预测技术规格书 | PROBABILISTIC_FORECASTING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./PROBABILISTIC_FORECASTING_TECHNICAL_SPECIFICATION.md) | P0级核心模块 |
+
 ---
 
 ## 6. 组合优化层技术规格书
@@ -195,9 +219,9 @@ compliance_level: 专业标准
 
 | 统计�?| 数量 |
 |--------|------|
-| **总文档数** | 95�?|
-| **活跃文档** | 94�?|
-| **归档文档** | 1�?|
+| **总文档数** | 95个 |
+| **活跃文档** | 91个 |
+| **归档文档** | 4个 |
 | **核心模块** | 11�?|
 | **数据层模�?* | 8�?|
 | **因子层模�?* | 5�?|
@@ -205,7 +229,7 @@ compliance_level: 专业标准
 | **组合优化层模�?* | 3�?|
 | **AI报告层模�?* | 4�?|
 
-> **更新说明**: 2026-04-03 更新机器学习层模块统计，新增模型训练流水线、模型服务化架构、MLOps平台、模型监控、数据漂移检测、在线学习等模块
+> **更新说明**: 2026-04-03 归档重复文档：强化学习、特征存储、MLOps平台技术规格书（与BLUEPRINT重复）
 
 ---
 

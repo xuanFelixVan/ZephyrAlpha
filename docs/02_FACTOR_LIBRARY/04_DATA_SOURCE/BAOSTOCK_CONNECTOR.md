@@ -250,7 +250,7 @@ def _initialize_baostock_client(self) -> None:
 - [QMT数据接口](./QMT_INTERFACE.md)
 - [iFind连接器](./IFIND_CONNECTOR.md)
 - [SuperCommand连接器](./SUPERCMD_CONNECTOR.md)
-- [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- [专业多时间框架架构](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 
 ---
 

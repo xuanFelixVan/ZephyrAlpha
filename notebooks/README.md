@@ -2,13 +2,13 @@
 standard_type: 技术文档
 applicable_scope: 全系统
 compliance_level: 初始标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-owner: 文档维护者
+parent_document: ./INDEX.md
+implementation_status: 可用
+owner: 研究团队
 version: 1.0.0
 module_id: DOC_README
 created_date: 2026-03-31
-last_updated: 2026-04-02
+last_updated: 2026-04-03
 ---
 # 研发笔记规范 (Notebooks Standards)
 

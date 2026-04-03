@@ -50,7 +50,7 @@ implementation_status: 进行�?---
 
 - **[目录索引](./INDEX.md)** - 完整的目录结构和文档列表
 - **[文档地图](./SITEMAP.md)** - 文档位置导航
-- **[系统清单](./System_Manifest.md)** - 系统状态快�?
+- **[系统清单](../System_Manifest.md)** - 系统状态快�?
 ---
 
 > **注意**: 本文档是因子库的高层概述。如需详细的目录结构和文档列表，请查看 [INDEX.md](./INDEX.md)�?

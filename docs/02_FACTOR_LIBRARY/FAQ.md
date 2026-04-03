@@ -201,7 +201,7 @@ implementation_status: 进行�?
 - 数据格式不兼�?
 - 接口版本升级
 
-详见: [VERSIONING.md](../05_IMPLEMENTATION/VERSIONING.md)
+详见: [VERSIONING.md](../../05_IMPLEMENTATION/VERSIONING.md)
 
 ### Q18: 什么时候升级次版本�?
 
@@ -245,7 +245,7 @@ implementation_status: 进行�?
 - `secrets/`
 - `pyproject.toml`
 
-详见: [AI_Permissions.md](../08_AI_GOVERNANCE/AI_Permissions.md)
+详见: [AI_Permissions.md](../../08_AI_GOVERNANCE/AI_Permissions.md)
 
 ### Q21: 如何让AI添加新因子？
 
