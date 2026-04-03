@@ -1,20 +1,19 @@
 ---
 title: AI工作流模块总索引
-version: 1.1.0
+version: 1.0.0
 created_date: 2026-04-02
-last_updated: 2026-04-03
+last_updated: 2026-04-02
 owner: 首席架构师
 standard_type: 专业机构级索引
-applicable_scope: AI工作流管理 + 舆情分析层改进
+applicable_scope: AI工作流管理
 compliance_level: 专业标准
 ---
 
 # AI工作流模块总索引
 
-> **版本**: v1.1  
+> **版本**: v1.0  
 > **创建日期**: 2026-04-02  
-> **最后更新**: 2026-04-03  
-> **核心定位**: AI辅助开发模式的核心基础设施 + 舆情分析层改进方案  
+> **核心定位**: AI辅助开发模式的核心基础设施  
 > **技术栈**: MLflow + SQLite + Python + Streamlit
 
 ---
@@ -30,7 +29,6 @@ AI工作流模块是清风量化系统的**核心基础设施**,旨在实现:
 - ✅ **交易复盘**: 分析交易决策,提取经验教训
 - ✅ **数据持久化**: 保存全流程数据
 - ✅ **开源集成**: 集成成熟开源项目
-- ✅ **舆情分析改进**: 提升舆情分析能力
 
 ### 1.2 核心价值
 
@@ -46,143 +44,267 @@ AI工作流模块是清风量化系统的**核心基础设施**,旨在实现:
 3. **知识基础**: 为知识管理提供数据支持
 4. **审计基础**: 为系统审计提供数据支持
 
----
-
-## 二、AI工作流模块文档
-
-### 2.1 核心模块蓝图
-
-| 文档名称 | 模块ID | 说明 | 状态 |
-|---------|--------|------|------|
-| **AI工作记录与优化模块蓝图** | AI_WFL_001 | 会话记录、决策记录、效果评估、优化迭代 | ✅ 完成 |
-| **AI工作汇报与交付模块蓝图** | AI_WR_001 | 每日工作总结、实时进度通知、决策汇报 | ✅ 完成 |
-| **复盘模块蓝图** | AI_PTR_001 | 回测复盘、实盘复盘、因子复盘、风险复盘 | ✅ 完成 |
-| **全流程数据保存机制蓝图** | AI_FPDP_001 | 实验追踪、数据血缘、版本控制 | ✅ 完成 |
-| **开源集成模块蓝图** | AI_OSI_001 | 开源项目评估、集成、维护 | ✅ 完成 |
-
-### 2.2 支撑性模块蓝图
-
-| 文档名称 | 模块ID | 说明 | 状态 |
-|---------|--------|------|------|
-| **合规监控模块蓝图** | AI_CM_001 | 交易合规检查、风控合规检查、监管报告 | ✅ 完成 |
-| **实盘监控模块蓝图** | AI_LTM_001 | 实时监控、异常检测、自动告警 | ✅ 完成 |
-| **性能分析模块蓝图** | AI_PA_001 | 性能监控、瓶颈分析、优化建议 | ✅ 完成 |
-
----
-
-## 三、舆情分析层改进模块
-
-### 3.1 核心蓝图文档
-
-| 文档名称 | 模块ID | 说明 | 状态 |
-|---------|--------|------|------|
-| **深度学习情感分析模块蓝图** | L3_DLSA_001 | FinBERT情感分析、多维度分析 | ✅ 完成 |
-| **实时预警系统模块蓝图** | L3_RTAS_001 | 实时监控、规则引擎、预警推送 | ✅ 完成 |
-| **模型性能与版本管理模块蓝图** | L3_MPVM_001 | 模型性能监控、漂移检测、版本管理 | ✅ 完成 |
-| **验证与测试框架蓝图** | L3_VTF_001 | A/B测试、回测验证、因子有效性验证 | ✅ 完成 |
-| **运维与知识管理模块蓝图** | L3_OKM_001 | 性能优化、数据安全、知识管理 | ✅ 完成 |
-| **舆情分析改进蓝图** | - | 多模态分析、AI虚拟研究团队 | ✅ 完成 |
-
-### 3.2 实施文档
-
-| 文档名称 | 说明 | 状态 |
-|---------|------|------|
-| **舆情分析实施细节** | 环境搭建、代码示例、配置模板 | ✅ 完成 |
-| **舆情分析测试计划** | 单元测试、集成测试、性能测试 | ✅ 完成 |
-| **舆情分析项目管理** | 项目规划、资源分配、里程碑 | ✅ 完成 |
-| **舆情分析风险管理** | 风险识别、缓解措施、应急预案 | ✅ 完成 |
-| **舆情分析改进文档索引** | 改进模块文档索引 | ✅ 完成 |
-
-### 3.3 审计报告
-
-| 文档名称 | 说明 | 状态 |
-|---------|------|------|
-| **舆情分析深度审计报告** | 文档治理审计、五大原则符合度评估 | ✅ 完成 |
-
----
-
-## 四、开源集成模块
-
-| 文档名称 | 说明 | 状态 |
-|---------|------|------|
-| **开源模块解决方案** | 适合个人开发者的开源模块推荐 | ✅ 完成 |
-| **开源集成蓝图** | 开源项目集成方案 | ✅ 完成 |
-
----
-
-## 五、快速开始
-
-### 5.1 AI工作流模块快速开始
-
-1. **查看AI工作记录**: 参考 [AI_WORKFLOW_LOGGER_BLUEPRINT.md](./AI_WORKFLOW_LOGGER_BLUEPRINT.md)
-2. **查看AI工作汇报**: 参考 [AI_WORK_REPORTER_BLUEPRINT.md](./AI_WORK_REPORTER_BLUEPRINT.md)
-3. **进行交易复盘**: 参考 [POST_TRADE_REVIEW_BLUEPRINT.md](./POST_TRADE_REVIEW_BLUEPRINT.md)
-
-### 5.2 舆情分析层改进快速开始
-
-1. **实施深度学习情感分析**: 参考 [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md)
-2. **建立实时预警系统**: 参考 [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md)
-3. **查看文档审计结果**: 参考 [SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT.md](./SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT.md)
-
----
-
-## 六、文档阅读路径
-
-### 路径1: AI工作流管理
+### 1.3 Layer定位
 
 ```
-INDEX.md (当前位置)
-  → AI_WORKFLOW_LOGGER_BLUEPRINT.md (了解AI工作记录)
-  → AI_WORK_REPORTER_BLUEPRINT.md (了解AI工作汇报)
-  → POST_TRADE_REVIEW_BLUEPRINT.md (了解交易复盘)
-  → FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md (了解数据持久化)
-```
-
-### 路径2: 舆情分析层改进
-
-```
-INDEX.md (当前位置)
-  → SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT.md (了解审计结果)
-  → DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md (实施情感分析)
-  → REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md (建立预警系统)
-  → SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md (实施细节)
-```
-
-### 路径3: 支撑性模块建设
-
-```
-INDEX.md (当前位置)
-  → MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md (模型管理)
-  → VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md (验证测试)
-  → OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md (运维知识管理)
+Layer 8.5: AI工作记录层 (AI Workflow Logging Layer)
+    ├── 会话记录层
+    ├── 决策记录层
+    ├── 效果评估层
+    ├── 优化迭代层
+    └── 知识管理层
 ```
 
 ---
 
-## 七、文档统计
+## 二、模块架构
 
-| 模块类型 | 文档数量 | 完成度 |
-|---------|---------|--------|
-| **AI工作流模块** | 9个 | 100% |
-| **舆情分析核心蓝图** | 6个 | 100% |
-| **舆情分析实施文档** | 5个 | 100% |
-| **舆情分析审计报告** | 1个 | 100% |
-| **开源集成模块** | 2个 | 100% |
-| **总计** | **23个** | **100%** |
+### 2.1 整体架构图
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    AI工作流模块架构                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │     Layer 8: 人机交互层 (Human-AI Interaction)      │   │
+│  │  ├─ AI工作汇报与交付模块 (AI_WORK_REPORTER)         │   │
+│  │  │  ├─ 每日工作总结                                 │   │
+│  │  │  ├─ 实时进度通知                                 │   │
+│  │  │  ├─ 决策汇报                                     │   │
+│  │  │  └─ 可视化展示                                   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │     Layer 7: AI报告层 (AI Reporting Layer)          │   │
+│  │  ├─ 复盘模块 (POST_TRADE_REVIEW)                    │   │
+│  │  │  ├─ 回测复盘                                     │   │
+│  │  │  ├─ 实盘复盘                                     │   │
+│  │  │  ├─ 因子复盘                                     │   │
+│  │  │  └─ 风险复盘                                     │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │     Layer 8.5: AI工作记录层 (AI Workflow Logging)   │   │
+│  │  ├─ AI工作记录与优化模块 (AI_WORKFLOW_LOGGER)       │   │
+│  │  │  ├─ 会话记录                                     │   │
+│  │  │  ├─ 决策记录                                     │   │
+│  │  │  ├─ 效果评估                                     │   │
+│  │  │  └─ 知识库构建                                   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │     Layer 0: 数据层 (Data Layer)                    │   │
+│  │  ├─ 全流程数据保存机制 (FULL_PROCESS_DATA_PERSISTENCE)│  │
+│  │  │  ├─ 实验追踪                                     │   │
+│  │  │  ├─ 数据血缘                                     │   │
+│  │  │  ├─ 版本控制                                     │   │
+│  │  │  └─ 数据治理                                     │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │     开源项目集成层 (Open Source Integration)        │   │
+│  │  ├─ 开源项目集成方案 (OPEN_SOURCE_INTEGRATION)      │   │
+│  │  │  ├─ MLflow集成                                   │   │
+│  │  │  ├─ Qlib集成                                     │   │
+│  │  │  └─ 其他工具集成                                 │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 数据流设计
+
+```
+用户输入 → AI理解 → AI工作记录 → AI执行 → 效果评估 → AI优化 → 知识沉淀
+    ↑                                                        ↓
+    └────────────────── 知识复用 ←───────────────────────────┘
+```
 
 ---
 
-## 八、维护信息
+## 三、模块清单
 
-**文档版本**: v1.1
-**最后更新**: 2026-04-03
-**维护人员**: @spec-approver (首席技术评审官)
-**文档状态**: ✅ 活跃
+### 3.1 核心模块
+
+| 模块ID | 模块名称 | 版本 | 状态 | 蓝图文档 | 核心职责 |
+|--------|---------|------|------|----------|----------|
+| **AI_WORKFLOW_LOGGER_001** | AI工作记录与优化模块 | 1.0 | Active | [AI_WORKFLOW_LOGGER_BLUEPRINT.md](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI会话记录、决策记录、效果评估、优化迭代、知识库构建 |
+| **AI_WORK_REPORTER_001** | AI工作汇报与交付模块 | 1.0 | Active | [AI_WORK_REPORTER_BLUEPRINT.md](./AI_WORK_REPORTER_BLUEPRINT.md) | 每日工作总结、进度通知、决策汇报、交互交付、可视化展示 |
+| **POST_TRADE_REVIEW_001** | 复盘模块 | 1.0 | Active | [POST_TRADE_REVIEW_BLUEPRINT.md](./POST_TRADE_REVIEW_BLUEPRINT.md) | 回测复盘、实盘复盘、因子复盘、策略复盘、风险复盘 |
+| **FULL_PROCESS_DATA_PERSISTENCE_001** | 全流程数据保存机制 | 1.0 | Active | [FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 实验追踪、数据血缘、版本控制、数据治理 |
+| **OPEN_SOURCE_INTEGRATION_001** | 开源项目集成方案 | 1.0 | Active | [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | MLflow集成、Qlib集成、架构参考、工具集成 |
+| **COMPLIANCE_MONITORING_001** | 合规监控模块 | 1.0 | Active | [COMPLIANCE_MONITORING_BLUEPRINT.md](./COMPLIANCE_MONITORING_BLUEPRINT.md) | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预警 |
+| **LIVE_TRADING_MONITOR_001** | 实盘监控模块 | 1.0 | Active | [LIVE_TRADING_MONITOR_BLUEPRINT.md](./LIVE_TRADING_MONITOR_BLUEPRINT.md) | 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警 |
+| **PERFORMANCE_ANALYSIS_001** | 性能分析模块 | 1.0 | Active | [PERFORMANCE_ANALYSIS_BLUEPRINT.md](./PERFORMANCE_ANALYSIS_BLUEPRINT.md) | 性能指标采集、性能瓶颈识别、性能报告生成、优化建议生成、性能趋势分析 |
+
+### 3.2 模块依赖关系
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    模块依赖关系图                        │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  AI_WORK_REPORTER_001 (AI工作汇报)                      │
+│         ↓                                               │
+│  AI_WORKFLOW_LOGGER_001 (AI工作记录)                    │
+│         ↓                                               │
+│  FULL_PROCESS_DATA_PERSISTENCE_001 (数据持久化)         │
+│         ↓                                               │
+│  OPEN_SOURCE_INTEGRATION_001 (开源集成)                 │
+│                                                         │
+│  POST_TRADE_REVIEW_001 (复盘模块)                       │
+│         ↓                                               │
+│  AI_WORKFLOW_LOGGER_001 (AI工作记录)                    │
+│         ↓                                               │
+│  FULL_PROCESS_DATA_PERSISTENCE_001 (数据持久化)         │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 九、相关链接
+## 四、实施路径
 
-- [系统总索引](../../System_Manifest.md)
-- [架构文档](../../01_FRAMEWORK/ARCHITECTURE.md)
-- [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+### 4.1 Phase 1: 数据持久化基础设施 (Week 1)
+
+**目标**: 部署MLflow并实现数据持久化
+
+**任务清单**:
+- [ ] 部署MLflow Tracking Server
+- [ ] 实现ExperimentTracker组件
+- [ ] 实现DataLineageTracker组件
+- [ ] 实现VersionController组件
+- [ ] 编写使用文档
+
+**验收标准**:
+- ✅ MLflow服务器正常运行
+- ✅ 能够追踪实验
+- ✅ 能够追踪数据血缘
+- ✅ 能够管理数据版本
+
+### 4.2 Phase 2: AI工作记录与优化 (Week 2)
+
+**目标**: 实现AI工作记录和优化功能
+
+**任务清单**:
+- [ ] 实现SessionRecorder组件
+- [ ] 实现DecisionRecorder组件
+- [ ] 实现EffectivenessEvaluator组件
+- [ ] 实现WorkflowOptimizer组件
+- [ ] 实现KnowledgeBaseBuilder组件
+
+**验收标准**:
+- ✅ 能够记录AI会话
+- ✅ 能够记录AI决策
+- ✅ 能够评估AI效果
+- ✅ 能够优化AI工作方式
+
+### 4.3 Phase 3: AI工作汇报与复盘 (Week 3)
+
+**目标**: 实现AI工作汇报和复盘功能
+
+**任务清单**:
+- [ ] 实现DailyReporter组件
+- [ ] 实现ProgressNotifier组件
+- [ ] 实现DecisionReporter组件
+- [ ] 实现BacktestReviewer组件
+- [ ] 实现LiveTradingReviewer组件
+
+**验收标准**:
+- ✅ 能够生成每日工作总结
+- ✅ 能够推送实时进度通知
+- ✅ 能够汇报重要决策
+- ✅ 能够分析回测结果
+
+---
+
+## 五、技术栈
+
+### 5.1 核心技术
+
+| 技术组件 | 选择方案 | 版本 | 用途 |
+|---------|---------|------|------|
+| **追踪引擎** | MLflow | 2.x | 实验追踪与模型管理 |
+| **数据库** | SQLite | 3.x | 轻量级数据存储 |
+| **数据格式** | Parquet + JSON | - | 高效数据存储 |
+| **可视化** | Plotly + Streamlit | - | 交互式可视化 |
+| **编程语言** | Python | 3.10+ | 核心开发语言 |
+
+### 5.2 开源项目
+
+| 项目名称 | 类型 | 集成优先级 | 用途 |
+|---------|------|-----------|------|
+| **MLflow** | 实验追踪 | P0 | 实验追踪与模型管理 |
+| **Qlib** | 量化框架 | P1 | 量化投资框架 |
+| **Optuna** | 参数优化 | P1 | 超参数优化 |
+| **Plotly** | 可视化 | P1 | 交互式图表 |
+| **Streamlit** | 仪表盘 | P2 | 数据仪表盘 |
+
+---
+
+## 六、文档治理
+
+### 6.1 文档索引
+
+| 文档类型 | 文档名称 | 路径 | 状态 |
+|---------|---------|------|------|
+| **总索引** | AI工作流模块总索引 | `docs/10_AI_WORKFLOW/INDEX.md` | Active |
+| **蓝图文档** | AI工作记录与优化模块蓝图 | `docs/10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md` | Active |
+| **蓝图文档** | AI工作汇报与交付模块蓝图 | `docs/10_AI_WORKFLOW/AI_WORK_REPORTER_BLUEPRINT.md` | Active |
+| **蓝图文档** | 复盘模块蓝图 | `docs/10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md` | Active |
+| **蓝图文档** | 全流程数据保存机制蓝图 | `docs/10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` | Active |
+| **蓝图文档** | 开源项目集成方案蓝图 | `docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md` | Active |
+
+### 6.2 策略专用AI模块索引
+
+> 以下模块位于 Layer 5-6，是策略层的专用AI模块
+
+| 文档类型 | 文档名称 | 路径 | 状态 |
+|---------|---------|------|------|
+| **蓝图文档** | 策略生命周期管理AI蓝图 | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_LIFECYCLE_AI_BLUEPRINT.md` | Active |
+| **蓝图文档** | 组合优化AI蓝图 | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md` | Active |
+| **蓝图文档** | 风险控制AI蓝图 | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/RISK_CONTROL_AI_BLUEPRINT.md` | Active |
+
+### 6.3 版本管理
+
+- **v1.0**: 初始版本,实现核心功能
+- **v1.1**: 增强效果评估算法
+- **v1.2**: 增加知识图谱可视化
+- **v2.0**: 集成更多开源项目
+
+---
+
+## 七、质量保证
+
+### 7.1 质量指标
+
+| 指标 | 目标值 | 当前值 | 状态 |
+|------|--------|--------|------|
+| **文档合规率** | ≥90% | - | 待评估 |
+| **代码覆盖率** | ≥80% | - | 待评估 |
+| **性能指标** | <100ms | - | 待评估 |
+| **可用性** | ≥99% | - | 待评估 |
+
+### 7.2 质量检查清单
+
+- [ ] 所有蓝图文档符合标准模板
+- [ ] 所有模块职责边界清晰
+- [ ] 所有接口定义完整
+- [ ] 所有数据流图准确
+- [ ] 所有实施路径可行
+
+---
+
+## 八、相关文档
+
+| 文档 | 说明 |
+|------|------|
+| [系统架构文档](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构定义 |
+| [模块职责边界文档](../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 模块职责边界定义 |
+| [系统总索引](../02_FACTOR_LIBRARY/System_Manifest.md) | 系统总索引 |
+| [技术栈文档](../01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 |
+
+---
+
+**版本**: v1.0 | **更新**: 2026-04-02 | **状态**: ✅ 活跃

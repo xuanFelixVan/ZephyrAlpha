@@ -1,123 +1,123 @@
----
+﻿---
 module_id: TECH_SPEC_MARKET_PARTICIPANT_SIM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书
-applicable_scope: 全系�?compliance_level: 专业标准
+owner: 棣栧腑鎶€鏈瘎瀹″畼
+standard_type: 涓撲笟閲忓寲鏈烘瀯鎶€鏈鏍间功
+applicable_scope: 鍏ㄧ郴缁?compliance_level: 涓撲笟鏍囧噯
 parent_document: ../PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-implementation_status: 设计阶段
+implementation_status: 璁捐闃舵
 ---
 
-# 市场参与者行为模拟系统技术规格书
+# 甯傚満鍙備笌鑰呰涓烘ā鎷熺郴缁熸妧鏈鏍间功
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-02
-> **技术评审官**: Spec-Approver (审批智能�?
-> **核心理念**: 桥水经济范式 + 文艺复兴统计套利 + 个人AI维护模式
-> **目标**: 实现国家队、主力、散户三类市场参与者行为模�?提升策略预测准确�?
+> **鐗堟湰**: v1.0
+> **鍒涘缓鏃ユ湡**: 2026-04-02
+> **鎶€鏈瘎瀹″畼**: Spec-Approver (瀹℃壒鏅鸿兘浣?
+> **鏍稿績鐞嗗康**: 妗ユ按缁忔祹鑼冨紡 + 鏂囪壓澶嶅叴缁熻濂楀埄 + 涓汉AI缁存姢妯″紡
+> **鐩爣**: 瀹炵幇鍥藉闃熴€佷富鍔涖€佹暎鎴蜂笁绫诲競鍦哄弬涓庤€呰涓烘ā鎷?鎻愬崌绛栫暐棰勬祴鍑嗙‘鎬?
 ---
 
-## 📋 一、概�?
-### 1.1 设计背景
+## 馃搵 涓€銆佹杩?
+### 1.1 璁捐鑳屾櫙
 
-**问题陈述**:
-- 传统量化策略仅基于历史价格和因子,忽略了市场参与者行为对价格的影�?- A股市场具有明显的"国家队干�?�?主力控盘"�?散户羊群"特征
-- 缺乏对市场微观结构和参与者博弈行为的建模
+**闂闄堣堪**:
+- 浼犵粺閲忓寲绛栫暐浠呭熀浜庡巻鍙蹭环鏍煎拰鍥犲瓙,蹇界暐浜嗗競鍦哄弬涓庤€呰涓哄浠锋牸鐨勫奖鍝?- A鑲″競鍦哄叿鏈夋槑鏄剧殑"鍥藉闃熷共棰?銆?涓诲姏鎺х洏"銆?鏁ｆ埛缇婄兢"鐗瑰緛
+- 缂轰箯瀵瑰競鍦哄井瑙傜粨鏋勫拰鍙備笌鑰呭崥寮堣涓虹殑寤烘ā
 
-**解决方案**:
-- 引入**多智能体市场模拟系统**,模拟三类市场参与者的交易行为
-- 基于**强化学习+LLM**构建智能体决策模�?- 与现有三级时间框架架构无缝集�?
-**预期收益**:
-- 提升策略信号准确�?15-25%
-- 降低最大回�?10-20%
-- 增强系统对极端市场情况的适应�?- 为投资决策提供市场博弈视�?
-### 1.2 技术定�?
-| 维度 | 定位 |
+**瑙ｅ喅鏂规**:
+- 寮曞叆**澶氭櫤鑳戒綋甯傚満妯℃嫙绯荤粺**,妯℃嫙涓夌被甯傚満鍙備笌鑰呯殑浜ゆ槗琛屼负
+- 鍩轰簬**寮哄寲瀛︿範+LLM**鏋勫缓鏅鸿兘浣撳喅绛栨ā鍨?- 涓庣幇鏈変笁绾ф椂闂存鏋舵灦鏋勬棤缂濋泦鎴?
+**棰勬湡鏀剁泭**:
+- 鎻愬崌绛栫暐淇″彿鍑嗙‘鎬?15-25%
+- 闄嶄綆鏈€澶у洖鎾?10-20%
+- 澧炲己绯荤粺瀵规瀬绔競鍦烘儏鍐电殑閫傚簲鎬?- 涓烘姇璧勫喅绛栨彁渚涘競鍦哄崥寮堣瑙?
+### 1.2 鎶€鏈畾浣?
+| 缁村害 | 瀹氫綅 |
 |------|------|
-| **架构层级** | Layer 2.5: 市场微观结构�?新增) |
-| **时间框架** | 中观策略�?日度/周度) + 微观执行�?日内) |
-| **核心价�?* | 提供市场参与者行为预�?增强Alpha信号 |
-| **参考模�?* | 桥水市场状态识�?+ 文艺复兴统计套利 + Two Sigma多智能体 |
+| **鏋舵瀯灞傜骇** | Layer 2.5: 甯傚満寰缁撴瀯灞?鏂板) |
+| **鏃堕棿妗嗘灦** | 涓绛栫暐灞?鏃ュ害/鍛ㄥ害) + 寰鎵ц灞?鏃ュ唴) |
+| **鏍稿績浠峰€?* | 鎻愪緵甯傚満鍙備笌鑰呰涓洪娴?澧炲己Alpha淇″彿 |
+| **鍙傝€冩ā鍨?* | 妗ユ按甯傚満鐘舵€佽瘑鍒?+ 鏂囪壓澶嶅叴缁熻濂楀埄 + Two Sigma澶氭櫤鑳戒綋 |
 
-### 1.3 版本信息
+### 1.3 鐗堟湰淇℃伅
 
-| 项目 | 内容 |
+| 椤圭洰 | 鍐呭 |
 |------|------|
-| **版本�?* | v1.0.0 |
-| **创建日期** | 2026-04-02 |
-| **最后更�?* | 2026-04-02 |
-| **维护�?* | 首席技术评审官 |
-| **评审状�?* | 待评�?|
+| **鐗堟湰鍙?* | v1.0.0 |
+| **鍒涘缓鏃ユ湡** | 2026-04-02 |
+| **鏈€鍚庢洿鏂?* | 2026-04-02 |
+| **缁存姢鑰?* | 棣栧腑鎶€鏈瘎瀹″畼 |
+| **璇勫鐘舵€?* | 寰呰瘎瀹?|
 
 ---
 
-## 🏛�?二、详细架构设�?
-### 2.1 整体架构�?
+## 馃彌锔?浜屻€佽缁嗘灦鏋勮璁?
+### 2.1 鏁翠綋鏋舵瀯鍥?
 ```
-┌─────────────────────────────────────────────────────────────────────────────�?�?                   市场参与者行为模拟系统架�?                                �?├─────────────────────────────────────────────────────────────────────────────�?�?                                                                            �?�? ┌──────────────────────────────────────────────────────────────────────�? �?�? �?                   数据输入�?(Data Input Layer)                      �? �?�? ├──────────────────────────────────────────────────────────────────────�? �?�? �? �?龙虎榜数�?(游资动向、机构买�?                                     �? �?�? �? �?Level-2行情 (订单簿、逐笔成交)                                      �? �?�? �? �?融资融券数据 (杠杆资金动向)                                         �? �?�? �? �?新闻舆情数据 (市场情绪)                                             �? �?�? �? �?宏观政策数据 (国家队干预信�?                                       �? �?�? └──────────────────────────────────────────────────────────────────────�? �?�?                                   �?                                       �?�? ┌──────────────────────────────────────────────────────────────────────�? �?�? �?               智能体管理层 (Agent Management Layer)                   �? �?�? ├──────────────────────────────────────────────────────────────────────�? �?�? �?                                                                       �? �?�? �? ┌────────────────�? ┌────────────────�? ┌────────────────�?        �? �?�? �? �?国家队智能体   �? �?主力/游资智能体│  �?散户智能�?    �?        �? �?�? �? �?               �? �?               �? �?               �?        �? �?�? �? �?�?政策驱动     �? �?�?资金优势     �? �?�?羊群效应     �?        �? �?�? �? �?�?稳定市场     �? �?�?信息优势     �? �?�?情绪驱动     �?        �? �?�? �? �?�?长期持有     �? �?�?操盘策略     �? �?�?追涨杀�?    �?        �? �?�? �? �?               �? �?               �? �?               �?        �? �?�? �? �?技术实�?      �? �?技术实�?      �? �?技术实�?      �?        �? �?�? �? �?规则引擎+LLM   �? �?RL+LLM混合     �? �?行为金融模型   �?        �? �?�? �? └────────────────�? └────────────────�? └────────────────�?        �? �?�? �?                                                                       �? �?�? └──────────────────────────────────────────────────────────────────────�? �?�?                                   �?                                       �?�? ┌──────────────────────────────────────────────────────────────────────�? �?�? �?               市场模拟引擎 (Market Simulation Engine)                 �? �?�? ├──────────────────────────────────────────────────────────────────────�? �?�? �? �?订单簿模拟器 (Order Book Simulator)                                �? �?�? �? �?价格发现机制 (Price Discovery Mechanism)                           �? �?�? �? �?市场冲击模型 (Market Impact Model)                                 �? �?�? �? �?流动性模�?(Liquidity Simulation)                                  �? �?�? �? �?事件驱动架构 (Event-Driven Architecture)                           �? �?�? └──────────────────────────────────────────────────────────────────────�? �?�?                                   �?                                       �?�? ┌──────────────────────────────────────────────────────────────────────�? �?�? �?               信号输出�?(Signal Output Layer)                        �? �?�? ├──────────────────────────────────────────────────────────────────────�? �?�? �? �?市场状态预�?(Market State Prediction)                             �? �?�? �? �?主力资金流向预测 (Capital Flow Prediction)                         �? �?�? �? �?价格冲击预测 (Price Impact Prediction)                             �? �?�? �? �?风险事件预警 (Risk Event Warning)                                  �? �?�? �? �?策略建议信号 (Strategy Suggestion Signals)                         �? �?�? └──────────────────────────────────────────────────────────────────────�? �?�?                                   �?                                       �?�? ┌──────────────────────────────────────────────────────────────────────�? �?�? �?               集成接口�?(Integration Interface Layer)                �? �?�? ├──────────────────────────────────────────────────────────────────────�? �?�? �? �?与中观策略层集成 (Alpha信号增强)                                    �? �?�? �? �?与微观执行层集成 (执行时机优化)                                     �? �?�? �? �?与风控系统集�?(风险预警)                                           �? �?�? �? �?与AI报告层集�?(博弈分析报告)                                       �? �?�? └──────────────────────────────────────────────────────────────────────�? �?�?                                                                            �?└─────────────────────────────────────────────────────────────────────────────�?```
+鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?鈹?                   甯傚満鍙備笌鑰呰涓烘ā鎷熺郴缁熸灦鏋?                                鈹?鈹溾攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?鈹?                                                                            鈹?鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹?                   鏁版嵁杈撳叆灞?(Data Input Layer)                      鈹? 鈹?鈹? 鈹溾攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹? 鈥?榫欒檸姒滄暟鎹?(娓歌祫鍔ㄥ悜銆佹満鏋勪拱鍗?                                     鈹? 鈹?鈹? 鈹? 鈥?Level-2琛屾儏 (璁㈠崟绨裤€侀€愮瑪鎴愪氦)                                      鈹? 鈹?鈹? 鈹? 鈥?铻嶈祫铻嶅埜鏁版嵁 (鏉犳潌璧勯噾鍔ㄥ悜)                                         鈹? 鈹?鈹? 鈹? 鈥?鏂伴椈鑸嗘儏鏁版嵁 (甯傚満鎯呯华)                                             鈹? 鈹?鈹? 鈹? 鈥?瀹忚鏀跨瓥鏁版嵁 (鍥藉闃熷共棰勪俊鍙?                                       鈹? 鈹?鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹?                                   鈫?                                       鈹?鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹?               鏅鸿兘浣撶鐞嗗眰 (Agent Management Layer)                   鈹? 鈹?鈹? 鈹溾攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹?                                                                       鈹? 鈹?鈹? 鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?        鈹? 鈹?鈹? 鈹? 鈹?鍥藉闃熸櫤鑳戒綋   鈹? 鈹?涓诲姏/娓歌祫鏅鸿兘浣撯攤  鈹?鏁ｆ埛鏅鸿兘浣?    鈹?        鈹? 鈹?鈹? 鈹? 鈹?               鈹? 鈹?               鈹? 鈹?               鈹?        鈹? 鈹?鈹? 鈹? 鈹?鈥?鏀跨瓥椹卞姩     鈹? 鈹?鈥?璧勯噾浼樺娍     鈹? 鈹?鈥?缇婄兢鏁堝簲     鈹?        鈹? 鈹?鈹? 鈹? 鈹?鈥?绋冲畾甯傚満     鈹? 鈹?鈥?淇℃伅浼樺娍     鈹? 鈹?鈥?鎯呯华椹卞姩     鈹?        鈹? 鈹?鈹? 鈹? 鈹?鈥?闀挎湡鎸佹湁     鈹? 鈹?鈥?鎿嶇洏绛栫暐     鈹? 鈹?鈥?杩芥定鏉€璺?    鈹?        鈹? 鈹?鈹? 鈹? 鈹?               鈹? 鈹?               鈹? 鈹?               鈹?        鈹? 鈹?鈹? 鈹? 鈹?鎶€鏈疄鐜?      鈹? 鈹?鎶€鏈疄鐜?      鈹? 鈹?鎶€鏈疄鐜?      鈹?        鈹? 鈹?鈹? 鈹? 鈹?瑙勫垯寮曟搸+LLM   鈹? 鈹?RL+LLM娣峰悎     鈹? 鈹?琛屼负閲戣瀺妯″瀷   鈹?        鈹? 鈹?鈹? 鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?        鈹? 鈹?鈹? 鈹?                                                                       鈹? 鈹?鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹?                                   鈫?                                       鈹?鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹?               甯傚満妯℃嫙寮曟搸 (Market Simulation Engine)                 鈹? 鈹?鈹? 鈹溾攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹? 鈥?璁㈠崟绨挎ā鎷熷櫒 (Order Book Simulator)                                鈹? 鈹?鈹? 鈹? 鈥?浠锋牸鍙戠幇鏈哄埗 (Price Discovery Mechanism)                           鈹? 鈹?鈹? 鈹? 鈥?甯傚満鍐插嚮妯″瀷 (Market Impact Model)                                 鈹? 鈹?鈹? 鈹? 鈥?娴佸姩鎬фā鎷?(Liquidity Simulation)                                  鈹? 鈹?鈹? 鈹? 鈥?浜嬩欢椹卞姩鏋舵瀯 (Event-Driven Architecture)                           鈹? 鈹?鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹?                                   鈫?                                       鈹?鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹?               淇″彿杈撳嚭灞?(Signal Output Layer)                        鈹? 鈹?鈹? 鈹溾攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹? 鈥?甯傚満鐘舵€侀娴?(Market State Prediction)                             鈹? 鈹?鈹? 鈹? 鈥?涓诲姏璧勯噾娴佸悜棰勬祴 (Capital Flow Prediction)                         鈹? 鈹?鈹? 鈹? 鈥?浠锋牸鍐插嚮棰勬祴 (Price Impact Prediction)                             鈹? 鈹?鈹? 鈹? 鈥?椋庨櫓浜嬩欢棰勮 (Risk Event Warning)                                  鈹? 鈹?鈹? 鈹? 鈥?绛栫暐寤鸿淇″彿 (Strategy Suggestion Signals)                         鈹? 鈹?鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹?                                   鈫?                                       鈹?鈹? 鈹屸攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹?               闆嗘垚鎺ュ彛灞?(Integration Interface Layer)                鈹? 鈹?鈹? 鈹溾攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹? 鈹? 鈥?涓庝腑瑙傜瓥鐣ュ眰闆嗘垚 (Alpha淇″彿澧炲己)                                    鈹? 鈹?鈹? 鈹? 鈥?涓庡井瑙傛墽琛屽眰闆嗘垚 (鎵ц鏃舵満浼樺寲)                                     鈹? 鈹?鈹? 鈹? 鈥?涓庨鎺х郴缁熼泦鎴?(椋庨櫓棰勮)                                           鈹? 鈹?鈹? 鈹? 鈥?涓嶢I鎶ュ憡灞傞泦鎴?(鍗氬紙鍒嗘瀽鎶ュ憡)                                       鈹? 鈹?鈹? 鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹? 鈹?鈹?                                                                            鈹?鈹斺攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹?```
 
-### 2.2 Layer定位与职�?
-| Layer | 职责 | 智能体类�?| 时间框架 |
+### 2.2 Layer瀹氫綅涓庤亴璐?
+| Layer | 鑱岃矗 | 鏅鸿兘浣撶被鍨?| 鏃堕棿妗嗘灦 |
 |-------|------|-----------|----------|
-| **Layer 2.5** | 市场微观结构模拟 | 三类智能�?| 日度/日内 |
-| **Layer 2** | Alpha因子计算 | 因子�?| 日度 |
-| **Layer 3** | 舆情分析 | 舆情智能�?| 实时 |
-| **Layer 5** | 策略执行 | 策略引擎 | 日度/日内 |
+| **Layer 2.5** | 甯傚満寰缁撴瀯妯℃嫙 | 涓夌被鏅鸿兘浣?| 鏃ュ害/鏃ュ唴 |
+| **Layer 2** | Alpha鍥犲瓙璁＄畻 | 鍥犲瓙搴?| 鏃ュ害 |
+| **Layer 3** | 鑸嗘儏鍒嗘瀽 | 鑸嗘儏鏅鸿兘浣?| 瀹炴椂 |
+| **Layer 5** | 绛栫暐鎵ц | 绛栫暐寮曟搸 | 鏃ュ害/鏃ュ唴 |
 
-**职责边界**:
-- **不负�?*: 策略逻辑开发、组合优化、交易执�?- **负责**: 市场参与者行为建模、市场状态预测、博弈分�?
-### 2.3 核心组件设计
+**鑱岃矗杈圭晫**:
+- **涓嶈礋璐?*: 绛栫暐閫昏緫寮€鍙戙€佺粍鍚堜紭鍖栥€佷氦鏄撴墽琛?- **璐熻矗**: 甯傚満鍙備笌鑰呰涓哄缓妯°€佸競鍦虹姸鎬侀娴嬨€佸崥寮堝垎鏋?
+### 2.3 鏍稿績缁勪欢璁捐
 
-#### 2.3.1 国家队智能体 (National Team Agent)
+#### 2.3.1 鍥藉闃熸櫤鑳戒綋 (National Team Agent)
 
-**设计理念**: 基于政策信号和市场稳定目�?模拟国家队干预行�?
+**璁捐鐞嗗康**: 鍩轰簬鏀跨瓥淇″彿鍜屽競鍦虹ǔ瀹氱洰鏍?妯℃嫙鍥藉闃熷共棰勮涓?
 ```python
 class NationalTeamAgent(BaseAgent):
-    """国家队智能体
+    """鍥藉闃熸櫤鑳戒綋
     
-    索引: AGENT.NATIONAL_TEAM.001
-    职责: 模拟国家�?证金、汇金、社�?的市场干预行�?    特点: 政策驱动、市场稳定目标、长期持�?    
-    行为模式:
-    1. 市场暴跌时买入蓝筹股稳定市场
-    2. 市场过热时适度减持降温
-    3. 重大政策出台时配合政策方�?    4. 长期持有,不频繁交�?    """
+    绱㈠紩: AGENT.NATIONAL_TEAM.001
+    鑱岃矗: 妯℃嫙鍥藉闃?璇侀噾銆佹眹閲戙€佺ぞ淇?鐨勫競鍦哄共棰勮涓?    鐗圭偣: 鏀跨瓥椹卞姩銆佸競鍦虹ǔ瀹氱洰鏍囥€侀暱鏈熸寔鏈?    
+    琛屼负妯″紡:
+    1. 甯傚満鏆磋穼鏃朵拱鍏ヨ摑绛硅偂绋冲畾甯傚満
+    2. 甯傚満杩囩儹鏃堕€傚害鍑忔寔闄嶆俯
+    3. 閲嶅ぇ鏀跨瓥鍑哄彴鏃堕厤鍚堟斂绛栨柟鍚?    4. 闀挎湡鎸佹湁,涓嶉绻佷氦鏄?    """
     
     def __init__(self, config: NationalTeamConfig):
         self.config = config
         self.policy_signal_detector = PolicySignalDetector()
         self.market_stability_monitor = MarketStabilityMonitor()
-        self.decision_engine = RuleBasedDecisionEngine()  # 规则引擎
-        self.llm_assistant = GLM47Flash()  # LLM辅助决策
+        self.decision_engine = RuleBasedDecisionEngine()  # 瑙勫垯寮曟搸
+        self.llm_assistant = GLM47Flash()  # LLM杈呭姪鍐崇瓥
         
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
-        """生成交易决策
+        """鐢熸垚浜ゆ槗鍐崇瓥
         
-        决策流程:
-        1. 检测政策信�?        2. 评估市场稳定�?        3. 规则引擎生成基础决策
-        4. LLM优化决策理由
-        5. 返回最终决�?        """
-        # 1. 检测政策信�?        policy_signals = self.policy_signal_detector.detect(
+        鍐崇瓥娴佺▼:
+        1. 妫€娴嬫斂绛栦俊鍙?        2. 璇勪及甯傚満绋冲畾鎬?        3. 瑙勫垯寮曟搸鐢熸垚鍩虹鍐崇瓥
+        4. LLM浼樺寲鍐崇瓥鐞嗙敱
+        5. 杩斿洖鏈€缁堝喅绛?        """
+        # 1. 妫€娴嬫斂绛栦俊鍙?        policy_signals = self.policy_signal_detector.detect(
             news_data=market_state.news,
             macro_data=market_state.macro_indicators
         )
         
-        # 2. 评估市场稳定�?        stability_score = self.market_stability_monitor.evaluate(
+        # 2. 璇勪及甯傚満绋冲畾鎬?        stability_score = self.market_stability_monitor.evaluate(
             price_data=market_state.prices,
             volatility=market_state.volatility,
             sentiment=market_state.sentiment
         )
         
-        # 3. 规则引擎生成基础决策
+        # 3. 瑙勫垯寮曟搸鐢熸垚鍩虹鍐崇瓥
         base_decision = self.decision_engine.decide(
             policy_signals=policy_signals,
             stability_score=stability_score,
             market_state=market_state
         )
         
-        # 4. LLM优化决策理由
+        # 4. LLM浼樺寲鍐崇瓥鐞嗙敱
         reasoning = self.llm_assistant.generate_reasoning(
             decision=base_decision,
             context={
@@ -137,77 +137,77 @@ class NationalTeamAgent(BaseAgent):
         )
 ```
 
-**技术实�?*:
-- **规则引擎**: 70%权重(政策信号、市场稳定性指�?
-- **LLM辅助**: 30%权重(决策理由生成、异常情况处�?
-- **数据�?*: 宏观政策新闻、市场波动率、蓝筹股资金流向
+**鎶€鏈疄鐜?*:
+- **瑙勫垯寮曟搸**: 70%鏉冮噸(鏀跨瓥淇″彿銆佸競鍦虹ǔ瀹氭€ф寚鏍?
+- **LLM杈呭姪**: 30%鏉冮噸(鍐崇瓥鐞嗙敱鐢熸垚銆佸紓甯告儏鍐靛鐞?
+- **鏁版嵁婧?*: 瀹忚鏀跨瓥鏂伴椈銆佸競鍦烘尝鍔ㄧ巼銆佽摑绛硅偂璧勯噾娴佸悜
 
-**参数配置**:
+**鍙傛暟閰嶇疆**:
 ```yaml
 national_team_agent:
   intervention_threshold:
-    market_drop: -0.05  # 市场下跌5%触发干预
-    volatility_spike: 2.0  # 波动率超�?倍标准差
-    sentiment_panic: -0.8  # 情绪指数低于-0.8
+    market_drop: -0.05  # 甯傚満涓嬭穼5%瑙﹀彂骞查
+    volatility_spike: 2.0  # 娉㈠姩鐜囪秴杩?鍊嶆爣鍑嗗樊
+    sentiment_panic: -0.8  # 鎯呯华鎸囨暟浣庝簬-0.8
   
   target_stocks:
-    - category: "蓝筹�?
+    - category: "钃濈鑲?
       weight: 0.6
-    - category: "金融�?
+    - category: "閲戣瀺鑲?
       weight: 0.3
-    - category: "政策支持板块"
+    - category: "鏀跨瓥鏀寔鏉垮潡"
       weight: 0.1
   
   position_limit:
-    max_single_stock: 0.05  # 单只股票最大持�?%
-    max_total: 0.15  # 总持仓最�?5%
+    max_single_stock: 0.05  # 鍗曞彧鑲＄エ鏈€澶ф寔浠?%
+    max_total: 0.15  # 鎬绘寔浠撴渶澶?5%
   
   holding_period:
-    min_days: 90  # 最小持�?0�?    avg_days: 180  # 平均持有180�?```
+    min_days: 90  # 鏈€灏忔寔鏈?0澶?    avg_days: 180  # 骞冲潎鎸佹湁180澶?```
 
-#### 2.3.2 主力/游资智能�?(Institutional/Hot Money Agent)
+#### 2.3.2 涓诲姏/娓歌祫鏅鸿兘浣?(Institutional/Hot Money Agent)
 
-**设计理念**: 基于资金优势和信息优�?模拟主力操盘行为
+**璁捐鐞嗗康**: 鍩轰簬璧勯噾浼樺娍鍜屼俊鎭紭鍔?妯℃嫙涓诲姏鎿嶇洏琛屼负
 
 ```python
 class InstitutionalAgent(BaseAgent):
-    """主力/游资智能�?    
-    索引: AGENT.INSTITUTIONAL.001
-    职责: 模拟主力资金(机构、游�?的操盘行�?    特点: 资金优势、信息优势、操盘策�?    
-    行为模式:
-    1. 吸筹阶段: 低位缓慢建仓,控制价格波动
-    2. 洗盘阶段: 震荡洗出散户,提高持仓成本
-    3. 拉升阶段: 快速拉�?吸引散户跟风
-    4. 出货阶段: 高位震荡出货,制造假突破
+    """涓诲姏/娓歌祫鏅鸿兘浣?    
+    绱㈠紩: AGENT.INSTITUTIONAL.001
+    鑱岃矗: 妯℃嫙涓诲姏璧勯噾(鏈烘瀯銆佹父璧?鐨勬搷鐩樿涓?    鐗圭偣: 璧勯噾浼樺娍銆佷俊鎭紭鍔裤€佹搷鐩樼瓥鐣?    
+    琛屼负妯″紡:
+    1. 鍚哥闃舵: 浣庝綅缂撴參寤轰粨,鎺у埗浠锋牸娉㈠姩
+    2. 娲楃洏闃舵: 闇囪崱娲楀嚭鏁ｆ埛,鎻愰珮鎸佷粨鎴愭湰
+    3. 鎷夊崌闃舵: 蹇€熸媺鍗?鍚稿紩鏁ｆ埛璺熼
+    4. 鍑鸿揣闃舵: 楂樹綅闇囪崱鍑鸿揣,鍒堕€犲亣绐佺牬
     """
     
     def __init__(self, config: InstitutionalConfig):
         self.config = config
-        self.rl_model = SACAgent()  # Soft Actor-Critic强化学习
-        self.llm_strategist = GLM47Flash()  # LLM策略生成
+        self.rl_model = SACAgent()  # Soft Actor-Critic寮哄寲瀛︿範
+        self.llm_strategist = GLM47Flash()  # LLM绛栫暐鐢熸垚
         self.market_microstructure_analyzer = MarketMicrostructureAnalyzer()
         self.sentiment_analyzer = SentimentAnalyzer()
         
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
-        """生成交易决策
+        """鐢熸垚浜ゆ槗鍐崇瓥
         
-        决策流程:
-        1. 分析市场微观结构
-        2. RL模型生成基础动作
-        3. LLM优化策略
-        4. 返回最终决�?        """
-        # 1. 分析市场微观结构
+        鍐崇瓥娴佺▼:
+        1. 鍒嗘瀽甯傚満寰缁撴瀯
+        2. RL妯″瀷鐢熸垚鍩虹鍔ㄤ綔
+        3. LLM浼樺寲绛栫暐
+        4. 杩斿洖鏈€缁堝喅绛?        """
+        # 1. 鍒嗘瀽甯傚満寰缁撴瀯
         microstructure = self.market_microstructure_analyzer.analyze(
             order_book=market_state.order_book,
             trade_flow=market_state.trade_flow,
             liquidity=market_state.liquidity
         )
         
-        # 2. RL模型生成基础动作
+        # 2. RL妯″瀷鐢熸垚鍩虹鍔ㄤ綔
         state_vector = self._build_state_vector(market_state, microstructure)
         rl_action = self.rl_model.act(state_vector)
         
-        # 3. LLM优化策略
+        # 3. LLM浼樺寲绛栫暐
         strategy = self.llm_strategist.optimize_strategy(
             rl_action=rl_action,
             market_state=market_state,
@@ -225,43 +225,43 @@ class InstitutionalAgent(BaseAgent):
         )
     
     def _build_state_vector(self, market_state, microstructure) -> np.ndarray:
-        """构建状态向�?        
-        状态维�?
-        1. 价格相关: 收益率、波动率、动�?        2. 成交量相�? 换手率、量价关�?        3. 订单簿相�? 买卖盘比例、订单不平衡
-        4. 资金流向: 主力资金净流入、散户资金净流入
-        5. 情绪指标: 舆情得分、市场热�?        6. 持仓状�? 当前仓位、盈亏比�?        """
+        """鏋勫缓鐘舵€佸悜閲?        
+        鐘舵€佺淮搴?
+        1. 浠锋牸鐩稿叧: 鏀剁泭鐜囥€佹尝鍔ㄧ巼銆佸姩閲?        2. 鎴愪氦閲忕浉鍏? 鎹㈡墜鐜囥€侀噺浠峰叧绯?        3. 璁㈠崟绨跨浉鍏? 涔板崠鐩樻瘮渚嬨€佽鍗曚笉骞宠　
+        4. 璧勯噾娴佸悜: 涓诲姏璧勯噾鍑€娴佸叆銆佹暎鎴疯祫閲戝噣娴佸叆
+        5. 鎯呯华鎸囨爣: 鑸嗘儏寰楀垎銆佸競鍦虹儹搴?        6. 鎸佷粨鐘舵€? 褰撳墠浠撲綅銆佺泩浜忔瘮渚?        """
         features = []
         
-        # 价格特征
+        # 浠锋牸鐗瑰緛
         features.append(market_state.returns)
         features.append(market_state.volatility)
         features.append(market_state.momentum)
         
-        # 成交量特�?        features.append(market_state.turnover_rate)
+        # 鎴愪氦閲忕壒寰?        features.append(market_state.turnover_rate)
         features.append(market_state.volume_price_correlation)
         
-        # 订单簿特�?        features.append(microstructure.bid_ask_imbalance)
+        # 璁㈠崟绨跨壒寰?        features.append(microstructure.bid_ask_imbalance)
         features.append(microstructure.order_book_depth)
         
-        # 资金流向
+        # 璧勯噾娴佸悜
         features.append(market_state.institutional_flow)
         features.append(market_state.retail_flow)
         
-        # 情绪指标
+        # 鎯呯华鎸囨爣
         features.append(market_state.sentiment_score)
         features.append(market_state.market_heat)
         
-        # 持仓状�?        features.append(self.portfolio.position_ratio)
+        # 鎸佷粨鐘舵€?        features.append(self.portfolio.position_ratio)
         features.append(self.portfolio.pnl_ratio)
         
         return np.array(features)
 ```
 
-**技术实�?*:
-- **强化学习**: 60%权重(SAC算法,学习最优操盘策�?
-- **LLM策略**: 40%权重(策略优化、异常情况处�?
-- **训练数据**: 龙虎榜历史数据、Level-2行情、资金流向数�?
-**参数配置**:
+**鎶€鏈疄鐜?*:
+- **寮哄寲瀛︿範**: 60%鏉冮噸(SAC绠楁硶,瀛︿範鏈€浼樻搷鐩樼瓥鐣?
+- **LLM绛栫暐**: 40%鏉冮噸(绛栫暐浼樺寲銆佸紓甯告儏鍐靛鐞?
+- **璁粌鏁版嵁**: 榫欒檸姒滃巻鍙叉暟鎹€丩evel-2琛屾儏銆佽祫閲戞祦鍚戞暟鎹?
+**鍙傛暟閰嶇疆**:
 ```yaml
 institutional_agent:
   strategy_phases:
@@ -300,18 +300,18 @@ institutional_agent:
     tau: 0.005
 ```
 
-#### 2.3.3 散户智能�?(Retail Investor Agent)
+#### 2.3.3 鏁ｆ埛鏅鸿兘浣?(Retail Investor Agent)
 
-**设计理念**: 基于行为金融学理�?模拟散户羊群效应和情绪驱动行�?
+**璁捐鐞嗗康**: 鍩轰簬琛屼负閲戣瀺瀛︾悊璁?妯℃嫙鏁ｆ埛缇婄兢鏁堝簲鍜屾儏缁┍鍔ㄨ涓?
 ```python
 class RetailInvestorAgent(BaseAgent):
-    """散户智能�?    
-    索引: AGENT.RETAIL.001
-    职责: 模拟散户投资者的交易行为
-    特点: 羊群效应、情绪驱动、追涨杀�?    
-    行为模式:
-    1. 羊群效应: 跟随主流资金和热点题�?    2. 过度自信: 高估自己的判断能�?    3. 损失厌恶: 过早卖出盈利股票,过久持有亏损股票
-    4. 处置效应: 倾向于实现收�?避免实现损失
+    """鏁ｆ埛鏅鸿兘浣?    
+    绱㈠紩: AGENT.RETAIL.001
+    鑱岃矗: 妯℃嫙鏁ｆ埛鎶曡祫鑰呯殑浜ゆ槗琛屼负
+    鐗圭偣: 缇婄兢鏁堝簲銆佹儏缁┍鍔ㄣ€佽拷娑ㄦ潃璺?    
+    琛屼负妯″紡:
+    1. 缇婄兢鏁堝簲: 璺熼殢涓绘祦璧勯噾鍜岀儹鐐归鏉?    2. 杩囧害鑷俊: 楂樹及鑷繁鐨勫垽鏂兘鍔?    3. 鎹熷け鍘屾伓: 杩囨棭鍗栧嚭鐩堝埄鑲＄エ,杩囦箙鎸佹湁浜忔崯鑲＄エ
+    4. 澶勭疆鏁堝簲: 鍊惧悜浜庡疄鐜版敹鐩?閬垮厤瀹炵幇鎹熷け
     """
     
     def __init__(self, config: RetailInvestorConfig):
@@ -321,26 +321,26 @@ class RetailInvestorAgent(BaseAgent):
         self.herding_detector = HerdingDetector()
         
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
-        """生成交易决策
+        """鐢熸垚浜ゆ槗鍐崇瓥
         
-        决策流程:
-        1. 分析市场情绪
-        2. 检测羊群行�?        3. 行为金融模型生成决策
-        4. 返回最终决�?        """
-        # 1. 分析市场情绪
+        鍐崇瓥娴佺▼:
+        1. 鍒嗘瀽甯傚満鎯呯华
+        2. 妫€娴嬬緤缇よ涓?        3. 琛屼负閲戣瀺妯″瀷鐢熸垚鍐崇瓥
+        4. 杩斿洖鏈€缁堝喅绛?        """
+        # 1. 鍒嗘瀽甯傚満鎯呯华
         sentiment = self.sentiment_analyzer.analyze(
             news=market_state.news,
             social_media=market_state.social_media,
             search_trends=market_state.search_trends
         )
         
-        # 2. 检测羊群行�?        herding_signals = self.herding_detector.detect(
+        # 2. 妫€娴嬬緤缇よ涓?        herding_signals = self.herding_detector.detect(
             capital_flow=market_state.capital_flow,
             hot_sectors=market_state.hot_sectors,
             volume surge=market_state.volume_surge_stocks
         )
         
-        # 3. 行为金融模型生成决策
+        # 3. 琛屼负閲戣瀺妯″瀷鐢熸垚鍐崇瓥
         decision = self.behavioral_model.decide(
             sentiment=sentiment,
             herding_signals=herding_signals,
@@ -358,42 +358,42 @@ class RetailInvestorAgent(BaseAgent):
         )
 ```
 
-**技术实�?*:
-- **行为金融模型**: 80%权重(羊群效应、过度自信、损失厌�?
-- **情绪分析**: 20%权重(舆情、社交媒体、搜索趋�?
-- **数据�?*: 股吧、雪球、东方财富股吧、搜索指�?
-**参数配置**:
+**鎶€鏈疄鐜?*:
+- **琛屼负閲戣瀺妯″瀷**: 80%鏉冮噸(缇婄兢鏁堝簲銆佽繃搴﹁嚜淇°€佹崯澶卞帉鎭?
+- **鎯呯华鍒嗘瀽**: 20%鏉冮噸(鑸嗘儏銆佺ぞ浜ゅ獟浣撱€佹悳绱㈣秼鍔?
+- **鏁版嵁婧?*: 鑲″惂銆侀洩鐞冦€佷笢鏂硅储瀵岃偂鍚с€佹悳绱㈡寚鏁?
+**鍙傛暟閰嶇疆**:
 ```yaml
 retail_investor_agent:
   behavioral_biases:
-    herding_coefficient: 0.6  # 羊群效应强度
-    overconfidence: 0.4  # 过度自信程度
-    loss_aversion: 2.25  # 损失厌恶系数(标准�?
-    disposition_effect: 0.7  # 处置效应强度
+    herding_coefficient: 0.6  # 缇婄兢鏁堝簲寮哄害
+    overconfidence: 0.4  # 杩囧害鑷俊绋嬪害
+    loss_aversion: 2.25  # 鎹熷け鍘屾伓绯绘暟(鏍囧噯鍊?
+    disposition_effect: 0.7  # 澶勭疆鏁堝簲寮哄害
   
   sentiment_sensitivity:
-    positive_threshold: 0.3  # 正面情绪阈�?    negative_threshold: -0.3  # 负面情绪阈�?    reaction_delay: [0, 3]  # 反应延迟(�?
+    positive_threshold: 0.3  # 姝ｉ潰鎯呯华闃堝€?    negative_threshold: -0.3  # 璐熼潰鎯呯华闃堝€?    reaction_delay: [0, 3]  # 鍙嶅簲寤惰繜(澶?
   
   trading_pattern:
     holding_period:
-      profit: [1, 10]  # 盈利股票持有1-10�?      loss: [10, 60]  # 亏损股票持有10-60�?    
+      profit: [1, 10]  # 鐩堝埄鑲＄エ鎸佹湁1-10澶?      loss: [10, 60]  # 浜忔崯鑲＄エ鎸佹湁10-60澶?    
     position_sizing:
-      method: "all_in"  # 散户倾向于全�?      max_stocks: 5  # 最多持�?只股�?    
+      method: "all_in"  # 鏁ｆ埛鍊惧悜浜庡叏浠?      max_stocks: 5  # 鏈€澶氭寔鏈?鍙偂绁?    
     stop_loss_take_profit:
-      stop_loss: -0.20  # 止损�?20%
-      take_profit: 0.30  # 止盈�?0%
-      execution_rate: 0.3  # 执行�?0%(散户纪律性差)
+      stop_loss: -0.20  # 姝㈡崯绾?20%
+      take_profit: 0.30  # 姝㈢泩绾?0%
+      execution_rate: 0.3  # 鎵ц鐜?0%(鏁ｆ埛绾緥鎬у樊)
 ```
 
-### 2.4 市场模拟引擎设计
+### 2.4 甯傚満妯℃嫙寮曟搸璁捐
 
 ```python
 class MarketSimulationEngine:
-    """市场模拟引擎
+    """甯傚満妯℃嫙寮曟搸
     
-    索引: ENGINE.MARKET_SIM.001
-    职责: 整合三类智能�?模拟市场交易过程
-    特点: 订单簿驱动、价格发现机制、市场冲击模�?    """
+    绱㈠紩: ENGINE.MARKET_SIM.001
+    鑱岃矗: 鏁村悎涓夌被鏅鸿兘浣?妯℃嫙甯傚満浜ゆ槗杩囩▼
+    鐗圭偣: 璁㈠崟绨块┍鍔ㄣ€佷环鏍煎彂鐜版満鍒躲€佸競鍦哄啿鍑绘ā鍨?    """
     
     def __init__(self, config: MarketSimConfig):
         self.config = config
@@ -409,42 +409,42 @@ class MarketSimulationEngine:
     def simulate_market(self, 
                        initial_state: MarketState,
                        simulation_steps: int = 100) -> SimulationResult:
-        """模拟市场交易
+        """妯℃嫙甯傚満浜ゆ槗
         
-        模拟流程:
-        1. 初始化市场状�?        2. 各智能体生成交易决策
-        3. 订单提交到订单簿
-        4. 价格发现机制撮合交易
-        5. 更新市场状�?        6. 重复步骤2-5
-        7. 返回模拟结果
+        妯℃嫙娴佺▼:
+        1. 鍒濆鍖栧競鍦虹姸鎬?        2. 鍚勬櫤鑳戒綋鐢熸垚浜ゆ槗鍐崇瓥
+        3. 璁㈠崟鎻愪氦鍒拌鍗曠翱
+        4. 浠锋牸鍙戠幇鏈哄埗鎾悎浜ゆ槗
+        5. 鏇存柊甯傚満鐘舵€?        6. 閲嶅姝ラ2-5
+        7. 杩斿洖妯℃嫙缁撴灉
         """
         market_state = initial_state
         simulation_history = []
         
         for step in range(simulation_steps):
-            # 1. 各智能体生成交易决策
+            # 1. 鍚勬櫤鑳戒綋鐢熸垚浜ゆ槗鍐崇瓥
             agent_decisions = {}
             for agent_name, agent in self.agents.items():
                 decision = agent.generate_trading_decision(market_state)
                 agent_decisions[agent_name] = decision
             
-            # 2. 订单提交到订单簿
+            # 2. 璁㈠崟鎻愪氦鍒拌鍗曠翱
             for agent_name, decision in agent_decisions.items():
                 orders = self._convert_decision_to_orders(decision)
                 for order in orders:
                     self.order_book.submit_order(order)
             
-            # 3. 价格发现机制撮合交易
+            # 3. 浠锋牸鍙戠幇鏈哄埗鎾悎浜ゆ槗
             trades = self.price_discovery.match_orders(self.order_book)
             
-            # 4. 计算市场冲击
+            # 4. 璁＄畻甯傚満鍐插嚮
             market_impact = self.market_impact.calculate(trades, market_state)
             
-            # 5. 更新市场状�?            market_state = self._update_market_state(
+            # 5. 鏇存柊甯傚満鐘舵€?            market_state = self._update_market_state(
                 market_state, trades, market_impact
             )
             
-            # 6. 记录历史
+            # 6. 璁板綍鍘嗗彶
             simulation_history.append({
                 'step': step,
                 'market_state': market_state,
@@ -460,28 +460,28 @@ class MarketSimulationEngine:
         )
 ```
 
-#### 2.4.1 订单撮合算法设计 �?**IMP-001补充**
+#### 2.4.1 璁㈠崟鎾悎绠楁硶璁捐 猸?**IMP-001琛ュ厖**
 
-**算法原理**: 价格优先、时间优�?
+**绠楁硶鍘熺悊**: 浠锋牸浼樺厛銆佹椂闂翠紭鍏?
 ```python
 class OrderMatchingAlgorithm:
-    """订单撮合算法
+    """璁㈠崟鎾悎绠楁硶
     
-    索引: ALGORITHM.ORDER_MATCHING.001
-    原理: 价格优先、时间优�?    复杂�? O(n log n) - n为订单数�?    """
+    绱㈠紩: ALGORITHM.ORDER_MATCHING.001
+    鍘熺悊: 浠锋牸浼樺厛銆佹椂闂翠紭鍏?    澶嶆潅搴? O(n log n) - n涓鸿鍗曟暟閲?    """
     
     def match_orders(self, order_book: OrderBook) -> List[Trade]:
-        """撮合订单
+        """鎾悎璁㈠崟
         
-        撮合规则:
-        1. 价格优先: 买单价格高者优先，卖单价格低者优�?        2. 时间优先: 同价格时，先提交的订单优�?        3. 撮合条件: 买一�?�?卖一�?        
-        算法流程:
-        1. 对买单按价格降序排序（价格相同按时间升序�?        2. 对卖单按价格升序排序（价格相同按时间升序�?        3. 取买一和卖一进行撮合
-        4. 如果买一�?�?卖一价，则成�?        5. 成交价格 = min(买一�? 卖一�? 前一笔成交价)
-        6. 更新订单簿，重复步骤3-5
+        鎾悎瑙勫垯:
+        1. 浠锋牸浼樺厛: 涔板崟浠锋牸楂樿€呬紭鍏堬紝鍗栧崟浠锋牸浣庤€呬紭鍏?        2. 鏃堕棿浼樺厛: 鍚屼环鏍兼椂锛屽厛鎻愪氦鐨勮鍗曚紭鍏?        3. 鎾悎鏉′欢: 涔颁竴浠?鈮?鍗栦竴浠?        
+        绠楁硶娴佺▼:
+        1. 瀵逛拱鍗曟寜浠锋牸闄嶅簭鎺掑簭锛堜环鏍肩浉鍚屾寜鏃堕棿鍗囧簭锛?        2. 瀵瑰崠鍗曟寜浠锋牸鍗囧簭鎺掑簭锛堜环鏍肩浉鍚屾寜鏃堕棿鍗囧簭锛?        3. 鍙栦拱涓€鍜屽崠涓€杩涜鎾悎
+        4. 濡傛灉涔颁竴浠?鈮?鍗栦竴浠凤紝鍒欐垚浜?        5. 鎴愪氦浠锋牸 = min(涔颁竴浠? 鍗栦竴浠? 鍓嶄竴绗旀垚浜や环)
+        6. 鏇存柊璁㈠崟绨匡紝閲嶅姝ラ3-5
         
-        返回:
-            List[Trade]: 成交记录列表
+        杩斿洖:
+            List[Trade]: 鎴愪氦璁板綍鍒楄〃
         """
         trades = []
         
@@ -510,49 +510,49 @@ class OrderMatchingAlgorithm:
         return trades
     
     def _get_last_trade_price(self) -> float:
-        """获取最后一笔成交价�?""
+        """鑾峰彇鏈€鍚庝竴绗旀垚浜や环鏍?""
         pass
 ```
 
-**算法复杂度分�?*:
-- **时间复杂�?*: O(n log n) - 排序订单�?- **空间复杂�?*: O(n) - 存储订单�?- **撮合速度**: < 1ms per 1000 orders
+**绠楁硶澶嶆潅搴﹀垎鏋?*:
+- **鏃堕棿澶嶆潅搴?*: O(n log n) - 鎺掑簭璁㈠崟绨?- **绌洪棿澶嶆潅搴?*: O(n) - 瀛樺偍璁㈠崟绨?- **鎾悎閫熷害**: < 1ms per 1000 orders
 
-**参数配置**:
+**鍙傛暟閰嶇疆**:
 ```yaml
 order_matching:
-  price_tick: 0.01  # 最小价格变动单�?  volume_tick: 100  # 最小成交量单位
-  max_orders_per_match: 10000  # 单次撮合最大订单数
-  match_interval_ms: 100  # 撮合间隔（毫秒）
+  price_tick: 0.01  # 鏈€灏忎环鏍煎彉鍔ㄥ崟浣?  volume_tick: 100  # 鏈€灏忔垚浜ら噺鍗曚綅
+  max_orders_per_match: 10000  # 鍗曟鎾悎鏈€澶ц鍗曟暟
+  match_interval_ms: 100  # 鎾悎闂撮殧锛堟绉掞級
 ```
 
-#### 2.4.2 价格发现算法设计 �?**IMP-001补充**
+#### 2.4.2 浠锋牸鍙戠幇绠楁硶璁捐 猸?**IMP-001琛ュ厖**
 
-**算法原理**: 基于订单簿的均衡价格计算
+**绠楁硶鍘熺悊**: 鍩轰簬璁㈠崟绨跨殑鍧囪　浠锋牸璁＄畻
 
 ```python
 class PriceDiscoveryAlgorithm:
-    """价格发现算法
+    """浠锋牸鍙戠幇绠楁硶
     
-    索引: ALGORITHM.PRICE_DISCOVERY.001
-    原理: 基于订单簿供需平衡计算均衡价格
-    复杂�? O(n) - n为价格档位数�?    """
+    绱㈠紩: ALGORITHM.PRICE_DISCOVERY.001
+    鍘熺悊: 鍩轰簬璁㈠崟绨夸緵闇€骞宠　璁＄畻鍧囪　浠锋牸
+    澶嶆潅搴? O(n) - n涓轰环鏍兼。浣嶆暟閲?    """
     
     def discover_equilibrium_price(self, order_book: OrderBook) -> EquilibriumPrice:
-        """发现均衡价格
+        """鍙戠幇鍧囪　浠锋牸
         
-        算法原理:
-        1. 收集所有智能体的买卖订�?        2. 构建虚拟订单簿（买盘和卖盘）
-        3. 计算每个价格档位的累积供需
-        4. 找到供需平衡点（累积买量 �?累积卖量�?        5. 均衡价格 = 供需平衡点对应的价格
+        绠楁硶鍘熺悊:
+        1. 鏀堕泦鎵€鏈夋櫤鑳戒綋鐨勪拱鍗栬鍗?        2. 鏋勫缓铏氭嫙璁㈠崟绨匡紙涔扮洏鍜屽崠鐩橈級
+        3. 璁＄畻姣忎釜浠锋牸妗ｄ綅鐨勭疮绉緵闇€
+        4. 鎵惧埌渚涢渶骞宠　鐐癸紙绱Н涔伴噺 鈮?绱Н鍗栭噺锛?        5. 鍧囪　浠锋牸 = 渚涢渶骞宠　鐐瑰搴旂殑浠锋牸
         
-        数学模型:
-        - 买盘累积: B(p) = Σ buy_volume where buy_price �?p
-        - 卖盘累积: S(p) = Σ sell_volume where sell_price �?p
-        - 均衡条件: |B(p*) - S(p*)| �?min
-        - 均衡价格: p* = argmin |B(p) - S(p)|
+        鏁板妯″瀷:
+        - 涔扮洏绱Н: B(p) = 危 buy_volume where buy_price 鈮?p
+        - 鍗栫洏绱Н: S(p) = 危 sell_volume where sell_price 鈮?p
+        - 鍧囪　鏉′欢: |B(p*) - S(p*)| 鈫?min
+        - 鍧囪　浠锋牸: p* = argmin |B(p) - S(p)|
         
-        返回:
-            EquilibriumPrice: 均衡价格对象
+        杩斿洖:
+            EquilibriumPrice: 鍧囪　浠锋牸瀵硅薄
         """
         price_levels = self._get_price_levels(order_book)
         
@@ -579,8 +579,8 @@ class PriceDiscoveryAlgorithm:
         )
     
     def _calculate_confidence(self, equilibrium: dict) -> float:
-        """计算均衡价格置信�?        
-        置信�?= 1 - (imbalance / total_volume)
+        """璁＄畻鍧囪　浠锋牸缃俊搴?        
+        缃俊搴?= 1 - (imbalance / total_volume)
         """
         total_volume = equilibrium['buy_volume'] + equilibrium['sell_volume']
         if total_volume == 0:
@@ -588,50 +588,50 @@ class PriceDiscoveryAlgorithm:
         return 1.0 - (equilibrium['imbalance'] / total_volume)
 ```
 
-**算法复杂度分�?*:
-- **时间复杂�?*: O(n) - n为价格档位数�?- **空间复杂�?*: O(n) - 存储价格档位
-- **计算速度**: < 10ms per 100 price levels
+**绠楁硶澶嶆潅搴﹀垎鏋?*:
+- **鏃堕棿澶嶆潅搴?*: O(n) - n涓轰环鏍兼。浣嶆暟閲?- **绌洪棿澶嶆潅搴?*: O(n) - 瀛樺偍浠锋牸妗ｄ綅
+- **璁＄畻閫熷害**: < 10ms per 100 price levels
 
-**参数配置**:
+**鍙傛暟閰嶇疆**:
 ```yaml
 price_discovery:
-  price_range: 0.10  # 价格搜索范围（�?0%�?  price_step: 0.001  # 价格搜索步长�?.1%�?  min_confidence: 0.7  # 最小置信度阈�?  max_iterations: 100  # 最大迭代次�?```
+  price_range: 0.10  # 浠锋牸鎼滅储鑼冨洿锛埪?0%锛?  price_step: 0.001  # 浠锋牸鎼滅储姝ラ暱锛?.1%锛?  min_confidence: 0.7  # 鏈€灏忕疆淇″害闃堝€?  max_iterations: 100  # 鏈€澶ц凯浠ｆ鏁?```
 
-#### 2.4.3 博弈均衡算法设计 �?**IMP-001补充**
+#### 2.4.3 鍗氬紙鍧囪　绠楁硶璁捐 猸?**IMP-001琛ュ厖**
 
-**算法原理**: 纳什均衡求解
+**绠楁硶鍘熺悊**: 绾充粈鍧囪　姹傝В
 
 ```python
 class GameEquilibriumAlgorithm:
-    """博弈均衡算法
+    """鍗氬紙鍧囪　绠楁硶
     
-    索引: ALGORITHM.GAME_EQUILIBRIUM.001
-    原理: 多智能体博弈的纳什均衡求解
-    复杂�? O(n^m) - n为策略数，m为智能体�?    """
+    绱㈠紩: ALGORITHM.GAME_EQUILIBRIUM.001
+    鍘熺悊: 澶氭櫤鑳戒綋鍗氬紙鐨勭撼浠€鍧囪　姹傝В
+    澶嶆潅搴? O(n^m) - n涓虹瓥鐣ユ暟锛宮涓烘櫤鑳戒綋鏁?    """
     
     def find_nash_equilibrium(self, 
                              agents: List[Agent],
                              market_state: MarketState) -> NashEquilibrium:
-        """求解纳什均衡
+        """姹傝В绾充粈鍧囪　
         
-        算法原理:
-        1. 定义每个智能体的策略空间
-        2. 计算每个智能体的支付函数（收益函数）
-        3. 迭代求解最优响应策�?        4. 收敛到纳什均衡
+        绠楁硶鍘熺悊:
+        1. 瀹氫箟姣忎釜鏅鸿兘浣撶殑绛栫暐绌洪棿
+        2. 璁＄畻姣忎釜鏅鸿兘浣撶殑鏀粯鍑芥暟锛堟敹鐩婂嚱鏁帮級
+        3. 杩唬姹傝В鏈€浼樺搷搴旂瓥鐣?        4. 鏀舵暃鍒扮撼浠€鍧囪　
         
-        数学模型:
-        - 策略空间: S_i = {s_i1, s_i2, ..., s_in}
-        - 支付函数: u_i(s_i, s_{-i})
-        - 最优响�? BR_i(s_{-i}) = argmax u_i(s_i, s_{-i})
-        - 纳什均衡: s* = (s_1*, ..., s_m*) where s_i* = BR_i(s_{-i}*)
+        鏁板妯″瀷:
+        - 绛栫暐绌洪棿: S_i = {s_i1, s_i2, ..., s_in}
+        - 鏀粯鍑芥暟: u_i(s_i, s_{-i})
+        - 鏈€浼樺搷搴? BR_i(s_{-i}) = argmax u_i(s_i, s_{-i})
+        - 绾充粈鍧囪　: s* = (s_1*, ..., s_m*) where s_i* = BR_i(s_{-i}*)
         
-        迭代算法:
-        1. 初始�? 随机选择初始策略 s^0
-        2. 迭代: s_i^{t+1} = BR_i(s_{-i}^t)
-        3. 收敛: ||s^{t+1} - s^t|| < ε
+        杩唬绠楁硶:
+        1. 鍒濆鍖? 闅忔満閫夋嫨鍒濆绛栫暐 s^0
+        2. 杩唬: s_i^{t+1} = BR_i(s_{-i}^t)
+        3. 鏀舵暃: ||s^{t+1} - s^t|| < 蔚
         
-        返回:
-            NashEquilibrium: 纳什均衡对象
+        杩斿洖:
+            NashEquilibrium: 绾充粈鍧囪　瀵硅薄
         """
         strategies = {agent.agent_id: self._initialize_strategy(agent) 
                      for agent in agents}
@@ -666,8 +666,8 @@ class GameEquilibriumAlgorithm:
                            agent: Agent,
                            strategies: dict,
                            market_state: MarketState) -> Strategy:
-        """找到最优响应策�?        
-        方法: 遍历所有可能的策略，选择收益最大的
+        """鎵惧埌鏈€浼樺搷搴旂瓥鐣?        
+        鏂规硶: 閬嶅巻鎵€鏈夊彲鑳界殑绛栫暐锛岄€夋嫨鏀剁泭鏈€澶х殑
         """
         best_strategy = None
         best_payoff = float('-inf')
@@ -685,9 +685,9 @@ class GameEquilibriumAlgorithm:
                          strategy: Strategy,
                          other_strategies: dict,
                          market_state: MarketState) -> float:
-        """计算支付函数（收益）
+        """璁＄畻鏀粯鍑芥暟锛堟敹鐩婏級
         
-        收益 = 预期收益 - 风险成本 - 交易成本
+        鏀剁泭 = 棰勬湡鏀剁泭 - 椋庨櫓鎴愭湰 - 浜ゆ槗鎴愭湰
         """
         expected_return = self._calculate_expected_return(
             agent, strategy, other_strategies, market_state
@@ -698,169 +698,169 @@ class GameEquilibriumAlgorithm:
         return expected_return - risk_cost - transaction_cost
 ```
 
-**算法复杂度分�?*:
-- **时间复杂�?*: O(n^m * k) - n为策略数，m为智能体数，k为迭代次�?- **空间复杂�?*: O(n^m) - 存储策略组合
-- **收敛速度**: 通常10-50次迭代收�?
-**参数配置**:
+**绠楁硶澶嶆潅搴﹀垎鏋?*:
+- **鏃堕棿澶嶆潅搴?*: O(n^m * k) - n涓虹瓥鐣ユ暟锛宮涓烘櫤鑳戒綋鏁帮紝k涓鸿凯浠ｆ鏁?- **绌洪棿澶嶆潅搴?*: O(n^m) - 瀛樺偍绛栫暐缁勫悎
+- **鏀舵暃閫熷害**: 閫氬父10-50娆¤凯浠ｆ敹鏁?
+**鍙傛暟閰嶇疆**:
 ```yaml
 game_equilibrium:
-  max_iterations: 100  # 最大迭代次�?  convergence_threshold: 0.01  # 收敛阈�?  strategy_discretization: 10  # 策略离散化粒�?  payoff_calculation_method: "expected_return"  # 支付函数计算方法
+  max_iterations: 100  # 鏈€澶ц凯浠ｆ鏁?  convergence_threshold: 0.01  # 鏀舵暃闃堝€?  strategy_discretization: 10  # 绛栫暐绂绘暎鍖栫矑搴?  payoff_calculation_method: "expected_return"  # 鏀粯鍑芥暟璁＄畻鏂规硶
 ```
 
-**算法验证标准**:
-1. **收敛�?*: 算法必须�?00次迭代内收敛
-2. **稳定�?*: 均衡策略在扰动下保持稳定
-3. **有效�?*: 均衡策略的收益不低于非均衡策�?4. **效率**: 计算时间 < 10�?
+**绠楁硶楠岃瘉鏍囧噯**:
+1. **鏀舵暃鎬?*: 绠楁硶蹇呴』鍦?00娆¤凯浠ｅ唴鏀舵暃
+2. **绋冲畾鎬?*: 鍧囪　绛栫暐鍦ㄦ壈鍔ㄤ笅淇濇寔绋冲畾
+3. **鏈夋晥鎬?*: 鍧囪　绛栫暐鐨勬敹鐩婁笉浣庝簬闈炲潎琛＄瓥鐣?4. **鏁堢巼**: 璁＄畻鏃堕棿 < 10绉?
 ---
 
-## 🔌 三、接口定�?
-### 3.1 智能体统一接口
+## 馃攲 涓夈€佹帴鍙ｅ畾涔?
+### 3.1 鏅鸿兘浣撶粺涓€鎺ュ彛
 
 ```python
 class BaseAgent(ABC):
-    """智能体基�?    
-    索引: INTERFACE.AGENT.BASE.001
-    遵循: API_Contract.md 2.4�?    """
+    """鏅鸿兘浣撳熀绫?    
+    绱㈠紩: INTERFACE.AGENT.BASE.001
+    閬靛惊: API_Contract.md 2.4鑺?    """
     
     @abstractmethod
     def generate_trading_decision(self, market_state: MarketState) -> AgentDecision:
-        """生成交易决策
+        """鐢熸垚浜ゆ槗鍐崇瓥
         
-        参数:
-            market_state: 市场状态对�?            
-        返回:
-            AgentDecision: 智能体决策对�?        """
+        鍙傛暟:
+            market_state: 甯傚満鐘舵€佸璞?            
+        杩斿洖:
+            AgentDecision: 鏅鸿兘浣撳喅绛栧璞?        """
         pass
     
     @abstractmethod
     def update_portfolio(self, trade_result: TradeResult) -> None:
-        """更新持仓
+        """鏇存柊鎸佷粨
         
-        参数:
-            trade_result: 交易结果对象
+        鍙傛暟:
+            trade_result: 浜ゆ槗缁撴灉瀵硅薄
         """
         pass
     
     @abstractmethod
     def get_state(self) -> AgentState:
-        """获取智能体状�?        
-        返回:
-            AgentState: 智能体状态对�?        """
+        """鑾峰彇鏅鸿兘浣撶姸鎬?        
+        杩斿洖:
+            AgentState: 鏅鸿兘浣撶姸鎬佸璞?        """
         pass
 ```
 
-### 3.2 数据结构定义
+### 3.2 鏁版嵁缁撴瀯瀹氫箟
 
 ```python
 @dataclass
 class MarketState:
-    """市场状态数据结�?""
+    """甯傚満鐘舵€佹暟鎹粨鏋?""
     timestamp: datetime
-    prices: pd.DataFrame  # 股票价格数据
-    volumes: pd.DataFrame  # 成交量数�?    order_book: Dict[str, OrderBook]  # 订单簿数�?    trade_flow: pd.DataFrame  # 逐笔成交数据
-    capital_flow: pd.DataFrame  # 资金流向数据
-    sentiment: SentimentIndicators  # 情绪指标
-    news: List[NewsItem]  # 新闻数据
-    macro_indicators: Dict[str, float]  # 宏观指标
+    prices: pd.DataFrame  # 鑲＄エ浠锋牸鏁版嵁
+    volumes: pd.DataFrame  # 鎴愪氦閲忔暟鎹?    order_book: Dict[str, OrderBook]  # 璁㈠崟绨挎暟鎹?    trade_flow: pd.DataFrame  # 閫愮瑪鎴愪氦鏁版嵁
+    capital_flow: pd.DataFrame  # 璧勯噾娴佸悜鏁版嵁
+    sentiment: SentimentIndicators  # 鎯呯华鎸囨爣
+    news: List[NewsItem]  # 鏂伴椈鏁版嵁
+    macro_indicators: Dict[str, float]  # 瀹忚鎸囨爣
     
 @dataclass
 class AgentDecision:
-    """智能体决策数据结�?""
+    """鏅鸿兘浣撳喅绛栨暟鎹粨鏋?""
     action: str  # BUY/SELL/HOLD
-    target_stocks: List[str]  # 目标股票列表
-    position_size: Dict[str, float]  # 各股票仓位大�?    confidence: float  # 决策置信�?    reasoning: str  # 决策理由
-    agent_type: str  # 智能体类�?    timestamp: datetime  # 时间�?    
+    target_stocks: List[str]  # 鐩爣鑲＄エ鍒楄〃
+    position_size: Dict[str, float]  # 鍚勮偂绁ㄤ粨浣嶅ぇ灏?    confidence: float  # 鍐崇瓥缃俊搴?    reasoning: str  # 鍐崇瓥鐞嗙敱
+    agent_type: str  # 鏅鸿兘浣撶被鍨?    timestamp: datetime  # 鏃堕棿鎴?    
 @dataclass
 class SimulationResult:
-    """模拟结果数据结构"""
-    final_state: MarketState  # 最终市场状�?    history: List[Dict]  # 模拟历史
-    statistics: Dict[str, float]  # 统计指标
+    """妯℃嫙缁撴灉鏁版嵁缁撴瀯"""
+    final_state: MarketState  # 鏈€缁堝競鍦虹姸鎬?    history: List[Dict]  # 妯℃嫙鍘嗗彶
+    statistics: Dict[str, float]  # 缁熻鎸囨爣
 ```
 
-### 3.3 与现有系统集成接�?
+### 3.3 涓庣幇鏈夌郴缁熼泦鎴愭帴鍙?
 ```python
 class MarketParticipantSimulatorInterface:
-    """市场参与者模拟器接口
+    """甯傚満鍙備笌鑰呮ā鎷熷櫒鎺ュ彛
     
-    索引: INTERFACE.SIMULATOR.001
-    职责: 提供与现有系统的集成接口
+    绱㈠紩: INTERFACE.SIMULATOR.001
+    鑱岃矗: 鎻愪緵涓庣幇鏈夌郴缁熺殑闆嗘垚鎺ュ彛
     """
     
     def predict_market_state(self, 
                             current_state: MarketState,
                             prediction_horizon: int = 5) -> MarketStatePrediction:
-        """预测市场状�?        
-        参数:
-            current_state: 当前市场状�?            prediction_horizon: 预测时长(�?
+        """棰勬祴甯傚満鐘舵€?        
+        鍙傛暟:
+            current_state: 褰撳墠甯傚満鐘舵€?            prediction_horizon: 棰勬祴鏃堕暱(澶?
             
-        返回:
-            MarketStatePrediction: 市场状态预�?        """
+        杩斿洖:
+            MarketStatePrediction: 甯傚満鐘舵€侀娴?        """
         pass
     
     def predict_capital_flow(self, 
                             symbols: List[str],
                             date: str) -> CapitalFlowPrediction:
-        """预测资金流向
+        """棰勬祴璧勯噾娴佸悜
         
-        参数:
-            symbols: 股票代码列表
-            date: 交易日期
+        鍙傛暟:
+            symbols: 鑲＄エ浠ｇ爜鍒楄〃
+            date: 浜ゆ槗鏃ユ湡
             
-        返回:
-            CapitalFlowPrediction: 资金流向预测
+        杩斿洖:
+            CapitalFlowPrediction: 璧勯噾娴佸悜棰勬祴
         """
         pass
     
     def generate_risk_warning(self, 
                              market_state: MarketState) -> RiskWarning:
-        """生成风险预警
+        """鐢熸垚椋庨櫓棰勮
         
-        参数:
-            market_state: 市场状�?            
-        返回:
-            RiskWarning: 风险预警
+        鍙傛暟:
+            market_state: 甯傚満鐘舵€?            
+        杩斿洖:
+            RiskWarning: 椋庨櫓棰勮
         """
         pass
 ```
 
-### 3.4 因子输出格式定义 �?**IMP-002补充**
+### 3.4 鍥犲瓙杈撳嚭鏍煎紡瀹氫箟 猸?**IMP-002琛ュ厖**
 
-#### 3.4.1 因子数据格式
+#### 3.4.1 鍥犲瓙鏁版嵁鏍煎紡
 
-**格式选择**: Parquet + 元数据JSON
+**鏍煎紡閫夋嫨**: Parquet + 鍏冩暟鎹甁SON
 
-**选择理由**:
-- �?**Parquet**: 列式存储，压缩率高，查询速度�?- �?**JSON元数�?*: 易读易维护，支持嵌套结构
-- �?**兼容�?*: 与Layer 2因子库无缝集�?
+**閫夋嫨鐞嗙敱**:
+- 鉁?**Parquet**: 鍒楀紡瀛樺偍锛屽帇缂╃巼楂橈紝鏌ヨ閫熷害蹇?- 鉁?**JSON鍏冩暟鎹?*: 鏄撹鏄撶淮鎶わ紝鏀寔宓屽缁撴瀯
+- 鉁?**鍏煎鎬?*: 涓嶭ayer 2鍥犲瓙搴撴棤缂濋泦鎴?
 ```python
 @dataclass
 class FactorOutput:
-    """因子输出数据结构
+    """鍥犲瓙杈撳嚭鏁版嵁缁撴瀯
     
-    索引: FORMAT.FACTOR.OUTPUT.001
-    用�? Layer 2.5 �?Layer 2 因子输出
+    绱㈠紩: FORMAT.FACTOR.OUTPUT.001
+    鐢ㄩ€? Layer 2.5 鈫?Layer 2 鍥犲瓙杈撳嚭
     """
-    factor_name: str  # 因子名称
-    factor_id: str  # 因子ID (�? FACTOR.INSTITUTIONAL.001)
-    timestamp: datetime  # 时间�?    value: float  # 因子�?    confidence: float  # 置信�?[0, 1]
-    metadata: FactorMetadata  # 元数�?
+    factor_name: str  # 鍥犲瓙鍚嶇О
+    factor_id: str  # 鍥犲瓙ID (濡? FACTOR.INSTITUTIONAL.001)
+    timestamp: datetime  # 鏃堕棿鎴?    value: float  # 鍥犲瓙鍊?    confidence: float  # 缃俊搴?[0, 1]
+    metadata: FactorMetadata  # 鍏冩暟鎹?
 @dataclass
 class FactorMetadata:
-    """因子元数�?""
-    agent_type: str  # 智能体类�?    data_source: str  # 数据�?    calculation_method: str  # 计算方法
-    lookback_period: int  # 回溯�?    update_frequency: str  # 更新频率
-    factor_category: str  # 因子类别
-    factor_description: str  # 因子描述
+    """鍥犲瓙鍏冩暟鎹?""
+    agent_type: str  # 鏅鸿兘浣撶被鍨?    data_source: str  # 鏁版嵁婧?    calculation_method: str  # 璁＄畻鏂规硶
+    lookback_period: int  # 鍥炴函鏈?    update_frequency: str  # 鏇存柊棰戠巼
+    factor_category: str  # 鍥犲瓙绫诲埆
+    factor_description: str  # 鍥犲瓙鎻忚堪
 ```
 
-**存储格式示例**:
+**瀛樺偍鏍煎紡绀轰緥**:
 
 ```
 /factors/institutional_activity_factor/
-    ├── 2026-04-03.parquet  # 因子数据
-    └── metadata.json       # 元数�?```
+    鈹溾攢鈹€ 2026-04-03.parquet  # 鍥犲瓙鏁版嵁
+    鈹斺攢鈹€ metadata.json       # 鍏冩暟鎹?```
 
-**Parquet文件结构**:
+**Parquet鏂囦欢缁撴瀯**:
 ```
 | timestamp           | symbol    | factor_value | confidence |
 |---------------------|-----------|--------------|------------|
@@ -869,39 +869,39 @@ class FactorMetadata:
 | 2026-04-03 09:30:00 | 600000.SH | 0.88         | 0.92       |
 ```
 
-**元数据JSON示例**:
+**鍏冩暟鎹甁SON绀轰緥**:
 ```json
 {
-    "factor_name": "主力动向因子",
+    "factor_name": "涓诲姏鍔ㄥ悜鍥犲瓙",
     "factor_id": "FACTOR.INSTITUTIONAL.001",
     "agent_type": "InstitutionalAgent",
     "data_source": "iFind",
     "calculation_method": "RL+LLM",
     "lookback_period": 20,
     "update_frequency": "daily",
-    "factor_category": "资金流向",
-    "factor_description": "基于主力智能体行为预测的资金流向因子",
+    "factor_category": "璧勯噾娴佸悜",
+    "factor_description": "鍩轰簬涓诲姏鏅鸿兘浣撹涓洪娴嬬殑璧勯噾娴佸悜鍥犲瓙",
     "created_date": "2026-04-03",
     "version": "1.0.0"
 }
 ```
 
-#### 3.4.2 因子存储接口
+#### 3.4.2 鍥犲瓙瀛樺偍鎺ュ彛
 
 ```python
 class FactorStorageInterface:
-    """因子存储接口
+    """鍥犲瓙瀛樺偍鎺ュ彛
     
-    索引: INTERFACE.FACTOR.STORAGE.001
-    用�? Layer 2.5 �?Layer 2 因子库集�?    """
+    绱㈠紩: INTERFACE.FACTOR.STORAGE.001
+    鐢ㄩ€? Layer 2.5 鈫?Layer 2 鍥犲瓙搴撻泦鎴?    """
     
     def save_factor(self, factor_output: FactorOutput) -> bool:
-        """保存因子到因子库
+        """淇濆瓨鍥犲瓙鍒板洜瀛愬簱
         
-        存储路径: /factors/{factor_name}/{date}.parquet
+        瀛樺偍璺緞: /factors/{factor_name}/{date}.parquet
         
-        返回:
-            bool: 保存是否成功
+        杩斿洖:
+            bool: 淇濆瓨鏄惁鎴愬姛
         """
         pass
     
@@ -909,48 +909,48 @@ class FactorStorageInterface:
                    factor_id: str,
                    start_date: datetime,
                    end_date: datetime) -> pd.DataFrame:
-        """加载因子数据
+        """鍔犺浇鍥犲瓙鏁版嵁
         
-        返回:
-            pd.DataFrame: 因子数据
+        杩斿洖:
+            pd.DataFrame: 鍥犲瓙鏁版嵁
         """
         pass
     
     def get_factor_metadata(self, factor_id: str) -> FactorMetadata:
-        """获取因子元数�?""
+        """鑾峰彇鍥犲瓙鍏冩暟鎹?""
         pass
 ```
 
-#### 3.4.3 因子质量检查标�?
-| 检查项 | 标准 | 检查方�?|
+#### 3.4.3 鍥犲瓙璐ㄩ噺妫€鏌ユ爣鍑?
+| 妫€鏌ラ」 | 鏍囧噯 | 妫€鏌ユ柟娉?|
 |--------|------|---------|
-| **因子IC** | |IC| > 0.03 | IC分析 |
-| **因子覆盖�?* | > 80% | 覆盖率统�?|
-| **因子单调�?* | 单调递增/递减 | 分组测试 |
-| **因子稳定�?* | IC_IR > 0.5 | 稳定性测�?|
+| **鍥犲瓙IC** | |IC| > 0.03 | IC鍒嗘瀽 |
+| **鍥犲瓙瑕嗙洊鐜?* | > 80% | 瑕嗙洊鐜囩粺璁?|
+| **鍥犲瓙鍗曡皟鎬?* | 鍗曡皟閫掑/閫掑噺 | 鍒嗙粍娴嬭瘯 |
+| **鍥犲瓙绋冲畾鎬?* | IC_IR > 0.5 | 绋冲畾鎬ф祴璇?|
 
-### 3.5 信号输出格式定义 �?**IMP-003补充**
+### 3.5 淇″彿杈撳嚭鏍煎紡瀹氫箟 猸?**IMP-003琛ュ厖**
 
-#### 3.5.1 交易信号格式
+#### 3.5.1 浜ゆ槗淇″彿鏍煎紡
 
-**格式选择**: JSON + 时间�?+ 置信�?
+**鏍煎紡閫夋嫨**: JSON + 鏃堕棿鎴?+ 缃俊搴?
 ```python
 @dataclass
 class TradingSignal:
-    """交易信号数据结构
+    """浜ゆ槗淇″彿鏁版嵁缁撴瀯
     
-    索引: FORMAT.SIGNAL.OUTPUT.001
-    用�? Layer 2.5 �?Layer 5 策略执行�?    """
-    signal_id: str  # 信号ID
-    signal_type: SignalType  # 信号类型 (BUY/SELL/HOLD)
-    signal_strength: float  # 信号强度 [0, 1]
-    timestamp: datetime  # 时间�?    valid_until: datetime  # 有效�?    agent_source: str  # 智能体来�?    confidence: float  # 置信�?[0, 1]
-    target_symbols: List[str]  # 目标股票
-    reasoning: str  # 信号理由
-    risk_level: RiskLevel  # 风险等级
+    绱㈠紩: FORMAT.SIGNAL.OUTPUT.001
+    鐢ㄩ€? Layer 2.5 鈫?Layer 5 绛栫暐鎵ц灞?    """
+    signal_id: str  # 淇″彿ID
+    signal_type: SignalType  # 淇″彿绫诲瀷 (BUY/SELL/HOLD)
+    signal_strength: float  # 淇″彿寮哄害 [0, 1]
+    timestamp: datetime  # 鏃堕棿鎴?    valid_until: datetime  # 鏈夋晥鏈?    agent_source: str  # 鏅鸿兘浣撴潵婧?    confidence: float  # 缃俊搴?[0, 1]
+    target_symbols: List[str]  # 鐩爣鑲＄エ
+    reasoning: str  # 淇″彿鐞嗙敱
+    risk_level: RiskLevel  # 椋庨櫓绛夌骇
 
 class SignalType(Enum):
-    """信号类型枚举"""
+    """淇″彿绫诲瀷鏋氫妇"""
     BUY = "BUY"
     SELL = "SELL"
     HOLD = "HOLD"
@@ -958,14 +958,14 @@ class SignalType(Enum):
     STRONG_SELL = "STRONG_SELL"
 
 class RiskLevel(Enum):
-    """风险等级枚举"""
+    """椋庨櫓绛夌骇鏋氫妇"""
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
     EXTREME = "EXTREME"
 ```
 
-**JSON格式示例**:
+**JSON鏍煎紡绀轰緥**:
 ```json
 {
     "signal_id": "SIG_20260403_001",
@@ -976,7 +976,7 @@ class RiskLevel(Enum):
     "agent_source": "ForeignInvestorAgent",
     "confidence": 0.80,
     "target_symbols": ["000001.SZ", "600000.SH"],
-    "reasoning": "北向资金持续流入，汇率稳定，全球宏观评分上升",
+    "reasoning": "鍖楀悜璧勯噾鎸佺画娴佸叆锛屾眹鐜囩ǔ瀹氾紝鍏ㄧ悆瀹忚璇勫垎涓婂崌",
     "risk_level": "MEDIUM",
     "metadata": {
         "north_bound_flow": 1500000000,
@@ -986,25 +986,25 @@ class RiskLevel(Enum):
 }
 ```
 
-#### 3.5.2 决策输出格式
+#### 3.5.2 鍐崇瓥杈撳嚭鏍煎紡
 
 ```python
 @dataclass
 class PortfolioDecision:
-    """组合决策数据结构
+    """缁勫悎鍐崇瓥鏁版嵁缁撴瀯
     
-    索引: FORMAT.DECISION.OUTPUT.001
-    用�? Layer 2.5 �?Layer 6 组合优化�?    """
-    decision_id: str  # 决策ID
-    decision_type: DecisionType  # 决策类型
-    target_weights: Dict[str, float]  # 目标权重
-    confidence: float  # 置信�?[0, 1]
-    timestamp: datetime  # 时间�?    valid_until: datetime  # 有效�?    voting_result: Dict[str, float]  # 多智能体投票结果
-    risk_budget: RiskBudget  # 风险预算
-    constraints: DecisionConstraints  # 约束条件
+    绱㈠紩: FORMAT.DECISION.OUTPUT.001
+    鐢ㄩ€? Layer 2.5 鈫?Layer 6 缁勫悎浼樺寲灞?    """
+    decision_id: str  # 鍐崇瓥ID
+    decision_type: DecisionType  # 鍐崇瓥绫诲瀷
+    target_weights: Dict[str, float]  # 鐩爣鏉冮噸
+    confidence: float  # 缃俊搴?[0, 1]
+    timestamp: datetime  # 鏃堕棿鎴?    valid_until: datetime  # 鏈夋晥鏈?    voting_result: Dict[str, float]  # 澶氭櫤鑳戒綋鎶曠エ缁撴灉
+    risk_budget: RiskBudget  # 椋庨櫓棰勭畻
+    constraints: DecisionConstraints  # 绾︽潫鏉′欢
 
 class DecisionType(Enum):
-    """决策类型枚举"""
+    """鍐崇瓥绫诲瀷鏋氫妇"""
     PORTFOLIO_REBALANCE = "PORTFOLIO_REBALANCE"
     POSITION_ADJUST = "POSITION_ADJUST"
     RISK_REDUCTION = "RISK_REDUCTION"
@@ -1012,17 +1012,17 @@ class DecisionType(Enum):
 
 @dataclass
 class RiskBudget:
-    """风险预算"""
-    max_volatility: float  # 最大波动率
-    max_drawdown: float  # 最大回�?    max_sector_exposure: float  # 最大行业暴�?
+    """椋庨櫓棰勭畻"""
+    max_volatility: float  # 鏈€澶ф尝鍔ㄧ巼
+    max_drawdown: float  # 鏈€澶у洖鎾?    max_sector_exposure: float  # 鏈€澶ц涓氭毚闇?
 @dataclass
 class DecisionConstraints:
-    """决策约束"""
-    min_position_size: float  # 最小仓�?    max_position_size: float  # 最大仓�?    max_turnover: float  # 最大换手率
-    min_holding_period: int  # 最小持有期
+    """鍐崇瓥绾︽潫"""
+    min_position_size: float  # 鏈€灏忎粨浣?    max_position_size: float  # 鏈€澶т粨浣?    max_turnover: float  # 鏈€澶ф崲鎵嬬巼
+    min_holding_period: int  # 鏈€灏忔寔鏈夋湡
 ```
 
-**JSON格式示例**:
+**JSON鏍煎紡绀轰緥**:
 ```json
 {
     "decision_id": "DEC_20260403_001",
@@ -1057,155 +1057,155 @@ class DecisionConstraints:
 }
 ```
 
-#### 3.5.3 风险控制接口
+#### 3.5.3 椋庨櫓鎺у埗鎺ュ彛
 
 ```python
 class RiskControlInterface:
-    """风险控制接口
+    """椋庨櫓鎺у埗鎺ュ彛
     
-    索引: INTERFACE.RISK.CONTROL.001
-    用�? Layer 2.5 �?Layer 5 风险控制
+    绱㈠紩: INTERFACE.RISK.CONTROL.001
+    鐢ㄩ€? Layer 2.5 鈫?Layer 5 椋庨櫓鎺у埗
     """
     
     def check_risk_budget(self, 
                          decision: PortfolioDecision) -> RiskCheckResult:
-        """检查风险预�?        
-        返回:
-            RiskCheckResult: 风险检查结�?        """
+        """妫€鏌ラ闄╅绠?        
+        杩斿洖:
+            RiskCheckResult: 椋庨櫓妫€鏌ョ粨鏋?        """
         pass
     
     def apply_stop_loss(self, 
                        position: Position,
                        current_price: float) -> StopLossDecision:
-        """应用止损策略
+        """搴旂敤姝㈡崯绛栫暐
         
-        返回:
-            StopLossDecision: 止损决策
+        杩斿洖:
+            StopLossDecision: 姝㈡崯鍐崇瓥
         """
         pass
     
     def apply_take_profit(self,
                          position: Position,
                          current_price: float) -> TakeProfitDecision:
-        """应用止盈策略
+        """搴旂敤姝㈢泩绛栫暐
         
-        返回:
-            TakeProfitDecision: 止盈决策
+        杩斿洖:
+            TakeProfitDecision: 姝㈢泩鍐崇瓥
         """
         pass
 ```
 
 ---
 
-## 📊 四、数据模型与存储
+## 馃搳 鍥涖€佹暟鎹ā鍨嬩笌瀛樺偍
 
-### 4.1 数据存储方案
+### 4.1 鏁版嵁瀛樺偍鏂规
 
-| 数据类型 | 存储方案 | 更新频率 | 保留期限 |
+| 鏁版嵁绫诲瀷 | 瀛樺偍鏂规 | 鏇存柊棰戠巼 | 淇濈暀鏈熼檺 |
 |---------|---------|---------|---------|
-| **龙虎榜数�?* | MySQL + Parquet | 日度 | 3�?|
-| **Level-2行情** | HDF5 + Redis | 实时 | 3个月 |
-| **融资融券数据** | MySQL | 日度 | 3�?|
-| **新闻舆情数据** | MongoDB | 实时 | 1�?|
-| **智能体决策日�?* | MongoDB + Elasticsearch | 实时 | 6个月 |
-| **模拟结果数据** | Parquet + S3 | 按需 | 1�?|
+| **榫欒檸姒滄暟鎹?* | MySQL + Parquet | 鏃ュ害 | 3骞?|
+| **Level-2琛屾儏** | HDF5 + Redis | 瀹炴椂 | 3涓湀 |
+| **铻嶈祫铻嶅埜鏁版嵁** | MySQL | 鏃ュ害 | 3骞?|
+| **鏂伴椈鑸嗘儏鏁版嵁** | MongoDB | 瀹炴椂 | 1骞?|
+| **鏅鸿兘浣撳喅绛栨棩蹇?* | MongoDB + Elasticsearch | 瀹炴椂 | 6涓湀 |
+| **妯℃嫙缁撴灉鏁版嵁** | Parquet + S3 | 鎸夐渶 | 1骞?|
 
-### 4.2 数据流设�?
+### 4.2 鏁版嵁娴佽璁?
 ```
-数据�?�?数据清洗 �?特征工程 �?智能体输�?�?模拟引擎 �?结果输出
-  �?        �?         �?          �?          �?         �?采集�?   Layer 1    Layer 2     Layer 2.5   Layer 2.5   Layer 7
+鏁版嵁婧?鈫?鏁版嵁娓呮礂 鈫?鐗瑰緛宸ョ▼ 鈫?鏅鸿兘浣撹緭鍏?鈫?妯℃嫙寮曟搸 鈫?缁撴灉杈撳嚭
+  鈫?        鈫?         鈫?          鈫?          鈫?         鈫?閲囬泦灞?   Layer 1    Layer 2     Layer 2.5   Layer 2.5   Layer 7
 ```
 
 ---
 
-## 🧪 五、测试策�?
-### 5.1 单元测试
+## 馃И 浜斻€佹祴璇曠瓥鐣?
+### 5.1 鍗曞厓娴嬭瘯
 
-| 测试模块 | 测试内容 | 覆盖率要�?|
+| 娴嬭瘯妯″潡 | 娴嬭瘯鍐呭 | 瑕嗙洊鐜囪姹?|
 |---------|---------|-----------|
-| **国家队智能体** | 政策信号检测、市场稳定性评估、决策生�?| �?5% |
-| **主力智能�?* | RL模型决策、LLM策略优化、状态向量构�?| �?5% |
-| **散户智能�?* | 行为金融模型、情绪分析、羊群检�?| �?5% |
-| **市场模拟引擎** | 订单撮合、价格发现、市场冲击计�?| �?0% |
+| **鍥藉闃熸櫤鑳戒綋** | 鏀跨瓥淇″彿妫€娴嬨€佸競鍦虹ǔ瀹氭€ц瘎浼般€佸喅绛栫敓鎴?| 鈮?5% |
+| **涓诲姏鏅鸿兘浣?* | RL妯″瀷鍐崇瓥銆丩LM绛栫暐浼樺寲銆佺姸鎬佸悜閲忔瀯寤?| 鈮?5% |
+| **鏁ｆ埛鏅鸿兘浣?* | 琛屼负閲戣瀺妯″瀷銆佹儏缁垎鏋愩€佺緤缇ゆ娴?| 鈮?5% |
+| **甯傚満妯℃嫙寮曟搸** | 璁㈠崟鎾悎銆佷环鏍煎彂鐜般€佸競鍦哄啿鍑昏绠?| 鈮?0% |
 
-### 5.2 集成测试
+### 5.2 闆嗘垚娴嬭瘯
 
-| 测试场景 | 测试内容 | 验收标准 |
+| 娴嬭瘯鍦烘櫙 | 娴嬭瘯鍐呭 | 楠屾敹鏍囧噯 |
 |---------|---------|---------|
-| **多智能体协同** | 三类智能体同时运�?市场状态一致�?| 无冲�?状态一�?|
-| **历史回测** | 模拟历史市场情况,验证预测准确�?| 预测准确率≥60% |
-| **极端情况** | 市场暴跌、暴涨、流动性枯竭等极端情况 | 系统稳定,无崩�?|
+| **澶氭櫤鑳戒綋鍗忓悓** | 涓夌被鏅鸿兘浣撳悓鏃惰繍琛?甯傚満鐘舵€佷竴鑷存€?| 鏃犲啿绐?鐘舵€佷竴鑷?|
+| **鍘嗗彶鍥炴祴** | 妯℃嫙鍘嗗彶甯傚満鎯呭喌,楠岃瘉棰勬祴鍑嗙‘鎬?| 棰勬祴鍑嗙‘鐜団墺60% |
+| **鏋佺鎯呭喌** | 甯傚満鏆磋穼銆佹毚娑ㄣ€佹祦鍔ㄦ€ф灟绔瓑鏋佺鎯呭喌 | 绯荤粺绋冲畾,鏃犲穿婧?|
 
-### 5.3 性能测试
+### 5.3 鎬ц兘娴嬭瘯
 
-| 性能指标 | 目标�?| 测试方法 |
+| 鎬ц兘鎸囨爣 | 鐩爣鍊?| 娴嬭瘯鏂规硶 |
 |---------|-------|---------|
-| **模拟速度** | 100�?�?| 压力测试 |
-| **内存占用** | <4GB | 内存监控 |
-| **并发智能体数** | �?00个智能体 | 并发测试 |
-| **响应延迟** | <500ms | 延迟测试 |
+| **妯℃嫙閫熷害** | 100姝?绉?| 鍘嬪姏娴嬭瘯 |
+| **鍐呭瓨鍗犵敤** | <4GB | 鍐呭瓨鐩戞帶 |
+| **骞跺彂鏅鸿兘浣撴暟** | 鈮?00涓櫤鑳戒綋 | 骞跺彂娴嬭瘯 |
+| **鍝嶅簲寤惰繜** | <500ms | 寤惰繜娴嬭瘯 |
 
-### 5.4 回测验证策略 �?**IMP-004补充**
+### 5.4 鍥炴祴楠岃瘉绛栫暐 猸?**IMP-004琛ュ厖**
 
-#### 5.4.1 回测数据准备
+#### 5.4.1 鍥炴祴鏁版嵁鍑嗗
 
-**数据范围**: 2020-01-01 �?2025-12-31 (5年历史数�?
+**鏁版嵁鑼冨洿**: 2020-01-01 鑷?2025-12-31 (5骞村巻鍙叉暟鎹?
 
-| 数据类型 | 数据�?| 字段要求 | 质量标准 |
+| 鏁版嵁绫诲瀷 | 鏁版嵁婧?| 瀛楁瑕佹眰 | 璐ㄩ噺鏍囧噯 |
 |---------|--------|---------|---------|
-| **历史行情** | iFind | 开高低收、成交量、成交额 | 缺失�?< 1% |
-| **龙虎榜数�?* | iFind | 机构买入、机构卖出、游资买入、游资卖�?| 覆盖�?> 90% |
-| **北向资金** | iFind | 日度流入流出、持股变�?| 完整�?100% |
-| **融资融券** | iFind | 融资余额、融券余�?| 完整�?100% |
-| **新闻舆情** | iFind | 新闻标题、新闻内容、情感标�?| 覆盖�?> 80% |
-| **宏观数据** | iFind + FRED | GDP、CPI、汇率、利�?| 月度数据完整 |
+| **鍘嗗彶琛屾儏** | iFind | 寮€楂樹綆鏀躲€佹垚浜ら噺銆佹垚浜ら | 缂哄け鐜?< 1% |
+| **榫欒檸姒滄暟鎹?* | iFind | 鏈烘瀯涔板叆銆佹満鏋勫崠鍑恒€佹父璧勪拱鍏ャ€佹父璧勫崠鍑?| 瑕嗙洊鐜?> 90% |
+| **鍖楀悜璧勯噾** | iFind | 鏃ュ害娴佸叆娴佸嚭銆佹寔鑲″彉鍖?| 瀹屾暣鎬?100% |
+| **铻嶈祫铻嶅埜** | iFind | 铻嶈祫浣欓銆佽瀺鍒镐綑棰?| 瀹屾暣鎬?100% |
+| **鏂伴椈鑸嗘儏** | iFind | 鏂伴椈鏍囬銆佹柊闂诲唴瀹广€佹儏鎰熸爣绛?| 瑕嗙洊鐜?> 80% |
+| **瀹忚鏁版嵁** | iFind + FRED | GDP銆丆PI銆佹眹鐜囥€佸埄鐜?| 鏈堝害鏁版嵁瀹屾暣 |
 
-**数据预处理流�?*:
+**鏁版嵁棰勫鐞嗘祦绋?*:
 ```
-1. 数据下载 �?2. 数据清洗 �?3. 数据验证 �?4. 数据存储
-   (iFind API)  (缺失值处�?  (质量检�?   (Parquet格式)
+1. 鏁版嵁涓嬭浇 鈫?2. 鏁版嵁娓呮礂 鈫?3. 鏁版嵁楠岃瘉 鈫?4. 鏁版嵁瀛樺偍
+   (iFind API)  (缂哄け鍊煎鐞?  (璐ㄩ噺妫€鏌?   (Parquet鏍煎紡)
 ```
 
-#### 5.4.2 智能体行为验�?
-**验证目标**: 验证智能体决策与历史实际行为的相似度
+#### 5.4.2 鏅鸿兘浣撹涓洪獙璇?
+**楠岃瘉鐩爣**: 楠岃瘉鏅鸿兘浣撳喅绛栦笌鍘嗗彶瀹為檯琛屼负鐨勭浉浼煎害
 
-**验证方法**:
+**楠岃瘉鏂规硶**:
 
 ```python
 class AgentBehaviorValidator:
-    """智能体行为验证器
+    """鏅鸿兘浣撹涓洪獙璇佸櫒
     
-    索引: VALIDATOR.AGENT.BEHAVIOR.001
-    目标: 验证智能体决策与历史实际行为的相似度
+    绱㈠紩: VALIDATOR.AGENT.BEHAVIOR.001
+    鐩爣: 楠岃瘉鏅鸿兘浣撳喅绛栦笌鍘嗗彶瀹為檯琛屼负鐨勭浉浼煎害
     """
     
     def validate_agent_behavior(self,
                                 agent: BaseAgent,
                                 historical_data: pd.DataFrame,
                                 validation_period: DateRange) -> ValidationResult:
-        """验证智能体行�?        
-        验证流程:
-        1. 提取历史时点的市场状�?        2. 智能体生成决�?        3. 对比智能体决�?vs 历史实际行为
-        4. 计算行为相似�?        5. 分析决策差异原因
+        """楠岃瘉鏅鸿兘浣撹涓?        
+        楠岃瘉娴佺▼:
+        1. 鎻愬彇鍘嗗彶鏃剁偣鐨勫競鍦虹姸鎬?        2. 鏅鸿兘浣撶敓鎴愬喅绛?        3. 瀵规瘮鏅鸿兘浣撳喅绛?vs 鍘嗗彶瀹為檯琛屼负
+        4. 璁＄畻琛屼负鐩镐技搴?        5. 鍒嗘瀽鍐崇瓥宸紓鍘熷洜
         
-        返回:
-            ValidationResult: 验证结果
+        杩斿洖:
+            ValidationResult: 楠岃瘉缁撴灉
         """
         similarity_scores = []
         decision_diffs = []
         
         for date in validation_period:
-            # 1. 提取历史时点的市场状�?            market_state = self._extract_market_state(historical_data, date)
+            # 1. 鎻愬彇鍘嗗彶鏃剁偣鐨勫競鍦虹姸鎬?            market_state = self._extract_market_state(historical_data, date)
             
-            # 2. 智能体生成决�?            agent_decision = agent.generate_trading_decision(market_state)
+            # 2. 鏅鸿兘浣撶敓鎴愬喅绛?            agent_decision = agent.generate_trading_decision(market_state)
             
-            # 3. 提取历史实际行为
+            # 3. 鎻愬彇鍘嗗彶瀹為檯琛屼负
             actual_behavior = self._extract_actual_behavior(historical_data, date, agent.agent_type)
             
-            # 4. 计算行为相似�?            similarity = self._calculate_similarity(agent_decision, actual_behavior)
+            # 4. 璁＄畻琛屼负鐩镐技搴?            similarity = self._calculate_similarity(agent_decision, actual_behavior)
             similarity_scores.append(similarity)
             
-            # 5. 分析决策差异
+            # 5. 鍒嗘瀽鍐崇瓥宸紓
             diff = self._analyze_decision_diff(agent_decision, actual_behavior)
             decision_diffs.append(diff)
         
@@ -1219,8 +1219,8 @@ class AgentBehaviorValidator:
     def _calculate_similarity(self, 
                              decision: AgentDecision,
                              actual: ActualBehavior) -> float:
-        """计算行为相似�?        
-        相似�?= 0.4 * 动作相似�?+ 0.3 * 方向相似�?+ 0.3 * 强度相似�?        """
+        """璁＄畻琛屼负鐩镐技搴?        
+        鐩镐技搴?= 0.4 * 鍔ㄤ綔鐩镐技搴?+ 0.3 * 鏂瑰悜鐩镐技搴?+ 0.3 * 寮哄害鐩镐技搴?        """
         action_sim = 1.0 if decision.action == actual.action else 0.0
         direction_sim = 1.0 if decision.direction == actual.direction else 0.0
         strength_sim = 1.0 - abs(decision.strength - actual.strength)
@@ -1228,64 +1228,64 @@ class AgentBehaviorValidator:
         return 0.4 * action_sim + 0.3 * direction_sim + 0.3 * strength_sim
 ```
 
-**验收标准**:
-| 智能体类�?| 行为相似度目�?| 关键验证�?|
+**楠屾敹鏍囧噯**:
+| 鏅鸿兘浣撶被鍨?| 琛屼负鐩镐技搴︾洰鏍?| 鍏抽敭楠岃瘉鐐?|
 |-----------|--------------|-----------|
-| **国家队智能体** | �?75% | 政策信号识别、市场干预时�?|
-| **主力智能�?* | �?70% | 吸筹-洗盘-拉升-出货周期 |
-| **散户智能�?* | �?65% | 羊群效应、追涨杀跌行�?|
-| **外资智能�?* | �?70% | 北向资金流向预测 |
-| **保险资金智能�?* | �?70% | 长期配置行为 |
+| **鍥藉闃熸櫤鑳戒綋** | 鈮?75% | 鏀跨瓥淇″彿璇嗗埆銆佸競鍦哄共棰勬椂鏈?|
+| **涓诲姏鏅鸿兘浣?* | 鈮?70% | 鍚哥-娲楃洏-鎷夊崌-鍑鸿揣鍛ㄦ湡 |
+| **鏁ｆ埛鏅鸿兘浣?* | 鈮?65% | 缇婄兢鏁堝簲銆佽拷娑ㄦ潃璺岃涓?|
+| **澶栬祫鏅鸿兘浣?* | 鈮?70% | 鍖楀悜璧勯噾娴佸悜棰勬祴 |
+| **淇濋櫓璧勯噾鏅鸿兘浣?* | 鈮?70% | 闀挎湡閰嶇疆琛屼负 |
 
-#### 5.4.3 市场模拟验证
+#### 5.4.3 甯傚満妯℃嫙楠岃瘉
 
-**验证目标**: 验证市场模拟引擎生成的价格与实际价格的误�?
-**验证方法**:
+**楠岃瘉鐩爣**: 楠岃瘉甯傚満妯℃嫙寮曟搸鐢熸垚鐨勪环鏍间笌瀹為檯浠锋牸鐨勮宸?
+**楠岃瘉鏂规硶**:
 
 ```python
 class MarketSimulationValidator:
-    """市场模拟验证�?    
-    索引: VALIDATOR.MARKET.SIMULATION.001
-    目标: 验证市场模拟引擎的准确�?    """
+    """甯傚満妯℃嫙楠岃瘉鍣?    
+    绱㈠紩: VALIDATOR.MARKET.SIMULATION.001
+    鐩爣: 楠岃瘉甯傚満妯℃嫙寮曟搸鐨勫噯纭€?    """
     
     def validate_market_simulation(self,
                                    simulation_engine: MarketSimulationEngine,
                                    historical_data: pd.DataFrame,
                                    validation_period: DateRange) -> ValidationResult:
-        """验证市场模拟
+        """楠岃瘉甯傚満妯℃嫙
         
-        验证流程:
-        1. 提取历史时点的初始市场状�?        2. 运行市场模拟引擎
-        3. 对比模拟价格 vs 实际价格
-        4. 计算价格误差
-        5. 分析误差原因
+        楠岃瘉娴佺▼:
+        1. 鎻愬彇鍘嗗彶鏃剁偣鐨勫垵濮嬪競鍦虹姸鎬?        2. 杩愯甯傚満妯℃嫙寮曟搸
+        3. 瀵规瘮妯℃嫙浠锋牸 vs 瀹為檯浠锋牸
+        4. 璁＄畻浠锋牸璇樊
+        5. 鍒嗘瀽璇樊鍘熷洜
         
-        返回:
-            ValidationResult: 验证结果
+        杩斿洖:
+            ValidationResult: 楠岃瘉缁撴灉
         """
         price_errors = []
         volume_errors = []
         
         for date in validation_period:
-            # 1. 提取初始市场状�?            initial_state = self._extract_initial_state(historical_data, date)
+            # 1. 鎻愬彇鍒濆甯傚満鐘舵€?            initial_state = self._extract_initial_state(historical_data, date)
             
-            # 2. 运行市场模拟
+            # 2. 杩愯甯傚満妯℃嫙
             simulation_result = simulation_engine.simulate_market(
                 initial_state=initial_state,
                 simulation_steps=100
             )
             
-            # 3. 提取实际价格
+            # 3. 鎻愬彇瀹為檯浠锋牸
             actual_prices = self._extract_actual_prices(historical_data, date)
             
-            # 4. 计算价格误差
+            # 4. 璁＄畻浠锋牸璇樊
             price_error = self._calculate_price_error(
                 simulation_result.final_state.prices,
                 actual_prices
             )
             price_errors.append(price_error)
             
-            # 5. 计算成交量误�?            volume_error = self._calculate_volume_error(
+            # 5. 璁＄畻鎴愪氦閲忚宸?            volume_error = self._calculate_volume_error(
                 simulation_result.final_state.volumes,
                 actual_prices.volumes
             )
@@ -1301,242 +1301,242 @@ class MarketSimulationValidator:
     def _calculate_price_error(self,
                               simulated_prices: pd.DataFrame,
                               actual_prices: pd.DataFrame) -> float:
-        """计算价格误差
+        """璁＄畻浠锋牸璇樊
         
-        误差 = mean(|simulated - actual| / actual)
+        璇樊 = mean(|simulated - actual| / actual)
         """
         relative_error = np.abs(simulated_prices - actual_prices) / actual_prices
         return np.mean(relative_error.values)
 ```
 
-**验收标准**:
-| 验证�?| 目标�?| 验证方法 |
+**楠屾敹鏍囧噯**:
+| 楠岃瘉椤?| 鐩爣鍊?| 楠岃瘉鏂规硶 |
 |--------|--------|---------|
-| **价格误差** | < 5% | 相对误差计算 |
-| **成交量误�?* | < 10% | 相对误差计算 |
-| **价格趋势一致�?* | > 80% | 趋势方向对比 |
-| **成交量分布相似度** | > 70% | 分布相似度计�?|
+| **浠锋牸璇樊** | < 5% | 鐩稿璇樊璁＄畻 |
+| **鎴愪氦閲忚宸?* | < 10% | 鐩稿璇樊璁＄畻 |
+| **浠锋牸瓒嬪娍涓€鑷存€?* | > 80% | 瓒嬪娍鏂瑰悜瀵规瘮 |
+| **鎴愪氦閲忓垎甯冪浉浼煎害** | > 70% | 鍒嗗竷鐩镐技搴﹁绠?|
 
-#### 5.4.4 策略回测验证
+#### 5.4.4 绛栫暐鍥炴祴楠岃瘉
 
-**验证目标**: 验证基于智能体信号的策略绩效
+**楠岃瘉鐩爣**: 楠岃瘉鍩轰簬鏅鸿兘浣撲俊鍙风殑绛栫暐缁╂晥
 
-**回测流程**:
+**鍥炴祴娴佺▼**:
 
 ```
-1. 数据准备 (2020-2025历史数据)
-   �?2. 智能体信号生�?(每日生成交易信号)
-   �?3. 策略构建 (基于信号构建交易策略)
-   �?4. 回测执行 (模拟交易执行)
-   �?5. 绩效评估 (计算收益、风险指�?
-   �?6. 对比分析 (与基准指数对�?
+1. 鏁版嵁鍑嗗 (2020-2025鍘嗗彶鏁版嵁)
+   鈫?2. 鏅鸿兘浣撲俊鍙风敓鎴?(姣忔棩鐢熸垚浜ゆ槗淇″彿)
+   鈫?3. 绛栫暐鏋勫缓 (鍩轰簬淇″彿鏋勫缓浜ゆ槗绛栫暐)
+   鈫?4. 鍥炴祴鎵ц (妯℃嫙浜ゆ槗鎵ц)
+   鈫?5. 缁╂晥璇勪及 (璁＄畻鏀剁泭銆侀闄╂寚鏍?
+   鈫?6. 瀵规瘮鍒嗘瀽 (涓庡熀鍑嗘寚鏁板姣?
 ```
 
-**绩效指标**:
+**缁╂晥鎸囨爣**:
 
-| 指标类别 | 具体指标 | 目标�?| 对比基准 |
+| 鎸囨爣绫诲埆 | 鍏蜂綋鎸囨爣 | 鐩爣鍊?| 瀵规瘮鍩哄噯 |
 |---------|---------|--------|---------|
-| **收益指标** | 年化收益�?| > 15% | 沪深300 (8%) |
-| **风险指标** | 最大回�?| < 15% | 沪深300 (20%) |
-| **风险调整收益** | 夏普比率 | > 1.5 | 沪深300 (0.8) |
-| **稳定性指�?* | 卡尔玛比�?| > 1.0 | 沪深300 (0.4) |
-| **胜率指标** | 盈利交易占比 | > 55% | - |
+| **鏀剁泭鎸囨爣** | 骞村寲鏀剁泭鐜?| > 15% | 娌繁300 (8%) |
+| **椋庨櫓鎸囨爣** | 鏈€澶у洖鎾?| < 15% | 娌繁300 (20%) |
+| **椋庨櫓璋冩暣鏀剁泭** | 澶忔櫘姣旂巼 | > 1.5 | 娌繁300 (0.8) |
+| **绋冲畾鎬ф寚鏍?* | 鍗″皵鐜涙瘮鐜?| > 1.0 | 娌繁300 (0.4) |
+| **鑳滅巼鎸囨爣** | 鐩堝埄浜ゆ槗鍗犳瘮 | > 55% | - |
 
-**回测报告模板**:
+**鍥炴祴鎶ュ憡妯℃澘**:
 
 ```markdown
-# 智能体策略回测报�?
-## 1. 回测概况
-- 回测期间: 2020-01-01 �?2025-12-31
-- 初始资金: 1,000,000�?- 交易成本: 0.15% (双边)
-- 滑点模型: 线性滑�?(0.05%)
+# 鏅鸿兘浣撶瓥鐣ュ洖娴嬫姤鍛?
+## 1. 鍥炴祴姒傚喌
+- 鍥炴祴鏈熼棿: 2020-01-01 鑷?2025-12-31
+- 鍒濆璧勯噾: 1,000,000鍏?- 浜ゆ槗鎴愭湰: 0.15% (鍙岃竟)
+- 婊戠偣妯″瀷: 绾挎€ф粦鐐?(0.05%)
 
-## 2. 绩效指标
-| 指标 | 策略收益 | 基准收益 | 超额收益 |
+## 2. 缁╂晥鎸囨爣
+| 鎸囨爣 | 绛栫暐鏀剁泭 | 鍩哄噯鏀剁泭 | 瓒呴鏀剁泭 |
 |------|---------|---------|---------|
-| 年化收益�?| 18.5% | 8.2% | +10.3% |
-| 最大回�?| -12.3% | -20.5% | +8.2% |
-| 夏普比率 | 1.85 | 0.82 | +1.03 |
+| 骞村寲鏀剁泭鐜?| 18.5% | 8.2% | +10.3% |
+| 鏈€澶у洖鎾?| -12.3% | -20.5% | +8.2% |
+| 澶忔櫘姣旂巼 | 1.85 | 0.82 | +1.03 |
 
-## 3. 智能体贡献分�?| 智能体类�?| 信号准确�?| 盈利贡献 | 使用频率 |
+## 3. 鏅鸿兘浣撹础鐚垎鏋?| 鏅鸿兘浣撶被鍨?| 淇″彿鍑嗙‘鐜?| 鐩堝埄璐＄尞 | 浣跨敤棰戠巼 |
 |-----------|-----------|---------|---------|
-| 外资智能�?| 72% | +5.2% | 45% |
-| 主力智能�?| 68% | +3.8% | 35% |
-| 国家队智能体 | 75% | +2.1% | 20% |
+| 澶栬祫鏅鸿兘浣?| 72% | +5.2% | 45% |
+| 涓诲姏鏅鸿兘浣?| 68% | +3.8% | 35% |
+| 鍥藉闃熸櫤鑳戒綋 | 75% | +2.1% | 20% |
 
-## 4. 结论
-- �?策略收益显著优于基准
-- �?风险控制良好
-- �?智能体信号有效性高
+## 4. 缁撹
+- 鉁?绛栫暐鏀剁泭鏄捐憲浼樹簬鍩哄噯
+- 鉁?椋庨櫓鎺у埗鑹ソ
+- 鉁?鏅鸿兘浣撲俊鍙锋湁鏁堟€ч珮
 ```
 
-#### 5.4.5 回测验收标准
+#### 5.4.5 鍥炴祴楠屾敹鏍囧噯
 
-| 验收�?| 验收标准 | 验证方法 |
+| 楠屾敹椤?| 楠屾敹鏍囧噯 | 楠岃瘉鏂规硶 |
 |--------|---------|---------|
-| **数据完整�?* | 缺失�?< 1% | 数据质量检�?|
-| **智能体行为相似度** | �?70% | 行为验证 |
-| **市场模拟准确�?* | 价格误差 < 5% | 模拟验证 |
-| **策略绩效** | 夏普比率 > 1.5 | 策略回测 |
-| **系统稳定�?* | 7×24小时无故�?| 稳定性测�?|
+| **鏁版嵁瀹屾暣鎬?* | 缂哄け鐜?< 1% | 鏁版嵁璐ㄩ噺妫€鏌?|
+| **鏅鸿兘浣撹涓虹浉浼煎害** | 鈮?70% | 琛屼负楠岃瘉 |
+| **甯傚満妯℃嫙鍑嗙‘鎬?* | 浠锋牸璇樊 < 5% | 妯℃嫙楠岃瘉 |
+| **绛栫暐缁╂晥** | 澶忔櫘姣旂巼 > 1.5 | 绛栫暐鍥炴祴 |
+| **绯荤粺绋冲畾鎬?* | 7脳24灏忔椂鏃犳晠闅?| 绋冲畾鎬ф祴璇?|
 
 ---
 
-## ⚠️ 六、风险与约束
+## 鈿狅笍 鍏€侀闄╀笌绾︽潫
 
-### 6.1 技术风�?
-| 风险等级 | 风险�?| 缓解措施 |
+### 6.1 鎶€鏈闄?
+| 椋庨櫓绛夌骇 | 椋庨櫓椤?| 缂撹В鎺柦 |
 |---------|-------|---------|
-| **P1** | RL模型训练不稳�?| 使用预训练模�?微调,增加训练数据 |
-| **P1** | LLM推理延迟�?| 使用GLM-4.7-Flash(快速版),缓存常见决策 |
-| **P2** | 数据质量问题 | 多数据源交叉验证,数据清洗流程 |
-| **P2** | 模拟结果偏差 | 定期校准模型,引入真实市场反馈 |
-| **P3** | 系统性能瓶颈 | 分布式计�?异步处理 |
+| **P1** | RL妯″瀷璁粌涓嶇ǔ瀹?| 浣跨敤棰勮缁冩ā鍨?寰皟,澧炲姞璁粌鏁版嵁 |
+| **P1** | LLM鎺ㄧ悊寤惰繜楂?| 浣跨敤GLM-4.7-Flash(蹇€熺増),缂撳瓨甯歌鍐崇瓥 |
+| **P2** | 鏁版嵁璐ㄩ噺闂 | 澶氭暟鎹簮浜ゅ弶楠岃瘉,鏁版嵁娓呮礂娴佺▼ |
+| **P2** | 妯℃嫙缁撴灉鍋忓樊 | 瀹氭湡鏍″噯妯″瀷,寮曞叆鐪熷疄甯傚満鍙嶉 |
+| **P3** | 绯荤粺鎬ц兘鐡堕 | 鍒嗗竷寮忚绠?寮傛澶勭悊 |
 
-### 6.2 实施约束
+### 6.2 瀹炴柦绾︽潫
 
-| 约束类型 | 约束内容 | 应对方案 |
+| 绾︽潫绫诲瀷 | 绾︽潫鍐呭 | 搴斿鏂规 |
 |---------|---------|---------|
-| **数据约束** | Level-2数据获取成本�?| 使用开源数�?模拟数据,逐步接入真实数据 |
-| **计算约束** | RL训练需要大量计算资�?| 使用云服�?分批训练 |
-| **时间约束** | 个人开发时间有�?| AI辅助开�?优先核心功能 |
-| **技能约�?* | 强化学习专业知识不足 | 使用成熟开源框�?学习社区最佳实�?|
+| **鏁版嵁绾︽潫** | Level-2鏁版嵁鑾峰彇鎴愭湰楂?| 浣跨敤寮€婧愭暟鎹?妯℃嫙鏁版嵁,閫愭鎺ュ叆鐪熷疄鏁版嵁 |
+| **璁＄畻绾︽潫** | RL璁粌闇€瑕佸ぇ閲忚绠楄祫婧?| 浣跨敤浜戞湇鍔?鍒嗘壒璁粌 |
+| **鏃堕棿绾︽潫** | 涓汉寮€鍙戞椂闂存湁闄?| AI杈呭姪寮€鍙?浼樺厛鏍稿績鍔熻兘 |
+| **鎶€鑳界害鏉?* | 寮哄寲瀛︿範涓撲笟鐭ヨ瘑涓嶈冻 | 浣跨敤鎴愮啛寮€婧愭鏋?瀛︿範绀惧尯鏈€浣冲疄璺?|
 
 ---
 
-## �?七、验收标�?
-### 7.1 功能验收标准
+## 鉁?涓冦€侀獙鏀舵爣鍑?
+### 7.1 鍔熻兘楠屾敹鏍囧噯
 
-| 功能模块 | 验收标准 | 验证方法 |
+| 鍔熻兘妯″潡 | 楠屾敹鏍囧噯 | 楠岃瘉鏂规硶 |
 |---------|---------|---------|
-| **国家队智能体** | 能识别政策信�?生成合理干预决策 | 单元测试+人工审核 |
-| **主力智能�?* | RL模型收敛,决策符合操盘逻辑 | 回测验证+绩效评估 |
-| **散户智能�?* | 行为模式符合行为金融学理�?| 统计检�?专家评审 |
-| **市场模拟引擎** | 模拟结果与真实市场相关性≥0.6 | 相关性分�?可视化对�?|
+| **鍥藉闃熸櫤鑳戒綋** | 鑳借瘑鍒斂绛栦俊鍙?鐢熸垚鍚堢悊骞查鍐崇瓥 | 鍗曞厓娴嬭瘯+浜哄伐瀹℃牳 |
+| **涓诲姏鏅鸿兘浣?* | RL妯″瀷鏀舵暃,鍐崇瓥绗﹀悎鎿嶇洏閫昏緫 | 鍥炴祴楠岃瘉+缁╂晥璇勪及 |
+| **鏁ｆ埛鏅鸿兘浣?* | 琛屼负妯″紡绗﹀悎琛屼负閲戣瀺瀛︾悊璁?| 缁熻妫€楠?涓撳璇勫 |
+| **甯傚満妯℃嫙寮曟搸** | 妯℃嫙缁撴灉涓庣湡瀹炲競鍦虹浉鍏虫€р墺0.6 | 鐩稿叧鎬у垎鏋?鍙鍖栧姣?|
 
-### 7.2 性能验收标准
+### 7.2 鎬ц兘楠屾敹鏍囧噯
 
-| 性能指标 | 目标�?| 验证方法 |
+| 鎬ц兘鎸囨爣 | 鐩爣鍊?| 楠岃瘉鏂规硶 |
 |---------|-------|---------|
-| **预测准确�?* | �?0% | 历史回测 |
-| **夏普比率提升** | �?5% | 策略对比 |
-| **最大回撤降�?* | �?0% | 风险指标对比 |
-| **系统稳定�?* | 7×24小时无故�?| 压力测试 |
+| **棰勬祴鍑嗙‘鐜?* | 鈮?0% | 鍘嗗彶鍥炴祴 |
+| **澶忔櫘姣旂巼鎻愬崌** | 鈮?5% | 绛栫暐瀵规瘮 |
+| **鏈€澶у洖鎾ら檷浣?* | 鈮?0% | 椋庨櫓鎸囨爣瀵规瘮 |
+| **绯荤粺绋冲畾鎬?* | 7脳24灏忔椂鏃犳晠闅?| 鍘嬪姏娴嬭瘯 |
 
-### 7.3 质量验收标准
+### 7.3 璐ㄩ噺楠屾敹鏍囧噯
 
-| 质量指标 | 目标�?| 验证方法 |
+| 璐ㄩ噺鎸囨爣 | 鐩爣鍊?| 楠岃瘉鏂规硶 |
 |---------|-------|---------|
-| **代码覆盖�?* | �?5% | pytest-cov |
-| **文档完整�?* | 100% | 文档审查 |
-| **接口一致�?* | 100% | 接口测试 |
-| **安全合规�?* | 无高危漏�?| 安全扫描 |
+| **浠ｇ爜瑕嗙洊鐜?* | 鈮?5% | pytest-cov |
+| **鏂囨。瀹屾暣鎬?* | 100% | 鏂囨。瀹℃煡 |
+| **鎺ュ彛涓€鑷存€?* | 100% | 鎺ュ彛娴嬭瘯 |
+| **瀹夊叏鍚堣鎬?* | 鏃犻珮鍗辨紡娲?| 瀹夊叏鎵弿 |
 
 ---
 
-## 🗓�?八、实施路线图
+## 馃棑锔?鍏€佸疄鏂借矾绾垮浘
 
-### 8.1 Phase 1: 基础框架搭建 (Month 1)
+### 8.1 Phase 1: 鍩虹妗嗘灦鎼缓 (Month 1)
 
-**目标**: 完成核心框架和数据管�?
-**任务清单**:
-- [ ] 搭建智能体基类和接口
-- [ ] 实现数据采集管道(龙虎榜、Level-2)
-- [ ] 搭建订单簿模拟器
-- [ ] 实现价格发现机制
-- [ ] 编写单元测试
+**鐩爣**: 瀹屾垚鏍稿績妗嗘灦鍜屾暟鎹閬?
+**浠诲姟娓呭崟**:
+- [ ] 鎼缓鏅鸿兘浣撳熀绫诲拰鎺ュ彛
+- [ ] 瀹炵幇鏁版嵁閲囬泦绠￠亾(榫欒檸姒溿€丩evel-2)
+- [ ] 鎼缓璁㈠崟绨挎ā鎷熷櫒
+- [ ] 瀹炵幇浠锋牸鍙戠幇鏈哄埗
+- [ ] 缂栧啓鍗曞厓娴嬭瘯
 
-**交付�?*:
-- 智能体框架代�?- 数据采集脚本
-- 订单簿模拟器
-- 单元测试报告
+**浜や粯鐗?*:
+- 鏅鸿兘浣撴鏋朵唬鐮?- 鏁版嵁閲囬泦鑴氭湰
+- 璁㈠崟绨挎ā鎷熷櫒
+- 鍗曞厓娴嬭瘯鎶ュ憡
 
-**工作�?*: 40小时
+**宸ヤ綔閲?*: 40灏忔椂
 
-### 8.2 Phase 2: 智能体开�?(Month 2-3)
+### 8.2 Phase 2: 鏅鸿兘浣撳紑鍙?(Month 2-3)
 
-**目标**: 完成三类智能体开�?
-**任务清单**:
-- [ ] 开发国家队智能�?规则引擎+LLM)
-- [ ] 开发主力智能体(RL+LLM)
-- [ ] 开发散户智能体(行为金融模型)
-- [ ] 训练RL模型
-- [ ] 集成测试
+**鐩爣**: 瀹屾垚涓夌被鏅鸿兘浣撳紑鍙?
+**浠诲姟娓呭崟**:
+- [ ] 寮€鍙戝浗瀹堕槦鏅鸿兘浣?瑙勫垯寮曟搸+LLM)
+- [ ] 寮€鍙戜富鍔涙櫤鑳戒綋(RL+LLM)
+- [ ] 寮€鍙戞暎鎴锋櫤鑳戒綋(琛屼负閲戣瀺妯″瀷)
+- [ ] 璁粌RL妯″瀷
+- [ ] 闆嗘垚娴嬭瘯
 
-**交付�?*:
-- 三类智能体代�?- RL模型训练脚本
-- 集成测试报告
+**浜や粯鐗?*:
+- 涓夌被鏅鸿兘浣撲唬鐮?- RL妯″瀷璁粌鑴氭湰
+- 闆嗘垚娴嬭瘯鎶ュ憡
 
-**工作�?*: 80小时
+**宸ヤ綔閲?*: 80灏忔椂
 
-### 8.3 Phase 3: 系统集成与优�?(Month 4)
+### 8.3 Phase 3: 绯荤粺闆嗘垚涓庝紭鍖?(Month 4)
 
-**目标**: 与现有系统集成并优化性能
+**鐩爣**: 涓庣幇鏈夌郴缁熼泦鎴愬苟浼樺寲鎬ц兘
 
-**任务清单**:
-- [ ] 与中观策略层集成
-- [ ] 与微观执行层集成
-- [ ] 与风控系统集�?- [ ] 性能优化
-- [ ] 压力测试
+**浠诲姟娓呭崟**:
+- [ ] 涓庝腑瑙傜瓥鐣ュ眰闆嗘垚
+- [ ] 涓庡井瑙傛墽琛屽眰闆嗘垚
+- [ ] 涓庨鎺х郴缁熼泦鎴?- [ ] 鎬ц兘浼樺寲
+- [ ] 鍘嬪姏娴嬭瘯
 
-**交付�?*:
-- 集成代码
-- 性能测试报告
-- 用户文档
+**浜や粯鐗?*:
+- 闆嗘垚浠ｇ爜
+- 鎬ц兘娴嬭瘯鎶ュ憡
+- 鐢ㄦ埛鏂囨。
 
-**工作�?*: 40小时
+**宸ヤ綔閲?*: 40灏忔椂
 
-### 8.4 Phase 4: 验证与上�?(Month 5-6)
+### 8.4 Phase 4: 楠岃瘉涓庝笂绾?(Month 5-6)
 
-**目标**: 验证系统效果并上线运�?
-**任务清单**:
-- [ ] 历史回测验证
-- [ ] 实盘模拟测试
-- [ ] 效果评估
-- [ ] 上线部署
-- [ ] 监控告警配置
+**鐩爣**: 楠岃瘉绯荤粺鏁堟灉骞朵笂绾胯繍琛?
+**浠诲姟娓呭崟**:
+- [ ] 鍘嗗彶鍥炴祴楠岃瘉
+- [ ] 瀹炵洏妯℃嫙娴嬭瘯
+- [ ] 鏁堟灉璇勪及
+- [ ] 涓婄嚎閮ㄧ讲
+- [ ] 鐩戞帶鍛婅閰嶇疆
 
-**交付�?*:
-- 回测报告
-- 实盘模拟报告
-- 上线部署文档
-- 监控仪表�?
-**工作�?*: 40小时
+**浜や粯鐗?*:
+- 鍥炴祴鎶ュ憡
+- 瀹炵洏妯℃嫙鎶ュ憡
+- 涓婄嚎閮ㄧ讲鏂囨。
+- 鐩戞帶浠〃鏉?
+**宸ヤ綔閲?*: 40灏忔椂
 
 ---
 
-## 📚 九、参考文�?
-### 9.1 架构文档
+## 馃摎 涔濄€佸弬鑰冩枃妗?
+### 9.1 鏋舵瀯鏂囨。
 
 - [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 - [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 
-### 9.2 技术文�?
+### 9.2 鎶€鏈枃妗?
 - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
 - [STRATEGY_SELECTION_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_SELECTION_BLUEPRINT.md)
 - [QUALITY_GATE_MECHANISM.md](../04_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 
-### 9.3 相关文档
+### 9.3 鐩稿叧鏂囨。
 
-> **注意**: 以下补充文档已整合到主规格书，保留原文档供参�?
-- **[MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md](./MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md)** - 必须改进项详细设�?  - IMP-001: 异常处理和重试机制设�?  - IMP-002: RL模型训练监控指标设计
-  - IMP-003: 市场冲击模型校准方案设计
-  - **状�?*: 已整合到主规格书第五�?
-- **[MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md](./MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md)** - 智能体扩展更�?  - 新增外资智能�?(Foreign Investor Agent)
-  - 新增保险资金智能�?(Insurance Fund Agent)
-  - 市场覆盖率提升至95.01%
-  - **状�?*: 已整合到主规格书第二�?
-- **[MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md](./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md)** - 实施计划
-  - Phase 1-4 详细实施步骤
-  - 工作量估算和里程�?
-- **[MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md](./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md)** - 实施指南
-  - 开发环境配�?  - 代码示例和最佳实�?
-- **[MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md)** - 集成架构
-  - 与现有系统的集成方案
-  - 数据流和接口设计
+> **娉ㄦ剰**: 浠ヤ笅琛ュ厖鏂囨。宸叉暣鍚堝埌涓昏鏍间功锛屼繚鐣欏師鏂囨。渚涘弬鑰?
+- **[MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md](./MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md)** - 蹇呴』鏀硅繘椤硅缁嗚璁?  - IMP-001: 寮傚父澶勭悊鍜岄噸璇曟満鍒惰璁?  - IMP-002: RL妯″瀷璁粌鐩戞帶鎸囨爣璁捐
+  - IMP-003: 甯傚満鍐插嚮妯″瀷鏍″噯鏂规璁捐
+  - **鐘舵€?*: 宸叉暣鍚堝埌涓昏鏍间功绗簲绔?
+- **[MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md](./MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md)** - 鏅鸿兘浣撴墿灞曟洿鏂?  - 鏂板澶栬祫鏅鸿兘浣?(Foreign Investor Agent)
+  - 鏂板淇濋櫓璧勯噾鏅鸿兘浣?(Insurance Fund Agent)
+  - 甯傚満瑕嗙洊鐜囨彁鍗囪嚦95.01%
+  - **鐘舵€?*: 宸叉暣鍚堝埌涓昏鏍间功绗簩绔?
+- **[MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md](../06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md)** - 瀹炴柦璁″垝
+  - Phase 1-4 璇︾粏瀹炴柦姝ラ
+  - 宸ヤ綔閲忎及绠楀拰閲岀▼纰?
+- **[MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md](../06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md)** - 瀹炴柦鎸囧崡
+  - 寮€鍙戠幆澧冮厤缃?  - 浠ｇ爜绀轰緥鍜屾渶浣冲疄璺?
+- **[MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md)** - 闆嗘垚鏋舵瀯
+  - 涓庣幇鏈夌郴缁熺殑闆嗘垚鏂规
+  - 鏁版嵁娴佸拰鎺ュ彛璁捐
 
-### 9.4 开源项目参�?
+### 9.4 寮€婧愰」鐩弬鑰?
 - **ReinforCents**: https://github.com/dagaaryan011/Reinforcents
 - **StockSim**: https://github.com/harrypapa2002/StockSim
 - **TradingAgents-AShare**: https://github.com/KylinMountain/TradingAgents-AShare
@@ -1544,12 +1544,12 @@ class MarketSimulationValidator:
 
 ---
 
-## 📝 十、变更记�?
-| 版本 | 日期 | 变更内容 | 作�?|
+## 馃摑 鍗併€佸彉鏇磋褰?
+| 鐗堟湰 | 鏃ユ湡 | 鍙樻洿鍐呭 | 浣滆€?|
 |------|------|----------|------|
-| v1.0 | 2026-04-02 | 初始版本,完整技术规格书 | Spec-Approver (审批智能�? |
-| v1.1 | 2026-04-02 | 补充三个必须改进项设计文�?| Spec-Approver (审批智能�? |
+| v1.0 | 2026-04-02 | 鍒濆鐗堟湰,瀹屾暣鎶€鏈鏍间功 | Spec-Approver (瀹℃壒鏅鸿兘浣? |
+| v1.1 | 2026-04-02 | 琛ュ厖涓変釜蹇呴』鏀硅繘椤硅璁℃枃妗?| Spec-Approver (瀹℃壒鏅鸿兘浣? |
 
 ---
 
-**版本**: v1.1 | **更新**: 2026-04-02 | **状�?*: �?已完�?
+**鐗堟湰**: v1.1 | **鏇存柊**: 2026-04-02 | **鐘舵€?*: 鉁?宸插畬鎴?
