@@ -722,6 +722,12 @@ class SourcePriorityManager:
 | **Qlib** | Python库 | 无需认证 | 🆓 免费 | 微软量化数据 | P2（补充） |
 | **自建数据源** | 自定义 | 自定义 | - | 自定义 | P3（自定义） |
 
+> **📋 详细数据接口清单**: 请参考 [DATA_SOURCE_INVENTORY.md](./DATA_SOURCE_INVENTORY.md) 获取完整的数据接口清单，包括：
+> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib）
+> - 数据源优先级策略和切换规则
+> - 成本分析和优化建议
+> - 数据源监控指标和告警规则
+
 ### 4.2 数据源配置规范
 
 ```yaml
