@@ -491,62 +491,20 @@ class CrossAssetCorrelationReport:
 
 ## 四、数据流设计
 
-#### 3.2.1 投资组合数据模型
+### 4.1 数据模型定义
 
-```python
-@dataclass
-class Portfolio:
-    portfolio_id: str
-    positions: List[Position]
-    total_value: float
-    cash: float
-    benchmark: str
-    timestamp: datetime
+**说明**: 详细的数据模型定义请参考各模块的技术规格书
 
-@dataclass
-class Position:
-    symbol: str
-    quantity: float
-    market_value: float
-    weight: float
-    sector: str
-    industry: str
-```
+#### 4.1.1 核心数据模型
 
-#### 3.2.2 风险指标数据模型
+| 数据模型 | 描述 | 详细定义位置 |
+|---------|------|-------------|
+| Portfolio | 投资组合数据 | 各模块技术规格书 |
+| Position | 持仓数据 | 各模块技术规格书 |
+| RiskMetrics | 风险指标数据 | [REALTIME_RISK_MONITORING_BLUEPRINT.md](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) |
+| BaseReport | 报告基础数据 | 各模块技术规格书 |
 
-```python
-@dataclass
-class RiskMetrics:
-    var_95: float  # 95% VaR
-    var_99: float  # 99% VaR
-    cvar_95: float  # 95% CVaR
-    max_drawdown: float
-    volatility: float
-    sharpe_ratio: float
-    sortino_ratio: float
-    beta: float
-    tracking_error: float
-```
-
-#### 3.2.3 报告基础数据模型
-
-```python
-@dataclass
-class BaseReport:
-    report_id: str
-    report_type: str
-    timestamp: datetime
-    portfolio_id: str
-    reporting_period: str
-    status: str  # generated, validated, distributed
-```
-
----
-
-## 四、数据流设计
-
-### 4.1 数据流向图
+### 4.2 数据流向图
 
 ```
 ┌─────────────┐
