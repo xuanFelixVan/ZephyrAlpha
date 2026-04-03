@@ -68,7 +68,7 @@ for i, line in enumerate(lines):
     if '二、AI治理框架' in line and start_idx is None:
         start_idx = i
         print(f"Found start at line {i}: {line[:60]}")
-    if '三、' in line or '风险分级' in line:
+    if start_idx is not None and i > start_idx and ('## ⚠️' in line or '风险分级体系' in line):
         end_idx = i
         print(f"Found end at line {i}: {line[:60]}")
         break
