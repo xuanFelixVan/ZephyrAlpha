@@ -1,9 +1,9 @@
 ---
 module_id: DOC_SYSTEM_MANIFEST_001
-version: 5.1.0
+version: 5.2.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-02
+last_updated: 2026-04-03
 owner: 首席文档架构师
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
@@ -15,7 +15,7 @@ implementation_status: 进行中
 
 # System_Manifest.md - 系统清单
 
-> 清风量化系统 v5.1.0 的完整系统状态快照
+> 清风量化系统 v5.2.0 的完整系统状态快照
 > 
 > **📝 恢复说明**: 本文档于 2026-03-31 从归档文件 `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` 恢复，作为系统主入口文档。
 
