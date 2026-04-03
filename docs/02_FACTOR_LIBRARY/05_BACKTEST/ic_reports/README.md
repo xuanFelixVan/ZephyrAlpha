@@ -62,7 +62,7 @@ implementation_status: 进行�?
 
 | 文档 | 说明 |
 |------|------|
-| [../01_STANDARDS/ic_analysis.md](../../01_STANDARDS/ic_analysis.md) | IC分析体系 |
+| [../01_STANDARDS/IC_ANALYSIS.md](../../01_STANDARDS/IC_ANALYSIS.md) | IC分析体系 |
 | [../02_ALPHA_FACTORS_INDEX.md](../../02_ALPHA_FACTORS_INDEX.md) | 因子索引�?|
 
 

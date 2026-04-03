@@ -483,16 +483,16 @@ factor_monitoring:
 ```
 02_FACTOR_LIBRARY/
 ├── 01_STANDARDS/
-�?  ├── ic_analysis.md
-�?  ├── factor_return_analysis.md
-�?  └── factor_neutralization.md
+�?  ├── IC_ANALYSIS.md
+�?  ├── FACTOR_RETURN_ANALYSIS.md
+�?  └── FACTOR_NEUTRALIZATION.md
 ├── 05_BACKTEST/
 �?  └── ic_reports/
 ├── 06_REGISTRY/
-�?  └── factor_catalog.md
+�?  └── FACTOR_CATALOG.md
 └── 07_FACTOR_MONITORING/           # �?新目�?
     ├── README.md
-    └── factor_monitoring.md        # 本文�?
+    └── FACTOR_MONITORING.md        # 本文�?
 ```
 
 ---

@@ -214,8 +214,8 @@ implementation_status: 进行�?
 | 文档类型 | 文档名称 | 位置 | 更新频率 |
 |----------|----------|------|----------|
 | **治理文档** | 因子治理框架 | 00_GOVERNANCE/ | 季度 |
-| **方法论文�?* | IC 分析标准 | 01_STANDARDS/ic_analysis.md | 年度 |
-| **方法论文�?* | 回测标准 | 01_STANDARDS/backtest_standards.md | 年度 |
+| **方法论文�?* | IC 分析标准 | 01_STANDARDS/IC_ANALYSIS.md | 年度 |
+| **方法论文�?* | 回测标准 | 01_STANDARDS/BACKTEST_STANDARDS.md | 年度 |
 | **因子文档** | 各因子详细说�?| 02_ALPHA_FACTORY/ | 按需 |
 | **验证报告** | IC 验证报告 | 05_BACKTEST_RESULTS/ic_reports/ | 月度 |
 | **监控报告** | 因子表现月报 | 07_MONITORING/monthly/ | 月度 |
@@ -249,8 +249,8 @@ implementation_status: 进行�?
 ### 10.1 相关文档
 
 - [因子计算方法论](../01_STANDARDS/T.02.FE001.factor_definition.md)
-- [IC 分析标准](../01_STANDARDS/ic_analysis.md)
-- [回测标准](../01_STANDARDS/backtest_standards.md)
+- [IC 分析标准](../01_STANDARDS/IC_ANALYSIS.md)
+- [回测标准](../01_STANDARDS/BACKTEST_STANDARDS.md)
 - [因子注册表](../../../README.md)
 
 ### 10.2 更新记录

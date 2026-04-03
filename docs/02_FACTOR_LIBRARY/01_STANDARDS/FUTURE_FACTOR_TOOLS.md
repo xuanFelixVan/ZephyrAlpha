@@ -223,9 +223,9 @@ Phase 3: 补充缺失指标
 
 | 现有文档 | Alphalens替代/增强 |
 |----------|-------------------|
-| `ic_analysis.md` (手动IC计算) | Alphalens自动计算，更全面 |
-| `factor_return_analysis.md` (手动收益分析) | Alphalens一键生�?|
-| `factor_monitoring.md` (简单监�? | Alphalens生成专业报告 |
+| `IC_ANALYSIS.md` (手动IC计算) | Alphalens自动计算，更全面 |
+| `FACTOR_RETURN_ANALYSIS.md` (手动收益分析) | Alphalens一键生�?|
+| `FACTOR_MONITORING.md` (简单监�? | Alphalens生成专业报告 |
 
 ### 3.4 集成方案
 
@@ -621,5 +621,5 @@ TA-Lib触发条件:
 
 - 父目�? [01_STANDARDS/README.md](./README.md)
 - 相关: [FACTOR_CALCULATION_FRAMEWORK.md](./FACTOR_CALCULATION_FRAMEWORK.md)
-- 相关: [ic_analysis.md](./ic_analysis.md)
-- 相关: [factor_synthesis.md](./factor_synthesis.md)
+- 相关: [IC_ANALYSIS.md](./IC_ANALYSIS.md)
+- 相关: [FACTOR_SYNTHESIS.md](./FACTOR_SYNTHESIS.md)

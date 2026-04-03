@@ -450,7 +450,7 @@ factor_management:
 |------|------|
 | [因子库总览](../README.md) | 因子库整体介�?|
 | [因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md) | 因子注册�?DAG/调度�?引擎 |
-| [因子监控](../07_FACTOR_MONITORING/factor_monitoring.md) | IC监控/衰减预警 |
+| [因子监控](../07_FACTOR_MONITORING/FACTOR_MONITORING.md) | IC监控/衰减预警 |
 | [5900因子筛选策略](./FACTOR_SCREENING_STRATEGY.md) | �?900筛选到20-30个有效因�?|
 
 ---

@@ -73,7 +73,7 @@ strategy_reports/
 | 文档 | 说明 |
 |------|------|
 | [../../Strategy_Spec_S001.md](../../../03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略逻辑定义 |
-| [../01_STANDARDS/backtest_standards.md](../../01_STANDARDS/backtest_standards.md) | 回测标准 |
+| [../01_STANDARDS/BACKTEST_STANDARDS.md](../../01_STANDARDS/BACKTEST_STANDARDS.md) | 回测标准 |
 
 
 **版本**: 1.0 | **更新**: 2026-03-28

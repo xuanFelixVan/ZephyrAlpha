@@ -65,7 +65,7 @@ implementation_status: 进行�?
 
 > **注意**: 因子定义和分类请参考以下文档：
 > - **因子分类�?*: [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) - 因子分类体系和参数配�?
-> - **因子注册�?*: [../06_REGISTRY/factor_catalog.md](../06_REGISTRY/factor_catalog.md) - 因子清单和元数据
+> - **因子注册�?*: [../06_REGISTRY/FACTOR_CATALOG.md](../06_REGISTRY/FACTOR_CATALOG.md) - 因子清单和元数据
 
 ### 2.1 因子依赖管理
 
@@ -549,8 +549,8 @@ class FactorValidator:
 �? ├── NEWS_SENTIMENT_DATA_SOURCE.md - 新闻舆情数据源定�?                             �?
 �? ├── TECHNICAL_INDICATORS.md - 技术指标计算公�?                    �?
 �? ├── FACTOR_TAXONOMY.md - 因子注册表格�?                         �?
-�? ├── ic_analysis.md - IC/IR分析方法                                �?
-�? └── factor_preprocessing.md - 因子预处理方�?                     �?
+�? ├── IC_ANALYSIS.md - IC/IR分析方法                                �?
+�? └── FACTOR_PREPROCESSING.md - 因子预处理方�?                     �?
 �?                                                                    �?
 └─────────────────────────────────────────────────────────────────────�?
 ```
@@ -562,4 +562,4 @@ class FactorValidator:
 - 父目�? [01_STANDARDS/README.md](./README.md)
 - 相关: [FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)
 - 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
-- 相关: [ic_analysis.md](./ic_analysis.md)
+- 相关: [IC_ANALYSIS.md](./IC_ANALYSIS.md)

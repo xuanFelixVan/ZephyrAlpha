@@ -52,7 +52,7 @@ implementation_status: 进行�?
 
 ## 回测报告模板
 
-详见：[01_STANDARDS/backtest_standards.md](../01_STANDARDS/backtest_standards.md)
+详见：[01_STANDARDS/BACKTEST_STANDARDS.md](../01_STANDARDS/BACKTEST_STANDARDS.md)
 
 ---
 

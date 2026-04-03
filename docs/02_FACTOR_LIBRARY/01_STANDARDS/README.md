@@ -37,11 +37,11 @@ implementation_status: 进行�?
 01_STANDARDS/
 ├── README.md                    # 本文�?
 ├── T.02.FE001.factor_definition.md         # 因子定义标准
-├── ic_analysis.md              # IC分析体系
-├── factor_preprocessing.md      # 因子预处理方�?
-├── factor_synthesis.md         # 因子合成方法
-├── backtest_standards.md       # 回测标准
-└── research_management.md       # 研究项目管理（新增）
+├── IC_ANALYSIS.md              # IC分析体系
+├── FACTOR_PREPROCESSING.md      # 因子预处理方�?
+├── FACTOR_SYNTHESIS.md         # 因子合成方法
+├── BACKTEST_STANDARDS.md       # 回测标准
+└── RESEARCH_MANAGEMENT.md       # 研究项目管理（新增）
 ```
 
 ---
@@ -54,25 +54,25 @@ implementation_status: 进行�?
 
 ## 3. IC分析体系
 
-详见：[ic_analysis.md](./ic_analysis.md)
+详见：[IC_ANALYSIS.md](./IC_ANALYSIS.md)
 
 ---
 
 ## 4. 因子预处理方�?
 
-详见：[factor_preprocessing.md](./factor_preprocessing.md)
+详见：[FACTOR_PREPROCESSING.md](./FACTOR_PREPROCESSING.md)
 
 ---
 
 ## 5. 因子合成方法
 
-详见：[factor_synthesis.md](./factor_synthesis.md)
+详见：[FACTOR_SYNTHESIS.md](./FACTOR_SYNTHESIS.md)
 
 ---
 
 ## 6. 回测标准
 
-详见：[backtest_standards.md](./backtest_standards.md)
+详见：[BACKTEST_STANDARDS.md](./BACKTEST_STANDARDS.md)
 
 ---
 

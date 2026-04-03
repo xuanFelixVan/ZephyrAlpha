@@ -179,7 +179,7 @@ implementation_status: 进行�?
 | 文档 | 说明 |
 |------|------|
 | [01_STANDARDS/T.02.FE001.factor_definition.md](01_STANDARDS/T.02.FE001.factor_definition.md) | 因子定义标准 |
-| [01_STANDARDS/ic_analysis.md](01_STANDARDS/ic_analysis.md) | IC分析体系 |
+| [01_STANDARDS/IC_ANALYSIS.md](01_STANDARDS/IC_ANALYSIS.md) | IC分析体系 |
 |  | 因子IC验证报告 |
 |  | 因子详细定义 |
 

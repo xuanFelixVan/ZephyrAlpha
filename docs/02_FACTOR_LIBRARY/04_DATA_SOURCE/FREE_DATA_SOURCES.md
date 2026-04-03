@@ -1,77 +1,77 @@
-ï»¿---
+---
 module_id: DATA_FREE_SOURCES_001
 version: 3.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: é¦–å¸­æ–‡æ¡£æ¶æ„ï¿½?standard_type: æ•°æ®æºæ–‡ï¿½?applicable_scope: æ•°æ®æºæ•´ï¿½?compliance_level: ä¸“ä¸šæ ‡å‡†
+owner: Ê×Ï¯ÎÄµµ¼Ü¹¹??standard_type: Êı¾İÔ´ÎÄ??applicable_scope: Êı¾İÔ´Õû??compliance_level: ×¨Òµ±ê×¼
 parent_document: ./INDEX.md
-implementation_status: è¿›è¡Œï¿½?--- è¿›è¡Œï¿½?
+implementation_status: ½øĞĞ??--- ½øĞĞ??
 ---
 
-# T.01.DS001.å…è´¹æ•°æ®æºæ•´ï¿½?
+# T.01.DS001.Ãâ·ÑÊı¾İÔ´Õû??
 
-> æ•°æ®æºç±»Alphaå› å­
+> Êı¾İÔ´ÀàAlphaÒò×Ó
 >
-> **é…å¥—æ–‡æ¡£**ï¿½?
-> - ä¸»æ–‡æ¡£ï¼š[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
-> - å› å­åº“ç´¢å¼•ï¼š[factor_master_index.md](IFIND/factor_master_index.md)
-> - æ•°æ®æºç´¢å¼•ï¼š[æ•°æ®ï¿½?README](./README.md)
+> **ÅäÌ×ÎÄµµ**??
+> - Ö÷ÎÄµµ£º[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
+> - Òò×Ó¿âË÷Òı£º[FACTOR_MASTER_INDEX.md](IFIND/FACTOR_MASTER_INDEX.md)
+> - Êı¾İÔ´Ë÷Òı£º[Êı¾İ??README](./README.md)
 
 ***
 
-## 1. æ•°æ®æºæ¦‚ï¿½?
+## 1. Êı¾İÔ´¸Å??
 
-| å±ï¿½?| å†…å®¹ |
+| Êô??| ÄÚÈİ |
 |------|------|
-| å› å­ç¼–å· | T.01.DS001 |
-| å› å­åç§° | å…è´¹æ•°æ®æºæ•´ï¿½?|
-| å› å­ç±»å‹ | æ•°æ®æºç±» |
-| æ•°æ®ï¿½?| Baostock / AkShare / Efinance / Tushare / æ–°æµª / è…¾è®¯ |
-| æ›´æ–°é¢‘ç‡ | æ—¥é¢‘/å®æ—¶ |
+| Òò×Ó±àºÅ | T.01.DS001 |
+| Òò×ÓÃû³Æ | Ãâ·ÑÊı¾İÔ´Õû??|
+| Òò×ÓÀàĞÍ | Êı¾İÔ´Àà |
+| Êı¾İ??| Baostock / AkShare / Efinance / Tushare / ĞÂÀË / ÌÚÑ¶ |
+| ¸üĞÂÆµÂÊ | ÈÕÆµ/ÊµÊ± |
 
-**æ ¸å¿ƒç†å¿µ**ï¼šæ•´åˆå¤šä¸ªå…è´¹æ•°æ®æºï¼Œæ„å»ºå®Œæ•´çš„Aè‚¡æ•°æ®ä½“ç³»ï¼Œè¦†ç›–è¡Œæƒ…ã€è´¢åŠ¡ã€èµ„é‡‘ã€èˆ†æƒ…ç­‰ç»´åº¦
+**ºËĞÄÀíÄî**£ºÕûºÏ¶à¸öÃâ·ÑÊı¾İÔ´£¬¹¹½¨ÍêÕûµÄA¹ÉÊı¾İÌåÏµ£¬¸²¸ÇĞĞÇé¡¢²ÆÎñ¡¢×Ê½ğ¡¢ÓßÇéµÈÎ¬¶È
 
-**é€‚ç”¨åœºæ™¯**ï¼šä¸ªäººé‡åŒ–äº¤æ˜“ã€å› å­ç ”ç©¶ã€å›æµ‹æ•°æ®å‡†ï¿½?
+**ÊÊÓÃ³¡¾°**£º¸öÈËÁ¿»¯½»Ò×¡¢Òò×ÓÑĞ¾¿¡¢»Ø²âÊı¾İ×¼??
 
 ***
 
-## 2. æ•°æ®æºæ€»è§ˆ
+## 2. Êı¾İÔ´×ÜÀÀ
 
-| æ•°æ®ï¿½?| å› å­æ•°é‡ | è¯„çº§ | æ ¸å¿ƒä¼˜åŠ¿ | è´¹ç”¨ |
+| Êı¾İ??| Òò×ÓÊıÁ¿ | ÆÀ¼¶ | ºËĞÄÓÅÊÆ | ·ÑÓÃ |
 |--------|----------|------|----------|------|
-| Baostock | 28+ | â­â­â­â­ï¿½?| è´¢åŠ¡æ•°æ®å…¨é¢ã€å†å²é•¿ | å…è´¹ |
-| AkShare | 115+ | â­â­â­â­ï¿½?| è¦†ç›–å…¨é¢ã€å®æ—¶æ€§å¥½ | å…è´¹ |
-| Efinance | 65+ | â­â­â­â­ | èµ„é‡‘æµæ•°æ®ç‹¬ï¿½?| å…è´¹ |
-| Tushare | 35+ | â­â­ï¿½?| éœ€ç§¯åˆ†ã€æ·±åº¦æ•°ï¿½?| éœ€ç§¯åˆ† |
-| æ–°æµªè´¢ç» | 28+ | â­â­ï¿½?| å®æ—¶è¡Œæƒ… | å…è´¹ |
-| è…¾è®¯è´¢ç» | 21+ | â­â­ | åŸºç¡€æ•°æ® | å…è´¹ |
+| Baostock | 28+ | ??????| ²ÆÎñÊı¾İÈ«Ãæ¡¢ÀúÊ·³¤ | Ãâ·Ñ |
+| AkShare | 115+ | ??????| ¸²¸ÇÈ«Ãæ¡¢ÊµÊ±ĞÔºÃ | Ãâ·Ñ |
+| Efinance | 65+ | ???? | ×Ê½ğÁ÷Êı¾İ¶À??| Ãâ·Ñ |
+| Tushare | 35+ | ????| Ğè»ı·Ö¡¢Éî¶ÈÊı??| Ğè»ı·Ö |
+| ĞÂÀË²Æ¾­ | 28+ | ????| ÊµÊ±ĞĞÇé | Ãâ·Ñ |
+| ÌÚÑ¶²Æ¾­ | 21+ | ?? | »ù´¡Êı¾İ | Ãâ·Ñ |
 
 ***
 
-## 3. Baostockæ•°æ®æºï¼ˆ28+å› å­ï¿½?
+## 3. BaostockÊı¾İÔ´£¨28+Òò×Ó??
 
-### 3.1 è¡Œæƒ…æ•°æ®ï¿½?4ä¸ªï¼‰
+### 3.1 ĞĞÇéÊı¾İ??4¸ö£©
 
 ```python
 class BaostockQuote:
-    """Baostockè¡Œæƒ…æ•°æ®"""
+    """BaostockĞĞÇéÊı¾İ"""
 
     COLUMNS = {
-        'åŸºç¡€è¡Œæƒ…': ['date', 'code', 'open', 'high', 'low', 'close', 'preclose'],
-        'äº¤æ˜“æ•°æ®': ['volume', 'amount', 'turn', 'pctChg'],
-        'ä¼°å€¼æ•°ï¿½?: ['peTTM', 'psTTM', 'pcfNcfTTM', 'pbMRQ'],
-        'çŠ¶æ€æ•°ï¿½?: ['isST']
+        '»ù´¡ĞĞÇé': ['date', 'code', 'open', 'high', 'low', 'close', 'preclose'],
+        '½»Ò×Êı¾İ': ['volume', 'amount', 'turn', 'pctChg'],
+        '¹ÀÖµÊı??: ['peTTM', 'psTTM', 'pcfNcfTTM', 'pbMRQ'],
+        '×´Ì¬Êı??: ['isST']
     }
 
     def get_daily(self, code, start_date, end_date):
         """
-        è·å–æ—¥çº¿è¡Œæƒ…æ•°æ®
+        »ñÈ¡ÈÕÏßĞĞÇéÊı¾İ
 
         Parameters:
-            code: è‚¡ç¥¨ä»£ç ï¼Œå¦‚ 'sh.600000'
-            start_date: å¼€å§‹æ—¥æœŸï¼Œï¿½?'2024-01-01'
-            end_date: ç»“æŸæ—¥æœŸï¼Œå¦‚ '2024-12-31'
+            code: ¹ÉÆ±´úÂë£¬Èç 'sh.600000'
+            start_date: ¿ªÊ¼ÈÕÆÚ£¬??'2024-01-01'
+            end_date: ½áÊøÈÕÆÚ£¬Èç '2024-12-31'
 
         Returns:
             DataFrame with columns: date, code, open, high, low, close, volume, amount, turn, pctChg, isST, peTTM, psTTM, pcfNcfTTM, pbMRQ
@@ -80,10 +80,10 @@ class BaostockQuote:
 
     def get_realtime(self, codes):
         """
-        è·å–å®æ—¶è¡Œæƒ…
+        »ñÈ¡ÊµÊ±ĞĞÇé
 
         Parameters:
-            codes: è‚¡ç¥¨ä»£ç åˆ—è¡¨
+            codes: ¹ÉÆ±´úÂëÁĞ±í
 
         Returns:
             DataFrame with realtime quote
@@ -91,38 +91,38 @@ class BaostockQuote:
         pass
 ```
 
-### 3.2 è´¢åŠ¡æ•°æ®ï¿½?1ä¸ªï¼‰
+### 3.2 ²ÆÎñÊı¾İ??1¸ö£©
 
 ```python
 class BaostockFinance:
-    """Baostockè´¢åŠ¡æ•°æ®"""
+    """Baostock²ÆÎñÊı¾İ"""
 
     INDICATORS = {
-        'åˆ©æ¶¦ï¿½?ï¿½?: [
-            'è¥ä¸šæ”¶å…¥', 'è¥ä¸šæˆæœ¬', 'è¥ä¸šåˆ©æ¶¦',
-            'åˆ©æ¶¦æ€»é¢', 'å‡€åˆ©æ¶¦', 'æ¯è‚¡æ”¶ç›Š', 'ROE'
+        'ÀûÈó????: [
+            'ÓªÒµÊÕÈë', 'ÓªÒµ³É±¾', 'ÓªÒµÀûÈó',
+            'ÀûÈó×Ü¶î', '¾»ÀûÈó', 'Ã¿¹ÉÊÕÒæ', 'ROE'
         ],
-        'èµ„äº§è´Ÿå€ºè¡¨7ï¿½?: [
-            'æ€»èµ„ï¿½?, 'æµåŠ¨èµ„äº§', 'å›ºå®šèµ„äº§',
-            'æ€»è´Ÿï¿½?, 'æµåŠ¨è´Ÿï¿½?, 'è‚¡ä¸œæƒç›Š', 'èµ„äº§è´Ÿå€ºç‡'
+        '×Ê²ú¸ºÕ®±í7??: [
+            '×Ü×Ê??, 'Á÷¶¯×Ê²ú', '¹Ì¶¨×Ê²ú',
+            '×Ü¸º??, 'Á÷¶¯¸º??, '¹É¶«È¨Òæ', '×Ê²ú¸ºÕ®ÂÊ'
         ],
-        'ç°é‡‘æµé‡ï¿½?ï¿½?: [
-            'ç»è¥æ´»åŠ¨ç°é‡‘ï¿½?, 'æŠ•èµ„æ´»åŠ¨ç°é‡‘ï¿½?,
-            'ç­¹èµ„æ´»åŠ¨ç°é‡‘ï¿½?, 'ç°é‡‘å‡€å¢åŠ ï¿½?
+        'ÏÖ½ğÁ÷Á¿????: [
+            '¾­Óª»î¶¯ÏÖ½ğ??, 'Í¶×Ê»î¶¯ÏÖ½ğ??,
+            '³ï×Ê»î¶¯ÏÖ½ğ??, 'ÏÖ½ğ¾»Ôö¼Ó??
         ],
-        'ä¸šç»©é¢„å‘Š3ï¿½?: [
-            'ä¸šç»©å˜åŠ¨ç±»å‹', 'é¢„æµ‹å‡€åˆ©æ¶¦ä¸‹é™', 'é¢„æµ‹å‡€åˆ©æ¶¦ä¸Šé™'
+        'Òµ¼¨Ô¤¸æ3??: [
+            'Òµ¼¨±ä¶¯ÀàĞÍ', 'Ô¤²â¾»ÀûÈóÏÂÏŞ', 'Ô¤²â¾»ÀûÈóÉÏÏŞ'
         ]
     }
 
     def get_finance(self, code, start_date, end_date, statements='all'):
         """
-        è·å–è´¢åŠ¡æ•°æ®
+        »ñÈ¡²ÆÎñÊı¾İ
 
         Parameters:
-            code: è‚¡ç¥¨ä»£ç 
-            start_date: å¼€å§‹æ—¥ï¿½?
-            end_date: ç»“æŸæ—¥æœŸ
+            code: ¹ÉÆ±´úÂë
+            start_date: ¿ªÊ¼ÈÕ??
+            end_date: ½áÊøÈÕÆÚ
             statements: 'all'/'income'/'balance'/'cash'
 
         Returns:
@@ -132,11 +132,11 @@ class BaostockFinance:
 
     def get_performance(self, start_date, end_date):
         """
-        è·å–ä¸šç»©é¢„å‘Š/å¿«æŠ¥
+        »ñÈ¡Òµ¼¨Ô¤¸æ/¿ì±¨
 
         Parameters:
-            start_date: å¼€å§‹æ—¥ï¿½?
-            end_date: ç»“æŸæ—¥æœŸ
+            start_date: ¿ªÊ¼ÈÕ??
+            end_date: ½áÊøÈÕÆÚ
 
         Returns:
             DataFrame with performance preview
@@ -144,18 +144,18 @@ class BaostockFinance:
         pass
 ```
 
-### 3.3 ä½¿ç”¨ç¤ºä¾‹
+### 3.3 Ê¹ÓÃÊ¾Àı
 
 ```python
 import baostock as bs
 import pandas as pd
 
-# ç™»å½•
+# µÇÂ¼
 lg = bs.login()
 print(f'Login respond error_code:{lg.error_code}')
 print(f'Login respond error_msg:{lg.error_msg}')
 
-# è·å–æ—¥çº¿æ•°æ®
+# »ñÈ¡ÈÕÏßÊı¾İ
 rs = bs.query_history_k_data_plus(
     "sh.600000",
     "date,code,open,high,low,close,volume,amount,pctChg",
@@ -164,13 +164,13 @@ rs = bs.query_history_k_data_plus(
     frequency="d"
 )
 
-# è½¬æ¢ä¸ºDataFrame
+# ×ª»»ÎªDataFrame
 data_list = []
 while (rs.error_code == '0') & rs.next():
     data_list.append(rs.get_row_data())
 df = pd.DataFrame(data_list, columns=rs.fields)
 
-# ç™»å‡º
+# µÇ³ö
 bs.logout()
 
 print(df.head())
@@ -178,21 +178,21 @@ print(df.head())
 
 ***
 
-## 4. AkShareæ•°æ®æºï¼ˆ115+å› å­ï¿½?
+## 4. AkShareÊı¾İÔ´£¨115+Òò×Ó??
 
-### 4.1 Aè‚¡è¡Œæƒ…ï¼ˆ45ä¸ªï¼‰
+### 4.1 A¹ÉĞĞÇé£¨45¸ö£©
 
 ```python
 class AkShareQuote:
-    """AkShareè¡Œæƒ…æ•°æ®"""
+    """AkShareĞĞÇéÊı¾İ"""
 
     def stock_zh_a_spot_em(self):
         """
-        è·å–Aè‚¡å®æ—¶è¡Œï¿½?
+        »ñÈ¡A¹ÉÊµÊ±ĞĞ??
 
         Returns:
-            DataFrame with columns: ä»£ç , åç§°, æœ€æ–°ä»·, æ¶¨è·Œï¿½? æ¶¨è·Œï¿½?
-            æˆäº¤ï¿½? æˆäº¤ï¿½? æŒ¯å¹…, æœ€ï¿½? æœ€ï¿½? ä»Šå¼€, æ˜¨æ”¶, é‡æ¯”, æ¢æ‰‹ç‡ç­‰
+            DataFrame with columns: ´úÂë, Ãû³Æ, ×îĞÂ¼Û, ÕÇµø?? ÕÇµø??
+            ³É½»?? ³É½»?? Õñ·ù, ×î?? ×î?? ½ñ¿ª, ×òÊÕ, Á¿±È, »»ÊÖÂÊµÈ
         """
         pass
 
@@ -205,13 +205,13 @@ class AkShareQuote:
         adjust: str = "qfq"
     ):
         """
-        è·å–Aè‚¡å†å²è¡Œï¿½?
+        »ñÈ¡A¹ÉÀúÊ·ĞĞ??
 
         Parameters:
-            symbol: è‚¡ç¥¨ä»£ç 
+            symbol: ¹ÉÆ±´úÂë
             period: 'daily'/'weekly'/'monthly'
-            start_date: å¼€å§‹æ—¥ï¿½?
-            end_date: ç»“æŸæ—¥æœŸ
+            start_date: ¿ªÊ¼ÈÕ??
+            end_date: ½áÊøÈÕÆÚ
             adjust: 'qfq'/'hfq'/'none'
 
         Returns:
@@ -226,10 +226,10 @@ class AkShareQuote:
         adjust: str = "qfq"
     ):
         """
-        è·å–åˆ†é’ŸKçº¿æ•°ï¿½?
+        »ñÈ¡·ÖÖÓKÏßÊı??
 
         Parameters:
-            symbol: è‚¡ç¥¨ä»£ç 
+            symbol: ¹ÉÆ±´úÂë
             period: '1'/'5'/'15'/'30'/'60'
             adjust: 'qfq'/'hfq'/'none'
 
@@ -239,19 +239,19 @@ class AkShareQuote:
         pass
 ```
 
-### 4.2 è´¢åŠ¡æ•°æ®ï¿½?4ä¸ªï¼‰
+### 4.2 ²ÆÎñÊı¾İ??4¸ö£©
 
 ```python
 class AkShareFinance:
-    """AkShareè´¢åŠ¡æ•°æ®"""
+    """AkShare²ÆÎñÊı¾İ"""
 
-    def stock_financial_report_sina(self, stock: str, symbol: str = "åˆ©æ¶¦ï¿½?):
+    def stock_financial_report_sina(self, stock: str, symbol: str = "ÀûÈó??):
         """
-        è·å–è´¢åŠ¡æŠ¥è¡¨
+        »ñÈ¡²ÆÎñ±¨±í
 
         Parameters:
-            stock: è‚¡ç¥¨ä»£ç 
-            symbol: 'åˆ©æ¶¦ï¿½?/'èµ„äº§è´Ÿå€ºè¡¨'/'ç°é‡‘æµé‡ï¿½?
+            stock: ¹ÉÆ±´úÂë
+            symbol: 'ÀûÈó??/'×Ê²ú¸ºÕ®±í'/'ÏÖ½ğÁ÷Á¿??
 
         Returns:
             DataFrame with financial report
@@ -265,7 +265,7 @@ class AkShareFinance:
         end_date: str
     ):
         """
-        è·å–è´¢åŠ¡æŒ‡æ ‡
+        »ñÈ¡²ÆÎñÖ¸±ê
 
         Returns:
             DataFrame with ROE, EPS, etc.
@@ -273,65 +273,65 @@ class AkShareFinance:
         pass
 ```
 
-### 4.3 å¸‚åœºæ•°æ®ï¿½?9ä¸ªï¼‰
+### 4.3 ÊĞ³¡Êı¾İ??9¸ö£©
 
 ```python
 class AkShareMarket:
-    """AkShareå¸‚åœºæ•°æ®"""
+    """AkShareÊĞ³¡Êı¾İ"""
 
     def stock_lhb_detail_em(self, date: str = None):
         """
-        è·å–é¾™è™æ¦œæ˜ï¿½?
+        »ñÈ¡Áú»¢°ñÃ÷??
 
         Parameters:
-            date: ä¸Šæ¦œæ—¥æœŸï¼Œå¦‚ '2024-01-15'
+            date: ÉÏ°ñÈÕÆÚ£¬Èç '2024-01-15'
 
         Returns:
-            DataFrame with columns: ä»£ç , åç§°, ä¸Šæ¦œæ—¥æœŸ, ä¸Šæ¦œåŸå› ,
-            ä¹°å…¥é‡‘é¢, å–å‡ºé‡‘é¢, å‡€ï¿½? ä¹°å…¥å¸­ä½, å–å‡ºå¸­ä½
+            DataFrame with columns: ´úÂë, Ãû³Æ, ÉÏ°ñÈÕÆÚ, ÉÏ°ñÔ­Òò,
+            ÂòÈë½ğ¶î, Âô³ö½ğ¶î, ¾»?? ÂòÈëÏ¯Î», Âô³öÏ¯Î»
         """
         pass
 
     def stock_margin_detail(self, symbol: str = None, date: str = None):
         """
-        è·å–èèµ„èåˆ¸æ˜ç»†
+        »ñÈ¡ÈÚ×ÊÈÚÈ¯Ã÷Ï¸
 
         Returns:
-            DataFrame with èèµ„ä½™é¢, èèµ„ä¹°å…¥ï¿½? èåˆ¸ä½™é¢ï¿½?
+            DataFrame with ÈÚ×ÊÓà¶î, ÈÚ×ÊÂòÈë?? ÈÚÈ¯Óà¶î??
         """
         pass
 
     def stock_block_trade_em(self, start_date: str, end_date: str):
         """
-        è·å–å¤§å®—äº¤æ˜“æ•°æ®
+        »ñÈ¡´ó×Ú½»Ò×Êı¾İ
 
         Returns:
-            DataFrame with æˆäº¤ï¿½? æˆäº¤ï¿½? æˆäº¤é‡‘é¢, æº¢ä»·ï¿½?
+            DataFrame with ³É½»?? ³É½»?? ³É½»½ğ¶î, Òç¼Û??
         """
         pass
 ```
 
-### 4.4 æŒ‡æ•°ä¸æ¿å—æ•°ï¿½?
+### 4.4 Ö¸ÊıÓë°å¿éÊı??
 
 ```python
 class AkShareIndex:
-    """AkShareæŒ‡æ•°æ•°æ®"""
+    """AkShareÖ¸ÊıÊı¾İ"""
 
     def index_zh_a_spot_em(self):
         """
-        è·å–æŒ‡æ•°å®æ—¶è¡Œæƒ…
+        »ñÈ¡Ö¸ÊıÊµÊ±ĞĞÇé
 
         Returns:
-            DataFrame with ä¸»è¦æŒ‡æ•°å®æ—¶æ•°æ®
+            DataFrame with Ö÷ÒªÖ¸ÊıÊµÊ±Êı¾İ
         """
         pass
 
     def index_zh_a_hist(self, symbol: str, period: str = "daily", start_date: str = None, end_date: str = None):
         """
-        è·å–æŒ‡æ•°å†å²è¡Œæƒ…
+        »ñÈ¡Ö¸ÊıÀúÊ·ĞĞÇé
 
         Parameters:
-            symbol: æŒ‡æ•°ä»£ç ï¼Œå¦‚ '000001'ï¼ˆä¸Šè¯æŒ‡æ•°ï¼‰
+            symbol: Ö¸Êı´úÂë£¬Èç '000001'£¨ÉÏÖ¤Ö¸Êı£©
             period: 'daily'/'weekly'/'monthly'
 
         Returns:
@@ -341,34 +341,34 @@ class AkShareIndex:
 
     def stock_board_industry_name_em(self):
         """
-        è·å–è¡Œä¸šæ¿å—åˆ—è¡¨
+        »ñÈ¡ĞĞÒµ°å¿éÁĞ±í
 
         Returns:
-            DataFrame with è¡Œä¸šæ¿å—æˆåˆ†ï¿½?
+            DataFrame with ĞĞÒµ°å¿é³É·Ö??
         """
         pass
 
     def stock_board_concept_name_em(self):
         """
-        è·å–æ¦‚å¿µæ¿å—åˆ—è¡¨
+        »ñÈ¡¸ÅÄî°å¿éÁĞ±í
 
         Returns:
-            DataFrame with æ¦‚å¿µæ¿å—æˆåˆ†ï¿½?
+            DataFrame with ¸ÅÄî°å¿é³É·Ö??
         """
         pass
 ```
 
-### 4.5 ä½¿ç”¨ç¤ºä¾‹
+### 4.5 Ê¹ÓÃÊ¾Àı
 
 ```python
 import akshare as ak
 import pandas as pd
 
-# è·å–å®æ—¶è¡Œæƒ…
+# »ñÈ¡ÊµÊ±ĞĞÇé
 df_spot = ak.stock_zh_a_spot_em()
-print(df_spot[['ä»£ç ', 'åç§°', 'æœ€æ–°ä»·', 'æ¶¨è·Œï¿½?]].head())
+print(df_spot[['´úÂë', 'Ãû³Æ', '×îĞÂ¼Û', 'ÕÇµø??]].head())
 
-# è·å–å†å²Kï¿½?
+# »ñÈ¡ÀúÊ·K??
 df_hist = ak.stock_zh_a_hist(
     symbol="000001",
     period="daily",
@@ -378,31 +378,31 @@ df_hist = ak.stock_zh_a_hist(
 )
 print(df_hist.head())
 
-# è·å–é¾™è™ï¿½?
+# »ñÈ¡Áú»¢??
 df_lhb = ak.stock_lhb_detail_em(date="20240115")
 print(df_lhb.head())
 
-# è·å–è¡Œä¸šæ¿å—
+# »ñÈ¡ĞĞÒµ°å¿é
 df_industry = ak.stock_board_industry_name_em()
 print(df_industry.head())
 ```
 
 ***
 
-## 5. Efinanceæ•°æ®æºï¼ˆ65+å› å­ï¿½?
+## 5. EfinanceÊı¾İÔ´£¨65+Òò×Ó??
 
-### 5.1 è‚¡ç¥¨è¡Œæƒ…ï¿½?8ä¸ªï¼‰
+### 5.1 ¹ÉÆ±ĞĞÇé??8¸ö£©
 
 ```python
 class EFinanceQuote:
-    """EFinanceè¡Œæƒ…æ•°æ®"""
+    """EFinanceĞĞÇéÊı¾İ"""
 
     def get_quote(self, codes):
         """
-        è·å–å®æ—¶è¡Œæƒ…
+        »ñÈ¡ÊµÊ±ĞĞÇé
 
         Parameters:
-            codes: è‚¡ç¥¨ä»£ç åˆ—è¡¨ï¼Œå¦‚ ['000001', '000002']
+            codes: ¹ÉÆ±´úÂëÁĞ±í£¬Èç ['000001', '000002']
 
         Returns:
             DataFrame with realtime quote
@@ -411,13 +411,13 @@ class EFinanceQuote:
 
     def get_kline(self, code, start_date=None, end_date=None, klt='101'):
         """
-        è·å–Kçº¿æ•°ï¿½?
+        »ñÈ¡KÏßÊı??
 
         Parameters:
-            code: è‚¡ç¥¨ä»£ç 
-            start_date: å¼€å§‹æ—¥ï¿½?
-            end_date: ç»“æŸæ—¥æœŸ
-            klt:  Kline type, '101'=æ—¥çº¿, '102'=å‘¨çº¿, '103'=æœˆçº¿
+            code: ¹ÉÆ±´úÂë
+            start_date: ¿ªÊ¼ÈÕ??
+            end_date: ½áÊøÈÕÆÚ
+            klt:  Kline type, '101'=ÈÕÏß, '102'=ÖÜÏß, '103'=ÔÂÏß
 
         Returns:
             DataFrame with OHLCV data
@@ -425,93 +425,93 @@ class EFinanceQuote:
         pass
 ```
 
-### 5.2 èµ„é‡‘æµå‘ï¿½?3ä¸ªï¼‰âœ¨ç‹¬å®¶ä¼˜ï¿½?
+### 5.2 ×Ê½ğÁ÷Ïò??3¸ö£©?¶À¼ÒÓÅ??
 
 ```python
 class EFinanceMoneyFlow:
-    """EFinanceèµ„é‡‘æµæ•°ï¿½?- ç‹¬å®¶ä¼˜åŠ¿"""
+    """EFinance×Ê½ğÁ÷Êı??- ¶À¼ÒÓÅÊÆ"""
 
     def get_individual_money_flow(self, stock: str, date: str = None):
         """
-        è·å–ä¸ªè‚¡èµ„é‡‘æµå‘
+        »ñÈ¡¸ö¹É×Ê½ğÁ÷Ïò
 
         Parameters:
-            stock: è‚¡ç¥¨ä»£ç 
-            date: æ—¥æœŸ
+            stock: ¹ÉÆ±´úÂë
+            date: ÈÕÆÚ
 
         Returns:
             DataFrame with columns:
-            - æœºæ„å‡€æµå…¥
-            - è¶…å¤§å•å‡€æµå…¥
-            - å¤§å•å‡€æµå…¥
-            - ä¸­å•å‡€æµå…¥
-            - å°å•å‡€æµå…¥
+            - »ú¹¹¾»Á÷Èë
+            - ³¬´óµ¥¾»Á÷Èë
+            - ´óµ¥¾»Á÷Èë
+            - ÖĞµ¥¾»Á÷Èë
+            - Ğ¡µ¥¾»Á÷Èë
         """
         pass
 
-    def get_sector_money_flow(self, sector_type: str = "è¡Œä¸š", date: str = None):
+    def get_sector_money_flow(self, sector_type: str = "ĞĞÒµ", date: str = None):
         """
-        è·å–æ¿å—èµ„é‡‘æµå‘
+        »ñÈ¡°å¿é×Ê½ğÁ÷Ïò
 
         Parameters:
-            sector_type: 'è¡Œä¸š'/'æ¦‚å¿µ'
-            date: æ—¥æœŸ
+            sector_type: 'ĞĞÒµ'/'¸ÅÄî'
+            date: ÈÕÆÚ
 
         Returns:
             DataFrame with columns:
-            - æ¿å—åç§°
-            - æœºæ„å‡€æµå…¥
-            - æ¶¨è·Œï¿½?
-            - é¢†æ¶¨ï¿½?
+            - °å¿éÃû³Æ
+            - »ú¹¹¾»Á÷Èë
+            - ÕÇµø??
+            - ÁìÕÇ??
         """
         pass
 
     def get_north_money_flow(self, date: str = None):
         """
-        è·å–åŒ—å‘èµ„é‡‘æµå‘
+        »ñÈ¡±±Ïò×Ê½ğÁ÷Ïò
 
         Returns:
             DataFrame with columns:
-            - æ—¥æœŸ
-            - æ²ªè‚¡é€šå‡€æµå…¥
-            - æ·±è‚¡é€šå‡€æµå…¥
-            - åŒ—å‘èµ„é‡‘åˆè®¡
+            - ÈÕÆÚ
+            - »¦¹ÉÍ¨¾»Á÷Èë
+            - Éî¹ÉÍ¨¾»Á÷Èë
+            - ±±Ïò×Ê½ğºÏ¼Æ
         """
         pass
 ```
 
-### 5.3 ä½¿ç”¨ç¤ºä¾‹
+### 5.3 Ê¹ÓÃÊ¾Àı
 
 ```python
 from efinance import stock
 import pandas as pd
 
-# è·å–å®æ—¶è¡Œæƒ…
+# »ñÈ¡ÊµÊ±ĞĞÇé
 df = stock.get_quote(['000001', '000002'])
-print(df[['ä»£ç ', 'åç§°', 'æœ€æ–°ä»·', 'æ¶¨è·Œï¿½?]].head())
+print(df[['´úÂë', 'Ãû³Æ', '×îĞÂ¼Û', 'ÕÇµø??]].head())
 
-# è·å–ä¸ªè‚¡èµ„é‡‘æµå‘
+# »ñÈ¡¸ö¹É×Ê½ğÁ÷Ïò
 df_mf = stock.get_individual_money_flow('000001', '20240115')
 print(df_mf)
 
-# è·å–åŒ—å‘èµ„é‡‘
+# »ñÈ¡±±Ïò×Ê½ğ
 df_north = stock.get_north_money_flow('20240115')
 print(df_north)
 ```
 
 ***
 
-## 6. Tushareæ•°æ®æºï¼ˆ35+å› å­ï¿½?
+## 6. TushareÊı¾İÔ´£¨35+Òò×Ó??
 
-### 6.1 åŸºç¡€æ•°æ®ï¿½?5ä¸ªï¼‰
+### 6.1 »ù´¡Êı¾İ??5¸ö£©
 
 ```python
 class TushareData:
-    """Tushareæ•°æ®"""
+    """TushareÊı¾İ"""
 
     def get_daily(self, ts_code, start_date, end_date):
         """
-        è·å–æ—¥çº¿è¡Œæƒ…
+        »ñÈ¡ÈÕÏßĞĞÇé
 
         Returns:
             DataFrame with date, ts_code, open, high, low, close, vol, amount, pct_chg
@@ -519,36 +519,36 @@ class TushareData:
         pass
 
     def get_weekly(self, ts_code, start_date, end_date):
-        """è·å–å‘¨çº¿æ•°æ®"""
+        """»ñÈ¡ÖÜÏßÊı¾İ"""
         pass
 
     def get_monthly(self, ts_code, start_date, end_date):
-        """è·å–æœˆçº¿æ•°æ®"""
+        """»ñÈ¡ÔÂÏßÊı¾İ"""
         pass
 
     def get_restricted_shares(self, start_date, end_date):
         """
-        è·å–é™å”®è‚¡è§£ç¦æ•°ï¿½?
+        »ñÈ¡ÏŞÊÛ¹É½â½ûÊı??
 
         Returns:
-            DataFrame with è‚¡ç¥¨ä»£ç , è§£ç¦æ—¥æœŸ, è§£ç¦æ•°é‡, è§£ç¦æ¯”ä¾‹
+            DataFrame with ¹ÉÆ±´úÂë, ½â½ûÈÕÆÚ, ½â½ûÊıÁ¿, ½â½û±ÈÀı
         """
         pass
 ```
 
-### 6.2 è¿›é˜¶æ•°æ®ï¼ˆéœ€2000ç§¯åˆ†ï¿½?
+### 6.2 ½ø½×Êı¾İ£¨Ğè2000»ı·Ö??
 
 ```python
 class TusharePro:
-    """Tushare Proè¿›é˜¶æ•°æ®ï¼ˆéœ€ç§¯åˆ†ï¿½?""
+    """Tushare Pro½ø½×Êı¾İ£¨Ğè»ı·Ö??""
 
     def get_minute_data(self, ts_code, trade_date, freq='5min'):
         """
-        è·å–åˆ†é’Ÿæ•°æ®
+        »ñÈ¡·ÖÖÓÊı¾İ
 
         Parameters:
-            ts_code: è‚¡ç¥¨ä»£ç 
-            trade_date: äº¤æ˜“æ—¥æœŸ
+            ts_code: ¹ÉÆ±´úÂë
+            trade_date: ½»Ò×ÈÕÆÚ
             freq: '1min'/'5min'/'15min'/'30min'/'60min'
 
         Returns:
@@ -558,37 +558,37 @@ class TusharePro:
 
     def get_financial(self, ts_code, period_type='annual'):
         """
-        è·å–è´¢åŠ¡æŠ¥è¡¨
+        »ñÈ¡²ÆÎñ±¨±í
 
         Parameters:
-            ts_code: è‚¡ç¥¨ä»£ç 
+            ts_code: ¹ÉÆ±´úÂë
             period_type: 'annual'/'quarter'
 
         Returns:
-            DataFrame with åˆ©æ¶¦ï¿½? èµ„äº§è´Ÿå€ºè¡¨, ç°é‡‘æµé‡ï¿½?
+            DataFrame with ÀûÈó?? ×Ê²ú¸ºÕ®±í, ÏÖ½ğÁ÷Á¿??
         """
         pass
 
     def get_money_flow(self, ts_code, trade_date):
         """
-        è·å–èµ„é‡‘æµå‘
+        »ñÈ¡×Ê½ğÁ÷Ïò
 
         Returns:
-            DataFrame with æœºæ„å‡€æµå…¥, æ•£æˆ·å‡€æµå…¥
+            DataFrame with »ú¹¹¾»Á÷Èë, É¢»§¾»Á÷Èë
         """
         pass
 ```
 
-### 6.3 ä½¿ç”¨ç¤ºä¾‹
+### 6.3 Ê¹ÓÃÊ¾Àı
 
 ```python
 import tushare as ts
 
-# è®¾ç½®token
+# ÉèÖÃtoken
 ts.set_token('your_token_here')
 pro = ts.pro_api()
 
-# è·å–æ—¥çº¿æ•°æ®
+# »ñÈ¡ÈÕÏßÊı¾İ
 df = pro.daily(
     ts_code='000001.SZ',
     start_date='20240101',
@@ -596,96 +596,96 @@ df = pro.daily(
 )
 print(df.head())
 
-# è·å–è´¢åŠ¡æ•°æ®
+# »ñÈ¡²ÆÎñÊı¾İ
 df_fin = pro.fina_indicator(ts_code='000001.SZ')
 print(df_fin[['ts_code', 'ann_date', 'roe', 'eps']].head())
 ```
 
 ***
 
-## 7. æ•°æ®å­˜å‚¨æ¶æ„
+## 7. Êı¾İ´æ´¢¼Ü¹¹
 
-### 7.1 å­˜å‚¨ç›®å½•ç»“æ„
+### 7.1 ´æ´¢Ä¿Â¼½á¹¹
 
 ```python
 DATA_STORAGE_STRUCTURE = {
-    'è¡Œæƒ…æ•°æ®': {
-        'æ—¥çº¿': 'data/quotes/daily/{stock_code}.parquet',
-        'å‘¨çº¿': 'data/quotes/weekly/{stock_code}.parquet',
-        'æœˆçº¿': 'data/quotes/monthly/{stock_code}.parquet',
-        '5åˆ†é’Ÿ': 'data/quotes/5min/{stock_code}_{date}.parquet',
-        '15åˆ†é’Ÿ': 'data/quotes/15min/{stock_code}_{date}.parquet',
-        '30åˆ†é’Ÿ': 'data/quotes/30min/{stock_code}_{date}.parquet',
-        '60åˆ†é’Ÿ': 'data/quotes/60min/{stock_code}_{date}.parquet',
+    'ĞĞÇéÊı¾İ': {
+        'ÈÕÏß': 'data/quotes/daily/{stock_code}.parquet',
+        'ÖÜÏß': 'data/quotes/weekly/{stock_code}.parquet',
+        'ÔÂÏß': 'data/quotes/monthly/{stock_code}.parquet',
+        '5·ÖÖÓ': 'data/quotes/5min/{stock_code}_{date}.parquet',
+        '15·ÖÖÓ': 'data/quotes/15min/{stock_code}_{date}.parquet',
+        '30·ÖÖÓ': 'data/quotes/30min/{stock_code}_{date}.parquet',
+        '60·ÖÖÓ': 'data/quotes/60min/{stock_code}_{date}.parquet',
     },
-    'è´¢åŠ¡æ•°æ®': {
-        'åˆ©æ¶¦ï¿½?: 'data/financial/income/{stock_code}_{period}.parquet',
-        'èµ„äº§è´Ÿå€ºè¡¨': 'data/financial/balance/{stock_code}_{period}.parquet',
-        'ç°é‡‘æµé‡ï¿½?: 'data/financial/cashflow/{stock_code}_{period}.parquet',
-        'ä¸šç»©é¢„å‘Š': 'data/financial/performance/{stock_code}_{date}.parquet',
+    '²ÆÎñÊı¾İ': {
+        'ÀûÈó??: 'data/financial/income/{stock_code}_{period}.parquet',
+        '×Ê²ú¸ºÕ®±í': 'data/financial/balance/{stock_code}_{period}.parquet',
+        'ÏÖ½ğÁ÷Á¿??: 'data/financial/cashflow/{stock_code}_{period}.parquet',
+        'Òµ¼¨Ô¤¸æ': 'data/financial/performance/{stock_code}_{date}.parquet',
     },
-    'ä¼°å€¼æ•°ï¿½?: {
-        'æ¯æ—¥ä¼°ï¿½?: 'data/valuation/daily/{date}.parquet',
-        'å†å²ä¼°ï¿½?: 'data/valuation/history/{stock_code}.parquet',
+    '¹ÀÖµÊı??: {
+        'Ã¿ÈÕ¹À??: 'data/valuation/daily/{date}.parquet',
+        'ÀúÊ·¹À??: 'data/valuation/history/{stock_code}.parquet',
     },
-    'èµ„é‡‘æ•°æ®': {
-        'ä¸ªè‚¡èµ„é‡‘ï¿½?: 'data/money_flow/individual/{stock_code}_{date}.parquet',
-        'æ¿å—èµ„é‡‘ï¿½?: 'data/money_flow/sector/{sector}_{date}.parquet',
-        'åŒ—å‘èµ„é‡‘': 'data/money_flow/north/{date}.parquet',
+    '×Ê½ğÊı¾İ': {
+        '¸ö¹É×Ê½ğ??: 'data/money_flow/individual/{stock_code}_{date}.parquet',
+        '°å¿é×Ê½ğ??: 'data/money_flow/sector/{sector}_{date}.parquet',
+        '±±Ïò×Ê½ğ': 'data/money_flow/north/{date}.parquet',
     },
-    'å¸‚åœºæ•°æ®': {
-        'èèµ„èåˆ¸': 'data/market/margin/{date}.parquet',
-        'å¤§å®—äº¤æ˜“': 'data/market/block/{date}.parquet',
-        'é¾™è™ï¿½?: 'data/market/lhb/{date}.parquet',
-        'é™å”®è§£ç¦': 'data/market/restricted/{date}.parquet',
+    'ÊĞ³¡Êı¾İ': {
+        'ÈÚ×ÊÈÚÈ¯': 'data/market/margin/{date}.parquet',
+        '´ó×Ú½»Ò×': 'data/market/block/{date}.parquet',
+        'Áú»¢??: 'data/market/lhb/{date}.parquet',
+        'ÏŞÊÛ½â½û': 'data/market/restricted/{date}.parquet',
     }
 }
 ```
 
-### 7.2 æ•°æ®æ›´æ–°é¢‘ç‡
+### 7.2 Êı¾İ¸üĞÂÆµÂÊ
 
-| æ•°æ®ç±»å‹ | æ›´æ–°é¢‘ç‡ | è·å–æ–¹å¼ |
+| Êı¾İÀàĞÍ | ¸üĞÂÆµÂÊ | »ñÈ¡·½Ê½ |
 |----------|----------|----------|
-| å®æ—¶è¡Œæƒ… | å®æ—¶ | æ–°æµª/è…¾è®¯API |
-| æ—¥çº¿è¡Œæƒ… | æ”¶ç›˜ï¿½?| Baostock/AkShare |
-| åˆ†é’ŸKï¿½?| ç›˜ä¸­ | AkShare/EFinance |
-| è´¢åŠ¡æ•°æ® | å­£æŠ¥/å¹´æŠ¥ | Baostock/AkShare |
-| èµ„é‡‘æµå‘ | æ—¥é¢‘ | EFinanceï¼ˆç‹¬å®¶ï¼‰ |
-| é¾™è™ï¿½?| æ¬¡æ—¥ | AkShare |
-| èèµ„èåˆ¸ | æ—¥é¢‘ | AkShare |
+| ÊµÊ±ĞĞÇé | ÊµÊ± | ĞÂÀË/ÌÚÑ¶API |
+| ÈÕÏßĞĞÇé | ÊÕÅÌ??| Baostock/AkShare |
+| ·ÖÖÓK??| ÅÌÖĞ | AkShare/EFinance |
+| ²ÆÎñÊı¾İ | ¼¾±¨/Äê±¨ | Baostock/AkShare |
+| ×Ê½ğÁ÷Ïò | ÈÕÆµ | EFinance£¨¶À¼Ò£© |
+| Áú»¢??| ´ÎÈÕ | AkShare |
+| ÈÚ×ÊÈÚÈ¯ | ÈÕÆµ | AkShare |
 
 ***
 
-## 8. æ•°æ®æºé€‰æ‹©å»ºè®®
+## 8. Êı¾İÔ´Ñ¡Ôñ½¨Òé
 
-### 8.1 ä¸ªäººé‡åŒ–ï¼ˆå…è´¹æ–¹æ¡ˆï¼‰
+### 8.1 ¸öÈËÁ¿»¯£¨Ãâ·Ñ·½°¸£©
 
 ```python
 RECOMMENDED_FREE_SETUP = {
-    'è¡Œæƒ…æ•°æ®': 'Baostock + AkShare',
-    'è´¢åŠ¡æ•°æ®': 'Baostock',
-    'èµ„é‡‘æµå‘': 'EFinance',
-    'å¸‚åœºæ•°æ®': 'AkShare',
-    'å®æ—¶è¡Œæƒ…': 'AkShare + æ–°æµª',
-    'æŒ‡æ•°æ•°æ®': 'AkShare'
+    'ĞĞÇéÊı¾İ': 'Baostock + AkShare',
+    '²ÆÎñÊı¾İ': 'Baostock',
+    '×Ê½ğÁ÷Ïò': 'EFinance',
+    'ÊĞ³¡Êı¾İ': 'AkShare',
+    'ÊµÊ±ĞĞÇé': 'AkShare + ĞÂÀË',
+    'Ö¸ÊıÊı¾İ': 'AkShare'
 }
 ```
 
-### 8.2 å› å­ä¼˜å…ˆï¿½?
+### 8.2 Òò×ÓÓÅÏÈ??
 
-| ä¼˜å…ˆï¿½?| å› å­ç±»åˆ« | æ¨èæ•°æ®ï¿½?| é‡è¦ï¿½?|
+| ÓÅÏÈ??| Òò×ÓÀà±ğ | ÍÆ¼öÊı¾İ??| ÖØÒª??|
 |--------|----------|------------|--------|
-| P0 | ä»·æ ¼/æˆäº¤ï¿½?| Baostock/AkShare | â­â­â­â­ï¿½?|
-| P0 | è´¢åŠ¡æ•°æ® | Baostock | â­â­â­â­ï¿½?|
-| P1 | èµ„é‡‘æµå‘ | EFinance | â­â­â­â­ï¿½?|
-| P1 | é¾™è™ï¿½?| AkShare | â­â­â­â­ |
-| P2 | èèµ„èåˆ¸ | AkShare | â­â­ï¿½?|
-| P2 | æŒ‡æ•°æˆåˆ† | AkShare | â­â­ï¿½?|
-| P3 | å®è§‚æ•°æ® | AkShare | â­â­ |
+| P0 | ¼Û¸ñ/³É½»??| Baostock/AkShare | ??????|
+| P0 | ²ÆÎñÊı¾İ | Baostock | ??????|
+| P1 | ×Ê½ğÁ÷Ïò | EFinance | ??????|
+| P1 | Áú»¢??| AkShare | ???? |
+| P2 | ÈÚ×ÊÈÚÈ¯ | AkShare | ????|
+| P2 | Ö¸Êı³É·Ö | AkShare | ????|
+| P3 | ºê¹ÛÊı¾İ | AkShare | ?? |
 
 ***
 
-## 9. Pythonå®ç°
+## 9. PythonÊµÏÖ
 
 ```python
 import pandas as pd
@@ -695,8 +695,8 @@ warnings.filterwarnings('ignore')
 
 class DataSourceIntegrator:
     """
-    å…è´¹æ•°æ®æºæ•´åˆå™¨
-    ç»Ÿä¸€æ¥å£è·å–å¤šä¸ªæ•°æ®æºçš„æ•°æ®
+    Ãâ·ÑÊı¾İÔ´ÕûºÏÆ÷
+    Í³Ò»½Ó¿Ú»ñÈ¡¶à¸öÊı¾İÔ´µÄÊı¾İ
     """
 
     def __init__(self):
@@ -706,44 +706,44 @@ class DataSourceIntegrator:
         self.tushare = None
 
     def init_baostock(self):
-        """åˆå§‹åŒ–Baostock"""
+        """³õÊ¼»¯Baostock"""
         try:
             import baostock as bs
             lg = bs.login()
             if lg.error_code == '0':
                 self.baostock = bs
-                print(f"Baostockç™»å½•æˆåŠŸ")
+                print(f"BaostockµÇÂ¼³É¹¦")
             else:
-                print(f"Baostockç™»å½•å¤±è´¥: {lg.error_msg}")
+                print(f"BaostockµÇÂ¼Ê§°Ü: {lg.error_msg}")
         except ImportError:
-            print("è¯·å®‰è£…baostock: pip install baostock")
+            print("Çë°²×°baostock: pip install baostock")
 
     def init_akshare(self):
-        """åˆå§‹åŒ–AkShare"""
+        """³õÊ¼»¯AkShare"""
         try:
             import akshare as ak
             self.akshare = ak
-            print(f"AkShareåˆå§‹åŒ–æˆï¿½?)
+            print(f"AkShare³õÊ¼»¯³É??)
         except ImportError:
-            print("è¯·å®‰è£…akshare: pip install akshare")
+            print("Çë°²×°akshare: pip install akshare")
 
     def init_efinance(self):
-        """åˆå§‹åŒ–EFinance"""
+        """³õÊ¼»¯EFinance"""
         try:
             from efinance import stock
             self.efinance = stock
-            print(f"EFinanceåˆå§‹åŒ–æˆï¿½?)
+            print(f"EFinance³õÊ¼»¯³É??)
         except ImportError:
-            print("è¯·å®‰è£…efinance: pip install efinance")
+            print("Çë°²×°efinance: pip install efinance")
 
     def get_daily_quote(self, code: str, start_date: str, end_date: str) -> pd.DataFrame:
         """
-        è·å–æ—¥çº¿è¡Œæƒ…ï¼ˆä¼˜å…ˆBaostockï¼Œå¤±è´¥ç”¨AkShareï¿½?
+        »ñÈ¡ÈÕÏßĞĞÇé£¨ÓÅÏÈBaostock£¬Ê§°ÜÓÃAkShare??
 
         Parameters:
-            code: è‚¡ç¥¨ä»£ç ï¼Œå¦‚ '000001'
-            start_date: å¼€å§‹æ—¥æœŸï¼Œï¿½?'2024-01-01'
-            end_date: ç»“æŸæ—¥æœŸï¼Œå¦‚ '2024-12-31'
+            code: ¹ÉÆ±´úÂë£¬Èç '000001'
+            start_date: ¿ªÊ¼ÈÕÆÚ£¬??'2024-01-01'
+            end_date: ½áÊøÈÕÆÚ£¬Èç '2024-12-31'
 
         Returns:
             DataFrame with OHLCV data
@@ -767,7 +767,7 @@ class DataSourceIntegrator:
                     df = pd.DataFrame(data_list, columns=rs.fields)
                     df['code'] = code
             except Exception as e:
-                print(f"Baostockè·å–å¤±è´¥: {e}")
+                print(f"Baostock»ñÈ¡Ê§°Ü: {e}")
 
         if df is None and self.akshare:
             try:
@@ -779,144 +779,144 @@ class DataSourceIntegrator:
                     adjust="qfq"
                 )
             except Exception as e:
-                print(f"AkShareè·å–å¤±è´¥: {e}")
+                print(f"AkShare»ñÈ¡Ê§°Ü: {e}")
 
         return df
 
     def get_money_flow(self, code: str, date: str) -> Optional[pd.DataFrame]:
         """
-        è·å–èµ„é‡‘æµå‘ï¼ˆEFinanceç‹¬å®¶ï¿½?
+        »ñÈ¡×Ê½ğÁ÷Ïò£¨EFinance¶À¼Ò??
 
         Parameters:
-            code: è‚¡ç¥¨ä»£ç 
-            date: æ—¥æœŸ
+            code: ¹ÉÆ±´úÂë
+            date: ÈÕÆÚ
 
         Returns:
-            DataFrame with æœºæ„/è¶…å¤§ï¿½?å¤§å•/ä¸­å•/å°å•å‡€æµå…¥
+            DataFrame with »ú¹¹/³¬´ó??´óµ¥/ÖĞµ¥/Ğ¡µ¥¾»Á÷Èë
         """
         if self.efinance:
             try:
                 df = self.efinance.get_individual_money_flow(code, date)
                 return df
             except Exception as e:
-                print(f"EFinanceè·å–å¤±è´¥: {e}")
+                print(f"EFinance»ñÈ¡Ê§°Ü: {e}")
 
         return None
 
     def get_lhb(self, date: str) -> Optional[pd.DataFrame]:
         """
-        è·å–é¾™è™æ¦œæ•°ï¿½?
+        »ñÈ¡Áú»¢°ñÊı??
 
         Parameters:
-            date: æ—¥æœŸ
+            date: ÈÕÆÚ
 
         Returns:
-            DataFrame with é¾™è™æ¦œæ˜ï¿½?
+            DataFrame with Áú»¢°ñÃ÷??
         """
         if self.akshare:
             try:
                 df = self.akshare.stock_lhb_detail_em(date=date)
                 return df
             except Exception as e:
-                print(f"è·å–é¾™è™æ¦œå¤±ï¿½? {e}")
+                print(f"»ñÈ¡Áú»¢°ñÊ§?? {e}")
 
         return None
 
     def get_north_money(self, date: str) -> Optional[pd.DataFrame]:
         """
-        è·å–åŒ—å‘èµ„é‡‘
+        »ñÈ¡±±Ïò×Ê½ğ
 
         Parameters:
-            date: æ—¥æœŸ
+            date: ÈÕÆÚ
 
         Returns:
-            DataFrame with æ²ªè‚¡ï¿½?æ·±è‚¡é€šå‡€æµå…¥
+            DataFrame with »¦¹É??Éî¹ÉÍ¨¾»Á÷Èë
         """
         if self.efinance:
             try:
                 df = self.efinance.get_north_money_flow(date)
                 return df
             except Exception as e:
-                print(f"è·å–åŒ—å‘èµ„é‡‘å¤±è´¥: {e}")
+                print(f"»ñÈ¡±±Ïò×Ê½ğÊ§°Ü: {e}")
 
         if self.akshare:
             try:
                 df = self.akshare.stock_hsgt_north_flow_em()
                 return df
             except Exception as e:
-                print(f"AkShareè·å–åŒ—å‘èµ„é‡‘å¤±è´¥: {e}")
+                print(f"AkShare»ñÈ¡±±Ïò×Ê½ğÊ§°Ü: {e}")
 
         return None
 
     def __del__(self):
-        """ææ„æ—¶ç™»å‡ºBaostock"""
+        """Îö¹¹Ê±µÇ³öBaostock"""
         if self.baostock:
             self.baostock.logout()
 ```
 
 ***
 
-## 10. ä½¿ç”¨ç¤ºä¾‹
+## 10. Ê¹ÓÃÊ¾Àı
 
 ```python
-# åˆå§‹åŒ–æ•°æ®æº
+# ³õÊ¼»¯Êı¾İÔ´
 integrator = DataSourceIntegrator()
 integrator.init_baostock()
 integrator.init_akshare()
 integrator.init_efinance()
 
-# è·å–æ—¥çº¿è¡Œæƒ…
+# »ñÈ¡ÈÕÏßĞĞÇé
 df_quote = integrator.get_daily_quote('000001', '2024-01-01', '2024-12-31')
-print(f"è·å–è¡Œæƒ…: {len(df_quote)} ï¿½?)
+print(f"»ñÈ¡ĞĞÇé: {len(df_quote)} ??)
 
-# è·å–èµ„é‡‘æµå‘
+# »ñÈ¡×Ê½ğÁ÷Ïò
 df_mf = integrator.get_money_flow('000001', '2024-01-15')
-print(f"èµ„é‡‘æµå‘: {df_mf}")
+print(f"×Ê½ğÁ÷Ïò: {df_mf}")
 
-# è·å–é¾™è™ï¿½?
+# »ñÈ¡Áú»¢??
 df_lhb = integrator.get_lhb('2024-01-15')
-print(f"é¾™è™ï¿½? {len(df_lhb)} ï¿½?)
+print(f"Áú»¢?? {len(df_lhb)} ??)
 
-# è·å–åŒ—å‘èµ„é‡‘
+# »ñÈ¡±±Ïò×Ê½ğ
 df_north = integrator.get_north_money('2024-01-15')
-print(f"åŒ—å‘èµ„é‡‘: {df_north}")
+print(f"±±Ïò×Ê½ğ: {df_north}")
 ```
 
 ***
 
-## 11. æ³¨æ„äº‹é¡¹
+## 11. ×¢ÒâÊÂÏî
 
-1. **APIé™åˆ¶**ï¼šå…è´¹æ•°æ®æºæœ‰è®¿é—®é¢‘ç‡é™åˆ¶ï¼Œéœ€æ·»åŠ å»¶æ—¶
-2. **æ•°æ®è´¨é‡**ï¼šå…è´¹æ•°æ®å¯èƒ½å­˜åœ¨ç¼ºå¤±æˆ–å»¶è¿Ÿï¼Œéœ€æ ¡éªŒ
-3. **åˆè§„ä½¿ç”¨**ï¼šè¯·éµå®ˆå„æ•°æ®æºçš„ä½¿ç”¨æ¡ï¿½?
-4. **æ•°æ®å¤‡ä»½**ï¼šé‡è¦æ•°æ®å»ºè®®æœ¬åœ°å¤‡ï¿½?
+1. **APIÏŞÖÆ**£ºÃâ·ÑÊı¾İÔ´ÓĞ·ÃÎÊÆµÂÊÏŞÖÆ£¬ĞèÌí¼ÓÑÓÊ±
+2. **Êı¾İÖÊÁ¿**£ºÃâ·ÑÊı¾İ¿ÉÄÜ´æÔÚÈ±Ê§»òÑÓ³Ù£¬ĞèĞ£Ñé
+3. **ºÏ¹æÊ¹ÓÃ**£ºÇë×ñÊØ¸÷Êı¾İÔ´µÄÊ¹ÓÃÌõ??
+4. **Êı¾İ±¸·İ**£ºÖØÒªÊı¾İ½¨Òé±¾µØ±¸??
 
 ***
 
-## 12. å¦ç±»æ•°æ®æ¡†æ¶
+## 12. ÁíÀàÊı¾İ¿ò¼Ü
 
-> **æ¥æº**ï¼šé‡åŒ–ç­–ç•¥ä¸“ä¸šåˆ†å±‚æ–¹æ¡ˆ_v3.0 é™„å½•AK
+> **À´Ô´**£ºÁ¿»¯²ßÂÔ×¨Òµ·Ö²ã·½°¸_v3.0 ¸½Â¼AK
 >
-> **è¯´æ˜**ï¼šå¦ç±»æ•°æ®æ˜¯ä¸“ä¸šé‡åŒ–æœºæ„çš„é‡è¦Alphaæ¥æºï¼Œä¸ªäººå¼€å‘è€…å¯ä»èˆ†æƒ…æ•°æ®å¼€å§‹ä½æˆæœ¬å°è¯•
+> **ËµÃ÷**£ºÁíÀàÊı¾İÊÇ×¨ÒµÁ¿»¯»ú¹¹µÄÖØÒªAlphaÀ´Ô´£¬¸öÈË¿ª·¢Õß¿É´ÓÓßÇéÊı¾İ¿ªÊ¼µÍ³É±¾³¢ÊÔ
 
-### 12.1 å¦ç±»æ•°æ®ç±»å‹
+### 12.1 ÁíÀàÊı¾İÀàĞÍ
 
-| æ•°æ®ç±»å‹ | æ•°æ®ï¿½?| æ›´æ–°é¢‘ç‡ | Alphaæ½œåŠ› | ä¸ªäººå¯è·å–ï¿½?|
+| Êı¾İÀàĞÍ | Êı¾İ??| ¸üĞÂÆµÂÊ | AlphaÇ±Á¦ | ¸öÈË¿É»ñÈ¡??|
 |:---------|:-------|:---------|:---------|:------------|
-| **èˆ†æƒ…æ•°æ®** | æ–°é—»/ç¤¾äº¤åª’ä½“ | å®æ—¶ | â­â­â­â­ | â­â­â­â­ï¿½?å…è´¹ |
-| **æ¶ˆè´¹æ•°æ®** | ç”µå•†/æ”¯ä»˜ | æ¯æ—¥ | â­â­ï¿½?| â­â­ï¿½?ä»˜è´¹ |
-| **ç‰©æµæ•°æ®** | è´§è¿/å¿«ï¿½?| æ¯å‘¨ | â­â­â­â­ | â­â­ ä»˜è´¹ |
-| **èƒ½æºæ•°æ®** | ç”µç½‘/å·¥ä¸šç”¨ç”µ | æ¯æ—¥ | â­â­ï¿½?| â­â­ ä»˜è´¹ |
-| **æ°”è±¡æ•°æ®** | å¤©æ°”/æ°”æ¸© | å®æ—¶ | â­â­ï¿½?| â­â­â­â­ï¿½?å…è´¹ |
-| **å«æ˜Ÿæ•°æ®** | åœè½¦ï¿½?å•†é“ºäººæµ | æ¯æ—¥ | â­â­â­â­ï¿½?| ï¿½?æ˜‚è´µ |
+| **ÓßÇéÊı¾İ** | ĞÂÎÅ/Éç½»Ã½Ìå | ÊµÊ± | ???? | ??????Ãâ·Ñ |
+| **Ïû·ÑÊı¾İ** | µçÉÌ/Ö§¸¶ | Ã¿ÈÕ | ????| ????¸¶·Ñ |
+| **ÎïÁ÷Êı¾İ** | »õÔË/¿ì??| Ã¿ÖÜ | ???? | ?? ¸¶·Ñ |
+| **ÄÜÔ´Êı¾İ** | µçÍø/¹¤ÒµÓÃµç | Ã¿ÈÕ | ????| ?? ¸¶·Ñ |
+| **ÆøÏóÊı¾İ** | ÌìÆø/ÆøÎÂ | ÊµÊ± | ????| ??????Ãâ·Ñ |
+| **ÎÀĞÇÊı¾İ** | Í£³µ??ÉÌÆÌÈËÁ÷ | Ã¿ÈÕ | ??????| ??°º¹ó |
 
-### 12.2 èˆ†æƒ…æ•°æ®å¤„ç†ï¼ˆä¸ªäººå¯è·å–ï¿½?
+### 12.2 ÓßÇéÊı¾İ´¦Àí£¨¸öÈË¿É»ñÈ¡??
 
 ```python
 class NewsSentimentProvider:
     """
-    èˆ†æƒ…æ•°æ®æä¾›ï¿½?
-    ä¸ªäººå¼€å‘è€…å¯ä½¿ç”¨Tushare/akshareè·å–æ–°é—»æ•°æ®
+    ÓßÇéÊı¾İÌá¹©??
+    ¸öÈË¿ª·¢Õß¿ÉÊ¹ÓÃTushare/akshare»ñÈ¡ĞÂÎÅÊı¾İ
     """
 
     def __init__(self):
@@ -924,24 +924,24 @@ class NewsSentimentProvider:
         self.akshare = None
 
     def init_tushare(self, token: str):
-        """åˆå§‹åŒ–Tushare"""
+        """³õÊ¼»¯Tushare"""
         try:
             import tushare as ts
             ts.set_token(token)
             self.tushare = ts.pro_api()
         except ImportError:
-            print("è¯·å®‰è£…tushare: pip install tushare")
+            print("Çë°²×°tushare: pip install tushare")
 
     def get_stock_news(self, stock_code: str, date: str) -> pd.DataFrame:
         """
-        è·å–ä¸ªè‚¡æ–°é—»
+        »ñÈ¡¸ö¹ÉĞÂÎÅ
 
         Parameters:
-            stock_code: è‚¡ç¥¨ä»£ç ï¼Œå¦‚ '000001'
-            date: æ—¥æœŸï¼Œå¦‚ '20240115'
+            stock_code: ¹ÉÆ±´úÂë£¬Èç '000001'
+            date: ÈÕÆÚ£¬Èç '20240115'
 
         Returns:
-            DataFrame with æ–°é—»æ ‡é¢˜, å‘å¸ƒæ—¶é—´, æ–°é—»å†…å®¹, æƒ…æ„Ÿå¾—åˆ†
+            DataFrame with ĞÂÎÅ±êÌâ, ·¢²¼Ê±¼ä, ĞÂÎÅÄÚÈİ, Çé¸ĞµÃ·Ö
         """
         if self.tushare:
             try:
@@ -952,22 +952,22 @@ class NewsSentimentProvider:
                 )
                 return df
             except Exception as e:
-                print(f"è·å–æ–°é—»å¤±è´¥: {e}")
+                print(f"»ñÈ¡ĞÂÎÅÊ§°Ü: {e}")
 
         return pd.DataFrame()
 
     def calc_sentiment(self, news_df: pd.DataFrame) -> float:
         """
-        è®¡ç®—æƒ…æ„Ÿå¾—åˆ†
+        ¼ÆËãÇé¸ĞµÃ·Ö
 
         Returns:
-            float: -1.0 (è´Ÿé¢) ~ 1.0 (æ­£é¢)
+            float: -1.0 (¸ºÃæ) ~ 1.0 (ÕıÃæ)
         """
         if news_df.empty:
             return 0.0
 
-        positive_keywords = ['å¢é•¿', 'ç›ˆåˆ©', 'çªç ´', 'åˆä½œ', 'ä¸­æ ‡', 'è¶…é¢„ï¿½?]
-        negative_keywords = ['äºæŸ', 'ä¸‹è·Œ', 'é£é™©', 'è°ƒæŸ¥', 'è¿è§„', 'é¢„è­¦']
+        positive_keywords = ['Ôö³¤', 'Ó¯Àû', 'Í»ÆÆ', 'ºÏ×÷', 'ÖĞ±ê', '³¬Ô¤??]
+        negative_keywords = ['¿÷Ëğ', 'ÏÂµø', '·çÏÕ', 'µ÷²é', 'Î¥¹æ', 'Ô¤¾¯']
 
         sentiment = 0.0
         for _, row in news_df.iterrows():
@@ -982,13 +982,13 @@ class NewsSentimentProvider:
         return max(-1.0, min(1.0, sentiment / max(len(news_df), 1)))
 ```
 
-### 12.3 å¦ç±»æ•°æ®é€‚é…ï¿½?
+### 12.3 ÁíÀàÊı¾İÊÊÅä??
 
 ```python
 class AlternativeDataAdapter:
     """
-    å¦ç±»æ•°æ®é€‚é…ï¿½?
-    æ•´åˆå¤šç§å¦ç±»æ•°æ®æºè®¡ç®—ç»¼åˆä¿¡ï¿½?
+    ÁíÀàÊı¾İÊÊÅä??
+    ÕûºÏ¶àÖÖÁíÀàÊı¾İÔ´¼ÆËã×ÛºÏĞÅ??
     """
 
     def __init__(self):
@@ -996,19 +996,19 @@ class AlternativeDataAdapter:
         self.data_sources = {}
 
     def add_provider(self, name: str, provider):
-        """æ·»åŠ æ•°æ®æä¾›ï¿½?""
+        """Ìí¼ÓÊı¾İÌá¹©??""
         self.data_sources[name] = provider
 
     def calc_alternative_signal(self, stock_code: str) -> dict:
         """
-        è®¡ç®—å¦ç±»æ•°æ®ç»¼åˆä¿¡å·
+        ¼ÆËãÁíÀàÊı¾İ×ÛºÏĞÅºÅ
 
         Returns:
             dict: {
-                'news_sentiment': float,      # èˆ†æƒ…å¾—åˆ†
-                'logistics_signal': float,    # ç‰©æµä¿¡å·
-                'consumer_signal': float,     # æ¶ˆè´¹ä¿¡å·
-                'composite': float             # ç»¼åˆä¿¡å·
+                'news_sentiment': float,      # ÓßÇéµÃ·Ö
+                'logistics_signal': float,    # ÎïÁ÷ĞÅºÅ
+                'consumer_signal': float,     # Ïû·ÑĞÅºÅ
+                'composite': float             # ×ÛºÏĞÅºÅ
             }
         """
         signals = {}
@@ -1017,7 +1017,7 @@ class AlternativeDataAdapter:
             news_df = self.news_provider.get_stock_news(stock_code)
             signals['news_sentiment'] = self.news_provider.calc_sentiment(news_df)
         except Exception as e:
-            print(f"èˆ†æƒ…æ•°æ®è·å–å¤±è´¥: {e}")
+            print(f"ÓßÇéÊı¾İ»ñÈ¡Ê§°Ü: {e}")
             signals['news_sentiment'] = None
 
         for name, provider in self.data_sources.items():
@@ -1025,7 +1025,7 @@ class AlternativeDataAdapter:
                 data = provider.get_data(stock_code)
                 signals[name] = self.process_data(name, data)
             except Exception as e:
-                print(f"{name}æ•°æ®è·å–å¤±è´¥: {e}")
+                print(f"{name}Êı¾İ»ñÈ¡Ê§°Ü: {e}")
                 signals[name] = None
 
         valid_signals = [v for v in signals.values() if v is not None]
@@ -1037,52 +1037,52 @@ class AlternativeDataAdapter:
         return signals
 
     def process_data(self, name: str, data) -> float:
-        """å¤„ç†å„ç±»æ•°æ®è¿”å›ä¿¡å·ï¿½?""
+        """´¦Àí¸÷ÀàÊı¾İ·µ»ØĞÅºÅ??""
         return 0.0
 ```
 
-### 12.4 æ°”è±¡æ•°æ®ï¼ˆå…è´¹å¯è·å–ï¿½?
+### 12.4 ÆøÏóÊı¾İ£¨Ãâ·Ñ¿É»ñÈ¡??
 
 ```python
 class WeatherDataProvider:
     """
-    æ°”è±¡æ•°æ®æä¾›ï¿½?
-    å¤©æ°”æ•°æ®å¯¹å†œï¿½?èƒ½æº/æ¶ˆè´¹ç­‰æ¿å—æœ‰å½±å“
+    ÆøÏóÊı¾İÌá¹©??
+    ÌìÆøÊı¾İ¶ÔÅ©??ÄÜÔ´/Ïû·ÑµÈ°å¿éÓĞÓ°Ïì
     """
 
     def get_weather(self, city: str, date: str) -> dict:
         """
-        è·å–å¤©æ°”æ•°æ®
+        »ñÈ¡ÌìÆøÊı¾İ
 
         Returns:
             dict: {
-                'temperature': float,    # æ¸©åº¦
-                'precipitation': float,  # é™æ°´ï¿½?
-                'weather_type': str      # å¤©æ°”ç±»å‹
+                'temperature': float,    # ÎÂ¶È
+                'precipitation': float,  # ½µË®??
+                'weather_type': str      # ÌìÆøÀàĞÍ
             }
         """
         return {
             'temperature': 25.0,
             'precipitation': 0.0,
-            'weather_type': 'ï¿½?
+            'weather_type': '??
         }
 
     def calc_weather_factor(self, sector: str, weather_data: dict) -> float:
         """
-        è®¡ç®—å¤©æ°”å¯¹æ¿å—çš„å½±å“å› å­
+        ¼ÆËãÌìÆø¶Ô°å¿éµÄÓ°ÏìÒò×Ó
 
         Parameters:
-            sector: æ¿å—åç§°
-            weather_data: å¤©æ°”æ•°æ®
+            sector: °å¿éÃû³Æ
+            weather_data: ÌìÆøÊı¾İ
 
         Returns:
-            float: å½±å“å› å­ï¼ŒèŒƒï¿½?-1.0 ~ 1.0
+            float: Ó°ÏìÒò×Ó£¬·¶??-1.0 ~ 1.0
         """
         sector_weather_map = {
-            'å†œä¸š': ['precipitation', 'temperature'],
-            'ç”µåŠ›': ['temperature'],
-            'ç…¤ç‚­': ['temperature'],
-            'æ¶ˆè´¹': ['temperature', 'precipitation']
+            'Å©Òµ': ['precipitation', 'temperature'],
+            'µçÁ¦': ['temperature'],
+            'ÃºÌ¿': ['temperature'],
+            'Ïû·Ñ': ['temperature', 'precipitation']
         }
 
         relevant_factors = sector_weather_map.get(sector, [])
@@ -1105,22 +1105,22 @@ class WeatherDataProvider:
         return max(-1.0, min(1.0, factor))
 ```
 
-### 12.5 ä¸ªäººå¼€å‘è€…å»ºï¿½?
+### 12.5 ¸öÈË¿ª·¢Õß½¨??
 
-| æ•°æ®ç±»å‹ | è·å–éš¾åº¦ | æˆæœ¬ | å»ºè®® |
+| Êı¾İÀàĞÍ | »ñÈ¡ÄÑ¶È | ³É±¾ | ½¨Òé |
 |---------|---------|------|------|
-| æ–°é—»èˆ†æƒ… | ï¿½?| å…è´¹ | ä¼˜å…ˆå®ç° |
-| ç¤¾äº¤åª’ä½“ | ï¿½?| å…è´¹/ä»˜è´¹ | Tushareçˆ¬è™« |
-| å¤©æ°”æ•°æ® | ï¿½?| å…è´¹ | OpenWeatherMap |
-| ç”µå•†æ•°æ® | ï¿½?| ä»˜è´¹ | æš‚ç¼“ |
-| å«æ˜Ÿæ•°æ® | æé«˜ | æ˜‚è´µ | ä¸å»ºï¿½?|
+| ĞÂÎÅÓßÇé | ??| Ãâ·Ñ | ÓÅÏÈÊµÏÖ |
+| Éç½»Ã½Ìå | ??| Ãâ·Ñ/¸¶·Ñ | TushareÅÀ³æ |
+| ÌìÆøÊı¾İ | ??| Ãâ·Ñ | OpenWeatherMap |
+| µçÉÌÊı¾İ | ??| ¸¶·Ñ | Ôİ»º |
+| ÎÀĞÇÊı¾İ | ¼«¸ß | °º¹ó | ²»½¨??|
 
 ***
 
-## 13. æ›´æ–°è®°å½•
+## 13. ¸üĞÂ¼ÇÂ¼
 
-| ç‰ˆæœ¬ | æ—¥æœŸ | å˜æ›´å†…å®¹ |
+| °æ±¾ | ÈÕÆÚ | ±ä¸üÄÚÈİ |
 |------|------|----------|
-| v1.0 | 2026-03-28 | åˆå§‹ç‰ˆæœ¬ï¼Œæ•´åˆé™„å½•AAæ•°æ®æºå› å­ä½“ï¿½?|
-| v1.1 | 2026-03-28 | æ•´åˆé™„å½•AKå¦ç±»æ•°æ®æ¡†æ¶ï¼Œè¡¥å……èˆ†ï¿½?æ°”è±¡æ•°æ®å¤„ç† |
+| v1.0 | 2026-03-28 | ³õÊ¼°æ±¾£¬ÕûºÏ¸½Â¼AAÊı¾İÔ´Òò×ÓÌå??|
+| v1.1 | 2026-03-28 | ÕûºÏ¸½Â¼AKÁíÀàÊı¾İ¿ò¼Ü£¬²¹³äÓß??ÆøÏóÊı¾İ´¦Àí |
 

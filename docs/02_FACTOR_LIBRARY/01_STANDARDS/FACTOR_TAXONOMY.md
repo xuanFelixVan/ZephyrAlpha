@@ -17,7 +17,7 @@ implementation_status: 进行�?
 > 因子分类体系与参数配置标�?
 >
 > **职责**: 定义因子分类体系和参数配�?
-> **注册�?*: [../06_REGISTRY/factor_catalog.md](../06_REGISTRY/factor_catalog.md) - 因子清单和元数据
+> **注册�?*: [../06_REGISTRY/FACTOR_CATALOG.md](../06_REGISTRY/FACTOR_CATALOG.md) - 因子清单和元数据
 > **计算框架**: [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 计算引擎和调度器
 
 ---
@@ -609,7 +609,7 @@ class FactorMonitor:
 | Alpha因子列表 | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | 风险因子列表 | [03_RISK_FACTORS/](../03_RISK_FACTORS/) |
 | THS_BD完整指标 | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
-| 因子注册�?| [factor_catalog.md](../06_REGISTRY/factor_catalog.md) |
+| 因子注册�?| [FACTOR_CATALOG.md](../06_REGISTRY/FACTOR_CATALOG.md) |
 | 因子计算框架 | [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) |
 
 ---

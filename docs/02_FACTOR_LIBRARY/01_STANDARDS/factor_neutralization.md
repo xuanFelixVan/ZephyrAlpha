@@ -453,10 +453,10 @@ factor_neutralization:
 ```
 02_FACTOR_LIBRARY/01_STANDARDS/
 ├── README.md
-├── ic_analysis.md              # IC分析
-├── factor_preprocessing.md     # 因子预处�?
-├── factor_return_analysis.md   # 因子收益率分�?
-└── factor_neutralization.md   # 本文�?�?
+├── IC_ANALYSIS.md              # IC分析
+├── FACTOR_PREPROCESSING.md     # 因子预处�?
+├── FACTOR_RETURN_ANALYSIS.md   # 因子收益率分�?
+└── FACTOR_NEUTRALIZATION.md   # 本文�?�?
 ```
 
 ---

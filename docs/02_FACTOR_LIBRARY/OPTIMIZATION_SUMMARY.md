@@ -42,7 +42,7 @@ implementation_status: 进行�?
 |----------|------|------|------|
 | **README.md** | 02_FACTOR_LIBRARY/ | 总览和导�?|  已创�?|
 | **README.md** | 00_GOVERNANCE/ | 治理框架 |  已创�?|
-| **factor_catalog.md** | 06_REGISTRY/ | 因子注册�?|  已创�?|
+| **FACTOR_CATALOG.md** | 06_REGISTRY/ | 因子注册�?|  已创�?|
 | **99_AUDIT_REPORT.md** | 02_FACTOR_LIBRARY/ | 审计报告 |  已创�?|
 
 ---
@@ -230,8 +230,8 @@ performance:
  01_STANDARDS/                    # 方法�?(优化)
     README.md
     T.02.FE001.factor_definition.md           # 因子定义标准
-    ic_analysis.md                 # IC 分析标准 (待创�?
-    backtest_standards.md          # 回测标准 (待创�?
+    IC_ANALYSIS.md                 # IC 分析标准 (待创�?
+    BACKTEST_STANDARDS.md          # 回测标准 (待创�?
 
  02_ALPHA_FACTORY/                  # Alpha 工厂  新增
     README.md
@@ -260,7 +260,7 @@ performance:
 
  06_REGISTRY/                # 因子注册  新增
     README.md
-    factor_catalog.md              # 因子注册�?
+    FACTOR_CATALOG.md              # 因子注册�?
 
  07_MONITORING/                     # 监控中心  新增
     README.md

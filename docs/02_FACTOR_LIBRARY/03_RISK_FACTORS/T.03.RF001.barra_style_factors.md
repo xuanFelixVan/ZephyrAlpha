@@ -18,7 +18,7 @@ implementation_status: 进行�?
 >
 > **配套文档**�?
 > - 主文档：[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
-> - 因子库索引：[../../04_DATA_SOURCE/iFind/factor_master_index.md](../04_DATA_SOURCE/iFind/factor_master_index.md)
+> - 因子库索引：[../../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md](../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md)
 > - 风险因子：[风险因子 README](../../../README.md)
 
 ***

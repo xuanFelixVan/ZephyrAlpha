@@ -71,7 +71,7 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [回测概述](./05_BACKTEST/README.md) | 回测概述 | ⭐⭐⭐⭐�?|
 | [因子验证蓝图](./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md) | 因子验证蓝图 | ⭐⭐⭐⭐ |
-| [IC分析](./01_STANDARDS/ic_analysis.md) | IC分析方法 | ⭐⭐⭐⭐ |
+| [IC分析](./01_STANDARDS/IC_ANALYSIS.md) | IC分析方法 | ⭐⭐⭐⭐ |
 
 ---
 
@@ -98,7 +98,7 @@ implementation_status: 活跃维护
 ### 因子开�?
 1. 阅读 [01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) - 因子计算框架
 2. 阅读 [05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md](./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md) - 因子验证
-3. 阅读 [01_STANDARDS/ic_analysis.md](./01_STANDARDS/ic_analysis.md) - IC分析
+3. 阅读 [01_STANDARDS/IC_ANALYSIS.md](./01_STANDARDS/IC_ANALYSIS.md) - IC分析
 
 ---
 

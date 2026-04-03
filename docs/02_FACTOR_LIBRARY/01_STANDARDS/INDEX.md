@@ -23,13 +23,13 @@ implementation_status: 已完�?---
 | [FACTOR_VALIDATION_GUIDE.md](FACTOR_VALIDATION_GUIDE.md) | 因子验证指南 | Active |
 | [TECHNICAL_INDICATORS.md](TECHNICAL_INDICATORS.md) | 技术指�?| Active |
 | [FUTURE_FACTOR_TOOLS.md](FUTURE_FACTOR_TOOLS.md) | 未来因子工具 | Active |
-| [factor_preprocessing.md](factor_preprocessing.md) | 因子预处�?| Active |
-| [factor_neutralization.md](factor_neutralization.md) | 因子中性化 | Active |
-| [factor_synthesis.md](factor_synthesis.md) | 因子合成 | Active |
-| [factor_return_analysis.md](factor_return_analysis.md) | 因子收益分析 | Active |
-| [ic_analysis.md](ic_analysis.md) | IC分析 | Active |
-| [backtest_standards.md](backtest_standards.md) | 回测标准 | Active |
-| [research_management.md](research_management.md) | 研究管理 | Active |
+| [FACTOR_PREPROCESSING.md](FACTOR_PREPROCESSING.md) | 因子预处�?| Active |
+| [FACTOR_NEUTRALIZATION.md](FACTOR_NEUTRALIZATION.md) | 因子中性化 | Active |
+| [FACTOR_SYNTHESIS.md](FACTOR_SYNTHESIS.md) | 因子合成 | Active |
+| [FACTOR_RETURN_ANALYSIS.md](FACTOR_RETURN_ANALYSIS.md) | 因子收益分析 | Active |
+| [IC_ANALYSIS.md](IC_ANALYSIS.md) | IC分析 | Active |
+| [BACKTEST_STANDARDS.md](BACKTEST_STANDARDS.md) | 回测标准 | Active |
+| [RESEARCH_MANAGEMENT.md](RESEARCH_MANAGEMENT.md) | 研究管理 | Active |
 | [T.02.FE001.factor_definition.md](T.02.FE001.factor_definition.md) | 因子定义模板 | Active |
 
 ## 📖 核心文档
@@ -42,9 +42,9 @@ implementation_status: 已完�?---
 - [FACTOR_VALIDATION_GUIDE.md](FACTOR_VALIDATION_GUIDE.md) - 因子验证指南
 
 ### 因子分析
-- [ic_analysis.md](ic_analysis.md) - IC分析
-- [factor_return_analysis.md](factor_return_analysis.md) - 因子收益分析
-- [factor_neutralization.md](factor_neutralization.md) - 因子中性化
+- [IC_ANALYSIS.md](IC_ANALYSIS.md) - IC分析
+- [FACTOR_RETURN_ANALYSIS.md](FACTOR_RETURN_ANALYSIS.md) - 因子收益分析
+- [FACTOR_NEUTRALIZATION.md](FACTOR_NEUTRALIZATION.md) - 因子中性化
 
 ---
 

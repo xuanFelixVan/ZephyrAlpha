@@ -168,10 +168,10 @@ implementation_status: 进行�?
 
 **已创建文�?*:
 1.  00_GOVERNANCE/README.md (治理框架)
-2.  06_REGISTRY/factor_catalog.md (因子注册�?
+2.  06_REGISTRY/FACTOR_CATALOG.md (因子注册�?
 3.  README.md (总览)
-4.  01_STANDARDS/ic_analysis.md (待创�?
-5.  01_STANDARDS/backtest_standards.md (待创�?
+4.  01_STANDARDS/IC_ANALYSIS.md (待创�?
+5.  01_STANDARDS/BACKTEST_STANDARDS.md (待创�?
 6.  07_MONITORING/monthly/template.md (待创�?
 
 **解决状�?*:  部分完成 (4/6)
@@ -312,7 +312,7 @@ performance:
 
 | 原文�?| 新位�?| 状�?|
 |--------|--------|------|
-| FACTOR_TAXONOMY.md | 06_REGISTRY/factor_catalog.md |  |
+| FACTOR_TAXONOMY.md | 06_REGISTRY/FACTOR_CATALOG.md |  |
 | factor_library_manual_v3.2.md (治理部分) | 00_GOVERNANCE/README.md |  |
 | factor_library_manual_v3.2.md (方法论部�? | 01_STANDARDS/ |  |
 | 趋势跟踪因子.md | 02_ALPHA_FACTORY/01_trend_factors.md |  |

@@ -31,7 +31,7 @@ implementation_status: 进行�?
 �?  ├── ALPHA_038-047_成长类_IC.md
 �?  ├── ALPHA_048-064_质量类_IC.md
 �?  ├── PE_TTM_IC.md          # 迁移自此�?
-�?  └── correlation_matrix.md         # 迁移自此�?
+�?  └── CORRELATION_MATRIX.md         # 迁移自此�?
 �?
 └── strategy_reports/                  # 策略回测报告
     ├── README.md
@@ -64,7 +64,7 @@ touch strategy_reports/README.md
 
 **源文�?*:
 - `05_BACKTEST/value_factors/PE_TTM_IC.md` �?`ic_reports/PE_TTM_IC.md`
-- `05_BACKTEST/correlation_matrix.md` �?`ic_reports/correlation_matrix.md`
+- `05_BACKTEST/CORRELATION_MATRIX.md` �?`ic_reports/CORRELATION_MATRIX.md`
 
 **新增文件**:
 - `ic_reports/ALPHA_001-014_趋势类_IC.md`
@@ -131,7 +131,7 @@ touch strategy_reports/README.md
 - [ ] 创建 `ic_reports/` 目录
 - [ ] 创建 `strategy_reports/` 目录
 - [ ] 迁移 `PE_TTM_IC.md` �?`ic_reports/`
-- [ ] 迁移 `correlation_matrix.md` �?`ic_reports/`
+- [ ] 迁移 `CORRELATION_MATRIX.md` �?`ic_reports/`
 - [ ] 创建 `ic_reports/README.md`
 - [ ] 创建 `strategy_reports/README.md`
 - [ ] 更新 `02_FACTOR_LIBRARY/00_INDEX/README.md`
