@@ -35,10 +35,10 @@ last_updated: 2026-04-03
 ```
 notebooks/
 ├── 00_TEMPLATES/              # 模板库
-│   ├── 01_EDA_TEMPLATE.py     # 探索性数据分析模板 (Python脚本格式)
-│   └── 02_FACTOR_TEMPLATE.py  # 因子开发模板 (Python脚本格式)
-│   # 预留: 03_STRATEGY_TEMPLATE.py   # 策略原型模板
-│   # 预留: 04_REPORT_TEMPLATE.py     # 报告生成模板
+│   ├── 01_EDA_TEMPLATE_v1.0.0.py     # 探索性数据分析模板 (Python脚本格式)
+│   ├── 02_FACTOR_TEMPLATE_v1.0.0.py  # 因子开发模板 (Python脚本格式)
+│   ├── 03_STRATEGY_TEMPLATE_v1.0.0.py # 策略研究模板 (Python脚本格式)
+│   └── 04_REPORT_TEMPLATE_v1.0.0.py   # 报告生成模板 (Python脚本格式)
 ├── 01_EXPLORATORY_ANALYSIS/   # 探索性分析 (预留目录)
 ├── 02_FACTOR_DEVELOPMENT/     # 因子开发 (预留目录)
 ├── 03_STRATEGY_RESEARCH/      # 策略研究 (预留目录)
