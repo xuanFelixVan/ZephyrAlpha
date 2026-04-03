@@ -1,3 +1,16 @@
+---
+standard_type: 代码模板
+applicable_scope: 探索性数据分析
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 可用
+owner: 研究团队
+version: 1.0.0
+module_id: TEMPLATE_EDA
+created_date: 2026-03-31
+last_updated: 2026-04-03
+description: 探索性数据分析模板 - 数据质量检查、分布分析、相关性研究
+---
 """
 探索性数据分析 (EDA) 模板
 

@@ -1,3 +1,16 @@
+---
+standard_type: 代码模板
+applicable_scope: 因子开发
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 可用
+owner: 研究团队
+version: 1.0.0
+module_id: TEMPLATE_FACTOR
+created_date: 2026-03-31
+last_updated: 2026-04-03
+description: 因子开发模板 - 新因子计算、IC分析、回测验证
+---
 """
 因子开发模板
 

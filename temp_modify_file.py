@@ -4,13 +4,30 @@ import re
 file_path = r'D:\ZephyrAlpha\docs\01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md'
 
 result = subprocess.run(['git', 'show', 'HEAD:docs/01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md'], 
-                       capture_output=True, text=True, encoding='utf-8')
+                       capture_output=True)
 
 if result.returncode != 0:
-    print(f"Git show failed: {result.stderr}")
+    print(f"Git show failed: {result.stderr.decode('utf-8', errors='replace')}")
     exit(1)
 
-content = result.stdout
+raw_bytes = result.stdout
+
+encodings = ['utf-8', 'utf-16-le', 'utf-16-be', 'gbk', 'gb18030', 'latin-1']
+
+content = None
+for encoding in encodings:
+    try:
+        content = raw_bytes.decode(encoding)
+        print(f"Successfully decoded with encoding: {encoding}")
+        break
+    except Exception as e:
+        print(f"Failed with encoding {encoding}: {str(e)[:50]}")
+        continue
+
+if content is None:
+    content = raw_bytes.decode('utf-8', errors='replace')
+    print("Used utf-8 with replacement characters")
+
 print(f"Original content length: {len(content)} characters")
 
 new_section = '''---
