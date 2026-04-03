@@ -242,7 +242,7 @@ git commit -m "feat: 新增市场数据EDA分析 - 20260331"
 ### 1. 创建新notebook
 ```bash
 # 复制模板
-cp notebooks/00_TEMPLATES/01_EDA_TEMPLATE.ipynb notebooks/01_EXPLORATORY_ANALYSIS/$(date +%Y%m%d)_new_analysis.ipynb
+cp notebooks/00_TEMPLATES/01_EDA_TEMPLATE_v1.0.0.py notebooks/01_EXPLORATORY_ANALYSIS/$(date +%Y%m%d)_new_analysis_v1.py
 ```
 
 ### 2. 环境设置
