@@ -1,0 +1,67 @@
+{
+    "mcpServers": {
+        "context7": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp@latest"
+            ],
+            "env": {},
+            "fromGalleryId": "byted-mcp-volcengine.3rd_party_mcp_server_context7"
+        },
+        "xmind": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@41px/mcp-xmind",
+                "D:/ZephyrAlpha"
+            ]
+        },
+        "pdf-reader-mcp": {
+            "command": "npx",
+            "args": [
+                "@sylphlab/pdf-reader-mcp"
+            ],
+            "env": {},
+            "fromGalleryId": "byted-mcp-volcengine.pdf-reader-mcp"
+        },
+        "Pandoc": {
+            "command": "uvx",
+            "args": [
+                "mcp-pandoc"
+            ],
+            "env": {},
+            "fromGalleryId": "vivekVells.mcp-pandoc"
+        },
+        "TH_MCP": {
+            "url": "https://mcp.tonghu.top/sse?apiKey=您在瞳虎mcp平台上申请的apiKey",
+            "fromGalleryId": "byted-mcp-volcengine.THOCR"
+        },
+        "Fetch": {
+            "command": "uvx",
+            "args": [
+                "mcp-server-fetch"
+            ],
+            "env": {},
+            "fromGalleryId": "modelcontextprotocol.servers_fetch"
+        },
+        "File System": {
+            "command": "npx -y @bunas/fs-mcp@latest",
+            "args": [],
+            "env": {
+                "API_KEY": ""
+            },
+            "fromGalleryId": "bunasQ.fs"
+        },
+        "audit-tools-wrapper": {
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "d:\\ZephyrAlpha\\.trae\\audit-mcp-simple.ps1"
+            ],
+            "description": "审计工具MCP包装器 - 解决'Connection closed'错误，包含7个审计工具"
+        }
+    }
+}

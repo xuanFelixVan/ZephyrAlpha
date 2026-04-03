@@ -4,31 +4,63 @@
 
 主要类:
     Result - 统一返回格式
-    Signal - 策略信号
-    Order - 订单
-    Position - 持仓
+
+向后兼容导入:
+    Signal, Order, Position - 从 trading_entities 模块导入
 """
 from dataclasses import dataclass, field
 from typing import Any, Optional, Dict
-from datetime import datetime
 
 
 @dataclass
 class Result:
-    """统一返回格式
-
+    """
+    统一返回格式
+    
     用于函数返回值封装，提供成功/失败状态、数据和错误信息。
-
+    这是系统中最基础的通用数据结构，所有模块都应使用此类封装返回值。
+    
     属性:
-        success: 是否成功
-        data: 返回数据
-        error: 错误信息
-        metadata: 元数据
-
+        success: 操作是否成功
+        data: 返回的数据 (任意类型)
+        error: 错误信息 (失败时提供)
+        metadata: 元数据字典 (可选的附加信息)
+    
+    设计理念:
+        - 统一返回格式，简化错误处理
+        - 支持链式调用和流畅接口
+        - 提供便捷的成功/失败检查方法
+    
     示例:
+        >>> # 成功返回
         >>> result = Result(success=True, data={"price": 100.0})
         >>> if result.is_success:
-        ...     print(result.data["price"])
+        ...     print(f"价格: {result.data['price']}")
+        价格: 100.0
+        
+        >>> # 失败返回
+        >>> result = Result(success=False, error="数据加载失败")
+        >>> if result.is_failure:
+        ...     print(f"错误: {result.error}")
+        错误: 数据加载失败
+        
+        >>> # 带元数据
+        >>> result = Result(
+        ...     success=True,
+        ...     data={"items": [1, 2, 3]},
+        ...     metadata={"count": 3, "source": "database"}
+        ... )
+    
+    最佳实践:
+        - 成功时: Result(success=True, data=...)
+        - 失败时: Result(success=False, error="错误描述")
+        - 使用 is_success 和 is_failure 属性检查状态
+        - 在 metadata 中存储额外信息 (如时间戳、来源等)
+    
+    注意:
+        - 不要同时设置 data 和 error
+        - metadata 应该只包含辅助信息，不应包含核心数据
+        - 建议在 metadata 中包含时间戳、来源、版本等信息
     """
     success: bool
     data: Any = None
@@ -36,137 +68,123 @@ class Result:
     metadata: Dict = field(default_factory=dict)
 
     def __post_init__(self):
+        """初始化后处理"""
         if self.metadata is None:
             self.metadata = {}
 
     @property
     def is_success(self) -> bool:
-        """检查是否成功"""
+        """
+        检查操作是否成功
+        
+        返回:
+            bool: True表示成功，False表示失败
+        """
         return self.success
 
     @property
     def is_failure(self) -> bool:
-        """检查是否失败"""
+        """
+        检查操作是否失败
+        
+        返回:
+            bool: True表示失败，False表示成功
+        """
         return not self.success
 
+    def get_data(self, key: str = None, default: Any = None) -> Any:
+        """
+        获取数据
+        
+        参数:
+            key: 数据键名 (如果data是字典)
+            default: 默认值
+        
+        返回:
+            Any: 数据值或默认值
+        
+        示例:
+            >>> result = Result(success=True, data={"price": 100.0})
+            >>> result.get_data("price", 0.0)
+            100.0
+            >>> result.get_data("volume", 0)
+            0
+        """
+        if not self.success:
+            return default
+        
+        if key is None:
+            return self.data
+        
+        if isinstance(self.data, dict):
+            return self.data.get(key, default)
+        
+        return default
 
-@dataclass
-class Signal:
-    """策略信号
+    def get_metadata(self, key: str, default: Any = None) -> Any:
+        """
+        获取元数据
+        
+        参数:
+            key: 元数据键名
+            default: 默认值
+        
+        返回:
+            Any: 元数据值或默认值
+        
+        示例:
+            >>> result = Result(
+            ...     success=True,
+            ...     data={"price": 100.0},
+            ...     metadata={"source": "api", "timestamp": "2026-04-02"}
+            ... )
+            >>> result.get_metadata("source", "unknown")
+            'api'
+        """
+        return self.metadata.get(key, default)
 
-    表示策略产生的交易信号。
+    @classmethod
+    def ok(cls, data: Any = None, **metadata) -> 'Result':
+        """
+        创建成功结果 (类方法)
+        
+        参数:
+            data: 返回数据
+            **metadata: 元数据键值对
+        
+        返回:
+            Result: 成功的结果对象
+        
+        示例:
+            >>> result = Result.ok({"price": 100.0}, source="api")
+            >>> result.is_success
+            True
+        """
+        return cls(success=True, data=data, metadata=metadata)
 
-    属性:
-        signal_id: 信号唯一标识
-        strategy_id: 策略ID
-        stock_code: 股票代码
-        direction: 方向 ('long' 或 'short')
-        strength: 信号强度 (0.0 - 1.0)
-        entry_price: 入场价格
-        timestamp: 信号时间戳
-        metadata: 元数据
-    """
-    signal_id: str
-    strategy_id: str
-    stock_code: str
-    direction: str
-    strength: float
-    entry_price: float
-    timestamp: datetime
-    metadata: Dict = field(default_factory=dict)
-
-    def __post_init__(self):
-        if self.metadata is None:
-            self.metadata = {}
-        if self.direction not in ("long", "short"):
-            raise ValueError(f"direction must be 'long' or 'short', got '{self.direction}'")
-        if not 0.0 <= self.strength <= 1.0:
-            raise ValueError(f"strength must be between 0.0 and 1.0, got {self.strength}")
-
-
-@dataclass
-class Order:
-    """订单
-
-    表示交易订单。
-
-    属性:
-        order_id: 订单唯一标识
-        signal_id: 关联信号ID
-        stock_code: 股票代码
-        direction: 方向 ('buy' 或 'sell')
-        order_type: 订单类型 ('market' 或 'limit')
-        price: 订单价格
-        quantity: 订单数量
-        status: 订单状态 ('pending' | 'filled' | 'cancelled' | 'rejected')
-        timestamp: 订单创建时间戳
-        filled_price: 成交价格
-        filled_quantity: 成交数量
-    """
-    order_id: str
-    signal_id: str
-    stock_code: str
-    direction: str
-    order_type: str
-    price: float
-    quantity: int
-    status: str = 'pending'
-    timestamp: datetime = None
-    filled_price: float = None
-    filled_quantity: int = 0
-
-    def __post_init__(self):
-        if self.timestamp is None:
-            self.timestamp = datetime.now()
-        if self.direction not in ("buy", "sell"):
-            raise ValueError(f"direction must be 'buy' or 'sell', got '{self.direction}'")
-        if self.order_type not in ("market", "limit"):
-            raise ValueError(f"order_type must be 'market' or 'limit', got '{self.order_type}'")
-        if self.status not in ("pending", "filled", "cancelled", "rejected"):
-            raise ValueError(f"Invalid status: {self.status}")
-        if self.quantity <= 0:
-            raise ValueError(f"quantity must be positive, got {self.quantity}")
-        if self.price <= 0:
-            raise ValueError(f"price must be positive, got {self.price}")
+    @classmethod
+    def fail(cls, error: str, **metadata) -> 'Result':
+        """
+        创建失败结果 (类方法)
+        
+        参数:
+            error: 错误信息
+            **metadata: 元数据键值对
+        
+        返回:
+            Result: 失败的结果对象
+        
+        示例:
+            >>> result = Result.fail("数据加载失败", code=500)
+            >>> result.is_failure
+            True
+        """
+        return cls(success=False, error=error, metadata=metadata)
 
 
-@dataclass
-class Position:
-    """持仓
+# 向后兼容导入
+# 为了保持向后兼容性，从 trading_entities 模块导入这些类
+# 新代码应直接从 src.core.trading_entities 导入
+from src.core.trading_entities import Signal, Order, Position
 
-    表示当前持仓信息。
-
-    属性:
-        stock_code: 股票代码
-        quantity: 持仓数量
-        avg_cost: 平均成本
-        current_price: 当前价格
-        unrealized_pnl: 浮动盈亏
-        realized_pnl: 已实现盈亏
-    """
-    stock_code: str
-    quantity: int
-    avg_cost: float
-    current_price: float
-    unrealized_pnl: float = 0.0
-    realized_pnl: float = 0.0
-
-    def __post_init__(self):
-        self.unrealized_pnl = (self.current_price - self.avg_cost) * self.quantity
-
-    @property
-    def market_value(self) -> float:
-        """市值"""
-        return self.current_price * self.quantity
-
-    @property
-    def cost_value(self) -> float:
-        """成本"""
-        return self.avg_cost * self.quantity
-
-    @property
-    def pnl_pct(self) -> float:
-        """盈亏比例"""
-        if self.cost_value == 0:
-            return 0.0
-        return (self.current_price - self.avg_cost) / self.avg_cost
+__all__ = ['Result', 'Signal', 'Order', 'Position']

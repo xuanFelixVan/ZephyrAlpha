@@ -1,3 +1,17 @@
+---
+module_id: RESEARCH_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构研究标准
+applicable_scope: 量化研究实验
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 探索性分析工具
 
 > 统计分析、模式挖掘、可视化

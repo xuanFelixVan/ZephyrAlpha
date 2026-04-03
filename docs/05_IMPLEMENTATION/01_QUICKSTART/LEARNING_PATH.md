@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 5.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 实施标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 新手学习路线图
 
 > 清风量化系统 v5.0 - 从零到跑通的完整学习路径
@@ -468,7 +482,7 @@ A: 正常现象，需考虑滑点、流动性等实盘因素
 
 ---
 
-**下一步**: 查看 [05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md](../05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) 开始第一个回测
+**下一步**: 查看 [05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md](first-backtest.md) 开始第一个回测
 
 ---
 

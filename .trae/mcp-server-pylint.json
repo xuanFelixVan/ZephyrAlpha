@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "pylint-code-analyzer": {
+      "command": "pylint",
+      "args": ["--output-format=json"],
+      "description": "Python代码质量分析工具，检查代码规范和质量问题"
+    }
+  }
+}

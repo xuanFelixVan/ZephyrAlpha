@@ -1,9 +1,23 @@
+---
+module_id: IMPL_GUIDE_001
+version: 1.0.0
+status: Stable
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 已完成
+---
+
 # 路径处理规范 (PATH_STANDARD.md)
 
 > 本文档定义了清风量化交易系统4.0的路径处理标准，包括命名规范、路径格式、跨平台兼容性等。
 >
 > **版本**：v1.0
-> **更新日期**：2026-03-28
+> **更新日期**：2026-04-02
 
 ---
 
@@ -38,7 +52,7 @@ T.00.MR001.市场趋势识别.md
     → T.00.MR001.Market_Trend_Recognition.md
 
 量化策略框架_v3.1.md
-    → quantitative_strategy_framework_v3.1.md
+    → quantitative_strategy_framework_v3_1.md
 ```
 
 ---
@@ -140,13 +154,13 @@ path = Path(path_with_chinese)
 ```markdown
 <!-- ✅ 正确：相对路径 -->
 [回到首页](./README.md)
-[策略池](./03_TRADING_TACTICS/strategy-pool/index.md)
+[策略池](../../03_TRADING_TACTICS/INDEX.md)
 
 <!-- ✅ 正确：目录层级引用 -->
-[上级目录](../SPEC.md)
+[上级目录](../../03_TRADING_TACTICS/INDEX.md)
 
 <!-- ❌ 错误：绝对路径（不可移植） -->
-[D:\项目\docs\SPEC.md](./SPEC.md)
+[D:\项目\docs\INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 ```
 
 ### 4.2 Python路径引用

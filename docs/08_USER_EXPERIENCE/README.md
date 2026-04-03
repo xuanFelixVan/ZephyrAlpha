@@ -1,6 +1,20 @@
+---
+module_id: UX_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 用户体验文档索引
 
-> 清风量化系统 v5.0 用户体验设计文档总览
+> 清风量化系统 v5.1 用户体验设计文档总览
 
 ---
 
@@ -11,7 +25,7 @@ docs/08_USER_EXPERIENCE/
 ├── README.md                      # 本文档
 │
 ├── 01_UI_DESIGN/                  # UI设计
-│   ├── 界面布局.md                # 五区域布局规范
+│   ├── ui_layout_standard.md                # 五区域布局规范
 │   ├── 组件库.md                  # 组件设计规范
 │   ├── 色彩系统.md                # 色彩规范
 │   └── 字体规范.md                # 字体规范
@@ -46,7 +60,7 @@ docs/08_USER_EXPERIENCE/
 
 | 文档 | 内容 | 优先级 |
 |------|------|--------|
-| 界面布局.md | 五区域布局、栅格系统、响应式断点 | P0 |
+| ui_layout_standard.md | 五区域布局、栅格系统、响应式断点 | P0 |
 | 组件库.md | 按钮、表单、表格、对话框等组件规范 | P0 |
 | 色彩系统.md | 主色、辅助色、语义色、渐变色 | P1 |
 | 字体规范.md | 字体家族、字号、字重、行高 | P1 |
@@ -116,10 +130,11 @@ docs/08_USER_EXPERIENCE/
 
 | 日期 | 版本 | 变更内容 |
 |------|------|----------|
+| 2026-03-31 | v5.1 | 版本同步至v5.1 |
 | 2026-03-29 | v5.0 | 更新为v5.0版本 |
 
 ---
 
-**最后更新**: 2026-03-28
-**版本**: v4.0
+**最后更新**: 2026-03-31
+**版本**: v5.1
 **维护者**: 清风量化系统

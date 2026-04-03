@@ -1,4 +1,18 @@
-﻿# 运维手册 (Operations Manual)
+---
+module_id: IMPL_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# 运维手册 (Operations Manual)
 
 > **适用**: 个人开发者运维系统  
 > **目标**: 简单监控，快速排障
@@ -9,9 +23,9 @@
 
 | 文档 | 说明 | 重要性 |
 |------|------|--------|
-| [monitoring.md](./monitoring.md) | 监控配置 |  建议 |
-| [faq.md](./faq.md) | 常见问题 |  必须 |
-| [performance-tips.md](./performance-tips.md) | 性能优化 |  建议 |
+| [DOCUMENT_AUDIT_WORKFLOW.md](./DOCUMENT_AUDIT_WORKFLOW.md) | 文档审查工作流程（个人版） |  必须 |
+| [AUDIT_CHECKLIST_TEMPLATE.md](./AUDIT_CHECKLIST_TEMPLATE.md) | 审查检查清单模板（个人版） |  必须 |
+|  | 常见问题 |  建议 |
 
 ---
 
@@ -57,7 +71,7 @@ tail -f logs/error.log
 
 ### Step 2: 检查常见问题
 
-查看 [faq.md](./faq.md) 寻找解决方案。
+查看  寻找解决方案。
 
 ### Step 3: 重启服务
 
@@ -91,9 +105,9 @@ python scripts/start_server.py
 ##  相关文档
 
 - [部署指南](../03_DEPLOYMENT/README.md)
-- [错误处理](../02_DEVELOPMENT/error-handling.md)
+- 
 
 ---
 
-**最后更新**: 2026-03-28  
+**最后更新**: 2026-03-31  
 **状态**:  可用

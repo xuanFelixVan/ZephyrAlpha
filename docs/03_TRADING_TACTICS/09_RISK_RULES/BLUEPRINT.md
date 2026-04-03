@@ -1,19 +1,24 @@
 ---
-module_id: RISK_RULES_001
-version: 1.0
+module_id: TACTICS_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-28
-layer: Layer 3, 6-7
-index: RSK_001
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+implementation_progress: 0%
 ---
+
 
 # 风控规则体系蓝图
 
 > 清风量化系统 v5.0 的风险控制规则体系
 > **索引**: `RSK_001`
 
----
 
 ## 1. 设计原则
 
@@ -24,7 +29,6 @@ index: RSK_001
 | 快速失败 | 风控触发时立即行动，不等待人工确认 |
 | 可追溯 | 所有风控事件完整记录，便于审计 |
 
----
 
 ## 2. 风控规则分层
 
@@ -69,7 +73,6 @@ index: RSK_001
 | 日终规则 | 事后 | 收盘后 | 报告 | 风险敞口报告 |
 | 归因规则 | 事后 | 日终 | 分析 | P&L归因 |
 
----
 
 ## 3. 核心风控规则定义
 
@@ -162,7 +165,6 @@ post_trade_rules:
     false_signal_review: true       # 假信号复盘
 ```
 
----
 
 ## 4. 风控规则引擎设计
 
@@ -394,7 +396,6 @@ class RuleExecutor:
         return ExecutionResult(success=True)
 ```
 
----
 
 ## 5. 规则配置接口
 
@@ -467,7 +468,6 @@ class RiskRuleAPI:
         """回测规则效果"""
 ```
 
----
 
 ## 6. 风控事件流
 
@@ -513,7 +513,6 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 | DANGER | 橙色 | 危险信号 | 自动减仓 |
 | CRITICAL | 红色 | 极端风险 | 自动清仓 |
 
----
 
 ## 7. 规则执行优先级
 
@@ -526,7 +525,6 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 | 5 | 流动性风控 | 异步, 预警+执行 | <1s |
 | 6 | 波动率风控 | 异步, 预警+对冲 | <1s |
 
----
 
 ## 8. 监控指标
 
@@ -558,7 +556,6 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
 
 ## 9. 集成接口
 
@@ -580,7 +577,6 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 | PerformanceAnalyzer | report() | 生成报告 |
 | LogManager | log_event() | 记录日志 |
 
----
 
 ## 10. 更新记录
 
@@ -588,7 +584,6 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `RSK_001`

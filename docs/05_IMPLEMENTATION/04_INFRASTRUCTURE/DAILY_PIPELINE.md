@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 每日数据流水线
 
 > 自动化数据采集、清洗、存储的完整流水线

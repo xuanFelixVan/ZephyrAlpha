@@ -1,3 +1,17 @@
+---
+module_id: IMPL_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+---
+
 # SECURITY_BLUEPRINT.md - 已归档
 
 > **归档时间**: 2026-03-29
@@ -11,7 +25,7 @@
 | 原因 | 说明 |
 |------|------|
 | **个人系统** | 数据为公开行情，不需要企业级安全 |
-| **已有认证** | [AUTH.md](./AUTH.md) 已实现JWT+API Key认证 |
+| **已有认证** | [AUTH.md](../02_DEVELOPMENT/AUTH.md) 已实现JWT+API Key认证 |
 | **工程量过大** | 完整安全方案需要额外40h |
 | **优先级低** | 1人+AI模式核心是策略和风控，不是安全 |
 
@@ -45,8 +59,8 @@
 
 | 文档 | 说明 |
 |------|------|
-| [AUTH.md](./AUTH.md) | 简化认证模块(已有) |
-| [DEVELOPER_RULES.md](../../DEVELOPER_RULES.md) | 开发规范 |
+| [AUTH.md](../02_DEVELOPMENT/AUTH.md) | 简化认证模块(已有) |
+| [DEVELOPER_RULES.md](../02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规范 |
 
 ---
 

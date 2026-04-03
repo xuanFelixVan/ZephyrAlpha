@@ -1,3 +1,17 @@
+---
+module_id: ARCHIVE_REPORT_001
+version: 5.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构审计标准
+applicable_scope: 全系统质量监控
+compliance_level: 审计标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 清风量化交易系统 v5.0 - 深度专业审核报告 (第二轮)
 
 > **审核日期**: 2026-03-29
@@ -35,7 +49,7 @@
 
 ### 2.1 factor_calculator.py - get_implemented_factors() 逻辑错误
 
-**位置**: [factor_calculator.py#L847-849](file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/factor_calculator.py#L847-849)
+**位置**: 
 
 **问题**:
 ```python
@@ -62,7 +76,7 @@ def get_implemented_factors(self) -> List[str]:
 
 ### 2.2 factor_calculator.py - supertrend 向量化实现问题
 
-**位置**: [factor_calculator.py#L691-732](file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/factor_calculator.py#L691-732)
+**位置**: 
 
 **问题**:
 ```python
@@ -136,7 +150,7 @@ def _calculate_supertrend(
 
 ### 3.1 risk_manager.py - 亏损判断逻辑问题
 
-**位置**: [risk_manager.py#L180](file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/risk_manager.py#L180)
+**位置**: 
 
 **问题**:
 ```python
@@ -162,7 +176,7 @@ if position.unrealized_pnl_pct < -0.20:
 
 ### 3.2 risk_manager.py - get_position_limit 空指针风险
 
-**位置**: [risk_manager.py#L233](file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/risk_manager.py#L233)
+**位置**: 
 
 **问题**:
 ```python

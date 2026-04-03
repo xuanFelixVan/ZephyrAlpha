@@ -1,8 +1,22 @@
+---
+module_id: FACTOR_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 因子库索引
 
 > 清风量化因子库导航入口
 >
-> **版本**：v4.0
+> **版本**：v5.1
 > **更新日期**：2026-03-28
 
 ---
@@ -11,14 +25,14 @@
 
 | 目录 | 内容 | 说明 |
 |------|------|------|
-| [00_INDEX](./00_INDEX/README.md) | 本文档 | 索引入口 |
-| [01_METHODOLOGY](./01_METHODOLOGY/README.md) | 研究方法论 | 因子研究标准 |
-| [02_ALPHA_FACTORS](./02_ALPHA_FACTORS/) | Alpha因子 | 87+个Alpha因子 |
-| [03_RISK_FACTORS](./03_RISK_FACTORS/) | 风险因子 | 46+个风险因子 |
-| [04_DATA_SOURCE](./04_DATA_SOURCE/) | 数据源 | THS_BD指标清单 |
-| [05_BACKTEST](./05_BACKTEST/) | 回测报告 | IC验证/回测报告 |
-| [06_ARCHIVE](./06_ARCHIVE/) | 归档文件 | 历史文件归档 |
-| [10_MANUAL](./10_MANUAL/) | 手册文档 | 因子库手册 |
+| [00_INDEX](../../../README.md) | 本文档 | 索引入口 |
+| [01_METHODOLOGY](../../../README.md) | 研究方法论 | 因子研究标准 |
+|  | Alpha因子 | 87+个Alpha因子 |
+|  | 风险因子 | 46+个风险因子 |
+|  | 数据源 | THS_BD指标清单 |
+|  | 回测报告 | IC验证/回测报告 |
+|  | 归档文件 | 历史文件归档 |
+|  | 手册文档 | 因子库手册 |
 
 ---
 
@@ -28,10 +42,10 @@
 factor-library/
 ├── 00_INDEX/                 # 索引导航
 │   ├── README.md             # 本文档
-│   └── 因子分类总表.md        # 因子分类总览
+│   └── factor_classification_summary.md        # 因子分类总览
 ├── 01_METHODOLOGY/           # 研究方法论
 │   ├── README.md            # 方法论索引
-│   ├── factor_definition.md # 因子定义标准
+│   ├── T.02.FE001.factor_definition.md # 因子定义标准
 │   ├── ic_analysis.md       # IC分析体系
 │   ├── factor_preprocessing.md    # 预处理方法
 │   ├── factor_synthesis.md  # 因子合成
@@ -45,24 +59,24 @@ factor-library/
 │   ├── 6_动量因子.md
 │   └── 7_情绪因子.md
 ├── 03_RISK_FACTORS/         # 风险因子（46+）
-│   ├── 1_Barra风格因子.md
-│   ├── 2_行业因子.md
-│   └── 3_尾部风险因子.md
+│   ├── T.03.RF001.barra_style_factors.md
+│   ├── T.03.RF002.industry_factors.md
+│   └── T.03.RF003.tail_risk_factors.md
 ├── 04_DATA_SOURCE/           # 数据源
 │   ├── iFind/               # iFind数据
-│   │   ├── 因子主索引.csv
-│   │   ├── 因子主索引.md
-│   │   ├── 因子清单.csv
-│   │   └── 财务报表指标/
+│   │   ├── factor_master_index.csv
+│   │   ├── factor_master_index.md
+│   │   ├── factor_list.csv
+│   │   └── financial_statements/
 │   └── README.md
 ├── 05_BACKTEST/             # 回测报告（新增）
 │   ├── README.md
-│   ├── 相关性矩阵_20260328.md
+│   ├── correlation_matrix.md
 │   ├── 趋势类/
 │   ├── 均值回归类/
-│   ├── 价值类/
-│   │   ├── PE_TTM_IC_20260328.md
-│   │   └── PE_TTM_BACKTEST_20260328.md
+│   ├── value_factors/
+│   │   ├── PE_TTM_IC.md
+│   │   └── PE_TTM_BACKTEST.md
 │   ├── 成长类/
 │   ├── 质量类/
 │   ├── 动量类/

@@ -2,7 +2,7 @@
 简单风控规则模块
 基于if-then规则的务实风控实现
 
-Layer 3, 6-7: 风控规则
+技术层次: Layer 3, 6-7 - 风控规则层 | 业务架构: 三级时间框架融合架构
 务实决策: 不使用复杂规则引擎，直接硬编码简单规则
 """
 import logging
@@ -75,7 +75,10 @@ class SimpleRiskRules:
     """
 
     def __init__(self, config: Optional[Dict] = None):
-        self.config = config or self._default_config()
+        default_config = self._default_config()
+        if config:
+            default_config.update(config)
+        self.config = default_config
         self.violation_history: List[Dict] = []
 
     def _default_config(self) -> Dict:

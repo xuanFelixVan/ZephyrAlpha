@@ -1,8 +1,23 @@
+---
+module_id: FRAMEWORK_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 框架定义 (Framework)
 
-> **版本**: v2.0
+> **版本**: v5.1
 > **更新日期**: 2026-03-30
-> **Layer**: Layer 0 (基础)
+> **技术架构**: Layer 0-8技术流水线
+> **业务架构**: 三级时间框架融合架构
 > **职责**: 系统架构、市场状态识别、人机协作流程、技术栈选择
 
 ---
@@ -15,6 +30,13 @@
 | **MARKET_REGIME.md** | 市场状态识别 | 大盘择时、状态分类、策略映射 |
 | **HUMAN_AI_FLOW.md** | 人机协作流程 | 授权机制、AI角色定义、决策流程 |
 | **TECH_STACK.md** | 技术栈选择 | 数据源/回测/可视化/AI/存储选型 |
+| **PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md** | 专业多时间框架架构 | 三级时间框架融合架构（桥水+文艺复兴模式） |
+| **PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md** | 专业实施蓝图 | 10个月实施路线图、AI评审团机制、5个关键审核节点 |
+| **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | 数据源层专业实施蓝图 | P0/P1/P2三级模块设计、3个月实施计划、专业机构对标 |
+| **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方案 | 6个适合个人开发的模块、4周实施计划、低成本轻量级方案 |
+| **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** | 关键模块实施蓝图 | P0实时风控+P1全球市场+P2扩展模块、3-6周实施、覆盖度提升至95% |
+| **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝图 | 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
+| **LAYER11_NL_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架构 | 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
 
 ---
 
@@ -32,7 +54,10 @@ Layer 5: 策略执行层 (信号生成/QMT交易)
 Layer 6: 组合优化层 (均值方差/Barra)
 Layer 7: AI报告层 (日报/月报/归因) 🆕
 Layer 8: 人机交互层 (授权/监控/辩论) 🆕
+Layer 11: 文字驱动层 (自然语言交互/零代码操作) 🆕
 ```
+
+**注意**: Layer 11是文字驱动层，位于Layer 0-8之上，提供自然语言交互界面，实现零代码操作整个系统。详细设计参见 [LAYER11_NL_INTERFACE_BLUEPRINT.md](./LAYER11_NL_INTERFACE_BLUEPRINT.md)
 
 ### 2.2 核心设计原则
 
@@ -55,6 +80,7 @@ Layer 8: 人机交互层 (授权/监控/辩论) 🆕
 | 了解大盘择时 | [MARKET_REGIME.md](./MARKET_REGIME.md) |
 | 理解人机协作 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
 | 查看技术选型 | [TECH_STACK.md](./TECH_STACK.md) |
+| 零代码操作系统 | [LAYER11_NL_INTERFACE_BLUEPRINT.md](./LAYER11_NL_INTERFACE_BLUEPRINT.md) |
 
 ### 3.2 按Layer导航
 
@@ -66,9 +92,10 @@ Layer 8: 人机交互层 (授权/监控/辩论) 🆕
 | Layer 3 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 4 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 5 | [执行文档](../04_EXECUTION/README.md) |
-| Layer 6 | [组合优化文档](../04_EXECUTION/README.md) |
-| Layer 7 | [绩效文档](../05_BACKTEST/README.md) |
+| Layer 6 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| Layer 7 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 8 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
+| Layer 11 | [LAYER11_NL_INTERFACE_BLUEPRINT.md](./LAYER11_NL_INTERFACE_BLUEPRINT.md) |
 
 ---
 

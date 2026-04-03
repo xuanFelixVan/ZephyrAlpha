@@ -1,0 +1,238 @@
+{
+  "summary": {
+    "scan_time": "2026-04-02T13:09:02.387013",
+    "scanned_files": 456,
+    "total_issues": 27,
+    "issues_by_severity": {
+      "info": 27
+    },
+    "issues_by_type": {
+      "non_standard_category": 27
+    }
+  },
+  "details": {
+    "link_issues": [],
+    "version_issues": [],
+    "classification_issues": [
+      {
+        "file_path": "docs\\00_OVERVIEW\\DATA_FLOW.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\00_OVERVIEW\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\00_RESOURCES\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\01_UI_DESIGN\\ui_layout_standard.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\ARCHIVED.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_0\\L0_BAOSTOCK.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_0\\L0_IFIND.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_0\\L0_QMT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_0\\L0_SUPERCMD.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_1\\L1_VALIDATOR.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\LAYER_11_ARCHITECTURE.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\LAYER_11_TOOL_INTERFACE_SPECIFICATION.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_FEATURE_OPTIMIZER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_HYPERPARAM_OPT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_MARKET_DETECTOR.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_MODEL_ENSEMBLER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH, 09_AUDIT, 02_FACTOR_LIBRARY, 04_EXECUTION, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 01_FRAMEWORK"
+      }
+    ]
+  },
+  "recommendations": [
+    "将文档移至标准分类目录，提高文档组织性"
+  ]
+}

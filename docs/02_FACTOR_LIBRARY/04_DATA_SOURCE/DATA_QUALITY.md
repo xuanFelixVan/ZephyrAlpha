@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 数据质量控制系统
 
 > **模块编号**: M-DQ-001 (Data Quality)
@@ -220,7 +234,7 @@ class MissingValueFiller:
         if strategy not in cls.STRATEGIES:
             raise ValueError(f"未知填充策略: {strategy}")
 
-        filled = cls.STRATEGIES[strategy](df[column].copy())
+        filled = cls.STRATEGIES)
         return filled
 
     @classmethod

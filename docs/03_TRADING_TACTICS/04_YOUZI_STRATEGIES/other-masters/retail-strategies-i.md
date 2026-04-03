@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_DOC_001
+version: 1.7.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # retail-strategies-i.md
 
 # 游资策略补充 (S068-S075)
@@ -10,7 +24,7 @@
 >
 > **配套文档**：
 > - [retail-strategies-h.md](./retail-strategies-h.md) - S059-S067
-> - [T.04.EX006.A股交易规则.md](../main/02_TACTICS/04_EXECUTION/T.04.EX006.A股交易规则.md) - 交易规则
+> -  - 交易规则
 
 ---
 

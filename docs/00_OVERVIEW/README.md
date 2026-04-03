@@ -1,14 +1,28 @@
-# 清风量化交易系统 v4.0 - 系统总览
+---
+module_id: OVERVIEW_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
 
-> **版本**：v4.0
-> **更新日期**：2026-03-28
+# 清风量化交易系统 v5.1 - 系统总览
+
+> **版本**：v5.1
+> **更新日期**：2026-03-31
 > **状态**：已完成
 
 ---
 
 ## 1. 系统简介
 
-清风量化交易系统是一套面向A股市场的专业级多策略量化交易平台，采用**Layer 0-7分层架构**，支持30-50种策略的动态管理和市场状态自适应。
+清风量化交易系统是一套面向A股市场的专业级多策略量化交易平台，采用**Layer 0-8分层架构**，支持30-50种策略的动态管理和市场状态自适应。
 
 ### 1.1 系统特点
 
@@ -27,34 +41,35 @@
 
 | 类型 | 文档 | 说明 |
 |------|------|------|
-| **主入口** | [SPEC.md](../SPEC.md) | 统一入口索引 |
-| **架构** | [DATA_FLOW.md](./DATA_FLOW.md) | 数据流与模块依赖 |
-| **版本** | [VERSION_HISTORY.md](./VERSION_HISTORY.md) | 版本演进历史 |
+| **主入口** | [INDEX.md](../03_TRADING_TACTICS/INDEX.md) | 文档索引入口 |
+| **架构** | [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | 系统蓝图 |
+| **版本** | [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | 版本变更日志 |
 
 ### 2.2 主要模块
 
 | 目录 | 说明 |
 |------|------|
-| [01_FRAMEWORK/](../01_FRAMEWORK/) | 核心框架（Layer 0-7战术实现） |
-| [02_FACTOR_LIBRARY/](../02_FACTOR_LIBRARY/) | 因子库（5900+因子） |
+| [01_FRAMEWORK/](../01_FRAMEWORK/) | 核心框架（Layer 0-8战术实现） |
+| [02_FACTOR_LIBRARY/](../02_FACTOR_LIBRARY/) | 因子库（87 Alpha + 46 Risk） |
 | [03_TRADING_TACTICS/](../03_TRADING_TACTICS/) | 交易策略池（S001-S120） |
-| [04_TECHNICAL_SPECS/](../04_TECHNICAL_SPECS/) | 技术规格 |
+| [04_EXECUTION/](../04_EXECUTION/) | 执行引擎 |
 | [05_IMPLEMENTATION/](../05_IMPLEMENTATION/) | 实施指南 |
 
 ---
 
-## 3. Layer 0-7 分层架构（概览）
+## 3. Layer 0-8 分层架构（概览）
 
 | Layer | 名称 | 功能 |
 |-------|------|------|
 | Layer 0 | 数据层 | 数据采集、清洗、存储 |
-| Layer 1 | 前置层 | 市场状态识别、信号预处理 |
-| Layer 2 | Alpha层 | Alpha因子生成、预测 |
-| Layer 3 | 风险层 | 风险因子建模、归因 |
-| Layer 4 | 组合层 | 组合优化、权重分配 |
-| Layer 5 | 执行层 | 订单生成、路由、执行 |
-| Layer 6 | 监控层 | 实时监控、告警 |
-| Layer 7 | 归因层 | 绩效归因、分析 |
+| Layer 1 | 数据预处理层 | 市场状态识别、信号预处理 |
+| Layer 2 | Alpha因子层 | Alpha因子生成、预测 |
+| Layer 3 | 舆情分析层 | 新闻/情感/事件分析 |
+| Layer 4 | 机器学习层 | ML Pipeline |
+| Layer 5 | 策略执行层 | 订单生成、路由、执行 |
+| Layer 6 | 组合优化层 | 组合优化、权重分配 |
+| Layer 7 | AI报告层 | 绩效归因、分析 |
+| Layer 8 | 人机交互层 | 授权、监控、报告 |
 
 > 详见：[01_FRAMEWORK/](../01_FRAMEWORK/) 中的战术实现文档
 
@@ -76,10 +91,10 @@
 
 | 文档 | 说明 |
 |------|------|
-| [SPEC.md](../SPEC.md) | 主规格文档（完整索引） |
-| [CODE_STATUS.md](../CODE_STATUS.md) | 代码状态规范 |
-| [CHANGELOG.md](../CHANGELOG.md) | 变更日志 |
-| [CODE_REVIEW_REPORT.md](../CODE_REVIEW_REPORT.md) | 审查报告 |
+| [INDEX.md](../03_TRADING_TACTICS/INDEX.md) | 文档索引入口 |
+| [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md) | 完整文档地图 |
+| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | 系统蓝图 |
+| [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | 变更日志 |
 
 ---
 
@@ -87,10 +102,10 @@
 
 | 目录 | 说明 |
 |------|------|
-| [src/](../src/) | 源代码 |
-| [tests/](../tests/) | 测试 |
-| [config/](../config/) | 配置 |
+|  | 源代码 |
+|  | 测试 |
+|  | 配置 |
 
 ---
 
-*最后更新：2026-03-28*
+*最后更新：2026-03-31*

@@ -1,14 +1,17 @@
 ---
-module_id: RISK_RPT_001
-version: 1.0
+module_id: TACTICS_REPORT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 7 (绩效归因层)
-index: RISK.RPT.001
-estimated_hours: 6h
-source: 源自4.0执行方案4.1.2节
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 风险报告生成器蓝图
 
@@ -17,7 +20,6 @@ source: 源自4.0执行方案4.1.2节
 > **开发时间**: 6h
 > **核心定位**: 生成定期和按需的风险报告，支持人(监督)决策
 
----
 
 ## 1. 设计原则
 
@@ -28,7 +30,6 @@ source: 源自4.0执行方案4.1.2节
 | **可追溯** | 历史报告存档，支持对比 |
 | **分层** | 摘要+详情，满足不同阅读需求 |
 
----
 
 ## 2. 报告类型
 
@@ -42,7 +43,6 @@ source: 源自4.0执行方案4.1.2节
 | **实时告警** | 触发时 | 风控人员 | 实时 |
 | **专题报告** | 按需 | 指定人员 | 手动触发 |
 
----
 
 ## 3. 核心实现
 
@@ -325,7 +325,6 @@ class VaRCalculator:
         return abs(cvar) if not np.isnan(cvar) else var
 ```
 
----
 
 ## 4. 报告模板
 
@@ -337,7 +336,6 @@ class VaRCalculator:
 **报告日期**: {{ date }}
 **生成时间**: {{ generated_at }}
 
----
 
 ## 一、概览
 
@@ -369,12 +367,10 @@ class VaRCalculator:
 
 {{ risk_notes }}
 
----
 
 *本报告由清风量化交易系统自动生成*
 ```
 
----
 
 ## 5. 报告存储
 
@@ -433,7 +429,6 @@ class ReportIndex:
         return results
 ```
 
----
 
 ## 6. 集成接口
 
@@ -454,7 +449,6 @@ class ReportIndex:
 | ReportStorage | save() | 存储报告 |
 | Dashboard | display() | 展示报告 |
 
----
 
 ## 7. 监控指标
 
@@ -464,7 +458,6 @@ class ReportIndex:
 | report_delivery_time | 报告送达时间 | <5min |
 | report_accuracy | 报告数据准确性 | >99% |
 
----
 
 ## 8. 开发任务分解(6h)
 
@@ -477,7 +470,6 @@ class ReportIndex:
 | 邮件/通知集成 | 0.5h | NotificationSystem |
 | 单元测试 | 0.5h | test_risk_report.py |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `RISK.RPT.001`

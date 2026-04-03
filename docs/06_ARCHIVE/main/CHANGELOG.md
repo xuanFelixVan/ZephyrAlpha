@@ -1,3 +1,17 @@
+---
+module_id: ARCHIVE_CHANGELOG_001
+version: 3.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 主文档版本历史
 
 > 清风量化主文档库的版本变更记录
@@ -8,7 +22,7 @@
 
 | 版本 | 日期 | 模块 | 变更内容 |
 |------|------|------|----------|
-| **v3.1** | 2026-03-28 | 框架 | 集成机构级优化，量化策略框架_v3.1.md作为主文档 |
+| **v3.1** | 2026-03-28 | 框架 | 集成机构级优化，quantitative_strategy_framework.md作为主文档 |
 | v3.0 | 2026-03-28 | 全部 | 专业机构标准重构，整合7层流水线架构（已归档） |
 | v2.0 | 2026-03-27 | 框架 | 初始化多策略框架 |
 | v1.0 | 2026-03-26 | 框架 | 初始版本 |

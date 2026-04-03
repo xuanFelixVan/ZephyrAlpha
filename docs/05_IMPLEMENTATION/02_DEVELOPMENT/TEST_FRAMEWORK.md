@@ -1,14 +1,17 @@
 ---
-module_id: TEST_UNIT_001
-version: 1.0
+module_id: IMPL_DOC_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 0 (基础设施层)
-index: TEST.UNIT.001
-estimated_hours: 15h
-source: 源自4.0执行方案6.2节
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 单元测试框架蓝图
 
@@ -17,7 +20,6 @@ source: 源自4.0执行方案6.2节
 > **开发时间**: 15h
 > **核心定位**: 确保代码质量，所有模块可独立测试
 
----
 
 ## 1. 设计原则
 
@@ -29,7 +31,6 @@ source: 源自4.0执行方案6.2节
 | **可重复** | 测试结果稳定，不依赖外部状态 |
 | **快速执行** | 单元测试<1s，集成测试<10s |
 
----
 
 ## 2. 测试目录结构
 
@@ -73,7 +74,6 @@ tests/
 └── pytest.ini                  # pytest配置
 ```
 
----
 
 ## 3. 核心实现
 
@@ -292,7 +292,6 @@ class TestRiskManager:
         assert 'max_drawdown' in risk_metrics
 ```
 
----
 
 ## 4. 测试覆盖目标
 
@@ -330,7 +329,6 @@ utils/
 └── 时间处理函数
 ```
 
----
 
 ## 5. pytest配置
 
@@ -373,7 +371,6 @@ show_missing = True
 skip_covered = False
 ```
 
----
 
 ## 6. 执行命令
 
@@ -431,7 +428,6 @@ jobs:
           file: ./coverage.xml
 ```
 
----
 
 ## 7. 测试数据管理
 
@@ -478,7 +474,6 @@ class DataFactory:
         return pd.concat(dfs, ignore_index=True)
 ```
 
----
 
 ## 8. 开发任务分解(15h)
 
@@ -496,7 +491,6 @@ class DataFactory:
 | CI集成 | 1h | github/workflows |
 | 覆盖率报告 | 0.5h | 报告配置 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `TEST.UNIT.001`

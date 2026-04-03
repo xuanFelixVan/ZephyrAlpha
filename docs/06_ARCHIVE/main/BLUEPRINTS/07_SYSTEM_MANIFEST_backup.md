@@ -1,16 +1,22 @@
 ---
-module_id: SYSTEM_MANIFEST_001
-version: 5.0
-interface_version: 1.0
-status: Approved
-last_updated: 2026-03-29
+module_id: ARCHIVE_DOC_001
+version: 5.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 架构标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # System_Manifest.md - 系统清单
 
 > 清风量化系统 v5.0 的完整系统状态快照
 
----
 
 ## 📌 文档定位
 
@@ -21,7 +27,6 @@ last_updated: 2026-03-29
 | **阅读时间** | 15分钟 |
 | **与其他文档关系** | 本文档是入口，详细技术细节见 `UNIFIED_ARCHITECTURE.md`，愿景目标见 `ULTIMATE_BLUEPRINT.md` |
 
----
 
 ## 开发阶段说明
 
@@ -34,7 +39,6 @@ last_updated: 2026-03-29
 
 > **重要说明**：当前所有代码均为**示例代码/框架代码**，用于说明逻辑，**不可直接运行**。
 
----
 
 ## 1. 物理架构 (v5.0)
 
@@ -132,7 +136,6 @@ D:\ZephyrAlpha\
 └── README.md                          # 项目总入口
 ```
 
----
 
 ## 2. 模块映射表 (实现状态)
 
@@ -160,7 +163,6 @@ D:\ZephyrAlpha\
 
 > **状态说明**: ✅ 已实现 = 可直接使用 | 🔄 规划中 = 已有规格，待开发 | ❌ 待开发 = 尚未规划
 
----
 
 ## 3. 接口版本管理
 
@@ -171,7 +173,6 @@ D:\ZephyrAlpha\
 | StrategyEngine → RiskManager | 1.0 | 2026-03-28 | 信号 + 头寸 |
 | RiskManager → TradeExecutor | 1.0 | 2026-03-28 | 订单 + 风控标志 |
 
----
 
 ## 4. 依赖矩阵
 
@@ -198,7 +199,6 @@ D:\ZephyrAlpha\
 | baostock | 0.0.9+ | 历史数据 |
 | tushare | 1.3.0+ | 财务数据 |
 
----
 
 ## 5. AI权限矩阵
 
@@ -238,7 +238,6 @@ D:\ZephyrAlpha\
 | `ZephyrAlpha/.gitignore` | Git配置 |
 | `ZephyrAlpha/pyproject.toml` | 项目配置 |
 
----
 
 ## 6. 配置文件关联
 
@@ -252,7 +251,6 @@ config/
     └── rules.yaml ──────────▶ risk_manager
 ```
 
----
 
 ## 7. 数据存储规格
 
@@ -265,7 +263,6 @@ config/
 | 订单数据 | SQLite | `data/orders/` | 交易订单 |
 | 回测结果 | Parquet | `data/backtest_results/` | 回测绩效 |
 
----
 
 ## 8. 版本管理规则
 
@@ -284,7 +281,6 @@ config/
 - 文档更新
 - 性能优化
 
----
 
 ## 9. 启动检查清单
 
@@ -295,19 +291,17 @@ AI启动前必读顺序：
 4. ✅ 读取 `AI_Permissions.md`
 5. ✅ 读取相关模块的 `README.md`
 
----
 
 ## 10. 核心文档索引
 
 | 文档 | 说明 | 优先级 |
 |------|------|--------|
-| [INDEX.md](INDEX.md) | 快速导航入口 | ⭐ 必读 |
-| [System_Manifest.md](System_Manifest.md) | 系统清单 | ⭐ 必读 |
-| [API_Contract.md](API_Contract.md) | 接口契约 | ⭐ 必读 |
-| [AI_Research_Framework.md](AI_RESEARCH_FRAMEWORK.md) | AI研究框架 | ⭐ 必读 |
-| [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | 策略模板 | 建议 |
-| [AI_Permissions.md](AI_Permissions.md) | AI权限 | 必读 |
+| [INDEX.md](../../../03_TRADING_TACTICS/INDEX.md) | 快速导航入口 | ⭐ 必读 |
+| [System_Manifest.md](../../../02_FACTOR_LIBRARY/System_Manifest.md) | 系统清单 | ⭐ 必读 |
+| [API_Contract.md](../../../03_TRADING_TACTICS/API_Contract.md) | 接口契约 | ⭐ 必读 |
+|  | AI研究框架 | ⭐ 必读 |
+| [Strategy_Spec_S001.md](../../../03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略模板 | 建议 |
+| [AI_Permissions.md](../../../08_AI_GOVERNANCE/AI_Permissions.md) | AI权限 | 必读 |
 
----
 
 **版本**: v5.0.0 | **更新**: 2026-03-29 | **状态**: ✅ 活跃

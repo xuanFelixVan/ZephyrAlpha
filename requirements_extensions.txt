@@ -1,0 +1,88 @@
+# 模拟交易扩展依赖 - 专业工具库集成
+# 版本说明：所有库均为开源免费，许可证友好（MIT/Apache-2.0）
+# 更新日期：2026-04-01
+
+# ===================== 第一阶段：立即集成（1-2周） =====================
+
+## 1. 专业绩效分析系统
+# pyfolio - 量化投资组合绩效与风险分析库（Quantopian出品）
+pyfolio>=0.9.0
+# 注意：pyfolio依赖于以下库，但已包含在其依赖中
+# pandas>=0.18.0, numpy>=1.9.0, scipy>=0.15.0, matplotlib>=1.4.0
+
+## 2. 金融风险指标库
+# empyrical - 常用金融风险与绩效指标计算库（Quantopian出品）
+empyrical>=0.5.0
+# 注意：empyrical是pyfolio的核心依赖，提供基础指标计算
+
+## 3. 轻量级回测框架
+# backtesting.py - 快速向量化回测引擎（14k+星标）
+backtesting>=0.3.0
+# 依赖：pandas, numpy, bokeh (用于可视化)
+
+# ===================== 第二阶段：专业增强（2-3周） =====================
+
+## 4. 投资组合优化引擎
+# Riskfolio-Lib - 现代投资组合理论优化库（3k+星标）
+Riskfolio-Lib>=4.2.0
+# 依赖：cvxpy, pandas, numpy, scipy, matplotlib, plotly
+
+## 5. 灵活回测框架
+# bt - 树形结构回测框架，ffn的姊妹项目（2.8k+星标）
+bt>=0.2.0
+# 依赖：ffn, pandas, numpy, matplotlib
+
+## 6. 金融函数基础库
+# ffn - 金融函数库，bt的基础（2.5k+星标）
+ffn>=0.3.0
+# 依赖：pandas, numpy, scipy, matplotlib
+
+# ===================== 第三阶段：高级扩展（可选） =====================
+
+## 7. 完整事件驱动回测框架
+# zipline - 完整的事件驱动算法交易库（16k+星标）
+# 注意：原Quantopian zipline已停止维护，建议使用zipline-reloaded
+zipline-reloaded>=2.4.0
+# 依赖较多：pandas, numpy, scipy, bottleneck, numexpr, pytz, etc.
+
+## 8. 专业回测引擎
+# QSTrader - 专业的回测与模拟交易框架（1.5k+星标）
+qstrader>=0.3.0
+# 依赖：pandas, numpy, matplotlib, seaborn
+
+# ===================== 可选可视化增强 =====================
+
+## 9. 高级可视化库（backtesting.py依赖）
+bokeh>=3.0.0  # backtesting.py的可视化后端
+
+## 10. 统计图表库（Riskfolio-Lib依赖）
+plotly>=5.0.0  # Riskfolio-Lib的交互式图表
+
+# ===================== 安装说明 =====================
+
+# 推荐使用分阶段安装：
+# 第一阶段：pip install pyfolio empyrical backtesting
+# 第二阶段：pip install Riskfolio-Lib bt ffn
+# 第三阶段：pip install zipline-reloaded qstrader
+
+# 注意：部分库可能有依赖冲突，建议使用虚拟环境或conda环境
+# 特别是zipline-reloaded依赖较旧版本的pandas，可能需要单独环境
+
+# ===================== 许可证确认 =====================
+
+# 所有库均为开源免费，商业使用无限制：
+# - MIT许可证：backtesting.py, bt, ffn, Riskfolio-Lib, QSTrader
+# - Apache-2.0许可证：pyfolio, empyrical, zipline-reloaded
+
+# ===================== 版本兼容性说明 =====================
+
+# 与现有系统兼容性：
+# 1. backtesting.py需要Python 3.6+，与现有系统兼容
+# 2. pyfolio/empyrical需要pandas>=0.18.0，现有pandas>=1.5.0，兼容
+# 3. Riskfolio-Lib需要cvxpy，可能新增依赖但无冲突
+# 4. zipline-reloaded可能需要较旧pandas版本，建议单独环境
+
+# 建议测试顺序：
+# 1. 先安装第一阶段库并测试
+# 2. 确认无冲突后再安装第二阶段
+# 3. 第三阶段库建议在独立环境中测试

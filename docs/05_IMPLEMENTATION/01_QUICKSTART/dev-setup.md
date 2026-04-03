@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 开发环境搭建 (5 分钟)
 
 > **适用**: Windows/Linux/Mac  
@@ -174,7 +188,7 @@ pip install -r requirements.txt
 
 1. 前往 [第一次回测](./first-backtest.md)
 2. 学习 [开发规范](../02_DEVELOPMENT/README.md)
-3. 阅读 [配置标准](../02_DEVELOPMENT/config-standard.md)
+3. 阅读 
 
 ---
 

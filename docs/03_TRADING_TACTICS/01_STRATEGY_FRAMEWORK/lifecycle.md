@@ -1,4 +1,18 @@
-﻿# 策略生命周期管理
+---
+module_id: TACTICS_DOC_001
+version: 2.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# 策略生命周期管理
 
 > 策略从构思到退出的全流程管理规范
 >
@@ -346,11 +360,11 @@ def generate_signal(data, params):
 
 ### 7.4 入池文档清单
 
--  [策略文档](../02_CORE_STRATEGIES/)
--  [回测报告](../99_ARCHIVE/backtest/)
--  [模拟盘记录](../99_ARCHIVE/paper_trading/)
--  [实盘记录](../99_ARCHIVE/live_trading/)
--  [评审报告](../99_ARCHIVE/review/)
+-  [策略文档](../INDEX.md)
+-  [回测报告](../05_STRATEGY_POOL/index.md)
+-  [模拟盘记录](../99_ARCHIVE/)
+-  [实盘记录](../99_ARCHIVE/)
+-  [评审报告](../99_ARCHIVE/)
 
 ---
 
@@ -478,11 +492,11 @@ def generate_signal(data, params):
 
 ### 10.1 策略文档模板
 
-详见：[策略文档模板](./strategy_template.md)
+详见：
 
 ### 10.2 评审检查清单
 
-详见：[评审检查清单](./review_checklist.md)
+详见：
 
 ### 10.3 常见问题
 

@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 ﻿# 第一次回测 (10 分钟)
 
 > **目标**: 完成你的第一次策略回测  
@@ -188,7 +202,7 @@ tail logs/error.log
 
 完成第一次回测后：
 
-1. 学习 [代码质量规范](../02_DEVELOPMENT/code-quality.md)
+1. 学习 
 2. 阅读 [策略开发指南](../../03_TRADING_TACTICS/README.md)
 3. 尝试修改策略参数，观察效果
 

@@ -1,4 +1,18 @@
-﻿# 因子库审计报告与优化总结 (Factor Library Audit Report)
+---
+module_id: FACTOR_REPORT_001
+version: 4.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构审计标准
+applicable_scope: 全系统质量监控
+compliance_level: 审计标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# 因子库审计报告与优化总结 (Factor Library Audit Report)
 
 > 清风量化交易系统因子库全面审计与专业机构化升级
 >
@@ -81,8 +95,8 @@
 ### 1.2 内容冗余问题 
 
 **问题描述**:
-1. **因子库手册_v3.2.md** 与其他文档内容大量重叠
-2. **因子分类总表.md** 与 README.md 内容重复
+1. **factor_library_manual_v3.2.md** 与其他文档内容大量重叠
+2. **factor_classification_summary.md** 与 README.md 内容重复
 3. 方法论文档分散在多个文件中
 
 **影响**:
@@ -298,9 +312,9 @@ performance:
 
 | 原文档 | 新位置 | 状态 |
 |--------|--------|------|
-| 因子分类总表.md | 06_FACTOR_REGISTRY/factor_catalog.md |  |
-| 因子库手册_v3.2.md (治理部分) | 00_GOVERNANCE/README.md |  |
-| 因子库手册_v3.2.md (方法论部分) | 01_METHODOLOGY/ |  |
+| factor_classification_summary.md | 06_FACTOR_REGISTRY/factor_catalog.md |  |
+| factor_library_manual_v3.2.md (治理部分) | 00_GOVERNANCE/README.md |  |
+| factor_library_manual_v3.2.md (方法论部分) | 01_METHODOLOGY/ |  |
 | 趋势跟踪因子.md | 02_ALPHA_FACTORY/01_trend_factors.md |  |
 | Barra 风格因子.md | 03_RISK_MODELS/01_barra_factors.md |  |
 

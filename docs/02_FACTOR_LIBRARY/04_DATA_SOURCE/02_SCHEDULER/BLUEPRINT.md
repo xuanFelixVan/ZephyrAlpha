@@ -1,14 +1,18 @@
 ---
-module_id: DATA_SCH_001
-version: 1.0
+module_id: FACTOR_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 0 (数据层)
-index: DATA.SCH.001
-estimated_hours: 8h
-source: 源自4.0执行方案3.1.2节
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 设计阶段
+implementation_progress: 0%
 ---
+
 
 # 智能下载调度器蓝图
 
@@ -17,7 +21,6 @@ source: 源自4.0执行方案3.1.2节
 > **开发时间**: 8h
 > **核心定位**: 基于时间和优先级的智能调度，确保数据在正确时间获取
 
----
 
 ## 1. 设计原则
 
@@ -28,7 +31,6 @@ source: 源自4.0执行方案3.1.2节
 | **自动重试** | 失败任务自动重试，指数退避 |
 | **依赖管理** | 支持任务间依赖关系 |
 
----
 
 ## 2. 系统架构
 
@@ -63,7 +65,6 @@ source: 源自4.0执行方案3.1.2节
 | **午盘** | 13:00-15:00 | 分钟线、盘后数据 | P2 |
 | **盘后** | 15:30-22:00 | 日线归档、财务数据、因子计算 | P3 |
 
----
 
 ## 3. 核心实现
 
@@ -281,7 +282,6 @@ class DownloadExecutor:
         return results
 ```
 
----
 
 ## 4. 任务类型定义
 
@@ -406,7 +406,6 @@ class AfterCloseTasks:
     }
 ```
 
----
 
 ## 5. 调度配置
 
@@ -466,7 +465,6 @@ task_defaults:
     interval: 300
 ```
 
----
 
 ## 6. 集成接口
 
@@ -486,7 +484,6 @@ task_defaults:
 | DataCleaner | clean() | 数据清洗 |
 | DataStorage | save() | 数据存储 |
 
----
 
 ## 7. 监控指标
 
@@ -497,7 +494,6 @@ task_defaults:
 | scheduler_retry_rate | 重试率 | <5% |
 | scheduler_failure_rate | 失败率 | <1% |
 
----
 
 ## 8. 开发任务分解(8h)
 
@@ -510,7 +506,6 @@ task_defaults:
 | 配置集成 | 0.5h | scheduler.yaml |
 | 单元测试 | 1h | test_scheduler.py |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `DATA.SCH.001`

@@ -1,0 +1,38 @@
+# 统计套利模块配置文件
+# 模块ID: STATISTICAL_ARBITRAGE_MODULE_001
+# 版本: v1.0.0
+
+# 配对选择参数
+pair_selection:
+  min_correlation: 0.7          # 最小相关系数
+  max_pairs: 50                 # 最大配对数量
+  lookback_period: 252          # 回溯期（天）
+  
+# 协整检验参数
+cointegration:
+  adf_critical_value: 0.05      # ADF检验临界值
+  min_half_life: 5              # 最小半衰期（天）
+  max_half_life: 60             # 最大半衰期（天）
+  
+# 价差交易参数
+spread_trading:
+  entry_zscore: 2.0             # 开仓Z-score阈值
+  exit_zscore: 0.5              # 平仓Z-score阈值
+  stop_loss: 0.05               # 止损比例
+  
+# 市场中性参数
+market_neutral:
+  industry_neutral: true        # 行业中性
+  style_neutral: true           # 风格中性
+  max_leverage: 2.0             # 最大杠杆
+  
+# 风险控制参数
+risk_control:
+  max_position_per_pair: 0.1    # 单对配对最大仓位
+  max_total_position: 1.0       # 总仓位上限
+  min_liquidity: 1000000        # 最小流动性（元）
+  
+# 信号过滤参数
+signal_filter:
+  min_signal_strength: 0.5      # 最小信号强度
+  max_signals_per_day: 20       # 每日最大信号数

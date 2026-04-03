@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构模板标准
+applicable_scope: 文档模板与规范
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 策略模板库
 
 > 标准化策略开发模板，覆盖趋势跟踪、均值回归、市场中性、事件驱动等策略类型

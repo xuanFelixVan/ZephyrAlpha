@@ -1,7 +1,7 @@
 [project]
 name = "quant-system-v5"
-version = "5.0.0"
-description = "清风量化交易系统 v5.0 - 专业级量化交易系统"
+version = "5.1.0"
+description = "清风量化交易系统 v5.1 - 专业级量化交易系统"
 authors = [
     {name = "Quant Developer"}
 ]
@@ -20,6 +20,8 @@ dependencies = [
     "akshare>=1.12.0",
     "baostock>=0.8.8",
     "efinance>=0.6.0",
+    "tushare>=1.3.0",
+    "ta-lib>=0.4.0",
     "pyyaml>=6.0",
     "python-dotenv>=1.0.0",
     "loguru>=0.7.0",

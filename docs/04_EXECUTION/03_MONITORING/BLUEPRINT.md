@@ -1,13 +1,30 @@
 ---
-module_id: MONITORING_001
-version: 1.0
-status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-28
-layer: Layer 6
-index: MON_001
-note: 简化版 - 使用Grafana替代自研监控面板
+standard_type: 蓝图标准
+applicable_scope: 交易执行
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+owner: 执行层负责人
+version: 1.0.0
+module_id: EXE_BLUEPRINT
+created_date: 2026-03-28
+last_updated: 2026-04-02
 ---
+module_id: MONITORING_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 设计阶段
+implementation_progress: 0%
+---
+---
+
 
 # 监控告警系统蓝图（简化版）
 
@@ -15,7 +32,6 @@ note: 简化版 - 使用Grafana替代自研监控面板
 > **索引**: `MON_001`
 > **注意**: 本蓝图采用"购买而非自研"策略，使用成熟的Grafana+Prometheus方案
 
----
 
 ## 1. 设计原则
 
@@ -25,7 +41,6 @@ note: 简化版 - 使用Grafana替代自研监控面板
 | 监控即代码 | 监控配置纳入版本控制 |
 | 告警即触发 | 告警规则明确，触发动作自动化 |
 
----
 
 ## 2. 监控方案选型
 
@@ -67,7 +82,6 @@ note: 简化版 - 使用Grafana替代自研监控面板
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
 
 ## 3. 监控指标定义
 
@@ -152,7 +166,6 @@ metrics:
     labels: [generation]
 ```
 
----
 
 ## 4. Grafana仪表板设计
 
@@ -217,7 +230,6 @@ metrics:
 }
 ```
 
----
 
 ## 5. 告警规则
 
@@ -325,7 +337,6 @@ receivers:
         send_resolved: true
 ```
 
----
 
 ## 6. 快速部署
 
@@ -382,7 +393,6 @@ docker-compose -f docker-compose.monitoring.yml up -d
 # AlertManager: http://localhost:9093
 ```
 
----
 
 ## 7. 指标导出代码示例
 
@@ -412,7 +422,6 @@ class StrategyMonitor:
 start_http_server(8000)
 ```
 
----
 
 ## 8. 更新记录
 
@@ -420,7 +429,6 @@ start_http_server(8000)
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `MON_001`

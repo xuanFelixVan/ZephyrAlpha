@@ -1,3 +1,17 @@
+---
+module_id: EXECUTION_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构交易执行标准
+applicable_scope: 交易执行与监控
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 模拟交易系统
 
 > Layer 5: 交易执行 - 模拟环境、订单模拟、持仓管理、成交回报
@@ -861,3 +875,42 @@ def example_simulation():
 **索引**: BLUEPRINTS.md → 模拟交易蓝图
 **上游接口**: StrategyEngine (M03), BacktestEngine (M15)
 **下游接口**: RiskMonitor (M07), TradeExecutor (M06)
+
+---
+
+## 9. 多引擎架构扩展
+
+为满足不同场景的模拟交易需求，系统设计了多引擎架构，支持三种主流开源交易引擎：
+
+### 9.1 支持的引擎
+
+| 引擎 | 定位 | 适用场景 | 详细设计 |
+|------|------|----------|----------|
+| **vn.py** | 生产级主引擎 | A股实盘/模拟、机构级交易 |  |
+| **RQAlpha** | 专业回测引擎 | A股深度回测、策略研究 |  |
+| **Backtrader** | 功能补充引擎 | 多资产测试、高级订单类型 |  |
+
+### 9.2 统一接口设计
+
+所有引擎通过统一接口层进行适配，提供一致的API：
+- 统一订单模型 (`UnifiedOrder`)
+- 抽象引擎接口 (`BaseEngineAdapter`)
+- 引擎工厂模式 (`EngineFactory`)
+- 多引擎协同器 (`MultiEngine`)
+
+详细设计参见：
+
+### 9.3 引擎切换策略
+
+系统支持动态引擎切换，根据场景自动选择最佳引擎：
+- **A股实盘模拟**: vn.py仿真引擎（默认）
+- **策略研究回测**: RQAlpha专业回测引擎
+- **多资产测试**: Backtrader引擎
+- **故障转移**: 主引擎失败时自动切换到备份引擎
+
+详细配置参见：
+
+### 9.4 完整多引擎蓝图
+
+完整的多引擎架构设计、实施路线图、性能测试方案详见：
+**[MULTI_ENGINE_BLUEPRINT.md](MULTI_ENGINE_BLUEPRINT.md)**

@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_DOC_001
+version: 1.6.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # retail-strategies-h.md
 
 # 游资策略补充 (S059-S067)
@@ -10,7 +24,7 @@
 >
 > **配套文档**：
 > - [retail-strategies-g.md](./retail-strategies-g.md) - S050-S058
-> - [T.01.VA001.估值分析.md](../main/02_TACTICS/02_ALPHA_FACTORS/03_价值投资/T.01.VA001.估值分析.md) - 估值分析
+> -  - 估值分析
 
 ---
 

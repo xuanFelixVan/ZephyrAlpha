@@ -1,0 +1,26 @@
+repos:
+  - repo: local
+    hooks:
+      - id: validate-version-metadata
+        name: 验证版本元数据
+        entry: python src/utils/validate_version_metadata.py
+        language: system
+        files: \.md$
+        args: ["--recursive", "--threshold", "80"]
+        pass_filenames: false
+        
+      - id: check-version-in-filename
+        name: 检查文件名中的版本信息
+        entry: python src/utils/validate_version_metadata.py
+        language: system
+        files: \.md$
+        args: ["--validate-only", "--check-filename-only"]
+        pass_filenames: true
+        
+      - id: check-metadata-required-fields
+        name: 检查元数据必选字段
+        entry: python src/utils/validate_version_metadata.py
+        language: system
+        files: \.md$
+        args: ["--validate-only", "--check-metadata-only"]
+        pass_filenames: true

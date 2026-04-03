@@ -1,7 +1,21 @@
+---
+module_id: IMPL_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 实施标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 实施指南 (个人开发者版)
 
-> **版本**: v2.0 (个人简化版)  
-> **更新日期**: 2026-03-28  
+> **版本**: v5.1
+> **更新日期**: 2026-03-31
 > **适用**: 个人开发、个人维护、个人使用
 
 ---
@@ -103,7 +117,11 @@
 
 ### 系统出问题了
 
- 查看常见问题 [04_OPERATIONS/faq.md](./04_OPERATIONS/faq.md) - 故障排查
+ 查看常见问题  - 故障排查
+
+### 我要查看施工文档
+
+ 前往 [06_CONSTRUCTION_DOCS/](./06_CONSTRUCTION_DOCS/) - 施工文档专区（蓝图、指南、手册、模板）
 
 ---
 
@@ -137,6 +155,18 @@
     monitoring.md            # 简易监控配置
     faq.md                   # 常见问题 FAQ
     performance-tips.md      # 性能优化技巧
+
+ 05_TECHNICAL_SPECIFICATIONS/ #  技术规范
+    README.md                # 技术规范总览
+
+ 06_CONSTRUCTION_DOCS/        #  施工文档专区 🆕
+    README.md                # 施工文档总索引
+    01_BLUEPRINTS/           # 实施蓝图
+    02_IMPLEMENTATION_GUIDES/ # 实施指南
+    03_OPERATION_MANUALS/     # 操作手册
+    04_CONFIG_TEMPLATES/      # 配置模板
+    05_PROGRESS_TRACKING/     # 进度跟踪
+    06_CHECKLISTS/            # 检查清单
 
  99_ARCHIVE/                  #  历史归档
      migration_guide_v1.md    # v1 迁移指南（历史）
@@ -207,7 +237,7 @@ bash scripts/deploy.sh
 .\scripts\deploy.ps1
 ```
 
-详细步骤：[03_DEPLOYMENT/one-click-deploy.md](./03_DEPLOYMENT/one-click-deploy.md)
+详细步骤：
 
 ---
 
@@ -277,7 +307,7 @@ cat config/system.yaml
 tail -f logs/error.log
 ```
 
-更多问题：[04_OPERATIONS/faq.md](./04_OPERATIONS/faq.md)
+更多问题：
 
 ---
 
@@ -307,6 +337,7 @@ tail -f logs/error.log
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
+| v5.1 | 2026-03-31 | 版本同步至v5.1 |
 | v2.0 | 2026-03-28 | 重构为个人开发者友好版 |
 | v1.2 | 2026-03-28 | 新增路径处理规范 |
 | v1.1 | 2026-03-28 | 新增日志和测试规范 |
@@ -334,7 +365,7 @@ tail -f logs/error.log
 
 ##  获取帮助
 
-1. 查看 [FAQ](./04_OPERATIONS/faq.md)
+1. 查看 
 2. 检查系统日志 `logs/`
 3. 搜索项目 Issues
 4. 联系项目维护者

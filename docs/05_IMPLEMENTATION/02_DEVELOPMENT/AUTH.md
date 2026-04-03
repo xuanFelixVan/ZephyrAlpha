@@ -1,14 +1,17 @@
 ---
-module_id: AUTH_001
-version: 1.0
+module_id: IMPL_DOC_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 0 (基础设施层)
-index: AUTH.001
-estimated_hours: 5h
-source: 源自4.0执行方案5.2.2节
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 简化认证模块蓝图
 
@@ -17,7 +20,6 @@ source: 源自4.0执行方案5.2.2节
 > **开发时间**: 5h
 > **核心定位**: 提供简化的身份认证和权限控制，支持AI权限管理
 
----
 
 ## 1. 设计原则
 
@@ -28,7 +30,6 @@ source: 源自4.0执行方案5.2.2节
 | **分层权限** | 运营/研究/风控三层权限 |
 | **AI友好** | 支持API Key认证，便于AI调用 |
 
----
 
 ## 2. 认证类型
 
@@ -40,7 +41,6 @@ source: 源自4.0执行方案5.2.2节
 | **API Key** | AI/系统认证 | AI Agent、系统间调用 |
 | **Session** | 短期会话 | Web界面 |
 
----
 
 ## 3. 核心实现
 
@@ -364,7 +364,6 @@ class PermissionService:
         return decorator
 ```
 
----
 
 ## 4. API接口
 
@@ -478,7 +477,6 @@ class PermissionAPI:
         """添加用户权限"""
 ```
 
----
 
 ## 5. 配置
 
@@ -518,7 +516,6 @@ roles:
     permissions: ["read", "execute"]
 ```
 
----
 
 ## 6. 安全考虑
 
@@ -557,7 +554,6 @@ class AuthAuditLogger:
         """记录权限拒绝"""
 ```
 
----
 
 ## 7. AI权限集成
 
@@ -614,7 +610,6 @@ class AIAuthIntegration:
         return required_permission in result.permissions
 ```
 
----
 
 ## 8. 开发任务分解(5h)
 
@@ -629,7 +624,6 @@ class AIAuthIntegration:
 | 配置集成 | 0.5h | auth.yaml |
 | 单元测试 | 0.5h | test_auth.py |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `AUTH.001`

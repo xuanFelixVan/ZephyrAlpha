@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 5.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 因子计算详细设计
 
 > 清风量化系统 v5.0 - 因子选股核心模块
@@ -802,4 +816,4 @@ print(f"选中{len(selected_stocks)}只股票: {selected_stocks}")
 **最后更新**: 2026-03-29
 **版本**: v5.0
 **前置文档**: [PHASE1_DESIGN.md](./PHASE1_DESIGN.md)
-**下一步文档**: [因子选股回测](./factor_backtest.md)
+**下一步文档**: 

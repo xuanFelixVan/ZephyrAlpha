@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # IC分析体系
 
 > 信息系数(IC)分析方法与标准
@@ -133,7 +147,7 @@ def ic_statistics(ic_series):
 | 胜率 | {value} |
 
 ### IC时序图
-![IC时序图](path/to/ic_plot.png)
+![IC时序图] (已移除: path/to/ic_plot.png)
 
 ### 结论
 - {conclusion}

@@ -1,3 +1,17 @@
+---
+module_id: IMPL_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 快速开始 (Quick Start)
 
 > **目标**: 5-10 分钟快速上手，开始你的第一次回测
@@ -103,7 +117,7 @@ which python  # Linux/Mac
 - 检查数据是否已下载：`ls data/raw/`
 - 查看日志：`tail logs/error.log`
 
-更多问题：[../04_OPERATIONS/faq.md](../04_OPERATIONS/faq.md)
+更多问题：
 
 ---
 
@@ -113,7 +127,7 @@ which python  # Linux/Mac
 
 1. 学习 [开发规范](../02_DEVELOPMENT/README.md)
 2. 阅读 [策略开发指南](../../03_TRADING_TACTICS/README.md)
-3. 了解 [系统架构](../../02_ARCHITECTURE/README.md)
+3. 了解 [系统架构](../../../README.md)
 
 ---
 

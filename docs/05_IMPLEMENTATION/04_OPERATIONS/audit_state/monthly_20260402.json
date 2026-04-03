@@ -1,0 +1,1149 @@
+{
+  "summary": {
+    "scan_time": "2026-04-02T21:29:17.736167",
+    "scanned_files": 543,
+    "total_issues": 140,
+    "issues_by_severity": {
+      "warning": 85,
+      "info": 55
+    },
+    "issues_by_type": {
+      "broken_link": 77,
+      "non_standard_category": 46,
+      "missing_metadata": 8,
+      "missing_recommended_metadata": 9
+    }
+  },
+  "details": {
+    "link_issues": [
+      {
+        "file_path": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+        "line_number": 378,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md"
+      },
+      {
+        "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND_CONNECTOR.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_IFIND.md",
+        "line_number": 25,
+        "suggestion": "检查链接路径是否正确: ../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_IFIND.md"
+      },
+      {
+        "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md",
+        "line_number": 23,
+        "suggestion": "检查链接路径是否正确: ../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DOCUMENT_ANALYSIS_L0_SUPERCMD_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md",
+        "line_number": 176,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../module_designs/layer_0/L0_QMT.md",
+        "line_number": 142,
+        "suggestion": "检查链接路径是否正确: ../module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ./04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 143,
+        "suggestion": "检查链接路径是否正确: ./04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md",
+        "line_number": 143,
+        "suggestion": "检查链接路径是否正确: ../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../module_designs/layer_0/L0_QMT.md",
+        "line_number": 148,
+        "suggestion": "检查链接路径是否正确: ../module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 149,
+        "suggestion": "检查链接路径是否正确: ../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../module_designs/layer_0/L0_QMT.md",
+        "line_number": 154,
+        "suggestion": "检查链接路径是否正确: ../module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 155,
+        "suggestion": "检查链接路径是否正确: ../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 254,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_COMPLETION_SUMMARY_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md",
+        "line_number": 259,
+        "suggestion": "检查链接路径是否正确: ../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_IFIND_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md",
+        "line_number": 202,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_IFIND_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+        "line_number": 207,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_IFIND_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+        "line_number": 208,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_IFIND_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md",
+        "line_number": 211,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_IFIND_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_IFIND.md",
+        "line_number": 212,
+        "suggestion": "检查链接路径是否正确: ../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_IFIND.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_QMT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md",
+        "line_number": 210,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_QMT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+        "line_number": 215,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_QMT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+        "line_number": 216,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_QMT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 219,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_QMT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md",
+        "line_number": 220,
+        "suggestion": "检查链接路径是否正确: ../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\MIGRATION_LOG_L0_QMT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../module_designs/layer_0/L0_QMT.md",
+        "line_number": 221,
+        "suggestion": "检查链接路径是否正确: ../../module_designs/layer_0/L0_QMT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md",
+        "line_number": 14,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/ai_factor_miner.py",
+        "line_number": 31,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/ai_factor_miner.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/deep_learning_miner.py",
+        "line_number": 39,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/deep_learning_miner.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/reinforcement_learning_miner.py",
+        "line_number": 52,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/reinforcement_learning_miner.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/genetic_algorithm_miner.py",
+        "line_number": 64,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/genetic_algorithm_miner.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/factor_evaluator.py",
+        "line_number": 73,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/factor_evaluator.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/factor_registry.py",
+        "line_number": 81,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/factor_registry.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/config/ai_factor_miner_config.yaml",
+        "line_number": 89,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/config/ai_factor_miner_config.yaml"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/requirements.txt",
+        "line_number": 97,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/requirements.txt"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/examples/example_usage.py",
+        "line_number": 106,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/examples/example_usage.py"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATA_LINEAGE_TRACKING_BLUEPRINT.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../LAYER1_GAP_ANALYSIS_REPORT.md",
+        "line_number": 860,
+        "suggestion": "检查链接路径是否正确: ../LAYER1_GAP_ANALYSIS_REPORT.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATA_LINEAGE_TRACKING_BLUEPRINT.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md",
+        "line_number": 862,
+        "suggestion": "检查链接路径是否正确: ../../05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATA_LINEAGE_TRACKING_BLUEPRINT.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_QUALITY.md",
+        "line_number": 863,
+        "suggestion": "检查链接路径是否正确: ../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_QUALITY.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../module_designs/layer_0/L0_IFIND.md",
+        "line_number": 1040,
+        "suggestion": "检查链接路径是否正确: ../../module_designs/layer_0/L0_IFIND.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\README.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ./02_IMPLEMENTATION_GUIDES/ECONOMIC_REGIME_GUIDE.md",
+        "line_number": 81,
+        "suggestion": "检查链接路径是否正确: ./02_IMPLEMENTATION_GUIDES/ECONOMIC_REGIME_GUIDE.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\README.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ./05_PROGRESS_TRACKING/WEEKLY_REPORTS/",
+        "line_number": 137,
+        "suggestion": "检查链接路径是否正确: ./05_PROGRESS_TRACKING/WEEKLY_REPORTS/"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\README.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ./05_PROGRESS_TRACKING/MILESTONES.md",
+        "line_number": 138,
+        "suggestion": "检查链接路径是否正确: ./05_PROGRESS_TRACKING/MILESTONES.md"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\README.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ./06_CHECKLISTS/DOCUMENT_QUALITY_CHECKLIST.md",
+        "line_number": 155,
+        "suggestion": "检查链接路径是否正确: ./06_CHECKLISTS/DOCUMENT_QUALITY_CHECKLIST.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_IFIND.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md",
+        "line_number": 24,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_IFIND.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../01_FRAMEWORK/ARCHITECTURE.md",
+        "line_number": 799,
+        "suggestion": "检查链接路径是否正确: ../../01_FRAMEWORK/ARCHITECTURE.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_IFIND.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../03_TRADING_TACTICS/API_Contract.md",
+        "line_number": 800,
+        "suggestion": "检查链接路径是否正确: ../../03_TRADING_TACTICS/API_Contract.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_IFIND.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md",
+        "line_number": 827,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_IFIND.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md",
+        "line_number": 827,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_QMT.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 24,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_0\\L0_QMT.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md",
+        "line_number": 176,
+        "suggestion": "检查链接路径是否正确: ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\BEST_PRACTICES\\DOCUMENT_GOVERNANCE_BEST_PRACTICES.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: NEW_DOCUMENT.md",
+        "line_number": 96,
+        "suggestion": "检查链接路径是否正确: NEW_DOCUMENT.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\CONFIGURATION\\SCHEDULED_AUDIT_CONFIGURATION.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: {report_url}",
+        "line_number": 489,
+        "suggestion": "检查链接路径是否正确: {report_url}"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/deploy_scheduled_tasks.ps1",
+        "line_number": 70,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/deploy_scheduled_tasks.ps1"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md",
+        "line_number": 76,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/scheduled_quick_audit.py",
+        "line_number": 81,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/scheduled_quick_audit.py"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/scheduled_standard_audit.py",
+        "line_number": 86,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/scheduled_standard_audit.py"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/scheduled_deep_audit.py",
+        "line_number": 90,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/scheduled_deep_audit.py"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/CONTINUOUS_IMPROVEMENT_PROCESS.md",
+        "line_number": 98,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/CONTINUOUS_IMPROVEMENT_PROCESS.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md",
+        "line_number": 108,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md",
+        "line_number": 114,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/CASE_STUDIES/DOCUMENT_GOVERNANCE_IMPROVEMENT_CASES.md",
+        "line_number": 119,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/CASE_STUDIES/DOCUMENT_GOVERNANCE_IMPROVEMENT_CASES.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md",
+        "line_number": 375,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../../../01_FRAMEWORK/ARCHITECTURE.md",
+        "line_number": 178,
+        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/ARCHITECTURE.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: ../STRATEGY_AI_MODULES_ANALYSIS.md",
+        "line_number": 185,
+        "suggestion": "检查链接路径是否正确: ../STRATEGY_AI_MODULES_ANALYSIS.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: STRATEGY_AI_MODULES_ANALYSIS.md",
+        "line_number": 186,
+        "suggestion": "检查链接路径是否正确: STRATEGY_AI_MODULES_ANALYSIS.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md",
+        "line_number": 193,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: {report_url}",
+        "line_number": 201,
+        "suggestion": "检查链接路径是否正确: {report_url}"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: {report_url}",
+        "line_number": 202,
+        "suggestion": "检查链接路径是否正确: {report_url}"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/fix_broken_links.py",
+        "line_number": 341,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/fix_broken_links.py"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/fix_remaining_links.py",
+        "line_number": 342,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/fix_remaining_links.py"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\LINK_FIX_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/scripts/scheduled_quick_audit.py",
+        "line_number": 343,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/scripts/scheduled_quick_audit.py"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\PLAN_FILES_CREATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md",
+        "line_number": 126,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\PLAN_FILES_CREATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md",
+        "line_number": 150,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\PLAN_FILES_CREATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md",
+        "line_number": 172,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\PLAN_FILES_CREATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md",
+        "line_number": 189,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\PLAN_FILES_CREATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/monitoring_config_template.yaml",
+        "line_number": 205,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/monitoring_config_template.yaml"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\REPORTS\\PLAN_FILES_CREATION_REPORT_20260402.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/POST_DEPLOYMENT_CHECKLIST.md",
+        "line_number": 219,
+        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/POST_DEPLOYMENT_CHECKLIST.md"
+      },
+      {
+        "file_path": "docs\\09_AUDIT\\TRAINING\\DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md",
+        "issue_type": "broken_link",
+        "severity": "warning",
+        "message": "链接目标不存在: API_SPECIFICATION.md",
+        "line_number": 95,
+        "suggestion": "检查链接路径是否正确: API_SPECIFICATION.md"
+      }
+    ],
+    "version_issues": [],
+    "classification_issues": [
+      {
+        "file_path": "docs\\00_OVERVIEW\\DATA_FLOW.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\00_OVERVIEW\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\00_RESOURCES\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: owner",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 owner 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: created_date",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 created_date 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: last_updated",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 last_updated 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: version",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 version 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: module_id",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 module_id 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: status",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 status 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: applicable_scope",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 applicable_scope 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: parent_document",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: standard_type",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 standard_type 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_20260402.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: implementation_status",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\06_CHECKLISTS\\CODE_REVIEW_CHECKLIST.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: implementation_status",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\06_CHECKLISTS\\DOCUMENT_QUALITY_GATE.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: implementation_status",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+      },
+      {
+        "file_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\06_CHECKLISTS\\PRE_DEPLOYMENT_CHECKLIST.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: implementation_status",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\01_UI_DESIGN\\ui_layout_standard.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\ARCHIVED.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\README.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\AI_WORKFLOW_LOGGER_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\AI_WORK_REPORTER_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\ALGORITHM_FLOWCHART_SUPPLEMENT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\API_EXAMPLES_SUPPLEMENT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\COMPLIANCE_MONITORING_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\DATA_DICTIONARY_SUPPLEMENT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\FACTOR_ARCHITECTURE_COMPARISON_REPORT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\IMPROVEMENT_COMPLETION_REPORT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\INDEX.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\INDEX.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: module_id",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 module_id 字段"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\INDEX.md",
+        "issue_type": "missing_metadata",
+        "severity": "warning",
+        "message": "缺少必需的元数据字段: status",
+        "line_number": null,
+        "suggestion": "在文档元数据中添加 status 字段"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\INDEX.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: parent_document",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\INDEX.md",
+        "issue_type": "missing_recommended_metadata",
+        "severity": "info",
+        "message": "缺少推荐的元数据字段: implementation_status",
+        "line_number": null,
+        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\LIVE_TRADING_MONITOR_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\LONG_TERM_IMPROVEMENT_GUIDE.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\OPEN_SOURCE_INTEGRATION_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\OPEN_SOURCE_MODULE_SOLUTION.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\PERFORMANCE_ANALYSIS_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\POST_TRADE_REVIEW_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\RESPONSIBILITY_BOUNDARY_CLARIFICATION.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\10_AI_WORKFLOW\\TEST_STRATEGY_SUPPLEMENT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: 10_AI_WORKFLOW",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_0\\L0_BAOSTOCK.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_0\\L0_SUPERCMD.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_1\\L1_VALIDATOR.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\LAYER_11_ARCHITECTURE.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_11\\LAYER_11_TOOL_INTERFACE_SPECIFICATION.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_FEATURE_OPTIMIZER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_HYPERPARAM_OPT.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_MARKET_DETECTOR.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      },
+      {
+        "file_path": "docs\\module_designs\\layer_9\\L9_MODEL_ENSEMBLER.md",
+        "issue_type": "non_standard_category",
+        "severity": "info",
+        "message": "文档不在标准分类目录下: module_designs",
+        "line_number": null,
+        "suggestion": "建议将文档移至标准分类目录: 04_EXECUTION, 02_FACTOR_LIBRARY, 01_FRAMEWORK, 03_TRADING_TACTICS, 09_AUDIT, 08_AI_GOVERNANCE, 05_IMPLEMENTATION, 06_ARCHIVE, 07_RESEARCH"
+      }
+    ]
+  },
+  "recommendations": [
+    "修复损坏的链接，确保所有内部链接指向有效文件",
+    "完善文档元数据，添加所有必需字段",
+    "将文档移至标准分类目录，提高文档组织性"
+  ]
+}

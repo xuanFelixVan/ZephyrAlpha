@@ -2,15 +2,30 @@
 # TODO: 阶段1实现
 
 system:
-  name: "清风量化交易系统v5.0"
-  version: "5.0.0"
+  name: "清风量化交易系统v5.1"
+  version: "5.1.0"
   mode: "backtest"  # backtest | simulation | paper | live
 
   paths:
-    data_dir: "./data"
-    log_dir: "./logs"
-    output_dir: "./output"
-    config_dir: "./config"
+    # 数据目录：存储市场数据、因子数据等
+    # 优先使用环境变量 ZEPHYR_DATA_DIR，如未设置则使用默认值
+    data_dir: "${ZEPHYR_DATA_DIR:./data}"
+    
+    # 日志目录：存储系统运行日志
+    # 优先使用环境变量 ZEPHYR_LOG_DIR，如未设置则使用默认值
+    log_dir: "${ZEPHYR_LOG_DIR:./logs}"
+    
+    # 输出目录：存储回测报告、分析结果等
+    # 优先使用环境变量 ZEPHYR_OUTPUT_DIR，如未设置则使用默认值
+    output_dir: "${ZEPHYR_OUTPUT_DIR:./output}"
+    
+    # 配置目录：存储系统配置文件
+    # 优先使用环境变量 ZEPHYR_CONFIG_DIR，如未设置则使用默认值
+    config_dir: "${ZEPHYR_CONFIG_DIR:./config}"
+    
+    # 项目根目录：自动检测，无需手动配置
+    # 在代码中使用 Path(__file__).parent.parent 获取
+    project_root: "${ZEPHYR_PROJECT_ROOT:."
 
   defaults:
     initial_capital: 1000000  # 初始资金100万
@@ -22,3 +37,14 @@ system:
     format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name} | {message}"
     rotation: "00:00"       # 每天零点轮转
     retention: "30 days"
+
+# 路径配置说明：
+# 1. 环境变量格式: ${ENV_VAR:default_value}
+#    - 如果设置了环境变量，使用环境变量的值
+#    - 如果未设置环境变量，使用默认值
+# 2. 相对路径基于项目根目录 (d:\ZephyrAlpha)
+# 3. 在代码中使用 Path 对象处理路径，确保跨平台兼容性
+# 4. 示例：
+#    - Linux/Mac: export ZEPHYR_DATA_DIR=/data/zephyr
+#    - Windows: set ZEPHYR_DATA_DIR=D:\data\zephyr
+#    - Python: from pathlib import Path; data_dir = Path(config['paths']['data_dir'])

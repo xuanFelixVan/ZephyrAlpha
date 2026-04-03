@@ -1,0 +1,37 @@
+{
+  "file_path": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md",
+  "overall_score": 53.0,
+  "complexity_level": "中等复杂度",
+  "implementation_effort_level": "大型项目",
+  "implementation_effort_days": 60,
+  "recommendation": "[WARNING] 实施复杂度中等，需要专业团队和经验丰富的开发者",
+  "architecture": {
+    "component_count": 37,
+    "dependency_complexity": 3.6,
+    "pattern_complexity": 0.0,
+    "deployment_complexity": 0.0,
+    "total_score": 11.0
+  },
+  "integration": {
+    "external_system_count": 20,
+    "interface_complexity": 0.0,
+    "data_format_complexity": 0.0,
+    "testing_complexity": 0.0,
+    "total_score": 10.0
+  },
+  "maintenance": {
+    "code_complexity": 10.0,
+    "config_complexity": 2.0,
+    "monitoring_complexity": 10.0,
+    "troubleshooting_complexity": 0.0,
+    "total_score": 22.0
+  },
+  "testing": {
+    "test_case_count": 0,
+    "environment_complexity": 0.0,
+    "automation_complexity": 0.0,
+    "performance_complexity": 10.0,
+    "total_score": 10.0
+  },
+  "analysis_timestamp": "2026-04-02 02:50:44"
+}

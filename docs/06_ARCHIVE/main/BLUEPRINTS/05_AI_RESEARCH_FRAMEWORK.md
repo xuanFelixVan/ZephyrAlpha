@@ -1,3 +1,17 @@
+---
+module_id: ARCHIVE_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # AI辅助研究框架
 
 > 务实版AI辅助量化研究实现方案

@@ -1,3 +1,17 @@
+---
+module_id: EXECUTION_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构交易执行标准
+applicable_scope: 交易执行与监控
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 实时监控系统
 
 > 策略状态、实时PnL、异常检测
@@ -246,7 +260,7 @@ class AlertSystem:
         """检查并告警"""
         alerts = []
         for rule in self.alert_rules:
-            if rule['condition'](metrics):
+            if rule:
                 alerts.append(Alert(
                     level=rule['level'],
                     message=rule['message'],

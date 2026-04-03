@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_DOC_001
+version: 2.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 另类数据 - 新闻舆情
 
 > NLP处理、情感分析、事件研究
@@ -1811,7 +1825,7 @@ FACTOR_STRATEGY = {
 | **计算范围** | 当前tick/分钟 | 全历史区间 |
 | **存储介质** | Redis/内存 | ClickHouse |
 | **用途** | 实盘下单 | 回测研究 |
-| **代码路径** | `src/ai/...` | `src/modules/backtest/...` |
+| **代码路径** | `src/modules/...` | `src/modules/backtest/...` |
 
 ### 9.6 统一数据访问接口
 
@@ -1885,7 +1899,7 @@ class DataService:
 | **缓存** | Redis | ClickHouse |
 | **计算** | 增量因子 | 全量因子 |
 | **存储** | 热数据(60日) | 温/冷数据(1年+) |
-| **代码路径** | `ZephyrAlpha/src/ai/` | `ZephyrAlpha/src/modules/factors/` |
+| **代码路径** | `ZephyrAlpha/src/modules/` | `ZephyrAlpha/src/modules/factors/` |
 
 ---
 

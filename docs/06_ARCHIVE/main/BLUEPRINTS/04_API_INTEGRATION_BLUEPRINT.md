@@ -1,13 +1,17 @@
 ---
-module_id: API_INTEGRATION_001
-version: 1.0
+module_id: ARCHIVE_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 0 (接口层)
-index: API.001
-estimated_hours: 40h
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
 ---
+
 
 # API层+集成蓝图
 
@@ -16,7 +20,6 @@ estimated_hours: 40h
 > **开发时间**: 40h
 > **核心定位**: 实现"各模块 → 统一API → 前端/外部"的完整集成方案
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +30,6 @@ estimated_hours: 40h
 | **Pydantic验证** | 使用Pydantic进行数据验证 |
 | **统一认证** | JWT Token统一认证 |
 
----
 
 ## 2. API架构
 
@@ -87,7 +89,6 @@ app.include_router(risk_router, prefix="/api/v1/risk", tags=["风控"])
 app.include_router(research_router, prefix="/api/v1/research", tags=["研究"])
 ```
 
----
 
 ## 3. 认证与授权
 
@@ -196,7 +197,6 @@ def check_permission(role: str, permission: str) -> bool:
     return permission in ROLES[role]['permissions']
 ```
 
----
 
 ## 4. 核心API实现
 
@@ -379,7 +379,6 @@ class TradingEndpoints:
         return Account.get_info()
 ```
 
----
 
 ## 5. 中间件
 
@@ -436,7 +435,6 @@ async def logging_middleware(request: Request, call_next):
     return response
 ```
 
----
 
 ## 6. API文档
 
@@ -470,7 +468,6 @@ class ErrorResponse(BaseResponse):
     message: str = "error"
 ```
 
----
 
 ## 7. 系统集成
 
@@ -514,7 +511,6 @@ EVENT_BUS.subscribe('risk.alert', lambda e: send_alert(e))
 EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 ```
 
----
 
 ## 8. 开发任务分解
 
@@ -532,7 +528,6 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 | 中间件 | 4h | 限流+日志 |
 | 文档 | 3h | Swagger配置 |
 
----
 
 ## 9. 更新记录
 
@@ -540,7 +535,6 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 |------|------|----------|
 | v1.0 | 2026-03-29 | 初始版本 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `API.001`

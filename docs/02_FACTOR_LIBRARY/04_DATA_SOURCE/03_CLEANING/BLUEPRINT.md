@@ -1,14 +1,18 @@
 ---
-module_id: DATA_CLN_001
-version: 1.0
+module_id: FACTOR_BLUEPRINT_002
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 0 (数据层)
-index: DATA.CLN.001
-estimated_hours: 10h
-source: 源自4.0执行方案3.1.2节
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 设计阶段
+implementation_progress: 0%
 ---
+
 
 # 数据清洗引擎蓝图
 
@@ -17,7 +21,6 @@ source: 源自4.0执行方案3.1.2节
 > **开发时间**: 10h
 > **核心定位**: 确保数据质量，为因子计算和策略回测提供可靠数据
 
----
 
 ## 1. 设计原则
 
@@ -28,7 +31,6 @@ source: 源自4.0执行方案3.1.2节
 | **保守清洗** | 保留原始数据，只标记异常 |
 | **可配置** | 清洗规则通过YAML配置 |
 
----
 
 ## 2. 系统架构
 
@@ -62,7 +64,6 @@ source: 源自4.0执行方案3.1.2节
           填充/删除       标记/裁剪     格式统一       边界处理
 ```
 
----
 
 ## 3. 核心实现
 
@@ -323,7 +324,6 @@ class OutlierDetector:
         return np.abs(modified_z_scores) > threshold
 ```
 
----
 
 ## 4. OHLCV清洗规则
 
@@ -399,7 +399,6 @@ outlier_detection:
     preserve_original: true  # 保留原始值，只标记
 ```
 
----
 
 ## 5. 清洗结果
 
@@ -494,7 +493,6 @@ class CleaningReport:
         return report
 ```
 
----
 
 ## 6. 集成接口
 
@@ -512,7 +510,6 @@ class CleaningReport:
 | DataStorage | save() | 存储清洗后数据 |
 | FactorCalculator | calculate() | 使用清洗后数据 |
 
----
 
 ## 7. 监控指标
 
@@ -524,7 +521,6 @@ class CleaningReport:
 | cleaning_error_rate | 清洗错误率 | <0.1% |
 | cleaning_latency | 清洗耗时 | <1s/千行 |
 
----
 
 ## 8. 开发任务分解(10h)
 
@@ -538,7 +534,6 @@ class CleaningReport:
 | OHLCV规则配置 | 1h | ohlcv.yaml |
 | 单元测试 | 1h | test_cleaning_engine.py |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `DATA.CLN.001`

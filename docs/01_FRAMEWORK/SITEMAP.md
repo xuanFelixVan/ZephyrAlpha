@@ -1,0 +1,187 @@
+---
+module_id: DOC_FRAMEWORK_SITEMAP_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-03
+last_updated: 2026-04-03
+owner: 系统架构师
+standard_type: 专业量化机构文档地图
+applicable_scope: 01_FRAMEWORK目录
+compliance_level: 专业标准
+parent_document: INDEX.md
+implementation_status: 活跃维护
+---
+
+# 框架设计文档地图 (SITEMAP)
+
+> 清风量化系统 v5.1 框架设计目录的完整文档导航地图
+>
+> **职责区分**:
+> - [INDEX.md](./INDEX.md) = 快速入口（5分钟导航）
+> - **本文档** = 完整地图（深度参考）
+
+---
+
+## 📍 文档位置导航
+
+### 一级导航
+
+```
+01_FRAMEWORK/
+├── 核心架构文档 (8个)
+│   ├── ARCHITECTURE.md                              # 系统架构
+│   ├── PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md # 三级时间框架融合架构
+│   ├── ARCHITECTURE_MIGRATION_PLAN.md               # 架构迁移计划
+│   ├── TECH_STACK.md                                # 技术栈
+│   ├── MODULE_RESPONSIBILITY_BOUNDARIES.md          # 模块职责边界
+│   ├── INTERFACE_CONTRACT_BLUEPRINT.md              # 接口契约
+│   ├── DATAFLOW_ARCHITECTURE_BLUEPRINT.md           # 数据流架构
+│   └── BLUEPRINT_ARCHITECTURE_MAPPING.md            # 蓝图架构映射
+│
+├── 实施蓝图文档 (6个)
+│   ├── PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md     # 专业实施蓝图
+│   ├── DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md       # 数据层实施蓝图
+│   ├── CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md # 关键模块实施蓝图
+│   ├── IMPLEMENTATION_ACCELERATION_BLUEPRINT.md     # 实施加速蓝图
+│   ├── PERSONAL_DEVELOPMENT_BLUEPRINT.md            # 个人开发蓝图
+│   └── ACCEPTANCE_CRITERIA_BLUEPRINT.md             # 验收标准蓝图
+│
+├── AI系统文档 (8个)
+│   ├── AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md        # AI虚拟研究团队
+│   ├── HUMAN_AI_INTERACTION_BLUEPRINT.md            # 人机交互
+│   ├── AI_GOVERNANCE_BLUEPRINT.md                   # AI治理
+│   ├── AI_STRATEGY_AUTOMATION_BLUEPRINT.md          # AI策略自动化
+│   ├── AI_CAPABILITY_GAP_BLUEPRINT.md               # AI能力差距
+│   ├── AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md       # AI可解释性工具包
+│   ├── MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md        # 多模型编排
+│   └── RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md            # RAG知识系统
+│
+├── 机器学习文档 (5个)
+│   ├── MLOPS_PLATFORM_BLUEPRINT.md                  # MLOps平台
+│   ├── MODEL_MONITORING_BLUEPRINT.md                # 模型监控
+│   ├── ONLINE_LEARNING_BLUEPRINT.md                 # 在线学习
+│   ├── REINFORCEMENT_LEARNING_BLUEPRINT.md          # 强化学习
+│   └── DRIFT_DETECTION_BLUEPRINT.md                 # 漂移检测
+│
+├── 子目录
+│   └── ARCHITECTURE_DECISIONS/                      # 架构决策记录
+│       └── README.md
+│
+└── 索引文档
+    ├── INDEX.md                                     # 快速入口
+    ├── SITEMAP.md                                   # 完整地图
+    └── README.md                                    # 框架概述
+```
+
+---
+
+## 🗺️ 按用途查找
+
+### 我是新手
+
+**快速上手路线** (30分钟):
+1. 阅读 [README.md](./README.md) - 框架概述 (5分钟)
+2. 阅读 [ARCHITECTURE.md](./ARCHITECTURE.md) - 系统架构 (10分钟)
+3. 阅读 [TECH_STACK.md](./TECH_STACK.md) - 技术栈 (10分钟)
+4. 阅读 [MODULE_RESPONSIBILITY_BOUNDARIES.md](./MODULE_RESPONSIBILITY_BOUNDARIES.md) - 模块边界 (5分钟)
+
+### 我要理解架构
+
+**架构学习路线** (2小时):
+1. 阅读 [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) - 三级时间框架融合架构 (30分钟)
+2. 阅读 [ARCHITECTURE.md](./ARCHITECTURE.md) - 系统架构详细说明 (30分钟)
+3. 阅读 [ARCHITECTURE_MIGRATION_PLAN.md](./ARCHITECTURE_MIGRATION_PLAN.md) - 架构迁移计划 (20分钟)
+4. 阅读 [DATAFLOW_ARCHITECTURE_BLUEPRINT.md](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md) - 数据流架构 (20分钟)
+5. 阅读 [INTERFACE_CONTRACT_BLUEPRINT.md](./INTERFACE_CONTRACT_BLUEPRINT.md) - 接口契约 (20分钟)
+
+### 我要开发AI系统
+
+**AI系统开发路线** (3小时):
+1. 阅读 [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) - AI虚拟研究团队 (30分钟)
+2. 阅读 [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md) - 人机交互 (30分钟)
+3. 阅读 [AI_GOVERNANCE_BLUEPRINT.md](./AI_GOVERNANCE_BLUEPRINT.md) - AI治理 (30分钟)
+4. 阅读 [MLOPS_PLATFORM_BLUEPRINT.md](./MLOPS_PLATFORM_BLUEPRINT.md) - MLOps平台 (30分钟)
+5. 阅读 [MODEL_MONITORING_BLUEPRINT.md](./MODEL_MONITORING_BLUEPRINT.md) - 模型监控 (30分钟)
+
+### 我要实施系统
+
+**实施路线** (4小时):
+1. 阅读 [PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](./PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) - 专业实施蓝图 (1小时)
+2. 阅读 [DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) - 数据层实施 (1小时)
+3. 阅读 [CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md](./CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md) - 关键模块实施 (1小时)
+4. 阅读 [IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md) - 实施加速 (1小时)
+
+---
+
+## 📊 按主题分类
+
+### 架构设计
+
+| 文档名称 | 说明 | 重要性 |
+|---------|------|--------|
+| [专业多时间框架架构](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构 | ⭐⭐⭐⭐⭐ |
+| [架构文档](./ARCHITECTURE.md) | 系统架构详细说明 | ⭐⭐⭐⭐⭐ |
+| [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md) | Layer 0-8迁移到三级时间框架 | ⭐⭐⭐⭐ |
+| [数据流架构蓝图](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md) | 数据流架构设计 | ⭐⭐⭐⭐ |
+
+### 模块设计
+
+| 文档名称 | 说明 | 重要性 |
+|---------|------|--------|
+| [模块职责边界](./MODULE_RESPONSIBILITY_BOUNDARIES.md) | 模块职责边界定义 | ⭐⭐⭐⭐⭐ |
+| [接口契约蓝图](./INTERFACE_CONTRACT_BLUEPRINT.md) | 接口契约定义 | ⭐⭐⭐⭐ |
+| [蓝图架构映射](./BLUEPRINT_ARCHITECTURE_MAPPING.md) | 蓝图与架构映射 | ⭐⭐⭐⭐ |
+
+### AI系统
+
+| 文档名称 | 说明 | 重要性 |
+|---------|------|--------|
+| [AI虚拟研究团队蓝图](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AI虚拟研究团队设计 | ⭐⭐⭐⭐⭐ |
+| [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | 人机交互设计 | ⭐⭐⭐⭐ |
+| [AI治理蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | AI治理框架 | ⭐⭐⭐⭐ |
+| [MLOps平台蓝图](./MLOPS_PLATFORM_BLUEPRINT.md) | MLOps平台设计 | ⭐⭐⭐⭐ |
+
+### 机器学习
+
+| 文档名称 | 说明 | 重要性 |
+|---------|------|--------|
+| [模型监控蓝图](./MODEL_MONITORING_BLUEPRINT.md) | 模型监控设计 | ⭐⭐⭐⭐ |
+| [在线学习蓝图](./ONLINE_LEARNING_BLUEPRINT.md) | 在线学习设计 | ⭐⭐⭐⭐ |
+| [强化学习蓝图](./REINFORCEMENT_LEARNING_BLUEPRINT.md) | 强化学习设计 | ⭐⭐⭐⭐ |
+| [漂移检测蓝图](./DRIFT_DETECTION_BLUEPRINT.md) | 漂移检测设计 | ⭐⭐⭐⭐ |
+
+---
+
+## 🔍 按关键词查找
+
+### 架构关键词
+
+- **三级时间框架**: [专业多时间框架架构](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- **Layer 0-8**: [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md)
+- **模块边界**: [模块职责边界](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- **接口契约**: [接口契约蓝图](./INTERFACE_CONTRACT_BLUEPRINT.md)
+- **数据流**: [数据流架构蓝图](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md)
+
+### AI关键词
+
+- **AI研究团队**: [AI虚拟研究团队蓝图](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
+- **人机交互**: [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- **AI治理**: [AI治理蓝图](./AI_GOVERNANCE_BLUEPRINT.md)
+- **MLOps**: [MLOps平台蓝图](./MLOPS_PLATFORM_BLUEPRINT.md)
+- **模型监控**: [模型监控蓝图](./MODEL_MONITORING_BLUEPRINT.md)
+
+### 实施关键词
+
+- **实施蓝图**: [专业实施蓝图](./PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- **数据层**: [数据层实施蓝图](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md)
+- **关键模块**: [关键模块实施蓝图](./CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md)
+- **个人开发**: [个人开发蓝图](./PERSONAL_DEVELOPMENT_BLUEPRINT.md)
+
+---
+
+## 🔗 相关链接
+
+- [系统主索引](../INDEX.md)
+- [系统文档地图](../SITEMAP.md)
+- [因子库索引](../02_FACTOR_LIBRARY/INDEX.md)
+- [实施层索引](../05_IMPLEMENTATION/INDEX.md)

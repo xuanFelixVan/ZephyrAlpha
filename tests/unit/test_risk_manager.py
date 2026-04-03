@@ -17,7 +17,12 @@ from src.modules.risk_manager import (
 def create_account(
     total_value: float = 1000000.0,
     cash: float = 500000.0,
-    positions: dict = None
+    positions: dict = None,
+    daily_pnl: float = 1000.0,
+    daily_pnl_pct: float = 0.001,
+    total_pnl: float = 10000.0,
+    total_pnl_pct: float = 0.01,
+    max_drawdown: float = 0.05
 ) -> Account:
     """创建测试账户"""
     if positions is None:
@@ -37,11 +42,11 @@ def create_account(
         total_value=total_value,
         cash=cash,
         positions=positions,
-        daily_pnl=1000.0,
-        daily_pnl_pct=0.001,
-        total_pnl=10000.0,
-        total_pnl_pct=0.01,
-        max_drawdown=0.05
+        daily_pnl=daily_pnl,
+        daily_pnl_pct=daily_pnl_pct,
+        total_pnl=total_pnl,
+        total_pnl_pct=total_pnl_pct,
+        max_drawdown=max_drawdown
     )
 
 
@@ -125,13 +130,13 @@ class TestCheckOrder:
 
         result = rules.check_order(
             order_symbol="000001",
-            order_quantity=100000,
+            order_quantity=4800,
             order_price=10.5,
             account=account
         )
 
         assert result.allowed is False
-        assert "单票持仓上限(含现有持仓)" in result.triggered_rules[0]
+        assert "单票持仓上限(含现有持仓)" in result.triggered_rules
 
     def test_max_positions_reached(self):
         """测试达到最大持仓数"""
@@ -335,9 +340,9 @@ class TestViolationRecording:
         """测试获取违规报告"""
         rules = SimpleRiskRules()
 
-        rules.record_violation({"rule": "单票持仓上限", "triggered_rules": ["规则1"]})
-        rules.record_violation({"rule": "日内亏损超限", "triggered_rules": ["规则2"]})
-        rules.record_violation({"rule": "单票持仓上限", "triggered_rules": ["规则1"]})
+        rules.record_violation({"triggered_rules": ["单票持仓上限"]})
+        rules.record_violation({"triggered_rules": ["日内亏损超限"]})
+        rules.record_violation({"triggered_rules": ["单票持仓上限"]})
 
         report = rules.get_violation_report()
 
@@ -398,7 +403,13 @@ class TestRiskManager:
     def test_check_portfolio_with_alert(self):
         """测试投资组合检查触发告警"""
         manager = RiskManager()
-        account = create_account(max_drawdown=0.15)
+        account = create_account(
+            max_drawdown=0.15,
+            daily_pnl=-30000.0,
+            daily_pnl_pct=-0.03,
+            total_pnl=-120000.0,
+            total_pnl_pct=-0.12
+        )
 
         alert_called = []
 

@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_README_001
+version: 4.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 ﻿# 因子库治理框架 (Factor Governance Framework)
 
 > 清风量化交易系统因子库的治理与管理体系
@@ -234,10 +248,10 @@
 
 ### 10.1 相关文档
 
-- [因子计算方法论](../01_METHODOLOGY/factor_definition.md)
+- [因子计算方法论](../01_METHODOLOGY/T.02.FE001.factor_definition.md)
 - [IC 分析标准](../01_METHODOLOGY/ic_analysis.md)
 - [回测标准](../01_METHODOLOGY/backtest_standards.md)
-- [因子注册表](../06_FACTOR_REGISTRY/README.md)
+- [因子注册表](../../../README.md)
 
 ### 10.2 更新记录
 

@@ -1,3 +1,17 @@
+---
+module_id: EXECUTION_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构交易执行标准
+applicable_scope: 交易执行与监控
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 风控规则引擎
 
 > Layer 6: 风险监控 - 风险规则引擎、实时检查、告警触发

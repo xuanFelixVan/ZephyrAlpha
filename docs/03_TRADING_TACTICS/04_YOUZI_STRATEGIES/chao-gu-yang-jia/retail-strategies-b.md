@@ -1,11 +1,25 @@
+---
+module_id: TACTICS_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 游资量化策略库 - 第二部分
 
 > 顶级游资交易思想量化提炼（二）
 >
 > **配套文档**：
-> - 主文档：[SPEC.md](../SPEC.md)
-> - 策略池索引：[index.md](./index.md)
-> - 游资策略第一部分：[retail-strategies-a.md](./retail-strategies-a.md)
+> - 主文档：
+> - 策略池索引：[index.md](../../05_STRATEGY_POOL/index.md)
+> - 游资策略第一部分：[retail-strategies-a.md](../asking/retail-strategies-a.md)
 
 ***
 

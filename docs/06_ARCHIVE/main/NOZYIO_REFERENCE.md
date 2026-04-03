@@ -1,3 +1,17 @@
+---
+module_id: ARCHIVE_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # NozyIO可视化编辑系统参考
 
 > 本文档归档旧系统3.0中的NozyIO四层可视化编辑系统架构，仅供参考
@@ -61,7 +75,7 @@ NozyIO可视化编辑系统
 │ │           │ │                                 │ │      │ │
 │ │ ├─趋势类  │ │    [MA_5] ──┬── [RSI] ──┐      │ │窗口: │ │
 │ │ ├─均值类  │ │              │          │      │ │ 14   │ │
-│ │ ├─价值类  │ │    [VOL] ───┘          ├──[因子]│ │      │ │
+│ │ ├─value_factors  │ │    [VOL] ───┘          ├──[因子]│ │      │ │
 │ │ └─质量类  │ │                       │         │ │标准化│ │
 │ │           │ │    [PRICE_DELTA] ─────┘         │ │ [✓]  │ │
 │ └───────────┘ └─────────────────────────────────┘ └──────┘ │

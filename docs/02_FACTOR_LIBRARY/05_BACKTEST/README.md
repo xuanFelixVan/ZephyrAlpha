@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 05_BACKTEST - 回测报告目录
 
 > 因子回测报告集中管理
@@ -14,7 +28,7 @@
 ├── README.md           # 本文档
 ├── 趋势类/            # 趋势跟踪因子回测
 ├── 均值回归类/        # 均值回归因子回测
-├── 价值类/            # 价值因子回测
+├── value_factors/            # 价值因子回测
 ├── 成长类/            # 成长因子回测
 ├── 质量类/            # 质量因子回测
 ├── 动量类/            # 动量因子回测
@@ -32,7 +46,7 @@
 
 示例：
 - `趋势类_MA5_20260328.md`
-- `价值类_PE_TTM_20260328.md`
+- `value_factors_PE_TTM_20260328.md`
 
 ---
 

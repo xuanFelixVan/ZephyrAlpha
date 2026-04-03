@@ -1,3 +1,17 @@
+---
+module_id: ARCHIVE_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 06_ARCHIVE - 统一归档目录
 
 > 历史版本文档和过度工程化文档集中管理
@@ -17,15 +31,15 @@
 │   ├── README.md
 │   ├── CHANGELOG.md            # 版本变更历史
 │   ├── NOZYIO_REFERENCE.md     # NozyIO参考
-│   ├── 量化策略框架_v3.1.md    # v3.1策略框架
+│   ├── quantitative_strategy_framework.md    # v3.1策略框架
 │   ├── SYSTEM_AUDIT_REPORT.md  # 系统审计报告
 │   ├── UPGRADE_REPORT.md       # 升级报告
 │   ├── FINAL_AUDIT_REPORT_V5.md # 最终审计报告v5
 │   ├── COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md # 完整文档审计
 │   │
 │   ├── v4_development/         # v4.0 开发文档
-│   │   ├── 清风量化交易系统4.0开发粗稿.md   # 初始设计
-│   │   └── 清风量化交易系统4.0开发方案.md   # 开发方案
+│   │   ├── qingfeng_v4_draft.md   # 初始设计
+│   │   └── qingfeng_v4_development_plan.md   # 开发方案
 │   │
 │   └── BLUEPRINTS/            # 原始蓝图文档(已合并)
 │       ├── 01_ULTIMATE_BLUEPRINT.md
@@ -47,10 +61,10 @@
 │   ├── METADATA_MANAGEMENT.md
 │   └── STORAGE_ARCHITECTURE.md
 │
-├── 战术手册_v1.0.md            # v1.0战术手册
-├── 技术文档_v1.0.md            # v1.0技术文档
-├── 策略池_v1.0.md             # v1.0策略池
-└── 系统增强手册_v1.0.md        # v1.0系统增强
+├── tactics_manual.md            # v1.0战术手册
+├── technical_documentation.md            # v1.0技术文档
+├── strategy_pool.md             # v1.0策略池
+└── system_enhancement_manual.md        # v1.0系统增强
 ```
 
 ---
@@ -94,8 +108,8 @@
 
 | 文件 | 说明 |
 |------|------|
-| 清风量化交易系统4.0开发粗稿.md | v4.0 初始设计 |
-| 清风量化交易系统4.0开发方案.md | v4.0 开发方案 |
+| qingfeng_v4_draft.md | v4.0 初始设计 |
+| qingfeng_v4_development_plan.md | v4.0 开发方案 |
 
 ---
 

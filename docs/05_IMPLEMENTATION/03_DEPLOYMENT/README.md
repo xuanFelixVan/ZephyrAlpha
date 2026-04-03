@@ -1,3 +1,17 @@
+---
+module_id: IMPL_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 ﻿# 部署指南 (Deployment Guide)
 
 > **适用**: 个人开发者部署到生产环境  
@@ -9,8 +23,8 @@
 
 | 文档 | 说明 | 难度 |
 |------|------|------|
-| [one-click-deploy.md](./one-click-deploy.md) | 一键部署脚本 |  |
-| [backup-restore.md](./backup-restore.md) | 备份与恢复 |  |
+|  | 一键部署脚本 |  |
+|  | 备份与恢复 |  |
 
 ---
 
@@ -66,8 +80,8 @@ sudo systemctl start quant-system
 ##  下一步
 
 - [运维手册](../04_OPERATIONS/README.md)
-- [监控配置](../04_OPERATIONS/monitoring.md)
-- [常见问题](../04_OPERATIONS/faq.md)
+- 
+- 
 
 ---
 

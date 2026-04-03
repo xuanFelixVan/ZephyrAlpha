@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 订单生成系统
 
 > TWAP、VWAP、冲击成本模型
@@ -220,4 +234,4 @@ Layer 5 (监控层) → 执行监控
 
 - 父目录: [03_TRADING_TACTICS/README.md](../README.md)
 - 上游: [06_POSITION_MANAGEMENT/README.md](../06_POSITION_MANAGEMENT/README.md)
-- 下游: [04_EXECUTION/02_TRADE_EXECUTOR/](../04_EXECUTION/02_TRADE_EXECUTOR/)
+- 下游: 

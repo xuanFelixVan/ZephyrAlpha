@@ -1,15 +1,22 @@
 ---
-module_id: ALPHA_FACTORS_INDEX
-version: 1.0
+module_id: FACTOR_DOC_001
+version: 1.0.0
 status: Active
-last_updated: 2026-03-28
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 02_ALPHA_FACTORS_INDEX.md - Alpha因子索引表
 
 > 清风量化系统 Alpha因子完整索引（按因子ID排序）
 
----
 
 ## 快速导航
 
@@ -24,7 +31,6 @@ last_updated: 2026-03-28
 | [情绪](#情绪因子) | 待补充 | 市场情绪指标 |
 | **合计** | **87+** | - |
 
----
 
 ## 因子详细索引
 
@@ -47,9 +53,8 @@ last_updated: 2026-03-28
 | ALPHA_013 | 均线多头排列 | MA多头排列 | 自定义 | 日 | ✅ |
 | ALPHA_014 | 趋势线突破 | 价格突破趋势线 | 自定义 | 日 | ✅ |
 
-**详细定义**: [factors/ALPHA_001-014.md](./factors/ALPHA_001-014.md)
+**详细定义**: 
 
----
 
 ### 均值回归因子
 
@@ -68,9 +73,8 @@ last_updated: 2026-03-28
 | ALPHA_025 | 股价偏离均线 | (Price-MA)/MA | 自定义 | 日 | ✅ |
 | ALPHA_026 | 高低价偏离 | (High-Low)/Price | 自定义 | 日 | ✅ |
 
-**详细定义**: [factors/ALPHA_015-026.md](./factors/ALPHA_015-026.md)
+**详细定义**: 
 
----
 
 ### 价值因子
 
@@ -88,9 +92,8 @@ last_updated: 2026-03-28
 | ALPHA_036 | 跌破净资产 | PB < 1 | 自定义 | 日 | ✅ |
 | ALPHA_037 | 低PE反转 | PE历史分位 < 20% | 自定义 | 日 | ✅ |
 
-**详细定义**: [factors/ALPHA_027-037.md](./factors/ALPHA_027-037.md)
+**详细定义**: 
 
----
 
 ### 成长因子
 
@@ -107,9 +110,8 @@ last_updated: 2026-03-28
 | ALPHA_046 | 营收3年CAGR | 复合年增长率 | 自定义 | 年 | ✅ |
 | ALPHA_047 | 净利润3年CAGR | 复合年增长率 | 自定义 | 年 | ✅ |
 
-**详细定义**: [factors/ALPHA_038-047.md](./factors/ALPHA_038-047.md)
+**详细定义**: 
 
----
 
 ### 质量因子
 
@@ -145,21 +147,18 @@ last_updated: 2026-03-28
 | ALPHA_063 | 资产负债率 | 总负债/总资产 | iFind-杠杆 | 季 | ✅ |
 | ALPHA_064 | 产权比率 | 总负债/股东权益 | iFind-杠杆 | 季 | ✅ |
 
-**详细定义**: [factors/ALPHA_048-064.md](./factors/ALPHA_048-064.md)
+**详细定义**: 
 
----
 
 ### 动量因子
 
 待补充（ALPHA_065-075）
 
----
 
 ### 情绪因子
 
 待补充（ALPHA_076-087）
 
----
 
 ## 因子统计
 
@@ -174,17 +173,15 @@ last_updated: 2026-03-28
 | 情绪 | 12 | 🔄 进行中 |
 | **合计** | **87** | - |
 
----
 
 ## 相关文档
 
 | 文档 | 说明 |
 |------|------|
-| [01_METHODOLOGY/factor_definition.md](../01_METHODOLOGY/factor_definition.md) | 因子定义标准 |
-| [01_METHODOLOGY/ic_analysis.md](../01_METHODOLOGY/ic_analysis.md) | IC分析体系 |
-| [05_BACKTEST/ic_reports/](../05_BACKTEST/ic_reports/) | 因子IC验证报告 |
-| [factors/](./factors/) | 因子详细定义 |
+| [01_METHODOLOGY/T.02.FE001.factor_definition.md](01_METHODOLOGY/T.02.FE001.factor_definition.md) | 因子定义标准 |
+| [01_METHODOLOGY/ic_analysis.md](01_METHODOLOGY/ic_analysis.md) | IC分析体系 |
+|  | 因子IC验证报告 |
+|  | 因子详细定义 |
 
----
 
 **版本**: 1.0 | **更新**: 2026-03-28 | **状态**: ✅ 活跃

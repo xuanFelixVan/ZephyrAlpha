@@ -1,0 +1,4645 @@
+{
+  "analysis": {
+    "total": 272,
+    "categories": {
+      "missing_file": 196,
+      "wrong_path": 0,
+      "missing_dir": 74,
+      "missing_image": 2,
+      "anchor_only": 0,
+      "external": 0
+    },
+    "details": {
+      "missing_file": [
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 247,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../SPEC.md",
+          "line_number": 248,
+          "suggestion": "检查链接路径是否正确: ../../SPEC.md"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../../../SPEC.md",
+          "line_number": 249,
+          "suggestion": "检查链接路径是否正确: ../../../../SPEC.md"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 250,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 251,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../CODE_STATUS.md",
+          "line_number": 268,
+          "suggestion": "检查链接路径是否正确: ../CODE_STATUS.md"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../CODE_STATUS.md",
+          "line_number": 269,
+          "suggestion": "检查链接路径是否正确: ../../CODE_STATUS.md"
+        },
+        {
+          "file_path": "docs\\00_RESOURCES\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 01_API_DOCS/迅投QMT_API_v2.0.pdf",
+          "line_number": 114,
+          "suggestion": "检查链接路径是否正确: 01_API_DOCS/迅投QMT_API_v2.0.pdf"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factors/ALPHA_001-014.md",
+          "line_number": 56,
+          "suggestion": "检查链接路径是否正确: ./factors/ALPHA_001-014.md"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factors/ALPHA_015-026.md",
+          "line_number": 76,
+          "suggestion": "检查链接路径是否正确: ./factors/ALPHA_015-026.md"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factors/ALPHA_027-037.md",
+          "line_number": 95,
+          "suggestion": "检查链接路径是否正确: ./factors/ALPHA_027-037.md"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factors/ALPHA_038-047.md",
+          "line_number": 113,
+          "suggestion": "检查链接路径是否正确: ./factors/ALPHA_038-047.md"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factors/ALPHA_048-064.md",
+          "line_number": 150,
+          "suggestion": "检查链接路径是否正确: ./factors/ALPHA_048-064.md"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: test_data",
+          "line_number": 327,
+          "suggestion": "检查链接路径是否正确: test_data"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: test_data",
+          "line_number": 332,
+          "suggestion": "检查链接路径是否正确: test_data"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./01_FRAMEWORK/ARCHITECTURE.md#4-跨层级数据流",
+          "line_number": 124,
+          "suggestion": "检查链接路径是否正确: ./01_FRAMEWORK/ARCHITECTURE.md#4-跨层级数据流"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\factor_classification_summary.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../10_MANUAL/factor_library_manual_v3.2.md",
+          "line_number": 83,
+          "suggestion": "检查链接路径是否正确: ../10_MANUAL/factor_library_manual_v3.2.md"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_QUALITY.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: df[column].copy(",
+          "line_number": 237,
+          "suggestion": "检查链接路径是否正确: df[column].copy("
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: result, **params",
+          "line_number": 342,
+          "suggestion": "检查链接路径是否正确: result, **params"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\factor_monitoring.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: metrics",
+          "line_number": 430,
+          "suggestion": "检查链接路径是否正确: metrics"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../main/量化策略框架_v3.0.md",
+          "line_number": 21,
+          "suggestion": "检查链接路径是否正确: ../../main/量化策略框架_v3.0.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./strategy_template.md",
+          "line_number": 495,
+          "suggestion": "检查链接路径是否正确: ./strategy_template.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./review_checklist.md",
+          "line_number": 499,
+          "suggestion": "检查链接路径是否正确: ./review_checklist.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./chao-gu-yang-jia/S017.md",
+          "line_number": 189,
+          "suggestion": "检查链接路径是否正确: ./chao-gu-yang-jia/S017.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./asking/S011.md",
+          "line_number": 190,
+          "suggestion": "检查链接路径是否正确: ./asking/S011.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./chao-gu-yang-jia/S018.md",
+          "line_number": 191,
+          "suggestion": "检查链接路径是否正确: ./chao-gu-yang-jia/S018.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./chao-gu-yang-jia/S021.md",
+          "line_number": 192,
+          "suggestion": "检查链接路径是否正确: ./chao-gu-yang-jia/S021.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./chao-gu-yang-jia/S022.md",
+          "line_number": 193,
+          "suggestion": "检查链接路径是否正确: ./chao-gu-yang-jia/S022.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-c.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.00.MR001.市场趋势识别.md",
+          "line_number": 508,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.00.MR001.市场趋势识别.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.01.SN001.资金流向.md",
+          "line_number": 509,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.01.SN001.资金流向.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+          "line_number": 510,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.00.MR001.市场趋势识别.md",
+          "line_number": 1120,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.00.MR001.市场趋势识别.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.01.SN001.资金流向.md",
+          "line_number": 1121,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.01.SN001.资金流向.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+          "line_number": 1122,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.00.MR001.市场趋势识别.md",
+          "line_number": 824,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.00.MR001.市场趋势识别.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.01.SN001.资金流向.md",
+          "line_number": 825,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.01.SN001.资金流向.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+          "line_number": 826,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.03.RM002.波动率目标管理.md",
+          "line_number": 827,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.03.RM002.波动率目标管理.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.00.MR001.市场趋势识别.md",
+          "line_number": 833,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.00.MR001.市场趋势识别.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.01.SN001.资金流向.md",
+          "line_number": 834,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.01.SN001.资金流向.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.01.SN002.龙虎榜跟庄.md",
+          "line_number": 835,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.01.SN002.龙虎榜跟庄.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+          "line_number": 836,
+          "suggestion": "检查链接路径是否正确: ../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/02_TACTICS/02_ALPHA_FACTORS/03_价值投资/T.01.VA001.估值分析.md",
+          "line_number": 27,
+          "suggestion": "检查链接路径是否正确: ../main/02_TACTICS/02_ALPHA_FACTORS/03_价值投资/T.01.VA001.估值分析.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/02_TACTICS/04_EXECUTION/T.04.EX006.A股交易规则.md",
+          "line_number": 27,
+          "suggestion": "检查链接路径是否正确: ../main/02_TACTICS/04_EXECUTION/T.04.EX006.A股交易规则.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-j.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/02_TACTICS/01_MARKET_REGIME/T.00.MR001.市场趋势识别.md",
+          "line_number": 27,
+          "suggestion": "检查链接路径是否正确: ../main/02_TACTICS/01_MARKET_REGIME/T.00.MR001.市场趋势识别.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-k.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/02_TACTICS/01_MARKET_REGIME/T.00.MR002.量能周期体系.md",
+          "line_number": 27,
+          "suggestion": "检查链接路径是否正确: ../main/02_TACTICS/01_MARKET_REGIME/T.00.MR002.量能周期体系.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-l.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../SPEC.md",
+          "line_number": 22,
+          "suggestion": "检查链接路径是否正确: ../../SPEC.md"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\05_STRATEGY_POOL\\index.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\03_MONITORING\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: metrics",
+          "line_number": 263,
+          "suggestion": "检查链接路径是否正确: metrics"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\04_AI_COMMITTEE\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./AI_COMMITTEE_DETAIL.md",
+          "line_number": 91,
+          "suggestion": "检查链接路径是否正确: ./AI_COMMITTEE_DETAIL.md"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: MULTI_ENGINE_BLUEPRINT.md#3-vnpy引擎详细设计",
+          "line_number": 889,
+          "suggestion": "检查链接路径是否正确: MULTI_ENGINE_BLUEPRINT.md#3-vnpy引擎详细设计"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: MULTI_ENGINE_BLUEPRINT.md#4-rqalpha引擎详细设计",
+          "line_number": 890,
+          "suggestion": "检查链接路径是否正确: MULTI_ENGINE_BLUEPRINT.md#4-rqalpha引擎详细设计"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: MULTI_ENGINE_BLUEPRINT.md#5-backtrader引擎详细设计",
+          "line_number": 891,
+          "suggestion": "检查链接路径是否正确: MULTI_ENGINE_BLUEPRINT.md#5-backtrader引擎详细设计"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设计",
+          "line_number": 901,
+          "suggestion": "检查链接路径是否正确: MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设计"
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策略",
+          "line_number": 911,
+          "suggestion": "检查链接路径是否正确: MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策略"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\BLUEPRINT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./06_ARCHIVE/main/BLUEPRINTS/06_AI_RESEARCH_FRAMEWORK.md",
+          "line_number": 634,
+          "suggestion": "检查链接路径是否正确: ./06_ARCHIVE/main/BLUEPRINTS/06_AI_RESEARCH_FRAMEWORK.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 08_OPERATIONS/DEPLOYMENT.md",
+          "line_number": 455,
+          "suggestion": "检查链接路径是否正确: 08_OPERATIONS/DEPLOYMENT.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 07_TESTING/STRATEGY.md",
+          "line_number": 456,
+          "suggestion": "检查链接路径是否正确: 07_TESTING/STRATEGY.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: path/to/upstream_module.md",
+          "line_number": 459,
+          "suggestion": "检查链接路径是否正确: path/to/upstream_module.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: path/to/downstream_module.md",
+          "line_number": 460,
+          "suggestion": "检查链接路径是否正确: path/to/downstream_module.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 06_DATA/DATABASE_DESIGN.md",
+          "line_number": 461,
+          "suggestion": "检查链接路径是否正确: 06_DATA/DATABASE_DESIGN.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 06_DATA/CACHE_DESIGN.md",
+          "line_number": 462,
+          "suggestion": "检查链接路径是否正确: 06_DATA/CACHE_DESIGN.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./04_OPERATIONS/faq.md",
+          "line_number": 120,
+          "suggestion": "检查链接路径是否正确: ./04_OPERATIONS/faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./03_DEPLOYMENT/one-click-deploy.md",
+          "line_number": 224,
+          "suggestion": "检查链接路径是否正确: ./03_DEPLOYMENT/one-click-deploy.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./04_OPERATIONS/faq.md",
+          "line_number": 294,
+          "suggestion": "检查链接路径是否正确: ./04_OPERATIONS/faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./04_OPERATIONS/faq.md",
+          "line_number": 352,
+          "suggestion": "检查链接路径是否正确: ./04_OPERATIONS/faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\dev-setup.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_DEVELOPMENT/config-standard.md",
+          "line_number": 191,
+          "suggestion": "检查链接路径是否正确: ../02_DEVELOPMENT/config-standard.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\factor_design.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factor_backtest.md",
+          "line_number": 819,
+          "suggestion": "检查链接路径是否正确: ./factor_backtest.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\first-backtest.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_DEVELOPMENT/code-quality.md",
+          "line_number": 205,
+          "suggestion": "检查链接路径是否正确: ../02_DEVELOPMENT/code-quality.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_OPERATIONS/faq.md",
+          "line_number": 120,
+          "suggestion": "检查链接路径是否正确: ../04_OPERATIONS/faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./FILE_NAMING_STANDARD.md",
+          "line_number": 251,
+          "suggestion": "检查链接路径是否正确: ./FILE_NAMING_STANDARD.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_OPERATIONS/DOCUMENT_GOVERNANCE_CHECKLIST.md",
+          "line_number": 252,
+          "suggestion": "检查链接路径是否正确: ../04_OPERATIONS/DOCUMENT_GOVERNANCE_CHECKLIST.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./code-quality.md",
+          "line_number": 26,
+          "suggestion": "检查链接路径是否正确: ./code-quality.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./config-standard.md",
+          "line_number": 27,
+          "suggestion": "检查链接路径是否正确: ./config-standard.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./error-handling.md",
+          "line_number": 28,
+          "suggestion": "检查链接路径是否正确: ./error-handling.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./logging-standard.md",
+          "line_number": 29,
+          "suggestion": "检查链接路径是否正确: ./logging-standard.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./path-standard.md",
+          "line_number": 30,
+          "suggestion": "检查链接路径是否正确: ./path-standard.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./testing-standard.md",
+          "line_number": 31,
+          "suggestion": "检查链接路径是否正确: ./testing-standard.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\VERSION_MANAGEMENT_STANDARD.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_OPERATIONS/SYSTEM_GOVERNANCE_STANDARD.md",
+          "line_number": 250,
+          "suggestion": "检查链接路径是否正确: ../04_OPERATIONS/SYSTEM_GOVERNANCE_STANDARD.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./one-click-deploy.md",
+          "line_number": 26,
+          "suggestion": "检查链接路径是否正确: ./one-click-deploy.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./backup-restore.md",
+          "line_number": 27,
+          "suggestion": "检查链接路径是否正确: ./backup-restore.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_OPERATIONS/monitoring.md",
+          "line_number": 83,
+          "suggestion": "检查链接路径是否正确: ../04_OPERATIONS/monitoring.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_OPERATIONS/faq.md",
+          "line_number": 84,
+          "suggestion": "检查链接路径是否正确: ../04_OPERATIONS/faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/.github/workflows/version-validation.yml",
+          "line_number": 63,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/.github/workflows/version-validation.yml"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/.pre-commit-config.yaml",
+          "line_number": 70,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/.pre-commit-config.yaml"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/utils/migrate_version_metadata.py",
+          "line_number": 248,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/utils/migrate_version_metadata.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/utils/validate_version_metadata.py",
+          "line_number": 249,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/utils/validate_version_metadata.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/utils/enhance_metadata.py",
+          "line_number": 250,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/utils/enhance_metadata.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/.github/workflows/version-validation.yml",
+          "line_number": 253,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/.github/workflows/version-validation.yml"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/.pre-commit-config.yaml",
+          "line_number": 254,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/.pre-commit-config.yaml"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260401.md",
+          "line_number": 259,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260401.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./faq.md",
+          "line_number": 28,
+          "suggestion": "检查链接路径是否正确: ./faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./faq.md",
+          "line_number": 74,
+          "suggestion": "检查链接路径是否正确: ./faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_DEVELOPMENT/error-handling.md",
+          "line_number": 108,
+          "suggestion": "检查链接路径是否正确: ../02_DEVELOPMENT/error-handling.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../10_MANUAL/factor_library_manual_v3.2.md",
+          "line_number": 230,
+          "suggestion": "检查链接路径是否正确: ../10_MANUAL/factor_library_manual_v3.2.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 84,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./VERSION_HISTORY.md",
+          "line_number": 99,
+          "suggestion": "检查链接路径是否正确: ./VERSION_HISTORY.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 135,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../CODE_STATUS.md",
+          "line_number": 136,
+          "suggestion": "检查链接路径是否正确: ../CODE_STATUS.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../CODE_REVIEW_REPORT.md",
+          "line_number": 138,
+          "suggestion": "检查链接路径是否正确: ../CODE_REVIEW_REPORT.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 179,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../CODE_STATUS.md",
+          "line_number": 192,
+          "suggestion": "检查链接路径是否正确: ../../CODE_STATUS.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../SPEC.md",
+          "line_number": 193,
+          "suggestion": "检查链接路径是否正确: ../../SPEC.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../CODE_STATUS.md",
+          "line_number": 194,
+          "suggestion": "检查链接路径是否正确: ../../CODE_STATUS.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../05_STRATEGY_POOL/selection-logic.md",
+          "line_number": 228,
+          "suggestion": "检查链接路径是否正确: ../05_STRATEGY_POOL/selection-logic.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../SPEC.md",
+          "line_number": 89,
+          "suggestion": "检查链接路径是否正确: ../SPEC.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./SPEC.md",
+          "line_number": 90,
+          "suggestion": "检查链接路径是否正确: ./SPEC.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_OPERATIONS/faq.md",
+          "line_number": 103,
+          "suggestion": "检查链接路径是否正确: ../04_OPERATIONS/faq.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/__init__.py",
+          "line_number": 61,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/__init__.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/core/__init__.py",
+          "line_number": 79,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/core/__init__.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/modules/__init__.py",
+          "line_number": 95,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/modules/__init__.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/utils/__init__.py",
+          "line_number": 111,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/utils/__init__.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/core/base.py",
+          "line_number": 106,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/core/base.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/file_importance_scores.json",
+          "line_number": 386,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/file_importance_scores.json"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit_list.json",
+          "line_number": 387,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit_list.json"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md",
+          "line_number": 388,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md#严重问题-蓝图与代码巨大差距",
+          "line_number": 30,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md#严重问题-蓝图与代码巨大差距"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/TESTING_STRATEGY.md",
+          "line_number": 214,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/TESTING_STRATEGY.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/modules/factor_calculator.py",
+          "line_number": 417,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/modules/factor_calculator.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/link_fix_final_result.json",
+          "line_number": 292,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/link_fix_final_result.json"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_final_result.json",
+          "line_number": 293,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_final_result.json"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report.json",
+          "line_number": 294,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report.json"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/config/system.yaml#L3-L6",
+          "line_number": 29,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/config/system.yaml#L3-L6"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/src/modules/alert_manager.py",
+          "line_number": 53,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/src/modules/alert_manager.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT_WORKING_PAPER_L1.md",
+          "line_number": 400,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT_WORKING_PAPER_L1.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/src/modules/factor_calculator.py",
+          "line_number": 405,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/src/modules/factor_calculator.py"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/01_METHODOLOGY/factor_definition.md",
+          "line_number": 408,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/01_METHODOLOGY/factor_definition.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: docs/...",
+          "line_number": 267,
+          "suggestion": "检查链接路径是否正确: docs/..."
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../LEGACY_DOC_ANALYSIS_V3.md",
+          "line_number": 98,
+          "suggestion": "检查链接路径是否正确: ../../LEGACY_DOC_ANALYSIS_V3.md"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../BLUEPRINTS.md",
+          "line_number": 99,
+          "suggestion": "检查链接路径是否正确: ../../BLUEPRINTS.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\strategy_pool.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/量化策略框架_v3.0.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../main/量化策略框架_v3.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\strategy_pool.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../factor-library/因子库手册_v1.0.md",
+          "line_number": 21,
+          "suggestion": "检查链接路径是否正确: ../factor-library/因子库手册_v1.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/量化策略框架_v3.0.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../main/量化策略框架_v3.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../factor-library/因子库手册_v1.0.md",
+          "line_number": 21,
+          "suggestion": "检查链接路径是否正确: ../factor-library/因子库手册_v1.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\tactics_manual.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/量化策略框架_v3.0.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../main/量化策略框架_v3.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\tactics_manual.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../factor-library/因子库手册_v1.0.md",
+          "line_number": 21,
+          "suggestion": "检查链接路径是否正确: ../factor-library/因子库手册_v1.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\technical_documentation.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../main/量化策略框架_v3.0.md",
+          "line_number": 20,
+          "suggestion": "检查链接路径是否正确: ../main/量化策略框架_v3.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\technical_documentation.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../factor-library/因子库手册_v1.0.md",
+          "line_number": 21,
+          "suggestion": "检查链接路径是否正确: ../factor-library/因子库手册_v1.0.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\technical_documentation.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: order, market_data",
+          "line_number": 824,
+          "suggestion": "检查链接路径是否正确: order, market_data"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/factor_calculator.py#L847-849",
+          "line_number": 52,
+          "suggestion": "检查链接路径是否正确: file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/factor_calculator.py#L847-849"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/factor_calculator.py#L691-732",
+          "line_number": 79,
+          "suggestion": "检查链接路径是否正确: file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/factor_calculator.py#L691-732"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/risk_manager.py#L180",
+          "line_number": 153,
+          "suggestion": "检查链接路径是否正确: file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/risk_manager.py#L180"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/risk_manager.py#L233",
+          "line_number": 179,
+          "suggestion": "检查链接路径是否正确: file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/risk_manager.py#L233"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../SPEC.md",
+          "line_number": 56,
+          "suggestion": "检查链接路径是否正确: ../../SPEC.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: AI_RESEARCH_FRAMEWORK.md",
+          "line_number": 302,
+          "suggestion": "检查链接路径是否正确: AI_RESEARCH_FRAMEWORK.md"
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: AI_RESEARCH_FRAMEWORK.md",
+          "line_number": 302,
+          "suggestion": "检查链接路径是否正确: AI_RESEARCH_FRAMEWORK.md"
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./dependency_management.md",
+          "line_number": 286,
+          "suggestion": "检查链接路径是否正确: ./dependency_management.md"
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./workflow_orchestration.md",
+          "line_number": 287,
+          "suggestion": "检查链接路径是否正确: ./workflow_orchestration.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md#快速扫描",
+          "line_number": 33,
+          "suggestion": "检查链接路径是否正确: ./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md#快速扫描"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md",
+          "line_number": 34,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./REPORTS/AUDIT_REPORT_TEMPLATE.md#个人版",
+          "line_number": 35,
+          "suggestion": "检查链接路径是否正确: ./REPORTS/AUDIT_REPORT_TEMPLATE.md#个人版"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./REPORTS/AUDIT_REPORT_TEMPLATE.md#ai版",
+          "line_number": 45,
+          "suggestion": "检查链接路径是否正确: ./REPORTS/AUDIT_REPORT_TEMPLATE.md#ai版"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#快速检查",
+          "line_number": 55,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#快速检查"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#变更影响",
+          "line_number": 56,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#变更影响"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TOOLS/AUDIT_TOOLS_OVERVIEW.md#文档扫描",
+          "line_number": 57,
+          "suggestion": "检查链接路径是否正确: ./TOOLS/AUDIT_TOOLS_OVERVIEW.md#文档扫描"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_PLAN_TEMPLATE.md#蓝图审计",
+          "line_number": 64,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_PLAN_TEMPLATE.md#蓝图审计"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./PROCEDURES/AI_AUDIT_GUIDELINES.md#输出验证",
+          "line_number": 65,
+          "suggestion": "检查链接路径是否正确: ./PROCEDURES/AI_AUDIT_GUIDELINES.md#输出验证"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_FINDING_TRACKER.md#代码增长",
+          "line_number": 66,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_FINDING_TRACKER.md#代码增长"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_PLAN_TEMPLATE.md#架构变更",
+          "line_number": 73,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_PLAN_TEMPLATE.md#架构变更"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./STANDARDS/AUDIT_STANDARDS.md#版本一致性",
+          "line_number": 74,
+          "suggestion": "检查链接路径是否正确: ./STANDARDS/AUDIT_STANDARDS.md#版本一致性"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./REPORTS/AUDIT_REPORT_TEMPLATE.md#健康度评估",
+          "line_number": 75,
+          "suggestion": "检查链接路径是否正确: ./REPORTS/AUDIT_REPORT_TEMPLATE.md#健康度评估"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./STANDARDS/AUDIT_STANDARDS.md#安全标准",
+          "line_number": 82,
+          "suggestion": "检查链接路径是否正确: ./STANDARDS/AUDIT_STANDARDS.md#安全标准"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./PROCEDURES/ARCHITECTURE_ADAPTATION.md#性能审计",
+          "line_number": 83,
+          "suggestion": "检查链接路径是否正确: ./PROCEDURES/ARCHITECTURE_ADAPTATION.md#性能审计"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md#合规标准",
+          "line_number": 84,
+          "suggestion": "检查链接路径是否正确: ./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md#合规标准"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md",
+          "line_number": 92,
+          "suggestion": "检查链接路径是否正确: ./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./STANDARDS/AUDIT_TERMINOLOGY.md",
+          "line_number": 93,
+          "suggestion": "检查链接路径是否正确: ./STANDARDS/AUDIT_TERMINOLOGY.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./PROCEDURES/ARCHITECTURE_ADAPTATION.md",
+          "line_number": 98,
+          "suggestion": "检查链接路径是否正确: ./PROCEDURES/ARCHITECTURE_ADAPTATION.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_PLAN_TEMPLATE.md",
+          "line_number": 101,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_PLAN_TEMPLATE.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md",
+          "line_number": 102,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_FINDING_TRACKER.md",
+          "line_number": 103,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_FINDING_TRACKER.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TOOLS/AUDIT_TOOLS_OVERVIEW.md",
+          "line_number": 107,
+          "suggestion": "检查链接路径是否正确: ./TOOLS/AUDIT_TOOLS_OVERVIEW.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./REPORTS/AUDIT_REPORT_TEMPLATE.md",
+          "line_number": 110,
+          "suggestion": "检查链接路径是否正确: ./REPORTS/AUDIT_REPORT_TEMPLATE.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md",
+          "line_number": 79,
+          "suggestion": "检查链接路径是否正确: ./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./REPORTS/AUDIT_REPORT_TEMPLATE.md",
+          "line_number": 80,
+          "suggestion": "检查链接路径是否正确: ./REPORTS/AUDIT_REPORT_TEMPLATE.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./PROCEDURES/ARCHITECTURE_ADAPTATION.md",
+          "line_number": 85,
+          "suggestion": "检查链接路径是否正确: ./PROCEDURES/ARCHITECTURE_ADAPTATION.md"
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: missing.md",
+          "line_number": 100,
+          "suggestion": "检查链接路径是否正确: missing.md"
+        },
+        {
+          "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md",
+          "line_number": 779,
+          "suggestion": "检查链接路径是否正确: ../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md"
+        },
+        {
+          "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../design/trading_costs/交易成本模型算法文档.md",
+          "line_number": 780,
+          "suggestion": "检查链接路径是否正确: ../design/trading_costs/交易成本模型算法文档.md"
+        },
+        {
+          "file_path": "docs\\design\\data_consistency\\补偿事务设计文档.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md",
+          "line_number": 1617,
+          "suggestion": "检查链接路径是否正确: ../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md"
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/DATA_QUALITY_STANDARD.md",
+          "line_number": 1153,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/DATA_QUALITY_STANDARD.md"
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/DATA_PREPROCESSING_STANDARD.md",
+          "line_number": 1147,
+          "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/DATA_PREPROCESSING_STANDARD.md"
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: metrics",
+          "line_number": 1337,
+          "suggestion": "检查链接路径是否正确: metrics"
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: metrics",
+          "line_number": 2149,
+          "suggestion": "检查链接路径是否正确: metrics"
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: test_data",
+          "line_number": 326,
+          "suggestion": "检查链接路径是否正确: test_data"
+        },
+        {
+          "file_path": "scripts\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../docs/09_AUDIT/QUALITY_MONITORING_BLUEPRINT_v5.1.md",
+          "line_number": 210,
+          "suggestion": "检查链接路径是否正确: ../docs/09_AUDIT/QUALITY_MONITORING_BLUEPRINT_v5.1.md"
+        }
+      ],
+      "wrong_path": [],
+      "missing_dir": [
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_DATA_SOURCE/",
+          "line_number": 323,
+          "suggestion": "检查链接路径是否正确: ../04_DATA_SOURCE/"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../05_BACKTEST/",
+          "line_number": 324,
+          "suggestion": "检查链接路径是否正确: ../05_BACKTEST/"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../06_FACTOR_REGISTRY/",
+          "line_number": 325,
+          "suggestion": "检查链接路径是否正确: ../06_FACTOR_REGISTRY/"
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../07_MONITORING/",
+          "line_number": 326,
+          "suggestion": "检查链接路径是否正确: ../07_MONITORING/"
+        },
+        {
+          "file_path": "docs\\00_OVERVIEW\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../src/",
+          "line_number": 105,
+          "suggestion": "检查链接路径是否正确: ../src/"
+        },
+        {
+          "file_path": "docs\\00_OVERVIEW\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../tests/",
+          "line_number": 106,
+          "suggestion": "检查链接路径是否正确: ../tests/"
+        },
+        {
+          "file_path": "docs\\00_OVERVIEW\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../config/",
+          "line_number": 107,
+          "suggestion": "检查链接路径是否正确: ../config/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../05_BACKTEST/ic_reports/",
+          "line_number": 183,
+          "suggestion": "检查链接路径是否正确: ../05_BACKTEST/ic_reports/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./factors/",
+          "line_number": 184,
+          "suggestion": "检查链接路径是否正确: ./factors/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\FAQ.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./02_FACTOR_LIBRARY/04_DATA_SOURCE/",
+          "line_number": 330,
+          "suggestion": "检查链接路径是否正确: ./02_FACTOR_LIBRARY/04_DATA_SOURCE/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./05_IMPLEMENTATION/02_DEVELOPMENT/",
+          "line_number": 79,
+          "suggestion": "检查链接路径是否正确: ./05_IMPLEMENTATION/02_DEVELOPMENT/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./02_FACTOR_LIBRARY/03_RISK_FACTORS/",
+          "line_number": 250,
+          "suggestion": "检查链接路径是否正确: ./02_FACTOR_LIBRARY/03_RISK_FACTORS/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./02_FACTOR_LIBRARY/01_METHODOLOGY/",
+          "line_number": 251,
+          "suggestion": "检查链接路径是否正确: ./02_FACTOR_LIBRARY/01_METHODOLOGY/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./05_IMPLEMENTATION/02_DEVELOPMENT/",
+          "line_number": 262,
+          "suggestion": "检查链接路径是否正确: ./05_IMPLEMENTATION/02_DEVELOPMENT/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./05_IMPLEMENTATION/04_OPERATIONS/",
+          "line_number": 273,
+          "suggestion": "检查链接路径是否正确: ./05_IMPLEMENTATION/04_OPERATIONS/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./02_ALPHA_FACTORS/",
+          "line_number": 30,
+          "suggestion": "检查链接路径是否正确: ./02_ALPHA_FACTORS/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./03_RISK_FACTORS/",
+          "line_number": 31,
+          "suggestion": "检查链接路径是否正确: ./03_RISK_FACTORS/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./04_DATA_SOURCE/",
+          "line_number": 32,
+          "suggestion": "检查链接路径是否正确: ./04_DATA_SOURCE/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./05_BACKTEST/",
+          "line_number": 33,
+          "suggestion": "检查链接路径是否正确: ./05_BACKTEST/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./06_ARCHIVE/",
+          "line_number": 34,
+          "suggestion": "检查链接路径是否正确: ./06_ARCHIVE/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./10_MANUAL/",
+          "line_number": 35,
+          "suggestion": "检查链接路径是否正确: ./10_MANUAL/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./IC验证记录/",
+          "line_number": 93,
+          "suggestion": "检查链接路径是否正确: ./IC验证记录/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./回测报告/",
+          "line_number": 94,
+          "suggestion": "检查链接路径是否正确: ./回测报告/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./版本追踪/",
+          "line_number": 95,
+          "suggestion": "检查链接路径是否正确: ./版本追踪/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./血缘追踪/",
+          "line_number": 96,
+          "suggestion": "检查链接路径是否正确: ./血缘追踪/"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ./相关性矩阵/",
+          "line_number": 97,
+          "suggestion": "检查链接路径是否正确: ./相关性矩阵/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/03_DEPLOYMENT/",
+          "line_number": 45,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/03_DEPLOYMENT/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 06_ARCHIVE/main/BLUEPRINTS/",
+          "line_number": 65,
+          "suggestion": "检查链接路径是否正确: 06_ARCHIVE/main/BLUEPRINTS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/00_INDEX/",
+          "line_number": 110,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/00_INDEX/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/01_METHODOLOGY/",
+          "line_number": 111,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/01_METHODOLOGY/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/03_RISK_FACTORS/",
+          "line_number": 113,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/03_RISK_FACTORS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/04_DATA_SOURCE/",
+          "line_number": 114,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/04_DATA_SOURCE/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/05_BACKTEST/",
+          "line_number": 115,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/05_BACKTEST/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/",
+          "line_number": 116,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 02_FACTOR_LIBRARY/07_MONITORING/",
+          "line_number": 117,
+          "suggestion": "检查链接路径是否正确: 02_FACTOR_LIBRARY/07_MONITORING/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/",
+          "line_number": 125,
+          "suggestion": "检查链接路径是否正确: 03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 03_TRADING_TACTICS/03_ADVANCED_TACTICS/",
+          "line_number": 127,
+          "suggestion": "检查链接路径是否正确: 03_TRADING_TACTICS/03_ADVANCED_TACTICS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 03_TRADING_TACTICS/04_YOUZI_STRATEGIES/",
+          "line_number": 128,
+          "suggestion": "检查链接路径是否正确: 03_TRADING_TACTICS/04_YOUZI_STRATEGIES/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 04_EXECUTION/01_EVENT_ENGINE/",
+          "line_number": 135,
+          "suggestion": "检查链接路径是否正确: 04_EXECUTION/01_EVENT_ENGINE/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 04_EXECUTION/02_TRADE_EXECUTOR/",
+          "line_number": 136,
+          "suggestion": "检查链接路径是否正确: 04_EXECUTION/02_TRADE_EXECUTOR/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 04_EXECUTION/03_MONITORING/",
+          "line_number": 137,
+          "suggestion": "检查链接路径是否正确: 04_EXECUTION/03_MONITORING/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/01_QUICKSTART/",
+          "line_number": 144,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/01_QUICKSTART/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/02_DEVELOPMENT/",
+          "line_number": 145,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/02_DEVELOPMENT/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/03_DEPLOYMENT/",
+          "line_number": 146,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/03_DEPLOYMENT/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/04_OPERATIONS/",
+          "line_number": 147,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/04_OPERATIONS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 06_ARCHIVE/main/v4_development/",
+          "line_number": 154,
+          "suggestion": "检查链接路径是否正确: 06_ARCHIVE/main/v4_development/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 06_ARCHIVE/over_engineered/",
+          "line_number": 155,
+          "suggestion": "检查链接路径是否正确: 06_ARCHIVE/over_engineered/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 07_RESEARCH/01_ENVIRONMENT/",
+          "line_number": 162,
+          "suggestion": "检查链接路径是否正确: 07_RESEARCH/01_ENVIRONMENT/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 07_RESEARCH/02_EXPLORATORY_ANALYSIS/",
+          "line_number": 163,
+          "suggestion": "检查链接路径是否正确: 07_RESEARCH/02_EXPLORATORY_ANALYSIS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 07_RESEARCH/03_PATTERN_RECOGNITION/",
+          "line_number": 164,
+          "suggestion": "检查链接路径是否正确: 07_RESEARCH/03_PATTERN_RECOGNITION/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 07_RESEARCH/04_EXPERIMENT_TRACKING/",
+          "line_number": 165,
+          "suggestion": "检查链接路径是否正确: 07_RESEARCH/04_EXPERIMENT_TRACKING/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 09_AUDIT/STANDARDS/",
+          "line_number": 173,
+          "suggestion": "检查链接路径是否正确: 09_AUDIT/STANDARDS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 09_AUDIT/PROCEDURES/",
+          "line_number": 174,
+          "suggestion": "检查链接路径是否正确: 09_AUDIT/PROCEDURES/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/02_DEVELOPMENT/",
+          "line_number": 183,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/02_DEVELOPMENT/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/01_QUICKSTART/",
+          "line_number": 188,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/01_QUICKSTART/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/03_DEPLOYMENT/",
+          "line_number": 191,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/03_DEPLOYMENT/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 05_IMPLEMENTATION/04_OPERATIONS/",
+          "line_number": 192,
+          "suggestion": "检查链接路径是否正确: 05_IMPLEMENTATION/04_OPERATIONS/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: 07_RESEARCH/04_EXPERIMENT_TRACKING/",
+          "line_number": 197,
+          "suggestion": "检查链接路径是否正确: 07_RESEARCH/04_EXPERIMENT_TRACKING/"
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\07_ORDER_GENERATION\\README.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_EXECUTION/02_TRADE_EXECUTOR/",
+          "line_number": 237,
+          "suggestion": "检查链接路径是否正确: ../04_EXECUTION/02_TRADE_EXECUTOR/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: docs/05_IMPLEMENTATION/04_OPERATIONS/",
+          "line_number": 714,
+          "suggestion": "检查链接路径是否正确: docs/05_IMPLEMENTATION/04_OPERATIONS/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_TECHNICAL_SPECS/",
+          "line_number": 114,
+          "suggestion": "检查链接路径是否正确: ../04_TECHNICAL_SPECS/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../05_IMPLEMENTATION/",
+          "line_number": 115,
+          "suggestion": "检查链接路径是否正确: ../05_IMPLEMENTATION/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../04_DATA_SOURCE/",
+          "line_number": 132,
+          "suggestion": "检查链接路径是否正确: ../04_DATA_SOURCE/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../05_BACKTEST/",
+          "line_number": 133,
+          "suggestion": "检查链接路径是否正确: ../05_BACKTEST/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../06_FACTOR_REGISTRY/",
+          "line_number": 134,
+          "suggestion": "检查链接路径是否正确: ../06_FACTOR_REGISTRY/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/03_TRADING_TACTICS/99_ARCHIVE/",
+          "line_number": 167,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/03_TRADING_TACTICS/99_ARCHIVE/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../../04_TECHNICAL_SPECS/",
+          "line_number": 195,
+          "suggestion": "检查链接路径是否正确: ../../04_TECHNICAL_SPECS/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_CORE_STRATEGIES/",
+          "line_number": 211,
+          "suggestion": "检查链接路径是否正确: ../02_CORE_STRATEGIES/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../99_ARCHIVE/backtest/",
+          "line_number": 212,
+          "suggestion": "检查链接路径是否正确: ../99_ARCHIVE/backtest/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../99_ARCHIVE/paper_trading/",
+          "line_number": 213,
+          "suggestion": "检查链接路径是否正确: ../99_ARCHIVE/paper_trading/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../99_ARCHIVE/live_trading/",
+          "line_number": 214,
+          "suggestion": "检查链接路径是否正确: ../99_ARCHIVE/live_trading/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../99_ARCHIVE/review/",
+          "line_number": 215,
+          "suggestion": "检查链接路径是否正确: ../99_ARCHIVE/review/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ../02_CORE_STRATEGIES/",
+          "line_number": 229,
+          "suggestion": "检查链接路径是否正确: ../02_CORE_STRATEGIES/"
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: file:///D:/ZephyrAlpha/docs/08_USER_EXPERIENCE/",
+          "line_number": 409,
+          "suggestion": "检查链接路径是否正确: file:///D:/ZephyrAlpha/docs/08_USER_EXPERIENCE/"
+        }
+      ],
+      "missing_image": [
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: ic_series.png",
+          "line_number": 326,
+          "suggestion": "检查链接路径是否正确: ic_series.png"
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+          "issue_type": "broken_link",
+          "severity": "warning",
+          "message": "链接目标不存在: path/to/ic_plot.png",
+          "line_number": 150,
+          "suggestion": "检查链接路径是否正确: path/to/ic_plot.png"
+        }
+      ],
+      "anchor_only": [],
+      "external": []
+    }
+  },
+  "fix_plan": [
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 247,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 248,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../SPEC.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 249,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../../../SPEC.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 250,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 251,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 268,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../CODE_STATUS.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 269,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../CODE_STATUS.md"
+    },
+    {
+      "file": "docs\\00_RESOURCES\\README.md",
+      "line": 114,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "01_API_DOCS/迅投QMT_API_v2.0.pdf"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 56,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./factors/ALPHA_001-014.md"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 76,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./factors/ALPHA_015-026.md"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 95,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./factors/ALPHA_027-037.md"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 113,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./factors/ALPHA_038-047.md"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 150,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./factors/ALPHA_048-064.md"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+      "line": 327,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "test_data"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+      "line": 332,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "test_data"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+      "line": 124,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./01_FRAMEWORK/ARCHITECTURE.md#4-跨层级数据流"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\factor_classification_summary.md",
+      "line": 83,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../10_MANUAL/factor_library_manual_v3.2.md"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_QUALITY.md",
+      "line": 237,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "df[column].copy("
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "line": 342,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "result, **params"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\factor_monitoring.md",
+      "line": 430,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "metrics"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
+      "line": 21,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../main/量化策略框架_v3.0.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
+      "line": 495,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./strategy_template.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
+      "line": 499,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./review_checklist.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+      "line": 189,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./chao-gu-yang-jia/S017.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+      "line": 190,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./asking/S011.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+      "line": 191,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./chao-gu-yang-jia/S018.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+      "line": 192,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./chao-gu-yang-jia/S021.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+      "line": 193,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./chao-gu-yang-jia/S022.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-c.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+      "line": 508,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.00.MR001.市场趋势识别.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+      "line": 509,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.01.SN001.资金流向.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+      "line": 510,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+      "line": 1120,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.00.MR001.市场趋势识别.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+      "line": 1121,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.01.SN001.资金流向.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+      "line": 1122,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+      "line": 824,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.00.MR001.市场趋势识别.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+      "line": 825,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.01.SN001.资金流向.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+      "line": 826,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+      "line": 827,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.03.RM002.波动率目标管理.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+      "line": 833,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.00.MR001.市场趋势识别.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+      "line": 834,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.01.SN001.资金流向.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+      "line": 835,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.01.SN002.龙虎榜跟庄.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+      "line": 836,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md",
+      "line": 27,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/02_TACTICS/02_ALPHA_FACTORS/03_价值投资/T.01.VA001.估值分析.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md",
+      "line": 27,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/02_TACTICS/04_EXECUTION/T.04.EX006.A股交易规则.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-j.md",
+      "line": 27,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/02_TACTICS/01_MARKET_REGIME/T.00.MR001.市场趋势识别.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-k.md",
+      "line": 27,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/02_TACTICS/01_MARKET_REGIME/T.00.MR002.量能周期体系.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-l.md",
+      "line": 22,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../SPEC.md"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\05_STRATEGY_POOL\\index.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\03_MONITORING\\README.md",
+      "line": 263,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "metrics"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\04_AI_COMMITTEE\\README.md",
+      "line": 91,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./AI_COMMITTEE_DETAIL.md"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+      "line": 889,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "MULTI_ENGINE_BLUEPRINT.md#3-vnpy引擎详细设计"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+      "line": 890,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "MULTI_ENGINE_BLUEPRINT.md#4-rqalpha引擎详细设计"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+      "line": 891,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "MULTI_ENGINE_BLUEPRINT.md#5-backtrader引擎详细设计"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+      "line": 901,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设计"
+    },
+    {
+      "file": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+      "line": 911,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策略"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\BLUEPRINT.md",
+      "line": 634,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./06_ARCHIVE/main/BLUEPRINTS/06_AI_RESEARCH_FRAMEWORK.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+      "line": 455,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "08_OPERATIONS/DEPLOYMENT.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+      "line": 456,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "07_TESTING/STRATEGY.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+      "line": 459,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "path/to/upstream_module.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+      "line": 460,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "path/to/downstream_module.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+      "line": 461,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "06_DATA/DATABASE_DESIGN.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+      "line": 462,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "06_DATA/CACHE_DESIGN.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\README.md",
+      "line": 120,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./04_OPERATIONS/faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\README.md",
+      "line": 224,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./03_DEPLOYMENT/one-click-deploy.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\README.md",
+      "line": 294,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./04_OPERATIONS/faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\README.md",
+      "line": 352,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./04_OPERATIONS/faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\dev-setup.md",
+      "line": 191,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_DEVELOPMENT/config-standard.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\factor_design.md",
+      "line": 819,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./factor_backtest.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\first-backtest.md",
+      "line": 205,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_DEVELOPMENT/code-quality.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\README.md",
+      "line": 120,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_OPERATIONS/faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+      "line": 251,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./FILE_NAMING_STANDARD.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+      "line": 252,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_OPERATIONS/DOCUMENT_GOVERNANCE_CHECKLIST.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "line": 26,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./code-quality.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "line": 27,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./config-standard.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "line": 28,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./error-handling.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "line": 29,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./logging-standard.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "line": 30,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./path-standard.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "line": 31,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./testing-standard.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\VERSION_MANAGEMENT_STANDARD.md",
+      "line": 250,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_OPERATIONS/SYSTEM_GOVERNANCE_STANDARD.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+      "line": 26,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./one-click-deploy.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+      "line": 27,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./backup-restore.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+      "line": 83,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_OPERATIONS/monitoring.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+      "line": 84,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_OPERATIONS/faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 63,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/.github/workflows/version-validation.yml"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 70,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/.pre-commit-config.yaml"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 248,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/utils/migrate_version_metadata.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 249,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/utils/validate_version_metadata.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 250,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/utils/enhance_metadata.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 253,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/.github/workflows/version-validation.yml"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 254,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/.pre-commit-config.yaml"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "line": 259,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260401.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+      "line": 28,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+      "line": 74,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+      "line": 108,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../02_DEVELOPMENT/error-handling.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+      "line": 230,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../10_MANUAL/factor_library_manual_v3.2.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 84,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 99,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./VERSION_HISTORY.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 135,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 136,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../CODE_STATUS.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 138,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../CODE_REVIEW_REPORT.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 179,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 192,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../CODE_STATUS.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 193,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../SPEC.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 194,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../CODE_STATUS.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 228,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../05_STRATEGY_POOL/selection-logic.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+      "line": 89,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../SPEC.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+      "line": 90,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./SPEC.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+      "line": 103,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_OPERATIONS/faq.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+      "line": 61,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/__init__.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+      "line": 79,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/core/__init__.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+      "line": 95,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/modules/__init__.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+      "line": 111,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/utils/__init__.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+      "line": 106,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/src/core/base.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+      "line": 386,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/file_importance_scores.json"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+      "line": 387,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit_list.json"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+      "line": 388,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md",
+      "line": 30,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md#严重问题-蓝图与代码巨大差距"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+      "line": 214,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/TESTING_STRATEGY.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+      "line": 417,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/modules/factor_calculator.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+      "line": 292,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/link_fix_final_result.json"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+      "line": 293,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_final_result.json"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+      "line": 294,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report.json"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+      "line": 29,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/config/system.yaml#L3-L6"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+      "line": 53,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/src/modules/alert_manager.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "line": 400,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT_WORKING_PAPER_L1.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "line": 405,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/src/modules/factor_calculator.py"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "line": 408,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/01_METHODOLOGY/factor_definition.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md",
+      "line": 267,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "docs/..."
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+      "line": 98,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../LEGACY_DOC_ANALYSIS_V3.md"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+      "line": 99,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../BLUEPRINTS.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\strategy_pool.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/量化策略框架_v3.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\strategy_pool.md",
+      "line": 21,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../factor-library/因子库手册_v1.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/量化策略框架_v3.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
+      "line": 21,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../factor-library/因子库手册_v1.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\tactics_manual.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/量化策略框架_v3.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\tactics_manual.md",
+      "line": 21,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../factor-library/因子库手册_v1.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\technical_documentation.md",
+      "line": 20,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../main/量化策略框架_v3.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\technical_documentation.md",
+      "line": 21,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../factor-library/因子库手册_v1.0.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\technical_documentation.md",
+      "line": 824,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "order, market_data"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+      "line": 52,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/factor_calculator.py#L847-849"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+      "line": 79,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/factor_calculator.py#L691-732"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+      "line": 153,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/清风量化交易系统5.0/quant_system_v4/src/modules/risk_manager.py#L180"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+      "line": 179,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/清风量化交易系统5.0/ZephyrAlpha/src/modules/risk_manager.py#L233"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\README.md",
+      "line": 56,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../../SPEC.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+      "line": 302,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "AI_RESEARCH_FRAMEWORK.md"
+    },
+    {
+      "file": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md",
+      "line": 302,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "AI_RESEARCH_FRAMEWORK.md"
+    },
+    {
+      "file": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+      "line": 286,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./dependency_management.md"
+    },
+    {
+      "file": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+      "line": 287,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./workflow_orchestration.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 33,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md#快速扫描"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 34,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 35,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#个人版"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 45,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#ai版"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 55,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#快速检查"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 56,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#变更影响"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 57,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TOOLS/AUDIT_TOOLS_OVERVIEW.md#文档扫描"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 64,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_PLAN_TEMPLATE.md#蓝图审计"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 65,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./PROCEDURES/AI_AUDIT_GUIDELINES.md#输出验证"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 66,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_FINDING_TRACKER.md#代码增长"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 73,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_PLAN_TEMPLATE.md#架构变更"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 74,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./STANDARDS/AUDIT_STANDARDS.md#版本一致性"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 75,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#健康度评估"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 82,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./STANDARDS/AUDIT_STANDARDS.md#安全标准"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 83,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./PROCEDURES/ARCHITECTURE_ADAPTATION.md#性能审计"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 84,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md#合规标准"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 92,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 93,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./STANDARDS/AUDIT_TERMINOLOGY.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 98,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./PROCEDURES/ARCHITECTURE_ADAPTATION.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 101,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_PLAN_TEMPLATE.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 102,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 103,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_FINDING_TRACKER.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 107,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TOOLS/AUDIT_TOOLS_OVERVIEW.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "line": 110,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./REPORTS/AUDIT_REPORT_TEMPLATE.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\README.md",
+      "line": 79,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\README.md",
+      "line": 80,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./REPORTS/AUDIT_REPORT_TEMPLATE.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\README.md",
+      "line": 85,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "./PROCEDURES/ARCHITECTURE_ADAPTATION.md"
+    },
+    {
+      "file": "docs\\09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md",
+      "line": 100,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "missing.md"
+    },
+    {
+      "file": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+      "line": 779,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md"
+    },
+    {
+      "file": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+      "line": 780,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../design/trading_costs/交易成本模型算法文档.md"
+    },
+    {
+      "file": "docs\\design\\data_consistency\\补偿事务设计文档.md",
+      "line": 1617,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md"
+    },
+    {
+      "file": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+      "line": 1153,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/DATA_QUALITY_STANDARD.md"
+    },
+    {
+      "file": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
+      "line": 1147,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "file:///d:/ZephyrAlpha/docs/DATA_PREPROCESSING_STANDARD.md"
+    },
+    {
+      "file": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
+      "line": 1337,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "metrics"
+    },
+    {
+      "file": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+      "line": 2149,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "metrics"
+    },
+    {
+      "file": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
+      "line": 326,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "test_data"
+    },
+    {
+      "file": "scripts\\README.md",
+      "line": 210,
+      "action": "remove",
+      "reason": "目标文件不存在",
+      "link": "../docs/09_AUDIT/QUALITY_MONITORING_BLUEPRINT_v5.1.md"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 323,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../04_DATA_SOURCE/"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 324,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../05_BACKTEST/"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 325,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../06_FACTOR_REGISTRY/"
+    },
+    {
+      "file": "DOCUMENT_AUDIT_v5.1.md",
+      "line": 326,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../07_MONITORING/"
+    },
+    {
+      "file": "docs\\00_OVERVIEW\\README.md",
+      "line": 105,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../src/"
+    },
+    {
+      "file": "docs\\00_OVERVIEW\\README.md",
+      "line": 106,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../tests/"
+    },
+    {
+      "file": "docs\\00_OVERVIEW\\README.md",
+      "line": 107,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../config/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 183,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../05_BACKTEST/ic_reports/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "line": 184,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./factors/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\FAQ.md",
+      "line": 330,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./02_FACTOR_LIBRARY/04_DATA_SOURCE/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+      "line": 79,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./05_IMPLEMENTATION/02_DEVELOPMENT/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+      "line": 250,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./02_FACTOR_LIBRARY/03_RISK_FACTORS/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+      "line": 251,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./02_FACTOR_LIBRARY/01_METHODOLOGY/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+      "line": 262,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./05_IMPLEMENTATION/02_DEVELOPMENT/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+      "line": 273,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./05_IMPLEMENTATION/04_OPERATIONS/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "line": 30,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./02_ALPHA_FACTORS/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "line": 31,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./03_RISK_FACTORS/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "line": 32,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./04_DATA_SOURCE/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "line": 33,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./05_BACKTEST/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "line": 34,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./06_ARCHIVE/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "line": 35,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./10_MANUAL/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+      "line": 93,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./IC验证记录/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+      "line": 94,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./回测报告/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+      "line": 95,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./版本追踪/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+      "line": 96,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./血缘追踪/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+      "line": 97,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "./相关性矩阵/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 45,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/03_DEPLOYMENT/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 65,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "06_ARCHIVE/main/BLUEPRINTS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 110,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/00_INDEX/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 111,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/01_METHODOLOGY/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 113,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/03_RISK_FACTORS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 114,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/04_DATA_SOURCE/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 115,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/05_BACKTEST/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 116,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 117,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "02_FACTOR_LIBRARY/07_MONITORING/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 125,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 127,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "03_TRADING_TACTICS/03_ADVANCED_TACTICS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 128,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "03_TRADING_TACTICS/04_YOUZI_STRATEGIES/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 135,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "04_EXECUTION/01_EVENT_ENGINE/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 136,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "04_EXECUTION/02_TRADE_EXECUTOR/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 137,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "04_EXECUTION/03_MONITORING/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 144,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/01_QUICKSTART/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 145,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/02_DEVELOPMENT/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 146,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/03_DEPLOYMENT/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 147,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/04_OPERATIONS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 154,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "06_ARCHIVE/main/v4_development/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 155,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "06_ARCHIVE/over_engineered/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 162,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "07_RESEARCH/01_ENVIRONMENT/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 163,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "07_RESEARCH/02_EXPLORATORY_ANALYSIS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 164,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "07_RESEARCH/03_PATTERN_RECOGNITION/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 165,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "07_RESEARCH/04_EXPERIMENT_TRACKING/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 173,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "09_AUDIT/STANDARDS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 174,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "09_AUDIT/PROCEDURES/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 183,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/02_DEVELOPMENT/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 188,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/01_QUICKSTART/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 191,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/03_DEPLOYMENT/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 192,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "05_IMPLEMENTATION/04_OPERATIONS/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "line": 197,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "07_RESEARCH/04_EXPERIMENT_TRACKING/"
+    },
+    {
+      "file": "docs\\03_TRADING_TACTICS\\07_ORDER_GENERATION\\README.md",
+      "line": 237,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../04_EXECUTION/02_TRADE_EXECUTOR/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+      "line": 714,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "docs/05_IMPLEMENTATION/04_OPERATIONS/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 114,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../04_TECHNICAL_SPECS/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "line": 115,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../05_IMPLEMENTATION/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 132,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../04_DATA_SOURCE/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 133,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../05_BACKTEST/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 134,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../06_FACTOR_REGISTRY/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 167,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/03_TRADING_TACTICS/99_ARCHIVE/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 195,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../../04_TECHNICAL_SPECS/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 211,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../02_CORE_STRATEGIES/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 212,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../99_ARCHIVE/backtest/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 213,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../99_ARCHIVE/paper_trading/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 214,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../99_ARCHIVE/live_trading/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 215,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../99_ARCHIVE/review/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "line": 229,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "../02_CORE_STRATEGIES/"
+    },
+    {
+      "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "line": 409,
+      "action": "remove",
+      "reason": "目标目录不存在",
+      "link": "file:///D:/ZephyrAlpha/docs/08_USER_EXPERIENCE/"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md",
+      "line": 326,
+      "action": "comment",
+      "reason": "图片文件不存在",
+      "link": "ic_series.png"
+    },
+    {
+      "file": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+      "line": 150,
+      "action": "comment",
+      "reason": "图片文件不存在",
+      "link": "path/to/ic_plot.png"
+    }
+  ],
+  "results": {
+    "total": 272,
+    "by_action": {
+      "removed": 270,
+      "commented": 2
+    },
+    "by_file": {
+      "DOCUMENT_AUDIT_v5.1.md": 11,
+      "docs\\00_RESOURCES\\README.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md": 7,
+      "docs\\02_FACTOR_LIBRARY\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md": 2,
+      "docs\\02_FACTOR_LIBRARY\\SITEMAP.md": 6,
+      "docs\\02_FACTOR_LIBRARY\\00_INDEX\\factor_classification_summary.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_QUALITY.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\factor_monitoring.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md": 1,
+      "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md": 1,
+      "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md": 2,
+      "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md": 1,
+      "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md": 1,
+      "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md": 5,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-c.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md": 4,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md": 4,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md": 5,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md": 5,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-j.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-k.md": 1,
+      "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-l.md": 1,
+      "docs\\03_TRADING_TACTICS\\05_STRATEGY_POOL\\index.md": 1,
+      "docs\\04_EXECUTION\\03_MONITORING\\README.md": 1,
+      "docs\\04_EXECUTION\\04_AI_COMMITTEE\\README.md": 1,
+      "docs\\04_EXECUTION\\06_SIMULATION\\README.md": 5,
+      "docs\\05_IMPLEMENTATION\\BLUEPRINT.md": 1,
+      "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md": 6,
+      "docs\\05_IMPLEMENTATION\\README.md": 4,
+      "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\dev-setup.md": 1,
+      "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\factor_design.md": 1,
+      "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\first-backtest.md": 1,
+      "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\README.md": 1,
+      "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md": 2,
+      "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md": 6,
+      "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\VERSION_MANAGEMENT_STANDARD.md": 1,
+      "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md": 4,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md": 8,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md": 3,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md": 1,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md": 7,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md": 16,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md": 3,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md": 4,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md": 4,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md": 1,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md": 1,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md": 1,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md": 3,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md": 2,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md": 4,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md": 1,
+      "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md": 2,
+      "docs\\06_ARCHIVE\\strategy_pool.md": 2,
+      "docs\\06_ARCHIVE\\system_enhancement_manual.md": 2,
+      "docs\\06_ARCHIVE\\tactics_manual.md": 2,
+      "docs\\06_ARCHIVE\\technical_documentation.md": 3,
+      "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md": 4,
+      "docs\\06_ARCHIVE\\main\\README.md": 1,
+      "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md": 1,
+      "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md": 1,
+      "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md": 2,
+      "docs\\09_AUDIT\\INDEX_AUDIT.md": 24,
+      "docs\\09_AUDIT\\README.md": 3,
+      "docs\\09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md": 1,
+      "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md": 2,
+      "docs\\design\\data_consistency\\补偿事务设计文档.md": 1,
+      "docs\\module_designs\\layer_1\\L1_CLEANER.md": 1,
+      "docs\\module_designs\\layer_1\\L1_NORMALIZER.md": 1,
+      "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md": 1,
+      "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md": 1,
+      "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md": 1,
+      "scripts\\README.md": 1,
+      "docs\\00_OVERVIEW\\README.md": 3,
+      "docs\\02_FACTOR_LIBRARY\\FAQ.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md": 6,
+      "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md": 5,
+      "docs\\03_TRADING_TACTICS\\INDEX.md": 32,
+      "docs\\03_TRADING_TACTICS\\07_ORDER_GENERATION\\README.md": 1,
+      "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md": 1,
+      "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md": 1
+    },
+    "details": [
+      {
+        "file": "DOCUMENT_AUDIT_v5.1.md",
+        "fixes": 11,
+        "status": "success"
+      },
+      {
+        "file": "docs\\00_RESOURCES\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+        "fixes": 7,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\SITEMAP.md",
+        "fixes": 6,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\factor_classification_summary.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_QUALITY.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\factor_monitoring.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+        "fixes": 5,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-c.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+        "fixes": 5,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+        "fixes": 5,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-j.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-k.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-l.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\05_STRATEGY_POOL\\index.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\04_EXECUTION\\03_MONITORING\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\04_EXECUTION\\04_AI_COMMITTEE\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+        "fixes": 5,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\BLUEPRINT.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\MODULE_DESIGN_TEMPLATE.md",
+        "fixes": 6,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\README.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\dev-setup.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\factor_design.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\first-backtest.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+        "fixes": 6,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\VERSION_MANAGEMENT_STANDARD.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+        "fixes": 8,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+        "fixes": 3,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+        "fixes": 7,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+        "fixes": 16,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+        "fixes": 3,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
+        "fixes": 3,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\strategy_pool.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\tactics_manual.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\technical_documentation.md",
+        "fixes": 3,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+        "fixes": 4,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\main\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+        "fixes": 24,
+        "status": "success"
+      },
+      {
+        "file": "docs\\09_AUDIT\\README.md",
+        "fixes": 3,
+        "status": "success"
+      },
+      {
+        "file": "docs\\09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "fixes": 2,
+        "status": "success"
+      },
+      {
+        "file": "docs\\design\\data_consistency\\补偿事务设计文档.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "scripts\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\00_OVERVIEW\\README.md",
+        "fixes": 3,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\FAQ.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+        "fixes": 6,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+        "fixes": 5,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\INDEX.md",
+        "fixes": 32,
+        "status": "success"
+      },
+      {
+        "file": "docs\\03_TRADING_TACTICS\\07_ORDER_GENERATION\\README.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md",
+        "fixes": 1,
+        "status": "success"
+      },
+      {
+        "file": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+        "fixes": 1,
+        "status": "success"
+      }
+    ]
+  }
+}

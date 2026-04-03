@@ -1,0 +1,26 @@
+{
+  "file_path": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md",
+  "overall_score": 18.335714285714285,
+  "risk_level": "极高风险 (P0)",
+  "recommendation": "[FAIL] 技术方案不可行，建议重新设计或选择替代方案",
+  "technical_maturity": {
+    "technology_stack_stability": 6.0,
+    "community_activity": 0.0,
+    "documentation_completeness": 2.5,
+    "total_score": 8.5
+  },
+  "team_skill_match": {
+    "existing_skill_coverage": 5.0,
+    "learning_curve_steepness": 1.6666666666666665,
+    "training_resource_availability": 1.4285714285714284,
+    "total_score": 14.761904761904763
+  },
+  "implementation_complexity": {
+    "architecture_complexity": 1.4285714285714284,
+    "integration_complexity": 3.75,
+    "maintenance_complexity": 5.0,
+    "testing_complexity": 1.4285714285714284,
+    "total_score": 28.392857142857142
+  },
+  "assessment_timestamp": "2026-04-02"
+}

@@ -1,19 +1,24 @@
 ---
-module_id: DATA_PIPELINE_001
-version: 1.0
+module_id: FACTOR_BLUEPRINT_003
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-28
-layer: Layer 0
-index: DAT_001
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: README.md
+implementation_status: 设计阶段
+implementation_progress: 0%
 ---
+
 
 # 数据流水线蓝图
 
 > 清风量化系统 v5.0 的数据流水线架构
 > **索引**: `DAT_001`
 
----
 
 ## 1. 设计原则
 
@@ -24,7 +29,6 @@ index: DAT_001
 | 可重放 | 支持历史数据重新处理 |
 | 分层缓存 | 热/温/冷数据分级存储 |
 
----
 
 ## 2. 数据流水线架构
 
@@ -77,7 +81,6 @@ index: DAT_001
 | 新闻文本 | 实时 | 文件+DB | 2年 | 财经新闻 |
 | 宏观数据 | 日级 | DB | 永久 | GDP、CPI |
 
----
 
 ## 3. 核心模块设计
 
@@ -349,7 +352,6 @@ class DataService:
         return results
 ```
 
----
 
 ## 4. 数据质量监控
 
@@ -420,7 +422,6 @@ class DataQualityChecker:
 | 缺失值比例 | <0.1% | >1% |
 | 异常值比例 | <0.01% | >0.1% |
 
----
 
 ## 5. 数据API接口
 
@@ -489,7 +490,6 @@ class DataAPI:
         """批量获取OHLCV数据"""
 ```
 
----
 
 ## 6. 存储策略
 
@@ -545,7 +545,6 @@ retention:
     risk_factors: 5years
 ```
 
----
 
 ## 7. 集成接口
 
@@ -571,7 +570,6 @@ retention:
 | BacktestEngine | get_historical_data() | 获取历史数据 |
 | PerformanceAnalyzer | get_trading_data() | 获取交易数据 |
 
----
 
 ## 8. 更新记录
 
@@ -580,7 +578,6 @@ retention:
 | v1.1 | 2026-03-29 | 新增新闻舆情LLM处理方案 |
 | v1.0 | 2026-03-28 | 初始版本 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `DAT_001`

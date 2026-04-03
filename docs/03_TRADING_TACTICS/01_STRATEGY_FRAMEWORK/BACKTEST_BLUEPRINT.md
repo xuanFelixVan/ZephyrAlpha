@@ -1,13 +1,17 @@
 ---
-module_id: BACKTEST_001
-version: 1.0
+module_id: TACTICS_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 5 (回测层)
-index: STRAT.001
-estimated_hours: 35h
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
 ---
+
 
 # Backtrader回测蓝图
 
@@ -16,7 +20,6 @@ estimated_hours: 35h
 > **开发时间**: 35h
 > **核心定位**: 实现"策略 → Backtrader回测 → 绩效分析 → Optuna优化"的完整回测闭环
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +30,6 @@ estimated_hours: 35h
 | **成本真实** | 手续费、滑点、冲击成本全部模拟 |
 | **Optuna优化** | 使用Optuna进行参数优化 |
 
----
 
 ## 2. Backtrader集成架构
 
@@ -68,7 +70,6 @@ estimated_hours: 35h
 8. 报告生成 ← 7. 参数优化 ← 6. 结果分析 ← 5. 结果输出
 ```
 
----
 
 ## 3. 核心实现
 
@@ -265,7 +266,6 @@ class MeanReversionStrategy(BaseStrategy):
                 self.order = self.sell()
 ```
 
----
 
 ## 4. 回测引擎
 
@@ -419,7 +419,6 @@ class OptunaOptimizer:
         )
 ```
 
----
 
 ## 5. 绩效分析
 
@@ -486,7 +485,6 @@ class PerformanceAnalyzer:
 """
 ```
 
----
 
 ## 6. API接口
 
@@ -524,7 +522,6 @@ class BacktestAPI:
         """获取回测结果"""
 ```
 
----
 
 ## 7. 开发任务分解
 
@@ -539,3 +536,18 @@ class BacktestAPI:
 | 回测引擎 | 6h | BacktestEngine |
 | Optuna集成 | 4h | 参数优化 |
 | 绩效分析 | 4h | empyrical/PyFolio |
+
+
+## 8. 相关文档
+
+| 文档 | 说明 |
+|------|------|
+| [overview.md](./overview.md) | 策略体系概述 |
+| [lifecycle.md](./lifecycle.md) | 策略生命周期管理 |
+| [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝图 |
+| [API_Contract.md](../API_Contract.md) | 系统API契约 |
+
+
+**文档版本**: v1.0  
+**最后更新**: 2026-04-01  
+**维护者**: 策略研发中心

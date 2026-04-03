@@ -1,15 +1,22 @@
 ---
-module_id: BACKTEST_STRUCTURE
-version: 1.0
+module_id: FACTOR_DOC_001
+version: 1.0.0
 status: Active
-last_updated: 2026-03-28
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 05_BACKTEST 目录重组方案
 
 > 分离因子IC验证 vs 策略回测报告
 
----
 
 ## 新目录结构
 
@@ -20,11 +27,11 @@ last_updated: 2026-03-28
 │   ├── README.md
 │   ├── ALPHA_001-014_趋势类_IC.md
 │   ├── ALPHA_015-026_均值回归类_IC.md
-│   ├── ALPHA_027-037_价值类_IC.md
+│   ├── ALPHA_027-037_value_factors_IC.md
 │   ├── ALPHA_038-047_成长类_IC.md
 │   ├── ALPHA_048-064_质量类_IC.md
-│   ├── PE_TTM_IC_20260328.md          # 迁移自此处
-│   └── 相关性矩阵_20260328.md         # 迁移自此处
+│   ├── PE_TTM_IC.md          # 迁移自此处
+│   └── correlation_matrix.md         # 迁移自此处
 │
 └── strategy_reports/                  # 策略回测报告
     ├── README.md
@@ -38,7 +45,6 @@ last_updated: 2026-03-28
     └── ...
 ```
 
----
 
 ## 迁移计划
 
@@ -57,13 +63,13 @@ touch strategy_reports/README.md
 ### 第二步：迁移因子IC报告
 
 **源文件**:
-- `05_BACKTEST/价值类/PE_TTM_IC_20260328.md` → `ic_reports/PE_TTM_IC_20260328.md`
-- `05_BACKTEST/相关性矩阵_20260328.md` → `ic_reports/相关性矩阵_20260328.md`
+- `05_BACKTEST/value_factors/PE_TTM_IC.md` → `ic_reports/PE_TTM_IC.md`
+- `05_BACKTEST/correlation_matrix.md` → `ic_reports/correlation_matrix.md`
 
 **新增文件**:
 - `ic_reports/ALPHA_001-014_趋势类_IC.md`
 - `ic_reports/ALPHA_015-026_均值回归类_IC.md`
-- `ic_reports/ALPHA_027-037_价值类_IC.md`
+- `ic_reports/ALPHA_027-037_value_factors_IC.md`
 - `ic_reports/ALPHA_038-047_成长类_IC.md`
 - `ic_reports/ALPHA_048-064_质量类_IC.md`
 
@@ -75,7 +81,6 @@ touch strategy_reports/README.md
 - `strategy_reports/S003_VALUE_INVESTING/`
 - ...
 
----
 
 ## 文件说明
 
@@ -109,7 +114,6 @@ touch strategy_reports/README.md
 
 **示例**: `S001_TREND_FOLLOW/backtest_20260328.md`
 
----
 
 ## 关键区别
 
@@ -121,20 +125,18 @@ touch strategy_reports/README.md
 | **频率** | 因子更新时验证 | 策略运行后验证 |
 | **位置** | `ic_reports/` | `strategy_reports/` |
 
----
 
 ## 迁移检查清单
 
 - [ ] 创建 `ic_reports/` 目录
 - [ ] 创建 `strategy_reports/` 目录
-- [ ] 迁移 `PE_TTM_IC_20260328.md` 到 `ic_reports/`
-- [ ] 迁移 `相关性矩阵_20260328.md` 到 `ic_reports/`
+- [ ] 迁移 `PE_TTM_IC.md` 到 `ic_reports/`
+- [ ] 迁移 `correlation_matrix.md` 到 `ic_reports/`
 - [ ] 创建 `ic_reports/README.md`
 - [ ] 创建 `strategy_reports/README.md`
 - [ ] 更新 `02_FACTOR_LIBRARY/00_INDEX/README.md`
 - [ ] 更新 `System_Manifest.md`
 - [ ] 更新 `CHANGELOG.md`
 
----
 
 **版本**: 1.0 | **更新**: 2026-03-28

@@ -1,3 +1,15 @@
+---
+standard_type: 技术文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+owner: 文档维护者
+version: 1.0.0
+module_id: DOC_DOCUMENT_AUDIT_V5.1
+created_date: 2026-03-31
+last_updated: 2026-04-02
+---
 # 清风量化系统 v5.1 文档审查报告
 
 > **审查时间**: 2026-03-31
@@ -237,11 +249,11 @@ Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_
 
 | 引用文档 | 引用路径 | 状态 |
 |----------|----------|------|
-| `docs/00_OVERVIEW/README.md` | `[SPEC.md](../SPEC.md)` | ❌ 不存在 |
-| `docs/03_TRADING_TACTICS/99_ARCHIVE/*.md` | `[SPEC.md](../../SPEC.md)` | ❌ 不存在 |
-| `docs/02_FACTOR_LIBRARY/03_RISK_FACTORS/*.md` | `[SPEC.md](../../../../SPEC.md)` | ❌ 不存在 |
-| `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/*.md` | `[SPEC.md](../SPEC.md)` | ❌ 不存在 |
-| `docs/03_TRADING_TACTICS/05_STRATEGY_POOL/index.md` | `[SPEC.md](../SPEC.md)` | ❌ 不存在 |
+| `docs/00_OVERVIEW/README.md` | `` | ❌ 不存在 |
+| `docs/03_TRADING_TACTICS/99_ARCHIVE/*.md` | `` | ❌ 不存在 |
+| `docs/02_FACTOR_LIBRARY/03_RISK_FACTORS/*.md` | `` | ❌ 不存在 |
+| `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/*.md` | `` | ❌ 不存在 |
+| `docs/03_TRADING_TACTICS/05_STRATEGY_POOL/index.md` | `` | ❌ 不存在 |
 
 **解决方案**:
 ```bash
@@ -258,8 +270,8 @@ Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_
 
 | 引用文档 | 引用路径 | 状态 |
 |----------|----------|------|
-| `docs/00_OVERVIEW/README.md` | `[CODE_STATUS.md](../CODE_STATUS.md)` | ❌ 不存在 |
-| `docs/03_TRADING_TACTICS/02_TACTICS_MERGED/README.md` | `[CODE_STATUS.md](../../CODE_STATUS.md)` | ❌ 不存在 |
+| `docs/00_OVERVIEW/README.md` | `` | ❌ 不存在 |
+| `docs/03_TRADING_TACTICS/02_TACTICS_MERGED/README.md` | `` | ❌ 不存在 |
 
 **解决方案**:
 ```bash
@@ -313,10 +325,10 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 **错误链接**：
 ```markdown
-| **数据宇宙** | 数据源、数据质量 | [04_DATA_SOURCE](../04_DATA_SOURCE/) |
-| **回测结果** | IC 报告、回测报告 | [05_BACKTEST](../05_BACKTEST/) |
-| **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](../06_FACTOR_REGISTRY/) |
-| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_MONITORING](../07_MONITORING/) |
+| **数据宇宙** | 数据源、数据质量 |  |
+| **回测结果** | IC 报告、回测报告 |  |
+| **因子注册** | 因子注册表、元数据 |  |
+| **监控中心** | 实时监控、月度报告、AI因子管家 |  |
 ```
 
 **问题分析**：
@@ -325,10 +337,10 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 **正确路径应为**：
 ```markdown
-| **数据宇宙** | 数据源、数据质量 | [04_DATA_SOURCE](04_DATA_SOURCE/) |
-| **回测结果** | IC 报告、回测报告 | [05_BACKTEST](05_BACKTEST/) |
-| **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](06_FACTOR_REGISTRY/) |
-| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_FACTOR_MONITORING](07_FACTOR_MONITORING/) |
+| **数据宇宙** | 数据源、数据质量 | [04_DATA_SOURCE](docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/) |
+| **回测结果** | IC 报告、回测报告 | [05_BACKTEST](docs/02_FACTOR_LIBRARY/05_BACKTEST/) |
+| **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](docs/02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/) |
+| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_FACTOR_MONITORING](docs/02_FACTOR_LIBRARY/07_FACTOR_MONITORING/) |
 ```
 
 ---
@@ -886,7 +898,7 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 **错误引用**：
 ```markdown
-| [System_Manifest.md](../docs/System_Manifest.md) | 系统清单 |
+| [System_Manifest.md](docs/02_FACTOR_LIBRARY/System_Manifest.md) | 系统清单 |
 ```
 
 **问题分析**：

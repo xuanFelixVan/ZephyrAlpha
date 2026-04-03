@@ -1,16 +1,22 @@
 ---
-module_id: STRAT_S001
-version: 1.0
-status: Draft
-last_updated: 2026-03-28
-dependencies: [DataHub, FactorCalculator, RiskManager]
+module_id: TACTICS_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: INDEX.md
+implementation_status: 进行中
 ---
+
 
 # Strategy_Spec_S001.md - 均线趋势跟踪策略
 
 > 基于双均线交叉的趋势追踪策略
 
----
 
 ## 1. 策略逻辑描述
 
@@ -30,7 +36,6 @@ dependencies: [DataHub, FactorCalculator, RiskManager]
 | 市场状态 | 趋势市（排除震荡市） |
 | 风险等级 | 中等 |
 
----
 
 ## 2. 信号计算公式
 
@@ -58,7 +63,6 @@ $$Confidence = \frac{|MA_5 - MA_{20}|}{MA_{20}} \times 100\%$$
 - 置信度 1%-2% 时，信号强度为"中"
 - 置信度 < 1% 时，信号强度为"弱"
 
----
 
 ## 3. 伪代码验证
 
@@ -105,7 +109,6 @@ print(f"Signal: {signal}, Confidence: {confidence:.2%}")
 # 预期输出: Signal: BUY, Confidence: 0.91%
 ```
 
----
 
 ## 4. 输入输出规范
 
@@ -134,7 +137,6 @@ print(f"Signal: {signal}, Confidence: {confidence:.2%}")
 }
 ```
 
----
 
 ## 5. 风险控制
 
@@ -158,7 +160,6 @@ $$TakeProfit = EntryPrice \times (1 + TakeProfitRatio)$$
 | 中（1%-2%） | 50% |
 | 弱（<1%） | 25% |
 
----
 
 ## 6. 异常处理
 
@@ -191,7 +192,6 @@ if price_change > 10%:  # 单根K线涨跌>10%
     log_alert("Circuit breaker triggered")
 ```
 
----
 
 ## 7. 回测验证标准
 
@@ -203,7 +203,6 @@ if price_change > 10%:  # 单根K线涨跌>10%
 | 盈亏比 | > 1.5 | 平均盈利/平均亏损 |
 | 年化收益 | > 15% | 年均收益率 |
 
----
 
 ## 8. 参数说明
 
@@ -215,7 +214,6 @@ if price_change > 10%:  # 单根K线涨跌>10%
 | 止盈比例 | 5% | 3%-10% | 单笔目标收益 |
 | 最大仓位 | 100% | 50%-100% | 单个策略最大仓位 |
 
----
 
 ## 9. 注意事项
 
@@ -224,16 +222,14 @@ if price_change > 10%:  # 单根K线涨跌>10%
 - ⚠️ 参数需要根据不同标的进行优化
 - ⚠️ 需要定期回测验证，至少每月一次
 
----
 
 ## 10. 相关文档
 
 | 文档 | 说明 |
 |------|------|
-| [API_Contract.md](../API_Contract.md) | 接口规范 |
+| [API_Contract.md](API_Contract.md) | 接口规范 |
 | [02_ALPHA_FACTORS/](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS/) | 因子库 |
 | [05_BACKTEST/](../02_FACTOR_LIBRARY/05_BACKTEST/) | 回测报告 |
 
----
 
 **版本**: 1.0 | **更新**: 2026-03-28 | **状态**: Draft

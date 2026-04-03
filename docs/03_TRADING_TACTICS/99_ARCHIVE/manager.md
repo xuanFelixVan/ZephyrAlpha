@@ -1,9 +1,23 @@
+---
+module_id: TACTICS_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 策略池管理器
 
 > 策略池核心管理器
 >
 > **配套文档**：
-> - 主文档：[SPEC.md](../SPEC.md)
+> - 主文档：[../../INDEX.md](../INDEX.md)
 > - 策略接口标准：[interface-standard.md](./interface-standard.md)
 
 ***

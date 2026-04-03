@@ -1,5 +1,5 @@
 """
-清风量化交易系统 v5.0
+清风量化交易系统 v5.1
 功能模块
 """
 from src.modules.factor_calculator import FactorCalculator, FactorResult
@@ -12,6 +12,7 @@ from src.modules.risk_manager import (
     RiskLevel,
 )
 from src.modules.alert_manager import AlertManager, Alert, AlertLevel
+from src.modules.data_hub import DataHub, IDataHub, get_default_datahub
 
 __all__ = [
     "FactorCalculator",
@@ -25,4 +26,7 @@ __all__ = [
     "AlertManager",
     "Alert",
     "AlertLevel",
+    "DataHub",
+    "IDataHub",
+    "get_default_datahub",
 ]

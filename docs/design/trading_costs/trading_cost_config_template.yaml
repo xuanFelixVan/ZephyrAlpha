@@ -1,0 +1,456 @@
+# 清风量化系统 - A股交易成本配置模板
+# 版本: 1.0.0
+# 创建日期: 2026-04-02
+# 描述: A股交易成本详细配置，支持券商费率、阶梯费率、免税品种等
+
+version: "1.0"
+description: "A股交易成本详细配置模板"
+
+cost_config:
+  # ============================================
+  # 1. 佣金配置
+  # ============================================
+  commission:
+    # 基础佣金率（万三）
+    base_rate: 0.0003
+    
+    # 最低佣金（元）
+    min_amount: 5.0
+    
+    # 最高佣金（可选，null表示无上限）
+    max_amount: null
+    
+    # 阶梯佣金率（按成交金额分段）
+    tiered_rates:
+      # 阈值1：100万以下
+      - threshold: 1000000
+        rate: 0.0003
+        min_amount: null  # 可选：该阶梯的最低收费
+        max_amount: null  # 可选：该阶梯的最高收费
+        description: "100万以下，万三费率"
+      
+      # 阈值2：100-500万
+      - threshold: 5000000
+        rate: 0.00025
+        description: "100-500万，万2.5费率"
+      
+      # 阈值3：500万以上（null表示无上限）
+      - threshold: null
+        rate: 0.0002
+        description: "500万以上，万二费率"
+    
+    # 免佣金证券类别
+    exempt_categories:
+      - "MONEY_FUND"       # 货币基金
+      - "TREASURY_REPO"    # 国债回购
+    
+    # 其他佣金规则
+    rules:
+      - name: "双向收取"
+        description: "买入和卖出都收取佣金"
+        enabled: true
+  
+  # ============================================
+  # 2. 印花税配置
+  # ============================================
+  stamp_tax:
+    # 印花税率（千一）
+    rate: 0.001
+    
+    # 仅卖出时收取
+    on_sell_only: true
+    
+    # 免税证券类别
+    exempt_categories:
+      - "ETF"                # ETF基金
+      - "BOND"              # 债券
+      - "TREASURY_BOND"     # 国债
+      - "CONVERTIBLE_BOND"  # 可转债
+      - "FUND"              # 基金
+      - "WARRANT"           # 权证
+      - "OPTION"            # 期权
+    
+    # 最低印花税（元，通常为0）
+    min_amount: 0.0
+    
+    # 特殊规则
+    special_rules:
+      - name: "ETF免印花税"
+        description: "所有ETF交易免收印花税"
+        enabled: true
+      - name: "债券免印花税"
+        description: "债券交易免收印花税"
+        enabled: true
+  
+  # ============================================
+  # 3. 过户费配置
+  # ============================================
+  transfer_fee:
+    # 沪市过户费率（万0.1，按面额计算）
+    sh_rate: 0.00001
+    
+    # 深市过户费率（万0.2，按成交金额计算）
+    sz_rate: 0.00002
+    
+    # 最低过户费（元）
+    min_amount: 1.0
+    
+    # 沪市按面额计算，深市按成交金额计算
+    sh_calc_by_par: true
+    sz_calc_by_par: false
+    
+    # 默认面值（元/股）
+    default_par_value: 1.0
+    
+    # 免过户费证券类别
+    exempt_categories:
+      - "BOND"              # 债券
+      - "FUND"              # 基金
+      - "MONEY_FUND"        # 货币基金
+    
+    # 市场特定规则
+    market_rules:
+      # 沪市规则
+      - market: "SH"
+        calculation_method: "par_value"
+        description: "沪市按面额计算：股数×面值×费率"
+      
+      # 深市规则
+      - market: "SZ"
+        calculation_method: "amount"
+        description: "深市按成交金额计算：金额×费率"
+  
+  # ============================================
+  # 4. 规费配置
+  # ============================================
+  regulatory_fees:
+    # 总规费率（万0.2）
+    total_rate: 0.00002
+    
+    # 规费组成明细
+    components:
+      交易经手费:
+        rate: 0.000012
+        description: "交易所收取的交易经手费"
+        agency: "交易所"
+      
+      证管费:
+        rate: 0.000002
+        description: "证监会收取的证管费"
+        agency: "证监会"
+      
+      证券结算风险基金:
+        rate: 0.000006
+        description: "证券结算风险基金"
+        agency: "中国结算"
+    
+    # 免规费证券类别
+    exempt_categories:
+      - "BOND"              # 债券
+      - "BOND_REPO"         # 债券回购
+      - "TREASURY_BOND"     # 国债
+    
+    # 双向收取
+    charged_on_both_sides: true
+    
+    # 最低规费（通常为0）
+    min_amount: 0.0
+  
+  # ============================================
+  # 5. 滑点成本配置
+  # ============================================
+  slippage:
+    # 基础滑点率（0.02%）
+    base_rate: 0.0002
+    
+    # 最大滑点率限制（1%）
+    max_rate: 0.01
+    
+    # 启用动态滑点计算
+    dynamic_calculation: true
+    
+    # 滑点因子配置
+    factors:
+      # 流动性因子
+      liquidity:
+        enabled: true
+        thresholds:
+          - daily_volume: 10000000  # >1000万，高流动性
+            factor: 0.5
+            description: "高流动性股票，滑点减少50%"
+          
+          - daily_volume: 1000000   # 100-1000万，中等流动性
+            factor: 1.0
+            description: "中等流动性股票，标准滑点"
+          
+          - daily_volume: 0         # <100万，低流动性
+            factor: 2.0
+            description: "低流动性股票，滑点增加100%"
+      
+      # 波动率因子
+      volatility:
+        enabled: true
+        thresholds:
+          - volatility: 0.03       # 高波动率（>3%）
+            factor: 1.5
+            description: "高波动率股票，滑点增加50%"
+          
+          - volatility: 0.015      # 中等波动率（1.5%-3%）
+            factor: 1.2
+            description: "中等波动率股票，滑点增加20%"
+          
+          - volatility: 0.0        # 低波动率（<1.5%）
+            factor: 0.8
+            description: "低波动率股票，滑点减少20%"
+      
+      # 订单大小因子
+      order_size:
+        enabled: true
+        base_avg_trade_size: 10000  # 基础平均成交额（股）
+        thresholds:
+          - multiple: 10            # 订单 > 10倍平均成交额
+            factor: 1.5
+            description: "大单，滑点增加50%"
+          
+          - multiple: 5             # 订单 5-10倍平均成交额
+            factor: 1.2
+            description: "中等单，滑点增加20%"
+          
+          - multiple: 0             # 订单 < 5倍平均成交额
+            factor: 1.0
+            description: "小单，标准滑点"
+      
+      # 时间因子
+      time:
+        enabled: true
+        periods:
+          # 开盘时段（9:00-9:30）
+          - start: "09:00"
+            end: "09:30"
+            factor: 1.5
+            description: "开盘时段，滑点增加50%"
+          
+          # 收盘时段（14:30-15:00）
+          - start: "14:30"
+            end: "15:00"
+            factor: 1.5
+            description: "收盘时段，滑点增加50%"
+          
+          # 午间时段（11:30-13:00）
+          - start: "11:30"
+            end: "13:00"
+            factor: 0.8
+            description: "午间时段，滑点减少20%"
+          
+          # 正常交易时段
+          - start: "09:30"
+            end: "11:30"
+            factor: 1.0
+            description: "正常交易时段，标准滑点"
+          
+          - start: "13:00"
+            end: "14:30"
+            factor: 1.0
+            description: "正常交易时段，标准滑点"
+  
+  # ============================================
+  # 6. 计算精度与舍入规则
+  # ============================================
+  calculation:
+    # 精度（小数位数）
+    precision: 2
+    
+    # 舍入方法
+    rounding_method: "ROUND"  # 可选值：ROUND（四舍五入）、CEIL（向上取整）、FLOOR（向下取整）
+    
+    # 人民币最小单位（分）
+    min_currency_unit: 0.01
+    
+    # 金额显示格式
+    display_format: "{:.2f}"
+    
+    # 百分比显示格式
+    percentage_format: "{:.4%}"
+  
+  # ============================================
+  # 7. 缓存配置
+  # ============================================
+  cache:
+    # 启用缓存
+    enabled: true
+    
+    # 缓存过期时间（秒）
+    ttl: 300
+    
+    # 最大缓存条目数
+    max_entries: 1000
+    
+    # 缓存键生成策略
+    key_generation: "order_based"  # 可选值：order_based、symbol_based、market_based
+    
+    # 缓存清理策略
+    cleanup:
+      strategy: "LRU"  # 最近最少使用
+      interval: 60     # 清理间隔（秒）
+  
+  # ============================================
+  # 8. 性能优化配置
+  # ============================================
+  performance:
+    # 批量计算最大数量
+    batch_size: 100
+    
+    # 并发计算线程数
+    concurrency: 4
+    
+    # 预计算配置
+    precomputation:
+      enabled: false
+      symbols: []  # 预计算的股票代码列表
+      
+    # 内存限制（MB）
+    memory_limit: 256
+    
+    # 计算超时（秒）
+    timeout: 5
+  
+  # ============================================
+  # 9. 日志与监控配置
+  # ============================================
+  logging:
+    # 日志级别
+    level: "INFO"  # 可选值：DEBUG, INFO, WARNING, ERROR
+    
+    # 日志文件路径
+    file_path: "logs/trading_costs.log"
+    
+    # 日志格式
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    
+    # 启用详细成本日志
+    detailed_cost_logging: true
+    
+    # 审计日志
+    audit:
+      enabled: true
+      file_path: "logs/cost_audit.log"
+      retention_days: 30
+  
+  # ============================================
+  # 10. 验证规则
+  # ============================================
+  validation:
+    # 费率范围验证
+    rate_ranges:
+      commission_rate:
+        min: 0.0002
+        max: 0.003
+        description: "佣金率应在0.02%-0.3%之间"
+      
+      stamp_tax_rate:
+        min: 0.001
+        max: 0.001
+        description: "印花税率为固定的0.1%"
+      
+      sh_transfer_rate:
+        min: 0.00001
+        max: 0.00001
+        description: "沪市过户费率为固定的0.001%"
+      
+      sz_transfer_rate:
+        min: 0.00002
+        max: 0.00002
+        description: "深市过户费率为固定的0.002%"
+    
+    # 阶梯费率验证
+    tiered_rate_validation:
+      # 阈值必须递增
+      require_increasing_thresholds: true
+      
+      # 最后一个阶梯阈值必须为null
+      require_last_null: true
+      
+      # 费率必须递减或保持不变
+      require_non_increasing_rates: true
+    
+    # 业务规则验证
+    business_rules:
+      - rule: "min_commission <= max_commission if max_commission is not null"
+        description: "最低佣金不能高于最高佣金"
+        severity: "ERROR"
+      
+      - rule: "min_transfer_fee >= 0"
+        description: "最低过户费不能为负数"
+        severity: "ERROR"
+      
+      - rule: "precision >= 0 and precision <= 4"
+        description: "精度应在0-4位小数之间"
+        severity: "WARNING"
+
+# ============================================
+# 配置使用说明
+# ============================================
+
+# 使用示例:
+# 
+# 1. 加载配置:
+#     import yaml
+#     with open("trading_cost_config_template.yaml", "r") as f:
+#         config = yaml.safe_load(f)
+#     cost_config = config["cost_config"]
+# 
+# 2. 创建成本计算器:
+#     from cost_calculator import CostCalculator, CostConfig
+#     calculator = CostCalculator(CostConfig(**cost_config))
+# 
+# 3. 计算成本:
+#     order = OrderInfo(symbol="000001.SZ", side="BUY", quantity=10000, price=10.0, market="SZ", category="STOCK")
+#     result = calculator.calculate_total_cost(order)
+#     print(f"总成本: {result.total_cost:.2f}元")
+#     print(f"佣金: {result.commission:.2f}元")
+#     print(f"印花税: {result.stamp_tax:.2f}元")
+#     print(f"过户费: {result.transfer_fee:.2f}元")
+#     print(f"规费: {result.regulatory_fees:.2f}元")
+#     print(f"滑点: {result.slippage:.2f}元")
+#     print(f"成本占比: {result.as_percentage:.4%}")
+# 
+# 4. 获取费用明细:
+#     breakdown = result.breakdown
+#     for cost_type, amount in breakdown.items():
+#         print(f"{cost_type}: {amount:.2f}元")
+
+# 配置更新说明:
+# 
+# 1. 费率更新:
+#     - 修改commission.base_rate更新佣金率
+#     - 修改stamp_tax.rate更新印花税率
+#     - 修改transfer_fee.sh_rate/sz_rate更新过户费率
+#     - 修改regulatory_fees.total_rate更新规费率
+# 
+# 2. 阶梯费率更新:
+#     - 修改commission.tiered_rates添加/删除/修改阶梯
+#     - 每个阶梯需要threshold和rate字段
+#     - 最后一个阶梯threshold应为null
+# 
+# 3. 免税类别更新:
+#     - 在各费用的exempt_categories中添加/删除证券类别
+#     - 证券类别值参考SecurityCategory枚举
+# 
+# 4. 滑点模型更新:
+#     - 修改slippage.base_rate更新基础滑点率
+#     - 修改slippage.factors中各因子的thresholds调整动态滑点计算
+#     - 禁用不需要的因子：设置enabled: false
+# 
+# 5. 性能优化:
+#     - 调整cache.ttl和max_entries优化缓存性能
+#     - 调整performance.concurrency优化并发计算
+#     - 启用precomputation.enabled进行预计算优化
+
+# 注意事项:
+# 
+# 1. 所有费率都以小数形式表示（如0.0003表示0.03%）
+# 2. 金额单位均为人民币元
+# 3. 数量单位为股
+# 4. 时间格式为24小时制HH:MM
+# 5. 证券类别必须使用预定义的枚举值
+# 6. 配置修改后建议运行验证工具检查配置有效性

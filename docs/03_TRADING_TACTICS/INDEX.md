@@ -1,285 +1,249 @@
 ---
-module_id: TRADING_TACTICS_INDEX_001
-version: 1.0
+module_id: DOC_DOC_001
+version: 5.1.0
 status: Active
-last_updated: 2026-03-28
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: INDEX.md
+implementation_status: 进行中
 ---
 
-# 交易策略索引
 
-> 清风量化系统 v5.0 的120个交易策略导航
+# 文档主索引
 
----
+> 清风量化系统 v5.1 精简文档导航（个人开发版）
+>
+> **文档职责说明**:
+> - **INDEX.md**: 快速入口（5分钟导航），聚焦核心文档和常用路径
+> - **SITEMAP.md**: 完整地图（深度参考），提供全面目录结构和按用途路线
+>
+> ⭐ 完整文档地图请查看 [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
+>
+> **快速入口**: ⭐ 推荐阅读 [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) 了解完整系统蓝图
 
-## 策略总览
 
-| 分类 | 策略数 | 说明 |
-|------|--------|------|
-| 趋势跟踪 | 30个 | S001-S030 |
-| 均值回归 | 25个 | S031-S055 |
-| 价值投资 | 20个 | S056-S075 |
-| 成长投资 | 15个 | S076-S090 |
-| 质量因子 | 15个 | S091-S105 |
-| 技术面 | 10个 | S106-S115 |
-| 情绪面 | 5个 | S116-S120 |
+## 🎯 快速入口
 
-**总计**: 120个策略
+### 我是新手
+→ [00_OVERVIEW/README.md](../../README.md) - 系统总览（5分钟）
 
----
+### 我要理解架构
+→ [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 清风量化系统蓝图（推荐）
+→ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-8统一架构
 
-## 已实现的策略
+### 我要开发策略
+→ [Strategy_Spec_S001.md](Strategy_Spec_S001.md) - 策略模板（30分钟）
 
-### S001: 均线趋势跟踪策略 ✅
+### 我要查因子
+→ [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - 因子索引（10分钟）
 
-**文件**: [Strategy_Spec_S001.md](../Strategy_Spec_S001.md)
+### 我要部署系统
+→  - 部署指南（20分钟）
 
-**逻辑**:
-- 快线(20日) > 慢线(50日) → 买入
-- 快线 < 慢线 → 卖出
-- 风险控制: 止损5%、止盈15%
+### 我遇到问题
+→ [FAQ.md](../02_FACTOR_LIBRARY/FAQ.md) - 常见问题（5分钟）
 
-**状态**: 完成度 100%
+### 我要审计系统
+→ [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - 审计门户（5分钟）
 
-**回测结果**: 
-- 年化收益: 18.5%
-- 夏普比率: 1.2
-- 最大回撤: 12%
 
----
+## ⭐ 核心文档（必读）
 
-## 待实现的策略
+| 文档 | 用途 | 阅读时间 |
+|------|------|----------|
+| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | ⭐ 清风量化系统蓝图（合并版） | 30分钟 |
+| [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 | 30分钟 |
+| [AI_Permissions.md](../08_AI_GOVERNANCE/AI_Permissions.md) | AI权限清单 | 10分钟 |
+| [API_Contract.md](API_Contract.md) | 模块接口契约 | 15分钟 |
+| [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | 策略逻辑白皮书 | 30分钟 |
+| [BLUEPRINT_CHECKLIST.md](../09_AUDIT/BLUEPRINT_CHECKLIST.md) | 蓝图完整性检查清单 | 20分钟 |
 
-### 趋势跟踪类 (S002-S030)
+> **说明**: 7个蓝图文档已合并为 ，原始文档归档于 
 
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S002 | 双均线MACD | MACD金叉/死叉 | 🔴 P0 |
-| S003 | 布林带突破 | 价格突破布林带 | 🔴 P0 |
-| S004 | 唐奇安通道 | 20日高点/低点突破 | 🟡 P1 |
-| S005 | 动量因子 | ROC > 阈值 | 🟡 P1 |
-| ... | ... | ... | ... |
-| S030 | 多周期趋势 | 日周月三周期共振 | 🟠 P2 |
 
----
+## 🤖 AI自主量化系统（终极目标）
 
-### 均值回归类 (S031-S055)
+> 核心: AI判断市场 → AI选择策略 → AI调整风控 → 人仅授权
 
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S031 | 配对交易 | 相关性高的两只股票 | 🔴 P0 |
-| S032 | 统计套利 | Z-score > 2 | 🔴 P0 |
-| S033 | 均值回归 | 价格偏离均值 | 🟡 P1 |
-| ... | ... | ... | ... |
-| S055 | 多因子均值回归 | 多个因子共同作用 | 🟠 P2 |
+### 开发规划
 
----
-
-### 价值投资类 (S056-S075)
-
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S056 | PE低估 | PE < 行业平均 | 🔴 P0 |
-| S057 | PB低估 | PB < 1.0 | 🔴 P0 |
-| S058 | 股息率 | 股息率 > 3% | 🟡 P1 |
-| ... | ... | ... | ... |
-| S075 | 多因子价值 | PE、PB、股息综合 | 🟠 P2 |
-
----
-
-### 成长投资类 (S076-S090)
-
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S076 | 营收增长 | 营收同比增长 > 20% | 🔴 P0 |
-| S077 | 利润增长 | 净利润同比增长 > 30% | 🔴 P0 |
-| S078 | ROE增长 | ROE > 15% | 🟡 P1 |
-| ... | ... | ... | ... |
-| S090 | 多因子成长 | 营收、利润、ROE综合 | 🟠 P2 |
-
----
-
-### 质量因子类 (S091-S105)
-
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S091 | 低波动 | 波动率 < 20% | 🔴 P0 |
-| S092 | 高质量 | 毛利率 > 30% | 🔴 P0 |
-| S093 | 低杠杆 | 负债率 < 50% | 🟡 P1 |
-| ... | ... | ... | ... |
-| S105 | 多因子质量 | 波动、毛利、杠杆综合 | 🟠 P2 |
-
----
-
-### 技术面类 (S106-S115)
-
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S106 | RSI超卖 | RSI < 30 | 🔴 P0 |
-| S107 | KDJ金叉 | K线穿过D线 | 🔴 P0 |
-| S108 | 成交量突增 | 成交量 > 平均2倍 | 🟡 P1 |
-| ... | ... | ... | ... |
-| S115 | 多指标共振 | RSI、KDJ、MACD共同作用 | 🟠 P2 |
-
----
-
-### 情绪面类 (S116-S120)
-
-| ID | 策略名 | 核心逻辑 | 优先级 |
-|----|----|----|----|
-| S116 | 涨停板 | 涨停板突破 | 🔴 P0 |
-| S117 | 跌停板 | 跌停板反弹 | 🔴 P0 |
-| S118 | 龙虎榜 | 龙虎榜出现 | 🟡 P1 |
-| S119 | 融资余额 | 融资余额变化 | 🟡 P1 |
-| S120 | 市场情绪 | VIX指数 | 🟠 P2 |
-
----
-
-## 策略框架
-
-### 策略生命周期
-
-```
-研究阶段 → 回测阶段 → 模拟阶段 → 实盘阶段 → 优化阶段 → 退役阶段
-```
-
-### 策略文档模板
-
-每个策略需要包含:
-
-1. **策略逻辑** (3句话说清楚)
-2. **数学公式** (LaTeX格式)
-3. **Python伪代码** (可执行框架)
-4. **风险控制** (止损、止盈、头寸)
-5. **回测结果** (年化收益、夏普比率、最大回撤)
-6. **参数优化** (参数范围、最优参数)
-7. **实盘表现** (实际收益、风险指标)
-
----
-
-## 策略开发计划
-
-### P0 - 立即开发（本周）
-
-**趋势跟踪类**:
-- S002: 双均线MACD
-- S003: 布林带突破
-
-**均值回归类**:
-- S031: 配对交易
-- S032: 统计套利
-
-**价值投资类**:
-- S056: PE低估
-- S057: PB低估
-
-**预计时间**: 20小时
-
----
-
-### P1 - 本月开发
-
-**成长投资类**:
-- S076: 营收增长
-- S077: 利润增长
-
-**质量因子类**:
-- S091: 低波动
-- S092: 高质量
-
-**技术面类**:
-- S106: RSI超卖
-- S107: KDJ金叉
-
-**预计时间**: 25小时
-
----
-
-### P2 - 下月开发
-
-**情绪面类**:
-- S116: 涨停板
-- S117: 跌停板
-
-**多因子策略**:
-- S030: 多周期趋势
-- S055: 多因子均值回归
-- S075: 多因子价值
-- S090: 多因子成长
-- S105: 多因子质量
-- S115: 多指标共振
-
-**预计时间**: 30小时
-
----
-
-## 策略性能对标
-
-### 行业基准
-
-| 指标 | 目标 | 说明 |
+| 文档 | 用途 | 索引 |
 |------|------|------|
-| 年化收益 | > 15% | 超过沪深300 |
-| 夏普比率 | > 1.0 | 风险调整后收益 |
-| 最大回撤 | < 20% | 风险控制 |
-| 胜率 | > 50% | 交易成功率 |
-| 盈亏比 | > 1.5 | 平均盈利/平均亏损 |
+| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | 清风量化系统蓝图 | - |
+| [06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md](../06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md) | 阶段性开发路线图 (Phase 0-6) | DEV.001 |
+| [06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md](../06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md) | AI研究Agent核心架构 | AI.AGENT.001 |
 
----
 
-## 策略组合
 
-### 推荐组合 (多策略融合)
 
-**保守组合** (风险低):
-- S001: 均线趋势跟踪 (40%)
-- S056: PE低估 (30%)
-- S091: 低波动 (30%)
+## 📁 文档地图
 
-**平衡组合** (风险中):
-- S001: 均线趋势跟踪 (30%)
-- S031: 配对交易 (25%)
-- S056: PE低估 (25%)
-- S091: 低波动 (20%)
+### 00_OVERVIEW - 系统总览
 
-**激进组合** (风险高):
-- S002: 双均线MACD (25%)
-- S003: 布林带突破 (25%)
-- S032: 统计套利 (25%)
-- S106: RSI超卖 (25%)
+| 文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 系统总览 |
+| [DATA_FLOW.md](../00_OVERVIEW/DATA_FLOW.md) | 数据流图 |
+| [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | 版本历史（已合并） |
 
----
+### 01_FRAMEWORK - 框架定义
 
-## 策略评估标准
+| 文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 框架文档索引 |
+| [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-8统一架构 |
+| [MODULE_DESIGN_TEMPLATE.md](../05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) | 模块设计模板 |
+| [MODULE_DESIGN_PLAN.md](../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md) | 模块设计计划 |
+| [MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) | 市场状态识别 |
+| [HUMAN_AI_FLOW.md](../01_FRAMEWORK/HUMAN_AI_FLOW.md) | 人机协作流程 |
+| [TECH_STACK.md](../01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 |
 
-### 回测评估
+### 02_FACTOR_LIBRARY - 因子库 (v5.0架构)
 
-- ✅ 年化收益 > 15%
-- ✅ 夏普比率 > 1.0
-- ✅ 最大回撤 < 20%
-- ✅ 胜率 > 50%
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 因子库总览 |
+|  | 因子分类导航 |
+|  | 因子研究方法论 |
+| [02_ALPHA_FACTORS_INDEX.md](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) | 87个Alpha因子索引 |
+|  | 46个风险因子 |
+|  | 数据源说明 |
+|  | 回测报告 |
+|  | 因子注册 |
+|  | 监控中心 |
 
-### 模拟评估
+### 03_TRADING_TACTICS - 交易策略
 
-- ✅ 实际收益与回测偏差 < 10%
-- ✅ 风险指标稳定
-- ✅ 无重大故障
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 策略池总览 |
+| [INDEX.md](INDEX.md) | 策略索引 |
+|  | 策略框架 |
+| [STRATEGY_ENGINE_BLUEPRINT.md](01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝图 |
+|  | 高级战术 |
+|  | 游资策略 |
 
-### 实盘评估
+### 04_EXECUTION - 执行引擎
 
-- ✅ 连续盈利 > 3个月
-- ✅ 风险指标在预期范围内
-- ✅ 客户满意度 > 80%
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 执行总览 |
+|  | 事件驱动引擎 |
+|  | 交易执行 |
+|  | 监控模块 |
 
----
+### 05_IMPLEMENTATION - 实施指南
 
-## 策略文档位置
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 实施指南总览 |
+|  | 快速开始（5分钟） |
+|  | 开发规范 |
+|  | 部署指南 |
+|  | 运维手册 |
 
-- 策略规格: `03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/`
-- 策略代码: `src/modules/strategies/`
-- 回测报告: `02_FACTOR_LIBRARY/05_BACKTEST/strategy_reports/`
-- 实盘记录: `logs/trading/`
+### 06_ARCHIVE - 归档
 
----
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 归档说明 |
+|  | v4.0开发文档（精简后2个） |
+|  | 过度工程化文档 |
 
-**最后更新**: 2026-03-28  
+### 07_RESEARCH - AI研究
+
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 研究总览 |
+|  | 研究环境 |
+|  | 探索性分析 |
+|  | 模式识别 |
+|  | 实验追踪 |
+
+### 09_AUDIT - 系统治理审计
+
+| 目录/文档 | 说明 |
+|------|------|
+| [README.md](../../README.md) | 审计体系总览 |
+| [INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) | 审计门户首页 |
+|  | 审计标准 |
+|  | 审计程序 |
+
+
+## 🔍 按用途查找
+
+### 策略开发者
+1. [Strategy_Spec_S001.md](Strategy_Spec_S001.md) - 策略模板
+2. [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - 因子库
+3. [03_TRADING_TACTICS/](./) - 策略参考
+4.  - 开发规范
+
+### 系统构建
+1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 清风量化系统蓝图
+2. [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - 统一架构
+3.  - 快速开始
+
+### 运维
+1.  - 部署指南
+2.  - 运维手册
+3. [FAQ.md](../02_FACTOR_LIBRARY/FAQ.md) - 常见问题
+
+### AI研究
+1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AI研究框架（见第六章）
+2.  - 实验追踪
+3. [KNOWLEDGE_MANAGEMENT.md](../02_FACTOR_LIBRARY/KNOWLEDGE_MANAGEMENT.md) - 知识管理
+
+### 系统审计员
+1. [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - 审计门户首页
+2. [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - 审计标准
+3. [09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md) - AI审计指南
+
+
+## 📊 文档统计
+
+- **总文档数**: ~80+（精简后）
+- **核心文档**: 5个（必读）
+- **一级目录**: 8个
+- **因子数**: 133个（87 Alpha + 46 Risk）
+- **策略数**: 120个（S001-S120）
+
+
+## 📋 其他重要文档
+
+| 文档 | 说明 | 用途 |
+|------|------|------|
+| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | 清风量化系统蓝图（合并版） | 完整蓝图参考 |
+| [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | 版本变更日志 | 版本控制参考 |
+| [VERSIONING.md](../05_IMPLEMENTATION/VERSIONING.md) | 版本管理规范 | 版本控制参考 |
+| [CODE_EXAMPLES.md](../05_IMPLEMENTATION/CODE_EXAMPLES.md) | 代码示例 | 开发参考 |
+| [HANDOVER.md](../02_FACTOR_LIBRARY/HANDOVER.md) | 交接文档 | 项目交接参考 |
+| [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) | 实验追踪 | AI研究参考 |
+| [DOCUMENT_AUDIT_v5.1.md](../../DOCUMENT_AUDIT_v5.1.md) | 文档审查报告 | 文档治理参考 |
+
+### 因子库补充文档
+
+| 文档 | 说明 |
+|------|------|
+| [02_FACTOR_LIBRARY/99_AUDIT_REPORT.md](../02_FACTOR_LIBRARY/99_AUDIT_REPORT.md) | 因子库审计报告 |
+| [02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md](../02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md) | 因子优化总结 |
+
+### 交易策略补充文档
+
+| 文档 | 说明 |
+|------|------|
+| [03_TRADING_TACTICS/OPTIMIZATION_REPORT.md](OPTIMIZATION_REPORT.md) | 策略优化报告 |
+| [03_TRADING_TACTICS/REFACTOR_COMPLETE.md](REFACTOR_COMPLETE.md) | 重构完成报告 |
+
+
+## 📖 完整地图
+
+如需完整文档结构，请查看 [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
+
+
+**最后更新**: 2026-03-31
 **维护者**: 清风量化系统
+**版本**: v5.1 个人开发精简版

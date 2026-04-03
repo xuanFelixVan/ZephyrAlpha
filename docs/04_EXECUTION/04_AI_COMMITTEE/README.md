@@ -1,3 +1,17 @@
+---
+module_id: EXECUTION_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构交易执行标准
+applicable_scope: 交易执行与监控
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # AI委员会系统
 
 > 战略决策中心、参数调优、风险预算调整
@@ -74,7 +88,7 @@ class AICommittee:
 
 ## 3. 战略决策中心
 
-详见: [详细接口文档](./AI_COMMITTEE_DETAIL.md)
+详见: 
 
 ---
 

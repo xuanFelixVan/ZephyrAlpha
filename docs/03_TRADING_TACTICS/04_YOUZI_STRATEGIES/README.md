@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_README_001
+version: 2.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 ﻿# 游资策略库
 
 > 中国游资心法与量化策略集成
@@ -172,11 +186,11 @@
 
 | 需求 | 推荐策略 | 文档位置 |
 |------|----------|----------|
-| **新手入门** | S017 半路拦截 | [./chao-gu-yang-jia/S017.md](./chao-gu-yang-jia/S017.md) |
-| **追求高收益** | S011 超强涨停 | [./asking/S011.md](./asking/S011.md) |
-| **稳健型** | S018 二分法 | [./chao-gu-yang-jia/S018.md](./chao-gu-yang-jia/S018.md) |
-| **情绪交易** | S021 情绪周期 | [./chao-gu-yang-jia/S021.md](./chao-gu-yang-jia/S021.md) |
-| **龙头战法** | S022 龙头战法 | [./chao-gu-yang-jia/S022.md](./chao-gu-yang-jia/S022.md) |
+| **新手入门** | S017 半路拦截 |  |
+| **追求高收益** | S011 超强涨停 |  |
+| **稳健型** | S018 二分法 |  |
+| **情绪交易** | S021 情绪周期 |  |
+| **龙头战法** | S022 龙头战法 |  |
 
 ---
 

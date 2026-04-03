@@ -1,3 +1,17 @@
+---
+module_id: ARCHIVE_REPORT_001
+version: 5.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构审计标准
+applicable_scope: 全系统质量监控
+compliance_level: 审计标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 清风量化系统 v5.0 完整文档审计报告
 
 > **审查日期**: 2026-03-30
@@ -114,7 +128,7 @@ docs/                      # ✅ 正确：所有文档
 
 | 文件 | 原位置 | 应在位置 | 状态 |
 |------|--------|----------|------|
-| `迅投QMT极速策略交易系统说明文档.pdf` | 根目录 | docs/04_EXECUTION/ | ✅ 已修复 |
+| `xuntou_qmt_trading_system_documentation.pdf` | 根目录 | docs/04_EXECUTION/ | ✅ 已修复 |
 
 **结论**: 主要漂移问题已修复
 
@@ -283,7 +297,7 @@ docs/05_IMPLEMENTATION/README.md
 docs/05_IMPLEMENTATION/99_ARCHIVE/migration_guide_v1.md
 docs/06_ARCHIVE/main/CHANGELOG.md
 docs/06_ARCHIVE/main/UPGRADE_REPORT.md
-docs/06_ARCHIVE/旧文档分析报告_清风量化交易系统4.0开发粗稿_backup.md
+docs/06_ARCHIVE/旧文档分析报告_qingfeng_v4_draft_backup.md
 docs/03_TRADING_TACTICS/INDEX.md
 ```
 

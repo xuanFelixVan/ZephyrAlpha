@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 安全规范 (SECURITY.md)
 
 > 本文档定义了清风量化交易系统4.0的安全规范，包括敏感信息管理、权限控制、API密钥保护等安全相关的标准和最佳实践。

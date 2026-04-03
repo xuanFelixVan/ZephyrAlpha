@@ -1,13 +1,18 @@
 ---
-module_id: SIMULATION_001
-version: 1.0
+module_id: EXECUTION_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-28
-layer: Layer 5
-index: SIM_001
-note: 整合现有模拟交易设计，简化架构
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 设计阶段
+implementation_progress: 0%
 ---
+
 
 # 模拟交易蓝图（简化版）
 
@@ -15,7 +20,6 @@ note: 整合现有模拟交易设计，简化架构
 > **索引**: `SIM_001`
 > **说明**: 整合现有TradeExecutor模块，简化模拟交易设计
 
----
 
 ## 1. 设计原则
 
@@ -25,7 +29,6 @@ note: 整合现有模拟交易设计，简化架构
 | 真实市场模拟 | 模拟撮合尽可能接近实盘 |
 | 完整日志 | 所有交易记录完整保存，便于复盘 |
 
----
 
 ## 2. 模拟交易架构
 
@@ -67,7 +70,6 @@ note: 整合现有模拟交易设计，简化架构
 | Account | 真实账户 | SimulatedAccount |
 | 数据源 | 实时行情 | 历史/实时数据 |
 
----
 
 ## 3. 核心模块设计
 
@@ -274,7 +276,6 @@ class VolumeBasedSlippage(SlippageModel):
             return self.base_slippage
 ```
 
----
 
 ## 4. 模拟交易流程
 
@@ -367,7 +368,6 @@ class SimulationEngine:
         return int(self.account.cash * 0.1 / signal.price)  # 10%仓位
 ```
 
----
 
 ## 5. 交易成本模型
 
@@ -402,7 +402,6 @@ cost_model:
         multiplier: 1
 ```
 
----
 
 ## 6. 模拟交易报告
 
@@ -449,7 +448,6 @@ cost_model:
 {position_analysis}
 ```
 
----
 
 ## 7. 与现有模块集成
 
@@ -483,15 +481,61 @@ engine = TradingEngine(
 )
 ```
 
----
 
 ## 8. 更新记录
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
+| v1.1 | 2026-04-01 | 添加多引擎架构扩展说明 |
 
----
+
+## 9. 多引擎架构扩展
+
+本蓝图（简化版）为基础设计，系统已扩展为**多引擎架构**，支持三种主流开源交易引擎：
+
+### 9.1 多引擎架构概览
+
+| 引擎 | 角色定位 | 与本蓝图的关系 |
+|------|----------|----------------|
+| **vn.py** | 生产级主引擎 | 本蓝图的**生产级实现**，提供完整A股模拟交易 |
+| **RQAlpha** | 专业回测引擎 | **增强回测能力**，提供专业级策略验证 |
+| **Backtrader** | 功能补充引擎 | **扩展功能支持**，多资产、高级订单类型 |
+
+### 9.2 架构演进
+
+1. **基础设计（本蓝图）**：
+   - 简化版模拟交易架构
+   - 核心模块：SimulatedBroker、OrderMatcher、SimulatedAccount
+   - 与现有TradeExecutor集成
+
+2. **多引擎扩展**：
+   - 统一接口层：抽象引擎接口，支持多引擎
+   - 适配器模式：每个引擎实现统一接口
+   - 动态切换：运行时选择最佳引擎
+   - 故障转移：主引擎失败时自动切换
+
+### 9.3 设计原则继承
+
+多引擎架构继承了本蓝图的核心设计原则：
+- ✅ **复用现有模块**：继续复用TradeExecutor、RiskManager等模块
+- ✅ **真实市场模拟**：各引擎都提供真实市场模拟能力
+- ✅ **完整日志**：统一日志记录，便于复盘分析
+
+### 9.4 完整多引擎设计
+
+详细的多引擎架构设计、接口定义、配置管理、实施路线图详见：
+**[MULTI_ENGINE_BLUEPRINT.md](MULTI_ENGINE_BLUEPRINT.md)**
+
+该文档包含：
+- 三引擎详细设计（vn.py、RQAlpha、Backtrader）
+- 统一接口层设计与实现
+- 引擎工厂与多引擎协同器
+- 动态切换策略与故障转移
+- 性能对比测试方案
+- 三阶段实施路线图
+
 
 **维护者**: 清风量化系统
-**索引**: `SIM_001`
+**索引**: `SIM_001` → `SIM_002` (多引擎扩展)
+**关联文档**: [MULTI_ENGINE_BLUEPRINT.md](MULTI_ENGINE_BLUEPRINT.md)

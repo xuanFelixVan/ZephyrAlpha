@@ -1,6 +1,18 @@
-# 清风量化交易系统 v5.0
+---
+standard_type: 技术文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+owner: 文档维护者
+version: 1.0.0
+module_id: DOC_README
+created_date: 2026-03-28
+last_updated: 2026-04-02
+---
+# 清风量化交易系统 v5.1
 
-> 专业级量化交易系统 - 个人开发者适配版
+> 清风量化系统 v5.1 - 专业级量化交易系统（个人开发者适配版）
 
 ---
 
@@ -31,11 +43,11 @@ python -m src.main
 
 | 文档 | 说明 |
 |------|------|
-| [docs/BLUEPRINT.md](docs/BLUEPRINT.md) | 系统蓝图 |
-| [docs/INDEX.md](docs/INDEX.md) | 文档索引 |
-| [docs/API_Contract.md](docs/API_Contract.md) | 接口规范 |
-| [docs/Strategy_Spec_S001.md](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略定义 |
-| [docs/FAQ.md](docs/FAQ.md) | 常见问题 |
+| [系统蓝图](docs/05_IMPLEMENTATION/BLUEPRINT.md) | 系统蓝图 |
+| [文档索引](docs/03_TRADING_TACTICS/INDEX.md) | 文档索引 |
+| [接口规范](docs/03_TRADING_TACTICS/API_Contract.md) | 接口规范 |
+| [策略定义](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略定义 |
+| [常见问题](docs/02_FACTOR_LIBRARY/FAQ.md) | 常见问题 |
 
 ---
 
@@ -84,7 +96,7 @@ ZephyrAlpha/
 - **文档中心**: [docs/](docs/)
 - **因子库**: [docs/02_FACTOR_LIBRARY/](docs/02_FACTOR_LIBRARY/)
 - **策略池**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
-- **变更日志**: [docs/CHANGELOG.md](docs/CHANGELOG.md)
+- **变更日志**: [docs/06_ARCHIVE/CHANGELOG.md](docs/06_ARCHIVE/CHANGELOG.md)
 
 ---
 

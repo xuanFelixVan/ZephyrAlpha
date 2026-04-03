@@ -1,13 +1,17 @@
 ---
-module_id: FACTOR_LIBRARY_001
-version: 1.0
+module_id: FACTOR_DOC_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 2 (因子层)
-index: DATA.003
-estimated_hours: 25h
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 因子库对接蓝图
 
@@ -16,7 +20,6 @@ estimated_hours: 25h
 > **开发时间**: 25h
 > **核心定位**: 实现"因子定义 → 计算 → 验证 → 存储 → 查询"的完整因子生命周期管理
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +30,6 @@ estimated_hours: 25h
 | **IC验证** | 因子入库前必须通过IC验证 |
 | **版本管理** | 因子版本完整记录 |
 
----
 
 ## 2. 因子架构
 
@@ -86,7 +88,6 @@ class Factor:
         }
 ```
 
----
 
 ## 3. 核心因子库
 
@@ -214,7 +215,6 @@ class PriceVolumeFactor:
         )
 ```
 
----
 
 ## 4. 因子验证
 
@@ -323,11 +323,10 @@ class ValidationResult:
 | IC衰减 | {self.ic_decay:.2%} | {self.thresholds['decay_max']} | {'✅' if self.ic_decay <= self.thresholds['decay_max'] else '❌'} |
 
 ## IC时序
-![IC时序图](ic_series.png)
+![IC时序图] (已移除: ic_series.png)
 """
 ```
 
----
 
 ## 5. 因子存储
 
@@ -394,7 +393,6 @@ class FactorRepository:
         return [Factor(**row) for row in rows]
 ```
 
----
 
 ## 6. API接口
 
@@ -441,7 +439,6 @@ class FactorAPI:
         """获取因子值"""
 ```
 
----
 
 ## 7. 开发任务分解
 

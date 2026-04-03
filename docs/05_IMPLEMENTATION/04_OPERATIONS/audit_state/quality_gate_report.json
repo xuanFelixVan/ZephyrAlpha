@@ -1,0 +1,36 @@
+{
+  "summary": {
+    "check_time": "2026-04-02T03:17:28.240508",
+    "total_files": 1,
+    "passed_files": 1,
+    "failed_files": 0,
+    "pass_rate": 100.0,
+    "total_issues": 0,
+    "total_warnings": 0,
+    "total_suggestions": 0
+  },
+  "results": [
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\09_RISK_RULES\\BLUEPRINT.md",
+      "check_time": "2026-04-02T03:17:28.240494",
+      "passed": true,
+      "p0_checks": {
+        "metadata_complete": true,
+        "version_format": true,
+        "module_id_unique": true
+      },
+      "p1_checks": {
+        "recommended_metadata": true,
+        "internal_links": true,
+        "classification": true
+      },
+      "p2_checks": {
+        "document_structure": true,
+        "code_examples": true
+      },
+      "issues": [],
+      "warnings": [],
+      "suggestions": []
+    }
+  ]
+}

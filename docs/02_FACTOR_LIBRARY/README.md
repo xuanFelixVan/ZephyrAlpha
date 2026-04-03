@@ -1,9 +1,23 @@
-# 02_FACTOR_LIBRARY - 因子库 (v5.0)
+---
+module_id: FACTOR_README_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# 02_FACTOR_LIBRARY - 因子库 (v5.1)
 
 > 清风量化交易系统的核心因子库，采用专业量化机构标准构建
 >
-> **版本**: v5.0
-> **更新日期**: 2026-03-29
+> **版本**: v5.2
+> **更新日期**: 2026-04-01
 > **状态**: 活跃
 
 ---
@@ -16,17 +30,19 @@
 | **方法论** | IC 分析、回测标准、因子定义 | [01_METHODOLOGY](01_METHODOLOGY/README.md) |
 | **Alpha因子** | Alpha 因子详细说明 | [02_ALPHA_FACTORS](02_ALPHA_FACTORS/) |
 | **风险因子** | 风险因子、Barra 模型 | [03_RISK_FACTORS](03_RISK_FACTORS/) |
-| **数据宇宙** | 数据源、数据质量 | [04_DATA_SOURCE](../04_DATA_SOURCE/) |
-| **回测结果** | IC 报告、回测报告 | [05_BACKTEST](../05_BACKTEST/) |
-| **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](../06_FACTOR_REGISTRY/) |
-| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_MONITORING](../07_FACTOR_MONITORING/) |
+| **数据宇宙** | 数据源、数据质量 | [04_DATA_SOURCE](./04_DATA_SOURCE/) |
+| **回测结果** | IC 报告、回测报告 | [05_BACKTEST](./05_BACKTEST/) |
+| **集成架构** | 因子库与回测集成蓝图 | [FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md](./FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) |
+| **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](./06_FACTOR_REGISTRY/) |
+| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_FACTOR_MONITORING](./07_FACTOR_MONITORING/) |
 
 ---
 
-## 新增内容 (2026-03-30)
+## 新增内容 (2026-04-01)
 
 | 文档 | 说明 | 链接 |
 |------|------|------|
+| **因子库与回测集成蓝图** | 专业架构设计、开源模块集成、实施路径 | [FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md](./FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) |
 | **因子管理标准** | 专业机构做法（分层/IC阈值/生命周期） | [01_METHODOLOGY](01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) |
 | **因子筛选策略** | 5900因子筛选到20-30个有效因子 | [01_METHODOLOGY](01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md) |
 | **AI因子管家** | 全自动因子管理（发现/淘汰/报告） | [07_FACTOR_MONITORING](07_FACTOR_MONITORING/AI_FACTOR_AGENT.md) |
@@ -35,21 +51,22 @@
 
 ## 架构说明
 
-### v5.0 目录结构
+### v5.1 目录结构
 
 ```
 02_FACTOR_LIBRARY/
+├── FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md  # 因子库与回测集成蓝图 (新增)
 ├── 00_GOVERNANCE/           # 因子治理框架 (新增)
 │   └── README.md
 ├── 00_INDEX/               # 因子分类总表
 │   ├── README.md
-│   └── 因子分类总表.md
+│   └── factor_classification_summary.md
 ├── 01_METHODOLOGY/          # 研究方法论
 │   ├── README.md
 │   ├── FACTOR_MANAGEMENT_STANDARD.md  # ⭐ 专业机构做法 (v1.0)
 │   ├── FACTOR_SCREENING_STRATEGY.md  # ⭐ 5900因子筛选 (v1.0)
 │   ├── ic_analysis.md
-│   ├── factor_definition.md
+│   ├── T.02.FE001.factor_definition.md
 │   ├── factor_preprocessing.md
 │   ├── factor_neutralization.md
 │   ├── factor_return_analysis.md
@@ -59,10 +76,10 @@
 │   └── TECHNICAL_INDICATORS.md
 ├── 02_ALPHA_FACTORS/        # Alpha因子 (87个)
 │   └── (因子定义文件)
-├── 03_RISK_FACTORS/         # 风险因子 (46个)
-│   ├── 1_Barra风格因子.md
-│   ├── 2_行业因子.md
-│   └── 3_尾部风险因子.md
+├── 03_RISK_FACTORS/         # 风险因子 (46 个)
+│   ├── T.03.RF001.barra_style_factors.md
+│   ├── T.03.RF002.industry_factors.md
+│   └── T.03.RF003.tail_risk_factors.md
 ├── 04_DATA_SOURCE/          # 数据源
 │   ├── README.md
 │   ├── iFind/
@@ -96,9 +113,9 @@
 
 | 文档 | 说明 |
 |------|------|
-| [因子分类总表.md](00_INDEX/因子分类总表.md) | 所有因子分类索引 |
-| [因子注册表](../06_FACTOR_REGISTRY/factor_catalog.md) | 完整因子列表 |
-| [Alpha因子索引](../02_ALPHA_FACTORS_INDEX.md) | 87个Alpha因子详细说明 |
+| [因子分类总表.md](00_INDEX/factor_classification_summary.md) | 所有因子分类索引 |
+| [因子注册表](./06_FACTOR_REGISTRY/factor_catalog.md) | 完整因子列表 |
+| [Alpha因子索引](02_ALPHA_FACTORS_INDEX.md) | 87个Alpha因子详细说明 |
 
 ---
 
@@ -118,7 +135,7 @@
 按名称查询：因子注册表 → 搜索 "MA5"
 按表现查询：因子注册表 → 筛选 "IC_IR > 1.0"
 
-因子注册表: [06_FACTOR_REGISTRY/factor_catalog.md](../06_FACTOR_REGISTRY/factor_catalog.md)
+因子注册表: [06_FACTOR_REGISTRY/factor_catalog.md](./06_FACTOR_REGISTRY/factor_catalog.md)
 
 ### 3. 因子使用
 
@@ -164,7 +181,7 @@ factor_info = fl.get_factor_info("ALPHA_001")
 | 数据缺失率 | > 10% | 4 小时 |
 | IC 连续为负 | 10 日 | 24 小时 |
 
-监控报告: [07_MONITORING/factor_monitoring.md](../07_MONITORING/factor_monitoring.md)
+监控报告: [07_FACTOR_MONITORING/factor_monitoring.md](./07_FACTOR_MONITORING/factor_monitoring.md)
 
 ---
 
@@ -172,6 +189,8 @@ factor_info = fl.get_factor_info("ALPHA_001")
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
+| v5.2 | 2026-04-01 | 添加因子库与回测集成蓝图 |
+| v5.1 | 2026-03-31 | 版本同步至v5.1 |
 | v5.0 | 2026-03-29 | 同步 v5.0 目录结构 |
 | v4.0 | 2026-03-28 | 专业机构化重构 |
 | v3.2 | 2026-03-20 | 补充 THS_BD 指标 |
@@ -183,11 +202,11 @@ factor_info = fl.get_factor_info("ALPHA_001")
 
 - [治理框架](00_GOVERNANCE/README.md) - 因子治理、生命周期管理
 - [方法论](01_METHODOLOGY/README.md) - IC 分析、回测标准
-- [因子注册表](../06_FACTOR_REGISTRY/factor_catalog.md) - 完整因子列表
-- [监控报告](../07_MONITORING/README.md) - 日常监控、月度报告
+- [因子注册表](./06_FACTOR_REGISTRY/factor_catalog.md) - 完整因子列表
+- [监控报告](../../README.md) - 日常监控、月度报告
 
 ---
 
 **维护部门**: 清风量化因子治理委员会
-**最后更新**: 2026-03-29
-**版本**: v5.0
+**最后更新**: 2026-04-01
+**版本**: v5.2

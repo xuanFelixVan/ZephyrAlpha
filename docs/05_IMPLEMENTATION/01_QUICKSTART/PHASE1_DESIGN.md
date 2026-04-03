@@ -1,3 +1,17 @@
+---
+module_id: IMPL_DOC_001
+version: 5.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 实施标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # Phase 1 详细设计：Backtrader回测框架
 
 > 清风量化系统 v5.0 - 第一个可运行的回测框架

@@ -1,13 +1,17 @@
 ---
-module_id: DATA_ACQUISITION_001
-version: 1.0
+module_id: FACTOR_DOC_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 0 (数据源层)
-index: DATA.001
-estimated_hours: 35h
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 数据采集+清洗蓝图
 
@@ -16,7 +20,6 @@ estimated_hours: 35h
 > **开发时间**: 35h
 > **核心定位**: 实现"多数据源 → 自动采集 → 智能清洗 → 统一存储"的完整数据Pipeline
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +30,6 @@ estimated_hours: 35h
 | **异常自动处理** | 数据异常自动检测和处理 |
 | **断点可续** | 采集失败后从断点继续 |
 
----
 
 ## 2. 数据源架构
 
@@ -67,7 +69,6 @@ DATA_TYPES = {
 }
 ```
 
----
 
 ## 3. 核心实现
 
@@ -273,7 +274,6 @@ class DataQualityChecker:
         )
 ```
 
----
 
 ## 4. Prefect调度
 
@@ -336,7 +336,6 @@ def minute_data_collection_flow():
 | 财务采集 | 20:00 | 每日 | 盘后财务数据 |
 |指数采集 | 18:30 | 每日 | 收盘后指数 |
 
----
 
 ## 5. 数据存储
 
@@ -385,7 +384,6 @@ class DataStorage:
                 self.s3.save(data, f"ohlcv/{symbol}/{freq}")
 ```
 
----
 
 ## 6. API接口
 
@@ -437,7 +435,6 @@ class DataAPI:
         """获取股票列表"""
 ```
 
----
 
 ## 7. 监控指标
 
@@ -448,7 +445,6 @@ class DataAPI:
 | data_freshness | 数据新鲜度 | <30min |
 | storage_usage | 存储使用量 | <80% |
 
----
 
 ## 8. 开发任务分解
 
@@ -464,7 +460,6 @@ class DataAPI:
 | 存储模块 | 4h | Redis/PostgreSQL/Parquet |
 | API层 | 3h | REST API |
 
----
 
 ## 9. 更新记录
 
@@ -472,7 +467,6 @@ class DataAPI:
 |------|------|----------|
 | v1.0 | 2026-03-29 | 初始版本 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `DATA.001`

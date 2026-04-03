@@ -1,14 +1,17 @@
 ---
-module_id: DEV_API_001
-version: 1.0
+module_id: IMPL_API_001
+version: 1.0.0
 status: Active
-parent_doc: DEVELOPER_RULES.md
-last_updated: 2026-03-29
-layer: Layer 0 (基础设施层)
-index: DEV.API.001
-estimated_hours: 5h
-source: 源自4.0执行方案-模块级分析
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # API设计规范
 
@@ -17,7 +20,6 @@ source: 源自4.0执行方案-模块级分析
 > **开发时间**: 5h
 > **核心定位**: 统一模块间通信接口，确保系统各层模块能有效交互
 
----
 
 ## 1. API设计原则
 
@@ -50,7 +52,6 @@ source: 源自4.0执行方案-模块级分析
 └─────────────────────────────────────────────┘
 ```
 
----
 
 ## 2. 统一响应格式
 
@@ -121,7 +122,6 @@ class ErrorCode:
     AUTH_ERROR = 5003
 ```
 
----
 
 ## 3. 模块接口定义
 
@@ -378,7 +378,6 @@ class IRiskManager(ABC):
         pass
 ```
 
----
 
 ## 4. FastAPI路由设计
 
@@ -441,7 +440,6 @@ async def get_ohlcv(
         raise HTTPException(status_code=500, detail="内部错误")
 ```
 
----
 
 ## 5. 接口版本控制
 
@@ -473,7 +471,6 @@ class DataAPIV2:
         return result
 ```
 
----
 
 ## 6. 接口文档
 
@@ -517,7 +514,6 @@ def custom_openapi():
 app.openapi = custom_openapi
 ```
 
----
 
 ## 7. 上下接口映射
 
@@ -529,7 +525,6 @@ app.openapi = custom_openapi
 | RiskManager.check_order | StrategyEngine, TradeExecutor | Config, Positions | RISK.001 |
 | TradeExecutor.execute | StrategyEngine | Broker API | EXEC.001 |
 
----
 
 ## 8. 开发任务分解(5h)
 
@@ -540,7 +535,6 @@ app.openapi = custom_openapi
 | FastAPI路由 | 1.5h | REST API实现 |
 | 文档集成 | 0.5h | OpenAPI/Swagger配置 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `DEV.API.001`

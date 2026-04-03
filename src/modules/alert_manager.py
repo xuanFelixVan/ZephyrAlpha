@@ -2,7 +2,7 @@
 告警系统
 支持邮件、微信（Server酱）、Bark等告警方式
 
-Layer 6: 监控告警
+技术层次: Layer 6 - 监控告警层 | 业务架构: 三级时间框架融合架构
 
 性能优化:
     - 重试机制: 网络失败自动重试
@@ -182,6 +182,11 @@ class ServerChanAlertChannel(AlertChannel):
         for attempt in range(self.max_retries):
             try:
                 url = f"https://sctapi.ftqq.com/{self.sendkey}.send"
+                
+                # 安全验证：只允许http或https协议（防御性编程）
+                if not url.startswith(('http://', 'https://')):
+                    logger.error(f"Unsupported protocol in URL: {url}")
+                    return False
 
                 data = urllib.parse.urlencode({
                     "title": title,
@@ -194,7 +199,7 @@ class ServerChanAlertChannel(AlertChannel):
                     headers={"Content-Type": "application/x-www-form-urlencoded"}
                 )
 
-                with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                with urllib.request.urlopen(req, timeout=self.timeout) as response:  # nosec B310
                     result = json.loads(response.read().decode("utf-8"))
 
                 if result.get("code") == 0:
@@ -265,10 +270,15 @@ class BarkAlertChannel(AlertChannel):
         for attempt in range(self.max_retries):
             try:
                 url = f"{self.bark_url}/{urllib.parse.quote(title)}/{urllib.parse.quote(content)}"
+                
+                # 安全验证：只允许http或https协议
+                if not url.startswith(('http://', 'https://')):
+                    logger.error(f"Unsupported protocol in URL: {url}")
+                    return False
 
                 req = urllib.request.Request(url)
 
-                with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                with urllib.request.urlopen(req, timeout=self.timeout) as response:  # nosec B310
                     result = json.loads(response.read().decode("utf-8"))
 
                 if result.get("code") == 200:

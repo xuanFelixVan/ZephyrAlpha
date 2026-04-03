@@ -1,10 +1,24 @@
+---
+module_id: TACTICS_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 游资量化策略库 - 第五部分
 
 > 顶级游资交易思想量化提炼（五）
 >
 > **配套文档**：
-> - 主文档：[SPEC.md](../SPEC.md)
-> - 策略池索引：[index.md](./index.md)
+> - 主文档：
+> - 策略池索引：[index.md](../../05_STRATEGY_POOL/index.md)
 
 ***
 
@@ -1103,6 +1117,6 @@ class PremiumTheorySystem(BaseStrategy):
 
 | 战术模块 | 关联策略 |
 |---------|---------|
-| [T.00.MR001.市场趋势识别](../02_TACTICS/T.00.MR001.市场趋势识别.md) | S032/S035/S040 |
-| [T.01.SN001.资金流向](../02_TACTICS/T.01.SN001.资金流向.md) | S034/S036 |
-| [T.04.EX004.盘前计划与买入模式](../02_TACTICS/T.04.EX004.盘前计划与买入模式.md) | S033/S038/S039 |
+|  | S032/S035/S040 |
+|  | S034/S036 |
+|  | S033/S038/S039 |

@@ -1,0 +1,2118 @@
+{
+  "summary": {
+    "total_files": 256,
+    "total_batches": 9,
+    "batch_size": 30,
+    "priority_distribution": {
+      "P1": 6,
+      "P2": 139,
+      "P3": 110,
+      "P4": 1
+    }
+  },
+  "batches": [
+    {
+      "batch_number": 1,
+      "files": [
+        {
+          "file_path": "docs\\System_Manifest.md",
+          "layer": "core",
+          "score": 85.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 1,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+          "layer": "core",
+          "score": 82.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 1,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\BLUEPRINT.md",
+          "layer": "core",
+          "score": 80.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 1,
+          "batch": 1
+        },
+        {
+          "file_path": "src\\core\\base.py",
+          "layer": "core",
+          "score": 80.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 1,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\BLUEPRINT.md",
+          "layer": "core",
+          "score": 80.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 1,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\BLUEPRINT.md",
+          "layer": "core",
+          "score": 80.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 1,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\09_RISK_RULES\\BLUEPRINT.md",
+          "layer": "important",
+          "score": 79.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
+          "layer": "important",
+          "score": 78.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\BLUEPRINT.md",
+          "layer": "important",
+          "score": 78.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\README.md",
+          "layer": "important",
+          "score": 76.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+          "layer": "important",
+          "score": 73.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "config\\system.yaml",
+          "layer": "important",
+          "score": 72.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\HUMAN_AI_FLOW.md",
+          "layer": "important",
+          "score": 72.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\MODULE_RESPONSIBILITY_BOUNDARIES.md",
+          "layer": "important",
+          "score": 72.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 72.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+          "layer": "important",
+          "score": 72.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\ic_reports\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\strategy_reports\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\05_RISK_ENGINE\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "src\\core\\exceptions.py",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "src\\core\\trading_entities.py",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "src\\core\\validators.py",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        },
+        {
+          "file_path": "src\\modules\\alert_manager.py",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 1
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 2,
+      "files": [
+        {
+          "file_path": "src\\modules\\factor_calculator.py",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "src\\modules\\risk_manager.py",
+          "layer": "important",
+          "score": 71.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\MARKET_REGIME.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\01_FRAMEWORK\\TECH_STACK.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\README.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\02_TACTICS_MERGED\\README.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\06_POSITION_MANAGEMENT\\README.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\07_ORDER_GENERATION\\README.md",
+          "layer": "important",
+          "score": 70.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\README.md",
+          "layer": "important",
+          "score": 69.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\01_EVENT_ENGINE\\README.md",
+          "layer": "important",
+          "score": 69.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\03_MONITORING\\README.md",
+          "layer": "important",
+          "score": 69.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\04_AI_COMMITTEE\\README.md",
+          "layer": "important",
+          "score": 69.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "src\\modules\\data_hub.py",
+          "layer": "important",
+          "score": 69.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\BLUEPRINT.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BREADTH_INDICATORS.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\99_AUDIT_REPORT.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_CALCULATION_FRAMEWORK.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_MANAGEMENT_STANDARD.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_neutralization.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_REGISTRY.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_return_analysis.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_SCREENING_STRATEGY.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FUTURE_FACTOR_TOOLS.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\TECHNICAL_INDICATORS.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RF001.barra_style_factors.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RF002.industry_factors.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 2
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 3,
+      "files": [
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RM003.barra_optimizer.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RM004.factor_transparency_report.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\ALTERNATIVE_DATA.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ACQUISITION.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_QUALITY.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\T.01.DS001.free_data_sources.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\financial_statements\\ths_bd_complete_indicator_list.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\07_LAYERED_BACKTEST.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\09_OVERFITTING_TEST.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\AI_FACTOR_AGENT.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\factor_monitoring.md",
+          "layer": "important",
+          "score": 67.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-l.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\OPTIMIZATION_REPORT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\09_RISK_RULES\\RISK_REPORT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\PARAMETER_OPTIMIZATION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-k.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\BATCH_EVALUATION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_SELECTION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_ENGINE_BLUEPRINT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_TEMPLATES.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 3
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 4,
+      "files": [
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\parameter_management.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\BACKTEST_BLUEPRINT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\PRODUCTION_MONITORING_BLUEPRINT.md",
+          "layer": "important",
+          "score": 66.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\01_EVENT_ENGINE\\EVENT_BUS.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\run_all_assessments.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\01_ORDER_EXECUTION\\ORDER_EXECUTION_BLUEPRINT.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\03_MONITORING\\REAL_TIME_MONITORING.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\audit_filesystem.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\06_FACTOR_DECAY.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\research_management.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_IC.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\documentation_debt_assessor.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\signal_generation.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\architecture_analyzer.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\06_FACTOR_REGISTRY\\factor_catalog.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\04_EXECUTION\\03_MONITORING\\MODULE_MONITOR.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\technical_feasibility_assessor.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\T.02.FE001.factor_definition.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\file_importance_scorer.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_synthesis.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\stratified_sampler.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\implementation_complexity_calculator.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\blueprint_validator.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RF003.tail_risk_factors.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "scripts\\monitoring_logger.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_preprocessing.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\04_EXPERIMENT_TRACKING\\BLUEPRINT.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 4
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 5,
+      "files": [
+        {
+          "file_path": "scripts\\risk_analyzer.py",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST_REORGANIZATION.md",
+          "layer": "important",
+          "score": 65.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+          "layer": "important",
+          "score": 64.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\pattern-recognition.md",
+          "layer": "important",
+          "score": 64.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
+          "layer": "important",
+          "score": 64.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+          "layer": "important",
+          "score": 64.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\Strategy_Spec_S001.md",
+          "layer": "important",
+          "score": 64.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\technical-indicators.md",
+          "layer": "important",
+          "score": 64.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "scripts\\log_qmt_review.py",
+          "layer": "important",
+          "score": 63.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "tests\\unit\\test_alert_manager.py",
+          "layer": "important",
+          "score": 63.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "config\\risk\\rules.yaml",
+          "layer": "important",
+          "score": 62.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "src\\engines\\base.py",
+          "layer": "important",
+          "score": 62.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "tests\\unit\\test_exceptions.py",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "tests\\unit\\test_main.py",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "tests\\unit\\test_core.py",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\README.md",
+          "layer": "important",
+          "score": 61.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_list.csv",
+          "layer": "important",
+          "score": 60.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\README.md",
+          "layer": "important",
+          "score": 60.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 2,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\00_OVERVIEW\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\00_RESOURCES\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 5
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\factor-library\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 5
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 6,
+      "files": [
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\01_ENVIRONMENT\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\03_PATTERN_RECOGNITION\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\08_USER_EXPERIENCE\\README.md",
+          "layer": "general",
+          "score": 58.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "config\\data_sources.yaml",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "config\\factors\\selected_factors.yaml",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\factor_design.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\LEARNING_PATH.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\PHASE1_DESIGN.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\API_DESIGN.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AUTH.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\CONFIG_MANAGEMENT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DESIGN_PRINCIPLES.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_STANDARDS.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\LOGGING_STANDARD.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\SECURITY.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\TESTING_STANDARD.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\TEST_FRAMEWORK.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\DEPLOYMENT_PLAN.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\DAILY_PIPELINE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\DATA_CLEANING.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\STORAGE_TIER.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\DOCUMENT_AUDIT_WORKFLOW.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SYSTEM_WIDE_APPROVAL_PLAN.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 6
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 7,
+      "files": [
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT_SENTINEL_MCP_TOOLS_VALIDATION_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_SYSTEM_SLIM_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FULL_SYSTEM_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FULL_SYSTEM_AUDIT_REPORT_2026-04-02.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PATH_LIST_AUDIT_UPDATE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\TEMP_FILE_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\TECHNICAL_SPECIFICATION_TEMPLATE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\QUALITY_MONITORING_BLUEPRINT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "分数优先",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\TEMPLATES\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\PROCEDURES\\PERSONAL_AUDIT_WORKFLOW.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\TEMPLATES\\AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
+          "layer": "general",
+          "score": 57.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "README.md",
+          "layer": "general",
+          "score": 56.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "notebooks\\README.md",
+          "layer": "general",
+          "score": 56.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "src\\utils\\validate_version_metadata.py",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\CONFIG_STANDARD.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        },
+        {
+          "file_path": "src\\utils\\migrate_version_metadata.py",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 7
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 8,
+      "files": [
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\AUDIT_CHECKLIST_TEMPLATE.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\BEST_PRACTICES_TEMPLATE.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P1_FIXES_COMPLETED.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_U1_findings.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\first-backtest.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "notebooks\\00_TEMPLATES\\02_FACTOR_TEMPLATE.py",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\ERROR_HANDLING.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_WORKFLOW.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
+          "layer": "general",
+          "score": 55.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\design\\技术方案评审会议议程.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\NEURAL_NETWORK_INTEGRATION_PLAN.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\correlation_analysis.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\CODE_EXAMPLES.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\MODULE_DESIGN_PLAN.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\03_PATTERN_RECOGNITION\\candle_patterns.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\design\\专业量化机构开发完整流程.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\module_designs\\layer_9\\L9_HYPERPARAM_OPT.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\01_ULTIMATE_BLUEPRINT.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\04_EXPERIMENT_TRACKING\\experiment_tracking.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\03_SECURITY_BLUEPRINT.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\00_OVERVIEW\\DATA_FLOW.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\design\\a_stock_rules\\T.08.AR001.a_stock_rule_engine_design.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\MODULE_DESIGN_TEMPLATE.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\KNOWLEDGE_MANAGEMENT.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        },
+        {
+          "file_path": "docs\\PROFESSIONAL_IMPLEMENTATION_PLAN.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 8
+        }
+      ],
+      "file_count": 30
+    },
+    {
+      "batch_number": 9,
+      "files": [
+        {
+          "file_path": "docs\\HANDOVER.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\technical_documentation.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\design\\web_interface\\前端组件结构图.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\SYSTEM_AUDIT_REPORT.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\design\\trading_costs\\交易成本测试用例设计.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\quantitative_strategy_framework.md",
+          "layer": "general",
+          "score": 54.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "src\\engines\\factory.py",
+          "layer": "general",
+          "score": 53.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+          "layer": "general",
+          "score": 52.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\design\\trading_costs\\T.05.TE001.trading_cost_model_algorithm_document.md",
+          "layer": "general",
+          "score": 52.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\06_ARCHIVE\\main\\COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md",
+          "layer": "general",
+          "score": 52.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\ARCHIVED.md",
+          "layer": "general",
+          "score": 52.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "DOCUMENT_AUDIT_v5.1.md",
+          "layer": "general",
+          "score": 52.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "scripts\\.gitkeep",
+          "layer": "general",
+          "score": 48.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": ".pre-commit-config.yaml",
+          "layer": "general",
+          "score": 45.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 3,
+          "batch": 9
+        },
+        {
+          "file_path": "data\\processed\\.gitkeep",
+          "layer": "temporary",
+          "score": 36.0,
+          "sample_reason": "随机抽样",
+          "audit_priority": 4,
+          "batch": 9
+        }
+      ],
+      "file_count": 16
+    }
+  ],
+  "timestamp": "2026-04-02T02:58:35.653392"
+}

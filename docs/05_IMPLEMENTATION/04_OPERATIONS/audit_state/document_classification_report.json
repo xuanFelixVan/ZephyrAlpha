@@ -1,0 +1,207 @@
+{
+  "summary": {
+    "scan_time": "2026-04-02T10:07:04.381917",
+    "total_non_standard_docs": 23,
+    "category_distribution": {
+      "02_FACTOR_LIBRARY": 9,
+      "08_AI_GOVERNANCE": 1,
+      "03_TRADING_TACTICS": 4,
+      "05_IMPLEMENTATION": 3,
+      "09_AUDIT": 3,
+      "06_ARCHIVE": 1,
+      "07_RESEARCH": 1,
+      "01_FRAMEWORK": 1
+    },
+    "confidence_distribution": {
+      "high": 14,
+      "medium": 6,
+      "low": 3
+    }
+  },
+  "suggestions": [
+    {
+      "file_path": "docs\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\AI_Permissions.md",
+      "current_location": "docs/",
+      "suggested_category": "08_AI_GOVERNANCE",
+      "suggested_path": "docs/08_AI_GOVERNANCE/AI_Permissions.md",
+      "confidence": 0.52,
+      "reason": "文件名包含08_AI_GOVERNANCE相关关键词; 文档内容包含08_AI_GOVERNANCE相关主题"
+    },
+    {
+      "file_path": "docs\\AI_SUPERVISION_INTEGRATION_PLAN.md",
+      "current_location": "docs/",
+      "suggested_category": "03_TRADING_TACTICS",
+      "suggested_path": "docs/03_TRADING_TACTICS/AI_SUPERVISION_INTEGRATION_PLAN.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含03_TRADING_TACTICS相关主题"
+    },
+    {
+      "file_path": "docs\\API_Contract.md",
+      "current_location": "docs/",
+      "suggested_category": "03_TRADING_TACTICS",
+      "suggested_path": "docs/03_TRADING_TACTICS/API_Contract.md",
+      "confidence": 0.8200000000000001,
+      "reason": "文档内容包含03_TRADING_TACTICS相关主题"
+    },
+    {
+      "file_path": "docs\\BLUEPRINT.md",
+      "current_location": "docs/",
+      "suggested_category": "05_IMPLEMENTATION",
+      "suggested_path": "docs/05_IMPLEMENTATION/BLUEPRINT.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含05_IMPLEMENTATION相关主题"
+    },
+    {
+      "file_path": "docs\\BLUEPRINT_CHECKLIST.md",
+      "current_location": "docs/",
+      "suggested_category": "09_AUDIT",
+      "suggested_path": "docs/09_AUDIT/BLUEPRINT_CHECKLIST.md",
+      "confidence": 0.52,
+      "reason": "文档内容包含09_AUDIT相关主题"
+    },
+    {
+      "file_path": "docs\\CHANGELOG.md",
+      "current_location": "docs/",
+      "suggested_category": "06_ARCHIVE",
+      "suggested_path": "docs/06_ARCHIVE/CHANGELOG.md",
+      "confidence": 0.86,
+      "reason": "文档内容包含06_ARCHIVE相关主题"
+    },
+    {
+      "file_path": "docs\\CODE_EXAMPLES.md",
+      "current_location": "docs/",
+      "suggested_category": "05_IMPLEMENTATION",
+      "suggested_path": "docs/05_IMPLEMENTATION/CODE_EXAMPLES.md",
+      "confidence": 0.66,
+      "reason": "文档内容包含05_IMPLEMENTATION相关主题"
+    },
+    {
+      "file_path": "docs\\CODING_ROADMAP.md",
+      "current_location": "docs/",
+      "suggested_category": "05_IMPLEMENTATION",
+      "suggested_path": "docs/05_IMPLEMENTATION/CODING_ROADMAP.md",
+      "confidence": 0.72,
+      "reason": "文档内容包含05_IMPLEMENTATION相关主题"
+    },
+    {
+      "file_path": "docs\\EXPERIMENT_TRACKING.md",
+      "current_location": "docs/",
+      "suggested_category": "07_RESEARCH",
+      "suggested_path": "docs/07_RESEARCH/EXPERIMENT_TRACKING.md",
+      "confidence": 1.0,
+      "reason": "文件名包含07_RESEARCH相关关键词; 文档内容包含07_RESEARCH相关主题"
+    },
+    {
+      "file_path": "docs\\FAQ.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/FAQ.md",
+      "confidence": 0.9800000000000001,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\HANDOVER.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/HANDOVER.md",
+      "confidence": 0.66,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\INDEX.md",
+      "current_location": "docs/",
+      "suggested_category": "03_TRADING_TACTICS",
+      "suggested_path": "docs/03_TRADING_TACTICS/INDEX.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含03_TRADING_TACTICS相关主题"
+    },
+    {
+      "file_path": "docs\\KNOWLEDGE_MANAGEMENT.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/KNOWLEDGE_MANAGEMENT.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\MODULE_DESIGN_PLAN.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md",
+      "confidence": 0.6400000000000001,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\MODULE_DESIGN_TEMPLATE.md",
+      "current_location": "docs/",
+      "suggested_category": "01_FRAMEWORK",
+      "suggested_path": "docs/01_FRAMEWORK/MODULE_DESIGN_TEMPLATE.md",
+      "confidence": 0.18,
+      "reason": "文档内容包含01_FRAMEWORK相关主题"
+    },
+    {
+      "file_path": "docs\\NEURAL_NETWORK_INTEGRATION_PLAN.md",
+      "current_location": "docs/",
+      "suggested_category": "03_TRADING_TACTICS",
+      "suggested_path": "docs/03_TRADING_TACTICS/NEURAL_NETWORK_INTEGRATION_PLAN.md",
+      "confidence": 0.8400000000000001,
+      "reason": "文档内容包含03_TRADING_TACTICS相关主题"
+    },
+    {
+      "file_path": "docs\\PROFESSIONAL_IMPLEMENTATION_PLAN.md",
+      "current_location": "docs/",
+      "suggested_category": "09_AUDIT",
+      "suggested_path": "docs/09_AUDIT/PROFESSIONAL_IMPLEMENTATION_PLAN.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含09_AUDIT相关主题"
+    },
+    {
+      "file_path": "docs\\QUICK_REFERENCE.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/QUICK_REFERENCE.md",
+      "confidence": 0.44000000000000006,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\SITEMAP.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/SITEMAP.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\System_Manifest.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/System_Manifest.md",
+      "confidence": 1.0,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    },
+    {
+      "file_path": "docs\\TECHNICAL_VALIDATION_PLAN.md",
+      "current_location": "docs/",
+      "suggested_category": "09_AUDIT",
+      "suggested_path": "docs/09_AUDIT/TECHNICAL_VALIDATION_PLAN.md",
+      "confidence": 0.32,
+      "reason": "文档内容包含09_AUDIT相关主题"
+    },
+    {
+      "file_path": "docs\\VERSIONING.md",
+      "current_location": "docs/",
+      "suggested_category": "02_FACTOR_LIBRARY",
+      "suggested_path": "docs/02_FACTOR_LIBRARY/VERSIONING.md",
+      "confidence": 0.22000000000000003,
+      "reason": "文档内容包含02_FACTOR_LIBRARY相关主题"
+    }
+  ]
+}

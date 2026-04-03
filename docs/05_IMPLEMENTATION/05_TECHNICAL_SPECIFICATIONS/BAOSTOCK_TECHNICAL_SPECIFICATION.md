@@ -1,0 +1,441 @@
+---
+module_id: DATA_BAO_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-02
+last_updated: 2026-04-02
+owner: 首席技术评审官
+standard_type: 专业量化机构技术规格书
+applicable_scope: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# Baostock适配器模块技术规格书
+
+> 清风量化系统 v5.2 - Baostock适配器模块详细技术设计
+> **模块ID**: `DATA_BAO_001`
+> **版本**: v1.0.0
+> **状态**: ✅ 正式
+
+
+## 1. 概述
+
+### 1.1 设计背景与业务目标
+- **业务需求**: 系统需要免费财务数据源用于数据验证和交叉校验，降低数据成本
+- **技术痛点**: 付费数据源成本高，需要备选数据源和数据验证工具
+- **预期价值**: 
+  - 提供免费财务数据，降低数据成本
+  - 支持多数据源交叉验证，提升数据质量
+  - 作为付费数据源的备选方案
+
+### 1.2 技术定位与架构层归属
+- **Layer定位**: Layer 0 - 数据源层 (符合ARCHITECTURE.md定义)
+- **模块类别**: 辅助数据源模块
+- **架构角色**: 系统辅助数据源和验证工具，对接Baostock免费API
+
+### 1.3 版本信息
+| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+|------|------|------|----------|------|
+| v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
+
+---
+
+## 2. 详细架构设计
+
+### 2.1 系统架构图
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Layer 0: 数据源层                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │          BaostockAdapter (主适配器)                   │  │
+│  │  - 财务数据获取                                       │  │
+│  │  - 行情数据获取                                       │  │
+│  │  - 数据验证                                          │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                           ↓                                  │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │          BaostockClient (客户端)                      │  │
+│  │  - baostock库封装                                    │  │
+│  │  - 连接管理                                          │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                           ↓                                  │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │          BaostockCache + DataValidator                │  │
+│  │  - 数据缓存 (24小时TTL)                              │  │
+│  │  - 数据验证器                                        │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+                           ↓
+        ┌──────────────────────────────────────┐
+        │    Baostock免费数据平台              │
+        │  - 财务报表数据                      │
+        │  - 历史行情数据                      │
+        └──────────────────────────────────────┘
+```
+
+### 2.2 Layer定位详细说明
+- **Layer归属**: Layer 0 - 数据源层
+- **职责范围**: 负责Baostock数据接入和数据验证
+- **上下层接口**: 
+  - 上层依赖: Layer 1 DataCleaner (财务数据推送)
+  - 下层依赖: Baostock免费API
+
+### 2.3 模块职责与边界定义
+- **核心职责**: Baostock数据接入、数据验证、交叉校验
+- **职责边界**: 
+  - ✅ 本模块负责: 财务数据获取、行情数据获取、数据验证、交叉校验
+  - ❌ 本模块不负责: 数据清洗、因子计算、数据持久化
+- **接口契约**: 提供统一的Python API接口
+
+### 2.4 依赖关系
+| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+|----------|----------|----------|----------|------|
+| baostock | 强依赖 | Python库 | >=1.0.0 | 免费财务数据API |
+| pandas | 强依赖 | Python库 | >=1.3.0 | 数据处理 |
+| numpy | 强依赖 | Python库 | >=1.21.0 | 数值计算 |
+
+---
+
+## 3. 接口定义
+
+### 3.1 API接口规范
+
+#### 3.1.1 主接口类
+```python
+from typing import List, Dict, Any, Optional, Literal
+from datetime import datetime
+import pandas as pd
+from dataclasses import dataclass
+
+
+@dataclass
+class BaostockConfig:
+    """Baostock配置"""
+    auto_connect: bool = True
+    cache_enabled: bool = True
+    timeout: float = 60.0
+    max_retries: int = 5
+    retry_delay: float = 2.0
+
+
+@dataclass
+class ValidationReport:
+    """验证报告"""
+    primary_source: str
+    reference_source: str
+    total_fields: int
+    passed_fields: int
+    failed_fields: int
+    pass_rate: float
+    details: List[Dict[str, Any]]
+
+
+class BaostockAdapter:
+    """Baostock适配器主类"""
+    
+    def __init__(self, config: BaostockConfig):
+        """初始化Baostock适配器"""
+        pass
+    
+    def connect(self) -> bool:
+        """连接Baostock"""
+        pass
+    
+    def disconnect(self) -> None:
+        """断开连接"""
+        pass
+    
+    def get_income_statement(
+        self, 
+        symbol: str, 
+        start_date: datetime,
+        end_date: datetime
+    ) -> pd.DataFrame:
+        """获取利润表"""
+        pass
+    
+    def get_balance_sheet(
+        self, 
+        symbol: str, 
+        start_date: datetime,
+        end_date: datetime
+    ) -> pd.DataFrame:
+        """获取资产负债表"""
+        pass
+    
+    def get_cashflow_statement(
+        self, 
+        symbol: str, 
+        start_date: datetime,
+        end_date: datetime
+    ) -> pd.DataFrame:
+        """获取现金流量表"""
+        pass
+    
+    def get_historical_data(
+        self, 
+        symbol: str, 
+        start_date: datetime,
+        end_date: datetime, 
+        frequency: str = "d"
+    ) -> pd.DataFrame:
+        """获取历史行情数据"""
+        pass
+    
+    def validate_against_baostock(
+        self, 
+        data: pd.DataFrame, 
+        data_type: str,
+        symbol: str
+    ) -> ValidationReport:
+        """与Baostock数据对比验证"""
+        pass
+    
+    def cross_validate_sources(
+        self, 
+        sources: List[Dict[str, Any]]
+    ) -> ValidationReport:
+        """多数据源交叉验证"""
+        pass
+    
+    def get_available_symbols(self) -> List[str]:
+        """获取可获取的股票列表"""
+        pass
+    
+    def get_data_update_time(self) -> datetime:
+        """获取数据更新时间"""
+        pass
+```
+
+### 3.2 性能指标要求
+| 性能指标 | 目标值 | 测量方法 |
+|----------|--------|----------|
+| 财务数据获取时间 | < 10秒 | 单只股票单季度 |
+| 行情数据获取时间 | < 5秒 | 单只股票一年数据 |
+| 数据验证时间 | < 30秒 | 单只股票完整验证 |
+| 缓存命中率 | ≥ 90% | 财务数据缓存命中率 |
+| 数据可用性 | ≥ 95% | 月度统计 |
+
+### 3.3 安全机制
+- **认证方式**: 无需认证，免费开源
+- **访问控制**: 无限制
+- **数据安全**: 仅读取公开数据
+
+---
+
+## 4. 数据模型与存储
+
+### 4.1 核心数据结构
+
+#### 4.1.1 财务数据模型
+```python
+@dataclass
+class FinancialData:
+    """财务数据模型"""
+    symbol: str              # 股票代码
+    report_date: datetime    # 报告期
+    report_type: str         # 报表类型
+    roe: float               # 净资产收益率
+    roa: float               # 总资产收益率
+    net_profit: float        # 净利润
+    operating_income: float  # 营业收入
+    total_assets: float      # 总资产
+    total_liabilities: float # 总负债
+    equity: float            # 股东权益
+```
+
+### 4.2 缓存策略
+| 缓存类型 | TTL | 淘汰策略 | 最大容量 |
+|----------|-----|----------|----------|
+| 财务数据缓存 | 24小时 | LRU | 5000条 |
+| 行情数据缓存 | 1小时 | LRU | 10000条 |
+
+### 4.3 数据持久化
+- **持久化需求**: 不需要持久化，仅作为数据通道
+- **日志记录**: 记录关键操作和错误日志
+
+---
+
+## 5. 算法实现说明
+
+### 5.1 核心算法
+
+#### 5.1.1 数据验证算法
+```python
+def validate_data(
+    self, 
+    primary_data: pd.DataFrame,
+    reference_data: pd.DataFrame,
+    tolerance: float = 0.05
+) -> ValidationReport:
+    """
+    数据验证算法
+    
+    算法原理:
+    1. 字段对比：逐字段对比数据差异
+    2. 容差检查：差异在容差范围内视为通过
+    3. 完整性检查：检查必填字段完整性
+    
+    复杂度: O(n) n为字段数量
+    """
+    pass
+```
+
+#### 5.1.2 交叉验证算法
+```python
+def cross_validate(
+    self, 
+    sources: List[pd.DataFrame]
+) -> ValidationReport:
+    """
+    多数据源交叉验证算法
+    
+    算法原理:
+    1. 数据对齐：对齐多个数据源的时间点
+    2. 差异分析：分析数据差异程度
+    3. 异常识别：识别异常数据点
+    
+    复杂度: O(n*m) n为数据点数，m为数据源数
+    """
+    pass
+```
+
+---
+
+## 6. 实施技术栈
+
+### 6.1 语言与框架
+| 技术选型 | 版本要求 | 用途 | 选择理由 |
+|----------|----------|------|----------|
+| Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
+| baostock | >=1.0.0 | 数据源 | 免费财务数据API |
+| pandas | >=1.3.0 | 数据处理 | 数据分析标准库 |
+| numpy | >=1.21.0 | 数值计算 | 高性能数值计算 |
+
+### 6.2 第三方依赖
+```yaml
+requirements:
+  - baostock>=1.0.0
+  - pandas>=1.3.0
+  - numpy>=1.21.0
+```
+
+---
+
+## 7. 测试策略
+
+### 7.1 单元测试
+| 测试项 | 测试内容 | 覆盖率目标 |
+|--------|----------|------------|
+| 连接管理 | 登录、登出 | 100% |
+| 数据获取 | 财务数据、行情数据 | 100% |
+| 数据验证 | 单源验证、交叉验证 | 100% |
+| 错误处理 | 异常捕获、重试 | 100% |
+
+### 7.2 集成测试
+```python
+def test_baostock_integration():
+    """集成测试示例"""
+    adapter = BaostockAdapter(BaostockConfig())
+    
+    assert adapter.connect() == True
+    
+    income = adapter.get_income_statement(
+        "000001.SZ", 
+        datetime(2024, 1, 1),
+        datetime(2024, 12, 31)
+    )
+    assert not income.empty
+    
+    adapter.disconnect()
+```
+
+---
+
+## 8. 风险与约束
+
+### 8.1 技术风险
+| 风险ID | 风险描述 | 风险等级 | 缓解措施 |
+|--------|----------|----------|----------|
+| R001 | Baostock数据更新慢 | P2 | 使用缓存，降低调用频率 |
+| R002 | 数据字段不完整 | P2 | 字段映射和补充 |
+| R003 | API响应慢 | P2 | 设置长超时，异步处理 |
+
+### 8.2 约束条件
+- **技术约束**: 依赖Baostock免费API可用性
+- **资源约束**: 无需付费，免费使用
+- **时间约束**: 预计开发时间8小时
+- **合规约束**: 遵守Baostock使用协议
+
+---
+
+## 9. 验收标准
+
+### 9.1 功能验收标准
+| 功能项 | 验收标准 | 验证方法 |
+|--------|----------|----------|
+| 财务数据获取 | 正确获取财务报表数据 | 单元测试 |
+| 行情数据获取 | 正确获取历史行情数据 | 单元测试 |
+| 数据验证 | 正确验证数据准确性 | 集成测试 |
+| 交叉验证 | 正确进行多源验证 | 集成测试 |
+
+### 9.2 性能验收标准
+| 性能指标 | 验收标准 | 验证方法 |
+|----------|----------|----------|
+| 财务数据获取时间 | < 10秒 | 性能测试 |
+| 行情数据获取时间 | < 5秒 | 性能测试 |
+| 缓存命中率 | ≥ 90% | 性能测试 |
+
+---
+
+## 10. 实施路线图
+
+### 10.1 Phase 1: 核心功能开发 (3天)
+- **Day 1**: 连接管理和数据获取
+- **Day 2**: 数据验证功能
+- **Day 3**: 测试和文档
+
+---
+
+## 附录
+
+### A. 配置示例
+```yaml
+baostock:
+  enabled: true
+  connection:
+    auto_connect: true
+    timeout: 60
+    max_retries: 5
+    retry_delay: 2.0
+  
+  cache:
+    enabled: true
+    ttl: 86400
+    max_size: 5000
+  
+  validation:
+    enabled: true
+    tolerance_threshold: 0.05
+```
+
+### B. 错误码定义
+| 错误码 | 错误类型 | 错误描述 | 处理方式 |
+|--------|----------|----------|----------|
+| ERR_BAOSTOCK_001 | BaostockConnectionError | 连接失败 | 重试连接 |
+| ERR_BAOSTOCK_002 | BaostockDataError | 数据获取失败 | 返回空数据 |
+| ERR_BAOSTOCK_003 | BaostockFormatError | 数据格式错误 | 数据清洗 |
+| ERR_BAOSTOCK_004 | BaostockValidationError | 验证失败 | 生成报告 |
+
+### C. 参考文档
+- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
+- [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- [Baostock设计文档](../../module_designs/layer_0/L0_BAOSTOCK.md)
+
+
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护者**: 数据源层负责人

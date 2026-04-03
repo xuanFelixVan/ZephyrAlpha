@@ -1,0 +1,4484 @@
+{
+  "summary": {
+    "scan_time": "2026-04-02T10:03:50.859998",
+    "total_files_with_gaps": 361,
+    "auto_fillable": 361,
+    "field_statistics": {
+      "standard_type": 23,
+      "compliance_level": 26,
+      "implementation_status": 360,
+      "parent_document": 355,
+      "applicable_scope": 26
+    }
+  },
+  "gaps": [
+    {
+      "file_path": "DOCUMENT_AUDIT_v5.1.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "README.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "temp_a_stock_blueprint.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "蓝图标准",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "assessments_output\\comprehensive_assessment_report.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "data\\assessments\\comprehensive_assessment_report.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "data\\monitoring\\reports\\daily\\2026-04-02_performance_report.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\AI_Permissions.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\AI_SUPERVISION_INTEGRATION_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\API_Contract.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\BLUEPRINT_CHECKLIST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\CHANGELOG.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\CODE_EXAMPLES.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\CODING_ROADMAP.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\EXPERIMENT_TRACKING.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\FAQ.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\HANDOVER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\INDEX.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\KNOWLEDGE_MANAGEMENT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\MODULE_DESIGN_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\MODULE_DESIGN_TEMPLATE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\NEURAL_NETWORK_INTEGRATION_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\PROFESSIONAL_IMPLEMENTATION_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\QUICK_REFERENCE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\SITEMAP.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\System_Manifest.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\TECHNICAL_VALIDATION_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\VERSIONING.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\00_OVERVIEW\\DATA_FLOW.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\00_OVERVIEW\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\00_RESOURCES\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\HUMAN_AI_FLOW.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\MARKET_REGIME.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\MODULE_RESPONSIBILITY_BOUNDARIES.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\01_FRAMEWORK\\TECH_STACK.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST_REORGANIZATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BREADTH_INDICATORS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\99_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\factor_classification_summary.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\backtest_standards.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_MANAGEMENT_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_neutralization.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_preprocessing.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_REGISTRY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_return_analysis.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_SCREENING_STRATEGY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_synthesis.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FUTURE_FACTOR_TOOLS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\research_management.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\T.02.FE001.factor_definition.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\TECHNICAL_INDICATORS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RF001.barra_style_factors.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RF002.industry_factors.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RF003.tail_risk_factors.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RM003.barra_optimizer.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\03_RISK_FACTORS\\T.03.RM004.factor_transparency_report.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\ALTERNATIVE_DATA.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ACQUISITION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_QUALITY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\T.01.DS001.free_data_sources.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\financial_statements\\ths_bd_complete_indicator_list.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\06_FACTOR_DECAY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\07_LAYERED_BACKTEST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\09_OVERFITTING_TEST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\ic_reports\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\strategy_reports\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_IC.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\06_FACTOR_REGISTRY\\factor_catalog.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\AI_FACTOR_AGENT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\factor_monitoring.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\INDEX.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\OPTIMIZATION_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\parameter_management.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\REFACTOR_COMPLETE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\Strategy_Spec_S001.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\BACKTEST_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\BATCH_EVALUATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\overview.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\PARAMETER_OPTIMIZATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\PORTFOLIO_OPTIMIZATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\PRODUCTION_MONITORING_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_ENGINE_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_ENGINE_CORE_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_SELECTION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_TEMPLATES.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\02_TACTICS_MERGED\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-c.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-j.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-k.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-l.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\05_STRATEGY_POOL\\index.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\06_POSITION_MANAGEMENT\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\07_ORDER_GENERATION\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\08_DECISION_FRAMEWORK\\ARCHIVED.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\09_RISK_RULES\\RISK_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\09_RISK_RULES\\RISK_RULE_ENGINE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\ai-integration.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\interface-standard.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\manager.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\pattern-recognition.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\03_TRADING_TACTICS\\99_ARCHIVE\\technical-indicators.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\signal_generation.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\01_EVENT_ENGINE\\EVENT_BUS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\01_EVENT_ENGINE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\01_ORDER_EXECUTION\\ORDER_EXECUTION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\02_TRADE_EXECUTOR\\tca.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "蓝图标准",
+        "applicable_scope": "交易执行",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\03_MONITORING\\HEALTH_MONITORING.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\03_MONITORING\\MODULE_MONITOR.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\03_MONITORING\\PERFORMANCE_ATTRIBUTION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\03_MONITORING\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\03_MONITORING\\REAL_TIME_MONITORING.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\04_AI_COMMITTEE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\05_RISK_ENGINE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\MULTI_ENGINE_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\PHASE2_COMPLETION_SUMMARY.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\dev-setup.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\factor_design.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\first-backtest.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\LEARNING_PATH.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\PHASE1_DESIGN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\01_QUICKSTART\\ROADMAP.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\API_DESIGN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AUTH.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\CODE_QUALITY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\CONFIG_MANAGEMENT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\CONFIG_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DESIGN_PRINCIPLES.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPER_RULES.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_STANDARDS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_WORKFLOW.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_NUMBERING_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "已完成"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_QUALITY_GATE_STANDARD.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "管理标准",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\ERROR_HANDLING.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\LOGGING_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\PATH_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "已完成"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\RELEASE_CHECKLIST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\SECURITY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\TESTING_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\TEST_FRAMEWORK.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\VERSION_MANAGEMENT_STANDARD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\DEPLOYMENT_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\03_DEPLOYMENT\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\DAILY_PIPELINE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\DATA_CLEANING.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\DATA_LINEAGE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_INFRASTRUCTURE\\STORAGE_TIER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\AUDIT_CHECKLIST_TEMPLATE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\AUDIT_HANDOVER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\DOCUMENT_AUDIT_WORKFLOW.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "实施指南",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SYSTEM_WIDE_APPROVAL_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_DECISIONS.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT_SENTINEL_MCP_TOOLS_VALIDATION_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT_STRATEGY_ADJUSTMENT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D4_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E1_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_E2_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_U1_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_U2_findings.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_SYSTEM_SLIM_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FULL_SYSTEM_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FULL_SYSTEM_AUDIT_REPORT_2026-04-02.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P0_FIXES_COMPLETED.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P1_FIXES_COMPLETED.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PATH_LIST_AUDIT_UPDATE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\TEMP_FILE_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_001_QMT_API_LEARNING_PLAN.md",
+      "missing_fields": [
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_002_QMT_API_COMMUNITY_RESEARCH.md",
+      "missing_fields": [
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md",
+      "missing_fields": [
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\BEST_PRACTICES_TEMPLATE.md",
+      "missing_fields": [
+        "compliance_level",
+        "implementation_status",
+        "applicable_scope",
+        "standard_type",
+        "parent_document"
+      ],
+      "suggested_values": {
+        "standard_type": "模板文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\CASE_STUDY_TEMPLATE.md",
+      "missing_fields": [
+        "compliance_level",
+        "implementation_status",
+        "applicable_scope",
+        "standard_type",
+        "parent_document"
+      ],
+      "suggested_values": {
+        "standard_type": "模板文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\ASHARE_HISTORICAL_DATA_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\BAOSTOCK_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\DATACLEANER_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\DATANORMALIZER_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\DATAVALIDATOR_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FACTOR_BACKTEST_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FACTOR_CALCULATOR_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FACTOR_IC_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FACTOR_STORE_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SUPERCOMMAND_TECHNICAL_REVIEW_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR\\comprehensive_assessment_report.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE\\comprehensive_assessment_report.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "审计报告",
+        "applicable_scope": "系统实施",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\ASHARE_HISTORICAL_DATA_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\BAOSTOCK_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATACLEANER_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATANORMALIZER_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATAVALIDATOR_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_BACKTEST_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_COMBINATION_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_IC_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_STORE_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\SUPERCOMMAND_TECHNICAL_SPECIFICATION.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\TECHNICAL_SPECIFICATION_TEMPLATE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\migration_guide_v1.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\05_IMPLEMENTATION\\99_ARCHIVE\\SECURITY_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\strategy_pool.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\tactics_manual.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\technical_documentation.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\factor-library\\ifind_factors_list.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\factor-library\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\CHANGELOG.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\FINAL_AUDIT_REPORT_V5.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\NOZYIO_REFERENCE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\quantitative_strategy_framework.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\SYSTEM_AUDIT_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\UPGRADE_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\01_ULTIMATE_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\02_DEPLOYMENT_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\03_SECURITY_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\04_API_INTEGRATION_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\05_AI_RESEARCH_FRAMEWORK.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\06_DEVELOPMENT_ROADMAP.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\v4_development\\qingfeng_v4_development_plan.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\06_ARCHIVE\\main\\v4_development\\qingfeng_v4_draft.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\01_ENVIRONMENT\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\correlation_analysis.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\research_report_generator.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\statistical_tools.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\03_PATTERN_RECOGNITION\\candle_patterns.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\03_PATTERN_RECOGNITION\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\07_RESEARCH\\04_EXPERIMENT_TRACKING\\experiment_tracking.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\08_USER_EXPERIENCE\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\08_USER_EXPERIENCE\\01_UI_DESIGN\\ui_layout_standard.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\ARCHIVED.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\BLUEPRINT_VALIDATION_REPORT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\QUALITY_MONITORING_BLUEPRINT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\README.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\PROCEDURES\\PERSONAL_AUDIT_WORKFLOW.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\STANDARDS\\AUDIT_STANDARDS.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "已完成"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\TEMPLATES\\AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\TEMPLATES\\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\09_AUDIT\\TEMPLATES\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\专业量化机构开发完整流程.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\个人技术决策确认清单.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\技术方案设计汇总报告.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\技术方案评审会议议程.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\评审材料分发清单.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\a_stock_rules\\T.08.AR001.a_stock_rule_engine_design.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-01_Database_Design_Document.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-01_Database_Design_Document_v1_backup.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-01_Database_Design_Review_Report.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-02_Data_Dictionary.md",
+      "missing_fields": [
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-03_Internal_Service_Interface_Design.md",
+      "missing_fields": [
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-04_Third_Party_Interface_Integration_Design.md",
+      "missing_fields": [
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-05_Multi_Engine_Coordinator_Design.md",
+      "missing_fields": [
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-06_Account_Management_Detailed_Design.md",
+      "missing_fields": [
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\database\\P0-07_Order_Management_Detailed_Design.md",
+      "missing_fields": [
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\data_consistency\\Saga模式实现流程图.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\data_consistency\\补偿事务设计文档.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\trading_costs\\T.05.TE001.trading_cost_model_algorithm_document.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\trading_costs\\交易成本测试用例设计.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\web_interface\\API接口规范文档.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\web_interface\\T.06.UI001.web_management_interface_architecture_design.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\design\\web_interface\\前端组件结构图.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_0\\L0_BAOSTOCK.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_0\\L0_IFIND.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_0\\L0_QMT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_0\\L0_SUPERCMD.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_1\\L1_VALIDATOR.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_9\\L9_FEATURE_OPTIMIZER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_9\\L9_HYPERPARAM_OPT.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_9\\L9_MARKET_DETECTOR.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "docs\\module_designs\\layer_9\\L9_MODEL_ENSEMBLER.md",
+      "missing_fields": [
+        "parent_document",
+        "implementation_status"
+      ],
+      "suggested_values": {
+        "parent_document": "../INDEX.md",
+        "implementation_status": "进行中"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "notebooks\\README.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    },
+    {
+      "file_path": "scripts\\README.md",
+      "missing_fields": [
+        "standard_type",
+        "compliance_level",
+        "implementation_status",
+        "parent_document",
+        "applicable_scope"
+      ],
+      "suggested_values": {
+        "standard_type": "技术文档",
+        "applicable_scope": "全系统",
+        "compliance_level": "初始标准",
+        "parent_document": "../INDEX.md",
+        "implementation_status": "设计阶段"
+      },
+      "auto_fillable": true
+    }
+  ]
+}

@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 因子研究方法论
 
 > 因子研究的标准化方法与流程
@@ -22,7 +36,7 @@
 ```
 01_METHODOLOGY/
 ├── README.md                    # 本文档
-├── factor_definition.md         # 因子定义标准
+├── T.02.FE001.factor_definition.md         # 因子定义标准
 ├── ic_analysis.md              # IC分析体系
 ├── factor_preprocessing.md      # 因子预处理方法
 ├── factor_synthesis.md         # 因子合成方法
@@ -34,7 +48,7 @@
 
 ## 2. 因子定义标准
 
-详见：[factor_definition.md](./factor_definition.md)
+详见：[T.02.FE001.factor_definition.md](./T.02.FE001.factor_definition.md)
 
 ---
 

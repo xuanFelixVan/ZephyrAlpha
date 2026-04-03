@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_DOC_001
+version: 3.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 游资策略补充（二）- S106-S120
 
 > 顶级游资交易思想量化提炼（遗漏附录整合）
@@ -5,8 +19,8 @@
 > **来源**：量化策略专业分层方案_v3.0 附录BS/BT/BU/BV/BW/BX/BY/BZ
 >
 > **配套文档**：
-> - 主文档：[SPEC.md](../../SPEC.md)
-> - 策略池索引：[index.md](./index.md)
+> - 主文档：
+> - 策略池索引：[index.md](../../05_STRATEGY_POOL/index.md)
 > - 策略一：[retail-strategies-k.md](./retail-strategies-k.md) - S091-S105
 
 ---

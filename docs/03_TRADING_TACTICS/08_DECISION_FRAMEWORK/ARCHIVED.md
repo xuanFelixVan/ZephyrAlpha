@@ -1,13 +1,17 @@
 ---
-module_id: DECISION_FRAMEWORK_001
-version: 0.1
-status: ARCHIVED
-parent_doc: INDEX.md
-last_updated: 2026-03-28
-layer: 待定
-index: ARC_001
-note: 已归档 - 单人维护不切实际，待未来扩展
+module_id: TACTICS_DOC_001
+version: 0.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 36环节决策框架（归档）
 
@@ -15,13 +19,11 @@ note: 已归档 - 单人维护不切实际，待未来扩展
 > **原因**: 36个环节过于复杂，单人无法维护
 > **索引**: `ARC_001`
 
----
 
 ## 原设计概述
 
 原计划将量化研究/开发/验证/部署流程拆分为36个环节，每个环节独立文档。
 
----
 
 ## 归档原因
 
@@ -31,7 +33,6 @@ note: 已归档 - 单人维护不切实际，待未来扩展
 | 复杂度 | 过度拆分导致关联性丢失 |
 | 实际价值 | 文档数量≠系统质量 |
 
----
 
 ## 替代方案
 
@@ -60,13 +61,11 @@ note: 已归档 - 单人维护不切实际，待未来扩展
 | 风控决策 | 最大回撤 | <15% |
 | 执行决策 | 模拟交易 | 3个月稳定 |
 
----
 
 ## 归档位置
 
 如有需要，可在 `docs/06_ARCHIVE/` 中找到原始设计文档。
 
----
 
 **维护者**: 清风量化系统
 **状态**: 已归档

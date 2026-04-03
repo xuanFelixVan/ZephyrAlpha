@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 技术指标完整参数表
 
 > 量化交易系统中所有技术指标的标准化定义、参数配置和计算公式

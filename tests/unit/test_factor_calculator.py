@@ -161,6 +161,105 @@ class TestCalculateAlphaFactor:
         assert isinstance(result, FactorResult)
         assert result.factor_name == "macd_signal_cross"
 
+    def test_value_factors(self):
+        """测试价值类因子"""
+        calculator = FactorCalculator()
+        data = create_sample_ohlcv_data(50)
+
+        # 测试已实现的价值类因子
+        for factor_id in ["ALPHA_027", "ALPHA_028", "ALPHA_029"]:
+            result = calculator.calculate(factor_id, data)
+            assert isinstance(result, FactorResult)
+            assert result.factor_id == factor_id
+            assert len(result.values) == len(data)
+            assert result.metadata["category"] == "value"
+
+        # 测试一个placeholder价值类因子
+        result = calculator.calculate("ALPHA_030", data)
+        assert result.factor_name == "placeholder"
+        assert result.values.iloc[-1] == 0
+
+    def test_growth_factors(self):
+        """测试成长类因子"""
+        calculator = FactorCalculator()
+        data = create_sample_ohlcv_data(100)  # 需要更多数据用于252天回报
+
+        # 测试已实现的成长类因子
+        for factor_id in ["ALPHA_042", "ALPHA_043", "ALPHA_044"]:
+            result = calculator.calculate(factor_id, data)
+            assert isinstance(result, FactorResult)
+            assert result.factor_id == factor_id
+            assert len(result.values) == len(data)
+            assert result.metadata["category"] == "growth"
+
+        # 测试一个placeholder成长类因子
+        result = calculator.calculate("ALPHA_045", data)
+        assert result.factor_name == "placeholder"
+        assert result.values.iloc[-1] == 0
+
+    def test_quality_factors(self):
+        """测试质量类因子"""
+        calculator = FactorCalculator()
+        data = create_sample_ohlcv_data(50)
+
+        # 测试已实现的质量类因子
+        for factor_id in ["ALPHA_054", "ALPHA_055", "ALPHA_056"]:
+            result = calculator.calculate(factor_id, data)
+            assert isinstance(result, FactorResult)
+            assert result.factor_id == factor_id
+            assert len(result.values) == len(data)
+            assert result.metadata["category"] == "quality"
+
+        # 测试一个placeholder质量类因子
+        result = calculator.calculate("ALPHA_057", data)
+        assert result.factor_name == "placeholder"
+        assert result.values.iloc[-1] == 0
+
+    def test_technical_factors(self):
+        """测试技术类因子"""
+        calculator = FactorCalculator()
+        data = create_sample_ohlcv_data(50)
+
+        # 测试已实现的技术类因子（除了已测试的）
+        # ALPHA_076 (RSI) 已测试，测试其他技术类因子
+        for factor_id in ["ALPHA_072", "ALPHA_073", "ALPHA_074", "ALPHA_075",
+                         "ALPHA_077", "ALPHA_078", "ALPHA_080", "ALPHA_081"]:
+            result = calculator.calculate(factor_id, data)
+            assert isinstance(result, FactorResult)
+            assert result.factor_id == factor_id
+            assert len(result.values) == len(data)
+            assert result.metadata["category"] == "technical"
+
+    def test_sentiment_factors(self):
+        """测试情绪类因子"""
+        calculator = FactorCalculator()
+        data = create_sample_ohlcv_data(50)
+
+        # 测试已实现的情绪类因子 (ALPHA_082 - ALPHA_086)
+        factor_names = {
+            "ALPHA_082": "money_flow",
+            "ALPHA_083": "short_medium_momentum",
+            "ALPHA_084": "price_60d_high",
+            "ALPHA_085": "price_60d_low",
+            "ALPHA_086": "rsi_14"
+        }
+        
+        for factor_id, expected_name in factor_names.items():
+            result = calculator.calculate(factor_id, data)
+            assert isinstance(result, FactorResult)
+            assert result.factor_id == factor_id
+            assert result.factor_name == expected_name
+            assert len(result.values) == len(data)
+            assert result.metadata["category"] == "sentiment"
+
+        # 测试placeholder情绪类因子 (ALPHA_087)
+        result = calculator.calculate("ALPHA_087", data)
+        assert isinstance(result, FactorResult)
+        assert result.factor_id == "ALPHA_087"
+        assert result.factor_name == "placeholder"
+        assert result.values.iloc[-1] == 0
+        assert result.metadata["category"] == "sentiment"
+
 
 class TestPlaceholderFactors:
     """测试Placeholder因子"""
@@ -169,7 +268,7 @@ class TestPlaceholderFactors:
         """测试placeholder因子集合非空"""
         assert len(PLACEHOLDER_FACTORS) > 0
 
-    def test_placeholder_warning(self):
+    def test_placeholder_warning(self, caplog):
         """测试placeholder因子产生警告"""
         import logging
         from src.core.exceptions import ValidationException
@@ -177,10 +276,11 @@ class TestPlaceholderFactors:
         calculator = FactorCalculator()
         data = create_sample_ohlcv_data(50)
 
-        with pytest.warns(UserWarning, match="placeholder"):
+        with caplog.at_level(logging.WARNING, logger='src.modules.factor_calculator'):
             result = calculator.calculate("ALPHA_030", data)
             assert result.factor_name == "placeholder"
             assert result.values.iloc[-1] == 0
+            assert any("placeholder" in record.message for record in caplog.records)
 
 
 class TestBatchCalculation:

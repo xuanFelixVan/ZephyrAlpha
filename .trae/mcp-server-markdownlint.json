@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "markdownlint-doc-validator": {
+      "command": "markdownlint-cli",
+      "args": [],
+      "description": "Markdown文档质量检查工具，验证文档格式规范"
+    }
+  }
+}

@@ -2,6 +2,7 @@
 告警管理器单元测试
 """
 import pytest
+import urllib.error
 from datetime import datetime
 from unittest.mock import Mock, patch, MagicMock
 
@@ -153,7 +154,18 @@ class TestEmailAlertChannel:
     @patch('smtplib.SMTP')
     def test_send_retry_on_failure(self, mock_smtp):
         """测试失败时重试"""
-        mock_smtp.side_effect = [ConnectionError("Failed"), None]
+        mock_smtp_instance = MagicMock()
+        mock_smtp_instance.starttls = Mock()
+        mock_smtp_instance.login = Mock()
+        mock_smtp_instance.sendmail = Mock()
+        
+        mock_smtp.side_effect = [
+            ConnectionError("Failed"),
+            Mock(
+                __enter__=Mock(return_value=mock_smtp_instance),
+                __exit__=Mock(return_value=False)
+            )
+        ]
 
         config = {
             "smtp_server": "smtp.gmail.com",
@@ -249,6 +261,39 @@ class TestServerChanAlertChannel:
 
         assert result is False
 
+    @patch('urllib.request.urlopen')
+    def test_send_url_error(self, mock_urlopen):
+        """测试URL错误触发重试"""
+        mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
+        
+        config = {"sendkey": "test_sendkey"}
+        channel = ServerChanAlertChannel(config)
+
+        alert = Alert(level=AlertLevel.INFO, title="Test", message="Test message")
+        result = channel.send(alert)
+
+        # 应该重试后失败
+        assert result is False
+        # 验证重试次数
+        assert mock_urlopen.call_count == 3
+
+    @patch('urllib.request.urlopen')
+    def test_send_json_decode_error(self, mock_urlopen):
+        """测试JSON解析错误"""
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'not json'
+        mock_response.__enter__.return_value = mock_response
+        mock_urlopen.return_value = mock_response
+        
+        config = {"sendkey": "test_sendkey"}
+        channel = ServerChanAlertChannel(config)
+
+        alert = Alert(level=AlertLevel.INFO, title="Test", message="Test message")
+        result = channel.send(alert)
+
+        # JSON解析错误应立即返回False
+        assert result is False
+
 
 class TestBarkAlertChannel:
     """测试 Bark 告警渠道"""
@@ -323,7 +368,7 @@ class TestAlertManager:
 
         result = manager.send(AlertLevel.INFO, "Info Title", "Info message")
 
-        assert result is True
+        assert result == 0
         assert len(manager.alert_history) == 1
         assert manager.alert_history[0].title == "Info Title"
 
@@ -333,7 +378,7 @@ class TestAlertManager:
 
         result = manager.warning("Warning Title", "Warning message")
 
-        assert result is True
+        assert result == 0
         assert manager.alert_history[0].level == AlertLevel.WARNING
 
     def test_send_error(self):
@@ -342,7 +387,7 @@ class TestAlertManager:
 
         result = manager.error("Error Title", "Error message")
 
-        assert result is True
+        assert result == 0
         assert manager.alert_history[0].level == AlertLevel.ERROR
 
     def test_send_critical(self):
@@ -351,7 +396,7 @@ class TestAlertManager:
 
         result = manager.critical("Critical Title", "Critical message")
 
-        assert result is True
+        assert result == 0
         assert manager.alert_history[0].level == AlertLevel.CRITICAL
 
     def test_send_trade_alert(self):
@@ -365,7 +410,7 @@ class TestAlertManager:
             price=10.5
         )
 
-        assert result is True
+        assert result == 0
         assert "000001" in manager.alert_history[0].title
         assert "BUY" in manager.alert_history[0].title
 
@@ -381,7 +426,7 @@ class TestAlertManager:
             pnl=500.0
         )
 
-        assert result is True
+        assert result == 0
         assert "盈亏" in manager.alert_history[0].message
 
     def test_send_risk_alert(self):
@@ -394,7 +439,7 @@ class TestAlertManager:
             triggered_rules=["单票持仓上限"]
         )
 
-        assert result is True
+        assert result == 0
         assert "仓位超限" in manager.alert_history[0].title
 
     def test_send_strategy_alert(self):
@@ -406,7 +451,7 @@ class TestAlertManager:
             message="检测到买入信号"
         )
 
-        assert result is True
+        assert result == 0
         assert "信号生成" in manager.alert_history[0].title
 
     def test_async_send(self):

@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "bandit-security-scanner": {
+      "command": "bandit",
+      "args": ["-r", "src/", "-f", "json"],
+      "description": "Python安全漏洞扫描工具，用于审计代码中的安全问题"
+    },
+    "pylint-code-analyzer": {
+      "command": "pylint",
+      "args": ["--output-format=json"],
+      "description": "Python代码质量分析工具，检查代码规范和质量问题"
+    },
+    "mypy-type-checker": {
+      "command": "mypy",
+      "args": [],
+      "description": "Python类型检查工具，验证代码类型注解的正确性"
+    },
+    "safety-dependency-checker": {
+      "command": "safety",
+      "args": ["check", "--json"],
+      "description": "Python依赖安全扫描工具，检查第三方包的安全漏洞"
+    },
+    "pydocstyle-doc-checker": {
+      "command": "pydocstyle",
+      "args": [],
+      "description": "Python文档一致性检查工具，验证文档字符串格式"
+    },
+    "yamllint-config-checker": {
+      "command": "yamllint",
+      "args": ["-f", "parsable"],
+      "description": "YAML配置检查工具，验证配置文件格式和规范"
+    },
+    "markdownlint-doc-validator": {
+      "command": "markdownlint-cli",
+      "args": [],
+      "description": "Markdown文档质量检查工具，验证文档格式规范"
+    }
+  }
+}

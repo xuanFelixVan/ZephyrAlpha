@@ -1,9 +1,19 @@
-# Python
+# ============================================
+# 清风量化系统 .gitignore 配置
+# 版本: v2.0 (2026-04-01)
+# 维护: Audit Sentinel
+# ============================================
+
+# --------------------------
+# Python 运行时和编译文件
+# --------------------------
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# 包构建和分发
 build/
 develop-eggs/
 dist/
@@ -20,20 +30,26 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# --------------------------
+# 虚拟环境
+# --------------------------
 venv/
 ENV/
 env/
-.venv
+.venv/
 
-# IDE
+# --------------------------
+# IDE 和编辑器文件
+# --------------------------
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Data
+# --------------------------
+# 数据文件（不提交到版本控制）
+# --------------------------
 data/raw/
 data/processed/
 data/factors/
@@ -44,19 +60,101 @@ data/reports/
 logs/
 *.db
 *.parquet
+A股数据/
 
-# Environment
+# --------------------------
+# 环境变量和密钥（绝对不提交！）
+# --------------------------
 .env
 .env.local
+.env.*.local
+.secrets/
+*.key
+*.pem
+*.cert
 
-# OS
+# --------------------------
+# 操作系统生成文件
+# --------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Test
+# --------------------------
+# 测试和覆盖率文件
+# --------------------------
 .pytest_cache/
+.mypy_cache/
 .coverage
+.coverage.*
 htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
 
+# --------------------------
+# Python 代码质量工具
+# --------------------------
+.pylint.d/
+.flake8
+.mccabe
+*.cache
+.cache/
+
+# --------------------------
+# Jupyter Notebook 缓存
+# --------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# --------------------------
+# 开发工具
+# --------------------------
+.trae/  # Trae IDE 工作区（保留）
+
+# --------------------------
 # Docker
+# --------------------------
 .dockerignore
+
+# --------------------------
+# 临时文件和备份文件
+# --------------------------
+*~
+*.bak
+*.tmp
+*.temp
+*.log
+*.log.*
+
+# --------------------------
+# 项目特定忽略规则
+# --------------------------
+# 因子库中间文件
+docs/02_FACTOR_LIBRARY/05_BACKTEST/value_factors/  # 因子回测结果
+docs/02_FACTOR_LIBRARY/05_BACKTEST/ic_reports/     # IC分析报告
+docs/02_FACTOR_LIBRARY/05_BACKTEST/strategy_reports/ # 策略回测报告
+
+# 审计报告缓存（可定期清理）
+docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/*.tmp
+
+# --------------------------
+# 外部文档资源（大文件）
+# --------------------------
+# 注意：外部PDF文档已移动到 docs/00_RESOURCES/
+# 该目录下的PDF文件较大，但作为参考文档需要保留
+# 如需节省空间，可考虑外部存储
+
+# ============================================
+# 规则说明：
+# 1. 以 / 结尾表示忽略整个目录
+# 2. * 表示通配符
+# 3. ! 表示例外（不忽略）
+# 4. 环境变量文件必须忽略，防止密钥泄露
+# ============================================

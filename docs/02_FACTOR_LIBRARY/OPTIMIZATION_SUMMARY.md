@@ -1,3 +1,17 @@
+---
+module_id: FACTOR_DOC_001
+version: 4.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 ﻿# 因子库优化总结 (Factor Library Optimization Summary)
 
 > 清风量化交易系统因子库专业机构化升级完成报告
@@ -215,7 +229,7 @@ performance:
 
  01_METHODOLOGY/                    # 方法论 (优化)
     README.md
-    factor_definition.md           # 因子定义标准
+    T.02.FE001.factor_definition.md           # 因子定义标准
     ic_analysis.md                 # IC 分析标准 (待创建)
     backtest_standards.md          # 回测标准 (待创建)
 

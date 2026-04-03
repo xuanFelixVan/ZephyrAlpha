@@ -1,13 +1,17 @@
 ---
-module_id: RISK_RULE_ENGINE_001
-version: 1.0
+module_id: TACTICS_DOC_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 6 (风控层)
-index: RISK.001
-estimated_hours: 40h
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # 风控规则引擎蓝图
 
@@ -16,7 +20,6 @@ estimated_hours: 40h
 > **开发时间**: 40h
 > **核心定位**: 实现"规则定义 → 实时检查 → 告警/执行 → 记录"的完整风控闭环
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +30,6 @@ estimated_hours: 40h
 | **快速失败** | 风控触发时立即行动，不等待人工 |
 | **完整审计** | 所有风控事件完整记录 |
 
----
 
 ## 2. 风控架构
 
@@ -67,7 +69,6 @@ estimated_hours: 40h
                     告警/执行动作
 ```
 
----
 
 ## 3. 核心实现
 
@@ -490,7 +491,6 @@ class RiskActions:
         AlertManager().send(alert)
 ```
 
----
 
 ## 4. 风控API
 
@@ -576,7 +576,6 @@ class RiskEndpoints:
         return RiskRuleEngine.get_alerts(start_date, end_date)
 ```
 
----
 
 ## 5. 告警管理
 
@@ -626,7 +625,6 @@ class AlertManager:
             return []  # info不发送
 ```
 
----
 
 ## 6. 开发任务分解
 

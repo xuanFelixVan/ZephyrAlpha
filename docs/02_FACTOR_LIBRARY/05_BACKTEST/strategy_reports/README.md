@@ -1,21 +1,27 @@
 ---
-module_id: STRATEGY_REPORTS_README
-version: 1.0
+module_id: FACTOR_README_001
+version: 1.0.0
 status: Active
-last_updated: 2026-03-28
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
 ---
+
 
 # strategy_reports/ - 策略回测报告
 
 > 完整策略交易表现验证报告集中管理
 
----
 
 ## 目录说明
 
 本目录存放**策略回测报告**，用于评估完整策略的交易表现。
 
----
 
 ## 目录结构
 
@@ -32,7 +38,6 @@ strategy_reports/
 └── ...
 ```
 
----
 
 ## 报告模板
 
@@ -62,15 +67,13 @@ strategy_reports/
 [统计数据]
 ```
 
----
 
 ## 相关文档
 
 | 文档 | 说明 |
 |------|------|
-| [../../Strategy_Spec_S001.md](../../Strategy_Spec_S001.md) | 策略逻辑定义 |
-| [../01_METHODOLOGY/backtest_standards.md](../01_METHODOLOGY/backtest_standards.md) | 回测标准 |
+| [../../Strategy_Spec_S001.md](../../../03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略逻辑定义 |
+| [../01_METHODOLOGY/backtest_standards.md](../../01_METHODOLOGY/backtest_standards.md) | 回测标准 |
 
----
 
 **版本**: 1.0 | **更新**: 2026-03-28

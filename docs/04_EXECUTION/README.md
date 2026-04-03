@@ -1,3 +1,17 @@
+---
+module_id: EXECUTION_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构交易执行标准
+applicable_scope: 交易执行与监控
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 04_EXECUTION - 执行与运行阶段
 
 > 实盘交易执行、监控与优化系统
@@ -38,8 +52,10 @@
 | 02_TRADE_EXECUTOR | Layer 5 | 订单管理、交易执行、TCA | P0 |
 | 03_MONITORING | Layer 6 | 实时监控、告警 | P1 |
 | 04_AI_COMMITTEE | Layer 7 | 战略决策、参数调优 | P2 |
+| 05_RISK_ENGINE | Layer 6 | 风险引擎、保证金管理 | P0 |
+| 06_SIMULATION | Layer 5 | 模拟撮合、回测引擎 | P1 |
 
 ---
 
 **维护者**: 清风量化执行部
-**更新**: 2026-03-28
+**更新**: 2026-03-31

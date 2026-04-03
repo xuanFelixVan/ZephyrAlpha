@@ -1,3 +1,17 @@
+---
+module_id: TACTICS_README_001
+version: 4.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # main/02_TACTICS - 战术模块
 
 > Layer 0-7 战术实现文档
@@ -171,7 +185,6 @@ T.{Layer 编号}.{分类代码}.{序号}.{战术名称}.md
 | 07_ITERATION/ | [STUDY_ONLY] | 策略迭代战术，待回测验证 |
 
 > ⚠️ **当前所有代码均为 [STUDY_ONLY] 状态，不可直接运行**
-> 详见：[CODE_STATUS.md](../../CODE_STATUS.md)
 
 ---
 
@@ -179,12 +192,11 @@ T.{Layer 编号}.{分类代码}.{序号}.{战术名称}.md
 
 | 文档 | 说明 |
 |------|------|
-| [../../SPEC.md](../../SPEC.md) | 主规格文档 |
-| [../../CODE_STATUS.md](../../CODE_STATUS.md) | 代码状态规范 |
-| [../../01_FRAMEWORK/README.md](../../01_FRAMEWORK/README.md) | Layer 0-7 框架说明 |
+| [../../INDEX.md](../INDEX.md) | 主规格文档 |
+| [../../CHANGELOG.md](../../06_ARCHIVE/CHANGELOG.md) | 变更日志 |
+| [../../01_FRAMEWORK/README.md](../../01_FRAMEWORK/README.md) | Layer 0-8 框架说明 |
 | [../../02_FACTOR_LIBRARY/](../../02_FACTOR_LIBRARY/) | 因子库 |
-| [../../03_TRADING_TACTICS/](../../03_TRADING_TACTICS/) | 交易策略池 |
-| [../../04_TECHNICAL_SPECS/](../../04_TECHNICAL_SPECS/) | 技术规格 |
+| [../../04_EXECUTION/](../../04_EXECUTION/) | 执行引擎 |
 
 ---
 

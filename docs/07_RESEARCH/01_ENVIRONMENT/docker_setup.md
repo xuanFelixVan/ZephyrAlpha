@@ -1,3 +1,17 @@
+---
+module_id: RESEARCH_DOC_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构研究标准
+applicable_scope: 量化研究实验
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # Docker 研究环境设置
 
 > 容器化研究环境，确保环境一致性和隔离性
@@ -269,8 +283,8 @@ jupyter lab --ip=0.0.0.0
 
 | 文档 | 说明 |
 |------|------|
-| [dependency_management.md](./dependency_management.md) | 依赖管理详细规范 |
-| [workflow_orchestration.md](./workflow_orchestration.md) | 工作流编排 |
+|  | 依赖管理详细规范 |
+|  | 工作流编排 |
 | [../02_EXPLORATORY_ANALYSIS/statistical_tools.md](../02_EXPLORATORY_ANALYSIS/statistical_tools.md) | 统计分析工具 |
 
 ---

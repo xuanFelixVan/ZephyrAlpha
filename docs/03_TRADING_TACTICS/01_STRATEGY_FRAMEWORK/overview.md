@@ -1,4 +1,18 @@
-﻿# 策略体系概述
+---
+module_id: TACTICS_DOC_001
+version: 2.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# 策略体系概述
 
 > 清风量化交易系统 4.0 策略体系总览
 >
@@ -257,8 +271,9 @@ graph LR
 | **了解策略体系** | [overview.md](./overview.md) |
 | **查看策略分类** | [classification.md](./classification.md) |
 | **开发新策略** | [lifecycle.md](./lifecycle.md) |
-| **选择策略** | [../05_STRATEGY_POOL/selection-logic.md](../05_STRATEGY_POOL/selection-logic.md) |
-| **查看具体策略** | [../02_CORE_STRATEGIES/](../02_CORE_STRATEGIES/) |
+| **策略引擎开发** | [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) |
+| **选择策略** | [../05_STRATEGY_POOL/index.md](../05_STRATEGY_POOL/index.md) |
+| **查看具体策略** | [../INDEX.md](../INDEX.md) |
 
 ---
 
@@ -280,6 +295,7 @@ graph LR
 -  《量化交易》- Ernest Chan
 -  [策略分类文档](./classification.md)
 -  [策略生命周期](./lifecycle.md)
+-  [策略引擎开发蓝图](./STRATEGY_ENGINE_BLUEPRINT.md)
 
 ---
 

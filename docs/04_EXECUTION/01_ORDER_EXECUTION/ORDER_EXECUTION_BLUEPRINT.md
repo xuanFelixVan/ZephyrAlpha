@@ -1,13 +1,17 @@
 ---
-module_id: ORDER_EXECUTION_001
-version: 1.0
+module_id: EXECUTION_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-29
-layer: Layer 5 (执行层)
-index: EXEC.001
-estimated_hours: 40h
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
 ---
+
 
 # 订单生成+执行蓝图
 
@@ -16,7 +20,6 @@ estimated_hours: 40h
 > **开发时间**: 40h
 > **核心定位**: 实现"信号 → 订单 → 撮合 → 成交"的完整交易执行闭环
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +30,6 @@ estimated_hours: 40h
 | **TWAP/VWAP为主** | 智能订单算法以TWAP/VWAP为主 |
 | **完整日志** | 所有交易记录完整保存 |
 
----
 
 ## 2. 交易执行架构
 
@@ -62,7 +64,6 @@ estimated_hours: 40h
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
 
 ## 3. 核心实现
 
@@ -420,7 +421,6 @@ class OrderExecutor:
         raise TimeoutError(f"等待成交超时: {broker_order_id}")
 ```
 
----
 
 ## 4. 模拟撮合引擎
 
@@ -475,7 +475,6 @@ class SimulatedBroker:
             order_data['filled_time'] = datetime.now()
 ```
 
----
 
 ## 5. vn.py集成
 
@@ -544,7 +543,6 @@ class VNpyConnector:
         return self.rest_client.get_position(symbol)
 ```
 
----
 
 ## 6. API接口
 
@@ -596,7 +594,6 @@ class TradingAPI:
         """
 ```
 
----
 
 ## 7. 开发任务分解
 
@@ -612,7 +609,6 @@ class TradingAPI:
 | vn.py集成 | 4h | VNpyConnector |
 | 交易API | 4h | REST API |
 
----
 
 ## 8. 更新记录
 
@@ -620,7 +616,6 @@ class TradingAPI:
 |------|------|----------|
 | v1.0 | 2026-03-29 | 初始版本 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `EXEC.001`

@@ -1,3 +1,17 @@
+---
+module_id: IMPL_GUIDE_001
+version: 1.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
 # 测试规范 (TESTING_STANDARD.md)
 
 > 本文档定义了清风量化交易系统4.0的测试标准，包括单元测试、集成测试、回测验证、策略验证等测试规范。

@@ -1,4 +1,18 @@
-﻿# 开发规范 (Development Standards)
+---
+module_id: IMPL_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 初始标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+# 开发规范 (Development Standards)
 
 > **适用**: 个人开发者  
 > **状态**: 必须遵守核心规范
@@ -9,12 +23,12 @@
 
 | 文档 | 说明 | 重要性 |
 |------|------|--------|
-| [code-quality.md](./code-quality.md) | 代码质量标准 |  必须 |
-| [config-standard.md](./config-standard.md) | 配置文件标准 |  必须 |
-| [error-handling.md](./error-handling.md) | 错误处理规范 |  必须 |
-| [logging-standard.md](./logging-standard.md) | 日志记录规范 |  必须 |
-| [path-standard.md](./path-standard.md) | 路径处理规范 |  建议 |
-| [testing-standard.md](./testing-standard.md) | 测试规范 |  建议 |
+|  | 代码质量标准 |  必须 |
+|  | 配置文件标准 |  必须 |
+|  | 错误处理规范 |  必须 |
+|  | 日志记录规范 |  必须 |
+|  | 路径处理规范 |  建议 |
+|  | 测试规范 |  建议 |
 | [security.md](./security.md) | 安全规范 |  必须 |
 
 ---
@@ -131,9 +145,9 @@ isort src/
 ##  相关文档
 
 - [快速开始](../01_QUICKSTART/README.md)
-- [常见问题](../04_OPERATIONS/faq.md)
+- [文档索引](../../03_TRADING_TACTICS/INDEX.md)
 
 ---
 
-**最后更新**: 2026-03-28  
+**最后更新**: 2026-03-31
 **状态**:  可用

@@ -1,0 +1,355 @@
+---
+module_id: IMPL_GUIDE_001
+version: 5.1.0
+status: Active
+created_date: 2026-04-01
+last_updated: 2026-04-01
+owner: 首席文档架构师
+standard_type: 专业量化机构实施标准
+applicable_scope: 系统实施与部署
+compliance_level: 实施标准
+parent_document: ../INDEX.md
+implementation_status: 进行中
+---
+
+
+# 开发标准与规范
+
+> 清风量化系统 v5.1 的开发标准、目录结构、代码规范
+>
+> **文档来源**: 由 DEVELOPER_RULES.md 拆分而来，遵循职责驱动原则
+> **相关文档**: [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md), [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md)
+
+
+## 一、目录结构规范
+
+### 1.1 顶层结构
+
+```
+D:\ZephyrAlpha\
+│
+├── docs/                          # 文档中心（只读参考）
+│   ├── INDEX.md                   # 文档导航入口
+│   ├── QUICK_REFERENCE.md         # 快速命令参考
+│   ├── System_Manifest.md         # 系统清单（架构、模块、权限）
+│   ├── API_Contract.md            # 模块间接口契约
+│   └── ...                        # 其他文档
+│
+├── src/                           # 源代码
+├── tests/                         # 测试
+├── config/                        # 配置
+├── scripts/                       # 脚本
+├── data/                          # 数据
+├── logs/                          # 日志
+└── notebooks/                     # Jupyter
+```
+
+### 1.2 ZephyrAlpha/ 详细结构
+
+```
+ZephyrAlpha/
+├── config/                        # 配置（所有可修改配置）
+│   ├── system.yaml               # 系统级配置
+│   ├── data_sources.yaml         # 数据源配置
+│   ├── factors/                   # 因子配置
+│   │   └── selected_factors.yaml
+│   ├── strategies/                # 策略配置
+│   │   └── active_strategies.yaml
+│   └── risk/                      # 风控配置
+│       └── rules.yaml
+│
+├── src/                           # 源代码
+│   ├── __init__.py
+│   ├── main.py                    # 入口点
+│   ├── core/                      # 核心基类
+│   │   ├── __init__.py
+│   │   ├── base.py                # Result, Signal, Order, Position
+│   │   └── exceptions.py          # 异常类定义
+│   ├── modules/                   # 功能模块（M01-M15）
+│   │   ├── __init__.py
+│   │   ├── datahub.py             # M01 数据中心
+│   │   ├── factor_calculator.py   # M02 因子计算
+│   │   ├── strategy_engine.py     # M03 策略引擎
+│   │   ├── risk_manager.py        # M04 风险管理
+│   │   ├── portfolio_optimizer.py # M05 组合优化
+│   │   ├── trade_executor.py      # M06 交易执行
+│   │   ├── risk_monitor.py        # M07 风险监控
+│   │   ├── performance_analyzer.py # M08 绩效分析
+│   │   ├── config_manager.py      # M09 配置管理
+│   │   ├── log_manager.py         # M10 日志管理
+│   │   ├── cache_manager.py       # M11 缓存管理
+│   │   ├── event_bus.py           # M12 事件总线
+│   │   ├── metrics_collector.py   # M13 指标采集
+│   │   ├── alert_manager.py       # M14 告警管理
+│   │   └── backtest_engine.py     # M15 回测引擎
+│   ├── strategies/                # 策略实现
+│   │   ├── __init__.py
+│   │   ├── s001_trend_follow.py   # S001 趋势跟踪
+│   │   └── s002_macd.py           # S002 MACD
+│   ├── factors/                   # 因子实现
+│   │   ├── __init__.py
+│   │   ├── alpha_001_momentum.py  # ALPHA_001 动量因子
+│   │   └── alpha_002_mean_reversion.py
+│   └── utils/                     # 工具函数
+│       ├── __init__.py
+│       ├── data_utils.py
+│       ├── math_utils.py
+│       └── time_utils.py
+│
+├── tests/                         # 测试
+│   ├── __init__.py
+│   ├── unit/                      # 单元测试
+│   │   ├── test_datahub.py
+│   │   └── test_factor_calculator.py
+│   ├── integration/               # 集成测试
+│   │   └── test_strategy_engine.py
+│   └── fixtures/                  # 测试数据
+│       └── sample_data.csv
+│
+├── scripts/                       # 工具脚本
+│   ├── download_data.py          # 数据下载
+│   ├── backtest.py               # 回测脚本
+│   └── init_db.py                # 数据库初始化
+│
+├── data/                          # 数据存储（gitignored）
+│   ├── raw/                      # 原始数据
+│   ├── processed/                # 处理后数据
+│   └── cache/                    # 临时缓存
+│
+├── logs/                          # 日志（gitignored）
+│
+├── notebooks/                     # Jupyter（gitignored）
+│
+├── docs/                          # 代码库文档（项目私有）
+│   ├── ARCHITECTURE.md           # 架构图
+│   ├── MODULES.md                # 模块规格
+│   └── ...
+│
+├── requirements.txt               # 依赖清单
+├── pyproject.toml                # 项目配置
+├── .env.example                  # 环境变量示例
+├── .gitignore
+└── README.md                      # 项目自述
+```
+
+### 1.3 禁止的目录和文件
+
+| 禁止 | 原因 | 正确位置 |
+|------|------|---------|
+| `temp/` | 污染根目录 | `/tmp/` 或 `data/cache/` |
+| `backup/` | 版本控制管理 | 使用 `git tag` |
+| `old/` | 版本控制管理 | 使用 `06_ARCHIVE/` |
+| `test_*.py` 在 `src/` | 测试应隔离 | `tests/unit/` |
+| `tmp_*` | 污染目录 | `data/cache/` |
+| 中文目录名 | 跨平台问题 | 英文命名 |
+
+
+## 二、文件命名规范
+
+### 2.1 Python 文件
+
+```python
+# ✅ 正确
+datahub.py                  # 模块: 小写 + 下划线
+s001_trend_follow.py        # 策略: s + 编号 + 下划线 + 名称
+alpha_001_momentum.py       # 因子: alpha_ + 编号 + 下划线 + 名称
+test_datahub.py             # 测试: test_ + 模块名
+
+# ❌ 错误
+DataHub.py                  # 不用 PascalCase
+S001TrendFollow.py          # 不用 CamelCase
+Alpha001Momentum.py         # 不用 CamelCase
+test-datahub.py             # 不用连字符
+```
+
+### 2.2 配置文件
+
+```yaml
+# ✅ 正确
+system.yaml                 # 系统配置
+strategies.yaml             # 策略配置
+factors.yaml                # 因子配置
+data_sources.yaml           # 数据源配置
+
+# ❌ 错误
+config.yaml                 # 太通用
+settings.json               # 使用 YAML
+system_config.yaml          # 冗余
+```
+
+### 2.3 文档文件
+
+```markdown
+# ✅ 正确
+README.md                   # 项目说明
+DEVELOPMENT_STANDARDS.md    # 开发标准
+INDEX.md                    # 文档索引
+CHANGELOG.md                # 变更日志
+
+# ❌ 错误
+readme.md                   # 用大写
+quick-start.md              # 用连字符
+```
+
+
+## 三、代码标准
+
+### 3.1 文件头部
+
+```python
+"""模块名称
+
+功能描述
+"""
+import logging
+from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+```
+
+### 3.2 类定义
+
+```python
+class DataHub:
+    """数据中心模块
+
+    职责：获取和缓存市场数据
+
+    属性：
+        config: 配置对象
+        cache: 缓存管理器
+
+    示例：
+        >>> hub = DataHub()
+        >>> data = hub.get_ohlcv("000001.SZ", "2026-01-01", "2026-03-28")
+    """
+
+    def __init__(self, config: Dict):
+        self.config = config
+        self.cache = None
+```
+
+### 3.3 函数定义
+
+```python
+def calculate_ma(prices: List[float], window: int) -> float:
+    """计算移动平均线
+
+    参数：
+        prices: 价格列表
+        window: 窗口大小
+
+    返回：
+        移动平均值
+
+    异常：
+        ValueError: 参数无效
+    """
+    if not prices or window <= 0:
+        raise ValueError("参数无效")
+    return sum(prices[-window:]) / window
+```
+
+### 3.4 类型提示
+
+```python
+# ✅ 正确
+def process_data(df: pd.DataFrame, params: Dict[str, Any]) -> pd.DataFrame:
+    ...
+
+# ❌ 错误
+def process_data(df, params):  # 无类型提示
+    ...
+```
+
+
+## 四、配置管理
+
+### 4.1 配置文件原则
+
+- **不硬编码**: 所有配置通过 YAML 文件或环境变量
+- **敏感信息**: 使用 `${VAR_NAME}` 或 `${VAR_NAME:default}` 语法
+- **分层管理**: system.yaml → strategies.yaml → 策略私有配置
+
+### 4.2 system.yaml 示例
+
+```yaml
+system:
+  name: "清风量化交易系统"
+  version: "4.0.3"
+  environment: "${ENVIRONMENT:development}"
+
+database:
+  host: "${DB_HOST:localhost}"
+  password: "${DB_PASSWORD}"
+
+cache:
+  host: "${CACHE_HOST:localhost}"
+  port: "${CACHE_PORT:6379}"
+  ttl: 3600
+```
+
+
+## 五、测试规范
+
+### 5.1 测试文件位置
+
+```
+tests/
+├── unit/                      # 单元测试
+│   ├── test_datahub.py
+│   └── test_factor_calculator.py
+│
+└── integration/              # 集成测试
+    └── test_strategy_engine.py
+```
+
+### 5.2 测试命名
+
+```python
+# ✅ 正确
+def test_calculate_ma_normal():
+    """测试正常情况"""
+
+def test_calculate_ma_empty_list():
+    """测试空列表"""
+
+def test_calculate_ma_invalid_window():
+    """测试无效窗口"""
+
+# ❌ 错误
+def test_ma():       # 名称模糊
+def test_1():        # 无意义编号
+```
+
+### 5.3 覆盖率要求
+
+```bash
+pytest tests/ --cov=src --cov-report=html
+# 最低要求: > 80%
+```
+
+
+## 六、文件归属检查清单
+
+创建文件前，问自己：
+
+| 问题 | 如果是 | 放这里 |
+|------|--------|--------|
+| 代码文件？ | 是 | `src/` |
+| 测试代码？ | 是 | `tests/` |
+| 配置文件？ | 是 | `config/` |
+| 工具脚本？ | 是 | `scripts/` |
+| 文档参考？ | 是 | `docs/` |
+| 临时数据？ | 是 | `data/cache/` |
+| 分析笔记本？ | 是 | `notebooks/` |
+
+
+> **维护部门**: 清风量化开发部
+> **最后更新**: 2026-04-01
+> **文档版本**: v5.1
+
+**相关文档**:
+- [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) - 开发工作流程
+- [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md) - 设计原则
+- [DEVELOPER_RULES.md](./DEVELOPER_RULES.md) - 原文档（已拆分）

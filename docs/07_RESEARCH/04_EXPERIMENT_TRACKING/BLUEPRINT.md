@@ -1,13 +1,18 @@
 ---
-module_id: EXPERIMENT_TRACKING_001
-version: 1.0
+module_id: RESEARCH_BLUEPRINT_001
+version: 1.0.0
 status: Active
-parent_doc: INDEX.md
-last_updated: 2026-03-28
-layer: Layer -1 (研究层)
-index: EXP_001
-note: 简化版 - 使用wandb.ai替代自研实验追踪系统
+created_date: 2026-04-01
+last_updated: 2026-04-02
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
+parent_document: ../README.md
+implementation_status: 设计阶段
+implementation_progress: 0%
 ---
+
 
 # 研究实验追踪蓝图（简化版）
 
@@ -16,7 +21,6 @@ note: 简化版 - 使用wandb.ai替代自研实验追踪系统
 > **注意**: 本蓝图采用"购买而非自研"策略，使用Weights & Biases (wandb.ai)
 > **理由**: wandb免费版足够个人使用，支持Python一行代码集成
 
----
 
 ## 1. 设计原则
 
@@ -27,7 +31,6 @@ note: 简化版 - 使用wandb.ai替代自研实验追踪系统
 | 永久免费 | 个人使用免费，足够中小规模实验 |
 | 云端同步 | 实验数据云端存储，不丢数据 |
 
----
 
 ## 2. 方案对比
 
@@ -39,7 +42,6 @@ note: 简化版 - 使用wandb.ai替代自研实验追踪系统
 | 可视化 | 简陋 | 专业图表 |
 | 协作支持 | 无 | 团队协作 |
 
----
 
 ## 3. wandb集成方案
 
@@ -198,7 +200,6 @@ study.optimize(
 )
 ```
 
----
 
 ## 4. wandb仪表板
 
@@ -218,7 +219,6 @@ wandb自动生成：
 - 收益-回撤散点图
 - 交易频率分析
 
----
 
 ## 5. 团队协作(可选)
 
@@ -238,7 +238,6 @@ projects:
     members: ["user1"]
 ```
 
----
 
 ## 6. 本地替代方案
 
@@ -267,7 +266,6 @@ with mlflow.start_run():
     mlflow.log_artifact("factors.parquet")
 ```
 
----
 
 ## 7. 更新记录
 
@@ -275,7 +273,6 @@ with mlflow.start_run():
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
----
 
 **维护者**: 清风量化系统
 **索引**: `EXP_001`
