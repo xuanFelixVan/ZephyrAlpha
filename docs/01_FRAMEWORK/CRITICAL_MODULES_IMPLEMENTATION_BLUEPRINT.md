@@ -24,6 +24,18 @@ implementation_status: 立即启动
 > **目标**: 补充实时风控数据和全球市场数据，达到专业机构95%能力水平
 > **实施周期**: 3-6周（P0+P1）
 > **预期提升**: 覆盖度从75%提升至95%
+>
+> ---
+>
+> **📋 文档关系说明**：
+> - [`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) = **专业机构级完整蓝图**，适用于大规模团队
+> - [`PERSONAL_DEVELOPMENT_BLUEPRINT.md`](./PERSONAL_DEVELOPMENT_BLUEPRINT.md) = **个人开发版简化方案**，适用于个人开发者
+> - 本文档（`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`）= **关键欠缺模块补充**，立即行动项
+>
+> **选择指南**：
+> - 如果你是大规模团队 → 参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
+> - 如果你是个人开发者 → 参考PERSONAL_DEVELOPMENT_BLUEPRINT.md
+> - 如果你需要补充关键模块 → 参考本文档（立即行动）
 
 
 ## 📋 一、实施概览

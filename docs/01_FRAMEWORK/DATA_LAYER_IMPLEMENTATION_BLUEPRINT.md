@@ -25,6 +25,18 @@ implementation_status: 蓝图设计阶段
 > **实施周期**: 3个月（P0→P1→P2）
 > **目标**: 实现专业机构级数据源层，达到桥水、文艺复兴、Two Sigma的数据能力水平
 > **核心问题**: 当前系统数据源层仅达到专业机构的10-20%水平，存在严重的P0级缺失
+>
+> ---
+>
+> **📋 文档关系说明**：
+> - 本文档（`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`）= **专业机构级完整蓝图**，适用于大规模团队
+> - [`PERSONAL_DEVELOPMENT_BLUEPRINT.md`](./PERSONAL_DEVELOPMENT_BLUEPRINT.md) = **个人开发版简化方案**，适用于个人开发者
+> - [`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`](./CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md) = **关键欠缺模块补充**，立即行动项
+>
+> **选择指南**：
+> - 如果你是大规模团队 → 参考本文档（完整专业方案）
+> - 如果你是个人开发者 → 参考PERSONAL_DEVELOPMENT_BLUEPRINT.md
+> - 如果你需要补充关键模块 → 参考CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md
 
 ---
 

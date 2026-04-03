@@ -420,97 +420,74 @@ CREATE TABLE factor_performance (
 
 ### 5.1 因子计算引擎
 
-#### 5.1.1 财务因子计算
+> **职责边界说明**: 
+> 本模块专注于因子筛选、合成和Alpha信号生成。
+> 基础因子计算由 [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md) 模块负责。
+> QlibAlpha158因子由 [QLIB_ALPHA158](./QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md) 模块提供。
+
+#### 5.1.1 因子计算集成
 
 ```python
-class FinancialFactorCalculator:
-    """财务因子计算器"""
+from factor_calculator import FactorCalculator
+from qlib_alpha158 import QlibAlpha158Manager
+
+class AlphaFactorFactory:
+    """Alpha因子工厂 - 因子筛选与合成"""
     
-    def calculate_value_factors(self, financial_data: pd.DataFrame) -> pd.DataFrame:
-        """计算价值因子
+    def __init__(self, config: AlphaFactorFactoryConfig):
+        self.config = config
+        self.factor_calculator = FactorCalculator(config.factor_calculator_config)
+        self.alpha158_manager = QlibAlpha158Manager(config.alpha158_config)
+        self.factor_screener = FactorScreener(config.screener_config)
+        self.factor_combiner = FactorCombiner(config.combiner_config)
+    
+    def calculate_factors(self, factor_input: FactorInput) -> pd.DataFrame:
+        """计算因子 - 整合多源因子
+        
+        职责边界:
+        - 调用FactorCalculator获取基础因子 (价值、成长、动量等)
+        - 调用QlibAlpha158获取AI因子
+        - 本模块负责因子筛选和合成
         
         Args:
-            financial_data: 财务数据
+            factor_input: 因子输入数据
             
         Returns:
-            pd.DataFrame: 价值因子值
+            pd.DataFrame: 筛选合成后的因子值
         """
-        factors = pd.DataFrame(index=financial_data.index)
+        all_factors = {}
         
-        # PE因子
-        factors['PE'] = financial_data['market_cap'] / financial_data['net_profit']
+        all_factors['basic'] = self.factor_calculator.calculate_factors(factor_input)
         
-        # PB因子
-        factors['PB'] = financial_data['market_cap'] / financial_data['net_assets']
+        all_factors['alpha158'] = self.alpha158_manager.calculate_factors(
+            instruments=factor_input.instruments,
+            start_date=factor_input.start_date,
+            end_date=factor_input.end_date
+        )
         
-        # PS因子
-        factors['PS'] = financial_data['market_cap'] / financial_data['revenue']
+        combined_factors = pd.concat(all_factors, axis=1)
         
-        # PCF因子
-        factors['PCF'] = financial_data['market_cap'] / financial_data['cash_flow']
+        selected_factors = self.factor_screener.filter_factors(
+            combined_factors,
+            factor_input.forward_returns
+        )
         
-        return factors
-    
-    def calculate_growth_factors(self, financial_data: pd.DataFrame) -> pd.DataFrame:
-        """计算成长因子"""
-        factors = pd.DataFrame(index=financial_data.index)
+        final_alpha = self.factor_combiner.combine_factors(selected_factors)
         
-        # 营收增长率
-        factors['revenue_growth'] = financial_data['revenue'].pct_change(4)
-        
-        # 利润增长率
-        factors['profit_growth'] = financial_data['net_profit'].pct_change(4)
-        
-        return factors
+        return final_alpha
 ```
 
-#### 5.1.2 技术因子计算
+#### 5.1.2 因子来源映射
 
-```python
-class TechnicalFactorCalculator:
-    """技术因子计算器"""
-    
-    def calculate_momentum_factors(self, price_data: pd.DataFrame) -> pd.DataFrame:
-        """计算动量因子
-        
-        Args:
-            price_data: 价格数据
-            
-        Returns:
-            pd.DataFrame: 动量因子值
-        """
-        factors = pd.DataFrame(index=price_data.index)
-        
-        # 1个月动量
-        factors['momentum_1m'] = price_data['close'].pct_change(20)
-        
-        # 3个月动量
-        factors['momentum_3m'] = price_data['close'].pct_change(60)
-        
-        # 6个月动量
-        factors['momentum_6m'] = price_data['close'].pct_change(120)
-        
-        return factors
-    
-    def calculate_technical_indicators(self, price_data: pd.DataFrame) -> pd.DataFrame:
-        """计算技术指标因子"""
-        import talib
-        
-        factors = pd.DataFrame(index=price_data.index)
-        
-        # MA因子
-        factors['MA5'] = talib.MA(price_data['close'], timeperiod=5)
-        factors['MA20'] = talib.MA(price_data['close'], timeperiod=20)
-        
-        # MACD因子
-        macd, macdsignal, macdhist = talib.MACD(price_data['close'])
-        factors['MACD'] = macd
-        
-        # RSI因子
-        factors['RSI'] = talib.RSI(price_data['close'], timeperiod=14)
-        
-        return factors
-```
+| 因子类别 | 来源模块 | 因子数量 | 职责归属 |
+|----------|----------|----------|----------|
+| 价值因子 | FactorCalculator | 20+ | Layer 2 基础因子 |
+| 成长因子 | FactorCalculator | 15+ | Layer 2 基础因子 |
+| 动量因子 | FactorCalculator | 30+ | Layer 2 基础因子 |
+| 技术指标 | FactorCalculator | 50+ | Layer 2 基础因子 |
+| AI因子 | QlibAlpha158 | 158 | Layer 4 AI因子 |
+| 因子筛选 | AlphaFactorFactory | - | 本模块职责 |
+| 因子合成 | AlphaFactorFactory | - | 本模块职责 |
 
 ### 5.2 因子筛选算法
 

@@ -450,123 +450,46 @@ class CrossAssetCorrelationReport:
 
 **响应格式**: JSON
 
-#### 3.1.1 情景分析API
+### 3.2 API接口概述
 
-```python
-POST /api/v1/reports/scenario/analyze
-Content-Type: application/json
+**说明**: 详细的API接口定义请参考 [LAYER7_API_REFERENCE.md](../../05_TECHNICAL_SPECIFICATIONS/LAYER7_API_REFERENCE.md)
 
-{
-  "portfolio_id": "PORTFOLIO_001",
-  "scenario_type": "market_crash",  # market_crash, rate_hike, liquidity_crisis, etc.
-  "custom_shock": {  # 可选，自定义冲击参数
-    "equity_shock": -0.20,
-    "bond_shock": -0.05,
-    "volatility_shock": 0.50
-  },
-  "output_format": "json"  # json, markdown, pdf
-}
+#### 3.2.1 核心模块API接口
 
-Response 200:
-{
-  "status": "success",
-  "report_id": "SCENARIO_RPT_20260402_000001",
-  "timestamp": "2026-04-02T10:30:00Z",
-  "scenario_result": {
-    "portfolio_impact": -0.15,
-    "var_increase": 0.08,
-    "risk_metrics": {...},
-    "sensitivity_analysis": {...}
-  }
-}
-```
+| 模块 | API路径 | 功能描述 | 详细文档位置 |
+|------|---------|---------|-------------|
+| 情景分析器 | POST /api/v1/reports/scenario/analyze | 执行情景分析 | [SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md) |
+| 压力测试 | POST /api/v1/reports/stress-test/run | 执行压力测试 | [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
+| 实时风险监控 | GET /api/v1/reports/realtime-risk/current | 获取实时风险指标 | [REALTIME_RISK_MONITORING_BLUEPRINT.md](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) |
+| 多时间框架融合 | POST /api/v1/reports/multi-timeframe/fuse | 融合多层报告 | 本文档 2.1节 |
+| 经济范式分析 | POST /api/v1/reports/economic-regime/analyze | 分析经济范式 | [ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md) |
+| 信号质量监控 | POST /api/v1/reports/signal-quality/analyze | 分析信号质量 | [SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md) |
+| 策略生命周期 | GET /api/v1/reports/strategy-lifecycle/{strategy_id} | 获取策略生命周期报告 | 本文档 2.2节 |
+| 监管合规 | POST /api/v1/reports/regulatory/generate | 生成监管合规报告 | 本文档 2.2节 |
+| AI可解释性 | POST /api/v1/reports/ai-explainability/analyze | AI决策可解释性分析 | 本文档 2.2节 |
+| 执行成本 | GET /api/v1/reports/execution-cost/summary | 获取执行成本分析 | 本文档 2.2节 |
 
-#### 3.1.2 压力测试API
+#### 3.2.2 P1级扩展模块API接口（待实施）
 
-```python
-POST /api/v1/reports/stress-test/run
-Content-Type: application/json
+| 模块 | API路径 | 功能描述 | 状态 |
+|------|---------|---------|------|
+| 风险预算执行 | POST /api/v1/reports/risk-budget/analyze | 风险预算偏差分析 | 蓝图设计完成 |
+| 模型稳定性 | POST /api/v1/reports/model-stability/analyze | 模型漂移检测 | 蓝图设计完成 |
+| 回测过拟合 | POST /api/v1/reports/backtest-overfit/analyze | 过拟合检测 | 蓝图设计完成 |
+| 跨资产相关性 | POST /api/v1/reports/cross-asset-correlation/analyze | 相关性突变检测 | 蓝图设计完成 |
 
-{
-  "portfolio_id": "PORTFOLIO_001",
-  "test_type": "comprehensive",  # historical, hypothetical, reverse, comprehensive
-  "scenarios": ["2008_financial_crisis", "2020_covid_crash", "custom_1"],
-  "output_format": "json"
-}
+### 3.3 职责边界说明
 
-Response 200:
-{
-  "status": "success",
-  "report_id": "STRESS_RPT_20260402_000001",
-  "timestamp": "2026-04-02T10:35:00Z",
-  "test_results": [
-    {
-      "scenario_name": "2008_financial_crisis",
-      "portfolio_loss": -0.35,
-      "survival_assessment": "survived",
-      "recovery_time_days": 180
-    },
-    ...
-  ]
-}
-```
+**说明**: 详细的模块职责边界定义请参考 [LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES.md](./LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES.md)
 
-#### 3.1.3 实时风险监控API
+**核心原则**:
+- **单一职责原则**: 每个模块只负责一个核心功能
+- **接口隔离原则**: 模块间通过明确定义的接口通信
+- **依赖倒置原则**: 高层模块不依赖低层模块，都依赖抽象
 
-```python
-GET /api/v1/reports/realtime-risk/current
-Authorization: Bearer {token}
+---
 
-Response 200:
-{
-  "status": "success",
-  "timestamp": "2026-04-02T10:40:00Z",
-  "risk_metrics": {
-    "var_95": 0.05,
-    "var_99": 0.08,
-    "cvar_95": 0.07,
-    "drawdown": 0.12,
-    "volatility": 0.18,
-    "liquidity_score": 85,
-    "concentration_score": 75
-  },
-  "alerts": [
-    {
-      "alert_id": "ALERT_001",
-      "severity": "warning",
-      "message": "VaR超过阈值",
-      "timestamp": "2026-04-02T10:39:30Z"
-    }
-  ]
-}
-```
-
-#### 3.1.4 多时间框架融合API
-
-```python
-POST /api/v1/reports/multi-timeframe/fuse
-Content-Type: application/json
-
-{
-  "macro_report_id": "MACRO_RPT_001",
-  "strategy_report_id": "STRATEGY_RPT_001",
-  "execution_report_id": "EXEC_RPT_001",
-  "output_format": "json"
-}
-
-Response 200:
-{
-  "status": "success",
-  "report_id": "FUSED_RPT_20260402_000001",
-  "timestamp": "2026-04-02T10:45:00Z",
-  "consistency_score": 85.5,
-  "alignment_issues": [...],
-  "cross_timeframe_risks": [...],
-  "optimization_opportunities": [...]
-}
-```
-
-### 3.2 数据模型定义
+## 四、数据流设计
 
 #### 3.2.1 投资组合数据模型
 

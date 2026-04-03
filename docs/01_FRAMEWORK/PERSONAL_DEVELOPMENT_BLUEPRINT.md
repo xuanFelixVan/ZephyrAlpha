@@ -24,6 +24,18 @@ implementation_status: 设计阶段
 > **目标用户**: 个人开发者 + AI辅助维护
 > **核心理念**: 轻量级、低成本、易维护、快速迭代
 > **实施周期**: 2-4周（核心模块）
+>
+> ---
+>
+> **📋 文档关系说明**：
+> - [`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) = **专业机构级完整蓝图**，适用于大规模团队
+> - 本文档（`PERSONAL_DEVELOPMENT_BLUEPRINT.md`）= **个人开发版简化方案**，适用于个人开发者
+> - [`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`](./CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md) = **关键欠缺模块补充**，立即行动项
+>
+> **选择指南**：
+> - 如果你是大规模团队 → 参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
+> - 如果你是个人开发者 → 参考本文档（简化方案）
+> - 如果你需要补充关键模块 → 参考CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md
 
 
 ## 📋 一、个人开发模块筛选
