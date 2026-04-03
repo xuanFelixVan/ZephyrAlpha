@@ -1,5 +1,5 @@
 ---
-module_id: TRADE_AUDITOR_001
+module_id: TRADE_AUDITOR_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02

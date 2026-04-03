@@ -1342,6 +1342,265 @@ class RiskControlInterface:
 | **并发智能体数** | ≥100个智能体 | 并发测试 |
 | **响应延迟** | <500ms | 延迟测试 |
 
+### 5.4 回测验证策略 ⭐ **IMP-004补充**
+
+#### 5.4.1 回测数据准备
+
+**数据范围**: 2020-01-01 至 2025-12-31 (5年历史数据)
+
+| 数据类型 | 数据源 | 字段要求 | 质量标准 |
+|---------|--------|---------|---------|
+| **历史行情** | iFind | 开高低收、成交量、成交额 | 缺失率 < 1% |
+| **龙虎榜数据** | iFind | 机构买入、机构卖出、游资买入、游资卖出 | 覆盖率 > 90% |
+| **北向资金** | iFind | 日度流入流出、持股变化 | 完整性 100% |
+| **融资融券** | iFind | 融资余额、融券余额 | 完整性 100% |
+| **新闻舆情** | iFind | 新闻标题、新闻内容、情感标签 | 覆盖率 > 80% |
+| **宏观数据** | iFind + FRED | GDP、CPI、汇率、利率 | 月度数据完整 |
+
+**数据预处理流程**:
+```
+1. 数据下载 → 2. 数据清洗 → 3. 数据验证 → 4. 数据存储
+   (iFind API)  (缺失值处理)  (质量检查)   (Parquet格式)
+```
+
+#### 5.4.2 智能体行为验证
+
+**验证目标**: 验证智能体决策与历史实际行为的相似度
+
+**验证方法**:
+
+```python
+class AgentBehaviorValidator:
+    """智能体行为验证器
+    
+    索引: VALIDATOR.AGENT.BEHAVIOR.001
+    目标: 验证智能体决策与历史实际行为的相似度
+    """
+    
+    def validate_agent_behavior(self,
+                                agent: BaseAgent,
+                                historical_data: pd.DataFrame,
+                                validation_period: DateRange) -> ValidationResult:
+        """验证智能体行为
+        
+        验证流程:
+        1. 提取历史时点的市场状态
+        2. 智能体生成决策
+        3. 对比智能体决策 vs 历史实际行为
+        4. 计算行为相似度
+        5. 分析决策差异原因
+        
+        返回:
+            ValidationResult: 验证结果
+        """
+        similarity_scores = []
+        decision_diffs = []
+        
+        for date in validation_period:
+            # 1. 提取历史时点的市场状态
+            market_state = self._extract_market_state(historical_data, date)
+            
+            # 2. 智能体生成决策
+            agent_decision = agent.generate_trading_decision(market_state)
+            
+            # 3. 提取历史实际行为
+            actual_behavior = self._extract_actual_behavior(historical_data, date, agent.agent_type)
+            
+            # 4. 计算行为相似度
+            similarity = self._calculate_similarity(agent_decision, actual_behavior)
+            similarity_scores.append(similarity)
+            
+            # 5. 分析决策差异
+            diff = self._analyze_decision_diff(agent_decision, actual_behavior)
+            decision_diffs.append(diff)
+        
+        return ValidationResult(
+            avg_similarity=np.mean(similarity_scores),
+            min_similarity=np.min(similarity_scores),
+            decision_diffs=decision_diffs,
+            passed=np.mean(similarity_scores) >= 0.70
+        )
+    
+    def _calculate_similarity(self, 
+                             decision: AgentDecision,
+                             actual: ActualBehavior) -> float:
+        """计算行为相似度
+        
+        相似度 = 0.4 * 动作相似度 + 0.3 * 方向相似度 + 0.3 * 强度相似度
+        """
+        action_sim = 1.0 if decision.action == actual.action else 0.0
+        direction_sim = 1.0 if decision.direction == actual.direction else 0.0
+        strength_sim = 1.0 - abs(decision.strength - actual.strength)
+        
+        return 0.4 * action_sim + 0.3 * direction_sim + 0.3 * strength_sim
+```
+
+**验收标准**:
+| 智能体类型 | 行为相似度目标 | 关键验证点 |
+|-----------|--------------|-----------|
+| **国家队智能体** | ≥ 75% | 政策信号识别、市场干预时机 |
+| **主力智能体** | ≥ 70% | 吸筹-洗盘-拉升-出货周期 |
+| **散户智能体** | ≥ 65% | 羊群效应、追涨杀跌行为 |
+| **外资智能体** | ≥ 70% | 北向资金流向预测 |
+| **保险资金智能体** | ≥ 70% | 长期配置行为 |
+
+#### 5.4.3 市场模拟验证
+
+**验证目标**: 验证市场模拟引擎生成的价格与实际价格的误差
+
+**验证方法**:
+
+```python
+class MarketSimulationValidator:
+    """市场模拟验证器
+    
+    索引: VALIDATOR.MARKET.SIMULATION.001
+    目标: 验证市场模拟引擎的准确性
+    """
+    
+    def validate_market_simulation(self,
+                                   simulation_engine: MarketSimulationEngine,
+                                   historical_data: pd.DataFrame,
+                                   validation_period: DateRange) -> ValidationResult:
+        """验证市场模拟
+        
+        验证流程:
+        1. 提取历史时点的初始市场状态
+        2. 运行市场模拟引擎
+        3. 对比模拟价格 vs 实际价格
+        4. 计算价格误差
+        5. 分析误差原因
+        
+        返回:
+            ValidationResult: 验证结果
+        """
+        price_errors = []
+        volume_errors = []
+        
+        for date in validation_period:
+            # 1. 提取初始市场状态
+            initial_state = self._extract_initial_state(historical_data, date)
+            
+            # 2. 运行市场模拟
+            simulation_result = simulation_engine.simulate_market(
+                initial_state=initial_state,
+                simulation_steps=100
+            )
+            
+            # 3. 提取实际价格
+            actual_prices = self._extract_actual_prices(historical_data, date)
+            
+            # 4. 计算价格误差
+            price_error = self._calculate_price_error(
+                simulation_result.final_state.prices,
+                actual_prices
+            )
+            price_errors.append(price_error)
+            
+            # 5. 计算成交量误差
+            volume_error = self._calculate_volume_error(
+                simulation_result.final_state.volumes,
+                actual_prices.volumes
+            )
+            volume_errors.append(volume_error)
+        
+        return ValidationResult(
+            avg_price_error=np.mean(price_errors),
+            max_price_error=np.max(price_errors),
+            avg_volume_error=np.mean(volume_errors),
+            passed=np.mean(price_errors) < 0.05 and np.mean(volume_errors) < 0.10
+        )
+    
+    def _calculate_price_error(self,
+                              simulated_prices: pd.DataFrame,
+                              actual_prices: pd.DataFrame) -> float:
+        """计算价格误差
+        
+        误差 = mean(|simulated - actual| / actual)
+        """
+        relative_error = np.abs(simulated_prices - actual_prices) / actual_prices
+        return np.mean(relative_error.values)
+```
+
+**验收标准**:
+| 验证项 | 目标值 | 验证方法 |
+|--------|--------|---------|
+| **价格误差** | < 5% | 相对误差计算 |
+| **成交量误差** | < 10% | 相对误差计算 |
+| **价格趋势一致性** | > 80% | 趋势方向对比 |
+| **成交量分布相似度** | > 70% | 分布相似度计算 |
+
+#### 5.4.4 策略回测验证
+
+**验证目标**: 验证基于智能体信号的策略绩效
+
+**回测流程**:
+
+```
+1. 数据准备 (2020-2025历史数据)
+   ↓
+2. 智能体信号生成 (每日生成交易信号)
+   ↓
+3. 策略构建 (基于信号构建交易策略)
+   ↓
+4. 回测执行 (模拟交易执行)
+   ↓
+5. 绩效评估 (计算收益、风险指标)
+   ↓
+6. 对比分析 (与基准指数对比)
+```
+
+**绩效指标**:
+
+| 指标类别 | 具体指标 | 目标值 | 对比基准 |
+|---------|---------|--------|---------|
+| **收益指标** | 年化收益率 | > 15% | 沪深300 (8%) |
+| **风险指标** | 最大回撤 | < 15% | 沪深300 (20%) |
+| **风险调整收益** | 夏普比率 | > 1.5 | 沪深300 (0.8) |
+| **稳定性指标** | 卡尔玛比率 | > 1.0 | 沪深300 (0.4) |
+| **胜率指标** | 盈利交易占比 | > 55% | - |
+
+**回测报告模板**:
+
+```markdown
+# 智能体策略回测报告
+
+## 1. 回测概况
+- 回测期间: 2020-01-01 至 2025-12-31
+- 初始资金: 1,000,000元
+- 交易成本: 0.15% (双边)
+- 滑点模型: 线性滑点 (0.05%)
+
+## 2. 绩效指标
+| 指标 | 策略收益 | 基准收益 | 超额收益 |
+|------|---------|---------|---------|
+| 年化收益率 | 18.5% | 8.2% | +10.3% |
+| 最大回撤 | -12.3% | -20.5% | +8.2% |
+| 夏普比率 | 1.85 | 0.82 | +1.03 |
+
+## 3. 智能体贡献分析
+| 智能体类型 | 信号准确率 | 盈利贡献 | 使用频率 |
+|-----------|-----------|---------|---------|
+| 外资智能体 | 72% | +5.2% | 45% |
+| 主力智能体 | 68% | +3.8% | 35% |
+| 国家队智能体 | 75% | +2.1% | 20% |
+
+## 4. 结论
+- ✅ 策略收益显著优于基准
+- ✅ 风险控制良好
+- ✅ 智能体信号有效性高
+```
+
+#### 5.4.5 回测验收标准
+
+| 验收项 | 验收标准 | 验证方法 |
+|--------|---------|---------|
+| **数据完整性** | 缺失率 < 1% | 数据质量检查 |
+| **智能体行为相似度** | ≥ 70% | 行为验证 |
+| **市场模拟准确性** | 价格误差 < 5% | 模拟验证 |
+| **策略绩效** | 夏普比率 > 1.5 | 策略回测 |
+| **系统稳定性** | 7×24小时无故障 | 稳定性测试 |
+
 ---
 
 ## ⚠️ 六、风险与约束
