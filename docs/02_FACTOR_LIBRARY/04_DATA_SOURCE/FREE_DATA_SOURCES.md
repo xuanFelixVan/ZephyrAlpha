@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_FREE_SOURCES_001
 version: 3.0.0
 status: Active
@@ -1123,3 +1123,4 @@ class WeatherDataProvider:
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本，整合附录AA数据源因子体�?|
 | v1.1 | 2026-03-28 | 整合附录AK另类数据框架，补充舆�?气象数据处理 |
+

@@ -1,10 +1,17 @@
+import subprocess
 import re
-import codecs
 
 file_path = r'D:\ZephyrAlpha\docs\01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md'
 
-with codecs.open(file_path, 'r', encoding='utf-16-le') as f:
-    content = f.read()
+result = subprocess.run(['git', 'show', 'HEAD:docs/01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md'], 
+                       capture_output=True, text=True, encoding='utf-8')
+
+if result.returncode != 0:
+    print(f"Git show failed: {result.stderr}")
+    exit(1)
+
+content = result.stdout
+print(f"Original content length: {len(content)} characters")
 
 new_section = '''---
 
@@ -63,8 +70,8 @@ pattern = r'## 🛡️ 二、AI治理框架.*?(?=\n---\n\n## ⚠️ 三、风险
 
 content = re.sub(pattern, new_section.strip(), content, flags=re.DOTALL)
 
-with codecs.open(file_path, 'w', encoding='utf-16-le') as f:
+with open(file_path, 'w', encoding='utf-8') as f:
     f.write(content)
 
 print("File modified successfully!")
-print(f"Content length: {len(content)} characters")
+print(f"New content length: {len(content)} characters")
