@@ -44,10 +44,10 @@ tags: ["知识库", "索引", "导航"]
 │   └── STRATEGY_CASE_LIBRARY.md
 ├── FACTOR_LIBRARY/              # 因子案例库
 │   └── FACTOR_CASE_LIBRARY.md
-├── KNOWLEDGE_GRAPH_PLAN.md      # 知识图谱规划
-├── INTELLIGENT_QA_SYSTEM_PLAN.md # 智能问答系统规划
 └── INDEX.md                     # 本索引文件
 ```
+
+> **注**: 知识图谱规划和智能问答系统规划已归档至 `06_ARCHIVE/knowledge_library/enterprise_plans/`，这些是企业级方案，对个人开发者价值较低。
 
 ---
 
@@ -60,7 +60,6 @@ tags: ["知识库", "索引", "导航"]
 | **新人** | 最佳实践 → 策略案例库 → 因子案例库 |
 | **策略研究员** | 策略案例库 → 因子案例库 → 最佳实践 |
 | **风险管理员** | 风险管理最佳实践 → 策略案例库 |
-| **系统管理员** | 知识图谱规划 → 智能问答系统规划 |
 
 ### 按场景导航
 
@@ -70,8 +69,6 @@ tags: ["知识库", "索引", "导航"]
 | **学习回测方法** | [回测最佳实践](BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md) |
 | **学习策略开发** | [策略案例库](STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md) |
 | **学习因子研究** | [因子案例库](FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md) |
-| **规划知识图谱** | [知识图谱规划](KNOWLEDGE_GRAPH_PLAN.md) |
-| **规划问答系统** | [智能问答系统规划](INTELLIGENT_QA_SYSTEM_PLAN.md) |
 
 ---
 

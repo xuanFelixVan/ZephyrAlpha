@@ -1,0 +1,551 @@
+# A股规则引擎配置模板
+# 版本: 1.0.0
+# 最后更新: 2026-04-02
+# 适用系统: 清风量化系统 v5.0
+# 文档索引: CONFIG_A_STOCK_RULES_001
+
+version: "1.0"
+engine: "AStockRuleEngine"
+last_updated: "2026-04-02"
+description: "A股市场交易规则配置，包含交易规则、费用规则、风险规则、市场规则"
+
+# ==================== 交易规则 (Trade Rules) ====================
+rules:
+  # ---------- T+1交易规则 ----------
+  - rule_id: "TRADE_001"
+    rule_name: "T+1交易规则"
+    category: "trade"
+    enabled: true
+    severity: "error"  # 错误级别，违反则拒绝订单
+    class: "T1Rule"
+    description: "A股T+1制度，当日买入次日才能卖出"
+    config:
+      lock_days: 1
+      exceptions: 
+        - "ETF"      # ETF基金
+        - "可转债"    # 可转换债券
+        - "期权"      # 期权合约
+        - "债券"      # 债券
+      check_method: "check_sell_permission"
+      enable_partial_sell: false  # 不允许部分卖出锁定仓位
+      holiday_adjustment: true    # 节假日顺延
+
+  # ---------- 涨跌停规则 ----------
+  - rule_id: "TRADE_002"
+    rule_name: "涨跌停规则"
+    category: "trade"
+    enabled: true
+    severity: "error"
+    class: "LimitUpDownRule"
+    description: "A股涨跌停板制度，不同板块幅度不同"
+    config:
+      limit_rates:
+        "主板":
+          code_prefixes: ["60", "000", "001", "002"]  # 沪市60，深市000/001/002
+          normal: 0.10      # 正常股票10%
+          st: 0.05          # ST股票5%
+          first_day: 0.44   # 首日上市44%
+          recovery_day: 0.10 # 恢复上市首日10%
+        "创业板":
+          code_prefixes: ["300"]
+          normal: 0.20      # 正常股票20%
+          st: 0.20          # ST股票20%
+          first_day: 0.44   # 首日上市44%
+          recovery_day: 0.20 # 恢复上市首日20%
+        "科创板":
+          code_prefixes: ["688", "689"]
+          normal: 0.20      # 正常股票20%
+          st: 0.20          # ST股票20%
+          first_day: null   # 首日无涨跌停限制
+          recovery_day: 0.20 # 恢复上市首日20%
+        "北交所":
+          code_prefixes: ["83", "87", "88"]
+          normal: 0.30      # 正常股票30%
+          st: 0.30          # ST股票30%
+          first_day: null   # 首日无涨跌停限制
+          recovery_day: 0.30 # 恢复上市首日30%
+      price_precision: 0.01  # 价格精度0.01元
+      round_method: "round"  # 四舍五入
+      strict_check: true     # 严格检查，价格超过涨跌停价则拒绝
+
+  # ---------- ST股票规则 ----------
+  - rule_id: "TRADE_003"
+    rule_name: "ST股票规则"
+    category: "trade"
+    enabled: true
+    severity: "warning"  # 警告级别，允许交易但提示风险
+    class: "STRule"
+    description: "ST/*ST股票特殊交易规则"
+    config:
+      st_prefixes: 
+        - "*ST"  # 退市风险警示
+        - "ST"   # 其他风险警示
+      warning_days: 30      # 风险警示期30天
+      delisting_threshold: 3 # 连续3年亏损可能退市
+      trading_restrictions:
+        - "涨跌幅限制5%（创业板/科创板20%）"
+        - "单日买入数量限制"
+        - "需签署风险揭示书"
+      margin_trading: false # 不允许融资融券
+      block_trade_only: false # 仅限大宗交易（特定情况下）
+
+  # ---------- 新股规则 ----------
+  - rule_id: "TRADE_004"
+    rule_name: "新股规则"
+    category: "trade"
+    enabled: true
+    severity: "info"
+    class: "NewStockRule"
+    description: "新股上市特殊交易规则"
+    config:
+      first_day_limits:
+        "主板": 
+          max_up: 0.44      # 最高涨幅44%
+          max_down: 0.36    # 最大跌幅36%
+          temporary_suspension: true # 临时停牌机制
+          suspension_triggers:
+            - "涨幅超过30%临时停牌10分钟"
+            - "涨幅超过60%临时停牌10分钟"
+        "创业板/科创板":
+          no_limit: true    # 无涨跌幅限制
+          temporary_suspension: true
+          suspension_triggers:
+            - "较开盘价上涨30%停牌10分钟"
+            - "较开盘价上涨60%停牌10分钟"
+      lottery_allocation: true # 申购中签分配
+      lockup_period: 12    # 原始股东锁定期12个月
+
+# ==================== 费用规则 (Fee Rules) ====================
+
+  # ---------- 佣金规则 ----------
+  - rule_id: "FEE_001"
+    rule_name: "佣金规则"
+    category: "fee"
+    enabled: true
+    severity: "info"
+    class: "CommissionRule"
+    description: "交易佣金计算规则，万三，最低5元"
+    config:
+      rate: 0.0003          # 万三佣金率
+      min_amount: 5.0       # 最低佣金5元
+      max_amount: null      # 无最高佣金限制
+      both_sides: true      # 双向收取
+      calculation_method: "percentage_with_min"  # 比例计算，有最低额
+      exempt_categories:    # 免佣金品种
+        - "货币基金"
+        - "国债逆回购"
+      tiered_rates:         # 阶梯费率（可选）
+        - threshold: 1000000  # 100万以下
+          rate: 0.0003
+        - threshold: 5000000  # 100-500万
+          rate: 0.00025
+        - threshold: null     # 500万以上
+          rate: 0.0002
+
+  # ---------- 印花税规则 ----------
+  - rule_id: "FEE_002"
+    rule_name: "印花税规则"
+    category: "fee"
+    enabled: true
+    severity: "info"
+    class: "StampTaxRule"
+    description: "证券交易印花税，千一，卖出时收取"
+    config:
+      rate: 0.001           # 千一印花税率
+      min_amount: 0.0       # 无最低额
+      apply_on: "sell"      # 仅卖出时收取
+      exempt_categories:    # 免税品种
+        - "ETF"
+        - "债券"
+        - "国债"
+        - "地方政府债"
+        - "金融债"
+      calculation_basis: "transaction_amount"  # 按成交金额计算
+      rounding: "ceil"      # 向上取整到分
+
+  # ---------- 过户费规则 ----------
+  - rule_id: "FEE_003"
+    rule_name: "过户费规则"
+    category: "fee"
+    enabled: true
+    severity: "info"
+    class: "TransferFeeRule"
+    description: "证券过户费，沪深市场费率不同"
+    config:
+      sh_rate: 0.00001      # 沪市：万0.1
+      sz_rate: 0.00002      # 深市：万0.2
+      min_amount: 1.0       # 最低1元
+      both_sides: true      # 双向收取
+      calculation_method: "percentage_with_min"
+      market_detection: true # 自动检测市场（沪/深）
+      exempt_categories:
+        - "债券"
+        - "基金"
+
+  # ---------- 规费规则 ----------
+  - rule_id: "FEE_004"
+    rule_name: "规费规则"
+    category: "fee"
+    enabled: true
+    severity: "info"
+    class: "RegulatoryFeeRule"
+    description: "交易经手费、证管费等规费"
+    config:
+      rate: 0.00002         # 万0.2
+      min_amount: 0.0       # 无最低额
+      both_sides: true      # 双向收取
+      components:           # 规费组成
+        - "交易经手费": 0.000012
+        - "证管费": 0.000002
+        - "证券结算风险基金": 0.000006
+      exempt_categories:
+        - "债券现货"
+        - "债券回购"
+
+  # ---------- 滑点模型 ----------
+  - rule_id: "FEE_005"
+    rule_name: "滑点模型"
+    category: "fee"
+    enabled: true
+    severity: "info"
+    class: "SlippageRule"
+    description: "交易滑点成本模型，基于流动性动态计算"
+    config:
+      base_rate: 0.0002     # 基础滑点率0.02%
+      liquidity_factor: true # 考虑流动性因素
+      volatility_factor: true # 考虑波动率因素
+      market_cap_weight: true # 考虑市值权重
+      time_factor: true     # 考虑交易时间因素
+      calculation_method: "dynamic"  # 动态计算
+      parameters:
+        liquidity_thresholds:
+          high: 10000000    # 高流动性：日成交额>1000万
+          medium: 1000000   # 中等流动性：100-1000万
+          low: 100000       # 低流动性：<100万
+        multipliers:
+          high: 0.5         # 高流动性乘数
+          medium: 1.0       # 中等流动性乘数
+          low: 2.0          # 低流动性乘数
+        volatility_multiplier: 1.5  # 高波动率乘数
+        market_cap_multipliers:
+          large: 0.8        # 大盘股乘数
+          medium: 1.0       # 中盘股乘数
+          small: 1.2        # 小盘股乘数
+        time_multipliers:
+          opening: 1.5      # 开盘时段乘数
+          morning: 1.0      # 上午时段乘数
+          lunch: 0.8        # 午间时段乘数
+          afternoon: 1.0    # 下午时段乘数
+          closing: 1.8      # 收盘时段乘数
+
+# ==================== 风险规则 (Risk Rules) ====================
+
+  # ---------- 单股仓位限制 ----------
+  - rule_id: "RISK_001"
+    rule_name: "单股仓位限制"
+    category: "risk"
+    enabled: true
+    severity: "error"
+    class: "PositionLimitRule"
+    description: "限制单只股票的最大持仓比例和市值"
+    config:
+      max_position_ratio: 0.10     # 单股最大仓位10%
+      max_position_value: 1000000  # 单股最大市值100万
+      apply_to: 
+        - "A股"
+        - "港股"
+        - "美股"
+      calculation_method: "market_value"  # 按市值计算
+      exclude_categories:          # 排除品种
+        - "货币基金"
+        - "国债"
+        - "现金"
+      check_frequency: "real_time" # 实时检查
+
+  # ---------- 总仓位限制 ----------
+  - rule_id: "RISK_002"
+    rule_name: "总仓位限制"
+    category: "risk"
+    enabled: true
+    severity: "error"
+    class: "TotalPositionRule"
+    description: "限制总持仓市值占净资产的比例"
+    config:
+      max_total_ratio: 0.80        # 总仓位最大80%
+      cash_reserve_ratio: 0.05     # 现金储备最低5%
+      net_asset_calculation: "mark_to_market"  # 按市值计算净资产
+      exclude_categories:
+        - "现金"
+        - "活期存款"
+      warning_threshold: 0.75      # 警告阈值75%
+      force_reduce_threshold: 0.85 # 强制减仓阈值85%
+
+  # ---------- 日换手率限制 ----------
+  - rule_id: "RISK_003"
+    rule_name: "日换手率限制"
+    category: "risk"
+    enabled: true
+    severity: "warning"
+    class: "TurnoverLimitRule"
+    description: "限制单日换手率，防止过度交易"
+    config:
+      max_daily_turnover: 0.30     # 日换手率不超过30%
+      calculation_period: "daily"  # 按日计算
+      calculation_method: "volume_value"  # 按成交额计算
+      reset_time: "00:00:00"       # 每日重置
+      apply_to:
+        - "A股"
+        - "港股"
+      exclude_categories:
+        - "ETF"
+        - "指数基金"
+      warning_threshold: 0.25      # 警告阈值25%
+
+  # ---------- 黑名单限制 ----------
+  - rule_id: "RISK_004"
+    rule_name: "黑名单限制"
+    category: "risk"
+    enabled: true
+    severity: "error"
+    class: "BlacklistRule"
+    description: "禁止交易特定股票"
+    config:
+      blacklist_source: "config/blacklist.yaml"  # 黑名单文件
+      blacklist_categories:
+        - "财务造假"
+        - "重大违法违规"
+        - "退市整理期"
+        - "ST/*ST"
+        - "高风险警示"
+      update_frequency: "daily"    # 每日更新
+      auto_update: true            # 自动更新
+      manual_override: false       # 不允许手动覆盖
+
+  # ---------- 流动性限制 ----------
+  - rule_id: "RISK_005"
+    rule_name: "流动性限制"
+    category: "risk"
+    enabled: true
+    severity: "warning"
+    class: "LiquidityRule"
+    description: "限制低流动性股票的交易"
+    config:
+      min_daily_volume: 1000000    # 最小日成交量100万元
+      min_daily_trades: 1000       # 最小日成交笔数1000笔
+      max_bid_ask_spread: 0.002    # 最大买卖价差0.2%
+      min_market_cap: 100000000    # 最小市值1亿元
+      check_frequency: "pre_trade" # 交易前检查
+      warning_only: true           # 仅警告，不拒绝
+      exempt_categories:
+        - "新股"
+        - "龙头股"
+
+# ==================== 市场规则 (Market Rules) ====================
+
+  # ---------- 交易时间规则 ----------
+  - rule_id: "MARKET_001"
+    rule_name: "交易时间规则"
+    category: "market"
+    enabled: true
+    severity: "error"
+    class: "TradingHoursRule"
+    description: "A股市场交易时间规则"
+    config:
+      market_hours:
+        "A股":
+          trading_days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+          morning_session:
+            open: "09:15"          # 集合竞价开始
+            continuous_open: "09:30" # 连续竞价开始
+            close: "11:30"         # 上午收盘
+          lunch_break:
+            start: "11:30"
+            end: "13:00"
+          afternoon_session:
+            open: "13:00"
+            close: "15:00"         # 下午收盘
+          auction_periods:
+            opening_auction: "09:15-09:25"
+            closing_auction: "14:57-15:00"
+        "港股":
+          trading_days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+          morning_session:
+            open: "09:30"
+            close: "12:00"
+          lunch_break:
+            start: "12:00"
+            end: "13:00"
+          afternoon_session:
+            open: "13:00"
+            close: "16:00"
+      holidays: "config/holidays/a_stock_holidays.yaml"  # 节假日配置文件
+      holiday_effect: "skip"       # 节假日跳过
+      early_close_days: []         # 提前收盘日（如春节前）
+
+  # ---------- 集合竞价规则 ----------
+  - rule_id: "MARKET_002"
+    rule_name: "集合竞价规则"
+    category: "market"
+    enabled: true
+    severity: "info"
+    class: "AuctionRule"
+    description: "开盘和收盘集合竞价规则"
+    config:
+      auction_periods:
+        "开盘竞价": 
+          start: "09:15"
+          end: "09:25"
+          order_acceptance: "09:15-09:20"  # 可撤单
+          order_freeze: "09:20-09:25"      # 不可撤单
+        "收盘竞价":
+          start: "14:57"
+          end: "15:00"
+          order_acceptance: "14:57-15:00"  # 不可撤单
+      price_discovery: "volume_weighted"  # 成交量加权价格发现
+      match_method: "price_time_priority" # 价格优先，时间优先
+      reference_price: "previous_close"   # 参考价为前收盘价
+      price_limit: "涨跌停限制"            # 受涨跌停限制
+      order_types: ["limit"]              # 只接受限价单
+
+  # ---------- 连续竞价规则 ----------
+  - rule_id: "MARKET_003"
+    rule_name: "连续竞价规则"
+    category: "market"
+    enabled: true
+    severity: "info"
+    class: "ContinuousAuctionRule"
+    description: "连续竞价阶段交易规则"
+    config:
+      match_method: "price_time_priority" # 价格优先，时间优先
+      price_limits: "dynamic"             # 动态价格限制
+      order_types: ["limit", "market"]    # 接受限价单和市价单
+      tick_size: 0.01                     # 最小变动单位0.01元
+      lot_size: 100                       # 交易单位100股
+      odd_lot_allowed: true               # 允许零股交易
+      odd_lot_routing: "auction"          # 零股交易方式：集合竞价
+      iceberg_order_allowed: true         # 允许冰山订单
+      iceberg_reveal_size: 10000          # 冰山订单每次揭示量
+
+  # ---------- 临时停牌规则 ----------
+  - rule_id: "MARKET_004"
+    rule_name: "临时停牌规则"
+    category: "market"
+    enabled: true
+    severity: "warning"
+    class: "TemporaryHaltRule"
+    description: "涨跌停触发的临时停牌规则"
+    config:
+      halt_triggers:
+        "新股上市":
+          - "涨幅超过30%停牌10分钟"
+          - "涨幅超过60%停牌10分钟"
+        "正常交易":
+          - "涨跌停板触发临时停牌"
+          - "重大事项公告停牌"
+          - "异常波动停牌"
+      halt_duration:
+        "新股": "10分钟"
+        "正常": "至收盘"
+        "重大事项": "1-5个交易日"
+      resume_conditions:
+        - "公告发布后"
+        - "价格回归正常区间"
+        - "交易所批准"
+      order_handling: "cancel"  # 停牌期间订单处理：取消
+
+# ==================== 规则引擎配置 ====================
+engine_config:
+  rule_loading: "dynamic"        # 动态加载规则
+  cache_enabled: true            # 启用缓存
+  cache_ttl: 300                # 缓存时间300秒
+  parallel_checking: true        # 并行检查
+  max_parallel_workers: 4       # 最大并行工作线程数
+  performance_monitoring: true   # 性能监控
+  log_level: "info"             # 日志级别
+  audit_trail: true             # 审计追踪
+  config_reload_interval: 300   # 配置重载间隔300秒
+
+# ==================== 默认规则组 ====================
+rule_groups:
+  default:
+    name: "默认规则组"
+    description: "标准A股交易规则组"
+    rules:
+      - "TRADE_001"  # T+1规则
+      - "TRADE_002"  # 涨跌停规则
+      - "FEE_001"    # 佣金规则
+      - "FEE_002"    # 印花税规则
+      - "FEE_003"    # 过户费规则
+      - "RISK_001"   # 单股仓位限制
+      - "RISK_002"   # 总仓位限制
+      - "MARKET_001" # 交易时间规则
+  
+  strict:
+    name: "严格规则组"
+    description: "更严格的风险控制规则组"
+    rules:
+      - "TRADE_001"  # T+1规则
+      - "TRADE_002"  # 涨跌停规则
+      - "TRADE_003"  # ST股票规则
+      - "FEE_001"    # 佣金规则
+      - "FEE_002"    # 印花税规则
+      - "FEE_003"    # 过户费规则
+      - "FEE_005"    # 滑点模型
+      - "RISK_001"   # 单股仓位限制
+      - "RISK_002"   # 总仓位限制
+      - "RISK_003"   # 日换手率限制
+      - "RISK_004"   # 黑名单限制
+      - "MARKET_001" # 交易时间规则
+  
+  simulation:
+    name: "模拟交易规则组"
+    description: "模拟交易专用规则组，放宽部分限制"
+    rules:
+      - "TRADE_001"  # T+1规则
+      - "TRADE_002"  # 涨跌停规则
+      - "FEE_001"    # 佣金规则
+      - "FEE_002"    # 印花税规则
+      - "FEE_003"    # 过户费规则
+      - "RISK_001"   # 单股仓位限制（放宽）
+      - "MARKET_001" # 交易时间规则
+    overrides:
+      "RISK_001":
+        max_position_ratio: 0.20  # 模拟交易放宽到20%
+        max_position_value: 2000000  # 放宽到200万
+
+# ==================== 配置验证规则 ====================
+validation:
+  schema: "config/schemas/a_stock_rules_schema.json"  # JSON Schema验证
+  required_fields:
+    - "version"
+    - "rules"
+    - "engine_config"
+  rule_validation:
+    unique_rule_ids: true      # 规则ID必须唯一
+    valid_categories: true     # 类别必须有效
+    valid_severities: true     # 严重程度必须有效
+    class_exists: true         # 类必须存在
+    config_valid: true         # 配置必须有效
+  auto_fix: false              # 不自动修复配置错误
+  strict_mode: true            # 严格模式
+
+# ==================== 注释说明 ====================
+_comment: |
+  本配置文件为A股规则引擎的完整配置模板。
+  
+  使用说明：
+  1. 根据需要启用/禁用特定规则
+  2. 调整规则参数以适应不同交易场景
+  3. 使用规则组功能快速切换规则集合
+  4. 定期检查并更新配置，确保符合最新市场规则
+  
+  注意事项：
+  1. 修改配置后建议进行测试验证
+  2. 生产环境建议使用严格规则组
+  3. 模拟交易可以使用模拟交易规则组
+  4. 节假日等特殊日期需要相应调整
+  
+  版本更新：
+  1. 当市场规则变更时，需及时更新本配置
+  2. 重大变更需进行回归测试
+  3. 保持版本控制，记录配置变更历史
