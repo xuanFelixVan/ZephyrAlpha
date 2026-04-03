@@ -1,0 +1,176 @@
+# ============================================
+# QMT交易接口配置文件
+# ============================================
+# 版本: v1.0
+# 创建日期: 2026-04-03
+# 说明: 此文件存储非敏感配置信息
+# 敏感信息（账号密码）存储在 .env.qmt 文件中
+# ============================================
+
+# QMT客户端配置
+qmt:
+  # 客户端类型
+  client_type: "mini_qmt"  # mini_qmt 或 full_qmt
+  
+  # 客户端路径（根据实际安装路径修改）
+  # Windows示例:
+  client_path: "E:/国金QMT交易端模拟/bin.x64"
+  
+  # 会话配置
+  session:
+    id: 10086  # 自定义会话ID
+    timeout: 30  # 连接超时时间（秒）
+    retry_times: 3  # 重试次数
+    retry_interval: 5  # 重试间隔（秒）
+  
+  # 数据路径
+  data_path: "E:/国金QMT交易端模拟/userdata_mini/datadir"
+  
+  # 日志配置
+  log:
+    enabled: true
+    level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+    file: "logs/qmt_trading.log"
+    max_size: 10485760  # 10MB
+    backup_count: 5
+
+# 交易配置
+trading:
+  # 交易模式
+  mode: "simulation"  # simulation（模拟）或 live（实盘）
+  
+  # 订单配置
+  order:
+    default_price_type: "limit"  # limit（限价）或 market（市价）
+    default_validity: "GTC"  # DAY（当日有效）, GTC（取消前有效）, IOC（立即成交或取消）, FOK（全数成交或取消）
+    default_strategy_name: "zephyr_alpha"
+    default_order_remark: "auto_trading"
+  
+  # 风险控制
+  risk:
+    max_order_amount: 100000  # 单笔订单最大金额
+    max_daily_trades: 50  # 每日最大交易次数
+    max_position_ratio: 0.95  # 最大持仓比例
+    enable_risk_check: true  # 启用风险检查
+  
+  # 滑点控制
+  slippage:
+    enabled: true
+    max_slippage: 0.002  # 最大滑点 0.2%
+    warning_slippage: 0.001  # 警告滑点 0.1%
+
+# 数据订阅配置
+subscription:
+  # 行情订阅
+  market_data:
+    enabled: true
+    symbols: []  # 订阅的股票代码列表，空列表表示动态订阅
+    period: "1d"  # K线周期: 1d, 1h, 30m, 15m, 5m, 1m
+    callback_enabled: true  # 启用回调
+  
+  # 账户订阅
+  account:
+    enabled: true
+    subscribe_position: true  # 订阅持仓变化
+    subscribe_order: true  # 订阅订单状态
+    subscribe_trade: true  # 订阅成交回报
+
+# 账户配置（账号信息从环境变量读取）
+accounts:
+  # 模拟账户
+  simulation:
+    enabled: true
+    account_id_env: "QMT_SIMULATION_ACCOUNT"  # 环境变量名
+    password_env: "QMT_SIMULATION_PASSWORD"
+    description: "国金证券QMT模拟账户"
+  
+  # 实盘账户
+  live:
+    enabled: true
+    account_id_env: "QMT_LIVE_ACCOUNT"  # 环境变量名
+    password_env: "QMT_LIVE_PASSWORD"
+    description: "国金证券QMT实盘账户"
+    warning: "⚠️ 实盘账户涉及真实资金，请谨慎操作！"
+
+# 性能优化配置
+performance:
+  # 连接池
+  connection_pool:
+    enabled: true
+    max_connections: 10
+    idle_timeout: 300  # 空闲超时（秒）
+  
+  # 缓存
+  cache:
+    enabled: true
+    type: "memory"  # memory 或 redis
+    ttl: 60  # 缓存时间（秒）
+    max_size: 1000  # 最大缓存条目数
+  
+  # 异步处理
+  async:
+    enabled: true
+    max_workers: 4
+    queue_size: 100
+
+# 监控配置
+monitoring:
+  # 心跳检测
+  heartbeat:
+    enabled: true
+    interval: 30  # 心跳间隔（秒）
+  
+  # 状态监控
+  status_check:
+    enabled: true
+    interval: 60  # 状态检查间隔（秒）
+  
+  # 告警配置
+  alert:
+    enabled: true
+    channels:
+      - "log"  # 日志告警
+      # - "email"  # 邮件告警
+      # - "wechat"  # 微信告警
+    
+    # 告警条件
+    conditions:
+      connection_lost: true  # 连接丢失告警
+      order_failed: true  # 订单失败告警
+      risk_breach: true  # 风险违规告警
+      abnormal_slippage: true  # 异常滑点告警
+
+# 开发调试配置
+development:
+  # 调试模式
+  debug_mode: false
+  
+  # 模拟撮合（不实际下单）
+  dry_run: false
+  
+  # 详细日志
+  verbose_logging: false
+  
+  # 测试模式
+  test_mode: false
+  test_account: "simulation"  # 测试时使用的账户
+
+# ============================================
+# 使用说明:
+# 
+# 1. 敏感信息配置:
+#    复制 .env.qmt.example 为 .env.qmt
+#    填写实际的账号和密码
+# 
+# 2. 修改客户端路径:
+#    根据实际安装路径修改 client_path 和 data_path
+# 
+# 3. 切换交易模式:
+#    trading.mode: "simulation" 或 "live"
+# 
+# 4. 风险控制:
+#    根据实际需求调整 risk 配置项
+# 
+# 5. 性能优化:
+#    根据硬件配置调整 performance 配置项
+# ============================================

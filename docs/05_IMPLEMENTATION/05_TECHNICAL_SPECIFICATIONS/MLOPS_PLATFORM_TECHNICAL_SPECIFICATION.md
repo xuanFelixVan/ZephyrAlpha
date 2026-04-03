@@ -6,7 +6,7 @@ status: Active
 parent_doc: docs/01_FRAMEWORK/MLOPS_PLATFORM_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (模型层) | 业务架构: AI模型服务
+layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
 index: MLO-001
 estimated_hours: 100
 review_status: Pending
@@ -50,7 +50,7 @@ implementation_status: 技术规格设计完成
 
 ### 1.2 技术定位与架构层归属
 
-- **Layer定位**: Layer 6 - 模型层 (AI模型服务)
+- **Layer定位**: Layer 4 - 机器学习层 (AI模型服务)
 - **模块类别**: 核心支撑模块
 - **架构角色**: 提供ML生命周期管理、实验跟踪、模型注册、自动化部署
 
@@ -104,7 +104,7 @@ implementation_status: 技术规格设计完成
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 6 - 模型层
+- **Layer归属**: Layer 4 - 机器学习层
 - **职责范围**: 实验跟踪、模型训练、模型部署、模型监控
 - **上下层接口**: 
   - 上层依赖: Layer 7 (策略层) - 模型请求

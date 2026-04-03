@@ -301,7 +301,15 @@ class FeedForward(nn.Module):
 
 
 class TransformerTrainer:
-    """Transformer训练器"""
+    """Transformer训练器 - 模型特定训练逻辑
+    
+    职责边界说明:
+    - 本训练器负责Transformer模型的特定训练逻辑（前向传播、损失计算、优化器配置）
+    - 通用训练流水线（数据版本管理、超参数优化、实验跟踪）由 ModelTrainingPipeline 负责
+    - 调用关系: ModelTrainingPipeline -> TransformerTrainer.train()
+    
+    参考: [MODEL_TRAINING_PIPELINE](./MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md)
+    """
     
     def __init__(self, model: TransformerModel, config: TransformerConfig):
         self.model = model

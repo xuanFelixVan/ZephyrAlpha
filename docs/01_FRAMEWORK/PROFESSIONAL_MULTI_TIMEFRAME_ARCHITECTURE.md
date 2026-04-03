@@ -997,12 +997,23 @@ class FullCyclePerformanceAttribution:
 
 ### 6.1 P0级核心蓝图
 
+#### AI增强系统
+
 | 蓝图文档 | 说明 | 实施周期 |
 |---------|------|---------|
 | **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | AI可解释性工具 - 桥水基金"安全花园"体系 | 2周 |
 | **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | RAG知识系统 - AI利用历史知识 | 2周 |
 | **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | 统一自适应模型 - 文艺复兴实时优化 | 3周 |
 | **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | 实施加速方案 - AI辅助开发90% | 8个月 |
+
+#### 核心监控体系
+
+| 蓝图文档 | 说明 | 实施周期 |
+|---------|------|---------|
+| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md)** | 数据质量监控 - 桥水基金数据质量体系 | 2周 |
+| **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | 实时风险监控 - Two Sigma风险监控体系 | 2周 |
+| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | 压力测试系统 - 桥水基金压力测试体系 | 2周 |
+| **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | 合规监控系统 - Citadel合规体系 | 2周 |
 
 ### 6.2 配套实施文档
 

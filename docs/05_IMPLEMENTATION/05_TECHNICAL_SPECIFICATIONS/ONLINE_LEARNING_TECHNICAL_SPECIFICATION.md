@@ -6,7 +6,7 @@ status: Active
 parent_doc: docs/01_FRAMEWORK/ONLINE_LEARNING_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (模型层) | 业务架构: AI模型服务
+layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
 index: OL-001
 estimated_hours: 60
 review_status: Pending
@@ -50,7 +50,7 @@ implementation_status: 技术规格设计完成
 
 ### 1.2 技术定位与架构层归属
 
-- **Layer定位**: Layer 6 - 模型层 (AI模型服务)
+- **Layer定位**: Layer 4 - 机器学习层 (AI模型服务)
 - **模块类别**: 核心模块
 - **架构角色**: 提供实时模型更新和自适应学习能力
 
@@ -105,7 +105,7 @@ implementation_status: 技术规格设计完成
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 6 - 模型层
+- **Layer归属**: Layer 4 - 机器学习层
 - **职责范围**: 提供在线学习算法、模型版本管理、实时预测服务
 - **上下层接口**: 
   - 上层依赖: Layer 7 (策略层) - 策略信号请求
