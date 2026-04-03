@@ -1,15 +1,19 @@
 ---
 module_id: QMT_EXECUTOR_001
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-03
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 5 策略执行层 | 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
+regulatory_compliance:
+  - module: COMPLIANCE_CHECKER_001
+    version: 1.0.0
+    integration_date: 2026-04-03
 ---
 
 # QMTExecutor交易执行器模块技术规格书
@@ -44,6 +48,7 @@ implementation_status: 进行中
 | 版本 | 日期 | 作者 | 变更说明 | 状态 |
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
+| v1.1.0 | 2026-04-03 | 首席架构师 | 集成监管合规检查模块（COMPLIANCE_CHECKER_001） | Active |
 
 ---
 

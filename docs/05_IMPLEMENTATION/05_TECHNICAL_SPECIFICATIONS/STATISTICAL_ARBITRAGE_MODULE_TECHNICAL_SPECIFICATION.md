@@ -1,12 +1,12 @@
 ---
-module_id: STATISTICAL_ARBITRAGE_MODULE_001
+module_id: STATISTICAL_ARBITRAGE_MODULE_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 6 组合优化层 | 业务架构: 三级时间框架融合架构
+applicable_scope: Layer 5 (中观策略层) | 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
