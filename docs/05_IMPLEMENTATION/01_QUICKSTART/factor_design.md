@@ -4,12 +4,12 @@ version: 5.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 研究标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 因子计算详细设计
@@ -20,30 +20,30 @@ implementation_status: 进行中
 
 ## 1. 因子概述
 
-### 1.1 什么是因子？
+### 1.1 什么是因子�?
 
-**因子 = 股票的特征数值**
+**因子 = 股票的特征数�?*
 
 | 因子类型 | 示例 | 含义 |
 |----------|------|------|
-| 估值因子 | PE、PB | 股票贵不贵 |
-| 动量因子 | 20日涨幅 | 股票强不强 |
-| 质量因子 | ROE、毛利率 | 公司好不好 |
-| 规模因子 | 市值 | 公司大不大 |
-| 波动率 | 日波动率 | 股票稳不稳 |
+| 估值因�?| PE、PB | 股票贵不�?|
+| 动量因子 | 20日涨�?| 股票强不�?|
+| 质量因子 | ROE、毛利率 | 公司好不�?|
+| 规模因子 | 市�?| 公司大不�?|
+| 波动�?| 日波动率 | 股票稳不�?|
 
 ### 1.2 因子选股流程
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    因子选股流程                             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  获取数据 ──▶ 计算因子 ──▶ 因子排序 ──▶ 选股 ──▶ 回测验证   │
-│                                                             │
-│  每日: 计算各股票因子 → 按因子值排序 → 选Top50 → 等权持有    │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   因子选股流程                             �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? 获取数据 ──�?计算因子 ──�?因子排序 ──�?选股 ──�?回测验证   �?
+�?                                                            �?
+�? 每日: 计算各股票因�?�?按因子值排�?�?选Top50 �?等权持有    �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ---
@@ -55,12 +55,12 @@ implementation_status: 进行中
 ```
 src/modules/
 ├── factors/
-│   ├── __init__.py
-│   ├── factor_base.py          # 因子基类
-│   ├── value_factors.py        # 估值因子
-│   ├── momentum_factors.py     # 动量因子
-│   ├── quality_factors.py      # 质量因子
-│   └── factor_portfolio.py     # 因子组合
+�?  ├── __init__.py
+�?  ├── factor_base.py          # 因子基类
+�?  ├── value_factors.py        # 估值因�?
+�?  ├── momentum_factors.py     # 动量因子
+�?  ├── quality_factors.py      # 质量因子
+�?  └── factor_portfolio.py     # 因子组合
 ```
 
 ### 2.2 因子基类 (factor_base.py)
@@ -78,7 +78,7 @@ class FactorBase(ABC):
     """
     因子基类
 
-    所有因子计算类都需要继承此类
+    所有因子计算类都需要继承此�?
     """
 
     def __init__(self, name: str, category: str):
@@ -94,23 +94,23 @@ class FactorBase(ABC):
             data: 包含OHLCV等数据的DataFrame
 
         Returns:
-            因子值Series，index为股票代码
+            因子值Series，index为股票代�?
         """
         pass
 
     def validate_data(self, data: pd.DataFrame) -> bool:
-        """验证数据完整性"""
+        """验证数据完整�?""
         required_cols = ['close', 'volume']
         return all(col in data.columns for col in required_cols)
 
     def handle_missing(self, values: pd.Series) -> pd.Series:
-        """处理缺失值"""
+        """处理缺失�?""
         # 用中位数填充
         return values.fillna(values.median())
 
 
 class ValueFactor(FactorBase):
-    """估值因子基类"""
+    """估值因子基�?""
 
     def __init__(self):
         super().__init__('value', 'valuation')
@@ -130,11 +130,11 @@ class QualityFactor(FactorBase):
         super().__init__('quality', 'quality')
 ```
 
-### 2.3 估值因子 (value_factors.py)
+### 2.3 估值因�?(value_factors.py)
 
 ```python
 """
-估值因子 - 计算股票的估值指标
+估值因�?- 计算股票的估值指�?
 """
 import pandas as pd
 import numpy as np
@@ -143,20 +143,20 @@ from .factor_base import ValueFactor
 
 class PE(FactorBase):
     """
-    市盈率因子 (Price-to-Earning Ratio)
+    市盈率因�?(Price-to-Earning Ratio)
 
-    计算方式: 市值 / 净利润
-    使用方式: 越低越便宜（但要结合行业）
+    计算方式: 市�?/ 净利润
+    使用方式: 越低越便宜（但要结合行业�?
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算PE"""
-        market_cap = data['market_cap']  # 市值
+        market_cap = data['market_cap']  # 市�?
         net_profit = data['net_profit']  # 净利润
 
         pe = market_cap / net_profit
 
-        # 处理异常值
+        # 处理异常�?
         pe = pe.replace([np.inf, -np.inf], np.nan)
         pe = self.handle_missing(pe)
 
@@ -165,15 +165,15 @@ class PE(FactorBase):
 
 class PB(FactorBase):
     """
-    市净率因子 (Price-to-Book Ratio)
+    市净率因�?(Price-to-Book Ratio)
 
-    计算方式: 市值 / 净资产
-    使用方式: 越低越便宜
+    计算方式: 市�?/ 净资产
+    使用方式: 越低越便�?
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算PB"""
-        market_cap = data['market_cap']  # 市值
+        market_cap = data['market_cap']  # 市�?
         book_value = data['total_assets'] - data['total_liabilities']  # 净资产
 
         pb = market_cap / book_value
@@ -186,10 +186,10 @@ class PB(FactorBase):
 
 class PS(FactorBase):
     """
-    市销率因子 (Price-to-Sales Ratio)
+    市销率因�?(Price-to-Sales Ratio)
 
-    计算方式: 市值 / 营业收入
-    使用方式: 越低越便宜
+    计算方式: 市�?/ 营业收入
+    使用方式: 越低越便�?
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
@@ -209,13 +209,13 @@ class PCF(ValueFactor):
     """
     现金流市值比
 
-    计算方式: 经营现金流 / 市值
+    计算方式: 经营现金�?/ 市�?
     使用方式: 越高越好
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算PCF"""
-        operating_cf = data['operating_cash_flow']  # 经营现金流
+        operating_cf = data['operating_cash_flow']  # 经营现金�?
         market_cap = data['market_cap']
 
         pcf = operating_cf / market_cap
@@ -230,7 +230,7 @@ class PCF(ValueFactor):
 
 ```python
 """
-动量因子 - 计算股票的动量指标
+动量因子 - 计算股票的动量指�?
 """
 import pandas as pd
 import numpy as np
@@ -241,7 +241,7 @@ class ReturnN(MomentumFactor):
     """
     N日收益率因子
 
-    计算方式: (今日收盘价 - N日前收盘价) / N日前收盘价
+    计算方式: (今日收盘�?- N日前收盘�? / N日前收盘�?
     使用方式: 越高表示近期涨势越强
     """
 
@@ -262,7 +262,7 @@ class VolumeRatio(MomentumFactor):
     """
     量比因子
 
-    计算方式: 今日成交量 / 过去N日平均成交量
+    计算方式: 今日成交�?/ 过去N日平均成交量
     使用方式: 大于1表示放量
     """
 
@@ -286,8 +286,8 @@ class RSRS(MomentumFactor):
 
     计算方式:
     1. 取过去N日最高价和最低价
-    2. 用线性回归计算斜率
-    3. 斜率标准化
+    2. 用线性回归计算斜�?
+    3. 斜率标准�?
 
     使用方式: 越高表示支撑越强
     """
@@ -307,7 +307,7 @@ class RSRS(MomentumFactor):
             y = high.iloc[i-self.period:i].values
             x = low.iloc[i-self.period:i].values
 
-            # 简单线性回归
+            # 简单线性回�?
             if len(x) > 0 and len(y) > 0:
                 slope = np.polyfit(x, y, 1)[0]
                 rsrs.iloc[i] = slope
@@ -345,7 +345,7 @@ class MACD_signal(MomentumFactor):
         # DEA
         dea = dif.ewm(span=self.signal).mean()
 
-        # MACD柱
+        # MACD�?
         macd = (dif - dea) * 2
 
         return macd.replace([np.inf, -np.inf], np.nan).fillna(0)
@@ -355,7 +355,7 @@ class MACD_signal(MomentumFactor):
 
 ```python
 """
-质量因子 - 计算公司的质量指标
+质量因子 - 计算公司的质量指�?
 """
 import pandas as pd
 import numpy as np
@@ -364,7 +364,7 @@ from .factor_base import QualityFactor
 
 class ROE(QualityFactor):
     """
-    净资产收益率 (Return on Equity)
+    净资产收益�?(Return on Equity)
 
     计算方式: 净利润 / 净资产
     使用方式: 越高表示盈利能力越强
@@ -382,14 +382,14 @@ class ROE(QualityFactor):
 
 class GrossMargin(QualityFactor):
     """
-    毛利率
+    毛利�?
 
     计算方式: (营业收入 - 营业成本) / 营业收入
-    使用方式: 越高表示竞争力越强
+    使用方式: 越高表示竞争力越�?
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """计算毛利率"""
+        """计算毛利�?""
         revenue = data['revenue']
         cost = data['operating_cost']
 
@@ -402,8 +402,8 @@ class DebtToAsset(QualityFactor):
     """
     资产负债率
 
-    计算方式: 总负债 / 总资产
-    使用方式: 越低表示财务越健康（不宜过低）
+    计算方式: 总负�?/ 总资�?
+    使用方式: 越低表示财务越健康（不宜过低�?
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
@@ -420,8 +420,8 @@ class CurrentRatio(QualityFactor):
     """
     流动比率
 
-    计算方式: 流动资产 / 流动负债
-    使用方式: 大于1表示短期偿债能力良好
+    计算方式: 流动资产 / 流动负�?
+    使用方式: 大于1表示短期偿债能力良�?
     """
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
@@ -438,11 +438,11 @@ class CurrentRatio(QualityFactor):
 
 ## 3. 因子组合
 
-### 3.1 因子组合器 (factor_portfolio.py)
+### 3.1 因子组合�?(factor_portfolio.py)
 
 ```python
 """
-因子组合器 - 将多个因子组合成选股策略
+因子组合�?- 将多个因子组合成选股策略
 """
 import pandas as pd
 import numpy as np
@@ -451,12 +451,12 @@ from typing import List, Dict
 
 class FactorPortfolio:
     """
-    因子组合器
+    因子组合�?
 
     功能:
     1. 计算多个因子
-    2. 因子去极值和标准化
-    3. 等权合成或加权合成
+    2. 因子去极值和标准�?
+    3. 等权合成或加权合�?
     4. 生成选股列表
     """
 
@@ -471,7 +471,7 @@ class FactorPortfolio:
 
         Args:
             name: 因子名称
-            factor: 因子值
+            factor: 因子�?
             weight: 因子权重
         """
         self.factors[name] = factor
@@ -485,20 +485,20 @@ class FactorPortfolio:
 
         Args:
             factor: 原始因子
-            market_cap: 市值
+            market_cap: 市�?
 
         Returns:
             中性化后的因子
         """
-        # 对数市值
+        # 对数市�?
         log_mcap = np.log(market_cap)
 
-        # 计算因子与市值的相关性
+        # 计算因子与市值的相关�?
         valid_idx = ~(factor.isna() | log_mcap.isna())
         if valid_idx.sum() < 10:
             return factor
 
-        # 简单线性回归
+        # 简单线性回�?
         x = log_mcap[valid_idx].values
         y = factor[valid_idx].values
 
@@ -511,16 +511,16 @@ class FactorPortfolio:
 
     def winsorize(self, factor: pd.Series, n_std: float = 3.0) -> pd.Series:
         """
-        去极值
+        去极�?
 
-        将超过n倍标准差的值替换为边界值
+        将超过n倍标准差的值替换为边界�?
 
         Args:
-            factor: 因子值
+            factor: 因子�?
             n_std: 标准差倍数
 
         Returns:
-            去极值后的因子
+            去极值后的因�?
         """
         mean = factor.mean()
         std = factor.std()
@@ -532,13 +532,13 @@ class FactorPortfolio:
 
     def standardize(self, factor: pd.Series) -> pd.Series:
         """
-        标准化 (Z-Score)
+        标准�?(Z-Score)
 
         Args:
-            factor: 因子值
+            factor: 因子�?
 
         Returns:
-            标准化后的因子 (均值为0，标准差为1)
+            标准化后的因�?(均值为0，标准差�?)
         """
         mean = factor.mean()
         std = factor.std()
@@ -553,8 +553,8 @@ class FactorPortfolio:
         组合因子
 
         步骤:
-        1. 去极值
-        2. 标准化
+        1. 去极�?
+        2. 标准�?
         3. 市值中性化（可选）
         4. 加权求和
 
@@ -564,10 +564,10 @@ class FactorPortfolio:
         combined = pd.Series(dtype=float)
 
         for name, factor in self.factors.items():
-            # 去极值
+            # 去极�?
             factor = self.winsorize(factor)
 
-            # 标准化
+            # 标准�?
             factor = self.standardize(factor)
 
             # 合成
@@ -584,10 +584,10 @@ class FactorPortfolio:
 
         Args:
             n: 选股数量
-            ascending: False表示选因子值高的
+            ascending: False表示选因子值高�?
 
         Returns:
-            选中的股票代码列表
+            选中的股票代码列�?
         """
         combined = self.combine()
 
@@ -605,7 +605,7 @@ class FactorPortfolio:
 
 ```python
 """
-IC分析 - 评估因子的预测能力
+IC分析 - 评估因子的预测能�?
 """
 import pandas as pd
 import numpy as np
@@ -616,14 +616,14 @@ def calculate_ic(factor: pd.Series, forward_return: pd.Series) -> Dict:
     """
     计算IC (Information Coefficient)
 
-    IC = 因子的排序与下期收益的排序相关性
+    IC = 因子的排序与下期收益的排序相关�?
 
     Args:
-        factor: 因子值
+        factor: 因子�?
         forward_return: 未来N日收益率
 
     Returns:
-        IC统计量
+        IC统计�?
     """
     # 合并数据
     data = pd.DataFrame({
@@ -653,8 +653,8 @@ def calculate_rolling_ic(
     计算滚动IC
 
     Args:
-        factor_df: 因子值 (index=日期, columns=股票)
-        return_df: 收益率 (index=日期, columns=股票)
+        factor_df: 因子�?(index=日期, columns=股票)
+        return_df: 收益�?(index=日期, columns=股票)
         window: 滚动窗口
 
     Returns:
@@ -665,7 +665,7 @@ def calculate_rolling_ic(
     dates = factor_df.index
 
     for i in range(window, len(dates)):
-        factor_window = factor_df.iloc[i - window:i].iloc[-1]  # 取最后一天
+        factor_window = factor_df.iloc[i - window:i].iloc[-1]  # 取最后一�?
         return_next = return_df.iloc[i]  # 下期收益
 
         ic = calculate_ic(factor_window, return_next)['ic']
@@ -679,8 +679,8 @@ def analyze_factor(factor: pd.Series, returns: pd.Series) -> Dict:
     因子分析报告
 
     Args:
-        factor: 因子值
-        returns: 收益率
+        factor: 因子�?
+        returns: 收益�?
 
     Returns:
         分析报告
@@ -690,7 +690,7 @@ def analyze_factor(factor: pd.Series, returns: pd.Series) -> Dict:
     # 分组回测
     data = pd.DataFrame({'factor': factor, 'return': returns}).dropna()
 
-    # 按因子值分组
+    # 按因子值分�?
     data['group'] = pd.qcut(data['factor'], q=5, labels=[1, 2, 3, 4, 5])
 
     # 计算每组收益
@@ -731,16 +731,16 @@ def run_factor_selection(stock_data: Dict[str, pd.DataFrame]) -> list:
         stock_data: 股票数据 {股票代码: DataFrame}
 
     Returns:
-        选中的股票列表
+        选中的股票列�?
     """
 
     # 合并数据
     df = pd.DataFrame(stock_data).T
 
-    # 创建因子组合器
+    # 创建因子组合�?
     portfolio = FactorPortfolio("value_momentum_quality")
 
-    # 添加估值因子
+    # 添加估值因�?
     pe = PE().calculate(df)
     pb = PB().calculate(df)
     portfolio.add_factor('pe', pe, weight=0.2)
@@ -779,41 +779,41 @@ stock_data = {
 }
 
 selected_stocks = run_factor_selection(stock_data)
-print(f"选中{len(selected_stocks)}只股票: {selected_stocks}")
+print(f"选中{len(selected_stocks)}只股�? {selected_stocks}")
 ```
 
 ---
 
-## 6. 因子库索引
+## 6. 因子库索�?
 
 | 因子ID | 因子名称 | 类别 | 说明 |
 |--------|----------|------|------|
-| F001 | PE | 估值 | 市盈率 |
-| F002 | PB | 估值 | 市净率 |
-| F003 | PS | 估值 | 市销率 |
-| F004 | PCF | 估值 | 现金流市值比 |
+| F001 | PE | 估�?| 市盈�?|
+| F002 | PB | 估�?| 市净�?|
+| F003 | PS | 估�?| 市销�?|
+| F004 | PCF | 估�?| 现金流市值比 |
 | F011 | ReturnN | 动量 | N日收益率 |
 | F012 | VolumeRatio | 动量 | 量比 |
 | F013 | RSRS | 动量 | 阻力支撑相对强度 |
 | F014 | MACD_signal | 动量 | MACD信号 |
-| F021 | ROE | 质量 | 净资产收益率 |
-| F022 | GrossMargin | 质量 | 毛利率 |
+| F021 | ROE | 质量 | 净资产收益�?|
+| F022 | GrossMargin | 质量 | 毛利�?|
 | F023 | DebtToAsset | 质量 | 资产负债率 |
 | F024 | CurrentRatio | 质量 | 流动比率 |
 
 ---
 
-## 7. 下一步
+## 7. 下一�?
 
 学完因子计算后，您可以：
 
-1. **进行IC分析**: 评估因子的预测能力
-2. **组合更多因子**: 尝试不同的因子组合
+1. **进行IC分析**: 评估因子的预测能�?
+2. **组合更多因子**: 尝试不同的因子组�?
 3. **进入Phase 2**: 完整选股回测
 
 ---
 
-**最后更新**: 2026-03-29
+**最后更�?*: 2026-03-29
 **版本**: v5.0
 **前置文档**: [PHASE1_DESIGN.md](./PHASE1_DESIGN.md)
-**下一步文档**: 
+**下一步文�?*: 

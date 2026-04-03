@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 2 Alpha因子层 - 另类数据源集成 | 业务架构: 三级时间框架融合架构
+applicable_scope: Layer 2 Alpha因子�?- 另类数据源集�?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
 implementation_status: 规划阶段
@@ -14,169 +14,75 @@ implementation_status: 规划阶段
 
 # 另类数据源集成技术规格书
 
-> **规格书编号**: SPEC-ALT-DATA-2026-001
-> **规格书版本**: v1.0
+> **规格书编�?*: SPEC-ALT-DATA-2026-001
+> **规格书版�?*: v1.0
 > **创建日期**: 2026-04-02
 > **技术评审官**: 首席技术评审官
-> **评审状态**: ✅ 已批准
-
+> **评审状�?*: �?已批�?
 ---
 
 ## 📋 技术规格书概述
 
 ### 文档目的
 
-本技术规格书详细定义了另类数据源集成项目的所有技术细节，包括架构设计、接口定义、数据模型、算法实现、测试策略等，为开发团队提供完整的技术指导。
-
+本技术规格书详细定义了另类数据源集成项目的所有技术细节，包括架构设计、接口定义、数据模型、算法实现、测试策略等，为开发团队提供完整的技术指导�?
 ### 适用范围
 
 本规格书适用于：
 - 数据工程师：数据源接入和数据采集
-- NLP工程师：情感分析和事件提取
-- 因子研究员：因子构建和验证
-- 测试工程师：系统测试和质量保证
-
+- NLP工程师：情感分析和事件提�?- 因子研究员：因子构建和验�?- 测试工程师：系统测试和质量保�?
 ---
 
-## 一、概述
-
+## 一、概�?
 ### 1.1 设计背景
 
-根据Layer 2 Alpha因子层技术评审结果，**数据源广度不足**是P0级阻断性风险。当前系统仅依赖iFinD、Baostock、AkShare三个数据源，缺少新闻、社交媒体、分析师预期等另类数据，严重限制了因子研究深度和原创性。
-
-### 1.2 技术定位
-
+根据Layer 2 Alpha因子层技术评审结果，**数据源广度不�?*是P0级阻断性风险。当前系统仅依赖iFinD、Baostock、AkShare三个数据源，缺少新闻、社交媒体、分析师预期等另类数据，严重限制了因子研究深度和原创性�?
+### 1.2 技术定�?
 **Layer定位**: Layer 2 - Alpha因子层（数据源扩展）
 
 **技术成熟度**: 成熟（基于公开API和开源工具）
 
-**实施复杂度**: 中等（需要NLP处理和因子构建）
+**实施复杂�?*: 中等（需要NLP处理和因子构建）
 
 ### 1.3 版本信息
 
-| 版本 | 日期 | 变更说明 | 作者 |
+| 版本 | 日期 | 变更说明 | 作�?|
 |------|------|---------|------|
 | v1.0 | 2026-04-02 | 初始版本 | 首席技术评审官 |
 
 ---
 
-## 二、详细架构设计
-
-### 2.1 整体架构图
-
+## 二、详细架构设�?
+### 2.1 整体架构�?
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    另类数据源集成架构                                 │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  Layer 1: 数据源层 (Data Sources)                                   │
-│  ├── 新闻数据源                                                     │
-│  │   ├── 财联社API (CailianNewsDataSource)                         │
-│  │   ├── 新浪财经API (SinaFinanceDataSource)                       │
-│  │   └── 东方财富API (EastMoneyDataSource)                         │
-│  ├── 社交媒体数据源                                                 │
-│  │   ├── 微博API (WeiboDataSource)                                 │
-│  │   ├── 雪球网爬虫 (XueqiuDataSource)                             │
-│  │   └── 东方财富股吧 (GubaDataSource)                             │
-│  └── 分析师预期数据源                                               │
-│      ├── 东方财富分析师预期 (AnalystExpectationDataSource)          │
-│      └── 同花顺研报 (ResearchReportDataSource)                      │
-│                                                                     │
-│  Layer 2: 数据采集层 (Data Collection)                              │
-│  ├── API适配器 (APIAdapter)                                        │
-│  │   ├── 统一API调用接口                                           │
-│  │   ├── 错误处理和重试机制                                         │
-│  │   └── 频率限制控制                                               │
-│  ├── 爬虫引擎 (CrawlerEngine)                                      │
-│  │   ├── Scrapy框架                                                │
-│  │   ├── Selenium动态页面                                          │
-│  │   └── 反爬虫策略                                                 │
-│  ├── 实时数据流 (DataStream)                                       │
-│  │   ├── WebSocket连接                                             │
-│  │   └── Kafka消息队列（可选）                                      │
-│  └── 数据调度器 (DataScheduler)                                    │
-│      ├── Apache Airflow                                            │
-│      └── 定时任务管理                                               │
-│                                                                     │
-│  Layer 3: 数据处理层 (Data Processing)                              │
-│  ├── 数据清洗 (DataCleaner)                                        │
-│  │   ├── 去重、去噪                                                │
-│  │   ├── 格式标准化                                                 │
-│  │   └── 异常检测                                                   │
-│  ├── NLP处理 (NLPProcessor)                                        │
-│  │   ├── 情感分析 (SentimentAnalyzer)                              │
-│  │   ├── 事件提取 (EventExtractor)                                 │
-│  │   ├── 实体识别 (EntityRecognizer)                               │
-│  │   └── 关系抽取 (RelationExtractor)                              │
-│  └── 向量化 (Vectorizer)                                           │
-│      ├── 文本向量化                                                 │
-│      └── 向量存储                                                   │
-│                                                                     │
-│  Layer 4: 因子构建层 (Factor Construction)                          │
-│  ├── 新闻因子 (NewsFactors)                                        │
-│  │   ├── 情感因子 (SentimentFactor)                                │
-│  │   ├── 事件驱动因子 (EventDrivenFactor)                          │
-│  │   └── 热度因子 (HeatFactor)                                     │
-│  ├── 情绪因子 (SentimentFactors)                                   │
-│  │   ├── 市场情绪 (MarketSentimentFactor)                          │
-│  │   └── 个股情绪 (StockSentimentFactor)                           │
-│  ├── 预期因子 (ExpectationFactors)                                 │
-│  │   ├── 预期差异因子 (ExpectationGapFactor)                       │
-│  │   └── 评级变化因子 (RatingChangeFactor)                         │
-│  └── 关注度因子 (AttentionFactors)                                 │
-│      └── 社交媒体热度因子 (SocialHeatFactor)                        │
-│                                                                     │
-│  Layer 5: 因子管理层 (Factor Management)                            │
-│  ├── 因子存储 (FactorStorage)                                      │
-│  │   ├── SQLite数据库                                              │
-│  │   └── ChromaDB向量数据库                                         │
-│  ├── IC验证 (ICValidator)                                          │
-│  │   ├── IC计算                                                    │
-│  │   ├── ICIR计算                                                  │
-│  │   └── 有效性检验                                                 │
-│  ├── 因子监控 (FactorMonitor)                                      │
-│  │   ├── 实时监控                                                   │
-│  │   └── 衰减检测                                                   │
-│  └── 因子注册 (FactorRegistry)                                     │
-│      ├── 自动注册                                                   │
-│      └── 元数据管理                                                 │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────────�?�?                   另类数据源集成架�?                                �?├─────────────────────────────────────────────────────────────────────�?�?                                                                    �?�? Layer 1: 数据源层 (Data Sources)                                   �?�? ├── 新闻数据�?                                                    �?�? �?  ├── 财联社API (CailianNewsDataSource)                         �?�? �?  ├── 新浪财经API (SinaFinanceDataSource)                       �?�? �?  └── 东方财富API (EastMoneyDataSource)                         �?�? ├── 社交媒体数据�?                                                �?�? �?  ├── 微博API (WeiboDataSource)                                 �?�? �?  ├── 雪球网爬�?(XueqiuDataSource)                             �?�? �?  └── 东方财富股吧 (GubaDataSource)                             �?�? └── 分析师预期数据源                                               �?�?     ├── 东方财富分析师预�?(AnalystExpectationDataSource)          �?�?     └── 同花顺研�?(ResearchReportDataSource)                      �?�?                                                                    �?�? Layer 2: 数据采集�?(Data Collection)                              �?�? ├── API适配�?(APIAdapter)                                        �?�? �?  ├── 统一API调用接口                                           �?�? �?  ├── 错误处理和重试机�?                                        �?�? �?  └── 频率限制控制                                               �?�? ├── 爬虫引擎 (CrawlerEngine)                                      �?�? �?  ├── Scrapy框架                                                �?�? �?  ├── Selenium动态页�?                                         �?�? �?  └── 反爬虫策�?                                                �?�? ├── 实时数据�?(DataStream)                                       �?�? �?  ├── WebSocket连接                                             �?�? �?  └── Kafka消息队列（可选）                                      �?�? └── 数据调度�?(DataScheduler)                                    �?�?     ├── Apache Airflow                                            �?�?     └── 定时任务管理                                               �?�?                                                                    �?�? Layer 3: 数据处理�?(Data Processing)                              �?�? ├── 数据清洗 (DataCleaner)                                        �?�? �?  ├── 去重、去�?                                               �?�? �?  ├── 格式标准�?                                                �?�? �?  └── 异常检�?                                                  �?�? ├── NLP处理 (NLPProcessor)                                        �?�? �?  ├── 情感分析 (SentimentAnalyzer)                              �?�? �?  ├── 事件提取 (EventExtractor)                                 �?�? �?  ├── 实体识别 (EntityRecognizer)                               �?�? �?  └── 关系抽取 (RelationExtractor)                              �?�? └── 向量�?(Vectorizer)                                           �?�?     ├── 文本向量�?                                                �?�?     └── 向量存储                                                   �?�?                                                                    �?�? Layer 4: 因子构建�?(Factor Construction)                          �?�? ├── 新闻因子 (NewsFactors)                                        �?�? �?  ├── 情感因子 (SentimentFactor)                                �?�? �?  ├── 事件驱动因子 (EventDrivenFactor)                          �?�? �?  └── 热度因子 (HeatFactor)                                     �?�? ├── 情绪因子 (SentimentFactors)                                   �?�? �?  ├── 市场情绪 (MarketSentimentFactor)                          �?�? �?  └── 个股情绪 (StockSentimentFactor)                           �?�? ├── 预期因子 (ExpectationFactors)                                 �?�? �?  ├── 预期差异因子 (ExpectationGapFactor)                       �?�? �?  └── 评级变化因子 (RatingChangeFactor)                         �?�? └── 关注度因�?(AttentionFactors)                                 �?�?     └── 社交媒体热度因子 (SocialHeatFactor)                        �?�?                                                                    �?�? Layer 5: 因子管理�?(Factor Management)                            �?�? ├── 因子存储 (FactorStorage)                                      �?�? �?  ├── SQLite数据�?                                             �?�? �?  └── ChromaDB向量数据�?                                        �?�? ├── IC验证 (ICValidator)                                          �?�? �?  ├── IC计算                                                    �?�? �?  ├── ICIR计算                                                  �?�? �?  └── 有效性检�?                                                �?�? ├── 因子监控 (FactorMonitor)                                      �?�? �?  ├── 实时监控                                                   �?�? �?  └── 衰减检�?                                                  �?�? └── 因子注册 (FactorRegistry)                                     �?�?     ├── 自动注册                                                   �?�?     └── 元数据管�?                                                �?�?                                                                    �?└─────────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 Layer定位说明
 
 | Layer | 定位 | 职责 | 技术栈 |
 |-------|------|------|--------|
-| **Layer 1** | 数据源层 | 提供原始数据 | 公开API、爬虫 |
-| **Layer 2** | 数据采集层 | 数据采集和调度 | Requests、Scrapy、Airflow |
-| **Layer 3** | 数据处理层 | 数据清洗和NLP处理 | GLM-4-Flash、正则表达式 |
-| **Layer 4** | 因子构建层 | 因子计算和构建 | NumPy、Pandas |
-| **Layer 5** | 因子管理层 | 因子存储和验证 | SQLite、ChromaDB |
+| **Layer 1** | 数据源层 | 提供原始数据 | 公开API、爬�?|
+| **Layer 2** | 数据采集�?| 数据采集和调�?| Requests、Scrapy、Airflow |
+| **Layer 3** | 数据处理�?| 数据清洗和NLP处理 | GLM-4-Flash、正则表达式 |
+| **Layer 4** | 因子构建�?| 因子计算和构�?| NumPy、Pandas |
+| **Layer 5** | 因子管理�?| 因子存储和验�?| SQLite、ChromaDB |
 
 ### 2.3 模块职责边界
 
 ```
-数据源层 → 数据采集层 → 数据处理层 → 因子构建层 → 因子管理层
-    ↓           ↓           ↓           ↓           ↓
- 原始数据    采集数据    清洗数据    因子数据    注册因子
+数据源层 �?数据采集�?�?数据处理�?�?因子构建�?�?因子管理�?    �?          �?          �?          �?          �? 原始数据    采集数据    清洗数据    因子数据    注册因子
 ```
 
 **职责边界**:
-- **数据源层**: 仅负责提供原始数据，不涉及数据处理
-- **数据采集层**: 仅负责数据采集，不涉及业务逻辑
-- **数据处理层**: 仅负责数据清洗和NLP处理，不涉及因子计算
-- **因子构建层**: 仅负责因子计算，不涉及数据存储
-- **因子管理层**: 仅负责因子存储和验证，不涉及因子计算
+- **数据源层**: 仅负责提供原始数据，不涉及数据处�?- **数据采集�?*: 仅负责数据采集，不涉及业务逻辑
+- **数据处理�?*: 仅负责数据清洗和NLP处理，不涉及因子计算
+- **因子构建�?*: 仅负责因子计算，不涉及数据存�?- **因子管理�?*: 仅负责因子存储和验证，不涉及因子计算
 
 ---
 
-## 三、接口定义
-
-### 3.1 数据源接口
-
-#### 3.1.1 新闻数据源接口
-
+## 三、接口定�?
+### 3.1 数据源接�?
+#### 3.1.1 新闻数据源接�?
 ```python
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional
@@ -184,7 +90,7 @@ from datetime import datetime
 import pandas as pd
 
 class NewsDataSource(ABC):
-    """新闻数据源基类"""
+    """新闻数据源基�?""
     
     @abstractmethod
     def get_realtime_news(self, limit: int = 100) -> List[Dict]:
@@ -200,8 +106,7 @@ class NewsDataSource(ABC):
             - title: 标题
             - content: 内容
             - publish_time: 发布时间
-            - source: 数据源
-            - url: 链接
+            - source: 数据�?            - url: 链接
         """
         pass
     
@@ -215,8 +120,7 @@ class NewsDataSource(ABC):
         
         Args:
             stock_code: 股票代码
-            start_date: 开始日期
-            end_date: 结束日期
+            start_date: 开始日�?            end_date: 结束日期
             
         Returns:
             新闻列表
@@ -232,9 +136,7 @@ class NewsDataSource(ABC):
         搜索新闻
         
         Args:
-            keyword: 关键词
-            start_date: 开始日期
-            end_date: 结束日期
+            keyword: 关键�?            start_date: 开始日�?            end_date: 结束日期
             
         Returns:
             新闻列表
@@ -242,11 +144,10 @@ class NewsDataSource(ABC):
         pass
 ```
 
-#### 3.1.2 社交媒体数据源接口
-
+#### 3.1.2 社交媒体数据源接�?
 ```python
 class SocialMediaDataSource(ABC):
-    """社交媒体数据源基类"""
+    """社交媒体数据源基�?""
     
     @abstractmethod
     def get_stock_posts(self, 
@@ -263,13 +164,9 @@ class SocialMediaDataSource(ABC):
             讨论列表，每个讨论包含：
             - post_id: 帖子ID
             - user_id: 用户ID
-            - user_name: 用户名
-            - content: 内容
+            - user_name: 用户�?            - content: 内容
             - publish_time: 发布时间
-            - likes: 点赞数
-            - comments: 评论数
-            - reposts: 转发数
-        """
+            - likes: 点赞�?            - comments: 评论�?            - reposts: 转发�?        """
         pass
     
     @abstractmethod
@@ -308,26 +205,22 @@ class AnalystExpectationDataSource(ABC):
     @abstractmethod
     def get_analyst_rating(self, stock_code: str) -> List[Dict]:
         """
-        获取分析师评级
-        
+        获取分析师评�?        
         Args:
             stock_code: 股票代码
             
         Returns:
             评级列表，每个评级包含：
-            - analyst_name: 分析师姓名
-            - institution: 机构名称
+            - analyst_name: 分析师姓�?            - institution: 机构名称
             - rating: 评级
-            - target_price: 目标价
-            - report_date: 报告日期
+            - target_price: 目标�?            - report_date: 报告日期
         """
         pass
     
     @abstractmethod
     def get_consensus_forecast(self, stock_code: str) -> Dict:
         """
-        获取一致预期
-        
+        获取一致预�?        
         Args:
             stock_code: 股票代码
             
@@ -335,8 +228,7 @@ class AnalystExpectationDataSource(ABC):
             一致预期数据：
             - eps_forecast: EPS预测
             - revenue_forecast: 营收预测
-            - rating_consensus: 评级一致预期
-        """
+            - rating_consensus: 评级一致预�?        """
         pass
     
     @abstractmethod
@@ -349,8 +241,7 @@ class AnalystExpectationDataSource(ABC):
         
         Args:
             stock_code: 股票代码
-            start_date: 开始日期
-            end_date: 结束日期
+            start_date: 开始日�?            end_date: 结束日期
             
         Returns:
             评级历史列表
@@ -364,7 +255,7 @@ class AnalystExpectationDataSource(ABC):
 
 ```python
 class SentimentAnalyzer:
-    """情感分析器"""
+    """情感分析�?""
     
     def analyze_sentiment(self, text: str) -> float:
         """
@@ -374,10 +265,8 @@ class SentimentAnalyzer:
             text: 文本内容
             
         Returns:
-            情感得分（-1到1）
-            -1: 极度负面
-            0: 中性
-            1: 极度正面
+            情感得分�?1�?�?            -1: 极度负面
+            0: 中�?            1: 极度正面
         """
         pass
     
@@ -398,7 +287,7 @@ class SentimentAnalyzer:
 
 ```python
 class EventExtractor:
-    """事件提取器"""
+    """事件提取�?""
     
     def extract_events(self, text: str) -> Dict:
         """
@@ -408,12 +297,11 @@ class EventExtractor:
             text: 新闻文本
             
         Returns:
-            事件信息：
-            - event_type: 事件类型
+            事件信息�?            - event_type: 事件类型
             - event_summary: 事件摘要
             - related_stocks: 相关股票
-            - impact_level: 影响等级（高/中/低）
-            - sentiment: 情感倾向（正面/负面/中性）
+            - impact_level: 影响等级（高/�?低）
+            - sentiment: 情感倾向（正�?负面/中性）
         """
         pass
 ```
@@ -422,7 +310,7 @@ class EventExtractor:
 
 ```python
 class EntityRecognizer:
-    """实体识别器"""
+    """实体识别�?""
     
     def extract_stocks(self, text: str) -> List[str]:
         """
@@ -460,9 +348,8 @@ class AlternativeDataFactorCalculator(ABC):
     """另类数据因子计算基类
     
     职责边界说明:
-    - 本类专门用于另类数据因子（新闻情感、事件驱动等）
-    - 基础因子（价值、成长、动量等）由FactorCalculator模块负责
-    - 参考: [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
+    - 本类专门用于另类数据因子（新闻情感、事件驱动等�?    - 基础因子（价值、成长、动量等）由FactorCalculator模块负责
+    - 参�? [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
     """
     
     @abstractmethod
@@ -471,16 +358,14 @@ class AlternativeDataFactorCalculator(ABC):
                   date: datetime, 
                   **kwargs) -> float:
         """
-        计算因子值
-        
+        计算因子�?        
         Args:
             stock_code: 股票代码
             date: 计算日期
             **kwargs: 其他参数
             
         Returns:
-            因子值
-        """
+            因子�?        """
         pass
     
     @abstractmethod
@@ -495,8 +380,7 @@ class AlternativeDataFactorCalculator(ABC):
             date: 计算日期
             
         Returns:
-            因子值序列（index=stock_code）
-        """
+            因子值序列（index=stock_code�?        """
         pass
     
     def get_factor_info(self) -> Dict:
@@ -504,8 +388,7 @@ class AlternativeDataFactorCalculator(ABC):
         获取因子信息
         
         Returns:
-            因子信息：
-            - factor_name: 因子名称
+            因子信息�?            - factor_name: 因子名称
             - factor_type: 因子类型
             - description: 因子描述
             - update_frequency: 更新频率
@@ -531,11 +414,9 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
         Args:
             stock_code: 股票代码
             date: 计算日期
-            window: 时间窗口（天）
-            
+            window: 时间窗口（天�?            
         Returns:
-            因子值（-1到1）
-        """
+            因子值（-1�?�?        """
         pass
 
 class EventDrivenFactor(AlternativeDataFactorCalculator):
@@ -552,8 +433,7 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
             date: 计算日期
             
         Returns:
-            因子值（事件影响得分）
-        """
+            因子值（事件影响得分�?        """
         pass
 
 class NewsHeatFactor(AlternativeDataFactorCalculator):
@@ -569,11 +449,9 @@ class NewsHeatFactor(AlternativeDataFactorCalculator):
         Args:
             stock_code: 股票代码
             date: 计算日期
-            window: 时间窗口（天）
-            
+            window: 时间窗口（天�?            
         Returns:
-            因子值（热度得分）
-        """
+            因子值（热度得分�?        """
         pass
 ```
 
@@ -583,7 +461,7 @@ class NewsHeatFactor(AlternativeDataFactorCalculator):
 
 ```python
 class FactorRegistry:
-    """因子注册表"""
+    """因子注册�?""
     
     def register_factor(self, 
                        factor_name: str,
@@ -596,9 +474,7 @@ class FactorRegistry:
         Args:
             factor_name: 因子名称
             factor_type: 因子类型
-            calculator: 因子计算器
-            metadata: 因子元数据
-            
+            calculator: 因子计算�?            metadata: 因子元数�?            
         Returns:
             因子ID
         """
@@ -633,34 +509,28 @@ class FactorRegistry:
 
 ```python
 class ICValidator:
-    """IC验证器"""
+    """IC验证�?""
     
     def calculate_ic(self, 
                      factor_values: pd.Series,
                      returns: pd.Series) -> float:
         """
-        计算IC值
-        
+        计算IC�?        
         Args:
-            factor_values: 因子值序列
-            returns: 收益率序列
-            
+            factor_values: 因子值序�?            returns: 收益率序�?            
         Returns:
-            IC值
-        """
+            IC�?        """
         pass
     
     def calculate_icir(self, 
                       ic_series: pd.Series) -> float:
         """
-        计算ICIR值
-        
+        计算ICIR�?        
         Args:
             ic_series: IC时间序列
             
         Returns:
-            ICIR值
-        """
+            ICIR�?        """
         pass
     
     def validate_factor(self, 
@@ -669,20 +539,12 @@ class ICValidator:
                        min_ic: float = 0.03,
                        min_icir: float = 1.0) -> Dict:
         """
-        验证因子有效性
-        
+        验证因子有效�?        
         Args:
-            factor_values: 因子值（index=date, columns=stock_code）
-            returns: 收益率（index=date, columns=stock_code）
-            min_ic: 最小IC阈值
-            min_icir: 最小ICIR阈值
-            
+            factor_values: 因子值（index=date, columns=stock_code�?            returns: 收益率（index=date, columns=stock_code�?            min_ic: 最小IC阈�?            min_icir: 最小ICIR阈�?            
         Returns:
-            验证结果：
-            - ic_mean: IC均值
-            - icir: ICIR
-            - ic_std: IC标准差
-            - is_valid: 是否有效
+            验证结果�?            - ic_mean: IC均�?            - icir: ICIR
+            - ic_std: IC标准�?            - is_valid: 是否有效
         """
         pass
 ```
@@ -693,8 +555,7 @@ class ICValidator:
 
 ### 4.1 数据库表结构
 
-#### 4.1.1 新闻数据表
-
+#### 4.1.1 新闻数据�?
 ```sql
 CREATE TABLE news_data (
     news_id TEXT PRIMARY KEY,
@@ -719,7 +580,7 @@ CREATE INDEX idx_news_event_type ON news_data(event_type);
 ```
 
 **字段说明**:
-| 字段名 | 类型 | 说明 | 索引 |
+| 字段�?| 类型 | 说明 | 索引 |
 |--------|------|------|------|
 | news_id | TEXT | 新闻唯一ID（主键） | PRIMARY |
 | title | TEXT | 新闻标题 | - |
@@ -727,16 +588,15 @@ CREATE INDEX idx_news_event_type ON news_data(event_type);
 | publish_time | TIMESTAMP | 发布时间 | INDEX |
 | source | TEXT | 数据来源 | INDEX |
 | url | TEXT | 原文链接 | - |
-| stock_codes | TEXT | 相关股票代码（JSON） | - |
-| sentiment | REAL | 情感得分（-1到1） | INDEX |
+| stock_codes | TEXT | 相关股票代码（JSON�?| - |
+| sentiment | REAL | 情感得分�?1�?�?| INDEX |
 | event_type | TEXT | 事件类型 | INDEX |
 | event_summary | TEXT | 事件摘要 | - |
 | impact_level | TEXT | 影响等级 | - |
 
 ---
 
-#### 4.1.2 社交媒体数据表
-
+#### 4.1.2 社交媒体数据�?
 ```sql
 CREATE TABLE social_posts (
     post_id TEXT PRIMARY KEY,
@@ -784,8 +644,7 @@ CREATE INDEX idx_analyst_institution ON analyst_expectations(institution);
 
 ---
 
-#### 4.1.4 因子数据表
-
+#### 4.1.4 因子数据�?
 ```sql
 CREATE TABLE alternative_factors (
     factor_id TEXT PRIMARY KEY,
@@ -832,8 +691,7 @@ CREATE INDEX idx_metadata_active ON factor_metadata(is_active);
 
 ---
 
-### 4.2 向量数据库设计
-
+### 4.2 向量数据库设�?
 #### 4.2.1 ChromaDB Collection设计
 
 ```python
@@ -868,8 +726,7 @@ class VectorStore:
 ```python
 {
     "id": "news_001",
-    "embedding": [0.1, 0.2, ...],  # 768维向量
-    "metadata": {
+    "embedding": [0.1, 0.2, ...],  # 768维向�?    "metadata": {
         "news_id": "news_001",
         "title": "新闻标题",
         "publish_time": "2026-04-02T10:00:00",
@@ -884,8 +741,7 @@ class VectorStore:
 ```python
 {
     "id": "post_001",
-    "embedding": [0.1, 0.2, ...],  # 768维向量
-    "metadata": {
+    "embedding": [0.1, 0.2, ...],  # 768维向�?    "metadata": {
         "post_id": "post_001",
         "platform": "weibo",
         "publish_time": "2026-04-02T10:00:00",
@@ -898,38 +754,33 @@ class VectorStore:
 
 ---
 
-### 4.3 数据流设计
-
+### 4.3 数据流设�?
 ```
-数据源 → 数据采集 → 数据清洗 → NLP处理 → 因子计算 → 因子存储
-  ↓         ↓          ↓          ↓          ↓          ↓
-原始数据  采集数据   清洗数据   结构化数据  因子数据   注册因子
+数据�?�?数据采集 �?数据清洗 �?NLP处理 �?因子计算 �?因子存储
+  �?        �?         �?         �?         �?         �?原始数据  采集数据   清洗数据   结构化数�? 因子数据   注册因子
 ```
 
 **数据流转过程**:
 
 1. **数据采集**: 从数据源获取原始数据
 2. **数据清洗**: 去重、去噪、格式标准化
-3. **NLP处理**: 情感分析、事件提取、实体识别
-4. **因子计算**: 基于处理后的数据计算因子
+3. **NLP处理**: 情感分析、事件提取、实体识�?4. **因子计算**: 基于处理后的数据计算因子
 5. **因子存储**: 存储因子数据和元数据
 6. **因子注册**: 注册因子到因子库
 
 ---
 
-## 五、算法实现说明
-
+## 五、算法实现说�?
 ### 5.1 情感分析算法
 
 #### 5.1.1 算法原理
 
-使用GLM-4-Flash进行情感分析，通过Prompt Engineering引导模型输出情感得分。
-
+使用GLM-4-Flash进行情感分析，通过Prompt Engineering引导模型输出情感得分�?
 #### 5.1.2 实现代码
 
 ```python
 class SentimentAnalyzer:
-    """情感分析器"""
+    """情感分析�?""
     
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -944,22 +795,19 @@ class SentimentAnalyzer:
             text: 文本内容
             
         Returns:
-            情感得分（-1到1）
-        """
+            情感得分�?1�?�?        """
         prompt = f"""
-        请分析以下财经新闻的情感倾向，返回-1到1之间的情感得分：
-        -1表示极度负面，0表示中性，1表示极度正面
+        请分析以下财经新闻的情感倾向，返�?1�?之间的情感得分：
+        -1表示极度负面�?表示中性，1表示极度正面
         
         新闻内容：{text}
         
-        请只返回情感得分数值，不要其他解释。
-        """
+        请只返回情感得分数值，不要其他解释�?        """
         
         response = self._call_api(prompt)
         sentiment_score = float(response.strip())
         
-        # 确保得分在[-1, 1]范围内
-        sentiment_score = max(-1.0, min(1.0, sentiment_score))
+        # 确保得分在[-1, 1]范围�?        sentiment_score = max(-1.0, min(1.0, sentiment_score))
         
         return sentiment_score
     
@@ -983,11 +831,9 @@ class SentimentAnalyzer:
         return result['choices'][0]['message']['content']
 ```
 
-#### 5.1.3 复杂度分析
-
-- **时间复杂度**: O(n)，其中n为文本长度
-- **空间复杂度**: O(1)
-- **API调用成本**: 0.1元/百万tokens
+#### 5.1.3 复杂度分�?
+- **时间复杂�?*: O(n)，其中n为文本长�?- **空间复杂�?*: O(1)
+- **API调用成本**: 0.1�?百万tokens
 
 ---
 
@@ -995,20 +841,19 @@ class SentimentAnalyzer:
 
 #### 5.2.1 算法原理
 
-使用GLM-4-Flash进行事件提取，识别新闻中的关键事件、影响等级和相关股票。
-
+使用GLM-4-Flash进行事件提取，识别新闻中的关键事件、影响等级和相关股票�?
 #### 5.2.2 实现代码
 
 ```python
 class EventExtractor:
-    """事件提取器"""
+    """事件提取�?""
     
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.model = "glm-4-flash"
         self.event_types = [
             '业绩公告', '并购重组', '股权变动', '高管变动',
-            '产品发布', '政策影响', '行业动态', '市场事件'
+            '产品发布', '政策影响', '行业动�?, '市场事件'
         ]
         
     def extract_events(self, text: str) -> Dict:
@@ -1026,17 +871,15 @@ class EventExtractor:
         
         新闻内容：{text}
         
-        请返回JSON格式：
-        {{
-            "event_type": "事件类型（从以下选择：{', '.join(self.event_types)}）",
-            "event_summary": "事件摘要（50字以内）",
+        请返回JSON格式�?        {{
+            "event_type": "事件类型（从以下选择：{', '.join(self.event_types)}�?,
+            "event_summary": "事件摘要�?0字以内）",
             "related_stocks": ["相关股票代码"],
-            "impact_level": "影响等级（高/中/低）",
-            "sentiment": "情感倾向（正面/负面/中性）"
+            "impact_level": "影响等级（高/�?低）",
+            "sentiment": "情感倾向（正�?负面/中性）"
         }}
         
-        只返回JSON，不要其他解释。
-        """
+        只返回JSON，不要其他解释�?        """
         
         response = self._call_api(prompt)
         event_info = json.loads(response)
@@ -1065,19 +908,15 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
         """
         计算新闻情感因子
         
-        算法步骤：
-        1. 获取过去window天的相关新闻
-        2. 计算每条新闻的情感得分
-        3. 加权平均（近期新闻权重更高）
+        算法步骤�?        1. 获取过去window天的相关新闻
+        2. 计算每条新闻的情感得�?        3. 加权平均（近期新闻权重更高）
         
         Args:
             stock_code: 股票代码
             date: 计算日期
-            window: 时间窗口（天）
-            
+            window: 时间窗口（天�?            
         Returns:
-            因子值（-1到1）
-        """
+            因子值（-1�?�?        """
         # 1. 获取过去window天的相关新闻
         start_date = date - timedelta(days=window)
         news_list = self.news_data_source.get_stock_news(
@@ -1087,8 +926,7 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
         if not news_list:
             return 0.0
         
-        # 2. 计算每条新闻的情感得分
-        sentiments = []
+        # 2. 计算每条新闻的情感得�?        sentiments = []
         for news in news_list:
             if news.get('sentiment') is not None:
                 sentiment = news['sentiment']
@@ -1107,9 +945,8 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
         return factor_value
 ```
 
-**算法复杂度**:
-- 时间复杂度: O(n)，其中n为新闻数量
-- 空间复杂度: O(n)
+**算法复杂�?*:
+- 时间复杂�? O(n)，其中n为新闻数�?- 空间复杂�? O(n)
 
 ---
 
@@ -1127,7 +964,7 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
         '高管变动': 0.5,
         '产品发布': 0.6,
         '政策影响': 0.8,
-        '行业动态': 0.4,
+        '行业动�?: 0.4,
         '市场事件': 0.3
     }
     
@@ -1139,18 +976,15 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
         """
         计算事件驱动因子
         
-        算法步骤：
-        1. 获取近期重大事件
-        2. 计算每个事件的影响得分
-        3. 综合评估事件影响
+        算法步骤�?        1. 获取近期重大事件
+        2. 计算每个事件的影响得�?        3. 综合评估事件影响
         
         Args:
             stock_code: 股票代码
             date: 计算日期
             
         Returns:
-            因子值（事件影响得分）
-        """
+            因子值（事件影响得分�?        """
         # 1. 获取近期重大事件
         start_date = date - timedelta(days=30)
         news_list = self.news_data_source.get_stock_news(
@@ -1163,8 +997,8 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
             if news.get('event_type'):
                 event_info = {
                     'event_type': news['event_type'],
-                    'impact_level': news.get('impact_level', '中'),
-                    'sentiment': news.get('sentiment', '中性'),
+                    'impact_level': news.get('impact_level', '�?),
+                    'sentiment': news.get('sentiment', '中�?),
                     'publish_time': news['publish_time']
                 }
                 events.append(event_info)
@@ -1179,19 +1013,18 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
             base_score = self.EVENT_IMPACT_MAP.get(event['event_type'], 0.5)
             
             # 影响等级乘数
-            level_multiplier = {'高': 1.0, '中': 0.6, '低': 0.3}.get(
+            level_multiplier = {'�?: 1.0, '�?: 0.6, '�?: 0.3}.get(
                 event['impact_level'], 0.6
             )
             
             # 情感乘数
-            sentiment_multiplier = {'正面': 1.0, '负面': -1.0, '中性': 0.0}.get(
+            sentiment_multiplier = {'正面': 1.0, '负面': -1.0, '中�?: 0.0}.get(
                 event['sentiment'], 0.0
             )
             
             # 时间衰减（近期事件权重更高）
             days_ago = (date - event['publish_time']).days
-            time_decay = np.exp(-days_ago / 30)  # 30天衰减周期
-            
+            time_decay = np.exp(-days_ago / 30)  # 30天衰减周�?            
             # 综合得分
             score = base_score * level_multiplier * sentiment_multiplier * time_decay
             impact_scores.append(score)
@@ -1206,22 +1039,20 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 
 ## 六、实施技术栈
 
-### 6.1 编程语言和框架
-
-| 技术领域 | 技术选型 | 版本 | 说明 |
+### 6.1 编程语言和框�?
+| 技术领�?| 技术选型 | 版本 | 说明 |
 |---------|---------|------|------|
 | **编程语言** | Python | 3.9+ | 主要开发语言 |
 | **爬虫框架** | Scrapy | 2.11+ | 数据采集 |
-| **动态页面** | Selenium | 4.15+ | JavaScript渲染 |
+| **动态页�?* | Selenium | 4.15+ | JavaScript渲染 |
 | **HTTP请求** | Requests | 2.31+ | API调用 |
 | **数据处理** | Pandas | 2.1+ | 数据处理 |
-| **数值计算** | NumPy | 1.26+ | 数值计算 |
+| **数值计�?* | NumPy | 1.26+ | 数值计�?|
 
-### 6.2 第三方依赖
-
-| 依赖包 | 版本 | 用途 |
+### 6.2 第三方依�?
+| 依赖�?| 版本 | 用�?|
 |--------|------|------|
-| **chromadb** | 0.4.0+ | 向量数据库 |
+| **chromadb** | 0.4.0+ | 向量数据�?|
 | **zhipuai** | 2.0.0+ | GLM-4 API |
 | **apache-airflow** | 2.7.0+ | 任务调度 |
 | **redis** | 5.0.0+ | 缓存 |
@@ -1232,24 +1063,23 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 | 环境 | 要求 |
 |------|------|
 | **操作系统** | Windows 10/11, Linux, macOS |
-| **内存** | ≥8GB |
-| **存储** | ≥50GB可用空间 |
+| **内存** | �?GB |
+| **存储** | �?0GB可用空间 |
 | **网络** | 稳定的互联网连接 |
 
 ---
 
-## 七、测试策略
-
+## 七、测试策�?
 ### 7.1 单元测试
 
 #### 7.1.1 测试范围
 
-| 模块 | 测试内容 | 覆盖率目标 |
+| 模块 | 测试内容 | 覆盖率目�?|
 |------|---------|-----------|
-| **数据采集** | API调用、数据解析 | >85% |
-| **NLP处理** | 情感分析、事件提取 | >80% |
+| **数据采集** | API调用、数据解�?| >85% |
+| **NLP处理** | 情感分析、事件提�?| >80% |
 | **因子计算** | 因子计算逻辑 | >90% |
-| **数据存储** | 数据库操作 | >85% |
+| **数据存储** | 数据库操�?| >85% |
 
 #### 7.1.2 测试用例示例
 
@@ -1261,7 +1091,7 @@ class TestNewsSentimentFactor:
     """新闻情感因子测试"""
     
     def test_calculate_with_positive_news(self):
-        """测试正面新闻的因子计算"""
+        """测试正面新闻的因子计�?""
         factor = NewsSentimentFactor(mock_news_source, mock_sentiment_analyzer)
         
         # 模拟正面新闻
@@ -1281,7 +1111,7 @@ class TestNewsSentimentFactor:
         assert factor_value <= 1
     
     def test_calculate_with_no_news(self):
-        """测试无新闻时的因子计算"""
+        """测试无新闻时的因子计�?""
         factor = NewsSentimentFactor(mock_news_source, mock_sentiment_analyzer)
         
         mock_news_source.get_stock_news.return_value = []
@@ -1299,9 +1129,9 @@ class TestNewsSentimentFactor:
 
 | 场景 | 测试内容 | 验收标准 |
 |------|---------|---------|
-| **数据采集流程** | 从数据源到数据库的完整流程 | 数据完整性>95% |
-| **NLP处理流程** | 从原始文本到结构化数据 | 准确率>80% |
-| **因子计算流程** | 从数据到因子的完整流程 | IC>0.03 |
+| **数据采集流程** | 从数据源到数据库的完整流�?| 数据完整�?95% |
+| **NLP处理流程** | 从原始文本到结构化数�?| 准确�?80% |
+| **因子计算流程** | 从数据到因子的完整流�?| IC>0.03 |
 
 ---
 
@@ -1309,81 +1139,75 @@ class TestNewsSentimentFactor:
 
 #### 7.3.1 性能指标
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
 | **数据采集延迟** | <5分钟 | 压力测试 |
-| **因子计算延迟** | <10秒 | 性能测试 |
-| **并发处理能力** | >100请求/秒 | 并发测试 |
+| **因子计算延迟** | <10�?| 性能测试 |
+| **并发处理能力** | >100请求/�?| 并发测试 |
 
 ---
 
 ## 八、风险与约束
 
-### 8.1 技术风险
-
+### 8.1 技术风�?
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
-| **API频率限制** | 中 | 高 | 请求队列、多账号轮换 |
-| **数据质量不稳定** | 高 | 中 | 数据清洗、异常检测 |
-| **NLP准确率不足** | 高 | 中 | 模型优化、人工标注 |
-| **系统性能瓶颈** | 中 | 低 | 异步处理、缓存优化 |
+| **API频率限制** | �?| �?| 请求队列、多账号轮换 |
+| **数据质量不稳�?* | �?| �?| 数据清洗、异常检�?|
+| **NLP准确率不�?* | �?| �?| 模型优化、人工标�?|
+| **系统性能瓶颈** | �?| �?| 异步处理、缓存优�?|
 
 ### 8.2 实施风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
-| **进度延期** | 高 | 中 | 预留缓冲、并行开发 |
-| **资源不足** | 中 | 低 | 优先级管理 |
-| **需求变更** | 中 | 低 | 需求冻结 |
+| **进度延期** | �?| �?| 预留缓冲、并行开�?|
+| **资源不足** | �?| �?| 优先级管�?|
+| **需求变�?* | �?| �?| 需求冻�?|
 
 ### 8.3 约束条件
 
-1. **数据源约束**: 仅使用免费公开API
-2. **成本约束**: 月成本<200元
-3. **时间约束**: 8周内完成
-4. **技术约束**: 使用现有技术栈
+1. **数据源约�?*: 仅使用免费公开API
+2. **成本约束**: 月成�?200�?3. **时间约束**: 8周内完成
+4. **技术约�?*: 使用现有技术栈
 
 ---
 
-## 九、验收标准
-
+## 九、验收标�?
 ### 9.1 功能验收
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| **数据采集** | 数据完整性>95% | 数据质量检查 |
-| **NLP处理** | 情感分析准确率>80% | 人工标注验证 |
-| **因子计算** | 因子数量≥8个 | 功能测试 |
-| **IC验证** | IC均值>0.03 | 统计检验 |
+| **数据采集** | 数据完整�?95% | 数据质量检�?|
+| **NLP处理** | 情感分析准确�?80% | 人工标注验证 |
+| **因子计算** | 因子数量�?�?| 功能测试 |
+| **IC验证** | IC均�?0.03 | 统计检�?|
 
 ### 9.2 性能验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
 | **数据采集延迟** | <5分钟 | 性能测试 |
-| **因子计算延迟** | <10秒 | 性能测试 |
-| **系统可用性** | >99% | 监控统计 |
+| **因子计算延迟** | <10�?| 性能测试 |
+| **系统可用�?* | >99% | 监控统计 |
 
 ### 9.3 质量验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| **代码覆盖率** | >80% | 单元测试 |
-| **文档完整性** | 100% | 文档审查 |
-| **系统稳定性** | >99% | 压力测试 |
+| **代码覆盖�?* | >80% | 单元测试 |
+| **文档完整�?* | 100% | 文档审查 |
+| **系统稳定�?* | >99% | 压力测试 |
 
 ---
 
 ## 十、实施路线图
 
-### 10.1 Phase 1: 数据源接入（Week 1-3）
-
+### 10.1 Phase 1: 数据源接入（Week 1-3�?
 **目标**: 完成数据源接入和数据采集
 
 **关键任务**:
-1. 新闻数据源接入
-2. 社交媒体数据源接入
-3. 分析师预期数据源接入
+1. 新闻数据源接�?2. 社交媒体数据源接�?3. 分析师预期数据源接入
 4. 数据库表结构设计
 5. 数据采集调度系统
 
@@ -1394,46 +1218,35 @@ class TestNewsSentimentFactor:
 
 ---
 
-### 10.2 Phase 2: NLP处理（Week 4-5）
-
+### 10.2 Phase 2: NLP处理（Week 4-5�?
 **目标**: 完成NLP处理模块
 
 **关键任务**:
 1. GLM-4-Flash API集成
-2. 情感分析模块开发
-3. 事件提取模块开发
-4. 实体识别模块开发
-5. 向量数据库集成
-
+2. 情感分析模块开�?3. 事件提取模块开�?4. 实体识别模块开�?5. 向量数据库集�?
 **验收标准**:
-- 情感分析准确率>80%
+- 情感分析准确�?80%
 - 事件提取完整
-- 实体识别准确率>90%
+- 实体识别准确�?90%
 
 ---
 
-### 10.3 Phase 3: 因子构建（Week 6-7）
-
-**目标**: 完成因子构建和验证
-
+### 10.3 Phase 3: 因子构建（Week 6-7�?
+**目标**: 完成因子构建和验�?
 **关键任务**:
 1. 新闻因子构建
 2. 情绪因子构建
 3. 预期因子构建
-4. 关注度因子构建
-5. IC验证
+4. 关注度因子构�?5. IC验证
 
 **验收标准**:
-- 至少8个因子
-- IC均值>0.03
+- 至少8个因�?- IC均�?0.03
 - 因子注册完成
 
 ---
 
-### 10.4 Phase 4: 测试验证（Week 8）
-
-**目标**: 完成系统测试和项目验收
-
+### 10.4 Phase 4: 测试验证（Week 8�?
+**目标**: 完成系统测试和项目验�?
 **关键任务**:
 1. 单元测试
 2. 集成测试
@@ -1466,5 +1279,5 @@ class TestNewsSentimentFactor:
 
 **技术规格书版本**: v1.0  
 **创建日期**: 2026-04-02  
-**评审状态**: ✅ 已批准  
-**下一步行动**: 开始Phase 1实施
+**评审状�?*: �?已批�? 
+**下一步行�?*: 开始Phase 1实施

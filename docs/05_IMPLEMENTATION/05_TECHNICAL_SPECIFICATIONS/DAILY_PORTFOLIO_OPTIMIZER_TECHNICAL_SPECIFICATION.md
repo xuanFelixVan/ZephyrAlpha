@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 2-4 (中观策略层) | 业务架构: 三级时间框架融合架构
+layer: Layer 2-4 (中观策略�? | 业务架构: 三级时间框架融合架构
 index: PORTFOLIO_OPTIMIZER_001
 estimated_hours: 180h
 review_status: Pending
@@ -14,56 +14,35 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 中观策略层负责人
 standard_type: 专业量化机构技术规格书
-applicable_scope: 全系统
-compliance_level: 专业标准
+applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 # 日线组合优化器技术规格书 v1.0
 
-> 清风量化系统 v5.2 - 日线组合优化器详细技术设计
-> **索引**: `PORTFOLIO_OPTIMIZER_001`
-> **开发时间**: 180h
-> **核心定位**: 基于Alpha信号和风险模型优化组合权重，为文艺复兴模式提供最优仓位配置
-
+> 清风量化系统 v5.2 - 日线组合优化器详细技术设�?> **索引**: `PORTFOLIO_OPTIMIZER_001`
+> **开发时�?*: 180h
+> **核心定位**: 基于Alpha信号和风险模型优化组合权重，为文艺复兴模式提供最优仓位配�?
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目标
+### 1.1 设计背景与业务目�?
+**业务需�?*�?- 当前系统缺失专业的组合优化能力，无法实现文艺复兴基金的统计套利组合构�?- 组合风险控制不足，导致组合波动过�?- 需要建立基于风险模型的组合优化体系，实现风险调整后收益最大化
 
-**业务需求**：
-- 当前系统缺失专业的组合优化能力，无法实现文艺复兴基金的统计套利组合构建
-- 组合风险控制不足，导致组合波动过大
-- 需要建立基于风险模型的组合优化体系，实现风险调整后收益最大化
+**技术痛�?*�?- 无组合优化模�?- 无风险模�?- 无约束条件管�?- 无换手率控制机制
 
-**技术痛点**：
-- 无组合优化模型
-- 无风险模型
-- 无约束条件管理
-- 无换手率控制机制
-
-**预期价值**：
-- 实现组合风险调整后收益最大化（夏普比率≥2.0）
-- 实现组合风险控制（最大回撤≤15%）
-- 实现换手率控制（月换手率≤100%）
-- 提升组合稳定性
-
-### 1.2 技术定位与架构层归属
-
-**Layer定位**: Layer 2-4 - 中观策略层
-
+**预期价�?*�?- 实现组合风险调整后收益最大化（夏普比率≥2.0�?- 实现组合风险控制（最大回撤≤15%�?- 实现换手率控制（月换手率�?00%�?- 提升组合稳定�?
+### 1.2 技术定位与架构层归�?
+**Layer定位**: Layer 2-4 - 中观策略�?
 **模块类别**: 核心模块
 
 **架构角色**: 
-- 作为文艺复兴模式的核心组件，将Alpha信号转化为组合权重
-- 作为中观层面的风险控制，确保组合风险在可控范围内
-- 作为微观执行层的输入，提供目标组合权重
-
-### 1.3 版本信息与变更记录
-
-| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+- 作为文艺复兴模式的核心组件，将Alpha信号转化为组合权�?- 作为中观层面的风险控制，确保组合风险在可控范围内
+- 作为微观执行层的输入，提供目标组合权�?
+### 1.3 版本信息与变更记�?
+| 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-03 | 首席技术评审官 | 初始版本 | Draft |
 
@@ -71,73 +50,38 @@ implementation_status: 设计阶段
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    日线组合优化器架构                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  输入层                                                         │
-│     ├── Alpha信号 (来自Alpha因子工厂)                           │
-│     ├── 风险模型 (协方差矩阵)                                   │
-│     ├── 约束条件 (权重/风险/换手率)                             │
-│     └── 当前组合 (现有持仓)                                     │
-│           ↓                                                     │
-│  风险模型层                                                     │
-│     ├── 因子风险模型                                            │
-│     ├── 特质风险模型                                            │
-│     ├── 协方差矩阵估计                                          │
-│     └── 风险分解                                                │
-│           ↓                                                     │
-│  优化引擎层                                                     │
-│     ├── 目标函数 (最大化风险调整后收益)                         │
-│     ├── 约束条件处理                                            │
-│     ├── 优化求解器                                              │
-│     └── 结果验证                                                │
-│           ↓                                                     │
-│  输出层                                                         │
-│     ├── 目标权重                                                │
-│     ├── 风险贡献                                                │
-│     ├── 换手率                                                  │
-│     └── 执行建议                                                │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                   日线组合优化器架�?                           �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? 输入�?                                                        �?�?    ├── Alpha信号 (来自Alpha因子工厂)                           �?�?    ├── 风险模型 (协方差矩�?                                   �?�?    ├── 约束条件 (权重/风险/换手�?                             �?�?    └── 当前组合 (现有持仓)                                     �?�?          �?                                                    �?�? 风险模型�?                                                    �?�?    ├── 因子风险模型                                            �?�?    ├── 特质风险模型                                            �?�?    ├── 协方差矩阵估�?                                         �?�?    └── 风险分解                                                �?�?          �?                                                    �?�? 优化引擎�?                                                    �?�?    ├── 目标函数 (最大化风险调整后收�?                         �?�?    ├── 约束条件处理                                            �?�?    ├── 优化求解�?                                             �?�?    └── 结果验证                                                �?�?          �?                                                    �?�? 输出�?                                                        �?�?    ├── 目标权重                                                �?�?    ├── 风险贡献                                                �?�?    ├── 换手�?                                                 �?�?    └── 执行建议                                                �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 Layer定位详细说明
 
-**Layer归属**: Layer 2-4 - 中观策略层
-
+**Layer归属**: Layer 2-4 - 中观策略�?
 **职责范围**: 
-- 估计风险模型（协方差矩阵）
-- 优化组合权重
+- 估计风险模型（协方差矩阵�?- 优化组合权重
 - 控制组合风险
 - 管理约束条件
 
-**上下层接口**: 
+**上下层接�?*: 
 - 上层依赖: 接收Alpha因子工厂的Alpha信号
 - 下层依赖: 为微观执行层提供目标组合权重
 
-### 2.3 模块职责与边界定义
-
-**核心职责**: 组合优化与风险控制
-
+### 2.3 模块职责与边界定�?
+**核心职责**: 组合优化与风险控�?
 **职责边界**: 
-- ✅ 本模块负责: 风险模型估计、组合优化、约束管理、换手率控制
-- ❌ 本模块不负责: Alpha信号生成、交易执行、绩效归因
-
+- �?本模块负�? 风险模型估计、组合优化、约束管理、换手率控制
+- �?本模块不负责: Alpha信号生成、交易执行、绩效归�?
 **接口契约**: 遵循 [INTERFACE_CONTRACT_BLUEPRINT.md](../../01_FRAMEWORK/INTERFACE_CONTRACT_BLUEPRINT.md) 中定义的 `IDailyPortfolioOptimizer` 接口
 
 ### 2.4 依赖关系与集成点
 
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| **Alpha因子工厂** | 强依赖 | API调用 | v1.0+ | 获取Alpha信号 |
-| **市场状态识别系统** | 弱依赖 | API调用 | v1.0+ | 获取市场状态 |
-| **数据源层** | 强依赖 | 数据库查询 | v1.0+ | 获取历史数据 |
-| **微观执行层** | 下游依赖 | 事件发布 | v1.0+ | 提供目标权重 |
-| **绩效归因层** | 弱依赖 | 日志记录 | v1.0+ | 记录优化过程 |
+| **Alpha因子工厂** | 强依�?| API调用 | v1.0+ | 获取Alpha信号 |
+| **市场状态识别系�?* | 弱依�?| API调用 | v1.0+ | 获取市场状�?|
+| **数据源层** | 强依�?| 数据库查�?| v1.0+ | 获取历史数据 |
+| **微观执行�?* | 下游依赖 | 事件发布 | v1.0+ | 提供目标权重 |
+| **绩效归因�?* | 弱依�?| 日志记录 | v1.0+ | 记录优化过程 |
 
 ---
 
@@ -159,9 +103,7 @@ class PortfolioInput:
     risk_model: Dict[str, any]           # 风险模型
     constraints: Dict[str, any]          # 约束条件
     current_portfolio: Dict[str, float]  # 当前组合
-    market_state: Optional[str]          # 市场状态
-    timestamp: datetime                  # 时间戳
-
+    market_state: Optional[str]          # 市场状�?    timestamp: datetime                  # 时间�?
 @dataclass
 class PortfolioOutput:
     """组合输出"""
@@ -170,12 +112,9 @@ class PortfolioOutput:
     expected_risk: float                 # 预期风险
     sharpe_ratio: float                  # 夏普比率
     risk_contributions: Dict[str, float] # 风险贡献
-    turnover: float                      # 换手率
-    execution_priority: Dict[str, float] # 执行优先级
-    timestamp: datetime                  # 时间戳
-
+    turnover: float                      # 换手�?    execution_priority: Dict[str, float] # 执行优先�?    timestamp: datetime                  # 时间�?
 class IDailyPortfolioOptimizer(ABC):
-    """日线组合优化器接口"""
+    """日线组合优化器接�?""
     
     @abstractmethod
     def optimize_portfolio(self, portfolio_input: PortfolioInput) -> PortfolioOutput:
@@ -189,8 +128,7 @@ class IDailyPortfolioOptimizer(ABC):
             
         Raises:
             OptimizationError: 优化失败
-            InfeasibleError: 不可行
-        """
+            InfeasibleError: 不可�?        """
         pass
     
     @abstractmethod
@@ -199,8 +137,7 @@ class IDailyPortfolioOptimizer(ABC):
         """估计风险模型
         
         Args:
-            historical_returns: 历史收益率
-            factor_exposures: 因子暴露(可选)
+            historical_returns: 历史收益�?            factor_exposures: 因子暴露(可�?
             
         Returns:
             Dict[str, any]: 风险模型
@@ -295,20 +232,18 @@ class IDailyPortfolioOptimizer(ABC):
 
 ### 3.3 性能指标
 
-| 性能指标 | 目标值 | 测量方法 |
+| 性能指标 | 目标�?| 测量方法 |
 |---------|--------|---------|
-| **优化时间** | ≤ 5秒 | 从输入到输出 |
-| **夏普比率** | ≥ 2.0 | 历史回测验证 |
-| **最大回撤** | ≤ 15% | 历史回测验证 |
-| **换手率控制** | ≤ 设定上限 | 月度统计 |
+| **优化时间** | �?5�?| 从输入到输出 |
+| **夏普比率** | �?2.0 | 历史回测验证 |
+| **最大回�?* | �?15% | 历史回测验证 |
+| **换手率控�?* | �?设定上限 | 月度统计 |
 
 ---
 
-## 4. 数据模型与存储
-
-### 4.1 数据表结构
-
-#### 4.1.1 组合优化结果表 (portfolio_optimization_results)
+## 4. 数据模型与存�?
+### 4.1 数据表结�?
+#### 4.1.1 组合优化结果�?(portfolio_optimization_results)
 
 ```sql
 CREATE TABLE portfolio_optimization_results (
@@ -320,74 +255,68 @@ CREATE TABLE portfolio_optimization_results (
     expected_risk DECIMAL(10,6) COMMENT '预期风险',
     sharpe_ratio DECIMAL(10,6) COMMENT '夏普比率',
     risk_contributions JSON COMMENT '风险贡献',
-    turnover DECIMAL(10,6) COMMENT '换手率',
-    optimization_status VARCHAR(20) COMMENT '优化状态',
+    turnover DECIMAL(10,6) COMMENT '换手�?,
+    optimization_status VARCHAR(20) COMMENT '优化状�?,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_trade_date (trade_date),
     INDEX idx_portfolio_id (portfolio_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组合优化结果表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='组合优化结果�?;
 ```
 
-#### 4.1.2 风险模型表 (risk_models)
+#### 4.1.2 风险模型�?(risk_models)
 
 ```sql
 CREATE TABLE risk_models (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     model_date DATE NOT NULL COMMENT '模型日期',
     model_type VARCHAR(50) NOT NULL COMMENT '模型类型',
-    covariance_matrix JSON COMMENT '协方差矩阵',
-    factor_covariance JSON COMMENT '因子协方差',
+    covariance_matrix JSON COMMENT '协方差矩�?,
+    factor_covariance JSON COMMENT '因子协方�?,
     factor_exposures JSON COMMENT '因子暴露',
     model_params JSON COMMENT '模型参数',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_model_date (model_date),
     INDEX idx_model_type (model_type)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='风险模型表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='风险模型�?;
 ```
 
-#### 4.1.3 约束条件表 (portfolio_constraints)
+#### 4.1.3 约束条件�?(portfolio_constraints)
 
 ```sql
 CREATE TABLE portfolio_constraints (
     id INT PRIMARY KEY AUTO_INCREMENT,
     constraint_name VARCHAR(100) NOT NULL COMMENT '约束名称',
     constraint_type VARCHAR(50) NOT NULL COMMENT '约束类型',
-    constraint_value DECIMAL(20,6) COMMENT '约束值',
+    constraint_value DECIMAL(20,6) COMMENT '约束�?,
     is_active BOOLEAN DEFAULT TRUE COMMENT '是否启用',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_constraint_type (constraint_type)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='约束条件表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='约束条件�?;
 ```
 
 ### 4.2 风险模型分类
 
 | 风险模型类型 | 模型描述 | 估计方法 | 更新频率 |
 |-------------|---------|---------|---------|
-| **样本协方差** | 历史收益率协方差 | 样本估计 | 日度 |
-| **因子风险模型** | 基于因子的风险模型 | 回归估计 | 周度 |
+| **样本协方�?* | 历史收益率协方差 | 样本估计 | 日度 |
+| **因子风险模型** | 基于因子的风险模�?| 回归估计 | 周度 |
 | **收缩估计** | Ledoit-Wolf收缩 | 收缩估计 | 日度 |
-| **动态风险模型** | GARCH类模型 | 时间序列模型 | 日度 |
+| **动态风险模�?* | GARCH类模�?| 时间序列模型 | 日度 |
 
-### 4.3 数据流设计
-
+### 4.3 数据流设�?
 ```
-数据源 (Layer 0)
-    ├── 历史收益率数据
-    ├── 因子暴露数据
+数据�?(Layer 0)
+    ├── 历史收益率数�?    ├── 因子暴露数据
     └── Alpha信号数据
-          ↓
-风险模型估计 (Layer 2-4)
-    ├── 协方差矩阵估计
-    ├── 因子风险模型
+          �?风险模型估计 (Layer 2-4)
+    ├── 协方差矩阵估�?    ├── 因子风险模型
     └── 风险分解
-          ↓
-组合优化 (Layer 2-4)
+          �?组合优化 (Layer 2-4)
     ├── 目标函数构建
     ├── 约束条件处理
     └── 优化求解
-          ↓
-结果存储 (Layer 1)
+          �?结果存储 (Layer 1)
     ├── 存储优化结果
     ├── 存储风险模型
     └── 发布目标权重事件
@@ -399,28 +328,22 @@ CREATE TABLE portfolio_constraints (
 
 ### 5.1 风险模型估计
 
-#### 5.1.1 样本协方差矩阵
-
+#### 5.1.1 样本协方差矩�?
 ```python
 class RiskModelEstimator:
-    """风险模型估计器"""
+    """风险模型估计�?""
     
     def estimate_sample_covariance(self, historical_returns: pd.DataFrame,
                                    lookback_period: int = 252) -> pd.DataFrame:
-        """估计样本协方差矩阵
-        
+        """估计样本协方差矩�?        
         Args:
-            historical_returns: 历史收益率
-            lookback_period: 回看期
-            
+            historical_returns: 历史收益�?            lookback_period: 回看�?            
         Returns:
-            pd.DataFrame: 协方差矩阵
-        """
+            pd.DataFrame: 协方差矩�?        """
         # 使用最近lookback_period天的数据
         recent_returns = historical_returns.iloc[-lookback_period:]
         
-        # 计算样本协方差
-        cov_matrix = recent_returns.cov()
+        # 计算样本协方�?        cov_matrix = recent_returns.cov()
         
         return cov_matrix
 ```
@@ -434,18 +357,14 @@ def estimate_factor_risk_model(self, historical_returns: pd.DataFrame,
     """估计因子风险模型
     
     Args:
-        historical_returns: 历史收益率
-        factor_exposures: 因子暴露
-        lookback_period: 回看期
-        
+        historical_returns: 历史收益�?        factor_exposures: 因子暴露
+        lookback_period: 回看�?        
     Returns:
         Dict[str, pd.DataFrame]: 因子风险模型
     """
-    # 1. 估计因子收益率
-    factor_returns = self._estimate_factor_returns(historical_returns, factor_exposures)
+    # 1. 估计因子收益�?    factor_returns = self._estimate_factor_returns(historical_returns, factor_exposures)
     
-    # 2. 估计因子协方差矩阵
-    factor_cov = factor_returns.iloc[-lookback_period:].cov()
+    # 2. 估计因子协方差矩�?    factor_cov = factor_returns.iloc[-lookback_period:].cov()
     
     # 3. 估计特质风险
     idiosyncratic_returns = self._calculate_idiosyncratic_returns(
@@ -453,8 +372,7 @@ def estimate_factor_risk_model(self, historical_returns: pd.DataFrame,
     )
     idiosyncratic_var = idiosyncratic_returns.var()
     
-    # 4. 构建完整协方差矩阵
-    # Σ = B * F * B' + D
+    # 4. 构建完整协方差矩�?    # Σ = B * F * B' + D
     cov_matrix = factor_exposures @ factor_cov @ factor_exposures.T + np.diag(idiosyncratic_var)
     
     return {
@@ -472,19 +390,16 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
     """Ledoit-Wolf收缩估计
     
     Args:
-        historical_returns: 历史收益率
-        
+        historical_returns: 历史收益�?        
     Returns:
-        pd.DataFrame: 收缩后的协方差矩阵
-    """
+        pd.DataFrame: 收缩后的协方差矩�?    """
     from sklearn.covariance import LedoitWolf
     
     # 使用Ledoit-Wolf收缩
     lw = LedoitWolf()
     lw.fit(historical_returns)
     
-    # 返回收缩后的协方差矩阵
-    shrunk_cov = pd.DataFrame(
+    # 返回收缩后的协方差矩�?    shrunk_cov = pd.DataFrame(
         lw.covariance_,
         index=historical_returns.columns,
         columns=historical_returns.columns
@@ -495,16 +410,16 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
 
 ### 5.2 组合优化算法
 
-#### 5.2.1 均值-方差优化
+#### 5.2.1 均�?方差优化
 
 ```python
 class PortfolioOptimizer:
-    """组合优化器"""
+    """组合优化�?""
     
     def mean_variance_optimization(self, alpha_signals: pd.Series,
                                    risk_model: Dict[str, any],
                                    constraints: Dict[str, any]) -> Dict[str, float]:
-        """均值-方差优化
+        """均�?方差优化
         
         Args:
             alpha_signals: Alpha信号
@@ -512,8 +427,7 @@ class PortfolioOptimizer:
             constraints: 约束条件
             
         Returns:
-            Dict[str, float]: 最优权重
-        """
+            Dict[str, float]: 最优权�?        """
         from scipy.optimize import minimize
         
         cov_matrix = risk_model['covariance_matrix']
@@ -526,8 +440,7 @@ class PortfolioOptimizer:
             # 夏普比率最大化 (假设无风险利率为0)
             sharpe_ratio = portfolio_return / portfolio_risk
             
-            return -sharpe_ratio  # 最小化负夏普比率
-        
+            return -sharpe_ratio  # 最小化负夏普比�?        
         # 初始权重
         n_assets = len(alpha_signals)
         initial_weights = np.ones(n_assets) / n_assets
@@ -572,11 +485,10 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
     
     Args:
         risk_model: 风险模型
-        risk_budget: 风险预算(可选)
+        risk_budget: 风险预算(可�?
         
     Returns:
-        Dict[str, float]: 最优权重
-    """
+        Dict[str, float]: 最优权�?    """
     from scipy.optimize import minimize
     
     cov_matrix = risk_model['covariance_matrix']
@@ -648,21 +560,18 @@ def apply_weight_constraints(self, weights: Dict[str, float],
     for asset, weight in weights.items():
         constrained_weights[asset] = np.clip(weight, min_weight, max_weight)
     
-    # 归一化
-    total_weight = sum(constrained_weights.values())
+    # 归一�?    total_weight = sum(constrained_weights.values())
     constrained_weights = {k: v/total_weight for k, v in constrained_weights.items()}
     
     return constrained_weights
 ```
 
-#### 5.3.2 换手率约束
-
+#### 5.3.2 换手率约�?
 ```python
 def apply_turnover_constraint(self, target_weights: Dict[str, float],
                              current_weights: Dict[str, float],
                              max_turnover: float) -> Dict[str, float]:
-    """应用换手率约束
-    
+    """应用换手率约�?    
     Args:
         target_weights: 目标权重
         current_weights: 当前权重
@@ -671,12 +580,10 @@ def apply_turnover_constraint(self, target_weights: Dict[str, float],
     Returns:
         Dict[str, float]: 约束后的权重
     """
-    # 计算换手率
-    turnover = sum(abs(target_weights.get(asset, 0) - current_weights.get(asset, 0))
+    # 计算换手�?    turnover = sum(abs(target_weights.get(asset, 0) - current_weights.get(asset, 0))
                    for asset in set(target_weights) | set(current_weights))
     
-    # 如果换手率超限,按比例缩减
-    if turnover > max_turnover:
+    # 如果换手率超�?按比例缩�?    if turnover > max_turnover:
         scale_factor = max_turnover / turnover
         
         adjusted_weights = {}
@@ -685,8 +592,7 @@ def apply_turnover_constraint(self, target_weights: Dict[str, float],
             current = current_weights.get(asset, 0)
             adjusted_weights[asset] = current + (target - current) * scale_factor
         
-        # 归一化
-        total_weight = sum(adjusted_weights.values())
+        # 归一�?        total_weight = sum(adjusted_weights.values())
         adjusted_weights = {k: v/total_weight for k, v in adjusted_weights.items()}
         
         return adjusted_weights
@@ -710,8 +616,7 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
     """
     cov_matrix = risk_model['covariance_matrix']
     
-    # 转换为向量
-    weight_vector = np.array([weights[asset] for asset in cov_matrix.columns])
+    # 转换为向�?    weight_vector = np.array([weights[asset] for asset in cov_matrix.columns])
     
     # 计算组合风险
     portfolio_risk = np.sqrt(np.dot(weight_vector.T, np.dot(cov_matrix, weight_vector)))
@@ -722,8 +627,7 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
     # 计算风险贡献
     risk_contrib = weight_vector * marginal_risk_contrib
     
-    # 归一化为百分比
-    risk_contrib_pct = risk_contrib / portfolio_risk
+    # 归一化为百分�?    risk_contrib_pct = risk_contrib / portfolio_risk
     
     # 返回字典
     risk_contrib_dict = dict(zip(cov_matrix.columns, risk_contrib_pct))
@@ -737,17 +641,16 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
 
 ### 6.1 语言框架
 
-| 技术组件 | 技术选型 | 版本要求 | 用途 |
+| 技术组�?| 技术选型 | 版本要求 | 用�?|
 |---------|---------|---------|------|
 | **编程语言** | Python | 3.9+ | 主要开发语言 |
-| **优化求解** | scipy | 1.10+ | 优化求解器 |
-| **数值计算** | numpy | 1.24+ | 数值计算 |
-| **数据处理** | pandas | 2.0+ | 数据处理与分析 |
+| **优化求解** | scipy | 1.10+ | 优化求解�?|
+| **数值计�?* | numpy | 1.24+ | 数值计�?|
+| **数据处理** | pandas | 2.0+ | 数据处理与分�?|
 | **机器学习** | scikit-learn | 1.3+ | 风险模型估计 |
-| **凸优化** | cvxpy | 1.4+ | 凸优化求解 |
+| **凸优�?* | cvxpy | 1.4+ | 凸优化求�?|
 
-### 6.2 第三方依赖
-
+### 6.2 第三方依�?
 ```txt
 pandas>=2.0.0
 numpy>=1.24.0
@@ -762,9 +665,9 @@ sqlalchemy>=2.0.0
 
 | 环境类型 | CPU | 内存 | 存储 | 备注 |
 |---------|-----|------|------|------|
-| **开发环境** | 4核 | 16GB | 100GB SSD | 本地开发 |
-| **测试环境** | 4核 | 16GB | 100GB SSD | 功能测试 |
-| **生产环境** | 8核 | 32GB | 500GB SSD | 高性能计算 |
+| **开发环�?* | 4�?| 16GB | 100GB SSD | 本地开�?|
+| **测试环境** | 4�?| 16GB | 100GB SSD | 功能测试 |
+| **生产环境** | 8�?| 32GB | 500GB SSD | 高性能计算 |
 
 ---
 
@@ -772,12 +675,12 @@ sqlalchemy>=2.0.0
 
 ### 7.1 单元测试
 
-| 测试模块 | 测试内容 | 覆盖率要求 |
+| 测试模块 | 测试内容 | 覆盖率要�?|
 |---------|---------|-----------|
-| **风险模型** | 协方差估计、因子模型 | ≥ 90% |
-| **组合优化** | 均值方差、风险平价 | ≥ 85% |
-| **约束处理** | 权重约束、换手率约束 | ≥ 90% |
-| **风险贡献** | 风险贡献计算 | ≥ 85% |
+| **风险模型** | 协方差估计、因子模�?| �?90% |
+| **组合优化** | 均值方差、风险平�?| �?85% |
+| **约束处理** | 权重约束、换手率约束 | �?90% |
+| **风险贡献** | 风险贡献计算 | �?85% |
 
 ### 7.2 集成测试
 
@@ -803,31 +706,29 @@ def test_portfolio_optimization():
 
 | 测试场景 | 性能指标 | 通过标准 |
 |---------|---------|---------|
-| **风险模型估计** | 估计时间 | ≤ 2秒 |
-| **组合优化** | 优化时间 | ≤ 5秒 |
-| **夏普比率** | 历史回测 | ≥ 2.0 |
-| **最大回撤** | 历史回测 | ≤ 15% |
+| **风险模型估计** | 估计时间 | �?2�?|
+| **组合优化** | 优化时间 | �?5�?|
+| **夏普比率** | 历史回测 | �?2.0 |
+| **最大回�?* | 历史回测 | �?15% |
 
 ---
 
-## 8. 风险与约束
-
-### 8.1 技术风险
-
-| 风险项 | 风险等级 | 影响 | 缓解措施 |
+## 8. 风险与约�?
+### 8.1 技术风�?
+| 风险�?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| **风险模型估计误差** | P1 | 组合风险控制失效 | 使用收缩估计、因子模型 |
-| **优化问题不可行** | P2 | 无法生成目标权重 | 放松约束、使用启发式方法 |
-| **过拟合** | P2 | 未来表现下降 | 样本外验证、正则化 |
-| **计算性能瓶颈** | P2 | 优化超时 | 并行计算、缓存优化 |
+| **风险模型估计误差** | P1 | 组合风险控制失效 | 使用收缩估计、因子模�?|
+| **优化问题不可�?* | P2 | 无法生成目标权重 | 放松约束、使用启发式方法 |
+| **过拟�?* | P2 | 未来表现下降 | 样本外验证、正则化 |
+| **计算性能瓶颈** | P2 | 优化超时 | 并行计算、缓存优�?|
 
 ### 8.2 实施约束
 
 | 约束类型 | 约束内容 | 应对策略 |
 |---------|---------|---------|
-| **数据约束** | 需要足够长的历史数据 | 分阶段实施，先积累数据 |
-| **计算约束** | 协方差矩阵估计计算量大 | 使用因子模型降维 |
-| **模型约束** | 优化模型假设可能不成立 | 使用稳健优化方法 |
+| **数据约束** | 需要足够长的历史数�?| 分阶段实施，先积累数�?|
+| **计算约束** | 协方差矩阵估计计算量�?| 使用因子模型降维 |
+| **模型约束** | 优化模型假设可能不成�?| 使用稳健优化方法 |
 
 ---
 
@@ -835,95 +736,87 @@ def test_portfolio_optimization():
 
 ### 9.1 功能验收
 
-| 验收项 | 验收标准 | 验证方法 |
+| 验收�?| 验收标准 | 验证方法 |
 |--------|---------|---------|
-| **风险模型估计** | 协方差矩阵正定 | 数学验证 |
-| **组合优化** | 夏普比率≥2.0 | 历史回测 |
+| **风险模型估计** | 协方差矩阵正�?| 数学验证 |
+| **组合优化** | 夏普比率�?.0 | 历史回测 |
 | **风险控制** | 最大回撤≤15% | 历史回测 |
-| **换手率控制** | 换手率≤设定上限 | 月度统计 |
+| **换手率控�?* | 换手率≤设定上限 | 月度统计 |
 
 ### 9.2 性能验收
 
-| 验收项 | 验收标准 | 验证方法 |
+| 验收�?| 验收标准 | 验证方法 |
 |--------|---------|---------|
-| **风险模型估计时间** | ≤2秒 | 性能测试 |
-| **组合优化时间** | ≤5秒 | 性能测试 |
-| **系统可用性** | ≥99.9% | 监控统计 |
+| **风险模型估计时间** | �?�?| 性能测试 |
+| **组合优化时间** | �?�?| 性能测试 |
+| **系统可用�?* | �?9.9% | 监控统计 |
 
 ### 9.3 质量验收
 
-| 验收项 | 验收标准 | 验证方法 |
+| 验收�?| 验收标准 | 验证方法 |
 |--------|---------|---------|
-| **代码覆盖率** | ≥85% | 单元测试 |
-| **文档完整性** | 100% | 文档审查 |
+| **代码覆盖�?* | �?5% | 单元测试 |
+| **文档完整�?* | 100% | 文档审查 |
 | **代码规范** | 符合PEP8 | 代码审查 |
 
 ---
 
-## 10. 实施路线图
+## 10. 实施路线�?
+### 10.1 分阶段实施计�?
+#### Phase 1: 风险模型开�?(Week 1-3)
 
-### 10.1 分阶段实施计划
-
-#### Phase 1: 风险模型开发 (Week 1-3)
-
-| 任务 | 交付物 | 工时 | 优先级 |
+| 任务 | 交付�?| 工时 | 优先�?|
 |------|--------|------|--------|
-| 样本协方差估计 | 协方差估计模块 | 12h | P0 |
+| 样本协方差估�?| 协方差估计模�?| 12h | P0 |
 | 因子风险模型 | 因子模型模块 | 24h | P0 |
 | 收缩估计 | 收缩估计模块 | 16h | P1 |
 
 #### Phase 2: 组合优化引擎 (Week 4-6)
 
-| 任务 | 交付物 | 工时 | 优先级 |
+| 任务 | 交付�?| 工时 | 优先�?|
 |------|--------|------|--------|
-| 均值方差优化 | 优化算法 | 20h | P0 |
+| 均值方差优�?| 优化算法 | 20h | P0 |
 | 风险平价优化 | 优化算法 | 16h | P0 |
 | 约束处理 | 约束模块 | 16h | P0 |
 
 #### Phase 3: 系统集成 (Week 7-8)
 
-| 任务 | 交付物 | 工时 | 优先级 |
+| 任务 | 交付�?| 工时 | 优先�?|
 |------|--------|------|--------|
-| API接口开发 | REST API | 16h | P0 |
+| API接口开�?| REST API | 16h | P0 |
 | 数据库设计与实现 | 数据库表 | 12h | P0 |
 | 缓存机制实现 | Redis缓存 | 8h | P1 |
 
-#### Phase 4: 测试与优化 (Week 9)
+#### Phase 4: 测试与优�?(Week 9)
 
-| 任务 | 交付物 | 工时 | 优先级 |
+| 任务 | 交付�?| 工时 | 优先�?|
 |------|--------|------|--------|
 | 单元测试 | 测试用例 | 12h | P0 |
 | 集成测试 | 测试报告 | 8h | P0 |
 | 性能优化 | 优化报告 | 8h | P1 |
 
-### 10.2 关键里程碑
-
-| 里程碑 | 时间 | 交付物 | 验收标准 |
+### 10.2 关键里程�?
+| 里程�?| 时间 | 交付�?| 验收标准 |
 |--------|------|--------|----------|
-| **M1: 风险模型完成** | Week 3 | 风险模型模块 | 协方差矩阵正定 |
-| **M2: 优化引擎完成** | Week 6 | 组合优化模块 | 夏普比率≥1.8 |
-| **M3: 系统集成完成** | Week 8 | 完整系统 | 所有接口正常 |
+| **M1: 风险模型完成** | Week 3 | 风险模型模块 | 协方差矩阵正�?|
+| **M2: 优化引擎完成** | Week 6 | 组合优化模块 | 夏普比率�?.8 |
+| **M3: 系统集成完成** | Week 8 | 完整系统 | 所有接口正�?|
 | **M4: 测试通过** | Week 9 | 测试报告 | 所有测试通过 |
 
-### 10.3 资源需求
-
+### 10.3 资源需�?
 **人力资源**:
-- 量化工程师: 1人（全职，9周）
-- 后端工程师: 1人（全职，9周）
-- 数据工程师: 1人（兼职，4周）
-- 测试工程师: 1人（兼职，2周）
+- 量化工程�? 1人（全职�?周）
+- 后端工程�? 1人（全职�?周）
+- 数据工程�? 1人（兼职�?周）
+- 测试工程�? 1人（兼职�?周）
 
 **硬件资源**:
-- 开发服务器: 1台（8核CPU，32GB内存，500GB SSD）
-- 测试服务器: 1台（4核CPU，16GB内存，200GB SSD）
-- 生产服务器: 1台（8核CPU，32GB内存，1TB SSD）
-
+- 开发服务器: 1台（8核CPU�?2GB内存�?00GB SSD�?- 测试服务�? 1台（4核CPU�?6GB内存�?00GB SSD�?- 生产服务�? 1台（8核CPU�?2GB内存�?TB SSD�?
 ---
 
 ## 附录
 
-### A. 参考文献
-
+### A. 参考文�?
 1. **组合优化理论**:
    - Markowitz, H. (1952). "Portfolio Selection"
    - Michaud, R. O. (1998). "Efficient Asset Management"
@@ -932,25 +825,24 @@ def test_portfolio_optimization():
    - Barra, M. (1998). "Risk Model Analysis"
    - Ledoit, O., & Wolf, M. (2004). "A Well-Conditioned Estimator for Large-Dimensional Covariance Matrices"
 
-3. **开源项目参考**:
+3. **开源项目参�?*:
    - PyPortfolioOpt: https://github.com/robertmartin8/PyPortfolioOpt
    - Riskfolio-Lib: https://github.com/dcajasn/Riskfolio-Lib
 
-### B. 术语表
-
-| 术语 | 定义 | 上下文 |
+### B. 术语�?
+| 术语 | 定义 | 上下�?|
 |------|------|--------|
-| **协方差矩阵** | 资产收益率的协方差矩阵 | 风险模型 |
-| **因子风险模型** | 基于因子的风险模型 | 风险分解 |
+| **协方差矩�?* | 资产收益率的协方差矩�?| 风险模型 |
+| **因子风险模型** | 基于因子的风险模�?| 风险分解 |
 | **风险贡献** | 每个资产对组合风险的贡献 | 风险归因 |
-| **换手率** | 组合调整的幅度 | 交易成本控制 |
+| **换手�?* | 组合调整的幅�?| 交易成本控制 |
 
 ### C. 变更记录
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|----------|------|
 | v1.0 | 2026-04-03 | 初始版本 | 首席技术评审官 |
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状态**: Draft | **下一步**: 技术评审
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Draft | **下一�?*: 技术评�?

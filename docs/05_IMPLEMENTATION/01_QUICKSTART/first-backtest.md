@@ -4,17 +4,17 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-﻿# 第一次回测 (10 分钟)
+�? 第一次回�?(10 分钟)
 
-> **目标**: 完成你的第一次策略回测  
+> **目标**: 完成你的第一次策略回�? 
 > **时间**: 10 分钟  
 > **难度**: 
 
@@ -31,12 +31,12 @@ implementation_status: 进行中
 
 ##  前置要求
 
--  已完成 [开发环境搭建](./dev-setup.md)
--  系统有 5GB 可用空间
+-  已完�?[开发环境搭建](./dev-setup.md)
+-  系统�?5GB 可用空间
 
 ---
 
-##  开始回测
+##  开始回�?
 
 ### Step 1: 准备数据目录
 
@@ -58,7 +58,7 @@ python scripts/download_data.py --symbol IF --start 2023-01-01 --end 2023-12-31
 
 **方式 2: 手动下载**
 
-从数据源下载 CSV 文件，放置到 `data/raw/` 目录。
+从数据源下载 CSV 文件，放置到 `data/raw/` 目录�?
 
 **验证数据:**
 ```bash
@@ -73,7 +73,7 @@ ls data/raw/
 ```yaml
 active_strategies:
   - strategy_id: S001
-    name: 双均线策略
+    name: 双均线策�?
     enabled: true
     params:
       fast_period: 5
@@ -97,11 +97,11 @@ python scripts/backtest.py --strategy S001 --initial-capital 1000000
 
 ### Step 5: 查看结果
 
-回测完成后，生成以下文件：
+回测完成后，生成以下文件�?
 
 ```
 output/
- backtest_result.html    # 可视化报告
+ backtest_result.html    # 可视化报�?
  backtest_result.json    # 详细数据
  trades.log              # 交易日志
 ```
@@ -126,18 +126,18 @@ open output/backtest_result.html
 
 | 指标 | 说明 | 合理范围 |
 |------|------|----------|
-| **总收益率** | 策略总收益 | > 0% |
-| **年化收益** | 年化收益率 | > 10% |
-| **夏普比率** | 风险调整后收益 | > 1.0 |
-| **最大回撤** | 最大亏损幅度 | < 20% |
+| **总收益率** | 策略总收�?| > 0% |
+| **年化收益** | 年化收益�?| > 10% |
+| **夏普比率** | 风险调整后收�?| > 1.0 |
+| **最大回�?* | 最大亏损幅�?| < 20% |
 | **胜率** | 盈利交易占比 | > 50% |
-| **盈亏比** | 平均盈利/平均亏损 | > 1.5 |
+| **盈亏�?* | 平均盈利/平均亏损 | > 1.5 |
 
 ### 图表说明
 
-1. **资金曲线**: 账户资金随时间变化
-2. **回撤曲线**: 当前回撤随时间变化
-3. **交易分布**: 交易在时间上的分布
+1. **资金曲线**: 账户资金随时间变�?
+2. **回撤曲线**: 当前回撤随时间变�?
+3. **交易分布**: 交易在时间上的分�?
 4. **收益分布**: 收益的直方图
 
 ---
@@ -146,7 +146,7 @@ open output/backtest_result.html
 
 - [ ] 数据已下载到 `data/raw/`
 - [ ] 回测成功运行，无错误
-- [ ] 生成了回测报告
+- [ ] 生成了回测报�?
 - [ ] 能够看懂关键指标
 
 ---
@@ -159,7 +159,7 @@ open output/backtest_result.html
 
 **解决方案**:
 ```bash
-# 检查网络连接
+# 检查网络连�?
 ping www.example.com
 
 # 使用代理
@@ -170,16 +170,16 @@ python scripts/download_data.py --symbol IF
 ### Q2: 回测结果为空
 
 **可能原因**:
-1. 数据文件不存在
-2. 策略未激活
-3. 时间范围无数据
+1. 数据文件不存�?
+2. 策略未激�?
+3. 时间范围无数�?
 
-**检查步骤**:
+**检查步�?*:
 ```bash
-# 1. 检查数据
+# 1. 检查数�?
 ls data/raw/
 
-# 2. 检查策略配置
+# 2. 检查策略配�?
 cat config/strategies/active.yaml
 
 # 3. 查看日志
@@ -190,23 +190,23 @@ tail logs/error.log
 
 **错误**: `KeyError: 'close'`
 
-**原因**: 数据格式不正确
+**原因**: 数据格式不正�?
 
 **解决方案**:
-- 检查 CSV 文件列名：`close`, `open`, `high`, `low`, `volume`
-- 参考示例数据格式
+- 检�?CSV 文件列名：`close`, `open`, `high`, `low`, `volume`
+- 参考示例数据格�?
 
 ---
 
-##  下一步
+##  下一�?
 
-完成第一次回测后：
+完成第一次回测后�?
 
 1. 学习 
 2. 阅读 [策略开发指南](../../03_TRADING_TACTICS/README.md)
-3. 尝试修改策略参数，观察效果
+3. 尝试修改策略参数，观察效�?
 
 ---
 
-**最后更新**: 2026-03-28  
-**状态**:  可用
+**最后更�?*: 2026-03-28  
+**状�?*:  可用

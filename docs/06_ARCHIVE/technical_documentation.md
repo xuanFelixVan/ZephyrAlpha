@@ -4,24 +4,24 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# 技术文档 v1.0
+# 技术文�?v1.0
 
-> 清风量化多策略系统的技术实现文档
+> 清风量化多策略系统的技术实现文�?
 >
-> **配套文档**：
+> **配套文档**�?
 > - 主文档：
 > - 因子库：
 > - 战术手册：[../trading-tactics/tactics_manual.md](tactics_manual.md)
 >
-> **版本说明**：
+> **版本说明**�?
 > - v1.0：初始版本，整合附录I/J/AC/AN
 
 ***
@@ -29,10 +29,10 @@ implementation_status: 进行中
 ## 目录
 
 1. [标准化JSON输出Schema](#1-标准化json输出schema)
-2. [全成本模型](#2-全成本模型)
-3. [分布式计算架构](#3-分布式计算架构)
+2. [全成本模型](#2-全成本模�?
+3. [分布式计算架构](#3-分布式计算架�?
 4. [A股基础交易规则](#4-aba交易规则)
-5. [Barra风险优化器](#5-barra风险优化器)
+5. [Barra风险优化器](#5-barra风险优化�?
 
 ***
 
@@ -56,7 +56,7 @@ implementation_status: 进行中
     "timestamp": {
       "type": "string",
       "format": "date-time",
-      "description": "输出时间戳"
+      "description": "输出时间�?
     },
     "layer": {
       "type": "string",
@@ -66,7 +66,7 @@ implementation_status: 进行中
     "status": {
       "type": "string",
       "enum": ["success", "warning", "error"],
-      "description": "执行状态"
+      "description": "执行状�?
     },
     "error": {
       "type": "object",
@@ -88,7 +88,7 @@ implementation_status: 进行中
 
 ```json
 {
-  "前置层输出": {
+  "前置层输�?: {
     "version": "string",
     "timestamp": "string",
     "market_state_prob": {
@@ -101,13 +101,13 @@ implementation_status: 进行中
     "market_state": "string (牛市|震荡|熊市|混沌)",
     "dimension_scores": {
       "技术面": "number (0-1)",
-      "资金面": "number (0-1)",
-      "情绪面": "number (0-1)",
-      "风格面": "number (0-1)",
-      "全球面": "number (0-1)"
+      "资金�?: "number (0-1)",
+      "情绪�?: "number (0-1)",
+      "风格�?: "number (0-1)",
+      "全球�?: "number (0-1)"
     },
-    "liquidity_state": "string (高|正常|低)",
-    "risk_level": "string (高|中|低)",
+    "liquidity_state": "string (高|正常|�?",
+    "risk_level": "string (高|中|�?",
     "recommended_position": "number (0-1)"
   }
 }
@@ -173,7 +173,7 @@ implementation_status: 进行中
 
 ```json
 {
-  "执行层输出": {
+  "执行层输�?: {
     "orders": [
       {
         "order_id": "string",
@@ -200,27 +200,27 @@ implementation_status: 进行中
 
 ***
 
-## 2. 全成本模型
+## 2. 全成本模�?
 
-> 本章来源：附录J - 全成本模型（交易成本量化体系）
+> 本章来源：附录J - 全成本模型（交易成本量化体系�?
 
 ### 2.1 交易成本分类
 
 | 成本类型 | 细分 | 计算方式 | 估算难度 |
 |----------|------|----------|----------|
-| **显性成本** | 佣金 | 固定费率 | 低 |
-| | 印花税 | 卖出时收取 | 低 |
-| **隐性成本** | 滑点 | 期望成交价vs实际成交价 | 中 |
-| | 冲击成本 | 大额订单对价格的影响 | 高 |
-| | 机会成本 | 未成交导致的收益损失 | 高 |
+| **显性成�?* | 佣金 | 固定费率 | �?|
+| | 印花�?| 卖出时收�?| �?|
+| **隐性成�?* | 滑点 | 期望成交价vs实际成交�?| �?|
+| | 冲击成本 | 大额订单对价格的影响 | �?|
+| | 机会成本 | 未成交导致的收益损失 | �?|
 
-### 2.2 A股显性成本计算
+### 2.2 A股显性成本计�?
 
-| 费用类型 | 费率 | 收取方式 | 最低收费 |
+| 费用类型 | 费率 | 收取方式 | 最低收�?|
 |----------|------|----------|----------|
-| 佣金 | 0.03%（默认，可调整） | 双向收取 | 5元/笔 |
-| 印花税 | 0.1%（仅卖出） | 单向收取 | - |
-| 过户费 | 0.001%（沪市） | 双向收取 | 1元/笔 |
+| 佣金 | 0.03%（默认，可调整） | 双向收取 | 5�?�?|
+| 印花�?| 0.1%（仅卖出�?| 单向收取 | - |
+| 过户�?| 0.001%（沪市） | 双向收取 | 1�?�?|
 
 ### 2.3 Python实现
 
@@ -247,7 +247,7 @@ def calculate_total_explicit_cost(trade_amount: float,
                                    direction: str = 'buy',
                                    market: str = 'SH',
                                    commission_rate: float = 0.0003) -> dict:
-    """计算总显性成本"""
+    """计算总显性成�?""
     commission = calculate_commission(trade_amount, commission_rate)
     stamp_duty = calculate_stamp_duty(trade_amount, direction)
     transfer_fee = calculate_transfer_fee(trade_amount, market)
@@ -264,12 +264,12 @@ def calculate_total_explicit_cost(trade_amount: float,
     }
 ```
 
-### 2.4 隐性成本计算
+### 2.4 隐性成本计�?
 
 | 滑点来源 | 计算公式 | 说明 |
 |----------|----------|------|
 | **价差成本** | $SpreadCost = (ask - bid)/midprice / 2$ | 买卖价差50% |
-| **冲击成本** | $ImpactCost = 0.1 × OrderSize/ADV × σ$ | 订单占比×波动率 |
+| **冲击成本** | $ImpactCost = 0.1 × OrderSize/ADV × σ$ | 订单占比×波动�?|
 | **延迟成本** | $DelayCost = σ × sqrt(延迟分钟/240)$ | 时间损失 |
 
 ```python
@@ -291,49 +291,49 @@ def calculate_slippage(order_value: float, adv: float, volatility: float,
 
 | 公式 | 说明 |
 |------|------|
-| $AnnualCost = 2 × Turnover × CostRate$ | 买卖双边×换手率 |
+| $AnnualCost = 2 × Turnover × CostRate$ | 买卖双边×换手�?|
 | $CostToReturn = AnnualCost / ExpectedReturn$ | 成本占收益比 |
-| $NetReturn = ExpectedReturn - AnnualCostRate$ | 扣除成本后收益 |
+| $NetReturn = ExpectedReturn - AnnualCostRate$ | 扣除成本后收�?|
 
-### 2.6 成本控制阈值
+### 2.6 成本控制阈�?
 
-| 成本类型 | 预警阈值 | 熔断阈值 |
+| 成本类型 | 预警阈�?| 熔断阈�?|
 |----------|----------|----------|
 | 单笔交易成本 | >0.2% | >0.3% |
-| 年化成本率 | >收益30% | >收益50% |
+| 年化成本�?| >收益30% | >收益50% |
 
 ***
 
-## 3. 分布式计算架构
+## 3. 分布式计算架�?
 
-> 本章来源：附录AL - 分布式计算架构
+> 本章来源：附录AL - 分布式计算架�?
 
 ### 3.1 架构概述
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     主控节点 (Master Node)                   │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │ 任务调度器  │  │  结果汇总器 │  │  健康监控   │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-└─────────────────────────────────────────────────────────────┘
-                              ↓ ↑
-┌─────────────────────────────────────────────────────────────┐
-│                     计算节点 (Worker Nodes)                   │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐       │
-│  │ Node 1  │  │ Node 2  │  │ Node 3  │  │ Node N  │       │
-│  │ 因子计算 │  │ 因子计算 │  │ 因子计算 │  │ 因子计算 │       │
-│  └─────────┘  └─────────┘  └─────────┘  └─────────┘       │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                    主控节点 (Master Node)                   �?
+�? ┌─────────────�? ┌─────────────�? ┌─────────────�?        �?
+�? �?任务调度�? �? �? 结果汇总器 �? �? 健康监控   �?        �?
+�? └─────────────�? └─────────────�? └─────────────�?        �?
+└─────────────────────────────────────────────────────────────�?
+                              �?�?
+┌─────────────────────────────────────────────────────────────�?
+�?                    计算节点 (Worker Nodes)                   �?
+�? ┌─────────�? ┌─────────�? ┌─────────�? ┌─────────�?      �?
+�? �?Node 1  �? �?Node 2  �? �?Node 3  �? �?Node N  �?      �?
+�? �?因子计算 �? �?因子计算 �? �?因子计算 �? �?因子计算 �?      �?
+�? └─────────�? └─────────�? └─────────�? └─────────�?      �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 3.2 任务分配策略
 
 | 分配方式 | 适用场景 | 负载均衡 |
 |----------|----------|----------|
-| 按股票池分配 | 选股任务 | ⭐⭐⭐⭐⭐ |
-| 按时间周期分配 | 回测任务 | ⭐⭐⭐⭐ |
-| 按因子类型分配 | 因子计算 | ⭐⭐⭐⭐⭐ |
+| 按股票池分配 | 选股任务 | ⭐⭐⭐⭐�?|
+| 按时间周期分�?| 回测任务 | ⭐⭐⭐⭐ |
+| 按因子类型分�?| 因子计算 | ⭐⭐⭐⭐�?|
 
 ### 3.3 Python实现
 
@@ -343,7 +343,7 @@ import pandas as pd
 from typing import List, Callable, Any
 
 class DistributedCalculator:
-    """分布式计算"""
+    """分布式计�?""
 
     def __init__(self, n_workers: int = 4):
         self.n_workers = n_workers
@@ -363,7 +363,7 @@ class DistributedCalculator:
         func : Callable
             计算函数
         groupby_col : str
-            分组列
+            分组�?
         n_chunks : int
             分片数量
         """
@@ -401,7 +401,7 @@ class DistributedCalculator:
 
     @staticmethod
     def _process_chunk(chunk: pd.DataFrame, func: Callable, key: Any) -> pd.DataFrame:
-        """处理单个数据块"""
+        """处理单个数据�?""
         result = func(chunk)
         result['_chunk_id'] = key
         return result
@@ -411,9 +411,9 @@ class DistributedCalculator:
 
 | 组件 | 功能 | 技术选型 |
 |------|------|----------|
-| 数据存储 | Tick数据持久化 | ClickHouse |
+| 数据存储 | Tick数据持久�?| ClickHouse |
 | 数据压缩 | 压缩存储 | ZSTD算法 |
-| 查询加速 | 快速检索 | 分区+索引 |
+| 查询加�?| 快速检�?| 分区+索引 |
 | 数据归档 | 历史数据管理 | 分层存储 |
 
 ### 3.5 Tick数据Schema
@@ -447,32 +447,32 @@ ORDER BY (code, timestamp);
 class T1TradingSystem:
     """
     T+1交易制度量化
-    A股当天买入，第二天才能卖出
+    A股当天买入，第二天才能卖�?
     """
 
     T1_RULES = {
         '当日买入锁定': True,
         '次日解除限制': True,
-        '适用范围': 'A股市场所有品种',
-        '例外情况': ['ETF基金', '可转债', '期权']
+        '适用范围': 'A股市场所有品�?,
+        '例外情况': ['ETF基金', '可转�?, '期权']
     }
 
     def check_sell_permission(self, position, buy_date, current_date):
         """
-        检查卖出权限
+        检查卖出权�?
         """
         if buy_date == current_date:
             return {
                 'can_sell': False,
-                'reason': 'T+1制度：当日买入不能卖出',
+                'reason': 'T+1制度：当日买入不能卖�?,
                 'available_date': self.next_trading_day(buy_date)
             }
         return {'can_sell': True}
 
     def calc_margin_impact(self, position, margin_ratio=0.25):
         """
-        计算保证金影响
-        T+1限制了当日对冲能力
+        计算保证金影�?
+        T+1限制了当日对冲能�?
         """
         return {
             'locked_margin': position * margin_ratio,
@@ -490,18 +490,18 @@ class LimitUpDownSystem:
     """
 
     LIMIT_RULES = {
-        '主板（沪市60/深市000）': {
-            '涨跌停幅度': 0.10,
+        '主板（沪�?0/深市000�?: {
+            '涨跌停幅�?: 0.10,
             'ST股票幅度': 0.05,
             '首日上市幅度': 0.44
         },
-        '创业板（300）': {
-            '涨跌停幅度': 0.20,
+        '创业板（300�?: {
+            '涨跌停幅�?: 0.20,
             'ST股票幅度': 0.20,
             '首日上市幅度': 0.44
         },
-        '科创板（688）': {
-            '涨跌停幅度': 0.20,
+        '科创板（688�?: {
+            '涨跌停幅�?: 0.20,
             'ST股票幅度': 0.20,
             '首日上市幅度':无涨跌停
         }
@@ -509,7 +509,7 @@ class LimitUpDownSystem:
 
     def check_limit_up(self, stock_code, change_pct, preclose):
         """
-        检查是否涨停
+        检查是否涨�?
         """
         limit_rate = self.get_limit_rate(stock_code)
         limit_price = preclose * (1 + limit_rate)
@@ -528,17 +528,17 @@ class LimitUpDownSystem:
 ```python
 TRADING_FEES = {
     '佣金': {'rate': 0.0003, 'min': 5, '双向': True},
-    '印花税': {'rate': 0.001, 'min': 0, '单向': 'sell'},
-    '过户费': {'rate': 0.00001, 'min': 1, '双向': True, 'market': 'SH'},
+    '印花�?: {'rate': 0.001, 'min': 0, '单向': 'sell'},
+    '过户�?: {'rate': 0.00001, 'min': 1, '双向': True, 'market': 'SH'},
     '规费': {'rate': 0.00002, 'min': 0, '双向': True}
 }
 ```
 
 ***
 
-## 5. Barra风险优化器
+## 5. Barra风险优化�?
 
-> 本章来源：附录AM - Barra风险优化器
+> 本章来源：附录AM - Barra风险优化�?
 
 ### 5.1 Barra风险模型基础
 
@@ -546,7 +546,7 @@ TRADING_FEES = {
 class BarraRiskModel:
     """
     Barra风险模型
-    包含风格因子 + 行业因子 + 特异性风险
+    包含风格因子 + 行业因子 + 特异性风�?
     """
 
     def __init__(self):
@@ -576,8 +576,8 @@ class BarraRiskModel:
 
     def calc_factor_covariance(self):
         """
-        计算因子协方差矩阵
-        使用Shrinkage估计器提高稳定性
+        计算因子协方差矩�?
+        使用Shrinkage估计器提高稳定�?
         """
         factor_ret = self.factor_returns
         sample_cov = factor_ret.T.cov()
@@ -590,7 +590,7 @@ class BarraRiskModel:
         return factor_cov
 ```
 
-### 5.2 Barra优化器实现
+### 5.2 Barra优化器实�?
 
 ```python
 from scipy.optimize import minimize
@@ -598,7 +598,7 @@ import cvxpy as cp
 
 class BarraOptimizer:
     """
-    Barra优化器
+    Barra优化�?
     在控制风险的同时优化组合收益
     """
 
@@ -626,10 +626,10 @@ class BarraOptimizer:
         # 约束条件
         constraints_list = [
             cp.sum(weights) == 1,  # 权重和为1
-            weights >= 0,          # 不允许做空
+            weights >= 0,          # 不允许做�?
         ]
 
-        # 添加自定义约束
+        # 添加自定义约�?
         for constraint in constraints:
             constraints_list.append(constraint)
 
@@ -643,31 +643,31 @@ class BarraOptimizer:
 
 | 因子类别 | 因子名称 | 说明 |
 |----------|----------|------|
-| 风格因子 | SIZE | 市值因子 |
-| 风格因子 | VALUE | 价值因子 |
+| 风格因子 | SIZE | 市值因�?|
+| 风格因子 | VALUE | 价值因�?|
 | 风格因子 | MOM | 动量因子 |
 | 风格因子 | QUAL | 质量因子 |
-| 风格因子 | VOL | 波动率因子 |
+| 风格因子 | VOL | 波动率因�?|
 | 风格因子 | GROW | 成长因子 |
 | 风格因子 | EARN | 盈利因子 |
 | 风格因子 | LEVER | 杠杆因子 |
-| 风格因子 | LIQUID | 流动性因子 |
+| 风格因子 | LIQUID | 流动性因�?|
 | 风格因子 | YIELD | 收益因子 |
 | 行业因子 | SW_INDUSTRY_L1 | 申万一级行业（28个） |
-| 特异性风险 | IDIO | 个股特有风险 |
+| 特异性风�?| IDIO | 个股特有风险 |
 
 ***
 
-## 6. 数据获取与存储架构
+## 6. 数据获取与存储架�?
 
-> 本章来源：全网搜索补充 - 2024年量化系统数据架构
+> 本章来源：全网搜索补�?- 2024年量化系统数据架�?
 
 ### 6.1 数据获取引擎架构
 
-| 模块 | 功能 | 技术实现 |
+| 模块 | 功能 | 技术实�?|
 |------|------|----------|
-| 实时行情 | Tick级数据推送 | WebSocket/TCP |
-| 历史数据 | K线/分钟/日线 | MySQL/ClickHouse |
+| 实时行情 | Tick级数据推�?| WebSocket/TCP |
+| 历史数据 | K�?分钟/日线 | MySQL/ClickHouse |
 | 财务数据 | 财报/公告/指标 | 异步爬虫+缓存 |
 | 另类数据 | 新闻/舆情/研报 | NLP处理+ES索引 |
 
@@ -680,17 +680,17 @@ class TickDataSchema:
     def __init__(self):
         self.schema = {
             "code": "str",           # 股票代码
-            "timestamp": "datetime",  # 时间戳
+            "timestamp": "datetime",  # 时间�?
             "last_price": "float",    # 最新价
             "open": "float",          # 开盘价
             "high": "float",          # 最高价
             "low": "float",           # 最低价
-            "volume": "int",          # 成交量
-            "turnover": "float",      # 成交额
-            "bid_price1": "float",    # 买一价
-            "bid_volume1": "int",      # 买一量
-            "ask_price1": "float",    # 卖一价
-            "ask_volume1": "int",      # 卖一量
+            "volume": "int",          # 成交�?
+            "turnover": "float",      # 成交�?
+            "bid_price1": "float",    # 买一�?
+            "bid_volume1": "int",      # 买一�?
+            "ask_price1": "float",    # 卖一�?
+            "ask_volume1": "int",      # 卖一�?
         }
 
 class MinuteDataSchema:
@@ -699,16 +699,16 @@ class MinuteDataSchema:
     def __init__(self):
         self.schema = {
             "code": "str",             # 股票代码
-            "timestamp": "datetime",   # 时间戳
+            "timestamp": "datetime",   # 时间�?
             "open": "float",          # 开盘价
             "high": "float",          # 最高价
             "low": "float",           # 最低价
-            "close": "float",         # 收盘价
-            "volume": "int",          # 成交量
-            "turnover": "float",      # 成交额
-            "ma5": "float",           # 5日均线
-            "ma10": "float",          # 10日均线
-            "ma20": "float",          # 20日均线
+            "close": "float",         # 收盘�?
+            "volume": "int",          # 成交�?
+            "turnover": "float",      # 成交�?
+            "ma5": "float",           # 5日均�?
+            "ma10": "float",          # 10日均�?
+            "ma20": "float",          # 20日均�?
         }
 ```
 
@@ -716,31 +716,31 @@ class MinuteDataSchema:
 
 | 检查项 | 量化标准 | 处理方式 |
 |--------|----------|----------|
-| 缺失值 | 连续缺失>5个Tick | 线性插值 |
-| 异常值 | 涨幅>20%或<-20% | 标记校验 |
-| 延迟 | 数据延迟>3秒 | 告警+切换源 |
-| 一致性 | 多源数据不一致 | 主源优先 |
+| 缺失�?| 连续缺失>5个Tick | 线性插�?|
+| 异常�?| 涨幅>20%�?-20% | 标记校验 |
+| 延迟 | 数据延迟>3�?| 告警+切换�?|
+| 一致�?| 多源数据不一�?| 主源优先 |
 
 ***
 
 ## 7. 算法交易模块
 
-> 本章来源：全网搜索补充 - 2024年算法交易架构
+> 本章来源：全网搜索补�?- 2024年算法交易架�?
 
 ### 7.1 算法交易类型
 
 | 算法类型 | 适用场景 | 核心逻辑 |
 |----------|----------|----------|
-| VWAP | 大单执行 | 分时成交量加权 |
+| VWAP | 大单执行 | 分时成交量加�?|
 | TWAP | 定时执行 | 均匀时间分配 |
 | 冰山订单 | 隐藏意图 | 显示部分+隐藏部分 |
-| 动态止盈止损 | 自动风控 | 价格阈值触发 |
+| 动态止盈止�?| 自动风控 | 价格阈值触�?|
 
 ### 7.2 算法交易Python实现
 
 ```python
 class AlgoExecution:
-    """算法交易执行器"""
+    """算法交易执行�?""
 
     def __init__(self):
         self.strategies = {
@@ -799,7 +799,7 @@ class AlgoExecution:
         }]
 
     def execute_dynamic(self, order: dict, market_data: dict) -> list:
-        """动态止盈止损执行"""
+        """动态止盈止损执�?""
         entry_price = order['entry_price']
         stop_loss = order.get('stop_loss', entry_price * 0.95)
         take_profit = order.get('take_profit', entry_price * 1.05)
@@ -828,19 +828,19 @@ class AlgoExecution:
 
 ## 8. 风险管理模块
 
-> 本章来源：全网搜索补充 - 2024年量化风控架构
+> 本章来源：全网搜索补�?- 2024年量化风控架�?
 
 ### 8.1 风控指标体系
 
-| 风控类型 | 指标 | 阈值 | 处理方式 |
+| 风控类型 | 指标 | 阈�?| 处理方式 |
 |----------|------|------|----------|
-| 市场风险 | VaR (99%, 1日) | 组合2% | 降仓 |
-| 市场风险 | 最大回撤 | 10% | 预警+减仓 |
-| 流动性风险 | 持仓集中度 | 单票20% | 限制加仓 |
-| 流动性风险 | 日内成交量占比 | 30% | 分批减仓 |
+| 市场风险 | VaR (99%, 1�? | 组合2% | 降仓 |
+| 市场风险 | 最大回�?| 10% | 预警+减仓 |
+| 流动性风�?| 持仓集中�?| 单票20% | 限制加仓 |
+| 流动性风�?| 日内成交量占�?| 30% | 分批减仓 |
 | 交易风险 | 单笔亏损 | 2% | 自动止损 |
-| 交易风险 | 日内交易频率 | 100次 | 暂停交易 |
-| 合规风险 | 持股限制 | 5%举牌线 | 预警 |
+| 交易风险 | 日内交易频率 | 100�?| 暂停交易 |
+| 合规风险 | 持股限制 | 5%举牌�?| 预警 |
 
 ### 8.2 风控Python实现
 
@@ -851,12 +851,12 @@ class RiskManager:
     def __init__(self):
         self.limits = {
             'max_var': 0.02,                # VaR 2%
-            'max_drawdown': 0.10,           # 最大回撤10%
-            'max_concentration': 0.20,      # 持仓集中度20%
-            'max_volume_ratio': 0.30,       # 成交量占比30%
+            'max_drawdown': 0.10,           # 最大回�?0%
+            'max_concentration': 0.20,      # 持仓集中�?0%
+            'max_volume_ratio': 0.30,       # 成交量占�?0%
             'max_single_loss': 0.02,        # 单笔亏损2%
-            'max_daily_trades': 100,        # 日内最多100次
-            'alert_line': 0.05              # 举牌线5%
+            'max_daily_trades': 100,        # 日内最�?00�?
+            'alert_line': 0.05              # 举牌�?%
         }
 
     def calculate_var(self, returns: list, confidence: float = 0.99) -> float:
@@ -870,7 +870,7 @@ class RiskManager:
         return abs(sorted_returns[index]) if index < len(sorted_returns) else 0.0
 
     def calculate_drawdown(self, equity_curve: list) -> float:
-        """计算最大回撤"""
+        """计算最大回�?""
         peak = equity_curve[0]
         max_dd = 0.0
 
@@ -890,16 +890,16 @@ class RiskManager:
             if ratio > self.limits['max_concentration']:
                 return False, f"{code}集中度{ratio*100:.1f}%超限"
 
-        return True, "集中度合规"
+        return True, "集中度合�?
 
     def check_daily_trades(self, trade_count: int) -> tuple:
-        """检查日内交易次数"""
+        """检查日内交易次�?""
         if trade_count > self.limits['max_daily_trades']:
             return False, f"交易次数{trade_count}超限"
         return True, "交易次数合规"
 
     def execute_risk_check(self, portfolio: dict, market_data: dict) -> dict:
-        """执行风控检查"""
+        """执行风控检�?""
         result = {
             'approved': True,
             'warnings': [],
@@ -935,17 +935,17 @@ class RiskManager:
 
 ## 9. 回测引擎
 
-> 本章来源：全网搜索补充 - 2024年量化回测架构
+> 本章来源：全网搜索补�?- 2024年量化回测架�?
 
 ### 9.1 回测框架设计
 
-| 模块 | 功能 | 技术要点 |
+| 模块 | 功能 | 技术要�?|
 |------|------|----------|
-| 数据回放 | 历史数据模拟 | Tick级重放 |
-| 撮合引擎 | 模拟订单成交 | 实时价/限价/止损 |
-| 滑点模型 | 成交价格偏移 | 固定/百分比滑点 |
-| 佣金计算 | 交易成本扣除 | 印花税+佣金+过户费 |
-| 绩效归因 | 收益/风险指标 | 年化/夏普/最大回撤 |
+| 数据回放 | 历史数据模拟 | Tick级重�?|
+| 撮合引擎 | 模拟订单成交 | 实时�?限价/止损 |
+| 滑点模型 | 成交价格偏移 | 固定/百分比滑�?|
+| 佣金计算 | 交易成本扣除 | 印花�?佣金+过户�?|
+| 绩效归因 | 收益/风险指标 | 年化/夏普/最大回�?|
 
 ### 9.2 回测引擎Python实现
 
@@ -1075,27 +1075,27 @@ class BacktestEngine:
         }
 ```
 
-### 9.3 回测指标汇总
+### 9.3 回测指标汇�?
 
 | 指标 | 计算方法 | 优秀标准 |
 |------|----------|----------|
-| 年化收益率 | 总收益×252/交易日 | >15% |
-| 夏普比率 | (年化-无风险)/波动率 | >1.5 |
-| 最大回撤 | 历史最高-最低 | <15% |
-| 胜率 | 盈利次数/总交易 | >50% |
-| 盈亏比 | 平均盈利/平均亏损 | >1.5 |
+| 年化收益�?| 总收益�?52/交易�?| >15% |
+| 夏普比率 | (年化-无风�?/波动�?| >1.5 |
+| 最大回�?| 历史最�?最�?| <15% |
+| 胜率 | 盈利次数/总交�?| >50% |
+| 盈亏�?| 平均盈利/平均亏损 | >1.5 |
 
 ***
 
 ## 10. 订单路由系统
 
-> 本章来源：全网搜索补充 - 2024年量化订单路由架构
+> 本章来源：全网搜索补�?- 2024年量化订单路由架�?
 
 ### 10.1 订单路由架构
 
-| 组件 | 功能 | 技术要点 |
+| 组件 | 功能 | 技术要�?|
 |------|------|----------|
-| 订单管理器 | 订单创建/修改/撤销 | 订单状态跟踪 |
+| 订单管理�?| 订单创建/修改/撤销 | 订单状态跟�?|
 | 路由引擎 | 订单分发到交易所 | 智能路由选择 |
 | 柜台接口 | 连接券商柜台系统 | 统一API |
 | 交易所接口 | 连接交易所系统 | 高速通道 |
@@ -1153,7 +1153,7 @@ class OrderRouter:
         return {'status': 'failed', 'reason': 'cancel_failed'}
 
     def query_order_status(self, order_id: str) -> dict:
-        """查询订单状态"""
+        """查询订单状�?""
         if order_id not in self.order_cache:
             return {'status': 'unknown'}
 
@@ -1173,29 +1173,29 @@ class OrderRouter:
 
 ### 10.3 订单状态机
 
-| 状态 | 说明 | 转换条件 |
+| 状�?| 说明 | 转换条件 |
 |------|------|----------|
 | PENDING | 等待提交 | 订单创建 |
-| SUBMITTED | 已提交 | 发送到交易所 |
+| SUBMITTED | 已提�?| 发送到交易所 |
 | PARTIAL | 部分成交 | 部分成交 |
 | FILLED | 全部成交 | 成交完成 |
 | CANCELLED | 已撤销 | 用户撤单 |
-| REJECTED | 已拒绝 | 交易所拒绝 |
+| REJECTED | 已拒�?| 交易所拒绝 |
 
 ***
 
 ## 11. 交易API接口
 
-> 本章来源：全网搜索补充 - 2024年量化交易API架构
+> 本章来源：全网搜索补�?- 2024年量化交易API架构
 
 ### 11.1 主流API对比
 
 | API | 特点 | 适用场景 |
 |-----|------|----------|
-| 东方财富 | 免费/功能全 | 零售用户 |
-| 同花顺 | 稳定性好 | 机构用户 |
+| 东方财富 | 免费/功能�?| 零售用户 |
+| 同花�?| 稳定性好 | 机构用户 |
 | 掘金量化 | 策略回测 | 量化私募 |
-| vn.py | 开源/Python | 开发者 |
+| vn.py | 开�?Python | 开发�?|
 | CTP | 期货/穿透式 | 期货量化 |
 
 ### 11.2 Python交易API封装
@@ -1237,7 +1237,7 @@ class TradingAPI:
             self.connected = False
 
     def send_order(self, order: dict) -> dict:
-        """发送订单"""
+        """发送订�?""
         if not self.connected:
             return {'success': False, 'reason': 'not_connected'}
 
@@ -1262,25 +1262,25 @@ class TradingAPI:
 
 ***
 
-## 12. 低延迟架构
+## 12. 低延迟架�?
 
-> 本章来源：全网搜索补充 - 2024年量化低延迟技术
+> 本章来源：全网搜索补�?- 2024年量化低延迟技�?
 
-### 12.1 延迟优化技术
+### 12.1 延迟优化技�?
 
-| 技术 | 优化效果 | 实现方式 |
+| 技�?| 优化效果 | 实现方式 |
 |------|----------|----------|
-| 内存数据库 | <1ms | Redis/内存映射 |
+| 内存数据�?| <1ms | Redis/内存映射 |
 | 批量处理 | 减少开销 | 批量确认 |
-| 异步IO | 非阻塞 | asyncio/aiohttp |
-| FPGA加速 | <100ns | 硬件加速 |
+| 异步IO | 非阻�?| asyncio/aiohttp |
+| FPGA加�?| <100ns | 硬件加�?|
 | 专线接入 | 减少网络 | 托管/专线 |
 
 ### 12.2 低延迟Python实现
 
 ```python
 class LowLatencyEngine:
-    """低延迟交易引擎"""
+    """低延迟交易引�?""
 
     def __init__(self):
         self.order_queue = []
@@ -1288,7 +1288,7 @@ class LowLatencyEngine:
         self.batch_interval = 0.001  # 1ms
 
     def submit_order(self, order: dict) -> str:
-        """提交订单（低延迟）"""
+        """提交订单（低延迟�?""
         order_id = self._generate_order_id()
         order['id'] = order_id
         order['submit_time'] = time.time_ns()
@@ -1301,7 +1301,7 @@ class LowLatencyEngine:
         return order_id
 
     def _flush_orders(self):
-        """批量发送订单"""
+        """批量发送订�?""
         if not self.order_queue:
             return
 
@@ -1333,25 +1333,25 @@ class LowLatencyEngine:
 
 | 指标 | 定义 | 目标 |
 |------|------|------|
-| 数据延迟 | 接收→处理 | <5ms |
-| 订单延迟 | 决策→确认 | <10ms |
+| 数据延迟 | 接收→处�?| <5ms |
+| 订单延迟 | 决策→确�?| <10ms |
 | 成交延迟 | 发送→成交 | <50ms |
-| 回报延迟 | 成交→确认 | <3ms |
+| 回报延迟 | 成交→确�?| <3ms |
 
 ***
 
 ## 13. 交易监控模块
 
-> 本章来源：全网搜索补充 - 2024年量化监控体系
+> 本章来源：全网搜索补�?- 2024年量化监控体�?
 
 ### 13.1 监控指标体系
 
-| 类型 | 指标 | 告警阈值 |
+| 类型 | 指标 | 告警阈�?|
 |------|------|----------|
-| 系统监控 | CPU使用率 | >80% |
-| 系统监控 | 内存使用率 | >85% |
+| 系统监控 | CPU使用�?| >80% |
+| 系统监控 | 内存使用�?| >85% |
 | 系统监控 | 网络延迟 | >100ms |
-| 交易监控 | 订单失败率 | >5% |
+| 交易监控 | 订单失败�?| >5% |
 | 交易监控 | 成交延迟P99 | >100ms |
 | 风控监控 | 仓位超限 | 即时告警 |
 | 风控监控 | 亏损超限 | 即时告警 |
@@ -1389,7 +1389,7 @@ class TradingMonitor:
         return self.metrics
 
     def check_alerts(self) -> list:
-        """检查告警"""
+        """检查告�?""
         alerts = []
 
         if self.metrics['cpu_usage'] > self.alert_thresholds['cpu_usage']:
@@ -1425,7 +1425,7 @@ class TradingMonitor:
             })
 
     def get_status_summary(self) -> dict:
-        """获取状态摘要"""
+        """获取状态摘�?""
         latency_p99 = sorted(self.metrics['order_latency'])[int(len(self.metrics['order_latency'])*0.99)] if self.metrics['order_latency'] else 0
 
         return {
@@ -1455,15 +1455,15 @@ class TradingMonitor:
 
 ## 14. 容灾备份架构
 
-> 本章来源：全网搜索补充 - 2024年量化系统容灾设计
+> 本章来源：全网搜索补�?- 2024年量化系统容灾设�?
 
 ### 14.1 容灾策略
 
 | 策略 | RTO | RPO | 实现方式 |
 |------|-----|-----|---------|
-| 本地备份 | <1小时 | <1小时 | RAID/磁带库 |
+| 本地备份 | <1小时 | <1小时 | RAID/磁带�?|
 | 同城容灾 | <4小时 | <15分钟 | 异地存储 |
-| 异地容灾 | <24小时 | <1小时 | 云存储 |
+| 异地容灾 | <24小时 | <1小时 | 云存�?|
 
 ### 14.2 Python容灾实现
 
@@ -1498,7 +1498,7 @@ class DisasterRecovery:
         return checkpoint_file
 
     def compress_and_archive(self, file_path: str):
-        """压缩并归档"""
+        """压缩并归�?""
         import gzip
         import shutil
 
@@ -1532,25 +1532,25 @@ class DisasterRecovery:
 
 | 切换类型 | 触发条件 | 自动/手动 |
 |----------|----------|----------|
-| 主备切换 | 主节点故障 | 自动 |
-| 降级运行 | 部分组件故障 | 半自动 |
-| 应急处置 | 灾难事件 | 手动 |
+| 主备切换 | 主节点故�?| 自动 |
+| 降级运行 | 部分组件故障 | 半自�?|
+| 应急处�?| 灾难事件 | 手动 |
 
 ***
 
 ## 15. 交易日志审计
 
-> 本章来源：全网搜索补充 - 2024年量化合规审计
+> 本章来源：全网搜索补�?- 2024年量化合规审�?
 
 ### 15.1 审计日志内容
 
 | 日志类型 | 记录内容 | 保留周期 |
 |----------|----------|----------|
-| 订单日志 | 订单创建/修改/撤销/成交 | 5年 |
-| 成交日志 | 成交确认/回报 | 5年 |
-| 持仓日志 | 持仓变化/成本记录 | 5年 |
-| 资金日志 | 资金变化/冻结/释放 | 5年 |
-| 风控日志 | 风控触发/处理记录 | 3年 |
+| 订单日志 | 订单创建/修改/撤销/成交 | 5�?|
+| 成交日志 | 成交确认/回报 | 5�?|
+| 持仓日志 | 持仓变化/成本记录 | 5�?|
+| 资金日志 | 资金变化/冻结/释放 | 5�?|
+| 风控日志 | 风控触发/处理记录 | 3�?|
 
 ### 15.2 Python审计实现
 
@@ -1657,10 +1657,10 @@ class TradingAuditor:
 
 | 要求 | 说明 | 实现 |
 |------|------|------|
-| 完整性 | 日志不被篡改 | 哈希校验 |
-| 可追溯性 | 每笔交易可追踪 | 全链路ID |
-| 时效性 | 日志实时记录 | 异步写入 |
-| 保密性 | 敏感信息脱敏 | 权限控制 |
+| 完整�?| 日志不被篡改 | 哈希校验 |
+| 可追溯�?| 每笔交易可追�?| 全链路ID |
+| 时效�?| 日志实时记录 | 异步写入 |
+| 保密�?| 敏感信息脱敏 | 权限控制 |
 
 ***
 
@@ -1669,13 +1669,13 @@ class TradingAuditor:
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-26 | 整合附录I/J/AC/AN |
-| v1.1 | 2026-03-26 | 补充附录BM/AO交易规则和Barra优化器 |
-| v1.2 | 2026-03-27 | 新增数据获取与存储架构（第6章） |
+| v1.1 | 2026-03-26 | 补充附录BM/AO交易规则和Barra优化�?|
+| v1.2 | 2026-03-27 | 新增数据获取与存储架构（�?章） |
 | v1.2 | 2026-03-27 | 新增算法交易模块（第7章） |
 | v1.2 | 2026-03-27 | 新增风险管理模块（第8章） |
 | v1.3 | 2026-03-27 | 新增订单路由系统（第10章） |
 | v1.3 | 2026-03-27 | 新增交易API接口（第11章） |
-| v1.3 | 2026-03-27 | 新增低延迟架构（第12章） |
+| v1.3 | 2026-03-27 | 新增低延迟架构（�?2章） |
 | v1.3 | 2026-03-27 | 新增交易监控模块（第13章） |
 | v1.4 | 2026-03-27 | 新增容灾备份架构（第14章） |
 | v1.4 | 2026-03-27 | 新增交易日志审计（第15章） |

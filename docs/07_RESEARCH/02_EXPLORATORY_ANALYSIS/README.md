@@ -4,15 +4,15 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# 探索性分析工具
+# 探索性分析工�?
 
 > 统计分析、模式挖掘、可视化
 
@@ -25,14 +25,14 @@ implementation_status: 进行中
 
 ## 1. 统计分析工具
 
-### 描述性统计
+### 描述性统�?
 
 ```python
 class DescriptiveStatistics:
-    """描述性统计分析"""
+    """描述性统计分�?""
 
     def analyze(self, series: pd.Series) -> dict:
-        """计算描述性统计"""
+        """计算描述性统�?""
         return {
             'mean': series.mean(),
             'median': series.median(),
@@ -50,7 +50,7 @@ class DistributionAnalyzer:
     """分布分析工具"""
 
     def normality_test(self, series: pd.Series) -> dict:
-        """正态性检验"""
+        """正态性检�?""
         from scipy import stats
         return {
             'shapiro': stats.shapiro(series),
@@ -59,21 +59,21 @@ class DistributionAnalyzer:
         }
 
     def qq_plot_data(self, series: pd.Series) -> list:
-        """生成QQ图数据"""
+        """生成QQ图数�?""
         import numpy as np
         quantiles = np.percentile(series, range(0, 100))
         theoretical = stats.norm.ppf([i/100 for i in range(0, 100)])
         return list(zip(theoretical, quantiles))
 ```
 
-### 稳定性分析
+### 稳定性分�?
 
 ```python
 class StationarityTests:
-    """平稳性检验"""
+    """平稳性检�?""
 
     def adf_test(self, series: pd.Series) -> dict:
-        """ADF检验"""
+        """ADF检�?""
         from statsmodels.tsa.stattools import adfuller
         result = adfuller(series)
         return {
@@ -83,7 +83,7 @@ class StationarityTests:
         }
 
     def kpss_test(self, series: pd.Series) -> dict:
-        """KPSS检验"""
+        """KPSS检�?""
         from statsmodels.tsa.stattools import kpss
         result = kpss(series, regression='c')
         return {
@@ -94,13 +94,13 @@ class StationarityTests:
 
 ---
 
-## 2. 相关性分析
+## 2. 相关性分�?
 
 ### 截面相关
 
 ```python
 class CrossSectionalCorrelation:
-    """截面相关性分析"""
+    """截面相关性分�?""
 
     def correlation_matrix(self, returns: pd.DataFrame) -> pd.DataFrame:
         """计算截面相关矩阵"""
@@ -118,11 +118,11 @@ class CrossSectionalCorrelation:
 
 ```python
 class RollingCorrelation:
-    """滚动相关性分析"""
+    """滚动相关性分�?""
 
     def rolling_corr(self, series1: pd.Series, series2: pd.Series,
                      window: int = 20) -> pd.Series:
-        """计算滚动窗口相关性"""
+        """计算滚动窗口相关�?""
         return series1.rolling(window).corr(series2)
 ```
 
@@ -130,21 +130,21 @@ class RollingCorrelation:
 
 ## 3. 深度模式挖掘
 
-### 市场状态聚类
+### 市场状态聚�?
 
 ```python
 class MarketRegimeDetector:
-    """市场状态识别"""
+    """市场状态识�?""
 
     def detect_regimes(self, features: pd.DataFrame,
                        n_regimes: int = 4) -> np.array:
-        """使用GMM识别市场状态"""
+        """使用GMM识别市场状�?""
         from sklearn.mixture import GaussianMixture
         gmm = GaussianMixture(n_components=n_regimes)
         return gmm.fit_predict(features)
 
     def describe_regime(self, data: pd.DataFrame, regime_id: int) -> dict:
-        """描述市场状态特征"""
+        """描述市场状态特�?""
         regime_data = data[data['regime'] == regime_id]
         return {
             'avg_volatility': regime_data['volatility'].mean(),
@@ -153,11 +153,11 @@ class MarketRegimeDetector:
         }
 ```
 
-### 季节性分析
+### 季节性分�?
 
 ```python
 class SeasonalityAnalyzer:
-    """季节性/周期性分析"""
+    """季节�?周期性分�?""
 
     def month_effect(self, returns: pd.Series) -> pd.DataFrame:
         """月份效应分析"""
@@ -170,7 +170,7 @@ class SeasonalityAnalyzer:
         return dow
 
     def fourier_analysis(self, series: pd.Series, n_harmonics: int = 5):
-        """傅里叶变换分析周期"""
+        """傅里叶变换分析周�?""
         from scipy.fft import fft
         n = len(series)
         y = series.values
@@ -190,7 +190,7 @@ class FactorExhaustor:
     def exhaustive_search(self, data: pd.DataFrame,
                          factor_templates: list,
                          target: str = 'return_5d') -> list:
-        """穷举测试简单因子组合"""
+        """穷举测试简单因子组�?""
         results = []
         for template in factor_templates:
             factor = self._apply_template(template, data)
@@ -207,5 +207,5 @@ class FactorExhaustor:
 
 ## 索引
 
-- 父目录: [07_RESEARCH/README.md](../README.md)
+- 父目�? [07_RESEARCH/README.md](../README.md)
 - 相关文档: [candle_patterns.md](../03_PATTERN_RECOGNITION/candle_patterns.md)

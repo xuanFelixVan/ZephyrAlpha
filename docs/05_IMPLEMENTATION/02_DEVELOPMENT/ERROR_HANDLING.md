@@ -4,19 +4,19 @@ version: 4.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # ERROR_HANDLING.md - 错误处理规范
 
 > **版本**：v4.0
-> **更新日期**：2026-03-28
-> **状态**：已制定
+> **更新日期**�?026-03-28
+> **状�?*：已制定
 
 ---
 
@@ -25,7 +25,7 @@ implementation_status: 进行中
 ### 1.1 异常层次结构
 
 ```python
-# 基础异常类
+# 基础异常�?
 class QuantSystemException(Exception):
     """量化系统基础异常"""
     def __init__(self, message: str, code: int = None, details: dict = None):
@@ -34,35 +34,35 @@ class QuantSystemException(Exception):
         self.details = details or {}
         super().__init__(self.message)
 
-# 数据层异常
+# 数据层异�?
 class DataException(QuantSystemException):
     """数据相关异常"""
     pass
 
-# 因子层异常
+# 因子层异�?
 class FactorException(QuantSystemException):
     """因子相关异常"""
     pass
 
-# 策略层异常
+# 策略层异�?
 class StrategyException(QuantSystemException):
     """策略相关异常"""
     pass
 
-# 风险层异常
+# 风险层异�?
 class RiskException(QuantSystemException):
     """风险相关异常"""
     pass
 
-# 执行层异常
+# 执行层异�?
 class ExecutionException(QuantSystemException):
     """执行相关异常"""
     pass
 ```
 
-### 1.2 异常错误码定义
+### 1.2 异常错误码定�?
 
-| 错误码 | 异常类型 | 说明 |
+| 错误�?| 异常类型 | 说明 |
 |--------|----------|------|
 | 1000-1999 | DataException | 数据相关错误 |
 | 2000-2999 | FactorException | 因子相关错误 |
@@ -92,17 +92,17 @@ def process_data(data):
         return Result(success=True, data=result)
 
     except ValidationError as e:
-        # 输入验证失败 - 记录日志，返回失败
+        # 输入验证失败 - 记录日志，返回失�?
         logger.warning(f"Validation failed: {e}")
         return Result(success=False, error=str(e), code=1001)
 
     except ProcessingError as e:
-        # 处理错误 - 记录日志，尝试恢复
+        # 处理错误 - 记录日志，尝试恢�?
         logger.error(f"Processing error: {e}")
         return retry_processing(data)
 
     except CriticalError as e:
-        # 严重错误 - 记录日志，告警
+        # 严重错误 - 记录日志，告�?
         logger.critical(f"Critical error: {e}")
         send_alert("CRITICAL", str(e))
         raise
@@ -117,7 +117,7 @@ def process_data(data):
 
 ```python
 def retry(max_attempts: int = 3, backoff: float = 1.0):
-    """重试装饰器"""
+    """重试装饰�?""
     def decorator(func):
         def wrapper(*args, **kwargs):
             for attempt in range(max_attempts):
@@ -139,7 +139,7 @@ def retry(max_attempts: int = 3, backoff: float = 1.0):
 
 ```python
 class CircuitBreaker:
-    """熔断器"""
+    """熔断�?""
     def __init__(self, threshold: int = 5, timeout: int = 60):
         self.threshold = threshold
         self.timeout = timeout
@@ -181,7 +181,7 @@ class CircuitBreaker:
 
 | 级别 | 使用场景 | 示例 |
 |------|----------|------|
-| DEBUG | 开发调试 | `logger.debug(f"Processing {len(data)} records")` |
+| DEBUG | 开发调�?| `logger.debug(f"Processing {len(data)} records")` |
 | INFO | 正常流程 | `logger.info("Data update completed")` |
 | WARNING | 异常但可处理 | `logger.warning("Using fallback data source")` |
 | ERROR | 处理失败 | `logger.error(f"Failed to fetch data: {e}")` |
@@ -190,7 +190,7 @@ class CircuitBreaker:
 ### 3.2 日志格式规范
 
 ```python
-# ✅ 标准日志格式
+# �?标准日志格式
 logger.info(f"[{timestamp}] [{module}] [{level}] {message} | context={context}")
 
 # 示例
@@ -250,31 +250,31 @@ class ErrorResponse:
         }
 ```
 
-### 4.2 错误码定义
+### 4.2 错误码定�?
 
 ```python
 ERROR_CODES = {
-    # 数据层 (1000-1999)
+    # 数据�?(1000-1999)
     1001: "DATA_FETCH_FAILED",
     1002: "DATA_VALIDATION_FAILED",
     1003: "DATA_STORAGE_FAILED",
 
-    # 因子层 (2000-2999)
+    # 因子�?(2000-2999)
     2001: "FACTOR_NOT_FOUND",
     2002: "FACTOR_CALCULATION_FAILED",
     2003: "FACTOR_VALIDATION_FAILED",
 
-    # 策略层 (3000-3999)
+    # 策略�?(3000-3999)
     3001: "STRATEGY_NOT_FOUND",
     3002: "STRATEGY_SIGNAL_FAILED",
     3003: "STRATEGY_PARAM_INVALID",
 
-    # 风险层 (4000-4999)
+    # 风险�?(4000-4999)
     4001: "RISK_LIMIT_EXCEEDED",
     4002: "RISK_VALIDATION_FAILED",
     4003: "POSITION_SIZE_ERROR",
 
-    # 执行层 (5000-5999)
+    # 执行�?(5000-5999)
     5001: "ORDER_SUBMIT_FAILED",
     5002: "ORDER_CANCEL_FAILED",
     5003: "EXECUTION_TIMEOUT"
@@ -289,8 +289,8 @@ ERROR_CODES = {
 
 | 级别 | 触发条件 | 通知方式 |
 |------|----------|----------|
-| INFO | 正常事件 | 仅记录 |
-| WARNING | 异常但可处理 | 日志+控制台 |
+| INFO | 正常事件 | 仅记�?|
+| WARNING | 异常但可处理 | 日志+控制�?|
 | ERROR | 处理失败 | 日志+邮件 |
 | CRITICAL | 严重错误 | 日志+邮件+短信 |
 

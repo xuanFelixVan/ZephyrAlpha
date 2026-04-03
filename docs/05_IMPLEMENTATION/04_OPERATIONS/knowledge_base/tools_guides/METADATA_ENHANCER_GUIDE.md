@@ -1,49 +1,38 @@
 ---
 standard_type: 工具指南
-applicable_scope: 元数据管理
-compliance_level: 正式标准
+applicable_scope: 元数据管�?compliance_level: 正式标准
 parent_document: ../README.md
-implementation_status: 已完成
-owner: 文档管理员
-version: 1.0.0
+implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
 module_id: METADATA_ENHANCER_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["工具指南", "元数据", "自动化", "使用手册"]
+tags: ["工具指南", "元数�?, "自动�?, "使用手册"]
 ---
-# 元数据增强工具使用指南
-
+# 元数据增强工具使用指�?
 **文档版本**: 1.0.0
-**最后更新**: 2026-04-02
-**文档所有者**: 文档管理员
-
+**最后更�?*: 2026-04-02
+**文档所有�?*: 文档管理�?
 ---
 
 ## 1. 工具概述
 
-### 1.1 工具简介
-
-元数据增强工具用于自动推断和补充文档元数据，确保文档元数据完整性和规范性。
-
+### 1.1 工具简�?
+元数据增强工具用于自动推断和补充文档元数据，确保文档元数据完整性和规范性�?
 ### 1.2 主要功能
 
-- ✅ 自动推断元数据
-- ✅ 批量添加元数据
-- ✅ 验证元数据完整性
-- ✅ 生成增强报告
+- �?自动推断元数�?- �?批量添加元数�?- �?验证元数据完整�?- �?生成增强报告
 
 ---
 
-## 2. 快速开始
-
+## 2. 快速开�?
 ### 2.1 基本使用
 
-**增强元数据**:
+**增强元数�?*:
 ```bash
 python scripts/metadata_enhancer.py
 ```
 
-**验证元数据**:
+**验证元数�?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
@@ -52,13 +41,11 @@ python scripts/metadata_enhancer.py --validate
 
 ## 3. 功能详解
 
-### 3.1 元数据推断
-
+### 3.1 元数据推�?
 **推断规则**:
 - 从文件路径推断module_id
 - 从文件名推断标题
-- 从目录结构推断分类
-
+- 从目录结构推断分�?
 **示例**:
 ```
 文件路径: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
@@ -68,8 +55,7 @@ python scripts/metadata_enhancer.py --validate
   - title: 动量因子
 ```
 
-### 3.2 元数据验证
-
+### 3.2 元数据验�?
 **必需字段**:
 - owner
 - version
@@ -99,16 +85,15 @@ inference_rules:
     source: "directory"
     mapping:
       "01_FRAMEWORK": "框架文档"
-      "02_FACTOR_LIBRARY": "因子库"
+      "02_FACTOR_LIBRARY": "因子�?
 ```
 
 ---
 
-## 5. 最佳实践
-
+## 5. 最佳实�?
 ### 5.1 使用模板
 
-**创建文档时使用模板**:
+**创建文档时使用模�?*:
 ```bash
 # 使用文档模板
 cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md new_document.md
@@ -116,19 +101,18 @@ cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md new_document.md
 
 ### 5.2 定期验证
 
-**每月验证元数据完整性**:
+**每月验证元数据完整�?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
 
 ---
 
-## 6. 参考文档
-
+## 6. 参考文�?
 - [元数据增强工具技术规范](../../05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
 - [文档模板](../../09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 
 ---
 
-**文档状态**: 正式标准
+**文档状�?*: 正式标准
 **下次更新**: 2026-07-02

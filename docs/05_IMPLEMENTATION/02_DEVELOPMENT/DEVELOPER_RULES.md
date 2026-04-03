@@ -4,34 +4,34 @@ version: 5.1.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 
-# 开发规则索引
+# 开发规则索�?
 
-> 清风量化系统 v5.1 开发文档索引
+> 清风量化系统 v5.1 开发文档索�?
 >
-> **重要**: 本文件已根据职责驱动原则拆分为三个专业文档。请直接参考相关专业文档。
+> **重要**: 本文件已根据职责驱动原则拆分为三个专业文档。请直接参考相关专业文档�?
 > **更新时间**: 2026-04-01（审计重构）
 
 
 ## 📋 文档拆分说明
 
-**审计发现**: 原 DEVELOPER_RULES.md 文件职责混合（目录规范 + 代码标准 + 工作流程 + 设计原则），违反了专业量化机构的职责驱动原则。
+**审计发现**: �?DEVELOPER_RULES.md 文件职责混合（目录规�?+ 代码标准 + 工作流程 + 设计原则），违反了专业量化机构的职责驱动原则�?
 
-**修复方案**: 拆分为三个专业文档，每个文档承担单一职责：
+**修复方案**: 拆分为三个专业文档，每个文档承担单一职责�?
 
-| 文档 | 职责 | 版本 | 状态 |
+| 文档 | 职责 | 版本 | 状�?|
 |------|------|------|------|
-| [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) | 开发标准（目录结构、命名规范、代码标准） | v5.1 | ✅ 活跃 |
-| [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) | 工作流程（开发流程、提交规范、依赖管理） | v5.1 | ✅ 活跃 |
-| [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md) | 设计原则（优先级驱动、容错恢复、性能要求） | v5.1 | ✅ 活跃 |
+| [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) | 开发标准（目录结构、命名规范、代码标准） | v5.1 | �?活跃 |
+| [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) | 工作流程（开发流程、提交规范、依赖管理） | v5.1 | �?活跃 |
+| [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md) | 设计原则（优先级驱动、容错恢复、性能要求�?| v5.1 | �?活跃 |
 
 
 ## 📚 专业文档索引
@@ -47,11 +47,11 @@ implementation_status: 进行中
 - 目录结构规范（顶层结构、详细结构、禁止目录）
 - 文件命名规范（Python文件、配置文件、文档文件）
 - 代码标准（文件头部、类定义、函数定义、类型提示）
-- 配置管理原则（配置文件原则、system.yaml示例）
-- 测试规范（测试文件位置、命名、覆盖率要求）
-- 文件归属检查清单
+- 配置管理原则（配置文件原则、system.yaml示例�?
+- 测试规范（测试文件位置、命名、覆盖率要求�?
+- 文件归属检查清�?
 
-### 2. 开发工作流程
+### 2. 开发工作流�?
 
 **文件**: [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md)  
 **版本**: v5.1  
@@ -66,12 +66,12 @@ implementation_status: 进行中
 - 版本控制（分支策略、版本号规范、标签管理）
 - 代码审查（审查要点、审查流程）
 
-### 3. 设计原则与系统架构
+### 3. 设计原则与系统架�?
 
 **文件**: [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md)  
 **版本**: v5.1  
 **更新日期**: 2026-04-01  
-**职责**: 定义系统设计原则、架构模式和可靠性要求
+**职责**: 定义系统设计原则、架构模式和可靠性要�?
 
 **内容概览**:
 - 优先级驱动原则（优先级分类、应用场景、评估标准）
@@ -84,55 +84,55 @@ implementation_status: 进行中
 
 ## 🔄 迁移指南
 
-### 如果您正在寻找...
+### 如果您正在寻�?..
 
-| 查找内容 | 请参考 |
+| 查找内容 | 请参�?|
 |----------|--------|
-| 目录结构、文件命名 | [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) |
-| 代码规范、类型提示 | [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) |
-| 开发流程、分支策略 | [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) |
-| 提交规范、代码审查 | [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) |
+| 目录结构、文件命�?| [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) |
+| 代码规范、类型提�?| [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) |
+| 开发流程、分支策�?| [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) |
+| 提交规范、代码审�?| [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) |
 | 设计原则、优先级 | [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md) |
 | 容错机制、性能要求 | [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md) |
 
-### 原文档结构映射
+### 原文档结构映�?
 
-| 原章节 | 新文档 | 新章节 |
+| 原章�?| 新文�?| 新章�?|
 |--------|--------|--------|
-| 一、目录结构规范 | DEVELOPMENT_STANDARDS.md | 一、目录结构规范 |
-| 二、文件命名规范 | DEVELOPMENT_STANDARDS.md | 二、文件命名规范 |
-| 三、代码标准 | DEVELOPMENT_STANDARDS.md | 三、代码标准 |
-| 四、配置管理 | DEVELOPMENT_STANDARDS.md | 四、配置管理 |
-| 五、测试规范 | DEVELOPMENT_STANDARDS.md | 五、测试规范 |
-| 六、工作流程 | DEVELOPMENT_WORKFLOW.md | 一、开发流程 |
-| 七、提交规范 | DEVELOPMENT_WORKFLOW.md | 二、提交规范 |
-| 八、依赖管理 | DEVELOPMENT_WORKFLOW.md | 三、依赖管理 |
-| 九、日志规范 | DEVELOPMENT_WORKFLOW.md | 四、日志规范 |
-| 十、核心设计原则 | DESIGN_PRINCIPLES.md | 一、优先级驱动原则 |
-| 十、开源优先原则 | DESIGN_PRINCIPLES.md | 二、开源优先原则 |
+| 一、目录结构规�?| DEVELOPMENT_STANDARDS.md | 一、目录结构规�?|
+| 二、文件命名规�?| DEVELOPMENT_STANDARDS.md | 二、文件命名规�?|
+| 三、代码标�?| DEVELOPMENT_STANDARDS.md | 三、代码标�?|
+| 四、配置管�?| DEVELOPMENT_STANDARDS.md | 四、配置管�?|
+| 五、测试规�?| DEVELOPMENT_STANDARDS.md | 五、测试规�?|
+| 六、工作流�?| DEVELOPMENT_WORKFLOW.md | 一、开发流�?|
+| 七、提交规�?| DEVELOPMENT_WORKFLOW.md | 二、提交规�?|
+| 八、依赖管�?| DEVELOPMENT_WORKFLOW.md | 三、依赖管�?|
+| 九、日志规�?| DEVELOPMENT_WORKFLOW.md | 四、日志规�?|
+| 十、核心设计原�?| DESIGN_PRINCIPLES.md | 一、优先级驱动原则 |
+| 十、开源优先原�?| DESIGN_PRINCIPLES.md | 二、开源优先原�?|
 | 十、容错与恢复机制 | DESIGN_PRINCIPLES.md | 三、容错与恢复机制 |
-| 十、Graceful Shutdown | DESIGN_PRINCIPLES.md | 四、优雅关闭机制 |
-| 十、系统自愈能力 | DESIGN_PRINCIPLES.md | 五、系统自愈能力 |
+| 十、Graceful Shutdown | DESIGN_PRINCIPLES.md | 四、优雅关闭机�?|
+| 十、系统自愈能�?| DESIGN_PRINCIPLES.md | 五、系统自愈能�?|
 | 十、性能指标要求 | DESIGN_PRINCIPLES.md | 六、性能指标要求 |
 
 
 ## 📊 审计质量指标
 
-| 指标 | 拆分前 | 拆分后 | 提升 |
+| 指标 | 拆分�?| 拆分�?| 提升 |
 |------|--------|--------|------|
-| **职责清晰度** | 25% (混合职责) | 100% (单一职责) | +75% |
-| **文档可维护性** | 40% (3000+行) | 95% (3×1000行) | +55% |
-| **查找效率** | 30% (需要滚动) | 90% (精准定位) | +60% |
-| **专业符合率** | 35% (违反SoC) | 100% (符合SoC) | +65% |
+| **职责清晰�?* | 25% (混合职责) | 100% (单一职责) | +75% |
+| **文档可维护�?* | 40% (3000+�? | 95% (3×1000�? | +55% |
+| **查找效率** | 30% (需要滚�? | 90% (精准定位) | +60% |
+| **专业符合�?* | 35% (违反SoC) | 100% (符合SoC) | +65% |
 
 
-> **维护部门**: 清风量化审计部
-> **最后更新**: 2026-04-01
+> **维护部门**: 清风量化审计�?
+> **最后更�?*: 2026-04-01
 > **文档版本**: v5.1
 
 **相关链接**:
-- [INDEX.md](../../03_TRADING_TACTICS/INDEX.md) - 文档主索引
+- [INDEX.md](../../03_TRADING_TACTICS/INDEX.md) - 文档主索�?
 - [SITEMAP.md](../../02_FACTOR_LIBRARY/SITEMAP.md) - 文档地图
-- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - 快速参考
+- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - 快速参�?
 
-**审计记录**: 本次拆分基于 [FULL_SYSTEM_AUDIT_REPORT.md](../04_OPERATIONS/audit_state/FULL_SYSTEM_AUDIT_REPORT.md) 审计发现执行。
+**审计记录**: 本次拆分基于 [FULL_SYSTEM_AUDIT_REPORT.md](../04_OPERATIONS/audit_state/FULL_SYSTEM_AUDIT_REPORT.md) 审计发现执行�?

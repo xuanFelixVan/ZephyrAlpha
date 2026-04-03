@@ -13,111 +13,57 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 ---
 
-# 数据源管理系统蓝图
-
-> 清风量化系统 v5.2 - 数据源管理系统详细设计
-> **模块ID**: `DATA_SOURCE_MANAGEMENT_001`
-> **实施周期**: Week 13-14（2周）
-> **优先级**: P0（必需）
-> **预期收益**: 提高数据源可用性99.9%，减少故障影响时间80%
+# 数据源管理系统蓝�?
+> 清风量化系统 v5.2 - 数据源管理系统详细设�?> **模块ID**: `DATA_SOURCE_MANAGEMENT_001`
+> **实施周期**: Week 13-14�?周）
+> **优先�?*: P0（必需�?> **预期收益**: 提高数据源可用�?9.9%，减少故障影响时�?0%
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
-
+### 1.1 业务需�?
 **当前痛点**:
-- ❌ 缺少统一的数据源接入和管理
-- ❌ 数据源故障无法及时发现和处理
-- ❌ 缺少数据源优先级和主备切换机制
-- ❌ 数据源成本无法追踪和优化
+- �?缺少统一的数据源接入和管�?- �?数据源故障无法及时发现和处理
+- �?缺少数据源优先级和主备切换机�?- �?数据源成本无法追踪和优化
 
 **业务目标**:
-- ✅ 建立统一的数据源接入和管理平台
-- ✅ 实时监控数据源健康状态
-- ✅ 自动化主备切换和负载均衡
-- ✅ 追踪和优化数据源成本
+- �?建立统一的数据源接入和管理平�?- �?实时监控数据源健康状�?- �?自动化主备切换和负载均衡
+- �?追踪和优化数据源成本
 
-### 1.2 技术目标
-
-| 指标 | 目标值 | 说明 |
+### 1.2 技术目�?
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **数据源可用性** | ≥99.9% | 数据源可用性≥99.9% |
-| **故障发现时间** | <30秒 | 故障发现时间<30秒 |
-| **主备切换时间** | <60秒 | 主备切换时间<60秒 |
-| **成本追踪覆盖率** | 100% | 所有数据源成本可追踪 |
+| **数据源可用�?* | �?9.9% | 数据源可用性≥99.9% |
+| **故障发现时间** | <30�?| 故障发现时间<30�?|
+| **主备切换时间** | <60�?| 主备切换时间<60�?|
+| **成本追踪覆盖�?* | 100% | 所有数据源成本可追�?|
 
 ---
 
-## 二、系统架构设计
-
-### 2.1 整体架构图
-
+## 二、系统架构设�?
+### 2.1 整体架构�?
 ```
-┌─────────────────────────────────────────────────────────────┐
-│              数据源管理系统架构                                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            数据源接入层 (Source Integration)          │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ QMT接入      │  │ iFind接入    │  │ Tushare接入  │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ AKShare     │  │ yfinance     │  │ 自建数据源   │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            数据源管理层 (Source Management)           │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ 健康监控     │  │ 优先级管理   │  │ 负载均衡     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ 主备切换     │  │ 连接池管理   │  │ 限流控制     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            数据源监控层 (Source Monitoring)           │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ 性能监控     │  │ 成本追踪     │  │ 告警通知     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            数据源服务层 (Source Service)              │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ 统一API      │  │ 数据路由     │  │ 配置管理     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────�?�?             数据源管理系统架�?                               �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据源接入层 (Source Integration)          �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?QMT接入      �? �?iFind接入    �? �?Tushare接入  �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?AKShare     �? �?yfinance     �? �?自建数据�?  �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据源管理层 (Source Management)           �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?健康监控     �? �?优先级管�?  �? �?负载均衡     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?主备切换     �? �?连接池管�?  �? �?限流控制     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据源监控层 (Source Monitoring)           �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?性能监控     �? �?成本追踪     �? �?告警通知     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据源服务层 (Source Service)              �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?统一API      �? �?数据路由     �? �?配置管理     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
 
 ### 2.2 技术选型
 
-| 组件 | 技术方案 | 版本要求 | 选型理由 |
+| 组件 | 技术方�?| 版本要求 | 选型理由 |
 |------|---------|---------|---------|
-| **消息队列** | Apache Kafka | ≥3.5.0 | 高吞吐量、持久化、分布式 |
-| **监控** | Prometheus | ≥2.40.0 | 成熟的监控方案 |
-| **可视化** | Grafana | ≥10.0.0 | 丰富的可视化面板 |
-| **元数据存储** | PostgreSQL | ≥13.0 | 关系型数据库 |
-| **缓存** | Redis | ≥7.2.0 | 高性能缓存 |
-| **配置中心** | Consul | ≥1.16.0 | 服务发现和配置管理 |
+| **消息队列** | Apache Kafka | �?.5.0 | 高吞吐量、持久化、分布式 |
+| **监控** | Prometheus | �?.40.0 | 成熟的监控方�?|
+| **可视�?* | Grafana | �?0.0.0 | 丰富的可视化面板 |
+| **元数据存�?* | PostgreSQL | �?3.0 | 关系型数据库 |
+| **缓存** | Redis | �?.2.0 | 高性能缓存 |
+| **配置中心** | Consul | �?.16.0 | 服务发现和配置管�?|
 
 ### 2.3 Layer定位
 
 - **Layer归属**: Layer 1 - 数据预处理层
-- **职责范围**: 数据源接入、健康监控、优先级管理、负载均衡、成本追踪
-- **上下层接口**:
-  - 上层依赖: Layer 2-8（提供统一数据访问接口）
-  - 下层依赖: Layer 0（管理具体数据源）
-
+- **职责范围**: 数据源接入、健康监控、优先级管理、负载均衡、成本追�?- **上下层接�?*:
+  - 上层依赖: Layer 2-8（提供统一数据访问接口�?  - 下层依赖: Layer 0（管理具体数据源�?
 ---
 
-## 三、核心模块设计
-
+## 三、核心模块设�?
 ### 3.1 数据源接入器 (SourceConnector)
 
 **职责**: 统一的数据源接入接口
@@ -130,19 +76,14 @@ from enum import Enum
 import asyncio
 
 class SourceType(Enum):
-    """数据源类型"""
+    """数据源类�?""
     QMT = "qmt"                    # 🆓 免费交易接口
-    IFIND = "ifind"                # ✅ 已有主数据源
-    TUSHARE = "tushare"            # 🆓 免费补充数据源
-    AKSHARE = "akshare"            # 🆓 免费补充数据源
-    BAOSTOCK = "baostock"          # 🆓 免费A股历史数据
-    EFINANCE = "efinance"          # 🆓 免费东方财富数据
-    YFINANCE = "yfinance"          # 🆓 免费美股数据源
-    QLIB = "qlib"                  # 🆓 免费微软量化数据
-    CUSTOM = "custom"              # 自建数据源
-
+    IFIND = "ifind"                # �?已有主数据源
+    TUSHARE = "tushare"            # 🆓 免费补充数据�?    AKSHARE = "akshare"            # 🆓 免费补充数据�?    BAOSTOCK = "baostock"          # 🆓 免费A股历史数�?    EFINANCE = "efinance"          # 🆓 免费东方财富数据
+    YFINANCE = "yfinance"          # 🆓 免费美股数据�?    QLIB = "qlib"                  # 🆓 免费微软量化数据
+    CUSTOM = "custom"              # 自建数据�?
 class SourceStatus(Enum):
-    """数据源状态"""
+    """数据源状�?""
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -150,14 +91,13 @@ class SourceStatus(Enum):
 
 @dataclass
 class DataSource:
-    """数据源"""
+    """数据�?""
     source_id: str
     source_name: str
     source_type: SourceType
     endpoint: str
     credentials: Dict[str, str]
-    priority: int  # 优先级，数字越小优先级越高
-    status: SourceStatus = SourceStatus.HEALTHY
+    priority: int  # 优先级，数字越小优先级越�?    status: SourceStatus = SourceStatus.HEALTHY
     enabled: bool = True
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
@@ -165,7 +105,7 @@ class DataSource:
 
 @dataclass
 class ConnectionPool:
-    """连接池"""
+    """连接�?""
     pool_id: str
     source_id: str
     max_connections: int
@@ -178,8 +118,7 @@ class SourceConnector:
     
     def __init__(self, config: Dict[str, Any]):
         """
-        初始化数据源接入器
-        
+        初始化数据源接入�?        
         Args:
             config: 配置信息
                 - max_connections: 最大连接数
@@ -195,27 +134,22 @@ class SourceConnector:
         source: DataSource
     ) -> bool:
         """
-        注册数据源
-        
+        注册数据�?        
         Args:
-            source: 数据源
-            
+            source: 数据�?            
         Returns:
             bool: 是否成功
         """
-        # 验证数据源配置
-        if not self._validate_source(source):
+        # 验证数据源配�?        if not self._validate_source(source):
             return False
         
         # 测试连接
         if not await self._test_connection(source):
             return False
         
-        # 注册数据源
-        self.sources[source.source_id] = source
+        # 注册数据�?        self.sources[source.source_id] = source
         
-        # 创建连接池
-        pool = ConnectionPool(
+        # 创建连接�?        pool = ConnectionPool(
             pool_id=f"pool_{source.source_id}",
             source_id=source.source_id,
             max_connections=self.config.get('max_connections', 10),
@@ -231,8 +165,7 @@ class SourceConnector:
         source_id: str
     ) -> bool:
         """
-        注销数据源
-        
+        注销数据�?        
         Args:
             source_id: 数据源ID
             
@@ -242,13 +175,11 @@ class SourceConnector:
         if source_id not in self.sources:
             return False
         
-        # 关闭连接池
-        if source_id in self.connection_pools:
+        # 关闭连接�?        if source_id in self.connection_pools:
             await self._close_connection_pool(source_id)
             del self.connection_pools[source_id]
         
-        # 注销数据源
-        del self.sources[source_id]
+        # 注销数据�?        del self.sources[source_id]
         
         return True
     
@@ -279,8 +210,7 @@ class SourceConnector:
             pool.current_connections += 1
             return await self._get_idle_connection(source_id)
         elif pool.current_connections < pool.max_connections:
-            # 创建新连接
-            pool.current_connections += 1
+            # 创建新连�?            pool.current_connections += 1
             return await self._create_connection(source_id)
         else:
             # 连接池已满，等待
@@ -308,7 +238,7 @@ class SourceConnector:
         self,
         source: DataSource
     ) -> bool:
-        """验证数据源配置"""
+        """验证数据源配�?""
         required_fields = ['source_id', 'source_name', 'source_type', 'endpoint']
         
         for field in required_fields:
@@ -322,8 +252,7 @@ class SourceConnector:
         source: DataSource
     ) -> bool:
         """测试连接"""
-        # 根据数据源类型测试连接
-        try:
+        # 根据数据源类型测试连�?        try:
             # 模拟连接测试
             await asyncio.sleep(0.1)
             return True
@@ -340,8 +269,7 @@ class SourceConnector:
         if not source:
             return None
         
-        # 根据数据源类型创建连接
-        # 这里返回模拟连接对象
+        # 根据数据源类型创建连�?        # 这里返回模拟连接对象
         return {"source_id": source_id, "connected": True}
     
     async def _get_idle_connection(
@@ -356,15 +284,13 @@ class SourceConnector:
         self,
         source_id: str
     ):
-        """关闭连接池"""
-        # 关闭所有连接
-        pass
+        """关闭连接�?""
+        # 关闭所有连�?        pass
 ```
 
 ### 3.2 数据源健康监控器 (SourceHealthMonitor)
 
-**职责**: 实时监控数据源健康状态
-
+**职责**: 实时监控数据源健康状�?
 ```python
 from dataclasses import dataclass, field
 from typing import Dict, List, Any
@@ -374,12 +300,11 @@ import time
 
 @dataclass
 class HealthCheckResult:
-    """健康检查结果"""
+    """健康检查结�?""
     source_id: str
     status: SourceStatus
     latency: float  # 响应延迟（毫秒）
-    error_rate: float  # 错误率
-    throughput: float  # 吞吐量（请求/秒）
+    error_rate: float  # 错误�?    throughput: float  # 吞吐量（请求/秒）
     checked_at: datetime = field(default_factory=datetime.now)
     error_message: str = ""
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -394,22 +319,17 @@ class SourceHealthMonitor:
         Args:
             config: 配置信息
                 - check_interval: 检查间隔（秒）
-                - timeout: 超时时间（秒）
-                - unhealthy_threshold: 不健康阈值
-        """
+                - timeout: 超时时间（秒�?                - unhealthy_threshold: 不健康阈�?        """
         self.config = config
         
         # 检查间隔（秒）
         self.check_interval = config.get('check_interval', 30)
         
-        # 超时时间（秒）
-        self.timeout = config.get('timeout', 10)
+        # 超时时间（秒�?        self.timeout = config.get('timeout', 10)
         
-        # 不健康阈值（连续失败次数）
-        self.unhealthy_threshold = config.get('unhealthy_threshold', 3)
+        # 不健康阈值（连续失败次数�?        self.unhealthy_threshold = config.get('unhealthy_threshold', 3)
         
-        # 健康检查历史
-        self.health_history: Dict[str, List[HealthCheckResult]] = {}
+        # 健康检查历�?        self.health_history: Dict[str, List[HealthCheckResult]] = {}
         
         # 连续失败计数
         self.failure_counts: Dict[str, int] = {}
@@ -422,49 +342,39 @@ class SourceHealthMonitor:
         启动监控
         
         Args:
-            sources: 数据源字典
-        """
+            sources: 数据源字�?        """
         while True:
             for source_id, source in sources.items():
-                # 执行健康检查
-                result = await self.check_health(source)
+                # 执行健康检�?                result = await self.check_health(source)
                 
                 # 记录历史
                 if source_id not in self.health_history:
                     self.health_history[source_id] = []
                 self.health_history[source_id].append(result)
                 
-                # 更新数据源状态
-                await self._update_source_status(source, result)
+                # 更新数据源状�?                await self._update_source_status(source, result)
             
-            # 等待下次检查
-            await asyncio.sleep(self.check_interval)
+            # 等待下次检�?            await asyncio.sleep(self.check_interval)
     
     async def check_health(
         self,
         source: DataSource
     ) -> HealthCheckResult:
         """
-        执行健康检查
-        
+        执行健康检�?        
         Args:
-            source: 数据源
-            
+            source: 数据�?            
         Returns:
-            HealthCheckResult: 健康检查结果
-        """
+            HealthCheckResult: 健康检查结�?        """
         start_time = time.time()
         
         try:
-            # 发送健康检查请求
-            # 这里模拟健康检查
-            await asyncio.sleep(0.1)
+            # 发送健康检查请�?            # 这里模拟健康检�?            await asyncio.sleep(0.1)
             
             # 计算延迟
             latency = (time.time() - start_time) * 1000
             
-            # 模拟检查结果
-            result = HealthCheckResult(
+            # 模拟检查结�?            result = HealthCheckResult(
                 source_id=source.source_id,
                 status=SourceStatus.HEALTHY,
                 latency=latency,
@@ -521,19 +431,14 @@ class SourceHealthMonitor:
         result: HealthCheckResult
     ):
         """
-        更新数据源状态
-        
+        更新数据源状�?        
         Args:
-            source: 数据源
-            result: 健康检查结果
-        """
-        # 根据连续失败次数判断状态
-        failure_count = self.failure_counts.get(source.source_id, 0)
+            source: 数据�?            result: 健康检查结�?        """
+        # 根据连续失败次数判断状�?        failure_count = self.failure_counts.get(source.source_id, 0)
         
         if failure_count >= self.unhealthy_threshold:
             source.status = SourceStatus.UNHEALTHY
-        elif result.latency > 1000:  # 延迟超过1秒
-            source.status = SourceStatus.DEGRADED
+        elif result.latency > 1000:  # 延迟超过1�?            source.status = SourceStatus.DEGRADED
         else:
             source.status = SourceStatus.HEALTHY
         
@@ -545,23 +450,20 @@ class SourceHealthMonitor:
         limit: int = 100
     ) -> List[HealthCheckResult]:
         """
-        获取健康检查历史
-        
+        获取健康检查历�?        
         Args:
             source_id: 数据源ID
             limit: 返回数量限制
             
         Returns:
-            List[HealthCheckResult]: 健康检查历史
-        """
+            List[HealthCheckResult]: 健康检查历�?        """
         history = self.health_history.get(source_id, [])
         return history[-limit:]
 ```
 
-### 3.3 数据源优先级管理器 (SourcePriorityManager)
+### 3.3 数据源优先级管理�?(SourcePriorityManager)
 
-**职责**: 管理数据源优先级和主备切换
-
+**职责**: 管理数据源优先级和主备切�?
 ```python
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -569,7 +471,7 @@ from datetime import datetime
 
 @dataclass
 class PriorityRule:
-    """优先级规则"""
+    """优先级规�?""
     rule_id: str
     data_type: str  # 数据类型（market_data, factor_data等）
     source_priorities: List[str]  # 数据源优先级列表
@@ -577,12 +479,11 @@ class PriorityRule:
     created_at: datetime = field(default_factory=datetime.now)
 
 class SourcePriorityManager:
-    """数据源优先级管理器"""
+    """数据源优先级管理�?""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        初始化优先级管理器
-        
+        初始化优先级管理�?        
         Args:
             config: 配置信息
                 - auto_failover: 是否自动故障转移
@@ -593,25 +494,20 @@ class SourcePriorityManager:
         # 是否自动故障转移
         self.auto_failover = config.get('auto_failover', True)
         
-        # 故障转移超时时间（秒）
-        self.failover_timeout = config.get('failover_timeout', 60)
+        # 故障转移超时时间（秒�?        self.failover_timeout = config.get('failover_timeout', 60)
         
-        # 优先级规则
-        self.priority_rules: Dict[str, PriorityRule] = {}
+        # 优先级规�?        self.priority_rules: Dict[str, PriorityRule] = {}
         
-        # 数据源状态缓存
-        self.source_status_cache: Dict[str, SourceStatus] = {}
+        # 数据源状态缓�?        self.source_status_cache: Dict[str, SourceStatus] = {}
         
     def add_priority_rule(
         self,
         rule: PriorityRule
     ) -> bool:
         """
-        添加优先级规则
-        
+        添加优先级规�?        
         Args:
-            rule: 优先级规则
-            
+            rule: 优先级规�?            
         Returns:
             bool: 是否成功
         """
@@ -628,8 +524,7 @@ class SourcePriorityManager:
         
         Args:
             data_type: 数据类型
-            sources: 数据源字典
-            
+            sources: 数据源字�?            
         Returns:
             Optional[DataSource]: 最佳数据源
         """
@@ -637,8 +532,7 @@ class SourcePriorityManager:
         rule = self._find_priority_rule(data_type)
         
         if not rule:
-            # 没有找到规则，返回第一个可用的数据源
-            for source in sources.values():
+            # 没有找到规则，返回第一个可用的数据�?            for source in sources.values():
                 if source.status == SourceStatus.HEALTHY and source.enabled:
                     return source
             return None
@@ -662,11 +556,9 @@ class SourcePriorityManager:
         
         Args:
             failed_source_id: 失败的数据源ID
-            sources: 数据源字典
-            
+            sources: 数据源字�?            
         Returns:
-            Optional[DataSource]: 备用数据源
-        """
+            Optional[DataSource]: 备用数据�?        """
         if not self.auto_failover:
             return None
         
@@ -675,8 +567,7 @@ class SourcePriorityManager:
         if not failed_source:
             return None
         
-        # 查找备用数据源
-        for source in sources.values():
+        # 查找备用数据�?        for source in sources.values():
             if (source.source_id != failed_source_id and 
                 source.status == SourceStatus.HEALTHY and 
                 source.enabled):
@@ -689,14 +580,12 @@ class SourcePriorityManager:
         data_type: str
     ) -> Optional[PriorityRule]:
         """
-        查找优先级规则
-        
+        查找优先级规�?        
         Args:
             data_type: 数据类型
             
         Returns:
-            Optional[PriorityRule]: 优先级规则
-        """
+            Optional[PriorityRule]: 优先级规�?        """
         for rule in self.priority_rules.values():
             if rule.enabled and rule.data_type == data_type:
                 return rule
@@ -710,29 +599,23 @@ class SourcePriorityManager:
 
 ### 4.1 支持的数据源类型
 
-| 数据源类型 | 接入方式 | 认证方式 | 付费状态 | 数据类型 | 优先级 |
+| 数据源类�?| 接入方式 | 认证方式 | 付费状�?| 数据类型 | 优先�?|
 |-----------|---------|---------|---------|---------|--------|
-| **iFind** | REST API | Token | ✅ 已有 | 行情数据、财务数据 | P0（主数据源） |
-| **QMT** | Python API | 券商账户 | 🆓 免费 | 行情数据、交易数据 | P0（交易执行） |
-| **Tushare** | REST API | Token | 🆓 免费 | A股市场数据 | P1（补充） |
-| **AKShare** | Python库 | 无需认证 | 🆓 免费 | 多市场数据 | P1（补充） |
-| **Baostock** | Python库 | 无需认证 | 🆓 免费 | A股历史数据 | P1（补充） |
-| **EFinance** | Python库 | 无需认证 | 🆓 免费 | 东方财富数据 | P1（补充） |
-| **yfinance** | Python库 | 无需认证 | 🆓 免费 | 美股市场数据 | P2（补充） |
-| **Qlib** | Python库 | 无需认证 | 🆓 免费 | 微软量化数据 | P2（补充） |
-| **自建数据源** | 自定义 | 自定义 | - | 自定义 | P3（自定义） |
+| **iFind** | REST API | Token | �?已有 | 行情数据、财务数�?| P0（主数据源） |
+| **QMT** | Python API | 券商账户 | 🆓 免费 | 行情数据、交易数�?| P0（交易执行） |
+| **Tushare** | REST API | Token | 🆓 免费 | A股市场数�?| P1（补充） |
+| **AKShare** | Python�?| 无需认证 | 🆓 免费 | 多市场数�?| P1（补充） |
+| **Baostock** | Python�?| 无需认证 | 🆓 免费 | A股历史数�?| P1（补充） |
+| **EFinance** | Python�?| 无需认证 | 🆓 免费 | 东方财富数据 | P1（补充） |
+| **yfinance** | Python�?| 无需认证 | 🆓 免费 | 美股市场数据 | P2（补充） |
+| **Qlib** | Python�?| 无需认证 | 🆓 免费 | 微软量化数据 | P2（补充） |
+| **自建数据�?* | 自定�?| 自定�?| - | 自定�?| P3（自定义�?|
 
-> **📋 详细数据接口清单**: 请参考 [DATA_SOURCE_INVENTORY.md](./DATA_SOURCE_INVENTORY.md) 获取完整的数据接口清单，包括：
-> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib）
-> - 数据源优先级策略和切换规则
-> - 成本分析和优化建议
-> - 数据源监控指标和告警规则
+> **📋 详细数据接口清单**: 请参�?[DATA_SOURCE_INVENTORY.md](./DATA_SOURCE_INVENTORY.md) 获取完整的数据接口清单，包括�?> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib�?> - 数据源优先级策略和切换规�?> - 成本分析和优化建�?> - 数据源监控指标和告警规则
 
-### 4.2 数据源配置规范
-
+### 4.2 数据源配置规�?
 ```yaml
-# 数据源配置示例
-sources:
+# 数据源配置示�?sources:
   # iFind主数据源（已有）
   - source_id: "ifind_primary"
     source_name: "iFind主数据源"
@@ -760,11 +643,10 @@ sources:
     metadata:
       data_types: ["market_data", "trading_data"]
       update_frequency: "realtime"
-      cost: "免费（需券商账户）"
+      cost: "免费（需券商账户�?
       
-  # Tushare补充数据源（免费）
-  - source_id: "tushare_backup"
-    source_name: "Tushare补充数据源"
+  # Tushare补充数据源（免费�?  - source_id: "tushare_backup"
+    source_name: "Tushare补充数据�?
     source_type: "tushare"
     endpoint: "https://api.tushare.pro"
     credentials:
@@ -776,9 +658,8 @@ sources:
       update_frequency: "daily"
       cost: "免费"
       
-  # AKShare补充数据源（免费）
-  - source_id: "akshare_backup"
-    source_name: "AKShare补充数据源"
+  # AKShare补充数据源（免费�?  - source_id: "akshare_backup"
+    source_name: "AKShare补充数据�?
     source_type: "akshare"
     endpoint: "local"
     credentials: {}
@@ -792,117 +673,100 @@ sources:
 
 ---
 
-## 五、实施步骤
-
-### 5.1 Week 13: 核心功能开发
-
-#### Day 1-2: 数据源接入器开发
-
+## 五、实施步�?
+### 5.1 Week 13: 核心功能开�?
+#### Day 1-2: 数据源接入器开�?
 **任务**:
 1. 实现SourceConnector数据源接入器
-2. 实现连接池管理
-3. 编写单元测试
+2. 实现连接池管�?3. 编写单元测试
 
-**交付物**:
+**交付�?*:
 ```
 src/
 ├── data_source/
-│   ├── __init__.py
-│   ├── connector.py           # SourceConnector
-│   ├── models.py              # 数据模型
-│   └── tests/
-│       └── test_connector.py
+�?  ├── __init__.py
+�?  ├── connector.py           # SourceConnector
+�?  ├── models.py              # 数据模型
+�?  └── tests/
+�?      └── test_connector.py
 ```
 
-#### Day 3-4: 健康监控器开发
-
+#### Day 3-4: 健康监控器开�?
 **任务**:
-1. 实现SourceHealthMonitor健康监控器
-2. 实现健康检查逻辑
+1. 实现SourceHealthMonitor健康监控�?2. 实现健康检查逻辑
 3. 集成Prometheus监控
 
-**交付物**:
+**交付�?*:
 ```
 src/
 ├── data_source/
-│   ├── monitor.py             # SourceHealthMonitor
-│   └── tests/
-│       └── test_monitor.py
+�?  ├── monitor.py             # SourceHealthMonitor
+�?  └── tests/
+�?      └── test_monitor.py
 ```
 
-#### Day 5: 优先级管理器开发
-
+#### Day 5: 优先级管理器开�?
 **任务**:
 1. 实现SourcePriorityManager优先级管理器
 2. 实现故障转移逻辑
 3. 编写单元测试
 
-### 5.2 Week 14: 集成与部署
-
-#### Day 6-7: 数据源适配器开发
-
+### 5.2 Week 14: 集成与部�?
+#### Day 6-7: 数据源适配器开�?
 **任务**:
-1. 实现iFind数据源适配器（主数据源）
-2. 实现QMT数据源适配器（交易执行）
-3. 实现Tushare数据源适配器（补充数据源）
+1. 实现iFind数据源适配器（主数据源�?2. 实现QMT数据源适配器（交易执行�?3. 实现Tushare数据源适配器（补充数据源）
 4. 实现AKShare数据源适配器（补充数据源）
 
-#### Day 8-9: API服务开发
-
+#### Day 8-9: API服务开�?
 **任务**:
 1. 实现RESTful API
 2. 编写API文档
 3. 部署上线
 
-#### Day 10: 监控与告警
-
+#### Day 10: 监控与告�?
 **任务**:
 1. 配置Prometheus监控
-2. 配置Grafana仪表板
-3. 配置告警规则
+2. 配置Grafana仪表�?3. 配置告警规则
 
 ---
 
-## 六、验收标准
-
+## 六、验收标�?
 ### 6.1 功能验收
 
-| 验收项 | 验收标准 | 验收方法 |
+| 验收�?| 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **数据源接入** | 支持≥3种数据源 | 功能测试 |
-| **健康监控** | 故障发现时间<30秒 | 性能测试 |
-| **主备切换** | 切换时间<60秒 | 功能测试 |
-| **成本追踪** | 追踪覆盖率100% | 功能测试 |
+| **数据源接�?* | 支持�?种数据源 | 功能测试 |
+| **健康监控** | 故障发现时间<30�?| 性能测试 |
+| **主备切换** | 切换时间<60�?| 功能测试 |
+| **成本追踪** | 追踪覆盖�?00% | 功能测试 |
 
 ### 6.2 性能验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| **数据源可用性** | ≥99.9% | 监控统计 |
-| **故障发现时间** | <30秒 | 性能测试 |
-| **主备切换时间** | <60秒 | 功能测试 |
-| **连接池效率** | ≥95% | 性能测试 |
+| **数据源可用�?* | �?9.9% | 监控统计 |
+| **故障发现时间** | <30�?| 性能测试 |
+| **主备切换时间** | <60�?| 功能测试 |
+| **连接池效�?* | �?5% | 性能测试 |
 
 ---
 
 ## 七、风险评估与缓解
 
-### 7.1 技术风险
-
-| 风险项 | 风险等级 | 影响 | 缓解措施 |
+### 7.1 技术风�?
+| 风险�?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| 数据源API变更 | P1 | 接入失败 | 版本锁定，适配器模式 |
-| 网络延迟 | P2 | 监控误判 | 调整超时阈值 |
-| 连接池耗尽 | P2 | 请求失败 | 限流控制，扩容 |
+| 数据源API变更 | P1 | 接入失败 | 版本锁定，适配器模�?|
+| 网络延迟 | P2 | 监控误判 | 调整超时阈�?|
+| 连接池耗尽 | P2 | 请求失败 | 限流控制，扩�?|
 
 ---
 
-## 八、文档治理
-
+## 八、文档治�?
 ### 8.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文档**: [LAYER1_IMPROVEMENT_PLAN.md](./LAYER1_IMPROVEMENT_PLAN.md)
+- **父文�?*: [LAYER1_IMPROVEMENT_PLAN.md](./LAYER1_IMPROVEMENT_PLAN.md)
 - **关联文档**:
   - [LAYER1_BLUEPRINT_GAP_ANALYSIS.md](../review_reports/LAYER1_BLUEPRINT_GAP_ANALYSIS.md)
   - [DATACLEANER_TECHNICAL_SPECIFICATION.md](./DATACLEANER_TECHNICAL_SPECIFICATION.md)
@@ -914,4 +778,4 @@ src/
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状态**: ✅ 正式 | **维护者**: ZephyrAlpha技术团队
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状�?*: �?正式 | **维护�?*: ZephyrAlpha技术团�?

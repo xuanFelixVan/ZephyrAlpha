@@ -4,10 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席架构师
-standard_type: 专业机构级压力测试系统蓝图
-applicable_scope: 全系统极端风险管理
-compliance_level: 顶级专业标准
+owner: 首席架构�?standard_type: 专业机构级压力测试系统蓝�?applicable_scope: 全系统极端风险管�?compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Stress Testing", "Citadel Scenario Analysis", "Morgan Stanley Risk Scenarios"]
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -17,112 +14,69 @@ implementation_status: 设计阶段
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
-> **实施周期**: 2周
-> **核心理念**: 桥水基金压力测试体系 - 极端风险是量化系统的最大威胁,必须通过压力测试提前识别和应对
-> **目标**: 实现专业机构级的压力测试能力,确保系统在极端市场环境下生存
+> **实施周期**: 2�?> **核心理念**: 桥水基金压力测试体系 - 极端风险是量化系统的最大威�?必须通过压力测试提前识别和应�?> **目标**: 实现专业机构级的压力测试能力,确保系统在极端市场环境下生存
 
 ---
 
-## 一、专业机构实践分析
-
+## 一、专业机构实践分�?
 ### 1.1 桥水基金压力测试实践
 
 **核心机制**:
 ```
 桥水基金压力测试体系:
 ├── 1. 历史情景压力测试
-│   ├── 2008金融危机 → 极端下跌情景
-│   ├── 2020疫情冲击 → 流动性危机情景
-│   ├── 2015股灾 → 杠杆爆仓情景
-│   └── 2018贸易战 → 政策风险情景
+�?  ├── 2008金融危机 �?极端下跌情景
+�?  ├── 2020疫情冲击 �?流动性危机情�?�?  ├── 2015股灾 �?杠杆爆仓情景
+�?  └── 2018贸易�?�?政策风险情景
 ├── 2. 假设情景压力测试
-│   ├── 极端波动情景 → 波动率翻倍
-│   ├── 流动性枯竭情景 → 无法交易
-│   ├── 相关性失效情景 → 分散化失效
-│   └── 系统性风险情景 → 市场崩盘
-├── 3. 敏感性分析
-│   ├── 因子敏感性 → 因子冲击影响
-│   ├── 参数敏感性 → 参数变化影响
-│   └── 模型敏感性 → 模型失效影响
+�?  ├── 极端波动情景 �?波动率翻�?�?  ├── 流动性枯竭情�?�?无法交易
+�?  ├── 相关性失效情�?�?分散化失�?�?  └── 系统性风险情�?�?市场崩盘
+├── 3. 敏感性分�?�?  ├── 因子敏感�?�?因子冲击影响
+�?  ├── 参数敏感�?�?参数变化影响
+�?  └── 模型敏感�?�?模型失效影响
 └── 4. 压力测试报告
-    ├── 最大损失估算 → 情景下损失
-    ├── 风险敞口识别 → 脆弱点识别
-    └── 缓解措施建议 → 对冲策略
+    ├── 最大损失估�?�?情景下损�?    ├── 风险敞口识别 �?脆弱点识�?    └── 缓解措施建议 �?对冲策略
 ```
 
 **关键原则**:
-1. **全面性原则**: 覆盖历史极端事件和假设极端情景
-2. **真实性原则**: 情景设计必须基于真实市场逻辑
-3. **前瞻性原则**: 提前识别潜在风险,制定应对预案
-4. **可操作性原则**: 压力测试结果必须转化为具体行动
-
+1. **全面性原�?*: 覆盖历史极端事件和假设极端情�?2. **真实性原�?*: 情景设计必须基于真实市场逻辑
+3. **前瞻性原�?*: 提前识别潜在风险,制定应对预案
+4. **可操作性原�?*: 压力测试结果必须转化为具体行�?
 ### 1.2 Citadel情景分析实践
 
 **核心机制**:
 ```
 Citadel情景分析框架:
 ├── 1. 宏观情景
-│   ├── 经济衰退情景 → GDP下滑
-│   ├── 通胀失控情景 → CPI飙升
-│   ├── 货币紧缩情景 → 加息周期
-│   └── 地缘政治情景 → 战争/制裁
+�?  ├── 经济衰退情景 �?GDP下滑
+�?  ├── 通胀失控情景 �?CPI飙升
+�?  ├── 货币紧缩情景 �?加息周期
+�?  └── 地缘政治情景 �?战争/制裁
 ├── 2. 市场情景
-│   ├── 黑天鹅事件 → 突发事件
-│   ├── 流动性危机 → 市场冻结
-│   ├── 波动率飙升 → VIX暴涨
-│   └── 相关性崩溃 → 分散化失效
-└── 3. 组合情景
-    ├── 单策略失效 → 策略崩溃
-    ├── 多策略共振 → 策略同时失效
-    └── 风险因子集中 → 风险集中爆发
+�?  ├── 黑天鹅事�?�?突发事件
+�?  ├── 流动性危�?�?市场冻结
+�?  ├── 波动率飙�?�?VIX暴涨
+�?  └── 相关性崩�?�?分散化失�?└── 3. 组合情景
+    ├── 单策略失�?�?策略崩溃
+    ├── 多策略共�?�?策略同时失效
+    └── 风险因子集中 �?风险集中爆发
 ```
 
 ---
 
-## 二、系统架构设计
-
+## 二、系统架构设�?
 ### 2.1 压力测试系统架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    压力测试系统架构                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  Layer 1: 情景管理层                                            │
-│      ├── ScenarioLibrary (情景库)                               │
-│      ├── ScenarioGenerator (情景生成器)                         │
-│      └── ScenarioManager (情景管理器)                           │
-│                                                                 │
-│  Layer 2: 冲击模拟层                                            │
-│      ├── MarketShockSimulator (市场冲击模拟器)                  │
-│      ├── FactorShockSimulator (因子冲击模拟器)                  │
-│      └── LiquidityShockSimulator (流动性冲击模拟器)             │
-│                                                                 │
-│  Layer 3: 组合影响评估层                                        │
-│      ├── PortfolioImpactAnalyzer (组合影响分析器)               │
-│      ├── LossEstimator (损失估算器)                             │
-│      └── RiskExposureIdentifier (风险敞口识别器)                │
-│                                                                 │
-│  Layer 4: 报告生成层                                            │
-│      ├── StressTestReporter (压力测试报告器)                    │
-│      ├── VulnerabilityAnalyzer (脆弱点分析器)                   │
-│      └── MitigationAdvisor (缓解措施建议器)                     │
-│                                                                 │
-│  Layer 5: 可视化层                                              │
-│      ├── StressTestDashboard (压力测试仪表板)                   │
-│      ├── LossDistributionChart (损失分布图)                     │
-│      └── ScenarioComparisonChart (情景对比图)                   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                   压力测试系统架构                              �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? Layer 1: 情景管理�?                                           �?�?     ├── ScenarioLibrary (情景�?                               �?�?     ├── ScenarioGenerator (情景生成�?                         �?�?     └── ScenarioManager (情景管理�?                           �?�?                                                                �?�? Layer 2: 冲击模拟�?                                           �?�?     ├── MarketShockSimulator (市场冲击模拟�?                  �?�?     ├── FactorShockSimulator (因子冲击模拟�?                  �?�?     └── LiquidityShockSimulator (流动性冲击模拟器)             �?�?                                                                �?�? Layer 3: 组合影响评估�?                                       �?�?     ├── PortfolioImpactAnalyzer (组合影响分析�?               �?�?     ├── LossEstimator (损失估算�?                             �?�?     └── RiskExposureIdentifier (风险敞口识别�?                �?�?                                                                �?�? Layer 4: 报告生成�?                                           �?�?     ├── StressTestReporter (压力测试报告�?                    �?�?     ├── VulnerabilityAnalyzer (脆弱点分析器)                   �?�?     └── MitigationAdvisor (缓解措施建议�?                     �?�?                                                                �?�? Layer 5: 可视化层                                              �?�?     ├── StressTestDashboard (压力测试仪表�?                   �?�?     ├── LossDistributionChart (损失分布�?                     �?�?     └── ScenarioComparisonChart (情景对比�?                   �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 核心组件设计
 
-#### 2.2.1 情景库 (ScenarioLibrary)
+#### 2.2.1 情景�?(ScenarioLibrary)
 
 ```python
 class ScenarioLibrary:
-    """情景库 - 存储历史和假设情景"""
+    """情景�?- 存储历史和假设情�?""
     
     def __init__(self):
         self.historical_scenarios = self._load_historical_scenarios()
@@ -133,57 +87,47 @@ class ScenarioLibrary:
         return {
             '2008_financial_crisis': Scenario(
                 name='2008金融危机',
-                description='雷曼兄弟破产引发的全球金融危机',
+                description='雷曼兄弟破产引发的全球金融危�?,
                 shock_parameters={
                     'market_return': -0.50,      # 市场下跌50%
-                    'volatility_spike': 3.0,     # 波动率翻3倍
-                    'liquidity_drop': 0.80,      # 流动性下降80%
-                    'correlation_spike': 0.90    # 相关性升至0.9
+                    'volatility_spike': 3.0,     # 波动率翻3�?                    'liquidity_drop': 0.80,      # 流动性下�?0%
+                    'correlation_spike': 0.90    # 相关性升�?.9
                 },
-                duration=180,  # 持续180天
-                affected_sectors=['金融', '房地产', '制造业'],
-                recovery_pattern='V型反转'
+                duration=180,  # 持续180�?                affected_sectors=['金融', '房地�?, '制造业'],
+                recovery_pattern='V型反�?
             ),
             
             '2020_covid_crash': Scenario(
                 name='2020疫情冲击',
-                description='新冠疫情引发的流动性危机',
+                description='新冠疫情引发的流动性危�?,
                 shock_parameters={
                     'market_return': -0.35,      # 市场下跌35%
-                    'volatility_spike': 5.0,     # 波动率翻5倍
-                    'liquidity_drop': 0.90,      # 流动性下降90%
-                    'correlation_spike': 0.95    # 相关性升至0.95
+                    'volatility_spike': 5.0,     # 波动率翻5�?                    'liquidity_drop': 0.90,      # 流动性下�?0%
+                    'correlation_spike': 0.95    # 相关性升�?.95
                 },
-                duration=30,  # 持续30天
-                affected_sectors=['航空', '旅游', '餐饮'],
-                recovery_pattern='快速反弹'
+                duration=30,  # 持续30�?                affected_sectors=['航空', '旅游', '餐饮'],
+                recovery_pattern='快速反�?
             ),
             
             '2015_chinese_crash': Scenario(
                 name='2015中国股灾',
-                description='杠杆资金爆仓引发的股市崩盘',
+                description='杠杆资金爆仓引发的股市崩�?,
                 shock_parameters={
                     'market_return': -0.45,      # 市场下跌45%
-                    'volatility_spike': 4.0,     # 波动率翻4倍
-                    'liquidity_drop': 0.70,      # 流动性下降70%
-                    'margin_call_wave': True     # 杠杆爆仓潮
-                },
-                duration=60,  # 持续60天
-                affected_sectors=['创业板', '中小板'],
+                    'volatility_spike': 4.0,     # 波动率翻4�?                    'liquidity_drop': 0.70,      # 流动性下�?0%
+                    'margin_call_wave': True     # 杠杆爆仓�?                },
+                duration=60,  # 持续60�?                affected_sectors=['创业�?, '中小�?],
                 recovery_pattern='缓慢修复'
             ),
             
             '2018_trade_war': Scenario(
-                name='2018贸易战',
-                description='中美贸易摩擦引发的市场动荡',
+                name='2018贸易�?,
+                description='中美贸易摩擦引发的市场动�?,
                 shock_parameters={
                     'market_return': -0.25,      # 市场下跌25%
-                    'volatility_spike': 2.0,     # 波动率翻2倍
-                    'sector_rotation': True,     # 板块轮动
-                    'policy_uncertainty': 0.80   # 政策不确定性
-                },
-                duration=90,  # 持续90天
-                affected_sectors=['出口', '科技', '制造业'],
+                    'volatility_spike': 2.0,     # 波动率翻2�?                    'sector_rotation': True,     # 板块轮动
+                    'policy_uncertainty': 0.80   # 政策不确定�?                },
+                duration=90,  # 持续90�?                affected_sectors=['出口', '科技', '制造业'],
                 recovery_pattern='震荡筑底'
             )
         }
@@ -193,7 +137,7 @@ class ScenarioLibrary:
         return {
             'extreme_volatility': Scenario(
                 name='极端波动情景',
-                description='波动率突然翻倍',
+                description='波动率突然翻�?,
                 shock_parameters={
                     'volatility_spike': 2.0,
                     'market_return': -0.20
@@ -202,8 +146,8 @@ class ScenarioLibrary:
             ),
             
             'liquidity_crisis': Scenario(
-                name='流动性枯竭情景',
-                description='市场流动性突然消失',
+                name='流动性枯竭情�?,
+                description='市场流动性突然消�?,
                 shock_parameters={
                     'liquidity_drop': 0.95,
                     'bid_ask_spread_widen': 5.0
@@ -212,8 +156,8 @@ class ScenarioLibrary:
             ),
             
             'correlation_collapse': Scenario(
-                name='相关性失效情景',
-                description='资产相关性突然失效',
+                name='相关性失效情�?,
+                description='资产相关性突然失�?,
                 shock_parameters={
                     'correlation_drop': -0.50,
                     'diversification_failure': True
@@ -222,7 +166,7 @@ class ScenarioLibrary:
             ),
             
             'systemic_crisis': Scenario(
-                name='系统性风险情景',
+                name='系统性风险情�?,
                 description='市场全面崩盘',
                 shock_parameters={
                     'market_return': -0.60,
@@ -235,11 +179,11 @@ class ScenarioLibrary:
         }
 ```
 
-#### 2.2.2 市场冲击模拟器 (MarketShockSimulator)
+#### 2.2.2 市场冲击模拟�?(MarketShockSimulator)
 
 ```python
 class MarketShockSimulator:
-    """市场冲击模拟器"""
+    """市场冲击模拟�?""
     
     def __init__(self):
         self.market_data = MarketDataLoader()
@@ -258,14 +202,11 @@ class MarketShockSimulator:
             # 市场冲击
             market_shock = scenario.shock_parameters.get('market_return', 0)
             
-            # 波动率冲击
-            volatility_shock = scenario.shock_parameters.get('volatility_spike', 1.0)
+            # 波动率冲�?            volatility_shock = scenario.shock_parameters.get('volatility_spike', 1.0)
             
-            # 流动性冲击
-            liquidity_shock = scenario.shock_parameters.get('liquidity_drop', 0)
+            # 流动性冲�?            liquidity_shock = scenario.shock_parameters.get('liquidity_drop', 0)
             
-            # 计算冲击后价格
-            shocked_price = price * (1 + market_shock)
+            # 计算冲击后价�?            shocked_price = price * (1 + market_shock)
             
             # 添加随机波动
             random_shock = np.random.normal(0, volatility_shock * 0.01)
@@ -287,11 +228,11 @@ class MarketShockSimulator:
         )
 ```
 
-#### 2.2.3 因子冲击模拟器 (FactorShockSimulator)
+#### 2.2.3 因子冲击模拟�?(FactorShockSimulator)
 
 ```python
 class FactorShockSimulator:
-    """因子冲击模拟器"""
+    """因子冲击模拟�?""
     
     def __init__(self):
         self.factor_model = BarraRiskModel()
@@ -334,11 +275,11 @@ class FactorShockSimulator:
         )
 ```
 
-#### 2.2.4 组合影响分析器 (PortfolioImpactAnalyzer)
+#### 2.2.4 组合影响分析�?(PortfolioImpactAnalyzer)
 
 ```python
 class PortfolioImpactAnalyzer:
-    """组合影响分析器"""
+    """组合影响分析�?""
     
     def __init__(self):
         self.market_simulator = MarketShockSimulator()
@@ -359,8 +300,7 @@ class PortfolioImpactAnalyzer:
             scenario, current_portfolio
         )
         
-        # 3. 流动性冲击分析
-        liquidity_impact = self._analyze_liquidity_impact(
+        # 3. 流动性冲击分�?        liquidity_impact = self._analyze_liquidity_impact(
             scenario, current_portfolio
         )
         
@@ -371,8 +311,7 @@ class PortfolioImpactAnalyzer:
             liquidity_impact['cost']
         )
         
-        # 5. 识别脆弱点
-        vulnerabilities = self._identify_vulnerabilities(
+        # 5. 识别脆弱�?        vulnerabilities = self._identify_vulnerabilities(
             market_impact, factor_impact, liquidity_impact
         )
         
@@ -389,27 +328,24 @@ class PortfolioImpactAnalyzer:
 
 ---
 
-## 三、敏感性分析
-
-### 3.1 因子敏感性分析
-
+## 三、敏感性分�?
+### 3.1 因子敏感性分�?
 ```python
 class FactorSensitivityAnalyzer:
     """因子敏感性分析器"""
     
     def __init__(self):
         self.factors = ['market', 'size', 'value', 'momentum', 'quality', 'volatility']
-        self.shock_range = np.linspace(-0.30, 0.30, 61)  # -30%到+30%
+        self.shock_range = np.linspace(-0.30, 0.30, 61)  # -30%�?30%
         
     def analyze_factor_sensitivity(self,
                                   current_portfolio: Dict[str, float]) -> SensitivityResult:
-        """分析因子敏感性"""
+        """分析因子敏感�?""
         
         sensitivity_curves = {}
         
         for factor in self.factors:
-            # 对每个因子进行敏感性分析
-            portfolio_values = []
+            # 对每个因子进行敏感性分�?            portfolio_values = []
             
             for shock in self.shock_range:
                 # 模拟因子冲击
@@ -431,8 +367,7 @@ class FactorSensitivityAnalyzer:
         )
 ```
 
-### 3.2 参数敏感性分析
-
+### 3.2 参数敏感性分�?
 ```python
 class ParameterSensitivityAnalyzer:
     """参数敏感性分析器"""
@@ -443,7 +378,7 @@ class ParameterSensitivityAnalyzer:
     def analyze_parameter_sensitivity(self,
                                      strategy: Strategy,
                                      parameter_ranges: Dict[str, List]) -> ParameterSensitivity:
-        """分析参数敏感性"""
+        """分析参数敏感�?""
         
         sensitivity_results = {}
         
@@ -453,8 +388,7 @@ class ParameterSensitivityAnalyzer:
                 
             results = []
             for value in parameter_ranges[param]:
-                # 修改参数并回测
-                modified_strategy = strategy.copy()
+                # 修改参数并回�?                modified_strategy = strategy.copy()
                 modified_strategy.set_parameter(param, value)
                 
                 # 运行回测
@@ -476,13 +410,11 @@ class ParameterSensitivityAnalyzer:
 
 ---
 
-## 四、压力测试报告
-
-### 4.1 压力测试报告生成器
-
+## 四、压力测试报�?
+### 4.1 压力测试报告生成�?
 ```python
 class StressTestReporter:
-    """压力测试报告生成器"""
+    """压力测试报告生成�?""
     
     def __init__(self):
         self.template = self._load_report_template()
@@ -491,17 +423,14 @@ class StressTestReporter:
                                    stress_test_results: List[ImpactAnalysis]) -> StressTestReport:
         """生成压力测试报告"""
         
-        # 1. 情景损失汇总
-        scenario_losses = {
+        # 1. 情景损失汇�?        scenario_losses = {
             result.scenario: result.total_loss
             for result in stress_test_results
         }
         
-        # 2. 最大损失情景
-        worst_case_scenario = max(scenario_losses.items(), key=lambda x: x[1])
+        # 2. 最大损失情�?        worst_case_scenario = max(scenario_losses.items(), key=lambda x: x[1])
         
-        # 3. 脆弱点汇总
-        all_vulnerabilities = []
+        # 3. 脆弱点汇�?        all_vulnerabilities = []
         for result in stress_test_results:
             all_vulnerabilities.extend(result.vulnerabilities)
         
@@ -536,7 +465,7 @@ class StressTestReporter:
                 priority='HIGH',
                 action='降低整体仓位',
                 description='建议将整体仓位降低至70%以下',
-                expected_effect='减少损失约30%'
+                expected_effect='减少损失�?0%'
             ))
         
         # 2. 增加对冲
@@ -548,13 +477,12 @@ class StressTestReporter:
                 expected_effect='对冲市场风险敞口50%'
             ))
         
-        # 3. 分散化投资
-        if '集中度风险' in vulnerabilities:
+        # 3. 分散化投�?        if '集中度风�? in vulnerabilities:
             measures.append(MitigationMeasure(
                 priority='MEDIUM',
-                action='增加持仓分散度',
+                action='增加持仓分散�?,
                 description='建议将持仓分散到更多股票',
-                expected_effect='降低集中度风险'
+                expected_effect='降低集中度风�?
             ))
         
         return measures
@@ -562,67 +490,56 @@ class StressTestReporter:
 
 ---
 
-## 五、实施路径
+## 五、实施路�?
+### Phase 1: 情景库和模拟�?(Week 1)
 
-### Phase 1: 情景库和模拟器 (Week 1)
+**Day 1-2**: 情景库建�?- �?实现ScenarioLibrary
+- �?加载历史情景数据
+- �?设计假设情景
 
-**Day 1-2**: 情景库建设
-- ✅ 实现ScenarioLibrary
-- ✅ 加载历史情景数据
-- ✅ 设计假设情景
-
-**Day 3-4**: 冲击模拟器
-- ✅ 实现MarketShockSimulator
-- ✅ 实现FactorShockSimulator
-- ✅ 实现LiquidityShockSimulator
+**Day 3-4**: 冲击模拟�?- �?实现MarketShockSimulator
+- �?实现FactorShockSimulator
+- �?实现LiquidityShockSimulator
 
 **Day 5-7**: 组合影响分析
-- ✅ 实现PortfolioImpactAnalyzer
-- ✅ 实现脆弱点识别
-- ✅ 实现损失估算
+- �?实现PortfolioImpactAnalyzer
+- �?实现脆弱点识�?- �?实现损失估算
 
 ### Phase 2: 报告与可视化 (Week 2)
 
 **Day 1-3**: 报告生成
-- ✅ 实现StressTestReporter
-- ✅ 实现敏感性分析
-- ✅ 实现缓解措施建议
+- �?实现StressTestReporter
+- �?实现敏感性分�?- �?实现缓解措施建议
 
 **Day 4-5**: 可视化仪表板
-- ✅ 搭建压力测试仪表板
-- ✅ 创建损失分布图
-- ✅ 创建情景对比图
-
+- �?搭建压力测试仪表�?- �?创建损失分布�?- �?创建情景对比�?
 **Day 6-7**: 集成测试
-- ✅ 端到端测试
-- ✅ 情景验证
-- ✅ 文档编写
+- �?端到端测�?- �?情景验证
+- �?文档编写
 
 ---
 
-## 六、成功指标
-
-| 指标 | 目标值 | 说明 |
+## 六、成功指�?
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **情景覆盖率** | ≥20个 | 历史情景+假设情景 |
-| **压力测试频率** | 每周1次 | 定期压力测试 |
-| **最大损失估算准确率** | ≥80% | 与实际损失对比 |
-| **脆弱点识别准确率** | ≥85% | 真实脆弱点识别 |
-| **缓解措施有效性** | ≥70% | 措施实施后风险降低 |
-| **报告生成时间** | ≤5分钟 | 自动生成报告 |
+| **情景覆盖�?* | �?0�?| 历史情景+假设情景 |
+| **压力测试频率** | 每周1�?| 定期压力测试 |
+| **最大损失估算准确率** | �?0% | 与实际损失对�?|
+| **脆弱点识别准确率** | �?5% | 真实脆弱点识�?|
+| **缓解措施有效�?* | �?0% | 措施实施后风险降�?|
+| **报告生成时间** | �?分钟 | 自动生成报告 |
 
 ---
 
-## 七、相关文档索引
-
-| 文档 | 说明 | 相关性 |
+## 七、相关文档索�?
+| 文档 | 说明 | 相关�?|
 |------|------|--------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-8主架构 | ⭐⭐⭐⭐⭐ |
-| [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架构 | ⭐⭐⭐⭐⭐ |
-| [REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控 | ⭐⭐⭐⭐⭐ |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-8主架�?| ⭐⭐⭐⭐�?|
+| [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架�?| ⭐⭐⭐⭐�?|
+| [REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控 | ⭐⭐⭐⭐�?|
 | [DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控 | ⭐⭐⭐⭐ |
 | [COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 合规监控 | ⭐⭐⭐⭐ |
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-03 | **状态**: ✅ 活跃
+**版本**: v1.0 | **更新**: 2026-04-03 | **状�?*: �?活跃

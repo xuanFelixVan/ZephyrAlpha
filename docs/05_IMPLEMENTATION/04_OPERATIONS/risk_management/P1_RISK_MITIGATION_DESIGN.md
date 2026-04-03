@@ -1,11 +1,11 @@
 ---
-document_type: P1级风险缓解方案设计
+document_type: P1级风险缓解方案设�?
 version: 1.0.0
 created_date: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构风险管理
 compliance_level: 专业标准
-status: 待实施
+status: 待实�?
 applicable_scope: 系统实施
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -13,43 +13,43 @@ module_id: IMP_P1_RISK_MITIGATION_D
 last_updated: 2026-04-02
 ---
 
-# P1级风险缓解方案设计文档
+# P1级风险缓解方案设计文�?
 
 > **创建日期**: 2026-04-02
-> **风险等级**: P1 (高)
-> **风险数量**: 18个
-> **处理原则**: 开发前设计方案，开发阶段实施
+> **风险等级**: P1 (�?
+> **风险数量**: 18�?
+> **处理原则**: 开发前设计方案，开发阶段实�?
 
 ---
 
-## 1. P1级风险清单
+## 1. P1级风险清�?
 
-### 1.1 外部API依赖风险（12个）
+### 1.1 外部API依赖风险�?2个）
 
 | 风险ID | 风险描述 | 涉及模块 | 影响范围 |
 |--------|----------|----------|----------|
 | **R-LLM-001** | GLM-4-Flash API调用失败 | DailyReporter, MonthlyReporter, MarketAnalyzer | AI报告生成失败 |
 | **R-LLM-002** | GLM-4-Flash API超时 | DailyReporter, MonthlyReporter, MarketAnalyzer | 报告生成延迟 |
 | **R-LLM-003** | GLM-4-Flash API成本超支 | 所有LLM集成模块 | 成本控制失效 |
-| **R-QMT-001** | QMT客户端连接失败 | QMTDataInterface, QMTExecutor | 数据获取失败、交易执行失败 |
-| **R-QMT-002** | QMT API响应超时 | QMTDataInterface, QMTExecutor | 数据延迟、交易延迟 |
+| **R-QMT-001** | QMT客户端连接失�?| QMTDataInterface, QMTExecutor | 数据获取失败、交易执行失�?|
+| **R-QMT-002** | QMT API响应超时 | QMTDataInterface, QMTExecutor | 数据延迟、交易延�?|
 | **R-IFIND-001** | iFind数据源不可用 | iFindConnector | 因子数据缺失 |
 | **R-IFIND-002** | iFind API限流 | iFindConnector | 数据获取受限 |
-| **R-NEWS-001** | 新闻爬虫被封禁 | NewsCrawler | 舆情数据缺失 |
-| **R-NEWS-002** | 新闻API不可用 | NewsCrawler | 舆情数据缺失 |
-| **R-DINGTALK-001** | 钉钉API不可用 | NotificationSystem | 通知发送失败 |
-| **R-WECHAT-001** | 企业微信API不可用 | NotificationSystem | 通知发送失败 |
-| **R-SMS-001** | 短信API不可用 | NotificationSystem | 通知发送失败 |
+| **R-NEWS-001** | 新闻爬虫被封�?| NewsCrawler | 舆情数据缺失 |
+| **R-NEWS-002** | 新闻API不可�?| NewsCrawler | 舆情数据缺失 |
+| **R-DINGTALK-001** | 钉钉API不可�?| NotificationSystem | 通知发送失�?|
+| **R-WECHAT-001** | 企业微信API不可�?| NotificationSystem | 通知发送失�?|
+| **R-SMS-001** | 短信API不可�?| NotificationSystem | 通知发送失�?|
 
-### 1.2 数据源不可用风险（6个）
+### 1.2 数据源不可用风险�?个）
 
 | 风险ID | 风险描述 | 涉及模块 | 影响范围 |
 |--------|----------|----------|----------|
 | **R-DATA-001** | 上游数据源不可用 | 所有Layer 0模块 | 数据获取失败 |
-| **R-DATA-002** | 数据库连接失败 | DataStorage, PositionManager | 数据持久化失败 |
-| **R-DATA-003** | 缓存服务不可用 | 所有缓存模块 | 性能下降 |
+| **R-DATA-002** | 数据库连接失�?| DataStorage, PositionManager | 数据持久化失�?|
+| **R-DATA-003** | 缓存服务不可�?| 所有缓存模�?| 性能下降 |
 | **R-DATA-004** | 数据质量异常 | DataValidator, DataCleaner | 数据错误 |
-| **R-DATA-005** | 数据延迟过高 | 所有实时数据模块 | 实时性下降 |
+| **R-DATA-005** | 数据延迟过高 | 所有实时数据模�?| 实时性下�?|
 | **R-DATA-006** | 数据存储空间不足 | DataStorage, TradeAuditor | 数据保存失败 |
 
 ---
@@ -60,7 +60,7 @@ last_updated: 2026-04-02
 
 #### 方案概述
 
-**核心策略**: 降级方案 + 重试机制 + 成本控制 + 多模型备份
+**核心策略**: 降级方案 + 重试机制 + 成本控制 + 多模型备�?
 
 #### 2.1.1 降级方案设计
 
@@ -90,7 +90,7 @@ class LLMFallbackStrategy:
         降级顺序:
         1. 主LLM (GLM-4-Flash)
         2. 备用LLM (GPT-3.5-Turbo)
-        3. 模板降级 (预定义模板)
+        3. 模板降级 (预定义模�?
         4. 缓存降级 (历史缓存)
         """
         for strategy in self.strategies:
@@ -102,7 +102,7 @@ class LLMFallbackStrategy:
                 logger.warning(f"策略失败: {strategy.__name__}, 错误: {e}")
                 continue
         
-        raise LLMFallbackError("所有降级策略失败")
+        raise LLMFallbackError("所有降级策略失�?)
     
     async def _primary_llm(self, prompt: str, context: Dict) -> str:
         """主LLM: GLM-4-Flash"""
@@ -113,7 +113,7 @@ class LLMFallbackStrategy:
         return await self._call_gpt35_turbo(prompt, context)
     
     async def _template_fallback(self, prompt: str, context: Dict) -> str:
-        """模板降级: 使用预定义模板"""
+        """模板降级: 使用预定义模�?""
         template = self._get_template(context['report_type'])
         return template.render(context)
     
@@ -153,9 +153,9 @@ class RetryStrategy:
         """带重试的执行
         
         重试策略:
-        - 最多重试3次
-        - 指数退避: 1s, 2s, 4s
-        - 最大延迟30秒
+        - 最多重�?�?
+        - 指数退�? 1s, 2s, 4s
+        - 最大延�?0�?
         """
         last_exception = None
         
@@ -181,15 +181,15 @@ class RetryStrategy:
 
 ```python
 class CostController:
-    """成本控制器
+    """成本控制�?
     
     索引: RISK.LLM.COST.001
     """
     
     def __init__(
         self,
-        daily_budget: float = 100.0,  # 日预算100元
-        monthly_budget: float = 2000.0,  # 月预算2000元
+        daily_budget: float = 100.0,  # 日预�?00�?
+        monthly_budget: float = 2000.0,  # 月预�?000�?
         alert_threshold: float = 0.8  # 80%告警
     ):
         self.daily_budget = daily_budget
@@ -199,17 +199,17 @@ class CostController:
         self.monthly_cost = 0.0
         
     async def check_budget(self, estimated_cost: float) -> bool:
-        """检查预算
+        """检查预�?
         
         返回:
             bool: 是否在预算范围内
         """
         if self.daily_cost + estimated_cost > self.daily_budget:
-            logger.error(f"日预算超支: 当前{self.daily_cost}, 预算{self.daily_budget}")
+            logger.error(f"日预算超�? 当前{self.daily_cost}, 预算{self.daily_budget}")
             return False
             
         if self.monthly_cost + estimated_cost > self.monthly_budget:
-            logger.error(f"月预算超支: 当前{self.monthly_cost}, 预算{self.monthly_budget}")
+            logger.error(f"月预算超�? 当前{self.monthly_cost}, 预算{self.monthly_budget}")
             return False
             
         return True
@@ -219,18 +219,18 @@ class CostController:
         self.daily_cost += actual_cost
         self.monthly_cost += actual_cost
         
-        # 检查告警阈值
+        # 检查告警阈�?
         if self.daily_cost > self.daily_budget * self.alert_threshold:
-            await self._send_alert("日预算即将超支")
+            await self._send_alert("日预算即将超�?)
         if self.monthly_cost > self.monthly_budget * self.alert_threshold:
-            await self._send_alert("月预算即将超支")
+            await self._send_alert("月预算即将超�?)
 ```
 
 #### 2.1.4 Token优化设计
 
 ```python
 class TokenOptimizer:
-    """Token优化器
+    """Token优化�?
     
     索引: RISK.LLM.TOKEN.001
     """
@@ -253,7 +253,7 @@ class TokenOptimizer:
         if 'data' in context:
             context['data'] = self._compress_data(context['data'])
         
-        # 限制数据量
+        # 限制数据�?
         if len(str(context)) > self.max_tokens:
             context = self._truncate_context(context, self.max_tokens)
         
@@ -272,13 +272,13 @@ class TokenOptimizer:
 
 #### 方案概述
 
-**核心策略**: 连接池 + 心跳检测 + 自动重连 + 降级方案
+**核心策略**: 连接�?+ 心跳检�?+ 自动重连 + 降级方案
 
-#### 2.2.1 连接池管理
+#### 2.2.1 连接池管�?
 
 ```python
 class QMTConnectionPool:
-    """QMT连接池
+    """QMT连接�?
     
     索引: RISK.QMT.POOL.001
     """
@@ -303,12 +303,12 @@ class QMTConnectionPool:
             if await self._check_connection(conn):
                 return conn
         
-        # 创建新连接
+        # 创建新连�?
         conn = await self._create_connection()
         return conn
     
     async def _check_connection(self, conn: QMTConnection) -> bool:
-        """检查连接有效性"""
+        """检查连接有效�?""
         try:
             await conn.ping()
             return True
@@ -316,7 +316,7 @@ class QMTConnectionPool:
             return False
     
     async def _create_connection(self) -> QMTConnection:
-        """创建新连接"""
+        """创建新连�?""
         conn = QMTConnection()
         await conn.connect()
         self._start_heartbeat(conn)
@@ -408,21 +408,21 @@ class QMTFallbackStrategy:
 
 #### 方案概述
 
-**核心策略**: 数据缓存 + 多源备份 + 健康检查 + 降级方案
+**核心策略**: 数据缓存 + 多源备份 + 健康检�?+ 降级方案
 
 #### 2.3.1 数据缓存机制
 
 ```python
 class DataCacheManager:
-    """数据缓存管理器
+    """数据缓存管理�?
     
     索引: RISK.DATA.CACHE.001
     """
     
     def __init__(
         self,
-        cache_ttl: int = 600,  # 缓存有效期10分钟
-        max_cache_size: int = 1000  # 最大缓存数量
+        cache_ttl: int = 600,  # 缓存有效�?0分钟
+        max_cache_size: int = 1000  # 最大缓存数�?
     ):
         self.cache_ttl = cache_ttl
         self.max_cache_size = max_cache_size
@@ -436,14 +436,14 @@ class DataCacheManager:
         *args,
         **kwargs
     ) -> Any:
-        """获取或拉取数据"""
-        # 检查缓存
+        """获取或拉取数�?""
+        # 检查缓�?
         if key in self.cache:
             timestamp = self.timestamps[key]
             if time.time() - timestamp < self.cache_ttl:
                 return self.cache[key]
         
-        # 拉取新数据
+        # 拉取新数�?
         data = await fetch_func(*args, **kwargs)
         
         # 更新缓存
@@ -460,7 +460,7 @@ class DataCacheManager:
 
 ```python
 class MultiSourceDataManager:
-    """多源数据管理器
+    """多源数据管理�?
     
     索引: RISK.DATA.MULTI.001
     """
@@ -490,10 +490,10 @@ class MultiSourceDataManager:
                     logger.warning(f"数据源{source}失败: {e}")
                     continue
         
-        raise DataSourceError("所有数据源不可用")
+        raise DataSourceError("所有数据源不可�?)
 ```
 
-#### 2.3.3 健康检查机制
+#### 2.3.3 健康检查机�?
 
 ```python
 class HealthChecker:
@@ -504,15 +504,15 @@ class HealthChecker:
     
     def __init__(
         self,
-        check_interval: int = 60,  # 检查间隔60秒
-        timeout: int = 10  # 超时时间10秒
+        check_interval: int = 60,  # 检查间�?0�?
+        timeout: int = 10  # 超时时间10�?
     ):
         self.check_interval = check_interval
         self.timeout = timeout
         self.health_status = {}
         
     async def check_all_sources(self) -> Dict[str, bool]:
-        """检查所有数据源健康状态"""
+        """检查所有数据源健康状�?""
         tasks = []
         for source in self._get_all_sources():
             tasks.append(self._check_source(source))
@@ -539,37 +539,37 @@ class HealthChecker:
 
 ### 3.1 开发前准备（必须完成）
 
-| 任务 | 工时 | 负责人 | 完成标准 |
+| 任务 | 工时 | 负责�?| 完成标准 |
 |------|------|--------|----------|
-| **LLM降级方案设计** | 4小时 | 架构师 | 设计文档完成 |
-| **QMT连接池设计** | 3小时 | 架构师 | 设计文档完成 |
-| **数据缓存机制设计** | 3小时 | 架构师 | 设计文档完成 |
-| **监控告警方案设计** | 2小时 | 架构师 | 设计文档完成 |
+| **LLM降级方案设计** | 4小时 | 架构�?| 设计文档完成 |
+| **QMT连接池设�?* | 3小时 | 架构�?| 设计文档完成 |
+| **数据缓存机制设计** | 3小时 | 架构�?| 设计文档完成 |
+| **监控告警方案设计** | 2小时 | 架构�?| 设计文档完成 |
 
-**总计**: 12小时（1.5天）
+**总计**: 12小时�?.5天）
 
-### 3.2 开发阶段实施
+### 3.2 开发阶段实�?
 
-| 阶段 | 任务 | 工时 | 优先级 |
+| 阶段 | 任务 | 工时 | 优先�?|
 |------|------|------|--------|
 | **Phase 1** | 实现LLM降级方案 | 8小时 | P1 |
-| **Phase 1** | 实现QMT连接池 | 6小时 | P1 |
+| **Phase 1** | 实现QMT连接�?| 6小时 | P1 |
 | **Phase 1** | 实现数据缓存机制 | 6小时 | P1 |
 | **Phase 2** | 实现监控告警 | 4小时 | P1 |
-| **Phase 2** | 实现健康检查 | 4小时 | P1 |
+| **Phase 2** | 实现健康检�?| 4小时 | P1 |
 
-**总计**: 28小时（3.5天）
+**总计**: 28小时�?.5天）
 
 ### 3.3 测试验证
 
-| 测试项 | 工时 | 验收标准 |
+| 测试�?| 工时 | 验收标准 |
 |--------|------|----------|
-| **降级方案测试** | 4小时 | 所有降级路径可用 |
+| **降级方案测试** | 4小时 | 所有降级路径可�?|
 | **重连机制测试** | 2小时 | 自动重连成功率≥95% |
 | **缓存机制测试** | 2小时 | 缓存命中率≥80% |
-| **监控告警测试** | 2小时 | 告警触发准确率100% |
+| **监控告警测试** | 2小时 | 告警触发准确�?00% |
 
-**总计**: 10小时（1.25天）
+**总计**: 10小时�?.25天）
 
 ---
 
@@ -577,28 +577,28 @@ class HealthChecker:
 
 ### 4.1 LLM API风险缓解
 
-| 指标 | 目标值 | 验证方法 |
+| 指标 | 目标�?| 验证方法 |
 |------|--------|----------|
-| **降级成功率** | ≥95% | 模拟API失败测试 |
-| **重试成功率** | ≥90% | 模拟网络故障测试 |
-| **成本控制准确率** | 100% | 成本监控测试 |
-| **Token优化率** | ≥20% | Token消耗对比测试 |
+| **降级成功�?* | �?5% | 模拟API失败测试 |
+| **重试成功�?* | �?0% | 模拟网络故障测试 |
+| **成本控制准确�?* | 100% | 成本监控测试 |
+| **Token优化�?* | �?0% | Token消耗对比测�?|
 
 ### 4.2 QMT API风险缓解
 
-| 指标 | 目标值 | 验证方法 |
+| 指标 | 目标�?| 验证方法 |
 |------|--------|----------|
-| **连接成功率** | ≥98% | 连接测试 |
-| **自动重连成功率** | ≥95% | 断线重连测试 |
-| **降级成功率** | ≥90% | 模拟故障测试 |
+| **连接成功�?* | �?8% | 连接测试 |
+| **自动重连成功�?* | �?5% | 断线重连测试 |
+| **降级成功�?* | �?0% | 模拟故障测试 |
 
-### 4.3 数据源风险缓解
+### 4.3 数据源风险缓�?
 
-| 指标 | 目标值 | 验证方法 |
+| 指标 | 目标�?| 验证方法 |
 |------|--------|----------|
-| **数据获取成功率** | ≥98% | 数据获取测试 |
-| **缓存命中率** | ≥80% | 缓存测试 |
-| **健康检查准确率** | 100% | 健康检查测试 |
+| **数据获取成功�?* | �?8% | 数据获取测试 |
+| **缓存命中�?* | �?0% | 缓存测试 |
+| **健康检查准确率** | 100% | 健康检查测�?|
 
 ---
 
@@ -606,13 +606,13 @@ class HealthChecker:
 
 ### 5.1 实时监控
 
-| 监控项 | 告警阈值 | 告警级别 |
+| 监控�?| 告警阈�?| 告警级别 |
 |--------|----------|----------|
-| **LLM API成功率** | <90% | P1 |
+| **LLM API成功�?* | <90% | P1 |
 | **LLM成本超支** | >预算80% | P2 |
-| **QMT连接成功率** | <95% | P1 |
-| **数据获取成功率** | <95% | P1 |
-| **缓存命中率** | <70% | P2 |
+| **QMT连接成功�?* | <95% | P1 |
+| **数据获取成功�?* | <95% | P1 |
+| **缓存命中�?* | <70% | P2 |
 
 ### 5.2 日志记录
 
@@ -641,7 +641,7 @@ class RiskMonitorLogger:
         
         logger.warning(f"风险事件: {json.dumps(log_entry, ensure_ascii=False)}")
         
-        # 发送告警
+        # 发送告�?
         if severity in ['P0', 'P1']:
             AlertManager.send_alert(log_entry)
 ```
@@ -652,19 +652,19 @@ class RiskMonitorLogger:
 
 ### 6.1 关键要点
 
-1. ✅ **P1级风险不需要开发前全部修复**
-2. ✅ **开发前需要完成缓解方案设计**
-3. ✅ **开发阶段实施缓解方案**
-4. ✅ **建立监控告警机制**
+1. �?**P1级风险不需要开发前全部修复**
+2. �?**开发前需要完成缓解方案设�?*
+3. �?**开发阶段实施缓解方�?*
+4. �?**建立监控告警机制**
 
 ### 6.2 实施建议
 
-1. **立即行动**: 完成缓解方案设计（1.5天）
-2. **开发阶段**: 实施缓解方案（3.5天）
-3. **测试阶段**: 验证缓解效果（1.25天）
-4. **上线后**: 持续监控优化
+1. **立即行动**: 完成缓解方案设计�?.5天）
+2. **开发阶�?*: 实施缓解方案�?.5天）
+3. **测试阶段**: 验证缓解效果�?.25天）
+4. **上线�?*: 持续监控优化
 
 ---
 
-**文档状态**: ✅ 已完成
-**下一步**: 开始缓解方案设计
+**文档状�?*: �?已完�?
+**下一�?*: 开始缓解方案设�?

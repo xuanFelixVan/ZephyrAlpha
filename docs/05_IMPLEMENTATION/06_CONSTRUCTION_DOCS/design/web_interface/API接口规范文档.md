@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构师
+owner: 首席蓝图架构�?
 standard_type: 专业量化机构设计标准
 applicable_scope: Web管理界面API接口规范
 compliance_level: 初始设计
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # API接口规范文档
@@ -18,33 +18,33 @@ implementation_status: 进行中
 > **索引**: `DESIGN_005`
 > **关联文档**: 
 > - [Web管理界面架构设计](T.06.UI001.web_management_interface_architecture_design.md)
-> - [前端组件结构图](前端组件结构图.md)
+> - [前端组件结构图](前端组件结构�?md)
 > - [系统API设计规范](../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
 
 ## 1. 概述
 
 ### 1.1 文档范围
-本规范定义**Web管理界面**专用的API接口，包括：
-- **RESTful API**: 前端与后端数据交互接口
-- **WebSocket API**: 实时数据推送接口
-- **认证授权API**: 用户认证和权限管理接口
+本规范定�?*Web管理界面**专用的API接口，包括：
+- **RESTful API**: 前端与后端数据交互接�?
+- **WebSocket API**: 实时数据推送接�?
+- **认证授权API**: 用户认证和权限管理接�?
 - **文件上传/下载API**: 配置文件导入导出接口
 
 ### 1.2 设计原则
 | 原则 | 说明 | 实现要求 |
 |------|------|----------|
-| **RESTful设计** | 遵循RESTful架构风格 | 资源导向、HTTP方法语义化 |
-| **一致性** | 统一响应格式、错误处理 | 所有接口返回标准APIResponse格式 |
-| **安全性** | 认证授权、数据加密 | JWT认证、HTTPS加密、输入验证 |
+| **RESTful设计** | 遵循RESTful架构风格 | 资源导向、HTTP方法语义�?|
+| **一致�?* | 统一响应格式、错误处�?| 所有接口返回标准APIResponse格式 |
+| **安全�?* | 认证授权、数据加�?| JWT认证、HTTPS加密、输入验�?|
 | **版本控制** | API版本管理 | URL路径版本控制 (v1, v2) |
-| **文档化** | 接口文档自动生成 | OpenAPI/Swagger文档自动生成 |
+| **文档�?* | 接口文档自动生成 | OpenAPI/Swagger文档自动生成 |
 
 ### 1.3 版本信息
-| 版本 | 发布时间 | 主要特性 | 兼容性 |
+| 版本 | 发布时间 | 主要特�?| 兼容�?|
 |------|----------|----------|--------|
-| v1.0 | 2026-04-02 | 基础CRUD接口、实时推送 | 初始版本 |
-| v1.1 | 计划 | 批量操作、高级查询 | 向下兼容v1.0 |
-| v2.0 | 计划 | GraphQL支持、流式响应 | 不兼容v1.x |
+| v1.0 | 2026-04-02 | 基础CRUD接口、实时推�?| 初始版本 |
+| v1.1 | 计划 | 批量操作、高级查�?| 向下兼容v1.0 |
+| v2.0 | 计划 | GraphQL支持、流式响�?| 不兼容v1.x |
 
 ## 2. 基础规范
 
@@ -67,7 +67,7 @@ implementation_status: 进行中
 ```json
 {
   "code": 1001,
-  "message": "数据不存在",
+  "message": "数据不存�?,
   "data": null,
   "request_id": "req_abc123def456",
   "timestamp": "2026-04-02T12:00:00Z",
@@ -79,36 +79,36 @@ implementation_status: 进行中
 }
 ```
 
-### 2.2 错误码定义
+### 2.2 错误码定�?
 
-#### 2.2.1 通用错误码 (0-999)
-| 错误码 | 说明 | HTTP状态码 |
+#### 2.2.1 通用错误�?(0-999)
+| 错误�?| 说明 | HTTP状态码 |
 |--------|------|------------|
 | 0 | 成功 | 200 |
 | 1 | 参数错误 | 400 |
 | 2 | 认证失败 | 401 |
 | 3 | 权限不足 | 403 |
-| 4 | 资源不存在 | 404 |
-| 5 | 请求方法不允许 | 405 |
+| 4 | 资源不存�?| 404 |
+| 5 | 请求方法不允�?| 405 |
 | 6 | 请求超时 | 408 |
 | 7 | 系统内部错误 | 500 |
-| 8 | 服务不可用 | 503 |
+| 8 | 服务不可�?| 503 |
 
-#### 2.2.2 Web界面专用错误码 (6000-6999)
-| 错误码 | 说明 | HTTP状态码 |
+#### 2.2.2 Web界面专用错误�?(6000-6999)
+| 错误�?| 说明 | HTTP状态码 |
 |--------|------|------------|
-| 6001 | 仪表板数据获取失败 | 500 |
+| 6001 | 仪表板数据获取失�?| 500 |
 | 6002 | 交易数据查询失败 | 500 |
 | 6003 | 性能数据计算失败 | 500 |
 | 6004 | 配置保存失败 | 500 |
 | 6005 | 配置验证失败 | 400 |
-| 6006 | 系统健康检查失败 | 500 |
+| 6006 | 系统健康检查失�?| 500 |
 | 6007 | 日志查询失败 | 500 |
 | 6008 | 文件上传失败 | 500 |
 | 6009 | 文件下载失败 | 500 |
-| 6010 | 实时推送连接失败 | 500 |
+| 6010 | 实时推送连接失�?| 500 |
 
-### 2.3 认证与授权
+### 2.3 认证与授�?
 
 #### 2.3.1 JWT认证
 ```http
@@ -118,18 +118,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 #### 2.3.2 权限角色
 | 角色 | 权限说明 | API访问范围 |
 |------|----------|-------------|
-| **admin** | 管理员 | 所有API |
-| **operator** | 操作员 | 读写交易数据、只读配置 |
-| **viewer** | 观察员 | 只读所有数据 |
+| **admin** | 管理�?| 所有API |
+| **operator** | 操作�?| 读写交易数据、只读配�?|
+| **viewer** | 观察�?| 只读所有数�?|
 | **guest** | 访客 | 只读公开数据 |
 
 ### 2.4 请求限制
-| 限制类型 | 限制值 | 说明 |
+| 限制类型 | 限制�?| 说明 |
 |----------|--------|------|
-| **频率限制** | 100次/分钟 | 每个IP地址 |
-| **并发连接** | 10个 | 每个用户 |
-| **请求体大小** | 10MB | 文件上传除外 |
-| **响应时间** | 30秒超时 | 长请求需使用异步 |
+| **频率限制** | 100�?分钟 | 每个IP地址 |
+| **并发连接** | 10�?| 每个用户 |
+| **请求体大�?* | 10MB | 文件上传除外 |
+| **响应时间** | 30秒超�?| 长请求需使用异步 |
 
 ## 3. RESTful API 接口
 
@@ -176,9 +176,9 @@ GET /api/v1/auth/me
 Authorization: Bearer {token}
 ```
 
-### 3.2 仪表板接口
+### 3.2 仪表板接�?
 
-#### 3.2.1 获取仪表板概览数据
+#### 3.2.1 获取仪表板概览数�?
 ```http
 GET /api/v1/dashboard/overview
 Authorization: Bearer {token}
@@ -207,13 +207,13 @@ Authorization: Bearer {token}
         "trade_count_today": 56,
         "last_heartbeat": "2026-04-02T11:59:30Z"
       },
-      // 其他引擎状态
+      // 其他引擎状�?
     ],
     "recent_alerts": [
       {
         "id": "alert_001",
         "level": "warning",
-        "message": "引擎 vn.py 内存使用率超过80%",
+        "message": "引擎 vn.py 内存使用率超�?0%",
         "timestamp": "2026-04-02T11:45:00Z",
         "acknowledged": false
       }
@@ -222,7 +222,7 @@ Authorization: Bearer {token}
 }
 ```
 
-#### 3.2.2 获取引擎详细状态
+#### 3.2.2 获取引擎详细状�?
 ```http
 GET /api/v1/dashboard/engines/{engine_id}/status
 Authorization: Bearer {token}
@@ -242,7 +242,7 @@ Authorization: Bearer {token}
 GET /api/v1/trades
 Authorization: Bearer {token}
 Query Parameters:
-  - start_date: string (YYYY-MM-DD)   # 开始日期
+  - start_date: string (YYYY-MM-DD)   # 开始日�?
   - end_date: string (YYYY-MM-DD)     # 结束日期
   - symbol: string                    # 股票代码
   - engine_id: string                 # 引擎ID
@@ -301,7 +301,7 @@ Authorization: Bearer {token}
 ```http
 GET /api/v1/trades/export
 Authorization: Bearer {token}
-Query Parameters: (同查询接口)
+Query Parameters: (同查询接�?
 Accept: text/csv, application/json
 ```
 
@@ -313,9 +313,9 @@ GET /api/v1/performance/metrics
 Authorization: Bearer {token}
 Query Parameters:
   - time_range: string (1d, 7d, 30d, 90d, 1y)  # 时间范围
-  - engine_id: string                          # 引擎ID，可选
-  - strategy_id: string                        # 策略ID，可选
-  - metrics: string[]                          # 指标列表，可选
+  - engine_id: string                          # 引擎ID，可�?
+  - strategy_id: string                        # 策略ID，可�?
+  - metrics: string[]                          # 指标列表，可�?
 ```
 
 **响应**:
@@ -341,12 +341,12 @@ Query Parameters:
     "equity_curve": [
       {"date": "2026-03-01", "value": 1000000},
       {"date": "2026-03-02", "value": 1001250},
-      // 更多数据点
+      // 更多数据�?
     ],
     "drawdown_curve": [
       {"date": "2026-03-01", "value": 0},
       {"date": "2026-03-02", "value": -0.012},
-      // 更多数据点
+      // 更多数据�?
     ]
   }
 }
@@ -429,7 +429,7 @@ Authorization: Bearer {token}
 
 ### 3.6 系统健康接口
 
-#### 3.6.1 获取系统健康状态
+#### 3.6.1 获取系统健康状�?
 ```http
 GET /api/v1/system/health
 Authorization: Bearer {token}
@@ -444,7 +444,7 @@ Authorization: Bearer {token}
     "overall_status": "healthy",
     "components": [
       {
-        "name": "数据库",
+        "name": "数据�?,
         "status": "healthy",
         "response_time": 45,
         "last_check": "2026-04-02T12:00:00Z"
@@ -460,7 +460,7 @@ Authorization: Bearer {token}
         "status": "degraded",
         "response_time": 350,
         "last_check": "2026-04-02T12:00:00Z",
-        "details": "内存使用率85%"
+        "details": "内存使用�?5%"
       }
     ],
     "metrics": {
@@ -516,8 +516,8 @@ Content-Type: multipart/form-data
 Form Data:
   - file: File (配置文件)
   - file_type: string (engine_config, strategy_config, risk_config)
-  - engine_id: string (可选)
-  - strategy_id: string (可选)
+  - engine_id: string (可�?
+  - strategy_id: string (可�?
 ```
 
 #### 3.7.2 下载配置文件
@@ -548,14 +548,14 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 
 #### 4.1.2 连接协议
 ```json
-// 客户端发送连接请求
+// 客户端发送连接请�?
 {
   "type": "connect",
   "client_id": "web_ui_001",
   "subscriptions": ["trades", "engine_status", "alerts"]
 }
 
-// 服务端响应
+// 服务端响�?
 {
   "type": "connected",
   "server_time": "2026-04-02T12:00:00Z",
@@ -564,7 +564,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-### 4.2 实时事件推送
+### 4.2 实时事件推�?
 
 #### 4.2.1 交易执行事件
 ```json
@@ -586,7 +586,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.2 引擎状态更新事件
+#### 4.2.2 引擎状态更新事�?
 ```json
 {
   "type": "engine_status_updated",
@@ -610,7 +610,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
   "data": {
     "alert_id": "alert_002",
     "level": "warning",
-    "message": "引擎 vn.py CPU使用率超过80%",
+    "message": "引擎 vn.py CPU使用率超�?0%",
     "component": "engine_vnpy_001",
     "timestamp": "2026-04-02T12:01:00Z",
     "details": {
@@ -641,17 +641,17 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-### 4.3 客户端订阅管理
+### 4.3 客户端订阅管�?
 
 #### 4.3.1 订阅事件
 ```json
-// 客户端发送订阅请求
+// 客户端发送订阅请�?
 {
   "type": "subscribe",
   "subscriptions": ["trades", "engine_status", "alerts"]
 }
 
-// 服务端响应
+// 服务端响�?
 {
   "type": "subscription_updated",
   "data": {
@@ -663,25 +663,25 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 
 #### 4.3.2 取消订阅
 ```json
-// 客户端发送取消订阅请求
+// 客户端发送取消订阅请�?
 {
   "type": "unsubscribe",
   "subscriptions": ["alerts"]
 }
 ```
 
-### 4.4 心跳与连接保持
+### 4.4 心跳与连接保�?
 
-#### 4.4.1 客户端心跳
+#### 4.4.1 客户端心�?
 ```json
-// 客户端定期发送心跳
+// 客户端定期发送心�?
 {
   "type": "ping",
   "client_id": "web_ui_001",
   "timestamp": "2026-04-02T12:00:00Z"
 }
 
-// 服务端响应
+// 服务端响�?
 {
   "type": "pong",
   "server_time": "2026-04-02T12:00:00Z",
@@ -690,9 +690,9 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 ```
 
 #### 4.4.2 连接超时
-- 心跳间隔: 30秒
-- 连接超时: 90秒
-- 自动重连: 支持，最大重试次数5次
+- 心跳间隔: 30�?
+- 连接超时: 90�?
+- 自动重连: 支持，最大重试次�?�?
 
 ## 5. 数据模型定义
 
@@ -727,14 +727,14 @@ class TimeRange(BaseModel):
 
 ### 5.2 业务数据模型
 
-#### 5.2.1 引擎状态模型
+#### 5.2.1 引擎状态模�?
 ```python
 class EngineStatus(BaseModel):
-    """引擎状态模型"""
+    """引擎状态模�?""
     engine_id: str
     engine_type: str
     status: str  # running, stopped, error, starting, stopping
-    cpu_usage: float  # 百分比
+    cpu_usage: float  # 百分�?
     memory_usage: float  # MB
     trade_count_today: int
     error_count: int
@@ -836,18 +836,18 @@ class EngineConfig(BaseModel):
 ## 6. API测试规范
 
 ### 6.1 测试环境
-| 环境 | 地址 | 用途 |
+| 环境 | 地址 | 用�?|
 |------|------|------|
-| **开发环境** | http://localhost:8000 | 开发测试 |
+| **开发环�?* | http://localhost:8000 | 开发测�?|
 | **测试环境** | http://test.api.qingfeng.com | 集成测试 |
-| **预生产环境** | http://staging.api.qingfeng.com | 预发布测试 |
+| **预生产环�?* | http://staging.api.qingfeng.com | 预发布测�?|
 | **生产环境** | https://api.qingfeng.com | 生产环境 |
 
 ### 6.2 测试工具
-| 工具 | 用途 | 配置 |
+| 工具 | 用�?| 配置 |
 |------|------|------|
-| **pytest** | 单元测试和集成测试 | `tests/api/` |
-| **Postman** | API测试和文档 | Postman Collection |
+| **pytest** | 单元测试和集成测�?| `tests/api/` |
+| **Postman** | API测试和文�?| Postman Collection |
 | **Swagger UI** | 交互式API文档 | http://localhost:8000/docs |
 | **Locust** | 性能测试 | `locustfile.py` |
 
@@ -904,15 +904,15 @@ def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
 ```
 
 ### 6.4 性能测试标准
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|----------|
 | **API响应时间** | P95 < 200ms | 负载测试 |
-| **并发处理能力** | ≥1000 QPS | 压力测试 |
-| **WebSocket连接数** | ≥500 并发连接 | 连接测试 |
+| **并发处理能力** | �?000 QPS | 压力测试 |
+| **WebSocket连接�?* | �?00 并发连接 | 连接测试 |
 | **内存使用** | < 1GB | 内存分析 |
-| **错误率** | < 0.1% | 稳定性测试 |
+| **错误�?* | < 0.1% | 稳定性测�?|
 
-## 7. 部署与运维
+## 7. 部署与运�?
 
 ### 7.1 部署配置
 
@@ -942,17 +942,17 @@ JWT_SECRET_KEY=your-secret-key
 CORS_ORIGINS=["http://localhost:3000"]
 ```
 
-### 7.2 监控与告警
+### 7.2 监控与告�?
 
 #### 7.2.1 监控指标
-| 指标 | 采集方式 | 告警阈值 |
+| 指标 | 采集方式 | 告警阈�?|
 |------|----------|----------|
-| **API请求率** | Prometheus | < 10 QPS 或 > 1000 QPS |
-| **API错误率** | Prometheus | > 1% |
+| **API请求�?* | Prometheus | < 10 QPS �?> 1000 QPS |
+| **API错误�?* | Prometheus | > 1% |
 | **API响应时间** | Prometheus | P95 > 500ms |
-| **WebSocket连接数** | Prometheus | > 1000 |
-| **内存使用率** | cAdvisor | > 80% |
-| **CPU使用率** | cAdvisor | > 70% |
+| **WebSocket连接�?* | Prometheus | > 1000 |
+| **内存使用�?* | cAdvisor | > 80% |
+| **CPU使用�?* | cAdvisor | > 70% |
 
 #### 7.2.2 日志配置
 ```python
@@ -965,7 +965,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
-# 结构化日志
+# 结构化日�?
 logger.add("logs/api.log", 
            rotation="100 MB", 
            retention="30 days",
@@ -998,7 +998,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    """速率限制中间件"""
+    """速率限制中间�?""
     # 不同接口不同限制
     if request.url.path.startswith("/api/v1/auth"):
         await limiter.check(request, "10/minute")
@@ -1011,31 +1011,31 @@ async def rate_limit_middleware(request: Request, call_next):
     return response
 ```
 
-## 8. 版本升级与兼容性
+## 8. 版本升级与兼容�?
 
 ### 8.1 版本升级策略
-| 升级类型 | 描述 | 兼容性要求 |
+| 升级类型 | 描述 | 兼容性要�?|
 |----------|------|------------|
-| **补丁版本** (x.y.z → x.y.z+1) | Bug修复、安全更新 | 完全兼容 |
-| **次要版本** (x.y.z → x.y+1.0) | 新增功能、API扩展 | 向前兼容 |
-| **主要版本** (x.y.z → x+1.0.0) | 重大变更、API不兼容 | 需要迁移 |
+| **补丁版本** (x.y.z �?x.y.z+1) | Bug修复、安全更�?| 完全兼容 |
+| **次要版本** (x.y.z �?x.y+1.0) | 新增功能、API扩展 | 向前兼容 |
+| **主要版本** (x.y.z �?x+1.0.0) | 重大变更、API不兼�?| 需要迁�?|
 
 ### 8.2 API废弃策略
-1. **预告期**: 在文档中标记为"已废弃"，持续3个月
-2. **警告期**: 返回警告头`X-API-Deprecated: true`，持续3个月
-3. **移除期**: 完全移除废弃API，返回410状态码
+1. **预告�?*: 在文档中标记�?已废�?，持�?个月
+2. **警告�?*: 返回警告头`X-API-Deprecated: true`，持�?个月
+3. **移除�?*: 完全移除废弃API，返�?10状态码
 
-### 8.3 客户端兼容性要求
-| 客户端类型 | 最低API版本 | 升级要求 |
+### 8.3 客户端兼容性要�?
+| 客户端类�?| 最低API版本 | 升级要求 |
 |------------|-------------|----------|
-| **Web界面** | v1.0 | 自动检测API版本，支持降级 |
+| **Web界面** | v1.0 | 自动检测API版本，支持降�?|
 | **移动端App** | v1.0 | 应用商店强制更新 |
-| **第三方集成** | v1.0 | 文档通知，提供迁移指南 |
+| **第三方集�?* | v1.0 | 文档通知，提供迁移指�?|
 
 ---
 
 **文档版本**: 1.0.0  
-**最后更新**: 2026-04-02  
-**维护者**: 首席蓝图架构师  
+**最后更�?*: 2026-04-02  
+**维护�?*: 首席蓝图架构�? 
 **索引**: `DESIGN_005`  
-**状态**: ✅ 设计完成，待评审
+**状�?*: �?设计完成，待评审

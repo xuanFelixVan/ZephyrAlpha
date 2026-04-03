@@ -4,43 +4,43 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 配置管理系统
 
-> 基础设施层: 集中式配置、动态更新、版本控制
+> 基础设施�? 集中式配置、动态更新、版本控�?
 
 ---
 
 ## 1. 设计概述
 
-配置管理系统提供集中式配置存储、动态更新和版本控制功能。
+配置管理系统提供集中式配置存储、动态更新和版本控制功能�?
 
 ```
 配置管理架构
-├── 配置存储层 (Config Storage)
-│   ├── 本地文件存储
-│   ├── 远程配置中心 (etcd/consul)
-│   └── 环境变量
-├── 配置加载层 (Config Loader)
-│   ├── YAML加载器
-│   ├── JSON加载器
-│   └── 环境变量加载器
-├── 配置验证层 (Config Validator)
-│   ├── 类型验证
-│   ├── 范围验证
-│   └── 依赖验证
+├── 配置存储�?(Config Storage)
+�?  ├── 本地文件存储
+�?  ├── 远程配置中心 (etcd/consul)
+�?  └── 环境变量
+├── 配置加载�?(Config Loader)
+�?  ├── YAML加载�?
+�?  ├── JSON加载�?
+�?  └── 环境变量加载�?
+├── 配置验证�?(Config Validator)
+�?  ├── 类型验证
+�?  ├── 范围验证
+�?  └── 依赖验证
 ├── 动态更新层 (Config Updater)
-│   ├── 热更新机制
-│   ├── 变更通知
-│   └── 回滚机制
-└── 版本控制层 (Config Versioning)
+�?  ├── 热更新机�?
+�?  ├── 变更通知
+�?  └── 回滚机制
+└── 版本控制�?(Config Versioning)
     ├── 配置变更历史
     ├── 配置快照
     └── 配置回滚
@@ -63,7 +63,7 @@ import os
 
 
 class ConfigScope(Enum):
-    """配置作用域"""
+    """配置作用�?""
     SYSTEM = "system"
     MODULE = "module"
     STRATEGY = "strategy"
@@ -72,7 +72,7 @@ class ConfigScope(Enum):
 
 @dataclass
 class ConfigItem:
-    """配置项"""
+    """配置�?""
     key: str
     value: Any
     scope: ConfigScope
@@ -99,7 +99,7 @@ class ConfigChange:
 
 
 class ConfigManager:
-    """配置管理器"""
+    """配置管理�?""
 
     def __init__(self, config_dir: str = "./config"):
         self.config_dir = config_dir
@@ -110,7 +110,7 @@ class ConfigManager:
         self._load_all_configs()
 
     def _load_all_configs(self):
-        """加载所有配置文件"""
+        """加载所有配置文�?""
         system_config_path = os.path.join(self.config_dir, "system.yaml")
 
         if os.path.exists(system_config_path):
@@ -125,7 +125,7 @@ class ConfigManager:
                 self._load_from_dict(data, ConfigScope.SYSTEM)
 
     def _load_from_dict(self, data: Dict, scope: ConfigScope):
-        """从字典加载配置"""
+        """从字典加载配�?""
         for key, value in data.items():
             if isinstance(value, dict):
                 self._load_from_dict(value, scope)
@@ -137,7 +137,7 @@ class ConfigManager:
                 )
 
     def get(self, key: str, default: Any = None) -> Any:
-        """获取配置值"""
+        """获取配置�?""
         item = self.configs.get(key)
 
         if item:
@@ -153,7 +153,7 @@ class ConfigManager:
         reason: str = "",
         notify: bool = True
     ) -> bool:
-        """设置配置值"""
+        """设置配置�?""
         old_item = self.configs.get(key)
         old_value = old_item.value if old_item else None
 
@@ -201,7 +201,7 @@ class ConfigManager:
                 print(f"Callback error: {e}")
 
     def validate(self, key: str, value: Any) -> tuple:
-        """验证配置值"""
+        """验证配置�?""
         item = self.configs.get(key)
 
         if not item:
@@ -221,7 +221,7 @@ class ConfigManager:
         return True, ""
 
     def get_all(self, scope: ConfigScope = None) -> Dict[str, Any]:
-        """获取所有配置"""
+        """获取所有配�?""
         if scope:
             return {
                 k: v.value
@@ -232,7 +232,7 @@ class ConfigManager:
         return {k: v.value for k, v in self.configs.items()}
 
     def export(self, path: str):
-        """导出配置到文件"""
+        """导出配置到文�?""
         data = self.get_all()
 
         with open(path, "w", encoding="utf-8") as f:
@@ -276,7 +276,7 @@ class ConfigManager:
 
 ---
 
-## 3. 预定义配置模板
+## 3. 预定义配置模�?
 
 ```python
 class ConfigTemplates:
@@ -323,7 +323,7 @@ class ConfigTemplates:
 
     @staticmethod
     def get_data_source_config() -> Dict:
-        """数据源配置模板"""
+        """数据源配置模�?""
         return {
             "akshare": {
                 "enabled": True,
@@ -372,7 +372,7 @@ def example_config_manager():
 
 **版本**: 1.0
 **更新**: 2026-03-28
-**Layer**: 基础设施层 (横切关注点)
-**索引**: BLUEPRINTS.md → 基础设施蓝图
+**Layer**: 基础设施�?(横切关注�?
+**索引**: BLUEPRINTS.md �?基础设施蓝图
 **上游接口**: 系统启动
-**下游接口**: 所有模块 (M01-M15)
+**下游接口**: 所有模�?(M01-M15)

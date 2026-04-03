@@ -6,42 +6,42 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 7 AI报告层 | 业务架构: 三级时间框架融合架构
+applicable_scope: Layer 7 AI报告�?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # PerformanceAnalyzer绩效分析器模块技术规格书
 
-> 清风量化系统 v5.2 - PerformanceAnalyzer绩效分析器模块详细技术设计
+> 清风量化系统 v5.2 - PerformanceAnalyzer绩效分析器模块详细技术设�?
 > **模块ID**: `PERFORMANCE_ANALYZER_001`
 > **版本**: v1.0.0
-> **状态**: ✅ 正式
+> **状�?*: �?正式
 
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目标
-- **业务需求**: 系统需要统一的绩效分析器进行策略绩效计算和分析
-- **技术痛点**: 
-  - 绩效指标多样：需要计算多种绩效指标（收益、风险、风险调整收益等）
-  - 归因分析复杂：需要进行收益归因、风险归因、因子归因
-  - 可视化要求高：需要生成专业的可视化报告
+### 1.1 设计背景与业务目�?
+- **业务需�?*: 系统需要统一的绩效分析器进行策略绩效计算和分�?
+- **技术痛�?*: 
+  - 绩效指标多样：需要计算多种绩效指标（收益、风险、风险调整收益等�?
+  - 归因分析复杂：需要进行收益归因、风险归因、因子归�?
+  - 可视化要求高：需要生成专业的可视化报�?
   - 基准比较：需要与基准进行对比分析
-- **预期价值**: 
-  - 建立统一的绩效分析机制
-  - 提供多维度绩效指标
+- **预期价�?*: 
+  - 建立统一的绩效分析机�?
+  - 提供多维度绩效指�?
   - 实现归因分析能力
-  - 支持可视化报告生成
+  - 支持可视化报告生�?
 
-### 1.2 技术定位与架构层归属
-- **Layer定位**: Layer 7 - AI报告层 (符合ARCHITECTURE.md定义)
+### 1.2 技术定位与架构层归�?
+- **Layer定位**: Layer 7 - AI报告�?(符合ARCHITECTURE.md定义)
 - **模块类别**: 核心绩效分析模块
 - **架构角色**: Layer 7绩效分析核心，负责策略绩效计算和分析
 
 ### 1.3 版本信息
-| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+| 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -49,69 +49,69 @@ implementation_status: 进行中
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构图
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Layer 7: AI报告层                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │        PerformanceAnalyzer (绩效分析器主模块)          │  │
-│  │  - 绩效指标计算                                        │  │
-│  │  - 风险指标分析                                        │  │
-│  │  - 归因分析                                            │  │
-│  │  - 报告生成                                            │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          核心组件                                      │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ReturnMetric │ │RiskMetrics  │ │RiskAdjMetric│  │  │
-│  │  │收益指标计算  │  │风险指标计算 │  │风险调整指标 │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │Attribution  │ │ReportGener  │ │Visualizer   │  │  │
-│  │  │归因分析器    │  │报告生成器   │  │可视化生成器 │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          绩效指标库                                    │  │
-│  │  - 总收益 (total_return)                              │  │
-│  │  - 年化收益 (annualized_return)                       │  │
-│  │  - 夏普比率 (sharpe_ratio)                            │  │
-│  │  - 最大回撤 (max_drawdown)                            │  │
-│  │  - Sortino比率 (sortino_ratio)                        │  │
-│  │  - Calmar比率 (calmar_ratio)                          │  │
-│  │  - 胜率 (win_rate)                                    │  │
-│  │  - 盈亏比 (profit_loss_ratio)                         │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   Layer 7: AI报告�?                        �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?       PerformanceAnalyzer (绩效分析器主模块)          �? �?
+�? �? - 绩效指标计算                                        �? �?
+�? �? - 风险指标分析                                        �? �?
+�? �? - 归因分析                                            �? �?
+�? �? - 报告生成                                            �? �?
+�? └──────────────────────────────────────────────────────�? �?
+�?                          �?                                 �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         核心组件                                      �? �?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?
+�? �? │ReturnMetric �?│RiskMetrics  �?│RiskAdjMetric�? �? �?
+�? �? │收益指标计�? �? │风险指标计�?�? │风险调整指�?�? �? �?
+�? �? └─────────────�? └─────────────�? └─────────────�? �? �?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?
+�? �? │Attribution  �?│ReportGener  �?│Visualizer   �? �? �?
+�? �? │归因分析器    �? │报告生成器   �? │可视化生成�?�? �? �?
+�? �? └─────────────�? └─────────────�? └─────────────�? �? �?
+�? └──────────────────────────────────────────────────────�? �?
+�?                          �?                                 �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         绩效指标�?                                   �? �?
+�? �? - 总收�?(total_return)                              �? �?
+�? �? - 年化收益 (annualized_return)                       �? �?
+�? �? - 夏普比率 (sharpe_ratio)                            �? �?
+�? �? - 最大回�?(max_drawdown)                            �? �?
+�? �? - Sortino比率 (sortino_ratio)                        �? �?
+�? �? - Calmar比率 (calmar_ratio)                          �? �?
+�? �? - 胜率 (win_rate)                                    �? �?
+�? �? - 盈亏�?(profit_loss_ratio)                         �? �?
+�? └──────────────────────────────────────────────────────�? �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 Layer定位详细说明
-- **Layer归属**: Layer 7 - AI报告层
-- **职责范围**: 绩效指标计算、风险指标分析、归因分析、报告生成
-- **上下层接口**: 
+- **Layer归属**: Layer 7 - AI报告�?
+- **职责范围**: 绩效指标计算、风险指标分析、归因分析、报告生�?
+- **上下层接�?*: 
   - 上层依赖: Layer 6 PortfolioOptimizer (提供组合优化结果)
-  - 下层依赖: Layer 8 人机交互层 (接收绩效报告)
+  - 下层依赖: Layer 8 人机交互�?(接收绩效报告)
 
-### 2.3 模块职责与边界定义
-- **核心职责**: 绩效指标计算、风险指标分析、归因分析、报告生成
+### 2.3 模块职责与边界定�?
+- **核心职责**: 绩效指标计算、风险指标分析、归因分析、报告生�?
 - **职责边界**: 
-  - ✅ 本模块负责: 绩效指标计算、风险指标分析、归因分析、报告生成
-  - ❌ 本模块不负责: 组合优化、风险模型、交易执行、数据获取
+  - �?本模块负�? 绩效指标计算、风险指标分析、归因分析、报告生�?
+  - �?本模块不负责: 组合优化、风险模型、交易执行、数据获�?
 - **接口契约**: 提供统一的Python API接口
 
 ### 2.4 依赖关系
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| empyrical | 强依赖 | Python库 | >=0.5.5 | 绩效指标计算 |
-| numpy | 强依赖 | Python库 | >=1.24.0 | 数值计算 |
-| pandas | 强依赖 | Python库 | >=2.0.0 | 数据处理 |
-| scipy | 强依赖 | Python库 | >=1.10.0 | 统计计算 |
-| matplotlib | 强依赖 | Python库 | >=3.7.0 | 可视化 |
+| empyrical | 强依�?| Python�?| >=0.5.5 | 绩效指标计算 |
+| numpy | 强依�?| Python�?| >=1.24.0 | 数值计�?|
+| pandas | 强依�?| Python�?| >=2.0.0 | 数据处理 |
+| scipy | 强依�?| Python�?| >=1.10.0 | 统计计算 |
+| matplotlib | 强依�?| Python�?| >=3.7.0 | 可视�?|
 
 ---
 
@@ -177,7 +177,7 @@ class AttributionResult:
 
 
 class ReturnMetricsCalculator:
-    """收益指标计算器"""
+    """收益指标计算�?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -186,10 +186,10 @@ class ReturnMetricsCalculator:
         self,
         returns: pd.Series
     ) -> float:
-        """计算总收益
+        """计算总收�?
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             
         返回:
             总收益率
@@ -204,11 +204,11 @@ class ReturnMetricsCalculator:
         """计算年化收益
         
         参数:
-            returns: 收益率序列
-            periods_per_year: 年化周期数
+            returns: 收益率序�?
+            periods_per_year: 年化周期�?
             
         返回:
-            年化收益率
+            年化收益�?
         """
         total_return = self.calculate_total_return(returns)
         n_periods = len(returns)
@@ -225,10 +225,10 @@ class ReturnMetricsCalculator:
         """计算累计收益
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             
         返回:
-            累计收益率序列
+            累计收益率序�?
         """
         return (1 + returns).cumprod() - 1
     
@@ -236,10 +236,10 @@ class ReturnMetricsCalculator:
         self,
         returns: pd.Series
     ) -> Dict[str, PerformanceMetric]:
-        """计算所有收益指标
+        """计算所有收益指�?
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             
         返回:
             收益指标字典
@@ -257,21 +257,21 @@ class ReturnMetricsCalculator:
             metric_name='annualized_return',
             metric_value=self.calculate_annualized_return(returns),
             metric_category=MetricCategory.RETURN,
-            description='年化收益率'
+            description='年化收益�?
         )
         
         metrics['daily_return_mean'] = PerformanceMetric(
             metric_name='daily_return_mean',
             metric_value=returns.mean(),
             metric_category=MetricCategory.RETURN,
-            description='日均收益率'
+            description='日均收益�?
         )
         
         return metrics
 
 
 class RiskMetricsCalculator:
-    """风险指标计算器"""
+    """风险指标计算�?""
     
     def __init__(self, risk_free_rate: float = 0.02):
         self.risk_free_rate = risk_free_rate
@@ -282,14 +282,14 @@ class RiskMetricsCalculator:
         returns: pd.Series,
         periods_per_year: int = 252
     ) -> float:
-        """计算年化波动率
+        """计算年化波动�?
         
         参数:
-            returns: 收益率序列
-            periods_per_year: 年化周期数
+            returns: 收益率序�?
+            periods_per_year: 年化周期�?
             
         返回:
-            年化波动率
+            年化波动�?
         """
         return returns.std() * np.sqrt(periods_per_year)
     
@@ -297,13 +297,13 @@ class RiskMetricsCalculator:
         self,
         returns: pd.Series
     ) -> float:
-        """计算最大回撤
+        """计算最大回�?
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             
         返回:
-            最大回撤
+            最大回�?
         """
         cumulative = (1 + returns).cumprod()
         running_max = cumulative.cummax()
@@ -318,8 +318,8 @@ class RiskMetricsCalculator:
         """计算下行偏差
         
         参数:
-            returns: 收益率序列
-            mar: 最低可接受收益率
+            returns: 收益率序�?
+            mar: 最低可接受收益�?
             
         返回:
             下行偏差
@@ -337,11 +337,11 @@ class RiskMetricsCalculator:
         """计算VaR
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             confidence: 置信水平
             
         返回:
-            VaR值
+            VaR�?
         """
         return np.percentile(returns, (1 - confidence) * 100)
     
@@ -353,11 +353,11 @@ class RiskMetricsCalculator:
         """计算CVaR
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             confidence: 置信水平
             
         返回:
-            CVaR值
+            CVaR�?
         """
         var = self.calculate_var(returns, confidence)
         return returns[returns <= var].mean()
@@ -366,10 +366,10 @@ class RiskMetricsCalculator:
         self,
         returns: pd.Series
     ) -> Dict[str, PerformanceMetric]:
-        """计算所有风险指标
+        """计算所有风险指�?
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             
         返回:
             风险指标字典
@@ -380,14 +380,14 @@ class RiskMetricsCalculator:
             metric_name='volatility',
             metric_value=self.calculate_volatility(returns),
             metric_category=MetricCategory.RISK,
-            description='年化波动率'
+            description='年化波动�?
         )
         
         metrics['max_drawdown'] = PerformanceMetric(
             metric_name='max_drawdown',
             metric_value=self.calculate_max_drawdown(returns),
             metric_category=MetricCategory.RISK,
-            description='最大回撤'
+            description='最大回�?
         )
         
         metrics['downside_deviation'] = PerformanceMetric(
@@ -415,7 +415,7 @@ class RiskMetricsCalculator:
 
 
 class RiskAdjustedMetricsCalculator:
-    """风险调整收益指标计算器"""
+    """风险调整收益指标计算�?""
     
     def __init__(self, risk_free_rate: float = 0.02):
         self.risk_free_rate = risk_free_rate
@@ -429,8 +429,8 @@ class RiskAdjustedMetricsCalculator:
         """计算夏普比率
         
         参数:
-            returns: 收益率序列
-            periods_per_year: 年化周期数
+            returns: 收益率序�?
+            periods_per_year: 年化周期�?
             
         返回:
             夏普比率
@@ -448,8 +448,8 @@ class RiskAdjustedMetricsCalculator:
         """计算Sortino比率
         
         参数:
-            returns: 收益率序列
-            periods_per_year: 年化周期数
+            returns: 收益率序�?
+            periods_per_year: 年化周期�?
             
         返回:
             Sortino比率
@@ -475,8 +475,8 @@ class RiskAdjustedMetricsCalculator:
         """计算Calmar比率
         
         参数:
-            returns: 收益率序列
-            periods_per_year: 年化周期数
+            returns: 收益率序�?
+            periods_per_year: 年化周期�?
             
         返回:
             Calmar比率
@@ -493,10 +493,10 @@ class RiskAdjustedMetricsCalculator:
         self,
         returns: pd.Series
     ) -> Dict[str, PerformanceMetric]:
-        """计算所有风险调整收益指标
+        """计算所有风险调整收益指�?
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             
         返回:
             风险调整收益指标字典
@@ -528,7 +528,7 @@ class RiskAdjustedMetricsCalculator:
 
 
 class AttributionAnalyzer:
-    """归因分析器"""
+    """归因分析�?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -543,8 +543,8 @@ class AttributionAnalyzer:
         """计算Brinson归因
         
         参数:
-            portfolio_returns: 组合收益率
-            benchmark_returns: 基准收益率
+            portfolio_returns: 组合收益�?
+            benchmark_returns: 基准收益�?
             portfolio_weights: 组合权重
             benchmark_weights: 基准权重
             
@@ -576,8 +576,8 @@ class AttributionAnalyzer:
         """计算因子归因
         
         参数:
-            portfolio_returns: 组合收益率
-            factor_returns: 因子收益率
+            portfolio_returns: 组合收益�?
+            factor_returns: 因子收益�?
             
         返回:
             因子归因结果
@@ -598,7 +598,7 @@ class AttributionAnalyzer:
 
 
 class ReportGenerator:
-    """报告生成器"""
+    """报告生成�?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -614,7 +614,7 @@ class ReportGenerator:
         
         参数:
             strategy_name: 策略名称
-            returns: 收益率序列
+            returns: 收益率序�?
             metrics: 绩效指标
             attribution: 归因分析结果
             
@@ -646,7 +646,7 @@ class ReportGenerator:
         """生成图表
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             metrics: 绩效指标
             
         返回:
@@ -656,10 +656,10 @@ class ReportGenerator:
         
         fig, ax = plt.subplots(figsize=(12, 6))
         cumulative = (1 + returns).cumprod()
-        ax.plot(cumulative.index, cumulative.values, label='策略净值')
-        ax.set_title('累计净值曲线')
+        ax.plot(cumulative.index, cumulative.values, label='策略净�?)
+        ax.set_title('累计净值曲�?)
         ax.set_xlabel('日期')
-        ax.set_ylabel('净值')
+        ax.set_ylabel('净�?)
         ax.legend()
         ax.grid(True)
         
@@ -691,9 +691,9 @@ class ReportGenerator:
             "",
             "## 核心指标",
             f"- 总收益率: {metrics['total_return'].metric_value:.2%}",
-            f"- 年化收益率: {metrics['annualized_return'].metric_value:.2%}",
+            f"- 年化收益�? {metrics['annualized_return'].metric_value:.2%}",
             f"- 夏普比率: {metrics['sharpe_ratio'].metric_value:.2f}",
-            f"- 最大回撤: {metrics['max_drawdown'].metric_value:.2%}",
+            f"- 最大回�? {metrics['max_drawdown'].metric_value:.2%}",
             ""
         ]
         
@@ -710,7 +710,7 @@ class ReportGenerator:
 
 
 class PerformanceAnalyzer:
-    """绩效分析器主类"""
+    """绩效分析器主�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -736,8 +736,8 @@ class PerformanceAnalyzer:
         """分析绩效
         
         参数:
-            returns: 收益率序列
-            benchmark_returns: 基准收益率序列
+            returns: 收益率序�?
+            benchmark_returns: 基准收益率序�?
             strategy_name: 策略名称
             
         返回:
@@ -754,14 +754,14 @@ class PerformanceAnalyzer:
                 metric_name='benchmark_return',
                 metric_value=self.return_calculator.calculate_total_return(benchmark_returns),
                 metric_category=MetricCategory.RETURN,
-                description='基准收益率'
+                description='基准收益�?
             )
             
             metrics['excess_return'] = PerformanceMetric(
                 metric_name='excess_return',
                 metric_value=metrics['total_return'].metric_value - metrics['benchmark_return'].metric_value,
                 metric_category=MetricCategory.RETURN,
-                description='超额收益率'
+                description='超额收益�?
             )
         
         report = self.report_generator.generate_performance_report(
@@ -780,11 +780,11 @@ class PerformanceAnalyzer:
         """计算单个指标
         
         参数:
-            returns: 收益率序列
+            returns: 收益率序�?
             metric_name: 指标名称
             
         返回:
-            指标值
+            指标�?
         """
         if metric_name in ['total_return', 'annualized_return', 'daily_return_mean']:
             return getattr(self.return_calculator, f'calculate_{metric_name}')(returns)
@@ -797,21 +797,21 @@ class PerformanceAnalyzer:
 ```
 
 ### 3.2 性能指标要求
-| 性能指标 | 目标值 | 测量方法 |
+| 性能指标 | 目标�?| 测量方法 |
 |----------|--------|----------|
-| 绩效计算时间 | < 5秒 | 单次计算 |
-| 报告生成时间 | < 10秒 | 单次生成 |
-| 归因分析时间 | < 3秒 | 单次分析 |
-| 图表生成时间 | < 5秒 | 单次生成 |
+| 绩效计算时间 | < 5�?| 单次计算 |
+| 报告生成时间 | < 10�?| 单次生成 |
+| 归因分析时间 | < 3�?| 单次分析 |
+| 图表生成时间 | < 5�?| 单次生成 |
 
 ### 3.3 安全机制
-- **数据验证**: 验证收益率数据的有效性
+- **数据验证**: 验证收益率数据的有效�?
 - **异常处理**: 处理计算过程中的异常
 - **日志记录**: 记录绩效计算过程
 
 ---
 
-## 4. 数据模型与存储
+## 4. 数据模型与存�?
 
 ### 4.1 核心数据结构
 
@@ -843,14 +843,14 @@ class PerformanceReportData:
 ```
 
 ### 4.2 缓存策略
-| 缓存类型 | TTL | 淘汰策略 | 最大容量 |
+| 缓存类型 | TTL | 淘汰策略 | 最大容�?|
 |----------|-----|----------|----------|
-| 绩效指标缓存 | 1小时 | LRU | 1000份报告 |
-| 图表缓存 | 1小时 | LRU | 500份图表 |
+| 绩效指标缓存 | 1小时 | LRU | 1000份报�?|
+| 图表缓存 | 1小时 | LRU | 500份图�?|
 
-### 4.3 数据持久化
-- **持久化需求**: 绩效报告需要持久化存储
-- **存储格式**: SQLite数据库 + Parquet文件
+### 4.3 数据持久�?
+- **持久化需�?*: 绩效报告需要持久化存储
+- **存储格式**: SQLite数据�?+ Parquet文件
 - **备份策略**: 每日备份
 
 ---
@@ -873,11 +873,11 @@ def calculate_sharpe_ratio(
     夏普比率 = (E[R] - Rf) / σ
     
     其中:
-        E[R]: 预期收益率
-        Rf: 无风险利率
+        E[R]: 预期收益�?
+        Rf: 无风险利�?
         σ: 收益率标准差
     
-    复杂度: O(n) - n为数据点数
+    复杂�? O(n) - n为数据点�?
     """
     excess_returns = returns - self.risk_free_rate / periods_per_year
     if returns.std() == 0:
@@ -885,19 +885,19 @@ def calculate_sharpe_ratio(
     return excess_returns.mean() / returns.std() * np.sqrt(periods_per_year)
 ```
 
-#### 5.1.2 最大回撤计算算法
+#### 5.1.2 最大回撤计算算�?
 ```python
 def calculate_max_drawdown(
     self,
     returns: pd.Series
 ) -> float:
     """
-    最大回撤计算算法
+    最大回撤计算算�?
     
     算法原理:
-    最大回撤 = max((峰值 - 当前值) / 峰值)
+    最大回�?= max((峰�?- 当前�? / 峰�?
     
-    复杂度: O(n) - n为数据点数
+    复杂�? O(n) - n为数据点�?
     """
     cumulative = (1 + returns).cumprod()
     running_max = cumulative.cummax()
@@ -924,7 +924,7 @@ def calculate_brinson_attribution(
     选择效应 = Σ w_b * (R_p - R_b)
     交互效应 = Σ(w_p - w_b) * (R_p - R_b)
     
-    复杂度: O(n) - n为资产数量
+    复杂�? O(n) - n为资产数�?
     """
     allocation_effect = ((portfolio_weights - benchmark_weights) * benchmark_returns).sum()
     selection_effect = (benchmark_weights * (portfolio_returns - benchmark_returns)).sum()
@@ -937,17 +937,17 @@ def calculate_brinson_attribution(
 
 ## 6. 实施技术栈
 
-### 6.1 语言与框架
-| 技术选型 | 版本要求 | 用途 | 选择理由 |
+### 6.1 语言与框�?
+| 技术选型 | 版本要求 | 用�?| 选择理由 |
 |----------|----------|------|----------|
 | Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
-| empyrical | >=0.5.5 | 绩效指标计算 | 专业绩效库 |
-| numpy | >=1.24.0 | 数值计算 | 高效矩阵运算 |
+| empyrical | >=0.5.5 | 绩效指标计算 | 专业绩效�?|
+| numpy | >=1.24.0 | 数值计�?| 高效矩阵运算 |
 | pandas | >=2.0.0 | 数据处理 | 数据分析利器 |
 | scipy | >=1.10.0 | 统计计算 | 统计函数丰富 |
-| matplotlib | >=3.7.0 | 可视化 | 数据可视化 |
+| matplotlib | >=3.7.0 | 可视�?| 数据可视�?|
 
-### 6.2 第三方依赖
+### 6.2 第三方依�?
 ```yaml
 requirements:
   - empyrical>=0.5.5
@@ -963,12 +963,12 @@ requirements:
 ## 7. 测试策略
 
 ### 7.1 单元测试
-| 测试项 | 测试内容 | 覆盖率目标 |
+| 测试�?| 测试内容 | 覆盖率目�?|
 |--------|----------|------------|
-| 收益指标计算 | 计算正确性 | 100% |
-| 风险指标计算 | 计算正确性 | 100% |
-| 风险调整指标 | 计算正确性 | 100% |
-| 归因分析 | 分析正确性 | 100% |
+| 收益指标计算 | 计算正确�?| 100% |
+| 风险指标计算 | 计算正确�?| 100% |
+| 风险调整指标 | 计算正确�?| 100% |
+| 归因分析 | 分析正确�?| 100% |
 
 ### 7.2 集成测试
 ```python
@@ -995,9 +995,9 @@ def test_performance_analyzer_integration():
 
 ---
 
-## 8. 风险与约束
+## 8. 风险与约�?
 
-### 8.1 技术风险
+### 8.1 技术风�?
 | 风险ID | 风险描述 | 风险等级 | 缓解措施 |
 |--------|----------|----------|----------|
 | R001 | 数据缺失 | P2 | 实现数据验证 |
@@ -1005,9 +1005,9 @@ def test_performance_analyzer_integration():
 | R003 | 图表生成失败 | P3 | 实现降级处理 |
 
 ### 8.2 约束条件
-- **技术约束**: 依赖empyrical、numpy、pandas、scipy、matplotlib
+- **技术约�?*: 依赖empyrical、numpy、pandas、scipy、matplotlib
 - **资源约束**: 内存使用<2GB，CPU使用<80%
-- **时间约束**: 预计开发时间12小时
+- **时间约束**: 预计开发时�?2小时
 - **质量约束**: 测试覆盖率≥90%
 
 ---
@@ -1015,7 +1015,7 @@ def test_performance_analyzer_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能项 | 验收标准 | 验证方法 |
+| 功能�?| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 绩效指标计算 | 计算正确 | 单元测试 |
 | 风险指标计算 | 计算正确 | 单元测试 |
@@ -1025,24 +1025,24 @@ def test_performance_analyzer_integration():
 ### 9.2 性能验收标准
 | 性能指标 | 验收标准 | 验证方法 |
 |----------|----------|----------|
-| 绩效计算时间 | < 5秒 | 性能测试 |
-| 报告生成时间 | < 10秒 | 性能测试 |
-| 归因分析时间 | < 3秒 | 性能测试 |
+| 绩效计算时间 | < 5�?| 性能测试 |
+| 报告生成时间 | < 10�?| 性能测试 |
+| 归因分析时间 | < 3�?| 性能测试 |
 
 ### 9.3 质量验收标准
 | 质量指标 | 验收标准 | 验证方法 |
 |----------|----------|----------|
-| 测试覆盖率 | ≥ 90% | pytest-cov |
-| 代码质量 | 无严重问题 | pylint |
+| 测试覆盖�?| �?90% | pytest-cov |
+| 代码质量 | 无严重问�?| pylint |
 
 ---
 
-## 10. 实施路线图
+## 10. 实施路线�?
 
-### 10.1 Phase 1: 核心功能开发 (3天)
+### 10.1 Phase 1: 核心功能开�?(3�?
 - **Day 1**: 收益指标计算器、风险指标计算器
 - **Day 2**: 风险调整指标计算器、归因分析器
-- **Day 3**: 报告生成器、可视化生成器、集成测试
+- **Day 3**: 报告生成器、可视化生成器、集成测�?
 
 ---
 
@@ -1072,18 +1072,18 @@ performance_analyzer:
       - calmar_ratio
 ```
 
-### B. 错误码定义
-| 错误码 | 错误类型 | 错误描述 | 处理方式 |
+### B. 错误码定�?
+| 错误�?| 错误类型 | 错误描述 | 处理方式 |
 |--------|----------|----------|----------|
-| ERR_PERF_001 | MetricError | 指标计算错误 | 记录日志，返回错误 |
-| ERR_PERF_002 | AttributionError | 归因分析错误 | 记录日志，返回错误 |
-| ERR_PERF_003 | ReportError | 报告生成错误 | 记录日志，返回错误 |
+| ERR_PERF_001 | MetricError | 指标计算错误 | 记录日志，返回错�?|
+| ERR_PERF_002 | AttributionError | 归因分析错误 | 记录日志，返回错�?|
+| ERR_PERF_003 | ReportError | 报告生成错误 | 记录日志，返回错�?|
 
-### C. 参考文档
+### C. 参考文�?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [回测蓝图](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/BACKTEST_BLUEPRINT.md)
 - [绩效归因](../../04_EXECUTION/03_MONITORING/PERFORMANCE_ATTRIBUTION.md)
 
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护者**: AI报告层负责人
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护�?*: AI报告层负责人

@@ -4,34 +4,34 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 研究报告自动生成
 
-> AI驱动的量化研究报告自动生成
+> AI驱动的量化研究报告自动生�?
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先级**: P2
-> **Layer**: Layer -1 (研究层)
+> **优先�?*: P2
+> **Layer**: Layer -1 (研究�?
 > **索引**: R.02.RPT.001
 
 ---
 
 ## 1. 概述
 
-研究报告生成器自动汇总分析结果，生成结构化Markdown报告。
+研究报告生成器自动汇总分析结果，生成结构化Markdown报告�?
 
-**设计原则**：
-- **自动化** - 脚本自动运行，无需人工干预
-- **可复现** - 报告包含所有参数、数据版本
-- **简洁** - 单人开发者只需核心内容
+**设计原则**�?
+- **自动�?* - 脚本自动运行，无需人工干预
+- **可复�?* - 报告包含所有参数、数据版�?
+- **简�?* - 单人开发者只需核心内容
 
 ---
 
@@ -43,7 +43,7 @@ implementation_status: 进行中
 # {因子名称} 研究报告
 
 **生成时间**: {timestamp}
-**研究员**: {researcher}
+**研究�?*: {researcher}
 **版本**: {version}
 
 ---
@@ -54,9 +54,9 @@ implementation_status: 进行中
 |------|------|
 | 因子ID | {factor_id} |
 | 因子类型 | {factor_type} |
-| 数据源 | {data_source} |
+| 数据�?| {data_source} |
 | 计算周期 | {period} |
-| 状态 | {status} |
+| 状�?| {status} |
 
 ---
 
@@ -64,16 +64,16 @@ implementation_status: 进行中
 
 ### 2.1 IC统计
 
-| 指标 | 值 |
+| 指标 | �?|
 |------|-----|
-| IC均值 | {ic_mean:.4f} |
-| IC标准差 | {ic_std:.4f} |
+| IC均�?| {ic_mean:.4f} |
+| IC标准�?| {ic_std:.4f} |
 | ICIR | {ic_ir:.4f} |
 | 胜率 | {ic_win_rate:.1%} |
 
 ### 2.2 IC衰减
 
-| 滞后期 | IC值 | 衰减率 |
+| 滞后�?| IC�?| 衰减�?|
 |--------|------|--------|
 | IC_1 | {ic_1:.4f} | - |
 | IC_5 | {ic_5:.4f} | {decay_5:.1%} |
@@ -85,7 +85,7 @@ implementation_status: 进行中
 
 ### 3.1 分组收益
 
-| 组别 | 年化收益 | 夏普比率 | 最大回撤 |
+| 组别 | 年化收益 | 夏普比率 | 最大回�?|
 |------|----------|----------|----------|
 | G1 (Top) | {g1_return:.2%} | {g1_sharpe:.2f} | {g1_mdd:.2%} |
 | G5 (Middle) | {g5_return:.2%} | {g5_sharpe:.2f} | {g5_mdd:.2%} |
@@ -93,11 +93,11 @@ implementation_status: 进行中
 
 ### 3.2 多空组合
 
-| 指标 | 值 |
+| 指标 | �?|
 |------|-----|
 | 多空收益 | {ls_return:.2%} |
 | 多空夏普 | {ls_sharpe:.2f} |
-| 最大回撤 | {ls_mdd:.2%} |
+| 最大回�?| {ls_mdd:.2%} |
 
 ---
 
@@ -124,7 +124,7 @@ implementation_status: 进行中
 
 ---
 
-## 3. 报告生成器
+## 3. 报告生成�?
 
 ```python
 import os
@@ -133,7 +133,7 @@ from datetime import datetime
 from pathlib import Path
 
 class ReportGenerator:
-    """研究报告生成器"""
+    """研究报告生成�?""
 
     def __init__(self, template_dir: str, output_dir: str):
         self.template_dir = Path(template_dir)
@@ -218,7 +218,7 @@ class ReportGenerator:
 
 ```python
 class AIConclusionGenerator:
-    """AI结论生成器"""
+    """AI结论生成�?""
 
     def generate_conclusion(
         self,
@@ -227,41 +227,41 @@ class AIConclusionGenerator:
         group_results: dict
     ) -> str:
         """
-        使用规则生成AI结论（简化版）
+        使用规则生成AI结论（简化版�?
         """
         conclusions = []
 
         # IC评估
         ic_ir = ic_metrics.get('ic_ir', 0)
         if ic_ir >= 1.0:
-            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现优秀，具有较强的预测能力。")
+            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现优秀，具有较强的预测能力�?)
         elif ic_ir >= 0.5:
-            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现良好，具有一定的预测能力。")
+            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现良好，具有一定的预测能力�?)
         elif ic_ir >= 0.3:
-            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现一般，需要进一步优化。")
+            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现一般，需要进一步优化�?)
         else:
-            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现较差，建议更换因子。")
+            conclusions.append(f"因子{factor_name}的ICIR为{ic_ir:.2f}，表现较差，建议更换因子�?)
 
         # 多空评估
         ls_return = group_results.get('long_short', {}).get('annual_return', 0)
         if ls_return > 0.1:
-            conclusions.append(f"多空组合年化收益为{ls_return:.2%}，表现优异。")
+            conclusions.append(f"多空组合年化收益为{ls_return:.2%}，表现优异�?)
         elif ls_return > 0:
-            conclusions.append(f"多空组合年化收益为{ls_return:.2%}，表现尚可。")
+            conclusions.append(f"多空组合年化收益为{ls_return:.2%}，表现尚可�?)
         else:
-            conclusions.append(f"多空组合年化收益为{ls_return:.2%}，需要注意风险。")
+            conclusions.append(f"多空组合年化收益为{ls_return:.2%}，需要注意风险�?)
 
-        # 单调性评估
+        # 单调性评�?
         monotonicity = group_results.get('monotonicity', 0)
         if monotonicity > 0.8:
-            conclusions.append(f"分组收益单调性得分为{monotonicity:.2f}，收益分布合理。")
+            conclusions.append(f"分组收益单调性得分为{monotonicity:.2f}，收益分布合理�?)
 
         return " ".join(conclusions)
 ```
 
 ---
 
-## 5. 自动化运行
+## 5. 自动化运�?
 
 ```python
 #每日报告生成脚本
@@ -276,7 +276,7 @@ def daily_report_job():
         output_dir='reports/'
     )
 
-    # 读取最新因子数据
+    # 读取最新因子数�?
     factors = ['ALPHA_001', 'ALPHA_002', ...]
 
     for factor_id in factors:
@@ -294,7 +294,7 @@ def daily_report_job():
             params=get_factor_params(factor_id)
         )
 
-    print(f"已生成{len(factors)}份研究报告")
+    print(f"已生成{len(factors)}份研究报�?)
 
 # 定时任务
 schedule.every().day.at("08:00").do(daily_report_job)
@@ -350,9 +350,9 @@ report_generation:
 ```
 07_RESEARCH/
 ├── 02_EXPLORATORY_ANALYSIS/
-│   ├── statistical_tools.md
-│   ├── correlation_analysis.md
-│   └── research_report_generator.md   # 本文档 ⭐
+�?  ├── statistical_tools.md
+�?  ├── correlation_analysis.md
+�?  └── research_report_generator.md   # 本文�?�?
 ```
 
 ---
@@ -361,9 +361,9 @@ report_generation:
 
 | 接口 | 说明 |
 |------|------|
-| **上游接口** | IC分析、分组回测、因子监控 |
-| **下游接口** | 研究笔记、策略迭代 |
-| **输入格式** | IC指标、回测结果、参数配置 |
+| **上游接口** | IC分析、分组回测、因子监�?|
+| **下游接口** | 研究笔记、策略迭�?|
+| **输入格式** | IC指标、回测结果、参数配�?|
 | **输出格式** | Markdown报告文件 |
 
 ---

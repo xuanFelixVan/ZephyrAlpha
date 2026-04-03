@@ -1,10 +1,8 @@
 ---
 standard_type: 操作指南
-applicable_scope: 全系统
-compliance_level: 正式标准
+applicable_scope: 全系�?compliance_level: 正式标准
 parent_document: ../README.md
-implementation_status: 已完成
-owner: 运维团队
+implementation_status: 已完�?owner: 运维团队
 version: 1.0.0
 module_id: DEPLOYMENT_MANUAL
 created_date: 2026-04-02
@@ -13,8 +11,8 @@ last_updated: 2026-04-02
 # 系统部署手册
 
 **文档版本**: 1.0.0
-**最后更新**: 2026-04-02
-**文档所有者**: 运维团队
+**最后更�?*: 2026-04-02
+**文档所有�?*: 运维团队
 
 ---
 
@@ -22,14 +20,12 @@ last_updated: 2026-04-02
 
 ### 1.1 部署目标
 
-本文档提供ZephyrAlpha量化交易系统的完整部署指南，确保系统在生产环境中稳定运行。
-
+本文档提供ZephyrAlpha量化交易系统的完整部署指南，确保系统在生产环境中稳定运行�?
 ### 1.2 部署范围
 
 - 生产环境部署
 - 测试环境部署
-- 开发环境部署
-- 灾备环境部署
+- 开发环境部�?- 灾备环境部署
 
 ### 1.3 部署前置条件
 
@@ -65,8 +61,7 @@ last_updated: 2026-04-02
 Python 3.8+
 pip 21+
 
-# 数据库
-PostgreSQL 12+
+# 数据�?PostgreSQL 12+
 Redis 6+
 
 # 可选容器化
@@ -81,10 +76,8 @@ pip install -r requirements.txt
 
 ### 2.3 环境变量配置
 
-创建 `.env` 文件：
-```bash
-# 数据库配置
-DATABASE_URL=postgresql://user:password@localhost:5432/zephyr
+创建 `.env` 文件�?```bash
+# 数据库配�?DATABASE_URL=postgresql://user:password@localhost:5432/zephyr
 REDIS_URL=redis://localhost:6379/0
 
 # API配置
@@ -103,8 +96,7 @@ JWT_SECRET=your-jwt-secret
 
 ---
 
-## 3. 数据库部署
-
+## 3. 数据库部�?
 ### 3.1 PostgreSQL部署
 
 **安装PostgreSQL**:
@@ -113,10 +105,10 @@ JWT_SECRET=your-jwt-secret
 sudo apt-get install postgresql-12
 
 # Windows
-# 下载安装包: https://www.postgresql.org/download/windows/
+# 下载安装�? https://www.postgresql.org/download/windows/
 ```
 
-**创建数据库**:
+**创建数据�?*:
 ```sql
 CREATE DATABASE zephyr;
 CREATE USER zephyr_user WITH PASSWORD 'your_password';
@@ -147,8 +139,7 @@ sudo vi /etc/redis/redis.conf
 # 设置密码
 requirepass your_redis_password
 
-# 设置最大内存
-maxmemory 2gb
+# 设置最大内�?maxmemory 2gb
 maxmemory-policy allkeys-lru
 ```
 
@@ -174,7 +165,7 @@ cd zephyr-alpha
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux
-# 或 venv\Scripts\activate  # Windows
+# �?venv\Scripts\activate  # Windows
 
 pip install -r requirements.txt
 ```
@@ -188,8 +179,7 @@ cp config/system_config_template.yaml config/system_config.yaml
 vi config/system_config.yaml
 ```
 
-### 4.2 数据初始化
-
+### 4.2 数据初始�?
 **初始化数据库**:
 ```bash
 python scripts/init_database.py
@@ -209,8 +199,7 @@ python scripts/verify_data.py
 
 **启动API服务**:
 ```bash
-# 开发模式
-python -m uvicorn src.api.main:app --reload
+# 开发模�?python -m uvicorn src.api.main:app --reload
 
 # 生产模式
 gunicorn src.api.main:app \
@@ -347,9 +336,8 @@ sudo apt-get install certbot python3-certbot-nginx
 sudo certbot --nginx -d api.zephyr-alpha.com
 ```
 
-### 6.3 防火墙配置
-
-**配置防火墙规则**:
+### 6.3 防火墙配�?
+**配置防火墙规�?*:
 ```bash
 # 允许HTTP和HTTPS
 sudo ufw allow 80/tcp
@@ -358,8 +346,7 @@ sudo ufw allow 443/tcp
 # 允许SSH
 sudo ufw allow 22/tcp
 
-# 启用防火墙
-sudo ufw enable
+# 启用防火�?sudo ufw enable
 ```
 
 ---
@@ -422,8 +409,7 @@ groups:
 
 ## 8. 备份策略
 
-### 8.1 数据库备份
-
+### 8.1 数据库备�?
 **创建备份脚本**:
 ```bash
 #!/bin/bash
@@ -438,14 +424,12 @@ pg_dump -U zephyr_user zephyr > $BACKUP_FILE
 # 压缩备份
 gzip $BACKUP_FILE
 
-# 删除30天前的备份
-find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
+# 删除30天前的备�?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 ```
 
 **配置定时任务**:
 ```bash
-# 每天凌晨2点备份
-0 2 * * * /path/to/backup_database.sh
+# 每天凌晨2点备�?0 2 * * * /path/to/backup_database.sh
 ```
 
 ### 8.2 配置备份
@@ -466,31 +450,26 @@ tar -czf $BACKUP_DIR/config_$DATE.tar.gz config/
 
 ### 9.1 常见问题
 
-**问题1: 数据库连接失败**
+**问题1: 数据库连接失�?*
 ```bash
-# 检查数据库状态
-sudo systemctl status postgresql
+# 检查数据库状�?sudo systemctl status postgresql
 
-# 检查连接
-psql -U zephyr_user -d zephyr -h localhost
+# 检查连�?psql -U zephyr_user -d zephyr -h localhost
 ```
 
 **问题2: Redis连接失败**
 ```bash
-# 检查Redis状态
-sudo systemctl status redis
+# 检查Redis状�?sudo systemctl status redis
 
 # 测试连接
 redis-cli -a your_redis_password ping
 ```
 
-**问题3: API服务无响应**
+**问题3: API服务无响�?*
 ```bash
-# 检查进程
-ps aux | grep gunicorn
+# 检查进�?ps aux | grep gunicorn
 
-# 检查端口
-netstat -tlnp | grep 8000
+# 检查端�?netstat -tlnp | grep 8000
 
 # 查看日志
 tail -f logs/error.log
@@ -531,7 +510,7 @@ sudo systemctl disable cups
 
 ### 10.2 应用安全
 
-**配置安全头**:
+**配置安全�?*:
 ```python
 # 在API中添加安全头
 from fastapi.middleware.cors import CORSMiddleware
@@ -562,9 +541,8 @@ async def endpoint():
 
 ## 11. 性能优化
 
-### 11.1 数据库优化
-
-**配置连接池**:
+### 11.1 数据库优�?
+**配置连接�?*:
 ```python
 # config/database.py
 from sqlalchemy import create_engine
@@ -581,8 +559,7 @@ engine = create_engine(
 
 **创建索引**:
 ```sql
--- 为常用查询创建索引
-CREATE INDEX idx_strategy_name ON strategies(name);
+-- 为常用查询创建索�?CREATE INDEX idx_strategy_name ON strategies(name);
 CREATE INDEX idx_order_time ON orders(created_at);
 ```
 
@@ -617,32 +594,20 @@ def cache_result(expire=300):
 
 ---
 
-## 12. 部署检查清单
+## 12. 部署检查清�?
+### 12.1 部署前检�?
+- [ ] 环境变量已配�?- [ ] 数据库已创建
+- [ ] Redis已启�?- [ ] 配置文件已更�?- [ ] 依赖已安�?- [ ] SSL证书已配�?- [ ] 防火墙规则已设置
 
-### 12.1 部署前检查
-
-- [ ] 环境变量已配置
-- [ ] 数据库已创建
-- [ ] Redis已启动
-- [ ] 配置文件已更新
-- [ ] 依赖已安装
-- [ ] SSL证书已配置
-- [ ] 防火墙规则已设置
-
-### 12.2 部署后检查
-
+### 12.2 部署后检�?
 - [ ] API服务正常响应
-- [ ] 数据库连接正常
-- [ ] Redis连接正常
+- [ ] 数据库连接正�?- [ ] Redis连接正常
 - [ ] 日志正常输出
 - [ ] 监控正常工作
-- [ ] 备份任务已配置
-- [ ] 告警规则已配置
-
+- [ ] 备份任务已配�?- [ ] 告警规则已配�?
 ---
 
-## 13. 参考文档
-
+## 13. 参考文�?
 - [系统配置模板](../04_CONFIG_TEMPLATES/system_config_template.yaml)
 - [监控手册](./MONITORING_MANUAL.md)
 - [维护手册](./MAINTENANCE_MANUAL.md)
@@ -650,5 +615,5 @@ def cache_result(expire=300):
 
 ---
 
-**文档状态**: 正式标准
+**文档状�?*: 正式标准
 **下次审查**: 2026-07-02

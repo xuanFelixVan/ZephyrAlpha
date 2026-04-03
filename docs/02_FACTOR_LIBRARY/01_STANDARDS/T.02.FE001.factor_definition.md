@@ -4,17 +4,17 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 因子定义标准
 
-> 因子标准化定义规范
+> 因子标准化定义规�?
 
 ---
 
@@ -32,12 +32,12 @@ implementation_status: 进行中
 |------|------|------|
 | RET | 收益率类 | RET_1D |
 | VAL | value_factors | VAL_PE_TTM |
-| GROW | 成长类 | GROW_REVENUE_YOY |
-| QUAL | 质量类 | QUAL_ROE |
-| MOM | 动量类 | MOM_RSI_14 |
+| GROW | 成长�?| GROW_REVENUE_YOY |
+| QUAL | 质量�?| QUAL_ROE |
+| MOM | 动量�?| MOM_RSI_14 |
 | LIQ | 流动性类 | LIQ_TURN_20 |
-| RISK | 风险类 | RISK_VOL_60 |
-| SENT | 情绪类 | SENT_BUY_RATIO |
+| RISK | 风险�?| RISK_VOL_60 |
+| SENT | 情绪�?| SENT_BUY_RATIO |
 
 ### 1.3 周期后缀
 
@@ -63,7 +63,7 @@ implementation_status: 进行中
 | 因子名称 | {名称} |
 | 因子类型 | {类型} |
 | 计算周期 | {周期} |
-| 数据源 | {数据源} |
+| 数据�?| {数据源} |
 
 ### 计算公式
 ```
@@ -78,29 +78,29 @@ def calc_{因子代码}(data):
 ```
 
 ### 参数说明
-| 参数 | 默认值 | 说明 |
+| 参数 | 默认�?| 说明 |
 |------|--------|------|
 | {参数1} | {默认值} | {说明} |
 
 ### 注意事项
-- {注意点1}
-- {注意点2}
+- {注意�?}
+- {注意�?}
 ```
 
 ---
 
-## 3. 因子属性
+## 3. 因子属�?
 
-| 属性 | 说明 | 必填 |
+| 属�?| 说明 | 必填 |
 |------|------|------|
-| 因子ID | 唯一标识符 | ✅ |
-| 因子名称 | 中文名称 | ✅ |
-| 因子类型 | Alpha/Risk/Macro | ✅ |
-| 计算周期 | D/W/M/Y | ✅ |
-| 数据源 | 原始数据来源 | ✅ |
-| 更新频率 | 数据更新频率 | ✅ |
-| 有效起始日期 | 因子有效开始日期 | ✅ |
-| 描述 | 因子说明 | ⚪ |
+| 因子ID | 唯一标识�?| �?|
+| 因子名称 | 中文名称 | �?|
+| 因子类型 | Alpha/Risk/Macro | �?|
+| 计算周期 | D/W/M/Y | �?|
+| 数据�?| 原始数据来源 | �?|
+| 更新频率 | 数据更新频率 | �?|
+| 有效起始日期 | 因子有效开始日�?| �?|
+| 描述 | 因子说明 | �?|
 
 ---
 
@@ -108,8 +108,8 @@ def calc_{因子代码}(data):
 
 ### 4.1 Alpha因子
 - 趋势跟踪因子
-- 均值回归因子
-- 价值因子
+- 均值回归因�?
+- 价值因�?
 - 成长因子
 - 质量因子
 - 动量因子

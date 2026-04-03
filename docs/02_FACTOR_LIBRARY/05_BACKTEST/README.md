@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 05_BACKTEST - 回测报告目录
@@ -17,7 +17,7 @@ implementation_status: 进行中
 > 因子回测报告集中管理
 >
 > **版本**：v1.0
-> **更新日期**：2026-03-28
+> **更新日期**�?026-03-28
 
 ---
 
@@ -25,15 +25,15 @@ implementation_status: 进行中
 
 ```
 05_BACKTEST/
-├── README.md           # 本文档
-├── 趋势类/            # 趋势跟踪因子回测
-├── 均值回归类/        # 均值回归因子回测
-├── value_factors/            # 价值因子回测
-├── 成长类/            # 成长因子回测
-├── 质量类/            # 质量因子回测
-├── 动量类/            # 动量因子回测
-├── 情绪类/            # 情绪因子回测
-└── 风险类/            # 风险因子回测
+├── README.md           # 本文�?
+├── 趋势�?            # 趋势跟踪因子回测
+├── 均值回归类/        # 均值回归因子回�?
+├── value_factors/            # 价值因子回�?
+├── 成长�?            # 成长因子回测
+├── 质量�?            # 质量因子回测
+├── 动量�?            # 动量因子回测
+├── 情绪�?            # 情绪因子回测
+└── 风险�?            # 风险因子回测
 ```
 
 ---
@@ -44,7 +44,7 @@ implementation_status: 进行中
 {因子类型}_{因子名称}_{日期}.md
 ```
 
-示例：
+示例�?
 - `趋势类_MA5_20260328.md`
 - `value_factors_PE_TTM_20260328.md`
 
@@ -52,7 +52,7 @@ implementation_status: 进行中
 
 ## 回测报告模板
 
-详见：[01_METHODOLOGY/backtest_standards.md](../01_METHODOLOGY/backtest_standards.md)
+详见：[01_STANDARDS/backtest_standards.md](../01_STANDARDS/backtest_standards.md)
 
 ---
 

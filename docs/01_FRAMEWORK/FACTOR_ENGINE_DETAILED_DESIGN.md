@@ -1,11 +1,8 @@
 ---
 standard_type: 架构文档
-applicable_scope: 全系统
-compliance_level: 专业标准
+applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完成
-owner: 首席架构师
-version: 2.0.0
+implementation_status: 已完�?owner: 首席架构�?version: 2.0.0
 module_id: FACTOR_ENGINE_DETAILED_DESIGN
 created_date: 2026-04-03
 last_updated: 2026-04-03
@@ -14,9 +11,8 @@ tags: ["架构设计", "因子引擎", "详细设计"]
 # 因子引擎详细设计文档
 
 **文档版本**: 2.0.0
-**最后更新**: 2026-04-03
-**文档所有者**: 首席架构师
-
+**最后更�?*: 2026-04-03
+**文档所有�?*: 首席架构�?
 ---
 
 ## 1. 因子引擎概述
@@ -25,16 +21,12 @@ tags: ["架构设计", "因子引擎", "详细设计"]
 
 **核心目标**:
 - 高效计算各类因子
-- 支持因子组合和优化
-- 提供因子质量评估
-- 支持因子回测和验证
-
+- 支持因子组合和优�?- 提供因子质量评估
+- 支持因子回测和验�?
 ### 1.2 架构位置
 
 ```
-Layer 3: 引擎层
-├── 因子引擎 (Factor Engine) ← 本文档
-├── 策略引擎 (Strategy Engine)
+Layer 3: 引擎�?├── 因子引擎 (Factor Engine) �?本文�?├── 策略引擎 (Strategy Engine)
 ├── 组合引擎 (Portfolio Engine)
 └── 风控引擎 (Risk Engine)
 ```
@@ -46,55 +38,20 @@ Layer 3: 引擎层
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        因子引擎架构                              │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────┐
-│                          接口层                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │  REST API    │  │   Python SDK │  │   CLI工具    │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-└─────────────────────────────────────────────────────────────────┘
-                                ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                          服务层                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │  因子计算    │  │  因子管理    │  │  因子评估    │         │
-│  │  服务        │  │  服务        │  │  服务        │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-└─────────────────────────────────────────────────────────────────┘
-                                ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                          核心层                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │  因子加载器  │  │  因子计算器  │  │  因子存储器  │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │  因子验证器  │  │  因子优化器  │  │  因子监控器  │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-└─────────────────────────────────────────────────────────────────┘
-                                ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                          数据层                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │  因子库      │  │  因子数据    │  │  因子元数据  │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                       因子引擎架构                              �?└─────────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────────�?�?                         接口�?                                 �?�? ┌──────────────�? ┌──────────────�? ┌──────────────�?        �?�? �? REST API    �? �?  Python SDK �? �?  CLI工具    �?        �?�? └──────────────�? └──────────────�? └──────────────�?        �?└─────────────────────────────────────────────────────────────────�?                                �?┌─────────────────────────────────────────────────────────────────�?�?                         服务�?                                 �?�? ┌──────────────�? ┌──────────────�? ┌──────────────�?        �?�? �? 因子计算    �? �? 因子管理    �? �? 因子评估    �?        �?�? �? 服务        �? �? 服务        �? �? 服务        �?        �?�? └──────────────�? └──────────────�? └──────────────�?        �?└─────────────────────────────────────────────────────────────────�?                                �?┌─────────────────────────────────────────────────────────────────�?�?                         核心�?                                 �?�? ┌──────────────�? ┌──────────────�? ┌──────────────�?        �?�? �? 因子加载�? �? �? 因子计算�? �? �? 因子存储�? �?        �?�? └──────────────�? └──────────────�? └──────────────�?        �?�? ┌──────────────�? ┌──────────────�? ┌──────────────�?        �?�? �? 因子验证�? �? �? 因子优化�? �? �? 因子监控�? �?        �?�? └──────────────�? └──────────────�? └──────────────�?        �?└─────────────────────────────────────────────────────────────────�?                                �?┌─────────────────────────────────────────────────────────────────�?�?                         数据�?                                 �?�? ┌──────────────�? ┌──────────────�? ┌──────────────�?        �?�? �? 因子�?     �? �? 因子数据    �? �? 因子元数�? �?        �?�? └──────────────�? └──────────────�? └──────────────�?        �?└─────────────────────────────────────────────────────────────────�?```
 
 ---
 
 ## 3. 核心组件设计
 
-### 3.1 因子加载器 (Factor Loader)
+### 3.1 因子加载�?(Factor Loader)
 
-**职责**: 加载和管理因子定义
-
+**职责**: 加载和管理因子定�?
 **接口设计**:
 ```python
 class FactorLoader:
-    """因子加载器"""
+    """因子加载�?""
     
     def load_factor(self, factor_id: str) -> Factor:
         """加载单个因子"""
@@ -105,7 +62,7 @@ class FactorLoader:
         pass
     
     def register_factor(self, factor: Factor) -> bool:
-        """注册新因子"""
+        """注册新因�?""
         pass
     
     def unregister_factor(self, factor_id: str) -> bool:
@@ -125,21 +82,19 @@ class Factor:
     formula: str                # 计算公式
     parameters: Dict[str, Any]  # 参数
     dependencies: List[str]     # 依赖因子
-    version: str                # 版本号
-    created_at: datetime        # 创建时间
+    version: str                # 版本�?    created_at: datetime        # 创建时间
     updated_at: datetime        # 更新时间
 ```
 
 ---
 
-### 3.2 因子计算器 (Factor Calculator)
+### 3.2 因子计算�?(Factor Calculator)
 
-**职责**: 计算因子值
-
+**职责**: 计算因子�?
 **接口设计**:
 ```python
 class FactorCalculator:
-    """因子计算器"""
+    """因子计算�?""
     
     def calculate(
         self,
@@ -172,28 +127,21 @@ class FactorCalculator:
 **计算流程**:
 ```
 数据输入
-  ↓
-参数验证
-  ↓
-依赖检查
-  ↓
-因子计算
-  ↓
-结果验证
-  ↓
-结果输出
+  �?参数验证
+  �?依赖检�?  �?因子计算
+  �?结果验证
+  �?结果输出
 ```
 
 ---
 
-### 3.3 因子存储器 (Factor Storage)
+### 3.3 因子存储�?(Factor Storage)
 
-**职责**: 存储和管理因子数据
-
+**职责**: 存储和管理因子数�?
 **接口设计**:
 ```python
 class FactorStorage:
-    """因子存储器"""
+    """因子存储�?""
     
     def save(
         self,
@@ -233,20 +181,18 @@ class FactorStorage:
 ```
 
 **存储策略**:
-- 热数据：Redis缓存（最近3个月）
-- 温数据：TimescaleDB（最近1年）
+- 热数据：Redis缓存（最�?个月�?- 温数据：TimescaleDB（最�?年）
 - 冷数据：文件存储（历史数据）
 
 ---
 
-### 3.4 因子验证器 (Factor Validator)
+### 3.4 因子验证�?(Factor Validator)
 
-**职责**: 验证因子有效性
-
+**职责**: 验证因子有效�?
 **接口设计**:
 ```python
 class FactorValidator:
-    """因子验证器"""
+    """因子验证�?""
     
     def validate_ic(
         self,
@@ -269,7 +215,7 @@ class FactorValidator:
         factor_values: pd.Series,
         window: int = 20
     ) -> Dict[str, float]:
-        """验证稳定性"""
+        """验证稳定�?""
         pass
     
     def validate_monotonicity(
@@ -278,26 +224,22 @@ class FactorValidator:
         returns: pd.Series,
         n_groups: int = 5
     ) -> Dict[str, float]:
-        """验证单调性"""
+        """验证单调�?""
         pass
 ```
 
 **验证指标**:
-- IC (Information Coefficient): 因子与收益的相关性
-- IR (Information Ratio): IC的均值/标准差
-- 稳定性: 因子值的时序稳定性
-- 单调性: 分组收益的单调性
-
+- IC (Information Coefficient): 因子与收益的相关�?- IR (Information Ratio): IC的均�?标准�?- 稳定�? 因子值的时序稳定�?- 单调�? 分组收益的单调�?
 ---
 
-### 3.5 因子优化器 (Factor Optimizer)
+### 3.5 因子优化�?(Factor Optimizer)
 
 **职责**: 优化因子组合
 
 **接口设计**:
 ```python
 class FactorOptimizer:
-    """因子优化器"""
+    """因子优化�?""
     
     def optimize_weights(
         self,
@@ -312,7 +254,7 @@ class FactorOptimizer:
         factor_values: pd.DataFrame,
         method: str = 'gram_schmidt'
     ) -> pd.DataFrame:
-        """因子正交化"""
+        """因子正交�?""
         pass
     
     def neutralize(
@@ -325,21 +267,17 @@ class FactorOptimizer:
 ```
 
 **优化方法**:
-- 最大夏普比率
-- 风险平价
-- 均值方差
-- 最小相关性
-
+- 最大夏普比�?- 风险平价
+- 均值方�?- 最小相关�?
 ---
 
-### 3.6 因子监控器 (Factor Monitor)
+### 3.6 因子监控�?(Factor Monitor)
 
-**职责**: 监控因子状态
-
+**职责**: 监控因子状�?
 **接口设计**:
 ```python
 class FactorMonitor:
-    """因子监控器"""
+    """因子监控�?""
     
     def monitor_performance(
         self,
@@ -354,7 +292,7 @@ class FactorMonitor:
         factor_id: str,
         threshold: float = 0.3
     ) -> bool:
-        """检测因子衰减"""
+        """检测因子衰�?""
         pass
     
     def alert(
@@ -363,29 +301,25 @@ class FactorMonitor:
         alert_type: str,
         message: str
     ) -> bool:
-        """发送告警"""
+        """发送告�?""
         pass
 ```
 
 **监控指标**:
 - IC衰减
-- 因子覆盖率
-- 因子稳定性
-- 因子有效性
-
+- 因子覆盖�?- 因子稳定�?- 因子有效�?
 ---
 
-## 4. 因子库设计
-
+## 4. 因子库设�?
 ### 4.1 因子分类
 
 **风格因子**:
 - 动量因子 (Momentum)
-- 价值因子 (Value)
+- 价值因�?(Value)
 - 质量因子 (Quality)
 - 规模因子 (Size)
 - 波动因子 (Volatility)
-- 流动性因子 (Liquidity)
+- 流动性因�?(Liquidity)
 
 **风险因子**:
 - 市场因子 (Market)
@@ -394,8 +328,8 @@ class FactorMonitor:
 
 **Alpha因子**:
 - 情绪因子 (Sentiment)
-- 基本面因子 (Fundamental)
-- 技术因子 (Technical)
+- 基本面因�?(Fundamental)
+- 技术因�?(Technical)
 - 另类因子 (Alternative)
 
 ---
@@ -414,29 +348,25 @@ def price_momentum(data: pd.DataFrame, window: int = 20) -> pd.Series:
         window: 回看窗口
     
     Returns:
-        动量因子值
-    """
+        动量因子�?    """
     return data['close'].pct_change(window)
 
-# 成交量动量因子
-def volume_momentum(data: pd.DataFrame, window: int = 20) -> pd.Series:
+# 成交量动量因�?def volume_momentum(data: pd.DataFrame, window: int = 20) -> pd.Series:
     """
-    成交量动量因子
-    
+    成交量动量因�?    
     Args:
         data: 价格和成交量数据
         window: 回看窗口
     
     Returns:
-        成交量动量因子值
-    """
+        成交量动量因子�?    """
     returns = data['close'].pct_change()
     volume = data['volume']
     weighted_returns = returns * volume
     return weighted_returns.rolling(window).sum() / volume.rolling(window).sum()
 ```
 
-**价值因子**:
+**价值因�?*:
 ```python
 # PB因子
 def pb_factor(data: pd.DataFrame) -> pd.Series:
@@ -447,8 +377,7 @@ def pb_factor(data: pd.DataFrame) -> pd.Series:
         data: 包含市值和账面价值的数据
     
     Returns:
-        PB因子值
-    """
+        PB因子�?    """
     return data['market_cap'] / data['book_value']
 
 # PE因子
@@ -457,11 +386,9 @@ def pe_factor(data: pd.DataFrame) -> pd.Series:
     PE因子
     
     Args:
-        data: 包含市值和净利润的数据
-    
+        data: 包含市值和净利润的数�?    
     Returns:
-        PE因子值
-    """
+        PE因子�?    """
     return data['market_cap'] / data['net_income']
 ```
 
@@ -471,7 +398,7 @@ def pe_factor(data: pd.DataFrame) -> pd.Series:
 
 ### 5.1 计算优化
 
-**向量化计算**:
+**向量化计�?*:
 ```python
 # 优化前：循环计算
 def calculate_momentum_loop(data: pd.DataFrame) -> pd.Series:
@@ -480,8 +407,7 @@ def calculate_momentum_loop(data: pd.DataFrame) -> pd.Series:
         result.iloc[i] = data['close'].iloc[i-20:i].mean()
     return result
 
-# 优化后：向量化计算
-def calculate_momentum_vector(data: pd.DataFrame) -> pd.Series:
+# 优化后：向量化计�?def calculate_momentum_vector(data: pd.DataFrame) -> pd.Series:
     return data['close'].rolling(20).mean()
 ```
 
@@ -536,49 +462,41 @@ def save_factor_compressed(
 
 ---
 
-## 6. 监控与告警
-
+## 6. 监控与告�?
 ### 6.1 监控指标
 
-| 指标类别 | 指标名称 | 目标值 | 告警阈值 |
+| 指标类别 | 指标名称 | 目标�?| 告警阈�?|
 |---------|---------|--------|---------|
 | **性能** | 计算延迟 | <100ms | >200ms |
-| **质量** | IC均值 | >0.05 | <0.03 |
-| **稳定性** | IC_IR | >2.0 | <1.5 |
-| **覆盖率** | 因子覆盖率 | >95% | <90% |
+| **质量** | IC均�?| >0.05 | <0.03 |
+| **稳定�?* | IC_IR | >2.0 | <1.5 |
+| **覆盖�?* | 因子覆盖�?| >95% | <90% |
 
 ---
 
 ### 6.2 告警机制
 
 **告警级别**:
-- P0（紧急）：因子失效
-- P1（高）：因子衰减
+- P0（紧急）：因子失�?- P1（高）：因子衰减
 - P2（中）：性能下降
-- P3（低）：覆盖率下降
-
+- P3（低）：覆盖率下�?
 **告警流程**:
 ```
 监控指标异常
-  ↓
-触发告警
-  ↓
-通知相关人员
-  ↓
-问题处理
-  ↓
-告警关闭
+  �?触发告警
+  �?通知相关人员
+  �?问题处理
+  �?告警关闭
 ```
 
 ---
 
-## 7. 参考文档
-
+## 7. 参考文�?
 - [系统架构全景图](./SYSTEM_ARCHITECTURE_DIAGRAM.md)
 - [数据流图与模块交互图](./DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md)
 - [性能基准测试体系](./PERFORMANCE_BENCHMARK_FRAMEWORK.md)
 
 ---
 
-**文档状态**: 正式标准
+**文档状�?*: 正式标准
 **下次更新**: 2026-07-03

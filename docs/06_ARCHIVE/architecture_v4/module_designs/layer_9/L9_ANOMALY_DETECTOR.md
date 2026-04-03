@@ -4,22 +4,22 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# L9_ANOMALY_DETECTOR: AI异常检测模块设计
+# L9_ANOMALY_DETECTOR: AI异常检测模块设�?
 
 > **模块ID**: L9_ANOMALY_DETECTOR  
-> **模块名称**: AI异常检测  
-> **所属层级**: Layer 9 - AI增强层  
-> **优先级**: P1  
+> **模块名称**: AI异常检�? 
+> **所属层�?*: Layer 9 - AI增强�? 
+> **优先�?*: P1  
 > **预计工时**: 28小时  
-> **设计状态**: 🟡 设计中  
+> **设计状�?*: 🟡 设计�? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: [AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md](../../02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md)
 
@@ -28,50 +28,50 @@ implementation_status: 进行中
 ## 📋 模块概述
 
 ### 1.1 功能定位
-**L9_ANOMALY_DETECTOR** 是AI增强层的第六个模块，负责使用pyod异常检测框架构建强大的异常检测系统。该模块专门用于识别量化交易中的异常模式、极端事件、数据质量问题以及潜在的欺诈行为，为风险管理和策略优化提供关键支持。
+**L9_ANOMALY_DETECTOR** 是AI增强层的第六个模块，负责使用pyod异常检测框架构建强大的异常检测系统。该模块专门用于识别量化交易中的异常模式、极端事件、数据质量问题以及潜在的欺诈行为，为风险管理和策略优化提供关键支持�?
 
 ### 1.2 设计原则
-- **多算法集成**: 集成多种异常检测算法，提高检测准确性和鲁棒性
-- **自适应阈值**: 根据数据分布动态调整异常检测阈值
-- **可解释性**: 提供异常原因分析和可视化解释
-- **实时性**: 支持实时异常检测和预警
-- **可扩展性**: 易于添加新的异常检测算法和特征
-- **集成友好**: 与Layer 0数据预处理层和Layer 8人机交互层无缝集成
+- **多算法集�?*: 集成多种异常检测算法，提高检测准确性和鲁棒�?
+- **自适应阈�?*: 根据数据分布动态调整异常检测阈�?
+- **可解释�?*: 提供异常原因分析和可视化解释
+- **实时�?*: 支持实时异常检测和预警
+- **可扩展�?*: 易于添加新的异常检测算法和特征
+- **集成友好**: 与Layer 0数据预处理层和Layer 8人机交互层无缝集�?
 
 ### 1.3 输入输出
 | 项目 | 描述 |
 |------|------|
-| **输入** | 时间序列数据、特征数据、历史异常标签（可选）、检测配置 |
-| **输出** | 异常分数、异常标签、异常原因分析、预警信号、检测报告 |
-| **控制参数** | 检测算法、阈值策略、时间窗口、特征选择、预警规则 |
+| **输入** | 时间序列数据、特征数据、历史异常标签（可选）、检测配�?|
+| **输出** | 异常分数、异常标签、异常原因分析、预警信号、检测报�?|
+| **控制参数** | 检测算法、阈值策略、时间窗口、特征选择、预警规�?|
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 2.1 模块结构
 ```
 L9_ANOMALY_DETECTOR/
-├── pyod_integration.py             # pyod集成核心类
+├── pyod_integration.py             # pyod集成核心�?
 ├── anomaly_detection_pipeline.py   # 异常检测流水线
 ├── anomaly_detector_ensemble.py    # 异常检测集成器
-├── anomaly_scorer.py               # 异常评分器
+├── anomaly_scorer.py               # 异常评分�?
 ├── threshold_optimizer.py          # 阈值优化器
-├── anomaly_explainer.py            # 异常解释器
+├── anomaly_explainer.py            # 异常解释�?
 ├── config/
-│   └── pyod_config.yaml           # 配置文件
+�?  └── pyod_config.yaml           # 配置文件
 ├── tests/
-│   ├── test_pyod_integration.py
-│   └── test_anomaly_pipeline.py
+�?  ├── test_pyod_integration.py
+�?  └── test_anomaly_pipeline.py
 └── monitoring/
     └── anomaly_detection_monitor.py
 ```
 
-### 2.2 核心类设计
+### 2.2 核心类设�?
 ```python
 # pyod_integration.py
 class PyodAnomalyDetector:
-    """pyod异常检测集成"""
+    """pyod异常检测集�?""
     
     def __init__(self, config: AnomalyDetectionConfig):
         self.config = config
@@ -89,7 +89,7 @@ class PyodAnomalyDetector:
         ensemble_method: str = 'average'
     ) -> AnomalyDetectionResult:
         """检测异常主方法"""
-        # 1. 数据预处理
+        # 1. 数据预处�?
         X_processed = self._preprocess_data(X)
         
         # 2. 训练检测器
@@ -100,12 +100,12 @@ class PyodAnomalyDetector:
         elif detection_mode == 'supervised':
             self._train_supervised_detectors(X_processed, y)
         else:
-            raise ValueError(f"未知检测模式: {detection_mode}")
+            raise ValueError(f"未知检测模�? {detection_mode}")
         
-        # 3. 检测异常
+        # 3. 检测异�?
         anomaly_scores = self._detect_with_ensemble(X_processed, ensemble_method)
         
-        # 4. 优化阈值
+        # 4. 优化阈�?
         optimal_threshold = self.threshold_optimizer.optimize_threshold(
             anomaly_scores, X_processed, self.config.threshold_optimization
         )
@@ -118,7 +118,7 @@ class PyodAnomalyDetector:
             X_processed, anomaly_scores, anomaly_labels, optimal_threshold
         )
         
-        # 7. 生成检测报告
+        # 7. 生成检测报�?
         detection_report = self._generate_detection_report(
             X_processed, anomaly_scores, anomaly_labels, anomaly_explanations
         )
@@ -254,7 +254,7 @@ class PyodAnomalyDetector:
     
     def _train_semi_supervised_detectors(self, X: pd.DataFrame, y: pd.Series):
         """训练半监督检测器"""
-        # 分离正常样本和异常样本
+        # 分离正常样本和异常样�?
         normal_indices = y == 0
         abnormal_indices = y == 1
         
@@ -291,7 +291,7 @@ class PyodAnomalyDetector:
         for detector_name, detector_info in self.detectors.items():
             detector = detector_info['detector']
             
-            # 检查是否支持监督训练
+            # 检查是否支持监督训�?
             if hasattr(detector, 'fit') and hasattr(detector, 'predict_proba'):
                 try:
                     detector.fit(X, y)
@@ -301,7 +301,7 @@ class PyodAnomalyDetector:
                     print(f"训练失败 {detector_name}: {str(e)}")
                     detector_info['trained'] = False
             else:
-                print(f"检测器 {detector_name} 不支持监督训练")
+                print(f"检测器 {detector_name} 不支持监督训�?)
                 detector_info['trained'] = False
     
     def _detect_with_ensemble(
@@ -309,8 +309,8 @@ class PyodAnomalyDetector:
         X: pd.DataFrame,
         ensemble_method: str = 'average'
     ) -> np.ndarray:
-        """使用集成方法检测异常"""
-        # 收集训练好的检测器的预测
+        """使用集成方法检测异�?""
+        # 收集训练好的检测器的预�?
         detector_scores = {}
         
         for detector_name, detector_info in self.detectors.items():
@@ -328,18 +328,18 @@ class PyodAnomalyDetector:
                 elif hasattr(detector, 'predict'):
                     scores = detector.predict(X)
                 else:
-                    print(f"检测器 {detector_name} 无评分方法")
+                    print(f"检测器 {detector_name} 无评分方�?)
                     continue
                 
                 # 标准化分数到[0, 1]范围
                 if scores.ndim == 1:
-                    # 一维数组
+                    # 一维数�?
                     if np.std(scores) > 0:
                         scores_normalized = (scores - np.min(scores)) / (np.max(scores) - np.min(scores))
                     else:
                         scores_normalized = np.zeros_like(scores)
                 else:
-                    # 多维数组（如某些检测器返回多列）
+                    # 多维数组（如某些检测器返回多列�?
                     scores_normalized = scores
                 
                 detector_scores[detector_name] = scores_normalized
@@ -359,7 +359,7 @@ class PyodAnomalyDetector:
             ensemble_scores = np.mean(all_scores, axis=0)
         
         elif ensemble_method == 'weighted_average':
-            # 加权平均（根据检测器性能）
+            # 加权平均（根据检测器性能�?
             weights = self._calculate_detector_weights(detector_scores)
             weighted_scores = []
             
@@ -370,17 +370,17 @@ class PyodAnomalyDetector:
             ensemble_scores = np.mean(weighted_scores, axis=0)
         
         elif ensemble_method == 'maximum':
-            # 最大分数（最敏感）
+            # 最大分数（最敏感�?
             all_scores = np.array(list(detector_scores.values()))
             ensemble_scores = np.max(all_scores, axis=0)
         
         elif ensemble_method == 'minimum':
-            # 最小分数（最保守）
+            # 最小分数（最保守�?
             all_scores = np.array(list(detector_scores.values()))
             ensemble_scores = np.min(all_scores, axis=0)
         
         elif ensemble_method == 'median':
-            # 中位数
+            # 中位�?
             all_scores = np.array(list(detector_scores.values()))
             ensemble_scores = np.median(all_scores, axis=0)
         
@@ -406,7 +406,7 @@ class PyodAnomalyDetector:
         
         for detector_name, scores in detector_scores.items():
             # 基于分数分布计算权重
-            # 1. 分数方差（越大越好，表示检测器有区分度）
+            # 1. 分数方差（越大越好，表示检测器有区分度�?
             score_variance = np.var(scores)
             
             # 2. 分数峰度（越小越好，表示分布不极端）
@@ -420,9 +420,9 @@ class PyodAnomalyDetector:
             # 综合权重
             weight = score_variance * (1 / (1 + abs(score_kurtosis))) * (1 / (1 + score_skewness))
             
-            weights[detector_name] = max(weight, 0.1)  # 最小权重0.1
+            weights[detector_name] = max(weight, 0.1)  # 最小权�?.1
         
-        # 归一化权重
+        # 归一化权�?
         total_weight = sum(weights.values())
         if total_weight > 0:
             weights = {k: v / total_weight for k, v in weights.items()}
@@ -430,12 +430,12 @@ class PyodAnomalyDetector:
         return weights
     
     def _preprocess_data(self, X: pd.DataFrame) -> pd.DataFrame:
-        """预处理数据"""
-        # 1. 处理缺失值
+        """预处理数�?""
+        # 1. 处理缺失�?
         if self.config.preprocessing.get('handle_missing', True):
             X = self._handle_missing_values(X)
         
-        # 2. 标准化/归一化
+        # 2. 标准�?归一�?
         if self.config.preprocessing.get('scale_features', True):
             X = self._scale_features(X)
         
@@ -450,13 +450,13 @@ class PyodAnomalyDetector:
         return X
     
     def _handle_missing_values(self, X: pd.DataFrame) -> pd.DataFrame:
-        """处理缺失值"""
-        # 简单策略：用中位数填充数值特征，用众数填充分类特征
+        """处理缺失�?""
+        # 简单策略：用中位数填充数值特征，用众数填充分类特�?
         X_filled = X.copy()
         
         for column in X.columns:
             if X[column].dtype in [np.float64, np.float32, np.int64, np.int32]:
-                # 数值特征
+                # 数值特�?
                 median_value = X[column].median()
                 X_filled[column] = X[column].fillna(median_value)
             else:
@@ -467,7 +467,7 @@ class PyodAnomalyDetector:
         return X_filled
     
     def _scale_features(self, X: pd.DataFrame) -> pd.DataFrame:
-        """标准化特征"""
+        """标准化特�?""
         from sklearn.preprocessing import StandardScaler
         
         scaler = StandardScaler()
@@ -476,7 +476,7 @@ class PyodAnomalyDetector:
         return pd.DataFrame(X_scaled, columns=X.columns, index=X.index)
 ```
 
-### 2.3 数据流水线
+### 2.3 数据流水�?
 ```python
 # anomaly_detection_pipeline.py
 class AnomalyDetectionPipeline:
@@ -508,10 +508,10 @@ class AnomalyDetectionPipeline:
         features = self.feature_engineer.create_anomaly_features(raw_data)
         results['feature_info'] = self._get_feature_info(features)
         
-        # 3. 异常检测
+        # 3. 异常检�?
         detection_result = self.detector.detect_anomalies(
             X=features,
-            y=None,  # 无监督模式
+            y=None,  # 无监督模�?
             detection_mode=detection_mode,
             ensemble_method=self.config.ensemble_method
         )
@@ -594,7 +594,7 @@ class AnomalyDetectionPipeline:
         if len(timestamps) == 0:
             return analysis
         
-        # 转换为datetime（如果还不是）
+        # 转换为datetime（如果还不是�?
         if not pd.api.types.is_datetime64_any_dtype(timestamps):
             try:
                 timestamps = pd.to_datetime(timestamps)
@@ -648,14 +648,14 @@ class AnomalyDetectionPipeline:
                 if len(anomaly_values) > 2 and len(normal_values) > 2:
                     from scipy.stats import ttest_ind, mannwhitneyu
                     
-                    # t检验
+                    # t检�?
                     t_stat, p_value_t = ttest_ind(anomaly_values, normal_values, equal_var=False)
                     analysis[column]['t_test'] = {
                         't_statistic': float(t_stat),
                         'p_value': float(p_value_t)
                     }
                     
-                    # Mann-Whitney U检验
+                    # Mann-Whitney U检�?
                     u_stat, p_value_u = mannwhitneyu(anomaly_values, normal_values)
                     analysis[column]['u_test'] = {
                         'u_statistic': float(u_stat),
@@ -665,12 +665,12 @@ class AnomalyDetectionPipeline:
         return analysis
     
     def _calculate_effect_size(self, group1: np.ndarray, group2: np.ndarray) -> float:
-        """计算效应大小（Cohen's d）"""
+        """计算效应大小（Cohen's d�?""
         mean1, mean2 = np.mean(group1), np.mean(group2)
         std1, std2 = np.std(group1, ddof=1), np.std(group2, ddof=1)
         n1, n2 = len(group1), len(group2)
         
-        # 合并标准差
+        # 合并标准�?
         pooled_std = np.sqrt(((n1 - 1) * std1**2 + (n2 - 1) * std2**2) / (n1 + n2 - 2))
         
         if pooled_std == 0:
@@ -688,7 +688,7 @@ class AnomalyDetectionPipeline:
         from sklearn.cluster import KMeans
         from sklearn.metrics import silhouette_score
         
-        # 尝试不同聚类数
+        # 尝试不同聚类�?
         max_clusters = min(10, len(anomaly_features))
         silhouette_scores = []
         
@@ -776,7 +776,7 @@ anomaly_detection:
         contamination: 0.1
     
     autoencoder:
-      enabled: false  # 深度学习，需要更多资源
+      enabled: false  # 深度学习，需要更多资�?
       type: "autoencoder"
       params:
         hidden_neurons: [64, 32, 32, 64]
@@ -814,23 +814,23 @@ anomaly_detection:
     min_detectors: 3  # 最少需要的检测器数量
     weight_calculation: "performance_based"  # performance_based | uniform | variance_based
   
-  # 阈值配置
+  # 阈值配�?
   threshold:
-    default: 0.9  # 默认阈值
+    default: 0.9  # 默认阈�?
     optimization:
       enabled: true
       method: "percentile"  # percentile | gaussian | mixture | elbow
       percentile: 95  # 用于percentile方法
-      sigma: 3  # 用于gaussian方法（3sigma）
+      sigma: 3  # 用于gaussian方法�?sigma�?
       contamination: 0.1  # 预期异常比例
     
     adaptive:
       enabled: true
       window_size: 1000  # 滑动窗口大小
-      update_frequency: 100  # 更新频率（样本数）
+      update_frequency: 100  # 更新频率（样本数�?
       min_samples: 100  # 最小样本数
   
-  # 预处理配置
+  # 预处理配�?
   preprocessing:
     handle_missing: true
     scale_features: true
@@ -841,10 +841,10 @@ anomaly_detection:
     missing_strategy: "median"  # median | mean | mode | constant | drop
     
     feature_selection_method: "variance"  # variance | correlation | mutual_info
-    variance_threshold: 0.01  # 方差阈值
+    variance_threshold: 0.01  # 方差阈�?
     
     dimensionality_reduction_method: "pca"  # pca | tsne | umap
-    n_components: 0.95  # 保留的方差比例或组件数
+    n_components: 0.95  # 保留的方差比例或组件�?
   
   # 特征工程配置
   feature_engineering:
@@ -853,7 +853,7 @@ anomaly_detection:
     technical_indicators: true
     rolling_features: true
     
-    time_windows: [5, 10, 20, 60]  # 时间窗口（分钟/条）
+    time_windows: [5, 10, 20, 60]  # 时间窗口（分�?条）
     statistical_measures: ["mean", "std", "skew", "kurtosis", "min", "max", "median"]
     
     technical_indicators:
@@ -869,7 +869,7 @@ anomaly_detection:
       windows: [10, 30, 60, 120]
       functions: ["mean", "std", "min", "max", "median", "sum"]
   
-  # 检测模式配置
+  # 检测模式配�?
   detection_mode:
     default: "unsupervised"  # unsupervised | semi_supervised | supervised
     retrain_frequency: "daily"  # hourly | daily | weekly | monthly
@@ -907,8 +907,8 @@ anomaly_detection:
         enabled: true
         url: "https://hooks.slack.com/services/..."
     
-    cooldown_period: 300  # 相同预警冷却时间（秒）
-    grouping_window: 60  # 预警分组时间窗口（秒）
+    cooldown_period: 300  # 相同预警冷却时间（秒�?
+    grouping_window: 60  # 预警分组时间窗口（秒�?
   
   # 性能配置
   performance:
@@ -970,7 +970,7 @@ plotly>=5.10.0
 joblib>=1.1.0
 tqdm>=4.64.0
 statsmodels>=0.13.0  # 时间序列特征
-ta>=0.10.0  # 技术指标
+ta>=0.10.0  # 技术指�?
 umap-learn>=0.5.0  # 降维
 ```
 
@@ -989,7 +989,7 @@ class AnomalyDetectionAPI:
         config: Optional[Dict[str, Any]] = None,
         detection_mode: str = "unsupervised"
     ) -> AnomalyDetectionResult:
-        """在数据中检测异常"""
+        """在数据中检测异�?""
         pass
     
     @staticmethod
@@ -998,7 +998,7 @@ class AnomalyDetectionAPI:
         config: Optional[Dict[str, Any]] = None,
         window_size: int = 1000
     ) -> Iterator[AnomalyDetectionResult]:
-        """在数据流中实时检测异常"""
+        """在数据流中实时检测异�?""
         pass
     
     @staticmethod
@@ -1032,7 +1032,7 @@ class AnomalyDetectionAPI:
 
 ### 4.2 内部接口
 ```python
-# 与Layer 0数据预处理层的接口
+# 与Layer 0数据预处理层的接�?
 class DataPreprocessingLayerIntegration:
     """数据预处理层集成接口"""
     
@@ -1043,7 +1043,7 @@ class DataPreprocessingLayerIntegration:
         end_date: str,
         feature_config: FeatureConfig
     ) -> pd.DataFrame:
-        """获取预处理后的数据"""
+        """获取预处理后的数�?""
         # 调用L0数据预处理层的API
         pass
     
@@ -1052,7 +1052,7 @@ class DataPreprocessingLayerIntegration:
         data_source: str,
         feature_config: FeatureConfig
     ) -> Iterator[pd.DataFrame]:
-        """获取实时数据流"""
+        """获取实时数据�?""
         pass
     
     def report_data_quality_issues(
@@ -1066,7 +1066,7 @@ class DataPreprocessingLayerIntegration:
 
 # 与Layer 8人机交互层的接口
 class HumanInteractionLayerIntegration:
-    """人机交互层集成接口"""
+    """人机交互层集成接�?""
     
     def send_anomaly_alert(
         self,
@@ -1075,7 +1075,7 @@ class HumanInteractionLayerIntegration:
         anomaly_details: Dict[str, Any],
         notification_channels: List[str]
     ) -> bool:
-        """发送异常预警"""
+        """发送异常预�?""
         pass
     
     def log_anomaly_event(
@@ -1097,16 +1097,16 @@ class HumanInteractionLayerIntegration:
 
 ### 4.3 数据接口
 ```python
-# 异常检测数据格式
+# 异常检测数据格�?
 class AnomalyDetectionData:
-    """异常检测数据格式"""
+    """异常检测数据格�?""
     
     def __init__(self):
         self.raw_data: pd.DataFrame  # 原始数据
         self.features: pd.DataFrame  # 特征数据
-        self.timestamps: pd.Series  # 时间戳
-        self.labels: Optional[pd.Series] = None  # 真实标签（如果有）
-        self.metadata: Dict[str, Any]  # 元数据
+        self.timestamps: pd.Series  # 时间�?
+        self.labels: Optional[pd.Series] = None  # 真实标签（如果有�?
+        self.metadata: Dict[str, Any]  # 元数�?
         
     @classmethod
     def from_raw_data(
@@ -1115,7 +1115,7 @@ class AnomalyDetectionData:
         feature_config: FeatureConfig,
         label_column: Optional[str] = None
     ) -> "AnomalyDetectionData":
-        """从原始数据创建"""
+        """从原始数据创�?""
         instance = cls()
         instance.raw_data = raw_data
         instance.features = cls._extract_features(raw_data, feature_config)
@@ -1190,7 +1190,7 @@ from L9_ANOMALY_DETECTOR.pyod_integration import PyodAnomalyDetector
 from L9_ANOMALY_DETECTOR.anomaly_detection_pipeline import AnomalyDetectionPipeline
 
 class TestPyodAnomalyDetector:
-    """pyod异常检测测试"""
+    """pyod异常检测测�?""
     
     def setup_method(self):
         self.config = {
@@ -1243,7 +1243,7 @@ class TestPyodAnomalyDetector:
             columns=[f'feature_{i}' for i in range(n_features)]
         )
         
-        # 异常数据（与正常数据分布不同）
+        # 异常数据（与正常数据分布不同�?
         self.X_abnormal = pd.DataFrame(
             np.random.randn(50, n_features) * 3 + 5,  # 不同的均值和方差
             columns=[f'feature_{i}' for i in range(n_features)]
@@ -1252,7 +1252,7 @@ class TestPyodAnomalyDetector:
         # 合并数据
         self.X = pd.concat([self.X_normal, self.X_abnormal], ignore_index=True)
         
-        # 标签（用于监督/半监督测试）
+        # 标签（用于监�?半监督测试）
         self.y = pd.Series([0] * n_samples + [1] * 50)
     
     def test_initialization(self):
@@ -1289,7 +1289,7 @@ class TestPyodAnomalyDetector:
     def test_train_unsupervised_detectors(self):
         self.detector._train_unsupervised_detectors(self.X)
         
-        # 验证检测器已训练
+        # 验证检测器已训�?
         assert self.detector.detectors['iforest']['trained'] == True
         assert self.detector.detectors['lof']['trained'] == True
         
@@ -1313,7 +1313,7 @@ class TestPyodAnomalyDetector:
         assert len(ensemble_scores) == len(self.X)
         assert ensemble_scores.ndim == 1
         assert np.all(ensemble_scores >= 0)  # 分数应该非负
-        assert np.all(ensemble_scores <= 1)  # 分数应该在[0,1]范围内
+        assert np.all(ensemble_scores <= 1)  # 分数应该在[0,1]范围�?
     
     def test_detect_with_ensemble_weighted_average(self):
         # 训练检测器
@@ -1345,18 +1345,18 @@ class TestPyodAnomalyDetector:
         assert len(result.anomaly_scores) == len(self.X)
         assert len(result.anomaly_labels) == len(self.X)
         
-        # 验证标签是0或1
+        # 验证标签�?�?
         assert set(result.anomaly_labels) <= {0, 1}
         
         # 验证异常比例大致符合预期
         anomaly_ratio = np.mean(result.anomaly_labels)
-        expected_contamination = 0.1  # 配置中的默认值
-        assert abs(anomaly_ratio - expected_contamination) < 0.1  # 允许一些误差
+        expected_contamination = 0.1  # 配置中的默认�?
+        assert abs(anomaly_ratio - expected_contamination) < 0.1  # 允许一些误�?
     
     def test_handle_missing_values(self):
         # 创建有缺失值的数据
         X_with_nan = self.X.copy()
-        X_with_nan.iloc[0:10, 0] = np.nan  # 前10行的第一列为NaN
+        X_with_nan.iloc[0:10, 0] = np.nan  # �?0行的第一列为NaN
         
         X_processed = self.detector._handle_missing_values(X_with_nan)
         
@@ -1373,13 +1373,13 @@ class TestPyodAnomalyDetector:
     def test_scale_features(self):
         X_scaled = self.detector._scale_features(self.X)
         
-        # 验证每列的均值为0，标准差为1（近似）
+        # 验证每列的均值为0，标准差�?（近似）
         for col in X_scaled.columns:
             col_mean = np.mean(X_scaled[col])
             col_std = np.std(X_scaled[col])
             
-            assert abs(col_mean) < 1e-10  # 均值接近0
-            assert abs(col_std - 1) < 1e-10  # 标准差接近1
+            assert abs(col_mean) < 1e-10  # 均值接�?
+            assert abs(col_std - 1) < 1e-10  # 标准差接�?
 ```
 
 ### 5.2 集成测试
@@ -1391,7 +1391,7 @@ class TestAnomalyDetectionPipeline:
     def test_full_pipeline(self):
         pipeline = AnomalyDetectionPipeline('config/pyod_config.yaml')
         
-        # 运行流水线
+        # 运行流水�?
         result = pipeline.run(
             data_source='synthetic',
             start_date='2026-01-01',
@@ -1407,7 +1407,7 @@ class TestAnomalyDetectionPipeline:
         assert 'anomaly_analysis' in result
         assert 'final_report' in result
         
-        # 验证检测结果
+        # 验证检测结�?
         detection_result = result.detection_result
         assert detection_result.anomaly_scores is not None
         assert detection_result.anomaly_labels is not None
@@ -1424,17 +1424,17 @@ class TestAnomalyDetectionPipeline:
         # 验证异常比例合理
         assert 0 <= stats['anomaly_ratio'] <= 1
         
-        # 验证最终报告
+        # 验证最终报�?
         final_report = result.final_report
         assert 'summary' in final_report
         assert 'detection_metrics' in final_report
         assert 'recommendations' in final_report
     
     def test_real_time_pipeline(self):
-        """测试实时异常检测"""
+        """测试实时异常检�?""
         pipeline = AnomalyDetectionPipeline('config/pyod_config.yaml')
         
-        # 创建模拟数据流
+        # 创建模拟数据�?
         def mock_data_stream():
             for i in range(5):
                 batch_data = pd.DataFrame({
@@ -1444,7 +1444,7 @@ class TestAnomalyDetectionPipeline:
                 })
                 yield batch_data
         
-        # 运行实时检测
+        # 运行实时检�?
         stream_results = []
         for data_batch in mock_data_stream():
             result = pipeline.run(
@@ -1474,7 +1474,7 @@ class TestAnomalyDetectionPipeline:
             'feature3': np.random.randn(n_samples) + 1
         })
         
-        # 创建异常标签（10%异常）
+        # 创建异常标签�?0%异常�?
         anomaly_labels = np.zeros(n_samples)
         anomaly_indices = np.random.choice(n_samples, size=100, replace=False)
         anomaly_labels[anomaly_indices] = 1
@@ -1525,7 +1525,7 @@ class TestPyodPerformance:
     """pyod性能测试"""
     
     def test_detection_scalability(self):
-        """测试检测可扩展性"""
+        """测试检测可扩展�?""
         import time
         
         config = {
@@ -1557,12 +1557,12 @@ class TestPyodPerformance:
                     columns=[f'feature_{i}' for i in range(n_features)]
                 )
                 
-                # 添加一些异常
+                # 添加一些异�?
                 n_anomalies = int(n_samples * 0.05)
                 anomaly_indices = np.random.choice(n_samples, n_anomalies, replace=False)
                 X.iloc[anomaly_indices] += np.random.randn(n_anomalies, n_features) * 5
                 
-                # 测量检测时间
+                # 测量检测时�?
                 start_time = time.time()
                 result = detector.detect_anomalies(
                     X=X,
@@ -1582,8 +1582,8 @@ class TestPyodPerformance:
                     'anomaly_count': int(np.sum(result.anomaly_labels))
                 })
                 
-                print(f"样本数: {n_samples}, 特征数: {n_features}, "
-                      f"时间: {detection_time:.2f}s, 样本/秒: {samples_per_second:.0f}")
+                print(f"样本�? {n_samples}, 特征�? {n_features}, "
+                      f"时间: {detection_time:.2f}s, 样本/�? {samples_per_second:.0f}")
         
         # 分析结果
         df_results = pd.DataFrame(results)
@@ -1591,20 +1591,20 @@ class TestPyodPerformance:
         print(df_results.groupby('n_samples')[['detection_time', 'samples_per_second']].mean())
         
         # 验证性能要求
-        # 对于10000样本，检测时间应小于10秒
+        # 对于10000样本，检测时间应小于10�?
         large_sample_result = df_results[df_results['n_samples'] == 10000]
         if len(large_sample_result) > 0:
             avg_time = large_sample_result['detection_time'].mean()
-            assert avg_time < 10, f"10000样本检测时间过长: {avg_time:.2f}s"
+            assert avg_time < 10, f"10000样本检测时间过�? {avg_time:.2f}s"
         
         # 对于10特征，每秒应处理至少1000样本
         low_feature_result = df_results[df_results['n_features'] == 10]
         if len(low_feature_result) > 0:
             avg_speed = low_feature_result['samples_per_second'].mean()
-            assert avg_speed > 1000, f"10特征处理速度过低: {avg_speed:.0f}样本/秒"
+            assert avg_speed > 1000, f"10特征处理速度过低: {avg_speed:.0f}样本/�?
     
     def test_memory_usage_large_data(self):
-        """测试大数据内存使用"""
+        """测试大数据内存使�?""
         import psutil
         import os
         
@@ -1622,7 +1622,7 @@ class TestPyodPerformance:
         
         detector = PyodAnomalyDetector(config)
         
-        # 创建大规模数据
+        # 创建大规模数�?
         n_samples = 50000
         n_features = 30
         X = pd.DataFrame(
@@ -1632,7 +1632,7 @@ class TestPyodPerformance:
         
         memory_before = process.memory_info().rss / 1024 / 1024  # MB
         
-        # 执行检测
+        # 执行检�?
         result = detector.detect_anomalies(
             X=X,
             detection_mode='unsupervised',
@@ -1642,13 +1642,13 @@ class TestPyodPerformance:
         memory_after = process.memory_info().rss / 1024 / 1024  # MB
         memory_increase = memory_after - memory_before
         
-        print(f"样本数: {n_samples}, 特征数: {n_features}")
+        print(f"样本�? {n_samples}, 特征�? {n_features}")
         print(f"内存增加: {memory_increase:.2f}MB")
         print(f"检测到异常: {np.sum(result.anomaly_labels)}")
         
         # 验证内存使用
-        assert memory_increase < 2048  # 内存增加不超过2GB
-        assert memory_increase / n_samples < 0.05  # 每样本内存增加小于0.05MB
+        assert memory_increase < 2048  # 内存增加不超�?GB
+        assert memory_increase / n_samples < 0.05  # 每样本内存增加小�?.05MB
     
     def test_real_time_performance(self):
         """测试实时性能"""
@@ -1682,11 +1682,11 @@ class TestPyodPerformance:
         
         detector.detect_anomalies(X_train, detection_mode='unsupervised')
         
-        # 测试实时检测延迟
+        # 测试实时检测延�?
         latencies = []
         
         for i in range(100):
-            # 单个样本检测
+            # 单个样本检�?
             X_single = pd.DataFrame(
                 np.random.randn(1, n_features),
                 columns=[f'feature_{i}' for i in range(n_features)]
@@ -1699,7 +1699,7 @@ class TestPyodPerformance:
             )
             end_time = time.perf_counter()
             
-            latency = (end_time - start_time) * 1000  # 转换为毫秒
+            latency = (end_time - start_time) * 1000  # 转换为毫�?
             latencies.append(latency)
         
         avg_latency = np.mean(latencies)
@@ -1708,12 +1708,12 @@ class TestPyodPerformance:
         
         print(f"平均延迟: {avg_latency:.2f}ms")
         print(f"P95延迟: {p95_latency:.2f}ms")
-        print(f"最大延迟: {max_latency:.2f}ms")
+        print(f"最大延�? {max_latency:.2f}ms")
         
         # 验证实时性能要求
         assert avg_latency < 50  # 平均延迟小于50ms
-        assert p95_latency < 100  # 95%的延迟小于100ms
-        assert max_latency < 200  # 最大延迟小于200ms
+        assert p95_latency < 100  # 95%的延迟小�?00ms
+        assert max_latency < 200  # 最大延迟小�?00ms
 ```
 
 ---
@@ -1724,7 +1724,7 @@ class TestPyodPerformance:
 ```python
 # monitoring/anomaly_detection_monitor.py
 class AnomalyDetectionMonitor:
-    """异常检测监控"""
+    """异常检测监�?""
     
     METRICS = [
         'data_volume',
@@ -1755,7 +1755,7 @@ class AnomalyDetectionMonitor:
         self.drift_detector = DataDriftDetector()
         
     def record_detection_metrics(self, detection_result: AnomalyDetectionResult, metadata: Dict[str, Any]):
-        """记录检测指标"""
+        """记录检测指�?""
         metrics = {
             'timestamp': datetime.now(),
             'system_id': self.system_id,
@@ -1766,7 +1766,7 @@ class AnomalyDetectionMonitor:
             'threshold_value': float(detection_result.threshold)
         }
         
-        # 添加性能指标（如果有真实标签）
+        # 添加性能指标（如果有真实标签�?
         if 'ground_truth' in metadata:
             self._add_performance_metrics(metrics, detection_result, metadata['ground_truth'])
         
@@ -1778,10 +1778,10 @@ class AnomalyDetectionMonitor:
         # 更新性能基线
         self._update_performance_baseline(metrics)
         
-        # 检查异常
+        # 检查异�?
         self._check_detection_anomalies(metrics, detection_result)
         
-        # 检查数据漂移
+        # 检查数据漂�?
         if 'features' in metadata:
             self._check_data_drift(metadata['features'], metrics['timestamp'])
     
@@ -1795,7 +1795,7 @@ class AnomalyDetectionMonitor:
         y_true = ground_truth.values
         y_pred = detection_result.anomaly_labels
         
-        # 确保形状一致
+        # 确保形状一�?
         if len(y_true) == len(y_pred):
             try:
                 metrics['precision'] = float(precision_score(y_true, y_pred, zero_division=0))
@@ -1805,7 +1805,7 @@ class AnomalyDetectionMonitor:
                 # AUC-ROC（需要概率分数）
                 if hasattr(detection_result, 'anomaly_scores'):
                     y_scores = detection_result.anomaly_scores
-                    if len(np.unique(y_true)) > 1:  # 需要正负样本
+                    if len(np.unique(y_true)) > 1:  # 需要正负样�?
                         metrics['auc_roc'] = float(roc_auc_score(y_true, y_scores))
                 
                 # 混淆矩阵
@@ -1850,17 +1850,17 @@ class AnomalyDetectionMonitor:
                 baseline = self.performance_baseline[metric_name]
                 baseline['values'].append(metrics[metric_name])
                 
-                # 保持最近100个值
+                # 保持最�?00个�?
                 if len(baseline['values']) > 100:
                     baseline['values'] = baseline['values'][-100:]
                 
-                # 重新计算统计量
+                # 重新计算统计�?
                 if len(baseline['values']) >= 10:
                     baseline['mean'] = np.mean(baseline['values'])
                     baseline['std'] = np.std(baseline['values'])
     
     def _check_detection_anomalies(self, metrics: Dict[str, Any], detection_result: AnomalyDetectionResult):
-        """检查检测异常"""
+        """检查检测异�?""
         alerts = []
         
         # 异常比例异常
@@ -1885,7 +1885,7 @@ class AnomalyDetectionMonitor:
                 baseline = self.performance_baseline[metric_name]
                 if baseline['mean'] is not None and baseline['std'] is not None:
                     current_value = metrics[metric_name]
-                    # 检查是否显著下降（超过2个标准差）
+                    # 检查是否显著下降（超过2个标准差�?
                     if current_value < baseline['mean'] - 2 * baseline['std']:
                         alerts.append({
                             'type': f'{metric_name}_degradation',
@@ -1907,14 +1907,14 @@ class AnomalyDetectionMonitor:
                     'threshold': 0.1
                 })
         
-        # 检测延迟过高
+        # 检测延迟过�?
         if 'detection_latency' in metrics:
             latency = metrics.get('detection_latency', 0)
-            if latency > 1000:  # 延迟超过1秒
+            if latency > 1000:  # 延迟超过1�?
                 alerts.append({
                     'type': 'high_detection_latency',
                     'severity': 'warning',
-                    'message': f'检测延迟过高: {latency:.0f}ms',
+                    'message': f'检测延迟过�? {latency:.0f}ms',
                     'value': latency,
                     'threshold': 1000
                 })
@@ -1937,22 +1937,22 @@ class AnomalyDetectionMonitor:
             alert['system_id'] = self.system_id
             self.alerts.append(alert)
             
-            # 发送告警（调用外部通知系统）
+            # 发送告警（调用外部通知系统�?
             self._send_alert(alert)
     
     def _check_data_drift(self, features: pd.DataFrame, timestamp: datetime):
-        """检查数据漂移"""
+        """检查数据漂�?""
         if len(features) == 0:
             return
         
-        # 检查特征分布漂移
+        # 检查特征分布漂�?
         drift_result = self.drift_detector.detect_drift(features)
         
         if drift_result['has_drift']:
             self.alerts.append({
                 'type': 'data_drift_detected',
                 'severity': 'warning',
-                'message': f'数据漂移检测: {drift_result["drift_score"]:.3f}',
+                'message': f'数据漂移检�? {drift_result["drift_score"]:.3f}',
                 'drift_score': drift_result['drift_score'],
                 'affected_features': drift_result['affected_features'],
                 'timestamp': timestamp,
@@ -1960,7 +1960,7 @@ class AnomalyDetectionMonitor:
             })
     
     def _send_alert(self, alert: Dict[str, Any]):
-        """发送告警"""
+        """发送告�?""
         # 这里集成到外部通知系统
         # 例如：发送到Slack、Email、短信等
         print(f"告警: [{alert['severity']}] {alert['message']}")
@@ -2032,7 +2032,7 @@ class AnomalyDetectionMonitor:
 ```python
 # monitoring/alert_rules.py
 class AnomalyDetectionAlertRules:
-    """异常检测告警规则"""
+    """异常检测告警规�?""
     
     RULES = {
         # 性能相关告警
@@ -2051,21 +2051,21 @@ class AnomalyDetectionAlertRules:
             'enabled': True,
             'severity': 'warning',
             'condition': lambda metrics: metrics.get('false_positive_rate', 0) > 0.1,
-            'message': '假阳性率过高，可能导致过多误报'
+            'message': '假阳性率过高，可能导致过多误�?
         },
         
         'low_anomaly_detection': {
             'enabled': True,
             'severity': 'info',
             'condition': lambda metrics: metrics.get('anomaly_ratio', 0) < 0.01,
-            'message': '异常检测率过低，可能漏报异常'
+            'message': '异常检测率过低，可能漏报异�?
         },
         
         'high_anomaly_detection': {
             'enabled': True,
             'severity': 'warning',
             'condition': lambda metrics: metrics.get('anomaly_ratio', 0) > 0.3,
-            'message': '异常检测率过高，可能误报正常数据'
+            'message': '异常检测率过高，可能误报正常数�?
         },
         
         # 系统相关告警
@@ -2073,14 +2073,14 @@ class AnomalyDetectionAlertRules:
             'enabled': True,
             'severity': 'warning',
             'condition': lambda metrics: metrics.get('detection_latency', 0) > 1000,
-            'message': '检测延迟过高，影响实时性'
+            'message': '检测延迟过高，影响实时�?
         },
         
         'high_memory_usage': {
             'enabled': True,
             'severity': 'critical',
             'condition': lambda metrics: metrics.get('memory_usage', 0) > 2048,
-            'message': '内存使用过高，可能影响系统稳定性'
+            'message': '内存使用过高，可能影响系统稳定�?
         },
         
         'high_cpu_utilization': {
@@ -2095,21 +2095,21 @@ class AnomalyDetectionAlertRules:
             'enabled': True,
             'severity': 'warning',
             'condition': lambda metrics: metrics.get('data_drift_score', 0) > 0.2,
-            'message': '检测到数据漂移，可能需要更新模型'
+            'message': '检测到数据漂移，可能需要更新模�?
         },
         
         'low_data_volume': {
             'enabled': True,
             'severity': 'info',
             'condition': lambda metrics: metrics.get('data_volume', 0) < 100,
-            'message': '数据量不足，可能影响检测准确性'
+            'message': '数据量不足，可能影响检测准确�?
         },
         
         'high_missing_rate': {
             'enabled': True,
             'severity': 'warning',
             'condition': lambda metrics: metrics.get('missing_rate', 0) > 0.1,
-            'message': '数据缺失率过高，可能影响检测准确性'
+            'message': '数据缺失率过高，可能影响检测准确�?
         },
         
         # 业务相关告警
@@ -2117,14 +2117,14 @@ class AnomalyDetectionAlertRules:
             'enabled': True,
             'severity': 'critical',
             'condition': lambda metrics: metrics.get('consecutive_anomalies', 0) > 5,
-            'message': '连续检测到多个异常，可能存在系统性风险'
+            'message': '连续检测到多个异常，可能存在系统性风�?
         },
         
         'anomaly_cluster_detected': {
             'enabled': True,
             'severity': 'warning',
             'condition': lambda metrics: metrics.get('anomaly_cluster_score', 0) > 0.8,
-            'message': '检测到异常聚集，可能存在模式异常'
+            'message': '检测到异常聚集，可能存在模式异�?
         },
         
         'unusual_temporal_pattern': {
@@ -2145,7 +2145,7 @@ class AnomalyDetectionAlertRules:
                 continue
             
             try:
-                # 检查条件
+                # 检查条�?
                 if rule_config:
                     alert = {
                         'rule': rule_name,
@@ -2156,7 +2156,7 @@ class AnomalyDetectionAlertRules:
                         'context': context
                     }
                     
-                    # 添加上下文信息
+                    # 添加上下文信�?
                     if 'anomaly_details' in context:
                         alert['anomaly_details'] = context['anomaly_details']
                     
@@ -2166,14 +2166,14 @@ class AnomalyDetectionAlertRules:
                 print(f"评估告警规则 {rule_name} 失败: {str(e)}")
                 continue
         
-        # 按严重性排序
+        # 按严重性排�?
         severity_order = {'critical': 0, 'warning': 1, 'info': 2}
         alerts.sort(key=lambda x: severity_order.get(x['severity'], 3))
         
         return alerts
     
     def suppress_similar_alerts(self, alerts: List[Dict[str, Any]], cooldown_period: int = 300) -> List[Dict[str, Any]]:
-        """抑制相似告警（冷却期）"""
+        """抑制相似告警（冷却期�?""
         if not alerts:
             return []
         
@@ -2188,9 +2188,9 @@ class AnomalyDetectionAlertRules:
             if rule_name in last_alert_time:
                 time_since_last = (current_time - last_alert_time[rule_name]).total_seconds()
                 if time_since_last < cooldown_period:
-                    continue  # 跳过，仍在冷却期内
+                    continue  # 跳过，仍在冷却期�?
             
-            # 更新最后告警时间
+            # 更新最后告警时�?
             last_alert_time[rule_name] = current_time
             suppressed_alerts.append(alert)
         
@@ -2205,7 +2205,7 @@ class AnomalyDetectionAlertRules:
 # deployment/deploy_anomaly_detector.py
 #!/usr/bin/env python3
 """
-异常检测模块部署脚本
+异常检测模块部署脚�?
 """
 
 import os
@@ -2267,7 +2267,7 @@ class AnomalyDetectorDeployer:
             # 1. 验证环境
             self._validate_environment()
             
-            # 2. 检查依赖
+            # 2. 检查依�?
             self._check_dependencies()
             
             # 3. 安装依赖
@@ -2285,7 +2285,7 @@ class AnomalyDetectorDeployer:
             # 7. 启动服务
             self._start_services()
             
-            # 8. 运行健康检查
+            # 8. 运行健康检�?
             self._run_health_checks()
             
             # 9. 验证部署
@@ -2308,9 +2308,9 @@ class AnomalyDetectorDeployer:
         required_version = (3, 8, 0)
         
         if python_version < required_version:
-            raise RuntimeError(f"Python版本需要 {required_version} 或更高，当前版本: {python_version}")
+            raise RuntimeError(f"Python版本需�?{required_version} 或更高，当前版本: {python_version}")
         
-        # 检查可用内存
+        # 检查可用内�?
         if self.environment == 'production':
             import psutil
             memory = psutil.virtual_memory()
@@ -2318,7 +2318,7 @@ class AnomalyDetectorDeployer:
             if memory.available < 4 * 1024 * 1024 * 1024:  # 4GB
                 self.logger.warning(f"可用内存不足: {memory.available / 1024 / 1024 / 1024:.1f}GB")
         
-        # 检查磁盘空间
+        # 检查磁盘空�?
         disk_usage = psutil.disk_usage('/')
         if disk_usage.free < 10 * 1024 * 1024 * 1024:  # 10GB
             self.logger.warning(f"磁盘空间不足: {disk_usage.free / 1024 / 1024 / 1024:.1f}GB")
@@ -2326,8 +2326,8 @@ class AnomalyDetectorDeployer:
         self.logger.info("环境验证通过")
     
     def _check_dependencies(self):
-        """检查依赖"""
-        self.logger.info("检查系统依赖")
+        """检查依�?""
+        self.logger.info("检查系统依�?)
         
         required_commands = [
             'git', 'python3', 'pip', 'docker', 'redis-cli'
@@ -2337,10 +2337,10 @@ class AnomalyDetectorDeployer:
         for cmd in required_commands:
             try:
                 subprocess.run([cmd, '--version'], capture_output=True, check=True)
-                self.logger.debug(f"✓ {cmd} 可用")
+                self.logger.debug(f"�?{cmd} 可用")
             except (subprocess.SubprocessError, FileNotFoundError):
                 missing_commands.append(cmd)
-                self.logger.warning(f"✗ {cmd} 不可用")
+                self.logger.warning(f"�?{cmd} 不可�?)
         
         if missing_commands:
             self.logger.warning(f"缺少命令: {', '.join(missing_commands)}")
@@ -2394,7 +2394,7 @@ class AnomalyDetectorDeployer:
         for key, value in env_vars.items():
             os.environ[key] = str(value)
         
-        self.logger.info(f"环境变量已写入: {env_file}")
+        self.logger.info(f"环境变量已写�? {env_file}")
     
     def _deploy_code(self):
         """部署代码"""
@@ -2419,7 +2419,7 @@ class AnomalyDetectorDeployer:
                 
                 self.logger.info(f"复制: {source_dir} -> {dest_dir}")
                 
-                # 使用rsync或cp（简化版）
+                # 使用rsync或cp（简化版�?
                 import shutil
                 if dest_dir.exists():
                     shutil.rmtree(dest_dir)
@@ -2468,11 +2468,11 @@ class AnomalyDetectorDeployer:
     
     def _start_services(self):
         """启动服务"""
-        self.logger.info("启动异常检测服务")
+        self.logger.info("启动异常检测服�?)
         
         services = self.config.get('services', {})
         
-        # 启动主检测服务
+        # 启动主检测服�?
         if services.get('detection_service', {}).get('enabled', True):
             self._start_detection_service()
         
@@ -2487,8 +2487,8 @@ class AnomalyDetectorDeployer:
         self.logger.info("所有服务已启动")
     
     def _start_detection_service(self):
-        """启动检测服务"""
-        self.logger.info("启动异常检测服务")
+        """启动检测服�?""
+        self.logger.info("启动异常检测服�?)
         
         service_config = self.config['services']['detection_service']
         
@@ -2523,8 +2523,8 @@ class AnomalyDetectorDeployer:
             subprocess.run(cmd)
     
     def _run_health_checks(self):
-        """运行健康检查"""
-        self.logger.info("运行健康检查")
+        """运行健康检�?""
+        self.logger.info("运行健康检�?)
         
         import time
         import requests
@@ -2538,23 +2538,23 @@ class AnomalyDetectorDeployer:
             
             for attempt in range(retries):
                 try:
-                    self.logger.info(f"检查健康端点: {url} (尝试 {attempt+1}/{retries})")
+                    self.logger.info(f"检查健康端�? {url} (尝试 {attempt+1}/{retries})")
                     
                     response = requests.get(url, timeout=timeout)
                     
                     if response.status_code == 200:
-                        self.logger.info(f"✓ {url} 健康")
+                        self.logger.info(f"�?{url} 健康")
                         break
                     else:
-                        self.logger.warning(f"✗ {url} 不健康: {response.status_code}")
+                        self.logger.warning(f"�?{url} 不健�? {response.status_code}")
                         
                 except Exception as e:
-                    self.logger.warning(f"✗ {url} 检查失败: {str(e)}")
+                    self.logger.warning(f"�?{url} 检查失�? {str(e)}")
                 
                 if attempt < retries - 1:
-                    time.sleep(5)  # 重试前等待
+                    time.sleep(5)  # 重试前等�?
             else:
-                self.logger.error(f"健康检查失败: {url}")
+                self.logger.error(f"健康检查失�? {url}")
     
     def _verify_deployment(self):
         """验证部署"""
@@ -2579,7 +2579,7 @@ class AnomalyDetectorDeployer:
     
     def _rollback_deployment(self):
         """回滚部署"""
-        self.logger.info("开始回滚部署")
+        self.logger.info("开始回滚部�?)
         
         # 停止服务
         self._stop_services()
@@ -2601,8 +2601,8 @@ class AnomalyDetectorDeployer:
         self.logger.info("回滚完成")
 
 def main():
-    """主函数"""
-    parser = argparse.ArgumentParser(description='部署异常检测模块')
+    """主函�?""
+    parser = argparse.ArgumentParser(description='部署异常检测模�?)
     parser.add_argument('--config', required=True, help='配置文件路径')
     parser.add_argument('--environment', default='production', choices=['development', 'staging', 'production'],
                        help='部署环境')
@@ -2611,7 +2611,7 @@ def main():
     args = parser.parse_args()
     
     if args.dry_run:
-        print("干运行模式，不实际部署")
+        print("干运行模式，不实际部�?)
         print(f"配置: {args.config}")
         print(f"环境: {args.environment}")
         return
@@ -2629,10 +2629,10 @@ if __name__ == '__main__':
 ```yaml
 # deployment/scheduler_config.yaml
 scheduling:
-  # 实时检测任务
+  # 实时检测任�?
   real_time_detection:
     enabled: true
-    schedule: "*/1 * * * *"  # 每分钟执行
+    schedule: "*/1 * * * *"  # 每分钟执�?
     command: "python -m L9_ANOMALY_DETECTOR.real_time_detector"
     args:
       - "--config"
@@ -2649,10 +2649,10 @@ scheduling:
       max_retries: 3
       backoff_delay: "30s"
     
-  # 批量检测任务
+  # 批量检测任�?
   batch_detection:
     enabled: true
-    schedule: "0 2 * * *"  # 每天凌晨2点
+    schedule: "0 2 * * *"  # 每天凌晨2�?
     command: "python -m L9_ANOMALY_DETECTOR.batch_detector"
     args:
       - "--config"
@@ -2666,10 +2666,10 @@ scheduling:
       cpu: "2"
       timeout: "2h"
     
-  # 模型重训练任务
+  # 模型重训练任�?
   model_retraining:
     enabled: true
-    schedule: "0 3 * * 0"  # 每周日凌晨3点
+    schedule: "0 3 * * 0"  # 每周日凌�?�?
     command: "python -m L9_ANOMALY_DETECTOR.model_retrainer"
     args:
       - "--config"
@@ -2686,7 +2686,7 @@ scheduling:
   # 性能监控任务
   performance_monitoring:
     enabled: true
-    schedule: "*/5 * * * *"  # 每5分钟
+    schedule: "*/5 * * * *"  # �?分钟
     command: "python -m L9_ANOMALY_DETECTOR.performance_monitor"
     args:
       - "--config"
@@ -2703,7 +2703,7 @@ scheduling:
   # 数据清理任务
   data_cleanup:
     enabled: true
-    schedule: "0 4 * * *"  # 每天凌晨4点
+    schedule: "0 4 * * *"  # 每天凌晨4�?
     command: "python -m L9_ANOMALY_DETECTOR.data_cleaner"
     args:
       - "--config"
@@ -2720,7 +2720,7 @@ scheduling:
   # 报告生成任务
   report_generation:
     enabled: true
-    schedule: "0 6 * * *"  # 每天凌晨6点
+    schedule: "0 6 * * *"  # 每天凌晨6�?
     command: "python -m L9_ANOMALY_DETECTOR.report_generator"
     args:
       - "--config"
@@ -2737,7 +2737,7 @@ scheduling:
       timeout: "1h"
 
 execution:
-  # 执行器配置
+  # 执行器配�?
   executor: "kubernetes"  # kubernetes | docker | systemd | cron
   
   kubernetes:
@@ -2775,7 +2775,7 @@ monitoring:
       - metric: "job_success_rate"
         condition: "< 0.9"
         severity: "critical"
-        message: "任务成功率过低"
+        message: "任务成功率过�?
         
       - metric: "job_duration"
         condition: "> 2h"
@@ -2785,7 +2785,7 @@ monitoring:
       - metric: "job_failure_rate"
         condition: "> 0.1"
         severity: "critical"
-        message: "任务失败率过高"
+        message: "任务失败率过�?
     
     dashboard:
       enabled: true
@@ -2795,7 +2795,7 @@ monitoring:
 backup:
   # 备份配置
   enabled: true
-  schedule: "0 1 * * *"  # 每天凌晨1点
+  schedule: "0 1 * * *"  # 每天凌晨1�?
   retention_days: 7
   
   backup_items:
@@ -2840,9 +2840,9 @@ backup:
 # deployment/environments.yaml
 environments:
   development:
-    description: "开发环境"
+    description: "开发环�?
     
-    # 数据库配置
+    # 数据库配�?
     database:
       host: "localhost"
       port: 5432
@@ -2896,9 +2896,9 @@ environments:
       backup_directory: "/tmp/backup/anomaly_detector_dev"
       
   staging:
-    description: "预发布环境"
+    description: "预发布环�?
     
-    # 数据库配置
+    # 数据库配�?
     database:
       host: "staging-db.example.com"
       port: 5432
@@ -3030,7 +3030,7 @@ environments:
       rate_limiting: true
       audit_logging: true
       
-    # 高可用配置
+    # 高可用配�?
     high_availability:
       enabled: true
       zones: ["us-east-1a", "us-east-1b", "us-east-1c"]
@@ -3055,105 +3055,105 @@ environments:
 
 ### 8.1 设计亮点
 
-1. **全面集成pyod框架**：
-   - 支持30+异常检测算法
-   - 灵活的无监督、半监督、监督模式
-   - 多种集成方法（平均、加权、投票等）
+1. **全面集成pyod框架**�?
+   - 支持30+异常检测算�?
+   - 灵活的无监督、半监督、监督模�?
+   - 多种集成方法（平均、加权、投票等�?
 
-2. **完整的异常分析流水线**：
+2. **完整的异常分析流水线**�?
    - 从数据加载到预警生成的全流程
-   - 多维异常分析（时间、特征、聚类等）
-   - 可解释异常检测
+   - 多维异常分析（时间、特征、聚类等�?
+   - 可解释异常检�?
 
-3. **专业级监控系统**：
-   - 实时性能监控和指标收集
-   - 智能告警规则和抑制机制
-   - 数据漂移检测
+3. **专业级监控系�?*�?
+   - 实时性能监控和指标收�?
+   - 智能告警规则和抑制机�?
+   - 数据漂移检�?
 
-4. **企业级部署方案**：
+4. **企业级部署方�?*�?
    - 多环境支持（开发、预发、生产）
-   - 自动化部署脚本
-   - 调度系统和资源管理
+   - 自动化部署脚�?
+   - 调度系统和资源管�?
    - 高可用和备份策略
 
 ### 8.2 预期效益
 
-1. **风险控制提升**：
+1. **风险控制提升**�?
    - 实时检测交易异常和市场异常
    - 提前预警潜在风险事件
    - 减少异常交易损失
 
-2. **数据质量保障**：
-   - 自动检测数据质量问题
+2. **数据质量保障**�?
+   - 自动检测数据质量问�?
    - 及时发现数据漂移
-   - 提高数据可靠性
+   - 提高数据可靠�?
 
-3. **运维效率提升**：
-   - 自动化异常检测流程
-   - 减少人工监控工作量
-   - 快速定位问题根源
+3. **运维效率提升**�?
+   - 自动化异常检测流�?
+   - 减少人工监控工作�?
+   - 快速定位问题根�?
 
-4. **决策支持增强**：
+4. **决策支持增强**�?
    - 提供异常分析报告
    - 支持异常原因调查
    - 辅助风险决策
 
 ### 8.3 后续优化方向
 
-1. **算法优化**：
-   - 引入深度学习异常检测模型
-   - 优化集成策略和权重计算
-   - 支持在线学习和增量更新
+1. **算法优化**�?
+   - 引入深度学习异常检测模�?
+   - 优化集成策略和权重计�?
+   - 支持在线学习和增量更�?
 
-2. **性能提升**：
-   - GPU加速支持
-   - 分布式检测框架
+2. **性能提升**�?
+   - GPU加速支�?
+   - 分布式检测框�?
    - 流式处理优化
 
-3. **功能扩展**：
+3. **功能扩展**�?
    - 多模态异常检测（文本、图像）
    - 因果异常分析
-   - 预测性异常预警
+   - 预测性异常预�?
 
-4. **集成增强**：
-   - 与现有监控系统深度集成
+4. **集成增强**�?
+   - 与现有监控系统深度集�?
    - 支持更多数据源和格式
    - 提供REST API和SDK
 
-### 8.4 风险评估与缓解
+### 8.4 风险评估与缓�?
 
 | 风险类型 | 风险描述 | 影响程度 | 缓解措施 |
 |---------|---------|---------|---------|
-| 技术风险 | pyod框架更新不兼容 | 中 | 版本锁定、兼容性测试、备用算法 |
-| 性能风险 | 实时检测延迟过高 | 高 | 性能监控、算法优化、硬件升级 |
-| 数据风险 | 数据质量影响检测准确性 | 高 | 数据验证、质量监控、异常过滤 |
-| 安全风险 | 敏感数据泄露 | 高 | 数据脱敏、访问控制、审计日志 |
-| 运维风险 | 系统故障影响业务 | 高 | 高可用架构、自动恢复、备份策略 |
+| 技术风�?| pyod框架更新不兼�?| �?| 版本锁定、兼容性测试、备用算�?|
+| 性能风险 | 实时检测延迟过�?| �?| 性能监控、算法优化、硬件升�?|
+| 数据风险 | 数据质量影响检测准确�?| �?| 数据验证、质量监控、异常过�?|
+| 安全风险 | 敏感数据泄露 | �?| 数据脱敏、访问控制、审计日�?|
+| 运维风险 | 系统故障影响业务 | �?| 高可用架构、自动恢复、备份策�?|
 
 ### 8.5 成功指标
 
-1. **检测性能指标**：
-   - 准确率 > 85%
-   - 召回率 > 80%
+1. **检测性能指标**�?
+   - 准确�?> 85%
+   - 召回�?> 80%
    - 假阳性率 < 10%
-   - 检测延迟 < 1秒
+   - 检测延�?< 1�?
 
-2. **系统性能指标**：
-   - 可用性 > 99.9%
-   - 并发处理能力 > 1000请求/秒
-   - 资源利用率 < 80%
+2. **系统性能指标**�?
+   - 可用�?> 99.9%
+   - 并发处理能力 > 1000请求/�?
+   - 资源利用�?< 80%
 
-3. **业务价值指标**：
+3. **业务价值指�?*�?
    - 异常发现时间减少 > 50%
-   - 人工监控工作量减少 > 70%
+   - 人工监控工作量减�?> 70%
    - 风险事件损失减少 > 30%
 
-4. **运维效率指标**：
-   - 部署成功率 > 95%
+4. **运维效率指标**�?
+   - 部署成功�?> 95%
    - 平均恢复时间 < 5分钟
-   - 自动化程度 > 80%
+   - 自动化程�?> 80%
 
 ---
 
-> **设计完成状态**: ✅ 已完成  
-> **下一步**: 按照MODULE_DESIGN_PLAN.md计划，进入技术验证阶段
+> **设计完成状�?*: �?已完�? 
+> **下一�?*: 按照MODULE_DESIGN_PLAN.md计划，进入技术验证阶�

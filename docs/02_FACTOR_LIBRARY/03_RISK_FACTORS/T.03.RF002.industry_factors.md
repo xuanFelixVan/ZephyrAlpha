@@ -4,19 +4,19 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # T.03.RF002.申万行业因子
 
-> 行业因子体系（A股适配）
+> 行业因子体系（A股适配�?
 >
-> **配套文档**：
+> **配套文档**�?
 > - 主文档：[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 > - 因子库索引：[../../04_DATA_SOURCE/iFind/factor_master_index.md](../04_DATA_SOURCE/iFind/factor_master_index.md)
 > - 风险因子：[风险因子 README](../../../README.md)
@@ -25,51 +25,51 @@ implementation_status: 进行中
 
 ## 1. 因子概述
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 因子编号 | T.03.RF002 |
 | 因子名称 | 申万行业因子 |
 | 因子类型 | 行业因子 |
-| 因子数量 | 28个一级行业 |
+| 因子数量 | 28个一级行�?|
 | 数据来源 | Baostock / AkShare |
 
-**核心理念**：基于申万行业分类体系，构建A股行业因子，用于行业轮动和风险控制
+**核心理念**：基于申万行业分类体系，构建A股行业因子，用于行业轮动和风险控�?
 
-**适用场景**：行业轮动策略、行业风险控制、行业暴露分析
+**适用场景**：行业轮动策略、行业风险控制、行业暴露分�?
 
 ***
 
-## 2. 申万一级行业分类
+## 2. 申万一级行业分�?
 
-### 2.1 28个一级行业
+### 2.1 28个一级行�?
 
 ```python
 SW_INDUSTRY_L1 = {
-    '农林牧渔': ['种植业', '渔业', '林业', '饲料', '畜禽养殖', '动物保健', '农业综合'],
-    '采掘': ['煤炭开采', '石油开采', '天然气开采', '金属非金属采矿', '采掘服务'],
+    '农林牧渔': ['种植�?, '渔业', '林业', '饲料', '畜禽养殖', '动物保健', '农业综合'],
+    '采掘': ['煤炭开�?, '石油开�?, '天然气开�?, '金属非金属采�?, '采掘服务'],
     '化工': ['化学原料', '化学制品', '化学纤维', '橡胶', '塑料'],
     '钢铁': ['普钢', '特钢', '冶钢原料'],
-    '有色金属': ['黄金', '铜', '铝', '锌铅', '锡锑', '钨', '稀土', '钼', '金属新材料'],
-    '电子': ['半导体', '元件', '光学光电子', '消费电子', '其他电子'],
-    '汽车': ['汽车整车', '汽车零部件', '汽车服务', '其他汽车'],
-    '家用电器': ['白色家电', '黑色家电', '小家电', '厨卫电器'],
-    '食品饮料': ['白酒', '啤酒', '其他酒类', '食品加工', '调味品', '乳品', '饮料制造'],
-    '纺织服装': ['纺织制造', '服装家纺', '饰品'],
-    '轻工制造': ['造纸', '包装印刷', '家用轻工'],
+    '有色金属': ['黄金', '�?, '�?, '锌铅', '锡锑', '�?, '稀�?, '�?, '金属新材�?],
+    '电子': ['半导�?, '元件', '光学光电�?, '消费电子', '其他电子'],
+    '汽车': ['汽车整车', '汽车零部�?, '汽车服务', '其他汽车'],
+    '家用电器': ['白色家电', '黑色家电', '小家�?, '厨卫电器'],
+    '食品饮料': ['白酒', '啤酒', '其他酒类', '食品加工', '调味�?, '乳品', '饮料制�?],
+    '纺织服装': ['纺织制�?, '服装家纺', '饰品'],
+    '轻工制�?: ['造纸', '包装印刷', '家用轻工'],
     '医药生物': ['化学制药', '中药', '生物制品', '医药商业', '医疗器械', '医疗服务'],
     '公用事业': ['电力', '燃气', '水务', '环保', '供热'],
-    '交通运输': ['航空机场', '公路铁路', '航运港口', '物流'],
-    '房地产': ['房地产开发', '房地产服务'],
-    '商业贸易': ['一般零售', '专业连锁', '商业物业经营', '贸易'],
+    '交通运�?: ['航空机场', '公路铁路', '航运港口', '物流'],
+    '房地�?: ['房地产开�?, '房地产服�?],
+    '商业贸易': ['一般零�?, '专业连锁', '商业物业经营', '贸易'],
     '休闲服务': ['酒店餐饮', '旅游综合', '景点', '其他休闲服务'],
-    '建筑材料': ['水泥制造', '玻璃制造', '其他建材'],
+    '建筑材料': ['水泥制�?, '玻璃制�?, '其他建材'],
     '建筑装饰': ['房屋建设', '装修装饰', '园林工程', '基础建设', '专业工程'],
-    '电气设备': ['电机', '电气自动化设备', '电源设备', '风电设备', '光伏设备', '储能设备'],
-    '国防军工': ['航空装备', '航天装备', '地面兵装', '船舶制造'],
-    '计算机': ['计算机设备', 'IT服务', '软件开发', '互联网服务'],
+    '电气设备': ['电机', '电气自动化设�?, '电源设备', '风电设备', '光伏设备', '储能设备'],
+    '国防军工': ['航空装备', '航天装备', '地面兵装', '船舶制�?],
+    '计算�?: ['计算机设�?, 'IT服务', '软件开�?, '互联网服�?],
     '传媒': ['广告营销', '影视院线', '游戏', '出版', '数字媒体'],
     '通信': ['通信设备', '通信服务'],
-    '银行': ['国有大型银行', '股份制银行', '城商行', '农商行'],
+    '银行': ['国有大型银行', '股份制银�?, '城商�?, '农商�?],
     '非银金融': ['证券', '保险', '多元金融'],
     '机械设备': ['通用设备', '专用设备', '仪器仪表', '金属制品'],
     '综合': ['综合']
@@ -90,18 +90,18 @@ SW_CODE_MAP = {
     '家用电器': '801110',
     '食品饮料': '801120',
     '纺织服装': '801130',
-    '轻工制造': '801140',
+    '轻工制�?: '801140',
     '医药生物': '801150',
     '公用事业': '801160',
-    '交通运输': '801170',
-    '房地产': '801180',
+    '交通运�?: '801170',
+    '房地�?: '801180',
     '商业贸易': '801200',
     '休闲服务': '801210',
     '建筑材料': '801220',
     '建筑装饰': '801230',
     '电气设备': '801730',
     '国防军工': '801740',
-    '计算机': '801750',
+    '计算�?: '801750',
     '传媒': '801760',
     '通信': '801770',
     '银行': '801780',
@@ -115,7 +115,7 @@ SW_CODE_MAP = {
 
 ## 3. 行业因子计算
 
-### 3.1 行业暴露度计算
+### 3.1 行业暴露度计�?
 
 ```python
 class IndustryFactor:
@@ -125,10 +125,10 @@ class IndustryFactor:
 
     def calc_industry_exposure(self, stock_industry):
         """
-        计算行业暴露度（独热编码）
+        计算行业暴露度（独热编码�?
 
         Parameters:
-            stock_industry: 股票所属申万一级行业
+            stock_industry: 股票所属申万一级行�?
 
         Returns:
             dict: 各行业暴露度
@@ -164,7 +164,7 @@ class IndustryFactor:
         return pd.DataFrame(matrix, index=stocks_industries.keys(), columns=industries)
 ```
 
-### 3.2 行业收益率计算
+### 3.2 行业收益率计�?
 
 ```python
 def calc_industry_return(self, industry_stocks, price_df):
@@ -172,7 +172,7 @@ def calc_industry_return(self, industry_stocks, price_df):
     计算行业收益率（成分股加权）
 
     Parameters:
-        industry_stocks: list, 行业成分股列表
+        industry_stocks: list, 行业成分股列�?
         price_df: DataFrame, 价格数据
 
     Returns:
@@ -198,18 +198,18 @@ def calc_industry_return(self, industry_stocks, price_df):
     return pd.Series(industry_returns)
 ```
 
-### 3.3 行业市值权重
+### 3.3 行业市值权�?
 
 ```python
 def calc_industry_market_weight(self, trade_date):
     """
-    计算申万行业在全市场的市值权重
+    计算申万行业在全市场的市值权�?
 
     Parameters:
         trade_date: 交易日期
 
     Returns:
-        Series: 各行业市值权重
+        Series: 各行业市值权�?
     """
     all_stocks = self.get_all_stocks(trade_date)
     industry_weights = {}
@@ -244,20 +244,20 @@ class IndustryRotationModel:
 
     ROTATION_MATRIX = {
         '复苏': {
-            'preferred': ['可选消费', '金融', '信息技术', '原材料'],
+            'preferred': ['可选消�?, '金融', '信息技�?, '原材�?],
             'avoid': ['公用事业', '必需消费']
         },
         '过热': {
-            'preferred': ['信息技术', '医疗保健', '能源', '原材料'],
-            'avoid': ['金融', '房地产']
+            'preferred': ['信息技�?, '医疗保健', '能源', '原材�?],
+            'avoid': ['金融', '房地�?]
         },
         '滞胀': {
             'preferred': ['能源', '医药', '公用事业', '金融'],
-            'avoid': ['可选消费', '信息技术']
+            'avoid': ['可选消�?, '信息技�?]
         },
         '衰退': {
             'preferred': ['公用事业', '金融', '必需消费', '通信'],
-            'avoid': ['可选消费', '房地产', '信息技术']
+            'avoid': ['可选消�?, '房地�?, '信息技�?]
         }
     }
 
@@ -268,7 +268,7 @@ class IndustryRotationModel:
         Parameters:
             macro_indicator: dict
                 - gdp产出缺口
-                - inflation 通胀率
+                - inflation 通胀�?
                 - PMI
 
         Returns:
@@ -291,7 +291,7 @@ class IndustryRotationModel:
         预测行业轮动方向
 
         Returns:
-            dict: 推荐的行业配置
+            dict: 推荐的行业配�?
         """
         clock_phase = self.get_clock_phase(macro_indicator)
         rotation = self.ROTATION_MATRIX.get(clock_phase, {})
@@ -311,8 +311,8 @@ def calc_industry_momentum(self, industry_returns, lookback=20):
     计算行业动量
 
     Parameters:
-        industry_returns: DataFrame, 行业收益率
-        lookback: int, 回溯期
+        industry_returns: DataFrame, 行业收益�?
+        lookback: int, 回溯�?
 
     Returns:
         Series: 行业动量排名
@@ -334,7 +334,7 @@ from typing import Dict, List, Optional
 
 class SWIndustryFactor:
     """
-    申万行业因子计算器
+    申万行业因子计算�?
     """
 
     INDUSTRIES = list(SW_INDUSTRY_L1.keys())
@@ -348,7 +348,7 @@ class SWIndustryFactor:
         获取个股的行业暴露度向量
 
         Returns:
-            ndarray: 28维行业暴露向量
+            ndarray: 28维行业暴露向�?
         """
         exposure = np.zeros(len(self.INDUSTRIES))
 
@@ -386,7 +386,7 @@ class SWIndustryFactor:
             price_df: 价格数据
 
         Returns:
-            float: 行业收益率
+            float: 行业收益�?
         """
         stocks = SW_INDUSTRY_L1.get(industry, [])
         returns = []
@@ -405,10 +405,10 @@ class SWIndustryFactor:
 
     def build_industry_covariance(self, returns_df: pd.DataFrame) -> pd.DataFrame:
         """
-        构建行业协方差矩阵
+        构建行业协方差矩�?
 
         Returns:
-            DataFrame: 28x28行业协方差矩阵
+            DataFrame: 28x28行业协方差矩�?
         """
         return returns_df.cov()
 ```
@@ -418,7 +418,7 @@ class SWIndustryFactor:
 ## 6. 使用示例
 
 ```python
-# 初始化
+# 初始�?
 industry_factor = SWIndustryFactor()
 
 # 获取个股行业暴露
@@ -439,7 +439,7 @@ rotation_model = IndustryRotationModel()
 macro = {'gdp_gap': 0.5, 'inflation': 0.02}
 rotation = rotation_model.predict_rotation(macro)
 print(f"时钟阶段: {rotation['clock_phase']}")
-print(f"首选行业: {rotation['preferred_industries']}")
+print(f"首选行�? {rotation['preferred_industries']}")
 ```
 
 ***
@@ -447,9 +447,9 @@ print(f"首选行业: {rotation['preferred_industries']}")
 ## 7. 注意事项
 
 1. **行业分类**：需定期更新申万行业分类
-2. **成分股变更**：行业成分股可能调整，需动态更新
-3. **停牌处理**：停牌股票收益率按0计算
-4. **权重计算**：建议使用流通市值加权
+2. **成分股变�?*：行业成分股可能调整，需动态更�?
+3. **停牌处理**：停牌股票收益率�?计算
+4. **权重计算**：建议使用流通市值加�?
 
 ***
 

@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
+layer: Layer 6 (组合优化�? | 业务架构: 三级时间框架融合架构
 index: STRESS_TEST_001
 estimated_hours: 80h
 review_status: Pending
@@ -14,49 +14,37 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
+applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 personal_development: true
 ai_maintenance: true
 ---
 
-# 压力测试与情景分析系统蓝图 v1.0
+# 压力测试与情景分析系统蓝�?v1.0
 
-> 清风量化系统 v5.2 - 压力测试与情景分析系统架构设计
-> **索引**: `STRESS_TEST_001`
-> **开发时间**: 80h（约2周）
-> **核心定位**: 评估极端市场下的组合风险，提供风险应急预案
-> **个人开发可行性**: ⭐⭐⭐⭐ 完全可行
-> **AI维护难度**: 低
-
+> 清风量化系统 v5.2 - 压力测试与情景分析系统架构设�?> **索引**: `STRESS_TEST_001`
+> **开发时�?*: 80h（约2周）
+> **核心定位**: 评估极端市场下的组合风险，提供风险应急预�?> **个人开发可行�?*: ⭐⭐⭐⭐ 完全可行
+> **AI维护难度**: �?
 ---
 
 ## 1. 模块概述
 
-### 1.1 业务背景与价值主张
+### 1.1 业务背景与价值主�?
+**业务需�?*�?- 当前系统缺乏系统性压力测试框�?- 无法评估极端市场下的组合风险
+- 缺乏历史危机事件的情景回放能�?- 无风险应急预案和风险缓解措施
 
-**业务需求**：
-- 当前系统缺乏系统性压力测试框架
-- 无法评估极端市场下的组合风险
-- 缺乏历史危机事件的情景回放能力
-- 无风险应急预案和风险缓解措施
-
-**价值主张**：
-- 实现历史情景回放（2008金融危机、2020疫情等）
+**价值主�?*�?- 实现历史情景回放�?008金融危机�?020疫情等）
 - 提供蒙特卡洛压力测试能力
 - 评估极端市场下的组合表现
 - 生成风险应急预案和缓解措施
 
-**个人开发优势**：
-- ✅ 实现简单：历史情景回放 + 蒙特卡洛模拟
-- ✅ 数据公开：历史危机事件数据公开可得
-- ✅ 维护简单：定期更新情景库即可
-- ✅ 价值明确：风险评估必备工具
+**个人开发优�?*�?- �?实现简单：历史情景回放 + 蒙特卡洛模拟
+- �?数据公开：历史危机事件数据公开可得
+- �?维护简单：定期更新情景库即�?- �?价值明确：风险评估必备工具
 
-### 1.2 技术定位与架构层归属
-
+### 1.2 技术定位与架构层归�?
 **Layer定位**: Layer 6 - 组合优化层（风险管理层）
 
 **模块类别**: 核心模块
@@ -64,94 +52,34 @@ ai_maintenance: true
 **架构角色**: 
 - 作为风险管理的核心组件，评估极端市场风险
 - 作为组合优化的输入，提供风险约束
-- 作为风险应急预案的基础，提供决策支持
-
+- 作为风险应急预案的基础，提供决策支�?
 ### 1.3 核心功能清单
 
-1. **历史情景回放**: 回放历史危机事件，评估组合表现
-2. **蒙特卡洛压力测试**: 模拟极端市场情景
+1. **历史情景回放**: 回放历史危机事件，评估组合表�?2. **蒙特卡洛压力测试**: 模拟极端市场情景
 3. **风险指标计算**: 计算VaR、CVaR、最大回撤等风险指标
-4. **应急预案生成**: 生成风险缓解措施和应急预案
-
+4. **应急预案生�?*: 生成风险缓解措施和应急预�?
 ---
 
 ## 2. 架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                  压力测试与情景分析系统架构                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              输入层                                        │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ 投资组合 │  │ 历史数据 │  │ 情景库   │  │ 风险参数 │ │  │
-│  │  │ 配置     │  │          │  │          │  │          │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              历史情景回放层                                │  │
-│  │  ┌────────────────────────────────────────────────────┐  │  │
-│  │  │  Historical Scenario Replay                        │  │  │
-│  │  │  - 2008 Financial Crisis                          │  │  │
-│  │  │  - 2020 COVID-19 Pandemic                         │  │  │
-│  │  │  - 2022 Interest Rate Hike                        │  │  │
-│  │  └────────────────────────────────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              蒙特卡洛模拟层                                │  │
-│  │  ┌────────────────────────────────────────────────────┐  │  │
-│  │  │  Monte Carlo Simulation Engine                     │  │  │
-│  │  │  - 极端波动率情景                                  │  │  │
-│  │  │  - 相关性突变情景                                  │  │  │
-│  │  │  - 流动性危机情景                                  │  │  │
-│  │  └────────────────────────────────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              风险指标计算层                                │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ VaR计算  │  │ CVaR计算 │  │ 最大回撤 │  │ 压力VaR  │ │  │
-│  │  │          │  │          │  │ 计算     │  │ 计算     │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              输出层                                        │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ 风险报告 │  │ 应急预案 │  │ 风险预警 │  │ 缓解措施 │ │  │
-│  │  │          │  │          │  │          │  │          │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                 压力测试与情景分析系统架�?                      �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             输入�?                                       �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?投资组合 �? �?历史数据 �? �?情景�?  �? �?风险参数 �?�? �?�? �? �?配置     �? �?         �? �?         �? �?         �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             历史情景回放�?                               �? �?�? �? ┌────────────────────────────────────────────────────�? �? �?�? �? �? Historical Scenario Replay                        �? �? �?�? �? �? - 2008 Financial Crisis                          �? �? �?�? �? �? - 2020 COVID-19 Pandemic                         �? �? �?�? �? �? - 2022 Interest Rate Hike                        �? �? �?�? �? └────────────────────────────────────────────────────�? �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             蒙特卡洛模拟�?                               �? �?�? �? ┌────────────────────────────────────────────────────�? �? �?�? �? �? Monte Carlo Simulation Engine                     �? �? �?�? �? �? - 极端波动率情�?                                 �? �? �?�? �? �? - 相关性突变情�?                                 �? �? �?�? �? �? - 流动性危机情�?                                 �? �? �?�? �? └────────────────────────────────────────────────────�? �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             风险指标计算�?                               �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?VaR计算  �? �?CVaR计算 �? �?最大回�?�? �?压力VaR  �?�? �?�? �? �?         �? �?         �? �?计算     �? �?计算     �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             输出�?                                       �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?风险报告 �? �?应急预�?�? �?风险预警 �? �?缓解措施 �?�? �?�? �? �?         �? �?         �? �?         �? �?         �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?└─────────────────────────────────────────────────────────────────�?```
 
-### 2.2 核心数据流
-
+### 2.2 核心数据�?
 ```
 投资组合配置
-    ↓
-选择测试类型（历史情景/蒙特卡洛/极端情景）
-    ↓
-执行压力测试
-    ↓
-计算风险指标（VaR/CVaR/最大回撤）
-    ↓
-生成风险报告
-    ↓
-输出应急预案与缓解措施
+    �?选择测试类型（历史情�?蒙特卡洛/极端情景�?    �?执行压力测试
+    �?计算风险指标（VaR/CVaR/最大回撤）
+    �?生成风险报告
+    �?输出应急预案与缓解措施
 ```
 
 ---
 
 ## 3. 核心模块设计
 
-### 3.1 压力测试系统（StressTestingSystem）
-
+### 3.1 压力测试系统（StressTestingSystem�?
 ```python
 class StressTestingSystem:
     """
@@ -160,8 +88,7 @@ class StressTestingSystem:
     索引: STRESS_TEST_001-M01
     职责: 评估极端市场下的组合风险
     输入: 投资组合、历史数据、情景库
-    输出: 压力测试结果、风险报告、应急预案
-    """
+    输出: 压力测试结果、风险报告、应急预�?    """
     
     def __init__(self, config: StressTestConfig):
         self.config = config
@@ -180,8 +107,7 @@ class StressTestingSystem:
         
         Args:
             portfolio: 投资组合
-            test_type: 测试类型（historical/monte_carlo/extreme）
-            scenarios: 指定情景列表（可选）
+            test_type: 测试类型（historical/monte_carlo/extreme�?            scenarios: 指定情景列表（可选）
             
         Returns:
             StressTestResult: 压力测试结果
@@ -201,8 +127,7 @@ class StressTestingSystem:
         # 生成风险报告
         risk_report = self._generate_risk_report(results, risk_metrics)
         
-        # 生成应急预案
-        contingency_plan = self._generate_contingency_plan(results, risk_metrics)
+        # 生成应急预�?        contingency_plan = self._generate_contingency_plan(results, risk_metrics)
         
         return StressTestResult(
             test_type=test_type,
@@ -223,16 +148,14 @@ class StressTestingSystem:
         
         Args:
             portfolio: 投资组合
-            scenario_name: 情景名称（如'2008_crisis'）
-            
+            scenario_name: 情景名称（如'2008_crisis'�?            
         Returns:
             ScenarioResult: 情景回放结果
         """
         # 1. 加载历史情景数据
         scenario_data = self.scenario_library.load_scenario(scenario_name)
         
-        # 2. 应用情景到组合
-        portfolio_impact = self._apply_scenario_to_portfolio(
+        # 2. 应用情景到组�?        portfolio_impact = self._apply_scenario_to_portfolio(
             portfolio, scenario_data
         )
         
@@ -261,8 +184,7 @@ class StressTestingSystem:
         Args:
             portfolio: 投资组合
             n_simulations: 模拟次数
-            time_horizon: 时间范围（天）
-            
+            time_horizon: 时间范围（天�?            
         Returns:
             MonteCarloResult: 蒙特卡洛模拟结果
         """
@@ -371,7 +293,7 @@ class StressTestingSystem:
         results: Dict,
         risk_metrics: RiskMetrics
     ) -> ContingencyPlan:
-        """生成应急预案"""
+        """生成应急预�?""
         # 识别主要风险
         main_risks = self._identify_main_risks(results, risk_metrics)
         
@@ -389,13 +311,11 @@ class StressTestingSystem:
         )
 ```
 
-### 3.2 历史情景库（HistoricalScenarioLibrary）
-
+### 3.2 历史情景库（HistoricalScenarioLibrary�?
 ```python
 class HistoricalScenarioLibrary:
     """
-    历史情景库
-    
+    历史情景�?    
     索引: STRESS_TEST_001-M02
     职责: 管理历史危机事件数据
     """
@@ -416,7 +336,7 @@ class HistoricalScenarioLibrary:
         """
         scenario_def = self.scenarios.get(scenario_name)
         if not scenario_def:
-            raise ValueError(f"未找到情景: {scenario_name}")
+            raise ValueError(f"未找到情�? {scenario_name}")
         
         # 加载历史数据
         market_data = self._load_market_data(scenario_def)
@@ -446,7 +366,7 @@ class HistoricalScenarioLibrary:
             '2008_financial_crisis': {
                 'start_date': '2008-09-01',
                 'end_date': '2009-03-31',
-                'description': '2008年全球金融危机',
+                'description': '2008年全球金融危�?,
                 'severity': 'extreme',
                 'key_events': [
                     '雷曼兄弟破产',
@@ -457,30 +377,29 @@ class HistoricalScenarioLibrary:
             '2020_covid_pandemic': {
                 'start_date': '2020-02-01',
                 'end_date': '2020-04-30',
-                'description': '2020年新冠疫情冲击',
+                'description': '2020年新冠疫情冲�?,
                 'severity': 'extreme',
                 'key_events': [
                     '全球股市熔断',
-                    '原油期货负价格',
+                    '原油期货负价�?,
                     '全球封锁'
                 ]
             },
             '2022_interest_rate_hike': {
                 'start_date': '2022-01-01',
                 'end_date': '2022-12-31',
-                'description': '2022年美联储激进加息',
+                'description': '2022年美联储激进加�?,
                 'severity': 'high',
                 'key_events': [
-                    '美联储连续加息',
+                    '美联储连续加�?,
                     '债券市场暴跌',
-                    '科技股回调'
+                    '科技股回�?
                 ]
             }
         }
 ```
 
-### 3.3 蒙特卡洛引擎（MonteCarloEngine）
-
+### 3.3 蒙特卡洛引擎（MonteCarloEngine�?
 ```python
 class MonteCarloEngine:
     """
@@ -503,25 +422,20 @@ class MonteCarloEngine:
         生成蒙特卡洛模拟路径
         
         Args:
-            portfolio_params: 组合参数（均值、协方差）
-            n_simulations: 模拟次数
-            time_horizon: 时间范围（天）
-            
+            portfolio_params: 组合参数（均值、协方差�?            n_simulations: 模拟次数
+            time_horizon: 时间范围（天�?            
         Returns:
-            np.ndarray: 模拟路径（n_simulations × time_horizon）
-        """
+            np.ndarray: 模拟路径（n_simulations × time_horizon�?        """
         # 使用几何布朗运动模型
         mu = portfolio_params.expected_return
         sigma = portfolio_params.volatility
         
-        # 生成随机数
-        dt = 1 / 252  # 日度数据
+        # 生成随机�?        dt = 1 / 252  # 日度数据
         Z = np.random.standard_normal((n_simulations, time_horizon))
         
         # 生成路径
         paths = np.zeros((n_simulations, time_horizon + 1))
-        paths[:, 0] = 1.0  # 初始值
-        
+        paths[:, 0] = 1.0  # 初始�?        
         for t in range(1, time_horizon + 1):
             paths[:, t] = paths[:, t-1] * np.exp(
                 (mu - 0.5 * sigma**2) * dt + sigma * np.sqrt(dt) * Z[:, t-1]
@@ -546,9 +460,7 @@ class MonteCarloEngine:
             n_simulations: 模拟次数
             time_horizon: 时间范围
             jump_intensity: 跳跃强度
-            jump_mean: 跳跃均值
-            jump_std: 跳跃标准差
-            
+            jump_mean: 跳跃均�?            jump_std: 跳跃标准�?            
         Returns:
             np.ndarray: 模拟路径
         """
@@ -565,16 +477,13 @@ class MonteCarloEngine:
         return paths
 ```
 
-### 3.4 风险计算器（RiskCalculator）
-
+### 3.4 风险计算器（RiskCalculator�?
 ```python
 class RiskCalculator:
     """
-    风险指标计算器
-    
+    风险指标计算�?    
     索引: STRESS_TEST_001-M04
-    职责: 计算VaR、CVaR等风险指标
-    """
+    职责: 计算VaR、CVaR等风险指�?    """
     
     def calculate_var(
         self,
@@ -583,16 +492,13 @@ class RiskCalculator:
         method: str = 'historical'
     ) -> float:
         """
-        计算VaR（Value at Risk）
-        
+        计算VaR（Value at Risk�?        
         Args:
             portfolio: 投资组合
             confidence: 置信水平
-            method: 计算方法（historical/parametric/monte_carlo）
-            
+            method: 计算方法（historical/parametric/monte_carlo�?            
         Returns:
-            float: VaR值
-        """
+            float: VaR�?        """
         if method == 'historical':
             returns = portfolio.get_historical_returns()
             var = np.percentile(returns, (1 - confidence) * 100)
@@ -611,20 +517,17 @@ class RiskCalculator:
         confidence: float = 0.95
     ) -> float:
         """
-        计算CVaR（Conditional VaR）
-        
+        计算CVaR（Conditional VaR�?        
         Args:
             portfolio: 投资组合
             confidence: 置信水平
             
         Returns:
-            float: CVaR值
-        """
+            float: CVaR�?        """
         returns = portfolio.get_historical_returns()
         var = self.calculate_var(portfolio, confidence)
         
-        # CVaR是VaR之外的平均损失
-        cvar = returns[returns <= -var].mean()
+        # CVaR是VaR之外的平均损�?        cvar = returns[returns <= -var].mean()
         
         return abs(cvar)
     
@@ -633,14 +536,11 @@ class RiskCalculator:
         returns: pd.Series
     ) -> MaxDrawdownResult:
         """
-        计算最大回撤
-        
+        计算最大回�?        
         Args:
-            returns: 收益率序列
-            
+            returns: 收益率序�?            
         Returns:
-            MaxDrawdownResult: 最大回撤结果
-        """
+            MaxDrawdownResult: 最大回撤结�?        """
         cumulative = (1 + returns).cumprod()
         running_max = cumulative.cummax()
         drawdown = (cumulative - running_max) / running_max
@@ -660,8 +560,7 @@ class RiskCalculator:
         )
 ```
 
-### 3.5 配置类定义
-
+### 3.5 配置类定�?
 ```python
 @dataclass
 class StressTestConfig:
@@ -674,16 +573,14 @@ class StressTestConfig:
 class MonteCarloConfig:
     """蒙特卡洛配置"""
     n_simulations: int = 10000  # 模拟次数
-    time_horizon: int = 252  # 时间范围（天）
-    include_jumps: bool = True  # 是否包含跳跃
+    time_horizon: int = 252  # 时间范围（天�?    include_jumps: bool = True  # 是否包含跳跃
     jump_intensity: float = 0.1  # 跳跃强度
     
 @dataclass
 class ScenarioLibraryConfig:
-    """情景库配置"""
+    """情景库配�?""
     data_path: str = 'data/scenarios/'
-    update_frequency: int = 90  # 更新频率（天）
-```
+    update_frequency: int = 90  # 更新频率（天�?```
 
 ---
 
@@ -697,10 +594,9 @@ class Portfolio:
     """投资组合"""
     weights: pd.Series  # 资产权重
     assets: List[str]   # 资产列表
-    value: float        # 组合价值
-    
+    value: float        # 组合价�?    
     def get_historical_returns(self) -> pd.Series:
-        """获取历史收益率"""
+        """获取历史收益�?""
         pass
 
 @dataclass
@@ -738,7 +634,7 @@ class ScenarioResult:
     
 @dataclass
 class ContingencyPlan:
-    """应急预案"""
+    """应急预�?""
     main_risks: List[str]
     mitigation_measures: List[str]
     action_plan: List[ActionItem]
@@ -747,31 +643,18 @@ class ContingencyPlan:
 
 ---
 
-## 5. 技术实现细节
-
-### 5.1 历史情景库构建
-
-**情景选择原则**：
-1. 覆盖不同类型的危机事件（金融危机、疫情、政策冲击）
+## 5. 技术实现细�?
+### 5.1 历史情景库构�?
+**情景选择原则**�?1. 覆盖不同类型的危机事件（金融危机、疫情、政策冲击）
 2. 包含不同严重程度（轻度、中度、重度、极端）
-3. 时间分布均匀（避免集中在某一时段）
-
-**情景数据来源**：
-- 公开市场数据（Yahoo Finance、iFind、Tushare）
-- 学术研究（危机事件研究报告）
-- 监管机构报告（美联储、IMF）
-
+3. 时间分布均匀（避免集中在某一时段�?
+**情景数据来源**�?- 公开市场数据（Yahoo Finance、iFind、Tushare�?- 学术研究（危机事件研究报告）
+- 监管机构报告（美联储、IMF�?
 ### 5.2 蒙特卡洛模拟优化
 
-**计算优化**：
-- 使用NumPy向量化计算
-- 并行化模拟路径生成
-- 使用GPU加速（可选）
+**计算优化**�?- 使用NumPy向量化计�?- 并行化模拟路径生�?- 使用GPU加速（可选）
 
-**模型选择**：
-- 基础模型：几何布朗运动（GBM）
-- 高级模型：带跳跃的扩散模型
-- 极端模型：重尾分布（t分布、稳定分布）
+**模型选择**�?- 基础模型：几何布朗运动（GBM�?- 高级模型：带跳跃的扩散模�?- 极端模型：重尾分布（t分布、稳定分布）
 
 ---
 
@@ -781,7 +664,7 @@ class ContingencyPlan:
 
 ```python
 class PortfolioOptimizer:
-    """组合优化器（集成压力测试）"""
+    """组合优化器（集成压力测试�?""
     
     def __init__(self, stress_tester: StressTestingSystem):
         self.stress_tester = stress_tester
@@ -791,12 +674,11 @@ class PortfolioOptimizer:
         portfolio: Portfolio,
         constraints: OptimizationConstraints
     ) -> OptimizationResult:
-        """压力测试感知的组合优化"""
+        """压力测试感知的组合优�?""
         # 1. 执行压力测试
         stress_result = self.stress_tester.run_stress_test(portfolio)
         
-        # 2. 检查风险约束
-        if stress_result.risk_metrics.max_drawdown > constraints.max_drawdown:
+        # 2. 检查风险约�?        if stress_result.risk_metrics.max_drawdown > constraints.max_drawdown:
             # 调整组合权重
             adjusted_portfolio = self._adjust_for_stress(
                 portfolio, stress_result
@@ -814,8 +696,7 @@ class PortfolioOptimizer:
         )
 ```
 
-### 6.2 与风险预警系统集成
-
+### 6.2 与风险预警系统集�?
 ```python
 class RiskAlertSystem:
     """风险预警系统（集成压力测试）"""
@@ -829,16 +710,14 @@ class RiskAlertSystem:
         market_data: pd.DataFrame
     ) -> RiskAlert:
         """监控风险"""
-        # 1. 执行快速压力测试
-        stress_result = self.stress_tester.run_stress_test(
+        # 1. 执行快速压力测�?        stress_result = self.stress_tester.run_stress_test(
             portfolio, test_type='extreme'
         )
         
-        # 2. 检查风险阈值
-        if stress_result.risk_metrics.var_99 > self.config.var_threshold:
+        # 2. 检查风险阈�?        if stress_result.risk_metrics.var_99 > self.config.var_threshold:
             return RiskAlert(
                 level='HIGH',
-                message='VaR超过阈值',
+                message='VaR超过阈�?,
                 recommendation=stress_result.contingency_plan.action_plan
             )
 ```
@@ -883,29 +762,20 @@ def test_var_calculation():
 
 ---
 
-## 8. 实施路线图
-
+## 8. 实施路线�?
 ### 8.1 开发阶段（2周）
 
-**Week 1: 核心功能开发**
-- Day 1-2: 历史情景库构建
-- Day 3-4: 蒙特卡洛引擎开发
-- Day 5: 风险计算器开发
-
-**Week 2: 集成与测试**
-- Day 1-2: 应急预案生成模块
-- Day 3: 与其他系统集成
-- Day 4: 单元测试与集成测试
-- Day 5: 文档编写与代码审查
-
-### 8.2 里程碑
-
-| 里程碑 | 时间 | 交付物 | 验收标准 |
+**Week 1: 核心功能开�?*
+- Day 1-2: 历史情景库构�?- Day 3-4: 蒙特卡洛引擎开�?- Day 5: 风险计算器开�?
+**Week 2: 集成与测�?*
+- Day 1-2: 应急预案生成模�?- Day 3: 与其他系统集�?- Day 4: 单元测试与集成测�?- Day 5: 文档编写与代码审�?
+### 8.2 里程�?
+| 里程�?| 时间 | 交付�?| 验收标准 |
 |--------|------|--------|----------|
-| **M1: 情景库完成** | Day 2 | 历史情景库 | 至少5个情景 |
+| **M1: 情景库完�?* | Day 2 | 历史情景�?| 至少5个情�?|
 | **M2: MC引擎完成** | Day 4 | 蒙特卡洛引擎 | 模拟正常 |
-| **M3: 风险计算完成** | Day 5 | 风险计算器 | VaR/CVaR准确 |
-| **M4: 集成完成** | Day 7 | 完整系统 | 所有接口正常 |
+| **M3: 风险计算完成** | Day 5 | 风险计算�?| VaR/CVaR准确 |
+| **M4: 集成完成** | Day 7 | 完整系统 | 所有接口正�?|
 | **M5: 测试通过** | Day 8 | 测试报告 | 所有测试通过 |
 | **M6: 生产就绪** | Day 10 | 生产系统 | 系统稳定运行 |
 
@@ -913,31 +783,18 @@ def test_var_calculation():
 
 ## 9. AI维护指南
 
-### 9.1 自动化监控指标
-
-**系统健康度指标**：
-- 情景库更新状态
-- 蒙特卡洛模拟成功率
-- 风险计算准确率
-
-**业务指标**：
-- 压力测试执行频率
-- 风险预警及时性
-- 应急预案有效性
-
-### 9.2 自动化维护任务
-
-**每日任务**：
-- 监控市场异常事件
+### 9.1 自动化监控指�?
+**系统健康度指�?*�?- 情景库更新状�?- 蒙特卡洛模拟成功�?- 风险计算准确�?
+**业务指标**�?- 压力测试执行频率
+- 风险预警及时�?- 应急预案有效�?
+### 9.2 自动化维护任�?
+**每日任务**�?- 监控市场异常事件
 - 更新情景数据
 
-**每周任务**：
-- 执行压力测试
+**每周任务**�?- 执行压力测试
 - 更新风险报告
 
-**每月任务**：
-- 更新情景库
-- 校准蒙特卡洛参数
+**每月任务**�?- 更新情景�?- 校准蒙特卡洛参数
 - 生成月度风险报告
 
 ---
@@ -948,53 +805,43 @@ def test_var_calculation():
 
 | 指标 | 当前水平 | 目标水平 | 提升幅度 |
 |------|---------|---------|---------|
-| **极端市场风险识别** | 无 | 有 | 新增能力 |
-| **风险预警提前期** | 无 | 提前1-2周 | 新增能力 |
-| **应急预案完备性** | 低 | 高 | 提升3倍 |
-| **风险报告质量** | 低 | 专业 | 提升2倍 |
+| **极端市场风险识别** | �?| �?| 新增能力 |
+| **风险预警提前�?* | �?| 提前1-2�?| 新增能力 |
+| **应急预案完备�?* | �?| �?| 提升3�?|
+| **风险报告质量** | �?| 专业 | 提升2�?|
 
-### 10.2 定性收益
-
-- ✅ 实现专业机构核心能力：压力测试与情景分析
-- ✅ 提升极端市场风险识别能力
-- ✅ 建立完善的风险应急预案体系
-- ✅ 为组合优化提供风险约束
-
+### 10.2 定性收�?
+- �?实现专业机构核心能力：压力测试与情景分析
+- �?提升极端市场风险识别能力
+- �?建立完善的风险应急预案体�?- �?为组合优化提供风险约�?
 ---
 
-## 11. 风险与约束
-
-### 11.1 技术风险
-
-| 风险项 | 风险等级 | 缓解措施 |
+## 11. 风险与约�?
+### 11.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| **历史数据缺失** | P2 | 使用替代数据、插值 |
-| **蒙特卡洛计算慢** | P3 | 并行计算、GPU加速 |
-| **情景定义不准** | P2 | 定期更新、专家审核 |
+| **历史数据缺失** | P2 | 使用替代数据、插�?|
+| **蒙特卡洛计算�?* | P3 | 并行计算、GPU加�?|
+| **情景定义不准** | P2 | 定期更新、专家审�?|
 
 ### 11.2 实施约束
 
-1. **数据约束**: 需要历史危机事件数据
-2. **计算约束**: 蒙特卡洛模拟需要计算资源
-3. **时间约束**: 开发周期2周
-
+1. **数据约束**: 需要历史危机事件数�?2. **计算约束**: 蒙特卡洛模拟需要计算资�?3. **时间约束**: 开发周�?�?
 ---
 
 ## 附录
 
-### A. 参考文献
-
+### A. 参考文�?
 1. **压力测试方法**:
    - Basel Committee on Banking Supervision. "Stress Testing Principles"
 
 2. **蒙特卡洛模拟**:
    - Glasserman, P. (2003). "Monte Carlo Methods in Financial Engineering"
 
-### B. 开源资源
-
+### B. 开源资�?
 - 历史危机事件数据: data/scenarios/
 - 蒙特卡洛模拟示例: docs/examples/monte_carlo_example.py
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 技术规格书编写

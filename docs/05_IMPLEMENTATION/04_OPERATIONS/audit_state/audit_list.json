@@ -167,7 +167,7 @@
           "batch": 1
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
           "layer": "important",
           "score": 71.0,
           "sample_reason": "分数优先",
@@ -421,7 +421,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_CALCULATION_FRAMEWORK.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -429,7 +429,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_MANAGEMENT_STANDARD.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -437,7 +437,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_neutralization.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_neutralization.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -445,7 +445,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_REGISTRY.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_REGISTRY.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -453,7 +453,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_return_analysis.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_return_analysis.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -461,7 +461,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_SCREENING_STRATEGY.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_SCREENING_STRATEGY.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -469,7 +469,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FUTURE_FACTOR_TOOLS.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -477,7 +477,7 @@
           "batch": 2
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\TECHNICAL_INDICATORS.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
           "layer": "important",
           "score": 67.0,
           "sample_reason": "分数优先",
@@ -833,7 +833,7 @@
           "batch": 4
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\research_management.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
           "layer": "important",
           "score": 65.0,
           "sample_reason": "随机抽样",
@@ -873,7 +873,7 @@
           "batch": 4
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\06_FACTOR_REGISTRY\\factor_catalog.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\06_REGISTRY\\factor_catalog.md",
           "layer": "important",
           "score": 65.0,
           "sample_reason": "随机抽样",
@@ -897,7 +897,7 @@
           "batch": 4
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\T.02.FE001.factor_definition.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\T.02.FE001.factor_definition.md",
           "layer": "important",
           "score": 65.0,
           "sample_reason": "随机抽样",
@@ -913,7 +913,7 @@
           "batch": 4
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_synthesis.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_synthesis.md",
           "layer": "important",
           "score": 65.0,
           "sample_reason": "随机抽样",
@@ -953,7 +953,7 @@
           "batch": 4
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\ic_analysis.md",
           "layer": "important",
           "score": 65.0,
           "sample_reason": "随机抽样",
@@ -969,7 +969,7 @@
           "batch": 4
         },
         {
-          "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_preprocessing.md",
+          "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_preprocessing.md",
           "layer": "important",
           "score": 65.0,
           "sample_reason": "随机抽样",
@@ -1833,7 +1833,7 @@
           "batch": 8
         },
         {
-          "file_path": "docs\\design\\技术方案评审会议议程.md",
+          "file_path": "docs\\design\\技术方案评审会议议�?md",
           "layer": "general",
           "score": 54.0,
           "sample_reason": "随机抽样",
@@ -1889,7 +1889,7 @@
           "batch": 8
         },
         {
-          "file_path": "docs\\design\\专业量化机构开发完整流程.md",
+          "file_path": "docs\\design\\专业量化机构开发完整流�?md",
           "layer": "general",
           "score": 54.0,
           "sample_reason": "随机抽样",
@@ -2007,7 +2007,7 @@
           "batch": 9
         },
         {
-          "file_path": "docs\\design\\web_interface\\前端组件结构图.md",
+          "file_path": "docs\\design\\web_interface\\前端组件结构�?md",
           "layer": "general",
           "score": 54.0,
           "sample_reason": "随机抽样",

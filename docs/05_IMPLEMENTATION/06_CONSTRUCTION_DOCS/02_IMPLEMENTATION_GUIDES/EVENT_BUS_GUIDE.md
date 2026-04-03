@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 专业量化机构实施指南
 applicable_scope: 事件总线模块实施
 compliance_level: 专业标准
 parent_document: ../README.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 事件总线实施指南
@@ -17,8 +17,8 @@ implementation_status: 进行中
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **职责**: 指导事件总线模块的实施和部署
-> **实施周期**: 2周（Week 1-2）
-> **优先级**: P0
+> **实施周期**: 2周（Week 1-2�?
+> **优先�?*: P0
 
 ---
 
@@ -26,35 +26,35 @@ implementation_status: 进行中
 
 ### 目标
 
-实现专业机构级事件总线系统，支持异步事件分发、订阅者管理和事件溯源。
+实现专业机构级事件总线系统，支持异步事件分发、订阅者管理和事件溯源�?
 
 ### 核心功能
 
 - **事件发布订阅**: 支持多对多的事件发布订阅模式
 - **异步事件分发**: 高性能异步事件分发机制
-- **事件溯源**: 支持事件历史记录和回放
+- **事件溯源**: 支持事件历史记录和回�?
 - **错误处理**: 完善的错误处理和重试机制
 - **性能监控**: 事件处理性能监控
 
-### 参考蓝图
+### 参考蓝�?
 
 - [专业量化系统实施蓝图](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 模块结构
 
 ```
 src/event_bus/
-├── __init__.py                 # 模块初始化
-├── event_bus.py                # EventBus核心类
+├── __init__.py                 # 模块初始�?
+├── event_bus.py                # EventBus核心�?
 ├── event.py                    # Event基类
 ├── handler.py                  # EventHandler基类
 ├── subscriber.py               # Subscriber管理
-├── dispatcher.py               # 事件分发器
-├── exceptions.py               # 自定义异常
+├── dispatcher.py               # 事件分发�?
+├── exceptions.py               # 自定义异�?
 └── tests/                      # 单元测试
     ├── test_event_bus.py
     ├── test_event.py
@@ -62,7 +62,7 @@ src/event_bus/
     └── test_dispatcher.py
 ```
 
-### 类设计
+### 类设�?
 
 #### Event - 事件基类
 
@@ -97,7 +97,7 @@ class Event:
             self.event_id = f"{self.event_type.value}_{self.timestamp.timestamp()}"
     
     def to_dict(self) -> Dict[str, Any]:
-        """转换为字典"""
+        """转换为字�?""
         return {
             "event_id": self.event_id,
             "event_type": self.event_type.value,
@@ -109,7 +109,7 @@ class Event:
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Event':
-        """从字典创建事件"""
+        """从字典创建事�?""
         return cls(
             event_type=EventType(data["event_type"]),
             timestamp=datetime.fromisoformat(data["timestamp"]),
@@ -120,7 +120,7 @@ class Event:
         )
 ```
 
-#### EventHandler - 事件处理器基类
+#### EventHandler - 事件处理器基�?
 
 ```python
 from abc import ABC, abstractmethod
@@ -128,7 +128,7 @@ from typing import Optional, List
 from .event import Event
 
 class EventHandler(ABC):
-    """事件处理器基类"""
+    """事件处理器基�?""
     
     def __init__(self, handler_id: str, event_types: Optional[List[EventType]] = None):
         self.handler_id = handler_id
@@ -220,7 +220,7 @@ class EventBus:
             raise EventBusError(f"Handler {handler.handler_id} failed: {e}")
     
     def _add_to_history(self, event: Event) -> None:
-        """添加到历史记录"""
+        """添加到历史记�?""
         self._event_history.append(event)
         
         if len(self._event_history) > self._max_history_size:
@@ -248,7 +248,7 @@ class EventBus:
 
 ## 📝 实施步骤
 
-### Step 1: 创建目录结构（30分钟）
+### Step 1: 创建目录结构�?0分钟�?
 
 ```bash
 # 创建事件总线模块目录
@@ -264,21 +264,21 @@ touch src/event_bus/dispatcher.py
 touch src/event_bus/exceptions.py
 ```
 
-### Step 2: 实现Event基类（1小时）
+### Step 2: 实现Event基类�?小时�?
 
 **任务清单**:
 - [ ] 定义事件类型枚举
 - [ ] 实现事件数据结构
-- [ ] 实现序列化/反序列化
+- [ ] 实现序列�?反序列化
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 事件类型定义完整
-- ✅ 数据结构合理
-- ✅ 序列化正确
-- ✅ 单元测试覆盖率 > 90%
+- �?事件类型定义完整
+- �?数据结构合理
+- �?序列化正�?
+- �?单元测试覆盖�?> 90%
 
-### Step 3: 实现EventHandler基类（1小时）
+### Step 3: 实现EventHandler基类�?小时�?
 
 **任务清单**:
 - [ ] 定义抽象方法
@@ -287,12 +287,12 @@ touch src/event_bus/exceptions.py
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 抽象方法定义完整
-- ✅ 事件过滤正确
-- ✅ 错误处理完善
-- ✅ 单元测试覆盖率 > 90%
+- �?抽象方法定义完整
+- �?事件过滤正确
+- �?错误处理完善
+- �?单元测试覆盖�?> 90%
 
-### Step 4: 实现EventBus核心类（2小时）
+### Step 4: 实现EventBus核心类（2小时�?
 
 **任务清单**:
 - [ ] 实现单例模式
@@ -302,41 +302,41 @@ touch src/event_bus/exceptions.py
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 单例模式正确实现
-- ✅ 订阅机制正确
-- ✅ 异步发布正确
-- ✅ 历史记录完整
-- ✅ 单元测试覆盖率 > 90%
+- �?单例模式正确实现
+- �?订阅机制正确
+- �?异步发布正确
+- �?历史记录完整
+- �?单元测试覆盖�?> 90%
 
-### Step 5: 性能优化（1小时）
+### Step 5: 性能优化�?小时�?
 
 **任务清单**:
-- [ ] 实现事件批处理
+- [ ] 实现事件批处�?
 - [ ] 实现事件过滤优化
 - [ ] 实现内存优化
 - [ ] 性能测试
 
 **验收标准**:
-- ✅ 事件处理吞吐量 > 10000 events/s
-- ✅ 内存占用 < 100MB
-- ✅ 延迟 < 10ms
+- �?事件处理吞吐�?> 10000 events/s
+- �?内存占用 < 100MB
+- �?延迟 < 10ms
 
-### Step 6: 集成测试（1小时）
+### Step 6: 集成测试�?小时�?
 
 **任务清单**:
-- [ ] 创建测试事件处理器
+- [ ] 创建测试事件处理�?
 - [ ] 测试完整流程
 - [ ] 性能测试
 - [ ] 文档编写
 
 **验收标准**:
-- ✅ 完整流程可正常运行
-- ✅ 性能指标达标
-- ✅ 文档完整
+- �?完整流程可正常运�?
+- �?性能指标达标
+- �?文档完整
 
 ---
 
-## ✅ 验收标准
+## �?验收标准
 
 ### 功能验收
 
@@ -344,27 +344,27 @@ touch src/event_bus/exceptions.py
 |------|---------|---------|
 | **事件发布订阅** | 订阅者可正确接收事件 | 单元测试 |
 | **异步事件分发** | 分发延迟 < 10ms | 性能测试 |
-| **事件溯源** | 历史事件可回放 | 集成测试 |
-| **错误处理** | 错误可正确处理 | 异常测试 |
-| **性能监控** | 监控指标可获取 | 性能测试 |
+| **事件溯源** | 历史事件可回�?| 集成测试 |
+| **错误处理** | 错误可正确处�?| 异常测试 |
+| **性能监控** | 监控指标可获�?| 性能测试 |
 
 ### 性能验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| **事件吞吐量** | > 10000 events/s | 性能测试 |
+| **事件吞吐�?* | > 10000 events/s | 性能测试 |
 | **事件延迟** | < 10ms | 性能测试 |
 | **内存占用** | < 100MB | 内存分析 |
 | **CPU占用** | < 30% | 性能监控 |
 
 ### 质量验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| **单元测试覆盖率** | > 90% | pytest --cov |
-| **代码复杂度** | < 10 | radon cc |
-| **代码重复率** | < 5% | pylint |
-| **文档完整性** | 100% | 文档审查 |
+| **单元测试覆盖�?* | > 90% | pytest --cov |
+| **代码复杂�?* | < 10 | radon cc |
+| **代码重复�?* | < 5% | pylint |
+| **文档完整�?* | 100% | 文档审查 |
 
 ---
 
@@ -456,7 +456,7 @@ class TestEventBusPerformance:
 
 ## 📊 性能优化
 
-### 异步批处理
+### 异步批处�?
 
 ```python
 class EventBus:
@@ -478,7 +478,7 @@ class EventBus:
         handler: EventHandler,
         filter_func: Optional[Callable[[Event], bool]] = None
     ) -> None:
-        """订阅事件（带过滤）"""
+        """订阅事件（带过滤�?""
         self._subscribers[event_type].append({
             "handler": handler,
             "filter": filter_func
@@ -541,7 +541,7 @@ class EventBus:
 
 ---
 
-## 📚 参考资料
+## 📚 参考资�?
 
 ### 内部文档
 
@@ -557,15 +557,15 @@ class EventBus:
 
 ## 📝 更新记录
 
-| 日期 | 版本 | 更新内容 | 更新人 |
+| 日期 | 版本 | 更新内容 | 更新�?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建事件总线实施指南 | 首席架构师 |
+| 2026-04-02 | v1.0 | 创建事件总线实施指南 | 首席架构�?|
 
 ---
 
 ## 📞 联系方式
 
-**文档维护者**: 首席架构师  
+**文档维护�?*: 首席架构�? 
 **创建日期**: 2026-04-02  
-**最后更新**: 2026-04-02  
+**最后更�?*: 2026-04-02  
 **版本**: v1.0

@@ -14,8 +14,7 @@ reviewer: 首席技术评审官
 review_date: 2026-04-02
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
+applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
@@ -24,101 +23,37 @@ implementation_status: 设计阶段
 
 > 清风量化系统 v5.2 - 强化学习调仓系统架构设计
 > **索引**: `RL_REBALANCING_001`
-> **开发时间**: 200h
+> **开发时�?*: 200h
 > **核心定位**: 基于Stable-Baselines3实现强化学习调仓决策模型，动态优化组合权重和调仓时机
 
 ---
 
 ## 1. 模块概述
 
-### 1.1 业务背景与价值主张
-
-**业务需求**：
-- 当前系统调仓决策基于固定规则，无法适应复杂多变的市场环境
-- 缺乏基于市场状态动态调整调仓策略的能力
-- 需要实现专业机构的智能调仓能力，提升组合表现
-
-**价值主张**：
-- 实现基于强化学习的智能调仓决策（决策准确率≥70%）
-- 提升组合夏普比率（≥2.5）
-- 降低交易成本（交易成本降低≥20%）
-- 实现自适应市场环境的动态调仓策略
-
-### 1.2 技术定位与架构层归属
-
+### 1.1 业务背景与价值主�?
+**业务需�?*�?- 当前系统调仓决策基于固定规则，无法适应复杂多变的市场环�?- 缺乏基于市场状态动态调整调仓策略的能力
+- 需要实现专业机构的智能调仓能力，提升组合表�?
+**价值主�?*�?- 实现基于强化学习的智能调仓决策（决策准确率≥70%�?- 提升组合夏普比率（≥2.5�?- 降低交易成本（交易成本降低≥20%�?- 实现自适应市场环境的动态调仓策�?
+### 1.2 技术定位与架构层归�?
 **Layer定位**: Layer 6 - 组合优化层（决策优化层）
 
 **模块类别**: 核心模块
 
 **架构角色**: 
 - 作为调仓决策的核心组件，实现智能调仓决策
-- 作为市场适应器，根据市场状态动态调整调仓策略
-- 作为交易成本优化器，平衡调仓收益和交易成本
-
+- 作为市场适应器，根据市场状态动态调整调仓策�?- 作为交易成本优化器，平衡调仓收益和交易成�?
 ### 1.3 核心功能清单
 
 1. **强化学习调仓模型**: 基于PPO/SAC算法训练调仓决策模型
-2. **动态奖励函数**: 根据市场状态动态调整奖励函数
-3. **状态空间设计**: 设计多维状态空间表征市场环境
-4. **动作空间设计**: 设计连续/离散动作空间表征调仓决策
+2. **动态奖励函�?*: 根据市场状态动态调整奖励函�?3. **状态空间设�?*: 设计多维状态空间表征市场环�?4. **动作空间设计**: 设计连续/离散动作空间表征调仓决策
 
 ---
 
 ## 2. 架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    强化学习调仓系统架构                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              环境与状态空间层                              │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ 市场状态 │  │ 组合状态 │  │ 风险状态 │  │ 成本状态 │ │  │
-│  │  │          │  │          │  │          │  │          │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              强化学习智能体层                              │  │
-│  │  ┌──────────────────┐      ┌──────────────────┐         │  │
-│  │  │  PPO智能体        │      │  SAC智能体       │         │  │
-│  │  │  ┌────────────┐  │      │  ┌────────────┐  │         │  │
-│  │  │  │ Actor网络  │  │      │  │ Actor网络  │  │         │  │
-│  │  │  │ (策略网络) │  │      │  │ (策略网络) │  │         │  │
-│  │  │  └────────────┘  │      │  └────────────┘  │         │  │
-│  │  │  ┌────────────┐  │      │  ┌────────────┐  │         │  │
-│  │  │  │ Critic网络 │  │      │  │ Critic网络 │  │         │  │
-│  │  │  │ (价值网络) │  │      │  │ (价值网络) │  │         │  │
-│  │  │  └────────────┘  │      │  └────────────┘  │         │  │
-│  │  └──────────────────┘      └──────────────────┘         │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              动作空间与决策层                              │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ 调仓方向 │  │ 调仓幅度 │  │ 调仓时机 │  │ 调仓频率 │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              奖励函数与反馈层                              │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ 收益奖励 │  │ 风险惩罚 │  │ 成本惩罚 │  │ 约束惩罚 │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              训练与优化层                                  │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │  │
-│  │  │ 模型训练 │  │ 超参数   │  │ 模型评估 │  │ 模型部署 │ │  │
-│  │  │          │  │ 优化     │  │          │  │          │ │  │
-│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                   强化学习调仓系统架构                           �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             环境与状态空间层                              �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?市场状�?�? �?组合状�?�? �?风险状�?�? �?成本状�?�?�? �?�? �? �?         �? �?         �? �?         �? �?         �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             强化学习智能体层                              �? �?�? �? ┌──────────────────�?     ┌──────────────────�?        �? �?�? �? �? PPO智能�?       �?     �? SAC智能�?      �?        �? �?�? �? �? ┌────────────�? �?     �? ┌────────────�? �?        �? �?�? �? �? �?Actor网络  �? �?     �? �?Actor网络  �? �?        �? �?�? �? �? �?(策略网络) �? �?     �? �?(策略网络) �? �?        �? �?�? �? �? └────────────�? �?     �? └────────────�? �?        �? �?�? �? �? ┌────────────�? �?     �? ┌────────────�? �?        �? �?�? �? �? �?Critic网络 �? �?     �? �?Critic网络 �? �?        �? �?�? �? �? �?(价值网�? �? �?     �? �?(价值网�? �? �?        �? �?�? �? �? └────────────�? �?     �? └────────────�? �?        �? �?�? �? └──────────────────�?     └──────────────────�?        �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             动作空间与决策层                              �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?调仓方向 �? �?调仓幅度 �? �?调仓时机 �? �?调仓频率 �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             奖励函数与反馈层                              �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?收益奖励 �? �?风险惩罚 �? �?成本惩罚 �? �?约束惩罚 �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             训练与优化层                                  �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�? ┌──────────�?�? �?�? �? �?模型训练 �? �?超参�?  �? �?模型评估 �? �?模型部署 �?�? �?�? �? �?         �? �?优化     �? �?         �? �?         �?�? �?�? �? └──────────�? └──────────�? └──────────�? └──────────�?�? �?�? └──────────────────────────────────────────────────────────�? �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 模块分层架构
 
@@ -129,37 +64,19 @@ implementation_status: 设计阶段
 - 成本状态编码器（交易成本、滑点、冲击成本）
 
 **Layer 2 - 强化学习智能体层**
-- PPO智能体（Proximal Policy Optimization）
-- SAC智能体（Soft Actor-Critic）
-- DQN智能体（Deep Q-Network）
-- A2C智能体（Advantage Actor-Critic）
-
+- PPO智能体（Proximal Policy Optimization�?- SAC智能体（Soft Actor-Critic�?- DQN智能体（Deep Q-Network�?- A2C智能体（Advantage Actor-Critic�?
 **Layer 3 - 动作空间与决策层**
-- 调仓方向决策器（买入/卖出/持有）
-- 调仓幅度决策器（调仓比例）
-- 调仓时机决策器（立即/延迟/取消）
-- 调仓频率决策器（日度/周度/月度）
-
+- 调仓方向决策器（买入/卖出/持有�?- 调仓幅度决策器（调仓比例�?- 调仓时机决策器（立即/延迟/取消�?- 调仓频率决策器（日度/周度/月度�?
 **Layer 4 - 奖励函数与反馈层**
-- 收益奖励计算器（风险调整收益）
-- 风险惩罚计算器（风险超标惩罚）
-- 成本惩罚计算器（交易成本惩罚）
-- 约束惩罚计算器（约束违反惩罚）
-
+- 收益奖励计算器（风险调整收益�?- 风险惩罚计算器（风险超标惩罚�?- 成本惩罚计算器（交易成本惩罚�?- 约束惩罚计算器（约束违反惩罚�?
 **Layer 5 - 训练与优化层**
-- 模型训练引擎（分布式训练）
-- 超参数优化器（网格搜索、贝叶斯优化）
-- 模型评估器（回测评估、样本外测试）
-- 模型部署器（模型版本管理、灰度发布）
+- 模型训练引擎（分布式训练�?- 超参数优化器（网格搜索、贝叶斯优化�?- 模型评估器（回测评估、样本外测试�?- 模型部署器（模型版本管理、灰度发布）
 
-### 2.3 数据流设计
-
+### 2.3 数据流设�?
 ```
-市场数据 → 状态编码 → 智能体决策 → 动作执行 → 奖励计算
-    ↓           ↓           ↓           ↓           ↓
-特征提取   状态向量   动作选择   组合更新   反馈学习
-    ↓           ↓           ↓           ↓           ↓
-状态归一化 策略网络   动作解码   绩效评估   模型更新
+市场数据 �?状态编�?�?智能体决�?�?动作执行 �?奖励计算
+    �?          �?          �?          �?          �?特征提取   状态向�?  动作选择   组合更新   反馈学习
+    �?          �?          �?          �?          �?状态归一�?策略网络   动作解码   绩效评估   模型更新
 ```
 
 ---
@@ -182,9 +99,7 @@ class PortfolioRebalancingEnv(gym.Env):
     
     索引: RL_REBALANCING_001-M01
     职责: 构建强化学习交易环境
-    输入: 市场数据、组合数据
-    输出: 状态、奖励、是否结束
-    """
+    输入: 市场数据、组合数�?    输出: 状态、奖励、是否结�?    """
     
     def __init__(self, config: EnvConfig):
         super(PortfolioRebalancingEnv, self).__init__()
@@ -202,24 +117,21 @@ class PortfolioRebalancingEnv(gym.Env):
         # 交易成本
         self.transaction_cost = config.transaction_cost
         
-        # 状态空间
-        self.observation_space = spaces.Box(
+        # 状态空�?        self.observation_space = spaces.Box(
             low=-np.inf,
             high=np.inf,
             shape=(self._get_state_dim(),),
             dtype=np.float32
         )
         
-        # 动作空间（连续：调仓权重）
-        self.action_space = spaces.Box(
+        # 动作空间（连续：调仓权重�?        self.action_space = spaces.Box(
             low=-1.0,
             high=1.0,
             shape=(self.n_assets,),
             dtype=np.float32
         )
         
-        # 当前时间步
-        self.current_step = 0
+        # 当前时间�?        self.current_step = 0
         self.max_steps = len(self.market_data)
         
         # 组合权重
@@ -234,13 +146,9 @@ class PortfolioRebalancingEnv(gym.Env):
         }
         
     def _get_state_dim(self) -> int:
-        """获取状态空间维度"""
-        # 市场状态 + 组合状态 + 风险状态 + 成本状态
-        market_dim = self.n_assets * 10  # 价格、收益率、波动率等
-        portfolio_dim = self.n_assets * 2  # 权重、价值
-        risk_dim = 4  # VaR, CVaR, 回撤, 杠杆
-        cost_dim = 2  # 交易成本、滑点
-        
+        """获取状态空间维�?""
+        # 市场状�?+ 组合状�?+ 风险状�?+ 成本状�?        market_dim = self.n_assets * 10  # 价格、收益率、波动率�?        portfolio_dim = self.n_assets * 2  # 权重、价�?        risk_dim = 4  # VaR, CVaR, 回撤, 杠杆
+        cost_dim = 2  # 交易成本、滑�?        
         return market_dim + portfolio_dim + risk_dim + cost_dim
     
     def reset(self) -> np.ndarray:
@@ -262,22 +170,16 @@ class PortfolioRebalancingEnv(gym.Env):
         """执行动作
         
         Args:
-            action: 调仓权重调整（-1到1之间）
-            
+            action: 调仓权重调整�?1�?之间�?            
         Returns:
-            state: 新状态
-            reward: 奖励
+            state: 新状�?            reward: 奖励
             done: 是否结束
             info: 额外信息
         """
-        # 1. 解码动作（转换为权重调整）
-        weight_adjustment = action * 0.1  # 限制调整幅度
+        # 1. 解码动作（转换为权重调整�?        weight_adjustment = action * 0.1  # 限制调整幅度
         
-        # 2. 计算新权重
-        new_weights = self.weights + weight_adjustment
-        new_weights = np.clip(new_weights, 0, 1)  # 不允许做空
-        new_weights = new_weights / new_weights.sum()  # 归一化
-        
+        # 2. 计算新权�?        new_weights = self.weights + weight_adjustment
+        new_weights = np.clip(new_weights, 0, 1)  # 不允许做�?        new_weights = new_weights / new_weights.sum()  # 归一�?        
         # 3. 计算交易成本
         turnover = np.abs(new_weights - self.weights).sum()
         transaction_cost = turnover * self.transaction_cost * self.current_capital
@@ -302,8 +204,7 @@ class PortfolioRebalancingEnv(gym.Env):
         self.history['returns'].append(portfolio_return)
         self.history['transaction_costs'].append(transaction_cost)
         
-        # 9. 更新时间步
-        self.current_step += 1
+        # 9. 更新时间�?        self.current_step += 1
         
         # 10. 判断是否结束
         done = (
@@ -311,8 +212,7 @@ class PortfolioRebalancingEnv(gym.Env):
             self.current_capital <= self.initial_capital * 0.5  # 回撤超过50%
         )
         
-        # 11. 获取新状态
-        state = self._get_state()
+        # 11. 获取新状�?        state = self._get_state()
         
         # 12. 额外信息
         info = {
@@ -325,21 +225,16 @@ class PortfolioRebalancingEnv(gym.Env):
         return state, reward, done, info
     
     def _get_state(self) -> np.ndarray:
-        """获取当前状态"""
-        # 市场状态
-        market_state = self._get_market_state()
+        """获取当前状�?""
+        # 市场状�?        market_state = self._get_market_state()
         
-        # 组合状态
-        portfolio_state = self._get_portfolio_state()
+        # 组合状�?        portfolio_state = self._get_portfolio_state()
         
-        # 风险状态
-        risk_state = self._get_risk_state()
+        # 风险状�?        risk_state = self._get_risk_state()
         
-        # 成本状态
-        cost_state = self._get_cost_state()
+        # 成本状�?        cost_state = self._get_cost_state()
         
-        # 合并状态
-        state = np.concatenate([
+        # 合并状�?        state = np.concatenate([
             market_state,
             portfolio_state,
             risk_state,
@@ -349,14 +244,13 @@ class PortfolioRebalancingEnv(gym.Env):
         return state.astype(np.float32)
     
     def _get_market_state(self) -> np.ndarray:
-        """获取市场状态"""
+        """获取市场状�?""
         current_data = self.market_data.iloc[self.current_step]
         
         # 价格相关
         prices = current_data[['close_' + str(i) for i in range(self.n_assets)]].values
         
-        # 收益率
-        if self.current_step > 0:
+        # 收益�?        if self.current_step > 0:
             prev_prices = self.market_data.iloc[self.current_step - 1][['close_' + str(i) for i in range(self.n_assets)]].values
             returns = (prices - prev_prices) / prev_prices
         else:
@@ -369,30 +263,27 @@ class PortfolioRebalancingEnv(gym.Env):
         else:
             volatility = np.zeros(self.n_assets)
         
-        # 趋势（简化：使用移动平均）
-        if self.current_step >= 20:
+        # 趋势（简化：使用移动平均�?        if self.current_step >= 20:
             ma_20 = self.market_data.iloc[self.current_step-20:self.current_step][['close_' + str(i) for i in range(self.n_assets)]].mean().values
             trend = (prices - ma_20) / ma_20
         else:
             trend = np.zeros(self.n_assets)
         
-        # 情绪（简化：随机生成）
-        sentiment = np.random.randn(self.n_assets) * 0.1
+        # 情绪（简化：随机生成�?        sentiment = np.random.randn(self.n_assets) * 0.1
         
         return np.concatenate([prices, returns, volatility, trend, sentiment])
     
     def _get_portfolio_state(self) -> np.ndarray:
-        """获取组合状态"""
+        """获取组合状�?""
         # 权重
         weights = self.weights
         
-        # 价值
-        values = weights * self.current_capital
+        # 价�?        values = weights * self.current_capital
         
         return np.concatenate([weights, values])
     
     def _get_risk_state(self) -> np.ndarray:
-        """获取风险状态"""
+        """获取风险状�?""
         # VaR（简化：使用历史分位数）
         if len(self.history['returns']) >= 20:
             recent_returns = self.history['returns'][-20:]
@@ -417,20 +308,19 @@ class PortfolioRebalancingEnv(gym.Env):
         return np.array([var, cvar, drawdown, leverage])
     
     def _get_cost_state(self) -> np.ndarray:
-        """获取成本状态"""
+        """获取成本状�?""
         # 平均交易成本
         if len(self.history['transaction_costs']) > 0:
             avg_cost = np.mean(self.history['transaction_costs'])
         else:
             avg_cost = 0.0
         
-        # 滑点（简化：假设为交易成本的10%）
-        slippage = avg_cost * 0.1
+        # 滑点（简化：假设为交易成本的10%�?        slippage = avg_cost * 0.1
         
         return np.array([avg_cost, slippage])
     
     def _get_market_returns(self) -> np.ndarray:
-        """获取市场收益率"""
+        """获取市场收益�?""
         if self.current_step >= len(self.market_data) - 1:
             return np.zeros(self.n_assets)
         
@@ -445,12 +335,10 @@ class PortfolioRebalancingEnv(gym.Env):
         """计算奖励
         
         Args:
-            portfolio_return: 组合收益率
-            transaction_cost: 交易成本
+            portfolio_return: 组合收益�?            transaction_cost: 交易成本
             
         Returns:
-            float: 奖励值
-        """
+            float: 奖励�?        """
         # 收益奖励
         return_reward = portfolio_return * 100  # 放大收益信号
         
@@ -465,14 +353,12 @@ class PortfolioRebalancingEnv(gym.Env):
         # 成本惩罚
         cost_penalty = transaction_cost / self.initial_capital * 100
         
-        # 总奖励
-        reward = return_reward - risk_penalty - cost_penalty
+        # 总奖�?        reward = return_reward - risk_penalty - cost_penalty
         
         return reward
 ```
 
-### 3.2 PPO智能体
-
+### 3.2 PPO智能�?
 **设计目标**: 使用PPO算法训练调仓决策模型
 
 ```python
@@ -482,8 +368,7 @@ from stable_baselines3.common.callbacks import EvalCallback
 import torch as th
 
 class PPORebalancingAgent:
-    """PPO调仓智能体
-    
+    """PPO调仓智能�?    
     索引: RL_REBALANCING_001-M02
     职责: 使用PPO算法训练调仓决策模型
     输入: 交易环境
@@ -535,8 +420,7 @@ class PPORebalancingAgent:
         """训练模型
         
         Args:
-            total_timesteps: 总训练步数
-            eval_env: 评估环境
+            total_timesteps: 总训练步�?            eval_env: 评估环境
             eval_freq: 评估频率
             
         Returns:
@@ -572,13 +456,10 @@ class PPORebalancingAgent:
         """预测动作
         
         Args:
-            observation: 观测状态
-            deterministic: 是否确定性策略
-            
+            observation: 观测状�?            deterministic: 是否确定性策�?            
         Returns:
             action: 动作
-            state: 隐状态（None）
-        """
+            state: 隐状态（None�?        """
         if self.model is None:
             raise ValueError("Model not trained yet. Call train() first.")
         
@@ -596,16 +477,14 @@ class PPORebalancingAgent:
         self.model = PPO.load(path, env=self.env)
 ```
 
-### 3.3 SAC智能体
-
+### 3.3 SAC智能�?
 **设计目标**: 使用SAC算法训练调仓决策模型（适用于连续动作空间）
 
 ```python
 from stable_baselines3 import SAC
 
 class SACRebalancingAgent:
-    """SAC调仓智能体
-    
+    """SAC调仓智能�?    
     索引: RL_REBALANCING_001-M03
     职责: 使用SAC算法训练调仓决策模型
     输入: 交易环境
@@ -696,19 +575,13 @@ class SACRebalancingAgent:
         self.model = SAC.load(path, env=self.env)
 ```
 
-### 3.4 动态奖励函数
-
-**设计目标**: 根据市场状态动态调整奖励函数
-
+### 3.4 动态奖励函�?
+**设计目标**: 根据市场状态动态调整奖励函�?
 ```python
 class DynamicRewardFunction:
-    """动态奖励函数
-    
+    """动态奖励函�?    
     索引: RL_REBALANCING_001-M04
-    职责: 根据市场状态动态调整奖励函数
-    输入: 组合收益、风险、成本、市场状态
-    输出: 动态奖励值
-    """
+    职责: 根据市场状态动态调整奖励函�?    输入: 组合收益、风险、成本、市场状�?    输出: 动态奖励�?    """
     
     def __init__(self, config: RewardConfig):
         self.config = config
@@ -724,20 +597,15 @@ class DynamicRewardFunction:
                         transaction_cost: float,
                         market_state: Dict[str, float],
                         constraint_violations: int) -> float:
-        """计算动态奖励
-        
+        """计算动态奖�?        
         Args:
-            portfolio_return: 组合收益率
-            risk_metrics: 风险指标（VaR, CVaR, 回撤等）
+            portfolio_return: 组合收益�?            risk_metrics: 风险指标（VaR, CVaR, 回撤等）
             transaction_cost: 交易成本
-            market_state: 市场状态（波动率、趋势等）
-            constraint_violations: 约束违反次数
+            market_state: 市场状态（波动率、趋势等�?            constraint_violations: 约束违反次数
             
         Returns:
-            float: 动态奖励值
-        """
-        # 1. 根据市场状态调整权重
-        self._adjust_weights(market_state)
+            float: 动态奖励�?        """
+        # 1. 根据市场状态调整权�?        self._adjust_weights(market_state)
         
         # 2. 计算收益奖励
         return_reward = self._calculate_return_reward(portfolio_return)
@@ -751,8 +619,7 @@ class DynamicRewardFunction:
         # 5. 计算约束惩罚
         constraint_penalty = self._calculate_constraint_penalty(constraint_violations)
         
-        # 6. 计算总奖励
-        total_reward = (
+        # 6. 计算总奖�?        total_reward = (
             self.reward_weights['return'] * return_reward -
             self.reward_weights['risk'] * risk_penalty -
             self.reward_weights['cost'] * cost_penalty -
@@ -762,7 +629,7 @@ class DynamicRewardFunction:
         return total_reward
     
     def _adjust_weights(self, market_state: Dict[str, float]):
-        """根据市场状态调整奖励权重"""
+        """根据市场状态调整奖励权�?""
         volatility = market_state.get('volatility', 0.02)
         trend = market_state.get('trend', 0.0)
         
@@ -772,16 +639,14 @@ class DynamicRewardFunction:
         else:
             self.reward_weights['risk'] = 0.5
         
-        # 趋势市场：增加收益权重
-        if abs(trend) > 0.01:
+        # 趋势市场：增加收益权�?        if abs(trend) > 0.01:
             self.reward_weights['return'] = 1.2
         else:
             self.reward_weights['return'] = 1.0
     
     def _calculate_return_reward(self, portfolio_return: float) -> float:
         """计算收益奖励"""
-        # 风险调整收益（Sharpe-like）
-        return portfolio_return * 100
+        # 风险调整收益（Sharpe-like�?        return portfolio_return * 100
     
     def _calculate_risk_penalty(self, risk_metrics: Dict[str, float]) -> float:
         """计算风险惩罚"""
@@ -800,8 +665,7 @@ class DynamicRewardFunction:
     
     def _calculate_cost_penalty(self, transaction_cost: float) -> float:
         """计算成本惩罚"""
-        # 成本惩罚（相对于初始资金）
-        return transaction_cost / self.config.initial_capital * 100
+        # 成本惩罚（相对于初始资金�?        return transaction_cost / self.config.initial_capital * 100
     
     def _calculate_constraint_penalty(self, violations: int) -> float:
         """计算约束惩罚"""
@@ -833,12 +697,10 @@ class HyperparameterOptimizer:
         
     def optimize(self, n_trials: int = 50,
                 algorithm: str = 'PPO') -> Dict[str, Any]:
-        """优化超参数
-        
+        """优化超参�?        
         Args:
             n_trials: 试验次数
-            algorithm: 算法类型（PPO/SAC）
-            
+            algorithm: 算法类型（PPO/SAC�?            
         Returns:
             Dict[str, Any]: 最优超参数
         """
@@ -847,8 +709,7 @@ class HyperparameterOptimizer:
         
         # 定义目标函数
         def objective(trial: Trial) -> float:
-            # 采样超参数
-            params = self._sample_params(trial, algorithm)
+            # 采样超参�?            params = self._sample_params(trial, algorithm)
             
             # 训练模型
             if algorithm == 'PPO':
@@ -866,11 +727,10 @@ class HyperparameterOptimizer:
         # 运行优化
         study.optimize(objective, n_trials=n_trials)
         
-        # 返回最优参数
-        return study.best_params
+        # 返回最优参�?        return study.best_params
     
     def _sample_params(self, trial: Trial, algorithm: str) -> Dict[str, Any]:
-        """采样超参数"""
+        """采样超参�?""
         params = {}
         
         # 通用参数
@@ -1013,14 +873,14 @@ class RewardConfig:
 
 @dataclass
 class OptimizerConfig:
-    """优化器配置"""
+    """优化器配�?""
     env: gym.Env
     eval_env: gym.Env
     training_steps: int = 50000
 
 
 class IRLAgent(ABC):
-    """强化学习智能体接口"""
+    """强化学习智能体接�?""
     
     @abstractmethod
     def train(self, total_timesteps: int) -> None:
@@ -1043,15 +903,12 @@ class IRLAgent(ABC):
         pass
 ```
 
-### 4.2 主接口
-
+### 4.2 主接�?
 ```python
 class RLRebalancingSystem:
-    """强化学习调仓系统主接口
-    
+    """强化学习调仓系统主接�?    
     索引: RL_REBALANCING_001-MAIN
-    职责: 协调环境构建、模型训练、模型评估、模型部署
-    """
+    职责: 协调环境构建、模型训练、模型评估、模型部�?    """
     
     def __init__(self, config: RLSystemConfig):
         self.config = config
@@ -1060,8 +917,7 @@ class RLRebalancingSystem:
         self.train_env = PortfolioRebalancingEnv(config.train_env_config)
         self.eval_env = PortfolioRebalancingEnv(config.eval_env_config)
         
-        # 构建智能体
-        if config.algorithm == 'PPO':
+        # 构建智能�?        if config.algorithm == 'PPO':
             self.agent = PPORebalancingAgent(config.ppo_config)
         elif config.algorithm == 'SAC':
             self.agent = SACRebalancingAgent(config.sac_config)
@@ -1079,11 +935,8 @@ class RLRebalancingSystem:
         """训练模型
         
         Args:
-            total_timesteps: 总训练步数
-            optimize_hyperparams: 是否优化超参数
-        """
-        # 超参数优化
-        if optimize_hyperparams:
+            total_timesteps: 总训练步�?            optimize_hyperparams: 是否优化超参�?        """
+        # 超参数优�?        if optimize_hyperparams:
             best_params = self.optimizer.optimize(
                 n_trials=50,
                 algorithm=self.config.algorithm
@@ -1101,8 +954,7 @@ class RLRebalancingSystem:
         """预测动作
         
         Args:
-            observation: 观测状态
-            
+            observation: 观测状�?            
         Returns:
             np.ndarray: 动作
         """
@@ -1113,8 +965,7 @@ class RLRebalancingSystem:
         """评估模型
         
         Args:
-            n_episodes: 评估回合数
-            
+            n_episodes: 评估回合�?            
         Returns:
             Dict[str, float]: 评估指标
         """
@@ -1156,106 +1007,90 @@ class RLRebalancingSystem:
 
 ### 5.1 开发里程碑
 
-**Phase 1: 环境与基础组件（Week 1-2）**
-- ✅ 实现交易环境（PortfolioRebalancingEnv）
-- ✅ 实现状态空间编码器
-- ✅ 实现动作空间设计
-- ✅ 完成环境测试
+**Phase 1: 环境与基础组件（Week 1-2�?*
+- �?实现交易环境（PortfolioRebalancingEnv�?- �?实现状态空间编码器
+- �?实现动作空间设计
+- �?完成环境测试
 
-**Phase 2: 智能体开发（Week 3-4）**
-- ✅ 实现PPO智能体
-- ✅ 实现SAC智能体
-- ✅ 实现动态奖励函数
-- ✅ 完成智能体测试
+**Phase 2: 智能体开发（Week 3-4�?*
+- �?实现PPO智能�?- �?实现SAC智能�?- �?实现动态奖励函�?- �?完成智能体测�?
+**Phase 3: 训练与优化（Week 5-6�?*
+- �?实现超参数优化器
+- �?实现分布式训�?- �?实现模型评估�?- �?完成训练流程测试
 
-**Phase 3: 训练与优化（Week 5-6）**
-- ✅ 实现超参数优化器
-- ✅ 实现分布式训练
-- ✅ 实现模型评估器
-- ✅ 完成训练流程测试
-
-**Phase 4: 系统集成与部署（Week 7-8）**
-- ✅ 集成到组合优化层
-- ✅ 实现实时推理接口
-- ✅ 实现模型版本管理
-- ✅ 完成生产部署
+**Phase 4: 系统集成与部署（Week 7-8�?*
+- �?集成到组合优化层
+- �?实现实时推理接口
+- �?实现模型版本管理
+- �?完成生产部署
 
 ### 5.2 技术栈
 
 | 组件 | 技术选型 | 版本要求 |
 |------|----------|----------|
-| **强化学习框架** | Stable-Baselines3 | ≥1.6 |
-| **深度学习框架** | PyTorch | ≥1.10 |
-| **优化框架** | Optuna | ≥2.10 |
-| **环境接口** | OpenAI Gym | ≥0.21 |
-| **可视化** | TensorBoard | ≥2.8 |
+| **强化学习框架** | Stable-Baselines3 | �?.6 |
+| **深度学习框架** | PyTorch | �?.10 |
+| **优化框架** | Optuna | �?.10 |
+| **环境接口** | OpenAI Gym | �?.21 |
+| **可视�?* | TensorBoard | �?.8 |
 
 ### 5.3 性能指标
 
-| 指标 | 目标值 | 验证方法 |
+| 指标 | 目标�?| 验证方法 |
 |------|--------|----------|
-| **决策准确率** | ≥70% | 样本外测试 |
-| **组合夏普比率** | ≥2.5 | 回测验证 |
-| **交易成本降低** | ≥20% | 对比测试 |
-| **模型推理延迟** | ≤50ms | 性能测试 |
+| **决策准确�?* | �?0% | 样本外测�?|
+| **组合夏普比率** | �?.5 | 回测验证 |
+| **交易成本降低** | �?0% | 对比测试 |
+| **模型推理延迟** | �?0ms | 性能测试 |
 
 ---
 
-## 6. 风险与约束
-
-### 6.1 技术风险
-
-| 风险项 | 风险等级 | 缓解措施 |
+## 6. 风险与约�?
+### 6.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| **模型过拟合** | P1 | 样本外验证、早停机制 |
-| **训练不稳定** | P1 | 超参数优化、梯度裁剪 |
-| **奖励函数设计不当** | P2 | 奖励塑形、专家经验 |
-| **计算资源需求高** | P2 | 分布式训练、GPU加速 |
+| **模型过拟�?* | P1 | 样本外验证、早停机�?|
+| **训练不稳�?* | P1 | 超参数优化、梯度裁�?|
+| **奖励函数设计不当** | P2 | 奖励塑形、专家经�?|
+| **计算资源需求高** | P2 | 分布式训练、GPU加�?|
 
 ### 6.2 实施约束
 
-1. **数据约束**: 需要足够长的历史数据支持训练
-2. **计算约束**: 需要GPU资源支持模型训练
+1. **数据约束**: 需要足够长的历史数据支持训�?2. **计算约束**: 需要GPU资源支持模型训练
 3. **时间约束**: 模型训练周期较长（数天）
-4. **存储约束**: 模型文件较大（100MB-500MB）
-
+4. **存储约束**: 模型文件较大�?00MB-500MB�?
 ---
 
 ## 7. 验收标准
 
 ### 7.1 功能验收
 
-- ✅ 支持PPO和SAC两种强化学习算法
-- ✅ 支持动态奖励函数
-- ✅ 支持超参数自动优化
-- ✅ 支持模型版本管理和灰度发布
-
+- �?支持PPO和SAC两种强化学习算法
+- �?支持动态奖励函�?- �?支持超参数自动优�?- �?支持模型版本管理和灰度发�?
 ### 7.2 性能验收
 
-- ✅ 决策准确率≥70%
-- ✅ 组合夏普比率≥2.5
-- ✅ 交易成本降低≥20%
-- ✅ 模型推理延迟≤50ms
+- �?决策准确率≥70%
+- �?组合夏普比率�?.5
+- �?交易成本降低�?0%
+- �?模型推理延迟�?0ms
 
 ### 7.3 质量验收
 
-- ✅ 代码覆盖率≥80%
-- ✅ 文档完整度≥95%
-- ✅ 符合API契约规范
-- ✅ 通过安全审计
+- �?代码覆盖率≥80%
+- �?文档完整度≥95%
+- �?符合API契约规范
+- �?通过安全审计
 
 ---
 
-## 8. 参考资料
-
+## 8. 参考资�?
 ### 8.1 学术论文
 
 1. **PPO**: Schulman, J., et al. (2017). "Proximal Policy Optimization Algorithms"
 2. **SAC**: Haarnoja, T., et al. (2018). "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning"
 3. **RL for Trading**: Deng, Y., et al. (2016). "Deep Direct Reinforcement Learning for Financial Signal Representation and Trading"
 
-### 8.2 开源项目
-
+### 8.2 开源项�?
 1. **Stable-Baselines3**: https://github.com/DLR-RM/stable-baselines3
 2. **Optuna**: https://optuna.org/
 3. **OpenAI Gym**: https://gym.openai.com/
@@ -1269,6 +1104,5 @@ class RLRebalancingSystem:
 ---
 
 **文档版本**: v1.0
-**最后更新**: 2026-04-02
-**审核状态**: 待审核
-**下一步**: 提交技术评审官审核
+**最后更�?*: 2026-04-02
+**审核状�?*: 待审�?**下一�?*: 提交技术评审官审核

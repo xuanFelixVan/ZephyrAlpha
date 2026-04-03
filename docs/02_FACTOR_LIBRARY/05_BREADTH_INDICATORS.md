@@ -4,28 +4,28 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 市场广度指标
 
-> 涨跌比率、腾落指标、市场广度分析
+> 涨跌比率、腾落指标、市场广度分�?
 
 ---
 
 ## 1. 广度指标概述
 
-| 指标 | 名称 | 说明 | 用途 |
+| 指标 | 名称 | 说明 | 用�?|
 |------|------|------|------|
 | ADR | 涨跌比率 | N日内上涨家数/下跌家数 | 市场情绪 |
 | ADL | 腾落指标 | 每日上涨-下跌家数累计 | 趋势确认 |
-| MCL | 麦克连指标 | 基于ADL的动量振荡 | 广度动量 |
-| NDR | 涨跌家数比 | 上涨家数-下跌家数 | 资金轮动 |
+| MCL | 麦克连指�?| 基于ADL的动量振�?| 广度动量 |
+| NDR | 涨跌家数�?| 上涨家数-下跌家数 | 资金轮动 |
 
 ---
 
@@ -49,12 +49,12 @@ class BreadthIndicators:
 
         ADR = N日内上涨家数之和 / N日内下跌家数之和
 
-        参数：
+        参数�?
             advance: 上涨家数序列
             decline: 下跌家数序列
             window: 计算窗口
 
-        返回：
+        返回�?
             ADR序列
         """
         adv_sum = advance.rolling(window).sum()
@@ -74,7 +74,7 @@ class BreadthIndicators:
 
         ADL = Σ(上涨家数 - 下跌家数)
 
-        返回：
+        返回�?
             ADL累计序列
         """
         net = advance - decline
@@ -87,16 +87,16 @@ class BreadthIndicators:
         short_period: int = 19,
         long_period: int = 39
     ) -> pd.Series:
-        """计算麦克连指标 (McClellan Oscillator)
+        """计算麦克连指�?(McClellan Oscillator)
 
         MCL = ADL的短期EMA - ADL的长期EMA
 
-        参数：
+        参数�?
             adl: ADL序列
-            short_period: 短期EMA周期（默认19）
-            long_period: 长期EMA周期（默认39）
+            short_period: 短期EMA周期（默�?9�?
+            long_period: 长期EMA周期（默�?9�?
 
-        返回：
+        返回�?
             MCL序列
         """
         ema_short = adl.ewm(span=short_period).mean()
@@ -118,7 +118,7 @@ class BreadthIndicators:
     ) -> pd.Series:
         """计算ADL动量
 
-        ADL动量 = ADL - ADL的N日前值
+        ADL动量 = ADL - ADL的N日前�?
         """
         return adl - adl.shift(period)
 
@@ -127,7 +127,7 @@ class BreadthIndicators:
         adl: pd.Series,
         period: int = 10
     ) -> pd.Series:
-        """计算ADL变化率
+        """计算ADL变化�?
 
         ROC = (ADL - ADL_N日前) / ADL_N日前 * 100
         """
@@ -170,10 +170,10 @@ class BreadthFactor:
     ) -> pd.Series:
         """构建广度动量因子
 
-        因子逻辑：
-        - 上涨家数占比 > 50%：市场偏强
+        因子逻辑�?
+        - 上涨家数占比 > 50%：市场偏�?
         - ADL创新高：趋势确认
-        - MCL > 0：动量偏多
+        - MCL > 0：动量偏�?
         """
         # 获取成分股收益率
         returns = self.get_stock_returns(index_components, end_date, lookback)
@@ -207,7 +207,7 @@ class BreadthFactor:
     ) -> pd.DataFrame:
         """构建行业广度因子
 
-        计算各行业的涨跌家数比
+        计算各行业的涨跌家数�?
         """
         stocks = self.get_sector_stocks(sector)
         returns = self.get_stock_returns(stocks, end_date, 1)
@@ -227,7 +227,7 @@ class BreadthFactor:
 
 ---
 
-## 5. 广度与价格背离
+## 5. 广度与价格背�?
 
 ```python
 class BreadthDivergence:
@@ -241,7 +241,7 @@ class BreadthDivergence:
     ) -> List[dict]:
         """检测ADL与价格的背离
 
-        逻辑：
+        逻辑�?
         - 价格创新高但ADL未创新高：顶背离（看跌）
         - 价格创新低但ADL未创新低：底背离（看涨）
         """
@@ -251,19 +251,19 @@ class BreadthDivergence:
         for i in range(window, len(index_price)):
             current_date = index_price.index[i]
 
-            # 价格是否创新高
+            # 价格是否创新�?
             price_window = index_price.iloc[i-window:i]
             is_price_high = index_price.iloc[i] >= price_window.max()
 
-            # ADL是否创新高
+            # ADL是否创新�?
             adl_window = adl.iloc[i-window:i]
             is_adl_high = adl.iloc[i] >= adl_window.max()
 
-            # 顶背离：价格新高但ADL未新高
+            # 顶背离：价格新高但ADL未新�?
             if is_price_high and not is_adl_high:
                 divergences.append({
                     'date': current_date,
-                    'type': 'bearish',  # 顶背离
+                    'type': 'bearish',  # 顶背�?
                     'price': index_price.iloc[i],
                     'adl': adl.iloc[i],
                     'strength': self._calculate_divergence_strength(
@@ -272,14 +272,14 @@ class BreadthDivergence:
                     )
                 })
 
-            # 底背离：价格新低但ADL未新低
+            # 底背离：价格新低但ADL未新�?
             is_price_low = index_price.iloc[i] <= price_window.min()
             is_adl_low = adl.iloc[i] <= adl_window.min()
 
             if is_price_low and not is_adl_low:
                 divergences.append({
                     'date': current_date,
-                    'type': 'bullish',  # 底背离
+                    'type': 'bullish',  # 底背�?
                     'price': index_price.iloc[i],
                     'adl': adl.iloc[i],
                     'strength': self._calculate_divergence_strength(
@@ -326,13 +326,13 @@ class BreadthMonitor:
         if advance_ratio > 0.6:
             sentiment = '强烈看涨'
         elif advance_ratio > 0.52:
-            sentiment = '偏看涨'
+            sentiment = '偏看�?
         elif advance_ratio < 0.4:
             sentiment = '强烈看跌'
         elif advance_ratio < 0.48:
-            sentiment = '偏看跌'
+            sentiment = '偏看�?
         else:
-            sentiment = '中性'
+            sentiment = '中�?
 
         return {
             'date': pd.Timestamp.now(),
@@ -366,13 +366,13 @@ breadth_indicators:
     bearish_threshold: -50      # MCL < -50 看跌
 
   adl:
-    bullish_confirmation: "ADL创新高"
-    bearish_confirmation: "ADL创新低"
+    bullish_confirmation: "ADL创新�?
+    bearish_confirmation: "ADL创新�?
 
   alerts:
-    - condition: "ADR连续3日 > 1.5"
+    - condition: "ADR连续3�?> 1.5"
       message: "市场可能过热"
-    - condition: "ADR连续3日 < 0.67"
+    - condition: "ADR连续3�?< 0.67"
       message: "市场可能见底"
     - condition: "MCL从负转正"
       message: "广度动量转多"

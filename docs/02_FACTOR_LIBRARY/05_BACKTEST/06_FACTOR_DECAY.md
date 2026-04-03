@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 因子衰减分析
@@ -34,12 +34,12 @@ def calculate_decay_curve(
 ) -> pd.DataFrame:
     """计算因子在不同持有期的IC衰减
 
-    参数：
-        factor: 因子值
-        returns: 收益率序列
+    参数�?
+        factor: 因子�?
+        returns: 收益率序�?
         max_holding_periods: 最大持有期（天数）
 
-    返回：
+    返回�?
         包含各期IC值的DataFrame
     """
     decay_data = []
@@ -48,7 +48,7 @@ def calculate_decay_curve(
         # 计算前向收益
         forward_returns = returns.shift(-period)
 
-        # 计算截面相关性
+        # 计算截面相关�?
         valid_idx = factor.notna() & forward_returns.notna()
         if valid_idx.sum() > 30:
             ic = factor[valid_idx].corr(forward_returns[valid_idx])
@@ -78,7 +78,7 @@ def decay_metrics(decay_df: pd.DataFrame) -> dict:
     }
 
 def find_half_life(ic_values: np.ndarray) -> int:
-    """找到IC衰减到一半的持有期"""
+    """找到IC衰减到一半的持有�?""
     initial_ic = ic_values[0]
     if initial_ic == 0:
         return 0
@@ -91,20 +91,20 @@ def find_half_life(ic_values: np.ndarray) -> int:
 
 ---
 
-## 2. 因子换手率分析
+## 2. 因子换手率分�?
 
 ```python
 def turnover_analysis(
     factor_quantiles: pd.DataFrame,
     period: int = 1
 ) -> pd.DataFrame:
-    """计算因子组合换手率
+    """计算因子组合换手�?
 
-    参数：
+    参数�?
         factor_quantiles: 因子分位数（每期为一行）
-        period: 持有周期（天）
+        period: 持有周期（天�?
 
-    返回：
+    返回�?
         换手率数据框
     """
     turnovers = []
@@ -128,11 +128,11 @@ def turnover_analysis(
 
 ---
 
-## 3. 因子有效性监控面板
+## 3. 因子有效性监控面�?
 
 ```python
 class FactorMonitor:
-    """因子有效性监控"""
+    """因子有效性监�?""
 
     def __init__(self, factor_id: str):
         self.factor_id = factor_id
@@ -144,7 +144,7 @@ class FactorMonitor:
         returns: pd.Series,
         factor_values: pd.Series
     ):
-        """每日更新因子状态"""
+        """每日更新因子状�?""
         self.history.append({
             'date': pd.Timestamp.now(),
             'ic': ic_value,
@@ -153,8 +153,8 @@ class FactorMonitor:
         })
 
     def check_alert(self, threshold_icir: float = 0.5) -> dict:
-        """检查是否需要告警"""
-        recent = pd.DataFrame(self.history[-20:])  # 最近20天
+        """检查是否需要告�?""
+        recent = pd.DataFrame(self.history[-20:])  # 最�?0�?
 
         if len(recent) < 10:
             return {'alert': False}
@@ -169,7 +169,7 @@ class FactorMonitor:
         }
 
     def _calc_turnover(self, factor_values: pd.Series) -> float:
-        """计算换手率"""
+        """计算换手�?""
         if len(self.history) == 0:
             return 0.0
 
@@ -183,13 +183,13 @@ class FactorMonitor:
 
 ## 4. IC 统计指标
 
-| 指标 | 计算方法 | 健康阈值 |
+| 指标 | 计算方法 | 健康阈�?|
 |------|---------|---------|
-| IC均值 | $mean(IC)$ | > 0.02 |
-| IC标准差 | $std(IC)$ | 越小越好 |
+| IC均�?| $mean(IC)$ | > 0.02 |
+| IC标准�?| $std(IC)$ | 越小越好 |
 | ICIR | $IC_{mean} / IC_{std}$ | > 0.5 |
-| IC胜率 | $IC > 0$ 的比例 | > 55% |
-| t统计量 | $IC_{mean} / (IC_{std} / \sqrt{N})$ | > 2.0 |
+| IC胜率 | $IC > 0$ 的比�?| > 55% |
+| t统计�?| $IC_{mean} / (IC_{std} / \sqrt{N})$ | > 2.0 |
 
 ---
 
@@ -202,8 +202,8 @@ factor_alerts:
     critical: 0.3
 
   decay_rate_threshold:
-    warning: 0.3  # 5日衰减超过30%
-    critical: 0.5  # 5日衰减超过50%
+    warning: 0.3  # 5日衰减超�?0%
+    critical: 0.5  # 5日衰减超�?0%
 
   turnover_threshold:
     warning: 0.5  # 日换手率超过50%

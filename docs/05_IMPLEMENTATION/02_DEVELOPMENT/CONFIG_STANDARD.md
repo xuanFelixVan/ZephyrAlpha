@@ -4,19 +4,19 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # CONFIG_STANDARD.md - 配置文件标准
 
 > **版本**：v4.0
-> **更新日期**：2026-03-28
-> **状态**：已制定
+> **更新日期**�?026-03-28
+> **状�?*：已制定
 
 ---
 
@@ -24,21 +24,21 @@ implementation_status: 进行中
 
 ```
 ZephyrAlpha/
-├── config/                    # 配置文件根目录
-│   ├── system.yaml         # 系统配置
-│   ├── data_sources.yaml   # 数据源配置
-│   ├── strategies/          # 策略配置
-│   │   ├── active.yaml    # 活跃策略列表
-│   │   └── templates/      # 策略模板
-│   ├── factors/            # 因子配置
-│   │   ├── alpha.yaml     # Alpha因子
-│   │   ├── risk.yaml      # 风险因子
-│   │   └── selected.yaml  # 选中的因子
-│   ├── risk/              # 风险配置
-│   │   ├── limits.yaml    # 风险限制
-│   │   └── rules.yaml     # 风险规则
-│   └── workflows/          # 工作流配置
-│       └── daily.yaml      # 每日流水线
+├── config/                    # 配置文件根目�?
+�?  ├── system.yaml         # 系统配置
+�?  ├── data_sources.yaml   # 数据源配�?
+�?  ├── strategies/          # 策略配置
+�?  �?  ├── active.yaml    # 活跃策略列表
+�?  �?  └── templates/      # 策略模板
+�?  ├── factors/            # 因子配置
+�?  �?  ├── alpha.yaml     # Alpha因子
+�?  �?  ├── risk.yaml      # 风险因子
+�?  �?  └── selected.yaml  # 选中的因�?
+�?  ├── risk/              # 风险配置
+�?  �?  ├── limits.yaml    # 风险限制
+�?  �?  └── rules.yaml     # 风险规则
+�?  └── workflows/          # 工作流配�?
+�?      └── daily.yaml      # 每日流水�?
 ```
 
 ---
@@ -48,7 +48,7 @@ ZephyrAlpha/
 ### 2.1 YAML格式要求
 
 ```yaml
-# ✅ 正确格式
+# �?正确格式
 config_version: "v1.0"
 last_updated: "2026-03-28"
 
@@ -56,20 +56,20 @@ system:
   name: "清风量化系统"
   mode: "backtest"
 
-# ❌ 错误格式
-config-version: v1.0  # 使用横杠而非下划线
+# �?错误格式
+config-version: v1.0  # 使用横杠而非下划�?
 lastUpdated: "2026-03-28"  # 使用驼峰而非蛇形
 ```
 
-### 2.2 配置项命名规范
+### 2.2 配置项命名规�?
 
 ```yaml
-# ✅ 正确：蛇形命名
+# �?正确：蛇形命�?
 data_source:
   api_key: "xxx"
   timeout_seconds: 30
 
-# ❌ 错误：驼峰命名
+# �?错误：驼峰命�?
 dataSource:
   apiKey: "xxx"
   timeoutSeconds: 30
@@ -77,7 +77,7 @@ dataSource:
 
 ---
 
-## 3. 配置项分类
+## 3. 配置项分�?
 
 ### 3.1 系统配置 (system.yaml)
 
@@ -104,7 +104,7 @@ logging:
   retention_days: 30
 ```
 
-### 3.2 数据源配置 (data_sources.yaml)
+### 3.2 数据源配�?(data_sources.yaml)
 
 ```yaml
 data_sources:
@@ -136,13 +136,13 @@ selected_factors:
 
   alpha_factors:
     - factor_id: "ALPHA_001"
-      name: "RPS5日"
+      name: "RPS5�?
       weight: 0.15
       status: "active"
 
   risk_factors:
     - factor_id: "RISK_001"
-      name: "市值因子"
+      name: "市值因�?
       style: "SIZE"
 ```
 
@@ -153,12 +153,12 @@ selected_factors:
 ### 4.1 环境变量命名规范
 
 ```bash
-# ✅ 正确：大写下划线
+# �?正确：大写下划线
 TUSHARE_TOKEN=xxx
 DATABASE_URL=xxx
 LOG_LEVEL=INFO
 
-# ❌ 错误：驼峰或点号
+# �?错误：驼峰或点号
 tushareToken=xxx
 database.url=xxx
 ```
@@ -169,7 +169,7 @@ database.url=xxx
 # 数据源Token
 TUSHARE_TOKEN=xxx
 
-# 数据库
+# 数据�?
 DATABASE_URL=sqlite:///./data/quant.db
 
 # 系统
@@ -185,16 +185,16 @@ API_PORT=8000
 
 ## 5. 配置加载规范
 
-### 5.1 配置加载优先级
+### 5.1 配置加载优先�?
 
 ```
-命令行参数 > 环境变量 > 用户配置 > 默认配置
+命令行参�?> 环境变量 > 用户配置 > 默认配置
 ```
 
 ### 5.2 配置验证
 
 ```python
-# ✅ 配置加载后必须验证
+# �?配置加载后必须验�?
 class ConfigValidator:
     def validate(self, config: dict) -> bool:
         required_fields = ["system.name", "system.version"]
@@ -206,7 +206,7 @@ class ConfigValidator:
 
 ---
 
-## 6. 配置热重载规范
+## 6. 配置热重载规�?
 
 ```python
 # 配置变更监听
@@ -216,7 +216,7 @@ class ConfigWatcher:
         self.last_modified = None
 
     def check_for_changes(self):
-        """检查配置文件是否变更"""
+        """检查配置文件是否变�?""
         current_mtime = os.path.getmtime(self.config_path)
         if current_mtime != self.last_modified:
             self.last_modified = current_mtime
@@ -233,7 +233,7 @@ class ConfigWatcher:
 | API地址 | `"http://api.example.com"` | `config.get("api.base_url")` |
 | 超时时间 | `timeout=30` | `config.get("api.timeout")` |
 | 重试次数 | `retry=3` | `config.get("api.retry")` |
-| 阈值 | `if x > 100:` | `if x > config.get("threshold.value"):` |
+| 阈�?| `if x > 100:` | `if x > config.get("threshold.value"):` |
 
 ---
 

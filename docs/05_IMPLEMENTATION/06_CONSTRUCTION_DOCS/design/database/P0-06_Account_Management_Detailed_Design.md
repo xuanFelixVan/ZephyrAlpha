@@ -4,60 +4,60 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构师
+owner: 首席蓝图架构�?
 standard_type: 专业量化机构账户管理标准
 applicable_scope: 账户服务模块
 compliance_level: 专业机构标准
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 账户管理详细设计（专业量化机构标准）
 
 > 清风量化系统 v5.0 - 专业量化机构标准账户管理设计
-> **设计模式**: DDD领域驱动设计 + 聚合根模式
-> **核心职责**: 账户生命周期管理、资金管理、账户快照
+> **设计模式**: DDD领域驱动设计 + 聚合根模�?
+> **核心职责**: 账户生命周期管理、资金管理、账户快�?
 
 ## 📋 模块概述
 
 ### 账户管理架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    应用层 (Application Layer)                │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          AccountApplicationService                    │  │
-│  │  - 创建账户应用服务                                    │  │
-│  │  - 查询账户应用服务                                    │  │
-│  │  - 资金管理应用服务                                    │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                    领域层 (Domain Layer)                     │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          AccountAggregate (账户聚合根)                │  │
-│  │  - Account (账户实体)                                 │  │
-│  │  - AccountSnapshot (账户快照实体)                     │  │
-│  │  - AccountDomainService (领域服务)                    │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                    基础设施层 (Infrastructure Layer)          │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          AccountRepository (账户仓储)                 │  │
-│  │  - PostgreSQL (主数据库)                              │  │
-│  │  - Redis (实时缓存)                                   │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   应用�?(Application Layer)                �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         AccountApplicationService                    �? �?
+�? �? - 创建账户应用服务                                    �? �?
+�? �? - 查询账户应用服务                                    �? �?
+�? �? - 资金管理应用服务                                    �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                   领域�?(Domain Layer)                     �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         AccountAggregate (账户聚合�?                �? �?
+�? �? - Account (账户实体)                                 �? �?
+�? �? - AccountSnapshot (账户快照实体)                     �? �?
+�? �? - AccountDomainService (领域服务)                    �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                   基础设施�?(Infrastructure Layer)          �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         AccountRepository (账户仓储)                 �? �?
+�? �? - PostgreSQL (主数据库)                              �? �?
+�? �? - Redis (实时缓存)                                   �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ---
 
 ## 1. 领域模型设计
 
-### 1.1 账户聚合根 (AccountAggregate)
+### 1.1 账户聚合�?(AccountAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -72,7 +72,7 @@ class AccountType(Enum):
     REAL = 'real'             # 实盘账户
 
 class AccountStatus(Enum):
-    """账户状态"""
+    """账户状�?""
     ACTIVE = 'active'         # 活跃
     FROZEN = 'frozen'         # 冻结
     CLOSED = 'closed'         # 关闭
@@ -150,7 +150,7 @@ class Account:
         self.updated_at = datetime.now()
     
     def update_max_drawdown(self, drawdown: Decimal) -> None:
-        """更新最大回撤"""
+        """更新最大回�?""
         if drawdown > self.max_drawdown:
             self.max_drawdown = drawdown
             self.updated_at = datetime.now()
@@ -225,7 +225,7 @@ class AccountDomainService:
         account: Account,
         previous_snapshot: Optional[AccountSnapshot]
     ) -> Decimal:
-        """计算日盈亏"""
+        """计算日盈�?""
         if not previous_snapshot:
             return Decimal('0.0000')
         
@@ -254,7 +254,7 @@ class AccountDomainService:
         self,
         account: Account
     ) -> Decimal:
-        """计算累计盈亏百分比"""
+        """计算累计盈亏百分�?""
         if account.initial_capital == 0:
             return Decimal('0.000000')
         
@@ -265,7 +265,7 @@ class AccountDomainService:
         self,
         snapshots: List[AccountSnapshot]
     ) -> Decimal:
-        """计算最大回撤"""
+        """计算最大回�?""
         if not snapshots:
             return Decimal('0.000000')
         
@@ -300,10 +300,10 @@ class AccountDomainService:
         if not daily_returns:
             return Decimal('0.000000')
         
-        # 计算平均收益率
+        # 计算平均收益�?
         avg_return = sum(daily_returns) / len(daily_returns)
         
-        # 计算标准差
+        # 计算标准�?
         variance = sum((r - avg_return) ** 2 for r in daily_returns) / len(daily_returns)
         std_dev = variance ** Decimal('0.5')
         
@@ -549,7 +549,7 @@ class AccountApplicationService:
         if not account:
             return {}
         
-        # 获取前一日快照
+        # 获取前一日快�?
         previous_snapshot = await self.account_repository.find_snapshot_by_date(
             account_id,
             snapshot_date
@@ -853,7 +853,7 @@ class AccountRepositoryImpl:
         )
     
     async def _get_cached_account(self, account_id: int) -> Optional[Account]:
-        """获取缓存的账户信息"""
+        """获取缓存的账户信�?""
         key = f"account:{account_id}"
         cached = await self.redis_client.get(key)
         
@@ -864,7 +864,7 @@ class AccountRepositoryImpl:
         return None
     
     def _row_to_account(self, row) -> Account:
-        """数据库行转账户实体"""
+        """数据库行转账户实�?""
         return Account(
             id=row['id'],
             account_code=row['account_code'],
@@ -887,15 +887,15 @@ class AccountRepositoryImpl:
 
 ---
 
-## 5. 性能与监控
+## 5. 性能与监�?
 
 ### 5.1 性能指标
 
 | 操作 | 响应时间 | 备注 |
 |------|----------|------|
-| **创建账户** | < 300ms | 包含数据库写入 |
+| **创建账户** | < 300ms | 包含数据库写�?|
 | **查询账户** | < 50ms | Redis缓存命中 |
-| **更新资金** | < 200ms | 包含数据库更新 |
+| **更新资金** | < 200ms | 包含数据库更�?|
 | **创建快照** | < 500ms | 包含指标计算 |
 
 ### 5.2 缓存策略
@@ -904,9 +904,9 @@ class AccountRepositoryImpl:
 |----------|----------|----------|
 | **账户基本信息** | 5分钟 | Redis缓存 |
 | **账户资金信息** | 1分钟 | Redis缓存 |
-| **账户快照** | 不缓存 | 实时查询 |
+| **账户快照** | 不缓�?| 实时查询 |
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状态**: ✅ 已完成  
-**下一步**: P0-7 订单管理详细设计
+**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
+**下一�?*: P0-7 订单管理详细设计

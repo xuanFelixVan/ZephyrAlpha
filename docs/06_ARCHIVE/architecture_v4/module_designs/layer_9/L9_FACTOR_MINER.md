@@ -4,22 +4,22 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # L9_FACTOR_MINER: AI因子挖掘模块设计
 
 > **模块ID**: L9_FACTOR_MINER  
 > **模块名称**: AI因子挖掘  
-> **所属层级**: Layer 9 - AI增强层  
-> **优先级**: P1  
+> **所属层�?*: Layer 9 - AI增强�? 
+> **优先�?*: P1  
 > **预计工时**: 25小时  
-> **设计状态**: 🟡 设计中  
+> **设计状�?*: 🟡 设计�? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: [AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md](../../02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md)
 
@@ -28,41 +28,41 @@ implementation_status: 进行中
 ## 📋 模块概述
 
 ### 1.1 功能定位
-**L9_FACTOR_MINER** 是AI增强层的第一个模块，负责使用遗传编程(gplearn)自动挖掘有效的量化因子。该模块将传统因子挖掘过程自动化，通过AI算法发现新的、有效的Alpha因子。
+**L9_FACTOR_MINER** 是AI增强层的第一个模块，负责使用遗传编程(gplearn)自动挖掘有效的量化因子。该模块将传统因子挖掘过程自动化，通过AI算法发现新的、有效的Alpha因子�?
 
 ### 1.2 设计原则
-- **自动化**: 最小化人工干预，全自动因子挖掘流程
-- **可解释性**: 生成的因子表达式需可解释、可验证
-- **性能导向**: 以信息系数(IC)等量化指标为优化目标
+- **自动�?*: 最小化人工干预，全自动因子挖掘流程
+- **可解释�?*: 生成的因子表达式需可解释、可验证
+- **性能导向**: 以信息系�?IC)等量化指标为优化目标
 - **集成友好**: 与现有因子库(Layer 2)无缝集成
 
 ### 1.3 输入输出
 | 项目 | 描述 |
 |------|------|
-| **输入** | 原始特征数据（价格、成交量、财务指标等） |
+| **输入** | 原始特征数据（价格、成交量、财务指标等�?|
 | **输出** | 挖掘的因子列表（含表达式、IC值、复杂度等） |
-| **控制参数** | 遗传算法参数、函数集配置、筛选阈值 |
+| **控制参数** | 遗传算法参数、函数集配置、筛选阈�?|
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 2.1 模块结构
 ```
 L9_FACTOR_MINER/
-├── gplearn_integration.py     # gplearn集成核心类
-├── factor_mining_pipeline.py  # 因子挖掘流水线
-├── factor_evaluator.py        # 因子评估器
-├── factor_registry.py         # 因子注册器
+├── gplearn_integration.py     # gplearn集成核心�?
+├── factor_mining_pipeline.py  # 因子挖掘流水�?
+├── factor_evaluator.py        # 因子评估�?
+├── factor_registry.py         # 因子注册�?
 ├── config/
-│   └── gplearn_config.yaml    # 配置文件
+�?  └── gplearn_config.yaml    # 配置文件
 ├── tests/
-│   └── test_gplearn_integration.py
+�?  └── test_gplearn_integration.py
 └── monitoring/
     └── factor_mining_monitor.py
 ```
 
-### 2.2 核心类设计
+### 2.2 核心类设�?
 ```python
 # gplearn_integration.py
 class GplearnFactorMiner:
@@ -75,7 +75,7 @@ class GplearnFactorMiner:
         self.mined_factors = []
     
     def mine_factors(self, raw_data: pd.DataFrame, target: pd.Series) -> List[Factor]:
-        """挖掘因子主方法"""
+        """挖掘因子主方�?""
         # 1. 特征准备
         X = self._prepare_features(raw_data)
         
@@ -88,7 +88,7 @@ class GplearnFactorMiner:
         # 4. 因子评估
         evaluated_factors = self._evaluate_factors(raw_factors, X, target)
         
-        # 5. 因子筛选
+        # 5. 因子筛�?
         valid_factors = self._filter_factors(evaluated_factors)
         
         # 6. 因子注册
@@ -97,7 +97,7 @@ class GplearnFactorMiner:
         return valid_factors
     
     def _define_custom_functions(self) -> Dict[str, Callable]:
-        """定义量化专用函数集"""
+        """定义量化专用函数�?""
         return {
             'returns': lambda x: np.diff(x) / x[:-1],
             'volatility': lambda x: np.std(x),
@@ -110,11 +110,11 @@ class GplearnFactorMiner:
         }
 ```
 
-### 2.3 数据流水线
+### 2.3 数据流水�?
 ```python
 # factor_mining_pipeline.py
 class FactorMiningPipeline:
-    """因子挖掘流水线"""
+    """因子挖掘流水�?""
     
     def __init__(self):
         self.stages = [
@@ -127,7 +127,7 @@ class FactorMiningPipeline:
         ]
     
     def run(self, data_source: str, target_variable: str):
-        """运行完整流水线"""
+        """运行完整流水�?""
         results = {}
         
         # 1. 数据准备
@@ -139,7 +139,7 @@ class FactorMiningPipeline:
         factors = miner.mine_factors(raw_data, target)
         results['mined_factors'] = factors
         
-        # 3. 后处理
+        # 3. 后处�?
         results['evaluation_report'] = self._generate_evaluation_report(factors)
         results['registration_summary'] = self._register_to_factor_library(factors)
         
@@ -169,13 +169,13 @@ gplearn_factor_miner:
     max_samples: 0.9
     parsimony_coefficient: 0.01
     
-  # 函数集配置
+  # 函数集配�?
   function_set:
     arithmetic: ["add", "sub", "mul", "div", "sqrt", "log", "abs", "neg", "inv"]
     trigonometric: ["sin", "cos", "tan"]
     custom: ["returns", "volatility", "zscore", "rank", "delay", "ts_mean", "ts_std"]
   
-  # 因子筛选配置
+  # 因子筛选配�?
   factor_filtering:
     min_ic: 0.03
     max_complexity: 50
@@ -222,7 +222,7 @@ class FactorMiningAPI:
         target_column: str,
         config_path: Optional[str] = None
     ) -> FactorMiningResult:
-        """从数据挖掘因子"""
+        """从数据挖掘因�?""
         pass
     
     @staticmethod
@@ -248,7 +248,7 @@ class FactorMiningAPI:
 ```python
 # 与Layer 2因子库的接口
 class FactorLibraryIntegration:
-    """因子库集成接口"""
+    """因子库集成接�?""
     
     def register_factor(self, factor: Factor) -> bool:
         """注册因子到因子库"""
@@ -256,7 +256,7 @@ class FactorLibraryIntegration:
         pass
     
     def get_factor_metadata(self, factor_id: str) -> FactorMetadata:
-        """获取因子元数据"""
+        """获取因子元数�?""
         pass
     
     def check_factor_existence(self, factor_expression: str) -> bool:
@@ -273,7 +273,7 @@ class FactorMiningData:
     def __init__(self):
         self.features: pd.DataFrame  # 特征数据
         self.target: pd.Series       # 目标变量
-        self.metadata: Dict[str, Any]  # 元数据
+        self.metadata: Dict[str, Any]  # 元数�?
         self.constraints: Dict[str, Any]  # 约束条件
 ```
 
@@ -321,7 +321,7 @@ class TestGplearnFactorMiner:
         assert 'volatility' in custom_funcs
         assert 'zscore' in custom_funcs
         
-        # 测试收益率函数
+        # 测试收益率函�?
         test_data = np.array([100, 105, 103, 108])
         returns = custom_funcs
         expected = np.array([0.05, -0.01904762, 0.04854369])
@@ -350,19 +350,19 @@ class TestGplearnFactorMiner:
 ```python
 # tests/test_factor_mining_pipeline.py
 class TestFactorMiningPipeline:
-    """因子挖掘流水线测试"""
+    """因子挖掘流水线测�?""
     
     def test_full_pipeline(self):
         pipeline = FactorMiningPipeline()
         
-        # 模拟数据源
+        # 模拟数据�?
         mock_data = pd.DataFrame({
             'close': np.random.randn(1000),
             'volume': np.random.randn(1000),
             'returns': np.random.randn(1000)
         })
         
-        # 运行流水线
+        # 运行流水�?
         result = pipeline.run(mock_data, 'returns')
         
         # 验证结果
@@ -384,7 +384,7 @@ class TestGplearnPerformance:
         
         miner = GplearnFactorMiner(self.config)
         
-        # 创建大规模测试数据
+        # 创建大规模测试数�?
         n_samples = 10000
         n_features = 20
         X_large = pd.DataFrame(np.random.randn(n_samples, n_features))
@@ -395,7 +395,7 @@ class TestGplearnPerformance:
         end_time = time.time()
         
         training_time = end_time - start_time
-        assert training_time < 300  # 5分钟内完成
+        assert training_time < 300  # 5分钟内完�?
         
         print(f"Training time for {n_samples} samples: {training_time:.2f}s")
     
@@ -416,7 +416,7 @@ class TestGplearnPerformance:
         memory_after = process.memory_info().rss / 1024 / 1024  # MB
         memory_increase = memory_after - memory_before
         
-        assert memory_increase < 1024  # 内存增加不超过1GB
+        assert memory_increase < 1024  # 内存增加不超�?GB
         
         print(f"Memory increase: {memory_increase:.2f}MB")
 ```
@@ -456,16 +456,16 @@ class FactorMiningMonitor:
             **metrics
         })
         
-        # 检查异常
+        # 检查异�?
         self._check_anomalies(metrics)
     
     def _check_anomalies(self, metrics: Dict[str, Any]):
-        """检查异常指标"""
-        # IC均值过低
+        """检查异常指�?""
+        # IC均值过�?
         if metrics.get('ic_mean', 0) < 0.01:
             self.alerts.append({
                 'type': 'low_ic',
-                'message': f"IC均值过低: {metrics['ic_mean']:.4f}",
+                'message': f"IC均值过�? {metrics['ic_mean']:.4f}",
                 'severity': 'warning'
             })
         
@@ -524,11 +524,11 @@ grafana_dashboards:
 ## 🚀 部署设计
 
 ### 7.1 部署环境
-| 环境 | 配置 | 用途 |
+| 环境 | 配置 | 用�?|
 |------|------|------|
-| **开发环境** | CPU: 8核, RAM: 32GB, GPU: 可选 | 功能验证和调试 |
-| **测试环境** | CPU: 16核, RAM: 64GB, GPU: RTX 4090 | 性能验证和集成测试 |
-| **生产环境** | CPU: 32核, RAM: 128GB, GPU: A100 | 生产级因子挖掘 |
+| **开发环�?* | CPU: 8�? RAM: 32GB, GPU: 可�?| 功能验证和调�?|
+| **测试环境** | CPU: 16�? RAM: 64GB, GPU: RTX 4090 | 性能验证和集成测�?|
+| **生产环境** | CPU: 32�? RAM: 128GB, GPU: A100 | 生产级因子挖�?|
 
 ### 7.2 部署脚本
 ```bash
@@ -548,7 +548,7 @@ source venv_factor_miner/bin/activate
 pip install -r requirements.txt
 pip install gplearn==0.4.2
 
-# 初始化配置
+# 初始化配�?
 python -m L9_FACTOR_MINER.config_initializer
 
 # 启动监控
@@ -566,7 +566,7 @@ echo "L9_FACTOR_MINER部署完成"
 schedules:
   daily_factor_mining:
     enabled: true
-    cron: "0 2 * * *"  # 每天凌晨2点
+    cron: "0 2 * * *"  # 每天凌晨2�?
     data_source: "ifind"
     universe: "all"
     target_variable: "next_day_returns"
@@ -574,7 +574,7 @@ schedules:
     
   weekly_deep_mining:
     enabled: true
-    cron: "0 3 * * 0"  # 每周日凌晨3点
+    cron: "0 3 * * 0"  # 每周日凌�?�?
     data_source: "all"
     universe: "hs300"
     target_variable: "next_week_returns"
@@ -582,7 +582,7 @@ schedules:
     
   monthly_review:
     enabled: true
-    cron: "0 4 1 * *"  # 每月1日凌晨4点
+    cron: "0 4 1 * *"  # 每月1日凌�?�?
     task: "factor_review"
     action: "retrain_and_evaluate"
 ```
@@ -591,30 +591,30 @@ schedules:
 
 ## 📈 成功标准
 
-### 8.1 技术成功标准
+### 8.1 技术成功标�?
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
-| **功能完整性** | 所有设计功能实现 | 单元测试通过率 > 95% |
+| **功能完整�?* | 所有设计功能实�?| 单元测试通过�?> 95% |
 | **性能达标** | 单次挖掘时间 < 1小时 | 性能测试验证 |
 | **内存控制** | 内存使用 < 8GB | 内存监控验证 |
-| **稳定性** | 连续运行7天无崩溃 | 稳定性测试 |
+| **稳定�?* | 连续运行7天无崩溃 | 稳定性测�?|
 
 ### 8.2 业务成功标准
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
-| **因子质量** | IC > 0.05的因子占比 > 30% | 回测验证 |
-| **因子多样性** | 与现有因子库相关性 < 0.7 | 相关性分析 |
-| **生产价值** | 至少3个因子进入生产 | A/B测试验证 |
-| **ROI** | 因子开发时间减少 > 50% | 时间效率分析 |
+| **因子质量** | IC > 0.05的因子占�?> 30% | 回测验证 |
+| **因子多样�?* | 与现有因子库相关�?< 0.7 | 相关性分�?|
+| **生产价�?* | 至少3个因子进入生�?| A/B测试验证 |
+| **ROI** | 因子开发时间减�?> 50% | 时间效率分析 |
 
-### 8.3 验收检查清单
-- [ ] **设计文档完整**: 本设计文档完成审核
-- [ ] **代码实现完成**: 所有核心功能代码实现
+### 8.3 验收检查清�?
+- [ ] **设计文档完整**: 本设计文档完成审�?
+- [ ] **代码实现完成**: 所有核心功能代码实�?
 - [ ] **测试用例通过**: 单元测试、集成测试通过
 - [ ] **性能测试达标**: 性能指标满足要求
-- [ ] **监控就绪**: 监控指标和告警配置完成
-- [ ] **部署就绪**: 部署脚本和环境配置完成
-- [ ] **文档完整**: API文档、用户手册完成
+- [ ] **监控就绪**: 监控指标和告警配置完�?
+- [ ] **部署就绪**: 部署脚本和环境配置完�?
+- [ ] **文档完整**: API文档、用户手册完�?
 - [ ] **集成测试**: 与Layer 2因子库集成测试通过
 
 ---
@@ -624,43 +624,43 @@ schedules:
 ### 9.1 版本规划
 | 版本 | 目标 | 预计完成 |
 |------|------|----------|
-| **v1.0** | 基础gplearn集成，基本因子挖掘 | 2026-04-15 |
+| **v1.0** | 基础gplearn集成，基本因子挖�?| 2026-04-15 |
 | **v1.1** | 增强函数集，优化算法参数 | 2026-04-30 |
 | **v2.0** | 多目标优化，并行挖掘 | 2026-05-15 |
-| **v2.1** | 集成其他GP库(DEAP)，对比优化 | 2026-05-31 |
+| **v2.1** | 集成其他GP�?DEAP)，对比优�?| 2026-05-31 |
 
-### 9.2 技术债管理
-| 技术债 | 优先级 | 解决计划 |
+### 9.2 技术债管�?
+| 技术�?| 优先�?| 解决计划 |
 |--------|--------|----------|
-| **GPU加速** | P2 | v2.0版本集成CUDA支持 |
-| **分布式挖掘** | P2 | v2.1版本支持多节点并行 |
+| **GPU加�?* | P2 | v2.0版本集成CUDA支持 |
+| **分布式挖�?* | P2 | v2.1版本支持多节点并�?|
 | **自动超参调优** | P1 | v1.1版本集成optuna |
-| **因子可解释性增强** | P1 | v1.1版本增加可视化分析 |
+| **因子可解释性增�?* | P1 | v1.1版本增加可视化分�?|
 
 ---
 
 ## 📝 设计决策记录
 
 ### 10.1 关键设计决策
-| 决策ID | 决策内容 | 决策理由 | 备选方案 |
+| 决策ID | 决策内容 | 决策理由 | 备选方�?|
 |--------|----------|----------|----------|
-| DD_FM_001 | 选择gplearn而非DEAP | 专门为符号回归设计，成熟稳定 | DEAP (更通用但复杂) |
-| DD_FM_002 | 使用自定义函数集 | 针对量化场景优化，提高因子质量 | 使用标准函数集 |
-| DD_FM_003 | 采用渐进式挖掘策略 | 平衡探索与开发，提高效率 | 一次性深度挖掘 |
-| DD_FM_004 | 集成到Layer 2因子库 | 确保因子一致性，便于管理 | 独立因子存储 |
+| DD_FM_001 | 选择gplearn而非DEAP | 专门为符号回归设计，成熟稳定 | DEAP (更通用但复�? |
+| DD_FM_002 | 使用自定义函数集 | 针对量化场景优化，提高因子质�?| 使用标准函数�?|
+| DD_FM_003 | 采用渐进式挖掘策�?| 平衡探索与开发，提高效率 | 一次性深度挖�?|
+| DD_FM_004 | 集成到Layer 2因子�?| 确保因子一致性，便于管理 | 独立因子存储 |
 
-### 10.2 技术决策
+### 10.2 技术决�?
 1. **遗传编程配置**: 选择适中的种群大小和代数，平衡效果和性能
-2. **函数集设计**: 结合数学运算和量化专用函数，提高因子实用性
+2. **函数集设�?*: 结合数学运算和量化专用函数，提高因子实用�?
 3. **因子评估标准**: 以IC为核心，结合其他统计指标综合评估
 4. **监控体系**: 设计全面的技术指标和业务指标监控
 
 ---
 
-> **设计状态**: 本设计文档为L9_FACTOR_MINER模块的详细施工图纸，基于AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md的架构设计细化实现细节。实施前需要完成代码评审和技术验证。
+> **设计状�?*: 本设计文档为L9_FACTOR_MINER模块的详细施工图纸，基于AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md的架构设计细化实现细节。实施前需要完成代码评审和技术验证�?
 
-**下一步行动**: 
-1. 评审本设计文档
+**下一步行�?*: 
+1. 评审本设计文�?
 2. 开始v1.0版本代码实现
 3. 设置开发和测试环境
-4. 运行初步技术验证
+4. 运行初步技术验�

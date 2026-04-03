@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 专业量化机构实施指南
 applicable_scope: 回测引擎模块实施
 compliance_level: 专业标准
 parent_document: ../README.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 回测引擎实施指南
@@ -17,8 +17,8 @@ implementation_status: 进行中
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **职责**: 指导Backtesting.py回测引擎的集成和适配
-> **实施周期**: 2周（Week 3-4）
-> **优先级**: P0
+> **实施周期**: 2周（Week 3-4�?
+> **优先�?*: P0
 
 ---
 
@@ -26,7 +26,7 @@ implementation_status: 进行中
 
 ### 目标
 
-集成Backtesting.py开源回测引擎，实现与系统策略框架的无缝对接。
+集成Backtesting.py开源回测引擎，实现与系统策略框架的无缝对接�?
 
 ### 核心功能
 
@@ -36,25 +36,25 @@ implementation_status: 进行中
 - **性能优化**: 优化回测性能
 - **报告生成**: 自动生成回测报告
 
-### 参考蓝图
+### 参考蓝�?
 
 - [专业量化系统实施蓝图](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 模块结构
 
 ```
 src/backtest/
-├── __init__.py                 # 模块初始化
-├── adapter.py                  # BacktestingPyAdapter适配器
-├── strategy_wrapper.py         # 策略包装器
-├── data_converter.py           # 数据转换器
+├── __init__.py                 # 模块初始�?
+├── adapter.py                  # BacktestingPyAdapter适配�?
+├── strategy_wrapper.py         # 策略包装�?
+├── data_converter.py           # 数据转换�?
 ├── result_formatter.py         # 结果格式化器
-├── report_generator.py         # 报告生成器
-├── exceptions.py               # 自定义异常
+├── report_generator.py         # 报告生成�?
+├── exceptions.py               # 自定义异�?
 └── tests/                      # 单元测试
     ├── test_adapter.py
     ├── test_strategy_wrapper.py
@@ -62,9 +62,9 @@ src/backtest/
     └── test_result_formatter.py
 ```
 
-### 类设计
+### 类设�?
 
-#### BacktestingPyAdapter - 适配器
+#### BacktestingPyAdapter - 适配�?
 
 ```python
 from typing import Dict, Any, Optional, List
@@ -73,7 +73,7 @@ from backtesting.lib import crossover
 import pandas as pd
 
 class BacktestingPyAdapter:
-    """Backtesting.py适配器 - 将系统策略适配为Backtesting.py格式"""
+    """Backtesting.py适配�?- 将系统策略适配为Backtesting.py格式"""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
@@ -132,19 +132,19 @@ class BacktestingPyAdapter:
         return result
 ```
 
-#### StrategyWrapper - 策略包装器
+#### StrategyWrapper - 策略包装�?
 
 ```python
 from backtesting import Strategy
 from typing import Dict, Any
 
 class StrategyWrapper(Strategy):
-    """策略包装器 - 将系统策略包装为Backtesting.py格式"""
+    """策略包装�?- 将系统策略包装为Backtesting.py格式"""
     
     system_strategy = None
     
     def init(self):
-        """初始化策略"""
+        """初始化策�?""
         if self.system_strategy:
             self.system_strategy.initialize({
                 "data": self.data,
@@ -190,14 +190,14 @@ class StrategyWrapper(Strategy):
         return WrappedStrategy
 ```
 
-#### DataConverter - 数据转换器
+#### DataConverter - 数据转换�?
 
 ```python
 import pandas as pd
 from typing import Dict, Any
 
 class DataConverter:
-    """数据转换器 - 将系统数据格式转换为Backtesting.py格式"""
+    """数据转换�?- 将系统数据格式转换为Backtesting.py格式"""
     
     def convert(self, data: pd.DataFrame) -> pd.DataFrame:
         """转换数据格式"""
@@ -221,7 +221,7 @@ class DataConverter:
         return bt_data
     
     def convert_from_bt(self, bt_data: pd.DataFrame) -> pd.DataFrame:
-        """从Backtesting.py格式转换回系统格式"""
+        """从Backtesting.py格式转换回系统格�?""
         system_data = bt_data.copy()
         
         column_mapping = {
@@ -247,7 +247,7 @@ class ResultFormatter:
     """结果格式化器 - 统一回测结果格式"""
     
     def format(self, stats) -> Dict[str, Any]:
-        """格式化回测结果"""
+        """格式化回测结�?""
         return {
             "performance": self._format_performance(stats),
             "trades": self._format_trades(stats),
@@ -257,7 +257,7 @@ class ResultFormatter:
         }
     
     def _format_performance(self, stats) -> Dict[str, Any]:
-        """格式化绩效指标"""
+        """格式化绩效指�?""
         return {
             "total_return": stats["Return [%]"],
             "annual_return": stats["Return (Ann.) [%]"],
@@ -269,7 +269,7 @@ class ResultFormatter:
         }
     
     def _format_trades(self, stats) -> List[Dict[str, Any]]:
-        """格式化交易记录"""
+        """格式化交易记�?""
         trades = []
         
         if hasattr(stats, "_trades"):
@@ -287,19 +287,19 @@ class ResultFormatter:
         return trades
     
     def _format_equity_curve(self, stats) -> pd.Series:
-        """格式化权益曲线"""
+        """格式化权益曲�?""
         if hasattr(stats, "_equity_curve"):
             return stats._equity_curve
         return pd.Series()
     
     def _format_drawdown(self, stats) -> pd.Series:
-        """格式化回撤曲线"""
+        """格式化回撤曲�?""
         if hasattr(stats, "_drawdown"):
             return stats._drawdown
         return pd.Series()
     
     def _format_metrics(self, stats) -> Dict[str, Any]:
-        """格式化其他指标"""
+        """格式化其他指�?""
         return {
             "start_date": stats["Start"],
             "end_date": stats["End"],
@@ -314,7 +314,7 @@ class ResultFormatter:
 
 ## 📝 实施步骤
 
-### Step 1: 安装依赖（30分钟）
+### Step 1: 安装依赖�?0分钟�?
 
 ```bash
 # 安装Backtesting.py
@@ -324,7 +324,7 @@ pip install backtesting
 pip install pandas numpy matplotlib
 ```
 
-### Step 2: 实现DataConverter（1小时）
+### Step 2: 实现DataConverter�?小时�?
 
 **任务清单**:
 - [ ] 实现数据格式转换
@@ -332,37 +332,37 @@ pip install pandas numpy matplotlib
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 数据格式转换正确
-- ✅ 缺失数据处理完善
-- ✅ 单元测试覆盖率 > 90%
+- �?数据格式转换正确
+- �?缺失数据处理完善
+- �?单元测试覆盖�?> 90%
 
-### Step 3: 实现StrategyWrapper（2小时）
+### Step 3: 实现StrategyWrapper�?小时�?
 
 **任务清单**:
 - [ ] 实现策略包装
 - [ ] 实现信号执行
-- [ ] 处理策略状态
+- [ ] 处理策略状�?
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 策略包装正确
-- ✅ 信号执行正确
-- ✅ 状态管理完善
-- ✅ 单元测试覆盖率 > 90%
+- �?策略包装正确
+- �?信号执行正确
+- �?状态管理完�?
+- �?单元测试覆盖�?> 90%
 
-### Step 4: 实现ResultFormatter（1小时）
+### Step 4: 实现ResultFormatter�?小时�?
 
 **任务清单**:
-- [ ] 实现结果格式化
+- [ ] 实现结果格式�?
 - [ ] 实现指标计算
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 结果格式统一
-- ✅ 指标计算正确
-- ✅ 单元测试覆盖率 > 90%
+- �?结果格式统一
+- �?指标计算正确
+- �?单元测试覆盖�?> 90%
 
-### Step 5: 实现BacktestingPyAdapter（2小时）
+### Step 5: 实现BacktestingPyAdapter�?小时�?
 
 **任务清单**:
 - [ ] 实现回测运行
@@ -370,11 +370,11 @@ pip install pandas numpy matplotlib
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 回测运行正确
-- ✅ 参数优化正确
-- ✅ 单元测试覆盖率 > 90%
+- �?回测运行正确
+- �?参数优化正确
+- �?单元测试覆盖�?> 90%
 
-### Step 6: 集成测试（1.5小时）
+### Step 6: 集成测试�?.5小时�?
 
 **任务清单**:
 - [ ] 创建测试策略
@@ -383,13 +383,13 @@ pip install pandas numpy matplotlib
 - [ ] 文档编写
 
 **验收标准**:
-- ✅ 完整流程可正常运行
-- ✅ 性能指标达标
-- ✅ 文档完整
+- �?完整流程可正常运�?
+- �?性能指标达标
+- �?文档完整
 
 ---
 
-## ✅ 验收标准
+## �?验收标准
 
 ### 功能验收
 
@@ -399,11 +399,11 @@ pip install pandas numpy matplotlib
 | **数据转换** | 数据格式转换正确 | 单元测试 |
 | **结果统一** | 结果格式统一 | 单元测试 |
 | **参数优化** | 参数优化正确 | 集成测试 |
-| **报告生成** | 报告可正确生成 | 集成测试 |
+| **报告生成** | 报告可正确生�?| 集成测试 |
 
 ### 性能验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
 | **回测速度** | > 1000 bars/s | 性能测试 |
 | **内存占用** | < 500MB | 内存分析 |
@@ -411,12 +411,12 @@ pip install pandas numpy matplotlib
 
 ### 质量验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| **单元测试覆盖率** | > 90% | pytest --cov |
-| **代码复杂度** | < 10 | radon cc |
-| **代码重复率** | < 5% | pylint |
-| **文档完整性** | 100% | 文档审查 |
+| **单元测试覆盖�?* | > 90% | pytest --cov |
+| **代码复杂�?* | < 10 | radon cc |
+| **代码重复�?* | < 5% | pylint |
+| **文档完整�?* | 100% | 文档审查 |
 
 ---
 
@@ -545,7 +545,7 @@ class BacktestingPyAdapter:
 
 ## 🚨 常见问题
 
-### Q1: 数据格式不匹配
+### Q1: 数据格式不匹�?
 
 **问题**: ValueError: Missing required column: Open
 
@@ -561,7 +561,7 @@ data = data.rename(columns={
 })
 ```
 
-### Q2: 策略初始化失败
+### Q2: 策略初始化失�?
 
 **问题**: AttributeError: 'NoneType' object has no attribute 'initialize'
 
@@ -592,7 +592,7 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 ---
 
-## 📚 参考资料
+## 📚 参考资�?
 
 ### 内部文档
 
@@ -608,15 +608,15 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 ## 📝 更新记录
 
-| 日期 | 版本 | 更新内容 | 更新人 |
+| 日期 | 版本 | 更新内容 | 更新�?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建回测引擎实施指南 | 首席架构师 |
+| 2026-04-02 | v1.0 | 创建回测引擎实施指南 | 首席架构�?|
 
 ---
 
 ## 📞 联系方式
 
-**文档维护者**: 首席架构师  
+**文档维护�?*: 首席架构�? 
 **创建日期**: 2026-04-02  
-**最后更新**: 2026-04-02  
+**最后更�?*: 2026-04-02  
 **版本**: v1.0

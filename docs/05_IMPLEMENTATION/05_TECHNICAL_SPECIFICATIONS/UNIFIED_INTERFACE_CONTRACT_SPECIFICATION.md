@@ -3,8 +3,7 @@
 > **文档版本**: v1.0
 > **创建日期**: 2026-04-03
 > **适用范围**: Layer 4 机器学习层及相关模块
-> **目的**: 消除接口重复定义，建立统一的接口契约
-
+> **目的**: 消除接口重复定义，建立统一的接口契�?
 ---
 
 ## 1. 概述
@@ -35,11 +34,10 @@
 
 ### 2.1 IFactorCalculator v1.0
 
-**职责**: 定义因子计算的标准接口
-
+**职责**: 定义因子计算的标准接�?
 **实现模块**: FactorCalculator (Layer 2), QlibAlpha158 (Layer 4)
 
-**调用方**: AlphaFactorFactory, 策略引擎
+**调用�?*: AlphaFactorFactory, 策略引擎
 
 ```python
 from abc import ABC, abstractmethod
@@ -75,7 +73,7 @@ class IFactorCalculator(ABC):
     - FactorCalculator: 基础因子计算 (Layer 2)
     - QlibAlpha158: AI因子计算 (Layer 4)
     
-    调用方:
+    调用�?
     - AlphaFactorFactory: 因子筛选和合成
     - 策略引擎: 直接使用因子
     """
@@ -125,7 +123,7 @@ class IFactorCalculator(ABC):
 
 | 实现模块 | 接口方法 | 因子类型 | Layer |
 |----------|----------|----------|-------|
-| FactorCalculator | calculate_factors | 价值、成长、动量、技术指标 | Layer 2 |
+| FactorCalculator | calculate_factors | 价值、成长、动量、技术指�?| Layer 2 |
 | QlibAlpha158 | calculate_factors | Alpha158 AI因子 | Layer 4 |
 | BarraStyleFactorCalculator | calculate_factors | 风格因子 | Layer 6 |
 
@@ -144,11 +142,10 @@ AlphaFactorFactory
 
 ### 3.1 IModelTrainer v1.0
 
-**职责**: 定义模型训练的标准接口
-
+**职责**: 定义模型训练的标准接�?
 **实现模块**: LSTMTrainer, TransformerTrainer
 
-**调用方**: ModelTrainingPipeline
+**调用�?*: ModelTrainingPipeline
 
 ```python
 from abc import ABC, abstractmethod
@@ -186,12 +183,9 @@ class IModelTrainer(ABC):
     """模型训练接口契约 v1.0
     
     实现模块:
-    - LSTMTrainer: LSTM模型训练器
-    - TransformerTrainer: Transformer模型训练器
-    
-    调用方:
-    - ModelTrainingPipeline: 通用训练流水线
-    """
+    - LSTMTrainer: LSTM模型训练�?    - TransformerTrainer: Transformer模型训练�?    
+    调用�?
+    - ModelTrainingPipeline: 通用训练流水�?    """
     
     @abstractmethod
     def train(
@@ -252,13 +246,11 @@ class IModelTrainer(ABC):
 ### 3.3 调用关系
 
 ```
-ModelTrainingPipeline (通用流水线)
-    │
-    ├── 数据版本管理 (DVC)
-    ├── 超参数优化 (Optuna)
+ModelTrainingPipeline (通用流水�?
+    �?    ├── 数据版本管理 (DVC)
+    ├── 超参数优�?(Optuna)
     ├── 实验跟踪 (MLflow)
-    │
-    └── IModelTrainer.train() (模型特定训练)
+    �?    └── IModelTrainer.train() (模型特定训练)
             ├── LSTMTrainer.train()
             └── TransformerTrainer.train()
 ```
@@ -269,12 +261,10 @@ ModelTrainingPipeline (通用流水线)
 
 ### 4.1 IFeatureService v1.0
 
-**职责**: 定义特征服务的标准接口
-
+**职责**: 定义特征服务的标准接�?
 **实现模块**: FeatureStore
 
-**调用方**: 模型训练、在线推理
-
+**调用�?*: 模型训练、在线推�?
 ```python
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any
@@ -317,7 +307,7 @@ class IFeatureService(ABC):
     实现模块:
     - FeatureStore: 特征存储服务
     
-    调用方:
+    调用�?
     - ModelTrainingPipeline: 训练数据获取
     - ModelServingService: 在线推理特征
     """
@@ -374,23 +364,18 @@ class IFeatureService(ABC):
 
 | 实现模块 | 接口方法 | 服务类型 | 职责 |
 |----------|----------|----------|------|
-| FeatureStore | get_online_features() | 在线服务 | 实时特征检索 |
-| FeatureStore | get_historical_features() | 离线服务 | 批量特征检索 |
+| FeatureStore | get_online_features() | 在线服务 | 实时特征检�?|
+| FeatureStore | get_historical_features() | 离线服务 | 批量特征检�?|
 
-### 4.3 与FeatureEngineering的协作
-
+### 4.3 与FeatureEngineering的协�?
 ```
 FeatureEngineering (特征工程)
-    │
-    ├── 特征生成
+    �?    ├── 特征生成
     ├── 特征选择
     ├── 特征变换
     └── 输出计算后的特征
-            │
-            ↓
-FeatureStore (特征存储)
-    │
-    ├── register_feature() -> 注册特征
+            �?            �?FeatureStore (特征存储)
+    �?    ├── register_feature() -> 注册特征
     ├── 存储特征数据
     └── get_online_features() -> 服务特征
 ```
@@ -403,13 +388,12 @@ FeatureStore (特征存储)
 
 1. **向后兼容**: 新版本必须向后兼容旧版本
 2. **废弃通知**: 废弃接口需提前3个月通知
-3. **版本标识**: 所有接口需标注版本号
-
+3. **版本标识**: 所有接口需标注版本�?
 ### 5.2 变更记录
 
 | 版本 | 日期 | 变更内容 | 影响模块 |
 |------|------|----------|----------|
-| v1.0 | 2026-04-03 | 初始版本 | 因子计算、模型训练、特征服务 |
+| v1.0 | 2026-04-03 | 初始版本 | 因子计算、模型训练、特征服�?|
 
 ---
 
@@ -476,17 +460,16 @@ features = feature_store.get_online_features(request)
 - [FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md)
 - [FEATURE_STORE_TECHNICAL_SPECIFICATION](./FEATURE_STORE_TECHNICAL_SPECIFICATION.md)
 
-### 7.2 术语表
-
+### 7.2 术语�?
 | 术语 | 定义 |
 |------|------|
-| 接口契约 | 模块间交互的标准化接口定义 |
+| 接口契约 | 模块间交互的标准化接口定�?|
 | 因子计算 | 从原始数据计算因子值的过程 |
-| 模型训练 | 使用数据训练机器学习模型的过程 |
-| 特征服务 | 提供特征数据的存储和检索服务 |
+| 模型训练 | 使用数据训练机器学习模型的过�?|
+| 特征服务 | 提供特征数据的存储和检索服�?|
 
 ---
 
 **文档版本**: v1.0
 **创建日期**: 2026-04-03
-**维护者**: 首席技术评审官
+**维护�?*: 首席技术评审官

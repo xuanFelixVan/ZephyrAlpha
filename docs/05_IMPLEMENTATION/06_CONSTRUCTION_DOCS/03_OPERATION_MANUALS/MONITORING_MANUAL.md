@@ -1,10 +1,8 @@
 ---
 standard_type: 操作指南
-applicable_scope: 全系统
-compliance_level: 正式标准
+applicable_scope: 全系�?compliance_level: 正式标准
 parent_document: ../README.md
-implementation_status: 已完成
-owner: 运维团队
+implementation_status: 已完�?owner: 运维团队
 version: 1.0.0
 module_id: MONITORING_MANUAL
 created_date: 2026-04-02
@@ -13,8 +11,8 @@ last_updated: 2026-04-02
 # 系统监控手册
 
 **文档版本**: 1.0.0
-**最后更新**: 2026-04-02
-**文档所有者**: 运维团队
+**最后更�?*: 2026-04-02
+**文档所有�?*: 运维团队
 
 ---
 
@@ -22,8 +20,7 @@ last_updated: 2026-04-02
 
 ### 1.1 监控目标
 
-建立全面的系统监控体系，确保ZephyrAlpha量化交易系统稳定运行，及时发现和处理异常情况。
-
+建立全面的系统监控体系，确保ZephyrAlpha量化交易系统稳定运行，及时发现和处理异常情况�?
 ### 1.2 监控范围
 
 - 系统性能监控
@@ -34,11 +31,8 @@ last_updated: 2026-04-02
 
 ### 1.3 监控工具
 
-- **Prometheus**: 指标收集和存储
-- **Grafana**: 可视化监控面板
-- **AlertManager**: 告警管理
-- **ELK Stack**: 日志收集和分析
-
+- **Prometheus**: 指标收集和存�?- **Grafana**: 可视化监控面�?- **AlertManager**: 告警管理
+- **ELK Stack**: 日志收集和分�?
 ---
 
 ## 2. 系统监控
@@ -46,14 +40,11 @@ last_updated: 2026-04-02
 ### 2.1 CPU监控
 
 **监控指标**:
-- CPU使用率
-- CPU负载
-- CPU核心使用率
-
+- CPU使用�?- CPU负载
+- CPU核心使用�?
 **Prometheus查询**:
 ```promql
-# CPU使用率
-100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+# CPU使用�?100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
 
 # CPU负载
 node_load1
@@ -69,24 +60,19 @@ node_load15
   labels:
     severity: warning
   annotations:
-    summary: "CPU使用率过高"
-    description: "CPU使用率超过80%，当前值: {{ $value }}%"
+    summary: "CPU使用率过�?
+    description: "CPU使用率超�?0%，当前�? {{ $value }}%"
 ```
 
 ### 2.2 内存监控
 
 **监控指标**:
-- 内存使用率
-- 内存使用量
-- Swap使用率
-
+- 内存使用�?- 内存使用�?- Swap使用�?
 **Prometheus查询**:
 ```promql
-# 内存使用率
-(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+# 内存使用�?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
 
-# 内存使用量
-node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
+# 内存使用�?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
 ```
 
 **告警规则**:
@@ -97,21 +83,19 @@ node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
   labels:
     severity: warning
   annotations:
-    summary: "内存使用率过高"
-    description: "内存使用率超过85%，当前值: {{ $value }}%"
+    summary: "内存使用率过�?
+    description: "内存使用率超�?5%，当前�? {{ $value }}%"
 ```
 
 ### 2.3 磁盘监控
 
 **监控指标**:
-- 磁盘使用率
-- 磁盘IO
+- 磁盘使用�?- 磁盘IO
 - 磁盘读写速度
 
 **Prometheus查询**:
 ```promql
-# 磁盘使用率
-(1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
+# 磁盘使用�?(1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
 
 # 磁盘IO
 irate(node_disk_read_bytes_total[5m])
@@ -126,25 +110,22 @@ irate(node_disk_written_bytes_total[5m])
   labels:
     severity: warning
   annotations:
-    summary: "磁盘使用率过高"
-    description: "磁盘使用率超过85%，当前值: {{ $value }}%"
+    summary: "磁盘使用率过�?
+    description: "磁盘使用率超�?5%，当前�? {{ $value }}%"
 ```
 
 ### 2.4 网络监控
 
 **监控指标**:
 - 网络流量
-- 网络连接数
-- 网络错误率
-
+- 网络连接�?- 网络错误�?
 **Prometheus查询**:
 ```promql
 # 网络流量
 irate(node_network_receive_bytes_total[5m])
 irate(node_network_transmit_bytes_total[5m])
 
-# 网络连接数
-node_netstat_Tcp_CurrEstab
+# 网络连接�?node_netstat_Tcp_CurrEstab
 ```
 
 ---
@@ -156,9 +137,7 @@ node_netstat_Tcp_CurrEstab
 **监控指标**:
 - 请求速率
 - 响应时间
-- 错误率
-- 并发连接数
-
+- 错误�?- 并发连接�?
 **Prometheus查询**:
 ```promql
 # 请求速率
@@ -167,8 +146,7 @@ rate(http_requests_total[5m])
 # 平均响应时间
 rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
 
-# 错误率
-rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
+# 错误�?rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
 ```
 
 **告警规则**:
@@ -179,8 +157,8 @@ rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
   labels:
     severity: critical
   annotations:
-    summary: "API错误率过高"
-    description: "API错误率超过10%，当前值: {{ $value | humanizePercentage }}"
+    summary: "API错误率过�?
+    description: "API错误率超�?0%，当前�? {{ $value | humanizePercentage }}"
 
 - alert: SlowResponse
   expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) > 1
@@ -189,24 +167,19 @@ rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
     severity: warning
   annotations:
     summary: "API响应时间过长"
-    description: "API平均响应时间超过1秒，当前值: {{ $value }}秒"
+    description: "API平均响应时间超过1秒，当前�? {{ $value }}�?
 ```
 
-### 3.2 数据库监控
-
+### 3.2 数据库监�?
 **监控指标**:
-- 连接数
-- 查询性能
-- 慢查询
-- 死锁
+- 连接�?- 查询性能
+- 慢查�?- 死锁
 
 **Prometheus查询**:
 ```promql
-# 连接数
-pg_stat_activity_count
+# 连接�?pg_stat_activity_count
 
-# 慢查询
-rate(pg_stat_statements_mean_exec_time_seconds[5m])
+# 慢查�?rate(pg_stat_statements_mean_exec_time_seconds[5m])
 ```
 
 **告警规则**:
@@ -218,7 +191,7 @@ rate(pg_stat_statements_mean_exec_time_seconds[5m])
     severity: warning
   annotations:
     summary: "数据库连接数过多"
-    description: "数据库连接数超过100，当前值: {{ $value }}"
+    description: "数据库连接数超过100，当前�? {{ $value }}"
 
 - alert: SlowDBQuery
   expr: rate(pg_stat_statements_mean_exec_time_seconds[5m]) > 1
@@ -226,16 +199,15 @@ rate(pg_stat_statements_mean_exec_time_seconds[5m])
   labels:
     severity: warning
   annotations:
-    summary: "数据库查询过慢"
-    description: "数据库平均查询时间超过1秒"
+    summary: "数据库查询过�?
+    description: "数据库平均查询时间超�?�?
 ```
 
 ### 3.3 Redis监控
 
 **监控指标**:
 - 内存使用
-- 连接数
-- 命令执行速率
+- 连接�?- 命令执行速率
 - 键空间命中率
 
 **Prometheus查询**:
@@ -243,8 +215,7 @@ rate(pg_stat_statements_mean_exec_time_seconds[5m])
 # 内存使用
 redis_memory_used_bytes
 
-# 连接数
-redis_connected_clients
+# 连接�?redis_connected_clients
 
 # 命令执行速率
 rate(redis_commands_processed_total[5m])
@@ -263,8 +234,7 @@ rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rat
 - 订单数量
 - 成交数量
 - 成交金额
-- 拒单率
-
+- 拒单�?
 **Prometheus查询**:
 ```promql
 # 订单数量
@@ -273,8 +243,7 @@ rate(orders_total[5m])
 # 成交金额
 rate(trade_value_total[5m])
 
-# 拒单率
-rate(orders_rejected_total[5m]) / rate(orders_total[5m])
+# 拒单�?rate(orders_rejected_total[5m]) / rate(orders_total[5m])
 ```
 
 **告警规则**:
@@ -285,15 +254,14 @@ rate(orders_rejected_total[5m]) / rate(orders_total[5m])
   labels:
     severity: warning
   annotations:
-    summary: "订单拒单率过高"
-    description: "订单拒单率超过5%，当前值: {{ $value | humanizePercentage }}"
+    summary: "订单拒单率过�?
+    description: "订单拒单率超�?%，当前�? {{ $value | humanizePercentage }}"
 ```
 
 ### 4.2 策略监控
 
 **监控指标**:
-- 策略运行状态
-- 策略收益
+- 策略运行状�?- 策略收益
 - 策略回撤
 - 策略夏普比率
 
@@ -318,7 +286,7 @@ strategy_sharpe_ratio
     severity: critical
   annotations:
     summary: "策略回撤过大"
-    description: "策略回撤超过10%，当前值: {{ $value | humanizePercentage }}"
+    description: "策略回撤超过10%，当前�? {{ $value | humanizePercentage }}"
 ```
 
 ### 4.3 风控监控
@@ -326,8 +294,7 @@ strategy_sharpe_ratio
 **监控指标**:
 - 风控触发次数
 - 风控拦截次数
-- 风控规则命中率
-
+- 风控规则命中�?
 **Prometheus查询**:
 ```promql
 # 风控触发次数
@@ -367,11 +334,9 @@ output.elasticsearch:
 # 查找错误日志
 level: ERROR
 
-# 查找特定API的日志
-api: /api/orders AND level: ERROR
+# 查找特定API的日�?api: /api/orders AND level: ERROR
 
-# 查找慢请求
-duration: >1000
+# 查找慢请�?duration: >1000
 ```
 
 ### 5.3 日志告警
@@ -385,7 +350,7 @@ duration: >1000
     severity: warning
   annotations:
     summary: "错误日志过多"
-    description: "错误日志速率超过10条/分钟"
+    description: "错误日志速率超过10�?分钟"
 ```
 
 ---
@@ -400,7 +365,7 @@ duration: >1000
   "title": "系统监控",
   "panels": [
     {
-      "title": "CPU使用率",
+      "title": "CPU使用�?,
       "type": "graph",
       "targets": [
         {
@@ -409,7 +374,7 @@ duration: >1000
       ]
     },
     {
-      "title": "内存使用率",
+      "title": "内存使用�?,
       "type": "graph",
       "targets": [
         {
@@ -487,9 +452,7 @@ receivers:
 ### 7.2 告警分级
 
 **告警级别**:
-- **Critical**: 需要立即处理
-- **Warning**: 需要关注
-- **Info**: 信息通知
+- **Critical**: 需要立即处�?- **Warning**: 需要关�?- **Info**: 信息通知
 
 **告警处理流程**:
 1. 接收告警通知
@@ -504,14 +467,9 @@ receivers:
 
 ## 8. 监控维护
 
-### 8.1 日常检查
-
+### 8.1 日常检�?
 **每日检查项**:
-- [ ] 检查系统资源使用情况
-- [ ] 检查应用错误日志
-- [ ] 检查告警历史
-- [ ] 检查备份状态
-
+- [ ] 检查系统资源使用情�?- [ ] 检查应用错误日�?- [ ] 检查告警历�?- [ ] 检查备份状�?
 ### 8.2 定期维护
 
 **每周维护**:
@@ -520,9 +478,7 @@ receivers:
 - 更新监控面板
 
 **每月维护**:
-- 评估监控覆盖率
-- 调整告警阈值
-- 优化监控性能
+- 评估监控覆盖�?- 调整告警阈�?- 优化监控性能
 
 ---
 
@@ -532,23 +488,18 @@ receivers:
 
 **问题1: 监控数据缺失**
 ```bash
-# 检查Prometheus状态
-systemctl status prometheus
+# 检查Prometheus状�?systemctl status prometheus
 
-# 检查数据采集
-curl http://localhost:9090/api/v1/targets
+# 检查数据采�?curl http://localhost:9090/api/v1/targets
 
-# 检查存储空间
-df -h /var/lib/prometheus
+# 检查存储空�?df -h /var/lib/prometheus
 ```
 
-**问题2: 告警未发送**
+**问题2: 告警未发�?*
 ```bash
-# 检查AlertManager状态
-systemctl status alertmanager
+# 检查AlertManager状�?systemctl status alertmanager
 
-# 检查告警规则
-curl http://localhost:9090/api/v1/rules
+# 检查告警规�?curl http://localhost:9090/api/v1/rules
 
 # 检查通知渠道
 curl http://localhost:9093/api/v1/receivers
@@ -556,11 +507,9 @@ curl http://localhost:9093/api/v1/receivers
 
 **问题3: Grafana面板无法访问**
 ```bash
-# 检查Grafana状态
-systemctl status grafana-server
+# 检查Grafana状�?systemctl status grafana-server
 
-# 检查日志
-tail -f /var/log/grafana/grafana.log
+# 检查日�?tail -f /var/log/grafana/grafana.log
 
 # 重启服务
 systemctl restart grafana-server
@@ -568,26 +517,20 @@ systemctl restart grafana-server
 
 ---
 
-## 10. 最佳实践
-
+## 10. 最佳实�?
 ### 10.1 监控设计原则
 
-1. **全面性**: 覆盖所有关键指标
-2. **及时性**: 快速发现和响应问题
-3. **准确性**: 避免误报和漏报
-4. **可操作性**: 提供可操作的告警信息
+1. **全面�?*: 覆盖所有关键指�?2. **及时�?*: 快速发现和响应问题
+3. **准确�?*: 避免误报和漏�?4. **可操作�?*: 提供可操作的告警信息
 
 ### 10.2 告警设计原则
 
 1. **分级管理**: 根据严重程度分级
 2. **避免噪音**: 减少无效告警
-3. **提供上下文**: 包含足够的诊断信息
-4. **快速响应**: 建立快速响应机制
-
+3. **提供上下�?*: 包含足够的诊断信�?4. **快速响�?*: 建立快速响应机�?
 ---
 
-## 11. 参考文档
-
+## 11. 参考文�?
 - [部署手册](./DEPLOYMENT_MANUAL.md)
 - [风险监控手册](./RISK_MONITORING_MANUAL.md)
 - [维护手册](./MAINTENANCE_MANUAL.md)
@@ -595,5 +538,5 @@ systemctl restart grafana-server
 
 ---
 
-**文档状态**: 正式标准
+**文档状�?*: 正式标准
 **下次审查**: 2026-07-02

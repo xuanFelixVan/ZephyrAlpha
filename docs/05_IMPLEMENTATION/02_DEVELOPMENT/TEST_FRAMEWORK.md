@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 
@@ -17,7 +17,7 @@ implementation_status: 进行中
 
 > 清风量化系统 v5.0 - 单元测试框架
 > **索引**: `TEST.UNIT.001`
-> **开发时间**: 15h
+> **开发时�?*: 15h
 > **核心定位**: 确保代码质量，所有模块可独立测试
 
 
@@ -25,11 +25,11 @@ implementation_status: 进行中
 
 | 原则 | 说明 |
 |------|------|
-| **AAA模式** | Arrange-Act-Assert，测试结构清晰 |
-| **单一职责** | 每个测试只验证一个行为 |
-| **独立性** | 测试间无依赖，可并行执行 |
-| **可重复** | 测试结果稳定，不依赖外部状态 |
-| **快速执行** | 单元测试<1s，集成测试<10s |
+| **AAA模式** | Arrange-Act-Assert，测试结构清�?|
+| **单一职责** | 每个测试只验证一个行�?|
+| **独立�?* | 测试间无依赖，可并行执行 |
+| **可重�?* | 测试结果稳定，不依赖外部状�?|
+| **快速执�?* | 单元测试<1s，集成测�?10s |
 
 
 ## 2. 测试目录结构
@@ -39,38 +39,38 @@ implementation_status: 进行中
 ```
 tests/
 ├── unit/
-│   ├── __init__.py
-│   ├── conftest.py              # 共享fixtures
-│   │
-│   ├── core/                    # core模块测试
-│   │   ├── test_base.py
-│   │   └── test_exceptions.py
-│   │
-│   ├── modules/                 # modules模块测试
-│   │   ├── test_datahub.py
-│   │   ├── test_factor_calculator.py
-│   │   ├── test_risk_manager.py
-│   │   ├── test_alert_manager.py
-│   │   └── test_strategy_engine.py
-│   │
-│   ├── strategies/              # 策略测试
-│   │   ├── test_s001_trend_follow.py
-│   │   └── test_s002_macd.py
-│   │
-│   └── utils/                  # 工具测试
-│       ├── test_data_utils.py
-│       └── test_math_utils.py
-│
+�?  ├── __init__.py
+�?  ├── conftest.py              # 共享fixtures
+�?  �?
+�?  ├── core/                    # core模块测试
+�?  �?  ├── test_base.py
+�?  �?  └── test_exceptions.py
+�?  �?
+�?  ├── modules/                 # modules模块测试
+�?  �?  ├── test_datahub.py
+�?  �?  ├── test_factor_calculator.py
+�?  �?  ├── test_risk_manager.py
+�?  �?  ├── test_alert_manager.py
+�?  �?  └── test_strategy_engine.py
+�?  �?
+�?  ├── strategies/              # 策略测试
+�?  �?  ├── test_s001_trend_follow.py
+�?  �?  └── test_s002_macd.py
+�?  �?
+�?  └── utils/                  # 工具测试
+�?      ├── test_data_utils.py
+�?      └── test_math_utils.py
+�?
 ├── integration/                 # 集成测试
-│   ├── test_data_pipeline.py
-│   ├── test_backtest_pipeline.py
-│   └── test_full_workflow.py
-│
+�?  ├── test_data_pipeline.py
+�?  ├── test_backtest_pipeline.py
+�?  └── test_full_workflow.py
+�?
 ├── fixtures/                   # 测试数据
-│   ├── sample_ohlcv.csv
-│   ├── sample_factors.csv
-│   └── mock_api_response.json
-│
+�?  ├── sample_ohlcv.csv
+�?  ├── sample_factors.csv
+�?  └── mock_api_response.json
+�?
 └── pytest.ini                  # pytest配置
 ```
 
@@ -90,7 +90,7 @@ from pathlib import Path
 
 @pytest.fixture(scope="session")
 def project_root():
-    """项目根目录"""
+    """项目根目�?""
     return Path(__file__).parent.parent.parent
 
 @pytest.fixture(scope="session")
@@ -152,18 +152,18 @@ import pytest
 from src.modules.factor_calculator import FactorCalculator
 
 class TestFactorCalculator:
-    """因子计算器单元测试
+    """因子计算器单元测�?
 
     索引: TEST.UNIT.001-MOD-001
     """
 
     @pytest.fixture
     def calculator(self, mock_config):
-        """因子计算器实例"""
+        """因子计算器实�?""
         return FactorCalculator(mock_config)
 
     def test_initialization(self, calculator):
-        """测试初始化"""
+        """测试初始�?""
         assert calculator is not None
         assert calculator.config is not None
 
@@ -202,7 +202,7 @@ class TestFactorCalculator:
         assert valid_count >= expected_min_periods
 
     def test_output_range(self, calculator, sample_factor_data):
-        """测试输出值范围"""
+        """测试输出值范�?""
         result = calculator.calculate_momentum(sample_factor_data, window=20)
         valid_result = result.dropna()
 
@@ -211,7 +211,7 @@ class TestFactorCalculator:
             assert valid_result.max() <= 1.0
 
     def test_no_future_lookahead(self, calculator, sample_factor_data):
-        """测试无未来函数"""
+        """测试无未来函�?""
         for i in range(5, len(sample_factor_data)):
             train_data = sample_factor_data.iloc[:i]
             result = calculator.calculate_momentum(train_data, window=3)
@@ -219,7 +219,7 @@ class TestFactorCalculator:
             assert result.iloc[-1] is not None or pd.isna(result.iloc[-1])
 ```
 
-### 3.3 风险管理器测试
+### 3.3 风险管理器测�?
 
 ```python
 # tests/unit/modules/test_risk_manager.py
@@ -228,14 +228,14 @@ import pytest
 from src.modules.risk_manager import RiskManager, Order, Position
 
 class TestRiskManager:
-    """风险管理器单元测试
+    """风险管理器单元测�?
 
     索引: TEST.UNIT.001-MOD-002
     """
 
     @pytest.fixture
     def risk_manager(self, mock_config):
-        """风险管理器实例"""
+        """风险管理器实�?""
         return RiskManager(mock_config)
 
     @pytest.fixture
@@ -247,7 +247,7 @@ class TestRiskManager:
         ]
 
     def test_initialization(self, risk_manager):
-        """测试初始化"""
+        """测试初始�?""
         assert risk_manager is not None
         assert risk_manager.max_position == 0.95
 
@@ -297,7 +297,7 @@ class TestRiskManager:
 
 ### 4.1 覆盖要求
 
-| 模块 | 最低覆盖率 | 目标覆盖率 |
+| 模块 | 最低覆盖率 | 目标覆盖�?|
 |------|------------|------------|
 | core/ | 90% | 95% |
 | modules/ | 80% | 90% |
@@ -308,20 +308,20 @@ class TestRiskManager:
 ### 4.2 关键测试场景
 
 ```
-必须覆盖的测试场景:
+必须覆盖的测试场�?
 
 core/
-├── Result类所有方法
-├── Signal类验证
-├── Order类验证
-└── Position类验证
+├── Result类所有方�?
+├── Signal类验�?
+├── Order类验�?
+└── Position类验�?
 
 modules/
-├── DataHub: 数据获取、缓存、错误处理
+├── DataHub: 数据获取、缓存、错误处�?
 ├── FactorCalculator: 所有因子、边界条件、NaN处理
-├── RiskManager: 风控规则、VaR计算、仓位检查
-├── AlertManager: 告警触发、通知发送
-└── StrategyEngine: 信号生成、订单处理
+├── RiskManager: 风控规则、VaR计算、仓位检�?
+├── AlertManager: 告警触发、通知发�?
+└── StrategyEngine: 信号生成、订单处�?
 
 utils/
 ├── 数据转换函数
@@ -377,16 +377,16 @@ skip_covered = False
 ### 6.1 测试执行
 
 ```bash
-# 运行所有单元测试
+# 运行所有单元测�?
 pytest tests/unit/ -v
 
-# 运行带覆盖率的测试
+# 运行带覆盖率的测�?
 pytest tests/unit/ --cov=src --cov-report=html --cov-report=term
 
 # 运行特定模块测试
 pytest tests/unit/modules/test_factor_calculator.py -v
 
-# 运行标记的测试
+# 运行标记的测�?
 pytest tests/unit/ -m "not slow" -v
 
 # 生成HTML报告
@@ -464,7 +464,7 @@ class DataFactory:
         symbols: List[str],
         dates: int = 60
     ) -> pd.DataFrame:
-        """创建多股票因子测试数据"""
+        """创建多股票因子测试数�?""
         dfs = []
         for symbol in symbols:
             df = DataFactory.create_ohlcv(symbol, dates)
@@ -475,9 +475,9 @@ class DataFactory:
 ```
 
 
-## 8. 开发任务分解(15h)
+## 8. 开发任务分�?15h)
 
-| 任务 | 时间 | 交付物 |
+| 任务 | 时间 | 交付�?|
 |------|------|--------|
 | 测试目录结构 | 0.5h | tests/目录 |
 | conftest.py fixtures | 1.5h | 共享fixtures |
@@ -489,9 +489,9 @@ class DataFactory:
 | 策略测试 | 1.5h | test_strategies.py |
 | pytest配置 | 0.5h | pytest.ini |
 | CI集成 | 1h | github/workflows |
-| 覆盖率报告 | 0.5h | 报告配置 |
+| 覆盖率报�?| 0.5h | 报告配置 |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `TEST.UNIT.001`
-**最后更新**: 2026-03-29
+**最后更�?*: 2026-03-29

@@ -4,24 +4,24 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# 开发规范 (Development Standards)
+# 开发规�?(Development Standards)
 
-> **适用**: 个人开发者  
-> **状态**: 必须遵守核心规范
+> **适用**: 个人开发�? 
+> **状�?*: 必须遵守核心规范
 
 ---
 
 ##  文档导航
 
-| 文档 | 说明 | 重要性 |
+| 文档 | 说明 | 重要�?|
 |------|------|--------|
 |  | 代码质量标准 |  必须 |
 |  | 配置文件标准 |  必须 |
@@ -37,7 +37,7 @@ implementation_status: 进行中
 
 以下规范**必须遵守**，否则可能导致严重问题：
 
-### 1. 禁止硬编码密钥
+### 1. 禁止硬编码密�?
 
 ```python
 #  错误
@@ -48,7 +48,7 @@ import os
 api_key = os.getenv("API_KEY")
 ```
 
-### 2. 所有配置使用 YAML 文件
+### 2. 所有配置使�?YAML 文件
 
 ```python
 #  错误
@@ -90,7 +90,7 @@ DB_PASSWORD=your_password
 
 以下规范**建议遵守**，提升代码质量：
 
-### 1. 函数添加文档字符串
+### 1. 函数添加文档字符�?
 
 ```python
 def calculate_sharpe(returns):
@@ -98,7 +98,7 @@ def calculate_sharpe(returns):
     计算夏普比率
 
     Args:
-        returns: 收益率序列
+        returns: 收益率序�?
 
     Returns:
         float: 夏普比率
@@ -114,10 +114,10 @@ def test_calculate_sharpe():
     assert calculate_sharpe(returns) > 0
 ```
 
-### 3. 代码格式化工整
+### 3. 代码格式化工�?
 
 ```bash
-# 使用 Black 格式化
+# 使用 Black 格式�?
 black src/
 
 # 使用 isort 排序导入
@@ -126,9 +126,9 @@ isort src/
 
 ---
 
-##  可选遵守（锦上添花）
+##  可选遵守（锦上添花�?
 
-- 参与贡献时遵循完整规范
+- 参与贡献时遵循完整规�?
 - 使用类型注解
 - 保持函数简洁（< 50 行）
 
@@ -136,7 +136,7 @@ isort src/
 
 ##  学习路径
 
-1. **新手**: 先遵守  必须规范
+1. **新手**: 先遵�? 必须规范
 2. **进阶**: 遵守  建议规范
 3. **专家**: 遵循所有规范，参与改进
 
@@ -149,5 +149,5 @@ isort src/
 
 ---
 
-**最后更新**: 2026-03-31
-**状态**:  可用
+**最后更�?*: 2026-03-31
+**状�?*:  可用

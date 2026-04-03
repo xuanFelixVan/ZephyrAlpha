@@ -4,41 +4,41 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# 因子研究方法论
+# 因子研究方法�?
 
-> 因子研究的标准化方法与流程
+> 因子研究的标准化方法与流�?
 >
 > **版本**：v1.0
-> **更新日期**：2026-03-28
-> **状态**：已完成
+> **更新日期**�?026-03-28
+> **状�?*：已完成
 
 ---
 
-## 1. 方法论概述
+## 1. 方法论概�?
 
 ### 1.1 目的
 
 建立统一的因子研究方法论，确保：
-- 因子定义标准化
-- 验证流程规范化
+- 因子定义标准�?
+- 验证流程规范�?
 - 评估标准一致化
 
 ### 1.2 文档结构
 
 ```
-01_METHODOLOGY/
-├── README.md                    # 本文档
+01_STANDARDS/
+├── README.md                    # 本文�?
 ├── T.02.FE001.factor_definition.md         # 因子定义标准
 ├── ic_analysis.md              # IC分析体系
-├── factor_preprocessing.md      # 因子预处理方法
+├── factor_preprocessing.md      # 因子预处理方�?
 ├── factor_synthesis.md         # 因子合成方法
 ├── backtest_standards.md       # 回测标准
 └── research_management.md       # 研究项目管理（新增）
@@ -58,7 +58,7 @@ implementation_status: 进行中
 
 ---
 
-## 4. 因子预处理方法
+## 4. 因子预处理方�?
 
 详见：[factor_preprocessing.md](./factor_preprocessing.md)
 

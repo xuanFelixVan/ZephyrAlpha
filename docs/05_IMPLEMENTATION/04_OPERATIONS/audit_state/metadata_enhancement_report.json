@@ -22,8 +22,8 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
-        "applicable_scope": "全系统",
+        "standard_type": "技术文�?,
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -40,8 +40,8 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
-        "applicable_scope": "全系统",
+        "standard_type": "技术文�?,
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -59,7 +59,7 @@
       ],
       "suggested_values": {
         "standard_type": "蓝图标准",
-        "applicable_scope": "全系统",
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -77,7 +77,7 @@
       ],
       "suggested_values": {
         "standard_type": "审计报告",
-        "applicable_scope": "全系统",
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -95,7 +95,7 @@
       ],
       "suggested_values": {
         "standard_type": "审计报告",
-        "applicable_scope": "全系统",
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -113,7 +113,7 @@
       ],
       "suggested_values": {
         "standard_type": "审计报告",
-        "applicable_scope": "全系统",
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -140,7 +140,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -152,7 +152,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -164,7 +164,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -188,7 +188,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -200,7 +200,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -212,7 +212,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -224,7 +224,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -236,7 +236,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -248,7 +248,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -260,7 +260,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -272,7 +272,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -284,7 +284,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -296,7 +296,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -308,7 +308,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -320,7 +320,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -332,7 +332,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -344,7 +344,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -356,7 +356,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -368,7 +368,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -380,7 +380,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -392,7 +392,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -404,7 +404,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -416,7 +416,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -428,7 +428,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -440,7 +440,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -452,7 +452,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -464,7 +464,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -476,7 +476,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -500,7 +500,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -512,7 +512,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -524,7 +524,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -536,7 +536,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -548,7 +548,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -560,7 +560,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -572,7 +572,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -596,7 +596,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -608,7 +608,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -620,7 +620,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -632,7 +632,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -644,7 +644,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -656,187 +656,187 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\backtest_standards.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_MANAGEMENT_STANDARD.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_neutralization.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_neutralization.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_preprocessing.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_preprocessing.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_REGISTRY.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_REGISTRY.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_return_analysis.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_return_analysis.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_SCREENING_STRATEGY.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_SCREENING_STRATEGY.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_synthesis.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_synthesis.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FUTURE_FACTOR_TOOLS.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\ic_analysis.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\research_management.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\T.02.FE001.factor_definition.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\T.02.FE001.factor_definition.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\TECHNICAL_INDICATORS.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -848,7 +848,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -860,7 +860,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -872,7 +872,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -884,7 +884,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -896,7 +896,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -908,7 +908,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -932,7 +932,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -944,7 +944,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -956,7 +956,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -968,7 +968,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -980,7 +980,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -992,7 +992,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1004,7 +1004,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1016,7 +1016,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1028,7 +1028,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1040,7 +1040,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1052,7 +1052,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1064,7 +1064,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1076,7 +1076,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1088,7 +1088,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1100,7 +1100,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1112,7 +1112,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1136,7 +1136,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1148,7 +1148,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1160,7 +1160,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1172,7 +1172,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1184,19 +1184,19 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\06_FACTOR_REGISTRY\\factor_catalog.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\06_REGISTRY\\factor_catalog.md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1208,7 +1208,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1220,7 +1220,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1232,7 +1232,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1244,7 +1244,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1256,7 +1256,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1268,7 +1268,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1280,7 +1280,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1292,7 +1292,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1304,7 +1304,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1340,7 +1340,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1352,7 +1352,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1364,7 +1364,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1448,7 +1448,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1460,7 +1460,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1472,7 +1472,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1484,7 +1484,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1496,7 +1496,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1508,7 +1508,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1520,7 +1520,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1532,7 +1532,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1544,7 +1544,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1556,7 +1556,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1568,7 +1568,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1580,7 +1580,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1592,7 +1592,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1604,7 +1604,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1616,7 +1616,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1628,7 +1628,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1640,7 +1640,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1652,7 +1652,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1664,7 +1664,7 @@
       ],
       "suggested_values": {
         "parent_document": "INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1676,7 +1676,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1688,7 +1688,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1700,7 +1700,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1712,7 +1712,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1724,7 +1724,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1736,7 +1736,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1748,7 +1748,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1760,7 +1760,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1772,7 +1772,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1784,7 +1784,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1796,7 +1796,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1808,7 +1808,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1820,7 +1820,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1832,7 +1832,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1856,7 +1856,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1886,7 +1886,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1898,7 +1898,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1910,7 +1910,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1922,7 +1922,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1934,7 +1934,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1946,7 +1946,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1958,7 +1958,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1982,7 +1982,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -1996,7 +1996,7 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
+        "standard_type": "技术文�?,
         "applicable_scope": "系统实施",
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
@@ -2012,7 +2012,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2024,7 +2024,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2036,7 +2036,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2048,7 +2048,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2060,7 +2060,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2072,7 +2072,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2084,7 +2084,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2096,7 +2096,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2110,7 +2110,7 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
+        "standard_type": "技术文�?,
         "applicable_scope": "系统实施",
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
@@ -2126,7 +2126,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2138,7 +2138,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2150,7 +2150,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2162,7 +2162,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2174,7 +2174,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2186,7 +2186,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2198,7 +2198,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2210,7 +2210,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2222,7 +2222,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2234,7 +2234,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "已完成"
+        "implementation_status": "已完�?
       },
       "auto_fillable": true
     },
@@ -2264,7 +2264,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2276,7 +2276,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2288,7 +2288,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "已完成"
+        "implementation_status": "已完�?
       },
       "auto_fillable": true
     },
@@ -2300,7 +2300,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2312,7 +2312,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2324,7 +2324,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2336,7 +2336,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2348,7 +2348,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2360,7 +2360,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2372,7 +2372,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2384,7 +2384,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2396,7 +2396,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2408,7 +2408,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2420,7 +2420,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2432,7 +2432,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2444,7 +2444,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2456,7 +2456,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2468,7 +2468,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2480,7 +2480,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2492,7 +2492,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2506,7 +2506,7 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
+        "standard_type": "技术文�?,
         "applicable_scope": "系统实施",
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
@@ -2524,7 +2524,7 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
+        "standard_type": "技术文�?,
         "applicable_scope": "系统实施",
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
@@ -2540,7 +2540,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2570,7 +2570,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2582,7 +2582,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2595,7 +2595,7 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
+        "standard_type": "技术文�?,
         "applicable_scope": "系统实施",
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md"
@@ -2610,7 +2610,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2622,7 +2622,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2634,7 +2634,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2646,7 +2646,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2658,7 +2658,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2670,7 +2670,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2682,7 +2682,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2694,7 +2694,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2706,7 +2706,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2718,7 +2718,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2730,7 +2730,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2760,7 +2760,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2772,7 +2772,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2796,7 +2796,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2808,7 +2808,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2820,7 +2820,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2832,7 +2832,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2844,7 +2844,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2856,7 +2856,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2868,7 +2868,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2880,7 +2880,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -2892,7 +2892,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3008,7 +3008,7 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
+        "standard_type": "技术文�?,
         "applicable_scope": "系统实施",
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
@@ -3024,7 +3024,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3036,7 +3036,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3048,7 +3048,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3060,7 +3060,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3072,7 +3072,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3084,7 +3084,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3096,7 +3096,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3108,7 +3108,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3120,7 +3120,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3132,7 +3132,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3144,7 +3144,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3156,7 +3156,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3168,7 +3168,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3216,7 +3216,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3228,7 +3228,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3240,7 +3240,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3252,7 +3252,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3264,7 +3264,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3276,7 +3276,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3288,7 +3288,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3300,7 +3300,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3312,7 +3312,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3324,7 +3324,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3336,7 +3336,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3348,7 +3348,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3360,7 +3360,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3372,7 +3372,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3384,7 +3384,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3396,7 +3396,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3420,7 +3420,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3432,7 +3432,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3444,7 +3444,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3456,7 +3456,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3468,7 +3468,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3480,7 +3480,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3492,7 +3492,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3504,7 +3504,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3516,7 +3516,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3528,7 +3528,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3540,7 +3540,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3552,7 +3552,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3564,7 +3564,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3576,7 +3576,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3588,7 +3588,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3648,7 +3648,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3660,7 +3660,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3672,7 +3672,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3684,7 +3684,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3696,7 +3696,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3708,7 +3708,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3720,7 +3720,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3732,7 +3732,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3744,7 +3744,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3756,7 +3756,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3768,7 +3768,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3780,7 +3780,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3792,7 +3792,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3804,7 +3804,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3816,7 +3816,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3828,7 +3828,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3840,7 +3840,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3852,7 +3852,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3864,7 +3864,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3876,7 +3876,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3900,7 +3900,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3912,7 +3912,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3936,7 +3936,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3948,7 +3948,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3960,7 +3960,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3972,7 +3972,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "已完成"
+        "implementation_status": "已完�?
       },
       "auto_fillable": true
     },
@@ -3984,7 +3984,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -3996,7 +3996,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4008,55 +4008,55 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\专业量化机构开发完整流程.md",
+      "file_path": "docs\\design\\专业量化机构开发完整流�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\个人技术决策确认清单.md",
+      "file_path": "docs\\design\\个人技术决策确认清�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\技术方案设计汇总报告.md",
+      "file_path": "docs\\design\\技术方案设计汇总报�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\技术方案评审会议议程.md",
+      "file_path": "docs\\design\\技术方案评审会议议�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4068,7 +4068,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4080,7 +4080,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4092,7 +4092,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4104,7 +4104,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4116,7 +4116,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4126,7 +4126,7 @@
         "implementation_status"
       ],
       "suggested_values": {
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4136,7 +4136,7 @@
         "implementation_status"
       ],
       "suggested_values": {
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4146,7 +4146,7 @@
         "implementation_status"
       ],
       "suggested_values": {
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4156,7 +4156,7 @@
         "implementation_status"
       ],
       "suggested_values": {
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4166,7 +4166,7 @@
         "implementation_status"
       ],
       "suggested_values": {
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4176,31 +4176,31 @@
         "implementation_status"
       ],
       "suggested_values": {
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\data_consistency\\Saga模式实现流程图.md",
+      "file_path": "docs\\design\\data_consistency\\Saga模式实现流程�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+      "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4212,7 +4212,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4224,7 +4224,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4236,7 +4236,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4248,7 +4248,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4260,19 +4260,19 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
     {
-      "file_path": "docs\\design\\web_interface\\前端组件结构图.md",
+      "file_path": "docs\\design\\web_interface\\前端组件结构�?md",
       "missing_fields": [
         "parent_document",
         "implementation_status"
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4284,7 +4284,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4296,7 +4296,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4308,7 +4308,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4320,7 +4320,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4332,7 +4332,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4344,7 +4344,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4356,7 +4356,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4368,7 +4368,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4380,7 +4380,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4392,7 +4392,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4404,7 +4404,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4416,7 +4416,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4428,7 +4428,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4440,7 +4440,7 @@
       ],
       "suggested_values": {
         "parent_document": "../INDEX.md",
-        "implementation_status": "进行中"
+        "implementation_status": "进行�?
       },
       "auto_fillable": true
     },
@@ -4454,8 +4454,8 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
-        "applicable_scope": "全系统",
+        "standard_type": "技术文�?,
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"
@@ -4472,8 +4472,8 @@
         "applicable_scope"
       ],
       "suggested_values": {
-        "standard_type": "技术文档",
-        "applicable_scope": "全系统",
+        "standard_type": "技术文�?,
+        "applicable_scope": "全系�?,
         "compliance_level": "初始标准",
         "parent_document": "../INDEX.md",
         "implementation_status": "设计阶段"

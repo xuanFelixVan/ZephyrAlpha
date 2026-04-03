@@ -4,17 +4,17 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # Docker 研究环境设置
 
-> 容器化研究环境，确保环境一致性和隔离性
+> 容器化研究环境，确保环境一致性和隔离�?
 
 ---
 
@@ -22,9 +22,9 @@ implementation_status: 进行中
 
 | 目标 | 说明 |
 |------|------|
-| 环境隔离 | 每个研究项目独立的Python环境和依赖 |
-| 可复现性 | 6个月后仍能准确复现研究结果 |
-| 快速启动 | 新成员可在5分钟内搭建好研究环境 |
+| 环境隔离 | 每个研究项目独立的Python环境和依�?|
+| 可复现�?| 6个月后仍能准确复现研究结�?|
+| 快速启�?| 新成员可�?分钟内搭建好研究环境 |
 
 ---
 
@@ -103,19 +103,19 @@ research_project/
 ├── docker-compose.yml
 ├── requirements.txt
 ├── config/
-│   └── project.yaml
+�?  └── project.yaml
 ├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── cache/
+�?  ├── raw/
+�?  ├── processed/
+�?  └── cache/
 ├── notebooks/
-│   ├── 01_exploration/
-│   ├── 02_factor_development/
-│   └── 03_backtest/
+�?  ├── 01_exploration/
+�?  ├── 02_factor_development/
+�?  └── 03_backtest/
 ├── src/
-│   ├── factors/
-│   ├── strategies/
-│   └── utils/
+�?  ├── factors/
+�?  ├── strategies/
+�?  └── utils/
 └── reports/
     └── figures/
 ```
@@ -126,7 +126,7 @@ research_project/
 project:
   name: "因子研究_YYYYMMDD"
   version: "1.0.0"
-  author: "研究员姓名"
+  author: "研究员姓�?
   created: "2026-03-28"
 
 environment:
@@ -167,7 +167,7 @@ baostock==0.8.8
 scikit-learn==1.3.0
 statsmodels==0.14.0
 
-# 可视化
+# 可视�?
 matplotlib==3.7.0
 seaborn==0.12.0
 plotly==5.15.0
@@ -180,18 +180,18 @@ ipykernel==6.25.0
 ### 4.2 依赖版本锁定
 
 ```bash
-# 导出当前环境的所有依赖
+# 导出当前环境的所有依�?
 pip freeze > requirements_locked.txt
 
-# 仅导出项目直接依赖
+# 仅导出项目直接依�?
 pip-compile --output-file requirements_locked.txt requirements.in
 ```
 
 ---
 
-## 5. 工作流编排
+## 5. 工作流编�?
 
-### 5.1 Prefect 工作流
+### 5.1 Prefect 工作�?
 
 ```python
 from prefect import flow, task
@@ -214,14 +214,14 @@ def run_backtest(factors):
 
 @flow
 def research_pipeline(start_date: str, end_date: str):
-    """完整研究流水线"""
+    """完整研究流水�?""
     data = fetch_data(date=start_date)
     factors = calculate_factors(data)
     results = run_backtest(factors)
     return results
 ```
 
-### 5.2 Dagster 工作流
+### 5.2 Dagster 工作�?
 
 ```python
 from dagster import job, op
@@ -257,7 +257,7 @@ LOG_LEVEL=INFO
 
 ---
 
-## 7. 快速开始
+## 7. 快速开�?
 
 ```bash
 # 1. 克隆项目
@@ -273,7 +273,7 @@ docker-compose exec research bash
 # 4. 启动 Jupyter
 jupyter lab --ip=0.0.0.0
 
-# 5. 打开浏览器
+# 5. 打开浏览�?
 # http://localhost:8888
 ```
 
@@ -284,7 +284,7 @@ jupyter lab --ip=0.0.0.0
 | 文档 | 说明 |
 |------|------|
 |  | 依赖管理详细规范 |
-|  | 工作流编排 |
+|  | 工作流编�?|
 | [../02_EXPLORATORY_ANALYSIS/statistical_tools.md](../02_EXPLORATORY_ANALYSIS/statistical_tools.md) | 统计分析工具 |
 
 ---

@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化层)
+layer: Layer 6 (组合优化�?
 index: CONSTRAINT_SOLVER_001
 estimated_hours: 60h
 review_status: Pending
@@ -14,155 +14,77 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
+applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 personal_development: true
 ai_maintenance: true
 ---
 
-# 约束求解器蓝图 v1.0
+# 约束求解器蓝�?v1.0
 
-> 清风量化系统 v5.2 - 约束求解器详细设计
-> **索引**: `CONSTRAINT_SOLVER_001`
-> **开发时间**: 60h（约1.5周）
-> **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求解
-> **对标机构**: 专业量化机构标准配置
-> **个人开发可行性**: ⭐⭐⭐⭐⭐ 完全可行
-> **AI维护难度**: 低
-
+> 清风量化系统 v5.2 - 约束求解器详细设�?> **索引**: `CONSTRAINT_SOLVER_001`
+> **开发时�?*: 60h（约1.5周）
+> **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求�?> **对标机构**: 专业量化机构标准配置
+> **个人开发可行�?*: ⭐⭐⭐⭐�?完全可行
+> **AI维护难度**: �?
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目标
-
-**业务需求**：
-- 当前系统仅有简单的权重约束（最小/最大权重）
+### 1.1 设计背景与业务目�?
+**业务需�?*�?- 当前系统仅有简单的权重约束（最�?最大权重）
 - 无法处理复杂约束条件（行业限制、因子暴露限制、换手率限制等）
 - 约束冲突时缺乏自动检测和调整机制
 - 实盘可执行性不足，优化结果难以落地
 
-**技术痛点**：
-- 无复杂约束处理能力
-- 无约束冲突检测机制
-- 无约束优先级管理
-- 无约束松弛策略
-
-**预期价值**：
-- 约束处理能力：从简单约束到复杂约束
+**技术痛�?*�?- 无复杂约束处理能�?- 无约束冲突检测机�?- 无约束优先级管理
+- 无约束松弛策�?
+**预期价�?*�?- 约束处理能力：从简单约束到复杂约束
 - 优化可行性：提升40%
 - 实盘可执行性：提升30%
-- 约束冲突自动解决：新增能力
-
-### 1.2 技术定位与架构层归属
-
-**Layer定位**: Layer 6 - 组合优化层（优化引擎子层）
-
+- 约束冲突自动解决：新增能�?
+### 1.2 技术定位与架构层归�?
+**Layer定位**: Layer 6 - 组合优化层（优化引擎子层�?
 **模块类别**: 核心模块（P0级）
 
 **架构角色**: 
-- 作为组合优化的约束处理器，处理复杂约束条件
-- 作为优化问题的求解器，使用凸优化算法求解
+- 作为组合优化的约束处理器，处理复杂约束条�?- 作为优化问题的求解器，使用凸优化算法求解
 - 作为约束冲突的解决器，自动检测和调整约束
 
 ### 1.3 核心功能清单
 
-1. **约束定义**: 支持多种约束类型的定义
-2. **约束验证**: 验证约束的可行性和一致性
-3. **约束求解**: 使用凸优化算法求解约束优化问题
-4. **约束冲突检测**: 检测约束冲突并提供解决方案
+1. **约束定义**: 支持多种约束类型的定�?2. **约束验证**: 验证约束的可行性和一致�?3. **约束求解**: 使用凸优化算法求解约束优化问�?4. **约束冲突检�?*: 检测约束冲突并提供解决方案
 5. **约束松弛**: 自动松弛约束以获得可行解
-6. **约束优先级**: 支持约束优先级管理
-
+6. **约束优先�?*: 支持约束优先级管�?
 ---
 
 ## 2. 架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    约束求解器系统架构                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              输入层                                        │  │
-│  │  ┌──────────────────────┐  ┌──────────────────────┐     │  │
-│  │  │ 优化目标              │  │ 约束条件              │     │  │
-│  │  │ - 目标函数            │  │ - 线性约束            │     │  │
-│  │  │ - 风险模型            │  │ - 二次约束            │     │  │
-│  │  │ - 收益预期            │  │ - 整数约束            │     │  │
-│  │  └──────────────────────┘  └──────────────────────┘     │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              约束验证层                                    │  │
-│  │  ┌────────────────────────────────────────────────────┐  │  │
-│  │  │  Constraint Validator                              │  │  │
-│  │  │  - 约束可行性检查                                   │  │  │
-│  │  │  - 约束一致性检查                                   │  │  │
-│  │  │  - 约束冲突检测                                     │  │  │
-│  │  └────────────────────────────────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              约束求解层                                    │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │  │
-│  │  │ 凸优化   │  │ 二次规划 │  │ 整数规划 │               │  │
-│  │  │ 求解器   │  │ 求解器   │  │ 求解器   │               │  │
-│  │  └──────────┘  └──────────┘  └──────────┘               │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              约束松弛层                                    │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │  │
-│  │  │ 约束松弛 │  │ 优先级   │  │ 冲突解决 │               │  │
-│  │  │ 策略     │  │ 管理     │  │ 机制     │               │  │
-│  │  └──────────┘  └──────────┘  └──────────┘               │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          ↓                                      │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │              输出层                                        │  │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │  │
-│  │  │ 优化结果 │  │ 约束状态 │  │ 求解报告 │               │  │
-│  │  │          │  │          │  │          │               │  │
-│  │  └──────────┘  └──────────┘  └──────────┘               │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                   约束求解器系统架�?                             �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             输入�?                                       �? �?�? �? ┌──────────────────────�? ┌──────────────────────�?    �? �?�? �? �?优化目标              �? �?约束条件              �?    �? �?�? �? �?- 目标函数            �? �?- 线性约�?           �?    �? �?�? �? �?- 风险模型            �? �?- 二次约束            �?    �? �?�? �? �?- 收益预期            �? �?- 整数约束            �?    �? �?�? �? └──────────────────────�? └──────────────────────�?    �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             约束验证�?                                   �? �?�? �? ┌────────────────────────────────────────────────────�? �? �?�? �? �? Constraint Validator                              �? �? �?�? �? �? - 约束可行性检�?                                  �? �? �?�? �? �? - 约束一致性检�?                                  �? �? �?�? �? �? - 约束冲突检�?                                    �? �? �?�? �? └────────────────────────────────────────────────────�? �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             约束求解�?                                   �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?凸优�?  �? �?二次规划 �? �?整数规划 �?              �? �?�? �? �?求解�?  �? �?求解�?  �? �?求解�?  �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             约束松弛�?                                   �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?约束松弛 �? �?优先�?  �? �?冲突解决 �?              �? �?�? �? �?策略     �? �?管理     �? �?机制     �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?�?                         �?                                     �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?             输出�?                                       �? �?�? �? ┌──────────�? ┌──────────�? ┌──────────�?              �? �?�? �? �?优化结果 �? �?约束状�?�? �?求解报告 �?              �? �?�? �? �?         �? �?         �? �?         �?              �? �?�? �? └──────────�? └──────────�? └──────────�?              �? �?�? └──────────────────────────────────────────────────────────�? �?└─────────────────────────────────────────────────────────────────�?```
 
-### 2.2 核心数据流
-
+### 2.2 核心数据�?
 ```
 优化目标 + 约束条件
-    ↓
-约束验证（可行性、一致性、冲突检测）
-    ↓
-约束求解（凸优化、二次规划、整数规划）
-    ↓
-约束松弛（如有冲突）
-    ↓
-输出：优化结果、约束状态、求解报告
-```
+    �?约束验证（可行性、一致性、冲突检测）
+    �?约束求解（凸优化、二次规划、整数规划）
+    �?约束松弛（如有冲突）
+    �?输出：优化结果、约束状态、求解报�?```
 
 ---
 
 ## 3. 核心模块设计
 
-### 3.1 约束求解器核心类（ConstraintSolver）
-
+### 3.1 约束求解器核心类（ConstraintSolver�?
 ```python
 class ConstraintSolver:
     """
     约束求解器核心类
     
     索引: CONSTRAINT_SOLVER_001-M01
-    职责: 处理复杂约束条件，求解约束优化问题
-    输入: 优化目标、约束条件
-    输出: 优化结果、约束状态、求解报告
-    """
+    职责: 处理复杂约束条件，求解约束优化问�?    输入: 优化目标、约束条�?    输出: 优化结果、约束状态、求解报�?    """
     
     def __init__(self, config: SolverConfig):
         self.config = config
@@ -202,10 +124,8 @@ class ConstraintSolver:
         # 3. 求解优化问题
         solution = self.convex_optimizer.solve(problem)
         
-        # 4. 验证解的可行性
-        if not self._is_feasible(solution, constraints):
-            # 解不可行，尝试约束松弛
-            solution = self._solve_with_relaxation(
+        # 4. 验证解的可行�?        if not self._is_feasible(solution, constraints):
+            # 解不可行，尝试约束松�?            solution = self._solve_with_relaxation(
                 objective, constraints, variables
             )
         
@@ -225,8 +145,7 @@ class ConstraintSolver:
                              variables: Variables,
                              priorities: Dict[str, int]) -> SolverResult:
         """
-        带优先级的约束求解
-        
+        带优先级的约束求�?        
         Args:
             objective: 优化目标
             constraints: 约束条件列表
@@ -289,7 +208,7 @@ class ConstraintSolver:
     def _is_feasible(self,
                     solution: np.ndarray,
                     constraints: List[Constraint]) -> bool:
-        """验证解的可行性"""
+        """验证解的可行�?""
         for constraint in constraints:
             if not constraint.is_satisfied(solution):
                 return False
@@ -313,13 +232,11 @@ class ConstraintSolver:
         return solution
 ```
 
-### 3.2 约束验证器（ConstraintValidator）
-
+### 3.2 约束验证器（ConstraintValidator�?
 ```python
 class ConstraintValidator:
     """
-    约束验证器
-    
+    约束验证�?    
     索引: CONSTRAINT_SOLVER_001-M02
     职责: 验证约束的可行性、一致性和冲突
     """
@@ -337,14 +254,11 @@ class ConstraintValidator:
         Returns:
             ValidationResult: 验证结果
         """
-        # 1. 可行性检查
-        is_feasible = self._check_feasibility(constraints, variables)
+        # 1. 可行性检�?        is_feasible = self._check_feasibility(constraints, variables)
         
-        # 2. 一致性检查
-        is_consistent = self._check_consistency(constraints)
+        # 2. 一致性检�?        is_consistent = self._check_consistency(constraints)
         
-        # 3. 冲突检测
-        conflicts = self.detect_conflicts(constraints)
+        # 3. 冲突检�?        conflicts = self.detect_conflicts(constraints)
         
         return ValidationResult(
             is_feasible=is_feasible and is_consistent,
@@ -355,8 +269,7 @@ class ConstraintValidator:
     
     def detect_conflicts(self, constraints: List[Constraint]) -> List[Conflict]:
         """
-        检测约束冲突
-        
+        检测约束冲�?        
         Args:
             constraints: 约束条件列表
             
@@ -381,9 +294,8 @@ class ConstraintValidator:
     def _check_feasibility(self,
                           constraints: List[Constraint],
                           variables: Variables) -> bool:
-        """检查约束可行性"""
-        # 使用线性规划检查可行性
-        # min 0
+        """检查约束可行�?""
+        # 使用线性规划检查可行�?        # min 0
         # s.t. constraints
         
         x = cp.Variable(variables.size)
@@ -401,7 +313,7 @@ class ConstraintValidator:
             return False
     
     def _check_consistency(self, constraints: List[Constraint]) -> bool:
-        """检查约束一致性"""
+        """检查约束一致�?""
         # 检查是否存在矛盾的约束
         for constraint in constraints:
             if not constraint.is_consistent():
@@ -423,16 +335,14 @@ class ConstraintValidator:
         return 'high'
 ```
 
-### 3.3 凸优化求解器（ConvexOptimizer）
-
+### 3.3 凸优化求解器（ConvexOptimizer�?
 ```python
 class ConvexOptimizer:
     """
     凸优化求解器
     
     索引: CONSTRAINT_SOLVER_001-M03
-    职责: 使用CVXPY求解凸优化问题
-    """
+    职责: 使用CVXPY求解凸优化问�?    """
     
     def __init__(self, config: ConvexConfig):
         self.config = config
@@ -440,28 +350,24 @@ class ConvexOptimizer:
         
     def solve(self, problem: cp.Problem) -> np.ndarray:
         """
-        求解凸优化问题
-        
+        求解凸优化问�?        
         Args:
             problem: CVXPY问题对象
             
         Returns:
-            np.ndarray: 优化解
-        """
+            np.ndarray: 优化�?        """
         # 求解问题
         problem.solve(solver=self.solver)
         
-        # 检查求解状态
-        if problem.status not in ['optimal', 'optimal_inaccurate']:
+        # 检查求解状�?        if problem.status not in ['optimal', 'optimal_inaccurate']:
             raise SolverError(f"求解失败: {problem.status}")
         
-        # 提取解
-        solution = problem.variables()[0].value
+        # 提取�?        solution = problem.variables()[0].value
         
         return solution
     
     def _select_solver(self, solver_type: str):
-        """选择求解器"""
+        """选择求解�?""
         solver_map = {
             'ecos': cp.ECOS,
             'scs': cp.SCS,
@@ -472,13 +378,11 @@ class ConvexOptimizer:
         return solver_map.get(solver_type, cp.ECOS)
 ```
 
-### 3.4 约束松弛器（ConstraintRelaxer）
-
+### 3.4 约束松弛器（ConstraintRelaxer�?
 ```python
 class ConstraintRelaxer:
     """
-    约束松弛器
-    
+    约束松弛�?    
     索引: CONSTRAINT_SOLVER_001-M04
     职责: 松弛冲突约束以获得可行解
     """
@@ -515,8 +419,7 @@ class ConstraintRelaxer:
                 conflict.constraint1, conflict.constraint2
             )
             
-            # 替换原约束
-            relaxed_constraints = self._replace_constraints(
+            # 替换原约�?            relaxed_constraints = self._replace_constraints(
                 relaxed_constraints, [conflict.constraint1, conflict.constraint2], relaxed
             )
         
@@ -525,7 +428,7 @@ class ConstraintRelaxer:
     def _slack_relaxation(self,
                          c1: Constraint,
                          c2: Constraint) -> List[Constraint]:
-        """松弛变量法"""
+        """松弛变量�?""
         # 添加松弛变量
         # 例如：w >= 0.05 变为 w >= 0.05 - s, s >= 0
         relaxed = []
@@ -543,15 +446,13 @@ class ConstraintRelaxer:
     def _penalty_relaxation(self,
                            c1: Constraint,
                            c2: Constraint) -> List[Constraint]:
-        """惩罚函数法"""
-        # 将约束转化为目标函数中的惩罚项
-        # 这里返回软约束
-        return self._soft_constraint(c1, c2)
+        """惩罚函数�?""
+        # 将约束转化为目标函数中的惩罚�?        # 这里返回软约�?        return self._soft_constraint(c1, c2)
     
     def _soft_constraint(self,
                         c1: Constraint,
                         c2: Constraint) -> List[Constraint]:
-        """软约束"""
+        """软约�?""
         # 将硬约束转化为软约束
         # 允许一定程度的违反
         c1.is_soft = True
@@ -581,8 +482,7 @@ class ConstraintRelaxer:
         return result
 ```
 
-### 3.5 约束类定义
-
+### 3.5 约束类定�?
 ```python
 class Constraint:
     """约束基类"""
@@ -597,15 +497,15 @@ class Constraint:
         raise NotImplementedError
         
     def is_satisfied(self, solution: np.ndarray) -> bool:
-        """检查约束是否满足"""
+        """检查约束是否满�?""
         raise NotImplementedError
         
     def is_consistent(self) -> bool:
-        """检查约束是否一致"""
+        """检查约束是否一�?""
         return True
 
 class LinearConstraint(Constraint):
-    """线性约束"""
+    """线性约�?""
     
     def __init__(self,
                  name: str,
@@ -685,18 +585,17 @@ class BoxConstraint(Constraint):
         return np.all(solution >= self.lower_bounds) and np.all(solution <= self.upper_bounds)
 ```
 
-### 3.6 配置类定义
-
+### 3.6 配置类定�?
 ```python
 @dataclass
 class SolverConfig:
-    """求解器配置"""
+    """求解器配�?""
     convex_config: ConvexConfig
     relax_config: RelaxConfig
     
 @dataclass
 class ConvexConfig:
-    """凸优化配置"""
+    """凸优化配�?""
     solver_type: str = 'ecos'  # 'ecos', 'scs', 'osqp', 'cvxopt'
     max_iter: int = 1000
     tolerance: float = 1e-6
@@ -704,10 +603,8 @@ class ConvexConfig:
 @dataclass
 class RelaxConfig:
     """约束松弛配置"""
-    slack_amount: float = 0.01  # 松弛量
-    penalty_weight: float = 100.0  # 惩罚权重
-    max_relax_iterations: int = 10  # 最大松弛迭代次数
-```
+    slack_amount: float = 0.01  # 松弛�?    penalty_weight: float = 100.0  # 惩罚权重
+    max_relax_iterations: int = 10  # 最大松弛迭代次�?```
 
 ---
 
@@ -737,17 +634,14 @@ class Variables:
 @dataclass
 class SolverResult:
     """求解结果"""
-    solution: np.ndarray  # 优化解
-    constraint_status: Dict[str, bool]  # 约束满足状态
-    report: SolverReport  # 求解报告
+    solution: np.ndarray  # 优化�?    constraint_status: Dict[str, bool]  # 约束满足状�?    report: SolverReport  # 求解报告
     timestamp: datetime
     
 @dataclass
 class ValidationResult:
     """验证结果"""
     is_feasible: bool  # 是否可行
-    is_consistent: bool  # 是否一致
-    conflicts: List[Conflict]  # 冲突列表
+    is_consistent: bool  # 是否一�?    conflicts: List[Conflict]  # 冲突列表
     recommendations: List[str]  # 建议
     
 @dataclass
@@ -762,10 +656,8 @@ class Conflict:
 class SolverReport:
     """求解报告"""
     solver_status: str  # 'optimal', 'infeasible', etc.
-    solve_time: float  # 求解时间（秒）
-    num_iterations: int  # 迭代次数
-    objective_value: float  # 目标函数值
-    constraint_violations: Dict[str, float]  # 约束违反程度
+    solve_time: float  # 求解时间（秒�?    num_iterations: int  # 迭代次数
+    objective_value: float  # 目标函数�?    constraint_violations: Dict[str, float]  # 约束违反程度
 ```
 
 ---
@@ -786,8 +678,7 @@ class PortfolioOptimizer:
                                  covariance_matrix: pd.DataFrame,
                                  constraints: List[Constraint]) -> pd.Series:
         """带约束的组合优化"""
-        # 1. 定义优化目标（最大化夏普比率）
-        def objective(x):
+        # 1. 定义优化目标（最大化夏普比率�?        def objective(x):
             portfolio_return = expected_returns.values @ x
             portfolio_risk = cp.sqrt(cp.quad_form(x, covariance_matrix.values))
             return portfolio_return / portfolio_risk
@@ -809,7 +700,7 @@ class PortfolioOptimizer:
 
 ```python
 class BarraRiskModel:
-    """Barra风险模型（集成约束求解器）"""
+    """Barra风险模型（集成约束求解器�?""
     
     def __init__(self, constraint_solver: ConstraintSolver):
         self.constraint_solver = constraint_solver
@@ -842,29 +733,25 @@ class BarraRiskModel:
 
 ---
 
-## 6. 实施路线图
-
+## 6. 实施路线�?
 ### 6.1 开发阶段（1.5周）
 
-**Week 1: 核心模块开发**
-- Day 1-2: 约束验证器
-- Day 3-4: 凸优化求解器
-- Day 5: 约束松弛器
-
-**Week 2: 集成与测试**
+**Week 1: 核心模块开�?*
+- Day 1-2: 约束验证�?- Day 3-4: 凸优化求解器
+- Day 5: 约束松弛�?
+**Week 2: 集成与测�?*
 - Day 1-2: 与组合优化器集成
 - Day 3: 单元测试
 - Day 4: 集成测试
 - Day 5: 文档编写
 
-### 6.2 里程碑
-
-| 里程碑 | 时间 | 交付物 | 验收标准 |
+### 6.2 里程�?
+| 里程�?| 时间 | 交付�?| 验收标准 |
 |--------|------|--------|----------|
-| **M1: 约束验证完成** | Day 2 | 约束验证器 | 验证正确 |
-| **M2: 求解器完成** | Day 4 | 凸优化求解器 | 求解成功 |
-| **M3: 松弛器完成** | Day 5 | 约束松弛器 | 松弛有效 |
-| **M4: 集成完成** | Day 7 | 完整系统 | 所有接口正常 |
+| **M1: 约束验证完成** | Day 2 | 约束验证�?| 验证正确 |
+| **M2: 求解器完�?* | Day 4 | 凸优化求解器 | 求解成功 |
+| **M3: 松弛器完�?* | Day 5 | 约束松弛�?| 松弛有效 |
+| **M4: 集成完成** | Day 7 | 完整系统 | 所有接口正�?|
 | **M5: 测试通过** | Day 9 | 测试报告 | 所有测试通过 |
 
 ---
@@ -875,31 +762,26 @@ class BarraRiskModel:
 
 | 指标 | 当前水平 | 目标水平 | 提升幅度 |
 |------|---------|---------|---------|
-| **约束处理能力** | 简单约束 | 复杂约束 | 质的飞跃 |
-| **优化可行性** | 70% | 98% | +28% |
-| **实盘可执行性** | 75% | 98% | +23% |
-| **约束冲突解决** | 无 | 自动 | 新增能力 |
+| **约束处理能力** | 简单约�?| 复杂约束 | 质的飞跃 |
+| **优化可行�?* | 70% | 98% | +28% |
+| **实盘可执行�?* | 75% | 98% | +23% |
+| **约束冲突解决** | �?| 自动 | 新增能力 |
 
-### 7.2 定性收益
-
-- ✅ 支持复杂约束条件
-- ✅ 自动检测和解决约束冲突
-- ✅ 提升优化可行性
-- ✅ 提升实盘可执行性
-- ✅ 支持约束优先级管理
-
+### 7.2 定性收�?
+- �?支持复杂约束条件
+- �?自动检测和解决约束冲突
+- �?提升优化可行�?- �?提升实盘可执行�?- �?支持约束优先级管�?
 ---
 
 ## 8. 技术栈选择
 
-### 8.1 核心依赖库
-
-| 库名 | 版本 | 用途 | 必要性 |
+### 8.1 核心依赖�?
+| 库名 | 版本 | 用�?| 必要�?|
 |------|------|------|--------|
-| **CVXPY** | ≥1.3 | 凸优化建模与求解 | 必需 |
-| **scipy** | ≥1.7 | 科学计算 | 必需 |
-| **numpy** | ≥1.21 | 数值计算 | 必需 |
-| **pandas** | ≥1.5 | 数据处理 | 必需 |
+| **CVXPY** | �?.3 | 凸优化建模与求解 | 必需 |
+| **scipy** | �?.7 | 科学计算 | 必需 |
+| **numpy** | �?.21 | 数值计�?| 必需 |
+| **pandas** | �?.5 | 数据处理 | 必需 |
 
 ### 8.2 安装命令
 
@@ -914,21 +796,20 @@ pip install pandas>=1.5
 
 ## 9. 风险评估
 
-### 9.1 技术风险
-
-| 风险项 | 风险等级 | 缓解措施 |
+### 9.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **求解器性能** | 低 | 选择合适的求解器、优化问题规模 |
-| **约束冲突复杂** | 中 | 完善的冲突检测和松弛策略 |
-| **数值稳定性** | 低 | 使用稳定的数值算法 |
+| **求解器性能** | �?| 选择合适的求解器、优化问题规�?|
+| **约束冲突复杂** | �?| 完善的冲突检测和松弛策略 |
+| **数值稳定�?* | �?| 使用稳定的数值算�?|
 
 ### 9.2 实施风险
 
-| 风险项 | 风险等级 | 缓解措施 |
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **开发时间超期** | 低 | 分阶段实施、里程碑管理 |
-| **集成困难** | 低 | 充分测试、接口文档完善 |
-| **性能不达标** | 低 | 性能优化、算法改进 |
+| **开发时间超�?* | �?| 分阶段实施、里程碑管理 |
+| **集成困难** | �?| 充分测试、接口文档完�?|
+| **性能不达�?* | �?| 性能优化、算法改�?|
 
 ---
 
@@ -937,31 +818,26 @@ pip install pandas>=1.5
 ### 10.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
-
-##### 6.5 约束求解器
-- **模块ID**: CONSTRAINT_SOLVER_001
+#### Layer 6: 组合优化�?
+##### 6.5 约束求解�?- **模块ID**: CONSTRAINT_SOLVER_001
 - **蓝图文档**: [CONSTRAINT_SOLVER_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md)
-- **技术规格书**: 待创建
-- **职责**: 约束处理、凸优化求解、约束冲突解决
-- **状态**: 设计阶段
+- **技术规格书**: 待创�?- **职责**: 约束处理、凸优化求解、约束冲突解�?- **状�?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **约束求解器** | 约束处理、优化求解 | **求解器层面** |
-| **组合优化器** | 组合权重优化 | 使用约束求解器 |
-| **Barra风险模型** | 风险模型、风险约束 | 提供风险约束 |
+| **约束求解�?* | 约束处理、优化求�?| **求解器层�?* |
+| **组合优化�?* | 组合权重优化 | 使用约束求解�?|
+| **Barra风险模型** | 风险模型、风险约�?| 提供风险约束 |
 
 ---
 
 ## 附录
 
-### A. 参考文献
-
-1. **凸优化理论**:
+### A. 参考文�?
+1. **凸优化理�?*:
    - Boyd, S. and Vandenberghe, L. (2004). "Convex Optimization"
    - Nocedal, J. and Wright, S.J. (2006). "Numerical Optimization"
 
@@ -972,15 +848,14 @@ pip install pandas>=1.5
 3. **组合优化**:
    - Grinold, R.C. and Kahn, R.N. (2000). "Active Portfolio Management"
 
-### B. 术语表
-
-| 术语 | 定义 | 上下文 |
+### B. 术语�?
+| 术语 | 定义 | 上下�?|
 |------|------|--------|
-| **凸优化** | 目标函数和约束都是凸的优化问题 | 优化方法 |
+| **凸优�?* | 目标函数和约束都是凸的优化问�?| 优化方法 |
 | **约束松弛** | 放宽约束条件以获得可行解 | 冲突解决 |
-| **软约束** | 允许一定违反的约束 | 约束类型 |
-| **优先级** | 约束的重要程度排序 | 约束管理 |
+| **软约�?* | 允许一定违反的约束 | 约束类型 |
+| **优先�?* | 约束的重要程度排�?| 约束管理 |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 技术规格书编写

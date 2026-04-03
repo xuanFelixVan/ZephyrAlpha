@@ -4,22 +4,22 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # L9_MODEL_ENSEMBLER: AI模型集成模块设计
 
 > **模块ID**: L9_MODEL_ENSEMBLER  
 > **模块名称**: AI模型集成  
-> **所属层级**: Layer 9 - AI增强层  
-> **优先级**: P1  
+> **所属层�?*: Layer 9 - AI增强�? 
+> **优先�?*: P1  
 > **预计工时**: 26小时  
-> **设计状态**: 🟡 设计中  
+> **设计状�?*: 🟡 设计�? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: [AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md](../../02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md)
 
@@ -28,46 +28,46 @@ implementation_status: 进行中
 ## 📋 模块概述
 
 ### 1.1 功能定位
-**L9_MODEL_ENSEMBLER** 是AI增强层的第五个模块，负责使用mlens模型集成框架构建强大的模型集成系统。该模块通过堆叠、混合、投票等多种集成策略，将多个基础模型组合成更强大的集成模型，显著提升预测性能和稳定性，同时降低过拟合风险。
+**L9_MODEL_ENSEMBLER** 是AI增强层的第五个模块，负责使用mlens模型集成框架构建强大的模型集成系统。该模块通过堆叠、混合、投票等多种集成策略，将多个基础模型组合成更强大的集成模型，显著提升预测性能和稳定性，同时降低过拟合风险�?
 
 ### 1.2 设计原则
-- **多样性**: 集成多样化基础模型，确保互补性
-- **自动化**: 自动选择最优集成策略和权重分配
-- **可解释性**: 提供集成模型的可解释性分析
-- **高效性**: 支持并行训练和预测，优化计算效率
-- **稳健性**: 增强模型对噪声和异常值的鲁棒性
-- **集成友好**: 与Layer 4机器学习层无缝集成
+- **多样�?*: 集成多样化基础模型，确保互补�?
+- **自动�?*: 自动选择最优集成策略和权重分配
+- **可解释�?*: 提供集成模型的可解释性分�?
+- **高效�?*: 支持并行训练和预测，优化计算效率
+- **稳健�?*: 增强模型对噪声和异常值的鲁棒�?
+- **集成友好**: 与Layer 4机器学习层无缝集�?
 
 ### 1.3 输入输出
 | 项目 | 描述 |
 |------|------|
-| **输入** | 多个基础模型、训练数据、验证数据、集成配置 |
-| **输出** | 集成模型、集成权重、性能评估报告、可解释性分析 |
-| **控制参数** | 集成策略、基础模型列表、权重优化方法、验证策略 |
+| **输入** | 多个基础模型、训练数据、验证数据、集成配�?|
+| **输出** | 集成模型、集成权重、性能评估报告、可解释性分�?|
+| **控制参数** | 集成策略、基础模型列表、权重优化方法、验证策�?|
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 2.1 模块结构
 ```
 L9_MODEL_ENSEMBLER/
-├── mlens_integration.py           # mlens集成核心类
-├── ensemble_construction_pipeline.py  # 模型集成构建流水线
-├── base_model_selector.py         # 基础模型选择器
-├── ensemble_strategy_designer.py  # 集成策略设计器
-├── ensemble_evaluator.py          # 集成模型评估器
-├── ensemble_explainer.py          # 集成模型解释器
+├── mlens_integration.py           # mlens集成核心�?
+├── ensemble_construction_pipeline.py  # 模型集成构建流水�?
+├── base_model_selector.py         # 基础模型选择�?
+├── ensemble_strategy_designer.py  # 集成策略设计�?
+├── ensemble_evaluator.py          # 集成模型评估�?
+├── ensemble_explainer.py          # 集成模型解释�?
 ├── config/
-│   └── mlens_config.yaml          # 配置文件
+�?  └── mlens_config.yaml          # 配置文件
 ├── tests/
-│   ├── test_mlens_integration.py
-│   └── test_ensemble_pipeline.py
+�?  ├── test_mlens_integration.py
+�?  └── test_ensemble_pipeline.py
 └── monitoring/
     └── ensemble_monitoring.py
 ```
 
-### 2.2 核心类设计
+### 2.2 核心类设�?
 ```python
 # mlens_integration.py
 class MlensModelEnsembler:
@@ -90,11 +90,11 @@ class MlensModelEnsembler:
         y_val: pd.Series,
         ensemble_strategy: str = 'stacking'
     ) -> EnsembleResult:
-        """构建集成模型主方法"""
+        """构建集成模型主方�?""
         # 1. 准备基础模型
         self.base_models = self._prepare_base_models(base_model_configs)
         
-        # 2. 构建集成层
+        # 2. 构建集成�?
         if ensemble_strategy == 'stacking':
             self.ensemble_model = self._build_stacking_ensemble()
         elif ensemble_strategy == 'blending':
@@ -179,7 +179,7 @@ class MlensModelEnsembler:
     
     def _build_stacking_ensemble(self) -> mlens.ensemble.SuperLearner:
         """构建堆叠集成"""
-        # 基础层模型
+        # 基础层模�?
         base_learners = []
         for base_model in self.base_models:
             base_learners.append(base_model['model'])
@@ -197,7 +197,7 @@ class MlensModelEnsembler:
             n_jobs=self.config.n_jobs
         )
         
-        # 添加基础层
+        # 添加基础�?
         ensemble.add(base_learners)
         
         # 添加元学习器
@@ -359,18 +359,18 @@ class MlensModelEnsembler:
         base_predictions: Dict[str, np.ndarray],
         y_true: pd.Series
     ) -> Dict[str, float]:
-        """使用线性回归优化权重"""
+        """使用线性回归优化权�?""
         # 准备特征矩阵
         X = np.column_stack(list(base_predictions.values()))
         
-        # 训练线性回归
+        # 训练线性回�?
         lr = LinearRegression(fit_intercept=False, positive=True)
         lr.fit(X, y_true)
         
         # 获取权重
         weights = lr.coef_
         
-        # 确保权重非负且和为1
+        # 确保权重非负且和�?
         weights = np.maximum(weights, 0)
         if np.sum(weights) > 0:
             weights = weights / np.sum(weights)
@@ -413,11 +413,11 @@ class MlensModelEnsembler:
         return metrics
 ```
 
-### 2.3 数据流水线
+### 2.3 数据流水�?
 ```python
 # ensemble_construction_pipeline.py
 class EnsembleConstructionPipeline:
-    """模型集成构建流水线"""
+    """模型集成构建流水�?""
     
     def __init__(self, config_path: str):
         self.config = self._load_config(config_path)
@@ -432,7 +432,7 @@ class EnsembleConstructionPipeline:
         model_pool_config: ModelPoolConfig,
         optimization_mode: str = 'performance'
     ) -> PipelineResult:
-        """运行完整集成构建流水线"""
+        """运行完整集成构建流水�?""
         results = {}
         
         # 1. 数据准备
@@ -473,7 +473,7 @@ class EnsembleConstructionPipeline:
         explanation = self._explain_ensemble(ensemble_result, test_data)
         results['explanation'] = explanation
         
-        # 7. 生成最终报告
+        # 7. 生成最终报�?
         results['final_report'] = self._generate_final_report(results)
         
         # 8. 保存集成模型
@@ -489,7 +489,7 @@ class EnsembleConstructionPipeline:
         # 特征工程
         features = self._engineer_features(raw_data, data_config.feature_config)
         
-        # 划分数据集
+        # 划分数据�?
         train_data, val_data, test_data = self._split_data(
             features, 
             data_config.split_config
@@ -502,7 +502,7 @@ class EnsembleConstructionPipeline:
         selected_models: List[Dict[str, Any]], 
         val_data: DataSplit
     ) -> Dict[str, float]:
-        """计算模型多样性"""
+        """计算模型多样�?""
         diversity_metrics = {}
         
         # 收集模型预测
@@ -515,12 +515,12 @@ class EnsembleConstructionPipeline:
                 y_pred = model.predict(val_data.X)
                 predictions[model_name] = y_pred
         
-        # 计算预测相关性
+        # 计算预测相关�?
         if len(predictions) > 1:
             prediction_matrix = np.column_stack(list(predictions.values()))
             correlation_matrix = np.corrcoef(prediction_matrix, rowvar=False)
             
-            # 平均相关性（越低越好）
+            # 平均相关性（越低越好�?
             n_models = len(predictions)
             avg_correlation = (np.sum(correlation_matrix) - n_models) / (n_models * (n_models - 1))
             diversity_metrics['avg_prediction_correlation'] = avg_correlation
@@ -658,9 +658,9 @@ model_ensembling:
   # 模型选择配置
   model_selection:
     max_models: 7  # 最大模型数量（避免过拟合）
-    min_diversity: 0.3  # 最小多样性要求
-    performance_threshold: 0.5  # 最小性能阈值（R2）
-    correlation_threshold: 0.8  # 最大允许相关性
+    min_diversity: 0.3  # 最小多样性要�?
+    performance_threshold: 0.5  # 最小性能阈值（R2�?
+    correlation_threshold: 0.8  # 最大允许相关�?
   
   # 性能配置
   performance:
@@ -686,9 +686,9 @@ model_ensembling:
     model_tracking: true
     performance_dashboard: true
     alert_thresholds:
-      performance_drop: 0.1  # 性能下降阈值
+      performance_drop: 0.1  # 性能下降阈�?
       memory_usage: "3GB"
-      training_time: 3600  # 秒
+      training_time: 3600  # �?
     visualization:
       enabled: true
       feature_importance: true
@@ -710,7 +710,7 @@ seaborn>=0.11.0
 plotly>=5.10.0
 joblib>=1.1.0
 tqdm>=4.64.0
-shap>=0.41.0  # 可解释性
+shap>=0.41.0  # 可解释�?
 ```
 
 ---
@@ -731,7 +731,7 @@ class ModelEnsemblingAPI:
         y_val: pd.Series,
         ensemble_config: Optional[Dict[str, Any]] = None
     ) -> EnsembleResult:
-        """从模型列表构建集成"""
+        """从模型列表构建集�?""
         pass
     
     @staticmethod
@@ -776,14 +776,14 @@ class ModelEnsemblingAPI:
 ```python
 # 与Layer 4机器学习层的接口
 class MachineLearningLayerIntegration:
-    """机器学习层集成接口"""
+    """机器学习层集成接�?""
     
     def get_trained_models(
         self, 
         model_types: List[str],
         training_date: str
     ) -> List[Dict[str, Any]]:
-        """获取已训练模型"""
+        """获取已训练模�?""
         # 调用L4_ML_PIPELINE的API获取训练好的模型
         pass
     
@@ -794,7 +794,7 @@ class MachineLearningLayerIntegration:
         performance_metrics: Dict[str, float],
         base_models: List[str]
     ) -> bool:
-        """注册集成模型到模型仓库"""
+        """注册集成模型到模型仓�?""
         pass
     
     def get_model_performance_history(
@@ -822,7 +822,7 @@ class EnsembleData:
         self.y_test: pd.Series      # 测试目标
         self.base_model_predictions: Dict[str, np.ndarray]  # 基础模型预测
         self.ensemble_predictions: np.ndarray  # 集成模型预测
-        self.feature_importance: Dict[str, float]  # 特征重要性
+        self.feature_importance: Dict[str, float]  # 特征重要�?
 ```
 
 ---
@@ -959,7 +959,7 @@ class TestMlensModelEnsembler:
         assert 'test_ic' in metrics
         assert 'test_rank_ic' in metrics
         
-        # 验证计算正确性
+        # 验证计算正确�?
         from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
         expected_mse = mean_squared_error(y_true, y_pred)
         assert abs(metrics['test_mse'] - expected_mse) < 1e-10
@@ -981,7 +981,7 @@ class TestMlensModelEnsembler:
         assert 'model2' in weights
         assert 'model3' in weights
         
-        # 验证权重非负且和为1（近似）
+        # 验证权重非负且和�?（近似）
         weight_sum = sum(weights.values())
         assert abs(weight_sum - 1.0) < 0.01
         assert all(w >= 0 for w in weights.values())
@@ -991,7 +991,7 @@ class TestMlensModelEnsembler:
 ```python
 # tests/test_ensemble_pipeline.py
 class TestEnsembleConstructionPipeline:
-    """模型集成构建流水线测试"""
+    """模型集成构建流水线测�?""
     
     def test_full_pipeline(self):
         pipeline = EnsembleConstructionPipeline('config/mlens_config.yaml')
@@ -1003,14 +1003,14 @@ class TestEnsembleConstructionPipeline:
             'split_config': {'train_ratio': 0.6, 'val_ratio': 0.2, 'test_ratio': 0.2}
         }
         
-        # 模型池配置
+        # 模型池配�?
         model_pool_config = {
             'model_types': ['linear_regression', 'random_forest', 'ridge_regression'],
             'max_models': 3,
             'selection_criteria': 'performance'
         }
         
-        # 运行流水线
+        # 运行流水�?
         result = pipeline.run(
             data_config=data_config,
             model_pool_config=model_pool_config,
@@ -1047,7 +1047,7 @@ class TestMlensPerformance:
     """mlens性能测试"""
     
     def test_ensemble_scalability(self):
-        """测试集成可扩展性"""
+        """测试集成可扩展�?""
         import time
         
         config = {
@@ -1057,14 +1057,14 @@ class TestMlensPerformance:
             'random_state': 42,
             'verbose': 0,
             'backend': 'threading',
-            'n_jobs': 4,  # 使用4个并行任务
+            'n_jobs': 4,  # 使用4个并行任�?
             'optimize_weights': True,
             'meta_learner': {'type': 'linear'}
         }
         
         ensembler = MlensModelEnsembler(config)
         
-        # 创建大规模测试数据
+        # 创建大规模测试数�?
         n_samples = 10000
         n_features = 50
         X_train = pd.DataFrame(np.random.randn(n_samples, n_features))
@@ -1078,7 +1078,7 @@ class TestMlensPerformance:
         model_types = ['linear_regression', 'ridge_regression', 'lasso_regression', 
                       'random_forest', 'xgboost', 'lightgbm']
         
-        for model_type in model_types[:4]:  # 测试4个模型
+        for model_type in model_types[:4]:  # 测试4个模�?
             if model_type == 'linear_regression':
                 params = {}
             elif model_type == 'ridge_regression':
@@ -1112,15 +1112,15 @@ class TestMlensPerformance:
         models_per_second = len(base_model_configs) / ensemble_time
         
         print(f"集成构建时间: {ensemble_time:.2f}s")
-        print(f"每秒模型数: {models_per_second:.2f}")
+        print(f"每秒模型�? {models_per_second:.2f}")
         print(f"集成模型性能 (IC): {result.performance_metrics.get('val_ic', 0):.4f}")
         
         # 性能要求
-        assert ensemble_time < 300  # 5分钟内完成集成构建
-        assert result.performance_metrics.get('val_ic', 0) > 0.1  # 有一定预测能力
+        assert ensemble_time < 300  # 5分钟内完成集成构�?
+        assert result.performance_metrics.get('val_ic', 0) > 0.1  # 有一定预测能�?
     
     def test_memory_usage_large_ensemble(self):
-        """测试大集成内存使用"""
+        """测试大集成内存使�?""
         import psutil
         import os
         
@@ -1186,7 +1186,7 @@ class TestMlensPerformance:
         print(f"基础模型数量: {len(base_model_configs)}")
         print(f"集成模型类型: {type(result.ensemble_model)}")
         
-        assert memory_increase < 1024  # 内存增加不超过1GB
+        assert memory_increase < 1024  # 内存增加不超�?GB
 ```
 
 ---
@@ -1251,7 +1251,7 @@ class EnsembleMonitoring:
         # 更新性能趋势
         self._update_performance_trends(metrics)
         
-        # 检查异常
+        # 检查异�?
         self._check_ensemble_anomalies(ensemble_result, metrics)
     
     def _calculate_weight_entropy(self, weights: Dict[str, float]) -> float:
@@ -1277,7 +1277,7 @@ class EnsembleMonitoring:
                 })
     
     def _check_ensemble_anomalies(self, ensemble_result: EnsembleResult, metrics: Dict[str, Any]):
-        """检查集成模型异常"""
+        """检查集成模型异�?""
         # 性能下降
         if 'val_ic' in metrics and metrics['val_ic'] < 0.01:
             self.alerts.append({
@@ -1285,7 +1285,7 @@ class EnsembleMonitoring:
                 'metric': 'val_ic',
                 'value': metrics['val_ic'],
                 'severity': 'warning',
-                'message': f"集成模型IC值过低: {metrics['val_ic']:.4f}"
+                'message': f"集成模型IC值过�? {metrics['val_ic']:.4f}"
             })
         
         # 权重过度集中
@@ -1294,7 +1294,7 @@ class EnsembleMonitoring:
                 'type': 'weight_concentration',
                 'max_weight': metrics['max_weight'],
                 'severity': 'warning',
-                'message': f"集成权重过度集中: 最大权重 {metrics['max_weight']:.2%}"
+                'message': f"集成权重过度集中: 最大权�?{metrics['max_weight']:.2%}"
             })
         
         # 训练时间过长
@@ -1303,10 +1303,10 @@ class EnsembleMonitoring:
                 'type': 'long_training_time',
                 'training_time': metrics['training_time'],
                 'severity': 'warning',
-                'message': f"集成训练时间过长: {metrics['training_time']:.0f}秒"
+                'message': f"集成训练时间过长: {metrics['training_time']:.0f}�?
             })
         
-        # 模型多样性过低
+        # 模型多样性过�?
         if hasattr(ensemble_result, 'model_diversity'):
             diversity = ensemble_result.model_diversity.get('diversity_score', 1.0)
             if diversity < 0.2:
@@ -1314,7 +1314,7 @@ class EnsembleMonitoring:
                     'type': 'low_diversity',
                     'diversity_score': diversity,
                     'severity': 'warning',
-                    'message': f"模型多样性过低: {diversity:.2f}"
+                    'message': f"模型多样性过�? {diversity:.2f}"
                 })
 ```
 
@@ -1351,12 +1351,12 @@ grafana_dashboards:
           - "memory_usage"
           - "model_size"
       
-      - title: "预测稳定性"
+      - title: "预测稳定�?
         type: "heatmap"
         metrics:
           - "prediction_correlation_matrix"
       
-      - title: "特征重要性"
+      - title: "特征重要�?
         type: "treemap"
         metrics:
           - "feature_importance"
@@ -1373,12 +1373,12 @@ grafana_dashboards:
 ## 🚀 部署设计
 
 ### 7.1 部署环境
-| 环境 | 配置 | 用途 |
+| 环境 | 配置 | 用�?|
 |------|------|------|
-| **开发环境** | CPU: 8核, RAM: 32GB, GPU: 可选 | 功能验证和调试 |
-| **测试环境** | CPU: 16核, RAM: 64GB, GPU: RTX 4090 | 性能验证和集成测试 |
-| **生产环境** | CPU: 32核, RAM: 128GB, GPU: A100 | 生产级模型集成 |
-| **分布式环境** | 多节点集群，每节点: CPU 16核, RAM 64GB | 大规模模型集成 |
+| **开发环�?* | CPU: 8�? RAM: 32GB, GPU: 可�?| 功能验证和调�?|
+| **测试环境** | CPU: 16�? RAM: 64GB, GPU: RTX 4090 | 性能验证和集成测�?|
+| **生产环境** | CPU: 32�? RAM: 128GB, GPU: A100 | 生产级模型集�?|
+| **分布式环�?* | 多节点集群，每节�? CPU 16�? RAM 64GB | 大规模模型集�?|
 
 ### 7.2 部署脚本
 ```bash
@@ -1390,7 +1390,7 @@ export PYTHONPATH="$PYTHONPATH:/path/to/zephyralpha"
 export MODEL_ENSEMBLER_CONFIG="/path/to/config/mlens_config.yaml"
 export LOG_LEVEL="INFO"
 export MLENS_CACHE="/path/to/mlens_cache"
-export OMP_NUM_THREADS=4  # 控制OpenMP线程数
+export OMP_NUM_THREADS=4  # 控制OpenMP线程�?
 
 # 创建虚拟环境
 python -m venv venv_model_ensembler
@@ -1403,14 +1403,14 @@ pip install xgboost==1.6.0
 pip install lightgbm==3.3.0
 pip install shap==0.41.0
 
-# 安装可选依赖
+# 安装可选依�?
 if [ "$USE_GPU" = "true" ]; then
     pip install cupy-cuda11x
     pip install xgboost-gpu
     pip install lightgbm-gpu
 fi
 
-# 初始化配置
+# 初始化配�?
 python -m L9_MODEL_ENSEMBLER.config_initializer
 
 # 创建缓存目录
@@ -1436,7 +1436,7 @@ schedules:
   # 每日集成更新
   daily_ensemble_update:
     enabled: true
-    cron: "0 1 * * *"  # 每天凌晨1点
+    cron: "0 1 * * *"  # 每天凌晨1�?
     task: "update_ensemble_models"
     data_source: "latest_1_month"
     ensemble_strategy: "stacking"
@@ -1446,7 +1446,7 @@ schedules:
   # 每周集成优化
   weekly_ensemble_optimization:
     enabled: true
-    cron: "0 3 * * 0"  # 每周日凌晨3点
+    cron: "0 3 * * 0"  # 每周日凌�?�?
     task: "optimize_ensemble"
     data_source: "latest_3_months"
     ensemble_strategy: "optimization"
@@ -1457,7 +1457,7 @@ schedules:
   # 月度集成评估
   monthly_ensemble_evaluation:
     enabled: true
-    cron: "0 5 1 * *"  # 每月1日凌晨5点
+    cron: "0 5 1 * *"  # 每月1日凌�?�?
     task: "evaluate_ensemble_performance"
     data_source: "full_history"
     evaluation_metrics: ["ic", "r2", "mse", "ir"]
@@ -1466,7 +1466,7 @@ schedules:
   # 季度集成重构
   quarterly_ensemble_rebuild:
     enabled: true
-    cron: "0 7 1 1,4,7,10 *"  # 每季度第一天凌晨7点
+    cron: "0 7 1 1,4,7,10 *"  # 每季度第一天凌�?�?
     task: "rebuild_ensemble_from_scratch"
     data_source: "full_history"
     ensemble_strategy: "comprehensive"
@@ -1478,14 +1478,14 @@ schedules:
 
 ## 📈 成功标准
 
-### 8.1 技术成功标准
+### 8.1 技术成功标�?
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
-| **功能完整性** | 所有设计功能实现 | 单元测试通过率 > 95% |
+| **功能完整�?* | 所有设计功能实�?| 单元测试通过�?> 95% |
 | **性能提升** | 集成模型IC > 最佳单模型IC + 0.01 | 回测验证 |
-| **多样性** | 模型多样性得分 > 0.3 | 多样性分析 |
-| **稳定性** | 集成模型预测稳定性 > 单模型 | 稳定性测试 |
-| **可解释性** | 集成模型可解释性得分 > 0.7 | SHAP分析 |
+| **多样�?* | 模型多样性得�?> 0.3 | 多样性分�?|
+| **稳定�?* | 集成模型预测稳定�?> 单模�?| 稳定性测�?|
+| **可解释�?* | 集成模型可解释性得�?> 0.7 | SHAP分析 |
 | **效率** | 集成训练时间 < 基准时间 × 1.5 | 性能测试 |
 
 ### 8.2 业务成功标准
@@ -1493,21 +1493,21 @@ schedules:
 |------|------|----------|
 | **预测性能** | 集成模型IC > 0.05 | 回测验证 |
 | **风险调整收益** | 集成模型IR > 单模型IR | 风险收益分析 |
-| **稳健性** | 不同市场环境下表现稳定 | 压力测试 |
-| **自动化程度** | 人工干预减少 > 80% | 流程分析 |
+| **稳健�?* | 不同市场环境下表现稳�?| 压力测试 |
+| **自动化程�?* | 人工干预减少 > 80% | 流程分析 |
 | **ROI** | 集成收益 > 计算成本 × 5 | 成本效益分析 |
 
-### 8.3 验收检查清单
-- [ ] **设计文档完整**: 本设计文档完成审核
-- [ ] **代码实现完成**: 所有核心功能代码实现
+### 8.3 验收检查清�?
+- [ ] **设计文档完整**: 本设计文档完成审�?
+- [ ] **代码实现完成**: 所有核心功能代码实�?
 - [ ] **测试用例通过**: 单元测试、集成测试、性能测试通过
-- [ ] **集成效果验证**: 在测试数据集上验证集成效果
-- [ ] **监控就绪**: 监控指标和告警配置完成
-- [ ] **部署就绪**: 部署脚本和环境配置完成
-- [ ] **文档完整**: API文档、用户手册、配置手册完成
+- [ ] **集成效果验证**: 在测试数据集上验证集成效�?
+- [ ] **监控就绪**: 监控指标和告警配置完�?
+- [ ] **部署就绪**: 部署脚本和环境配置完�?
+- [ ] **文档完整**: API文档、用户手册、配置手册完�?
 - [ ] **集成测试**: 与Layer 4机器学习层集成测试通过
-- [ ] **可解释性验证**: SHAP分析和其他可解释性方法验证
-- [ ] **性能基准**: 建立性能基准线
+- [ ] **可解释性验�?*: SHAP分析和其他可解释性方法验�?
+- [ ] **性能基准**: 建立性能基准�?
 
 ---
 
@@ -1516,19 +1516,19 @@ schedules:
 ### 9.1 版本规划
 | 版本 | 目标 | 预计完成 |
 |------|------|----------|
-| **v1.0** | 基础mlens集成，堆叠集成 | 2026-04-22 |
+| **v1.0** | 基础mlens集成，堆叠集�?| 2026-04-22 |
 | **v1.1** | 多策略集成（混合、投票、袋装） | 2026-04-30 |
-| **v2.0** | 自动模型选择，权重优化 | 2026-05-10 |
+| **v2.0** | 自动模型选择，权重优�?| 2026-05-10 |
 | **v2.1** | 可解释性增强，SHAP集成 | 2026-05-20 |
-| **v3.0** | 分布式集成，GPU加速 | 2026-06-01 |
+| **v3.0** | 分布式集成，GPU加�?| 2026-06-01 |
 
-### 9.2 技术债管理
-| 技术债 | 优先级 | 解决计划 |
+### 9.2 技术债管�?
+| 技术�?| 优先�?| 解决计划 |
 |--------|--------|----------|
-| **GPU加速集成** | P1 | v3.0版本集成GPU支持 |
-| **分布式集成** | P1 | v3.0版本支持多节点集成 |
+| **GPU加速集�?* | P1 | v3.0版本集成GPU支持 |
+| **分布式集�?* | P1 | v3.0版本支持多节点集�?|
 | **自动模型发现** | P2 | v2.1版本集成自动模型搜索 |
-| **元集成** | P2 | 未来版本支持集成之集成 |
+| **元集�?* | P2 | 未来版本支持集成之集�?|
 | **实时集成更新** | P3 | 未来版本支持流式集成更新 |
 | **集成模型压缩** | P3 | 未来版本支持模型蒸馏 |
 
@@ -1537,28 +1537,28 @@ schedules:
 ## 📝 设计决策记录
 
 ### 10.1 关键设计决策
-| 决策ID | 决策内容 | 决策理由 | 备选方案 |
+| 决策ID | 决策内容 | 决策理由 | 备选方�?|
 |--------|----------|----------|----------|
-| DD_ME_001 | 选择mlens而非自己实现 | 专业集成库，功能完整，维护良好 | 自定义实现（复杂且易错） |
+| DD_ME_001 | 选择mlens而非自己实现 | 专业集成库，功能完整，维护良�?| 自定义实现（复杂且易错） |
 | DD_ME_002 | 默认使用堆叠集成 | 效果最好，理论支持充分 | 混合集成（简单但效果一般） |
-| DD_ME_003 | 集成线性回归作为元学习器 | 简单有效，避免过拟合 | 复杂模型（可能过拟合） |
-| DD_ME_004 | 支持多策略集成 | 适应不同场景，提高灵活性 | 单一策略（限制应用场景） |
-| DD_ME_005 | 强调模型多样性 | 多样性是集成效果的关键 | 只关注性能（可能过拟合） |
+| DD_ME_003 | 集成线性回归作为元学习�?| 简单有效，避免过拟�?| 复杂模型（可能过拟合�?|
+| DD_ME_004 | 支持多策略集�?| 适应不同场景，提高灵活�?| 单一策略（限制应用场景） |
+| DD_ME_005 | 强调模型多样�?| 多样性是集成效果的关�?| 只关注性能（可能过拟合�?|
 
-### 10.2 技术决策
-1. **集成策略组合**: 以堆叠为主，混合和投票为辅，适应不同需求
+### 10.2 技术决�?
+1. **集成策略组合**: 以堆叠为主，混合和投票为辅，适应不同需�?
 2. **基础模型选择**: 结合性能、多样性和计算成本综合选择
-3. **权重优化**: 使用线性回归优化权重，确保可解释性和稳定性
-4. **可解释性设计**: 集成SHAP分析，提供模型级和特征级解释
+3. **权重优化**: 使用线性回归优化权重，确保可解释性和稳定�?
+4. **可解释性设�?*: 集成SHAP分析，提供模型级和特征级解释
 5. **监控体系**: 设计全面的技术指标和业务指标监控
 
 ---
 
-> **设计状态**: 本设计文档为L9_MODEL_ENSEMBLER模块的详细施工图纸，基于AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md的架构设计细化实现细节。实施前需要完成代码评审和技术验证。
+> **设计状�?*: 本设计文档为L9_MODEL_ENSEMBLER模块的详细施工图纸，基于AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md的架构设计细化实现细节。实施前需要完成代码评审和技术验证�?
 
-**下一步行动**: 
-1. 评审本设计文档
+**下一步行�?*: 
+1. 评审本设计文�?
 2. 开始v1.0版本代码实现
 3. 设置mlens开发和测试环境
-4. 运行初步技术验证
-5. 集成到Layer 4机器学习层
+4. 运行初步技术验�?
+5. 集成到Layer 4机器学习�

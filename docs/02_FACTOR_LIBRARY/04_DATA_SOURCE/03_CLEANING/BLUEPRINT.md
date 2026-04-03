@@ -4,9 +4,9 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -16,20 +16,20 @@ implementation_progress: 0%
 
 # 数据清洗引擎蓝图
 
-> 清风量化系统 v5.0 - 自动化数据清洗引擎
+> 清风量化系统 v5.0 - 自动化数据清洗引�?
 > **索引**: `DATA.CLN.001`
-> **开发时间**: 10h
-> **核心定位**: 确保数据质量，为因子计算和策略回测提供可靠数据
+> **开发时�?*: 10h
+> **核心定位**: 确保数据质量，为因子计算和策略回测提供可靠数�?
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 |
 |------|------|
-| **自动化** | 规则配置化，减少人工干预 |
-| **可追溯** | 记录所有清洗操作，支持回溯 |
+| **自动�?* | 规则配置化，减少人工干预 |
+| **可追�?* | 记录所有清洗操作，支持回溯 |
 | **保守清洗** | 保留原始数据，只标记异常 |
-| **可配置** | 清洗规则通过YAML配置 |
+| **可配�?* | 清洗规则通过YAML配置 |
 
 
 ## 2. 系统架构
@@ -37,30 +37,30 @@ implementation_progress: 0%
 ### 2.1 清洗引擎架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    数据清洗引擎                                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
-│  │  原始数据   │───▶│  规则引擎   │───▶│  清洗结果   │     │
-│  │  Raw Data  │    │ RuleEngine │    │ CleanResult │     │
-│  └─────────────┘    └─────────────┘    └─────────────┘     │
-│                            │                                 │
-│                            ▼                                 │
-│                     ┌─────────────┐                         │
-│                     │  异常记录   │                         │
-│                     │ AuditLog   │                         │
-│                     └─────────────┘                         │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   数据清洗引擎                                �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌─────────────�?   ┌─────────────�?   ┌─────────────�?    �?
+�? �? 原始数据   │───▶│  规则引擎   │───▶│  清洗结果   �?    �?
+�? �? Raw Data  �?   �?RuleEngine �?   �?CleanResult �?    �?
+�? └─────────────�?   └─────────────�?   └─────────────�?    �?
+�?                           �?                                �?
+�?                           �?                                �?
+�?                    ┌─────────────�?                        �?
+�?                    �? 异常记录   �?                        �?
+�?                    �?AuditLog   �?                        �?
+�?                    └─────────────�?                        �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 清洗流程
 
 ```
-原始数据 ──▶ 缺失值处理 ──▶ 异常值检测 ──▶ 类型转换 ──▶ 范围校验 ──▶ 清洗后数据
-              │               │              │              │
-              ▼               ▼              ▼              ▼
+原始数据 ──�?缺失值处�?──�?异常值检�?──�?类型转换 ──�?范围校验 ──�?清洗后数�?
+              �?              �?             �?             �?
+              �?              �?             �?             �?
           填充/删除       标记/裁剪     格式统一       边界处理
 ```
 
@@ -155,7 +155,7 @@ class DataCleaningEngine:
 
         返回:
             CleaningResult {
-                'data': pd.DataFrame,      # 清洗后数据
+                'data': pd.DataFrame,      # 清洗后数�?
                 'records': List[CleaningRecord], # 操作记录
                 'summary': CleaningSummary    # 清洗摘要
             }
@@ -191,7 +191,7 @@ class DataCleaningEngine:
             rule: 规则
 
         返回:
-            (处理后数据, 清洗记录)
+            (处理后数�? 清洗记录)
         """
         record = CleaningRecord(
             rule_id=rule.rule_id,
@@ -239,7 +239,7 @@ class DataCleaningEngine:
         """验证清洗结果
 
         参数:
-            df: 清洗后数据
+            df: 清洗后数�?
 
         返回:
             验证结果
@@ -264,7 +264,7 @@ class DataCleaningEngine:
         return ValidationResult(errors=errors, warnings=warnings)
 ```
 
-### 3.3 异常值检测
+### 3.3 异常值检�?
 
 ```python
 class OutlierDetector:
@@ -275,11 +275,11 @@ class OutlierDetector:
 
     @staticmethod
     def detect_zscore(series: pd.Series, threshold: float = 3.0) -> pd.Series:
-        """Z-Score异常值检测
+        """Z-Score异常值检�?
 
         参数:
             series: 数据序列
-            threshold: Z-Score阈值
+            threshold: Z-Score阈�?
 
         返回:
             布尔序列，True表示异常
@@ -291,7 +291,7 @@ class OutlierDetector:
 
     @staticmethod
     def detect_iqr(series: pd.Series, factor: float = 1.5) -> pd.Series:
-        """IQR异常值检测
+        """IQR异常值检�?
 
         参数:
             series: 数据序列
@@ -309,7 +309,7 @@ class OutlierDetector:
 
     @staticmethod
     def detect_mad(series: pd.Series, threshold: float = 3.5) -> pd.Series:
-        """MAD异常值检测（适合金融数据）
+        """MAD异常值检测（适合金融数据�?
 
         参数:
             series: 数据序列
@@ -381,7 +381,7 @@ rules:
     severity: error
 ```
 
-### 4.2 异常检测规则
+### 4.2 异常检测规�?
 
 ```yaml
 # config/cleaning_rules/outlier_detection.yaml
@@ -396,7 +396,7 @@ outlier_detection:
 
   actions:
     - flag  # flag, clip, drop
-    preserve_original: true  # 保留原始值，只标记
+    preserve_original: true  # 保留原始值，只标�?
 ```
 
 
@@ -453,7 +453,7 @@ class CleaningResult:
 
 ```python
 class CleaningReport:
-    """清洗报告生成器
+    """清洗报告生成�?
 
     索引: DATA.CLN.001-M03
     """
@@ -472,16 +472,16 @@ class CleaningReport:
 
 ## 清洗摘要
 
-| 指标 | 值 |
+| 指标 | �?|
 |------|-----|
 | 处理行数 | {result.summary.stats.total_rows_processed} |
-| 缺失值填充 | {result.summary.stats.total_missing_filled} |
-| 异常值标记 | {result.summary.stats.total_outliers_flagged} |
-| 错误数 | {result.summary.stats.total_errors} |
+| 缺失值填�?| {result.summary.stats.total_missing_filled} |
+| 异常值标�?| {result.summary.stats.total_outliers_flagged} |
+| 错误�?| {result.summary.stats.total_errors} |
 
 ## 清洗详情
 
-| 规则ID | 列 | 操作 | 处理前行 | 处理后行 | 影响行数 |
+| 规则ID | �?| 操作 | 处理前行 | 处理后行 | 影响行数 |
 |--------|-----|------|----------|----------|----------|
 """
 
@@ -500,41 +500,41 @@ class CleaningReport:
 
 | 模块 | 接口 | 说明 |
 |------|------|------|
-| IntelligentScheduler | schedule() | 获取待清洗数据 |
+| IntelligentScheduler | schedule() | 获取待清洗数�?|
 | DataSourceAdapter | fetch() | 获取原始数据 |
 
 ### 6.2 下游接口
 
 | 模块 | 接口 | 说明 |
 |------|------|------|
-| DataStorage | save() | 存储清洗后数据 |
-| FactorCalculator | calculate() | 使用清洗后数据 |
+| DataStorage | save() | 存储清洗后数�?|
+| FactorCalculator | calculate() | 使用清洗后数�?|
 
 
 ## 7. 监控指标
 
-| 指标 | 说明 | 阈值 |
+| 指标 | 说明 | 阈�?|
 |------|------|------|
 | cleaning_rows_processed | 处理行数/批次 | - |
 | cleaning_missing_filled | 缺失值填充数 | <10% |
-| cleaning_outlier_rate | 异常值比例 | <5% |
-| cleaning_error_rate | 清洗错误率 | <0.1% |
+| cleaning_outlier_rate | 异常值比�?| <5% |
+| cleaning_error_rate | 清洗错误�?| <0.1% |
 | cleaning_latency | 清洗耗时 | <1s/千行 |
 
 
-## 8. 开发任务分解(10h)
+## 8. 开发任务分�?10h)
 
-| 任务 | 时间 | 交付物 |
+| 任务 | 时间 | 交付�?|
 |------|------|--------|
 | 清洗规则引擎 | 3h | CleaningRule, RuleEngine |
-| 缺失值处理 | 1h | Fill/Interolate实现 |
-| 异常值检测 | 2h | OutlierDetector |
+| 缺失值处�?| 1h | Fill/Interolate实现 |
+| 异常值检�?| 2h | OutlierDetector |
 | 验证框架 | 1h | ValidationRule, Validator |
 | 报告生成 | 1h | CleaningReport |
 | OHLCV规则配置 | 1h | ohlcv.yaml |
 | 单元测试 | 1h | test_cleaning_engine.py |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `DATA.CLN.001`
-**最后更新**: 2026-03-29
+**最后更�?*: 2026-03-29

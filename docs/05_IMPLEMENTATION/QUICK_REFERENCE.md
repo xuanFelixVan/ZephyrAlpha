@@ -4,26 +4,26 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 
-# 快速参考
+# 快速参�?
 
-> 清风量化系统 v5.0 的常用命令、API和配置速查表
+> 清风量化系统 v5.0 的常用命令、API和配置速查�?
 
 
-## 1. 常用命令速查表
+## 1. 常用命令速查�?
 
 ### Git命令
 
 ```bash
-# 查看状态
+# 查看状�?
 git status
 
 # 查看日志
@@ -35,7 +35,7 @@ git add .
 # 提交
 git commit -m "feat: 描述"
 
-# 推送
+# 推�?
 git push origin main
 
 # 拉取
@@ -87,7 +87,7 @@ docker-compose logs -f
 # 创建虚拟环境
 python -m venv venv
 
-# 激活虚拟环境
+# 激活虚拟环�?
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 
@@ -100,7 +100,7 @@ python src/main.py
 # 运行测试
 pytest tests/ -v
 
-# 生成覆盖率报告
+# 生成覆盖率报�?
 pytest tests/ --cov=src --cov-report=html
 ```
 
@@ -127,7 +127,7 @@ tail -f logs/error.log
 ```
 
 
-## 2. API快速参考
+## 2. API快速参�?
 
 ### DataHub API
 
@@ -216,7 +216,7 @@ order = executor.execute(
     order_type="limit"
 )
 
-# 查询订单状态
+# 查询订单状�?
 status = executor.get_order_status(order_id="ORD_001")
 
 # 取消订单
@@ -235,7 +235,7 @@ system:
   version: "4.0.2"
   environment: "production"  # development, staging, production
   
-# 数据库配置
+# 数据库配�?
 database:
   host: "localhost"
   port: 5432
@@ -290,16 +290,16 @@ strategies:
       
 # 风险控制配置
 risk_control:
-  max_position_size: 0.1  # 单个头寸最大占比
-  max_daily_loss: 0.02    # 单日最大亏损
-  max_drawdown: 0.2       # 最大回撤
+  max_position_size: 0.1  # 单个头寸最大占�?
+  max_daily_loss: 0.02    # 单日最大亏�?
+  max_drawdown: 0.2       # 最大回�?
   
 # 交易配置
 trading:
   market_open: "09:30"
   market_close: "15:00"
   min_volume: 100000      # 最小成交量
-  max_slippage: 0.001     # 最大滑点
+  max_slippage: 0.001     # 最大滑�?
 ```
 
 ### factors.yaml
@@ -315,8 +315,8 @@ factors:
       period: 20
       
   ALPHA_002:
-    name: "均值回归因子"
-    category: "均值回归"
+    name: "均值回归因�?
+    category: "均值回�?
     enabled: true
     params:
       period: 30
@@ -332,7 +332,7 @@ factor_weights:
 
 ## 4. 常见问题速查
 
-### Q: 如何启动系统？
+### Q: 如何启动系统�?
 
 ```bash
 cd ZephyrAlpha
@@ -342,7 +342,7 @@ pip install -r requirements.txt
 python src/main.py --mode production
 ```
 
-### Q: 如何运行回测？
+### Q: 如何运行回测�?
 
 ```bash
 python scripts/backtest.py \
@@ -352,7 +352,7 @@ python scripts/backtest.py \
   --output results/backtest_s001.html
 ```
 
-### Q: 如何查看日志？
+### Q: 如何查看日志�?
 
 ```bash
 # 实时查看
@@ -365,7 +365,7 @@ tail -f logs/error.log
 tail -f logs/trading.log
 ```
 
-### Q: 如何更新策略参数？
+### Q: 如何更新策略参数�?
 
 ```python
 from qingfeng.modules import StrategyEngine
@@ -397,7 +397,7 @@ kubectl logs -f deployment/qingfeng-datahub
 
 ## 5. 性能优化建议
 
-### 数据库优化
+### 数据库优�?
 
 ```sql
 -- 创建索引
@@ -407,7 +407,7 @@ CREATE INDEX idx_factor_date ON factor_data(factor_id, date);
 -- 查询优化
 EXPLAIN ANALYZE SELECT * FROM market_data WHERE symbol='000001.SZ' AND date>'2026-01-01';
 
--- 表分区
+-- 表分�?
 ALTER TABLE market_data PARTITION BY RANGE (YEAR(date)) (
   PARTITION p2025 VALUES LESS THAN (2026),
   PARTITION p2026 VALUES LESS THAN (2027)
@@ -433,11 +433,11 @@ cache.warmup(symbols=["000001.SZ", "000002.SZ", ...])
 ### 计算优化
 
 ```python
-# 使用向量化计算
+# 使用向量化计�?
 import numpy as np
 
 prices = np.array([100, 101, 102, 103])
-returns = np.diff(prices) / prices[:-1]  # 快速计算
+returns = np.diff(prices) / prices[:-1]  # 快速计�?
 
 # 使用JIT编译
 from numba import jit
@@ -455,31 +455,31 @@ def fast_calculation(data):
 
 ### 系统指标
 
-| 指标 | 正常范围 | 告警阈值 |
+| 指标 | 正常范围 | 告警阈�?|
 |------|---------|---------|
-| CPU使用率 | < 70% | > 80% |
-| 内存使用率 | < 75% | > 85% |
-| 磁盘使用率 | < 80% | > 90% |
+| CPU使用�?| < 70% | > 80% |
+| 内存使用�?| < 75% | > 85% |
+| 磁盘使用�?| < 80% | > 90% |
 | 网络延迟 | < 50ms | > 100ms |
 
 ### 应用指标
 
-| 指标 | 正常范围 | 告警阈值 |
+| 指标 | 正常范围 | 告警阈�?|
 |------|---------|---------|
 | 请求延迟(P99) | < 500ms | > 1000ms |
-| 错误率 | < 0.1% | > 1% |
-| 缓存命中率 | > 90% | < 80% |
-| 吞吐量 | > 1000 QPS | < 100 QPS |
+| 错误�?| < 0.1% | > 1% |
+| 缓存命中�?| > 90% | < 80% |
+| 吞吐�?| > 1000 QPS | < 100 QPS |
 
 ### 业务指标
 
-| 指标 | 正常范围 | 告警阈值 |
+| 指标 | 正常范围 | 告警阈�?|
 |------|---------|---------|
 | 年化收益 | > 15% | < 5% |
 | 夏普比率 | > 1.0 | < 0.5 |
-| 最大回撤 | < 15% | > 20% |
+| 最大回�?| < 15% | > 20% |
 | 胜率 | > 50% | < 40% |
 
 
-**最后更新**: 2026-03-28  
-**维护者**: 清风量化系统
+**最后更�?*: 2026-03-28  
+**维护�?*: 清风量化系统

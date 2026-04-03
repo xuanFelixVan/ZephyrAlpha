@@ -4,9 +4,9 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -14,12 +14,12 @@ implementation_progress: 0%
 ---
 
 
-# 智能下载调度器蓝图
+# 智能下载调度器蓝�?
 
-> 清风量化系统 v5.0 - 智能数据下载调度器
+> 清风量化系统 v5.0 - 智能数据下载调度�?
 > **索引**: `DATA.SCH.001`
-> **开发时间**: 8h
-> **核心定位**: 基于时间和优先级的智能调度，确保数据在正确时间获取
+> **开发时�?*: 8h
+> **核心定位**: 基于时间和优先级的智能调度，确保数据在正确时间获�?
 
 
 ## 1. 设计原则
@@ -27,43 +27,43 @@ implementation_progress: 0%
 | 原则 | 说明 |
 |------|------|
 | **时间驱动** | 盘前、盘中、盘后差异化调度 |
-| **优先级队列** | 紧急任务优先执行 |
-| **自动重试** | 失败任务自动重试，指数退避 |
-| **依赖管理** | 支持任务间依赖关系 |
+| **优先级队�?* | 紧急任务优先执�?|
+| **自动重试** | 失败任务自动重试，指数退�?|
+| **依赖管理** | 支持任务间依赖关�?|
 
 
 ## 2. 系统架构
 
-### 2.1 调度器架构
+### 2.1 调度器架�?
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    智能下载调度器                              │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
-│  │  任务队列   │───▶│  调度器    │───▶│  执行器     │     │
-│  │  PriorityQ  │    │ Scheduler  │    │ Executor   │     │
-│  └─────────────┘    └─────────────┘    └─────────────┘     │
-│         │                  │                  │              │
-│         ▼                  ▼                  ▼              │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
-│  │  任务注册   │    │  时间窗口   │    │  结果回调   │     │
-│  │  TaskReg   │    │ TimeWindow │    │  Callback  │     │
-│  └─────────────┘    └─────────────┘    └─────────────┘     │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   智能下载调度�?                             �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌─────────────�?   ┌─────────────�?   ┌─────────────�?    �?
+�? �? 任务队列   │───▶│  调度�?   │───▶│  执行�?    �?    �?
+�? �? PriorityQ  �?   �?Scheduler  �?   �?Executor   �?    �?
+�? └─────────────�?   └─────────────�?   └─────────────�?    �?
+�?        �?                 �?                 �?             �?
+�?        �?                 �?                 �?             �?
+�? ┌─────────────�?   ┌─────────────�?   ┌─────────────�?    �?
+�? �? 任务注册   �?   �? 时间窗口   �?   �? 结果回调   �?    �?
+�? �? TaskReg   �?   �?TimeWindow �?   �? Callback  �?    �?
+�? └─────────────�?   └─────────────�?   └─────────────�?    �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 时间窗口定义
 
-| 时段 | 时间范围 | 任务类型 | 优先级 |
+| 时段 | 时间范围 | 任务类型 | 优先�?|
 |------|----------|----------|--------|
-| **盘前** | 07:00-09:00 | 日线数据、财经日历、隔夜外盘 | P0 |
+| **盘前** | 07:00-09:00 | 日线数据、财经日历、隔夜外�?| P0 |
 | **早盘** | 09:15-09:30 | 分钟线、Level2快照 | P1 |
-| **盘中** | 09:30-11:30 | 实时行情、异动监控 | P0 |
-| **午盘** | 13:00-15:00 | 分钟线、盘后数据 | P2 |
-| **盘后** | 15:30-22:00 | 日线归档、财务数据、因子计算 | P3 |
+| **盘中** | 09:30-11:30 | 实时行情、异动监�?| P0 |
+| **午盘** | 13:00-15:00 | 分钟线、盘后数�?| P2 |
+| **盘后** | 15:30-22:00 | 日线归档、财务数据、因子计�?| P3 |
 
 
 ## 3. 核心实现
@@ -80,7 +80,7 @@ import heapq
 class Priority(Enum):
     P0_CRITICAL = 0  # 必须立即执行
     P1_HIGH = 1      # 高优先级
-    P2_NORMAL = 2    # 普通
+    P2_NORMAL = 2    # 普�?
     P3_LOW = 3       # 低优先级
 
 class TaskStatus(Enum):
@@ -112,11 +112,11 @@ class DownloadTask:
             self.priority = self.priority.value
 ```
 
-### 3.2 调度器核心
+### 3.2 调度器核�?
 
 ```python
 class IntelligentScheduler:
-    """智能下载调度器
+    """智能下载调度�?
 
     索引: DATA.SCH.001-M01
     上游: DataHub, FactorCalculator
@@ -132,7 +132,7 @@ class IntelligentScheduler:
         self.executor = DownloadExecutor()
 
     def _init_time_windows(self) -> Dict[str, TimeWindow]:
-        """初始化时间窗口"""
+        """初始化时间窗�?""
         return {
             'pre_market': TimeWindow(time(7, 0), time(9, 0), [Priority.P0_CRITICAL]),
             'morning': TimeWindow(time(9, 15), time(9, 30), [Priority.P1_HIGH]),
@@ -142,7 +142,7 @@ class IntelligentScheduler:
         }
 
     def add_task(self, task: DownloadTask) -> str:
-        """添加任务到调度队列
+        """添加任务到调度队�?
 
         参数:
             task: 下载任务
@@ -156,7 +156,7 @@ class IntelligentScheduler:
         return task.task_id
 
     def schedule(self) -> Optional[DownloadTask]:
-        """调度下一个任务
+        """调度下一个任�?
 
         返回:
             下一个要执行的任务，None表示队列为空
@@ -233,11 +233,11 @@ class IntelligentScheduler:
             logger.error(f"Task {task_id} failed after {task.max_retries} retries: {error}")
 ```
 
-### 3.3 执行器
+### 3.3 执行�?
 
 ```python
 class DownloadExecutor:
-    """下载执行器
+    """下载执行�?
 
     索引: DATA.SCH.001-M02
     上游: IntelligentScheduler
@@ -474,7 +474,7 @@ task_defaults:
 |------|------|------|
 | DataHub | request_data_download() | 请求数据下载 |
 | FactorCalculator | request_factor_data() | 请求因子数据 |
-| MonitoringSystem | get_schedule_status() | 获取调度状态 |
+| MonitoringSystem | get_schedule_status() | 获取调度状�?|
 
 ### 6.2 下游接口
 
@@ -487,26 +487,26 @@ task_defaults:
 
 ## 7. 监控指标
 
-| 指标 | 说明 | 阈值 |
+| 指标 | 说明 | 阈�?|
 |------|------|------|
-| scheduler_queue_size | 队列任务数 | <100 |
+| scheduler_queue_size | 队列任务�?| <100 |
 | scheduler_task_latency | 任务调度延迟 | <1s |
-| scheduler_retry_rate | 重试率 | <5% |
-| scheduler_failure_rate | 失败率 | <1% |
+| scheduler_retry_rate | 重试�?| <5% |
+| scheduler_failure_rate | 失败�?| <1% |
 
 
-## 8. 开发任务分解(8h)
+## 8. 开发任务分�?8h)
 
-| 任务 | 时间 | 交付物 |
+| 任务 | 时间 | 交付�?|
 |------|------|--------|
 | 任务队列实现 | 2h | PriorityQ, DownloadTask |
 | 时间窗口调度 | 2h | TimeWindow, Scheduler |
-| 执行器框架 | 1.5h | DownloadExecutor |
+| 执行器框�?| 1.5h | DownloadExecutor |
 | 任务类型定义 | 1h | PreMarket/InTrading/AfterClose Tasks |
 | 配置集成 | 0.5h | scheduler.yaml |
 | 单元测试 | 1h | test_scheduler.py |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `DATA.SCH.001`
-**最后更新**: 2026-03-29
+**最后更�?*: 2026-03-29

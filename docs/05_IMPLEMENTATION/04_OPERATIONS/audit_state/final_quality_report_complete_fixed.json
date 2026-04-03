@@ -21,33 +21,33 @@
         "file_path": "docs\\00_OVERVIEW\\DATA_FLOW.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "message": "文档不在标准分类目录�? 00_OVERVIEW",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\00_OVERVIEW\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "message": "文档不在标准分类目录�? 00_OVERVIEW",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\00_RESOURCES\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "message": "文档不在标准分类目录�? 00_RESOURCES",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "message": "文档不在标准分类目录�? 00_RESOURCES",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\CONFIG_MANAGER_TECHNICAL_REVIEW_REPORT.md",
@@ -55,7 +55,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\CONFIG_MANAGER_TECHNICAL_REVIEW_REPORT.md",
@@ -63,7 +63,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\CONFIG_MANAGER_TECHNICAL_REVIEW_REPORT.md",
@@ -71,7 +71,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\CONFIG_MANAGER_TECHNICAL_REVIEW_REPORT.md",
@@ -79,7 +79,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FEEDBACK_COLLECTOR_TECHNICAL_REVIEW_REPORT.md",
@@ -87,7 +87,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FEEDBACK_COLLECTOR_TECHNICAL_REVIEW_REPORT.md",
@@ -95,7 +95,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FEEDBACK_COLLECTOR_TECHNICAL_REVIEW_REPORT.md",
@@ -103,7 +103,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\FEEDBACK_COLLECTOR_TECHNICAL_REVIEW_REPORT.md",
@@ -111,7 +111,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\HELP_SYSTEM_TECHNICAL_REVIEW_REPORT.md",
@@ -119,7 +119,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\HELP_SYSTEM_TECHNICAL_REVIEW_REPORT.md",
@@ -127,7 +127,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\HELP_SYSTEM_TECHNICAL_REVIEW_REPORT.md",
@@ -135,7 +135,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\HELP_SYSTEM_TECHNICAL_REVIEW_REPORT.md",
@@ -143,7 +143,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_MONITOR_TECHNICAL_REVIEW_REPORT.md",
@@ -151,7 +151,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_MONITOR_TECHNICAL_REVIEW_REPORT.md",
@@ -159,7 +159,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_MONITOR_TECHNICAL_REVIEW_REPORT.md",
@@ -167,7 +167,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_MONITOR_TECHNICAL_REVIEW_REPORT.md",
@@ -175,7 +175,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY.md",
@@ -183,7 +183,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY.md",
@@ -191,7 +191,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY.md",
@@ -199,7 +199,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: status",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 status 字段"
+        "suggestion": "在文档元数据中添�?status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY.md",
@@ -207,7 +207,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY.md",
@@ -215,7 +215,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY.md",
@@ -223,7 +223,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: applicable_scope",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 applicable_scope 字段"
+        "suggestion": "建议在文档元数据中添�?applicable_scope 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md",
@@ -231,7 +231,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md",
@@ -239,7 +239,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md",
@@ -247,7 +247,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md",
@@ -255,7 +255,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\risk_management\\P1_RISK_MITIGATION_DESIGN.md",
@@ -263,7 +263,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\risk_management\\P1_RISK_MITIGATION_DESIGN.md",
@@ -271,7 +271,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\risk_management\\P1_RISK_MITIGATION_DESIGN.md",
@@ -279,7 +279,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\risk_management\\P1_RISK_MITIGATION_DESIGN.md",
@@ -287,7 +287,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\risk_management\\P1_RISK_MITIGATION_DESIGN.md",
@@ -295,7 +295,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: applicable_scope",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 applicable_scope 字段"
+        "suggestion": "建议在文档元数据中添�?applicable_scope 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md",
@@ -303,7 +303,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md",
@@ -311,7 +311,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md",
@@ -319,7 +319,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md",
@@ -327,7 +327,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION.md",
@@ -335,7 +335,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION.md",
@@ -343,7 +343,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION.md",
@@ -351,7 +351,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION.md",
@@ -359,7 +359,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\HELP_SYSTEM_TECHNICAL_SPECIFICATION.md",
@@ -367,7 +367,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\HELP_SYSTEM_TECHNICAL_SPECIFICATION.md",
@@ -375,7 +375,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\HELP_SYSTEM_TECHNICAL_SPECIFICATION.md",
@@ -383,7 +383,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\HELP_SYSTEM_TECHNICAL_SPECIFICATION.md",
@@ -391,7 +391,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\USER_PREFERENCES_TECHNICAL_SPECIFICATION.md",
@@ -399,7 +399,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\USER_PREFERENCES_TECHNICAL_SPECIFICATION.md",
@@ -407,7 +407,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: compliance_level",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 compliance_level 字段"
+        "suggestion": "建议在文档元数据中添�?compliance_level 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\USER_PREFERENCES_TECHNICAL_SPECIFICATION.md",
@@ -415,7 +415,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\USER_PREFERENCES_TECHNICAL_SPECIFICATION.md",
@@ -423,196 +423,196 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\01_UI_DESIGN\\ui_layout_standard.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\ARCHIVED.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_BAOSTOCK.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_IFIND.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_QMT.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_SUPERCMD.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_VALIDATOR.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_11\\LAYER_11_ARCHITECTURE.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_11\\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_11\\LAYER_11_TOOL_INTERFACE_SPECIFICATION.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_FEATURE_OPTIMIZER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_HYPERPARAM_OPT.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_MARKET_DETECTOR.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_MODEL_ENSEMBLER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 04_EXECUTION, 02_FACTOR_LIBRARY, 08_AI_GOVERNANCE, 03_TRADING_TACTICS, 05_IMPLEMENTATION, 07_RESEARCH, 06_ARCHIVE, 01_FRAMEWORK"
       }
     ]
   },
   "recommendations": [
     "完善文档元数据，添加所有必需字段",
-    "将文档移至标准分类目录，提高文档组织性"
+    "将文档移至标准分类目录，提高文档组织�?
   ]
 }

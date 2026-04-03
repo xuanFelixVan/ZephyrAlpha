@@ -16,141 +16,127 @@ implementation_status: 准备阶段
 
 > 清风量化系统 v5.2 - 资源准备
 > **准备日期**: 2026-04-02
-> **实施周期**: 3个月（P0→P1→P2）
-> **目标**: 确保所有资源到位，支持数据源层顺利实施
+> **实施周期**: 3个月（P0→P1→P2�?> **目标**: 确保所有资源到位，支持数据源层顺利实施
 
 
-## 📋 一、开发环境准备
-
+## 📋 一、开发环境准�?
 ### 1.1 Python环境
-| 组件 | 版本要求 | 安装命令 | 验证方法 | 状态 |
+| 组件 | 版本要求 | 安装命令 | 验证方法 | 状�?|
 |------|---------|----------|----------|------|
-| **Python** | 3.9+ | 官网下载安装 | `python --version` | ⏳ 待准备 |
-| **pip** | 21.0+ | 自动安装 | `pip --version` | ⏳ 待准备 |
-| **virtualenv** | 20.0+ | `pip install virtualenv` | `virtualenv --version` | ⏳ 待准备 |
+| **Python** | 3.9+ | 官网下载安装 | `python --version` | �?待准�?|
+| **pip** | 21.0+ | 自动安装 | `pip --version` | �?待准�?|
+| **virtualenv** | 20.0+ | `pip install virtualenv` | `virtualenv --version` | �?待准�?|
 
 ### 1.2 IDE和编辑器
-| 工具 | 用途 | 安装方式 | 配置要求 | 状态 |
+| 工具 | 用�?| 安装方式 | 配置要求 | 状�?|
 |------|------|----------|----------|------|
-| **VS Code** | 主力IDE | 官网下载 | Python扩展、Pylance、GitLens | ⏳ 待准备 |
-| **PyCharm** | 备选IDE | 官网下载 | Professional版本（可选） | ⏳ 待准备 |
-| **Jupyter Notebook** | 数据分析 | `pip install jupyter` | 数据探索和可视化 | ⏳ 待准备 |
+| **VS Code** | 主力IDE | 官网下载 | Python扩展、Pylance、GitLens | �?待准�?|
+| **PyCharm** | 备选IDE | 官网下载 | Professional版本（可选） | �?待准�?|
+| **Jupyter Notebook** | 数据分析 | `pip install jupyter` | 数据探索和可视化 | �?待准�?|
 
 ### 1.3 版本控制
-| 工具 | 版本要求 | 安装命令 | 配置要求 | 状态 |
+| 工具 | 版本要求 | 安装命令 | 配置要求 | 状�?|
 |------|---------|----------|----------|------|
-| **Git** | 2.30+ | 官网下载 | 配置用户名、邮箱、SSH密钥 | ⏳ 待准备 |
-| **GitHub Desktop** | GUI工具 | 官网下载 | 可选，简化Git操作 | ⏳ 待准备 |
+| **Git** | 2.30+ | 官网下载 | 配置用户名、邮箱、SSH密钥 | �?待准�?|
+| **GitHub Desktop** | GUI工具 | 官网下载 | 可选，简化Git操作 | �?待准�?|
 
 
-## 📦 二、开源工具准备
-
-### 2.1 Phase 1 (P0) 开源工具
-
-#### 2.1.1 数据源
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+## 📦 二、开源工具准�?
+### 2.1 Phase 1 (P0) 开源工�?
+#### 2.1.1 数据�?| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **AKShare** | 1.12.0+ | `pip install akshare` | 免费数据源（优先级最高） | [官方文档](https://akshare.akfamily.xyz/) | ⏳ 待安装 |
-| **Tushare** | 1.4.0+ | `pip install tushare` | 专业数据源（备用） | [官方文档](https://tushare.pro/document/2) | ⏳ 待安装 |
+| **AKShare** | 1.12.0+ | `pip install akshare` | 免费数据源（优先级最高） | [官方文档](https://akshare.akfamily.xyz/) | �?待安�?|
+| **Tushare** | 1.4.0+ | `pip install tushare` | 专业数据源（备用�?| [官方文档](https://tushare.pro/document/2) | �?待安�?|
 
 #### 2.1.2 数据缓存
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **Redis** | 7.0+ | 官网下载或Docker | 实时数据缓存 | [官方文档](https://redis.io/documentation) | ⏳ 待安装 |
-| **redis-py** | 5.0+ | `pip install redis` | Python Redis客户端 | [官方文档](https://github.com/redis/redis-py) | ⏳ 待安装 |
+| **Redis** | 7.0+ | 官网下载或Docker | 实时数据缓存 | [官方文档](https://redis.io/documentation) | �?待安�?|
+| **redis-py** | 5.0+ | `pip install redis` | Python Redis客户�?| [官方文档](https://github.com/redis/redis-py) | �?待安�?|
 
 #### 2.1.3 实时通信
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **websockets** | 12.0+ | `pip install websockets` | WebSocket服务器 | [官方文档](https://websockets.readthedocs.io/) | ⏳ 待安装 |
+| **websockets** | 12.0+ | `pip install websockets` | WebSocket服务�?| [官方文档](https://websockets.readthedocs.io/) | �?待安�?|
 
 #### 2.1.4 异步框架
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **asyncio** | 内置 | Python内置 | 异步事件处理 | [官方文档](https://docs.python.org/3/library/asyncio.html) | ✅ 已就绪 |
+| **asyncio** | 内置 | Python内置 | 异步事件处理 | [官方文档](https://docs.python.org/3/library/asyncio.html) | �?已就�?|
 
-### 2.2 Phase 2 (P1) 开源工具
-
-#### 2.2.1 数据库
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+### 2.2 Phase 2 (P1) 开源工�?
+#### 2.2.1 数据�?| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **ClickHouse** | 23.0+ | 官网下载或Docker | 列式数据库 | [官方文档](https://clickhouse.com/docs/en/) | ⏳ 待安装 |
-| **clickhouse-driver** | 0.2.6+ | `pip install clickhouse-driver` | Python ClickHouse客户端 | [官方文档](https://clickhouse-driver.readthedocs.io/) | ⏳ 待安装 |
+| **ClickHouse** | 23.0+ | 官网下载或Docker | 列式数据�?| [官方文档](https://clickhouse.com/docs/en/) | �?待安�?|
+| **clickhouse-driver** | 0.2.6+ | `pip install clickhouse-driver` | Python ClickHouse客户�?| [官方文档](https://clickhouse-driver.readthedocs.io/) | �?待安�?|
 
-#### 2.2.2 分布式计算
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+#### 2.2.2 分布式计�?| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **Dask** | 2024.1.0+ | `pip install dask[complete]` | 分布式计算框架 | [官方文档](https://docs.dask.org/) | ⏳ 待安装 |
-| **distributed** | 2024.1.0+ | `pip install distributed` | Dask分布式调度器 | [官方文档](https://distributed.dask.org/) | ⏳ 待安装 |
+| **Dask** | 2024.1.0+ | `pip install dask[complete]` | 分布式计算框�?| [官方文档](https://docs.dask.org/) | �?待安�?|
+| **distributed** | 2024.1.0+ | `pip install distributed` | Dask分布式调度器 | [官方文档](https://distributed.dask.org/) | �?待安�?|
 
 #### 2.2.3 数据处理
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **Pandas** | 2.0+ | `pip install pandas` | 数据处理 | [官方文档](https://pandas.pydata.org/) | ⏳ 待安装 |
-| **NumPy** | 1.24+ | `pip install numpy` | 数值计算 | [官方文档](https://numpy.org/) | ⏳ 待安装 |
+| **Pandas** | 2.0+ | `pip install pandas` | 数据处理 | [官方文档](https://pandas.pydata.org/) | �?待安�?|
+| **NumPy** | 1.24+ | `pip install numpy` | 数值计�?| [官方文档](https://numpy.org/) | �?待安�?|
 
-### 2.3 Phase 3 (P2) 开源工具
-
+### 2.3 Phase 3 (P2) 开源工�?
 #### 2.3.1 AI和NLP
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **transformers** | 4.35.0+ | `pip install transformers` | NLP模型 | [官方文档](https://huggingface.co/docs/transformers/) | ⏳ 待安装 |
-| **torch** | 2.1.0+ | `pip install torch` | 深度学习框架 | [官方文档](https://pytorch.org/) | ⏳ 待安装 |
-| **jieba** | 0.42.1+ | `pip install jieba` | 中文分词 | [官方文档](https://github.com/fxsjy/jieba) | ⏳ 待安装 |
+| **transformers** | 4.35.0+ | `pip install transformers` | NLP模型 | [官方文档](https://huggingface.co/docs/transformers/) | �?待安�?|
+| **torch** | 2.1.0+ | `pip install torch` | 深度学习框架 | [官方文档](https://pytorch.org/) | �?待安�?|
+| **jieba** | 0.42.1+ | `pip install jieba` | 中文分词 | [官方文档](https://github.com/fxsjy/jieba) | �?待安�?|
 
 #### 2.3.2 高频数据处理
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **InfluxDB** | 2.7+ | 官网下载或Docker | 时序数据库 | [官方文档](https://docs.influxdata.com/) | ⏳ 待安装 |
-| **influxdb-client** | 1.38.0+ | `pip install influxdb-client` | Python InfluxDB客户端 | [官方文档](https://github.com/influxdata/influxdb-client-python) | ⏳ 待安装 |
-| **Kafka** | 3.5+ | 官网下载或Docker | 消息队列 | [官方文档](https://kafka.apache.org/documentation/) | ⏳ 待安装 |
-| **kafka-python** | 2.0.2+ | `pip install kafka-python` | Python Kafka客户端 | [官方文档](https://kafka-python.readthedocs.io/) | ⏳ 待安装 |
+| **InfluxDB** | 2.7+ | 官网下载或Docker | 时序数据�?| [官方文档](https://docs.influxdata.com/) | �?待安�?|
+| **influxdb-client** | 1.38.0+ | `pip install influxdb-client` | Python InfluxDB客户�?| [官方文档](https://github.com/influxdata/influxdb-client-python) | �?待安�?|
+| **Kafka** | 3.5+ | 官网下载或Docker | 消息队列 | [官方文档](https://kafka.apache.org/documentation/) | �?待安�?|
+| **kafka-python** | 2.0.2+ | `pip install kafka-python` | Python Kafka客户�?| [官方文档](https://kafka-python.readthedocs.io/) | �?待安�?|
 
 #### 2.3.3 数据治理
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **DVC** | 3.0+ | `pip install dvc` | 数据版本控制 | [官方文档](https://dvc.org/doc) | ⏳ 待安装 |
-| **Apache Atlas** | 2.3+ | 官网下载或Docker | 数据血缘管理 | [官方文档](https://atlas.apache.org/) | ⏳ 待安装 |
-| **Elasticsearch** | 8.0+ | 官网下载或Docker | 审计日志存储 | [官方文档](https://www.elastic.co/guide/) | ⏳ 待安装 |
+| **DVC** | 3.0+ | `pip install dvc` | 数据版本控制 | [官方文档](https://dvc.org/doc) | �?待安�?|
+| **Apache Atlas** | 2.3+ | 官网下载或Docker | 数据血缘管�?| [官方文档](https://atlas.apache.org/) | �?待安�?|
+| **Elasticsearch** | 8.0+ | 官网下载或Docker | 审计日志存储 | [官方文档](https://www.elastic.co/guide/) | �?待安�?|
 
 ### 2.4 测试工具
-| 工具名称 | 版本要求 | 安装命令 | 用途 | 文档链接 | 状态 |
+| 工具名称 | 版本要求 | 安装命令 | 用�?| 文档链接 | 状�?|
 |---------|---------|----------|------|----------|------|
-| **pytest** | 7.4.0+ | `pip install pytest` | 单元测试框架 | [官方文档](https://docs.pytest.org/) | ⏳ 待安装 |
-| **pytest-asyncio** | 0.21.0+ | `pip install pytest-asyncio` | 异步测试支持 | [官方文档](https://pytest-asyncio.readthedocs.io/) | ⏳ 待安装 |
-| **pytest-cov** | 4.1.0+ | `pip install pytest-cov` | 测试覆盖率 | [官方文档](https://pytest-cov.readthedocs.io/) | ⏳ 待安装 |
-| **locust** | 2.20.0+ | `pip install locust` | 性能测试 | [官方文档](https://docs.locust.io/) | ⏳ 待安装 |
+| **pytest** | 7.4.0+ | `pip install pytest` | 单元测试框架 | [官方文档](https://docs.pytest.org/) | �?待安�?|
+| **pytest-asyncio** | 0.21.0+ | `pip install pytest-asyncio` | 异步测试支持 | [官方文档](https://pytest-asyncio.readthedocs.io/) | �?待安�?|
+| **pytest-cov** | 4.1.0+ | `pip install pytest-cov` | 测试覆盖�?| [官方文档](https://pytest-cov.readthedocs.io/) | �?待安�?|
+| **locust** | 2.20.0+ | `pip install locust` | 性能测试 | [官方文档](https://docs.locust.io/) | �?待安�?|
 
 
-## 💻 三、硬件资源准备
-
-### 3.1 Phase 1 (P0) 硬件需求
-| 资源类型 | 最低配置 | 推荐配置 | 数量 | 用途 | 预估成本 | 状态 |
+## 💻 三、硬件资源准�?
+### 3.1 Phase 1 (P0) 硬件需�?| 资源类型 | 最低配�?| 推荐配置 | 数量 | 用�?| 预估成本 | 状�?|
 |----------|----------|----------|------|------|----------|------|
-| **开发机** | CPU 4核, RAM 16GB, SSD 256GB | CPU 8核, RAM 32GB, SSD 512GB | 1台 | 本地开发测试 | ¥8,000-15,000 | ⏳ 待准备 |
-| **Redis服务器** | CPU 2核, RAM 8GB | CPU 4核, RAM 16GB | 1台 | 实时数据缓存 | ¥3,000-6,000 | ⏳ 待准备 |
+| **开发机** | CPU 4�? RAM 16GB, SSD 256GB | CPU 8�? RAM 32GB, SSD 512GB | 1�?| 本地开发测�?| ¥8,000-15,000 | �?待准�?|
+| **Redis服务�?* | CPU 2�? RAM 8GB | CPU 4�? RAM 16GB | 1�?| 实时数据缓存 | ¥3,000-6,000 | �?待准�?|
 
-**Phase 1总成本**: ¥11,000-21,000
+**Phase 1总成�?*: ¥11,000-21,000
 
-### 3.2 Phase 2 (P1) 硬件需求
-| 资源类型 | 最低配置 | 推荐配置 | 数量 | 用途 | 预估成本 | 状态 |
+### 3.2 Phase 2 (P1) 硬件需�?| 资源类型 | 最低配�?| 推荐配置 | 数量 | 用�?| 预估成本 | 状�?|
 |----------|----------|----------|------|------|----------|------|
-| **ClickHouse服务器** | CPU 8核, RAM 64GB, SSD 1TB | CPU 16核, RAM 128GB, SSD 2TB | 1台 | 历史数据存储 | ¥30,000-60,000 | ⏳ 待准备 |
-| **Dask工作节点** | CPU 4核, RAM 16GB | CPU 8核, RAM 32GB | 3台 | 分布式计算 | ¥9,000-18,000 | ⏳ 待准备 |
+| **ClickHouse服务�?* | CPU 8�? RAM 64GB, SSD 1TB | CPU 16�? RAM 128GB, SSD 2TB | 1�?| 历史数据存储 | ¥30,000-60,000 | �?待准�?|
+| **Dask工作节点** | CPU 4�? RAM 16GB | CPU 8�? RAM 32GB | 3�?| 分布式计�?| ¥9,000-18,000 | �?待准�?|
 
-**Phase 2总成本**: ¥39,000-78,000
+**Phase 2总成�?*: ¥39,000-78,000
 
-### 3.3 Phase 3 (P2) 硬件需求
-| 资源类型 | 最低配置 | 推荐配置 | 数量 | 用途 | 预估成本 | 状态 |
+### 3.3 Phase 3 (P2) 硬件需�?| 资源类型 | 最低配�?| 推荐配置 | 数量 | 用�?| 预估成本 | 状�?|
 |----------|----------|----------|------|------|----------|------|
-| **InfluxDB服务器** | CPU 4核, RAM 32GB, SSD 500GB | CPU 8核, RAM 64GB, SSD 1TB | 1台 | 高频数据存储 | ¥15,000-30,000 | ⏳ 待准备 |
-| **Kafka集群** | CPU 4核, RAM 16GB, SSD 256GB | CPU 8核, RAM 32GB, SSD 512GB | 3台 | 消息队列 | ¥12,000-24,000 | ⏳ 待准备 |
-| **Elasticsearch服务器** | CPU 4核, RAM 16GB, SSD 256GB | CPU 8核, RAM 32GB, SSD 512GB | 1台 | 审计日志存储 | ¥4,000-8,000 | ⏳ 待准备 |
+| **InfluxDB服务�?* | CPU 4�? RAM 32GB, SSD 500GB | CPU 8�? RAM 64GB, SSD 1TB | 1�?| 高频数据存储 | ¥15,000-30,000 | �?待准�?|
+| **Kafka集群** | CPU 4�? RAM 16GB, SSD 256GB | CPU 8�? RAM 32GB, SSD 512GB | 3�?| 消息队列 | ¥12,000-24,000 | �?待准�?|
+| **Elasticsearch服务�?* | CPU 4�? RAM 16GB, SSD 256GB | CPU 8�? RAM 32GB, SSD 512GB | 1�?| 审计日志存储 | ¥4,000-8,000 | �?待准�?|
 
-**Phase 3总成本**: ¥31,000-62,000
+**Phase 3总成�?*: ¥31,000-62,000
 
-### 3.4 硬件总成本
-| 阶段 | 最低成本 | 推荐成本 | 备注 |
+### 3.4 硬件总成�?| 阶段 | 最低成�?| 推荐成本 | 备注 |
 |------|----------|----------|------|
 | **Phase 1** | ¥11,000 | ¥21,000 | 可使用云服务器按需付费 |
 | **Phase 2** | ¥39,000 | ¥78,000 | 可使用云服务器按需付费 |
@@ -158,57 +144,53 @@ implementation_status: 准备阶段
 | **总计** | **¥81,000** | **¥161,000** | 建议使用云服务器降低初期成本 |
 
 
-## 👥 四、人力资源准备
-
+## 👥 四、人力资源准�?
 ### 4.1 团队角色定义
-| 角色 | 人数 | 技能要求 | 职责范围 | 到岗时间 | 状态 |
+| 角色 | 人数 | 技能要�?| 职责范围 | 到岗时间 | 状�?|
 |------|------|----------|----------|----------|------|
-| **数据工程师** | 2人 | Python、Redis、ClickHouse、Dask | 数据源层核心开发 | Week 1 | ⏳ 待招聘 |
-| **后端工程师** | 1人 | Python、WebSocket、异步编程 | 实时数据流开发 | Week 1 | ⏳ 待招聘 |
-| **运维工程师** | 1人 | Linux、Docker、K8s、监控 | 系统部署和运维 | Week 2 | ⏳ 待招聘 |
-| **测试工程师** | 1人 | pytest、性能测试、自动化测试 | 测试和质量保证 | Week 2 | ⏳ 待招聘 |
-| **项目经理** | 1人 | 项目管理、敏捷开发 | 项目协调和进度管理 | Week 1 | ⏳ 待招聘 |
+| **数据工程�?* | 2�?| Python、Redis、ClickHouse、Dask | 数据源层核心开�?| Week 1 | �?待招�?|
+| **后端工程�?* | 1�?| Python、WebSocket、异步编�?| 实时数据流开�?| Week 1 | �?待招�?|
+| **运维工程�?* | 1�?| Linux、Docker、K8s、监�?| 系统部署和运�?| Week 2 | �?待招�?|
+| **测试工程�?* | 1�?| pytest、性能测试、自动化测试 | 测试和质量保�?| Week 2 | �?待招�?|
+| **项目经理** | 1�?| 项目管理、敏捷开�?| 项目协调和进度管�?| Week 1 | �?待招�?|
 
-**团队总人数**: 6人
-
+**团队总人�?*: 6�?
 ### 4.2 外部支持
-| 支持类型 | 人数 | 技能要求 | 支持范围 | 合作方式 | 状态 |
+| 支持类型 | 人数 | 技能要�?| 支持范围 | 合作方式 | 状�?|
 |----------|------|----------|----------|----------|------|
-| **ClickHouse专家** | 1人 | ClickHouse架构、优化、集群管理 | 技术咨询、培训、架构设计 | 外部顾问 | ⏳ 待联系 |
-| **Dask专家** | 1人 | Dask分布式计算、集群管理 | 技术咨询、培训、性能优化 | 外部顾问 | ⏳ 待联系 |
+| **ClickHouse专家** | 1�?| ClickHouse架构、优化、集群管�?| 技术咨询、培训、架构设�?| 外部顾问 | �?待联�?|
+| **Dask专家** | 1�?| Dask分布式计算、集群管�?| 技术咨询、培训、性能优化 | 外部顾问 | �?待联�?|
 
 
-## 📚 五、培训资源准备
-
+## 📚 五、培训资源准�?
 ### 5.1 ClickHouse培训
-| 培训内容 | 培训方式 | 时长 | 资源链接 | 负责人 | 状态 |
+| 培训内容 | 培训方式 | 时长 | 资源链接 | 负责�?| 状�?|
 |----------|----------|------|----------|--------|------|
-| **ClickHouse基础** | 在线课程 | 8小时 | [官方教程](https://clickhouse.com/docs/en/tutorial/) | 外部专家 | ⏳ 待安排 |
-| **ClickHouse SQL优化** | 实战培训 | 4小时 | 内部培训材料 | 外部专家 | ⏳ 待安排 |
-| **ClickHouse集群部署** | 实战培训 | 4小时 | 内部培训材料 | 外部专家 | ⏳ 待安排 |
+| **ClickHouse基础** | 在线课程 | 8小时 | [官方教程](https://clickhouse.com/docs/en/tutorial/) | 外部专家 | �?待安�?|
+| **ClickHouse SQL优化** | 实战培训 | 4小时 | 内部培训材料 | 外部专家 | �?待安�?|
+| **ClickHouse集群部署** | 实战培训 | 4小时 | 内部培训材料 | 外部专家 | �?待安�?|
 
-**ClickHouse培训总时长**: 16小时
+**ClickHouse培训总时�?*: 16小时
 
 ### 5.2 Dask培训
-| 培训内容 | 培训方式 | 时长 | 资源链接 | 负责人 | 状态 |
+| 培训内容 | 培训方式 | 时长 | 资源链接 | 负责�?| 状�?|
 |----------|----------|------|----------|--------|------|
-| **Dask基础** | 在线课程 | 6小时 | [官方教程](https://tutorial.dask.org/) | 外部专家 | ⏳ 待安排 |
-| **Dask分布式计算** | 实战培训 | 4小时 | 内部培训材料 | 外部专家 | ⏳ 待安排 |
-| **Dask性能优化** | 实战培训 | 2小时 | 内部培训材料 | 外部专家 | ⏳ 待安排 |
+| **Dask基础** | 在线课程 | 6小时 | [官方教程](https://tutorial.dask.org/) | 外部专家 | �?待安�?|
+| **Dask分布式计�?* | 实战培训 | 4小时 | 内部培训材料 | 外部专家 | �?待安�?|
+| **Dask性能优化** | 实战培训 | 2小时 | 内部培训材料 | 外部专家 | �?待安�?|
 
-**Dask培训总时长**: 12小时
+**Dask培训总时�?*: 12小时
 
 ### 5.3 其他培训
-| 培训内容 | 培训方式 | 时长 | 资源链接 | 负责人 | 状态 |
+| 培训内容 | 培训方式 | 时长 | 资源链接 | 负责�?| 状�?|
 |----------|----------|------|----------|--------|------|
-| **Redis高级应用** | 在线课程 | 4小时 | [Redis大学](https://university.redis.com/) | 内部讲师 | ⏳ 待安排 |
-| **WebSocket编程** | 实战培训 | 4小时 | 内部培训材料 | 内部讲师 | ⏳ 待安排 |
-| **数据质量管理** | 在线课程 | 6小时 | [Coursera](https://www.coursera.org/) | 内部讲师 | ⏳ 待安排 |
+| **Redis高级应用** | 在线课程 | 4小时 | [Redis大学](https://university.redis.com/) | 内部讲师 | �?待安�?|
+| **WebSocket编程** | 实战培训 | 4小时 | 内部培训材料 | 内部讲师 | �?待安�?|
+| **数据质量管理** | 在线课程 | 6小时 | [Coursera](https://www.coursera.org/) | 内部讲师 | �?待安�?|
 
-**其他培训总时长**: 14小时
+**其他培训总时�?*: 14小时
 
-### 5.4 培训总时长
-| 培训类型 | 总时长 | 完成时限 | 备注 |
+### 5.4 培训总时�?| 培训类型 | 总时�?| 完成时限 | 备注 |
 |----------|--------|----------|------|
 | **ClickHouse培训** | 16小时 | Week 1-2 | 必须完成 |
 | **Dask培训** | 12小时 | Week 1-2 | 必须完成 |
@@ -219,106 +201,75 @@ implementation_status: 准备阶段
 ## 📊 六、资源准备时间表
 
 ### 6.1 Week 1 资源准备
-| 资源类型 | 具体内容 | 负责人 | 完成时限 | 状态 |
+| 资源类型 | 具体内容 | 负责�?| 完成时限 | 状�?|
 |----------|----------|--------|----------|------|
-| **开发环境** | Python、IDE、Git | 开发工程师 | Day 1-2 | ⏳ 待准备 |
-| **P0开源工具** | AKShare、Tushare、Redis、websockets | 开发工程师 | Day 2-3 | ⏳ 待准备 |
-| **硬件资源** | 开发机、Redis服务器 | 运维工程师 | Day 3-5 | ⏳ 待准备 |
-| **人力资源** | 数据工程师、后端工程师、项目经理 | HR | Day 1-5 | ⏳ 待准备 |
-| **培训资源** | ClickHouse培训、Dask培训 | 外部专家 | Day 3-5 | ⏳ 待安排 |
+| **开发环�?* | Python、IDE、Git | 开发工程师 | Day 1-2 | �?待准�?|
+| **P0开源工�?* | AKShare、Tushare、Redis、websockets | 开发工程师 | Day 2-3 | �?待准�?|
+| **硬件资源** | 开发机、Redis服务�?| 运维工程�?| Day 3-5 | �?待准�?|
+| **人力资源** | 数据工程师、后端工程师、项目经�?| HR | Day 1-5 | �?待准�?|
+| **培训资源** | ClickHouse培训、Dask培训 | 外部专家 | Day 3-5 | �?待安�?|
 
 ### 6.2 Week 2 资源准备
-| 资源类型 | 具体内容 | 负责人 | 完成时限 | 状态 |
+| 资源类型 | 具体内容 | 负责�?| 完成时限 | 状�?|
 |----------|----------|--------|----------|------|
-| **测试工具** | pytest、locust | 测试工程师 | Day 1-2 | ⏳ 待准备 |
-| **人力资源** | 运维工程师、测试工程师 | HR | Day 1-3 | ⏳ 待准备 |
-| **培训资源** | Redis培训、WebSocket培训 | 内部讲师 | Day 1-3 | ⏳ 待安排 |
+| **测试工具** | pytest、locust | 测试工程�?| Day 1-2 | �?待准�?|
+| **人力资源** | 运维工程师、测试工程师 | HR | Day 1-3 | �?待准�?|
+| **培训资源** | Redis培训、WebSocket培训 | 内部讲师 | Day 1-3 | �?待安�?|
 
-### 6.3 Month 1 资源准备（Phase 2）
-| 资源类型 | 具体内容 | 负责人 | 完成时限 | 状态 |
+### 6.3 Month 1 资源准备（Phase 2�?| 资源类型 | 具体内容 | 负责�?| 完成时限 | 状�?|
 |----------|----------|--------|----------|------|
-| **P1开源工具** | ClickHouse、Dask、Pandas、NumPy | 开发工程师 | Week 3-4 | ⏳ 待准备 |
-| **硬件资源** | ClickHouse服务器、Dask工作节点 | 运维工程师 | Week 3-4 | ⏳ 待准备 |
+| **P1开源工�?* | ClickHouse、Dask、Pandas、NumPy | 开发工程师 | Week 3-4 | �?待准�?|
+| **硬件资源** | ClickHouse服务器、Dask工作节点 | 运维工程�?| Week 3-4 | �?待准�?|
 
-### 6.4 Month 2-3 资源准备（Phase 3）
-| 资源类型 | 具体内容 | 负责人 | 完成时限 | 状态 |
+### 6.4 Month 2-3 资源准备（Phase 3�?| 资源类型 | 具体内容 | 负责�?| 完成时限 | 状�?|
 |----------|----------|--------|----------|------|
-| **P2开源工具** | InfluxDB、Kafka、DVC、Elasticsearch | 开发工程师 | Month 2-3 | ⏳ 待准备 |
-| **硬件资源** | InfluxDB服务器、Kafka集群、Elasticsearch服务器 | 运维工程师 | Month 2-3 | ⏳ 待准备 |
+| **P2开源工�?* | InfluxDB、Kafka、DVC、Elasticsearch | 开发工程师 | Month 2-3 | �?待准�?|
+| **硬件资源** | InfluxDB服务器、Kafka集群、Elasticsearch服务�?| 运维工程�?| Month 2-3 | �?待准�?|
 
 
-## ✅ 七、资源准备检查清单
-
-### 7.1 Week 1 检查清单
-- [ ] Python环境安装完成
+## �?七、资源准备检查清�?
+### 7.1 Week 1 检查清�?- [ ] Python环境安装完成
 - [ ] IDE和编辑器配置完成
 - [ ] Git版本控制配置完成
 - [ ] AKShare和Tushare安装完成
-- [ ] Redis安装并启动成功
-- [ ] websockets安装完成
+- [ ] Redis安装并启动成�?- [ ] websockets安装完成
 - [ ] 开发机准备就绪
-- [ ] Redis服务器准备就绪
-- [ ] 数据工程师到岗
-- [ ] 后端工程师到岗
-- [ ] 项目经理到岗
+- [ ] Redis服务器准备就�?- [ ] 数据工程师到�?- [ ] 后端工程师到�?- [ ] 项目经理到岗
 - [ ] ClickHouse培训安排完成
 - [ ] Dask培训安排完成
 
-### 7.2 Week 2 检查清单
-- [ ] pytest安装完成
+### 7.2 Week 2 检查清�?- [ ] pytest安装完成
 - [ ] locust安装完成
-- [ ] 运维工程师到岗
-- [ ] 测试工程师到岗
-- [ ] Redis培训完成
+- [ ] 运维工程师到�?- [ ] 测试工程师到�?- [ ] Redis培训完成
 - [ ] WebSocket培训完成
 
-### 7.3 Month 1 检查清单（Phase 2）
-- [ ] ClickHouse安装并启动成功
-- [ ] Dask安装并启动成功
-- [ ] Pandas和NumPy安装完成
-- [ ] ClickHouse服务器准备就绪
-- [ ] Dask工作节点准备就绪
+### 7.3 Month 1 检查清单（Phase 2�?- [ ] ClickHouse安装并启动成�?- [ ] Dask安装并启动成�?- [ ] Pandas和NumPy安装完成
+- [ ] ClickHouse服务器准备就�?- [ ] Dask工作节点准备就绪
 - [ ] ClickHouse培训完成
 - [ ] Dask培训完成
 
-### 7.4 Month 2-3 检查清单（Phase 3）
-- [ ] InfluxDB安装并启动成功
-- [ ] Kafka安装并启动成功
-- [ ] DVC安装完成
-- [ ] Elasticsearch安装并启动成功
-- [ ] InfluxDB服务器准备就绪
-- [ ] Kafka集群准备就绪
-- [ ] Elasticsearch服务器准备就绪
+### 7.4 Month 2-3 检查清单（Phase 3�?- [ ] InfluxDB安装并启动成�?- [ ] Kafka安装并启动成�?- [ ] DVC安装完成
+- [ ] Elasticsearch安装并启动成�?- [ ] InfluxDB服务器准备就�?- [ ] Kafka集群准备就绪
+- [ ] Elasticsearch服务器准备就�?
 
-
-## 📝 八、资源准备注意事项
-
+## 📝 八、资源准备注意事�?
 ### 8.1 成本控制建议
-1. **优先使用云服务器**: 初期使用云服务器按需付费，降低硬件采购成本
-2. **开源工具优先**: 优先使用成熟的开源工具，避免商业软件许可费用
-3. **渐进式投入**: 按照P0→P1→P2顺序渐进式投入资源，避免一次性大额投入
-4. **资源复用**: 开发、测试、生产环境尽可能复用资源
+1. **优先使用云服务器**: 初期使用云服务器按需付费，降低硬件采购成�?2. **开源工具优�?*: 优先使用成熟的开源工具，避免商业软件许可费用
+3. **渐进式投�?*: 按照P0→P1→P2顺序渐进式投入资源，避免一次性大额投�?4. **资源复用**: 开发、测试、生产环境尽可能复用资源
 
 ### 8.2 风险应对
-1. **硬件采购延迟**: 提前2周下单，或使用云服务器快速部署
-2. **人员招聘困难**: 提前启动招聘，或考虑外包和兼职
-3. **培训资源不足**: 优先使用在线培训资源，或邀请外部专家
-4. **开源工具问题**: 准备备选方案，如AKShare不可用时使用Tushare
+1. **硬件采购延迟**: 提前2周下单，或使用云服务器快速部�?2. **人员招聘困难**: 提前启动招聘，或考虑外包和兼�?3. **培训资源不足**: 优先使用在线培训资源，或邀请外部专�?4. **开源工具问�?*: 准备备选方案，如AKShare不可用时使用Tushare
 
 ### 8.3 质量保证
-1. **环境一致性**: 使用Docker容器确保开发、测试、生产环境一致
-2. **版本锁定**: 所有工具使用指定版本，避免版本不一致问题
-3. **配置管理**: 使用配置文件管理所有配置，避免硬编码
-4. **文档记录**: 详细记录所有安装和配置步骤，便于后续维护
-
+1. **环境一致�?*: 使用Docker容器确保开发、测试、生产环境一�?2. **版本锁定**: 所有工具使用指定版本，避免版本不一致问�?3. **配置管理**: 使用配置文件管理所有配置，避免硬编�?4. **文档记录**: 详细记录所有安装和配置步骤，便于后续维�?
 
 ## 📞 九、资源准备联系人
 
-| 资源类型 | 负责人 | 联系方式 | 备注 |
+| 资源类型 | 负责�?| 联系方式 | 备注 |
 |----------|--------|----------|------|
-| **开发环境** | 开发工程师 | - | - |
-| **开源工具** | 开发工程师 | - | - |
-| **硬件资源** | 运维工程师 | - | - |
+| **开发环�?* | 开发工程师 | - | - |
+| **开源工�?* | 开发工程师 | - | - |
+| **硬件资源** | 运维工程�?| - | - |
 | **人力资源** | HR | - | - |
 | **培训资源** | 项目经理 | - | - |
 | **外部专家** | 项目经理 | - | ClickHouse、Dask专家 |
@@ -327,7 +278,5 @@ implementation_status: 准备阶段
 
 **资源准备清单结束**
 
-> 本清单由审批智能体 (Spec-Approver) 生成，确保数据源层实施所需的所有资源到位。
-> 
-> **准备状态**: ⏳ 待准备
-> **下一步行动**: 按照Week 1检查清单开始资源准备
+> 本清单由审批智能�?(Spec-Approver) 生成，确保数据源层实施所需的所有资源到位�?> 
+> **准备状�?*: �?待准�?> **下一步行�?*: 按照Week 1检查清单开始资源准�?

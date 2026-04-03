@@ -86,8 +86,8 @@
       },
       {
         "file_path": "DOCUMENT_AUDIT_v5.1.md",
-        "link_text": "06_FACTOR_REGISTRY",
-        "link_target": "../06_FACTOR_REGISTRY/",
+        "link_text": "06_REGISTRY",
+        "link_target": "../06_REGISTRY/",
         "line_number": 318,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -118,10 +118,10 @@
       },
       {
         "file_path": "DOCUMENT_AUDIT_v5.1.md",
-        "link_text": "06_FACTOR_REGISTRY",
-        "link_target": "06_FACTOR_REGISTRY/",
+        "link_text": "06_REGISTRY",
+        "link_target": "06_REGISTRY/",
         "line_number": 330,
-        "suggested_fix": "docs/02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/",
+        "suggested_fix": "docs/02_FACTOR_LIBRARY/06_REGISTRY/",
         "fix_type": "auto"
       },
       {
@@ -256,7 +256,7 @@
       },
       {
         "file_path": "docs\\MODULE_DESIGN_TEMPLATE.md",
-        "link_text": "数据库设计",
+        "link_text": "数据库设�?,
         "link_target": "06_DATA/DATABASE_DESIGN.md",
         "line_number": 459,
         "suggested_fix": null,
@@ -380,18 +380,18 @@
       },
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
-        "link_text": "01_METHODOLOGY/T.02.FE001.factor_definition.md",
-        "link_target": "../01_METHODOLOGY/T.02.FE001.factor_definition.md",
+        "link_text": "01_STANDARDS/T.02.FE001.factor_definition.md",
+        "link_target": "../01_STANDARDS/T.02.FE001.factor_definition.md",
         "line_number": 179,
-        "suggested_fix": "01_METHODOLOGY/T.02.FE001.factor_definition.md",
+        "suggested_fix": "01_STANDARDS/T.02.FE001.factor_definition.md",
         "fix_type": "auto"
       },
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md",
-        "link_text": "01_METHODOLOGY/ic_analysis.md",
-        "link_target": "../01_METHODOLOGY/ic_analysis.md",
+        "link_text": "01_STANDARDS/ic_analysis.md",
+        "link_target": "../01_STANDARDS/ic_analysis.md",
         "line_number": 180,
-        "suggested_fix": "01_METHODOLOGY/ic_analysis.md",
+        "suggested_fix": "01_STANDARDS/ic_analysis.md",
         "fix_type": "auto"
       },
       {
@@ -432,8 +432,8 @@
     "docs\\02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md": [
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md",
-        "link_text": "因子注册表",
-        "link_target": "../06_FACTOR_REGISTRY/README.md",
+        "link_text": "因子注册�?,
+        "link_target": "../06_REGISTRY/README.md",
         "line_number": 252,
         "suggested_fix": "../../../README.md",
         "fix_type": "auto"
@@ -452,7 +452,7 @@
     "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md": [
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\FACTOR_LIBRARY.md",
-        "link_text": "IC时序图",
+        "link_text": "IC时序�?,
         "link_target": "ic_series.png",
         "line_number": 324,
         "suggested_fix": null,
@@ -470,8 +470,8 @@
       },
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\00_INDEX\\README.md",
-        "link_text": "01_METHODOLOGY",
-        "link_target": "./01_METHODOLOGY/README.md",
+        "link_text": "01_STANDARDS",
+        "link_target": "./01_STANDARDS/README.md",
         "line_number": 27,
         "suggested_fix": "../../../README.md",
         "fix_type": "auto"
@@ -525,10 +525,10 @@
         "fix_type": "manual"
       }
     ],
-    "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md": [
+    "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\ic_analysis.md": [
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
-        "link_text": "IC时序图",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\ic_analysis.md",
+        "link_text": "IC时序�?,
         "link_target": "path/to/ic_plot.png",
         "line_number": 148,
         "suggested_fix": null,
@@ -636,16 +636,16 @@
       },
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
-        "link_text": "血缘追踪/",
-        "link_target": "./血缘追踪/",
+        "link_text": "血缘追�?",
+        "link_target": "./血缘追�?",
         "line_number": 94,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\04_DATA_SOURCE\\iFind\\factor_master_index.md",
-        "link_text": "相关性矩阵/",
-        "link_target": "./相关性矩阵/",
+        "link_text": "相关性矩�?",
+        "link_target": "./相关性矩�?",
         "line_number": 95,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -654,10 +654,10 @@
     "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\ic_reports\\README.md": [
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\ic_reports\\README.md",
-        "link_text": "../01_METHODOLOGY/ic_analysis.md",
-        "link_target": "../01_METHODOLOGY/ic_analysis.md",
+        "link_text": "../01_STANDARDS/ic_analysis.md",
+        "link_target": "../01_STANDARDS/ic_analysis.md",
         "line_number": 63,
-        "suggested_fix": "../../01_METHODOLOGY/ic_analysis.md",
+        "suggested_fix": "../../01_STANDARDS/ic_analysis.md",
         "fix_type": "auto"
       },
       {
@@ -680,10 +680,10 @@
       },
       {
         "file_path": "docs\\02_FACTOR_LIBRARY\\05_BACKTEST\\strategy_reports\\README.md",
-        "link_text": "../01_METHODOLOGY/backtest_standards.md",
-        "link_target": "../01_METHODOLOGY/backtest_standards.md",
+        "link_text": "../01_STANDARDS/backtest_standards.md",
+        "link_target": "../01_STANDARDS/backtest_standards.md",
         "line_number": 74,
-        "suggested_fix": "../../01_METHODOLOGY/backtest_standards.md",
+        "suggested_fix": "../../01_STANDARDS/backtest_standards.md",
         "fix_type": "auto"
       }
     ],
@@ -782,7 +782,7 @@
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\lifecycle.md",
-        "link_text": "评审检查清单",
+        "link_text": "评审检查清�?,
         "link_target": "./review_checklist.md",
         "line_number": 497,
         "suggested_fix": null,
@@ -982,8 +982,8 @@
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
-        "link_text": "T.04.EX004.盘前计划与买入模式",
-        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+        "link_text": "T.04.EX004.盘前计划与买入模�?,
+        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模�?md",
         "line_number": 508,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1024,8 +1024,8 @@
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
-        "link_text": "T.04.EX004.盘前计划与买入模式",
-        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+        "link_text": "T.04.EX004.盘前计划与买入模�?,
+        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模�?md",
         "line_number": 1120,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1066,16 +1066,16 @@
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
-        "link_text": "T.04.EX004.盘前计划与买入模式",
-        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+        "link_text": "T.04.EX004.盘前计划与买入模�?,
+        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模�?md",
         "line_number": 824,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
-        "link_text": "T.03.RM002.波动率目标管理",
-        "link_target": "../02_TACTICS/T.03.RM002.波动率目标管理.md",
+        "link_text": "T.03.RM002.波动率目标管�?,
+        "link_target": "../02_TACTICS/T.03.RM002.波动率目标管�?md",
         "line_number": 825,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1116,16 +1116,16 @@
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
-        "link_text": "T.01.SN002.龙虎榜跟庄",
-        "link_target": "../02_TACTICS/T.01.SN002.龙虎榜跟庄.md",
+        "link_text": "T.01.SN002.龙虎榜跟�?,
+        "link_target": "../02_TACTICS/T.01.SN002.龙虎榜跟�?md",
         "line_number": 833,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
-        "link_text": "T.04.EX004.盘前计划与买入模式",
-        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模式.md",
+        "link_text": "T.04.EX004.盘前计划与买入模�?,
+        "link_target": "../02_TACTICS/T.04.EX004.盘前计划与买入模�?md",
         "line_number": 834,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1134,8 +1134,8 @@
     "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md": [
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-h.md",
-        "link_text": "T.01.VA001.估值分析.md",
-        "link_target": "../main/02_TACTICS/02_ALPHA_FACTORS/03_价值投资/T.01.VA001.估值分析.md",
+        "link_text": "T.01.VA001.估值分�?md",
+        "link_target": "../main/02_TACTICS/02_ALPHA_FACTORS/03_价值投�?T.01.VA001.估值分�?md",
         "line_number": 25,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1144,8 +1144,8 @@
     "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md": [
       {
         "file_path": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-i.md",
-        "link_text": "T.04.EX006.A股交易规则.md",
-        "link_target": "../main/02_TACTICS/04_EXECUTION/T.04.EX006.A股交易规则.md",
+        "link_text": "T.04.EX006.A股交易规�?md",
+        "link_target": "../main/02_TACTICS/04_EXECUTION/T.04.EX006.A股交易规�?md",
         "line_number": 25,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1272,16 +1272,16 @@
       },
       {
         "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
-        "link_text": "MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设计",
-        "link_target": "MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设计",
+        "link_text": "MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设�?,
+        "link_target": "MULTI_ENGINE_BLUEPRINT.md#6-统一接口层设�?,
         "line_number": 899,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\04_EXECUTION\\06_SIMULATION\\README.md",
-        "link_text": "MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策略",
-        "link_target": "MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策略",
+        "link_text": "MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策�?,
+        "link_target": "MULTI_ENGINE_BLUEPRINT.md#7-引擎选择与切换策�?,
         "line_number": 909,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1426,7 +1426,7 @@
     "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\PATH_STANDARD.md": [
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\PATH_STANDARD.md",
-        "link_text": "策略池",
+        "link_text": "策略�?,
         "link_target": "../03_TRADING_TACTICS/INDEX.md",
         "line_number": 155,
         "suggested_fix": "../../INDEX.md",
@@ -1654,7 +1654,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
-        "link_text": "知识库框架",
+        "link_text": "知识库框�?,
         "link_target": "docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/README.md",
         "line_number": 371,
         "suggested_fix": "../../../README.md",
@@ -1764,7 +1764,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D1_findings.md",
-        "link_text": "因子库文档",
+        "link_text": "因子库文�?,
         "link_target": "../02_FACTOR_LIBRARY/README.md",
         "line_number": 157,
         "suggested_fix": "../../../../README.md",
@@ -1838,8 +1838,8 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
-        "link_text": "06_FACTOR_REGISTRY",
-        "link_target": "../06_FACTOR_REGISTRY/",
+        "link_text": "06_REGISTRY",
+        "link_target": "../06_REGISTRY/",
         "line_number": 132,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -1854,18 +1854,18 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
-        "link_text": "因子注册表",
-        "link_target": "../06_FACTOR_REGISTRY/factor_catalog.md",
+        "link_text": "因子注册�?,
+        "link_target": "../06_REGISTRY/factor_catalog.md",
         "line_number": 152,
-        "suggested_fix": "../../../02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/factor_catalog.md",
+        "suggested_fix": "../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md",
         "fix_type": "auto"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
-        "link_text": "06_FACTOR_REGISTRY/factor_catalog.md",
-        "link_target": "../06_FACTOR_REGISTRY/factor_catalog.md",
+        "link_text": "06_REGISTRY/factor_catalog.md",
+        "link_target": "../06_REGISTRY/factor_catalog.md",
         "line_number": 153,
-        "suggested_fix": "../../../02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/factor_catalog.md",
+        "suggested_fix": "../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md",
         "fix_type": "auto"
       },
       {
@@ -1878,10 +1878,10 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
-        "link_text": "因子注册表",
-        "link_target": "../06_FACTOR_REGISTRY/factor_catalog.md",
+        "link_text": "因子注册�?,
+        "link_target": "../06_REGISTRY/factor_catalog.md",
         "line_number": 155,
-        "suggested_fix": "../../../02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/factor_catalog.md",
+        "suggested_fix": "../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md",
         "fix_type": "auto"
       },
       {
@@ -1966,7 +1966,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D2_findings.md",
-        "link_text": "模拟盘记录",
+        "link_text": "模拟盘记�?,
         "link_target": "../99_ARCHIVE/paper_trading/",
         "line_number": 211,
         "suggested_fix": null,
@@ -2080,7 +2080,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLOCK_D3_findings.md",
-        "link_text": "策略池",
+        "link_text": "策略�?,
         "link_target": "./03_TRADING_TACTICS/strategy-pool/index.md",
         "line_number": 116,
         "suggested_fix": "../../../03_TRADING_TACTICS/05_STRATEGY_POOL/index.md",
@@ -2240,8 +2240,8 @@
     "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md": [
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_AUDIT_SUMMARY.md",
-        "link_text": "蓝图描述 vs 实际实现对比表",
-        "link_target": "file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md#严重问题-蓝图与代码巨大差距",
+        "link_text": "蓝图描述 vs 实际实现对比�?,
+        "link_target": "file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md#严重问题-蓝图与代码巨大差�?,
         "line_number": 28,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -2282,7 +2282,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
-        "link_text": "蓝图完整性检查清单",
+        "link_text": "蓝图完整性检查清�?,
         "link_target": "file:///D:/ZephyrAlpha/docs/BLUEPRINT_CHECKLIST.md",
         "line_number": 38,
         "suggested_fix": "../../../BLUEPRINT_CHECKLIST.md",
@@ -2356,7 +2356,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
-        "link_text": "文档治理审计检查清单",
+        "link_text": "文档治理审计检查清�?,
         "link_target": "file:///D:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
         "line_number": 410,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
@@ -2364,7 +2364,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
-        "link_text": "AI文档治理审计提示词",
+        "link_text": "AI文档治理审计提示�?,
         "link_target": "file:///D:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
         "line_number": 411,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
@@ -2548,7 +2548,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PATH_LIST_AUDIT_UPDATE.md",
-        "link_text": "开发标准",
+        "link_text": "开发标�?,
         "link_target": "docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md",
         "line_number": 324,
         "suggested_fix": "../../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md",
@@ -2582,7 +2582,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md",
-        "link_text": "文档治理审计检查清单",
+        "link_text": "文档治理审计检查清�?,
         "link_target": "../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
         "line_number": 286,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
@@ -2590,7 +2590,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md",
-        "link_text": "AI文档治理审计提示词",
+        "link_text": "AI文档治理审计提示�?,
         "link_target": "../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
         "line_number": 287,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
@@ -2624,7 +2624,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
-        "link_text": "AI文档治理审计提示词",
+        "link_text": "AI文档治理审计提示�?,
         "link_target": "docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
         "line_number": 395,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
@@ -2673,7 +2673,7 @@
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
         "link_text": "factor_definition.md",
-        "link_target": "file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/01_METHODOLOGY/factor_definition.md",
+        "link_target": "file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/01_STANDARDS/factor_definition.md",
         "line_number": 406,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -2704,7 +2704,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
-        "link_text": "文档治理审计检查清单",
+        "link_text": "文档治理审计检查清�?,
         "link_target": "docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
         "line_number": 413,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
@@ -2712,7 +2712,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
-        "link_text": "AI文档治理审计提示词",
+        "link_text": "AI文档治理审计提示�?,
         "link_target": "docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
         "line_number": 414,
         "suggested_fix": "../../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
@@ -2746,7 +2746,7 @@
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\TEMP_FILE_AUDIT_REPORT.md",
-        "link_text": "开发标准",
+        "link_text": "开发标�?,
         "link_target": "docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md",
         "line_number": 238,
         "suggested_fix": "../../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md",
@@ -2915,9 +2915,9 @@
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md",
         "link_text": "因子计算框架",
-        "link_target": "../../../02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_CALCULATION_FRAMEWORK.md",
+        "link_target": "../../../02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
         "line_number": 538,
-        "suggested_fix": "../../02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_CALCULATION_FRAMEWORK.md",
+        "suggested_fix": "../../02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
         "fix_type": "auto"
       }
     ],
@@ -2941,9 +2941,9 @@
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_COMBINATION_TECHNICAL_SPECIFICATION.md",
         "link_text": "因子合成方法",
-        "link_target": "../../../02_FACTOR_LIBRARY/01_METHODOLOGY/factor_synthesis.md",
+        "link_target": "../../../02_FACTOR_LIBRARY/01_STANDARDS/factor_synthesis.md",
         "line_number": 592,
-        "suggested_fix": "../../02_FACTOR_LIBRARY/01_METHODOLOGY/factor_synthesis.md",
+        "suggested_fix": "../../02_FACTOR_LIBRARY/01_STANDARDS/factor_synthesis.md",
         "fix_type": "auto"
       }
     ],
@@ -2967,9 +2967,9 @@
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_IC_TECHNICAL_SPECIFICATION.md",
         "link_text": "IC分析体系",
-        "link_target": "../../../02_FACTOR_LIBRARY/01_METHODOLOGY/ic_analysis.md",
+        "link_target": "../../../02_FACTOR_LIBRARY/01_STANDARDS/ic_analysis.md",
         "line_number": 542,
-        "suggested_fix": "../../02_FACTOR_LIBRARY/01_METHODOLOGY/ic_analysis.md",
+        "suggested_fix": "../../02_FACTOR_LIBRARY/01_STANDARDS/ic_analysis.md",
         "fix_type": "auto"
       }
     ],
@@ -2993,9 +2993,9 @@
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_STORE_TECHNICAL_SPECIFICATION.md",
         "link_text": "因子计算框架",
-        "link_target": "../../../02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_CALCULATION_FRAMEWORK.md",
+        "link_target": "../../../02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
         "line_number": 581,
-        "suggested_fix": "../../02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_CALCULATION_FRAMEWORK.md",
+        "suggested_fix": "../../02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
         "fix_type": "auto"
       }
     ],
@@ -3598,15 +3598,15 @@
     "docs\\09_AUDIT\\INDEX_AUDIT.md": [
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "个人快速审计",
-        "link_target": "./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md#快速扫描",
+        "link_text": "个人快速审�?,
+        "link_target": "./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md#快速扫�?,
         "line_number": 31,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "使用检查清单",
+        "link_text": "使用检查清�?,
         "link_target": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md",
         "line_number": 32,
         "suggested_fix": null,
@@ -3614,8 +3614,8 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "生成简要报告",
-        "link_target": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#个人版",
+        "link_text": "生成简要报�?,
+        "link_target": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#个人�?,
         "line_number": 33,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -3623,15 +3623,15 @@
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
         "link_text": "生成标准报告",
-        "link_target": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#ai版",
+        "link_target": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#ai�?,
         "line_number": 43,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "快速检查清单",
-        "link_target": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#快速检查",
+        "link_text": "快速检查清�?,
+        "link_target": "./TEMPLATES/AUDIT_WORKPAPER_TEMPLATE.md#快速检�?,
         "line_number": 53,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -3646,7 +3646,7 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "文档健康度扫描",
+        "link_text": "文档健康度扫�?,
         "link_target": "./TOOLS/AUDIT_TOOLS_OVERVIEW.md#文档扫描",
         "line_number": 55,
         "suggested_fix": null,
@@ -3670,7 +3670,7 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "新增代码专项检查",
+        "link_text": "新增代码专项检�?,
         "link_target": "./TEMPLATES/AUDIT_FINDING_TRACKER.md#代码增长",
         "line_number": 64,
         "suggested_fix": null,
@@ -3686,16 +3686,16 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "版本一致性检查清单",
-        "link_target": "./STANDARDS/AUDIT_STANDARDS.md#版本一致性",
+        "link_text": "版本一致性检查清�?,
+        "link_target": "./STANDARDS/AUDIT_STANDARDS.md#版本一致�?,
         "line_number": 72,
         "suggested_fix": null,
         "fix_type": "manual"
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "系统健康度评估报告",
-        "link_target": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#健康度评估",
+        "link_text": "系统健康度评估报�?,
+        "link_target": "./REPORTS/AUDIT_REPORT_TEMPLATE.md#健康度评�?,
         "line_number": 73,
         "suggested_fix": null,
         "fix_type": "manual"
@@ -3718,7 +3718,7 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "合规检查清单",
+        "link_text": "合规检查清�?,
         "link_target": "./STANDARDS/AUDIT_ACCEPTANCE_CRITERIA.md#合规标准",
         "line_number": 82,
         "suggested_fix": null,
@@ -3734,7 +3734,7 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "审计术语库",
+        "link_text": "审计术语�?,
         "link_target": "./STANDARDS/AUDIT_TERMINOLOGY.md",
         "line_number": 91,
         "suggested_fix": null,
@@ -3766,7 +3766,7 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\INDEX_AUDIT.md",
-        "link_text": "审计发现跟踪器",
+        "link_text": "审计发现跟踪�?,
         "link_target": "./TEMPLATES/AUDIT_FINDING_TRACKER.md",
         "line_number": 101,
         "suggested_fix": null,
@@ -3834,7 +3834,7 @@
       },
       {
         "file_path": "docs\\09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md",
-        "link_text": "大规模文件系统深度审计框架",
+        "link_text": "大规模文件系统深度审计框�?,
         "link_target": "file:///d:/ZephyrAlpha/docs/09_AUDIT/MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
         "line_number": 332,
         "suggested_fix": "../MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
@@ -3844,7 +3844,7 @@
     "docs\\09_AUDIT\\STANDARDS\\AUDIT_STANDARDS.md": [
       {
         "file_path": "docs\\09_AUDIT\\STANDARDS\\AUDIT_STANDARDS.md",
-        "link_text": "大规模文件系统深度审计框架",
+        "link_text": "大规模文件系统深度审计框�?,
         "link_target": "file:///d:/ZephyrAlpha/docs/09_AUDIT/MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
         "line_number": 261,
         "suggested_fix": "../MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
@@ -3854,32 +3854,32 @@
     "docs\\09_AUDIT\\TEMPLATES\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md": [
       {
         "file_path": "docs\\09_AUDIT\\TEMPLATES\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md",
-        "link_text": "大规模文件系统深度审计框架",
+        "link_text": "大规模文件系统深度审计框�?,
         "link_target": "file:///d:/ZephyrAlpha/docs/09_AUDIT/MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
         "line_number": 645,
         "suggested_fix": "../MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md",
         "fix_type": "auto"
       }
     ],
-    "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md": [
+    "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md": [
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
-        "link_text": "多引擎数据一致性设计方案.md",
-        "link_target": "design/data_consistency/多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
+        "link_text": "多引擎数据一致性设计方�?md",
+        "link_target": "design/data_consistency/多引擎数据一致性设计方�?md",
         "line_number": 655,
-        "suggested_fix": "多引擎数据一致性设计方案.md",
+        "suggested_fix": "多引擎数据一致性设计方�?md",
         "fix_type": "auto"
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
-        "link_text": "Saga模式实现流程图.md",
-        "link_target": "design/data_consistency/Saga模式实现流程图.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
+        "link_text": "Saga模式实现流程�?md",
+        "link_target": "design/data_consistency/Saga模式实现流程�?md",
         "line_number": 656,
-        "suggested_fix": "Saga模式实现流程图.md",
+        "suggested_fix": "Saga模式实现流程�?md",
         "fix_type": "auto"
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
         "link_text": "补偿事务设计文档.md",
         "link_target": "design/data_consistency/补偿事务设计文档.md",
         "line_number": 657,
@@ -3887,7 +3887,7 @@
         "fix_type": "auto"
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
         "link_text": "MULTI_ENGINE_BLUEPRINT.md",
         "link_target": "../04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md",
         "line_number": 775,
@@ -3895,7 +3895,7 @@
         "fix_type": "auto"
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
         "link_text": "STORAGE_TIER.md",
         "link_target": "../05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md",
         "line_number": 776,
@@ -3903,7 +3903,7 @@
         "fix_type": "auto"
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
         "link_text": "ENGINE_ADAPTER_DESIGN.md",
         "link_target": "../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md",
         "line_number": 777,
@@ -3911,7 +3911,7 @@
         "fix_type": "manual"
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
         "link_text": "TRADING_COST_MODEL.md",
         "link_target": "../design/trading_costs/交易成本模型算法文档.md",
         "line_number": 778,
@@ -4070,7 +4070,7 @@
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
-        "link_text": "数据预处理标准",
+        "link_text": "数据预处理标�?,
         "link_target": "file:///d:/ZephyrAlpha/docs/DATA_PREPROCESSING_STANDARD.md",
         "line_number": 1145,
         "suggested_fix": null,

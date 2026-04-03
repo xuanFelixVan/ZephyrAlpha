@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 数据清洗
@@ -18,19 +18,19 @@ implementation_status: 进行中
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先级**: P1 - 核心模块
-> **Layer**: Layer 0 (数据层)
+> **优先�?*: P1 - 核心模块
+> **Layer**: Layer 0 (数据�?
 > **索引**: D.04.CLN.001
 
 ---
 
 ## 1. 概述
 
-数据清洗是量化系统的基础，确保进入系统的数据准确、完整、一致。
+数据清洗是量化系统的基础，确保进入系统的数据准确、完整、一致�?
 
-**清洗流程**：
+**清洗流程**�?
 ```
-原始数据 → 去重 → 缺失值处理 → 异常值检测 → 格式转换 → 标准化 → 质量检查 → 存储
+原始数据 �?去重 �?缺失值处�?�?异常值检�?�?格式转换 �?标准�?�?质量检�?�?存储
 ```
 
 ---
@@ -134,7 +134,7 @@ class DataCleaner:
         if 'deduplication' in rules:
             df_cleaned = self._deduplicate(df_cleaned, rules['deduplication'])
 
-        # 2. 缺失值处理
+        # 2. 缺失值处�?
         if 'missing_value' in rules:
             df_cleaned = self._fill_missing(df_cleaned, rules['missing_value'])
 
@@ -158,7 +158,7 @@ class DataCleaner:
         return df.drop_duplicates(subset=keys, keep=keep)
 
     def _fill_missing(self, df: pd.DataFrame, config: dict) -> pd.DataFrame:
-        """缺失值填充"""
+        """缺失值填�?""
         df_filled = df.copy()
 
         for col, method in config.items():
@@ -176,7 +176,7 @@ class DataCleaner:
             elif method == 0 or method == '0':
                 df_filled[col] = df_filled[col].fillna(0)
             elif method == 'industry_mean':
-                # 需要行业信息，简化为全局均值
+                # 需要行业信息，简化为全局均�?
                 df_filled[col] = df_filled[col].fillna(df_filled[col].mean())
 
         return df_filled
@@ -186,7 +186,7 @@ class DataCleaner:
         df: pd.DataFrame,
         detection_rules: list
     ) -> tuple:
-        """异常值检测"""
+        """异常值检�?""
         anomalies = {}
         df_checked = df.copy()
 
@@ -194,7 +194,7 @@ class DataCleaner:
             if rule == 'price_inversion' and 'high' in df.columns and 'low' in df.columns:
                 mask = df_checked['high'] < df_checked['low']
                 anomalies['price_inversion'] = mask.sum()
-                # 修正：取high和low的均值
+                # 修正：取high和low的均�?
                 df_checked.loc[mask, 'high'] = df_checked.loc[mask, ['high', 'low']].max(axis=1)
                 df_checked.loc[mask, 'low'] = df_checked.loc[mask, ['high', 'low']].min(axis=1)
 
@@ -212,14 +212,14 @@ class DataCleaner:
                 returns = df_checked['close'].pct_change()
                 mask = returns.abs() > 0.11
                 anomalies['limit_move'] = mask.sum()
-                # 涨跌停数据保留，但标记
+                # 涨跌停数据保留，但标�?
 
         return df_checked, anomalies
 ```
 
 ---
 
-## 4. 数据质量检查
+## 4. 数据质量检�?
 
 ### 4.1 质量检查器
 
@@ -229,7 +229,7 @@ class DataQualityChecker:
 
     def check(self, df: pd.DataFrame, data_type: str) -> dict:
         """
-        检查数据质量
+        检查数据质�?
 
         Returns:
         --------
@@ -237,7 +237,7 @@ class DataQualityChecker:
         """
         issues = []
 
-        # 检查缺失值
+        # 检查缺失�?
         missing = df.isnull().sum()
         if missing.any():
             issues.append({
@@ -246,7 +246,7 @@ class DataQualityChecker:
                 'severity': 'HIGH'
             })
 
-        # 检查重复
+        # 检查重�?
         duplicates = df.duplicated().sum()
         if duplicates > 0:
             issues.append({
@@ -255,7 +255,7 @@ class DataQualityChecker:
                 'severity': 'MEDIUM'
             })
 
-        # 数据类型特定检查
+        # 数据类型特定检�?
         if data_type == 'OHLCV':
             issues.extend(self._check_ohlcv(df))
         elif data_type == 'FUNDAMENTAL':
@@ -271,7 +271,7 @@ class DataQualityChecker:
         }
 
     def _check_ohlcv(self, df: pd.DataFrame) -> list:
-        """OHLCV数据特定检查"""
+        """OHLCV数据特定检�?""
         issues = []
 
         if 'high' in df.columns and 'low' in df.columns:
@@ -298,10 +298,10 @@ class DataQualityChecker:
         return issues
 
     def _check_fundamental(self, df: pd.DataFrame) -> list:
-        """基本面数据特定检查"""
+        """基本面数据特定检�?""
         issues = []
 
-        # 检查负值
+        # 检查负�?
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         for col in numeric_cols:
             if (df[col] < 0).any():
@@ -318,17 +318,17 @@ class DataQualityChecker:
 
 ```python
 class QualityReportGenerator:
-    """数据质量报告生成器"""
+    """数据质量报告生成�?""
 
     def generate(self, check_result: dict) -> str:
         """生成质量报告"""
-        status = "✅ PASS" if check_result['passed'] else "❌ FAIL"
+        status = "�?PASS" if check_result['passed'] else "�?FAIL"
 
         report = f"""
 # 数据质量报告
 
-## 总体状态
-- **状态**: {status}
+## 总体状�?
+- **状�?*: {status}
 - **质量评分**: {check_result['score']:.1f}/100
 - **数据行数**: {check_result['row_count']}
 
@@ -372,11 +372,11 @@ class IncrementalCleaner:
         Parameters:
         -----------
         new_data : pd.DataFrame
-            新数据
+            新数�?
         data_type : str
             数据类型
         key_columns : list
-            主键列
+            主键�?
 
         Returns:
         --------
@@ -394,7 +394,7 @@ class IncrementalCleaner:
         # 清洗
         cleaned = self.cleaner.clean(combined, data_type)
 
-        # 只保留最新数据
+        # 只保留最新数�?
         cleaned = cleaned.sort_values(key_columns).drop_duplicates(
             subset=key_columns,
             keep='last'
@@ -433,7 +433,7 @@ data_cleaning:
       anomaly_detection:
         - "negative_value"
 
-  # 质量检查阈值
+  # 质量检查阈�?
   quality_thresholds:
     min_score: 90
     max_missing_ratio: 0.05
@@ -447,8 +447,8 @@ data_cleaning:
 ```
 04_INFRASTRUCTURE/
 ├── STORAGE_ARCHITECTURE.md      # 存储架构
-├── DAILY_PIPELINE.md            # 数据流水线
-└── DATA_CLEANING.md            # 本文档 ⭐
+├── DAILY_PIPELINE.md            # 数据流水�?
+└── DATA_CLEANING.md            # 本文�?�?
 ```
 
 ---
@@ -457,10 +457,10 @@ data_cleaning:
 
 | 接口 | 说明 |
 |------|------|
-| **上游接口** | 智能下载调度器、多数据源适配器 |
-| **下游接口** | 数据存储、质量报告系统 |
+| **上游接口** | 智能下载调度器、多数据源适配�?|
+| **下游接口** | 数据存储、质量报告系�?|
 | **输入格式** | pd.DataFrame (原始数据) |
-| **输出格式** | pd.DataFrame (清洗后数据) |
+| **输出格式** | pd.DataFrame (清洗后数�? |
 
 ---
 

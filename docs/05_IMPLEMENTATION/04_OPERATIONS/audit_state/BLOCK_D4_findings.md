@@ -4,17 +4,17 @@ version: 5.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构审计标准
-applicable_scope: 全系统质量监控
+applicable_scope: 全系统质量监�?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# BLOCK_D4_findings.md - D4块审计发现
+# BLOCK_D4_findings.md - D4块审计发�?
 
-> **审计块**: D4 (06_ARCHIVE ~ 08_USER_EXPERIENCE)
+> **审计�?*: D4 (06_ARCHIVE ~ 08_USER_EXPERIENCE)
 > **审计日期**: 2026-03-31
 > **审计模式**: Sentinel v5.1
 
@@ -22,10 +22,10 @@ implementation_status: 进行中
 
 ## 📋 问题摘要
 
-| # | 严重性 | 问题类型 | 文件 | 修复方向 |
+| # | 严重�?| 问题类型 | 文件 | 修复方向 |
 |---|--------|----------|------|----------|
 | 1 | 🟠 P1 | 版本v5.0 vs 系统v5.1 | 08_USER_EXPERIENCE/README.md | 更新版本 |
-| 2 | 🟡 P2 | 版本v1.0 vs 系统v5.1 | 07_RESEARCH/README.md | 更新版本或确认Layer -1特殊性 |
+| 2 | 🟡 P2 | 版本v1.0 vs 系统v5.1 | 07_RESEARCH/README.md | 更新版本或确认Layer -1特殊�?|
 
 ---
 
@@ -33,42 +33,42 @@ implementation_status: 进行中
 
 ### 06_ARCHIVE (归档目录)
 
-| 目录 | 文档数 | 主要文档 |
+| 目录 | 文档�?| 主要文档 |
 |------|--------|----------|
-| main/ | 15+ | BLUEPRINTS/, CHANGELOG.md, 审计报告等 |
-| factor-library/ | 3 | README.md, ifind_factors_list.md等 |
-| v4_development/ | 2 | v4.0开发文档 |
-| 根目录 | 4 | 战术/技术/策略手册v1.0 |
+| main/ | 15+ | BLUEPRINTS/, CHANGELOG.md, 审计报告�?|
+| factor-library/ | 3 | README.md, ifind_factors_list.md�?|
+| v4_development/ | 2 | v4.0开发文�?|
+| 根目�?| 4 | 战术/技�?策略手册v1.0 |
 
-**版本状态**: 06_ARCHIVE/README.md 已更新至v5.1 ✅
+**版本状�?*: 06_ARCHIVE/README.md 已更新至v5.1 �?
 
 ### 07_RESEARCH (研究阶段)
 
-| 目录 | 文档数 | 主要文档 |
+| 目录 | 文档�?| 主要文档 |
 |------|--------|----------|
 | 01_ENVIRONMENT/ | 2 | README.md, docker_setup.md |
-| 02_EXPLORATORY_ANALYSIS/ | 3 | README.md, correlation_analysis.md等 |
+| 02_EXPLORATORY_ANALYSIS/ | 3 | README.md, correlation_analysis.md�?|
 | 03_PATTERN_RECOGNITION/ | 2 | README.md, candle_patterns.md |
 | 04_EXPERIMENT_TRACKING/ | 2 | BLUEPRINT.md, experiment_tracking.md |
-| 根目录 | 1 | README.md |
+| 根目�?| 1 | README.md |
 
-**版本状态**: 全部v1.0 (研究阶段，Layer -1)
+**版本状�?*: 全部v1.0 (研究阶段，Layer -1)
 
 ### 08_USER_EXPERIENCE (用户体验)
 
-| 目录 | 文档数 | 主要文档 |
+| 目录 | 文档�?| 主要文档 |
 |------|--------|----------|
 | 01_UI_DESIGN/ | 1 | 界面布局.md |
 | 04_NOZYIO/ | 2 | README.md, ARCHIVED.md |
-| 根目录 | 1 | README.md |
+| 根目�?| 1 | README.md |
 
-**版本状态**: v5.0 (需要更新至v5.1)
+**版本状�?*: v5.0 (需要更新至v5.1)
 
 ---
 
 ## 🔍 详细问题分析
 
-### D4-P1-001: 08_USER_EXPERIENCE/README.md 版本不一致
+### D4-P1-001: 08_USER_EXPERIENCE/README.md 版本不一�?
 
 **位置**: [08_USER_EXPERIENCE/README.md](../../../../README.md)
 
@@ -76,50 +76,50 @@ implementation_status: 进行中
 - 文档标题显示 v5.0
 - 版本历史记录显示 v5.0
 
-**当前值**: v5.0
-**期望值**: v5.1
-**差异**: 与系统版本v5.1不一致
+**当前�?*: v5.0
+**期望�?*: v5.1
+**差异**: 与系统版本v5.1不一�?
 
 **修复**: 更新为v5.1
 
 ---
 
-### D4-P2-001: 07_RESEARCH/README.md 版本特殊性确认
+### D4-P2-001: 07_RESEARCH/README.md 版本特殊性确�?
 
 **位置**: [07_RESEARCH/README.md](../../../../README.md)
 
 **问题**:
 - 文档版本显示 v1.0
-- 标注为 Layer -1 (研究阶段)
+- 标注�?Layer -1 (研究阶段)
 
-**分析**: 研究阶段文档可能保持独立版本号，因为：
+**分析**: 研究阶段文档可能保持独立版本号，因为�?
 - 属于AI研究Agent专属使用
 - Layer -1 表示在主系统之外
-- 与生产系统版本解耦
+- 与生产系统版本解�?
 
 **修复选项**:
 1. 保持v1.0（研究阶段特殊性）
 2. 更新为v5.1以匹配主系统
 
-**建议**: 保持v1.0，添加说明表示与主系统版本解耦
+**建议**: 保持v1.0，添加说明表示与主系统版本解�?
 
 ---
 
-## ✅ 修复执行记录
+## �?修复执行记录
 
-### 2026-03-31 D4块审查 - 修复完成
+### 2026-03-31 D4块审�?- 修复完成
 
-| # | 问题编号 | 修复操作 | 状态 | 修复日期 |
+| # | 问题编号 | 修复操作 | 状�?| 修复日期 |
 |---|----------|----------|------|----------|
-| 1 | D4-P1-001 | 08_USER_EXPERIENCE/README.md版本v5.0 → v5.1 | ✅ 已修复 | 2026-03-31 |
-| 2 | D4-P2-001 | 07_RESEARCH/README.md版本确认（建议保持v1.0） | ✅ 已确认 | 2026-03-31 |
+| 1 | D4-P1-001 | 08_USER_EXPERIENCE/README.md版本v5.0 �?v5.1 | �?已修�?| 2026-03-31 |
+| 2 | D4-P2-001 | 07_RESEARCH/README.md版本确认（建议保持v1.0�?| �?已确�?| 2026-03-31 |
 
 ### 修复详情
 
 **1. 08_USER_EXPERIENCE/README.md版本更新**:
-- 版本: v5.0 → v5.1
-- 标题: v5.0 → v5.1
-- 更新日期: 2026-03-28 → 2026-03-31
+- 版本: v5.0 �?v5.1
+- 标题: v5.0 �?v5.1
+- 更新日期: 2026-03-28 �?2026-03-31
 - 版本历史新增v5.1条目
 
 **2. 07_RESEARCH/README.md版本确认**:
@@ -130,5 +130,5 @@ implementation_status: 进行中
 
 **审计完成时间**: 2026-03-31
 **修复完成时间**: 2026-03-31
-**审计模式**: D4块完整审计+修复
-**下次审计块**: E1 (09_RESEARCH_LOG审查)
+**审计模式**: D4块完整审�?修复
+**下次审计�?*: E1 (09_RESEARCH_LOG审查)

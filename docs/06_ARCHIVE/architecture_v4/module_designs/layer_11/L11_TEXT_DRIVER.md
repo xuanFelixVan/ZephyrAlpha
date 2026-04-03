@@ -4,25 +4,25 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 layer: Layer 11
 module_type: 核心模块
 priority: P0
 estimated_hours: 40
 standard_type: 设计文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # L11_TEXT_DRIVER: 文字驱动核心模块设计文档
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-02  
-> **所属层级**: Layer 11 - 文字驱动层  
-> **设计状态**: ✅ 设计完成  
-> **优先级**: P0 (核心模块)
+> **所属层�?*: Layer 11 - 文字驱动�? 
+> **设计状�?*: �?设计完成  
+> **优先�?*: P0 (核心模块)
 
 ---
 
@@ -30,9 +30,9 @@ implementation_status: 进行中
 
 - [1. 模块概述](#1-模块概述)
 - [2. 功能设计](#2-功能设计)
-- [3. 技术架构](#3-技术架构)
+- [3. 技术架构](#3-技术架�?
 - [4. 接口设计](#4-接口设计)
-- [5. 数据流设计](#5-数据流设计)
+- [5. 数据流设计](#5-数据流设�?
 - [6. 配置管理](#6-配置管理)
 - [7. 错误处理](#7-错误处理)
 - [8. 测试方案](#8-测试方案)
@@ -44,12 +44,12 @@ implementation_status: 进行中
 
 ### 1.1 功能定位
 
-**L11_TEXT_DRIVER**是Layer 11的核心模块，负责将用户的自然语言描述转换为系统操作指令。
+**L11_TEXT_DRIVER**是Layer 11的核心模块，负责将用户的自然语言描述转换为系统操作指令�?
 
-**核心职责**：
+**核心职责**�?
 - 🎯 **自然语言理解**：理解用户的文字描述
 - 🧠 **意图识别**：识别用户的操作意图
-- 📊 **参数提取**：从描述中提取关键参数
+- 📊 **参数提取**：从描述中提取关键参�?
 - 🔧 **工具调用**：调用对应的系统工具
 - 💬 **结果反馈**：将执行结果转换为自然语言
 
@@ -59,17 +59,17 @@ implementation_status: 进行中
 输入:
   - 用户文字描述
   - 对话历史
-  - 系统状态
+  - 系统状�?
 
 输出:
   - 工具调用指令
   - 执行结果反馈
   - 智能建议
 
-不包含:
-  - 模型推理（由Agent模块负责）
-  - 工具实现（由工具模块负责）
-  - UI渲染（由Web界面负责）
+不包�?
+  - 模型推理（由Agent模块负责�?
+  - 工具实现（由工具模块负责�?
+  - UI渲染（由Web界面负责�?
 ```
 
 ### 1.3 依赖关系
@@ -99,7 +99,7 @@ implementation_status: 进行中
 
 **功能描述**：理解用户的自然语言描述
 
-**实现方式**：
+**实现方式**�?
 ```python
 class NaturalLanguageUnderstanding:
     """自然语言理解"""
@@ -124,15 +124,15 @@ class NaturalLanguageUnderstanding:
                 "holding_period": 5,
                 "stop_loss": 0.1
             },
-            "confidence": 0.95  # 置信度
+            "confidence": 0.95  # 置信�?
         }
         """
         prompt = f"""
-        分析以下用户输入，提取意图和关键参数：
+        分析以下用户输入，提取意图和关键参数�?
         
         用户输入: {user_input}
         
-        请返回JSON格式：
+        请返回JSON格式�?
         {{
             "intent": "意图类型",
             "entities": {{}},
@@ -146,30 +146,30 @@ class NaturalLanguageUnderstanding:
 
 #### 2.1.2 意图识别
 
-**支持的意图类型**：
+**支持的意图类�?*�?
 
 | 意图类型 | 描述 | 示例 |
 |----------|------|------|
-| **configure_strategy** | 配置策略 | "创建一个动量因子策略" |
+| **configure_strategy** | 配置策略 | "创建一个动量因子策�? |
 | **adjust_risk_control** | 调整风控 | "把最大回撤限制调整到10%" |
-| **query_status** | 查询状态 | "告诉我系统当前状态" |
-| **run_backtest** | 运行回测 | "对这个策略运行2023年的回测" |
-| **export_report** | 导出报告 | "导出本月的交易报告" |
-| **get_suggestion** | 获取建议 | "给我一些策略建议" |
+| **query_status** | 查询状�?| "告诉我系统当前状�? |
+| **run_backtest** | 运行回测 | "对这个策略运�?023年的回测" |
+| **export_report** | 导出报告 | "导出本月的交易报�? |
+| **get_suggestion** | 获取建议 | "给我一些策略建�? |
 
-**意图识别逻辑**：
+**意图识别逻辑**�?
 ```python
 class IntentRecognizer:
-    """意图识别器"""
+    """意图识别�?""
     
     def recognize(self, user_input: str) -> str:
         """识别用户意图"""
         
-        # 关键词匹配
+        # 关键词匹�?
         keywords = {
             "configure_strategy": ["创建", "配置", "设置", "策略"],
             "adjust_risk_control": ["调整", "风控", "回撤", "止损"],
-            "query_status": ["查询", "状态", "表现", "持仓"],
+            "query_status": ["查询", "状�?, "表现", "持仓"],
             "run_backtest": ["回测", "测试", "验证"],
             "export_report": ["导出", "报告", "下载"],
             "get_suggestion": ["建议", "推荐", "意见"]
@@ -184,11 +184,11 @@ class IntentRecognizer:
 
 #### 2.1.3 参数提取
 
-**参数提取规则**：
+**参数提取规则**�?
 
 ```python
 class ParameterExtractor:
-    """参数提取器"""
+    """参数提取�?""
     
     def extract(self, user_input: str, intent: str) -> dict:
         """提取参数"""
@@ -207,7 +207,7 @@ class ParameterExtractor:
         # 策略类型
         strategy_types = {
             "动量": "momentum",
-            "价值": "value",
+            "价�?: "value",
             "质量": "quality",
             "成长": "growth"
         }
@@ -217,7 +217,7 @@ class ParameterExtractor:
         
         # 持仓周期
         import re
-        match = re.search(r"持仓(\d+)天", user_input)
+        match = re.search(r"持仓(\d+)�?, user_input)
         if match:
             params["holding_period"] = int(match.group(1))
         
@@ -254,7 +254,7 @@ class ConversationManager:
             self.history = self.history[-self.max_history:]
     
     def get_context(self, last_n: int = 5) -> str:
-        """获取上下文"""
+        """获取上下�?""
         recent = self.history[-last_n:]
         return "\n".join([
             f"{msg['role']}: {msg['content']}"
@@ -269,7 +269,7 @@ class SmartPrompter:
     """智能提示"""
     
     def suggest_next_action(self, context: dict) -> str:
-        """建议下一步操作"""
+        """建议下一步操�?""
         
         if context.get("strategy_configured"):
             return "策略已配置，是否需要运行回测验证？"
@@ -281,49 +281,49 @@ class SmartPrompter:
 
 ---
 
-## 3. 技术架构
+## 3. 技术架�?
 
-### 3.1 架构图
+### 3.1 架构�?
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  用户输入                                                 │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  NaturalLanguageUnderstanding                           │
-│  ├─ InputPreprocessor (输入预处理)                       │
-│  ├─ IntentRecognizer (意图识别)                          │
-│  └─ ParameterExtractor (参数提取)                        │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  ConversationManager (对话管理)                          │
-│  ├─ HistoryManager (历史管理)                            │
-│  ├─ ContextBuilder (上下文构建)                          │
-│  └─ MemoryManager (记忆管理)                             │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  ToolDispatcher (工具调度)                               │
-│  ├─ ToolSelector (工具选择)                              │
-│  ├─ ParameterValidator (参数验证)                        │
-│  └─ ExecutionMonitor (执行监控)                          │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  ResultFormatter (结果格式化)                            │
-│  ├─ NaturalLanguageGenerator (自然语言生成)              │
-│  ├─ SmartPrompter (智能提示)                             │
-│  └─ FeedbackCollector (反馈收集)                         │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────�?
+�? 用户输入                                                 �?
+└─────────────────────────────────────────────────────────�?
+                        �?
+┌─────────────────────────────────────────────────────────�?
+�? NaturalLanguageUnderstanding                           �?
+�? ├─ InputPreprocessor (输入预处�?                       �?
+�? ├─ IntentRecognizer (意图识别)                          �?
+�? └─ ParameterExtractor (参数提取)                        �?
+└─────────────────────────────────────────────────────────�?
+                        �?
+┌─────────────────────────────────────────────────────────�?
+�? ConversationManager (对话管理)                          �?
+�? ├─ HistoryManager (历史管理)                            �?
+�? ├─ ContextBuilder (上下文构�?                          �?
+�? └─ MemoryManager (记忆管理)                             �?
+└─────────────────────────────────────────────────────────�?
+                        �?
+┌─────────────────────────────────────────────────────────�?
+�? ToolDispatcher (工具调度)                               �?
+�? ├─ ToolSelector (工具选择)                              �?
+�? ├─ ParameterValidator (参数验证)                        �?
+�? └─ ExecutionMonitor (执行监控)                          �?
+└─────────────────────────────────────────────────────────�?
+                        �?
+┌─────────────────────────────────────────────────────────�?
+�? ResultFormatter (结果格式�?                            �?
+�? ├─ NaturalLanguageGenerator (自然语言生成)              �?
+�? ├─ SmartPrompter (智能提示)                             �?
+�? └─ FeedbackCollector (反馈收集)                         �?
+└─────────────────────────────────────────────────────────�?
 ```
 
-### 3.2 核心类设计
+### 3.2 核心类设�?
 
 ```python
 class TextDriver:
-    """文字驱动核心类"""
+    """文字驱动核心�?""
     
     def __init__(self, config: dict):
         self.nlu = NaturalLanguageUnderstanding(config["model"])
@@ -346,7 +346,7 @@ class TextDriver:
             understanding["entities"]
         )
         
-        # 4. 格式化结果
+        # 4. 格式化结�?
         response = self.result_formatter.format(tool_result)
         
         # 5. 更新对话历史
@@ -403,29 +403,29 @@ class IToolDispatcher(ABC):
 
 ---
 
-## 5. 数据流设计
+## 5. 数据流设�?
 
 ### 5.1 主数据流
 
 ```
 用户输入
-  ↓
-[预处理] → 清洗、分词、标准化
-  ↓
-[意图识别] → 识别操作意图
-  ↓
-[参数提取] → 提取关键参数
-  ↓
-[上下文构建] → 结合对话历史
-  ↓
-[工具选择] → 选择合适的工具
-  ↓
-[参数验证] → 验证参数合法性
-  ↓
-[工具执行] → 执行工具操作
-  ↓
-[结果格式化] → 生成自然语言响应
-  ↓
+  �?
+[预处理] �?清洗、分词、标准化
+  �?
+[意图识别] �?识别操作意图
+  �?
+[参数提取] �?提取关键参数
+  �?
+[上下文构建] �?结合对话历史
+  �?
+[工具选择] �?选择合适的工具
+  �?
+[参数验证] �?验证参数合法�?
+  �?
+[工具执行] �?执行工具操作
+  �?
+[结果格式化] �?生成自然语言响应
+  �?
 用户反馈
 ```
 
@@ -468,11 +468,11 @@ tool_result = {
 }
 
 # 响应
-response = """✅ 策略配置成功！
+response = """�?策略配置成功�?
 
 策略ID: strategy_1
 策略类型: 动量因子策略
-持仓周期: 5天
+持仓周期: 5�?
 止损比例: 10%
 
 预计年化收益: 15-25%
@@ -528,7 +528,7 @@ text_driver:
 import yaml
 
 class ConfigManager:
-    """配置管理器"""
+    """配置管理�?""
     
     def __init__(self, config_path: str):
         with open(config_path, 'r', encoding='utf-8') as f:
@@ -571,22 +571,22 @@ class ToolDispatchError(TextDriverError):
 
 ```python
 class ErrorHandler:
-    """错误处理器"""
+    """错误处理�?""
     
     def handle(self, error: Exception, context: dict) -> str:
         """处理错误"""
         
         if isinstance(error, IntentRecognitionError):
-            return "抱歉，我不太理解您的意思，能换种说法吗？"
+            return "抱歉，我不太理解您的意思，能换种说法吗�?
         
         elif isinstance(error, ParameterExtractionError):
-            return f"参数提取失败，请提供更详细的信息。"
+            return f"参数提取失败，请提供更详细的信息�?
         
         elif isinstance(error, ToolDispatchError):
             return f"操作执行失败：{str(error)}"
         
         else:
-            return "系统出现错误，请稍后重试。"
+            return "系统出现错误，请稍后重试�?
 ```
 
 ---
@@ -601,7 +601,7 @@ def test_intent_recognition():
     recognizer = IntentRecognizer()
     
     # 测试策略配置意图
-    intent = recognizer.recognize("我想创建一个动量因子策略")
+    intent = recognizer.recognize("我想创建一个动量因子策�?)
     assert intent == "configure_strategy"
     
     # 测试风控调整意图
@@ -627,7 +627,7 @@ def test_parameter_extraction():
 
 ```python
 def test_end_to_end():
-    """端到端测试"""
+    """端到端测�?""
     driver = TextDriver(config)
     
     # 测试完整流程
@@ -635,7 +635,7 @@ def test_end_to_end():
     
     assert "策略配置成功" in response
     assert "动量因子策略" in response
-    assert "5天" in response
+    assert "5�? in response
     assert "10%" in response
 ```
 
@@ -652,8 +652,8 @@ def test_end_to_end():
   - Ollama (本地LLM)
   - Open WebUI (Web界面)
   
-资源需求:
-  CPU: 4核+
+资源需�?
+  CPU: 4�?
   内存: 16GB+
   GPU: 8GB+ (推荐)
   存储: 50GB+
@@ -669,14 +669,14 @@ def main():
     # 加载配置
     config = ConfigManager("config/layer_11/text_driver_config.yaml").config
     
-    # 初始化文字驱动
+    # 初始化文字驱�?
     driver = TextDriver(config)
     
     # 启动服务
-    print("文字驱动模块已启动")
+    print("文字驱动模块已启�?)
     
     # 测试
-    response = driver.process("查询系统状态")
+    response = driver.process("查询系统状�?)
     print(response)
 
 if __name__ == "__main__":
@@ -692,12 +692,12 @@ if __name__ == "__main__":
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
 | [Layer 11架构蓝图](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11整体架构 |
-| [Layer 11工具封装蓝图](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | 工具封装架构、单一AI层设计 |
-| [Layer 11工具接口规范](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | 所有模块工具接口详细定义 |
-| [量化交易Agent模块](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agent框架、模型管理、工具集成 |
+| [Layer 11工具封装蓝图](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | 工具封装架构、单一AI层设�?|
+| [Layer 11工具接口规范](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | 所有模块工具接口详细定�?|
+| [量化交易Agent模块](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agent框架、模型管理、工具集�?|
 
 ---
 
 > **设计完成时间**: 2026-04-02  
-> **设计状态**: ✅ 已完成  
+> **设计状�?*: �?已完�? 
 > **下一阶段**: 编码实施

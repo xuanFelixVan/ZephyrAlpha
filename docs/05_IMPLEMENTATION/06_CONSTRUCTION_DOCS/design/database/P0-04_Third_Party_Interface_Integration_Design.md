@@ -4,17 +4,17 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构师
-standard_type: 专业量化机构第三方接口集成标准
-applicable_scope: 多引擎接口集成
+owner: 首席蓝图架构�?
+standard_type: 专业量化机构第三方接口集成标�?
+applicable_scope: 多引擎接口集�?
 compliance_level: 专业机构标准
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# 第三方接口集成设计（专业量化机构标准）
+# 第三方接口集成设计（专业量化机构标准�?
 
-> 清风量化系统 v5.0 - 专业量化机构标准第三方接口集成设计
+> 清风量化系统 v5.0 - 专业量化机构标准第三方接口集成设�?
 > **集成引擎**: vn.py, RQAlpha, Backtrader, QMT, Backtesting.py
 > **设计原则**: 接口统一、适配器模式、松耦合、易扩展
 
@@ -23,37 +23,37 @@ implementation_status: 进行中
 ### 引擎集成架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    统一引擎接口层                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          EngineInterface (统一接口)                   │  │
-│  │  - create_order()    创建订单                         │  │
-│  │  - cancel_order()    取消订单                         │  │
-│  │  - query_order()     查询订单                         │  │
-│  │  - query_position()  查询持仓                         │  │
-│  │  - query_account()   查询账户                         │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓ 适配器模式
-┌─────────────────────────────────────────────────────────────┐
-│                    引擎适配器层                               │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
-│  │VnpyAdapter│ │RQAlphaAdapter│ │BacktraderAdapter│ │QMTAdapter│ │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
-│  ┌──────────┐                                              │
-│  │BacktestingAdapter│                                      │
-│  └──────────┘                                              │
-└─────────────────────────────────────────────────────────────┘
-                            ↓ 第三方引擎
-┌─────────────────────────────────────────────────────────────┐
-│                    第三方引擎层                               │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
-│  │   vn.py  │ │  RQAlpha │ │Backtrader│ │   QMT    │      │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
-│  ┌──────────┐                                              │
-│  │Backtesting.py│                                          │
-│  └──────────┘                                              │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   统一引擎接口�?                            �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         EngineInterface (统一接口)                   �? �?
+�? �? - create_order()    创建订单                         �? �?
+�? �? - cancel_order()    取消订单                         �? �?
+�? �? - query_order()     查询订单                         �? �?
+�? �? - query_position()  查询持仓                         �? �?
+�? �? - query_account()   查询账户                         �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
+                            �?适配器模�?
+┌─────────────────────────────────────────────────────────────�?
+�?                   引擎适配器层                               �?
+�? ┌──────────�?┌──────────�?┌──────────�?┌──────────�?     �?
+�? │VnpyAdapter�?│RQAlphaAdapter�?│BacktraderAdapter�?│QMTAdapter�?�?
+�? └──────────�?└──────────�?└──────────�?└──────────�?     �?
+�? ┌──────────�?                                             �?
+�? │BacktestingAdapter�?                                     �?
+�? └──────────�?                                             �?
+└─────────────────────────────────────────────────────────────�?
+                            �?第三方引�?
+┌─────────────────────────────────────────────────────────────�?
+�?                   第三方引擎层                               �?
+�? ┌──────────�?┌──────────�?┌──────────�?┌──────────�?     �?
+�? �?  vn.py  �?�? RQAlpha �?│Backtrader�?�?  QMT    �?     �?
+�? └──────────�?└──────────�?└──────────�?└──────────�?     �?
+�? ┌──────────�?                                             �?
+�? │Backtesting.py�?                                         �?
+�? └──────────�?                                             �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ---
@@ -73,7 +73,7 @@ class EngineInterface(ABC):
     
     @abstractmethod
     async def initialize(self, config: Dict[str, Any]) -> bool:
-        """初始化引擎"""
+        """初始化引�?""
         pass
     
     @abstractmethod
@@ -88,7 +88,7 @@ class EngineInterface(ABC):
     
     @abstractmethod
     async def health_check(self) -> Dict[str, Any]:
-        """健康检查"""
+        """健康检�?""
         pass
     
     @abstractmethod
@@ -182,9 +182,9 @@ class EngineInterface(ABC):
 
 ---
 
-## 2. vn.py引擎适配器 (VnpyAdapter)
+## 2. vn.py引擎适配�?(VnpyAdapter)
 
-### 2.1 适配器实现
+### 2.1 适配器实�?
 
 ```python
 from typing import Dict, Any, List, Optional
@@ -200,7 +200,7 @@ from vnpy.trader.object import (
 )
 
 class VnpyAdapter(EngineInterface):
-    """vn.py引擎适配器"""
+    """vn.py引擎适配�?""
     
     def __init__(self, engine_id: str, config: Dict[str, Any]):
         self.engine_id = engine_id
@@ -222,7 +222,7 @@ class VnpyAdapter(EngineInterface):
             
             return True
         except Exception as e:
-            print(f"vn.py初始化失败: {e}")
+            print(f"vn.py初始化失�? {e}")
             return False
     
     async def connect(self) -> bool:
@@ -245,9 +245,9 @@ class VnpyAdapter(EngineInterface):
             return False
     
     async def health_check(self) -> Dict[str, Any]:
-        """健康检查"""
+        """健康检�?""
         try:
-            # 检查引擎状态
+            # 检查引擎状�?
             status = self.main_engine.get_gateway(self.gateway_name)
             
             return {
@@ -296,7 +296,7 @@ class VnpyAdapter(EngineInterface):
                 reference=f"ZEPHYR_{account_id}"
             )
             
-            # 发送订单
+            # 发送订�?
             order_id = self.main_engine.send_order(req, self.gateway_name)
             
             return {
@@ -501,9 +501,9 @@ class VnpyAdapter(EngineInterface):
 
 ---
 
-## 3. RQAlpha引擎适配器 (RQAlphaAdapter)
+## 3. RQAlpha引擎适配�?(RQAlphaAdapter)
 
-### 3.1 适配器实现
+### 3.1 适配器实�?
 
 ```python
 from typing import Dict, Any, List, Optional
@@ -512,7 +512,7 @@ import rqalpha as rq
 from rqalpha.const import SIDE, POSITION_EFFECT
 
 class RQAlphaAdapter(EngineInterface):
-    """RQAlpha引擎适配器"""
+    """RQAlpha引擎适配�?""
     
     def __init__(self, engine_id: str, config: Dict[str, Any]):
         self.engine_id = engine_id
@@ -526,13 +526,13 @@ class RQAlphaAdapter(EngineInterface):
             self.env = rq.create_env(config)
             return True
         except Exception as e:
-            print(f"RQAlpha初始化失败: {e}")
+            print(f"RQAlpha初始化失�? {e}")
             return False
     
     async def connect(self) -> bool:
         """连接RQAlpha引擎"""
         try:
-            # RQAlpha不需要连接
+            # RQAlpha不需要连�?
             return True
         except Exception as e:
             print(f"RQAlpha连接失败: {e}")
@@ -549,7 +549,7 @@ class RQAlphaAdapter(EngineInterface):
             return False
     
     async def health_check(self) -> Dict[str, Any]:
-        """健康检查"""
+        """健康检�?""
         try:
             return {
                 'engine_id': self.engine_id,
@@ -604,7 +604,7 @@ class RQAlphaAdapter(EngineInterface):
     async def cancel_order(self, order_id: str) -> bool:
         """取消订单"""
         try:
-            # RQAlpha不支持取消订单
+            # RQAlpha不支持取消订�?
             return False
         except Exception as e:
             print(f"取消订单失败: {e}")
@@ -612,7 +612,7 @@ class RQAlphaAdapter(EngineInterface):
     
     async def query_order(self, order_id: str) -> Dict[str, Any]:
         """查询订单"""
-        # RQAlpha不支持查询订单
+        # RQAlpha不支持查询订�?
         return {}
     
     async def query_orders(
@@ -621,7 +621,7 @@ class RQAlphaAdapter(EngineInterface):
         status: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """查询订单列表"""
-        # RQAlpha不支持查询订单列表
+        # RQAlpha不支持查询订单列�?
         return []
     
     async def query_position(
@@ -744,7 +744,7 @@ class EngineManagerService:
     ) -> bool:
         """注册引擎"""
         try:
-            # 创建引擎适配器
+            # 创建引擎适配�?
             if engine_type == EngineType.VNPY:
                 adapter = VnpyAdapter(engine_id, config)
             elif engine_type == EngineType.RQALPHA:
@@ -752,7 +752,7 @@ class EngineManagerService:
             else:
                 raise ValueError(f"不支持的引擎类型: {engine_type}")
             
-            # 初始化引擎
+            # 初始化引�?
             success = await adapter.initialize(config)
             
             if success:
@@ -792,7 +792,7 @@ class EngineManagerService:
             return False
     
     async def health_check_engine(self, engine_id: str) -> Dict[str, Any]:
-        """健康检查引擎"""
+        """健康检查引�?""
         try:
             engine = self.engines.get(engine_id)
             
@@ -811,7 +811,7 @@ class EngineManagerService:
             }
     
     async def health_check_all(self) -> List[Dict[str, Any]]:
-        """健康检查所有引擎"""
+        """健康检查所有引�?""
         results = []
         
         for engine_id in self.engines:
@@ -840,16 +840,16 @@ class EngineManagerService:
 | **交易方向** | buy/sell | LONG/SHORT | BUY/SELL |
 | **订单类型** | limit/market | LIMIT/MARKET | LIMIT/MARKET |
 | **交易所** | SH/SZ | SHFE/SZSE | SH/SZ |
-| **订单状态** | pending/submitted/filled | NOTTRADED/TRADED | pending/filled |
+| **订单状�?* | pending/submitted/filled | NOTTRADED/TRADED | pending/filled |
 
 ### 5.2 错误处理
 
 | 错误类型 | 处理方式 | 重试策略 |
 |----------|----------|----------|
-| **连接失败** | 记录日志，返回错误 | 重试3次，间隔5秒 |
-| **订单失败** | 记录日志，返回错误 | 不重试 |
-| **查询失败** | 记录日志，返回空结果 | 重试2次，间隔2秒 |
-| **超时** | 记录日志，返回超时错误 | 重试1次 |
+| **连接失败** | 记录日志，返回错�?| 重试3次，间隔5�?|
+| **订单失败** | 记录日志，返回错�?| 不重�?|
+| **查询失败** | 记录日志，返回空结果 | 重试2次，间隔2�?|
+| **超时** | 记录日志，返回超时错�?| 重试1�?|
 
 ### 5.3 性能要求
 
@@ -863,5 +863,5 @@ class EngineManagerService:
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状态**: ✅ 已完成  
-**下一步**: P0-5 多引擎协同器详细设计
+**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
+**下一�?*: P0-5 多引擎协同器详细设计

@@ -4,9 +4,9 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -14,12 +14,12 @@ implementation_progress: 0%
 ---
 
 
-# 研究实验追踪蓝图（简化版）
+# 研究实验追踪蓝图（简化版�?
 
-> 清风量化系统 v5.0 的研究实验追踪方案
+> 清风量化系统 v5.0 的研究实验追踪方�?
 > **索引**: `EXP_001`
-> **注意**: 本蓝图采用"购买而非自研"策略，使用Weights & Biases (wandb.ai)
-> **理由**: wandb免费版足够个人使用，支持Python一行代码集成
+> **注意**: 本蓝图采�?购买而非自研"策略，使用Weights & Biases (wandb.ai)
+> **理由**: wandb免费版足够个人使用，支持Python一行代码集�?
 
 
 ## 1. 设计原则
@@ -27,25 +27,25 @@ implementation_progress: 0%
 | 原则 | 说明 |
 |------|------|
 | 购买而非自研 | 使用wandb.ai，不自研实验追踪 |
-| 零学习成本 | wandb一行代码即可开始追踪 |
-| 永久免费 | 个人使用免费，足够中小规模实验 |
-| 云端同步 | 实验数据云端存储，不丢数据 |
+| 零学习成�?| wandb一行代码即可开始追�?|
+| 永久免费 | 个人使用免费，足够中小规模实�?|
+| 云端同步 | 实验数据云端存储，不丢数�?|
 
 
 ## 2. 方案对比
 
 | 方案 | 自研系统 | wandb.ai(推荐) |
 |------|----------|----------------|
-| 开发时间 | 1-2个月 | 5分钟集成 |
-| 功能完整度 | 50% | 95% |
+| 开发时�?| 1-2个月 | 5分钟集成 |
+| 功能完整�?| 50% | 95% |
 | 免费额度 | - | 100GB存储 |
-| 可视化 | 简陋 | 专业图表 |
-| 协作支持 | 无 | 团队协作 |
+| 可视�?| 简�?| 专业图表 |
+| 协作支持 | �?| 团队协作 |
 
 
 ## 3. wandb集成方案
 
-### 3.1 快速集成
+### 3.1 快速集�?
 
 ```bash
 # 安装
@@ -62,7 +62,7 @@ import wandb
 import pandas as pd
 import numpy as np
 
-# 初始化
+# 初始�?
 wandb.init(
     project="quant-research",
     entity="your_username",
@@ -103,7 +103,7 @@ class FactorExperiment:
             wandb.log({
                 'ic_timeseries': wandb.plot.line(
                     metrics['ic_series'],
-                    title="IC时序图"
+                    title="IC时序�?
                 ),
                 'factor_distribution': wandb.Histogram(
                     factor_values.stack()
@@ -158,14 +158,14 @@ class StrategyExperiment:
             })
 ```
 
-### 3.4 超参数优化追踪
+### 3.4 超参数优化追�?
 
 ```python
 import wandb
 from wandb.sklearn import plot_clusterer, plot_regressor
 
 def objective(params):
-    """Optuna + wandb 超参数优化"""
+    """Optuna + wandb 超参数优�?""
 
     with wandb.init(
         project="quant-research",
@@ -182,7 +182,7 @@ def objective(params):
             'drawdown': results['drawdown']
         })
 
-        # 返回目标值
+        # 返回目标�?
         return results['sharpe']
 
 # 使用wandb追踪Optuna
@@ -201,30 +201,30 @@ study.optimize(
 ```
 
 
-## 4. wandb仪表板
+## 4. wandb仪表�?
 
-### 4.1 因子研究仪表板
+### 4.1 因子研究仪表�?
 
-wandb自动生成：
-- IC_IR散点图
+wandb自动生成�?
+- IC_IR散点�?
 - 超参数相关性热力图
 - 最佳实验对比表
-- 实验历史时间线
+- 实验历史时间�?
 
-### 4.2 策略研究仪表板
+### 4.2 策略研究仪表�?
 
-wandb自动生成：
+wandb自动生成�?
 - Sharpe比率分布
 - 回测权益曲线对比
-- 收益-回撤散点图
+- 收益-回撤散点�?
 - 交易频率分析
 
 
-## 5. 团队协作(可选)
+## 5. 团队协作(可�?
 
 ```yaml
 # wandb 团队协作(未来扩展)
-# 个人免费，团队付费
+# 个人免费，团队付�?
 team:
   name: "qingfeng-quant"
   members:
@@ -241,7 +241,7 @@ projects:
 
 ## 6. 本地替代方案
 
-如果不需要云端同步，可以使用MLflow(开源本地方案)：
+如果不需要云端同步，可以使用MLflow(开源本地方�?�?
 
 ```yaml
 # docker-compose.yml
@@ -274,5 +274,5 @@ with mlflow.start_run():
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `EXP_001`

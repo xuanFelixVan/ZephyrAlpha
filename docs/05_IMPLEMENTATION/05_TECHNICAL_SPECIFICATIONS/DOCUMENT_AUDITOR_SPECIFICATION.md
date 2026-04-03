@@ -1,36 +1,26 @@
 ---
-standard_type: 技术规范
-applicable_scope: 文档审计系统
+standard_type: 技术规�?applicable_scope: 文档审计系统
 compliance_level: 正式标准
 parent_document: ../README.md
-implementation_status: 已完成
-owner: 文档管理员
-version: 1.0.0
+implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_SPECIFICATION
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# 文档审计工具技术规范
-
+# 文档审计工具技术规�?
 **文档版本**: 1.0.0
-**最后更新**: 2026-04-02
-**文档所有者**: 文档管理员
-
+**最后更�?*: 2026-04-02
+**文档所有�?*: 文档管理�?
 ---
 
 ## 1. 概述
 
 ### 1.1 目标
 
-定义文档审计工具的技术规范，确保工具能够有效执行文档质量检查和审计任务。
-
+定义文档审计工具的技术规范，确保工具能够有效执行文档质量检查和审计任务�?
 ### 1.2 适用范围
 
-- 链接有效性检查
-- 版本格式检查
-- 文档分类检查
-- 元数据完整性检查
-
+- 链接有效性检�?- 版本格式检�?- 文档分类检�?- 元数据完整性检�?
 ---
 
 ## 2. 架构设计
@@ -39,7 +29,7 @@ last_updated: 2026-04-02
 
 ```python
 class DocumentAuditor:
-    """文档审计器"""
+    """文档审计�?""
     
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
@@ -49,13 +39,13 @@ class DocumentAuditor:
         """扫描所有Markdown文件"""
         
     def check_links(self, files: List[Path]) -> List[AuditIssue]:
-        """检查链接有效性"""
+        """检查链接有效�?""
         
     def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-        """检查版本格式"""
+        """检查版本格�?""
         
     def check_classification(self, files: List[Path]) -> List[AuditIssue]:
-        """检查文档分类"""
+        """检查文档分�?""
         
     def run_full_audit(self) -> Dict:
         """执行完整审计"""
@@ -79,17 +69,13 @@ class AuditIssue:
 
 ## 3. 功能规范
 
-### 3.1 链接检查
-
-**检查内容**:
-- 内部链接有效性
-- 相对路径正确性
-- 文件存在性
-
+### 3.1 链接检�?
+**检查内�?*:
+- 内部链接有效�?- 相对路径正确�?- 文件存在�?
 **实现方式**:
 ```python
 def check_links(self, files: List[Path]) -> List[AuditIssue]:
-    """检查链接有效性"""
+    """检查链接有效�?""
     for file in files:
         content = file.read_text(encoding='utf-8')
         links = self._extract_links(content)
@@ -100,20 +86,17 @@ def check_links(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='broken_link',
                     severity='warning',
-                    message=f'链接目标不存在: {link}'
+                    message=f'链接目标不存�? {link}'
                 ))
 ```
 
-### 3.2 版本检查
-
-**检查内容**:
-- 版本号格式（MAJOR.MINOR.PATCH）
-- 版本一致性
-
+### 3.2 版本检�?
+**检查内�?*:
+- 版本号格式（MAJOR.MINOR.PATCH�?- 版本一致�?
 **实现方式**:
 ```python
 def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-    """检查版本格式"""
+    """检查版本格�?""
     VERSION_PATTERN = re.compile(r'version:\s*["\']?(\d+\.\d+\.\d+)["\']?')
     
     for file in files:
@@ -131,16 +114,13 @@ def check_versions(self, files: List[Path]) -> List[AuditIssue]:
                 ))
 ```
 
-### 3.3 分类检查
-
-**检查内容**:
-- 文档分类规范性
-- 目录结构一致性
-
+### 3.3 分类检�?
+**检查内�?*:
+- 文档分类规范�?- 目录结构一致�?
 **实现方式**:
 ```python
 def check_classification(self, files: List[Path]) -> List[AuditIssue]:
-    """检查文档分类"""
+    """检查文档分�?""
     STANDARD_CATEGORIES = {
         '01_FRAMEWORK',
         '02_FACTOR_LIBRARY',
@@ -155,7 +135,7 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
                 file_path=str(file),
                 issue_type='non_standard_category',
                 severity='info',
-                message=f'非标准分类: {category}'
+                message=f'非标准分�? {category}'
             ))
 ```
 
@@ -167,9 +147,9 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
 
 | 指标 | 要求 |
 |------|------|
-| **扫描速度** | ≥500文件/分钟 |
-| **内存使用** | ≤500MB |
-| **报告生成** | ≤5秒 |
+| **扫描速度** | �?00文件/分钟 |
+| **内存使用** | �?00MB |
+| **报告生成** | �?�?|
 
 ### 4.2 优化策略
 
@@ -181,17 +161,13 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
 
 ## 5. 接口规范
 
-### 5.1 命令行接口
-
+### 5.1 命令行接�?
 ```bash
-# 检查链接
-python scripts/document_auditor.py --check-links
+# 检查链�?python scripts/document_auditor.py --check-links
 
-# 检查版本
-python scripts/document_auditor.py --check-versions
+# 检查版�?python scripts/document_auditor.py --check-versions
 
-# 检查分类
-python scripts/document_auditor.py --check-classification
+# 检查分�?python scripts/document_auditor.py --check-classification
 
 # 完整审计
 python scripts/document_auditor.py --all
@@ -220,17 +196,16 @@ python scripts/document_auditor.py --all
 
 ---
 
-## 6. 扩展性
-
+## 6. 扩展�?
 ### 6.1 插件机制
 
-支持自定义检查规则:
+支持自定义检查规�?
 ```python
 class CustomAuditRule:
-    """自定义审计规则"""
+    """自定义审计规�?""
     
     def check(self, file: Path) -> List[AuditIssue]:
-        """执行检查"""
+        """执行检�?""
         pass
 
 # 注册规则
@@ -254,12 +229,11 @@ rules:
 
 ---
 
-## 7. 参考文档
-
+## 7. 参考文�?
 - [文档治理流程标准](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [文档分类标准](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**文档状态**: 正式标准
+**文档状�?*: 正式标准
 **下次审查**: 2026-07-02

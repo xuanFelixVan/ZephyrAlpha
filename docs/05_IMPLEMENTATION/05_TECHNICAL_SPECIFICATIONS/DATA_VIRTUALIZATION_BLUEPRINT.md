@@ -17,104 +17,52 @@ implementation_progress: 0%
 
 > 清风量化系统 v5.2 - 数据虚拟化层详细设计
 > **模块ID**: `DATA_VIRTUALIZATION_001`
-> **实施周期**: Week 1-3（3周）
-> **优先级**: P1（中期优化）
+> **实施周期**: Week 1-3�?周）
+> **优先�?*: P1（中期优化）
 > **预期收益**: 数据访问效率提升3倍，统一数据访问接口
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
-
+### 1.1 业务需�?
 **当前痛点**:
-- ❌ 数据存储分散，访问方式不统一
-- ❌ 需要了解数据物理存储位置，增加使用复杂度
-- ❌ 跨数据源查询复杂，性能低下
-- ❌ 数据访问权限管理分散，安全风险高
+- �?数据存储分散，访问方式不统一
+- �?需要了解数据物理存储位置，增加使用复杂�?- �?跨数据源查询复杂，性能低下
+- �?数据访问权限管理分散，安全风险高
 
 **业务目标**:
-- ✅ 提供统一的数据访问接口，屏蔽底层存储复杂性
-- ✅ 支持跨数据源的联邦查询
-- ✅ 实现智能查询优化，提升查询性能
-- ✅ 统一数据访问权限管理，提高安全性
-
-### 1.2 技术目标
-
-| 指标 | 目标值 | 说明 |
+- �?提供统一的数据访问接口，屏蔽底层存储复杂�?- �?支持跨数据源的联邦查�?- �?实现智能查询优化，提升查询性能
+- �?统一数据访问权限管理，提高安全�?
+### 1.2 技术目�?
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **查询性能** | 3倍提升 | 相比直接访问数据源性能提升3倍 |
-| **数据源支持** | ≥5种 | 支持PostgreSQL、Delta Lake、MongoDB、Redis、Kafka等 |
-| **查询延迟** | <500ms | 简单查询响应时间<500ms |
-| **并发查询** | ≥50 | 支持50+并发查询 |
-| **缓存命中率** | ≥80% | 查询缓存命中率≥80% |
+| **查询性能** | 3倍提�?| 相比直接访问数据源性能提升3�?|
+| **数据源支�?* | �?�?| 支持PostgreSQL、Delta Lake、MongoDB、Redis、Kafka�?|
+| **查询延迟** | <500ms | 简单查询响应时�?500ms |
+| **并发查询** | �?0 | 支持50+并发查询 |
+| **缓存命中�?* | �?0% | 查询缓存命中率≥80% |
 
 ---
 
-## 二、系统架构设计
-
-### 2.1 整体架构图
-
+## 二、系统架构设�?
+### 2.1 整体架构�?
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                 数据虚拟化层架构                              │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            数据访问层 (Data Access Layer)             │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ SQL接口      │  │ REST API    │  │ Python SDK  │  │  │
-│  │  │ (Trino)     │  │ (FastAPI)   │  │ (Client)    │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            查询优化层 (Query Optimization)            │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ 查询解析     │  │ 查询优化     │  │ 查询路由     │  │  │
-│  │  │ (Parser)    │  │ (Optimizer) │  │ (Router)    │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            缓存层 (Cache Layer)                       │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ 查询缓存     │  │ 元数据缓存   │  │ 结果缓存     │  │  │
-│  │  │ (Redis)     │  │ (Redis)     │  │ (Redis)     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │            数据源适配层 (Data Source Adapter)         │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ PostgreSQL  │  │ Delta Lake  │  │ MongoDB     │  │  │
-│  │  │ Adapter     │  │ Adapter     │  │ Adapter     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │ Redis       │  │ Kafka       │  │ iFind API   │  │  │
-│  │  │ Adapter     │  │ Adapter     │  │ Adapter     │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────�?�?                数据虚拟化层架构                              �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据访问�?(Data Access Layer)             �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?SQL接口      �? �?REST API    �? �?Python SDK  �? �? �?�? �? �?(Trino)     �? �?(FastAPI)   �? �?(Client)    �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           查询优化�?(Query Optimization)            �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?查询解析     �? �?查询优化     �? �?查询路由     �? �? �?�? �? �?(Parser)    �? �?(Optimizer) �? �?(Router)    �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           缓存�?(Cache Layer)                       �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?查询缓存     �? �?元数据缓�?  �? �?结果缓存     �? �? �?�? �? �?(Redis)     �? �?(Redis)     �? �?(Redis)     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?           数据源适配�?(Data Source Adapter)         �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?PostgreSQL  �? �?Delta Lake  �? �?MongoDB     �? �? �?�? �? �?Adapter     �? �?Adapter     �? �?Adapter     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?�? �? �?Redis       �? �?Kafka       �? �?iFind API   �? �? �?�? �? �?Adapter     �? �?Adapter     �? �?Adapter     �? �? �?�? �? └─────────────�? └─────────────�? └─────────────�? �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
 
 ### 2.2 技术选型
 
-| 组件 | 技术方案 | 版本要求 | 选型理由 |
+| 组件 | 技术方�?| 版本要求 | 选型理由 |
 |------|---------|---------|---------|
-| **查询引擎** | Trino | ≥400 | 分布式SQL查询，联邦查询 |
-| **缓存系统** | Redis | ≥7.0 | 高性能缓存，支持多种数据结构 |
-| **API服务** | FastAPI | ≥0.100.0 | 高性能异步API框架 |
-| **数据源连接器** | Trino Connectors | - | 支持多种数据源 |
+| **查询引擎** | Trino | �?00 | 分布式SQL查询，联邦查�?|
+| **缓存系统** | Redis | �?.0 | 高性能缓存，支持多种数据结�?|
+| **API服务** | FastAPI | �?.100.0 | 高性能异步API框架 |
+| **数据源连接器** | Trino Connectors | - | 支持多种数据�?|
 | **监控工具** | Prometheus + Grafana | - | 性能监控和可视化 |
 
-### 2.3 数据源配置
-
-#### 2.3.1 PostgreSQL连接器
-
+### 2.3 数据源配�?
+#### 2.3.1 PostgreSQL连接�?
 ```properties
-# PostgreSQL连接器配置
-connector.name=postgresql
+# PostgreSQL连接器配�?connector.name=postgresql
 connection-url=jdbc:postgresql://localhost:5432/zephyr_alpha
 connection-user=zephyr
 connection-password=${ENV:POSTGRES_PASSWORD}
@@ -124,11 +72,9 @@ postgresql.connection-pool-size=10
 postgresql.connection-pool.max-size=20
 ```
 
-#### 2.3.2 Delta Lake连接器
-
+#### 2.3.2 Delta Lake连接�?
 ```properties
-# Delta Lake连接器配置
-connector.name=delta
+# Delta Lake连接器配�?connector.name=delta
 delta.catalog-name=zephyr_delta
 delta.s3.endpoint=http://localhost:9000
 delta.s3.access-key=${ENV:MINIO_ACCESS_KEY}
@@ -139,11 +85,9 @@ delta.cache.enabled=true
 delta.cache.size=10GB
 ```
 
-#### 2.3.3 MongoDB连接器
-
+#### 2.3.3 MongoDB连接�?
 ```properties
-# MongoDB连接器配置
-connector.name=mongodb
+# MongoDB连接器配�?connector.name=mongodb
 mongodb.connection-string=mongodb://localhost:27017
 mongodb.schema-collection=zephyr_schema
 
@@ -154,8 +98,7 @@ mongodb.cursor.timeout=300000
 
 ---
 
-## 三、核心模块设计
-
+## 三、核心模块设�?
 ### 3.1 统一数据访问接口
 
 #### 3.1.1 SQL接口
@@ -253,8 +196,7 @@ class UnifiedSQLInterface:
         查询因子数据
         
         支持跨数据源关联查询:
-        - PostgreSQL: 因子元数据
-        - Delta Lake: 因子计算结果
+        - PostgreSQL: 因子元数�?        - Delta Lake: 因子计算结果
         """
         sql = f"""
         SELECT 
@@ -283,10 +225,7 @@ class UnifiedSQLInterface:
         跨数据源联邦查询
         
         支持的数据源:
-        - delta: Delta Lake数据湖
-        - postgresql: PostgreSQL数据库
-        - mongodb: MongoDB文档数据库
-        - redis: Redis缓存
+        - delta: Delta Lake数据�?        - postgresql: PostgreSQL数据�?        - mongodb: MongoDB文档数据�?        - redis: Redis缓存
         """
         return self.execute_query(sql)
 ```
@@ -334,14 +273,10 @@ async def get_market_data(request: MarketDataRequest):
     
     支持字段:
     - symbol: 股票代码
-    - timestamp: 时间戳
-    - open: 开盘价
+    - timestamp: 时间�?    - open: 开盘价
     - high: 最高价
     - low: 最低价
-    - close: 收盘价
-    - volume: 成交量
-    - amount: 成交额
-    """
+    - close: 收盘�?    - volume: 成交�?    - amount: 成交�?    """
     try:
         sql_interface = UnifiedSQLInterface(get_config())
         df = sql_interface.query_market_data(
@@ -365,8 +300,7 @@ async def get_factor_data(request: FactorDataRequest):
     获取因子数据
     
     支持跨数据源关联查询:
-    - PostgreSQL: 因子元数据
-    - Delta Lake: 因子计算结果
+    - PostgreSQL: 因子元数�?    - Delta Lake: 因子计算结果
     """
     try:
         sql_interface = UnifiedSQLInterface(get_config())
@@ -407,8 +341,7 @@ async def execute_query(sql: str):
 @app.get("/api/v1/metadata/tables")
 async def list_tables(catalog: str = None, schema: str = None):
     """
-    列出所有可用的表
-    
+    列出所有可用的�?    
     Args:
         catalog: 数据源名称（delta, postgresql, mongodb等）
         schema: schema名称
@@ -458,7 +391,7 @@ class ZephyrDataClient:
         
         Args:
             symbols: 股票代码列表
-            start_date: 开始日期 (YYYY-MM-DD)
+            start_date: 开始日�?(YYYY-MM-DD)
             end_date: 结束日期 (YYYY-MM-DD)
             fields: 字段列表
         
@@ -502,7 +435,7 @@ class ZephyrDataClient:
         Args:
             factor_ids: 因子ID列表
             symbols: 股票代码列表
-            start_date: 开始日期 (YYYY-MM-DD)
+            start_date: 开始日�?(YYYY-MM-DD)
             end_date: 结束日期 (YYYY-MM-DD)
         
         Returns:
@@ -548,15 +481,14 @@ class ZephyrDataClient:
 
 ### 3.2 查询优化引擎
 
-#### 3.2.1 查询解析与优化
-
+#### 3.2.1 查询解析与优�?
 ```python
 import sqlparse
 from sqlparse.sql import IdentifierList, Identifier
 from sqlparse.tokens import Keyword, DML
 
 class QueryOptimizer:
-    """查询优化器"""
+    """查询优化�?""
     
     def __init__(self):
         self.cache = QueryCache()
@@ -569,11 +501,9 @@ class QueryOptimizer:
         优化策略:
         1. 查询重写
         2. 谓词下推
-        3. 列裁剪
-        4. 缓存利用
+        3. 列裁�?        4. 缓存利用
         """
-        # 1. 检查缓存
-        cached_result = self.cache.get(sql)
+        # 1. 检查缓�?        cached_result = self.cache.get(sql)
         if cached_result is not None:
             return cached_result
         
@@ -586,8 +516,7 @@ class QueryOptimizer:
         # 4. 谓词下推
         optimized_sql = self._push_down_predicates(optimized_sql)
         
-        # 5. 列裁剪
-        optimized_sql = self._column_pruning(optimized_sql)
+        # 5. 列裁�?        optimized_sql = self._column_pruning(optimized_sql)
         
         return optimized_sql
     
@@ -606,15 +535,12 @@ class QueryOptimizer:
     def _push_down_predicates(self, sql: str) -> str:
         """谓词下推"""
         # 将过滤条件尽可能下推到数据源
-        # 减少数据传输量
-        
+        # 减少数据传输�?        
         return sql
     
     def _column_pruning(self, sql: str) -> str:
-        """列裁剪"""
-        # 只查询需要的列
-        # 减少数据传输量
-        
+        """列裁�?""
+        # 只查询需要的�?        # 减少数据传输�?        
         return sql
     
     def _extract_tables(self, parsed):
@@ -673,11 +599,9 @@ class QueryRouter:
         # 4. 选择最优数据源
         primary_source = max(source_scores.items(), key=lambda x: x[1])[0]
         
-        # 5. 选择备用数据源
-        fallback_source = self._select_fallback_source(data_sources, primary_source)
+        # 5. 选择备用数据�?        fallback_source = self._select_fallback_source(data_sources, primary_source)
         
-        # 6. 估算成本和时间
-        estimated_cost = self._estimate_query_cost(sql, primary_source)
+        # 6. 估算成本和时�?        estimated_cost = self._estimate_query_cost(sql, primary_source)
         estimated_time = self._estimate_query_time(sql, primary_source)
         
         return {
@@ -699,8 +623,7 @@ class QueryRouter:
         
         sql_upper = sql.upper()
         
-        # 检测聚合
-        if any(agg in sql_upper for agg in ['SUM', 'AVG', 'COUNT', 'MAX', 'MIN']):
+        # 检测聚�?        if any(agg in sql_upper for agg in ['SUM', 'AVG', 'COUNT', 'MAX', 'MIN']):
             pattern['aggregation'] = True
         
         # 检测JOIN
@@ -780,8 +703,7 @@ class QueryCache:
         
         # 缓存配置
         self.default_ttl = 3600  # 1小时
-        self.max_cache_size = 10000  # 最大缓存数量
-    
+        self.max_cache_size = 10000  # 最大缓存数�?    
     def get(self, sql: str, params: dict = None):
         """
         获取缓存结果
@@ -793,8 +715,7 @@ class QueryCache:
         Returns:
             DataFrame: 缓存结果，如果不存在返回None
         """
-        # 生成缓存键
-        cache_key = self._generate_cache_key(sql, params)
+        # 生成缓存�?        cache_key = self._generate_cache_key(sql, params)
         
         # 从Redis获取
         cached_data = self.redis_client.get(cache_key)
@@ -820,13 +741,10 @@ class QueryCache:
             sql: SQL语句
             result: 查询结果
             params: 参数
-            ttl: 过期时间（秒）
-        """
-        # 生成缓存键
-        cache_key = self._generate_cache_key(sql, params)
+            ttl: 过期时间（秒�?        """
+        # 生成缓存�?        cache_key = self._generate_cache_key(sql, params)
         
-        # 序列化
-        data = {
+        # 序列�?        data = {
             'records': result.to_dict('records'),
             'columns': list(result.columns)
         }
@@ -846,13 +764,11 @@ class QueryCache:
             pattern: 缓存键模式（支持通配符）
         """
         if pattern:
-            # 删除匹配的缓存
-            keys = self.redis_client.keys(pattern)
+            # 删除匹配的缓�?            keys = self.redis_client.keys(pattern)
             if keys:
                 self.redis_client.delete(*keys)
         else:
-            # 清空所有缓存
-            self.redis_client.flushdb()
+            # 清空所有缓�?            self.redis_client.flushdb()
     
     def get_cache_stats(self):
         """
@@ -874,9 +790,8 @@ class QueryCache:
         }
     
     def _generate_cache_key(self, sql: str, params: dict = None) -> str:
-        """生成缓存键"""
-        # SQL标准化
-        normalized_sql = ' '.join(sql.split()).lower()
+        """生成缓存�?""
+        # SQL标准�?        normalized_sql = ' '.join(sql.split()).lower()
         
         # 添加参数
         if params:
@@ -888,7 +803,7 @@ class QueryCache:
         return f"query_cache:{hash_value}"
     
     def _calculate_hit_rate(self) -> float:
-        """计算缓存命中率"""
+        """计算缓存命中�?""
         info = self.redis_client.info('stats')
         
         hits = info.get('keyspace_hits', 0)
@@ -901,11 +816,10 @@ class QueryCache:
         return hits / total
 ```
 
-#### 3.3.2 元数据缓存
-
+#### 3.3.2 元数据缓�?
 ```python
 class MetadataCache:
-    """元数据缓存"""
+    """元数据缓�?""
     
     def __init__(self, redis_client: redis.Redis):
         self.redis_client = redis_client
@@ -913,16 +827,13 @@ class MetadataCache:
     
     def get_table_schema(self, catalog: str, schema: str, table: str):
         """
-        获取表结构
-        
+        获取表结�?        
         Args:
-            catalog: 数据源名称
-            schema: schema名称
+            catalog: 数据源名�?            schema: schema名称
             table: 表名
         
         Returns:
-            dict: 表结构信息
-        """
+            dict: 表结构信�?        """
         cache_key = f"schema:{catalog}.{schema}.{table}"
         
         cached_schema = self.redis_client.get(cache_key)
@@ -934,8 +845,7 @@ class MetadataCache:
     
     def set_table_schema(self, catalog: str, schema: str, table: str, schema_info: dict):
         """
-        设置表结构缓存
-        """
+        设置表结构缓�?        """
         cache_key = f"schema:{catalog}.{schema}.{table}"
         
         self.redis_client.setex(
@@ -946,8 +856,7 @@ class MetadataCache:
     
     def get_table_statistics(self, catalog: str, schema: str, table: str):
         """
-        获取表统计信息
-        
+        获取表统计信�?        
         Returns:
             {
                 'row_count': 1000000,
@@ -966,8 +875,7 @@ class MetadataCache:
     
     def set_table_statistics(self, catalog: str, schema: str, table: str, stats: dict):
         """
-        设置表统计信息缓存
-        """
+        设置表统计信息缓�?        """
         cache_key = f"stats:{catalog}.{schema}.{table}"
         
         self.redis_client.setex(
@@ -996,8 +904,7 @@ class QueryPerformanceOptimizer:
         1. 小表驱动大表
         2. 过滤条件优先
         """
-        # 分析表大小
-        # 重写JOIN顺序
+        # 分析表大�?        # 重写JOIN顺序
         return sql
     
     @staticmethod
@@ -1038,8 +945,7 @@ class QueryPerformanceOptimizer:
         
         hint_str += '*/'
         
-        # 在SELECT后添加提示
-        sql = sql.replace('SELECT', f'SELECT {hint_str}', 1)
+        # 在SELECT后添加提�?        sql = sql.replace('SELECT', f'SELECT {hint_str}', 1)
         
         return sql
 ```
@@ -1052,7 +958,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List, Dict
 
 class ConcurrentQueryExecutor:
-    """并发查询执行器"""
+    """并发查询执行�?""
     
     def __init__(self, max_workers: int = 10):
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
@@ -1089,8 +995,7 @@ class ConcurrentQueryExecutor:
     async def _execute_single_query(self, query: dict):
         """执行单个查询"""
         async with self.semaphore:
-            # 在线程池中执行查询
-            loop = asyncio.get_event_loop()
+            # 在线程池中执行查�?            loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 self.executor,
                 self._execute_query_sync,
@@ -1148,10 +1053,7 @@ class QueryPerformanceMonitor:
         记录查询指标
         
         Args:
-            catalog: 数据源名称
-            duration: 查询耗时（秒）
-            status: 查询状态（success, error）
-        """
+            catalog: 数据源名�?            duration: 查询耗时（秒�?            status: 查询状态（success, error�?        """
         self.query_count.labels(catalog=catalog, status=status).inc()
         self.query_duration.labels(catalog=catalog).observe(duration)
     
@@ -1160,18 +1062,14 @@ class QueryPerformanceMonitor:
         记录缓存命中
         
         Args:
-            cache_type: 缓存类型（query, metadata）
-        """
+            cache_type: 缓存类型（query, metadata�?        """
         self.cache_hits.labels(cache_type=cache_type).inc()
     
     def update_active_connections(self, catalog: str, count: int):
         """
-        更新活跃连接数
-        
+        更新活跃连接�?        
         Args:
-            catalog: 数据源名称
-            count: 连接数
-        """
+            catalog: 数据源名�?            count: 连接�?        """
         self.active_connections.labels(catalog=catalog).set(count)
 ```
 
@@ -1182,14 +1080,13 @@ import logging
 from datetime import datetime
 
 class QueryLogger:
-    """查询日志记录器"""
+    """查询日志记录�?""
     
     def __init__(self, log_file: str = 'logs/query.log'):
         self.logger = logging.getLogger('query_logger')
         self.logger.setLevel(logging.INFO)
         
-        # 文件处理器
-        file_handler = logging.FileHandler(log_file)
+        # 文件处理�?        file_handler = logging.FileHandler(log_file)
         file_handler.setLevel(logging.INFO)
         
         # 格式化器
@@ -1213,10 +1110,7 @@ class QueryLogger:
         
         Args:
             sql: SQL语句
-            catalog: 数据源名称
-            duration: 查询耗时（秒）
-            status: 查询状态
-            error: 错误信息
+            catalog: 数据源名�?            duration: 查询耗时（秒�?            status: 查询状�?            error: 错误信息
         """
         log_entry = {
             'timestamp': datetime.now().isoformat(),
@@ -1235,8 +1129,7 @@ class QueryLogger:
 
 ---
 
-## 六、实施步骤
-
+## 六、实施步�?
 ### 6.1 Week 1: 基础架构搭建
 
 #### Day 1-2: 环境准备
@@ -1246,82 +1139,69 @@ class QueryLogger:
 2. 配置数据源连接器
 3. 安装Redis集群
 
-**交付物**:
-- ✅ Trino集群
-- ✅ 数据源连接器配置
-- ✅ Redis集群
+**交付�?*:
+- �?Trino集群
+- �?数据源连接器配置
+- �?Redis集群
 
-#### Day 3-5: 数据访问接口开发
-
+#### Day 3-5: 数据访问接口开�?
 **任务**:
 1. 实现SQL接口
 2. 实现REST API
 3. 实现Python SDK
 
-**交付物**:
-- ✅ UnifiedSQLInterface
-- ✅ FastAPI服务
-- ✅ ZephyrDataClient SDK
+**交付�?*:
+- �?UnifiedSQLInterface
+- �?FastAPI服务
+- �?ZephyrDataClient SDK
 
-### 6.2 Week 2: 查询优化开发
-
+### 6.2 Week 2: 查询优化开�?
 #### Day 1-3: 查询优化引擎
 
 **任务**:
-1. 实现查询解析器
-2. 实现查询优化器
-3. 实现查询路由器
-
-**交付物**:
-- ✅ QueryOptimizer
-- ✅ QueryRouter
-- ✅ 测试报告
+1. 实现查询解析�?2. 实现查询优化�?3. 实现查询路由�?
+**交付�?*:
+- �?QueryOptimizer
+- �?QueryRouter
+- �?测试报告
 
 #### Day 4-5: 缓存管理
 
 **任务**:
 1. 实现查询缓存
-2. 实现元数据缓存
-3. 测试缓存性能
+2. 实现元数据缓�?3. 测试缓存性能
 
-**交付物**:
-- ✅ QueryCache
-- ✅ MetadataCache
-- ✅ 性能测试报告
+**交付�?*:
+- �?QueryCache
+- �?MetadataCache
+- �?性能测试报告
 
-### 6.3 Week 3: 监控与上线
-
-#### Day 1-3: 监控与运维
-
+### 6.3 Week 3: 监控与上�?
+#### Day 1-3: 监控与运�?
 **任务**:
 1. 实现性能监控
 2. 实现查询日志
-3. 部署Grafana仪表板
-
-**交付物**:
-- ✅ QueryPerformanceMonitor
-- ✅ QueryLogger
-- ✅ Grafana仪表板
-
-#### Day 4-5: 集成测试与上线
-
+3. 部署Grafana仪表�?
+**交付�?*:
+- �?QueryPerformanceMonitor
+- �?QueryLogger
+- �?Grafana仪表�?
+#### Day 4-5: 集成测试与上�?
 **任务**:
-1. 端到端集成测试
-2. 性能压力测试
+1. 端到端集成测�?2. 性能压力测试
 3. 用户培训
 
-**交付物**:
-- ✅ 集成测试报告
-- ✅ 性能测试报告
-- ✅ 用户手册
+**交付�?*:
+- �?集成测试报告
+- �?性能测试报告
+- �?用户手册
 
 ---
 
-## 七、验收标准
-
+## 七、验收标�?
 ### 7.1 功能验收
 
-| 验收项 | 验收标准 | 验收方法 |
+| 验收�?| 验收标准 | 验收方法 |
 |--------|---------|---------|
 | **SQL接口** | 支持标准SQL查询 | 功能测试 |
 | **REST API** | API正常响应 | 功能测试 |
@@ -1330,50 +1210,47 @@ class QueryLogger:
 
 ### 7.2 性能验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| **查询性能** | 3倍提升 | 性能测试 |
+| **查询性能** | 3倍提�?| 性能测试 |
 | **查询延迟** | <500ms | 性能测试 |
-| **并发查询** | ≥50 | 压力测试 |
-| **缓存命中率** | ≥80% | 性能测试 |
+| **并发查询** | �?0 | 压力测试 |
+| **缓存命中�?* | �?0% | 性能测试 |
 
 ---
 
 ## 八、风险评估与缓解
 
-### 8.1 技术风险
-
-| 风险项 | 风险等级 | 影响 | 缓解措施 |
+### 8.1 技术风�?
+| 风险�?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| **Trino学习曲线** | 中 | 开发效率 | 提前学习，准备示例代码 |
-| **跨数据源查询性能** | 中 | 用户体验 | 优化查询，增加缓存 |
-| **缓存一致性** | 低 | 数据准确性 | 实现缓存失效机制 |
+| **Trino学习曲线** | �?| 开发效�?| 提前学习，准备示例代�?|
+| **跨数据源查询性能** | �?| 用户体验 | 优化查询，增加缓�?|
+| **缓存一致�?* | �?| 数据准确�?| 实现缓存失效机制 |
 
 ### 8.2 实施风险
 
-| 风险项 | 风险等级 | 影响 | 缓解措施 |
+| 风险�?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
-| **数据源兼容性** | 中 | 功能完整性 | 提前测试各数据源 |
-| **性能调优复杂** | 中 | 延期风险 | 预留缓冲时间 |
+| **数据源兼容�?* | �?| 功能完整�?| 提前测试各数据源 |
+| **性能调优复杂** | �?| 延期风险 | 预留缓冲时间 |
 
 ---
 
-## 九、文档治理
-
+## 九、文档治�?
 ### 9.1 文档索引
 
 **本文档在系统中的位置**:
 - 架构文档: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - Layer 1文档: [Layer_1_Data_Preprocessing.md](../../../01_FRAMEWORK/layers/Layer_1_Data_Preprocessing.md)
-- 实时数据湖: [REALTIME_DATA_LAKE_BLUEPRINT.md](./REALTIME_DATA_LAKE_BLUEPRINT.md)
+- 实时数据�? [REALTIME_DATA_LAKE_BLUEPRINT.md](./REALTIME_DATA_LAKE_BLUEPRINT.md)
 
 ### 9.2 版本管理
 
 **版本历史**:
-- v1.0.0 (2026-04-03): 初始版本，完成数据虚拟化层设计
-
+- v1.0.0 (2026-04-03): 初始版本，完成数据虚拟化层设�?
 ---
 
-**最后更新**: 2026-04-03
-**维护者**: 首席技术评审官
-**审核状态**: ✅ 已审核
+**最后更�?*: 2026-04-03
+**维护�?*: 首席技术评审官
+**审核状�?*: �?已审�?

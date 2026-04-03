@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部署
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 
@@ -17,7 +17,7 @@ implementation_status: 进行中
 
 > 清风量化系统 v5.0 - API设计蓝图
 > **索引**: `DEV.API.001`
-> **开发时间**: 5h
+> **开发时�?*: 5h
 > **核心定位**: 统一模块间通信接口，确保系统各层模块能有效交互
 
 
@@ -25,31 +25,31 @@ implementation_status: 进行中
 
 ### 1.1 核心原则
 
-| 原则 | 说明 | 优先级 |
+| 原则 | 说明 | 优先�?|
 |------|------|--------|
-| **一致性** | 统一响应格式、错误码、命名 | 必须 |
-| **简洁性** | 接口职责单一，不过度封装 | 必须 |
-| **可测试** | 接口可独立于业务逻辑测试 | 必须 |
-| **版本化** | API版本控制，支持平滑升级 | 应该 |
-| **文档化** | 自动生成OpenAPI/Swagger文档 | 应该 |
+| **一致�?* | 统一响应格式、错误码、命�?| 必须 |
+| **简洁�?* | 接口职责单一，不过度封装 | 必须 |
+| **可测�?* | 接口可独立于业务逻辑测试 | 必须 |
+| **版本�?* | API版本控制，支持平滑升�?| 应该 |
+| **文档�?* | 自动生成OpenAPI/Swagger文档 | 应该 |
 
 ### 1.2 接口分层
 
 ```
-┌─────────────────────────────────────────────┐
-│           External API (外部接口)            │
-│    FastAPI Routes → 人/外部系统调用           │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│           Internal API (内部接口)             │
-│    Module Methods → 模块间调用                 │
-└─────────────────────────────────────────────┘
-                    ↓
-┌─────────────────────────────────────────────┐
-│           Data Interface (数据接口)           │
-│    Repository Pattern → 数据访问              │
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────�?
+�?          External API (外部接口)            �?
+�?   FastAPI Routes �?�?外部系统调用           �?
+└─────────────────────────────────────────────�?
+                    �?
+┌─────────────────────────────────────────────�?
+�?          Internal API (内部接口)             �?
+�?   Module Methods �?模块间调�?                �?
+└─────────────────────────────────────────────�?
+                    �?
+┌─────────────────────────────────────────────�?
+�?          Data Interface (数据接口)           �?
+�?   Repository Pattern �?数据访问              �?
+└─────────────────────────────────────────────�?
 ```
 
 
@@ -82,9 +82,9 @@ class APIResponse(BaseModel, Generic[T]):
         }
 ```
 
-### 2.2 错误码定义
+### 2.2 错误码定�?
 
-| 错误码 | 范围 | 说明 |
+| 错误�?| 范围 | 说明 |
 |--------|------|------|
 | 0 | 0xx | 成功 |
 | 1000-1999 | 1xxx | 数据相关错误 |
@@ -148,15 +148,15 @@ class IDataHub(ABC):
 
         参数:
             symbol: 股票代码 (e.g. "000001.SZ")
-            start_date: 开始日期 (e.g. "2026-01-01")
+            start_date: 开始日�?(e.g. "2026-01-01")
             end_date: 结束日期 (e.g. "2026-03-28")
-            fields: 可选字段列表
+            fields: 可选字段列�?
 
         返回:
             DataFrame with columns: date, open, high, low, close, volume
 
         异常:
-            DataNotFoundError: 数据不存在
+            DataNotFoundError: 数据不存�?
             DataTimeoutError: 数据获取超时
         """
         pass
@@ -167,14 +167,14 @@ class IDataHub(ABC):
         symbol: str,
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """获取基本面数据
+        """获取基本面数�?
 
         参数:
             symbol: 股票代码
-            fields: 可选字段列表
+            fields: 可选字段列�?
 
         返回:
-            基本面数据字典
+            基本面数据字�?
         """
         pass
 
@@ -195,7 +195,7 @@ class IDataHub(ABC):
 
 ```python
 class IFactorCalculator(ABC):
-    """因子计算器接口"""
+    """因子计算器接�?""
 
     @abstractmethod
     def calculate(
@@ -205,7 +205,7 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """计算单个因子值
+        """计算单个因子�?
 
         参数:
             factor_name: 因子名称
@@ -232,7 +232,7 @@ class IFactorCalculator(ABC):
         参数:
             factor_name: 因子名称
             symbols: 股票代码列表
-            start_date: 开始日期
+            start_date: 开始日�?
             end_date: 结束日期
             params: 因子参数
 
@@ -247,11 +247,11 @@ class IFactorCalculator(ABC):
         factor_name: str,
         ic_threshold: float = 0.03
     ) -> Dict[str, Any]:
-        """验证因子有效性
+        """验证因子有效�?
 
         参数:
             factor_name: 因子名称
-            ic_threshold: IC阈值
+            ic_threshold: IC阈�?
 
         返回:
             {'ic': float, 'ir': float, 'valid': bool}
@@ -324,7 +324,7 @@ class IStrategyEngine(ABC):
 
 ```python
 class IRiskManager(ABC):
-    """风险管理器接口"""
+    """风险管理器接�?""
 
     @abstractmethod
     def check_order(
@@ -353,7 +353,7 @@ class IRiskManager(ABC):
 
         参数:
             positions: 持仓列表
-            portfolio_value: 组合市值
+            portfolio_value: 组合市�?
 
         返回:
             风险指标
@@ -366,14 +366,14 @@ class IRiskManager(ABC):
         current_value: float,
         peak_value: float
     ) -> bool:
-        """检查回撤是否超限
+        """检查回撤是否超�?
 
         参数:
-            current_value: 当前值
-            peak_value: 历史峰值
+            current_value: 当前�?
+            peak_value: 历史峰�?
 
         返回:
-            True表示超限，需要处理
+            True表示超限，需要处�?
         """
         pass
 ```
@@ -386,28 +386,28 @@ class IRiskManager(ABC):
 ```
 /api/v1/
 ├── /data
-│   ├── GET  /ohlcv/{symbol}     # 获取K线数据
-│   ├── GET  /fundamental/{symbol} # 获取基本面
-│   └── GET  /symbols            # 获取股票列表
-│
+�?  ├── GET  /ohlcv/{symbol}     # 获取K线数�?
+�?  ├── GET  /fundamental/{symbol} # 获取基本�?
+�?  └── GET  /symbols            # 获取股票列表
+�?
 ├── /factors
-│   ├── GET  /{factor_name}      # 计算因子
-│   ├── POST /batch             # 批量计算
-│   └── GET  /validate/{name}   # 验证因子
-│
+�?  ├── GET  /{factor_name}      # 计算因子
+�?  ├── POST /batch             # 批量计算
+�?  └── GET  /validate/{name}   # 验证因子
+�?
 ├── /strategies
-│   ├── GET  /                   # 策略列表
-│   ├── POST /signals           # 生成信号
-│   ├── GET  /{id}/positions    # 获取持仓
-│   └── POST /{id}/orders      # 下单
-│
+�?  ├── GET  /                   # 策略列表
+�?  ├── POST /signals           # 生成信号
+�?  ├── GET  /{id}/positions    # 获取持仓
+�?  └── POST /{id}/orders      # 下单
+�?
 ├── /risk
-│   ├── POST /check_order       # 风控检查
-│   ├── GET  /metrics           # 风险指标
-│   └── GET  /limits            # 风险限额
-│
+�?  ├── POST /check_order       # 风控检�?
+�?  ├── GET  /metrics           # 风险指标
+�?  └── GET  /limits            # 风险限额
+�?
 └── /system
-    ├── GET  /health            # 健康检查
+    ├── GET  /health            # 健康检�?
     ├── GET  /version           # 版本信息
     └── GET  /config            # 配置信息
 ```
@@ -423,7 +423,7 @@ router = APIRouter(prefix="/api/v1", tags=["data"])
 @router.get("/data/ohlcv/{symbol}")
 async def get_ohlcv(
     symbol: str,
-    start_date: str = Query(..., description="开始日期"),
+    start_date: str = Query(..., description="开始日�?),
     end_date: str = Query(..., description="结束日期"),
     fields: Optional[str] = Query(None, description="字段列表，逗号分隔")
 ) -> APIResponse[pd.DataFrame]:
@@ -450,10 +450,10 @@ async def get_ohlcv(
 /api/v2/data/ohlcv     # v2版本
 ```
 
-### 5.2 兼容性策略
+### 5.2 兼容性策�?
 
 ```python
-# v1 → v2 兼容策略
+# v1 �?v2 兼容策略
 class DataAPIV2:
     """v2版本数据API"""
 
@@ -517,25 +517,25 @@ app.openapi = custom_openapi
 
 ## 7. 上下接口映射
 
-| 接口 | 上游(调用者) | 下游(被调用) | 索引 |
+| 接口 | 上游(调用�? | 下游(被调�? | 索引 |
 |------|-------------|-------------|------|
-| DataHub.get_ohlcv | FactorCalculator, StrategyEngine | 数据源(AKShare/Tushare) | DATA.001 |
+| DataHub.get_ohlcv | FactorCalculator, StrategyEngine | 数据�?AKShare/Tushare) | DATA.001 |
 | FactorCalculator.calculate | StrategyEngine | DataHub | FACT.001 |
 | StrategyEngine.generate_signals | API Layer | FactorCalculator, RiskManager | STRAT.001 |
 | RiskManager.check_order | StrategyEngine, TradeExecutor | Config, Positions | RISK.001 |
 | TradeExecutor.execute | StrategyEngine | Broker API | EXEC.001 |
 
 
-## 8. 开发任务分解(5h)
+## 8. 开发任务分�?5h)
 
-| 任务 | 时间 | 交付物 |
+| 任务 | 时间 | 交付�?|
 |------|------|--------|
-| 响应格式标准化 | 1h | APIResponse基类, ErrorCode定义 |
-| 模块接口定义 | 2h | IDataHub, IFactorCalculator等接口 |
+| 响应格式标准�?| 1h | APIResponse基类, ErrorCode定义 |
+| 模块接口定义 | 2h | IDataHub, IFactorCalculator等接�?|
 | FastAPI路由 | 1.5h | REST API实现 |
 | 文档集成 | 0.5h | OpenAPI/Swagger配置 |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `DEV.API.001`
-**最后更新**: 2026-03-29
+**最后更�?*: 2026-03-29

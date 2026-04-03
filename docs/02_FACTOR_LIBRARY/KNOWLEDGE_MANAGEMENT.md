@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 
@@ -17,19 +17,19 @@ implementation_status: 进行中
 
 > 清风量化系统 v5.0 - AI知识管理系统
 > **索引**: `KNOWLEDGE.001`
-> **开发时间**: 25h
-> **优先级**: P1
-> **核心定位**: AI自动提取和更新研究知识，实现"AI研究 → 自动入库 → 可查询复用"
+> **开发时�?*: 25h
+> **优先�?*: P1
+> **核心定位**: AI自动提取和更新研究知识，实现"AI研究 �?自动入库 �?可查询复�?
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 |
 |------|------|
-| **Obsidian + AI** | Obsidian手工 + AI自动提取，混合模式 |
-| **向量检索** | 使用向量数据库实现语义检索 |
-| **自动入库** | 实验完成后自动提取关键信息入库 |
-| **可追溯** | 完整记录知识来源和血缘 |
+| **Obsidian + AI** | Obsidian手工 + AI自动提取，混合模�?|
+| **向量检�?* | 使用向量数据库实现语义检�?|
+| **自动入库** | 实验完成后自动提取关键信息入�?|
+| **可追�?* | 完整记录知识来源和血�?|
 
 
 ## 2. 知识管理架构
@@ -37,15 +37,15 @@ implementation_status: 进行中
 ### 2.1 知识来源
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    知识来源                                  │
-├─────────────────────────────────────────────────────────────┤
-│  wandb实验报告 ──▶ AI自动提取 ──▶ 知识库                 │
-│  研究笔记 ───────▶ AI辅助整理 ──▶ 知识库                 │
-│  策略代码 ──────▶ AI自动注释 ──▶ 知识库                   │
-│  回测报告 ──────▶ AI自动总结 ──▶ 知识库                   │
-│  人工整理 ──────────────────────▶ 知识库(Obsidian)       │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   知识来源                                  �?
+├─────────────────────────────────────────────────────────────�?
+�? wandb实验报告 ──�?AI自动提取 ──�?知识�?                �?
+�? 研究笔记 ───────�?AI辅助整理 ──�?知识�?                �?
+�? 策略代码 ──────�?AI自动注释 ──�?知识�?                  �?
+�? 回测报告 ──────�?AI自动总结 ──�?知识�?                  �?
+�? 人工整理 ──────────────────────�?知识�?Obsidian)       �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 知识类型
@@ -53,23 +53,23 @@ implementation_status: 进行中
 | 知识类型 | 说明 | 入库方式 |
 |----------|------|----------|
 | 因子知识 | 因子定义、IC表现、适用场景 | AI自动提取 |
-| 策略知识 | 策略逻辑、参数、表现 | AI自动提取 |
-| 教训知识 | 失败原因、注意事项 | 人工整理+AI辅助 |
-| 市场知识 | 市场状态、季节性、事件 | AI自动提取 |
-| 代码知识 | 代码片段、最佳实践 | AI自动注释 |
+| 策略知识 | 策略逻辑、参数、表�?| AI自动提取 |
+| 教训知识 | 失败原因、注意事�?| 人工整理+AI辅助 |
+| 市场知识 | 市场状态、季节性、事�?| AI自动提取 |
+| 代码知识 | 代码片段、最佳实�?| AI自动注释 |
 
 
-## 3. 知识库实现
+## 3. 知识库实�?
 
 ### 3.1 向量数据库选型
 
-| 方案 | 说明 | 推荐度 |
+| 方案 | 说明 | 推荐�?|
 |------|------|--------|
-| **Chroma** | 轻量级，易用，免费 | ⭐⭐⭐⭐⭐ |
+| **Chroma** | 轻量级，易用，免�?| ⭐⭐⭐⭐�?|
 | FAISS | Facebook开源，高性能 | ⭐⭐⭐⭐ |
-| Milvus | 功能强大，需要运维 | ⭐⭐⭐ |
+| Milvus | 功能强大，需要运�?| ⭐⭐�?|
 
-**选择**: Chroma (个人使用足够简单)
+**选择**: Chroma (个人使用足够简�?
 
 ### 3.2 知识库核心类
 
@@ -78,7 +78,7 @@ from chromadb import Client
 from chromadb.config import Settings
 
 class KnowledgeBase:
-    """知识库
+    """知识�?
 
     索引: KNOWLEDGE.001-M01
     上游: wandb, ResearchPipeline
@@ -92,7 +92,7 @@ class KnowledgeBase:
         ))
         self.collection = self.client.get_or_create_collection(
             name="quant_knowledge",
-            metadata={"description": "量化研究知识库"}
+            metadata={"description": "量化研究知识�?}
         )
 
     def add_knowledge(
@@ -105,7 +105,7 @@ class KnowledgeBase:
 
         参数:
             content: 知识内容
-            metadata: 元数据 (来源、时间、标签等)
+            metadata: 元数�?(来源、时间、标签等)
             category: 知识类别 (factor/strategy/lesson/market)
         """
         self.collection.add(
@@ -118,7 +118,7 @@ class KnowledgeBase:
         )
 
     def query(self, query: str, n_results: int = 5) -> list:
-        """语义检索
+        """语义检�?
 
         参数:
             query: 查询文本
@@ -139,19 +139,19 @@ class KnowledgeBase:
         参数:
             factor_data: {
                 'name': 'momentum_20',
-                'definition': '20日动量因子',
+                'definition': '20日动量因�?,
                 'ic_mean': 0.045,
                 'ic_ir': 0.52,
                 'best_params': {'period': 20},
-                'notes': '适用于趋势市场'
+                'notes': '适用于趋势市�?
             }
         """
         content = f"""
         因子名称: {factor_data['name']}
         因子定义: {factor_data['definition']}
-        IC均值: {factor_data.get('ic_mean', 'N/A')}
+        IC均�? {factor_data.get('ic_mean', 'N/A')}
         IC_IR: {factor_data.get('ic_ir', 'N/A')}
-        最优参数: {factor_data.get('best_params', {})}
+        最优参�? {factor_data.get('best_params', {})}
         使用注意: {factor_data.get('notes', '')}
         """
 
@@ -172,7 +172,7 @@ class KnowledgeBase:
         策略类型: {strategy_data.get('type', 'N/A')}
         核心逻辑: {strategy_data.get('logic', 'N/A')}
         夏普比率: {strategy_data.get('sharpe', 'N/A')}
-        最大回撤: {strategy_data.get('max_drawdown', 'N/A')}
+        最大回�? {strategy_data.get('max_drawdown', 'N/A')}
         适用场景: {strategy_data.get('scenario', 'N/A')}
         """
 
@@ -209,7 +209,7 @@ class ExperimentExtractor:
             run_id: wandb run ID
 
         返回:
-            提取的知识
+            提取的知�?
         """
         # 获取实验数据
         run = wandb.Api().run(run_id)
@@ -222,7 +222,7 @@ class ExperimentExtractor:
         实验配置: {run.config}
         实验指标: {run.summaryMetrics}
 
-        请提取:
+        请提�?
         1. 核心发现
         2. 成功要素
         3. 失败教训
@@ -241,9 +241,9 @@ class ExperimentExtractor:
 
         {report_text}
 
-        请提取:
+        请提�?
         1. 核心发现
-        2. 方法论
+        2. 方法�?
         3. 适用条件
         4. 注意事项
         """
@@ -268,7 +268,7 @@ class KnowledgeIngestion:
     def on_experiment_complete(self, experiment_id: str):
         """实验完成回调
 
-        实验完成后自动提取知识入库
+        实验完成后自动提取知识入�?
         """
         # 1. 从wandb提取知识
         knowledge = self.extractor.extract_from_wandb(experiment_id)
@@ -300,7 +300,7 @@ class KnowledgeQuery:
         self.kb = KnowledgeBase()
 
     def query_for_research(self, objective: str) -> list:
-        """为研究查询相关知识
+        """为研究查询相关知�?
 
         参数:
             objective: 研究目标
@@ -308,10 +308,10 @@ class KnowledgeQuery:
         返回:
             相关知识列表
         """
-        # 语义检索
+        # 语义检�?
         results = self.kb.query(objective, n_results=10)
 
-        # 格式化输出
+        # 格式化输�?
         return [
             {
                 'content': r['document'],
@@ -352,15 +352,15 @@ class KnowledgeQuery:
 
 ```
 vault/
-├── 00_知识库/
-│   ├── 因子/
-│   │   ├── momentum_20.md
-│   │   └── value_factor.md
-│   ├── 策略/
-│   │   ├── trend_following.md
-│   │   └── mean_reversion.md
-│   └── 教训/
-│       └── common_mistakes.md
+├── 00_知识�?
+�?  ├── 因子/
+�?  �?  ├── momentum_20.md
+�?  �?  └── value_factor.md
+�?  ├── 策略/
+�?  �?  ├── trend_following.md
+�?  �?  └── mean_reversion.md
+�?  └── 教训/
+�?      └── common_mistakes.md
 ```
 
 ### 6.2 AI自动更新Obsidian
@@ -381,7 +381,7 @@ class ObsidianUpdater:
         参数:
             factor_data: 因子数据
         """
-        note_path = f"{self.vault_path}/00_知识库/因子/{factor_data['name']}.md"
+        note_path = f"{self.vault_path}/00_知识�?因子/{factor_data['name']}.md"
 
         content = f"""---
 type: factor
@@ -394,12 +394,12 @@ tags: [{', '.join(factor_data.get('tags', []))}]
 {factor_data.get('definition', '')}
 
 ## 表现
-| 指标 | 值 |
+| 指标 | �?|
 |------|-----|
-| IC均值 | {factor_data.get('ic_mean', 'N/A')} |
+| IC均�?| {factor_data.get('ic_mean', 'N/A')} |
 | IC_IR | {factor_data.get('ic_ir', 'N/A')} |
 
-## 最优参数
+## 最优参�?
 ```json
 {factor_data.get('best_params', {})}
 ```
@@ -454,11 +454,11 @@ class KnowledgeAPI:
 
     @router.get("/factors")
     def list_factors() -> List[FactorSummary]:
-        """列出所有因子"""
+        """列出所有因�?""
 
     @router.get("/strategies")
     def list_strategies() -> List[StrategySummary]:
-        """列出所有策略"""
+        """列出所有策�?""
 
     @router.post("/sync/obsidian")
     def sync_obsidian() -> SyncResult:
@@ -466,7 +466,7 @@ class KnowledgeAPI:
 ```
 
 
-## 8. 开发任务分解
+## 8. 开发任务分�?
 
 ### 8.1 任务分解 (25h)
 
@@ -474,11 +474,11 @@ class KnowledgeAPI:
 |------|------|------|
 | Chroma环境搭建 | 2h | Chroma安装+配置 |
 | 知识库核心类 | 6h | KnowledgeBase实现 |
-| 向量提取器 | 6h | ExperimentExtractor |
+| 向量提取�?| 6h | ExperimentExtractor |
 | 知识入库流程 | 4h | KnowledgeIngestion |
 | 查询接口 | 4h | KnowledgeQuery |
 | Obsidian集成 | 3h | ObsidianUpdater |
-| API层 | 2h | REST API |
+| API�?| 2h | REST API |
 | 测试 | 2h | 集成测试 |
 
 
@@ -486,12 +486,12 @@ class KnowledgeAPI:
 
 ### 9.1 关键指标
 
-| 指标 | 说明 | 阈值 |
+| 指标 | 说明 | 阈�?|
 |------|------|------|
-| knowledge_count | 知识条目数 | - |
-| query_count | 查询次数/日 | - |
-| query_hit_rate | 查询命中率 | >70% |
-| auto_ingest_rate | 自动入库率 | >80% |
+| knowledge_count | 知识条目�?| - |
+| query_count | 查询次数/�?| - |
+| query_hit_rate | 查询命中�?| >70% |
+| auto_ingest_rate | 自动入库�?| >80% |
 
 
 ## 10. 测试策略
@@ -499,11 +499,11 @@ class KnowledgeAPI:
 ### 10.1 测试分层
 
 ```
-单元测试 (KnowledgeBase类测试)
-    ↓
+单元测试 (KnowledgeBase类测�?
+    �?
 集成测试 (Chroma API测试)
-    ↓
-端到端测试 (完整知识管理流程)
+    �?
+端到端测�?(完整知识管理流程)
 ```
 
 ### 10.2 单元测试
@@ -517,10 +517,10 @@ from src.knowledge.base import KnowledgeBase
 from src.knowledge.extractor import KnowledgeExtractor
 
 class TestKnowledgeBase:
-    """知识库单元测试"""
+    """知识库单元测�?""
 
     def setup_method(self):
-        """测试前准备"""
+        """测试前准�?""
         with patch('src.knowledge.base.Client') as mock_client:
             self.mock_collection = MagicMock()
             mock_client.return_value.get_or_create_collection.return_value = self.mock_collection
@@ -529,7 +529,7 @@ class TestKnowledgeBase:
     def test_add_knowledge(self):
         """测试添加知识"""
         self.kb.add_knowledge(
-            content="MACD因子在2024年表现良好",
+            content="MACD因子�?024年表现良�?,
             category="factor",
             metadata={"factor_name": "MACD"}
         )
@@ -543,7 +543,7 @@ class TestKnowledgeBase:
             'distances': [[0.1]]
         }
 
-        results = self.kb.query("MACD因子怎么样", n_results=5)
+        results = self.kb.query("MACD因子怎么�?, n_results=5)
         assert len(results) == 1
         assert results[0]['content'] == "MACD因子表现良好"
 
@@ -575,13 +575,13 @@ class TestKnowledgeBase:
         self.mock_collection.update.assert_called_once()
 
 class TestKnowledgeExtractor:
-    """知识提取器测试"""
+    """知识提取器测�?""
 
     def setup_method(self):
         self.extractor = KnowledgeExtractor()
 
     def test_extract_from_factor_result(self):
-        """测试从因子结果提取知识"""
+        """测试从因子结果提取知�?""
         factor_result = {
             'factor_name': 'momentum_20',
             'ic_mean': 0.045,
@@ -598,7 +598,7 @@ class TestKnowledgeExtractor:
         assert knowledge.metadata['ic_mean'] == 0.045
 
     def test_extract_from_strategy_result(self):
-        """测试从策略结果提取知识"""
+        """测试从策略结果提取知�?""
         strategy_result = {
             'strategy_name': 'trend_following',
             'annual_return': 0.15,
@@ -613,10 +613,10 @@ class TestKnowledgeExtractor:
         assert knowledge.metadata['sharpe_ratio'] == 1.8
 
     def test_extract_failure_case(self):
-        """测试从失败案例提取知识"""
+        """测试从失败案例提取知�?""
         failure_result = {
             'experiment_id': 'exp_002',
-            'reason': '过拟合',
+            'reason': '过拟�?,
             'ic_train': 0.08,
             'ic_test': 0.02
         }
@@ -624,7 +624,7 @@ class TestKnowledgeExtractor:
         knowledge = self.extractor.extract_failure_case(failure_result)
 
         assert knowledge.category == "failure"
-        assert "过拟合" in knowledge.content
+        assert "过拟�? in knowledge.content
         assert knowledge.metadata['experiment_id'] == 'exp_002'
 ```
 
@@ -638,7 +638,7 @@ from src.knowledge.base import KnowledgeBase
 from src.knowledge.ingestion import KnowledgeIngestion
 
 class TestKnowledgeIntegration:
-    """知识库集成测试"""
+    """知识库集成测�?""
 
     @pytest.fixture
     def kb(self):
@@ -684,20 +684,20 @@ class TestKnowledgeIntegration:
             vault_path="/tmp/test_vault"
         )
 
-        # 3. 验证文件已创建
+        # 3. 验证文件已创�?
         note_path = Path("/tmp/test_vault/factors/momentum_20.md")
         assert note_path.exists()
 
-### 10.4 端到端测试
+### 10.4 端到端测�?
 
 ```python
 # tests/e2e/test_knowledge_e2e.py
 
 class TestKnowledgeE2E:
-    """知识管理端到端测试"""
+    """知识管理端到端测�?""
 
     def test_research_to_knowledge_flow(self):
-        """测试从研究到知识的完整流程"""
+        """测试从研究到知识的完整流�?""
         # 1. 提交研究任务
         response = client.post("/api/v1/agent/research", json={
             "objective": "研究MACD因子"
@@ -711,13 +711,13 @@ class TestKnowledgeE2E:
                 break
             time.sleep(1)
 
-        # 3. 验证知识已入库
+        # 3. 验证知识已入�?
         response = client.get("/api/v1/knowledge/query", params={
             "q": "MACD因子"
         })
         assert len(response.json()) > 0
 
-        # 4. 验证Obsidian笔记已创建
+        # 4. 验证Obsidian笔记已创�?
         note_path = Path("/tmp/obsidian/MACD因子.md")
         assert note_path.exists()
 ```
@@ -728,7 +728,7 @@ class TestKnowledgeE2E:
 
 ```python
 class KnowledgeBase:
-    """知识库 - 批量优化"""
+    """知识�?- 批量优化"""
 
     def add_knowledge_batch(self, knowledge_list: list):
         """批量添加知识"""
@@ -766,7 +766,7 @@ class KnowledgeCache:
             if time.time() - timestamp < ttl:
                 return cached
 
-        # 缓存未命中，查询数据库
+        # 缓存未命中，查询数据�?
         results = self.kb.query(query)
         self.cache[cache_key] = (results, time.time())
         return results
@@ -781,5 +781,5 @@ class KnowledgeCache:
 | v1.1 | 2026-03-29 | 补充测试策略、性能优化 |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `KNOWLEDGE.001`

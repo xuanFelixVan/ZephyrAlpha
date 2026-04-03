@@ -297,7 +297,7 @@
       }
     },
     {
-      "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+      "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
       "total_score": 71.0,
       "path_score": 25.0,
       "type_score": 18.0,
@@ -306,7 +306,7 @@
       "size_score": 8.0,
       "layer": "important",
       "metadata": {
-        "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+        "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
         "size_kb": 1.68
       }
     },
@@ -2764,7 +2764,7 @@
         }
       },
       {
-        "file_path": "docs\\design\\专业量化机构开发完整流程.md",
+        "file_path": "docs\\design\\专业量化机构开发完整流�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2773,12 +2773,12 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\专业量化机构开发完整流程.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\专业量化机构开发完整流�?md",
           "size_kb": 17.51
         }
       },
       {
-        "file_path": "docs\\design\\个人技术决策确认清单.md",
+        "file_path": "docs\\design\\个人技术决策确认清�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2787,12 +2787,12 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\个人技术决策确认清单.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\个人技术决策确认清�?md",
           "size_kb": 16.38
         }
       },
       {
-        "file_path": "docs\\design\\技术方案设计汇总报告.md",
+        "file_path": "docs\\design\\技术方案设计汇总报�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2801,12 +2801,12 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\技术方案设计汇总报告.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\技术方案设计汇总报�?md",
           "size_kb": 16.86
         }
       },
       {
-        "file_path": "docs\\design\\技术方案评审会议议程.md",
+        "file_path": "docs\\design\\技术方案评审会议议�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2815,7 +2815,7 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\技术方案评审会议议程.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\技术方案评审会议议�?md",
           "size_kb": 10.39
         }
       },
@@ -2848,7 +2848,7 @@
         }
       },
       {
-        "file_path": "docs\\design\\data_consistency\\Saga模式实现流程图.md",
+        "file_path": "docs\\design\\data_consistency\\Saga模式实现流程�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2857,12 +2857,12 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\data_consistency\\Saga模式实现流程图.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\data_consistency\\Saga模式实现流程�?md",
           "size_kb": 19.86
         }
       },
       {
-        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+        "file_path": "docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2871,7 +2871,7 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\data_consistency\\多引擎数据一致性设计方案.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\data_consistency\\多引擎数据一致性设计方�?md",
           "size_kb": 33.01
         }
       },
@@ -2946,7 +2946,7 @@
         }
       },
       {
-        "file_path": "docs\\design\\web_interface\\前端组件结构图.md",
+        "file_path": "docs\\design\\web_interface\\前端组件结构�?md",
         "total_score": 54.0,
         "path_score": 12.0,
         "type_score": 12.0,
@@ -2955,7 +2955,7 @@
         "size_score": 10.0,
         "layer": "general",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\web_interface\\前端组件结构图.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\design\\web_interface\\前端组件结构�?md",
           "size_kb": 20.76
         }
       },
@@ -4252,7 +4252,7 @@
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
         "total_score": 71.0,
         "path_score": 25.0,
         "type_score": 18.0,
@@ -4261,7 +4261,7 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\README.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
           "size_kb": 1.68
         }
       },
@@ -4686,7 +4686,7 @@
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_CALCULATION_FRAMEWORK.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4695,12 +4695,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_CALCULATION_FRAMEWORK.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
           "size_kb": 29.7
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_MANAGEMENT_STANDARD.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4709,12 +4709,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_MANAGEMENT_STANDARD.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
           "size_kb": 20.04
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_neutralization.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_neutralization.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4723,12 +4723,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_neutralization.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_neutralization.md",
           "size_kb": 12.25
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_REGISTRY.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_REGISTRY.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4737,12 +4737,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_REGISTRY.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_REGISTRY.md",
           "size_kb": 16.76
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_return_analysis.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_return_analysis.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4751,12 +4751,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_return_analysis.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_return_analysis.md",
           "size_kb": 14.08
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_SCREENING_STRATEGY.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_SCREENING_STRATEGY.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4765,12 +4765,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FACTOR_SCREENING_STRATEGY.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_SCREENING_STRATEGY.md",
           "size_kb": 16.6
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FUTURE_FACTOR_TOOLS.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4779,12 +4779,12 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\FUTURE_FACTOR_TOOLS.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
           "size_kb": 26.06
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\TECHNICAL_INDICATORS.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
         "total_score": 67.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -4793,7 +4793,7 @@
         "size_score": 10.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\TECHNICAL_INDICATORS.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
           "size_kb": 14.97
         }
       },
@@ -5484,7 +5484,7 @@
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\backtest_standards.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5493,12 +5493,12 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\backtest_standards.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
           "size_kb": 9.33
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_preprocessing.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_preprocessing.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5507,12 +5507,12 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_preprocessing.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_preprocessing.md",
           "size_kb": 4.55
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_synthesis.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_synthesis.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5521,12 +5521,12 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\factor_synthesis.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\factor_synthesis.md",
           "size_kb": 2.97
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\ic_analysis.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5535,12 +5535,12 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\ic_analysis.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\ic_analysis.md",
           "size_kb": 3.4
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\research_management.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5549,12 +5549,12 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\research_management.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
           "size_kb": 8.52
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\T.02.FE001.factor_definition.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\T.02.FE001.factor_definition.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5563,7 +5563,7 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_METHODOLOGY\\T.02.FE001.factor_definition.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\01_STANDARDS\\T.02.FE001.factor_definition.md",
           "size_kb": 2.4
         }
       },
@@ -5680,7 +5680,7 @@
         }
       },
       {
-        "file_path": "docs\\02_FACTOR_LIBRARY\\06_FACTOR_REGISTRY\\factor_catalog.md",
+        "file_path": "docs\\02_FACTOR_LIBRARY\\06_REGISTRY\\factor_catalog.md",
         "total_score": 65.0,
         "path_score": 25.0,
         "type_score": 12.0,
@@ -5689,7 +5689,7 @@
         "size_score": 8.0,
         "layer": "important",
         "metadata": {
-          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\06_FACTOR_REGISTRY\\factor_catalog.md",
+          "absolute_path": "d:\\ZephyrAlpha\\docs\\02_FACTOR_LIBRARY\\06_REGISTRY\\factor_catalog.md",
           "size_kb": 3.05
         }
       },

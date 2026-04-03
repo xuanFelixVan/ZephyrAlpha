@@ -20,89 +20,89 @@
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/intelligent_link_fix_result.json",
+        "message": "链接目标不存�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/intelligent_link_fix_result.json",
         "line_number": 311,
-        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/intelligent_link_fix_result.json"
+        "suggestion": "检查链接路径是否正�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/intelligent_link_fix_result.json"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_round3.json",
+        "message": "链接目标不存�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_round3.json",
         "line_number": 312,
-        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_round3.json"
+        "suggestion": "检查链接路径是否正�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement_round3.json"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/document_classification_scan.json",
+        "message": "链接目标不存�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/document_classification_scan.json",
         "line_number": 313,
-        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/document_classification_scan.json"
+        "suggestion": "检查链接路径是否正�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/document_classification_scan.json"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report_round3.json",
+        "message": "链接目标不存�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report_round3.json",
         "line_number": 314,
-        "suggestion": "检查链接路径是否正确: file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report_round3.json"
+        "suggestion": "检查链接路径是否正�? file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/final_quality_report_round3.json"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../03_TRADING_TACTICS/NEURAL_NETWORK_INTEGRATION_PLAN.md",
+        "message": "链接目标不存�? ../../03_TRADING_TACTICS/NEURAL_NETWORK_INTEGRATION_PLAN.md",
         "line_number": 278,
-        "suggestion": "检查链接路径是否正确: ../../03_TRADING_TACTICS/NEURAL_NETWORK_INTEGRATION_PLAN.md"
+        "suggestion": "检查链接路径是否正�? ../../03_TRADING_TACTICS/NEURAL_NETWORK_INTEGRATION_PLAN.md"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\LSTM_MODEL_TECHNICAL_SPECIFICATION.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../../01_FRAMEWORK/ARCHITECTURE.md",
+        "message": "链接目标不存�? ../../../01_FRAMEWORK/ARCHITECTURE.md",
         "line_number": 651,
-        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/ARCHITECTURE.md"
+        "suggestion": "检查链接路径是否正�? ../../../01_FRAMEWORK/ARCHITECTURE.md"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\LSTM_MODEL_TECHNICAL_SPECIFICATION.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
+        "message": "链接目标不存�? ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
         "line_number": 652,
-        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md"
+        "suggestion": "检查链接路径是否正�? ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../../01_FRAMEWORK/ARCHITECTURE.md",
+        "message": "链接目标不存�? ../../../01_FRAMEWORK/ARCHITECTURE.md",
         "line_number": 678,
-        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/ARCHITECTURE.md"
+        "suggestion": "检查链接路径是否正�? ../../../01_FRAMEWORK/ARCHITECTURE.md"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
+        "message": "链接目标不存�? ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
         "line_number": 679,
-        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md"
+        "suggestion": "检查链接路径是否正�? ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../../01_FRAMEWORK/ARCHITECTURE.md",
+        "message": "链接目标不存�? ../../../01_FRAMEWORK/ARCHITECTURE.md",
         "line_number": 728,
-        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/ARCHITECTURE.md"
+        "suggestion": "检查链接路径是否正�? ../../../01_FRAMEWORK/ARCHITECTURE.md"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md",
         "issue_type": "broken_link",
         "severity": "warning",
-        "message": "链接目标不存在: ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
+        "message": "链接目标不存�? ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
         "line_number": 729,
-        "suggestion": "检查链接路径是否正确: ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md"
+        "suggestion": "检查链接路径是否正�? ../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md"
       }
     ],
     "version_issues": [],
@@ -113,7 +113,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "DOCUMENT_AUDIT_v5.1.md",
@@ -121,7 +121,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "DOCUMENT_AUDIT_v5.1.md",
@@ -129,7 +129,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "DOCUMENT_AUDIT_v5.1.md",
@@ -137,7 +137,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "DOCUMENT_AUDIT_v5.1.md",
@@ -145,7 +145,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "README.md",
@@ -153,7 +153,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "README.md",
@@ -161,7 +161,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "README.md",
@@ -169,7 +169,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "README.md",
@@ -177,7 +177,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "README.md",
@@ -185,7 +185,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "temp_a_stock_blueprint.md",
@@ -193,7 +193,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "temp_a_stock_blueprint.md",
@@ -201,7 +201,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "temp_a_stock_blueprint.md",
@@ -209,7 +209,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "temp_a_stock_blueprint.md",
@@ -217,7 +217,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "temp_a_stock_blueprint.md",
@@ -225,7 +225,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "assessments_output\\comprehensive_assessment_report.md",
@@ -233,7 +233,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "assessments_output\\comprehensive_assessment_report.md",
@@ -241,7 +241,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "assessments_output\\comprehensive_assessment_report.md",
@@ -249,7 +249,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "assessments_output\\comprehensive_assessment_report.md",
@@ -257,7 +257,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "assessments_output\\comprehensive_assessment_report.md",
@@ -265,7 +265,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "data\\assessments\\comprehensive_assessment_report.md",
@@ -273,7 +273,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "data\\assessments\\comprehensive_assessment_report.md",
@@ -281,7 +281,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "data\\assessments\\comprehensive_assessment_report.md",
@@ -289,7 +289,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "data\\assessments\\comprehensive_assessment_report.md",
@@ -297,7 +297,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "data\\assessments\\comprehensive_assessment_report.md",
@@ -305,7 +305,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "data\\monitoring\\reports\\daily\\2026-04-02_performance_report.md",
@@ -313,7 +313,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "data\\monitoring\\reports\\daily\\2026-04-02_performance_report.md",
@@ -321,7 +321,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "data\\monitoring\\reports\\daily\\2026-04-02_performance_report.md",
@@ -329,7 +329,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "data\\monitoring\\reports\\daily\\2026-04-02_performance_report.md",
@@ -337,7 +337,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "data\\monitoring\\reports\\daily\\2026-04-02_performance_report.md",
@@ -345,39 +345,39 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\00_OVERVIEW\\DATA_FLOW.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "message": "文档不在标准分类目录�? 00_OVERVIEW",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\00_OVERVIEW\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_OVERVIEW",
+        "message": "文档不在标准分类目录�? 00_OVERVIEW",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\00_RESOURCES\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "message": "文档不在标准分类目录�? 00_RESOURCES",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 00_RESOURCES",
+        "message": "文档不在标准分类目录�? 00_RESOURCES",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
@@ -385,7 +385,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
@@ -393,7 +393,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
@@ -401,7 +401,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
@@ -409,7 +409,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\04_EXECUTION\\03_MONITORING\\BLUEPRINT.md",
@@ -417,7 +417,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\PHASE2_COMPLETION_SUMMARY.md",
@@ -425,7 +425,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\PHASE2_COMPLETION_SUMMARY.md",
@@ -433,7 +433,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\PHASE2_COMPLETION_SUMMARY.md",
@@ -441,7 +441,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\PHASE2_COMPLETION_SUMMARY.md",
@@ -449,7 +449,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\PHASE2_COMPLETION_SUMMARY.md",
@@ -457,7 +457,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
@@ -465,7 +465,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
@@ -473,7 +473,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
@@ -481,7 +481,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
@@ -489,7 +489,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
@@ -497,7 +497,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_QUALITY_GATE_STANDARD.md",
@@ -505,7 +505,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_QUALITY_GATE_STANDARD.md",
@@ -513,7 +513,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_QUALITY_GATE_STANDARD.md",
@@ -521,7 +521,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_QUALITY_GATE_STANDARD.md",
@@ -529,7 +529,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\02_DEVELOPMENT\\DOCUMENT_QUALITY_GATE_STANDARD.md",
@@ -537,7 +537,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
@@ -545,7 +545,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
@@ -553,7 +553,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
@@ -561,7 +561,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
@@ -569,7 +569,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\PERFORMANCE_MONITORING.md",
@@ -577,7 +577,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
@@ -585,7 +585,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
@@ -593,7 +593,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
@@ -601,7 +601,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
@@ -609,7 +609,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
@@ -617,7 +617,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
@@ -625,7 +625,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
@@ -633,7 +633,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
@@ -641,7 +641,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
@@ -649,7 +649,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
@@ -657,7 +657,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
@@ -665,7 +665,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
@@ -673,7 +673,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
@@ -681,7 +681,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
@@ -689,7 +689,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md",
@@ -697,7 +697,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md",
@@ -705,7 +705,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md",
@@ -713,7 +713,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md",
@@ -721,7 +721,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md",
@@ -729,7 +729,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md",
@@ -737,7 +737,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
@@ -745,7 +745,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
@@ -753,7 +753,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
@@ -761,7 +761,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
@@ -769,7 +769,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md",
@@ -777,7 +777,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
@@ -785,7 +785,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
@@ -793,7 +793,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
@@ -801,7 +801,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
@@ -809,7 +809,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\FINAL_QUALITY_OPTIMIZATION_REPORT_20260402.md",
@@ -817,7 +817,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\QUALITY_OPTIMIZATION_COMPREHENSIVE_REPORT_20260402.md",
@@ -825,7 +825,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\QUALITY_OPTIMIZATION_COMPREHENSIVE_REPORT_20260402.md",
@@ -833,7 +833,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\QUALITY_OPTIMIZATION_COMPREHENSIVE_REPORT_20260402.md",
@@ -841,7 +841,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\QUALITY_OPTIMIZATION_COMPREHENSIVE_REPORT_20260402.md",
@@ -849,7 +849,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\QUALITY_OPTIMIZATION_COMPREHENSIVE_REPORT_20260402.md",
@@ -857,7 +857,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
@@ -865,7 +865,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
@@ -873,7 +873,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
@@ -881,7 +881,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
@@ -889,7 +889,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\sample_validation_2026-04-02\\sample_audit_report.md",
@@ -897,7 +897,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_001_QMT_API_LEARNING_PLAN.md",
@@ -905,7 +905,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_001_QMT_API_LEARNING_PLAN.md",
@@ -913,7 +913,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_002_QMT_API_COMMUNITY_RESEARCH.md",
@@ -921,7 +921,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_002_QMT_API_COMMUNITY_RESEARCH.md",
@@ -929,7 +929,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md",
@@ -937,7 +937,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\improvements\\IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md",
@@ -945,7 +945,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\BEST_PRACTICES_TEMPLATE.md",
@@ -953,7 +953,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\BEST_PRACTICES_TEMPLATE.md",
@@ -961,7 +961,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\CASE_STUDY_TEMPLATE.md",
@@ -969,7 +969,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\CASE_STUDY_TEMPLATE.md",
@@ -977,7 +977,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
@@ -985,7 +985,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
@@ -993,7 +993,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
@@ -1001,7 +1001,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
@@ -1009,7 +1009,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\knowledge_base\\README.md",
@@ -1017,7 +1017,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md",
@@ -1025,7 +1025,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md",
@@ -1033,7 +1033,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR\\comprehensive_assessment_report.md",
@@ -1041,7 +1041,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR\\comprehensive_assessment_report.md",
@@ -1049,7 +1049,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR\\comprehensive_assessment_report.md",
@@ -1057,7 +1057,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR\\comprehensive_assessment_report.md",
@@ -1065,7 +1065,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\IFIND_CONNECTOR\\comprehensive_assessment_report.md",
@@ -1073,7 +1073,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE\\comprehensive_assessment_report.md",
@@ -1081,7 +1081,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE\\comprehensive_assessment_report.md",
@@ -1089,7 +1089,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE\\comprehensive_assessment_report.md",
@@ -1097,7 +1097,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE\\comprehensive_assessment_report.md",
@@ -1105,7 +1105,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\04_OPERATIONS\\review_reports\\QMT_DATA_INTERFACE\\comprehensive_assessment_report.md",
@@ -1113,7 +1113,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md",
@@ -1121,7 +1121,7 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: implementation_status",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 implementation_status 字段"
+        "suggestion": "建议在文档元数据中添�?implementation_status 字段"
       },
       {
         "file_path": "docs\\05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md",
@@ -1129,151 +1129,151 @@
         "severity": "info",
         "message": "缺少推荐的元数据字段: parent_document",
         "line_number": null,
-        "suggestion": "建议在文档元数据中添加 parent_document 字段"
+        "suggestion": "建议在文档元数据中添�?parent_document 字段"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\01_UI_DESIGN\\ui_layout_standard.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\ARCHIVED.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\08_USER_EXPERIENCE\\04_NOZYIO\\README.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: 08_USER_EXPERIENCE",
+        "message": "文档不在标准分类目录�? 08_USER_EXPERIENCE",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_BAOSTOCK.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_IFIND.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_QMT.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_0\\L0_SUPERCMD.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_CLEANER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_NORMALIZER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_1\\L1_VALIDATOR.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_4\\L4_FEATURE_ENG.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_FACTOR_MINER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_FEATURE_OPTIMIZER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_HYPERPARAM_OPT.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_MARKET_DETECTOR.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "docs\\module_designs\\layer_9\\L9_MODEL_ENSEMBLER.md",
         "issue_type": "non_standard_category",
         "severity": "info",
-        "message": "文档不在标准分类目录下: module_designs",
+        "message": "文档不在标准分类目录�? module_designs",
         "line_number": null,
-        "suggestion": "建议将文档移至标准分类目录: 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
+        "suggestion": "建议将文档移至标准分类目�? 09_AUDIT, 05_IMPLEMENTATION, 01_FRAMEWORK, 02_FACTOR_LIBRARY, 07_RESEARCH, 04_EXECUTION, 06_ARCHIVE, 08_AI_GOVERNANCE, 03_TRADING_TACTICS"
       },
       {
         "file_path": "notebooks\\README.md",
@@ -1281,7 +1281,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "notebooks\\README.md",
@@ -1289,7 +1289,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "notebooks\\README.md",
@@ -1297,7 +1297,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "notebooks\\README.md",
@@ -1305,7 +1305,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "notebooks\\README.md",
@@ -1313,7 +1313,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       },
       {
         "file_path": "scripts\\README.md",
@@ -1321,7 +1321,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: owner",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 owner 字段"
+        "suggestion": "在文档元数据中添�?owner 字段"
       },
       {
         "file_path": "scripts\\README.md",
@@ -1329,7 +1329,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: version",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 version 字段"
+        "suggestion": "在文档元数据中添�?version 字段"
       },
       {
         "file_path": "scripts\\README.md",
@@ -1337,7 +1337,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: module_id",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 module_id 字段"
+        "suggestion": "在文档元数据中添�?module_id 字段"
       },
       {
         "file_path": "scripts\\README.md",
@@ -1345,7 +1345,7 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: created_date",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 created_date 字段"
+        "suggestion": "在文档元数据中添�?created_date 字段"
       },
       {
         "file_path": "scripts\\README.md",
@@ -1353,13 +1353,13 @@
         "severity": "warning",
         "message": "缺少必需的元数据字段: last_updated",
         "line_number": null,
-        "suggestion": "在文档元数据中添加 last_updated 字段"
+        "suggestion": "在文档元数据中添�?last_updated 字段"
       }
     ]
   },
   "recommendations": [
-    "修复损坏的链接，确保所有内部链接指向有效文件",
+    "修复损坏的链接，确保所有内部链接指向有效文�?,
     "完善文档元数据，添加所有必需字段",
-    "将文档移至标准分类目录，提高文档组织性"
+    "将文档移至标准分类目录，提高文档组织�?
   ]
 }

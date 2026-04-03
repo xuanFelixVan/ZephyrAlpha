@@ -4,61 +4,61 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构师
+owner: 首席蓝图架构�?
 standard_type: 专业量化机构订单管理标准
 applicable_scope: 订单服务模块
 compliance_level: 专业机构标准
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 订单管理详细设计（专业量化机构标准）
 
 > 清风量化系统 v5.0 - 专业量化机构标准订单管理设计
 > **设计模式**: DDD领域驱动设计 + 状态机模式 + Saga事务
-> **核心职责**: 订单生命周期管理、订单执行、订单查询
+> **核心职责**: 订单生命周期管理、订单执行、订单查�?
 
 ## 📋 模块概述
 
 ### 订单管理架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    应用层 (Application Layer)                │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          OrderApplicationService                      │  │
-│  │  - 创建订单应用服务                                    │  │
-│  │  - 执行订单应用服务                                    │  │
-│  │  - 查询订单应用服务                                    │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                    领域层 (Domain Layer)                     │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          OrderAggregate (订单聚合根)                  │  │
-│  │  - Order (订单实体)                                   │  │
-│  │  - Trade (交易记录实体)                               │  │
-│  │  - OrderDomainService (领域服务)                      │  │
-│  │  - OrderStateMachine (状态机)                         │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                    基础设施层 (Infrastructure Layer)          │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          OrderRepository (订单仓储)                   │  │
-│  │  - PostgreSQL (主数据库)                              │  │
-│  │  - Redis (实时缓存)                                   │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   应用�?(Application Layer)                �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         OrderApplicationService                      �? �?
+�? �? - 创建订单应用服务                                    �? �?
+�? �? - 执行订单应用服务                                    �? �?
+�? �? - 查询订单应用服务                                    �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                   领域�?(Domain Layer)                     �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         OrderAggregate (订单聚合�?                  �? �?
+�? �? - Order (订单实体)                                   �? �?
+�? �? - Trade (交易记录实体)                               �? �?
+�? �? - OrderDomainService (领域服务)                      �? �?
+�? �? - OrderStateMachine (状态机)                         �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                   基础设施�?(Infrastructure Layer)          �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         OrderRepository (订单仓储)                   �? �?
+�? �? - PostgreSQL (主数据库)                              �? �?
+�? �? - Redis (实时缓存)                                   �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ---
 
 ## 1. 领域模型设计
 
-### 1.1 订单聚合根 (OrderAggregate)
+### 1.1 订单聚合�?(OrderAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -74,18 +74,18 @@ class OrderDirection(Enum):
 
 class OrderType(Enum):
     """订单类型"""
-    MARKET = 'market'  # 市价单
-    LIMIT = 'limit'    # 限价单
+    MARKET = 'market'  # 市价�?
+    LIMIT = 'limit'    # 限价�?
 
 class OrderStatus(Enum):
-    """订单状态"""
-    PENDING = 'pending'           # 待提交
-    SUBMITTED = 'submitted'       # 已提交
+    """订单状�?""
+    PENDING = 'pending'           # 待提�?
+    SUBMITTED = 'submitted'       # 已提�?
     PARTIAL_FILLED = 'partial_filled'  # 部分成交
     FILLED = 'filled'             # 完全成交
-    CANCELLED = 'cancelled'       # 已取消
-    REJECTED = 'rejected'         # 已拒绝
-    EXPIRED = 'expired'           # 已过期
+    CANCELLED = 'cancelled'       # 已取�?
+    REJECTED = 'rejected'         # 已拒�?
+    EXPIRED = 'expired'           # 已过�?
 
 @dataclass
 class Order:
@@ -218,7 +218,7 @@ class Order:
         ]
     
     def is_completed(self) -> bool:
-        """是否已完成"""
+        """是否已完�?""
         return self.status in [
             OrderStatus.FILLED,
             OrderStatus.CANCELLED,
@@ -270,7 +270,7 @@ from typing import Dict, Set
 class OrderStateMachine:
     """订单状态机"""
     
-    # 状态转换规则
+    # 状态转换规�?
     TRANSITIONS: Dict[OrderStatus, Set[OrderStatus]] = {
         OrderStatus.PENDING: {
             OrderStatus.SUBMITTED,
@@ -287,10 +287,10 @@ class OrderStateMachine:
             OrderStatus.FILLED,
             OrderStatus.CANCELLED
         },
-        OrderStatus.FILLED: set(),  # 终态
-        OrderStatus.CANCELLED: set(),  # 终态
-        OrderStatus.REJECTED: set(),  # 终态
-        OrderStatus.EXPIRED: set()  # 终态
+        OrderStatus.FILLED: set(),  # 终�?
+        OrderStatus.CANCELLED: set(),  # 终�?
+        OrderStatus.REJECTED: set(),  # 终�?
+        OrderStatus.EXPIRED: set()  # 终�?
     }
     
     @classmethod
@@ -301,12 +301,12 @@ class OrderStateMachine:
     
     @classmethod
     def get_next_statuses(cls, current_status: OrderStatus) -> Set[OrderStatus]:
-        """获取可能的下一状态"""
+        """获取可能的下一状�?""
         return cls.TRANSITIONS.get(current_status, set())
     
     @classmethod
     def is_final_status(cls, status: OrderStatus) -> bool:
-        """是否是终态"""
+        """是否是终�?""
         return len(cls.TRANSITIONS.get(status, set())) == 0
 ```
 
@@ -330,7 +330,7 @@ class OrderDomainService:
     ) -> Decimal:
         """计算佣金"""
         commission = trade_amount * commission_rate
-        # 最低佣金5元
+        # 最低佣�?�?
         return max(commission, Decimal('5.0000'))
     
     async def calculate_stamp_tax(
@@ -349,7 +349,7 @@ class OrderDomainService:
         trade_quantity: int,
         transfer_fee_rate: Decimal = Decimal('0.00001')
     ) -> Decimal:
-        """计算过户费"""
+        """计算过户�?""
         return Decimal(trade_quantity) * transfer_fee_rate
     
     async def calculate_total_cost(
@@ -360,12 +360,12 @@ class OrderDomainService:
         transfer_fee: Decimal,
         direction: OrderDirection
     ) -> Decimal:
-        """计算总成本"""
+        """计算总成�?""
         if direction == OrderDirection.BUY:
-            # 买入：交易金额 + 佣金 + 过户费
+            # 买入：交易金�?+ 佣金 + 过户�?
             return trade_amount + commission + transfer_fee
         else:
-            # 卖出：交易金额 - 佣金 - 印花税 - 过户费
+            # 卖出：交易金�?- 佣金 - 印花�?- 过户�?
             return trade_amount - commission - stamp_tax - transfer_fee
     
     async def calculate_net_amount(
@@ -393,7 +393,7 @@ class OrderDomainService:
         """验证订单"""
         # 验证订单价格
         if order.order_type == OrderType.LIMIT and order.order_price <= 0:
-            return False, "限价单价格必须大于0"
+            return False, "限价单价格必须大�?"
         
         # 验证订单数量
         if order.order_quantity <= 0:
@@ -476,7 +476,7 @@ class OrderApplicationService:
         # 验证订单
         account = await self.account_service.get_account(account_id)
         if not account:
-            raise ValueError(f"账户不存在: {account_id}")
+            raise ValueError(f"账户不存�? {account_id}")
         
         if direction == 'buy':
             available_balance = Decimal(str(account['available_cash']))
@@ -531,7 +531,7 @@ class OrderApplicationService:
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
-            raise ValueError(f"订单不存在: {order_id}")
+            raise ValueError(f"订单不存�? {order_id}")
         
         if not order.can_submit():
             raise ValueError(f"订单状态不允许提交: {order.status.value}")
@@ -562,7 +562,7 @@ class OrderApplicationService:
         if not order.can_cancel():
             return False
         
-        # 如果已提交到引擎，先从引擎取消
+        # 如果已提交到引擎，先从引擎取�?
         if order.broker_order_id:
             engine = self.engine_manager.get_engine(order.engine_id)
             if engine:
@@ -698,7 +698,7 @@ class OrderApplicationService:
 
 ---
 
-## 5. 性能与监控
+## 5. 性能与监�?
 
 ### 5.1 性能指标
 
@@ -746,7 +746,7 @@ class OrderMonitor:
                 / self.metrics['filled_orders']
             )
         
-        # 更新成交率
+        # 更新成交�?
         self.metrics['fill_rate'] = (
             self.metrics['filled_orders'] / self.metrics['total_orders']
             if self.metrics['total_orders'] > 0 else 0
@@ -759,5 +759,5 @@ class OrderMonitor:
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状态**: ✅ 已完成  
-**全部任务完成！**
+**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
+**全部任务完成�?*

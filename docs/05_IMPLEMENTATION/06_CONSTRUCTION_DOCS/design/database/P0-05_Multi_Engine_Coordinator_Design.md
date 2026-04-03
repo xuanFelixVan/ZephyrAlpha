@@ -4,50 +4,50 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构师
+owner: 首席蓝图架构�?
 standard_type: 专业量化机构多引擎协同器标准
-applicable_scope: 多引擎事务协调
+applicable_scope: 多引擎事务协�?
 compliance_level: 专业机构标准
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 多引擎协同器详细设计（专业量化机构标准）
 
 > 清风量化系统 v5.0 - 专业量化机构标准多引擎协同器设计
-> **设计模式**: Saga分布式事务模式 + 事件驱动架构
-> **核心职责**: 多引擎事务协调、数据一致性保障、故障恢复
+> **设计模式**: Saga分布式事务模�?+ 事件驱动架构
+> **核心职责**: 多引擎事务协调、数据一致性保障、故障恢�?
 
-## 📋 协同器概述
+## 📋 协同器概�?
 
 ### Saga事务架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Saga协调器 (Saga Coordinator)             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  1. 事务编排 (Transaction Orchestration)              │  │
-│  │  2. 状态管理 (State Management)                       │  │
-│  │  3. 补偿机制 (Compensation Mechanism)                 │  │
-│  │  4. 故障恢复 (Failure Recovery)                       │  │
-│  └──────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓ 事件驱动
-┌─────────────────────────────────────────────────────────────┐
-│                    Saga执行步骤                              │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
-│  │Step 1    │ │Step 2    │ │Step 3    │ │Step 4    │      │
-│  │创建订单  │→│冻结资金  │→│提交引擎  │→│更新持仓  │      │
-│  │          │ │          │ │          │ │          │      │
-│  │Compensate│ │Compensate│ │Compensate│ │Compensate│      │
-│  │取消订单  │ │解冻资金  │ │取消订单  │ │回滚持仓  │      │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   Saga协调�?(Saga Coordinator)             �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �? 1. 事务编排 (Transaction Orchestration)              �? �?
+�? �? 2. 状态管�?(State Management)                       �? �?
+�? �? 3. 补偿机制 (Compensation Mechanism)                 �? �?
+�? �? 4. 故障恢复 (Failure Recovery)                       �? �?
+�? └──────────────────────────────────────────────────────�? �?
+└─────────────────────────────────────────────────────────────�?
+                            �?事件驱动
+┌─────────────────────────────────────────────────────────────�?
+�?                   Saga执行步骤                              �?
+�? ┌──────────�?┌──────────�?┌──────────�?┌──────────�?     �?
+�? │Step 1    �?│Step 2    �?│Step 3    �?│Step 4    �?     �?
+�? │创建订�? │→│冻结资�? │→│提交引�? │→│更新持�? �?     �?
+�? �?         �?�?         �?�?         �?�?         �?     �?
+�? │Compensate�?│Compensate�?│Compensate�?│Compensate�?     �?
+�? │取消订�? �?│解冻资�? �?│取消订�? �?│回滚持�? �?     �?
+�? └──────────�?└──────────�?└──────────�?└──────────�?     �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ---
 
-## 1. Saga协调器核心设计
+## 1. Saga协调器核心设�?
 
 ### 1.1 Saga状态机
 
@@ -59,21 +59,21 @@ from decimal import Decimal
 import asyncio
 
 class SagaStatus(Enum):
-    """Saga状态"""
-    PENDING = 'pending'           # 待执行
-    RUNNING = 'running'           # 执行中
-    COMPLETED = 'completed'       # 已完成
-    COMPENSATING = 'compensating' # 补偿中
-    COMPENSATED = 'compensated'   # 已补偿
+    """Saga状�?""
+    PENDING = 'pending'           # 待执�?
+    RUNNING = 'running'           # 执行�?
+    COMPLETED = 'completed'       # 已完�?
+    COMPENSATING = 'compensating' # 补偿�?
+    COMPENSATED = 'compensated'   # 已补�?
     FAILED = 'failed'             # 失败
 
 class StepStatus(Enum):
-    """步骤状态"""
-    PENDING = 'pending'           # 待执行
-    RUNNING = 'running'           # 执行中
-    COMPLETED = 'completed'       # 已完成
-    COMPENSATING = 'compensating' # 补偿中
-    COMPENSATED = 'compensated'   # 已补偿
+    """步骤状�?""
+    PENDING = 'pending'           # 待执�?
+    RUNNING = 'running'           # 执行�?
+    COMPLETED = 'completed'       # 已完�?
+    COMPENSATING = 'compensating' # 补偿�?
+    COMPENSATED = 'compensated'   # 已补�?
     FAILED = 'failed'             # 失败
 
 class SagaStep:
@@ -117,7 +117,7 @@ class SagaStep:
             return result
         except asyncio.TimeoutError:
             self.status = StepStatus.FAILED
-            self.error = f"步骤执行超时: {self.timeout}秒"
+            self.error = f"步骤执行超时: {self.timeout}�?
             raise Exception(self.error)
         except Exception as e:
             self.status = StepStatus.FAILED
@@ -165,24 +165,24 @@ class Saga:
         self.updated_at = datetime.now()
         
         try:
-            # 顺序执行所有步骤
+            # 顺序执行所有步�?
             for i, step in enumerate(self.steps):
                 self.current_step_index = i
                 
                 # 执行步骤
                 result = await step.execute(self.context)
                 
-                # 更新上下文
+                # 更新上下�?
                 self.context.update(result)
                 self.updated_at = datetime.now()
             
-            # 所有步骤执行成功
+            # 所有步骤执行成�?
             self.status = SagaStatus.COMPLETED
             self.updated_at = datetime.now()
             return True
         
         except Exception as e:
-            # 执行失败，开始补偿
+            # 执行失败，开始补�?
             print(f"Saga执行失败: {e}")
             await self.compensate()
             return False
@@ -262,7 +262,7 @@ class OrderSaga:
             timeout=10
         )
         
-        # Step 3: 提交到引擎
+        # Step 3: 提交到引�?
         step3 = SagaStep(
             step_id="submit_to_engine",
             step_name="提交引擎",
@@ -320,7 +320,7 @@ class OrderSaga:
         order = context['order']
         
         if order['direction'] == 'buy':
-            # 买入：冻结资金
+            # 买入：冻结资�?
             frozen_amount = order['order_price'] * order['order_quantity']
             success = await self.account_service.freeze_cash(
                 order['account_id'],
@@ -332,7 +332,7 @@ class OrderSaga:
                 'frozen_type': 'cash'
             }
         else:
-            # 卖出：冻结持仓
+            # 卖出：冻结持�?
             success = await self.position_service.freeze_position(
                 order['account_id'],
                 order['stock_code'],
@@ -365,16 +365,16 @@ class OrderSaga:
         return success
     
     async def _submit_to_engine(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """提交到引擎"""
+        """提交到引�?""
         order = context['order']
         
         # 获取引擎
         engine = self.engine_manager.get_engine(order['engine_id'])
         
         if not engine:
-            raise Exception(f"引擎不存在: {order['engine_id']}")
+            raise Exception(f"引擎不存�? {order['engine_id']}")
         
-        # 提交订单到引擎
+        # 提交订单到引�?
         result = await engine.create_order(
             account_id=order['account_id'],
             stock_code=order['stock_code'],
@@ -394,7 +394,7 @@ class OrderSaga:
         }
     
     async def _cancel_from_engine(self, context: Dict[str, Any], result: Dict[str, Any]) -> bool:
-        """从引擎取消订单"""
+        """从引擎取消订�?""
         order = context['order']
         broker_order_id = result['broker_order_id']
         
@@ -417,11 +417,11 @@ class OrderSaga:
         order_status = await self.order_service.query_order(order['id'])
         
         if order_status['status'] != 'filled':
-            raise Exception("订单未成交")
+            raise Exception("订单未成�?)
         
         # 更新持仓
         if order['direction'] == 'buy':
-            # 买入：增加持仓
+            # 买入：增加持�?
             position = await self.position_service.increase_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -430,7 +430,7 @@ class OrderSaga:
                 trade_id=order_status.get('trade_id')
             )
         else:
-            # 卖出：减少持仓
+            # 卖出：减少持�?
             position = await self.position_service.decrease_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -450,7 +450,7 @@ class OrderSaga:
         
         # 回滚持仓
         if order['direction'] == 'buy':
-            # 买入回滚：减少持仓
+            # 买入回滚：减少持�?
             success = await self.position_service.decrease_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -458,7 +458,7 @@ class OrderSaga:
                 price=position['avg_cost']
             )
         else:
-            # 卖出回滚：增加持仓
+            # 卖出回滚：增加持�?
             success = await self.position_service.increase_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -471,9 +471,9 @@ class OrderSaga:
 
 ---
 
-## 3. Saga协调器服务
+## 3. Saga协调器服�?
 
-### 3.1 协调器实现
+### 3.1 协调器实�?
 
 ```python
 from typing import Dict, Any, Optional
@@ -481,7 +481,7 @@ import uuid
 import json
 
 class SagaCoordinator:
-    """Saga协调器"""
+    """Saga协调�?""
     
     def __init__(self, saga_repository):
         self.saga_repository = saga_repository
@@ -492,7 +492,7 @@ class SagaCoordinator:
         # 保存Saga
         await self.saga_repository.save_saga(saga)
         
-        # 添加到活跃列表
+        # 添加到活跃列�?
         self.active_sagas[saga.saga_id] = saga
         
         # 异步执行Saga
@@ -506,14 +506,14 @@ class SagaCoordinator:
             # 执行Saga
             success = await saga.execute()
             
-            # 更新Saga状态
+            # 更新Saga状�?
             await self.saga_repository.update_saga_status(
                 saga.saga_id,
                 saga.status,
                 saga.context
             )
             
-            # 从活跃列表移除
+            # 从活跃列表移�?
             if saga.saga_id in self.active_sagas:
                 del self.active_sagas[saga.saga_id]
         
@@ -527,12 +527,12 @@ class SagaCoordinator:
                 saga.context
             )
             
-            # 从活跃列表移除
+            # 从活跃列表移�?
             if saga.saga_id in self.active_sagas:
                 del self.active_sagas[saga.saga_id]
     
     async def get_saga_status(self, saga_id: str) -> Optional[Dict[str, Any]]:
-        """获取Saga状态"""
+        """获取Saga状�?""
         # 先查活跃列表
         if saga_id in self.active_sagas:
             saga = self.active_sagas[saga_id]
@@ -575,7 +575,7 @@ class SagaCoordinator:
         # 执行补偿
         success = await saga_obj.compensate()
         
-        # 更新状态
+        # 更新状�?
         await self.saga_repository.update_saga_status(
             saga_id,
             saga_obj.status,
@@ -587,12 +587,12 @@ class SagaCoordinator:
 
 ---
 
-## 4. Saga持久化设计
+## 4. Saga持久化设�?
 
-### 4.1 Saga表结构
+### 4.1 Saga表结�?
 
 ```sql
--- Saga事务表
+-- Saga事务�?
 CREATE TABLE saga_transactions (
     id BIGSERIAL PRIMARY KEY,
     saga_id VARCHAR(100) NOT NULL UNIQUE,
@@ -607,7 +607,7 @@ CREATE TABLE saga_transactions (
     error_message TEXT
 );
 
--- Saga步骤表
+-- Saga步骤�?
 CREATE TABLE saga_steps (
     id BIGSERIAL PRIMARY KEY,
     saga_id VARCHAR(100) NOT NULL,
@@ -633,7 +633,7 @@ CREATE INDEX idx_saga_steps_status ON saga_steps(status);
 
 ## 5. 故障恢复机制
 
-### 5.1 故障检测
+### 5.1 故障检�?
 
 ```python
 class SagaRecoveryService:
@@ -660,15 +660,15 @@ class SagaRecoveryService:
         if not saga:
             return False
         
-        # 根据状态决定恢复策略
+        # 根据状态决定恢复策�?
         if saga['status'] == SagaStatus.RUNNING.value:
-            # 执行中的Saga：重新执行
+            # 执行中的Saga：重新执�?
             return await self._retry_saga(saga)
         elif saga['status'] == SagaStatus.COMPENSATING.value:
-            # 补偿中的Saga：继续补偿
+            # 补偿中的Saga：继续补�?
             return await self._continue_compensate(saga)
         elif saga['status'] == SagaStatus.FAILED.value:
-            # 失败的Saga：手动处理
+            # 失败的Saga：手动处�?
             return await self._manual_recovery(saga)
         
         return False
@@ -691,16 +691,16 @@ class SagaRecoveryService:
 
 ---
 
-## 6. 性能与监控
+## 6. 性能与监�?
 
 ### 6.1 性能指标
 
-| 指标 | 目标值 | 备注 |
+| 指标 | 目标�?| 备注 |
 |------|--------|------|
-| **Saga执行时间** | < 5秒 | 包含所有步骤 |
-| **补偿时间** | < 10秒 | 包含所有补偿步骤 |
-| **并发Saga数** | 100 | 同时执行的Saga数量 |
-| **成功率** | ≥ 99% | Saga成功完成率 |
+| **Saga执行时间** | < 5�?| 包含所有步�?|
+| **补偿时间** | < 10�?| 包含所有补偿步�?|
+| **并发Saga�?* | 100 | 同时执行的Saga数量 |
+| **成功�?* | �?99% | Saga成功完成�?|
 
 ### 6.2 监控指标
 
@@ -752,5 +752,5 @@ class SagaMonitor:
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状态**: ✅ 已完成  
-**下一步**: P0-6 账户管理详细设计
+**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
+**下一�?*: P0-6 账户管理详细设计

@@ -1,10 +1,9 @@
-# Layer 7 AI报告层 - 统一API接口文档
+# Layer 7 AI报告�?- 统一API接口文档
 
 **文档ID**: LAYER7_API_REFERENCE_001
 **版本**: v1.0.0
 **创建日期**: 2026-04-02
-**适用范围**: Layer 7所有报告模块
-
+**适用范围**: Layer 7所有报告模�?
 ---
 
 ## 一、API概览
@@ -66,14 +65,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
-### 1.4 错误码定义
-
-| 错误码 | HTTP状态码 | 描述 |
+### 1.4 错误码定�?
+| 错误�?| HTTP状态码 | 描述 |
 |--------|-----------|------|
 | INVALID_PARAMETER | 400 | 参数错误 |
-| UNAUTHORIZED | 401 | 未授权 |
-| FORBIDDEN | 403 | 无权限 |
-| NOT_FOUND | 404 | 资源不存在 |
+| UNAUTHORIZED | 401 | 未授�?|
+| FORBIDDEN | 403 | 无权�?|
+| NOT_FOUND | 404 | 资源不存�?|
 | INTERNAL_ERROR | 500 | 内部错误 |
 
 ---
@@ -88,25 +86,25 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| portfolio_id | string | 是 | 投资组合ID |
-| scenario_type | string | 是 | 情景类型（见情景类型表） |
-| custom_shock | object | 否 | 自定义冲击参数 |
-| output_format | string | 否 | 输出格式（json/markdown/pdf），默认json |
+| portfolio_id | string | �?| 投资组合ID |
+| scenario_type | string | �?| 情景类型（见情景类型表） |
+| custom_shock | object | �?| 自定义冲击参�?|
+| output_format | string | �?| 输出格式（json/markdown/pdf），默认json |
 
-**情景类型表**:
+**情景类型�?*:
 
 | 情景类型 | 描述 | 默认冲击参数 |
 |---------|------|-------------|
 | market_crash | 市场崩盘 | equity: -20%, vol: +50% |
 | rate_hike | 加息周期 | bond: -5%, equity: -10% |
-| liquidity_crisis | 流动性危机 | spread: +100%, vol: +30% |
+| liquidity_crisis | 流动性危�?| spread: +100%, vol: +30% |
 | sector_rotation | 行业轮动 | sector_shift: ±15% |
 | currency_crisis | 货币危机 | fx: ±10%, equity: -15% |
 | commodity_shock | 商品冲击 | commodity: ±20% |
 | credit_crisis | 信用危机 | credit_spread: +200bp |
-| custom | 自定义 | 需提供custom_shock |
+| custom | 自定�?| 需提供custom_shock |
 
 **请求示例**:
 ```json
@@ -180,25 +178,24 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **接口**: `POST /api/v1/reports/stress-test/run`
 
-**描述**: 执行压力测试并生成报告
-
+**描述**: 执行压力测试并生成报�?
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| portfolio_id | string | 是 | 投资组合ID |
-| test_type | string | 是 | 测试类型（historical/hypothetical/reverse/comprehensive） |
-| scenarios | array | 否 | 指定测试情景列表 |
-| output_format | string | 否 | 输出格式，默认json |
+| portfolio_id | string | �?| 投资组合ID |
+| test_type | string | �?| 测试类型（historical/hypothetical/reverse/comprehensive�?|
+| scenarios | array | �?| 指定测试情景列表 |
+| output_format | string | �?| 输出格式，默认json |
 
 **测试类型说明**:
 
 | 测试类型 | 描述 | 适用场景 |
 |---------|------|---------|
 | historical | 历史情景测试 | 使用历史危机数据 |
-| hypothetical | 假设情景测试 | 自定义极端情景 |
-| reverse | 反向压力测试 | 寻找导致破产的情景 |
-| comprehensive | 综合测试 | 执行所有类型测试 |
+| hypothetical | 假设情景测试 | 自定义极端情�?|
+| reverse | 反向压力测试 | 寻找导致破产的情�?|
+| comprehensive | 综合测试 | 执行所有类型测�?|
 
 **请求示例**:
 ```json
@@ -238,11 +235,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       ]
     },
     {
-      "scenario_name": "极端流动性危机",
+      "scenario_name": "极端流动性危�?,
       "scenario_type": "hypothetical",
       "portfolio_loss": -0.55,
       "survival_assessment": "failed",
-      "failure_reason": "流动性枯竭导致无法平仓"
+      "failure_reason": "流动性枯竭导致无法平�?
     }
   ],
   "recommendations": [
@@ -252,12 +249,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
-### 3.2 获取历史情景库
-
+### 3.2 获取历史情景�?
 **接口**: `GET /api/v1/reports/stress-test/historical-scenarios`
 
-**描述**: 获取可用的历史压力情景
-
+**描述**: 获取可用的历史压力情�?
 **响应示例**:
 ```json
 {
@@ -265,7 +260,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   "scenarios": [
     {
       "scenario_id": "2008_financial_crisis",
-      "name": "2008年全球金融危机",
+      "name": "2008年全球金融危�?,
       "start_date": "2008-09-01",
       "end_date": "2009-03-01",
       "key_events": ["雷曼兄弟破产", "AIG救助", "量化宽松"],
@@ -320,7 +315,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
       "metric": "VaR_95",
       "threshold": 0.05,
       "actual": 0.052,
-      "message": "VaR超过阈值4%",
+      "message": "VaR超过阈�?%",
       "timestamp": "2026-04-02T10:39:30Z"
     }
   ],
@@ -332,12 +327,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
-### 4.2 订阅实时风险推送
-
+### 4.2 订阅实时风险推�?
 **接口**: `WebSocket /api/v1/reports/realtime-risk/stream`
 
-**描述**: WebSocket实时推送风险指标
-
+**描述**: WebSocket实时推送风险指�?
 **连接示例**:
 ```javascript
 const ws = new WebSocket('ws://localhost:8000/api/v1/reports/realtime-risk/stream');
@@ -348,7 +341,7 @@ ws.onmessage = (event) => {
 };
 ```
 
-**推送消息格式**:
+**推送消息格�?*:
 ```json
 {
   "type": "risk_update",
@@ -367,12 +360,12 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| portfolio_id | string | 是 | 投资组合ID |
-| start_date | string | 是 | 开始日期（YYYY-MM-DD） |
-| end_date | string | 是 | 结束日期（YYYY-MM-DD） |
-| metrics | array | 否 | 指标列表，默认全部 |
+| portfolio_id | string | �?| 投资组合ID |
+| start_date | string | �?| 开始日期（YYYY-MM-DD�?|
+| end_date | string | �?| 结束日期（YYYY-MM-DD�?|
+| metrics | array | �?| 指标列表，默认全�?|
 
 **响应示例**:
 ```json
@@ -406,12 +399,12 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| macro_report_id | string | 是 | 宏观报告ID |
-| strategy_report_id | string | 是 | 策略报告ID |
-| execution_report_id | string | 是 | 执行报告ID |
-| output_format | string | 否 | 输出格式，默认json |
+| macro_report_id | string | �?| 宏观报告ID |
+| strategy_report_id | string | �?| 策略报告ID |
+| execution_report_id | string | �?| 执行报告ID |
+| output_format | string | �?| 输出格式，默认json |
 
 **响应示例**:
 ```json
@@ -423,9 +416,9 @@ ws.onmessage = (event) => {
     "consistency_score": 85.5,
     "alignment_issues": [
       {
-        "issue": "宏观层经济范式为扩张期，但策略层使用防御性策略",
+        "issue": "宏观层经济范式为扩张期，但策略层使用防御性策�?,
         "severity": "medium",
-        "recommendation": "考虑增加周期性策略权重"
+        "recommendation": "考虑增加周期性策略权�?
       }
     ]
   },
@@ -439,7 +432,7 @@ ws.onmessage = (event) => {
   "optimization_opportunities": [
     {
       "opportunity": "执行层滑点较高，建议优化交易时机",
-      "potential_improvement": "降低执行成本约15%"
+      "potential_improvement": "降低执行成本�?5%"
     }
   ],
   "action_items": [
@@ -460,9 +453,9 @@ ws.onmessage = (event) => {
 
 **路径参数**:
 
-| 参数名 | 类型 | 描述 |
+| 参数�?| 类型 | 描述 |
 |--------|------|------|
-| layer_type | string | 层类型（macro/strategy/execution） |
+| layer_type | string | 层类型（macro/strategy/execution�?|
 
 **响应示例**:
 ```json
@@ -521,7 +514,7 @@ ws.onmessage = (event) => {
   "strategy_details": [
     {
       "strategy_id": "STRAT_001",
-      "strategy_name": "价值策略",
+      "strategy_name": "价值策�?,
       "current_phase": "mature",
       "status": "active",
       "sharpe_ratio": 1.8,
@@ -539,18 +532,16 @@ ws.onmessage = (event) => {
     }
   ],
   "recommendations": [
-    "动量策略性能下降，建议评估是否退役",
+    "动量策略性能下降，建议评估是否退�?,
     "新兴策略数量较少，建议开发新策略"
   ]
 }
 ```
 
-### 6.2 更新策略状态
-
+### 6.2 更新策略状�?
 **接口**: `PUT /api/v1/reports/strategy-lifecycle/strategy/{strategy_id}`
 
-**描述**: 更新策略状态
-
+**描述**: 更新策略状�?
 **请求示例**:
 ```json
 {
@@ -572,11 +563,11 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| portfolio_id | string | 是 | 投资组合ID |
-| reporting_period | string | 是 | 报告期间 |
-| report_type | string | 是 | 报告类型（quarterly/annual） |
+| portfolio_id | string | �?| 投资组合ID |
+| reporting_period | string | �?| 报告期间 |
+| report_type | string | �?| 报告类型（quarterly/annual�?|
 
 **响应示例**:
 ```json
@@ -593,19 +584,19 @@ ws.onmessage = (event) => {
   "compliance_checks": [
     {
       "check_name": "单股权重限制",
-      "requirement": "≤10%",
+      "requirement": "�?0%",
       "actual": "8.5%",
       "status": "compliant"
     },
     {
       "check_name": "行业权重限制",
-      "requirement": "≤30%",
+      "requirement": "�?0%",
       "actual": "25%",
       "status": "compliant"
     },
     {
-      "check_name": "现金最低要求",
-      "requirement": "≥5%",
+      "check_name": "现金最低要�?,
+      "requirement": "�?%",
       "actual": "6%",
       "status": "compliant"
     }
@@ -615,12 +606,10 @@ ws.onmessage = (event) => {
 }
 ```
 
-### 7.2 获取合规检查规则
-
+### 7.2 获取合规检查规�?
 **接口**: `GET /api/v1/reports/regulatory/rules`
 
-**描述**: 获取所有合规检查规则
-
+**描述**: 获取所有合规检查规�?
 **响应示例**:
 ```json
 {
@@ -629,8 +618,8 @@ ws.onmessage = (event) => {
     {
       "rule_id": "RULE_001",
       "rule_name": "单股权重限制",
-      "requirement": "单股权重≤10%",
-      "regulation_source": "证监会私募基金管理办法第15条"
+      "requirement": "单股权重�?0%",
+      "regulation_source": "证监会私募基金管理办法第15�?
     },
     ...
   ]
@@ -641,19 +630,17 @@ ws.onmessage = (event) => {
 
 ## 八、AI可解释性API
 
-### 8.1 生成可解释性报告
-
+### 8.1 生成可解释性报�?
 **接口**: `POST /api/v1/reports/ai-explainability/analyze`
 
-**描述**: 生成AI决策可解释性报告
-
+**描述**: 生成AI决策可解释性报�?
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| model_id | string | 是 | 模型ID |
-| sample_ids | array | 否 | 样本ID列表，默认分析全部 |
-| explanation_method | string | 否 | 解释方法（shap/lime），默认shap |
+| model_id | string | �?| 模型ID |
+| sample_ids | array | �?| 样本ID列表，默认分析全�?|
+| explanation_method | string | �?| 解释方法（shap/lime），默认shap |
 
 **响应示例**:
 ```json
@@ -684,12 +671,10 @@ ws.onmessage = (event) => {
 }
 ```
 
-### 8.2 获取单样本解释
-
+### 8.2 获取单样本解�?
 **接口**: `GET /api/v1/reports/ai-explainability/sample/{sample_id}`
 
-**描述**: 获取单个样本的决策解释
-
+**描述**: 获取单个样本的决策解�?
 **响应示例**:
 ```json
 {
@@ -699,10 +684,10 @@ ws.onmessage = (event) => {
   "decision_type": "买入信号",
   "confidence": 0.92,
   "decision_path": [
-    "PE_ratio负向贡献（值=25.3）",
-    "momentum正向贡献（值=0.15）",
-    "ROE正向贡献（值=18.5%）",
-    "最终决策: 买入信号"
+    "PE_ratio负向贡献（�?25.3�?,
+    "momentum正向贡献（�?0.15�?,
+    "ROE正向贡献（�?18.5%�?,
+    "最终决�? 买入信号"
   ],
   "alternative_scenarios": [
     {
@@ -725,11 +710,11 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| portfolio_id | string | 是 | 投资组合ID |
-| start_date | string | 是 | 开始日期 |
-| end_date | string | 是 | 结束日期 |
+| portfolio_id | string | �?| 投资组合ID |
+| start_date | string | �?| 开始日�?|
+| end_date | string | �?| 结束日期 |
 
 **响应示例**:
 ```json
@@ -800,12 +785,12 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| report_type | string | 否 | 报告类型 |
-| start_date | string | 否 | 开始日期 |
-| end_date | string | 否 | 结束日期 |
-| limit | int | 否 | 返回数量，默认20 |
+| report_type | string | �?| 报告类型 |
+| start_date | string | �?| 开始日�?|
+| end_date | string | �?| 结束日期 |
+| limit | int | �?| 返回数量，默�?0 |
 
 ### 10.2 下载报告
 
@@ -813,9 +798,9 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数名 | 类型 | 必填 | 描述 |
+| 参数�?| 类型 | 必填 | 描述 |
 |--------|------|------|------|
-| format | string | 否 | 下载格式（json/pdf/markdown） |
+| format | string | �?| 下载格式（json/pdf/markdown�?|
 
 ### 10.3 删除报告
 
@@ -845,7 +830,7 @@ stress_result = client.stress_test.run(
     portfolio_id="PORTFOLIO_001",
     test_type="comprehensive"
 )
-print(f"存活率: {stress_result['test_summary']['survived_count']}/{stress_result['test_summary']['total_scenarios']}")
+print(f"存活�? {stress_result['test_summary']['survived_count']}/{stress_result['test_summary']['total_scenarios']}")
 
 risk_metrics = client.realtime_risk.get_current()
 print(f"当前VaR(95%): {risk_metrics['risk_metrics']['var_95']:.2%}")
@@ -874,14 +859,11 @@ const ws = client.realtimeRiske.subscribe((data) => {
 
 ---
 
-## 十二、最佳实践
-
+## 十二、最佳实�?
 ### 12.1 性能优化建议
 
 1. **批量请求**: 使用批量接口减少网络开销
-2. **缓存利用**: 合理使用ETag和If-None-Match头
-3. **异步处理**: 长时间报告生成使用异步接口
-4. **WebSocket**: 实时数据优先使用WebSocket
+2. **缓存利用**: 合理使用ETag和If-None-Match�?3. **异步处理**: 长时间报告生成使用异步接�?4. **WebSocket**: 实时数据优先使用WebSocket
 
 ### 12.2 错误处理建议
 
@@ -900,13 +882,12 @@ except APIError as e:
 
 ### 12.3 安全建议
 
-1. **Token管理**: 定期刷新Token，避免长期有效
-2. **HTTPS**: 生产环境强制使用HTTPS
-3. **IP白名单**: 限制API访问IP范围
+1. **Token管理**: 定期刷新Token，避免长期有�?2. **HTTPS**: 生产环境强制使用HTTPS
+3. **IP白名�?*: 限制API访问IP范围
 4. **日志审计**: 记录所有API调用日志
 
 ---
 
 **文档版本**: v1.0.0
-**最后更新**: 2026-04-02
-**维护者**: Layer 7 AI报告层团队
+**最后更�?*: 2026-04-02
+**维护�?*: Layer 7 AI报告层团�?

@@ -4,10 +4,8 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 11文字驱动层
-compliance_level: 专业机构标准
+owner: 首席蓝图架构�?standard_type: 专业量化机构蓝图
+applicable_scope: Layer 11文字驱动�?compliance_level: 专业机构标准
 parent_document: ../LAYER_11_ARCHITECTURE.md
 implementation_status: 设计阶段
 ---
@@ -16,9 +14,8 @@ implementation_status: 设计阶段
 
 > 清风量化交易系统 v5.2 - Layer 11工具封装详细设计
 > **索引**: `LAYER_11_TOOL_ENCAP_001`
-> **核心定位**: 统一工具封装架构，实现单一AI交互层 + 纯执行层分离
-> **关键原则**: 避免重复AI调用，提升系统效率
-
+> **核心定位**: 统一工具封装架构，实现单一AI交互�?+ 纯执行层分离
+> **关键原则**: 避免重复AI调用，提升系统效�?
 
 ## 一、设计背景与目标
 
@@ -27,22 +24,18 @@ implementation_status: 设计阶段
 #### 当前架构问题
 
 ```
-❌ 问题架构（两次AI调用）：
+�?问题架构（两次AI调用）：
 
-用户输入: "创建动量策略，持仓5天"
-    ↓
-Layer 11 (AI理解)
-    → 意图: 配置策略
-    → 参数: {type: momentum, period: 5}
-    ↓
-调用策略引擎交付系统 (AI再次理解) ❌ 冗余
-    → 意图: 配置策略 (重复)
-    → 参数: {type: momentum, period: 5} (重复)
-    ↓
-执行操作
+用户输入: "创建动量策略，持�?�?
+    �?Layer 11 (AI理解)
+    �?意图: 配置策略
+    �?参数: {type: momentum, period: 5}
+    �?调用策略引擎交付系统 (AI再次理解) �?冗余
+    �?意图: 配置策略 (重复)
+    �?参数: {type: momentum, period: 5} (重复)
+    �?执行操作
 
-问题：
-1. 两次AI调用，效率低
+问题�?1. 两次AI调用，效率低
 2. 重复的意图识别和参数提取
 3. 成本翻倍（API费用或推理时间）
 4. 维护复杂度高
@@ -51,108 +44,65 @@ Layer 11 (AI理解)
 #### 专业机构正确做法
 
 ```
-✅ 正确架构（单次AI调用）：
+�?正确架构（单次AI调用）：
 
-用户输入: "创建动量策略，持仓5天"
-    ↓
-Layer 11 (AI理解) - 唯一AI层
-    → 意图: 配置策略
-    → 参数: {type: momentum, period: 5}
-    ↓
-调用策略引擎API (直接执行，无AI) ✅ 高效
-    → 直接执行 configure_strategy({type: momentum, period: 5})
-    ↓
-返回结果
+用户输入: "创建动量策略，持�?�?
+    �?Layer 11 (AI理解) - 唯一AI�?    �?意图: 配置策略
+    �?参数: {type: momentum, period: 5}
+    �?调用策略引擎API (直接执行，无AI) �?高效
+    �?直接执行 configure_strategy({type: momentum, period: 5})
+    �?返回结果
 
-优势：
-1. 只有1个AI理解层
-2. 所有模块通过工具调用
-3. 维护成本低
-4. 符合专业机构做法
+优势�?1. 只有1个AI理解�?2. 所有模块通过工具调用
+3. 维护成本�?4. 符合专业机构做法
 ```
 
 ### 1.2 设计目标
 
-| 目标 | 优先级 | 技术实现 |
+| 目标 | 优先�?| 技术实�?|
 |------|--------|----------|
-| **单一AI交互层** | P0 | Layer 11是唯一AI理解层 |
+| **单一AI交互�?* | P0 | Layer 11是唯一AI理解�?|
 | **纯执行层分离** | P0 | 所有模块只提供API接口，无AI |
-| **工具化封装** | P0 | 每个模块封装为工具，通过LangChain调用 |
+| **工具化封�?* | P0 | 每个模块封装为工具，通过LangChain调用 |
 | **性能优化** | P1 | 减少AI调用次数，降低延迟和成本 |
-| **可维护性** | P1 | 统一工具接口，易于扩展和维护 |
+| **可维护�?* | P1 | 统一工具接口，易于扩展和维护 |
 
 ### 1.3 架构原则
 
 1. **单一职责原则**：Layer 11负责AI理解，各模块负责执行
-2. **接口隔离原则**：工具接口清晰，参数和返回值明确
-3. **依赖倒置原则**：工具依赖于抽象接口，不依赖具体实现
-4. **开闭原则**：对扩展开放（新增工具），对修改封闭（现有工具）
+2. **接口隔离原则**：工具接口清晰，参数和返回值明�?3. **依赖倒置原则**：工具依赖于抽象接口，不依赖具体实现
+4. **开闭原�?*：对扩展开放（新增工具），对修改封闭（现有工具�?
 
-
-## 二、整体架构设计
-
+## 二、整体架构设�?
 ### 2.1 架构分层
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  Layer 11: 文字驱动层（唯一AI交互层）                         │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  用户输入                                              │ │
-│  │  "创建动量策略，持仓5天，止损10%"                       │ │
-│  └───────────────────────────────────────────────────────┘ │
-│                          ↓                                  │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  自然语言理解 (NLU)                                    │ │
-│  │  - 意图识别: "配置策略"                                │ │
-│  │  - 参数提取: {type: momentum, period: 5, stop_loss: 0.1}│ │
-│  │  - 工具选择: "策略管理工具"                            │ │
-│  └───────────────────────────────────────────────────────┘ │
-│                          ↓                                  │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │  工具路由层                                            │ │
-│  │  根据意图选择对应的工具                                 │ │
-│  └───────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-                           ↓
-        ┌──────────────────┼──────────────────┐
-        ↓                  ↓                  ↓
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  策略工具     │  │  风控工具     │  │  报告工具     │
-│  (无AI)      │  │  (无AI)      │  │  (无AI)      │
-└──────┬───────┘  └──────┬───────┘  └──────┬───────┘
-       ↓                  ↓                  ↓
-┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  策略引擎     │  │  风控引擎     │  │  报告引擎     │
-│  (纯API)     │  │  (纯API)     │  │  (纯API)     │
-└──────────────┘  └──────────────┘  └──────────────┘
-```
+┌─────────────────────────────────────────────────────────────�?�? Layer 11: 文字驱动层（唯一AI交互层）                         �?�? ┌───────────────────────────────────────────────────────�?�?�? �? 用户输入                                              �?�?�? �? "创建动量策略，持�?天，止损10%"                       �?�?�? └───────────────────────────────────────────────────────�?�?�?                         �?                                 �?�? ┌───────────────────────────────────────────────────────�?�?�? �? 自然语言理解 (NLU)                                    �?�?�? �? - 意图识别: "配置策略"                                �?�?�? �? - 参数提取: {type: momentum, period: 5, stop_loss: 0.1}�?�?�? �? - 工具选择: "策略管理工具"                            �?�?�? └───────────────────────────────────────────────────────�?�?�?                         �?                                 �?�? ┌───────────────────────────────────────────────────────�?�?�? �? 工具路由�?                                           �?�?�? �? 根据意图选择对应的工�?                                �?�?�? └───────────────────────────────────────────────────────�?�?└─────────────────────────────────────────────────────────────�?                           �?        ┌──────────────────┼──────────────────�?        �?                 �?                 �?┌──────────────�? ┌──────────────�? ┌──────────────�?�? 策略工具     �? �? 风控工具     �? �? 报告工具     �?�? (无AI)      �? �? (无AI)      �? �? (无AI)      �?└──────┬───────�? └──────┬───────�? └──────┬───────�?       �?                 �?                 �?┌──────────────�? ┌──────────────�? ┌──────────────�?�? 策略引擎     �? �? 风控引擎     �? �? 报告引擎     �?�? (纯API)     �? �? (纯API)     �? �? (纯API)     �?└──────────────�? └──────────────�? └──────────────�?```
 
 ### 2.2 工具分类体系
 
-| 工具类别 | 覆盖模块 | 工具数量 | 优先级 |
+| 工具类别 | 覆盖模块 | 工具数量 | 优先�?|
 |---------|---------|---------|--------|
-| **策略工具** | Layer 5 | 6个 | P0 |
-| **因子工具** | Layer 2 | 4个 | P0 |
-| **风控工具** | Layer 6 | 4个 | P0 |
-| **授权工具** | Layer 8 | 1个 | P0 |
-| **舆情工具** | Layer 3 | 2个 | P1 |
-| **ML工具** | Layer 4 | 2个 | P1 |
-| **组合工具** | Layer 6 | 3个 | P1 |
-| **报告工具** | Layer 7 | 2个 | P1 |
-| **数据源工具** | Layer 0 | 4个 | P2 |
-| **预处理工具** | Layer 1 | 3个 | P2 |
-| **总计** | - | **31个** | - |
+| **策略工具** | Layer 5 | 6�?| P0 |
+| **因子工具** | Layer 2 | 4�?| P0 |
+| **风控工具** | Layer 6 | 4�?| P0 |
+| **授权工具** | Layer 8 | 1�?| P0 |
+| **舆情工具** | Layer 3 | 2�?| P1 |
+| **ML工具** | Layer 4 | 2�?| P1 |
+| **组合工具** | Layer 6 | 3�?| P1 |
+| **报告工具** | Layer 7 | 2�?| P1 |
+| **数据源工�?* | Layer 0 | 4�?| P2 |
+| **预处理工�?* | Layer 1 | 3�?| P2 |
+| **总计** | - | **31�?* | - |
 
 
-## 三、工具封装规范
-
+## 三、工具封装规�?
 ### 3.1 工具基类设计
 
 ```python
 """
 工具基类
-所有工具必须继承此类
-"""
+所有工具必须继承此�?"""
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 from langchain.tools import Tool
@@ -162,8 +112,7 @@ class BaseTool(ABC):
     
     def __init__(self, name: str, description: str):
         """
-        初始化工具
-        
+        初始化工�?        
         Args:
             name: 工具名称
             description: 工具描述
@@ -177,8 +126,7 @@ class BaseTool(ABC):
         执行工具（子类必须实现）
         
         Args:
-            params: 参数字典（由Layer 11 AI提取）
-            
+            params: 参数字典（由Layer 11 AI提取�?            
         Returns:
             执行结果字典
         """
@@ -186,8 +134,7 @@ class BaseTool(ABC):
     
     def validate_params(self, params: Dict[str, Any]) -> bool:
         """
-        验证参数（子类可重写）
-        
+        验证参数（子类可重写�?        
         Args:
             params: 参数字典
             
@@ -212,8 +159,7 @@ class BaseTool(ABC):
 ```python
 {
     "action": "操作类型",  # 必需：configure|start|stop|status|list
-    "params": {            # 必需：具体参数
-        "param1": "value1",
+    "params": {            # 必需：具体参�?        "param1": "value1",
         "param2": "value2"
     }
 }
@@ -223,9 +169,7 @@ class BaseTool(ABC):
 
 ```python
 {
-    "success": True,       # 必需：是否成功
-    "message": "操作结果描述",  # 必需：结果描述
-    "data": {              # 可选：返回数据
+    "success": True,       # 必需：是否成�?    "message": "操作结果描述",  # 必需：结果描�?    "data": {              # 可选：返回数据
         "key1": "value1",
         "key2": "value2"
     },
@@ -235,18 +179,16 @@ class BaseTool(ABC):
 
 ### 3.3 工具命名规范
 
-| 规范项 | 格式 | 示例 |
+| 规范�?| 格式 | 示例 |
 |--------|------|------|
-| **工具名称** | {模块名}_{功能} | 策略管理、因子查询 |
+| **工具名称** | {模块名}_{功能} | 策略管理、因子查�?|
 | **工具类名** | {模块}Tool | StrategyTool, FactorTool |
-| **工具文件名** | {模块}_tool.py | strategy_tool.py, factor_tool.py |
+| **工具文件�?* | {模块}_tool.py | strategy_tool.py, factor_tool.py |
 | **工具ID** | L11_TOOL_{模块}_{序号} | L11_TOOL_STRATEGY_001 |
 
 
-## 四、核心工具详细设计
-
-### 4.1 策略工具（StrategyTool）
-
+## 四、核心工具详细设�?
+### 4.1 策略工具（StrategyTool�?
 **文件位置**: `src/layer_11/tools/strategy_tool.py`
 
 ```python
@@ -257,27 +199,21 @@ class BaseTool(ABC):
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# 导入策略引擎（纯执行层，无AI）
-from src.layer_5.strategy_engine import StrategyEngine
+# 导入策略引擎（纯执行层，无AI�?from src.layer_5.strategy_engine import StrategyEngine
 
 class StrategyTool(BaseTool):
     """策略工具"""
     
     def __init__(self):
-        """初始化策略工具"""
+        """初始化策略工�?""
         super().__init__(
             name="策略管理",
-            description="""管理交易策略，包括配置、启动、停止、查询等操作。
-
+            description="""管理交易策略，包括配置、启动、停止、查询等操作�?
 支持的操作：
-- configure: 配置新策略
-- start: 启动策略
+- configure: 配置新策�?- start: 启动策略
 - stop: 停止策略
-- status: 查询策略状态
-- list: 列出所有策略
-
-参数格式：
-{
+- status: 查询策略状�?- list: 列出所有策�?
+参数格式�?{
     "action": "configure",
     "params": {
         "strategy_type": "momentum",
@@ -287,8 +223,7 @@ class StrategyTool(BaseTool):
 }
 """
         )
-        # 初始化策略引擎（纯执行层，无AI）
-        self.engine = StrategyEngine()
+        # 初始化策略引擎（纯执行层，无AI�?        self.engine = StrategyEngine()
     
     def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -326,8 +261,7 @@ class StrategyTool(BaseTool):
         return all(field in params for field in required_fields)
 ```
 
-### 4.2 因子工具（FactorTool）
-
+### 4.2 因子工具（FactorTool�?
 **文件位置**: `src/layer_11/tools/factor_tool.py`
 
 ```python
@@ -338,26 +272,21 @@ class StrategyTool(BaseTool):
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# 导入因子引擎（纯执行层，无AI）
-from src.layer_2.factor_engine import FactorEngine
+# 导入因子引擎（纯执行层，无AI�?from src.layer_2.factor_engine import FactorEngine
 
 class FactorTool(BaseTool):
     """因子工具"""
     
     def __init__(self):
-        """初始化因子工具"""
+        """初始化因子工�?""
         super().__init__(
             name="因子管理",
-            description="""管理因子，包括查询、挖掘、验证、监控等操作。
-
+            description="""管理因子，包括查询、挖掘、验证、监控等操作�?
 支持的操作：
 - query: 查询因子数据/表现
-- mine: AI挖掘新因子
-- validate: 验证因子有效性
-- monitor: 监控因子漂移
+- mine: AI挖掘新因�?- validate: 验证因子有效�?- monitor: 监控因子漂移
 
-参数格式：
-{
+参数格式�?{
     "action": "query",
     "params": {
         "factor_name": "momentum",
@@ -367,8 +296,7 @@ class FactorTool(BaseTool):
 }
 """
         )
-        # 初始化因子引擎（纯执行层，无AI）
-        self.engine = FactorEngine()
+        # 初始化因子引擎（纯执行层，无AI�?        self.engine = FactorEngine()
     
     def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """执行因子操作"""
@@ -388,8 +316,7 @@ class FactorTool(BaseTool):
             return {"success": False, "error": f"未知操作：{action}"}
 ```
 
-### 4.3 风控工具（RiskControlTool）
-
+### 4.3 风控工具（RiskControlTool�?
 **文件位置**: `src/layer_11/tools/risk_control_tool.py`
 
 ```python
@@ -400,26 +327,23 @@ class FactorTool(BaseTool):
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# 导入风控管理器（纯执行层，无AI）
-from src.layer_6.risk_manager import RiskManager
+# 导入风控管理器（纯执行层，无AI�?from src.layer_6.risk_manager import RiskManager
 
 class RiskControlTool(BaseTool):
     """风控工具"""
     
     def __init__(self):
-        """初始化风控工具"""
+        """初始化风控工�?""
         super().__init__(
             name="风控管理",
-            description="""管理风险控制，包括调整参数、设置止损止盈等操作。
-
+            description="""管理风险控制，包括调整参数、设置止损止盈等操作�?
 支持的操作：
 - adjust_params: 调整风控参数
 - set_stop_loss: 设置止损
 - set_take_profit: 设置止盈
 - get_risk_report: 获取风险报告
 
-参数格式：
-{
+参数格式�?{
     "action": "adjust_params",
     "params": {
         "max_drawdown": 0.10,
@@ -428,8 +352,7 @@ class RiskControlTool(BaseTool):
 }
 """
         )
-        # 初始化风控管理器（纯执行层，无AI）
-        self.manager = RiskManager()
+        # 初始化风控管理器（纯执行层，无AI�?        self.manager = RiskManager()
     
     def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """执行风控操作"""
@@ -449,38 +372,29 @@ class RiskControlTool(BaseTool):
             return {"success": False, "error": f"未知操作：{action}"}
 ```
 
-### 4.4 数据源工具（DataSourceTool）
-
+### 4.4 数据源工具（DataSourceTool�?
 **文件位置**: `src/layer_11/tools/data_source_tool.py`
 
 ```python
 """
-数据源工具
-封装数据源管理的纯API接口
+数据源工�?封装数据源管理的纯API接口
 """
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# 导入数据源管理器（纯执行层，无AI）
-from src.layer_0.data_source_manager import DataSourceManager
+# 导入数据源管理器（纯执行层，无AI�?from src.layer_0.data_source_manager import DataSourceManager
 
 class DataSourceTool(BaseTool):
-    """数据源工具"""
+    """数据源工�?""
     
     def __init__(self):
         """初始化数据源工具"""
         super().__init__(
-            name="数据源管理",
-            description="""管理数据源，包括配置、测试、查询等操作。
-
+            name="数据源管�?,
+            description="""管理数据源，包括配置、测试、查询等操作�?
 支持的操作：
-- configure_qmt: 配置QMT数据源
-- configure_ifind: 配置iFind数据源
-- test_connection: 测试数据源连接
-- status: 查询数据源状态
-
-参数格式：
-{
+- configure_qmt: 配置QMT数据�?- configure_ifind: 配置iFind数据�?- test_connection: 测试数据源连�?- status: 查询数据源状�?
+参数格式�?{
     "action": "configure_qmt",
     "params": {
         "account": "your_account",
@@ -489,11 +403,10 @@ class DataSourceTool(BaseTool):
 }
 """
         )
-        # 初始化数据源管理器（纯执行层，无AI）
-        self.manager = DataSourceManager()
+        # 初始化数据源管理器（纯执行层，无AI�?        self.manager = DataSourceManager()
     
     def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """执行数据源操作"""
+        """执行数据源操�?""
         action = params.get("action")
         action_params = params.get("params", {})
         
@@ -511,8 +424,7 @@ class DataSourceTool(BaseTool):
 ```
 
 
-## 五、工具注册中心
-
+## 五、工具注册中�?
 ### 5.1 注册中心设计
 
 **文件位置**: `src/layer_11/tools/__init__.py`
@@ -536,12 +448,12 @@ class ToolRegistry:
     """工具注册中心"""
     
     def __init__(self):
-        """初始化工具注册中心"""
+        """初始化工具注册中�?""
         self.tools = {}
         self._register_all_tools()
     
     def _register_all_tools(self):
-        """注册所有工具"""
+        """注册所有工�?""
         # 注册P0工具
         self.register(StrategyTool())
         self.register(FactorTool())
@@ -567,25 +479,24 @@ class ToolRegistry:
 
 
 def get_all_tools() -> List[Tool]:
-    """获取所有工具（便捷函数）"""
+    """获取所有工具（便捷函数�?""
     registry = ToolRegistry()
     return registry.get_all_tools()
 ```
 
-### 5.2 工具注册表
-
-| 工具名称 | 工具类 | 优先级 | 状态 |
+### 5.2 工具注册�?
+| 工具名称 | 工具�?| 优先�?| 状�?|
 |---------|--------|--------|------|
-| 策略管理 | StrategyTool | P0 | ✅ 已设计 |
-| 因子管理 | FactorTool | P0 | ✅ 已设计 |
-| 风控管理 | RiskControlTool | P0 | ✅ 已设计 |
-| 授权确认 | ApprovalTool | P0 | 🆕 待开发 |
-| 舆情查询 | SentimentTool | P1 | 🆕 待开发 |
-| 模型训练 | MLTool | P1 | 🆕 待开发 |
-| 组合优化 | PortfolioTool | P1 | 🆕 待开发 |
-| 报告查询 | ReportTool | P1 | ✅ 已设计 |
-| 数据源管理 | DataSourceTool | P2 | ✅ 已设计 |
-| 数据预处理 | PreprocessingTool | P2 | 🆕 待开发 |
+| 策略管理 | StrategyTool | P0 | �?已设�?|
+| 因子管理 | FactorTool | P0 | �?已设�?|
+| 风控管理 | RiskControlTool | P0 | �?已设�?|
+| 授权确认 | ApprovalTool | P0 | 🆕 待开�?|
+| 舆情查询 | SentimentTool | P1 | 🆕 待开�?|
+| 模型训练 | MLTool | P1 | 🆕 待开�?|
+| 组合优化 | PortfolioTool | P1 | 🆕 待开�?|
+| 报告查询 | ReportTool | P1 | �?已设�?|
+| 数据源管�?| DataSourceTool | P2 | �?已设�?|
+| 数据预处�?| PreprocessingTool | P2 | 🆕 待开�?|
 
 
 ## 六、Agent集成方案
@@ -616,11 +527,9 @@ class QuantTradingAgent:
             temperature=0.1
         )
         
-        # 2. 获取所有工具（纯执行层，无AI）
-        self.tools = get_all_tools()
+        # 2. 获取所有工具（纯执行层，无AI�?        self.tools = get_all_tools()
         
-        # 3. 初始化记忆
-        self.memory = ConversationBufferMemory(
+        # 3. 初始化记�?        self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
@@ -637,20 +546,16 @@ class QuantTradingAgent:
         """
         与Agent对话
         
-        流程：
-        1. AI理解用户意图
+        流程�?        1. AI理解用户意图
         2. AI提取参数
         3. AI选择工具
-        4. 调用工具（纯执行，无AI）
-        5. AI格式化结果
-        """
+        4. 调用工具（纯执行，无AI�?        5. AI格式化结�?        """
         result = self.agent.invoke({"input": user_input})
         return result["output"]
     
     def _get_system_prompt(self) -> str:
-        """系统提示词"""
-        return """你是ZephyrAlpha量化交易系统的AI助手。
-
+        """系统提示�?""
+        return """你是ZephyrAlpha量化交易系统的AI助手�?
 ## 工作流程
 1. 理解用户意图
 2. 提取关键参数
@@ -659,10 +564,7 @@ class QuantTradingAgent:
 5. 将结果转换为自然语言反馈
 
 ## 重要提示
-- 你是唯一的AI交互层
-- 工具内部不再有AI理解，直接执行
-- 确保参数提取准确，避免重复调用
-"""
+- 你是唯一的AI交互�?- 工具内部不再有AI理解，直接执�?- 确保参数提取准确，避免重复调�?"""
 ```
 
 ### 6.2 调用示例
@@ -688,8 +590,8 @@ result = agent.chat(user_input)
            "stop_loss": 0.1
        }
    })
-5. 工具执行: 策略引擎.configure_strategy(...) (无AI，直接执行)
-6. AI格式化结果: "策略配置成功！策略ID: STRAT_001"
+5. 工具执行: 策略引擎.configure_strategy(...) (无AI，直接执�?
+6. AI格式化结�? "策略配置成功！策略ID: STRAT_001"
 """
 
 print(result)
@@ -701,12 +603,12 @@ print(result)
 
 ### 7.1 性能对比
 
-| 指标 | 重构前（两次AI） | 重构后（单次AI） | 提升 |
+| 指标 | 重构前（两次AI�?| 重构后（单次AI�?| 提升 |
 |------|-----------------|-----------------|------|
-| **响应时间** | 2-4秒 | 1-2秒 | 50%↑ |
-| **API成本** | 2倍 | 1倍 | 50%↓ |
-| **推理次数** | 2次 | 1次 | 50%↓ |
-| **维护复杂度** | 高 | 低 | 显著降低 |
+| **响应时间** | 2-4�?| 1-2�?| 50%�?|
+| **API成本** | 2�?| 1�?| 50%�?|
+| **推理次数** | 2�?| 1�?| 50%�?|
+| **维护复杂�?* | �?| �?| 显著降低 |
 
 ### 7.2 缓存策略
 
@@ -733,56 +635,37 @@ class ToolCache:
 
 ## 八、实施路线图
 
-### Phase 1：核心工具开发（Week 1-2）
-
-**目标**: 完成P0工具开发
-
+### Phase 1：核心工具开发（Week 1-2�?
+**目标**: 完成P0工具开�?
 ```yaml
 工作内容:
-  1. 策略工具开发
-     - 封装策略引擎API
+  1. 策略工具开�?     - 封装策略引擎API
      - 实现configure/start/stop/status/list操作
   
-  2. 因子工具开发
-     - 封装因子引擎API
+  2. 因子工具开�?     - 封装因子引擎API
      - 实现query/mine/validate/monitor操作
   
-  3. 风控工具开发
-     - 封装风控引擎API
-     - 实现adjust_params/set_stop_loss等操作
-  
-  4. 授权工具开发
-     - 封装授权确认API
+  3. 风控工具开�?     - 封装风控引擎API
+     - 实现adjust_params/set_stop_loss等操�?  
+  4. 授权工具开�?     - 封装授权确认API
      - 实现关键决策授权
 
-交付物:
-  - 4个工具文件
-  - 工具注册中心
+交付�?
+  - 4个工具文�?  - 工具注册中心
   - 单元测试
 ```
 
-### Phase 2：扩展工具开发（Week 3-4）
-
-**目标**: 完成P1-P2工具开发
-
+### Phase 2：扩展工具开发（Week 3-4�?
+**目标**: 完成P1-P2工具开�?
 ```yaml
 工作内容:
-  1. 舆情工具开发
-  2. ML工具开发
-  3. 组合工具开发
-  4. 报告工具开发
-  5. 数据源工具开发
-  6. 预处理工具开发
-
-交付物:
-  - 6个工具文件
-  - 集成测试
+  1. 舆情工具开�?  2. ML工具开�?  3. 组合工具开�?  4. 报告工具开�?  5. 数据源工具开�?  6. 预处理工具开�?
+交付�?
+  - 6个工具文�?  - 集成测试
 ```
 
-### Phase 3：优化完善（Week 5-6）
-
-**目标**: 性能优化和文档完善
-
+### Phase 3：优化完善（Week 5-6�?
+**目标**: 性能优化和文档完�?
 ```yaml
 工作内容:
   1. 性能优化
@@ -800,37 +683,33 @@ class ToolCache:
      - 集成测试
      - 性能测试
 
-交付物:
-  - 完整的测试套件
-  - 用户手册
+交付�?
+  - 完整的测试套�?  - 用户手册
   - API文档
 ```
 
 
 ## 九、风险评估与缓解
 
-### 9.1 技术风险
-
+### 9.1 技术风�?
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **工具接口不统一** | 高 | 中 | 制定严格的接口规范 |
-| **参数提取错误** | 高 | 中 | AI参数提取验证机制 |
-| **性能瓶颈** | 中 | 低 | 工具缓存、并发控制 |
-| **工具依赖冲突** | 中 | 低 | 依赖隔离、版本管理 |
+| **工具接口不统一** | �?| �?| 制定严格的接口规�?|
+| **参数提取错误** | �?| �?| AI参数提取验证机制 |
+| **性能瓶颈** | �?| �?| 工具缓存、并发控�?|
+| **工具依赖冲突** | �?| �?| 依赖隔离、版本管�?|
 
 ### 9.2 实施风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **重构工作量超预期** | 高 | 中 | 分阶段实施、优先级管理 |
-| **现有系统兼容性** | 高 | 中 | 充分测试、渐进式迁移 |
-| **文档更新滞后** | 中 | 高 | 同步更新文档、文档审计 |
+| **重构工作量超预期** | �?| �?| 分阶段实施、优先级管理 |
+| **现有系统兼容�?* | �?| �?| 充分测试、渐进式迁移 |
+| **文档更新滞后** | �?| �?| 同步更新文档、文档审�?|
 
 
-## 十、相关文档索引
-
-### 10.1 核心参考文档
-
+## 十、相关文档索�?
+### 10.1 核心参考文�?
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
 | [Layer 11架构蓝图](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11整体架构 |
@@ -851,5 +730,5 @@ class ToolCache:
 ---
 
 **文档版本**: v1.0.0
-**最后更新**: 2026-04-02
-**维护者**: 首席蓝图架构师
+**最后更�?*: 2026-04-02
+**维护�?*: 首席蓝图架构�?

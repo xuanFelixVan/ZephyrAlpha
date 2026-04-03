@@ -4,24 +4,24 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 因子合成方法
 
-> 多因子合成技术
+> 多因子合成技�?
 
 ---
 
 ## 1. 合成目的
 
-- 降低因子冗余性
-- 提高因子稳定性
+- 降低因子冗余�?
+- 提高因子稳定�?
 - 增强预测能力
 
 ---
@@ -30,7 +30,7 @@ implementation_status: 进行中
 
 ### 2.1 等权合成
 
-最简单的合成方法，所有因子权重相等。
+最简单的合成方法，所有因子权重相等�?
 
 $$Composite = \frac{1}{n}\sum_{i=1}^{n} Factor_i$$
 
@@ -42,7 +42,7 @@ def equal_weight合成(factors):
 
 ### 2.2 IC加权合成
 
-根据IC表现分配权重。
+根据IC表现分配权重�?
 
 $$w_i = \frac{IC_i}{\sum_{j}IC_j}$$
 
@@ -55,13 +55,13 @@ def ic_weight合成(factors, ic_series):
 
 ### 2.3 最大化ICIR合成
 
-优化权重使组合ICIR最大。
+优化权重使组合ICIR最大�?
 
 ```python
 from scipy.optimize import minimize
 
 def optimize_icir_weights(factors, returns):
-    """优化权重使ICIR最大"""
+    """优化权重使ICIR最�?""
     n = factors.shape[1]
 
     def neg_icir(weights):
@@ -80,13 +80,13 @@ def optimize_icir_weights(factors, returns):
     return result.x if result.success else initial_weights
 ```
 
-### 2.4 因子正交化
+### 2.4 因子正交�?
 
-去除因子间的共线性。
+去除因子间的共线性�?
 
 ```python
 def orthogonalize_factors(factor_matrix, base_factor):
-    """因子对base_factor正交化"""
+    """因子对base_factor正交�?""
     from sklearn.linear_model import LinearRegression
 
     X = base_factor.values.reshape(-1, 1)
@@ -107,9 +107,9 @@ def orthogonalize_factors(factor_matrix, base_factor):
 
 | 指标 | 说明 |
 |------|------|
-| IC均值 | 合成因子IC |
+| IC均�?| 合成因子IC |
 | ICIR | 风险调整IC |
-| 相关系数 | 与成分因子相关性 |
+| 相关系数 | 与成分因子相关�?|
 | 因子数量 | 有效因子数量 |
 
 ### 3.2 评估流程

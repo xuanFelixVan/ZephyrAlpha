@@ -6,36 +6,32 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 技术规格书补充文档
-applicable_scope: 市场参与者行为模拟系统
-compliance_level: 专业标准
+applicable_scope: 市场参与者行为模拟系�?compliance_level: 专业标准
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
 implementation_status: 设计阶段
 ---
 
-# 市场参与者行为模拟系统 - 必须改进项补充设计
-
+# 市场参与者行为模拟系�?- 必须改进项补充设�?
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **技术评审官**: Spec-Approver (审批智能体)
-> **目的**: 补充三个必须改进项的详细设计,确保蓝图完整性
-> **优先级**: P0 (24小时内完成)
+> **技术评审官**: Spec-Approver (审批智能�?
+> **目的**: 补充三个必须改进项的详细设计,确保蓝图完整�?> **优先�?*: P0 (24小时内完�?
 
 ---
 
 ## 📋 一、改进项概述
 
-根据技术评审报告,需要补充以下三个必须改进项:
+根据技术评审报�?需要补充以下三个必须改进项:
 
-| 改进项ID | 改进内容 | 优先级 | 完成标准 |
+| 改进项ID | 改进内容 | 优先�?| 完成标准 |
 |---------|---------|--------|---------|
-| **IMP-001** | 补充异常处理和重试机制 | P0 | 所有接口都有异常处理,重试机制完善 |
-| **IMP-002** | 完善RL模型训练监控指标 | P1 | 训练过程可视化,性能指标实时监控 |
+| **IMP-001** | 补充异常处理和重试机�?| P0 | 所有接口都有异常处�?重试机制完善 |
+| **IMP-002** | 完善RL模型训练监控指标 | P1 | 训练过程可视�?性能指标实时监控 |
 | **IMP-003** | 补充市场冲击模型校准方案 | P1 | 校准流程清晰,验证标准明确 |
 
 ---
 
-## 🔧 二、IMP-001: 异常处理和重试机制设计
-
+## 🔧 二、IMP-001: 异常处理和重试机制设�?
 ### 2.1 异常处理架构
 
 #### 2.1.1 异常层次结构
@@ -58,8 +54,7 @@ class DataAcquisitionException(MarketSimulationException):
     """数据采集异常
     
     索引: EXCEPTION.DATA.001
-    场景: 数据源不可用、数据格式错误、数据缺失
-    """
+    场景: 数据源不可用、数据格式错误、数据缺�?    """
     def __init__(self, source: str, message: str, **kwargs):
         self.source = source
         error_code = f"DATA_ACQUISITION_{source.upper()}"
@@ -67,11 +62,9 @@ class DataAcquisitionException(MarketSimulationException):
 
 
 class AgentDecisionException(MarketSimulationException):
-    """智能体决策异常
-    
+    """智能体决策异�?    
     索引: EXCEPTION.AGENT.001
-    场景: 智能体决策失败、状态异常、参数错误
-    """
+    场景: 智能体决策失败、状态异常、参数错�?    """
     def __init__(self, agent_type: str, message: str, **kwargs):
         self.agent_type = agent_type
         error_code = f"AGENT_DECISION_{agent_type.upper()}"
@@ -82,8 +75,7 @@ class RLTrainingException(MarketSimulationException):
     """RL训练异常
     
     索引: EXCEPTION.RL.001
-    场景: 模型训练失败、梯度爆炸、收敛失败
-    """
+    场景: 模型训练失败、梯度爆炸、收敛失�?    """
     def __init__(self, model_name: str, message: str, **kwargs):
         self.model_name = model_name
         error_code = f"RL_TRAINING_{model_name.upper()}"
@@ -94,22 +86,18 @@ class MarketImpactException(MarketSimulationException):
     """市场冲击模型异常
     
     索引: EXCEPTION.MARKET_IMPACT.001
-    场景: 市场冲击计算失败、参数校准错误
-    """
+    场景: 市场冲击计算失败、参数校准错�?    """
     def __init__(self, message: str, **kwargs):
         error_code = "MARKET_IMPACT_ERROR"
         super().__init__(message, error_code, **kwargs)
 ```
 
-#### 2.1.2 异常处理器设计
-
+#### 2.1.2 异常处理器设�?
 ```python
 class ExceptionHandler:
-    """统一异常处理器
-    
+    """统一异常处理�?    
     索引: HANDLER.EXCEPTION.001
-    职责: 统一处理系统异常,记录日志,发送告警
-    """
+    职责: 统一处理系统异常,记录日志,发送告�?    """
     
     def __init__(self, config: ExceptionHandlerConfig):
         self.config = config
@@ -125,7 +113,7 @@ class ExceptionHandler:
         处理流程:
         1. 记录异常日志
         2. 判断异常级别
-        3. 发送告警(如需要)
+        3. 发送告�?如需�?
         4. 记录到错误数据库
         5. 返回处理结果
         """
@@ -135,8 +123,7 @@ class ExceptionHandler:
         # 2. 判断异常级别
         severity = self._determine_severity(exception)
         
-        # 3. 发送告警
-        if severity in ['HIGH', 'CRITICAL']:
+        # 3. 发送告�?        if severity in ['HIGH', 'CRITICAL']:
             self._send_alert(exception, severity)
         
         # 4. 记录到错误数据库
@@ -169,8 +156,7 @@ class ExceptionHandler:
         """判断异常严重级别
         
         级别定义:
-        - CRITICAL: 系统崩溃、数据丢失
-        - HIGH: 核心功能失效
+        - CRITICAL: 系统崩溃、数据丢�?        - HIGH: 核心功能失效
         - MEDIUM: 部分功能降级
         - LOW: 可忽略的异常
         """
@@ -186,7 +172,7 @@ class ExceptionHandler:
         return severity_mapping.get(error_prefix, 'LOW')
     
     def _send_alert(self, exception: MarketSimulationException, severity: str):
-        """发送告警"""
+        """发送告�?""
         alert = Alert(
             level=severity,
             title=f"市场模拟系统异常: {exception.error_code}",
@@ -229,9 +215,7 @@ from functools import wraps
 class RetryStrategy(Enum):
     """重试策略枚举"""
     FIXED_INTERVAL = "fixed_interval"  # 固定间隔
-    EXPONENTIAL_BACKOFF = "exponential_backoff"  # 指数退避
-    LINEAR_BACKOFF = "linear_backoff"  # 线性退避
-
+    EXPONENTIAL_BACKOFF = "exponential_backoff"  # 指数退�?    LINEAR_BACKOFF = "linear_backoff"  # 线性退�?
 
 class RetryConfig:
     """重试配置
@@ -254,8 +238,7 @@ class RetryConfig:
 
 
 class RetryExecutor:
-    """重试执行器
-    
+    """重试执行�?    
     索引: EXECUTOR.RETRY.001
     职责: 执行带重试机制的操作
     """
@@ -289,15 +272,13 @@ class RetryExecutor:
             except Exception as e:
                 last_exception = e
                 
-                # 检查是否为可重试异常
-                if not self._is_retryable_exception(e):
+                # 检查是否为可重试异�?                if not self._is_retryable_exception(e):
                     self.logger.error(
                         f"Operation '{operation_name}' failed with non-retryable exception: {e}"
                     )
                     raise
                 
-                # 检查是否达到最大重试次数
-                if attempt >= self.config.max_retries:
+                # 检查是否达到最大重试次�?                if attempt >= self.config.max_retries:
                     self.logger.error(
                         f"Operation '{operation_name}' failed after {self.config.max_retries} retries"
                     )
@@ -316,7 +297,7 @@ class RetryExecutor:
         raise last_exception
     
     def _is_retryable_exception(self, exception: Exception) -> bool:
-        """检查是否为可重试异常"""
+        """检查是否为可重试异�?""
         return any(
             isinstance(exception, retryable_exc) 
             for retryable_exc in self.config.retryable_exceptions
@@ -346,8 +327,7 @@ class RetryExecutor:
 
 
 def retry_on_failure(config: RetryConfig):
-    """重试装饰器
-    
+    """重试装饰�?    
     索引: DECORATOR.RETRY.001
     用法: @retry_on_failure(RetryConfig(max_retries=3))
     """
@@ -365,8 +345,7 @@ def retry_on_failure(config: RetryConfig):
 
 ```python
 class DataCollectorWithRetry:
-    """带重试机制的数据采集器
-    
+    """带重试机制的数据采集�?    
     索引: COLLECTOR.DATA.RETRY.001
     """
     
@@ -386,7 +365,7 @@ class DataCollectorWithRetry:
         
     @retry_on_failure(RetryConfig(max_retries=3, base_delay=2.0))
     def collect_longhubang_data(self, date: str) -> pd.DataFrame:
-        """采集龙虎榜数据(带重试)"""
+        """采集龙虎榜数�?带重�?"""
         try:
             import akshare as ak
             data = ak.stock_lhb_detail_em(start_date=date, end_date=date)
@@ -400,7 +379,7 @@ class DataCollectorWithRetry:
     
     @retry_on_failure(RetryConfig(max_retries=5, base_delay=5.0))
     def collect_level2_data(self, symbol: str, date: str) -> Dict:
-        """采集Level-2数据(带重试)"""
+        """采集Level-2数据(带重�?"""
         try:
             # 模拟Level-2数据采集
             data = self._fetch_level2_from_source(symbol, date)
@@ -414,8 +393,7 @@ class DataCollectorWithRetry:
 
 
 class AgentDecisionWithRetry:
-    """带重试机制的智能体决策
-    
+    """带重试机制的智能体决�?    
     索引: AGENT.DECISION.RETRY.001
     """
     
@@ -430,7 +408,7 @@ class AgentDecisionWithRetry:
         self.executor = RetryExecutor(self.retry_config)
         
     def generate_decision_with_retry(self, market_state: MarketState) -> AgentDecision:
-        """生成决策(带重试)"""
+        """生成决策(带重�?"""
         operation = lambda: self.agent.generate_trading_decision(market_state)
         
         try:
@@ -472,37 +450,28 @@ class RLTrainingMetrics:
     # 基础指标
     episode: int  # 当前回合
     step: int  # 当前步数
-    timestamp: datetime  # 时间戳
-    
+    timestamp: datetime  # 时间�?    
     # 奖励指标
-    episode_reward: float  # 回合总奖励
-    average_reward: float  # 平均奖励
-    reward_std: float  # 奖励标准差
-    
+    episode_reward: float  # 回合总奖�?    average_reward: float  # 平均奖励
+    reward_std: float  # 奖励标准�?    
     # 损失指标
     actor_loss: float  # Actor损失
     critic_loss: float  # Critic损失
-    entropy: float  # 熵(探索程度)
+    entropy: float  # �?探索程度)
     
     # 性能指标
     sharpe_ratio: float  # 夏普比率
-    max_drawdown: float  # 最大回撤
-    win_rate: float  # 胜率
-    profit_factor: float  # 盈亏比
-    
-    # 训练稳定性指标
-    gradient_norm: float  # 梯度范数
-    learning_rate: float  # 学习率
-    exploration_rate: float  # 探索率
-    
+    max_drawdown: float  # 最大回�?    win_rate: float  # 胜率
+    profit_factor: float  # 盈亏�?    
+    # 训练稳定性指�?    gradient_norm: float  # 梯度范数
+    learning_rate: float  # 学习�?    exploration_rate: float  # 探索�?    
     # 资源指标
     gpu_memory_used: float  # GPU内存使用
     training_time: float  # 训练时间
 
 
 class RLTrainingMonitor:
-    """RL训练监控器
-    
+    """RL训练监控�?    
     索引: MONITOR.RL.001
     职责: 实时监控RL训练过程,记录指标,生成报告
     """
@@ -518,22 +487,17 @@ class RLTrainingMonitor:
         """记录训练指标
         
         记录流程:
-        1. 添加到历史记录
-        2. 写入TensorBoard
-        3. 检查异常指标
-        4. 发送告警(如需要)
+        1. 添加到历史记�?        2. 写入TensorBoard
+        3. 检查异常指�?        4. 发送告�?如需�?
         """
-        # 1. 添加到历史记录
-        self.metrics_history.append(metrics)
+        # 1. 添加到历史记�?        self.metrics_history.append(metrics)
         
         # 2. 写入TensorBoard
         self._write_to_tensorboard(metrics)
         
-        # 3. 检查异常指标
-        anomalies = self._check_anomalies(metrics)
+        # 3. 检查异常指�?        anomalies = self._check_anomalies(metrics)
         
-        # 4. 发送告警
-        if anomalies:
+        # 4. 发送告�?        if anomalies:
             self._send_training_alert(metrics, anomalies)
     
     def _write_to_tensorboard(self, metrics: RLTrainingMetrics):
@@ -562,8 +526,7 @@ class RLTrainingMonitor:
             'Performance/Max_Drawdown', metrics.max_drawdown, metrics.episode
         )
         
-        # 训练稳定性指标
-        self.tensorboard_writer.add_scalar(
+        # 训练稳定性指�?        self.tensorboard_writer.add_scalar(
             'Training/Gradient_Norm', metrics.gradient_norm, metrics.episode
         )
         self.tensorboard_writer.add_scalar(
@@ -571,22 +534,19 @@ class RLTrainingMonitor:
         )
     
     def _check_anomalies(self, metrics: RLTrainingMetrics) -> List[str]:
-        """检查异常指标"""
+        """检查异常指�?""
         anomalies = []
         
-        # 检查奖励异常
-        if metrics.episode_reward < self.config.reward_lower_bound:
+        # 检查奖励异�?        if metrics.episode_reward < self.config.reward_lower_bound:
             anomalies.append(f"Episode reward too low: {metrics.episode_reward}")
         
-        # 检查损失异常
-        if abs(metrics.actor_loss) > self.config.loss_upper_bound:
+        # 检查损失异�?        if abs(metrics.actor_loss) > self.config.loss_upper_bound:
             anomalies.append(f"Actor loss too high: {metrics.actor_loss}")
         
         if abs(metrics.critic_loss) > self.config.loss_upper_bound:
             anomalies.append(f"Critic loss too high: {metrics.critic_loss}")
         
-        # 检查梯度爆炸
-        if metrics.gradient_norm > self.config.gradient_norm_threshold:
+        # 检查梯度爆�?        if metrics.gradient_norm > self.config.gradient_norm_threshold:
             anomalies.append(f"Gradient explosion detected: {metrics.gradient_norm}")
         
         # 检查性能下降
@@ -598,7 +558,7 @@ class RLTrainingMonitor:
         return anomalies
     
     def _send_training_alert(self, metrics: RLTrainingMetrics, anomalies: List[str]):
-        """发送训练告警"""
+        """发送训练告�?""
         alert = Alert(
             level='HIGH',
             title=f"RL训练异常: Episode {metrics.episode}",
@@ -625,43 +585,39 @@ class RLTrainingMonitor:
 
 ## 训练概览
 - **当前回合**: {latest_metrics.episode}
-- **训练时间**: {latest_metrics.training_time:.2f}秒
-- **GPU内存使用**: {latest_metrics.gpu_memory_used:.2f}GB
+- **训练时间**: {latest_metrics.training_time:.2f}�?- **GPU内存使用**: {latest_metrics.gpu_memory_used:.2f}GB
 
 ## 奖励指标
-- **回合总奖励**: {latest_metrics.episode_reward:.4f}
+- **回合总奖�?*: {latest_metrics.episode_reward:.4f}
 - **平均奖励**: {latest_metrics.average_reward:.4f}
-- **奖励标准差**: {latest_metrics.reward_std:.4f}
+- **奖励标准�?*: {latest_metrics.reward_std:.4f}
 
 ## 性能指标
 - **夏普比率**: {latest_metrics.sharpe_ratio:.4f}
-- **最大回撤**: {latest_metrics.max_drawdown:.4f}
+- **最大回�?*: {latest_metrics.max_drawdown:.4f}
 - **胜率**: {latest_metrics.win_rate:.2%}
-- **盈亏比**: {latest_metrics.profit_factor:.4f}
+- **盈亏�?*: {latest_metrics.profit_factor:.4f}
 
-## 训练稳定性
-- **梯度范数**: {latest_metrics.gradient_norm:.4f}
-- **学习率**: {latest_metrics.learning_rate:.6f}
-- **探索率**: {latest_metrics.exploration_rate:.4f}
+## 训练稳定�?- **梯度范数**: {latest_metrics.gradient_norm:.4f}
+- **学习�?*: {latest_metrics.learning_rate:.6f}
+- **探索�?*: {latest_metrics.exploration_rate:.4f}
 
 ## 损失指标
 - **Actor损失**: {latest_metrics.actor_loss:.4f}
 - **Critic损失**: {latest_metrics.critic_loss:.4f}
-- **熵**: {latest_metrics.entropy:.4f}
+- **�?*: {latest_metrics.entropy:.4f}
 """
         
         return report
 ```
 
-#### 3.1.2 训练过程可视化
-
+#### 3.1.2 训练过程可视�?
 ```python
 class RLTrainingVisualizer:
     """RL训练可视化器
     
     索引: VISUALIZER.RL.001
-    职责: 生成训练过程可视化图表
-    """
+    职责: 生成训练过程可视化图�?    """
     
     def __init__(self, monitor: RLTrainingMonitor):
         self.monitor = monitor
@@ -699,8 +655,7 @@ class RLTrainingVisualizer:
         axes[0, 2].set_xlabel('Episode')
         axes[0, 2].set_ylabel('Sharpe Ratio')
         
-        # 最大回撤曲线
-        max_drawdowns = [m.max_drawdown for m in metrics]
+        # 最大回撤曲�?        max_drawdowns = [m.max_drawdown for m in metrics]
         axes[1, 0].plot(episodes, max_drawdowns)
         axes[1, 0].set_title('Max Drawdown')
         axes[1, 0].set_xlabel('Episode')
@@ -713,8 +668,7 @@ class RLTrainingVisualizer:
         axes[1, 1].set_xlabel('Episode')
         axes[1, 1].set_ylabel('Norm')
         
-        # 探索率曲线
-        exploration_rates = [m.exploration_rate for m in metrics]
+        # 探索率曲�?        exploration_rates = [m.exploration_rate for m in metrics]
         axes[1, 2].plot(episodes, exploration_rates)
         axes[1, 2].set_title('Exploration Rate')
         axes[1, 2].set_xlabel('Episode')
@@ -734,27 +688,23 @@ class RLTrainingVisualizer:
 rl_training_monitor:
   log_dir: "logs/rl_training/"
   
-  monitoring_interval: 100  # 每100步记录一次
-  
+  monitoring_interval: 100  # �?00步记录一�?  
   anomaly_detection:
     reward_lower_bound: -1000.0
     loss_upper_bound: 10000.0
     gradient_norm_threshold: 100.0
     
   alert_thresholds:
-    consecutive_low_reward: 10  # 连续10回合低奖励
-    performance_degradation: 0.5  # 性能下降50%
+    consecutive_low_reward: 10  # 连续10回合低奖�?    performance_degradation: 0.5  # 性能下降50%
     
   visualization:
     enabled: true
-    update_interval: 1000  # 每1000步更新图表
-    save_dir: "reports/rl_training/"
+    update_interval: 1000  # �?000步更新图�?    save_dir: "reports/rl_training/"
     
   early_stopping:
     enabled: true
     patience: 50  # 50回合无改善则停止
-    min_delta: 0.01  # 最小改善阈值
-```
+    min_delta: 0.01  # 最小改善阈�?```
 
 ---
 
@@ -779,11 +729,8 @@ class MarketImpactModel:
         # 模型参数
         self.temporary_impact_coef = None  # 临时冲击系数
         self.permanent_impact_coef = None  # 永久冲击系数
-        self.volatility_coef = None  # 波动率系数
-        self.liquidity_coef = None  # 流动性系数
-        
-        # 校准状态
-        self.is_calibrated = False
+        self.volatility_coef = None  # 波动率系�?        self.liquidity_coef = None  # 流动性系�?        
+        # 校准状�?        self.is_calibrated = False
         self.calibration_date = None
         self.calibration_metrics = {}
         
@@ -796,9 +743,7 @@ class MarketImpactModel:
         
         参数:
             order_size: 订单大小(股数)
-            average_volume: 平均成交量
-            volatility: 波动率
-            execution_time: 执行时间(天)
+            average_volume: 平均成交�?            volatility: 波动�?            execution_time: 执行时间(�?
             
         返回:
             MarketImpactResult: 市场冲击结果
@@ -806,8 +751,7 @@ class MarketImpactModel:
         if not self.is_calibrated:
             raise MarketImpactException("Model not calibrated. Please calibrate first.")
         
-        # 计算参与率
-        participation_rate = order_size / (average_volume * execution_time)
+        # 计算参与�?        participation_rate = order_size / (average_volume * execution_time)
         
         # 计算临时冲击
         temporary_impact = self.temporary_impact_coef * participation_rate * volatility
@@ -815,8 +759,7 @@ class MarketImpactModel:
         # 计算永久冲击
         permanent_impact = self.permanent_impact_coef * participation_rate * volatility
         
-        # 计算总冲击
-        total_impact = temporary_impact + permanent_impact
+        # 计算总冲�?        total_impact = temporary_impact + permanent_impact
         
         # 计算冲击成本
         impact_cost = total_impact * order_size
@@ -831,20 +774,15 @@ class MarketImpactModel:
         )
     
     def _calculate_confidence(self, participation_rate: float, volatility: float) -> float:
-        """计算置信度
-        
-        置信度基于:
-        1. 参与率是否在合理范围内
-        2. 波动率是否在历史范围内
-        """
+        """计算置信�?        
+        置信度基�?
+        1. 参与率是否在合理范围�?        2. 波动率是否在历史范围�?        """
         confidence = 1.0
         
-        # 参与率过高,置信度降低
-        if participation_rate > 0.1:
+        # 参与率过�?置信度降�?        if participation_rate > 0.1:
             confidence *= 0.7
         
-        # 波动率过高,置信度降低
-        if volatility > 0.05:
+        # 波动率过�?置信度降�?        if volatility > 0.05:
             confidence *= 0.8
         
         return confidence
@@ -854,8 +792,7 @@ class MarketImpactModel:
 
 ```python
 class MarketImpactCalibrator:
-    """市场冲击模型校准器
-    
+    """市场冲击模型校准�?    
     索引: CALIBRATOR.MARKET_IMPACT.001
     职责: 使用历史数据校准市场冲击模型参数
     """
@@ -870,16 +807,14 @@ class MarketImpactCalibrator:
         """校准市场冲击模型
         
         校准流程:
-        1. 数据预处理
-        2. 特征工程
+        1. 数据预处�?        2. 特征工程
         3. 参数估计
         4. 模型验证
         5. 生成校准报告
         """
         self.logger.info("Starting market impact model calibration...")
         
-        # 1. 数据预处理
-        cleaned_data = self._preprocess_data(historical_data)
+        # 1. 数据预处�?        cleaned_data = self._preprocess_data(historical_data)
         
         # 2. 特征工程
         features = self._engineer_features(cleaned_data)
@@ -909,16 +844,12 @@ class MarketImpactCalibrator:
         )
     
     def _preprocess_data(self, historical_data: pd.DataFrame) -> pd.DataFrame:
-        """数据预处理
-        
+        """数据预处�?        
         处理步骤:
-        1. 去除异常值
-        2. 填充缺失值
-        3. 标准化
-        """
+        1. 去除异常�?        2. 填充缺失�?        3. 标准�?        """
         cleaned_data = historical_data.copy()
         
-        # 去除异常值(3σ原则)
+        # 去除异常�?3σ原则)
         for col in ['price_impact', 'volume', 'volatility']:
             mean = cleaned_data[col].mean()
             std = cleaned_data[col].std()
@@ -927,8 +858,7 @@ class MarketImpactCalibrator:
                 (cleaned_data[col] <= mean + 3*std)
             ]
         
-        # 填充缺失值
-        cleaned_data = cleaned_data.fillna(method='ffill')
+        # 填充缺失�?        cleaned_data = cleaned_data.fillna(method='ffill')
         
         return cleaned_data
     
@@ -936,10 +866,7 @@ class MarketImpactCalibrator:
         """特征工程
         
         特征:
-        1. 参与率 = 订单量 / 平均成交量
-        2. 相对波动率 = 波动率 / 平均波动率
-        3. 流动性指标 = 成交量 / 市值
-        """
+        1. 参与�?= 订单�?/ 平均成交�?        2. 相对波动�?= 波动�?/ 平均波动�?        3. 流动性指�?= 成交�?/ 市�?        """
         features = data.copy()
         
         features['participation_rate'] = features['order_size'] / features['average_volume']
@@ -954,8 +881,8 @@ class MarketImpactCalibrator:
         """参数估计
         
         使用方法:
-        1. 线性回归(基础方法)
-        2. 非线性优化(高级方法)
+        1. 线性回�?基础方法)
+        2. 非线性优�?高级方法)
         """
         from scipy.optimize import minimize
         
@@ -973,8 +900,7 @@ class MarketImpactCalibrator:
             # 计算MSE
             mse = np.mean((predicted_impact - y) ** 2)
             
-            # 添加正则化
-            regularization = config.regularization_coef * (temp_coef**2 + perm_coef**2)
+            # 添加正则�?            regularization = config.regularization_coef * (temp_coef**2 + perm_coef**2)
             
             return mse + regularization
         
@@ -1002,8 +928,8 @@ class MarketImpactCalibrator:
         """验证模型
         
         验证方法:
-        1. 样本内验证(R²)
-        2. 样本外验证(交叉验证)
+        1. 样本内验�?R²)
+        2. 样本外验�?交叉验证)
         3. 残差分析
         """
         from sklearn.model_selection import train_test_split
@@ -1012,13 +938,11 @@ class MarketImpactCalibrator:
         # 分割数据
         train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
         
-        # 训练集验证
-        train_pred = self._predict_impact(train_data, params)
+        # 训练集验�?        train_pred = self._predict_impact(train_data, params)
         train_r2 = r2_score(train_data['price_impact'], train_pred)
         train_mae = mean_absolute_error(train_data['price_impact'], train_pred)
         
-        # 测试集验证
-        test_pred = self._predict_impact(test_data, params)
+        # 测试集验�?        test_pred = self._predict_impact(test_data, params)
         test_r2 = r2_score(test_data['price_impact'], test_pred)
         test_mae = mean_absolute_error(test_data['price_impact'], test_pred)
         
@@ -1060,7 +984,7 @@ class MarketImpactCalibrator:
 ## 校准概览
 - **校准日期**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 - **优化成功**: {params['optimization_success']}
-- **最终损失**: {params['final_loss']:.6f}
+- **最终损�?*: {params['final_loss']:.6f}
 
 ## 校准参数
 - **临时冲击系数**: {params['temporary_impact_coef']:.6f}
@@ -1071,14 +995,14 @@ class MarketImpactCalibrator:
 - **测试集R²**: {validation.test_r2:.4f}
 - **训练集MAE**: {validation.train_mae:.6f}
 - **测试集MAE**: {validation.test_mae:.6f}
-- **模型有效**: {'✅ 是' if validation.is_valid else '❌ 否'}
+- **模型有效**: {'�?�? if validation.is_valid else '�?�?}
 
 ## 建议
 """
         
         if validation.is_valid:
             report += "- 模型验证通过,可以使用\n"
-            report += "- 建议定期重新校准(每月一次)\n"
+            report += "- 建议定期重新校准(每月一�?\n"
         else:
             report += "- ⚠️ 模型验证未通过,需要调整参数或增加数据\n"
             report += "- 建议检查数据质量和特征工程\n"
@@ -1114,16 +1038,12 @@ market_impact_calibration:
         fields: ["price_impact", "market_cap"]
   
   calibration_config:
-    method: "nonlinear_optimization"  # 线性回归或非线性优化
-    regularization_coef: 0.01  # 正则化系数
-    validation_split: 0.2  # 验证集比例
-    cross_validation: true  # 是否交叉验证
+    method: "nonlinear_optimization"  # 线性回归或非线性优�?    regularization_coef: 0.01  # 正则化系�?    validation_split: 0.2  # 验证集比�?    cross_validation: true  # 是否交叉验证
     
   quality_thresholds:
     min_r2: 0.5  # 最小R²
     max_mae: 0.02  # 最大MAE
-    max_parameter_value: 1.0  # 参数最大值
-    
+    max_parameter_value: 1.0  # 参数最大�?    
   recalibration:
     enabled: true
     frequency: "monthly"  # 每月重新校准
@@ -1136,11 +1056,11 @@ market_impact_calibration:
 
 | 验证维度 | 验证标准 | 验证方法 |
 |---------|---------|---------|
-| **参数合理性** | 参数在[0, 1]范围内 | 参数边界检查 |
-| **拟合优度** | R² ≥ 0.5 | 样本外验证 |
-| **预测准确性** | MAE < 0.02 | 残差分析 |
-| **稳定性** | 参数波动 < 10% | 滚动窗口验证 |
-| **业务合理性** | 临时冲击 > 永久冲击 | 理论验证 |
+| **参数合理�?* | 参数在[0, 1]范围�?| 参数边界检�?|
+| **拟合优度** | R² �?0.5 | 样本外验�?|
+| **预测准确�?* | MAE < 0.02 | 残差分析 |
+| **稳定�?* | 参数波动 < 10% | 滚动窗口验证 |
+| **业务合理�?* | 临时冲击 > 永久冲击 | 理论验证 |
 
 ---
 
@@ -1148,33 +1068,26 @@ market_impact_calibration:
 
 ### 5.1 更新说明
 
-本补充文档已补充了三个必须改进项的详细设计:
+本补充文档已补充了三个必须改进项的详细设�?
 
 1. **IMP-001**: 完整的异常处理和重试机制设计
    - 异常层次结构
-   - 统一异常处理器
-   - 重试策略和执行器
+   - 统一异常处理�?   - 重试策略和执行器
    - 具体应用场景
 
 2. **IMP-002**: 完善的RL模型训练监控指标设计
    - 核心监控指标体系
-   - 训练监控器
-   - 训练过程可视化
-   - 异常检测和告警
+   - 训练监控�?   - 训练过程可视�?   - 异常检测和告警
 
-3. **IMP-003**: 详细的市场冲击模型校准方案
-   - 市场冲击模型基础
+3. **IMP-003**: 详细的市场冲击模型校准方�?   - 市场冲击模型基础
    - 模型校准方法
    - 校准数据要求
    - 校准验证标准
 
-### 5.2 下一步行动
-
+### 5.2 下一步行�?
 1. **立即执行**: 将本补充文档的内容集成到主技术规格书
-2. **代码实现**: 按照设计文档实现三个改进项
-3. **单元测试**: 为三个改进项编写单元测试
-4. **集成测试**: 验证三个改进项与现有系统的集成
-
+2. **代码实现**: 按照设计文档实现三个改进�?3. **单元测试**: 为三个改进项编写单元测试
+4. **集成测试**: 验证三个改进项与现有系统的集�?
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状态**: ✅ 已完成
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?已完�?
