@@ -52,7 +52,7 @@ last_updated: 2026-04-03
 ### 1. 使用现有模板
 ```bash
 # 复制模板到目标目录
-cp 00_TEMPLATES/01_EDA_TEMPLATE.py 01_EXPLORATORY_ANALYSIS/$(date +%Y%m%d)_your_analysis.py
+cp 00_TEMPLATES/01_EDA_TEMPLATE_v1.0.0.py 01_EXPLORATORY_ANALYSIS/$(date +%Y%m%d)_your_analysis_v1.py
 ```
 
 ### 2. 修改模板内容
