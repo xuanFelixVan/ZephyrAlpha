@@ -61,6 +61,24 @@ implementation_status: 活跃维护
 | [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | 人机交互设计 | ⭐⭐⭐⭐ |
 | [AI治理蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | AI治理框架 | ⭐⭐⭐⭐ |
 
+### 核心监控体系 (P0级)
+
+| 文档名称 | 说明 | 重要性 | 实施周期 |
+|---------|------|--------|---------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 实时数据质量监控、自动告警、质量报告 | ⭐⭐⭐⭐⭐ | 2周 |
+| [实时风险监控蓝图](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控仪表板、风险预警系统 | ⭐⭐⭐⭐⭐ | 2周 |
+| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 历史情景压力测试、敏感性分析 | ⭐⭐⭐⭐⭐ | 2周 |
+| [合规监控系统蓝图](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 监管合规监控、内部合规流程 | ⭐⭐⭐⭐⭐ | 2周 |
+
+### AI增强系统 (P0级)
+
+| 文档名称 | 说明 | 重要性 | 实施周期 |
+|---------|------|--------|---------|
+| [AI可解释性工具蓝图](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md) | 基于桥水"安全花园"的AI决策可解释性工具 | ⭐⭐⭐⭐⭐ | 2周 |
+| [RAG知识系统蓝图](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md) | 检索增强生成知识系统 | ⭐⭐⭐⭐⭐ | 2周 |
+| [自适应模型系统蓝图](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md) | HMM市场状态识别+动态模型选择 | ⭐⭐⭐⭐⭐ | 2周 |
+| [实施加速方案蓝图](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md) | 8个月加速实施计划 | ⭐⭐⭐⭐⭐ | 8个月 |
+
 ---
 
 ## 🗂️ 子目录

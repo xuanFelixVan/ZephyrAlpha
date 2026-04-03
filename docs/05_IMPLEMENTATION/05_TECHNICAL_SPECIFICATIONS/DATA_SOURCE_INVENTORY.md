@@ -1,162 +1,4 @@
 ---
-
-### 2.5 Baostock - 🆓 免费A股历史数据
-
-**基本信息**:
-- **接口名称**: Baostock
-- **接口类型**: Python库
-- **付费状态**: 🆓 **完全免费**
-- **数据覆盖**: A股、指数、基金
-- **数据频率**: 日线、周线、月线
-- **数据质量**: ⭐⭐⭐⭐（高质量）
-
-**数据类型**:
-- ✅ A股历史K线数据
-- ✅ 指数数据
-- ✅ 基金数据
-- ✅ 复权因子
-
-**接入方式**:
-```python
-import baostock as bs
-
-class BaostockAdapter:
-    """Baostock数据源适配器"""
-    
-    def __init__(self):
-        self.logged_in = False
-    
-    def login(self):
-        """登录"""
-        lg = bs.login()
-        if lg.error_code != '0':
-            raise Exception(f"登录失败: {lg.error_msg}")
-        self.logged_in = True
-    
-    def get_daily_data(self, code: str, start: str, end: str):
-        """获取日线数据"""
-        if not self.logged_in:
-            self.login()
-        
-        rs = bs.query_history_k_data_plus(
-            code,
-            "date,code,open,high,low,close,volume",
-            start_date=start,
-            end_date=end,
-            frequency="d",
-            adjustflag="3"
-        )
-        
-        data_list = []
-        while (rs.error_code == '0') & rs.next():
-            data_list.append(rs.get_row_data())
-        
-        return data_list
-```
-
-**优先级**: **P1（补充数据源）**
-
-**使用场景**:
-- A股历史数据获取
-- 数据质量校验
-- 复权数据获取
-
----
-
-### 2.6 EFinance - 🆓 免费东方财富数据
-
-**基本信息**:
-- **接口名称**: EFinance
-- **接口类型**: Python库
-- **付费状态**: 🆓 **完全免费**
-- **数据覆盖**: A股、港股、美股、期货
-- **数据频率**: 日线、分钟线、实时行情
-- **数据质量**: ⭐⭐⭐⭐（高质量）
-
-**数据类型**:
-- ✅ A股行情数据
-- ✅ 港股行情数据
-- ✅ 美股行情数据
-- ✅ 期货行情数据
-- ✅ 实时行情
-
-**接入方式**:
-```python
-import efinance as ef
-
-class EFinanceAdapter:
-    """EFinance数据源适配器"""
-    
-    def __init__(self):
-        pass
-    
-    def get_stock_data(self, code: str, start: str, end: str):
-        """获取股票数据"""
-        df = ef.stock.get_quote_history(
-            code,
-            beg=start,
-            end=end,
-            klt=101,  # 日K
-            fqt=1     # 前复权
-        )
-        return df
-```
-
-**优先级**: **P1（补充数据源）**
-
-**使用场景**:
-- 东方财富数据获取
-- 实时行情数据
-- 多市场数据
-
----
-
-### 2.7 Qlib - 🆓 微软量化数据
-
-**基本信息**:
-- **接口名称**: Qlib（微软量化平台）
-- **接口类型**: Python库
-- **付费状态**: 🆓 **完全免费**
-- **数据覆盖**: A股、美股
-- **数据频率**: 日线
-- **数据质量**: ⭐⭐⭐⭐（高质量）
-
-**数据类型**:
-- ✅ A股行情数据
-- ✅ 美股行情数据
-- ✅ 财务数据
-- ✅ 因子数据
-
-**接入方式**:
-```python
-import qlib
-from qlib.data import D
-
-class QlibAdapter:
-    """Qlib数据源适配器"""
-    
-    def __init__(self):
-        qlib.init()
-    
-    def get_stock_data(self, instruments, start_time, end_time, fields):
-        """获取股票数据"""
-        df = D.features(
-            instruments=instruments,
-            fields=fields,
-            start_time=start_time,
-            end_time=end_time
-        )
-        return df
-```
-
-**优先级**: **P2（补充数据源）**
-
-**使用场景**:
-- 微软量化平台数据
-- 因子数据获取
-- 机器学习数据
-
----
 module_id: DATA_SOURCE_INVENTORY_001
 version: 1.0.0
 status: Active
@@ -173,19 +15,19 @@ parent_document: ../INDEX.md
 
 > 清风量化系统 v5.2 - 数据接口源完整清单
 > **清单日期**: 2026-04-03
-> **清单目的**: 明确系统所有数据接口源，标识付费接口，确保数据源管理规范
+> **清单目的**: 明确系统所有数据接口源，标识免费接口，确保数据源管理规范
 
 
 ## 一、数据接口总览
 
-### 1.1 当前可用数据接口
+### 1.1 主数据源
 
 | 序号 | 数据接口名称 | 接口类型 | 付费状态 | 数据类型 | 接入方式 | 认证方式 | 优先级 | 状态 |
 |------|------------|---------|---------|---------|---------|---------|--------|------|
 | 1 | **iFind** | REST API | ✅ **已有** | 行情数据、财务数据 | REST API | Token | P0（主数据源） | ✅ 可用 |
-| 2 | **QMT** | Python API | 🆓 **免费** | 行情数据、交易数据 | Python API | 券商账户 | P0（交易执行） | ✅ 可用 |
+| 2 | **QMT** | Python API | 🆓 **免费** | 行情数据、交易数据 | Python API | 券商账户 | P0（交易执行） | ⚠️ 待接入 |
 
-### 1.2 免费数据接口
+### 1.2 免费补充数据接口
 
 | 序号 | 数据接口名称 | 接口类型 | 付费状态 | 数据类型 | 接入方式 | 认证方式 | 优先级 | 状态 |
 |------|------------|---------|---------|---------|---------|---------|--------|------|
@@ -281,7 +123,6 @@ class QMTAdapter:
     
     def connect(self):
         """连接QMT"""
-        # 连接QMT终端
         self.connected = True
         return True
     
@@ -290,7 +131,6 @@ class QMTAdapter:
         if not self.connected:
             self.connect()
         
-        # 使用QMT API获取数据
         data = xtdata.get_market_data(
             stock_list=[symbol],
             period=period,
@@ -406,7 +246,118 @@ class AKShareAdapter:
 
 ---
 
-### 2.5 yfinance - 🆓 免费补充数据源（美股）
+### 2.5 Baostock - 🆓 免费A股历史数据
+
+**基本信息**:
+- **接口名称**: Baostock
+- **接口类型**: Python库
+- **付费状态**: 🆓 **完全免费**
+- **数据覆盖**: A股、指数、基金
+- **数据频率**: 日线、周线、月线
+- **数据质量**: ⭐⭐⭐⭐（高质量）
+
+**数据类型**:
+- ✅ A股历史K线数据
+- ✅ 指数数据
+- ✅ 基金数据
+- ✅ 复权因子
+
+**接入方式**:
+```python
+import baostock as bs
+
+class BaostockAdapter:
+    """Baostock数据源适配器"""
+    
+    def __init__(self):
+        self.logged_in = False
+    
+    def login(self):
+        """登录"""
+        lg = bs.login()
+        if lg.error_code != '0':
+            raise Exception(f"登录失败: {lg.error_msg}")
+        self.logged_in = True
+    
+    def get_daily_data(self, code: str, start: str, end: str):
+        """获取日线数据"""
+        if not self.logged_in:
+            self.login()
+        
+        rs = bs.query_history_k_data_plus(
+            code,
+            "date,code,open,high,low,close,volume",
+            start_date=start,
+            end_date=end,
+            frequency="d",
+            adjustflag="3"
+        )
+        
+        data_list = []
+        while (rs.error_code == '0') & rs.next():
+            data_list.append(rs.get_row_data())
+        
+        return data_list
+```
+
+**优先级**: **P1（补充数据源）**
+
+**使用场景**:
+- A股历史数据获取
+- 数据质量校验
+- 复权数据获取
+
+---
+
+### 2.6 EFinance - 🆓 免费东方财富数据
+
+**基本信息**:
+- **接口名称**: EFinance
+- **接口类型**: Python库
+- **付费状态**: 🆓 **完全免费**
+- **数据覆盖**: A股、港股、美股、期货
+- **数据频率**: 日线、分钟线、实时行情
+- **数据质量**: ⭐⭐⭐⭐（高质量）
+
+**数据类型**:
+- ✅ A股行情数据
+- ✅ 港股行情数据
+- ✅ 美股行情数据
+- ✅ 期货行情数据
+- ✅ 实时行情
+
+**接入方式**:
+```python
+import efinance as ef
+
+class EFinanceAdapter:
+    """EFinance数据源适配器"""
+    
+    def __init__(self):
+        pass
+    
+    def get_stock_data(self, code: str, start: str, end: str):
+        """获取股票数据"""
+        df = ef.stock.get_quote_history(
+            code,
+            beg=start,
+            end=end,
+            klt=101,  # 日K
+            fqt=1     # 前复权
+        )
+        return df
+```
+
+**优先级**: **P1（补充数据源）**
+
+**使用场景**:
+- 东方财富数据获取
+- 实时行情数据
+- 多市场数据
+
+---
+
+### 2.7 yfinance - 🆓 免费美股数据源
 
 **基本信息**:
 - **接口名称**: yfinance（Yahoo Finance）
@@ -447,18 +398,66 @@ class YFinanceAdapter:
 
 ---
 
+### 2.8 Qlib - 🆓 微软量化数据
+
+**基本信息**:
+- **接口名称**: Qlib（微软量化平台）
+- **接口类型**: Python库
+- **付费状态**: 🆓 **完全免费**
+- **数据覆盖**: A股、美股
+- **数据频率**: 日线
+- **数据质量**: ⭐⭐⭐⭐（高质量）
+
+**数据类型**:
+- ✅ A股行情数据
+- ✅ 美股行情数据
+- ✅ 财务数据
+- ✅ 因子数据
+
+**接入方式**:
+```python
+import qlib
+from qlib.data import D
+
+class QlibAdapter:
+    """Qlib数据源适配器"""
+    
+    def __init__(self):
+        qlib.init()
+    
+    def get_stock_data(self, instruments, start_time, end_time, fields):
+        """获取股票数据"""
+        df = D.features(
+            instruments=instruments,
+            fields=fields,
+            start_time=start_time,
+            end_time=end_time
+        )
+        return df
+```
+
+**优先级**: **P2（补充数据源）**
+
+**使用场景**:
+- 微软量化平台数据
+- 因子数据获取
+- 机器学习数据
+
+---
+
 ## 三、数据源优先级策略
 
 ### 3.1 数据源优先级矩阵
 
 | 数据类型 | 第一优先级 | 第二优先级 | 第三优先级 | 说明 |
 |---------|-----------|-----------|-----------|------|
-| **A股行情数据** | iFind | Tushare | AKShare | iFind为主，免费源补充 |
-| **A股财务数据** | iFind | Tushare | - | iFind财务数据最完整 |
-| **实时行情** | QMT | iFind | - | QMT实时性最好 |
-| **交易执行** | QMT | - | - | 仅QMT支持交易执行 |
-| **美股数据** | yfinance | - | - | 美股数据源 |
-| **宏观经济** | iFind | Tushare | AKShare | 多源交叉验证 |
+| **A股行情数据** | iFind ✅ | Tushare 🆓 | AKShare 🆓 | iFind为主，免费源补充 |
+| **A股财务数据** | iFind ✅ | Tushare 🆓 | - | iFind财务数据最完整 |
+| **实时行情** | QMT 🆓 | iFind ✅ | - | QMT实时性最好 |
+| **交易执行** | QMT 🆓 | - | - | 仅QMT支持交易执行 |
+| **美股数据** | yfinance 🆓 | - | - | 美股数据源 |
+| **宏观经济** | iFind ✅ | Tushare 🆓 | AKShare 🆓 | 多源交叉验证 |
+| **A股历史数据** | Baostock 🆓 | EFinance 🆓 | Tushare 🆓 | 多个免费源 |
 
 ### 3.2 数据源切换策略
 
@@ -474,30 +473,34 @@ class YFinanceAdapter:
 
 ---
 
-## 四、付费接口成本分析
+## 四、成本分析
 
-### 4.1 付费接口成本对比
+### 4.1 成本对比
 
-| 数据接口 | 年费估算 | 数据覆盖 | 性价比 | 建议 |
-|---------|---------|---------|--------|------|
-| **QMT** | 3-5万元 | A股、期货、期权 | ⭐⭐⭐⭐⭐ | ✅ **必需**（交易执行） |
-| **Wind** | 5-10万元 | 全市场 | ⭐⭐⭐⭐ | ⚠️ 可选（iFind已覆盖） |
-| **Bloomberg** | 20-30万元 | 全球市场 | ⭐⭐⭐ | ❌ 不推荐（成本高） |
-| **东方财富Choice** | 2-3万元 | A股市场 | ⭐⭐⭐ | ❌ 不推荐（iFind已覆盖） |
+| 数据接口 | 费用 | 说明 |
+|---------|------|------|
+| **iFind** | ✅ 已有 | 主数据源 |
+| **QMT** | 🆓 免费 | XtQuant库免费，需券商账户 |
+| **Tushare** | 🆓 免费 | 基础功能免费 |
+| **AKShare** | 🆓 免费 | 完全免费 |
+| **yfinance** | 🆓 免费 | 完全免费 |
+| **Baostock** | 🆓 免费 | 完全免费 |
+| **EFinance** | 🆓 免费 | 完全免费 |
+| **Qlib** | 🆓 免费 | 完全免费 |
 
 ### 4.2 成本优化建议
 
 **当前方案（推荐）**:
 - ✅ iFind（已有） - 主数据源
-- ✅ QMT（付费） - 交易执行
+- ✅ QMT（免费） - 交易执行
 - ✅ Tushare（免费） - 数据补充
 - ✅ AKShare（免费） - 数据补充
+- ✅ Baostock（免费） - 历史数据
+- ✅ EFinance（免费） - 实时数据
+- ✅ yfinance（免费） - 美股数据
+- ✅ Qlib（免费） - 因子数据
 
-**年成本**: 约3-5万元（仅QMT）
-
-**备选方案**:
-- 如果需要更全面的数据覆盖，可考虑Wind
-- 如果需要全球市场数据，可考虑Bloomberg（成本较高）
+**年成本**: 0元（全免费）
 
 ---
 

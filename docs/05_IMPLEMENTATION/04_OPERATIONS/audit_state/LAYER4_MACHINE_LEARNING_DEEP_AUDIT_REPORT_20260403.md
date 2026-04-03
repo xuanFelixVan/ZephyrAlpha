@@ -443,4 +443,332 @@ ModelMonitoring (模块级):
 |------|----------|----------|-----------|
 | FEATURE_STORE | Layer 4 数据层 | 特征存储和服务 | 数据服务层 |
 | MLOPS_PLATFORM | Layer 6 模型层 | ML生命周期管理 | Layer 4 (与机器学习层一致) |
-| MODEL_MONITORING | Layer 6 模型层 | 模型性能监控 | Layer 4 (
+| MODEL_MONITORING | Layer 6 模型层 | 模型性能监控 | Layer 4 (与机器学习层一致) |
+| ONLINE_LEARNING | Layer 6 模型层 | 在线学习 | Layer 4 (与机器学习层一致) |
+
+**问题详情**:
+- Layer 4定义为"机器学习层"
+- 但MLOps、ModelMonitoring、OnlineLearning等ML相关模块却声称在Layer 6
+- Layer定位混乱，不符合架构设计
+
+**建议修复**:
+```
+统一Layer定位:
+  Layer 4 - 机器学习层:
+    - ModelTrainingPipeline
+    - ModelServingArchitecture
+    - FeatureEngineering
+    - LSTMModel
+    - TransformerModel
+    - QlibAlpha158
+    - MLOpsPlatform (移入)
+    - ModelMonitoring (移入)
+    - OnlineLearning (移入)
+
+  数据服务层 (新建):
+    - FeatureStore
+    - 数据存储服务
+    - 数据缓存服务
+```
+
+---
+
+### 2.3 接口定义重复问题 (P2级风险)
+
+#### 问题1: 因子计算接口重复
+
+**重复接口**:
+- `IAlphaFactorFactory.calculate_factors()` - ALPHA_FACTOR_FACTORY
+- `QlibAlpha158Manager.calculate_factors()` - QLIB_ALPHA158
+- `FactorCalculator.calculate_factors()` - FACTOR_CALCULATOR
+
+**建议**: 统一因子计算接口定义，明确调用关系
+
+---
+
+#### 问题2: 模型训练接口重复
+
+**重复接口**:
+- `ModelTrainingPipeline.train_model()` - MODEL_TRAINING_PIPELINE
+- `LSTMTrainer.train()` - LSTM_MODEL
+- `TransformerTrainer.train()` - TRANSFORMER_MODEL
+- `MarketImpactModelAPI.train_model()` - MARKET_IMPACT_MODEL
+
+**建议**: 明确训练接口层次，Pipeline调用模型特定训练器
+
+---
+
+#### 问题3: 特征服务接口重复
+
+**重复接口**:
+- `FeatureEngineeringPipeline.fit_transform()` - FEATURE_ENGINEERING
+- `FeatureStoreAPI.get_online_features()` - FEATURE_STORE
+
+**建议**: 明确特征工程和特征服务的接口边界
+
+---
+
+## 3. 量化指标统计
+
+### 3.1 问题分布统计
+
+| 问题类型 | 数量 | 占比 | 风险等级 |
+|----------|------|------|----------|
+| 内容重复 | 6项 | 33.3% | P1 |
+| 职责边界不清 | 5项 | 27.8% | P1 |
+| Layer定位不一致 | 4项 | 22.2% | P2 |
+| 接口定义重复 | 3项 | 16.7% | P2 |
+| **总计** | **18项** | **100%** | - |
+
+### 3.2 文档质量评分
+
+| 文档 | 内容完整性 | 职责清晰度 | Layer一致性 | 综合评分 |
+|------|-----------|-----------|-------------|----------|
+| MODEL_TRAINING_PIPELINE | 90% | 85% | 100% | 92% |
+| MODEL_SERVING_ARCHITECTURE | 90% | 90% | 100% | 93% |
+| FEATURE_ENGINEERING | 85% | 70% | 100% | 85% |
+| FEATURE_STORE | 85% | 60% | 50% | 65% |
+| LSTM_MODEL | 90% | 85% | 100% | 92% |
+| TRANSFORMER_MODEL | 90% | 85% | 100% | 92% |
+| QLIB_ALPHA158 | 85% | 70% | 100% | 85% |
+| ALPHA_FACTOR_FACTORY | 90% | 65% | 80% | 78% |
+| MLOPS_PLATFORM | 85% | 70% | 60% | 72% |
+| MODEL_MONITORING | 85% | 75% | 60% | 73% |
+| BARRA_RISK_MODEL | 90% | 85% | 100% | 92% |
+| MARKET_IMPACT_MODEL | 85% | 80% | 100% | 88% |
+| STREAMLIT_DASHBOARD | 80% | 90% | 100% | 90% |
+| **平均** | **87.3%** | **77.7%** | **88.5%** | **84.4%** |
+
+### 3.3 合规率统计
+
+| 审计维度 | 合规文档数 | 总文档数 | 合规率 |
+|----------|-----------|----------|--------|
+| 内容无重复 | 7 | 13 | 53.8% |
+| 职责边界清晰 | 6 | 13 | 46.2% |
+| Layer定位一致 | 9 | 13 | 69.2% |
+| 接口定义规范 | 10 | 13 | 76.9% |
+| **总体合规** | - | - | **61.5%** |
+
+---
+
+## 4. 风险评估与优先级
+
+### 4.1 高风险问题 (P0级)
+
+**无P0级问题**
+
+### 4.2 中风险问题 (P1级)
+
+| 序号 | 问题描述 | 影响范围 | 修复优先级 |
+|------|----------|----------|-----------|
+| 1 | 因子计算功能在4个文档中重复 | 全局 | 高 |
+| 2 | 特征计算功能在FeatureEngineering和FeatureStore中重复 | Layer 4 | 高 |
+| 3 | IC计算功能在4个文档中重复 | Layer 2-4 | 高 |
+| 4 | 模型训练功能分散在6个文档中 | Layer 4 | 高 |
+| 5 | FeatureEngineering vs FeatureStore职责重叠 | Layer 4 | 高 |
+| 6 | AlphaFactorFactory vs QlibAlpha158职责重叠 | Layer 2-4 | 高 |
+
+### 4.3 低风险问题 (P2级)
+
+| 序号 | 问题描述 | 影响范围 | 修复优先级 |
+|------|----------|----------|-----------|
+| 1 | Layer定位不一致（4个文档） | 架构清晰度 | 中 |
+| 2 | 接口定义重复（3组） | 接口规范 | 中 |
+| 3 | 注意力机制重复定义 | 模型层 | 低 |
+| 4 | 风险分解功能重复 | Layer 6 | 低 |
+
+---
+
+## 5. 改进建议与行动计划
+
+### 5.1 立即修复项 (24小时内)
+
+#### 修复1: 明确因子计算职责边界
+
+**操作步骤**:
+1. 保留FACTOR_CALCULATOR作为Layer 2基础因子计算模块
+2. 修改ALPHA_FACTOR_FACTORY，删除FinancialFactorCalculator和TechnicalFactorCalculator，改为调用FactorCalculator
+3. 修改QLIB_ALPHA158，明确其作为外部因子库集成，不重复定义计算逻辑
+4. 修改BARRA_RISK_MODEL，明确StyleFactorCalculator和IndustryFactorCalculator是风险因子计算，与Alpha因子计算区分
+
+**预期效果**: 消除因子计算功能的4处重复
+
+---
+
+#### 修复2: 明确FeatureEngineering和FeatureStore职责
+
+**操作步骤**:
+1. 修改FEATURE_STORE文档，删除"特征计算层"，保留"特征存储层"和"特征服务层"
+2. 明确FeatureStore的Layer定位为"数据服务层"
+3. 在FEATURE_ENGINEERING中添加与FeatureStore的集成说明
+4. 明确FeatureEngineering负责特征工程逻辑，FeatureStore负责特征存储和服务
+
+**预期效果**: 消除特征计算功能重复，明确职责边界
+
+---
+
+#### 修复3: 统一模型训练架构
+
+**操作步骤**:
+1. 确认ModelTrainingPipeline作为训练入口
+2. 修改LSTM_MODEL和TRANSFORMER_MODEL，明确Trainer被Pipeline调用
+3. 修改其他包含train_model的文档，改为调用ModelTrainingPipeline
+4. 添加训练架构说明文档
+
+**预期效果**: 消除训练功能的6处分散
+
+---
+
+### 5.2 短期改进项 (1周内)
+
+#### 改进1: 统一Layer定位
+
+**操作步骤**:
+1. 审查所有Layer 6文档，确认是否应移入Layer 4
+2. 修改MLOPS_PLATFORM、MODEL_MONITORING、ONLINE_LEARNING的Layer定位为Layer 4
+3. 新建"数据服务层"分类，将FeatureStore移入
+4. 更新架构文档，明确Layer定义
+
+---
+
+#### 改进2: 统一接口定义
+
+**操作步骤**:
+1. 定义统一的因子计算接口`IFactorCalculator`
+2. 定义统一的模型训练接口`IModelTrainer`
+3. 定义统一的特征服务接口`IFeatureService`
+4. 各模块实现统一接口
+
+---
+
+#### 改进3: 添加模块关系图
+
+**操作步骤**:
+1. 为每组职责重叠的模块添加关系说明
+2. 绘制模块调用关系图
+3. 明确上下游依赖关系
+4. 添加到各文档的"依赖关系"章节
+
+---
+
+### 5.3 长期优化项 (1个月内)
+
+#### 优化1: 建立模块注册中心
+
+**目标**: 统一管理所有模块的定义和职责
+
+**内容**:
+- 模块ID注册
+- 职责声明
+- 接口契约
+- 依赖关系
+
+---
+
+#### 优化2: 建立文档治理流程
+
+**目标**: 防止新增文档引入重复和职责不清
+
+**内容**:
+- 新文档审批流程
+- 职责边界审查
+- 重复内容检测
+- Layer定位审核
+
+---
+
+#### 优化3: 建立接口版本管理
+
+**目标**: 统一管理接口定义和变更
+
+**内容**:
+- 接口注册
+- 版本控制
+- 变更通知
+- 兼容性管理
+
+---
+
+## 6. 审计质量声明
+
+### 6.1 审计局限性
+
+1. **审计范围**: 本次审计仅覆盖Layer 4机器学习层相关文档，未覆盖其他Layer
+2. **审计深度**: 代码级实现细节未完全验证，仅基于文档内容分析
+3. **动态变化**: 文档可能随时更新，审计结果反映审计时点状态
+
+### 6.2 质量保证
+
+1. **审计方法**: 采用三层审计方法，确保全面覆盖
+2. **证据支撑**: 所有发现均有具体文档位置和内容引用
+3. **可验证性**: 所有建议均可通过文档修改验证效果
+
+### 6.3 后续审计建议
+
+1. **跟踪审计**: 修复完成后进行跟踪审计，验证修复效果
+2. **扩展审计**: 将审计范围扩展到其他Layer
+3. **定期审计**: 建立季度审计机制，持续监控文档质量
+
+---
+
+## 附录A: 审计工作底稿
+
+### A.1 文档读取记录
+
+| 文档 | 行数 | 读取时间 | 状态 |
+|------|------|----------|------|
+| MODEL_TRAINING_PIPELINE | 360 | 2026-04-03 | 完成 |
+| MODEL_SERVING_ARCHITECTURE | 307 | 2026-04-03 | 完成 |
+| FEATURE_ENGINEERING | 500+ | 2026-04-03 | 完成 |
+| FEATURE_STORE | 500+ | 2026-04-03 | 完成 |
+| LSTM_MODEL | 500+ | 2026-04-03 | 完成 |
+| TRANSFORMER_MODEL | 500+ | 2026-04-03 | 完成 |
+| QLIB_ALPHA158 | 500+ | 2026-04-03 | 完成 |
+| ALPHA_FACTOR_FACTORY | 500+ | 2026-04-03 | 完成 |
+| MLOPS_PLATFORM | 500+ | 2026-04-03 | 完成 |
+| MODEL_MONITORING | 500+ | 2026-04-03 | 完成 |
+| BARRA_RISK_MODEL | 500+ | 2026-04-03 | 完成 |
+| MARKET_IMPACT_MODEL | 500+ | 2026-04-03 | 完成 |
+| STREAMLIT_DASHBOARD | 500+ | 2026-04-03 | 完成 |
+
+### A.2 Grep搜索记录
+
+| 搜索模式 | 命中文件数 | 命中行数 |
+|----------|-----------|----------|
+| 特征计算/特征生成/特征选择 | 9 | 30+ |
+| 因子计算/因子筛选 | 28 | 50+ |
+| 模型训练/模型部署 | 29 | 50+ |
+| 模型监控/性能监控 | 13 | 20+ |
+| IC计算/IC检验 | 2 | 30+ |
+| 风险分解 | 1 | 30+ |
+| 注意力机制 | 2 | 26+ |
+| Layer定位/Layer归属 | 50+ | 50+ |
+
+---
+
+## 附录B: 参考标准文档
+
+1. [专业文档治理审计指南](file:///D:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+2. [文档治理审计检查清单](file:///D:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+3. [审计质量标准v5.1](file:///D:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+
+---
+
+## 附录C: 术语表
+
+| 术语 | 定义 | 上下文 |
+|------|------|--------|
+| **Layer定位** | 模块在系统架构中的层级归属 | 架构设计 |
+| **职责边界** | 模块负责的功能范围和不负责的功能范围 | 模块设计 |
+| **内容重复** | 相同或相似的功能定义出现在多个文档中 | 文档治理 |
+| **接口契约** | 模块对外提供的API接口定义 | 接口设计 |
+| **IC** | Information Coefficient，信息系数 | 因子评估 |
+| **特征工程** | 从原始数据中提取和变换特征的过程 | 机器学习 |
+| **特征存储** | 特征数据的存储、管理和服务系统 | 数据工程 |
+
+---
+
+**审计报告版本**: v1.0
+**审计日期**: 2026-04-03
+**审计官**: Audit Sentinel
+**下一步**: 执行立即修复项

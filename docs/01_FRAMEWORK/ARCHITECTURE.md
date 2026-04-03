@@ -289,11 +289,27 @@ Layer 8: 人机交互层 (Human-AI Interface)
 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) | 人机协作流程 |
 | [TECH_STACK.md](./TECH_STACK.md) | 技术栈选择 |
 | [README.md](./README.md) | 框架总览 |
+
+### P0级核心蓝图
+
+#### AI增强系统
+
+| 文档 | 说明 |
+|------|------|
 | **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | **🆕 P0级: AI可解释性工具蓝图** |
 | **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | **🆕 P0级: RAG知识系统蓝图** |
 | **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | **🆕 P0级: 统一自适应模型蓝图** |
 | **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | **🆕 P0级: 实施加速方案蓝图** |
 
+#### 核心监控体系
+
+| 文档 | 说明 |
+|------|------|
+| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md)** | **🆕 P0级: 数据质量监控蓝图** |
+| **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | **🆕 P0级: 实时风险监控蓝图** |
+| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0级: 压力测试系统蓝图** |
+| **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | **🆕 P0级: 合规监控系统蓝图** |
+
 ---
 
-**版本**: v2.2 | **更新**: 2026-04-03 | **状态**: ✅ 活跃
+**版本**: v5.2 | **更新**: 2026-04-03 | **状态**: ✅ 活跃

@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
+applicable_scope: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -123,13 +123,16 @@ from datetime import datetime
 from enum import Enum
 import json
 
-class DataSourceType(Enum):
+class SourceType(Enum):
     """数据源类型"""
-    QMT = "qmt"                    # 💰 付费交易接口
+    QMT = "qmt"                    # 🆓 免费交易接口
     IFIND = "ifind"                # ✅ 已有主数据源
     TUSHARE = "tushare"            # 🆓 免费补充数据源
     AKSHARE = "akshare"            # 🆓 免费补充数据源
+    BAOSTOCK = "baostock"          # 🆓 免费A股历史数据
+    EFINANCE = "efinance"          # 🆓 免费东方财富数据
     YFINANCE = "yfinance"          # 🆓 免费美股数据源
+    QLIB = "qlib"                  # 🆓 免费微软量化数据
     CUSTOM = "custom"              # 自建数据源
     SUPERCOMMAND = "supercommand"
     BAOSTOCK = "baostock"

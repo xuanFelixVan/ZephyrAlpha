@@ -596,7 +596,7 @@ class ComplianceChecker:
         results.append(stt_check)
         
         is_compliant = all(r.is_compliant for r in results)
-        compliance_level = max(r.compliance_level for r in results, key=lambda x: x.value)
+        compliance_level = max((r.compliance_level for r in results), key=lambda x: x.value)
         triggered_rules = [rule for r in results for rule in r.triggered_rules]
         warnings = [w for r in results for w in r.warnings]
         violations = [v for r in results for v in r.violations]
