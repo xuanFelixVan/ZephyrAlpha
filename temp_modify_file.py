@@ -2,8 +2,19 @@ import re
 
 file_path = r'D:\ZephyrAlpha\docs\01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md'
 
-with open(file_path, 'r', encoding='utf-8') as f:
-    content = f.read()
+with open(file_path, 'rb') as f:
+    raw_bytes = f.read()
+
+if raw_bytes.startswith(b'\xff\xfe'):
+    encoding = 'utf-16-le'
+elif raw_bytes.startswith(b'\xfe\xff'):
+    encoding = 'utf-16-be'
+else:
+    encoding = 'utf-8'
+
+print(f"Detected encoding: {encoding}")
+
+content = raw_bytes.decode(encoding)
 
 new_section = '''---
 

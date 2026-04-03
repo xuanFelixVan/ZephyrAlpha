@@ -35,25 +35,15 @@ last_updated: 2026-04-02
 ```
 notebooks/
 ├── 00_TEMPLATES/              # 模板库
-│   ├── 01_EDA_TEMPLATE.ipynb  # 探索性数据分析模板
-│   ├── 02_FACTOR_TEMPLATE.ipynb # 因子开发模板
-│   ├── 03_STRATEGY_TEMPLATE.ipynb # 策略原型模板
-│   └── 04_REPORT_TEMPLATE.ipynb # 报告生成模板
-├── 01_EXPLORATORY_ANALYSIS/   # 探索性分析
-│   ├── 20260331_market_data_eda.ipynb
-│   └── 20260401_factor_correlation.ipynb
-├── 02_FACTOR_DEVELOPMENT/     # 因子开发
-│   ├── 20260328_new_momentum_factor.ipynb
-│   └── 20260329_risk_factor_analysis.ipynb
-├── 03_STRATEGY_RESEARCH/      # 策略研究
-│   ├── 20260330_s001_backtest.ipynb
-│   └── 20260331_market_regime_test.ipynb
-├── 04_MODEL_EXPERIMENTS/      # 模型实验
-│   ├── 20260328_lstm_predictor.ipynb
-│   └── 20260329_xgboost_ensemble.ipynb
-├── 05_REPORTS/                # 报告生成
-│   ├── 202603_月度因子报告.ipynb
-│   └── 20260331_策略回测报告.ipynb
+│   ├── 01_EDA_TEMPLATE.py     # 探索性数据分析模板 (Python脚本格式)
+│   └── 02_FACTOR_TEMPLATE.py  # 因子开发模板 (Python脚本格式)
+│   # 预留: 03_STRATEGY_TEMPLATE.py   # 策略原型模板
+│   # 预留: 04_REPORT_TEMPLATE.py     # 报告生成模板
+├── 01_EXPLORATORY_ANALYSIS/   # 探索性分析 (预留目录)
+├── 02_FACTOR_DEVELOPMENT/     # 因子开发 (预留目录)
+├── 03_STRATEGY_RESEARCH/      # 策略研究 (预留目录)
+├── 04_MODEL_EXPERIMENTS/      # 模型实验 (预留目录)
+├── 05_REPORTS/                # 报告生成 (预留目录)
 └── README.md                  # 本文档
 ```
 
@@ -285,7 +275,7 @@ def save_results(results_dict, filename):
 |------|------|
 | [../docs/07_RESEARCH/README.md](../docs/07_RESEARCH/README.md) | 研究模块总览 |
 | [../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规范 |
-| [../docs/02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md](../docs/02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准 |
+| [../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md](../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准 |
 
 ---
 
