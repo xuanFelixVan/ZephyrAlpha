@@ -334,4 +334,4 @@ AI启动前必读顺序：
 | [数据库设计评审报告](../design/database/P0-01_Database_Design_Review_Report.md) | `docs/design/database/P0-01_Database_Design_Review_Report.md` | DB_REVIEW_001 | 1.0 | Active | 专业量化机构数据库设计评审 |
 
 
-**版本**: v5.1.0 | **更新**: 2026-04-02 | **状态**: ✅ 活跃
+**版本**: v5.2.0 | **更新**: 2026-04-03 | **状态**: ✅ 活跃
