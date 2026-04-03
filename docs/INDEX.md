@@ -15,7 +15,7 @@ last_updated: 2026-04-02
 
 > **版本**: v5.1  
 > **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-02  
+> **最后更新**: 2026-04-03  
 > **维护者**: 系统架构师
 
 ---
@@ -48,7 +48,7 @@ docs/
 ├── 04_EXECUTION/         # 执行层
 ├── 05_IMPLEMENTATION/    # 实施层
 ├── 06_ARCHIVE/           # 归档文档
-├── 08_AI_GOVERNANCE/     # AI治理
+├── 07_RESEARCH/          # 研究支持
 ├── 09_AUDIT/             # 审计系统
 └── 10_AI_WORKFLOW/       # AI工作流
 ```
@@ -186,12 +186,24 @@ docs/
 
 ## 🚀 快速开始
 
-### 新用户入门
+### 📖 文档阅读路径
+
+| 角色 | 推荐阅读路径 |
+|------|-------------|
+| **新用户** | 系统概览 → 架构设计 → 实施蓝图 → 开发标准 |
+| **系统架构师** | 专业架构 → 实施蓝图 → 架构迁移计划 → 审计标准 |
+| **因子研究员** | 因子注册表 → 因子计算框架 → 数据源接口 → 回测标准 |
+| **策略开发人员** | 策略框架 → 开发标准 → 测试标准 → 部署计划 |
+| **风险管理人员** | 风险规则引擎 → 风险规则蓝图 → 风险报告 |
+| **审计人员** | 审计指南 → 审计检查清单 → 审计标准 |
+
+### 新用户入门（5步快速上手）
 
 1. **阅读系统概览**：[系统概览](./00_OVERVIEW/README.md)
 2. **了解架构设计**：[专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 3. **查看实施蓝图**：[实施蓝图](./05_IMPLEMENTATION/BLUEPRINT.md)
-4. **开始开发**：[开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+4. **配置开发环境**：[开发环境配置](./05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md)
+5. **开始开发**：[开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
 
 ### 开发人员快速开始
 

@@ -57,9 +57,10 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [AI虚拟研究团队蓝图](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AI虚拟研究团队设计 | ⭐⭐⭐⭐⭐ |
+| [AI虚拟研究团队](./AI_VIRTUAL_RESEARCH_TEAM/INDEX.md) | AI虚拟研究团队设计（子目录） | ⭐⭐⭐⭐⭐ |
 | [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | 人机交互设计 | ⭐⭐⭐⭐ |
 | [AI治理蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | AI治理框架 | ⭐⭐⭐⭐ |
+| [AI权限清单](./AI_PERMISSIONS.md) | AI权限规范 | ⭐⭐⭐⭐ |
 
 ### 核心监控体系 (P0级)
 
@@ -85,6 +86,7 @@ implementation_status: 活跃维护
 
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
+| [AI_VIRTUAL_RESEARCH_TEAM/](./AI_VIRTUAL_RESEARCH_TEAM/) | AI虚拟研究团队蓝图 | 3 |
 | [ARCHITECTURE_DECISIONS/](./ARCHITECTURE_DECISIONS/) | 架构决策记录 | 1 |
 
 ---
