@@ -459,3 +459,58 @@ class InstitutionalRewardFunction:
         奖励函数:
         R = R_profit + R_risk + R_execution + R_penalty
         
+        其中:
+        - R_profit: 收益奖励 = 收益率 * 权重
+        - R_risk: 风险惩罚 = -波动率 * 权重
+        - R_execution: 执行质量奖励 = 滑点控制 * 权重
+        - R_penalty: 违规惩罚 = -违规次数 * 权重
+        
+        返回:
+            float: 奖励值
+        """
+        # 收益奖励
+        profit = self._calculate_profit(state, next_state)
+        r_profit = profit * self.config.profit_weight
+        
+        # 风险惩罚
+        volatility = self._calculate_volatility(state, next_state)
+        r_risk = -volatility * self.config.risk_weight
+        
+        # 执行质量奖励
+        execution_quality = self._calculate_execution_quality(action)
+        r_execution = execution_quality * self.config.execution_weight
+        
+        # 违规惩罚
+        penalty = self._check_violations(action)
+        r_penalty = -penalty * self.config.penalty_weight
+        
+        return r_profit + r_risk + r_execution + r_penalty
+```
+
+#### 4.1.2 奖励函数参数配置
+
+```yaml
+institutional_reward_function:
+  profit_weight: 1.0  # 收益权重
+  risk_weight: 0.5  # 风险权重
+  execution_weight: 0.3  # 执行质量权重
+  penalty_weight: 2.0  # 违规惩罚权重
+  
+  profit_config:
+    target_return: 0.20  # 目标收益率 20%
+    reward_scale: 10.0  # 奖励缩放因子
+  
+  risk_config:
+    max_volatility: 0.30  # 最大波动率 30%
+    penalty_scale: 5.0  # 惩罚缩放因子
+  
+  execution_config:
+    max_slippage: 0.02  # 最大滑点 2%
+    reward_scale: 1.0  # 奖励缩放因子
+  
+  penalty_config:
+    position_limit_violation: 10.0  # 仓位违规惩罚
+    risk_limit_violation: 20.0  # 风险违规惩罚
+```
+
+#### 4.1.3

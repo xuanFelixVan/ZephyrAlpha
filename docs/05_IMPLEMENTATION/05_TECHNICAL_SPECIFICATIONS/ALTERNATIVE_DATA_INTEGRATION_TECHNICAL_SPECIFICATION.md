@@ -8,7 +8,7 @@ owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 2 Alpha因子层 - 另类数据源集成 | 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
-parent_document: ./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+parent_document: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
 implementation_status: 规划阶段
 ---
 

@@ -46,7 +46,7 @@ implementation_status: 进行中
 ### 研究人员
 
 1. 查看 [因子注册表](./06_FACTOR_REGISTRY/factor_catalog.md) 了解现有因子
-2. 参考 [因子筛选策略](./01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md) 进行因子筛选
+2. 参考 [因子管理标准](./01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) 进行因子筛选（含筛选策略）
 3. 使用 [IC分析方法](./01_METHODOLOGY/ic_analysis.md) 验证因子有效性
 
 ### 开发人员

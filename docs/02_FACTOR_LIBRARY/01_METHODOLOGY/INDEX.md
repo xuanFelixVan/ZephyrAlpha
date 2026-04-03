@@ -23,8 +23,7 @@ implementation_status: 已完成
 | [README.md](README.md) | 方法论概述 | Active |
 | [FACTOR_REGISTRY.md](FACTOR_REGISTRY.md) | 因子注册表 | Active |
 | [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | Active |
-| [FACTOR_MANAGEMENT_STANDARD.md](FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准 | Active |
-| [FACTOR_SCREENING_STRATEGY.md](FACTOR_SCREENING_STRATEGY.md) | 因子筛选策略 | Active |
+| [FACTOR_MANAGEMENT_STANDARD.md](FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准（含筛选策略） | Active |
 | [TECHNICAL_INDICATORS.md](TECHNICAL_INDICATORS.md) | 技术指标 | Active |
 | [FUTURE_FACTOR_TOOLS.md](FUTURE_FACTOR_TOOLS.md) | 未来因子工具 | Active |
 | [factor_preprocessing.md](factor_preprocessing.md) | 因子预处理 | Active |

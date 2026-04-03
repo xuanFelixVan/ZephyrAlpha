@@ -33,7 +33,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [系统清单](./System_Manifest.md) | 因子库系统清单 | ⭐⭐⭐⭐⭐ |
+| [系统清单](../System_Manifest.md) | 系统清单（全局） | ⭐⭐⭐⭐⭐ |
 | [README](./README.md) | 因子库概述 | ⭐⭐⭐⭐⭐ |
 | [SITEMAP](./SITEMAP.md) | 因子库文档地图 | ⭐⭐⭐⭐ |
 
@@ -43,8 +43,7 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [因子注册表](./01_METHODOLOGY/FACTOR_REGISTRY.md) | 因子注册表 | ⭐⭐⭐⭐⭐ |
 | [因子计算框架](./01_METHODOLOGY/FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | ⭐⭐⭐⭐⭐ |
-| [因子管理标准](./01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准 | ⭐⭐⭐⭐ |
-| [因子筛选策略](./01_METHODOLOGY/FACTOR_SCREENING_STRATEGY.md) | 因子筛选策略 | ⭐⭐⭐⭐ |
+| [因子管理标准](./01_METHODOLOGY/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准（含筛选策略） | ⭐⭐⭐⭐ |
 
 ### Alpha因子
 
@@ -101,8 +100,8 @@ implementation_status: 活跃维护
 ### 新手入门
 
 1. 阅读 [README.md](./README.md) - 因子库概述
-2. 阅读 [System_Manifest.md](./System_Manifest.md) - 系统清单
-3. 阅读 [01_METHODOLOGY/FACTOR_REGISTRY.md](./01_METHODOLOGY/FACTOR_REGISTRY.md) - 因子注册表
+2. 阅读 [系统清单](../System_Manifest.md) - 系统清单（全局）
+3. 阅读 [因子分类学](./01_METHODOLOGY/FACTOR_REGISTRY.md) - 因子分类体系
 
 ### 因子开发
 

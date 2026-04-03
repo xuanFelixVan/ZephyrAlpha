@@ -1749,12 +1749,33 @@ class MarketSimulationValidator:
 - [STRATEGY_SELECTION_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_SELECTION_BLUEPRINT.md)
 - [QUALITY_GATE_MECHANISM.md](../04_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 
-### 9.3 补充文档
+### 9.3 相关文档
+
+> **注意**: 以下补充文档已整合到主规格书，保留原文档供参考
 
 - **[MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md](./MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md)** - 必须改进项详细设计
   - IMP-001: 异常处理和重试机制设计
   - IMP-002: RL模型训练监控指标设计
   - IMP-003: 市场冲击模型校准方案设计
+  - **状态**: 已整合到主规格书第五章
+
+- **[MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md](./MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md)** - 智能体扩展更新
+  - 新增外资智能体 (Foreign Investor Agent)
+  - 新增保险资金智能体 (Insurance Fund Agent)
+  - 市场覆盖率提升至95.01%
+  - **状态**: 已整合到主规格书第二章
+
+- **[MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md](./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md)** - 实施计划
+  - Phase 1-4 详细实施步骤
+  - 工作量估算和里程碑
+
+- **[MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md](./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md)** - 实施指南
+  - 开发环境配置
+  - 代码示例和最佳实践
+
+- **[MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md)** - 集成架构
+  - 与现有系统的集成方案
+  - 数据流和接口设计
 
 ### 9.4 开源项目参考
 

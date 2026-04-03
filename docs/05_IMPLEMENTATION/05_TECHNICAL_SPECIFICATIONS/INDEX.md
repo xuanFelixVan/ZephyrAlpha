@@ -133,13 +133,13 @@ compliance_level: 专业标准
 
 ## 5. 机器学习层技术规格书
 
-### 5.1 模型训练
+### 5.1 模型架构
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | LSTM模型技术规格书 | LSTM_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LSTM_MODEL_TECHNICAL_SPECIFICATION.md) |
 | Transformer模型技术规格书 | TRANSFORMER_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md) |
-| 强化学习技术规格书 | REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-02 | [链接](./REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md) |
+| 强化学习技术规格书 | REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md) |
 
 ### 5.2 特征工程
 
@@ -147,6 +147,22 @@ compliance_level: 专业标准
 |----------|-----------|------|------|----------|----------|
 | 特征工程技术规格书 | FEATURE_ENGINEERING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md) |
 | 特征存储技术规格书 | FEATURE_STORE_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FEATURE_STORE_TECHNICAL_SPECIFICATION.md) |
+
+### 5.3 模型训练与服务
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 模型训练流水线技术规格书 | MODEL_TRAINING_PIPELINE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md) |
+| 模型服务化架构技术规格书 | MODEL_SERVING_ARCHITECTURE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md) |
+
+### 5.4 MLOps与监控
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| MLOps平台技术规格书 | MLOPS_PLATFORM_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md) |
+| 模型监控技术规格书 | MODEL_MONITORING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_MONITORING_TECHNICAL_SPECIFICATION.md) |
+| 数据漂移检测技术规格书 | DRIFT_DETECTION_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DRIFT_DETECTION_TECHNICAL_SPECIFICATION.md) |
+| 在线学习技术规格书 | ONLINE_LEARNING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ONLINE_LEARNING_TECHNICAL_SPECIFICATION.md) |
 
 ---
 
@@ -189,15 +205,17 @@ compliance_level: 专业标准
 
 | 统计项 | 数量 |
 |--------|------|
-| **总文档数** | 97个 |
-| **活跃文档** | 96个 |
+| **总文档数** | 95个 |
+| **活跃文档** | 94个 |
 | **归档文档** | 1个 |
 | **核心模块** | 11个 |
 | **数据层模块** | 8个 |
 | **因子层模块** | 5个 |
-| **机器学习层模块** | 5个 |
+| **机器学习层模块** | 11个 |
 | **组合优化层模块** | 3个 |
 | **AI报告层模块** | 4个 |
+
+> **更新说明**: 2026-04-03 更新机器学习层模块统计，新增模型训练流水线、模型服务化架构、MLOps平台、模型监控、数据漂移检测、在线学习等模块
 
 ---
 
