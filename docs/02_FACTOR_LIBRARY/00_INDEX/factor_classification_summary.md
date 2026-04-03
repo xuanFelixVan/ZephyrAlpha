@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_DOC_001
+module_id: INDEX_CLASSIFICATION_001
 version: 5.1.0
 status: Active
 created_date: 2026-04-01

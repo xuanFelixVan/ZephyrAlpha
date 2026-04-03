@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_DOC_001
+module_id: MISC_OPT_SUMMARY_001
 version: 4.0.0
 status: Active
 created_date: 2026-04-01

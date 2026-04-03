@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_DOC_001
+module_id: BACKTEST_PE_IC_001
 version: 2026.03.28
 status: Active
 created_date: 2026-03-28
