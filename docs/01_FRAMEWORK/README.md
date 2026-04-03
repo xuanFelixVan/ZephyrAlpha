@@ -36,7 +36,7 @@ implementation_status: 进行中
 | **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方案 | 6个适合个人开发的模块、4周实施计划、低成本轻量级方案 |
 | **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** | 关键模块实施蓝图 | P0实时风控+P1全球市场+P2扩展模块、3-6周实施、覆盖度提升至95% |
 | **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝图 | 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
-| **LAYER11_NL_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架构 | 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
+| **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架构 | 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
 
 ---
 
@@ -57,7 +57,7 @@ Layer 8: 人机交互层 (授权/监控/辩论) 🆕
 Layer 11: 文字驱动层 (自然语言交互/零代码操作) 🆕
 ```
 
-**注意**: Layer 11是文字驱动层，位于Layer 0-8之上，提供自然语言交互界面，实现零代码操作整个系统。详细设计参见 [LAYER11_NL_INTERFACE_BLUEPRINT.md](./LAYER11_NL_INTERFACE_BLUEPRINT.md)
+**注意**: Layer 11是文字驱动层，位于Layer 0-8之上，提供自然语言交互界面，实现零代码操作整个系统。详细设计参见 [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md)
 
 ### 2.2 核心设计原则
 
@@ -80,7 +80,7 @@ Layer 11: 文字驱动层 (自然语言交互/零代码操作) 🆕
 | 了解大盘择时 | [MARKET_REGIME.md](./MARKET_REGIME.md) |
 | 理解人机协作 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
 | 查看技术选型 | [TECH_STACK.md](./TECH_STACK.md) |
-| 零代码操作系统 | [LAYER11_NL_INTERFACE_BLUEPRINT.md](./LAYER11_NL_INTERFACE_BLUEPRINT.md) |
+| 零代码操作系统 | [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
 ### 3.2 按Layer导航
 
@@ -95,7 +95,7 @@ Layer 11: 文字驱动层 (自然语言交互/零代码操作) 🆕
 | Layer 6 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 7 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 8 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
-| Layer 11 | [LAYER11_NL_INTERFACE_BLUEPRINT.md](./LAYER11_NL_INTERFACE_BLUEPRINT.md) |
+| Layer 11 | [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
 ---
 

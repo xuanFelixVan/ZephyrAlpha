@@ -21,7 +21,7 @@ implementation_status: 已完成
 | 子目录/文件 | 职责 | 状态 |
 |-------------|------|------|
 | [README.md](README.md) | 数据源概述 | Active |
-| [ALTERNATIVE_DATA.md](ALTERNATIVE_DATA.md) | 另类数据（新闻舆情） | Active |
+| [NEWS_SENTIMENT_DATA_SOURCE.md](NEWS_SENTIMENT_DATA_SOURCE.md) | 新闻舆情数据源 | Active |
 | [IFIND_CONNECTOR.md](IFIND_CONNECTOR.md) | iFind数据源接口 | Active |
 | [BAOSTOCK_CONNECTOR.md](BAOSTOCK_CONNECTOR.md) | Baostock数据源接口 | Active |
 | [QMT_INTERFACE.md](QMT_INTERFACE.md) | QMT接口 | Active |
@@ -43,7 +43,7 @@ implementation_status: 已完成
 ### 数据源接口
 - [IFIND_CONNECTOR.md](IFIND_CONNECTOR.md) - iFind主数据源
 - [BAOSTOCK_CONNECTOR.md](BAOSTOCK_CONNECTOR.md) - Baostock免费数据源
-- [ALTERNATIVE_DATA.md](ALTERNATIVE_DATA.md) - 另类数据源
+- [NEWS_SENTIMENT_DATA_SOURCE.md](NEWS_SENTIMENT_DATA_SOURCE.md) - 新闻舆情数据源
 
 ### 数据管理
 - [DATA_QUALITY.md](DATA_QUALITY.md) - 数据质量管理

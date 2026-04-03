@@ -546,7 +546,7 @@ class FactorValidator:
 │  └── 位置: 02_FACTOR_LIBRARY/01_METHODOLOGY/                      │
 │                                                                     │
 │  相关文档:                                                          │
-│  ├── ALTERNATIVE_DATA.md - 数据源定义                              │
+│  ├── NEWS_SENTIMENT_DATA_SOURCE.md - 新闻舆情数据源定义                              │
 │  ├── TECHNICAL_INDICATORS.md - 技术指标计算公式                     │
 │  ├── FACTOR_REGISTRY.md - 因子注册表格式                          │
 │  ├── ic_analysis.md - IC/IR分析方法                                │

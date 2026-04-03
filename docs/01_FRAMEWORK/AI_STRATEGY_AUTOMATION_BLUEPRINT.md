@@ -1822,7 +1822,7 @@ production_pipeline:
 > 
 > **适用场景**: 策略创建、策略修改、策略管理、策略查询、系统控制
 > 
-> **架构定位**: 本模块是 [Layer 11文字驱动层](./LAYER11_NL_INTERFACE_BLUEPRINT.md) 的策略层专用实现
+> **架构定位**: 本模块是 [Layer 11文字驱动层](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) 的策略层专用实现
 
 ### 6.1 系统概述
 
@@ -1870,7 +1870,7 @@ production_pipeline:
 4. **策略层** 执行具体功能并返回结果
 5. **Layer 11** 将结果转换为自然语言回复用户
 
-**详细设计**: 参见 [Layer 11文字驱动层架构蓝图](./LAYER11_NL_INTERFACE_BLUEPRINT.md)
+**详细设计**: 参见 [Layer 11文字驱动层架构蓝图](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md)
 
 #### 设计理念
 
