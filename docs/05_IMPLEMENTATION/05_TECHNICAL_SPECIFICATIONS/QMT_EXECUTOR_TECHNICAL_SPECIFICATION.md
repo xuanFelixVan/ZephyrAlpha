@@ -66,6 +66,7 @@ regulatory_compliance:
 │  │  - 订单监控                                            │  │
 │  │  - 异常处理                                            │  │
 │  │  - 风险控制                                            │  │
+│  │  - 合规检查 🆕                                         │  │
 │  └──────────────────────────────────────────────────────┘  │
 │                           ↓                                  │
 │  ┌──────────────────────────────────────────────────────┐  │
@@ -78,6 +79,12 @@ regulatory_compliance:
 │  │  │ExceptionHdlr│ │RetryManager │ │AccountManager│  │  │
 │  │  │异常处理器    │  │重试管理器   │  │账户管理器   │  │  │
 │  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
+│  │  ┌─────────────┐                                       │  │
+│  │  │ComplianceChk│ 🆕 监管合规检查器                     │  │
+│  │  │(COMPLIANCE_ │  - 高频交易认定检查                   │  │
+│  │  │CHECKER_001) │  - 撤单限制检查                       │  │
+│  │  │             │  - 短线交易合规检查                   │  │
+│  │  └─────────────┘                                       │  │
 │  └──────────────────────────────────────────────────────┘  │
 │                           ↓                                  │
 │  ┌──────────────────────────────────────────────────────┐  │
@@ -1056,4 +1063,600 @@ qmt_executor:
 - [QMT数据接口技术规格书](./QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
 
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护者**: 策略执行层负责人
+**文档版本**: v1.1.0 | **创建日期**: 2026-04-02 | **维护者**: 策略执行层负责人
+
+---
+
+## 11. 监管合规检查集成方案 🆕
+
+### 11.1 集成背景
+
+**监管要求**：
+- **2026年4月7日**：证监会《关于短线交易监管的若干规定》正式施行
+- **2025年7月7日**：沪深北交易所《程序化交易管理实施细则》正式施行
+- **监管导向**：限速、穿透、平权，A股交易生态迎来根本性重塑
+
+**集成目标**：
+- ✅ 确保所有交易行为符合最新监管要求
+- ✅ 实时预警合规风险，避免违规处罚
+- ✅ 降低合规成本，自动化合规检查流程
+- ✅ 提升系统专业性，符合机构级标准
+
+### 11.2 合规模块集成
+
+#### 11.2.1 模块依赖
+
+**依赖模块**: `COMPLIANCE_CHECKER_001` (v1.0.0)
+
+**模块位置**: `src/modules/compliance_checker.py`
+
+**技术规格书**: [COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md](./COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md)
+
+#### 11.2.2 核心功能
+
+| 功能模块 | 功能说明 | 监管依据 |
+|---------|---------|---------|
+| **高频交易认定检查** | 检查是否触发高频交易认定标准（每秒≥300笔或单日≥20000笔） | 沪深北交易所《程序化交易管理实施细则》第三十三条 |
+| **撤单限制检查** | 检查撤单频率和撤单率是否符合限制（每秒≤15笔，撤单率≤15%） | 沪深北交易所《程序化交易管理实施细则》 |
+| **订单停留时间检查** | 检查订单是否满足最小停留时间要求（≥50微秒） | 沪深北交易所《程序化交易管理实施细则》 |
+| **短线交易合规检查** | 检查大股东短线交易锁仓期（6个月） | 证监会《关于短线交易监管的若干规定》 |
+| **异常交易行为监控** | 监控四类异常交易行为 | 沪深北交易所《程序化交易管理实施细则》 |
+
+### 11.3 集成实现方案
+
+#### 11.3.1 初始化集成
+
+```python
+from src.modules.compliance_checker import (
+    create_compliance_checker,
+    OrderRecord,
+    ComplianceLevel
+)
+
+class QMTExecutor:
+    """QMT交易执行器（集成合规检查）"""
+    
+    def __init__(self, config: QMTConfig):
+        self.config = config
+        
+        # 初始化QMT交易接口
+        from xtquant.xttrader import XtQuantTrader
+        self.trader = XtQuantTrader(
+            config.account_id,
+            config.session_id,
+            config.client_path
+        )
+        self.trader.start()
+        self.trader.subscribe_account(config.account_id)
+        
+        # 初始化核心组件
+        self.converter = OrderConverter()
+        self.monitor = OrderMonitor(config)
+        self.risk_checker = RiskChecker({})
+        self.exception_handler = ExceptionHandler(config)
+        self.retry_manager = RetryManager(config)
+        self.account_manager = AccountManager(self.trader)
+        
+        # 🆕 初始化监管合规检查器
+        self.compliance_checker = create_compliance_checker()
+        
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("QMTExecutor initialized with compliance checker")
+```
+
+#### 11.3.2 订单提交前合规检查
+
+```python
+def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
+    """执行订单（集成合规检查）
+    
+    执行流程:
+    1. 传统风险检查
+    2. 🆕 监管合规检查
+    3. 订单转换
+    4. 订单提交
+    5. 订单监控
+    
+    参数:
+        unified_order: 统一订单
+        
+    返回:
+        执行结果
+    """
+    # 1. 传统风险检查
+    if not self.risk_checker.check_order(unified_order):
+        return ExecutionResult(
+            order_id=unified_order.order_id,
+            status=OrderStatus.REJECTED,
+            filled_volume=0,
+            filled_amount=0.0,
+            avg_price=0.0,
+            commission=0.0,
+            timestamp=datetime.now(),
+            error_message="Risk check failed"
+        )
+    
+    # 2. 🆕 监管合规检查
+    compliance_result = self._check_compliance(unified_order)
+    
+    if not compliance_result.is_compliant:
+        self.logger.error(
+            f"Order {unified_order.order_id} rejected by compliance check: "
+            f"{compliance_result.violations}"
+        )
+        return ExecutionResult(
+            order_id=unified_order.order_id,
+            status=OrderStatus.REJECTED,
+            filled_volume=0,
+            filled_amount=0.0,
+            avg_price=0.0,
+            commission=0.0,
+            timestamp=datetime.now(),
+            error_message=f"Compliance check failed: {compliance_result.violations}"
+        )
+    
+    # 记录合规警告
+    if compliance_result.warnings:
+        self.logger.warning(
+            f"Order {unified_order.order_id} compliance warnings: "
+            f"{compliance_result.warnings}"
+        )
+    
+    # 3. 订单转换
+    qmt_order = self.converter.to_qmt_order(unified_order)
+    
+    # 4. 订单提交
+    try:
+        order_id = self.trader.order_stock(
+            self.config.account_id,
+            qmt_order.order_type,
+            qmt_order.stock_code,
+            qmt_order.order_volume,
+            qmt_order.price,
+            qmt_order.strategy_name,
+            qmt_order.order_remark
+        )
+        
+        # 5. 注册订单监控
+        self.monitor.register_order(order_id)
+        
+        self.logger.info(
+            f"Order submitted successfully: {unified_order.order_id} -> {order_id}"
+        )
+        
+        return ExecutionResult(
+            order_id=unified_order.order_id,
+            status=OrderStatus.SUBMITTED,
+            filled_volume=0,
+            filled_amount=0.0,
+            avg_price=0.0,
+            commission=0.0,
+            timestamp=datetime.now()
+        )
+        
+    except Exception as e:
+        return self.exception_handler.handle_execution_error(unified_order, e)
+
+
+def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResult':
+    """执行合规检查
+    
+    参数:
+        unified_order: 统一订单
+        
+    返回:
+        合规检查结果
+    """
+    # 创建合规检查订单记录
+    compliance_order = OrderRecord(
+        order_id=unified_order.order_id,
+        symbol=unified_order.symbol,
+        direction='buy' if unified_order.direction == OrderDirection.BUY else 'sell',
+        quantity=unified_order.volume,
+        price=unified_order.price or 0.0,
+        order_type=unified_order.order_type.value,
+        timestamp=unified_order.timestamp,
+        status='submitted'
+    )
+    
+    # 获取持仓信息（用于短线交易检查）
+    position_pct = self._get_position_pct(unified_order.symbol)
+    last_trade_date = self._get_last_trade_date(unified_order.symbol)
+    
+    # 执行合规检查
+    result = self.compliance_checker.check_order_before_submission(
+        order=compliance_order,
+        position_pct=position_pct,
+        last_trade_date=last_trade_date
+    )
+    
+    return result
+
+
+def _get_position_pct(self, symbol: str) -> float:
+    """获取持仓比例
+    
+    参数:
+        symbol: 股票代码
+        
+    返回:
+        持仓比例
+    """
+    account_info = self.account_manager.get_account_info(self.config.account_id)
+    positions = self.account_manager.get_positions(self.config.account_id)
+    
+    total_asset = account_info.get('total_asset', 0)
+    if total_asset == 0:
+        return 0.0
+    
+    for pos in positions:
+        if pos['stock_code'] == symbol:
+            return pos['market_value'] / total_asset
+    
+    return 0.0
+
+
+def _get_last_trade_date(self, symbol: str) -> Optional[datetime]:
+    """获取上次交易日期
+    
+    参数:
+        symbol: 股票代码
+        
+    返回:
+        上次交易日期
+    """
+    # TODO: 从交易记录中获取上次交易日期
+    # 这里需要从数据库或交易记录中查询
+    return None
+```
+
+#### 11.3.3 撤单合规检查
+
+```python
+def cancel_order(self, order_id: str) -> bool:
+    """撤单（集成合规检查）
+    
+    参数:
+        order_id: 订单ID
+        
+    返回:
+        是否成功
+    """
+    # 获取订单信息
+    order_status = self.monitor.get_status(order_id)
+    
+    if order_status in [OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED]:
+        self.logger.warning(f"Cannot cancel order {order_id}: status is {order_status}")
+        return False
+    
+    # 🆕 检查撤单限制
+    cancel_check = self.compliance_checker.check_cancel_limits()
+    
+    if not cancel_check.is_compliant:
+        self.logger.error(
+            f"Cannot cancel order {order_id}: cancel limit exceeded - "
+            f"{cancel_check.violations}"
+        )
+        return False
+    
+    # 记录撤单警告
+    if cancel_check.warnings:
+        self.logger.warning(f"Cancel warnings: {cancel_check.warnings}")
+    
+    # 执行撤单
+    try:
+        self.trader.cancel_order(self.config.account_id, order_id)
+        
+        # 🆕 记录撤单时间（用于订单停留时间检查）
+        self.compliance_checker.order_tracker.record_cancel(
+            order_id, 
+            datetime.now()
+        )
+        
+        self.logger.info(f"Order cancelled successfully: {order_id}")
+        return True
+        
+    except Exception as e:
+        self.logger.error(f"Failed to cancel order {order_id}: {e}")
+        return False
+```
+
+### 11.4 定时监控任务
+
+#### 11.4.1 实时合规监控
+
+```python
+def start_compliance_monitoring(self):
+    """启动合规监控"""
+    import threading
+    import time
+    
+    def monitoring_loop():
+        while True:
+            try:
+                # 检查异常交易行为
+                result = self.compliance_checker.check_abnormal_trading()
+                
+                if result.compliance_level == ComplianceLevel.WARNING:
+                    self.logger.warning(
+                        f"Compliance warning: {result.warnings}"
+                    )
+                    # TODO: 发送告警通知
+                
+                elif result.compliance_level == ComplianceLevel.VIOLATION:
+                    self.logger.error(
+                        f"Compliance violation: {result.violations}"
+                    )
+                    # TODO: 触发风控措施
+                
+                # 每分钟检查一次
+                time.sleep(60)
+                
+            except Exception as e:
+                self.logger.error(f"Error in compliance monitoring: {e}")
+                time.sleep(60)
+    
+    monitor_thread = threading.Thread(target=monitoring_loop, daemon=True)
+    monitor_thread.start()
+    self.logger.info("Compliance monitoring started")
+```
+
+#### 11.4.2 每日重置任务
+
+```python
+def daily_reset(self):
+    """每日重置（开盘前调用）"""
+    # 重置合规检查器
+    self.compliance_checker.reset_daily()
+    self.logger.info("Compliance checker reset for new trading day")
+```
+
+### 11.5 合规报告生成
+
+```python
+def generate_compliance_report(self) -> Dict:
+    """生成合规报告
+    
+    返回:
+        合规报告字典
+    """
+    report = self.compliance_checker.generate_compliance_report()
+    
+    self.logger.info(
+        f"Compliance report generated: "
+        f"compliance_rate={report['compliance_summary']['compliance_rate']:.2%}"
+    )
+    
+    return report
+```
+
+### 11.6 配置管理
+
+#### 11.6.1 合规配置文件
+
+**配置文件位置**: `config/compliance_config.yaml`
+
+```yaml
+compliance:
+  # 高频交易认定标准
+  high_frequency_criteria:
+    per_second_threshold: 300      # 每秒申报+撤单≥300笔
+    per_day_threshold: 20000       # 单日申报+撤单≥20000笔
+    stricter_standard:
+      per_second: 15                # 更严格标准：每秒15笔
+      cancel_rate_per_day: 0.15     # 单日撤单率≤15%
+  
+  # 撤单限制
+  cancel_order_limits:
+    max_cancel_per_second: 15       # 每秒撤单≤15笔
+    max_cancel_rate_per_day: 0.15   # 单日撤单率≤15%
+    min_order_duration_microseconds: 50  # 订单停留≥50微秒
+  
+  # 短线交易规则
+  short_term_trading_rules:
+    lock_period_months: 6              # 6个月锁仓期
+    major_shareholder_threshold: 0.05  # 5%大股东认定
+    penetration_enabled: true          # 穿透监管启用
+  
+  # 监控配置
+  monitoring:
+    enabled: true                      # 启用监控
+    check_interval_seconds: 60         # 检查间隔（秒）
+    alert_enabled: true                # 启用告警
+```
+
+#### 11.6.2 加载配置
+
+```python
+import yaml
+
+def load_compliance_config(self, config_path: str = 'config/compliance_config.yaml'):
+    """加载合规配置
+    
+    参数:
+        config_path: 配置文件路径
+    """
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        # 重新创建合规检查器（应用新配置）
+        self.compliance_checker = create_compliance_checker(
+            config.get('compliance', {})
+        )
+        
+        self.logger.info(f"Compliance config loaded from {config_path}")
+        
+    except Exception as e:
+        self.logger.error(f"Failed to load compliance config: {e}")
+        # 使用默认配置
+        self.compliance_checker = create_compliance_checker()
+```
+
+### 11.7 测试验证
+
+#### 11.7.1 单元测试
+
+```python
+import unittest
+from datetime import datetime, timedelta
+
+class TestQMTExecutorCompliance(unittest.TestCase):
+    """QMTExecutor合规检查测试"""
+    
+    def setUp(self):
+        """测试初始化"""
+        self.config = QMTConfig(
+            account_id='test_account',
+            session_id='test_session',
+            client_path='/path/to/qmt'
+        )
+        self.executor = QMTExecutor(self.config)
+    
+    def test_compliance_check_pass(self):
+        """测试合规检查通过"""
+        order = UnifiedOrder(
+            order_id='TEST_001',
+            symbol='000001.SZ',
+            direction=OrderDirection.BUY,
+            order_type=OrderType.LIMIT,
+            volume=1000,
+            price=10.5,
+            strategy_id='test_strategy',
+            timestamp=datetime.now()
+        )
+        
+        result = self.executor._check_compliance(order)
+        self.assertTrue(result.is_compliant)
+    
+    def test_high_frequency_detection(self):
+        """测试高频交易检测"""
+        # 模拟高频交易场景
+        for i in range(20):
+            order = UnifiedOrder(
+                order_id=f'HF_{i:03d}',
+                symbol='000001.SZ',
+                direction=OrderDirection.BUY,
+                order_type=OrderType.LIMIT,
+                volume=100,
+                price=10.5,
+                strategy_id='test_strategy',
+                timestamp=datetime.now()
+            )
+            self.executor._check_compliance(order)
+        
+        # 检查高频交易检测
+        result = self.executor.compliance_checker.check_high_frequency_trading()
+        self.assertEqual(result.compliance_level, ComplianceLevel.WARNING)
+    
+    def test_cancel_limit_check(self):
+        """测试撤单限制检查"""
+        # 模拟撤单场景
+        for i in range(20):
+            self.executor.compliance_checker.order_tracker.record_cancel(
+                f'ORDER_{i:03d}',
+                datetime.now()
+            )
+        
+        # 检查撤单限制
+        result = self.executor.compliance_checker.check_cancel_limits()
+        self.assertFalse(result.is_compliant)
+
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### 11.8 监控与告警
+
+#### 11.8.1 监控指标
+
+| 监控指标 | 说明 | 告警阈值 |
+|---------|------|---------|
+| **合规检查次数** | 每日合规检查总次数 | - |
+| **违规次数** | 每日违规次数 | > 0 立即告警 |
+| **警告次数** | 每日警告次数 | > 10 延迟告警 |
+| **合规率** | 合规检查通过率 | < 95% 每日告警 |
+| **高频交易触发次数** | 触发高频交易认定次数 | > 0 立即告警 |
+| **撤单率** | 每日撤单率 | > 10% 警告告警 |
+
+#### 11.8.2 告警通知
+
+```python
+def send_compliance_alert(self, level: str, message: str):
+    """发送合规告警
+    
+    参数:
+        level: 告警级别
+        message: 告警消息
+    """
+    # TODO: 集成告警系统
+    self.logger.warning(f"[COMPLIANCE ALERT] [{level}] {message}")
+    
+    # 示例：发送邮件通知
+    # send_email(
+    #     subject=f"[合规告警] {level}",
+    #     body=message
+    # )
+    
+    # 示例：发送微信通知
+    # send_wechat_message(message)
+```
+
+### 11.9 最佳实践
+
+#### 11.9.1 开发建议
+
+1. **始终进行合规检查**: 在订单提交前必须进行合规检查
+2. **记录所有警告**: 即使通过检查，也要记录警告信息
+3. **定期生成报告**: 每日生成合规报告，便于审计
+4. **及时更新规则**: 关注监管动态，及时更新合规规则
+
+#### 11.9.2 运维建议
+
+1. **每日重置**: 开盘前调用 `daily_reset()` 重置合规检查器
+2. **实时监控**: 启动合规监控线程，实时监控交易行为
+3. **告警响应**: 收到告警后立即处理，避免违规
+4. **定期审计**: 定期审计合规报告，优化交易策略
+
+### 11.10 故障排查
+
+#### 11.10.1 常见问题
+
+| 问题 | 可能原因 | 解决方案 |
+|------|---------|---------|
+| **订单被拒绝** | 触发合规限制 | 检查合规检查结果，调整交易策略 |
+| **高频交易告警** | 交易频率过高 | 降低交易频率，使用智能执行算法 |
+| **撤单失败** | 撤单率超标 | 减少撤单操作，优化订单价格 |
+| **合规报告异常** | 数据统计错误 | 检查订单跟踪器，重置每日数据 |
+
+#### 11.10.2 日志分析
+
+```python
+# 查看合规检查日志
+# grep "COMPLIANCE" logs/trading.log
+
+# 查看违规记录
+# grep "Compliance violation" logs/trading.log
+
+# 查看告警记录
+# grep "COMPLIANCE ALERT" logs/trading.log
+```
+
+### 11.11 总结
+
+**集成价值**：
+- ✅ **合规保障**: 确保系统100%符合最新监管要求
+- ✅ **风险预警**: 实时监控，提前预警合规风险
+- ✅ **成本降低**: 自动化合规检查，降低人工成本
+- ✅ **专业提升**: 符合机构级标准，提升系统专业性
+
+**实施建议**：
+1. **立即集成**: 将合规检查模块集成到QMTExecutor
+2. **定期监控**: 设置定时任务，实时监控合规状态
+3. **持续更新**: 关注监管动态，及时更新规则
+4. **培训团队**: 确保团队理解合规要求
+
+---
+
+**文档版本**: v1.1.0 | **创建日期**: 2026-04-02 | **维护者**: 策略执行层负责人

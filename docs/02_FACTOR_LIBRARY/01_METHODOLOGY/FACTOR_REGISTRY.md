@@ -12,9 +12,13 @@ parent_document: ../INDEX.md
 implementation_status: 进行中
 ---
 
-# 因子映射库 - 完整设计
+# 因子分类学 (Factor Taxonomy)
 
-> 统一管理所有因子定义、参数配置、依赖关系和版本控制
+> 因子分类体系与参数配置标准
+>
+> **职责**: 定义因子分类体系和参数配置
+> **注册表**: [../06_FACTOR_REGISTRY/factor_catalog.md](../06_FACTOR_REGISTRY/factor_catalog.md) - 因子清单和元数据
+> **计算框架**: [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 计算引擎和调度器
 
 ---
 

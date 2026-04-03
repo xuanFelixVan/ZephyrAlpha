@@ -89,9 +89,9 @@ compliance_level: 专业标准
 
 ### 2.11 统计套利模块
 
-| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
-|----------|-----------|------|------|----------|----------|
-| 统计套利模块技术规格书 | STATISTICAL_ARBITRAGE_MODULE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./STATISTICAL_ARBITRAGE_MODULE_TECHNICAL_SPECIFICATION.md) |
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 | 备注 |
+|----------|-----------|------|------|----------|----------|------|
+| 统计套利模块技术规格书 | STATISTICAL_ARBITRAGE_MODULE_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./STATISTICAL_ARBITRAGE_MODULE_TECHNICAL_SPECIFICATION.md) | Layer 5 (中观策略层) |
 
 ---
 
