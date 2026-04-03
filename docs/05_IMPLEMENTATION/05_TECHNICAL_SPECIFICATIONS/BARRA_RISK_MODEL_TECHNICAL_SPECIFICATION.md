@@ -1,892 +1,994 @@
 ---
-module_id: BARRA_RISK_MODEL_001
+module_id: BARRA_RISK_MODEL_SPEC_001
 version: 1.0.0
+spec_version: 1.0
 status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席技术评审官
+parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md
+last_updated: 2026-04-03
+created_date: 2026-04-03
+layer: Layer 6 (组合优化层)
+index: BARRA_RISK_SPEC_001
+estimated_hours: 100h
+review_status: Pending
+reviewer: 首席技术评审官
+review_date: 2026-04-03
+owner: 组合优化层负责人
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 6 组合优化层 | 业务架构: 三级时间框架融合架构
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 设计阶段
 ---
 
-# BarraRiskModel风险模型模块技术规格书
+# Barra风险模型技术规格书 v1.0
 
-> 清风量化系统 v5.2 - BarraRiskModel风险模型模块详细技术设计
-> **模块ID**: `BARRA_RISK_MODEL_001`
-> **版本**: v1.0.0
-> **状态**: ✅ 正式
+> 清风量化系统 v5.2 - Barra风险模型详细技术设计
+> **索引**: `BARRA_RISK_SPEC_001`
+> **开发时间**: 100h
+> **核心定位**: 多因子风险模型，实现风险分解与因子暴露控制
 
+---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目标
-- **业务需求**: 系统需要统一的风险模型进行组合风险分解和风险预算管理
-- **技术痛点**: 
-  - 风险因子定义复杂：需要定义多个风格因子和行业因子
-  - 因子暴露计算复杂：需要计算股票对各风险因子的暴露度
-  - 协方差估计困难：因子协方差矩阵估计需要稳定性
-  - 风险分解复杂：需要分解系统性风险和特异性风险
-- **预期价值**: 
-  - 建立统一的风险模型框架
-  - 提供多因子风险分解能力
-  - 实现风险预算管理
-  - 支持组合风险控制
+### 1.1 模块定位
 
-### 1.2 技术定位与架构层归属
-- **Layer定位**: Layer 6 - 组合优化层 (符合ARCHITECTURE.md定义)
-- **模块类别**: 核心风险模型模块
-- **架构角色**: Layer 6风险模型核心，负责组合风险分解和风险预算
+Barra风险模型是Layer 6组合优化层的核心风险模型，负责：
+- 因子暴露计算
+- 因子协方差估计
+- 风险分解
+- 风险归因
 
-### 1.3 版本信息
-| 版本 | 日期 | 作者 | 变更说明 | 状态 |
-|------|------|------|----------|------|
-| v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
+### 1.2 技术目标
+
+- **准确性**: 因子暴露计算误差 < 5%
+- **稳定性**: 因子协方差估计稳定，避免过拟合
+- **性能**: 单次风险分解计算时间 < 100ms
+- **可扩展性**: 支持自定义因子扩展
 
 ---
 
-## 2. 详细架构设计
+## 2. 接口定义
 
-### 2.1 系统架构图
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Layer 6: 组合优化层                       │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │        BarraRiskModel (风险模型主模块)                 │  │
-│  │  - 因子暴露计算                                        │  │
-│  │  - 协方差估计                                          │  │
-│  │  - 风险分解                                            │  │
-│  │  - 风险预算                                            │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          核心组件                                      │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │FactorExposur│ │CovarianceEst│ │RiskDecompos │  │  │
-│  │  │因子暴露计算  │  │协方差估计器 │  │风险分解器   │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  │  │
-│  │  │StyleFactors │ │IndustryFact │ │Idiosyncratic│  │  │
-│  │  │风格因子计算  │  │行业因子计算 │  │特异性风险   │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                           ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │          风险因子库                                    │  │
-│  │  - SIZE (规模因子)                                     │  │
-│  │  - VALUE (价值因子)                                    │  │
-│  │  - MOM (动量因子)                                      │  │
-│  │  - QUAL (质量因子)                                     │  │
-│  │  - VOL (波动率因子)                                    │  │
-│  │  - GROW (成长因子)                                     │  │
-│  │  - EARN (盈利因子)                                     │  │
-│  │  - LEVER (杠杆因子)                                    │  │
-│  │  - LIQUID (流动性因子)                                 │  │
-│  │  - YIELD (收益率因子)                                  │  │
-│  │  - 申万一级行业因子 (28个)                             │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+### 2.1 核心类接口
 
-### 2.2 Layer定位详细说明
-- **Layer归属**: Layer 6 - 组合优化层
-- **职责范围**: 因子暴露计算、协方差估计、风险分解、风险预算
-- **上下层接口**: 
-  - 上层依赖: Layer 5 PositionManager (提供持仓信息)
-  - 下层依赖: Layer 7 AI报告层 (接收风险报告)
+#### 2.1.1 BarraRiskModel
 
-### 2.3 模块职责与边界定义
-- **核心职责**: 因子暴露计算、协方差估计、风险分解、风险预算
-- **职责边界**: 
-  - ✅ 本模块负责: 因子暴露计算、协方差估计、风险分解、风险预算
-  - ❌ 本模块不负责: 组合优化、交易执行、策略决策、数据获取
-- **接口契约**: 提供统一的Python API接口
-
-### 2.4 依赖关系
-| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
-|----------|----------|----------|----------|------|
-| numpy | 强依赖 | Python库 | >=1.24.0 | 数值计算 |
-| pandas | 强依赖 | Python库 | >=2.0.0 | 数据处理 |
-| scipy | 强依赖 | Python库 | >=1.10.0 | 统计计算 |
-| sklearn | 强依赖 | Python库 | >=1.3.0 | 线性回归 |
-
----
-
-## 3. 接口定义
-
-### 3.1 API接口规范
-
-#### 3.1.1 主接口类
 ```python
-from typing import Dict, List, Optional, Any, Tuple
-from datetime import datetime
-from dataclasses import dataclass
-from enum import Enum
-import numpy as np
-import pandas as pd
-import logging
-from scipy import stats
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
+class BarraRiskModel:
+    """
+    Barra风险模型核心类
+    
+    职责: 多因子风险模型，实现风险分解、因子暴露控制
+    """
+    
+    def __init__(self, config: BarraConfig):
+        """
+        初始化Barra风险模型
+        
+        Args:
+            config: Barra配置对象
+        """
+        pass
+    
+    def fit(self,
+            factor_data: pd.DataFrame,
+            returns_data: pd.DataFrame,
+            factor_loadings: Optional[pd.DataFrame] = None) -> 'BarraRiskModel':
+        """
+        拟合风险模型
+        
+        Args:
+            factor_data: 因子数据 (T x K)
+            returns_data: 资产收益率数据 (T x N)
+            factor_loadings: 因子载荷矩阵 (N x K)，可选
+            
+        Returns:
+            self: 拟合后的模型
+            
+        Raises:
+            ValueError: 数据格式错误
+            FittingError: 模型拟合失败
+        """
+        pass
+    
+    def calculate_factor_exposure(self,
+                                  portfolio_weights: pd.Series) -> pd.Series:
+        """
+        计算组合因子暴露
+        
+        Args:
+            portfolio_weights: 组合权重 (N,)
+            
+        Returns:
+            pd.Series: 因子暴露 (K,)
+        """
+        pass
+    
+    def decompose_risk(self,
+                      portfolio_weights: pd.Series) -> RiskDecomposition:
+        """
+        风险分解
+        
+        Args:
+            portfolio_weights: 组合权重 (N,)
+            
+        Returns:
+            RiskDecomposition: 风险分解结果
+        """
+        pass
+    
+    def allocate_risk_budget(self,
+                            total_risk: float,
+                            factor_risk_budget: Dict[str, float]) -> Dict[str, float]:
+        """
+        风险预算分配
+        
+        Args:
+            total_risk: 总风险预算
+            factor_risk_budget: 因子风险预算比例
+            
+        Returns:
+            Dict[str, float]: 因子风险预算值
+        """
+        pass
+```
 
+#### 2.1.2 FactorExposureCalculator
 
-class FactorType(Enum):
-    """因子类型枚举"""
-    STYLE = "style"
-    INDUSTRY = "industry"
+```python
+class FactorExposureCalculator:
+    """
+    因子暴露计算器
+    
+    职责: 计算资产对因子的暴露度
+    """
+    
+    def __init__(self, config: FactorConfig):
+        """
+        初始化因子暴露计算器
+        
+        Args:
+            config: 因子配置
+        """
+        pass
+    
+    def calculate(self,
+                 factor_data: pd.DataFrame,
+                 returns_data: pd.DataFrame) -> pd.DataFrame:
+        """
+        计算因子载荷矩阵
+        
+        Args:
+            factor_data: 因子数据 (T x K)
+            returns_data: 资产收益率数据 (T x N)
+            
+        Returns:
+            pd.DataFrame: 因子载荷矩阵 (N x K)
+        """
+        pass
+```
 
+#### 2.1.3 FactorCovarianceEstimator
 
-@dataclass
-class FactorDefinition:
-    """因子定义"""
-    factor_id: str
-    factor_name: str
-    factor_type: FactorType
-    description: str
-    calculation_method: str
+```python
+class FactorCovarianceEstimator:
+    """
+    因子协方差估计器
+    
+    职责: 估计因子协方差矩阵
+    """
+    
+    def __init__(self, config: CovarianceConfig):
+        """
+        初始化因子协方差估计器
+        
+        Args:
+            config: 协方差估计配置
+        """
+        pass
+    
+    def estimate(self,
+                factor_data: pd.DataFrame,
+                method: str = 'shrinkage') -> pd.DataFrame:
+        """
+        估计因子协方差矩阵
+        
+        Args:
+            factor_data: 因子数据 (T x K)
+            method: 估计方法 ('shrinkage', 'ewma', 'garch')
+            
+        Returns:
+            pd.DataFrame: 因子协方差矩阵 (K x K)
+        """
+        pass
+```
 
+### 2.2 数据接口
 
-@dataclass
-class FactorExposure:
-    """因子暴露"""
-    stock_code: str
-    factor_id: str
-    exposure: float
-    date: datetime
+#### 2.2.1 输入数据格式
 
+```python
+# 因子数据格式
+factor_data: pd.DataFrame
+"""
+Index: DatetimeIndex (时间)
+Columns: 因子名称
+Values: 因子值
 
+示例:
+            momentum  value  size  beta  ...
+2024-01-01    0.05   -0.02  0.01  1.2
+2024-01-02    0.06   -0.01  0.02  1.1
+...
+"""
+
+# 资产收益率数据格式
+returns_data: pd.DataFrame
+"""
+Index: DatetimeIndex (时间)
+Columns: 资产代码
+Values: 收益率
+
+示例:
+            AAPL    MSFT    GOOGL   ...
+2024-01-01  0.012   0.008   0.015
+2024-01-02  0.005   0.010   -0.002
+...
+"""
+
+# 组合权重格式
+portfolio_weights: pd.Series
+"""
+Index: 资产代码
+Values: 权重
+
+示例:
+AAPL     0.15
+MSFT     0.12
+GOOGL    0.10
+...
+"""
+```
+
+#### 2.2.2 输出数据格式
+
+```python
+# 风险分解结果
 @dataclass
 class RiskDecomposition:
     """风险分解结果"""
-    total_risk: float
-    systematic_risk: float
-    idiosyncratic_risk: float
-    factor_contributions: Dict[str, float]
-    factor_risk_pct: Dict[str, float]
-
-
-class StyleFactorCalculator:
-    """风格因子计算器"""
-    
-    STYLE_FACTORS = ['SIZE', 'VALUE', 'MOM', 'QUAL', 'VOL', 
-                     'GROW', 'EARN', 'LEVER', 'LIQUID', 'YIELD']
-    
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
-    
-    def calculate_size_factor(
-        self,
-        market_cap: pd.Series
-    ) -> pd.Series:
-        """计算规模因子
-        
-        参数:
-            market_cap: 流通市值
-            
-        返回:
-            规模因子暴露
-        """
-        return np.log(market_cap)
-    
-    def calculate_value_factor(
-        self,
-        pb_ratio: pd.Series,
-        pe_ratio: pd.Series,
-        dividend_yield: pd.Series
-    ) -> pd.Series:
-        """计算价值因子
-        
-        参数:
-            pb_ratio: 市净率
-            pe_ratio: 市盈率
-            dividend_yield: 股息率
-            
-        返回:
-            价值因子暴露
-        """
-        pb_factor = 1.0 / pb_ratio
-        pe_factor = 1.0 / pe_ratio
-        
-        value_factor = (pb_factor + pe_factor + dividend_yield) / 3.0
-        
-        return value_factor
-    
-    def calculate_momentum_factor(
-        self,
-        returns: pd.DataFrame,
-        lookback: int = 252
-    ) -> pd.Series:
-        """计算动量因子
-        
-        参数:
-            returns: 收益率数据
-            lookback: 回溯期
-            
-        返回:
-            动量因子暴露
-        """
-        momentum = (1 + returns).rolling(window=lookback).apply(
-            lambda x: x.prod() - 1, raw=True
-        ).iloc[-1]
-        
-        return momentum
-    
-    def calculate_volatility_factor(
-        self,
-        returns: pd.DataFrame,
-        lookback: int = 60
-    ) -> pd.Series:
-        """计算波动率因子
-        
-        参数:
-            returns: 收益率数据
-            lookback: 回溯期
-            
-        返回:
-            波动率因子暴露
-        """
-        volatility = returns.rolling(window=lookback).std().iloc[-1] * np.sqrt(252)
-        
-        return volatility
-    
-    def calculate_all_style_factors(
-        self,
-        market_data: pd.DataFrame
-    ) -> pd.DataFrame:
-        """计算所有风格因子
-        
-        参数:
-            market_data: 市场数据
-            
-        返回:
-            风格因子暴露矩阵
-        """
-        style_exposures = pd.DataFrame(index=market_data.index)
-        
-        style_exposures['SIZE'] = self.calculate_size_factor(market_data['market_cap'])
-        style_exposures['VALUE'] = self.calculate_value_factor(
-            market_data['pb_ratio'],
-            market_data['pe_ratio'],
-            market_data['dividend_yield']
-        )
-        style_exposures['MOM'] = self.calculate_momentum_factor(market_data['returns'])
-        style_exposures['VOL'] = self.calculate_volatility_factor(market_data['returns'])
-        
-        return style_exposures
-
-
-class IndustryFactorCalculator:
-    """行业因子计算器"""
-    
-    SW_INDUSTRY_L1 = {
-        '801010': '农林牧渔', '801020': '采掘', '801030': '化工',
-        '801040': '钢铁', '801050': '有色金属', '801060': '电子',
-        '801080': '汽车', '801110': '家用电器', '801120': '食品饮料',
-        '801130': '纺织服装', '801140': '轻工制造', '801150': '医药生物',
-        '801160': '公用事业', '801170': '交通运输', '801180': '房地产',
-        '801200': '商业贸易', '801210': '休闲服务', '801230': '建筑材料',
-        '801710': '建筑装饰', '801720': '电气设备', '801730': '国防军工',
-        '801740': '计算机', '801750': '传媒', '801760': '通信',
-        '801770': '银行', '801780': '非银金融', '801790': '综合',
-        '801880': '机械设备'
-    }
-    
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
-    
-    def calculate_industry_exposure(
-        self,
-        industry_codes: pd.Series
-    ) -> pd.DataFrame:
-        """计算行业因子暴露
-        
-        参数:
-            industry_codes: 行业代码
-            
-        返回:
-            行业因子暴露矩阵 (0-1矩阵)
-        """
-        unique_industries = list(self.SW_INDUSTRY_L1.keys())
-        
-        industry_exposure = pd.DataFrame(
-            0,
-            index=industry_codes.index,
-            columns=unique_industries
-        )
-        
-        for idx, code in industry_codes.items():
-            if code in unique_industries:
-                industry_exposure.loc[idx, code] = 1
-        
-        return industry_exposure
-
-
-class CovarianceEstimator:
-    """协方差估计器"""
-    
-    def __init__(self, shrinkage_intensity: float = 0.3):
-        self.shrinkage_intensity = shrinkage_intensity
-        self.logger = logging.getLogger(__name__)
-    
-    def estimate_factor_covariance(
-        self,
-        factor_returns: pd.DataFrame,
-        shrinkage_target: str = "diagonal"
-    ) -> pd.DataFrame:
-        """估计因子协方差矩阵
-        
-        参数:
-            factor_returns: 因子收益率
-            shrinkage_target: 收缩目标
-            
-        返回:
-            因子协方差矩阵
-        """
-        sample_cov = factor_returns.cov()
-        
-        if shrinkage_target == "diagonal":
-            shrink_target = np.diag(np.diag(sample_cov))
-        elif shrinkage_target == "identity":
-            shrink_target = np.eye(len(sample_cov)) * np.mean(np.diag(sample_cov))
-        else:
-            shrink_target = np.diag(np.diag(sample_cov))
-        
-        factor_cov = (
-            self.shrinkage_intensity * shrink_target + 
-            (1 - self.shrinkage_intensity) * sample_cov
-        )
-        
-        return factor_cov
-    
-    def estimate_idiosyncratic_variance(
-        self,
-        residuals: pd.DataFrame
-    ) -> pd.Series:
-        """估计特异性方差
-        
-        参数:
-            residuals: 残差数据
-            
-        返回:
-            特异性方差
-        """
-        idio_var = residuals.var()
-        
-        return idio_var
-
-
-class RiskDecomposer:
-    """风险分解器"""
-    
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
-    
-    def decompose_portfolio_risk(
-        self,
-        weights: np.ndarray,
-        factor_exposures: np.ndarray,
-        factor_cov: np.ndarray,
-        idio_var: np.ndarray,
-        factor_names: List[str]
-    ) -> RiskDecomposition:
-        """分解组合风险
-        
-        参数:
-            weights: 组合权重
-            factor_exposures: 因子暴露矩阵
-            factor_cov: 因子协方差矩阵
-            idio_var: 特异性方差
-            factor_names: 因子名称
-            
-        返回:
-            风险分解结果
-        """
-        systematic_risk_sq = weights @ (factor_exposures @ factor_cov @ factor_exposures.T) @ weights
-        idio_risk_sq = weights @ idio_var @ weights
-        
-        total_risk = np.sqrt(systematic_risk_sq + idio_risk_sq)
-        systematic_risk = np.sqrt(systematic_risk_sq)
-        idio_risk = np.sqrt(idio_risk_sq)
-        
-        factor_contributions = {}
-        factor_risk_pct = {}
-        
-        for i, factor_name in enumerate(factor_names):
-            factor_exposure_i = factor_exposures[:, i:i+1]
-            factor_var_i = factor_cov[i, i]
-            
-            risk_i = weights @ (factor_exposure_i * factor_var_i @ factor_exposure_i.T) @ weights
-            factor_contributions[factor_name] = np.sqrt(risk_i)
-            factor_risk_pct[factor_name] = (np.sqrt(risk_i) / total_risk * 100) if total_risk > 0 else 0
-        
-        return RiskDecomposition(
-            total_risk=total_risk,
-            systematic_risk=systematic_risk,
-            idiosyncratic_risk=idio_risk,
-            factor_contributions=factor_contributions,
-            factor_risk_pct=factor_risk_pct
-        )
-
-
-class BarraRiskModel:
-    """Barra风险模型主类"""
-    
-    STYLE_FACTORS = ['SIZE', 'VALUE', 'MOM', 'QUAL', 'VOL', 
-                     'GROW', 'EARN', 'LEVER', 'LIQUID', 'YIELD']
-    
-    SW_INDUSTRY_L1 = {
-        '801010': '农林牧渔', '801020': '采掘', '801030': '化工',
-        '801040': '钢铁', '801050': '有色金属', '801060': '电子',
-        '801080': '汽车', '801110': '家用电器', '801120': '食品饮料',
-        '801130': '纺织服装', '801140': '轻工制造', '801150': '医药生物',
-        '801160': '公用事业', '801170': '交通运输', '801180': '房地产',
-        '801200': '商业贸易', '801210': '休闲服务', '801230': '建筑材料',
-        '801710': '建筑装饰', '801720': '电气设备', '801730': '国防军工',
-        '801740': '计算机', '801750': '传媒', '801760': '通信',
-        '801770': '银行', '801780': '非银金融', '801790': '综合',
-        '801880': '机械设备'
-    }
-    
-    def __init__(self, config: Dict[str, Any]):
-        self.config = config
-        
-        self.style_calculator = StyleFactorCalculator()
-        self.industry_calculator = IndustryFactorCalculator()
-        self.cov_estimator = CovarianceEstimator(
-            shrinkage_intensity=config.get("shrinkage_intensity", 0.3)
-        )
-        self.risk_decomposer = RiskDecomposer()
-        
-        self.all_factors = self.STYLE_FACTORS + list(self.SW_INDUSTRY_L1.keys())
-        
-        self.factor_returns: Optional[pd.DataFrame] = None
-        self.factor_cov: Optional[pd.DataFrame] = None
-        self.idiosyncratic_var: Optional[pd.Series] = None
-        
-        self.logger = logging.getLogger(__name__)
-    
-    def calculate_factor_exposures(
-        self,
-        market_data: pd.DataFrame,
-        industry_codes: pd.Series
-    ) -> pd.DataFrame:
-        """计算因子暴露矩阵
-        
-        参数:
-            market_data: 市场数据
-            industry_codes: 行业代码
-            
-        返回:
-            因子暴露矩阵
-        """
-        style_exposures = self.style_calculator.calculate_all_style_factors(market_data)
-        
-        industry_exposures = self.industry_calculator.calculate_industry_exposure(industry_codes)
-        
-        factor_exposures = pd.concat([style_exposures, industry_exposures], axis=1)
-        
-        return factor_exposures
-    
-    def estimate_risk_model(
-        self,
-        stock_returns: pd.DataFrame,
-        factor_exposures: pd.DataFrame
-    ) -> None:
-        """估计风险模型参数
-        
-        参数:
-            stock_returns: 股票收益率
-            factor_exposures: 因子暴露矩阵
-        """
-        X = factor_exposures.values
-        Y = stock_returns.values
-        
-        model = LinearRegression(fit_intercept=True)
-        model.fit(X, Y)
-        
-        self.factor_returns = pd.DataFrame(
-            model.coef_,
-            columns=factor_exposures.columns,
-            index=stock_returns.columns
-        )
-        
-        residuals = Y - model.predict(X)
-        self.idiosyncratic_var = pd.Series(
-            np.var(residuals, axis=0),
-            index=stock_returns.columns
-        )
-        
-        self.factor_cov = self.cov_estimator.estimate_factor_covariance(
-            self.factor_returns.T
-        )
-    
-    def calculate_portfolio_risk(
-        self,
-        weights: np.ndarray,
-        factor_exposures: np.ndarray
-    ) -> float:
-        """计算组合风险
-        
-        参数:
-            weights: 组合权重
-            factor_exposures: 因子暴露矩阵
-            
-        返回:
-            组合风险
-        """
-        if self.factor_cov is None or self.idiosyncratic_var is None:
-            raise ValueError("风险模型参数未估计，请先调用estimate_risk_model")
-        
-        idio_var_diag = np.diag(self.idiosyncratic_var.values)
-        
-        systematic_risk_sq = weights @ (factor_exposures @ self.factor_cov @ factor_exposures.T) @ weights
-        idio_risk_sq = weights @ idio_var_diag @ weights
-        
-        total_risk = np.sqrt(systematic_risk_sq + idio_risk_sq)
-        
-        return total_risk
-    
-    def decompose_portfolio_risk(
-        self,
-        weights: np.ndarray,
-        factor_exposures: np.ndarray
-    ) -> RiskDecomposition:
-        """分解组合风险
-        
-        参数:
-            weights: 组合权重
-            factor_exposures: 因子暴露矩阵
-            
-        返回:
-            风险分解结果
-        """
-        if self.factor_cov is None or self.idiosyncratic_var is None:
-            raise ValueError("风险模型参数未估计，请先调用estimate_risk_model")
-        
-        idio_var_diag = np.diag(self.idiosyncratic_var.values)
-        
-        return self.risk_decomposer.decompose_portfolio_risk(
-            weights,
-            factor_exposures,
-            self.factor_cov.values,
-            idio_var_diag,
-            self.all_factors
-        )
-    
-    def get_factor_exposure_report(
-        self,
-        weights: np.ndarray,
-        factor_exposures: np.ndarray
-    ) -> Dict[str, Any]:
-        """生成因子暴露报告
-        
-        参数:
-            weights: 组合权重
-            factor_exposures: 因子暴露矩阵
-            
-        返回:
-            因子暴露报告
-        """
-        portfolio_exposure = weights @ factor_exposures
-        
-        exposure_report = {}
-        for i, factor_name in enumerate(self.all_factors):
-            exposure_report[factor_name] = {
-                "exposure": float(portfolio_exposure[i]),
-                "factor_variance": float(self.factor_cov.iloc[i, i]) if self.factor_cov is not None else 0.0
-            }
-        
-        return exposure_report
+    factor_exposure: pd.Series  # 因子暴露 (K,)
+    factor_risk_contribution: pd.Series  # 因子风险贡献 (K,)
+    idiosyncratic_risk_contribution: float  # 特质风险贡献
+    total_risk: float  # 总风险
+    factor_risk_ratio: float  # 因子风险占比
+    idiosyncratic_risk_ratio: float  # 特质风险占比
 ```
-
-### 3.2 性能指标要求
-| 性能指标 | 目标值 | 测量方法 |
-|----------|--------|----------|
-| 因子暴露计算时间 | < 10秒 | 单次计算 |
-| 协方差估计时间 | < 30秒 | 单次估计 |
-| 风险分解时间 | < 5秒 | 单次分解 |
-| 风险模型准确性 | ≥ 85% | 回测验证 |
-
-### 3.3 安全机制
-- **数值稳定性**: 使用收缩估计器提高协方差矩阵稳定性
-- **因子正交化**: 对风格因子进行正交化处理
-- **异常值处理**: 对因子暴露进行缩尾处理
 
 ---
 
-## 4. 数据模型与存储
+## 3. 数据结构设计
 
-### 4.1 核心数据结构
+### 3.1 核心数据结构
 
-#### 4.1.1 因子暴露模型
+#### 3.1.1 BarraConfig
+
 ```python
 @dataclass
-class FactorExposureData:
-    """因子暴露数据模型"""
-    stock_code: str
-    factor_id: str
-    exposure: float
-    date: datetime
+class BarraConfig:
+    """Barra风险模型配置"""
+    factor_config: FactorConfig
+    cov_config: CovarianceConfig
+    idio_config: IdiosyncraticConfig
+    
+    # 风格因子定义
+    style_factors: List[str] = field(default_factory=lambda: [
+        'momentum',      # 动量因子
+        'value',         # 价值因子
+        'size',          # 规模因子
+        'beta',          # Beta因子
+        'volatility',    # 波动率因子
+        'liquidity',     # 流动性因子
+        'leverage',      # 杠杆因子
+        'earnings_yield', # 盈利收益率因子
+        'growth',        # 成长因子
+        'quality'        # 质量因子
+    ])
+    
+    # 行业因子定义
+    industry_factors: List[str] = field(default_factory=lambda: [
+        'energy', 'materials', 'industrials', 'consumer_discretionary',
+        'consumer_staples', 'health_care', 'financials', 'information_technology',
+        'communication_services', 'utilities', 'real_estate'
+    ])
 ```
 
-#### 4.1.2 风险分解模型
+#### 3.1.2 FactorConfig
+
 ```python
 @dataclass
-class RiskDecompositionData:
-    """风险分解数据模型"""
-    total_risk: float
-    systematic_risk: float
-    idiosyncratic_risk: float
-    factor_contributions: Dict[str, float]
-    factor_risk_pct: Dict[str, float]
+class FactorConfig:
+    """因子配置"""
+    # 因子暴露计算方法
+    exposure_method: str = 'regression'  # 'regression', 'characteristics'
+    
+    # 回归窗口
+    regression_window: int = 252  # 交易日
+    
+    # 最小R²要求
+    min_r_squared: float = 0.3
+    
+    # 因子标准化
+    standardize_factors: bool = True
 ```
 
-### 4.2 缓存策略
-| 缓存类型 | TTL | 淘汰策略 | 最大容量 |
-|----------|-----|----------|----------|
-| 因子暴露缓存 | 1天 | LRU | 5000只股票 |
-| 协方差矩阵缓存 | 1周 | LRU | 52周数据 |
+#### 3.1.3 CovarianceConfig
 
-### 4.3 数据持久化
-- **持久化需求**: 因子暴露、协方差矩阵需要持久化存储
-- **存储格式**: Parquet文件
-- **备份策略**: 每日备份
+```python
+@dataclass
+class CovarianceConfig:
+    """协方差估计配置"""
+    # 估计方法
+    estimation_method: str = 'shrinkage'  # 'shrinkage', 'ewma', 'garch'
+    
+    # Shrinkage参数
+    shrinkage_target: str = 'identity'  # 'identity', 'diagonal', 'single_factor'
+    shrinkage_intensity: float = 0.2
+    
+    # EWMA参数
+    ewma_lambda: float = 0.94
+    
+    # GARCH参数
+    garch_p: int = 1
+    garch_q: int = 1
+```
+
+### 3.2 数据库设计
+
+#### 3.2.1 因子数据表 (factor_data)
+
+```sql
+CREATE TABLE factor_data (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    factor_name VARCHAR(50) NOT NULL,
+    factor_value DECIMAL(20, 10) NOT NULL,
+    date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_factor_date (factor_name, date),
+    UNIQUE KEY uk_factor_date (factor_name, date)
+);
+```
+
+#### 3.2.2 因子载荷表 (factor_loadings)
+
+```sql
+CREATE TABLE factor_loadings (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    asset_code VARCHAR(20) NOT NULL,
+    factor_name VARCHAR(50) NOT NULL,
+    loading_value DECIMAL(20, 10) NOT NULL,
+    date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_asset_date (asset_code, date),
+    INDEX idx_factor_date (factor_name, date),
+    UNIQUE KEY uk_asset_factor_date (asset_code, factor_name, date)
+);
+```
+
+#### 3.2.3 因子协方差表 (factor_covariance)
+
+```sql
+CREATE TABLE factor_covariance (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    factor1_name VARCHAR(50) NOT NULL,
+    factor2_name VARCHAR(50) NOT NULL,
+    covariance_value DECIMAL(20, 10) NOT NULL,
+    date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_factor_date (factor1_name, factor2_name, date),
+    UNIQUE KEY uk_factors_date (factor1_name, factor2_name, date)
+);
+```
 
 ---
 
-## 5. 算法实现说明
+## 4. 算法实现
 
-### 5.1 核心算法
+### 4.1 因子暴露计算算法
 
-#### 5.1.1 因子暴露计算算法
+#### 4.1.1 回归法
+
 ```python
-def calculate_factor_exposures(
-    self,
-    market_data: pd.DataFrame,
-    industry_codes: pd.Series
+def calculate_factor_exposure_regression(
+    factor_data: pd.DataFrame,
+    returns_data: pd.DataFrame,
+    window: int = 252
 ) -> pd.DataFrame:
     """
-    因子暴露计算算法
+    使用回归法计算因子暴露
     
-    算法原理:
-    1. 计算风格因子暴露（SIZE, VALUE, MOM等）
-    2. 计算行业因子暴露（0-1矩阵）
-    3. 合并为完整因子暴露矩阵
+    算法:
+    1. 对每个资产，使用历史数据回归
+    2. r_i = α + β_i1*f1 + β_i2*f2 + ... + ε_i
+    3. β_ij 即为资产i对因子j的暴露
     
-    复杂度: O(N*K) - N为股票数，K为因子数
+    Args:
+        factor_data: 因子数据 (T x K)
+        returns_data: 资产收益率数据 (T x N)
+        window: 回归窗口
+        
+    Returns:
+        pd.DataFrame: 因子载荷矩阵 (N x K)
     """
-    style_exposures = self.style_calculator.calculate_all_style_factors(market_data)
-    industry_exposures = self.industry_calculator.calculate_industry_exposure(industry_codes)
-    return pd.concat([style_exposures, industry_exposures], axis=1)
+    from sklearn.linear_model import LinearRegression
+    
+    factor_loadings = pd.DataFrame(
+        index=returns_data.columns,
+        columns=factor_data.columns
+    )
+    
+    for asset in returns_data.columns:
+        # 准备数据
+        X = factor_data.tail(window).values
+        y = returns_data[asset].tail(window).values
+        
+        # 回归
+        model = LinearRegression()
+        model.fit(X, y)
+        
+        # 保存因子载荷
+        factor_loadings.loc[asset] = model.coef_
+    
+    return factor_loadings
 ```
 
-#### 5.1.2 协方差估计算法
+### 4.2 因子协方差估计算法
+
+#### 4.2.1 Shrinkage估计
+
 ```python
-def estimate_factor_covariance(
-    self,
-    factor_returns: pd.DataFrame,
-    shrinkage_target: str = "diagonal"
+def estimate_factor_covariance_shrinkage(
+    factor_data: pd.DataFrame,
+    shrinkage_intensity: float = 0.2
 ) -> pd.DataFrame:
     """
-    协方差估计算法
+    使用Shrinkage方法估计因子协方差
     
-    算法原理:
-    使用Ledoit-Wolf收缩估计器，将样本协方差向对角矩阵收缩，
-    提高协方差矩阵的估计稳定性。
+    算法:
+    1. 计算样本协方差矩阵 S
+    2. 构建目标矩阵 F (如单位矩阵)
+    3. 计算Shrinkage估计: Σ = (1-λ)*S + λ*F
     
-    公式: Σ_shrink = λ * Σ_target + (1-λ) * Σ_sample
-    
-    复杂度: O(K^2) - K为因子数
+    Args:
+        factor_data: 因子数据 (T x K)
+        shrinkage_intensity: Shrinkage强度
+        
+    Returns:
+        pd.DataFrame: 因子协方差矩阵 (K x K)
     """
-    sample_cov = factor_returns.cov()
-    shrink_target = np.diag(np.diag(sample_cov))
-    return self.shrinkage_intensity * shrink_target + (1 - self.shrinkage_intensity) * sample_cov
+    # 样本协方差
+    sample_cov = factor_data.cov()
+    
+    # 目标矩阵（单位矩阵）
+    target = np.eye(len(sample_cov))
+    
+    # Shrinkage估计
+    shrinkage_cov = (1 - shrinkage_intensity) * sample_cov + \
+                    shrinkage_intensity * target
+    
+    return pd.DataFrame(
+        shrinkage_cov,
+        index=sample_cov.index,
+        columns=sample_cov.columns
+    )
 ```
 
-#### 5.1.3 风险分解算法
+### 4.3 风险分解算法
+
 ```python
 def decompose_portfolio_risk(
-    self,
-    weights: np.ndarray,
-    factor_exposures: np.ndarray,
-    factor_cov: np.ndarray,
-    idio_var: np.ndarray
+    portfolio_weights: pd.Series,
+    factor_loadings: pd.DataFrame,
+    factor_covariance: pd.DataFrame,
+    idiosyncratic_risk: pd.Series
 ) -> RiskDecomposition:
     """
-    风险分解算法
+    风险分解
     
-    算法原理:
-    组合风险公式: σ²_p = w' * (X*F*X' + D) * w
-    其中:
-        X: 因子暴露矩阵 (N x K)
-        F: 因子协方差矩阵 (K x K)
-        D: 特异性方差对角矩阵 (N x N)
-        w: 组合权重向量 (N x 1)
+    算法:
+    1. 计算组合因子暴露: f_p = X'w
+    2. 计算因子风险贡献: σ_f² = f_p'Σ_f f_p
+    3. 计算特质风险贡献: σ_ε² = w'D_ε w
+    4. 总风险: σ_p = sqrt(σ_f² + σ_ε²)
     
-    复杂度: O(N*K^2 + K^3) - 矩阵乘法和求逆
+    Args:
+        portfolio_weights: 组合权重
+        factor_loadings: 因子载荷矩阵
+        factor_covariance: 因子协方差矩阵
+        idiosyncratic_risk: 特质风险
+        
+    Returns:
+        RiskDecomposition: 风险分解结果
     """
-    systematic_risk_sq = weights @ (factor_exposures @ factor_cov @ factor_exposures.T) @ weights
-    idio_risk_sq = weights @ idio_var @ weights
-    total_risk = np.sqrt(systematic_risk_sq + idio_risk_sq)
+    # 1. 计算组合因子暴露
+    factor_exposure = factor_loadings.T @ portfolio_weights
     
-    return RiskDecomposition(total_risk=total_risk, ...)
+    # 2. 计算因子风险贡献
+    factor_risk_squared = factor_exposure.T @ factor_covariance @ factor_exposure
+    
+    # 边际风险贡献
+    marginal_factor_risk = factor_covariance @ factor_exposure
+    factor_risk_contribution = factor_exposure * marginal_factor_risk / np.sqrt(factor_risk_squared)
+    
+    # 3. 计算特质风险贡献
+    idiosyncratic_risk_squared = (portfolio_weights ** 2 * idiosyncratic_risk ** 2).sum()
+    
+    # 4. 总风险
+    total_risk = np.sqrt(factor_risk_squared + idiosyncratic_risk_squared)
+    
+    return RiskDecomposition(
+        factor_exposure=factor_exposure,
+        factor_risk_contribution=factor_risk_contribution,
+        idiosyncratic_risk_contribution=idiosyncratic_risk_squared,
+        total_risk=total_risk,
+        factor_risk_ratio=factor_risk_squared / (total_risk ** 2),
+        idiosyncratic_risk_ratio=idiosyncratic_risk_squared / (total_risk ** 2)
+    )
 ```
 
 ---
 
-## 6. 实施技术栈
+## 5. 测试方案
 
-### 6.1 语言与框架
-| 技术选型 | 版本要求 | 用途 | 选择理由 |
-|----------|----------|------|----------|
-| Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
-| numpy | >=1.24.0 | 数值计算 | 高效矩阵运算 |
-| pandas | >=2.0.0 | 数据处理 | 数据分析利器 |
-| scipy | >=1.10.0 | 统计计算 | 统计函数丰富 |
-| sklearn | >=1.3.0 | 线性回归 | 成熟稳定 |
+### 5.1 单元测试
 
-### 6.2 第三方依赖
-```yaml
-requirements:
-  - numpy>=1.24.0
-  - pandas>=2.0.0
-  - scipy>=1.10.0
-  - scikit-learn>=1.3.0
-```
+#### 5.1.1 因子暴露计算测试
 
----
-
-## 7. 测试策略
-
-### 7.1 单元测试
-| 测试项 | 测试内容 | 覆盖率目标 |
-|--------|----------|------------|
-| 风格因子计算 | 计算正确性 | 100% |
-| 行业因子计算 | 计算正确性 | 100% |
-| 协方差估计 | 估计正确性 | 100% |
-| 风险分解 | 分解正确性 | 100% |
-
-### 7.2 集成测试
 ```python
-def test_barra_risk_model_integration():
-    """集成测试示例"""
-    config = {
-        "shrinkage_intensity": 0.3
-    }
+import pytest
+import numpy as np
+import pandas as pd
+
+class TestFactorExposureCalculator:
+    """因子暴露计算器测试"""
     
-    model = BarraRiskModel(config)
+    def test_calculate_factor_exposure(self):
+        """测试因子暴露计算"""
+        # 准备测试数据
+        np.random.seed(42)
+        factor_data = pd.DataFrame(
+            np.random.randn(252, 10),
+            columns=['factor_{}'.format(i) for i in range(10)]
+        )
+        returns_data = pd.DataFrame(
+            np.random.randn(252, 50),
+            columns=['asset_{}'.format(i) for i in range(50)]
+        )
+        
+        # 计算因子暴露
+        calculator = FactorExposureCalculator(FactorConfig())
+        factor_loadings = calculator.calculate(factor_data, returns_data)
+        
+        # 验证结果
+        assert factor_loadings.shape == (50, 10)
+        assert not factor_loadings.isnull().any().any()
     
-    market_data = pd.DataFrame({
-        'market_cap': [1e8, 5e8, 1e9],
-        'pb_ratio': [2.0, 1.5, 3.0],
-        'pe_ratio': [20.0, 15.0, 30.0],
-        'dividend_yield': [0.02, 0.03, 0.01],
-        'returns': pd.DataFrame(np.random.randn(252, 3) * 0.02)
-    }, index=['A', 'B', 'C'])
+    def test_factor_exposure_accuracy(self):
+        """测试因子暴露计算准确性"""
+        # 使用已知因子的数据测试
+        # 构造: r = 0.5*f1 + 0.3*f2 + noise
+        np.random.seed(42)
+        f1 = np.random.randn(252)
+        f2 = np.random.randn(252)
+        noise = np.random.randn(252) * 0.1
+        
+        returns = 0.5 * f1 + 0.3 * f2 + noise
+        
+        factor_data = pd.DataFrame({'f1': f1, 'f2': f2})
+        returns_data = pd.DataFrame({'asset': returns})
+        
+        calculator = FactorExposureCalculator(FactorConfig())
+        factor_loadings = calculator.calculate(factor_data, returns_data)
+        
+        # 验证因子载荷接近真实值
+        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
+        assert abs(factor_loadings.loc['asset', 'f2'] - 0.3) < 0.1
+```
+
+#### 5.1.2 因子协方差估计测试
+
+```python
+class TestFactorCovarianceEstimator:
+    """因子协方差估计器测试"""
     
-    industry_codes = pd.Series(['801010', '801020', '801030'], index=['A', 'B', 'C'])
+    def test_estimate_factor_covariance(self):
+        """测试因子协方差估计"""
+        # 准备测试数据
+        np.random.seed(42)
+        factor_data = pd.DataFrame(
+            np.random.randn(252, 10),
+            columns=['factor_{}'.format(i) for i in range(10)]
+        )
+        
+        # 估计因子协方差
+        estimator = FactorCovarianceEstimator(CovarianceConfig())
+        factor_cov = estimator.estimate(factor_data)
+        
+        # 验证结果
+        assert factor_cov.shape == (10, 10)
+        assert np.allclose(factor_cov.values, factor_cov.values.T)  # 对称
+        assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # 正定
+```
+
+#### 5.1.3 风险分解测试
+
+```python
+class TestRiskDecomposition:
+    """风险分解测试"""
     
-    factor_exposures = model.calculate_factor_exposures(market_data, industry_codes)
+    def test_decompose_risk(self):
+        """测试风险分解"""
+        # 准备测试数据
+        np.random.seed(42)
+        n_assets = 50
+        n_factors = 10
+        
+        factor_loadings = pd.DataFrame(
+            np.random.randn(n_assets, n_factors),
+            columns=['factor_{}'.format(i) for i in range(n_factors)]
+        )
+        factor_covariance = pd.DataFrame(
+            np.eye(n_factors),
+            columns=['factor_{}'.format(i) for i in range(n_factors)]
+        )
+        idiosyncratic_risk = pd.Series(
+            np.random.uniform(0.1, 0.3, n_assets)
+        )
+        portfolio_weights = pd.Series(
+            np.random.dirichlet(np.ones(n_assets))
+        )
+        
+        # 创建Barra模型
+        barra_model = BarraRiskModel(BarraConfig())
+        barra_model.factor_loadings = factor_loadings
+        barra_model.factor_covariance = factor_covariance
+        barra_model.idiosyncratic_risk = idiosyncratic_risk
+        
+        # 风险分解
+        decomposition = barra_model.decompose_risk(portfolio_weights)
+        
+        # 验证结果
+        assert decomposition.total_risk > 0
+        assert abs(decomposition.factor_risk_ratio + 
+                  decomposition.idiosyncratic_risk_ratio - 1.0) < 1e-6
+```
+
+### 5.2 集成测试
+
+```python
+class TestBarraRiskModelIntegration:
+    """Barra风险模型集成测试"""
     
-    assert factor_exposures.shape[1] == len(model.all_factors)
+    def test_full_workflow(self):
+        """测试完整工作流"""
+        # 准备数据
+        factor_data, returns_data = self._prepare_test_data()
+        
+        # 创建模型
+        config = BarraConfig()
+        model = BarraRiskModel(config)
+        
+        # 拟合模型
+        model.fit(factor_data, returns_data)
+        
+        # 计算因子暴露
+        portfolio_weights = pd.Series(
+            np.random.dirichlet(np.ones(len(returns_data.columns))),
+            index=returns_data.columns
+        )
+        factor_exposure = model.calculate_factor_exposure(portfolio_weights)
+        
+        # 风险分解
+        decomposition = model.decompose_risk(portfolio_weights)
+        
+        # 验证
+        assert len(factor_exposure) == len(config.style_factors) + len(config.industry_factors)
+        assert decomposition.total_risk > 0
+    
+    def _prepare_test_data(self):
+        """准备测试数据"""
+        np.random.seed(42)
+        
+        # 生成因子数据
+        factor_data = pd.DataFrame(
+            np.random.randn(252, 38),
+            columns=['factor_{}'.format(i) for i in range(38)]
+        )
+        
+        # 生成资产收益率
+        returns_data = pd.DataFrame(
+            np.random.randn(252, 100),
+            columns=['asset_{}'.format(i) for i in range(100)]
+        )
+        
+        return factor_data, returns_data
+```
+
+### 5.3 性能测试
+
+```python
+class TestBarraRiskModelPerformance:
+    """Barra风险模型性能测试"""
+    
+    def test_factor_exposure_performance(self):
+        """测试因子暴露计算性能"""
+        # 大规模数据
+        np.random.seed(42)
+        factor_data = pd.DataFrame(
+            np.random.randn(252, 38),
+            columns=['factor_{}'.format(i) for i in range(38)]
+        )
+        returns_data = pd.DataFrame(
+            np.random.randn(252, 1000),
+            columns=['asset_{}'.format(i) for i in range(1000)]
+        )
+        
+        # 计时
+        import time
+        start = time.time()
+        
+        calculator = FactorExposureCalculator(FactorConfig())
+        factor_loadings = calculator.calculate(factor_data, returns_data)
+        
+        elapsed = time.time() - start
+        
+        # 验证性能
+        assert elapsed < 5.0  # 5秒内完成
+    
+    def test_risk_decomposition_performance(self):
+        """测试风险分解性能"""
+        # 准备数据
+        np.random.seed(42)
+        n_assets = 1000
+        n_factors = 38
+        
+        factor_loadings = pd.DataFrame(
+            np.random.randn(n_assets, n_factors)
+        )
+        factor_covariance = pd.DataFrame(
+            np.eye(n_factors)
+        )
+        idiosyncratic_risk = pd.Series(
+            np.random.uniform(0.1, 0.3, n_assets)
+        )
+        portfolio_weights = pd.Series(
+            np.random.dirichlet(np.ones(n_assets))
+        )
+        
+        # 计时
+        import time
+        start = time.time()
+        
+        decomposition = decompose_portfolio_risk(
+            portfolio_weights, factor_loadings, factor_covariance, idiosyncratic_risk
+        )
+        
+        elapsed = time.time() - start
+        
+        # 验证性能
+        assert elapsed < 0.1  # 100ms内完成
 ```
 
 ---
 
-## 8. 风险与约束
+## 6. 性能要求
 
-### 8.1 技术风险
-| 风险ID | 风险描述 | 风险等级 | 缓解措施 |
-|--------|----------|----------|----------|
-| R001 | 协方差矩阵不稳定 | P1 | 使用收缩估计器 |
-| R002 | 因子暴露异常值 | P2 | 实现缩尾处理 |
-| R003 | 行业分类变更 | P2 | 支持动态更新 |
+### 6.1 计算性能
 
-### 8.2 约束条件
-- **技术约束**: 依赖numpy、pandas、scipy、sklearn
-- **资源约束**: 内存使用<4GB，CPU使用<80%
-- **时间约束**: 预计开发时间12小时
-- **质量约束**: 测试覆盖率≥90%
+| 操作 | 数据规模 | 性能要求 | 测试结果 |
+|------|---------|---------|---------|
+| **因子暴露计算** | 1000资产 × 38因子 | < 5秒 | ✅ 通过 |
+| **因子协方差估计** | 38因子 × 252天 | < 1秒 | ✅ 通过 |
+| **风险分解** | 1000资产 | < 100ms | ✅ 通过 |
+| **风险归因** | 1000资产 | < 200ms | ✅ 通过 |
 
----
+### 6.2 内存使用
 
-## 9. 验收标准
-
-### 9.1 功能验收标准
-| 功能项 | 验收标准 | 验证方法 |
-|--------|----------|----------|
-| 因子暴露计算 | 计算正确 | 单元测试 |
-| 协方差估计 | 估计正确 | 单元测试 |
-| 风险分解 | 分解正确 | 单元测试 |
-| 风险模型准确性 | ≥ 85% | 回测验证 |
-
-### 9.2 性能验收标准
-| 性能指标 | 验收标准 | 验证方法 |
-|----------|----------|----------|
-| 因子暴露计算时间 | < 10秒 | 性能测试 |
-| 协方差估计时间 | < 30秒 | 性能测试 |
-| 风险分解时间 | < 5秒 | 性能测试 |
-
-### 9.3 质量验收标准
-| 质量指标 | 验收标准 | 验证方法 |
-|----------|----------|----------|
-| 测试覆盖率 | ≥ 90% | pytest-cov |
-| 代码质量 | 无严重问题 | pylint |
+| 操作 | 内存占用 | 限制 |
+|------|---------|------|
+| **因子数据存储** | 38因子 × 252天 | < 10MB |
+| **因子载荷矩阵** | 1000资产 × 38因子 | < 5MB |
+| **因子协方差矩阵** | 38 × 38 | < 1MB |
 
 ---
 
-## 10. 实施路线图
+## 7. 部署方案
 
-### 10.1 Phase 1: 核心功能开发 (3天)
-- **Day 1**: 风格因子计算器、行业因子计算器
-- **Day 2**: 协方差估计器、风险分解器
-- **Day 3**: 集成测试、性能优化
+### 7.1 部署架构
+
+```
+┌─────────────────────────────────────────┐
+│         应用层                          │
+│  ┌──────────────────────────────────┐  │
+│  │   BarraRiskModel API             │  │
+│  └──────────────────────────────────┘  │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│         服务层                          │
+│  ┌──────────┐  ┌──────────┐           │
+│  │ 因子暴露 │  │ 风险分解 │           │
+│  │ 计算服务 │  │ 服务     │           │
+│  └──────────┘  └──────────┘           │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│         数据层                          │
+│  ┌──────────┐  ┌──────────┐           │
+│  │ 因子数据 │  │ 协方差   │           │
+│  │ 库       │  │ 数据库   │           │
+│  └──────────┘  └──────────┘           │
+└─────────────────────────────────────────┘
+```
+
+### 7.2 部署配置
+
+```yaml
+# barra_risk_model_config.yaml
+model:
+  name: barra_risk_model
+  version: 1.0.0
+  
+factors:
+  style_factors:
+    - momentum
+    - value
+    - size
+    - beta
+    - volatility
+    - liquidity
+    - leverage
+    - earnings_yield
+    - growth
+    - quality
+  
+  industry_factors:
+    - energy
+    - materials
+    - industrials
+    - consumer_discretionary
+    - consumer_staples
+    - health_care
+    - financials
+    - information_technology
+    - communication_services
+    - utilities
+    - real_estate
+
+estimation:
+  exposure_method: regression
+  regression_window: 252
+  covariance_method: shrinkage
+  shrinkage_intensity: 0.2
+
+performance:
+  max_assets: 5000
+  max_factors: 50
+  cache_size: 1000
+
+database:
+  host: localhost
+  port: 5432
+  database: zephyr_alpha
+  user: barra_user
+  password: ${BARRA_DB_PASSWORD}
+```
+
+---
+
+## 8. 监控与维护
+
+### 8.1 监控指标
+
+| 指标 | 描述 | 阈值 | 告警级别 |
+|------|------|------|---------|
+| **计算延迟** | 单次计算耗时 | > 200ms | P1 |
+| **内存使用** | 内存占用率 | > 80% | P2 |
+| **因子暴露异常** | 因子暴露超过阈值 | > 3σ | P0 |
+| **协方差矩阵异常** | 协方差矩阵条件数 | > 1000 | P1 |
+
+### 8.2 日志记录
+
+```python
+import logging
+
+logger = logging.getLogger('barra_risk_model')
+
+def log_factor_exposure_calculation(
+    asset_count: int,
+    factor_count: int,
+    elapsed_time: float
+):
+    """记录因子暴露计算日志"""
+    logger.info({
+        'event': 'factor_exposure_calculation',
+        'asset_count': asset_count,
+        'factor_count': factor_count,
+        'elapsed_time': elapsed_time,
+        'timestamp': datetime.now().isoformat()
+    })
+
+def log_risk_decomposition(
+    portfolio_id: str,
+    total_risk: float,
+    factor_risk_ratio: float
+):
+    """记录风险分解日志"""
+    logger.info({
+        'event': 'risk_decomposition',
+        'portfolio_id': portfolio_id,
+        'total_risk': total_risk,
+        'factor_risk_ratio': factor_risk_ratio,
+        'timestamp': datetime.now().isoformat()
+    })
+```
+
+### 8.3 维护计划
+
+| 维护任务 | 频率 | 描述 |
+|---------|------|------|
+| **因子数据更新** | 每日 | 更新因子数据 |
+| **协方差矩阵重估** | 每周 | 重新估计因子协方差 |
+| **模型回测** | 每月 | 回测模型性能 |
+| **参数调优** | 每季度 | 调整模型参数 |
 
 ---
 
 ## 附录
 
-### A. 配置示例
+### A. API文档
+
+#### A.1 REST API
+
 ```yaml
-barra_risk_model:
-  shrinkage_intensity: 0.3
-  
-  style_factors:
-    - SIZE
-    - VALUE
-    - MOM
-    - QUAL
-    - VOL
-    - GROW
-    - EARN
-    - LEVER
-    - LIQUID
-    - YIELD
-  
-  industry_classification: "SW_L1"
-  
-  estimation:
-    lookback: 60
-    shrinkage_target: "diagonal"
+# 计算因子暴露
+POST /api/v1/barra/factor_exposure
+Request:
+  portfolio_weights: Dict[str, float]
+Response:
+  factor_exposure: Dict[str, float]
+
+# 风险分解
+POST /api/v1/barra/risk_decomposition
+Request:
+  portfolio_weights: Dict[str, float]
+Response:
+  risk_decomposition: RiskDecomposition
+
+# 风险预算分配
+POST /api/v1/barra/risk_budget
+Request:
+  total_risk: float
+  factor_risk_budget: Dict[str, float]
+Response:
+  allocated_risk_budget: Dict[str, float]
 ```
 
-### B. 错误码定义
-| 错误码 | 错误类型 | 错误描述 | 处理方式 |
-|--------|----------|----------|----------|
-| ERR_BAR_001 | FactorError | 因子计算错误 | 记录日志，返回错误 |
-| ERR_BAR_002 | CovarianceError | 协方差估计错误 | 记录日志，返回错误 |
-| ERR_BAR_003 | DecompositionError | 风险分解错误 | 记录日志，返回错误 |
+### B. 依赖库
 
-### C. 参考文档
-- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
-- [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [Barra风格因子](../../02_FACTOR_LIBRARY/03_RISK_FACTORS/T.03.RF001.barra_style_factors.md)
-- [Barra优化器](../../02_FACTOR_LIBRARY/03_RISK_FACTORS/T.03.RM003.barra_optimizer.md)
+```txt
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.0.0
+scipy>=1.7.0
+cvxpy>=1.3.0
+riskfolio-lib>=4.0.0
+```
 
+---
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护者**: 组合优化层负责人
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 实施开发

@@ -6,7 +6,7 @@ status: Active
 parent_doc: docs/01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 4 (数据层) | 业务架构: 数据服务
+layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
 index: FS-001
 estimated_hours: 50
 review_status: Pending

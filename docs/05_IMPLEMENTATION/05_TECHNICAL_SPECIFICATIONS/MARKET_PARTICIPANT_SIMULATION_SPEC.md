@@ -579,6 +579,288 @@ class MarketSimulationEngine:
         )
 ```
 
+#### 2.4.1 订单撮合算法设计 ⭐ **IMP-001补充**
+
+**算法原理**: 价格优先、时间优先
+
+```python
+class OrderMatchingAlgorithm:
+    """订单撮合算法
+    
+    索引: ALGORITHM.ORDER_MATCHING.001
+    原理: 价格优先、时间优先
+    复杂度: O(n log n) - n为订单数量
+    """
+    
+    def match_orders(self, order_book: OrderBook) -> List[Trade]:
+        """撮合订单
+        
+        撮合规则:
+        1. 价格优先: 买单价格高者优先，卖单价格低者优先
+        2. 时间优先: 同价格时，先提交的订单优先
+        3. 撮合条件: 买一价 ≥ 卖一价
+        
+        算法流程:
+        1. 对买单按价格降序排序（价格相同按时间升序）
+        2. 对卖单按价格升序排序（价格相同按时间升序）
+        3. 取买一和卖一进行撮合
+        4. 如果买一价 ≥ 卖一价，则成交
+        5. 成交价格 = min(买一价, 卖一价, 前一笔成交价)
+        6. 更新订单簿，重复步骤3-5
+        
+        返回:
+            List[Trade]: 成交记录列表
+        """
+        trades = []
+        
+        while order_book.has_buy_orders() and order_book.has_sell_orders():
+            best_buy = order_book.get_best_buy_order()
+            best_sell = order_book.get_best_sell_order()
+            
+            if best_buy.price >= best_sell.price:
+                trade_price = min(best_buy.price, best_sell.price, 
+                                 self._get_last_trade_price())
+                trade_volume = min(best_buy.volume, best_sell.volume)
+                
+                trade = Trade(
+                    price=trade_price,
+                    volume=trade_volume,
+                    buy_order_id=best_buy.order_id,
+                    sell_order_id=best_sell.order_id,
+                    timestamp=datetime.now()
+                )
+                trades.append(trade)
+                
+                order_book.update_after_trade(best_buy, best_sell, trade_volume)
+            else:
+                break
+        
+        return trades
+    
+    def _get_last_trade_price(self) -> float:
+        """获取最后一笔成交价格"""
+        pass
+```
+
+**算法复杂度分析**:
+- **时间复杂度**: O(n log n) - 排序订单簿
+- **空间复杂度**: O(n) - 存储订单簿
+- **撮合速度**: < 1ms per 1000 orders
+
+**参数配置**:
+```yaml
+order_matching:
+  price_tick: 0.01  # 最小价格变动单位
+  volume_tick: 100  # 最小成交量单位
+  max_orders_per_match: 10000  # 单次撮合最大订单数
+  match_interval_ms: 100  # 撮合间隔（毫秒）
+```
+
+#### 2.4.2 价格发现算法设计 ⭐ **IMP-001补充**
+
+**算法原理**: 基于订单簿的均衡价格计算
+
+```python
+class PriceDiscoveryAlgorithm:
+    """价格发现算法
+    
+    索引: ALGORITHM.PRICE_DISCOVERY.001
+    原理: 基于订单簿供需平衡计算均衡价格
+    复杂度: O(n) - n为价格档位数量
+    """
+    
+    def discover_equilibrium_price(self, order_book: OrderBook) -> EquilibriumPrice:
+        """发现均衡价格
+        
+        算法原理:
+        1. 收集所有智能体的买卖订单
+        2. 构建虚拟订单簿（买盘和卖盘）
+        3. 计算每个价格档位的累积供需
+        4. 找到供需平衡点（累积买量 ≈ 累积卖量）
+        5. 均衡价格 = 供需平衡点对应的价格
+        
+        数学模型:
+        - 买盘累积: B(p) = Σ buy_volume where buy_price ≥ p
+        - 卖盘累积: S(p) = Σ sell_volume where sell_price ≤ p
+        - 均衡条件: |B(p*) - S(p*)| → min
+        - 均衡价格: p* = argmin |B(p) - S(p)|
+        
+        返回:
+            EquilibriumPrice: 均衡价格对象
+        """
+        price_levels = self._get_price_levels(order_book)
+        
+        equilibrium_candidates = []
+        for price in price_levels:
+            cumulative_buy = order_book.get_cumulative_buy_volume(price)
+            cumulative_sell = order_book.get_cumulative_sell_volume(price)
+            imbalance = abs(cumulative_buy - cumulative_sell)
+            
+            equilibrium_candidates.append({
+                'price': price,
+                'buy_volume': cumulative_buy,
+                'sell_volume': cumulative_sell,
+                'imbalance': imbalance
+            })
+        
+        equilibrium = min(equilibrium_candidates, key=lambda x: x['imbalance'])
+        
+        return EquilibriumPrice(
+            price=equilibrium['price'],
+            buy_volume=equilibrium['buy_volume'],
+            sell_volume=equilibrium['sell_volume'],
+            confidence=self._calculate_confidence(equilibrium)
+        )
+    
+    def _calculate_confidence(self, equilibrium: dict) -> float:
+        """计算均衡价格置信度
+        
+        置信度 = 1 - (imbalance / total_volume)
+        """
+        total_volume = equilibrium['buy_volume'] + equilibrium['sell_volume']
+        if total_volume == 0:
+            return 0.0
+        return 1.0 - (equilibrium['imbalance'] / total_volume)
+```
+
+**算法复杂度分析**:
+- **时间复杂度**: O(n) - n为价格档位数量
+- **空间复杂度**: O(n) - 存储价格档位
+- **计算速度**: < 10ms per 100 price levels
+
+**参数配置**:
+```yaml
+price_discovery:
+  price_range: 0.10  # 价格搜索范围（±10%）
+  price_step: 0.001  # 价格搜索步长（0.1%）
+  min_confidence: 0.7  # 最小置信度阈值
+  max_iterations: 100  # 最大迭代次数
+```
+
+#### 2.4.3 博弈均衡算法设计 ⭐ **IMP-001补充**
+
+**算法原理**: 纳什均衡求解
+
+```python
+class GameEquilibriumAlgorithm:
+    """博弈均衡算法
+    
+    索引: ALGORITHM.GAME_EQUILIBRIUM.001
+    原理: 多智能体博弈的纳什均衡求解
+    复杂度: O(n^m) - n为策略数，m为智能体数
+    """
+    
+    def find_nash_equilibrium(self, 
+                             agents: List[Agent],
+                             market_state: MarketState) -> NashEquilibrium:
+        """求解纳什均衡
+        
+        算法原理:
+        1. 定义每个智能体的策略空间
+        2. 计算每个智能体的支付函数（收益函数）
+        3. 迭代求解最优响应策略
+        4. 收敛到纳什均衡
+        
+        数学模型:
+        - 策略空间: S_i = {s_i1, s_i2, ..., s_in}
+        - 支付函数: u_i(s_i, s_{-i})
+        - 最优响应: BR_i(s_{-i}) = argmax u_i(s_i, s_{-i})
+        - 纳什均衡: s* = (s_1*, ..., s_m*) where s_i* = BR_i(s_{-i}*)
+        
+        迭代算法:
+        1. 初始化: 随机选择初始策略 s^0
+        2. 迭代: s_i^{t+1} = BR_i(s_{-i}^t)
+        3. 收敛: ||s^{t+1} - s^t|| < ε
+        
+        返回:
+            NashEquilibrium: 纳什均衡对象
+        """
+        strategies = {agent.agent_id: self._initialize_strategy(agent) 
+                     for agent in agents}
+        
+        for iteration in range(self.config.max_iterations):
+            new_strategies = {}
+            
+            for agent in agents:
+                best_response = self._find_best_response(
+                    agent, 
+                    strategies, 
+                    market_state
+                )
+                new_strategies[agent.agent_id] = best_response
+            
+            if self._is_converged(strategies, new_strategies):
+                return NashEquilibrium(
+                    strategies=new_strategies,
+                    iteration=iteration,
+                    converged=True
+                )
+            
+            strategies = new_strategies
+        
+        return NashEquilibrium(
+            strategies=strategies,
+            iteration=self.config.max_iterations,
+            converged=False
+        )
+    
+    def _find_best_response(self, 
+                           agent: Agent,
+                           strategies: dict,
+                           market_state: MarketState) -> Strategy:
+        """找到最优响应策略
+        
+        方法: 遍历所有可能的策略，选择收益最大的
+        """
+        best_strategy = None
+        best_payoff = float('-inf')
+        
+        for strategy in agent.get_possible_strategies():
+            payoff = self._calculate_payoff(agent, strategy, strategies, market_state)
+            if payoff > best_payoff:
+                best_payoff = payoff
+                best_strategy = strategy
+        
+        return best_strategy
+    
+    def _calculate_payoff(self,
+                         agent: Agent,
+                         strategy: Strategy,
+                         other_strategies: dict,
+                         market_state: MarketState) -> float:
+        """计算支付函数（收益）
+        
+        收益 = 预期收益 - 风险成本 - 交易成本
+        """
+        expected_return = self._calculate_expected_return(
+            agent, strategy, other_strategies, market_state
+        )
+        risk_cost = self._calculate_risk_cost(agent, strategy)
+        transaction_cost = self._calculate_transaction_cost(agent, strategy)
+        
+        return expected_return - risk_cost - transaction_cost
+```
+
+**算法复杂度分析**:
+- **时间复杂度**: O(n^m * k) - n为策略数，m为智能体数，k为迭代次数
+- **空间复杂度**: O(n^m) - 存储策略组合
+- **收敛速度**: 通常10-50次迭代收敛
+
+**参数配置**:
+```yaml
+game_equilibrium:
+  max_iterations: 100  # 最大迭代次数
+  convergence_threshold: 0.01  # 收敛阈值
+  strategy_discretization: 10  # 策略离散化粒度
+  payoff_calculation_method: "expected_return"  # 支付函数计算方法
+```
+
+**算法验证标准**:
+1. **收敛性**: 算法必须在100次迭代内收敛
+2. **稳定性**: 均衡策略在扰动下保持稳定
+3. **有效性**: 均衡策略的收益不低于非均衡策略
+4. **效率**: 计算时间 < 10秒
+
 ---
 
 ## 🔌 三、接口定义
@@ -706,6 +988,303 @@ class MarketParticipantSimulatorInterface:
             
         返回:
             RiskWarning: 风险预警
+        """
+        pass
+```
+
+### 3.4 因子输出格式定义 ⭐ **IMP-002补充**
+
+#### 3.4.1 因子数据格式
+
+**格式选择**: Parquet + 元数据JSON
+
+**选择理由**:
+- ✅ **Parquet**: 列式存储，压缩率高，查询速度快
+- ✅ **JSON元数据**: 易读易维护，支持嵌套结构
+- ✅ **兼容性**: 与Layer 2因子库无缝集成
+
+```python
+@dataclass
+class FactorOutput:
+    """因子输出数据结构
+    
+    索引: FORMAT.FACTOR.OUTPUT.001
+    用途: Layer 2.5 → Layer 2 因子输出
+    """
+    factor_name: str  # 因子名称
+    factor_id: str  # 因子ID (如: FACTOR.INSTITUTIONAL.001)
+    timestamp: datetime  # 时间戳
+    value: float  # 因子值
+    confidence: float  # 置信度 [0, 1]
+    metadata: FactorMetadata  # 元数据
+
+@dataclass
+class FactorMetadata:
+    """因子元数据"""
+    agent_type: str  # 智能体类型
+    data_source: str  # 数据源
+    calculation_method: str  # 计算方法
+    lookback_period: int  # 回溯期
+    update_frequency: str  # 更新频率
+    factor_category: str  # 因子类别
+    factor_description: str  # 因子描述
+```
+
+**存储格式示例**:
+
+```
+/factors/institutional_activity_factor/
+    ├── 2026-04-03.parquet  # 因子数据
+    └── metadata.json       # 元数据
+```
+
+**Parquet文件结构**:
+```
+| timestamp           | symbol    | factor_value | confidence |
+|---------------------|-----------|--------------|------------|
+| 2026-04-03 09:30:00 | 000001.SZ | 0.75         | 0.85       |
+| 2026-04-03 09:30:00 | 000002.SZ | 0.62         | 0.78       |
+| 2026-04-03 09:30:00 | 600000.SH | 0.88         | 0.92       |
+```
+
+**元数据JSON示例**:
+```json
+{
+    "factor_name": "主力动向因子",
+    "factor_id": "FACTOR.INSTITUTIONAL.001",
+    "agent_type": "InstitutionalAgent",
+    "data_source": "iFind",
+    "calculation_method": "RL+LLM",
+    "lookback_period": 20,
+    "update_frequency": "daily",
+    "factor_category": "资金流向",
+    "factor_description": "基于主力智能体行为预测的资金流向因子",
+    "created_date": "2026-04-03",
+    "version": "1.0.0"
+}
+```
+
+#### 3.4.2 因子存储接口
+
+```python
+class FactorStorageInterface:
+    """因子存储接口
+    
+    索引: INTERFACE.FACTOR.STORAGE.001
+    用途: Layer 2.5 → Layer 2 因子库集成
+    """
+    
+    def save_factor(self, factor_output: FactorOutput) -> bool:
+        """保存因子到因子库
+        
+        存储路径: /factors/{factor_name}/{date}.parquet
+        
+        返回:
+            bool: 保存是否成功
+        """
+        pass
+    
+    def load_factor(self, 
+                   factor_id: str,
+                   start_date: datetime,
+                   end_date: datetime) -> pd.DataFrame:
+        """加载因子数据
+        
+        返回:
+            pd.DataFrame: 因子数据
+        """
+        pass
+    
+    def get_factor_metadata(self, factor_id: str) -> FactorMetadata:
+        """获取因子元数据"""
+        pass
+```
+
+#### 3.4.3 因子质量检查标准
+
+| 检查项 | 标准 | 检查方法 |
+|--------|------|---------|
+| **因子IC** | |IC| > 0.03 | IC分析 |
+| **因子覆盖率** | > 80% | 覆盖率统计 |
+| **因子单调性** | 单调递增/递减 | 分组测试 |
+| **因子稳定性** | IC_IR > 0.5 | 稳定性测试 |
+
+### 3.5 信号输出格式定义 ⭐ **IMP-003补充**
+
+#### 3.5.1 交易信号格式
+
+**格式选择**: JSON + 时间戳 + 置信度
+
+```python
+@dataclass
+class TradingSignal:
+    """交易信号数据结构
+    
+    索引: FORMAT.SIGNAL.OUTPUT.001
+    用途: Layer 2.5 → Layer 5 策略执行层
+    """
+    signal_id: str  # 信号ID
+    signal_type: SignalType  # 信号类型 (BUY/SELL/HOLD)
+    signal_strength: float  # 信号强度 [0, 1]
+    timestamp: datetime  # 时间戳
+    valid_until: datetime  # 有效期
+    agent_source: str  # 智能体来源
+    confidence: float  # 置信度 [0, 1]
+    target_symbols: List[str]  # 目标股票
+    reasoning: str  # 信号理由
+    risk_level: RiskLevel  # 风险等级
+
+class SignalType(Enum):
+    """信号类型枚举"""
+    BUY = "BUY"
+    SELL = "SELL"
+    HOLD = "HOLD"
+    STRONG_BUY = "STRONG_BUY"
+    STRONG_SELL = "STRONG_SELL"
+
+class RiskLevel(Enum):
+    """风险等级枚举"""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    EXTREME = "EXTREME"
+```
+
+**JSON格式示例**:
+```json
+{
+    "signal_id": "SIG_20260403_001",
+    "signal_type": "BUY",
+    "signal_strength": 0.85,
+    "timestamp": "2026-04-03T15:30:00Z",
+    "valid_until": "2026-04-03T16:30:00Z",
+    "agent_source": "ForeignInvestorAgent",
+    "confidence": 0.80,
+    "target_symbols": ["000001.SZ", "600000.SH"],
+    "reasoning": "北向资金持续流入，汇率稳定，全球宏观评分上升",
+    "risk_level": "MEDIUM",
+    "metadata": {
+        "north_bound_flow": 1500000000,
+        "exchange_rate": 7.25,
+        "global_macro_score": 0.75
+    }
+}
+```
+
+#### 3.5.2 决策输出格式
+
+```python
+@dataclass
+class PortfolioDecision:
+    """组合决策数据结构
+    
+    索引: FORMAT.DECISION.OUTPUT.001
+    用途: Layer 2.5 → Layer 6 组合优化层
+    """
+    decision_id: str  # 决策ID
+    decision_type: DecisionType  # 决策类型
+    target_weights: Dict[str, float]  # 目标权重
+    confidence: float  # 置信度 [0, 1]
+    timestamp: datetime  # 时间戳
+    valid_until: datetime  # 有效期
+    voting_result: Dict[str, float]  # 多智能体投票结果
+    risk_budget: RiskBudget  # 风险预算
+    constraints: DecisionConstraints  # 约束条件
+
+class DecisionType(Enum):
+    """决策类型枚举"""
+    PORTFOLIO_REBALANCE = "PORTFOLIO_REBALANCE"
+    POSITION_ADJUST = "POSITION_ADJUST"
+    RISK_REDUCTION = "RISK_REDUCTION"
+    CASH_RAISE = "CASH_RAISE"
+
+@dataclass
+class RiskBudget:
+    """风险预算"""
+    max_volatility: float  # 最大波动率
+    max_drawdown: float  # 最大回撤
+    max_sector_exposure: float  # 最大行业暴露
+
+@dataclass
+class DecisionConstraints:
+    """决策约束"""
+    min_position_size: float  # 最小仓位
+    max_position_size: float  # 最大仓位
+    max_turnover: float  # 最大换手率
+    min_holding_period: int  # 最小持有期
+```
+
+**JSON格式示例**:
+```json
+{
+    "decision_id": "DEC_20260403_001",
+    "decision_type": "PORTFOLIO_REBALANCE",
+    "target_weights": {
+        "000001.SZ": 0.15,
+        "000002.SZ": 0.10,
+        "600000.SH": 0.12,
+        "600519.SH": 0.08
+    },
+    "confidence": 0.75,
+    "timestamp": "2026-04-03T15:30:00Z",
+    "valid_until": "2026-04-04T09:30:00Z",
+    "voting_result": {
+        "ForeignInvestorAgent": 0.85,
+        "InsuranceFundAgent": 0.70,
+        "NationalTeamAgent": 0.60,
+        "InstitutionalAgent": 0.75,
+        "RetailAgent": 0.45
+    },
+    "risk_budget": {
+        "max_volatility": 0.15,
+        "max_drawdown": 0.10,
+        "max_sector_exposure": 0.30
+    },
+    "constraints": {
+        "min_position_size": 0.01,
+        "max_position_size": 0.20,
+        "max_turnover": 0.30,
+        "min_holding_period": 5
+    }
+}
+```
+
+#### 3.5.3 风险控制接口
+
+```python
+class RiskControlInterface:
+    """风险控制接口
+    
+    索引: INTERFACE.RISK.CONTROL.001
+    用途: Layer 2.5 → Layer 5 风险控制
+    """
+    
+    def check_risk_budget(self, 
+                         decision: PortfolioDecision) -> RiskCheckResult:
+        """检查风险预算
+        
+        返回:
+            RiskCheckResult: 风险检查结果
+        """
+        pass
+    
+    def apply_stop_loss(self, 
+                       position: Position,
+                       current_price: float) -> StopLossDecision:
+        """应用止损策略
+        
+        返回:
+            StopLossDecision: 止损决策
+        """
+        pass
+    
+    def apply_take_profit(self,
+                         position: Position,
+                         current_price: float) -> TakeProfitDecision:
+        """应用止盈策略
+        
+        返回:
+            TakeProfitDecision: 止盈决策
         """
         pass
 ```

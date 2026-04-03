@@ -456,8 +456,14 @@ class EntityRecognizer:
 ```python
 from abc import ABC, abstractmethod
 
-class FactorCalculator(ABC):
-    """因子计算基类"""
+class AlternativeDataFactorCalculator(ABC):
+    """另类数据因子计算基类
+    
+    职责边界说明:
+    - 本类专门用于另类数据因子（新闻情感、事件驱动等）
+    - 基础因子（价值、成长、动量等）由FactorCalculator模块负责
+    - 参考: [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
+    """
     
     @abstractmethod
     def calculate(self, 
@@ -512,7 +518,7 @@ class FactorCalculator(ABC):
 #### 3.3.2 新闻因子接口
 
 ```python
-class NewsSentimentFactor(FactorCalculator):
+class NewsSentimentFactor(AlternativeDataFactorCalculator):
     """新闻情感因子"""
     
     def calculate(self, 
@@ -532,7 +538,7 @@ class NewsSentimentFactor(FactorCalculator):
         """
         pass
 
-class EventDrivenFactor(FactorCalculator):
+class EventDrivenFactor(AlternativeDataFactorCalculator):
     """事件驱动因子"""
     
     def calculate(self, 
@@ -550,7 +556,7 @@ class EventDrivenFactor(FactorCalculator):
         """
         pass
 
-class NewsHeatFactor(FactorCalculator):
+class NewsHeatFactor(AlternativeDataFactorCalculator):
     """新闻热度因子"""
     
     def calculate(self, 
@@ -582,7 +588,7 @@ class FactorRegistry:
     def register_factor(self, 
                        factor_name: str,
                        factor_type: str,
-                       calculator: FactorCalculator,
+                       calculator: AlternativeDataFactorCalculator,
                        metadata: Dict) -> str:
         """
         注册因子
@@ -1045,7 +1051,7 @@ class EventExtractor:
 #### 5.3.1 新闻情感因子算法
 
 ```python
-class NewsSentimentFactor(FactorCalculator):
+class NewsSentimentFactor(AlternativeDataFactorCalculator):
     """新闻情感因子"""
     
     def __init__(self, news_data_source, sentiment_analyzer):
@@ -1110,7 +1116,7 @@ class NewsSentimentFactor(FactorCalculator):
 #### 5.3.2 事件驱动因子算法
 
 ```python
-class EventDrivenFactor(FactorCalculator):
+class EventDrivenFactor(AlternativeDataFactorCalculator):
     """事件驱动因子"""
     
     # 事件影响基准得分
