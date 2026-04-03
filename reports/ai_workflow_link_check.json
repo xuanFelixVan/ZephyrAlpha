@@ -1,0 +1,554 @@
+# 链接检查报告
+
+**检查时间**: 2026-04-03
+**检查范围**: docs\10_AI_WORKFLOW
+**最大路径层级**: 3
+**文档总数**: 31
+
+---
+
+## 📊 检查结果概览
+
+- **总问题数**: 76
+- **P0级问题**: 76
+- **P1级问题**: 0
+- **P2级问题**: 0
+
+## 🔴 内部链接失效
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 舆情分析层对比报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md
+**源文件**: `docs\10_AI_WORKFLOW\DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md`
+**链接URL**: `./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md`
+
+### 另类数据集成蓝图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+**源文件**: `docs\10_AI_WORKFLOW\DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md`
+**链接URL**: `./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
+
+### 系统总索引
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ../02_FACTOR_LIBRARY/System_Manifest.md
+**源文件**: `docs\10_AI_WORKFLOW\INDEX.md`
+**链接URL**: `../02_FACTOR_LIBRARY/System_Manifest.md`
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 蓝图欠缺分析报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_BLUEPRINT_GAP_ANALYSIS.md
+**源文件**: `docs\10_AI_WORKFLOW\MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_BLUEPRINT_GAP_ANALYSIS.md`
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 蓝图欠缺分析报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_BLUEPRINT_GAP_ANALYSIS.md
+**源文件**: `docs\10_AI_WORKFLOW\OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_BLUEPRINT_GAP_ANALYSIS.md`
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 舆情分析层对比报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md
+**源文件**: `docs\10_AI_WORKFLOW\REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md`
+**链接URL**: `./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md`
+
+### 环境搭建指南
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一环境搭建指南
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md`
+**链接URL**: `#一环境搭建指南`
+
+### 代码示例
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二代码示例
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md`
+**链接URL**: `#二代码示例`
+
+### 配置文件模板
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三配置文件模板
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md`
+**链接URL**: `#三配置文件模板`
+
+### 部署架构
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四部署架构
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md`
+**链接URL**: `#四部署架构`
+
+### 数据库设计
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五数据库设计
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md`
+**链接URL**: `#五数据库设计`
+
+### 监控与日志
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #六监控与日志
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md`
+**链接URL**: `#六监控与日志`
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 舆情分析层对比报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md`
+
+### 中期改进蓝图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md`
+
+### LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md`
+
+### ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
+
+### LAYER3_SHORT_TERM_TECHNICAL_SPECIFICATION.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_SHORT_TERM_TECHNICAL_SPECIFICATION.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+
+### LAYER3_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md`
+
+### LAYER3_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+
+### LAYER3_LONG_TERM_TECHNICAL_SPECIFICATION.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_LONG_TERM_TECHNICAL_SPECIFICATION.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+
+### LAYER3_IMPLEMENTATION_DETAILS.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPLEMENTATION_DETAILS.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_IMPLEMENTATION_DETAILS.md`
+
+### LAYER3_TEST_PLAN.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_TEST_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_TEST_PLAN.md`
+
+### LAYER3_RISK_MANAGEMENT.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_RISK_MANAGEMENT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_RISK_MANAGEMENT.md`
+
+### LAYER3_PROJECT_MANAGEMENT.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_PROJECT_MANAGEMENT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_PROJECT_MANAGEMENT.md`
+
+### DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md`
+
+### LAYER3_BLUEPRINT_GAP_ANALYSIS.md
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_BLUEPRINT_GAP_ANALYSIS.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./LAYER3_BLUEPRINT_GAP_ANALYSIS.md`
+
+### 因子架构对比报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./FACTOR_ARCHITECTURE_COMPARISON_REPORT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md`
+**链接URL**: `./FACTOR_ARCHITECTURE_COMPARISON_REPORT.md`
+
+### 多模态分析模块技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一多模态分析模块技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#一多模态分析模块技术规格`
+
+### AI虚拟研究团队技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二ai虚拟研究团队技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#二ai虚拟研究团队技术规格`
+
+### 数据字典
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三数据字典
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#三数据字典`
+
+### API接口规范
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四api接口规范
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#四api接口规范`
+
+### 算法流程图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五算法流程图
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#五算法流程图`
+
+### 性能指标定义
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #六性能指标定义
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#六性能指标定义`
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 舆情分析层对比报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md`
+**链接URL**: `./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md`
+
+### 短期改进蓝图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md`
+**链接URL**: `./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
+
+### 知识图谱模块技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一知识图谱模块技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#一知识图谱模块技术规格`
+
+### 流式处理架构技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二流式处理架构技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#二流式处理架构技术规格`
+
+### 多语言支持模块技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三多语言支持模块技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#三多语言支持模块技术规格`
+
+### 数据字典
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四数据字典
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#四数据字典`
+
+### API接口规范
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五api接口规范
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#五api接口规范`
+
+### 算法流程图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #六算法流程图
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#六算法流程图`
+
+### 性能指标定义
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #七性能指标定义
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#七性能指标定义`
+
+### 工作分解结构(WBS)
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一工作分解结构wbs
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md`
+**链接URL**: `#一工作分解结构wbs`
+
+### 甘特图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二甘特图
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md`
+**链接URL**: `#二甘特图`
+
+### 里程碑计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三里程碑计划
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md`
+**链接URL**: `#三里程碑计划`
+
+### 资源分配
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四资源分配
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md`
+**链接URL**: `#四资源分配`
+
+### 进度跟踪
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五进度跟踪
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md`
+**链接URL**: `#五进度跟踪`
+
+### 风险识别
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一风险识别
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md`
+**链接URL**: `#一风险识别`
+
+### 风险评估
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二风险评估
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md`
+**链接URL**: `#二风险评估`
+
+### 风险缓解措施
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三风险缓解措施
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md`
+**链接URL**: `#三风险缓解措施`
+
+### 应急预案
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四应急预案
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md`
+**链接URL**: `#四应急预案`
+
+### 风险监控
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五风险监控
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md`
+**链接URL**: `#五风险监控`
+
+### 数据源扩展模块技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一数据源扩展模块技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#一数据源扩展模块技术规格`
+
+### 深度学习情感分析模块技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二深度学习情感分析模块技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#二深度学习情感分析模块技术规格`
+
+### 实时预警系统模块技术规格
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三实时预警系统模块技术规格
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#三实时预警系统模块技术规格`
+
+### 数据字典
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四数据字典
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#四数据字典`
+
+### API接口规范
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五api接口规范
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#五api接口规范`
+
+### 算法流程图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #六算法流程图
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#六算法流程图`
+
+### 性能指标定义
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #七性能指标定义
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#七性能指标定义`
+
+### 错误处理规范
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #八错误处理规范
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `#八错误处理规范`
+
+### 另类数据集成模块蓝图
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md`
+**链接URL**: `./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备`
+
+### 测试策略
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #一测试策略
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_TEST_PLAN.md`
+**链接URL**: `#一测试策略`
+
+### 单元测试计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #二单元测试计划
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_TEST_PLAN.md`
+**链接URL**: `#二单元测试计划`
+
+### 集成测试计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #三集成测试计划
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_TEST_PLAN.md`
+**链接URL**: `#三集成测试计划`
+
+### 性能测试计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #四性能测试计划
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_TEST_PLAN.md`
+**链接URL**: `#四性能测试计划`
+
+### 验收测试计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #五验收测试计划
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_TEST_PLAN.md`
+**链接URL**: `#五验收测试计划`
+
+### 测试数据准备
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: #六测试数据准备
+**源文件**: `docs\10_AI_WORKFLOW\SENTIMENT_ANALYSIS_TEST_PLAN.md`
+**链接URL**: `#六测试数据准备`
+
+### Layer 3改进实施计划
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md
+**源文件**: `docs\10_AI_WORKFLOW\VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md`
+**链接URL**: `./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md`
+
+### 蓝图欠缺分析报告
+
+**问题等级**: P0
+**问题描述**: 内部链接失效: ./LAYER3_BLUEPRINT_GAP_ANALYSIS.md
+**源文件**: `docs\10_AI_WORKFLOW\VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md`
+**链接URL**: `./LAYER3_BLUEPRINT_GAP_ANALYSIS.md`
+
+---
+
+**检查工具**: link_checker.py v1.0.0
+**检查日期**: 2026-04-03

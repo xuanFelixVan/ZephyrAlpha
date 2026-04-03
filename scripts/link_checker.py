@@ -248,9 +248,17 @@ class LinkChecker:
         broken_links = []
         external_links = []
         
+        seen_urls = set()  # Track already checked URLs
         for doc_path, doc_info in self.documents.items():
             for link in doc_info['links']:
                 if link['type'] == 'external':
+                    # Skip special URL schemes that don't need HTTP checking
+                    if link['url'].startswith(('mailto:', 'tel:', 'ftp:')):
+                        continue
+                    # Skip duplicate URLs to avoid redundant checks
+                    if link['url'] in seen_urls:
+                        continue
+                    seen_urls.add(link['url'])
                     external_links.append({
                         'source_file': doc_path,
                         'link_text': link['text'],
