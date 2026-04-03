@@ -1,6 +1,6 @@
 ---
 module_id: QMT_EXECUTOR_SPEC_001
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-03
