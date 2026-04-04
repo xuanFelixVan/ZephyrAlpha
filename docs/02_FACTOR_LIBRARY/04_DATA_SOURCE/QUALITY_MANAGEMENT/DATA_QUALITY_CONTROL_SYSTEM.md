@@ -4,39 +4,39 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?compliance_level: 初始标准
+owner: 首席文档架构�?standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管�?compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?---
 
 # 数据质量控制系统
 
 > **模块编号**: M-DQ-001 (Data Quality)
 > **版本**: 1.0
 > **创建日期**: 2026-03-28
-> **优先�?*: P0
+> **优先�?*: P0
 
 ---
 
 ## 1. 系统概述
 
 ### 1.1 目标
-确保进入系统的数据满足量化分析的质量要求，防�?垃圾进，垃圾�?（GIGO: Garbage In, Garbage Out）�?
+确保进入系统的数据满足量化分析的质量要求，防�?垃圾进，垃圾�?（GIGO: Garbage In, Garbage Out）�?
 ### 1.2 数据质量维度
 
-| 维度 | 说明 | 检查方�?|
+| 维度 | 说明 | 检查方�?|
 |------|------|----------|
-| **完整�?* | 数据无缺�?| 缺失值检�?|
-| **有效�?* | 数据在合理范围内 | 有效性规�?|
-| **一致�?* | 数据格式统一 | 格式校验 |
-| **时效�?* | 数据及时更新 | 时间戳检�?|
-| **准确�?* | 数据正确无误 | 合理性检�?|
-| **去重�?* | 无重复记�?| 重复检�?|
+| **完整�?* | 数据无缺�?| 缺失值检�?|
+| **有效�?* | 数据在合理范围内 | 有效性规�?|
+| **一致�?* | 数据格式统一 | 格式校验 |
+| **时效�?* | 数据及时更新 | 时间戳检�?|
+| **准确�?* | 数据正确无误 | 合理性检�?|
+| **去重�?* | 无重复记�?| 重复检�?|
 
 ---
 
-## 2. 数据质量检查框�?
-### 2.1 核心类设�?
+## 2. 数据质量检查框�?
+### 2.1 核心类设�?
 ```python
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Callable
@@ -49,7 +49,7 @@ class Severity(Enum):
     """问题严重级别"""
     CRITICAL = "critical"  # 致命，数据不可用
     WARNING = "warning"    # 警告，数据可用但需注意
-    INFO = "info"         # 信息，提�?
+    INFO = "info"         # 信息，提�?
 @dataclass
 class DataIssue:
     """数据问题"""
@@ -67,13 +67,13 @@ class DataIssue:
 
 @dataclass
 class DataQualityResult:
-    """数据质量检查结�?""
+    """数据质量检查结�?""
     passed: bool
     issues: List[DataIssue] = field(default_factory=list)
     checked_at: datetime = field(default_factory=datetime.now)
     record_count: int = 0
     issue_count: int = 0
-    quality_score: float = 1.0  # 0-1的质量分�?
+    quality_score: float = 1.0  # 0-1的质量分�?
     def add_issue(self, issue: DataIssue):
         self.issues.append(issue)
         self.issue_count += 1
@@ -106,13 +106,13 @@ class DataQualityChecker:
 
     def check(self, df: pd.DataFrame, data_type: str = "ohlcv") -> DataQualityResult:
         """
-        执行完整的数据质量检�?
+        执行完整的数据质量检�?
         参数:
             df: 待检查的数据
             data_type: 数据类型 ("ohlcv", "factor", "fundamental")
 
         返回:
-            DataQualityResult: 检查结�?        """
+            DataQualityResult: 检查结�?        """
         result = DataQualityResult(passed=True, record_count=len(df))
 
         check_methods = {
@@ -139,28 +139,28 @@ class DataQualityChecker:
         if not result.passed:
             issues_str = "\n".join([str(i) for i in result.issues])
             raise DataQualityError(
-                f"数据质量检查失�?({result.issue_count} issues):\n{issues_str}"
+                f"数据质量检查失�?({result.issue_count} issues):\n{issues_str}"
             )
         return df
 ```
 
 ---
 
-## 3. 缺失值检�?
+## 3. 缺失值检�?
 ### 3.1 缺失值检测器
 
 ```python
 @dataclass
 class MissingValueConfig:
-    """缺失值检查配�?""
+    """缺失值检查配�?""
     max_missing_ratio: float = 0.05      # 最大缺失率(5%)
-    critical_fields: List[str] = None     # 关键字段，缺失直接失�?    fill_strategies: Dict[str, str] = None  # 填充策略
+    critical_fields: List[str] = None     # 关键字段，缺失直接失�?    fill_strategies: Dict[str, str] = None  # 填充策略
 
 class MissingValueChecker:
     """缺失值检测器"""
 
     def _check_missing(self, df: pd.DataFrame, result: DataQualityResult):
-        """检查缺失�?""
+        """检查缺失�?""
         config = self.config.missing_value
 
         for col in df.columns:
@@ -176,28 +176,28 @@ class MissingValueChecker:
                     result.add_issue(DataIssue(
                         severity=Severity.CRITICAL,
                         category="missing",
-                        message=f"关键字段缺失 {missing_count} �?({missing_ratio:.2%})",
+                        message=f"关键字段缺失 {missing_count} �?({missing_ratio:.2%})",
                         field=col
                     ))
                     continue
 
-            # 检查缺失率阈�?            if missing_ratio > config.max_missing_ratio:
+            # 检查缺失率阈�?            if missing_ratio > config.max_missing_ratio:
                 result.add_issue(DataIssue(
                     severity=Severity.CRITICAL,
                     category="missing",
-                    message=f"缺失�?{missing_ratio:.2%} 超过阈�?{config.max_missing_ratio:.2%}",
+                    message=f"缺失�?{missing_ratio:.2%} 超过阈�?{config.max_missing_ratio:.2%}",
                     field=col
                 ))
             else:
                 result.add_issue(DataIssue(
                     severity=Severity.WARNING,
                     category="missing",
-                    message=f"字段缺失 {missing_count} �?({missing_ratio:.2%})",
+                    message=f"字段缺失 {missing_count} �?({missing_ratio:.2%})",
                     field=col
                 ))
 ```
 
-### 3.2 缺失值填充策�?
+### 3.2 缺失值填充策�?
 ```python
 class MissingValueFiller:
     """缺失值填充器"""
@@ -205,14 +205,14 @@ class MissingValueFiller:
     STRATEGIES = {
         "forward": lambda s: s.fillna(method='ffill'),      # 前向填充
         "backward": lambda s: s.fillna(method='bfill'),    # 后向填充
-        "linear": lambda s: s.interpolate(method='linear'), # 线性插�?        "mean": lambda s: s.fillna(s.mean()),               # 均值填�?        "median": lambda s: s.fillna(s.median()),           # 中位数填�?        "zero": lambda s: s.fillna(0),                      # 零填�?        "ffill_then_mean": lambda s: s.fillna(method='ffill').fillna(s.mean()),
+        "linear": lambda s: s.interpolate(method='linear'), # 线性插�?        "mean": lambda s: s.fillna(s.mean()),               # 均值填�?        "median": lambda s: s.fillna(s.median()),           # 中位数填�?        "zero": lambda s: s.fillna(0),                      # 零填�?        "ffill_then_mean": lambda s: s.fillna(method='ffill').fillna(s.mean()),
     }
 
     @classmethod
     def fill(cls, df: pd.DataFrame,
              column: str,
              strategy: str = "forward") -> pd.Series:
-        """填充指定列的缺失�?""
+        """填充指定列的缺失�?""
         if strategy not in cls.STRATEGIES:
             raise ValueError(f"未知填充策略: {strategy}")
 
@@ -224,7 +224,7 @@ class MissingValueFiller:
                    price_columns: List[str] = None,
                    volume_column: str = "volume") -> pd.DataFrame:
         """
-        填充OHLCV数据的缺失�?        价格列用前向填充，成交量�?填充
+        填充OHLCV数据的缺失�?        价格列用前向填充，成交量�?填充
         """
         df = df.copy()
         price_cols = price_columns or ['open', 'high', 'low', 'close']
@@ -241,16 +241,16 @@ class MissingValueFiller:
 
 ---
 
-## 4. 有效性规则检�?
-### 4.1 OHLCV有效性检�?
+## 4. 有效性规则检�?
+### 4.1 OHLCV有效性检�?
 ```python
 class OHLCVValidityChecker:
     """OHLCV数据有效性检查器"""
 
     def _check_ohlcv_validity(self, df: pd.DataFrame, result: DataQualityResult):
-        """检查OHLCV数据有效�?""
+        """检查OHLCV数据有效�?""
 
-        # 1. 收盘�?>= 0
+        # 1. 收盘�?>= 0
         if 'close' in df.columns:
             invalid_close = df[df['close'] < 0]
             if len(invalid_close) > 0:
@@ -268,11 +268,11 @@ class OHLCVValidityChecker:
                 result.add_issue(DataIssue(
                     severity=Severity.CRITICAL,
                     category="validity",
-                    message=f"存在 {len(invalid_range)} 条最高价 < 最低价的记�?,
+                    message=f"存在 {len(invalid_range)} 条最高价 < 最低价的记�?,
                     field="high/low"
                 ))
 
-        # 3. 开盘价和收盘价在高低价范围�?        for _, row in df.iterrows():
+        # 3. 开盘价和收盘价在高低价范围�?        for _, row in df.iterrows():
             if not (row['low'] <= row['open'] <= row['high']):
                 result.add_issue(DataIssue(
                     severity=Severity.WARNING,
@@ -285,36 +285,36 @@ class OHLCVValidityChecker:
                 result.add_issue(DataIssue(
                     severity=Severity.WARNING,
                     category="validity",
-                    message=f"收盘�?{row['close']} 超出范围 [{row['low']}, {row['high']}]",
+                    message=f"收盘�?{row['close']} 超出范围 [{row['low']}, {row['high']}]",
                     field="close",
                     row_index=_
                 ))
 
-        # 4. 成交�?>= 0
+        # 4. 成交�?>= 0
         if 'volume' in df.columns:
             invalid_volume = df[df['volume'] < 0]
             if len(invalid_volume) > 0:
                 result.add_issue(DataIssue(
                     severity=Severity.CRITICAL,
                     category="validity",
-                    message=f"存在 {len(invalid_volume)} 条负成交量记�?,
+                    message=f"存在 {len(invalid_volume)} 条负成交量记�?,
                     field="volume"
                 ))
 ```
 
-### 4.2 股票代码有效性检�?
+### 4.2 股票代码有效性检�?
 ```python
 @dataclass
 class SecurityConfig:
     """证券数据配置"""
     valid_exchanges: List[str] = None  # 有效交易所
-    valid_tick_pattern: str = r"^\d{6}\.[A-Z]$"  # 6位数�?大写字母
+    valid_tick_pattern: str = r"^\d{6}\.[A-Z]$"  # 6位数�?大写字母
 
 class SecurityChecker:
     """股票代码检查器"""
 
     def check_symbol(self, symbol: str, config: SecurityConfig = None) -> bool:
-        """检查股票代码格�?""
+        """检查股票代码格�?""
         import re
         config = config or SecurityConfig()
         pattern = config.valid_tick_pattern
@@ -335,7 +335,7 @@ class SecurityChecker:
         """检查数据覆盖度"""
         result = DataQualityResult(passed=True)
 
-        # 检查日期范�?        if 'date' in df.columns:
+        # 检查日期范�?        if 'date' in df.columns:
             df['date'] = pd.to_datetime(df['date'])
             start_date, end_date = date_range
 
@@ -346,11 +346,11 @@ class SecurityChecker:
                     result.add_issue(DataIssue(
                         severity=Severity.WARNING,
                         category="coverage",
-                        message=f"日期覆盖缺失 {len(missing_dates)} �?({missing_ratio:.1%})",
+                        message=f"日期覆盖缺失 {len(missing_dates)} �?({missing_ratio:.1%})",
                         field="date"
                     ))
 
-        # 检查股票覆�?        if 'symbol' in df.columns:
+        # 检查股票覆�?        if 'symbol' in df.columns:
             df_symbols = set(df['symbol'].unique())
             expected = set(expected_symbols)
             missing_symbols = expected - df_symbols
@@ -359,7 +359,7 @@ class SecurityChecker:
                 result.add_issue(DataIssue(
                     severity=Severity.WARNING,
                     category="coverage",
-                    message=f"缺少 {len(missing_symbols)} 只股票数�? {list(missing_symbols)[:5]}",
+                    message=f"缺少 {len(missing_symbols)} 只股票数�? {list(missing_symbols)[:5]}",
                     field="symbol"
                 ))
 
@@ -368,14 +368,14 @@ class SecurityChecker:
 
 ---
 
-## 5. 重复检�?
-### 5.1 重复记录检�?
+## 5. 重复检�?
+### 5.1 重复记录检�?
 ```python
 class DuplicateChecker:
     """重复数据检测器"""
 
     def _check_duplicates(self, df: pd.DataFrame, result: DataQualityResult):
-        """检查重复记�?""
+        """检查重复记�?""
 
         # 1. 完全重复
         duplicates = df.duplicated()
@@ -398,11 +398,11 @@ class DuplicateChecker:
                 result.add_issue(DataIssue(
                     severity=Severity.CRITICAL,
                     category="duplicate",
-                    message=f"存在 {key_dup_count} 条日�?股票代码重复的记�?,
+                    message=f"存在 {key_dup_count} 条日�?股票代码重复的记�?,
                     field="date+symbol"
                 ))
 
-        # 3. 重复日期检�?(同一股票同一日期多条记录)
+        # 3. 重复日期检�?(同一股票同一日期多条记录)
         if 'date' in df.columns and 'symbol' in df.columns:
             grouped = df.groupby(['date', 'symbol']).size()
             multi_records = grouped[grouped > 1]
@@ -411,7 +411,7 @@ class DuplicateChecker:
                 result.add_issue(DataIssue(
                     severity=Severity.WARNING,
                     category="duplicate",
-                    message=f"存在 {len(multi_records)} 个日期存在多条记�?,
+                    message=f"存在 {len(multi_records)} 个日期存在多条记�?,
                     field="date+symbol"
                 ))
 ```
@@ -420,7 +420,7 @@ class DuplicateChecker:
 
 ```python
 class DataCleaner:
-    """数据清洗�?""
+    """数据清洗�?""
 
     @staticmethod
     def remove_duplicates(df: pd.DataFrame,
@@ -442,14 +442,14 @@ class DataCleaner:
                          agg_rules: Dict[str, str]) -> pd.DataFrame:
         """
         合并重复记录
-        对同一日期+股票的多条记录取均�?        """
+        对同一日期+股票的多条记录取均�?        """
         return df.groupby(groupby_cols).agg(agg_rules).reset_index()
 ```
 
 ---
 
-## 6. 异常值检�?
-### 6.1 统计方法检�?
+## 6. 异常值检�?
+### 6.1 统计方法检�?
 ```python
 class OutlierDetector:
     """异常值检测器"""
@@ -458,7 +458,7 @@ class OutlierDetector:
     def zscore(series: pd.Series, threshold: float = 3.0) -> pd.Series:
         """
         Z-Score方法
-        超过threshold个标准差的视为异�?        """
+        超过threshold个标准差的视为异�?        """
         mean = series.mean()
         std = series.std()
         if std == 0:
@@ -470,7 +470,7 @@ class OutlierDetector:
     def iqr(series: pd.Series, factor: float = 1.5) -> pd.Series:
         """
         IQR方法
-        超过 Q1 - factor*IQR �?Q3 + factor*IQR 的视为异�?        """
+        超过 Q1 - factor*IQR �?Q3 + factor*IQR 的视为异�?        """
         Q1 = series.quantile(0.25)
         Q3 = series.quantile(0.75)
         IQR = Q3 - Q1
@@ -483,7 +483,7 @@ class OutlierDetector:
                    lower: float = 0.01,
                    upper: float = 0.99) -> pd.Series:
         """
-        百分位方�?        低于lower百分位或高于upper百分位的视为异常
+        百分位方�?        低于lower百分位或高于upper百分位的视为异常
         """
         lower_val = series.quantile(lower)
         upper_val = series.quantile(upper)
@@ -494,9 +494,9 @@ class OutlierDetector:
                    column: str,
                    methods: List[str] = None) -> Dict[str, pd.Series]:
         """
-        使用多种方法检测异常�?
+        使用多种方法检测异常�?
         返回:
-            Dict: {方法�? 异常值Series}
+            Dict: {方法�? 异常值Series}
         """
         methods = methods or ["zscore", "iqr"]
         results = {}
@@ -516,14 +516,14 @@ class OutlierDetector:
     def get_outlier_stats(cls, df: pd.DataFrame,
                           column: str,
                           methods: List[str] = None) -> pd.DataFrame:
-        """获取异常值统计信�?""
+        """获取异常值统计信�?""
         results = cls.detect_all(df, column, methods)
 
         stats = []
         for method, outliers in results.items():
             count = outliers.sum()
             ratio = count / len(df)
-            indices = df[outliers].index.tolist()[:10]  # 最多显�?0�?
+            indices = df[outliers].index.tolist()[:10]  # 最多显�?0�?
             stats.append({
                 "method": method,
                 "outlier_count": count,
@@ -534,16 +534,16 @@ class OutlierDetector:
         return pd.DataFrame(stats)
 ```
 
-### 6.2 业务规则检�?
+### 6.2 业务规则检�?
 ```python
 class BusinessRuleDetector:
-    """业务规则异常检�?""
+    """业务规则异常检�?""
 
     @staticmethod
     def check_price_change(df: pd.DataFrame,
                           max_daily_change: float = 0.5) -> pd.DataFrame:
         """
-        检查日内价格变化是否超过阈�?        默认日内涨跌超过50%视为异常
+        检查日内价格变化是否超过阈�?        默认日内涨跌超过50%视为异常
         """
         if 'close' not in df.columns or 'open' not in df.columns:
             return pd.Series([False] * len(df), index=df.index)
@@ -569,7 +569,7 @@ class BusinessRuleDetector:
                             max_range: float = 0.5) -> pd.Series:
         """
         检查高低点范围是否合理
-        超过max_range(默认50%)的视为异�?        """
+        超过max_range(默认50%)的视为异�?        """
         if 'high' not in df.columns or 'low' not in df.columns:
             return pd.Series([False] * len(df), index=df.index)
 
@@ -578,7 +578,7 @@ class BusinessRuleDetector:
 
     @classmethod
     def check_all_rules(cls, df: pd.DataFrame) -> Dict[str, pd.Series]:
-        """执行所有业务规则检�?""
+        """执行所有业务规则检�?""
         return {
             "price_change": cls.check_price_change(df),
             "volume_spike": cls.check_volume_spike(df),
@@ -590,10 +590,10 @@ class BusinessRuleDetector:
 
 ## 7. 数据质量报告
 
-### 7.1 报告生成�?
+### 7.1 报告生成�?
 ```python
 class DataQualityReport:
-    """数据质量报告生成�?""
+    """数据质量报告生成�?""
 
     @staticmethod
     def generate(result: DataQualityResult,
@@ -605,16 +605,16 @@ class DataQualityReport:
 
         report = f"""
 ================================================================================
-                        数据质量检查报�?================================================================================
+                        数据质量检查报�?================================================================================
 数据名称: {data_name}
-检查时�? {result.checked_at.strftime('%Y-%m-%d %H:%M:%S')}
-数据记录�? {result.record_count}
+检查时�? {result.checked_at.strftime('%Y-%m-%d %H:%M:%S')}
+数据记录�? {result.record_count}
 --------------------------------------------------------------------------------
-检查结�? {'�?通过' if summary['passed'] else '�?失败'}
+检查结�? {'�?通过' if summary['passed'] else '�?失败'}
 质量评分: {summary['quality_score']:.1%}
 
-问题汇�?
-  - 致命问题: {summary['critical_count']} �?  - 警告问题: {summary['warning_count']} �?  - 提示信息: {summary['info_count']} �?
+问题汇�?
+  - 致命问题: {summary['critical_count']} �?  - 警告问题: {summary['warning_count']} �?  - 提示信息: {summary['info_count']} �?
 ================================================================================
                             详细问题列表
 ================================================================================
@@ -634,16 +634,16 @@ class DataQualityReport:
     描述: {issue.message}
 """
                 if issue.value is not None:
-                    report += f"    当前�? {issue.value}\n"
+                    report += f"    当前�? {issue.value}\n"
                 if issue.expected is not None:
-                    report += f"    期望�? {issue.expected}\n"
+                    report += f"    期望�? {issue.expected}\n"
 
         if df is not None:
             report += f"""
 ================================================================================
                             数据样本预览
 ================================================================================
-�?�?
+�?�?
 {df.head().to_string()}
 
 数据类型:
@@ -662,15 +662,15 @@ class DataQualityReport:
         <html>
         <head><title>数据质量报告</title></head>
         <body>
-        <h1>数据质量检查报�?/h1>
+        <h1>数据质量检查报�?/h1>
         <table border="1">
-            <tr><th>检查时�?/th><td>{result.checked_at}</td></tr>
-            <tr><th>记录�?/th><td>{result.record_count}</td></tr>
+            <tr><th>检查时�?/th><td>{result.checked_at}</td></tr>
+            <tr><th>记录�?/th><td>{result.record_count}</td></tr>
             <tr><th>结果</th><td>{'通过' if summary['passed'] else '失败'}</td></tr>
             <tr><th>质量评分</th><td>{summary['quality_score']:.1%}</td></tr>
         </table>
 
-        <h2>问题汇�?/h2>
+        <h2>问题汇�?/h2>
         <ul>
             <li>致命: {summary['critical_count']}</li>
             <li>警告: {summary['warning_count']}</li>
@@ -698,11 +698,11 @@ class DataQualityReport:
 
 ---
 
-## 8. 与数据管道集�?
-### 8.1 在DataHub中使�?
+## 8. 与数据管道集�?
+### 8.1 在DataHub中使�?
 ```python
 class DataHub:
-    """数据中心 - 集成数据质量检�?""
+    """数据中心 - 集成数据质量检�?""
 
     def __init__(self, config: DataHubConfig):
         self.config = config
@@ -713,7 +713,7 @@ class DataHub:
                  end_date: str,
                  check_quality: bool = True) -> pd.DataFrame:
         """
-        获取OHLCV数据，带质量检�?        """
+        获取OHLCV数据，带质量检�?        """
         df = self._fetch_from_source(symbol, start_date, end_date)
 
         if check_quality:
@@ -738,7 +738,7 @@ class DataHub:
         # 移除重复
         df = DataCleaner.remove_duplicates(df)
 
-        # 填充缺失�?        if 'close' in df.columns:
+        # 填充缺失�?        if 'close' in df.columns:
             df['close'] = MissingValueFiller.fill(df, 'close', 'forward')
 
         return df
@@ -765,28 +765,28 @@ class DataQualityConfig:
     outlier_methods: List[str] = field(default_factory=lambda: ["zscore", "iqr"])
 
     business_rules: bool = True
-    max_daily_change: float = 0.5  # 日内最大变�?0%
+    max_daily_change: float = 0.5  # 日内最大变�?0%
     max_volume_spike: float = 10.0  # 成交量最大放大倍数
 ```
 
 ---
 
-## 9. 快速使用示�?
+## 9. 快速使用示�?
 ```python
 # 1. 创建检查器
 checker = DataQualityChecker()
 
-# 2. 检查数�?df = pd.read_csv("stock_data.csv")
+# 2. 检查数�?df = pd.read_csv("stock_data.csv")
 result = checker.check(df, data_type="ohlcv")
 
 # 3. 查看结果
 print(result.get_summary())
 
 # 4. 生成报告
-report = DataQualityReport.generate(result, df, "A股数�?)
+report = DataQualityReport.generate(result, df, "A股数�?)
 print(report)
 
-# 5. 自动清洗并重新检�?if not result.passed:
+# 5. 自动清洗并重新检�?if not result.passed:
     df_cleaned = DataCleaner.remove_duplicates(df)
     df_cleaned = MissingValueFiller.fill_ohlcv(df_cleaned)
     result2 = checker.check(df_cleaned)
@@ -826,11 +826,11 @@ data_quality:
   business_rules:
     enabled: true
     max_daily_change: 0.5      # 50%
-    max_volume_spike: 10.0      # 10�?    max_high_low_range: 0.5     # 50%
+    max_volume_spike: 10.0      # 10�?    max_high_low_range: 0.5     # 50%
 ```
 
 ---
 
 **版本**: 1.0
 **更新**: 2026-03-28
-**状�?*: 草稿
+**状�?*: 草稿
