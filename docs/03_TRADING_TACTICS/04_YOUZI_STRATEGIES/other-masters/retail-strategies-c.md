@@ -1,58 +1,58 @@
 ---
-module_id: TACTICS_DOC_001
-version: 1.0.0
+module_id: TACTICS_YOUZI_OTHER_C_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 游资量化策略�?- 第三部分
+# 游资量化策略�?- 第三部分
 
-> 顶级游资交易思想量化提炼（三�?
+> 顶级游资交易思想量化提炼（三�?
 >
-> **配套文档**�?
+> **配套文档**�?
 > - 主文档：
 > - 策略池索引：[index.md](../../05_STRATEGY_POOL/index.md)
 
 ***
 
-> **说明**：这些策略来自A股顶级游资的经验总结，已抽象为量化规则，需历史回测验证有效性后再入�?
+> **说明**：这些策略来自A股顶级游资的经验总结，已抽象为量化规则，需历史回测验证有效性后再入�?
 
 ***
 
 ## 1. 赵老哥龙头战法
 
-### S021: 二板定龙头策�?
+### S021: 二板定龙头策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S021 |
-| 策略名称 | 二板定龙�?|
+| 策略名称 | 二板定龙�?|
 | 来源 | 赵老哥 |
-| 适用市场 | 妖股周期、牛�?|
-| 风险等级 | �?|
+| 适用市场 | 妖股周期、牛�?|
+| 风险等级 | �?|
 
 **核心理念**：一板能看出来个毛，二板才是确认
 
-**量化规则**�?
-- 从昨日首板中筛选二板候�?
-- 一板后次日高开幅度�?%-7%
+**量化规则**�?
+- 从昨日首板中筛选二板候�?
+- 一板后次日高开幅度�?%-7%
 - 回调不破一板最高价80%
 - 10点前封板
-- 同题材有一板跟�?
+- 同题材有一板跟�?
 
 ```python
 class SecondBoardDragonStrategy(BaseStrategy):
-    """二板定龙头策�?""
+    """二板定龙头策�?""
 
     def __init__(self):
-        super().__init__("二板定龙�?, "S021")
+        super().__init__("二板定龙�?, "S021")
         self.market_states = [MarketState.YAO, MarketState.BULL]
         self.parameters = {
             'open_ratio_min': 0.03,
@@ -63,7 +63,7 @@ class SecondBoardDragonStrategy(BaseStrategy):
 
     def select_second_board(self, yesterday_first_board_stocks):
         """
-        从昨日首板中选取二板候�?
+        从昨日首板中选取二板候�?
         """
         candidates = []
         params = self.parameters
@@ -119,27 +119,27 @@ class SecondBoardDragonStrategy(BaseStrategy):
 
 ***
 
-### S022: 新题材判断策�?
+### S022: 新题材判断策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S022 |
-| 策略名称 | 新题材判�?|
+| 策略名称 | 新题材判�?|
 | 来源 | 赵老哥 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 有故事：重大政策、业绩拐点、并购重组等
-- 大量资金活跃：成交额 > 10�?
+- 大量资金活跃：成交额 > 10�?
 - 市场认同度高：板块内多个涨停
 
 ```python
 class NewThemeQuantifier(BaseStrategy):
-    """新题材判断量化策�?""
+    """新题材判断量化策�?""
 
     def __init__(self):
-        super().__init__("新题材判�?, "S022")
+        super().__init__("新题材判�?, "S022")
         self.market_states = [s for s in MarketState]
         self.parameters = {
             'min_turnover': 1e9,
@@ -156,8 +156,8 @@ class NewThemeQuantifier(BaseStrategy):
         params = self.parameters
 
         has_story = self.check_theme_story(theme_data, market_data)
-        has_capital = theme_data.get('板块成交�?, 0) > params['min_turnover']
-        has_recognition = theme_data.get('板块涨停�?, 0) >= params['min_limit_up_count']
+        has_capital = theme_data.get('板块成交�?, 0) > params['min_turnover']
+        has_recognition = theme_data.get('板块涨停�?, 0) >= params['min_limit_up_count']
 
         total_score = (
             has_story * params['policy_weight'] +
@@ -180,45 +180,45 @@ class NewThemeQuantifier(BaseStrategy):
 
     def check_theme_story(self, theme_data, market_data):
         """
-        检查题材是否有故事（政策、业绩等�?
+        检查题材是否有故事（政策、业绩等�?
         """
-        policy_score = theme_data.get('政策关联�?, 0)
+        policy_score = theme_data.get('政策关联�?, 0)
         event_score = theme_data.get('重大事件', 0)
         return min((policy_score + event_score) / 2, 1.0)
 ```
 
 ***
 
-## 2. 情绪周期五阶段量�?
+## 2. 情绪周期五阶段量�?
 
-### S023: 情绪周期五阶段策�?
+### S023: 情绪周期五阶段策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S023 |
-| 策略名称 | 情绪周期五阶�?|
+| 策略名称 | 情绪周期五阶�?|
 | 来源 | 情绪周期理论 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**核心理念**：冰点→回暖→发酵→高潮→退�?
+**核心理念**：冰点→回暖→发酵→高潮→退�?
 
-**量化规则**�?
+**量化规则**�?
 
-| 阶段 | 涨停家数 | 跌停家数 | 炸板�?| 连板股数 | 操作策略 |
+| 阶段 | 涨停家数 | 跌停家数 | 炸板�?| 连板股数 | 操作策略 |
 |------|----------|----------|--------|----------|----------|
-| 冰点 | <20 | >30 | >50% | 0 | 观望，等待转�?|
+| 冰点 | <20 | >30 | >50% | 0 | 观望，等待转�?|
 | 回暖 | 20-50 | 10-30 | 30-50% | >=2 | 试探买入 |
 | 发酵 | 50-100 | <10 | <30% | >=3 | 积极参与 |
 | 高潮 | >100 | <5 | <20% | >=5 | 谨慎追高 |
-| 退�?| 下降 | 增加 | 上升 | 减少 | 减仓出局 |
+| 退�?| 下降 | 增加 | 上升 | 减少 | 减仓出局 |
 
 ```python
 class EmotionCycleFiveStagesStrategy(BaseStrategy):
-    """情绪周期五阶段策�?""
+    """情绪周期五阶段策�?""
 
     def __init__(self):
-        super().__init__("情绪周期五阶�?, "S023")
+        super().__init__("情绪周期五阶�?, "S023")
         self.market_states = [s for s in MarketState]
         self.parameters = {
             '冰点': {
@@ -253,7 +253,7 @@ class EmotionCycleFiveStagesStrategy(BaseStrategy):
                 'action': '谨慎追高',
                 'position': 0.25
             },
-            '退�?: {
+            '退�?: {
                 '涨停家数_max': 50,
                 '跌停家数_min': 20,
                 'action': '减仓出局',
@@ -268,7 +268,7 @@ class EmotionCycleFiveStagesStrategy(BaseStrategy):
         params = self.parameters
         limit_up = market_data.get('涨停家数', 0)
         limit_down = market_data.get('跌停家数', 0)
-        break_rate = market_data.get('炸板�?, 0)
+        break_rate = market_data.get('炸板�?, 0)
         continuous_boards = market_data.get('连板股数', 0)
 
         if limit_up < params['冰点']['涨停家数_max'] and limit_down > params['冰点']['跌停家数_min']:
@@ -282,7 +282,7 @@ class EmotionCycleFiveStagesStrategy(BaseStrategy):
         elif limit_up > params['高潮']['涨停家数_min']:
             return {'stage': '高潮', **params['高潮']}
         else:
-            return {'stage': '退�?, **params['退�?]}
+            return {'stage': '退�?, **params['退�?]}
 
         return {'stage': '未知', 'action': '观察', 'position': 0.0}
 
@@ -292,7 +292,7 @@ class EmotionCycleFiveStagesStrategy(BaseStrategy):
 
         if stage == '冰点':
             return None
-        elif stage == '退�?:
+        elif stage == '退�?:
             return TradingSignal(
                 code=stock_data['code'],
                 signal=SignalType.SELL,
@@ -327,20 +327,20 @@ class EmotionCycleFiveStagesStrategy(BaseStrategy):
 
 ### S024: 箱体突破策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S024 |
 | 策略名称 | 箱体突破 |
 | 来源 | 主力伏击战法 |
-| 适用市场 | 震荡市、熊市反�?|
-| 风险等级 | �?|
+| 适用市场 | 震荡市、熊市反�?|
+| 风险等级 | �?|
 
 **核心理念**：用箱体横盘锁定主力吸筹痕迹
 
-**量化规则**�?
-- 箱体横盘：股价在一定区间内震荡，高�?20%，持�?0天以�?
+**量化规则**�?
+- 箱体横盘：股价在一定区间内震荡，高�?20%，持�?0天以�?
 - 吸筹确认：缩量调整，不破箱体下沿
-- 突破信号：放量突破箱体上沿（涨幅>2%�?
+- 突破信号：放量突破箱体上沿（涨幅>2%�?
 - 回调买入：突破后缩量回踩箱体上沿
 
 ```python
@@ -360,7 +360,7 @@ class BoxBreakoutStrategy(BaseStrategy):
 
     def detect_box_formation(self, price_data):
         """
-        检测箱体形�?
+        检测箱体形�?
         """
         params = self.parameters
         highs = price_data['近期高点']
@@ -382,12 +382,12 @@ class BoxBreakoutStrategy(BaseStrategy):
 
     def check_breakout_signal(self, stock_data, box_data):
         """
-        检查突破信�?
+        检查突破信�?
         """
         params = self.parameters
         current_price = stock_data['close']
         box_top = box_data['box_top']
-        volume = stock_data['成交�?]
+        volume = stock_data['成交�?]
         avg_volume = stock_data['均量']
 
         if current_price > box_top * params['breakout_ratio']:
@@ -402,12 +402,12 @@ class BoxBreakoutStrategy(BaseStrategy):
 
     def check_pullback_entry(self, stock_data, box_data):
         """
-        检查回调买入信�?
+        检查回调买入信�?
         """
         params = self.parameters
         current_price = stock_data['close']
         box_top = box_data['box_top']
-        volume = stock_data['成交�?]
+        volume = stock_data['成交�?]
         avg_volume = stock_data['均量']
 
         if current_price >= box_top * 0.98 and current_price <= box_top * 1.02:
@@ -460,24 +460,24 @@ class BoxBreakoutStrategy(BaseStrategy):
 
 ### S025: 主力四步循环策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S025 |
 | 策略名称 | 主力四步循环 |
 | 来源 | 主力伏击战法 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**核心理念**：主力行为四步循环：吸筹→洗盘→拉升→出�?
+**核心理念**：主力行为四步循环：吸筹→洗盘→拉升→出�?
 
-**量化规则**�?
+**量化规则**�?
 
 | 阶段 | 特征 | 量化信号 | 散户应对 |
 |------|------|----------|----------|
-| 吸筹 | 低位悄悄�?| 缩量横盘/地量 | 别割�?|
+| 吸筹 | 低位悄悄�?| 缩量横盘/地量 | 别割�?|
 | 洗盘 | 把散户洗出去 | 缩量下跌/尾盘打压 | 别被吓走 |
-| 拉升 | 快速拉高赚�?| 放量突破/缩量回调 | 拿稳 |
-| 出货 | 高位偷偷�?| 高位放量滞涨 | 快跑 |
+| 拉升 | 快速拉高赚�?| 放量突破/缩量回调 | 拿稳 |
+| 出货 | 高位偷偷�?| 高位放量滞涨 | 快跑 |
 
 ```python
 class MainForceCycleStrategy(BaseStrategy):
@@ -510,8 +510,8 @@ class MainForceCycleStrategy(BaseStrategy):
         识别主力行为阶段
         """
         params = self.parameters
-        volume_ratio = stock_data['成交�?] / stock_data['均量']
-        price_change = stock_data['涨跌�?]
+        volume_ratio = stock_data['成交�?] / stock_data['均量']
+        price_change = stock_data['涨跌�?]
 
         if volume_ratio < params['accumulation']['volume_ratio_max']:
             if abs(price_change) < params['accumulation']['price_change_max']:
@@ -589,27 +589,27 @@ class MainForceCycleStrategy(BaseStrategy):
 
 ***
 
-## 4. 一夜持股法（杨永兴战法�?
+## 4. 一夜持股法（杨永兴战法�?
 
 ### S026: 一夜持股法策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S026 |
 | 策略名称 | 一夜持股法 |
-| 来源 | 杨永�?|
+| 来源 | 杨永�?|
 | 适用市场 | 牛市、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
 **核心理念**：尾盘买入，次日早盘卖出
 
-**量化规则**�?
-- 买入时间�?4:30 - 14:50
-- 选股标准：上升通道、缩量调整、不能追�?
+**量化规则**�?
+- 买入时间�?4:30 - 14:50
+- 选股标准：上升通道、缩量调整、不能追�?
 - 仓位：不超过30%
-- 次日高开：直接卖�?
-- 次日平开：冲高卖�?
-- 次日低开：视情况持有或止�?
+- 次日高开：直接卖�?
+- 次日平开：冲高卖�?
+- 次日低开：视情况持有或止�?
 
 ```python
 class OneNightHoldingStrategy(BaseStrategy):
@@ -644,7 +644,7 @@ class OneNightHoldingStrategy(BaseStrategy):
 
     def check_entry_conditions(self, stock_data):
         """
-        检查买入条�?
+        检查买入条�?
         """
         trend = self.check_trend(stock_data)
         volume = self.check_volume(stock_data)
@@ -670,7 +670,7 @@ class OneNightHoldingStrategy(BaseStrategy):
         """
         检查量能：缩量调整
         """
-        volume_ratio = stock_data['成交�?] / stock_data['均量']
+        volume_ratio = stock_data['成交�?] / stock_data['均量']
         if volume_ratio < 0.8:
             return '缩量'
         elif volume_ratio > 1.2:
@@ -712,28 +712,28 @@ class OneNightHoldingStrategy(BaseStrategy):
 
 ***
 
-## 5. 做T仓位管理与决策规�?
+## 5. 做T仓位管理与决策规�?
 
 ### S027: 做T仓位管理策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S027 |
 | 策略名称 | 做T仓位管理 |
-| 来源 | A股特色增�?|
-| 适用市场 | 所有市场（日内�?|
-| 风险等级 | �?|
+| 来源 | A股特色增�?|
+| 适用市场 | 所有市场（日内�?|
+| 风险等级 | �?|
 
-**核心理念**：做T是A股重要的超额收益来源，需要分钟级数据和特殊因子支�?
+**核心理念**：做T是A股重要的超额收益来源，需要分钟级数据和特殊因子支�?
 
-**量化规则**�?
-- 基础比例：日线仓�?× 20-30%
-- 置信度调整：基础仓位 × 分钟预测置信�?
-- 市场状态调整：牛市上限50%，熊市上�?0%
-- 硬性限制：单日做T仓位 �?总资�?0%
-- 最大做T次数：≤10�?�?
-- 最小间隔时间：�?5分钟
-- 冷却机制：连�?次亏损暂停做T
+**量化规则**�?
+- 基础比例：日线仓�?× 20-30%
+- 置信度调整：基础仓位 × 分钟预测置信�?
+- 市场状态调整：牛市上限50%，熊市上�?0%
+- 硬性限制：单日做T仓位 �?总资�?0%
+- 最大做T次数：≤10�?�?
+- 最小间隔时间：�?5分钟
+- 冷却机制：连�?次亏损暂停做T
 
 ```python
 class DayTradingPositionStrategy(BaseStrategy):
@@ -765,10 +765,10 @@ class DayTradingPositionStrategy(BaseStrategy):
         params = self.parameters
 
         if self.daily_stats['trade_count'] >= params['max_trades_per_day']:
-            return 0.0, '已达每日最大交易次�?
+            return 0.0, '已达每日最大交易次�?
 
         if self.daily_stats['consecutive_losses'] >= params['cooling_losses']:
-            return 0.0, '连续亏损，触发冷�?
+            return 0.0, '连续亏损，触发冷�?
 
         base_position = daily_position * params['base_ratio']
 
@@ -789,7 +789,7 @@ class DayTradingPositionStrategy(BaseStrategy):
 
     def check_interval(self, current_time):
         """
-        检查最小间隔时�?
+        检查最小间隔时�?
         """
         params = self.parameters
         if self.daily_stats['last_trade_time'] is None:
@@ -824,33 +824,33 @@ class DayTradingPositionStrategy(BaseStrategy):
 
 ### S028: 做T决策规则策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S028 |
 | 策略名称 | 做T决策规则 |
-| 来源 | A股特色增�?|
-| 适用市场 | 所有市场（日内�?|
-| 风险等级 | �?|
+| 来源 | A股特色增�?|
+| 适用市场 | 所有市场（日内�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 
-**买入信号**�?
-- 技术信号：分时指标金叉 + 盘口支持（MACD金叉 + 买盘占优�?
-- 资金信号：分钟级资金持续流入（连�?�?分钟净流入�?
-- 波动信号：波动率回归到均值以下（波动�?< 20日均值�?.8�?
-- 协同信号：与日线趋势方向一致（日线看多 + 分钟回调买点�?
+**买入信号**�?
+- 技术信号：分时指标金叉 + 盘口支持（MACD金叉 + 买盘占优�?
+- 资金信号：分钟级资金持续流入（连�?�?分钟净流入�?
+- 波动信号：波动率回归到均值以下（波动�?< 20日均值�?.8�?
+- 协同信号：与日线趋势方向一致（日线看多 + 分钟回调买点�?
 
-**卖出信号**�?
-- 止盈条件：达到目标收益率（收益率 > 1.5%�?
-- 技术止损：分时指标死叉或支撑跌破（KDJ死叉 OR 价格<分时均线�?
-- 时间止损：持仓超�?0分钟无盈�?
-- 风险止损：波动率突然放大（ATR突破布林上轨�?
+**卖出信号**�?
+- 止盈条件：达到目标收益率（收益率 > 1.5%�?
+- 技术止损：分时指标死叉或支撑跌破（KDJ死叉 OR 价格<分时均线�?
+- 时间止损：持仓超�?0分钟无盈�?
+- 风险止损：波动率突然放大（ATR突破布林上轨�?
 
-**不做T条件**�?
+**不做T条件**�?
 - 流动性不足：买卖价差 > 0.2%
-- 波动率过低：5分钟ATR < 20日均值�?.6
-- 重大事件窗口：财�?宏观数据发布前后1小时
-- 系统风险预警：大盘下�?> 2%
+- 波动率过低：5分钟ATR < 20日均值�?.6
+- 重大事件窗口：财�?宏观数据发布前后1小时
+- 系统风险预警：大盘下�?> 2%
 
 ```python
 class DayTradingDecisionStrategy(BaseStrategy):
@@ -899,7 +899,7 @@ class DayTradingDecisionStrategy(BaseStrategy):
         current_vol = minute_data.get('volatility', 1)
         avg_vol = minute_data.get('volatility_ma20', 1)
         if current_vol < avg_vol * params['volatility_threshold']:
-            signals['波动率回�?] = 0.20
+            signals['波动率回�?] = 0.20
 
         total_score = sum(signals.values())
         return total_score >= 0.60, signals, total_score
@@ -923,7 +923,7 @@ class DayTradingDecisionStrategy(BaseStrategy):
             signals['时间止损'] = 0.30
 
         if position_data.get('atr_break_bollinger', False):
-            signals['波动率止�?] = 0.30
+            signals['波动率止�?] = 0.30
 
         total_score = sum(signals.values())
         return total_score >= 0.50, signals
@@ -936,15 +936,15 @@ class DayTradingDecisionStrategy(BaseStrategy):
         reasons = []
 
         if market_data.get('买卖价差', 0) > params['spread_threshold']:
-            reasons.append('流动性不�?)
+            reasons.append('流动性不�?)
 
-        if market_data.get('5分钟ATR', 0) < market_data.get('ATR均�?, 1) * params['low_volatility_threshold']:
-            reasons.append('波动率过�?)
+        if market_data.get('5分钟ATR', 0) < market_data.get('ATR均�?, 1) * params['low_volatility_threshold']:
+            reasons.append('波动率过�?)
 
         if market_data.get('重大事件窗口', False):
             reasons.append('重大事件窗口')
 
-        if market_data.get('大盘涨跌�?, 0) < -params['market_drop_warning']:
+        if market_data.get('大盘涨跌�?, 0) < -params['market_drop_warning']:
             reasons.append('系统风险预警')
 
         return len(reasons) > 0, reasons
@@ -977,4 +977,4 @@ class DayTradingDecisionStrategy(BaseStrategy):
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.0 | 2026-03-28 | 整合二板定龙�?S021-S022)、情绪周期五阶段(S023)、主力伏�?S024-S025)、一夜持股法(S026)、做T策略(S027-S028) |
+| v1.0 | 2026-03-28 | 整合二板定龙�?S021-S022)、情绪周期五阶段(S023)、主力伏�?S024-S025)、一夜持股法(S026)、做T策略(S027-S028) |

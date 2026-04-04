@@ -1,18 +1,18 @@
 ---
-module_id: TACTICS_DOC_001
-version: 1.0.0
+module_id: TACTICS_STRATEGY_TEMPLATES_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构模板标准
-applicable_scope: 文档模板与规�?
+applicable_scope: 文档模板与规�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 策略模板�?
+# 策略模板�?
 
 > 标准化策略开发模板，覆盖趋势跟踪、均值回归、市场中性、事件驱动等策略类型
 
@@ -23,29 +23,29 @@ implementation_status: 进行�?
 ```
 策略模板
 ├── 趋势跟踪策略
-�?  ├── 移动均线交叉策略
-�?  ├── 唐奇安通道策略
-�?  ├── 布林带趋势策�?
-�?  └── MACD趋势策略
-├── 均值回归策�?
-�?  ├── 布林带回归策�?
-�?  ├── RSI超买超卖策略
-�?  ├── 配对交易策略
-�?  └── 网格交易策略
-├── 市场中性策�?
-�?  ├── Alpha套利策略
-�?  ├── 统计套利策略
-�?  └── 因子中性策�?
+�?  ├── 移动均线交叉策略
+�?  ├── 唐奇安通道策略
+�?  ├── 布林带趋势策�?
+�?  └── MACD趋势策略
+├── 均值回归策�?
+�?  ├── 布林带回归策�?
+�?  ├── RSI超买超卖策略
+�?  ├── 配对交易策略
+�?  └── 网格交易策略
+├── 市场中性策�?
+�?  ├── Alpha套利策略
+�?  ├── 统计套利策略
+�?  └── 因子中性策�?
 ├── 事件驱动策略
-�?  ├── 财报发布策略
-�?  ├── 分析师评级策�?
-�?  └── 股权激励策�?
+�?  ├── 财报发布策略
+�?  ├── 分析师评级策�?
+�?  └── 股权激励策�?
 ├── 多因子选股策略
-�?  ├── 价值成长策�?
-�?  ├── 质量动量策略
-�?  └── 综合打分策略
+�?  ├── 价值成长策�?
+�?  ├── 质量动量策略
+�?  └── 综合打分策略
 └── 择时策略
-    ├── 技术指标择�?
+    ├── 技术指标择�?
     ├── 宏观择时
     └── 情绪择时
 ```
@@ -72,7 +72,7 @@ class StrategyStatus(Enum):
 class Signal:
     """交易信号"""
     symbol: str
-    direction: int          # 1: 做多, -1: 做空, 0: 无信�?
+    direction: int          # 1: 做多, -1: 做空, 0: 无信�?
     strength: float         # 信号强度 0-1
     signal_type: str         # 'entry', 'exit', 'adjust'
     price: float            # 信号产生时的价格
@@ -107,7 +107,7 @@ class StrategyBase(ABC):
 
     @abstractmethod
     def handle_data(self, data: pd.DataFrame) -> List[Signal]:
-        """处理市场数据，生成信�?
+        """处理市场数据，生成信�?
 
         参数:
             data: 包含 OHLCV 等数据的 DataFrame
@@ -119,24 +119,24 @@ class StrategyBase(ABC):
 
     @abstractmethod
     def risk_check(self, signal: Signal, data: pd.DataFrame) -> bool:
-        """风控检�?
+        """风控检�?
 
         返回:
-            True: 信号通过，可以执�?
-            False: 信号被风控拦�?
+            True: 信号通过，可以执�?
+            False: 信号被风控拦�?
         """
         pass
 
     def on_order_status(self, order_id: str, status: str, fill_price: float):
-        """订单状态更新回�?""
+        """订单状态更新回�?""
         pass
 
     def _init_params(self) -> Dict:
-        """初始化策略参�?""
+        """初始化策略参�?""
         return {}
 
     def get_state(self) -> Dict:
-        """获取策略当前状�?""
+        """获取策略当前状�?""
         return {
             'name': self.name,
             'status': self.status.value,
@@ -207,7 +207,7 @@ class MATrendStrategy(StrategyBase):
         return signals
 
     def risk_check(self, signal: Signal, data: pd.DataFrame) -> bool:
-        # 基础风控检�?
+        # 基础风控检�?
         if signal.strength < 0.1:
             return False
         return True
@@ -286,27 +286,27 @@ class DonchianChannelStrategy(StrategyBase):
 
 ---
 
-## 4. 均值回归策略模�?
+## 4. 均值回归策略模�?
 
-### 4.1 布林带回归策�?
+### 4.1 布林带回归策�?
 
 ```python
 class BollingerBandReversionStrategy(StrategyBase):
-    """布林带均值回归策�?""
+    """布林带均值回归策�?""
 
     def _init_params(self) -> Dict:
         return {
-            'bb_period': 20,            # 布林带周�?
+            'bb_period': 20,            # 布林带周�?
             'bb_std': 2.0,             # 标准差倍数
-            'entry_threshold': 0.9,    # 入场阈�?(0-1, 0.9为下轨附�?
-            'exit_threshold': 0.5,     # 出场阈�?(0.5为中�?
+            'entry_threshold': 0.9,    # 入场阈�?(0-1, 0.9为下轨附�?
+            'exit_threshold': 0.5,     # 出场阈�?(0.5为中�?
             'position_size': 0.1
         }
 
     def handle_data(self, data: pd.DataFrame) -> List[Signal]:
         signals = []
 
-        # 计算布林�?
+        # 计算布林�?
         middle = data['close'].rolling(self.params['bb_period']).mean()
         std = data['close'].rolling(self.params['bb_period']).std()
         upper = middle + self.params['bb_std'] * std
@@ -445,8 +445,8 @@ class MultiFactorSelectionStrategy(StrategyBase):
         return {
             'factors': ['PE', 'ROE', 'MOM20', 'VOLUME_RATIO'],
             'factor_weights': [0.25, 0.25, 0.25, 0.25],
-            'top_n': 50,               # 选前N只股�?
-            'rebalance_period': 5,      # 调仓周期（交易日�?
+            'top_n': 50,               # 选前N只股�?
+            'rebalance_period': 5,      # 调仓周期（交易日�?
             'position_size': 0.02      # 单只股票仓位
         }
 
@@ -460,11 +460,11 @@ class MultiFactorSelectionStrategy(StrategyBase):
 
         current_date = data['timestamp'].iloc[-1].date()
 
-        # 检查是否需要调�?
+        # 检查是否需要调�?
         if self._should_rebalance(current_date):
             new_stocks = self._select_stocks(data)
 
-            # 卖出不在新名单中的股�?
+            # 卖出不在新名单中的股�?
             for stock in self.selected_stocks:
                 if stock not in new_stocks:
                     stock_data = data[data['symbol'] == stock].iloc[-1]
@@ -477,7 +477,7 @@ class MultiFactorSelectionStrategy(StrategyBase):
                         timestamp=stock_data['timestamp']
                     ))
 
-            # 买入新名单中的股�?
+            # 买入新名单中的股�?
             for stock in new_stocks:
                 if stock not in self.selected_stocks:
                     stock_data = data[data['symbol'] == stock].iloc[-1]
@@ -519,16 +519,16 @@ class MultiFactorSelectionStrategy(StrategyBase):
 
             scores[symbol] = score
 
-        # 按分数排序，选前N�?
+        # 按分数排序，选前N�?
         sorted_stocks = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         return [s[0] for s in sorted_stocks[:self.params['top_n']]]
 
     def _get_factor_value(self, stock_data: pd.DataFrame, factor: str) -> float:
-        """获取因子�?""
+        """获取因子�?""
         return stock_data[factor].iloc[-1]
 
     def _normalize_factor(self, value: float, factor: str) -> float:
-        """因子标准化（Z-score�?""
+        """因子标准化（Z-score�?""
         # 简化版，实际应使用全市场截面标准化
         return (value - 0) / 1.0  # placeholder
 ```
@@ -577,8 +577,8 @@ class StrategyLifecycle:
         'PAPER_TRADING': '模拟交易',
         'LIVE_TRADING': '实盘运行',
         'PAUSED': '暂停',
-        'OPTIMIZING': '优化�?,
-        'DEPRECATED': '退�?
+        'OPTIMIZING': '优化�?,
+        'DEPRECATED': '退�?
     }
 
     TRANSITIONS = {

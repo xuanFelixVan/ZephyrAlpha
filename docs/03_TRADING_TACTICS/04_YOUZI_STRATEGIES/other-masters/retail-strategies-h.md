@@ -1,15 +1,15 @@
 ---
-module_id: TACTICS_DOC_001
-version: 1.6.0
+module_id: TACTICS_YOUZI_OTHER_H_001
+version: 1.6.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # retail-strategies-h.md
@@ -19,48 +19,48 @@ implementation_status: 进行�?
 > 遗漏内容整合补充
 >
 > **版本**：v1.6
-> **日期**�?026-03-28
-> **策略�?*：清风量化交易系�?.0
+> **日期**�?026-03-28
+> **策略�?*：清风量化交易系�?.0
 >
-> **配套文档**�?
+> **配套文档**�?
 > - [retail-strategies-g.md](./retail-strategies-g.md) - S050-S058
-> -  - 估值分�?
+> -  - 估值分�?
 
 ---
 
-## 1. PE/PB/PS估值体�?(S059)
+## 1. PE/PB/PS估值体�?(S059)
 
 > 来源：附录P
 >
 > 价值投资估值三剑客
 
-### 1.1 估值指标计�?
+### 1.1 估值指标计�?
 
 ```python
 class ValuationCalculator:
     """
     估值计算器
-    PE/PB/PS三位一�?
+    PE/PB/PS三位一�?
     """
 
     def calc_pe(self, price: float, eps: float) -> float:
-        """市盈�?""
+        """市盈�?""
         return price / eps if eps > 0 else None
 
     def calc_pb(self, price: float, book_per_share: float) -> float:
-        """市净�?""
+        """市净�?""
         return price / book_per_share if book_per_share > 0 else None
 
     def calc_ps(self, price: float, revenue_per_share: float) -> float:
-        """市销�?""
+        """市销�?""
         return price / revenue_per_share if revenue_per_share > 0 else None
 
     def comprehensive_valuation(self, stock_data: dict) -> dict:
         """
-        综合估�?
+        综合估�?
 
         返回:
-            valuation: 估值结�?
+            valuation: 估值结�?
         """
         price = stock_data['close']
 
@@ -91,12 +91,12 @@ class ValuationCalculator:
         return sum(1 for x in sorted_hist if x < value) / len(sorted_hist) * 100
 
     def get_valuation_recommendation(self, pe_pct: float, pb_pct: float) -> str:
-        """估值建�?""
+        """估值建�?""
         if pe_pct and pe_pct < 20 and pb_pct and pb_pct < 20:
-            return '低估，建议买�?
+            return '低估，建议买�?
         elif pe_pct and pe_pct > 80:
-            return '高估，建议卖�?
-        return '估值合�?
+            return '高估，建议卖�?
+        return '估值合�?
 ```
 
 ### 1.2 估值选股策略
@@ -104,16 +104,16 @@ class ValuationCalculator:
 ```python
 class ValuationStockSelector:
     """
-    估值选股�?
+    估值选股�?
     """
 
     def select_by_valuation(self, stock_universe: list,
                           valuation_data: dict) -> list:
         """
-        按估值筛�?
+        按估值筛�?
 
-        条件�?
-        - PE < 行业均�?
+        条件�?
+        - PE < 行业均�?
         - PB < 3
         - PE历史分位 < 30%
         """
@@ -142,7 +142,7 @@ class ValuationStockSelector:
         return sorted(selected, key=lambda x: x['score'], reverse=True)
 
     def calc_value_score(self, val: dict) -> float:
-        """计算价值得�?""
+        """计算价值得�?""
         score = 0
 
         if val.get('pe_percentile'):
@@ -169,11 +169,11 @@ class ValuationStockSelector:
 ```python
 class IntervalStrongSelector:
     """
-    区间三强选股�?
+    区间三强选股�?
 
-    选择条件�?
-    1. 区间涨幅�?0%
-    2. 相对行业超额收益�?0%
+    选择条件�?
+    1. 区间涨幅�?0%
+    2. 相对行业超额收益�?0%
     3. 区间换手率适中
     """
 
@@ -187,9 +187,9 @@ class IntervalStrongSelector:
         区间三强选股
 
         参数:
-            stock_universe: 股票�?
+            stock_universe: 股票�?
             market_data: 市场数据
-            lookback: 回溯�?
+            lookback: 回溯�?
 
         返回:
             selected: 选中股票
@@ -225,13 +225,13 @@ class IntervalStrongSelector:
         return (current_price - past_price) / past_price
 
     def calc_avg_turnover(self, price_data: dict, lookback: int) -> float:
-        """计算平均换手�?""
+        """计算平均换手�?""
         return price_data['turnover_rate'].iloc[-lookback:].mean()
 
     def check_criteria(self, interval_ret: float,
                       excess_ret: float,
                       turnover: float) -> bool:
-        """检查是否满足条�?""
+        """检查是否满足条�?""
         if interval_ret < 0:
             return False
 
@@ -247,16 +247,16 @@ class IntervalStrongSelector:
 
 > 来源：附录AP
 >
-> 市场情绪与指数背离分�?
+> 市场情绪与指数背离分�?
 
 ### 3.1 背离识别
 
 ```python
 class SentimentDivergenceAnalyzer:
     """
-    情绪背离分析�?
+    情绪背离分析�?
 
-    背离类型�?
+    背离类型�?
     - 顶背离：指数新高但情绪不跟随
     - 底背离：指数新低但情绪不跟随
     """
@@ -264,7 +264,7 @@ class SentimentDivergenceAnalyzer:
     def detect_divergence(self, index_data: dict,
                         sentiment_data: dict) -> list:
         """
-        检测背�?
+        检测背�?
 
         参数:
             index_data: 指数数据
@@ -280,36 +280,36 @@ class SentimentDivergenceAnalyzer:
 
         if self.is_top_divergence(price_trend, sentiment_trend):
             divergences.append({
-                'type': '顶背�?,
+                'type': '顶背�?,
                 'signal': '看跌',
-                'strength': '�?
+                'strength': '�?
             })
 
         if self.is_bottom_divergence(price_trend, sentiment_trend):
             divergences.append({
-                'type': '底背�?,
+                'type': '底背�?,
                 'signal': '看涨',
-                'strength': '�?
+                'strength': '�?
             })
 
         return divergences
 
     def is_top_divergence(self, price_trend: dict,
                         sentiment_trend: dict) -> bool:
-        """顶背�?""
+        """顶背�?""
         return (price_trend['direction'] == 'up' and
                 price_trend['strength'] > sentiment_trend['strength'])
 
     def is_bottom_divergence(self, price_trend: dict,
                            sentiment_trend: dict) -> bool:
-        """底背�?""
+        """底背�?""
         return (price_trend['direction'] == 'down' and
                 sentiment_trend['direction'] == 'up')
 ```
 
 ---
 
-## 4. 仓位管理与止损止�?(S062)
+## 4. 仓位管理与止损止�?(S062)
 
 > 来源：附录AX
 >
@@ -320,7 +320,7 @@ class SentimentDivergenceAnalyzer:
 ```python
 class PositionManager:
     """
-    仓位管理�?
+    仓位管理�?
     """
 
     def __init__(self, max_position: float = 0.30):
@@ -347,7 +347,7 @@ class PositionManager:
         """
         根据回撤调整仓位
 
-        回撤越大，仓位越�?
+        回撤越大，仓位越�?
         """
         if current_drawdown < 0.05:
             return 1.0
@@ -375,7 +375,7 @@ class StopLossTakeProfit:
     def calc_stop_loss(self, buy_price: float,
                      market_volatility: float) -> float:
         """
-        计算止损�?
+        计算止损�?
 
         动态止损基于波动率
         """
@@ -388,7 +388,7 @@ class StopLossTakeProfit:
     def calc_take_profit(self, buy_price: float,
                        market_state: str) -> float:
         """
-        计算止盈�?
+        计算止盈�?
         """
         if market_state == '强势':
             return buy_price * (1 + self.take_profit_pct * 1.5)
@@ -415,7 +415,7 @@ class StopLossTakeProfit:
 ```python
 class TradingReview:
     """
-    交易复盘�?
+    交易复盘�?
     """
 
     def daily_review(self, trades: list, market_data: dict) -> dict:
@@ -434,7 +434,7 @@ class TradingReview:
         }
 
     def summarize_trades(self, trades: list) -> dict:
-        """交易汇�?""
+        """交易汇�?""
         total_trades = len(trades)
         profitable = len([t for t in trades if t['pnl'] > 0])
 
@@ -462,20 +462,20 @@ class TradingReview:
 
 ## 6. 一夜持股法 (S064)
 
-> 超短线持仓策�?
+> 超短线持仓策�?
 
 ### 6.1 选股条件
 
 ```python
 class OvernightHoldingSelector:
     """
-    一夜持股法选股�?
+    一夜持股法选股�?
 
-    核心：收盘前买入，次日开盘卖�?
-    选股条件�?
+    核心：收盘前买入，次日开盘卖�?
+    选股条件�?
     1. 当日涨幅3-8%
-    2. 成交量放�?
-    3. 突破关键阻力�?
+    2. 成交量放�?
+    3. 突破关键阻力�?
     4. 板块情绪高涨
     """
 
@@ -498,7 +498,7 @@ class OvernightHoldingSelector:
         return sorted(candidates, key=lambda x: x['score'], reverse=True)[:20]
 
     def meet_conditions(self, data: dict) -> bool:
-        """检查条�?""
+        """检查条�?""
         if not (3 <= data['change_pct'] <= 8):
             return False
 
@@ -511,28 +511,28 @@ class OvernightHoldingSelector:
         return True
 
     def calc_overnight_score(self, data: dict) -> float:
-        """计算一夜持股评�?""
+        """计算一夜持股评�?""
         return data['change_pct'] * 0.3 + data['volume_ratio'] * 0.4 + data['breakout_strength'] * 0.3
 ```
 
 ---
 
-## 7. 次新股低�?(S065)
+## 7. 次新股低�?(S065)
 
 > 来源：附录CA
 >
-> 次新股价值发�?
+> 次新股价值发�?
 
-### 7.1 次新股筛�?
+### 7.1 次新股筛�?
 
 ```python
 class SmallCapValueSelector:
     """
     次新股低估筛选器
 
-    上市时间�?-3�?
-    市值：< 100�?
-    估值：PE < 行业均�?0%
+    上市时间�?-3�?
+    市值：< 100�?
+    估值：PE < 行业均�?0%
     """
 
     def select_small_cap_value(self, stock_universe: list) -> list:
@@ -554,7 +554,7 @@ class SmallCapValueSelector:
         return sorted(selected, key=lambda x: x['value_score'], reverse=True)
 
     def is_small_cap(self, stock: dict) -> bool:
-        """小市�?""
+        """小市�?""
         return stock.get('market_cap', float('inf')) < 100
 
     def is_value_stock(self, stock: dict) -> bool:
@@ -562,7 +562,7 @@ class SmallCapValueSelector:
         return stock.get('pe', float('inf')) < stock.get('industry_pe', 20) * 0.5
 
     def is_growing(self, stock: dict) -> bool:
-        """成长�?""
+        """成长�?""
         return stock.get('profit_growth', 0) > 10
 ```
 
@@ -579,13 +579,13 @@ class SmallCapValueSelector:
 ```python
 class TradingPsychologyAnalyzer:
     """
-    交易心理分析�?
+    交易心理分析�?
 
-    常见心理偏差�?
-    - 损失厌恶：亏损时不止�?
-    - 过度自信：频繁交�?
+    常见心理偏差�?
+    - 损失厌恶：亏损时不止�?
+    - 过度自信：频繁交�?
     - 锚定效应：紧盯买入价
-    - 从众心理：追涨杀�?
+    - 从众心理：追涨杀�?
     """
 
     def analyze_psychology(self, trades: list) -> dict:
@@ -604,14 +604,14 @@ class TradingPsychologyAnalyzer:
         }
 
     def check_loss_aversion(self, trades: list) -> float:
-        """检查损失厌�?""
+        """检查损失厌�?""
         losing_trades = [t for t in trades if t['pnl'] < 0]
         held_to_loss = [t for t in losing_trades if t.get('holding_days', 0) > 5]
 
         return len(held_to_loss) / len(losing_trades) if losing_trades else 0
 
     def check_overconfidence(self, trades: list) -> float:
-        """检查过度自�?""
+        """检查过度自�?""
         return len(trades) / 30 if len(trades) > 30 else 0
 ```
 
@@ -630,8 +630,8 @@ class MovingAverageStrategy:
     """
     均线策略
 
-    核心理念�?
-    - 5日线操作�?
+    核心理念�?
+    - 5日线操作�?
     - 10日线判断趋势
     - 20日线决策买卖
     """
