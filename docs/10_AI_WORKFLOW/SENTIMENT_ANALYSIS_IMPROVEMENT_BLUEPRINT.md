@@ -14,7 +14,7 @@ included_modules:
   - AI虚拟研究团队
 ---
 
-# Layer 3长期改进综合蓝图 (Long-Term Improvement Blueprint)
+# 舆情分析层长期改进综合蓝图 (Long-Term Improvement Blueprint)
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02

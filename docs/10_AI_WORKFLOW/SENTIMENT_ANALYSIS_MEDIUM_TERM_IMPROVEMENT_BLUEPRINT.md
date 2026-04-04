@@ -15,7 +15,7 @@ included_modules:
   - 多语言支持
 ---
 
-# Layer 3中期改进综合蓝图 (Medium-Term Improvement Blueprint)
+# 舆情分析层中期改进综合蓝图 (Medium-Term Improvement Blueprint)
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
