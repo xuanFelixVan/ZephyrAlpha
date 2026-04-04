@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_FREE_SOURCES_001
 version: 3.0.0
 status: Active
@@ -16,7 +16,7 @@ implementation_status: ����??--- ����??
 > **�����ĵ�**??
 > - ���ĵ���[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 > - ���ӿ�������[FACTOR_MASTER_INDEX.md](IFIND/FACTOR_MASTER_INDEX.md)
-> - ����Դ������[����??README](./README.md)
+> - ����Դ������[数据源索引](./INDEX.md)
 
 ***
 
@@ -1123,4 +1123,5 @@ class WeatherDataProvider:
 |------|------|----------|
 | v1.0 | 2026-03-28 | ��ʼ�汾�����ϸ�¼AA����Դ������??|
 | v1.1 | 2026-03-28 | ���ϸ�¼AK�������ݿ�ܣ�������??�������ݴ��� |
+
 
