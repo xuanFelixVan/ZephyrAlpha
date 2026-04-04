@@ -283,7 +283,7 @@ Layer 11: 战略决策层 (Strategic Decision) 🆕
 | 文档 | 说明 |
 |------|------|
 | [MARKET_REGIME.md](./MARKET_REGIME.md) | 市场状态识别 |
-| [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) | 人机协作流程 |
+| [HUMAN_AI_INTEGRATION_BLUEPRINT.md](./HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 人机协作流程 |
 | [TECH_STACK.md](./TECH_STACK.md) | 技术栈选择 |
 | [README.md](./README.md) | 框架总览 |
 
@@ -304,7 +304,7 @@ Layer 11: 战略决策层 (Strategic Decision) 🆕
 |------|------|
 | **[DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md)** | **🆕 P0级** 数据质量监控蓝图 |
 | **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | **🆕 P0级** 实时风险监控蓝图 |
-| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0级** 压力测试系统蓝图 |
+| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0级** 压力测试系统蓝图 |
 | **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | **🆕 P0级** 合规监控系统蓝图 |
 
 #### 顶层架构体系 (Layer 9-11)
