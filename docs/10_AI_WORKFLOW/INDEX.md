@@ -77,9 +77,9 @@ Layer 8.5: AI工作记录�?(AI Workflow Logging Layer)
 
 | 模块ID | 模块名称 | 版本 | 状�?| 蓝图文档 | 核心职责 |
 |--------|---------|------|------|----------|----------|
-| **L3_DLSA_001** | 深度学习情感分析模块 | 1.0 | Active | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | 深度学习情感分析、多维度情感评估、金融领域专业模�?|
-| **L3_RTAS_001** | 实时预警系统模块 | 1.0 | Active | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时预警、多渠道推送、规则引擎、预警历史管�?|
-| **L3_VTF_001** | 验证与测试框架模�?| 1.0 | Active | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证模块、模型验证、策略验�?|
+| **AIWF_DLSA_001** | 深度学习情感分析模块 | 1.0 | Active | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | 深度学习情感分析、多维度情感评估、金融领域专业模�?|
+| **AIWF_RTAS_001** | 实时预警系统模块 | 1.0 | Active | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时预警、多渠道推送、规则引擎、预警历史管�?|
+| **AIWF_VTF_001** | 验证与测试框架模�?| 1.0 | Active | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证模块、模型验证、策略验�?|
 | **AIWF_DQLM_001** | 数据质量与血缘管理模�?| 1.0 | Active | [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md) | 数据质量评分、数据血缘追踪、异常检测、质量报�?|
 | **AIWF_OKM_001** | 运维知识管理模块 | 1.0 | Active | [OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 知识库构建、运维经验沉淀、故障诊断、知识检�?|
 | **AIWF_MPVM_001** | 模型性能与版本管理模�?| 1.0 | Active | [MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md](./MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md) | 模型版本控制、性能监控、模型回滚、性能对比 |
