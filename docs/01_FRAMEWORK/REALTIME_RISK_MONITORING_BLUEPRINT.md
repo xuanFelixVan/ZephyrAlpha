@@ -1,21 +1,50 @@
 ---
 module_id: FRAMEWORK_RISK_MONITORING_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席架构�?standard_type: 专业机构级实时风险监控蓝�?applicable_scope: 全系统风险管�?compliance_level: 顶级专业标准
+last_updated: 2026-04-04
+owner: 首席架构师
+standard_type: 专业机构级实时风险监控蓝图
+applicable_scope: 全系统风险管理
+compliance_level: 顶级专业标准
 reference_models: ["Two Sigma Risk Monitoring", "Bridgewater Risk Dashboard", "Citadel Risk Control"]
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+related_documents:
+  downstream:
+    - 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md (风控规则体系)
+    - 04_EXECUTION/05_RISK_ENGINE/README.md (风控规则引擎实现)
+    - 05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md (实时风险对冲引擎)
 ---
 
 # 实时风险监控仪表板蓝图
-> **版本**: v1.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-03
+> **更新日期**: 2026-04-04
 > **实施周期**: 2周
 > **核心理念**: Two Sigma实时风险监控 - 风险管理是量化系统的核心,必须实时、可视化、可预警
 > **目标**: 实现专业机构级的实时风险监控,确保风险可控、可测、可预警
+
+---
+
+## 文档层级关系
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  本文档: 框架层 - 定义整体架构和设计原则                      │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  战术层: 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md       │
+│  定义风控规则体系和三层防御架构                               │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  执行层: 04_EXECUTION/05_RISK_ENGINE/README.md               │
+│  实现风控规则引擎核心功能                                     │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -27,10 +56,10 @@ implementation_status: 设计阶段
 - 规划系统架构层次和核心组件接口
 - 制定风险监控的关键原则和标准
 
-**实施层文档**: [实时风险对冲引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
-- 具体实现方案和技术细节
-- 核心子系统设计和代码示例
-- 部署方案和实施路径
+**下游文档**:
+- [风控规则体系蓝图](../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) - 战术层规则定义
+- [风控规则引擎](../04_EXECUTION/05_RISK_ENGINE/README.md) - 执行层实现
+- [实时风险对冲引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) - 实施层细节
 
 ---
 

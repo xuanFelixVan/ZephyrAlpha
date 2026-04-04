@@ -1,23 +1,58 @@
 ---
 module_id: TACTICS_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-02
+last_updated: 2026-04-04
 owner: 首席文档架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统架构设计
-compliance_level: 初始标准
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+related_documents:
+  upstream:
+    - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (框架层架构定义)
+  downstream:
+    - 04_EXECUTION/05_RISK_ENGINE/README.md (执行层实现)
+    - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成器)
 ---
-
 
 # 风控规则体系蓝图
 
 > 清风量化系统 v5.0 的风险控制规则体系
 > **索引**: `RSK_001`
+> **版本**: v1.0.1
+> **更新**: 2026-04-04
+
+---
+
+## 文档层级关系
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  框架层: 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md  │
+│  定义实时风险监控的整体架构和设计原则                          │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  本文档: 战术层 - 定义风控规则体系和三层防御架构               │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  执行层: 04_EXECUTION/05_RISK_ENGINE/README.md               │
+│  实现风控规则引擎核心功能                                     │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**上游文档**: [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 框架层架构定义
+
+**下游文档**:
+- [风控规则引擎](../../04_EXECUTION/05_RISK_ENGINE/README.md) - 执行层实现
+- [风险报告生成器](./RISK_REPORT.md) - 报告生成
+
+---
 
 
 ## 1. 设计原则
