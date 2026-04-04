@@ -1,3 +1,21 @@
+---
+module_id: L3_VTF_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-03
+last_updated: 2026-04-04
+owner: 首席架构师
+standard_type: 专业机构级蓝图
+applicable_scope: 验证与测试框架模块
+compliance_level: 专业标准
+layer: Layer 3 - 舆情分析层
+priority: P1
+estimated_effort: 60h
+integrated_modules:
+  - L3_ABTF_001
+  - L3_BVM_001
+---
+
 # 验证与测试框架蓝图 (Validation & Testing Framework Blueprint)
 
 > **模块ID**: L3_VTF_001

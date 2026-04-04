@@ -118,6 +118,16 @@ implementation_status: 活跃维护
 
 ## 🤖 机器学习层蓝图 (Layer 4)
 
+### P0级核心蓝图 (必须补充)
+
+| 蓝图名称 | module_id | 说明 | 优先级 |
+|---------|-----------|------|--------|
+| [实验追踪系统蓝图](./EXPERIMENT_TRACKING_BLUEPRINT.md) | EXP-001 | 实验记录、版本对比、可复现性、团队协作 | P0 |
+| [超参数优化系统蓝图](./HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) | HPO-001 | 自动调参、贝叶斯优化、多保真优化 | P0 |
+| [分布式训练框架蓝图](./DISTRIBUTED_TRAINING_BLUEPRINT.md) | DIST-001 | 数据并行、模型并行、ZeRO优化 | P0 |
+| [模型调试工具蓝图](./MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md) | DEBUG-001 | 梯度分析、激活分析、性能分析 | P0 |
+| [推理加速引擎蓝图](./INFERENCE_ACCELERATION_BLUEPRINT.md) | INF-001 | 模型量化、算子融合、TensorRT编译 | P0 |
+
 ### P1级核心蓝图 (专业机构标配)
 
 | 蓝图名称 | module_id | 说明 | 优先级 |

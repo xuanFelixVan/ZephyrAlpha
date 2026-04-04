@@ -3,7 +3,7 @@ module_id: OPEN_SOURCE_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-04
 owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 开源项目集成与管理
@@ -19,6 +19,7 @@ related_documents:
   - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
   - TECH_STACK.md
+  - OPEN_SOURCE_MODULE_SOLUTION.md
 ---
 
 # 开源项目集成方案蓝图
@@ -28,6 +29,21 @@ related_documents:
 > **实施周期**: 3周
 > **核心定位**: 借力开源生态,加速系统建设
 > **技术栈**: MLflow + Qlib + QuantHedgeFund
+
+---
+
+## 📋 文档职责说明
+
+**本文档职责**: **实施方案和技术细节**
+- 架构设计和集成策略
+- 核心开源项目集成代码示例
+- 部署方案和配置
+- 测试和维护方案
+
+**相关文档**: [开源模块完整方案](./OPEN_SOURCE_MODULE_SOLUTION.md)
+- 开源模块全景图和架构映射
+- 核心开源项目详细介绍
+- 选型对比和推荐理由
 
 ---
 
