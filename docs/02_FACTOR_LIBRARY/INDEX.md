@@ -61,6 +61,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
+| [因子筛选策略](./01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) | 5900因子筛选流程（4阶段） | ⭐⭐⭐⭐⭐ |
 | [因子挖掘指南](./01_STANDARDS/FACTOR_MINING_GUIDE.md) | 因子挖掘方法论 | ⭐⭐⭐⭐ |
 | [因子验证指南](./01_STANDARDS/FACTOR_VALIDATION_GUIDE.md) | 因子验证流程 | ⭐⭐⭐⭐ |
 | [研究管理](./01_STANDARDS/RESEARCH_MANAGEMENT.md) | 研究管理规范 | ⭐⭐⭐⭐ |

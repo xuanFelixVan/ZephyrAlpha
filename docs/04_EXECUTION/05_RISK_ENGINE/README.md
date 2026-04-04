@@ -1,20 +1,60 @@
 ---
-module_id: EXECUTION_README_001
-version: 1.0.0
+module_id: EXECUTION_RISK_ENGINE_001
+version: 2.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: 2026-04-04
 owner: 首席文档架构师
 standard_type: 专业量化机构交易执行标准
 applicable_scope: 交易执行与监控
-compliance_level: 初始标准
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
+related_documents:
+  - 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md (风控规则体系框架)
+  - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成器)
+  - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风险监控仪表板)
 ---
 
 # 风控规则引擎
 
-> Layer 6: 风险监控 - 风险规则引擎、实时检查、告警触发
+> **Layer 6: 风险监控** - 风险规则引擎、实时检查、告警触发
+>
+> **版本**: v2.0 (合并版)
+> **更新**: 2026-04-04
+> **说明**: 本文档整合了原 `03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md` 的内容
+
+---
+
+## 设计原则
+
+| 原则 | 说明 |
+|------|------|
+| **规则即配置** | 风控规则以YAML配置，不写死代码 |
+| **三层防御** | 事前检查 → 事中监控 → 事后分析 |
+| **快速失败** | 风控触发时立即行动，不等待人工 |
+| **完整审计** | 所有风控事件完整记录 |
+
+---
+
+## 文档层级关系
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  框架层: 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md  │
+│  (定义实时风险监控的整体架构和设计原则)                        │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  战术层: 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md       │
+│  (定义风控规则体系和三层防御架构)                             │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  执行层: 本文档 (04_EXECUTION/05_RISK_ENGINE/README.md)      │
+│  (实现风控规则引擎核心功能)                                   │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
