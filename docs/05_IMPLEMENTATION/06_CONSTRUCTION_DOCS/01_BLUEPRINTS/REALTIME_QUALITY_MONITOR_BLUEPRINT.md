@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_QUALITY_MONITOR_001
 version: 1.0.0
 status: Active
@@ -62,7 +62,7 @@ implementation_progress: 0%
 ### 2.3 Layer定位
 
 - **Layer归属**: Layer 1 - 数据预处理层
-- **职责范围**: 实时数据质量监控、告警、可视化
+- **职责范围**: 实时数据质量监控和检测（告警功能由[ENHANCED_ALERT_SYSTEM_BLUEPRINT.md](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)提供）
 - **上下层接?*:
   - 上层依赖: Layer 2-8（提供质量监控服务）
   - 下层依赖: Layer 0-1（监控数据源和预处理质量?
