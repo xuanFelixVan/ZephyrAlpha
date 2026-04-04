@@ -1,5 +1,5 @@
 ---
-module_id: L3_RTAS_001
+module_id: AIWF_RTAS_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02

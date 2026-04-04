@@ -1,5 +1,5 @@
 ---
-module_id: L3_DQLM_001
+module_id: AIWF_DQLM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
@@ -8,11 +8,11 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 数据质量与血缘管理模块
 compliance_level: 专业标准
-layer: Layer 3 - 舆情分析层
+layer: 舆情分析层
 priority: P0
 estimated_effort: 40h
 integrated_modules:
-  - L3_DQM_001
+  - AIWF_DQM_001
   - L3_DLT_001
 ---
 

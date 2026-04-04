@@ -1,5 +1,5 @@
 ---
-module_id: L3_DLSA_001
+module_id: AIWF_DLSA_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
@@ -8,7 +8,7 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 深度学习情感分析模块
 compliance_level: 专业标准
-layer: Layer 3 - 舆情分析层
+layer: 舆情分析层
 priority: P0
 estimated_effort: 60h
 ---

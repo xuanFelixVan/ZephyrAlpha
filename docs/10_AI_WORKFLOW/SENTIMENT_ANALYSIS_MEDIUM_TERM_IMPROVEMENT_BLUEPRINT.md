@@ -26,7 +26,7 @@ included_modules:
 
 ## 📋 执行摘要
 
-本文档整合了Layer 3舆情分析层中期改进（第4-6个月）的三个核心模块蓝图：
+本文档整合了舆情分析层中期改进（第4-6个月）的三个核心模块蓝图：
 1. **金融知识图谱模块** (Financial Knowledge Graph)
 2. **流式处理架构** (Stream Processing Architecture)
 3. **多语言支持模块** (Multilingual Sentiment Analyzer)
@@ -449,7 +449,7 @@ included_modules:
 
 | 文档 | 说明 |
 |------|------|
-| [Layer 3改进实施计划](./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md) | 总体实施计划 |
+| [舆情分析层改进实施计划](./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md) | 总体实施计划 |
 | [舆情分析层对比报告](./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md) | 专业对比分析 |
 | [短期改进蓝图](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) | 短期改进模块 |
 

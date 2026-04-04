@@ -25,7 +25,7 @@ included_modules:
 
 ## 📋 执行摘要
 
-本文档整合了Layer 3舆情分析层长期改进（第7-12个月）的两个高级模块蓝图：
+本文档整合了舆情分析层长期改进（第7-12个月）的两个高级模块蓝图：
 1. **多模态情感分析模块** (Multimodal Sentiment Analyzer)
 2. **AI虚拟研究团队** (AI Virtual Research Team)
 
@@ -532,7 +532,7 @@ included_modules:
 
 | 文档 | 说明 |
 |------|------|
-| [Layer 3改进实施计划](./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md) | 总体实施计划 |
+| [舆情分析层改进实施计划](./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md) | 总体实施计划 |
 | [舆情分析层对比报告](./LAYER3_SENTIMENT_ANALYSIS_COMPARISON_REPORT.md) | 专业对比分析 |
 | [中期改进蓝图](./LAYER3_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md) | 中期改进模块 |
 
