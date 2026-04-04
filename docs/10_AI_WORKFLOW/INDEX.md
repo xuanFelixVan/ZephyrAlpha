@@ -2,7 +2,7 @@
 title: AI工作流模块总索引
 version: 1.0.0
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-04
 owner: 首席架构师
 standard_type: 专业机构级索引
 applicable_scope: AI工作流管理
@@ -15,6 +15,16 @@ compliance_level: 专业标准
 > **创建日期**: 2026-04-02  
 > **核心定位**: AI辅助开发模式的核心基础设施  
 > **技术栈**: MLflow + SQLite + Python + Streamlit
+
+---
+
+## 📚 快速导航
+
+### 二级索引
+
+| 索引名称 | 适用范围 | 路径 | 说明 |
+|---------|---------|------|------|
+| **舆情分析层改进蓝图文档索引** | 舆情分析层改进 | [SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md) | 舆情分析层短期、中期、长期改进文档总索引 |
 
 ---
 
@@ -138,7 +148,49 @@ Layer 8.5: AI工作记录层 (AI Workflow Logging Layer)
 | **LIVE_TRADING_MONITOR_001** | 实盘监控模块 | 1.0 | Active | [LIVE_TRADING_MONITOR_BLUEPRINT.md](./LIVE_TRADING_MONITOR_BLUEPRINT.md) | 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警 |
 | **PERFORMANCE_ANALYSIS_001** | 性能分析模块 | 1.0 | Active | [PERFORMANCE_ANALYSIS_BLUEPRINT.md](./PERFORMANCE_ANALYSIS_BLUEPRINT.md) | 性能指标采集、性能瓶颈识别、性能报告生成、优化建议生成、性能趋势分析 |
 
-### 3.2 模块依赖关系
+### 3.2 舆情分析模块
+
+| 模块ID | 模块名称 | 版本 | 状态 | 蓝图文档 | 核心职责 |
+|--------|---------|------|------|----------|----------|
+| **L3_DLSA_001** | 深度学习情感分析模块 | 1.0 | Active | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | 深度学习情感分析、多维度情感评估、金融领域专业模型 |
+| **L3_RTAS_001** | 实时预警系统模块 | 1.0 | Active | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时预警、多渠道推送、规则引擎、预警历史管理 |
+| **L3_VTF_001** | 验证与测试框架模块 | 1.0 | Active | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证模块、模型验证、策略验证 |
+| **AIWF_DQLM_001** | 数据质量与血缘管理模块 | 1.0 | Active | [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md) | 数据质量评分、数据血缘追踪、异常检测、质量报告 |
+| **AIWF_OKM_001** | 运维知识管理模块 | 1.0 | Active | [OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 知识库构建、运维经验沉淀、故障诊断、知识检索 |
+| **AIWF_MPVM_001** | 模型性能与版本管理模块 | 1.0 | Active | [MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md](./MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md) | 模型版本控制、性能监控、模型回滚、性能对比 |
+
+### 3.3 舆情分析改进蓝图
+
+| 文档类型 | 文档名称 | 版本 | 状态 | 文档路径 | 核心职责 |
+|---------|---------|------|------|----------|----------|
+| **改进蓝图** | 舆情分析层长期改进蓝图 | 1.0 | Active | [SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md) | 多模态分析、AI虚拟研究团队（第7-12个月） |
+| **改进蓝图** | 舆情分析层中期改进蓝图 | 1.0 | Active | [SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md) | 知识图谱、流式处理、多语言支持（第4-6个月） |
+
+### 3.4 技术规格文档
+
+| 文档类型 | 文档名称 | 版本 | 状态 | 文档路径 | 核心职责 |
+|---------|---------|------|------|----------|----------|
+| **技术规格** | 短期改进技术规格书 | 1.1 | Active | [SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md](./SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md) | 数据源扩展、深度学习情感分析、实时预警系统技术规格 |
+| **技术规格** | 中期改进技术规格书 | 1.0 | Active | [SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md](./SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md) | 知识图谱、流式处理、多语言支持技术规格 |
+| **技术规格** | 长期改进技术规格书 | 1.0 | Active | [SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md](./SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md) | 多模态分析、AI虚拟研究团队技术规格 |
+
+### 3.5 项目管理文档
+
+| 文档类型 | 文档名称 | 版本 | 状态 | 文档路径 | 核心职责 |
+|---------|---------|------|------|----------|----------|
+| **项目管理** | 项目管理文档 | 1.1 | Active | [SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md](./SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md) | WBS分解、甘特图、里程碑计划、资源分配 |
+| **风险管理** | 风险管理文档 | 1.1 | Active | [SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md](./SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md) | 风险识别、风险评估、风险缓解措施 |
+| **测试计划** | 测试计划文档 | 1.0 | Active | [SENTIMENT_ANALYSIS_TEST_PLAN.md](./SENTIMENT_ANALYSIS_TEST_PLAN.md) | 测试策略、单元测试、集成测试、性能测试 |
+| **实施细节** | 实施细节文档 | 1.0 | Active | [SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md](./SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md) | 环境搭建、代码示例、配置模板、部署架构 |
+| **文档索引** | 改进蓝图文档索引 | 1.0 | Active | [SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md) | 舆情分析层改进蓝图文档总索引 |
+
+### 3.6 其他文档
+
+| 文档类型 | 文档名称 | 版本 | 状态 | 文档路径 | 核心职责 |
+|---------|---------|------|------|----------|----------|
+| **解决方案** | 开源模块解决方案 | 1.0 | Active | [OPEN_SOURCE_MODULE_SOLUTION.md](./OPEN_SOURCE_MODULE_SOLUTION.md) | 开源模块选型、集成方案、替代方案 |
+
+### 3.7 模块依赖关系
 
 ```
 ┌─────────────────────────────────────────────────────────┐

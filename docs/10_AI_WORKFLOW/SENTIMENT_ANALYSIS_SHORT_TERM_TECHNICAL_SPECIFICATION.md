@@ -1,3 +1,19 @@
+---
+module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001
+version: 1.1.0
+status: Active
+created_date: 2026-04-02
+last_updated: 2026-04-04
+owner: 首席架构师
+standard_type: 技术规格书
+applicable_scope: 舆情分析层短期改进模块
+compliance_level: 专业标准
+applicable_modules:
+  - 数据源扩展
+  - 深度学习情感分析
+  - 实时预警系统
+---
+
 # 舆情分析层短期改进模块详细技术规格书
 
 > **版本**: v1.1

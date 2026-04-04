@@ -1,3 +1,20 @@
+---
+module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-02
+last_updated: 2026-04-04
+owner: 首席架构师
+standard_type: 专业机构级蓝图
+applicable_scope: 舆情分析层中期改进模块
+compliance_level: 专业标准
+implementation_period: 第4-6个月
+included_modules:
+  - 金融知识图谱
+  - 流式处理架构
+  - 多语言支持
+---
+
 # Layer 3中期改进综合蓝图 (Medium-Term Improvement Blueprint)
 
 > **版本**: v1.0
