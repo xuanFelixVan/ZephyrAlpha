@@ -4,15 +4,15 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
 
-# 批处理推理优化蓝�?
+# 批处理推理优化蓝�?
 > **蓝图编号**: `BATCH-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -20,7 +20,7 @@ priority: P2
 
 批处理推理优化提升离线推理效率：
 
-- **吞吐优化**: 最大化吞吐�?- **资源利用**: 高效利用硬件
+- **吞吐优化**: 最大化吞吐�?- **资源利用**: 高效利用硬件
 - **成本降低**: 降低计算成本
 - **调度优化**: 智能任务调度
 
@@ -38,24 +38,81 @@ class BatchInferenceOptimizer:
         max_batch_size: int = 1024,
         num_workers: int = 4
     ):
-        """初始化批处理优化�?        
+        """初始化批处理优化�?        
         Args:
             model: 模型
-            max_batch_size: 最大批�?            num_workers: 工作进程�?        """
+            max_batch_size: 最大批�?            num_workers: 工作进程�?        """
         pass
     
     def optimize_batch(
         self,
         inputs: List[torch.Tensor]
     ) -> torch.Tensor:
-        """优化批处�?        
+        """优化批处�?        
         Args:
             inputs: 输入列表
             
         Returns:
-            torch.Tensor: 批处理结�?        """
+            torch.Tensor: 批处理结�?        """
         pass
 ```
+
+---
+
+## 6. 开源项目推荐
+
+### 推荐方案: Triton + ONNX Runtime
+
+| 项目 | 成熟度 | 许可证 | 专业机构使用 | GitHub Stars |
+|------|--------|--------|--------------|--------------|
+| [Triton Inference Server](https://github.com/triton-inference-server/server) | ⭐⭐⭐⭐⭐ | BSD | NVIDIA | 8k+ |
+| [ONNX Runtime](https://github.com/microsoft/onnxruntime) | ⭐⭐⭐⭐⭐ | MIT | Microsoft | 14k+ |
+| [TensorRT](https://developer.nvidia.com/tensorrt) | ⭐⭐⭐⭐⭐ | 商业 | NVIDIA | - |
+| [vLLM](https://github.com/vllm-project/vllm) | ⭐⭐⭐⭐⭐ | Apache 2.0 | 广泛使用 | 25k+ |
+
+### Triton 动态批处理
+
+```python
+# model_config.pbtxt
+dynamic_batching {
+    preferred_batch_size: [ 1, 2, 4, 8 ]
+    max_queue_delay_microseconds: 100
+}
+```
+
+### ONNX Runtime 批处理
+
+```python
+import onnxruntime as ort
+
+session = ort.InferenceSession("model.onnx")
+
+# 批量推理
+batch_inputs = preprocess_batch(inputs)
+outputs = session.run(None, {"input": batch_inputs})
+```
+
+### vLLM 批处理 (LLM专用)
+
+```python
+from vllm import LLM, SamplingParams
+
+llm = LLM(model="meta-llama/Llama-2-7b-hf")
+sampling_params = SamplingParams(temperature=0.8, top_p=0.95)
+
+# 自动批处理
+outputs = llm.generate(prompts, sampling_params)
+```
+
+### 实施建议
+
+| 方案 | 适用场景 | 特点 |
+|------|----------|------|
+| Triton | 生产部署 | 动态批处理、多模型 |
+| ONNX Runtime | CPU推理 | 跨平台、高效 |
+| vLLM | LLM推理 | PagedAttention、高吞吐 |
+
+**推荐**: 使用Triton进行生产部署，vLLM用于LLM推理。
 
 ---
 

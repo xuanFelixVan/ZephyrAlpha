@@ -23,6 +23,7 @@ parent_document: ../INDEX.md
 | 文件 | 职责 | 状态 |
 |------|------|------|
 | [BLUEPRINT.md](BLUEPRINT.md) | 数据清洗引擎蓝图 | Active |
+| [CLEANING_RULES.md](CLEANING_RULES.md) | 数据清洗规则配置 | Active |
 
 ---
 

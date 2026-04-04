@@ -1,15 +1,15 @@
 ---
-module_id: EXECUTION_DOC_001
-version: 1.0.0
+module_id: EXEC_TCA_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 交易成本分析 (TCA)
@@ -20,14 +20,14 @@ implementation_status: 进行�?
 
 ## 1. 交易成本组成
 
-| 成本类型 | 说明 | 典型�?|
+| 成本类型 | 说明 | 典型�?|
 |---------|------|--------|
 | 佣金 | 券商收取 | 万三 (0.03%) |
-| 印花�?| 卖出时收�?| 千一 (0.1%) |
-| 过户�?| 沪市收取 | �?.1 |
+| 印花�?| 卖出时收�?| 千一 (0.1%) |
+| 过户�?| 沪市收取 | �?.1 |
 | 冲击成本 | 大单对市场的影响 | 0.01%-0.5% |
 | 价差成本 | 买卖价差 | 0.01%-0.1% |
-| 机会成本 | 未成交损�?| 可变 |
+| 机会成本 | 未成交损�?| 可变 |
 
 ---
 
@@ -38,7 +38,7 @@ import pandas as pd
 import numpy as np
 
 class TCACalculator:
-    """交易成本分析�?""
+    """交易成本分析�?""
 
     def __init__(self, commission_rate: float = 0.0003, stamp_tax: float = 0.001):
         self.commission_rate = commission_rate
@@ -54,14 +54,14 @@ class TCACalculator:
     ) -> dict:
         """计算单笔交易成本
 
-        参数�?
+        参数�?
             symbol: 股票代码
             direction: 'buy' or 'sell'
-            quantity: 成交�?
+            quantity: 成交�?
             execution_price: 执行价格
-            arrival_price: 到达价格（决策参考价�?
+            arrival_price: 到达价格（决策参考价�?
 
-        返回�?
+        返回�?
             成本分解
         """
         notional = quantity * execution_price
@@ -80,7 +80,7 @@ class TCACalculator:
 
         impact_cost = abs(market_impact) * notional
 
-        # 总成�?
+        # 总成�?
         total_cost = commission + tax + impact_cost
         total_cost_bps = (total_cost / notional) * 10000
 
@@ -107,10 +107,10 @@ class TCACalculator:
     ) -> dict:
         """计算周期TCA报告
 
-        参数�?
+        参数�?
             trades: 交易记录DataFrame
 
-        返回�?
+        返回�?
             TCA统计
         """
         total_cost = trades['total_cost'].sum()
@@ -167,11 +167,11 @@ class VWAPAnalyzer:
     ) -> dict:
         """与市场VWAP对比
 
-        参数�?
+        参数�?
             trades: 交易记录
             market_vwap: 市场VWAP
 
-        返回�?
+        返回�?
             对比结果
         """
         executed_vwap = self.calculate_vwap(trades)

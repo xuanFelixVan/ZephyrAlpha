@@ -1,31 +1,31 @@
 ---
-module_id: EXECUTION_README_001
-version: 1.0.0
+module_id: EXEC_AI_COMMITTEE_README_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# AI委员会系�?
+# AI委员会系�?
 
-> 战略决策中心、参数调优、风险预算调�?
+> 战略决策中心、参数调优、风险预算调�?
 
 ---
 
 ## 1. 系统架构
 
 ```
-AI委员�?
+AI委员�?
 ├── 战略决策中心 (Strategy Selection)
-├── 参数优化�?(Parameter Tuning)
-├── 风险预算调整�?(Risk Budget Adjuster)
-└── 异常诊断�?(Anomaly Diagnosis)
+├── 参数优化�?(Parameter Tuning)
+├── 风险预算调整�?(Risk Budget Adjuster)
+└── 异常诊断�?(Anomaly Diagnosis)
 ```
 
 ---
@@ -40,7 +40,7 @@ import numpy as np
 
 @dataclass
 class MarketRegime:
-    """市场状�?""
+    """市场状�?""
     regime_type: str           # 'trending', 'mean_reverting', 'volatile', 'calm'
     confidence: float           # 0-1
     indicators: Dict[str, float]
@@ -48,7 +48,7 @@ class MarketRegime:
 
 
 class AICommittee:
-    """AI委员会系�?""
+    """AI委员会系�?""
 
     def __init__(self, config: dict):
         self.config = config
@@ -95,4 +95,4 @@ class AICommittee:
 **版本**: 1.0
 **更新**: 2026-03-28
 **Layer**: Layer 5 (优化阶段)
-**索引**: BLUEPRINTS.md �?AI委员会蓝�?
+**索引**: BLUEPRINTS.md �?AI委员会蓝�?

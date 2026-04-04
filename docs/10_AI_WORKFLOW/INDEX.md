@@ -18,7 +18,7 @@ owner: 首席架构�?standard_type: 专业机构级索�?applicable_scope: AI
 
 | 索引名称 | 适用范围 | 路径 | 说明 |
 |---------|---------|------|------|
-| **舆情分析层改进蓝图文档索�?* | 舆情分析层改�?| [SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md) | 舆情分析层短期、中期、长期改进文档总索�?|
+| **舆情分析层改进蓝图文档索�?* | 舆情分析层改�?| [SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md) | 舆情分析层短期、中期、长期改进文档总索�?|
 
 ---
 
@@ -106,7 +106,7 @@ Layer 8.5: AI工作记录�?(AI Workflow Logging Layer)
 | **风险管理** | 风险管理文档 | 1.1 | Active | [SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md](./SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md) | 风险识别、风险评估、风险缓解措�?|
 | **测试计划** | 测试计划文档 | 1.0 | Active | [SENTIMENT_ANALYSIS_TEST_PLAN.md](./SENTIMENT_ANALYSIS_TEST_PLAN.md) | 测试策略、单元测试、集成测试、性能测试 |
 | **实施细节** | 实施细节文档 | 1.0 | Active | [SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md](./SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md) | 环境搭建、代码示例、配置模板、部署架�?|
-| **文档索引** | 改进蓝图文档索引 | 1.0 | Active | [SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_DOCUMENT_INDEX.md) | 舆情分析层改进蓝图文档总索�?|
+| **进度追踪** | 改进蓝图进度追踪器 | 1.2 | Active | [SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md) | 文档完成度统计、优先级分类、蓝图欠缺分析 |
 
 ### 3.6 其他文档
 

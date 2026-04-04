@@ -1,43 +1,43 @@
 ---
-module_id: EXECUTION_DOC_001
-version: 1.0.0
+module_id: EXEC_MODULE_MONITOR_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 系统监控体系
 
-> 基础设施�? 模块监控、资源监控、性能指标、告警管�?
+> 基础设施�? 模块监控、资源监控、性能指标、告警管�?
 
 ---
 
 ## 1. 设计概述
 
-系统监控体系负责收集和展示所有模块的运行状态和性能指标�?
+系统监控体系负责收集和展示所有模块的运行状态和性能指标�?
 
 ```
 监控架构
-├── 指标收集�?(Metrics Collection)
-�?  ├── 系统指标
-�?  ├── 业务指标
-�?  └── 自定义指�?
-├── 指标存储�?(Metrics Storage)
-�?  ├── 实时内存存储
-�?  ├── 时序数据库存�?
-�?  └── 历史数据存储
+├── 指标收集�?(Metrics Collection)
+�?  ├── 系统指标
+�?  ├── 业务指标
+�?  └── 自定义指�?
+├── 指标存储�?(Metrics Storage)
+�?  ├── 实时内存存储
+�?  ├── 时序数据库存�?
+�?  └── 历史数据存储
 ├── 可视化层 (Visualization)
-�?  ├── 仪表�?
-�?  ├── 趋势�?
-�?  └── 告警面板
-└── 告警管理�?(Alerting)
-    ├── 阈值告�?
+�?  ├── 仪表�?
+�?  ├── 趋势�?
+�?  └── 告警面板
+└── 告警管理�?(Alerting)
+    ├── 阈值告�?
     ├── 趋势告警
     └── 复合告警
 ```
@@ -58,10 +58,10 @@ import time
 
 class MetricType(Enum):
     """指标类型"""
-    COUNTER = "counter"       # 计数�?
+    COUNTER = "counter"       # 计数�?
     GAUGE = "gauge"         # 仪表
-    HISTOGRAM = "histogram" # 直方�?
-    TIMER = "timer"         # 计时�?
+    HISTOGRAM = "histogram" # 直方�?
+    TIMER = "timer"         # 计时�?
 
 
 @dataclass
@@ -77,7 +77,7 @@ class Metric:
 
 @dataclass
 class ModuleStatus:
-    """模块状�?""
+    """模块状�?""
     module_id: str
     module_name: str
     status: str  # 'healthy', 'degraded', 'down'
@@ -88,7 +88,7 @@ class ModuleStatus:
 
 
 class MetricsCollector:
-    """指标收集�?""
+    """指标收集�?""
 
     def __init__(self):
         self.metrics: Dict[str, List[Metric]] = {}
@@ -122,15 +122,15 @@ class MetricsCollector:
             self.metrics[name] = self.metrics[name][-5000:]
 
     def increment(self, name: str, value: float = 1, tags: Dict[str, str] = None):
-        """增加计数�?""
+        """增加计数�?""
         self.record(name, value, MetricType.COUNTER, tags=tags)
 
     def gauge(self, name: str, value: float, unit: str = "", tags: Dict[str, str] = None):
-        """设置仪表�?""
+        """设置仪表�?""
         self.record(name, value, MetricType.GAUGE, unit, tags)
 
     def histogram(self, name: str, value: float, tags: Dict[str, str] = None):
-        """记录直方图�?""
+        """记录直方图�?""
         self.record(name, value, MetricType.HISTOGRAM, tags=tags)
 
     def timer(self, name: str, func, tags: Dict[str, str] = None):
@@ -154,7 +154,7 @@ class MetricsCollector:
         metrics: Dict[str, float] = None,
         errors: List[str] = None
     ):
-        """更新模块状�?""
+        """更新模块状�?""
         now = datetime.now()
 
         if module_id in self.module_status:
@@ -203,7 +203,7 @@ class MetricsCollector:
         return metrics
 
     def get_latest_value(self, name: str) -> Optional[float]:
-        """获取最新�?""
+        """获取最新�?""
         if name not in self.metrics or not self.metrics[name]:
             return None
 
@@ -215,7 +215,7 @@ class MetricsCollector:
         aggregation: str = "mean",
         window_seconds: int = 60
     ) -> Optional[float]:
-        """获取聚合�?""
+        """获取聚合�?""
         metrics = self.get_metric_series(name)
 
         if not metrics:
@@ -243,13 +243,13 @@ class MetricsCollector:
 
 ---
 
-## 3. 预定义监控指�?
+## 3. 预定义监控指�?
 
-### 3.1 系统级指�?
+### 3.1 系统级指�?
 
 ```python
 class SystemMetrics:
-    """系统级指�?""
+    """系统级指�?""
 
     @staticmethod
     def get_cpu_metrics() -> Dict[str, float]:
@@ -290,11 +290,11 @@ class SystemMetrics:
         }
 ```
 
-### 3.2 业务级指�?
+### 3.2 业务级指�?
 
 ```python
 class BusinessMetrics:
-    """业务级指�?""
+    """业务级指�?""
 
     DATA_HUB = "datahub"
     FACTOR_CALC = "factor_calculator"
@@ -332,7 +332,7 @@ class BusinessMetrics:
 
 ```python
 class MonitoringDashboard:
-    """监控仪表�?""
+    """监控仪表�?""
 
     def __init__(self, collector: MetricsCollector):
         self.collector = collector
@@ -352,15 +352,15 @@ class MonitoringDashboard:
         lines.append(f"系统运行时间: {uptime_hours:.1f} 小时")
         lines.append("")
 
-        lines.append("模块状�?")
+        lines.append("模块状�?")
         lines.append("-" * 80)
 
         for module_id, status in self.collector.module_status.items():
-            status_icon = "�? if status.status == "healthy" else "⚠️" if status.status == "degraded" else "�?
+            status_icon = "�? if status.status == "healthy" else "⚠️" if status.status == "degraded" else "�?
 
             lines.append(f"{status_icon} {status.module_name}: {status.status}")
             lines.append(f"   运行时间: {status.uptime / 3600:.1f}小时")
-            lines.append(f"   最后心�? {status.last_heartbeat.strftime('%H:%M:%S')}")
+            lines.append(f"   最后心�? {status.last_heartbeat.strftime('%H:%M:%S')}")
 
             if status.errors:
                 lines.append(f"   错误: {', '.join(status.errors[-3:])}")
@@ -397,7 +397,7 @@ class MonitoringDashboard:
         return "\n".join(lines)
 
     def check_health(self) -> Dict:
-        """健康检�?""
+        """健康检�?""
         issues = []
 
         for module_id, status in self.collector.module_status.items():
@@ -455,7 +455,7 @@ def example_monitoring():
 
 **版本**: 1.0
 **更新**: 2026-03-28
-**Layer**: 基础设施�?(横切关注�?
-**索引**: BLUEPRINTS.md �?基础设施蓝图
-**上游接口**: 所有模�?(M01-M15)
+**Layer**: 基础设施�?(横切关注�?
+**索引**: BLUEPRINTS.md �?基础设施蓝图
+**上游接口**: 所有模�?(M01-M15)
 **下游接口**: AlertManager (M14)

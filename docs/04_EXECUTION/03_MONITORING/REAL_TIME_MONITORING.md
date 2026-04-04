@@ -1,20 +1,20 @@
 ---
-module_id: EXECUTION_DOC_001
-version: 1.0.0
+module_id: EXEC_REAL_TIME_MONITORING_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 实时监控系统
 
-> 策略运行状态、性能追踪、异常检�?
+> 策略运行状态、性能追踪、异常检�?
 
 ---
 
@@ -22,30 +22,30 @@ implementation_status: 进行�?
 
 ```
 实时监控系统
-├── 策略状态监�?
-�?  ├── 运行状�?
-�?  ├── 信号生成
-�?  ├── 订单执行
-�?  └── 持仓变化
+├── 策略状态监�?
+�?  ├── 运行状�?
+�?  ├── 信号生成
+�?  ├── 订单执行
+�?  └── 持仓变化
 ├── 性能追踪
-�?  ├── 实时PnL
-�?  ├── 持仓市�?
-�?  ├── 风险指标
-�?  └── 换手�?
-├── 异常检�?
-�?  ├── 价格异动
-�?  ├── 流动性枯�?
-�?  ├── 信号异常
-�?  └── 风控触发
-└── 告警推�?
+�?  ├── 实时PnL
+�?  ├── 持仓市�?
+�?  ├── 风险指标
+�?  └── 换手�?
+├── 异常检�?
+�?  ├── 价格异动
+�?  ├── 流动性枯�?
+�?  ├── 信号异常
+�?  └── 风控触发
+└── 告警推�?
     ├── 即时通知
     ├── 定期报告
-    └── 异常汇�?
+    └── 异常汇�?
 ```
 
 ---
 
-## 2. 策略状态监�?
+## 2. 策略状态监�?
 
 ```python
 from dataclasses import dataclass, field
@@ -62,7 +62,7 @@ class StrategyState(Enum):
 
 @dataclass
 class StrategyStatus:
-    """策略状�?""
+    """策略状�?""
     strategy_id: str
     strategy_name: str
     state: StrategyState
@@ -111,7 +111,7 @@ class StrategyMonitor:
         daily_pnl: float = None,
         metrics: Dict = None
     ):
-        """更新策略状�?""
+        """更新策略状�?""
         if strategy_id not in self.strategies:
             return
 
@@ -133,22 +133,22 @@ class StrategyMonitor:
             status.metrics.update(metrics)
 
     def _record_state_change(self, strategy_id: str, new_state: StrategyState):
-        """记录状态变�?""
+        """记录状态变�?""
         self.state_history[strategy_id].append({
             'state': new_state,
             'timestamp': datetime.now()
         })
 
     def get_strategy_status(self, strategy_id: str) -> Optional[StrategyStatus]:
-        """获取策略状�?""
+        """获取策略状�?""
         return self.strategies.get(strategy_id)
 
     def get_all_strategies_status(self) -> List[StrategyStatus]:
-        """获取所有策略状�?""
+        """获取所有策略状�?""
         return list(self.strategies.values())
 
     def check_stale_strategies(self, threshold_minutes: int = 30) -> List[Dict]:
-        """检查停滞策�?""
+        """检查停滞策�?""
         now = datetime.now()
         stale = []
 
@@ -208,7 +208,7 @@ class PerformanceTracker:
         unrealized_pnl = total_value - total_cost
         pnl_rate = unrealized_pnl / total_cost if total_cost > 0 else 0
 
-        # 换手率（今日交易�?总市值）
+        # 换手率（今日交易�?总市值）
         today_turnover = sum(
             pos.get('today_traded_value', 0)
             for pos in self.positions.values()
@@ -228,7 +228,7 @@ class PerformanceTracker:
         }
 
     def get_position_summary(self) -> pd.DataFrame:
-        """获取持仓汇�?""
+        """获取持仓汇�?""
         if not self.positions:
             return pd.DataFrame()
 
@@ -249,7 +249,7 @@ class PerformanceTracker:
 
 ---
 
-## 4. 异常检�?
+## 4. 异常检�?
 
 ```python
 class AnomalyDetector:
@@ -281,7 +281,7 @@ class AnomalyDetector:
         current_price: float,
         window: int = 20
     ) -> Optional[Dict]:
-        """检测价格异�?""
+        """检测价格异�?""
         if symbol not in self.baseline_stats:
             return None
 
@@ -312,14 +312,14 @@ class AnomalyDetector:
         baseline = self.baseline_stats[symbol]
         volume_ratio = current_volume / baseline['volume_mean']
 
-        if volume_ratio > 5:  # 成交量放�?�?
+        if volume_ratio > 5:  # 成交量放�?�?
             return {
                 'type': 'volume_anomaly',
                 'symbol': symbol,
                 'current_volume': current_volume,
                 'volume_ratio': volume_ratio,
                 'severity': 'critical' if volume_ratio > 10 else 'warning',
-                'message': f"{symbol} 成交量异常放�?({volume_ratio:.1f}x)"
+                'message': f"{symbol} 成交量异常放�?({volume_ratio:.1f}x)"
             }
 
         return None
@@ -329,13 +329,13 @@ class AnomalyDetector:
         signals: List[Dict],
         threshold: int = 20
     ) -> Optional[Dict]:
-        """检测信号异常（信号过于集中�?""
+        """检测信号异常（信号过于集中�?""
         if len(signals) > threshold:
             return {
                 'type': 'signal_flood',
                 'signal_count': len(signals),
                 'severity': 'warning',
-                'message': f"信号过于集中 ({len(signals)} 个信�?"
+                'message': f"信号过于集中 ({len(signals)} 个信�?"
             }
         return None
 
@@ -344,7 +344,7 @@ class AnomalyDetector:
         current_drawdown: float,
         max_acceptable_drawdown: float = 0.15
     ) -> Optional[Dict]:
-        """检测回撤异�?""
+        """检测回撤异�?""
         if current_drawdown < -max_acceptable_drawdown:
             return {
                 'type': 'drawdown_alert',
@@ -373,7 +373,7 @@ class MonitoringDashboard:
 
     def generate_dashboard_data(self) -> Dict:
         """生成监控面板数据"""
-        # 策略状�?
+        # 策略状�?
         strategies = self.strategy_monitor.get_all_strategies_status()
         strategy_summary = {
             'total': len(strategies),
@@ -385,7 +385,7 @@ class MonitoringDashboard:
         # 性能指标
         perf_metrics = self.performance_tracker.calculate_realtime_metrics()
 
-        # 持仓汇�?
+        # 持仓汇�?
         positions_df = self.performance_tracker.get_position_summary()
 
         # 活跃告警
@@ -401,7 +401,7 @@ class MonitoringDashboard:
         }
 
     def _get_system_health(self) -> Dict:
-        """获取系统健康�?""
+        """获取系统健康�?""
         import psutil
 
         return {
@@ -460,12 +460,12 @@ monitoring:
 
 | 类别 | 指标 | 正常范围 | 告警条件 |
 |------|------|---------|---------|
-| 策略 | 运行状�?| RUNNING | ERROR, STOPPED |
+| 策略 | 运行状�?| RUNNING | ERROR, STOPPED |
 | 策略 | 信号频率 | 0-10/分钟 | > 20/分钟 |
-| 策略 | 无信号时�?| < 30分钟 | > 60分钟 |
+| 策略 | 无信号时�?| < 30分钟 | > 60分钟 |
 | 持仓 | 单股持仓 | < 20% | > 25% |
-| 持仓 | 总仓�?| 0-90% | > 95% |
-| PnL | 日盈�?| ±10% | < -15% |
+| 持仓 | 总仓�?| 0-90% | > 95% |
+| PnL | 日盈�?| ±10% | < -15% |
 | PnL | 回撤 | > -10% | < -15% |
 | 系统 | CPU | < 70% | > 85% |
 | 系统 | 内存 | < 80% | > 90% |

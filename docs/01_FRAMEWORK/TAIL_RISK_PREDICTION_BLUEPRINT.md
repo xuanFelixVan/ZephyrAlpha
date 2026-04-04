@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -13,13 +13,13 @@ priority: P2
 
 > **蓝图编号**: `TAIL-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
 ## 1. 概述
 
-极端风险预测是风险管理的核心�?
+极端风险预测是风险管理的核心�?
 - **尾部风险**: 预测极端事件
 - **VaR/ES**: 风险度量
 - **压力测试**: 情景分析
@@ -31,9 +31,9 @@ priority: P2
 
 | 模型 | 说明 | 适用场景 |
 |------|------|----------|
-| EVT | 极值理�?| 尾部建模 |
-| GPD | 广义帕累�?| 超阈�?|
-| Quantile Regression | 分位数回�?| 条件VaR |
+| EVT | 极值理�?| 尾部建模 |
+| GPD | 广义帕累�?| 超阈�?|
+| Quantile Regression | 分位数回�?| 条件VaR |
 | DeepTail | 深度学习 | 复杂模式 |
 
 ---
@@ -64,9 +64,9 @@ class TailRiskPredictor:
         """预测VaR
         
         Args:
-            returns: 收益率序�?            
+            returns: 收益率序�?            
         Returns:
-            float: VaR�?        """
+            float: VaR�?        """
         pass
     
     def predict_es(
@@ -76,16 +76,16 @@ class TailRiskPredictor:
         """预测ES (Expected Shortfall)
         
         Args:
-            returns: 收益率序�?            
+            returns: 收益率序�?            
         Returns:
-            float: ES�?        """
+            float: ES�?        """
         pass
     
     def detect_tail_event(
         self,
         current_return: float
     ) -> bool:
-        """检测尾部事�?        
+        """检测尾部事�?        
         Args:
             current_return: 当前收益
             
@@ -94,6 +94,72 @@ class TailRiskPredictor:
         """
         pass
 ```
+
+---
+
+## 6. 开源项目推荐
+
+### 推荐方案: arch + PyPortfolioOpt
+
+| 项目 | 成熟度 | 许可证 | 专业机构使用 | GitHub Stars |
+|------|--------|--------|--------------|--------------|
+| [arch](https://github.com/bashtage/arch) | ⭐⭐⭐⭐⭐ | NCSA | 学术界 | 1k+ |
+| [PyPortfolioOpt](https://github.com/robertmartin8/PyPortfolioOpt) | ⭐⭐⭐⭐⭐ | MIT | 学术界 | 4k+ |
+| [Riskfolio-Lib](https://github.com/david-cortes/riskfolio-lib) | ⭐⭐⭐⭐ | BSD | 学术界 | 3k+ |
+| [scipy.stats](https://docs.scipy.org/doc/scipy/reference/stats.html) | ⭐⭐⭐⭐⭐ | BSD | 广泛使用 | - |
+
+### arch 核心功能
+
+```python
+from arch import arch_model
+import numpy as np
+
+# GARCH模型估计尾部风险
+am = arch_model(returns, vol='Garch', p=1, q=1, dist='StudentsT')
+res = am.fit(disp='off')
+
+# 条件VaR
+forecasts = res.forecast(horizon=1)
+sigma = np.sqrt(forecasts.variance.values[-1, :])
+VaR = res.params['mu'] - sigma * res.params['nu']  # t分布分位数
+```
+
+### PyPortfolioOpt 核心功能
+
+```python
+from pypfopt import risk_models, expected_returns
+from pypfopt import EfficientFrontier
+
+# CVaR优化
+mu = expected_returns.mean_historical_return(prices)
+S = risk_models.sample_cov(prices)
+
+ef = EfficientFrontier(mu, S)
+weights = ef.min_cvar()  # 最小化CVaR
+```
+
+### scipy.stats 核心功能
+
+```python
+from scipy import stats
+
+# 极值理论(EVT)拟合
+params = stats.genextreme.fit(extreme_returns)
+
+# VaR和ES计算
+VaR = stats.genextreme.ppf(0.95, *params)
+ES = stats.genextreme.expect(lambda x: x, args=params, lb=VaR)
+```
+
+### 实施建议
+
+| 方案 | 适用场景 | 特点 |
+|------|----------|------|
+| arch | GARCH族 | 波动率建模 |
+| PyPortfolioOpt | 组合风险 | CVaR优化 |
+| scipy.stats | EVT | 极值理论 |
+
+**推荐**: 使用arch进行GARCH建模，scipy.stats进行极值理论分析。
 
 ---
 

@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -13,7 +13,7 @@ priority: P2
 
 > **蓝图编号**: `TEE-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -28,12 +28,12 @@ priority: P2
 
 ---
 
-## 2. 技术类�?
-| 技�?| 说明 | 适用场景 |
+## 2. 技术类�?
+| 技�?| 说明 | 适用场景 |
 |------|------|----------|
-| Intel SGX | Intel安全�?| 通用服务�?|
-| AMD SEV | AMD加密虚拟�?| 云环�?|
-| ARM TrustZone | ARM可信�?| 移动设备 |
+| Intel SGX | Intel安全�?| 通用服务�?|
+| AMD SEV | AMD加密虚拟�?| 云环�?|
+| ARM TrustZone | ARM可信�?| 移动设备 |
 
 ---
 
@@ -58,7 +58,7 @@ class TrustedExecutionEnvironment:
         self,
         code: bytes
     ) -> str:
-        """创建安全�?        
+        """创建安全�?        
         Args:
             code: 代码
             
@@ -81,6 +81,63 @@ class TrustedExecutionEnvironment:
         """
         pass
 ```
+
+---
+
+## 6. 开源项目推荐
+
+### 推荐方案: Open Enclave SDK + Gramine
+
+| 项目 | 成熟度 | 许可证 | 专业机构使用 | GitHub Stars |
+|------|--------|--------|--------------|--------------|
+| [Open Enclave SDK](https://github.com/openenclave/openenclave) | ⭐⭐⭐⭐ | MIT | Microsoft | 1k+ |
+| [Gramine](https://github.com/gramineproject/gramine) | ⭐⭐⭐⭐ | LGPL | Intel | 1k+ |
+| [Intel SGX SDK](https://github.com/intel/linux-sgx) | ⭐⭐⭐⭐ | BSD | Intel | 1k+ |
+| [Occlum](https://github.com/occlum/occlum) | ⭐⭐⭐⭐ | BSD | Ant Group | 1k+ |
+
+### Open Enclave SDK 核心功能
+
+```c
+#include <openenclave/enclave.h>
+
+OE_ECALL void secure_computation(void* args) {
+    // 安全区内计算
+    // 数据加密保护
+    oe_result_t result = oe_get_report(OE_REPORT_FLAGS_REMOTE_ATTESTATION, ...);
+}
+```
+
+### Gramine 核心功能
+
+```bash
+# Gramine配置文件
+[loader]
+entrypoint = /app/model_inference
+
+[env]
+MODEL_PATH = /secure/models
+
+# 运行SGX应用
+gramine-sgx ./app
+```
+
+### Occlum 核心功能 (蚂蚁集团)
+
+```bash
+# Occlum配置
+occlum build
+occlum run /bin/python model_inference.py
+```
+
+### 实施建议
+
+| 方案 | 适用场景 | 特点 |
+|------|----------|------|
+| Open Enclave | SGX开发 | 微软支持、跨平台 |
+| Gramine | 容器化SGX | Intel支持、易用 |
+| Occlum | 金融场景 | 蚂蚁集团、生产验证 |
+
+**推荐**: 使用Gramine进行SGX应用部署，Occlum适合金融场景。
 
 ---
 

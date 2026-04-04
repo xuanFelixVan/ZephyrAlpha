@@ -23,6 +23,7 @@ parent_document: ../INDEX.md
 | 文件 | 职责 | 状态 |
 |------|------|------|
 | [DATA_QUALITY_CONTROL_SYSTEM.md](DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制系统 | Active |
+| [QUALITY_METRICS.md](QUALITY_METRICS.md) | 数据质量指标定义 | Active |
 
 ---
 

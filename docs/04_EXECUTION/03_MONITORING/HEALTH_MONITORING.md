@@ -1,61 +1,61 @@
 ---
-module_id: EXECUTION_DOC_001
-version: 1.0.0
+module_id: EXEC_HEALTH_MONITORING_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 系统健康监控
 
-> 简化的自动化健康检�?
+> 简化的自动化健康检�?
 
 **版本**: v1.0
 **更新**: 2026-03-29
-**Layer**: Layer 5 (监控�?
-**优先�?*: P2 - 可选（1�?AI简化版�?
+**Layer**: Layer 5 (监控�?
+**优先�?*: P2 - 可选（1�?AI简化版�?
 
 ---
 
-## 1. 为什么需要健康监�?
+## 1. 为什么需要健康监�?
 
 ```
-�?监督) �?AI(执行) �?AI(优化) �?�?监督) �?AI(报告)
+�?监督) �?AI(执行) �?AI(优化) �?�?监督) �?AI(报告)
 
 系统可能出问题：
 - 服务崩溃
-- 数据未更�?
+- 数据未更�?
 - 磁盘空间不足
 - 任务执行失败
 
-�?AI自动检测并告警，人只需处理异常
+�?AI自动检测并告警，人只需处理异常
 ```
 
 ---
 
-## 2. 简化监控架�?
+## 2. 简化监控架�?
 
 ```python
 class SimpleHealthCheck:
-    """简化健康检�?- 1�?AI版本"""
+    """简化健康检�?- 1�?AI版本"""
 
     def __init__(self):
         self.checks = [
-            self.check_processes,      # 进程检�?
-            self.check_data_fresh,    # 数据新鲜�?
+            self.check_processes,      # 进程检�?
+            self.check_data_fresh,    # 数据新鲜�?
             self.check_disk_space,     # 磁盘空间
             self.check_error_logs,     # 错误日志
-            self.check_pipeline_status # 流水线状�?
+            self.check_pipeline_status # 流水线状�?
         ]
 
     def check_all(self) -> HealthReport:
-        """执行所有检�?""
+        """执行所有检�?""
         results = []
         for check in self.checks:
             result = check()
@@ -72,13 +72,13 @@ class SimpleHealthCheck:
 
 ## 3. 检查项定义
 
-### 3.1 进程检�?
+### 3.1 进程检�?
 
 ```python
 def check_processes(self) -> CheckResult:
-    """检查关键进程是否存�?""
+    """检查关键进程是否存�?""
     critical_processes = [
-        'data_pipeline',    # 数据流水�?
+        'data_pipeline',    # 数据流水�?
         'strategy_engine',  # 策略引擎
         'execution_agent',   # 执行Agent
         'ai_research_agent' # AI研究Agent
@@ -96,12 +96,12 @@ def check_processes(self) -> CheckResult:
     )
 
 def _is_process_running(self, process_name: str) -> bool:
-    """检查进程是否运�?""
-    # 使用 psutil 或系统命令检�?
-    return True  # 简化实�?
+    """检查进程是否运�?""
+    # 使用 psutil 或系统命令检�?
+    return True  # 简化实�?
 ```
 
-### 3.2 数据新鲜度检�?
+### 3.2 数据新鲜度检�?
 
 ```python
 def check_data_fresh(self) -> CheckResult:
@@ -122,7 +122,7 @@ def check_data_fresh(self) -> CheckResult:
         mtime = os.path.getmtime(path)
         age_hours = (time.time() - mtime) / 3600
 
-        # 日线数据应该在收盘后2小时内更�?
+        # 日线数据应该在收盘后2小时内更�?
         if age_hours > 26:
             stale_data.append(f"{name}({age_hours:.1f}h)")
 
@@ -133,11 +133,11 @@ def check_data_fresh(self) -> CheckResult:
     )
 ```
 
-### 3.3 磁盘空间检�?
+### 3.3 磁盘空间检�?
 
 ```python
 def check_disk_space(self) -> CheckResult:
-    """检查磁盘空�?""
+    """检查磁盘空�?""
     import shutil
 
     # 检查根目录和data目录
@@ -157,25 +157,25 @@ def check_disk_space(self) -> CheckResult:
     )
 ```
 
-### 3.4 错误日志检�?
+### 3.4 错误日志检�?
 
 ```python
 def check_error_logs(self) -> CheckResult:
-    """检查最近错误日�?""
+    """检查最近错误日�?""
     import os
 
     log_file = 'logs/error.log'
     if not os.path.exists(log_file):
         return CheckResult(name='error_logs', ok=True, message="No error log")
 
-    # 读取最�?小时的错�?
+    # 读取最�?小时的错�?
     with open(log_file, 'r') as f:
         lines = f.readlines()
 
     recent_errors = []
-    cutoff = time.time() - 3600  # 1小时�?
+    cutoff = time.time() - 3600  # 1小时�?
 
-    for line in lines[-100:]:  # 只检查最�?00�?
+    for line in lines[-100:]:  # 只检查最�?00�?
         if 'ERROR' in line:
             try:
                 timestamp = self._parse_log_timestamp(line)
@@ -186,12 +186,12 @@ def check_error_logs(self) -> CheckResult:
 
     return CheckResult(
         name='error_logs',
-        ok=len(recent_errors) < 10,  # 少于10个错误认为正�?
+        ok=len(recent_errors) < 10,  # 少于10个错误认为正�?
         message=f"Recent errors: {len(recent_errors)}" if recent_errors else "No recent errors"
     )
 ```
 
-### 3.5 流水线状态检�?
+### 3.5 流水线状态检�?
 
 ```python
 def check_pipeline_status(self) -> CheckResult:
@@ -225,13 +225,13 @@ def check_pipeline_status(self) -> CheckResult:
 
 ```python
 class SimpleAlertManager:
-    """简化告警管�?""
+    """简化告警管�?""
 
     def __init__(self):
         self.alert_history = []
 
     def send_alert(self, level: str, message: str):
-        """发送告�?""
+        """发送告�?""
         alert = Alert(
             timestamp=datetime.now(),
             level=level,
@@ -244,12 +244,12 @@ class SimpleAlertManager:
         print(f"[{level}] {message}")
 
     def should_alert(self, result: CheckResult) -> bool:
-        """判断是否需要告�?""
+        """判断是否需要告�?""
         if not result.ok:
             # 首次失败不告警（可能是临时问题）
             if self._is_first_failure(result.name):
                 return False
-            # 连续失败才告�?
+            # 连续失败才告�?
             return self._consecutive_failures(result.name) >= 2
         else:
             # 恢复时发送恢复通知
@@ -265,7 +265,7 @@ class SimpleAlertManager:
 
 ```python
 class MonitorScheduler:
-    """监控调度�?""
+    """监控调度�?""
 
     def __init__(self, health_check: SimpleHealthCheck,
                  alert_manager: SimpleAlertManager):
@@ -273,7 +273,7 @@ class MonitorScheduler:
         self.alert_manager = alert_manager
 
     def run_periodic_check(self, interval_minutes: int = 30):
-        """定时执行健康检�?""
+        """定时执行健康检�?""
         while True:
             report = self.health_check.check_all()
 
@@ -282,22 +282,22 @@ class MonitorScheduler:
                     if self.alert_manager.should_alert(result):
                         self.alert_manager.send_alert('WARNING', result.message)
 
-            # 发送每日健康报�?
+            # 发送每日健康报�?
             self._send_daily_report(report)
 
             time.sleep(interval_minutes * 60)
 
     def _send_daily_report(self, report: HealthReport):
-        """发送每日健康报告（22:00�?""
+        """发送每日健康报告（22:00�?""
         current_time = datetime.now().strftime('%H:%M')
         if current_time == '22:00':
             summary = f"""
 每日健康报告 - {datetime.now().date()}
 ========================
-状�? {report.status}
+状�? {report.status}
 检查项: {len(report.checks)}
-正常�? {sum(1 for r in report.checks if r.ok)}
-异常�? {sum(1 for r in report.checks if not r.ok)}
+正常�? {sum(1 for r in report.checks if r.ok)}
+异常�? {sum(1 for r in report.checks if not r.ok)}
 """
             self.alert_manager.send_alert('INFO', summary)
 ```
@@ -327,7 +327,7 @@ class AutoRecovery:
         return False
 
     def _restart_pipeline(self):
-        """重启数据流水�?""
+        """重启数据流水�?""
         # 实现重启逻辑
         pass
 ```
@@ -362,15 +362,15 @@ monitoring:
 
 ```
 04_EXECUTION/03_MONITORING/
-├── README.md              # 本文�?
+├── README.md              # 本文�?
 ├── REAL_TIME_MONITORING.md  # 实时监控（策略PnL等）
 ├── PERFORMANCE_ATTRIBUTION.md # 业绩归因
-└── HEALTH_MONITOR.py       # 健康监控脚本 ⭐新�?
+└── HEALTH_MONITOR.py       # 健康监控脚本 ⭐新�?
 ```
 
 ---
 
 ## 索引
 
-- 父目�? [04_EXECUTION/03_MONITORING/README.md](./README.md)
+- 父目�? [04_EXECUTION/03_MONITORING/README.md](./README.md)
 - 相关: [REAL_TIME_MONITORING.md](./REAL_TIME_MONITORING.md)
