@@ -1,20 +1,20 @@
 ---
-module_id: RESEARCH_README_001
-version: 1.0.0
+module_id: RESEARCH_PATTERN_README_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 模式识别算法�?
+# 模式识别算法�?
 
-> 技术分析图形模式识�?
+> 技术分析图形模式识�?
 
 **版本**: v1.0
 **更新**: 2026-03-29
@@ -23,27 +23,27 @@ implementation_status: 进行�?
 
 ---
 
-## 1. 图形形态分�?
+## 1. 图形形态分�?
 
-### 反转形�?
+### 反转形�?
 
-| 形�?| 说明 | 识别难度 |
+| 形�?| 说明 | 识别难度 |
 |------|------|----------|
-| 头肩�?�?| 经典反转形�?| �?|
-| 双顶/双底 | W�?M底形�?| �?|
-| 三重�?�?| 更强阻力确认 | �?|
-| 圆弧�?�?| 弧形反转 | �?|
-| V形反�?| 尖锐顶部/底部 | �?|
+| 头肩�?�?| 经典反转形�?| �?|
+| 双顶/双底 | W�?M底形�?| �?|
+| 三重�?�?| 更强阻力确认 | �?|
+| 圆弧�?�?| 弧形反转 | �?|
+| V形反�?| 尖锐顶部/底部 | �?|
 
-### 持续形�?
+### 持续形�?
 
-| 形�?| 说明 | 识别难度 |
+| 形�?| 说明 | 识别难度 |
 |------|------|----------|
-| 对称三角�?| 收敛整理 | �?|
-| 上升三角�?| 上升收敛 | �?|
-| 下降三角�?| 下降收敛 | �?|
-| 旗形整理 | 小矩形通道 | �?|
-| 矩形整理 | 箱体震荡 | �?|
+| 对称三角�?| 收敛整理 | �?|
+| 上升三角�?| 上升收敛 | �?|
+| 下降三角�?| 下降收敛 | �?|
+| 旗形整理 | 小矩形通道 | �?|
+| 矩形整理 | 箱体震荡 | �?|
 
 ---
 
@@ -58,7 +58,7 @@ class PatternRecognizer:
         raise NotImplementedError
 
     def validate(self, pattern: PatternSignal) -> bool:
-        """验证模式有效�?""
+        """验证模式有效�?""
         raise NotImplementedError
 
 
@@ -75,7 +75,7 @@ class PatternSignal:
 
 ---
 
-## 3. 头肩形态识�?
+## 3. 头肩形态识�?
 
 ```python
 class HeadShoulderRecognizer(PatternRecognizer):
@@ -85,7 +85,7 @@ class HeadShoulderRecognizer(PatternRecognizer):
         self.tolerance = tolerance
 
     def recognize(self, highs: pd.Series, lows: pd.Series) -> List[PatternSignal]:
-        """识别头肩形�?""
+        """识别头肩形�?""
         swing_highs = self._find_swing_points(highs, lookback=20)
         signals = []
 
@@ -108,11 +108,11 @@ class HeadShoulderRecognizer(PatternRecognizer):
 
 ---
 
-## 4. 蜡烛图模�?
+## 4. 蜡烛图模�?
 
 ```python
 class CandlestickPatternRecognizer:
-    """蜡烛图模式识�?""
+    """蜡烛图模式识�?""
 
     PATTERNS = {
         'doji': lambda o, h, l, c: abs(o - c) / (h - l) < 0.1,
@@ -124,7 +124,7 @@ class CandlestickPatternRecognizer:
     }
 
     def recognize(self, ohlcv: pd.DataFrame) -> Dict[str, List[PatternSignal]]:
-        """识别蜡烛图模�?""
+        """识别蜡烛图模�?""
         patterns = {}
         for name, condition in self.PATTERNS.items():
             signals = []
@@ -147,10 +147,10 @@ class CandlestickPatternRecognizer:
 
 ```python
 class ChanTheoryRecognizer:
-    """缠论笔、段、中枢识�?""
+    """缠论笔、段、中枢识�?""
 
     def find_bi(self, prices: pd.Series, threshold: float = 0.03) -> List[Bi]:
-        """识别�?""
+        """识别�?""
         direction = None
         bi_list = []
         start_idx = 0
@@ -173,12 +173,12 @@ class ChanTheoryRecognizer:
         return bi_list
 
     def find_duan(self, bi_list: List[Bi]) -> List[Duan]:
-        """识别�?- 至少3笔重�?""
+        """识别�?- 至少3笔重�?""
         # 段识别逻辑
         pass
 
     def find_zhongshu(self, duan_list: List[Duan]) -> List[Zhongshu]:
-        """识别中枢 - 至少3段重�?""
+        """识别中枢 - 至少3段重�?""
         # 中枢识别逻辑
         pass
 ```
@@ -188,7 +188,7 @@ class ChanTheoryRecognizer:
 ## 6. 人机交互研究循环
 
 ```
-算法初筛 �?人工确认 �?反馈学习 �?批量验证 �?规则固化
+算法初筛 �?人工确认 �?反馈学习 �?批量验证 �?规则固化
 ```
 
 ```python
@@ -201,7 +201,7 @@ class InteractivePatternLearning:
         self.rejected_patterns = []
 
     def present_for_confirmation(self, signal: PatternSignal) -> bool:
-        """展示给用户确�?""
+        """展示给用户确�?""
         # 返回True表示确认，False表示拒绝
         pass
 
@@ -213,8 +213,8 @@ class InteractivePatternLearning:
             self.rejected_patterns.append(signal)
 
     def update_recognizer(self):
-        """更新识别器参�?""
-        # 基于确认/拒绝的模式调整识别参�?
+        """更新识别器参�?""
+        # 基于确认/拒绝的模式调整识别参�?
         pass
 ```
 
@@ -222,5 +222,5 @@ class InteractivePatternLearning:
 
 ## 索引
 
-- 父目�? [07_RESEARCH/README.md](../README.md)
+- 父目�? [07_RESEARCH/README.md](../README.md)
 - 相关文档: [statistical_tools.md](../02_EXPLORATORY_ANALYSIS/statistical_tools.md)
