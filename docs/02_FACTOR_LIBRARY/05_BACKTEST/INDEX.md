@@ -1,6 +1,6 @@
 ---
-module_id: BACKTEST_INDEX_001
-version: 1.0.0
+module_id: INDEX_BACKTEST_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04

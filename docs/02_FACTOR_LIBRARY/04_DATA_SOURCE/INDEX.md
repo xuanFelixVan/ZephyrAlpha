@@ -1,13 +1,16 @@
 ---
-module_id: INDEX_DATA_SOURCE
-version: 1.0.0
+module_id: INDEX_DATA_SOURCE_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构索引
-applicable_scope: 数据源目�?compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已完�?---
+last_updated: 2026-04-04
+owner: 首席文档架构师
+standard_type: 专业量化机构索引
+applicable_scope: 数据源目录
+compliance_level: 专业标准
+parent_document: ../../INDEX.md
+implementation_status: 已完成
+---
 
 # 数据源目录索�?
 > **目录职责**: 数据源接口、数据获取、数据质量管�?

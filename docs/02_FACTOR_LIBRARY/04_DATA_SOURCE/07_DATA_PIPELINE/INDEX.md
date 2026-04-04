@@ -1,6 +1,6 @@
 ---
-module_id: DATA_PIPELINE_INDEX_001
-version: 1.0.0
+module_id: INDEX_DATA_PIPELINE_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
@@ -8,7 +8,7 @@ owner: 首席文档架构师
 standard_type: 目录索引
 applicable_scope: 数据管道
 compliance_level: 专业标准
-parent_document: ../INDEX.md
+parent_document: ../../INDEX.md
 implementation_status: 已完成
 ---
 

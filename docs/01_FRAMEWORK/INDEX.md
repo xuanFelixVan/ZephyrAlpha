@@ -66,6 +66,14 @@ implementation_status: 活跃维护
 | [AI决策审计蓝图](./AI_DECISION_AUDIT_BLUEPRINT.md) | AI决策全链路审计 | ⭐⭐⭐⭐ |
 | [AI能力补充蓝图](./AI_CAPABILITY_GAP_BLUEPRINT.md) | AI能力差距与补充计划 | ⭐⭐⭐⭐ |
 
+### Layer 7-11顶层架构蓝图 🆕
+
+| 文档名称 | 说明 | 重要性 |
+|---------|------|--------|
+| [研究与创新层蓝图](../09_RESEARCH_INNOVATION/BLUEPRINT.md) | **Layer 9** AI虚拟研究实验室+创新孵化器 | ⭐⭐⭐⭐⭐ |
+| [治理与合规层蓝图](../10_GOVERNANCE_COMPLIANCE/BLUEPRINT.md) | **Layer 10** 内部控制体系+合规监控 | ⭐⭐⭐⭐⭐ |
+| [战略决策层蓝图](../11_STRATEGIC_DECISION/BLUEPRINT.md) | **Layer 11** 战略资产配置+风险预算分配 | ⭐⭐⭐⭐⭐ |
+
 ### 核心监控体系 (P0�?
 
 | 文档名称 | 说明 | 重要�?| 实施周期 |

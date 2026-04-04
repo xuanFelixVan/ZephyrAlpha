@@ -1,9 +1,9 @@
 ---
-module_id: KNOWLEDGE_INDEX_001
-version: 1.0.0
+module_id: INDEX_KNOWLEDGE_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: 2026-04-04
 owner: 首席知识官
 standard_type: 专业量化机构索引文档
 applicable_scope: 知识库导航

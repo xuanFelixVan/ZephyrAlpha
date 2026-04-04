@@ -41,17 +41,19 @@ last_updated: 2026-04-04
 
 ```
 docs/
-├── 00_OVERVIEW/          # 系统概览
-├── 00_RESOURCES/         # 资源文档
-├── 01_FRAMEWORK/         # 框架设计
-├── 02_FACTOR_LIBRARY/    # 因子库
-├── 03_TRADING_TACTICS/   # 交易战术
-├── 04_EXECUTION/         # 执行层
-├── 05_IMPLEMENTATION/    # 实施层
-├── 06_ARCHIVE/           # 归档文档
-├── 07_RESEARCH/          # 研究支持
-├── 09_AUDIT/             # 审计系统
-└── 10_AI_WORKFLOW/       # AI工作流
+├── 00_OVERVIEW/              # 系统概览
+├── 00_RESOURCES/             # 资源文档
+├── 01_FRAMEWORK/             # 框架设计
+├── 02_FACTOR_LIBRARY/        # 因子库 (Layer 2)
+├── 03_TRADING_TACTICS/       # 交易战术 (Layer 3, 5)
+├── 04_EXECUTION/             # 执行层 (Layer 5, 6)
+├── 05_IMPLEMENTATION/        # 实施层
+├── 06_ARCHIVE/               # 归档文档
+├── 07_AI_REPORTING/          # 🆕 Layer 7: AI报告层
+├── 08_HUMAN_AI_INTERFACE/    # 🆕 Layer 8: 人机交互层
+├── 09_RESEARCH_INNOVATION/   # 🆕 Layer 9: 研究与创新层
+├── 10_GOVERNANCE_COMPLIANCE/ # 🆕 Layer 10: 治理与合规层
+└── 11_STRATEGIC_DECISION/    # 🆕 Layer 11: 战略决策层
 ```
 
 ---
@@ -82,26 +84,28 @@ docs/
 
 | Layer | 层级名称 | 核心职责 | 关键文档 |
 |-------|---------|---------|---------|
-| **Layer 11** | 战略决策层 | 战略资产配置、风险预算分配 | [战略决策层蓝图](./01_FRAMEWORK/STRATEGIC_DECISION_LAYER_BLUEPRINT.md) |
-| **Layer 10** | 治理与合规层 | 内部控制、合规监控 | [治理与合规层蓝图](./01_FRAMEWORK/GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) |
-| **Layer 9** | 研究与创新层 | AI虚拟研究实验室、创新孵化器 | [研究与创新层蓝图](./01_FRAMEWORK/RESEARCH_INNOVATION_LAYER_BLUEPRINT.md) |
-| **Layer 8** | 人机交互层 | 授权、监控、报告 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 7** | AI报告层 | 绩效归因、自动报告 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 11** | 战略决策层 | 战略资产配置、风险预算分配 | [战略决策层索引](./11_STRATEGIC_DECISION/INDEX.md) |
+| **Layer 10** | 治理与合规层 | 内部控制、合规监控 | [治理与合规层索引](./10_GOVERNANCE_COMPLIANCE/INDEX.md) |
+| **Layer 9** | 研究与创新层 | AI虚拟研究实验室、创新孵化器 | [研究与创新层索引](./09_RESEARCH_INNOVATION/INDEX.md) |
+| **Layer 8** | 人机交互层 | 授权、监控、报告 | [人机交互层索引](./08_HUMAN_AI_INTERFACE/INDEX.md) |
+| **Layer 7** | AI报告层 | 绩效归因、自动报告 | [AI报告层索引](./07_AI_REPORTING/INDEX.md) |
 | **Layer 6** | 组合优化层 | 组合优化、风险模型 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 5** | 策略执行层 | 策略运行、信号生成 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 5** | 策略执行层 | 策略运行、信号生成 | [执行层索引](./04_EXECUTION/INDEX.md) |
 | **Layer 4** | 机器学习层 | AI预测、特征工程 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 3** | 舆情分析层 | 新闻分析、情感分析 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 2** | Alpha因子层 | 因子计算、因子库 | [因子库系统清单](./02_FACTOR_LIBRARY/System_Manifest.md) |
 | **Layer 1** | 数据预处理层 | 数据清洗、标准化 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 0** | 数据源层 | 数据采集、数据接入 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 
-### 顶层架构蓝图 (Layer 9-11) 🆕
+### 顶层架构蓝图 (Layer 7-11) 🆕
 
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| [**研究与创新层蓝图**](./01_FRAMEWORK/RESEARCH_INNOVATION_LAYER_BLUEPRINT.md) | **🆕 Layer 9** AI虚拟研究实验室+创新孵化器 | ⭐⭐⭐⭐⭐ |
-| [**治理与合规层蓝图**](./01_FRAMEWORK/GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | **🆕 Layer 10** 内部控制体系+合规监控 | ⭐⭐⭐⭐⭐ |
-| [**战略决策层蓝图**](./01_FRAMEWORK/STRATEGIC_DECISION_LAYER_BLUEPRINT.md) | **🆕 Layer 11** 战略资产配置+风险预算分配 | ⭐⭐⭐⭐⭐ |
+| Layer | 层级名称 | 核心文档 | 重要度 |
+|-------|---------|---------|--------|
+| **Layer 11** | 战略决策层 | [战略决策层蓝图](./11_STRATEGIC_DECISION/BLUEPRINT.md) | ⭐⭐⭐⭐⭐ |
+| **Layer 10** | 治理与合规层 | [治理与合规层蓝图](./10_GOVERNANCE_COMPLIANCE/BLUEPRINT.md) | ⭐⭐⭐⭐⭐ |
+| **Layer 9** | 研究与创新层 | [研究与创新层蓝图](./09_RESEARCH_INNOVATION/BLUEPRINT.md) | ⭐⭐⭐⭐⭐ |
+| **Layer 8** | 人机交互层 | [人机交互层蓝图](./01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md) | ⭐⭐⭐⭐⭐ |
+| **Layer 7** | AI报告层 | [AI报告层蓝图](./07_AI_REPORTING/BLUEPRINT.md) | ⭐⭐⭐⭐⭐ |
 
 ---
 

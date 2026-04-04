@@ -1,4 +1,4 @@
-﻿﻿---
+﻿---
 module_id: DOC_SYSTEM_MANIFEST_001
 version: 5.3.0
 status: Active
@@ -53,20 +53,24 @@ D:\ZephyrAlpha\
 �?  └── risk/                         # 风险配置
 ├── data/                             # 数据存储 (gitignored)
 ├── docs/                             # 文档中心
-�?  ├── INDEX.md                      # 快速导航入�?
-�?  ├── System_Manifest.md            # 本文�?
-�?  ├── API_Contract.md              # 接口契约
-�?  ├── BLUEPRINT.md                  # 系统蓝图
-�?  ├── AI_Permissions.md            # AI权限清单
-�?  ├── CHANGELOG.md                  # 变更日志
-�?  ├── 00_OVERVIEW/                  # 系统总览
-�?  ├── 01_FRAMEWORK/                 # 框架定义
-�?  ├── 02_FACTOR_LIBRARY/            # 因子�?
-�?  ├── 03_TRADING_TACTICS/           # 交易策略
-�?  ├── 04_EXECUTION/                 # 执行引擎
-�?  ├── 05_IMPLEMENTATION/            # 实施指南
-�?  ├── 06_ARCHIVE/                   # 归档
-�?  └── 07_RESEARCH/                  # AI研究
+│   ├── INDEX.md                      # 快速导航入口
+│   ├── System_Manifest.md            # 本文档
+│   ├── API_Contract.md              # 接口契约
+│   ├── BLUEPRINT.md                  # 系统蓝图
+│   ├── AI_Permissions.md            # AI权限清单
+│   ├── CHANGELOG.md                  # 变更日志
+│   ├── 00_OVERVIEW/                  # 系统总览
+│   ├── 01_FRAMEWORK/                 # 框架定义
+│   ├── 02_FACTOR_LIBRARY/            # 因子库 (Layer 2)
+│   ├── 03_TRADING_TACTICS/           # 交易策略 (Layer 3, 5)
+│   ├── 04_EXECUTION/                 # 执行引擎 (Layer 5, 6)
+│   ├── 05_IMPLEMENTATION/            # 实施指南
+│   ├── 06_ARCHIVE/                   # 归档
+│   ├── 07_AI_REPORTING/              # 🆕 Layer 7: AI报告层
+│   ├── 08_HUMAN_AI_INTERFACE/        # 🆕 Layer 8: 人机交互层
+│   ├── 09_RESEARCH_INNOVATION/       # 🆕 Layer 9: 研究与创新层
+│   ├── 10_GOVERNANCE_COMPLIANCE/     # 🆕 Layer 10: 治理与合规层
+│   └── 11_STRATEGIC_DECISION/        # 🆕 Layer 11: 战略决策层
 ├── notebooks/                        # Jupyter分析 (gitignored)
 ├── scripts/                          # 系统脚本
 �?  └── audit_filesystem.py

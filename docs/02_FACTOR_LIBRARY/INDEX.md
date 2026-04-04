@@ -1,9 +1,9 @@
 ---
-module_id: DOC_FACTOR_LIBRARY_INDEX_001
-version: 2.0.0
+module_id: INDEX_FACTOR_LIBRARY_001
+version: 2.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: 2026-04-04
 owner: 因子库架构师
 standard_type: 专业量化机构目录索引
 applicable_scope: 02_FACTOR_LIBRARY目录
