@@ -2,13 +2,13 @@
 standard_type: 系统索引
 applicable_scope: 全系统
 compliance_level: 顶级标准
-parent_document: ../README.md
+parent_document: README.md
 implementation_status: 活跃维护
 owner: 系统架构师
-version: 1.1.0
-module_id: DOC_INDEX_ROOT
+version: 1.1.1
+module_id: INDEX_ROOT_001
 created_date: 2026-04-02
-last_updated: 2026-04-03
+last_updated: 2026-04-04
 ---
 
 # 清风量化系统文档索引

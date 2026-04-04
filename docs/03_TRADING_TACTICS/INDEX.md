@@ -1,21 +1,20 @@
 ---
-module_id: DOC_DOC_001
+module_id: INDEX_TACTICS_001
 version: 5.3.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: 2026-04-04
 owner: 首席文档架构师
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
-parent_document: INDEX.md
+parent_document: ../INDEX.md
 implementation_status: 进行中
 ---
 
+# 交易战术目录索引
 
-# 文档主索引
-
-> 清风量化系统 v5.3 精简文档导航（个人开发版）
+> 清风量化系统 v5.3 战术层文档导航
 >
 > **文档职责说明**:
 > - **INDEX.md**: 快速入口（5分钟导航），聚焦核心文档和常用路径

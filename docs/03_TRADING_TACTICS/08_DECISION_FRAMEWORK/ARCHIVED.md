@@ -1,15 +1,19 @@
 ---
 module_id: TACTICS_DOC_001
-version: 0.1.0
-status: Active
+version: 0.1.1
+status: Archived
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: 2026-04-04
 owner: 首席文档架构师
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 已归档
+archive_reason: 36个环节过于复杂，单人无法维护
+archive_date: 2026-03-28
+archive_location: 99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md
+duplicate_note: 本文档内容已复制到归档目录，保留此文件作为历史记录
 ---
 
 
@@ -18,6 +22,7 @@ implementation_status: 进行中
 > **状态**: ❌ 已归档
 > **原因**: 36个环节过于复杂，单人无法维护
 > **索引**: `ARC_001`
+> **归档副本**: [99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md](../99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md)
 
 
 ## 原设计概述
