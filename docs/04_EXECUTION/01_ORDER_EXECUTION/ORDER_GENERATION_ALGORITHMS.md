@@ -1,25 +1,26 @@
 ---
-module_id: TACTICS_README_001
+module_id: EXECUTION_ORDER_ALGO_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: 2026-04-04
 owner: 首席文档架构师
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 订单生成算法
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
 ---
 
-# 订单生成系统
+# 订单生成算法
 
 > TWAP、VWAP、冲击成本模型
 
 **版本**: v1.0
-**更新**: 2026-03-29
-**Layer**: Layer 4 (执行层)
-**索引**: 03_TRADING_TACTICS/07_ORDER_GENERATION
+**更新**: 2026-04-04
+**层级**: 执行层 (Layer 4)
+**索引**: 04_EXECUTION/01_ORDER_EXECUTION/ORDER_GENERATION_ALGORITHMS.md
+**说明**: 本文档从 03_TRADING_TACTICS/07_ORDER_GENERATION/ 移动至此，因其属于执行层内容
 
 ---
 

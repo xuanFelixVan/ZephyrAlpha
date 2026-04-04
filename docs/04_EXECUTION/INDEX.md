@@ -48,6 +48,8 @@ implementation_status: 活跃维护
 | 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
 | [订单执行蓝图](./01_ORDER_EXECUTION/ORDER_EXECUTION_BLUEPRINT.md) | 订单执行蓝图 | ⭐⭐⭐⭐⭐ |
+| [QMT执行器蓝图](./01_ORDER_EXECUTION/QMT_EXECUTOR_BLUEPRINT.md) | QMT执行器蓝图 | ⭐⭐⭐⭐⭐ |
+| [订单生成算法](./01_ORDER_EXECUTION/ORDER_GENERATION_ALGORITHMS.md) | TWAP/VWAP/冲击成本模型 | ⭐⭐⭐⭐⭐ |
 
 ### 交易执行器
 
@@ -97,7 +99,7 @@ implementation_status: 活跃维护
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
 | [01_EVENT_ENGINE/](./01_EVENT_ENGINE/) | 事件引擎 | 2 |
-| [01_ORDER_EXECUTION/](./01_ORDER_EXECUTION/) | 订单执行 | 1 |
+| [01_ORDER_EXECUTION/](./01_ORDER_EXECUTION/) | 订单执行 | 3 |
 | [02_TRADE_EXECUTOR/](./02_TRADE_EXECUTOR/) | 交易执行器 | 1 |
 | [03_MONITORING/](./03_MONITORING/) | 监控系统 | 6 |
 | [04_AI_COMMITTEE/](./04_AI_COMMITTEE/) | AI委员会 | 1 |
