@@ -1,6 +1,6 @@
 ---
-module_id: TACTICS_DOC_001
-version: 0.1.1
+module_id: TACTICS_ARCHIVED_MARKER_001
+version: 0.1.2
 status: Archived
 created_date: 2026-04-01
 last_updated: 2026-04-04
