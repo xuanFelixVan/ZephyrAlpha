@@ -1,15 +1,15 @@
----
-module_id: DOC_DOC_001
+﻿---
+module_id: DOC_SITEMAP_001
 version: 5.3.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构?
+last_updated: 2026-04-04
+owner: 首席文档架构师
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: INDEX.md
-implementation_status: 进行?
+implementation_status: 进行中
 ---
 
 
@@ -64,9 +64,9 @@ docs/
 
 **架构学习路线** (2小时):
 1. 阅读 [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 系统蓝图 (30分钟)
-2. 阅读 [01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11统一架构 (30分钟)
+2. 阅读 [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11统一架构 (30分钟)
 3. 阅读 [01_FRAMEWORK/README.md](../../README.md) - 框架文档索引 (20分钟)
-4. 阅读 [AI_Permissions.md](../../08_AI_GOVERNANCE/AI_Permissions.md) - AI权限清单 (20分钟)
+4. 阅读 [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AI权限清单 (20分钟)
 
 
 ### 我要开发策?
@@ -84,16 +84,16 @@ docs/
 
 **部署路线** (3小时):
 1. 阅读 [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 系统蓝图 (30分钟)
-2. 阅读 [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署方案 (30分钟)
+2. 阅读 [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署方案 (30分钟)
 3. 执行部署脚本 (2小时)
 
 
 ### 我理解安?
 
 **安全学习路线** (1.5小时):
-1. 阅读 [AI_Permissions.md](../../08_AI_GOVERNANCE/AI_Permissions.md) - AI权限清单 (20分钟)
-2. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - 安全规范 (25分钟)
-3. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - 认证授权 (20分钟)
+1. 阅读 [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AI权限清单 (20分钟)
+2. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - 安全规范 (25分钟)
+3. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - 认证授权 (20分钟)
 
 
 ### 我遇到问?
@@ -229,14 +229,14 @@ docs/
 ### 架构相关
 
 - [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 系统蓝图
-- [01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11架构
-- [01_FRAMEWORK/MARKET_REGIME.md](../../01_FRAMEWORK/MARKET_REGIME.md) - 市场状态识?
+- [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11架构
+- [01_FRAMEWORK/MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) - 市场状态识?
 
 ### 模块相关
 
 - [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md) - 接口契约
 - [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 模块蓝图
-- [AI_Permissions.md](../../08_AI_GOVERNANCE/AI_Permissions.md) - AI权限
+- [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AI权限
 
 ### 策略相关
 
@@ -255,7 +255,7 @@ docs/
 ### 部署相关
 
 - [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 系统蓝图
-- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署方案
+- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署方案
 
 ### 开发相?
 
@@ -367,3 +367,4 @@ INDEX.md (快速入?
 **最后更?*: 2026-03-31
 **维护?*: 清风量化系统
 **版本**: v5.3
+

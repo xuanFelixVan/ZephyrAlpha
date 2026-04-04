@@ -245,7 +245,7 @@ implementation_status: 进行?
 - `secrets/`
 - `pyproject.toml`
 
-详见: [AI_Permissions.md](../../08_AI_GOVERNANCE/AI_Permissions.md)
+详见: [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md)
 
 ### Q21: 如何让AI添加新因子？
 
