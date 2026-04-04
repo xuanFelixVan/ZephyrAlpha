@@ -1,42 +1,42 @@
 ---
-module_id: TACTICS_DOC_001
-version: 1.0.0
+module_id: TACTICS_LIMIT_UP_ANALYSIS_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 涨停板量�?
+# 涨停板量�?
 
-> 涨停板量化分析体�?
+> 涨停板量化分析体�?
 >
-> **配套文档**�?
+> **配套文档**�?
 > - 主文档：
 > - 形态识别：[pattern-recognition.md](../99_ARCHIVE/pattern-recognition.md)
 
 ***
 
-## 1. 涨停板量化体�?
+## 1. 涨停板量化体�?
 
-### 1.1 涨停板分�?
+### 1.1 涨停板分�?
 
 | 分类维度 | 类型 | 量化标准 |
 |----------|------|----------|
 | 板数 | 首板 | 首次涨停 |
-| | 二板 | 连续第二个涨�?|
-| | 三板及以�?| 连续涨停�? |
-| 封板时间 | 早板 | 10:00前封�?|
+| | 二板 | 连续第二个涨�?|
+| | 三板及以�?| 连续涨停�? |
+| 封板时间 | 早板 | 10:00前封�?|
 | | 中板 | 10:00-14:00封板 |
-| | 尾板 | 14:00后封�?|
+| | 尾板 | 14:00后封�?|
 | 封板力度 | 一字板 | 开盘即涨停 |
-| | 实体�?| 有实体涨幅的涨停 |
-| | 秒封�?| 涨停后成交额<1000�?|
+| | 实体�?| 有实体涨幅的涨停 |
+| | 秒封�?| 涨停后成交额<1000�?|
 
 ***
 
@@ -46,7 +46,7 @@ implementation_status: 进行�?
 
 ```python
 class LimitUpAnalyzer:
-    """涨停板分�?""
+    """涨停板分�?""
 
     def __init__(self):
         self.limit_up_stocks = []
@@ -57,7 +57,7 @@ class LimitUpAnalyzer:
         return abs(change_pct - limit_rate * 100) < 0.1
 
     def get_limit_up_info(self, stock_data):
-        """获取涨停板信�?""
+        """获取涨停板信�?""
         return {
             'code': stock_data['code'],
             'name': stock_data['name'],
@@ -77,14 +77,14 @@ class LimitUpAnalyzer:
         return (seal_amount / turnover) * 100
 
     def identify_limit_up_type(self, stock_data):
-        """识别涨停板类�?""
+        """识别涨停板类�?""
         seal_time = stock_data.get('seal_time', '15:00')
 
         if stock_data['open'] == stock_data['high']:
             return '一字板'
 
         if stock_data.get('open_count', 0) == 0:
-            return '秒封�?
+            return '秒封�?
 
         if seal_time < '10:00':
             return '早板'
@@ -96,11 +96,11 @@ class LimitUpAnalyzer:
 
 ***
 
-### 2.2 连板股量�?
+### 2.2 连板股量�?
 
 ```python
 class ConsecutiveLimitUpAnalyzer:
-    """连板股分�?""
+    """连板股分�?""
 
     def __init__(self):
         self.consecutive_stocks = {}
@@ -116,7 +116,7 @@ class ConsecutiveLimitUpAnalyzer:
         })
 
     def get_consecutive_count(self, code, current_date):
-        """获取连板�?""
+        """获取连板�?""
         if code not in self.consecutive_stocks:
             return 0
 
@@ -135,7 +135,7 @@ class ConsecutiveLimitUpAnalyzer:
         return consecutive
 
     def is_leader_candidate(self, code, current_date, threshold=4):
-        """判断是否为龙头候�?""
+        """判断是否为龙头候�?""
         consecutive = self.get_consecutive_count(code, current_date)
 
         if consecutive >= threshold:
@@ -154,15 +154,15 @@ class ConsecutiveLimitUpAnalyzer:
 
 ***
 
-## 3. 涨停板情绪量�?
+## 3. 涨停板情绪量�?
 
-### 3.1 涨停板情绪指�?
+### 3.1 涨停板情绪指�?
 
 | 指标 | 计算方式 | 含义 |
 |------|----------|------|
 | 涨停家数 | 当日涨停股票数量 | 市场热度 |
-| 连板股比�?| 连续涨停�?涨停�?| 接力情况 |
-| 炸板�?| 炸板股数/涨停股数 | 封板成功�?|
+| 连板股比�?| 连续涨停�?涨停�?| 接力情况 |
+| 炸板�?| 炸板股数/涨停股数 | 封板成功�?|
 | 跌停家数 | 当日跌停股票数量 | 市场恐慌程度 |
 | 涨停溢价 | 次日平均高开幅度 | 赚钱效应 |
 
@@ -172,13 +172,13 @@ class ConsecutiveLimitUpAnalyzer:
 
 ```python
 class LimitUpSentimentAnalyzer:
-    """涨停板情绪分�?""
+    """涨停板情绪分�?""
 
     def __init__(self):
         self.market_data = {}
 
     def calculate_sentiment_index(self, date):
-        """计算涨停板情绪指�?""
+        """计算涨停板情绪指�?""
         limit_up_count = self.get_limit_up_count(date)
         limit_down_count = self.get_limit_down_count(date)
         break_limit_count = self.get_break_limit_count(date)
@@ -212,46 +212,46 @@ class LimitUpSentimentAnalyzer:
     def get_emotion_zone(self, sentiment_index):
         """判断情绪区域"""
         if sentiment_index >= 80:
-            return {'zone': '极热�?, 'action': '减仓观望'}
+            return {'zone': '极热�?, 'action': '减仓观望'}
         elif sentiment_index >= 65:
-            return {'zone': '过热�?, 'action': '谨慎追涨'}
+            return {'zone': '过热�?, 'action': '谨慎追涨'}
         elif sentiment_index >= 45:
-            return {'zone': '正常�?, 'action': '积极参与'}
+            return {'zone': '正常�?, 'action': '积极参与'}
         elif sentiment_index >= 30:
-            return {'zone': '过冷�?, 'action': '等待机会'}
+            return {'zone': '过冷�?, 'action': '等待机会'}
         else:
-            return {'zone': '极冷�?, 'action': '抄底信号'}
+            return {'zone': '极冷�?, 'action': '抄底信号'}
 ```
 
 ***
 
-## 4. 涨停板量化筛�?
+## 4. 涨停板量化筛�?
 
-### 4.1 首板筛选条�?
+### 4.1 首板筛选条�?
 
 | 条件类型 | 量化标准 | 说明 |
 |----------|----------|------|
-| 市值要�?| 流通市�?100�?| 便于资金炒作 |
-| 成交量要�?| 成交�?3�?| 资金参与�?|
-| 换手率要�?| 换手�?5% | 充分换手 |
-| 封单要求 | 封单�?1�?| 封板力度 |
-| 题材要求 | 所属题材涨停≥3�?| 板块联动 |
+| 市值要�?| 流通市�?100�?| 便于资金炒作 |
+| 成交量要�?| 成交�?3�?| 资金参与�?|
+| 换手率要�?| 换手�?5% | 充分换手 |
+| 封单要求 | 封单�?1�?| 封板力度 |
+| 题材要求 | 所属题材涨停≥3�?| 板块联动 |
 
 ***
 
-### 4.2 二板筛选条�?
+### 4.2 二板筛选条�?
 
 | 条件类型 | 量化标准 | 说明 |
 |----------|----------|------|
-| 一板质�?| 一板为实体�?| 非一字板 |
+| 一板质�?| 一板为实体�?| 非一字板 |
 | 高开幅度 | 3%-8% | 不过高不过低 |
 | 回调幅度 | 不跌破一板最高价80% | 强势整理 |
-| 封板时间 | 10:30前封�?| 强势信号 |
-| 跟风效应 | 同题材有一板助�?| 板块联动 |
+| 封板时间 | 10:30前封�?| 强势信号 |
+| 跟风效应 | 同题材有一板助�?| 板块联动 |
 
 ***
 
-### 4.3 龙头股筛�?
+### 4.3 龙头股筛�?
 
 ```python
 class DragonStockSelector:
@@ -262,7 +262,7 @@ class DragonStockSelector:
         self.sector_leader_weight = 2.0
 
     def select_dragon_candidates(self, limit_up_stocks):
-        """筛选龙头候�?""
+        """筛选龙头候�?""
         candidates = []
 
         for stock in limit_up_stocks:
