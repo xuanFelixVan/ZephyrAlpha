@@ -844,9 +844,233 @@ def example_risk_control():
 
 ---
 
-**版本**: 1.0
-**更新**: 2026-03-28
+## 6. 规则配置 (YAML)
+
+```yaml
+# config/risk/rules.yaml
+
+rules:
+  # ============ 事前风控规则 ============
+
+  - rule_id: RISK_001
+    name: "单股仓位限制"
+    category: pre_trade
+    severity: danger
+    enabled: true
+    params:
+      max_position_ratio: 0.10  # 单股最大仓位10%
+      max_position_value: 1000000  # 单股最大市值100万
+    condition: "check_position_limit"
+    action: "reject_order"
+
+  - rule_id: RISK_002
+    name: "总仓位限制"
+    category: pre_trade
+    severity: danger
+    enabled: true
+    params:
+      max_total_ratio: 0.80  # 总仓位最大80%
+    condition: "check_total_position"
+    action: "reject_order"
+
+  - rule_id: RISK_003
+    name: "资金充足检查"
+    category: pre_trade
+    severity: danger
+    enabled: true
+    params:
+      min_cash_reserve: 0.05  # 最低5%现金储备
+    condition: "check_fund_sufficiency"
+    action: "reject_order"
+
+  - rule_id: RISK_004
+    name: "ST股票限制"
+    category: pre_trade
+    severity: warning
+    enabled: true
+    params:
+      allowed: false
+    condition: "check_st_stock"
+    action: "reject_order"
+
+  - rule_id: RISK_005
+    name: "涨停不买"
+    category: pre_trade
+    severity: warning
+    enabled: true
+    params: {}
+    condition: "check_limit_up"
+    action: "reject_order"
+
+  # ============ 事中风控规则 ============
+
+  - rule_id: RISK_006
+    name: "单股回撤止损"
+    category: in_trade
+    severity: critical
+    enabled: true
+    params:
+      max_loss_ratio: 0.08  # 单股最大回撤8%
+    condition: "check_stock_stop_loss"
+    action: "close_position"
+
+  - rule_id: RISK_007
+    name: "组合回撤止损"
+    category: in_trade
+    severity: critical
+    enabled: true
+    params:
+      max_portfolio_loss: 0.05  # 组合最大回撤5%
+    condition: "check_portfolio_stop_loss"
+    action: "close_all_positions"
+
+  - rule_id: RISK_008
+    name: "移动止损"
+    category: in_trade
+    severity: danger
+    enabled: true
+    params:
+      trailing_ratio: 0.03  # 移动止损3%
+    condition: "check_trailing_stop"
+    action: "reduce_position"
+
+  - rule_id: RISK_009
+    name: "波动率预警"
+    category: in_trade
+    severity: warning
+    enabled: true
+    params:
+      vol_threshold: 0.30  # 波动率阈值30%
+    condition: "check_volatility"
+    action: "send_alert"
+
+  - rule_id: RISK_010
+    name: "流动性预警"
+    category: in_trade
+    severity: warning
+    enabled: true
+    params:
+      min_volume: 1000000  # 最小成交量100万
+      min_turnover: 500000  # 最小成交额50万
+    condition: "check_liquidity"
+    action: "send_alert"
+```
+
+---
+
+## 7. 风控API
+
+```python
+# API: /api/v1/risk
+
+risk_router = APIRouter()
+
+class RiskEndpoints:
+    """风控接口
+
+    索引: API_RISK_001
+    """
+
+    @risk_router.get("/rules")
+    async def list_rules(
+        category: str = None,
+        auth: dict = Depends(verify_auth)
+    ) -> List[RiskRule]:
+        """列出风控规则
+
+        参数:
+            category: pre_trade / in_trade / post_trade
+        """
+        rules = RiskRuleEngine.get_rules(category=category)
+        return rules
+
+    @risk_router.post("/rules")
+    async def create_rule(
+        rule: RiskRuleConfig,
+        auth: dict = Depends(verify_auth)
+    ) -> RiskRule:
+        """创建风控规则"""
+        if not check_permission(auth['role'], 'risk:write'):
+            raise HTTPException(status_code=403, detail="无权限")
+
+        return RiskRuleEngine.create_rule(rule)
+
+    @risk_router.put("/rules/{rule_id}")
+    async def update_rule(
+        rule_id: str,
+        rule: RiskRuleConfig,
+        auth: dict = Depends(verify_auth)
+    ) -> RiskRule:
+        """更新风控规则"""
+
+    @risk_router.post("/rules/{rule_id}/enable")
+    async def enable_rule(
+        rule_id: str,
+        auth: dict = Depends(verify_auth)
+    ) -> Response:
+        """启用规则"""
+        RiskRuleEngine.enable_rule(rule_id)
+        return Response(code=0, message="规则已启用")
+
+    @risk_router.post("/rules/{rule_id}/disable")
+    async def disable_rule(
+        rule_id: str,
+        auth: dict = Depends(verify_auth)
+    ) -> Response:
+        """禁用规则"""
+        RiskRuleEngine.disable_rule(rule_id)
+        return Response(code=0, message="规则已禁用")
+
+    @risk_router.get("/violations")
+    async def get_violations(
+        start_date: str = None,
+        end_date: str = None,
+        auth: dict = Depends(verify_auth)
+    ) -> List[Violation]:
+        """查询违规记录"""
+        return RiskRuleEngine.get_violations(start_date, end_date)
+
+    @risk_router.get("/alerts")
+    async def get_alerts(
+        start_date: str = None,
+        end_date: str = None,
+        auth: dict = Depends(verify_auth)
+    ) -> List[Alert]:
+        """查询告警记录"""
+        return RiskRuleEngine.get_alerts(start_date, end_date)
+```
+
+---
+
+## 8. 开发任务分解
+
+| 任务 | 时间 | 说明 |
+|------|------|------|
+| 规则引擎核心 | 8h | RiskRuleEngine |
+| 规则条件实现 | 10h | 10+种条件 |
+| 规则动作实现 | 6h | 5种动作 |
+| 规则配置加载 | 4h | YAML配置解析 |
+| 告警管理 | 4h | AlertManager |
+| API层 | 4h | REST API |
+| 测试 | 4h | 单元测试 |
+| **总计** | **40h** | |
+
+---
+
+## 9. 相关文档
+
+| 文档 | 层级 | 说明 |
+|------|------|------|
+| [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) | 框架层 | 定义整体架构和设计原则 |
+| [风控规则体系蓝图](../../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) | 战术层 | 定义规则体系和三层防御 |
+| [风险报告生成器](../../03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) | 战术层 | 风险报告生成 |
+
+---
+
+**版本**: v2.0 (合并版)
+**更新**: 2026-04-04
 **Layer**: Layer 6 (风险监控)
-**索引**: BLUEPRINTS.md → 风控规则引擎蓝图
-**上游接口**: PortfolioOptimizer (M05), TradeExecutor (M06)
-**下游接口**: AlertManager (M14), PerformanceAnalyzer (M08)
+**索引**: EXECUTION_RISK_ENGINE_001
+**上游接口**: PortfolioOptimizer, TradeExecutor
+**下游接口**: AlertManager, PerformanceAnalyzer
+**合并来源**: 原 `03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md` 已整合至此
