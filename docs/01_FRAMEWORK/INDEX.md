@@ -107,6 +107,52 @@ implementation_status: 活跃维护
 
 ---
 
+## 🤖 机器学习层蓝图 (Layer 4)
+
+### P1级核心蓝图 (专业机构标配)
+
+| 蓝图名称 | module_id | 说明 | 优先级 |
+|---------|-----------|------|--------|
+| [市场微观结构模型蓝图](./MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md) | MMM-001 | 订单簿动态、流动性预测、市场冲击估计 | P1 |
+| [高频信号处理蓝图](./HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md) | HFSP-001 | 微秒级特征提取、噪声过滤、信号聚合 | P1 |
+| [另类数据融合蓝图](./ALTERNATIVE_DATA_FUSION_BLUEPRINT.md) | ADF-001 | 多源数据处理、跨模态融合、Alpha生成 | P1 |
+| [事件驱动学习蓝图](./EVENT_DRIVEN_LEARNING_BLUEPRINT.md) | EDL-001 | 事件检测、分类、影响预测 | P1 |
+| [LLM微调蓝图](./LLM_FINE_TUNING_BLUEPRINT.md) | LLMFT-001 | LoRA/QLoRA微调、金融领域适配 | P1 |
+| [提示工程蓝图](./PROMPT_ENGINEERING_BLUEPRINT.md) | PE-001 | 提示模板、Few-shot学习、CoT | P1 |
+| [RAG系统蓝图](./RAG_SYSTEM_BLUEPRINT.md) | RAG-001 | 向量数据库、相似度搜索、增强生成 | P1 |
+| [模型版本控制蓝图](./MODEL_VERSIONING_BLUEPRINT.md) | MV-001 | 版本追踪、对比、回滚能力 | P1 |
+| [模型血缘追踪蓝图](./MODEL_LINEAGE_BLUEPRINT.md) | MLIN-001 | 数据追溯、特征追溯、训练追溯 | P1 |
+| [模型A/B测试蓝图](./MODEL_AB_TESTING_BLUEPRINT.md) | ABTEST-001 | 在线对比、流量分配、统计显著性 | P1 |
+| [模型回滚机制蓝图](./MODEL_ROLLBACK_BLUEPRINT.md) | ROLLBACK-001 | 快速回退、自动触发、无损切换 | P1 |
+| [联邦学习蓝图](./FEDERATED_LEARNING_BLUEPRINT.md) | FL-001 | 隐私保护分布式训练、安全聚合 | P1 |
+| [自监督学习蓝图](./SELF_SUPERVISED_LEARNING_BLUEPRINT.md) | SSL-001 | 对比学习、掩码预测、预训练 | P1 |
+| [图神经网络蓝图](./GRAPH_NEURAL_NETWORK_BLUEPRINT.md) | GNN-001 | 股权关系图、供应链网络、知识图谱 | P1 |
+| [隐私保护ML蓝图](./DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md) | DPML-001 | 差分隐私、梯度裁剪、噪声注入 | P1 |
+| [合成数据生成蓝图](./SYNTHETIC_DATA_GENERATION_BLUEPRINT.md) | SYNTH-001 | GAN/VAE/Diffusion生成、质量评估 | P1 |
+
+### P2级扩展蓝图 (建议补充)
+
+| 蓝图名称 | module_id | 说明 | 优先级 |
+|---------|-----------|------|--------|
+| [扩散模型蓝图](./DIFFUSION_MODEL_BLUEPRINT.md) | DIFF-001 | 高质量生成、可控生成、情景模拟 | P2 |
+| [Mamba/SSM蓝图](./MAMBA_SSM_BLUEPRINT.md) | MAMBA-001 | 线性复杂度、高效推理、长序列 | P2 |
+| [混合专家模型蓝图](./MIXTURE_OF_EXPERTS_BLUEPRINT.md) | MOE-001 | 稀疏激活、模型容量、专业化 | P2 |
+| [课程学习蓝图](./CURRICULUM_LEARNING_BLUEPRINT.md) | CURR-001 | 渐进学习、难度评估、训练调度 | P2 |
+| [主动学习蓝图](./ACTIVE_LEARNING_BLUEPRINT.md) | AL-001 | 智能采样、标注效率、不确定性采样 | P2 |
+| [模型卡片蓝图](./MODEL_CARD_BLUEPRINT.md) | MC-001 | 模型透明、合规文档、责任追溯 | P2 |
+| [合规审计日志蓝图](./COMPLIANCE_AUDIT_LOG_BLUEPRINT.md) | AUDIT-001 | 操作记录、不可篡改、审计追溯 | P2 |
+| [灰度发布系统蓝图](./GRAYSCALE_RELEASE_BLUEPRINT.md) | GRAY-001 | 渐进发布、风险控制、自动回滚 | P2 |
+| [模型性能基准蓝图](./MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md) | BENCH-001 | 标准化评估、横向对比、纵向追踪 | P2 |
+| [模型水印蓝图](./MODEL_WATERMARK_BLUEPRINT.md) | WM-001 | 所有权证明、版权保护、盗用检测 | P2 |
+| [后门检测蓝图](./BACKDOOR_DETECTION_BLUEPRINT.md) | BD-001 | 后门识别、触发器检测、安全审计 | P2 |
+| [MIA防御蓝图](./MIA_DEFENSE_BLUEPRINT.md) | MIA-001 | 成员推理攻击防御、隐私保护 | P2 |
+| [特征选择自动化蓝图](./FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md) | FSA-001 | 自动筛选、冗余消除、效率提升 | P2 |
+| [数据质量评估蓝图](./DATA_QUALITY_ASSESSMENT_BLUEPRINT.md) | DQA-001 | 质量监控、异常检测、质量报告 | P2 |
+| [AI Agent框架蓝图](./AI_AGENT_FRAMEWORK_BLUEPRINT.md) | AGENT-001 | 自主决策、工具调用、多Agent协作 | P2 |
+| [模型压缩蓝图](./MODEL_COMPRESSION_BLUEPRINT.md) | COMP-001 | 量化、剪枝、知识蒸馏 | P2 |
+
+---
+
 ## 🔗 相关链接
 
 - [系统主索引](../INDEX.md)
