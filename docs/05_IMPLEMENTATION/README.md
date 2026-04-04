@@ -150,7 +150,7 @@ implementation_status: 进行?
     one-click-deploy.md      # 一键部署脚?
     backup-restore.md        # 备份与恢?
 
- 04_OPERATIONS/               #  运维手册
+ 07_OPERATIONS/               #  运维手册
     README.md                # 运维手册总览
     monitoring.md            # 简易监控配?
     faq.md                   # 常见问题 FAQ
@@ -350,9 +350,9 @@ tail -f logs/error.log
 ### 个人开发者最佳实?
 
 1. **快速上?*: 先看 01_QUICKSTART，动手实?
-2. **开发参?*: 写代码时参?02_DEVELOPMENT
+2. **开发参?*: 写代码时�?02_DEVELOPMENT
 3. **部署部署**: 部署前阅?03_DEPLOYMENT
-4. **遇到问题**: 先查 04_OPERATIONS/faq.md
+4. **遇到问题**: 先查 07_OPERATIONS/faq.md
 
 ### 渐进式采?
 
@@ -374,4 +374,4 @@ tail -f logs/error.log
 
 **维护?*: 清风量化系统  
 **最后更?*: 2026-03-28  
-**文档状?*:  个人开发者友好版
+**文档�?*:  个人开发者友好版

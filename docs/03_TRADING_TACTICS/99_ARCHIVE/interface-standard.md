@@ -4,19 +4,19 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构标准
-applicable_scope: 全系统标准规范
+applicable_scope: 全系统标准规�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 策略接口标准
 
-> 策略基类与接口定义
+> 策略基类与接口定�?
 >
-> **配套文档**：
+> **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
 > - 策略池概述：[../05_STRATEGY_POOL/index.md](../05_STRATEGY_POOL/index.md)
 
@@ -31,12 +31,12 @@ from typing import Optional, Dict, List
 from enum import Enum
 
 class MarketState(Enum):
-    """市场状态枚举"""
+    """市场状态枚�?""
     BULL = "牛市"
     BEAR = "熊市"
-    VOLATILE = "震荡市"
+    VOLATILE = "震荡�?
     YAO = "妖股周期"
-    CHAOS = "混沌状态"
+    CHAOS = "混沌状�?
 
 class SignalType(Enum):
     """信号类型枚举"""
@@ -49,10 +49,10 @@ class TradingSignal:
     """交易信号数据结构"""
     code: str                          # 股票代码
     signal: SignalType                  # 信号类型
-    confidence: float                   # 置信度 (0.0-1.0)
-    entry_price: float                 # 建议入场价
-    stop_loss: float                   # 止损价
-    target_price: float               # 目标价
+    confidence: float                   # 置信�?(0.0-1.0)
+    entry_price: float                 # 建议入场�?
+    stop_loss: float                   # 止损�?
+    target_price: float               # 目标�?
     strategy_name: str                 # 策略名称
     position_size: float = 0.0        # 仓位建议
     holding_period: int = 5           # 持有天数建议
@@ -62,10 +62,10 @@ class TradingSignal:
 class StrategyPerformance:
     """策略绩效数据结构"""
     win_rate: float                    # 胜率
-    avg_return: float                  # 平均收益率
-    max_drawdown: float               # 最大回撤
+    avg_return: float                  # 平均收益�?
+    max_drawdown: float               # 最大回�?
     sharpe_ratio: float              # 夏普比率
-    total_trades: int                # 总交易次数
+    total_trades: int                # 总交易次�?
     avg_holding_days: float           # 平均持有天数
 
 class BaseStrategy(ABC):
@@ -87,9 +87,9 @@ class BaseStrategy(ABC):
         生成交易信号
 
         参数:
-            market_data: 市场数据（大盘指数等）
+            market_data: 市场数据（大盘指数等�?
             stock_data: 个股数据
-            market_state: 当前市场状态
+            market_state: 当前市场状�?
 
         返回:
             TradingSignal: 交易信号，无信号时返回None
@@ -97,7 +97,7 @@ class BaseStrategy(ABC):
         pass
 
     def get_applicable_states(self) -> List[MarketState]:
-        """获取策略适用的市场状态"""
+        """获取策略适用的市场状�?""
         return self.market_states
 
     def get_performance(self) -> StrategyPerformance:
@@ -113,7 +113,7 @@ class BaseStrategy(ABC):
 
 ***
 
-## 2. 策略注册装饰器
+## 2. 策略注册装饰�?
 
 ```python
 from functools import wraps
@@ -121,7 +121,7 @@ from functools import wraps
 _strategies_registry = {}
 
 def register_strategy(strategy_class):
-    """策略注册装饰器"""
+    """策略注册装饰�?""
     @wraps(strategy_class)
     def wrapper(*args, **kwargs):
         return strategy_class(*args, **kwargs)
@@ -135,7 +135,7 @@ def get_strategy(strategy_id: str) -> Optional[BaseStrategy]:
     return _strategies_registry.get(strategy_id)
 
 def list_all_strategies() -> Dict[str, BaseStrategy]:
-    """列出所有注册策略"""
+    """列出所有注册策�?""
     return _strategies_registry.copy()
 ```
 
@@ -167,7 +167,7 @@ class MaTrendStrategy(BaseStrategy):
                        market_state: MarketState) -> Optional[TradingSignal]:
         """
         均线趋势策略信号生成
-        条件: MA5 > MA20 > MA60 且 成交量放大
+        条件: MA5 > MA20 > MA60 �?成交量放�?
         """
         if market_state not in self.market_states:
             return None
@@ -180,7 +180,7 @@ class MaTrendStrategy(BaseStrategy):
 
         # 多头排列条件
         if ma5 > ma20 > ma60:
-            # 成交量放大确认
+            # 成交量放大确�?
             if volume_ratio > params['min_volume_ratio']:
                 current_price = stock_data['close']
                 stop_loss = ma20 * 0.97

@@ -363,7 +363,7 @@ def place_order(
         - order_type: 订单类型
         - quantity: 委托数量
         - price: 委托价格
-        - status: 订单状?
+        - status: 订单�?
         - message: 订单消息
         - timestamp: 下单时间
     
@@ -397,7 +397,7 @@ OrderResult(
 - 成功? ?9.9%
 - 并发支持: ?0并发下单
 
-### 3.4 性能指标汇?
+### 3.4 性能指标�?
 
 | 接口类型 | 响应时间 | 吞吐?| 并发支持 | 成功?|
 |----------|----------|--------|----------|--------|
@@ -479,7 +479,7 @@ class OrderResult:
     order_type: str              # 订单类型
     quantity: int                # 委托数量
     price: Optional[float]       # 委托价格
-    status: str                  # 订单状?
+    status: str                  # 订单�?
     message: str                 # 订单消息
     timestamp: datetime          # 下单时间
 ```
@@ -583,7 +583,7 @@ CREATE TABLE financial_data (
 
 **算法名称**: QMT连接池管?
 
-**算法原理**: 使用单例模式管理QMT连接池，确保连接复用和资源优化?
+**算法原理**: 使用单例模式管理QMT连接池，确保连接复用和资源优�?
 
 **实现代码**:
 ```python
@@ -802,7 +802,7 @@ def get_realtime_quotes_with_retry(stock_codes: List[str]) -> pd.DataFrame:
 
 ### 6.1 语言与框?
 
-| 技术栈 | 版本 | 用?|
+| 技术栈 | 版本 | �?|
 |--------|------|------|
 | **Python** | 3.10+ | 主要开发语言 |
 | **QMT Python API** | v3.8+ | QMT数据接口 |
@@ -814,7 +814,7 @@ def get_realtime_quotes_with_retry(stock_codes: List[str]) -> pd.DataFrame:
 
 ### 6.2 第三方依?
 
-| 依赖?| 版本 | 用?|
+| 依赖?| 版本 | �?|
 |--------|------|------|
 | **xtquant** | 最新版 | QMT官方Python?|
 | **redis-py** | 5.0+ | Redis客户?|
@@ -1128,7 +1128,7 @@ class TestPerformance:
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [系统清单](../../02_FACTOR_LIBRARY/System_Manifest.md)
-- [质量门禁机制](../04_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- [质量门禁机制](../07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 
 ### C. 变更历史
 
@@ -1138,4 +1138,4 @@ class TestPerformance:
 
 ---
 
-**版本**: v1.0 | **创建**: 2026-04-02 | **状?*: ?活跃 | **维护?*: 清风量化系统技术团?
+**版本**: v1.0 | **创建**: 2026-04-02 | **�?*: ?活跃 | **维护?*: 清风量化系统技术团?

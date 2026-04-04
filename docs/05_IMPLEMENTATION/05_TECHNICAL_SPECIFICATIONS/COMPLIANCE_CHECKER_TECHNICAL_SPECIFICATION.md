@@ -10,8 +10,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 已完?regulatory_basis:
   - name: 证监会《关于短线交易监管的若干规定?    effective_date: 2026-04-07
-    document_id: 证监会公告?026??  - name: 沪深北交易所《程序化交易管理实施细则?    effective_date: 2025-07-07
-    document_id: 上证发?025?2?future_optimization:
+    document_id: 证监会公�?026??  - name: 沪深北交易所《程序化交易管理实施细则?    effective_date: 2025-07-07
+    document_id: 上证�?025?2?future_optimization:
   - phase: short_term
     timeline: 3-6个月
     items:
@@ -26,13 +26,13 @@ implementation_status: 已完?regulatory_basis:
   - phase: long_term
     timeline: 12-24个月
     items:
-      - 强化学习自适应阈?      - 联邦学习跨机构模?      - 区块链合规审?---
+      - 强化学习自适应�?      - 联邦学习跨机构模?      - 区块链合规审?---
 
 # 监管合规检查模块技术规格书
 
 > 清风量化系统 v5.3 - 监管合规检查模块详细技术设?> **模块ID**: `COMPLIANCE_CHECKER_001`
 > **版本**: v1.1.0
-> **状?*: ?正式
+> **�?*: ?正式
 
 ---
 
@@ -44,7 +44,7 @@ implementation_status: 已完?regulatory_basis:
 - 需要实时监控交易行为，防止触发高频交易认定
 - 需要检查撤单限制，避免撤单率超?- 需要监控短线交易，遵守6个月锁仓期规?- 需要生成合规报告，便于监管报备
 
-**预期价?*?- 确保系统100%符合监管要求，避免违规处?- 实时预警合规风险，提前采取应对措?- 降低合规成本，自动化合规检查流?- 提升系统专业性，符合机构级标?
+**预期�?*?- 确保系统100%符合监管要求，避免违规处?- 实时预警合规风险，提前采取应对措?- 降低合规成本，自动化合规检查流?- 提升系统专业性，符合机构级标?
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 5 - 策略执行?
 **模块类别**: 核心合规模块（P0级）
@@ -135,7 +135,7 @@ SHORT_TERM_TRADING_RULES = {
 **监管依据**: 沪深北交易所《程序化交易管理实施细则?
 **四类异常行为**:
 
-| 异常行为类型 | 定义 | 监控阈?|
+| 异常行为类型 | 定义 | 监控�?|
 |------------|------|---------|
 | **瞬时申报速率异常** | 极短时间内申报笔数巨?| 1秒内申报、撤单≥300?|
 | **频繁瞬时撤单** | 日内频繁申报后迅速撤?| 全日撤单比例?5% |
@@ -181,7 +181,7 @@ class OrderTracker:
 - 高频交易认定标准
 - 撤单限制参数
 - 短线交易规则
-- 异常行为阈?
+- 异常行为�?
 ### 4.4 数据结构
 
 **OrderRecord (订单记录)**:
@@ -445,7 +445,7 @@ def daily_reset_task():
 ### 8.3 压力测试
 
 **测试指标**:
-- 1000 TPS订单检?- 100个账户并发检?- 长时间运行稳定?
+- 1000 TPS订单检?- 100个账户并发检?- 长时间运行稳�?
 ---
 
 ## 9. 部署方案
@@ -591,7 +591,7 @@ class MLComplianceChecker:
         """自适应阈值调?        
         使用强化学习动态调整合规检查阈?        
         优势:
-        - 根据市场条件自动调整阈?        - 平衡合规严格度和交易效率
+        - 根据市场条件自动调整�?        - 平衡合规严格度和交易效率
         - 持续学习和优?        """
         pass
 ```
@@ -773,7 +773,7 @@ class ComplianceResponse(BaseModel):
 
 @app.post("/api/v1/compliance/check", response_model=ComplianceResponse)
 async def check_order_compliance(order: OrderRequest):
-    """检查订单合规?    
+    """检查订单合�?    
     API端点: POST /api/v1/compliance/check
     
     请求示例:
@@ -851,7 +851,7 @@ async def health_check():
     """健康检?    
     API端点: GET /api/v1/compliance/health
     
-    用于监控API服务状?    """
+    用于监控API服务�?    """
     return {"status": "healthy", "service": "compliance-checker"}
 
 if __name__ == "__main__":
@@ -897,7 +897,7 @@ class ComplianceServiceServicer(compliance_pb2_grpc.ComplianceServiceServicer):
     """合规检查gRPC服务"""
     
     def CheckOrderCompliance(self, request, context):
-        """检查订单合规?        
+        """检查订单合�?        
         gRPC优势:
         - 性能更高（比REST?-5倍）
         - 支持双向流式通信
@@ -1004,7 +1004,7 @@ def serve():
 
 ## 14. 总结
 
-### 14.1 核心价?
+### 14.1 核心�?
 - **合规保障**: 确保系统100%符合最新监管要?- **风险预警**: 实时监控，提前预警合规风?- **成本降低**: 自动化合规检查，降低人工成本
 - **专业提升**: 符合机构级标准，提升系统专业?
 ### 14.2 实施建议

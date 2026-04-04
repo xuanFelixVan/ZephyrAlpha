@@ -50,10 +50,10 @@ implementation_status: 活跃维护
 ?  ├── README.md                     # 基础设施概述
 ?  ├── DAILY_PIPELINE.md             # 日常流水??  ├── DATA_CLEANING.md              # 数据清洗
 ?  ├── DATA_LINEAGE.md               # 数据血??  └── STORAGE_TIER.md               # 存储分层
-?├── 04_OPERATIONS/                    # 运维
+?├── 07_OPERATIONS/                    # 运维
 ?  ├── README.md                     # 运维概述
 ?  ├── AUDIT_CHECKLIST_TEMPLATE.md   # 审计检查清单模??  ├── QUALITY_GATE_MECHANISM.md     # 质量门机??  ├── PERFORMANCE_MONITORING.md     # 性能监控
-?  ├── DOCUMENT_AUDIT_WORKFLOW.md    # 文档审计工作??  ├── VERSION_MANAGEMENT_AUTOMATION_GUIDE.md # 版本管理自动化指??  ├── audit_state/                  # 审计状??  ├── knowledge_base/               # 知识??  ├── review_reports/               # 评审报告
+?  ├── DOCUMENT_AUDIT_WORKFLOW.md    # 文档审计工作??  ├── VERSION_MANAGEMENT_AUTOMATION_GUIDE.md # 版本管理自动化指??  ├── audit_state/                  # 审计�??  ├── knowledge_base/               # 知识??  ├── review_reports/               # 评审报告
 ?  └── improvement_plans/            # 改进计划
 ?├── 05_TECHNICAL_SPECIFICATIONS/      # 技术规??  ├── (80+技术规格文?
 ?  └── ...
@@ -75,7 +75,7 @@ implementation_status: 活跃维护
 3. 阅读 [01_QUICKSTART/dev-setup.md](./01_QUICKSTART/dev-setup.md) - 开发环境设?(20分钟)
 4. 阅读 [01_QUICKSTART/first-backtest.md](./01_QUICKSTART/first-backtest.md) - 第一次回?(20分钟)
 
-### 我是开发?
+### 我是开�?
 **开发规范学习路?* (2小时):
 1. 阅读 [02_DEVELOPMENT/README.md](./02_DEVELOPMENT/README.md) - 开发概?(10分钟)
 2. 阅读 [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - 开发标?(30分钟)
@@ -87,9 +87,9 @@ implementation_status: 活跃维护
 ### 我是运维人员
 
 **运维工作路线** (2小时):
-1. 阅读 [04_OPERATIONS/README.md](./04_OPERATIONS/README.md) - 运维概述 (20分钟)
-2. 阅读 [04_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./04_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - 审计检查清?(20分钟)
-3. 阅读 [04_OPERATIONS/QUALITY_GATE_MECHANISM.md](./04_OPERATIONS/QUALITY_GATE_MECHANISM.md) - 质量门机?(20分钟)
+1. 阅读 [07_OPERATIONS/README.md](./07_OPERATIONS/README.md) - 运维概述 (20分钟)
+2. 阅读 [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - 审计检查清?(20分钟)
+3. 阅读 [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - 质量门机?(20分钟)
 4. 阅读 [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署计划 (20分钟)
 5. 阅读 [04_INFRASTRUCTURE/DAILY_PIPELINE.md](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) - 日常流水?(20分钟)
 
@@ -130,10 +130,10 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [运维概述](./04_OPERATIONS/README.md) | 运维概述 | ⭐⭐⭐⭐?|
-| [审计检查清单模板](./04_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | 审计检查清?| ⭐⭐⭐⭐ |
-| [质量门机制](./04_OPERATIONS/QUALITY_GATE_MECHANISM.md) | 质量门机?| ⭐⭐⭐⭐ |
-| [性能监控](./04_OPERATIONS/PERFORMANCE_MONITORING.md) | 性能监控 | ⭐⭐⭐⭐ |
+| [运维概述](./07_OPERATIONS/README.md) | 运维概述 | ⭐⭐⭐⭐?|
+| [审计检查清单模板](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | 审计检查清?| ⭐⭐⭐⭐ |
+| [质量门机制](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | 质量门机?| ⭐⭐⭐⭐ |
+| [性能监控](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | 性能监控 | ⭐⭐⭐⭐ |
 
 ---
 
@@ -153,10 +153,10 @@ implementation_status: 活跃维护
 - **数据清洗**: [数据清洗](./04_INFRASTRUCTURE/DATA_CLEANING.md)
 
 ### 运维关键?
-- **运维**: [运维概述](./04_OPERATIONS/README.md)
-- **审计**: [审计检查清单模板](./04_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
-- **质量?*: [质量门机制](./04_OPERATIONS/QUALITY_GATE_MECHANISM.md)
-- **监控**: [性能监控](./04_OPERATIONS/PERFORMANCE_MONITORING.md)
+- **运维**: [运维概述](./07_OPERATIONS/README.md)
+- **审计**: [审计检查清单模板](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
+- **质量?*: [质量门机制](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- **监控**: [性能监控](./07_OPERATIONS/PERFORMANCE_MONITORING.md)
 
 ### 文档标准关键?
 - **文档编号**: [文档编号标准](./02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)

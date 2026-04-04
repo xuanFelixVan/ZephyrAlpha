@@ -5,142 +5,86 @@ spec_version: 1.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
+layer: Layer 4 (机器学习�? | 业务架构: AI模型服务
 index: MG-001
 estimated_hours: 80
 review_status: Pending
 reviewer: 首席技术评审官
-owner: 首席风险官
-standard_type: 专业量化机构技术规格书
-applicable_scope: 模型治理与合规
-compliance_level: 顶级专业标准
+owner: 首席风险�?standard_type: 专业量化机构技术规格书
+applicable_scope: 模型治理与合�?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
-implementation_status: 技术规格设计完成
-regulatory_framework: SR 11-7, OCC 2011-12, Basel III
+implementation_status: 技术规格设计完�?regulatory_framework: SR 11-7, OCC 2011-12, Basel III
 ---
 
 # 模型治理与合规技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 模型治理与合规详细技术设计
-> **索引**: `MG-001`
-> **开发时间**: 80h
+> 清风量化系统 v5.3 - 模型治理与合规详细技术设�?> **索引**: `MG-001`
+> **开发时�?*: 80h
 > **核心定位**: 提供模型风险管理、文档自动化、审计追踪、审批工作流
 
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目的
-
-**业务需求**:
-- 金融监管要求模型风险管理体系（SR 11-7, OCC 2011-12）
-- 机构投资者尽职调查需要完整的模型文档
+### 1.1 设计背景与业务目�?
+**业务需�?*:
+- 金融监管要求模型风险管理体系（SR 11-7, OCC 2011-12�?- 机构投资者尽职调查需要完整的模型文档
 - 模型决策需要可追溯、可审计
 - 模型上线需要标准化审批流程
 
-**技术痛点**:
-- 缺乏模型风险识别和评估机制
-- 模型文档手动编写，效率低且不一致
-- 模型决策缺乏审计追踪
-- 模型上线流程不规范，风险不可控
-
-**预期价值**:
+**技术痛�?*:
+- 缺乏模型风险识别和评估机�?- 模型文档手动编写，效率低且不一�?- 模型决策缺乏审计追踪
+- 模型上线流程不规范，风险不可�?
+**预期价�?*:
 - 100%满足金融监管要求
-- 通过机构投资者尽职调查
-- 模型风险可量化、可管理
+- 通过机构投资者尽职调�?- 模型风险可量化、可管理
 - 模型决策可追溯、可问责
 
 ### 1.2 监管框架
 
 | 监管要求 | 来源 | 核心内容 |
 |----------|------|----------|
-| **SR 11-7** | 美联储 | 模型风险管理监管指引 |
-| **OCC 2011-12** | 美国货币监理署 | 模型风险管理补充指引 |
+| **SR 11-7** | 美联�?| 模型风险管理监管指引 |
+| **OCC 2011-12** | 美国货币监理�?| 模型风险管理补充指引 |
 | **Basel III** | 巴塞尔委员会 | 银行资本要求中的模型风险 |
 | **FRTB** | 巴塞尔委员会 | 交易账户根本审查中的模型要求 |
 
-### 1.3 技术定位与架构层归属
-
-- **Layer定位**: Layer 4 - 机器学习层（AI模型服务）
-- **模块类别**: 核心治理模块
+### 1.3 技术定位与架构层归�?
+- **Layer定位**: Layer 4 - 机器学习层（AI模型服务�?- **模块类别**: 核心治理模块
 - **架构角色**: 提供模型风险管理、文档自动化、审计追踪、审批工作流
 
-### 1.4 版本信息与变更记录
-
-| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+### 1.4 版本信息与变更记�?
+| 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | 首席风险官 | 初始版本 | Active |
+| v1.0 | 2026-04-03 | 首席风险�?| 初始版本 | Active |
 
 ---
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                   模型治理与合规系统架构                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             模型风险管理 (Model Risk Management)          │  │
-│ │ ├── RiskIdentification (风险识别)                        │  │
-│ │ ├── RiskAssessment (风险评估)                            │  │
-│ │ ├── RiskMonitoring (风险监控)                            │  │
-│ │ └── RiskReporting (风险报告)                             │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                            │                                    │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             模型文档 (Model Documentation)                │  │
-│ │ ├── ModelCard (模型卡片)                                 │  │
-│ │ ├── TechnicalDoc (技术文档)                              │  │
-│ │ ├── UserGuide (用户指南)                                 │  │
-│ │ └── RegulatoryDoc (监管文档)                             │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                            │                                    │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             审计追踪 (Audit Trail)                        │  │
-│ │ ├── DecisionLog (决策日志)                               │  │
-│ │ ├── ChangeLog (变更日志)                                 │  │
-│ │ ├── AccessLog (访问日志)                                 │  │
-│ │ └── AuditReport (审计报告)                               │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                            │                                    │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             审批工作流 (Approval Workflow)                │  │
-│ │ ├── WorkflowEngine (工作流引擎)                          │  │
-│ │ ├── ApprovalChain (审批链)                               │  │
-│ │ ├── NotificationService (通知服务)                       │  │
-│ │ └── EscalationManager (升级管理)                         │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                  模型治理与合规系统架�?                         �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            模型风险管理 (Model Risk Management)          �? �?�?�?├── RiskIdentification (风险识别)                        �? �?�?�?├── RiskAssessment (风险评估)                            �? �?�?�?├── RiskMonitoring (风险监控)                            �? �?�?�?└── RiskReporting (风险报告)                             �? �?�?└──────────────────────────────────────────────────────────�? �?�?                           �?                                   �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            模型文档 (Model Documentation)                �? �?�?�?├── ModelCard (模型卡片)                                 �? �?�?�?├── TechnicalDoc (技术文�?                              �? �?�?�?├── UserGuide (用户指南)                                 �? �?�?�?└── RegulatoryDoc (监管文档)                             �? �?�?└──────────────────────────────────────────────────────────�? �?�?                           �?                                   �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            审计追踪 (Audit Trail)                        �? �?�?�?├── DecisionLog (决策日志)                               �? �?�?�?├── ChangeLog (变更日志)                                 �? �?�?�?├── AccessLog (访问日志)                                 �? �?�?�?└── AuditReport (审计报告)                               �? �?�?└──────────────────────────────────────────────────────────�? �?�?                           �?                                   �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            审批工作�?(Approval Workflow)                �? �?�?�?├── WorkflowEngine (工作流引�?                          �? �?�?�?├── ApprovalChain (审批�?                               �? �?�?�?├── NotificationService (通知服务)                       �? �?�?�?└── EscalationManager (升级管理)                         �? �?�?└──────────────────────────────────────────────────────────�? �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 4 - 机器学习层
-- **职责范围**: 模型风险管理、文档自动化、审计追踪、审批工作流
-- **上下层接口**: 
-  - 上层依赖: Layer 8 (人机交互层) - 审批决策
+- **Layer归属**: Layer 4 - 机器学习�?- **职责范围**: 模型风险管理、文档自动化、审计追踪、审批工作流
+- **上下层接�?*: 
+  - 上层依赖: Layer 8 (人机交互�? - 审批决策
   - 下层依赖: Layer 4 (ML模块) - 模型信息
 
-### 2.3 模块职责与边界定义
-
-- **核心职责**: 模型治理与合规管理
-- **职责边界**: 
-  - ✅ 本模块负责: 风险识别、文档生成、审计追踪、审批流程
-  - ❌ 本模块不负责: 模型训练、模型部署、模型监控
-- **接口契约**: 提供标准化的治理API
+### 2.3 模块职责与边界定�?
+- **核心职责**: 模型治理与合规管�?- **职责边界**: 
+  - �?本模块负�? 风险识别、文档生成、审计追踪、审批流�?  - �?本模块不负责: 模型训练、模型部署、模型监�?- **接口契约**: 提供标准化的治理API
 
 ### 2.4 依赖关系与集成点
 
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| MLflow | 强依赖 | Python API | >=2.9.0 | 模型注册 |
-| PostgreSQL | 强依赖 | 数据库 | >=15.0 | 审计日志存储 |
-| Elasticsearch | 强依赖 | HTTP API | >=8.0 | 日志检索 |
-| Camunda | 弱依赖 | REST API | >=8.0 | 工作流引擎 |
+| MLflow | 强依�?| Python API | >=2.9.0 | 模型注册 |
+| PostgreSQL | 强依�?| 数据�?| >=15.0 | 审计日志存储 |
+| Elasticsearch | 强依�?| HTTP API | >=8.0 | 日志检�?|
+| Camunda | 弱依�?| REST API | >=8.0 | 工作流引�?|
 
 ---
 
@@ -165,7 +109,7 @@ class RiskLevel(Enum):
 
 
 class ModelStatus(Enum):
-    """模型状态"""
+    """模型状�?""
     DEVELOPMENT = "development"
     TESTING = "testing"
     STAGING = "staging"
@@ -175,7 +119,7 @@ class ModelStatus(Enum):
 
 
 class ApprovalStatus(Enum):
-    """审批状态"""
+    """审批状�?""
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
@@ -365,7 +309,7 @@ class ModelRiskManagement:
 
 
 class ModelDocumentation:
-    """模型文档自动化"""
+    """模型文档自动�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -407,14 +351,12 @@ class ModelDocumentation:
         return model_card
     
     def generate_technical_doc(self, model_id: str) -> Dict[str, Any]:
-        """生成技术文档
-        
+        """生成技术文�?        
         Args:
             model_id: 模型ID
             
         Returns:
-            Dict: 技术文档
-        """
+            Dict: 技术文�?        """
         doc = {
             "doc_id": f"TECH-DOC-{model_id}",
             "model_id": model_id,
@@ -479,10 +421,8 @@ class AuditTrail:
         Args:
             model_id: 模型ID
             decision: 决策内容
-            actor: 决策者
-            details: 决策详情
-            context: 上下文信息
-            
+            actor: 决策�?            details: 决策详情
+            context: 上下文信�?            
         Returns:
             AuditLog: 审计日志
         """
@@ -519,10 +459,7 @@ class AuditTrail:
         Args:
             model_id: 模型ID
             change_type: 变更类型
-            old_value: 旧值
-            new_value: 新值
-            actor: 变更者
-            reason: 变更原因
+            old_value: 旧�?            new_value: 新�?            actor: 变更�?            reason: 变更原因
             
         Returns:
             AuditLog: 审计日志
@@ -558,10 +495,8 @@ class AuditTrail:
         
         Args:
             model_id: 模型ID
-            accessor: 访问者
-            access_type: 访问类型
-            context: 上下文信息
-            
+            accessor: 访问�?            access_type: 访问类型
+            context: 上下文信�?            
         Returns:
             AuditLog: 审计日志
         """
@@ -594,8 +529,7 @@ class AuditTrail:
         
         Args:
             model_id: 模型ID
-            start_time: 开始时间
-            end_time: 结束时间
+            start_time: 开始时�?            end_time: 结束时间
             action_types: 动作类型过滤
             
         Returns:
@@ -632,8 +566,7 @@ class AuditTrail:
         
         Args:
             model_id: 模型ID
-            start_time: 开始时间
-            end_time: 结束时间
+            start_time: 开始时�?            end_time: 结束时间
             
         Returns:
             Dict: 审计报告
@@ -664,7 +597,7 @@ class AuditTrail:
 
 
 class ApprovalWorkflow:
-    """审批工作流"""
+    """审批工作�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -684,8 +617,7 @@ class ApprovalWorkflow:
             model_id: 模型ID
             model_version: 模型版本
             request_type: 请求类型
-            requester: 请求者
-            justification: 申请理由
+            requester: 请求�?            justification: 申请理由
             
         Returns:
             ApprovalRequest: 审批请求
@@ -732,8 +664,7 @@ class ApprovalWorkflow:
         
         Args:
             request_id: 请求ID
-            approver: 审批人
-            comments: 审批意见
+            approver: 审批�?            comments: 审批意见
             
         Returns:
             ApprovalRequest: 更新后的审批请求
@@ -741,7 +672,7 @@ class ApprovalWorkflow:
         request = self._fetch_request(request_id)
         
         if request.current_approver != approver:
-            raise ValueError(f"当前审批人不是 {approver}")
+            raise ValueError(f"当前审批人不�?{approver}")
         
         current_index = request.approval_chain.index(approver)
         
@@ -767,8 +698,7 @@ class ApprovalWorkflow:
         
         Args:
             request_id: 请求ID
-            approver: 审批人
-            reason: 拒绝原因
+            approver: 审批�?            reason: 拒绝原因
             
         Returns:
             ApprovalRequest: 更新后的审批请求
@@ -794,8 +724,7 @@ class ApprovalWorkflow:
         
         Args:
             request_id: 请求ID
-            approver: 当前审批人
-            reason: 升级原因
+            approver: 当前审批�?            reason: 升级原因
             escalate_to: 升级目标
             
         Returns:
@@ -813,14 +742,11 @@ class ApprovalWorkflow:
         return request
     
     def get_pending_approvals(self, approver: str) -> List[ApprovalRequest]:
-        """获取待审批列表
-        
+        """获取待审批列�?        
         Args:
-            approver: 审批人
-            
+            approver: 审批�?            
         Returns:
-            List[ApprovalRequest]: 待审批列表
-        """
+            List[ApprovalRequest]: 待审批列�?        """
         query = {
             "query": {
                 "bool": {
@@ -840,13 +766,11 @@ class ApprovalWorkflow:
 
 ---
 
-## 4. 数据模型与存储
-
+## 4. 数据模型与存�?
 ### 4.1 数据库表结构
 
 ```sql
--- 模型风险表
-CREATE TABLE model_risks (
+-- 模型风险�?CREATE TABLE model_risks (
     risk_id VARCHAR(50) PRIMARY KEY,
     model_id VARCHAR(50) NOT NULL,
     risk_type VARCHAR(50) NOT NULL,
@@ -859,8 +783,7 @@ CREATE TABLE model_risks (
     FOREIGN KEY (model_id) REFERENCES models(model_id)
 );
 
--- 模型卡片表
-CREATE TABLE model_cards (
+-- 模型卡片�?CREATE TABLE model_cards (
     model_id VARCHAR(50) PRIMARY KEY,
     model_name VARCHAR(200) NOT NULL,
     model_version VARCHAR(50) NOT NULL,
@@ -880,8 +803,7 @@ CREATE TABLE model_cards (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 审计日志表
-CREATE TABLE audit_logs (
+-- 审计日志�?CREATE TABLE audit_logs (
     log_id VARCHAR(100) PRIMARY KEY,
     model_id VARCHAR(50) NOT NULL,
     action VARCHAR(50) NOT NULL,
@@ -893,8 +815,7 @@ CREATE TABLE audit_logs (
     FOREIGN KEY (model_id) REFERENCES models(model_id)
 );
 
--- 审批请求表
-CREATE TABLE approval_requests (
+-- 审批请求�?CREATE TABLE approval_requests (
     request_id VARCHAR(100) PRIMARY KEY,
     model_id VARCHAR(50) NOT NULL,
     model_version VARCHAR(50),
@@ -937,40 +858,18 @@ CREATE TABLE approval_requests (
 
 ### 5.1 核心依赖
 
-| 组件 | 版本 | 用途 |
+| 组件 | 版本 | 用�?|
 |------|------|------|
 | Python | >=3.10 | 开发语言 |
-| PostgreSQL | >=15.0 | 关系数据库 |
-| Elasticsearch | >=8.0 | 日志检索 |
-| Camunda | >=8.0 | 工作流引擎 |
+| PostgreSQL | >=15.0 | 关系数据�?|
+| Elasticsearch | >=8.0 | 日志检�?|
+| Camunda | >=8.0 | 工作流引�?|
 | MLflow | >=2.9.0 | 模型注册 |
 
 ### 5.2 部署架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                   模型治理系统部署架构                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐        │
-│  │   Web UI    │    │   API GW    │    │  Scheduler  │        │
-│  │  (Streamlit)│    │  (FastAPI)  │    │  (Celery)   │        │
-│  └─────────────┘    └─────────────┘    └─────────────┘        │
-│         │                  │                  │                │
-│         └──────────────────┼──────────────────┘                │
-│                            │                                    │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │                   应用服务层                              │  │
-│  │  RiskMgmt | Documentation | AuditTrail | Workflow        │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                            │                                    │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐        │
-│  │ PostgreSQL  │    │Elasticsearch│    │   Camunda   │        │
-│  │  (元数据)   │    │  (日志)     │    │  (工作流)   │        │
-│  └─────────────┘    └─────────────┘    └─────────────┘        │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                  模型治理系统部署架构                            �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌─────────────�?   ┌─────────────�?   ┌─────────────�?       �?�? �?  Web UI    �?   �?  API GW    �?   �? Scheduler  �?       �?�? �? (Streamlit)�?   �? (FastAPI)  �?   �? (Celery)   �?       �?�? └─────────────�?   └─────────────�?   └─────────────�?       �?�?        �?                 �?                 �?               �?�?        └──────────────────┼──────────────────�?               �?�?                           �?                                   �?�? ┌──────────────────────────────────────────────────────────�? �?�? �?                  应用服务�?                             �? �?�? �? RiskMgmt | Documentation | AuditTrail | Workflow        �? �?�? └──────────────────────────────────────────────────────────�? �?�?                           �?                                   �?�? ┌─────────────�?   ┌─────────────�?   ┌─────────────�?       �?�? �?PostgreSQL  �?   │Elasticsearch�?   �?  Camunda   �?       �?�? �? (元数�?   �?   �? (日志)     �?   �? (工作�?   �?       �?�? └─────────────�?   └─────────────�?   └─────────────�?       �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ---
 
@@ -1046,23 +945,21 @@ class TestApprovalWorkflow:
 
 ---
 
-## 7. 风险与约束
-
-### 7.1 技术风险
-
-| 风险项 | 风险等级 | 缓解措施 |
+## 7. 风险与约�?
+### 7.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| 审计日志丢失 | P1 | 多副本存储、定期备份 |
-| 工作流引擎故障 | P1 | 高可用部署、故障转移 |
-| 文档生成错误 | P2 | 模板验证、人工审核 |
+| 审计日志丢失 | P1 | 多副本存储、定期备�?|
+| 工作流引擎故�?| P1 | 高可用部署、故障转�?|
+| 文档生成错误 | P2 | 模板验证、人工审�?|
 
 ### 7.2 合规风险
 
-| 风险项 | 风险等级 | 缓解措施 |
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| 监管要求变更 | P1 | 定期合规审查、灵活配置 |
-| 审计追踪不完整 | P1 | 全链路日志、自动补全 |
-| 审批流程违规 | P2 | 强制流程、权限控制 |
+| 监管要求变更 | P1 | 定期合规审查、灵活配�?|
+| 审计追踪不完�?| P1 | 全链路日志、自动补�?|
+| 审批流程违规 | P2 | 强制流程、权限控�?|
 
 ---
 
@@ -1070,21 +967,21 @@ class TestApprovalWorkflow:
 
 ### 8.1 功能验收
 
-| 验收项 | 验收标准 |
+| 验收�?| 验收标准 |
 |--------|----------|
-| 风险识别 | 能识别所有类型模型风险 |
-| 文档生成 | 自动生成符合监管要求的文档 |
+| 风险识别 | 能识别所有类型模型风�?|
+| 文档生成 | 自动生成符合监管要求的文�?|
 | 审计追踪 | 100%记录所有决策和变更 |
-| 审批流程 | 支持多级审批和升级 |
+| 审批流程 | 支持多级审批和升�?|
 
 ### 8.2 性能验收
 
-| 指标 | 目标值 |
+| 指标 | 目标�?|
 |------|--------|
-| 风险评估响应时间 | < 5秒 |
-| 文档生成时间 | < 30秒 |
-| 审计日志查询 | < 1秒 |
-| 审批流程启动 | < 3秒 |
+| 风险评估响应时间 | < 5�?|
+| 文档生成时间 | < 30�?|
+| 审计日志查询 | < 1�?|
+| 审批流程启动 | < 3�?|
 
 ### 8.3 合规验收
 
@@ -1096,33 +993,29 @@ class TestApprovalWorkflow:
 
 ---
 
-## 9. 实施路线图
-
+## 9. 实施路线�?
 ### 9.1 Phase 1: 核心功能（第1-4周）
 
 - Week 1-2: 模型风险管理模块
-- Week 3-4: 模型文档自动化模块
-
-### 9.2 Phase 2: 审计与审批（第5-8周）
+- Week 3-4: 模型文档自动化模�?
+### 9.2 Phase 2: 审计与审批（�?-8周）
 
 - Week 5-6: 审计追踪模块
-- Week 7-8: 审批工作流模块
-
-### 9.3 Phase 3: 集成与测试（第9-12周）
+- Week 7-8: 审批工作流模�?
+### 9.3 Phase 3: 集成与测试（�?-12周）
 
 - Week 9-10: 系统集成
-- Week 11-12: 测试与上线
-
+- Week 11-12: 测试与上�?
 ---
 
 ## 10. 版本历史
 
-| 版本 | 日期 | 作者 | 变更说明 |
+| 版本 | 日期 | 作�?| 变更说明 |
 |------|------|------|----------|
-| v1.0 | 2026-04-03 | 首席风险官 | 初始版本 |
+| v1.0 | 2026-04-03 | 首席风险�?| 初始版本 |
 
 ---
 
 **文档版本**: v1.0.0
-**最后更新**: 2026-04-03
-**维护者**: 首席风险官
+**最后更�?*: 2026-04-03
+**维护�?*: 首席风险�?

@@ -31,7 +31,7 @@ implementation_status: 进行?
 | **HUMAN_AI_FLOW.md** | 人机协作流程 | 授权机制、AI角色定义、决策流?|
 | **TECH_STACK.md** | 技术栈选择 | 数据?回测/可视?AI/存储选型 |
 | **PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md** | 专业多时间框架架?| 三级时间框架融合架构（桥?文艺复兴模式?|
-| **PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md** | 专业实施蓝图 | 10个月实施路线图、AI评审团机制?个关键审核节?|
+| **PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md** | 专业实施蓝图 | 10个月实施路线图、AI评审团机�?个关键审核节?|
 | **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | 数据源层专业实施蓝图 | P0/P1/P2三级模块设计?个月实施计划、专业机构对?|
 | **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方?| 6个适合个人开发的模块?周实施计划、低成本轻量级方?|
 | **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** | 关键模块实施蓝图 | P0实时风控+P1全球市场+P2扩展模块?-6周实施、覆盖度提升?5% |
@@ -63,7 +63,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 
 | 原则 | 说明 |
 |------|------|
-| **大盘择时优先** | 所有策略的第一步，判断市场状?|
+| **大盘择时优先** | 所有策略的第一步，判断市场�?|
 | **人授权AI执行** | 人做决策，AI执行 |
 | **可回测优?* | 稳定策略才实?|
 | **AI辅助不替?* | AI提供建议，人最终决?|
@@ -126,4 +126,4 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 
 ---
 
-**状?*: ?活跃
+**�?*: ?活跃

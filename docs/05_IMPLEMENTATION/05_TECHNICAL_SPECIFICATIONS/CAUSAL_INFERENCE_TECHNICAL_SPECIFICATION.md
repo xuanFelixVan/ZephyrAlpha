@@ -5,133 +5,80 @@ spec_version: 1.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
+layer: Layer 4 (机器学习�? | 业务架构: AI模型服务
 index: CI-001
 estimated_hours: 80
 review_status: Pending
 reviewer: 首席技术评审官
-owner: 量化研究员
-standard_type: 专业量化机构技术规格书
+owner: 量化研究�?standard_type: 专业量化机构技术规格书
 applicable_scope: 因果推断系统
 compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
-implementation_status: 技术规格设计完成
----
+implementation_status: 技术规格设计完�?---
 
 # 因果推断技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 因果推断详细技术设计
-> **索引**: `CI-001`
-> **开发时长**: 80h
+> 清风量化系统 v5.3 - 因果推断详细技术设�?> **索引**: `CI-001`
+> **开发时�?*: 80h
 > **核心定位**: 区分因果与相关、因果发现、因果效应估计、反事实分析
 
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目的
-
-**业务需求**:
+### 1.1 设计背景与业务目�?
+**业务需�?*:
 - 区分因果性与相关性是量化核心能力
 - 避免虚假信号和过拟合
-- 提升策略稳健性和可解释性
-- 支持策略归因分析
+- 提升策略稳健性和可解释�?- 支持策略归因分析
 
-**技术痛点**:
+**技术痛�?*:
 - 传统ML只学习相关性，无法识别因果
-- 因果图构建依赖专家知识
-- 混杂因素处理困难
-- 反事实推断计算复杂
+- 因果图构建依赖专家知�?- 混杂因素处理困难
+- 反事实推断计算复�?
+**预期价�?*:
+- 策略稳健性提�?0%
+- 虚假信号识别率提�?0%
+- 策略归因准确性提�?0%
+- 过拟合风险降�?0%
 
-**预期价值**:
-- 策略稳健性提升30%
-- 虚假信号识别率提升50%
-- 策略归因准确性提升40%
-- 过拟合风险降低60%
-
-### 1.2 技术定位与架构层归属
-
-- **Layer定位**: Layer 4 - 机器学习层（AI模型服务）
-- **模块类别**: 核心支撑模块
+### 1.2 技术定位与架构层归�?
+- **Layer定位**: Layer 4 - 机器学习层（AI模型服务�?- **模块类别**: 核心支撑模块
 - **架构角色**: 提供因果发现、因果效应估计、反事实分析
 
-### 1.3 版本信息与变更记录
-
-| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+### 1.3 版本信息与变更记�?
+| 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | 量化研究员 | 初始版本 | Active |
+| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 | Active |
 
 ---
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     因果推断系统架构                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             因果发现层 (Causal Discovery Layer)           │  │
-│ │ ├── PCAlgorithm (PC算法)                                 │  │
-│ │ ├── GESAlgorithm (GES算法)                               │  │
-│ │ ├── NOTEARSAlgorithm (NOTEARS算法)                       │  │
-│ │ └── CausalGraphValidator (因果图验证)                    │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                             │                                   │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             因果效应估计层 (Effect Estimation Layer)      │  │
-│ │ ├── PropensityScoreMatching (倾向得分匹配)               │  │
-│ │ ├── InverseProbabilityWeighting (逆概率加权)             │  │
-│ │ ├── DoublyRobustEstimator (双重稳健估计)                 │  │
-│ │ ├── InstrumentalVariable (工具变量法)                    │  │
-│ │ └── DifferenceInDifferences (双重差分)                   │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                             │                                   │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             反事实推断层 (Counterfactual Layer)           │  │
-│ │ ├── IndividualTreatmentEffect (个体处理效应)             │  │
-│ │ ├── AverageTreatmentEffect (平均处理效应)                │  │
-│ │ ├── ConditionalAverageTreatmentEffect (条件平均处理效应) │  │
-│ │ └── CounterfactualPredictor (反事实预测器)               │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                             │                                   │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             应用层 (Application Layer)                    │  │
-│ │ ├── FactorCausalAnalysis (因子因果分析)                  │  │
-│ │ ├── StrategyAttribution (策略归因)                       │  │
-│ │ ├── MarketRegimeCausal (市场状态因果)                    │  │
-│ │ └── InterventionSimulator (干预模拟器)                   │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                    因果推断系统架构                              �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            因果发现�?(Causal Discovery Layer)           �? �?�?�?├── PCAlgorithm (PC算法)                                 �? �?�?�?├── GESAlgorithm (GES算法)                               �? �?�?�?├── NOTEARSAlgorithm (NOTEARS算法)                       �? �?�?�?└── CausalGraphValidator (因果图验�?                    �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            因果效应估计�?(Effect Estimation Layer)      �? �?�?�?├── PropensityScoreMatching (倾向得分匹配)               �? �?�?�?├── InverseProbabilityWeighting (逆概率加�?             �? �?�?�?├── DoublyRobustEstimator (双重稳健估计)                 �? �?�?�?├── InstrumentalVariable (工具变量�?                    �? �?�?�?└── DifferenceInDifferences (双重差分)                   �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            反事实推断层 (Counterfactual Layer)           �? �?�?�?├── IndividualTreatmentEffect (个体处理效应)             �? �?�?�?├── AverageTreatmentEffect (平均处理效应)                �? �?�?�?├── ConditionalAverageTreatmentEffect (条件平均处理效应) �? �?�?�?└── CounterfactualPredictor (反事实预测器)               �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            应用�?(Application Layer)                    �? �?�?�?├── FactorCausalAnalysis (因子因果分析)                  �? �?�?�?├── StrategyAttribution (策略归因)                       �? �?�?�?├── MarketRegimeCausal (市场状态因�?                    �? �?�?�?└── InterventionSimulator (干预模拟�?                   �? �?�?└──────────────────────────────────────────────────────────�? �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 4 - 机器学习层
-- **职责范围**: 因果发现、因果效应估计、反事实推断、干预模拟
-- **上下层接口**: 
-  - 上层依赖: Layer 5 (策略执行层) - 策略归因请求
+- **Layer归属**: Layer 4 - 机器学习�?- **职责范围**: 因果发现、因果效应估计、反事实推断、干预模�?- **上下层接�?*: 
+  - 上层依赖: Layer 5 (策略执行�? - 策略归因请求
   - 下层依赖: Layer 4 (ML模型) - 特征数据
 
-### 2.3 模块职责与边界定义
-
+### 2.3 模块职责与边界定�?
 - **核心职责**: 因果推断分析
 - **职责边界**: 
-  - ✅ 本模块负责: 因果发现、效应估计、反事实推断
-  - ❌ 本模块不负责: 模型训练、特征工程、策略执行
-- **接口契约**: 提供标准化的因果推断API
+  - �?本模块负�? 因果发现、效应估计、反事实推断
+  - �?本模块不负责: 模型训练、特征工程、策略执�?- **接口契约**: 提供标准化的因果推断API
 
 ### 2.4 依赖关系与集成点
 
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| DoWhy | 强依赖 | Python库 | >=0.8.0 | 因果推断框架 |
-| CausalNex | 强依赖 | Python库 | >=0.12.0 | 贝叶斯网络 |
-| EconML | 强依赖 | Python库 | >=0.14.0 | 异质效应估计 |
-| CDT | 强依赖 | Python库 | >=0.6.0 | 因果发现工具 |
+| DoWhy | 强依�?| Python�?| >=0.8.0 | 因果推断框架 |
+| CausalNex | 强依�?| Python�?| >=0.12.0 | 贝叶斯网�?|
+| EconML | 强依�?| Python�?| >=0.14.0 | 异质效应估计 |
+| CDT | 强依�?| Python�?| >=0.6.0 | 因果发现工具 |
 
 ---
 
@@ -167,7 +114,7 @@ class TreatmentType(Enum):
 
 @dataclass
 class CausalEdge:
-    """因果边"""
+    """因果�?""
     source: str
     target: str
     edge_type: CausalRelationType
@@ -177,18 +124,18 @@ class CausalEdge:
 
 @dataclass
 class CausalGraph:
-    """因果图"""
+    """因果�?""
     nodes: Set[str]
     edges: List[CausalEdge]
     adjacency_matrix: np.ndarray
     graph: nx.DiGraph
     
     def get_parents(self, node: str) -> List[str]:
-        """获取父节点"""
+        """获取父节�?""
         return list(self.graph.predecessors(node))
     
     def get_children(self, node: str) -> List[str]:
-        """获取子节点"""
+        """获取子节�?""
         return list(self.graph.successors(node))
     
     def get_ancestors(self, node: str) -> Set[str]:
@@ -238,7 +185,7 @@ class CausalEffect:
 
 @dataclass
 class CounterfactualResult:
-    """反事实结果"""
+    """反事实结�?""
     sample_id: str
     factual_outcome: float
     counterfactual_outcome: float
@@ -266,12 +213,9 @@ class CausalDiscovery:
         
         Args:
             data: 观测数据
-            alpha: 显著性水平
-            indep_test: 独立性检验方法
-            
+            alpha: 显著性水�?            indep_test: 独立性检验方�?            
         Returns:
-            CausalGraph: 因果图
-        """
+            CausalGraph: 因果�?        """
         from causallearn.search.ConstraintBased.PC import pc
         
         cg = pc(data.values, alpha, indep_test)
@@ -317,16 +261,13 @@ class CausalDiscovery:
     ) -> CausalGraph:
         """NOTEARS算法因果发现
         
-        基于连续优化的因果发现方法
-        
+        基于连续优化的因果发现方�?        
         Args:
             data: 观测数据
-            lambda1: L1正则化参数
-            loss_type: 损失函数类型
+            lambda1: L1正则化参�?            loss_type: 损失函数类型
             
         Returns:
-            CausalGraph: 因果图
-        """
+            CausalGraph: 因果�?        """
         from castle.algorithms import Notears
         
         notears = Notears(lambda1=lambda1, loss_type=loss_type)
@@ -367,11 +308,9 @@ class CausalDiscovery:
         data: pd.DataFrame,
         domain_knowledge: Optional[Dict[str, List[str]]] = None
     ) -> Dict[str, Any]:
-        """验证因果图
-        
+        """验证因果�?        
         Args:
-            graph: 因果图
-            data: 观测数据
+            graph: 因果�?            data: 观测数据
             domain_knowledge: 领域知识约束
             
         Returns:
@@ -386,7 +325,7 @@ class CausalDiscovery:
         
         if not nx.is_directed_acyclic_graph(graph.graph):
             validation_result["is_valid"] = False
-            validation_result["violations"].append("存在环")
+            validation_result["violations"].append("存在�?)
         
         if domain_knowledge:
             for constraint_type, constraints in domain_knowledge.items():
@@ -394,7 +333,7 @@ class CausalDiscovery:
                     for source, target in constraints:
                         if graph.graph.has_edge(source, target):
                             validation_result["violations"].append(
-                                f"禁止边存在: {source} -> {target}"
+                                f"禁止边存�? {source} -> {target}"
                             )
         
         validation_result["score"] = self._calculate_graph_score(graph, data)
@@ -402,7 +341,7 @@ class CausalDiscovery:
         return validation_result
     
     def _calculate_graph_score(self, graph: CausalGraph, data: pd.DataFrame) -> float:
-        """计算图评分"""
+        """计算图评�?""
         from scipy.stats import pearsonr
         
         total_score = 0.0
@@ -418,8 +357,7 @@ class CausalDiscovery:
 
 
 class CausalEffectEstimator:
-    """因果效应估计器
-    
+    """因果效应估计�?    
     估计处理对结果的因果效应
     """
     
@@ -503,8 +441,7 @@ class CausalEffectEstimator:
         outcome: str,
         confounders: List[str]
     ) -> CausalEffect:
-        """逆概率加权估计
-        
+        """逆概率加权估�?        
         Args:
             data: 数据
             treatment: 处理变量
@@ -618,8 +555,7 @@ class CausalEffectEstimator:
 class CounterfactualAnalyzer:
     """反事实分析器
     
-    进行反事实推断
-    """
+    进行反事实推�?    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -642,8 +578,7 @@ class CounterfactualAnalyzer:
             sample_indices: 样本索引
             
         Returns:
-            List[CounterfactualResult]: 反事实结果列表
-        """
+            List[CounterfactualResult]: 反事实结果列�?        """
         if sample_indices is None:
             sample_indices = list(range(min(100, len(X))))
         
@@ -687,8 +622,7 @@ class CounterfactualAnalyzer:
             X: 特征数据
             treatment: 处理变量
             outcome: 结果变量
-            subgroups: 子群体定义
-            
+            subgroups: 子群体定�?            
         Returns:
             Dict[str, float]: 各子群体的CATE
         """
@@ -717,8 +651,7 @@ class CounterfactualAnalyzer:
         """模拟干预效果
         
         Args:
-            causal_graph: 因果图
-            data: 观测数据
+            causal_graph: 因果�?            data: 观测数据
             intervention: 干预定义 {变量: 值}
             outcome: 目标结果变量
             
@@ -752,8 +685,7 @@ class CounterfactualAnalyzer:
 
 
 class FactorCausalAnalyzer:
-    """因子因果分析器
-    
+    """因子因果分析�?    
     专门用于量化因子因果分析
     """
     
@@ -769,12 +701,10 @@ class FactorCausalAnalyzer:
         returns: pd.Series,
         factor_names: List[str]
     ) -> Dict[str, Any]:
-        """分析因子因果性
-        
+        """分析因子因果�?        
         Args:
             factor_data: 因子数据
-            returns: 收益率序列
-            factor_names: 因子名称列表
+            returns: 收益率序�?            factor_names: 因子名称列表
             
         Returns:
             Dict: 因果分析结果
@@ -820,10 +750,8 @@ class FactorCausalAnalyzer:
         
         Args:
             factor_data: 因子数据
-            returns: 收益率序列
-            factor_names: 因子名称列表
-            threshold: 效应阈值
-            
+            returns: 收益率序�?            factor_names: 因子名称列表
+            threshold: 效应阈�?            
         Returns:
             List[str]: 虚假信号因子列表
         """
@@ -901,15 +829,13 @@ class TestCausalEffectEstimator:
 
 ---
 
-## 5. 风险与约束
-
-### 5.1 技术风险
-
-| 风险项 | 风险等级 | 缓解措施 |
+## 5. 风险与约�?
+### 5.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| 因果图错误 | P1 | 领域知识验证、多算法交叉验证 |
-| 未观测混杂 | P1 | 敏感性分析、工具变量 |
-| 计算复杂度高 | P2 | 采样、并行计算 |
+| 因果图错�?| P1 | 领域知识验证、多算法交叉验证 |
+| 未观测混�?| P1 | 敏感性分析、工具变�?|
+| 计算复杂度高 | P2 | 采样、并行计�?|
 
 ---
 
@@ -917,31 +843,31 @@ class TestCausalEffectEstimator:
 
 ### 6.1 功能验收
 
-| 验收项 | 验收标准 |
+| 验收�?| 验收标准 |
 |--------|----------|
 | 因果发现 | 支持PC、NOTEARS算法 |
-| 效应估计 | 支持PSM、IPW、双重稳健 |
-| 反事实推断 | 支持ITE、CATE估计 |
+| 效应估计 | 支持PSM、IPW、双重稳�?|
+| 反事实推�?| 支持ITE、CATE估计 |
 | 因子分析 | 支持虚假信号识别 |
 
 ### 6.2 性能验收
 
-| 指标 | 目标值 |
+| 指标 | 目标�?|
 |------|--------|
-| 因果发现（1000样本） | < 60秒 |
-| 效应估计 | < 5秒 |
-| 反事实推断（100样本） | < 10秒 |
+| 因果发现�?000样本�?| < 60�?|
+| 效应估计 | < 5�?|
+| 反事实推断（100样本�?| < 10�?|
 
 ---
 
 ## 7. 版本历史
 
-| 版本 | 日期 | 作者 | 变更说明 |
+| 版本 | 日期 | 作�?| 变更说明 |
 |------|------|------|----------|
-| v1.0 | 2026-04-03 | 量化研究员 | 初始版本 |
+| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 |
 
 ---
 
 **文档版本**: v1.0.0
-**最后更新**: 2026-04-03
-**维护者**: 量化研究员
+**最后更�?*: 2026-04-03
+**维护�?*: 量化研究�?

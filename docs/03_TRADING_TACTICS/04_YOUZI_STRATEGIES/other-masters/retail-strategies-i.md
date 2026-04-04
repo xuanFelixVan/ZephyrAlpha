@@ -4,12 +4,12 @@ version: 1.7.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # retail-strategies-i.md
@@ -19,28 +19,28 @@ implementation_status: 进行中
 > 遗漏内容整合补充第二部分
 >
 > **版本**：v1.7
-> **日期**：2026-03-28
-> **策略池**：清风量化交易系统4.0
+> **日期**�?026-03-28
+> **策略�?*：清风量化交易系�?.0
 >
-> **配套文档**：
+> **配套文档**�?
 > - [retail-strategies-h.md](./retail-strategies-h.md) - S059-S067
 > -  - 交易规则
 
 ---
 
-## 1. 龙飞虎动态仓位管理 (S068)
+## 1. 龙飞虎动态仓位管�?(S068)
 
 > 来源：附录BD
 >
-> 动态仓位管理策略
+> 动态仓位管理策�?
 
 ### 1.1 仓位计算核心
 
 ```python
 class DragonFlyTigerPosition:
     """
-    龙飞虎动态仓位管理
-    核心：收盘持有3-6成仓位，动态仓位5成上下
+    龙飞虎动态仓位管�?
+    核心：收盘持�?-6成仓位，动态仓�?成上�?
     """
 
     def calc_position(self, market_open_performance, old_positions, new_signals):
@@ -97,20 +97,20 @@ class DragonFlyTigerPosition:
 
 > 来源：附录BE
 >
-> 二板定龙头策略
+> 二板定龙头策�?
 
-### 2.1 二板定龙头量化
+### 2.1 二板定龙头量�?
 
 ```python
 class SecondBoardDragon:
     """
-    二板定龙头
+    二板定龙�?
     核心：一板能看出来个毛，二板才是确认
     """
 
     def select_second_board(self, yesterday_first_board_stocks):
         """
-        从昨日首板中选取二板候选
+        从昨日首板中选取二板候�?
         """
         candidates = []
 
@@ -138,12 +138,12 @@ class SecondBoardDragon:
         return sorted(candidates, key=lambda x: x['score'], reverse=True)
 ```
 
-### 2.2 新题材判断量化
+### 2.2 新题材判断量�?
 
 ```python
 class NewThemeQuantifier:
     """
-    新题材判断量化
+    新题材判断量�?
     """
 
     def identify_new_theme(self, market_data, today_turnover):
@@ -171,14 +171,14 @@ class NewThemeQuantifier:
         """
         检查是否有重大故事
         """
-        story_indicators = ['政策利好', '业绩拐点', '并购重组', '技术突破']
+        story_indicators = ['政策利好', '业绩拐点', '并购重组', '技术突�?]
         return any(indicator in market_data.get('主题', '') for indicator in story_indicators)
 
     def check_plate_recognition(self, market_data):
         """
         检查板块认同度
         """
-        return market_data.get('板块涨停数', 0) >= 3
+        return market_data.get('板块涨停�?, 0) >= 3
 ```
 
 ---
@@ -195,7 +195,7 @@ class NewThemeQuantifier:
 class AilinCoreStrategy:
     """
     艾琳心法核心策略
-    操作对象：股指期货主力合约
+    操作对象：股指期货主力合�?
     """
 
     def __init__(self):
@@ -249,9 +249,9 @@ class AilinCoreStrategy:
 
 > 来源：附录BG
 >
-> 超短线操作体系
+> 超短线操作体�?
 
-### 4.1 超短线核心
+### 4.1 超短线核�?
 
 ```python
 class SingleStockArrow:
@@ -281,7 +281,7 @@ class SingleStockArrow:
             if stock['turnover_rate'] >= 10:
                 score += 0.15
 
-            if stock['突破阻力位']:
+            if stock['突破阻力�?]:
                 score += 0.15
 
             if score >= 0.6:
@@ -291,12 +291,12 @@ class SingleStockArrow:
 
     def execute_next_day(self, stock, open_price):
         """
-        次日开盘执行
+        次日开盘执�?
         """
-        if open_price > stock['收盘价'] * 1.03:
+        if open_price > stock['收盘�?] * 1.03:
             return {'action': '卖出', 'reason': '高开止盈'}
 
-        if open_price < stock['收盘价'] * 0.97:
+        if open_price < stock['收盘�?] * 0.97:
             return {'action': '卖出', 'reason': '低开止损'}
 
         return {'action': '持有观望'}
@@ -322,10 +322,10 @@ class ZexiAbsoluteReturnQuantifier:
     ASSESSMENT_CRITERIA = {
         'price_movement': '推荐的股票要能涨',
         'speed': '最好马上涨',
-        'vs_benchmark': '涨幅要高过沪深300',
-        'max_drawdown': '买入后不能下跌超过10%',
-        'stop_loss': '否则无条件止损',
-        'no_add': '不允许补仓'
+        'vs_benchmark': '涨幅要高过沪�?00',
+        'max_drawdown': '买入后不能下跌超�?0%',
+        'stop_loss': '否则无条件止�?,
+        'no_add': '不允许补�?
     }
 
     def evaluate_recommendation(self, stock_return, benchmark_return, max_drawdown):
@@ -339,19 +339,19 @@ class ZexiAbsoluteReturnQuantifier:
         elif stock_return > 0 and vs_benchmark > 0:
             return {'rating': '良好', 'score': 80}
         elif max_drawdown > 0.1:
-            return {'rating': '不合格', 'score': 30}
+            return {'rating': '不合�?, 'score': 30}
         else:
-            return {'rating': '不合格', 'score': 20}
+            return {'rating': '不合�?, 'score': 20}
 
     def apply_stop_loss(self, entry_price, current_price):
         """
         止损执行
-        不允许补仓
+        不允许补�?
         """
         drawdown = (current_price - entry_price) / entry_price
 
         if drawdown <= -0.1:
-            return {'action': '无条件止损', 'allow_add': False}
+            return {'action': '无条件止�?, 'allow_add': False}
         elif drawdown <= -0.05:
             return {'action': '考虑止损', 'allow_add': False}
 
@@ -374,12 +374,12 @@ class ZexiReverseThinkingQuantifier:
         signals = []
 
         if market_data.get('最热门板块涨幅', 0) > 8:
-            signals.append('市场最热门板块涨幅过大，警惕')
+            signals.append('市场最热门板块涨幅过大，警�?)
 
         if market_data.get('涨停家数', 0) > 200:
-            signals.append('涨停满屏，心生寒意')
+            signals.append('涨停满屏，心生寒�?)
 
-        if market_data.get('市场报告一致性', 0) > 0.8:
+        if market_data.get('市场报告一致�?, 0) > 0.8:
             signals.append('市场报告一片看好，警惕顶部')
 
         return signals
@@ -393,13 +393,13 @@ class ZexiReverseThinkingQuantifier:
 >
 > 著名刺客实盘量化经验
 
-### 6.1 情绪逆转大长腿
+### 6.1 情绪逆转大长�?
 
 ```python
 class AssassinEmotionReversal:
     """
-    情绪逆转大长腿
-    条件：主线+人气核心+情绪波动
+    情绪逆转大长�?
+    条件：主�?人气核心+情绪波动
     """
 
     def select_emotion_reversal_stock(self, market_data, hot_stocks):
@@ -429,15 +429,15 @@ class AssassinEmotionReversal:
     def execute_buy(self, stock):
         """
         买点
-        水下低位承接、分时底背离、放量拉升瞬间
+        水下低位承接、分时底背离、放量拉升瞬�?
         """
         buy_signals = {
             '水下低位承接': stock['current_price'] < stock['yesterday_close'],
-            '分时底背离': self.check_divergence(stock),
+            '分时底背�?: self.check_divergence(stock),
             '放量拉升': stock['volume'] > stock['avg_volume'] * 1.5
         }
 
-        if buy_signals['水下低位承接'] and buy_signals['分时底背离']:
+        if buy_signals['水下低位承接'] and buy_signals['分时底背�?]:
             return {'action': '买入', 'entry': stock['current_price']}
 
         if buy_signals['放量拉升']:
@@ -449,7 +449,7 @@ class AssassinEmotionReversal:
         """
         检查分时底背离
         """
-        return stock.get('分时底背离', False)
+        return stock.get('分时底背�?, False)
 ```
 
 ### 6.2 连板战法
@@ -461,14 +461,14 @@ class AssassinConsecutiveBoard:
     """
 
     TECHNIQUES = {
-        '换手连板': {'投入资金多', '高换手率'},
-        '缩量板': {'投入资金少', '缩量'},
+        '换手连板': {'投入资金�?, '高换手率'},
+        '缩量�?: {'投入资金�?, '缩量'},
         'principle': '只做超强势股'
     }
 
     def select_consecutive_board(self, stocks):
         """
-        选择连板股
+        选择连板�?
         """
         candidates = []
 
@@ -476,7 +476,7 @@ class AssassinConsecutiveBoard:
             if stock['连续涨停天数'] >= 2:
                 candidates.append({
                     'stock': stock,
-                    'board_type': '换手连板' if stock['换手率'] > 0.15 else '缩量板'
+                    'board_type': '换手连板' if stock['换手�?] > 0.15 else '缩量�?
                 })
 
         return sorted(candidates, key=lambda x: x['stock']['连续涨停天数'], reverse=True)
@@ -484,7 +484,7 @@ class AssassinConsecutiveBoard:
 
 ---
 
-## 7. 万狮虎养家心法 (S074)
+## 7. 万狮虎养家心�?(S074)
 
 > 来源：附录BL
 >
@@ -527,13 +527,13 @@ class YangjiaMindQuantifier:
         根据情绪获取建议
         """
         if emotion_level >= 70:
-            return '积极做多，重仓龙头'
+            return '积极做多，重仓龙�?
         elif emotion_level >= 50:
-            return '稳健操作，控制仓位'
+            return '稳健操作，控制仓�?
         elif emotion_level >= 30:
-            return '谨慎观望，减少操作'
+            return '谨慎观望，减少操�?
         else:
-            return '空仓等待，避免抄底'
+            return '空仓等待，避免抄�?
 
     def select_main_line_stocks(self, stocks, market_data):
         """
@@ -552,7 +552,7 @@ class YangjiaMindQuantifier:
 
 > 来源：附录BR
 >
-> 职业炒手/王元杰量化
+> 职业炒手/王元杰量�?
 
 ### 8.1 职业炒手核心
 
@@ -564,7 +564,7 @@ class ProfessionalTraderQuantifier:
 
     def select_high_probability_stocks(self, market_data):
         """
-        选取高胜率股票
+        选取高胜率股�?
         """
         candidates = []
 
@@ -574,13 +574,13 @@ class ProfessionalTraderQuantifier:
             if stock['涨幅'] >= 5 and stock['涨幅'] <= 9:
                 score += 0.25
 
-            if stock['成交量'] > stock['均量'] * 2:
+            if stock['成交�?] > stock['均量'] * 2:
                 score += 0.2
 
             if stock['封板时间'] <= '10:30':
                 score += 0.2
 
-            if stock['换手率'] >= 10:
+            if stock['换手�?] >= 10:
                 score += 0.15
 
             if stock['属于主线板块']:
@@ -595,16 +595,16 @@ class ProfessionalTraderQuantifier:
         """
         买入执行
         """
-        if stock['开盘涨幅'] > 5:
+        if stock['开盘涨�?] > 5:
             return {
                 'action': '等待回调买入',
-                'wait_for': '回调至+3%左右',
+                'wait_for': '回调�?3%左右',
                 'max_entry': stock['昨日收盘'] * 1.05
             }
 
-        if -2 <= stock['开盘涨幅'] <= 5:
+        if -2 <= stock['开盘涨�?] <= 5:
             return {
-                'action': '开盘买入',
+                'action': '开盘买�?,
                 'entry': stock['当前价格']
             }
 
@@ -644,8 +644,8 @@ class StockSelectionChecklist:
 
     BASIC_CONDITIONS = {
         '涨幅要求': ('>', 0.07, '放量阳线'),
-        '成交量要求': ('>', 1.5, '倍量'),
-        '换手率要求': ('>', 0.05, '5%以上'),
+        '成交量要�?: ('>', 1.5, '倍量'),
+        '换手率要�?: ('>', 0.05, '5%以上'),
         '封板时间': ('<=', '14:00', '早板优先')
     }
 
@@ -657,7 +657,7 @@ class StockSelectionChecklist:
 
         checks['涨幅'] = stock['change_pct'] > 0.07
         checks['量比'] = stock['volume_ratio'] > 1.5
-        checks['换手率'] = stock['turnover_rate'] > 0.05
+        checks['换手�?] = stock['turnover_rate'] > 0.05
         checks['封板时间'] = stock['封板时间'] <= '14:00'
 
         passed = sum(checks.values())
@@ -693,4 +693,4 @@ class StockSelectionChecklist:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.7 | 2026-03-28 | 新增遗漏策略：龙飞虎仓位(S068)、赵老哥龙头(S069)、艾琳心法(S070)、独股一箭(S071)、泽熙量化(S072)、著名刺客(S073)、万狮虎(S074)、职业炒手(S075)、综合清单(S076) |
+| v1.7 | 2026-03-28 | 新增遗漏策略：龙飞虎仓位(S068)、赵老哥龙头(S069)、艾琳心�?S070)、独股一�?S071)、泽熙量�?S072)、著名刺�?S073)、万狮虎(S074)、职业炒�?S075)、综合清�?S076) |

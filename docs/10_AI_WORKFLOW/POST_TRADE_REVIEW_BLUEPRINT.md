@@ -4,8 +4,8 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构师
-standard_type: 专业机构级蓝图
+owner: 首席架构�?
+standard_type: 专业机构级蓝�?
 applicable_scope: 交易复盘分析
 compliance_level: 专业标准
 parent_document: INDEX.md
@@ -24,33 +24,33 @@ related_documents:
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **实施周期**: 2周
-> **核心定位**: 交易决策的质量保障机制
+> **实施周期**: 2�?
+> **核心定位**: 交易决策的质量保障机�?
 > **技术栈**: Pandas + NumPy + Matplotlib
 
 ---
 
-## 一、概述
+## 一、概�?
 
 ### 1.1 蓝图定位
 
-本文档是清风量化系统的**复盘模块蓝图**,旨在实现:
+本文档是清风量化系统�?*复盘模块蓝图**,旨在实现:
 
-- ✅ **回测复盘**: 分析回测结果,提取经验教训
-- ✅ **实盘复盘**: 分析实盘交易,优化策略参数
-- ✅ **因子复盘**: 分析因子表现,优化因子组合
-- ✅ **策略复盘**: 分析策略表现,改进策略逻辑
-- ✅ **风险复盘**: 分析风险事件,完善风控体系
+- �?**回测复盘**: 分析回测结果,提取经验教训
+- �?**实盘复盘**: 分析实盘交易,优化策略参数
+- �?**因子复盘**: 分析因子表现,优化因子组合
+- �?**策略复盘**: 分析策略表现,改进策略逻辑
+- �?**风险复盘**: 分析风险事件,完善风控体系
 
-### 1.2 核心价值
+### 1.2 核心价�?
 
-**对个人开发者的价值**:
+**对个人开发者的价�?*:
 1. **经验积累**: 从历史交易中学习
 2. **策略优化**: 基于数据优化策略
-3. **风险规避**: 识别并规避风险
+3. **风险规避**: 识别并规避风�?
 4. **持续改进**: 建立持续改进机制
 
-**对系统的价值**:
+**对系统的价�?*:
 1. **质量保障**: 提升策略质量
 2. **风险控制**: 完善风控体系
 3. **知识沉淀**: 积累交易知识
@@ -59,79 +59,79 @@ related_documents:
 ### 1.3 Layer定位
 
 ```
-Layer 7: AI报告层 (AI Reporting Layer)
-    ├── 回测复盘子系统
-    ├── 实盘复盘子系统
-    ├── 因子复盘子系统
-    ├── 策略复盘子系统
-    └── 风险复盘子系统
+Layer 7: AI报告�?(AI Reporting Layer)
+    ├── 回测复盘子系�?
+    ├── 实盘复盘子系�?
+    ├── 因子复盘子系�?
+    ├── 策略复盘子系�?
+    └── 风险复盘子系�?
 ```
 
-**架构位置**: 位于Layer 7(AI报告层),是交易决策质量保障的核心模块。
+**架构位置**: 位于Layer 7(AI报告�?,是交易决策质量保障的核心模块�?
 
 ---
 
-## 二、架构设计
+## 二、架构设�?
 
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    复盘模块架构                              │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          回测复盘层 (Backtest Review)                │   │
-│  │  ├─ 回测结果分析                                     │   │
-│  │  ├─ 交易明细分析                                     │   │
-│  │  ├─ 策略表现评估                                     │   │
-│  │  └─ 优化建议生成                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          实盘复盘层 (Live Trading Review)            │   │
-│  │  ├─ 实盘交易分析                                     │   │
-│  │  ├─ 滑点成本分析                                     │   │
-│  │  ├─ 执行效率评估                                     │   │
-│  │  └─ 实盘优化建议                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          因子复盘层 (Factor Review)                  │   │
-│  │  ├─ 因子表现分析                                     │   │
-│  │  ├─ IC值趋势分析                                     │   │
-│  │  ├─ 因子衰减分析                                     │   │
-│  │  └─ 因子优化建议                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          策略复盘层 (Strategy Review)                │   │
-│  │  ├─ 策略表现分析                                     │   │
-│  │  ├─ 参数敏感性分析                                   │   │
-│  │  ├─ 市场适应性分析                                   │   │
-│  │  └─ 策略改进建议                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          风险复盘层 (Risk Review)                    │   │
-│  │  ├─ 风险事件分析                                     │   │
-│  │  ├─ 回撤分析                                         │   │
-│  │  ├─ 风险因子识别                                     │   │
-│  │  └─ 风控优化建议                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   复盘模块架构                              �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         回测复盘�?(Backtest Review)                �?  �?
+�? �? ├─ 回测结果分析                                     �?  �?
+�? �? ├─ 交易明细分析                                     �?  �?
+�? �? ├─ 策略表现评估                                     �?  �?
+�? �? └─ 优化建议生成                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         实盘复盘�?(Live Trading Review)            �?  �?
+�? �? ├─ 实盘交易分析                                     �?  �?
+�? �? ├─ 滑点成本分析                                     �?  �?
+�? �? ├─ 执行效率评估                                     �?  �?
+�? �? └─ 实盘优化建议                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         因子复盘�?(Factor Review)                  �?  �?
+�? �? ├─ 因子表现分析                                     �?  �?
+�? �? ├─ IC值趋势分�?                                    �?  �?
+�? �? ├─ 因子衰减分析                                     �?  �?
+�? �? └─ 因子优化建议                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         策略复盘�?(Strategy Review)                �?  �?
+�? �? ├─ 策略表现分析                                     �?  �?
+�? �? ├─ 参数敏感性分�?                                  �?  �?
+�? �? ├─ 市场适应性分�?                                  �?  �?
+�? �? └─ 策略改进建议                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         风险复盘�?(Risk Review)                    �?  �?
+�? �? ├─ 风险事件分析                                     �?  �?
+�? �? ├─ 回撤分析                                         �?  �?
+�? �? ├─ 风险因子识别                                     �?  �?
+�? �? └─ 风控优化建议                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
-### 2.2 数据流设计
+### 2.2 数据流设�?
 
 ```
-交易数据 → 数据清洗 → 指标计算 → 分析建模 → 报告生成 → 知识沉淀
-    ↑                                                        ↓
-    └────────────────── 策略优化 ←───────────────────────────┘
+交易数据 �?数据清洗 �?指标计算 �?分析建模 �?报告生成 �?知识沉淀
+    �?                                                       �?
+    └────────────────── 策略优化 ←───────────────────────────�?
 ```
 
-**数据流说明**:
+**数据流说�?*:
 1. **交易数据**: 从回测引擎或实盘系统获取交易数据
 2. **数据清洗**: 清洗和标准化交易数据
 3. **指标计算**: 计算各种绩效指标
@@ -142,7 +142,7 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
 ### 2.3 核心组件设计
 
-#### 组件1: BacktestReviewer (回测复盘器)
+#### 组件1: BacktestReviewer (回测复盘�?
 
 **职责**: 分析回测结果,提取经验教训
 
@@ -159,7 +159,7 @@ def review_backtest(backtest_result: dict) -> PostTradeReview:
     pass
 ```
 
-#### 组件2: LiveTradingReviewer (实盘复盘器)
+#### 组件2: LiveTradingReviewer (实盘复盘�?
 
 **职责**: 分析实盘交易,优化策略参数
 
@@ -176,7 +176,7 @@ def review_live_trading(live_trading_data: dict) -> PostTradeReview:
     pass
 ```
 
-#### 组件3: FactorReviewer (因子复盘器)
+#### 组件3: FactorReviewer (因子复盘�?
 
 **职责**: 分析因子表现,优化因子组合
 
@@ -193,7 +193,7 @@ def review_factor(factor_data: dict) -> FactorReview:
     pass
 ```
 
-#### 组件4: StrategyReviewer (策略复盘器)
+#### 组件4: StrategyReviewer (策略复盘�?
 
 **职责**: 分析策略表现,改进策略逻辑
 
@@ -210,7 +210,7 @@ def review_strategy(strategy_data: dict) -> StrategyReview:
     pass
 ```
 
-#### 组件5: RiskReviewer (风险复盘器)
+#### 组件5: RiskReviewer (风险复盘�?
 
 **职责**: 分析风险事件,完善风控体系
 
@@ -229,21 +229,21 @@ def review_risk(risk_data: dict) -> RiskReview:
 
 ---
 
-## 三、数据模型
+## 三、数据模�?
 
-### 3.1 复盘报告表 (post_trade_reviews)
+### 3.1 复盘报告�?(post_trade_reviews)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | review_id | VARCHAR(64) | 复盘ID (主键) | review_20260402_001 |
 | review_type | VARCHAR(32) | 复盘类型 | backtest_review |
 | strategy_name | VARCHAR(128) | 策略名称 | momentum_strategy_v1 |
-| period_start | DATE | 复盘开始日期 | 2026-03-01 |
+| period_start | DATE | 复盘开始日�?| 2026-03-01 |
 | period_end | DATE | 复盘结束日期 | 2026-03-31 |
-| total_trades | INTEGER | 总交易次数 | 150 |
+| total_trades | INTEGER | 总交易次�?| 150 |
 | win_rate | FLOAT | 胜率 | 0.65 |
 | sharpe_ratio | FLOAT | 夏普比率 | 1.85 |
-| max_drawdown | FLOAT | 最大回撤 | -0.12 |
+| max_drawdown | FLOAT | 最大回�?| -0.12 |
 | good_trades | TEXT | 好的交易 | "..." |
 | bad_trades | TEXT | 差的交易 | "..." |
 | lessons_learned | TEXT | 经验教训 | "..." |
@@ -255,9 +255,9 @@ def review_risk(risk_data: dict) -> RiskReview:
 - INDEX: review_type
 - INDEX: period_start
 
-### 3.2 交易分析表 (trade_analysis)
+### 3.2 交易分析�?(trade_analysis)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | analysis_id | VARCHAR(64) | 分析ID (主键) | analysis_20260402_001 |
 | review_id | VARCHAR(64) | 复盘ID (外键) | review_20260402_001 |
@@ -268,51 +268,51 @@ def review_risk(risk_data: dict) -> RiskReview:
 | exit_price | FLOAT | 出场价格 | 10.80 |
 | position_size | INTEGER | 持仓数量 | 1000 |
 | pnl | FLOAT | 盈亏 | 300.0 |
-| pnl_pct | FLOAT | 盈亏百分比 | 0.0286 |
+| pnl_pct | FLOAT | 盈亏百分�?| 0.0286 |
 | holding_period | INTEGER | 持仓时长(分钟) | 330 |
 | trade_quality | VARCHAR(16) | 交易质量 | good |
-| analysis_notes | TEXT | 分析备注 | "趋势明确,入场时机好" |
+| analysis_notes | TEXT | 分析备注 | "趋势明确,入场时机�? |
 
 **索引**:
 - PRIMARY KEY: analysis_id
-- FOREIGN KEY: review_id → post_trade_reviews.review_id
+- FOREIGN KEY: review_id �?post_trade_reviews.review_id
 - INDEX: trade_quality
 
-### 3.3 经验教训表 (lessons_learned)
+### 3.3 经验教训�?(lessons_learned)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | lesson_id | VARCHAR(64) | 教训ID (主键) | lesson_20260402_001 |
 | review_id | VARCHAR(64) | 复盘ID (外键) | review_20260402_001 |
 | category | VARCHAR(32) | 类别 | entry_timing |
 | lesson_type | VARCHAR(16) | 类型 | success |
-| description | TEXT | 描述 | "趋势明确时入场效果更好" |
+| description | TEXT | 描述 | "趋势明确时入场效果更�? |
 | frequency | INTEGER | 出现频率 | 15 |
 | impact_score | FLOAT | 影响评分 | 0.85 |
 | created_at | DATETIME | 创建时间 | 2026-04-02 18:00:00 |
 
 **索引**:
 - PRIMARY KEY: lesson_id
-- FOREIGN KEY: review_id → post_trade_reviews.review_id
+- FOREIGN KEY: review_id �?post_trade_reviews.review_id
 - INDEX: category
 
 ---
 
-## 四、技术实现
+## 四、技术实�?
 
 ### 4.1 技术栈选择
 
-| 技术组件 | 选择方案 | 理由 |
+| 技术组�?| 选择方案 | 理由 |
 |---------|---------|------|
-| **数据分析** | Pandas + NumPy | 专业数据分析库 |
-| **可视化** | Matplotlib + Seaborn | 专业可视化库 |
+| **数据分析** | Pandas + NumPy | 专业数据分析�?|
+| **可视�?* | Matplotlib + Seaborn | 专业可视化库 |
 | **报告生成** | Markdown + Jinja2 | 灵活模板,易于定制 |
-| **数据存储** | SQLite | 轻量级,易于管理 |
-| **编程语言** | Python 3.10+ | 与现有系统一致 |
+| **数据存储** | SQLite | 轻量�?易于管理 |
+| **编程语言** | Python 3.10+ | 与现有系统一�?|
 
 ### 4.2 核心代码实现
 
-#### 4.2.1 PostTradeReviewer类
+#### 4.2.1 PostTradeReviewer�?
 
 ```python
 import sqlite3
@@ -476,38 +476,38 @@ class PostTradeReviewer:
 **复盘ID**: {review['review_id']}
 **复盘类型**: {review['review_type']}
 **策略名称**: {review['strategy_name']}
-**复盘周期**: {review['period_start']} 至 {review['period_end']}
+**复盘周期**: {review['period_start']} �?{review['period_end']}
 
 ---
 
-## 一、交易概览
+## 一、交易概�?
 
-- **总交易次数**: {review['total_trades']}
+- **总交易次�?*: {review['total_trades']}
 - **胜率**: {review['win_rate']:.2%}
 - **夏普比率**: {review['sharpe_ratio']:.2f}
-- **最大回撤**: {review['max_drawdown']:.2%}
+- **最大回�?*: {review['max_drawdown']:.2%}
 
 ---
 
-## 二、好的交易分析
+## 二、好的交易分�?
 
 {self._format_trades(json.loads(review['good_trades']))}
 
 ---
 
-## 三、差的交易分析
+## 三、差的交易分�?
 
 {self._format_trades(json.loads(review['bad_trades']))}
 
 ---
 
-## 四、经验教训
+## 四、经验教�?
 
 {self._format_lessons(json.loads(review['lessons_learned']))}
 
 ---
 
-## 五、改进建议
+## 五、改进建�?
 
 {self._format_improvements(json.loads(review['improvements']))}
 
@@ -633,7 +633,7 @@ class PostTradeReviewer:
         conn.close()
     
     def _format_trades(self, trades: list) -> str:
-        """格式化交易列表"""
+        """格式化交易列�?""
         if not trades:
             return "暂无数据"
         
@@ -649,7 +649,7 @@ class PostTradeReviewer:
         return "\n\n".join(formatted)
     
     def _format_lessons(self, lessons: list) -> str:
-        """格式化经验教训"""
+        """格式化经验教�?""
         if not lessons:
             return "暂无数据"
         
@@ -666,7 +666,7 @@ class PostTradeReviewer:
         return "\n\n".join(formatted)
     
     def _format_improvements(self, improvements: list) -> str:
-        """格式化改进建议"""
+        """格式化改进建�?""
         if not improvements:
             return "暂无数据"
         
@@ -675,7 +675,7 @@ class PostTradeReviewer:
             formatted.append(
                 f"- **类别**: {improvement['category']}\n"
                 f"  - **建议**: {improvement['suggestion']}\n"
-                f"  - **优先级**: {improvement['priority']}"
+                f"  - **优先�?*: {improvement['priority']}"
             )
         
         return "\n\n".join(formatted)
@@ -683,25 +683,25 @@ class PostTradeReviewer:
 
 ---
 
-## 五、实施路径
+## 五、实施路�?
 
 ### 5.1 Phase 1: 核心复盘功能 (Week 1)
 
-**目标**: 实现回测复盘和实盘复盘功能
+**目标**: 实现回测复盘和实盘复盘功�?
 
 **任务清单**:
 - [ ] 设计数据库表结构
 - [ ] 实现BacktestReviewer组件
 - [ ] 实现LiveTradingReviewer组件
-- [ ] 集成到现有系统
+- [ ] 集成到现有系�?
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 能够分析回测结果
-- ✅ 能够分析实盘交易
-- ✅ 能够生成复盘报告
+- �?能够分析回测结果
+- �?能够分析实盘交易
+- �?能够生成复盘报告
 
-### 5.2 Phase 2: 深度分析与优化 (Week 2)
+### 5.2 Phase 2: 深度分析与优�?(Week 2)
 
 **目标**: 实现因子复盘、策略复盘和风险复盘功能
 
@@ -709,24 +709,24 @@ class PostTradeReviewer:
 - [ ] 实现FactorReviewer组件
 - [ ] 实现StrategyReviewer组件
 - [ ] 实现RiskReviewer组件
-- [ ] 集成到现有系统
+- [ ] 集成到现有系�?
 - [ ] 编写集成测试
 
 **验收标准**:
-- ✅ 能够分析因子表现
-- ✅ 能够分析策略表现
-- ✅ 能够分析风险事件
+- �?能够分析因子表现
+- �?能够分析策略表现
+- �?能够分析风险事件
 
 ---
 
-## 六、文档治理
+## 六、文档治�?
 
 ### 6.1 System_Manifest.md索引
 
 ```markdown
-| 蓝图文档 | 路径 | 模块ID | 版本 | 状态 | 职责概要 |
+| 蓝图文档 | 路径 | 模块ID | 版本 | 状�?| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [复盘模块蓝图](../10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md` | POST_TRADE_REVIEW_001 | 1.0 | Active | 回测复盘、实盘复盘、因子复盘、策略复盘、风险复盘 |
+| [复盘模块蓝图](../10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md` | POST_TRADE_REVIEW_001 | 1.0 | Active | 回测复盘、实盘复盘、因子复盘、策略复盘、风险复�?|
 ```
 
 ### 6.2 模块职责边界
@@ -738,47 +738,47 @@ class PostTradeReviewer:
 - 策略复盘
 - 风险复盘
 
-**非职责**:
+**非职�?*:
 - AI工作记录 (由AI_WORKFLOW_LOGGER模块负责)
 - AI工作汇报 (由AI_WORK_REPORTER模块负责)
-- 数据持久化 (由FULL_PROCESS_DATA_PERSISTENCE模块负责)
+- 数据持久�?(由FULL_PROCESS_DATA_PERSISTENCE模块负责)
 
 ### 6.3 版本管理策略
 
 - **v1.0**: 初始版本,实现核心功能
 - **v1.1**: 增强分析算法
-- **v1.2**: 增加可视化功能
+- **v1.2**: 增加可视化功�?
 - **v2.0**: 集成AI辅助分析
 
 ---
 
-## 七、风险评估
+## 七、风险评�?
 
-### 7.1 技术风险
+### 7.1 技术风�?
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **数据质量差** | 高 | 中 | 建立数据质量检查机制 |
-| **分析结果主观** | 中 | 高 | 建立客观评估指标 |
-| **报告内容空洞** | 中 | 中 | 建立报告模板,丰富内容来源 |
+| **数据质量�?* | �?| �?| 建立数据质量检查机�?|
+| **分析结果主观** | �?| �?| 建立客观评估指标 |
+| **报告内容空洞** | �?| �?| 建立报告模板,丰富内容来源 |
 
 ### 7.2 实施风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **集成复杂度高** | 高 | 中 | 分阶段实施,逐步集成 |
-| **用户不重视** | 中 | 中 | 提供价值证明,逐步引导 |
+| **集成复杂度高** | �?| �?| 分阶段实�?逐步集成 |
+| **用户不重�?* | �?| �?| 提供价值证�?逐步引导 |
 
 ---
 
-## 八、相关文档
+## 八、相关文�?
 
 | 文档 | 说明 |
 |------|------|
-| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录数据源 |
+| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录数据�?|
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
 | [质量监控蓝图](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 质量监控体系 |
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状态**: ✅ 活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃

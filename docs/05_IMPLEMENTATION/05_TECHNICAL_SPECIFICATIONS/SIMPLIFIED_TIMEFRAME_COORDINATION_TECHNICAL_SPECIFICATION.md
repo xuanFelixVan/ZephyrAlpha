@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TIMEFRAME_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,50 +6,50 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化层)
+layer: Layer 6 (����Ż���)
 index: TIMEFRAME_SPEC_001
 estimated_hours: 80h
 review_status: Pending
-reviewer: 首席技术评审官
+reviewer: ��ϯ���������
 review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构技术规格书
-applicable_scope: 全系统
-compliance_level: 专业标准
+owner: ����Ż��㸺����
+standard_type: רҵ�����������������
+applicable_scope: ȫϵͳ
+compliance_level: רҵ��׼
 ---
 
-# 简化时间框架协同技术规格书 v1.0
+# ��ʱ����Эͬ��������� v1.0
 
-> 清风量化系统 v5.3 - 时间框架协同详细技术设计
-> **索引**: `TIMEFRAME_SPEC_001`
-> **开发时间**: 80h
-> **核心定位**: 三级时间框架协同、信号融合
+> �������ϵͳ v5.3 - ʱ����Эͬ��ϸ�������
+> **����**: `TIMEFRAME_SPEC_001`
+> **����ʱ��**: 80h
+> **���Ķ�λ**: ����ʱ����Эͬ���ź��ں�
 
 ---
 
-## 1. 概述
+## 1. ����
 
-时间框架协同模块负责宏观/中观/微观三级时间框架的信号融合。
+ʱ����Эͬģ�鸺����/�й�/΢������ʱ���ܵ��ź��ںϡ�
 
-## 2. 接口定义
+## 2. �ӿڶ���
 
 ```python
 class TimeframeCoordinator:
-    """时间框架协调器"""
+    """ʱ����Э����"""
     
     def fuse_signals(self,
                     macro_signal: pd.Series,
                     medium_signal: pd.Series,
                     micro_signal: pd.Series) -> pd.Series:
-        """融合信号"""
+        """�ں��ź�"""
         pass
     
     def resolve_conflicts(self,
                          signals: Dict[str, pd.Series]) -> pd.Series:
-        """解决信号冲突"""
+        """����źų�ͻ"""
         pass
 ```
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状态**: Final
+**���������汾**: v1.0 | **��������**: 2026-04-03 | **״̬**: Final

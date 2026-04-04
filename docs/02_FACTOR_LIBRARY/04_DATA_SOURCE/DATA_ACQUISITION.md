@@ -4,19 +4,19 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 数据处理文档
-applicable_scope: 数据采集与清�?compliance_level: 专业标准
+owner: 首席文档架构�?standard_type: 数据处理文档
+applicable_scope: 数据采集与清�?compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行�?--- 进行�?
+implementation_status: 进行�?--- 进行�?
 ---
 
 
 # 数据采集+清洗蓝图
 
-> 清风量化系统 v5.0 - 数据采集与清洗系�?
+> 清风量化系统 v5.0 - 数据采集与清洗系�?
 > **索引**: `DATA.001`
-> **开发时�?*: 35h
-> **核心定位**: 实现"多数据源 �?自动采集 �?智能清洗 �?统一存储"的完整数据Pipeline
+> **开发时�?*: 35h
+> **核心定位**: 实现"多数据源 �?自动采集 �?智能清洗 �?统一存储"的完整数据Pipeline
 
 
 ## 1. 设计原则
@@ -29,23 +29,23 @@ implementation_status: 进行�?--- 进行�?
 | **断点可续** | 采集失败后从断点继续 |
 
 
-## 2. 数据源架�?
+## 2. 数据源架�?
 
-### 2.1 数据源矩�?
+### 2.1 数据源矩�?
 
-| 数据�?| 类型 | 数据范围 | 更新频率 | 优先�?|
+| 数据�?| 类型 | 数据范围 | 更新频率 | 优先�?|
 |--------|------|----------|----------|--------|
-| **AkShare** | 免费 | 行情/财务/宏观 | �?分钟 | ⭐⭐⭐⭐�?|
-| **Tushare** | 免费/付费 | 全量A�?| �?分钟 | ⭐⭐⭐⭐ |
-| **Wind** | 付费 | 全量 | 实时 | ⭐⭐�?|
-| **聚宽** | 免费/付费 | 全量 | �?分钟 | ⭐⭐�?|
+| **AkShare** | 免费 | 行情/财务/宏观 | �?分钟 | ⭐⭐⭐⭐�?|
+| **Tushare** | 免费/付费 | 全量A�?| �?分钟 | ⭐⭐⭐⭐ |
+| **Wind** | 付费 | 全量 | 实时 | ⭐⭐�?|
+| **聚宽** | 免费/付费 | 全量 | �?分钟 | ⭐⭐�?|
 
 ### 2.2 数据类型
 
 ```python
 DATA_TYPES = {
     'ohlcv': {
-        'description': 'K线数�?,
+        'description': 'K线数�?,
         'frequency': ['1m', '5m', '15m', '30m', '1h', '1d'],
         'fields': ['open', 'high', 'low', 'close', 'volume']
     },
@@ -70,14 +70,14 @@ DATA_TYPES = {
 
 ## 3. 核心实现
 
-### 3.1 数据采集�?
+### 3.1 数据采集�?
 
 ```python
 from akshare import stock_zh_a_hist, tushare_api
 from prefect import task
 
 class DataAcquisitor:
-    """数据采集�?
+    """数据采集�?
 
     索引: DATA.001-M01
     上游: 数据源API
@@ -101,10 +101,10 @@ class DataAcquisitor:
         """采集日线数据
 
         参数:
-            symbol: 股票代码 (�?'000001')
-            start_date: 开始日�?
+            symbol: 股票代码 (�?'000001')
+            start_date: 开始日�?
             end_date: 结束日期
-            source: 数据�?
+            source: 数据�?
 
         返回:
             OHLCV DataFrame
@@ -113,11 +113,11 @@ class DataAcquisitor:
 
         try:
             data = adapter.get_ohlcv(symbol, start_date, end_date)
-            logger.info(f"采集成功: {symbol} {len(data)}条数�?)
+            logger.info(f"采集成功: {symbol} {len(data)}条数�?)
             return data
         except Exception as e:
             logger.error(f"采集失败: {symbol} {e}")
-            # 尝试备用数据�?
+            # 尝试备用数据�?
             return self._try_backup_source(symbol, start_date, end_date)
 
     def _try_backup_source(
@@ -126,7 +126,7 @@ class DataAcquisitor:
         start_date: str,
         end_date: str
     ) -> pd.DataFrame:
-        """尝试备用数据�?""
+        """尝试备用数据�?""
         for source_name, adapter in self.sources.items():
             if source_name == 'akshare':
                 continue
@@ -134,14 +134,14 @@ class DataAcquisitor:
                 return adapter.get_ohlcv(symbol, start_date, end_date)
             except:
                 continue
-        raise DataSourceError(f"所有数据源都失�? {symbol}")
+        raise DataSourceError(f"所有数据源都失�? {symbol}")
 ```
 
-### 3.2 数据清洗�?
+### 3.2 数据清洗�?
 
 ```python
 class DataCleaner:
-    """数据清洗�?
+    """数据清洗�?
 
     索引: DATA.001-M02
     上游: DataAcquisitor
@@ -159,7 +159,7 @@ class DataCleaner:
         """
         cleaned = data.copy()
 
-        # 1. 列名标准�?
+        # 1. 列名标准�?
         cleaned.columns = cleaned.columns.str.lower()
 
         # 2. 日期格式
@@ -168,10 +168,10 @@ class DataCleaner:
         elif 'trade_date' in cleaned.columns:
             cleaned['date'] = pd.to_datetime(cleaned['trade_date'])
 
-        # 3. 缺失值处�?
+        # 3. 缺失值处�?
         cleaned = self._handle_missing_values(cleaned)
 
-        # 4. 异常值处�?
+        # 4. 异常值处�?
         cleaned = self._handle_outliers(cleaned)
 
         # 5. 复权处理
@@ -183,7 +183,7 @@ class DataCleaner:
         return cleaned
 
     def _handle_missing_values(self, data: pd.DataFrame) -> pd.DataFrame:
-        """处理缺失�?""
+        """处理缺失�?""
         # 前向填充 (开盘价/收盘价用前�?
         price_cols = ['open', 'high', 'low', 'close']
         data[price_cols] = data[price_cols].fillna(method='ffill')
@@ -197,41 +197,41 @@ class DataCleaner:
         return data
 
     def _handle_outliers(self, data: pd.DataFrame) -> pd.DataFrame:
-        """处理异常�?""
-        # 价格异常: 最�?最�?
+        """处理异常�?""
+        # 价格异常: 最�?最�?
         invalid = data['high'] < data['low']
         data = data[~invalid]
 
-        # 价格异常: 收盘价超出高低范�?
+        # 价格异常: 收盘价超出高低范�?
         invalid = (data['close'] > data['high']) | (data['close'] < data['low'])
         data = data[~invalid]
 
-        # 成交量异�? 负数
+        # 成交量异�? 负数
         data = data[data['volume'] >= 0]
 
         return data
 
     def _handle_adjustment(self, data: pd.DataFrame) -> pd.DataFrame:
         """处理复权"""
-        # 默认前复�?(qfq)
+        # 默认前复�?(qfq)
         if 'adj_close' in data.columns and 'close' not in data.columns:
             data['close'] = data['adj_close']
 
         return data
 ```
 
-### 3.3 数据质量检�?
+### 3.3 数据质量检�?
 
 ```python
 class DataQualityChecker:
-    """数据质量检�?
+    """数据质量检�?
 
     索引: DATA.001-M03
     """
 
     QUALITY_RULES = {
         'ohlcv': [
-            ('no_missing_close', '收盘价不能为�?),
+            ('no_missing_close', '收盘价不能为�?),
             ('no_negative_price', '价格不能为负'),
             ('no_invalid_hl', '最高价>=最低价'),
             ('no_zero_volume_days', '成交量不能连续为0')
@@ -239,7 +239,7 @@ class DataQualityChecker:
     }
 
     def check(self, data: pd.DataFrame, data_type: str) -> QualityReport:
-        """执行质量检�?
+        """执行质量检�?
 
         参数:
             data: 数据
@@ -283,7 +283,7 @@ from prefect.schedules import CronSchedule
 
 @flow(
     name="日线数据采集",
-    schedule=CronSchedule(cron="0 18 * * 1-5"),  # 收盘�?8:00
+    schedule=CronSchedule(cron="0 18 * * 1-5"),  # 收盘�?8:00
     log_prints=True
 )
 def daily_data_collection_flow():
@@ -305,7 +305,7 @@ def daily_data_collection_flow():
         # 3. 清洗
         cleaned = clean_ohlcv(data)
 
-        # 4. 质量检�?
+        # 4. 质量检�?
         report = DataQualityChecker().check(cleaned, 'ohlcv')
 
         if report.passed:
@@ -317,7 +317,7 @@ def daily_data_collection_flow():
 
 @flow(
     name="分钟数据采集",
-    schedule=CronSchedule(cron="*/30 9-15 * * 1-5"),  # 交易时段�?0分钟
+    schedule=CronSchedule(cron="*/30 9-15 * * 1-5"),  # 交易时段�?0分钟
     log_prints=True
 )
 def minute_data_collection_flow():
@@ -325,14 +325,14 @@ def minute_data_collection_flow():
     pass
 ```
 
-### 4.2 调度时间�?
+### 4.2 调度时间�?
 
 | Flow | 时间 | 频率 | 说明 |
 |------|------|------|------|
-| 日线采集 | 18:00 | 每日 | 收盘后采�?|
+| 日线采集 | 18:00 | 每日 | 收盘后采�?|
 | 分钟采集 | 9:00-15:00 | 30分钟 | 盘中实时 |
 | 财务采集 | 20:00 | 每日 | 盘后财务数据 |
-|指数采集 | 18:30 | 每日 | 收盘后指�?|
+|指数采集 | 18:30 | 每日 | 收盘后指�?|
 
 
 ## 5. 数据存储
@@ -341,11 +341,11 @@ def minute_data_collection_flow():
 
 ```
 存储层级:
-├── Redis (热数�?
-�?  └── 最�?个月分钟数据
-├── PostgreSQL (温数�?
-�?  └── 最�?年日线数�?
-└── Parquet (冷数�?
+├── Redis (热数�?
+�?  └── 最�?个月分钟数据
+├── PostgreSQL (温数�?
+�?  └── 最�?年日线数�?
+└── Parquet (冷数�?
     └── 历史全部数据
 ```
 
@@ -408,16 +408,16 @@ class DataAPI:
         参数:
             symbol: 股票代码
             freq: 频率 (1m/5m/15m/1h/1d)
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
         """
-        # 优先从缓存获�?
+        # 优先从缓存获�?
         cache_key = f"ohlcv:{symbol}:{freq}:{start_date}:{end_date}"
         cached = self.redis.get(cache_key)
         if cached:
             return cached
 
-        # 从存储获�?
+        # 从存储获�?
         data = self.storage.load(symbol, freq, start_date, end_date)
 
         # 缓存
@@ -428,7 +428,7 @@ class DataAPI:
     @router.get("/stock_list")
     def get_stock_list(
         exchange: str = None,
-        market: str = "A�?
+        market: str = "A�?
     ) -> List[str]:
         """获取股票列表"""
 ```
@@ -438,25 +438,25 @@ class DataAPI:
 
 | 指标 | 说明 | 阈�?|
 |------|------|------|
-| data_fetch_success_rate | 采集成功�?| >98% |
+| data_fetch_success_rate | 采集成功�?| >98% |
 | data_quality_score | 数据质量评分 | >90% |
-| data_freshness | 数据新鲜�?| <30min |
-| storage_usage | 存储使用�?| <80% |
+| data_freshness | 数据新鲜�?| <30min |
+| storage_usage | 存储使用�?| <80% |
 
 
-## 8. 开发任务分�?
+## 8. 开发任务分�?
 
 ### 8.1 任务分解 (35h)
 
 | 任务 | 时间 | 说明 |
 |------|------|------|
-| AkShare适配�?| 6h | AkShare数据获取封装 |
-| Tushare适配�?| 4h | Tushare数据获取封装 |
-| 数据清洗模块 | 8h | 缺失�?异常�?复权 |
-| 质量检查模�?| 4h | QualityChecker |
+| AkShare适配�?| 6h | AkShare数据获取封装 |
+| Tushare适配�?| 4h | Tushare数据获取封装 |
+| 数据清洗模块 | 8h | 缺失�?异常�?复权 |
+| 质量检查模�?| 4h | QualityChecker |
 | Prefect调度 | 6h | Flow定义+调度配置 |
 | 存储模块 | 4h | Redis/PostgreSQL/Parquet |
-| API�?| 3h | REST API |
+| API�?| 3h | REST API |
 
 
 ## 9. 更新记录
@@ -466,5 +466,5 @@ class DataAPI:
 | v1.0 | 2026-03-29 | 初始版本 |
 
 
-**维护�?*: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `DATA.001`

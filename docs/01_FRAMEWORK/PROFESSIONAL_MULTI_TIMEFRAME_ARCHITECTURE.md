@@ -207,9 +207,9 @@ class AllWeatherOptimizer:
 
 ### 2.3 输出产物
 
-| 输出?| 格式 | 频率 | 用?|
+| 输出?| 格式 | 频率 | �?|
 |--------|------|------|------|
-| **经济范式报告** | JSON + PDF | 月度 | 宏观决策参?|
+| **经济范式报告** | JSON + PDF | 月度 | 宏观决策�?|
 | **战略资产权重** | 权重向量 | 季度 | 大类资产配置 |
 | **调仓触发信号** | 布尔?+ 原因 | 实时 | 触发配置调整 |
 | **风险预算分配** | 风险预算矩阵 | 季度 | 风险限额管理 |
@@ -242,7 +242,7 @@ class MarketRegimeSystem:
         self.microstructure = MarketMicrostructureAnalyzer()
         
     def identify_market_state(self, market_data: MarketData) -> MarketState:
-        """识别市场状?""
+        """识别市场�?""
         # 1. HMM隐马尔可夫模型识?
         hmm_state, hmm_prob = self.hmm_model.predict(market_data.price_series)
         
@@ -289,7 +289,7 @@ class AlphaFactorFactory:
         
     def generate_alpha_signals(self, market_state: MarketState) -> AlphaSignals:
         """生成阿尔法信?""
-        # 1. 基于市场状态的因子筛?
+        # 1. 基于市场状态的因子�?
         selected_factors = self.factor_selector.select_factors(
             market_regime=market_state.regime,
             stock_universe=self._get_stock_universe(),
@@ -411,7 +411,7 @@ class StrategySelectionSystem:
         
         参数:
             timeframe: 'weekly'周度策略, 'daily'日度策略, 'intraday'日内策略
-            market_state: 当前市场状?
+            market_state: 当前市场�?
             
         返回:
             选定策略列表及权重分?
@@ -466,8 +466,8 @@ class StrategySelectionSystem:
         评估维度:
         - 绩效维度: 夏普比率、年化收益、最大回撤、胜?
         - 风险维度: 波动率、下行风险、尾部风?
-        - 稳定性维? 收益序列稳定性、参数敏感?
-        - 适应性维? 不同市场状态表现、策略鲁棒?
+        - 稳定性维? 收益序列稳定性、参数敏�?
+        - 适应性维? 不同市场状态表现、策略鲁�?
         - 复杂度维? 策略简洁性、过拟合风险
         """
         criteria_data = {}
@@ -518,7 +518,7 @@ class StrategySelectionSystem:
         """生成策略选择理由"""
         reasoning = []
         reasoning.append(f"时间框架: {timeframe}")
-        reasoning.append(f"市场状? {market_state.regime.value}")
+        reasoning.append(f"市场�? {market_state.regime.value}")
         reasoning.append(f"选择策略数量: {len(strategies)}")
         
         for i, strategy in enumerate(strategies[:3], 1):
@@ -533,7 +533,7 @@ class StrategySelectionSystem:
 
 ### 3.3 输出产物
 
-| 输出?| 格式 | 频率 | 用?|
+| 输出?| 格式 | 频率 | �?|
 |--------|------|------|------|
 | **市场状态报?* | JSON + 可视?| 日度 | 策略参数调整 |
 | **阿尔法信号矩?* | 数值矩?| 日度 | 选股和权重基础 |
@@ -860,7 +860,7 @@ class IntradayStrategy:
 
 ### 4.4 输出产物
 
-| 输出?| 格式 | 频率 | 用?|
+| 输出?| 格式 | 频率 | �?|
 |--------|------|------|------|
 | **分钟执行计划** | 交易指令序列 | 分钟?| 具体交易执行 |
 | **实时对冲指令** | 对冲订单 | 秒级 | 风险实时控制 |
@@ -1025,7 +1025,7 @@ class FullCyclePerformanceAttribution:
 
 ---
 
-**版本**: v1.1 | **更新**: 2026-04-03 | **状?*: ?活跃
+**版本**: v1.1 | **更新**: 2026-04-03 | **�?*: ?活跃
             attribution_results=attribution_results,
             integrated_view=integrated_view
         )
@@ -1088,7 +1088,7 @@ class FullCyclePerformanceAttribution:
 4. **专业模块?*：开盘、盘中、收盘等专业交易模块
 5. **风险分层控制**：战略风险、战术风险、执行风险独立管?
 
-### 7.2 对个人开发者的特殊价?
+### 7.2 对个人开发者的特殊�?
 
 尽管?不懂编程"，但此架构设计具有特殊优势：
 
@@ -1104,7 +1104,7 @@ class FullCyclePerformanceAttribution:
 3. **启动数据基础设施升级**：这是所有层级的基础
 4. **开始宏观层实现**：经济范式判断是最独立的起?
 
-**不计成本追求最佳架构的承诺**：此架构代表了当前量化交易系统的顶级设计水平，完全符合专业机构的实践标准。虽然实施复杂、成本高昂，但一旦完成，将为您提供一?*真正的机构级交易系统**，而非个人开发者项目?
+**不计成本追求最佳架构的承诺**：此架构代表了当前量化交易系统的顶级设计水平，完全符合专业机构的实践标准。虽然实施复杂、成本高昂，但一旦完成，将为您提供一?*真正的机构级交易系统**，而非个人开发者项�?
 
 ---
-**版本**: v1.0 | **更新**: 2026-04-02 | **状?*: 🆕 全新专业架构
+**版本**: v1.0 | **更新**: 2026-04-02 | **�?*: 🆕 全新专业架构

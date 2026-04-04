@@ -35,7 +35,7 @@ implementation_status: 设计阶段
 
 ### 1.2 技术目?
 - **正确?*: 约束求解结果100%满足约束条件
-- **效率**: 单次求解时间 < 500ms?000资产规模?- **鲁棒?*: 处理约束冲突，自动松弛求?- **可扩展?*: 支持自定义约束类?
+- **效率**: 单次求解时间 < 500ms?000资产规模?- **鲁棒?*: 处理约束冲突，自动松弛求?- **可扩�?*: 支持自定义约束类?
 ---
 
 ## 2. 接口定义
@@ -293,7 +293,7 @@ class Variables:
 @dataclass
 class SolverResult:
     """求解结果"""
-    solution: np.ndarray  # 优化?    constraint_status: Dict[str, bool]  # 约束满足状?    report: SolverReport  # 求解报告
+    solution: np.ndarray  # 优化?    constraint_status: Dict[str, bool]  # 约束满足�?    report: SolverReport  # 求解报告
     timestamp: datetime
 
 # 验证结果
@@ -359,7 +359,7 @@ def validate_constraints(
     
     算法:
     1. 检查约束可行性（使用线性规划）
-    2. 检查约束一致?    3. 检测约束冲?    
+    2. 检查约束一�?    3. 检测约束冲?    
     Args:
         constraints: 约束条件列表
         variables: 优化变量
@@ -385,7 +385,7 @@ def check_feasibility(
     variables: Variables
 ) -> bool:
     """
-    检查约束可行?    
+    检查约束可�?    
     使用线性规划检?
     min 0
     s.t. constraints
@@ -693,7 +693,7 @@ performance:
 ## 8. 监控与维?
 ### 8.1 监控指标
 
-| 指标 | 描述 | 阈?| 告警级别 |
+| 指标 | 描述 | �?| 告警级别 |
 |------|------|------|---------|
 | **求解延迟** | 单次求解耗时 | > 1?| P1 |
 | **求解失败?* | 求解失败比例 | > 5% | P0 |
@@ -713,4 +713,4 @@ scipy>=1.7.0
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?

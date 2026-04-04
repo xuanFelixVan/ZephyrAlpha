@@ -17,7 +17,7 @@ implementation_progress: 0%
 > 清风量化系统 v5.3 - 自动化数据修复引擎详细设?> **模块ID**: `AUTO_REPAIR_ENGINE_001`
 > **实施周期**: Week 5-7?周）
 > **优先?*: P0（核心）
-> **预期收益**: 减少70%人工干预，提高修复准确?5%
+> **预期收益**: 减少70%人工干预，提高修复准�?5%
 
 
 ## 一、设计背景与目标
@@ -118,7 +118,7 @@ class ProblemDetector:
         data: pd.DataFrame
     ) -> List[DataProblem]:
         """
-        检测缺失?        
+        检测缺�?        
         Args:
             data: 数据DataFrame
             
@@ -154,7 +154,7 @@ class ProblemDetector:
         method: str = "iqr"
     ) -> List[DataProblem]:
         """
-        检测异常?        
+        检测异�?        
         Args:
             data: 数据DataFrame
             method: 异常值检测方法（iqr, zscore, isolation_forest?            
@@ -195,7 +195,7 @@ class ProblemDetector:
                     field_name=col,
                     row_index=idx,
                     original_value=data.loc[idx, col],
-                    problem_description=f"字段 {col} 在第 {idx} 行存在异常?,
+                    problem_description=f"字段 {col} 在第 {idx} 行存在异�?,
                     severity="high",
                     metadata={
                         'column': col,
@@ -667,7 +667,7 @@ class RepairExecutor:
                 confidence = 0.7
                 
         elif problem.problem_type == ProblemType.OUTLIER:
-            # 检查修复后是否不再是异常?            field = problem.field_name
+            # 检查修复后是否不再是异�?            field = problem.field_name
             Q1 = data[field].quantile(0.25)
             Q3 = data[field].quantile(0.75)
             IQR = Q3 - Q1
@@ -712,7 +712,7 @@ class RepairExecutor:
 | 策略 | 适用场景 | 优点 | 缺点 | 置信?|
 |------|---------|------|------|--------|
 | **均值填?* | 数值型数据，分布均匀 | 简单快?| 不适合偏态分?| 0.7 |
-| **中位数填?* | 数值型数据，有异常?| 抗异常?| 信息损失 | 0.75 |
+| **中位数填?* | 数值型数据，有异常?| 抗异�?| 信息损失 | 0.75 |
 | **众数填充** | 分类数据 | 保持分布 | 不适合连续数据 | 0.65 |
 | **前向填充** | 时序数据 | 保持时序?| 可能传播错误 | 0.8 |
 | **后向填充** | 时序数据 | 保持时序?| 可能传播错误 | 0.8 |
@@ -725,14 +725,14 @@ class RepairExecutor:
 | **裁剪?* | 明显异常?| 简单快?| 可能丢失信息 | 0.7 |
 | **Winsorization** | 金融数据 | 保留极值信?| 需要设定百分位 | 0.8 |
 | **ML预测** | 复杂数据 | 准确性高 | 计算成本?| 0.9 |
-| **历史均?* | 周期性数?| 考虑历史模式 | 需要历史数?| 0.85 |
+| **历史�?* | 周期性数?| 考虑历史模式 | 需要历史数?| 0.85 |
 
 ---
 
 ## 五、智能根因分?
 ### 5.1 设计背景
 
-**传统修复的局限?*:
+**传统修复的局�?*:
 - ?修复问题后，无法识别根本原因
 - ?同类问题反复出现，无法根?- ?缺少因果分析，修复效率低
 - ?依赖人工经验，难以规模化
@@ -846,7 +846,7 @@ class CausalInferenceEngine:
                     'cause': 'data_source_failure',
                     'confidence': 0.85,
                     'evidence': [
-                        f"数据源健康度{context['data_source_health']:.2%}低于阈?0%",
+                        f"数据源健康度{context['data_source_health']:.2%}低于�?0%",
                         f"受影响字段{problem['affected_field']}"
                     ],
                     'fix_suggestion': '检查数据源连接状态，切换到备用数据源'
@@ -988,7 +988,7 @@ class RootCauseKnowledgeBase:
                 ],
                 'prevention': [
                     '实施主备数据源切换机?,
-                    '定期检查数据源健康状?,
+                    '定期检查数据源健康�?,
                     '设置合理的请求频率限?
                 ]
             },
@@ -1163,7 +1163,7 @@ class FixSuggestionEngine:
             steps.extend([
                 {
                     'step': 2,
-                    'action': '检查数据源状?,
+                    'action': '检查数据源�?,
                     'description': '检查主数据源健康状?
                 },
                 {
@@ -1174,7 +1174,7 @@ class FixSuggestionEngine:
                 {
                     'step': 4,
                     'action': '验证数据',
-                    'description': '验证切换后数据完整?
+                    'description': '验证切换后数据完�?
                 }
             ])
         
@@ -1193,7 +1193,7 @@ class FixSuggestionEngine:
                 {
                     'step': 4,
                     'action': '测试验证',
-                    'description': '测试新格式解析正确?
+                    'description': '测试新格式解析正�?
                 }
             ])
         
@@ -1305,7 +1305,7 @@ class CausalChainVisualizer:
 
 ### 5.6 预期收益
 
-| 收益?| 当前状?| 智能根因分析?| 提升幅度 |
+| 收益?| 当前�?| 智能根因分析?| 提升幅度 |
 |--------|---------|--------------|---------|
 | **根因识别准确?* | 60% | 90% | +30% |
 | **修复时间** | 30分钟 | 5分钟 | -83% |
@@ -1467,4 +1467,4 @@ src/
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?

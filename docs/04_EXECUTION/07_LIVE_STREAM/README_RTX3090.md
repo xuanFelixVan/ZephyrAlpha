@@ -1,5 +1,5 @@
 ---
-standard_type: 技术文档
+standard_type: 技术文�?
 applicable_scope: 交易执行
 compliance_level: 初始标准
 parent_document: ../INDEX.md
@@ -10,32 +10,32 @@ module_id: EXE_README_RTX3090
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# 多主播直播金融分析系统 - RTX 3090 配置
+# 多主播直播金融分析系�?- RTX 3090 配置
 
-> **快速开始指南** | RTX 3090 24GB + 64GB RAM + i7-12700KF
+> **快速开始指�?* | RTX 3090 24GB + 64GB RAM + i7-12700KF
 
 ---
 
 ## 🎯 您的配置
 
 ```
-✅ 显卡: NVIDIA RTX 3090 24GB
-✅ 内存: 64GB
-✅ 处理器: i7-12700KF
-✅ 配置评级: ⭐⭐⭐⭐⭐ 机构级
+�?显卡: NVIDIA RTX 3090 24GB
+�?内存: 64GB
+�?处理�? i7-12700KF
+�?配置评级: ⭐⭐⭐⭐�?机构�?
 ```
 
 ---
 
 ## 🚀 快速开始（3步）
 
-### 步骤1: 安装依赖（15分钟）
+### 步骤1: 安装依赖�?5分钟�?
 
 ```powershell
 .\install_dependencies.ps1
 ```
 
-### 步骤2: 验证安装（2分钟）
+### 步骤2: 验证安装�?分钟�?
 
 ```powershell
 python test_rtx3090_models.py
@@ -53,9 +53,9 @@ python main.py
 
 ### 🎯 必读文档
 
-1. **[配置总结](./RTX3090_CONFIGURATION_SUMMARY.md)** ⭐ **从这里开始**
+1. **[配置总结](./RTX3090_CONFIGURATION_SUMMARY.md)** �?**从这里开�?*
    - 完整配置方案
-   - 下一步操作
+   - 下一步操�?
    - 文档索引
 
 2. **[最佳模型配置](./RTX3090_BEST_MODELS.md)**
@@ -75,14 +75,14 @@ python main.py
 
 ### 🔧 工具脚本
 
-5. **[安装脚本](./install_dependencies.ps1)** - 一键安装
-6. **[部署脚本](./deploy_rtx3090.ps1)** - 一键部署
+5. **[安装脚本](./install_dependencies.ps1)** - 一键安�?
+6. **[部署脚本](./deploy_rtx3090.ps1)** - 一键部�?
 7. **[测试脚本](./test_rtx3090_models.py)** - 验证配置
 
 ### 📖 完整文档
 
 8. **[系统蓝图](./LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md)**
-   - 完整技术方案
+   - 完整技术方�?
    - 系统架构设计
 
 ---
@@ -97,7 +97,7 @@ python main.py
 情感分析: FinBERT (本地)
 
 显存占用: ~20GB / 24GB
-性能: ⭐⭐⭐⭐⭐
+性能: ⭐⭐⭐⭐�?
 成本: ¥0
 ```
 
@@ -113,7 +113,7 @@ ollama pull qwen2.5:32b
 情感分析: FinBERT (本地)
 
 显存占用: ~22GB / 24GB
-性能: ⭐⭐⭐⭐⭐ (最高)
+性能: ⭐⭐⭐⭐�?(最�?
 成本: ¥0
 ```
 
@@ -121,7 +121,7 @@ ollama pull qwen2.5:32b
 
 ## 💰 成本优势
 
-| 方案 | 1年成本 | 2年成本 |
+| 方案 | 1年成�?| 2年成�?|
 |------|---------|---------|
 | 云端API | ¥88,000 | ¥176,000 |
 | 本地模型 | ¥657 | ¥1,314 |
@@ -129,15 +129,15 @@ ollama pull qwen2.5:32b
 
 ---
 
-## ✅ 测试结果
+## �?测试结果
 
-运行 `python test_rtx3090_models.py` 查看详细测试结果。
+运行 `python test_rtx3090_models.py` 查看详细测试结果�?
 
-**当前状态**:
-- ✅ Ollama服务: 正常
-- ✅ FinBERT: 正常
+**当前状�?*:
+- �?Ollama服务: 正常
+- �?FinBERT: 正常
 - ⚠️ CUDA: 需要安装CUDA版本的PyTorch
-- ⚠️ Whisper: 需要安装
+- ⚠️ Whisper: 需要安�?
 
 ---
 
@@ -150,4 +150,4 @@ ollama pull qwen2.5:32b
 ---
 
 **创建日期**: 2026-04-02
-**配置评级**: ⭐⭐⭐⭐⭐ 机构级
+**配置评级**: ⭐⭐⭐⭐�?机构�?

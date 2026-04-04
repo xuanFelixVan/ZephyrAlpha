@@ -1,4 +1,4 @@
-ï»¿ï»¿---
+?---
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,81 +6,81 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (ç»„åˆä¼˜åŒ–ï¿½?
+layer: Layer 6 (×éºÏÓÅ»¯??
 index: BARRA_RISK_001
 estimated_hours: 100h
 review_status: Pending
-reviewer: é¦–å¸­æŠ€æœ¯è¯„å®¡å®˜
+reviewer: Ê×Ï¯¼¼ÊõÆÀÉó¹Ù
 review_date: 2026-04-03
-owner: ç»„åˆä¼˜åŒ–å±‚è´Ÿè´£äºº
-standard_type: ä¸“ä¸šé‡åŒ–æœºæž„è“å›¾æ–‡æ¡£
-applicable_scope: å…¨ç³»ï¿½?compliance_level: ä¸“ä¸šæ ‡å‡†
+owner: ×éºÏÓÅ»¯²ã¸ºÔðÈË
+standard_type: ×¨ÒµÁ¿»¯»ú¹¹À¶Í¼ÎÄµµ
+applicable_scope: È«Ïµ??compliance_level: ×¨Òµ±ê×¼
 parent_document: ../INDEX.md
-implementation_status: è®¾è®¡é˜¶æ®µ
+implementation_status: Éè¼Æ½×¶Î
 personal_development: true
 ai_maintenance: true
 ---
 
-# Barraé£Žé™©æ¨¡åž‹è“å›¾ v1.0
+# Barra·çÏÕÄ£ÐÍÀ¶Í¼ v1.0
 
-> æ¸…é£Žé‡åŒ–ç³»ç»Ÿ v5.3 - Barraé£Žé™©æ¨¡åž‹è¯¦ç»†è®¾è®¡
-> **ç´¢å¼•**: `BARRA_RISK_001`
-> **å¼€å‘æ—¶ï¿½?*: 100hï¼ˆçº¦2.5å‘¨ï¼‰
-> **æ ¸å¿ƒå®šä½**: å¤šå› å­é£Žé™©æ¨¡åž‹ï¼Œå®žçŽ°é£Žé™©åˆ†è§£ã€å› å­æš´éœ²æŽ§åˆ¶ã€é£Žé™©é¢„ç®—åˆ†ï¿½?> **å¯¹æ ‡æœºæž„**: æ¡¥æ°´åŸºé‡‘ï¼ˆBridgewater Associatesï¿½?> **ä¸ªäººå¼€å‘å¯è¡Œï¿½?*: â­â­â­â­ å®Œå…¨å¯è¡Œ
-> **AIç»´æŠ¤éš¾åº¦**: ï¿½?
+> Çå·çÁ¿»¯ÏµÍ³ v5.3 - Barra·çÏÕÄ£ÐÍÏêÏ¸Éè¼Æ
+> **Ë÷Òý**: `BARRA_RISK_001`
+> **¿ª·¢Ê±??*: 100h£¨Ô¼2.5ÖÜ£©
+> **ºËÐÄ¶¨Î»**: ¶àÒò×Ó·çÏÕÄ£ÐÍ£¬ÊµÏÖ·çÏÕ·Ö½â¡¢Òò×Ó±©Â¶¿ØÖÆ¡¢·çÏÕÔ¤Ëã·Ö??> **¶Ô±ê»ú¹¹**: ÇÅË®»ù½ð£¨Bridgewater Associates??> **¸öÈË¿ª·¢¿ÉÐÐ??*: ???? ÍêÈ«¿ÉÐÐ
+> **AIÎ¬»¤ÄÑ¶È**: ??
 ---
 
-## 1. æ¦‚è¿°
+## 1. ¸ÅÊö
 
-### 1.1 è®¾è®¡èƒŒæ™¯ä¸Žä¸šåŠ¡ç›®ï¿½?
-**ä¸šåŠ¡éœ€ï¿½?*ï¿½?- å½“å‰ç³»ç»Ÿä»…æœ‰åŸºç¡€çš„åæ–¹å·®çŸ©é˜µä¼°è®¡ï¼Œç¼ºä¹å¤šå› å­é£Žé™©æ¨¡åž‹
-- æ— æ³•ç²¾ç¡®åˆ†è§£ç»„åˆé£Žé™©æ¥æºï¼ˆå› å­é£Žï¿½?vs ç‰¹è´¨é£Žé™©ï¿½?- æ— æ³•æŽ§åˆ¶å› å­æš´éœ²ï¼Œå¯¼è‡´ç»„åˆé£Žé™©ä¸å¯æŽ§
-- æ— æ³•å®žçŽ°ç²¾ç¡®çš„é£Žé™©é¢„ç®—åˆ†ï¿½?
-**æŠ€æœ¯ç—›ï¿½?*ï¿½?- æ— å¤šå› å­é£Žé™©æ¨¡åž‹å®žçŽ°
-- æ— å› å­æš´éœ²è®¡ç®—èƒ½ï¿½?- æ— é£Žé™©åˆ†è§£ä¸Žå½’å› èƒ½åŠ›
-- æ— å› å­é£Žé™©é¢„ç®—åˆ†é…èƒ½ï¿½?
-**é¢„æœŸä»·ï¿½?*ï¿½?- é£Žé™©åˆ†è§£ç²¾åº¦æå‡ï¿½?0%
-- å› å­æš´éœ²æŽ§åˆ¶èƒ½åŠ›ï¼šæ–°ï¿½?- é£Žé™©é¢„ç®—åˆ†é…ç²¾åº¦ï¼šæï¿½?0%
-- é£Žé™©å½’å› åˆ†æžèƒ½åŠ›ï¼šæ–°ï¿½?- ä¸ºæ¡¥æ°´é£Žé™©å¹³ä»·æä¾›æ ¸å¿ƒæ”¯ï¿½?
-### 1.2 æŠ€æœ¯å®šä½ä¸Žæž¶æž„å±‚å½’ï¿½?
-**Layerå®šä½**: Layer 6 - ç»„åˆä¼˜åŒ–å±‚ï¼ˆé£Žé™©ç®¡ç†å­å±‚ï¿½?
-**æ¨¡å—ç±»åˆ«**: æ ¸å¿ƒæ¨¡å—ï¼ˆP0çº§ï¼‰
+### 1.1 Éè¼Æ±³¾°ÓëÒµÎñÄ¿??
+**ÒµÎñÐè??*??- µ±Ç°ÏµÍ³½öÓÐ»ù´¡µÄÐ­·½²î¾ØÕó¹À¼Æ£¬È±·¦¶àÒò×Ó·çÏÕÄ£ÐÍ
+- ÎÞ·¨¾«È··Ö½â×éºÏ·çÏÕÀ´Ô´£¨Òò×Ó·ç??vs ÌØÖÊ·çÏÕ??- ÎÞ·¨¿ØÖÆÒò×Ó±©Â¶£¬µ¼ÖÂ×éºÏ·çÏÕ²»¿É¿Ø
+- ÎÞ·¨ÊµÏÖ¾«È·µÄ·çÏÕÔ¤Ëã·Ö??
+**¼¼ÊõÍ´??*??- ÎÞ¶àÒò×Ó·çÏÕÄ£ÐÍÊµÏÖ
+- ÎÞÒò×Ó±©Â¶¼ÆËãÄÜ??- ÎÞ·çÏÕ·Ö½âÓë¹éÒòÄÜÁ¦
+- ÎÞÒò×Ó·çÏÕÔ¤Ëã·ÖÅäÄÜ??
+**Ô¤ÆÚ¼Û??*??- ·çÏÕ·Ö½â¾«¶ÈÌáÉý??0%
+- Òò×Ó±©Â¶¿ØÖÆÄÜÁ¦£ºÐÂ??- ·çÏÕÔ¤Ëã·ÖÅä¾«¶È£ºÌá??0%
+- ·çÏÕ¹éÒò·ÖÎöÄÜÁ¦£ºÐÂ??- ÎªÇÅË®·çÏÕÆ½¼ÛÌá¹©ºËÐÄÖ§??
+### 1.2 ¼¼Êõ¶¨Î»Óë¼Ü¹¹²ã¹é??
+**Layer¶¨Î»**: Layer 6 - ×éºÏÓÅ»¯²ã£¨·çÏÕ¹ÜÀí×Ó²ã??
+**Ä£¿éÀà±ð**: ºËÐÄÄ£¿é£¨P0¼¶£©
 
-**æž¶æž„è§’è‰²**: 
-- ä½œä¸ºæ¡¥æ°´é£Žé™©å¹³ä»·çš„æ ¸å¿ƒç»„ä»¶ï¼Œæä¾›ç²¾ç¡®çš„é£Žé™©åˆ†ï¿½?- ä½œä¸ºç»„åˆä¼˜åŒ–çš„é£Žé™©çº¦æŸï¼ŒæŽ§åˆ¶å› å­æš´éœ²
-- ä½œä¸ºé£Žé™©é¢„ç®—åˆ†é…çš„åŸºç¡€ï¼Œå®žçŽ°ç²¾ç»†åŒ–é£Žé™©ç®¡ç†
+**¼Ü¹¹½ÇÉ«**: 
+- ×÷ÎªÇÅË®·çÏÕÆ½¼ÛµÄºËÐÄ×é¼þ£¬Ìá¹©¾«È·µÄ·çÏÕ·Ö??- ×÷Îª×éºÏÓÅ»¯µÄ·çÏÕÔ¼Êø£¬¿ØÖÆÒò×Ó±©Â¶
+- ×÷Îª·çÏÕÔ¤Ëã·ÖÅäµÄ»ù´¡£¬ÊµÏÖ¾«Ï¸»¯·çÏÕ¹ÜÀí
 
-### 1.3 æ ¸å¿ƒåŠŸèƒ½æ¸…å•
+### 1.3 ºËÐÄ¹¦ÄÜÇåµ¥
 
-1. **å› å­æš´éœ²è®¡ç®—**: è®¡ç®—ç»„åˆåœ¨å„å› å­ä¸Šçš„æš´éœ²ï¿½?2. **é£Žé™©åˆ†è§£**: å°†ç»„åˆé£Žé™©åˆ†è§£ä¸ºå› å­é£Žé™©å’Œç‰¹è´¨é£Žï¿½?3. **å› å­åæ–¹å·®ä¼°ï¿½?*: ä¼°è®¡å› å­é—´çš„åæ–¹å·®çŸ©ï¿½?4. **ç‰¹è´¨é£Žé™©ä¼°è®¡**: ä¼°è®¡å„èµ„äº§çš„ç‰¹è´¨é£Žé™©
-5. **é£Žé™©å½’å› **: åˆ†æžé£Žé™©æ¥æºï¼Œç”Ÿæˆå½’å› æŠ¥ï¿½?6. **é£Žé™©é¢„ç®—åˆ†é…**: åŸºäºŽå› å­é£Žé™©è¿›è¡Œé¢„ç®—åˆ†é…
+1. **Òò×Ó±©Â¶¼ÆËã**: ¼ÆËã×éºÏÔÚ¸÷Òò×ÓÉÏµÄ±©Â¶??2. **·çÏÕ·Ö½â**: ½«×éºÏ·çÏÕ·Ö½âÎªÒò×Ó·çÏÕºÍÌØÖÊ·ç??3. **Òò×ÓÐ­·½²î¹À??*: ¹À¼ÆÒò×Ó¼äµÄÐ­·½²î¾Ø??4. **ÌØÖÊ·çÏÕ¹À¼Æ**: ¹À¼Æ¸÷×Ê²úµÄÌØÖÊ·çÏÕ
+5. **·çÏÕ¹éÒò**: ·ÖÎö·çÏÕÀ´Ô´£¬Éú³É¹éÒò±¨??6. **·çÏÕÔ¤Ëã·ÖÅä**: »ùÓÚÒò×Ó·çÏÕ½øÐÐÔ¤Ëã·ÖÅä
 
 ---
 
-## 2. æž¶æž„è®¾è®¡
+## 2. ¼Ü¹¹Éè¼Æ
 
-### 2.1 ç³»ç»Ÿæž¶æž„ï¿½?
+### 2.1 ÏµÍ³¼Ü¹¹??
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?ï¿½?                   Barraé£Žé™©æ¨¡åž‹ç³»ç»Ÿæž¶æž„                          ï¿½?â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?ï¿½?                                                                ï¿½?ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½? ï¿½?             è¾“å…¥ï¿½?                                       ï¿½? ï¿½?ï¿½? ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?    ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?å› å­æ•°æ®              ï¿½? ï¿½?èµ„äº§æ”¶ç›ŠçŽ‡æ•°ï¿½?       ï¿½?    ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?- é£Žæ ¼å› å­ï¿½?0ä¸ªï¼‰    ï¿½? ï¿½?- åŽ†å²æ”¶ç›Šï¿½?         ï¿½?    ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?- è¡Œä¸šå› å­ï¿½?8ä¸ªï¼‰    ï¿½? ï¿½?- å¸‚åœºæ•°æ®            ï¿½?    ï¿½? ï¿½?ï¿½? ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?    ï¿½? ï¿½?ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½?                         ï¿½?                                     ï¿½?ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½? ï¿½?             å› å­æš´éœ²è®¡ç®—ï¿½?                               ï¿½? ï¿½?ï¿½? ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½? ï¿½?ï¿½? ï¿½? ï¿½? Factor Exposure Calculator                        ï¿½? ï¿½? ï¿½?ï¿½? ï¿½? ï¿½? - é£Žæ ¼å› å­æš´éœ²è®¡ç®—                                 ï¿½? ï¿½? ï¿½?ï¿½? ï¿½? ï¿½? - è¡Œä¸šå› å­æš´éœ²è®¡ç®—                                 ï¿½? ï¿½? ï¿½?ï¿½? ï¿½? ï¿½? - å› å­æš´éœ²çŸ©é˜µæž„å»º                                 ï¿½? ï¿½? ï¿½?ï¿½? ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½? ï¿½?ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½?                         ï¿½?                                     ï¿½?ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½? ï¿½?             é£Žé™©æ¨¡åž‹ä¼°è®¡ï¿½?                               ï¿½? ï¿½?ï¿½? ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?å› å­åæ–¹å·®â”‚  ï¿½?ç‰¹è´¨é£Žé™© ï¿½? ï¿½?åæ–¹å·®çŸ©é˜µâ”‚               ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?ä¼°è®¡     ï¿½? ï¿½?ä¼°è®¡     ï¿½? ï¿½?é‡æž„      ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?              ï¿½? ï¿½?ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½?                         ï¿½?                                     ï¿½?ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½? ï¿½?             é£Žé™©åˆ†è§£ä¸Žå½’å› å±‚                              ï¿½? ï¿½?ï¿½? ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?é£Žé™©åˆ†è§£ ï¿½? ï¿½?é£Žé™©å½’å›  ï¿½? ï¿½?é£Žé™©æŠ¥å‘Š ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?         ï¿½? ï¿½?         ï¿½? ï¿½?         ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?              ï¿½? ï¿½?ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½?                         ï¿½?                                     ï¿½?ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?ï¿½? ï¿½?             è¾“å‡ºï¿½?                                       ï¿½? ï¿½?ï¿½? ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?å› å­æš´éœ² ï¿½? ï¿½?é£Žé™©åˆ†è§£ ï¿½? ï¿½?é£Žé™©é¢„ç®— ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? ï¿½?çŸ©é˜µ     ï¿½? ï¿½?ç»“æžœ     ï¿½? ï¿½?åˆ†é…     ï¿½?              ï¿½? ï¿½?ï¿½? ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?              ï¿½? ï¿½?ï¿½? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½? ï¿½?â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ï¿½?```
+©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤????                   Barra·çÏÕÄ£ÐÍÏµÍ³¼Ü¹¹                          ??©À©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤????                                                                ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             ÊäÈë??                                       ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??    ?? ???? ?? ??Òò×ÓÊý¾Ý              ?? ??×Ê²úÊÕÒæÂÊÊý??       ??    ?? ???? ?? ??- ·ç¸ñÒò×Ó??0¸ö£©    ?? ??- ÀúÊ·ÊÕÒæ??         ??    ?? ???? ?? ??- ÐÐÒµÒò×Ó??8¸ö£©    ?? ??- ÊÐ³¡Êý¾Ý            ??    ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??    ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             Òò×Ó±©Â¶¼ÆËã??                               ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ?? ???? ?? ?? Factor Exposure Calculator                        ?? ?? ???? ?? ?? - ·ç¸ñÒò×Ó±©Â¶¼ÆËã                                 ?? ?? ???? ?? ?? - ÐÐÒµÒò×Ó±©Â¶¼ÆËã                                 ?? ?? ???? ?? ?? - Òò×Ó±©Â¶¾ØÕó¹¹½¨                                 ?? ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             ·çÏÕÄ£ÐÍ¹À¼Æ??                               ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ?? ??Òò×ÓÐ­·½²î©¦  ??ÌØÖÊ·çÏÕ ?? ??Ð­·½²î¾ØÕó©¦               ?? ???? ?? ??¹À¼Æ     ?? ??¹À¼Æ     ?? ??ÖØ¹¹      ??              ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             ·çÏÕ·Ö½âÓë¹éÒò²ã                              ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ?? ??·çÏÕ·Ö½â ?? ??·çÏÕ¹éÒò ?? ??·çÏÕ±¨¸æ ??              ?? ???? ?? ??         ?? ??         ?? ??         ??              ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             Êä³ö??                                       ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ?? ??Òò×Ó±©Â¶ ?? ??·çÏÕ·Ö½â ?? ??·çÏÕÔ¤Ëã ??              ?? ???? ?? ??¾ØÕó     ?? ??½á¹û     ?? ??·ÖÅä     ??              ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ??©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??```
 
-### 2.2 æ ¸å¿ƒæ•°æ®ï¿½?
+### 2.2 ºËÐÄÊý¾Ý??
 ```
-å› å­æ•°æ® + èµ„äº§æ”¶ç›ŠçŽ‡æ•°ï¿½?    ï¿½?å› å­æš´éœ²è®¡ç®—ï¼ˆå›žå½’åˆ†æžï¼‰
-    ï¿½?å› å­åæ–¹å·®ä¼°è®¡ï¼ˆç»Ÿè®¡æ¨¡åž‹ï¿½?    ï¿½?ç‰¹è´¨é£Žé™©ä¼°è®¡ï¼ˆæ®‹å·®åˆ†æžï¼‰
-    ï¿½?åæ–¹å·®çŸ©é˜µé‡ï¿½?    ï¿½?é£Žé™©åˆ†è§£ä¸Žå½’ï¿½?    ï¿½?è¾“å‡ºï¼šå› å­æš´éœ²ã€é£Žé™©åˆ†è§£ã€é£Žé™©é¢„ï¿½?```
+Òò×ÓÊý¾Ý + ×Ê²úÊÕÒæÂÊÊý??    ??Òò×Ó±©Â¶¼ÆËã£¨»Ø¹é·ÖÎö£©
+    ??Òò×ÓÐ­·½²î¹À¼Æ£¨Í³¼ÆÄ£ÐÍ??    ??ÌØÖÊ·çÏÕ¹À¼Æ£¨²Ð²î·ÖÎö£©
+    ??Ð­·½²î¾ØÕóÖØ??    ??·çÏÕ·Ö½âÓë¹é??    ??Êä³ö£ºÒò×Ó±©Â¶¡¢·çÏÕ·Ö½â¡¢·çÏÕÔ¤??```
 
 ---
 
-## 3. æ ¸å¿ƒæ¨¡å—è®¾è®¡
+## 3. ºËÐÄÄ£¿éÉè¼Æ
 
-### 3.1 Barraé£Žé™©æ¨¡åž‹æ ¸å¿ƒç±»ï¼ˆBarraRiskModelï¿½?
+### 3.1 Barra·çÏÕÄ£ÐÍºËÐÄÀà£¨BarraRiskModel??
 ```python
 class BarraRiskModel:
     """
-    Barraé£Žé™©æ¨¡åž‹æ ¸å¿ƒï¿½?    
-    ç´¢å¼•: BARRA_RISK_001-M01
-    èŒè´£: å¤šå› å­é£Žé™©æ¨¡åž‹ï¼Œå®žçŽ°é£Žé™©åˆ†è§£ã€å› å­æš´éœ²æŽ§ï¿½?    è¾“å…¥: å› å­æ•°æ®ã€èµ„äº§æ”¶ç›ŠçŽ‡æ•°æ®
-    è¾“å‡º: å› å­æš´éœ²ã€é£Žé™©åˆ†è§£ã€é£Žé™©é¢„ï¿½?    """
+    Barra·çÏÕÄ£ÐÍºËÐÄ??    
+    Ë÷Òý: BARRA_RISK_001-M01
+    Ö°Ôð: ¶àÒò×Ó·çÏÕÄ£ÐÍ£¬ÊµÏÖ·çÏÕ·Ö½â¡¢Òò×Ó±©Â¶¿Ø??    ÊäÈë: Òò×ÓÊý¾Ý¡¢×Ê²úÊÕÒæÂÊÊý¾Ý
+    Êä³ö: Òò×Ó±©Â¶¡¢·çÏÕ·Ö½â¡¢·çÏÕÔ¤??    """
     
     def __init__(self, config: BarraConfig):
         self.config = config
@@ -95,17 +95,17 @@ class BarraRiskModel:
             returns_data: pd.DataFrame,
             factor_loadings: Optional[pd.DataFrame] = None) -> 'BarraRiskModel':
         """
-        æ‹ŸåˆBarraé£Žé™©æ¨¡åž‹
+        ÄâºÏBarra·çÏÕÄ£ÐÍ
         
         Args:
-            factor_data: å› å­æ•°æ®ï¼ˆDataFrameï¼Œåˆ—ä¸ºå› å­ï¼‰
-            returns_data: èµ„äº§æ”¶ç›ŠçŽ‡æ•°æ®ï¼ˆDataFrameï¼Œåˆ—ä¸ºèµ„äº§ï¼‰
-            factor_loadings: å› å­è½½è·çŸ©é˜µï¼ˆå¯é€‰ï¼Œå¦‚å·²çŸ¥ï¼‰
+            factor_data: Òò×ÓÊý¾Ý£¨DataFrame£¬ÁÐÎªÒò×Ó£©
+            returns_data: ×Ê²úÊÕÒæÂÊÊý¾Ý£¨DataFrame£¬ÁÐÎª×Ê²ú£©
+            factor_loadings: Òò×ÓÔØºÉ¾ØÕó£¨¿ÉÑ¡£¬ÈçÒÑÖª£©
             
         Returns:
-            self: æ‹ŸåˆåŽçš„æ¨¡åž‹å®žä¾‹
+            self: ÄâºÏºóµÄÄ£ÐÍÊµÀý
         """
-        # 1. è®¡ç®—å› å­æš´éœ²
+        # 1. ¼ÆËãÒò×Ó±©Â¶
         if factor_loadings is None:
             self.factor_loadings = self.factor_exposure_calculator.calculate(
                 factor_data, returns_data
@@ -113,16 +113,16 @@ class BarraRiskModel:
         else:
             self.factor_loadings = factor_loadings
         
-        # 2. ä¼°è®¡å› å­åæ–¹å·®çŸ©ï¿½?        self.factor_covariance = self.factor_covariance_estimator.estimate(
+        # 2. ¹À¼ÆÒò×ÓÐ­·½²î¾Ø??        self.factor_covariance = self.factor_covariance_estimator.estimate(
             factor_data
         )
         
-        # 3. ä¼°è®¡ç‰¹è´¨é£Žé™©
+        # 3. ¹À¼ÆÌØÖÊ·çÏÕ
         self.idiosyncratic_risk = self.idiosyncratic_risk_estimator.estimate(
             returns_data, self.factor_loadings
         )
         
-        # 4. é‡æž„èµ„äº§åæ–¹å·®çŸ©ï¿½?        self.asset_covariance = self._reconstruct_covariance(
+        # 4. ÖØ¹¹×Ê²úÐ­·½²î¾Ø??        self.asset_covariance = self._reconstruct_covariance(
             self.factor_loadings, self.factor_covariance, self.idiosyncratic_risk
         )
         
@@ -131,12 +131,12 @@ class BarraRiskModel:
     def calculate_factor_exposure(self, 
                                  portfolio_weights: pd.Series) -> pd.Series:
         """
-        è®¡ç®—ç»„åˆçš„å› å­æš´ï¿½?        
+        ¼ÆËã×éºÏµÄÒò×Ó±©??        
         Args:
-            portfolio_weights: ç»„åˆæƒé‡ï¼ˆSeriesï¼Œç´¢å¼•ä¸ºèµ„äº§ï¿½?            
+            portfolio_weights: ×éºÏÈ¨ÖØ£¨Series£¬Ë÷ÒýÎª×Ê²ú??            
         Returns:
-            pd.Series: å› å­æš´éœ²ï¼ˆç´¢å¼•ä¸ºå› å­ï¿½?        """
-        # ç»„åˆå› å­æš´éœ² = ç»„åˆæƒé‡ Ã— å› å­è½½è·çŸ©é˜µ
+            pd.Series: Òò×Ó±©Â¶£¨Ë÷ÒýÎªÒò×Ó??        """
+        # ×éºÏÒò×Ó±©Â¶ = ×éºÏÈ¨ÖØ ¡Á Òò×ÓÔØºÉ¾ØÕó
         factor_exposure = portfolio_weights @ self.factor_loadings
         
         return factor_exposure
@@ -144,27 +144,27 @@ class BarraRiskModel:
     def decompose_risk(self, 
                       portfolio_weights: pd.Series) -> RiskDecomposition:
         """
-        åˆ†è§£ç»„åˆé£Žé™©
+        ·Ö½â×éºÏ·çÏÕ
         
         Args:
-            portfolio_weights: ç»„åˆæƒé‡ï¼ˆSeriesï¼Œç´¢å¼•ä¸ºèµ„äº§ï¿½?            
+            portfolio_weights: ×éºÏÈ¨ÖØ£¨Series£¬Ë÷ÒýÎª×Ê²ú??            
         Returns:
-            RiskDecomposition: é£Žé™©åˆ†è§£ç»“æžœ
+            RiskDecomposition: ·çÏÕ·Ö½â½á¹û
         """
-        # 1. è®¡ç®—ç»„åˆå› å­æš´éœ²
+        # 1. ¼ÆËã×éºÏÒò×Ó±©Â¶
         factor_exposure = self.calculate_factor_exposure(portfolio_weights)
         
-        # 2. è®¡ç®—å› å­é£Žé™©è´¡çŒ®
+        # 2. ¼ÆËãÒò×Ó·çÏÕ¹±Ï×
         factor_risk_contribution = self.risk_decomposer.calculate_factor_risk(
             factor_exposure, self.factor_covariance
         )
         
-        # 3. è®¡ç®—ç‰¹è´¨é£Žé™©è´¡çŒ®
+        # 3. ¼ÆËãÌØÖÊ·çÏÕ¹±Ï×
         idiosyncratic_risk_contribution = self.risk_decomposer.calculate_idiosyncratic_risk(
             portfolio_weights, self.idiosyncratic_risk
         )
         
-        # 4. è®¡ç®—æ€»é£Žï¿½?        total_risk = np.sqrt(
+        # 4. ¼ÆËã×Ü·ç??        total_risk = np.sqrt(
             factor_risk_contribution.sum() + idiosyncratic_risk_contribution
         )
         
@@ -181,25 +181,25 @@ class BarraRiskModel:
                       portfolio_weights: pd.Series,
                       benchmark_weights: Optional[pd.Series] = None) -> RiskAttribution:
         """
-        é£Žé™©å½’å› åˆ†æž
+        ·çÏÕ¹éÒò·ÖÎö
         
         Args:
-            portfolio_weights: ç»„åˆæƒé‡
-            benchmark_weights: åŸºå‡†æƒé‡ï¼ˆå¯é€‰ï¼‰
+            portfolio_weights: ×éºÏÈ¨ÖØ
+            benchmark_weights: »ù×¼È¨ÖØ£¨¿ÉÑ¡£©
             
         Returns:
-            RiskAttribution: é£Žé™©å½’å› ç»“æžœ
+            RiskAttribution: ·çÏÕ¹éÒò½á¹û
         """
-        # 1. ç»„åˆé£Žé™©åˆ†è§£
+        # 1. ×éºÏ·çÏÕ·Ö½â
         portfolio_decomposition = self.decompose_risk(portfolio_weights)
         
-        # 2. åŸºå‡†é£Žé™©åˆ†è§£ï¼ˆå¦‚æœ‰ï¼‰
+        # 2. »ù×¼·çÏÕ·Ö½â£¨ÈçÓÐ£©
         if benchmark_weights is not None:
             benchmark_decomposition = self.decompose_risk(benchmark_weights)
         else:
             benchmark_decomposition = None
         
-        # 3. é£Žé™©å½’å› 
+        # 3. ·çÏÕ¹éÒò
         attribution = self.risk_attributor.attribute(
             portfolio_decomposition, benchmark_decomposition
         )
@@ -210,20 +210,20 @@ class BarraRiskModel:
                             target_risk: float,
                             risk_budget_constraints: Optional[Dict] = None) -> RiskBudgetAllocation:
         """
-        é£Žé™©é¢„ç®—åˆ†é…
+        ·çÏÕÔ¤Ëã·ÖÅä
         
         Args:
-            target_risk: ç›®æ ‡é£Žé™©æ°´å¹³ï¼ˆå¹´åŒ–æ³¢åŠ¨çŽ‡ï¿½?            risk_budget_constraints: é£Žé™©é¢„ç®—çº¦æŸï¼ˆå¯é€‰ï¼‰
+            target_risk: Ä¿±ê·çÏÕË®Æ½£¨Äê»¯²¨¶¯ÂÊ??            risk_budget_constraints: ·çÏÕÔ¤ËãÔ¼Êø£¨¿ÉÑ¡£©
             
         Returns:
-            RiskBudgetAllocation: é£Žé™©é¢„ç®—åˆ†é…æ–¹æ¡ˆ
+            RiskBudgetAllocation: ·çÏÕÔ¤Ëã·ÖÅä·½°¸
         """
-        # 1. è®¡ç®—å„å› å­çš„é£Žé™©é¢„ç®—
+        # 1. ¼ÆËã¸÷Òò×ÓµÄ·çÏÕÔ¤Ëã
         factor_risk_budget = self._calculate_factor_risk_budget(
             target_risk, risk_budget_constraints
         )
         
-        # 2. è®¡ç®—ç‰¹è´¨é£Žé™©é¢„ç®—
+        # 2. ¼ÆËãÌØÖÊ·çÏÕÔ¤Ëã
         idiosyncratic_risk_budget = self._calculate_idiosyncratic_risk_budget(
             target_risk, factor_risk_budget
         )
@@ -238,10 +238,10 @@ class BarraRiskModel:
                                 factor_loadings: pd.DataFrame,
                                 factor_covariance: pd.DataFrame,
                                 idiosyncratic_risk: pd.Series) -> pd.DataFrame:
-        """é‡æž„èµ„äº§åæ–¹å·®çŸ©ï¿½?""
-        # Î£ = B * F * B' + D
-        # B: å› å­è½½è·çŸ©é˜µ
-        # F: å› å­åæ–¹å·®çŸ©ï¿½?        # D: ç‰¹è´¨é£Žé™©å¯¹è§’çŸ©é˜µ
+        """ÖØ¹¹×Ê²úÐ­·½²î¾Ø??""
+        # ¦² = B * F * B' + D
+        # B: Òò×ÓÔØºÉ¾ØÕó
+        # F: Òò×ÓÐ­·½²î¾Ø??        # D: ÌØÖÊ·çÏÕ¶Ô½Ç¾ØÕó
         
         B = factor_loadings.values
         F = factor_covariance.values
@@ -256,34 +256,34 @@ class BarraRiskModel:
         )
 ```
 
-### 3.2 å› å­æš´éœ²è®¡ç®—å™¨ï¼ˆFactorExposureCalculatorï¿½?
+### 3.2 Òò×Ó±©Â¶¼ÆËãÆ÷£¨FactorExposureCalculator??
 ```python
 class FactorExposureCalculator:
     """
-    å› å­æš´éœ²è®¡ç®—ï¿½?    
-    ç´¢å¼•: BARRA_RISK_001-M02
-    èŒè´£: è®¡ç®—èµ„äº§åœ¨å„å› å­ä¸Šçš„æš´éœ²ï¿½?    """
+    Òò×Ó±©Â¶¼ÆËã??    
+    Ë÷Òý: BARRA_RISK_001-M02
+    Ö°Ôð: ¼ÆËã×Ê²úÔÚ¸÷Òò×ÓÉÏµÄ±©Â¶??    """
     
     def __init__(self, config: FactorConfig):
         self.config = config
-        self.style_factors = config.style_factors  # 10ä¸ªé£Žæ ¼å› ï¿½?        self.industry_factors = config.industry_factors  # 28ä¸ªè¡Œä¸šå› ï¿½?        
+        self.style_factors = config.style_factors  # 10¸ö·ç¸ñÒò??        self.industry_factors = config.industry_factors  # 28¸öÐÐÒµÒò??        
     def calculate(self,
                  factor_data: pd.DataFrame,
                  returns_data: pd.DataFrame) -> pd.DataFrame:
         """
-        è®¡ç®—å› å­æš´éœ²çŸ©é˜µ
+        ¼ÆËãÒò×Ó±©Â¶¾ØÕó
         
         Args:
-            factor_data: å› å­æ•°æ®
-            returns_data: èµ„äº§æ”¶ç›ŠçŽ‡æ•°ï¿½?            
+            factor_data: Òò×ÓÊý¾Ý
+            returns_data: ×Ê²úÊÕÒæÂÊÊý??            
         Returns:
-            pd.DataFrame: å› å­æš´éœ²çŸ©é˜µï¼ˆè¡Œä¸ºèµ„äº§ï¼Œåˆ—ä¸ºå› å­ï¿½?        """
-        # 1. é£Žæ ¼å› å­æš´éœ²è®¡ç®—ï¼ˆå›žå½’åˆ†æžï¼‰
+            pd.DataFrame: Òò×Ó±©Â¶¾ØÕó£¨ÐÐÎª×Ê²ú£¬ÁÐÎªÒò×Ó??        """
+        # 1. ·ç¸ñÒò×Ó±©Â¶¼ÆËã£¨»Ø¹é·ÖÎö£©
         style_exposures = self._calculate_style_exposures(factor_data, returns_data)
         
-        # 2. è¡Œä¸šå› å­æš´éœ²è®¡ç®—ï¼ˆå“‘å˜é‡ï¿½?        industry_exposures = self._calculate_industry_exposures(factor_data)
+        # 2. ÐÐÒµÒò×Ó±©Â¶¼ÆËã£¨ÑÆ±äÁ¿??        industry_exposures = self._calculate_industry_exposures(factor_data)
         
-        # 3. åˆå¹¶å› å­æš´éœ²çŸ©é˜µ
+        # 3. ºÏ²¢Òò×Ó±©Â¶¾ØÕó
         factor_loadings = pd.concat([style_exposures, industry_exposures], axis=1)
         
         return factor_loadings
@@ -291,15 +291,15 @@ class FactorExposureCalculator:
     def _calculate_style_exposures(self,
                                    factor_data: pd.DataFrame,
                                    returns_data: pd.DataFrame) -> pd.DataFrame:
-        """è®¡ç®—é£Žæ ¼å› å­æš´éœ²"""
+        """¼ÆËã·ç¸ñÒò×Ó±©Â¶"""
         style_exposures = {}
         
         for asset in returns_data.columns:
-            # å¯¹æ¯ä¸ªèµ„äº§è¿›è¡Œæ—¶é—´åºåˆ—å›žï¿½?            # r_i = Î± + Î²_1*f_1 + ... + Î²_k*f_k + Îµ
+            # ¶ÔÃ¿¸ö×Ê²ú½øÐÐÊ±¼äÐòÁÐ»Ø??            # r_i = ¦Á + ¦Â_1*f_1 + ... + ¦Â_k*f_k + ¦Å
             X = factor_data[self.style_factors].values
             y = returns_data[asset].values
             
-            # ä½¿ç”¨OLSå›žå½’
+            # Ê¹ÓÃOLS»Ø¹é
             model = LinearRegression()
             model.fit(X, y)
             
@@ -309,20 +309,20 @@ class FactorExposureCalculator:
     
     def _calculate_industry_exposures(self,
                                      factor_data: pd.DataFrame) -> pd.DataFrame:
-        """è®¡ç®—è¡Œä¸šå› å­æš´éœ²ï¼ˆå“‘å˜é‡ï¿½?""
-        # è¡Œä¸šå› å­æš´éœ²æ˜¯å“‘å˜é‡ï¿½?ï¿½?ï¿½?        industry_exposures = pd.get_dummies(factor_data['industry'])
+        """¼ÆËãÐÐÒµÒò×Ó±©Â¶£¨ÑÆ±äÁ¿??""
+        # ÐÐÒµÒò×Ó±©Â¶ÊÇÑÆ±äÁ¿??????        industry_exposures = pd.get_dummies(factor_data['industry'])
         
         return industry_exposures
 ```
 
-### 3.3 å› å­åæ–¹å·®ä¼°è®¡å™¨ï¼ˆFactorCovarianceEstimatorï¿½?
+### 3.3 Òò×ÓÐ­·½²î¹À¼ÆÆ÷£¨FactorCovarianceEstimator??
 ```python
 class FactorCovarianceEstimator:
     """
-    å› å­åæ–¹å·®ä¼°è®¡å™¨
+    Òò×ÓÐ­·½²î¹À¼ÆÆ÷
     
-    ç´¢å¼•: BARRA_RISK_001-M03
-    èŒè´£: ä¼°è®¡å› å­é—´çš„åæ–¹å·®çŸ©ï¿½?    """
+    Ë÷Òý: BARRA_RISK_001-M03
+    Ö°Ôð: ¹À¼ÆÒò×Ó¼äµÄÐ­·½²î¾Ø??    """
     
     def __init__(self, config: CovarianceConfig):
         self.config = config
@@ -330,17 +330,17 @@ class FactorCovarianceEstimator:
         
     def estimate(self, factor_data: pd.DataFrame) -> pd.DataFrame:
         """
-        ä¼°è®¡å› å­åæ–¹å·®çŸ©ï¿½?        
+        ¹À¼ÆÒò×ÓÐ­·½²î¾Ø??        
         Args:
-            factor_data: å› å­æ•°æ®
+            factor_data: Òò×ÓÊý¾Ý
             
         Returns:
-            pd.DataFrame: å› å­åæ–¹å·®çŸ©ï¿½?        """
+            pd.DataFrame: Òò×ÓÐ­·½²î¾Ø??        """
         if self.estimation_method == 'sample':
-            # æ ·æœ¬åæ–¹å·®çŸ©ï¿½?            factor_cov = factor_data.cov()
+            # Ñù±¾Ð­·½²î¾Ø??            factor_cov = factor_data.cov()
             
         elif self.estimation_method == 'shrinkage':
-            # Ledoit-Wolfæ”¶ç¼©ä¼°è®¡
+            # Ledoit-WolfÊÕËõ¹À¼Æ
             from sklearn.covariance import LedoitWolf
             lw = LedoitWolf()
             lw.fit(factor_data.values)
@@ -351,35 +351,35 @@ class FactorCovarianceEstimator:
             )
             
         elif self.estimation_method == 'ewma':
-            # æŒ‡æ•°åŠ æƒç§»åŠ¨å¹³å‡
+            # Ö¸Êý¼ÓÈ¨ÒÆ¶¯Æ½¾ù
             factor_cov = self._ewma_covariance(factor_data)
             
         else:
-            raise ValueError(f"ä¸æ”¯æŒçš„ä¼°è®¡æ–¹æ³•: {self.estimation_method}")
+            raise ValueError(f"²»Ö§³ÖµÄ¹À¼Æ·½·¨: {self.estimation_method}")
         
         return factor_cov
     
     def _ewma_covariance(self, 
                         factor_data: pd.DataFrame,
                         lambda_: float = 0.94) -> pd.DataFrame:
-        """EWMAåæ–¹å·®ä¼°ï¿½?""
-        # æŒ‡æ•°åŠ æƒåæ–¹å·®çŸ©ï¿½?        weights = np.array([(1 - lambda_) * lambda_**i 
+        """EWMAÐ­·½²î¹À??""
+        # Ö¸Êý¼ÓÈ¨Ð­·½²î¾Ø??        weights = np.array([(1 - lambda_) * lambda_**i 
                            for i in range(len(factor_data))])
         weights = weights[::-1] / weights.sum()
         
-        # åŠ æƒåæ–¹ï¿½?        demeaned = factor_data - factor_data.mean()
+        # ¼ÓÈ¨Ð­·½??        demeaned = factor_data - factor_data.mean()
         factor_cov = (demeaned.T * weights) @ demeaned
         
         return factor_cov
 ```
 
-### 3.4 ç‰¹è´¨é£Žé™©ä¼°è®¡å™¨ï¼ˆIdiosyncraticRiskEstimatorï¿½?
+### 3.4 ÌØÖÊ·çÏÕ¹À¼ÆÆ÷£¨IdiosyncraticRiskEstimator??
 ```python
 class IdiosyncraticRiskEstimator:
     """
-    ç‰¹è´¨é£Žé™©ä¼°è®¡ï¿½?    
-    ç´¢å¼•: BARRA_RISK_001-M04
-    èŒè´£: ä¼°è®¡å„èµ„äº§çš„ç‰¹è´¨é£Žé™©
+    ÌØÖÊ·çÏÕ¹À¼Æ??    
+    Ë÷Òý: BARRA_RISK_001-M04
+    Ö°Ôð: ¹À¼Æ¸÷×Ê²úµÄÌØÖÊ·çÏÕ
     """
     
     def __init__(self, config: IdiosyncraticConfig):
@@ -389,53 +389,53 @@ class IdiosyncraticRiskEstimator:
                 returns_data: pd.DataFrame,
                 factor_loadings: pd.DataFrame) -> pd.Series:
         """
-        ä¼°è®¡ç‰¹è´¨é£Žé™©
+        ¹À¼ÆÌØÖÊ·çÏÕ
         
         Args:
-            returns_data: èµ„äº§æ”¶ç›ŠçŽ‡æ•°ï¿½?            factor_loadings: å› å­è½½è·çŸ©é˜µ
+            returns_data: ×Ê²úÊÕÒæÂÊÊý??            factor_loadings: Òò×ÓÔØºÉ¾ØÕó
             
         Returns:
-            pd.Series: ç‰¹è´¨é£Žé™©ï¼ˆç´¢å¼•ä¸ºèµ„äº§ï¿½?        """
+            pd.Series: ÌØÖÊ·çÏÕ£¨Ë÷ÒýÎª×Ê²ú??        """
         idiosyncratic_risk = {}
         
         for asset in returns_data.columns:
-            # è®¡ç®—æ®‹å·®æ”¶ç›Šï¿½?            # Îµ_i = r_i - B_i * F
+            # ¼ÆËã²Ð²îÊÕÒæ??            # ¦Å_i = r_i - B_i * F
             asset_returns = returns_data[asset].values
             asset_loadings = factor_loadings.loc[asset].values
             
-            # ä½¿ç”¨å› å­æ¨¡åž‹é¢„æµ‹æ”¶ç›Šï¿½?            predicted_returns = asset_loadings @ factor_loadings.T @ returns_data.T
+            # Ê¹ÓÃÒò×ÓÄ£ÐÍÔ¤²âÊÕÒæ??            predicted_returns = asset_loadings @ factor_loadings.T @ returns_data.T
             
-            # è®¡ç®—æ®‹å·®
+            # ¼ÆËã²Ð²î
             residuals = asset_returns - predicted_returns
             
-            # ä¼°è®¡ç‰¹è´¨é£Žé™©ï¼ˆæ®‹å·®æ ‡å‡†å·®ï¿½?            idiosyncratic_risk[asset] = np.std(residuals, ddof=1)
+            # ¹À¼ÆÌØÖÊ·çÏÕ£¨²Ð²î±ê×¼²î??            idiosyncratic_risk[asset] = np.std(residuals, ddof=1)
         
         return pd.Series(idiosyncratic_risk)
 ```
 
-### 3.5 é£Žé™©åˆ†è§£å™¨ï¼ˆRiskDecomposerï¿½?
+### 3.5 ·çÏÕ·Ö½âÆ÷£¨RiskDecomposer??
 ```python
 class RiskDecomposer:
     """
-    é£Žé™©åˆ†è§£ï¿½?    
-    ç´¢å¼•: BARRA_RISK_001-M05
-    èŒè´£: å°†ç»„åˆé£Žé™©åˆ†è§£ä¸ºå› å­é£Žé™©å’Œç‰¹è´¨é£Žï¿½?    """
+    ·çÏÕ·Ö½â??    
+    Ë÷Òý: BARRA_RISK_001-M05
+    Ö°Ôð: ½«×éºÏ·çÏÕ·Ö½âÎªÒò×Ó·çÏÕºÍÌØÖÊ·ç??    """
     
     def calculate_factor_risk(self,
                              factor_exposure: pd.Series,
                              factor_covariance: pd.DataFrame) -> pd.Series:
         """
-        è®¡ç®—å› å­é£Žé™©è´¡çŒ®
+        ¼ÆËãÒò×Ó·çÏÕ¹±Ï×
         
         Args:
-            factor_exposure: å› å­æš´éœ²
-            factor_covariance: å› å­åæ–¹å·®çŸ©ï¿½?            
+            factor_exposure: Òò×Ó±©Â¶
+            factor_covariance: Òò×ÓÐ­·½²î¾Ø??            
         Returns:
-            pd.Series: å„å› å­çš„é£Žé™©è´¡çŒ®
+            pd.Series: ¸÷Òò×ÓµÄ·çÏÕ¹±Ï×
         """
-        # å› å­é£Žé™©è´¡çŒ® = f_i * (F * f)_i
-        # f: å› å­æš´éœ²å‘é‡
-        # F: å› å­åæ–¹å·®çŸ©ï¿½?        
+        # Òò×Ó·çÏÕ¹±Ï× = f_i * (F * f)_i
+        # f: Òò×Ó±©Â¶ÏòÁ¿
+        # F: Òò×ÓÐ­·½²î¾Ø??        
         F_f = factor_covariance @ factor_exposure
         factor_risk_contribution = factor_exposure * F_f
         
@@ -445,18 +445,18 @@ class RiskDecomposer:
                                     portfolio_weights: pd.Series,
                                     idiosyncratic_risk: pd.Series) -> float:
         """
-        è®¡ç®—ç‰¹è´¨é£Žé™©è´¡çŒ®
+        ¼ÆËãÌØÖÊ·çÏÕ¹±Ï×
         
         Args:
-            portfolio_weights: ç»„åˆæƒé‡
-            idiosyncratic_risk: ç‰¹è´¨é£Žé™©
+            portfolio_weights: ×éºÏÈ¨ÖØ
+            idiosyncratic_risk: ÌØÖÊ·çÏÕ
             
         Returns:
-            float: ç‰¹è´¨é£Žé™©è´¡çŒ®
+            float: ÌØÖÊ·çÏÕ¹±Ï×
         """
-        # ç‰¹è´¨é£Žé™©è´¡çŒ® = Î£ w_i^2 * Ïƒ_i^2
-        # w: ç»„åˆæƒé‡
-        # Ïƒ: ç‰¹è´¨é£Žé™©
+        # ÌØÖÊ·çÏÕ¹±Ï× = ¦² w_i^2 * ¦Ò_i^2
+        # w: ×éºÏÈ¨ÖØ
+        # ¦Ò: ÌØÖÊ·çÏÕ
         
         idiosyncratic_risk_contribution = (
             portfolio_weights**2 * idiosyncratic_risk**2
@@ -465,27 +465,27 @@ class RiskDecomposer:
         return idiosyncratic_risk_contribution
 ```
 
-### 3.6 é…ç½®ç±»å®šï¿½?
+### 3.6 ÅäÖÃÀà¶¨??
 ```python
 @dataclass
 class BarraConfig:
-    """Barraé£Žé™©æ¨¡åž‹é…ç½®"""
+    """Barra·çÏÕÄ£ÐÍÅäÖÃ"""
     factor_config: FactorConfig
     cov_config: CovarianceConfig
     idio_config: IdiosyncraticConfig
     
 @dataclass
 class FactorConfig:
-    """å› å­é…ç½®"""
+    """Òò×ÓÅäÖÃ"""
     style_factors: List[str] = field(default_factory=lambda: [
         'momentum', 'value', 'size', 'quality', 'volatility',
         'growth', 'leverage', 'liquidity', 'yield', 'beta'
-    ])  # 10ä¸ªé£Žæ ¼å› ï¿½?    industry_factors: List[str] = field(default_factory=lambda: [
-        # GICSä¸€çº§è¡Œä¸šï¼ˆ11ä¸ªï¼‰
+    ])  # 10¸ö·ç¸ñÒò??    industry_factors: List[str] = field(default_factory=lambda: [
+        # GICSÒ»¼¶ÐÐÒµ£¨11¸ö£©
         'energy', 'materials', 'industrials', 'consumer_discretionary',
         'consumer_staples', 'healthcare', 'financials', 'technology',
         'communication', 'utilities', 'real_estate',
-        # GICSäºŒçº§è¡Œä¸šæ‰©å±•ï¼ˆ24ä¸ªï¼‰
+        # GICS¶þ¼¶ÐÐÒµÀ©Õ¹£¨24¸ö£©
         'energy_equipment', 'chemicals', 'construction', 'aerospace_defense',
         'auto_components', 'consumer_services', 'food_beverage', 'pharmaceuticals',
         'biotechnology', 'banks', 'insurance', 'software', 'semiconductors',
@@ -493,9 +493,9 @@ class FactorConfig:
         'retail_reits', 'residential_reits', 'diversified_financials',
         'capital_markets', 'real_estate_management', 'trading_companies',
         'commercial_services'
-    ])  # 35ä¸ªè¡Œä¸šå› å­ï¼ˆ11ä¸ªä¸€çº§ + 24ä¸ªäºŒçº§æ‰©å±•ï¼‰
+    ])  # 35¸öÐÐÒµÒò×Ó£¨11¸öÒ»¼¶ + 24¸ö¶þ¼¶À©Õ¹£©
     
-    # è¡Œä¸šå› å­å±‚çº§é…ç½®
+    # ÐÐÒµÒò×Ó²ã¼¶ÅäÖÃ
     industry_hierarchy: Dict[str, List[str]] = field(default_factory=lambda: {
         'energy': ['energy_equipment'],
         'materials': ['chemicals', 'construction'],
@@ -508,72 +508,72 @@ class FactorConfig:
         'communication': ['telecom', 'media'],
         'utilities': ['electric_utilities', 'gas_utilities'],
         'real_estate': ['retail_reits', 'residential_reits', 'real_estate_management']
-    })ï¼ˆç¤ºä¾‹ï¿½?    
+    })£¨Ê¾Àý??    
 @dataclass
 class CovarianceConfig:
-    """åæ–¹å·®ä¼°è®¡é…ï¿½?""
+    """Ð­·½²î¹À¼ÆÅä??""
     estimation_method: str = 'shrinkage'  # 'sample', 'shrinkage', 'ewma'
-    lookback_period: int = 252  # å›žçœ‹æœŸï¼ˆäº¤æ˜“æ—¥ï¼‰
+    lookback_period: int = 252  # »Ø¿´ÆÚ£¨½»Ò×ÈÕ£©
     
 @dataclass
 class IdiosyncraticConfig:
-    """ç‰¹è´¨é£Žé™©ä¼°è®¡é…ç½®"""
+    """ÌØÖÊ·çÏÕ¹À¼ÆÅäÖÃ"""
     estimation_method: str = 'residual'  # 'residual', 'garch'
 ```
 
 ---
 
-## 4. æ•°æ®æ¨¡åž‹å®šä¹‰
+## 4. Êý¾ÝÄ£ÐÍ¶¨Òå
 
-### 4.1 è¾“å…¥æ•°æ®æ¨¡åž‹
+### 4.1 ÊäÈëÊý¾ÝÄ£ÐÍ
 
 ```python
 @dataclass
 class FactorData:
-    """å› å­æ•°æ®"""
+    """Òò×ÓÊý¾Ý"""
     date: datetime
-    style_factors: Dict[str, float]  # é£Žæ ¼å› å­ï¿½?    industry: str  # è¡Œä¸šåˆ†ç±»
+    style_factors: Dict[str, float]  # ·ç¸ñÒò×Ó??    industry: str  # ÐÐÒµ·ÖÀà
     
 @dataclass
 class ReturnsData:
-    """æ”¶ç›ŠçŽ‡æ•°ï¿½?""
+    """ÊÕÒæÂÊÊý??""
     date: datetime
-    asset_returns: Dict[str, float]  # èµ„äº§æ”¶ç›Šï¿½?```
+    asset_returns: Dict[str, float]  # ×Ê²úÊÕÒæ??```
 
-### 4.2 è¾“å‡ºæ•°æ®æ¨¡åž‹
+### 4.2 Êä³öÊý¾ÝÄ£ÐÍ
 
 ```python
 @dataclass
 class RiskDecomposition:
-    """é£Žé™©åˆ†è§£ç»“æžœ"""
-    factor_exposure: pd.Series  # å› å­æš´éœ²
-    factor_risk_contribution: pd.Series  # å› å­é£Žé™©è´¡çŒ®
-    idiosyncratic_risk_contribution: float  # ç‰¹è´¨é£Žé™©è´¡çŒ®
-    total_risk: float  # æ€»é£Žï¿½?    factor_risk_ratio: float  # å› å­é£Žé™©å æ¯”
-    idiosyncratic_risk_ratio: float  # ç‰¹è´¨é£Žé™©å æ¯”
+    """·çÏÕ·Ö½â½á¹û"""
+    factor_exposure: pd.Series  # Òò×Ó±©Â¶
+    factor_risk_contribution: pd.Series  # Òò×Ó·çÏÕ¹±Ï×
+    idiosyncratic_risk_contribution: float  # ÌØÖÊ·çÏÕ¹±Ï×
+    total_risk: float  # ×Ü·ç??    factor_risk_ratio: float  # Òò×Ó·çÏÕÕ¼±È
+    idiosyncratic_risk_ratio: float  # ÌØÖÊ·çÏÕÕ¼±È
     
 @dataclass
 class RiskAttribution:
-    """é£Žé™©å½’å› ç»“æžœ"""
-    factor_attribution: pd.DataFrame  # å› å­å½’å› 
-    industry_attribution: pd.DataFrame  # è¡Œä¸šå½’å› 
-    total_attribution: pd.DataFrame  # æ€»å½’ï¿½?    
+    """·çÏÕ¹éÒò½á¹û"""
+    factor_attribution: pd.DataFrame  # Òò×Ó¹éÒò
+    industry_attribution: pd.DataFrame  # ÐÐÒµ¹éÒò
+    total_attribution: pd.DataFrame  # ×Ü¹é??    
 @dataclass
 class RiskBudgetAllocation:
-    """é£Žé™©é¢„ç®—åˆ†é…"""
-    factor_risk_budget: pd.Series  # å› å­é£Žé™©é¢„ç®—
-    idiosyncratic_risk_budget: float  # ç‰¹è´¨é£Žé™©é¢„ç®—
-    total_risk_budget: float  # æ€»é£Žé™©é¢„ï¿½?```
+    """·çÏÕÔ¤Ëã·ÖÅä"""
+    factor_risk_budget: pd.Series  # Òò×Ó·çÏÕÔ¤Ëã
+    idiosyncratic_risk_budget: float  # ÌØÖÊ·çÏÕÔ¤Ëã
+    total_risk_budget: float  # ×Ü·çÏÕÔ¤??```
 
 ---
 
-## 5. é›†æˆæ–¹æ¡ˆ
+## 5. ¼¯³É·½°¸
 
-### 5.1 ä¸Žç»„åˆä¼˜åŒ–å™¨é›†æˆ
+### 5.1 Óë×éºÏÓÅ»¯Æ÷¼¯³É
 
 ```python
 class PortfolioOptimizer:
-    """ç»„åˆä¼˜åŒ–å™¨ï¼ˆé›†æˆBarraé£Žé™©æ¨¡åž‹ï¿½?""
+    """×éºÏÓÅ»¯Æ÷£¨¼¯³ÉBarra·çÏÕÄ£ÐÍ??""
     
     def __init__(self, barra_model: BarraRiskModel):
         self.barra_model = barra_model
@@ -582,48 +582,48 @@ class PortfolioOptimizer:
                                         expected_returns: pd.Series,
                                         factor_exposure_limits: Dict[str, Tuple[float, float]],
                                         target_risk: float) -> pd.Series:
-        """å¸¦å› å­çº¦æŸçš„ç»„åˆä¼˜åŒ–"""
-        # 1. èŽ·å–Barraé£Žé™©æ¨¡åž‹å‚æ•°
+        """´øÒò×ÓÔ¼ÊøµÄ×éºÏÓÅ»¯"""
+        # 1. »ñÈ¡Barra·çÏÕÄ£ÐÍ²ÎÊý
         factor_loadings = self.barra_model.factor_loadings
         factor_covariance = self.barra_model.factor_covariance
         idiosyncratic_risk = self.barra_model.idiosyncratic_risk
         
-        # 2. å®šä¹‰ä¼˜åŒ–é—®é¢˜
+        # 2. ¶¨ÒåÓÅ»¯ÎÊÌâ
         n_assets = len(expected_returns)
         w = cp.Variable(n_assets)
         
-        # ç›®æ ‡å‡½æ•°ï¼šæœ€å¤§åŒ–é¢„æœŸæ”¶ç›Š
+        # Ä¿±êº¯Êý£º×î´ó»¯Ô¤ÆÚÊÕÒæ
         objective = cp.Maximize(expected_returns.values @ w)
         
-        # çº¦æŸæ¡ä»¶
+        # Ô¼ÊøÌõ¼þ
         constraints = [
-            cp.sum(w) == 1,  # æƒé‡å’Œä¸º1
-            w >= 0,  # éžè´Ÿæƒé‡
+            cp.sum(w) == 1,  # È¨ÖØºÍÎª1
+            w >= 0,  # ·Ç¸ºÈ¨ÖØ
         ]
         
-        # å› å­æš´éœ²çº¦æŸ
+        # Òò×Ó±©Â¶Ô¼Êø
         for factor, (lower, upper) in factor_exposure_limits.items():
             factor_loading = factor_loadings[factor].values
             constraints.append(factor_loading @ w >= lower)
             constraints.append(factor_loading @ w <= upper)
         
-        # é£Žé™©çº¦æŸ
+        # ·çÏÕÔ¼Êø
         portfolio_risk = cp.sqrt(
             cp.quad_form(w, self.barra_model.asset_covariance.values)
         )
         constraints.append(portfolio_risk <= target_risk)
         
-        # æ±‚è§£ä¼˜åŒ–é—®é¢˜
+        # Çó½âÓÅ»¯ÎÊÌâ
         problem = cp.Problem(objective, constraints)
         problem.solve()
         
         return pd.Series(w.value, index=expected_returns.index)
 ```
 
-### 5.2 ä¸Žé£Žé™©é¢„ç®—ç³»ç»Ÿé›†ï¿½?
+### 5.2 Óë·çÏÕÔ¤ËãÏµÍ³¼¯??
 ```python
 class RiskBudgetSystem:
-    """é£Žé™©é¢„ç®—ç³»ç»Ÿï¼ˆé›†æˆBarraé£Žé™©æ¨¡åž‹ï¿½?""
+    """·çÏÕÔ¤ËãÏµÍ³£¨¼¯³ÉBarra·çÏÕÄ£ÐÍ??""
     
     def __init__(self, barra_model: BarraRiskModel):
         self.barra_model = barra_model
@@ -631,11 +631,11 @@ class RiskBudgetSystem:
     def allocate_risk_budget_by_factors(self,
                                        target_risk: float,
                                        factor_risk_targets: Dict[str, float]) -> RiskBudgetAllocation:
-        """åŸºäºŽå› å­çš„é£Žé™©é¢„ç®—åˆ†ï¿½?""
-        # 1. è®¡ç®—å› å­é£Žé™©é¢„ç®—
+        """»ùÓÚÒò×ÓµÄ·çÏÕÔ¤Ëã·Ö??""
+        # 1. ¼ÆËãÒò×Ó·çÏÕÔ¤Ëã
         factor_risk_budget = pd.Series(factor_risk_targets)
         
-        # 2. è®¡ç®—ç‰¹è´¨é£Žé™©é¢„ç®—
+        # 2. ¼ÆËãÌØÖÊ·çÏÕÔ¤Ëã
         factor_risk_total = np.sqrt((factor_risk_budget**2).sum())
         idiosyncratic_risk_budget = np.sqrt(
             target_risk**2 - factor_risk_total**2
@@ -650,62 +650,62 @@ class RiskBudgetSystem:
 
 ---
 
-## 6. å®žæ–½è·¯çº¿ï¿½?
-### 6.1 å¼€å‘é˜¶æ®µï¼ˆ2.5å‘¨ï¼‰
+## 6. ÊµÊ©Â·Ïß??
+### 6.1 ¿ª·¢½×¶Î£¨2.5ÖÜ£©
 
-**Week 1: æ ¸å¿ƒæ¨¡å—å¼€ï¿½?*
-- Day 1-2: å› å­æš´éœ²è®¡ç®—ï¿½?- Day 3-4: å› å­åæ–¹å·®ä¼°è®¡å™¨
-- Day 5: ç‰¹è´¨é£Žé™©ä¼°è®¡ï¿½?
-**Week 2: é£Žé™©åˆ†è§£ä¸Žé›†ï¿½?*
-- Day 1-2: é£Žé™©åˆ†è§£å™¨ä¸Žå½’å› ï¿½?- Day 3-4: ä¸Žç»„åˆä¼˜åŒ–å™¨é›†æˆ
-- Day 5: ä¸Žé£Žé™©é¢„ç®—ç³»ç»Ÿé›†ï¿½?
-**Week 3: æµ‹è¯•ä¸Žæ–‡ï¿½?*
-- Day 1-2: å•å…ƒæµ‹è¯•
-- Day 3: é›†æˆæµ‹è¯•
-- Day 4: æ–‡æ¡£ç¼–å†™
-- Day 5: æ€§èƒ½ä¼˜åŒ–
+**Week 1: ºËÐÄÄ£¿é¿ª??*
+- Day 1-2: Òò×Ó±©Â¶¼ÆËã??- Day 3-4: Òò×ÓÐ­·½²î¹À¼ÆÆ÷
+- Day 5: ÌØÖÊ·çÏÕ¹À¼Æ??
+**Week 2: ·çÏÕ·Ö½âÓë¼¯??*
+- Day 1-2: ·çÏÕ·Ö½âÆ÷Óë¹éÒò??- Day 3-4: Óë×éºÏÓÅ»¯Æ÷¼¯³É
+- Day 5: Óë·çÏÕÔ¤ËãÏµÍ³¼¯??
+**Week 3: ²âÊÔÓëÎÄ??*
+- Day 1-2: µ¥Ôª²âÊÔ
+- Day 3: ¼¯³É²âÊÔ
+- Day 4: ÎÄµµ±àÐ´
+- Day 5: ÐÔÄÜÓÅ»¯
 
-### 6.2 é‡Œç¨‹ï¿½?
-| é‡Œç¨‹ï¿½?| æ—¶é—´ | äº¤ä»˜ï¿½?| éªŒæ”¶æ ‡å‡† |
+### 6.2 Àï³Ì??
+| Àï³Ì??| Ê±¼ä | ½»¸¶??| ÑéÊÕ±ê×¼ |
 |--------|------|--------|----------|
-| **M1: å› å­æš´éœ²è®¡ç®—å®Œæˆ** | Day 2 | å› å­æš´éœ²è®¡ç®—ï¿½?| æš´éœ²è®¡ç®—æ­£ç¡® |
-| **M2: åæ–¹å·®ä¼°è®¡å®Œï¿½?* | Day 4 | åæ–¹å·®ä¼°è®¡å™¨ | ä¼°è®¡åˆç† |
-| **M3: é£Žé™©åˆ†è§£å®Œæˆ** | Day 7 | é£Žé™©åˆ†è§£ï¿½?| åˆ†è§£å‡†ç¡® |
-| **M4: é›†æˆå®Œæˆ** | Day 9 | å®Œæ•´ç³»ç»Ÿ | æ‰€æœ‰æŽ¥å£æ­£ï¿½?|
-| **M5: æµ‹è¯•é€šè¿‡** | Day 12 | æµ‹è¯•æŠ¥å‘Š | æ‰€æœ‰æµ‹è¯•é€šè¿‡ |
+| **M1: Òò×Ó±©Â¶¼ÆËãÍê³É** | Day 2 | Òò×Ó±©Â¶¼ÆËã??| ±©Â¶¼ÆËãÕýÈ· |
+| **M2: Ð­·½²î¹À¼ÆÍê??* | Day 4 | Ð­·½²î¹À¼ÆÆ÷ | ¹À¼ÆºÏÀí |
+| **M3: ·çÏÕ·Ö½âÍê³É** | Day 7 | ·çÏÕ·Ö½â??| ·Ö½â×¼È· |
+| **M4: ¼¯³ÉÍê³É** | Day 9 | ÍêÕûÏµÍ³ | ËùÓÐ½Ó¿ÚÕý??|
+| **M5: ²âÊÔÍ¨¹ý** | Day 12 | ²âÊÔ±¨¸æ | ËùÓÐ²âÊÔÍ¨¹ý |
 
 ---
 
-## 7. é¢„æœŸæ”¶ç›Šè¯„ä¼°
+## 7. Ô¤ÆÚÊÕÒæÆÀ¹À
 
-### 7.1 å®šé‡æ”¶ç›Š
+### 7.1 ¶¨Á¿ÊÕÒæ
 
-| æŒ‡æ ‡ | å½“å‰æ°´å¹³ | ç›®æ ‡æ°´å¹³ | æå‡å¹…åº¦ |
+| Ö¸±ê | µ±Ç°Ë®Æ½ | Ä¿±êË®Æ½ | ÌáÉý·ù¶È |
 |------|---------|---------|---------|
-| **é£Žé™©åˆ†è§£ç²¾åº¦** | åŸºç¡€ | ç²¾ç¡® | +50% |
-| **å› å­æš´éœ²æŽ§åˆ¶** | ï¿½?| ï¿½?| æ–°å¢žèƒ½åŠ› |
-| **é£Žé™©é¢„ç®—ç²¾åº¦** | 70% | 90% | +20% |
-| **é£Žé™©å½’å› èƒ½åŠ›** | ï¿½?| ï¿½?| æ–°å¢žèƒ½åŠ› |
+| **·çÏÕ·Ö½â¾«¶È** | »ù´¡ | ¾«È· | +50% |
+| **Òò×Ó±©Â¶¿ØÖÆ** | ??| ??| ÐÂÔöÄÜÁ¦ |
+| **·çÏÕÔ¤Ëã¾«¶È** | 70% | 90% | +20% |
+| **·çÏÕ¹éÒòÄÜÁ¦** | ??| ??| ÐÂÔöÄÜÁ¦ |
 
-### 7.2 å®šæ€§æ”¶ï¿½?
-- ï¿½?å®žçŽ°æ¡¥æ°´é£Žé™©å¹³ä»·æ ¸å¿ƒèƒ½åŠ›
-- ï¿½?ç²¾ç¡®çš„é£Žé™©åˆ†è§£ä¸ŽæŽ§åˆ¶
-- ï¿½?å› å­æš´éœ²ç®¡ç†èƒ½åŠ›
-- ï¿½?é£Žé™©é¢„ç®—ç²¾ç»†åŒ–åˆ†ï¿½?- ï¿½?ä¸ºç»„åˆä¼˜åŒ–æä¾›é£Žé™©çº¦ï¿½?
+### 7.2 ¶¨ÐÔÊÕ??
+- ??ÊµÏÖÇÅË®·çÏÕÆ½¼ÛºËÐÄÄÜÁ¦
+- ??¾«È·µÄ·çÏÕ·Ö½âÓë¿ØÖÆ
+- ??Òò×Ó±©Â¶¹ÜÀíÄÜÁ¦
+- ??·çÏÕÔ¤Ëã¾«Ï¸»¯·Ö??- ??Îª×éºÏÓÅ»¯Ìá¹©·çÏÕÔ¼??
 ---
 
-## 8. æŠ€æœ¯æ ˆé€‰æ‹©
+## 8. ¼¼ÊõÕ»Ñ¡Ôñ
 
-### 8.1 æ ¸å¿ƒä¾èµ–ï¿½?
-| åº“å | ç‰ˆæœ¬ | ç”¨ï¿½?| å¿…è¦ï¿½?|
+### 8.1 ºËÐÄÒÀÀµ??
+| ¿âÃû | °æ±¾ | ÓÃ??| ±ØÒª??|
 |------|------|------|--------|
-| **riskfolio-lib** | ï¿½?.0 | å› å­æ¨¡åž‹ã€é£Žé™©é¢„ï¿½?| å¿…éœ€ |
-| **CVXPY** | ï¿½?.3 | çº¦æŸä¼˜åŒ– | å¿…éœ€ |
-| **scikit-learn** | ï¿½?.0 | å›žå½’åˆ†æžã€æ”¶ç¼©ä¼°ï¿½?| å¿…éœ€ |
-| **pandas** | ï¿½?.5 | æ•°æ®å¤„ç† | å¿…éœ€ |
-| **numpy** | ï¿½?.21 | æ•°å€¼è®¡ï¿½?| å¿…éœ€ |
+| **riskfolio-lib** | ??.0 | Òò×ÓÄ£ÐÍ¡¢·çÏÕÔ¤??| ±ØÐè |
+| **CVXPY** | ??.3 | Ô¼ÊøÓÅ»¯ | ±ØÐè |
+| **scikit-learn** | ??.0 | »Ø¹é·ÖÎö¡¢ÊÕËõ¹À??| ±ØÐè |
+| **pandas** | ??.5 | Êý¾Ý´¦Àí | ±ØÐè |
+| **numpy** | ??.21 | ÊýÖµ¼Æ??| ±ØÐè |
 
-### 8.2 å®‰è£…å‘½ä»¤
+### 8.2 °²×°ÃüÁî
 
 ```bash
 pip install riskfolio-lib>=3.0
@@ -717,71 +717,71 @@ pip install numpy>=1.21
 
 ---
 
-## 9. é£Žé™©è¯„ä¼°
+## 9. ·çÏÕÆÀ¹À
 
-### 9.1 æŠ€æœ¯é£Žï¿½?
-| é£Žé™©ï¿½?| é£Žé™©ç­‰çº§ | ç¼“è§£æŽªæ–½ |
+### 9.1 ¼¼Êõ·ç??
+| ·çÏÕ??| ·çÏÕµÈ¼¶ | »º½â´ëÊ© |
 |--------|---------|---------|
-| **å› å­æ•°æ®è´¨é‡** | ï¿½?| å¤šæ•°æ®æºéªŒè¯ã€æ•°æ®æ¸…ï¿½?|
-| **æ¨¡åž‹ä¼°è®¡è¯¯å·®** | ï¿½?| ä½¿ç”¨æ”¶ç¼©ä¼°è®¡ã€äº¤å‰éªŒï¿½?|
-| **è®¡ç®—æ€§èƒ½** | ï¿½?| ä½¿ç”¨å‘é‡åŒ–è®¡ç®—ã€ç¼“å­˜æœºï¿½?|
+| **Òò×ÓÊý¾ÝÖÊÁ¿** | ??| ¶àÊý¾ÝÔ´ÑéÖ¤¡¢Êý¾ÝÇå??|
+| **Ä£ÐÍ¹À¼ÆÎó²î** | ??| Ê¹ÓÃÊÕËõ¹À¼Æ¡¢½»²æÑé??|
+| **¼ÆËãÐÔÄÜ** | ??| Ê¹ÓÃÏòÁ¿»¯¼ÆËã¡¢»º´æ»ú??|
 
-### 9.2 å®žæ–½é£Žé™©
+### 9.2 ÊµÊ©·çÏÕ
 
-| é£Žé™©ï¿½?| é£Žé™©ç­‰çº§ | ç¼“è§£æŽªæ–½ |
+| ·çÏÕ??| ·çÏÕµÈ¼¶ | »º½â´ëÊ© |
 |--------|---------|---------|
-| **å¼€å‘æ—¶é—´è¶…ï¿½?* | ï¿½?| åˆ†é˜¶æ®µå®žæ–½ã€é‡Œç¨‹ç¢‘ç®¡ç† |
-| **é›†æˆå›°éš¾** | ï¿½?| å……åˆ†æµ‹è¯•ã€æŽ¥å£æ–‡æ¡£å®Œï¿½?|
-| **æ€§èƒ½ä¸è¾¾ï¿½?* | ï¿½?| æ€§èƒ½ä¼˜åŒ–ã€ç®—æ³•æ”¹ï¿½?|
+| **¿ª·¢Ê±¼ä³¬??* | ??| ·Ö½×¶ÎÊµÊ©¡¢Àï³Ì±®¹ÜÀí |
+| **¼¯³ÉÀ§ÄÑ** | ??| ³ä·Ö²âÊÔ¡¢½Ó¿ÚÎÄµµÍê??|
+| **ÐÔÄÜ²»´ï??* | ??| ÐÔÄÜÓÅ»¯¡¢Ëã·¨¸Ä??|
 
 ---
 
-## 10. æ–‡æ¡£æ²»ç†
+## 10. ÎÄµµÖÎÀí
 
-### 10.1 System_Manifest.mdç´¢å¼•
+### 10.1 System_Manifest.mdË÷Òý
 
 ```markdown
-#### Layer 6: ç»„åˆä¼˜åŒ–ï¿½?
-##### 6.4 Barraé£Žé™©æ¨¡åž‹
-- **æ¨¡å—ID**: BARRA_RISK_001
-- **è“å›¾æ–‡æ¡£**: [BARRA_RISK_MODEL_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md)
-- **æŠ€æœ¯è§„æ ¼ä¹¦**: å¾…åˆ›ï¿½?- **èŒè´£**: å¤šå› å­é£Žé™©æ¨¡åž‹ã€é£Žé™©åˆ†è§£ã€å› å­æš´éœ²æŽ§ï¿½?- **çŠ¶ï¿½?*: è®¾è®¡é˜¶æ®µ
+#### Layer 6: ×éºÏÓÅ»¯??
+##### 6.4 Barra·çÏÕÄ£ÐÍ
+- **Ä£¿éID**: BARRA_RISK_001
+- **À¶Í¼ÎÄµµ**: [BARRA_RISK_MODEL_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md)
+- **¼¼Êõ¹æ¸ñÊé**: ´ý´´??- **Ö°Ôð**: ¶àÒò×Ó·çÏÕÄ£ÐÍ¡¢·çÏÕ·Ö½â¡¢Òò×Ó±©Â¶¿Ø??- **×´??*: Éè¼Æ½×¶Î
 ```
 
-### 10.2 æ¨¡å—èŒè´£è¾¹ç•Œ
+### 10.2 Ä£¿éÖ°Ôð±ß½ç
 
-| æ¨¡å— | èŒè´£ | è¾¹ç•Œ |
+| Ä£¿é | Ö°Ôð | ±ß½ç |
 |------|------|------|
-| **Barraé£Žé™©æ¨¡åž‹** | å› å­æš´éœ²è®¡ç®—ã€é£Žé™©åˆ†è§£ã€é£Žé™©å½’ï¿½?| **é£Žé™©æ¨¡åž‹å±‚é¢** |
-| **ç»„åˆä¼˜åŒ–ï¿½?* | ç»„åˆæƒé‡ä¼˜åŒ– | ä½¿ç”¨Barraæ¨¡åž‹çš„é£Žé™©çº¦ï¿½?|
-| **é£Žé™©é¢„ç®—ç³»ç»Ÿ** | é£Žé™©é¢„ç®—åˆ†é… | ä½¿ç”¨Barraæ¨¡åž‹çš„é£Žé™©åˆ†ï¿½?|
+| **Barra·çÏÕÄ£ÐÍ** | Òò×Ó±©Â¶¼ÆËã¡¢·çÏÕ·Ö½â¡¢·çÏÕ¹é??| **·çÏÕÄ£ÐÍ²ãÃæ** |
+| **×éºÏÓÅ»¯??* | ×éºÏÈ¨ÖØÓÅ»¯ | Ê¹ÓÃBarraÄ£ÐÍµÄ·çÏÕÔ¼??|
+| **·çÏÕÔ¤ËãÏµÍ³** | ·çÏÕÔ¤Ëã·ÖÅä | Ê¹ÓÃBarraÄ£ÐÍµÄ·çÏÕ·Ö??|
 
 ---
 
-## é™„å½•
+## ¸½Â¼
 
-### A. å‚è€ƒæ–‡ï¿½?
-1. **Barraé£Žé™©æ¨¡åž‹**:
+### A. ²Î¿¼ÎÄ??
+1. **Barra·çÏÕÄ£ÐÍ**:
    - Barra Risk Model Handbook
    - Grinold, R.C. and Kahn, R.N. (2000). "Active Portfolio Management"
 
-2. **å› å­æ¨¡åž‹ç†è®º**:
+2. **Òò×ÓÄ£ÐÍÀíÂÛ**:
    - Ross, S.A. (1976). "The Arbitrage Theory of Capital Asset Pricing"
    - Fama, E.F. and French, K.R. (1993). "Common Risk Factors in the Returns on Stocks and Bonds"
 
-3. **å¼€æºé¡¹ç›®å‚ï¿½?*:
+3. **¿ªÔ´ÏîÄ¿²Î??*:
    - riskfolio-lib: https://github.com/dcajasn/Riskfolio-Lib
    - PyPortfolioOpt: https://github.com/robertmartin8/PyPortfolioOpt
 
-### B. æœ¯è¯­ï¿½?
-| æœ¯è¯­ | å®šä¹‰ | ä¸Šä¸‹ï¿½?|
+### B. ÊõÓï??
+| ÊõÓï | ¶¨Òå | ÉÏÏÂ??|
 |------|------|--------|
-| **Barraæ¨¡åž‹** | å¤šå› å­é£Žé™©æ¨¡ï¿½?| é£Žé™©åˆ†è§£ä¸ŽæŽ§ï¿½?|
-| **å› å­æš´éœ²** | èµ„äº§å¯¹å› å­çš„æ•æ„Ÿï¿½?| å› å­è½½è· |
-| **ç‰¹è´¨é£Žé™©** | æ— æ³•è¢«å› å­è§£é‡Šçš„é£Žé™© | æ®‹å·®é£Žé™© |
-| **é£Žé™©å½’å› ** | åˆ†æžé£Žé™©æ¥æº | é£Žé™©åˆ†è§£ |
+| **BarraÄ£ÐÍ** | ¶àÒò×Ó·çÏÕÄ£??| ·çÏÕ·Ö½âÓë¿Ø??|
+| **Òò×Ó±©Â¶** | ×Ê²ú¶ÔÒò×ÓµÄÃô¸Ð??| Òò×ÓÔØºÉ |
+| **ÌØÖÊ·çÏÕ** | ÎÞ·¨±»Òò×Ó½âÊÍµÄ·çÏÕ | ²Ð²î·çÏÕ |
+| **·çÏÕ¹éÒò** | ·ÖÎö·çÏÕÀ´Ô´ | ·çÏÕ·Ö½â |
 
 ---
 
-**è“å›¾ç‰ˆæœ¬**: v1.0 | **åˆ›å»ºæ—¥æœŸ**: 2026-04-03 | **çŠ¶ï¿½?*: Final | **ä¸‹ä¸€ï¿½?*: æŠ€æœ¯è§„æ ¼ä¹¦ç¼–å†™
+**À¶Í¼°æ±¾**: v1.0 | **´´½¨ÈÕÆÚ**: 2026-04-03 | **×´??*: Final | **ÏÂÒ»??*: ¼¼Êõ¹æ¸ñÊé±àÐ´
 

@@ -82,7 +82,7 @@ implementation_status: 进行?
 | `docs\02_FACTOR_LIBRARY\05_BACKTEST\strategy_reports\` | 重要 | 必须添加 |
 | `docs\02_FACTOR_LIBRARY\06_REGISTRY\` | 中等 | 建议添加 |
 | `docs\02_FACTOR_LIBRARY\07_FACTOR_MONITORING\` | 中等 | 建议添加 |
-| `docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\` | 重要 | 必须添加 |
+| `docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\` | 重要 | 必须添加 |
 
 ### 2. 合规性问题分?
 
@@ -102,7 +102,7 @@ implementation_status: 进行?
 #### 2.2 缓存目录管理问题 (2?
 根据开发标?§4.2.2，缓存目录应被正确忽略：
 
-| 目录 | 问题 | 标准要求 | 当前状?|
+| 目录 | 问题 | 标准要求 | 当前�?|
 |------|------|----------|----------|
 | `.mypy_cache\` | 未在.gitignore?| 应忽略构建缓?| ⚠️ 未忽?|
 | `.trae\` | 未在.gitignore?| 应忽略IDE配置 | ⚠️ 未忽?|
@@ -123,7 +123,7 @@ implementation_status: 进行?
 - **格式**: 每行一个绝对路径，Windows格式
 - **范围**: 覆盖系统主要目录，但缺失某些子目?
 - **时效?*: 反映近期系统状态，但包含计划中目录
-- **用?*: 可能用于系统清单、文档索引或审计参?
+- **�?*: 可能用于系统清单、文档索引或审计�?
 
 #### 3.2 与System_Manifest.md对比
 检?[System_Manifest.md](../../../02_FACTOR_LIBRARY/System_Manifest.md) 发现?
@@ -210,7 +210,7 @@ docs\02_FACTOR_LIBRARY\05_BACKTEST\ic_reports\
 docs\02_FACTOR_LIBRARY\05_BACKTEST\strategy_reports\
 docs\02_FACTOR_LIBRARY\06_REGISTRY\
 docs\02_FACTOR_LIBRARY\07_FACTOR_MONITORING\
-docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\
+docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\
 ```
 
 #### 2.3 更新中文路径为英?
@@ -229,7 +229,7 @@ docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\
 确保 [System_Manifest.md](../../../02_FACTOR_LIBRARY/System_Manifest.md) 反映更新后的路径结构?
 
 #### 3.2 更新INDEX.md和SITEMAP.md
-检查并更新主索引文档中的路径引用?
+检查并更新主索引文档中的路径引�?
 
 #### 3.3 更新因子库索?
 更新 [factor_master_index.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/factor_master_index.md) 中的文件引用?

@@ -25,7 +25,7 @@ ai_maintenance: true
 
 > 清风量化系统 v5.3 - 多资产类别配置详细设?> **索引**: `MULTI_ASSET_001`
 > **开发时?*: 120h（约3周）
-> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可行?*: ⭐⭐⭐⭐ 完全可行
+> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可�?*: ⭐⭐⭐⭐ 完全可行
 > **AI维护难度**: ?
 ---
 
@@ -39,7 +39,7 @@ ai_maintenance: true
 - 无跨资产相关性建?- 无跨资产风险平价优化
 - 无跨资产风险预算分配
 
-**预期价?*?- 资产配置多样性：提升50%
+**预期�?*?- 资产配置多样性：提升50%
 - 系统性风险分散：提升40%
 - 实现桥水全天候策略核心能?- 为多策略配置提供基础
 
@@ -104,7 +104,7 @@ class MultiAssetAllocator:
         """
         # 1. 获取多资产数?        asset_data = self.data_manager.get_asset_data(asset_classes)
         
-        # 2. 估计跨资产相关?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
+        # 2. 估计跨资产相�?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
         
         # 3. 选择优化方法
         if optimization_method == 'risk_parity':
@@ -244,7 +244,7 @@ class CrossAssetCorrelationModeler:
     跨资产相关性建模器
     
     索引: MULTI_ASSET_001-M03
-    职责: 估计跨资产动态相关?    """
+    职责: 估计跨资产动态相�?    """
     
     def __init__(self, config: CorrelationConfig):
         self.config = config
@@ -262,7 +262,7 @@ class CrossAssetCorrelationModeler:
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
         
-        # 2. 使用DCC-GARCH估计动态相关?        if self.config.use_dcc_garch:
+        # 2. 使用DCC-GARCH估计动态相�?        if self.config.use_dcc_garch:
             correlation_matrix = self.dcc_garch.estimate(returns)
         else:
             # 使用历史相关?            correlation_matrix = returns.corr()
@@ -652,7 +652,7 @@ class BarraRiskModel:
 ## 8. 技术栈选择
 
 ### 8.1 核心依赖?
-| 库名 | 版本 | 用?| 必要?|
+| 库名 | 版本 | �?| 必要?|
 |------|------|------|--------|
 | **pandas** | ?.5 | 数据处理 | 必需 |
 | **numpy** | ?.21 | 数值计?| 必需 |
@@ -700,7 +700,7 @@ pip install arch>=5.0
 ##### 6.7 多资产类别配?- **模块ID**: MULTI_ASSET_001
 - **蓝图文档**: [MULTI_ASSET_ALLOCATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md)
 - **技术规格书**: 待创?- **职责**: 跨资产配置、风险平价优化、跨资产风险监控
-- **状?*: 设计阶段
+- **�?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界
@@ -733,9 +733,9 @@ pip install arch>=5.0
 |------|------|--------|
 | **风险平价** | 基于风险贡献度的资产配置方法 | 配置策略 |
 | **全天候策?* | 桥水基金的风险平价策?| 资产配置 |
-| **跨资产相关?* | 不同资产类别之间的相关?| 相关性建?|
+| **跨资产相�?* | 不同资产类别之间的相�?| 相关性建?|
 | **资产类别** | 股票、债券、商品、外汇等大类资产 | 资产分类 |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 技术规格书编写

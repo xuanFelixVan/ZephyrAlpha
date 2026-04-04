@@ -28,7 +28,7 @@ implementation_status: 进行�?
 
 | 文件路径 | 删除原因 |
 |----------|----------|
-| `05_IMPLEMENTATION/04_OPERATIONS/faq.md` | �?`docs/FAQ.md` 重复 |
+| `05_IMPLEMENTATION/07_OPERATIONS/faq.md` | �?`docs/FAQ.md` 重复 |
 | `00_OVERVIEW/VERSION_HISTORY.md` | �?`CHANGELOG.md` 重复 |
 | `06_ARCHIVE/main/v4_development/qingfeng_v4_draft - 副本.md` | 冗余副本 |
 | `06_ARCHIVE/main/v4_development/qingfeng_v4_draft_backup.md` | 冗余备份 |

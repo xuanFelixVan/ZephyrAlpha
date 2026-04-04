@@ -4,8 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构师
-layer: Layer 4 (机器学习层)
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -14,15 +13,13 @@ priority: P2
 
 > **蓝图编号**: `TAIL-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习层
-> **优先级**: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
 ## 1. 概述
 
-极端风险预测是风险管理的核心：
-
+极端风险预测是风险管理的核心�?
 - **尾部风险**: 预测极端事件
 - **VaR/ES**: 风险度量
 - **压力测试**: 情景分析
@@ -34,9 +31,9 @@ priority: P2
 
 | 模型 | 说明 | 适用场景 |
 |------|------|----------|
-| EVT | 极值理论 | 尾部建模 |
-| GPD | 广义帕累托 | 超阈值 |
-| Quantile Regression | 分位数回归 | 条件VaR |
+| EVT | 极值理�?| 尾部建模 |
+| GPD | 广义帕累�?| 超阈�?|
+| Quantile Regression | 分位数回�?| 条件VaR |
 | DeepTail | 深度学习 | 复杂模式 |
 
 ---
@@ -67,11 +64,9 @@ class TailRiskPredictor:
         """预测VaR
         
         Args:
-            returns: 收益率序列
-            
+            returns: 收益率序�?            
         Returns:
-            float: VaR值
-        """
+            float: VaR�?        """
         pass
     
     def predict_es(
@@ -81,19 +76,16 @@ class TailRiskPredictor:
         """预测ES (Expected Shortfall)
         
         Args:
-            returns: 收益率序列
-            
+            returns: 收益率序�?            
         Returns:
-            float: ES值
-        """
+            float: ES�?        """
         pass
     
     def detect_tail_event(
         self,
         current_return: float
     ) -> bool:
-        """检测尾部事件
-        
+        """检测尾部事�?        
         Args:
             current_return: 当前收益
             

@@ -22,7 +22,7 @@ last_updated: 2026-04-02
 
 | 任务类别 | 具体任务 | 完成状�?| 产出文档/工具 |
 |----------|----------|----------|---------------|
-| **立即行动�?* | 创建输出目录 | �?完成 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/`<br>`docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/` |
+| **立即行动�?* | 创建输出目录 | �?完成 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/`<br>`docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/` |
 | | 创建模板文件 | �?完成 | `TECHNICAL_SPECIFICATION_TEMPLATE.md`<br>`TECHNICAL_REVIEW_REPORT_TEMPLATE.md` |
 | | 首次验证测试 | �?完成 | 端到端测试报告（因子库回测集成评审） |
 | **工具完善** | 技术可行性评估工�?| �?完成 | `scripts/technical_feasibility_assessor.py` |

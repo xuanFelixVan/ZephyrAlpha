@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 个人开发?standard_type: 知识索引文档
+owner: 个人开�?standard_type: 知识索引文档
 applicable_scope: 个人知识管理
 compliance_level: 简化标?parent_document: ../README.md
 implementation_status: Active
@@ -106,8 +106,8 @@ implementation_status: Active
 
 | 知识主题 | 文档位置 | 关键?| 重要程度 |
 |---------|---------|--------|---------|
-| **策略工厂实施案例** | [STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md](../04_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md) | 工厂模式、注册表模式、实施流?| 🔴 核心 |
-| **事件总线集成案例** | [EVENT_BUS_INTEGRATION_CASE_STUDY.md](../04_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md) | 观察者模式、异步编程、性能优化 | 🔴 核心 |
+| **策略工厂实施案例** | [STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md](../07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md) | 工厂模式、注册表模式、实施流?| 🔴 核心 |
+| **事件总线集成案例** | [EVENT_BUS_INTEGRATION_CASE_STUDY.md](../07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md) | 观察者模式、异步编程、性能优化 | 🔴 核心 |
 
 **快速检索关键词**: `案例` `策略工厂案例` `事件总线案例` `实施案例`
 
@@ -117,8 +117,8 @@ implementation_status: Active
 
 | 知识主题 | 文档位置 | 关键?| 重要程度 |
 |---------|---------|--------|---------|
-| **Python代码规范** | [PYTHON_CODING_BEST_PRACTICES.md](../04_OPERATIONS/knowledge_base/best_practices/PYTHON_CODING_BEST_PRACTICES.md) | 命名规范、代码格式、类型注?| 🔴 核心 |
-| **最佳实践索?* | [BEST_PRACTICES_INDEX.md](../04_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) | 最佳实践分类、实践索?| 🟡 重要 |
+| **Python代码规范** | [PYTHON_CODING_BEST_PRACTICES.md](../07_OPERATIONS/knowledge_base/best_practices/PYTHON_CODING_BEST_PRACTICES.md) | 命名规范、代码格式、类型注?| 🔴 核心 |
+| **最佳实践索?* | [BEST_PRACTICES_INDEX.md](../07_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) | 最佳实践分类、实践索?| 🟡 重要 |
 
 **快速检索关键词**: `最佳实践` `代码规范` `命名规范` `类型注解`
 
@@ -234,7 +234,7 @@ backtest_config_template.yaml
 |---------|---------|------|
 | 🔴 **核心** | 15 | 必须掌握的核心知?|
 | 🟡 **重要** | 8 | 重要但非核心的知?|
-| 🟢 **参?* | 2 | 参考性知?|
+| 🟢 **�?* | 2 | 参考性知?|
 
 ---
 
@@ -244,7 +244,7 @@ backtest_config_template.yaml
 
 1. **新增模块**: 创建新模块时添加相关知识
 2. **重大变更**: 架构或流程重大变更时更新知识
-3. **问题解决**: 解决重要问题时记录解决方?4. **定期评审**: 每月评审知识索引的完整?
+3. **问题解决**: 解决重要问题时记录解决方?4. **定期评审**: 每月评审知识索引的完�?
 ### **更新流程**
 
 ```
@@ -308,13 +308,13 @@ backtest_config_template.yaml
 
 | 日期 | 版本 | 更新内容 | 更新?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建知识索引文档 | 个人开发?|
+| 2026-04-02 | v1.0 | 创建知识索引文档 | 个人开�?|
 
 ---
 
 ## 📞 **联系方式**
 
-**文档维护?*: 个人开发? 
+**文档维护?*: 个人开�? 
 **创建日期**: 2026-04-02  
 **最后更?*: 2026-04-02  
 **版本**: v1.0

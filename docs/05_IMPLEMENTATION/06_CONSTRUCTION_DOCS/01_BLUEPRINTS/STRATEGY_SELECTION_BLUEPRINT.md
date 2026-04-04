@@ -200,9 +200,9 @@ class TOPSISEvaluator:
             'max_drawdown': 0.20,       # 最大回撤：风险控制
             'annual_return': 0.15,      # 年化收益：盈利能?
             'win_rate': 0.10,           # 胜率：交易质?
-            'stability_score': 0.10,    # 稳定性：绩效一致?
+            'stability_score': 0.10,    # 稳定性：绩效一�?
             'adaptability_score': 0.10, # 适应性：市场环境适应能力
-            'complexity_score': 0.05,   # 复杂度：策略简洁?
+            'complexity_score': 0.05,   # 复杂度：策略简�?
             'turnover': 0.05           # 换手率：交易成本考虑
         }
         
@@ -219,8 +219,8 @@ class TOPSISEvaluator:
     def _calculate_ideal_solutions(self, weighted_matrix: pd.DataFrame) -> Tuple[pd.Series, pd.Series]:
         """计算正理想解和负理想?
         
-        对于效益型指标（越大越好）：正理想解取最大值，负理想解取最小?
-        对于成本型指标（越小越好）：正理想解取最小值，负理想解取最大?
+        对于效益型指标（越大越好）：正理想解取最大值，负理想解取最�?
+        对于成本型指标（越小越好）：正理想解取最小值，负理想解取最�?
         """
         # 定义指标类型
         benefit_criteria = ['sharpe_ratio', 'annual_return', 'win_rate', 
@@ -267,13 +267,13 @@ class DynamicWeightOptimizer:
         """优化评分权重
         
         基于以下因素动态调整权重：
-        1. 当前市场状?
+        1. 当前市场�?
         2. 用户风险偏好
         3. 策略历史表现
         4. 经济周期阶段
         """
         
-        # 1. 获取当前市场状?
+        # 1. 获取当前市场�?
         market_state = self.market_state_detector.get_current_state()
         
         # 2. 获取用户风险偏好
@@ -351,7 +351,7 @@ class DynamicWeightOptimizer:
         template = weight_templates.get(market_state.name, weight_templates['range_market'])
         
         # 根据市场状态强度调整权?
-        strength_factor = market_state.strength  # 0-1之间的强度?
+        strength_factor = market_state.strength  # 0-1之间的强�?
         adjusted_weights = {}
         
         for criterion, base_weight in template.items():
@@ -543,7 +543,7 @@ class TimeWeightedPerformanceScorer:
         weights = self._exponential_decay_weights(len(rolling_dd))
         weighted_dd = (rolling_dd * weights).sum() / weights.sum()
         
-        return abs(weighted_dd)  # 返回正?
+        return abs(weighted_dd)  # 返回�?
         
     def _exponential_decay_weights(self, n_periods: int) -> np.ndarray:
         """生成指数衰减权重向量"""
@@ -647,7 +647,7 @@ class StrategyCorrelationAnalyzer:
         diversification = pd.DataFrame(index=corr_matrix.index, columns=['diversification_score'])
         
         for strategy in corr_matrix.index:
-            # 计算该策略与其他策略的平均相关?
+            # 计算该策略与其他策略的平均相�?
             other_correlations = [corr_matrix.loc[strategy, other] 
                                 for other in corr_matrix.index if other != strategy]
             
@@ -789,7 +789,7 @@ class AIStrategyRecommender:
             if len(selected) >= n_strategies:
                 break
                 
-            # 检查相关?
+            # 检查相�?
             if self._is_diversified(selected, strategy, diversification_weight):
                 selected.append(strategy)
                 # 基于预测得分分配权重

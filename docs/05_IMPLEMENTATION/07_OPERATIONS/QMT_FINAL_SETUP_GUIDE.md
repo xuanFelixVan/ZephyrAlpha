@@ -2,7 +2,7 @@
 
 ## Current Status
 
-✅ **Completed Successfully:**
+�?**Completed Successfully:**
 
 1. **Miniconda installed** at `E:\Miniconda`
 2. **Python 3.12 environment** created as `qmt`
@@ -11,13 +11,13 @@
 5. **Permissions verified** (strategy trading permission exists)
 6. **Configuration updated** with correct paths
 
-❌ **Remaining Issue:**
+�?**Remaining Issue:**
 
 **QMT trading interface connection returns -1**
 
 This means:
-- ✅ Data interface works (xtdata connects)
-- ❌ Trading interface fails (xttrader returns -1)
+- �?Data interface works (xtdata connects)
+- �?Trading interface fails (xttrader returns -1)
 
 ## Root Cause Analysis
 
@@ -36,14 +36,14 @@ When you login to QMT, you must check the "Minimal Mode" or "Independent Trading
 
 ### Step 2: Login with Minimal Mode
 
-1. **Start QMT client** (double-click "国金证券QMT交易端")
+1. **Start QMT client** (double-click "国金证券QMT交易�?)
 2. **On login screen:**
    - Account: `8886156677`
    - Password: `134752`
-   - ✅ **CHECK "极简模式" or "独立交易" checkbox** (MUST BE CHECKED!)
+   - �?**CHECK "极简模式" or "独立交易" checkbox** (MUST BE CHECKED!)
    - Click "Login"
 3. **Wait 30 seconds** for full initialization
-4. **Verify login:** Main window appears, status shows "已连接"
+4. **Verify login:** Main window appears, status shows "已连�?
 
 ### Step 3: Test Connection
 
@@ -64,14 +64,11 @@ C:\Users\fanzi\.conda\envs\qmt\python.exe scripts\test_qmt_connection_v6.py
 
 If successful:
 ```
-✅ 交易接口连接成功！
-✅ 账户订阅成功！
-✅ 资产查询成功！
-```
+�?交易接口连接成功�?�?账户订阅成功�?�?资产查询成功�?```
 
 If still failing (returns -1):
 ```
-❌ 交易接口连接失败，返回码: -1
+�?交易接口连接失败，返回码: -1
 ```
 
 ## If Still Failing
@@ -101,7 +98,7 @@ If still failing after confirming Minimal Mode login:
 
 1. **Contact Guojin Securities:** 95310
    - Ask: "确认账号 8886156677 是否有QMT策略交易权限"
-   - Ask: "确认MiniQMT极简模式是否已开通"
+   - Ask: "确认MiniQMT极简模式是否已开�?
 2. **Check official documentation:**
    - https://dict.thinktrader.net/
    - https://www.xuntou.net/
@@ -112,11 +109,11 @@ If still failing after confirming Minimal Mode login:
 ```
 QMT_SIMULATION_ACCOUNT=8886156677
 QMT_SIMULATION_PASSWORD=134752
-QMT_SIMULATION_CLIENT_PATH=E:/国金QMT交易端模拟/userdata_mini
+QMT_SIMULATION_CLIENT_PATH=E:/国金QMT交易端模�?userdata_mini
 
 QMT_LIVE_ACCOUNT=8887871993
 QMT_LIVE_PASSWORD=198910
-QMT_LIVE_CLIENT_PATH=D:/国金证券QMT交易端/userdata_mini
+QMT_LIVE_CLIENT_PATH=D:/国金证券QMT交易�?userdata_mini
 ```
 
 ### Python Environment
@@ -155,11 +152,11 @@ Once connection succeeds:
 **The only remaining issue is QMT client login mode.**
 
 All technical preparations are complete:
-- ✅ Python 3.12 environment ready
-- ✅ xtquant library installed
-- ✅ Configuration files correct
-- ✅ Permissions verified
-- ✅ Data interface working
+- �?Python 3.12 environment ready
+- �?xtquant library installed
+- �?Configuration files correct
+- �?Permissions verified
+- �?Data interface working
 
 **You just need to ensure QMT is logged in with "Minimal Mode" checked.**
 

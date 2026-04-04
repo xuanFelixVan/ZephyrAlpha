@@ -26,16 +26,16 @@ implementation_status: 立即启动
 > ---
 >
 > **📋 文档关系说明**?> - [`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) = **专业机构级完整蓝?*，适用于大规模团队
-> - [`PERSONAL_DEVELOPMENT_BLUEPRINT.md`](./PERSONAL_DEVELOPMENT_BLUEPRINT.md) = **个人开发版简化方?*，适用于个人开发?> - 本文档（`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`? **关键欠缺模块补充**，立即行动项
+> - [`PERSONAL_DEVELOPMENT_BLUEPRINT.md`](./PERSONAL_DEVELOPMENT_BLUEPRINT.md) = **个人开发版简化方?*，适用于个人开�?> - 本文档（`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`? **关键欠缺模块补充**，立即行动项
 >
 > **选择指南**?> - 如果你是大规模团??参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
-> - 如果你是个人开发??参考PERSONAL_DEVELOPMENT_BLUEPRINT.md
+> - 如果你是个人开�??参考PERSONAL_DEVELOPMENT_BLUEPRINT.md
 > - 如果你需要补充关键模??参考本文档（立即行动）
 
 
 ## 📋 一、实施概?
 ### 1.1 模块优先?
-| 优先?| 模块名称 | 实施时间 | 影响程度 | 提升覆盖?| 状?|
+| 优先?| 模块名称 | 实施时间 | 影响程度 | 提升覆盖?| �?|
 |--------|---------|---------|---------|-----------|------|
 | **P0** | 实时风控数据模块 | 1-2?| 🔴 ?| +10% | 🚀 立即启动 |
 | **P1** | 全球市场数据模块 | 2-4?| 🔴 ?| +10% | ?待启?|
@@ -128,7 +128,7 @@ class VaRCalculator:
         """历史模拟法计算VaR
         
         Args:
-            returns: 历史收益率序?            portfolio_value: 投资组合价?            
+            returns: 历史收益率序?            portfolio_value: 投资组合�?            
         Returns:
             float: VaR值（绝对金额?        """
         # 计算历史收益率分位数
@@ -149,7 +149,7 @@ class VaRCalculator:
         """蒙特卡洛法计算VaR
         
         Args:
-            returns: 历史收益率序?            portfolio_value: 投资组合价?            num_simulations: 模拟次数
+            returns: 历史收益率序?            portfolio_value: 投资组合�?            num_simulations: 模拟次数
             time_horizon: 时间跨度（天?            
         Returns:
             float: VaR值（绝对金额?        """
@@ -175,7 +175,7 @@ class VaRCalculator:
         """参数法计算VaR（假设正态分布）
         
         Args:
-            returns: 历史收益率序?            portfolio_value: 投资组合价?            time_horizon: 时间跨度（天?            
+            returns: 历史收益率序?            portfolio_value: 投资组合�?            time_horizon: 时间跨度（天?            
         Returns:
             float: VaR值（绝对金额?        """
         # 计算收益率均值和标准?        mu = np.mean(returns)
@@ -194,7 +194,7 @@ class VaRCalculator:
     def cvar(self, returns: np.ndarray, portfolio_value: float) -> float:
         """计算CVaR（条件风险价值，Expected Shortfall?        
         Args:
-            returns: 历史收益率序?            portfolio_value: 投资组合价?            
+            returns: 历史收益率序?            portfolio_value: 投资组合�?            
         Returns:
             float: CVaR值（绝对金额?        """
         # 计算VaR分位?        var_percentile = (1 - self.confidence_level) * 100
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     # 模拟历史收益率数?    np.random.seed(42)
     returns = np.random.normal(0.001, 0.02, 1000)  # 日均收益0.1%，标准差2%
     
-    # 投资组合价?    portfolio_value = 1000000  # 100万元
+    # 投资组合�?    portfolio_value = 1000000  # 100万元
     
     # 计算VaR
     historical_var = var_calculator.historical_var(returns, portfolio_value)
@@ -258,7 +258,7 @@ if __name__ == "__main__":
     parametric_var = var_calculator.parametric_var(returns, portfolio_value)
     cvar = var_calculator.cvar(returns, portfolio_value)
     
-    print(f"\n投资组合价? {portfolio_value:,.0f}?)
+    print(f"\n投资组合�? {portfolio_value:,.0f}?)
     print(f"历史模拟法VaR: {historical_var:,.2f}?)
     print(f"蒙特卡洛VaR: {monte_carlo_var:,.2f}?)
     print(f"参数法VaR: {parametric_var:,.2f}?)
@@ -459,7 +459,7 @@ class GreeksCalculator:
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
             
         Returns:
-            Dict: 所有希腊字母?        """
+            Dict: 所有希腊字�?        """
         greeks = {
             'delta': self.delta(S, K, T, r, sigma, option_type),
             'gamma': self.gamma(S, K, T, r, sigma),
@@ -643,7 +643,7 @@ class StressTestEngine:
         
         for factor in risk_factors:
             for shock in shocks:
-                # 计算冲击后的投资组合价?                shocked_portfolio = {}
+                # 计算冲击后的投资组合�?                shocked_portfolio = {}
                 for asset_type, value in portfolio.items():
                     if factor.lower() in asset_type.lower():
                         shocked_portfolio[asset_type] = value * (1 + shock)
@@ -698,7 +698,7 @@ class StressTestEngine:
         
         for scenario_name, result in results.items():
             report.append(f"情景: {result.get('description', scenario_name)}")
-            report.append(f"投资组合价? {result['portfolio_value']:,.2f}?)
+            report.append(f"投资组合�? {result['portfolio_value']:,.2f}?)
             report.append(f"总损? {result['total_loss']:,.2f}?)
             report.append(f"损失比例: {result['loss_percentage']*100:.2f}%")
             report.append("")
@@ -748,7 +748,7 @@ if __name__ == "__main__":
 **功能说明**:
 - **实时风险监控**: 监控VaR、希腊字母等风险指标
 - **风险限额检?*: 检查是否超过预设风险限?- **多级预警**: P0/P1/P2/P3四级预警机制
-- **预警推?*: WebSocket实时推送预警信?
+- **预警�?*: WebSocket实时推送预警信?
 **代码实现**:
 ```python
 # src/data/risk_alert_system.py
@@ -771,7 +771,7 @@ class RiskAlertSystem:
     
     功能?        - 实时风险监控
         - 风险限额检?        - 多级预警
-        - 预警推?    """
+        - 预警�?    """
     
     def __init__(self, risk_limits: Dict[str, float]):
         """初始化风险预警系?        
@@ -838,7 +838,7 @@ class RiskAlertSystem:
             
             if utilization >= 1.0:
                 level = RiskLevel.P0
-                message = f"{greek.upper()}超限！当前? {value:.2f}，限? {limit:.2f}"
+                message = f"{greek.upper()}超限！当�? {value:.2f}，限? {limit:.2f}"
             elif utilization >= 0.9:
                 level = RiskLevel.P1
                 message = f"{greek.upper()}接近限额！利用率: {utilization*100:.1f}%"
@@ -1050,7 +1050,7 @@ docs/
 |------|------|--------|
 | **港股市场数据** | 港股实时+历史数据 | AKShare + Tushare |
 | **美股市场数据** | 美股实时+历史数据 | yfinance |
-| **债券市场数据** | 国?企业债数?| 中债登 + 上交所 |
+| **债券市场数据** | �?企业债数?| 中债登 + 上交所 |
 | **商品市场数据** | 期货/现货数据 | 各大期货交易所 |
 | **外汇市场数据** | 主要货币对数?| 中国外汇交易中心 |
 
@@ -1223,5 +1223,5 @@ class GlobalMarketDataEngine:
 **蓝图创建完成**
 
 > 本蓝图包含P0/P1/P2三级模块的详细实施方案，确保数据源层达到专业机构95%能力水平?> 
-> **实施状?*: 🚀 立即启动
+> **实施�?*: 🚀 立即启动
 > **下一步行?*: 按照Week 1计划开始实施P0级实时风控数据模?

@@ -4,54 +4,54 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 实施指南
-applicable_scope: 舆情分析层改进模块实施
+applicable_scope: 舆情分析层改进模块实�?
 compliance_level: 专业标准
 ---
 
-# 舆情分析层改进模块实施细节文档
+# 舆情分析层改进模块实施细节文�?
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **文档类型**: 实施指南
-> **状态**: ✅ 活跃
+> **状�?*: �?活跃
 
 ---
 
 ## 📋 文档目录
 
 1. [环境搭建指南](#一环境搭建指南)
-2. [代码示例](#二代码示例)
-3. [配置文件模板](#三配置文件模板)
-4. [部署架构](#四部署架构)
+2. [代码示例](#二代码示�?
+3. [配置文件模板](#三配置文件模�?
+4. [部署架构](#四部署架�?
 5. [数据库设计](#五数据库设计)
 6. [监控与日志](#六监控与日志)
 
 ---
 
-## 一、环境搭建指南
+## 一、环境搭建指�?
 
 ### 1.1 系统要求
 
 #### 硬件要求
 
-| 组件 | 最低要求 | 推荐配置 | 说明 |
+| 组件 | 最低要�?| 推荐配置 | 说明 |
 |------|---------|---------|------|
-| CPU | 4核心 | 8核心+ | 多线程处理 |
-| 内存 | 16GB | 32GB+ | 模型加载和数据处理 |
+| CPU | 4核心 | 8核心+ | 多线程处�?|
+| 内存 | 16GB | 32GB+ | 模型加载和数据处�?|
 | GPU | NVIDIA GTX 1060 | NVIDIA RTX 3080+ | 深度学习推理 |
 | GPU内存 | 6GB | 10GB+ | 模型加载 |
-| 存储 | 100GB SSD | 500GB+ SSD | 数据和模型存储 |
+| 存储 | 100GB SSD | 500GB+ SSD | 数据和模型存�?|
 
 #### 软件要求
 
 | 软件 | 版本 | 说明 |
 |------|------|------|
 | Python | 3.9+ | 编程语言 |
-| CUDA | 11.8+ | GPU加速 |
-| cuDNN | 8.6+ | 深度学习库 |
-| Docker | 20.10+ | 容器化部署 |
+| CUDA | 11.8+ | GPU加�?|
+| cuDNN | 8.6+ | 深度学习�?|
+| Docker | 20.10+ | 容器化部�?|
 | Docker Compose | 2.0+ | 容器编排 |
 
 ### 1.2 Python环境配置
@@ -88,7 +88,7 @@ fastapi==0.100.0
 uvicorn==0.23.1
 pydantic==2.0.3
 
-# 数据库
+# 数据�?
 sqlalchemy==2.0.19
 psycopg2-binary==2.9.6
 redis==4.6.0
@@ -114,16 +114,16 @@ opencv-python==4.8.0.74
 librosa==0.10.1
 soundfile==0.12.1
 
-# 向量数据库
+# 向量数据�?
 chromadb==0.4.6
 faiss-cpu==1.7.4
 
-# 可视化
+# 可视�?
 matplotlib==3.7.2
 seaborn==0.12.2
 plotly==5.15.0
 
-# 监控和日志
+# 监控和日�?
 prometheus-client==0.17.1
 loguru==0.7.0
 
@@ -226,7 +226,7 @@ services:
               count: 1
               capabilities: [gpu]
 
-  # PostgreSQL数据库
+  # PostgreSQL数据�?
   postgres:
     image: postgres:15
     environment:
@@ -300,26 +300,26 @@ volumes:
 ```
 
 ```bash
-# 启动所有服务
+# 启动所有服�?
 docker-compose up -d
 
-# 查看服务状态
+# 查看服务状�?
 docker-compose ps
 
 # 查看日志
 docker-compose logs -f api
 
-# 停止所有服务
+# 停止所有服�?
 docker-compose down
 ```
 
 ---
 
-## 二、代码示例
+## 二、代码示�?
 
-### 2.1 数据源扩展模块代码示例
+### 2.1 数据源扩展模块代码示�?
 
-#### Twitter API适配器实现
+#### Twitter API适配器实�?
 
 ```python
 import tweepy
@@ -331,7 +331,7 @@ logger = logging.getLogger(__name__)
 
 
 class TwitterAPIAdapter:
-    """Twitter API适配器实现"""
+    """Twitter API适配器实�?""
     
     def __init__(
         self,
@@ -341,14 +341,14 @@ class TwitterAPIAdapter:
         access_token: str,
         access_token_secret: str
     ):
-        """初始化Twitter API适配器"""
+        """初始化Twitter API适配�?""
         self.bearer_token = bearer_token
         self.api_key = api_key
         self.api_secret = api_secret
         self.access_token = access_token
         self.access_token_secret = access_token_secret
         
-        # 初始化API客户端
+        # 初始化API客户�?
         self.client = tweepy.Client(
             bearer_token=bearer_token,
             consumer_key=api_key,
@@ -411,7 +411,7 @@ class TwitterAPIAdapter:
                 rule_ids = [rule.id for rule in existing_rules.data]
                 self.client.delete_rules(rule_ids)
             
-            # 添加新规则
+            # 添加新规�?
             self.client.add_rules(rule)
             
             # 启动流式监听
@@ -428,7 +428,7 @@ class TwitterAPIAdapter:
             raise
     
     def _format_tweet(self, tweet) -> Dict[str, Any]:
-        """格式化推文数据"""
+        """格式化推文数�?""
         return {
             'id': tweet.id,
             'text': tweet.text,
@@ -468,11 +468,11 @@ if __name__ == "__main__":
     
     for tweet in results['data']:
         print(f"推文: {tweet['text']}")
-        print(f"点赞数: {tweet['public_metrics']['like_count']}")
+        print(f"点赞�? {tweet['public_metrics']['like_count']}")
         print("-" * 50)
 ```
 
-#### 深度学习情感分析器实现
+#### 深度学习情感分析器实�?
 
 ```python
 import torch
@@ -497,7 +497,7 @@ class SentimentResult:
 
 
 class DLSentimentAnalyzer:
-    """深度学习情感分析器实现"""
+    """深度学习情感分析器实�?""
     
     def __init__(
         self,
@@ -552,7 +552,7 @@ class DLSentimentAnalyzer:
             confidence = probabilities[0][predicted_class].item()
             label = self.label_map[predicted_class]
             
-            # 获取所有分数
+            # 获取所有分�?
             scores = {}
             if return_all_scores:
                 for idx, prob in enumerate(probabilities[0]):
@@ -627,8 +627,8 @@ class DLSentimentAnalyzer:
         return results
     
     def _extract_keywords(self, text: str) -> List[str]:
-        """提取关键词"""
-        # 简单实现：提取大写单词和特殊标记
+        """提取关键�?""
+        # 简单实现：提取大写单词和特殊标�?
         import re
         keywords = []
         
@@ -644,7 +644,7 @@ class DLSentimentAnalyzer:
     
     def _extract_entities(self, text: str) -> List[str]:
         """提取实体"""
-        # 简单实现：使用正则表达式
+        # 简单实现：使用正则表达�?
         import re
         entities = []
         
@@ -668,9 +668,9 @@ if __name__ == "__main__":
     
     print(f"文本: {result.text}")
     print(f"情感: {result.label}")
-    print(f"置信度: {result.confidence:.2f}")
+    print(f"置信�? {result.confidence:.2f}")
     print(f"分数: {result.scores}")
-    print(f"关键词: {result.keywords}")
+    print(f"关键�? {result.keywords}")
     print(f"实体: {result.entities}")
     
     # 批量分析
@@ -684,14 +684,14 @@ if __name__ == "__main__":
     
     for result in results:
         print(f"\n文本: {result.text}")
-        print(f"情感: {result.label}, 置信度: {result.confidence:.2f}")
+        print(f"情感: {result.label}, 置信�? {result.confidence:.2f}")
 ```
 
 ---
 
-## 三、配置文件模板
+## 三、配置文件模�?
 
-### 3.1 主配置文件
+### 3.1 主配置文�?
 
 **config/config.yaml**:
 ```yaml
@@ -709,7 +709,7 @@ api:
   workers: 4
   reload: true
   
-# 数据库配置
+# 数据库配�?
 database:
   postgres:
     host: "localhost"
@@ -760,7 +760,7 @@ monitoring:
     - "error_count"
 ```
 
-### 3.2 数据源配置文件
+### 3.2 数据源配置文�?
 
 **config/data_sources.yaml**:
 ```yaml
@@ -779,7 +779,7 @@ twitter:
     retry_attempts: 3
     retry_delay: 60
     
-  # 监控关键词
+  # 监控关键�?
   keywords:
     - "$AAPL"
     - "Apple stock"
@@ -797,7 +797,7 @@ reddit:
   client_secret: "${REDDIT_CLIENT_SECRET}"
   user_agent: "ZephyrAlpha/1.0"
   
-  # 子版块
+  # 子版�?
   subreddits:
     - name: "wallstreetbets"
       limit: 100
@@ -814,10 +814,10 @@ fred:
   # 经济指标
   series:
     - id: "GDP"
-      name: "国内生产总值"
+      name: "国内生产总�?
       frequency: "q"
     - id: "UNRATE"
-      name: "失业率"
+      name: "失业�?
       frequency: "m"
 
 # SEC EDGAR API配置
@@ -891,103 +891,103 @@ relation_extraction:
 
 ---
 
-## 四、部署架构
+## 四、部署架�?
 
 ### 4.1 单机部署架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      单机部署架构                             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │              Nginx (反向代理)                          │ │
-│  │              - 负载均衡                                │ │
-│  │              - SSL终止                                 │ │
-│  └───────────────────────────────────────────────────────┘ │
-│                           ↓                                 │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │              FastAPI应用                               │ │
-│  │              - RESTful API                             │ │
-│  │              - WebSocket                               │ │
-│  │              - 业务逻辑                                │ │
-│  └───────────────────────────────────────────────────────┘ │
-│                           ↓                                 │
-│  ┌─────────────┬─────────────┬─────────────┬────────────┐ │
-│  │ PostgreSQL  │    Redis    │   Neo4j     │   Kafka    │ │
-│  │  (关系型)   │   (缓存)    │  (图数据库) │ (消息队列) │ │
-│  └─────────────┴─────────────┴─────────────┴────────────┘ │
-│                                                             │
-│  ┌───────────────────────────────────────────────────────┐ │
-│  │              GPU服务器                                 │ │
-│  │              - 深度学习模型                            │ │
-│  │              - 情感分析                                │ │
-│  │              - 多模态处理                              │ │
-│  └───────────────────────────────────────────────────────┘ │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                     单机部署架构                             �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌───────────────────────────────────────────────────────�?�?
+�? �?             Nginx (反向代理)                          �?�?
+�? �?             - 负载均衡                                �?�?
+�? �?             - SSL终止                                 �?�?
+�? └───────────────────────────────────────────────────────�?�?
+�?                          �?                                �?
+�? ┌───────────────────────────────────────────────────────�?�?
+�? �?             FastAPI应用                               �?�?
+�? �?             - RESTful API                             �?�?
+�? �?             - WebSocket                               �?�?
+�? �?             - 业务逻辑                                �?�?
+�? └───────────────────────────────────────────────────────�?�?
+�?                          �?                                �?
+�? ┌─────────────┬─────────────┬─────────────┬────────────�?�?
+�? �?PostgreSQL  �?   Redis    �?  Neo4j     �?  Kafka    �?�?
+�? �? (关系�?   �?  (缓存)    �? (图数据库) �?(消息队列) �?�?
+�? └─────────────┴─────────────┴─────────────┴────────────�?�?
+�?                                                            �?
+�? ┌───────────────────────────────────────────────────────�?�?
+�? �?             GPU服务�?                                �?�?
+�? �?             - 深度学习模型                            �?�?
+�? �?             - 情感分析                                �?�?
+�? �?             - 多模态处�?                             �?�?
+�? └───────────────────────────────────────────────────────�?�?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
-### 4.2 分布式部署架构
+### 4.2 分布式部署架�?
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        分布式部署架构                                 │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌───────────────────────────────────────────────────────────────┐ │
-│  │                    负载均衡层                                  │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │ │
-│  │  │   Nginx 1   │  │   Nginx 2   │  │   Nginx 3   │          │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘          │ │
-│  └───────────────────────────────────────────────────────────────┘ │
-│                               ↓                                     │
-│  ┌───────────────────────────────────────────────────────────────┐ │
-│  │                    API服务层                                   │ │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │ │
-│  │  │  API Pod 1  │  │  API Pod 2  │  │  API Pod 3  │          │ │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘          │ │
-│  └───────────────────────────────────────────────────────────────┘ │
-│                               ↓                                     │
-│  ┌───────────────────────────────────────────────────────────────┐ │
-│  │                    数据层                                      │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │ │
-│  │  │ PostgreSQL   │  │ Redis Cluster│  │ Neo4j Cluster│       │ │
-│  │  │   Cluster    │  │              │  │              │       │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘       │ │
-│  │  ┌──────────────┐  ┌──────────────┐                         │ │
-│  │  │Kafka Cluster │  │Spark Cluster │                         │ │
-│  │  │              │  │              │                         │ │
-│  │  └──────────────┘  └──────────────┘                         │ │
-│  └───────────────────────────────────────────────────────────────┘ │
-│                               ↓                                     │
-│  ┌───────────────────────────────────────────────────────────────┐ │
-│  │                    GPU计算层                                   │ │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │ │
-│  │  │  GPU Node 1  │  │  GPU Node 2  │  │  GPU Node 3  │       │ │
-│  │  │  (RTX 3080)  │  │  (RTX 3080)  │  │  (RTX 3080)  │       │ │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘       │ │
-│  └───────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────�?
+�?                       分布式部署架�?                                �?
+├─────────────────────────────────────────────────────────────────────�?
+�?                                                                    �?
+�? ┌───────────────────────────────────────────────────────────────�?�?
+�? �?                   负载均衡�?                                 �?�?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�?         �?�?
+�? �? �?  Nginx 1   �? �?  Nginx 2   �? �?  Nginx 3   �?         �?�?
+�? �? └─────────────�? └─────────────�? └─────────────�?         �?�?
+�? └───────────────────────────────────────────────────────────────�?�?
+�?                              �?                                    �?
+�? ┌───────────────────────────────────────────────────────────────�?�?
+�? �?                   API服务�?                                  �?�?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�?         �?�?
+�? �? �? API Pod 1  �? �? API Pod 2  �? �? API Pod 3  �?         �?�?
+�? �? └─────────────�? └─────────────�? └─────────────�?         �?�?
+�? └───────────────────────────────────────────────────────────────�?�?
+�?                              �?                                    �?
+�? ┌───────────────────────────────────────────────────────────────�?�?
+�? �?                   数据�?                                     �?�?
+�? �? ┌──────────────�? ┌──────────────�? ┌──────────────�?      �?�?
+�? �? �?PostgreSQL   �? �?Redis Cluster�? �?Neo4j Cluster�?      �?�?
+�? �? �?  Cluster    �? �?             �? �?             �?      �?�?
+�? �? └──────────────�? └──────────────�? └──────────────�?      �?�?
+�? �? ┌──────────────�? ┌──────────────�?                        �?�?
+�? �? │Kafka Cluster �? │Spark Cluster �?                        �?�?
+�? �? �?             �? �?             �?                        �?�?
+�? �? └──────────────�? └──────────────�?                        �?�?
+�? └───────────────────────────────────────────────────────────────�?�?
+�?                              �?                                    �?
+�? ┌───────────────────────────────────────────────────────────────�?�?
+�? �?                   GPU计算�?                                  �?�?
+�? �? ┌──────────────�? ┌──────────────�? ┌──────────────�?      �?�?
+�? �? �? GPU Node 1  �? �? GPU Node 2  �? �? GPU Node 3  �?      �?�?
+�? �? �? (RTX 3080)  �? �? (RTX 3080)  �? �? (RTX 3080)  �?      �?�?
+�? �? └──────────────�? └──────────────�? └──────────────�?      �?�?
+�? └───────────────────────────────────────────────────────────────�?�?
+�?                                                                    �?
+└─────────────────────────────────────────────────────────────────────�?
 ```
 
 ---
 
 ## 五、数据库设计
 
-### 5.1 PostgreSQL数据库设计
+### 5.1 PostgreSQL数据库设�?
 
-#### 创建数据库和表
+#### 创建数据库和�?
 
 ```sql
--- 创建数据库
+-- 创建数据�?
 CREATE DATABASE zephyr_alpha;
 
 -- 创建扩展
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 创建推文表
+-- 创建推文�?
 CREATE TABLE tweets (
     id SERIAL PRIMARY KEY,
     tweet_id TEXT UNIQUE NOT NULL,
@@ -1010,7 +1010,7 @@ CREATE INDEX idx_tweets_created_at ON tweets(created_at);
 CREATE INDEX idx_tweets_user_id ON tweets(user_id);
 CREATE INDEX idx_tweets_lang ON tweets(lang);
 
--- 创建Reddit帖子表
+-- 创建Reddit帖子�?
 CREATE TABLE reddit_posts (
     id SERIAL PRIMARY KEY,
     post_id TEXT UNIQUE NOT NULL,
@@ -1025,7 +1025,7 @@ CREATE TABLE reddit_posts (
     collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 创建情感分析结果表
+-- 创建情感分析结果�?
 CREATE TABLE sentiment_results (
     id SERIAL PRIMARY KEY,
     text_hash TEXT UNIQUE NOT NULL,
@@ -1042,7 +1042,7 @@ CREATE TABLE sentiment_results (
     analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 创建预警规则表
+-- 创建预警规则�?
 CREATE TABLE alert_rules (
     id SERIAL PRIMARY KEY,
     rule_id TEXT UNIQUE NOT NULL,
@@ -1056,7 +1056,7 @@ CREATE TABLE alert_rules (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 创建预警历史表
+-- 创建预警历史�?
 CREATE TABLE alert_history (
     id SERIAL PRIMARY KEY,
     alert_id TEXT UNIQUE NOT NULL,
@@ -1091,7 +1091,7 @@ CREATE INDEX idx_knowledge_embedding ON knowledge_base USING ivfflat (embedding 
 
 ### 5.2 Neo4j图数据库设计
 
-#### 创建约束和索引
+#### 创建约束和索�?
 
 ```cypher
 // 创建唯一约束
@@ -1108,7 +1108,7 @@ CREATE INDEX company_ticker IF NOT EXISTS FOR (c:Company) ON (c.ticker);
 CREATE INDEX person_name IF NOT EXISTS FOR (p:Person) ON (p.name);
 CREATE INDEX event_date IF NOT EXISTS FOR (e:Event) ON (e.date);
 
-// 示例：创建公司节点
+// 示例：创建公司节�?
 CREATE (apple:Company {
     id: 'AAPL',
     name: 'Apple Inc.',
@@ -1118,22 +1118,22 @@ CREATE (apple:Company {
     country: 'USA'
 });
 
-// 示例：创建人物节点
+// 示例：创建人物节�?
 CREATE (tim:Person {
     id: 'tim_cook',
     name: 'Tim Cook',
     position: 'CEO'
 });
 
-// 示例：创建关系
+// 示例：创建关�?
 MATCH (p:Person {id: 'tim_cook'}), (c:Company {id: 'AAPL'})
 CREATE (p)-[:BELONG_TO {role: 'CEO', since: '2011'}]->(c);
 
-// 查询示例：查找苹果公司的所有关系
+// 查询示例：查找苹果公司的所有关�?
 MATCH (c:Company {id: 'AAPL'})-[r]-(n)
 RETURN c, r, n;
 
-// 查询示例：查找影响传导路径
+// 查询示例：查找影响传导路�?
 MATCH path = (c:Company {id: 'AAPL'})-[:INFLUENCE*1..3]->(target)
 RETURN path;
 ```
@@ -1215,7 +1215,7 @@ SENTIMENT_ANALYSIS_LATENCY = Histogram(
     ['model']
 )
 
-# FastAPI中间件
+# FastAPI中间�?
 app = FastAPI()
 
 @app.middleware("http")
@@ -1261,9 +1261,9 @@ from loguru import logger
 import sys
 
 # 配置日志
-logger.remove()  # 移除默认处理器
+logger.remove()  # 移除默认处理�?
 
-# 控制台日志
+# 控制台日�?
 logger.add(
     sys.stdout,
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
@@ -1300,7 +1300,7 @@ logger.warning("警告信息")
 logger.error("错误信息")
 
 try:
-    # 可能出错的代码
+    # 可能出错的代�?
     result = 1 / 0
 except Exception as e:
     logger.exception("发生异常")
@@ -1308,4 +1308,4 @@ except Exception as e:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状态**: ✅ 活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃

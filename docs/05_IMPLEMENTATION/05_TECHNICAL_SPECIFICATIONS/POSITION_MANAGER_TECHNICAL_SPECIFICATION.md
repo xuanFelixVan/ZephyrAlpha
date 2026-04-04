@@ -17,7 +17,7 @@ implementation_status: 进行?
 > 清风量化系统 v5.3 - PositionManager持仓管理器模块详细技术设?
 > **模块ID**: `POSITION_MANAGER_001`
 > **版本**: v1.0.0
-> **状?*: ?正式
+> **�?*: ?正式
 
 
 ## 1. 概述
@@ -29,7 +29,7 @@ implementation_status: 进行?
   - 持仓更新频繁：交易频繁导致持仓更新频?
   - 持仓查询多样：需要支持多种持仓查询方?
   - 风险控制严格：持仓需要严格的风险控制
-- **预期价?*: 
+- **预期�?*: 
   - 建立统一的持仓计算机?
   - 提供高效的持仓更新机?
   - 支持多种持仓查询方式
@@ -41,7 +41,7 @@ implementation_status: 进行?
 - **架构角色**: Layer 5策略执行核心，负责持仓计算和管理
 
 ### 1.3 版本信息
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -333,7 +333,7 @@ class PositionRepository:
             frozen_quantity: 冻结数量
             avg_cost: 平均成本
             current_price: 当前价格
-            market_value: 市?
+            market_value: �?
             unrealized_pnl: 浮动盈亏
             unrealized_pnl_pct: 浮动盈亏比例
             realized_pnl: 已实现盈?
@@ -468,14 +468,14 @@ class PositionCalculator:
         quantity: int,
         current_price: Decimal
     ) -> Decimal:
-        """计算市?
+        """计算�?
         
         参数:
             quantity: 数量
             current_price: 当前价格
             
         返回:
-            市?
+            �?
         """
         return Decimal(quantity) * current_price
     
@@ -524,7 +524,7 @@ class PositionCalculator:
         """计算仓位占比
         
         参数:
-            market_value: 市?
+            market_value: �?
             total_value: 总资?
             
         返回:
@@ -1008,10 +1008,10 @@ class PositionManager:
 | 持仓更新时间 | < 50ms | 单次更新 |
 | 持仓查询时间 | < 20ms | 单次查询 |
 | 缓存命中?| ?90% | 缓存监控 |
-| 数据一致?| 100% | 数据验证 |
+| 数据一�?| 100% | 数据验证 |
 
 ### 3.3 安全机制
-- **数据一致?*: 使用数据库事务保证数据一致?
+- **数据一�?*: 使用数据库事务保证数据一�?
 - **并发控制**: 使用乐观锁控制并发更?
 - **数据备份**: 定期备份持仓数据
 
@@ -1125,7 +1125,7 @@ def update_position_from_trade(
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 技术选型 | 版本要求 | 用?| 选择理由 |
+| 技术选型 | 版本要求 | �?| 选择理由 |
 |----------|----------|------|----------|
 | Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
 | psycopg2 | >=2.9 | PostgreSQL驱动 | 成熟稳定 |

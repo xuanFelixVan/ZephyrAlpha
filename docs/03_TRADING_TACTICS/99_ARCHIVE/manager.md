@@ -4,25 +4,25 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 策略池管理器
 
 > 策略池核心管理器
 >
-> **配套文档**：
+> **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
 > - 策略接口标准：[interface-standard.md](./interface-standard.md)
 
 ***
 
-## 1. 策略池管理器类
+## 1. 策略池管理器�?
 
 ```python
 class StrategyPool:
@@ -58,7 +58,7 @@ class StrategyPool:
         return False
 
     def set_market_state(self, market_state: MarketState):
-        """设置市场状态"""
+        """设置市场状�?""
         self.market_state = market_state
 
     def select_strategies(self,
@@ -68,29 +68,29 @@ class StrategyPool:
         根据市场状态选择策略
 
         参数:
-            min_sharpe: 最小夏普比率要求
-            max_strategies: 最多选择的策略数量
+            min_sharpe: 最小夏普比率要�?
+            max_strategies: 最多选择的策略数�?
 
         返回:
-            符合条件的策略列表，按夏普比率降序排列
+            符合条件的策略列表，按夏普比率降序排�?
         """
         candidates = []
 
         for strategy_id in self.enabled_strategies:
             strategy = self.strategies[strategy_id]
 
-            # 检查是否适用于当前市场状态
+            # 检查是否适用于当前市场状�?
             if self.market_state not in strategy.get_applicable_states():
                 continue
 
-            # 检查绩效
+            # 检查绩�?
             perf = strategy.get_performance()
             if perf.sharpe_ratio < min_sharpe:
                 continue
 
             candidates.append((strategy, perf.sharpe_ratio))
 
-        # 按夏普比率降序排列
+        # 按夏普比率降序排�?
         candidates.sort(key=lambda x: x[1], reverse=True)
 
         return [s[0] for s in candidates[:max_strategies]]
@@ -102,12 +102,12 @@ class StrategyPool:
         方法: 基于夏普比率的，风险平价分配
 
         返回:
-            策略ID -> 权重 的字典
+            策略ID -> 权重 的字�?
         """
         if not selected_strategies:
             return {}
 
-        # 计算总夏普比率
+        # 计算总夏普比�?
         total_sharpe = sum(
             s.get_performance().sharpe_ratio
             for s in selected_strategies
@@ -135,8 +135,8 @@ class StrategyPool:
         流程:
         1. 选择适合当前市场状态的策略
         2. 分配策略权重
-        3. 各策略分别生成信号
-        4. 按权重聚合信号
+        3. 各策略分别生成信�?
+        4. 按权重聚合信�?
         """
         # 选择策略
         selected = self.select_strategies(max_strategies=10)
@@ -146,7 +146,7 @@ class StrategyPool:
         # 分配权重
         self.strategy_weights = self.allocate_weights(selected)
 
-        # 生成各策略信号
+        # 生成各策略信�?
         all_signals = []
         for strategy in selected:
             signal = strategy.generate_signal(
@@ -167,7 +167,7 @@ class StrategyPool:
 ## 2. 策略池管理器配置
 
 ```python
-# 策略池配置
+# 策略池配�?
 STRATEGY_POOL_CONFIG = {
     'max_strategies': 50,
     'default_selection': 10,

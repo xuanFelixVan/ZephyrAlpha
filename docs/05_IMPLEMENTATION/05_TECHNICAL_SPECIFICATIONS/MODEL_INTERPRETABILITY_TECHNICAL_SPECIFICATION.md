@@ -6,133 +6,79 @@ status: Active
 parent_doc: docs/01_FRAMEWORK/MODEL_INTERPRETABILITY_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 4 (机器学习层) | 业务架构: AI模型服务
+layer: Layer 4 (机器学习�? | 业务架构: AI模型服务
 index: MI-001
 estimated_hours: 60
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
-owner: AI工程师
-standard_type: 专业量化机构技术规格书
-applicable_scope: 模型可解释性系统
-compliance_level: 顶级专业标准
+owner: AI工程�?standard_type: 专业量化机构技术规格书
+applicable_scope: 模型可解释性系�?compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/MODEL_INTERPRETABILITY_BLUEPRINT.md
-implementation_status: 技术规格设计完成
----
+implementation_status: 技术规格设计完�?---
 
 # 模型可解释性技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 模型可解释性详细技术设计
-> **索引**: `MI-001`
-> **开发时长**: 60h
-> **核心定位**: 提供模型决策解释、特征重要性分析和可视化能力
-
+> 清风量化系统 v5.3 - 模型可解释性详细技术设�?> **索引**: `MI-001`
+> **开发时�?*: 60h
+> **核心定位**: 提供模型决策解释、特征重要性分析和可视化能�?
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目的
-
-**业务需求**:
+### 1.1 设计背景与业务目�?
+**业务需�?*:
 - 机构投资者需要理解模型决策逻辑
-- 监管要求模型决策可解释（SR 11-7）
-- 风险管理需要归因分析
-- 模型调试和改进需要可解释性
-
-**技术痛点**:
-- 深度学习模型是"黑箱"，决策过程不透明
+- 监管要求模型决策可解释（SR 11-7�?- 风险管理需要归因分�?- 模型调试和改进需要可解释�?
+**技术痛�?*:
+- 深度学习模型�?黑箱"，决策过程不透明
 - 缺乏统一的可解释性工具和框架
 - 可解释性结果难以转化为业务语言
 - 不同模型需要不同的解释方法
 
-**预期价值**:
+**预期价�?*:
 - 提升投资者信任度50%
-- 满足监管可解释性要求100%
+- 满足监管可解释性要�?00%
 - 模型调试效率提升30%
 - 策略归因分析能力100%
 
-### 1.2 技术定位与架构层归属
-
-- **Layer定位**: Layer 4 - 机器学习层（AI模型服务）
-- **模块类别**: 核心支撑模块
-- **架构角色**: 提供模型可解释性、特征重要性分析、决策解释
-
-### 1.3 版本信息与变更记录
-
-| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+### 1.2 技术定位与架构层归�?
+- **Layer定位**: Layer 4 - 机器学习层（AI模型服务�?- **模块类别**: 核心支撑模块
+- **架构角色**: 提供模型可解释性、特征重要性分析、决策解�?
+### 1.3 版本信息与变更记�?
+| 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | AI工程师 | 初始版本 | Active |
+| v1.0 | 2026-04-03 | AI工程�?| 初始版本 | Active |
 
 ---
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构图
-
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                   模型可解释性系统架构                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             全局解释层 (Global Explanation Layer)         │  │
-│ │ ├── FeatureImportanceAnalyzer (特征重要性分析)           │  │
-│ │ ├── PartialDependencePlotter (偏依赖图)                  │  │
-│ │ ├── GlobalSHAPAnalyzer (全局SHAP分析)                    │  │
-│ │ └── ModelSummaryGenerator (模型摘要生成)                 │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                             │                                   │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             局部解释层 (Local Explanation Layer)          │  │
-│ │ ├── SHAPExplainer (SHAP解释器)                           │  │
-│ │ ├── LIMEExplainer (LIME解释器)                           │  │
-│ │ ├── CounterfactualExplainer (反事实解释)                 │  │
-│ │ └── IndividualPredictionAnalyzer (单样本分析)            │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                             │                                   │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             可视化层 (Visualization Layer)                │  │
-│ │ ├── SHAPVisualizer (SHAP可视化)                          │  │
-│ │ ├── FeatureImportancePlotter (特征重要性图)              │  │
-│ │ ├── DecisionPathVisualizer (决策路径可视化)              │  │
-│ │ └── InteractiveDashboard (交互式仪表板)                  │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                             │                                   │
-│ ┌──────────────────────────────────────────────────────────┐  │
-│ │             自然语言生成层 (NLG Layer)                    │  │
-│ │ ├── DecisionExplainer (决策解释生成)                     │  │
-│ │ ├── FactorAttributionGenerator (因子归因生成)            │  │
-│ │ └── ReportGenerator (报告生成器)                         │  │
-│ └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────────────────────────────�?�?                  模型可解释性系统架�?                           �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            全局解释�?(Global Explanation Layer)         �? �?�?�?├── FeatureImportanceAnalyzer (特征重要性分�?           �? �?�?�?├── PartialDependencePlotter (偏依赖图)                  �? �?�?�?├── GlobalSHAPAnalyzer (全局SHAP分析)                    �? �?�?�?└── ModelSummaryGenerator (模型摘要生成)                 �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            局部解释层 (Local Explanation Layer)          �? �?�?�?├── SHAPExplainer (SHAP解释�?                           �? �?�?�?├── LIMEExplainer (LIME解释�?                           �? �?�?�?├── CounterfactualExplainer (反事实解�?                 �? �?�?�?└── IndividualPredictionAnalyzer (单样本分�?            �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            可视化层 (Visualization Layer)                �? �?�?�?├── SHAPVisualizer (SHAP可视�?                          �? �?�?�?├── FeatureImportancePlotter (特征重要性图)              �? �?�?�?├── DecisionPathVisualizer (决策路径可视�?              �? �?�?�?└── InteractiveDashboard (交互式仪表板)                  �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            自然语言生成�?(NLG Layer)                    �? �?�?�?├── DecisionExplainer (决策解释生成)                     �? �?�?�?├── FactorAttributionGenerator (因子归因生成)            �? �?�?�?└── ReportGenerator (报告生成�?                         �? �?�?└──────────────────────────────────────────────────────────�? �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 4 - 机器学习层
-- **职责范围**: 模型可解释性、特征重要性、决策解释、可视化
-- **上下层接口**: 
-  - 上层依赖: Layer 8 (人机交互层) - 解释请求
+- **Layer归属**: Layer 4 - 机器学习�?- **职责范围**: 模型可解释性、特征重要性、决策解释、可视化
+- **上下层接�?*: 
+  - 上层依赖: Layer 8 (人机交互�? - 解释请求
   - 下层依赖: Layer 4 (ML模型) - 模型信息
 
-### 2.3 模块职责与边界定义
-
-- **核心职责**: 模型可解释性分析
-- **职责边界**: 
-  - ✅ 本模块负责: 特征重要性、SHAP/LIME解释、可视化、自然语言解释
-  - ❌ 本模块不负责: 模型训练、模型部署、特征工程
-- **接口契约**: 提供标准化的可解释性API
+### 2.3 模块职责与边界定�?
+- **核心职责**: 模型可解释性分�?- **职责边界**: 
+  - �?本模块负�? 特征重要性、SHAP/LIME解释、可视化、自然语言解释
+  - �?本模块不负责: 模型训练、模型部署、特征工�?- **接口契约**: 提供标准化的可解释性API
 
 ### 2.4 依赖关系与集成点
 
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| SHAP | 强依赖 | Python库 | >=0.42.0 | SHAP值计算 |
-| LIME | 强依赖 | Python库 | >=0.2.0 | 局部解释 |
-| Captum | 强依赖 | Python库 | >=0.7.0 | PyTorch解释 |
-| Matplotlib | 强依赖 | Python库 | >=3.8.0 | 可视化 |
-| Plotly | 强依赖 | Python库 | >=5.18.0 | 交互式可视化 |
+| SHAP | 强依�?| Python�?| >=0.42.0 | SHAP值计�?|
+| LIME | 强依�?| Python�?| >=0.2.0 | 局部解�?|
+| Captum | 强依�?| Python�?| >=0.7.0 | PyTorch解释 |
+| Matplotlib | 强依�?| Python�?| >=3.8.0 | 可视�?|
+| Plotly | 强依�?| Python�?| >=5.18.0 | 交互式可视化 |
 
 ---
 
@@ -158,7 +104,7 @@ class ExplanationType(Enum):
 
 
 class VisualizationType(Enum):
-    """可视化类型"""
+    """可视化类�?""
     SHAP_SUMMARY = "shap_summary"
     FEATURE_IMPORTANCE = "feature_importance"
     PARTIAL_DEPENDENCE = "partial_dependence"
@@ -168,7 +114,7 @@ class VisualizationType(Enum):
 
 @dataclass
 class FeatureImportance:
-    """特征重要性"""
+    """特征重要�?""
     feature_name: str
     importance_score: float
     rank: int
@@ -200,7 +146,7 @@ class LIMEExplanation:
 
 @dataclass
 class CounterfactualExplanation:
-    """反事实解释"""
+    """反事实解�?""
     sample_id: str
     original_prediction: float
     counterfactual_prediction: float
@@ -221,11 +167,9 @@ class DecisionExplanation:
 
 
 class SHAPExplainer:
-    """SHAP解释器
-    
+    """SHAP解释�?    
     基于SHAP (SHapley Additive exPlanations) 的模型解释器
-    提供全局和局部解释能力
-    """
+    提供全局和局部解释能�?    """
     
     def __init__(self, model: Any, background_data: pd.DataFrame):
         self.model = model
@@ -233,7 +177,7 @@ class SHAPExplainer:
         self.explainer = self._create_explainer()
         
     def _create_explainer(self) -> Any:
-        """创建SHAP解释器"""
+        """创建SHAP解释�?""
         import shap
         
         model_type = type(self.model).__name__
@@ -283,15 +227,13 @@ class SHAPExplainer:
         }
     
     def explain_local(self, X: pd.DataFrame, sample_indices: Optional[List[int]] = None) -> List[SHAPExplanation]:
-        """局部解释
-        
+        """局部解�?        
         Args:
             X: 特征数据
             sample_indices: 样本索引列表
             
         Returns:
-            List[SHAPExplanation]: 局部解释列表
-        """
+            List[SHAPExplanation]: 局部解释列�?        """
         if sample_indices is None:
             sample_indices = list(range(min(10, len(X))))
         
@@ -340,8 +282,8 @@ class SHAPExplainer:
         for feature, shap_val in sorted_features:
             direction = "正向" if shap_val > 0 else "负向"
             text_parts.append(
-                f"- {feature} (值: {feature_values[feature]:.4f}) "
-                f"贡献了 {direction} 影响 {abs(shap_val):.4f}\n"
+                f"- {feature} (�? {feature_values[feature]:.4f}) "
+                f"贡献�?{direction} 影响 {abs(shap_val):.4f}\n"
             )
         
         return "".join(text_parts)
@@ -355,7 +297,7 @@ class SHAPExplainer:
         return (float(ci[0]), float(ci[1]))
     
     def _prepare_summary_plot_data(self, shap_values: np.ndarray, X: pd.DataFrame) -> Dict[str, Any]:
-        """准备摘要图数据"""
+        """准备摘要图数�?""
         return {
             "shap_values": shap_values.tolist(),
             "feature_names": X.columns.tolist(),
@@ -364,8 +306,7 @@ class SHAPExplainer:
 
 
 class LIMEExplainer:
-    """LIME解释器
-    
+    """LIME解释�?    
     基于LIME (Local Interpretable Model-agnostic Explanations) 的局部解释器
     """
     
@@ -376,7 +317,7 @@ class LIMEExplainer:
         self.explainer = self._create_explainer()
         
     def _create_explainer(self) -> Any:
-        """创建LIME解释器"""
+        """创建LIME解释�?""
         import lime.lime_tabular
         
         return lime.lime_tabular.LimeTabularExplainer(
@@ -386,12 +327,10 @@ class LIMEExplainer:
         )
     
     def explain_local(self, sample: pd.Series, num_features: int = 10) -> LIMEExplanation:
-        """局部解释
-        
+        """局部解�?        
         Args:
             sample: 单个样本
-            num_features: 解释的特征数量
-            
+            num_features: 解释的特征数�?            
         Returns:
             LIMEExplanation: LIME解释
         """
@@ -429,8 +368,8 @@ class LIMEExplainer:
         for feature, weight in sorted_features:
             direction = "增加" if weight > 0 else "降低"
             text_parts.append(
-                f"- {feature} (值: {sample[feature]:.4f}) "
-                f"{direction}预测值 {abs(weight):.4f}\n"
+                f"- {feature} (�? {sample[feature]:.4f}) "
+                f"{direction}预测�?{abs(weight):.4f}\n"
             )
         
         return "".join(text_parts)
@@ -439,8 +378,7 @@ class LIMEExplainer:
 class FeatureImportanceAnalyzer:
     """特征重要性分析器
     
-    提供多种特征重要性分析方法
-    """
+    提供多种特征重要性分析方�?    """
     
     def __init__(self, model: Any, X: pd.DataFrame, y: pd.Series):
         self.model = model
@@ -452,15 +390,13 @@ class FeatureImportanceAnalyzer:
         n_repeats: int = 10,
         random_state: int = 42
     ) -> List[FeatureImportance]:
-        """排列重要性分析
-        
+        """排列重要性分�?        
         Args:
             n_repeats: 重复次数
             random_state: 随机种子
             
         Returns:
-            List[FeatureImportance]: 特征重要性列表
-        """
+            List[FeatureImportance]: 特征重要性列�?        """
         from sklearn.inspection import permutation_importance
         
         result = permutation_importance(
@@ -489,7 +425,7 @@ class FeatureImportanceAnalyzer:
     def analyze_builtin_importance(self) -> List[FeatureImportance]:
         """内置特征重要性（树模型）"""
         if not hasattr(self.model, 'feature_importances_'):
-            raise ValueError("模型不支持内置特征重要性")
+            raise ValueError("模型不支持内置特征重要�?)
         
         importances = self.model.feature_importances_
         sorted_idx = np.argsort(importances)[::-1]
@@ -507,7 +443,7 @@ class FeatureImportanceAnalyzer:
         return result
     
     def analyze_correlation_importance(self) -> List[FeatureImportance]:
-        """相关性重要性"""
+        """相关性重要�?""
         correlations = self.X.corrwith(self.y).abs()
         sorted_corr = correlations.sort_values(ascending=False)
         
@@ -525,8 +461,7 @@ class FeatureImportanceAnalyzer:
 
 
 class DecisionExplainer:
-    """决策解释生成器
-    
+    """决策解释生成�?    
     将模型解释转化为自然语言
     """
     
@@ -543,10 +478,7 @@ class DecisionExplainer:
         """生成决策解释
         
         Args:
-            prediction: 预测值
-            feature_importance: 特征重要性列表
-            context: 上下文信息
-            
+            prediction: 预测�?            feature_importance: 特征重要性列�?            context: 上下文信�?            
         Returns:
             DecisionExplanation: 决策解释
         """
@@ -583,7 +515,7 @@ class DecisionExplainer:
         for f in factors:
             direction = "正向贡献" if f.contribution_direction == "positive" else "负向贡献"
             factor_descriptions.append(
-                f"{f.feature_name}（重要性: {f.importance_score:.4f}, {direction}）"
+                f"{f.feature_name}（重要�? {f.importance_score:.4f}, {direction}�?
             )
         
         text = template.format(
@@ -600,7 +532,7 @@ class DecisionExplainer:
         prediction: float,
         factors: List[FeatureImportance]
     ) -> Dict[str, Any]:
-        """准备可视化数据"""
+        """准备可视化数�?""
         return {
             "type": "bar",
             "data": {
@@ -616,7 +548,7 @@ class DecisionExplainer:
         return {
             "decision": """
 模型预测结果: {prediction:.4f}
-置信度: {confidence:.2%}
+置信�? {confidence:.2%}
 
 关键影响因素:
 {factors}
@@ -627,10 +559,8 @@ class DecisionExplainer:
 
 
 class ModelInterpretabilityService:
-    """模型可解释性服务
-    
-    统一的可解释性服务接口
-    """
+    """模型可解释性服�?    
+    统一的可解释性服务接�?    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -694,8 +624,7 @@ class ModelInterpretabilityService:
         y: pd.Series,
         model: Any
     ) -> Dict[str, Any]:
-        """生成可解释性报告
-        
+        """生成可解释性报�?        
         Args:
             model_id: 模型ID
             X: 特征数据
@@ -703,8 +632,7 @@ class ModelInterpretabilityService:
             model: 模型对象
             
         Returns:
-            Dict: 可解释性报告
-        """
+            Dict: 可解释性报�?        """
         shap_global = self.shap_explainers[model_id].explain_global(X)
         
         importance_analyzer = FeatureImportanceAnalyzer(model, X, y)
@@ -729,7 +657,7 @@ class ModelInterpretabilityService:
         return report
     
     def _prepare_importance_chart(self, importance: List[FeatureImportance]) -> Dict[str, Any]:
-        """准备重要性图表数据"""
+        """准备重要性图表数�?""
         return {
             "type": "horizontal_bar",
             "data": {
@@ -777,7 +705,7 @@ class TestSHAPExplainer:
         assert result["feature_importance"][0].feature_name in ['A', 'B']
     
     def test_local_explanation(self, sample_data):
-        """测试局部解释"""
+        """测试局部解�?""
         X, y = sample_data
         from sklearn.linear_model import LinearRegression
         
@@ -794,14 +722,12 @@ class TestSHAPExplainer:
 
 ---
 
-## 5. 风险与约束
-
-### 5.1 技术风险
-
-| 风险项 | 风险等级 | 缓解措施 |
+## 5. 风险与约�?
+### 5.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| SHAP计算开销大 | P2 | 采样近似、GPU加速 |
-| 解释不一致 | P2 | 多方法交叉验证 |
+| SHAP计算开销�?| P2 | 采样近似、GPU加�?|
+| 解释不一�?| P2 | 多方法交叉验�?|
 | 可视化性能 | P3 | 数据聚合、懒加载 |
 
 ---
@@ -810,31 +736,31 @@ class TestSHAPExplainer:
 
 ### 6.1 功能验收
 
-| 验收项 | 验收标准 |
+| 验收�?| 验收标准 |
 |--------|----------|
-| SHAP解释 | 支持树模型、神经网络、任意模型 |
-| LIME解释 | 支持表格数据局部解释 |
-| 特征重要性 | 支持多种重要性计算方法 |
-| 可视化 | 生成交互式可视化图表 |
+| SHAP解释 | 支持树模型、神经网络、任意模�?|
+| LIME解释 | 支持表格数据局部解�?|
+| 特征重要�?| 支持多种重要性计算方�?|
+| 可视�?| 生成交互式可视化图表 |
 
 ### 6.2 性能验收
 
-| 指标 | 目标值 |
+| 指标 | 目标�?|
 |------|--------|
-| 单样本解释时间 | < 1秒 |
-| 全局解释时间（1000样本） | < 30秒 |
-| 报告生成时间 | < 60秒 |
+| 单样本解释时�?| < 1�?|
+| 全局解释时间�?000样本�?| < 30�?|
+| 报告生成时间 | < 60�?|
 
 ---
 
 ## 7. 版本历史
 
-| 版本 | 日期 | 作者 | 变更说明 |
+| 版本 | 日期 | 作�?| 变更说明 |
 |------|------|------|----------|
-| v1.0 | 2026-04-03 | AI工程师 | 初始版本 |
+| v1.0 | 2026-04-03 | AI工程�?| 初始版本 |
 
 ---
 
 **文档版本**: v1.0.0
-**最后更新**: 2026-04-03
-**维护者**: AI工程师
+**最后更�?*: 2026-04-03
+**维护�?*: AI工程�?

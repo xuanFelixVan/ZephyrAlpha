@@ -120,7 +120,7 @@ implementation_status: 进行?
 
 ```python
 def check_version_compatibility():
-    """检查系统版本兼容?""
+    """检查系统版本兼�?""
     
     # 读取当前版本
     current_version = read_system_version()
@@ -128,7 +128,7 @@ def check_version_compatibility():
     # 读取快照版本
     snapshot_version = read_snapshot_version()
     
-    # 检查兼容?
+    # 检查兼�?
     if current_version.major != snapshot_version.major:
         raise VersionMismatchError(
             f"主版本不匹配: {current_version} vs {snapshot_version}"
@@ -210,4 +210,4 @@ def negotiate_interface_version():
 | v4.0 | 2026-03-28 | 首次发布 |
 
 
-**版本**: 1.0 | **更新**: 2026-03-28 | **状?*: ?活跃
+**版本**: 1.0 | **更新**: 2026-03-28 | **�?*: ?活跃

@@ -65,7 +65,7 @@ class PortfolioRebalancer:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            market_state: 市场状?            
+            market_state: 市场�?            
         Returns:
             bool: 是否需要再平衡
         """
@@ -133,7 +133,7 @@ class RLRebalanceAgent:
         预测动作
         
         Args:
-            observation: 观察状?            
+            observation: 观察�?            
         Returns:
             np.ndarray: 动作（权重调整）
         """
@@ -171,12 +171,12 @@ def should_rebalance(
     """
     再平衡决策算?    
     条件:
-    1. 权重偏离超过阈?    2. 预期收益 > 交易成本
+    1. 权重偏离超过�?    2. 预期收益 > 交易成本
     
     Args:
         current_weights: 当前权重
         target_weights: 目标权重
-        threshold: 阈?        
+        threshold: �?        
     Returns:
         bool: 是否需要再平衡
     """
@@ -184,7 +184,7 @@ def should_rebalance(
     weight_drift = np.abs(current_weights - target_weights)
     max_drift = weight_drift.max()
     
-    # 判断是否超过阈?    if max_drift > threshold:
+    # 判断是否超过�?    if max_drift > threshold:
         return True
     
     # 计算预期收益改善
@@ -207,7 +207,7 @@ def should_rebalance(
 class RebalanceEnv(gym.Env):
     """
     再平衡强化学习环?    
-    状? [当前权重, 市场状? 风险指标]
+    �? [当前权重, 市场�? 风险指标]
     动作: 权重调整
     奖励: 风险调整后收?- 交易成本
     """
@@ -248,7 +248,7 @@ class RebalanceEnv(gym.Env):
         # 计算奖励
         reward = self.calculate_reward(new_weights)
         
-        # 更新状?        self.current_weights = new_weights
+        # 更新�?        self.current_weights = new_weights
         observation = self.get_observation()
         
         return observation, reward, False, {}
@@ -285,7 +285,7 @@ class TestPortfolioRebalancing:
         current = pd.Series([0.4, 0.3, 0.3], index=['A', 'B', 'C'])
         target = pd.Series([0.5, 0.3, 0.2], index=['A', 'B', 'C'])
         
-        # 偏离超过阈?        assert rebalancer.should_rebalance(current, target, threshold=0.05) == True
+        # 偏离超过�?        assert rebalancer.should_rebalance(current, target, threshold=0.05) == True
         
         # 偏离未超过阈?        target2 = pd.Series([0.42, 0.29, 0.29], index=['A', 'B', 'C'])
         assert rebalancer.should_rebalance(current, target2, threshold=0.05) == False
@@ -329,4 +329,4 @@ torch>=2.0.0
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?

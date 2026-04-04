@@ -86,7 +86,7 @@ D:\ZephyrAlpha\
 �?  �?  ├── 01_QUICKSTART/            # 快速开�?
 �?  �?  ├── 02_DEVELOPMENT/           # 开发规�?
 �?  �?  ├── 03_DEPLOYMENT/            # 部署指南
-�?  �?  └── 04_OPERATIONS/            # 运维手册
+�?  �?  └── 07_OPERATIONS/            # 运维手册
 �?  �?
 �?  ├── 06_ARCHIVE/                   # 归档
 �?  �?  ├── main/                     # 主文档历�?

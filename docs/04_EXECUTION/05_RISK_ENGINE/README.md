@@ -4,25 +4,25 @@ version: 2.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-04
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监控
+applicable_scope: 交易执行与监�?
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 related_documents:
   - 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md (风控规则体系框架)
-  - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成器)
-  - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风险监控仪表板)
+  - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成�?
+  - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风险监控仪表�?
 ---
 
 # 风控规则引擎
 
-> **Layer 6: 风险监控** - 风险规则引擎、实时检查、告警触发
+> **Layer 6: 风险监控** - 风险规则引擎、实时检查、告警触�?
 >
-> **版本**: v2.0 (合并版)
+> **版本**: v2.0 (合并�?
 > **更新**: 2026-04-04
-> **说明**: 本文档整合了原 `03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md` 的内容
+> **说明**: 本文档整合了�?`03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md` 的内�?
 
 ---
 
@@ -30,30 +30,30 @@ related_documents:
 
 | 原则 | 说明 |
 |------|------|
-| **规则即配置** | 风控规则以YAML配置，不写死代码 |
-| **三层防御** | 事前检查 → 事中监控 → 事后分析 |
-| **快速失败** | 风控触发时立即行动，不等待人工 |
-| **完整审计** | 所有风控事件完整记录 |
+| **规则即配�?* | 风控规则以YAML配置，不写死代码 |
+| **三层防御** | 事前检�?�?事中监控 �?事后分析 |
+| **快速失�?* | 风控触发时立即行动，不等待人�?|
+| **完整审计** | 所有风控事件完整记�?|
 
 ---
 
 ## 文档层级关系
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  框架层: 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md  │
-│  (定义实时风险监控的整体架构和设计原则)                        │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│  战术层: 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md       │
-│  (定义风控规则体系和三层防御架构)                             │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│  执行层: 本文档 (04_EXECUTION/05_RISK_ENGINE/README.md)      │
-│  (实现风控规则引擎核心功能)                                   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�? 框架�? 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md  �?
+�? (定义实时风险监控的整体架构和设计原则)                        �?
+└─────────────────────────────────────────────────────────────�?
+                              �?
+┌─────────────────────────────────────────────────────────────�?
+�? 战术�? 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md       �?
+�? (定义风控规则体系和三层防御架�?                             �?
+└─────────────────────────────────────────────────────────────�?
+                              �?
+┌─────────────────────────────────────────────────────────────�?
+�? 执行�? 本文�?(04_EXECUTION/05_RISK_ENGINE/README.md)      �?
+�? (实现风控规则引擎核心功能)                                   �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ---
@@ -62,22 +62,22 @@ related_documents:
 
 ```
 风控规则引擎
-├── 规则定义层 (Rule Definition)
-│   ├── 规则DSL语法
-│   ├── 规则模板库
-│   └── 规则版本管理
-├── 规则执行层 (Rule Engine)
-│   ├── 规则解析器
-│   ├── 规则评估器
-│   └── 规则组合器
+├── 规则定义�?(Rule Definition)
+�?  ├── 规则DSL语法
+�?  ├── 规则模板�?
+�?  └── 规则版本管理
+├── 规则执行�?(Rule Engine)
+�?  ├── 规则解析�?
+�?  ├── 规则评估�?
+�?  └── 规则组合�?
 ├── 实时检查层 (Real-time Check)
-│   ├── 持仓检查
-│   ├── 交易检查
-│   └── 市场检查
-├── 告警触发层 (Alert Trigger)
-│   ├── 告警分级
-│   ├── 通知渠道
-│   └── 告警抑制
+�?  ├── 持仓检�?
+�?  ├── 交易检�?
+�?  └── 市场检�?
+├── 告警触发�?(Alert Trigger)
+�?  ├── 告警分级
+�?  ├── 通知渠道
+�?  └── 告警抑制
 └── 风控报告生成
     ├── 风险摘要
     ├── 违规记录
@@ -106,10 +106,10 @@ class RuleType(Enum):
     TURNOVER_LIMIT = "turnover_limit"       # 换手限制
     DRAWDAWN_LIMIT = "drawdown_limit"       # 回撤限制
     LOSS_LIMIT = "loss_limit"               # 亏损限制
-    LIQUIDITY_LIMIT = "liquidity_limit"     # 流动性限制
-    VOLATILITY_LIMIT = "volatility_limit"   # 波动率限制
-    CORRELATION_LIMIT = "correlation_limit"  # 相关性限制
-    CUSTOM = "custom"                       # 自定义规则
+    LIQUIDITY_LIMIT = "liquidity_limit"     # 流动性限�?
+    VOLATILITY_LIMIT = "volatility_limit"   # 波动率限�?
+    CORRELATION_LIMIT = "correlation_limit"  # 相关性限�?
+    CUSTOM = "custom"                       # 自定义规�?
 
 
 class RuleSeverity(Enum):
@@ -121,7 +121,7 @@ class RuleSeverity(Enum):
 
 
 class RuleStatus(Enum):
-    """规则状态"""
+    """规则状�?""
     ENABLED = "enabled"
     DISABLED = "disabled"
     SUSPENDED = "suspended"
@@ -130,9 +130,9 @@ class RuleStatus(Enum):
 @dataclass
 class RuleCondition:
     """规则条件"""
-    field: str                    # 字段名
-    operator: str                # 操作符: >, <, >=, <=, ==, !=, in, not in
-    value: Any                   # 比较值
+    field: str                    # 字段�?
+    operator: str                # 操作�? >, <, >=, <=, ==, !=, in, not in
+    value: Any                   # 比较�?
 
     def evaluate(self, context: Dict) -> bool:
         """评估条件"""
@@ -159,7 +159,7 @@ class RuleCondition:
             return False
 
     def _get_field_value(self, context: Dict, field: str) -> Any:
-        """获取字段值"""
+        """获取字段�?""
         parts = field.split(".")
         value = context
 
@@ -212,7 +212,7 @@ class RuleViolation:
     resolved_at: Optional[datetime] = None
 ```
 
-### 2.2 预定义规则模板
+### 2.2 预定义规则模�?
 
 ```python
 class RuleTemplates:
@@ -225,7 +225,7 @@ class RuleTemplates:
         """单票持仓上限
 
         参数:
-            max_position_pct: 最大持仓比例 (默认15%)
+            max_position_pct: 最大持仓比�?(默认15%)
         """
         return Rule(
             rule_id="R001",
@@ -276,10 +276,10 @@ class RuleTemplates:
 
     @staticmethod
     def max_drawdown_limit(max_dd_pct: float = 0.10) -> Rule:
-        """最大回撤限制"""
+        """最大回撤限�?""
         return Rule(
             rule_id="R004",
-            name="最大回撤限制",
+            name="最大回撤限�?,
             description=f"账户最大回撤不得超过{max_dd_pct:.0%}",
             rule_type=RuleType.DRAWDAWN_LIMIT,
             severity=RuleSeverity.CRITICAL,
@@ -295,10 +295,10 @@ class RuleTemplates:
         max_turnover_pct: float = 0.50,
         window: int = 1
     ) -> Rule:
-        """换手率限制"""
+        """换手率限�?""
         return Rule(
             rule_id="R005",
-            name="换手率限制",
+            name="换手率限�?,
             description=f"{window}日内累计换手率不得超过{max_turnover_pct:.0%}",
             rule_type=RuleType.TURNOVER_LIMIT,
             severity=RuleSeverity.WARNING,
@@ -317,11 +317,11 @@ class RuleTemplates:
         min_daily_volume: float = 1000000,
         max_position_pct_of_volume: float = 0.01
     ) -> Rule:
-        """流动性限制"""
+        """流动性限�?""
         return Rule(
             rule_id="R006",
-            name="流动性限制",
-            description="持仓量不得超过当日成交量的1%",
+            name="流动性限�?,
+            description="持仓量不得超过当日成交量�?%",
             rule_type=RuleType.LIQUIDITY_LIMIT,
             severity=RuleSeverity.WARNING,
             conditions=[
@@ -343,10 +343,10 @@ class RuleTemplates:
         max_volatility: float = 0.05,
         window: int = 20
     ) -> Rule:
-        """价格波动率限制"""
+        """价格波动率限�?""
         return Rule(
             rule_id="R007",
-            name="波动率限制",
+            name="波动率限�?,
             description=f"持仓股票{window}日波动率不得超过{max_volatility:.0%}",
             rule_type=RuleType.VOLATILITY_LIMIT,
             severity=RuleSeverity.WARNING,
@@ -365,7 +365,7 @@ class RuleTemplates:
 
 ## 3. 规则引擎核心
 
-### 3.1 风控执行器
+### 3.1 风控执行�?
 
 ```python
 class RiskControlEngine:
@@ -388,18 +388,18 @@ class RiskControlEngine:
             self.register_rule(rule)
 
     def set_alert_handler(self, handler: Callable):
-        """设置告警处理器"""
+        """设置告警处理�?""
         self.alert_handler = handler
 
     def check_pretrade(self, order: Order, context: Dict) -> CheckResult:
-        """交易前检查
+        """交易前检�?
 
         参数:
             order: 订单
-            context: 上下文（持仓、市场等）
+            context: 上下文（持仓、市场等�?
 
         返回:
-            检查结果
+            检查结�?
         """
         context["order"] = order.to_dict()
         context["action"] = "pretrade"
@@ -417,7 +417,7 @@ class RiskControlEngine:
         return CheckResult(allowed=True, triggered_rules=[], blocked=False)
 
     def check_posttrade(self, trade: Trade, context: Dict) -> CheckResult:
-        """交易后检查"""
+        """交易后检�?""
         context["trade"] = trade.to_dict()
         context["action"] = "posttrade"
 
@@ -430,7 +430,7 @@ class RiskControlEngine:
         )
 
     def check_portfolio(self, portfolio: Portfolio, context: Dict) -> CheckResult:
-        """投资组合检查"""
+        """投资组合检�?""
         context["portfolio"] = portfolio.to_dict()
         context["position"] = portfolio.get_position_summary()
         context["action"] = "portfolio_check"
@@ -452,7 +452,7 @@ class RiskControlEngine:
         )
 
     def check_market(self, market_data: Dict, context: Dict) -> CheckResult:
-        """市场状态检查"""
+        """市场状态检�?""
         context["market"] = market_data
         context["action"] = "market_check"
 
@@ -465,7 +465,7 @@ class RiskControlEngine:
         )
 
     def _evaluate_rules(self, context: Dict) -> List[Rule]:
-        """评估所有规则"""
+        """评估所有规�?""
         triggered = []
 
         for rule in self.rules.values():
@@ -529,14 +529,14 @@ class RiskControlEngine:
                 self._execute_closing(rule, violation, context)
 
     def _send_warning(self, rule: Rule, violation: RuleViolation, context: Dict):
-        """发送警告"""
+        """发送警�?""
         message = f"Risk Warning: {rule.name} triggered"
 
         if self.alert_handler:
             self.alert_handler("warning", message)
 
     def _send_alert(self, rule: Rule, violation: RuleViolation, context: Dict):
-        """发送告警"""
+        """发送告�?""
         message = f"Risk Alert [{rule.severity.value.upper()}]: {rule.name}"
 
         if self.alert_handler:
@@ -547,14 +547,14 @@ class RiskControlEngine:
         pass
 
     def _format_block_message(self, triggered_rules: List[Rule]) -> str:
-        """格式化阻止消息"""
+        """格式化阻止消�?""
         rule_names = [r.name for r in triggered_rules]
         return f"Blocked by risk rules: {', '.join(rule_names)}"
 
 
 @dataclass
 class CheckResult:
-    """检查结果"""
+    """检查结�?""
     allowed: bool
     triggered_rules: List[Rule]
     blocked: bool
@@ -565,11 +565,11 @@ class CheckResult:
 
 ## 4. 实时监控
 
-### 4.1 风控监控器
+### 4.1 风控监控�?
 
 ```python
 class RiskMonitor:
-    """实时风险监控器"""
+    """实时风险监控�?""
 
     def __init__(self, engine: RiskControlEngine):
         self.engine = engine
@@ -579,7 +579,7 @@ class RiskMonitor:
         self.alerts: List[Alert] = []
 
     def update_portfolio(self, portfolio: Portfolio):
-        """更新组合状态"""
+        """更新组合状�?""
         self.portfolio_state = {
             "total_value": portfolio.total_value,
             "positions": portfolio.positions,
@@ -603,7 +603,7 @@ class RiskMonitor:
             self._process_triggered_rules(result.triggered_rules, context)
 
     def update_market(self, market_data: Dict):
-        """更新市场状态"""
+        """更新市场状�?""
         self.market_state.update(market_data)
 
         context = {"market": self.market_state}
@@ -622,7 +622,7 @@ class RiskMonitor:
         triggered_rules: List[Rule],
         context: Dict
     ):
-        """处理触发的规则"""
+        """处理触发的规�?""
         for rule in triggered_rules:
             if rule.severity == RuleSeverity.CRITICAL:
                 alert = Alert(
@@ -682,11 +682,11 @@ class AlertSeverity(Enum):
 
 ## 5. 风控报告
 
-### 5.1 报告生成器
+### 5.1 报告生成�?
 
 ```python
 class RiskReportGenerator:
-    """风控报告生成器"""
+    """风控报告生成�?""
 
     def __init__(self, engine: RiskControlEngine, monitor: RiskMonitor):
         self.engine = engine
@@ -717,10 +717,10 @@ class RiskReportGenerator:
 
         if summary.get("portfolio"):
             p = summary["portfolio"]
-            lines.append(f"  账户总值: {p.get('total_value', 0):,.2f}")
+            lines.append(f"  账户总�? {p.get('total_value', 0):,.2f}")
             lines.append(f"  今日盈亏: {p.get('daily_pnl', 0):,.2f} ({p.get('daily_pnl_pct', 0):.2%})")
-            lines.append(f"  最大回撤: {p.get('max_drawdown', 0):.2%}")
-            lines.append(f"  波动率: {p.get('volatility', 0):.2%}")
+            lines.append(f"  最大回�? {p.get('max_drawdown', 0):.2%}")
+            lines.append(f"  波动�? {p.get('volatility', 0):.2%}")
 
         lines.append("")
         lines.append("2. 规则触发统计")
@@ -731,11 +731,11 @@ class RiskReportGenerator:
             rule_stats[v.rule_name] = rule_stats.get(v.rule_name, 0) + 1
 
         for rule_name, count in sorted(rule_stats.items(), key=lambda x: -x[1]):
-            lines.append(f"  {rule_name}: {count}次")
+            lines.append(f"  {rule_name}: {count}�?)
 
         if critical_count > 0:
             lines.append("")
-            lines.append(f"⚠️ 严重告警: {critical_count}次")
+            lines.append(f"⚠️ 严重告警: {critical_count}�?)
 
         lines.append("")
         lines.append("3. 违规详情")
@@ -775,7 +775,7 @@ class RiskReportGenerator:
             severity = v.severity.value
             by_severity[severity] = by_severity.get(severity, 0) + 1
 
-        lines.append("按严重级别统计:")
+        lines.append("按严重级别统�?")
         for severity, count in by_severity.items():
             lines.append(f"  {severity}: {count}")
 
@@ -858,28 +858,28 @@ rules:
     severity: danger
     enabled: true
     params:
-      max_position_ratio: 0.10  # 单股最大仓位10%
-      max_position_value: 1000000  # 单股最大市值100万
+      max_position_ratio: 0.10  # 单股最大仓�?0%
+      max_position_value: 1000000  # 单股最大市�?00�?
     condition: "check_position_limit"
     action: "reject_order"
 
   - rule_id: RISK_002
-    name: "总仓位限制"
+    name: "总仓位限�?
     category: pre_trade
     severity: danger
     enabled: true
     params:
-      max_total_ratio: 0.80  # 总仓位最大80%
+      max_total_ratio: 0.80  # 总仓位最�?0%
     condition: "check_total_position"
     action: "reject_order"
 
   - rule_id: RISK_003
-    name: "资金充足检查"
+    name: "资金充足检�?
     category: pre_trade
     severity: danger
     enabled: true
     params:
-      min_cash_reserve: 0.05  # 最低5%现金储备
+      min_cash_reserve: 0.05  # 最�?%现金储备
     condition: "check_fund_sufficiency"
     action: "reject_order"
 
@@ -910,7 +910,7 @@ rules:
     severity: critical
     enabled: true
     params:
-      max_loss_ratio: 0.08  # 单股最大回撤8%
+      max_loss_ratio: 0.08  # 单股最大回�?%
     condition: "check_stock_stop_loss"
     action: "close_position"
 
@@ -920,7 +920,7 @@ rules:
     severity: critical
     enabled: true
     params:
-      max_portfolio_loss: 0.05  # 组合最大回撤5%
+      max_portfolio_loss: 0.05  # 组合最大回�?%
     condition: "check_portfolio_stop_loss"
     action: "close_all_positions"
 
@@ -935,23 +935,23 @@ rules:
     action: "reduce_position"
 
   - rule_id: RISK_009
-    name: "波动率预警"
+    name: "波动率预�?
     category: in_trade
     severity: warning
     enabled: true
     params:
-      vol_threshold: 0.30  # 波动率阈值30%
+      vol_threshold: 0.30  # 波动率阈�?0%
     condition: "check_volatility"
     action: "send_alert"
 
   - rule_id: RISK_010
-    name: "流动性预警"
+    name: "流动性预�?
     category: in_trade
     severity: warning
     enabled: true
     params:
-      min_volume: 1000000  # 最小成交量100万
-      min_turnover: 500000  # 最小成交额50万
+      min_volume: 1000000  # 最小成交量100�?
+      min_turnover: 500000  # 最小成交额50�?
     condition: "check_liquidity"
     action: "send_alert"
 ```
@@ -991,7 +991,7 @@ class RiskEndpoints:
     ) -> RiskRule:
         """创建风控规则"""
         if not check_permission(auth['role'], 'risk:write'):
-            raise HTTPException(status_code=403, detail="无权限")
+            raise HTTPException(status_code=403, detail="无权�?)
 
         return RiskRuleEngine.create_rule(rule)
 
@@ -1010,7 +1010,7 @@ class RiskEndpoints:
     ) -> Response:
         """启用规则"""
         RiskRuleEngine.enable_rule(rule_id)
-        return Response(code=0, message="规则已启用")
+        return Response(code=0, message="规则已启�?)
 
     @risk_router.post("/rules/{rule_id}/disable")
     async def disable_rule(
@@ -1019,7 +1019,7 @@ class RiskEndpoints:
     ) -> Response:
         """禁用规则"""
         RiskRuleEngine.disable_rule(rule_id)
-        return Response(code=0, message="规则已禁用")
+        return Response(code=0, message="规则已禁�?)
 
     @risk_router.get("/violations")
     async def get_violations(
@@ -1042,16 +1042,16 @@ class RiskEndpoints:
 
 ---
 
-## 8. 开发任务分解
+## 8. 开发任务分�?
 
 | 任务 | 时间 | 说明 |
 |------|------|------|
 | 规则引擎核心 | 8h | RiskRuleEngine |
-| 规则条件实现 | 10h | 10+种条件 |
-| 规则动作实现 | 6h | 5种动作 |
+| 规则条件实现 | 10h | 10+种条�?|
+| 规则动作实现 | 6h | 5种动�?|
 | 规则配置加载 | 4h | YAML配置解析 |
 | 告警管理 | 4h | AlertManager |
-| API层 | 4h | REST API |
+| API�?| 4h | REST API |
 | 测试 | 4h | 单元测试 |
 | **总计** | **40h** | |
 
@@ -1061,16 +1061,16 @@ class RiskEndpoints:
 
 | 文档 | 层级 | 说明 |
 |------|------|------|
-| [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) | 框架层 | 定义整体架构和设计原则 |
-| [风控规则体系蓝图](../../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) | 战术层 | 定义规则体系和三层防御 |
-| [风险报告生成器](../../03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) | 战术层 | 风险报告生成 |
+| [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) | 框架�?| 定义整体架构和设计原�?|
+| [风控规则体系蓝图](../../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) | 战术�?| 定义规则体系和三层防�?|
+| [风险报告生成器](../../03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) | 战术�?| 风险报告生成 |
 
 ---
 
-**版本**: v2.0 (合并版)
+**版本**: v2.0 (合并�?
 **更新**: 2026-04-04
 **Layer**: Layer 6 (风险监控)
 **索引**: EXECUTION_RISK_ENGINE_001
 **上游接口**: PortfolioOptimizer, TradeExecutor
 **下游接口**: AlertManager, PerformanceAnalyzer
-**合并来源**: 原 `03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md` 已整合至此
+**合并来源**: �?`03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md` 已整合至�?

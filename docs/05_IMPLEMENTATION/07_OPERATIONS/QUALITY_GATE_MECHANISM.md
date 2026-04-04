@@ -14,7 +14,7 @@ last_updated: 2026-04-02
 
 ## 1. 概述
 
-本文档定义了清风量化系统的质量门禁机制，确保所有技术方案和代码实现必须通过严格的技术评审才能进入下一开发阶段。质量门禁是**代码开发的必要条件**，遵?*评审通过、质量优先、风险可?*的原则?
+本文档定义了清风量化系统的质量门禁机制，确保所有技术方案和代码实现必须通过严格的技术评审才能进入下一开发阶段。质量门禁是**代码开发的必要条件**，遵?*评审通过、质量优先、风险可?*的原�?
 
 ## 2. 质量门禁定义
 
@@ -27,7 +27,7 @@ last_updated: 2026-04-02
 ### 2.2 门禁级别
 | 门禁级别 | 评审对象 | 评审标准 | 通过条件 |
 |----------|----------|----------|----------|
-| **L1: 蓝图设计门禁** | 系统蓝图文档 | 架构完整性、职责清晰度、技术可行?| 蓝图完整性评??80?|
+| **L1: 蓝图设计门禁** | 系统蓝图文档 | 架构完整性、职责清晰度、技术可�?| 蓝图完整性评??80?|
 | **L2: 技术规格门?* | 技术规格书 | 技术可行性、风险评估、实施复杂度 | 综合评估评分 ?70?|
 | **L3: 代码实现门禁** | 代码实现 | 代码质量、测试覆盖率、安全合?| 代码质量评分 ?80?|
 | **L4: 部署上线门禁** | 部署方案 | 部署安全性、性能指标、监控能?| 部署检查全部通过 |
@@ -141,7 +141,7 @@ last_updated: 2026-04-02
 | `run_all_assessments.py` | 集成脚本 | L2 | JSON, Markdown | 命令行调?|
 
 ### 6.2 工具配置要求
-1. **版本锁定**：所有工具必须使用指定版本，确保结果一致?
+1. **版本锁定**：所有工具必须使用指定版本，确保结果一�?
 2. **配置统一**：使用统一的配置文件，避免环境差异
 3. **输出标准?*：输出必须符合JSON格式规范，便于解?
 4. **错误处理**：工具必须提供明确的错误码和错误信息
@@ -207,7 +207,7 @@ last_updated: 2026-04-02
 ## 10. 附录
 
 ### 10.1 门禁状态文件格?
-门禁状态保存在 `docs/05_IMPLEMENTATION/04_OPERATIONS/quality_gates/` 目录下，文件格式为JSON?
+门禁状态保存在 `docs/05_IMPLEMENTATION/07_OPERATIONS/quality_gates/` 目录下，文件格式为JSON?
 ```json
 {
   "module_id": "FACTOR_BACKTEST_001",
@@ -217,13 +217,13 @@ last_updated: 2026-04-02
       "status": "passed",
       "score": 85,
       "review_date": "2026-04-01T10:00:00Z",
-      "review_report": "docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/FACTOR_BACKTEST_L1_REVIEW.md"
+      "review_report": "docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/FACTOR_BACKTEST_L1_REVIEW.md"
     },
     "L2": {
       "status": "conditional_passed",
       "score": 46.6,
       "review_date": "2026-04-02T01:35:45Z",
-      "review_report": "docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/FACTOR_BACKTEST_INTEGRATION_REVIEW_20260402.md",
+      "review_report": "docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/FACTOR_BACKTEST_INTEGRATION_REVIEW_20260402.md",
       "conditions": ["需在开发前完成风险缓解计划"]
     }
   },
@@ -234,7 +234,7 @@ last_updated: 2026-04-02
 
 ### 10.2 门禁目录结构
 ```
-docs/05_IMPLEMENTATION/04_OPERATIONS/
+docs/05_IMPLEMENTATION/07_OPERATIONS/
 ├── quality_gates/              # 门禁状态文件目?
 ?  ├── FACTOR_BACKTEST_001.json
 ?  ├── STRAT_ENGINE_001.json
@@ -247,6 +247,6 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/
 ```
 
 ### 10.3 版本历史
-| 版本 | 日期 | 说明 | 作?|
+| 版本 | 日期 | 说明 | �?|
 |------|------|------|------|
 | v1.0 | 2026-04-02 | 初始版本，定义基础质量门禁机制 | 审批智能?(Spec-Approver) |

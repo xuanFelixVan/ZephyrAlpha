@@ -1,5 +1,5 @@
 ---
-standard_type: 技术文档
+standard_type: 技术文�?
 applicable_scope: 交易执行
 compliance_level: 初始标准
 parent_document: ../INDEX.md
@@ -14,7 +14,7 @@ last_updated: 2026-04-02
 
 > **配置日期**: 2026-04-02
 > **硬件配置**: RTX 3090 24GB + 64GB RAM + i7-12700KF
-> **配置评级**: ⭐⭐⭐⭐⭐ 机构级
+> **配置评级**: ⭐⭐⭐⭐�?机构�?
 
 ---
 
@@ -37,7 +37,7 @@ PyTorch支持版本: Python 3.8-3.12
 # 1. 创建环境
 conda create -n live-analysis python=3.10 -y
 
-# 2. 激活环境
+# 2. 激活环�?
 conda activate live-analysis
 
 # 3. 安装PyTorch
@@ -57,34 +57,34 @@ python test_rtx3090_models.py
 
 ---
 
-## ✅ 已完成的工作
+## �?已完成的工作
 
 ### 1. 硬件配置分析
 
 ```
-✅ 显卡: NVIDIA RTX 3090 24GB - 高端显卡
-✅ 内存: 64GB - 非常充足
-✅ 处理器: i7-12700KF - 强力CPU
-✅ 存储: 1.82TB - 空间充足
+�?显卡: NVIDIA RTX 3090 24GB - 高端显卡
+�?内存: 64GB - 非常充足
+�?处理�? i7-12700KF - 强力CPU
+�?存储: 1.82TB - 空间充足
 
-配置评级: ⭐⭐⭐⭐⭐ 机构级配置
+配置评级: ⭐⭐⭐⭐�?机构级配�?
 ```
 
 ### 2. 已有模型分析
 
-| 模型 | 大小 | 适用性 | 推荐度 |
+| 模型 | 大小 | 适用�?| 推荐�?|
 |------|------|--------|--------|
-| **deepseek-r1:14b** | 9.0GB | ✅✅ **非常适合** | ⭐⭐⭐⭐⭐ |
-| qwen3:8b | 5.2GB | ✅ 适合内容分析 | ⭐⭐⭐⭐ |
-| deepseek-r1:8b | 5.2GB | ✅ 适合内容分析 | ⭐⭐⭐⭐ |
+| **deepseek-r1:14b** | 9.0GB | ✅✅ **非常适合** | ⭐⭐⭐⭐�?|
+| qwen3:8b | 5.2GB | �?适合内容分析 | ⭐⭐⭐⭐ |
+| deepseek-r1:8b | 5.2GB | �?适合内容分析 | ⭐⭐⭐⭐ |
 
-### 3. 创建的文档
+### 3. 创建的文�?
 
 | 文档 | 说明 |
 |------|------|
 | [PYTHON_VERSION_FIX.md](./PYTHON_VERSION_FIX.md) | **重要**：Python版本问题解决方案 |
 | [RTX3090_CONFIGURATION_SUMMARY.md](./RTX3090_CONFIGURATION_SUMMARY.md) | 完整配置总结 |
-| [RTX3090_BEST_MODELS.md](./RTX3090_BEST_MODELS.md) | 最佳模型配置详细说明 |
+| [RTX3090_BEST_MODELS.md](./RTX3090_BEST_MODELS.md) | 最佳模型配置详细说�?|
 | [INSTALL_GUIDE_RTX3090.md](./INSTALL_GUIDE_RTX3090.md) | 安装指南 |
 | [config_local_rtx3090.yaml](./config_local_rtx3090.yaml) | 系统配置文件 |
 | [test_rtx3090_models.py](./test_rtx3090_models.py) | 模型测试脚本 |
@@ -97,11 +97,11 @@ python test_rtx3090_models.py
 
 ```
 语音识别: Whisper large-v3 (本地)
-内容分析: deepseek-r1:14b (已有) ✅
+内容分析: deepseek-r1:14b (已有) �?
 情感分析: FinBERT (本地)
 
 显存占用: ~20GB / 24GB
-性能评级: ⭐⭐⭐⭐⭐
+性能评级: ⭐⭐⭐⭐�?
 成本: ¥0 (使用现有模型)
 ```
 
@@ -117,7 +117,7 @@ ollama pull qwen2.5:32b
 情感分析: FinBERT (本地)
 
 显存占用: ~22GB / 24GB
-性能评级: ⭐⭐⭐⭐⭐ (最高)
+性能评级: ⭐⭐⭐⭐�?(最�?
 成本: ¥0 (仅需下载时间)
 ```
 
@@ -125,7 +125,7 @@ ollama pull qwen2.5:32b
 
 ## 💰 成本优势
 
-| 方案 | 1年成本 | 2年成本 |
+| 方案 | 1年成�?| 2年成�?|
 |------|---------|---------|
 | 云端API | ¥88,000 | ¥176,000 |
 | 本地模型 | ¥657 | ¥1,314 |
@@ -139,7 +139,7 @@ ollama pull qwen2.5:32b
 
 1. **[PYTHON_VERSION_FIX.md](./PYTHON_VERSION_FIX.md)** - Python版本问题解决方案（重要）
 2. **[RTX3090_CONFIGURATION_SUMMARY.md](./RTX3090_CONFIGURATION_SUMMARY.md)** - 完整配置总结
-3. **[RTX3090_BEST_MODELS.md](./RTX3090_BEST_MODELS.md)** - 最佳模型配置
+3. **[RTX3090_BEST_MODELS.md](./RTX3090_BEST_MODELS.md)** - 最佳模型配�?
 
 ### 配置文件
 
@@ -151,7 +151,7 @@ ollama pull qwen2.5:32b
 
 ---
 
-## 🚀 快速开始
+## 🚀 快速开�?
 
 ### 步骤1: 创建Conda环境
 
@@ -196,5 +196,5 @@ python test_rtx3090_models.py
 
 **创建日期**: 2026-04-02
 **硬件配置**: RTX 3090 24GB + 64GB RAM + i7-12700KF
-**配置评级**: ⭐⭐⭐⭐⭐ 机构级
+**配置评级**: ⭐⭐⭐⭐�?机构�?
 **重要发现**: Python 3.13不支持PyTorch，需使用Conda创建Python 3.10环境

@@ -42,7 +42,7 @@ implementation_status: 进行?
    git add .
    git commit -m "feat: 描述"
 
-5. 推?
+5. �?
    git push origin feature/xxx
 
 6. 合并（审核后?

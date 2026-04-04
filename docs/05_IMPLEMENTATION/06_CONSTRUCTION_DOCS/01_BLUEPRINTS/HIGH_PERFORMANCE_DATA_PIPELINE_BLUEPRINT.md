@@ -131,7 +131,7 @@ class StreamDataProcessor:
 
 ### 3.2 数据分发?(DataDistributor)
 
-**职责**: 实时分发数据到多个订阅?
+**职责**: 实时分发数据到多个订�?
 ```python
 from typing import Dict, List, Any
 from dataclasses import dataclass
@@ -215,4 +215,4 @@ class DataDistributor:
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?

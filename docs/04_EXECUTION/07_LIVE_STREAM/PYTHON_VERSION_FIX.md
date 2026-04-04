@@ -1,5 +1,5 @@
 ---
-standard_type: 技术文档
+standard_type: 技术文�?
 applicable_scope: 交易执行
 compliance_level: 初始标准
 parent_document: ../INDEX.md
@@ -24,19 +24,19 @@ PyTorch支持版本: Python 3.8-3.12
 
 ## 解决方案
 
-### 方案一：使用Conda创建Python 3.10环境（推荐）⭐⭐⭐⭐⭐
+### 方案一：使用Conda创建Python 3.10环境（推荐）⭐⭐⭐⭐�?
 
-#### 步骤1: 安装Miniconda（如果未安装）
+#### 步骤1: 安装Miniconda（如果未安装�?
 
 下载地址: https://docs.conda.io/en/latest/miniconda.html
 
 #### 步骤2: 创建Python 3.10环境
 
 ```powershell
-# 创建新环境
+# 创建新环�?
 conda create -n live-analysis python=3.10 -y
 
-# 激活环境
+# 激活环�?
 conda activate live-analysis
 
 # 验证Python版本
@@ -78,7 +78,7 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 #### 步骤3: 使用Python 3.12运行安装脚本
 
 ```powershell
-# 使用py启动器指定版本
+# 使用py启动器指定版�?
 py -3.12 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 py -3.12 -m pip install openai-whisper transformers accelerate requests ffmpeg-python
@@ -86,9 +86,9 @@ py -3.12 -m pip install openai-whisper transformers accelerate requests ffmpeg-p
 
 ---
 
-### 方案三：使用现有的CPU版本PyTorch（临时方案）⭐⭐⭐
+### 方案三：使用现有的CPU版本PyTorch（临时方案）⭐⭐�?
 
-如果暂时不想安装新Python版本，可以继续使用CPU版本：
+如果暂时不想安装新Python版本，可以继续使用CPU版本�?
 
 ```powershell
 # 安装CPU版本的PyTorch
@@ -101,27 +101,27 @@ pip install openai-whisper
 pip install transformers accelerate requests ffmpeg-python
 ```
 
-**注意**: CPU版本速度较慢，但可以正常工作。
+**注意**: CPU版本速度较慢，但可以正常工作�?
 
 ---
 
 ## 推荐方案对比
 
-| 方案 | 难度 | 性能 | 推荐度 |
+| 方案 | 难度 | 性能 | 推荐�?|
 |------|------|------|--------|
-| Conda环境 | 中等 | 最佳 | ⭐⭐⭐⭐⭐ |
-| Python 3.12 | 简单 | 最佳 | ⭐⭐⭐⭐ |
-| CPU版本 | 最简单 | 较慢 | ⭐⭐⭐ |
+| Conda环境 | 中等 | 最�?| ⭐⭐⭐⭐�?|
+| Python 3.12 | 简�?| 最�?| ⭐⭐⭐⭐ |
+| CPU版本 | 最简�?| 较慢 | ⭐⭐�?|
 
 ---
 
-## 快速开始（Conda方案）
+## 快速开始（Conda方案�?
 
 ```powershell
 # 1. 创建环境
 conda create -n live-analysis python=3.10 -y
 
-# 2. 激活环境
+# 2. 激活环�?
 conda activate live-analysis
 
 # 3. 安装PyTorch
@@ -151,11 +151,11 @@ python test_rtx3090_models.py
 **预期结果**:
 
 ```
-✅ CUDA: 通过
-✅ OLLAMA: 通过
-✅ WHISPER: 通过
-✅ FINBERT: 通过
-✅ OLLAMA_MODEL: 通过
+�?CUDA: 通过
+�?OLLAMA: 通过
+�?WHISPER: 通过
+�?FINBERT: 通过
+�?OLLAMA_MODEL: 通过
 
 总计: 5/5 测试通过
 ```
@@ -164,7 +164,7 @@ python test_rtx3090_models.py
 
 ## 常见问题
 
-### Q1: Conda安装速度慢
+### Q1: Conda安装速度�?
 
 **解决方案**: 使用国内镜像
 
@@ -176,7 +176,7 @@ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/
 conda config --set show_channel_urls yes
 ```
 
-### Q2: CUDA版本不匹配
+### Q2: CUDA版本不匹�?
 
 **解决方案**: 检查CUDA版本
 
@@ -189,7 +189,7 @@ nvidia-smi
 # CUDA 11.8: pytorch-cuda=11.8
 ```
 
-### Q3: Whisper下载速度慢
+### Q3: Whisper下载速度�?
 
 **解决方案**: 使用国内镜像
 
@@ -203,7 +203,7 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 ---
 
-## 下一步
+## 下一�?
 
 安装完成后，请：
 

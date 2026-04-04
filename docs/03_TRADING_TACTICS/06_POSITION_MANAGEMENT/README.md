@@ -4,21 +4,21 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 仓位管理系统
 
-> 固定分数、凯利公式、风险平价
+> 固定分数、凯利公式、风险平�?
 
 **版本**: v1.0
 **更新**: 2026-03-29
-**Layer**: Layer 3 (策略层)
+**Layer**: Layer 3 (策略�?
 **索引**: 03_TRADING_TACTICS/06_POSITION_MANAGEMENT
 
 ---
@@ -29,14 +29,14 @@ implementation_status: 进行中
 
 | 角色 | 职责 |
 |------|------|
-| **人** | 风控规则设计（你能承受多大风险） |
-| **AI** | 计算具体仓位、执行交易 |
+| **�?* | 风控规则设计（你能承受多大风险） |
+| **AI** | 计算具体仓位、执行交�?|
 
 ---
 
 ## 2. 仓位管理方法
 
-### 2.1 固定分数法 (Fixed Fraction)
+### 2.1 固定分数�?(Fixed Fraction)
 
 ```python
 class FixedFractionSizer:
@@ -67,11 +67,11 @@ class KellySizer:
         """计算凯利比例"""
         if avg_loss == 0:
             return 0
-        b = avg_win / avg_loss  # 盈亏比
+        b = avg_win / avg_loss  # 盈亏�?
         q = 1 - win_rate
         kelly = (b * win_rate - q) / b
 
-        # 限制最大仓位
+        # 限制最大仓�?
         return max(0, min(kelly, self.max_kelly))
 
     def calculate_position(self, account_value: float,
@@ -94,7 +94,7 @@ class RiskParitySizer:
     def calculate_weights(self, positions: Dict[str, float],
                         volatilities: Dict[str, float]) -> Dict[str, float]:
         """计算风险平价权重"""
-        # 等风险贡献权重
+        # 等风险贡献权�?
         inv_vol = {k: 1/v for k, v in volatilities.items()}
         total_inv_vol = sum(inv_vol.values())
         weights = {k: v/total_inv_vol for k, v in inv_vol.items()}
@@ -107,18 +107,18 @@ class RiskParitySizer:
 
     def _calculate_portfolio_vol(self, weights: Dict[str, float],
                                   volatilities: Dict[str, float]) -> float:
-        """计算组合波动率"""
+        """计算组合波动�?""
         import numpy as np
         w = np.array(list(weights.values()))
         v = np.array(list(volatilities.values()))
         return np.sqrt(np.dot(w**2, v**2))
 ```
 
-### 2.4 金字塔加码
+### 2.4 金字塔加�?
 
 ```python
 class PyramidSizer:
-    """金字塔加码/减码策略"""
+    """金字塔加�?减码策略"""
 
     def __init__(self, base_position: int, max_layers: int = 3,
                  increment: float = 0.5):
@@ -127,7 +127,7 @@ class PyramidSizer:
         self.increment = increment
 
     def calculate_pyramid(self, layer: int, direction: str) -> int:
-        """计算某层的仓位"""
+        """计算某层的仓�?""
         if direction == 'add':
             return int(self.base_position * (1 + self.increment) ** layer)
         else:  # reduce
@@ -149,15 +149,15 @@ risk_management:
 
   max_positions:
     total: 10
-    single_stock: 0.15  # 最大单只股票仓位占比
+    single_stock: 0.15  # 最大单只股票仓位占�?
 
   stop_loss:
     fixed: 0.05  # 固定止损5%
     trailing: true  # 跟踪止损
 
   drawdown_control:
-    max_drawdown: 0.20  # 最大回撤20%
-    reduce_ratio: 0.50  # 触发后仓位减半
+    max_drawdown: 0.20  # 最大回�?0%
+    reduce_ratio: 0.50  # 触发后仓位减�?
 ```
 
 ---
@@ -165,18 +165,18 @@ risk_management:
 ## 4. 层级关系
 
 ```
-Layer 3 (策略层)
-    ↓ 上游
-Layer 2 (因子层) → 提供信号
-Layer 4 (执行层) → 执行订单
-    ↓ 下游
-Layer 5 (监控层) → 监控风险
+Layer 3 (策略�?
+    �?上游
+Layer 2 (因子�? �?提供信号
+Layer 4 (执行�? �?执行订单
+    �?下游
+Layer 5 (监控�? �?监控风险
 ```
 
 ---
 
 ## 索引
 
-- 父目录: [03_TRADING_TACTICS/README.md](../README.md)
+- 父目�? [03_TRADING_TACTICS/README.md](../README.md)
 - 上游: [STRATEGY_TEMPLATES.md](../01_STRATEGY_FRAMEWORK/STRATEGY_TEMPLATES.md)
 - 下游: [07_ORDER_GENERATION/README.md](../07_ORDER_GENERATION/README.md)

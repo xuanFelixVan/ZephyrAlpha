@@ -17,7 +17,7 @@ implementation_status: 进行?
 
 > 清风量化系统 v5.3 开发文档索?
 >
-> **重要**: 本文件已根据职责驱动原则拆分为三个专业文档。请直接参考相关专业文档?
+> **重要**: 本文件已根据职责驱动原则拆分为三个专业文档。请直接参考相关专业文�?
 > **更新时间**: 2026-04-01（审计重构）
 
 
@@ -27,7 +27,7 @@ implementation_status: 进行?
 
 **修复方案**: 拆分为三个专业文档，每个文档承担单一职责?
 
-| 文档 | 职责 | 版本 | 状?|
+| 文档 | 职责 | 版本 | �?|
 |------|------|------|------|
 | [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) | 开发标准（目录结构、命名规范、代码标准） | v5.3 | ?活跃 |
 | [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) | 工作流程（开发流程、提交规范、依赖管理） | v5.3 | ?活跃 |
@@ -121,7 +121,7 @@ implementation_status: 进行?
 | 指标 | 拆分?| 拆分?| 提升 |
 |------|--------|--------|------|
 | **职责清晰?* | 25% (混合职责) | 100% (单一职责) | +75% |
-| **文档可维护?* | 40% (3000+? | 95% (3×1000? | +55% |
+| **文档可维�?* | 40% (3000+? | 95% (3×1000? | +55% |
 | **查找效率** | 30% (需要滚? | 90% (精准定位) | +60% |
 | **专业符合?* | 35% (违反SoC) | 100% (符合SoC) | +65% |
 
@@ -135,4 +135,4 @@ implementation_status: 进行?
 - [SITEMAP.md](../../02_FACTOR_LIBRARY/SITEMAP.md) - 文档地图
 - [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - 快速参?
 
-**审计记录**: 本次拆分基于 [FULL_SYSTEM_AUDIT_REPORT.md](../04_OPERATIONS/audit_state/FULL_SYSTEM_AUDIT_REPORT.md) 审计发现执行?
+**审计记录**: 本次拆分基于 [FULL_SYSTEM_AUDIT_REPORT.md](../07_OPERATIONS/audit_state/FULL_SYSTEM_AUDIT_REPORT.md) 审计发现执行?

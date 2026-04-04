@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监控
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 信号生成系统
@@ -18,18 +18,18 @@ implementation_status: 进行中
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先级**: P0 - 核心系统
+> **优先�?*: P0 - 核心系统
 
 ---
 
 ## 1. 概述
 
-信号生成系统是策略与执行之间的桥梁，负责将策略产生的因子信号转化为可执行的交易信号。
+信号生成系统是策略与执行之间的桥梁，负责将策略产生的因子信号转化为可执行的交易信号�?
 
 ```
-因子信号 → 信号生成 → 订单信号 → 交易执行
-     ↑           ↑           ↑
-  Layer 2    本模块      Layer 5
+因子信号 �?信号生成 �?订单信号 �?交易执行
+     �?          �?          �?
+  Layer 2    本模�?     Layer 5
 ```
 
 ---
@@ -40,11 +40,11 @@ implementation_status: 进行中
 
 | 信号类型 | 说明 | 示例 |
 |----------|------|------|
-| BUY | 买入信号 | 因子值高于阈值 |
-| SELL | 卖出信号 | 因子值低于阈值 |
-| HOLD | 持有信号 | 无显著信号 |
-| COVER | 买回信号 | 做空时平仓 |
-| SHORT | 卖出信号 | 做空时开仓 |
+| BUY | 买入信号 | 因子值高于阈�?|
+| SELL | 卖出信号 | 因子值低于阈�?|
+| HOLD | 持有信号 | 无显著信�?|
+| COVER | 买回信号 | 做空时平�?|
+| SHORT | 卖出信号 | 做空时开�?|
 
 ### 2.2 信号强度
 
@@ -52,7 +52,7 @@ implementation_status: 进行中
 |----------|------|------|
 | STRONG_BUY | >= 0.8 | 强烈买入 |
 | BUY | 0.5 - 0.8 | 买入 |
-| NEUTRAL | -0.5 - 0.5 | 中性 |
+| NEUTRAL | -0.5 - 0.5 | 中�?|
 | SELL | -0.8 - -0.5 | 卖出 |
 | STRONG_SELL | <= -0.8 | 强烈卖出 |
 
@@ -61,16 +61,16 @@ implementation_status: 进行中
 ## 3. 信号生成流程
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    信号生成流程                              │
-├─────────────────────────────────────────────────────────────┤
-│  1. 因子信号输入  →  2. 信号计算  →  3. 信号过滤  →  4. 输出  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   信号生成流程                              �?
+├─────────────────────────────────────────────────────────────�?
+�? 1. 因子信号输入  �? 2. 信号计算  �? 3. 信号过滤  �? 4. 输出  �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ```python
 class SignalGenerator:
-    """信号生成器"""
+    """信号生成�?""
 
     def __init__(self, config: dict):
         self.min_signal_strength = config.get('min_signal_strength', 0.5)
@@ -100,7 +100,7 @@ class SignalGenerator:
         """过滤信号"""
         filtered = signals.copy()
 
-        # 流动性过滤
+        # 流动性过�?
         if self.volume_filter_enabled:
             liquid_stocks = market_data.get('liquid_stocks', signals.columns)
             filtered = filtered[liquid_stocks]
@@ -124,13 +124,13 @@ class SignalGenerator:
 
 ---
 
-## 4. 多信号合成
+## 4. 多信号合�?
 
-### 4.1 简单加权平均
+### 4.1 简单加权平�?
 
 ```python
 class WeightedSignalSynthesizer:
-    """加权信号合成器"""
+    """加权信号合成�?""
 
     def __init__(self, weights: dict):
         """
@@ -142,10 +142,10 @@ class WeightedSignalSynthesizer:
     def _validate_weights(self):
         total = sum(self.weights.values())
         if abs(total - 1.0) > 0.001:
-            raise ValueError(f"权重之和必须为1，当前: {total}")
+            raise ValueError(f"权重之和必须�?，当�? {total}")
 
     def synthesize(self, factor_data: dict) -> pd.Series:
-        """合成多因子信号"""
+        """合成多因子信�?""
         result = None
 
         for factor_name, weight in self.weights.items():
@@ -158,11 +158,11 @@ class WeightedSignalSynthesizer:
         return result.fillna(0)
 ```
 
-### 4.2 动态权重
+### 4.2 动态权�?
 
 ```python
 class DynamicWeightSynthesizer:
-    """动态权重信号合成"""
+    """动态权重信号合�?""
 
     def __init__(self):
         self.base_weights = {}
@@ -180,7 +180,7 @@ class DynamicWeightSynthesizer:
         self.base_weights[factor_name] = exp_ics[list(self.ic_history.keys()).index(factor_name)] / total
 
     def synthesize(self, factor_data: dict) -> pd.Series:
-        """动态权重合成"""
+        """动态权重合�?""
         result = None
 
         for factor_name, weight in self.base_weights.items():
@@ -197,18 +197,18 @@ class DynamicWeightSynthesizer:
 
 ## 5. 信号过滤机制
 
-### 5.1 流动性过滤
+### 5.1 流动性过�?
 
 ```python
 class LiquidityFilter:
-    """流动性过滤"""
+    """流动性过�?""
 
     def __init__(self, min_avg_volume: float = 1000000, min_trading_days: int = 20):
         self.min_avg_volume = min_avg_volume  # 最小日均成交量
         self.min_trading_days = min_trading_days
 
     def filter(self, signals: pd.DataFrame, volume_data: pd.Series) -> pd.DataFrame:
-        """过滤低流动性股票"""
+        """过滤低流动性股�?""
         avg_volume = volume_data.rolling(self.min_trading_days).mean()
         liquid_mask = avg_volume >= self.min_avg_volume
 
@@ -218,18 +218,18 @@ class LiquidityFilter:
         return filtered
 ```
 
-### 5.2 波动率过滤
+### 5.2 波动率过�?
 
 ```python
 class VolatilityFilter:
-    """波动率过滤"""
+    """波动率过�?""
 
     def __init__(self, min_volatility: float = 0.01, max_volatility: float = 0.5):
         self.min_volatility = min_volatility  # 最小波动率
         self.max_volatility = max_volatility  # 最大波动率
 
     def filter(self, signals: pd.DataFrame, returns: pd.Series, window: int = 20) -> pd.DataFrame:
-        """过滤极端波动率"""
+        """过滤极端波动�?""
         volatility = returns.rolling(window).std() * np.sqrt(252)
 
         low_vol_mask = volatility >= self.min_volatility
@@ -249,7 +249,7 @@ class SignalDecayHandler:
     """信号衰减处理"""
 
     def __init__(self, decay_rate: float = 0.1):
-        self.decay_rate = decay_rate  # 每日衰减率
+        self.decay_rate = decay_rate  # 每日衰减�?
 
     def apply_decay(self, signals: pd.DataFrame, holding_days: int) -> pd.DataFrame:
         """应用信号衰减"""
@@ -269,16 +269,16 @@ class SignalDecayHandler:
 
 | 指标 | 说明 | 评判标准 |
 |------|------|----------|
-| 信号胜率 | 信号产生收益的比例 | > 55% |
-| 信号IC | 信号与收益相关性 | > 0.03 |
-| 信号持续性 | 信号持续时间 | > 3天 |
-| 信号一致性 | 样本内外表现差异 | < 30% |
+| 信号胜率 | 信号产生收益的比�?| > 55% |
+| 信号IC | 信号与收益相关�?| > 0.03 |
+| 信号持续�?| 信号持续时间 | > 3�?|
+| 信号一致�?| 样本内外表现差异 | < 30% |
 
 ### 6.2 评估代码
 
 ```python
 class SignalQualityEvaluator:
-    """信号质量评估器"""
+    """信号质量评估�?""
 
     def evaluate(self, signals: pd.DataFrame, returns: pd.Series) -> dict:
         """评估信号质量"""
@@ -290,10 +290,10 @@ class SignalQualityEvaluator:
         # 计算信号IC
         metrics['signal_ic'] = self._calculate_signal_ic(signals, returns)
 
-        # 计算信号持续性
+        # 计算信号持续�?
         metrics['signal_duration'] = self._calculate_duration(signals)
 
-        # 计算信号一致性
+        # 计算信号一致�?
         metrics['consistency'] = self._calculate_consistency(signals, returns)
 
         return metrics
@@ -312,11 +312,11 @@ class SignalQualityEvaluator:
 
     def _calculate_duration(self, signals: pd.DataFrame) -> float:
         """计算信号平均持续天数"""
-        # 简化版本：计算非零信号的平均比例
+        # 简化版本：计算非零信号的平均比�?
         return (signals != 0).sum(axis=1).mean()
 
     def _calculate_consistency(self, signals: pd.DataFrame, returns: pd.Series) -> float:
-        """计算样本内外一致性"""
+        """计算样本内外一致�?""
         mid_point = len(signals) // 2
         in_sample = signals.iloc[:mid_point]
         out_sample = signals.iloc[mid_point:]
@@ -341,9 +341,9 @@ class SignalQualityEvaluator:
 # config/signal_generation.yaml
 signal_generation:
   # 信号生成基础配置
-  min_signal_strength: 0.5          # 最小信号强度
+  min_signal_strength: 0.5          # 最小信号强�?
   confirmation_enabled: true       # 是否启用信号确认
-  volume_filter_enabled: true      # 是否启用流动性过滤
+  volume_filter_enabled: true      # 是否启用流动性过�?
 
   # 信号合成配置
   synthesis:
@@ -372,7 +372,7 @@ signal_generation:
     decay_rate: 0.1                # 每日衰减10%
     max_holding_days: 10
 
-  # 信号质量阈值
+  # 信号质量阈�?
   quality_thresholds:
     min_win_rate: 0.55
     min_signal_ic: 0.03
@@ -390,7 +390,7 @@ SignalOutput = {
     'direction': pd.DataFrame,     # 信号方向 BUY/SELL/HOLD
     'timestamp': datetime,          # 生成时间
     'metadata': {
-        'factors_used': list,       # 使用的因子列表
+        'factors_used': list,       # 使用的因子列�?
         'filter_applied': list,     # 应用的过滤器
         'quality_metrics': dict      # 质量指标
     }
@@ -405,7 +405,7 @@ SignalOutput = {
 04_EXECUTION/
 ├── 01_EVENT_ENGINE/
 ├── 02_TRADE_EXECUTOR/
-│   └── signal_generation.md      # 本文档
+�?  └── signal_generation.md      # 本文�?
 ├── 03_MONITORING/
 └── 04_AI_COMMITTEE/
 ```

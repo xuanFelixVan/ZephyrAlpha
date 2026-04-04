@@ -1,30 +1,24 @@
 ---
-standard_type: 技术标准
-applicable_scope: 模块开发
-compliance_level: 专业标准
+standard_type: 技术标�?applicable_scope: 模块开�?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完成
-owner: 首席架构师
-version: 1.0.0
+implementation_status: 已完�?owner: 首席架构�?version: 1.0.0
 module_id: MODULE_INTERFACE_SPECIFICATION
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["模块接口", "接口定义", "技术标准", "专业标准"]
+tags: ["模块接口", "接口定义", "技术标�?, "专业标准"]
 ---
 # 模块接口定义规范
 
 **文档版本**: 1.0.0
-**最后更新**: 2026-04-02
-**文档所有者**: 首席架构师
-
+**最后更�?*: 2026-04-02
+**文档所有�?*: 首席架构�?
 ---
 
 ## 1. 规范概述
 
 ### 1.1 规范目的
 
-建立统一的模块接口定义标准，确保模块间接口清晰、规范、可维护，提升系统模块化程度和可扩展性。
-
+建立统一的模块接口定义标准，确保模块间接口清晰、规范、可维护，提升系统模块化程度和可扩展性�?
 ### 1.2 适用范围
 
 本标准适用于ZephyrAlpha系统中所有模块的接口定义，包括但不限于：
@@ -37,11 +31,8 @@ tags: ["模块接口", "接口定义", "技术标准", "专业标准"]
 
 ### 1.3 核心原则
 
-1. **清晰性**: 接口定义清晰明了，易于理解
-2. **一致性**: 接口风格统一，符合规范
-3. **可扩展性**: 接口设计考虑未来扩展
-4. **可测试性**: 接口易于测试和验证
-5. **版本化**: 接口版本管理规范
+1. **清晰�?*: 接口定义清晰明了，易于理�?2. **一致�?*: 接口风格统一，符合规�?3. **可扩展�?*: 接口设计考虑未来扩展
+4. **可测试�?*: 接口易于测试和验�?5. **版本�?*: 接口版本管理规范
 
 ---
 
@@ -52,20 +43,19 @@ tags: ["模块接口", "接口定义", "技术标准", "专业标准"]
 **原则**: 每个接口只负责一个明确的功能
 
 **要求**:
-- ✅ 接口功能单一明确
-- ✅ 接口命名清晰表达功能
-- ✅ 避免接口功能过多
+- �?接口功能单一明确
+- �?接口命名清晰表达功能
+- �?避免接口功能过多
 
 **示例**:
 ```python
-# ✅ 好的设计
+# �?好的设计
 def calculate_factor(data: pd.DataFrame) -> pd.Series:
     """计算因子"""
     pass
 
-# ❌ 不好的设计
-def calculate_and_store_factor(data: pd.DataFrame) -> bool:
-    """计算并存储因子"""
+# �?不好的设�?def calculate_and_store_factor(data: pd.DataFrame) -> bool:
+    """计算并存储因�?""
     pass
 ```
 
@@ -74,13 +64,12 @@ def calculate_and_store_factor(data: pd.DataFrame) -> bool:
 **原则**: 接口应该小而专，不应该大而全
 
 **要求**:
-- ✅ 接口参数精简
-- ✅ 接口返回值明确
-- ✅ 避免冗余参数
+- �?接口参数精简
+- �?接口返回值明�?- �?避免冗余参数
 
 **示例**:
 ```python
-# ✅ 好的设计
+# �?好的设计
 def get_factor_data(
     factor_id: str,
     start_date: str,
@@ -89,8 +78,7 @@ def get_factor_data(
     """获取因子数据"""
     pass
 
-# ❌ 不好的设计
-def get_data(
+# �?不好的设�?def get_data(
     factor_id: str = None,
     start_date: str = None,
     end_date: str = None,
@@ -103,16 +91,15 @@ def get_data(
 
 ### 2.3 依赖倒置原则
 
-**原则**: 高层模块不应依赖低层模块，两者都应依赖抽象
-
+**原则**: 高层模块不应依赖低层模块，两者都应依赖抽�?
 **要求**:
-- ✅ 使用抽象接口
-- ✅ 通过依赖注入
-- ✅ 避免直接依赖实现
+- �?使用抽象接口
+- �?通过依赖注入
+- �?避免直接依赖实现
 
 **示例**:
 ```python
-# ✅ 好的设计
+# �?好的设计
 from abc import ABC, abstractmethod
 
 class DataSourceInterface(ABC):
@@ -131,14 +118,12 @@ class FactorCalculator:
         pass
 ```
 
-### 2.4 接口版本化原则
-
+### 2.4 接口版本化原�?
 **原则**: 接口变更必须版本化，保证向后兼容
 
 **要求**:
-- ✅ 使用语义化版本号
-- ✅ 废弃接口需过渡期
-- ✅ 提供迁移指南
+- �?使用语义化版本号
+- �?废弃接口需过渡�?- �?提供迁移指南
 
 ---
 
@@ -153,7 +138,7 @@ class FactorCalculator:
 
 **示例**:
 ```python
-# ✅ 好的命名
+# �?好的命名
 def get_factor_data() -> pd.DataFrame:
     """获取因子数据"""
     pass
@@ -166,8 +151,7 @@ def execute_order() -> bool:
     """执行订单"""
     pass
 
-# ❌ 不好的命名
-def data() -> pd.DataFrame:
+# �?不好的命�?def data() -> pd.DataFrame:
     """数据"""
     pass
 
@@ -179,9 +163,7 @@ def calc() -> pd.Series:
 ### 3.2 参数定义规范
 
 **参数类型**:
-- 必需参数：无默认值
-- 可选参数：有默认值
-- 可变参数：使用*args和**kwargs
+- 必需参数：无默认�?- 可选参数：有默认�?- 可变参数：使�?args�?*kwargs
 
 **参数命名**:
 - 使用有意义的名称
@@ -196,19 +178,14 @@ def get_factor_data(
     factor_id: str,                          # 必需参数
     start_date: str,                         # 必需参数
     end_date: str,                           # 必需参数
-    frequency: str = 'daily',                # 可选参数
-    fields: Optional[List[str]] = None,      # 可选参数
-    **kwargs: Any                            # 可变参数
+    frequency: str = 'daily',                # 可选参�?    fields: Optional[List[str]] = None,      # 可选参�?    **kwargs: Any                            # 可变参数
 ) -> pd.DataFrame:
     """
     获取因子数据
     
     Args:
         factor_id: 因子ID
-        start_date: 开始日期（YYYY-MM-DD）
-        end_date: 结束日期（YYYY-MM-DD）
-        frequency: 数据频率（daily/hourly/minute）
-        fields: 需要的字段列表
+        start_date: 开始日期（YYYY-MM-DD�?        end_date: 结束日期（YYYY-MM-DD�?        frequency: 数据频率（daily/hourly/minute�?        fields: 需要的字段列表
         **kwargs: 其他参数
     
     Returns:
@@ -216,14 +193,12 @@ def get_factor_data(
     
     Raises:
         ValueError: 参数错误
-        DataNotFoundError: 数据不存在
-    """
+        DataNotFoundError: 数据不存�?    """
     pass
 ```
 
-### 3.3 返回值定义规范
-
-**返回值类型**:
+### 3.3 返回值定义规�?
+**返回值类�?*:
 - 单一返回值：使用类型注解
 - 多个返回值：使用Tuple或NamedTuple
 - 复杂返回值：使用TypedDict或Pydantic模型
@@ -233,18 +208,15 @@ def get_factor_data(
 from typing import Tuple, NamedTuple
 from pydantic import BaseModel
 
-# 单一返回值
-def calculate_factor() -> pd.Series:
+# 单一返回�?def calculate_factor() -> pd.Series:
     """计算因子"""
     pass
 
-# 多个返回值（使用Tuple）
-def get_factor_info() -> Tuple[str, str, float]:
+# 多个返回值（使用Tuple�?def get_factor_info() -> Tuple[str, str, float]:
     """获取因子信息"""
     return 'MOMENTUM_001', '动量因子', 0.85
 
-# 多个返回值（使用NamedTuple）
-class FactorInfo(NamedTuple):
+# 多个返回值（使用NamedTuple�?class FactorInfo(NamedTuple):
     factor_id: str
     factor_name: str
     ic: float
@@ -253,8 +225,7 @@ def get_factor_info() -> FactorInfo:
     """获取因子信息"""
     return FactorInfo('MOMENTUM_001', '动量因子', 0.85)
 
-# 复杂返回值（使用Pydantic）
-class FactorData(BaseModel):
+# 复杂返回值（使用Pydantic�?class FactorData(BaseModel):
     factor_id: str
     factor_name: str
     data: pd.DataFrame
@@ -269,18 +240,16 @@ def get_factor_data() -> FactorData:
 
 **异常类型**:
 - 使用标准异常
-- 自定义异常继承标准异常
-- 异常信息清晰明确
+- 自定义异常继承标准异�?- 异常信息清晰明确
 
 **示例**:
 ```python
-# 自定义异常
-class FactorError(Exception):
+# 自定义异�?class FactorError(Exception):
     """因子相关错误"""
     pass
 
 class DataNotFoundError(FactorError):
-    """数据不存在错误"""
+    """数据不存在错�?""
     pass
 
 class CalculationError(FactorError):
@@ -293,8 +262,7 @@ def calculate_factor(data: pd.DataFrame) -> pd.Series:
     计算因子
     
     Raises:
-        DataNotFoundError: 数据不存在
-        CalculationError: 计算错误
+        DataNotFoundError: 数据不存�?        CalculationError: 计算错误
     """
     if data.empty:
         raise DataNotFoundError("数据为空")
@@ -310,8 +278,7 @@ def calculate_factor(data: pd.DataFrame) -> pd.Series:
 
 ## 4. 接口文档标准
 
-### 4.1 文档字符串规范
-
+### 4.1 文档字符串规�?
 **Google风格**:
 ```python
 def get_factor_data(
@@ -322,23 +289,19 @@ def get_factor_data(
     """
     获取因子数据
     
-    从数据库中获取指定因子在指定时间范围内的数据。
-    
+    从数据库中获取指定因子在指定时间范围内的数据�?    
     Args:
-        factor_id: 因子ID，例如'MOMENTUM_001'
+        factor_id: 因子ID，例�?MOMENTUM_001'
         start_date: 开始日期，格式为YYYY-MM-DD
         end_date: 结束日期，格式为YYYY-MM-DD
     
     Returns:
-        因子数据DataFrame，包含以下列：
-        - date: 日期
-        - value: 因子值
-        - rank: 因子排名
+        因子数据DataFrame，包含以下列�?        - date: 日期
+        - value: 因子�?        - rank: 因子排名
     
     Raises:
         ValueError: 参数格式错误
-        DataNotFoundError: 因子数据不存在
-    
+        DataNotFoundError: 因子数据不存�?    
     Example:
         >>> data = get_factor_data('MOMENTUM_001', '2020-01-01', '2020-12-31')
         >>> print(data.head())
@@ -348,26 +311,20 @@ def get_factor_data(
 
 ### 4.2 接口文档模板
 
-每个模块接口必须包含以下文档：
-
+每个模块接口必须包含以下文档�?
 **接口说明**:
 - 接口名称
 - 接口功能
 - 接口版本
-- 接口负责人
-
+- 接口负责�?
 **参数说明**:
 - 参数名称
 - 参数类型
 - 参数说明
-- 默认值
-- 是否必需
+- 默认�?- 是否必需
 
-**返回值说明**:
-- 返回值类型
-- 返回值说明
-- 返回值示例
-
+**返回值说�?*:
+- 返回值类�?- 返回值说�?- 返回值示�?
 **异常说明**:
 - 异常类型
 - 异常条件
@@ -382,26 +339,21 @@ def get_factor_data(
 
 ## 5. 接口版本管理
 
-### 5.1 版本号规则
-
+### 5.1 版本号规�?
 **语义化版本号**: MAJOR.MINOR.PATCH
 
 - **MAJOR**: 不兼容的API变更
-- **MINOR**: 向后兼容的功能新增
-- **PATCH**: 向后兼容的问题修复
-
+- **MINOR**: 向后兼容的功能新�?- **PATCH**: 向后兼容的问题修�?
 **示例**:
-- 1.0.0 → 1.0.1: Bug修复
-- 1.0.0 → 1.1.0: 新增功能
-- 1.0.0 → 2.0.0: 破坏性变更
-
+- 1.0.0 �?1.0.1: Bug修复
+- 1.0.0 �?1.1.0: 新增功能
+- 1.0.0 �?2.0.0: 破坏性变�?
 ### 5.2 版本变更规范
 
 **MAJOR版本变更**:
 - 必须提前通知
 - 提供迁移指南
-- 保留旧版本一段时间
-
+- 保留旧版本一段时�?
 **MINOR版本变更**:
 - 向后兼容
 - 更新文档
@@ -417,12 +369,8 @@ def get_factor_data(
 **废弃流程**:
 ```
 标记废弃
-  ↓
-提供替代方案
-  ↓
-保留一段时间（至少3个月）
-  ↓
-移除接口
+  �?提供替代方案
+  �?保留一段时间（至少3个月�?  �?移除接口
 ```
 
 **示例**:
@@ -437,14 +385,14 @@ def old_interface():
         使用 new_interface() 替代
     """
     warnings.warn(
-        "old_interface() 已废弃，请使用 new_interface()",
+        "old_interface() 已废弃，请使�?new_interface()",
         DeprecationWarning,
         stacklevel=2
     )
     return new_interface()
 
 def new_interface():
-    """新接口"""
+    """新接�?""
     pass
 ```
 
@@ -478,7 +426,7 @@ def test_get_factor_data_invalid_params():
         get_factor_data('MOMENTUM_001', '2020-13-01', '2020-12-31')
 
 def test_get_factor_data_not_found():
-    """测试数据不存在"""
+    """测试数据不存�?""
     with pytest.raises(DataNotFoundError):
         get_factor_data('NOT_EXIST', '2020-01-01', '2020-12-31')
 ```
@@ -486,24 +434,21 @@ def test_get_factor_data_not_found():
 ### 6.2 集成测试要求
 
 **测试场景**:
-- 模块间接口调用
-- 数据流转测试
+- 模块间接口调�?- 数据流转测试
 - 性能测试
 
 ### 6.3 接口文档测试
 
 **文档测试**:
-- 示例代码可运行
-- 输出结果正确
-- 文档与代码一致
-
+- 示例代码可运�?- 输出结果正确
+- 文档与代码一�?
 ---
 
 ## 7. 接口性能标准
 
 ### 7.1 性能指标
 
-| 接口类型 | 响应时间 | 吞吐量 | 并发数 |
+| 接口类型 | 响应时间 | 吞吐�?| 并发�?|
 |---------|---------|--------|--------|
 | **数据查询** | <100ms | >1000 QPS | >100 |
 | **因子计算** | <1s | >100 QPS | >10 |
@@ -518,8 +463,7 @@ def test_get_factor_data_not_found():
 - 分页查询
 
 **计算优化**:
-- 向量化计算
-- 并行计算
+- 向量化计�?- 并行计算
 - 增量计算
 
 ---
@@ -567,10 +511,8 @@ class FactorRequest(BaseModel):
 
 **记录内容**:
 - 调用时间
-- 调用者
-- 参数
-- 返回值
-- 异常信息
+- 调用�?- 参数
+- 返回�?- 异常信息
 
 ---
 
@@ -580,31 +522,25 @@ class FactorRequest(BaseModel):
 
 **基础指标**:
 - 调用次数
-- 成功率
-- 平均响应时间
-- 错误率
-
+- 成功�?- 平均响应时间
+- 错误�?
 **业务指标**:
-- 数据量
-- 计算时间
-- 资源消耗
-
+- 数据�?- 计算时间
+- 资源消�?
 ### 9.2 告警规则
 
 **告警条件**:
-- 错误率 > 5%
-- 平均响应时间 > 阈值
-- 调用次数异常
+- 错误�?> 5%
+- 平均响应时间 > 阈�?- 调用次数异常
 
 ---
 
-## 10. 参考文档
-
+## 10. 参考文�?
 - [模块职责边界定义](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [文档治理流程标准](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [Python类型注解指南](https://docs.python.org/zh-cn/3/library/typing.html)
 
 ---
 
-**文档状态**: 正式标准
+**文档状�?*: 正式标准
 **下次更新**: 2026-07-02

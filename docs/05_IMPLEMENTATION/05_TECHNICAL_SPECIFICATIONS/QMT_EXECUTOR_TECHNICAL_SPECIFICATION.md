@@ -6,10 +6,10 @@ created_date: 2026-04-02
 last_updated: 2026-04-03
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 5 策略执行�?| 业务架构: 三级时间框架融合架构
+applicable_scope: Layer 5 策略执行�?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 regulatory_compliance:
   - module: COMPLIANCE_CHECKER_001
     version: 1.0.0
@@ -18,38 +18,38 @@ regulatory_compliance:
 
 # QMTExecutor交易执行器模块技术规格书
 
-> 清风量化系统 v5.3 - QMTExecutor交易执行器模块详细技术设�?
+> 清风量化系统 v5.3 - QMTExecutor交易执行器模块详细技术设�?
 > **模块ID**: `QMT_EXECUTOR_001`
 > **版本**: v1.0.0
-> **状�?*: �?正式
+> **状�?*: �?正式
 
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目�?
-- **业务需�?*: 系统需要统一的交易执行器进行实盘交易执行
-- **技术痛�?*: 
+### 1.1 设计背景与业务目�?
+- **业务需�?*: 系统需要统一的交易执行器进行实盘交易执行
+- **技术痛�?*: 
   - 交易执行不稳定：缺乏统一的订单管理和执行机制
-  - 订单状态监控困难：缺乏实时的订单状态跟�?
-  - 交易异常处理不足：缺乏完善的异常处理和重试机�?
-  - 交易风险控制缺失：缺乏交易前的风险检�?
+  - 订单状态监控困难：缺乏实时的订单状态跟�?
+  - 交易异常处理不足：缺乏完善的异常处理和重试机�?
+  - 交易风险控制缺失：缺乏交易前的风险检�?
 - **预期价�?*: 
   - 建立统一的交易执行和管理机制
   - 提供实时的订单状态监控和跟踪
   - 实现完善的异常处理和重试机制
   - 支持交易前的风险检查和控制
 
-### 1.2 技术定位与架构层归�?
-- **Layer定位**: Layer 5 - 策略执行�?(符合ARCHITECTURE.md定义)
+### 1.2 技术定位与架构层归�?
+- **Layer定位**: Layer 5 - 策略执行�?(符合ARCHITECTURE.md定义)
 - **模块类别**: 核心交易执行模块
-- **架构角色**: Layer 5策略执行核心，负责实盘交易执�?
+- **架构角色**: Layer 5策略执行核心，负责实盘交易执�?
 
 ### 1.3 版本信息
 | 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
-| v1.1.0 | 2026-04-03 | 首席架构师 | 集成监管合规检查模块（COMPLIANCE_CHECKER_001） | Active |
-| v1.2.0 | 2026-04-03 | 首席架构师 | 增加"通俗理解"章节，提升文档可读性 | Active |
+| v1.1.0 | 2026-04-03 | 首席架构�?| 集成监管合规检查模块（COMPLIANCE_CHECKER_001�?| Active |
+| v1.2.0 | 2026-04-03 | 首席架构�?| 增加"通俗理解"章节，提升文档可读�?| Active |
 
 ### 1.4 通俗理解
 
@@ -57,100 +57,67 @@ regulatory_compliance:
 
 **QMTExecutor = 您的"交易执行管家"**
 
-就像您有一个专门的管家帮您处理所有交易相关的事情，确保交易安全、合规、高效地执行。
-
-#### 1.4.2 在交易流程中的位置
-
+就像您有一个专门的管家帮您处理所有交易相关的事情，确保交易安全、合规、高效地执行�?
+#### 1.4.2 在交易流程中的位�?
 ```
-交易决策流程：
-┌─────────────┐
-│ 策略生成信号 │  Layer 3-4
-│ (买入/卖出)  │
-└──────┬──────┘
-       ↓
-┌─────────────┐
-│ QMTExecutor │  ← 这里！交易执行管家
-│  执行交易    │
-└──────┬──────┘
-       ↓
-┌─────────────┐
-│ QMT交易接口  │  实际下单
-│ (券商系统)   │
-└─────────────┘
-```
+交易决策流程�?┌─────────────�?�?策略生成信号 �? Layer 3-4
+�?(买入/卖出)  �?└──────┬──────�?       �?┌─────────────�?�?QMTExecutor �? �?这里！交易执行管�?�? 执行交易    �?└──────┬──────�?       �?┌─────────────�?�?QMT交易接口  �? 实际下单
+�?(券商系统)   �?└─────────────�?```
 
 #### 1.4.3 核心功能类比
 
-**1. 订单执行 = "下单员"**
+**1. 订单执行 = "下单�?**
 
 类比：就像餐厅的服务员，把您的订单送到厨房（券商系统）
 
 ```python
-# 策略说：买入1000股平安银行
-strategy_signal = {
+# 策略说：买入1000股平安银�?strategy_signal = {
     "symbol": "000001.SZ",
     "action": "buy",
     "quantity": 1000,
     "price": 10.5
 }
 
-# QMTExecutor负责：
-# 1. 检查订单是否合理
-# 2. 检查是否合规（新增！）
+# QMTExecutor负责�?# 1. 检查订单是否合�?# 2. 检查是否合规（新增！）
 # 3. 转换为QMT格式
-# 4. 提交给券商系统
-qmt_executor.execute_order(strategy_signal)
+# 4. 提交给券商系�?qmt_executor.execute_order(strategy_signal)
 ```
 
-**2. 订单监控 = "订单跟踪器"**
+**2. 订单监控 = "订单跟踪�?**
 
-类比：就像快递追踪系统，实时查看订单状态
-
+类比：就像快递追踪系统，实时查看订单状�?
 ```python
-# 查询订单状态
-status = qmt_executor.get_order_status("ORDER_001")
+# 查询订单状�?status = qmt_executor.get_order_status("ORDER_001")
 
 # 可能的状态：
-# - pending: 待提交
-# - submitted: 已提交
-# - partial_filled: 部分成交
+# - pending: 待提�?# - submitted: 已提�?# - partial_filled: 部分成交
 # - filled: 完全成交
 # - cancelled: 已撤销
-# - rejected: 已拒绝
-```
+# - rejected: 已拒�?```
 
 **3. 风险控制 = "安全检查员"**
 
-类比：就像机场安检，在登机（下单）前进行安全检查
-
+类比：就像机场安检，在登机（下单）前进行安全检�?
 ```python
 # 下单前自动检查：
-# 1. 资金是否充足？
-# 2. 持仓是否超限？
-# 3. 价格是否合理？
-# 4. 是否触发风控规则？
-
+# 1. 资金是否充足�?# 2. 持仓是否超限�?# 3. 价格是否合理�?# 4. 是否触发风控规则�?
 if not risk_checker.check_order(order):
     print("订单被拒绝：资金不足")
 ```
 
-**4. 合规检查 = "合规官" 🆕**
+**4. 合规检�?= "合规�? 🆕**
 
-类比：就像交警，确保您的驾驶（交易）符合交通规则（监管要求）
-
+类比：就像交警，确保您的驾驶（交易）符合交通规则（监管要求�?
 ```python
 # 下单前自动检查：
-# 1. 是否触发高频交易认定？
-# 2. 撤单率是否超标？
-# 3. 是否违反短线交易规则？
-# 4. 订单停留时间是否足够？
-
+# 1. 是否触发高频交易认定�?# 2. 撤单率是否超标？
+# 3. 是否违反短线交易规则�?# 4. 订单停留时间是否足够�?
 compliance_result = compliance_checker.check(order)
 if not compliance_result.is_compliant:
     print("订单被拒绝：违反监管规则")
 ```
 
-**5. 异常处理 = "故障修复师"**
+**5. 异常处理 = "故障修复�?**
 
 类比：就像医院的急诊科，处理各种突发状况
 
@@ -158,11 +125,9 @@ if not compliance_result.is_compliant:
 # 可能的异常情况：
 # - 网络中断
 # - 券商系统故障
-# - 订单被拒绝
-# - 成交价格异常
+# - 订单被拒�?# - 成交价格异常
 
-# QMTExecutor自动处理：
-try:
+# QMTExecutor自动处理�?try:
     execute_order(order)
 except NetworkError:
     # 自动重试
@@ -174,149 +139,127 @@ except BrokerError:
 
 #### 1.4.4 生活化类比：餐厅场景
 
-| 餐厅场景 | 量化交易系统 | QMTExecutor的作用 |
+| 餐厅场景 | 量化交易系统 | QMTExecutor的作�?|
 |---------|------------|-----------------|
-| **您（顾客）** | 策略系统 | 决定吃什么（买什么股票） |
-| **服务员** | **QMTExecutor** | 接单、下单、跟踪、处理问题 |
+| **您（顾客�?* | 策略系统 | 决定吃什么（买什么股票） |
+| **服务�?* | **QMTExecutor** | 接单、下单、跟踪、处理问�?|
 | **厨房** | QMT券商系统 | 实际做菜（执行交易） |
 | **菜单** | 交易接口 | 提供可用的交易选项 |
 | **账单** | 成交回报 | 告诉您花了多少钱 |
 
 **QMTExecutor就是那个专业的服务员**，确保：
-- ✅ 您的订单准确无误地传达到厨房
-- ✅ 实时告诉您菜做到哪一步了
-- ✅ 如果厨房出问题，及时处理
-- ✅ 确保您有足够的钱付款
-- ✅ 确保您的点菜符合餐厅规定
+- �?您的订单准确无误地传达到厨房
+- �?实时告诉您菜做到哪一步了
+- �?如果厨房出问题，及时处理
+- �?确保您有足够的钱付款
+- �?确保您的点菜符合餐厅规定
 
-#### 1.4.5 与QMT的关系
-
+#### 1.4.5 与QMT的关�?
 **QMT = 迅投量化交易终端**（一款量化交易软件）
 
 ```
-QMT提供：
-- 交易接口（XtQuantTrader）
-- 数据接口
+QMT提供�?- 交易接口（XtQuantTrader�?- 数据接口
 - 订单接口
 ```
 
-**QMTExecutor与QMT的关系**：
-
+**QMTExecutor与QMT的关�?*�?
 ```
-┌─────────────────┐
-│  您的策略系统    │
-│  (决策买什么)    │
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│  QMTExecutor    │  ← 中间层，翻译官
-│  (订单处理)      │
-└────────┬────────┘
-         ↓
-┌─────────────────┐
-│  QMT交易接口     │  ← 底层接口
-│  (券商系统)      │
-└─────────────────┘
-```
+┌─────────────────�?�? 您的策略系统    �?�? (决策买什�?    �?└────────┬────────�?         �?┌─────────────────�?�? QMTExecutor    �? �?中间层，翻译�?�? (订单处理)      �?└────────┬────────�?         �?┌─────────────────�?�? QMT交易接口     �? �?底层接口
+�? (券商系统)      �?└─────────────────�?```
 
-**QMTExecutor的作用**：
-1. **翻译官**：把您的策略信号翻译成QMT能理解的格式
-2. **保护伞**：在调用QMT接口前进行各种检查（风险、合规）
-3. **监控器**：实时监控QMT返回的订单状态
-4. **故障处理**：处理QMT接口可能出现的各种异常
-
-#### 1.4.6 为什么需要QMTExecutor？
-
-**问题：为什么不直接调用QMT接口？**
+**QMTExecutor的作�?*�?1. **翻译�?*：把您的策略信号翻译成QMT能理解的格式
+2. **保护�?*：在调用QMT接口前进行各种检查（风险、合规）
+3. **监控�?*：实时监控QMT返回的订单状�?4. **故障处理**：处理QMT接口可能出现的各种异�?
+#### 1.4.6 为什么需要QMTExecutor�?
+**问题：为什么不直接调用QMT接口�?*
 
 答案：就像为什么不直接去厨房点菜？
 
 | 直接调用QMT | 通过QMTExecutor |
 |-----------|---------------|
-| ❌ 需要自己处理订单格式转换 | ✅ 自动转换格式 |
-| ❌ 需要自己监控订单状态 | ✅ 自动监控和通知 |
-| ❌ 需要自己处理异常 | ✅ 自动重试和恢复 |
-| ❌ 需要自己检查风险 | ✅ 自动风险检查 |
-| ❌ 需要自己检查合规 | ✅ 自动合规检查 |
-| ❌ 代码重复，难以维护 | ✅ 统一接口，易于维护 |
+| �?需要自己处理订单格式转�?| �?自动转换格式 |
+| �?需要自己监控订单状�?| �?自动监控和通知 |
+| �?需要自己处理异�?| �?自动重试和恢�?|
+| �?需要自己检查风�?| �?自动风险检�?|
+| �?需要自己检查合�?| �?自动合规检�?|
+| �?代码重复，难以维�?| �?统一接口，易于维�?|
 
-#### 1.4.7 核心价值
-
-| 价值 | 说明 |
+#### 1.4.7 核心价�?
+| 价�?| 说明 |
 |------|------|
 | **统一接口** | 提供简单易用的交易接口 |
-| **风险控制** | 自动检查各种风险 |
-| **合规检查** | 确保符合监管要求 🆕 |
+| **风险控制** | 自动检查各种风�?|
+| **合规检�?* | 确保符合监管要求 🆕 |
 | **异常处理** | 自动处理各种异常 |
-| **订单监控** | 实时跟踪订单状态 |
+| **订单监控** | 实时跟踪订单状�?|
 
 ---
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构�?
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   Layer 5: 策略执行�?                      �?
-├─────────────────────────────────────────────────────────────�?
-�?                                                            �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?       QMTExecutor (交易执行器主模块)                  �? �?
-�? �? - 订单执行                                            �? �?
-�? �? - 订单监控                                            �? �?
-�? �? - 异常处理                                            �? �?
-�? �? - 风险控制                                            �? �?
-�? �? - 合规检�?🆕                                         �? �?
-�? └──────────────────────────────────────────────────────�? �?
-�?                          �?                                 �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         核心组件                                      �? �?
-�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?
-�? �? │OrderConverter�?│OrderMonitor �?│RiskChecker  �? �? �?
-�? �? │订单转换器     �? │订单监控器   �? │风险检查器   �? �? �?
-�? �? └─────────────�? └─────────────�? └─────────────�? �? �?
-�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?
-�? �? │ExceptionHdlr�?│RetryManager �?│AccountManager�? �? �?
-�? �? │异常处理器    �? │重试管理器   �? │账户管理器   �? �? �?
-�? �? └─────────────�? └─────────────�? └─────────────�? �? �?
-�? �? ┌─────────────�?                                      �? �?
-�? �? │ComplianceChk�?🆕 监管合规检查器                     �? �?
-�? �? �?COMPLIANCE_ �? - 高频交易认定检�?                  �? �?
-�? �? │CHECKER_001) �? - 撤单限制检�?                      �? �?
-�? �? �?            �? - 短线交易合规检�?                  �? �?
-�? �? └─────────────�?                                      �? �?
-�? └──────────────────────────────────────────────────────�? �?
-�?                          �?                                 �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         QMT API�?                                   �? �?
-�? �? - XtQuantTrader (交易API)                           �? �?
-�? �? - xtdata (数据API)                                  �? �?
-�? �? - xtorder (订单API)                                 �? �?
-�? └──────────────────────────────────────────────────────�? �?
-�?                                                            �?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────�?
+�?                   Layer 5: 策略执行�?                      �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?       QMTExecutor (交易执行器主模块)                  �? �?
+�? �? - 订单执行                                            �? �?
+�? �? - 订单监控                                            �? �?
+�? �? - 异常处理                                            �? �?
+�? �? - 风险控制                                            �? �?
+�? �? - 合规检�?🆕                                         �? �?
+�? └──────────────────────────────────────────────────────�? �?
+�?                          �?                                 �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         核心组件                                      �? �?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?
+�? �? │OrderConverter�?│OrderMonitor �?│RiskChecker  �? �? �?
+�? �? │订单转换器     �? │订单监控器   �? │风险检查器   �? �? �?
+�? �? └─────────────�? └─────────────�? └─────────────�? �? �?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? �? �?
+�? �? │ExceptionHdlr�?│RetryManager �?│AccountManager�? �? �?
+�? �? │异常处理器    �? │重试管理器   �? │账户管理器   �? �? �?
+�? �? └─────────────�? └─────────────�? └─────────────�? �? �?
+�? �? ┌─────────────�?                                      �? �?
+�? �? │ComplianceChk�?🆕 监管合规检查器                     �? �?
+�? �? �?COMPLIANCE_ �? - 高频交易认定检�?                  �? �?
+�? �? │CHECKER_001) �? - 撤单限制检�?                      �? �?
+�? �? �?            �? - 短线交易合规检�?                  �? �?
+�? �? └─────────────�?                                      �? �?
+�? └──────────────────────────────────────────────────────�? �?
+�?                          �?                                 �?
+�? ┌──────────────────────────────────────────────────────�? �?
+�? �?         QMT API�?                                   �? �?
+�? �? - XtQuantTrader (交易API)                           �? �?
+�? �? - xtdata (数据API)                                  �? �?
+�? �? - xtorder (订单API)                                 �? �?
+�? └──────────────────────────────────────────────────────�? �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 Layer定位详细说明
-- **Layer归属**: Layer 5 - 策略执行�?
-- **职责范围**: 订单执行、订单监控、异常处理、风险控�?
-- **上下层接�?*: 
+- **Layer归属**: Layer 5 - 策略执行�?
+- **职责范围**: 订单执行、订单监控、异常处理、风险控�?
+- **上下层接�?*: 
   - 上层依赖: Layer 5 SignalGenerator (提供交易信号)
-  - 下层依赖: Layer 6 组合优化�?(接收执行结果)
+  - 下层依赖: Layer 6 组合优化�?(接收执行结果)
 
-### 2.3 模块职责与边界定�?
-- **核心职责**: 实盘交易执行、订单管理、风险控�?
+### 2.3 模块职责与边界定�?
+- **核心职责**: 实盘交易执行、订单管理、风险控�?
 - **职责边界**: 
-  - �?本模块负�? 订单执行、订单监控、异常处理、风险检�?
-  - �?本模块不负责: 信号生成、策略决策、数据获取、风险模�?
+  - �?本模块负�? 订单执行、订单监控、异常处理、风险检�?
+  - �?本模块不负责: 信号生成、策略决策、数据获取、风险模�?
 - **接口契约**: 提供统一的Python API接口
 
 ### 2.4 依赖关系
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| xtquant | 强依�?| QMT Python API | >=1.0.0 | QMT官方API |
-| threading | 强依�?| Python标准�?| >=3.8 | 多线程支�?|
-| queue | 强依�?| Python标准�?| >=3.8 | 队列支持 |
+| xtquant | 强依�?| QMT Python API | >=1.0.0 | QMT官方API |
+| threading | 强依�?| Python标准�?| >=3.8 | 多线程支�?|
+| queue | 强依�?| Python标准�?| >=3.8 | 队列支持 |
 
 ---
 
@@ -337,7 +280,7 @@ import logging
 
 
 class OrderStatus(Enum):
-    """订单状态枚�?""
+    """订单状态枚�?""
     PENDING = "pending"
     SUBMITTED = "submitted"
     PARTIAL_FILLED = "partial_filled"
@@ -411,7 +354,7 @@ class QMTConfig:
 
 
 class OrderConverter:
-    """订单转换�?""
+    """订单转换�?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -444,13 +387,13 @@ class OrderConverter:
         )
     
     def _format_symbol(self, symbol: str) -> str:
-        """格式化股票代�?
+        """格式化股票代�?
         
         参数:
             symbol: 股票代码
             
         返回:
-            格式化后的股票代�?
+            格式化后的股票代�?
         """
         if symbol.endswith('.SH'):
             return symbol.replace('.SH', '.XSHG')
@@ -487,7 +430,7 @@ class OrderConverter:
 
 
 class OrderMonitor:
-    """订单监控�?""
+    """订单监控�?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -581,7 +524,7 @@ class OrderMonitor:
                 self.logger.error(f"Error in monitor loop: {e}")
     
     def _check_order_status(self, order_id: str) -> None:
-        """检查订单状�?
+        """检查订单状�?
         
         参数:
             order_id: 订单ID
@@ -597,13 +540,13 @@ class RiskChecker:
         self.logger = logging.getLogger(__name__)
     
     def check_order(self, order: UnifiedOrder) -> bool:
-        """检查订单风�?
+        """检查订单风�?
         
         参数:
             order: 统一订单
             
         返回:
-            是否通过风险检�?
+            是否通过风险检�?
         """
         if not self._check_volume(order.volume):
             self.logger.warning(f"Order volume check failed: {order.order_id}")
@@ -620,13 +563,13 @@ class RiskChecker:
         return True
     
     def _check_volume(self, volume: int) -> bool:
-        """检查订单数�?
+        """检查订单数�?
         
         参数:
             volume: 订单数量
             
         返回:
-            是否通过检�?
+            是否通过检�?
         """
         max_volume = self.config.get('max_volume', 1000000)
         min_volume = self.config.get('min_volume', 100)
@@ -634,13 +577,13 @@ class RiskChecker:
         return min_volume <= volume <= max_volume
     
     def _check_price(self, price: Optional[float]) -> bool:
-        """检查订单价�?
+        """检查订单价�?
         
         参数:
             price: 订单价格
             
         返回:
-            是否通过检�?
+            是否通过检�?
         """
         if price is None:
             return True
@@ -651,19 +594,19 @@ class RiskChecker:
         return min_price <= price <= max_price
     
     def _check_frequency(self, symbol: str) -> bool:
-        """检查交易频�?
+        """检查交易频�?
         
         参数:
             symbol: 股票代码
             
         返回:
-            是否通过检�?
+            是否通过检�?
         """
         return True
 
 
 class ExceptionHandler:
-    """异常处理�?""
+    """异常处理�?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -698,7 +641,7 @@ class ExceptionHandler:
 
 
 class RetryManager:
-    """重试管理�?""
+    """重试管理�?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -734,12 +677,12 @@ class RetryManager:
             del self._retry_count[order_id]
     
     def wait_before_retry(self) -> None:
-        """重试前等�?""
+        """重试前等�?""
         time.sleep(self.config.retry_interval)
 
 
 class AccountManager:
-    """账户管理�?""
+    """账户管理�?""
     
     def __init__(self, trader):
         self.trader = trader
@@ -795,7 +738,7 @@ class AccountManager:
 
 
 class QMTExecutor:
-    """QMT交易执行�?""
+    """QMT交易执行�?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -954,32 +897,32 @@ class QMTExecutor:
         return self.account_manager.get_positions(self.config.account_id)
     
     def start(self) -> None:
-        """启动执行�?""
+        """启动执行�?""
         self.monitor.start()
         self.logger.info("QMTExecutor started")
     
     def stop(self) -> None:
-        """停止执行�?""
+        """停止执行�?""
         self.monitor.stop()
         self.logger.info("QMTExecutor stopped")
 ```
 
 ### 3.2 性能指标要求
-| 性能指标 | 目标�?| 测量方法 |
+| 性能指标 | 目标�?| 测量方法 |
 |----------|--------|----------|
 | 订单执行时间 | < 500ms | 单次执行 |
-| 订单监控延迟 | < 1�?| 单次监控 |
-| 并发订单�?| �?10�?| 并发测试 |
-| 订单成功�?| �?95% | 统计分析 |
+| 订单监控延迟 | < 1�?| 单次监控 |
+| 并发订单�?| �?10�?| 并发测试 |
+| 订单成功�?| �?95% | 统计分析 |
 
 ### 3.3 安全机制
-- **风险检�?*: 交易前进行风险检�?
+- **风险检�?*: 交易前进行风险检�?
 - **异常处理**: 完善的异常处理和重试机制
 - **订单监控**: 实时监控订单状�?
 
 ---
 
-## 4. 数据模型与存�?
+## 4. 数据模型与存�?
 
 ### 4.1 核心数据结构
 
@@ -1015,15 +958,15 @@ class ExecutionResultData:
 ```
 
 ### 4.2 缓存策略
-| 缓存类型 | TTL | 淘汰策略 | 最大容�?|
+| 缓存类型 | TTL | 淘汰策略 | 最大容�?|
 |----------|-----|----------|----------|
-| 订单状态缓�?| 1�?| LRU | 1000个订�?|
-| 账户信息缓存 | 1分钟 | LRU | 1个账�?|
-| 持仓信息缓存 | 1分钟 | LRU | 100只股�?|
+| 订单状态缓�?| 1�?| LRU | 1000个订�?|
+| 账户信息缓存 | 1分钟 | LRU | 1个账�?|
+| 持仓信息缓存 | 1分钟 | LRU | 100只股�?|
 
-### 4.3 数据持久�?
-- **持久化需�?*: 订单历史、执行结果需要持久化存储
-- **存储格式**: SQLite数据�?
+### 4.3 数据持久�?
+- **持久化需�?*: 订单历史、执行结果需要持久化存储
+- **存储格式**: SQLite数据�?
 
 ---
 
@@ -1038,14 +981,14 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
     订单执行算法
     
     算法原理:
-    1. 进行风险检�?
+    1. 进行风险检�?
     2. 注册订单到监控器
     3. 转换订单格式
     4. 发送订单到QMT
     5. 等待订单完成
     6. 返回执行结果
     
-    复杂�? O(1)
+    复杂�? O(1)
     """
     if not self.risk_checker.check_order(unified_order):
         return ExecutionResult(
@@ -1101,10 +1044,10 @@ def should_retry(self, order_id: str) -> bool:
     
     算法原理:
     1. 获取当前重试次数
-    2. 判断是否超过最大重试次�?
+    2. 判断是否超过最大重试次�?
     3. 更新重试计数
     
-    复杂�? O(1)
+    复杂�? O(1)
     """
     count = self._retry_count.get(order_id, 0)
     
@@ -1121,14 +1064,14 @@ def should_retry(self, order_id: str) -> bool:
 
 ## 6. 实施技术栈
 
-### 6.1 语言与框�?
+### 6.1 语言与框�?
 | 技术选型 | 版本要求 | 用�?| 选择理由 |
 |----------|----------|------|----------|
 | Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
 | xtquant | >=1.0.0 | QMT Python API | QMT官方API |
-| threading | 标准�?| 多线程支�?| Python内置，稳定可�?|
+| threading | 标准�?| 多线程支�?| Python内置，稳定可�?|
 
-### 6.2 第三方依�?
+### 6.2 第三方依�?
 ```yaml
 requirements:
   - xtquant>=1.0.0
@@ -1139,12 +1082,12 @@ requirements:
 ## 7. 测试策略
 
 ### 7.1 单元测试
-| 测试�?| 测试内容 | 覆盖率目�?|
+| 测试�?| 测试内容 | 覆盖率目�?|
 |--------|----------|------------|
-| 订单转换 | 转换正确�?| 100% |
-| 风险检�?| 检查正确�?| 100% |
-| 订单执行 | 执行正确�?| 100% |
-| 异常处理 | 处理正确�?| 100% |
+| 订单转换 | 转换正确�?| 100% |
+| 风险检�?| 检查正确�?| 100% |
+| 订单执行 | 执行正确�?| 100% |
+| 异常处理 | 处理正确�?| 100% |
 
 ### 7.2 集成测试
 ```python
@@ -1177,20 +1120,20 @@ def test_qmt_executor_integration():
 
 ---
 
-## 8. 风险与约�?
+## 8. 风险与约�?
 
-### 8.1 技术风�?
+### 8.1 技术风�?
 | 风险ID | 风险描述 | 风险等级 | 缓解措施 |
 |--------|----------|----------|----------|
-| R001 | QMT API不稳�?| P0 | 实现异常处理和重试机�?|
-| R002 | 订单执行失败 | P1 | 实现订单监控和告�?|
+| R001 | QMT API不稳�?| P0 | 实现异常处理和重试机�?|
+| R002 | 订单执行失败 | P1 | 实现订单监控和告�?|
 | R003 | 网络连接中断 | P1 | 实现连接重连机制 |
-| R004 | 交易权限不足 | P2 | 实现权限检查机�?|
+| R004 | 交易权限不足 | P2 | 实现权限检查机�?|
 
 ### 8.2 约束条件
-- **技术约�?*: 依赖QMT客户端和API
+- **技术约�?*: 依赖QMT客户端和API
 - **资源约束**: 内存使用<500MB，CPU使用<20%
-- **时间约束**: 预计开发时�?0小时
+- **时间约束**: 预计开发时�?0小时
 - **质量约束**: 测试覆盖率≥90%
 
 ---
@@ -1198,34 +1141,34 @@ def test_qmt_executor_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能�?| 验收标准 | 验证方法 |
+| 功能�?| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 订单执行 | 执行正确 | 单元测试 |
 | 订单监控 | 监控正确 | 单元测试 |
 | 异常处理 | 处理正确 | 单元测试 |
-| 风险检�?| 检查正�?| 单元测试 |
+| 风险检�?| 检查正�?| 单元测试 |
 
 ### 9.2 性能验收标准
 | 性能指标 | 验收标准 | 验证方法 |
 |----------|----------|----------|
 | 订单执行时间 | < 500ms | 性能测试 |
-| 订单监控延迟 | < 1�?| 性能测试 |
-| 订单成功�?| �?95% | 统计分析 |
+| 订单监控延迟 | < 1�?| 性能测试 |
+| 订单成功�?| �?95% | 统计分析 |
 
 ### 9.3 质量验收标准
 | 质量指标 | 验收标准 | 验证方法 |
 |----------|----------|----------|
-| 测试覆盖�?| �?90% | pytest-cov |
-| 代码质量 | 无严重问�?| pylint |
+| 测试覆盖�?| �?90% | pytest-cov |
+| 代码质量 | 无严重问�?| pylint |
 
 ---
 
-## 10. 实施路线�?
+## 10. 实施路线�?
 
-### 10.1 Phase 1: 核心功能开�?(3�?
+### 10.1 Phase 1: 核心功能开�?(3�?
 - **Day 1**: 订单转换器、风险检查器
 - **Day 2**: 订单监控器、异常处理器
-- **Day 3**: 交易执行器、集成测�?
+- **Day 3**: 交易执行器、集成测�?
 
 ---
 
@@ -1249,30 +1192,30 @@ qmt_executor:
     min_price: 0.1
 ```
 
-### B. 错误码定�?
-| 错误�?| 错误类型 | 错误描述 | 处理方式 |
+### B. 错误码定�?
+| 错误�?| 错误类型 | 错误描述 | 处理方式 |
 |--------|----------|----------|----------|
-| ERR_EXEC_001 | ExecuteError | 订单执行失败 | 记录日志，返回错�?|
-| ERR_EXEC_002 | CancelError | 订单撤销失败 | 记录日志，返回错�?|
-| ERR_EXEC_003 | RiskCheckError | 风险检查失�?| 记录日志，返回错�?|
-| ERR_EXEC_004 | TimeoutError | 订单超时 | 记录日志，返回错�?|
+| ERR_EXEC_001 | ExecuteError | 订单执行失败 | 记录日志，返回错�?|
+| ERR_EXEC_002 | CancelError | 订单撤销失败 | 记录日志，返回错�?|
+| ERR_EXEC_003 | RiskCheckError | 风险检查失�?| 记录日志，返回错�?|
+| ERR_EXEC_004 | TimeoutError | 订单超时 | 记录日志，返回错�?|
 
-### C. 参考文�?
+### C. 参考文�?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [QMT数据接口技术规格书](./QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
 
 
-**文档版本**: v1.2.0 | **创建日期**: 2026-04-02 | **维护者**: 策略执行层负责人
+**文档版本**: v1.2.0 | **创建日期**: 2026-04-02 | **维护�?*: 策略执行层负责人
 
 ---
 
-## 11. 监管合规检查集成方�?🆕
+## 11. 监管合规检查集成方�?🆕
 
 ### 11.1 集成背景
 
-**监管要求**�?- **2026�?�?�?*：证监会《关于短线交易监管的若干规定》正式施�?- **2025�?�?�?*：沪深北交易所《程序化交易管理实施细则》正式施�?- **监管导向**：限速、穿透、平权，A股交易生态迎来根本性重�?
-**集成目标**�?- �?确保所有交易行为符合最新监管要�?- �?实时预警合规风险，避免违规处�?- �?降低合规成本，自动化合规检查流�?- �?提升系统专业性，符合机构级标�?
+**监管要求**�?- **2026�?�?�?*：证监会《关于短线交易监管的若干规定》正式施�?- **2025�?�?�?*：沪深北交易所《程序化交易管理实施细则》正式施�?- **监管导向**：限速、穿透、平权，A股交易生态迎来根本性重�?
+**集成目标**�?- �?确保所有交易行为符合最新监管要�?- �?实时预警合规风险，避免违规处�?- �?降低合规成本，自动化合规检查流�?- �?提升系统专业性，符合机构级标�?
 ### 11.2 合规模块集成
 
 #### 11.2.1 模块依赖
@@ -1287,15 +1230,15 @@ qmt_executor:
 
 | 功能模块 | 功能说明 | 监管依据 |
 |---------|---------|---------|
-| **高频交易认定检�?* | 检查是否触发高频交易认定标准（每秒�?00笔或单日�?0000笔） | 沪深北交易所《程序化交易管理实施细则》第三十三条 |
-| **撤单限制检�?* | 检查撤单频率和撤单率是否符合限制（每秒�?5笔，撤单率≤15%�?| 沪深北交易所《程序化交易管理实施细则�?|
-| **订单停留时间检�?* | 检查订单是否满足最小停留时间要求（�?0微秒�?| 沪深北交易所《程序化交易管理实施细则�?|
-| **短线交易合规检�?* | 检查大股东短线交易锁仓期（6个月�?| 证监会《关于短线交易监管的若干规定�?|
-| **异常交易行为监控** | 监控四类异常交易行为 | 沪深北交易所《程序化交易管理实施细则�?|
+| **高频交易认定检�?* | 检查是否触发高频交易认定标准（每秒�?00笔或单日�?0000笔） | 沪深北交易所《程序化交易管理实施细则》第三十三条 |
+| **撤单限制检�?* | 检查撤单频率和撤单率是否符合限制（每秒�?5笔，撤单率≤15%�?| 沪深北交易所《程序化交易管理实施细则�?|
+| **订单停留时间检�?* | 检查订单是否满足最小停留时间要求（�?0微秒�?| 沪深北交易所《程序化交易管理实施细则�?|
+| **短线交易合规检�?* | 检查大股东短线交易锁仓期（6个月�?| 证监会《关于短线交易监管的若干规定�?|
+| **异常交易行为监控** | 监控四类异常交易行为 | 沪深北交易所《程序化交易管理实施细则�?|
 
 ### 11.3 集成实现方案
 
-#### 11.3.1 初始化集�?
+#### 11.3.1 初始化集�?
 ```python
 from src.modules.compliance_checker import (
     create_compliance_checker,
@@ -1319,7 +1262,7 @@ class QMTExecutor:
         self.trader.start()
         self.trader.subscribe_account(config.account_id)
         
-        # 初始化核心组�?        self.converter = OrderConverter()
+        # 初始化核心组�?        self.converter = OrderConverter()
         self.monitor = OrderMonitor(config)
         self.risk_checker = RiskChecker({})
         self.exception_handler = ExceptionHandler(config)
@@ -1333,13 +1276,13 @@ class QMTExecutor:
         self.logger.info("QMTExecutor initialized with compliance checker")
 ```
 
-#### 11.3.2 订单提交前合规检�?
+#### 11.3.2 订单提交前合规检�?
 ```python
 def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
     """执行订单（集成合规检查）
     
     执行流程:
-    1. 传统风险检�?    2. 🆕 监管合规检�?    3. 订单转换
+    1. 传统风险检�?    2. 🆕 监管合规检�?    3. 订单转换
     4. 订单提交
     5. 订单监控
     
@@ -1349,7 +1292,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
     返回:
         执行结果
     """
-    # 1. 传统风险检�?    if not self.risk_checker.check_order(unified_order):
+    # 1. 传统风险检�?    if not self.risk_checker.check_order(unified_order):
         return ExecutionResult(
             order_id=unified_order.order_id,
             status=OrderStatus.REJECTED,
@@ -1361,7 +1304,7 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
             error_message="Risk check failed"
         )
     
-    # 2. 🆕 监管合规检�?    compliance_result = self._check_compliance(unified_order)
+    # 2. 🆕 监管合规检�?    compliance_result = self._check_compliance(unified_order)
     
     if not compliance_result.is_compliant:
         self.logger.error(
@@ -1423,13 +1366,13 @@ def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
 
 
 def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResult':
-    """执行合规检�?    
+    """执行合规检�?    
     参数:
         unified_order: 统一订单
         
     返回:
-        合规检查结�?    """
-    # 创建合规检查订单记�?    compliance_order = OrderRecord(
+        合规检查结�?    """
+    # 创建合规检查订单记�?    compliance_order = OrderRecord(
         order_id=unified_order.order_id,
         symbol=unified_order.symbol,
         direction='buy' if unified_order.direction == OrderDirection.BUY else 'sell',
@@ -1444,7 +1387,7 @@ def _check_compliance(self, unified_order: UnifiedOrder) -> 'ComplianceCheckResu
     position_pct = self._get_position_pct(unified_order.symbol)
     last_trade_date = self._get_last_trade_date(unified_order.symbol)
     
-    # 执行合规检�?    result = self.compliance_checker.check_order_before_submission(
+    # 执行合规检�?    result = self.compliance_checker.check_order_before_submission(
         order=compliance_order,
         position_pct=position_pct,
         last_trade_date=last_trade_date
@@ -1486,10 +1429,10 @@ def _get_last_trade_date(self, symbol: str) -> Optional[datetime]:
         上次交易日期
     """
     # TODO: 从交易记录中获取上次交易日期
-    # 这里需要从数据库或交易记录中查�?    return None
+    # 这里需要从数据库或交易记录中查�?    return None
 ```
 
-#### 11.3.3 撤单合规检�?
+#### 11.3.3 撤单合规检�?
 ```python
 def cancel_order(self, order_id: str) -> bool:
     """撤单（集成合规检查）
@@ -1507,7 +1450,7 @@ def cancel_order(self, order_id: str) -> bool:
         self.logger.warning(f"Cannot cancel order {order_id}: status is {order_status}")
         return False
     
-    # 🆕 检查撤单限�?    cancel_check = self.compliance_checker.check_cancel_limits()
+    # 🆕 检查撤单限�?    cancel_check = self.compliance_checker.check_cancel_limits()
     
     if not cancel_check.is_compliant:
         self.logger.error(
@@ -1551,7 +1494,7 @@ def start_compliance_monitoring(self):
     def monitoring_loop():
         while True:
             try:
-                # 检查异常交易行�?                result = self.compliance_checker.check_abnormal_trading()
+                # 检查异常交易行�?                result = self.compliance_checker.check_abnormal_trading()
                 
                 if result.compliance_level == ComplianceLevel.WARNING:
                     self.logger.warning(
@@ -1565,7 +1508,7 @@ def start_compliance_monitoring(self):
                     )
                     # TODO: 触发风控措施
                 
-                # 每分钟检查一�?                time.sleep(60)
+                # 每分钟检查一�?                time.sleep(60)
                 
             except Exception as e:
                 self.logger.error(f"Error in compliance monitoring: {e}")
@@ -1580,7 +1523,7 @@ def start_compliance_monitoring(self):
 
 ```python
 def daily_reset(self):
-    """每日重置（开盘前调用�?""
+    """每日重置（开盘前调用�?""
     # 重置合规检查器
     self.compliance_checker.reset_daily()
     self.logger.info("Compliance checker reset for new trading day")
@@ -1615,17 +1558,17 @@ def generate_compliance_report(self) -> Dict:
 compliance:
   # 高频交易认定标准
   high_frequency_criteria:
-    per_second_threshold: 300      # 每秒申报+撤单�?00�?    per_day_threshold: 20000       # 单日申报+撤单�?0000�?    stricter_standard:
-      per_second: 15                # 更严格标准：每秒15�?      cancel_rate_per_day: 0.15     # 单日撤单率≤15%
+    per_second_threshold: 300      # 每秒申报+撤单�?00�?    per_day_threshold: 20000       # 单日申报+撤单�?0000�?    stricter_standard:
+      per_second: 15                # 更严格标准：每秒15�?      cancel_rate_per_day: 0.15     # 单日撤单率≤15%
   
   # 撤单限制
   cancel_order_limits:
-    max_cancel_per_second: 15       # 每秒撤单�?5�?    max_cancel_rate_per_day: 0.15   # 单日撤单率≤15%
-    min_order_duration_microseconds: 50  # 订单停留�?0微秒
+    max_cancel_per_second: 15       # 每秒撤单�?5�?    max_cancel_rate_per_day: 0.15   # 单日撤单率≤15%
+    min_order_duration_microseconds: 50  # 订单停留�?0微秒
   
   # 短线交易规则
   short_term_trading_rules:
-    lock_period_months: 6              # 6个月锁仓�?    major_shareholder_threshold: 0.05  # 5%大股东认�?    penetration_enabled: true          # 穿透监管启�?  
+    lock_period_months: 6              # 6个月锁仓�?    major_shareholder_threshold: 0.05  # 5%大股东认�?    penetration_enabled: true          # 穿透监管启�?  
   # 监控配置
   monitoring:
     enabled: true                      # 启用监控
@@ -1648,7 +1591,7 @@ def load_compliance_config(self, config_path: str = 'config/compliance_config.ya
         with open(config_path, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
         
-        # 重新创建合规检查器（应用新配置�?        self.compliance_checker = create_compliance_checker(
+        # 重新创建合规检查器（应用新配置�?        self.compliance_checker = create_compliance_checker(
             config.get('compliance', {})
         )
         
@@ -1669,10 +1612,10 @@ import unittest
 from datetime import datetime, timedelta
 
 class TestQMTExecutorCompliance(unittest.TestCase):
-    """QMTExecutor合规检查测�?""
+    """QMTExecutor合规检查测�?""
     
     def setUp(self):
-        """测试初始�?""
+        """测试初始�?""
         self.config = QMTConfig(
             account_id='test_account',
             session_id='test_session',
@@ -1697,7 +1640,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
         self.assertTrue(result.is_compliant)
     
     def test_high_frequency_detection(self):
-        """测试高频交易检�?""
+        """测试高频交易检�?""
         # 模拟高频交易场景
         for i in range(20):
             order = UnifiedOrder(
@@ -1712,11 +1655,11 @@ class TestQMTExecutorCompliance(unittest.TestCase):
             )
             self.executor._check_compliance(order)
         
-        # 检查高频交易检�?        result = self.executor.compliance_checker.check_high_frequency_trading()
+        # 检查高频交易检�?        result = self.executor.compliance_checker.check_high_frequency_trading()
         self.assertEqual(result.compliance_level, ComplianceLevel.WARNING)
     
     def test_cancel_limit_check(self):
-        """测试撤单限制检�?""
+        """测试撤单限制检�?""
         # 模拟撤单场景
         for i in range(20):
             self.executor.compliance_checker.order_tracker.record_cancel(
@@ -1724,7 +1667,7 @@ class TestQMTExecutorCompliance(unittest.TestCase):
                 datetime.now()
             )
         
-        # 检查撤单限�?        result = self.executor.compliance_checker.check_cancel_limits()
+        # 检查撤单限�?        result = self.executor.compliance_checker.check_cancel_limits()
         self.assertFalse(result.is_compliant)
 
 
@@ -1732,23 +1675,23 @@ if __name__ == '__main__':
     unittest.main()
 ```
 
-### 11.8 监控与告�?
+### 11.8 监控与告�?
 #### 11.8.1 监控指标
 
 | 监控指标 | 说明 | 告警阈�?|
 |---------|------|---------|
-| **合规检查次�?* | 每日合规检查总次�?| - |
+| **合规检查次�?* | 每日合规检查总次�?| - |
 | **违规次数** | 每日违规次数 | > 0 立即告警 |
 | **警告次数** | 每日警告次数 | > 10 延迟告警 |
-| **合规�?* | 合规检查通过�?| < 95% 每日告警 |
+| **合规�?* | 合规检查通过�?| < 95% 每日告警 |
 | **高频交易触发次数** | 触发高频交易认定次数 | > 0 立即告警 |
-| **撤单�?* | 每日撤单�?| > 10% 警告告警 |
+| **撤单�?* | 每日撤单�?| > 10% 警告告警 |
 
 #### 11.8.2 告警通知
 
 ```python
 def send_compliance_alert(self, level: str, message: str):
-    """发送合规告�?    
+    """发送合规告�?    
     参数:
         level: 告警级别
         message: 告警消息
@@ -1766,31 +1709,31 @@ def send_compliance_alert(self, level: str, message: str):
     # send_wechat_message(message)
 ```
 
-### 11.9 最佳实�?
-#### 11.9.1 开发建�?
-1. **始终进行合规检�?*: 在订单提交前必须进行合规检�?2. **记录所有警�?*: 即使通过检查，也要记录警告信息
-3. **定期生成报告**: 每日生成合规报告，便于审�?4. **及时更新规则**: 关注监管动态，及时更新合规规则
+### 11.9 最佳实�?
+#### 11.9.1 开发建�?
+1. **始终进行合规检�?*: 在订单提交前必须进行合规检�?2. **记录所有警�?*: 即使通过检查，也要记录警告信息
+3. **定期生成报告**: 每日生成合规报告，便于审�?4. **及时更新规则**: 关注监管动态，及时更新合规规则
 
 #### 11.9.2 运维建议
 
 1. **每日重置**: 开盘前调用 `daily_reset()` 重置合规检查器
-2. **实时监控**: 启动合规监控线程，实时监控交易行�?3. **告警响应**: 收到告警后立即处理，避免违规
-4. **定期审计**: 定期审计合规报告，优化交易策�?
+2. **实时监控**: 启动合规监控线程，实时监控交易行�?3. **告警响应**: 收到告警后立即处理，避免违规
+4. **定期审计**: 定期审计合规报告，优化交易策�?
 ### 11.10 故障排查
 
 #### 11.10.1 常见问题
 
 | 问题 | 可能原因 | 解决方案 |
 |------|---------|---------|
-| **订单被拒�?* | 触发合规限制 | 检查合规检查结果，调整交易策略 |
-| **高频交易告警** | 交易频率过高 | 降低交易频率，使用智能执行算�?|
-| **撤单失败** | 撤单率超�?| 减少撤单操作，优化订单价�?|
-| **合规报告异常** | 数据统计错误 | 检查订单跟踪器，重置每日数�?|
+| **订单被拒�?* | 触发合规限制 | 检查合规检查结果，调整交易策略 |
+| **高频交易告警** | 交易频率过高 | 降低交易频率，使用智能执行算�?|
+| **撤单失败** | 撤单率超�?| 减少撤单操作，优化订单价�?|
+| **合规报告异常** | 数据统计错误 | 检查订单跟踪器，重置每日数�?|
 
 #### 11.10.2 日志分析
 
 ```python
-# 查看合规检查日�?# grep "COMPLIANCE" logs/trading.log
+# 查看合规检查日�?# grep "COMPLIANCE" logs/trading.log
 
 # 查看违规记录
 # grep "Compliance violation" logs/trading.log
@@ -1801,12 +1744,12 @@ def send_compliance_alert(self, level: str, message: str):
 
 ### 11.11 总结
 
-**集成价�?*�?- �?**合规保障**: 确保系统100%符合最新监管要�?- �?**风险预警**: 实时监控，提前预警合规风�?- �?**成本降低**: 自动化合规检查，降低人工成本
-- �?**专业提升**: 符合机构级标准，提升系统专业�?
-**实施建议**�?1. **立即集成**: 将合规检查模块集成到QMTExecutor
-2. **定期监控**: 设置定时任务，实时监控合规状�?3. **持续更新**: 关注监管动态，及时更新规则
+**集成价�?*�?- �?**合规保障**: 确保系统100%符合最新监管要�?- �?**风险预警**: 实时监控，提前预警合规风�?- �?**成本降低**: 自动化合规检查，降低人工成本
+- �?**专业提升**: 符合机构级标准，提升系统专业�?
+**实施建议**�?1. **立即集成**: 将合规检查模块集成到QMTExecutor
+2. **定期监控**: 设置定时任务，实时监控合规状�?3. **持续更新**: 关注监管动态，及时更新规则
 4. **培训团队**: 确保团队理解合规要求
 
 ---
 
-**文档版本**: v1.2.0 | **创建日期**: 2026-04-02 | **维护者**: 策略执行层负责人
+**文档版本**: v1.2.0 | **创建日期**: 2026-04-02 | **维护�?*: 策略执行层负责人

@@ -30,16 +30,16 @@ last_updated: 2026-04-02
 | 模板名称 | 文件位置 | 主要用�?| 输出格式 |
 |----------|----------|----------|----------|
 | 技术规格书模板 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/TECHNICAL_SPECIFICATION_TEMPLATE.md` | 生成标准技术规格书 | Markdown文档 |
-| 技术评审报告模�?| `docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/TECHNICAL_REVIEW_REPORT_TEMPLATE.md` | 生成标准评审报告 | Markdown文档 |
-| 案例研究模板 | `docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/CASE_STUDY_TEMPLATE.md` | 创建技术评审案例研�?| Markdown文档 |
-| 最佳实践模�?| `docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/BEST_PRACTICES_TEMPLATE.md` | 创建最佳实践文�?| Markdown文档 |
+| 技术评审报告模�?| `docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/TECHNICAL_REVIEW_REPORT_TEMPLATE.md` | 生成标准评审报告 | Markdown文档 |
+| 案例研究模板 | `docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/CASE_STUDY_TEMPLATE.md` | 创建技术评审案例研�?| Markdown文档 |
+| 最佳实践模�?| `docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/BEST_PRACTICES_TEMPLATE.md` | 创建最佳实践文�?| Markdown文档 |
 
 ### 2.3 协议与标�?
 | 文档名称 | 文件位置 | 主要作用 | 约束范围 |
 |----------|----------|----------|----------|
 | 智能体间调用协议 | `docs/05_IMPLEMENTATION/02_DEVELOPMENT/AI_AGENT_CALL_PROTOCOL.md` | 定义智能体间标准化调用格�?| 所有智能体交互 |
-| 质量门禁机制 | `docs/05_IMPLEMENTATION/04_OPERATIONS/QUALITY_GATE_MECHANISM.md` | 定义技术评审通过标准 | 所有开发阶段门�?|
-| 知识库框�?| `docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/README.md` | 定义知识积累和管理框�?| 知识创建、使用、管�?|
+| 质量门禁机制 | `docs/05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md` | 定义技术评审通过标准 | 所有开发阶段门�?|
+| 知识库框�?| `docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/README.md` | 定义知识积累和管理框�?| 知识创建、使用、管�?|
 
 ## 3. 工具详细使用说明
 
@@ -273,12 +273,12 @@ best_practices = search_knowledge_base("技术可行性评�?最佳实�?)
 PATHS = {
     "templates": {
         "technical_spec": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/TECHNICAL_SPECIFICATION_TEMPLATE.md",
-        "review_report": "docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/TECHNICAL_REVIEW_REPORT_TEMPLATE.md"
+        "review_report": "docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/TECHNICAL_REVIEW_REPORT_TEMPLATE.md"
     },
     "outputs": {
         "specifications": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/",
-        "review_reports": "docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/",
-        "knowledge_base": "docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/"
+        "review_reports": "docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/",
+        "knowledge_base": "docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/"
     }
 }
 ```

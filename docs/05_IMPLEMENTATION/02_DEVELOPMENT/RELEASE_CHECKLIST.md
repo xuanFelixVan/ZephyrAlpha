@@ -24,17 +24,17 @@ implementation_status: 进行?
 
 ### 1. 版本一致性检?
 - [ ] **系统主版?*: `config/system.yaml` ?`docs/System_Manifest.md` 版本一?
-- [ ] **模块状?*: 核心模块状态标识正?(Active/Stable/Frozen)
+- [ ] **模块�?*: 核心模块状态标识正?(Active/Stable/Frozen)
 - [ ] **版本格式**: 所有版本号遵循语义化版?(X.Y.Z 格式)
 
 **快速检查命?*:
 ```powershell
-# 检查系统版本一致?
+# 检查系统版本一�?
 Get-Content config/system.yaml | Select-String "version:"
 Get-Content docs/System_Manifest.md | Select-String "版本:" | Select -First 1
 
 # 检查核心模块状?
-Get-Content docs/System_Manifest.md | Select-String "状?*Active|状?*Stable"
+Get-Content docs/System_Manifest.md | Select-String "�?*Active|�?*Stable"
 ```
 
 ### 2. 代码质量检?
@@ -149,7 +149,7 @@ with open('config/system.yaml', 'r') as f:
 
 ## 📝 发布记录模板
 
-### 发布记录文件: `docs/05_IMPLEMENTATION/04_OPERATIONS/release_notes/`
+### 发布记录文件: `docs/05_IMPLEMENTATION/07_OPERATIONS/release_notes/`
 ```
 release_v5.3.0.md
 release_v5.3.1.md
@@ -171,7 +171,7 @@ release_v5.3.0.md
 2. 统一系统版本标识 (v5.3.0)
 3. 补充10个次要文档索?
 
-### 模块状?
+### 模块�?
 - Active: 5个核心模?
 - Stable: 3个稳定模?
 
@@ -191,14 +191,14 @@ release_v5.3.0.md
 
 ## 🔧 工具与自动化
 
-### 快速检查脚?(可?
+### 快速检查脚?(�?
 ```python
 # release_check.py - 简化发布检?
 import os
 import yaml
 
 def check_system_version():
-    """检查系统版本一致?""
+    """检查系统版本一�?""
     # 简单实?
     pass
 

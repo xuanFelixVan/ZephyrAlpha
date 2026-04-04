@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 个人开发?standard_type: 个人开发友好实施蓝?applicable_scope: Layer 0数据源层（个人开发模块）| 业务架构: 三级时间框架融合架构
+owner: 个人开�?standard_type: 个人开发友好实施蓝?applicable_scope: Layer 0数据源层（个人开发模块）| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准（个人版?reference_models: ["个人量化交易", "AI辅助开?, "轻量级架?]
 related_documents:
   - DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
@@ -17,15 +17,15 @@ implementation_status: 设计阶段
 > 清风量化系统 v5.3 - 个人开发版
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **目标用户**: 个人开发?+ AI辅助维护
+> **目标用户**: 个人开�?+ AI辅助维护
 > **核心理念**: 轻量级、低成本、易维护、快速迭?> **实施周期**: 2-4周（核心模块?>
 > ---
 >
 > **📋 文档关系说明**?> - [`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) = **专业机构级完整蓝?*，适用于大规模团队
-> - 本文档（`PERSONAL_DEVELOPMENT_BLUEPRINT.md`? **个人开发版简化方?*，适用于个人开发?> - [`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`](./CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md) = **关键欠缺模块补充**，立即行动项
+> - 本文档（`PERSONAL_DEVELOPMENT_BLUEPRINT.md`? **个人开发版简化方?*，适用于个人开�?> - [`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`](./CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md) = **关键欠缺模块补充**，立即行动项
 >
 > **选择指南**?> - 如果你是大规模团??参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
-> - 如果你是个人开发??参考本文档（简化方案）
+> - 如果你是个人开�??参考本文档（简化方案）
 > - 如果你需要补充关键模??参考CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md
 
 
@@ -62,7 +62,7 @@ implementation_status: 设计阶段
 - **缓存**：Redis（单机版?- **异步框架**：asyncio（Python内置?
 **硬件要求**?- CPU: 2?- RAM: 4GB
 - 存储: 10GB
-- **成本**: 云服务器约?0-100/?
+- **成本**: 云服务器�?0-100/?
 **实施步骤**?-5天）?
 **Day 1: 环境准备**
 ```bash
@@ -244,12 +244,12 @@ class PersonalQualityMonitor:
     def __init__(self, config: Dict[str, Any] = None):
         self.config = config or {
             'missing_threshold': 0.05,  # 缺失值阈?%
-            'outlier_zscore': 3.0,      # 异常值Z-score阈?            'alert_email': None,         # 告警邮箱
+            'outlier_zscore': 3.0,      # 异常值Z-score�?            'alert_email': None,         # 告警邮箱
             'alert_wechat': None         # 企业微信webhook
         }
     
     def check_missing_values(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """检查缺失?        
+        """检查缺�?        
         Args:
             data: 数据DataFrame
             
@@ -287,7 +287,7 @@ class PersonalQualityMonitor:
         }
     
     def check_data_freshness(self, data: pd.DataFrame, timestamp_col: str) -> Dict[str, Any]:
-        """检查数据时效?        
+        """检查数据时�?        
         Args:
             data: 数据DataFrame
             timestamp_col: 时间戳列?            
@@ -543,7 +543,7 @@ class PersonalRedundancyManager:
         return None
     
     def check_source_health(self) -> Dict[str, Any]:
-        """检查数据源健康状?        
+        """检查数据源健康�?        
         Returns:
             Dict: 健康状态报?        """
         health_report = {
@@ -592,7 +592,7 @@ class PersonalRedundancyManager:
 if __name__ == "__main__":
     # 创建冗余管理?    manager = PersonalRedundancyManager(tushare_token='YOUR_TUSHARE_TOKEN')
     
-    # 检查数据源健康状?    health = manager.check_source_health()
+    # 检查数据源健康�?    health = manager.check_source_health()
     print("数据源健康状?")
     print(json.dumps(health, indent=2, ensure_ascii=False))
     
@@ -875,7 +875,7 @@ if __name__ == "__main__":
 - **情感分析**：预训练模型（如BERT?
 **硬件要求**?- CPU: 4核（推荐GPU，但CPU也可运行?- RAM: 8GB
 - 存储: 20GB（模型文件）
-- **成本**: 云服务器约?00-200/月（CPU版）
+- **成本**: 云服务器�?00-200/月（CPU版）
 
 **实施步骤**?-7天）?
 **Day 1-2: 环境准备和模型下?*
@@ -1311,7 +1311,7 @@ if __name__ == "__main__":
 | **总计** | - | - | **¥60-120/?* | 可使用个人电?|
 
 ### 3.3 软件资源需?
-| 软件 | 用?| 成本 | 备注 |
+| 软件 | �?| 成本 | 备注 |
 |------|------|------|------|
 | **Python 3.9+** | 开发语言 | 免费 | - |
 | **AKShare** | 数据?| 免费 | 主要数据?|
@@ -1366,7 +1366,7 @@ if __name__ == "__main__":
 
 ### 5.3 AI维护工具
 
-| 工具 | 用?| 效率提升 |
+| 工具 | �?| 效率提升 |
 |------|------|----------|
 | **代码审查** | AI审查代码质量 | 50% |
 | **文档生成** | AI生成技术文?| 80% |
@@ -1402,12 +1402,12 @@ if __name__ == "__main__":
 | **代码质量** | pylint评分 > 8.0 | 自动检?|
 | **测试覆盖?* | > 80% | 自动测试 |
 | **文档完整?* | > 90% | 人工审查 |
-| **可维护?* | 评分 > 8.0 | AI评估 |
+| **可维�?* | 评分 > 8.0 | AI评估 |
 
 
 ## 📚 七、参考资?
 ### 7.1 开源项?
-| 项目 | 用?| 链接 |
+| 项目 | �?| 链接 |
 |------|------|------|
 | **AKShare** | 金融数据接口 | https://github.com/akfamily/akshare |
 | **Tushare** | 金融数据接口 | https://github.com/waditu/tushare |
@@ -1425,7 +1425,7 @@ if __name__ == "__main__":
 
 ### 7.3 社区支持
 
-| 社区 | 用?| 链接 |
+| 社区 | �?| 链接 |
 |------|------|------|
 | **GitHub Issues** | 问题反馈 | 各项目GitHub页面 |
 | **Stack Overflow** | 技术问?| https://stackoverflow.com/ |
@@ -1452,5 +1452,5 @@ if __name__ == "__main__":
 
 **文档结束**
 
-> 本蓝图专为个人开发者设计，遵循"轻量级、低成本、易维护、快速迭?的原则?> 
-> **实施状?*: ?待实?> **下一步行?*: 按照Week 1计划开始实施实时数据流模块
+> 本蓝图专为个人开发者设计，遵循"轻量级、低成本、易维护、快速迭?的原�?> 
+> **实施�?*: ?待实?> **下一步行?*: 按照Week 1计划开始实施实时数据流模块

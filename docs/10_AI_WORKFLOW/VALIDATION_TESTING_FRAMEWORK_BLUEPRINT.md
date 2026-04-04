@@ -4,11 +4,11 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
-owner: 首席架构师
-standard_type: 专业机构级蓝图
-applicable_scope: 验证与测试框架模块
+owner: 首席架构�?
+standard_type: 专业机构级蓝�?
+applicable_scope: 验证与测试框架模�?
 compliance_level: 专业标准
-layer: 舆情分析层
+layer: 舆情分析�?
 priority: P1
 estimated_effort: 60h
 integrated_modules:
@@ -16,81 +16,81 @@ integrated_modules:
   - L3_BVM_001
 ---
 
-# 验证与测试框架蓝图 (Validation & Testing Framework Blueprint)
+# 验证与测试框架蓝�?(Validation & Testing Framework Blueprint)
 
 > **模块ID**: L3_VTF_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
-> **Layer定位**: Layer 3 - 舆情分析层
-> **优先级**: P1 (高优先级)
-> **预计工作量**: 60小时
+> **Layer定位**: Layer 3 - 舆情分析�?
+> **优先�?*: P1 (高优先级)
+> **预计工作�?*: 60小时
 > **整合模块**: L3_ABTF_001 (A/B测试框架) + L3_BVM_001 (回测验证模块)
 
 ---
 
-## 一、模块概述
+## 一、模块概�?
 
 ### 1.1 设计背景
 
-**业务需求**:
-- 科学验证模型和策略效果
-- 验证情感信号的有效性
-- 评估因子和策略的稳健性
-- 支持数据驱动的决策
+**业务需�?*:
+- 科学验证模型和策略效�?
+- 验证情感信号的有效�?
+- 评估因子和策略的稳健�?
+- 支持数据驱动的决�?
 
-**技术痛点**:
+**技术痛�?*:
 - 当前缺少A/B测试框架
 - 缺少情感信号回测机制
-- 缺少因子有效性验证工具
-- 缺少稳健性检验机制
+- 缺少因子有效性验证工�?
+- 缺少稳健性检验机�?
 
-**预期价值**:
+**预期价�?*:
 - 模型验证效率提升80%
-- 策略验证准确率>95%
-- 决策科学性提升100%
-- 实验复现率100%
+- 策略验证准确�?95%
+- 决策科学性提�?00%
+- 实验复现�?00%
 
 ### 1.2 模块定位
 
-**Layer归属**: Layer 3 - 舆情分析层
-**模块类别**: 支撑性模块
-**架构角色**: 验证与测试组件，确保模型和策略的有效性
+**Layer归属**: Layer 3 - 舆情分析�?
+**模块类别**: 支撑性模�?
+**架构角色**: 验证与测试组件，确保模型和策略的有效�?
 
 ---
 
-## 二、详细架构设计
+## 二、详细架构设�?
 
-### 2.1 系统架构图
+### 2.1 系统架构�?
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│              验证与测试框架架构                                       │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │          ABTestingFramework (A/B测试框架)                    │  │
-│  │  - 实验设计                                                   │  │
-│  │  - 流量分配                                                   │  │
-│  │  - 结果分析                                                   │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-│                           ↓                                          │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │          BacktestingValidator (回测验证器)                    │  │
-│  │  - 情感信号回测                                               │  │
-│  │  - 因子有效性验证                                             │  │
-│  │  - 稳健性检验                                                 │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-│                           ↓                                          │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │          开源工具层                                           │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────┐ │  │
-│  │  │SciPy        │  │Statsmodels  │  │Backtrader   │  │Streamlit│ │
-│  │  │Statistical  │  │Statistical  │  │Backtesting  │  │Dashboard│ │
-│  │  │Tests        │  │Modeling     │  │Framework    │  │        │ │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘  └──────┘ │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────�?
+�?             验证与测试框架架�?                                      �?
+├─────────────────────────────────────────────────────────────────────�?
+�?                                                                    �?
+�? ┌──────────────────────────────────────────────────────────────�? �?
+�? �?         ABTestingFramework (A/B测试框架)                    �? �?
+�? �? - 实验设计                                                   �? �?
+�? �? - 流量分配                                                   �? �?
+�? �? - 结果分析                                                   �? �?
+�? └──────────────────────────────────────────────────────────────�? �?
+�?                          �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────�? �?
+�? �?         BacktestingValidator (回测验证�?                    �? �?
+�? �? - 情感信号回测                                               �? �?
+�? �? - 因子有效性验�?                                            �? �?
+�? �? - 稳健性检�?                                                �? �?
+�? └──────────────────────────────────────────────────────────────�? �?
+�?                          �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────�? �?
+�? �?         开源工具层                                           �? �?
+�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? ┌──────�?�? �?
+�? �? │SciPy        �? │Statsmodels  �? │Backtrader   �? │Streamlit�?�?
+�? �? │Statistical  �? │Statistical  �? │Backtesting  �? │Dashboard�?�?
+�? �? │Tests        �? │Modeling     �? │Framework    �? �?       �?�? �?
+�? �? └─────────────�? └─────────────�? └─────────────�? └──────�?�? �?
+�? └──────────────────────────────────────────────────────────────�? �?
+�?                                                                    �?
+└─────────────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 核心组件设计
@@ -115,12 +115,12 @@ class ExperimentConfig:
     experiment_id: str              # 实验ID
     experiment_name: str            # 实验名称
     hypothesis: str                 # 假设描述
-    control_group: str              # 对照组名称
-    treatment_group: str            # 实验组名称
-    sample_size: int                # 样本量
-    significance_level: float       # 显著性水平 (默认0.05)
+    control_group: str              # 对照组名�?
+    treatment_group: str            # 实验组名�?
+    sample_size: int                # 样本�?
+    significance_level: float       # 显著性水�?(默认0.05)
     power: float                    # 统计功效 (默认0.8)
-    start_time: datetime            # 开始时间
+    start_time: datetime            # 开始时�?
     end_time: datetime              # 结束时间
 
 
@@ -128,10 +128,10 @@ class ExperimentConfig:
 class ExperimentResult:
     """实验结果"""
     experiment_id: str              # 实验ID
-    control_metrics: Dict[str, float]  # 对照组指标
-    treatment_metrics: Dict[str, float]  # 实验组指标
-    lift: float                     # 提升度
-    p_value: float                  # P值
+    control_metrics: Dict[str, float]  # 对照组指�?
+    treatment_metrics: Dict[str, float]  # 实验组指�?
+    lift: float                     # 提升�?
+    p_value: float                  # P�?
     confidence_interval: Tuple[float, float]  # 置信区间
     is_significant: bool            # 是否显著
     conclusion: str                 # 结论
@@ -168,11 +168,11 @@ class ABTestingFramework:
         Args:
             experiment_name: 实验名称
             hypothesis: 假设描述
-            control_group: 对照组名称
-            treatment_group: 实验组名称
-            expected_lift: 预期提升度
+            control_group: 对照组名�?
+            treatment_group: 实验组名�?
+            expected_lift: 预期提升�?
             baseline_metric: 基线指标
-            significance_level: 显著性水平
+            significance_level: 显著性水�?
             power: 统计功效
             
         Returns:
@@ -187,16 +187,16 @@ class ABTestingFramework:
         significance_level: float = 0.05,
         power: float = 0.8
     ) -> int:
-        """计算样本量
+        """计算样本�?
         
         Args:
             baseline_metric: 基线指标
-            expected_lift: 预期提升度
-            significance_level: 显著性水平
+            expected_lift: 预期提升�?
+            significance_level: 显著性水�?
             power: 统计功效
             
         Returns:
-            所需样本量
+            所需样本�?
         """
         pass
     
@@ -214,7 +214,7 @@ class ABTestingFramework:
             traffic_split: 流量分配比例
             
         Returns:
-            分配的组别
+            分配的组�?
         """
         pass
     
@@ -255,15 +255,15 @@ class ABTestingFramework:
         treatment_data: np.ndarray,
         test_type: str = "t-test"
     ) -> Tuple[float, float]:
-        """统计检验
+        """统计检�?
         
         Args:
-            control_data: 对照组数据
-            treatment_data: 实验组数据
-            test_type: 检验类型 (t-test, mann-whitney, chi-square)
+            control_data: 对照组数�?
+            treatment_data: 实验组数�?
+            test_type: 检验类�?(t-test, mann-whitney, chi-square)
             
         Returns:
-            (统计量, P值)
+            (统计�? P�?
         """
         pass
     
@@ -284,25 +284,25 @@ class ABTestingFramework:
         pass
 ```
 
-**统计检验方法**:
+**统计检验方�?*:
 
-1. **t检验** (Student's t-test):
-   - 独立样本t检验
-   - 配对样本t检验
+1. **t检�?* (Student's t-test):
+   - 独立样本t检�?
+   - 配对样本t检�?
    - Welch's t-test
 
-2. **非参数检验**:
-   - Mann-Whitney U检验
-   - Wilcoxon符号秩检验
-   - Kruskal-Wallis检验
+2. **非参数检�?*:
+   - Mann-Whitney U检�?
+   - Wilcoxon符号秩检�?
+   - Kruskal-Wallis检�?
 
-3. **卡方检验**:
-   - 卡方独立性检验
-   - 卡方拟合优度检验
+3. **卡方检�?*:
+   - 卡方独立性检�?
+   - 卡方拟合优度检�?
 
 ---
 
-#### 2.2.2 回测验证器 (BacktestingValidator)
+#### 2.2.2 回测验证�?(BacktestingValidator)
 
 **功能设计**:
 
@@ -318,7 +318,7 @@ from datetime import datetime
 class BacktestConfig:
     """回测配置"""
     backtest_id: str                # 回测ID
-    start_date: datetime            # 开始日期
+    start_date: datetime            # 开始日�?
     end_date: datetime              # 结束日期
     initial_capital: float          # 初始资金
     commission: float               # 手续费率
@@ -331,20 +331,20 @@ class BacktestResult:
     """回测结果"""
     backtest_id: str                # 回测ID
     total_return: float             # 总收益率
-    annual_return: float            # 年化收益率
+    annual_return: float            # 年化收益�?
     sharpe_ratio: float             # 夏普比率
-    max_drawdown: float             # 最大回撤
+    max_drawdown: float             # 最大回�?
     win_rate: float                 # 胜率
-    profit_loss_ratio: float        # 盈亏比
+    profit_loss_ratio: float        # 盈亏�?
     ic: float                       # 信息系数
     ir: float                       # 信息比率
     trades: List[Dict[str, Any]]    # 交易记录
 
 
 class BacktestingValidator:
-    """回测验证器
+    """回测验证�?
     
-    负责情感信号回测、因子有效性验证和稳健性检验
+    负责情感信号回测、因子有效性验证和稳健性检�?
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -379,7 +379,7 @@ class BacktestingValidator:
         return_data: pd.DataFrame,
         factor_name: str
     ) -> Dict[str, Any]:
-        """验证因子有效性
+        """验证因子有效�?
         
         Args:
             factor_data: 因子数据
@@ -387,7 +387,7 @@ class BacktestingValidator:
             factor_name: 因子名称
             
         Returns:
-            因子有效性验证结果
+            因子有效性验证结�?
         """
         pass
     
@@ -400,12 +400,12 @@ class BacktestingValidator:
         """计算信息系数 (IC)
         
         Args:
-            factor_values: 因子值
-            returns: 收益率
-            method: 相关性方法 (pearson, spearman)
+            factor_values: 因子�?
+            returns: 收益�?
+            method: 相关性方�?(pearson, spearman)
             
         Returns:
-            IC值
+            IC�?
         """
         pass
     
@@ -419,7 +419,7 @@ class BacktestingValidator:
             ic_series: IC序列
             
         Returns:
-            IR值
+            IR�?
         """
         pass
     
@@ -447,7 +447,7 @@ class BacktestingValidator:
         params_range: Dict[str, List[Any]],
         n_simulations: int = 100
     ) -> Dict[str, Any]:
-        """稳健性检验
+        """稳健性检�?
         
         Args:
             backtest_func: 回测函数
@@ -455,7 +455,7 @@ class BacktestingValidator:
             n_simulations: 模拟次数
             
         Returns:
-            稳健性检验结果
+            稳健性检验结�?
         """
         pass
     
@@ -465,7 +465,7 @@ class BacktestingValidator:
         param_name: str,
         param_range: List[Any]
     ) -> pd.DataFrame:
-        """参数敏感性分析
+        """参数敏感性分�?
         
         Args:
             base_params: 基础参数
@@ -473,7 +473,7 @@ class BacktestingValidator:
             param_range: 参数范围
             
         Returns:
-            敏感性分析结果
+            敏感性分析结�?
         """
         pass
     
@@ -482,14 +482,14 @@ class BacktestingValidator:
         data: pd.DataFrame,
         train_ratio: float = 0.7
     ) -> Dict[str, Any]:
-        """样本外测试
+        """样本外测�?
         
         Args:
             data: 数据
-            train_ratio: 训练集比例
+            train_ratio: 训练集比�?
             
         Returns:
-            样本外测试结果
+            样本外测试结�?
         """
         pass
     
@@ -546,11 +546,11 @@ class BacktestingValidator:
 
 ---
 
-### 2.3 开源工具集成
+### 2.3 开源工具集�?
 
 #### Backtrader集成
 
-**安装和配置**:
+**安装和配�?*:
 
 ```bash
 # 安装Backtrader
@@ -613,9 +613,9 @@ def run_backtest(
 
 ---
 
-#### SciPy统计检验集成
+#### SciPy统计检验集�?
 
-**统计检验示例**:
+**统计检验示�?*:
 
 ```python
 from scipy import stats
@@ -627,15 +627,15 @@ def perform_ttest(
     treatment: np.ndarray,
     equal_var: bool = False
 ) -> Tuple[float, float]:
-    """执行t检验
+    """执行t检�?
     
     Args:
-        control: 对照组数据
-        treatment: 实验组数据
+        control: 对照组数�?
+        treatment: 实验组数�?
         equal_var: 方差是否相等
         
     Returns:
-        (统计量, P值)
+        (统计�? P�?
     """
     statistic, p_value = stats.ttest_ind(
         control,
@@ -649,14 +649,14 @@ def perform_mannwhitney_u(
     control: np.ndarray,
     treatment: np.ndarray
 ) -> Tuple[float, float]:
-    """执行Mann-Whitney U检验
+    """执行Mann-Whitney U检�?
     
     Args:
-        control: 对照组数据
-        treatment: 实验组数据
+        control: 对照组数�?
+        treatment: 实验组数�?
         
     Returns:
-        (统计量, P值)
+        (统计�? P�?
     """
     statistic, p_value = stats.mannwhitneyu(
         control,
@@ -670,14 +670,14 @@ def calculate_effect_size(
     control: np.ndarray,
     treatment: np.ndarray
 ) -> float:
-    """计算效应量 (Cohen's d)
+    """计算效应�?(Cohen's d)
     
     Args:
-        control: 对照组数据
-        treatment: 实验组数据
+        control: 对照组数�?
+        treatment: 实验组数�?
         
     Returns:
-        效应量
+        效应�?
     """
     n1, n2 = len(control), len(treatment)
     var1, var2 = control.var(ddof=1), treatment.var(ddof=1)
@@ -692,7 +692,7 @@ def calculate_effect_size(
 
 ---
 
-## 三、接口定义
+## 三、接口定�?
 
 ### 3.1 RESTful API接口
 
@@ -770,7 +770,7 @@ async def validate_factor(
     return_data_path: str,
     factor_name: str
 ):
-    """验证因子有效性"""
+    """验证因子有效�?""
     pass
 
 
@@ -779,15 +779,15 @@ async def run_robustness_test(
     backtest_id: str,
     test_type: str
 ):
-    """运行稳健性检验"""
+    """运行稳健性检�?""
     pass
 ```
 
 ---
 
-## 四、数据模型
+## 四、数据模�?
 
-### 4.1 实验记录表
+### 4.1 实验记录�?
 
 ```sql
 CREATE TABLE experiments (
@@ -808,7 +808,7 @@ CREATE TABLE experiments (
 );
 ```
 
-### 4.2 实验数据表
+### 4.2 实验数据�?
 
 ```sql
 CREATE TABLE experiment_data (
@@ -823,7 +823,7 @@ CREATE TABLE experiment_data (
 );
 ```
 
-### 4.3 回测记录表
+### 4.3 回测记录�?
 
 ```sql
 CREATE TABLE backtest_records (
@@ -847,64 +847,64 @@ CREATE TABLE backtest_records (
 
 ---
 
-## 五、实施计划
+## 五、实施计�?
 
-### 5.1 第1-2周: A/B测试框架开发
+### 5.1 �?-2�? A/B测试框架开�?
 
 **任务清单**:
-- [ ] 开发实验设计模块
-- [ ] 开发流量分配模块
-- [ ] 开发统计检验模块
-- [ ] 开发结果分析模块
-- [ ] 开发实验报告生成模块
-- [ ] 测试和验证
+- [ ] 开发实验设计模�?
+- [ ] 开发流量分配模�?
+- [ ] 开发统计检验模�?
+- [ ] 开发结果分析模�?
+- [ ] 开发实验报告生成模�?
+- [ ] 测试和验�?
 
-**交付物**:
+**交付�?*:
 - ABTestingFramework代码
 - 测试报告
 
 ---
 
-### 5.2 第3-4周: 回测验证器开发
+### 5.2 �?-4�? 回测验证器开�?
 
 **任务清单**:
-- [ ] 开发情感信号回测模块
-- [ ] 开发因子有效性验证模块
-- [ ] 开发稳健性检验模块
+- [ ] 开发情感信号回测模�?
+- [ ] 开发因子有效性验证模�?
+- [ ] 开发稳健性检验模�?
 - [ ] 集成Backtrader
-- [ ] 开发回测报告生成模块
-- [ ] 测试和验证
+- [ ] 开发回测报告生成模�?
+- [ ] 测试和验�?
 
-**交付物**:
+**交付�?*:
 - BacktestingValidator代码
 - 测试报告
 
 ---
 
-### 5.3 第5周: 集成和测试
+### 5.3 �?�? 集成和测�?
 
 **任务清单**:
 - [ ] 开发RESTful API
-- [ ] 开发Streamlit仪表板
-- [ ] 集成到现有系统
-- [ ] 开发单元测试
-- [ ] 开发集成测试
-- [ ] 性能测试和优化
+- [ ] 开发Streamlit仪表�?
+- [ ] 集成到现有系�?
+- [ ] 开发单元测�?
+- [ ] 开发集成测�?
+- [ ] 性能测试和优�?
 
-**交付物**:
+**交付�?*:
 - 集成后的系统
-- Streamlit仪表板
+- Streamlit仪表�?
 - 测试报告
 
 ---
 
-## 六、测试策略
+## 六、测试策�?
 
 ### 6.1 单元测试
 
 **测试范围**:
 - 实验设计功能测试
-- 统计检验功能测试
+- 统计检验功能测�?
 - 回测功能测试
 - 因子验证功能测试
 
@@ -918,7 +918,7 @@ CREATE TABLE backtest_records (
 
 **测试范围**:
 - 端到端A/B测试流程
-- 端到端回测流程
+- 端到端回测流�?
 - 因子验证流程
 
 **测试数据**:
@@ -927,43 +927,43 @@ CREATE TABLE backtest_records (
 
 ---
 
-## 七、风险管理
+## 七、风险管�?
 
-### 7.1 技术风险
+### 7.1 技术风�?
 
-| 风险项 | 概率 | 影响 | 缓解措施 |
+| 风险�?| 概率 | 影响 | 缓解措施 |
 |--------|------|------|----------|
-| 统计方法误用 | 中 | 高 | 参考统计学最佳实践，咨询专家 |
-| 回测过拟合 | 中 | 高 | 使用样本外测试，稳健性检验 |
-| 性能问题 | 低 | 中 | 使用并行计算，优化算法 |
+| 统计方法误用 | �?| �?| 参考统计学最佳实践，咨询专家 |
+| 回测过拟�?| �?| �?| 使用样本外测试，稳健性检�?|
+| 性能问题 | �?| �?| 使用并行计算，优化算�?|
 
 ---
 
-## 八、验收标准
+## 八、验收标�?
 
 ### 8.1 功能验收
 
 - [ ] 实验设计功能正常
-- [ ] 统计检验功能正常
+- [ ] 统计检验功能正�?
 - [ ] 回测功能正常
 - [ ] 因子验证功能正常
-- [ ] 稳健性检验功能正常
+- [ ] 稳健性检验功能正�?
 
 ### 8.2 性能验收
 
-- [ ] 统计检验速度 < 1秒
-- [ ] 回测速度 < 30秒/1年数据
-- [ ] 因子验证速度 < 5秒
+- [ ] 统计检验速度 < 1�?
+- [ ] 回测速度 < 30�?1年数�?
+- [ ] 因子验证速度 < 5�?
 
 ### 8.3 质量验收
 
-- [ ] 代码覆盖率 > 80%
+- [ ] 代码覆盖�?> 80%
 - [ ] 所有单元测试通过
 - [ ] 所有集成测试通过
 
 ---
 
-## 九、相关文档
+## 九、相关文�?
 
 | 文档 | 说明 |
 |------|------|
@@ -972,4 +972,4 @@ CREATE TABLE backtest_records (
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-03 | **状态**: ✅ 活跃
+**版本**: v1.0 | **更新**: 2026-04-03 | **状�?*: �?活跃

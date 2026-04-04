@@ -4,13 +4,10 @@ version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
-standard_type: 专业量化机构文档
-applicable_scope: 全系统
-compliance_level: 专业标准
+owner: 首席文档架构�?standard_type: 专业量化机构文档
+applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: INDEX.md
-implementation_status: 进行中
----
+implementation_status: 进行�?---
 
 
 # API_Contract.md - 接口契约
@@ -22,14 +19,12 @@ implementation_status: 进行中
 
 - **格式**: JSON
 - **编码**: UTF-8
-- **时间戳**: ISO 8601 格式（UTC）
-- **数值精度**: float64（8字节浮点数）
-- **错误处理**: 返回 `error` 字段，包含错误码和消息
-
+- **时间�?*: ISO 8601 格式（UTC�?- **数值精�?*: float64�?字节浮点数）
+- **错误处理**: 返回 `error` 字段，包含错误码和消�?
 
 ## 2. 核心接口定义
 
-### 2.1 DataHub → FactorCalculator
+### 2.1 DataHub �?FactorCalculator
 
 **功能**: 传递标准化市场数据
 
@@ -80,10 +75,9 @@ implementation_status: 进行中
 ```
 
 
-### 2.2 FactorCalculator → StrategyEngine
+### 2.2 FactorCalculator �?StrategyEngine
 
-**功能**: 传递计算后的因子值
-
+**功能**: 传递计算后的因子�?
 **请求格式**:
 ```json
 {
@@ -123,7 +117,7 @@ implementation_status: 进行中
 ```
 
 
-### 2.3 StrategyEngine → RiskManager
+### 2.3 StrategyEngine �?RiskManager
 
 **功能**: 传递策略信号和头寸信息
 
@@ -181,10 +175,9 @@ implementation_status: 进行中
 ```
 
 
-### 2.4 RiskManager → TradeExecutor
+### 2.4 RiskManager �?TradeExecutor
 
-**功能**: 传递已批准的交易订单
-
+**功能**: 传递已批准的交易订�?
 **请求格式**:
 ```json
 {
@@ -219,16 +212,15 @@ implementation_status: 进行中
 ```
 
 
-## 3. 错误码规范
-
-| 错误码 | 含义 | 处理方式 |
+## 3. 错误码规�?
+| 错误�?| 含义 | 处理方式 |
 |--------|------|---------|
 | DATA_001 | 数据格式错误 | 记录日志，跳过该数据 |
 | DATA_002 | 数据缺失 | 使用前向填充 |
-| FACTOR_001 | 因子计算失败 | 使用备选因子 |
-| SIGNAL_001 | 信号生成失败 | 不发出交易信号 |
-| RISK_001 | 风险检查失败 | 拒绝交易 |
-| EXEC_001 | 执行失败 | 重试3次，失败则告警 |
+| FACTOR_001 | 因子计算失败 | 使用备选因�?|
+| SIGNAL_001 | 信号生成失败 | 不发出交易信�?|
+| RISK_001 | 风险检查失�?| 拒绝交易 |
+| EXEC_001 | 执行失败 | 重试3次，失败则告�?|
 
 
 ## 4. 数据类型规范
@@ -239,10 +231,10 @@ implementation_status: 进行中
 |------|------|------|
 | timestamp | ISO 8601 UTC时间 | "2026-03-28T10:00:00Z" |
 | symbol | 股票代码 | "000001.SZ" |
-| float | 浮点数 | 101.5 |
+| float | 浮点�?| 101.5 |
 | int | 整数 | 1000 |
-| string | 字符串 | "BUY" |
-| boolean | 布尔值 | true/false |
+| string | 字符�?| "BUY" |
+| boolean | 布尔�?| true/false |
 
 ### 复合类型
 
@@ -255,8 +247,7 @@ class OHLCV:
     close: float
     volume: int
 
-# 因子值
-class FactorValue:
+# 因子�?class FactorValue:
     value: float
     signal: str  # "BUY" / "SELL" / "HOLD"
     confidence: float  # 0.0 - 1.0
@@ -273,18 +264,14 @@ class TradeSignal:
 
 ## 5. 版本协商
 
-### 版本号格式
-```
+### 版本号格�?```
 {major}.{minor}.{patch}
 ```
 
-### 兼容性规则
-- **主版本不兼容**: 接口结构改变
-- **次版本向后兼容**: 新增可选字段
-- **补丁版本向后兼容**: Bug修复
+### 兼容性规�?- **主版本不兼容**: 接口结构改变
+- **次版本向后兼�?*: 新增可选字�?- **补丁版本向后兼容**: Bug修复
 
-### 版本检查
-```json
+### 版本检�?```json
 {
   "interface_version": "1.0",
   "supported_versions": ["1.0", "1.1"]
@@ -299,7 +286,7 @@ class TradeSignal:
 | 数据采集 | 30s | 单次API调用 |
 | 因子计算 | 5s | 单个因子 |
 | 策略信号 | 2s | 单个策略 |
-| 风险检查 | 1s | 风控审批 |
+| 风险检�?| 1s | 风控审批 |
 | 交易执行 | 10s | 订单提交 |
 
 
@@ -307,19 +294,16 @@ class TradeSignal:
 
 ```
 重试条件: 网络错误、超时、临时服务不可用
-重试次数: 最多3次
-重试间隔: 指数退避（1s, 2s, 4s）
-最大等待: 7s
+重试次数: 最�?�?重试间隔: 指数退避（1s, 2s, 4s�?最大等�? 7s
 ```
 
 
 ## 8. 日志规范
 
-每个接口调用必须记录：
-```json
+每个接口调用必须记录�?```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
-  "interface": "FactorCalculator → StrategyEngine",
+  "interface": "FactorCalculator �?StrategyEngine",
   "request_id": "REQ_20260328_000001",
   "status": "success",
   "latency_ms": 12,
@@ -338,9 +322,9 @@ class IDataHub(ABC):
 
     索引: API.DH.001
     Layer: Layer 0
-    上游: 数据源(AKShare/Tushare)
+    上游: 数据�?AKShare/Tushare)
     下游: FactorCalculator, Monitor
-    状态: 规划中 (v5.3阶段尚未实现)
+    状�? 规划�?(v5.3阶段尚未实现)
     """
 
     @abstractmethod
@@ -360,7 +344,7 @@ class IDataHub(ABC):
         symbol: str,
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """获取基本面数据"""
+        """获取基本面数�?""
         pass
 
     @abstractmethod
@@ -373,8 +357,7 @@ class IDataHub(ABC):
 
 ```python
 class IFactorCalculator(ABC):
-    """因子计算器接口
-
+    """因子计算器接�?
     索引: API.FC.001
     Layer: Layer 2
     上游: DataHub
@@ -389,7 +372,7 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """计算单个因子值"""
+        """计算单个因子�?""
         pass
 
     @abstractmethod
@@ -441,8 +424,7 @@ class IStrategyEngine(ABC):
 
 ```python
 class IRiskManager(ABC):
-    """风险管理器接口
-
+    """风险管理器接�?
     索引: API.RM.001
     Layer: Layer 3
     上游: StrategyEngine, TradeExecutor
@@ -468,66 +450,39 @@ class IRiskManager(ABC):
         pass
 ```
 
-### 9.5 模块依赖关系图
-
+### 9.5 模块依赖关系�?
 ```
-                    ┌─────────────┐
-                    │   DataHub   │◄────────── 数据源 (AKShare/Tushare)
-                    └──────┬──────┘
-                           │ push/pull
-                           ▼
-                    ┌─────────────┐
-                    │FactorCalc   │
-                    └──────┬──────┘
-                           │ push
-                           ▼
-                    ┌─────────────┐
-                    │StrategyEng  │
-                    └──────┬──────┘
-                           │ push
-                           ▼
-                    ┌─────────────┐
-                    │RiskManager  │
-                    └──────┬──────┘
-                           │ callback/block
-                           ▼
-                    ┌─────────────┐
-                    │TradeExecutor│
-                    └──────┬──────┘
-                           │ report
-                           ▼
-                    ┌─────────────┐
-                    │   Monitor   │
-                    └──────┬──────┘
-                           │ alert
-                           ▼
-                    ┌─────────────┐
-                    │   人(监督)  │
-                    └─────────────┘
-```
+                    ┌─────────────�?                    �?  DataHub   │◄────────── 数据�?(AKShare/Tushare)
+                    └──────┬──────�?                           �?push/pull
+                           �?                    ┌─────────────�?                    │FactorCalc   �?                    └──────┬──────�?                           �?push
+                           �?                    ┌─────────────�?                    │StrategyEng  �?                    └──────┬──────�?                           �?push
+                           �?                    ┌─────────────�?                    │RiskManager  �?                    └──────┬──────�?                           �?callback/block
+                           �?                    ┌─────────────�?                    │TradeExecutor�?                    └──────┬──────�?                           �?report
+                           �?                    ┌─────────────�?                    �?  Monitor   �?                    └──────┬──────�?                           �?alert
+                           �?                    ┌─────────────�?                    �?  �?监督)  �?                    └─────────────�?```
 
 ### 9.6 版本管理
 
-| 模块 | 版本 | 状态 | 最后更新 |
+| 模块 | 版本 | 状�?| 最后更�?|
 |------|------|------|----------|
-| DataHub | 1.0 | ✅ 稳定 | 2026-03-28 |
-| FactorCalculator | 1.0 | ✅ 稳定 | 2026-03-28 |
-| StrategyEngine | 1.0 | ✅ 稳定 | 2026-03-28 |
-| RiskManager | 1.0 | ✅ 稳定 | 2026-03-28 |
-| TradeExecutor | 1.0 | ✅ 稳定 | 2026-03-28 |
-| Monitor | 1.0 | ✅ 稳定 | 2026-03-28 |
+| DataHub | 1.0 | �?稳定 | 2026-03-28 |
+| FactorCalculator | 1.0 | �?稳定 | 2026-03-28 |
+| StrategyEngine | 1.0 | �?稳定 | 2026-03-28 |
+| RiskManager | 1.0 | �?稳定 | 2026-03-28 |
+| TradeExecutor | 1.0 | �?稳定 | 2026-03-28 |
+| Monitor | 1.0 | �?稳定 | 2026-03-28 |
 
 
 ## 10. 索引清单
 
-| 索引 | 模块/接口 | Layer | 状态 |
+| 索引 | 模块/接口 | Layer | 状�?|
 |------|-----------|-------|------|
-| API.DH.001 | DataHub接口 | 0 | ✅ |
-| API.FC.001 | FactorCalculator接口 | 2 | ✅ |
-| API.SE.001 | StrategyEngine接口 | 3 | ✅ |
-| API.RM.001 | RiskManager接口 | 3 | ✅ |
-| API.TE.001 | TradeExecutor接口 | 4 | ✅ |
-| API.MO.001 | Monitor接口 | 6 | ✅ |
+| API.DH.001 | DataHub接口 | 0 | �?|
+| API.FC.001 | FactorCalculator接口 | 2 | �?|
+| API.SE.001 | StrategyEngine接口 | 3 | �?|
+| API.RM.001 | RiskManager接口 | 3 | �?|
+| API.TE.001 | TradeExecutor接口 | 4 | �?|
+| API.MO.001 | Monitor接口 | 6 | �?|
 
 
-**版本**: 1.1 | **更新**: 2026-03-29 | **状态**: ✅ 活跃
+**版本**: 1.1 | **更新**: 2026-03-29 | **状�?*: �?活跃

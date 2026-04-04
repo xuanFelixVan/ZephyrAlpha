@@ -4,8 +4,8 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构师
-standard_type: 专业机构级蓝图
+owner: 首席架构�?
+standard_type: 专业机构级蓝�?
 applicable_scope: 合规监控模块实现
 compliance_level: 专业标准
 parent_document: INDEX.md
@@ -16,21 +16,21 @@ reference_models:
   - Regulatory Reporting Systems
 related_documents:
   upstream:
-    - 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md (框架层文档)
+    - 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md (框架层文�?
     - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风控)
   peer:
     - RISK_RULE_ENGINE.md
     - QUALITY_MONITORING_BLUEPRINT.md
 responsibility_boundary: |
-  本文档职责: 实现层模块设计
-  - 合规监控模块的具体实现方案
+  本文档职�? 实现层模块设�?
+  - 合规监控模块的具体实现方�?
   - 技术栈选型: Python + SQLite + Rule Engine
-  - 代码示例和部署方案
+  - 代码示例和部署方�?
   
-  框架层文档: 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+  框架层文�? 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
   - 定义合规监控的整体架构和设计原则
-  - 分析专业机构的合规实践
-  - 规划核心组件和接口
+  - 分析专业机构的合规实�?
+  - 规划核心组件和接�?
 ---
 
 # 合规监控模块蓝图
@@ -38,8 +38,8 @@ responsibility_boundary: |
 > **版本**: v1.0.1
 > **创建日期**: 2026-04-02
 > **更新日期**: 2026-04-04
-> **实施周期**: 2周
-> **核心定位**: 专业量化机构的合规保障体系
+> **实施周期**: 2�?
+> **核心定位**: 专业量化机构的合规保障体�?
 > **技术栈**: Python + SQLite + Rule Engine
 
 ---
@@ -47,42 +47,42 @@ responsibility_boundary: |
 ## 文档层级关系
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  框架层: 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT │
-│  定义合规监控整体架构和设计原则                               │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│  本文档: 实现层 - 合规监控模块的具体实现方案                  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�? 框架�? 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT �?
+�? 定义合规监控整体架构和设计原�?                              �?
+└─────────────────────────────────────────────────────────────�?
+                              �?
+┌─────────────────────────────────────────────────────────────�?
+�? 本文�? 实现�?- 合规监控模块的具体实现方�?                 �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
-**上游文档**: [合规监控系统蓝图](../01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) - 框架层架构设计
+**上游文档**: [合规监控系统蓝图](../01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) - 框架层架构设�?
 
 ---
 
-## 一、概述
+## 一、概�?
 
 ### 1.1 蓝图定位
 
-本文档是清风量化系统的**合规监控模块蓝图**,旨在实现:
+本文档是清风量化系统�?*合规监控模块蓝图**,旨在实现:
 
-- ✅ **交易合规检查**: 确保所有交易符合监管要求
-- ✅ **风控合规检查**: 确保风险控制措施有效执行
-- ✅ **监管报告生成**: 自动生成监管机构要求的报告
-- ✅ **合规审计追踪**: 记录所有合规检查和审计过程
-- ✅ **违规预警机制**: 实时监控并预警潜在违规行为
+- �?**交易合规检�?*: 确保所有交易符合监管要�?
+- �?**风控合规检�?*: 确保风险控制措施有效执行
+- �?**监管报告生成**: 自动生成监管机构要求的报�?
+- �?**合规审计追踪**: 记录所有合规检查和审计过程
+- �?**违规预警机制**: 实时监控并预警潜在违规行�?
 
-### 1.2 核心价值
+### 1.2 核心价�?
 
-**对个人开发者的价值**:
+**对个人开发者的价�?*:
 1. **合规保障**: 确保系统符合监管要求
-2. **风险规避**: 避免违规操作带来的风险
-3. **自动化报告**: 自动生成监管报告,节省时间
-4. **审计支持**: 提供完整的审计追踪记录
+2. **风险规避**: 避免违规操作带来的风�?
+3. **自动化报�?*: 自动生成监管报告,节省时间
+4. **审计支持**: 提供完整的审计追踪记�?
 
-**对系统的价值**:
-1. **合规性**: 确保系统符合专业机构标准
+**对系统的价�?*:
+1. **合规�?*: 确保系统符合专业机构标准
 2. **风险控制**: 完善风险控制体系
 3. **监管对接**: 为未来监管对接做准备
 4. **信任建立**: 建立用户和监管机构的信任
@@ -90,103 +90,103 @@ responsibility_boundary: |
 ### 1.3 Layer定位
 
 ```
-Layer 6: 风险管理层 (Risk Management Layer)
-    ├── 合规监控子系统
-    ├── 交易合规检查
-    ├── 风控合规检查
+Layer 6: 风险管理�?(Risk Management Layer)
+    ├── 合规监控子系�?
+    ├── 交易合规检�?
+    ├── 风控合规检�?
     ├── 监管报告生成
     └── 违规预警机制
 ```
 
-**架构位置**: 位于Layer 6(风险管理层),是专业量化机构的必备模块。
+**架构位置**: 位于Layer 6(风险管理�?,是专业量化机构的必备模块�?
 
 ---
 
-## 二、架构设计
+## 二、架构设�?
 
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                合规监控模块架构                              │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          交易合规层 (Trading Compliance)             │   │
-│  │  ├─ 交易前合规检查                                   │   │
-│  │  ├─ 交易中合规监控                                   │   │
-│  │  ├─ 交易后合规审计                                   │   │
-│  │  └─ 交易限制管理                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          风控合规层 (Risk Compliance)                │   │
-│  │  ├─ 风险限额检查                                     │   │
-│  │  ├─ 敞口限制检查                                     │   │
-│  │  ├─ 止损止盈检查                                     │   │
-│  │  └─ 风险指标监控                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          监管报告层 (Regulatory Reporting)           │   │
-│  │  ├─ 日报生成                                         │   │
-│  │  ├─ 周报生成                                         │   │
-│  │  ├─ 月报生成                                         │   │
-│  │  └─ 年报生成                                         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          审计追踪层 (Audit Trail)                    │   │
-│  │  ├─ 操作日志记录                                     │   │
-│  │  ├─ 合规检查记录                                     │   │
-│  │  ├─ 违规记录追踪                                     │   │
-│  │  └─ 审计报告生成                                     │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │          预警机制层 (Alert Mechanism)                │   │
-│  │  ├─ 实时违规预警                                     │   │
-│  │  ├─ 风险阈值预警                                     │   │
-│  │  ├─ 合规异常预警                                     │   │
-│  │  └─ 多渠道通知                                       │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?               合规监控模块架构                              �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         交易合规�?(Trading Compliance)             �?  �?
+�? �? ├─ 交易前合规检�?                                  �?  �?
+�? �? ├─ 交易中合规监�?                                  �?  �?
+�? �? ├─ 交易后合规审�?                                  �?  �?
+�? �? └─ 交易限制管理                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         风控合规�?(Risk Compliance)                �?  �?
+�? �? ├─ 风险限额检�?                                    �?  �?
+�? �? ├─ 敞口限制检�?                                    �?  �?
+�? �? ├─ 止损止盈检�?                                    �?  �?
+�? �? └─ 风险指标监控                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         监管报告�?(Regulatory Reporting)           �?  �?
+�? �? ├─ 日报生成                                         �?  �?
+�? �? ├─ 周报生成                                         �?  �?
+�? �? ├─ 月报生成                                         �?  �?
+�? �? └─ 年报生成                                         �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         审计追踪�?(Audit Trail)                    �?  �?
+�? �? ├─ 操作日志记录                                     �?  �?
+�? �? ├─ 合规检查记�?                                    �?  �?
+�? �? ├─ 违规记录追踪                                     �?  �?
+�? �? └─ 审计报告生成                                     �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?         预警机制�?(Alert Mechanism)                �?  �?
+�? �? ├─ 实时违规预警                                     �?  �?
+�? �? ├─ 风险阈值预�?                                    �?  �?
+�? �? ├─ 合规异常预警                                     �?  �?
+�? �? └─ 多渠道通知                                       �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
-### 2.2 数据流设计
+### 2.2 数据流设�?
 
 ```
-交易请求 → 合规检查 → 风控检查 → 执行 → 审计记录 → 报告生成
-    ↑                                                        ↓
-    └────────────────── 违规拦截 ←───────────────────────────┘
+交易请求 �?合规检�?�?风控检�?�?执行 �?审计记录 �?报告生成
+    �?                                                       �?
+    └────────────────── 违规拦截 ←───────────────────────────�?
 ```
 
-**数据流说明**:
-1. **交易请求**: 用户或系统发起交易请求
-2. **合规检查**: 检查交易是否符合监管要求
-3. **风控检查**: 检查交易是否符合风险控制要求
+**数据流说�?*:
+1. **交易请求**: 用户或系统发起交易请�?
+2. **合规检�?*: 检查交易是否符合监管要�?
+3. **风控检�?*: 检查交易是否符合风险控制要�?
 4. **执行**: 通过检查后执行交易
-5. **审计记录**: 记录所有交易和检查过程
+5. **审计记录**: 记录所有交易和检查过�?
 6. **报告生成**: 定期生成合规报告
-7. **违规拦截**: 发现违规立即拦截并预警
+7. **违规拦截**: 发现违规立即拦截并预�?
 
 ### 2.3 核心组件设计
 
 #### 组件1: TradingComplianceChecker (交易合规检查器)
 
-**职责**: 检查交易是否符合监管要求
+**职责**: 检查交易是否符合监管要�?
 
 **输入**:
 - order: 订单信息
 
 **输出**:
-- compliance_result: 合规检查结果
+- compliance_result: 合规检查结�?
 
 **接口**:
 ```python
 def check_trading_compliance(order: dict) -> dict:
-    """检查交易合规性"""
+    """检查交易合规�?""
     pass
 ```
 
@@ -223,7 +223,7 @@ def check_trading_compliance(order: dict) -> dict:
     "violations": [
         {
             "type": "volume_limit_exceeded",
-            "details": "交易量超过限制: 150000 > 100000"
+            "details": "交易量超过限�? 150000 > 100000"
         }
     ],
     "action_taken": "blocked",
@@ -234,7 +234,7 @@ def check_trading_compliance(order: dict) -> dict:
 
 #### 组件2: RiskComplianceChecker (风控合规检查器)
 
-**职责**: 检查交易是否符合风险控制要求
+**职责**: 检查交易是否符合风险控制要�?
 
 **输入**:
 - position: 持仓信息
@@ -246,7 +246,7 @@ def check_trading_compliance(order: dict) -> dict:
 **接口**:
 ```python
 def check_risk_compliance(position: dict, risk_limits: dict) -> dict:
-    """检查风控合规性"""
+    """检查风控合规�?""
     pass
 ```
 
@@ -289,9 +289,9 @@ def check_risk_compliance(position: dict, risk_limits: dict) -> dict:
 }
 ```
 
-#### 组件3: RegulatoryReporter (监管报告生成器)
+#### 组件3: RegulatoryReporter (监管报告生成�?
 
-**职责**: 生成监管机构要求的报告
+**职责**: 生成监管机构要求的报�?
 
 **输入**:
 - report_type: 报告类型
@@ -330,7 +330,7 @@ def generate_regulatory_report(report_type: str, period: dict) -> dict:
 }
 ```
 
-#### 组件4: AuditTrailRecorder (审计追踪记录器)
+#### 组件4: AuditTrailRecorder (审计追踪记录�?
 
 **职责**: 记录所有合规检查和审计过程
 
@@ -347,9 +347,9 @@ def record_audit_trail(audit_event: dict) -> str:
     pass
 ```
 
-#### 组件5: ComplianceAlerter (合规预警器)
+#### 组件5: ComplianceAlerter (合规预警�?
 
-**职责**: 实时监控并预警潜在违规行为
+**职责**: 实时监控并预警潜在违规行�?
 
 **输入**:
 - violation_event: 违规事件
@@ -360,43 +360,43 @@ def record_audit_trail(audit_event: dict) -> str:
 **接口**:
 ```python
 def alert_compliance_violation(violation_event: dict) -> bool:
-    """发送合规预警"""
+    """发送合规预�?""
     pass
 ```
 
 ---
 
-## 三、数据模型
+## 三、数据模�?
 
 ### 3.1 合规检查表 (compliance_checks)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | check_id | VARCHAR(64) | 检查ID (主键) | check_20260402_001 |
-| check_type | VARCHAR(32) | 检查类型 | trading_compliance |
-| check_time | DATETIME | 检查时间 | 2026-04-02 10:30:00 |
+| check_type | VARCHAR(32) | 检查类�?| trading_compliance |
+| check_time | DATETIME | 检查时�?| 2026-04-02 10:30:00 |
 | order_id | VARCHAR(64) | 订单ID | order_20260402_001 |
-| check_result | VARCHAR(16) | 检查结果 | pass/fail |
+| check_result | VARCHAR(16) | 检查结�?| pass/fail |
 | violation_type | VARCHAR(64) | 违规类型 | position_limit_exceeded |
 | violation_details | TEXT | 违规详情 | "持仓超过限额10%" |
 | action_taken | VARCHAR(32) | 采取行动 | blocked/warned |
-| reviewer | VARCHAR(64) | 审核人 | AI |
+| reviewer | VARCHAR(64) | 审核�?| AI |
 
 **索引**:
 - PRIMARY KEY: check_id
 - INDEX: check_type
 - INDEX: check_time
 
-### 3.2 风险限额表 (risk_limits)
+### 3.2 风险限额�?(risk_limits)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | limit_id | VARCHAR(64) | 限额ID (主键) | limit_001 |
 | limit_type | VARCHAR(32) | 限额类型 | position_limit |
-| limit_value | FLOAT | 限额值 | 1000000.0 |
-| current_value | FLOAT | 当前值 | 950000.0 |
-| utilization_rate | FLOAT | 使用率 | 0.95 |
-| status | VARCHAR(16) | 状态 | normal/warning/breach |
+| limit_value | FLOAT | 限额�?| 1000000.0 |
+| current_value | FLOAT | 当前�?| 950000.0 |
+| utilization_rate | FLOAT | 使用�?| 0.95 |
+| status | VARCHAR(16) | 状�?| normal/warning/breach |
 | created_at | DATETIME | 创建时间 | 2026-04-02 10:00:00 |
 | updated_at | DATETIME | 更新时间 | 2026-04-02 10:30:00 |
 
@@ -405,34 +405,34 @@ def alert_compliance_violation(violation_event: dict) -> bool:
 - INDEX: limit_type
 - INDEX: status
 
-### 3.3 监管报告表 (regulatory_reports)
+### 3.3 监管报告�?(regulatory_reports)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | report_id | VARCHAR(64) | 报告ID (主键) | report_20260402_001 |
 | report_type | VARCHAR(32) | 报告类型 | daily_report |
 | report_period | VARCHAR(32) | 报告周期 | 2026-04-02 |
 | generated_at | DATETIME | 生成时间 | 2026-04-02 18:00:00 |
 | report_content | TEXT | 报告内容 | "..." |
-| compliance_status | VARCHAR(16) | 合规状态 | compliant |
+| compliance_status | VARCHAR(16) | 合规状�?| compliant |
 | violations_count | INTEGER | 违规次数 | 0 |
-| reviewed_by | VARCHAR(64) | 审核人 | AI |
+| reviewed_by | VARCHAR(64) | 审核�?| AI |
 
 **索引**:
 - PRIMARY KEY: report_id
 - INDEX: report_type
 - INDEX: report_period
 
-### 3.4 审计追踪表 (audit_trail)
+### 3.4 审计追踪�?(audit_trail)
 
-| 字段名 | 类型 | 说明 | 示例 |
+| 字段�?| 类型 | 说明 | 示例 |
 |--------|------|------|------|
 | audit_id | VARCHAR(64) | 审计ID (主键) | audit_20260402_001 |
 | event_type | VARCHAR(32) | 事件类型 | compliance_check |
 | event_time | DATETIME | 事件时间 | 2026-04-02 10:30:00 |
 | user_id | VARCHAR(64) | 用户ID | user_001 |
 | action | VARCHAR(64) | 操作 | check_trading_compliance |
-| details | TEXT | 详情 | "检查订单合规性" |
+| details | TEXT | 详情 | "检查订单合规�? |
 | result | VARCHAR(16) | 结果 | success/failure |
 | ip_address | VARCHAR(64) | IP地址 | 192.168.1.1 |
 
@@ -443,21 +443,21 @@ def alert_compliance_violation(violation_event: dict) -> bool:
 
 ---
 
-## 四、技术实现
+## 四、技术实�?
 
 ### 4.1 技术栈选择
 
-| 技术组件 | 选择方案 | 理由 |
+| 技术组�?| 选择方案 | 理由 |
 |---------|---------|------|
-| **规则引擎** | 自定义规则引擎 | 灵活配置,易于扩展 |
-| **数据库** | SQLite | 轻量级,易于管理 |
+| **规则引擎** | 自定义规则引�?| 灵活配置,易于扩展 |
+| **数据�?* | SQLite | 轻量�?易于管理 |
 | **报告生成** | Markdown + Jinja2 | 灵活模板,易于定制 |
-| **预警通知** | 系统通知 + 邮件 | 多渠道覆盖 |
-| **编程语言** | Python 3.10+ | 与现有系统一致 |
+| **预警通知** | 系统通知 + 邮件 | 多渠道覆�?|
+| **编程语言** | Python 3.10+ | 与现有系统一�?|
 
 ### 4.2 核心代码实现
 
-#### 4.2.1 ComplianceMonitor类
+#### 4.2.1 ComplianceMonitor�?
 
 ```python
 import sqlite3
@@ -534,7 +534,7 @@ class ComplianceMonitor:
         conn.close()
     
     def check_trading_compliance(self, order: dict) -> dict:
-        """检查交易合规性"""
+        """检查交易合规�?""
         
         check_id = f"check_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
@@ -543,7 +543,7 @@ class ComplianceMonitor:
         if order.get('volume', 0) > 100000:
             violations.append({
                 "type": "volume_limit_exceeded",
-                "details": f"交易量超过限制: {order['volume']} > 100000"
+                "details": f"交易量超过限�? {order['volume']} > 100000"
             })
         
         if order.get('price', 0) <= 0:
@@ -588,7 +588,7 @@ class ComplianceMonitor:
         }
     
     def check_risk_compliance(self, position: dict, risk_limits: dict) -> dict:
-        """检查风控合规性"""
+        """检查风控合规�?""
         
         violations = []
         
@@ -655,27 +655,27 @@ class ComplianceMonitor:
 # 监管合规报告
 
 **报告类型**: {report_type}
-**报告周期**: {period['start_date']} 至 {period['end_date']}
+**报告周期**: {period['start_date']} �?{period['end_date']}
 
-## 一、合规检查概览
+## 一、合规检查概�?
 
-- **总检查次数**: {total_checks}
+- **总检查次�?*: {total_checks}
 - **违规次数**: {violations_count}
-- **合规率**: {(1 - violations_count/total_checks)*100:.2f}%
-- **合规状态**: {compliance_status}
+- **合规�?*: {(1 - violations_count/total_checks)*100:.2f}%
+- **合规状�?*: {compliance_status}
 
-## 二、违规详情
+## 二、违规详�?
 
-暂无违规记录。
+暂无违规记录�?
 
-## 三、改进建议
+## 三、改进建�?
 
-继续保持合规操作,定期检查风险限额。
+继续保持合规操作,定期检查风险限额�?
 
 ---
 
 **报告生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-**审核人**: AI
+**审核�?*: AI
         """
         
         report_id = f"report_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -729,13 +729,13 @@ class ComplianceMonitor:
         return audit_id
     
     def alert_compliance_violation(self, violation_event: dict) -> bool:
-        """发送合规预警"""
+        """发送合规预�?""
         
         check_id = violation_event.get('check_id', '')
         violations = violation_event.get('violations', [])
         
         alert_message = f"""
-【合规预警】
+【合规预警�?
 
 检查ID: {check_id}
 时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -743,7 +743,7 @@ class ComplianceMonitor:
 违规详情:
 {json.dumps(violations, ensure_ascii=False, indent=2)}
 
-请立即处理!
+请立即处�?
         """
         
         print(alert_message)
@@ -753,65 +753,65 @@ class ComplianceMonitor:
 
 ---
 
-## 五、实施路径
+## 五、实施路�?
 
-### 5.1 Phase 1: 核心合规检查 (Week 1)
+### 5.1 Phase 1: 核心合规检�?(Week 1)
 
-**目标**: 实现交易合规和风控合规检查功能
+**目标**: 实现交易合规和风控合规检查功�?
 
 **任务清单**:
 - [ ] 设计数据库表结构
 - [ ] 实现TradingComplianceChecker组件
 - [ ] 实现RiskComplianceChecker组件
-- [ ] 集成到现有系统
+- [ ] 集成到现有系�?
 - [ ] 编写单元测试
 
 **验收标准**:
-- ✅ 能够检查交易合规性
-- ✅ 能够检查风控合规性
-- ✅ 能够记录违规行为
+- �?能够检查交易合规�?
+- �?能够检查风控合规�?
+- �?能够记录违规行为
 
-### 5.2 Phase 2: 报告与审计 (Week 2)
+### 5.2 Phase 2: 报告与审�?(Week 2)
 
-**目标**: 实现监管报告和审计追踪功能
+**目标**: 实现监管报告和审计追踪功�?
 
 **任务清单**:
 - [ ] 实现RegulatoryReporter组件
 - [ ] 实现AuditTrailRecorder组件
 - [ ] 实现ComplianceAlerter组件
-- [ ] 集成到现有系统
+- [ ] 集成到现有系�?
 - [ ] 编写集成测试
 
 **验收标准**:
-- ✅ 能够生成监管报告
-- ✅ 能够记录审计追踪
-- ✅ 能够发送合规预警
+- �?能够生成监管报告
+- �?能够记录审计追踪
+- �?能够发送合规预�?
 
 ---
 
-## 六、文档治理
+## 六、文档治�?
 
 ### 6.1 System_Manifest.md索引
 
 ```markdown
-| 蓝图文档 | 路径 | 模块ID | 版本 | 状态 | 职责概要 |
+| 蓝图文档 | 路径 | 模块ID | 版本 | 状�?| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [合规监控模块蓝图](../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md` | COMPLIANCE_MONITORING_001 | 1.0 | Active | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预警 |
+| [合规监控模块蓝图](../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md` | COMPLIANCE_MONITORING_001 | 1.0 | Active | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预�?|
 ```
 
 ### 6.2 模块职责边界
 
 **核心职责**:
-- 交易合规检查
-- 风控合规检查
+- 交易合规检�?
+- 风控合规检�?
 - 监管报告生成
 - 审计追踪记录
 - 违规预警通知
 
-**非职责**:
+**非职�?*:
 - 风险管理 (由RISK_MANAGER模块负责)
 - 交易执行 (由TRADE_EXECUTOR模块负责)
-- 数据持久化 (由FULL_PROCESS_DATA_PERSISTENCE模块负责)
+- 数据持久�?(由FULL_PROCESS_DATA_PERSISTENCE模块负责)
 
 ### 6.3 版本管理策略
 
@@ -822,26 +822,26 @@ class ComplianceMonitor:
 
 ---
 
-## 七、风险评估
+## 七、风险评�?
 
-### 7.1 技术风险
+### 7.1 技术风�?
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **规则配置复杂** | 中 | 中 | 提供可视化配置界面 |
-| **性能影响** | 低 | 低 | 优化检查算法,使用缓存 |
-| **误报率高** | 中 | 中 | 优化规则,引入AI辅助判断 |
+| **规则配置复杂** | �?| �?| 提供可视化配置界�?|
+| **性能影响** | �?| �?| 优化检查算�?使用缓存 |
+| **误报率高** | �?| �?| 优化规则,引入AI辅助判断 |
 
 ### 7.2 实施风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **监管要求变化** | 高 | 中 | 保持规则灵活性,定期更新 |
-| **用户不重视** | 中 | 中 | 提供价值证明,强制执行 |
+| **监管要求变化** | �?| �?| 保持规则灵活�?定期更新 |
+| **用户不重�?* | �?| �?| 提供价值证�?强制执行 |
 
 ---
 
-## 八、相关文档
+## 八、相关文�?
 
 | 文档 | 说明 |
 |------|------|
@@ -851,4 +851,4 @@ class ComplianceMonitor:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状态**: ✅ 活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃

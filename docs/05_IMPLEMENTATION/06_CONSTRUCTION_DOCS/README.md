@@ -54,9 +54,9 @@ implementation_status: 进行�?---
 
 | 文档名称 | 版本 | 状�?| 最后更�?| 说明 |
 |---------|------|------|---------|------|
-| [知识索引](../04_OPERATIONS/knowledge_base/KNOWLEDGE_INDEX.md) | v1.0 | Active | 2026-04-02 | 📖 **知识总索�?* - 25+文档分类索引、快速检�?|
-| [案例研究库索引](../04_OPERATIONS/knowledge_base/case_studies/) | v1.0 | Active | 2026-04-02 | 📚 **案例�?* - 2+核心案例、成功失败案�?|
-| [最佳实践库索引](../04_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) | v1.0 | Active | 2026-04-02 | 💡 **实践�?* - 15+核心实践、编�?架构/测试 |
+| [知识索引](../07_OPERATIONS/knowledge_base/KNOWLEDGE_INDEX.md) | v1.0 | Active | 2026-04-02 | 📖 **知识总索�?* - 25+文档分类索引、快速检�?|
+| [案例研究库索引](../07_OPERATIONS/knowledge_base/case_studies/) | v1.0 | Active | 2026-04-02 | 📚 **案例�?* - 2+核心案例、成功失败案�?|
+| [最佳实践库索引](../07_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) | v1.0 | Active | 2026-04-02 | 💡 **实践�?* - 15+核心实践、编�?架构/测试 |
 
 **专业机构标准**: 桥水、文艺复兴等顶级机构都有完善的知识传承体系，包括案例研究库、最佳实践库、经验教训库�?
 ---

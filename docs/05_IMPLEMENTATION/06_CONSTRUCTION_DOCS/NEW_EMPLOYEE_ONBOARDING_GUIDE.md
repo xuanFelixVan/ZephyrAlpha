@@ -178,7 +178,7 @@ Python版本:
 必需工具:
   - Git
   - VS Code (推荐)
-  - Docker (可?
+  - Docker (�?
 
 Python包管?
   - pip
@@ -357,7 +357,7 @@ pip install -r requirements.txt
 
 ### **?周进度检?*
 
-| 任务 | 完成状?| 验证方式 |
+| 任务 | 完成�?| 验证方式 |
 |------|---------|---------|
 | 阅读系统架构文档 | ?| 能描述Layer 0-11架构 |
 | 阅读施工规范文档 | ?| 能说出文件夹结构规范 |
@@ -366,7 +366,7 @@ pip install -r requirements.txt
 
 ### **?周进度检?*
 
-| 任务 | 完成状?| 验证方式 |
+| 任务 | 完成�?| 验证方式 |
 |------|---------|---------|
 | 阅读核心模块文档 | ?| 能描述策略工厂设?|
 | 参与代码审查 | ?| 完成1次代码审?|
@@ -379,9 +379,9 @@ pip install -r requirements.txt
 
 ### **内部资源**
 
-- **知识?*: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/](../04_OPERATIONS/knowledge_base/)
-- **案例研究**: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/case_studies/](../04_OPERATIONS/knowledge_base/case_studies/)
-- **最佳实?*: [docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/best_practices/](../04_OPERATIONS/knowledge_base/best_practices/)
+- **知识?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](../07_OPERATIONS/knowledge_base/)
+- **案例研究**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](../07_OPERATIONS/knowledge_base/case_studies/)
+- **最佳实?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](../07_OPERATIONS/knowledge_base/best_practices/)
 
 ### **外部资源**
 

@@ -75,8 +75,8 @@ python scripts/test_qmt_connection_v2.py
 
 ## 📚 详细文档
 
-- [根本原因分析](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
-- [连接问题排查指南](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md)
+- [根本原因分析](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
+- [连接问题排查指南](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md)
 - [QMT数据接口文档](file:///d:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 
 ---

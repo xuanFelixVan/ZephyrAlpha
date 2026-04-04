@@ -17,7 +17,7 @@ implementation_status: 进行?
 > 清风量化系统 v5.3 - StrategyEngine策略引擎模块详细技术设?
 > **模块ID**: `STRATEGY_ENGINE_001`
 > **版本**: v1.0.0
-> **状?*: ?正式
+> **�?*: ?正式
 
 
 ## 1. 概述
@@ -29,7 +29,7 @@ implementation_status: 进行?
   - 策略执行效率低：策略执行缺乏并行化和优化
   - 策略监控困难：缺乏实时的策略运行状态监?
   - 策略扩展性差：难以快速添加和部署新策?
-- **预期价?*: 
+- **预期�?*: 
   - 建立统一的策略注册和管理机制
   - 提升策略执行效率和并行化能力
   - 提供实时的策略运行状态监?
@@ -41,7 +41,7 @@ implementation_status: 进行?
 - **架构角色**: Layer 5策略执行核心，协调策略注册、调度、执行和监控
 
 ### 1.3 版本信息
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -292,14 +292,14 @@ class StrategyRegistry:
         return self._strategies[strategy_id]
     
     def get_status(self, strategy_id: str) -> StrategyStatus:
-        """获取策略状?""
+        """获取策略�?""
         if strategy_id not in self._statuses:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         return self._statuses[strategy_id]
     
     def set_status(self, strategy_id: str, status: StrategyStatus) -> None:
-        """设置策略状?""
+        """设置策略�?""
         if strategy_id not in self._statuses:
             raise ValueError(f"Strategy {strategy_id} not found")
         
@@ -749,7 +749,7 @@ def _dispatch_event(self, event: Dict[str, Any]) -> None:
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 技术选型 | 版本要求 | 用?| 选择理由 |
+| 技术选型 | 版本要求 | �?| 选择理由 |
 |----------|----------|------|----------|
 | Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
 | threading | 标准?| 多线程支?| Python内置，稳定可?|
@@ -773,7 +773,7 @@ requirements:
 | 策略注册 | 注册正确?| 100% |
 | 策略执行 | 执行正确?| 100% |
 | 事件分发 | 分发正确?| 100% |
-| 状态管?| 状态转换正确?| 100% |
+| 状态管?| 状态转换正�?| 100% |
 
 ### 7.2 集成测试
 ```python

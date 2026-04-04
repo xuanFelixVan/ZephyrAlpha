@@ -4,21 +4,21 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监控
+applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
 # 实时监控系统
 
-> 策略状态、实时PnL、异常检测
+> 策略状态、实时PnL、异常检�?
 
 **版本**: v1.0
 **更新**: 2026-03-29
-**Layer**: Layer 5 (监控层)
+**Layer**: Layer 5 (监控�?
 **索引**: 04_EXECUTION/03_MONITORING
 
 ---
@@ -29,24 +29,24 @@ implementation_status: 进行中
 
 | 角色 | 职责 |
 |------|------|
-| **AI** | 自动监控、异常检测、报告生成 |
-| **人** | 监督、异常确认 |
+| **AI** | 自动监控、异常检测、报告生�?|
+| **�?* | 监督、异常确�?|
 
 ---
 
 ## 2. 核心监控指标
 
-### 2.1 策略状态监控
+### 2.1 策略状态监�?
 
 ```python
 class StrategyMonitor:
-    """策略运行状态监控"""
+    """策略运行状态监�?""
 
     def __init__(self):
         self.strategies = {}
 
     def update_status(self, strategy_id: str, status: dict) -> None:
-        """更新策略状态"""
+        """更新策略状�?""
         self.strategies[strategy_id] = {
             'status': status.get('running', 'unknown'),
             'last_signal': status.get('last_signal_time'),
@@ -95,7 +95,7 @@ class RealTimePnLTracker:
         )
 
     def get_total_pnl(self) -> dict:
-        """获取总盈亏"""
+        """获取总盈�?""
         total_pnl = self.realized_pnl + self.unrealized_pnl
         return {
             'realized': self.realized_pnl,
@@ -105,14 +105,14 @@ class RealTimePnLTracker:
         }
 ```
 
-### 2.3 持仓汇总
+### 2.3 持仓汇�?
 
 ```python
 class PositionSummary:
-    """持仓汇总"""
+    """持仓汇�?""
 
     def generate_summary(self, positions: dict) -> dict:
-        """生成持仓汇总"""
+        """生成持仓汇�?""
         total_value = sum(p['current_price'] * p['quantity']
                          for p in positions.values())
         total_cost = sum(p['avg_cost'] * p['quantity']
@@ -138,20 +138,20 @@ class PositionSummary:
 
 ---
 
-## 3. 异常检测
+## 3. 异常检�?
 
 ### 3.1 价格异常
 
 ```python
 class PriceAnomalyDetector:
-    """价格异常检测"""
+    """价格异常检�?""
 
     def __init__(self, z_threshold: float = 3.0):
         self.z_threshold = z_threshold
         self.price_history = {}
 
     def detect(self, symbol: str, price: float) -> dict:
-        """检测价格异常"""
+        """检测价格异�?""
         if symbol not in self.price_history:
             self.price_history[symbol] = []
 
@@ -172,14 +172,14 @@ class PriceAnomalyDetector:
         }
 ```
 
-### 3.2 成交量异常
+### 3.2 成交量异�?
 
 ```python
 class VolumeAnomalyDetector:
-    """成交量异常检测"""
+    """成交量异常检�?""
 
     def __init__(self, volume_threshold: float = 5.0):
-        self.volume_threshold = volume_threshold  # 超过平均5倍
+        self.volume_threshold = volume_threshold  # 超过平均5�?
 
     def detect(self, symbol: str, volume: int, avg_volume: float) -> dict:
         """检测成交量异常"""
@@ -197,25 +197,25 @@ class VolumeAnomalyDetector:
 
 ```python
 class SignalAnomalyDetector:
-    """信号异常检测"""
+    """信号异常检�?""
 
     def __init__(self):
         self.signal_history = {}
 
     def detect(self, strategy_id: str, signal: dict) -> dict:
-        """检测信号异常"""
+        """检测信号异�?""
         if strategy_id not in self.signal_history:
             self.signal_history[strategy_id] = []
 
         history = self.signal_history[strategy_id]
         history.append(signal)
 
-        # 检测信号频率异常
+        # 检测信号频率异�?
         recent_signals = [s for s in history if
                          (datetime.now() - s['timestamp']).seconds < 300]
         frequency_anomaly = len(recent_signals) > 10
 
-        # 检测信号方向突变
+        # 检测信号方向突�?
         direction_anomaly = False
         if len(history) >= 2:
             last_direction = history[-2].get('direction')
@@ -275,17 +275,17 @@ class AlertSystem:
 ## 5. 层级关系
 
 ```
-Layer 5 (监控层)
-    ↑ 上游
-Layer 4 (执行层) → 订单执行
-Layer 3 (策略层) → 策略信号
-    ↓ 下游
-AI报告系统 → 自动报告生成
+Layer 5 (监控�?
+    �?上游
+Layer 4 (执行�? �?订单执行
+Layer 3 (策略�? �?策略信号
+    �?下游
+AI报告系统 �?自动报告生成
 ```
 
 ---
 
 ## 索引
 
-- 父目录: [04_EXECUTION/README.md](../README.md)
+- 父目�? [04_EXECUTION/README.md](../README.md)
 - 相关: [PERFORMANCE_ATTRIBUTION.md](./PERFORMANCE_ATTRIBUTION.md)

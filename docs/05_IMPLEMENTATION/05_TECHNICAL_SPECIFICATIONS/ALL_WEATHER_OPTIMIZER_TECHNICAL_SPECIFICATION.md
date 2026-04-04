@@ -16,7 +16,7 @@ implementation_status: 待实?risk_level: P1
 
 > 清风量化系统 v5.3 - 全天候配置优化器详细技术设?> **模块ID**: `ALL_WEATHER_OPTIMIZER_001`
 > **版本**: v1.0.0
-> **状?*: ?正式
+> **�?*: ?正式
 > **风险等级**: P1(高风?
 
 ---
@@ -27,7 +27,7 @@ implementation_status: 待实?risk_level: P1
 - **技术痛?*: 
   - 缺乏风险平价模型: 当前组合优化仅支持均值方?不支持风险平?  - 缺乏宏观视角: 无法基于经济范式调整资产配置
   - 缺乏多资产配? 仅支持股?不支持债券、商品、现金等资产
-- **预期价?*: 
+- **预期�?*: 
   - 提供风险平价资产配置能力
   - 支持基于经济范式的动态调?  - 实现跨资产类别的风险分散
   - 降低组合波动?提升夏普比率
@@ -36,7 +36,7 @@ implementation_status: 待实?risk_level: P1
 - **架构角色**: 桥水模式核心组件,接收Layer 4经济范式判断结果
 
 ### 1.3 版本信息
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -148,7 +148,7 @@ class AllWeatherOptimizer:
                 AssetDefinition(
                     asset_class=AssetClass.BONDS,
                     ticker='10Y_TREASURY',
-                    name='10年期国?,
+                    name='10年期�?,
                     expected_return=0.03,
                     volatility=0.05,
                     correlations={}
@@ -296,7 +296,7 @@ class AllWeatherOptimizer:
                 '000300.SH': (0.02, confidence * 0.5)  # 看淡股票
             },
             'recession': {
-                '10Y_TREASURY': (0.05, confidence),  # 看好国?                'CNY_CASH': (0.03, confidence),      # 看好现金
+                '10Y_TREASURY': (0.05, confidence),  # 看好�?                'CNY_CASH': (0.03, confidence),      # 看好现金
                 '000300.SH': (-0.02, confidence)     # 看淡股票
             },
             'recovery': {
@@ -602,7 +602,7 @@ def test_risk_parity_optimization():
    - **影响**: 无法生成资产配置方案
    - **概率**: ?   - **缓解措施**: 
      - 提供默认配置方案
-     - 多种优化算法备?     - 优化失败告警机制
+     - 多种优化算法�?     - 优化失败告警机制
    - **责任?*: 量化工程?
 ---
 

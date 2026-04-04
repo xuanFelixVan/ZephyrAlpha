@@ -1,77 +1,77 @@
-ï»¿---
+---
 module_id: REALTIME_QUALITY_MONITOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: é¦–å¸­æŠ€æœ¯è¯„å®¡å®˜
-standard_type: ä¸“ä¸šé‡åŒ–æœºæ„è“å›¾
-applicable_scope: Layer 1æ•°æ®é¢„å¤„ç†å±‚ | ä¸šåŠ¡æ¶æ„: ä¸‰çº§æ—¶é—´æ¡†æ¶èåˆæ¶æ„
-compliance_level: ä¸“ä¸šæ ‡å‡†
+owner: Ê×Ï¯¼¼ÊõÆÀÉó¹Ù
+standard_type: ×¨ÒµÁ¿»¯»ú¹¹À¶Í¼
+applicable_scope: Layer 1Êı¾İÔ¤´¦Àí²ã | ÒµÎñ¼Ü¹¹: Èı¼¶Ê±¼ä¿ò¼ÜÈÚºÏ¼Ü¹¹
+compliance_level: ×¨Òµ±ê×¼
 parent_document: ../INDEX.md
-implementation_status: è®¾è®¡é˜¶æ®µ
+implementation_status: Éè¼Æ½×¶Î
 implementation_progress: 0%
 ---
 
-# å®æ—¶æ•°æ®è´¨é‡ç›‘æ§ç³»ç»Ÿè“å›¾
+# ÊµÊ±Êı¾İÖÊÁ¿¼à¿ØÏµÍ³À¶Í¼
 
-> æ¸…é£é‡åŒ–ç³»ç»Ÿ v5.3 - å®æ—¶æ•°æ®è´¨é‡ç›‘æ§ç³»ç»Ÿè¯¦ç»†è®¾è®¡
-> **æ¨¡å—ID**: `REALTIME_QUALITY_MONITOR_001`
-> **å®æ–½å‘¨æœŸ**: Week 3-4?å‘¨ï¼‰
-> **ä¼˜å…ˆ?*: P0ï¼ˆæ ¸å¿ƒï¼‰
-> **é¢„æœŸæ”¶ç›Š**: ç§’çº§å‘ç°æ•°æ®é—®é¢˜ï¼Œæé«˜ç³»ç»Ÿç¨³å®š?0%
+> Çå·çÁ¿»¯ÏµÍ³ v5.3 - ÊµÊ±Êı¾İÖÊÁ¿¼à¿ØÏµÍ³ÏêÏ¸Éè¼Æ
+> **Ä£¿éID**: `REALTIME_QUALITY_MONITOR_001`
+> **ÊµÊ©ÖÜÆÚ**: Week 3-4?ÖÜ£©
+> **ÓÅÏÈ?*: P0£¨ºËĞÄ£©
+> **Ô¤ÆÚÊÕÒæ**: Ãë¼¶·¢ÏÖÊı¾İÎÊÌâ£¬Ìá¸ßÏµÍ³ÎÈ¶¨?0%
 
 
-## ä¸€ã€è®¾è®¡èƒŒæ™¯ä¸ç›®æ ‡
+## Ò»¡¢Éè¼Æ±³¾°ÓëÄ¿±ê
 
-### 1.1 ä¸šåŠ¡éœ€?
-**å½“å‰ç—›ç‚¹**:
-- ?æ•°æ®è´¨é‡é—®é¢˜å‘ç°ä¸åŠæ—¶ï¼Œå½±å“ä¸Šå±‚åˆ†æ
-- ?ç¼ºå°‘å®æ—¶ç›‘æ§ï¼Œé—®é¢˜å‘ç°æ»?- ?ç¼ºå°‘å¤šç»´åº¦è´¨é‡æŒ‡æ ‡ç›‘?- ?ç¼ºå°‘å®æ—¶å‘Šè­¦æœºåˆ¶
+### 1.1 ÒµÎñĞè?
+**µ±Ç°Í´µã**:
+- ?Êı¾İÖÊÁ¿ÎÊÌâ·¢ÏÖ²»¼°Ê±£¬Ó°ÏìÉÏ²ã·ÖÎö
+- ?È±ÉÙÊµÊ±¼à¿Ø£¬ÎÊÌâ·¢ÏÖÖÍ?- ?È±ÉÙ¶àÎ¬¶ÈÖÊÁ¿Ö¸±ê¼à?- ?È±ÉÙÊµÊ±¸æ¾¯»úÖÆ
 
-**ä¸šåŠ¡ç›®æ ‡**:
-- ?å®æ—¶ç›‘æ§æ•°æ®è´¨é‡ï¼Œç§’çº§å‘ç°æ•°æ®é—®?- ?å¤šç»´åº¦è´¨é‡æŒ‡æ ‡ç›‘æ§ï¼ˆå®Œæ•´æ€§ã€å‡†ç¡®æ€§ã€æ—¶æ•ˆæ€§ã€ä¸€è‡´æ€§ï¼‰
-- ?å®æ—¶å‘Šè­¦ï¼Œå¤šæ¸ é“é€šçŸ¥
-- ?å¯è§†åŒ–è´¨é‡ä»ªè¡¨æ¿
+**ÒµÎñÄ¿±ê**:
+- ?ÊµÊ±¼à¿ØÊı¾İÖÊÁ¿£¬Ãë¼¶·¢ÏÖÊı¾İÎÊ?- ?¶àÎ¬¶ÈÖÊÁ¿Ö¸±ê¼à¿Ø£¨ÍêÕûĞÔ¡¢×¼È·ĞÔ¡¢Ê±Ğ§ĞÔ¡¢Ò»ÖÂĞÔ£©
+- ?ÊµÊ±¸æ¾¯£¬¶àÇşµÀÍ¨Öª
+- ?¿ÉÊÓ»¯ÖÊÁ¿ÒÇ±í°å
 
-### 1.2 æŠ€æœ¯ç›®?
-| æŒ‡æ ‡ | ç›®æ ‡?| è¯´æ˜ |
+### 1.2 ¼¼ÊõÄ¿?
+| Ö¸±ê | Ä¿±ê?| ËµÃ÷ |
 |------|--------|------|
-| **ç›‘æ§è¦†ç›–?* | ?0% | 90%ä»¥ä¸Šçš„æ•°æ®æœ‰å®æ—¶ç›‘æ§ |
-| **å‘Šè­¦åŠæ—¶?* | <30?| æ•°æ®é—®é¢˜å‘ç”Ÿ?0ç§’å†…å‘Šè­¦ |
-| **å‘Šè­¦å‡†ç¡®?* | ?5% | 95%ä»¥ä¸Šçš„å‘Šè­¦ä¸ºçœŸå®é—®é¢˜ |
-| **ç›‘æ§å»¶è¿Ÿ** | <5?| ç›‘æ§æŒ‡æ ‡é‡‡é›†å»¶è¿Ÿ<5?|
+| **¼à¿Ø¸²¸Ç?* | ?0% | 90%ÒÔÉÏµÄÊı¾İÓĞÊµÊ±¼à¿Ø |
+| **¸æ¾¯¼°Ê±?* | <30?| Êı¾İÎÊÌâ·¢Éú?0ÃëÄÚ¸æ¾¯ |
+| **¸æ¾¯×¼È·?* | ?5% | 95%ÒÔÉÏµÄ¸æ¾¯ÎªÕæÊµÎÊÌâ |
+| **¼à¿ØÑÓ³Ù** | <5?| ¼à¿ØÖ¸±ê²É¼¯ÑÓ³Ù<5?|
 
 ---
 
-## äºŒã€ç³»ç»Ÿæ¶æ„è®¾?
-### 2.1 æ•´ä½“æ¶æ„?
+## ¶ş¡¢ÏµÍ³¼Ü¹¹Éè?
+### 2.1 ÕûÌå¼Ü¹¹?
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€??             å®æ—¶æ•°æ®è´¨é‡ç›‘æ§ç³»ç»Ÿæ¶æ„                          ?â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€??                                                            ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ?? ?           æ•°æ®é‡‡é›†?(Metrics Collection)            ? ?? ? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? ? ?å®Œæ•´æ€§é‡‡?  ? ?å‡†ç¡®æ€§é‡‡?  ? ?æ—¶æ•ˆæ€§é‡‡?  ? ? ?? ? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? ? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? ? ?ä¸€è‡´æ€§é‡‡?  ? ?å¼‚å¸¸æ£€?    ? ?è´¨é‡è¯„åˆ†     ? ? ?? ? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ??                          ?                                 ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ?? ?           æŒ‡æ ‡å­˜å‚¨?(Metrics Storage)               ? ?? ? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? ? ?Prometheus  ? ?æ—¶åºæ•°æ®?  ? ?å†å²æ•°æ®     ? ? ?? ? ?(å®æ—¶æŒ‡æ ‡)  ? ?(InfluxDB)  ? ?(PostgreSQL)? ? ?? ? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ??                          ?                                 ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ?? ?           å‘Šè­¦å¼•æ“?(Alert Engine)                  ? ?? ? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? ? ?è§„åˆ™å¼•æ“     ? ?å‘Šè­¦è·¯ç”±     ? ?å‘Šè­¦é€šçŸ¥     ? ? ?? ? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ??                          ?                                 ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ?? ?           å¯è§†åŒ–å±‚ (Visualization)                   ? ?? ? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? ? ?Grafanaä»ªè¡¨æ¿â”‚  ?è´¨é‡æŠ¥å‘Š     ? ?å‘Šè­¦å†å²     ? ? ?? ? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ? ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ??                                                            ?â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€?```
+©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??             ÊµÊ±Êı¾İÖÊÁ¿¼à¿ØÏµÍ³¼Ü¹¹                          ?©À©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??                                                            ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ?? ?           Êı¾İ²É¼¯?(Metrics Collection)            ? ?? ? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ? ?ÍêÕûĞÔ²É?  ? ?×¼È·ĞÔ²É?  ? ?Ê±Ğ§ĞÔ²É?  ? ? ?? ? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ? ?Ò»ÖÂĞÔ²É?  ? ?Òì³£¼ì?    ? ?ÖÊÁ¿ÆÀ·Ö     ? ? ?? ? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ??                          ?                                 ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ?? ?           Ö¸±ê´æ´¢?(Metrics Storage)               ? ?? ? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ? ?Prometheus  ? ?Ê±ĞòÊı¾İ?  ? ?ÀúÊ·Êı¾İ     ? ? ?? ? ?(ÊµÊ±Ö¸±ê)  ? ?(InfluxDB)  ? ?(PostgreSQL)? ? ?? ? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ??                          ?                                 ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ?? ?           ¸æ¾¯ÒıÇæ?(Alert Engine)                  ? ?? ? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ? ?¹æÔòÒıÇæ     ? ?¸æ¾¯Â·ÓÉ     ? ?¸æ¾¯Í¨Öª     ? ? ?? ? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ??                          ?                                 ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ?? ?           ¿ÉÊÓ»¯²ã (Visualization)                   ? ?? ? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ? ?GrafanaÒÇ±í°å©¦  ?ÖÊÁ¿±¨¸æ     ? ?¸æ¾¯ÀúÊ·     ? ? ?? ? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ??                                                            ?©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?```
 
-### 2.2 æŠ€æœ¯é€‰å‹
+### 2.2 ¼¼ÊõÑ¡ĞÍ
 
-| ç»„ä»¶ | æŠ€æœ¯æ–¹?| ç‰ˆæœ¬è¦æ±‚ | é€‰å‹ç†ç”± |
+| ×é¼ş | ¼¼Êõ·½?| °æ±¾ÒªÇó | Ñ¡ĞÍÀíÓÉ |
 |------|---------|---------|---------|
-| **æŒ‡æ ‡é‡‡é›†** | Prometheus | ?.40.0 | æˆç†Ÿçš„ç›‘æ§æŒ‡æ ‡é‡‡é›†æ–¹?|
-| **æ—¶åºæ•°æ®?* | InfluxDB | ?.7.0 | é«˜æ€§èƒ½æ—¶åºæ•°æ®?|
-| **å¯è§†?* | Grafana | ?0.0.0 | å¼ºå¤§çš„å¯è§†åŒ–èƒ½åŠ› |
-| **å‘Šè­¦ç®¡ç†** | Alertmanager | ?.26.0 | Prometheusç”Ÿæ€å‘Šè­¦ç»„?|
-| **è´¨é‡æ£€?* | Great Expectations | ?.18.0 | æ•°æ®è´¨é‡æ£€æŸ¥æ¡†?|
+| **Ö¸±ê²É¼¯** | Prometheus | ?.40.0 | ³ÉÊìµÄ¼à¿ØÖ¸±ê²É¼¯·½?|
+| **Ê±ĞòÊı¾İ?* | InfluxDB | ?.7.0 | ¸ßĞÔÄÜÊ±ĞòÊı¾İ?|
+| **¿ÉÊÓ?* | Grafana | ?0.0.0 | Ç¿´óµÄ¿ÉÊÓ»¯ÄÜÁ¦ |
+| **¸æ¾¯¹ÜÀí** | Alertmanager | ?.26.0 | PrometheusÉúÌ¬¸æ¾¯×é?|
+| **ÖÊÁ¿¼ì?* | Great Expectations | ?.18.0 | Êı¾İÖÊÁ¿¼ì²é¿ò?|
 
-### 2.3 Layerå®šä½
+### 2.3 Layer¶¨Î»
 
-- **Layerå½’å±**: Layer 1 - æ•°æ®é¢„å¤„ç†å±‚
-- **èŒè´£èŒƒå›´**: å®æ—¶æ•°æ®è´¨é‡ç›‘æ§å’Œæ£€æµ‹ï¼ˆå‘Šè­¦åŠŸèƒ½ç”±[ENHANCED_ALERT_SYSTEM_BLUEPRINT.md](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)æä¾›ï¼‰
-- **ä¸Šä¸‹å±‚æ¥?*:
-  - ä¸Šå±‚ä¾èµ–: Layer 2-8ï¼ˆæä¾›è´¨é‡ç›‘æ§æœåŠ¡ï¼‰
-  - ä¸‹å±‚ä¾èµ–: Layer 0-1ï¼ˆç›‘æ§æ•°æ®æºå’Œé¢„å¤„ç†è´¨é‡?
+- **Layer¹éÊô**: Layer 1 - Êı¾İÔ¤´¦Àí²ã
+- **Ö°Ôğ·¶Î§**: ÊµÊ±Êı¾İÖÊÁ¿¼à¿ØºÍ¼ì²â£¨¸æ¾¯¹¦ÄÜÓÉ[ENHANCED_ALERT_SYSTEM_BLUEPRINT.md](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)Ìá¹©£©
+- **ÉÏÏÂ²ã½Ó?*:
+  - ÉÏ²ãÒÀÀµ: Layer 2-8£¨Ìá¹©ÖÊÁ¿¼à¿Ø·şÎñ£©
+  - ÏÂ²ãÒÀÀµ: Layer 0-1£¨¼à¿ØÊı¾İÔ´ºÍÔ¤´¦ÀíÖÊÁ¿?
 ---
 
-## ä¸‰ã€æ ¸å¿ƒæ¨¡å—è®¾?
-### 3.1 è´¨é‡æŒ‡æ ‡é‡‡é›†?(QualityMetricsCollector)
+## Èı¡¢ºËĞÄÄ£¿éÉè?
+### 3.1 ÖÊÁ¿Ö¸±ê²É¼¯?(QualityMetricsCollector)
 
-**èŒè´£**: é‡‡é›†å¤šç»´åº¦æ•°æ®è´¨é‡æŒ‡?
+**Ö°Ôğ**: ²É¼¯¶àÎ¬¶ÈÊı¾İÖÊÁ¿Ö¸?
 ```python
 from dataclasses import dataclass, field
 from typing import Dict, List, Any, Optional
@@ -82,11 +82,11 @@ import numpy as np
 from prometheus_client import Counter, Gauge, Histogram
 
 class QualityDimension(Enum):
-    """è´¨é‡ç»´åº¦"""
-    COMPLETENESS = "completeness"      # å®Œæ•´?    ACCURACY = "accuracy"              # å‡†ç¡®?    TIMELINESS = "timeliness"          # æ—¶æ•ˆ?    CONSISTENCY = "consistency"        # ä¸€è‡´?    VALIDITY = "validity"              # æœ‰æ•ˆ?    UNIQUENSS = "uniqueness"           # å”¯ä¸€?
+    """ÖÊÁ¿Î¬¶È"""
+    COMPLETENESS = "completeness"      # ÍêÕû?    ACCURACY = "accuracy"              # ×¼È·?    TIMELINESS = "timeliness"          # Ê±Ğ§?    CONSISTENCY = "consistency"        # Ò»ÖÂ?    VALIDITY = "validity"              # ÓĞĞ§?    UNIQUENSS = "uniqueness"           # Î¨Ò»?
 @dataclass
 class QualityMetric:
-    """è´¨é‡æŒ‡æ ‡"""
+    """ÖÊÁ¿Ö¸±ê"""
     metric_id: str
     dimension: QualityDimension
     metric_name: str
@@ -98,7 +98,7 @@ class QualityMetric:
 
 @dataclass
 class QualityCheckResult:
-    """è´¨é‡æ£€æŸ¥ç»“?""
+    """ÖÊÁ¿¼ì²é½á?""
     check_id: str
     check_name: str
     dimension: QualityDimension
@@ -108,53 +108,53 @@ class QualityCheckResult:
     timestamp: datetime = field(default_factory=datetime.now)
 
 class QualityMetricsCollector:
-    """è´¨é‡æŒ‡æ ‡é‡‡é›†?""
+    """ÖÊÁ¿Ö¸±ê²É¼¯?""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        åˆå§‹åŒ–è´¨é‡æŒ‡æ ‡é‡‡é›†å™¨
+        ³õÊ¼»¯ÖÊÁ¿Ö¸±ê²É¼¯Æ÷
         
         Args:
-            config: é…ç½®ä¿¡æ¯
-                - prometheus_gateway: Prometheus Pushgatewayåœ°å€
-                - check_interval: æ£€æŸ¥é—´éš”ï¼ˆç§’ï¼‰
+            config: ÅäÖÃĞÅÏ¢
+                - prometheus_gateway: Prometheus PushgatewayµØÖ·
+                - check_interval: ¼ì²é¼ä¸ô£¨Ãë£©
         """
         self.config = config
         
-        # PrometheusæŒ‡æ ‡å®šä¹‰
+        # PrometheusÖ¸±ê¶¨Òå
         self.completeness_gauge = Gauge(
             'data_completeness',
-            'æ•°æ®å®Œæ•´æ€§æŒ‡?,
+            'Êı¾İÍêÕûĞÔÖ¸?,
             ['data_source', 'table']
         )
         
         self.accuracy_gauge = Gauge(
             'data_accuracy',
-            'æ•°æ®å‡†ç¡®æ€§æŒ‡?,
+            'Êı¾İ×¼È·ĞÔÖ¸?,
             ['data_source', 'table']
         )
         
         self.timeliness_gauge = Gauge(
             'data_timeliness',
-            'æ•°æ®æ—¶æ•ˆæ€§æŒ‡?,
+            'Êı¾İÊ±Ğ§ĞÔÖ¸?,
             ['data_source', 'table']
         )
         
         self.consistency_gauge = Gauge(
             'data_consistency',
-            'æ•°æ®ä¸€è‡´æ€§æŒ‡?,
+            'Êı¾İÒ»ÖÂĞÔÖ¸?,
             ['data_source', 'table']
         )
         
         self.quality_score_gauge = Gauge(
             'data_quality_score',
-            'æ•°æ®è´¨é‡ç»¼åˆè¯„åˆ†',
+            'Êı¾İÖÊÁ¿×ÛºÏÆÀ·Ö',
             ['data_source', 'table']
         )
         
         self.check_counter = Counter(
             'quality_checks_total',
-            'è´¨é‡æ£€æŸ¥æ€»æ¬¡?,
+            'ÖÊÁ¿¼ì²é×Ü´Î?,
             ['data_source', 'dimension', 'status']
         )
         
@@ -165,24 +165,24 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        é‡‡é›†å®Œæ•´æ€§æŒ‡?        
+        ²É¼¯ÍêÕûĞÔÖ¸?        
         Args:
-            data: æ•°æ®DataFrame
-            data_source: æ•°æ®?            table: è¡¨å
+            data: Êı¾İDataFrame
+            data_source: Êı¾İ?            table: ±íÃû
             
         Returns:
-            QualityMetric: å®Œæ•´æ€§æŒ‡?        """
-        # è®¡ç®—å®Œæ•´?        total_cells = data.size
+            QualityMetric: ÍêÕûĞÔÖ¸?        """
+        # ¼ÆËãÍêÕû?        total_cells = data.size
         missing_cells = data.isnull().sum().sum()
         completeness = 1 - (missing_cells / total_cells)
         
-        # æ›´æ–°PrometheusæŒ‡æ ‡
+        # ¸üĞÂPrometheusÖ¸±ê
         self.completeness_gauge.labels(
             data_source=data_source,
             table=table
         ).set(completeness)
         
-        # åˆ¤æ–­çŠ¶?        if completeness >= 0.95:
+        # ÅĞ¶Ï×´?        if completeness >= 0.95:
             status = "normal"
         elif completeness >= 0.90:
             status = "warning"
@@ -192,7 +192,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_completeness",
             dimension=QualityDimension.COMPLETENESS,
-            metric_name="æ•°æ®å®Œæ•´?,
+            metric_name="Êı¾İÍêÕû?,
             metric_value=completeness,
             threshold=0.95,
             status=status,
@@ -212,14 +212,14 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        é‡‡é›†å‡†ç¡®æ€§æŒ‡?        
+        ²É¼¯×¼È·ĞÔÖ¸?        
         Args:
-            data: æ•°æ®DataFrame
-            rules: å‡†ç¡®æ€§è§„åˆ™åˆ—?            data_source: æ•°æ®?            table: è¡¨å
+            data: Êı¾İDataFrame
+            rules: ×¼È·ĞÔ¹æÔòÁĞ?            data_source: Êı¾İ?            table: ±íÃû
             
         Returns:
-            QualityMetric: å‡†ç¡®æ€§æŒ‡?        """
-        # åº”ç”¨å‡†ç¡®æ€§è§„?        total_checks = len(rules)
+            QualityMetric: ×¼È·ĞÔÖ¸?        """
+        # Ó¦ÓÃ×¼È·ĞÔ¹æ?        total_checks = len(rules)
         passed_checks = 0
         
         for rule in rules:
@@ -243,17 +243,17 @@ class QualityMetricsCollector:
                     passed_checks += 1
                     
             elif rule_type == 'custom':
-                # è‡ªå®šä¹‰è§„åˆ™æ£€?                pass
+                # ×Ô¶¨Òå¹æÔò¼ì?                pass
         
         accuracy = passed_checks / total_checks if total_checks > 0 else 1.0
         
-        # æ›´æ–°PrometheusæŒ‡æ ‡
+        # ¸üĞÂPrometheusÖ¸±ê
         self.accuracy_gauge.labels(
             data_source=data_source,
             table=table
         ).set(accuracy)
         
-        # åˆ¤æ–­çŠ¶?        if accuracy >= 0.95:
+        # ÅĞ¶Ï×´?        if accuracy >= 0.95:
             status = "normal"
         elif accuracy >= 0.90:
             status = "warning"
@@ -263,7 +263,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_accuracy",
             dimension=QualityDimension.ACCURACY,
-            metric_name="æ•°æ®å‡†ç¡®?,
+            metric_name="Êı¾İ×¼È·?,
             metric_value=accuracy,
             threshold=0.95,
             status=status,
@@ -284,26 +284,26 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        é‡‡é›†æ—¶æ•ˆæ€§æŒ‡?        
+        ²É¼¯Ê±Ğ§ĞÔÖ¸?        
         Args:
-            data: æ•°æ®DataFrame
-            timestamp_field: æ—¶é—´æˆ³å­—?            expected_delay: é¢„æœŸå»¶è¿Ÿï¼ˆç§’?            data_source: æ•°æ®?            table: è¡¨å
+            data: Êı¾İDataFrame
+            timestamp_field: Ê±¼ä´Á×Ö?            expected_delay: Ô¤ÆÚÑÓ³Ù£¨Ãë?            data_source: Êı¾İ?            table: ±íÃû
             
         Returns:
-            QualityMetric: æ—¶æ•ˆæ€§æŒ‡?        """
-        # è®¡ç®—æ—¶æ•ˆ?        latest_timestamp = pd.to_datetime(data[timestamp_field].max())
+            QualityMetric: Ê±Ğ§ĞÔÖ¸?        """
+        # ¼ÆËãÊ±Ğ§?        latest_timestamp = pd.to_datetime(data[timestamp_field].max())
         current_time = datetime.now()
         actual_delay = (current_time - latest_timestamp).total_seconds()
         
         timeliness = max(0, 1 - (actual_delay / expected_delay))
         
-        # æ›´æ–°PrometheusæŒ‡æ ‡
+        # ¸üĞÂPrometheusÖ¸±ê
         self.timeliness_gauge.labels(
             data_source=data_source,
             table=table
         ).set(timeliness)
         
-        # åˆ¤æ–­çŠ¶?        if timeliness >= 0.95:
+        # ÅĞ¶Ï×´?        if timeliness >= 0.95:
             status = "normal"
         elif timeliness >= 0.90:
             status = "warning"
@@ -313,7 +313,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_timeliness",
             dimension=QualityDimension.TIMELINESS,
-            metric_name="æ•°æ®æ—¶æ•ˆ?,
+            metric_name="Êı¾İÊ±Ğ§?,
             metric_value=timeliness,
             threshold=0.95,
             status=status,
@@ -335,16 +335,16 @@ class QualityMetricsCollector:
         table: str
     ) -> QualityMetric:
         """
-        é‡‡é›†ä¸€è‡´æ€§æŒ‡?        
+        ²É¼¯Ò»ÖÂĞÔÖ¸?        
         Args:
-            data: æ•°æ®DataFrame
-            reference_data: å‚è€ƒæ•°æ®DataFrame
-            key_fields: å…³é”®å­—æ®µåˆ—è¡¨
-            data_source: æ•°æ®?            table: è¡¨å
+            data: Êı¾İDataFrame
+            reference_data: ²Î¿¼Êı¾İDataFrame
+            key_fields: ¹Ø¼ü×Ö¶ÎÁĞ±í
+            data_source: Êı¾İ?            table: ±íÃû
             
         Returns:
-            QualityMetric: ä¸€è‡´æ€§æŒ‡?        """
-        # è®¡ç®—ä¸€è‡´?        merged = data.merge(
+            QualityMetric: Ò»ÖÂĞÔÖ¸?        """
+        # ¼ÆËãÒ»ÖÂ?        merged = data.merge(
             reference_data,
             on=key_fields,
             how='left',
@@ -355,13 +355,13 @@ class QualityMetricsCollector:
         total_count = len(data)
         consistency = consistent_count / total_count if total_count > 0 else 1.0
         
-        # æ›´æ–°PrometheusæŒ‡æ ‡
+        # ¸üĞÂPrometheusÖ¸±ê
         self.consistency_gauge.labels(
             data_source=data_source,
             table=table
         ).set(consistency)
         
-        # åˆ¤æ–­çŠ¶?        if consistency >= 0.95:
+        # ÅĞ¶Ï×´?        if consistency >= 0.95:
             status = "normal"
         elif consistency >= 0.90:
             status = "warning"
@@ -371,7 +371,7 @@ class QualityMetricsCollector:
         return QualityMetric(
             metric_id=f"{data_source}_{table}_consistency",
             dimension=QualityDimension.CONSISTENCY,
-            metric_name="æ•°æ®ä¸€è‡´?,
+            metric_name="Êı¾İÒ»ÖÂ?,
             metric_value=consistency,
             threshold=0.95,
             status=status,
@@ -389,14 +389,14 @@ class QualityMetricsCollector:
         weights: Optional[Dict[str, float]] = None
     ) -> float:
         """
-        è®¡ç®—ç»¼åˆè´¨é‡è¯„åˆ†
+        ¼ÆËã×ÛºÏÖÊÁ¿ÆÀ·Ö
         
         Args:
-            metrics: è´¨é‡æŒ‡æ ‡åˆ—è¡¨
-            weights: å„ç»´åº¦æƒé‡ï¼ˆå¯é€‰ï¼‰
+            metrics: ÖÊÁ¿Ö¸±êÁĞ±í
+            weights: ¸÷Î¬¶ÈÈ¨ÖØ£¨¿ÉÑ¡£©
             
         Returns:
-            float: ç»¼åˆè´¨é‡è¯„åˆ†
+            float: ×ÛºÏÖÊÁ¿ÆÀ·Ö
         """
         if weights is None:
             weights = {
@@ -415,9 +415,9 @@ class QualityMetricsCollector:
         return score
 ```
 
-### 3.2 å‘Šè­¦å¼•æ“ (AlertEngine)
+### 3.2 ¸æ¾¯ÒıÇæ (AlertEngine)
 
-**èŒè´£**: å®æ—¶å‘Šè­¦å¤„ç†å’Œé€šçŸ¥
+**Ö°Ôğ**: ÊµÊ±¸æ¾¯´¦ÀíºÍÍ¨Öª
 
 ```python
 from dataclasses import dataclass, field
@@ -429,13 +429,13 @@ from email.mime.text import MIMEText
 import requests
 
 class AlertSeverity(Enum):
-    """å‘Šè­¦ä¸¥é‡çº§åˆ«"""
+    """¸æ¾¯ÑÏÖØ¼¶±ğ"""
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
 
 class AlertChannel(Enum):
-    """å‘Šè­¦æ¸ é“"""
+    """¸æ¾¯ÇşµÀ"""
     EMAIL = "email"
     SMS = "sms"
     SLACK = "slack"
@@ -443,7 +443,7 @@ class AlertChannel(Enum):
 
 @dataclass
 class AlertRule:
-    """å‘Šè­¦è§„åˆ™"""
+    """¸æ¾¯¹æÔò"""
     rule_id: str
     rule_name: str
     metric_name: str
@@ -452,10 +452,10 @@ class AlertRule:
     severity: AlertSeverity
     channels: List[AlertChannel]
     enabled: bool = True
-    cooldown: int = 300  # å†·å´æ—¶é—´ï¼ˆç§’?
+    cooldown: int = 300  # ÀäÈ´Ê±¼ä£¨Ãë?
 @dataclass
 class Alert:
-    """å‘Šè­¦"""
+    """¸æ¾¯"""
     alert_id: str
     rule_id: str
     metric_name: str
@@ -468,16 +468,16 @@ class Alert:
     resolved: bool = False
 
 class AlertEngine:
-    """å‘Šè­¦å¼•æ“"""
+    """¸æ¾¯ÒıÇæ"""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        åˆå§‹åŒ–å‘Šè­¦å¼•?        
+        ³õÊ¼»¯¸æ¾¯Òı?        
         Args:
-            config: é…ç½®ä¿¡æ¯
-                - email_config: é‚®ä»¶é…ç½®
+            config: ÅäÖÃĞÅÏ¢
+                - email_config: ÓÊ¼şÅäÖÃ
                 - slack_webhook: Slack webhook URL
-                - sms_api: çŸ­ä¿¡APIé…ç½®
+                - sms_api: ¶ÌĞÅAPIÅäÖÃ
         """
         self.config = config
         self.rules: Dict[str, AlertRule] = {}
@@ -486,37 +486,37 @@ class AlertEngine:
         
     def add_rule(self, rule: AlertRule):
         """
-        æ·»åŠ å‘Šè­¦è§„åˆ™
+        Ìí¼Ó¸æ¾¯¹æÔò
         
         Args:
-            rule: å‘Šè­¦è§„åˆ™
+            rule: ¸æ¾¯¹æÔò
         """
         self.rules[rule.rule_id] = rule
         
     def check_metric(self, metric: QualityMetric) -> Optional[Alert]:
         """
-        æ£€æŸ¥æŒ‡æ ‡æ˜¯å¦è§¦å‘å‘Š?        
+        ¼ì²éÖ¸±êÊÇ·ñ´¥·¢¸æ?        
         Args:
-            metric: è´¨é‡æŒ‡æ ‡
+            metric: ÖÊÁ¿Ö¸±ê
             
         Returns:
-            Optional[Alert]: å‘Šè­¦ï¼ˆå¦‚æœè§¦å‘ï¼‰
+            Optional[Alert]: ¸æ¾¯£¨Èç¹û´¥·¢£©
         """
-        # æŸ¥æ‰¾åŒ¹é…çš„è§„?        for rule in self.rules.values():
+        # ²éÕÒÆ¥ÅäµÄ¹æ?        for rule in self.rules.values():
             if not rule.enabled:
                 continue
                 
             if rule.metric_name != metric.metric_name:
                 continue
             
-            # æ£€æŸ¥å†·å´æ—¶?            if rule.rule_id in self.last_alert_time:
+            # ¼ì²éÀäÈ´Ê±?            if rule.rule_id in self.last_alert_time:
                 time_since_last = (
                     datetime.now() - self.last_alert_time[rule.rule_id]
                 ).total_seconds()
                 if time_since_last < rule.cooldown:
                     continue
             
-            # æ£€æŸ¥æ¡?            triggered = False
+            # ¼ì²éÌõ?            triggered = False
             if rule.condition == '>' and metric.metric_value > rule.threshold:
                 triggered = True
             elif rule.condition == '<' and metric.metric_value < rule.threshold:
@@ -534,13 +534,13 @@ class AlertEngine:
                     metric_value=metric.metric_value,
                     threshold=rule.threshold,
                     severity=rule.severity,
-                    message=f"æŒ‡æ ‡ {metric.metric_name} è§¦å‘å‘Šè­¦ï¼šå½“å‰?{metric.metric_value:.2f}ï¼Œé˜ˆ?{rule.threshold:.2f}"
+                    message=f"Ö¸±ê {metric.metric_name} ´¥·¢¸æ¾¯£ºµ±Ç°?{metric.metric_value:.2f}£¬ãĞ?{rule.threshold:.2f}"
                 )
                 
                 self.alerts.append(alert)
                 self.last_alert_time[rule.rule_id] = datetime.now()
                 
-                # å‘é€å‘Šè­¦é€šçŸ¥
+                # ·¢ËÍ¸æ¾¯Í¨Öª
                 self._send_alert(alert, rule.channels)
                 
                 return alert
@@ -549,11 +549,11 @@ class AlertEngine:
     
     def _send_alert(self, alert: Alert, channels: List[AlertChannel]):
         """
-        å‘é€å‘Šè­¦é€šçŸ¥
+        ·¢ËÍ¸æ¾¯Í¨Öª
         
         Args:
-            alert: å‘Šè­¦
-            channels: å‘Šè­¦æ¸ é“åˆ—è¡¨
+            alert: ¸æ¾¯
+            channels: ¸æ¾¯ÇşµÀÁĞ±í
         """
         for channel in channels:
             if channel == AlertChannel.EMAIL:
@@ -567,14 +567,14 @@ class AlertEngine:
     
     def _send_email(self, alert: Alert):
         """
-        å‘é€é‚®ä»¶å‘Š?        
+        ·¢ËÍÓÊ¼ş¸æ?        
         Args:
-            alert: å‘Šè­¦
+            alert: ¸æ¾¯
         """
         email_config = self.config.get('email_config', {})
         
         msg = MIMEText(alert.message)
-        msg['Subject'] = f"[{alert.severity.value.upper()}] æ•°æ®è´¨é‡å‘Šè­¦"
+        msg['Subject'] = f"[{alert.severity.value.upper()}] Êı¾İÖÊÁ¿¸æ¾¯"
         msg['From'] = email_config.get('sender')
         msg['To'] = email_config.get('recipients', [])
         
@@ -586,10 +586,10 @@ class AlertEngine:
     
     def _send_slack(self, alert: Alert):
         """
-        å‘é€Slackå‘Šè­¦
+        ·¢ËÍSlack¸æ¾¯
         
         Args:
-            alert: å‘Šè­¦
+            alert: ¸æ¾¯
         """
         webhook_url = self.config.get('slack_webhook')
         if not webhook_url:
@@ -602,22 +602,22 @@ class AlertEngine:
                     'color': 'danger' if alert.severity == AlertSeverity.CRITICAL else 'warning',
                     'fields': [
                         {
-                            'title': 'æŒ‡æ ‡åç§°',
+                            'title': 'Ö¸±êÃû³Æ',
                             'value': alert.metric_name,
                             'short': True
                         },
                         {
-                            'title': 'å½“å‰?,
+                            'title': 'µ±Ç°?,
                             'value': f"{alert.metric_value:.2f}",
                             'short': True
                         },
                         {
-                            'title': 'é˜ˆ?,
+                            'title': 'ãĞ?,
                             'value': f"{alert.threshold:.2f}",
                             'short': True
                         },
                         {
-                            'title': 'æ—¶é—´',
+                            'title': 'Ê±¼ä',
                             'value': alert.timestamp.isoformat(),
                             'short': True
                         }
@@ -630,19 +630,19 @@ class AlertEngine:
     
     def _send_sms(self, alert: Alert):
         """
-        å‘é€çŸ­ä¿¡å‘Š?        
+        ·¢ËÍ¶ÌĞÅ¸æ?        
         Args:
-            alert: å‘Šè­¦
+            alert: ¸æ¾¯
         """
-        # å®ç°çŸ­ä¿¡å‘Šè­¦é€»è¾‘
+        # ÊµÏÖ¶ÌĞÅ¸æ¾¯Âß¼­
         pass
     
     def _send_webhook(self, alert: Alert):
         """
-        å‘é€Webhookå‘Šè­¦
+        ·¢ËÍWebhook¸æ¾¯
         
         Args:
-            alert: å‘Šè­¦
+            alert: ¸æ¾¯
         """
         webhook_url = self.config.get('webhook_url')
         if not webhook_url:
@@ -661,9 +661,9 @@ class AlertEngine:
         requests.post(webhook_url, json=payload)
 ```
 
-### 3.3 è´¨é‡ç›‘æ§æœåŠ¡ (QualityMonitorService)
+### 3.3 ÖÊÁ¿¼à¿Ø·şÎñ (QualityMonitorService)
 
-**èŒè´£**: æä¾›è´¨é‡ç›‘æ§APIæœåŠ¡
+**Ö°Ôğ**: Ìá¹©ÖÊÁ¿¼à¿ØAPI·şÎñ
 
 ```python
 from fastapi import FastAPI, HTTPException
@@ -671,23 +671,23 @@ from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 
-app = FastAPI(title="å®æ—¶æ•°æ®è´¨é‡ç›‘æ§ç³»ç»ŸAPI")
+app = FastAPI(title="ÊµÊ±Êı¾İÖÊÁ¿¼à¿ØÏµÍ³API")
 
 class QualityCheckRequest(BaseModel):
-    """è´¨é‡æ£€æŸ¥è¯·?""
+    """ÖÊÁ¿¼ì²éÇë?""
     data_source: str
     table: str
     check_types: List[str]  # completeness, accuracy, timeliness, consistency
 
 class QualityCheckResponse(BaseModel):
-    """è´¨é‡æ£€æŸ¥å“?""
+    """ÖÊÁ¿¼ì²éÏì?""
     success: bool
     metrics: List[Dict[str, Any]]
     quality_score: float
     timestamp: str
 
 class AlertRuleRequest(BaseModel):
-    """å‘Šè­¦è§„åˆ™è¯·æ±‚"""
+    """¸æ¾¯¹æÔòÇëÇó"""
     rule_name: str
     metric_name: str
     condition: str
@@ -698,11 +698,11 @@ class AlertRuleRequest(BaseModel):
 @app.post("/quality/check")
 async def check_quality(request: QualityCheckRequest):
     """
-    æ‰§è¡Œè´¨é‡æ£€?    
+    Ö´ĞĞÖÊÁ¿¼ì?    
     Args:
-        request: è´¨é‡æ£€æŸ¥è¯·?        
+        request: ÖÊÁ¿¼ì²éÇë?        
     Returns:
-        è´¨é‡æ£€æŸ¥ç»“?    """
+        ÖÊÁ¿¼ì²é½á?    """
     pass
 
 @app.get("/quality/metrics/{data_source}/{table}")
@@ -713,27 +713,27 @@ async def get_quality_metrics(
     end_time: Optional[str] = None
 ):
     """
-    è·å–è´¨é‡æŒ‡æ ‡å†å²æ•°æ®
+    »ñÈ¡ÖÊÁ¿Ö¸±êÀúÊ·Êı¾İ
     
     Args:
-        data_source: æ•°æ®?        table: è¡¨å
-        start_time: å¼€å§‹æ—¶?        end_time: ç»“æŸæ—¶é—´
+        data_source: Êı¾İ?        table: ±íÃû
+        start_time: ¿ªÊ¼Ê±?        end_time: ½áÊøÊ±¼ä
         
     Returns:
-        è´¨é‡æŒ‡æ ‡å†å²æ•°æ®
+        ÖÊÁ¿Ö¸±êÀúÊ·Êı¾İ
     """
     pass
 
 @app.post("/alerts/rules")
 async def create_alert_rule(request: AlertRuleRequest):
     """
-    åˆ›å»ºå‘Šè­¦è§„åˆ™
+    ´´½¨¸æ¾¯¹æÔò
     
     Args:
-        request: å‘Šè­¦è§„åˆ™è¯·æ±‚
+        request: ¸æ¾¯¹æÔòÇëÇó
         
     Returns:
-        åˆ›å»ºç»“æœ
+        ´´½¨½á¹û
     """
     pass
 
@@ -744,46 +744,46 @@ async def get_alert_history(
     severity: Optional[str] = None
 ):
     """
-    è·å–å‘Šè­¦å†å²
+    »ñÈ¡¸æ¾¯ÀúÊ·
     
     Args:
-        start_time: å¼€å§‹æ—¶?        end_time: ç»“æŸæ—¶é—´
-        severity: ä¸¥é‡çº§åˆ«
+        start_time: ¿ªÊ¼Ê±?        end_time: ½áÊøÊ±¼ä
+        severity: ÑÏÖØ¼¶±ğ
         
     Returns:
-        å‘Šè­¦å†å²
+        ¸æ¾¯ÀúÊ·
     """
     pass
 
 @app.get("/quality/dashboard")
 async def get_dashboard_data():
     """
-    è·å–ä»ªè¡¨æ¿æ•°?    
+    »ñÈ¡ÒÇ±í°åÊı?    
     Returns:
-        ä»ªè¡¨æ¿æ•°?    """
+        ÒÇ±í°åÊı?    """
     pass
 ```
 
 ---
 
-## å››ã€ç›‘æ§æŒ‡æ ‡ä½“?
-### 4.1 æ ¸å¿ƒç›‘æ§æŒ‡æ ‡
+## ËÄ¡¢¼à¿ØÖ¸±êÌå?
+### 4.1 ºËĞÄ¼à¿ØÖ¸±ê
 
-| æŒ‡æ ‡ç±»åˆ« | æŒ‡æ ‡åç§° | è¯´æ˜ | é˜ˆ?|
+| Ö¸±êÀà±ğ | Ö¸±êÃû³Æ | ËµÃ÷ | ãĞ?|
 |---------|---------|------|------|
-| **å®Œæ•´?* | data_completeness | æ•°æ®å®Œæ•´?| ?5% |
-| **å‡†ç¡®?* | data_accuracy | æ•°æ®å‡†ç¡®?| ?5% |
-| **æ—¶æ•ˆ?* | data_timeliness | æ•°æ®æ—¶æ•ˆ?| ?5% |
-| **ä¸€è‡´?* | data_consistency | æ•°æ®ä¸€è‡´?| ?5% |
-| **ç»¼åˆè¯„åˆ†** | data_quality_score | æ•°æ®è´¨é‡ç»¼åˆè¯„åˆ† | ?0% |
+| **ÍêÕû?* | data_completeness | Êı¾İÍêÕû?| ?5% |
+| **×¼È·?* | data_accuracy | Êı¾İ×¼È·?| ?5% |
+| **Ê±Ğ§?* | data_timeliness | Êı¾İÊ±Ğ§?| ?5% |
+| **Ò»ÖÂ?* | data_consistency | Êı¾İÒ»ÖÂ?| ?5% |
+| **×ÛºÏÆÀ·Ö** | data_quality_score | Êı¾İÖÊÁ¿×ÛºÏÆÀ·Ö | ?0% |
 
-### 4.2 å‘Šè­¦è§„åˆ™é…ç½®
+### 4.2 ¸æ¾¯¹æÔòÅäÖÃ
 
 ```yaml
-# å‘Šè­¦è§„åˆ™é…ç½®æ–‡ä»¶
+# ¸æ¾¯¹æÔòÅäÖÃÎÄ¼ş
 rules:
   - rule_id: "completeness_critical"
-    rule_name: "å®Œæ•´æ€§ä¸¥é‡å‘Š?
+    rule_name: "ÍêÕûĞÔÑÏÖØ¸æ?
     metric_name: "data_completeness"
     condition: "<"
     threshold: 0.90
@@ -794,7 +794,7 @@ rules:
     cooldown: 300
     
   - rule_id: "completeness_warning"
-    rule_name: "å®Œæ•´æ€§è­¦?
+    rule_name: "ÍêÕûĞÔ¾¯?
     metric_name: "data_completeness"
     condition: "<"
     threshold: 0.95
@@ -804,7 +804,7 @@ rules:
     cooldown: 600
     
   - rule_id: "accuracy_critical"
-    rule_name: "å‡†ç¡®æ€§ä¸¥é‡å‘Š?
+    rule_name: "×¼È·ĞÔÑÏÖØ¸æ?
     metric_name: "data_accuracy"
     condition: "<"
     threshold: 0.90
@@ -815,7 +815,7 @@ rules:
     cooldown: 300
     
   - rule_id: "timeliness_critical"
-    rule_name: "æ—¶æ•ˆæ€§ä¸¥é‡å‘Š?
+    rule_name: "Ê±Ğ§ĞÔÑÏÖØ¸æ?
     metric_name: "data_timeliness"
     condition: "<"
     threshold: 0.90
@@ -829,16 +829,16 @@ rules:
 
 ---
 
-## äº”ã€Grafanaä»ªè¡¨æ¿è®¾?
-### 5.1 ä»ªè¡¨æ¿å¸ƒå±€
+## Îå¡¢GrafanaÒÇ±í°åÉè?
+### 5.1 ÒÇ±í°å²¼¾Ö
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€??                 æ•°æ®è´¨é‡ç›‘æ§ä»ªè¡¨?                           ?â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€??                                                            ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€?        ?? ?å®Œæ•´æ€§è¯„?  ? ?å‡†ç¡®æ€§è¯„?  ? ?æ—¶æ•ˆæ€§è¯„?  ?        ?? ?  95.2%     ? ?  96.8%     ? ?  94.5%     ?        ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€?        ??                                                            ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ?? ?           æ•°æ®è´¨é‡è¶‹åŠ¿å›¾ï¼ˆ24å°æ—¶?                   ? ?? ? [æŠ˜çº¿å›¾ï¼šå®Œæ•´æ€§ã€å‡†ç¡®æ€§ã€æ—¶æ•ˆæ€§ã€ä¸€è‡´æ€§]              ? ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? ??                                                            ?? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€?        ?? ? å‘Šè­¦å†å²ï¼ˆæœ€?å°æ—¶ï¼‰â”‚  ? æ•°æ®æºè´¨é‡æ’?     ?        ?? ? [è¡¨æ ¼ï¼šæ—¶é—´ã€çº§åˆ«ã€æ¶ˆæ¯]? [æŸ±çŠ¶å›¾ï¼šå„æ•°æ®æºè¯„åˆ†]?        ?? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€? â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€?        ??                                                            ?â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€?```
+©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??                 Êı¾İÖÊÁ¿¼à¿ØÒÇ±í?                           ?©À©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??                                                            ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?        ?? ?ÍêÕûĞÔÆÀ?  ? ?×¼È·ĞÔÆÀ?  ? ?Ê±Ğ§ĞÔÆÀ?  ?        ?? ?  95.2%     ? ?  96.8%     ? ?  94.5%     ?        ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?        ??                                                            ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ?? ?           Êı¾İÖÊÁ¿Ç÷ÊÆÍ¼£¨24Ğ¡Ê±?                   ? ?? ? [ÕÛÏßÍ¼£ºÍêÕûĞÔ¡¢×¼È·ĞÔ¡¢Ê±Ğ§ĞÔ¡¢Ò»ÖÂĞÔ]              ? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ??                                                            ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?        ?? ? ¸æ¾¯ÀúÊ·£¨×î?Ğ¡Ê±£©©¦  ? Êı¾İÔ´ÖÊÁ¿ÅÅ?     ?        ?? ? [±í¸ñ£ºÊ±¼ä¡¢¼¶±ğ¡¢ÏûÏ¢]? [Öù×´Í¼£º¸÷Êı¾İÔ´ÆÀ·Ö]?        ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?        ??                                                            ?©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?```
 
-### 5.2 Grafanaé…ç½®
+### 5.2 GrafanaÅäÖÃ
 
 ```yaml
-# Grafanaä»ªè¡¨æ¿é…?apiVersion: 1
+# GrafanaÒÇ±í°åÅä?apiVersion: 1
 providers:
   - name: 'Data Quality Dashboard'
     orgId: 1
@@ -851,7 +851,7 @@ providers:
 
 dashboards:
   - uid: 'data-quality'
-    title: 'æ•°æ®è´¨é‡ç›‘æ§ä»ªè¡¨?
+    title: 'Êı¾İÖÊÁ¿¼à¿ØÒÇ±í?
     tags: ['quality', 'monitoring']
     timezone: 'browser'
     schemaVersion: 16
@@ -859,7 +859,7 @@ dashboards:
     refresh: '10s'
     panels:
       - id: 1
-        title: 'å®Œæ•´æ€§è¯„?
+        title: 'ÍêÕûĞÔÆÀ?
         type: 'gauge'
         gridPos:
           x: 0
@@ -868,7 +868,7 @@ dashboards:
           h: 6
         targets:
           - expr: 'data_completeness'
-            legendFormat: 'å®Œæ•´?
+            legendFormat: 'ÍêÕû?
         options:
           thresholds:
             - value: 0
@@ -881,21 +881,21 @@ dashboards:
 
 ---
 
-## å…­ã€AIå¢å¼ºæ•°æ®è´¨é‡ç›‘æ§
+## Áù¡¢AIÔöÇ¿Êı¾İÖÊÁ¿¼à¿Ø
 
-### 6.1 AIé©±åŠ¨çš„å¼‚å¸¸æ£€?
-#### 6.1.1 è®¾è®¡èƒŒæ™¯
+### 6.1 AIÇı¶¯µÄÒì³£¼ì?
+#### 6.1.1 Éè¼Æ±³¾°
 
-**ä¼ ç»Ÿç›‘æ§çš„å±€é™?*:
-- ?åŸºäºå›ºå®šé˜ˆå€¼ï¼Œæ— æ³•é€‚åº”æ•°æ®åˆ†å¸ƒå˜åŒ–
-- ?æ— æ³•æ£€æµ‹æœªçŸ¥å¼‚å¸¸æ¨¡?- ?è¯¯æŠ¥ç‡é«˜ï¼Œå‘Šè­¦ç–²?- ?ç¼ºå°‘é¢„æµ‹æ€§èƒ½?
-**AIå¢å¼ºçš„ä¼˜?*:
-- ?è‡ªåŠ¨å­¦ä¹ æ•°æ®æ­£å¸¸æ¨¡å¼
-- ?æ£€æµ‹æœªçŸ¥å¼‚å¸¸æ¨¡?- ?é™ä½è¯¯æŠ¥?0%
-- ?é¢„æµ‹æ€§å‘Šè­¦ï¼Œæå‰å‘ç°é—®é¢˜
+**´«Í³¼à¿ØµÄ¾ÖÏŞ?*:
+- ?»ùÓÚ¹Ì¶¨ãĞÖµ£¬ÎŞ·¨ÊÊÓ¦Êı¾İ·Ö²¼±ä»¯
+- ?ÎŞ·¨¼ì²âÎ´ÖªÒì³£Ä£?- ?Îó±¨ÂÊ¸ß£¬¸æ¾¯Æ£?- ?È±ÉÙÔ¤²âĞÔÄÜ?
+**AIÔöÇ¿µÄÓÅ?*:
+- ?×Ô¶¯Ñ§Ï°Êı¾İÕı³£Ä£Ê½
+- ?¼ì²âÎ´ÖªÒì³£Ä£?- ?½µµÍÎó±¨?0%
+- ?Ô¤²âĞÔ¸æ¾¯£¬ÌáÇ°·¢ÏÖÎÊÌâ
 
-#### 6.1.2 æŠ€æœ¯æ–¹?
-**æ·±åº¦å­¦ä¹ å¼‚å¸¸æ£€æµ‹æ¨¡?*:
+#### 6.1.2 ¼¼Êõ·½?
+**Éî¶ÈÑ§Ï°Òì³£¼ì²âÄ£?*:
 
 ```python
 import torch
@@ -903,12 +903,12 @@ import torch.nn as nn
 from transformers import AutoModel, AutoTokenizer
 
 class DataQualityAnomalyDetector(nn.Module):
-    """æ•°æ®è´¨é‡å¼‚å¸¸æ£€æµ‹æ¨¡?""
+    """Êı¾İÖÊÁ¿Òì³£¼ì²âÄ£?""
     
     def __init__(self, input_dim: int = 128, hidden_dim: int = 256):
         super().__init__()
         
-        # æ—¶åºç¼–ç ?        self.temporal_encoder = nn.LSTM(
+        # Ê±Ğò±àÂë?        self.temporal_encoder = nn.LSTM(
             input_size=input_dim,
             hidden_size=hidden_dim,
             num_layers=2,
@@ -916,17 +916,17 @@ class DataQualityAnomalyDetector(nn.Module):
             dropout=0.2
         )
         
-        # å¼‚å¸¸æ£€æµ‹å¤´
+        # Òì³£¼ì²âÍ·
         self.anomaly_head = nn.Sequential(
             nn.Linear(hidden_dim, 128),
             nn.ReLU(),
             nn.Dropout(0.3),
             nn.Linear(128, 64),
             nn.ReLU(),
-            nn.Linear(64, 2)  # æ­£å¸¸/å¼‚å¸¸
+            nn.Linear(64, 2)  # Õı³£/Òì³£
         )
         
-        # ç½®ä¿¡åº¦ä¼°?        self.confidence_head = nn.Sequential(
+        # ÖÃĞÅ¶È¹À?        self.confidence_head = nn.Sequential(
             nn.Linear(hidden_dim, 64),
             nn.ReLU(),
             nn.Linear(64, 1),
@@ -941,17 +941,17 @@ class DataQualityAnomalyDetector(nn.Module):
             anomaly_logits: (batch_size, 2)
             confidence: (batch_size, 1)
         """
-        # æ—¶åºç¼–ç 
+        # Ê±Ğò±àÂë
         temporal_out, _ = self.temporal_encoder(x)
-        temporal_features = temporal_out[:, -1, :]  # å–æœ€åæ—¶?        
-        # å¼‚å¸¸æ£€?        anomaly_logits = self.anomaly_head(temporal_features)
+        temporal_features = temporal_out[:, -1, :]  # È¡×îºóÊ±?        
+        # Òì³£¼ì?        anomaly_logits = self.anomaly_head(temporal_features)
         
-        # ç½®ä¿¡åº¦ä¼°?        confidence = self.confidence_head(temporal_features)
+        # ÖÃĞÅ¶È¹À?        confidence = self.confidence_head(temporal_features)
         
         return anomaly_logits, confidence
 
 class MultivariateAnomalyDetector:
-    """å¤šå˜é‡å¼‚å¸¸æ£€æµ‹å™¨"""
+    """¶à±äÁ¿Òì³£¼ì²âÆ÷"""
     
     def __init__(self, model_path: str = None):
         self.model = DataQualityAnomalyDetector()
@@ -959,17 +959,17 @@ class MultivariateAnomalyDetector:
             self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
         
-        # ç‰¹å¾æ ‡å‡†?        self.scaler = StandardScaler()
+        # ÌØÕ÷±ê×¼?        self.scaler = StandardScaler()
         
-        # å†å²æ•°æ®ç¼“å­˜
+        # ÀúÊ·Êı¾İ»º´æ
         self.history_buffer = []
         self.buffer_size = 1000
     
     def detect_anomaly(self, metrics: dict) -> dict:
         """
-        å®æ—¶å¼‚å¸¸æ£€?        
+        ÊµÊ±Òì³£¼ì?        
         Args:
-            metrics: è´¨é‡æŒ‡æ ‡å­—å…¸
+            metrics: ÖÊÁ¿Ö¸±ê×Öµä
                 {
                     'completeness': 0.95,
                     'accuracy': 0.98,
@@ -988,27 +988,27 @@ class MultivariateAnomalyDetector:
                 'description': str
             }
         """
-        # ç‰¹å¾æå–
+        # ÌØÕ÷ÌáÈ¡
         features = self._extract_features(metrics)
         
-        # æ ‡å‡†?        features_scaled = self.scaler.transform([features])
+        # ±ê×¼?        features_scaled = self.scaler.transform([features])
         
-        # æ¨¡å‹æ¨ç†
+        # Ä£ĞÍÍÆÀí
         with torch.no_grad():
             x = torch.FloatTensor(features_scaled).unsqueeze(0)
             anomaly_logits, confidence = self.model(x)
             
-            # å¼‚å¸¸æ¦‚ç‡
+            # Òì³£¸ÅÂÊ
             anomaly_prob = torch.softmax(anomaly_logits, dim=1)[0, 1].item()
             
-            # åˆ¤æ–­æ˜¯å¦å¼‚å¸¸
+            # ÅĞ¶ÏÊÇ·ñÒì³£
             is_anomaly = anomaly_prob > 0.7
             anomaly_score = anomaly_prob
         
-        # å¼‚å¸¸ç±»å‹è¯†åˆ«
+        # Òì³£ÀàĞÍÊ¶±ğ
         anomaly_type = self._classify_anomaly_type(metrics, features)
         
-        # ç”Ÿæˆæè¿°
+        # Éú³ÉÃèÊö
         description = self._generate_description(anomaly_type, metrics)
         
         return {
@@ -1020,14 +1020,14 @@ class MultivariateAnomalyDetector:
         }
     
     def _extract_features(self, metrics: dict) -> list:
-        """æå–ç‰¹å¾"""
+        """ÌáÈ¡ÌØÕ÷"""
         features = [
             metrics.get('completeness', 0),
             metrics.get('accuracy', 0),
             metrics.get('timeliness', 0),
             metrics.get('consistency', 0),
-            metrics.get('volume', 0) / 10000,  # å½’ä¸€?            metrics.get('error_rate', 0),
-            # ç»Ÿè®¡ç‰¹å¾
+            metrics.get('volume', 0) / 10000,  # ¹éÒ»?            metrics.get('error_rate', 0),
+            # Í³¼ÆÌØÕ÷
             np.mean(list(metrics.values())),
             np.std(list(metrics.values())),
             np.max(list(metrics.values())),
@@ -1036,7 +1036,7 @@ class MultivariateAnomalyDetector:
         return features
     
     def _classify_anomaly_type(self, metrics: dict, features: list) -> str:
-        """åˆ†ç±»å¼‚å¸¸ç±»å‹"""
+        """·ÖÀàÒì³£ÀàĞÍ"""
         if metrics.get('completeness', 1) < 0.9:
             return 'completeness_anomaly'
         elif metrics.get('accuracy', 1) < 0.95:
@@ -1051,41 +1051,41 @@ class MultivariateAnomalyDetector:
             return 'unknown_anomaly'
     
     def _generate_description(self, anomaly_type: str, metrics: dict) -> str:
-        """ç”Ÿæˆå¼‚å¸¸æè¿°"""
+        """Éú³ÉÒì³£ÃèÊö"""
         descriptions = {
-            'completeness_anomaly': f"æ•°æ®å®Œæ•´æ€§å¼‚å¸¸ï¼Œå½“å‰å€¼{metrics.get('completeness', 0):.2%}ï¼Œä½äºé˜ˆ?0%",
-            'accuracy_anomaly': f"æ•°æ®å‡†ç¡®æ€§å¼‚å¸¸ï¼Œå½“å‰å€¼{metrics.get('accuracy', 0):.2%}ï¼Œä½äºé˜ˆ?5%",
-            'timeliness_anomaly': f"æ•°æ®æ—¶æ•ˆæ€§å¼‚å¸¸ï¼Œå½“å‰å€¼{metrics.get('timeliness', 0):.2%}ï¼Œä½äºé˜ˆ?0%",
-            'consistency_anomaly': f"æ•°æ®ä¸€è‡´æ€§å¼‚å¸¸ï¼Œå½“å‰å€¼{metrics.get('consistency', 0):.2%}ï¼Œä½äºé˜ˆ?5%",
-            'error_rate_anomaly': f"é”™è¯¯ç‡å¼‚å¸¸ï¼Œå½“å‰å€¼{metrics.get('error_rate', 0):.2%}ï¼Œé«˜äºé˜ˆ?%",
-            'unknown_anomaly': "æ£€æµ‹åˆ°æœªçŸ¥å¼‚å¸¸æ¨¡å¼ï¼Œéœ€è¦äººå·¥ç¡®?
+            'completeness_anomaly': f"Êı¾İÍêÕûĞÔÒì³££¬µ±Ç°Öµ{metrics.get('completeness', 0):.2%}£¬µÍÓÚãĞ?0%",
+            'accuracy_anomaly': f"Êı¾İ×¼È·ĞÔÒì³££¬µ±Ç°Öµ{metrics.get('accuracy', 0):.2%}£¬µÍÓÚãĞ?5%",
+            'timeliness_anomaly': f"Êı¾İÊ±Ğ§ĞÔÒì³££¬µ±Ç°Öµ{metrics.get('timeliness', 0):.2%}£¬µÍÓÚãĞ?0%",
+            'consistency_anomaly': f"Êı¾İÒ»ÖÂĞÔÒì³££¬µ±Ç°Öµ{metrics.get('consistency', 0):.2%}£¬µÍÓÚãĞ?5%",
+            'error_rate_anomaly': f"´íÎóÂÊÒì³££¬µ±Ç°Öµ{metrics.get('error_rate', 0):.2%}£¬¸ßÓÚãĞ?%",
+            'unknown_anomaly': "¼ì²âµ½Î´ÖªÒì³£Ä£Ê½£¬ĞèÒªÈË¹¤È·?
         }
-        return descriptions.get(anomaly_type, "æœªçŸ¥å¼‚å¸¸")
+        return descriptions.get(anomaly_type, "Î´ÖªÒì³£")
 ```
 
-#### 6.1.3 æ¨¡å‹è®­ç»ƒ
+#### 6.1.3 Ä£ĞÍÑµÁ·
 
-**è®­ç»ƒæ•°æ®å‡†å¤‡**:
+**ÑµÁ·Êı¾İ×¼±¸**:
 
 ```python
 class AnomalyDetectionTrainer:
-    """å¼‚å¸¸æ£€æµ‹æ¨¡å‹è®­ç»ƒå™¨"""
+    """Òì³£¼ì²âÄ£ĞÍÑµÁ·Æ÷"""
     
     def __init__(self, model, train_data, val_data):
         self.model = model
         self.train_data = train_data
         self.val_data = val_data
         
-        # æŸå¤±å‡½æ•°
+        # ËğÊ§º¯Êı
         self.criterion = nn.CrossEntropyLoss()
         
-        # ä¼˜åŒ–?        self.optimizer = torch.optim.Adam(
+        # ÓÅ»¯?        self.optimizer = torch.optim.Adam(
             model.parameters(),
             lr=0.001,
             weight_decay=1e-5
         )
         
-        # å­¦ä¹ ç‡è°ƒåº¦å™¨
+        # Ñ§Ï°ÂÊµ÷¶ÈÆ÷
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer,
             mode='min',
@@ -1094,30 +1094,30 @@ class AnomalyDetectionTrainer:
         )
     
     def train(self, epochs: int = 100):
-        """è®­ç»ƒæ¨¡å‹"""
+        """ÑµÁ·Ä£ĞÍ"""
         best_val_loss = float('inf')
         
         for epoch in range(epochs):
-            # è®­ç»ƒé˜¶æ®µ
+            # ÑµÁ·½×¶Î
             self.model.train()
             train_loss = 0
             
             for batch_x, batch_y in self.train_data:
                 self.optimizer.zero_grad()
                 
-                # å‰å‘ä¼ æ’­
+                # Ç°Ïò´«²¥
                 anomaly_logits, confidence = self.model(batch_x)
                 
-                # è®¡ç®—æŸå¤±
+                # ¼ÆËãËğÊ§
                 loss = self.criterion(anomaly_logits, batch_y)
                 
-                # åå‘ä¼ æ’­
+                # ·´Ïò´«²¥
                 loss.backward()
                 self.optimizer.step()
                 
                 train_loss += loss.item()
             
-            # éªŒè¯é˜¶æ®µ
+            # ÑéÖ¤½×¶Î
             self.model.eval()
             val_loss = 0
             correct = 0
@@ -1129,17 +1129,17 @@ class AnomalyDetectionTrainer:
                     loss = self.criterion(anomaly_logits, batch_y)
                     val_loss += loss.item()
                     
-                    # è®¡ç®—å‡†ç¡®?                    _, predicted = torch.max(anomaly_logits, 1)
+                    # ¼ÆËã×¼È·?                    _, predicted = torch.max(anomaly_logits, 1)
                     total += batch_y.size(0)
                     correct += (predicted == batch_y).sum().item()
             
-            # å­¦ä¹ ç‡è°ƒ?            self.scheduler.step(val_loss)
+            # Ñ§Ï°ÂÊµ÷?            self.scheduler.step(val_loss)
             
-            # ä¿å­˜æœ€ä½³æ¨¡?            if val_loss < best_val_loss:
+            # ±£´æ×î¼ÑÄ£?            if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 torch.save(self.model.state_dict(), 'best_anomaly_detector.pth')
             
-            # æ‰“å°è¿›åº¦
+            # ´òÓ¡½ø¶È
             if (epoch + 1) % 10 == 0:
                 print(f"Epoch [{epoch+1}/{epochs}]")
                 print(f"  Train Loss: {train_loss/len(self.train_data):.4f}")
@@ -1147,42 +1147,42 @@ class AnomalyDetectionTrainer:
                 print(f"  Val Accuracy: {100*correct/total:.2f}%")
 ```
 
-### 6.2 é¢„æµ‹æ€§è´¨é‡å‘Š?
-#### 6.2.1 è®¾è®¡æ€è·¯
+### 6.2 Ô¤²âĞÔÖÊÁ¿¸æ?
+#### 6.2.1 Éè¼ÆË¼Â·
 
-**é¢„æµ‹æ€§å‘Šè­¦æµ?*:
+**Ô¤²âĞÔ¸æ¾¯Á÷?*:
 ```
-å†å²æ•°æ® ?æ—¶åºé¢„æµ‹æ¨¡å‹ ?æœªæ¥è´¨é‡é¢„æµ‹ ?æå‰å‘Šè­¦
+ÀúÊ·Êı¾İ ?Ê±ĞòÔ¤²âÄ£ĞÍ ?Î´À´ÖÊÁ¿Ô¤²â ?ÌáÇ°¸æ¾¯
 ```
 
-**æŠ€æœ¯æ–¹?*:
-- ä½¿ç”¨LSTM/Transformeré¢„æµ‹æœªæ¥è´¨é‡æŒ‡æ ‡
-- æå‰30åˆ†é’Ÿé¢„æµ‹è´¨é‡ä¸‹é™
-- æå‰å‘å‡ºé¢„è­¦ï¼Œé¿å…é—®é¢˜å‘?
-#### 6.2.2 é¢„æµ‹æ¨¡å‹
+**¼¼Êõ·½?*:
+- Ê¹ÓÃLSTM/TransformerÔ¤²âÎ´À´ÖÊÁ¿Ö¸±ê
+- ÌáÇ°30·ÖÖÓÔ¤²âÖÊÁ¿ÏÂ½µ
+- ÌáÇ°·¢³öÔ¤¾¯£¬±ÜÃâÎÊÌâ·¢?
+#### 6.2.2 Ô¤²âÄ£ĞÍ
 
 ```python
 class QualityPredictor:
-    """è´¨é‡é¢„æµ‹æ¨¡å‹"""
+    """ÖÊÁ¿Ô¤²âÄ£ĞÍ"""
     
     def __init__(self, forecast_horizon: int = 30):
-        self.forecast_horizon = forecast_horizon  # é¢„æµ‹æ—¶é•¿ï¼ˆåˆ†é’Ÿï¼‰
+        self.forecast_horizon = forecast_horizon  # Ô¤²âÊ±³¤£¨·ÖÖÓ£©
         
-        # æ—¶åºé¢„æµ‹æ¨¡å‹
+        # Ê±ĞòÔ¤²âÄ£ĞÍ
         self.forecast_model = nn.LSTM(
-            input_size=6,  # 6ä¸ªè´¨é‡æŒ‡?            hidden_size=128,
+            input_size=6,  # 6¸öÖÊÁ¿Ö¸?            hidden_size=128,
             num_layers=2,
             batch_first=True
         )
         
-        # é¢„æµ‹?        self.predict_head = nn.Linear(128, 6)
+        # Ô¤²â?        self.predict_head = nn.Linear(128, 6)
     
     def predict_future_quality(self, history_metrics: list) -> dict:
         """
-        é¢„æµ‹æœªæ¥è´¨é‡æŒ‡æ ‡
+        Ô¤²âÎ´À´ÖÊÁ¿Ö¸±ê
         
         Args:
-            history_metrics: å†å²è´¨é‡æŒ‡æ ‡åˆ—è¡¨
+            history_metrics: ÀúÊ·ÖÊÁ¿Ö¸±êÁĞ±í
                 [
                     {'completeness': 0.95, 'accuracy': 0.98, ...},
                     {'completeness': 0.94, 'accuracy': 0.97, ...},
@@ -1197,15 +1197,15 @@ class QualityPredictor:
                 'alert_message': str
             }
         """
-        # å‡†å¤‡è¾“å…¥æ•°æ®
+        # ×¼±¸ÊäÈëÊı¾İ
         x = self._prepare_input(history_metrics)
         
-        # æ¨¡å‹é¢„æµ‹
+        # Ä£ĞÍÔ¤²â
         with torch.no_grad():
             lstm_out, _ = self.forecast_model(x)
             predicted = self.predict_head(lstm_out[:, -1, :])
         
-        # è§£æé¢„æµ‹ç»“æœ
+        # ½âÎöÔ¤²â½á¹û
         predicted_metrics = {
             'completeness': predicted[0, 0].item(),
             'accuracy': predicted[0, 1].item(),
@@ -1215,12 +1215,12 @@ class QualityPredictor:
             'error_rate': predicted[0, 5].item()
         }
         
-        # åˆ†æè¶‹åŠ¿
+        # ·ÖÎöÇ÷ÊÆ
         quality_trend = self._analyze_trend(history_metrics, predicted_metrics)
         
-        # åˆ¤æ–­æ˜¯å¦éœ€è¦å‘Š?        alert_needed = self._check_alert_needed(predicted_metrics)
+        # ÅĞ¶ÏÊÇ·ñĞèÒª¸æ?        alert_needed = self._check_alert_needed(predicted_metrics)
         
-        # ç”Ÿæˆå‘Šè­¦æ¶ˆæ¯
+        # Éú³É¸æ¾¯ÏûÏ¢
         alert_message = self._generate_alert_message(predicted_metrics, quality_trend)
         
         return {
@@ -1231,10 +1231,10 @@ class QualityPredictor:
         }
     
     def _analyze_trend(self, history: list, predicted: dict) -> str:
-        """åˆ†æè´¨é‡è¶‹åŠ¿"""
-        # è®¡ç®—å†å²å¹³å‡?        avg_completeness = np.mean([h['completeness'] for h in history[-10:]])
+        """·ÖÎöÖÊÁ¿Ç÷ÊÆ"""
+        # ¼ÆËãÀúÊ·Æ½¾ù?        avg_completeness = np.mean([h['completeness'] for h in history[-10:]])
         
-        # æ¯”è¾ƒé¢„æµ‹?        if predicted['completeness'] < avg_completeness - 0.05:
+        # ±È½ÏÔ¤²â?        if predicted['completeness'] < avg_completeness - 0.05:
             return 'declining'
         elif predicted['completeness'] > avg_completeness + 0.05:
             return 'improving'
@@ -1242,7 +1242,7 @@ class QualityPredictor:
             return 'stable'
     
     def _check_alert_needed(self, predicted: dict) -> bool:
-        """æ£€æŸ¥æ˜¯å¦éœ€è¦å‘Š?""
+        """¼ì²éÊÇ·ñĞèÒª¸æ?""
         thresholds = {
             'completeness': 0.90,
             'accuracy': 0.95,
@@ -1262,61 +1262,61 @@ class QualityPredictor:
         return False
     
     def _generate_alert_message(self, predicted: dict, trend: str) -> str:
-        """ç”Ÿæˆå‘Šè­¦æ¶ˆæ¯"""
+        """Éú³É¸æ¾¯ÏûÏ¢"""
         if trend == 'declining':
-            return f"âš ï¸ é¢„æµ‹æœªæ¥{self.forecast_horizon}åˆ†é’Ÿæ•°æ®è´¨é‡å°†ä¸‹é™ï¼Œ" \
-                   f"å®Œæ•´æ€§é¢„è®¡é™è‡³{predicted['completeness']:.2%}ï¼Œè¯·æå‰å…³æ³¨"
+            return f"?? Ô¤²âÎ´À´{self.forecast_horizon}·ÖÖÓÊı¾İÖÊÁ¿½«ÏÂ½µ£¬" \
+                   f"ÍêÕûĞÔÔ¤¼Æ½µÖÁ{predicted['completeness']:.2%}£¬ÇëÌáÇ°¹Ø×¢"
         elif trend == 'improving':
-            return f"?é¢„æµ‹æœªæ¥{self.forecast_horizon}åˆ†é’Ÿæ•°æ®è´¨é‡å°†æå‡ï¼Œ" \
-                   f"å®Œæ•´æ€§é¢„è®¡å‡è‡³{predicted['completeness']:.2%}"
+            return f"?Ô¤²âÎ´À´{self.forecast_horizon}·ÖÖÓÊı¾İÖÊÁ¿½«ÌáÉı£¬" \
+                   f"ÍêÕûĞÔÔ¤¼ÆÉıÖÁ{predicted['completeness']:.2%}"
         else:
-            return f"ğŸ“Š é¢„æµ‹æœªæ¥{self.forecast_horizon}åˆ†é’Ÿæ•°æ®è´¨é‡ä¿æŒç¨³å®š? \
-                   f"å®Œæ•´æ€§é¢„è®¡ä¸º{predicted['completeness']:.2%}"
+            return f"?? Ô¤²âÎ´À´{self.forecast_horizon}·ÖÖÓÊı¾İÖÊÁ¿±£³ÖÎÈ¶¨? \
+                   f"ÍêÕûĞÔÔ¤¼ÆÎª{predicted['completeness']:.2%}"
 ```
 
-### 6.3 AIå¢å¼ºç›‘æ§æŒ‡æ ‡
+### 6.3 AIÔöÇ¿¼à¿ØÖ¸±ê
 
-#### 6.3.1 æ–°å¢ç›‘æ§æŒ‡æ ‡
+#### 6.3.1 ĞÂÔö¼à¿ØÖ¸±ê
 
-| æŒ‡æ ‡åç§° | æŒ‡æ ‡è¯´æ˜ | ç›®æ ‡?| å‘Šè­¦é˜ˆ?|
+| Ö¸±êÃû³Æ | Ö¸±êËµÃ÷ | Ä¿±ê?| ¸æ¾¯ãĞ?|
 |---------|---------|--------|---------|
-| **AIå¼‚å¸¸æ£€æµ‹å‡†ç¡®ç‡** | AIæ¨¡å‹æ£€æµ‹å¼‚å¸¸çš„å‡†ç¡®?| ?5% | <90% |
-| **AIå¼‚å¸¸æ£€æµ‹å¬å›ç‡** | AIæ¨¡å‹æ£€æµ‹å¼‚å¸¸çš„å¬å›?| ?0% | <85% |
-| **é¢„æµ‹æ€§å‘Šè­¦å‡†ç¡®ç‡** | é¢„æµ‹æ€§å‘Šè­¦çš„å‡†ç¡®?| ?5% | <80% |
-| **AIè¯¯æŠ¥?* | AIæ¨¡å‹çš„è¯¯æŠ¥ç‡ | ?% | >10% |
-| **æ¨¡å‹æ¨ç†å»¶è¿Ÿ** | AIæ¨¡å‹æ¨ç†å»¶è¿Ÿ | <100ms | >200ms |
+| **AIÒì³£¼ì²â×¼È·ÂÊ** | AIÄ£ĞÍ¼ì²âÒì³£µÄ×¼È·?| ?5% | <90% |
+| **AIÒì³£¼ì²âÕÙ»ØÂÊ** | AIÄ£ĞÍ¼ì²âÒì³£µÄÕÙ»Ø?| ?0% | <85% |
+| **Ô¤²âĞÔ¸æ¾¯×¼È·ÂÊ** | Ô¤²âĞÔ¸æ¾¯µÄ×¼È·?| ?5% | <80% |
+| **AIÎó±¨?* | AIÄ£ĞÍµÄÎó±¨ÂÊ | ?% | >10% |
+| **Ä£ĞÍÍÆÀíÑÓ³Ù** | AIÄ£ĞÍÍÆÀíÑÓ³Ù | <100ms | >200ms |
 
-#### 6.3.2 AIç›‘æ§ä»ªè¡¨?
+#### 6.3.2 AI¼à¿ØÒÇ±í?
 ```yaml
-# Grafana AIç›‘æ§ä»ªè¡¨æ¿é…?dashboard:
-  title: "AIå¢å¼ºæ•°æ®è´¨é‡ç›‘æ§"
+# Grafana AI¼à¿ØÒÇ±í°åÅä?dashboard:
+  title: "AIÔöÇ¿Êı¾İÖÊÁ¿¼à¿Ø"
   panels:
-    - title: "AIå¼‚å¸¸æ£€æµ‹å‡†ç¡®ç‡"
+    - title: "AIÒì³£¼ì²â×¼È·ÂÊ"
       type: graph
       targets:
         - expr: 'ai_anomaly_detection_accuracy'
-          legendFormat: 'å‡†ç¡®?
+          legendFormat: '×¼È·?
       thresholds:
         - value: 0.90
           color: 'yellow'
         - value: 0.95
           color: 'green'
     
-    - title: "é¢„æµ‹æ€§å‘Šè­¦ç»Ÿ?
+    - title: "Ô¤²âĞÔ¸æ¾¯Í³?
       type: stat
       targets:
         - expr: 'predictive_alerts_total'
-          legendFormat: 'æ€»é¢„æµ‹å‘Š?
+          legendFormat: '×ÜÔ¤²â¸æ?
         - expr: 'predictive_alerts_correct'
-          legendFormat: 'å‡†ç¡®é¢„æµ‹'
+          legendFormat: '×¼È·Ô¤²â'
       options:
         displayMode: 'gradient'
     
-    - title: "AIæ¨¡å‹æ€§èƒ½"
+    - title: "AIÄ£ĞÍĞÔÄÜ"
       type: graph
       targets:
         - expr: 'ai_model_inference_latency_ms'
-          legendFormat: 'æ¨ç†å»¶è¿Ÿ(ms)'
+          legendFormat: 'ÍÆÀíÑÓ³Ù(ms)'
       thresholds:
         - value: 200
           color: 'yellow'
@@ -1324,176 +1324,176 @@ class QualityPredictor:
           color: 'green'
 ```
 
-### 6.4 å®æ–½è·¯çº¿?
-#### 6.4.1 Phase 1: AIæ¨¡å‹å¼€å‘ï¼ˆWeek 1-2?
-**ä»»åŠ¡**:
-1. æ”¶é›†å†å²è´¨é‡æ•°æ®
-2. æ ‡æ³¨å¼‚å¸¸æ ·æœ¬
-3. è®­ç»ƒå¼‚å¸¸æ£€æµ‹æ¨¡?4. è®­ç»ƒé¢„æµ‹æ¨¡å‹
+### 6.4 ÊµÊ©Â·Ïß?
+#### 6.4.1 Phase 1: AIÄ£ĞÍ¿ª·¢£¨Week 1-2?
+**ÈÎÎñ**:
+1. ÊÕ¼¯ÀúÊ·ÖÊÁ¿Êı¾İ
+2. ±ê×¢Òì³£Ñù±¾
+3. ÑµÁ·Òì³£¼ì²âÄ£?4. ÑµÁ·Ô¤²âÄ£ĞÍ
 
-**äº¤ä»˜?*:
-- ?å¼‚å¸¸æ£€æµ‹æ¨¡å‹ï¼ˆå‡†ç¡®ç‡â‰¥95%?- ?é¢„æµ‹æ¨¡å‹ï¼ˆå‡†ç¡®ç‡?5%?- ?æ¨¡å‹è¯„ä¼°æŠ¥å‘Š
+**½»¸¶?*:
+- ?Òì³£¼ì²âÄ£ĞÍ£¨×¼È·ÂÊ¡İ95%?- ?Ô¤²âÄ£ĞÍ£¨×¼È·ÂÊ?5%?- ?Ä£ĞÍÆÀ¹À±¨¸æ
 
-#### 6.4.2 Phase 2: AIæ¨¡å‹é›†æˆï¼ˆWeek 3?
-**ä»»åŠ¡**:
-1. é›†æˆAIæ¨¡å‹åˆ°ç›‘æ§ç³»?2. å®ç°å®æ—¶æ¨ç†æ¥å£
-3. é…ç½®é¢„æµ‹æ€§å‘Š?4. éƒ¨ç½²AIç›‘æ§ä»ªè¡¨?
-**äº¤ä»˜?*:
-- ?AIå¢å¼ºç›‘æ§ç³»ç»Ÿä¸Šçº¿
-- ?é¢„æµ‹æ€§å‘Šè­¦åŠŸèƒ½ä¸Š?- ?AIç›‘æ§ä»ªè¡¨æ¿ä¸Š?
-#### 6.4.3 Phase 3: ä¼˜åŒ–ä¸è¿­ä»£ï¼ˆWeek 4?
-**ä»»åŠ¡**:
-1. ç›‘æ§AIæ¨¡å‹æ€§èƒ½
-2. æ”¶é›†åé¦ˆæ•°æ®
-3. ä¼˜åŒ–æ¨¡å‹å‚æ•°
-4. æŒç»­è¿­ä»£æ”¹è¿›
+#### 6.4.2 Phase 2: AIÄ£ĞÍ¼¯³É£¨Week 3?
+**ÈÎÎñ**:
+1. ¼¯³ÉAIÄ£ĞÍµ½¼à¿ØÏµ?2. ÊµÏÖÊµÊ±ÍÆÀí½Ó¿Ú
+3. ÅäÖÃÔ¤²âĞÔ¸æ?4. ²¿ÊğAI¼à¿ØÒÇ±í?
+**½»¸¶?*:
+- ?AIÔöÇ¿¼à¿ØÏµÍ³ÉÏÏß
+- ?Ô¤²âĞÔ¸æ¾¯¹¦ÄÜÉÏ?- ?AI¼à¿ØÒÇ±í°åÉÏ?
+#### 6.4.3 Phase 3: ÓÅ»¯Óëµü´ú£¨Week 4?
+**ÈÎÎñ**:
+1. ¼à¿ØAIÄ£ĞÍĞÔÄÜ
+2. ÊÕ¼¯·´À¡Êı¾İ
+3. ÓÅ»¯Ä£ĞÍ²ÎÊı
+4. ³ÖĞøµü´ú¸Ä½ø
 
-**äº¤ä»˜?*:
-- ?AIæ¨¡å‹æ€§èƒ½æŠ¥å‘Š
-- ?ä¼˜åŒ–å»ºè®®æ–‡æ¡£
-- ?è¿­ä»£æ”¹è¿›è®¡åˆ’
+**½»¸¶?*:
+- ?AIÄ£ĞÍĞÔÄÜ±¨¸æ
+- ?ÓÅ»¯½¨ÒéÎÄµµ
+- ?µü´ú¸Ä½ø¼Æ»®
 
-### 6.5 é¢„æœŸæ”¶ç›Š
+### 6.5 Ô¤ÆÚÊÕÒæ
 
-| æ”¶ç›Š?| å½“å‰çŠ¶?| AIå¢å¼º?| æå‡å¹…åº¦ |
+| ÊÕÒæ?| µ±Ç°×´?| AIÔöÇ¿?| ÌáÉı·ù¶È |
 |--------|---------|---------|---------|
-| **å¼‚å¸¸æ£€æµ‹å‡†ç¡®ç‡** | 85% | 95% | +10% |
-| **å¼‚å¸¸æ£€æµ‹å¬å›ç‡** | 80% | 90% | +10% |
-| **è¯¯æŠ¥?* | 15% | 5% | -10% |
-| **å‘Šè­¦æå‰æ—¶é—´** | 0åˆ†é’Ÿ | 30åˆ†é’Ÿ | +30åˆ†é’Ÿ |
-| **é—®é¢˜å‘ç°?* | 70% | 95% | +25% |
-| **äººå·¥å¹²é¢„æ—¶é—´** | 100% | 20% | -80% |
+| **Òì³£¼ì²â×¼È·ÂÊ** | 85% | 95% | +10% |
+| **Òì³£¼ì²âÕÙ»ØÂÊ** | 80% | 90% | +10% |
+| **Îó±¨?* | 15% | 5% | -10% |
+| **¸æ¾¯ÌáÇ°Ê±¼ä** | 0·ÖÖÓ | 30·ÖÖÓ | +30·ÖÖÓ |
+| **ÎÊÌâ·¢ÏÖ?* | 70% | 95% | +25% |
+| **ÈË¹¤¸ÉÔ¤Ê±¼ä** | 100% | 20% | -80% |
 
 ---
 
-## ä¸ƒã€å®æ–½æ­¥?
-### 7.1 Week 3: åŸºç¡€æ¶æ„æ­å»º
+## Æß¡¢ÊµÊ©²½?
+### 7.1 Week 3: »ù´¡¼Ü¹¹´î½¨
 
-#### Day 1-2: ç¯å¢ƒå‡†å¤‡
+#### Day 1-2: »·¾³×¼±¸
 
-**ä»»åŠ¡**:
-1. å®‰è£…Prometheusï¼ˆDockeræ–¹å¼?2. å®‰è£…Grafanaï¼ˆDockeræ–¹å¼?3. å®‰è£…InfluxDBï¼ˆå¯é€‰ï¼‰
-4. é…ç½®Pythonå¼€å‘ç¯?
-**å‘½ä»¤**:
+**ÈÎÎñ**:
+1. °²×°Prometheus£¨Docker·½Ê½?2. °²×°Grafana£¨Docker·½Ê½?3. °²×°InfluxDB£¨¿ÉÑ¡£©
+4. ÅäÖÃPython¿ª·¢»·?
+**ÃüÁî**:
 ```bash
-# å®‰è£…Prometheus
+# °²×°Prometheus
 docker run -d \
     --name prometheus \
     -p 9090:9090 \
     -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml \
     prom/prometheus:v2.40.0
 
-# å®‰è£…Grafana
+# °²×°Grafana
 docker run -d \
     --name grafana \
     -p 3000:3000 \
     grafana/grafana:10.0.0
 
-# å®‰è£…InfluxDBï¼ˆå¯é€‰ï¼‰
+# °²×°InfluxDB£¨¿ÉÑ¡£©
 docker run -d \
     --name influxdb \
     -p 8086:8086 \
     influxdb:2.7
 ```
 
-#### Day 3-4: æ ¸å¿ƒæ¨¡å—å¼€?
-**ä»»åŠ¡**:
-1. å®ç°QualityMetricsCollectorè´¨é‡æŒ‡æ ‡é‡‡é›†?2. å®ç°AlertEngineå‘Šè­¦å¼•æ“
-3. ç¼–å†™å•å…ƒæµ‹è¯•
+#### Day 3-4: ºËĞÄÄ£¿é¿ª?
+**ÈÎÎñ**:
+1. ÊµÏÖQualityMetricsCollectorÖÊÁ¿Ö¸±ê²É¼¯?2. ÊµÏÖAlertEngine¸æ¾¯ÒıÇæ
+3. ±àĞ´µ¥Ôª²âÊÔ
 
-**äº¤ä»˜?*:
+**½»¸¶?*:
 ```
 src/
-â”œâ”€â”€ quality_monitor/
-?  â”œâ”€â”€ __init__.py
-?  â”œâ”€â”€ collector.py          # QualityMetricsCollector
-?  â”œâ”€â”€ alert_engine.py       # AlertEngine
-?  â”œâ”€â”€ models.py             # æ•°æ®æ¨¡å‹
-?  â””â”€â”€ tests/
-?      â”œâ”€â”€ test_collector.py
-?      â””â”€â”€ test_alert_engine.py
+©À©¤©¤ quality_monitor/
+?  ©À©¤©¤ __init__.py
+?  ©À©¤©¤ collector.py          # QualityMetricsCollector
+?  ©À©¤©¤ alert_engine.py       # AlertEngine
+?  ©À©¤©¤ models.py             # Êı¾İÄ£ĞÍ
+?  ©¸©¤©¤ tests/
+?      ©À©¤©¤ test_collector.py
+?      ©¸©¤©¤ test_alert_engine.py
 ```
 
-#### Day 5: é›†æˆæµ‹è¯•
+#### Day 5: ¼¯³É²âÊÔ
 
-**ä»»åŠ¡**:
-1. é›†æˆPrometheuså’ŒGrafana
-2. æµ‹è¯•è´¨é‡æŒ‡æ ‡é‡‡é›†å’Œå‘Šè­¦åŠŸ?3. æ€§èƒ½æµ‹è¯•
+**ÈÎÎñ**:
+1. ¼¯³ÉPrometheusºÍGrafana
+2. ²âÊÔÖÊÁ¿Ö¸±ê²É¼¯ºÍ¸æ¾¯¹¦?3. ĞÔÄÜ²âÊÔ
 
-### 7.2 Week 4: åŠŸèƒ½å®Œå–„ä¸å¯è§†åŒ–
+### 7.2 Week 4: ¹¦ÄÜÍêÉÆÓë¿ÉÊÓ»¯
 
-#### Day 6-7: APIæœåŠ¡å¼€?
-**ä»»åŠ¡**:
-1. å®ç°QualityMonitorService API
-2. å®ç°RESTfulæ¥å£
-3. ç¼–å†™APIæ–‡æ¡£
+#### Day 6-7: API·şÎñ¿ª?
+**ÈÎÎñ**:
+1. ÊµÏÖQualityMonitorService API
+2. ÊµÏÖRESTful½Ó¿Ú
+3. ±àĞ´APIÎÄµµ
 
-**äº¤ä»˜?*:
+**½»¸¶?*:
 ```
 src/
-â”œâ”€â”€ quality_monitor/
-?  â”œâ”€â”€ api.py                # FastAPIæœåŠ¡
-?  â””â”€â”€ tests/
-?      â””â”€â”€ test_api.py
+©À©¤©¤ quality_monitor/
+?  ©À©¤©¤ api.py                # FastAPI·şÎñ
+?  ©¸©¤©¤ tests/
+?      ©¸©¤©¤ test_api.py
 ```
 
-#### Day 8-9: Grafanaä»ªè¡¨æ¿é…?
-**ä»»åŠ¡**:
-1. é…ç½®Grafanaæ•°æ®?2. åˆ›å»ºæ•°æ®è´¨é‡ä»ªè¡¨?3. é…ç½®å‘Šè­¦è§„åˆ™
+#### Day 8-9: GrafanaÒÇ±í°åÅä?
+**ÈÎÎñ**:
+1. ÅäÖÃGrafanaÊı¾İ?2. ´´½¨Êı¾İÖÊÁ¿ÒÇ±í?3. ÅäÖÃ¸æ¾¯¹æÔò
 
-#### Day 10: ç”¨æˆ·åŸ¹è®­ä¸æ–‡?
-**ä»»åŠ¡**:
-1. ç¼–å†™ç”¨æˆ·ä½¿ç”¨æ‰‹å†Œ
-2. å½•åˆ¶åŸ¹è®­è§†é¢‘
-3. éƒ¨ç½²ä¸Šçº¿
+#### Day 10: ÓÃ»§ÅàÑµÓëÎÄ?
+**ÈÎÎñ**:
+1. ±àĞ´ÓÃ»§Ê¹ÓÃÊÖ²á
+2. Â¼ÖÆÅàÑµÊÓÆµ
+3. ²¿ÊğÉÏÏß
 
 ---
 
-## å…«ã€éªŒæ”¶æ ‡?
-### 8.1 åŠŸèƒ½éªŒæ”¶
+## °Ë¡¢ÑéÊÕ±ê?
+### 8.1 ¹¦ÄÜÑéÊÕ
 
-| éªŒæ”¶?| éªŒæ”¶æ ‡å‡† | éªŒæ”¶æ–¹æ³• |
+| ÑéÊÕ?| ÑéÊÕ±ê×¼ | ÑéÊÕ·½·¨ |
 |--------|---------|---------|
-| **è´¨é‡æŒ‡æ ‡é‡‡é›†** | ?0%æ•°æ®æœ‰å®æ—¶ç›‘?| é…ç½®æ£€?|
-| **å‘Šè­¦åŠæ—¶?* | <30ç§’å‘ç°æ•°æ®é—®?| æ¨¡æ‹Ÿæµ‹è¯• |
-| **å‘Šè­¦å‡†ç¡®?* | ?5%å‘Šè­¦ä¸ºçœŸå®é—®?| å†å²æ•°æ®éªŒè¯ |
-| **å¯è§†åŒ–å±•?* | Grafanaä»ªè¡¨æ¿æ­£å¸¸æ˜¾?| åŠŸèƒ½æµ‹è¯• |
+| **ÖÊÁ¿Ö¸±ê²É¼¯** | ?0%Êı¾İÓĞÊµÊ±¼à?| ÅäÖÃ¼ì?|
+| **¸æ¾¯¼°Ê±?* | <30Ãë·¢ÏÖÊı¾İÎÊ?| Ä£Äâ²âÊÔ |
+| **¸æ¾¯×¼È·?* | ?5%¸æ¾¯ÎªÕæÊµÎÊ?| ÀúÊ·Êı¾İÑéÖ¤ |
+| **¿ÉÊÓ»¯Õ¹?* | GrafanaÒÇ±í°åÕı³£ÏÔ?| ¹¦ÄÜ²âÊÔ |
 
-### 8.2 æ€§èƒ½éªŒæ”¶
+### 8.2 ĞÔÄÜÑéÊÕ
 
-| æŒ‡æ ‡ | ç›®æ ‡?| æµ‹è¯•æ–¹æ³• |
+| Ö¸±ê | Ä¿±ê?| ²âÊÔ·½·¨ |
 |------|--------|---------|
-| **ç›‘æ§å»¶è¿Ÿ** | <5?| æ€§èƒ½æµ‹è¯• |
-| **å‘Šè­¦å»¶è¿Ÿ** | <30?| åŠŸèƒ½æµ‹è¯• |
-| **æŒ‡æ ‡é‡‡é›†åå?* | >1000??| å‹åŠ›æµ‹è¯• |
-| **ç³»ç»Ÿå¯ç”¨?* | >99.9% | ç›‘æ§ç»Ÿè®¡ |
+| **¼à¿ØÑÓ³Ù** | <5?| ĞÔÄÜ²âÊÔ |
+| **¸æ¾¯ÑÓ³Ù** | <30?| ¹¦ÄÜ²âÊÔ |
+| **Ö¸±ê²É¼¯ÍÌÍÂ?* | >1000??| Ñ¹Á¦²âÊÔ |
+| **ÏµÍ³¿ÉÓÃ?* | >99.9% | ¼à¿ØÍ³¼Æ |
 
 ---
 
-## ä¹ã€é£é™©è¯„ä¼°ä¸ç¼“è§£
+## ¾Å¡¢·çÏÕÆÀ¹ÀÓë»º½â
 
-### 9.1 æŠ€æœ¯é£?
-| é£é™©?| é£é™©ç­‰çº§ | å½±å“ | ç¼“è§£æªæ–½ |
+### 9.1 ¼¼Êõ·ç?
+| ·çÏÕ?| ·çÏÕµÈ¼¶ | Ó°Ïì | »º½â´ëÊ© |
 |--------|---------|------|---------|
-| Prometheuså­¦ä¹ æ›²çº¿ | P2 | å»¶æœŸ2-3?| æå‰å­¦ä¹ ï¼Œå‚è€ƒå®˜æ–¹æ–‡?|
-| å‘Šè­¦è§„åˆ™é…ç½®å¤æ‚ | P2 | é…ç½®é”™è¯¯ | æä¾›é…ç½®æ¨¡æ¿å’ŒéªŒè¯å·¥?|
-| Grafanaä»ªè¡¨æ¿è®¾è®¡å¤?| P2 | å¼€å‘å»¶?| ä½¿ç”¨ç°æˆæ¨¡æ¿ |
+| PrometheusÑ§Ï°ÇúÏß | P2 | ÑÓÆÚ2-3?| ÌáÇ°Ñ§Ï°£¬²Î¿¼¹Ù·½ÎÄ?|
+| ¸æ¾¯¹æÔòÅäÖÃ¸´ÔÓ | P2 | ÅäÖÃ´íÎó | Ìá¹©ÅäÖÃÄ£°åºÍÑéÖ¤¹¤?|
+| GrafanaÒÇ±í°åÉè¼Æ¸´?| P2 | ¿ª·¢ÑÓ?| Ê¹ÓÃÏÖ³ÉÄ£°å |
 
 ---
 
-## åã€æ–‡æ¡£æ²»?
-### 10.1 æ–‡æ¡£ç´¢å¼•
+## Ê®¡¢ÎÄµµÖÎ?
+### 10.1 ÎÄµµË÷Òı
 
-**æœ¬æ–‡æ¡£åœ¨ç³»ç»Ÿä¸­çš„ä½ç½®**:
-- **çˆ¶æ–‡?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
-- **å…³è”æ–‡æ¡£**:
+**±¾ÎÄµµÔÚÏµÍ³ÖĞµÄÎ»ÖÃ**:
+- **¸¸ÎÄ?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
+- **¹ØÁªÎÄµµ**:
   - [DATA_LINEAGE_TRACKING_BLUEPRINT.md](./DATA_LINEAGE_TRACKING_BLUEPRINT.md)
   - [DATA_QUALITY.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_QUALITY.md)
 
-### 10.2 ç‰ˆæœ¬ç®¡ç†
+### 10.2 °æ±¾¹ÜÀí
 
-**ç‰ˆæœ¬å†å²**:
-- v1.0.0 (2026-04-02): åˆå§‹ç‰ˆæœ¬ï¼Œå®Œæˆå®æ—¶æ•°æ®è´¨é‡ç›‘æ§ç³»ç»Ÿè®¾?
+**°æ±¾ÀúÊ·**:
+- v1.0.0 (2026-04-02): ³õÊ¼°æ±¾£¬Íê³ÉÊµÊ±Êı¾İÖÊÁ¿¼à¿ØÏµÍ³Éè?
 ---
 
-**è“å›¾ç‰ˆæœ¬**: v1.0 | **åˆ›å»ºæ—¥æœŸ**: 2026-04-02 | **çŠ¶?*: ?æ­£å¼ | **ç»´æŠ¤?*: ZephyrAlphaæŠ€æœ¯å›¢?
+**À¶Í¼°æ±¾**: v1.0 | **´´½¨ÈÕÆÚ**: 2026-04-02 | **×´?*: ?ÕıÊ½ | **Î¬»¤?*: ZephyrAlpha¼¼ÊõÍÅ?

@@ -20,20 +20,20 @@ last_updated: 2026-04-02
 ## 📊 测试结果分析
 
 ```
-✅ Ollama服务: 正常
-✅ FinBERT: 正常
-❌ CUDA: PyTorch是CPU版本，需要重新安装
-❌ Whisper: 未安装
-❌ Ollama模型: deepseek-r1:14b响应超时（可能是CPU推理慢）
+�?Ollama服务: 正常
+�?FinBERT: 正常
+�?CUDA: PyTorch是CPU版本，需要重新安�?
+�?Whisper: 未安�?
+�?Ollama模型: deepseek-r1:14b响应超时（可能是CPU推理慢）
 ```
 
 ---
 
-## 🚀 快速修复方案
+## 🚀 快速修复方�?
 
 ### 步骤1: 安装CUDA版本的PyTorch
 
-**问题**: 当前PyTorch是CPU版本（2.9.1+cpu），无法使用GPU
+**问题**: 当前PyTorch是CPU版本�?.9.1+cpu），无法使用GPU
 
 **解决方案**:
 
@@ -81,7 +81,7 @@ python -c "import whisper; print('Whisper安装成功')"
 ### 步骤3: 下载Whisper large-v3模型
 
 ```powershell
-# 下载并加载模型（会自动下载到本地）
+# 下载并加载模型（会自动下载到本地�?
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 ```
 
@@ -105,12 +105,12 @@ ollama pull deepseek-r1:32b
 
 ---
 
-## 🛠️ 一键安装脚本
+## 🛠�?一键安装脚�?
 
 创建一个PowerShell脚本 `install_dependencies.ps1`:
 
 ```powershell
-# RTX 3090 环境配置一键安装脚本
+# RTX 3090 环境配置一键安装脚�?
 
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host "  RTX 3090 环境配置安装" -ForegroundColor Cyan
@@ -149,10 +149,10 @@ if torch.cuda.is_available():
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
-Write-Host "  ✅ 安装完成！" -ForegroundColor Green
+Write-Host "  �?安装完成�? -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "下一步:" -ForegroundColor Cyan
+Write-Host "下一�?" -ForegroundColor Cyan
 Write-Host "  1. 运行测试: python test_rtx3090_models.py"
 Write-Host "  2. 拉取更大模型: ollama pull qwen2.5:32b"
 Write-Host "  3. 启动系统: python main.py"
@@ -172,7 +172,7 @@ Write-Host ""
 ### 1. 安装CUDA版本的PyTorch
 
 ```powershell
-# 卸载旧版本
+# 卸载旧版�?
 pip uninstall -y torch torchvision torchaudio
 
 # 安装CUDA 12.1版本
@@ -197,15 +197,15 @@ pip install transformers accelerate requests ffmpeg-python
 # Whisper large-v3
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
-# FinBERT（已下载）
+# FinBERT（已下载�?
 # python -c "from transformers import AutoModelForSequenceClassification; AutoModelForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone')"
 ```
 
 ---
 
-## ✅ 验证安装
+## �?验证安装
 
-运行测试脚本验证所有组件:
+运行测试脚本验证所有组�?
 
 ```powershell
 python test_rtx3090_models.py
@@ -214,21 +214,21 @@ python test_rtx3090_models.py
 **预期结果**:
 
 ```
-✅ CUDA: 通过
-✅ OLLAMA: 通过
-✅ WHISPER: 通过
-✅ FINBERT: 通过
-✅ OLLAMA_MODEL: 通过
+�?CUDA: 通过
+�?OLLAMA: 通过
+�?WHISPER: 通过
+�?FINBERT: 通过
+�?OLLAMA_MODEL: 通过
 
 总计: 5/5 测试通过
-✅ 所有测试通过！系统可以正常运行。
+�?所有测试通过！系统可以正常运行�?
 ```
 
 ---
 
 ## 🎯 推荐配置
 
-### 方案一：使用现有模型（立即可用）
+### 方案一：使用现有模型（立即可用�?
 
 ```
 语音识别: Whisper large-v3 (本地)
@@ -236,10 +236,10 @@ python test_rtx3090_models.py
 情感分析: FinBERT (本地)
 
 显存占用: ~20GB / 24GB
-性能评级: ⭐⭐⭐⭐⭐
+性能评级: ⭐⭐⭐⭐�?
 ```
 
-### 方案二：拉取更大模型（最佳性能）
+### 方案二：拉取更大模型（最佳性能�?
 
 ```powershell
 # 拉取Qwen2.5 32B
@@ -252,7 +252,7 @@ ollama pull qwen2.5:32b
 情感分析: FinBERT (本地)
 
 显存占用: ~22GB / 24GB
-性能评级: ⭐⭐⭐⭐⭐ (最高)
+性能评级: ⭐⭐⭐⭐�?(最�?
 ```
 
 ---
@@ -268,7 +268,7 @@ ollama pull qwen2.5:32b
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### Q2: Whisper下载速度慢
+### Q2: Whisper下载速度�?
 
 **解决方案**:
 
@@ -280,9 +280,9 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 ### Q3: Ollama模型响应超时
 
-**原因**: CPU推理速度慢
+**原因**: CPU推理速度�?
 
-**解决方案**: 安装CUDA版本的PyTorch后，Ollama会自动使用GPU加速
+**解决方案**: 安装CUDA版本的PyTorch后，Ollama会自动使用GPU加�?
 
 ---
 

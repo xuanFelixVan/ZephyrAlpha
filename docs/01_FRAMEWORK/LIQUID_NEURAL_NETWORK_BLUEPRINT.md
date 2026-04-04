@@ -4,8 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构师
-layer: Layer 4 (机器学习层)
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -14,8 +13,7 @@ priority: P2
 
 > **蓝图编号**: `LNN-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习层
-> **优先级**: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -23,10 +21,8 @@ priority: P2
 
 液体神经网络是连续时间动态神经网络：
 
-- **连续时间**: 连续时间动态
-- **自适应**: 实时适应
-- **可解释**: 物理可解释
-- **低延迟**: 高效推理
+- **连续时间**: 连续时间动�?- **自适应**: 实时适应
+- **可解�?*: 物理可解�?- **低延�?*: 高效推理
 
 ---
 
@@ -42,8 +38,7 @@ class LiquidNeuralNetwork:
         hidden_dim: int,
         output_dim: int
     ):
-        """初始化液体神经网络
-        
+        """初始化液体神经网�?        
         Args:
             input_dim: 输入维度
             hidden_dim: 隐藏维度
@@ -60,8 +55,7 @@ class LiquidNeuralNetwork:
         
         Args:
             x: 输入
-            time_step: 时间步
-            
+            time_step: 时间�?            
         Returns:
             torch.Tensor: 输出
         """

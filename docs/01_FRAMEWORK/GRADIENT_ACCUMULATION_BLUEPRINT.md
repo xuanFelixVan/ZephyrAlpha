@@ -4,8 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构师
-layer: Layer 4 (机器学习层)
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -14,8 +13,7 @@ priority: P2
 
 > **蓝图编号**: `GRADACC-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习层
-> **优先级**: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -25,8 +23,7 @@ priority: P2
 
 - **显存优化**: 小显存实现大batch
 - **等效batch**: 累积梯度等效大batch
-- **灵活配置**: 可调节累积步数
-- **兼容性好**: 无需修改模型
+- **灵活配置**: 可调节累积步�?- **兼容性好**: 无需修改模型
 
 ---
 
@@ -34,7 +31,7 @@ priority: P2
 
 ```python
 class GradientAccumulator:
-    """梯度累积器"""
+    """梯度累积�?""
     
     def __init__(
         self,

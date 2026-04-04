@@ -4,97 +4,97 @@ version: 0.6.5
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
+applicable_scope: 全系统架构设�?
 compliance_level: 架构标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 
-# 多引擎模拟交易蓝图
+# 多引擎模拟交易蓝�?
 
 > 清风量化系统 v5.0 的模拟交易多引擎架构方案
 > **索引**: `SIM_002`
-> **说明**: 整合vn.py、RQAlpha、Backtrader三大开源交易引擎，提供灵活、可靠、高性能的模拟交易解决方案
+> **说明**: 整合vn.py、RQAlpha、Backtrader三大开源交易引擎，提供灵活、可靠、高性能的模拟交易解决方�?
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 | 实现方式 |
 |------|------|----------|
-| **引擎无关性** | 上层应用不依赖特定引擎，通过统一接口调用 | 抽象接口层 + 适配器模式 |
+| **引擎无关�?* | 上层应用不依赖特定引擎，通过统一接口调用 | 抽象接口�?+ 适配器模�?|
 | **灵活切换** | 支持运行时动态切换引擎，无需修改策略代码 | 配置驱动 + 工厂模式 |
-| **功能互补** | 不同引擎优势互补，覆盖全场景需求 | 多引擎协同架构 |
-| **风险分散** | 不依赖单一引擎，降低技术风险 | 多引擎备份机制 |
-| **A股优先** | 优先选择对A股市场支持最好的引擎 | vn.py为主，RQAlpha为辅 |
+| **功能互补** | 不同引擎优势互补，覆盖全场景需�?| 多引擎协同架�?|
+| **风险分散** | 不依赖单一引擎，降低技术风�?| 多引擎备份机�?|
+| **A股优�?* | 优先选择对A股市场支持最好的引擎 | vn.py为主，RQAlpha为辅 |
 
 
 ## 2. 四引擎架构总览
 
-### 2.1 架构全景图
+### 2.1 架构全景�?
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                       统一交易执行层 (Unified Execution Layer)               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────┐  │
-│  │                   统一接口适配器 (UnifiedAdapter)                     │  │
-│  │  ├── 引擎工厂 (EngineFactory)                                        │  │
-│  │  ├── 配置管理器 (ConfigManager)                                      │  │
-│  │  ├── 性能监控器 (PerformanceMonitor)                                 │  │
-│  │  └── 错误处理器 (ErrorHandler)                                       │  │
-│  └─────────────────────────────────────────────────────────────────────┘  │
-│                              │                                             │
-│         ┌────────────────────┼────────────────────┬────────────────────┐   │
-│         │                    │                    │                    │   │
-│         ▼                    ▼                    ▼                    ▼   │
-│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  │   vn.py     │     │   RQAlpha   │     │  Backtrader │     │     QMT     │
-│  │  适配器     │     │   适配器    │     │   适配器    │     │   适配器    │
-│  └─────────────┘     └─────────────┘     └─────────────┘     └─────────────┘
-│         │                    │                    │                    │   │
-│         └────────────────────┼────────────────────┼────────────────────┘   │
-│                              ▼                                             │
-│                  ┌─────────────────────┐                                  │
-│                  │   策略执行上下文     │                                  │
-│                  │  (StrategyContext)  │                                  │
-│                  └─────────────────────┘                                  │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────�?
+�?                      统一交易执行�?(Unified Execution Layer)               �?
+├─────────────────────────────────────────────────────────────────────────────�?
+�?                                                                            �?
+�? ┌─────────────────────────────────────────────────────────────────────�? �?
+�? �?                  统一接口适配�?(UnifiedAdapter)                     �? �?
+�? �? ├── 引擎工厂 (EngineFactory)                                        �? �?
+�? �? ├── 配置管理�?(ConfigManager)                                      �? �?
+�? �? ├── 性能监控�?(PerformanceMonitor)                                 �? �?
+�? �? └── 错误处理�?(ErrorHandler)                                       �? �?
+�? └─────────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                            �?
+�?        ┌────────────────────┼────────────────────┬────────────────────�?  �?
+�?        �?                   �?                   �?                   �?  �?
+�?        �?                   �?                   �?                   �?  �?
+�? ┌─────────────�?    ┌─────────────�?    ┌─────────────�?    ┌─────────────�?
+�? �?  vn.py     �?    �?  RQAlpha   �?    �? Backtrader �?    �?    QMT     �?
+�? �? 适配�?    �?    �?  适配�?   �?    �?  适配�?   �?    �?  适配�?   �?
+�? └─────────────�?    └─────────────�?    └─────────────�?    └─────────────�?
+�?        �?                   �?                   �?                   �?  �?
+�?        └────────────────────┼────────────────────┼────────────────────�?  �?
+�?                             �?                                            �?
+�?                 ┌─────────────────────�?                                 �?
+�?                 �?  策略执行上下�?    �?                                 �?
+�?                 �? (StrategyContext)  �?                                 �?
+�?                 └─────────────────────�?                                 �?
+└─────────────────────────────────────────────────────────────────────────────�?
 ```
 
-### 2.2 引擎定位与分工
+### 2.2 引擎定位与分�?
 
-| 引擎 | 核心定位 | 优势场景 | 在系统中的角色 |
+| 引擎 | 核心定位 | 优势场景 | 在系统中的角�?|
 |------|----------|----------|----------------|
-| **vn.py** | **生产级主引擎** | A股实盘/模拟、机构级功能、中文生态 | 默认引擎，承担80%生产任务 |
-| **RQAlpha** | **专业回测引擎** | A股深度回测、研究分析、米筐数据生态 | 专业回测，承担研究验证任务 |
-| **Backtrader** | **功能补充引擎** | 多资产支持、高级订单类型、国际标准 | 功能备份，特殊场景使用 |
-| **QMT** | **券商官方引擎** | A股实盘交易、官方API支持、低延迟执行 | 实盘生产引擎，承担实盘交易任务 |
+| **vn.py** | **生产级主引擎** | A股实�?模拟、机构级功能、中文生�?| 默认引擎，承�?0%生产任务 |
+| **RQAlpha** | **专业回测引擎** | A股深度回测、研究分析、米筐数据生�?| 专业回测，承担研究验证任�?|
+| **Backtrader** | **功能补充引擎** | 多资产支持、高级订单类型、国际标�?| 功能备份，特殊场景使�?|
+| **QMT** | **券商官方引擎** | A股实盘交易、官方API支持、低延迟执行 | 实盘生产引擎，承担实盘交易任�?|
 
 ### 2.3 引擎能力矩阵
 
-| 功能维度 | vn.py | RQAlpha | Backtrader | QMT | 优先级 |
+| 功能维度 | vn.py | RQAlpha | Backtrader | QMT | 优先�?|
 |----------|-------|---------|------------|-----|--------|
-| **A股市场支持** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | P0 |
-| **模拟交易深度** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | P0 |
-| **实盘交易支持** | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | P1 |
-| **回测引擎性能** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | P1 |
-| **事件驱动架构** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | P1 |
-| **中文文档生态** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ | P2 |
-| **社区活跃度** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ | P2 |
-| **扩展性** | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | P2 |
+| **A股市场支�?* | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐⭐⭐�?| P0 |
+| **模拟交易深度** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | P0 |
+| **实盘交易支持** | ⭐⭐⭐⭐�?| ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| P1 |
+| **回测引擎性能** | ⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐�?| P1 |
+| **事件驱动架构** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐�?| P1 |
+| **中文文档生�?* | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐�?| P2 |
+| **社区活跃�?* | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐�?| P2 |
+| **扩展�?* | ⭐⭐⭐⭐ | ⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐�?| P2 |
 
 
 ## 3. vn.py引擎详细设计
 
-### 3.1 vn.py适配器架构
+### 3.1 vn.py适配器架�?
 
 ```python
 class VnPySimulationAdapter(BaseEngineAdapter):
-    """vn.py模拟交易适配器
+    """vn.py模拟交易适配�?
     
     索引: SIM_002-M01-VNPY
     角色: 生产级模拟交易主引擎
@@ -112,7 +112,7 @@ class VnPySimulationAdapter(BaseEngineAdapter):
             "initial_capital": config.initial_capital,
             "commission_rate": config.commission_rate,
             "slippage": config.slippage,
-            "market_type": "A_SHARE",  # A股市场
+            "market_type": "A_SHARE",  # A股市�?
             "t_plus_one": True,        # T+1交易
         }
         
@@ -123,10 +123,10 @@ class VnPySimulationAdapter(BaseEngineAdapter):
         # 转换统一订单为vn.py订单
         vn_order = self._convert_to_vn_order(unified_order)
         
-        # 发送订单
+        # 发送订�?
         order_id = self.gateway.send_order(vn_order)
         
-        # 监控订单状态
+        # 监控订单状�?
         return self._monitor_order(order_id)
     
     def _convert_to_vn_order(self, unified_order: UnifiedOrder) -> dict:
@@ -166,18 +166,18 @@ vnpy:
   engine_type: "simulation"  # simulation/production
   initial_capital: 1000000
   commission_rate: 0.0003     # 万三
-  min_commission: 5.0         # 最低5元
+  min_commission: 5.0         # 最�?�?
   slippage: 0.0002            # 万二滑点
   
-  # A股特有配置
+  # A股特有配�?
   market_type: "A_SHARE"
   t_plus_one: true
   support_st: true            # 支持ST股票交易
   support_new_stock: true     # 支持新股交易
   
   # 风险控制
-  position_limit: 0.8         # 单票持仓不超过80%
-  daily_turnover_limit: 0.3   # 日换手率不超过30%
+  position_limit: 0.8         # 单票持仓不超�?0%
+  daily_turnover_limit: 0.3   # 日换手率不超�?0%
   
   # 性能优化
   cache_enabled: true
@@ -188,21 +188,21 @@ vnpy:
 ### 3.3 vn.py集成优势
 
 1. **实盘验证**：在生产环境经过大量验证，稳定性高
-2. **完整生态**：数据->回测->模拟->实盘全链路支持
-3. **中文友好**：中文文档、中文社区、中文技术支持
-4. **机构级功能**：多账户管理、合规检查、审计日志
+2. **完整生�?*：数�?>回测->模拟->实盘全链路支�?
+3. **中文友好**：中文文档、中文社区、中文技术支�?
+4. **机构级功�?*：多账户管理、合规检查、审计日�?
 
 
 ## 4. RQAlpha引擎详细设计
 
-### 4.1 RQAlpha适配器架构
+### 4.1 RQAlpha适配器架�?
 
 ```python
 class RQAlphaBacktestAdapter(BaseEngineAdapter):
-    """RQAlpha回测适配器
+    """RQAlpha回测适配�?
     
     索引: SIM_002-M02-RQALPHA
-    角色: 专业级回测引擎，用于策略验证和优化
+    角色: 专业级回测引擎，用于策略验证和优�?
     """
     
     def __init__(self, config: RQAlphaConfig):
@@ -233,7 +233,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
                 "sys_simulation": {
                     "enabled": True,
                     "matching_type": "current_bar",  # 当前bar撮合
-                    "price_limit": True,             # 涨跌停限制
+                    "price_limit": True,             # 涨跌停限�?
                     "slippage": config.slippage,
                 },
             },
@@ -245,7 +245,7 @@ class RQAlphaBacktestAdapter(BaseEngineAdapter):
         
         # 包装策略函数
         def wrapped_strategy(context, bar_dict):
-            # 转换RQAlpha上下文为统一上下文
+            # 转换RQAlpha上下文为统一上下�?
             unified_context = self._convert_to_unified_context(context)
             # 执行策略
             strategy_func(unified_context, bar_dict)
@@ -288,10 +288,10 @@ rqalpha:
   data_source: "rqdata"     # 米筐数据
   data_level: "daily"       # 日线数据
   
-  # A股特有规则
-  price_limit: true         # 涨跌停限制
-  st_limit: true           # ST股限制
-  dividend_reinvestment: false  # 分红再投资
+  # A股特有规�?
+  price_limit: true         # 涨跌停限�?
+  st_limit: true           # ST股限�?
+  dividend_reinvestment: false  # 分红再投�?
   
   # 交易成本
   commission_multiplier: 1.0
@@ -306,22 +306,22 @@ rqalpha:
 
 ### 4.3 RQAlpha集成优势
 
-1. **A股深度定制**：完整的A股交易规则建模（T+1、涨跌停、ST等）
+1. **A股深度定�?*：完整的A股交易规则建模（T+1、涨跌停、ST等）
 2. **专业回测**：事件驱动回测引擎，避免未来函数
-3. **数据生态**：与米筐数据无缝集成，数据质量高
-4. **研究友好**：适合策略研究和学术分析
+3. **数据生�?*：与米筐数据无缝集成，数据质量高
+4. **研究友好**：适合策略研究和学术分�?
 
 
 ## 5. Backtrader引擎详细设计
 
-### 5.1 Backtrader适配器架构
+### 5.1 Backtrader适配器架�?
 
 ```python
 class BacktraderAdapter(BaseEngineAdapter):
-    """Backtrader适配器
+    """Backtrader适配�?
     
     索引: SIM_002-M03-BACKTRADER
-    角色: 功能补充引擎，支持高级订单类型和多资产
+    角色: 功能补充引擎，支持高级订单类型和多资�?
     """
     
     def __init__(self, config: BacktraderConfig):
@@ -339,7 +339,7 @@ class BacktraderAdapter(BaseEngineAdapter):
             name=None
         )
         
-        # 添加分析器
+        # 添加分析�?
         self.cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
         self.cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
         self.cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
@@ -388,11 +388,11 @@ backtrader:
   slippage: 0.0002          # 滑点
   
   # 订单执行
-  execution_mode: "close"   # 收盘价执行
-  cheat_on_open: false      # 不允许开盘作弊
-  cheat_on_close: false     # 不允许收盘作弊
+  execution_mode: "close"   # 收盘价执�?
+  cheat_on_open: false      # 不允许开盘作�?
+  cheat_on_close: false     # 不允许收盘作�?
   
-  # 分析器配置
+  # 分析器配�?
   analyzers:
     sharpe_ratio: true
     drawdown: true
@@ -415,22 +415,22 @@ backtrader:
 
 ### 5.3 Backtrader集成优势
 
-1. **功能全面**：122+内置指标，支持所有标准订单类型
-2. **国际标准**：遵循国际量化交易标准，易于与国外系统集成
-3. **可视化强大**：内置matplotlib图表，可视化效果好
+1. **功能全面**�?22+内置指标，支持所有标准订单类�?
+2. **国际标准**：遵循国际量化交易标准，易于与国外系统集�?
+3. **可视化强�?*：内置matplotlib图表，可视化效果�?
 4. **灵活扩展**：易于自定义指标、分析器、数据源
 
 
 ## 6. QMT引擎详细设计
 
-### 6.1 QMT适配器架构
+### 6.1 QMT适配器架�?
 
 ```python
 class QMTExecutionAdapter(BaseEngineAdapter):
-    """QMT执行适配器
+    """QMT执行适配�?
     
     索引: SIM_002-M04-QMT
-    角色: 券商官方引擎，承担实盘交易任务
+    角色: 券商官方引擎，承担实盘交易任�?
     """
     
     def __init__(self, config: QMTConfig):
@@ -450,7 +450,7 @@ class QMTExecutionAdapter(BaseEngineAdapter):
         # 启动交易线程
         self.trader.start()
         
-        # 订阅账户和持仓
+        # 订阅账户和持�?
         self.trader.subscribe_account(config.account_id)
     
     def execute_order(self, unified_order: UnifiedOrder) -> ExecutionResult:
@@ -458,10 +458,10 @@ class QMTExecutionAdapter(BaseEngineAdapter):
         # 转换统一订单为QMT订单格式
         qmt_order = self._convert_to_qmt_order(unified_order)
         
-        # 发送订单
+        # 发送订�?
         order_id = self.trader.order_stock(qmt_order)
         
-        # 监控订单状态
+        # 监控订单状�?
         return self._monitor_qmt_order(order_id)
     
     def _convert_to_qmt_order(self, unified_order: UnifiedOrder) -> dict:
@@ -511,13 +511,13 @@ qmt:
   session_id: 10086                 # 会话ID
   
   # 路径配置
-  client_path: "C:/迅投QMT/miniQMT" # QMT客户端安装路径
+  client_path: "C:/迅投QMT/miniQMT" # QMT客户端安装路�?
   data_path: "C:/迅投QMT/data"      # 数据存储路径
   
   # 交易配置
   initial_capital: 1000000          # 初始资金
   commission_rate: 0.0003           # 佣金比例
-  min_commission: 5.0               # 最低佣金
+  min_commission: 5.0               # 最低佣�?
   stamp_tax_rate: 0.001             # 印花税率（卖出）
   
   # 模拟交易配置
@@ -525,27 +525,27 @@ qmt:
   simulation_slippage: 0.0002       # 模拟交易滑点
   
   # 性能配置
-  reconnect_interval: 60            # 重连间隔（秒）
-  heartbeat_interval: 30            # 心跳间隔（秒）
-  timeout: 10                       # 请求超时时间（秒）
+  reconnect_interval: 60            # 重连间隔（秒�?
+  heartbeat_interval: 30            # 心跳间隔（秒�?
+  timeout: 10                       # 请求超时时间（秒�?
 ```
 
 ### 6.3 QMT集成优势
 
-1. **官方API支持**：券商官方交易接口，稳定性和可靠性最高
-2. **实盘交易能力**：直接对接券商交易系统，支持A股、基金、债券等
-3. **内置模拟交易**：提供专业级模拟交易环境，与实盘接口一致
-4. **低延迟执行**：极速交易通道，适合高频和算法交易
+1. **官方API支持**：券商官方交易接口，稳定性和可靠性最�?
+2. **实盘交易能力**：直接对接券商交易系统，支持A股、基金、债券�?
+3. **内置模拟交易**：提供专业级模拟交易环境，与实盘接口一�?
+4. **低延迟执�?*：极速交易通道，适合高频和算法交�?
 5. **数据服务**：集成实时行情、历史数据、财务数据等
 
-### 6.4 与vn.py的协同关系
+### 6.4 与vn.py的协同关�?
 
 | 对比维度 | vn.py | QMT | 协同策略 |
 |----------|-------|-----|----------|
 | **实盘交易** | 支持多家券商 | **券商官方接口** | QMT优先，vn.py备份 |
-| **模拟交易** | 功能完整 | **内置模拟** | 统一接口层无缝切换 |
+| **模拟交易** | 功能完整 | **内置模拟** | 统一接口层无缝切�?|
 | **数据服务** | 第三方数据源 | **官方行情数据** | QMT数据 + vn.py处理 |
-| **扩展性** | 开源可定制 | 闭源但稳定 | vn.py扩展 + QMT核心 |
+| **扩展�?* | 开源可定制 | 闭源但稳�?| vn.py扩展 + QMT核心 |
 
 
 ### 6.5 使用示例
@@ -580,7 +580,7 @@ order = UnifiedOrder(
 result = qmt_engine.execute_order(order)
 print(f"订单执行结果: {result}")
 
-# 示例2: 多引擎协同 - QMT实盘 + vn.py模拟对比
+# 示例2: 多引擎协�?- QMT实盘 + vn.py模拟对比
 from execution.multi_engine import MultiEngine
 
 multi_engine = MultiEngine({
@@ -592,13 +592,13 @@ multi_engine = MultiEngine({
 # 设置主引擎为QMT（实盘）
 multi_engine.set_active_engine("qmt")
 
-# 执行订单（带故障转移）
+# 执行订单（带故障转移�?
 result = multi_engine.execute_with_fallback(order)
-print(f"多引擎执行结果: {result}")
+print(f"多引擎执行结�? {result}")
 ```
 
 
-## 7. 统一接口层设计
+## 7. 统一接口层设�?
 
 ### 7.1 统一数据模型
 
@@ -615,7 +615,7 @@ class UnifiedOrder:
     price: Optional[float] = None
     time_in_force: TimeInForce = TimeInForce.DAY
     
-    # A股特有字段
+    # A股特有字�?
     market_type: MarketType = MarketType.SH_A
     position_effect: PositionEffect = PositionEffect.OPEN
     order_condition: Optional[OrderCondition] = None
@@ -636,7 +636,7 @@ class UnifiedPosition:
     unrealized_pnl: float
     realized_pnl: float
     
-    # A股特有
+    # A股特�?
     market_type: MarketType
     position_side: PositionSide  # LONG/SHORT
     available_quantity: int  # 可用数量(T+1)
@@ -646,7 +646,7 @@ class UnifiedPosition:
 
 ```python
 class BaseEngineAdapter(ABC):
-    """引擎适配器抽象基类"""
+    """引擎适配器抽象基�?""
     
     @abstractmethod
     def execute_order(self, order: UnifiedOrder) -> ExecutionResult:
@@ -670,7 +670,7 @@ class BaseEngineAdapter(ABC):
     
     @abstractmethod
     def get_order_status(self, order_id: str) -> OrderStatus:
-        """获取订单状态"""
+        """获取订单状�?""
         pass
     
     @abstractmethod
@@ -710,7 +710,7 @@ class EngineFactory:
     
     @classmethod
     def create_multi_engine(cls, configs: Dict[str, Dict]) -> MultiEngine:
-        """创建多引擎实例"""
+        """创建多引擎实�?""
         engines = {}
         for engine_type, config in configs.items():
             engines[engine_type] = cls.create_engine(engine_type, config)
@@ -729,13 +729,13 @@ class MultiEngine:
         self.active_engine = None
         self.backup_engines = []
         
-        # 设置主引擎
+        # 设置主引�?
         self.set_active_engine("vnpy_simulation")
     
     def set_active_engine(self, engine_type: str):
         """设置活动引擎"""
         if engine_type not in self.engines:
-            raise ValueError(f"引擎不存在: {engine_type}")
+            raise ValueError(f"引擎不存�? {engine_type}")
         
         self.active_engine = self.engines[engine_type]
         
@@ -759,10 +759,10 @@ class MultiEngine:
                 except EngineError:
                     continue
             
-            raise EngineError("所有引擎执行失败")
+            raise EngineError("所有引擎执行失�?)
     
     def compare_results(self, strategy, data) -> Dict[str, BacktestResult]:
-        """多引擎结果对比"""
+        """多引擎结果对�?""
         results = {}
         for name, engine in self.engines.items():
             try:
@@ -775,26 +775,26 @@ class MultiEngine:
 ```
 
 
-## 8. 引擎选择与切换策略
+## 8. 引擎选择与切换策�?
 
 ### 8.1 场景化引擎选择矩阵
 
 | 使用场景 | 推荐引擎 | 备用引擎 | 选择理由 |
 |----------|----------|----------|----------|
-| **A股实盘模拟** | vn.py仿真 | QMT模拟 | vn.py对A股支持最完整 |
-| **策略研究回测** | RQAlpha | Backtrader | RQAlpha回测更专业 |
-| **多资产测试** | Backtrader | vn.py | Backtrader支持资产类型更多 |
-| **券商实盘交易** | QMT实盘 | vn.py实盘 | QMT为券商官方接口，稳定性最高 |
+| **A股实盘模�?* | vn.py仿真 | QMT模拟 | vn.py对A股支持最完整 |
+| **策略研究回测** | RQAlpha | Backtrader | RQAlpha回测更专�?|
+| **多资产测�?* | Backtrader | vn.py | Backtrader支持资产类型更多 |
+| **券商实盘交易** | QMT实盘 | vn.py实盘 | QMT为券商官方接口，稳定性最�?|
 | **生产实盘交易** | vn.py实盘 | EasyTrader | vn.py经过生产验证 |
-| **快速原型验证** | backtesting.py | - | 轻量级，快速验证想法 |
+| **快速原型验�?* | backtesting.py | - | 轻量级，快速验证想�?|
 | **AI策略训练** | 自研引擎 | Backtrader | 需要深度定制化 |
 
-### 8.2 动态切换配置
+### 8.2 动态切换配�?
 
 ```yaml
 # config/engine_routing.yaml
 engine_routing:
-  # 按策略类型路由
+  # 按策略类型路�?
   by_strategy_type:
     "a_share_daily": "vnpy_simulation"
     "a_share_minute": "vnpy_simulation"
@@ -804,13 +804,13 @@ engine_routing:
     "qmt_real": "qmt"                    # QMT实盘交易
     "qmt_simulation": "qmt"              # QMT模拟交易
   
-  # 按时间路由
+  # 按时间路�?
   by_time:
     "trading_hours": "vnpy_simulation"
     "backtest_hours": "rqalpha_backtest"
     "overnight": "backtrader"
   
-  # 按资源路由
+  # 按资源路�?
   by_resource:
     "high_performance": "vnpy_simulation"
     "low_memory": "backtesting.py"
@@ -821,7 +821,7 @@ engine_routing:
     primary: "vnpy_simulation"
     secondary: "qmt"          # 券商官方引擎作为第二选择
     tertiary: "backtrader"
-    quaternary: "easytrader"  # 最后备用引擎
+    quaternary: "easytrader"  # 最后备用引�?
   
   # 自动切换条件
   auto_switch:
@@ -833,22 +833,22 @@ engine_routing:
       action: "switch_to_low_memory"
 ```
 
-### 8.3 性能监控与自动切换
+### 8.3 性能监控与自动切�?
 
 ```python
 class EngineMonitor:
-    """引擎监控器"""
+    """引擎监控�?""
     
     def __init__(self):
         self.metrics = defaultdict(list)
         self.thresholds = {
-            "latency": 1000,      # 1秒
+            "latency": 1000,      # 1�?
             "error_rate": 0.05,   # 5%
             "memory_usage": 0.8,  # 80%
         }
     
     def monitor_engine(self, engine: BaseEngineAdapter) -> EngineHealth:
-        """监控引擎健康状态"""
+        """监控引擎健康状�?""
         health = EngineHealth()
         
         # 监控延迟
@@ -856,7 +856,7 @@ class EngineMonitor:
         health.latency = latency
         health.latency_ok = latency < self.thresholds["latency"]
         
-        # 监控错误率
+        # 监控错误�?
         error_rate = self._calculate_error_rate(engine)
         health.error_rate = error_rate
         health.error_rate_ok = error_rate < self.thresholds["error_rate"]
@@ -866,7 +866,7 @@ class EngineMonitor:
         health.memory_usage = memory_usage
         health.memory_ok = memory_usage < self.thresholds["memory_usage"]
         
-        # 总体健康状态
+        # 总体健康状�?
         health.overall_health = (
             health.latency_ok and 
             health.error_rate_ok and 
@@ -876,7 +876,7 @@ class EngineMonitor:
         return health
     
     def recommend_engine(self, context: ExecutionContext) -> str:
-        """推荐最适合的引擎"""
+        """推荐最适合的引�?""
         requirements = context.requirements
         
         if requirements.get("a_share_priority", False):
@@ -892,53 +892,53 @@ class EngineMonitor:
 ```
 
 
-## 9. 集成路线图
+## 9. 集成路线�?
 
-### 9.1 三阶段实施计划
+### 9.1 三阶段实施计�?
 
-**阶段1：基础集成 (4-6周)**
+**阶段1：基础集成 (4-6�?**
 1. 安装配置三大引擎测试环境
 2. 实现统一接口层基础框架
 3. 开发vn.py适配器（主引擎）
 4. 编写引擎对比测试用例
 5. 创建基础配置管理系统
 
-**阶段2：功能完善 (6-8周)**
-1. 实现RQAlpha适配器（专业回测）
-2. 实现Backtrader适配器（功能补充）
-3. 开发多引擎协同器
-4. 实现动态切换机制
+**阶段2：功能完�?(6-8�?**
+1. 实现RQAlpha适配器（专业回测�?
+2. 实现Backtrader适配器（功能补充�?
+3. 开发多引擎协同�?
+4. 实现动态切换机�?
 5. 集成现有风控模块
 
-**阶段3：优化扩展 (4-6周)**
-1. 性能优化与压力测试
-2. 实现引擎监控与告警
+**阶段3：优化扩�?(4-6�?**
+1. 性能优化与压力测�?
+2. 实现引擎监控与告�?
 3. 开发Web管理界面
-4. 编写完整文档和培训材料
+4. 编写完整文档和培训材�?
 5. 生产环境部署验证
 
-### 9.2 关键里程碑
+### 9.2 关键里程�?
 
-| 里程碑 | 时间 | 交付物 | 验收标准 |
+| 里程�?| 时间 | 交付�?| 验收标准 |
 |--------|------|--------|----------|
-| M1: 引擎测试环境 | 第2周 | 三大引擎可运行环境 | 能运行示例策略 |
-| M2: 统一接口层 | 第4周 | BaseEngineAdapter及基础实现 | 支持基础订单执行 |
-| M3: vn.py适配器 | 第6周 | 完整vn.py适配器 | 支持A股模拟交易 |
-| M4: 多引擎协同 | 第10周 | MultiEngine协同器 | 支持引擎切换和故障转移 |
-| M5: RQAlpha适配器 | 第12周 | RQAlpha适配器 | 支持专业级回测 |
-| M6: 生产就绪 | 第16周 | 完整多引擎系统 | 通过压力测试，文档完整 |
+| M1: 引擎测试环境 | �?�?| 三大引擎可运行环�?| 能运行示例策�?|
+| M2: 统一接口�?| �?�?| BaseEngineAdapter及基础实现 | 支持基础订单执行 |
+| M3: vn.py适配�?| �?�?| 完整vn.py适配�?| 支持A股模拟交�?|
+| M4: 多引擎协�?| �?0�?| MultiEngine协同�?| 支持引擎切换和故障转�?|
+| M5: RQAlpha适配�?| �?2�?| RQAlpha适配�?| 支持专业级回�?|
+| M6: 生产就绪 | �?6�?| 完整多引擎系�?| 通过压力测试，文档完�?|
 
 ### 9.3 风险控制措施
 
 | 风险类别 | 风险描述 | 缓解措施 |
 |----------|----------|----------|
-| **技术风险** | 引擎兼容性问题 | 1. 抽象接口隔离变化<br>2. 多引擎备份<br>3. 渐进式集成 |
-| **性能风险** | 多引擎开销大 | 1. 懒加载引擎<br>2. 资源监控<br>3. 按需启用引擎 |
-| **维护风险** | 多个引擎更新频繁 | 1. 版本锁定<br>2. 自动化测试<br>3. 更新回滚机制 |
-| **数据风险** | 不同引擎数据不一致 | 1. 统一数据源<br>2. 数据验证层<br>3. 结果对比验证 |
+| **技术风�?* | 引擎兼容性问�?| 1. 抽象接口隔离变化<br>2. 多引擎备�?br>3. 渐进式集�?|
+| **性能风险** | 多引擎开销�?| 1. 懒加载引�?br>2. 资源监控<br>3. 按需启用引擎 |
+| **维护风险** | 多个引擎更新频繁 | 1. 版本锁定<br>2. 自动化测�?br>3. 更新回滚机制 |
+| **数据风险** | 不同引擎数据不一�?| 1. 统一数据�?br>2. 数据验证�?br>3. 结果对比验证 |
 
 
-## 10. 性能对比与测试方案
+## 10. 性能对比与测试方�?
 
 ### 10.1 基准测试策略
 
@@ -951,7 +951,7 @@ class BenchmarkStrategy:
         """生成信号"""
         signals = []
         
-        # 简单移动平均策略
+        # 简单移动平均策�?
         for symbol in data.symbols:
             prices = data.get_history(symbol, period=20)
             sma = prices.mean()
@@ -970,10 +970,10 @@ class BenchmarkStrategy:
 | 测试维度 | 测试指标 | 合格标准 | 测试方法 |
 |----------|----------|----------|----------|
 | **执行性能** | 订单执行延迟 | <100ms | 批量订单压力测试 |
-| **回测性能** | 日线回测速度 | >1000天/秒 | 历史数据回测 |
-| **内存使用** | 峰值内存使用 | <2GB | 大数据量测试 |
-| **准确性** | 结果一致性 | 误差<0.1% | 多引擎结果对比 |
-| **稳定性** | 连续运行时间 | >72小时无故障 | 长时间压力测试 |
+| **回测性能** | 日线回测速度 | >1000�?�?| 历史数据回测 |
+| **内存使用** | 峰值内存使�?| <2GB | 大数据量测试 |
+| **准确�?* | 结果一致�?| 误差<0.1% | 多引擎结果对�?|
+| **稳定�?* | 连续运行时间 | >72小时无故�?| 长时间压力测�?|
 
 ### 10.3 测试用例设计
 
@@ -983,26 +983,26 @@ test_cases:
   - name: "basic_order_execution"
     description: "基础订单执行测试"
     steps:
-      - 创建100个随机订单
-      - 在三引擎中分别执行
-      - 对比执行结果和时间
+      - 创建100个随机订�?
+      - 在三引擎中分别执�?
+      - 对比执行结果和时�?
     expected: "结果一致，执行时间差异<20%"
   
   - name: "a_share_backtest"
-    description: "A股回测对比测试"
+    description: "A股回测对比测�?
     steps:
-      - 使用相同A股策略
-      - 在三引擎中运行2019-2023年回测
-      - 对比收益曲线和风险指标
-    expected: "年化收益差异<1%，最大回撤差异<2%"
+      - 使用相同A股策�?
+      - 在三引擎中运�?019-2023年回�?
+      - 对比收益曲线和风险指�?
+    expected: "年化收益差异<1%，最大回撤差�?2%"
   
   - name: "engine_switching"
     description: "引擎切换测试"
     steps:
-      - 运行中动态切换引擎
-      - 验证持仓和资金连续性
+      - 运行中动态切换引�?
+      - 验证持仓和资金连续�?
       - 检查无数据丢失
-    expected: "切换平滑，数据一致，无交易中断"
+    expected: "切换平滑，数据一致，无交易中�?
 ```
 
 
@@ -1012,15 +1012,15 @@ test_cases:
 
 #### 11.1.1 设计目标
 - **流水线化处理**：信号生成→订单批处理→执行监控的完整流水线
-- **多引擎兼容**：适配vn.py、RQAlpha、Backtrader、QMT所有引擎
-- **A股规则支持**：T+1交易、涨跌停限制、ST股处理
+- **多引擎兼�?*：适配vn.py、RQAlpha、Backtrader、QMT所有引�?
+- **A股规则支�?*：T+1交易、涨跌停限制、ST股处�?
 - **性能优化**：支持批量订单处理，减少引擎调用开销
 
 #### 11.1.2 核心组件
 
 ```python
 class DailyRebalancer:
-    """每日调仓器"""
+    """每日调仓�?""
     
     def __init__(self, engine_adapter: BaseEngineAdapter, config: RebalancerConfig):
         self.engine = engine_adapter
@@ -1038,13 +1038,13 @@ class DailyRebalancer:
         # 2. 订单生成阶段
         orders = self._generate_orders(signals, portfolio)
         
-        # 3. 订单优化阶段 (合并、拆分、排序)
+        # 3. 订单优化阶段 (合并、拆分、排�?
         optimized_orders = self._optimize_orders(orders)
         
         # 4. 执行阶段
         execution_results = self._execute_orders(optimized_orders)
         
-        # 5. 监控与报告阶段
+        # 5. 监控与报告阶�?
         report = self._generate_report(execution_results)
         
         return RebalanceResult(
@@ -1072,7 +1072,7 @@ class DailyRebalancer:
             # 计算目标持仓
             target_position = self._calculate_target_position(signal, portfolio)
             
-            # 计算调整量
+            # 计算调整�?
             current_position = portfolio.get_position(signal.symbol)
             adjustment = target_position - current_position
             
@@ -1090,8 +1090,8 @@ class DailyRebalancer:
         return orders
     
     def _optimize_orders(self, orders: List[UnifiedOrder]) -> List[UnifiedOrder]:
-        """优化订单：合并、拆分、排序"""
-        # 1. 合并同一标的的同向订单
+        """优化订单：合并、拆分、排�?""
+        # 1. 合并同一标的的同向订�?
         merged_orders = self._merge_same_symbol_orders(orders)
         
         # 2. 拆分大额订单（避免冲击成本）
@@ -1103,10 +1103,10 @@ class DailyRebalancer:
         return sorted_orders
     
     def _execute_orders(self, orders: List[UnifiedOrder]) -> List[ExecutionResult]:
-        """执行订单批处理"""
+        """执行订单批处�?""
         results = []
         
-        # 批量执行（提高性能）
+        # 批量执行（提高性能�?
         batch_size = self.config.batch_size
         for i in range(0, len(orders), batch_size):
             batch = orders[i:i+batch_size]
@@ -1119,7 +1119,7 @@ class DailyRebalancer:
             
             results.extend(batch_results)
             
-            # 监控执行状态
+            # 监控执行状�?
             self.execution_monitor.monitor(batch_results)
         
         return results
@@ -1133,38 +1133,38 @@ daily_rebalancer:
   # 信号生成配置
   signal_strategy: "target_weight"  # target_weight/risk_parity/momentum
   rebalance_frequency: "daily"      # daily/weekly/monthly
-  rebalance_time: "14:50:00"        # 收盘前10分钟调仓
+  rebalance_time: "14:50:00"        # 收盘�?0分钟调仓
   
   # 订单优化配置
-  min_trade_size: 100               # 最小交易数量
-  max_trade_size: 10000             # 最大单笔交易数量
+  min_trade_size: 100               # 最小交易数�?
+  max_trade_size: 10000             # 最大单笔交易数�?
   batch_size: 20                    # 批量执行大小
   parallel_execution: true          # 并行执行
   
   # 成本控制配置
-  max_slippage: 0.001               # 最大滑点
-  max_impact_cost: 0.0005           # 最大冲击成本
+  max_slippage: 0.001               # 最大滑�?
+  max_impact_cost: 0.0005           # 最大冲击成�?
   commission_aware: true            # 考虑佣金
   
-  # A股规则配置
+  # A股规则配�?
   enforce_tplus_one: true           # 强制T+1规则
-  respect_price_limit: true         # 遵守涨跌停限制
+  respect_price_limit: true         # 遵守涨跌停限�?
   avoid_st_stocks: false            # 是否避开ST股票
   
   # 风险控制配置
   position_limit: 0.8               # 单票持仓上限
-  sector_limit: 0.3                 # 单行业持仓上限
+  sector_limit: 0.3                 # 单行业持仓上�?
   max_turnover: 0.4                 # 最大换手率
 ```
 
 #### 11.1.4 多引擎适配策略
 
-| 引擎 | 适配策略 | 优化点 |
+| 引擎 | 适配策略 | 优化�?|
 |------|----------|--------|
 | **vn.py** | 使用`SimulationGateway`批量接口 | 利用vn.py的批量订单接口减少开销 |
-| **RQAlpha** | 集成到回测流水线中 | 在`handle_bar`中调用调仓逻辑 |
+| **RQAlpha** | 集成到回测流水线�?| 在`handle_bar`中调用调仓逻辑 |
 | **Backtrader** | 实现为`RebalanceStrategy` | 利用Backtrader的定时器功能 |
-| **QMT** | 使用`order_stock_batch`批量接口 | 减少API调用次数，提高执行效率 |
+| **QMT** | 使用`order_stock_batch`批量接口 | 减少API调用次数，提高执行效�?|
 
 ### 11.2 交易成本模型详细设计 (CostCalculator)
 
@@ -1172,7 +1172,7 @@ daily_rebalancer:
 
 ```python
 class CostCalculator:
-    """交易成本计算器"""
+    """交易成本计算�?""
     
     def calculate_cost(self, order: UnifiedOrder, execution_price: float) -> TradeCost:
         """计算交易成本"""
@@ -1208,7 +1208,7 @@ class CostCalculator:
         """计算佣金"""
         amount = price * order.quantity
         
-        # 佣金规则：万三，最低5元
+        # 佣金规则：万三，最�?�?
         commission_rate = self.config.commission_rate  # 0.0003
         min_commission = self.config.min_commission    # 5.0
         
@@ -1233,7 +1233,7 @@ class CostCalculator:
     
     def _calculate_transfer_fee(self, order: UnifiedOrder, price: float) -> float:
         """计算过户费（A股特有）"""
-        # 过户费：成交金额的万分之0.2，双向收取
+        # 过户费：成交金额的万分之0.2，双向收�?
         amount = price * order.quantity
         transfer_rate = self.config.transfer_fee_rate  # 0.00002
         
@@ -1241,7 +1241,7 @@ class CostCalculator:
     
     def _calculate_slippage(self, order: UnifiedOrder, execution_price: float) -> float:
         """计算滑点成本"""
-        # 获取订单的预期价格（如有）
+        # 获取订单的预期价格（如有�?
         expected_price = order.price or self._get_market_price(order.symbol)
         
         if not expected_price:
@@ -1281,7 +1281,7 @@ class CostCalculator:
 cost_model:
   # 佣金配置
   commission_rate: 0.0003           # 万三佣金
-  min_commission: 5.0               # 最低佣金5元
+  min_commission: 5.0               # 最低佣�?�?
   waive_min_commission: false       # 是否免五
   
   # 税费配置
@@ -1291,14 +1291,14 @@ cost_model:
   # 滑点模型配置
   slippage_model:
     type: "proportional"            # proportional/fixed/adaptive
-    base_rate: 0.0002               # 基础滑点率0.02%
-    volume_factor: 0.0001           # 成交量因子
-    volatility_factor: 0.0003       # 波动率因子
+    base_rate: 0.0002               # 基础滑点�?.02%
+    volume_factor: 0.0001           # 成交量因�?
+    volatility_factor: 0.0003       # 波动率因�?
     
   # 冲击成本模型配置
   impact_model:
     type: "square_root"             # square_root/linear/quadratic
-    liquidity_factor: 0.0005        # 流动性因子
+    liquidity_factor: 0.0005        # 流动性因�?
     market_impact_factor: 0.0008    # 市场影响因子
     
   # 市场条件调整
@@ -1309,29 +1309,29 @@ cost_model:
     closing_auction_multiplier: 2.0
 ```
 
-#### 11.2.3 多市场支持
+#### 11.2.3 多市场支�?
 
 | 市场类型 | 成本项目 | 费率标准 | 备注 |
 |----------|----------|----------|------|
-| **A股主板** | 佣金 | 万三，最低5元 | 可申请免五 |
-| | 印花税 | 0.1%（卖出） | 仅卖出收取 |
-| | 过户费 | 0.002%（双向） | 沪市、深市 |
-| **科创板** | 佣金 | 万三，最低5元 | 同主板 |
-| | 印花税 | 0.1%（卖出） | 同主板 |
-| | 过户费 | 0.002%（双向） | 同主板 |
-| **港股** | 佣金 | 0.25%，最低100HKD | 券商差异大 |
-| | 印花税 | 0.13%（双向） | 香港特区政府 |
-| | 交易征费 | 0.0027% | 证监会 |
-| **美股** | 佣金 | 0$（多数券商） | 零佣金趋势 |
-| | 监管费 | 0.0000221%（卖出） | FINRA |
+| **A股主�?* | 佣金 | 万三，最�?�?| 可申请免�?|
+| | 印花�?| 0.1%（卖出） | 仅卖出收�?|
+| | 过户�?| 0.002%（双向） | 沪市、深�?|
+| **科创�?* | 佣金 | 万三，最�?�?| 同主�?|
+| | 印花�?| 0.1%（卖出） | 同主�?|
+| | 过户�?| 0.002%（双向） | 同主�?|
+| **港股** | 佣金 | 0.25%，最�?00HKD | 券商差异�?|
+| | 印花�?| 0.13%（双向） | 香港特区政府 |
+| | 交易征费 | 0.0027% | 证监�?|
+| **美股** | 佣金 | 0$（多数券商） | 零佣金趋�?|
+| | 监管�?| 0.0000221%（卖出） | FINRA |
 
 ### 11.3 账户管理模块详细设计 (AccountManager)
 
-#### 11.3.1 多账户管理架构
+#### 11.3.1 多账户管理架�?
 
 ```python
 class AccountManager:
-    """账户管理器"""
+    """账户管理�?""
     
     def __init__(self, config: AccountManagerConfig):
         self.config = config
@@ -1365,7 +1365,7 @@ class AccountManager:
     def allocate_capital(self, strategy_id: str, target_allocation: Dict[str, float]) -> AllocationResult:
         """资金分配"""
         
-        # 1. 计算可用资金池
+        # 1. 计算可用资金�?
         available_cash = self.cash_manager.get_available_cash()
         
         # 2. 根据风险限制调整分配
@@ -1396,14 +1396,14 @@ class AccountManager:
         )
     
     def execute_cross_account_rebalance(self, rebalance_plan: RebalancePlan) -> RebalanceResult:
-        """执行跨账户调仓"""
+        """执行跨账户调�?""
         
         results = {}
         
-        # 按账户分组订单
+        # 按账户分组订�?
         account_orders = self._group_orders_by_account(rebalance_plan.orders)
         
-        # 并行执行各账户调仓
+        # 并行执行各账户调�?
         for account_id, orders in account_orders.items():
             account = self.accounts[account_id]
             
@@ -1414,12 +1414,12 @@ class AccountManager:
             result = rebalancer.rebalance(account.portfolio, orders)
             results[account_id] = result
             
-            # 风险检查
+            # 风险检�?
             risk_check = self.risk_manager.check_post_trade_risk(account, result)
             if not risk_check.passed:
                 logger.warning(f"账户 {account_id} 调仓后风险检查未通过: {risk_check.violations}")
         
-        # 汇总结果
+        # 汇总结�?
         aggregated_result = self._aggregate_rebalance_results(results)
         
         # 资金结算
@@ -1460,11 +1460,11 @@ class AccountManager:
 ```yaml
 # config/account_manager.yaml
 account_manager:
-  # 资金池配置
+  # 资金池配�?
   cash_pool:
     total_capital: 10000000          # 总资金池
-    reserve_ratio: 0.1               # 储备金比例10%
-    max_leverage: 1.0                # 最大杠杆1倍
+    reserve_ratio: 0.1               # 储备金比�?0%
+    max_leverage: 1.0                # 最大杠�?�?
     
   # 账户配置列表
   accounts:
@@ -1479,7 +1479,7 @@ account_manager:
       sector_limit: 0.4
       
     - id: "sim_002"
-      name: "模拟账户-价值"
+      name: "模拟账户-价�?
       type: "SIMULATION"
       engine_type: "rqalpha_backtest"
       initial_capital: 3000000
@@ -1507,7 +1507,7 @@ account_manager:
   
   # 风险管理配置
   risk_limits:
-    max_drawdown: 0.15               # 最大回撤15%
+    max_drawdown: 0.15               # 最大回�?5%
     max_var_95: 0.05                 # 95% VaR 5%
     max_concentration: 0.3           # 最大集中度30%
     
@@ -1515,17 +1515,17 @@ account_manager:
   settlement:
     time: "16:00:00"                 # 每日结算时间
     auto_transfer: true              # 自动资金调拨
-    min_transfer_amount: 1000        # 最小调拨金额
+    min_transfer_amount: 1000        # 最小调拨金�?
 ```
 
-#### 11.3.3 多引擎账户协同
+#### 11.3.3 多引擎账户协�?
 
 | 账户类型 | 引擎 | 管理策略 | 协同方式 |
 |----------|------|----------|----------|
-| **模拟账户** | vn.py/RQAlpha | 独立管理，自由调仓 | 定期同步持仓数据 |
-| **实盘账户** | QMT/vn.py实盘 | 严格风控，有限调仓 | 实时监控，自动风控 |
-| **回测账户** | RQAlpha/Backtrader | 策略验证，参数优化 | 结果对比，参数迁移 |
-| **资金池** | 自管理 | 统一调度，风险控制 | 跨账户资金平衡 |
+| **模拟账户** | vn.py/RQAlpha | 独立管理，自由调�?| 定期同步持仓数据 |
+| **实盘账户** | QMT/vn.py实盘 | 严格风控，有限调�?| 实时监控，自动风�?|
+| **回测账户** | RQAlpha/Backtrader | 策略验证，参数优�?| 结果对比，参数迁�?|
+| **资金�?* | 自管�?| 统一调度，风险控�?| 跨账户资金平�?|
 
 
 ## 12. 开源模块集成方案（P1/P2扩展项）
@@ -1534,24 +1534,24 @@ account_manager:
 
 | 维度 | 机构标准 | 权重 | 评估方法 |
 |------|----------|------|----------|
-| **专业化程度** | 金融领域专有功能支持 | 30% | A股规则适配、交易成本精确计算 |
-| **生产就绪度** | 企业级稳定性、性能指标 | 25% | 压力测试结果、故障恢复机制 |
-| **集成复杂度** | 与现有架构兼容性 | 20% | API一致性、数据格式转换成本 |
-| **维护成本** | 社区活跃度、文档完整性 | 15% | 更新频率、Issue响应速度 |
-| **技术债务** | 长期可持续性 | 10% | 技术栈前瞻性、向后兼容 |
+| **专业化程�?* | 金融领域专有功能支持 | 30% | A股规则适配、交易成本精确计�?|
+| **生产就绪�?* | 企业级稳定性、性能指标 | 25% | 压力测试结果、故障恢复机�?|
+| **集成复杂�?* | 与现有架构兼容�?| 20% | API一致性、数据格式转换成�?|
+| **维护成本** | 社区活跃度、文档完整�?| 15% | 更新频率、Issue响应速度 |
+| **技术债务** | 长期可持续�?| 10% | 技术栈前瞻性、向后兼�?|
 
 ### 12.2 最优解方案（专业机构推荐）
 
-#### 12.2.1 报告生成系统 → QuantStats + JupyterLab
-**许可证**: Apache-2.0 (免费开源)
+#### 12.2.1 报告生成系统 �?QuantStats + JupyterLab
+**许可�?*: Apache-2.0 (免费开�?
 
 | 对比维度 | QuantStats | 原方案gs-quant | 胜出原因 |
 |----------|------------|-----------------|----------|
-| **A股支持** | ✅ 完整支持 | ⚠️ 有限支持 | 直接支持A股收益率计算 |
-| **集成复杂度** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 纯Python，无外部API依赖 |
-| **报告质量** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 生成专业HTML/PDF，图表丰富 |
-| **性能** | 百万级数据处理 | 千万级处理 | 满足99%场景需求 |
-| **社区活跃** | 2.5k+星标，月更新 | 高盛内部维护 | 开源透明，持续迭代 |
+| **A股支�?* | �?完整支持 | ⚠️ 有限支持 | 直接支持A股收益率计算 |
+| **集成复杂�?* | ⭐⭐⭐⭐�?| ⭐⭐ | 纯Python，无外部API依赖 |
+| **报告质量** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| 生成专业HTML/PDF，图表丰�?|
+| **性能** | 百万级数据处�?| 千万级处�?| 满足99%场景需�?|
+| **社区活跃** | 2.5k+星标，月更新 | 高盛内部维护 | 开源透明，持续迭�?|
 
 **集成代码示例**:
 ```python
@@ -1572,42 +1572,42 @@ class QuantStatsReporter:
                        title='策略绩效分析报告')
 ```
 
-#### 12.2.2 Web管理界面 → React + FastAPI + Plotly
-**许可证**: MIT (免费开源)
+#### 12.2.2 Web管理界面 �?React + FastAPI + Plotly
+**许可�?*: MIT (免费开�?
 
 | 对比维度 | React + FastAPI | 原方案Streamlit | 胜出原因 |
 |----------|-----------------|-----------------|----------|
-| **并发性能** | 10k+并发 | 500并发限制 | 企业级负载需求 |
-| **用户体验** | 企业级SPA | 简单交互 | 交易员需要专业界面 |
-| **开发效率** | 中（需要前端技能） | 高 | 长期维护成本更低 |
-| **可扩展性** | 模块化架构 | 受限 | 未来功能扩展需求 |
-| **部署灵活性** | 前后端分离 | 单体应用 | 微服务架构兼容 |
+| **并发性能** | 10k+并发 | 500并发限制 | 企业级负载需�?|
+| **用户体验** | 企业级SPA | 简单交�?| 交易员需要专业界�?|
+| **开发效�?* | 中（需要前端技能） | �?| 长期维护成本更低 |
+| **可扩展�?* | 模块化架�?| 受限 | 未来功能扩展需�?|
+| **部署灵活�?* | 前后端分�?| 单体应用 | 微服务架构兼�?|
 
 **架构设计**:
 ```
-┌─────────────────┐    ┌──────────────┐    ┌──────────────┐
-│   React前端     │◄──►│  FastAPI网关 │◄──►│  交易引擎    │
-│  - 实时图表     │    │  - 认证授权  │    │  - vn.py     │
-│  - 订单管理     │    │  - 路由转发  │    │  - QMT       │
-│  - 风险监控     │    │  - 限流熔断  │    │  - RQAlpha   │
-└─────────────────┘    └──────────────┘    └──────────────┘
+┌─────────────────�?   ┌──────────────�?   ┌──────────────�?
+�?  React前端     │◄──►│  FastAPI网关 │◄──►│  交易引擎    �?
+�? - 实时图表     �?   �? - 认证授权  �?   �? - vn.py     �?
+�? - 订单管理     �?   �? - 路由转发  �?   �? - QMT       �?
+�? - 风险监控     �?   �? - 限流熔断  �?   �? - RQAlpha   �?
+└─────────────────�?   └──────────────�?   └──────────────�?
 ```
 
-#### 12.2.3 市场模拟引擎 → AXOrderBook + 自定义撮合器
-**许可证**: MIT (免费开源)
+#### 12.2.3 市场模拟引擎 �?AXOrderBook + 自定义撮合器
+**许可�?*: MIT (免费开�?
 
 | 对比维度 | AXOrderBook | 原方案LightMatchingEngine | 胜出原因 |
 |----------|-------------|---------------------------|----------|
-| **A股适配** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 专门为A股设计 |
+| **A股适配** | ⭐⭐⭐⭐�?| ⭐⭐ | 专门为A股设�?|
 | **规则支持** | 涨停跌停、T+1 | 基础价格时间优先 | A股合规必需 |
-| **性能** | FPGA加速版本 | 纯Python实现 | 高频模拟需求 |
-| **数据源** | 逐笔行情重建 | 模拟数据生成 | 真实性保障 |
-| **千档快照** | ✅ 支持 | ❌ 不支持 | 专业机构需求 |
+| **性能** | FPGA加速版�?| 纯Python实现 | 高频模拟需�?|
+| **数据�?* | 逐笔行情重建 | 模拟数据生成 | 真实性保�?|
+| **千档快照** | �?支持 | �?不支�?| 专业机构需�?|
 
-**核心特性**:
-- **逐笔行情重建**：使用交易所L2数据精确重建订单簿
+**核心特�?*:
+- **逐笔行情重建**：使用交易所L2数据精确重建订单�?
 - **涨停跌停规则**：内置A股涨跌停价格计算算法
-- **FPGA加速**：可选FPGA版本，性能提升100倍
+- **FPGA加�?*：可选FPGA版本，性能提升100�?
 - **千档快照**：支持专业机构的深度市场数据分析
 
 **集成代码**:
@@ -1620,9 +1620,9 @@ class AShareMatchingEngine:
         self.reconstructor = OrderBookReconstructor()
         
     def match_order(self, order: UnifiedOrder):
-        # A股特有规则检查
+        # A股特有规则检�?
         if self._is_price_limit_hit(order.symbol, order.price):
-            raise PriceLimitError("触及涨跌停限制")
+            raise PriceLimitError("触及涨跌停限�?)
             
         if order.side == OrderSide.SELL and self._is_tplus_one_violation(order):
             raise TPlusOneError("T+1规则违规")
@@ -1631,28 +1631,28 @@ class AShareMatchingEngine:
         return self.reconstructor.match(order)
 ```
 
-#### 12.2.4 数据一致性 → PostgreSQL逻辑复制 + Redis Streams
-**许可证**: PostgreSQL License + BSD (免费开源)
+#### 12.2.4 数据一致�?�?PostgreSQL逻辑复制 + Redis Streams
+**许可�?*: PostgreSQL License + BSD (免费开�?
 
 | 对比维度 | PostgreSQL+Redis | 原方案Debezium+Kafka | 胜出原因 |
 |----------|------------------|---------------------|----------|
-| **架构复杂度** | 中 | 极高 | 中等规模系统最佳平衡 |
-| **维护成本** | 低（DBA熟悉） | 高（需要专职团队） | 资源有限团队 |
-| **延迟** | <50ms | <10ms | 交易系统可接受 |
-| **可靠性** | 强一致性保证 | 最终一致性 | 财务数据必需强一致 |
-| **学习曲线** | 平缓 | 陡峭 | 团队技能匹配 |
+| **架构复杂�?* | �?| 极高 | 中等规模系统最佳平�?|
+| **维护成本** | 低（DBA熟悉�?| 高（需要专职团队） | 资源有限团队 |
+| **延迟** | <50ms | <10ms | 交易系统可接�?|
+| **可靠�?* | 强一致性保�?| 最终一致�?| 财务数据必需强一�?|
+| **学习曲线** | 平缓 | 陡峭 | 团队技能匹�?|
 
 **Saga模式实现**:
 ```python
 # 基于Saga的跨引擎数据同步
 class TradingSaga:
     def execute_cross_engine_transfer(self, transfer: TransferRequest):
-        # 1. 预检查阶段
+        # 1. 预检查阶�?
         self._pre_check(transfer)
         
         # 2. 执行阶段（补偿事务支持）
         try:
-            # 源引擎扣减
+            # 源引擎扣�?
             result1 = self._debit_from_source(transfer)
             
             # 目标引擎增加
@@ -1666,7 +1666,7 @@ class TradingSaga:
             self._compensate_transfer(transfer, e)
             
     def _compensate_transfer(self, transfer: TransferRequest, error: Exception):
-        # 基于Redis Streams的事件驱动补偿
+        # 基于Redis Streams的事件驱动补�?
         compensation_event = CompensationEvent(
             transfer_id=transfer.id,
             error=str(error),
@@ -1675,8 +1675,8 @@ class TradingSaga:
         redis_client.xadd('compensation_stream', compensation_event.dict())
 ```
 
-#### 12.2.5 API文档 → FastAPI（保持最优）
-**许可证**: MIT (免费开源)
+#### 12.2.5 API文档 �?FastAPI（保持最优）
+**许可�?*: MIT (免费开�?
 
 **增强方案**:
 ```python
@@ -1699,24 +1699,24 @@ security = HTTPBearer()
 
 @app.get("/api/v1/positions", 
          summary="获取持仓信息",
-         description="跨引擎合并持仓查询",
+         description="跨引擎合并持仓查�?,
          response_model=List[Position])
 async def get_positions(
     credentials: HTTPAuthorizationCredentials = Security(security)
 ):
-    """机构级持仓查询接口"""
+    """机构级持仓查询接�?""
     pass
 ```
 
-#### 12.2.6 部署架构 → Nautilus Trader Docker + K8s（保持参考）
-**许可证**: MIT/Apache (免费开源)
+#### 12.2.6 部署架构 �?Nautilus Trader Docker + K8s（保持参考）
+**许可�?*: MIT/Apache (免费开�?
 
 **优化配置**:
 ```yaml
 # docker-compose.prod.yaml
 version: '3.8'
 services:
-  # A股行情服务
+  # A股行情服�?
   ashare-marketdata:
     image: ashare-marketdata:latest
     environment:
@@ -1735,7 +1735,7 @@ services:
       - ENGINE_TYPES=vnpy,qmt,rqalpha,backtrader
       - FAILOVER_STRATEGY=auto_switch
     
-  # A股风险控制
+  # A股风险控�?
   ashare-risk:
     image: ashare-risk:latest
     environment:
@@ -1744,85 +1744,85 @@ services:
       - ST_RULES_ENABLED=true
 ```
 
-### 12.3 许可证确认与开源保证
+### 12.3 许可证确认与开源保�?
 
-所有推荐模块均为**100%免费开源项目**，无任何商业许可费用：
+所有推荐模块均�?*100%免费开源项�?*，无任何商业许可费用�?
 
 | 模块 | 开源许可证 | 商业使用 | 修改分发 | 专利授权 |
 |------|------------|----------|----------|----------|
-| **QuantStats** | Apache-2.0 | ✅ 允许 | ✅ 允许 | ✅ 包含 |
-| **React** | MIT | ✅ 允许 | ✅ 允许 | ❌ 不包含 |
-| **FastAPI** | MIT | ✅ 允许 | ✅ 允许 | ❌ 不包含 |
-| **AXOrderBook** | MIT | ✅ 允许 | ✅ 允许 | ❌ 不包含 |
-| **PostgreSQL** | PostgreSQL License | ✅ 允许 | ✅ 允许 | ✅ 包含 |
-| **Redis** | BSD 3-Clause | ✅ 允许 | ✅ 允许 | ❌ 不包含 |
-| **Nautilus Trader** | MIT/Apache-2.0 | ✅ 允许 | ✅ 允许 | 视版本而定 |
+| **QuantStats** | Apache-2.0 | �?允许 | �?允许 | �?包含 |
+| **React** | MIT | �?允许 | �?允许 | �?不包�?|
+| **FastAPI** | MIT | �?允许 | �?允许 | �?不包�?|
+| **AXOrderBook** | MIT | �?允许 | �?允许 | �?不包�?|
+| **PostgreSQL** | PostgreSQL License | �?允许 | �?允许 | �?包含 |
+| **Redis** | BSD 3-Clause | �?允许 | �?允许 | �?不包�?|
+| **Nautilus Trader** | MIT/Apache-2.0 | �?允许 | �?允许 | 视版本而定 |
 
-**开源合规性保证**：
-1. **无传染性条款**：所有许可证均非GPL，不会强制开源衍生代码
+**开源合规性保�?*�?
+1. **无传染性条�?*：所有许可证均非GPL，不会强制开源衍生代�?
 2. **专利保护**：Apache-2.0和PostgreSQL License提供专利授权保护
-3. **商业友好**：所有许可证均允许商业使用，无需支付许可费
-4. **修改自由**：允许修改源代码并闭源分发修改版本（MIT/BSD）
+3. **商业友好**：所有许可证均允许商业使用，无需支付许可�?
+4. **修改自由**：允许修改源代码并闭源分发修改版本（MIT/BSD�?
 
-### 12.4 集成路线图与优先级
+### 12.4 集成路线图与优先�?
 
-#### 第一阶段：基础能力建设（2-4周）
-1.  **核心集成**：QuantStats报告系统 + PostgreSQL数据层
-2.  **A股适配**：AXOrderBook集成到模拟引擎
-3.  **API标准化**：FastAPI统一接口层开发
+#### 第一阶段：基础能力建设�?-4周）
+1.  **核心集成**：QuantStats报告系统 + PostgreSQL数据�?
+2.  **A股适配**：AXOrderBook集成到模拟引�?
+3.  **API标准�?*：FastAPI统一接口层开�?
 
 #### 第二阶段：专业功能增强（3-5周）
-4.  **Web界面**：React前端 + 实时图表开发
-5.  **风控系统**：A股规则引擎实现
-6.  **部署优化**：Docker容器化 + K8s编排
+4.  **Web界面**：React前端 + 实时图表开�?
+5.  **风控系统**：A股规则引擎实�?
+6.  **部署优化**：Docker容器�?+ K8s编排
 
-#### 第三阶段：生产级优化（2-3周）
+#### 第三阶段：生产级优化�?-3周）
 7.  **性能压测**：多引擎并发测试
 8.  **故障恢复**：Saga补偿机制完善
 9.  **监控告警**：Prometheus + Grafana监控
 
-### 12.5 风险与缓解措施
+### 12.5 风险与缓解措�?
 
 | 风险 | 影响 | **缓解措施** |
 |------|------|--------------|
 | **AXOrderBook学习曲线** | 集成延迟 | 提供详细中文文档 + 示例代码 |
-| **React前端开发资源** | 人力成本 | 使用Ant Design Pro模板加速 |
-| **多引擎数据一致性** | 数据错误 | 实施Saga模式 + 每日对账 |
-| **生产环境性能** | 延迟超标 | 分阶段压力测试 + 性能优化 |
+| **React前端开发资�?* | 人力成本 | 使用Ant Design Pro模板加�?|
+| **多引擎数据一致�?* | 数据错误 | 实施Saga模式 + 每日对账 |
+| **生产环境性能** | 延迟超标 | 分阶段压力测�?+ 性能优化 |
 
 
 ## 13. 轻量级引擎与专业工具扩展
 
-### 13.1 新发现的开源项目与集成价值
+### 13.1 新发现的开源项目与集成价�?
 
-在深入搜索GitHub后，发现了以下**成熟、免费、开源**的模拟交易相关项目，可显著增强系统能力：
+在深入搜索GitHub后，发现了以�?*成熟、免费、开�?*的模拟交易相关项目，可显著增强系统能力：
 
-| 项目 | 星标 | 许可证 | 核心功能 | 集成价值 | 状态 |
+| 项目 | 星标 | 许可�?| 核心功能 | 集成价�?| 状�?|
 |------|------|--------|----------|----------|------|
-| **backtesting.py** | 14k+ | MIT | 轻量级回测框架，向量化引擎 | ⭐⭐⭐⭐⭐ | ✅ 已成功安装 |
-| **pyfolio** | 4.5k+ | Apache-2.0 | 专业绩效分析与风险报告 | ⭐⭐⭐⭐⭐ | ⚠️ 兼容性问题 |
-| **empyrical** | 1.2k+ | Apache-2.0 | 金融风险指标计算库 | ⭐⭐⭐⭐ | ⚠️ 兼容性问题 |
-| **Riskfolio-Lib** | 3k+ | MIT | 投资组合优化（现代投资组合理论） | ⭐⭐⭐⭐ | 🔄 待测试 |
-| **bt** | 2.8k+ | MIT | 灵活回测框架，树形策略结构 | ⭐⭐⭐⭐ | 🔄 待测试 |
-| **ffn** | 2.5k+ | MIT | 金融函数库（绩效衡量、资产配置） | ⭐⭐⭐ | 🔄 待测试 |
-| **zipline** | 16k+ | Apache-2.0 | 完整事件驱动回测框架 | ⭐⭐⭐⭐ | 🔄 待测试 |
-| **QSTrader** | 1.5k+ | MIT | 专业回测引擎，支持多资产 | ⭐⭐⭐⭐ | 🔄 待测试 |
+| **backtesting.py** | 14k+ | MIT | 轻量级回测框架，向量化引�?| ⭐⭐⭐⭐�?| �?已成功安�?|
+| **pyfolio** | 4.5k+ | Apache-2.0 | 专业绩效分析与风险报�?| ⭐⭐⭐⭐�?| ⚠️ 兼容性问�?|
+| **empyrical** | 1.2k+ | Apache-2.0 | 金融风险指标计算�?| ⭐⭐⭐⭐ | ⚠️ 兼容性问�?|
+| **Riskfolio-Lib** | 3k+ | MIT | 投资组合优化（现代投资组合理论） | ⭐⭐⭐⭐ | 🔄 待测�?|
+| **bt** | 2.8k+ | MIT | 灵活回测框架，树形策略结�?| ⭐⭐⭐⭐ | 🔄 待测�?|
+| **ffn** | 2.5k+ | MIT | 金融函数库（绩效衡量、资产配置） | ⭐⭐�?| 🔄 待测�?|
+| **zipline** | 16k+ | Apache-2.0 | 完整事件驱动回测框架 | ⭐⭐⭐⭐ | 🔄 待测�?|
+| **QSTrader** | 1.5k+ | MIT | 专业回测引擎，支持多资产 | ⭐⭐⭐⭐ | 🔄 待测�?|
 
-### 13.2 第一阶段集成：兼容性解决方案
+### 13.2 第一阶段集成：兼容性解决方�?
 
 #### 13.2.1 backtesting.py - 成功集成
 ```python
 # 已成功安装并测试
 # 安装命令：pip install backtesting
-# 版本：0.6.5
-# 状态：✅ 完全兼容Python 3.13，无依赖冲突
+# 版本�?.6.5
+# 状态：�?完全兼容Python 3.13，无依赖冲突
 ```
 
 #### 13.2.2 pyfolio/empyrical - 兼容性问题与解决方案
-**问题**：原版pyfolio/empyrical使用旧版versioneer.py，与Python 3.13不兼容（SafeConfigParser错误）。
+**问题**：原版pyfolio/empyrical使用旧版versioneer.py，与Python 3.13不兼容（SafeConfigParser错误）�?
 
-**解决方案**：
-1. **推荐方案**：使用`pyfolio-reloaded`和`empyrical-reloaded`（社区维护的更新版本）
+**解决方案**�?
+1. **推荐方案**：使用`pyfolio-reloaded`和`empyrical-reloaded`（社区维护的更新版本�?
    ```bash
    # 安装reloaded版本
    pip install pyfolio-reloaded empyrical-reloaded
@@ -1830,18 +1830,18 @@ services:
    
 2. **依赖冲突**：`vnpy-sqlite`需要`peewee>=3.17.9`，而`pyfolio-reloaded`依赖`peewee==3.17.3`
    
-3. **解决策略**：
+3. **解决策略**�?
    ```yaml
    # 解决方案1：升级peewee版本（推荐）
    pip install peewee==3.18.3  # 先升级peewee
    pip install pyfolio-reloaded --no-deps  # 跳过依赖安装
    pip install empyrical-reloaded --no-deps
    
-   # 解决方案2：使用虚拟环境隔离
-   # 创建专门用于分析的环境，避免与交易引擎冲突
+   # 解决方案2：使用虚拟环境隔�?
+   # 创建专门用于分析的环境，避免与交易引擎冲�?
    
-   # 解决方案3：使用QuantStats替代（无依赖冲突）
-   pip install quantstats  # 已在前述方案中推荐
+   # 解决方案3：使用QuantStats替代（无依赖冲突�?
+   pip install quantstats  # 已在前述方案中推�?
    ```
 
 #### 13.2.3 集成架构设计
@@ -1853,8 +1853,8 @@ class EnhancedEngineFactory:
         'rqalpha': RQAlphaAdapter,
         'backtrader': BacktraderAdapter,
         'qmt': QMTAdapter,
-        'backtesting': BacktestingPyAdapter,  # 新增轻量级引擎
-        'bt': BtFrameworkAdapter,            # 待集成
+        'backtesting': BacktestingPyAdapter,  # 新增轻量级引�?
+        'bt': BtFrameworkAdapter,            # 待集�?
     }
     
     def create_engine(self, engine_type: str, config: Dict):
@@ -1868,7 +1868,7 @@ class EnhancedEngineFactory:
 
 ### 13.3 各工具的核心增强能力
 
-#### 13.3.1 backtesting.py - 轻量级快速验证
+#### 13.3.1 backtesting.py - 轻量级快速验�?
 ```python
 from backtesting import Backtest, Strategy
 
@@ -1888,7 +1888,7 @@ import pyfolio_reloaded as pf
 class ProfessionalPerformanceAnalyzer:
     """机构级绩效分析器"""
     def generate_tear_sheet(self, returns, positions, benchmark=None):
-        """生成专业拆解报告（30+种分析图表）"""
+        """生成专业拆解报告�?0+种分析图表）"""
         pf.create_full_tear_sheet(
             returns=returns,
             positions=positions,
@@ -1902,7 +1902,7 @@ class ProfessionalPerformanceAnalyzer:
 import riskfolio as rp
 
 class PortfolioOptimizer:
-    """现代投资组合理论优化器"""
+    """现代投资组合理论优化�?""
     def optimize(self, returns, risk_model='CVaR'):
         """多种优化模型支持"""
         model = rp.Portfolio(returns=returns)
@@ -1919,9 +1919,9 @@ class PortfolioOptimizer:
 ### 13.4 集成路线图（修订版）
 
 #### 第一阶段：立即集成（1-2周）
-1. **backtesting.py** - 作为第五轻量级引擎集成
-2. **pyfolio-reloaded** + **empyrical-reloaded** - 解决依赖冲突后集成
-3. **QuantStats** - 作为备选方案，无依赖冲突
+1. **backtesting.py** - 作为第五轻量级引擎集�?
+2. **pyfolio-reloaded** + **empyrical-reloaded** - 解决依赖冲突后集�?
+3. **QuantStats** - 作为备选方案，无依赖冲�?
 
 #### 第二阶段：专业增强（2-3周）
 4. **Riskfolio-Lib** - 投资组合优化引擎
@@ -1934,14 +1934,14 @@ class PortfolioOptimizer:
 ### 13.5 依赖管理建议
 
 ```txt
-# requirements_extensions.txt（已创建）
+# requirements_extensions.txt（已创建�?
 # 分阶段安装，避免依赖冲突
 
-# 第一阶段（无冲突）
+# 第一阶段（无冲突�?
 backtesting>=0.6.0
 quantstats>=0.0.37
 
-# 第二阶段（需解决peewee冲突）
+# 第二阶段（需解决peewee冲突�?
 pyfolio-reloaded>=0.9.9
 empyrical-reloaded>=0.5.12
 # 注意：需要先升级peewee>=3.17.9
@@ -1952,179 +1952,179 @@ bt>=0.2.0
 ffn>=0.3.0
 ```
 
-### 13.6 风险与缓解
+### 13.6 风险与缓�?
 
 | 风险 | 影响 | **缓解措施** |
 |------|------|--------------|
-| **依赖冲突** | 系统不稳定 | 使用虚拟环境隔离，分阶段集成 |
-| **Python 3.13兼容性** | 部分库无法使用 | 使用reloaded版本或寻找替代方案 |
-| **性能开销** | 系统响应变慢 | 轻量级引擎按需加载，分析任务异步执行 |
-| **学习成本** | 集成延迟 | 提供详细示例代码和中文文档 |
+| **依赖冲突** | 系统不稳�?| 使用虚拟环境隔离，分阶段集成 |
+| **Python 3.13兼容�?* | 部分库无法使�?| 使用reloaded版本或寻找替代方�?|
+| **性能开销** | 系统响应变慢 | 轻量级引擎按需加载，分析任务异步执�?|
+| **学习成本** | 集成延迟 | 提供详细示例代码和中文文�?|
 
 
-## 14. 结论与建议
+## 14. 结论与建�?
 
 ### 14.1 技术选型总结
 
-1. **主引擎选择**：**vn.py**作为生产级主引擎，理由：
+1. **主引擎选择**�?*vn.py**作为生产级主引擎，理由：
    - 对A股支持最完整
    - 经过实盘生产验证
-   - 中文生态完善
+   - 中文生态完�?
    - 社区活跃度高
 
-2. **专业回测引擎**：**RQAlpha**作为专业回测引擎，理由：
+2. **专业回测引擎**�?*RQAlpha**作为专业回测引擎，理由：
    - A股深度定制，规则完整
-   - 回测引擎专业，避免未来函数
-   - 米筐数据生态支持
+   - 回测引擎专业，避免未来函�?
+   - 米筐数据生态支�?
 
-3. **功能补充引擎**：**Backtrader**作为功能补充，理由：
-   - 功能最全面，122+指标
-   - 多资产支持
-   - 国际标准，易于扩展
+3. **功能补充引擎**�?*Backtrader**作为功能补充，理由：
+   - 功能最全面�?22+指标
+   - 多资产支�?
+   - 国际标准，易于扩�?
 
 ### 14.2 架构优势
 
-1. **风险分散**：不依赖单一引擎，降低技术风险
-2. **功能互补**：不同引擎优势互补，覆盖全场景
-3. **灵活扩展**：易于添加新引擎，保持架构开放性
-4. **平滑迁移**：支持渐进式迁移，降低切换风险
+1. **风险分散**：不依赖单一引擎，降低技术风�?
+2. **功能互补**：不同引擎优势互补，覆盖全场�?
+3. **灵活扩展**：易于添加新引擎，保持架构开放�?
+4. **平滑迁移**：支持渐进式迁移，降低切换风�?
 
 ### 14.3 实施建议
 
-1. **渐进式实施**：先集成vn.py，再逐步添加其他引擎
+1. **渐进式实�?*：先集成vn.py，再逐步添加其他引擎
 2. **充分测试**：建立完整的对比测试体系
-3. **监控先行**：实施前建立完善的监控体系
-4. **文档驱动**：编写详细的使用和集成文档
+3. **监控先行**：实施前建立完善的监控体�?
+4. **文档驱动**：编写详细的使用和集成文�?
 
 ### 14.4 后续规划
 
-1. **短期（1-3月）**：完成vn.py集成，建立基础框架
-2. **中期（3-6月）**：集成RQAlpha和Backtrader，完善功能
-3. **长期（6-12月）**：优化性能，开发高级功能，社区贡献
+1. **短期�?-3月）**：完成vn.py集成，建立基础框架
+2. **中期�?-6月）**：集成RQAlpha和Backtrader，完善功�?
+3. **长期�?-12月）**：优化性能，开发高级功能，社区贡献
 
 
-## 15. 待办事项与后续评审清单
+## 15. 待办事项与后续评审清�?
 
-### 15.1 已完成项（✅）
+### 15.1 已完成项（✅�?
 
-| 项目 | 状态 | 完成时间 | 说明 |
+| 项目 | 状�?| 完成时间 | 说明 |
 |------|------|----------|------|
-| **backtesting.py引擎集成** | ✅ 已完成 | 2026-04-01 | 作为第五轻量级引擎添加到架构中 |
-| **基础适配器框架** | ✅ 已完成 | 2026-04-01 | BaseEngineAdapter、EngineFactory等基础类 |
-| **依赖清单创建** | ✅ 已完成 | 2026-04-01 | requirements_extensions.txt包含所有扩展依赖 |
-| **蓝图文档更新** | ✅ 已完成 | 2026-04-01 | 轻量级引擎与专业工具扩展章节 |
+| **backtesting.py引擎集成** | �?已完�?| 2026-04-01 | 作为第五轻量级引擎添加到架构�?|
+| **基础适配器框�?* | �?已完�?| 2026-04-01 | BaseEngineAdapter、EngineFactory等基础�?|
+| **依赖清单创建** | �?已完�?| 2026-04-01 | requirements_extensions.txt包含所有扩展依�?|
+| **蓝图文档更新** | �?已完�?| 2026-04-01 | 轻量级引擎与专业工具扩展章节 |
 
-### 15.2 待集成引擎（第一阶段）
+### 15.2 待集成引擎（第一阶段�?
 
-| 引擎 | 优先级 | 状态 | 依赖 | 预计工时 | 风险 |
+| 引擎 | 优先�?| 状�?| 依赖 | 预计工时 | 风险 |
 |------|--------|------|------|----------|------|
-| **vn.py适配器** | P0（最高） | 🔄 待实现 | vn.py | 3-5天 | 中（A股规则复杂） |
-| **RQAlpha适配器** | P0 | 🔄 待实现 | RQAlpha | 2-4天 | 低（专业回测框架） |
-| **Backtrader适配器** | P1 | 🔄 待实现 | backtrader | 2-3天 | 低（国际标准） |
-| **QMT适配器** | P1 | 🔄 待实现 | xtquant | 3-5天 | 中（券商API依赖） |
+| **vn.py适配�?* | P0（最高） | 🔄 待实�?| vn.py | 3-5�?| 中（A股规则复杂） |
+| **RQAlpha适配�?* | P0 | 🔄 待实�?| RQAlpha | 2-4�?| 低（专业回测框架�?|
+| **Backtrader适配�?* | P1 | 🔄 待实�?| backtrader | 2-3�?| 低（国际标准�?|
+| **QMT适配�?* | P1 | 🔄 待实�?| xtquant | 3-5�?| 中（券商API依赖�?|
 
 ### 15.3 专业工具集成（第二阶段）
 
-| 工具 | 优先级 | 状态 | 依赖 | 预计工时 | 备注 |
+| 工具 | 优先�?| 状�?| 依赖 | 预计工时 | 备注 |
 |------|--------|------|------|----------|------|
-| **pyfolio-reloaded** | P1 | ⚠️ 依赖冲突 | pyfolio-reloaded | 1-2天 | peewee版本冲突需解决 |
-| **empyrical-reloaded** | P1 | ⚠️ 依赖冲突 | empyrical-reloaded | 1天 | 同pyfolio依赖问题 |
-| **QuantStats** | P1 | 🔄 待测试 | quantstats | 1天 | 备选方案，无依赖冲突 |
-| **Riskfolio-Lib** | P2 | 🔄 待测试 | Riskfolio-Lib | 2-3天 | 投资组合优化 |
-| **bt框架** | P2 | 🔄 待测试 | bt, ffn | 1-2天 | 灵活回测框架 |
+| **pyfolio-reloaded** | P1 | ⚠️ 依赖冲突 | pyfolio-reloaded | 1-2�?| peewee版本冲突需解决 |
+| **empyrical-reloaded** | P1 | ⚠️ 依赖冲突 | empyrical-reloaded | 1�?| 同pyfolio依赖问题 |
+| **QuantStats** | P1 | 🔄 待测�?| quantstats | 1�?| 备选方案，无依赖冲�?|
+| **Riskfolio-Lib** | P2 | 🔄 待测�?| Riskfolio-Lib | 2-3�?| 投资组合优化 |
+| **bt框架** | P2 | 🔄 待测�?| bt, ffn | 1-2�?| 灵活回测框架 |
 
 ### 15.4 A股专业化增强（第三阶段）
 
-| 功能 | 优先级 | 状态 | 依赖 | 预计工时 | 说明 |
+| 功能 | 优先�?| 状�?| 依赖 | 预计工时 | 说明 |
 |------|--------|------|------|----------|------|
-| **A股规则引擎** | P1 | 🔄 待设计 | 无 | 3-5天 | 涨停跌停、T+1、ST股规则 |
-| **交易成本模型** | P1 | ⚠️ 部分完成 | 无 | 2-3天 | 佣金、印花税、过户费精确计算 |
-| **逐笔行情模拟** | P2 | 🔄 待设计 | AXOrderBook | 3-5天 | 市场微观结构模拟 |
-| **FPGA加速** | P3 | 🔄 待调研 | FPGA硬件 | 10+天 | 高性能撮合引擎 |
+| **A股规则引�?* | P1 | 🔄 待设�?| �?| 3-5�?| 涨停跌停、T+1、ST股规�?|
+| **交易成本模型** | P1 | ⚠️ 部分完成 | �?| 2-3�?| 佣金、印花税、过户费精确计算 |
+| **逐笔行情模拟** | P2 | 🔄 待设�?| AXOrderBook | 3-5�?| 市场微观结构模拟 |
+| **FPGA加�?* | P3 | 🔄 待调�?| FPGA硬件 | 10+�?| 高性能撮合引擎 |
 
 ### 15.5 系统架构扩展
 
-| 模块 | 优先级 | 状态 | 技术栈 | 预计工时 | 说明 |
+| 模块 | 优先�?| 状�?| 技术栈 | 预计工时 | 说明 |
 |------|--------|------|--------|----------|------|
-| **Web管理界面** | P1 | 🔄 待设计 | React + FastAPI | 5-7天 | 企业级交易仪表板 |
-| **数据一致性** | P1 | 🔄 待设计 | PostgreSQL + Redis | 3-5天 | Saga模式跨引擎同步 |
-| **API文档规范** | P1 | 🔄 待实现 | FastAPI OpenAPI | 1-2天 | 自动生成Swagger文档 |
-| **部署架构** | P2 | 🔄 待设计 | Docker + K8s | 2-4天 | 容器化生产部署 |
+| **Web管理界面** | P1 | 🔄 待设�?| React + FastAPI | 5-7�?| 企业级交易仪表板 |
+| **数据一致�?* | P1 | 🔄 待设�?| PostgreSQL + Redis | 3-5�?| Saga模式跨引擎同�?|
+| **API文档规范** | P1 | 🔄 待实�?| FastAPI OpenAPI | 1-2�?| 自动生成Swagger文档 |
+| **部署架构** | P2 | 🔄 待设�?| Docker + K8s | 2-4�?| 容器化生产部�?|
 
-### 15.6 测试与验证
+### 15.6 测试与验�?
 
-| 测试类型 | 优先级 | 状态 | 工具 | 预计工时 | 说明 |
+| 测试类型 | 优先�?| 状�?| 工具 | 预计工时 | 说明 |
 |----------|--------|------|------|----------|------|
-| **单元测试** | P1 | 🔄 待创建 | pytest | 2-3天 | 适配器接口测试 |
-| **集成测试** | P1 | 🔄 待创建 | 自定义 | 3-5天 | 多引擎协同测试 |
-| **性能测试** | P2 | 🔄 待创建 | locust | 1-2天 | 并发和延迟测试 |
-| **兼容性测试** | P2 | 🔄 待创建 | 多版本Python | 2-3天 | Python 3.8-3.13兼容性 |
+| **单元测试** | P1 | 🔄 待创�?| pytest | 2-3�?| 适配器接口测�?|
+| **集成测试** | P1 | 🔄 待创�?| 自定�?| 3-5�?| 多引擎协同测�?|
+| **性能测试** | P2 | 🔄 待创�?| locust | 1-2�?| 并发和延迟测�?|
+| **兼容性测�?* | P2 | 🔄 待创�?| 多版本Python | 2-3�?| Python 3.8-3.13兼容�?|
 
-### 15.7 文档与维护
+### 15.7 文档与维�?
 
-| 文档项 | 优先级 | 状态 | 格式 | 预计工时 | 说明 |
+| 文档�?| 优先�?| 状�?| 格式 | 预计工时 | 说明 |
 |--------|--------|------|------|----------|------|
-| **用户手册** | P1 | 🔄 待编写 | Markdown | 2-3天 | 最终用户使用指南 |
-| **开发者指南** | P1 | 🔄 待编写 | Markdown | 3-4天 | 架构说明和扩展指南 |
-| **API参考** | P1 | 🔄 待生成 | OpenAPI | 1天 | 自动生成API文档 |
-| **故障排除** | P2 | 🔄 待编写 | Markdown | 1-2天 | 常见问题解决方案 |
+| **用户手册** | P1 | 🔄 待编�?| Markdown | 2-3�?| 最终用户使用指�?|
+| **开发者指�?* | P1 | 🔄 待编�?| Markdown | 3-4�?| 架构说明和扩展指�?|
+| **API参�?* | P1 | 🔄 待生�?| OpenAPI | 1�?| 自动生成API文档 |
+| **故障排除** | P2 | 🔄 待编�?| Markdown | 1-2�?| 常见问题解决方案 |
 
 ### 15.8 评审要点
 
-1. **架构评审**：
-   - 多引擎适配器设计是否合理
-   - 统一接口层能否满足所有引擎需求
+1. **架构评审**�?
+   - 多引擎适配器设计是否合�?
+   - 统一接口层能否满足所有引擎需�?
    - 扩展性是否足够支持未来新引擎
 
-2. **技术评审**：
-   - Python 3.13兼容性问题解决方案
+2. **技术评�?*�?
+   - Python 3.13兼容性问题解决方�?
    - 依赖冲突管理策略
    - 性能优化方案是否可行
 
-3. **业务评审**：
-   - A股规则覆盖是否完整
+3. **业务评审**�?
+   - A股规则覆盖是否完�?
    - 交易成本计算是否准确
    - 风险控制机制是否健全
 
-4. **实施评审**：
-   - 分阶段实施计划是否合理
-   - 资源需求评估是否准确
+4. **实施评审**�?
+   - 分阶段实施计划是否合�?
+   - 资源需求评估是否准�?
    - 风险缓解措施是否有效
 
 ### 15.9 后续行动建议
 
-1. **立即行动**：
+1. **立即行动**�?
    - 解决pyfolio-reloaded的peewee依赖冲突
-   - 开始vn.py适配器实现
+   - 开始vn.py适配器实�?
    - 创建基础单元测试框架
 
-2. **短期计划**：
-   - 完成所有P0优先级引擎适配器
+2. **短期计划**�?
+   - 完成所有P0优先级引擎适配�?
    - 实现Web管理界面原型
-   - 建立CI/CD流水线
+   - 建立CI/CD流水�?
 
-3. **中期计划**：
-   - 集成专业分析工具（pyfolio、Riskfolio-Lib）
-   - 实现A股规则引擎
+3. **中期计划**�?
+   - 集成专业分析工具（pyfolio、Riskfolio-Lib�?
+   - 实现A股规则引�?
    - 完成系统整体测试
 
-4. **长期计划**：
-   - 优化系统性能，实现FPGA加速
+4. **长期计划**�?
+   - 优化系统性能，实现FPGA加�?
    - 扩展多市场支持（港股、美股）
-   - 社区贡献和开源维护
+   - 社区贡献和开源维�?
 
 
 ## 16. 更新记录
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.0 | 2026-04-01 | 初始版本 - 多引擎架构设计 |
+| v1.0 | 2026-04-01 | 初始版本 - 多引擎架构设�?|
 | v1.1 | 2026-04-01 | QMT引擎集成 - 添加迅投QMT作为第四交易引擎 |
-| v1.2 | 2026-04-01 | 缺失模块设计 - 添加每日调仓逻辑、交易成本模型、账户管理模块 |
-| v1.3 | 2026-04-01 | 开源模块集成方案 - 添加P1/P2扩展项最优解方案及开源许可证确认 |
-| v1.4 | 2026-04-01 | 轻量级引擎扩展 - 添加backtesting.py等轻量级引擎与专业工具集成方案 |
+| v1.2 | 2026-04-01 | 缺失模块设计 - 添加每日调仓逻辑、交易成本模型、账户管理模�?|
+| v1.3 | 2026-04-01 | 开源模块集成方�?- 添加P1/P2扩展项最优解方案及开源许可证确认 |
+| v1.4 | 2026-04-01 | 轻量级引擎扩�?- 添加backtesting.py等轻量级引擎与专业工具集成方�?|
 
-**维护者**: 清风量化系统  
+**维护�?*: 清风量化系统  
 **索引**: `SIM_002`  
 **关联文档**: [BLUEPRINT.md](BLUEPRINT.md), [README.md](README.md)  
-**状态**: ✅ 设计完成，待评审
+**状�?*: �?设计完成，待评审

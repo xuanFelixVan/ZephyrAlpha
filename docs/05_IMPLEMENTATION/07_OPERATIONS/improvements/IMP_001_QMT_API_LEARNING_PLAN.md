@@ -200,8 +200,8 @@ last_updated: 2026-04-02
 | 资源名称 | 资源类型 | 存储位置 | 重要�?|
 |----------|----------|----------|--------|
 | QMT数据接口技术规格书 | 文档 | docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ | ⭐⭐⭐⭐�?|
-| QMT数据接口评审报告 | 文档 | docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/ | ⭐⭐⭐⭐ |
-| QMT API最佳实践知识库 | 文档 | docs/05_IMPLEMENTATION/04_OPERATIONS/knowledge_base/ | ⭐⭐⭐⭐ |
+| QMT数据接口评审报告 | 文档 | docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/ | ⭐⭐⭐⭐ |
+| QMT API最佳实践知识库 | 文档 | docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/ | ⭐⭐⭐⭐ |
 
 
 ## 4. 培训记录

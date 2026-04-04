@@ -428,7 +428,7 @@ class FederatedDataGovernance:
     """联邦式数据治?""
     
     def __init__(self):
-        self.governance_council = []  # 治理委员?        self.domain_governors = {}    # 域治理?        self.global_policies = {}     # 全局策略
+        self.governance_council = []  # 治理委员?        self.domain_governors = {}    # 域治�?        self.global_policies = {}     # 全局策略
         self.domain_policies = {}     # 域策?    
     def setup_governance_structure(self):
         """设置治理结构"""
@@ -469,7 +469,7 @@ class FederatedDataGovernance:
         governor: dict
     ):
         """
-        任命域治理?        
+        任命域治�?        
         Args:
             domain: 数据?            governor: 治理者信?                {
                     'name': '张三',
@@ -722,7 +722,7 @@ class DataProductAccessService:
 ---
 
 ## 四、预期收?
-| 收益?| 当前状?| 数据网格实施?| 提升幅度 |
+| 收益?| 当前�?| 数据网格实施?| 提升幅度 |
 |--------|---------|--------------|---------|
 | **数据交付周期** | 2-4?| 1-3?| -90% |
 | **数据团队效率** | ?| ?| +200% |
@@ -746,4 +746,4 @@ class DataProductAccessService:
 
 **最后更?*: 2026-04-03
 **维护?*: 首席技术评审官
-**审核状?*: ?已审?**实施状?*: 未来规划?-12个月?
+**审核�?*: ?已审?**实施�?*: 未来规划?-12个月?

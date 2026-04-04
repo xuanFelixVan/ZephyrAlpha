@@ -4,8 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构师
-layer: Layer 4 (机器学习层)
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -14,8 +13,7 @@ priority: P2
 
 > **蓝图编号**: `MESH-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习层
-> **优先级**: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -25,19 +23,18 @@ priority: P2
 
 - **流量管理**: 智能路由
 - **安全通信**: mTLS加密
-- **可观测性**: 分布式追踪
-- **弹性能力**: 熔断限流
+- **可观测�?*: 分布式追�?- **弹性能�?*: 熔断限流
 
 ---
 
 ## 2. 技术栈
 
-| 技术 | 说明 |
+| 技�?| 说明 |
 |------|------|
 | Istio | 主流服务网格 |
 | Envoy | 数据平面代理 |
 | Prometheus | 指标收集 |
-| Jaeger | 分布式追踪 |
+| Jaeger | 分布式追�?|
 
 ---
 
@@ -51,8 +48,7 @@ class ServiceMeshIntegration:
         self,
         mesh_type: str = 'istio'
     ):
-        """初始化服务网格
-        
+        """初始化服务网�?        
         Args:
             mesh_type: 网格类型
         """
@@ -66,8 +62,7 @@ class ServiceMeshIntegration:
         """配置流量规则
         
         Args:
-            service: 服务名
-            rules: 流量规则
+            service: 服务�?            rules: 流量规则
         """
         pass
     

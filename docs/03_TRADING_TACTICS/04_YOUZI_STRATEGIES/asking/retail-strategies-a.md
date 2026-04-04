@@ -4,44 +4,44 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
+implementation_status: 进行�?
 ---
 
-# 游资量化策略库 - 第一部分
+# 游资量化策略�?- 第一部分
 
-> 顶级游资交易思想量化提炼（一）
+> 顶级游资交易思想量化提炼（一�?
 >
-> **配套文档**：
+> **配套文档**�?
 > - 主文档：
 > - 策略池索引：[index.md](../../05_STRATEGY_POOL/index.md)
 
 ***
 
-> **说明**：这些策略来自A股顶级游资的经验总结，已抽象为量化规则，需历史回测验证有效性后再入池
+> **说明**：这些策略来自A股顶级游资的经验总结，已抽象为量化规则，需历史回测验证有效性后再入�?
 
 ***
 
-## 1. Asking（邱宝裕）核心策略
+## 1. Asking（邱宝裕）核心策�?
 
 ### S011: 只做超强势股策略
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S011 |
 | 策略名称 | 只做超强势股 |
-| 来源 | Asking（邱宝裕） |
-| 适用市场 | 妖股周期、牛市 |
+| 来源 | Asking（邱宝裕�?|
+| 适用市场 | 妖股周期、牛�?|
 | 风险等级 | 极高 |
 
-**量化规则**：
+**量化规则**�?
 - 涨幅 > 5%
-- 成交额 > 10亿
-- 换手率 > 10%
+- 成交�?> 10�?
+- 换手�?> 10%
 - 属于热点板块
 
 ```python
@@ -86,15 +86,15 @@ class UltraStrongStockStrategy(BaseStrategy):
 
 ### S012: 守株待兔策略
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S012 |
 | 策略名称 | 守株待兔（超跌反弹） |
-| 来源 | Asking（邱宝裕） |
+| 来源 | Asking（邱宝裕�?|
 | 适用市场 | 熊市反弹、震荡市 |
-| 风险等级 | 高 |
+| 风险等级 | �?|
 
-**量化规则**：
+**量化规则**�?
 - 已有2个大阳线以上（超强势股）
 - 回调至MA5附近
 - 缩量整理
@@ -150,19 +150,19 @@ class WaitAndJumpStrategy(BaseStrategy):
 
 ### S017: 半仓盈利加仓策略
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S017 |
 | 策略名称 | 半仓盈利加仓 |
-| 来源 | Asking（邱宝裕） |
-| 适用市场 | 所有市场 |
-| 风险等级 | 中 |
+| 来源 | Asking（邱宝裕�?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**：
-- 半仓操作：初始仓位50%
-- 盈利后才能动用另一半资金
-- 盈利标准：现有仓位盈利>5%
-- 加仓后迅速盈利，可再动剩余资金
+**量化规则**�?
+- 半仓操作：初始仓�?0%
+- 盈利后才能动用另一半资�?
+- 盈利标准：现有仓位盈�?5%
+- 加仓后迅速盈利，可再动剩余资�?
 
 ```python
 class HalfPositionAddStrategy(BaseStrategy):
@@ -190,15 +190,15 @@ class HalfPositionAddStrategy(BaseStrategy):
 
         if phase == 1 and current_profit > params['profit_threshold']:
             self.position_phases[stock_code] = 2
-            return 1.0, "加仓至满仓"
+            return 1.0, "加仓至满�?
 
         elif phase == 2 and current_profit > params['second_add_threshold']:
             self.position_phases[stock_code] = 3
-            return 1.5, "盈利丰厚，动用备用资金"
+            return 1.5, "盈利丰厚，动用备用资�?
 
         elif current_profit < -0.03:
             self.position_phases[stock_code] = 1
-            return 0.5, "止损，回调半仓"
+            return 0.5, "止损，回调半�?
 
         return self.position_phases.get(stock_code, 1) * 0.5, "持有"
 ```
@@ -209,17 +209,17 @@ class HalfPositionAddStrategy(BaseStrategy):
 
 ### S013: 情绪转折策略
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S013 |
 | 策略名称 | 情绪转折策略 |
 | 来源 | 炒股养家 |
-| 适用市场 | 妖股周期、情绪底部 |
-| 风险等级 | 高 |
+| 适用市场 | 妖股周期、情绪底�?|
+| 风险等级 | �?|
 
-**量化规则**：
+**量化规则**�?
 - 赚钱效应强时敢于重仓
-- 亏钱效应弥漫时空仓
+- 亏钱效应弥漫时空�?
 - 跌停家数减少+翘板
 
 ```python
@@ -238,7 +238,7 @@ class SentimentReversalStrategy(BaseStrategy):
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        profit_ratio = market_data['上涨家数'] / market_data['总交易家数']
+        profit_ratio = market_data['上涨家数'] / market_data['总交易家�?]
         if profit_ratio < params['profit_ratio_threshold']:
             return None
 
@@ -265,27 +265,27 @@ class SentimentReversalStrategy(BaseStrategy):
 
 ***
 
-### S018: 情绪两分法策略
+### S018: 情绪两分法策�?
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S018 |
-| 策略名称 | 情绪两分法 |
+| 策略名称 | 情绪两分�?|
 | 来源 | 炒股养家 |
-| 适用市场 | 所有市场 |
-| 风险等级 | 高 |
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**：
+**量化规则**�?
 - 极冷区（上涨家数<40%）：加仓
 - 极热区（上涨家数>70%）：减仓
 - 参考指标：880005涨跌家数
 
 ```python
 class SentimentTwoDivisionsStrategy(BaseStrategy):
-    """情绪两分法策略"""
+    """情绪两分法策�?""
 
     def __init__(self):
-        super().__init__("情绪两分法", "S018")
+        super().__init__("情绪两分�?, "S018")
         self.market_states = [
             MarketState.BULL, MarketState.VOLATILE,
             MarketState.BEAR, MarketState.CHAOS
@@ -299,7 +299,7 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
 
     def get_market_sentiment(self, market_data):
         rise_count = market_data.get('上涨家数', 0)
-        total_count = market_data.get('总交易家数', 1)
+        total_count = market_data.get('总交易家�?, 1)
         ratio = rise_count / total_count if total_count > 0 else 0.5
         return ratio
 
@@ -338,17 +338,17 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
 
 ***
 
-### S019: 情绪六分法策略
+### S019: 情绪六分法策�?
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S019 |
-| 策略名称 | 情绪六分法 |
+| 策略名称 | 情绪六分�?|
 | 来源 | 炒股养家 |
-| 适用市场 | 所有市场 |
-| 风险等级 | 中 |
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**：
+**量化规则**�?
 - 极热区（>66%上涨）：大幅减仓
 - 过热区（55%-66%）：逐步减仓
 - 微热区（51%-55%）：谨慎
@@ -358,10 +358,10 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
 
 ```python
 class SentimentSixDivisionsStrategy(BaseStrategy):
-    """情绪六分法策略"""
+    """情绪六分法策�?""
 
     def __init__(self):
-        super().__init__("情绪六分法", "S019")
+        super().__init__("情绪六分�?, "S019")
         self.market_states = [s for s in MarketState]
         self.parameters = {
             'extreme_hot': 0.66,
@@ -374,20 +374,20 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
     def get_sentiment_zone(self, sentiment_ratio):
         p = self.parameters
         if sentiment_ratio > p['extreme_hot']:
-            return {'zone': '极热区', 'action': '大幅减仓', 'position_change': -0.30}
+            return {'zone': '极热�?, 'action': '大幅减仓', 'position_change': -0.30}
         elif sentiment_ratio > p['over_hot']:
-            return {'zone': '过热区', 'action': '逐步减仓', 'position_change': -0.15}
+            return {'zone': '过热�?, 'action': '逐步减仓', 'position_change': -0.15}
         elif sentiment_ratio > p['slight_hot']:
-            return {'zone': '微热区', 'action': '谨慎持有', 'position_change': 0}
+            return {'zone': '微热�?, 'action': '谨慎持有', 'position_change': 0}
         elif sentiment_ratio > p['slight_cold']:
-            return {'zone': '微冷区', 'action': '观察等待', 'position_change': 0}
+            return {'zone': '微冷�?, 'action': '观察等待', 'position_change': 0}
         elif sentiment_ratio > p['over_cold']:
-            return {'zone': '过冷区', 'action': '观望', 'position_change': 0.10}
+            return {'zone': '过冷�?, 'action': '观望', 'position_change': 0.10}
         else:
-            return {'zone': '极冷区', 'action': '加仓机会', 'position_change': 0.25}
+            return {'zone': '极冷�?, 'action': '加仓机会', 'position_change': 0.25}
 
     def generate_signal(self, market_data, stock_data, market_state):
-        sentiment = market_data.get('上涨家数', 0) / market_data.get('总交易家数', 1)
+        sentiment = market_data.get('上涨家数', 0) / market_data.get('总交易家�?, 1)
         zone_info = self.get_sentiment_zone(sentiment)
 
         if zone_info['position_change'] > 0:
@@ -420,9 +420,9 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
 
 ***
 
-### S020: 弱势转折点搏击策略
+### S020: 弱势转折点搏击策�?
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S020 |
 | 策略名称 | 弱势转折点搏击（涨停启明星） |
@@ -430,17 +430,17 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
 | 适用市场 | 妖股周期、反弹市 |
 | 风险等级 | 极高 |
 
-**量化规则**：
-- 市场连续普跌后出现转折迹象
+**量化规则**�?
+- 市场连续普跌后出现转折迹�?
 - 领头羊：在市场最糟糕时逆势抗跌+2连板
 - 次日市场企稳反弹确认
 
 ```python
 class WeakMarketTurnStrategy(BaseStrategy):
-    """弱势转折点搏击策略"""
+    """弱势转折点搏击策�?""
 
     def __init__(self):
-        super().__init__("弱势转折点", "S020")
+        super().__init__("弱势转折�?, "S020")
         self.market_states = [MarketState.YAO, MarketState.VOLATILE]
         self.parameters = {
             'consecutive_drop_days': 3,
@@ -455,13 +455,13 @@ class WeakMarketTurnStrategy(BaseStrategy):
                 consecutive_drops += 1
 
         if consecutive_drops < self.parameters['consecutive_drop_days']:
-            return {'can_turn': False, 'reason': '未出现连续普跌'}
+            return {'can_turn': False, 'reason': '未出现连续普�?}
 
-        limit_up_count = market_data.get('连板股数量', 100)
+        limit_up_count = market_data.get('连板股数�?, 100)
         if limit_up_count > self.parameters['limit_up_count_threshold']:
-            return {'can_turn': False, 'reason': '连板股仍然活跃'}
+            return {'can_turn': False, 'reason': '连板股仍然活�?}
 
-        return {'can_turn': True, 'phase': '等待领头羊'}
+        return {'can_turn': True, 'phase': '等待领头�?}
 
     def select_leader_stock(self, candidate_stocks):
         for stock in candidate_stocks:
@@ -498,29 +498,29 @@ class WeakMarketTurnStrategy(BaseStrategy):
 
 ***
 
-## 3. 五日线战法
+## 3. 五日线战�?
 
-### T011: 五日线趋势策略
+### T011: 五日线趋势策�?
 
-| 属性 | 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | T011 |
-| 策略名称 | 五日线趋势策略 |
+| 策略名称 | 五日线趋势策�?|
 | 来源 | 明王心法 |
 | 适用市场 | 牛市、震荡市 |
-| 风险等级 | 中 |
+| 风险等级 | �?|
 
-**量化规则**：
-- 大盘在5日线上方：右侧交易，积极操作
-- 大盘在5日线下方：左侧交易，谨慎操作
-- 买入：5日线收复 + 成交量逆转 + 强势板块
+**量化规则**�?
+- 大盘�?日线上方：右侧交易，积极操作
+- 大盘�?日线下方：左侧交易，谨慎操作
+- 买入�?日线收复 + 成交量逆转 + 强势板块
 
 ```python
 class FiveDayLineStrategy(BaseStrategy):
-    """五日线战法"""
+    """五日线战�?""
 
     def __init__(self):
-        super().__init__("五日线战法", "T011")
+        super().__init__("五日线战�?, "T011")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
             'position_threshold': 0.01,

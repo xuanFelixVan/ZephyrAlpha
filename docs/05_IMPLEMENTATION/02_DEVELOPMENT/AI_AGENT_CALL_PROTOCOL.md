@@ -14,7 +14,7 @@ last_updated: 2026-04-02
 
 ## 1. 概述
 
-本文档定义了清风量化系统中各AI智能体之间的标准化调用协议，确保智能体协作高效、数据传递规范、错误处理统一。协议遵?*职责驱动、接口明确、数据标准化**的原则?
+本文档定义了清风量化系统中各AI智能体之间的标准化调用协议，确保智能体协作高效、数据传递规范、错误处理统一。协议遵?*职责驱动、接口明确、数据标准化**的原�?
 
 ## 2. 智能体角色定?
 
@@ -73,7 +73,7 @@ last_updated: 2026-04-02
 | `review_technical_spec` | 评审技术规格书 | spec-approver | spec-approver |
 | `generate_implementation` | 生成代码实现 | spec-approver | development-agent |
 | `audit_code_quality` | 审计代码质量 | development-agent | audit-sentinel |
-| `assess_technical_feasibility` | 评估技术可行?| spec-approver | spec-approver |
+| `assess_technical_feasibility` | 评估技术可�?| spec-approver | spec-approver |
 | `analyze_risk` | 分析风险 | spec-approver | spec-approver |
 | `calculate_implementation_complexity` | 计算实施复杂?| spec-approver | spec-approver |
 
@@ -214,7 +214,7 @@ last_updated: 2026-04-02
         "description": "因子库与回测集成技术规格书"
       },
       {
-        "path": "d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/review_reports/FACTOR_BACKTEST_INTEGRATION_REVIEW_20260402.md",
+        "path": "d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/FACTOR_BACKTEST_INTEGRATION_REVIEW_20260402.md",
         "type": "review_report",
         "description": "技术评审报?
       }
@@ -255,7 +255,7 @@ last_updated: 2026-04-02
 
 ## 9. 版本历史
 
-| 版本 | 日期 | 说明 | 作?|
+| 版本 | 日期 | 说明 | �?|
 |------|------|------|------|
 | v1.0 | 2026-04-02 | 初始版本，定义基础调用协议 | 审批智能?(Spec-Approver) |
 

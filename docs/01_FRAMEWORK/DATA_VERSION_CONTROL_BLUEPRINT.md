@@ -4,8 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构师
-layer: Layer 4 (机器学习层)
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -14,8 +13,7 @@ priority: P2
 
 > **蓝图编号**: `DVC-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习层
-> **优先级**: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -40,8 +38,7 @@ class DataVersionControl:
         self,
         storage_backend: str = 's3'
     ):
-        """初始化数据版本控制
-        
+        """初始化数据版本控�?        
         Args:
             storage_backend: 存储后端
         """
@@ -67,8 +64,7 @@ class DataVersionControl:
         self,
         version_id: str
     ) -> str:
-        """检出数据版本
-        
+        """检出数据版�?        
         Args:
             version_id: 版本ID
             

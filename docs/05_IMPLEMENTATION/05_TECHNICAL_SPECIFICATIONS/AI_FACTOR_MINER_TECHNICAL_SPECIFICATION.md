@@ -36,7 +36,7 @@ implementation_status: 设计完成
 - 缺少自动化因子发现和验证机制
 - AI技术应用深度不?仅停留在LLM辅助层面
 
-**预期价?*:
+**预期�?*:
 - 自动挖掘原创因子,提升Alpha收益
 - 降低因子研发成本80%以上
 - 缩短因子研发周期从数月到数天
@@ -51,7 +51,7 @@ implementation_status: 设计完成
 - 向上: 为Layer 2因子层提供原创因?- 向下: 依赖Layer 0数据源层和Layer 1数据预处理层
 - 横向: 与Layer 4机器学习层协同工?
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-02 | 首席架构?| 初始版本,包含三大AI挖掘引擎 | Draft |
 
@@ -83,7 +83,7 @@ implementation_status: 设计完成
   - 深度学习因子挖掘(LSTM、Transformer、GNN)
   - 强化学习因子优化(DQN、PPO、A2C)
   - 遗传算法因子发现(表达式挖掘、规则发?
-  - 因子质量评估(IC/IR、相关性、稳定?
+  - 因子质量评估(IC/IR、相关性、稳�?
   - 因子注册与存?  
 - ?本模块不负责:
   - 因子计算执行 (由Layer 2因子计算引擎负责)
@@ -146,12 +146,12 @@ class AIFactorMiner:
         挖掘因子主方?        
         Args:
             data: 原始特征数据 (index=date, columns=features)
-            target: 目标收益率序?            methods: 使用的挖掘方法列?            min_ic: 最小IC阈?            max_factors: 最大返回因子数?            
+            target: 目标收益率序?            methods: 使用的挖掘方法列?            min_ic: 最小IC�?            max_factors: 最大返回因子数?            
         Returns:
             因子列表,每个因子包含:
             - factor_id: 因子ID
             - factor_name: 因子名称
-            - expression: 因子表达?            - ic_mean: IC均?            - ic_ir: IC信息比率
+            - expression: 因子表达?            - ic_mean: IC�?            - ic_ir: IC信息比率
             - method: 挖掘方法
             - complexity: 复杂度评?            - created_at: 创建时间
             
@@ -299,7 +299,7 @@ class ReinforcementLearningMiner:
         
         Args:
             factors: 因子列表
-            market_state: 市场状?('bull' | 'bear' | 'sideways')
+            market_state: 市场�?('bull' | 'bear' | 'sideways')
             
         Returns:
             选中的因子ID列表
@@ -444,7 +444,7 @@ class GeneticAlgorithmMiner:
 | **挖掘速度** | ?小时/100因子 | 端到端时?| 包含训练和评?|
 | **因子质量** | IC均值≥0.03 | 统计检?| 通过t检?p<0.05) |
 | **因子稳定?* | ICIR?.0 | IC标准?| 稳定性要?|
-| **因子差异?* | 相关性≤0.5 | 与现有因子相关?| 避免重复 |
+| **因子差异?* | 相关性≤0.5 | 与现有因子相�?| 避免重复 |
 | **GPU利用?* | ?0% | nvidia-smi监控 | 深度学习训练 |
 | **内存占用** | ?6GB | 内存监控 | 单次挖掘任务 |
 | **并发能力** | ?个任?| 同时运行 | 不同挖掘方法 |
@@ -540,7 +540,7 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
 ### 4.2 数据流与ETL流程
 
 ```
-原始数据 ?特征工程 ?AI挖掘引擎 ?因子评估 ?因子筛??因子注册 ?特征存储
+原始数据 ?特征工程 ?AI挖掘引擎 ?因子评估 ?因子�??因子注册 ?特征存储
 ```
 
 **数据?*:
@@ -553,14 +553,14 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
    - 缺失值处?前向填充)
    - 异常值检?3σ原则)
    - 标准?Z-Score)
-   - 特征构?技术指标、财务比?
+   - 特征�?技术指标、财务比?
 3. **AI挖掘**: 
    - 深度学习训练(LSTM/Transformer/GNN)
    - 强化学习优化(DQN/PPO/A2C)
    - 遗传算法进化(DEAP)
 4. **因子评估**:
    - IC/IR计算
-   - 相关性分?   - 稳定性检?   - 过拟合检?5. **因子筛?*:
+   - 相关性分?   - 稳定性检?   - 过拟合检?5. **因子�?*:
    - IC阈值过??.03)
    - 复杂度控??0)
    - 相关性去??.5)
@@ -569,7 +569,7 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
 **数据质量检查规?*:
 - 数据完整? 缺失?5%
 - 数据准确? 异常值比?1%
-- 数据一致? 时间戳对?- 数据时效? T+1更新
+- 数据一�? 时间戳对?- 数据时效? T+1更新
 
 ### 4.3 缓存策略与数据一致性方?
 **缓存类型**: 
@@ -580,7 +580,7 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
 - **LRU缓存**: 训练数据和中间结?- **TTL缓存**: 因子评估结果(24小时)
 - **写穿?*: 因子注册时同步更新缓?
 **一致性保?*:
-- **最终一致?*: 因子数据更新?分钟内同步到所有节?- **强一致?*: 因子注册操作使用分布式锁
+- **最终一�?*: 因子数据更新?分钟内同步到所有节?- **强一�?*: 因子注册操作使用分布式锁
 
 **失效策略**:
 - **主动失效**: 因子状态变更时主动清除缓存
@@ -613,10 +613,10 @@ CREATE TABLE IF NOT EXISTS factor_evaluations (
 ```
 遗忘? f_t = σ(W_f · [h_{t-1}, x_t] + b_f)
 输入? i_t = σ(W_i · [h_{t-1}, x_t] + b_i)
-候选? C̃_t = tanh(W_C · [h_{t-1}, x_t] + b_C)
-细胞状? C_t = f_t * C_{t-1} + i_t * C̃_t
+候�? C̃_t = tanh(W_C · [h_{t-1}, x_t] + b_C)
+细胞�? C_t = f_t * C_{t-1} + i_t * C̃_t
 输出? o_t = σ(W_o · [h_{t-1}, x_t] + b_o)
-隐藏状? h_t = o_t * tanh(C_t)
+隐藏�? h_t = o_t * tanh(C_t)
 因子? factor_t = W_factor · h_t + b_factor
 ```
 
@@ -678,7 +678,7 @@ transformer_config:
 Q值函? Q(s, a; θ) ?r + γ · max_{a'} Q(s', a'; θ')
 损失函数: L(θ) = E[(r + γ · max_{a'} Q(s', a'; θ') - Q(s, a; θ))²]
 动作: 因子权重调整
-状? 当前因子组合表现
+�? 当前因子组合表现
 奖励: 夏普比率提升
 ```
 
@@ -811,7 +811,7 @@ p? p = 2 · (1 - CDF(|t|))
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 类别 | 技术选型 | 版本要求 | 用?|
+| 类别 | 技术选型 | 版本要求 | �?|
 |------|---------|---------|------|
 | **编程语言** | Python | >=3.9 | 主要开发语言 |
 | **深度学习框架** | PyTorch | >=2.0.0 | LSTM/Transformer/GNN |
@@ -860,7 +860,7 @@ seaborn>=0.12.0
 - IDE: VSCode / PyCharm
 - 版本控制: Git
 - 容器? Docker
-- 编排: Kubernetes (可?
+- 编排: Kubernetes (�?
 
 ### 6.4 部署架构
 
@@ -965,7 +965,7 @@ performance_test:
 **技术约?*:
 - 必须兼容现有Layer 0-11架构
 - 必须使用Python 3.9+
-- 必须支持GPU加?- 必须符合数据安全规范
+- 必须支持GPU�?- 必须符合数据安全规范
 
 **业务约束**:
 - 因子挖掘周期?小时
@@ -1010,7 +1010,7 @@ performance_test:
 | **代码质量** | 无严重代码异?| SonarQube |
 | **文档完整?* | 100%接口有文?| 人工审查 |
 | **安全?* | 无高危漏?| OWASP ZAP |
-| **可维护?* | 模块化设计、低耦合 | 架构审查 |
+| **可维�?* | 模块化设计、低耦合 | 架构审查 |
 
 ### 9.4 文档验收标准
 
@@ -1051,10 +1051,10 @@ performance_test:
 **任务清单**:
 - [ ] 实现DeepLearningFactorMiner?- [ ] 实现LSTM因子挖掘模块
 - [ ] 实现Transformer因子挖掘模块
-- [ ] 实现GNN因子挖掘模块(可?
+- [ ] 实现GNN因子挖掘模块(�?
 - [ ] 训练数据准备和预处理
 - [ ] 模型训练和调?- [ ] 编写深度学习模块单元测试
-- [ ] 性能优化和GPU加?
+- [ ] 性能优化和GPU�?
 **交付?*:
 - 深度学习挖掘引擎代码
 - 训练好的模型文件
@@ -1178,7 +1178,7 @@ performance_test:
 |------|------|
 | **Alpha因子** | 能够产生超额收益的因?|
 | **IC (Information Coefficient)** | 因子值与未来收益率的相关系数 |
-| **ICIR (IC Information Ratio)** | IC均值与IC标准差的比?|
+| **ICIR (IC Information Ratio)** | IC均值与IC标准差的�?|
 | **LSTM** | 长短期记忆网?|
 | **Transformer** | 基于自注意力机制的神经网?|
 | **GNN** | 图神经网?|
@@ -1192,5 +1192,5 @@ performance_test:
 **文档版本**: v1.0  
 **创建日期**: 2026-04-02  
 **最后更?*: 2026-04-02  
-**文档状?*: ?完成  
+**文档�?*: ?完成  
 **下一?*: 开始实施Phase 1

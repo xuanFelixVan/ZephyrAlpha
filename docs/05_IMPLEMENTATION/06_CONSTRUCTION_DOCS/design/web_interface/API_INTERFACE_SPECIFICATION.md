@@ -34,13 +34,13 @@ implementation_status: 进行?
 | 原则 | 说明 | 实现要求 |
 |------|------|----------|
 | **RESTful设计** | 遵循RESTful架构风格 | 资源导向、HTTP方法语义?|
-| **一致?* | 统一响应格式、错误处?| 所有接口返回标准APIResponse格式 |
+| **一�?* | 统一响应格式、错误处?| 所有接口返回标准APIResponse格式 |
 | **安全?* | 认证授权、数据加?| JWT认证、HTTPS加密、输入验?|
 | **版本控制** | API版本管理 | URL路径版本控制 (v1, v2) |
 | **文档?* | 接口文档自动生成 | OpenAPI/Swagger文档自动生成 |
 
 ### 1.3 版本信息
-| 版本 | 发布时间 | 主要特?| 兼容?|
+| 版本 | 发布时间 | 主要�?| 兼容?|
 |------|----------|----------|--------|
 | v1.0 | 2026-04-02 | 基础CRUD接口、实时推?| 初始版本 |
 | v1.1 | 计划 | 批量操作、高级查?| 向下兼容v1.0 |
@@ -207,7 +207,7 @@ Authorization: Bearer {token}
         "trade_count_today": 56,
         "last_heartbeat": "2026-04-02T11:59:30Z"
       },
-      // 其他引擎状?
+      // 其他引擎�?
     ],
     "recent_alerts": [
       {
@@ -222,7 +222,7 @@ Authorization: Bearer {token}
 }
 ```
 
-#### 3.2.2 获取引擎详细状?
+#### 3.2.2 获取引擎详细�?
 ```http
 GET /api/v1/dashboard/engines/{engine_id}/status
 Authorization: Bearer {token}
@@ -429,7 +429,7 @@ Authorization: Bearer {token}
 
 ### 3.6 系统健康接口
 
-#### 3.6.1 获取系统健康状?
+#### 3.6.1 获取系统健康�?
 ```http
 GET /api/v1/system/health
 Authorization: Bearer {token}
@@ -516,8 +516,8 @@ Content-Type: multipart/form-data
 Form Data:
   - file: File (配置文件)
   - file_type: string (engine_config, strategy_config, risk_config)
-  - engine_id: string (可?
-  - strategy_id: string (可?
+  - engine_id: string (�?
+  - strategy_id: string (�?
 ```
 
 #### 3.7.2 下载配置文件
@@ -564,7 +564,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-### 4.2 实时事件推?
+### 4.2 实时事件�?
 
 #### 4.2.1 交易执行事件
 ```json
@@ -836,7 +836,7 @@ class EngineConfig(BaseModel):
 ## 6. API测试规范
 
 ### 6.1 测试环境
-| 环境 | 地址 | 用?|
+| 环境 | 地址 | �?|
 |------|------|------|
 | **开发环?* | http://localhost:8000 | 开发测?|
 | **测试环境** | http://test.api.qingfeng.com | 集成测试 |
@@ -844,7 +844,7 @@ class EngineConfig(BaseModel):
 | **生产环境** | https://api.qingfeng.com | 生产环境 |
 
 ### 6.2 测试工具
-| 工具 | 用?| 配置 |
+| 工具 | �?| 配置 |
 |------|------|------|
 | **pytest** | 单元测试和集成测?| `tests/api/` |
 | **Postman** | API测试和文?| Postman Collection |
@@ -945,7 +945,7 @@ CORS_ORIGINS=["http://localhost:3000"]
 ### 7.2 监控与告?
 
 #### 7.2.1 监控指标
-| 指标 | 采集方式 | 告警阈?|
+| 指标 | 采集方式 | 告警�?|
 |------|----------|----------|
 | **API请求?* | Prometheus | < 10 QPS ?> 1000 QPS |
 | **API错误?* | Prometheus | > 1% |
@@ -1011,7 +1011,7 @@ async def rate_limit_middleware(request: Request, call_next):
     return response
 ```
 
-## 8. 版本升级与兼容?
+## 8. 版本升级与兼�?
 
 ### 8.1 版本升级策略
 | 升级类型 | 描述 | 兼容性要?|
@@ -1038,4 +1038,4 @@ async def rate_limit_middleware(request: Request, call_next):
 **最后更?*: 2026-04-02  
 **维护?*: 首席蓝图架构? 
 **索引**: `DESIGN_005`  
-**状?*: ?设计完成，待评审
+**�?*: ?设计完成，待评审

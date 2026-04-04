@@ -15,9 +15,9 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -26,20 +26,20 @@ implementation_progress: 0%
 ---
 
 
-# 监控告警系统蓝图（简化版）
+# 监控告警系统蓝图（简化版�?
 
-> 清风量化系统 v5.0 的监控告警方案
+> 清风量化系统 v5.0 的监控告警方�?
 > **索引**: `MON_001`
-> **注意**: 本蓝图采用"购买而非自研"策略，使用成熟的Grafana+Prometheus方案
+> **注意**: 本蓝图采�?购买而非自研"策略，使用成熟的Grafana+Prometheus方案
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 |
 |------|------|
-| 购买而非自研 | 使用成熟开源方案，不自研监控面板 |
-| 监控即代码 | 监控配置纳入版本控制 |
-| 告警即触发 | 告警规则明确，触发动作自动化 |
+| 购买而非自研 | 使用成熟开源方案，不自研监控面�?|
+| 监控即代�?| 监控配置纳入版本控制 |
+| 告警即触�?| 告警规则明确，触发动作自动化 |
 
 
 ## 2. 监控方案选型
@@ -48,38 +48,38 @@ implementation_progress: 0%
 
 | 方案 | 自研监控 | Grafana+Prometheus(推荐) |
 |------|----------|-------------------------|
-| 开发时间 | 2-3个月 | 1-2天 |
-| 功能完整度 | 60% | 95% |
-| 维护成本 | 高 | 极低 |
-| 可扩展性 | 受限 | 强 |
-| 社区支持 | 无 | 强大 |
+| 开发时�?| 2-3个月 | 1-2�?|
+| 功能完整�?| 60% | 95% |
+| 维护成本 | �?| 极低 |
+| 可扩展�?| 受限 | �?|
+| 社区支持 | �?| 强大 |
 
 ### 2.2 最终选择
 
 **采用 Grafana + Prometheus + AlertManager 方案**
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Grafana 仪表板                         │
-│   (策略绩效 / 风控指标 / 系统状态 / 告警历史)                │
-└─────────────────────────────────────────────────────────────┘
-                            ↑
-┌─────────────────────────────────────────────────────────────┐
-│                    AlertManager 告警管理                      │
-│   (告警路由 / 抑制 / 分组 / 升级)                           │
-└─────────────────────────────────────────────────────────────┘
-                            ↑
-┌─────────────────────────────────────────────────────────────┐
-│                      Prometheus 监控                        │
-│   (指标采集 / 存储 / 查询)                                  │
-└─────────────────────────────────────────────────────────────┘
-                            ↑
-┌─────────────────────────────────────────────────────────────┐
-│                   Exporters (被监控目标)                    │
-│   - TradeExecutor / RiskMonitor / DataHub                  │
-│   - Node Exporter (系统指标)                                │
-│   - Custom Exporters (业务指标)                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                     Grafana 仪表�?                        �?
+�?  (策略绩效 / 风控指标 / 系统状�?/ 告警历史)                �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                   AlertManager 告警管理                      �?
+�?  (告警路由 / 抑制 / 分组 / 升级)                           �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                     Prometheus 监控                        �?
+�?  (指标采集 / 存储 / 查询)                                  �?
+└─────────────────────────────────────────────────────────────�?
+                            �?
+┌─────────────────────────────────────────────────────────────�?
+�?                  Exporters (被监控目�?                    �?
+�?  - TradeExecutor / RiskMonitor / DataHub                  �?
+�?  - Node Exporter (系统指标)                                �?
+�?  - Custom Exporters (业务指标)                             �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 
@@ -123,13 +123,13 @@ metrics:
 
   - name: risk_position_value
     type: gauge
-    description: 持仓风险值
+    description: 持仓风险�?
     labels: [symbol]
 
   # 因子指标
   - name: factor_ic_value
     type: gauge
-    description: 因子IC值
+    description: 因子IC�?
     labels: [factor_id]
 
   - name: factor_calculation_latency
@@ -146,15 +146,15 @@ metrics:
 metrics:
   - name: cpu_usage_percent
     type: gauge
-    description: CPU使用率
+    description: CPU使用�?
 
   - name: memory_usage_bytes
     type: gauge
-    description: 内存使用量
+    description: 内存使用�?
 
   - name: disk_usage_bytes
     type: gauge
-    description: 磁盘使用量
+    description: 磁盘使用�?
 
   - name: network_io_bytes
     type: counter
@@ -167,20 +167,20 @@ metrics:
 ```
 
 
-## 4. Grafana仪表板设计
+## 4. Grafana仪表板设�?
 
-### 4.1 仪表板列表
+### 4.1 仪表板列�?
 
-| 仪表板 | 用途 | 刷新频率 |
+| 仪表�?| 用�?| 刷新频率 |
 |--------|------|----------|
-| 系统概览 | 全局状态一目了然 | 10s |
-| 策略绩效 | 各策略表现 | 1min |
+| 系统概览 | 全局状态一目了�?| 10s |
+| 策略绩效 | 各策略表�?| 1min |
 | 风控监控 | 风险指标实时 | 5s |
-| 因子状态 | 因子IC监控 | 1min |
+| 因子状�?| 因子IC监控 | 1min |
 | 交易明细 | 订单执行情况 | 10s |
-| 系统资源 | 服务器状态 | 30s |
+| 系统资源 | 服务器状�?| 30s |
 
-### 4.2 系统概览仪表板
+### 4.2 系统概览仪表�?
 
 ```json
 {
@@ -192,7 +192,7 @@ metrics:
       "targets": [
         {
           "expr": "sum(rate(strategy_signal_count[5m]))",
-          "legendFormat": "信号/秒"
+          "legendFormat": "信号/�?
         }
       ]
     },
@@ -202,7 +202,7 @@ metrics:
       "targets": [
         {
           "expr": "sum(rate(order_submit_count[5m]))",
-          "legendFormat": "订单/秒"
+          "legendFormat": "订单/�?
         }
       ]
     },
@@ -212,12 +212,12 @@ metrics:
       "targets": [
         {
           "expr": "sum(rate(risk_violation_count[5m]))",
-          "legendFormat": "违规/秒"
+          "legendFormat": "违规/�?
         }
       ]
     },
     {
-      "title": "策略绩效热力图",
+      "title": "策略绩效热力�?,
       "type": "heatmap",
       "targets": [
         {
@@ -256,8 +256,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "策略无信号"
-          description: "{{ $labels.strategy_id }} 已30分钟无信号"
+          summary: "策略无信�?
+          description: "{{ $labels.strategy_id }} �?0分钟无信�?
 
   - name: risk_alerts
     rules:
@@ -268,7 +268,7 @@ groups:
           severity: warning
         annotations:
           summary: "风控违规频繁"
-          description: "5分钟内发生 {{ $value }} 次违规"
+          description: "5分钟内发�?{{ $value }} 次违�?
 
       - alert: RiskExposureHigh
         expr: risk_position_value > 0.8
@@ -288,7 +288,7 @@ groups:
           severity: warning
         annotations:
           summary: "CPU使用率高"
-          description: "CPU使用率 {{ $value }}%"
+          description: "CPU使用�?{{ $value }}%"
 
       - alert: HighMemory
         expr: memory_usage_bytes > 8e9
@@ -338,7 +338,7 @@ receivers:
 ```
 
 
-## 6. 快速部署
+## 6. 快速部�?
 
 ### 6.1 Docker Compose配置
 
@@ -396,7 +396,7 @@ docker-compose -f docker-compose.monitoring.yml up -d
 
 ## 7. 指标导出代码示例
 
-### 7.1 自定义指标导出
+### 7.1 自定义指标导�?
 
 ```python
 from prometheus_client import Counter, Histogram, Gauge, start_http_server
@@ -408,7 +408,7 @@ signal_latency = Histogram('strategy_signal_latency', '信号生成延迟',
                           ['strategy_id'])
 risk_violation = Counter('risk_violation_count', '风控违规次数',
                        ['rule_id', 'severity'])
-factor_ic = Gauge('factor_ic_value', '因子IC值', ['factor_id'])
+factor_ic = Gauge('factor_ic_value', '因子IC�?, ['factor_id'])
 
 # 在代码中使用
 class StrategyMonitor:
@@ -418,7 +418,7 @@ class StrategyMonitor:
     def on_risk_violation(self, rule_id: str, severity: str):
         risk_violation.labels(rule_id=rule_id, severity=severity).inc()
 
-# 启动指标服务器
+# 启动指标服务�?
 start_http_server(8000)
 ```
 
@@ -430,5 +430,5 @@ start_http_server(8000)
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `MON_001`

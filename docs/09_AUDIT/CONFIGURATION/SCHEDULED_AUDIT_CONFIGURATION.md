@@ -1,10 +1,10 @@
 ---
 standard_type: 配置标准
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 正式标准
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
-implementation_status: 已完成
-owner: 文档管理员
+implementation_status: 已完�?
+owner: 文档管理�?
 version: 1.0.0
 module_id: SCHEDULED_AUDIT_CONFIG
 created_date: 2026-04-02
@@ -13,8 +13,8 @@ last_updated: 2026-04-02
 # 定期审计任务配置
 
 **配置版本**: 1.0.0
-**最后更新**: 2026-04-02
-**配置所有者**: 文档管理员
+**最后更�?*: 2026-04-02
+**配置所有�?*: 文档管理�?
 
 ---
 
@@ -24,15 +24,15 @@ last_updated: 2026-04-02
 
 | 任务名称 | 频率 | 执行时间 | 审计内容 | 输出位置 |
 |---------|------|----------|----------|---------|
-| **快速审计** | 每周一 | 凌晨2:00 | 链接有效性、元数据完整性 | audit_reports/weekly/ |
-| **标准审计** | 每月1日 | 凌晨3:00 | 文档分类、命名规范、索引完整性 | audit_reports/monthly/ |
-| **深度审计** | 每季度首日 | 工作时间 | 三层审计（L1-L3）、五大原则符合性 | audit_reports/quarterly/ |
-| **专项审计** | 事件触发 | 变更后24小时内 | 变更影响范围、文档一致性 | audit_reports/adhoc/ |
+| **快速审�?* | 每周一 | 凌晨2:00 | 链接有效性、元数据完整�?| audit_reports/weekly/ |
+| **标准审计** | 每月1�?| 凌晨3:00 | 文档分类、命名规范、索引完整�?| audit_reports/monthly/ |
+| **深度审计** | 每季度首�?| 工作时间 | 三层审计（L1-L3）、五大原则符合�?| audit_reports/quarterly/ |
+| **专项审计** | 事件触发 | 变更�?4小时�?| 变更影响范围、文档一致�?| audit_reports/adhoc/ |
 
-### 1.2 审计任务优先级
+### 1.2 审计任务优先�?
 
 - **P0**: 快速审计（每周执行，确保基本质量）
-- **P1**: 标准审计（每月执行，确保规范符合）
+- **P1**: 标准审计（每月执行，确保规范符合�?
 - **P2**: 深度审计（每季度执行，确保专业标准）
 - **P3**: 专项审计（事件触发，确保变更一致性）
 
@@ -52,63 +52,63 @@ crontab -e
 ```bash
 # ZephyrAlpha文档治理定期审计任务
 
-# 快速审计 - 每周一凌晨2:00执行
-0 2 * * 1 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --quick --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/weekly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+# 快速审�?- 每周一凌晨2:00执行
+0 2 * * 1 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --quick --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 标准审计 - 每月1日凌晨3:00执行
-0 3 1 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --all --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+# 标准审计 - 每月1日凌�?:00执行
+0 3 1 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --all --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 深度审计 - 每季度首日凌晨3:00执行（1月、4月、7月、10月）
-0 3 1 1,4,7,10 * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --deep --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quarterly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+# 深度审计 - 每季度首日凌�?:00执行�?月�?月�?月�?0月）
+0 3 1 1,4,7,10 * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --deep --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/quarterly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 元数据完整性检查 - 每周日凌晨2:30执行
-30 2 * * 0 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/metadata_enhancer.py --scan --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+# 元数据完整性检�?- 每周日凌�?:30执行
+30 2 * * 0 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/metadata_enhancer.py --scan --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/metadata_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 文档分类检查 - 每月15日凌晨3:00执行
-0 3 15 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_classifier.py --scan --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/classification_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+# 文档分类检�?- 每月15日凌�?:00执行
+0 3 15 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_classifier.py --scan --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/classification_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 ```
 
 ### 2.2 Windows系统（任务计划程序）
 
 **创建任务计划**:
 
-1. **快速审计任务**:
+1. **快速审计任�?*:
    - 名称: `ZephyrAlpha_Weekly_Audit`
-   - 触发器: 每周一凌晨2:00
+   - 触发�? 每周一凌晨2:00
    - 操作: 启动程序
    - 程序: `python`
-   - 参数: `scripts\document_auditor.py --quick --output "docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\weekly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
+   - 参数: `scripts\document_auditor.py --quick --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
    - 起始位置: `D:\ZephyrAlpha`
 
 2. **标准审计任务**:
    - 名称: `ZephyrAlpha_Monthly_Audit`
-   - 触发器: 每月1日凌晨3:00
+   - 触发�? 每月1日凌�?:00
    - 操作: 启动程序
    - 程序: `python`
-   - 参数: `scripts\document_auditor.py --all --output "docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\monthly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
+   - 参数: `scripts\document_auditor.py --all --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
    - 起始位置: `D:\ZephyrAlpha`
 
 3. **深度审计任务**:
    - 名称: `ZephyrAlpha_Quarterly_Audit`
-   - 触发器: 每季度首日凌晨3:00（手动设置）
+   - 触发�? 每季度首日凌�?:00（手动设置）
    - 操作: 启动程序
    - 程序: `python`
-   - 参数: `scripts\document_auditor.py --deep --output "docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\quarterly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
+   - 参数: `scripts\document_auditor.py --deep --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\quarterly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
    - 起始位置: `D:\ZephyrAlpha`
 
 ---
 
 ## 3. 审计脚本配置
 
-### 3.1 快速审计脚本
+### 3.1 快速审计脚�?
 
 **文件**: `scripts/scheduled_quick_audit.py`
 
 ```python
 #!/usr/bin/env python3
 """
-快速审计脚本
-功能: 每周执行，检查链接有效性和元数据完整性
+快速审计脚�?
+功能: 每周执行，检查链接有效性和元数据完整�?
 """
 
 import os
@@ -136,19 +136,19 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_quick_audit():
-    """执行快速审计"""
+    """执行快速审�?""
     try:
-        logger.info("开始快速审计...")
+        logger.info("开始快速审�?..")
         
         # 初始化审计器
         auditor = DocumentAuditor(project_root='.')
         
-        # 执行快速审计
+        # 执行快速审�?
         results = auditor.quick_audit()
         
-        # 生成报告文件名
+        # 生成报告文件�?
         timestamp = datetime.now().strftime('%Y%m%d')
-        output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/weekly_{timestamp}.json'
+        output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_{timestamp}.json'
         
         # 保存报告
         with open(output_file, 'w', encoding='utf-8') as f:
@@ -158,7 +158,7 @@ def run_quick_audit():
         
         # 检查是否有严重问题
         if results['summary']['total_issues'] > 0:
-            logger.warning(f"发现 {results['summary']['total_issues']} 个问题")
+            logger.warning(f"发现 {results['summary']['total_issues']} 个问�?)
             
             # 发送通知（可选）
             send_notification(results)
@@ -166,7 +166,7 @@ def run_quick_audit():
         return 0
         
     except Exception as e:
-        logger.error(f"快速审计失败: {str(e)}")
+        logger.error(f"快速审计失�? {str(e)}")
         return 1
 
 def send_notification(results):
@@ -187,7 +187,7 @@ if __name__ == '__main__':
 #!/usr/bin/env python3
 """
 标准审计脚本
-功能: 每月执行，检查文档分类、命名规范、索引完整性
+功能: 每月执行，检查文档分类、命名规范、索引完整�?
 """
 
 import os
@@ -215,18 +215,18 @@ logger = logging.getLogger(__name__)
 def run_standard_audit():
     """执行标准审计"""
     try:
-        logger.info("开始标准审计...")
+        logger.info("开始标准审�?..")
         
         auditor = DocumentAuditor(project_root='.')
         results = auditor.full_audit()
         
         timestamp = datetime.now().strftime('%Y%m%d')
-        output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_{timestamp}.json'
+        output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_{timestamp}.json'
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"标准审计完成，报告已保存到: {output_file}")
+        logger.info(f"标准审计完成，报告已保存�? {output_file}")
         
         # 生成审计摘要报告
         generate_summary_report(results, timestamp)
@@ -239,13 +239,13 @@ def run_standard_audit():
 
 def generate_summary_report(results, timestamp):
     """生成审计摘要报告"""
-    summary_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_summary_{timestamp}.md'
+    summary_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_summary_{timestamp}.md'
     
     with open(summary_file, 'w', encoding='utf-8') as f:
         f.write(f"# 月度文档审计摘要报告\n\n")
         f.write(f"**审计时间**: {results['summary']['scan_time']}\n\n")
         f.write(f"## 审计概要\n\n")
-        f.write(f"- 扫描文件数: {results['summary']['scanned_files']}\n")
+        f.write(f"- 扫描文件�? {results['summary']['scanned_files']}\n")
         f.write(f"- 问题总数: {results['summary']['total_issues']}\n\n")
         
         if results['summary']['issues_by_severity']:
@@ -270,7 +270,7 @@ if __name__ == '__main__':
 #!/usr/bin/env python3
 """
 深度审计脚本
-功能: 每季度执行，执行三层审计（L1-L3）和五大原则符合性检查
+功能: 每季度执行，执行三层审计（L1-L3）和五大原则符合性检�?
 """
 
 import os
@@ -298,7 +298,7 @@ logger = logging.getLogger(__name__)
 def run_deep_audit():
     """执行深度审计"""
     try:
-        logger.info("开始深度审计...")
+        logger.info("开始深度审�?..")
         
         auditor = DocumentAuditor(project_root='.')
         
@@ -325,12 +325,12 @@ def run_deep_audit():
         }
         
         timestamp = datetime.now().strftime('%Y%m%d')
-        output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quarterly_{timestamp}.json'
+        output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/quarterly_{timestamp}.json'
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"深度审计完成，报告已保存到: {output_file}")
+        logger.info(f"深度审计完成，报告已保存�? {output_file}")
         
         # 生成详细报告
         generate_detailed_report(results, timestamp)
@@ -353,9 +353,9 @@ def generate_detailed_report(results, timestamp):
         f.write(f"## 审计概要\n\n")
         f.write(f"| 审计层级 | 问题数量 |\n")
         f.write(f"|---------|---------|\n")
-        f.write(f"| L1文件系统层 | {results['summary']['l1_issues']} |\n")
-        f.write(f"| L2文档内容层 | {results['summary']['l2_issues']} |\n")
-        f.write(f"| L3专业标准层 | {results['summary']['l3_issues']} |\n")
+        f.write(f"| L1文件系统�?| {results['summary']['l1_issues']} |\n")
+        f.write(f"| L2文档内容�?| {results['summary']['l2_issues']} |\n")
+        f.write(f"| L3专业标准�?| {results['summary']['l3_issues']} |\n")
         f.write(f"| **总计** | **{results['summary']['total_issues']}** |\n\n")
         
         # L1结果详情
@@ -388,8 +388,8 @@ if __name__ == '__main__':
 
 | 报告类型 | 保留期限 | 归档位置 |
 |---------|---------|---------|
-| **快速审计报告** | 3个月 | audit_reports/weekly/ |
-| **标准审计报告** | 1年 | audit_reports/monthly/ |
+| **快速审计报�?* | 3个月 | audit_reports/weekly/ |
+| **标准审计报告** | 1�?| audit_reports/monthly/ |
 | **深度审计报告** | 永久 | audit_reports/quarterly/ |
 | **专项审计报告** | 永久 | audit_reports/adhoc/ |
 
@@ -401,7 +401,7 @@ if __name__ == '__main__':
 #!/usr/bin/env python3
 """
 审计报告清理脚本
-功能: 清理过期的审计报告
+功能: 清理过期的审计报�?
 """
 
 import os
@@ -410,15 +410,15 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 def cleanup_old_reports():
-    """清理过期的审计报告"""
-    base_path = Path('docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state')
+    """清理过期的审计报�?""
+    base_path = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
     
-    # 清理快速审计报告（保留3个月）
+    # 清理快速审计报告（保留3个月�?
     weekly_path = base_path / 'weekly'
     if weekly_path.exists():
         cleanup_reports(weekly_path, days=90)
     
-    # 清理标准审计报告（保留1年）
+    # 清理标准审计报告（保�?年）
     monthly_path = base_path / 'monthly'
     if monthly_path.exists():
         cleanup_reports(monthly_path, days=365)
@@ -432,7 +432,7 @@ def cleanup_reports(directory, days):
         
         if file_date < cutoff_date:
             file_path.unlink()
-            print(f"已删除过期报告: {file_path}")
+            print(f"已删除过期报�? {file_path}")
 
 if __name__ == '__main__':
     cleanup_old_reports()
@@ -459,16 +459,16 @@ email:
   subject_template: "ZephyrAlpha文档审计报告 - {audit_type} - {date}"
   
   body_template: |
-    尊敬的文档管理员：
+    尊敬的文档管理员�?
     
     {audit_type}审计已完成，以下是审计结果摘要：
     
-    - 扫描文件数: {scanned_files}
+    - 扫描文件�? {scanned_files}
     - 问题总数: {total_issues}
     - 严重问题: {critical_issues}
     - 警告问题: {warning_issues}
     
-    详细报告请查看: {report_path}
+    详细报告请查�? {report_path}
     
     此致
     Audit Sentinel
@@ -486,7 +486,7 @@ dingtalk:
       "msgtype": "markdown",
       "markdown": {
         "title": "文档审计报告",
-<!-- 占位符链接已注释: "text": "### {audit_type}审计完成\n\n- 扫描文件数: {scanned_files}\n- 问题总数: {total_issues}\n- 严重问题: {critical_issues}\n\n[查看详细报告]({report_url})" -->
+<!-- 占位符链接已注释: "text": "### {audit_type}审计完成\n\n- 扫描文件�? {scanned_files}\n- 问题总数: {total_issues}\n- 严重问题: {critical_issues}\n\n[查看详细报告]({report_url})" -->
 
       }
     }
@@ -496,15 +496,15 @@ dingtalk:
 
 ## 6. 审计任务监控
 
-### 6.1 任务执行状态检查
+### 6.1 任务执行状态检�?
 
 **文件**: `scripts/check_audit_status.py`
 
 ```python
 #!/usr/bin/env python3
 """
-审计任务状态检查脚本
-功能: 检查定期审计任务是否正常执行
+审计任务状态检查脚�?
+功能: 检查定期审计任务是否正常执�?
 """
 
 import os
@@ -512,26 +512,26 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 def check_audit_status():
-    """检查审计任务状态"""
-    base_path = Path('docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state')
+    """检查审计任务状�?""
+    base_path = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
     
-    # 检查快速审计（应该每周执行）
+    # 检查快速审计（应该每周执行�?
     latest_weekly = get_latest_report(base_path / 'weekly')
     if latest_weekly:
         days_since_last = (datetime.now() - latest_weekly).days
         if days_since_last > 7:
             print(f"⚠️  警告: 快速审计已 {days_since_last} 天未执行")
         else:
-            print(f"✅ 快速审计状态正常，上次执行: {latest_weekly}")
+            print(f"�?快速审计状态正常，上次执行: {latest_weekly}")
     
-    # 检查标准审计（应该每月执行）
+    # 检查标准审计（应该每月执行�?
     latest_monthly = get_latest_report(base_path / 'monthly')
     if latest_monthly:
         days_since_last = (datetime.now() - latest_monthly).days
         if days_since_last > 30:
-            print(f"⚠️  警告: 标准审计已 {days_since_last} 天未执行")
+            print(f"⚠️  警告: 标准审计�?{days_since_last} 天未执行")
         else:
-            print(f"✅ 标准审计状态正常，上次执行: {latest_monthly}")
+            print(f"�?标准审计状态正常，上次执行: {latest_monthly}")
 
 def get_latest_report(directory):
     """获取最新的审计报告时间"""
@@ -558,7 +558,7 @@ if __name__ == '__main__':
 
 如果审计任务失败，执行以下步骤：
 
-1. **检查日志文件**:
+1. **检查日志文�?*:
    ```bash
    tail -f logs/audit.log
    ```
@@ -568,10 +568,10 @@ if __name__ == '__main__':
    python scripts/document_auditor.py --quick
    ```
 
-3. **检查系统资源**:
+3. **检查系统资�?*:
    ```bash
-   df -h  # 检查磁盘空间
-   free -m  # 检查内存
+   df -h  # 检查磁盘空�?
+   free -m  # 检查内�?
    ```
 
 4. **重启审计任务**:
@@ -585,12 +585,12 @@ if __name__ == '__main__':
 
 ---
 
-## 8. 参考文档
+## 8. 参考文�?
 
 - [文档治理流程标准](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [文档审计工具使用手册](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
 
 ---
 
-**配置状态**: 正式标准
+**配置状�?*: 正式标准
 **下次审查**: 2026-07-02

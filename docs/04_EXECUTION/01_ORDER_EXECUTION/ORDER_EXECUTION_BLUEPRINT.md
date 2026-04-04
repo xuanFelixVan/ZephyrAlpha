@@ -4,9 +4,9 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构师
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -15,20 +15,20 @@ implementation_status: 设计阶段
 
 # 订单生成+执行蓝图
 
-> 清风量化系统 v5.0 - 订单生成与执行系统
+> 清风量化系统 v5.0 - 订单生成与执行系�?
 > **索引**: `EXEC.001`
-> **开发时间**: 40h
-> **核心定位**: 实现"信号 → 订单 → 撮合 → 成交"的完整交易执行闭环
+> **开发时�?*: 40h
+> **核心定位**: 实现"信号 �?订单 �?撮合 �?成交"的完整交易执行闭�?
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 |
 |------|------|
-| **vn.py集成** | 使用vn.py作为执行层 |
+| **vn.py集成** | 使用vn.py作为执行�?|
 | **模拟/实盘切换** | 一键切换模拟和实盘 |
 | **TWAP/VWAP为主** | 智能订单算法以TWAP/VWAP为主 |
-| **完整日志** | 所有交易记录完整保存 |
+| **完整日志** | 所有交易记录完整保�?|
 
 
 ## 2. 交易执行架构
@@ -36,42 +36,42 @@ implementation_status: 设计阶段
 ### 2.1 系统架构
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    交易执行架构                                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────┐                                           │
-│  │   信号      │ ◀── StrategyEngine                        │
-│  └──────┬──────┘                                           │
-│         │                                                   │
-│         ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │              订单生成器                                  ││
-│  │  - 订单类型选择  - 数量计算  - 价格确定                  ││
-│  └─────────────────────────────────────────────────────────┘│
-│         │                                                   │
-│         ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │              风控检查                                    ││
-│  │  - 仓位检查  - 资金检查  - 价格检查                    ││
-│  └─────────────────────────────────────────────────────────┘│
-│         │                                                   │
-│         ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │              订单执行                                    ││
-│  │  - Broker接口  - 撮合引擎  - 成交回报                  ││
-│  └─────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?                   交易执行架构                                �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌─────────────�?                                          �?
+�? �?  信号      �?◀── StrategyEngine                        �?
+�? └──────┬──────�?                                          �?
+�?        �?                                                  �?
+�?        �?                                                  �?
+�? ┌─────────────────────────────────────────────────────────┐│
+�? �?             订单生成�?                                 ││
+�? �? - 订单类型选择  - 数量计算  - 价格确定                  ││
+�? └─────────────────────────────────────────────────────────┘│
+�?        �?                                                  �?
+�?        �?                                                  �?
+�? ┌─────────────────────────────────────────────────────────┐│
+�? �?             风控检�?                                   ││
+�? �? - 仓位检�? - 资金检�? - 价格检�?                   ││
+�? └─────────────────────────────────────────────────────────┘│
+�?        �?                                                  �?
+�?        �?                                                  �?
+�? ┌─────────────────────────────────────────────────────────┐│
+�? �?             订单执行                                    ││
+�? �? - Broker接口  - 撮合引擎  - 成交回报                  ││
+�? └─────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────�?
 ```
 
 
 ## 3. 核心实现
 
-### 3.1 订单生成器
+### 3.1 订单生成�?
 
 ```python
 class OrderGenerator:
-    """订单生成器
+    """订单生成�?
 
     索引: EXEC.001-M01
     上游: StrategyEngine
@@ -79,7 +79,7 @@ class OrderGenerator:
     """
 
     def __init__(self):
-        self.order_type = 'market'  # 默认市价单
+        self.order_type = 'market'  # 默认市价�?
 
     def generate_order(
         self,
@@ -127,24 +127,24 @@ class OrderGenerator:
             market_data: 市场数据
 
         返回:
-            下单数量(手)
+            下单数量(�?
         """
         symbol = signal.symbol
         price = market_data.get_price(symbol)
 
         if signal.position_ratio:
-            # 按仓位比例下单
+            # 按仓位比例下�?
             target_value = account.total_value * signal.position_ratio
             quantity = int(target_value / price / 100) * 100  # 整手
         elif signal.position_value:
-            # 按金额下单
+            # 按金额下�?
             quantity = int(signal.position_value / price / 100) * 100
         else:
             # 默认10%仓位
             target_value = account.total_value * 0.1
             quantity = int(target_value / price / 100) * 100
 
-        return max(quantity, 100)  # 最低100股
+        return max(quantity, 100)  # 最�?00�?
 
     def _determine_price(
         self,
@@ -153,7 +153,7 @@ class OrderGenerator:
     ) -> float:
         """确定订单价格"""
         if self.order_type == 'market':
-            return 0  # 市价单不需要指定价格
+            return 0  # 市价单不需要指定价�?
         elif self.order_type == 'limit':
             price = market_data.get_price(symbol)
             return price.last
@@ -180,13 +180,13 @@ class SmartOrderAlgorithm:
         参数:
             symbol: 股票代码
             action: buy/sell
-            total_quantity: 总数量
+            total_quantity: 总数�?
             duration_minutes: 持续时间(分钟)
 
         返回:
-            子订单列表
+            子订单列�?
         """
-        interval = duration_minutes / 10  # 分成10份
+        interval = duration_minutes / 10  # 分成10�?
         child_quantity = total_quantity // 10
 
         orders = []
@@ -216,11 +216,11 @@ class SmartOrderAlgorithm:
         参数:
             symbol: 股票代码
             action: buy/sell
-            total_quantity: 总数量
+            total_quantity: 总数�?
             volume_share: 每笔占比
 
         返回:
-            子订单列表
+            子订单列�?
         """
         child_quantity = int(total_quantity * volume_share)
         orders = []
@@ -251,8 +251,8 @@ class SmartOrderAlgorithm:
         参数:
             symbol: 股票代码
             action: buy/sell
-            total_quantity: 总数量
-            visible_ratio: 可见的比例
+            total_quantity: 总数�?
+            visible_ratio: 可见的比�?
 
         返回:
             冰山订单
@@ -269,7 +269,7 @@ class SmartOrderAlgorithm:
         )
 ```
 
-### 3.3 风控检查
+### 3.3 风控检�?
 
 ```python
 class RiskChecker:
@@ -284,7 +284,7 @@ class RiskChecker:
         self.rules = RiskRuleEngine()
 
     def check(self, order: Order, account: Account, market_data: MarketData) -> CheckResult:
-        """检查订单
+        """检查订�?
 
         参数:
             order: 订单
@@ -296,22 +296,22 @@ class RiskChecker:
         """
         violations = []
 
-        # 1. 仓位检查
+        # 1. 仓位检�?
         position_check = self._check_position(order, account)
         if not position_check.passed:
             violations.append(position_check)
 
-        # 2. 资金检查
+        # 2. 资金检�?
         fund_check = self._check_fund(order, account, market_data)
         if not fund_check.passed:
             violations.append(fund_check)
 
-        # 3. 价格检查
+        # 3. 价格检�?
         price_check = self._check_price(order, market_data)
         if not price_check.passed:
             violations.append(price_check)
 
-        # 4. 规则检查
+        # 4. 规则检�?
         rule_check = self.rules.check(order, account)
         if not rule_check.passed:
             violations.append(rule_check)
@@ -322,13 +322,13 @@ class RiskChecker:
         )
 
     def _check_position(self, order: Order, account: Account) -> CheckResult:
-        """仓位检查"""
+        """仓位检�?""
         if order.action == 'buy':
             pos = account.get_position(order.symbol)
             current_ratio = (pos.quantity * order.price) / account.total_value if pos else 0
             new_ratio = (pos.quantity * order.price + order.quantity * order.price) / account.total_value if pos else 0
 
-            if new_ratio > 0.1:  # 单股不超过10%
+            if new_ratio > 0.1:  # 单股不超�?0%
                 return CheckResult(
                     passed=False,
                     reason=f"单股仓位超限: {new_ratio:.2%} > 10%"
@@ -337,9 +337,9 @@ class RiskChecker:
         return CheckResult(passed=True)
 
     def _check_fund(self, order: Order, account: Account, market_data: MarketData) -> CheckResult:
-        """资金检查"""
+        """资金检�?""
         if order.action == 'buy':
-            estimated_cost = order.quantity * order.price * 1.003  # 预估+手续费
+            estimated_cost = order.quantity * order.price * 1.003  # 预估+手续�?
             if account.cash < estimated_cost:
                 return CheckResult(
                     passed=False,
@@ -349,11 +349,11 @@ class RiskChecker:
         return CheckResult(passed=True)
 ```
 
-### 3.4 订单执行器
+### 3.4 订单执行�?
 
 ```python
 class OrderExecutor:
-    """订单执行器
+    """订单执行�?
 
     索引: EXEC.001-M04
     上游: RiskChecker
@@ -458,9 +458,9 @@ class SimulatedBroker:
         order_data = self.orders[order_id]
         order = order_data['order']
 
-        # 市价单立即成交
+        # 市价单立即成�?
         if order.order_type == 'market':
-            # 使用昨收价模拟
+            # 使用昨收价模�?
             price = self._get模拟_price(order.symbol)
             slippage = price * 0.0002  # 万二滑点
 
@@ -478,11 +478,11 @@ class SimulatedBroker:
 
 ## 5. vn.py集成
 
-### 5.1 vn.py连接器
+### 5.1 vn.py连接�?
 
 ```python
 class VNpyConnector:
-    """vn.py连接器
+    """vn.py连接�?
 
     索引: EXEC.001-M06
     """
@@ -513,7 +513,7 @@ class VNpyConnector:
         price: float = 0,
         order_type: str = 'limit'
     ) -> str:
-        """发送订单"""
+        """发送订�?""
         if direction == 'long':
             direction = Direction.LONG
             offset = Offset.OPEN
@@ -595,16 +595,16 @@ class TradingAPI:
 ```
 
 
-## 7. 开发任务分解
+## 7. 开发任务分�?
 
 ### 7.1 任务分解 (40h)
 
 | 任务 | 时间 | 说明 |
 |------|------|------|
-| 订单生成器 | 6h | OrderGenerator |
+| 订单生成�?| 6h | OrderGenerator |
 | TWAP/VWAP算法 | 8h | SmartOrderAlgorithm |
-| 风控检查 | 6h | RiskChecker |
-| 订单执行器 | 6h | OrderExecutor |
+| 风控检�?| 6h | RiskChecker |
+| 订单执行�?| 6h | OrderExecutor |
 | 模拟撮合 | 6h | SimulatedBroker |
 | vn.py集成 | 4h | VNpyConnector |
 | 交易API | 4h | REST API |
@@ -617,5 +617,5 @@ class TradingAPI:
 | v1.0 | 2026-03-29 | 初始版本 |
 
 
-**维护者**: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `EXEC.001`

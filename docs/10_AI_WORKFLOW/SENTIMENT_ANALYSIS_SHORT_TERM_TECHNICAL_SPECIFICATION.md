@@ -4,12 +4,12 @@ version: 1.1.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 技术规格书
-applicable_scope: 舆情分析层短期改进模块
+applicable_scope: 舆情分析层短期改进模�?
 compliance_level: 专业标准
 applicable_modules:
-  - 数据源扩展
+  - 数据源扩�?
   - 深度学习情感分析
   - 实时预警系统
 ---
@@ -18,45 +18,45 @@ applicable_modules:
 
 > **版本**: v1.1
 > **创建日期**: 2026-04-02
-> **最后更新**: 2026-04-04
-> **适用模块**: 数据源扩展、深度学习情感分析、实时预警系统
-> **标准**: 专业量化机构技术规格标准
+> **最后更�?*: 2026-04-04
+> **适用模块**: 数据源扩展、深度学习情感分析、实时预警系�?
+> **标准**: 专业量化机构技术规格标�?
 
 ---
 
 ## 📋 文档目录
 
-1. [数据源扩展模块技术规格](#一数据源扩展模块技术规格)
-2. [深度学习情感分析模块技术规格](#二深度学习情感分析模块技术规格)
-3. [实时预警系统模块技术规格](#三实时预警系统模块技术规格)
-4. [数据字典](#四数据字典)
+1. [数据源扩展模块技术规格](#一数据源扩展模块技术规�?
+2. [深度学习情感分析模块技术规格](#二深度学习情感分析模块技术规�?
+3. [实时预警系统模块技术规格](#三实时预警系统模块技术规�?
+4. [数据字典](#四数据字�?
 5. [API接口规范](#五api接口规范)
 6. [算法流程图](#六算法流程图)
 7. [性能指标定义](#七性能指标定义)
-8. [错误处理规范](#八错误处理规范)
+8. [错误处理规范](#八错误处理规�?
 
 ---
 
-## 〇、环境准备
+## 〇、环境准�?
 
-> **重要提示**: 在开始实施前，请先完成环境准备工作。详细的环境准备步骤请参考各模块蓝图文档：
+> **重要提示**: 在开始实施前，请先完成环境准备工作。详细的环境准备步骤请参考各模块蓝图文档�?
 
-### 0.1 数据源扩展模块环境准备
+### 0.1 数据源扩展模块环境准�?
 
-**参考文档**: [另类数据集成模块蓝图](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备)
+**参考文�?*: [另类数据集成模块蓝图](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备)
 
 **环境要求**:
 - Python 3.9+
 - PostgreSQL 12+
 - Redis 6+
-- API密钥（Twitter、Reddit、FRED）
+- API密钥（Twitter、Reddit、FRED�?
 
-**快速验证**:
+**快速验�?*:
 ```bash
 # 验证Python版本
 python --version
 
-# 验证依赖库
+# 验证依赖�?
 pip list | grep -E "tweepy|praw|requests|pandas"
 
 # 验证环境变量
@@ -67,7 +67,7 @@ python verify_environment.py
 
 ### 0.2 深度学习情感分析模块环境准备
 
-**参考文档**: [深度学习情感分析模块蓝图](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md#511-环境准备)
+**参考文�?*: [深度学习情感分析模块蓝图](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md#511-环境准备)
 
 **环境要求**:
 - Python 3.9+
@@ -75,7 +75,7 @@ python verify_environment.py
 - Transformers 4.35.0+
 - GPU（推荐，可选）
 
-**快速验证**:
+**快速验�?*:
 ```bash
 # 验证Python版本
 python --version
@@ -94,21 +94,21 @@ python verify_finbert.py
 
 ### 0.3 实时预警系统模块环境准备
 
-**参考文档**: [实时预警系统模块蓝图](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-环境准备)
+**参考文�?*: [实时预警系统模块蓝图](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-环境准备)
 
 **环境要求**:
 - Python 3.9+
 - FastAPI 0.104.1+
 - PostgreSQL 12+
 - Redis 6+
-- 推送服务配置（邮件、微信、Telegram）
+- 推送服务配置（邮件、微信、Telegram�?
 
-**快速验证**:
+**快速验�?*:
 ```bash
 # 验证Python版本
 python --version
 
-# 验证依赖库
+# 验证依赖�?
 pip list | grep -E "fastapi|uvicorn|redis|yagmail"
 
 # 验证环境变量
@@ -117,25 +117,25 @@ python verify_environment.py
 
 ---
 
-## 一、数据源扩展模块技术规格
+## 一、数据源扩展模块技术规�?
 
 ### 1.1 模块概述
 
 **模块ID**: L3_ADI_001
 **模块名称**: Alternative Data Integration (另类数据集成)
 **版本**: v1.0.0
-**状态**: 设计中
+**状�?*: 设计�?
 
 ### 1.2 详细API接口定义
 
-#### 1.2.1 Twitter API适配器接口
+#### 1.2.1 Twitter API适配器接�?
 
 **接口名称**: TwitterAPIAdapter
 
-**类定义**:
+**类定�?*:
 ```python
 class TwitterAPIAdapter:
-    """Twitter API适配器
+    """Twitter API适配�?
     
     负责从Twitter采集财经相关推文数据
     """
@@ -148,7 +148,7 @@ class TwitterAPIAdapter:
         access_token: str,
         access_token_secret: str
     ):
-        """初始化Twitter API适配器
+        """初始化Twitter API适配�?
         
         Args:
             bearer_token: Twitter Bearer Token
@@ -170,9 +170,9 @@ class TwitterAPIAdapter:
         """搜索推文
         
         Args:
-            query: 搜索查询字符串
-            max_results: 最大结果数（10-100）
-            start_time: 开始时间
+            query: 搜索查询字符�?
+            max_results: 最大结果数�?0-100�?
+            start_time: 开始时�?
             end_time: 结束时间
             tweet_fields: 推文字段列表
             
@@ -201,7 +201,7 @@ class TwitterAPIAdapter:
         """添加流式规则
         
         Args:
-            value: 规则值
+            value: 规则�?
             tag: 规则标签
             
         Returns:
@@ -227,22 +227,22 @@ class TwitterAPIAdapter:
         """流式采集推文
         
         Args:
-            callback: 回调函数，处理每条推文
+            callback: 回调函数，处理每条推�?
         """
         pass
     
     def get_rate_limit_status(self) -> Dict[str, Any]:
-        """获取速率限制状态
+        """获取速率限制状�?
         
         Returns:
-            速率限制状态
+            速率限制状�?
         """
         pass
 ```
 
 **请求示例**:
 ```python
-# 初始化适配器
+# 初始化适配�?
 adapter = TwitterAPIAdapter(
     bearer_token="YOUR_BEARER_TOKEN",
     api_key="YOUR_API_KEY",
@@ -262,7 +262,7 @@ results = adapter.search_tweets(
 
 # 流式采集
 def process_tweet(tweet):
-    print(f"新推文: {tweet['text']}")
+    print(f"新推�? {tweet['text']}")
 
 adapter.stream_tweets(callback=process_tweet)
 ```
@@ -297,16 +297,16 @@ adapter.stream_tweets(callback=process_tweet)
 
 ---
 
-#### 1.2.2 Reddit API适配器接口
+#### 1.2.2 Reddit API适配器接�?
 
 **接口名称**: RedditAPIAdapter
 
-**类定义**:
+**类定�?*:
 ```python
 class RedditAPIAdapter:
-    """Reddit API适配器
+    """Reddit API适配�?
     
-    负责从Reddit采集财经相关帖子和评论
+    负责从Reddit采集财经相关帖子和评�?
     """
     
     def __init__(
@@ -315,12 +315,12 @@ class RedditAPIAdapter:
         client_secret: str,
         user_agent: str
     ):
-        """初始化Reddit API适配器
+        """初始化Reddit API适配�?
         
         Args:
             client_id: Reddit应用客户端ID
-            client_secret: Reddit应用客户端密钥
-            user_agent: 用户代理字符串
+            client_secret: Reddit应用客户端密�?
+            user_agent: 用户代理字符�?
         """
         pass
     
@@ -333,7 +333,7 @@ class RedditAPIAdapter:
         """获取热门帖子
         
         Args:
-            subreddit: 子版块名称
+            subreddit: 子版块名�?
             limit: 返回数量限制
             params: 额外参数
             
@@ -347,10 +347,10 @@ class RedditAPIAdapter:
         subreddit: str,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """获取最新帖子
+        """获取最新帖�?
         
         Args:
-            subreddit: 子版块名称
+            subreddit: 子版块名�?
             limit: 返回数量限制
             
         Returns:
@@ -386,7 +386,7 @@ class RedditAPIAdapter:
         """搜索帖子
         
         Args:
-            subreddit: 子版块名称
+            subreddit: 子版块名�?
             query: 搜索查询
             sort: 排序方式
             limit: 返回数量限制
@@ -397,20 +397,20 @@ class RedditAPIAdapter:
         pass
     
     def get_subreddit_info(self, subreddit: str) -> Dict[str, Any]:
-        """获取子版块信息
+        """获取子版块信�?
         
         Args:
-            subreddit: 子版块名称
+            subreddit: 子版块名�?
             
         Returns:
-            子版块信息
+            子版块信�?
         """
         pass
 ```
 
 **请求示例**:
 ```python
-# 初始化适配器
+# 初始化适配�?
 adapter = RedditAPIAdapter(
     client_id="YOUR_CLIENT_ID",
     client_secret="YOUR_CLIENT_SECRET",
@@ -466,20 +466,20 @@ comments = adapter.get_post_comments(
 
 ---
 
-#### 1.2.3 FRED API适配器接口
+#### 1.2.3 FRED API适配器接�?
 
 **接口名称**: FREDAPIAdapter
 
-**类定义**:
+**类定�?*:
 ```python
 class FREDAPIAdapter:
-    """FRED API适配器
+    """FRED API适配�?
     
     负责从FRED采集美国宏观经济数据
     """
     
     def __init__(self, api_key: str):
-        """初始化FRED API适配器
+        """初始化FRED API适配�?
         
         Args:
             api_key: FRED API密钥
@@ -497,7 +497,7 @@ class FREDAPIAdapter:
         
         Args:
             series_id: 序列ID
-            observation_start: 开始日期 (YYYY-MM-DD)
+            observation_start: 开始日�?(YYYY-MM-DD)
             observation_end: 结束日期 (YYYY-MM-DD)
             frequency: 频率 (d, w, m, q, a)
             
@@ -563,7 +563,7 @@ class FREDAPIAdapter:
 
 **请求示例**:
 ```python
-# 初始化适配器
+# 初始化适配�?
 adapter = FREDAPIAdapter(api_key="YOUR_FRED_API_KEY")
 
 # 获取GDP数据
@@ -612,23 +612,23 @@ series_info = adapter.get_series_info(series_id="GDP")
 
 ---
 
-#### 1.2.4 SEC EDGAR API适配器接口
+#### 1.2.4 SEC EDGAR API适配器接�?
 
 **接口名称**: SECEdgARAPIAdapter
 
-**类定义**:
+**类定�?*:
 ```python
 class SECEdgARAPIAdapter:
-    """SEC EDGAR API适配器
+    """SEC EDGAR API适配�?
     
     负责从SEC EDGAR采集上市公司财务数据
     """
     
     def __init__(self, user_agent: str):
-        """初始化SEC EDGAR API适配器
+        """初始化SEC EDGAR API适配�?
         
         Args:
-            user_agent: 用户代理字符串（必须包含邮箱）
+            user_agent: 用户代理字符串（必须包含邮箱�?
         """
         pass
     
@@ -636,7 +636,7 @@ class SECEdgARAPIAdapter:
         """获取公司财务数据
         
         Args:
-            cik: 公司CIK号
+            cik: 公司CIK�?
             
         Returns:
             公司财务数据
@@ -652,8 +652,8 @@ class SECEdgARAPIAdapter:
         """获取公司特定概念数据
         
         Args:
-            cik: 公司CIK号
-            taxonomy: 分类法 (us-gaap, ifrs-full)
+            cik: 公司CIK�?
+            taxonomy: 分类�?(us-gaap, ifrs-full)
             concept: 概念名称
             
         Returns:
@@ -671,7 +671,7 @@ class SECEdgARAPIAdapter:
         """获取财报列表
         
         Args:
-            cik: 公司CIK号
+            cik: 公司CIK�?
             form_type: 表格类型 (10-K, 10-Q, 8-K)
             filing_date: 提交日期
             limit: 返回数量限制
@@ -689,7 +689,7 @@ class SECEdgARAPIAdapter:
         """获取财报文档
         
         Args:
-            accession_number: 登记号
+            accession_number: 登记�?
             document_name: 文档名称
             
         Returns:
@@ -701,7 +701,7 @@ class SECEdgARAPIAdapter:
         """获取公司信息
         
         Args:
-            cik: 公司CIK号
+            cik: 公司CIK�?
             
         Returns:
             公司信息
@@ -727,7 +727,7 @@ class SECEdgARAPIAdapter:
 
 **请求示例**:
 ```python
-# 初始化适配器
+# 初始化适配�?
 adapter = SECEdgARAPIAdapter(
     user_agent="ZephyrAlpha/1.0 (your.email@example.com)"
 )
@@ -786,27 +786,27 @@ companies = adapter.search_companies(
 
 ---
 
-## 二、深度学习情感分析模块技术规格
+## 二、深度学习情感分析模块技术规�?
 
 ### 2.1 模块概述
 
 **模块ID**: L3_DLSA_001
-**模块名称**: Deep Learning Sentiment Analyzer (深度学习情感分析器)
+**模块名称**: Deep Learning Sentiment Analyzer (深度学习情感分析�?
 **版本**: v1.0.0
-**状态**: 设计中
+**状�?*: 设计�?
 
 ### 2.2 详细API接口定义
 
-#### 2.2.1 深度学习情感分析器接口
+#### 2.2.1 深度学习情感分析器接�?
 
 **接口名称**: DLSentimentAnalyzer
 
-**类定义**:
+**类定�?*:
 ```python
 class DLSentimentAnalyzer:
-    """深度学习情感分析器
+    """深度学习情感分析�?
     
-    使用深度学习模型进行多维度情感分析
+    使用深度学习模型进行多维度情感分�?
     """
     
     def __init__(
@@ -820,10 +820,10 @@ class DLSentimentAnalyzer:
         """初始化情感分析器
         
         Args:
-            model_name: 模型名称或路径
+            model_name: 模型名称或路�?
             device: 设备类型 (cpu, cuda)
-            max_length: 最大序列长度
-            batch_size: 批处理大小
+            max_length: 最大序列长�?
+            batch_size: 批处理大�?
             use_fp16: 是否使用FP16精度
         """
         pass
@@ -838,8 +838,8 @@ class DLSentimentAnalyzer:
         """分析单条文本情感
         
         Args:
-            text: 待分析文本
-            return_all_scores: 是否返回所有分数
+            text: 待分析文�?
+            return_all_scores: 是否返回所有分�?
             return_emotion: 是否返回情绪分析
             return_intensity: 是否返回强度分析
             
@@ -858,8 +858,8 @@ class DLSentimentAnalyzer:
         
         Args:
             texts: 文本列表
-            return_all_scores: 是否返回所有分数
-            show_progress: 是否显示进度条
+            return_all_scores: 是否返回所有分�?
+            show_progress: 是否显示进度�?
             
         Returns:
             情感分析结果列表
@@ -873,10 +873,10 @@ class DLSentimentAnalyzer:
         """详细分析文本情感
         
         Args:
-            text: 待分析文本
+            text: 待分析文�?
             
         Returns:
-            详细分析结果，包含情感、情绪、强度、关键词等
+            详细分析结果，包含情感、情绪、强度、关键词�?
         """
         pass
     
@@ -897,9 +897,9 @@ class DLSentimentAnalyzer:
             train_data: 训练数据
             val_data: 验证数据
             output_dir: 输出目录
-            learning_rate: 学习率
+            learning_rate: 学习�?
             num_epochs: 训练轮数
-            batch_size: 批处理大小
+            batch_size: 批处理大�?
             warmup_steps: 预热步数
             save_steps: 保存步数
             
@@ -1034,14 +1034,14 @@ benchmark_results = analyzer.benchmark(
 
 ---
 
-## 三、实时预警系统模块技术规格
+## 三、实时预警系统模块技术规�?
 
 ### 3.1 模块概述
 
 **模块ID**: L3_RTAS_001
 **模块名称**: Real-Time Alert System (实时预警系统)
 **版本**: v1.0.0
-**状态**: 设计中
+**状�?*: 设计�?
 
 ### 3.2 详细API接口定义
 
@@ -1049,12 +1049,12 @@ benchmark_results = analyzer.benchmark(
 
 **接口名称**: RealTimeAlertSystem
 
-**类定义**:
+**类定�?*:
 ```python
 class RealTimeAlertSystem:
     """实时预警系统
     
-    实现实时监控、规则执行、多渠道预警推送
+    实现实时监控、规则执行、多渠道预警推�?
     """
     
     def __init__(
@@ -1062,7 +1062,7 @@ class RealTimeAlertSystem:
         config: Dict[str, Any],
         pusher_config: Dict[str, Any]
     ):
-        """初始化预警系统
+        """初始化预警系�?
         
         Args:
             config: 系统配置
@@ -1112,7 +1112,7 @@ class RealTimeAlertSystem:
         pass
     
     def get_rules(self) -> List[AlertRule]:
-        """获取所有预警规则
+        """获取所有预警规�?
         
         Returns:
             预警规则列表
@@ -1123,7 +1123,7 @@ class RealTimeAlertSystem:
         self,
         data: Dict[str, Any]
     ) -> Optional[Alert]:
-        """处理数据并触发预警
+        """处理数据并触发预�?
         
         Args:
             data: 监控数据
@@ -1134,13 +1134,13 @@ class RealTimeAlertSystem:
         pass
     
     def push_alert(self, alert: Alert) -> bool:
-        """推送预警
+        """推送预�?
         
         Args:
             alert: 预警信息
             
         Returns:
-            是否推送成功
+            是否推送成�?
         """
         pass
     
@@ -1154,7 +1154,7 @@ class RealTimeAlertSystem:
         """获取预警历史
         
         Args:
-            start_time: 开始时间
+            start_time: 开始时�?
             end_time: 结束时间
             severity: 预警级别
             limit: 返回数量限制
@@ -1165,10 +1165,10 @@ class RealTimeAlertSystem:
         pass
     
     def get_system_status(self) -> Dict[str, Any]:
-        """获取系统状态
+        """获取系统状�?
         
         Returns:
-            系统状态
+            系统状�?
         """
         pass
     
@@ -1176,7 +1176,7 @@ class RealTimeAlertSystem:
         """测试推送器
         
         Args:
-            channel: 推送渠道
+            channel: 推送渠�?
             
         Returns:
             是否测试成功
@@ -1186,10 +1186,10 @@ class RealTimeAlertSystem:
 
 **请求示例**:
 ```python
-# 初始化预警系统
+# 初始化预警系�?
 alert_system = RealTimeAlertSystem(
     config={
-        "monitoring_interval": 60,  # 秒
+        "monitoring_interval": 60,  # �?
         "max_alerts_per_hour": 100
     },
     pusher_config={
@@ -1212,7 +1212,7 @@ alert_system = RealTimeAlertSystem(
 # 添加预警规则
 rule = AlertRule(
     rule_id="sentiment_negative_spike",
-    rule_name="负面情感激增",
+    rule_name="负面情感激�?,
     description="负面情感分数突然下降超过20%",
     condition={
         "metric": "sentiment_score",
@@ -1246,8 +1246,8 @@ if alert:
     "alert_id": "alert_20260402_001",
     "rule_id": "sentiment_negative_spike",
     "severity": "high",
-    "title": "负面情感激增预警",
-    "message": "负面情感分数从0.6下降至0.3，下降幅度50%，超过阈值20%",
+    "title": "负面情感激增预�?,
+    "message": "负面情感分数�?.6下降�?.3，下降幅�?0%，超过阈�?0%",
     "data": {
         "sentiment_score": 0.3,
         "previous_sentiment_score": 0.6,
@@ -1262,62 +1262,62 @@ if alert:
 
 ---
 
-## 四、数据字典
+## 四、数据字�?
 
-### 4.1 Twitter数据表字段说明
+### 4.1 Twitter数据表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | tweet_id | TEXT | 推文ID | "1234567890" |
 | text | TEXT | 推文内容 | "Apple stock surges..." |
 | user_id | TEXT | 用户ID | "987654321" |
-| user_name | TEXT | 用户名 | "trader_john" |
-| user_followers_count | INTEGER | 粉丝数 | 5000 |
+| user_name | TEXT | 用户�?| "trader_john" |
+| user_followers_count | INTEGER | 粉丝�?| 5000 |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 | lang | TEXT | 语言 | "en" |
 | hashtags | TEXT | 标签列表(JSON) | ["AAPL", "stocks"] |
 | symbols | TEXT | 股票代码(JSON) | ["$AAPL"] |
-| like_count | INTEGER | 点赞数 | 150 |
-| retweet_count | INTEGER | 转发数 | 45 |
-| reply_count | INTEGER | 回复数 | 12 |
+| like_count | INTEGER | 点赞�?| 150 |
+| retweet_count | INTEGER | 转发�?| 45 |
+| reply_count | INTEGER | 回复�?| 12 |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:05:00" |
 
-### 4.2 Reddit数据表字段说明
+### 4.2 Reddit数据表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | post_id | TEXT | 帖子ID | "abc123" |
 | title | TEXT | 帖子标题 | "AAPL to the moon!" |
 | selftext | TEXT | 帖子内容 | "Apple just reported..." |
-| author | TEXT | 作者 | "username" |
-| subreddit | TEXT | 子版块 | "wallstreetbets" |
+| author | TEXT | 作�?| "username" |
+| subreddit | TEXT | 子版�?| "wallstreetbets" |
 | created_utc | TIMESTAMP | 创建时间(UTC) | "2026-04-02 10:00:00" |
 | score | INTEGER | 得分 | 1500 |
-| num_comments | INTEGER | 评论数 | 245 |
+| num_comments | INTEGER | 评论�?| 245 |
 | upvote_ratio | REAL | 点赞比例 | 0.95 |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:05:00" |
 
-### 4.3 FRED数据表字段说明
+### 4.3 FRED数据表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | series_id | TEXT | 序列ID | "GDP" |
 | title | TEXT | 序列标题 | "Gross Domestic Product" |
 | observation_date | DATE | 观察日期 | "2026-01-01" |
-| value | REAL | 数值 | 25000.0 |
+| value | REAL | 数�?| 25000.0 |
 | frequency | TEXT | 频率 | "Quarterly" |
 | units | TEXT | 单位 | "Billions of Dollars" |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:00:00" |
 
-### 4.4 SEC EDGAR数据表字段说明
+### 4.4 SEC EDGAR数据表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
-| cik | TEXT | 公司CIK号 | "0000320193" |
+| cik | TEXT | 公司CIK�?| "0000320193" |
 | company_name | TEXT | 公司名称 | "Apple Inc." |
 | form_type | TEXT | 表格类型 | "10-K" |
 | filed_at | DATE | 提交日期 | "2026-04-02" |
@@ -1327,54 +1327,54 @@ if alert:
 | parsed_data | TEXT | 解析数据(JSON) | {...} |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:00:00" |
 
-### 4.5 情感分析结果表字段说明
+### 4.5 情感分析结果表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | text_hash | TEXT | 文本哈希 | "a1b2c3d4..." |
 | text | TEXT | 原始文本 | "Apple's revenue..." |
-| source | TEXT | 数据源 | "twitter" |
+| source | TEXT | 数据�?| "twitter" |
 | basic_sentiment | TEXT | 基础情感(JSON) | {"label": "positive", ...} |
 | emotion | TEXT | 情绪(JSON) | {"fear": 0.05, ...} |
 | intensity | TEXT | 强度(JSON) | {"label": "strong", ...} |
 | time_horizon | TEXT | 时间维度(JSON) | {"short_term": 0.25, ...} |
-| keywords | TEXT | 关键词(JSON) | ["Apple", "revenue"] |
+| keywords | TEXT | 关键�?JSON) | ["Apple", "revenue"] |
 | entities | TEXT | 实体(JSON) | ["Apple Inc."] |
-| confidence | REAL | 置信度 | 0.92 |
+| confidence | REAL | 置信�?| 0.92 |
 | model_name | TEXT | 模型名称 | "ProsusAI/finbert" |
 | analyzed_at | TIMESTAMP | 分析时间 | "2026-04-02 10:00:00" |
 
-### 4.6 预警规则表字段说明
+### 4.6 预警规则表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | rule_id | TEXT | 规则ID | "sentiment_negative_spike" |
-| rule_name | TEXT | 规则名称 | "负面情感激增" |
+| rule_name | TEXT | 规则名称 | "负面情感激�? |
 | description | TEXT | 描述 | "负面情感分数突然下降..." |
 | condition | TEXT | 条件(JSON) | {"metric": "sentiment_score", ...} |
 | severity | TEXT | 严重级别 | "high" |
-| channels | TEXT | 推送渠道(JSON) | ["email", "wechat"] |
+| channels | TEXT | 推送渠�?JSON) | ["email", "wechat"] |
 | enabled | INTEGER | 是否启用 | 1 |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 | updated_at | TIMESTAMP | 更新时间 | "2026-04-02 10:00:00" |
 
-### 4.7 预警历史表字段说明
+### 4.7 预警历史表字段说�?
 
-| 字段名 | 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | alert_id | TEXT | 预警ID | "alert_20260402_001" |
 | rule_id | TEXT | 规则ID | "sentiment_negative_spike" |
 | severity | TEXT | 严重级别 | "high" |
-| title | TEXT | 标题 | "负面情感激增预警" |
-| message | TEXT | 消息 | "负面情感分数从0.6..." |
+| title | TEXT | 标题 | "负面情感激增预�? |
+| message | TEXT | 消息 | "负面情感分数�?.6..." |
 | data | TEXT | 数据(JSON) | {...} |
 | triggered_at | TIMESTAMP | 触发时间 | "2026-04-02 10:30:00" |
-| channels | TEXT | 推送渠道(JSON) | ["email", "wechat"] |
-| status | TEXT | 状态 | "sent" |
-| sent_at | TIMESTAMP | 发送时间 | "2026-04-02 10:30:05" |
+| channels | TEXT | 推送渠�?JSON) | ["email", "wechat"] |
+| status | TEXT | 状�?| "sent" |
+| sent_at | TIMESTAMP | 发送时�?| "2026-04-02 10:30:05" |
 | error_message | TEXT | 错误消息 | NULL |
 
 ---
@@ -1390,7 +1390,7 @@ if alert:
 **资源命名**:
 - 使用复数名词: `/tweets`, `/posts`, `/alerts`
 - 使用小写字母和连字符: `/sentiment-results`
-- 避免深层嵌套: 最多2层
+- 避免深层嵌套: 最�?�?
 
 **示例**:
 ```
@@ -1410,7 +1410,7 @@ PUT    /api/v1/alerts/rules/{id}         # 更新预警规则
 
 #### 5.1.2 请求格式
 
-**请求头**:
+**请求�?*:
 ```
 Content-Type: application/json
 Authorization: Bearer {token}
@@ -1469,11 +1469,11 @@ Accept: application/json
 | 201 | Created | 成功创建资源 |
 | 204 | No Content | 成功删除资源 |
 | 400 | Bad Request | 请求参数错误 |
-| 401 | Unauthorized | 未授权 |
+| 401 | Unauthorized | 未授�?|
 | 403 | Forbidden | 禁止访问 |
-| 404 | Not Found | 资源不存在 |
+| 404 | Not Found | 资源不存�?|
 | 429 | Too Many Requests | 请求过于频繁 |
-| 500 | Internal Server Error | 服务器内部错误 |
+| 500 | Internal Server Error | 服务器内部错�?|
 
 ---
 
@@ -1488,7 +1488,7 @@ Accept: application/json
 const ws = new WebSocket('ws://localhost:8000/ws');
 
 ws.onopen = function(event) {
-    console.log('WebSocket连接已建立');
+    console.log('WebSocket连接已建�?);
     // 订阅频道
     ws.send(JSON.stringify({
         action: 'subscribe',
@@ -1506,7 +1506,7 @@ ws.onerror = function(error) {
 };
 
 ws.onclose = function(event) {
-    console.log('WebSocket连接已关闭');
+    console.log('WebSocket连接已关�?);
 };
 ```
 
@@ -1531,7 +1531,7 @@ ws.onclose = function(event) {
 }
 ```
 
-**推送消息**:
+**推送消�?*:
 ```json
 {
     "channel": "sentiment_stream",
@@ -1551,108 +1551,108 @@ ws.onclose = function(event) {
 ### 6.1 数据源扩展模块流程图
 
 ```
-开始
-  ↓
-初始化数据源适配器
-  ↓
-配置API密钥和参数
-  ↓
+开�?
+  �?
+初始化数据源适配�?
+  �?
+配置API密钥和参�?
+  �?
 建立API连接
-  ↓
+  �?
 [连接成功?]
-  ├─ 否 → 记录错误日志 → 重试(最多3次) → 失败
-  └─ 是 ↓
-      开始数据采集
-        ↓
+  ├─ �?�?记录错误日志 �?重试(最�?�? �?失败
+  └─ �?�?
+      开始数据采�?
+        �?
       [采集模式?]
-        ├─ 实时流式 → 启动流式监听 → 接收数据 → 数据清洗
-        └─ 定时批量 → 设置定时任务 → 触发采集 → 数据清洗
-                ↓
-            数据标准化
-                ↓
+        ├─ 实时流式 �?启动流式监听 �?接收数据 �?数据清洗
+        └─ 定时批量 �?设置定时任务 �?触发采集 �?数据清洗
+                �?
+            数据标准�?
+                �?
             数据存储
-                ↓
+                �?
             更新采集统计
-                ↓
+                �?
             [继续采集?]
-                ├─ 是 → 返回数据采集
-                └─ 否 → 结束
+                ├─ �?�?返回数据采集
+                └─ �?�?结束
 ```
 
-### 6.2 深度学习情感分析模块流程图
+### 6.2 深度学习情感分析模块流程�?
 
 ```
-开始
-  ↓
-加载预训练模型
-  ↓
+开�?
+  �?
+加载预训练模�?
+  �?
 初始化分词器
-  ↓
+  �?
 接收文本输入
-  ↓
-文本预处理
+  �?
+文本预处�?
   ├─ 去除HTML标签
   ├─ 去除特殊字符
   ├─ 分词
   └─ 编码
-  ↓
+  �?
 模型推理
-  ↓
+  �?
 获取情感分数
-  ↓
-[需要详细分析?]
-  ├─ 否 → 返回基础情感结果
-  └─ 是 ↓
-      多维度分析
+  �?
+[需要详细分�?]
+  ├─ �?�?返回基础情感结果
+  └─ �?�?
+      多维度分�?
         ├─ 情绪分析
         ├─ 强度评估
         ├─ 时间维度
-        └─ 关键词提取
-          ↓
+        └─ 关键词提�?
+          �?
       结果融合
-          ↓
+          �?
       返回详细结果
-          ↓
+          �?
         结束
 ```
 
-### 6.3 实时预警系统模块流程图
+### 6.3 实时预警系统模块流程�?
 
 ```
-开始
-  ↓
-初始化预警系统
-  ↓
+开�?
+  �?
+初始化预警系�?
+  �?
 加载预警规则
-  ↓
+  �?
 启动监控线程
-  ↓
+  �?
 [监控模式?]
-  ├─ 被动模式 → 等待数据输入 → 接收数据
-  └─ 主动模式 → 定时采集数据 → 获取数据
-      ↓
-  数据预处理
-      ↓
+  ├─ 被动模式 �?等待数据输入 �?接收数据
+  └─ 主动模式 �?定时采集数据 �?获取数据
+      �?
+  数据预处�?
+      �?
   规则匹配
-      ↓
+      �?
   [触发规则?]
-      ├─ 否 → 更新监控指标 → 返回监控
-      └─ 是 ↓
+      ├─ �?�?更新监控指标 �?返回监控
+      └─ �?�?
           生成预警信息
-              ↓
+              �?
           [预警级别?]
-              ├─ Critical → 立即推送
-              ├─ High → 5分钟内推送
-              ├─ Medium → 15分钟内推送
-              └─ Low → 汇总推送
-                  ↓
-              选择推送渠道
-                  ↓
-              [推送成功?]
-                  ├─ 是 → 记录推送历史 → 更新统计 → 返回监控
-                  └─ 否 → 重试(最多3次) → [重试成功?]
-                              ├─ 是 → 记录推送历史 → 返回监控
-                              └─ 否 → 记录失败日志 → 使用备用渠道 → 返回监控
+              ├─ Critical �?立即推�?
+              ├─ High �?5分钟内推�?
+              ├─ Medium �?15分钟内推�?
+              └─ Low �?汇总推�?
+                  �?
+              选择推送渠�?
+                  �?
+              [推送成�?]
+                  ├─ �?�?记录推送历�?�?更新统计 �?返回监控
+                  └─ �?�?重试(最�?�? �?[重试成功?]
+                              ├─ �?�?记录推送历�?�?返回监控
+                              └─ �?�?记录失败日志 �?使用备用渠道 �?返回监控
 ```
 
 ---
@@ -1661,50 +1661,50 @@ ws.onclose = function(event) {
 
 ### 7.1 数据源扩展模块性能指标
 
-| 指标名称 | 目标值 | 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
-| 数据采集速度 | > 100条/分钟 | 统计单位时间采集数量 | 每个数据源 |
-| API响应时间 | < 2秒 | 记录API调用耗时 | 平均响应时间 |
-| 数据完整性 | > 95% | 统计成功采集比例 | 成功数/总数 |
-| 数据准确性 | > 95% | 抽样验证数据质量 | 正确数/抽样数 |
-| 系统可用性 | > 99% | 监控系统运行时间 | 正常时间/总时间 |
+| 数据采集速度 | > 100�?分钟 | 统计单位时间采集数量 | 每个数据�?|
+| API响应时间 | < 2�?| 记录API调用耗时 | 平均响应时间 |
+| 数据完整�?| > 95% | 统计成功采集比例 | 成功�?总数 |
+| 数据准确�?| > 95% | 抽样验证数据质量 | 正确�?抽样�?|
+| 系统可用�?| > 99% | 监控系统运行时间 | 正常时间/总时�?|
 | 错误恢复时间 | < 5分钟 | 记录错误恢复耗时 | 从错误到恢复 |
 
 ### 7.2 深度学习情感分析模块性能指标
 
-| 指标名称 | 目标值 | 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
 | 单条分析速度 | < 100ms (GPU) | 记录单次分析耗时 | 平均耗时 |
-| 批量分析速度 | > 100条/秒 (GPU) | 统计批量处理速度 | 吞吐量 |
-| 模型准确率 | > 85% | 测试集评估 | Accuracy |
-| 模型精确率 | > 85% | 测试集评估 | Precision |
-| 模型召回率 | > 85% | 测试集评估 | Recall |
-| F1分数 | > 0.85 | 测试集评估 | F1 Score |
-| GPU利用率 | > 80% | 监控GPU使用率 | 平均利用率 |
-| 内存使用 | < 4GB | 监控内存使用 | 峰值内存 |
+| 批量分析速度 | > 100�?�?(GPU) | 统计批量处理速度 | 吞吐�?|
+| 模型准确�?| > 85% | 测试集评�?| Accuracy |
+| 模型精确�?| > 85% | 测试集评�?| Precision |
+| 模型召回�?| > 85% | 测试集评�?| Recall |
+| F1分数 | > 0.85 | 测试集评�?| F1 Score |
+| GPU利用�?| > 80% | 监控GPU使用�?| 平均利用�?|
+| 内存使用 | < 4GB | 监控内存使用 | 峰值内�?|
 
 ### 7.3 实时预警系统模块性能指标
 
-| 指标名称 | 目标值 | 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
 | 监控延迟 | < 1分钟 | 记录数据到监控的时间 | 平均延迟 |
 | 规则执行速度 | < 100ms | 记录规则执行耗时 | 平均耗时 |
-| 预警推送延迟 | < 30秒 | 记录触发到推送的时间 | 平均延迟 |
-| 预警准确率 | > 90% | 验证预警有效性 | 有效预警/总预警 |
-| 预警误报率 | < 10% | 统计误报比例 | 误报数/总预警 |
-| 推送成功率 | > 95% | 统计推送成功比例 | 成功数/总数 |
-| 系统吞吐量 | > 100条/分钟 | 统计处理能力 | 每分钟处理数 |
+| 预警推送延�?| < 30�?| 记录触发到推送的时间 | 平均延迟 |
+| 预警准确�?| > 90% | 验证预警有效�?| 有效预警/总预�?|
+| 预警误报�?| < 10% | 统计误报比例 | 误报�?总预�?|
+| 推送成功率 | > 95% | 统计推送成功比�?| 成功�?总数 |
+| 系统吞吐�?| > 100�?分钟 | 统计处理能力 | 每分钟处理数 |
 
 ---
 
-## 八、错误处理规范
+## 八、错误处理规�?
 
 ### 8.1 错误分类
 
-#### 8.1.1 按严重程度分类
+#### 8.1.1 按严重程度分�?
 
-**P0 - 阻断性错误**:
-- 数据库连接失败
+**P0 - 阻断性错�?*:
+- 数据库连接失�?
 - 模型加载失败
 - API认证失败
 - 系统崩溃
@@ -1712,7 +1712,7 @@ ws.onclose = function(event) {
 **P1 - 高优先级错误**:
 - 数据采集失败
 - 情感分析失败
-- 预警推送失败
+- 预警推送失�?
 - 数据存储失败
 
 **P2 - 中优先级错误**:
@@ -1723,9 +1723,9 @@ ws.onclose = function(event) {
 **P3 - 低优先级错误**:
 - 日志记录失败
 - 统计更新失败
-- 非关键功能失败
+- 非关键功能失�?
 
-#### 8.1.2 按错误类型分类
+#### 8.1.2 按错误类型分�?
 
 **网络错误**:
 - 连接超时
@@ -1736,9 +1736,9 @@ ws.onclose = function(event) {
 **API错误**:
 - 认证失败 (401)
 - 权限不足 (403)
-- 资源不存在 (404)
+- 资源不存�?(404)
 - 速率限制 (429)
-- 服务器错误 (500)
+- 服务器错�?(500)
 
 **数据错误**:
 - 数据格式错误
@@ -1761,7 +1761,7 @@ ws.onclose = function(event) {
 **重试条件**:
 - 网络错误（连接超时、连接拒绝）
 - API速率限制 (429)
-- 服务器临时错误 (500, 502, 503)
+- 服务器临时错�?(500, 502, 503)
 
 **重试策略**:
 ```python
@@ -1772,20 +1772,20 @@ def retry_with_backoff(
     max_delay: float = 60.0,
     backoff_factor: float = 2.0
 ) -> Any:
-    """指数退避重试
+    """指数退避重�?
     
     Args:
         func: 要执行的函数
-        max_retries: 最大重试次数
-        base_delay: 基础延迟（秒）
+        max_retries: 最大重试次�?
+        base_delay: 基础延迟（秒�?
         max_delay: 最大延迟（秒）
-        backoff_factor: 退避因子
+        backoff_factor: 退避因�?
         
     Returns:
         函数执行结果
         
     Raises:
-        Exception: 重试失败后抛出异常
+        Exception: 重试失败后抛出异�?
     """
     import time
     from functools import wraps
@@ -1804,14 +1804,14 @@ def retry_with_backoff(
 #### 8.2.2 降级策略
 
 **降级条件**:
-- GPU不可用 → 使用CPU
-- 外部API不可用 → 使用缓存数据
-- 数据库不可用 → 使用文件存储
+- GPU不可�?�?使用CPU
+- 外部API不可�?�?使用缓存数据
+- 数据库不可用 �?使用文件存储
 
 **降级示例**:
 ```python
 def analyze_sentiment(text: str) -> Dict[str, Any]:
-    """情感分析（带降级策略）"""
+    """情感分析（带降级策略�?""
     try:
         # 尝试使用GPU
         if torch.cuda.is_available():
@@ -1828,14 +1828,14 @@ def analyze_sentiment(text: str) -> Dict[str, Any]:
 #### 8.2.3 熔断策略
 
 **熔断条件**:
-- 连续失败次数超过阈值（如5次）
-- 错误率超过阈值（如50%）
-- 响应时间超过阈值（如10秒）
+- 连续失败次数超过阈值（�?次）
+- 错误率超过阈值（�?0%�?
+- 响应时间超过阈值（�?0秒）
 
 **熔断示例**:
 ```python
 class CircuitBreaker:
-    """熔断器"""
+    """熔断�?""
     
     def __init__(
         self,
@@ -1845,8 +1845,8 @@ class CircuitBreaker:
     ):
         """
         Args:
-            failure_threshold: 失败阈值
-            timeout: 熔断超时时间（秒）
+            failure_threshold: 失败阈�?
+            timeout: 熔断超时时间（秒�?
             success_threshold: 成功阈值（半开状态）
         """
         self.failure_threshold = failure_threshold
@@ -1858,13 +1858,13 @@ class CircuitBreaker:
         self.last_failure_time = None
     
     def call(self, func: Callable, *args, **kwargs) -> Any:
-        """调用函数（带熔断保护）"""
+        """调用函数（带熔断保护�?""
         if self.state == "open":
             if time.time() - self.last_failure_time > self.timeout:
                 self.state = "half-open"
                 self.success_count = 0
             else:
-                raise CircuitBreakerOpenError("熔断器处于打开状态")
+                raise CircuitBreakerOpenError("熔断器处于打开状�?)
         
         try:
             result = func(*args, **kwargs)
@@ -1901,8 +1901,8 @@ class CircuitBreaker:
 
 | 级别 | 说明 | 使用场景 |
 |------|------|----------|
-| DEBUG | 调试信息 | 开发调试 |
-| INFO | 一般信息 | 正常操作 |
+| DEBUG | 调试信息 | 开发调�?|
+| INFO | 一般信�?| 正常操作 |
 | WARNING | 警告信息 | 潜在问题 |
 | ERROR | 错误信息 | 错误但可恢复 |
 | CRITICAL | 严重错误 | 系统崩溃 |
@@ -1939,18 +1939,18 @@ class CircuitBreaker:
 **示例**:
 - `TWITTER_API_401`: Twitter API认证失败
 - `TWITTER_API_429`: Twitter API速率限制
-- `REDDIT_API_500`: Reddit API服务器错误
+- `REDDIT_API_500`: Reddit API服务器错�?
 - `FRED_API_TIMEOUT`: FRED API连接超时
-- `SEC_API_NOT_FOUND`: SEC EDGAR资源不存在
+- `SEC_API_NOT_FOUND`: SEC EDGAR资源不存�?
 - `MODEL_LOAD_ERROR`: 模型加载失败
 - `SENTIMENT_ANALYSIS_ERROR`: 情感分析失败
-- `ALERT_PUSH_ERROR`: 预警推送失败
+- `ALERT_PUSH_ERROR`: 预警推送失�?
 
 ---
 
-## 九、配置文件规范
+## 九、配置文件规�?
 
-### 9.1 数据源配置文件
+### 9.1 数据源配置文�?
 
 **文件**: `config/data_sources.yaml`
 
@@ -2003,13 +2003,13 @@ fred:
     retry_delay: 5
   series:
     - id: "GDP"
-      name: "国内生产总值"
+      name: "国内生产总�?
       frequency: "q"
     - id: "UNRATE"
-      name: "失业率"
+      name: "失业�?
       frequency: "m"
     - id: "CPIAUCSL"
-      name: "消费者价格指数"
+      name: "消费者价格指�?
       frequency: "m"
 
 # SEC EDGAR API配置
@@ -2061,7 +2061,7 @@ analysis:
 performance:
   cache_enabled: true
   cache_size: 10000
-  cache_ttl: 3600  # 秒
+  cache_ttl: 3600  # �?
   parallel_workers: 4
   
 # 微调配置
@@ -2083,11 +2083,11 @@ fine_tuning:
 ```yaml
 # 系统配置
 system:
-  monitoring_interval: 60  # 秒
+  monitoring_interval: 60  # �?
   max_alerts_per_hour: 100
   alert_history_days: 30
   
-# 推送渠道配置
+# 推送渠道配�?
 pushers:
   email:
     enabled: true
@@ -2120,7 +2120,7 @@ pushers:
 # 默认预警规则
 default_rules:
   - rule_id: "sentiment_negative_spike"
-    rule_name: "负面情感激增"
+    rule_name: "负面情感激�?
     enabled: true
     condition:
       metric: "sentiment_score"
@@ -2131,7 +2131,7 @@ default_rules:
     channels: ["email", "wechat"]
     
   - rule_id: "news_volume_spike"
-    rule_name: "新闻量激增"
+    rule_name: "新闻量激�?
     enabled: true
     condition:
       metric: "news_count"
@@ -2144,4 +2144,4 @@ default_rules:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状态**: ✅ 活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃

@@ -1,11 +1,8 @@
 ---
-standard_type: 技术文档
-applicable_scope: 全系统
-compliance_level: 初始标准
+standard_type: 技术文�?applicable_scope: 全系�?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-owner: 文档维护者
-version: 1.0.0
+owner: 文档维护�?version: 1.0.0
 module_id: DOC_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02
@@ -13,9 +10,8 @@ last_updated: 2026-04-02
 # 文档标题
 
 **文档版本**: 1.0.0
-**最后更新**: 2026-04-02
-**文档所有者**: 文档维护者
-
+**最后更�?*: 2026-04-02
+**文档所有�?*: 文档维护�?
 ---
 
 ## 1. 概述
@@ -77,27 +73,25 @@ last_updated: 2026-04-02
 
 ---
 
-## 5. 维护与支持
-
+## 5. 维护与支�?
 ### 5.1 维护责任
 
-- **负责人**: [负责人姓名]
+- **负责�?*: [负责人姓名]
 - **联系方式**: [联系方式]
 
 ### 5.2 更新历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| 1.0.0 | 2026-04-02 | 初始版本 | 文档维护者 |
+| 1.0.0 | 2026-04-02 | 初始版本 | 文档维护�?|
 
 ---
 
-## 6. 参考文档
-
+## 6. 参考文�?
 - [系统架构文档](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [文档分类规范](../STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**文档状态**: 初始标准
+**文档状�?*: 初始标准
 **下次审查**: 2026-05-02

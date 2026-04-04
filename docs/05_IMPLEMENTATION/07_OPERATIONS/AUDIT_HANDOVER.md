@@ -26,9 +26,9 @@ implementation_status: 进行?
 
 | 文件路径 | 版本 | 说明 |
 |----------|------|------|
-| `D:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\DOCUMENT_AUDIT_WORKFLOW.md` | v2.0 | 审查工作流程主文档（个人版） |
-| `D:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\AUDIT_CHECKLIST_TEMPLATE.md` | v2.0 | 审查检查清单模板（个人版） |
-| `D:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\README.md` | - | 运维手册（已更新审查文档导航?|
+| `D:\ZephyrAlpha\docs\05_IMPLEMENTATION\07_OPERATIONS\DOCUMENT_AUDIT_WORKFLOW.md` | v2.0 | 审查工作流程主文档（个人版） |
+| `D:\ZephyrAlpha\docs\05_IMPLEMENTATION\07_OPERATIONS\AUDIT_CHECKLIST_TEMPLATE.md` | v2.0 | 审查检查清单模板（个人版） |
+| `D:\ZephyrAlpha\docs\05_IMPLEMENTATION\07_OPERATIONS\README.md` | - | 运维手册（已更新审查文档导航?|
 
 ### 自动化审查脚?
 
@@ -239,11 +239,11 @@ python scripts/audit_documents.py
 
 ## 📚 相关文档索引
 
-| 文档 | 路径 | 用?|
+| 文档 | 路径 | �?|
 |------|------|------|
-| 审查工作流程 | `docs/05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_AUDIT_WORKFLOW.md` | 主文?|
-| 审查检查清?| `docs/05_IMPLEMENTATION/04_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md` | 执行模板 |
-| 运维手册 | `docs/05_IMPLEMENTATION/04_OPERATIONS/README.md` | 运维入口 |
+| 审查工作流程 | `docs/05_IMPLEMENTATION/07_OPERATIONS/DOCUMENT_AUDIT_WORKFLOW.md` | 主文?|
+| 审查检查清?| `docs/05_IMPLEMENTATION/07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md` | 执行模板 |
+| 运维手册 | `docs/05_IMPLEMENTATION/07_OPERATIONS/README.md` | 运维入口 |
 | 自动化脚?| `scripts/audit_filesystem.py` | 自动化工?|
 | 系统蓝图 | `docs/BLUEPRINT.md` | 系统概览 |
 | 文档地图 | `docs/SITEMAP.md` | 完整导航 |
@@ -253,4 +253,4 @@ python scripts/audit_documents.py
 
 **交接完成**: 2026-03-31
 **下次审查触发条件**: 新蓝图或AI讨论新内容后
-**维护?*: 个人开发?
+**维护?*: 个人开�?
