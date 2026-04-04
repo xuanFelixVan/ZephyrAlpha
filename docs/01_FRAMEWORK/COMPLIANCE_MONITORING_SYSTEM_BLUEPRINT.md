@@ -1,24 +1,61 @@
 ---
 module_id: FRAMEWORK_COMPLIANCE_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席架构?standard_type: 专业机构级合规监控系统蓝?applicable_scope: 全系统合规管?compliance_level: 顶级专业标准
+last_updated: 2026-04-04
+owner: 首席架构师
+standard_type: 专业机构级合规监控系统蓝图
+applicable_scope: 全系统合规管理框架设计
+compliance_level: 顶级专业标准
 reference_models: ["Citadel Compliance", "Two Sigma Compliance", "Goldman Sachs Risk Compliance"]
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+related_documents:
+  downstream:
+    - 10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md (实现层文档)
+    - 04_EXECUTION/05_RISK_ENGINE/README.md (风控规则引擎)
+responsibility_boundary: |
+  本文档职责: 框架层架构定义
+  - 定义合规监控的整体架构和设计原则
+  - 分析专业机构（Citadel、Two Sigma、Goldman Sachs）的合规实践
+  - 规划合规监控系统的核心组件和接口
+  
+  实现层文档: 10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md
+  - 合规监控模块的具体实现方案
+  - 技术栈选型和详细设计
+  - 代码示例和部署方案
 ---
 
 # 合规监控系统蓝图
 
-> **版本**: v1.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-03
-> **实施周期**: 2?> **核心理念**: Citadel合规体系 - 合规是量化系统的底线,必须实时、全面、可追溯
-> **目标**: 实现专业机构级的合规监控能力,确保系统运行符合监管要求和内部风控标?
+> **更新日期**: 2026-04-04
+> **实施周期**: 2周
+> **核心理念**: Citadel合规体系 - 合规是量化系统的底线,必须实时、全面、可追溯
+> **目标**: 实现专业机构级的合规监控能力,确保系统运行符合监管要求和内部风控标准
+
 ---
 
-## 一、专业机构实践分?
+## 文档层级关系
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  本文档: 框架层 - 定义合规监控整体架构和设计原则              │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  实现层: 10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md   │
+│  合规监控模块的具体实现方案和技术细节                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**下游文档**: [合规监控模块实现](../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) - 实现层详细设计
+
+---
+
+## 一、专业机构实践分析
 ### 1.1 Citadel合规实践
 
 **核心机制**:

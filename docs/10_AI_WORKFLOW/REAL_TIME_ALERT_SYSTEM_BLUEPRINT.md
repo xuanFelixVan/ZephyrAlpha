@@ -1,12 +1,60 @@
+---
+module_id: L3_RTAS_001
+version: 1.0.1
+status: Active
+created_date: 2026-04-02
+last_updated: 2026-04-04
+owner: 首席架构师
+standard_type: 专业机构级蓝图
+applicable_scope: 舆情分析层专用预警模块
+compliance_level: 专业标准
+parent_document: INDEX.md
+implementation_status: 设计阶段
+related_documents:
+  upstream:
+    - 05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ENHANCED_ALERT_SYSTEM_BLUEPRINT.md (统一告警平台)
+  peer:
+    - SENTIMENT_ANALYZER_TECHNICAL_SPECIFICATION.md
+    - NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md
+responsibility_boundary: |
+  本文档职责: 舆情专用预警模块
+  - 实时舆情监控和预警规则定义
+  - 及时发现重要事件和情感变化
+  - 生成预警事件并发送到统一告警平台
+  
+  统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
+  - 接收所有子系统的告警（包括本模块）
+  - 提供告警聚合、抑制、路由、多渠道分发
+---
+
 # 实时预警系统模块蓝图 (Real-Time Alert System Blueprint)
 
 > **模块ID**: L3_RTAS_001
-> **版本**: v1.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-02
+> **更新日期**: 2026-04-04
 > **技术架构**: Layer 3 - 舆情分析层
 > **业务架构**: 三级时间框架融合架构（中观策略层）
 > **优先级**: P0 (阻断性)
 > **预计工作量**: 50小时
+
+---
+
+## 文档层级关系
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT               │
+│  接收所有子系统的告警并统一分发                               │
+└─────────────────────────────────────────────────────────────┘
+                              ↑
+┌─────────────────────────────────────────────────────────────┐
+│  本文档: 舆情专用预警模块 - 监控舆情并生成预警事件            │
+│  预警事件 → 发送到统一告警平台进行分发                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**上游文档**: [统一告警平台](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) - 接收本模块产生的预警并统一分发
 
 ---
 

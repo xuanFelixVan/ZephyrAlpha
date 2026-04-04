@@ -1,12 +1,12 @@
 ---
 module_id: COMPLIANCE_MONITORING_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-04
 owner: 首席架构师
 standard_type: 专业机构级蓝图
-applicable_scope: 合规监控与风险管理
+applicable_scope: 合规监控模块实现
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
@@ -15,18 +15,49 @@ reference_models:
   - Risk Management Standards
   - Regulatory Reporting Systems
 related_documents:
-  - RISK_RULE_ENGINE.md
-  - QUALITY_MONITORING_BLUEPRINT.md
-  - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
+  upstream:
+    - 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md (框架层文档)
+    - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风控)
+  peer:
+    - RISK_RULE_ENGINE.md
+    - QUALITY_MONITORING_BLUEPRINT.md
+responsibility_boundary: |
+  本文档职责: 实现层模块设计
+  - 合规监控模块的具体实现方案
+  - 技术栈选型: Python + SQLite + Rule Engine
+  - 代码示例和部署方案
+  
+  框架层文档: 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+  - 定义合规监控的整体架构和设计原则
+  - 分析专业机构的合规实践
+  - 规划核心组件和接口
 ---
 
 # 合规监控模块蓝图
 
-> **版本**: v1.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-02
+> **更新日期**: 2026-04-04
 > **实施周期**: 2周
 > **核心定位**: 专业量化机构的合规保障体系
 > **技术栈**: Python + SQLite + Rule Engine
+
+---
+
+## 文档层级关系
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  框架层: 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT │
+│  定义合规监控整体架构和设计原则                               │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│  本文档: 实现层 - 合规监控模块的具体实现方案                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**上游文档**: [合规监控系统蓝图](../01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) - 框架层架构设计
 
 ---
 
