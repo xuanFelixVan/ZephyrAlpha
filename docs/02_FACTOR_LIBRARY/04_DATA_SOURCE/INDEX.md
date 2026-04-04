@@ -22,7 +22,8 @@ implementation_status: 已完�?---
 | [SUPERCMD_CONNECTOR.md](SUPERCMD_CONNECTOR.md) | SuperCommand接口 | Active |
 | [DATA_ACQUISITION.md](DATA_ACQUISITION.md) | 数据获取方案 | Active |
 | [DATA_REQUIREMENTS.md](DATA_REQUIREMENTS.md) | 数据需求规�?| Active |
-| [DATA_SOURCE_ADAPTERS.md](DATA_SOURCE_ADAPTERS.md) | 数据源适配�?| Active |
+| [DATA_SOURCE_ADAPTERS.md](DATA_SOURCE_ADAPTERS.md) | 数据源适配器 | Active |
+| [DATA_QUALITY.md](DATA_QUALITY.md) | 数据质量控制系统 | Active |
 | [MACRO_DATA.md](MACRO_DATA.md) | 宏观数据 | Active |
 | [CORRELATION_ANALYSIS.md](CORRELATION_ANALYSIS.md) | 相关性分�?| Active |
 | [STATISTICAL_TOOLS.md](STATISTICAL_TOOLS.md) | 统计工具 | Active |
@@ -39,7 +40,9 @@ implementation_status: 已完�?---
 - [BAOSTOCK_CONNECTOR.md](BAOSTOCK_CONNECTOR.md) - Baostock免费数据�?- [NEWS_SENTIMENT_DATA_SOURCE.md](NEWS_SENTIMENT_DATA_SOURCE.md) - 新闻舆情数据�?- [FREE_DATA_SOURCES.md](FREE_DATA_SOURCES.md) - 免费数据源整�?
 ### 数据管理
 - [DATA_ACQUISITION.md](DATA_ACQUISITION.md) - 数据获取方案
-- [DATA_REQUIREMENTS.md](DATA_REQUIREMENTS.md) - 数据需求规�?- [DATA_SOURCE_ADAPTERS.md](DATA_SOURCE_ADAPTERS.md) - 数据源适配�?
+- [DATA_REQUIREMENTS.md](DATA_REQUIREMENTS.md) - 数据需求规划
+- [DATA_SOURCE_ADAPTERS.md](DATA_SOURCE_ADAPTERS.md) - 数据源适配器
+- [DATA_QUALITY.md](DATA_QUALITY.md) - 数据质量控制系统数据源适配�?
 ---
 
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护�?*: 首席文档架构�?

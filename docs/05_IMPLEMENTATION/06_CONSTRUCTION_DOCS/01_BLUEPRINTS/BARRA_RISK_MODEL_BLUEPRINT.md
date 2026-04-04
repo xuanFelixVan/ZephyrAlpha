@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0
 spec_version: 1.0

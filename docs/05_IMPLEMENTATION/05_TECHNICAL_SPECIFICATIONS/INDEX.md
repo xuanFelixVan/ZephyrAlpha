@@ -131,14 +131,14 @@ compliance_level: 专业标准
 |----------|-----------|------|------|----------|----------|
 | LSTM模型技术规格书 | LSTM_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LSTM_MODEL_TECHNICAL_SPECIFICATION.md) |
 | Transformer模型技术规格书 | TRANSFORMER_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md) |
-| 强化学习技术规格书 | REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Archived | 2026-04-03 | [归档](../../06_ARCHIVE/duplicate_documents/20260403_blueprint_spec_audit/REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md) | 与BLUEPRINT重复 |
+| 强化学习技术规格书 | REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md) | 已恢复 |
 
 ### 5.2 特征工程
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 特征工程技术规格书 | FEATURE_ENGINEERING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md) |
-| 特征存储技术规格书 | FEATURE_STORE_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Archived | 2026-04-02 | [归档](../../06_ARCHIVE/duplicate_documents/20260403_blueprint_spec_audit/FEATURE_STORE_TECHNICAL_SPECIFICATION.md) | 与BLUEPRINT重复 |
+| 特征存储技术规格书 | FEATURE_STORE_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./FEATURE_STORE_TECHNICAL_SPECIFICATION.md) | 已恢复 |
 
 ### 5.3 模型训练与服�?
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
@@ -149,7 +149,7 @@ compliance_level: 专业标准
 ### 5.4 MLOps与监�?
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| MLOps平台技术规格书 | MLOPS_PLATFORM_001 | v1.0.0 | Archived | 2026-04-02 | [归档](../../06_ARCHIVE/duplicate_documents/20260403_blueprint_spec_audit/MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md) | 与BLUEPRINT重复 |
+| MLOps平台技术规格书 | MLOPS_PLATFORM_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md) | 已恢复 |
 | 模型监控技术规格书 | MODEL_MONITORING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_MONITORING_TECHNICAL_SPECIFICATION.md) |
 | 数据漂移检测技术规格书 | DRIFT_DETECTION_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DRIFT_DETECTION_TECHNICAL_SPECIFICATION.md) |
 | 在线学习技术规格书 | ONLINE_LEARNING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ONLINE_LEARNING_TECHNICAL_SPECIFICATION.md) |

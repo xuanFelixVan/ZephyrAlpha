@@ -4,30 +4,30 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 数据源文�?applicable_scope: 数据源适配�?compliance_level: 专业标准
+owner: 首席文档架构�?standard_type: 数据源文�?applicable_scope: 数据源适配�?compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?---
 
-# 数据源适配�?
+# 数据源适配�?
 
 > 多数据源统一接入管理，支持股票、期货、期权、宏观等各类数据
 
 ---
 
-## 1. 数据源概�?
+## 1. 数据源概�?
 
-| 数据�?| 类型 | 数据质量 | 主要用�?| 权限 |
+| 数据�?| 类型 | 数据质量 | 主要用�?| 权限 |
 |--------|------|---------|---------|------|
-| Baostock | 官方API | ⭐⭐⭐⭐�?| 历史行情、财务数据、复权因�?| 免费注册 |
-| AkShare | 开源库 | ⭐⭐⭐⭐ | 实时行情、概念板块、资金流�?| 完全免费 |
-| Efinance | 开源库 | ⭐⭐⭐⭐ | 资金流向、北向资金、实时行�?| 完全免费 |
-| Tushare Pro | 官方API | ⭐⭐⭐⭐�?| 深度数据、因子数据、专业指�?| 积分�?|
-| 新浪财经 | 网络API | ⭐⭐�?| 实时行情备用、历史数�?| 免费 |
-| 腾讯财经 | 网络API | ⭐⭐�?| 实时行情备用、基础数据 | 免费 |
+| Baostock | 官方API | ⭐⭐⭐⭐�?| 历史行情、财务数据、复权因�?| 免费注册 |
+| AkShare | 开源库 | ⭐⭐⭐⭐ | 实时行情、概念板块、资金流�?| 完全免费 |
+| Efinance | 开源库 | ⭐⭐⭐⭐ | 资金流向、北向资金、实时行�?| 完全免费 |
+| Tushare Pro | 官方API | ⭐⭐⭐⭐�?| 深度数据、因子数据、专业指�?| 积分�?|
+| 新浪财经 | 网络API | ⭐⭐�?| 实时行情备用、历史数�?| 免费 |
+| 腾讯财经 | 网络API | ⭐⭐�?| 实时行情备用、基础数据 | 免费 |
 
 ---
 
-## 2. 多数据源适配器设�?
+## 2. 多数据源适配器设�?
 
 ```python
 from abc import ABC, abstractmethod
@@ -41,17 +41,17 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class DataSourceConfig:
-    """数据源配�?""
+    """数据源配�?""
     name: str
     source_type: str              # 'api', 'web', 'database'
-    priority: int                 # 优先级，数字越小优先级越�?
-    rate_limit: Optional[int]     # 速率限制（请�?秒）
-    timeout: int = 30            # 超时时间（秒�?
+    priority: int                 # 优先级，数字越小优先级越�?
+    rate_limit: Optional[int]     # 速率限制（请�?秒）
+    timeout: int = 30            # 超时时间（秒�?
     retry_count: int = 3         # 重试次数
     is_available: bool = True    # 是否可用
 
 class DataSource(ABC):
-    """数据源基�?""
+    """数据源基�?""
 
     def __init__(self, config: DataSourceConfig):
         self.config = config
@@ -79,26 +79,26 @@ class DataSource(ABC):
 
     @abstractmethod
     def health_check(self) -> bool:
-        """健康检�?""
+        """健康检�?""
         pass
 ```
 
 ---
 
-## 3. 具体数据源实�?
+## 3. 具体数据源实�?
 
-### 3.1 Baostock 数据�?
+### 3.1 Baostock 数据�?
 
 ```python
 import baostock as bs
 
 class BaostockDataSource(DataSource):
-    """Baostock 数据�?
+    """Baostock 数据�?
 
-    适用场景�?
+    适用场景�?
     - 历史行情（日线、周线、月线）
     - 复权数据（前后复权）
-    - 财务报表（资产负债表、利润表、现金流量表�?
+    - 财务报表（资产负债表、利润表、现金流量表�?
     - 融资融券数据
     """
 
@@ -133,10 +133,10 @@ class BaostockDataSource(DataSource):
 
         参数:
             symbol: 股票代码，如 '600000.SH'
-            start_date: 开始日期，�?'2026-01-01'
+            start_date: 开始日期，�?'2026-01-01'
             end_date: 结束日期，如 '2026-03-28'
-            freq: 频率�?d'=日线�?w'=周线�?m'=月线
-            adjust: 复权类型�?qfq'=前复权，'hfq'=后复权，''=不复�?
+            freq: 频率�?d'=日线�?w'=周线�?m'=月线
+            adjust: 复权类型�?qfq'=前复权，'hfq'=后复权，''=不复�?
         """
         code = self._normalize_symbol(symbol)
 
@@ -171,7 +171,7 @@ class BaostockDataSource(DataSource):
         """获取财务报表
 
         返回:
-            包含 bs_balance_sheet, bs_income_statement, bs_cash_flow 的字�?
+            包含 bs_balance_sheet, bs_income_statement, bs_cash_flow 的字�?
         """
         code = self._normalize_symbol(symbol)
 
@@ -179,11 +179,11 @@ class BaostockDataSource(DataSource):
         balance_rs = bs.query_balance_sheet(code, year=2024, quarter=4)
         balance_df = self._rs_to_df(balance_rs)
 
-        # 利润�?
+        # 利润�?
         income_rs = bs.query_profit_statement(code, year=2024, quarter=4)
         income_df = self._rs_to_df(income_rs)
 
-        # 现金流量�?
+        # 现金流量�?
         cash_rs = bs.query_cash_flow_statement(code, year=2024, quarter=4)
         cash_df = self._rs_to_df(cash_rs)
 
@@ -194,7 +194,7 @@ class BaostockDataSource(DataSource):
         }
 
     def _normalize_symbol(self, symbol: str) -> str:
-        """标准化股票代�?""
+        """标准化股票代�?""
         if symbol.endswith('.SH') or symbol.endswith('.SZ'):
             return symbol
         elif symbol.startswith('6'):
@@ -222,17 +222,17 @@ class BaostockDataSource(DataSource):
             return False
 ```
 
-### 3.2 AkShare 数据�?
+### 3.2 AkShare 数据�?
 
 ```python
 import akshare as ak
 
 class AkShareDataSource(DataSource):
-    """AkShare 数据�?
+    """AkShare 数据�?
 
-    适用场景�?
+    适用场景�?
     - 实时行情
-    - 概念板块、行业分�?
+    - 概念板块、行业分�?
     - 资金流向
     - 宏观数据
     """
@@ -314,11 +314,11 @@ class AkShareDataSource(DataSource):
 
 ---
 
-## 4. 智能数据源选择�?
+## 4. 智能数据源选择�?
 
 ```python
 class SmartDataSourceSelector:
-    """智能数据源选择�?
+    """智能数据源选择�?
 
     根据数据类型、质量、可用性自动选择最优数据源
     """
@@ -329,14 +329,14 @@ class SmartDataSourceSelector:
         self._register_default_sources()
 
     def _register_default_sources(self):
-        """注册默认数据�?""
+        """注册默认数据�?""
         self.register_source('ohlcv', BaostockDataSource())
         self.register_source('ohlcv', AkShareDataSource())
         self.register_source('financial', BaostockDataSource())
         self.register_source('money_flow', AkShareDataSource())
 
     def register_source(self, data_type: str, source: DataSource):
-        """注册数据�?""
+        """注册数据�?""
         if data_type not in self.sources:
             self.sources[data_type] = []
         self.sources[data_type].append(source)
@@ -362,12 +362,12 @@ class SmartDataSourceSelector:
         # 按优先级排序
         sources = sorted(sources, key=lambda s: s.config.priority)
 
-        # 如果指定了首选源，优先使�?
+        # 如果指定了首选源，优先使�?
         if preferred_source:
             preferred = [s for s in sources if s.name == preferred_source]
             sources = preferred + [s for s in sources if s.name != preferred_source]
 
-        # 尝试从各源获取数�?
+        # 尝试从各源获取数�?
         for source in sources:
             if not source.config.is_available:
                 continue
@@ -381,7 +381,7 @@ class SmartDataSourceSelector:
                 self._record_failure(source.name, data_type, str(e))
                 continue
 
-        raise Exception(f"所有{data_type}数据源获取失�?)
+        raise Exception(f"所有{data_type}数据源获取失�?)
 
     def _fetch_from_source(
         self,
@@ -404,7 +404,7 @@ class SmartDataSourceSelector:
         if df.empty:
             return False
 
-        # 检查必要的�?
+        # 检查必要的�?
         if data_type == 'ohlcv':
             required_cols = ['date', 'open', 'high', 'low', 'close', 'volume']
             return all(col in df.columns or col.lower() in df.columns for col in required_cols)
@@ -427,7 +427,7 @@ class SmartDataSourceSelector:
         logger.warning(f"数据获取失败: {source_name}_{data_type}, error={error}")
 
     def get_source_quality_report(self) -> Dict:
-        """获取数据源质量报�?""
+        """获取数据源质量报�?""
         report = {}
         for key, stats in self.quality_stats.items():
             total = stats['success'] + stats['failure']
@@ -443,7 +443,7 @@ class SmartDataSourceSelector:
 
 ---
 
-## 5. 数据下载调度�?
+## 5. 数据下载调度�?
 
 ```python
 from queue import PriorityQueue
@@ -464,7 +464,7 @@ class DownloadTask:
     max_retries: int = 3
 
 class SmartDownloadScheduler:
-    """智能下载调度�?""
+    """智能下载调度�?""
 
     def __init__(self, data_source_selector: SmartDataSourceSelector):
         self.task_queue = PriorityQueue()
@@ -472,7 +472,7 @@ class SmartDownloadScheduler:
         self.schedule_rules = self._init_schedule_rules()
 
     def _init_schedule_rules(self) -> Dict:
-        """初始化调度规�?""
+        """初始化调度规�?""
         return {
             'pre_market': {
                 'time': (time(6, 0), time(9, 0)),
@@ -517,7 +517,7 @@ class SmartDownloadScheduler:
         self.task_queue.put(task)
 
     def execute_daily_pipeline(self):
-        """执行每日数据流水�?""
+        """执行每日数据流水�?""
         # 盘前准备
         self._execute_schedule('pre_market')
 
@@ -597,11 +597,11 @@ class DataQualityChecker:
         }
 
     def check_quality(self, df: pd.DataFrame, data_type: str) -> Dict:
-        """执行质量检�?""
+        """执行质量检�?""
         rules = self.quality_rules.get(data_type, {})
         issues = []
 
-        # 1. 必要列检�?
+        # 1. 必要列检�?
         if 'required_columns' in rules:
             missing_cols = set(rules['required_columns']) - set(df.columns)
             if missing_cols:
@@ -610,7 +610,7 @@ class DataQualityChecker:
                     'details': list(missing_cols)
                 })
 
-        # 2. 值域检�?
+        # 2. 值域检�?
         if 'value_ranges' in rules:
             for col, (min_val, max_val) in rules['value_ranges'].items():
                 if col in df.columns:
@@ -622,7 +622,7 @@ class DataQualityChecker:
                             'count': out_of_range.sum()
                         })
 
-        # 3. 逻辑关系检�?
+        # 3. 逻辑关系检�?
         if 'relationship_rules' in rules:
             for rule in rules['relationship_rules']:
                 if not self._check_relationship(df, rule['check']):
@@ -631,7 +631,7 @@ class DataQualityChecker:
                         'rule': rule['description']
                     })
 
-        # 4. 缺失值检�?
+        # 4. 缺失值检�?
         if 'missing_threshold' in rules:
             missing_rate = df.isnull().mean()
             for col, rate in missing_rate.items():
@@ -650,13 +650,13 @@ class DataQualityChecker:
 
     def _check_relationship(self, df: pd.DataFrame, rule: str) -> bool:
         """检查逻辑关系"""
-        # 简化实�?
+        # 简化实�?
         return True
 ```
 
 ---
 
-## 7. 数据源配�?
+## 7. 数据源配�?
 
 ```yaml
 # config/data_sources.yaml

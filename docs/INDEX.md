@@ -103,12 +103,6 @@ docs/
 | [**治理与合规层蓝图**](./01_FRAMEWORK/GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | **🆕 Layer 10** 内部控制体系+合规监控 | ⭐⭐⭐⭐⭐ |
 | [**战略决策层蓝图**](./01_FRAMEWORK/STRATEGIC_DECISION_LAYER_BLUEPRINT.md) | **🆕 Layer 11** 战略资产配置+风险预算分配 | ⭐⭐⭐⭐⭐ |
 
-### 横向支撑体系 📋
-
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| [**灾备体系蓝图**](./01_FRAMEWORK/DISASTER_RECOVERY_BLUEPRINT.md) | **📋 规划中** 数据备份+故障恢复+异地容灾 | ⭐⭐⭐ |
-
 ---
 
 ## 📖 核心模块文档

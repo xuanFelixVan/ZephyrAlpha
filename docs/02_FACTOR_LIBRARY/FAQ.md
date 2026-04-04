@@ -1,5 +1,5 @@
 ---
-module_id: DOC_DOC_001
+module_id: DOC_FAQ_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
@@ -81,7 +81,7 @@ implementation_status: 进行?
 
 ### Q7: 因子库中有多少个因子?
 
-**A**: 当前?87 ?Alpha 因子 + 46 个风险因?= 133 个因子?
+**A**: 当前?87 ?Alpha 因子 + 46 个风险因?= 133 个因�?
 
 详见: [02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md)
 
@@ -169,7 +169,7 @@ implementation_status: 进行?
 3. 重启系统使配置生?
 4. ?`CHANGELOG.md` 中记录配置变?
 
-**注意**: 不要在代码中硬编码配置，应该从配置文件读取?
+**注意**: 不要在代码中硬编码配置，应该从配置文件读�?
 
 ### Q15: 如何添加新的数据源？
 
@@ -330,4 +330,4 @@ implementation_status: 进行?
 详见: 
 
 
-**版本**: 1.0 | **更新**: 2026-03-28 | **状?*: ?活跃
+**版本**: 1.0 | **更新**: 2026-03-28 | **�?*: ?活跃

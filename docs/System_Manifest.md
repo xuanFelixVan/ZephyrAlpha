@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DOC_SYSTEM_MANIFEST_001
 version: 5.3.0
 status: Active

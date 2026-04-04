@@ -4,40 +4,40 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 分析工具文档
+owner: 首席文档架构�?standard_type: 分析工具文档
 applicable_scope: 统计分析工具
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?---
 
 # 统计分析工具
 
 > **模块编号**: M-STAT-001 (Statistical Analysis Tools)
 > **版本**: 1.0
 > **创建日期**: 2026-03-28
-> **优先�?*: P1
+> **优先�?*: P1
 
 ---
 
 ## 1. 系统概述
 
 ### 1.1 目标
-为量化研究提供基础的统计分析能力，支持描述性统计、分布分析、相关性分析等常用统计方法�?
+为量化研究提供基础的统计分析能力，支持描述性统计、分布分析、相关性分析等常用统计方法�?
 
 ### 1.2 功能范围
 
 | 类别 | 功能 | 说明 |
 |------|------|------|
-| **描述性统�?* | 均值、中位数、众数、方差、标准差 | 数据基本特征 |
-| **分布分析** | 偏度、峰度、分位数、分布拟�?| 数据分布形�?|
-| **时间序列分析** | 收益率、波动率、滚动统�?| 金融时序特�?|
-| **相关性分�?* | Pearson、Spearman、滚动相�?| 变量间关�?|
+| **描述性统�?* | 均值、中位数、众数、方差、标准差 | 数据基本特征 |
+| **分布分析** | 偏度、峰度、分位数、分布拟�?| 数据分布形�?|
+| **时间序列分析** | 收益率、波动率、滚动统�?| 金融时序特�?|
+| **相关性分�?* | Pearson、Spearman、滚动相�?| 变量间关�?|
 
 ---
 
-## 2. 描述性统�?
+## 2. 描述性统�?
 
-### 2.1 基础统计量计�?
+### 2.1 基础统计量计�?
 
 ```python
 from dataclasses import dataclass
@@ -85,7 +85,7 @@ class DescriptiveStatistics:
             series: 输入数据
 
         返回:
-            DescriptiveStats: 统计量对�?
+            DescriptiveStats: 统计量对�?
         """
         return DescriptiveStats(
             count=len(series),
@@ -104,7 +104,7 @@ class DescriptiveStatistics:
     def compute_dataframe(cls, df: pd.DataFrame,
                           columns: List[str] = None) -> pd.DataFrame:
         """
-        计算DataFrame多个列的描述性统�?
+        计算DataFrame多个列的描述性统�?
 
         返回:
             DataFrame: 行是统计量，列是变量
@@ -123,28 +123,28 @@ class DescriptiveStatistics:
         """生成简洁的统计摘要"""
         stats = DescriptiveStatistics.compute(series)
         return f"""
-┌─────────────────────────────────�?
-�?      描述性统计摘�?           �?
-├─────────────────────────────────�?
-�? 样本�?    {stats.count:>15,.0f} �?
-�? 均�?      {stats.mean:>15.4f} �?
-�? 标准�?    {stats.std:>15.4f} �?
-�? 最小�?    {stats.min:>15.4f} �?
-�? 25%分位:   {stats.q25:>15.4f} �?
-�? 中位�?    {stats.q50:>15.4f} �?
-�? 75%分位:   {stats.q75:>15.4f} �?
-�? 最大�?    {stats.max:>15.4f} �?
-�? 偏度:      {stats.skewness:>15.4f} �?
-�? 峰度:      {stats.kurtosis:>15.4f} �?
-└─────────────────────────────────�?
+┌─────────────────────────────────�?
+�?      描述性统计摘�?           �?
+├─────────────────────────────────�?
+�? 样本�?    {stats.count:>15,.0f} �?
+�? 均�?      {stats.mean:>15.4f} �?
+�? 标准�?    {stats.std:>15.4f} �?
+�? 最小�?    {stats.min:>15.4f} �?
+�? 25%分位:   {stats.q25:>15.4f} �?
+�? 中位�?    {stats.q50:>15.4f} �?
+�? 75%分位:   {stats.q75:>15.4f} �?
+�? 最大�?    {stats.max:>15.4f} �?
+�? 偏度:      {stats.skewness:>15.4f} �?
+�? 峰度:      {stats.kurtosis:>15.4f} �?
+└─────────────────────────────────�?
 """
 ```
 
-### 2.2 收益率统�?
+### 2.2 收益率统�?
 
 ```python
 class ReturnStatistics:
-    """收益率统计分�?""
+    """收益率统计分�?""
 
     @staticmethod
     def simple_return(prices: pd.Series) -> pd.Series:
@@ -157,7 +157,7 @@ class ReturnStatistics:
     @staticmethod
     def log_return(prices: pd.Series) -> pd.Series:
         """
-        计算对数收益�?
+        计算对数收益�?
         r = ln(P_t / P_{t-1})
         """
         return np.log(prices / prices.shift(1))
@@ -166,11 +166,11 @@ class ReturnStatistics:
     def annual_return(daily_return: pd.Series,
                       periods_per_year: int = 252) -> float:
         """
-        年化收益�?
+        年化收益�?
 
         参数:
             daily_return: 日收益率序列
-            periods_per_year: 年化周期�?(股票默认252)
+            periods_per_year: 年化周期�?(股票默认252)
         """
         mean_daily = daily_return.mean()
         return (1 + mean_daily) ** periods_per_year - 1
@@ -179,11 +179,11 @@ class ReturnStatistics:
     def annual_volatility(daily_return: pd.Series,
                           periods_per_year: int = 252) -> float:
         """
-        年化波动�?
+        年化波动�?
 
         参数:
             daily_return: 日收益率序列
-            periods_per_year: 年化周期�?
+            periods_per_year: 年化周期�?
         """
         return daily_return.std() * np.sqrt(periods_per_year)
 
@@ -202,7 +202,7 @@ class ReturnStatistics:
     @staticmethod
     def max_drawdown(prices: pd.Series) -> Tuple[float, str, str]:
         """
-        最大回�?
+        最大回�?
 
         返回:
             (最大回撤�? 最高点日期, 最低点日期)
@@ -222,17 +222,17 @@ class ReturnStatistics:
 
 ## 3. 分布分析
 
-### 3.1 分位数分�?
+### 3.1 分位数分�?
 
 ```python
 class QuantileAnalysis:
-    """分位数分�?""
+    """分位数分�?""
 
     @staticmethod
     def compute_quantiles(series: pd.Series,
                          quantiles: List[float] = None) -> Dict:
         """
-        计算分位�?
+        计算分位�?
 
         参数:
             series: 数据
@@ -247,11 +247,11 @@ class QuantileAnalysis:
     def iqr_outliers(series: pd.Series,
                     factor: float = 1.5) -> Tuple[pd.Series, pd.Series]:
         """
-        基于IQR的异常值检�?
+        基于IQR的异常值检�?
 
         参数:
             series: 数据
-            factor: IQR倍数，默�?.5
+            factor: IQR倍数，默�?.5
 
         返回:
             (下界异常, 上界异常)
@@ -269,7 +269,7 @@ class QuantileAnalysis:
     def percentile_rank(series: pd.Series,
                       window: int = None) -> pd.Series:
         """
-        计算百分位排�?
+        计算百分位排�?
 
         参数:
             series: 数据
@@ -300,7 +300,7 @@ class DistributionFitter:
     @classmethod
     def fit_normal(cls, series: pd.Series) -> Tuple[float, float]:
         """
-        拟合正态分�?
+        拟合正态分�?
 
         返回:
             (mu, sigma)
@@ -320,10 +320,10 @@ class DistributionFitter:
     @classmethod
     def normality_test(series: pd.Series) -> Dict:
         """
-        正态性检�?(Jarque-Bera)
+        正态性检�?(Jarque-Bera)
 
         返回:
-            (JB统计�? p�? 是否正�?
+            (JB统计�? p�? 是否正�?
         """
         jb_stat, p_value = stats.jarque_bera(series)
         return {
@@ -336,10 +336,10 @@ class DistributionFitter:
     def ks_test(cls, series: pd.Series,
                 distribution: str = 'normal') -> Dict:
         """
-        Kolmogorov-Smirnov检�?
+        Kolmogorov-Smirnov检�?
 
         返回:
-            (KS统计�? p�? 是否服从指定分布)
+            (KS统计�? p�? 是否服从指定分布)
         """
         if distribution == 'normal':
             mu, sigma = cls.fit_normal(series)
@@ -376,7 +376,7 @@ class RollingStatistics:
     @staticmethod
     def rolling_std(series: pd.Series,
                    window: int) -> pd.Series:
-        """滚动标准�?""
+        """滚动标准�?""
         return series.rolling(window).std()
 
     @staticmethod
@@ -387,9 +387,9 @@ class RollingStatistics:
         滚动夏普比率
 
         参数:
-            returns: 收益率序�?
-            window: 窗口�?
-            risk_free_rate: 年化无风险利�?
+            returns: 收益率序�?
+            window: 窗口�?
+            risk_free_rate: 年化无风险利�?
         """
         excess = returns - risk_free_rate / 252
         roll_mean = excess.rolling(window).mean()
@@ -421,16 +421,16 @@ class RollingStatistics:
         return (series - roll_mean) / roll_std
 ```
 
-### 4.2 趋势检�?
+### 4.2 趋势检�?
 
 ```python
 class TrendDetection:
-    """趋势检测工�?""
+    """趋势检测工�?""
 
     @staticmethod
     def linear_trend(series: pd.Series) -> Dict:
         """
-        线性趋势拟�?
+        线性趋势拟�?
 
         返回:
             {slope, intercept, r_value, p_value}
@@ -459,7 +459,7 @@ class TrendDetection:
         def trend_direction(x):
             slope, _, r, p, _ = stats.linregress(np.arange(len(x)), x)
             if p > 0.05:
-                return 0  # 无显著趋�?
+                return 0  # 无显著趋�?
             return 1 if slope > 0 else -1
 
         return series.rolling(window).apply(trend_direction)
@@ -470,8 +470,8 @@ class TrendDetection:
                         upper_threshold: float = 2.0,
                         lower_threshold: float = -2.0) -> pd.DataFrame:
         """
-        Z-Score穿越检�?
-        用于均值回归策�?
+        Z-Score穿越检�?
+        用于均值回归策�?
 
         返回:
             DataFrame with zscore and signals
@@ -491,13 +491,13 @@ class TrendDetection:
 
 ---
 
-## 5. 相关性分�?
+## 5. 相关性分�?
 
 ### 5.1 相关系数计算
 
 ```python
 class CorrelationAnalysis:
-    """相关性分析工�?""
+    """相关性分析工�?""
 
     @staticmethod
     def pearson_corr(x: pd.Series,
@@ -508,7 +508,7 @@ class CorrelationAnalysis:
     @staticmethod
     def spearman_corr(x: pd.Series,
                      y: pd.Series) -> float:
-        """Spearman秩相关系�?""
+        """Spearman秩相关系�?""
         return x.corr(y, method='spearman')
 
     @staticmethod
@@ -535,7 +535,7 @@ class CorrelationAnalysis:
                             y: pd.Series,
                             window: int = 60) -> pd.Series:
         """
-        滚动相关�?
+        滚动相关�?
 
         参数:
             x, y: 两个时间序列
@@ -544,26 +544,26 @@ class CorrelationAnalysis:
         return x.rolling(window).corr(y)
 ```
 
-### 5.2 相关性分析报�?
+### 5.2 相关性分析报�?
 
 ```python
 class CorrelationReport:
-    """相关性分析报�?""
+    """相关性分析报�?""
 
     @staticmethod
     def generate_report(data: pd.DataFrame,
                        target: str,
                        method: str = 'pearson') -> pd.DataFrame:
         """
-        生成与目标变量的相关性报�?
+        生成与目标变量的相关性报�?
 
         参数:
             data: 数据DataFrame
-            target: 目标变量�?
+            target: 目标变量�?
             method: 相关系数方法
 
         返回:
-            DataFrame: 包含相关系数和p�?
+            DataFrame: 包含相关系数和p�?
         """
         results = []
 
@@ -574,7 +574,7 @@ class CorrelationReport:
             if data[col].dtype in [np.float64, np.int64]:
                 corr = data[col].corr(data[target], method=method)
 
-                # 计算p�?
+                # 计算p�?
                 n = len(data)
                 t_stat = corr * np.sqrt(n - 2) / np.sqrt(1 - corr ** 2)
                 p_value = 2 * (1 - stats.t.cdf(abs(t_stat), n - 2))
@@ -596,12 +596,12 @@ class CorrelationReport:
                     threshold: float = 0.5) -> pd.DataFrame:
         """
         生成相关性热力图数据
-        只保留相关性超过阈值的变量�?
+        只保留相关性超过阈值的变量�?
         """
         corr = data.corr()
         upper = corr.where(np.triu(np.ones(corr.shape), k=1).astype(bool))
 
-        # 找到高相关的变量�?
+        # 找到高相关的变量�?
         high_corr = [
             (col, row, upper.loc[row, col])
             for col in upper.columns
@@ -616,7 +616,7 @@ class CorrelationReport:
 
 ## 6. 组合统计分析
 
-### 6.1 多因子分�?
+### 6.1 多因子分�?
 
 ```python
 class FactorStatistics:
@@ -627,17 +627,17 @@ class FactorStatistics:
                       returns: pd.Series,
                       quantiles: int = 5) -> pd.DataFrame:
         """
-        计算因子分位数组合收�?
+        计算因子分位数组合收�?
 
         参数:
-            factor: 因子�?
-            returns: 收益�?
-            quantiles: 分组�?
+            factor: 因子�?
+            returns: 收益�?
+            quantiles: 分组�?
 
         返回:
-            DataFrame: 各分位数组合的收益统�?
+            DataFrame: 各分位数组合的收益统�?
         """
-        # 按因子值分�?
+        # 按因子值分�?
         labels = [f'Q{i+1}' for i in range(quantiles)]
         factor_quantiles = pd.qcut(factor, q=quantiles, labels=labels)
 
@@ -665,7 +665,7 @@ class FactorStatistics:
         IC = corr(factor, forward_return)
 
         参数:
-            factor: 因子�?
+            factor: 因子�?
             returns: 下期收益
             method: 'pearson' or 'spearman'
 
@@ -698,11 +698,11 @@ class RollingAnalysis:
         计算滚动性能指标
 
         参数:
-            returns: 收益率序�?
+            returns: 收益率序�?
             window: 滚动窗口
 
         返回:
-            DataFrame: 包含滚动收益、波动率、夏普比率、最大回�?
+            DataFrame: 包含滚动收益、波动率、夏普比率、最大回�?
         """
         df = pd.DataFrame(index=returns.index)
 
@@ -710,7 +710,7 @@ class RollingAnalysis:
         df['rolling_vol'] = returns.rolling(window).std() * np.sqrt(252)
         df['rolling_sharpe'] = df['rolling_return'] / df['rolling_vol']
 
-        # 滚动最大回�?
+        # 滚动最大回�?
         prices = (1 + returns).cumprod()
         rolling_max = prices.rolling(window).max()
         drawdown = (prices - rolling_max) / rolling_max
@@ -735,22 +735,22 @@ class RollingAnalysis:
 
 ---
 
-## 7. 统计检�?
+## 7. 统计检�?
 
-### 7.1 常用检�?
+### 7.1 常用检�?
 
 ```python
 class StatisticalTests:
-    """统计检验工�?""
+    """统计检验工�?""
 
     @staticmethod
     def t_test(sample1: pd.Series,
               sample2: pd.Series,
               equal_var: bool = False) -> Dict:
         """
-        独立样本t检�?
+        独立样本t检�?
 
-        检验两组均值是否显著不�?
+        检验两组均值是否显著不�?
         """
         t_stat, p_value = stats.ttest_ind(sample1, sample2, equal_var=equal_var)
 
@@ -758,16 +758,16 @@ class StatisticalTests:
             't_statistic': t_stat,
             'p_value': p_value,
             'significant': p_value < 0.05,
-            'interpretation': '均值显著不�? if p_value < 0.05 else '均值无显著差异'
+            'interpretation': '均值显著不�? if p_value < 0.05 else '均值无显著差异'
         }
 
     @staticmethod
     def mann_whitney_test(sample1: pd.Series,
                          sample2: pd.Series) -> Dict:
         """
-        Mann-Whitney U检�?(非参�?
+        Mann-Whitney U检�?(非参�?
 
-        不要求正态分布假�?
+        不要求正态分布假�?
         """
         statistic, p_value = stats.mannwhitneyu(sample1, sample2)
 
@@ -780,9 +780,9 @@ class StatisticalTests:
     @staticmethod
     def stationarity_test(series: pd.Series) -> Dict:
         """
-        ADF平稳性检�?
+        ADF平稳性检�?
 
-        检验时间序列是否平�?
+        检验时间序列是否平�?
         """
         result = stats.zivot_andrews(series) if hasattr(stats, 'zivot_andrews') \
                  else None
@@ -802,7 +802,7 @@ class StatisticalTests:
     def autocorrelation_test(series: pd.Series,
                             lags: int = 10) -> pd.DataFrame:
         """
-        自相关性检�?(Ljung-Box)
+        自相关性检�?(Ljung-Box)
 
         检验序列是否存在自相关
         """
@@ -815,14 +815,14 @@ class StatisticalTests:
 
 ---
 
-## 8. 快速使用示�?
+## 8. 快速使用示�?
 
 ```python
-# 1. 描述性统�?
+# 1. 描述性统�?
 stats = DescriptiveStatistics.compute(df['close'])
 print(stats.to_dict())
 
-# 2. 收益率分�?
+# 2. 收益率分�?
 returns = ReturnStatistics.log_return(df['close'])
 annual_ret = ReturnStatistics.annual_return(returns)
 annual_vol = ReturnStatistics.annual_volatility(returns)
@@ -831,7 +831,7 @@ sharpe = ReturnStatistics.sharpe_ratio(returns)
 # 3. 滚动分析
 rolling = RollingAnalysis.rolling_metrics(returns, window=60)
 
-# 4. 相关�?
+# 4. 相关�?
 corr_report = CorrelationReport.generate_report(factor_df, target='forward_return')
 high_corr = CorrelationReport.heatmap_data(factor_df, threshold=0.7)
 

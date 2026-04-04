@@ -1,9 +1,9 @@
 ---
-module_id: TACTICS_BLUEPRINT_001
+module_id: PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: 2026-04-03
 owner: 首席文档架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统架构设计

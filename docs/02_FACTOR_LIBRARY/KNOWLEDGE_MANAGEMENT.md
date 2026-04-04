@@ -1,5 +1,5 @@
 ---
-module_id: DOC_DOC_001
+module_id: DOC_KNOWLEDGE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01

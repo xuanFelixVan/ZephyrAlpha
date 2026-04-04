@@ -281,21 +281,100 @@ owner: 负责人
 
 ### 8.1 已有工具
 
-| 工具名称 | 功能 | 位置 |
-|---------|------|------|
-| documentation_debt_assessor.py | 文档债务评估 | scripts/ |
-| blueprint_validator.py | 蓝图质量验证 | scripts/ |
-| boundary_checker.py | 职责边界检查 | scripts/ |
-| architecture_analyzer.py | 架构分析 | scripts/ |
+| 工具名称 | 功能 | 位置 | 状态 |
+|---------|------|------|------|
+| duplicate_detector.py | 重复文档检测 | scripts/ | ✅ 已完成 |
+| link_checker.py | 死链接检测 | scripts/ | ✅ 已完成 |
+| document_integrity_checker.py | 文档完整性检查 | scripts/ | ✅ 已完成 |
+| documentation_debt_assessor.py | 文档债务评估 | scripts/ | ✅ 已完成 |
+| blueprint_validator.py | 蓝图质量验证 | scripts/ | ✅ 已完成 |
+| boundary_checker.py | 职责边界检查 | scripts/ | ✅ 已完成 |
+| architecture_analyzer.py | 架构分析 | scripts/ | ✅ 已完成 |
 
-### 8.2 建议新增工具
+### 8.2 工具使用说明
+
+#### 8.2.1 重复文档检测工具
+
+**使用场景**: 检测文档内容重复、module_id重复、职责重叠
+
+**使用方法**:
+```bash
+# 检测指定目录的重复文档
+python scripts/duplicate_detector.py --dir docs/10_AI_WORKFLOW --threshold 0.7 --output reports/duplicate_check.json
+
+# 检测全系统重复文档
+python scripts/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/full_duplicate_check.json
+```
+
+**参数说明**:
+- `--dir`: 要检查的目录路径
+- `--threshold`: 相似度阈值（0.0-1.0），默认0.7
+- `--output`: 输出报告文件路径
+
+#### 8.2.2 链接检查工具
+
+**使用场景**: 检查内部链接、外部链接、路径层级违规
+
+**使用方法**:
+```bash
+# 检查指定目录的链接
+python scripts/link_checker.py --dir docs/10_AI_WORKFLOW --max-depth 3 --output reports/link_check.json
+
+# 检查全系统链接
+python scripts/link_checker.py --dir docs/ --max-depth 4 --output reports/full_link_check.json
+```
+
+**参数说明**:
+- `--dir`: 要检查的目录路径
+- `--max-depth`: 最大路径层级，默认3
+- `--output`: 输出报告文件路径
+
+#### 8.2.3 文档完整性检查工具
+
+**使用场景**: 检查文档大小异常、YAML头部完整性、文档结构完整性
+
+**使用方法**:
+```bash
+# 检查指定目录的文档完整性
+python scripts/document_integrity_checker.py --dir docs/10_AI_WORKFLOW --min-size 100 --output reports/integrity_check.json
+
+# 检查全系统文档完整性
+python scripts/document_integrity_checker.py --dir docs/ --min-size 50 --output reports/full_integrity_check.json
+```
+
+**参数说明**:
+- `--dir`: 要检查的目录路径
+- `--min-size`: 最小文件大小（字节），默认100
+- `--output`: 输出报告文件路径
+- `--no-yaml`: 跳过YAML头部检查
+- `--no-structure`: 跳过文档结构检查
+
+### 8.3 定期审计工具集成
+
+**每周快速扫描脚本**:
+```bash
+# 每周一执行
+python scripts/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/weekly/duplicate_check.json
+python scripts/link_checker.py --dir docs/ --max-depth 3 --output reports/weekly/link_check.json
+python scripts/document_integrity_checker.py --dir docs/ --min-size 100 --output reports/weekly/integrity_check.json
+```
+
+**每月深度审计脚本**:
+```bash
+# 每月第一周执行
+python scripts/architecture_analyzer.py --verbose --report --output reports/monthly/architecture_analysis.json
+python scripts/boundary_checker.py --verbose --report --output reports/monthly/boundary_check.json
+python scripts/documentation_debt_assessor.py --verbose --report --category all --output reports/monthly/debt_assessment.json
+python scripts/blueprint_validator.py --verbose --report --output reports/monthly/blueprint_validation.json
+```
+
+### 8.4 建议新增工具
 
 | 工具名称 | 功能 | 优先级 |
 |---------|------|--------|
-| duplicate_detector.py | 重复文档检测 | P0 |
-| link_checker.py | 死链接检测 | P0 |
 | naming_validator.py | 命名规范检查 | P1 |
 | yaml_validator.py | YAML头部验证 | P1 |
+| auto_fixer.py | 自动修复常见问题 | P2 |
 
 ---
 

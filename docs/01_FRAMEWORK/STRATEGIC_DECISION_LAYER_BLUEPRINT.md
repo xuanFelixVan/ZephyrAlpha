@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_LAYER11_001
+module_id: STRATEGIC_DECISION_LAYER_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

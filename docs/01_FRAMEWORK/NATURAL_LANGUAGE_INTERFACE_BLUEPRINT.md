@@ -1,5 +1,5 @@
 ---
-module_id: LAYER11_NL_INTERFACE_001
+module_id: NATURAL_LANGUAGE_INTERFACE_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
