@@ -42,9 +42,10 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据血缘追踪蓝�?| DATA_LINEAGE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) |
-| 数据目录元数据蓝�?| DATA_CATALOG_METADATA_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_CATALOG_METADATA_BLUEPRINT.md) |
-
+| 数据血缘追踪蓝�?|| 数据血缘追踪蓝图 | DATA_LINEAGE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) |
+| 数据目录/元数据管理蓝图 | DATA_CATALOG_001 | v1.0.0 | Active | 2026-04-05 | [链接](./DATA_CATALOG_BLUEPRINT.md) 🆕 |
+| 数据可观测性蓝图 | DATA_OBSERVABILITY_001 | v1.0.0 | Active | 2026-04-05 | [链接](./DATA_OBSERVABILITY_BLUEPRINT.md) 🆕 |
+| 数据目录元数据蓝图 | DATA_CATALOG_METADATA_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_CATALOG_METADATA_BLUEPRINT.md) |
 ### 2.4 数据生命周期管理
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
