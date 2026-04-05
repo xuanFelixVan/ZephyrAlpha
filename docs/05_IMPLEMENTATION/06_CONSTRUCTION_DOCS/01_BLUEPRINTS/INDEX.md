@@ -120,7 +120,7 @@ parent_document: ../INDEX.md
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 实时风险对冲引擎蓝图 | REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) |
-| 尾部风险对冲蓝图 | TAIL_RISK_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./TAIL_RISK_HEDGING_BLUEPRINT.md) |
+| 尾部风险对冲蓝图 | TAIL_RISK_HEDGING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./TAIL_RISK_HEDGING_BLUEPRINT.md) |
 | 压力测试系统蓝图 | STRESS_TESTING_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
 
 ---
@@ -196,7 +196,7 @@ parent_document: ../INDEX.md
 ### 8.1 按层级统�?
 | 层级 | 文档数量 | 占比 |
 |------|---------|------|
-| **数据预处理层（Layer 1�?* | 17�?| 34.7% |
+| **数据预处理层（Layer 1�?* | 17�?| 37.3% |
 | **组合优化层（Layer 6�?* | 12�?| 24.5% |
 | **风险控制层（Layer 7�?* | 5�?| 10.2% |
 | **执行层（Layer 5�?* | 5�?| 10.2% |
