@@ -12,7 +12,7 @@ reference_models: ["Two Sigma Research Platform", "Citadel Quant Dashboard", "Re
 related_documents:
   - BLUEPRINT.md
   - GRAFANA_MONITORING_BLUEPRINT.md
-parent_document: ../INDEX.md
+parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 ---
 

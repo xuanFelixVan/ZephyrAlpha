@@ -13,7 +13,7 @@ related_documents:
   - BLUEPRINT.md
   - REALTIME_RISK_MONITORING_BLUEPRINT.md
   - MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
-parent_document: ../../01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md
+parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 ---
 

@@ -12,7 +12,7 @@ reference_models: ["Bridgewater Access Control", "Two Sigma Authentication", "Ci
 related_documents:
   - BLUEPRINT.md
   - GRAFANA_MONITORING_BLUEPRINT.md
-parent_document: ../INDEX.md
+parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 ---
 
