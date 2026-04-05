@@ -4,8 +4,8 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?compliance_level: 初始标准
+owner: 首席文档架构�?standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设�?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
@@ -27,7 +27,7 @@ implementation_status: 设计阶段
 
 | 目标 | 优先?| 技术实?|
 |------|--------|----------|
-| **多策略组合优?* | P0 | �?方差优化、风险平价、最大夏普比率、最小回撤等多种优化目标 |
+| **多策略组合优?* | P0 | �?方差优化、风险平价、最大夏普比率、最小回撤等多种优化目标 |
 | **智能资金分配** | P0 | 基于策略绩效、相关性、风险贡献度的动态资金分配算?|
 | **风险预算管理** | P1 | 多层次风险预算体系，支持策略层、资产层、因子层风险控制 |
 | **动态调仓逻辑** | P1 | 基于市场状态、策略表现、风险指标的动态调仓决策系?|
@@ -210,12 +210,12 @@ class PortfolioOptimizationController:
         }
 ```
 
-### 3.2 �?方差优化器（MeanVarianceOptimizer?
+### 3.2 �?方差优化器（MeanVarianceOptimizer?
 
 ```python
 class MeanVarianceOptimizer:
     """
-    �?方差优化?- 基于马科维茨现代投资组合理论
+    �?方差优化?- 基于马科维茨现代投资组合理论
     使用PyPortfolioOpt库实?
     """
     
@@ -225,7 +225,7 @@ class MeanVarianceOptimizer:
     def optimize(self, returns: pd.Series, cov_matrix: pd.DataFrame, 
                 constraints: List[Constraint]) -> pd.Series:
         """
-        执行�?方差优化
+        执行�?方差优化
         
         Args:
             returns: 各策略预期收益率
@@ -279,7 +279,7 @@ class MeanVarianceOptimizer:
             ret, vol, sharpe = ef.portfolio_performance(weights=self.optimal_weights)
             ax.scatter(vol, ret, marker='*', s=200, c='r', label='最优组?)
         
-        ax.set_title('�?方差有效前沿')
+        ax.set_title('�?方差有效前沿')
         ax.legend()
         return fig
 ```
@@ -497,7 +497,7 @@ class RLRebalancer:
     """
     
     def __init__(self, state_dim: int = 20, action_dim: int = 10):
-        self.state_dim = state_dim  # 状态维度：市场�?+ 策略表现 + 风险指标
+        self.state_dim = state_dim  # 状态维度：市场�?+ 策略表现 + 风险指标
         self.action_dim = action_dim  # 动作维度：各策略权重调整幅度
         
         # 使用Stable-Baselines3?
@@ -626,7 +626,7 @@ class RLRebalancer:
 pypfopt_config:
   optimization_methods:
     - name: "mean_variance"
-      description: "�?方差优化"
+      description: "�?方差优化"
       parameters:
         target_return: null
         target_volatility: null
@@ -660,7 +660,7 @@ pypfopt_config:
 riskfolio_config:
   risk_measures:
     - name: "CVaR"
-      description: "条件在险�?
+      description: "条件在险�?
       parameters:
         alpha: 0.05
         confidence_level: 0.95
@@ -831,7 +831,7 @@ async def run_complete_portfolio_optimization():
 # 查看可用的优化方?
 python portfolio_optimizer.py list-methods
 
-# 执行�?方差优化
+# 执行�?方差优化
 python portfolio_optimizer.py optimize \
   --method mean_variance \
   --target max_sharpe \
@@ -960,7 +960,7 @@ portfolio_optimization:
 
 | 里程?| 预计完成时间 | 交付?| 成功标准 |
 |--------|--------------|--------|----------|
-| **M1：基础优化框架** | ?周结?| 1. 组合优化控制?br>2. �?方差优化?br>3. 基本约束处理?| 支持5种策略组合优化，结果可复?|
+| **M1：基础优化框架** | ?周结?| 1. 组合优化控制?br>2. �?方差优化?br>3. 基本约束处理?| 支持5种策略组合优化，结果可复?|
 | **M2：风险平价实?* | ?0周结?| 1. 风险平价优化?br>2. 风险贡献度分?br>3. 多风险度量支?| 实现经典风险平价和风险预算模?|
 | **M3：AI调仓系统** | ?8周结?| 1. 强化学习调仓?br>2. 市场环境分类?br>3. 自适应优化框架 | AI调仓策略表现优于静态优?0% |
 | **M4：实盘就?* | ?4周结?| 1. 完整实盘约束处理<br>2. 高性能优化引擎<br>3. 监控告警系统 | 通过3个月模拟盘测试，年化换手?8?|
@@ -981,7 +981,7 @@ portfolio_optimization:
 
 1. **PyPortfolioOpt** - Python投资组合优化?
    - GitHub: https://github.com/robertmartin8/PyPortfolioOpt
-   - 特点：实现马科维茨现代投资组合理论，支持�?方差优化、黑利特曼模型等
+   - 特点：实现马科维茨现代投资组合理论，支持�?方差优化、黑利特曼模型等
    - 集成方式：直接pip安装，作为核心优化引?
 
 2. **Riskfolio-Lib** - Python风险平价与组合优化库
@@ -1038,7 +1038,7 @@ portfolio_optimization:
 
 ## 八、总结
 
-本蓝图详细设计了策略组合优化系统的完整技术方案，涵盖从基础�?方差优化到高级风险平价模型，再到AI增强的动态调仓系统。系统设计遵循以下核心原则：
+本蓝图详细设计了策略组合优化系统的完整技术方案，涵盖从基础�?方差优化到高级风险平价模型，再到AI增强的动态调仓系统。系统设计遵循以下核心原则：
 
 1. **开源优先原?*：最大限度利用成熟开源库，减少自研代码量
 2. **模块化设?*：各优化算法独立封装，支持灵活组合和扩展

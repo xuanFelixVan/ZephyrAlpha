@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 2-4 (中观策略? | 业务架构: 三级时间框架融合架构
+layer: Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
 index: DAILY_PORTFOLIO_OPTIMIZER_001
 estimated_hours: 180h
 review_status: Pending

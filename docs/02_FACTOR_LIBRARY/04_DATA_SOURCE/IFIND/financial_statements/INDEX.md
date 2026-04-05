@@ -23,6 +23,7 @@ parent_document: ../../INDEX.md
 | 文件 | 职责 | 状态 |
 |------|------|------|
 | [THS_BD_COMPLETE_INDICATOR_LIST.md](THS_BD_COMPLETE_INDICATOR_LIST.md) | iFind THS_BD完整指标清单 | Active |
+| [FINANCIAL_STATEMENTS_API.md](FINANCIAL_STATEMENTS_API.md) | 财务数据API参考文档 | Active |
 
 ---
 

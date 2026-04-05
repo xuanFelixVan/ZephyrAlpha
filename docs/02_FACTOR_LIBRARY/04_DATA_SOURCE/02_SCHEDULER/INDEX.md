@@ -23,6 +23,7 @@ parent_document: ../INDEX.md
 | 文件 | 职责 | 状态 |
 |------|------|------|
 | [BLUEPRINT.md](BLUEPRINT.md) | 智能下载调度器蓝图 | Active |
+| [SCHEDULER_API.md](SCHEDULER_API.md) | 调度器API参考文档 | Active |
 
 ---
 

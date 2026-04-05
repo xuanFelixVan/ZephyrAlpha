@@ -65,6 +65,13 @@ implementation_status: 活跃维护
 | [AI决策审计蓝图](./AI_DECISION_AUDIT_BLUEPRINT.md) | AI决策全链路审�?| ⭐⭐⭐⭐ |
 | [AI能力补充蓝图](./AI_CAPABILITY_GAP_BLUEPRINT.md) | AI能力差距与补充计�?| ⭐⭐⭐⭐ |
 
+### Layer 11 文字驱动层 🆕
+
+| 文档名称 | 说明 | 重要�?|
+|---------|------|--------|
+| [自然语言界面蓝图](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) | Layer 11文字驱动层架构设计 | ⭐⭐⭐⭐�?|
+| [全模块文字交互需求分析](./NLP_MODULE_ANALYSIS.md) | Layer 11全模块文字交互需求分析 | ⭐⭐⭐⭐ |
+
 ### Layer 7-11顶层架构蓝图 🆕
 
 | 文档名称 | 说明 | 重要�?|
