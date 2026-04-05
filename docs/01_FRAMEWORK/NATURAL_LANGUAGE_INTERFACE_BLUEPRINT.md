@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-05
 owner: 首席架构师
+layer: Layer 11 (文字驱动层)
 standard_type: 专业机构级架构
 applicable_scope: 全系统文字交互层
 compliance_level: 专业标准
@@ -15,7 +16,7 @@ responsibility_boundary: |
   - 三层架构设计（文字驱动层、量化交易系统、交易平台层）
   - 核心功能模块定义（意图识别、工具调用、上下文管理）
   
-  具体模块的文字交互需求分析请参考：NLP_MODULE_ANALYSIS.md
+  具体模块的文字交互需求分析请参考：NATURAL_LANGUAGE_MODULE_ANALYSIS.md
 implementation_status: 设计阶段
 ---
 
