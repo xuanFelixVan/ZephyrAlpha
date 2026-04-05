@@ -70,7 +70,7 @@ implementation_status: 活跃维护
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
 | [自然语言界面蓝图](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) | Layer 11文字驱动层架构设计 | ⭐⭐⭐⭐�?|
-| [全模块文字交互需求分析](./NLP_MODULE_ANALYSIS.md) | Layer 11全模块文字交互需求分析 | ⭐⭐⭐⭐ |
+| [全模块文字交互需求分析](./NATURAL_LANGUAGE_MODULE_ANALYSIS.md) | Layer 11全模块文字交互需求分析 | ⭐⭐⭐⭐ |
 
 ### Layer 7-11顶层架构蓝图 🆕
 

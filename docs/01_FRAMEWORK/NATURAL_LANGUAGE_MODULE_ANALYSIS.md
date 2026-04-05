@@ -3,9 +3,19 @@ module_id: NLP_MODULE_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席架构?standard_type: 专业机构级分?applicable_scope: 全系统文字交互需求分?compliance_level: 专业标准
+last_updated: 2026-04-05
+owner: 首席架构师
+standard_type: 专业机构级分析
+applicable_scope: 全系统文字交互需求分析
+compliance_level: 专业标准
 parent_document: ./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
+responsibility_boundary: |
+  本文档负责Layer 11全模块文字交互需求分析，包括：
+  - Layer 0-11所有模块的文字交互需求梳理
+  - 每个模块的意图类型、工具定义、数据需求分析
+  - 文字交互场景设计和实现建议
+  
+  整体架构设计请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 implementation_status: 分析完成
 ---
 
