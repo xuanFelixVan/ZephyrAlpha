@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -13,7 +13,7 @@ priority: P2
 
 > **蓝图编号**: `MESH-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -23,18 +23,18 @@ priority: P2
 
 - **流量管理**: 智能路由
 - **安全通信**: mTLS加密
-- **可观测�?*: 分布式追�?- **弹性能�?*: 熔断限流
+- **可观测�?*: 分布式追�?- **弹性能�?*: 熔断限流
 
 ---
 
 ## 2. 技术栈
 
-| 技�?| 说明 |
+| 技�?| 说明 |
 |------|------|
 | Istio | 主流服务网格 |
 | Envoy | 数据平面代理 |
 | Prometheus | 指标收集 |
-| Jaeger | 分布式追�?|
+| Jaeger | 分布式追�?|
 
 ---
 
@@ -48,7 +48,7 @@ class ServiceMeshIntegration:
         self,
         mesh_type: str = 'istio'
     ):
-        """初始化服务网�?        
+        """初始化服务网�?        
         Args:
             mesh_type: 网格类型
         """
@@ -62,7 +62,7 @@ class ServiceMeshIntegration:
         """配置流量规则
         
         Args:
-            service: 服务�?            rules: 流量规则
+            service: 服务�?            rules: 流量规则
         """
         pass
     
@@ -77,6 +77,74 @@ class ServiceMeshIntegration:
         """
         pass
 ```
+
+---
+
+## 6. 开源项目推荐
+
+### 推荐方案: Istio (首选) + Linkerd
+
+| 项目 | 成熟度 | 许可证 | 专业机构使用 | GitHub Stars |
+|------|--------|--------|--------------|--------------|
+| [Istio](https://github.com/istio/istio) | ⭐⭐⭐⭐⭐ | Apache 2.0 | 广泛使用 | 36k+ |
+| [Linkerd](https://github.com/linkerd/linkerd2) | ⭐⭐⭐⭐⭐ | Apache 2.0 | 多家企业 | 11k+ |
+| [Consul Connect](https://github.com/hashicorp/consul) | ⭐⭐⭐⭐ | MPL | HashiCorp | 28k+ |
+| [Kuma](https://github.com/kumahq/kuma) | ⭐⭐⭐⭐ | Apache 2.0 | Kong | 5k+ |
+
+### Istio 核心功能
+
+```yaml
+# istio配置示例
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: model-service
+spec:
+  hosts:
+  - model-service
+  http:
+  - route:
+    - destination:
+        host: model-service
+        subset: v1
+      weight: 90
+    - destination:
+        host: model-service
+        subset: v2
+      weight: 10
+```
+
+### Istio mTLS配置
+
+```yaml
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+spec:
+  mtls:
+    mode: STRICT
+```
+
+### Linkerd 核心功能
+
+```bash
+# 安装Linkerd
+linkerd install | kubectl apply -f -
+
+# 注入服务
+kubectl get deploy -o yaml | linkerd inject - | kubectl apply -f -
+```
+
+### 实施建议
+
+| 方案 | 适用场景 | 特点 |
+|------|----------|------|
+| Istio | 企业级 | 功能全面、生态丰富 |
+| Linkerd | 轻量级 | 简单易用、性能好 |
+| Kuma | 多集群 | Kong支持 |
+
+**推荐**: 使用Istio进行服务网格管理，功能全面、社区活跃。
 
 ---
 

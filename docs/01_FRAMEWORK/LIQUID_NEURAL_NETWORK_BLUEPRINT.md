@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
 ---
@@ -13,7 +13,7 @@ priority: P2
 
 > **蓝图编号**: `LNN-001`
 > **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
 
 ---
 
@@ -21,8 +21,8 @@ priority: P2
 
 液体神经网络是连续时间动态神经网络：
 
-- **连续时间**: 连续时间动�?- **自适应**: 实时适应
-- **可解�?*: 物理可解�?- **低延�?*: 高效推理
+- **连续时间**: 连续时间动�?- **自适应**: 实时适应
+- **可解�?*: 物理可解�?- **低延�?*: 高效推理
 
 ---
 
@@ -38,7 +38,7 @@ class LiquidNeuralNetwork:
         hidden_dim: int,
         output_dim: int
     ):
-        """初始化液体神经网�?        
+        """初始化液体神经网�?        
         Args:
             input_dim: 输入维度
             hidden_dim: 隐藏维度
@@ -55,12 +55,64 @@ class LiquidNeuralNetwork:
         
         Args:
             x: 输入
-            time_step: 时间�?            
+            time_step: 时间�?            
         Returns:
             torch.Tensor: 输出
         """
         pass
 ```
+
+---
+
+## 6. 开源项目推荐
+
+### 推荐方案: 自研 + PyTorch
+
+| 项目 | 成熟度 | 许可证 | 专业机构使用 | GitHub Stars |
+|------|--------|--------|--------------|--------------|
+| [Liquid Time-constant Networks](https://github.com/raminmh/liquid_time_constant_networks) | ⭐⭐⭐ | MIT | MIT | 500+ |
+| [Closed-form Continuous-time](https://github.com/raminmh/CfC) | ⭐⭐⭐⭐ | MIT | MIT | 1k+ |
+| [Neural ODEs](https://github.com/rtqichen/torchdiffeq) | ⭐⭐⭐⭐⭐ | MIT | 学术界 | 5k+ |
+
+### CfC 核心功能
+
+```python
+from ncps.torch import CfC
+
+# Closed-form Continuous-time模型
+model = CfC(input_size=20, hidden_size=64, proj_size=10)
+
+# 前向传播
+output, hidden_state = model(x, hidden_state)
+```
+
+### Liquid Time-constant Networks
+
+```python
+import torch
+import torch.nn as nn
+
+class LiquidCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.W = nn.Linear(input_size + hidden_size, hidden_size)
+        self.tau = nn.Parameter(torch.ones(hidden_size))
+        
+    def forward(self, x, h):
+        combined = torch.cat([x, h], dim=-1)
+        dh = torch.sigmoid(self.W(combined)) * (1 - h) / self.tau
+        return h + dh
+```
+
+### 实施建议
+
+| 方案 | 适用场景 | 特点 |
+|------|----------|------|
+| CfC | 时间序列 | 闭式解、高效 |
+| 自研 | 量化场景 | 定制化、可控 |
+| Neural ODE | 学术研究 | 灵活性高 |
+
+**推荐**: 使用CfC进行时间序列建模，核心量化场景自研优化。
 
 ---
 
