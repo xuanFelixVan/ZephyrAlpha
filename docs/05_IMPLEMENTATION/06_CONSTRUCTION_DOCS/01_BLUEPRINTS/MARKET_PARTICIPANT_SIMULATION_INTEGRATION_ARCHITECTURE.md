@@ -1,64 +1,64 @@
 ---
-module_id: IMPL_PLAN_AGENT_INTEGRATION_001
+module_id: MARKET_PARTICIPANT_SIMULATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 架构集成方案
-applicable_scope: 市场参与者行为模拟系统集�?compliance_level: 专业标准
+applicable_scope: 市场参与者行为模拟系统集�?compliance_level: 专业标准
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md
 implementation_status: 设计阶段
 ---
 
-# 市场参与者行为模拟系�?- 多层次集成架构方�?
+# 市场参与者行为模拟系�?- 多层次集成架构方�?
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **技术评审官**: Spec-Approver (审批智能�?
+> **技术评审官**: Spec-Approver (审批智能�?
 > **核心问题**: 市场参与者模拟（国家队、主力、散户）如何集成到现有系统？
-> **答案**: 多层次集�?- 同时作为因子、信号、决策三种形式介�?
+> **答案**: 多层次集�?- 同时作为因子、信号、决策三种形式介�?
 ---
 
-## 🎯 一、核心答案：多层次集成架�?
+## 🎯 一、核心答案：多层次集成架�?
 ### 1.1 不是单选题，而是多选题
 
-市场参与者行为模�?*不应�?*只选择一种集成方式，而应该采�?*多层次集成架�?*�?
+市场参与者行为模�?*不应�?*只选择一种集成方式，而应该采�?*多层次集成架�?*�?
 ```
-┌─────────────────────────────────────────────────────────────�?�?         市场参与者行为模拟系�?(Layer 2.5 新增�?          �?�?                                                            �?�? ┌─────────────�? ┌─────────────�? ┌─────────────�?        �?�? �?国家队智能体 �? �?主力智能�? �? �?散户智能�? �?        �?�? └──────┬──────�? └──────┬──────�? └──────┬──────�?        �?�?        �?               �?               �?                �?�?        └────────────────┴────────────────�?                �?�?                         �?                                 �?�?                         �?                                 �?�?             ┌───────────────────────�?                    �?�?             �? 市场模拟引擎         �?                    �?�?             �? (博弈与价格发�?     �?                    �?�?             └───────────┬───────────�?                    �?�?                         �?                                 �?└──────────────────────────┼──────────────────────────────────�?                           �?                           �?        ┌──────────────────┴──────────────────�?        �?                                    �?        �?                                    �?┌───────────────�?                   ┌───────────────�?�? 因子输出�?  �?                   �? 信号输出�?  �?�? (Layer 2)    �?                   �? (策略�?     �?└───────┬───────�?                   └───────┬───────�?        �?                                    �?        �?                                    �?┌───────────────�?                   ┌───────────────�?�?因子库集�?   �?                   �?策略信号生成  �?�?- 主力动向因子�?                   �?- 买卖信号    �?�?- 散户情绪因子�?                   �?- 仓位建议    �?�?- 政策信号因子�?                   �?- 风险预警    �?└───────────────�?                   └───────────────�?        �?                                    �?        └──────────────┬──────────────────────�?                       �?                       �?              ┌───────────────�?              �?决策输出�?   �?              �?(组合优化�?  �?              └───────┬───────�?                      �?                      �?              ┌───────────────�?              �?组合权重优化  �?              �?- 多智能体投票�?              �?- 风险预算分配�?              �?- 执行路径规划�?              └───────────────�?```
+┌─────────────────────────────────────────────────────────────�?�?         市场参与者行为模拟系�?(Layer 2.5 新增�?          �?�?                                                            �?�? ┌─────────────�? ┌─────────────�? ┌─────────────�?        �?�? �?国家队智能体 �? �?主力智能�? �? �?散户智能�? �?        �?�? └──────┬──────�? └──────┬──────�? └──────┬──────�?        �?�?        �?               �?               �?                �?�?        └────────────────┴────────────────�?                �?�?                         �?                                 �?�?                         �?                                 �?�?             ┌───────────────────────�?                    �?�?             �? 市场模拟引擎         �?                    �?�?             �? (博弈与价格发�?     �?                    �?�?             └───────────┬───────────�?                    �?�?                         �?                                 �?└──────────────────────────┼──────────────────────────────────�?                           �?                           �?        ┌──────────────────┴──────────────────�?        �?                                    �?        �?                                    �?┌───────────────�?                   ┌───────────────�?�? 因子输出�?  �?                   �? 信号输出�?  �?�? (Layer 2)    �?                   �? (策略�?     �?└───────┬───────�?                   └───────┬───────�?        �?                                    �?        �?                                    �?┌───────────────�?                   ┌───────────────�?�?因子库集�?   �?                   �?策略信号生成  �?�?- 主力动向因子�?                   �?- 买卖信号    �?�?- 散户情绪因子�?                   �?- 仓位建议    �?�?- 政策信号因子�?                   �?- 风险预警    �?└───────────────�?                   └───────────────�?        �?                                    �?        └──────────────┬──────────────────────�?                       �?                       �?              ┌───────────────�?              �?决策输出�?   �?              �?(组合优化�?  �?              └───────┬───────�?                      �?                      �?              ┌───────────────�?              �?组合权重优化  �?              �?- 多智能体投票�?              �?- 风险预算分配�?              �?- 执行路径规划�?              └───────────────�?```
 
 ### 1.2 三种集成方式对比
 
 | 集成方式 | 优点 | 缺点 | 适用场景 |
 |---------|------|------|---------|
-| **作为因子** | �?简单直�?br>�?与现有因子库无缝集成<br>�?可用于多因子模型 | �?丢失智能体交互特�?br>�?无法模拟博弈过程 | 作为输入特征，供策略使用 |
-| **作为策略** | �?独立运行<br>�?可生成交易信�?br>�?易于回测 | �?可能与其他策略冲�?br>�?缺乏协同效应 | 作为独立策略，生成买卖信�?|
-| **作为智能体层** | �?保留博弈特�?br>�?可模拟市场生�?br>�?多层次输�?| �?架构复杂度高<br>�?开发难度大 | **推荐方案**：完整模拟市场参与者行�?|
+| **作为因子** | �?简单直�?br>�?与现有因子库无缝集成<br>�?可用于多因子模型 | �?丢失智能体交互特�?br>�?无法模拟博弈过程 | 作为输入特征，供策略使用 |
+| **作为策略** | �?独立运行<br>�?可生成交易信�?br>�?易于回测 | �?可能与其他策略冲�?br>�?缺乏协同效应 | 作为独立策略，生成买卖信�?|
+| **作为智能体层** | �?保留博弈特�?br>�?可模拟市场生�?br>�?多层次输�?| �?架构复杂度高<br>�?开发难度大 | **推荐方案**：完整模拟市场参与者行�?|
 
 ---
 
-## 🏗�?二、详细集成架构设�?
+## 🏗�?二、详细集成架构设�?
 ### 2.1 Layer 2.5 新增层：市场参与者模拟层
 
-**架构定位**: 在Layer 2 (Alpha因子�? �?Layer 3 (舆情分析�? 之间新增
+**架构定位**: 在Layer 2 (Alpha因子�? �?Layer 3 (舆情分析�? 之间新增
 
 ```
 Layer 0: 数据源层
-    �?Layer 1: 数据预处理层
-    �?Layer 2: Alpha因子�?(现有5700+因子)
-    �?Layer 2.5: 市场参与者模拟层 🆕 (新增核心�?
+    �?Layer 1: 数据预处理层
+    �?Layer 2: Alpha因子�?(现有5700+因子)
+    �?Layer 2.5: 市场参与者模拟层 🆕 (新增核心�?
     ├─ 国家队智能体 (NationalTeamAgent)
-    ├─ 主力智能�?(InstitutionalAgent)
-    ├─ 散户智能�?(RetailAgent)
+    ├─ 主力智能�?(InstitutionalAgent)
+    ├─ 散户智能�?(RetailAgent)
     └─ 市场模拟引擎 (MarketSimulationEngine)
-    �?Layer 3: 舆情分析�?    �?Layer 4: 机器学习�?    �?Layer 5: 策略执行�?    �?Layer 6: 组合优化�?    �?Layer 7: AI报告�?    �?Layer 8: 人机交互�?```
+    �?Layer 3: 舆情分析�?    �?Layer 4: 机器学习�?    �?Layer 5: 策略执行�?    �?Layer 6: 组合优化�?    �?Layer 7: AI报告�?    �?Layer 8: 人机交互�?```
 
-**为什么需要Layer 2.5�?*
+**为什么需要Layer 2.5�?*
 1. **数据层面**: 需要整合龙虎榜、资金流向、舆情等多源数据
-2. **计算层面**: 需要运行RL模型、行为金融学模型等复杂计�?3. **交互层面**: 需要模拟智能体之间的博弈和交互
-4. **输出层面**: 需要同时输出因子、信号、决策三种形�?
+2. **计算层面**: 需要运行RL模型、行为金融学模型等复杂计�?3. **交互层面**: 需要模拟智能体之间的博弈和交互
+4. **输出层面**: 需要同时输出因子、信号、决策三种形�?
 ---
 
-### 2.2 因子输出层集成方�?
+### 2.2 因子输出层集成方�?
 #### 2.2.1 因子定义
 
 **主力动向因子** (InstitutionalActivityFactor)
@@ -68,11 +68,11 @@ class InstitutionalActivityFactor(BaseFactor):
     """主力动向因子
     
     索引: FACTOR.INSTITUTIONAL.001
-    Layer: Layer 2 (Alpha因子�?
-    数据�? Layer 2.5 主力智能体输�?    
+    Layer: Layer 2 (Alpha因子�?
+    数据�? Layer 2.5 主力智能体输�?    
     因子构成:
     1. 资金流向强度 (CapitalFlowIntensity)
-    2. 订单簿不平衡�?(OrderBookImbalance)
+    2. 订单簿不平衡�?(OrderBookImbalance)
     3. 主力持仓变化 (InstitutionalHoldingChange)
     4. 操盘阶段识别 (ManipulationPhase)
     """
@@ -84,12 +84,12 @@ class InstitutionalActivityFactor(BaseFactor):
         """计算主力动向因子
         
         输入:
-            data: 包含价格、成交量、订单簿等数�?            
+            data: 包含价格、成交量、订单簿等数�?            
         输出:
-            pd.Series: 主力动向因子�?(范围[-1, 1])
-            - 正�? 主力资金流入
-            - 负�? 主力资金流出
-            - 绝对值越�?强度越大
+            pd.Series: 主力动向因子�?(范围[-1, 1])
+            - 正�? 主力资金流入
+            - 负�? 主力资金流出
+            - 绝对值越�?强度越大
         """
         # 1. 获取主力智能体的市场微观结构分析
         microstructure = self.agent.market_microstructure_analyzer.analyze(
@@ -103,7 +103,7 @@ class InstitutionalActivityFactor(BaseFactor):
             microstructure.trade_flow
         )
         
-        # 3. 计算订单簿不平衡�?        order_book_imbalance = self._calculate_order_book_imbalance(
+        # 3. 计算订单簿不平衡�?        order_book_imbalance = self._calculate_order_book_imbalance(
             microstructure.order_book
         )
         
@@ -117,7 +117,7 @@ class InstitutionalActivityFactor(BaseFactor):
             microstructure
         )
         
-        # 6. 合成最终因�?        factor_value = (
+        # 6. 合成最终因�?        factor_value = (
             0.3 * capital_flow_intensity +
             0.3 * order_book_imbalance +
             0.2 * holding_change +
@@ -134,13 +134,13 @@ class RetailSentimentFactor(BaseFactor):
     """散户情绪因子
     
     索引: FACTOR.RETAIL.001
-    Layer: Layer 2 (Alpha因子�?
-    数据�? Layer 2.5 散户智能体输�?    
+    Layer: Layer 2 (Alpha因子�?
+    数据�? Layer 2.5 散户智能体输�?    
     因子构成:
     1. 市场情绪指数 (MarketSentimentIndex)
     2. 羊群效应强度 (HerdingIntensity)
     3. 散户持仓变化 (RetailHoldingChange)
-    4. 追涨杀跌程�?(ChaseTrendDegree)
+    4. 追涨杀跌程�?(ChaseTrendDegree)
     """
     
     def __init__(self, retail_agent: RetailAgent):
@@ -150,10 +150,10 @@ class RetailSentimentFactor(BaseFactor):
         """计算散户情绪因子
         
         输出:
-            pd.Series: 散户情绪因子�?(范围[-1, 1])
-            - 正�? 散户情绪乐观(可能见顶)
-            - 负�? 散户情绪悲观(可能见底)
-            - 绝对值越�?情绪越极�?        """
+            pd.Series: 散户情绪因子�?(范围[-1, 1])
+            - 正�? 散户情绪乐观(可能见顶)
+            - 负�? 散户情绪悲观(可能见底)
+            - 绝对值越�?情绪越极�?        """
         # 1. 获取散户智能体的情绪分析
         sentiment_score = self.agent.sentiment_analyzer.analyze(
             news=data['news'],
@@ -172,11 +172,11 @@ class RetailSentimentFactor(BaseFactor):
             data['retail_holdings']
         )
         
-        # 4. 计算追涨杀跌程�?        chase_trend_degree = self._calculate_chase_trend_degree(
+        # 4. 计算追涨杀跌程�?        chase_trend_degree = self._calculate_chase_trend_degree(
             data['prices'], data['retail_holdings']
         )
         
-        # 5. 合成最终因�?        factor_value = (
+        # 5. 合成最终因�?        factor_value = (
             0.4 * sentiment_score +
             0.3 * herding_intensity +
             0.2 * holding_change +
@@ -193,13 +193,13 @@ class PolicySignalFactor(BaseFactor):
     """政策信号因子
     
     索引: FACTOR.POLICY.001
-    Layer: Layer 2 (Alpha因子�?
-    数据�? Layer 2.5 国家队智能体输出
+    Layer: Layer 2 (Alpha因子�?
+    数据�? Layer 2.5 国家队智能体输出
     
     因子构成:
-    1. 政策支持�?(PolicySupportLevel)
-    2. 市场稳定�?(MarketStability)
-    3. 国家队持仓变�?(NationalTeamHoldingChange)
+    1. 政策支持�?(PolicySupportLevel)
+    2. 市场稳定�?(MarketStability)
+    3. 国家队持仓变�?(NationalTeamHoldingChange)
     4. 干预概率 (InterventionProbability)
     """
     
@@ -210,21 +210,21 @@ class PolicySignalFactor(BaseFactor):
         """计算政策信号因子
         
         输出:
-            pd.Series: 政策信号因子�?(范围[-1, 1])
-            - 正�? 政策利好,国家队可能买�?            - 负�? 政策利空,国家队可能减�?            - 绝对值越�?信号越强
+            pd.Series: 政策信号因子�?(范围[-1, 1])
+            - 正�? 政策利好,国家队可能买�?            - 负�? 政策利空,国家队可能减�?            - 绝对值越�?信号越强
         """
-        # 1. 获取国家队智能体的政策信�?        policy_signals = self.agent.policy_signal_detector.detect(
+        # 1. 获取国家队智能体的政策信�?        policy_signals = self.agent.policy_signal_detector.detect(
             news_data=data['news'],
             macro_data=data['macro_indicators']
         )
         
-        # 2. 评估市场稳定�?        stability_score = self.agent.market_stability_monitor.evaluate(
+        # 2. 评估市场稳定�?        stability_score = self.agent.market_stability_monitor.evaluate(
             price_data=data['prices'],
             volatility=data['volatility'],
             sentiment=data['sentiment']
         )
         
-        # 3. 计算国家队持仓变�?        holding_change = self._calculate_holding_change(
+        # 3. 计算国家队持仓变�?        holding_change = self._calculate_holding_change(
             data['national_team_holdings']
         )
         
@@ -233,7 +233,7 @@ class PolicySignalFactor(BaseFactor):
             policy_signals, stability_score
         )
         
-        # 5. 合成最终因�?        factor_value = (
+        # 5. 合成最终因�?        factor_value = (
             0.4 * policy_signals.composite_score +
             0.3 * stability_score +
             0.2 * holding_change +
@@ -243,13 +243,13 @@ class PolicySignalFactor(BaseFactor):
         return factor_value
 ```
 
-#### 2.2.2 因子库集�?
+#### 2.2.2 因子库集�?
 ```python
 class AgentBasedFactorLibrary:
-    """基于智能体的因子�?    
+    """基于智能体的因子�?    
     索引: FACTOR.LIBRARY.AGENT.001
-    Layer: Layer 2 (Alpha因子�?
-    职责: 管理和计算所有智能体生成的因�?    """
+    Layer: Layer 2 (Alpha因子�?
+    职责: 管理和计算所有智能体生成的因�?    """
     
     def __init__(self, 
                  national_team_agent: NationalTeamAgent,
@@ -261,7 +261,7 @@ class AgentBasedFactorLibrary:
             'retail': retail_agent
         }
         
-        # 初始化因�?        self.factors = {
+        # 初始化因�?        self.factors = {
             'policy_signal': PolicySignalFactor(national_team_agent),
             'institutional_activity': InstitutionalActivityFactor(institutional_agent),
             'retail_sentiment': RetailSentimentFactor(retail_agent)
@@ -291,31 +291,31 @@ class AgentBasedFactorLibrary:
         
         集成方式:
         1. 直接拼接 (新增3个因子列)
-        2. 因子正交�?(去除与现有因子的共线�?
-        3. 因子标准�?(统一量纲)
+        2. 因子正交�?(去除与现有因子的共线�?
+        3. 因子标准�?(统一量纲)
         """
         # 1. 直接拼接
         integrated_factors = pd.concat([existing_factors, agent_factors], axis=1)
         
-        # 2. 因子正交�?(可�?
+        # 2. 因子正交�?(可�?
         if self.config.orthogonalize:
             integrated_factors = self._orthogonalize_factors(integrated_factors)
         
-        # 3. 因子标准�?        integrated_factors = self._standardize_factors(integrated_factors)
+        # 3. 因子标准�?        integrated_factors = self._standardize_factors(integrated_factors)
         
         return integrated_factors
 ```
 
 ---
 
-### 2.3 信号输出层集成方�?
-#### 2.3.1 信号生成�?
+### 2.3 信号输出层集成方�?
+#### 2.3.1 信号生成�?
 ```python
 class AgentBasedSignalGenerator:
-    """基于智能体的信号生成�?    
+    """基于智能体的信号生成�?    
     索引: SIGNAL.GENERATOR.AGENT.001
-    Layer: Layer 5 (策略执行�?
-    职责: 将智能体决策转换为交易信�?    """
+    Layer: Layer 5 (策略执行�?
+    职责: 将智能体决策转换为交易信�?    """
     
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
@@ -327,21 +327,21 @@ class AgentBasedSignalGenerator:
         流程:
         1. 各智能体独立生成决策
         2. 市场模拟引擎模拟博弈
-        3. 信号合成器整合信�?        4. 返回最终交易信�?        """
+        3. 信号合成器整合信�?        4. 返回最终交易信�?        """
         # 1. 各智能体独立生成决策
         agent_decisions = {}
         for agent_name, agent in self.agents.items():
             decision = agent.generate_trading_decision(market_state)
             agent_decisions[agent_name] = decision
         
-        # 2. 市场模拟引擎模拟博弈 (可�?
+        # 2. 市场模拟引擎模拟博弈 (可�?
         if self.config.enable_simulation:
             simulation_result = self._simulate_market(agent_decisions, market_state)
             market_impact = simulation_result.market_impact
         else:
             market_impact = None
         
-        # 3. 信号合成器整合信�?        final_signals = self.signal_combiner.combine(
+        # 3. 信号合成器整合信�?        final_signals = self.signal_combiner.combine(
             agent_decisions=agent_decisions,
             market_impact=market_impact,
             risk_budget=self.config.risk_budget
@@ -351,7 +351,7 @@ class AgentBasedSignalGenerator:
 
 
 class SignalCombiner:
-    """信号合成�?    
+    """信号合成�?    
     索引: SIGNAL.COMBINER.001
     职责: 整合多个智能体的信号
     """
@@ -367,7 +367,7 @@ class SignalCombiner:
         2. 市场冲击调整 (考虑市场冲击成本)
         3. 风险预算约束 (确保风险可控)
         """
-        # 1. 提取各智能体的信�?        signals = {}
+        # 1. 提取各智能体的信�?        signals = {}
         for agent_name, decision in agent_decisions.items():
             signals[agent_name] = {
                 'action': decision.action,
@@ -397,9 +397,9 @@ class SignalCombiner:
         """加权平均合成
         
         权重计算:
-        - 国家�? 权重 = 置信�?* 0.3 (长期稳定)
-        - 主力: 权重 = 置信�?* 0.5 (市场主导)
-        - 散户: 权重 = 置信�?* 0.2 (反向指标)
+        - 国家�? 权重 = 置信�?* 0.3 (长期稳定)
+        - 主力: 权重 = 置信�?* 0.5 (市场主导)
+        - 散户: 权重 = 置信�?* 0.2 (反向指标)
         """
         total_weight = 0
         weighted_position = {}
@@ -416,7 +416,7 @@ class SignalCombiner:
             else:
                 base_weight = 0.1
             
-            # 计算最终权�?            weight = base_weight * signal['confidence']
+            # 计算最终权�?            weight = base_weight * signal['confidence']
             total_weight += weight
             
             # 加权累加
@@ -425,7 +425,7 @@ class SignalCombiner:
                     weighted_position[stock] = 0
                 weighted_position[stock] += weight * size
         
-        # 归一�?        if total_weight > 0:
+        # 归一�?        if total_weight > 0:
             for stock in weighted_position:
                 weighted_position[stock] /= total_weight
         
@@ -437,13 +437,13 @@ class SignalCombiner:
         )
 ```
 
-#### 2.3.2 与现有策略集�?
+#### 2.3.2 与现有策略集�?
 ```python
 class StrategyWithAgentSignals(BaseStrategy):
     """集成智能体信号的策略基类
     
     索引: STRATEGY.AGENT.001
-    Layer: Layer 5 (策略执行�?
+    Layer: Layer 5 (策略执行�?
     
     使用方式:
     1. 继承此类
@@ -461,12 +461,12 @@ class StrategyWithAgentSignals(BaseStrategy):
         
         流程:
         1. 获取传统因子信号
-        2. 获取智能体信�?        3. 融合两类信号
-        4. 返回最终信�?        """
+        2. 获取智能体信�?        3. 融合两类信号
+        4. 返回最终信�?        """
         # 1. 获取传统因子信号
         traditional_signals = self._generate_traditional_signals(data)
         
-        # 2. 获取智能体信�?        market_state = self._build_market_state(data)
+        # 2. 获取智能体信�?        market_state = self._build_market_state(data)
         agent_signals = self.agent_signal_generator.generate_signals(market_state)
         
         # 3. 融合信号
@@ -480,8 +480,8 @@ class StrategyWithAgentSignals(BaseStrategy):
         """融合传统信号和智能体信号
         
         融合策略:
-        1. 信号方向一�?�?增强信号强度
-        2. 信号方向冲突 �?降低信号强度或放�?        3. 智能体信号独�?�?作为新信号添�?        """
+        1. 信号方向一�?�?增强信号强度
+        2. 信号方向冲突 �?降低信号强度或放�?        3. 智能体信号独�?�?作为新信号添�?        """
         fused_signals = []
         
         for trad_signal in traditional_signals:
@@ -489,7 +489,7 @@ class StrategyWithAgentSignals(BaseStrategy):
             if trad_signal.symbol in agent_signals.position_size:
                 agent_position = agent_signals.position_size[trad_signal.symbol]
                 
-                # 信号方向一�?                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
+                # 信号方向一�?                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
                    (trad_signal.direction == 'SELL' and agent_position < 0):
                     # 增强信号强度
                     fused_signal = Signal(
@@ -513,7 +513,7 @@ class StrategyWithAgentSignals(BaseStrategy):
                 # 传统信号独立
                 fused_signals.append(trad_signal)
         
-        # 添加智能体独立信�?        for symbol, position in agent_signals.position_size.items():
+        # 添加智能体独立信�?        for symbol, position in agent_signals.position_size.items():
             if not any(s.symbol == symbol for s in fused_signals):
                 fused_signals.append(Signal(
                     symbol=symbol,
@@ -527,7 +527,7 @@ class StrategyWithAgentSignals(BaseStrategy):
 
 ---
 
-### 2.4 决策输出层集成方�?
+### 2.4 决策输出层集成方�?
 #### 2.4.1 多智能体投票机制
 
 ```python
@@ -535,8 +535,8 @@ class MultiAgentVotingSystem:
     """多智能体投票系统
     
     索引: VOTING.AGENT.001
-    Layer: Layer 6 (组合优化�?
-    职责: 通过投票机制整合智能体决�?    """
+    Layer: Layer 6 (组合优化�?
+    职责: 通过投票机制整合智能体决�?    """
     
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
@@ -544,12 +544,12 @@ class MultiAgentVotingSystem:
     def vote_on_portfolio(self, 
                          market_state: MarketState,
                          current_portfolio: Portfolio) -> PortfolioDecision:
-        """对组合调整进行投�?        
+        """对组合调整进行投�?        
         投票机制:
         1. 各智能体独立投票
         2. 根据投票结果计算权重
         3. 考虑风险预算约束
-        4. 返回最终组合决�?        """
+        4. 返回最终组合决�?        """
         # 1. 各智能体独立投票
         votes = {}
         for agent_name, agent in self.agents.items():
@@ -565,7 +565,7 @@ class MultiAgentVotingSystem:
         # 3. 考虑风险预算约束
         target_weights = self._apply_risk_budget(target_weights, current_portfolio)
         
-        # 4. 返回最终组合决�?        return PortfolioDecision(
+        # 4. 返回最终组合决�?        return PortfolioDecision(
             target_weights=target_weights,
             rebalance_reasons=self._generate_rebalance_reasons(votes),
             confidence=self._calculate_confidence(votes),
@@ -576,9 +576,9 @@ class MultiAgentVotingSystem:
         """计算投票权重
         
         投票权重因素:
-        1. 智能体类型权�?(国家�?.3, 主力0.5, 散户0.2)
-        2. 决策置信�?(0-1)
-        3. 历史准确�?(基于历史表现)
+        1. 智能体类型权�?(国家�?.3, 主力0.5, 散户0.2)
+        2. 决策置信�?(0-1)
+        3. 历史准确�?(基于历史表现)
         """
         # 基础权重
         base_weights = {
@@ -589,9 +589,9 @@ class MultiAgentVotingSystem:
         
         base_weight = base_weights.get(agent_name, 0.1)
         
-        # 置信度调�?        confidence_adjusted = base_weight * decision.confidence
+        # 置信度调�?        confidence_adjusted = base_weight * decision.confidence
         
-        # 历史准确率调�?(如果�?
+        # 历史准确率调�?(如果�?
         historical_accuracy = self._get_historical_accuracy(agent_name)
         final_weight = confidence_adjusted * historical_accuracy
         
@@ -601,7 +601,7 @@ class MultiAgentVotingSystem:
         """根据投票结果计算目标权重
         
         计算方法:
-        1. 对每只股�?累加各智能体的投票权�?        2. 归一化权�?        3. 应用权重限制 (单只股票权重不超�?0%)
+        1. 对每只股�?累加各智能体的投票权�?        2. 归一化权�?        3. 应用权重限制 (单只股票权重不超�?0%)
         """
         stock_weights = {}
         total_voting_power = 0
@@ -623,7 +623,7 @@ class MultiAgentVotingSystem:
             
             total_voting_power += voting_power
         
-        # 归一�?        if total_voting_power > 0:
+        # 归一�?        if total_voting_power > 0:
             for stock in stock_weights:
                 stock_weights[stock] /= total_voting_power
         
@@ -636,18 +636,18 @@ class MultiAgentVotingSystem:
         return stock_weights
 ```
 
-#### 2.4.2 与现有组合优化集�?
+#### 2.4.2 与现有组合优化集�?
 ```python
 class PortfolioOptimizerWithAgents:
-    """集成智能体的组合优化�?    
+    """集成智能体的组合优化�?    
     索引: OPTIMIZER.PORTFOLIO.AGENT.001
-    Layer: Layer 6 (组合优化�?
+    Layer: Layer 6 (组合优化�?
     
     集成方式:
     1. 智能体投票结果作为目标权重的先验
     2. 因子模型作为收益预测
     3. 风险模型作为风险约束
-    4. 优化求解最终权�?    """
+    4. 优化求解最终权�?    """
     
     def __init__(self,
                  voting_system: MultiAgentVotingSystem,
@@ -663,10 +663,10 @@ class PortfolioOptimizerWithAgents:
         """优化组合
         
         优化流程:
-        1. 智能体投票生成先验权�?        2. 因子模型预测收益
+        1. 智能体投票生成先验权�?        2. 因子模型预测收益
         3. 风险模型计算风险
-        4. 优化求解最终权�?        """
-        # 1. 智能体投票生成先验权�?        voting_result = self.voting_system.vote_on_portfolio(
+        4. 优化求解最终权�?        """
+        # 1. 智能体投票生成先验权�?        voting_result = self.voting_system.vote_on_portfolio(
             market_state, current_portfolio
         )
         prior_weights = voting_result.target_weights
@@ -681,7 +681,7 @@ class PortfolioOptimizerWithAgents:
             market_state.prices
         )
         
-        # 4. 优化求解最终权�?        optimal_weights = self._solve_optimization(
+        # 4. 优化求解最终权�?        optimal_weights = self._solve_optimization(
             prior_weights=prior_weights,
             expected_returns=expected_returns,
             risk_matrix=risk_matrix,
@@ -708,7 +708,7 @@ class PortfolioOptimizerWithAgents:
         其中:
         - w: 组合权重
         - μ: 预期收益
-        - Σ: 协方差矩�?        - w_prior: 先验权重 (智能体投票结�?
+        - Σ: 协方差矩�?        - w_prior: 先验权重 (智能体投票结�?
         - λ: 风险厌恶系数
         - γ: 先验权重偏离惩罚系数
         """
@@ -737,7 +737,7 @@ class PortfolioOptimizerWithAgents:
         # 约束条件
         constraints_list = [
             cp.sum(w) == 1,  # 权重和为1
-            w >= 0,  # 不允许做�?            w <= self.config.max_weight  # 单只股票最大权�?        ]
+            w >= 0,  # 不允许做�?            w <= self.config.max_weight  # 单只股票最大权�?        ]
         
         # 求解
         problem = cp.Problem(objective, constraints_list)
@@ -753,70 +753,70 @@ class PortfolioOptimizerWithAgents:
 
 ---
 
-## 📊 三、集成效果对�?
-### 3.1 单一集成方式 vs 多层次集�?
-| 维度 | 单一因子集成 | 单一策略集成 | 多层次集�?(推荐) |
+## 📊 三、集成效果对�?
+### 3.1 单一集成方式 vs 多层次集�?
+| 维度 | 单一因子集成 | 单一策略集成 | 多层次集�?(推荐) |
 |------|------------|------------|-----------------|
-| **信息利用** | ⭐⭐ 仅利用因子信�?| ⭐⭐�?仅利用信号信�?| ⭐⭐⭐⭐�?全方位利�?|
-| **博弈模拟** | �?无法模拟 | �?无法模拟 | �?完整模拟 |
-| **决策质量** | ⭐⭐�?中等 | ⭐⭐⭐⭐ 较好 | ⭐⭐⭐⭐�?优秀 |
-| **开发难�?* | �?�?| ⭐⭐ �?| ⭐⭐⭐⭐ �?|
-| **维护成本** | �?�?| ⭐⭐ �?| ⭐⭐�?中高 |
-| **扩展�?* | ⭐⭐ 一�?| ⭐⭐�?较好 | ⭐⭐⭐⭐�?优秀 |
+| **信息利用** | ⭐⭐ 仅利用因子信�?| ⭐⭐�?仅利用信号信�?| ⭐⭐⭐⭐�?全方位利�?|
+| **博弈模拟** | �?无法模拟 | �?无法模拟 | �?完整模拟 |
+| **决策质量** | ⭐⭐�?中等 | ⭐⭐⭐⭐ 较好 | ⭐⭐⭐⭐�?优秀 |
+| **开发难�?* | �?�?| ⭐⭐ �?| ⭐⭐⭐⭐ �?|
+| **维护成本** | �?�?| ⭐⭐ �?| ⭐⭐�?中高 |
+| **扩展�?* | ⭐⭐ 一�?| ⭐⭐�?较好 | ⭐⭐⭐⭐�?优秀 |
 
 ### 3.2 多层次集成的优势
 
 1. **信息最大化利用**:
-   - 因子�? 提取智能体行为的量化特征
-   - 信号�? 生成具体的买卖信�?   - 决策�? 通过投票机制优化组合
+   - 因子�? 提取智能体行为的量化特征
+   - 信号�? 生成具体的买卖信�?   - 决策�? 通过投票机制优化组合
 
 2. **博弈过程完整保留**:
-   - 市场模拟引擎模拟智能体交�?   - 价格发现机制反映供需博弈
+   - 市场模拟引擎模拟智能体交�?   - 价格发现机制反映供需博弈
    - 市场冲击模型评估交易影响
 
 3. **灵活性强**:
    - 可以单独使用某一层的输出
    - 可以组合使用多层输出
-   - 可以根据市场状态动态调整权�?
+   - 可以根据市场状态动态调整权�?
 4. **可解释性好**:
    - 每个智能体的决策都有明确理由
-   - 投票过程透明可追�?   - 因子贡献度可量化分析
+   - 投票过程透明可追�?   - 因子贡献度可量化分析
 
 ---
 
-## 🚀 四、实施建�?
-### 4.1 分阶段实施路�?
+## 🚀 四、实施建�?
+### 4.1 分阶段实施路�?
 **Phase 1: 因子集成** (Month 1-2)
-- 实现三个智能体因�?(政策信号、主力动向、散户情�?
+- 实现三个智能体因�?(政策信号、主力动向、散户情�?
 - 集成到现有因子库
-- 验证因子有效�?
+- 验证因子有效�?
 **Phase 2: 信号集成** (Month 3-4)
-- 实现信号生成器和信号合成�?- 集成到现有策略框�?- 回测验证信号质量
+- 实现信号生成器和信号合成�?- 集成到现有策略框�?- 回测验证信号质量
 
 **Phase 3: 决策集成** (Month 5-6)
 - 实现多智能体投票系统
 - 集成到组合优化器
 - 实盘验证决策效果
 
-### 4.2 优先级建�?
+### 4.2 优先级建�?
 **高优先级** (必须实现):
-1. �?因子输出层集�?(最简�?最直接)
-2. �?信号输出层集�?(核心功能)
+1. �?因子输出层集�?(最简�?最直接)
+2. �?信号输出层集�?(核心功能)
 
 **中优先级** (推荐实现):
-3. �?决策输出层集�?(高级功能)
+3. �?决策输出层集�?(高级功能)
 
-**低优先级** (可选实�?:
-4. ⏸️ 市场模拟引擎 (计算密集,可后期优�?
+**低优先级** (可选实�?:
+4. ⏸️ 市场模拟引擎 (计算密集,可后期优�?
 
 ### 4.3 技术选型建议
 
-| 功能模块 | 推荐技�?| 理由 |
+| 功能模块 | 推荐技�?| 理由 |
 |---------|---------|------|
-| **因子计算** | Pandas + NumPy | 成熟稳定,性能�?|
-| **信号生成** | 事件驱动架构 | 灵活,易扩�?|
-| **组合优化** | CVXPY + Barra模型 | 专业,可解�?|
-| **智能体通信** | 消息队列 (Redis/RabbitMQ) | 异步,解�?|
+| **因子计算** | Pandas + NumPy | 成熟稳定,性能�?|
+| **信号生成** | 事件驱动架构 | 灵活,易扩�?|
+| **组合优化** | CVXPY + Barra模型 | 专业,可解�?|
+| **智能体通信** | 消息队列 (Redis/RabbitMQ) | 异步,解�?|
 
 ---
 
@@ -827,11 +827,11 @@ class PortfolioOptimizerWithAgents:
 **市场参与者行为模拟应该采用多层次集成架构，同时作为因子、信号、决策三种形式介入系统：**
 
 1. **作为因子介入** (Layer 2):
-   - 生成政策信号因子、主力动向因子、散户情绪因�?   - 与现�?700+因子无缝集成
+   - 生成政策信号因子、主力动向因子、散户情绪因�?   - 与现�?700+因子无缝集成
    - 供多因子模型使用
 
 2. **作为信号介入** (Layer 5):
-   - 生成买卖信号、仓位建议、风险预�?   - 与现有策略框架协同工�?   - 增强策略信号质量
+   - 生成买卖信号、仓位建议、风险预�?   - 与现有策略框架协同工�?   - 增强策略信号质量
 
 3. **作为决策介入** (Layer 6):
    - 通过多智能体投票机制优化组合
@@ -840,25 +840,25 @@ class PortfolioOptimizerWithAgents:
 
 ### 关键优势
 
-- �?**信息最大化利用**: 全方位提取智能体行为信息
-- �?**博弈完整保留**: 模拟市场参与者之间的交互
-- �?**灵活可扩�?*: 可单独或组合使用各层输出
-- �?**可解释性强**: 每个决策都有明确理由
+- �?**信息最大化利用**: 全方位提取智能体行为信息
+- �?**博弈完整保留**: 模拟市场参与者之间的交互
+- �?**灵活可扩�?*: 可单独或组合使用各层输出
+- �?**可解释性强**: 每个决策都有明确理由
 
-### 下一步行�?
-**立即开�?*:
-1. 实现三个智能体因�?(Week 1-2)
+### 下一步行�?
+**立即开�?*:
+1. 实现三个智能体因�?(Week 1-2)
 2. 集成到现有因子库 (Week 3)
-3. 验证因子有效�?(Week 4)
+3. 验证因子有效�?(Week 4)
 
 **准备就绪**:
-- �?集成架构设计完成
-- �?因子定义明确
-- �?信号生成方案清晰
-- �?决策集成路径明确
+- �?集成架构设计完成
+- �?因子定义明确
+- �?信号生成方案清晰
+- �?决策集成路径明确
 
 **现在可以开始编码实现了!** 🚀
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?已完�?
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?已完�?

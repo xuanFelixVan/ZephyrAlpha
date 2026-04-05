@@ -1,12 +1,12 @@
 ---
-module_id: DOC_BLUEPRINT_001
+module_id: AI_ENHANCEMENT_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
@@ -18,55 +18,55 @@ implementation_status: 设计阶段
 > **版本**: v1.0
 > **创建日期**: 2026-04-01
 > **设计阶段**: 蓝图规划阶段 (施工图纸设计)
-> **设计原则**: 模块化设计、渐进式集成、专业机构标�?
-> **集成目标**: �?类AI增强开源项目系统化集成到ZephyrAlpha�?
+> **设计原则**: 模块化设计、渐进式集成、专业机构标�?
+> **集成目标**: �?类AI增强开源项目系统化集成到ZephyrAlpha�?
 
 
 ## 🎯 **设计策略：先设计图纸，再施工**
 
 ### 1.1 总体设计原则
 ```
-设计优先，实施在�?
-图纸完备，施工有�?
-模块独立，接口清�?
-渐进验证，风险可�?
+设计优先，实施在�?
+图纸完备，施工有�?
+模块独立，接口清�?
+渐进验证，风险可�?
 ```
 
-### 1.2 集成设计路线�?
+### 1.2 集成设计路线�?
 ```
 阶段1: 集成设计 (蓝图阶段) - 当前
-  ├── 需求分�? 明确每个项目的集成需�?
-  ├── 架构设计: 设计集成架构和接�?
-  ├── 技术验�? 验证技术可行�?
+  ├── 需求分�? 明确每个项目的集成需�?
+  ├── 架构设计: 设计集成架构和接�?
+  ├── 技术验�? 验证技术可行�?
   └── 计划制定: 制定详细集成计划
 
 阶段2: 核心集成 (实施阶段)
   ├── gplearn因子挖掘集成
-  ├── HMM市场状态识别集�?
+  ├── HMM市场状态识别集�?
   └── autogluon特征工程集成
 
 阶段3: 优化集成 (实施阶段)
-  ├── optuna超参数优化集�?
+  ├── optuna超参数优化集�?
   ├── mlens模型集成集成
-  └── pyod异常检测集�?
+  └── pyod异常检测集�?
 ```
 
 
-## 🏗�?**AI增强集成架构设计**
+## 🏗�?**AI增强集成架构设计**
 
-### 2.1 新增AI增强�?(Layer 9)
+### 2.1 新增AI增强�?(Layer 9)
 ```
-Layer 9: AI增强�?(AIAugmentation Layer)
+Layer 9: AI增强�?(AIAugmentation Layer)
 ├── L9_FACTOR_MINER: AI因子挖掘 (gplearn + MarketRegimeTrader)
-├── L9_MARKET_DETECTOR: AI市场状态识�?(HMM Market Regime Engine)
+├── L9_MARKET_DETECTOR: AI市场状态识�?(HMM Market Regime Engine)
 ├── L9_FEATURE_OPTIMIZER: AI特征选择优化 (autogluon)
-├── L9_HYPERPARAM_OPT: AI超参数优�?(optuna + GS Quant)
+├── L9_HYPERPARAM_OPT: AI超参数优�?(optuna + GS Quant)
 ├── L9_MODEL_ENSEMBLER: AI模型集成 (mlens)
-├── L9_ANOMALY_DETECTOR: AI异常检�?(pyod)
+├── L9_ANOMALY_DETECTOR: AI异常检�?(pyod)
 └── L9_STRESS_TESTER: AI压力测试 (待定)
 ```
 
-### 2.2 数据流设�?
+### 2.2 数据流设�?
 ```mermaid
 graph TD
     A[原始数据 Layer 0-2] --> B[L9_FACTOR_MINER<br/>AI因子挖掘]
@@ -75,8 +75,8 @@ graph TD
     D --> E[L9_HYPERPARAM_OPT<br/>AI超参数优化]
     E --> F[L9_MODEL_ENSEMBLER<br/>AI模型集成]
     F --> G[增强数据输出]
-    G --> H[传统策略�?Layer 5-6]
-    G --> I[AI监督�?Layer 7-8]
+    G --> H[传统策略�?Layer 5-6]
+    G --> I[AI监督�?Layer 7-8]
     
     J[交易数据] --> K[L9_ANOMALY_DETECTOR<br/>AI异常检测]
     K --> L[风险告警]
@@ -95,7 +95,7 @@ class AIEnhancementModule:
         self.version = '1.0.0'
     
     def initialize(self) -> bool:
-        """初始化模�?""
+        """初始化模�?""
         pass
     
     def enhance(self, input_data: Any, context: Optional[Dict] = None) -> EnhancementResult:
@@ -107,11 +107,11 @@ class AIEnhancementModule:
         pass
     
     def get_status(self) -> ModuleStatus:
-        """获取模块状�?""
+        """获取模块状�?""
         pass
     
     def reset(self) -> None:
-        """重置模块状�?""
+        """重置模块状�?""
         pass
 ```
 
@@ -119,26 +119,26 @@ class AIEnhancementModule:
 ## 🔧 **项目1: gplearn因子挖掘集成设计**
 
 ### 3.1 项目基本信息
-| 属�?| �?|
+| 属�?| �?|
 |------|-----|
 | **项目名称** | gplearn |
 | **GitHub地址** | https://github.com/trevorstephens/gplearn |
 | **Stars数量** | 1.2k+ |
 | **主要功能** | 遗传编程符号回归 |
 | **集成位置** | L9_FACTOR_MINER |
-| **优先�?* | P0 (核心) |
+| **优先�?* | P0 (核心) |
 
-### 3.2 技术可行性分�?
+### 3.2 技术可行性分�?
 #### 优势
-�?**成熟稳定**: 1.2k+ Stars，维护良�?
-�?**专门设计**: 专门为符号回归设�?
-�?**易于扩展**: 支持自定义函数和算子
-�?**性能良好**: 支持并行计算
+�?**成熟稳定**: 1.2k+ Stars，维护良�?
+�?**专门设计**: 专门为符号回归设�?
+�?**易于扩展**: 支持自定义函数和算子
+�?**性能良好**: 支持并行计算
 
 #### 风险
-⚠️ **计算复杂�?*: 遗传编程计算量较�?
-⚠️ **过拟合风�?*: 需要谨慎控制复杂度
-⚠️ **解释�?*: 生成的因子需要可解释性检�?
+⚠️ **计算复杂�?*: 遗传编程计算量较�?
+⚠️ **过拟合风�?*: 需要谨慎控制复杂度
+⚠️ **解释�?*: 生成的因子需要可解释性检�?
 
 ### 3.3 集成架构设计
 ```python
@@ -171,10 +171,10 @@ class GplearnFactorMiner:
         self.custom_functions = self._define_custom_functions()
     
     def _define_custom_functions(self) -> Dict[str, Callable]:
-        """定义量化专用函数�?""
+        """定义量化专用函数�?""
         return {
-            'returns': lambda x: np.diff(x) / x[:-1],  # 收益�?
-            'volatility': lambda x: np.std(x),         # 波动�?
+            'returns': lambda x: np.diff(x) / x[:-1],  # 收益�?
+            'volatility': lambda x: np.std(x),         # 波动�?
             'zscore': lambda x: (x - np.mean(x)) / np.std(x),  # Z-score
             'rank': lambda x: pd.Series(x).rank().values,      # 排名
             'delay': lambda x, n=1: np.roll(x, n),             # 滞后
@@ -193,13 +193,13 @@ class GplearnFactorMiner:
         # 2. 训练遗传编程模型
         self.gplearn.fit(X, y)
         
-        # 3. 提取生成的因�?
+        # 3. 提取生成的因�?
         factors = self._extract_factors(self.gplearn)
         
         # 4. 评估因子质量
         evaluated_factors = self._evaluate_factors(factors, X, y)
         
-        # 5. 筛选有效因�?
+        # 5. 筛选有效因�?
         valid_factors = self._filter_factors(evaluated_factors)
         
         return valid_factors
@@ -241,10 +241,10 @@ gplearn:
     max_samples: 0.9
     parsimony_coefficient: 0.01
     
-  # 函数集配�?
+  # 函数集配�?
   functions:
     arithmetic: ["add", "sub", "mul", "div", "sqrt", "log", "abs", "neg", "inv"]
-    trigonometric: ["sin", "cos", "tan"]  # 可�?
+    trigonometric: ["sin", "cos", "tan"]  # 可�?
     custom: ["returns", "volatility", "zscore", "rank", "delay", "ts_mean", "ts_std"]
   
   # 性能配置
@@ -253,12 +253,12 @@ gplearn:
     verbose: 1
     random_state: 42
     
-  # 因子筛选配�?
+  # 因子筛选配�?
   filtering:
-    min_ic: 0.03  # 最小信息系�?
+    min_ic: 0.03  # 最小信息系�?
     max_complexity: 50  # 最大复杂度
-    min_unique_values: 100  # 最小唯一值数�?
-    correlation_threshold: 0.8  # 相关性阈�?
+    min_unique_values: 100  # 最小唯一值数�?
+    correlation_threshold: 0.8  # 相关性阈�?
 ```
 
 ### 3.5 测试设计
@@ -295,7 +295,7 @@ class TestGplearnFactorMiner:
         self.y = pd.Series(np.random.randn(n_samples))
     
     def test_initialization(self):
-        """测试初始�?""
+        """测试初始�?""
         assert self.miner.config == self.config
         assert self.miner.status == 'initialized'
     
@@ -319,10 +319,10 @@ class TestGplearnFactorMiner:
         assert factors[0].fitness == 0.8
     
     def test_custom_functions(self):
-        """测试自定义函�?""
+        """测试自定义函�?""
         custom_funcs = self.miner.custom_functions
         
-        # 测试收益率函�?
+        # 测试收益率函�?
         test_data = np.array([100, 105, 103, 108])
         returns = custom_funcs
         expected = np.array([0.05, -0.01904762, 0.04854369])
@@ -330,8 +330,8 @@ class TestGplearnFactorMiner:
         
         # 测试Z-score函数
         zscore = custom_funcs
-        assert np.abs(np.mean(zscore)) < 1e-10  # 均值接�?
-        assert np.abs(np.std(zscore) - 1) < 1e-10  # 标准差接�?
+        assert np.abs(np.mean(zscore)) < 1e-10  # 均值接�?
+        assert np.abs(np.std(zscore) - 1) < 1e-10  # 标准差接�?
 ```
 
 ### 3.6 监控设计
@@ -391,22 +391,22 @@ class GplearnMonitoring:
 ```
 
 
-## 🔧 **项目2: HMM市场状态识别集成设�?*
+## 🔧 **项目2: HMM市场状态识别集成设�?*
 
 ### 4.1 项目基本信息
-| 属�?| �?|
+| 属�?| �?|
 |------|-----|
 | **项目名称** | HMM Market Regime Engine |
 | **GitHub地址** | https://github.com/Yosri-Ben-Halima/hmm-market-regime-engine |
-| **主要功能** | HMM市场状态识�?|
+| **主要功能** | HMM市场状态识�?|
 | **集成位置** | L9_MARKET_DETECTOR |
-| **优先�?* | P0 (核心) |
+| **优先�?* | P0 (核心) |
 
 ### 4.2 集成架构设计
 ```python
 # L9_MARKET_DETECTOR/hmm_integration.py
 class HMMMarketRegimeDetector:
-    """HMM市场状态识别集�?""
+    """HMM市场状态识别集�?""
     
     def __init__(self, config: MarketRegimeConfig):
         self.config = config
@@ -414,12 +414,12 @@ class HMMMarketRegimeDetector:
         self.regime_labels = {
             0: 'bull_market',      # 牛市
             1: 'bear_market',      # 熊市
-            2: 'sideways_market',  # 震荡�?
-            3: 'transition_market' # 转折�?
+            2: 'sideways_market',  # 震荡�?
+            3: 'transition_market' # 转折�?
         }
     
     def detect_regime(self, market_data: pd.DataFrame) -> RegimeDetectionResult:
-        """检测市场状�?""
+        """检测市场状�?""
         
         # 1. 特征提取
         features = self._extract_features(market_data)
@@ -428,13 +428,13 @@ class HMMMarketRegimeDetector:
         if self.hmm_model is None:
             self.hmm_model = self._train_hmm(features)
         
-        # 3. 状态预�?
+        # 3. 状态预�?
         hidden_states = self.hmm_model.predict(features)
         
-        # 4. 状态转换概�?
+        # 4. 状态转换概�?
         transition_matrix = self.hmm_model.transmat_
         
-        # 5. 生成检测结�?
+        # 5. 生成检测结�?
         result = RegimeDetectionResult(
             current_regime=self.regime_labels[hidden_states[-1]],
             regime_history=[self.regime_labels[s] for s in hidden_states],
@@ -455,7 +455,7 @@ class HMMMarketRegimeDetector:
         features['volatility'] = market_data['close'].rolling(20).std()
         features['volume_ratio'] = market_data['volume'] / market_data['volume'].rolling(20).mean()
         
-        # 技术指标特�?
+        # 技术指标特�?
         features['rsi'] = self._calculate_rsi(market_data['close'])
         features['macd'] = self._calculate_macd(market_data['close'])
         features['bollinger_band_width'] = self._calculate_bollinger_band_width(market_data['close'])
@@ -502,11 +502,11 @@ hmm_market_regime:
         
     market_breadth:
       advance_decline_ratio: true
-      new_highs_lows: false  # 需要额外数�?
+      new_highs_lows: false  # 需要额外数�?
       
-  # 检测配�?
+  # 检测配�?
   detection:
-    retrain_frequency: "1M"  # 每月重训�?
+    retrain_frequency: "1M"  # 每月重训�?
     min_data_points: 1000
     confidence_threshold: 0.7
 ```
@@ -515,14 +515,14 @@ hmm_market_regime:
 ## 🔧 **项目3: autogluon特征工程集成设计**
 
 ### 5.1 项目基本信息
-| 属�?| �?|
+| 属�?| �?|
 |------|-----|
 | **项目名称** | autogluon |
 | **GitHub地址** | https://github.com/autogluon/autogluon |
 | **Stars数量** | 6.5k+ |
-| **主要功能** | 自动化机器学�?|
+| **主要功能** | 自动化机器学�?|
 | **集成位置** | L9_FEATURE_OPTIMIZER |
-| **优先�?* | P1 |
+| **优先�?* | P1 |
 
 ### 5.2 集成架构设计
 ```python
@@ -553,7 +553,7 @@ class AutogluonFeatureOptimizer:
             presets=self.config.presets
         )
         
-        # 3. 特征重要性分�?
+        # 3. 特征重要性分�?
         feature_importance = self.predictor.feature_importance(data)
         
         # 4. 特征选择
@@ -575,122 +575,122 @@ class AutogluonFeatureOptimizer:
 
 ## 📋 **集成实施计划**
 
-### 6.1 蓝图设计阶段 (�?-2�?
-| 任务 | 负责�?| 完成标准 |
+### 6.1 蓝图设计阶段 (�?-2�?
+| 任务 | 负责�?| 完成标准 |
 |------|--------|----------|
-| **gplearn集成详细设计** | AI助手 | 完成3.1-3.6节设�?|
-| **HMM集成详细设计** | AI助手 | 完成4.1-4.3节设�?|
-| **autogluon集成详细设计** | AI助手 | 完成5.1-5.2节设�?|
+| **gplearn集成详细设计** | AI助手 | 完成3.1-3.6节设�?|
+| **HMM集成详细设计** | AI助手 | 完成4.1-4.3节设�?|
+| **autogluon集成详细设计** | AI助手 | 完成5.1-5.2节设�?|
 | **集成测试方案设计** | AI助手 | 设计完整测试套件 |
-| **监控告警方案设计** | AI助手 | 设计监控指标和告�?|
+| **监控告警方案设计** | AI助手 | 设计监控指标和告�?|
 
-### 6.2 技术验证阶�?(�?-4�?
-| 任务 | 负责�?| 完成标准 |
+### 6.2 技术验证阶�?(�?-4�?
+| 任务 | 负责�?| 完成标准 |
 |------|--------|----------|
-| **gplearn技术验�?* | 开发�?| 验证功能和技术可行�?|
-| **HMM技术验�?* | 开发�?| 验证市场状态识别效�?|
-| **环境兼容性测�?* | 开发�?| 验证依赖兼容�?|
-| **性能基准测试** | 开发�?| 建立性能基准 |
+| **gplearn技术验�?* | 开发�?| 验证功能和技术可行�?|
+| **HMM技术验�?* | 开发�?| 验证市场状态识别效�?|
+| **环境兼容性测�?* | 开发�?| 验证依赖兼容�?|
+| **性能基准测试** | 开发�?| 建立性能基准 |
 
-### 6.3 集成实施阶段 (�?-8�?
+### 6.3 集成实施阶段 (�?-8�?
 | 周次 | 任务 | 目标 |
 |------|------|------|
-| **�?�?* | gplearn集成实现 | 完成L9_FACTOR_MINER模块 |
-| **�?�?* | HMM集成实现 | 完成L9_MARKET_DETECTOR模块 |
-| **�?�?* | autogluon集成实现 | 完成L9_FEATURE_OPTIMIZER模块 |
-| **�?�?* | 系统集成测试 | 完成端到端测�?|
+| **�?�?* | gplearn集成实现 | 完成L9_FACTOR_MINER模块 |
+| **�?�?* | HMM集成实现 | 完成L9_MARKET_DETECTOR模块 |
+| **�?�?* | autogluon集成实现 | 完成L9_FEATURE_OPTIMIZER模块 |
+| **�?�?* | 系统集成测试 | 完成端到端测�?|
 
 
-## ⚠️ **风险与应�?*
+## ⚠️ **风险与应�?*
 
-### 7.1 技术风�?
-| 风险 | 可能�?| 影响 | 应对策略 |
+### 7.1 技术风�?
+| 风险 | 可能�?| 影响 | 应对策略 |
 |------|--------|------|----------|
-| **开源项目API变更** | �?| �?| 版本锁定 + 接口适配�?|
-| **性能不满足要�?* | �?| �?| 性能监控 + 优化方案 |
-| **集成复杂度高** | �?| �?| 模块化设�?+ 分阶段集�?|
-| **依赖冲突** | �?| �?| 虚拟环境隔离 + 依赖管理 |
+| **开源项目API变更** | �?| �?| 版本锁定 + 接口适配�?|
+| **性能不满足要�?* | �?| �?| 性能监控 + 优化方案 |
+| **集成复杂度高** | �?| �?| 模块化设�?+ 分阶段集�?|
+| **依赖冲突** | �?| �?| 虚拟环境隔离 + 依赖管理 |
 
 ### 7.2 业务风险
-| 风险 | 可能�?| 影响 | 应对策略 |
+| 风险 | 可能�?| 影响 | 应对策略 |
 |------|--------|------|----------|
-| **AI生成因子无效** | �?| �?| 严格验证 + 人工审核 |
-| **市场状态识别错�?* | �?| �?| 多模型验�?+ 人工确认 |
-| **特征过拟�?* | �?| �?| 交叉验证 + 正则�?|
+| **AI生成因子无效** | �?| �?| 严格验证 + 人工审核 |
+| **市场状态识别错�?* | �?| �?| 多模型验�?+ 人工确认 |
+| **特征过拟�?* | �?| �?| 交叉验证 + 正则�?|
 
 ### 7.3 实施风险
-| 风险 | 可能�?| 影响 | 应对策略 |
+| 风险 | 可能�?| 影响 | 应对策略 |
 |------|--------|------|----------|
-| **进度延迟** | �?| �?| 弹性时间安�?+ 优先级调�?|
-| **技术学习曲�?* | �?| �?| 文档 + 示例代码 + 分阶段学�?|
-| **资源不足** | �?| �?| 云资源扩�?+ 性能优化 |
+| **进度延迟** | �?| �?| 弹性时间安�?+ 优先级调�?|
+| **技术学习曲�?* | �?| �?| 文档 + 示例代码 + 分阶段学�?|
+| **资源不足** | �?| �?| 云资源扩�?+ 性能优化 |
 
 
-## 🏁 **成功标准与验�?*
+## 🏁 **成功标准与验�?*
 
-### 8.1 技术成功标�?
+### 8.1 技术成功标�?
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
-| **集成完整�?* | 所有设计模块完成集�?| 代码审查 + 单元测试 |
-| **功能正确�?* | 各模块功能符合设�?| 功能测试 + 集成测试 |
-| **性能达标** | 响应时间 < 5�?| 性能测试 + 监控 |
-| **稳定�?* | 7x24小时稳定运行 | 压力测试 + 长期监控 |
+| **集成完整�?* | 所有设计模块完成集�?| 代码审查 + 单元测试 |
+| **功能正确�?* | 各模块功能符合设�?| 功能测试 + 集成测试 |
+| **性能达标** | 响应时间 < 5�?| 性能测试 + 监控 |
+| **稳定�?* | 7x24小时稳定运行 | 压力测试 + 长期监控 |
 
 ### 8.2 业务成功标准
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
-| **因子挖掘效果** | IC > 0.05的因子占�?> 30% | 回测验证 |
-| **市场识别准确�?* | 状态识别准确率 > 80% | 历史数据验证 |
+| **因子挖掘效果** | IC > 0.05的因子占�?> 30% | 回测验证 |
+| **市场识别准确�?* | 状态识别准确率 > 80% | 历史数据验证 |
 | **特征优化效果** | 模型性能提升 > 10% | A/B测试对比 |
-| **系统价�?* | 整体策略性能提升 > 20% | 实盘验证 |
+| **系统价�?* | 整体策略性能提升 > 20% | 实盘验证 |
 
-### 8.3 验收检查清�?
-- [ ] **设计文档完整**: 所有集成设计文档完�?
-- [ ] **技术验证通过**: 各项目技术可行性验�?
-- [ ] **代码实现完成**: 所有模块代码实�?
+### 8.3 验收检查清�?
+- [ ] **设计文档完整**: 所有集成设计文档完�?
+- [ ] **技术验证通过**: 各项目技术可行性验�?
+- [ ] **代码实现完成**: 所有模块代码实�?
 - [ ] **测试用例通过**: 单元测试、集成测试通过
 - [ ] **性能测试达标**: 性能指标满足要求
 - [ ] **文档完整**: 使用文档、API文档完整
-- [ ] **监控就绪**: 监控指标和告警配置完�?
+- [ ] **监控就绪**: 监控指标和告警配置完�?
 
 
 ## 📝 **设计决策记录**
 
 ### 9.1 关键设计决策
-| 决策ID | 决策内容 | 决策理由 | 备选方�?|
+| 决策ID | 决策内容 | 决策理由 | 备选方�?|
 |--------|----------|----------|----------|
-| DD_AI_001 | 选择gplearn而非其他GP�?| 专门为符号回归设计，成熟稳定 | DEAP (更通用但复�? |
-| DD_AI_002 | 集成HMM Market Regime Engine | 专门为量化设计，HMM成熟 | 自研HMM (风险�? |
-| DD_AI_003 | 采用模块化集成架�?| 灵活扩展，易于维�?| 紧耦合集成 |
-| DD_AI_004 | 分阶段实�?| 降低风险，逐步验证 | 一次性集�?|
+| DD_AI_001 | 选择gplearn而非其他GP�?| 专门为符号回归设计，成熟稳定 | DEAP (更通用但复�? |
+| DD_AI_002 | 集成HMM Market Regime Engine | 专门为量化设计，HMM成熟 | 自研HMM (风险�? |
+| DD_AI_003 | 采用模块化集成架�?| 灵活扩展，易于维�?| 紧耦合集成 |
+| DD_AI_004 | 分阶段实�?| 降低风险，逐步验证 | 一次性集�?|
 
-### 9.2 技术决�?
+### 9.2 技术决�?
 1. **遗传编程配置**: 选择适中的种群大小和代数，平衡效果和性能
-2. **HMM状态数�?*: 设置4个状态，符合市场实际分类
+2. **HMM状态数�?*: 设置4个状态，符合市场实际分类
 3. **特征选择策略**: 结合模型重要性和业务知识
 4. **监控指标**: 设计全面的技术指标和业务指标
 
 
-> **设计状�?*: 本蓝图为AI增强项目集成设计蓝图，详细规划了6个开源项目的集成方案。实施前需要完成技术验证和详细设计评审�?
+> **设计状�?*: 本蓝图为AI增强项目集成设计蓝图，详细规划了6个开源项目的集成方案。实施前需要完成技术验证和详细设计评审�?
 
 
-## 🔧 **项目4: optuna超参数优化集成设�?*
+## 🔧 **项目4: optuna超参数优化集成设�?*
 
 ### 10.1 项目基本信息
-| 属�?| �?|
+| 属�?| �?|
 |------|-----|
 | **项目名称** | optuna |
 | **GitHub地址** | https://github.com/optuna/optuna |
 | **Stars数量** | 9.5k+ |
-| **主要功能** | 超参数优化框�?|
+| **主要功能** | 超参数优化框�?|
 | **集成位置** | L9_HYPERPARAM_OPT |
-| **优先�?* | P1 |
+| **优先�?* | P1 |
 
 ### 10.2 集成架构设计
 ```python
 # L9_HYPERPARAM_OPT/optuna_integration.py
 class OptunaHyperparameterOptimizer:
-    """optuna超参数优化集�?""
+    """optuna超参数优化集�?""
     
     def __init__(self, config: HyperparamOptimizationConfig):
         import optuna
@@ -700,7 +700,7 @@ class OptunaHyperparameterOptimizer:
         self.best_params = None
     
     def optimize(self, model_class, X_train, y_train, X_val, y_val) -> OptimizationResult:
-        """优化超参�?""
+        """优化超参�?""
         
         def objective(trial):
             # 1. 定义搜索空间
@@ -733,7 +733,7 @@ class OptunaHyperparameterOptimizer:
             n_jobs=self.config.n_jobs
         )
         
-        # 7. 获取最佳参�?
+        # 7. 获取最佳参�?
         self.best_params = self.study.best_params
         
         # 8. 生成结果
@@ -748,7 +748,7 @@ class OptunaHyperparameterOptimizer:
         return result
     
     def _define_search_space(self, trial) -> Dict[str, Any]:
-        """定义超参数搜索空�?""
+        """定义超参数搜索空�?""
         params = {}
         
         # 机器学习通用参数
@@ -818,14 +818,14 @@ optuna_hyperparameter:
 ## 🔧 **项目5: mlens模型集成集成设计**
 
 ### 11.1 项目基本信息
-| 属�?| �?|
+| 属�?| �?|
 |------|-----|
 | **项目名称** | mlens |
 | **GitHub地址** | https://github.com/flennerhag/mlens |
 | **Stars数量** | 1.1k+ |
 | **主要功能** | 机器学习模型集成 |
 | **集成位置** | L9_MODEL_ENSEMBLER |
-| **优先�?* | P2 |
+| **优先�?* | P2 |
 
 ### 11.2 集成架构设计
 ```python
@@ -848,7 +848,7 @@ class MLensModelEnsembler:
     def build_ensemble(self, base_models: List[BaseModel], meta_model: BaseModel) -> EnsembleResult:
         """构建模型集成"""
         
-        # 1. 添加基础层模�?
+        # 1. 添加基础层模�?
         for model_name, model in base_models.items():
             self.ensemble.add([model], name=model_name)
         
@@ -880,15 +880,15 @@ class MLensModelEnsembler:
         return result
     
     def _analyze_contributions(self) -> Dict[str, float]:
-        """分析模型贡献�?""
+        """分析模型贡献�?""
         contributions = {}
         
-        # 获取基础层预�?
+        # 获取基础层预�?
         base_predictions = self.ensemble.data.get_layer_predictions(0)
         
-        # 计算每个基础模型的贡�?
+        # 计算每个基础模型的贡�?
         for i, model_name in enumerate(self.ensemble.names[0]):
-            # 计算与最终预测的相关�?
+            # 计算与最终预测的相关�?
             correlation = np.corrcoef(
                 base_predictions[:, i], 
                 self.ensemble.data.get_final_predictions()
@@ -913,7 +913,7 @@ mlens_ensemble:
     backend: "threading"  # threading | multiprocessing
     n_jobs: -1
     
-  # 基础层模型配�?
+  # 基础层模型配�?
   base_layer:
     - name: "random_forest"
       enabled: true
@@ -948,28 +948,28 @@ mlens_ensemble:
       
   # 性能配置
   performance:
-    min_improvement: 0.02  # 最少提�?%
-    max_models: 10  # 最多集�?0个模�?
+    min_improvement: 0.02  # 最少提�?%
+    max_models: 10  # 最多集�?0个模�?
 ```
 
 
-## 🔧 **项目6: pyod异常检测集成设�?*
+## 🔧 **项目6: pyod异常检测集成设�?*
 
 ### 12.1 项目基本信息
-| 属�?| �?|
+| 属�?| �?|
 |------|-----|
 | **项目名称** | pyod |
 | **GitHub地址** | https://github.com/yzhao062/pyod |
 | **Stars数量** | 7.2k+ |
-| **主要功能** | Python异常检�?|
+| **主要功能** | Python异常检�?|
 | **集成位置** | L9_ANOMALY_DETECTOR |
-| **优先�?* | P1 |
+| **优先�?* | P1 |
 
 ### 12.2 集成架构设计
 ```python
 # L9_ANOMALY_DETECTOR/pyod_integration.py
 class PyODAnomalyDetector:
-    """pyod异常检测集�?""
+    """pyod异常检测集�?""
     
     def __init__(self, config: AnomalyDetectionConfig):
         from pyod.models.iforest import IForest
@@ -992,9 +992,9 @@ class PyODAnomalyDetector:
         self.ensemble_detector = None
     
     def detect_anomalies(self, data: pd.DataFrame) -> AnomalyDetectionResult:
-        """检测异�?""
+        """检测异�?""
         
-        # 1. 数据预处�?
+        # 1. 数据预处�?
         processed_data = self._preprocess_data(data)
         
         # 2. 训练多个检测器
@@ -1004,10 +1004,10 @@ class PyODAnomalyDetector:
             scores = detector.decision_function(processed_data)
             detector_scores[name] = scores
         
-        # 3. 集成检测结�?
+        # 3. 集成检测结�?
         self.ensemble_detector = self._create_ensemble_detector(detector_scores)
         
-        # 4. 检测异�?
+        # 4. 检测异�?
         anomaly_scores = self.ensemble_detector.decision_function(processed_data)
         anomalies = self.ensemble_detector.predict(processed_data)
         
@@ -1092,35 +1092,35 @@ pyod_anomaly_detection:
       copod: 0.3
     method: "weighted_average"  # weighted_average | majority_vote | stacking
     
-  # 检测配�?
+  # 检测配�?
   detection:
     contamination: 0.1
     threshold_auto_adjust: true
     min_samples: 1000
-    retrain_frequency: "1D"  # 每日重训�?
+    retrain_frequency: "1D"  # 每日重训�?
     
   # 告警配置
   alerting:
     enabled: true
-    anomaly_threshold: 0.8  # 异常分数阈�?
+    anomaly_threshold: 0.8  # 异常分数阈�?
     consecutive_anomalies: 3  # 连续异常次数
     notification_channels: ["log", "email"]
 ```
 
 
-## 📊 **技术验证计�?*
+## 📊 **技术验证计�?*
 
 ### 13.1 验证目标
-1. **功能验证**: 确认每个开源项目功能符合预�?
+1. **功能验证**: 确认每个开源项目功能符合预�?
 2. **性能验证**: 验证性能指标满足系统要求
-3. **兼容性验�?*: 验证与现有系统的兼容�?
-4. **集成验证**: 验证模块间集成效�?
+3. **兼容性验�?*: 验证与现有系统的兼容�?
+4. **集成验证**: 验证模块间集成效�?
 
 ### 13.2 验证方法
 ```python
 # tests/technical_validation.py
 class TechnicalValidation:
-    """技术验证框�?""
+    """技术验证框�?""
     
     def validate_gplearn(self):
         """验证gplearn"""
@@ -1131,10 +1131,10 @@ class TechnicalValidation:
         pass
     
     def validate_hmm(self):
-        """验证HMM市场状态引�?""
-        # 1. 数据格式兼容�?
-        # 2. 市场状态识别准确�?
-        # 3. 实时性验�?
+        """验证HMM市场状态引�?""
+        # 1. 数据格式兼容�?
+        # 2. 市场状态识别准确�?
+        # 3. 实时性验�?
         pass
     
     def validate_autogluon(self):
@@ -1146,9 +1146,9 @@ class TechnicalValidation:
     
     def validate_optuna(self):
         """验证optuna"""
-        # 1. 超参数优化效�?
+        # 1. 超参数优化效�?
         # 2. 并行性能验证
-        # 3. 结果一致性验�?
+        # 3. 结果一致性验�?
         pass
     
     def validate_mlens(self):
@@ -1160,28 +1160,28 @@ class TechnicalValidation:
     
     def validate_pyod(self):
         """验证pyod"""
-        # 1. 异常检测准确�?
+        # 1. 异常检测准确�?
         # 2. 实时检测性能
         # 3. 内存使用验证
         pass
 ```
 
 ### 13.3 验证环境
-| 环境 | 配置 | 用�?|
+| 环境 | 配置 | 用�?|
 |------|------|------|
-| **开发环�?* | CPU: 8�? RAM: 32GB | 功能验证和调�?|
-| **测试环境** | CPU: 16�? RAM: 64GB | 性能验证和集成测�?|
-| **基准环境** | CPU: 32�? RAM: 128GB | 性能基准测试 |
+| **开发环�?* | CPU: 8�? RAM: 32GB | 功能验证和调�?|
+| **测试环境** | CPU: 16�? RAM: 64GB | 性能验证和集成测�?|
+| **基准环境** | CPU: 32�? RAM: 128GB | 性能基准测试 |
 
 ### 13.4 验证时间安排
-| 项目 | 时间预算 | 优先�?|
+| 项目 | 时间预算 | 优先�?|
 |------|----------|--------|
-| **gplearn** | 2�?| P0 |
-| **HMM** | 2�?| P0 |
-| **autogluon** | 3�?| P1 |
-| **optuna** | 2�?| P1 |
-| **mlens** | 1�?| P2 |
-| **pyod** | 2�?| P1 |
-| **集成验证** | 3�?| P0 |
+| **gplearn** | 2�?| P0 |
+| **HMM** | 2�?| P0 |
+| **autogluon** | 3�?| P1 |
+| **optuna** | 2�?| P1 |
+| **mlens** | 1�?| P2 |
+| **pyod** | 2�?| P1 |
+| **集成验证** | 3�?| P0 |
 
-> **设计状�?*: 本蓝图为AI增强项目集成设计蓝图，详细规划了6个开源项目的集成方案。实施前需要完成技术验证和详细设计评审�?
+> **设计状�?*: 本蓝图为AI增强项目集成设计蓝图，详细规划了6个开源项目的集成方案。实施前需要完成技术验证和详细设计评审�?

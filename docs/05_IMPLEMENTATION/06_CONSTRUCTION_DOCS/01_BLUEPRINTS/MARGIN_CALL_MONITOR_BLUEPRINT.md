@@ -128,4 +128,236 @@ implementation_status: 设计阶段
 │  │  └──────────────┘  └──────────────┘  └──────────────┘          │   │
 │  └─────────────────────────────────────────────────────────────────┘   │
 │                                    ↓                                    │
-│  ┌────────────────────────────────────────────────────────────────
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                  集成接口层 (Integration Layer)                 │   │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │   │
+│  │  │ 动态杠杆管理 │  │ 压力测试系统 │  │ 风控系统     │          │   │
+│  │  │ 系统集成     │  │ 集成         │  │ 集成         │          │   │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘          │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 模块分层架构
+
+**Layer 1 - 数据采集层**
+- 雪球产品数据采集器（敲入敲出线、期初价格、到期时间）
+- 融资盘数据采集器（担保比例、杠杆倍数、持仓明细）
+- 市场行情数据采集器（指数价格、波动率、相关性）
+
+**Layer 2 - 爆仓风险计算引擎**
+- 雪球产品爆仓概率计算器（蒙特卡洛模拟、敲入概率）
+- 融资盘爆仓风险计算器（维持担保比例、强平价格）
+- 市场杠杆风险计算器（市场杠杆水平、集中度分析）
+
+**Layer 3 - 预警决策系统**
+- 风险等级判定器（P0-P3四级分类）
+- 预警阈值管理器（动态调整预警阈值）
+- 预警信号生成器（多渠道通知）
+
+**Layer 4 - 集成接口层**
+- 动态杠杆管理系统接口（提供杠杆约束条件）
+- 压力测试系统接口（提供爆仓情景数据）
+- 风控系统接口（提供预警信号）
+
+### 2.3 数据流设计
+
+```
+外部数据源 → 数据采集层 → 风险计算引擎 → 预警决策系统 → 集成接口层
+     ↓              ↓              ↓              ↓              ↓
+ 雪球产品数据    敲入概率计算    风险等级判定    预警信号生成    风控系统
+ 融资盘数据      强平价格计算    预警阈值检查    多渠道通知      压力测试
+ 市场行情数据    杠杆集中度分析  系统性风险识别  应急响应触发    杠杆管理
+```
+
+---
+
+## 3. 核心组件详细设计
+
+### 3.1 雪球产品爆仓概率计算器
+
+**设计目标**: 基于蒙特卡洛模拟计算雪球产品的敲入概率和爆仓风险
+
+**索引**: `MARGIN_CALL_001-M01`
+
+```python
+from dataclasses import dataclass
+from typing import Dict, Any, Optional
+import numpy as np
+import pandas as pd
+from scipy.stats import norm
+
+@dataclass
+class SnowballProduct:
+    """雪球产品数据结构"""
+    product_id: str
+    underlying: str                    # 标的（如中证500指数）
+    initial_price: float               # 期初价格
+    knock_in_ratio: float              # 敲入比例（如0.75）
+    knock_out_ratio: float             # 敲出比例（如1.03）
+    maturity_days: int                 # 到期天数
+    coupon_rate: float                 # 票息率（如0.20）
+    leverage: float                    # 杠杆倍数（如4.0）
+    margin_ratio: float                # 保证金比例（如0.25）
+    
+    @property
+    def knock_in_price(self) -> float:
+        """敲入价格"""
+        return self.initial_price * self.knock_in_ratio
+    
+    @property
+    def knock_out_price(self) -> float:
+        """敲出价格"""
+        return self.initial_price * self.knock_out_ratio
+
+
+@dataclass
+class KnockInProbabilityResult:
+    """敲入概率计算结果"""
+    knock_in_probability: float        # 敲入概率
+    knock_out_probability: float       # 敲出概率
+    neither_probability: float         # 既未敲入也未敲出概率
+    expected_loss: float               # 预期损失
+    margin_call_risk: str              # 爆仓风险等级
+    distance_to_knock_in: float        # 距离敲入线距离
+    alert_level: str                   # 预警等级
+
+
+class SnowballKnockInCalculator:
+    """雪球产品敲入概率计算器
+    
+    索引: MARGIN_CALL_001-M01
+    职责: 基于蒙特卡洛模拟计算雪球产品敲入概率
+    输入: 雪球产品参数、当前价格、波动率
+    输出: 敲入概率、爆仓风险等级、预警等级
+    """
+    
+    def __init__(self, n_simulations: int = 10000, random_seed: int = 42):
+        """
+        Args:
+            n_simulations: 蒙特卡洛模拟次数
+            random_seed: 随机种子
+        """
+        self.n_simulations = n_simulations
+        self.random_seed = random_seed
+        np.random.seed(random_seed)
+    
+    def calculate_knock_in_probability(
+        self,
+        product: SnowballProduct,
+        current_price: float,
+        volatility: float,
+        risk_free_rate: float = 0.03
+    ) -> KnockInProbabilityResult:
+        """计算敲入概率
+        
+        Args:
+            product: 雪球产品参数
+            current_price: 当前标的价格
+            volatility: 年化波动率
+            risk_free_rate: 无风险利率
+            
+        Returns:
+            KnockInProbabilityResult: 敲入概率计算结果
+        """
+        # 蒙特卡洛模拟价格路径
+        dt = 1 / 252  # 日度时间步长
+        n_steps = product.maturity_days
+        
+        # 生成随机路径
+        Z = np.random.standard_normal((self.n_simulations, n_steps))
+        
+        # 几何布朗运动模拟
+        price_paths = np.zeros((self.n_simulations, n_steps + 1))
+        price_paths[:, 0] = current_price
+        
+        for t in range(1, n_steps + 1):
+            price_paths[:, t] = price_paths[:, t-1] * np.exp(
+                (risk_free_rate - 0.5 * volatility**2) * dt +
+                volatility * np.sqrt(dt) * Z[:, t-1]
+            )
+        
+        # 判断敲入、敲出事件
+        knock_in_occurred = np.any(
+            price_paths <= product.knock_in_price, axis=1
+        )
+        knock_out_occurred = np.any(
+            price_paths >= product.knock_out_price, axis=1
+        )
+        
+        # 计算概率
+        knock_in_prob = np.mean(knock_in_occurred)
+        knock_out_prob = np.mean(knock_out_occurred & ~knock_in_occurred)
+        neither_prob = 1 - knock_in_prob - knock_out_prob
+        
+        # 计算预期损失
+        expected_loss = self._calculate_expected_loss(
+            product, price_paths, knock_in_occurred
+        )
+        
+        # 计算距离敲入线距离
+        distance_to_knock_in = (
+            (current_price - product.knock_in_price) / product.initial_price
+        )
+        
+        # 判定爆仓风险等级
+        margin_call_risk = self._determine_margin_call_risk(
+            product, knock_in_prob, distance_to_knock_in
+        )
+        
+        # 判定预警等级
+        alert_level = self._determine_alert_level(
+            distance_to_knock_in, knock_in_prob
+        )
+        
+        return KnockInProbabilityResult(
+            knock_in_probability=knock_in_prob,
+            knock_out_probability=knock_out_prob,
+            neither_probability=neither_prob,
+            expected_loss=expected_loss,
+            margin_call_risk=margin_call_risk,
+            distance_to_knock_in=distance_to_knock_in,
+            alert_level=alert_level
+        )
+    
+    def _calculate_expected_loss(
+        self,
+        product: SnowballProduct,
+        price_paths: np.ndarray,
+        knock_in_occurred: np.ndarray
+    ) -> float:
+        """计算预期损失"""
+        # 敲入情况下的损失
+        if np.any(knock_in_occurred):
+            final_prices = price_paths[knock_in_occurred, -1]
+            losses = (product.initial_price - final_prices) / product.initial_price
+            # 考虑杠杆放大效应
+            leveraged_losses = losses * product.leverage
+            expected_loss = np.mean(leveraged_losses)
+        else:
+            expected_loss = 0.0
+        
+        return expected_loss
+    
+    def _determine_margin_call_risk(
+        self,
+        product: SnowballProduct,
+        knock_in_prob: float,
+        distance_to_knock_in: float
+    ) -> str:
+        """判定爆仓风险等级"""
+        if distance_to_knock_in < 0:
+            return "CRITICAL"  # 已敲入
+        elif distance_to_knock_in < 0.05:
+            return "EXTREME"   # 极高风险
+        elif distance_to_knock_in < 0.10:
+            return "HIGH"      # 高风险
+        elif distance_to_knock_in < 0.15:
+            return "MEDIUM"    # 中风险
+        else:
+            return "LOW"       # 低风险
+    
+    def _determine_alert_level(
+        self,
+        distance_to_knock_in: float
