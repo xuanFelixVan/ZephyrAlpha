@@ -61,7 +61,7 @@ parent_document: ../INDEX.md
 
 ### 上层文档
 - [数据源层索引](../INDEX.md) - 数据源层总览
-- [数据质量控制系统](../DATA_QUALITY.md) - 数据质量标准
+- [数据质量控制系统](DATA_QUALITY_CONTROL_SYSTEM.md) - 数据质量标准
 
 ### 相关模块
 - [数据清洗引擎](../03_CLEANING/) - 数据清洗处理

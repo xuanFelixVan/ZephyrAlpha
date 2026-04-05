@@ -14,10 +14,22 @@ implementation_progress: 0%
 ---
 
 
-# 数据流水线蓝�?
+# 数据流水线蓝图
 
 > 清风量化系统 v5.0 的数据流水线架构
 > **索引**: `DAT_001`
+
+**相关文档**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据采集实现 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
+| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
+| 数据质量管理 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 下游检查 | 数据质量控制体系 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义数据流水线的整体架构和设计原则
+- ❌ 本文档不负责: 具体的数据采集实现（由 DATA_ACQUISITION.md 负责）
+- ❌ 本文档不负责: 具体的数据清洗规则（由 03_CLEANING/BLUEPRINT.md 负责）
 
 
 ## 1. 设计原则

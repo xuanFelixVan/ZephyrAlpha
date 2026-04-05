@@ -59,7 +59,8 @@ parent_document: ../INDEX.md
 
 ### 相关模块
 - [智能下载调度器](../02_SCHEDULER/) - 数据下载调度
-- [数据质量控制系统](../DATA_QUALITY.md) - 数据质量管理
+- [数据质量管理系统](../QUALITY_MANAGEMENT/) - 数据质量管理
+- [数据质量控制系统](../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) - 数据质量标准
 - [数据源适配器](../DATA_SOURCE_ADAPTERS.md) - 数据源接入管理
 
 ---
