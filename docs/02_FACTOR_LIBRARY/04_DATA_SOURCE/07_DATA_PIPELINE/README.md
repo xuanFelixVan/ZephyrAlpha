@@ -1,18 +1,18 @@
 ---
-module_id: FACTOR_README_001
+module_id: DATA_PIPELINE_README_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: 2026-04-04
+owner: 首席文档架构师
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管理
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行中
 ---
 
-# 数据流水线蓝�?
+# 数据流水线蓝�?
 
 > Layer 0: 数据基础设施 - 多数据源适配、数据清洗、质量控制、每日流水线
 
@@ -21,38 +21,38 @@ implementation_status: 进行�?
 ## 1. 系统架构
 
 ```
-数据流水线架�?
+数据流水线架�?
 ├── 数据源层 (Data Sources)
-�?  ├── AkShare (免费行情)
-�?  ├── Tushare Pro (付费行情+财务)
-�?  ├── iFind (专业数据)
-�?  └── 东方财富 Choice (备用)
+�?  ├── AkShare (免费行情)
+�?  ├── Tushare Pro (付费行情+财务)
+�?  ├── iFind (专业数据)
+�?  └── 东方财富 Choice (备用)
 ├── 适配器层 (Adapters)
-�?  ├── DataSourceAdapter (统一接口)
-�?  ├── RetryHandler (重试机制)
-�?  └── FallbackManager (降级策略)
-├── 清洗�?(Cleaning)
-�?  ├── MissingValueHandler (缺失�?
-�?  ├── OutlierDetector (异常�?
-�?  └── Normalizer (标准�?
-├── 质量控制�?(DQC)
-�?  ├── CompletenessChecker (完整�?
-�?  ├── ConsistencyChecker (一致�?
-�?  └── TimelinessChecker (时效�?
-├── 存储�?(Storage)
-�?  ├── Redis (热数�? 实时行情)
-�?  ├── PostgreSQL (关系数据: 财务)
-�?  ├── ClickHouse (分析数据: 历史行情)
-�?  └── Parquet (归档数据: 因子)
-└── 调度�?(Scheduler)
-    ├── DailyPipeline (每日流水�?
+�?  ├── DataSourceAdapter (统一接口)
+�?  ├── RetryHandler (重试机制)
+�?  └── FallbackManager (降级策略)
+├── 清洗�?(Cleaning)
+�?  ├── MissingValueHandler (缺失�?
+�?  ├── OutlierDetector (异常�?
+�?  └── Normalizer (标准�?
+├── 质量控制�?(DQC)
+�?  ├── CompletenessChecker (完整�?
+�?  ├── ConsistencyChecker (一致�?
+�?  └── TimelinessChecker (时效�?
+├── 存储�?(Storage)
+�?  ├── Redis (热数�? 实时行情)
+�?  ├── PostgreSQL (关系数据: 财务)
+�?  ├── ClickHouse (分析数据: 历史行情)
+�?  └── Parquet (归档数据: 因子)
+└── 调度�?(Scheduler)
+    ├── DailyPipeline (每日流水�?
     ├── IncrementalUpdate (增量更新)
-    └── EmergencyRefresh (紧急刷�?
+    └── EmergencyRefresh (紧急刷�?
 ```
 
 ---
 
-## 2. 多数据源适配器系�?
+## 2. 多数据源适配器系�?
 
 ### 2.1 统一接口定义
 
@@ -108,7 +108,7 @@ class DataResponse:
 
 
 class DataSourceAdapter(ABC):
-    """数据源适配器基�?""
+    """数据源适配器基�?""
 
     def __init__(self, source_type: DataSourceType):
         self.source_type = source_type
@@ -125,13 +125,13 @@ class DataSourceAdapter(ABC):
         """获取OHLCV数据
 
         参数:
-            symbol: 股票代码 (�? 000001.SZ)
-            start_date: 开始日�?
+            symbol: 股票代码 (�? 000001.SZ)
+            start_date: 开始日�?
             end_date: 结束日期
             frequency: 频率 (1d, 1w, 1M, 1m, 5m, 15m, 30m, 60m)
 
         返回:
-            DataResponse: 包含数据的响应对�?
+            DataResponse: 包含数据的响应对�?
         """
         pass
 
@@ -147,12 +147,12 @@ class DataSourceAdapter(ABC):
 
         参数:
             symbol: 股票代码
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
             report_type: 报告类型 (annual, quarterly, ttm)
 
         返回:
-            DataResponse: 包含财务数据的响应对�?
+            DataResponse: 包含财务数据的响应对�?
         """
         pass
 
@@ -167,7 +167,7 @@ class DataSourceAdapter(ABC):
         pass
 
     def health_check(self) -> bool:
-        """健康检�?""
+        """健康检�?""
         try:
             return self._ping()
         except Exception as e:
@@ -176,15 +176,15 @@ class DataSourceAdapter(ABC):
 
     @abstractmethod
     def _ping(self) -> bool:
-        """实际健康检�?""
+        """实际健康检�?""
         pass
 ```
 
-### 2.2 多数据源管理�?
+### 2.2 多数据源管理�?
 
 ```python
 class MultiSourceManager:
-    """多数据源管理�?""
+    """多数据源管理�?""
 
     def __init__(self, config: Dict):
         self.adapters: Dict[DataSourceType, DataSourceAdapter] = {}
@@ -193,7 +193,7 @@ class MultiSourceManager:
         self._initialize_adapters(config)
 
     def _initialize_adapters(self, config: Dict):
-        """初始化所有适配�?""
+        """初始化所有适配�?""
         source_config = config.get("data_sources", {})
 
         if source_config.get("akshare", {}).get("enabled", True):
@@ -210,7 +210,7 @@ class MultiSourceManager:
         self.fallback_order = [ds for ds in self.adapters.keys()]
 
     def _register_adapter(self, adapter: DataSourceAdapter):
-        """注册适配�?""
+        """注册适配�?""
         self.adapters[adapter.source_type] = adapter
         self.source_health[adapter.source_type] = adapter.health_check()
         self.logger.info(f"Registered adapter: {adapter.source_type.value}")
@@ -263,7 +263,7 @@ class MultiSourceManager:
         adapter: DataSourceAdapter,
         request: DataRequest
     ) -> DataResponse:
-        """使用适配器获取数�?""
+        """使用适配器获取数�?""
         for attempt in range(request.retry_count):
             try:
                 response = adapter.get_ohlcv(
@@ -288,7 +288,7 @@ class MultiSourceManager:
         )
 
     def refresh_health_status(self):
-        """刷新数据源健康状�?""
+        """刷新数据源健康状�?""
         for source_type, adapter in self.adapters.items():
             self.source_health[source_type] = adapter.health_check()
             self.logger.info(f"Health status {source_type.value}: {self.source_health[source_type]}")
@@ -298,7 +298,7 @@ class MultiSourceManager:
 
 ## 3. 数据清洗引擎
 
-### 3.1 清洗处理�?
+### 3.1 清洗处理�?
 
 ```python
 from typing import Callable, Dict, List, Any
@@ -314,7 +314,7 @@ class DataCleaner:
         self._register_default_handlers()
 
     def _register_default_handlers(self):
-        """注册默认处理�?""
+        """注册默认处理�?""
         self.handlers["missing_values"] = self._handle_missing_values
         self.handlers["outliers"] = self._handle_outliers
         self.handlers["duplicates"] = self._handle_duplicates
@@ -350,15 +350,15 @@ class DataCleaner:
         method: str = "forward_fill",
         columns: List[str] = None
     ) -> pd.DataFrame:
-        """处理缺失�?
+        """处理缺失�?
 
         参数:
             method: 处理方法
                 - 'forward_fill': 前向填充
                 - 'backward_fill': 后向填充
-                - 'interpolate': 插�?
-                - 'mean': 均值填�?
-                - 'median': 中位数填�?
+                - 'interpolate': 插�?
+                - 'mean': 均值填�?
+                - 'median': 中位数填�?
                 - 'drop': 删除
             columns: 需要处理的列，None表示所有列
         """
@@ -394,15 +394,15 @@ class DataCleaner:
         threshold: float = 3.0,
         columns: List[str] = None
     ) -> pd.DataFrame:
-        """处理异常�?
+        """处理异常�?
 
         参数:
-            method: 检测方�?
-                - 'mad': MAD�?(中位数绝对偏�?
-                - 'zscore': Z-score�?
-                - 'iqr': 四分位距�?
-            threshold: 阈�?
-            columns: 需要处理的�?
+            method: 检测方�?
+                - 'mad': MAD�?(中位数绝对偏�?
+                - 'zscore': Z-score�?
+                - 'iqr': 四分位距�?
+            threshold: 阈�?
+            columns: 需要处理的�?
         """
         result = df.copy()
         cols = columns or [c for c in result.columns if c not in ['date', 'symbol', 'code']]
@@ -449,13 +449,13 @@ class DataCleaner:
         method: str = "zscore",
         columns: List[str] = None
     ) -> pd.DataFrame:
-        """标准化数�?
+        """标准化数�?
 
         参数:
-            method: 标准化方�?
-                - 'zscore': Z-score标准�?
-                - 'minmax': Min-Max归一�?
-                - 'rank': 排序归一�?
+            method: 标准化方�?
+                - 'zscore': Z-score标准�?
+                - 'minmax': Min-Max归一�?
+                - 'rank': 排序归一�?
         """
         result = df.copy()
         cols = columns or result.select_dtypes(include=[np.number]).columns.tolist()
@@ -510,7 +510,7 @@ class DataCleaner:
 ```python
 @dataclass
 class QualityCheckResult:
-    """质量检查结�?""
+    """质量检查结�?""
     check_name: str
     passed: bool
     score: float  # 0-100
@@ -530,15 +530,15 @@ class DataQualityChecker:
         data_type: str,
         symbol: str = None
     ) -> List[QualityCheckResult]:
-        """执行所有质量检�?
+        """执行所有质量检�?
 
         参数:
-            df: 待检查数�?
+            df: 待检查数�?
             data_type: 数据类型 (ohlcv, financial, index)
             symbol: 股票代码
 
         返回:
-            检查结果列�?
+            检查结果列�?
         """
         results = []
 
@@ -555,7 +555,7 @@ class DataQualityChecker:
         df: pd.DataFrame,
         symbol: str = None
     ) -> QualityCheckResult:
-        """完整性检�?""
+        """完整性检�?""
         total_cells = df.size
         missing_cells = df.isna().sum().sum()
         completeness_rate = (1 - missing_cells / total_cells) * 100 if total_cells > 0 else 0
@@ -565,7 +565,7 @@ class DataQualityChecker:
 
         suggestions = []
         if completeness_rate < 95:
-            suggestions.append(f"数据完整�?{completeness_rate:.1f}% 低于95%，建议检查数据源")
+            suggestions.append(f"数据完整�?{completeness_rate:.1f}% 低于95%，建议检查数据源")
 
         return QualityCheckResult(
             check_name="completeness",
@@ -585,19 +585,19 @@ class DataQualityChecker:
         df: pd.DataFrame,
         symbol: str = None
     ) -> QualityCheckResult:
-        """一致性检�?""
+        """一致性检�?""
         issues = []
 
         if "close" in df.columns and "open" in df.columns:
             invalid_ranges = ((df["close"] < 0) | (df["open"] < 0) |
                             (df["high"] < df["low"])).sum()
             if invalid_ranges > 0:
-                issues.append(f"发现 {invalid_ranges} 条价格范围异常记�?)
+                issues.append(f"发现 {invalid_ranges} 条价格范围异常记�?)
 
         if "volume" in df.columns:
             negative_volume = (df["volume"] < 0).sum()
             if negative_volume > 0:
-                issues.append(f"发现 {negative_volume} 条负成交量记�?)
+                issues.append(f"发现 {negative_volume} 条负成交量记�?)
 
         consistency_rate = max(0, 100 - len(issues) * 10)
 
@@ -614,14 +614,14 @@ class DataQualityChecker:
         df: pd.DataFrame,
         symbol: str = None
     ) -> QualityCheckResult:
-        """时效性检�?""
+        """时效性检�?""
         if "date" not in df.columns and "timestamp" not in df.columns:
             return QualityCheckResult(
                 check_name="timeliness",
                 passed=False,
                 score=0,
                 details={"error": "无日期列"},
-                suggestions=["添加日期列以便进行时效性检�?]
+                suggestions=["添加日期列以便进行时效性检�?]
             )
 
         date_col = "date" if "date" in df.columns else "timestamp"
@@ -648,7 +648,7 @@ class DataQualityChecker:
         df: pd.DataFrame,
         data_type: str
     ) -> QualityCheckResult:
-        """准确性检�?""
+        """准确性检�?""
         accuracy_checks = []
 
         if data_type == "ohlcv":
@@ -660,7 +660,7 @@ class DataQualityChecker:
                     (df["low"] <= df["open"]) &
                     (df["low"] <= df["close"])
                 ).mean() * 100
-                accuracy_checks.append(("价格逻辑一致�?, price_consistency))
+                accuracy_checks.append(("价格逻辑一致�?, price_consistency))
 
         score = np.mean([check[1] for check in accuracy_checks]) if accuracy_checks else 100
 
@@ -677,7 +677,7 @@ class DataQualityChecker:
         df: pd.DataFrame,
         symbol: str = None
     ) -> QualityCheckResult:
-        """唯一性检�?""
+        """唯一性检�?""
         if "date" in df.columns:
             total_rows = len(df)
             unique_dates = df["date"].nunique()
@@ -692,7 +692,7 @@ class DataQualityChecker:
                     "unique_dates": unique_dates,
                     "duplicate_rate": duplicate_rate
                 },
-                suggestions=[f"发现 {total_rows - unique_dates} 条重复日期记�?] if duplicate_rate > 0 else []
+                suggestions=[f"发现 {total_rows - unique_dates} 条重复日期记�?] if duplicate_rate > 0 else []
             )
 
         return QualityCheckResult(
@@ -708,10 +708,10 @@ class DataQualityChecker:
         results: List[QualityCheckResult]
     ) -> str:
         """生成质量报告"""
-        report_lines = ["=" * 60, "数据质量检查报�?, "=" * 60, ""]
+        report_lines = ["=" * 60, "数据质量检查报�?, "=" * 60, ""]
 
         for result in results:
-            status = "�?通过" if result.passed else "�?未通过"
+            status = "�?通过" if result.passed else "�?未通过"
             report_lines.append(f"【{result.check_name}】{status}")
             report_lines.append(f"  评分: {result.score:.1f}/100")
 
@@ -735,7 +735,7 @@ class DataQualityChecker:
 
 ---
 
-## 5. 每日数据流水�?
+## 5. 每日数据流水�?
 
 ### 5.1 流水线调度器
 
@@ -795,7 +795,7 @@ class DailyPipelineScheduler:
         handler: callable,
         enabled: bool = True
     ):
-        """添加自定义任�?""
+        """添加自定义任�?""
         self.tasks.append({
             "name": name,
             "time": task_time,
@@ -804,7 +804,7 @@ class DailyPipelineScheduler:
         })
 
     def start(self):
-        """启动调度�?""
+        """启动调度�?""
         if self.running:
             self.logger.warning("Scheduler already running")
             return
@@ -815,7 +815,7 @@ class DailyPipelineScheduler:
         self.logger.info("Pipeline scheduler started")
 
     def stop(self):
-        """停止调度�?""
+        """停止调度�?""
         self.running = False
         if self.thread:
             self.thread.join(timeout=5)
@@ -840,7 +840,7 @@ class DailyPipelineScheduler:
             time_module.sleep(60)
 
     def get_status(self) -> Dict:
-        """获取调度器状�?""
+        """获取调度器状�?""
         return {
             "running": self.running,
             "tasks": [
@@ -855,7 +855,7 @@ class DailyPipelineScheduler:
 
 
 class PipelineTask:
-    """流水线任务基�?""
+    """流水线任务基�?""
 
     def __init__(self, name: str):
         self.name = name
@@ -902,7 +902,7 @@ class IncrementalUpdateStrategy:
         self.last_update[key] = update_time
 
     def should_full_refresh(self, symbol: str, data_type: str) -> bool:
-        """判断是否需要全量刷�?""
+        """判断是否需要全量刷�?""
         key = f"{symbol}:{data_type}"
         last_update = self.last_update.get(key)
 
@@ -923,31 +923,31 @@ class IncrementalUpdateStrategy:
 ```
 存储分层设计
 ├── 热数据层 (Hot) - Redis
-�?  ├── 数据: 实时行情(Tick)、当前持仓、资�?
-�?  ├── 访问频率: 每秒数百�?
-�?  ├── 保留�? 当日
-�?  └── 容量: ~1GB
-�?
+�?  ├── 数据: 实时行情(Tick)、当前持仓、资�?
+�?  ├── 访问频率: 每秒数百�?
+�?  ├── 保留�? 当日
+�?  └── 容量: ~1GB
+�?
 ├── 温数据层 (Warm) - PostgreSQL
-�?  ├── 数据: 财务报表、元数据、用户配�?
-�?  ├── 访问频率: 每分钟数�?
-�?  ├── 保留�? 永久
-�?  └── 容量: ~10GB
-�?
+�?  ├── 数据: 财务报表、元数据、用户配�?
+�?  ├── 访问频率: 每分钟数�?
+�?  ├── 保留�? 永久
+�?  └── 容量: ~10GB
+�?
 ├── 冷数据层 (Cold) - ClickHouse
-�?  ├── 数据: 历史行情(分钟线、日�?、因子�?
-�?  ├── 访问频率: 每日数次
-�?  ├── 保留�? 永久
-�?  └── 容量: ~100GB
-�?
-└── 归档�?(Archive) - Parquet + 分区
+�?  ├── 数据: 历史行情(分钟线、日�?、因子�?
+�?  ├── 访问频率: 每日数次
+�?  ├── 保留�? 永久
+�?  └── 容量: ~100GB
+�?
+└── 归档�?(Archive) - Parquet + 分区
     ├── 数据: 超过1年的历史数据
     ├── 访问频率: 偶尔
-    ├── 保留�? 永久
+    ├── 保留�? 永久
     └── 容量: ~500GB
 ```
 
-### 6.2 数据源配置示�?
+### 6.2 数据源配置示�?
 
 ```yaml
 # config/data_sources.yaml
@@ -956,7 +956,7 @@ data_sources:
   akshare:
     enabled: true
     priority: 1
-    rate_limit: 10  # 每秒请求�?
+    rate_limit: 10  # 每秒请求�?
     retry_count: 3
     
   tushare:
@@ -976,7 +976,7 @@ storage:
     host: localhost
     port: 6379
     db: 0
-    ttl: 86400  # 1�?
+    ttl: 86400  # 1�?
     
   warm:
     type: postgresql
@@ -1011,9 +1011,9 @@ pipeline:
 |------|------|------|
 | 实时数据更新延迟 | < 100ms | 从数据源到Redis |
 | 历史数据查询延迟 | < 1s | ClickHouse查询 |
-| 每日流水线执行时�?| < 30min | 包含所有股�?|
-| 数据质量评分 | > 95�?| 综合质量检�?|
-| 系统可用�?| > 99.9% | 全年365�?|
+| 每日流水线执行时�?| < 30min | 包含所有股�?|
+| 数据质量评分 | > 95�?| 综合质量检�?|
+| 系统可用�?| > 99.9% | 全年365�?|
 | 故障恢复时间 | < 5min | MTTR目标 |
 
 ---
@@ -1021,7 +1021,7 @@ pipeline:
 ## 8. 上游下游接口
 
 ### 上游接口
-- **数据�?*: AkShare API, Tushare API, iFind API
+- **数据�?*: AkShare API, Tushare API, iFind API
 
 ### 下游接口
 - **DataHub (M01)**: 提供统一数据访问接口
@@ -1030,12 +1030,12 @@ pipeline:
 
 ### 内部接口
 - **EventBus (M12)**: 发布数据更新事件
-- **AlertManager (M14)**: 发送数据异常告�?
+- **AlertManager (M14)**: 发送数据异常告�?
 - **ConfigManager (M09)**: 获取配置参数
 
 ---
 
 **版本**: 1.0
 **更新**: 2026-03-28
-**Layer**: Layer 0 (数据�?
-**索引**: BLUEPRINTS.md �?数据流水线蓝�?
+**Layer**: Layer 0 (数据�?
+**索引**: BLUEPRINTS.md �?数据流水线蓝�?
