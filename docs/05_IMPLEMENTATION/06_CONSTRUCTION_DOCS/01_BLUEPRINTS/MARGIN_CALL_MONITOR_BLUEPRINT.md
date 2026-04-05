@@ -360,4 +360,126 @@ class SnowballKnockInCalculator:
     
     def _determine_alert_level(
         self,
-        distance_to_knock_in: float
+        distance_to_knock_in: float,
+        knock_in_prob: float
+    ) -> str:
+        """判定预警等级"""
+        if distance_to_knock_in < 0.05 or knock_in_prob > 0.80:
+            return "P0_CRITICAL"
+        elif distance_to_knock_in < 0.10 or knock_in_prob > 0.60:
+            return "P1_HIGH"
+        elif distance_to_knock_in < 0.15 or knock_in_prob > 0.40:
+            return "P2_MEDIUM"
+        else:
+            return "P3_LOW"
+```
+
+### 3.2 融资盘爆仓预警器
+
+**设计目标**: 监控融资盘维持担保比例，预警强制平仓风险
+
+**索引**: `MARGIN_CALL_001-M02`
+
+```python
+@dataclass
+class MarginAccount:
+    """融资账户数据结构"""
+    account_id: str
+    total_assets: float                # 总资产
+    total_debt: float                  # 总负债
+    cash: float                        # 现金
+    positions: Dict[str, float]        # 持仓 {股票代码: 市值}
+    maintenance_ratio: float = 1.30    # 维持担保比例（130%）
+    warning_ratio: float = 1.50        # 预警比例（150%）
+    
+    @property
+    def current_ratio(self) -> float:
+        """当前担保比例"""
+        return self.total_assets / self.total_debt if self.total_debt > 0 else float('inf')
+    
+    @property
+    def leverage(self) -> float:
+        """杠杆倍数"""
+        return self.total_assets / (self.total_assets - self.total_debt) if self.total_debt > 0 else 1.0
+
+
+@dataclass
+class MarginCallRiskResult:
+    """融资盘爆仓风险结果"""
+    current_ratio: float               # 当前担保比例
+    distance_to_margin_call: float     # 距离平仓线距离
+    forced_liquidation_price: float    # 强平价格
+    risk_level: str                    # 风险等级
+    alert_level: str                   # 预警等级
+    leverage: float                    # 杠杆倍数
+    margin_call_probability: float     # 爆仓概率
+
+
+class MarginCallMonitor:
+    """融资盘爆仓监控器
+    
+    索引: MARGIN_CALL_001-M02
+    职责: 监控融资盘维持担保比例，预警强制平仓风险
+    输入: 融资账户数据、市场行情
+    输出: 爆仓风险等级、预警信号
+    """
+    
+    def __init__(self, config: Optional[Dict] = None):
+        self.config = config or {
+            'maintenance_ratio': 1.30,
+            'warning_ratio': 1.50,
+            'alert_thresholds': {
+                'P0_CRITICAL': 1.30,
+                'P1_HIGH': 1.50,
+                'P2_MEDIUM': 1.80,
+                'P3_LOW': 2.00
+            }
+        }
+    
+    def monitor_margin_call_risk(
+        self,
+        account: MarginAccount,
+        price_changes: Dict[str, float]
+    ) -> MarginCallRiskResult:
+        """监控融资盘爆仓风险
+        
+        Args:
+            account: 融资账户数据
+            price_changes: 价格变化 {股票代码: 涨跌幅}
+            
+        Returns:
+            MarginCallRiskResult: 爆仓风险结果
+        """
+        # 计算当前担保比例
+        current_ratio = account.current_ratio
+        
+        # 计算强平价格（总资产需要降低到的水平）
+        forced_liquidation_price = account.total_debt * account.maintenance_ratio
+        
+        # 计算距离平仓线距离
+        distance_to_margin_call = (
+            (account.total_assets - forced_liquidation_price) / account.total_assets
+        )
+        
+        # 计算爆仓概率（基于价格波动）
+        margin_call_probability = self._calculate_margin_call_probability(
+            account, price_changes
+        )
+        
+        # 判定风险等级
+        risk_level = self._determine_risk_level(current_ratio)
+        
+        # 判定预警等级
+        alert_level = self._determine_alert_level(current_ratio)
+        
+        return MarginCallRiskResult(
+            current_ratio=current_ratio,
+            distance_to_margin_call=distance_to_margin_call,
+            forced_liquidation_price=forced_liquidation_price,
+            risk_level=risk_level,
+            alert_level=alert_level,
+            leverage=account.leverage,
+            margin_call_probability=margin_call_probability
+        )
+    
+    def _calculate_margin_call_probability(
