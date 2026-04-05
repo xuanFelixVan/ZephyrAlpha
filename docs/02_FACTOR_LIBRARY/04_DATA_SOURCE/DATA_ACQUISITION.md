@@ -1,30 +1,31 @@
 ---
 module_id: DATA_ACQUISITION_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-05
 owner: 首席文档架构师
 standard_type: 数据处理文档
-applicable_scope: 数据采集与清洗
+applicable_scope: 数据采集系统
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 implementation_status: 进行中
 ---
 
-# 数据采集+清洗蓝图
+# 数据采集蓝图
 
 ## 文档职责说明
 
-**本文档职责**: 数据采集与清洗技术实现
+**本文档职责**: 数据采集技术实现
 - 定义数据采集架构和实现方案
-- 规划数据清洗规则和质量检查流程
-- 设计调度系统和存储架构
+- 规划数据源接入和调度系统
+- 设计数据存储架构
 
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据需求清单 | [DATA_REQUIREMENTS.md](./DATA_REQUIREMENTS.md) | 上游规格 | 定义需要采集的数据规格 |
+| 数据清洗引擎 | [03_CLEANING/](./03_CLEANING/) | 下游处理 | 数据清洗和质量检查 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:

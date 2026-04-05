@@ -244,3 +244,378 @@ class AlertProcessor:
             "channels": [],
             "receivers": [],
             "priority": alert.severity.value
+        }
+        
+        # P0级预警：全渠道推送
+        if alert.severity == AlertSeverity.P0:
+            routing["channels"] = ["wechat", "dingtalk", "sms"]
+            routing["receivers"] = ["all_admins"]
+        
+        # P1级预警：主要渠道推送
+        elif alert.severity == AlertSeverity.P1:
+            routing["channels"] = ["wechat", "dingtalk"]
+            routing["receivers"] = ["risk_managers", "traders"]
+        
+        # P2级预警：单一渠道推送
+        elif alert.severity == AlertSeverity.P2:
+            routing["channels"] = ["wechat"]
+            routing["receivers"] = ["operators"]
+        
+        # P3级预警：邮件推送
+        else:
+            routing["channels"] = ["email"]
+            routing["receivers"] = ["all_users"]
+        
+        return routing
+    
+    def _record_alert(self, alert: Alert, group_key: str):
+        """记录预警"""
+        key = f"alert:history:{datetime.now().strftime('%Y%m%d')}"
+        self.redis.lpush(key, alert.to_dict())
+        self.redis.expire(key, 86400 * 30)  # 保留30天
+```
+
+### 2.2 多渠道推送网关
+
+#### 2.2.1 企业微信机器人
+
+```python
+import requests
+from typing import Dict, List
+
+
+class WeChatWorkBot:
+    def __init__(self, webhook_url: str):
+        self.webhook_url = webhook_url
+    
+    def send_markdown(self, content: str, mentioned_list: List[str] = None) -> bool:
+        """发送Markdown消息"""
+        data = {
+            "msgtype": "markdown",
+            "markdown": {
+                "content": content,
+                "mentioned_list": mentioned_list or []
+            }
+        }
+        
+        response = requests.post(
+            self.webhook_url,
+            json=data,
+            timeout=10
+        )
+        
+        return response.status_code == 200
+    
+    def send_alert(self, alert: Alert) -> bool:
+        """发送预警消息"""
+        severity_emoji = {
+            AlertSeverity.P0: "🔴",
+            AlertSeverity.P1: "🟠",
+            AlertSeverity.P2: "🟡",
+            AlertSeverity.P3: "🔵"
+        }
+        
+        content = f"""{severity_emoji[alert.severity]} **{alert.title}**
+
+**级别**: {alert.severity.value}
+**类型**: {alert.category.value}
+**来源**: {alert.source}
+**时间**: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+
+**详情**:
+{alert.message}
+
+---
+*ZephyrAlpha量化系统自动推送*
+"""
+        
+        return self.send_markdown(content)
+```
+
+#### 2.2.2 钉钉机器人
+
+```python
+import hmac
+import hashlib
+import base64
+import time
+import urllib.parse
+
+
+class DingTalkBot:
+    def __init__(self, webhook_url: str, secret: str = None):
+        self.webhook_url = webhook_url
+        self.secret = secret
+    
+    def _sign(self) -> tuple:
+        """生成签名"""
+        timestamp = str(round(time.time() * 1000))
+        string_to_sign = f"{timestamp}\n{self.secret}"
+        hmac_code = hmac.new(
+            self.secret.encode("utf-8"),
+            string_to_sign.encode("utf-8"),
+            digestmod=hashlib.sha256
+        ).digest()
+        sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
+        return timestamp, sign
+    
+    def send_markdown(self, title: str, text: str) -> bool:
+        """发送Markdown消息"""
+        url = self.webhook_url
+        if self.secret:
+            timestamp, sign = self._sign()
+            url = f"{url}&timestamp={timestamp}&sign={sign}"
+        
+        data = {
+            "msgtype": "markdown",
+            "markdown": {
+                "title": title,
+                "text": text
+            }
+        }
+        
+        response = requests.post(url, json=data, timeout=10)
+        return response.status_code == 200
+    
+    def send_alert(self, alert: Alert) -> bool:
+        """发送预警消息"""
+        severity_color = {
+            AlertSeverity.P0: "🔴",
+            AlertSeverity.P1: "🟠",
+            AlertSeverity.P2: "🟡",
+            AlertSeverity.P3: "🔵"
+        }
+        
+        text = f"""{severity_color[alert.severity]} {alert.title}
+
+**级别**: {alert.severity.value}
+**类型**: {alert.category.value}
+**来源**: {alert.source}
+**时间**: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+
+**详情**:
+{alert.message}
+"""
+        
+        return self.send_markdown(alert.title, text)
+```
+
+#### 2.2.3 Telegram Bot
+
+```python
+from telegram import Bot
+from telegram.parsemode import ParseMode
+
+
+class TelegramBot:
+    def __init__(self, token: str, chat_id: str):
+        self.bot = Bot(token=token)
+        self.chat_id = chat_id
+    
+    async def send_alert(self, alert: Alert) -> bool:
+        """发送预警消息"""
+        severity_emoji = {
+            AlertSeverity.P0: "🔴",
+            AlertSeverity.P1: "🟠",
+            AlertSeverity.P2: "🟡",
+            AlertSeverity.P3: "🔵"
+        }
+        
+        message = f"""{severity_emoji[alert.severity]} *{alert.title}*
+
+*级别*: {alert.severity.value}
+*类型*: {alert.category.value}
+*来源*: {alert.source}
+*时间*: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+
+*详情*:
+{alert.message}
+
+_#ZephyrAlpha #QuantTrading_
+"""
+        
+        try:
+            await self.bot.send_message(
+                chat_id=self.chat_id,
+                text=message,
+                parse_mode=ParseMode.MARKDOWN
+            )
+            return True
+        except Exception as e:
+            print(f"Telegram推送失败: {e}")
+            return False
+```
+
+### 2.3 推送管理器
+
+```python
+from typing import List, Dict
+import asyncio
+
+
+class PushNotificationManager:
+    def __init__(self, config: Dict):
+        self.config = config
+        self.channels = self._init_channels()
+        
+    def _init_channels(self) -> Dict:
+        """初始化推送渠道"""
+        channels = {}
+        
+        if "wechat" in self.config["channels"]:
+            channels["wechat"] = WeChatWorkBot(
+                self.config["channels"]["wechat"]["webhook_url"]
+            )
+        
+        if "dingtalk" in self.config["channels"]:
+            channels["dingtalk"] = DingTalkBot(
+                self.config["channels"]["dingtalk"]["webhook_url"],
+                self.config["channels"]["dingtalk"].get("secret")
+            )
+        
+        if "telegram" in self.config["channels"]:
+            channels["telegram"] = TelegramBot(
+                self.config["channels"]["telegram"]["token"],
+                self.config["channels"]["telegram"]["chat_id"]
+            )
+        
+        return channels
+    
+    async def push_alert(self, alert: Alert, routing: Dict) -> Dict:
+        """推送预警"""
+        results = {}
+        
+        for channel_name in routing["channels"]:
+            if channel_name in self.channels:
+                channel = self.channels[channel_name]
+                
+                try:
+                    if channel_name == "telegram":
+                        success = await channel.send_alert(alert)
+                    else:
+                        success = channel.send_alert(alert)
+                    
+                    results[channel_name] = {
+                        "success": success,
+                        "timestamp": datetime.now().isoformat()
+                    }
+                except Exception as e:
+                    results[channel_name] = {
+                        "success": False,
+                        "error": str(e),
+                        "timestamp": datetime.now().isoformat()
+                    }
+        
+        return results
+```
+
+---
+
+## 三、预警场景设计
+
+### 3.1 风险预警推送
+
+| 预警类型 | 触发条件 | 推送级别 | 推送渠道 | 推送频率 |
+|---------|---------|---------|---------|---------|
+| **VaR超限** | VaR > 预算120% | P0 | 企业微信+钉钉+短信 | 立即 |
+| **回撤预警** | 回撤 > 15% | P0 | 企业微信+钉钉+短信 | 立即 |
+| **持仓集中** | 单股占比 > 30% | P1 | 企业微信+钉钉 | 5分钟内 |
+| **流动性风险** | 流动性 < 50% | P1 | 企业微信+钉钉 | 5分钟内 |
+| **因子失效** | IC < 0.02 | P2 | 企业微信 | 1小时内 |
+
+### 3.2 交易授权推送
+
+| 授权类型 | 触发条件 | 推送级别 | 推送渠道 | 响应时限 |
+|---------|---------|---------|---------|---------|
+| **大额交易** | 金额 > 50万 | P0 | 企业微信+钉钉 | 30分钟 |
+| **策略调整** | 策略参数变更 | P1 | 企业微信 | 1小时 |
+| **紧急止损** | 触发止损线 | P0 | 企业微信+钉钉+短信 | 立即 |
+| **新策略上线** | 新策略启用 | P2 | 企业微信 | 4小时 |
+
+### 3.3 系统异常推送
+
+| 异常类型 | 触发条件 | 推送级别 | 推送渠道 | 推送频率 |
+|---------|---------|---------|---------|---------|
+| **数据源故障** | 数据中断 > 5分钟 | P0 | 企业微信+钉钉 | 立即 |
+| **系统崩溃** | 系统无响应 | P0 | 企业微信+钉钉+短信 | 立即 |
+| **性能下降** | 延迟 > 5秒 | P1 | 企业微信 | 5分钟内 |
+| **存储告警** | 磁盘使用 > 80% | P2 | 企业微信 | 1小时内 |
+
+---
+
+## 四、监控与优化
+
+### 4.1 推送效果监控
+
+```python
+from prometheus_client import Counter, Histogram, Gauge
+
+# 推送计数器
+push_total = Counter(
+    'push_notification_total',
+    'Total push notifications',
+    ['channel', 'severity', 'category']
+)
+
+# 推送成功计数器
+push_success = Counter(
+    'push_notification_success_total',
+    'Successful push notifications',
+    ['channel', 'severity']
+)
+
+# 推送延迟直方图
+push_latency = Histogram(
+    'push_notification_latency_seconds',
+    'Push notification latency',
+    ['channel']
+)
+
+# 推送失败计数器
+push_failure = Counter(
+    'push_notification_failure_total',
+    'Failed push notifications',
+    ['channel', 'error_type']
+)
+```
+
+### 4.2 Grafana监控面板
+
+**关键指标**:
+- 推送成功率 (按渠道、级别、类型)
+- 推送延迟分布 (P50, P95, P99)
+- 推送失败原因分析
+- 预警频率趋势
+- 渠道使用分布
+
+---
+
+## 五、实施计划
+
+### 5.1 实施阶段
+
+| 阶段 | 时间 | 目标 | 交付物 |
+|------|------|------|--------|
+| **阶段1** | 第1天 | 企业微信推送 | 企业微信机器人集成 |
+| **阶段2** | 第2天 | 钉钉推送 | 钉钉机器人集成 |
+| **阶段3** | 第3天 | Telegram推送 | Telegram Bot集成 |
+| **阶段4** | 第4-5天 | 预警处理引擎 | 预警去重、分组、路由 |
+| **阶段5** | 第6-7天 | 监控面板 | Grafana仪表板 |
+
+### 5.2 配置示例
+
+```yaml
+# config/push_notification.yaml
+channels:
+  wechat:
+    enabled: true
+    webhook_url: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
+    
+  dingtalk:
+    enabled: true
+    webhook_url: "https://oapi.dingtalk.com/robot/send?access_token=YOUR_TOKEN"
+    secret: "YOUR_SECRET"
+    
+  telegram:
+    enabled: true
+    token: "YOUR_BOT_TOKEN"
