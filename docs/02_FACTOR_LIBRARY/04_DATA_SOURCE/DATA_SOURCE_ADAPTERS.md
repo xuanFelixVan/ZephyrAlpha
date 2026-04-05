@@ -1,33 +1,47 @@
 ---
 module_id: DATA_ADAPTERS_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 数据源文�?applicable_scope: 数据源适配�?compliance_level: 专业标准
+last_updated: 2026-04-05
+owner: 首席文档架构师
+standard_type: 数据源文档
+applicable_scope: 数据源适配器
+compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行中
+---
 
-# 数据源适配�?
+# 数据源适配器
 
 > 多数据源统一接入管理，支持股票、期货、期权、宏观等各类数据
 
+**相关文档**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 免费数据源规格 | [FREE_DATA_SOURCES.md](./FREE_DATA_SOURCES.md) | 详细规格 | 免费数据源的具体接口定义 |
+| 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义统一适配器接口和架构
+- ❌ 本文档不负责: 具体数据源的接口细节（由 FREE_DATA_SOURCES.md 负责）
+
 ---
 
-## 1. 数据源概�?
+## 1. 数据源概览
 
-| 数据�?| 类型 | 数据质量 | 主要用�?| 权限 |
+| 数据源 | 类型 | 数据质量 | 主要用途 | 权限 |
 |--------|------|---------|---------|------|
-| Baostock | 官方API | ⭐⭐⭐⭐�?| 历史行情、财务数据、复权因�?| 免费注册 |
-| AkShare | 开源库 | ⭐⭐⭐⭐ | 实时行情、概念板块、资金流�?| 完全免费 |
-| Efinance | 开源库 | ⭐⭐⭐⭐ | 资金流向、北向资金、实时行�?| 完全免费 |
-| Tushare Pro | 官方API | ⭐⭐⭐⭐�?| 深度数据、因子数据、专业指�?| 积分�?|
-| 新浪财经 | 网络API | ⭐⭐�?| 实时行情备用、历史数�?| 免费 |
-| 腾讯财经 | 网络API | ⭐⭐�?| 实时行情备用、基础数据 | 免费 |
+| Baostock | 官方API | ⭐⭐⭐⭐⭐ | 历史行情、财务数据、复权因子 | 免费注册 |
+| AkShare | 开源库 | ⭐⭐⭐⭐ | 实时行情、概念板块、资金流向 | 完全免费 |
+| Efinance | 开源库 | ⭐⭐⭐⭐ | 资金流向、北向资金、实时行情 | 完全免费 |
+| Tushare Pro | 官方API | ⭐⭐⭐⭐⭐ | 深度数据、因子数据、专业指标 | 积分制 |
+| 新浪财经 | 网络API | ⭐⭐⭐ | 实时行情备用、历史数据 | 免费 |
+| 腾讯财经 | 网络API | ⭐⭐⭐ | 实时行情备用、基础数据 | 免费 |
 
 ---
 
-## 2. 多数据源适配器设�?
+## 2. 多数据源适配器设计
 
 ```python
 from abc import ABC, abstractmethod
@@ -41,17 +55,17 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class DataSourceConfig:
-    """数据源配�?""
+    """数据源配置"""
     name: str
     source_type: str              # 'api', 'web', 'database'
-    priority: int                 # 优先级，数字越小优先级越�?
-    rate_limit: Optional[int]     # 速率限制（请�?秒）
-    timeout: int = 30            # 超时时间（秒�?
+    priority: int                 # 优先级，数字越小优先级越高
+    rate_limit: Optional[int]     # 速率限制（请求/秒）
+    timeout: int = 30            # 超时时间（秒）
     retry_count: int = 3         # 重试次数
     is_available: bool = True    # 是否可用
 
 class DataSource(ABC):
-    """数据源基�?""
+    """数据源基类"""
 
     def __init__(self, config: DataSourceConfig):
         self.config = config
@@ -79,26 +93,26 @@ class DataSource(ABC):
 
     @abstractmethod
     def health_check(self) -> bool:
-        """健康检�?""
+        """健康检查"""
         pass
 ```
 
 ---
 
-## 3. 具体数据源实�?
+## 3. 具体数据源实现
 
-### 3.1 Baostock 数据�?
+### 3.1 Baostock 数据源
 
 ```python
 import baostock as bs
 
 class BaostockDataSource(DataSource):
-    """Baostock 数据�?
+    """Baostock 数据源
 
-    适用场景�?
+    适用场景：
     - 历史行情（日线、周线、月线）
     - 复权数据（前后复权）
-    - 财务报表（资产负债表、利润表、现金流量表�?
+    - 财务报表（资产负债表、利润表、现金流量表）
     - 融资融券数据
     """
 
@@ -133,10 +147,10 @@ class BaostockDataSource(DataSource):
 
         参数:
             symbol: 股票代码，如 '600000.SH'
-            start_date: 开始日期，�?'2026-01-01'
+            start_date: 开始日期，如 '2026-01-01'
             end_date: 结束日期，如 '2026-03-28'
-            freq: 频率�?d'=日线�?w'=周线�?m'=月线
-            adjust: 复权类型�?qfq'=前复权，'hfq'=后复权，''=不复�?
+            freq: 频率，'d'=日线，'w'=周线，'m'=月线
+            adjust: 复权类型，'qfq'=前复权，'hfq'=后复权，''=不复权
         """
         code = self._normalize_symbol(symbol)
 
@@ -171,7 +185,7 @@ class BaostockDataSource(DataSource):
         """获取财务报表
 
         返回:
-            包含 bs_balance_sheet, bs_income_statement, bs_cash_flow 的字�?
+            包含 balance_sheet, income_statement, cash_flow 的字典
         """
         code = self._normalize_symbol(symbol)
 
@@ -179,11 +193,11 @@ class BaostockDataSource(DataSource):
         balance_rs = bs.query_balance_sheet(code, year=2024, quarter=4)
         balance_df = self._rs_to_df(balance_rs)
 
-        # 利润�?
+        # 利润表
         income_rs = bs.query_profit_statement(code, year=2024, quarter=4)
         income_df = self._rs_to_df(income_rs)
 
-        # 现金流量�?
+        # 现金流量表
         cash_rs = bs.query_cash_flow_statement(code, year=2024, quarter=4)
         cash_df = self._rs_to_df(cash_rs)
 
@@ -194,7 +208,7 @@ class BaostockDataSource(DataSource):
         }
 
     def _normalize_symbol(self, symbol: str) -> str:
-        """标准化股票代�?""
+        """标准化股票代码"""
         if symbol.endswith('.SH') or symbol.endswith('.SZ'):
             return symbol
         elif symbol.startswith('6'):
@@ -222,17 +236,17 @@ class BaostockDataSource(DataSource):
             return False
 ```
 
-### 3.2 AkShare 数据�?
+### 3.2 AkShare 数据源
 
 ```python
 import akshare as ak
 
 class AkShareDataSource(DataSource):
-    """AkShare 数据�?
+    """AkShare 数据源
 
-    适用场景�?
+    适用场景：
     - 实时行情
-    - 概念板块、行业分�?
+    - 概念板块、行业分析
     - 资金流向
     - 宏观数据
     """
@@ -314,11 +328,11 @@ class AkShareDataSource(DataSource):
 
 ---
 
-## 4. 智能数据源选择�?
+## 4. 智能数据源选择器
 
 ```python
 class SmartDataSourceSelector:
-    """智能数据源选择�?
+    """智能数据源选择器
 
     根据数据类型、质量、可用性自动选择最优数据源
     """
@@ -329,14 +343,14 @@ class SmartDataSourceSelector:
         self._register_default_sources()
 
     def _register_default_sources(self):
-        """注册默认数据�?""
+        """注册默认数据源"""
         self.register_source('ohlcv', BaostockDataSource())
         self.register_source('ohlcv', AkShareDataSource())
         self.register_source('financial', BaostockDataSource())
         self.register_source('money_flow', AkShareDataSource())
 
     def register_source(self, data_type: str, source: DataSource):
-        """注册数据�?""
+        """注册数据源"""
         if data_type not in self.sources:
             self.sources[data_type] = []
         self.sources[data_type].append(source)
@@ -362,12 +376,12 @@ class SmartDataSourceSelector:
         # 按优先级排序
         sources = sorted(sources, key=lambda s: s.config.priority)
 
-        # 如果指定了首选源，优先使�?
+        # 如果指定了首选源，优先使用
         if preferred_source:
             preferred = [s for s in sources if s.name == preferred_source]
             sources = preferred + [s for s in sources if s.name != preferred_source]
 
-        # 尝试从各源获取数�?
+        # 尝试从各源获取数据
         for source in sources:
             if not source.config.is_available:
                 continue
@@ -381,7 +395,7 @@ class SmartDataSourceSelector:
                 self._record_failure(source.name, data_type, str(e))
                 continue
 
-        raise Exception(f"所有{data_type}数据源获取失�?)
+        raise Exception(f"所有{data_type}数据源获取失败")
 
     def _fetch_from_source(
         self,
@@ -404,7 +418,7 @@ class SmartDataSourceSelector:
         if df.empty:
             return False
 
-        # 检查必要的�?
+        # 检查必要的列
         if data_type == 'ohlcv':
             required_cols = ['date', 'open', 'high', 'low', 'close', 'volume']
             return all(col in df.columns or col.lower() in df.columns for col in required_cols)
@@ -427,7 +441,7 @@ class SmartDataSourceSelector:
         logger.warning(f"数据获取失败: {source_name}_{data_type}, error={error}")
 
     def get_source_quality_report(self) -> Dict:
-        """获取数据源质量报�?""
+        """获取数据源质量报告"""
         report = {}
         for key, stats in self.quality_stats.items():
             total = stats['success'] + stats['failure']
@@ -443,7 +457,7 @@ class SmartDataSourceSelector:
 
 ---
 
-## 5. 数据下载调度�?
+## 5. 数据下载调度器
 
 ```python
 from queue import PriorityQueue
@@ -464,7 +478,7 @@ class DownloadTask:
     max_retries: int = 3
 
 class SmartDownloadScheduler:
-    """智能下载调度�?""
+    """智能下载调度器"""
 
     def __init__(self, data_source_selector: SmartDataSourceSelector):
         self.task_queue = PriorityQueue()
@@ -472,7 +486,7 @@ class SmartDownloadScheduler:
         self.schedule_rules = self._init_schedule_rules()
 
     def _init_schedule_rules(self) -> Dict:
-        """初始化调度规�?""
+        """初始化调度规则"""
         return {
             'pre_market': {
                 'time': (time(6, 0), time(9, 0)),
@@ -498,206 +512,9 @@ class SmartDownloadScheduler:
                 ]
             }
         }
-
-    def add_task(
-        self,
-        task_type: str,
-        params: Dict,
-        priority: int = 5,
-        scheduled_time: datetime = None
-    ):
-        """添加下载任务"""
-        task = DownloadTask(
-            priority=priority,
-            task_id=self._generate_task_id(),
-            task_type=task_type,
-            params=params,
-            status='pending'
-        )
-        self.task_queue.put(task)
-
-    def execute_daily_pipeline(self):
-        """执行每日数据流水�?""
-        # 盘前准备
-        self._execute_schedule('pre_market')
-
-        # 交易时段（可选实时任务）
-        # self._execute_schedule('trading_hours')
-
-        # 盘后处理
-        self._execute_schedule('post_market')
-
-    def _execute_schedule(self, schedule_name: str):
-        """执行指定时间段的调度"""
-        schedule = self.schedule_rules.get(schedule_name)
-        if not schedule:
-            return
-
-        for task_config in schedule['tasks']:
-            task = DownloadTask(
-                priority=task_config['priority'],
-                task_id=self._generate_task_id(),
-                task_type=task_config['type'],
-                params={},
-                status='scheduled'
-            )
-            self._execute_task(task)
-
-    def _execute_task(self, task: DownloadTask):
-        """执行单个任务"""
-        try:
-            logger.info(f"执行任务: {task.task_type}, priority={task.priority}")
-            self.data_source.fetch_data(task.task_type, task.params)
-            task.status = 'completed'
-        except Exception as e:
-            logger.error(f"任务执行失败: {task.task_id}, error={e}")
-            if task.retry_count < task.max_retries:
-                task.retry_count += 1
-                self.task_queue.put(task)
-            else:
-                task.status = 'failed'
-
-    def _generate_task_id(self) -> str:
-        return f"task_{datetime.now().strftime('%Y%m%d%H%M%S%f')}"
 ```
 
 ---
 
-## 6. 数据质量控制
-
-```python
-class DataQualityChecker:
-    """数据质量检查器"""
-
-    def __init__(self):
-        self.quality_rules = self._init_quality_rules()
-
-    def _init_quality_rules(self) -> Dict:
-        return {
-            'ohlcv': {
-                'required_columns': ['date', 'open', 'high', 'low', 'close', 'volume'],
-                'value_ranges': {
-                    'open': (0, 10000),
-                    'high': (0, 10000),
-                    'low': (0, 10000),
-                    'close': (0, 10000),
-                    'volume': (0, 1e12)
-                },
-                'relationship_rules': [
-                    {'check': 'high >= max(open, close)', 'description': '最高价应大于等于开盘价和收盘价'},
-                    {'check': 'low <= min(open, close)', 'description': '最低价应小于等于开盘价和收盘价'},
-                ],
-                'missing_threshold': 0.05,
-                'duplicate_check': ['date', 'symbol']
-            },
-            'financial': {
-                'required_columns': ['report_date', 'code'],
-                'missing_threshold': 0.1
-            }
-        }
-
-    def check_quality(self, df: pd.DataFrame, data_type: str) -> Dict:
-        """执行质量检�?""
-        rules = self.quality_rules.get(data_type, {})
-        issues = []
-
-        # 1. 必要列检�?
-        if 'required_columns' in rules:
-            missing_cols = set(rules['required_columns']) - set(df.columns)
-            if missing_cols:
-                issues.append({
-                    'type': 'missing_columns',
-                    'details': list(missing_cols)
-                })
-
-        # 2. 值域检�?
-        if 'value_ranges' in rules:
-            for col, (min_val, max_val) in rules['value_ranges'].items():
-                if col in df.columns:
-                    out_of_range = (df[col] < min_val) | (df[col] > max_val)
-                    if out_of_range.any():
-                        issues.append({
-                            'type': 'out_of_range',
-                            'column': col,
-                            'count': out_of_range.sum()
-                        })
-
-        # 3. 逻辑关系检�?
-        if 'relationship_rules' in rules:
-            for rule in rules['relationship_rules']:
-                if not self._check_relationship(df, rule['check']):
-                    issues.append({
-                        'type': 'relationship_violation',
-                        'rule': rule['description']
-                    })
-
-        # 4. 缺失值检�?
-        if 'missing_threshold' in rules:
-            missing_rate = df.isnull().mean()
-            for col, rate in missing_rate.items():
-                if rate > rules['missing_threshold']:
-                    issues.append({
-                        'type': 'high_missing_rate',
-                        'column': col,
-                        'rate': rate
-                    })
-
-        return {
-            'passed': len(issues) == 0,
-            'issues': issues,
-            'quality_score': max(0, 100 - len(issues) * 10)
-        }
-
-    def _check_relationship(self, df: pd.DataFrame, rule: str) -> bool:
-        """检查逻辑关系"""
-        # 简化实�?
-        return True
-```
-
----
-
-## 7. 数据源配�?
-
-```yaml
-# config/data_sources.yaml
-data_sources:
-  baostock:
-    name: "Baostock"
-    enabled: true
-    priority: 1
-    rate_limit: 100
-    timeout: 30
-    retry_count: 3
-   适用场景:
-      - historical_ohlcv
-      - financial_data
-      - adj_factor
-
-  akshare:
-    name: "AkShare"
-    enabled: true
-    priority: 2
-    rate_limit: 10
-    timeout: 30
-    retry_count: 3
-    适用场景:
-      - realtime_quote
-      - concept_board
-      - money_flow
-      - macro_data
-
-  tushare_pro:
-    name: "Tushare Pro"
-    enabled: false
-    priority: 1
-    token: "${TUSHARE_TOKEN}"
-    rate_limit: 60
-    适用场景:
-      - deep_financial_data
-      - factor_data
-      - professional_indicators
-```
-
----
-
-**版本**: 1.0 | **更新**: 2026-03-28
+**维护者**: 首席文档架构师
+**索引**: `DATA_ADAPTERS_001`

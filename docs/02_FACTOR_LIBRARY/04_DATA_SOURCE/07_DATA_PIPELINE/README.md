@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_PIPELINE_README_001
 version: 1.0.0
 status: Active
@@ -12,9 +12,9 @@ parent_document: ../INDEX.md
 implementation_status: 进行中
 ---
 
-# 数据流水线蓝�?
+# 数据流水线蓝图
 
-> Layer 0: 数据基础设施 - 多数据源适配、数据清洗、质量控制、每日流水线
+> 数据源层: 数据基础设施 - 多数据源适配、数据清洗、质量控制、每日流水线
 
 ---
 

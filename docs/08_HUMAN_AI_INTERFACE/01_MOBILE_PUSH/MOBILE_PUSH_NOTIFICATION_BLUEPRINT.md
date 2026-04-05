@@ -619,3 +619,89 @@ channels:
   telegram:
     enabled: true
     token: "YOUR_BOT_TOKEN"
+    chat_id: "YOUR_CHAT_ID"
+    
+  email:
+    enabled: true
+    smtp_server: "smtp.example.com"
+    smtp_port: 587
+    username: "your_email@example.com"
+    password: "your_password"
+    
+  sms:
+    enabled: false
+    provider: "aliyun"
+    access_key: "YOUR_ACCESS_KEY"
+    secret_key: "YOUR_SECRET_KEY"
+
+routing:
+  P0:
+    channels: ["wechat", "dingtalk", "sms"]
+    receivers: ["all_admins"]
+    
+  P1:
+    channels: ["wechat", "dingtalk"]
+    receivers: ["risk_managers", "traders"]
+    
+  P2:
+    channels: ["wechat"]
+    receivers: ["operators"]
+    
+  P3:
+    channels: ["email"]
+    receivers: ["all_users"]
+
+deduplication:
+  window: 300  # 5分钟
+  
+suppression:
+  P2:
+    max_per_minute: 3
+  P3:
+    max_per_minute: 1
+```
+
+---
+
+## 六、最佳实践
+
+### 6.1 专业机构经验
+
+| 实践 | 说明 | 效果 |
+|------|------|------|
+| **多渠道冗余** | 关键预警使用多个渠道 | 确保触达率 > 99% |
+| **智能去重** | 基于fingerprint去重 | 减少90%重复推送 |
+| **分级推送** | 根据严重性选择渠道 | 降低通知疲劳 |
+| **推送追踪** | 记录推送状态和效果 | 持续优化推送策略 |
+
+### 6.2 常见陷阱
+
+| 陷阱 | 后果 | 解决方案 |
+|------|------|---------|
+| **推送过载** | 用户忽略通知 | 严格分级+智能抑制 |
+| **渠道单一** | 渠道故障无备份 | 多渠道冗余 |
+| **无追踪** | 不知道推送效果 | Prometheus监控 |
+| **硬编码配置** | 难以调整 | YAML配置文件 |
+
+---
+
+## 七、总结
+
+移动端推送通知系统通过**开源优先策略**，实现了：
+
+1. **多渠道推送** - 企业微信/钉钉/Telegram/邮件/短信
+2. **智能处理** - 去重、分组、抑制、路由
+3. **实时监控** - Prometheus + Grafana
+4. **灵活配置** - YAML配置文件
+
+**核心优势**:
+- ✅ 100%使用成熟开源项目/云服务
+- ✅ 实施周期短（1周）
+- ✅ 成本低（主要渠道免费）
+- ✅ 可靠性高（多渠道冗余）
+
+**下一步**:
+1. 实施企业微信推送（第1天）
+2. 实施钉钉推送（第2天）
+3. 实施预警处理引擎（第4-5天）
+4. 部署监控面板（第6-7天）
