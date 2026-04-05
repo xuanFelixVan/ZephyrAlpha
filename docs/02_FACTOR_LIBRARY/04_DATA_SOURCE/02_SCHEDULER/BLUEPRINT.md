@@ -3,23 +3,42 @@ module_id: DATA_SCHEDULER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 数据处理文档
+last_updated: 2026-04-05
+owner: 首席文档架构师
+standard_type: 数据处理文档
 applicable_scope: 数据调度系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
 ---
----
 
 
-# 智能下载调度器蓝�?
+# 智能下载调度器蓝图
 
-> 清风量化系统 v5.0 - 智能数据下载调度�?
+## 文档职责说明
+
+**本文档职责**: 数据下载调度系统设计
+- 定义基于时间和优先级的智能调度策略
+- 设计盘前、盘中、盘后差异化调度方案
+- 实现断点续传和异常恢复机制
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据采集系统 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 上游架构 | 数据采集整体架构 |
+| 数据源适配器 | [../DATA_SOURCE_ADAPTERS.md](../DATA_SOURCE_ADAPTERS.md) | 数据源 | 数据源接口定义 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义"何时下载数据"的调度策略
+- ❌ 本文档不负责: 数据采集实现（由 DATA_ACQUISITION.md 负责）
+- ❌ 本文档不负责: 数据源接口定义（由 DATA_SOURCE_ADAPTERS.md 负责）
+
+> 清风量化系统 v5.0 - 智能数据下载调度器
 > **索引**: `DATA.SCH.001`
-> **开发时�?*: 8h
-> **核心定位**: 基于时间和优先级的智能调度，确保数据在正确时间获�?
+> **开发时间**: 8h
+> **核心定位**: 基于时间和优先级的智能调度，确保数据在正确时间获取
 
 
 ## 1. 设计原则

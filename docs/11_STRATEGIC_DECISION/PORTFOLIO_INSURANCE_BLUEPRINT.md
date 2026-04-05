@@ -232,4 +232,257 @@ class CPPIEngine:
                        target_allocation: Dict) -> bool:
         """检查是否需要再平衡"""
         risky_diff = abs(
-            current_allocation['risky_ratio'] - target_allocation['risky
+            current_allocation['risky_ratio'] - target_allocation['risky_ratio']
+        )
+        return risky_diff > self.strategy.rebalance_threshold
+    
+    def generate_rebalance_signal(self, 
+                                 current_allocation: Dict,
+                                 target_allocation: Dict) -> Dict:
+        """生成再平衡信号"""
+        if not self.check_rebalance(current_allocation, target_allocation):
+            return {'rebalance_needed': False}
+        
+        risky_trade = (target_allocation['risky_allocation'] - 
+                      current_allocation['risky_allocation'])
+        
+        return {
+            'rebalance_needed': True,
+            'risky_trade': risky_trade,
+            'safe_trade': -risky_trade,
+            'reason': f"保护距离偏离超过阈值 {self.strategy.rebalance_threshold:.1%}",
+            'timestamp': datetime.now()
+        }
+```
+
+#### 2.1.3 CPPI保护效果示例
+
+**场景：市场下跌20%**
+
+```
+初始状态:
+- 组合价值: 100万
+- 保护层: 80万
+- 保护距离: 20万
+- 风险资产: 60万 (20万 × 3)
+- 安全资产: 40万
+
+市场下跌20%后:
+- 风险资产: 48万 (60万 × 0.8)
+- 组合价值: 88万 (48万 + 40万)
+- 新保护层: 80万 (保持不变)
+- 新保护距离: 8万
+- 新风险资产: 24万 (8万 × 3)
+- 新安全资产: 64万
+
+保护效果:
+- 无CPPI损失: 20万 (100万 × 20%)
+- 有CPPI损失: 12万 (100万 - 88万)
+- 保护效果: 减少40%损失
+```
+
+---
+
+### 2.2 TIPP引擎 (Time-Invariant Portfolio Protection)
+
+#### 2.2.1 核心原理
+
+**TIPP数学模型**：
+
+```
+保护层动态提升:
+Floor_t = Max(Floor_t-1, Portfolio_Value_t × Floor_Ratio)
+
+收益锁定机制:
+如果 Portfolio_Value_t > Peak_Value_t-1:
+    New_Floor = Max(Old_Floor, Portfolio_Value_t × Lock_Ratio)
+    
+风险资产配置:
+Risky_Asset_t = (Portfolio_Value_t - Floor_t) × Multiplier
+```
+
+**关键特性**：
+- **时间不变性**: 保护层随时间增长而提升
+- **收益锁定**: 自动锁定已实现收益
+- **动态保护**: 保护水平随组合价值增长
+
+#### 2.2.2 技术实现
+
+```python
+class TIPPStrategy:
+    """TIPP策略参数"""
+    initial_value: float
+    floor_ratio: float = 0.80          # 初始保护层比例
+    lock_ratio: float = 0.80           # 收益锁定比例
+    multiplier: float = 3.0            # 风险乘数
+    max_risky_ratio: float = 0.90      # 最大风险资产比例
+
+class TIPPEngine:
+    """TIPP引擎"""
+    
+    def __init__(self, strategy: TIPPStrategy):
+        self.strategy = strategy
+        self.floor = strategy.initial_value * strategy.floor_ratio
+        self.peak_value = strategy.initial_value
+        self.locked_profits = 0.0
+        
+    def update_floor(self, portfolio_value: float) -> float:
+        """更新保护层"""
+        if portfolio_value > self.peak_value:
+            profit = portfolio_value - self.peak_value
+            self.locked_profits += profit * (1 - self.strategy.lock_ratio)
+            
+            new_floor = portfolio_value * self.strategy.lock_ratio
+            self.floor = max(self.floor, new_floor)
+            self.peak_value = portfolio_value
+        
+        return self.floor
+    
+    def allocate_assets(self, portfolio_value: float) -> Dict:
+        """资产配置"""
+        floor = self.update_floor(portfolio_value)
+        cushion = portfolio_value - floor
+        
+        risky_allocation = min(
+            cushion * self.strategy.multiplier,
+            portfolio_value * self.strategy.max_risky_ratio
+        )
+        
+        safe_allocation = portfolio_value - risky_allocation
+        
+        return {
+            'portfolio_value': portfolio_value,
+            'floor': floor,
+            'cushion': cushion,
+            'risky_allocation': risky_allocation,
+            'safe_allocation': safe_allocation,
+            'peak_value': self.peak_value,
+            'locked_profits': self.locked_profits,
+            'floor_growth': (floor / (self.strategy.initial_value * 
+                                      self.strategy.floor_ratio) - 1),
+            'timestamp': datetime.now()
+        }
+```
+
+---
+
+### 2.3 OBPI引擎 (Option-Based Portfolio Insurance)
+
+#### 2.3.1 核心原理
+
+**OBPI数学模型**：
+
+```
+保护性看跌期权策略:
+Portfolio_t = Stock_t + Put_Option_t
+
+成本计算:
+Hedge_Cost = Put_Premium × Number_of_Contracts
+
+保护效果:
+如果 Stock_t < Strike_Price:
+    Portfolio_Value = Strike_Price × Shares + Put_Payoff
+否则:
+    Portfolio_Value = Stock_t × Shares
+```
+
+**关键参数**：
+- **Strike_Price**: 行权价（通常为当前价格的90-95%）
+- **Expiration**: 到期时间（通常为1-3个月）
+- **Hedge_Ratio**: 对冲比例（通常为50-100%）
+
+#### 2.3.2 技术实现
+
+```python
+from scipy.stats import norm
+import math
+
+class OBPIStrategy:
+    """OBPI策略参数"""
+    portfolio_value: float
+    protection_ratio: float = 0.95    # 保护比例（95%）
+    hedge_ratio: float = 1.0          # 对冲比例（100%）
+    time_to_expiry: int = 90          # 到期时间（天）
+    risk_free_rate: float = 0.03      # 无风险利率
+
+class OBPIEngine:
+    """OBPI引擎"""
+    
+    def __init__(self, strategy: OBPIStrategy):
+        self.strategy = strategy
+        
+    def black_scholes_put(self, 
+                         S: float,    # 标的价格
+                         K: float,    # 行权价
+                         T: float,    # 到期时间（年）
+                         r: float,    # 无风险利率
+                         sigma: float # 波动率
+                         ) -> float:
+        """Black-Scholes看跌期权定价"""
+        d1 = (math.log(S / K) + (r + 0.5 * sigma ** 2) * T) / \
+             (sigma * math.sqrt(T))
+        d2 = d1 - sigma * math.sqrt(T)
+        
+        put_price = K * math.exp(-r * T) * norm.cdf(-d2) - \
+                   S * norm.cdf(-d1)
+        return put_price
+    
+    def calculate_hedge_cost(self, 
+                            current_price: float,
+                            volatility: float) -> Dict:
+        """计算对冲成本"""
+        strike = current_price * self.strategy.protection_ratio
+        T = self.strategy.time_to_expiry / 365.0
+        
+        put_price = self.black_scholes_put(
+            S=current_price,
+            K=strike,
+            T=T,
+            r=self.strategy.risk_free_rate,
+            sigma=volatility
+        )
+        
+        total_cost = put_price * self.strategy.hedge_ratio
+        
+        return {
+            'put_price': put_price,
+            'strike_price': strike,
+            'total_cost': total_cost,
+            'cost_ratio': total_cost / current_price,
+            'expiration_days': self.strategy.time_to_expiry,
+            'timestamp': datetime.now()
+        }
+    
+    def optimize_hedge_strategy(self, 
+                               current_price: float,
+                               volatility: float,
+                               risk_budget: float) -> Dict:
+        """优化对冲策略"""
+        protection_ratios = [0.90, 0.92, 0.95, 0.98]
+        hedge_ratios = [0.5, 0.7, 0.85, 1.0]
+        
+        best_strategy = None
+        best_cost_benefit = 0
+        
+        for prot_ratio in protection_ratios:
+            for hedge_ratio in hedge_ratios:
+                temp_strategy = OBPIStrategy(
+                    portfolio_value=self.strategy.portfolio_value,
+                    protection_ratio=prot_ratio,
+                    hedge_ratio=hedge_ratio
+                )
+                
+                temp_engine = OBPIEngine(temp_strategy)
+                cost_info = temp_engine.calculate_hedge_cost(
+                    current_price, volatility
+                )
+                
+                if cost_info['total_cost'] <= risk_budget:
+                    protection_level = prot_ratio * hedge_ratio
+                    cost_benefit = protection_level / cost_info['cost_ratio']
+                    
+                    if cost_benefit > best_cost_benefit:
+                        best_cost_benefit = cost_benefit
+                        best_strategy = {
+                            'protection_ratio': prot_ratio,
+                            'hedge_ratio
