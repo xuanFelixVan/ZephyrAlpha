@@ -28,6 +28,7 @@ implementation_status: 蓝图设计完成
 responsibility:
   - 数据质量 (Layer 1)
 ---
+---
 
 # 数据质量监控界面蓝图
 > **核心职责**: Data Quality Monitoring Interface蓝图设计

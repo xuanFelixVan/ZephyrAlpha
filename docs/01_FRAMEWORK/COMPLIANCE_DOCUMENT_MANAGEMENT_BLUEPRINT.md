@@ -50,6 +50,7 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
 ---
+---
 
 # 合规文档管理系统蓝图
 > **核心职责**: Compliance Document Management蓝图设计

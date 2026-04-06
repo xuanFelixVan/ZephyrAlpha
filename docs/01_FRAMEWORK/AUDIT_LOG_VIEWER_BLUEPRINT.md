@@ -29,7 +29,9 @@ responsibility_boundary: |
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
   AI决策审计请参考：AI_DECISION_AUDIT_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
 
 
 # 审计日志查看器蓝图

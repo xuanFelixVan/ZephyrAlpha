@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的联邦学习系统设计，包括分布式训练、隐私保护、模型聚合等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 联邦学习蓝图
 > **核心职责**: Federated Learning蓝图设计
 > **职责边界**: 

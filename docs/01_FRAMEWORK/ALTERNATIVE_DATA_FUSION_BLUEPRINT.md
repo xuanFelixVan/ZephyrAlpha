@@ -23,6 +23,7 @@ responsibility_boundary: |
   本文档负责Layer 0数据源层的另类数据融合设计，包括卫星数据、社交媒体、信用卡数据等核心功能。
 layer: Layer 0 (数据源层)
 ---
+---
 
 
 

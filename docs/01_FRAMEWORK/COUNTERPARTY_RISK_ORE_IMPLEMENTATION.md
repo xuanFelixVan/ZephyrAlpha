@@ -18,7 +18,9 @@ related_documents:
   - COUNTERPARTY_RISK_BLUEPRINT.md
   - P0_MODULES_IMPLEMENTATION_PLAN.md
 parent_document: ../INDEX.md
-implementation_status: 设计阶段---
+implementation_status: 设计阶段
+---
+---
 
 
 # 交易对手风险系统ORE集成实施方案

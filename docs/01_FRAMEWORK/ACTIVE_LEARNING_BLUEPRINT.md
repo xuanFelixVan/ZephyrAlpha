@@ -23,6 +23,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的主动学习系统设计，包括样本选择、标注策略、迭代学习等核心功能。
 layer: Layer 3 (策略层)
 ---
+---
 
 
 

@@ -52,6 +52,7 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）
 ---
+---
 
 # 反洗钱监控系统蓝图
 > **核心职责**: Aml Monitoring System蓝图设计

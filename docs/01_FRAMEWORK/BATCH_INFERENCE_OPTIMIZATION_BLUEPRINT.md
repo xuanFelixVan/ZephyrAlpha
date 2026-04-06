@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的批处理推理优化设计，包括批处理策略、推理加速、资源优化等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 批处理推理优化蓝�?
 > **核心职责**: Batch Inference Optimization蓝图设计
 > **职责边界**: 

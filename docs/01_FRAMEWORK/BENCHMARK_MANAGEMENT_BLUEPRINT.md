@@ -35,7 +35,9 @@ responsibility_boundary: |
   
   **与本文档职责边界**：
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因（包含基准归因）
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）---
+  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）
+---
+---
 
 
 # 基准管理系统蓝图（蓝图阶段）

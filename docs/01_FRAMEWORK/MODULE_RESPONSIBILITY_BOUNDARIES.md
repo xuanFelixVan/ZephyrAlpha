@@ -13,7 +13,10 @@ standard_type: 专业量化机构文档
 applicable_scope: 全系?
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+layer: Layer 4
+---
+---
 
 
 # 模块职责边界定义

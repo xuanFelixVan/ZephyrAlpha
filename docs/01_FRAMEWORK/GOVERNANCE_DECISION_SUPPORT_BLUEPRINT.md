@@ -28,6 +28,7 @@ responsibility:
   - 决策支持
   - AI推荐
 ---
+---
 
 # 治理决策支持系统蓝图
 > **核心职责**: Governance Decision Support蓝图设计

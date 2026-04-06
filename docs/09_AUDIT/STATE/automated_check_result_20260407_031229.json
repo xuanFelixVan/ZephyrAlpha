@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-04-07T03:12:29.123927",
+  "total_files": 1772,
+  "compliance_rate": {
+    "responsibility_rate": 97.29119638826185,
+    "yaml_rate": 99.94356659142211,
+    "module_id_rate": 99.94356659142211,
+    "naming_rate": 92.60722347629797,
+    "overall_rate": 97.44638826185101
+  },
+  "issues": {
+    "missing_responsibility": 48,
+    "missing_yaml": 1,
+    "missing_module_id": 1,
+    "naming_issues": 131,
+    "sparse_directories": 93
+  }
+}

@@ -52,6 +52,7 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准
 ---
+---
 
 # 算法交易合规系统蓝图
 > **核心职责**: Algorithmic Trading Compliance蓝图设计

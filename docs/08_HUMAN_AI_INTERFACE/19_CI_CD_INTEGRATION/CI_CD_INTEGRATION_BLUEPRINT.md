@@ -2,21 +2,6 @@
 module_id: CI_CD_INTEGRATION_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - CI/CD集成，负责持续集成、持续部署和自动化流水线，不负责系统监控和告警
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: CI_CD_INTEGRATION_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -29,6 +14,8 @@ implementation_status: 蓝图设计
 open_source_project: GitHub Actions
 github_url: https://github.com/features/actions
 license: Free for public repositories
+responsibility:
+  - CI/CD集成，负责持续集成、持续部署和自动化流水线，不负责系统监控和告警
 ---
 # CI/CD集成模块蓝图
 > **核心职责**: Ci Cd Integration蓝图设计

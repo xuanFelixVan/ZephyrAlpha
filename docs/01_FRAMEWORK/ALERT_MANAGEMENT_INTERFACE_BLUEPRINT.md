@@ -28,7 +28,9 @@ responsibility_boundary: |
   系统监控请参考：GRAFANA_MONITORING_BLUEPRINT.md
   推送通知请参考：MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
 
 
 # 告警管理界面蓝图

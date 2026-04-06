@@ -32,6 +32,7 @@ responsibility_boundary: |
 responsibility:
   - 数据质量 (Layer 10)
 ---
+---
 
 # 数据质量治理体系蓝图
 > **核心职责**: Data Quality Governance蓝图设计

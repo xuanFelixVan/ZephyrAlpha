@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的扩散模型设计，包括扩散过程、去噪网络、生成采样等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 扩散模型蓝图
 > **核心职责**: Diffusion Model蓝图设计
 > **职责边界**: 

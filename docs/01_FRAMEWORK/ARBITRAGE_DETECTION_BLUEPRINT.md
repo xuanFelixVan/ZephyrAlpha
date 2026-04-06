@@ -23,6 +23,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的套利检测模型设计，包括套利机会识别、风险套利、统计套利等核心功能。
 layer: Layer 2 (Alpha因子层)
 ---
+---
 
 
 

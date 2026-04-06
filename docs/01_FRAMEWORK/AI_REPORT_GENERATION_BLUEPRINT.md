@@ -13,7 +13,9 @@ layer: Layer 7 (风控层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: AI报告生成模块
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg", "Morningstar", "MSCI"]---
+reference_models: ["Bloomberg", "Morningstar", "MSCI"]
+---
+---
 
 
 # AI报告生成蓝图

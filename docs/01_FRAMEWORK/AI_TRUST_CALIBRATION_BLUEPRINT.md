@@ -23,6 +23,7 @@ responsibility:
   responsibility_layer: Layer 4
   responsibility_layer: Layer 11
 ---
+---
 ﻿---
 module_id: AI_TRUST_CALIBRATION_BLUEPRINT_001
 version: 1.0.0

@@ -41,7 +41,9 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - GRAFANA_MONITORING_BLUEPRINT.md: Grafana监控系统
   - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统---
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
+---
+---
 
 
 # 治理仪表板系统蓝图

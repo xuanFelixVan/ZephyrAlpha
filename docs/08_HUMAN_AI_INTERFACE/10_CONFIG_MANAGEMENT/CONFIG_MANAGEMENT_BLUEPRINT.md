@@ -2,21 +2,6 @@
 module_id: CONFIG_MANAGEMENT_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 配置管理系统，负责系统配置的集中管理、版本控制和配置同步，不负责用户偏好设置
-layer: Layer 4 (机器学习层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: CONFIG_MANAGEMENT_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha配置管理
 compliance_level: 专业标准
 parent_document: ../index.md
 implementation_status: 蓝图设计
+responsibility:
+  - 配置管理系统，负责系统配置的集中管理、版本控制和配置同步，不负责用户偏好设置
 ---
 # 配置管理界面模块蓝图
 > **核心职责**: Config Management蓝图设计

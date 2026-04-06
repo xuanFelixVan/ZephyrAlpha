@@ -12,6 +12,7 @@ compliance_level: 专业标准
 responsibility:
   - 风险预算 (Layer 11)
 ---
+---
 
 ﻿---
 module_id: DECISION_DASHBOARD_BLUEPRINT_001

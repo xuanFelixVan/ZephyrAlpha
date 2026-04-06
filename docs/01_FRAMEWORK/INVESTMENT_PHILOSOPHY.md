@@ -10,7 +10,10 @@ implementation_status: å·²å®æ?owner: é¦å¸­æèµå®?vers
 module_id: INVESTMENT_PHILOSOPHY
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["æèµå²å­¦", "æ ¸å¿çå¿µ", "æèµåå"]---
+tags: ["æèµå²å­¦", "æ ¸å¿çå¿µ", "æèµåå"]
+layer: Layer 4
+---
+---
 
 # ZephyrAlphaæèµå²å­¦
 > **核心职责**: 文档内容说明

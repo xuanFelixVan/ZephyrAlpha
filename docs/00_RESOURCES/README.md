@@ -11,7 +11,11 @@ responsibility:
   - 数据源
 applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?
+layer: Layer 4
+---
+---
+---
 
 # 00_RESOURCES - 外部参考文档资源库
 > **核心职责**: 模块说明和快速入门指南

@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的后门检测系统设计，包括后门检测、防御策略、安全审计等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 后门检测蓝�?
 > **核心职责**: Backdoor Detection蓝图设计
 > **职责边界**: 

@@ -23,6 +23,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的分布式训练系统设计，包括数据并行、模型并行、混合并行等核心功能。
 layer: Layer 3 (策略层)
 ---
+---
 
 
 

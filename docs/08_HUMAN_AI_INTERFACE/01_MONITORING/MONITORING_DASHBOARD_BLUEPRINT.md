@@ -2,21 +2,6 @@
 module_id: MONITORING_DASHBOARD_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 系统监控仪表板，负责实时监控系统运行状态、关键指标展示和性能监控，不负责告警推送和日志记录
-layer: Layer 5 (执行层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: MONITORING_DASHBOARD_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha系统监控
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计
+responsibility:
+  - 系统监控仪表板，负责实时监控系统运行状态、关键指标展示和性能监控，不负责告警推送和日志记录
 ---
 # 监控仪表板模块蓝图
 > **核心职责**: Monitoring Dashboard蓝图设计

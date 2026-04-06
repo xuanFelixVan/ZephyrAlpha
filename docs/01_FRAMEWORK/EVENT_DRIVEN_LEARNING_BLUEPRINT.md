@@ -23,6 +23,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的事件驱动学习设计，包括事件检测、触发学习、实时更新等核心功能。
 layer: Layer 3 (策略层)
 ---
+---
 
 
 

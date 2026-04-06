@@ -10,6 +10,9 @@ responsibility:
   - 因子计算
   - 交易执行
   - 回测系统
+layer: Layer 4
+---
+---
 ---
 
 ---

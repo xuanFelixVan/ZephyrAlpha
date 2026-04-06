@@ -14,6 +14,8 @@ responsibility: 风险预算
   - 数据质量 (Layer 1)
   responsibility_layer: Layer 1
   responsibility_layer: Layer 11
+last_updated: 2026-04-07
+---
 ---
 
 # 蓝图阶段完整补充方案

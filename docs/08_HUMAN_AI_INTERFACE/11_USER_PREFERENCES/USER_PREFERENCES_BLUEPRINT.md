@@ -2,21 +2,6 @@
 module_id: USER_PREFERENCES_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 用户偏好设置，负责用户个性化配置、界面定制和偏好管理，不负责系统配置管理
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: USER_PREFERENCES_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha用户偏好
 compliance_level: 专业标准
 parent_document: ../index.md
 implementation_status: 蓝图设计
+responsibility:
+  - 用户偏好设置，负责用户个性化配置、界面定制和偏好管理，不负责系统配置管理
 ---
 # 用户偏好设置模块蓝图
 > **核心职责**: User Preferences蓝图设计

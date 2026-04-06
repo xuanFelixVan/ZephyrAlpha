@@ -2,21 +2,6 @@
 module_id: BACKTEST_UI_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 交互式回测界面，负责策略回测的可视化展示、结果分析和报告生成，不负责实盘交易和参数优化
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: BACKTEST_UI_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha回测界面
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计
+responsibility:
+  - 交互式回测界面，负责策略回测的可视化展示、结果分析和报告生成，不负责实盘交易和参数优化
 ---
 # 交互式回测界面模块蓝图
 > **核心职责**: Backtest Ui蓝图设计

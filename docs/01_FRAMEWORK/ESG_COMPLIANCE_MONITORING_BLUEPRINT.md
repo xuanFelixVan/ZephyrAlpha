@@ -31,7 +31,9 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪---
+  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
+---
+---
 
 
 # ESG合规监控系统蓝图

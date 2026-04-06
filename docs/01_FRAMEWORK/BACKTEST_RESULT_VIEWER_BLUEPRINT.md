@@ -28,7 +28,9 @@ responsibility_boundary: |
   回测配置请参考：STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
   绩效归因请参考：STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
 
 
 # 回测结果查看器蓝图

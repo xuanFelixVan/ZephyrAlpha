@@ -26,7 +26,9 @@ responsibility_boundary: |
   
   持仓管理请参考：POSITION_MANAGEMENT_INTERFACE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
 
 
 # 资金管理界面蓝图

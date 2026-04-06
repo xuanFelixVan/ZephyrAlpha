@@ -39,7 +39,9 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - KILL_SWITCH_SYSTEM_BLUEPRINT.md: 紧急停止开关（立即停止）
   - RISK_LIMIT_MANAGEMENT_BLUEPRINT.md: 风险限额管理（限额监控）
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）---
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
+---
+---
 
 
 # 熔断机制系统蓝图

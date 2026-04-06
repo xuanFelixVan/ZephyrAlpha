@@ -15,16 +15,42 @@ responsibility:
 ---
 
 # Layer 11 战略决策层蓝图索引
-> **核心职责**: Blueprint Index.Md蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Blueprint Index.Md蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-07
 > **索引类型**: 完整蓝图体系索引
 > **适用场景**: 个人开发、AI维护、个人使用
+
+---
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**Layer 11战略决策层的蓝图索引导航文档**，负责：
+- 提供完整的蓝图清单和快速导航
+- 说明蓝图之间的依赖关系
+- 提供实施优先级参考
+- 为蓝图查找提供索引服务
+
+### 职责边界
+
+**负责**：
+- ✅ 提供蓝图清单和导航链接
+- ✅ 说明蓝图依赖关系
+- ✅ 提供实施优先级参考
+- ✅ 提供开源方案推荐
+
+**不负责**：
+- ❌ 详细的模块状态和实施进度（由COMPLETE_BLUEPRINT_OVERVIEW.md负责）
+- ❌ 缺失模块清单（由COMPLETE_BLUEPRINT_OVERVIEW.md负责）
+- ❌ 整体架构设计（由BLUEPRINT.md负责）
+
+### 对接文档
+
+**相关文档**：
+- [BLUEPRINT.md](./BLUEPRINT.md) - 整体架构设计
+- [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md) - 完整模块清单和状态
 
 ---
 
@@ -34,9 +60,9 @@ responsibility:
 
 | 类别 | 已完成 | 总数 | 完成率 | 状态 |
 |------|--------|------|--------|------|
-| **P0级蓝图** | 3 | 6 | 50% | ⚠️ 进行中 |
+| **P0级蓝图** | 6 | 6 | 100% | ✅ 完成 |
 | **P1级蓝图** | 6 | 6 | 100% | ✅ 完成 |
-| **总体蓝图** | 9 | 12 | 75% | ⚠️ 进行中 |
+| **总体蓝图** | 12 | 12 | 100% | ✅ 完成 |
 
 ---
 
@@ -50,12 +76,10 @@ responsibility:
 |------|---------|---------|---------|---------|
 | 1 | [ASSET_ALLOCATION_MODEL.md](./01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | 战略资产配置模型设计 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 1-2 |
 | 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](./01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | 资产配置优化方法 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 3-4 |
-| 3 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](./04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | Week 2, Day 6-7 |
-
-**注意**: 以下P0级蓝图待补充：
-- 风险预算框架.md（待创建）
-- 策略选择框架.md（待创建）
-- 策略组合优化.md（待创建）
+| 3 | [RISK_BUDGETING_FRAMEWORK.md](./02_risk_budgeting/RISK_BUDGETING_FRAMEWORK.md) | 风险预算分配框架 | Riskfolio-Lib, XQRiskCore | Week 1, Day 5-7 |
+| 4 | [STRATEGY_SELECTION_FRAMEWORK.md](./03_strategy_selection/STRATEGY_SELECTION_FRAMEWORK.md) | 投资策略选择框架 | skfolio, empyrical | Week 2, Day 1-3 |
+| 5 | [STRATEGY_PORTFOLIO_OPTIMIZATION.md](./03_strategy_selection/STRATEGY_PORTFOLIO_OPTIMIZATION.md) | 策略组合优化方法 | Multi-Strategy-Portfolio, skfolio | Week 2, Day 4-5 |
+| 6 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](./04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | Week 2, Day 6-7 |
 
 ### 1.2 P1级蓝图（重要支持模块）
 

@@ -27,7 +27,9 @@ responsibility_boundary: |
   
   实施阶段分析请参考：IMPLEMENTATION_ACCELERATION_BLUEPRINT.md
 parent_document: ./System_Manifest.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
 
 
 # 蓝图阶段完整缺失模块分析与补充方案

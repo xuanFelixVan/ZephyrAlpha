@@ -31,7 +31,9 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查---
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
+---
+---
 
 
 # 数据隐私合规系统蓝图

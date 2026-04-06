@@ -2,21 +2,6 @@
 module_id: AUTH_SYSTEM_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 认证授权系统，负责用户身份认证、登录管理和基础权限验证，不负责细粒度权限控制
-layer: Layer 2 (Alpha因子层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: AUTH_SYSTEM_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha认证授权
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计
+responsibility:
+  - 认证授权系统，负责用户身份认证、登录管理和基础权限验证，不负责细粒度权限控制
 ---
 # 认证授权系统模块蓝图
 > **核心职责**: Auth System蓝图设计

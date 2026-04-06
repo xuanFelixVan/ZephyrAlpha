@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的数据标注平台设计，包括标注工具、质量控制、标注流程等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 数据标注平台蓝图
 > **核心职责**: Data Annotation Platform蓝图设计
 > **职责边界**: 

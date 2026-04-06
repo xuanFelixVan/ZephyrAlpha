@@ -32,6 +32,7 @@ responsibility_boundary: |
 responsibility:
   - 数据质量 (Layer 1)
 ---
+---
 
 # 数据源质量监控蓝图
 > **核心职责**: Data Source Quality Monitoring蓝图设计

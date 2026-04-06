@@ -2,21 +2,6 @@
 module_id: PERMISSION_MANAGEMENT_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 权限管理系统，负责细粒度权限控制、角色管理和权限审计，不负责基础认证授权
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: PERMISSION_MANAGEMENT_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha权限管理
 compliance_level: 专业标准
 parent_document: ../index.md
 implementation_status: 蓝图设计
+responsibility:
+  - 权限管理系统，负责细粒度权限控制、角色管理和权限审计，不负责基础认证授权
 ---
 # 权限管理界面模块蓝图
 > **核心职责**: Permission Management蓝图设计

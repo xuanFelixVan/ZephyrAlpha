@@ -30,7 +30,9 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
   - MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 模型性能基准
-  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成---
+  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+---
+---
 
 
 # 算法性能基准库蓝图

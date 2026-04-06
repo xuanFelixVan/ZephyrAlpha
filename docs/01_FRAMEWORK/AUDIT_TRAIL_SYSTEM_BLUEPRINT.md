@@ -32,7 +32,9 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
-  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成---
+  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+---
+---
 
 
 # 审计追踪系统蓝图

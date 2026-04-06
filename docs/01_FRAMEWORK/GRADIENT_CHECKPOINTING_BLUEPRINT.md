@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的梯度检查点设计，包括内存优化、计算重用、训练加速等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 梯度检查点蓝图
 > **核心职责**: Gradient Checkpointing蓝图设计
 > **职责边界**: 

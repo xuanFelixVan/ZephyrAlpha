@@ -13,7 +13,9 @@ layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 因子回测框架模块
 compliance_level: 顶级专业标准
-reference_models: ["WorldQuant", "Two Sigma", "Citadel"]---
+reference_models: ["WorldQuant", "Two Sigma", "Citadel"]
+---
+---
 
 
 # 因子回测框架蓝图

@@ -28,7 +28,9 @@ responsibility_boundary: |
   合规监控请参考：COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
   监管报告请参考：REGULATORY_REPORTING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
 
 
 # 合规报告界面蓝图

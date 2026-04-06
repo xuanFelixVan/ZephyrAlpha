@@ -28,7 +28,9 @@ responsibility_boundary: |
   
   注意：本文档属于Layer 8 (人机交互层)，不属于Layer 4 (机器学习层)
   
-  机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md---
+  机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md
+---
+---
 
 
 # 灾备体系蓝图

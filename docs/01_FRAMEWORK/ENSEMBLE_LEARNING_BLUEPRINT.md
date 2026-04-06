@@ -32,6 +32,7 @@ priority: P0 (最高优先级)
 estimated_effort: 1.5周
 open_source_solution: XGBoost + LightGBM + CatBoost + Scikit-learn
 ---
+---
 
 # 模型集成学习蓝图
 > **核心职责**: Ensemble Learning蓝图设计

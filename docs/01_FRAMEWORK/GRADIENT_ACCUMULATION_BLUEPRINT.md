@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的梯度累积设计，包括批次模拟、内存优化、训练稳定性等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 梯度累积蓝图
 > **核心职责**: Gradient Accumulation蓝图设计
 > **职责边界**: 

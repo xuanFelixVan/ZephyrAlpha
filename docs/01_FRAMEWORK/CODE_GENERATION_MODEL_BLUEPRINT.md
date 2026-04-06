@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的代码生成模型设计，包括代码理解、代码生成、代码补全等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # 代码生成模型蓝图
 > **核心职责**: Code Generation Model蓝图设计
 > **职责边界**: 

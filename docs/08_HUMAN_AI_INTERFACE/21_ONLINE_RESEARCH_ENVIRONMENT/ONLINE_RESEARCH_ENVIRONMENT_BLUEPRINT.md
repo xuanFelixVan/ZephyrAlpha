@@ -2,21 +2,6 @@
 module_id: ONLINE_RESEARCH_ENVIRONMENT_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化
-layer: Layer 2 (Alpha因子层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: ONLINE_RESEARCH_ENVIRONMENT_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -29,6 +14,8 @@ implementation_status: 蓝图设计
 open_source_project: JupyterLab
 github_url: https://github.com/jupyterlab/jupyterlab
 license: BSD-3-Clause
+responsibility:
+  - 在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化
 ---
 # 在线研究环境模块蓝图
 > **核心职责**: Online Research Environment蓝图设计

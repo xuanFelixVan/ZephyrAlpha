@@ -2,21 +2,6 @@
 module_id: PARAMETER_OPTIMIZATION_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 参数优化界面，负责策略参数优化、参数搜索和优化结果展示，不负责策略回测和实盘交易
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: PARAMETER_OPTIMIZATION_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -29,6 +14,8 @@ implementation_status: 蓝图设计
 open_source_project: Optuna
 github_url: https://github.com/optuna/optuna
 license: MIT
+responsibility:
+  - 参数优化界面，负责策略参数优化、参数搜索和优化结果展示，不负责策略回测和实盘交易
 ---
 # 参数优化界面模块蓝图
 > **核心职责**: Parameter Optimization蓝图设计

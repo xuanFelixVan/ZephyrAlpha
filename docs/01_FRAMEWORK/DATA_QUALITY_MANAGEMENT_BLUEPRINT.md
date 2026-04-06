@@ -39,6 +39,7 @@ responsibility_boundary: |
 responsibility:
   - 数据质量 (Layer 1)
 ---
+---
 
 # 数据质量管理系统蓝图
 > **核心职责**: Data Quality Management蓝图设计

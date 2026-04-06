@@ -52,6 +52,7 @@ responsibility_boundary: |
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）
   - BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT.md: 业务连续性管理（灾难恢复）
 ---
+---
 
 # 网络安全事件响应系统蓝图
 > **核心职责**: Cybersecurity Incident Response蓝图设计

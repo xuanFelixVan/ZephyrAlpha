@@ -13,7 +13,9 @@ layer: 全系统
 standard_type: 蓝图阶段最终完成报告
 applicable_scope: 蓝图阶段所有内容确认
 compliance_level: 专业机构标准
-reference_models: ["Two Sigma", "Citadel", "文艺复兴", "桥水基金", "Google", "Netflix"]---
+reference_models: ["Two Sigma", "Citadel", "文艺复兴", "桥水基金", "Google", "Netflix"]
+---
+---
 
 
 # 蓝图阶段最终完成报告

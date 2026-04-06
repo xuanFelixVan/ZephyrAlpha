@@ -2,21 +2,6 @@
 module_id: DATA_BACKUP_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 数据备份系统，负责数据备份、恢复和备份策略管理，不负责数据导入导出
-layer: Layer 2 (Alpha因子层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: DATA_BACKUP_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -29,6 +14,8 @@ implementation_status: 蓝图设计
 open_source_project: Restic
 github_url: https://github.com/restic/restic
 license: BSD-2-Clause
+responsibility:
+  - 数据备份系统，负责数据备份、恢复和备份策略管理，不负责数据导入导出
 ---
 # 数据备份模块蓝图
 > **核心职责**: Data Backup蓝图设计

@@ -52,6 +52,7 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 数据质量治理
 ---
+---
 
 # 数据主权合规系统蓝图
 > **核心职责**: Data Sovereignty Compliance蓝图设计

@@ -21,6 +21,7 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的DeepAR时序模型设计，包括概率预测、自回归结构、不确定性建模等核心功能。
 layer: Layer 4 (机器学习层)
 ---
+---
 # DeepAR èå¾
 > **核心职责**: Deepar蓝图设计
 > **职责边界**: 

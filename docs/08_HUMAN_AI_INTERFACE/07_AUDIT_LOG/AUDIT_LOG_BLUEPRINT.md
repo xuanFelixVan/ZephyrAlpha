@@ -2,21 +2,6 @@
 module_id: AUDIT_LOG_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-responsibility:
-  - 审计日志系统，负责操作审计、日志记录和审计追踪，不负责系统监控和告警
-layer: Layer 2 (Alpha因子层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-﻿---
-module_id: AUDIT_LOG_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
@@ -28,6 +13,8 @@ applicable_scope: ZephyrAlpha审计日志
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计
+responsibility:
+  - 审计日志系统，负责操作审计、日志记录和审计追踪，不负责系统监控和告警
 ---
 # 审计日志系统模块蓝图
 > **核心职责**: Audit Log蓝图设计

@@ -30,6 +30,7 @@ responsibility_boundary: |
 responsibility:
   - 数据质量 (Layer 1)
 ---
+---
 
 # 数据血缘追踪系统蓝图
 > **核心职责**: Data Lineage Tracking蓝图设计
