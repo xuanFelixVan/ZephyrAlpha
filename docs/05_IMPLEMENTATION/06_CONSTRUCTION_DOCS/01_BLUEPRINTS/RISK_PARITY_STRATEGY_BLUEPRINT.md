@@ -80,6 +80,52 @@ layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [动态相关性建模蓝图](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | DYNAMIC_CORRELATION_MODELING_001 | 强依赖 | 提供协方差矩阵 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [简化风险预算系统蓝图](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 强依赖 | 风险预算系统 |
+| [Black-Litterman模型蓝图](./BLACK_LITTERMAN_MODEL_BLUEPRINT.md) | BLACK_LITTERMAN_MODEL_001 | 中依赖 | 收益增强 |
+| [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
+| **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
+| **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[动态相关性建模] --> B[风险平价策略]
+    C[组合优化引擎] --> B
+    D[数据质量监控] --> B
+    
+    B --> E[风险预算系统]
+    B --> F[Black-Litterman模型]
+    B --> G[组合再平衡]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+---
+
 ## 2. 架构设计
 
 ### 2.1 Layer定位与职责边界
