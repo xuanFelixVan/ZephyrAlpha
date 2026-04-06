@@ -13,8 +13,21 @@ reference_models: ["Two Sigma Data Quality", "Citadel Data Validation", "Bridgew
 related_documents:
   - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
   - DATA_QUALITY_MONITORING_BLUEPRINT.md
+  - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md
+  - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 1 数据层）**：
+  - 数据质量多维度评估（完整性、准确性、时效性、一致性评估）
+  - 数据质量评分体系（多维度评分、综合评分、质量等级）
+  - 数据质量趋势分析（历史对比、趋势预测）
+  
+  **与本文档职责边界**：
+  - Layer 0（数据源层）: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md - 负责数据源健康监控
+  - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
+  - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
+  - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 ---
 
 # 数据质量评估蓝图

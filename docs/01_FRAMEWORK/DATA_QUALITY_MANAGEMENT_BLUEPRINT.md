@@ -13,8 +13,22 @@ reference_models: ["Two Sigma Data Governance", "Great Expectations"]
 related_documents:
   - ARCHITECTURE.md
   - LAYER_10_GAP_ANALYSIS_REPORT.md
+  - DATA_QUALITY_ASSESSMENT_BLUEPRINT.md
+  - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
+  - DATA_QUALITY_MONITORING_BLUEPRINT.md
+  - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理层）**：
+  - 数据质量规则定义（完整性、准确性、一致性、时效性标准制定）
+  - 数据质量改进跟踪（问题跟踪、改进建议、合规管理）
+  
+  **与本文档职责边界**：
+  - Layer 0（数据源层）: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md - 负责数据源健康监控
+  - Layer 1（数据层）: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md - 负责多维度质量评估
+  - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
+  - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 ---
 
 # 数据质量管理系统蓝图

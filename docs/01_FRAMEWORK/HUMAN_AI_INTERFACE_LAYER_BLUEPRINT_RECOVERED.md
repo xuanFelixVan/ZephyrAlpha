@@ -1,20 +1,36 @@
 ---
-module_id: HUMAN_AI_INTERFACE_LAYER_BLUEPRINT_001
+module_id: HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BP_001
 version: 1.0.0
-status: Active
+status: Archived
 created_date: 2026-04-04
-last_updated: 2026-04-04
+last_updated: 2026-04-06
 owner: 系统架构师
+layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 8 - 人机交互层
+applicable_scope: Layer 8 - 人机交互层技术实现
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Human-AI Collaboration", "Renaissance Human Oversight", "Two Sigma Human Interface", "Citadel Human Control"]
 related_documents:
   - ARCHITECTURE.md
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - HUMAN_AI_INTEGRATION_BLUEPRINT.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+  - GRAFANA_MONITORING_BLUEPRINT.md
+  - AI_TRUST_CALIBRATION_BLUEPRINT.md
+parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
+implementation_status: 设计阶段(已归档)
+responsibility_boundary: |
+  本文档负责人机交互层技术实现细节，包括：
+  - 交易授权系统（授权管理引擎、授权流程管理）
+  - 实时监控系统（监控引擎、预警系统）
+  - 报告查看系统（报告查看引擎、交互式分析）
+  - 协作决策系统（协作决策引擎、信任校准）
+  
+  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
+  治理合规请参考：GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+  
+  注意：本文档已归档，内容可能被其他文档引用
 ---
 
 # Layer 8: 人机交互层蓝图
