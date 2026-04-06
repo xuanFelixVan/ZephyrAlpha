@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QMT_INTERFACE_001
 version: 1.0.1
 status: Active
@@ -20,7 +20,7 @@ timeframe_support: [宏观配置�? 中观策略�? 微观执行层]
 > **创建日期**: 2026-04-02
 > **所属层�?*: 数据基础设施�?
 > **设计状�?*: �?设计完成
-> **迁移来源**: <!-- 归档链接已注�? [L0_QMT.md](../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md) --> (已归�?
+> **迁移来源**: <!-- 归档链接已注�?  --> (已归�?
 
 ---
 
@@ -690,7 +690,7 @@ def _initialize_qmt_client(self) -> None:
 1. [数据源适配器](./DATA_SOURCE_ADAPTERS.md)
 2. [数据获取规范](./DATA_ACQUISITION.md)
 3. [数据质量管理系统](./QUALITY_MANAGEMENT/)
-4. [专业多时间框架架构](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+4. [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 
 ---
 
@@ -705,3 +705,4 @@ def _initialize_qmt_client(self) -> None:
 **文档状�?*: �?已完成迁�? 
 **最后更�?*: 2026-04-02  
 **维护人员**: 数据架构�?
+
