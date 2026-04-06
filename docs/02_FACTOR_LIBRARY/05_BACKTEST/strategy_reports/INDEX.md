@@ -11,7 +11,7 @@ compliance_level: 专业标准
 ---
 
 ﻿---
-module_id: INDEX_STRATEGY_REPORTS_001
+module_id: FACTOR_STRATEGY_REPORTS_策略回测报告_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-04

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ROBUST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -13,6 +13,7 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 open_source_dependency: Skfolio, cvxpy, scipy
 estimated_effort: 1.5周
+layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 鲁棒优化蓝图

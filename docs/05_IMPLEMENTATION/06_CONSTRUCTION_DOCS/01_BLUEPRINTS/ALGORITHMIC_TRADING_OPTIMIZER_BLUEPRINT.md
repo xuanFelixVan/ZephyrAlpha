@@ -527,12 +527,55 @@ class OptimizationResult:
 
 ## 九、相关文档
 
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供组合权重数据 |
+| [SMART_ORDER_ROUTER_BLUEPRINT.md](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 强依赖 | 提供订单路由支持 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 强依赖 | 交易成本分析 |
+| [TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md](./TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md) | TRADING_SIGNAL_VALIDATOR_001 | 中依赖 | 交易信号验证 |
+| [EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md](./EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md) | EXECUTION_STRATEGY_BACKTESTER_001 | 中依赖 | 执行策略回测 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **VeighNa** | 3.0+ | 算法交易框架 | [官方文档](https://www.vnpy.com/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.11+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[组合优化引擎] --> B[算法交易优化器]
+    C[智能订单路由] --> B
+    D[数据质量监控] --> B
+    
+    B --> E[交易成本分析]
+    B --> F[交易信号验证]
+    B --> G[执行策略回测]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 其他相关文档
+
 | 文档名称 | 说明 |
 |---------|------|
 | [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构文档 |
 | [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](../../../01_FRAMEWORK/STRATEGY_EXECUTION_LAYER_BLUEPRINT.md) | 策略执行层蓝图 |
 | [SMART_EXECUTION_ENGINE_BLUEPRINT.md](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) | 智能执行引擎蓝图 |
-| [TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | 交易成本分析引擎蓝图 |
 
 ---
 

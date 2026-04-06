@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -13,6 +13,7 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 open_source_dependency: PyPortfolioOpt, cvxpy, scipy
 estimated_effort: 1周
+layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 均值方差优化基础框架蓝图

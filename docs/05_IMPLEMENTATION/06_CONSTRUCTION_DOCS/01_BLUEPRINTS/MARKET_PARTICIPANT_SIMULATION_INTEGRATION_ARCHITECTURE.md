@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_001
 version: 1.0.0
 status: Active
@@ -9,6 +9,7 @@ standard_type: 架构集成方案
 applicable_scope: 市场参与者行为模拟系统集�?compliance_level: 专业标准
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md
 implementation_status: 设计阶段
+layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 市场参与者行为模拟系�?- 多层次集成架构方�?

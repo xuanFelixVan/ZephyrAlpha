@@ -14,6 +14,7 @@ open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
 estimated_effort: 60h
 priority: P0
 simplified_version: true
+layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 简化版动态风险预算系统蓝图

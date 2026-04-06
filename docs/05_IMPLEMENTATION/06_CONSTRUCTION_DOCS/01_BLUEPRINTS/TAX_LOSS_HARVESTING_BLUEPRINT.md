@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TAX_LOSS_HARVESTING_001
 version: 1.0.0
 status: Active
@@ -13,6 +13,7 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 open_source_dependency: rebalancer (参考), 自研核心
 estimated_effort: 2周
+layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 税收优化（税损收割）蓝图

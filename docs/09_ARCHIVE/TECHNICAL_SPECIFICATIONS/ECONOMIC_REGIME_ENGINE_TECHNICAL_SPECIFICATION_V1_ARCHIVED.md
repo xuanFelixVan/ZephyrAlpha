@@ -1,5 +1,5 @@
 ---
-module_id: ECONOMIC_REGIME_ENGINE_001
+module_id: ECONOMIC_REGIME_ENGINE_001_L09_DOC
 version: 1.0.0
 spec_version: 1.0
 status: Active

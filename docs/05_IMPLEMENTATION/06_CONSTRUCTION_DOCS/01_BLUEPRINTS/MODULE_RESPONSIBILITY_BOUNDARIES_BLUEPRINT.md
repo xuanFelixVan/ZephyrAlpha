@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: None
 estimated_effort: 1周
 priority: P1
+layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
 
 # Layer 7 AI报告?- 模块职责边界定义

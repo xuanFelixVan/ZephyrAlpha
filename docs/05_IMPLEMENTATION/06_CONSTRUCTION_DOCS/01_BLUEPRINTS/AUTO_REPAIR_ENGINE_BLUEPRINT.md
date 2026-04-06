@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: scikit-learn, pyod, great_expectations
 estimated_effort: 3周
 priority: P0
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 自动化数据修复引擎蓝图

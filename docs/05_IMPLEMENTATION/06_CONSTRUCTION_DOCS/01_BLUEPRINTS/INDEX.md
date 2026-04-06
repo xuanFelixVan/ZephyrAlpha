@@ -12,7 +12,7 @@ compliance_level: 专业标准
 
 ﻿﻿---
 index_id: BLUEPRINTS_INDEX_001
-version: 1.4.0
+version: 1.5.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-07
@@ -27,7 +27,7 @@ parent_document: ../INDEX.md
 
 > **索引编号**: `BLUEPRINTS_INDEX_001`
 > **最后更新**: 2026-04-07
-> **文档总数**: 85个（Active: 85个，Archived: 0个）
+> **文档总数**: 92个（Active: 92个，Archived: 0个）
 
 ---
 
@@ -203,6 +203,19 @@ parent_document: ../INDEX.md
 |----------|-----------|------|------|----------|----------|
 | 流动性约束优化蓝图 | LIQUIDITY_CONSTRAINED_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md) 🆕 |
 
+### 3.12 动态资产配置
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 动态资产配置蓝图 | DYNAMIC_ASSET_ALLOCATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md) 🆕 |
+
+### 3.13 分散化与风险度量
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合分散化度量蓝图 | PORTFOLIO_DIVERSIFICATION_METRIC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md) 🆕 |
+| 尾部风险度量扩展蓝图 | TAIL_RISK_METRICS_EXTENSION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./TAIL_RISK_METRICS_EXTENSION_BLUEPRINT.md) 🆕 |
+
 **模块关系说明**:
 - PORTFOLIO_REBALANCING: 基础再平衡框架，提供触发机制和决策引擎
 - TRANSACTION_COST_AWARE_REBALANCING: 高级成本感知再平衡，依赖基础框架
@@ -361,19 +374,19 @@ parent_document: ../INDEX.md
 
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
-| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 23.5% |
-| **组合优化层（Layer 6）** | 33个 | 33个 | 0个 | 38.8% |
-| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 2.4% |
-| **执行层（Layer 5）** | 12个 | 12个 | 0个 | 14.1% |
-| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.4% |
-| **其他** | 16个 | 16个 | 0个 | 18.8% |
-| **总计** | **85个** | **85个** | **0个** | **100%** |
+| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 21.7% |
+| **组合优化层（Layer 6）** | 36个 | 36个 | 0个 | 39.1% |
+| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 2.2% |
+| **执行层（Layer 5）** | 12个 | 12个 | 0个 | 13.0% |
+| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.2% |
+| **其他** | 20个 | 20个 | 0个 | 21.7% |
+| **总计** | **92个** | **92个** | **0个** | **100%** |
 
 ### 8.2 按状态统计
 
 | 状态 | 文档数量 | 占比 | 说明 |
 |------|---------|------|------|
-| **Active** | 85个 | 100% | 正常可用文档 |
+| **Active** | 92个 | 100% | 正常可用文档 |
 | **Archived** | 0个 | 0% | 无归档文档 |
 | **Draft** | 0个 | 0% | 草稿文档 |
 

@@ -29,6 +29,28 @@ dependencies:
 
 # 数据异常检测蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据异常检测系统设计蓝图
+- 定义数据异常检测架构
+- 说明异常值和离群点检测方案
+- 提供异常原因分析和处理建议方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析V2 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据质量控制 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 协同模块 | 数据质量规则 |
+| 数据监控增强 | [../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/) | 协同模块 | 数据质量监控 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据异常检测系统架构设计
+- ✅ 本文档负责: 异常值检测、离群点识别、异常分析方案
+- ❌ 本文档不负责: 数据质量规则定义（由 QUALITY_MANAGEMENT 负责）
+- ❌ 本文档不负责: 数据质量监控执行（由 DATA_MONITORING_ENHANCED 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+
 > **优先级**: 🟡 P1 (重要)
 > **实施周期**: 1周
 > **开源方案**: PyOD (Python Outlier Detection)

@@ -29,6 +29,7 @@ responsibility_boundary: |
   子系统专用预警模块:
   - 10_AI_WORKFLOW/REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md (舆情专用预警)
     由该模块产生的告警会发送到本统一告警平台进行分发
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 实时告警系统增强蓝图

@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: apache-atlas, datahub, open-metadata
 estimated_effort: 3周
 priority: P2
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 数据治理平台蓝图

@@ -13,6 +13,7 @@ implementation_status: 设计阶段
 open_source_dependency: 待补充
 estimated_effort: 待评估
 priority: P1
+layer: 'Layer 9 (AI增强层) | 业务架构: 三级时间框架融合架构'
 ---
 
 

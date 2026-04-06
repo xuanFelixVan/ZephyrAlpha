@@ -29,6 +29,28 @@ dependencies:
 
 # 数据目录系统蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据目录系统设计蓝图
+- 定义数据目录系统架构
+- 说明数据资产发现和元数据管理方案
+- 提供数据血缘集成和治理支持方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](../DATA_LINEAGE_TRACKING/) | 协同模块 | 数据血缘关系 |
+| 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据目录系统架构设计
+- ✅ 本文档负责: 数据资产发现、元数据管理、血缘集成方案
+- ❌ 本文档不负责: 数据血缘追踪实施（由 DATA_LINEAGE_TRACKING 负责）
+- ❌ 本文档不负责: 数据权限管理（由 DATA_PERMISSION_MANAGEMENT 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+
 > 清风量化系统 v5.4 - 数据目录模块
 > **优先级**: 🟡 P1级（短期实施）
 > **实施周期**: 2周

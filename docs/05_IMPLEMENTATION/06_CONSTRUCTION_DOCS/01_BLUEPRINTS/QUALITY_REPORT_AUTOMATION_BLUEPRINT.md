@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: jinja2, weasyprint, plotly
 estimated_effort: 1周
 priority: P1
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 质量报告自动化蓝图

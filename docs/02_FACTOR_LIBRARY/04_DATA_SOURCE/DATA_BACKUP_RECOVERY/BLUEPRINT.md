@@ -28,6 +28,28 @@ dependencies:
 
 # 数据备份恢复蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据备份恢复系统设计蓝图
+- 定义数据备份恢复架构
+- 说明自动化备份和多地容灾方案
+- 提供快速数据恢复和版本管理方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据版本控制 | [../DATA_VERSION_CONTROL/](../DATA_VERSION_CONTROL/) | 协同模块 | 数据版本管理 |
+| 数据生命周期 | [../DATA_LIFECYCLE_MANAGEMENT/](../DATA_LIFECYCLE_MANAGEMENT/) | 协同模块 | 数据生命周期管理 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据备份恢复系统架构设计
+- ✅ 本文档负责: 自动化备份、多地容灾、快速恢复方案
+- ❌ 本文档不负责: 数据版本控制（由 DATA_VERSION_CONTROL 负责）
+- ❌ 本文档不负责: 数据生命周期管理（由 DATA_LIFECYCLE_MANAGEMENT 负责）
+- ❌ 本文档不负责: 数据质量管理（由 QUALITY_MANAGEMENT 负责）
+
 > **优先级**: 🟡 P1 (重要)
 > **实施周期**: 1周
 > **开源方案**: Restic + rclone

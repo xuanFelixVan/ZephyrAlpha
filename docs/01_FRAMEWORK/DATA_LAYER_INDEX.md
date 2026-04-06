@@ -11,7 +11,7 @@ compliance_level: 专业标准
 ---
 
 ?---
-module_id: DATA_LAYER_INDEX_001
+module_id: FRAMEWORK__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -13,6 +13,7 @@ implementation_status: 蓝图设计阶段
 open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, skfolio
 estimated_effort: 2-3天
 priority: P0
+layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
 
 

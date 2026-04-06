@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: pandas, numpy, apache-atlas
 estimated_effort: 2周
 priority: P2
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 数据目录与元数据管理系统蓝图

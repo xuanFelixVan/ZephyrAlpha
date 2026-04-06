@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: hashicorp-vault, opa, anchore
 estimated_effort: 3周
 priority: P2
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 数据安全合规蓝图

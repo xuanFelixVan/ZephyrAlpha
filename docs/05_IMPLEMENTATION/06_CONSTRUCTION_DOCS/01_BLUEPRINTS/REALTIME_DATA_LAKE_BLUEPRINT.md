@@ -14,6 +14,7 @@ implementation_progress: 0%
 open_source_dependency: delta-lake, apache-iceberg, minio
 estimated_effort: 2周
 priority: P2
+layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
 # 实时数据湖蓝图

@@ -27,6 +27,28 @@ dependencies:
 
 # 配置管理蓝图
 
+## 文档职责说明
+
+**本文档职责**: 配置管理系统设计蓝图
+- 定义配置管理架构
+- 说明统一配置管理和多环境支持方案
+- 提供配置版本控制和敏感信息加密方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据安全隐私 | [../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/) | 协同模块 | 数据安全保护 |
+| 数据API网关 | [../DATA_API_GATEWAY/](../DATA_API_GATEWAY/) | 协同模块 | 数据访问接口 |
+
+**职责边界**:
+- ✅ 本文档负责: 配置管理系统架构设计
+- ✅ 本文档负责: 统一配置管理、多环境支持、版本控制方案
+- ❌ 本文档不负责: 数据安全隐私保护（由 DATA_SECURITY_PRIVACY 负责）
+- ❌ 本文档不负责: 数据API接口（由 DATA_API_GATEWAY 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+
 > **优先级**: 🟢 P2 (可选)
 > **实施周期**: 3天
 > **开源方案**: Dynaconf

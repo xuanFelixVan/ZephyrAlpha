@@ -1,5 +1,5 @@
 ---
-module_id: AUDIT_AI工作流层深度审计报告_001
+module_id: AUDIT_AI_001_L09_REPORT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

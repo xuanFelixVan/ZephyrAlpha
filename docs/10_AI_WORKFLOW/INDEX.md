@@ -1,10 +1,10 @@
 ---
 module_id: INDEX_AI_WORKFLOW_001
 title: AI工作流模块总索引
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席文档架构师
 standard_type: 专业量化机构索引
 applicable_scope: AI工作流管理
@@ -95,6 +95,11 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 | **COMPLIANCE_MONITORING_001** | 合规监控模块 | 1.0 | Active | [COMPLIANCE_MONITORING_BLUEPRINT.md](./COMPLIANCE_MONITORING_BLUEPRINT.md) | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预|
 | **LIVE_TRADING_MONITOR_001** | 实盘监控模块 | 1.0 | Active | [LIVE_TRADING_MONITOR_BLUEPRINT.md](./LIVE_TRADING_MONITOR_BLUEPRINT.md) | 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警 |
 | **PERFORMANCE_ANALYSIS_001** | 性能分析模块 | 1.0 | Active | [PERFORMANCE_ANALYSIS_BLUEPRINT.md](./PERFORMANCE_ANALYSIS_BLUEPRINT.md) | 性能指标采集、性能瓶颈识别、性能报告生成、优化建议生成、性能趋势分析 |
+| **MULTI_AGENT_COLLABORATION_001** | 多智能体协作系统 | 1.0 | Active | [MULTI_AGENT_COLLABORATION_BLUEPRINT.md](./MULTI_AGENT_COLLABORATION_BLUEPRINT.md) | 多智能体角色定义、协作机制、任务分配、知识共享、决策融合 |
+| **AUTO_REPORT_GENERATION_001** | 自动化报告生成引擎 | 1.0 | Active | [AUTO_REPORT_GENERATION_BLUEPRINT.md](./AUTO_REPORT_GENERATION_BLUEPRINT.md) | 自动化报告生成、多维度数据融合、AI决策仪表盘、多渠道推送、定时调度 |
+| **REAL_TIME_RISK_MONITOR_001** | 实时风险监控系统 | 1.0 | Active | [REAL_TIME_RISK_MONITOR_BLUEPRINT.md](./REAL_TIME_RISK_MONITOR_BLUEPRINT.md) | 实时风险监控、多维度风险评估、动态预警机制、风险报告生成、风险限额管理 |
+| **KNOWLEDGE_MANAGEMENT_001** | 知识管理与传承系统 | 1.0 | Active | [KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 知识库构建、知识检索、知识图谱、经验传承、学习路径规划 |
+| **SCENARIO_ANALYSIS_STRESS_TEST_001** | 情景分析与压力测试系统 | 1.0 | Active | [SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md](./SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md) | 历史情景分析、假设情景模拟、压力测试引擎、情景报告生成、情景库管理 |
 
 ### 3.2 舆情分析模块
 

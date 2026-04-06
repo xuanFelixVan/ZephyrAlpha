@@ -13,6 +13,7 @@ implementation_status: 规划阶段
 open_source_dependency: pandas, numpy, requests
 estimated_effort: 8周
 priority: P0
+layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
 
 

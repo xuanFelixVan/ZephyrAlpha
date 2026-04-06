@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_AI_001
+module_id: FRAMEWORK_AI_001_L01_DOC
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

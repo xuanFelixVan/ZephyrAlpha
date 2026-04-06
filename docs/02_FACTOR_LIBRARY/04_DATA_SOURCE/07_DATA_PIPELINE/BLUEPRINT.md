@@ -11,7 +11,7 @@ compliance_level: 专业标准
 ---
 
 ﻿---
-module_id: DATA_PIPELINE_BLUEPRINT_001
+module_id: FACTOR_数据流水线蓝图_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
