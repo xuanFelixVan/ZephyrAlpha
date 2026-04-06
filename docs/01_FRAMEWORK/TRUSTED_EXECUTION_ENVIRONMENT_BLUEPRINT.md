@@ -8,6 +8,14 @@ owner: 首席蓝图架构师
 layer: Layer 4 (机器学习层)
 standard_type: 高层架构蓝图
 priority: P2
+responsibility_boundary: |
+  本文档负责可信执行环境(TEE)设计，包括：
+  - 硬件隔离
+  - 内存加密
+  - 远程证明
+  - 安全计算
+  
+  机器学习层架构请参考：MACHINE_LEARNING_LAYER_BLUEPRINT.md
 ---
 
 # 可信执行环境(TEE)蓝图

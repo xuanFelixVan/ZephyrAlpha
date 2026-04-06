@@ -16,6 +16,14 @@ related_documents:
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 layer: Layer 8 (人机交互层)
+responsibility_boundary: |
+  本文档负责Grafana监控可视化系统设计，包括：
+  - Prometheus监控数据采集
+  - Grafana可视化仪表板
+  - AlertManager告警管理
+  
+  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  实时风险监控请参考：REALTIME_RISK_MONITORING_BLUEPRINT.md
 ---
 
 # Grafana监控可视化系统蓝图

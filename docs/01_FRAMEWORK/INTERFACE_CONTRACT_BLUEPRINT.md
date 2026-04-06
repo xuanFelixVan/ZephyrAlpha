@@ -10,6 +10,13 @@ applicable_scope: 三级时间框架架构
 compliance_level: 专业标准
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 layer: Layer 2 (Alpha因子层)
+responsibility_boundary: |
+  本文档负责三级时间框架接口契约设计，包括：
+  - 模块间接口定义
+  - 数据传输协议
+  - 接口版本管理
+  
+  三级时间框架架构请参考：PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 ---
 
 # 三级时间框架接口契约蓝图

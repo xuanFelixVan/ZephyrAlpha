@@ -15,6 +15,13 @@ related_documents:
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 layer: Layer 8 (人机交互层)
+responsibility_boundary: |
+  本文档负责FastAPI-Users认证权限系统设计，包括：
+  - 用户认证管理
+  - 权限控制管理
+  - 角色管理
+  
+  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
 ---
 
 # FastAPI-Users认证权限系统蓝图

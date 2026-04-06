@@ -15,6 +15,13 @@ related_documents:
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 layer: Layer 8 (人机交互层)
+responsibility_boundary: |
+  本文档负责Streamlit交互式回测界面设计，包括：
+  - 交互式回测界面
+  - 回测参数配置
+  - 回测结果可视化
+  
+  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
 ---
 
 # Streamlit交互式回测界面蓝图

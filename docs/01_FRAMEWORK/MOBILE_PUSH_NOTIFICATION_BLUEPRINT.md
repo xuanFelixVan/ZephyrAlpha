@@ -16,6 +16,13 @@ related_documents:
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 layer: Layer 8 (人机交互层)
+responsibility_boundary: |
+  本文档负责移动端推送通知系统设计，包括：
+  - 多渠道推送通知（邮件、短信、移动端推送）
+  - 推送通知优先级管理
+  - 推送通知模板管理
+  
+  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
 ---
 
 # 移动端推送通知系统蓝图
