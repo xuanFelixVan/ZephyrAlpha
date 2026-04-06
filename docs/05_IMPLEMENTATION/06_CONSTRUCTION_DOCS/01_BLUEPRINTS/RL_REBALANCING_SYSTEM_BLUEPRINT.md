@@ -22,7 +22,7 @@ implementation_status: 设计阶段
 # 强化学习调仓系统蓝图 v1.0
 
 > 清风量化系统 v5.3 - 强化学习调仓系统架构设计
-> **索引**: `RL_REBALANCING_001`
+> **索引**: `RL_REBALANCING_SYSTEM_001`
 > **开发时?*: 200h
 > **核心定位**: 基于Stable-Baselines3实现强化学习调仓决策模型，动态优化组合权重和调仓时机
 

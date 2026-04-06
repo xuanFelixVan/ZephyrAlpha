@@ -1,80 +1,80 @@
 ---
-module_id: ARCHIVE_DOC_001
-version: 1.0.0
+module_id: ARCHIVE_STRATEGY_POOL_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 策略�?v1.0
+# 策略�?v1.0
 
-> 清风量化多策略系统的策略池管理框�?
+> 清风量化多策略系统的策略池管理框�?
 >
-> **配套文档**�?
+> **配套文档**�?
 > - 主文档：
 > - 因子库：
 > - 战术手册：[../trading-tactics/tactics_manual.md](tactics_manual.md)
 >
-> **版本说明**�?
+> **版本说明**�?
 > - v1.0：初始版本，整合游资量化策略和策略池管理框架
 
 ***
 
 ## 目录
 
-1. [策略池概述](#1-策略池概�?
+1. [策略池概述](#1-策略池概�?
 2. [策略分类体系](#2-策略分类体系)
 3. [策略接口标准](#3-策略接口标准)
 4. [策略池管理器](#4-策略池管理器)
 5. [策略选择机制](#5-策略选择机制)
-6. [策略池配置](#6-策略池配�?
-7. [游资量化策略库](#7-游资量化策略�?
+6. [策略池配置](#6-策略池配�?
+7. [游资量化策略库](#7-游资量化策略�?
 8. [行业精选策略库](#8-行业精选策略库)
 
 ***
 
-## 1. 策略池概�?
+## 1. 策略池概�?
 
-### 1.1 策略池定�?
+### 1.1 策略池定�?
 
-> **策略�?*是量化交易系统的核心组件，负责管�?0-50种交易策略，根据市场状态动态选择和分配权重�?
+> **策略�?*是量化交易系统的核心组件，负责管�?0-50种交易策略，根据市场状态动态选择和分配权重�?
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                     策略池系�?                             �?
-├─────────────────────────────────────────────────────────────�?
-�? 前置层输�?�?策略选择�?�?策略权重分配 �?信号输出          �?
-�?      �?             �?             �?             �?       �?
-�? 市场状�?        匹配策略        动态权�?      聚合信号   �?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────�?
+�?                     策略池系�?                             �?
+├─────────────────────────────────────────────────────────────�?
+�? 前置层输�?�?策略选择�?�?策略权重分配 �?信号输出          �?
+�?      �?             �?             �?             �?       �?
+�? 市场状�?        匹配策略        动态权�?      聚合信号   �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
-### 1.2 策略池容量规�?
+### 1.2 策略池容量规�?
 
 | 策略类型 | 策略数量 | 占比 |
 |----------|----------|------|
-| 趋势跟踪�?| 8-10�?| 25% |
-| 均值回归类 | 6-8�?| 20% |
-| 动量�?| 6-8�?| 20% |
-| 短线交易�?| 8-10�?| 25% |
-| 套利�?| 3-5�?| 10% |
-| **合计** | **30-50�?* | 100% |
+| 趋势跟踪�?| 8-10�?| 25% |
+| 均值回归类 | 6-8�?| 20% |
+| 动量�?| 6-8�?| 20% |
+| 短线交易�?| 8-10�?| 25% |
+| 套利�?| 3-5�?| 10% |
+| **合计** | **30-50�?* | 100% |
 
 ### 1.3 市场状态适配矩阵
 
-| 市场状�?| 趋势�?| 均值回�?| 动量�?| 短线�?| 套利�?|
+| 市场状�?| 趋势�?| 均值回�?| 动量�?| 短线�?| 套利�?|
 |----------|--------|----------|--------|--------|--------|
-| 牛市 | ⭐⭐⭐⭐�?| �?| ⭐⭐�?| ⭐⭐ | �?|
-| 熊市 | �?| ⭐⭐ | �?| ⭐⭐⭐⭐�?| ⭐⭐ |
-| 震荡�?| ⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐ | ⭐⭐�?|
-| 妖股周期 | �?| �?| ⭐⭐�?| ⭐⭐⭐⭐�?| �?|
-| 混沌状�?| �?| ⭐⭐ | �?| ⭐⭐ | ⭐⭐⭐⭐ |
+| 牛市 | ⭐⭐⭐⭐�?| �?| ⭐⭐�?| ⭐⭐ | �?|
+| 熊市 | �?| ⭐⭐ | �?| ⭐⭐⭐⭐�?| ⭐⭐ |
+| 震荡�?| ⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐ | ⭐⭐�?|
+| 妖股周期 | �?| �?| ⭐⭐�?| ⭐⭐⭐⭐�?| �?|
+| 混沌状�?| �?| ⭐⭐ | �?| ⭐⭐ | ⭐⭐⭐⭐ |
 
 ***
 
@@ -84,67 +84,67 @@ implementation_status: 进行�?
 
 | 策略编号 | 策略名称 | 核心逻辑 | 适用市场 | 风险等级 |
 |----------|----------|----------|----------|----------|
-| T001 | 均线趋势策略 | MA5>MA20>MA60多头排列 | 牛市 | �?|
-| T002 | MACD趋势策略 | DIF>DEA且MACD柱状线放�?| 牛市 | �?|
-| T003 | ADX趋势确认策略 | ADX>25�?DI>-DI | 趋势�?| 中低 |
-| T004 | 趋势突破策略 | 价格突破20日高�?| 趋势�?| �?|
-| T005 | 布林带趋势策�?| 中轨向上+价格在上轨运�?| 牛市 | �?|
-| T006 | ATR趋势策略 | 趋势强度>2倍ATR | 趋势�?| �?|
+| T001 | 均线趋势策略 | MA5>MA20>MA60多头排列 | 牛市 | �?|
+| T002 | MACD趋势策略 | DIF>DEA且MACD柱状线放�?| 牛市 | �?|
+| T003 | ADX趋势确认策略 | ADX>25�?DI>-DI | 趋势�?| 中低 |
+| T004 | 趋势突破策略 | 价格突破20日高�?| 趋势�?| �?|
+| T005 | 布林带趋势策�?| 中轨向上+价格在上轨运�?| 牛市 | �?|
+| T006 | ATR趋势策略 | 趋势强度>2倍ATR | 趋势�?| �?|
 | T007 | 均线金叉策略 | MA5上穿MA20 | 任意 | 中低 |
-| T008 | 趋势线突破策�?| 价格突破趋势�?| 趋势�?| �?|
-| T009 | 多周期共振策�?| 日线+周线趋势一�?| 牛市 | �?|
-| T010 | 趋势回调策略 | 回调至EMA55企稳 | 牛市回调 | �?|
+| T008 | 趋势线突破策�?| 价格突破趋势�?| 趋势�?| �?|
+| T009 | 多周期共振策�?| 日线+周线趋势一�?| 牛市 | �?|
+| T010 | 趋势回调策略 | 回调至EMA55企稳 | 牛市回调 | �?|
 
-### 2.2 均值回归类策略�?-8种）
+### 2.2 均值回归类策略�?-8种）
 
 | 策略编号 | 策略名称 | 核心逻辑 | 适用市场 | 风险等级 |
 |----------|----------|----------|----------|----------|
-| M001 | RSI超卖策略 | RSI<30且拐头向�?| 震荡�?| �?|
-| M002 | 布林带回归策�?| 价格触及下轨+缩量 | 震荡�?| 中低 |
-| M003 | KDJ超卖策略 | KDJ<20金叉 | 超卖反弹 | �?|
-| M004 | 波动率收缩策�?|ATR收缩至均线下�?| 突破�?| �?|
-| M005 | 乖离率策�?| 价格偏离MA20过远 | 均值回�?| 中低 |
-| M006 | 量价背离策略 | 价格新低+量能缩量 | 反弹 | �?|
-| M007 | 支撑位策�?| 回踩重要支撑位企�?| 任意 | 中低 |
-| M008 | 缩量整理策略 | 量比<0.8+振幅<3% | 整理后突�?| �?|
+| M001 | RSI超卖策略 | RSI<30且拐头向�?| 震荡�?| �?|
+| M002 | 布林带回归策�?| 价格触及下轨+缩量 | 震荡�?| 中低 |
+| M003 | KDJ超卖策略 | KDJ<20金叉 | 超卖反弹 | �?|
+| M004 | 波动率收缩策�?|ATR收缩至均线下�?| 突破�?| �?|
+| M005 | 乖离率策�?| 价格偏离MA20过远 | 均值回�?| 中低 |
+| M006 | 量价背离策略 | 价格新低+量能缩量 | 反弹 | �?|
+| M007 | 支撑位策�?| 回踩重要支撑位企�?| 任意 | 中低 |
+| M008 | 缩量整理策略 | 量比<0.8+振幅<3% | 整理后突�?| �?|
 
 ### 2.3 动量类策略（6-8种）
 
 | 策略编号 | 策略名称 | 核心逻辑 | 适用市场 | 风险等级 |
 |----------|----------|----------|----------|----------|
-| P001 | 动量加速策�?| 连续3日上�?成交量放�?| 强势市场 | �?|
-| P002 | 板块动量策略 | 所属板块涨�?3% | 板块轮动 | �?|
-| P003 | 资金流入策略 | 机构净流入>1�?| 资金推动 | �?|
-| P004 | 动量反转策略 | 前期强势股回调后反弹 | 轮动 | �?|
-| P005 | 北向资金策略 | 北向连续净流入3�?| 外资主导 | �?|
-| P006 | 相对强弱策略 | 个股RS>板块RS | 强势�?| 中低 |
-| P007 | 动量攒旗策略 | 旗形整理后突�?| 趋势中继 | �?|
-| P008 | 加速突破策�?| 成交量放�?�?涨幅>5% | 突破 | �?|
+| P001 | 动量加速策�?| 连续3日上�?成交量放�?| 强势市场 | �?|
+| P002 | 板块动量策略 | 所属板块涨�?3% | 板块轮动 | �?|
+| P003 | 资金流入策略 | 机构净流入>1�?| 资金推动 | �?|
+| P004 | 动量反转策略 | 前期强势股回调后反弹 | 轮动 | �?|
+| P005 | 北向资金策略 | 北向连续净流入3�?| 外资主导 | �?|
+| P006 | 相对强弱策略 | 个股RS>板块RS | 强势�?| 中低 |
+| P007 | 动量攒旗策略 | 旗形整理后突�?| 趋势中继 | �?|
+| P008 | 加速突破策�?| 成交量放�?�?涨幅>5% | 突破 | �?|
 
 ### 2.4 短线交易类策略（8-10种）
 
 | 策略编号 | 策略名称 | 核心逻辑 | 适用市场 | 风险等级 |
 |----------|----------|----------|----------|----------|
-| S001 | 首板策略 | 首次涨停+封单>1�?| 妖股周期 | 极高 |
-| S002 | 连板策略 | 连续涨停>=2�?| 强势市场 | 极高 |
-| S003 | 龙头股策�?| 板块龙头+涨停 | 热点轮动 | �?|
-| S004 | 涨停回封策略 | 开板后回封+时间<30�?| 强势市场 | �?|
-| S005 | 尾盘策略 | 14:30后涨�?-8% | 短线 | �?|
-| S006 | 集合竞价策略 | 竞价涨幅2-5% | 短线 | �?|
-| S007 | 炸板反抽策略 | 涨停炸板后反�?| 超跌反弹 | �?|
-| S008 | 弱势抄底策略 | 大盘下跌>1%+个股抗跌 | 逆势 | �?|
-| S009 | 情绪转折策略 | 跌停家数减少+翘板 | 情绪底部 | �?|
-| S010 | 游资席位策略 | 机构席位买入+次日溢价 | 跟庄 | �?|
+| S001 | 首板策略 | 首次涨停+封单>1�?| 妖股周期 | 极高 |
+| S002 | 连板策略 | 连续涨停>=2�?| 强势市场 | 极高 |
+| S003 | 龙头股策�?| 板块龙头+涨停 | 热点轮动 | �?|
+| S004 | 涨停回封策略 | 开板后回封+时间<30�?| 强势市场 | �?|
+| S005 | 尾盘策略 | 14:30后涨�?-8% | 短线 | �?|
+| S006 | 集合竞价策略 | 竞价涨幅2-5% | 短线 | �?|
+| S007 | 炸板反抽策略 | 涨停炸板后反�?| 超跌反弹 | �?|
+| S008 | 弱势抄底策略 | 大盘下跌>1%+个股抗跌 | 逆势 | �?|
+| S009 | 情绪转折策略 | 跌停家数减少+翘板 | 情绪底部 | �?|
+| S010 | 游资席位策略 | 机构席位买入+次日溢价 | 跟庄 | �?|
 
 ### 2.5 套利类策略（3-5种）
 
 | 策略编号 | 策略名称 | 核心逻辑 | 适用市场 | 风险等级 |
 |----------|----------|----------|----------|----------|
-| A001 | 期现套利策略 | 期货升贴水回�?| 任意 | �?|
-| A002 | 跨品种套利策�?| 相关品种价差回归 | 商品 | 中低 |
-| A003 | 统计套利策略 | 均值回�?协整关系 | 统计机会 | �?|
-| A004 | 南北向套利策�?| 沪深港通价�?| 跨境 | �?|
-| A005 | 可转债套利策�?| 转股价值偏�?| 低波�?| �?|
+| A001 | 期现套利策略 | 期货升贴水回�?| 任意 | �?|
+| A002 | 跨品种套利策�?| 相关品种价差回归 | 商品 | 中低 |
+| A003 | 统计套利策略 | 均值回�?协整关系 | 统计机会 | �?|
+| A004 | 南北向套利策�?| 沪深港通价�?| 跨境 | �?|
+| A005 | 可转债套利策�?| 转股价值偏�?| 低波�?| �?|
 
 ***
 
@@ -159,12 +159,12 @@ from typing import Optional, Dict, List
 from enum import Enum
 
 class MarketState(Enum):
-    """市场状态枚�?""
+    """市场状态枚�?""
     BULL = "牛市"
     BEAR = "熊市"
-    VOLATILE = "震荡�?
+    VOLATILE = "震荡�?
     YAO = "妖股周期"
-    CHAOS = "混沌状�?
+    CHAOS = "混沌状�?
 
 class SignalType(Enum):
     """信号类型枚举"""
@@ -177,10 +177,10 @@ class TradingSignal:
     """交易信号数据结构"""
     code: str                          # 股票代码
     signal: SignalType                  # 信号类型
-    confidence: float                   # 置信�?(0.0-1.0)
-    entry_price: float                 # 建议入场�?
-    stop_loss: float                   # 止损�?
-    target_price: float               # 目标�?
+    confidence: float                   # 置信�?(0.0-1.0)
+    entry_price: float                 # 建议入场�?
+    stop_loss: float                   # 止损�?
+    target_price: float               # 目标�?
     strategy_name: str                 # 策略名称
     position_size: float = 0.0        # 仓位建议
     holding_period: int = 5           # 持有天数建议
@@ -190,10 +190,10 @@ class TradingSignal:
 class StrategyPerformance:
     """策略绩效数据结构"""
     win_rate: float                    # 胜率
-    avg_return: float                  # 平均收益�?
-    max_drawdown: float               # 最大回�?
+    avg_return: float                  # 平均收益�?
+    max_drawdown: float               # 最大回�?
     sharpe_ratio: float              # 夏普比率
-    total_trades: int                # 总交易次�?
+    total_trades: int                # 总交易次�?
     avg_holding_days: float           # 平均持有天数
 
 class BaseStrategy(ABC):
@@ -215,9 +215,9 @@ class BaseStrategy(ABC):
         生成交易信号
 
         参数:
-            market_data: 市场数据（大盘指数等�?
+            market_data: 市场数据（大盘指数等�?
             stock_data: 个股数据
-            market_state: 当前市场状�?
+            market_state: 当前市场状�?
 
         返回:
             TradingSignal: 交易信号，无信号时返回None
@@ -225,7 +225,7 @@ class BaseStrategy(ABC):
         pass
 
     def get_applicable_states(self) -> List[MarketState]:
-        """获取策略适用的市场状�?""
+        """获取策略适用的市场状�?""
         return self.market_states
 
     def get_performance(self) -> StrategyPerformance:
@@ -239,7 +239,7 @@ class BaseStrategy(ABC):
         self.parameters.update(new_params)
 ```
 
-### 3.2 策略注册装饰�?
+### 3.2 策略注册装饰�?
 
 ```python
 from functools import wraps
@@ -247,7 +247,7 @@ from functools import wraps
 _strategies_registry = {}
 
 def register_strategy(strategy_class):
-    """策略注册装饰�?""
+    """策略注册装饰�?""
     @wraps(strategy_class)
     def wrapper(*args, **kwargs):
         return strategy_class(*args, **kwargs)
@@ -261,7 +261,7 @@ def get_strategy(strategy_id: str) -> Optional[BaseStrategy]:
     return _strategies_registry.get(strategy_id)
 
 def list_all_strategies() -> Dict[str, BaseStrategy]:
-    """列出所有注册策�?""
+    """列出所有注册策�?""
     return _strategies_registry.copy()
 ```
 
@@ -291,7 +291,7 @@ class MaTrendStrategy(BaseStrategy):
                        market_state: MarketState) -> Optional[TradingSignal]:
         """
         均线趋势策略信号生成
-        条件: MA5 > MA20 > MA60 �?成交量放�?
+        条件: MA5 > MA20 > MA60 �?成交量放�?
         """
         if market_state not in self.market_states:
             return None
@@ -304,7 +304,7 @@ class MaTrendStrategy(BaseStrategy):
 
         # 多头排列条件
         if ma5 > ma20 > ma60:
-            # 成交量放大确�?
+            # 成交量放大确�?
             if volume_ratio > params['min_volume_ratio']:
                 current_price = stock_data['close']
                 stop_loss = ma20 * 0.97  # 止损设在中轨下方3%
@@ -318,7 +318,7 @@ class MaTrendStrategy(BaseStrategy):
                     stop_loss=stop_loss,
                     target_price=target,
                     strategy_name=self.name,
-                    position_size=0.15,  # 趋势明确�?5%仓位
+                    position_size=0.15,  # 趋势明确�?5%仓位
                     holding_period=10
                 )
 
@@ -329,7 +329,7 @@ class MaTrendStrategy(BaseStrategy):
 
 ## 4. 策略池管理器
 
-### 4.1 策略池管理器�?
+### 4.1 策略池管理器�?
 
 ```python
 class StrategyPool:
@@ -365,7 +365,7 @@ class StrategyPool:
         return False
 
     def set_market_state(self, market_state: MarketState):
-        """设置市场状�?""
+        """设置市场状�?""
         self.market_state = market_state
 
     def select_strategies(self,
@@ -375,29 +375,29 @@ class StrategyPool:
         根据市场状态选择策略
 
         参数:
-            min_sharpe: 最小夏普比率要�?
-            max_strategies: 最多选择的策略数�?
+            min_sharpe: 最小夏普比率要�?
+            max_strategies: 最多选择的策略数�?
 
         返回:
-            符合条件的策略列表，按夏普比率降序排�?
+            符合条件的策略列表，按夏普比率降序排�?
         """
         candidates = []
 
         for strategy_id in self.enabled_strategies:
             strategy = self.strategies[strategy_id]
 
-            # 检查是否适用于当前市场状�?
+            # 检查是否适用于当前市场状�?
             if self.market_state not in strategy.get_applicable_states():
                 continue
 
-            # 检查绩�?
+            # 检查绩�?
             perf = strategy.get_performance()
             if perf.sharpe_ratio < min_sharpe:
                 continue
 
             candidates.append((strategy, perf.sharpe_ratio))
 
-        # 按夏普比率降序排�?
+        # 按夏普比率降序排�?
         candidates.sort(key=lambda x: x[1], reverse=True)
 
         return [s[0] for s in candidates[:max_strategies]]
@@ -409,12 +409,12 @@ class StrategyPool:
         方法: 基于夏普比率的，风险平价分配
 
         返回:
-            策略ID -> 权重 的字�?
+            策略ID -> 权重 的字�?
         """
         if not selected_strategies:
             return {}
 
-        # 计算总夏普比�?
+        # 计算总夏普比�?
         total_sharpe = sum(
             s.get_performance().sharpe_ratio
             for s in selected_strategies
@@ -442,8 +442,8 @@ class StrategyPool:
         流程:
         1. 选择适合当前市场状态的策略
         2. 分配策略权重
-        3. 各策略分别生成信�?
-        4. 按权重聚合信�?
+        3. 各策略分别生成信�?
+        4. 按权重聚合信�?
         """
         # 选择策略
         selected = self.select_strategies(max_strategies=10)
@@ -453,7 +453,7 @@ class StrategyPool:
         # 分配权重
         self.strategy_weights = self.allocate_weights(selected)
 
-        # 生成各策略信�?
+        # 生成各策略信�?
         all_signals = []
         for strategy in selected:
             signal = strategy.generate_signal(
@@ -472,14 +472,14 @@ class StrategyPool:
 ### 4.2 策略池管理器配置
 
 ```python
-# 策略池配�?
+# 策略池配�?
 STRATEGY_POOL_CONFIG = {
-    'max_strategies': 50,              # 最大策略数�?
+    'max_strategies': 50,              # 最大策略数�?
     'default_selection': 10,            # 默认选择策略数量
-    'min_sharpe_for_selection': 0.3,   # 选择策略的最低夏普比�?
-    'min_confidence_threshold': 0.4,   # 信号最小置信度阈�?
-    'max_position_per_strategy': 0.2,  # 单策略最大仓�?
-    'market_state_update_freq': 'daily' # 市场状态更新频�?
+    'min_sharpe_for_selection': 0.3,   # 选择策略的最低夏普比�?
+    'min_confidence_threshold': 0.4,   # 信号最小置信度阈�?
+    'max_position_per_strategy': 0.2,  # 单策略最大仓�?
+    'market_state_update_freq': 'daily' # 市场状态更新频�?
 }
 
 # 策略参数配置模板
@@ -491,15 +491,15 @@ STRATEGY_PARAM_TEMPLATES = {
         'min_volume_ratio': 1.5
     },
     'S001': {  # 首板策略
-        'min_limit_up_amount': 1e8,     # 最小封单金�?�?
-        'max_float_market_cap': 100e8,  # 最大流通市�?00�?
+        'min_limit_up_amount': 1e8,     # 最小封单金�?�?
+        'max_float_market_cap': 100e8,  # 最大流通市�?00�?
         'max_turnover_rate': 15,        # 最大换手率15%
-        'max_open_times': 2              # 最大开板次�?�?
+        'max_open_times': 2              # 最大开板次�?�?
     },
     'M001': {  # RSI超卖策略
         'rsi_period': 14,
         'rsi_oversold': 30,
-        'rsi_threshold': 40           # 拐头向上的阈�?
+        'rsi_threshold': 40           # 拐头向上的阈�?
     }
 }
 ```
@@ -512,7 +512,7 @@ STRATEGY_PARAM_TEMPLATES = {
 
 ```python
 class MarketStateStrategySelector:
-    """基于市场状态的策略选择�?""
+    """基于市场状态的策略选择�?""
 
     STATE_STRATEGY_CONFIG = {
         MarketState.BULL: {
@@ -547,7 +547,7 @@ class MarketStateStrategySelector:
                         available_strategies: Dict[str, BaseStrategy]
                         ) -> List[tuple]:
         """
-        根据市场状态选择策略及权�?
+        根据市场状态选择策略及权�?
 
         返回:
             [(strategy, weight), ...]
@@ -569,7 +569,7 @@ class MarketStateStrategySelector:
             if sid in available_strategies:
                 selected.append((available_strategies[sid], secondary_weight))
 
-        # 归一化权�?
+        # 归一化权�?
         total = sum(w for _, w in selected)
         if total > 0:
             selected = [(s, w/total) for s, w in selected]
@@ -577,11 +577,11 @@ class MarketStateStrategySelector:
         return selected
 ```
 
-### 5.2 策略绩效动态调�?
+### 5.2 策略绩效动态调�?
 
 ```python
 class StrategyPerformanceTracker:
-    """策略绩效追踪�?""
+    """策略绩效追踪�?""
 
     def __init__(self, lookback_periods: int = 20):
         self.lookback_periods = lookback_periods
@@ -589,7 +589,7 @@ class StrategyPerformanceTracker:
         self.signal_history: Dict[str, List[TradingSignal]] = {}
 
     def record_signal(self, strategy_id: str, signal: TradingSignal, actual_return: float):
-        """记录信号和实际收�?""
+        """记录信号和实际收�?""
         if strategy_id not in self.signal_history:
             self.signal_history[strategy_id] = []
             self.performance_history[strategy_id] = []
@@ -617,7 +617,7 @@ class StrategyPerformanceTracker:
             max_drawdown=self._calculate_max_drawdown(returns),
             sharpe_ratio=self._calculate_sharpe(returns),
             total_trades=total_trades,
-            avg_holding_days=5.0  # 简化处�?
+            avg_holding_days=5.0  # 简化处�?
         )
 
     def update_strategy_performance(self,
@@ -627,7 +627,7 @@ class StrategyPerformanceTracker:
         strategy.performance = self.calculate_recent_performance(strategy_id)
 
     def _calculate_max_drawdown(self, returns: List[float]) -> float:
-        """计算最大回�?""
+        """计算最大回�?""
         cumulative = np.cumprod(1 + np.array(returns))
         running_max = np.maximum.accumulate(cumulative)
         drawdown = (cumulative - running_max) / running_max
@@ -643,7 +643,7 @@ class StrategyPerformanceTracker:
 
 ***
 
-## 6. 策略池配�?
+## 6. 策略池配�?
 
 ### 6.1 策略池初始化配置
 
@@ -653,14 +653,14 @@ def initialize_strategy_pool() -> StrategyPool:
     初始化策略池
 
     流程:
-    1. 创建策略池实�?
-    2. 注册所有策�?
+    1. 创建策略池实�?
+    2. 注册所有策�?
     3. 设置策略参数
     4. 加载历史绩效
     """
     pool = StrategyPool(max_strategies=50)
 
-    # 注册趋势类策�?
+    # 注册趋势类策�?
     pool.register_strategy(MaTrendStrategy())
     pool.register_strategy(MacdTrendStrategy())
     pool.register_strategy(AdxTrendStrategy())
@@ -671,27 +671,27 @@ def initialize_strategy_pool() -> StrategyPool:
     pool.register_strategy(BollingerBandStrategy())
     pool.register_strategy(KdjOversoldStrategy())
 
-    # 注册动量类策�?
+    # 注册动量类策�?
     pool.register_strategy(MomentumAccelerateStrategy())
     pool.register_strategy(SectorMomentumStrategy())
     pool.register_strategy(FundFlowStrategy())
 
-    # 注册短线交易类策�?
+    # 注册短线交易类策�?
     pool.register_strategy(FirstLimitUpStrategy())
     pool.register_strategy(ConsecutiveLimitUpStrategy())
     pool.register_strategy(DragonStockStrategy())
     pool.register_strategy(LimitBackfillStrategy())
 
-    # 注册套利类策�?
+    # 注册套利类策�?
     pool.register_strategy(ArbitrageStrategy())
 
     return pool
 
-# 策略池单�?
+# 策略池单�?
 strategy_pool_instance = None
 
 def get_strategy_pool() -> StrategyPool:
-    """获取策略池单�?""
+    """获取策略池单�?""
     global strategy_pool_instance
     if strategy_pool_instance is None:
         strategy_pool_instance = initialize_strategy_pool()
@@ -703,45 +703,45 @@ def get_strategy_pool() -> StrategyPool:
 ```python
 SIGNAL_AGGREGATION_CONFIG = {
     'min_strategies_for_signal': 2,     # 触发信号的最少策略数
-    'signal_aggregation_method': 'weighted_confidence',  # 置信度加�?
+    'signal_aggregation_method': 'weighted_confidence',  # 置信度加�?
     'position_sizing': {
         'method': 'kelly_fraction',      # 凯利公式
         'kelly_fraction': 0.5,           # 凯利半仓
-        'max_position': 0.3,             # 最大仓�?0%
-        'min_position': 0.05             # 最小仓�?%
+        'max_position': 0.3,             # 最大仓�?0%
+        'min_position': 0.05             # 最小仓�?%
     },
     'risk_control': {
         'max_strategies_per_stock': 3,  # 单只股票最多策略数
-        'max_total_positions': 20,       # 最大持仓数�?
-        'correlation_threshold': 0.7     # 持仓相关性阈�?
+        'max_total_positions': 20,       # 最大持仓数�?
+        'correlation_threshold': 0.7     # 持仓相关性阈�?
     }
 }
 ```
 
 ***
 
-## 7. 游资量化策略�?
+## 7. 游资量化策略�?
 
-> 本章节来源：附录Q/BC/BE/BF/BG�?- 顶级游资交易思想体系量化提炼
+> 本章节来源：附录Q/BC/BE/BF/BG�?- 顶级游资交易思想体系量化提炼
 >
-> **说明**：这些策略来自A股顶级游资的经验总结，已抽象为量化规则，需历史回测验证有效性后再入�?
+> **说明**：这些策略来自A股顶级游资的经验总结，已抽象为量化规则，需历史回测验证有效性后再入�?
 
-### 7.1 Asking（邱宝裕）核心策�?
+### 7.1 Asking（邱宝裕）核心策�?
 
 #### S011: 只做超强势股策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S011 |
 | 策略名称 | 只做超强势股 |
-| 来源 | Asking（邱宝裕�?|
-| 适用市场 | 妖股周期、牛�?|
+| 来源 | Asking（邱宝裕�?|
+| 适用市场 | 妖股周期、牛�?|
 | 风险等级 | 极高 |
 
-**量化规则**�?
+**量化规则**�?
 - 涨幅 > 5%
-- 成交�?> 10�?
-- 换手�?> 10%
+- 成交�?> 10�?
+- 换手�?> 10%
 - 属于热点板块
 
 ```python
@@ -752,8 +752,8 @@ class UltraStrongStockStrategy(BaseStrategy):
         super().__init__("只做超强势股", "S011")
         self.market_states = [MarketState.YAO, MarketState.BULL]
         self.parameters = {
-            'min_change_pct': 5.0,      # 最小涨�?%
-            'min_turnover': 1e9,       # 最小成交额10�?
+            'min_change_pct': 5.0,      # 最小涨�?%
+            'min_turnover': 1e9,       # 最小成交额10�?
             'min_turnover_rate': 10.0, # 最小换手率10%
         }
 
@@ -764,11 +764,11 @@ class UltraStrongStockStrategy(BaseStrategy):
         if stock_data['change_pct'] < params['min_change_pct']:
             return None
 
-        # 成交额过�?
+        # 成交额过�?
         if stock_data['turnover'] < params['min_turnover']:
             return None
 
-        # 换手率过�?
+        # 换手率过�?
         if stock_data['turnover_rate'] < params['min_turnover_rate']:
             return None
 
@@ -784,22 +784,22 @@ class UltraStrongStockStrategy(BaseStrategy):
             stop_loss=stock_data['close'] * 0.95,
             target_price=stock_data['close'] * 1.15,
             strategy_name=self.name,
-            position_size=0.10,  # 高风险策略，仓位控制�?0%
+            position_size=0.10,  # 高风险策略，仓位控制�?0%
             holding_period=3
         )
 ```
 
 #### S012: 守株待兔策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S012 |
 | 策略名称 | 守株待兔（超跌反弹） |
-| 来源 | Asking（邱宝裕�?|
+| 来源 | Asking（邱宝裕�?|
 | 适用市场 | 熊市反弹、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 已有2个大阳线以上（超强势股）
 - 回调至MA5附近
 - 缩量整理
@@ -815,14 +815,14 @@ class WaitAndJumpStrategy(BaseStrategy):
         self.parameters = {
             'min_up_days': 2,            # 至少2个大阳线
             'min_up_pct': 5.0,          # 每根阳线至少5%
-            'ma5_distance': 0.02,       # 距离MA5不超�?%
+            'ma5_distance': 0.02,       # 距离MA5不超�?%
             'volume_ratio_max': 0.8,    # 缩量整理
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 检查连续上�?
+        # 检查连续上�?
         up_count = 0
         for i in range(params['min_up_days']):
             if stock_data[f'd_{i}_change_pct'] >= params['min_up_pct']:
@@ -858,17 +858,17 @@ class WaitAndJumpStrategy(BaseStrategy):
 
 #### S013: 情绪转折策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S013 |
 | 策略名称 | 情绪转折策略 |
 | 来源 | 炒股养家 |
-| 适用市场 | 妖股周期、情绪底�?|
-| 风险等级 | �?|
+| 适用市场 | 妖股周期、情绪底�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 赚钱效应强时敢于重仓
-- 亏钱效应弥漫时空�?
+- 亏钱效应弥漫时空�?
 - 跌停家数减少+翘板
 
 ```python
@@ -879,16 +879,16 @@ class SentimentReversalStrategy(BaseStrategy):
         super().__init__("情绪转折", "S013")
         self.market_states = [MarketState.YAO, MarketState.VOLATILE]
         self.parameters = {
-            'profit_ratio_threshold': 0.6,   # 赚钱效应阈�?0%
+            'profit_ratio_threshold': 0.6,   # 赚钱效应阈�?0%
             'limit_down_decrease': 10,       # 跌停家数减少
-            'rebound_candidates': 5,          # 翘板候选数�?
+            'rebound_candidates': 5,          # 翘板候选数�?
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
         # 赚钱效应评估
-        profit_ratio = market_data['上涨家数'] / market_data['总交易家�?]
+        profit_ratio = market_data['上涨家数'] / market_data['总交易家�?]
         if profit_ratio < params['profit_ratio_threshold']:
             return None
 
@@ -897,7 +897,7 @@ class SentimentReversalStrategy(BaseStrategy):
         if limit_down_change < params['limit_down_decrease']:
             return None
 
-        # 有翘板候�?
+        # 有翘板候�?
         rebound_count = self.count_rebound_candidates(market_data)
         if rebound_count < params['rebound_candidates']:
             return None
@@ -915,32 +915,32 @@ class SentimentReversalStrategy(BaseStrategy):
         )
 ```
 
-### 7.3 五日线战�?
+### 7.3 五日线战�?
 
-#### T011: 五日线趋势策�?
+#### T011: 五日线趋势策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | T011 |
-| 策略名称 | 五日线趋势策�?|
+| 策略名称 | 五日线趋势策�?|
 | 来源 | 明王心法 |
 | 适用市场 | 牛市、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 大盘�?日线上方：右侧交易，积极操作
-- 大盘�?日线下方：左侧交易，谨慎操作
-- 买入�?日线收复 + 成交量逆转 + 强势板块
+**量化规则**�?
+- 大盘�?日线上方：右侧交易，积极操作
+- 大盘�?日线下方：左侧交易，谨慎操作
+- 买入�?日线收复 + 成交量逆转 + 强势板块
 
 ```python
 class FiveDayLineStrategy(BaseStrategy):
-    """五日线战�?""
+    """五日线战�?""
 
     def __init__(self):
-        super().__init__("五日线战�?, "T011")
+        super().__init__("五日线战�?, "T011")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
-            'position_threshold': 0.01,    # 偏离阈�?%
+            'position_threshold': 0.01,    # 偏离阈�?%
             'volume_reversal': True,       # 成交量逆转
         }
 
@@ -978,33 +978,33 @@ class FiveDayLineStrategy(BaseStrategy):
         )
 ```
 
-### 7.4 反弹三定律策�?
+### 7.4 反弹三定律策�?
 
-#### M009: 反弹三定律策�?
+#### M009: 反弹三定律策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | M009 |
-| 策略名称 | 反弹三定�?|
+| 策略名称 | 反弹三定�?|
 | 来源 | 明王心法 |
 | 适用市场 | 熊市反弹、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 第一定律：成交量逆转
-- 第二定律�?日线收复
-- 第三定律：强势板块出�?
-- 共振越多，信号越�?
+- 第二定律�?日线收复
+- 第三定律：强势板块出�?
+- 共振越多，信号越�?
 
 ```python
 class ReboundThreeLawsStrategy(BaseStrategy):
-    """反弹三定律策�?""
+    """反弹三定律策�?""
 
     def __init__(self):
-        super().__init__("反弹三定�?, "M009")
+        super().__init__("反弹三定�?, "M009")
         self.market_states = [MarketState.BEAR, MarketState.VOLATILE]
         self.parameters = {
-            '共振阈�?: 2,  # 至少2个条件触�?
+            '共振阈�?: 2,  # 至少2个条件触�?
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
@@ -1014,15 +1014,15 @@ class ReboundThreeLawsStrategy(BaseStrategy):
         if self.check_volume_reversal(stock_data):
             共振 += 1
 
-        # 第二定律�?日线收复
+        # 第二定律�?日线收复
         if stock_data['close'] > stock_data['ma5']:
             共振 += 1
 
-        # 第三定律：强势板块出�?
+        # 第三定律：强势板块出�?
         if stock_data.get('is_strong_sector', False):
             共振 += 1
 
-        if 共振 < self.parameters['共振阈�?]:
+        if 共振 < self.parameters['共振阈�?]:
             return None
 
         confidence = 共振 / 3
@@ -1041,44 +1041,44 @@ class ReboundThreeLawsStrategy(BaseStrategy):
         )
 ```
 
-### 7.5 二板定龙头策�?
+### 7.5 二板定龙头策�?
 
-#### S014: 二板定龙头策�?
+#### S014: 二板定龙头策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S014 |
-| 策略名称 | 二板定龙�?|
+| 策略名称 | 二板定龙�?|
 | 来源 | 赵老哥 |
 | 适用市场 | 妖股周期 |
 | 风险等级 | 极高 |
 
-**量化规则**�?
-- 从昨日首板中选取二板候�?
-- 一板后次日高开幅度�?%-7%
+**量化规则**�?
+- 从昨日首板中选取二板候�?
+- 一板后次日高开幅度�?%-7%
 - 回调不破一板最高价80%
 - 10点前封板
-- 同题材有一板跟�?
+- 同题材有一板跟�?
 
 ```python
 class SecondBoardDragonStrategy(BaseStrategy):
-    """二板定龙头策�?""
+    """二板定龙头策�?""
 
     def __init__(self):
-        super().__init__("二板定龙�?, "S014")
+        super().__init__("二板定龙�?, "S014")
         self.market_states = [MarketState.YAO]
         self.parameters = {
-            'open_ratio_min': 0.03,      # 高开最�?%
-            'open_ratio_max': 0.07,      # 高开最�?%
-            'low_protection': 0.80,      # 回调不破一板最�?0%
+            'open_ratio_min': 0.03,      # 高开最�?%
+            'open_ratio_max': 0.07,      # 高开最�?%
+            'low_protection': 0.80,      # 回调不破一板最�?0%
             'seal_time_limit': '10:00',   # 10点前封板
-            'min_score': 0.70,           # 最小评�?
+            'min_score': 0.70,           # 最小评�?
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 高开幅度筛�?
+        # 高开幅度筛�?
         open_ratio = stock_data['open_ratio']
         if not (params['open_ratio_min'] <= open_ratio <= params['open_ratio_max']):
             return None
@@ -1093,7 +1093,7 @@ class SecondBoardDragonStrategy(BaseStrategy):
         if stock_data['seal_time'] > params['seal_time_limit']:
             return None
 
-        # 同题材有一板跟�?
+        # 同题材有一板跟�?
         if stock_data.get('same_theme_first_board', 0) < 1:
             return None
 
@@ -1110,31 +1110,31 @@ class SecondBoardDragonStrategy(BaseStrategy):
         )
 ```
 
-### 7.6 超短线最高境界策�?
+### 7.6 超短线最高境界策�?
 
-#### S015: 独股一箭策�?
+#### S015: 独股一箭策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S015 |
 | 策略名称 | 独股一箭（超短线） |
-| 来源 | 独股一�?|
+| 来源 | 独股一�?|
 | 适用市场 | 妖股周期（强势环境） |
 | 风险等级 | 极高 |
 
-**量化规则**�?
-- 只攻不守，满仓一只股�?
-- 第二天不管盈亏都�?
-- 5日线附近买，不追�?
-- 冲高无量坚决�?
-- 热点和强势股可忽略大�?
+**量化规则**�?
+- 只攻不守，满仓一只股�?
+- 第二天不管盈亏都�?
+- 5日线附近买，不追�?
+- 冲高无量坚决�?
+- 热点和强势股可忽略大�?
 
 ```python
 class DuguYijianStrategy(BaseStrategy):
     """独股一箭超短线策略"""
 
     def __init__(self):
-        super().__init__("独股一�?, "S015")
+        super().__init__("独股一�?, "S015")
         self.market_states = [MarketState.YAO]
         self.parameters = {
             'ma5_distance': 0.02,        # 5日线附近2%
@@ -1145,8 +1145,8 @@ class DuguYijianStrategy(BaseStrategy):
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 环境判断：赚钱效�?
-        profit_ratio = market_data['上涨家数'] / market_data['总交易家�?]
+        # 环境判断：赚钱效�?
+        profit_ratio = market_data['上涨家数'] / market_data['总交易家�?]
         if profit_ratio < 0.5 and not stock_data.get('is_hot_stock', False):
             return None
 
@@ -1156,7 +1156,7 @@ class DuguYijianStrategy(BaseStrategy):
         if abs(current - ma5) / ma5 > params['ma5_distance']:
             return None
 
-        # 有题�?热点
+        # 有题�?热点
         if not (stock_data.get('has_theme', False) and stock_data.get('is_hot', False)):
             return None
 
@@ -1171,50 +1171,50 @@ class DuguYijianStrategy(BaseStrategy):
             target_price=current * (1 + params['profit_target']),
             strategy_name=self.name,
             position_size=position,
-            holding_period=1  # 超短线，次日必须�?
+            holding_period=1  # 超短线，次日必须�?
         )
 
     def exit_signal(self, position_data):
-        """超短线卖出信�?""
+        """超短线卖出信�?""
         current = position_data['current_price']
         entry = position_data['entry_price']
         volume_ratio = position_data['volume_ratio']
 
-        # 冲高无量坚决�?
+        # 冲高无量坚决�?
         if volume_ratio < 0.5 and current > entry * 1.05:
             return {'action': '卖出', 'reason': '冲高无量'}
 
-        # 涨停差一点就�?
+        # 涨停差一点就�?
         limit_up = entry * 1.10
         if current < limit_up and current >= entry * 1.09:
-            return {'action': '卖出', 'reason': '涨停差一�?}
+            return {'action': '卖出', 'reason': '涨停差一�?}
 
-        return None  # 持有至收�?
+        return None  # 持有至收�?
 ```
 
 ### 7.7 仓位管理策略
 
-#### R001: 动态仓位管理策�?
+#### R001: 动态仓位管理策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | R001 |
-| 策略名称 | 动态仓位管�?|
-| 来源 | 龙飞�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | 低（风控策略�?|
+| 策略名称 | 动态仓位管�?|
+| 来源 | 龙飞�?|
+| 适用市场 | 所有市�?|
+| 风险等级 | 低（风控策略�?|
 
-**量化规则**�?
-- 赢面仓位量化�?0%以下观望�?0%-70%小仓�?0%-80%中仓�?0%-90%大仓�?0%以上全仓
+**量化规则**�?
+- 赢面仓位量化�?0%以下观望�?0%-70%小仓�?0%-80%中仓�?0%-90%大仓�?0%以上全仓
 - 动态回撤线：距最高点回撤10%分仓防守
-- 半仓操作原则：盈利后才动用另一�?
+- 半仓操作原则：盈利后才动用另一�?
 
 ```python
 class DynamicPositionStrategy(BaseStrategy):
-    """动态仓位管理策�?""
+    """动态仓位管理策�?""
 
     def __init__(self):
-        super().__init__("动态仓位管�?, "R001")
+        super().__init__("动态仓位管�?, "R001")
         self.market_states = [
             MarketState.BULL,
             MarketState.BEAR,
@@ -1227,7 +1227,7 @@ class DynamicPositionStrategy(BaseStrategy):
             'small_position': 0.2,          # 小仓20%
             'medium_position': 0.4,         # 中仓40%
             'large_position': 0.6,          # 大仓60%
-            'max_position': 0.8,            # 最�?0%
+            'max_position': 0.8,            # 最�?0%
             'drawdown_protection': 0.10,   # 回撤10%防守
         }
 
@@ -1254,7 +1254,7 @@ class DynamicPositionStrategy(BaseStrategy):
 
     def check_drawdown_protection(self, current_value, peak_value):
         """
-        回撤保护检�?
+        回撤保护检�?
         """
         drawdown = (peak_value - current_value) / peak_value
 
@@ -1262,53 +1262,53 @@ class DynamicPositionStrategy(BaseStrategy):
             return {
                 'action': '减仓',
                 'ratio': 0.5,
-                'reason': f'回撤{drawdown*100:.1f}%，触发保�?
+                'reason': f'回撤{drawdown*100:.1f}%，触发保�?
             }
 
         return None
 ```
 
-### 7.8 新题材判断策�?
+### 7.8 新题材判断策�?
 
-#### S016: 新题材策�?
+#### S016: 新题材策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S016 |
-| 策略名称 | 新题材判�?|
+| 策略名称 | 新题材判�?|
 | 来源 | 赵老哥 |
 | 适用市场 | 妖股周期 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 有故事：重大政策、业绩拐点、并购重组等
-- 大量资金活跃：成交额 > 10�?
+- 大量资金活跃：成交额 > 10�?
 - 市场认同度高：板块内多个涨停
 
 ```python
 class NewThemeStrategy(BaseStrategy):
-    """新题材策�?""
+    """新题材策�?""
 
     def __init__(self):
-        super().__init__("新题材判�?, "S016")
+        super().__init__("新题材判�?, "S016")
         self.market_states = [MarketState.YAO]
         self.parameters = {
-            'min_turnover': 1e9,           # 最小成交额10�?
+            'min_turnover': 1e9,           # 最小成交额10�?
             'min_sector_limit_up': 3,      # 板块最少涨停数
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 成交�?> 10�?
+        # 成交�?> 10�?
         if stock_data['turnover'] < params['min_turnover']:
             return None
 
-        # 有故事（重大事项�?
+        # 有故事（重大事项�?
         if not stock_data.get('has_major_event', False):
             return None
 
-        # 板块内多个涨�?
+        # 板块内多个涨�?
         sector_limit_up = stock_data.get('sector_limit_up_count', 0)
         if sector_limit_up < params['min_sector_limit_up']:
             return None
@@ -1330,21 +1330,21 @@ class NewThemeStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 来源 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|------|----------|------|----------|
-| S011 | 只做超强势股 | Asking | 妖股/牛市 | 极高 | 涨幅>5%+成交�?10�?换手�?10% |
-| S012 | 守株待兔 | Asking | 熊市/震荡 | �?| 回调至MA5+缩量整理 |
-| S013 | 情绪转折 | 炒股养家 | 妖股/情绪�?| �?| 赚钱效应+跌停减少+翘板 |
-| T011 | 五日线战�?| 明王 | 牛市/震荡 | �?| 5日线收复+成交量逆转 |
-| M009 | 反弹三定�?| 明王 | 熊市/震荡 | �?| 成交量逆转+5日线收复+强势板块 |
-| S014 | 二板定龙�?| 赵老哥 | 妖股 | 极高 | 高开3-7%+回调不破80%+10点前封板 |
-| S015 | 独股一�?| 独股一�?| 妖股 | 极高 | 满仓一�?次日�?冲高无量�?|
-| R001 | 动态仓位管�?| 龙飞�?| 所�?| �?| 赢面仓位+回撤保护 |
-| S016 | 新题材判�?| 赵老哥 | 妖股 | �?| 有故�?成交�?10�?板块涨停 |
-| S017 | 半仓盈利加仓 | Asking | 所�?| �?| 半仓盈利>5%后才能加�?|
-| S018 | 情绪两分�?| 炒股养家 | 所�?| �?| 极冷区加仓，极热区减�?|
-| S019 | 情绪六分�?| 炒股养家 | 所�?| �?| 按情绪分区动态调整仓�?|
-| S020 | 弱势转折�?| 炒股养家 | 妖股/反弹 | 极高 | 连续普跌+领头�?连板 |
-| R002 | 稳定复利风控 | 退�?| 所�?| �?| 不大�?回撤10%分仓 |
-| M010 | 下跌三阶�?| 炒股养家 | 熊市/震荡 | �?| �?�?末三期策略不�?|
+| S011 | 只做超强势股 | Asking | 妖股/牛市 | 极高 | 涨幅>5%+成交�?10�?换手�?10% |
+| S012 | 守株待兔 | Asking | 熊市/震荡 | �?| 回调至MA5+缩量整理 |
+| S013 | 情绪转折 | 炒股养家 | 妖股/情绪�?| �?| 赚钱效应+跌停减少+翘板 |
+| T011 | 五日线战�?| 明王 | 牛市/震荡 | �?| 5日线收复+成交量逆转 |
+| M009 | 反弹三定�?| 明王 | 熊市/震荡 | �?| 成交量逆转+5日线收复+强势板块 |
+| S014 | 二板定龙�?| 赵老哥 | 妖股 | 极高 | 高开3-7%+回调不破80%+10点前封板 |
+| S015 | 独股一�?| 独股一�?| 妖股 | 极高 | 满仓一�?次日�?冲高无量�?|
+| R001 | 动态仓位管�?| 龙飞�?| 所�?| �?| 赢面仓位+回撤保护 |
+| S016 | 新题材判�?| 赵老哥 | 妖股 | �?| 有故�?成交�?10�?板块涨停 |
+| S017 | 半仓盈利加仓 | Asking | 所�?| �?| 半仓盈利>5%后才能加�?|
+| S018 | 情绪两分�?| 炒股养家 | 所�?| �?| 极冷区加仓，极热区减�?|
+| S019 | 情绪六分�?| 炒股养家 | 所�?| �?| 按情绪分区动态调整仓�?|
+| S020 | 弱势转折�?| 炒股养家 | 妖股/反弹 | 极高 | 连续普跌+领头�?连板 |
+| R002 | 稳定复利风控 | 退�?| 所�?| �?| 不大�?回撤10%分仓 |
+| M010 | 下跌三阶�?| 炒股养家 | 熊市/震荡 | �?| �?�?末三期策略不�?|
 
 ***
 
@@ -1352,19 +1352,19 @@ class NewThemeStrategy(BaseStrategy):
 
 #### S017: 半仓盈利加仓策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S017 |
 | 策略名称 | 半仓盈利加仓 |
-| 来源 | Asking（邱宝裕�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 来源 | Asking（邱宝裕�?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 半仓操作：初始仓�?0%
-- 盈利后才能动用另一半资�?
-- 盈利标准：现有仓位盈�?5%
-- 加仓后迅速盈利，可再动剩余资�?
+**量化规则**�?
+- 半仓操作：初始仓�?0%
+- 盈利后才能动用另一半资�?
+- 盈利标准：现有仓位盈�?5%
+- 加仓后迅速盈利，可再动剩余资�?
 
 ```python
 class HalfPositionAddStrategy(BaseStrategy):
@@ -1379,7 +1379,7 @@ class HalfPositionAddStrategy(BaseStrategy):
         self.parameters = {
             'initial_position': 0.50,     # 初始半仓
             'profit_threshold': 0.05,      # 盈利5%才能加仓
-            'second_add_threshold': 0.08, # 第二次加仓盈�?%
+            'second_add_threshold': 0.08, # 第二次加仓盈�?%
         }
         self.position_phases = {}  # 记录每只股票仓位阶段
 
@@ -1388,52 +1388,52 @@ class HalfPositionAddStrategy(BaseStrategy):
         根据盈利计算仓位
         """
         if stock_code not in self.position_phases:
-            self.position_phases[stock_code] = 1  # 第一阶段：初始半�?
+            self.position_phases[stock_code] = 1  # 第一阶段：初始半�?
 
         phase = self.position_phases[stock_code]
         params = self.parameters
 
         if phase == 1 and current_profit > params['profit_threshold']:
-            # 进入第二阶段：全�?
+            # 进入第二阶段：全�?
             self.position_phases[stock_code] = 2
-            return 1.0, "加仓至满�?
+            return 1.0, "加仓至满�?
 
         elif phase == 2 and current_profit > params['second_add_threshold']:
-            # 进入第三阶段：超仓（使用备用资金�?
+            # 进入第三阶段：超仓（使用备用资金�?
             self.position_phases[stock_code] = 3
-            return 1.5, "盈利丰厚，动用备用资�?
+            return 1.5, "盈利丰厚，动用备用资�?
 
         elif current_profit < -0.03:
             # 止损：退回第一阶段
             self.position_phases[stock_code] = 1
-            return 0.5, "止损，回调半�?
+            return 0.5, "止损，回调半�?
 
         return self.position_phases.get(stock_code, 1) * 0.5, "持有"
 ```
 
 ### 7.11 炒股养家情绪策略
 
-#### S018: 情绪两分法策�?
+#### S018: 情绪两分法策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S018 |
-| 策略名称 | 情绪两分�?|
+| 策略名称 | 情绪两分�?|
 | 来源 | 炒股养家 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 极冷区（上涨家数<40%）：加仓
 - 极热区（上涨家数>70%）：减仓
 - 参考指标：880005涨跌家数
 
 ```python
 class SentimentTwoDivisionsStrategy(BaseStrategy):
-    """情绪两分法策�?""
+    """情绪两分法策�?""
 
     def __init__(self):
-        super().__init__("情绪两分�?, "S018")
+        super().__init__("情绪两分�?, "S018")
         self.market_states = [
             MarketState.BULL, MarketState.VOLATILE,
             MarketState.BEAR, MarketState.CHAOS
@@ -1441,8 +1441,8 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
         self.parameters = {
             'hot_threshold': 0.70,        # 70%为极热区
             'cold_threshold': 0.40,        # 40%为极冷区
-            'add_position': 0.30,         # 极冷区加�?0%
-            'reduce_position': 0.20,       # 极热区减�?0%
+            'add_position': 0.30,         # 极冷区加�?0%
+            'reduce_position': 0.20,       # 极热区减�?0%
         }
 
     def get_market_sentiment(self, market_data):
@@ -1450,7 +1450,7 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
         获取市场情绪
         """
         rise_count = market_data.get('上涨家数', 0)
-        total_count = market_data.get('总交易家�?, 1)
+        total_count = market_data.get('总交易家�?, 1)
         ratio = rise_count / total_count if total_count > 0 else 0.5
         return ratio
 
@@ -1486,20 +1486,20 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
                 holding_period=10
             )
 
-        return None  # 正常区间，观�?
+        return None  # 正常区间，观�?
 ```
 
-#### S019: 情绪六分法策�?
+#### S019: 情绪六分法策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S019 |
-| 策略名称 | 情绪六分�?|
+| 策略名称 | 情绪六分�?|
 | 来源 | 炒股养家 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 极热区（>66%上涨）：大幅减仓
 - 过热区（55%-66%）：逐步减仓
 - 微热区（51%-55%）：谨慎
@@ -1509,17 +1509,17 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
 
 ```python
 class SentimentSixDivisionsStrategy(BaseStrategy):
-    """情绪六分法策�?""
+    """情绪六分法策�?""
 
     def __init__(self):
-        super().__init__("情绪六分�?, "S019")
+        super().__init__("情绪六分�?, "S019")
         self.market_states = [s for s in MarketState]
         self.parameters = {
-            'extreme_hot': 0.66,      # 极热�?
-            'over_hot': 0.55,         # 过热�?
-            'slight_hot': 0.51,        # 微热�?
-            'slight_cold': 0.45,       # 微冷�?
-            'over_cold': 0.35,         # 过冷�?
+            'extreme_hot': 0.66,      # 极热�?
+            'over_hot': 0.55,         # 过热�?
+            'slight_hot': 0.51,        # 微热�?
+            'slight_cold': 0.45,       # 微冷�?
+            'over_cold': 0.35,         # 过冷�?
         }
 
     def get_sentiment_zone(self, sentiment_ratio):
@@ -1528,20 +1528,20 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
         """
         p = self.parameters
         if sentiment_ratio > p['extreme_hot']:
-            return {'zone': '极热�?, 'action': '大幅减仓', 'position_change': -0.30}
+            return {'zone': '极热�?, 'action': '大幅减仓', 'position_change': -0.30}
         elif sentiment_ratio > p['over_hot']:
-            return {'zone': '过热�?, 'action': '逐步减仓', 'position_change': -0.15}
+            return {'zone': '过热�?, 'action': '逐步减仓', 'position_change': -0.15}
         elif sentiment_ratio > p['slight_hot']:
-            return {'zone': '微热�?, 'action': '谨慎持有', 'position_change': 0}
+            return {'zone': '微热�?, 'action': '谨慎持有', 'position_change': 0}
         elif sentiment_ratio > p['slight_cold']:
-            return {'zone': '微冷�?, 'action': '观察等待', 'position_change': 0}
+            return {'zone': '微冷�?, 'action': '观察等待', 'position_change': 0}
         elif sentiment_ratio > p['over_cold']:
-            return {'zone': '过冷�?, 'action': '观望', 'position_change': 0.10}
+            return {'zone': '过冷�?, 'action': '观望', 'position_change': 0.10}
         else:
-            return {'zone': '极冷�?, 'action': '加仓机会', 'position_change': 0.25}
+            return {'zone': '极冷�?, 'action': '加仓机会', 'position_change': 0.25}
 
     def generate_signal(self, market_data, stock_data, market_state):
-        sentiment = market_data.get('上涨家数', 0) / market_data.get('总交易家�?, 1)
+        sentiment = market_data.get('上涨家数', 0) / market_data.get('总交易家�?, 1)
         zone_info = self.get_sentiment_zone(sentiment)
 
         if zone_info['position_change'] > 0:
@@ -1572,9 +1572,9 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
         return None
 ```
 
-#### S020: 弱势转折点搏击策�?
+#### S020: 弱势转折点搏击策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S020 |
 | 策略名称 | 弱势转折点搏击（涨停启明星） |
@@ -1582,27 +1582,27 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
 | 适用市场 | 妖股周期、反弹市 |
 | 风险等级 | 极高 |
 
-**量化规则**�?
-- 市场连续普跌后出现转折迹�?
+**量化规则**�?
+- 市场连续普跌后出现转折迹�?
 - 领头羊：在市场最糟糕时逆势抗跌+2连板
 - 次日市场企稳反弹确认
 
 ```python
 class WeakMarketTurnStrategy(BaseStrategy):
-    """弱势转折点搏击策�?""
+    """弱势转折点搏击策�?""
 
     def __init__(self):
-        super().__init__("弱势转折�?, "S020")
+        super().__init__("弱势转折�?, "S020")
         self.market_states = [MarketState.YAO, MarketState.VOLATILE]
         self.parameters = {
             'consecutive_drop_days': 3,       # 连续下跌天数
-            'limit_up_count_threshold': 5,   # 连板股数量稀�?
+            'limit_up_count_threshold': 5,   # 连板股数量稀�?
             'space_board_suppressed': True,  # 空间板被压制
         }
 
     def check_market_turn_signals(self, market_data):
         """
-        检查市场转折信�?
+        检查市场转折信�?
         """
         # 连续普跌
         consecutive_drops = 0
@@ -1611,18 +1611,18 @@ class WeakMarketTurnStrategy(BaseStrategy):
                 consecutive_drops += 1
 
         if consecutive_drops < self.parameters['consecutive_drop_days']:
-            return {'can_turn': False, 'reason': '未出现连续普�?}
+            return {'can_turn': False, 'reason': '未出现连续普�?}
 
-        # 连板股绝�?
-        limit_up_count = market_data.get('连板股数�?, 100)
+        # 连板股绝�?
+        limit_up_count = market_data.get('连板股数�?, 100)
         if limit_up_count > self.parameters['limit_up_count_threshold']:
-            return {'can_turn': False, 'reason': '连板股仍然活�?}
+            return {'can_turn': False, 'reason': '连板股仍然活�?}
 
-        return {'can_turn': True, 'phase': '等待领头�?}
+        return {'can_turn': True, 'phase': '等待领头�?}
 
     def select_leader_stock(self, candidate_stocks):
         """
-        选择领头�?
+        选择领头�?
         条件：在市场最糟糕时逆势抗跌 + 走出2连板
         """
         for stock in candidate_stocks:
@@ -1662,21 +1662,21 @@ class WeakMarketTurnStrategy(BaseStrategy):
         return None
 ```
 
-### 7.12 退神稳定复利风控策�?
+### 7.12 退神稳定复利风控策�?
 
 #### R002: 稳定复利风控策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | R002 |
 | 策略名称 | 稳定复利风控 |
-| 来源 | 退�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | 低（风控策略�?|
+| 来源 | 退�?|
+| 适用市场 | 所有市�?|
+| 风险等级 | 低（风控策略�?|
 
-**量化规则**�?
-- 稳定复利，慢就是�?
-- 设置动态回撤线：距最高点回撤10%，触发分仓防�?
+**量化规则**�?
+- 稳定复利，慢就是�?
+- 设置动态回撤线：距最高点回撤10%，触发分仓防�?
 - 单只仓位不超50%
 - 永不大赔
 
@@ -1688,14 +1688,14 @@ class StableCompoundStrategy(BaseStrategy):
         super().__init__("稳定复利风控", "R002")
         self.market_states = [s for s in MarketState]
         self.parameters = {
-            'max_single_position': 0.50,     # 单只最大仓�?0%
+            'max_single_position': 0.50,     # 单只最大仓�?0%
             'drawdown_line': 0.10,           # 回撤10%分仓防守
-            'compound_rate': 0.02,           # 月复合增长目�?%
+            'compound_rate': 0.02,           # 月复合增长目�?%
         }
 
     def check_drawdown_protection(self, current_value, peak_value):
         """
-        检查回撤保�?
+        检查回撤保�?
         """
         drawdown = (peak_value - current_value) / peak_value
 
@@ -1704,7 +1704,7 @@ class StableCompoundStrategy(BaseStrategy):
                 'triggered': True,
                 'action': '分仓防守',
                 'reduce_ratio': 0.5,
-                'reason': f'回撤{drawdown*100:.1f}%，触�?0%回撤�?
+                'reason': f'回撤{drawdown*100:.1f}%，触�?0%回撤�?
             }
 
         return {'triggered': False}
@@ -1716,59 +1716,59 @@ class StableCompoundStrategy(BaseStrategy):
         """
         max_pos = self.parameters['max_single_position']
 
-        # 检查回�?
+        # 检查回�?
         protection = self.check_drawdown_protection(current_value, peak_value)
         if protection['triggered']:
             return max_pos * protection['reduce_ratio']
 
-        # 根据目标收益和风险确定仓�?
-        if target_profit > 0.20:  # 高确定性机�?
+        # 根据目标收益和风险确定仓�?
+        if target_profit > 0.20:  # 高确定性机�?
             return max_pos
-        elif target_profit > 0.10:  # 中确定�?
+        elif target_profit > 0.10:  # 中确定�?
             return max_pos * 0.7
-        else:  # 低确定�?
+        else:  # 低确定�?
             return max_pos * 0.5
 
     def validate_not_big_loss(self, current_profit):
         """
-        验证不大�?
+        验证不大�?
         """
         if current_profit < -0.10:  # 亏损超过10%
             return {
                 'valid': False,
                 'action': '止损出局',
-                'reason': '亏损�?0%，触发不大赔红线'
+                'reason': '亏损�?0%，触发不大赔红线'
             }
         return {'valid': True}
 ```
 
-### 7.13 下跌三阶段策�?
+### 7.13 下跌三阶段策�?
 
-#### M010: 下跌三阶段策�?
+#### M010: 下跌三阶段策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | M010 |
-| 策略名称 | 下跌三阶�?|
+| 策略名称 | 下跌三阶�?|
 | 来源 | 炒股养家 |
 | 适用市场 | 熊市、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 初期：做强势股回调反�?
-- 中期：做超跌�?
+**量化规则**�?
+- 初期：做强势股回调反�?
+- 中期：做超跌�?
 - 末期：做新强势股（场外资金入场）
 
 ```python
 class DeclineThreePhasesStrategy(BaseStrategy):
-    """下跌三阶段策�?""
+    """下跌三阶段策�?""
 
     def __init__(self):
-        super().__init__("下跌三阶�?, "M010")
+        super().__init__("下跌三阶�?, "M010")
         self.market_states = [MarketState.BEAR, MarketState.VOLATILE]
         self.parameters = {
-            'early_phase_days': 5,      # 初期：连续下跌前5�?
-            'mid_phase_days': 15,       # 中期：连续下�?-15�?
+            'early_phase_days': 5,      # 初期：连续下跌前5�?
+            'mid_phase_days': 15,       # 中期：连续下�?-15�?
             'late_phase_signal': 'new_money',  # 末期：新资金入场信号
         }
 
@@ -1777,7 +1777,7 @@ class DeclineThreePhasesStrategy(BaseStrategy):
         识别下跌阶段
         """
         consecutive_drop_days = 0
-        for i in range(30):  # 检查最�?0�?
+        for i in range(30):  # 检查最�?0�?
             if market_data.get(f'd_{i}_change', 0) < 0:
                 consecutive_drop_days += 1
             else:
@@ -1794,7 +1794,7 @@ class DeclineThreePhasesStrategy(BaseStrategy):
         phase = self.identify_decline_phase(market_data)
 
         if phase == 'early':
-            # 初期：做强势股回调反�?
+            # 初期：做强势股回调反�?
             if stock_data['relative_strength'] > 0.05:  # 相对大盘强势
                 return TradingSignal(
                     code=stock_data['code'],
@@ -1809,7 +1809,7 @@ class DeclineThreePhasesStrategy(BaseStrategy):
                 )
 
         elif phase == 'mid':
-            # 中期：做超跌�?
+            # 中期：做超跌�?
             if stock_data['change_pct'] < -0.15:  # 跌幅超过15%
                 return TradingSignal(
                     code=stock_data['code'],
@@ -1825,8 +1825,8 @@ class DeclineThreePhasesStrategy(BaseStrategy):
 
         else:  # late
             # 末期：做新强势股（场外资金入场）
-            if market_data.get('new_money_signal', False):  # 新资金入场信�?
-                if stock_data['volume_ratio'] > 2.0:  # 成交量放�?
+            if market_data.get('new_money_signal', False):  # 新资金入场信�?
+                if stock_data['volume_ratio'] > 2.0:  # 成交量放�?
                     return TradingSignal(
                         code=stock_data['code'],
                         signal=SignalType.BUY,
@@ -1853,18 +1853,18 @@ class DeclineThreePhasesStrategy(BaseStrategy):
 | 因子 | 标准 | 量化公式 |
 | ------ | ---- | -------- |
 | 研发占比 | 研发占比 > 5%(硬科技) OR > 3%(软科技) | 研发费用 / 营业收入 × 100% |
-| 国产替代逻辑 | 卡脖子技术方�?| 替代空间 > 100亿人民币 |
-| 想象空间 | 技术领先×市场容�?| 目标市值空�?> 5倍当前市�?|
-| 研发人员占比 | 研发人员 / 总员�?| > 20% |
-| 专利数量 | 发明专利 | > 100�?OR 专利增�?> 30% |
+| 国产替代逻辑 | 卡脖子技术方�?| 替代空间 > 100亿人民币 |
+| 想象空间 | 技术领先×市场容�?| 目标市值空�?> 5倍当前市�?|
+| 研发人员占比 | 研发人员 / 总员�?| > 20% |
+| 专利数量 | 发明专利 | > 100�?OR 专利增�?> 30% |
 
-### 8.2 科技股估值辅助指�?
+### 8.2 科技股估值辅助指�?
 
-| 估值方�?| 适用场景 | 标准 |
+| 估值方�?| 适用场景 | 标准 |
 | ---------- | ------------ | ---- |
-| PS估�?| 尚未盈利的成长期科技�?| PS < 10�?高速增�? OR PS < 5�?稳定增长) |
-| PB估�?| 半导�?硬件类科技�?| PB < 10�?合理) OR PB < 5�?低估) |
-| EV/Revenue | 云计�?SaaS类科技�?| EV/Revenue < 10�?|
+| PS估�?| 尚未盈利的成长期科技�?| PS < 10�?高速增�? OR PS < 5�?稳定增长) |
+| PB估�?| 半导�?硬件类科技�?| PB < 10�?合理) OR PB < 5�?低估) |
+| EV/Revenue | 云计�?SaaS类科技�?| EV/Revenue < 10�?|
 
 ### 8.3 科技股选股Python实现
 
@@ -1873,17 +1873,17 @@ class TechStockSelector(BaseStrategy):
     """科技股选股策略"""
 
     def __init__(self):
-        super().__init__("科技股精�?, "T001")
+        super().__init__("科技股精�?, "T001")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
             'min_rd_ratio_hard': 0.05,      # 硬科技研发占比>5%
             'min_rd_ratio_soft': 0.03,      # 软科技研发占比>3%
-            'min_replacement_space': 100e8,  # 替代空间>100�?
-            'min_target_market_cap': 5.0,   # 目标市值空�?5�?
+            'min_replacement_space': 100e8,  # 替代空间>100�?
+            'min_target_market_cap': 5.0,   # 目标市值空�?5�?
             'min_rd_personnel_ratio': 0.20, # 研发人员>20%
-            'min_patent_count': 100,         # 专利>100�?
-            'max_ps': 10,                    # PS估值上�?
-            'max_pb': 10,                    # PB估值上�?
+            'min_patent_count': 100,         # 专利>100�?
+            'max_ps': 10,                    # PS估值上�?
+            'max_pb': 10,                    # PB估值上�?
         }
 
     def evaluate_rd_investment(self, stock_data):
@@ -1906,13 +1906,13 @@ class TechStockSelector(BaseStrategy):
         """
         replacement_space = stock_data.get('replacement_space', 0)
         if replacement_space < self.parameters['min_replacement_space']:
-            return {'pass': False, 'reason': f'替代空间{replacement_space/1e8:.0f}�?{self.parameters["min_replacement_space"]/1e8:.0f}�?}
+            return {'pass': False, 'reason': f'替代空间{replacement_space/1e8:.0f}�?{self.parameters["min_replacement_space"]/1e8:.0f}�?}
 
         return {'pass': True, 'score': min(replacement_space / 500e8, 2.0)}
 
     def evaluate_valuation(self, stock_data):
         """
-        评估估值水�?
+        评估估值水�?
         """
         is_hard_tech = stock_data.get('is_hard_tech', False)
         max_ps = self.parameters['max_ps']
@@ -1923,10 +1923,10 @@ class TechStockSelector(BaseStrategy):
 
         if is_hard_tech:
             if ps > max_ps:
-                return {'pass': False, 'reason': f'PS{ps:.1f}倍超过{max_ps}�?}
+                return {'pass': False, 'reason': f'PS{ps:.1f}倍超过{max_ps}�?}
         else:
             if pb > max_pb:
-                return {'pass': False, 'reason': f'PB{pb:.1f}倍超过{max_pb}�?}
+                return {'pass': False, 'reason': f'PB{pb:.1f}倍超过{max_pb}�?}
 
         return {'pass': True, 'score': 1.0}
 
@@ -1937,7 +1937,7 @@ class TechStockSelector(BaseStrategy):
         results = []
         results.append(('研发投入', self.evaluate_rd_investment(stock_data)))
         results.append(('替代逻辑', self.evaluate_replacement_logic(stock_data)))
-        results.append(('估�?, self.evaluate_valuation(stock_data)))
+        results.append(('估�?, self.evaluate_valuation(stock_data)))
 
         all_pass = all(r[1]['pass'] for r in results)
         if not all_pass:
@@ -1960,62 +1960,62 @@ class TechStockSelector(BaseStrategy):
         )
 ```
 
-### 8.4 科技股行业分�?
+### 8.4 科技股行业分�?
 
-| 科技类别 | 代表行业 | 硬科技/软科技 | 估值偏�?|
+| 科技类别 | 代表行业 | 硬科技/软科技 | 估值偏�?|
 |----------|----------|----------------|----------|
-| 半导�?| 芯片设计/制�?设备 | 硬科技 | PS/PB |
-| 新能�?| 光伏/锂电/储能 | 硬科技 | PS |
-| 云计�?| SaaS/IaaS | 软科技 | PS/EV |
+| 半导�?| 芯片设计/制�?设备 | 硬科技 | PS/PB |
+| 新能�?| 光伏/锂电/储能 | 硬科技 | PS |
+| 云计�?| SaaS/IaaS | 软科技 | PS/EV |
 | 人工智能 | 算法/应用 | 软科技 | PS |
-| 生物医药 | 创新�?器械 | 硬科技 | PS/PB |
+| 生物医药 | 创新�?器械 | 硬科技 | PS/PB |
 
 ***
 
-## 9. 事件驱动策略�?
+## 9. 事件驱动策略�?
 
-> 本章来源：全网搜索补�?- 2024-2025年主流事件驱动量化策�?
+> 本章来源：全网搜索补�?- 2024-2025年主流事件驱动量化策�?
 
-### 9.1 业绩超预期策�?
+### 9.1 业绩超预期策�?
 
-#### E001: 财报业绩超预期策�?
+#### E001: 财报业绩超预期策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | E001 |
-| 策略名称 | 业绩超预期策�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 策略名称 | 业绩超预期策�?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 业绩公告后净利润增�?> 分析师预�?0%以上
-- 营收增�?> 20%
-- 毛利率环比提�?
+**量化规则**�?
+- 业绩公告后净利润增�?> 分析师预�?0%以上
+- 营收增�?> 20%
+- 毛利率环比提�?
 - 股价跳空高开 > 3%
 
 ```python
 class EarningsSurpriseStrategy(BaseStrategy):
-    """业绩超预期策�?""
+    """业绩超预期策�?""
 
     def __init__(self):
-        super().__init__("业绩超预�?, "E001")
+        super().__init__("业绩超预�?, "E001")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
-            'profit_beat_threshold': 0.10,    # 业绩超预�?0%
-            'min_revenue_growth': 0.20,         # 营收增�?20%
+            'profit_beat_threshold': 0.10,    # 业绩超预�?0%
+            'min_revenue_growth': 0.20,         # 营收增�?20%
             'min_gap_open': 0.03,               # 跳空高开>3%
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 业绩超预�?
+        # 业绩超预�?
         actual_profit = stock_data.get('actual_profit_growth', 0)
         expected_profit = stock_data.get('expected_profit_growth', 0)
         if actual_profit < expected_profit * (1 + params['profit_beat_threshold']):
             return None
 
-        # 营收增�?
+        # 营收增�?
         revenue_growth = stock_data.get('revenue_growth', 0)
         if revenue_growth < params['min_revenue_growth']:
             return None
@@ -2042,18 +2042,18 @@ class EarningsSurpriseStrategy(BaseStrategy):
 
 #### E002: 并购重组事件策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | E002 |
 | 策略名称 | 并购重组事件策略 |
-| 适用市场 | 牛市、主题炒�?|
-| 风险等级 | �?|
+| 适用市场 | 牛市、主题炒�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 上市公司发布并购重组公告
-- 标的资产与主业相关度�?
-- 估值溢价合理（PE<20�?
-- 股价尚未反映（停牌前涨幅<50%�?
+- 标的资产与主业相关度�?
+- 估值溢价合理（PE<20�?
+- 股价尚未反映（停牌前涨幅<50%�?
 
 ```python
 class M\&AStrategy(BaseStrategy):
@@ -2063,9 +2063,9 @@ class M\&AStrategy(BaseStrategy):
         super().__init__("并购重组", "E002")
         self.market_states = [MarketState.BULL, MarketState.YAO]
         self.parameters = {
-            'min_relatedness': 0.7,           # 资产相关�?70%
+            'min_relatedness': 0.7,           # 资产相关�?70%
             'max_pe_ratio': 20,               # PE<20
-            'max_prior_return': 0.50,        # 停牌前涨�?50%
+            'max_prior_return': 0.50,        # 停牌前涨�?50%
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
@@ -2075,12 +2075,12 @@ class M\&AStrategy(BaseStrategy):
         if not stock_data.get('has_ma_announcement', False):
             return None
 
-        # 资产相关�?
+        # 资产相关�?
         relatedness = stock_data.get('asset_relatedness', 0)
         if relatedness < params['min_relatedness']:
             return None
 
-        # 估值合�?
+        # 估值合�?
         pe_ratio = stock_data.get('pe_ratio', 100)
         if pe_ratio > params['max_pe_ratio']:
             return None
@@ -2100,20 +2100,20 @@ class M\&AStrategy(BaseStrategy):
 
 ### 9.3 高管增持策略
 
-#### E003: 高管/大股东增持策�?
+#### E003: 高管/大股东增持策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | E003 |
 | 策略名称 | 高管增持策略 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 高管或大股东增持 > 1000万元
 - 增持比例 > 0.5%
-- 增持后持股比�?> 30%
-- 增持时股价相对低�?
+- 增持后持股比�?> 30%
+- 增持时股价相对低�?
 
 ```python
 class InsiderBuyStrategy(BaseStrategy):
@@ -2123,9 +2123,9 @@ class InsiderBuyStrategy(BaseStrategy):
         super().__init__("高管增持", "E003")
         self.market_states = [s for s in MarketState]
         self.parameters = {
-            'min_amount': 1000e4,             # 增持>1000�?
+            'min_amount': 1000e4,             # 增持>1000�?
             'min_ratio': 0.005,              # 增持比例>0.5%
-            'min_hold_ratio': 0.30,          # 增持后持�?30%
+            'min_hold_ratio': 0.30,          # 增持后持�?30%
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
@@ -2141,7 +2141,7 @@ class InsiderBuyStrategy(BaseStrategy):
         if buy_ratio < params['min_ratio']:
             return None
 
-        # 增持后持�?
+        # 增持后持�?
         hold_ratio = stock_data.get('insider_hold_ratio', 0)
         if hold_ratio < params['min_hold_ratio']:
             return None
@@ -2163,51 +2163,51 @@ class InsiderBuyStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| E001 | 业绩超预�?| 牛市/震荡 | �?| 业绩增�?预期+跳空高开 |
-| E002 | 并购重组 | 牛市/妖股 | �?| 资产相关+估值合�?|
-| E003 | 高管增持 | 所�?| �?| 增持金额>1000�?比例>0.5% |
+| E001 | 业绩超预�?| 牛市/震荡 | �?| 业绩增�?预期+跳空高开 |
+| E002 | 并购重组 | 牛市/妖股 | �?| 资产相关+估值合�?|
+| E003 | 高管增持 | 所�?| �?| 增持金额>1000�?比例>0.5% |
 
 ***
 
-## 10. 价值与红利策略�?
+## 10. 价值与红利策略�?
 
-> 本章来源：全网搜索补�?- 2024年主流价值投资量化策�?
+> 本章来源：全网搜索补�?- 2024年主流价值投资量化策�?
 
-### 10.1 高股息策�?
+### 10.1 高股息策�?
 
-#### V001: 稳定高股息策�?
+#### V001: 稳定高股息策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | V001 |
-| 策略名称 | 稳定高股息策�?|
+| 策略名称 | 稳定高股息策�?|
 | 适用市场 | 所有市场（防御性） |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 股息�?> 3%
-- 连续3年分�?
-- 利润增�?> 5%
-- PE < 20�?
+**量化规则**�?
+- 股息�?> 3%
+- 连续3年分�?
+- 利润增�?> 5%
+- PE < 20�?
 
 ```python
 class HighDividendStrategy(BaseStrategy):
-    """高股息策�?""
+    """高股息策�?""
 
     def __init__(self):
-        super().__init__("高股�?, "V001")
+        super().__init__("高股�?, "V001")
         self.market_states = [s for s in MarketState]
         self.parameters = {
-            'min_dividend_yield': 0.03,      # 股息�?3%
-            'min_consecutive_years': 3,       # 连续3年分�?
-            'min_profit_growth': 0.05,        # 利润增�?5%
+            'min_dividend_yield': 0.03,      # 股息�?3%
+            'min_consecutive_years': 3,       # 连续3年分�?
+            'min_profit_growth': 0.05,        # 利润增�?5%
             'max_pe': 20,                     # PE<20
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 股息�?
+        # 股息�?
         dividend_yield = stock_data.get('dividend_yield', 0)
         if dividend_yield < params['min_dividend_yield']:
             return None
@@ -2217,7 +2217,7 @@ class HighDividendStrategy(BaseStrategy):
         if consecutive < params['min_consecutive_years']:
             return None
 
-        # 估�?
+        # 估�?
         pe = stock_data.get('pe_ratio', 100)
         if pe > params['max_pe']:
             return None
@@ -2239,18 +2239,18 @@ class HighDividendStrategy(BaseStrategy):
 
 #### V002: 困境反转策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | V002 |
 | 策略名称 | 困境反转策略 |
-| 适用市场 | 震荡市、熊市末�?|
+| 适用市场 | 震荡市、熊市末�?|
 | 风险等级 | 中高 |
 
-**量化规则**�?
-- PE处于历史低位�?20%分位�?
+**量化规则**�?
+- PE处于历史低位�?20%分位�?
 - 营收连续2季度回升
-- 行业景气度开始回�?
-- 机构开始上调评�?
+- 行业景气度开始回�?
+- 机构开始上调评�?
 
 ```python
 class TurnaroundStrategy(BaseStrategy):
@@ -2261,7 +2261,7 @@ class TurnaroundStrategy(BaseStrategy):
         self.market_states = [MarketState.VOLATILE, MarketState.BEAR]
         self.parameters = {
             'pe_percentile': 0.20,           # PE<20%分位
-            'min_revenue_growth_quarter': 2,  # 营收连续回升季度�?
+            'min_revenue_growth_quarter': 2,  # 营收连续回升季度�?
             'upgrade_count': 1,               # 机构上调评级次数
         }
 
@@ -2300,18 +2300,18 @@ class TurnaroundStrategy(BaseStrategy):
 
 #### V003: ESG量化选股策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | V003 |
 | 策略名称 | ESG量化选股策略 |
-| 适用市场 | 牛市、长期投�?|
+| 适用市场 | 牛市、长期投�?|
 | 风险等级 | 中低 |
 
-**量化规则**�?
-- ESG评分 > A�?
-- 环境评分 > 80�?
-- 社会评分 > 70�?
-- 公司治理评分 > 70�?
+**量化规则**�?
+- ESG评分 > A�?
+- 环境评分 > 80�?
+- 社会评分 > 70�?
+- 公司治理评分 > 70�?
 
 ```python
 class ESGScoreStrategy(BaseStrategy):
@@ -2357,7 +2357,7 @@ class ESGScoreStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| V001 | 稳定高股�?| 所有（防御�?| �?| 股息�?3%+连分3�?PE<20 |
+| V001 | 稳定高股�?| 所有（防御�?| �?| 股息�?3%+连分3�?PE<20 |
 | V002 | 困境反转 | 震荡/熊市 | 中高 | PE低位+营收回升+机构上调 |
 | V003 | ESG量化选股 | 牛市/长期 | 中低 | ESG评级A+各维度达标准 |
 
@@ -2365,24 +2365,24 @@ class ESGScoreStrategy(BaseStrategy):
 
 ## 11. Smart Money与北向资金策略库
 
-> 本章来源：全网搜索补�?- 2024年主力资金追踪量化策�?
+> 本章来源：全网搜索补�?- 2024年主力资金追踪量化策�?
 
 ### 11.1 主力资金动向策略
 
 #### M001: 主力资金连续流入策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | M001 |
 | 策略名称 | 主力资金连续流入策略 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 主力资金连续净流入 > 3�?
-- 3日主力净流入 > 5�?
+**量化规则**�?
+- 主力资金连续净流入 > 3�?
+- 3日主力净流入 > 5�?
 - 股价涨幅 < 5%（尚未启动）
-- 换手率温和放�?
+- 换手率温和放�?
 
 ```python
 class MainForceFlowStrategy(BaseStrategy):
@@ -2392,8 +2392,8 @@ class MainForceFlowStrategy(BaseStrategy):
         super().__init__("主力资金流入", "M001")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
-            'min_consecutive_days': 3,        # 连续流入3�?
-            'min_net_flow_3d': 5e8,           # 3日净流入>5�?
+            'min_consecutive_days': 3,        # 连续流入3�?
+            'min_net_flow_3d': 5e8,           # 3日净流入>5�?
             'max_price_rise': 0.05,          # 涨幅<5%
         }
 
@@ -2432,14 +2432,14 @@ class MainForceFlowStrategy(BaseStrategy):
 
 #### M002: 北向资金持仓策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | M002 |
 | 策略名称 | 北向资金持仓策略 |
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 北向持股比例 > 5%
 - 北向持股比例持续提升
 - 股价处于相对低位
@@ -2488,18 +2488,18 @@ class NorthMoneyStrategy(BaseStrategy):
 
 #### M003: 北向资金连续流入策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | M003 |
 | 策略名称 | 北向资金连续流入策略 |
 | 适用市场 | 外资主导行情 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 北向资金连续净流入 > 5�?
-- 期间累计净流入 > 10�?
+**量化规则**�?
+- 北向资金连续净流入 > 5�?
+- 期间累计净流入 > 10�?
 - 大盘处于上升通道
-- 重点配置沪深300成分�?
+- 重点配置沪深300成分�?
 
 ```python
 class NorthMoneyInflowStrategy(BaseStrategy):
@@ -2510,8 +2510,8 @@ class NorthMoneyInflowStrategy(BaseStrategy):
         self.market_states = [MarketState.BULL]
         self.parameters = {
             'min_consecutive_days': 5,        # 连续5日净流入
-            'min_total_flow': 10e8,           # 累计流入>10�?
-            'only_hs300': True,               # 仅沪�?00成分
+            'min_total_flow': 10e8,           # 累计流入>10�?
+            'only_hs300': True,               # 仅沪�?00成分
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
@@ -2527,7 +2527,7 @@ class NorthMoneyInflowStrategy(BaseStrategy):
         if total_flow < params['min_total_flow']:
             return None
 
-        # 仅沪�?00
+        # 仅沪�?00
         if params['only_300'] and not stock_data.get('is_hs300', False):
             return None
 
@@ -2548,30 +2548,30 @@ class NorthMoneyInflowStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| M001 | 主力资金连续流入 | 牛市/震荡 | �?| 主力连流3�?净流入>5�?|
-| M002 | 北向持仓策略 | 所�?| �?| 北向持股>5%+比例提升 |
-| M003 | 北向资金连续流入 | 牛市 | �?| 北向连流5�?累计>10�?|
+| M001 | 主力资金连续流入 | 牛市/震荡 | �?| 主力连流3�?净流入>5�?|
+| M002 | 北向持仓策略 | 所�?| �?| 北向持股>5%+比例提升 |
+| M003 | 北向资金连续流入 | 牛市 | �?| 北向连流5�?累计>10�?|
 
 ***
 
 ## 12. 行业轮动与统计套利策略库
 
-> 本章来源：全网搜索补�?- 2024年板块轮动与套利量化策略
+> 本章来源：全网搜索补�?- 2024年板块轮动与套利量化策略
 
 ### 12.1 行业轮动策略
 
 #### S001: 板块动量轮动策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S001 |
 | 策略名称 | 板块动量轮动策略 |
-| 适用市场 | 结构性行�?|
-| 风险等级 | �?|
+| 适用市场 | 结构性行�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 行业指数20日动量排名Top20%
-- 行业成交量放�?> 1.5�?
+- 行业成交量放�?> 1.5�?
 - 行业资金净流入
 - 龙头股已启动
 
@@ -2623,16 +2623,16 @@ class SectorMomentumRotationStrategy(BaseStrategy):
 
 #### S002: 统计套利配对交易
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S002 |
 | 策略名称 | 配对交易策略 |
-| 适用市场 | 震荡�?|
-| 风险等级 | �?|
+| 适用市场 | 震荡�?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 两股票历史相关�?> 0.8
-- 当前价差偏离均�?> 2倍标准差
+**量化规则**�?
+- 两股票历史相关�?> 0.8
+- 当前价差偏离均�?> 2倍标准差
 - 预期价差回归
 - 行业/业务高度相似
 
@@ -2644,15 +2644,15 @@ class PairTradingStrategy(BaseStrategy):
         super().__init__("配对交易", "S002")
         self.market_states = [MarketState.VOLATILE, MarketState.CHAOS]
         self.parameters = {
-            'min_correlation': 0.80,           # 历史相关�?0.8
+            'min_correlation': 0.80,           # 历史相关�?0.8
             'z_score_threshold': 2.0,         # 价差偏离>2倍标准差
-            'min_halflife': 5,                 # 回归半周�?5�?
+            'min_halflife': 5,                 # 回归半周�?5�?
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 相关�?
+        # 相关�?
         correlation = stock_data.get('pair_correlation', 0)
         if correlation < params['min_correlation']:
             return None
@@ -2664,7 +2664,7 @@ class PairTradingStrategy(BaseStrategy):
 
         # 判断多空方向
         if z_score > 0:
-            # 价差过高，做空价差（卖stock_a买stock_b�?
+            # 价差过高，做空价差（卖stock_a买stock_b�?
             return TradingSignal(
                 code=stock_data['code'],
                 signal=SignalType.SELL,
@@ -2677,7 +2677,7 @@ class PairTradingStrategy(BaseStrategy):
                 holding_period=10
             )
         else:
-            # 价差过低，做多价�?
+            # 价差过低，做多价�?
             return TradingSignal(
                 code=stock_data['code'],
                 signal=SignalType.BUY,
@@ -2695,30 +2695,30 @@ class PairTradingStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| S001 | 板块动量轮动 | 牛市/结构 | �?| 动量Top20%+量比>1.5 |
-| S002 | 配对交易 | 震荡 | �?| 相关>0.8+价差偏离2σ |
+| S001 | 板块动量轮动 | 牛市/结构 | �?| 动量Top20%+量比>1.5 |
+| S002 | 配对交易 | 震荡 | �?| 相关>0.8+价差偏离2σ |
 
 ***
 
-## 13. 小市值与指数增强策略�?
+## 13. 小市值与指数增强策略�?
 
-> 本章来源：全网搜索补�?- 2024年小市值与指数增强量化策略
+> 本章来源：全网搜索补�?- 2024年小市值与指数增强量化策略
 
 ### 13.1 小市值低波动策略
 
 #### S003: 小市值低波动策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S003 |
 | 策略名称 | 小市值低波动策略 |
-| 适用市场 | 结构性行情、中小票活跃�?|
+| 适用市场 | 结构性行情、中小票活跃�?|
 | 风险等级 | 中高 |
 
-**量化规则**�?
-- 全市场股票池剔除ST、上市不�?�?
-- 选取过去20日波动率最低的100�?
-- 3个月涨幅最小的50�?
+**量化规则**�?
+- 全市场股票池剔除ST、上市不�?�?
+- 选取过去20日波动率最低的100�?
+- 3个月涨幅最小的50�?
 - 因子做市值行业中性化处理
 
 ```python
@@ -2729,21 +2729,21 @@ class SmallCapLowVolatilityStrategy(BaseStrategy):
         super().__init__("小市值低波动", "S003")
         self.market_states = [MarketState.VOLATILE, MarketState.BULL]
         self.parameters = {
-            'min_listed_days': 250,           # 上市�?�?
-            'top_volatility_percentile': 0.20, # 波动率最�?0%
-            'top_return_percentile': 0.15,     # 涨幅最�?5%
-            'stock_pool_size': 100,           # 选取100�?
+            'min_listed_days': 250,           # 上市�?�?
+            'top_volatility_percentile': 0.20, # 波动率最�?0%
+            'top_return_percentile': 0.15,     # 涨幅最�?5%
+            'stock_pool_size': 100,           # 选取100�?
         }
 
     def filter_stocks(self, stock_data):
-        """过滤股票�?""
+        """过滤股票�?""
         filtered = []
 
         for stock in stock_data:
             # 剔除ST
             if stock.get('is_st', False):
                 continue
-            # 剔除上市不满1�?
+            # 剔除上市不满1�?
             if stock.get('listed_days', 0) < self.parameters['min_listed_days']:
                 continue
             filtered.append(stock)
@@ -2758,7 +2758,7 @@ class SmallCapLowVolatilityStrategy(BaseStrategy):
         return ranked[:self.parameters['stock_pool_size']]
 
     def rank_by_return(self, stocks):
-        """按涨幅排�?""
+        """按涨幅排�?""
         ranked = sorted(stocks,
                        key=lambda x: x.get('return_3m', 0),
                        reverse=False)
@@ -2770,13 +2770,13 @@ class SmallCapLowVolatilityStrategy(BaseStrategy):
         # 过滤
         filtered = self.filter_stocks(stock_data)
 
-        # 低波动排�?
+        # 低波动排�?
         low_vol = self.rank_by_volatility(filtered)
 
-        # 小涨幅排�?
+        # 小涨幅排�?
         low_return = self.rank_by_return(filtered)
 
-        # 取交�?
+        # 取交�?
         candidates = [s for s in low_vol if s in low_return]
 
         if not candidates:
@@ -2801,17 +2801,17 @@ class SmallCapLowVolatilityStrategy(BaseStrategy):
 
 #### I001: 中证2000指数增强策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | I001 |
 | 策略名称 | 中证2000指数增强策略 |
 | 适用市场 | 结构性行情、小盘股活跃 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 对标中证2000指数
-- 行业权重与指数相�?
-- 风格因子控制市值、行业偏�?
+- 行业权重与指数相�?
+- 风格因子控制市值、行业偏�?
 - 追求稳定超额收益
 
 ```python
@@ -2824,8 +2824,8 @@ class IndexEnhancementStrategy(BaseStrategy):
         self.parameters = {
             'target_index': '中证2000',        # 目标指数
             'max_industry_deviation': 0.02,   # 行业偏离<2%
-            'max_size_deviation': 0.10,        # 市值偏�?10%
-            'min_alpha_factor': 0.01,         # Alpha因子阈�?
+            'max_size_deviation': 0.10,        # 市值偏�?10%
+            'min_alpha_factor': 0.01,         # Alpha因子阈�?
             'max_stock_weight': 0.03,          # 单只权重<3%
         }
 
@@ -2848,7 +2848,7 @@ class IndexEnhancementStrategy(BaseStrategy):
             if deviation > self.parameters['max_industry_deviation']:
                 return False, f"{industry}偏离{deviation*100:.1f}%超过2%"
 
-        return True, "偏离度合�?
+        return True, "偏离度合�?
 
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
@@ -2859,7 +2859,7 @@ class IndexEnhancementStrategy(BaseStrategy):
         # 获取指数目标权重
         target_weights = market_data.get(f'{params["target_index"]}_weights', {})
 
-        # 检查偏�?
+        # 检查偏�?
         valid, msg = self.check_deviation(current_industry, target_weights)
         if not valid:
             return None
@@ -2891,43 +2891,43 @@ class IndexEnhancementStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| S003 | 小市值低波动 | 震荡/结构 | 中高 | 波动率最�?涨幅最�?|
-| I001 | 中证2000指数增强 | 牛市/小盘 | �?| 对标指数+稳定超额 |
+| S003 | 小市值低波动 | 震荡/结构 | 中高 | 波动率最�?涨幅最�?|
+| I001 | 中证2000指数增强 | 牛市/小盘 | �?| 对标指数+稳定超额 |
 
 ***
 
 ## 14. 可转债与多因子策略库
 
-> 本章来源：全网搜索补�?- 2024年可转债量化与择时策略
+> 本章来源：全网搜索补�?- 2024年可转债量化与择时策略
 
-### 14.1 可转债量化策�?
+### 14.1 可转债量化策�?
 
 #### C001: 可转债多策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | C001 |
 | 策略名称 | 可转债量化多策略 |
 | 适用市场 | 所有市场（低波动环境） |
 | 风险等级 | 低中 |
 
-**量化规则**�?
-- 转股溢价�?< 20%
+**量化规则**�?
+- 转股溢价�?< 20%
 - 纯债溢价率 < 30%
-- 剩余规模 < 5�?
-- 正股波动�?> 30%
+- 剩余规模 < 5�?
+- 正股波动�?> 30%
 
 ```python
 class ConvertibleBondStrategy(BaseStrategy):
-    """可转债量化策�?""
+    """可转债量化策�?""
 
     def __init__(self):
         super().__init__("可转债多策略", "C001")
         self.market_states = [MarketState.VOLATILE, MarketState.CHAOS]
         self.parameters = {
             'max_conversion_premium': 0.20,    # 转股溢价<20%
-            'max_pure_bond_premium': 0.30,     # 纯债溢�?30%
-            'max_scale': 5e8,                   # 剩余规模<5�?
+            'max_pure_bond_premium': 0.30,     # 纯债溢�?30%
+            'max_scale': 5e8,                   # 剩余规模<5�?
             'min_stock_volatility': 0.30,       # 正股波动>30%
         }
 
@@ -2935,7 +2935,7 @@ class ConvertibleBondStrategy(BaseStrategy):
         """评估转股机会"""
         params = self.parameters
 
-        # 转股溢价�?
+        # 转股溢价�?
         conv_premium = cb_data.get('conversion_premium', 1.0)
         if conv_premium > params['max_conversion_premium']:
             return False, f"转股溢价{conv_premium*100:.1f}%过高"
@@ -2948,7 +2948,7 @@ class ConvertibleBondStrategy(BaseStrategy):
         # 规模
         scale = cb_data.get('cb_scale', float('inf'))
         if scale > params['max_scale']:
-            return False, f"规模{scale/1e8:.1f}亿过�?
+            return False, f"规模{scale/1e8:.1f}亿过�?
 
         # 正股波动
         stock_vol = cb_data.get('stock_volatility', 0)
@@ -2975,33 +2975,33 @@ class ConvertibleBondStrategy(BaseStrategy):
         )
 ```
 
-### 14.2 多因子择时策�?
+### 14.2 多因子择时策�?
 
-#### T012: 多因子机器学习择时策�?
+#### T012: 多因子机器学习择时策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | T012 |
-| 策略名称 | 多因子机器学习择�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | �?|
+| 策略名称 | 多因子机器学习择�?|
+| 适用市场 | 所有市�?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 选取有效择时因子：动�?估�?情绪/趋势
-- 机器学习模型预测收益�?
-- 预期收益�?> 阈值时做多
+**量化规则**�?
+- 选取有效择时因子：动�?估�?情绪/趋势
+- 机器学习模型预测收益�?
+- 预期收益�?> 阈值时做多
 - DTW择时策略年化36%
 
 ```python
 class MultiFactorTimingStrategy(BaseStrategy):
-    """多因子择时策�?""
+    """多因子择时策�?""
 
     def __init__(self):
-        super().__init__("多因子择�?, "T012")
+        super().__init__("多因子择�?, "T012")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE, MarketState.BEAR]
         self.parameters = {
             'min_return_threshold': 0.02,      # 预期收益>2%
-            'max_drawdown_limit': 0.15,        # 最大回撤限�?5%
+            'max_drawdown_limit': 0.15,        # 最大回撤限�?5%
             'features': ['momentum', 'valuation', 'sentiment', 'trend'],
             'model_type': 'random_forest',     # 随机森林模型
         }
@@ -3013,7 +3013,7 @@ class MultiFactorTimingStrategy(BaseStrategy):
         # 动量因子
         features['momentum'] = market_data.get('index_return_20d', 0)
 
-        # 估值因�?
+        # 估值因�?
         features['valuation'] = market_data.get('pe_percentile', 0.5)
 
         # 情绪因子
@@ -3025,7 +3025,7 @@ class MultiFactorTimingStrategy(BaseStrategy):
         return features
 
     def predict_return(self, features, model):
-        """预测未来收益�?""
+        """预测未来收益�?""
         feature_vector = [features[f] for f in self.parameters['features']]
         return model.predict([feature_vector])[0]
 
@@ -3035,10 +3035,10 @@ class MultiFactorTimingStrategy(BaseStrategy):
         # 提取因子
         features = self.extract_features(market_data)
 
-        # 预测收益（简化版�?
+        # 预测收益（简化版�?
         predicted_return = sum(features.values()) / len(features)
 
-        # 收益阈�?
+        # 收益阈�?
         if predicted_return < params['min_return_threshold']:
             return TradingSignal(
                 code=stock_data['code'],
@@ -3067,42 +3067,42 @@ class MultiFactorTimingStrategy(BaseStrategy):
 
 ### 14.3 行业配置策略
 
-#### S004: 多维度行业配置策�?
+#### S004: 多维度行业配置策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | S004 |
-| 策略名称 | 多维度行业配置策�?|
+| 策略名称 | 多维度行业配置策�?|
 | 适用市场 | 牛市、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | �?|
 
-**量化规则**�?
-- 动量维度�?0日行业动量排�?
-- 估值维度：PE历史分位�?
+**量化规则**�?
+- 动量维度�?0日行业动量排�?
+- 估值维度：PE历史分位�?
 - 情绪维度：行业资金净流入
-- 景气维度：行业净利润增�?
+- 景气维度：行业净利润增�?
 
 ```python
 class MultiDimensionalSectorStrategy(BaseStrategy):
-    """多维度行业配置策�?""
+    """多维度行业配置策�?""
 
     def __init__(self):
-        super().__init__("多维度行业配�?, "S004")
+        super().__init__("多维度行业配�?, "S004")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
             'momentum_weight': 0.30,           # 动量权重30%
-            'valuation_weight': 0.25,           # 估值权�?5%
+            'valuation_weight': 0.25,           # 估值权�?5%
             'sentiment_weight': 0.25,           # 情绪权重25%
-            'fundamental_weight': 0.20,        # 基本面权�?0%
-            'top_sectors': 3,                  # 配置�?行业
+            'fundamental_weight': 0.20,        # 基本面权�?0%
+            'top_sectors': 3,                  # 配置�?行业
         }
 
     def calculate_dimension_score(self, sector, dimension):
-        """计算单维度得�?""
+        """计算单维度得�?""
         if dimension == 'momentum':
             return sector.get('momentum_20d_rank', 0.5)
         elif dimension == 'valuation':
-            return 1 - sector.get('pe_percentile', 0.5)  # 低估值高�?
+            return 1 - sector.get('pe_percentile', 0.5)  # 低估值高�?
         elif dimension == 'sentiment':
             return sector.get('net_flow_rank', 0.5)
         elif dimension == 'fundamental':
@@ -3123,7 +3123,7 @@ class MultiDimensionalSectorStrategy(BaseStrategy):
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        # 获取所有行�?
+        # 获取所有行�?
         sectors = market_data.get('sectors', [])
 
         # 计算综合得分
@@ -3135,7 +3135,7 @@ class MultiDimensionalSectorStrategy(BaseStrategy):
         # 取前N
         top_sectors = [s[0]['industry'] for s in ranked[:params['top_sectors']]]
 
-        # 检查个股所属行�?
+        # 检查个股所属行�?
         stock_industry = stock_data.get('industry', '')
         if stock_industry not in top_sectors:
             return None
@@ -3157,29 +3157,29 @@ class MultiDimensionalSectorStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| C001 | 可转债多策略 | 震荡/低波�?| 低中 | 转股溢价<20%+规模<5�?|
-| T012 | 多因子择�?| 所�?| �?| 机器学习+动量/估�?情绪 |
-| S004 | 多维度行业配�?| 牛市/震荡 | �?| 动量+估�?情绪+基本�?|
+| C001 | 可转债多策略 | 震荡/低波�?| 低中 | 转股溢价<20%+规模<5�?|
+| T012 | 多因子择�?| 所�?| �?| 机器学习+动量/估�?情绪 |
+| S004 | 多维度行业配�?| 牛市/震荡 | �?| 动量+估�?情绪+基本�?|
 
 ***
 
-## 15. CTA商品期货策略�?
+## 15. CTA商品期货策略�?
 
-> 本章来源：全网搜索补�?- 2024年量化CTA策略
+> 本章来源：全网搜索补�?- 2024年量化CTA策略
 
 ### 15.1 趋势追踪CTA策略
 
 #### CTA001: 商品期货趋势追踪策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | CTA001 |
 | 策略名称 | 商品期货趋势追踪策略 |
-| 适用市场 | 商品期货、股指期�?|
+| 适用市场 | 商品期货、股指期�?|
 | 风险等级 | 中高 |
 
-**量化规则**�?
-- 20日均�?> 60日均线，多头趋势
+**量化规则**�?
+- 20日均�?> 60日均线，多头趋势
 - ATR通道突破上轨做多
 - 趋势反转止损
 
@@ -3191,8 +3191,8 @@ class CTATrendFollowingStrategy(BaseStrategy):
         super().__init__("CTA趋势追踪", "CTA001")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
-            'fast_ma': 20,                # 快速均�?
-            'slow_ma': 60,                # 慢速均�?
+            'fast_ma': 20,                # 快速均�?
+            'slow_ma': 60,                # 慢速均�?
             'atr_period': 20,             # ATR周期
             'atr_multiplier': 2.0,        # ATR倍数
             'stop_loss_atr': 3.0,         # 止损ATR
@@ -3250,24 +3250,24 @@ class CTATrendFollowingStrategy(BaseStrategy):
 
 ***
 
-## 16. 高频交易策略�?
+## 16. 高频交易策略�?
 
-> 本章来源：全网搜索补�?- 2024年高频量化交易策�?
+> 本章来源：全网搜索补�?- 2024年高频量化交易策�?
 
 ### 16.1 日内T+0策略
 
 #### HFT001: 股票日内T+0策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | HFT001 |
 | 策略名称 | 日内T+0策略 |
-| 适用市场 | A股（底仓支持�?|
-| 风险等级 | �?|
+| 适用市场 | A股（底仓支持�?|
+| 风险等级 | �?|
 
-**量化规则**�?
+**量化规则**�?
 - 持有现货底仓
-- 15分钟K线均值回�?
+- 15分钟K线均值回�?
 - 日内高点卖、低点买
 - 严格执行止盈止损
 
@@ -3279,11 +3279,11 @@ class IntradayT0Strategy(BaseStrategy):
         super().__init__("日内T+0", "HFT001")
         self.market_states = [MarketState.BULL, MarketState.VOLATILE]
         self.parameters = {
-            'kline_period': 15,             # 15分钟K�?
-            'mean_reversion_threshold': 0.01,  # 均值回复阈�?%
+            'kline_period': 15,             # 15分钟K�?
+            'mean_reversion_threshold': 0.01,  # 均值回复阈�?%
             'profit_target': 0.005,         # 止盈0.5%
             'loss_limit': 0.003,            # 止损0.3%
-            'max_daily_trades': 10,         # 每日最�?0�?
+            'max_daily_trades': 10,         # 每日最�?0�?
         }
 
     def calculate_ma15(self, data):
@@ -3291,20 +3291,20 @@ class IntradayT0Strategy(BaseStrategy):
         return data['close'].rolling(10).mean()
 
     def detect_mean_reversion_signal(self, data):
-        """检测均值回复信�?""
+        """检测均值回复信�?""
         ma = self.calculate_ma15(data)
         current_price = data['close'].iloc[-1]
         deviation = (current_price - ma.iloc[-1]) / ma.iloc[-1]
 
         if deviation < -self.parameters['mean_reversion_threshold']:
-            return 'BUY'  # 价格低于均线，买�?
+            return 'BUY'  # 价格低于均线，买�?
         elif deviation > self.parameters['mean_reversion_threshold']:
-            return 'SELL'  # 价格高于均线，卖�?
+            return 'SELL'  # 价格高于均线，卖�?
 
         return 'HOLD'
 
     def check_trade_limits(self, trade_count):
-        """检查交易次数限�?""
+        """检查交易次数限�?""
         return trade_count < self.parameters['max_daily_trades']
 
     def generate_signal(self, market_data, stock_data, market_state):
@@ -3347,29 +3347,29 @@ class IntradayT0Strategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| HFT001 | 日内T+0 | A股底�?| �?| 均值回�?严格止损 |
+| HFT001 | 日内T+0 | A股底�?| �?| 均值回�?严格止损 |
 
 ***
 
-## 17. 期权量化策略�?
+## 17. 期权量化策略�?
 
-> 本章来源：全网搜索补�?- 2024年期权量化策�?
+> 本章来源：全网搜索补�?- 2024年期权量化策�?
 
 ### 17.1 备兑看涨期权策略
 
 #### OPT001: 备兑看涨期权策略
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | OPT001 |
 | 策略名称 | 备兑看涨期权策略 |
-| 适用市场 | 所有（需期权账户�?|
+| 适用市场 | 所有（需期权账户�?|
 | 风险等级 | 中低 |
 
-**量化规则**�?
+**量化规则**�?
 - 持有标的股票或ETF
-- 卖出虚值看涨期�?
-- 收取权利金增强收�?
+- 卖出虚值看涨期�?
+- 收取权利金增强收�?
 - 标的上涨被行权则止盈
 
 ```python
@@ -3380,8 +3380,8 @@ class CoveredCallStrategy(BaseStrategy):
         super().__init__("备兑看涨", "OPT001")
         self.market_states = [MarketState.VOLATILE, MarketState.BULL]
         self.parameters = {
-            'moneyness': 0.05,              # 虚�?%
-            'days_to_expiry': 30,          # 30天到�?
+            'moneyness': 0.05,              # 虚�?%
+            'days_to_expiry': 30,          # 30天到�?
             'min_premium': 0.01,           # 最低权利金
             'delta_target': 0.30,           # 目标Delta
         }
@@ -3398,11 +3398,11 @@ class CoveredCallStrategy(BaseStrategy):
         return None
 
     def calculate_break_even(self, stock_price, premium):
-        """计算盈亏平衡�?""
+        """计算盈亏平衡�?""
         return stock_price - premium
 
     def calculate_max_profit(self, entry_price, strike_price, premium):
-        """计算最大盈�?""
+        """计算最大盈�?""
         if strike_price > entry_price:
             return (strike_price - entry_price + premium) * 100
         return premium * 100
@@ -3435,26 +3435,26 @@ class CoveredCallStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| OPT001 | 备兑看涨期权 | 所�?| 中低 | 持有标的+卖虚值购 |
+| OPT001 | 备兑看涨期权 | 所�?| 中低 | 持有标的+卖虚值购 |
 
 ***
 
 ## 18. 市场中性策略库
 
-> 本章来源：全网搜索补�?- 2024年量化对冲策�?
+> 本章来源：全网搜索补�?- 2024年量化对冲策�?
 
-### 18.1 Alpha对冲中性策�?
+### 18.1 Alpha对冲中性策�?
 
-#### N001: 市场中性策�?
+#### N001: 市场中性策�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
 | 策略编号 | N001 |
-| 策略名称 | 市场中性策�?|
-| 适用市场 | 所有（需期货/期权对冲�?|
+| 策略名称 | 市场中性策�?|
+| 适用市场 | 所有（需期货/期权对冲�?|
 | 风险等级 | 中低 |
 
-**量化规则**�?
+**量化规则**�?
 - 选取Alpha因子强的股票
 - 期货/期权对冲Beta
 - 剥离市场风险
@@ -3462,17 +3462,17 @@ class CoveredCallStrategy(BaseStrategy):
 
 ```python
 class MarketNeutralStrategy(BaseStrategy):
-    """市场中性策�?""
+    """市场中性策�?""
 
     def __init__(self):
-        super().__init__("市场中�?, "N001")
+        super().__init__("市场中�?, "N001")
         self.market_states = [MarketState.VOLATILE, MarketState.BEAR]
         self.parameters = {
-            'long_count': 20,              # 多头20�?
-            'short_count': 20,             # 空头20�?
+            'long_count': 20,              # 多头20�?
+            'short_count': 20,             # 空头20�?
             'hedge_ratio': 0.90,           # 对冲比例90%
-            'alpha_threshold': 0.02,       # Alpha阈�?%
-            'max_drawdown': 0.05,          # 最大回�?%
+            'alpha_threshold': 0.02,       # Alpha阈�?%
+            'max_drawdown': 0.05,          # 最大回�?%
         }
 
     def select_long_stocks(self, stock_pool):
@@ -3533,7 +3533,7 @@ class MarketNeutralStrategy(BaseStrategy):
 
 | 策略编号 | 策略名称 | 适用市场 | 风险 | 核心逻辑 |
 |----------|----------|----------|------|----------|
-| N001 | 市场中�?| 所�?| 中低 | Alpha选股+期货对冲 |
+| N001 | 市场中�?| 所�?| 中低 | Alpha选股+期货对冲 |
 
 ***
 
@@ -3541,8 +3541,8 @@ class MarketNeutralStrategy(BaseStrategy):
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.0 | 2026-03-26 | 初始版本，整合游资量化策略和策略池管理框�?|
+| v1.0 | 2026-03-26 | 初始版本，整合游资量化策略和策略池管理框�?|
 | v1.1 | 2026-03-26 | 补充附录Q/BC/BE/BF/BG游资量化策略 |
-| v1.2 | 2026-03-27 | 新增事件驱动/价值红�?Smart Money/行业轮动策略�?|
-| v1.3 | 2026-03-27 | 新增小市值低波动/指数增强/可转�?多因子择�?行业配置策略 |
+| v1.2 | 2026-03-27 | 新增事件驱动/价值红�?Smart Money/行业轮动策略�?|
+| v1.3 | 2026-03-27 | 新增小市值低波动/指数增强/可转�?多因子择�?行业配置策略 |
 | v1.4 | 2026-03-27 | 新增CTA/高频交易/期权量化/市场中性策略库 |
