@@ -54,10 +54,9 @@ parent_document: INDEX.md
 
 ### 三、长期改进文档（6-12个月�?
 #### 3.1 蓝图文档
-
-| 文档名称 | 模块ID | 路径 | 说明 | 状�?|
+| 文档名称 | 模块ID | 路径 | 说明 | 状态 |
 |---------|--------|------|------|------|
-| **长期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_IMPROVEMENT_BLUEPRINT.md) | 多模态分析、AI虚拟研究团队 | �?完成 |
+| **长期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md) | 多模态分析、AI虚拟研究团队 | ✓ 完成 |
 
 **包含模块**:
 - **多模态分析模�?* (L3_MMSA_001): 文本+图像+音频情感分析

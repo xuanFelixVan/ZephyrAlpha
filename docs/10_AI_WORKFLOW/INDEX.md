@@ -77,6 +77,9 @@ Layer 8.5: AI工作记录�?(AI Workflow Logging Layer)
 
 | 模块ID | 模块名称 | 版本 | 状�?| 蓝图文档 | 核心职责 |
 |--------|---------|------|------|----------|----------|
+| **AIWF_DSE_001** | 数据源扩展模块 | 1.0 | Active | [DATA_SOURCE_EXTENSION_BLUEPRINT.md](./DATA_SOURCE_EXTENSION_BLUEPRINT.md) | Twitter/Reddit/FRED/SEC EDGAR数据采集、数据源管理 |
+| **AIWF_SFL_001** | 舆情因子库模块 | 1.0 | Active | [SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md](./SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md) | 因子定义、因子计算、因子评估、因子优化 |
+| **AIWF_RMD_001** | 实时监控仪表盘模块 | 1.0 | Active | [REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md](./REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md) | 舆情热力图、情感趋势图、预警时间线 |
 | **AIWF_DLSA_001** | 深度学习情感分析模块 | 1.0 | Active | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | 深度学习情感分析、多维度情感评估、金融领域专业模�?|
 | **AIWF_RTAS_001** | 实时预警系统模块 | 1.0 | Active | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时预警、多渠道推送、规则引擎、预警历史管�?|
 | **AIWF_VTF_001** | 验证与测试框架模�?| 1.0 | Active | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证模块、模型验证、策略验�?|
