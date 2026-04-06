@@ -81,6 +81,12 @@ implementation_status: 蓝图设计
 |------|--------|---------|---------|--------|
 | 8.8 | MOBILE_PUSH | 移动推送通知 | 微信/邮件 | P2 |
 | 8.9 | TRADING_JOURNAL | 交易日志系统 | SQLite + Streamlit | P2 |
+| 8.10 | CONFIG_MANAGEMENT | 配置管理界面 | Streamlit + YAML | P2 |
+| 8.11 | USER_PREFERENCES | 用户偏好设置 | SQLite + Streamlit | P2 |
+| 8.12 | SYSTEM_STATUS | 系统状态面板 | Streamlit + Prometheus | P2 |
+| 8.13 | DATA_MANAGEMENT | 数据管理界面 | Streamlit + Pandas | P2 |
+| 8.14 | STRATEGY_MANAGEMENT | 策略管理界面 | Streamlit + SQLite | P2 |
+| 8.15 | PERMISSION_MANAGEMENT | 权限管理界面 | Streamlit + FastAPI-Users | P2 |
 
 ---
 
@@ -238,6 +244,12 @@ implementation_status: 蓝图设计
 |------|------|------|
 | 移动推送蓝图 | [MOBILE_PUSH_BLUEPRINT.md](08_MOBILE_PUSH/MOBILE_PUSH_BLUEPRINT.md) | 推送通知方案 |
 | 交易日志蓝图 | [TRADING_JOURNAL_BLUEPRINT.md](09_TRADING_JOURNAL/TRADING_JOURNAL_BLUEPRINT.md) | 交易记录方案 |
+| 配置管理蓝图 | [CONFIG_MANAGEMENT_BLUEPRINT.md](10_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md) | 配置管理方案 |
+| 用户偏好蓝图 | [USER_PREFERENCES_BLUEPRINT.md](11_USER_PREFERENCES/USER_PREFERENCES_BLUEPRINT.md) | 用户偏好方案 |
+| 系统状态蓝图 | [SYSTEM_STATUS_BLUEPRINT.md](12_SYSTEM_STATUS/SYSTEM_STATUS_BLUEPRINT.md) | 系统状态方案 |
+| 数据管理蓝图 | [DATA_MANAGEMENT_BLUEPRINT.md](13_DATA_MANAGEMENT/DATA_MANAGEMENT_BLUEPRINT.md) | 数据管理方案 |
+| 策略管理蓝图 | [STRATEGY_MANAGEMENT_BLUEPRINT.md](14_STRATEGY_MANAGEMENT/STRATEGY_MANAGEMENT_BLUEPRINT.md) | 策略管理方案 |
+| 权限管理蓝图 | [PERMISSION_MANAGEMENT_BLUEPRINT.md](15_PERMISSION_MANAGEMENT/PERMISSION_MANAGEMENT_BLUEPRINT.md) | 权限管理方案 |
 
 ---
 
