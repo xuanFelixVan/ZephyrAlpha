@@ -31,10 +31,10 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 实时数据质量监控蓝图 | REALTIME_QUALITY_MONITOR_001 | v1.0.0 | Active | 2026-04-02 | [链接](./REALTIME_QUALITY_MONITOR_BLUEPRINT.md) |
-| 质量评分系统蓝图 | QUALITY_SCORING_SYSTEM_001 | v1.0.0 | Active | 2026-04-02 | [链接](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) |
-| 质量报告自动化蓝图 | QUALITY_REPORT_AUTOMATION_001 | v1.0.0 | Active | 2026-04-02 | [链接](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) |
-| 自动修复引擎蓝图 | AUTO_REPAIR_ENGINE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) |
+| 实时数据质量监控蓝图 | REALTIME_QUALITY_MONITOR_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_QUALITY_MONITOR_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 质量评分系统蓝图 | QUALITY_SCORING_SYSTEM_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_SCORING_SYSTEM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 质量报告自动化蓝图 | QUALITY_REPORT_AUTOMATION_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_REPORT_AUTOMATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 自动修复引擎蓝图 | AUTO_REPAIR_ENGINE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/AUTO_REPAIR_ENGINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
 
 ### 2.2 数据架构与治理
 
