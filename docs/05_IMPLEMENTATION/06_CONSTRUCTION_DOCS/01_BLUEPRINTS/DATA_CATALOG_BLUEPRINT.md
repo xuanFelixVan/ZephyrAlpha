@@ -53,6 +53,52 @@ priority: P1
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接信息 |
+| [数据安全合规蓝图](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依赖 | 提供敏感数据分类标准 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据血缘追踪蓝图](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | 强依赖 | 提供血缘追踪元数据 |
+| [数据可观测性蓝图](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 强依赖 | 提供数据资产监控 |
+| [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 提供治理策略执行 |
+| [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | 中依赖 | 提供生命周期元数据 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **OpenMetadata** | 1.2+ | 元数据管理 | [官方文档](https://docs.open-metadata.org/) |
+| **Apache Atlas** | 2.3+ | 数据血缘 | [官方文档](https://atlas.apache.org/) |
+| **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
+| **Neo4j** | 5.0+ | 图数据库 | [官方文档](https://neo4j.com/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据源管理] --> B[数据目录]
+    C[数据安全合规] --> B
+    
+    B --> D[数据血缘追踪]
+    B --> E[数据可观测性]
+    B --> F[数据治理平台]
+    B --> G[数据生命周期管理]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+---
+
 ## 二、系统架构设计
 
 ### 2.1 整体架构图

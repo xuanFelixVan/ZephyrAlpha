@@ -267,7 +267,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 经济范式判断引擎蓝图 | ECONOMIC_REGIME_ENGINE_002 | v1.0.0 | Active | 2026-04-02 | [链接](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md) |
+| 经济范式判断引擎蓝图 | ECONOMIC_REGIME_ENGINE_001 | v2.0.3 | Active | 2026-04-07 | [链接](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md) |
 | 策略选择蓝图 | STRATEGY_SELECTION_001 | v1.0.0 | Active | 2026-04-01 | [链接](./STRATEGY_SELECTION_BLUEPRINT.md) |
 
 ### 7.3 系统架构与集成
