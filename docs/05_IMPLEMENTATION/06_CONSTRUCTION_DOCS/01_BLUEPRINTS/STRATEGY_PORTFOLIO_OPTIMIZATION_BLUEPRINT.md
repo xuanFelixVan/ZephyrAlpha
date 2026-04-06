@@ -18,7 +18,7 @@ priority: P0
 # 策略组合优化蓝图
 
 > 清风量化交易系统 v5.3 - 策略组合优化详细设计
-> **索引**: `STRATEGY_PORTFOLIO_001`
+> **索引**: `STRATEGY_PORTFOLIO_OPTIMIZATION_001`
 > **开发周期**: 5-7天
 > **核心定位**: 多策略组合优化，实现策略间的资金分配和风险预算管理
 > **参考开源**: PyPortfolioOpt, Riskfolio-Lib

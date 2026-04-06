@@ -18,7 +18,7 @@ priority: P0
 # 交易成本感知再平衡蓝图
 
 > 清风量化交易系统 v5.3 - 交易成本感知再平衡详细设计
-> **索引**: `TX_COST_REBALANCE_001`
+> **索引**: `TRANSACTION_COST_AWARE_REBALANCING_001`
 > **开发周期**: 5-7天
 > **核心定位**: 在再平衡决策中考虑交易成本，优化调整频率和幅度
 > **参考开源**: PyPortfolioOpt, Riskfolio-Lib
