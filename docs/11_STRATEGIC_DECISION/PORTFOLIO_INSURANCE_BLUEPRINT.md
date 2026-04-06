@@ -485,4 +485,299 @@ class OBPIEngine:
                         best_cost_benefit = cost_benefit
                         best_strategy = {
                             'protection_ratio': prot_ratio,
-                            'hedge_ratio
+                            'hedge_ratio': hedge_ratio,
+                            'cost': cost_info['total_cost'],
+                            'protection_level': protection_level,
+                            'cost_benefit': cost_benefit
+                        }
+        
+        return best_strategy
+```
+
+---
+
+### 2.4 保险状态监控系统
+
+#### 2.4.1 监控指标体系
+
+```python
+class InsuranceMonitor:
+    """保险状态监控系统"""
+    
+    def __init__(self):
+        self.monitoring_metrics = {
+            'cushion_ratio': [],      # 保护距离比例
+            'floor_distance': [],     # 保护层距离
+            'insurance_cost': [],     # 保险成本
+            'protection_effect': []   # 保护效果
+        }
+        
+    def monitor_cppi_state(self, cppi_result: Dict) -> Dict:
+        """监控CPPI状态"""
+        cushion_ratio = cppi_result['cushion'] / cppi_result['portfolio_value']
+        
+        alerts = []
+        if cushion_ratio < 0.05:
+            alerts.append({
+                'level': 'CRITICAL',
+                'message': f'保护距离过低: {cushion_ratio:.2%}',
+                'action': '立即减仓风险资产'
+            })
+        elif cushion_ratio < 0.10:
+            alerts.append({
+                'level': 'WARNING',
+                'message': f'保护距离偏低: {cushion_ratio:.2%}',
+                'action': '考虑降低风险暴露'
+            })
+        
+        return {
+            'cushion_ratio': cushion_ratio,
+            'state': cppi_result['state'],
+            'alerts': alerts,
+            'timestamp': datetime.now()
+        }
+    
+    def calculate_insurance_effectiveness(self, 
+                                         portfolio_returns: pd.Series,
+                                         benchmark_returns: pd.Series) -> Dict:
+        """计算保险效果"""
+        portfolio_dd = self._calculate_drawdown(portfolio_returns)
+        benchmark_dd = self._calculate_drawdown(benchmark_returns)
+        
+        protection_effect = (benchmark_dd - portfolio_dd) / benchmark_dd
+        
+        return {
+            'portfolio_max_dd': portfolio_dd,
+            'benchmark_max_dd': benchmark_dd,
+            'protection_effect': protection_effect,
+            'effectiveness_score': '优秀' if protection_effect > 0.3 else '良好' if protection_effect > 0.15 else '一般',
+            'timestamp': datetime.now()
+        }
+    
+    def _calculate_drawdown(self, returns: pd.Series) -> float:
+        """计算最大回撤"""
+        cumulative = (1 + returns).cumprod()
+        running_max = cumulative.cummax()
+        drawdown = (cumulative - running_max) / running_max
+        return abs(drawdown.min())
+```
+
+---
+
+## 三、数据模型与接口设计
+
+### 3.1 核心数据结构
+
+```python
+@dataclass
+class InsuranceState:
+    """保险状态"""
+    insurance_id: str
+    insurance_type: str              # CPPI, TIPP, OBPI
+    portfolio_value: float
+    floor: float
+    cushion: float
+    risky_allocation: float
+    safe_allocation: float
+    state: str                       # normal, warning, critical
+    created_at: datetime
+    updated_at: datetime
+
+@dataclass
+class InsuranceSignal:
+    """保险信号"""
+    signal_id: str
+    signal_type: str                 # rebalance, adjust, hedge
+    insurance_type: str
+    current_allocation: Dict
+    target_allocation: Dict
+    trade_amount: float
+    reason: str
+    created_at: datetime
+```
+
+### 3.2 接口定义
+
+```python
+class PortfolioInsuranceInterface:
+    """投资组合保险接口"""
+    
+    def calculate_protection(self, 
+                            portfolio_value: float,
+                            market_data: Dict) -> InsuranceState:
+        """计算保护状态"""
+        pass
+    
+    def generate_adjustment_signal(self, 
+                                  current_state: InsuranceState,
+                                  market_data: Dict) -> InsuranceSignal:
+        """生成调整信号"""
+        pass
+    
+    def evaluate_insurance_effect(self, 
+                                 historical_data: pd.DataFrame) -> Dict:
+        """评估保险效果"""
+        pass
+```
+
+---
+
+## 四、与其他模块的集成
+
+### 4.1 与Layer 11.2风险预算分配的集成
+
+```
+11.2 风险预算分配
+    ↓ 风险预算
+11.5 投资组合保险
+    ├── 根据风险预算确定保护层
+    ├── 计算保险成本
+    └── 调整风险预算分配
+    ↓ 保护后风险预算
+11.1 战略资产配置
+```
+
+### 4.2 与Layer 6组合优化的集成
+
+```
+Layer 11.5 投资组合保险
+    ↓ 保护后权重
+Layer 6 组合优化
+    ├── 接收保护后权重作为约束
+    ├── 在保护约束下优化组合
+    └── 返回优化后组合
+    ↓ 优化后组合
+Layer 5 策略执行
+```
+
+### 4.3 与Layer 7 AI报告的集成
+
+```
+Layer 11.5 投资组合保险
+    ↓ 保险状态数据
+Layer 7 AI报告
+    ├── 生成保险效果报告
+    ├── 分析保护效果
+    └── 提供优化建议
+```
+
+---
+
+## 五、实施路径
+
+### 5.1 Phase 1: CPPI核心引擎（1个月）
+
+**目标**: 实现基础CPPI保护机制
+
+| 任务 | 时间 | 交付成果 |
+|------|------|---------|
+| CPPI算法实现 | 1周 | CPPI引擎核心代码 |
+| 参数优化 | 1周 | 参数优化框架 |
+| 回测验证 | 1周 | 历史数据回测报告 |
+| 集成测试 | 1周 | 集成测试通过 |
+
+### 5.2 Phase 2: TIPP和监控（1个月）
+
+**目标**: 实现收益锁定和状态监控
+
+| 任务 | 时间 | 交付成果 |
+|------|------|---------|
+| TIPP引擎实现 | 1周 | TIPP引擎核心代码 |
+| 监控系统实现 | 1周 | 状态监控系统 |
+| 预警机制 | 1周 | 预警和通知系统 |
+| 文档完善 | 1周 | 完整技术文档 |
+
+### 5.3 Phase 3: OBPI和优化（持续）
+
+**目标**: 实现期权对冲和持续优化
+
+| 任务 | 时间 | 交付成果 |
+|------|------|---------|
+| OBPI引擎实现 | 2周 | OBPI引擎核心代码 |
+| 成本优化 | 1周 | 成本优化算法 |
+| 效果评估 | 1周 | 效果评估框架 |
+
+---
+
+## 六、开源项目参考
+
+### 6.1 可参考的开源项目
+
+| 项目 | 功能 | 适用性 | 链接 |
+|------|------|--------|------|
+| **PyPortfolioOpt** | 组合优化 | ⭐⭐⭐ | 可用于优化保护后组合 |
+| **QuantLib** | 期权定价 | ⭐⭐⭐⭐ | OBPI引擎核心依赖 |
+| **tf-quant-finance** | 蒙特卡洛 | ⭐⭐⭐ | 压力测试和情景分析 |
+
+### 6.2 需要自研的部分
+
+| 模块 | 原因 | 开发投入 |
+|------|------|---------|
+| **CPPI/TIPP引擎** | 无成熟开源实现 | 2个月 |
+| **保险状态监控** | 需定制化 | 2周 |
+| **成本优化** | A股特色 | 1周 |
+
+---
+
+## 七、风险评估
+
+### 7.1 技术风险
+
+| 风险 | 影响 | 缓解措施 |
+|------|------|---------|
+| **参数敏感性** | 高 | 参数优化 + 敏感性分析 |
+| **市场极端情况** | 高 | 多层保护 + 压力测试 |
+| **流动性风险** | 中 | 流动性约束 + 分批调整 |
+
+### 7.2 实施风险
+
+| 风险 | 影响 | 缓解措施 |
+|------|------|---------|
+| **过度保护** | 中 | 成本效益分析 + 动态调整 |
+| **保护不足** | 高 | 多重保护机制 + 实时监控 |
+| **成本过高** | 中 | 成本优化 + AI辅助决策 |
+
+---
+
+## 八、质量保证
+
+### 8.1 测试标准
+
+| 测试类型 | 覆盖率要求 | 通过标准 |
+|---------|-----------|---------|
+| **单元测试** | ≥90% | 所有测试通过 |
+| **集成测试** | ≥85% | 关键路径通过 |
+| **回测验证** | 5年历史数据 | 保护效果≥20% |
+| **压力测试** | 极端场景 | 无爆仓风险 |
+
+### 8.2 监控指标
+
+| 指标 | 目标值 | 监控频率 |
+|------|--------|---------|
+| **保护距离比例** | >15% | 实时 |
+| **保险成本比例** | <2%/年 | 日频 |
+| **保护效果** | >20% | 月频 |
+| **误触发率** | <5% | 月频 |
+
+---
+
+## 九、相关文档
+
+| 文档 | 说明 |
+|------|------|
+| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
+| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./RISK_BUDGET_SYSTEM_BLUEPRINT.md) | 风险预算系统 |
+
+---
+
+## 十、版本历史
+
+| 版本 | 日期 | 变更说明 |
+|------|------|---------|
+| v1.0 | 2026-04-05 | 初始版本，完成CPPI/TIPP/OBPI三大引擎设计 |
+
+---
+
+**文档状态**: ✅ 设计完成  
+**下一步**: 创建融资融券管理系统蓝图
