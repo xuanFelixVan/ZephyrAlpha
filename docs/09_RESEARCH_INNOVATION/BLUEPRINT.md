@@ -2209,6 +2209,599 @@ class ResearchResourceManager:
 
 ---
 
+### 2.11 模型监控与漂移检测系统 ⭐关键缺失
+
+#### 2.11.1 系统定位与职责
+
+**核心职责**：
+1. **数据漂移检测**：监控输入数据分布变化
+2. **模型性能监控**：实时追踪模型预测性能
+3. **概念漂移检测**：识别模型与目标关系变化
+4. **自动化告警**：异常情况自动通知
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│         模型监控与漂移检测系统架构                       │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         数据监控层 (Data Monitoring)             │   │
+│  │  - 数据分布变化检测                              │   │
+│  │  - 特征统计监控                                  │   │
+│  │  - 数据质量检查                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         模型监控层 (Model Monitoring)            │   │
+│  │  - 预测性能追踪                                  │   │
+│  │  - 模型漂移检测                                  │   │
+│  │  - 模型解释性分析                                │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         告警层 (Alerting)                        │   │
+│  │  - 阈值告警                                      │   │
+│  │  - 异常检测                                      │   │
+│  │  - 自动通知                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         报告层 (Reporting)                       │   │
+│  │  - 监控报告生成                                  │   │
+│  │  - 可视化仪表板                                  │   │
+│  │  - 历史趋势分析                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import pandas as pd
+from evidently import Report
+from evidently.presets import DataDriftPreset, ClassificationPreset, RegressionPreset
+from evidently.descriptors import Sentiment, TextLength
+
+class ModelMonitoringSystem:
+    """模型监控与漂移检测系统 - 基于Evidently AI"""
+    
+    def __init__(self, reference_data: pd.DataFrame):
+        self.reference_data = reference_data
+        self.alert_thresholds = {
+            'psi': 0.1,
+            'accuracy_drop': 0.05,
+            'drift_share': 0.3
+        }
+    
+    def detect_data_drift(self, 
+                         current_data: pd.DataFrame,
+                         method: str = "psi") -> Dict:
+        """检测数据漂移"""
+        report = Report([
+            DataDriftPreset(method=method)
+        ])
+        
+        result = report.run(
+            current_data=current_data,
+            reference_data=self.reference_data
+        )
+        
+        metrics = result.dict()
+        
+        return {
+            'dataset_drift': metrics.get('dataset_drift', False),
+            'drift_share': metrics.get('drift_share', 0),
+            'drifted_columns': metrics.get('drifted_columns', []),
+            'psi_values': metrics.get('psi_values', {}),
+            'report_html': result.save_html("drift_report.html")
+        }
+    
+    def monitor_model_performance(self,
+                                  predictions: pd.DataFrame,
+                                  actuals: pd.DataFrame,
+                                  model_type: str = "classification") -> Dict:
+        """监控模型性能"""
+        if model_type == "classification":
+            preset = ClassificationPreset()
+        else:
+            preset = RegressionPreset()
+        
+        report = Report([preset])
+        result = report.run(
+            current_data=predictions,
+            reference_data=actuals
+        )
+        
+        metrics = result.dict()
+        
+        return {
+            'accuracy': metrics.get('accuracy', 0),
+            'precision': metrics.get('precision', 0),
+            'recall': metrics.get('recall', 0),
+            'f1_score': metrics.get('f1_score', 0),
+            'roc_auc': metrics.get('roc_auc', 0)
+        }
+    
+    def check_alerts(self, metrics: Dict) -> List[Dict]:
+        """检查告警"""
+        alerts = []
+        
+        if metrics.get('psi', 0) > self.alert_thresholds['psi']:
+            alerts.append({
+                'type': 'data_drift',
+                'severity': 'high',
+                'message': f"数据漂移PSI={metrics['psi']:.3f}超过阈值{self.alert_thresholds['psi']}",
+                'timestamp': datetime.now()
+            })
+        
+        if metrics.get('accuracy_drop', 0) > self.alert_thresholds['accuracy_drop']:
+            alerts.append({
+                'type': 'performance_drop',
+                'severity': 'high',
+                'message': f"模型准确率下降{metrics['accuracy_drop']:.3f}超过阈值{self.alert_thresholds['accuracy_drop']}",
+                'timestamp': datetime.now()
+            })
+        
+        return alerts
+    
+    def generate_monitoring_report(self,
+                                   current_data: pd.DataFrame,
+                                   predictions: pd.DataFrame = None,
+                                   actuals: pd.DataFrame = None) -> str:
+        """生成监控报告"""
+        presets = [DataDriftPreset(method="psi")]
+        
+        if predictions is not None and actuals is not None:
+            presets.append(ClassificationPreset())
+        
+        report = Report(presets)
+        result = report.run(
+            current_data=current_data,
+            reference_data=self.reference_data
+        )
+        
+        report_path = f"monitoring_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        result.save_html(report_path)
+        
+        return report_path
+```
+
+**技术选型标准**：
+- **首选**: Evidently AI (5k+ stars, 100+指标, 支持LLM)
+- **备选**: NannyML (无标签性能估计, CBPE算法)
+- **备选**: Deepchecks (全面验证套件, 内置测试)
+
+**量化特有监控指标**：
+- **因子IC漂移**: 监控因子IC的时间稳定性
+- **因子衰减**: 监控因子预测能力的衰减
+- **策略收益漂移**: 监控策略实际收益与预期收益的偏差
+
+**应用场景**：
+- 模型部署后持续监控
+- 数据质量异常检测
+- 模型性能退化预警
+
+---
+
+### 2.12 A/B测试框架 ⭐关键缺失
+
+#### 2.12.1 系统定位与职责
+
+**核心职责**：
+1. **策略对比验证**：验证新策略是否优于旧策略
+2. **因果推断分析**：分析策略变更的因果效应
+3. **统计显著性检验**：确保结论统计可靠
+4. **方差减少技术**：提高测试效率
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│              A/B测试框架架构                             │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         实验设计层 (Experiment Design)           │   │
+│  │  - 样本量计算                                    │   │
+│  │  - 分组策略设计                                  │   │
+│  │  - 指标定义                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         执行层 (Execution)                       │   │
+│  │  - 流量分配                                      │   │
+│  │  - 实验运行                                      │   │
+│  │  - 数据收集                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         分析层 (Analysis)                        │   │
+│  │  - 统计检验                                      │   │
+│  │  - 因果推断                                      │   │
+│  │  - 方差减少                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         决策层 (Decision)                        │   │
+│  │  - 结果解读                                      │   │
+│  │  - 决策建议                                      │   │
+│  │  - 报告生成                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import pandas as pd
+import numpy as np
+from scipy import stats
+
+class ABTestingFramework:
+    """A/B测试框架 - 基于HypEx"""
+    
+    def __init__(self, alpha: float = 0.05, power: float = 0.8):
+        self.alpha = alpha
+        self.power = power
+    
+    def calculate_sample_size(self,
+                             baseline_metric: float,
+                             minimum_detectable_effect: float,
+                             std_dev: float) -> int:
+        """计算样本量"""
+        effect_size = minimum_detectable_effect / std_dev
+        
+        from statsmodels.stats.power import NormalIndPower
+        power_analysis = NormalIndPower()
+        
+        sample_size = power_analysis.solve_power(
+            effect_size=effect_size,
+            alpha=self.alpha,
+            power=self.power,
+            alternative='two-sided'
+        )
+        
+        return int(np.ceil(sample_size))
+    
+    def run_ab_test(self,
+                   control_data: pd.DataFrame,
+                   treatment_data: pd.DataFrame,
+                   metric_name: str) -> Dict:
+        """运行A/B测试"""
+        control_values = control_data[metric_name]
+        treatment_values = treatment_data[metric_name]
+        
+        statistic, p_value = stats.ttest_ind(
+            control_values,
+            treatment_values
+        )
+        
+        control_mean = control_values.mean()
+        treatment_mean = treatment_values.mean()
+        
+        effect_size = treatment_mean - control_mean
+        relative_lift = effect_size / control_mean if control_mean != 0 else 0
+        
+        return {
+            'control_mean': control_mean,
+            'treatment_mean': treatment_mean,
+            'effect_size': effect_size,
+            'relative_lift': relative_lift,
+            'p_value': p_value,
+            'statistic': statistic,
+            'is_significant': p_value < self.alpha
+        }
+    
+    def cuped_variance_reduction(self,
+                                 current_metric: pd.Series,
+                                 pre_experiment_metric: pd.Series) -> pd.Series:
+        """CUPED方差减少技术"""
+        theta = np.cov(current_metric, pre_experiment_metric)[0, 1] / np.var(pre_experiment_metric)
+        
+        cuped_metric = current_metric - theta * (pre_experiment_metric - pre_experiment_metric.mean())
+        
+        return cuped_metric
+    
+    def stratified_analysis(self,
+                           data: pd.DataFrame,
+                           treatment_col: str,
+                           metric_col: str,
+                           strata_col: str) -> Dict:
+        """分层分析"""
+        strata_results = {}
+        
+        for stratum in data[strata_col].unique():
+            stratum_data = data[data[strata_col] == stratum]
+            
+            control = stratum_data[stratum_data[treatment_col] == 0][metric_col]
+            treatment = stratum_data[stratum_data[treatment_col] == 1][metric_col]
+            
+            statistic, p_value = stats.ttest_ind(control, treatment)
+            
+            strata_results[stratum] = {
+                'control_mean': control.mean(),
+                'treatment_mean': treatment.mean(),
+                'effect_size': treatment.mean() - control.mean(),
+                'p_value': p_value
+            }
+        
+        return strata_results
+    
+    def generate_ab_report(self, results: Dict) -> str:
+        """生成A/B测试报告"""
+        report = f"""
+# A/B测试报告
+
+## 测试结果
+
+- **对照组均值**: {results['control_mean']:.4f}
+- **实验组均值**: {results['treatment_mean']:.4f}
+- **效应大小**: {results['effect_size']:.4f}
+- **相对提升**: {results['relative_lift']:.2%}
+- **P值**: {results['p_value']:.4f}
+- **统计显著性**: {'是' if results['is_significant'] else '否'}
+
+## 结论
+
+{'实验组显著优于对照组' if results['is_significant'] and results['effect_size'] > 0 else '无显著差异'}
+"""
+        return report
+```
+
+**技术选型标准**：
+- **首选**: HypEx (因果推断, CUPED方差减少)
+- **备选**: AB-Testing (简单易用, 统计检验)
+- **备选**: 自研轻量级 (量化特有需求)
+
+**量化特有A/B测试场景**：
+- **策略对比**: 新策略 vs 旧策略
+- **因子对比**: 新因子 vs 旧因子
+- **参数对比**: 不同参数组合对比
+
+**应用场景**：
+- 策略上线前验证
+- 因子有效性验证
+- 参数优化验证
+
+---
+
+### 2.13 时间泄漏检测系统 ⭐关键缺失
+
+#### 2.13.1 系统定位与职责
+
+**核心职责**：
+1. **未来数据检测**：识别因子计算中使用了未来数据
+2. **前视偏差检测**：检测策略回测中的前视偏差
+3. **数据时间戳验证**：验证数据时间戳的正确性
+4. **自动化检查**：自动扫描代码和数据
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           时间泄漏检测系统架构                           │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         数据检测层 (Data Detection)              │   │
+│  │  - 时间戳验证                                    │   │
+│  │  - 未来数据检测                                  │   │
+│  │  - 数据对齐检查                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         代码检测层 (Code Detection)              │   │
+│  │  - 未来函数调用检测                              │   │
+│  │  - 数据访问模式分析                              │   │
+│  │  - 时间窗口验证                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         回测检测层 (Backtest Detection)          │   │
+│  │  - 前视偏差检测                                  │   │
+│  │  - 交易信号验证                                  │   │
+│  │  - 滑点模拟验证                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         报告层 (Reporting)                       │   │
+│  │  - 问题定位                                      │   │
+│  │  - 风险评估                                      │   │
+│  │  - 修复建议                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional, Tuple
+from datetime import datetime, timedelta
+import pandas as pd
+import numpy as np
+import ast
+import inspect
+
+class TemporalLeakageDetector:
+    """时间泄漏检测系统 - 量化特有"""
+    
+    def __init__(self):
+        self.issues = []
+        self.risk_levels = {
+            'high': '可能导致严重回测偏差',
+            'medium': '可能影响回测准确性',
+            'low': '轻微影响，建议修复'
+        }
+    
+    def detect_future_data_in_factor(self,
+                                    factor_data: pd.DataFrame,
+                                    returns: pd.Series,
+                                    threshold: float = 0.3) -> List[Dict]:
+        """检测因子中的未来数据"""
+        issues = []
+        
+        for col in factor_data.columns:
+            future_data = factor_data[col].shift(-1)
+            corr = future_data.corr(returns)
+            
+            if abs(corr) > threshold:
+                issues.append({
+                    'type': 'future_data_leakage',
+                    'factor': col,
+                    'correlation': corr,
+                    'risk': 'high' if abs(corr) > 0.5 else 'medium',
+                    'message': f"因子{col}可能使用了未来数据，相关系数={corr:.3f}",
+                    'suggestion': "检查因子计算逻辑，确保不使用未来数据"
+                })
+        
+        return issues
+    
+    def detect_lookahead_bias_in_backtest(self,
+                                         signals: pd.Series,
+                                         prices: pd.DataFrame,
+                                         execution_delay: int = 1) -> List[Dict]:
+        """检测回测中的前视偏差"""
+        issues = []
+        
+        if execution_delay < 1:
+            issues.append({
+                'type': 'lookahead_bias',
+                'risk': 'high',
+                'message': f"执行延迟={execution_delay}可能导致前视偏差",
+                'suggestion': "设置执行延迟>=1，模拟真实交易延迟"
+            })
+        
+        signal_shifted = signals.shift(execution_delay)
+        returns = prices['close'].pct_change()
+        
+        if not signal_shifted.equals(signals):
+            issues.append({
+                'type': 'signal_timing',
+                'risk': 'medium',
+                'message': "信号未考虑执行延迟",
+                'suggestion': f"信号应延迟{execution_delay}期执行"
+            })
+        
+        return issues
+    
+    def detect_future_function_calls(self, code: str) -> List[Dict]:
+        """检测代码中的未来函数调用"""
+        issues = []
+        
+        future_functions = [
+            'shift(-1)', 'shift(-2)', 'shift(-n)',
+            'iloc[i+1]', 'iloc[i+2]',
+            'future', 'lookahead'
+        ]
+        
+        for func in future_functions:
+            if func in code:
+                issues.append({
+                    'type': 'future_function_call',
+                    'function': func,
+                    'risk': 'high',
+                    'message': f"检测到未来函数调用: {func}",
+                    'suggestion': "检查该函数是否会导致时间泄漏"
+                })
+        
+        return issues
+    
+    def validate_data_timestamps(self,
+                                data: pd.DataFrame,
+                                timestamp_col: str = 'datetime') -> List[Dict]:
+        """验证数据时间戳"""
+        issues = []
+        
+        if timestamp_col not in data.columns:
+            issues.append({
+                'type': 'missing_timestamp',
+                'risk': 'high',
+                'message': f"缺少时间戳列: {timestamp_col}",
+                'suggestion': "添加时间戳列以进行时间验证"
+            })
+            return issues
+        
+        timestamps = pd.to_datetime(data[timestamp_col])
+        
+        if not timestamps.is_monotonic_increasing:
+            issues.append({
+                'type': 'non_monotonic_timestamps',
+                'risk': 'medium',
+                'message': "时间戳非单调递增",
+                'suggestion': "检查数据排序，确保时间戳按时间顺序排列"
+            })
+        
+        time_diffs = timestamps.diff()
+        irregular_intervals = time_diffs[time_diffs != time_diffs.mode()[0]]
+        
+        if len(irregular_intervals) > 0:
+            issues.append({
+                'type': 'irregular_intervals',
+                'risk': 'low',
+                'message': f"检测到{len(irregular_intervals)}个不规则时间间隔",
+                'suggestion': "检查数据完整性，处理缺失数据"
+            })
+        
+        return issues
+    
+    def generate_leakage_report(self, all_issues: List[Dict]) -> str:
+        """生成时间泄漏检测报告"""
+        report = "# 时间泄漏检测报告\n\n"
+        
+        high_risk = [i for i in all_issues if i.get('risk') == 'high']
+        medium_risk = [i for i in all_issues if i.get('risk') == 'medium']
+        low_risk = [i for i in all_issues if i.get('risk') == 'low']
+        
+        report += f"## 检测结果摘要\n\n"
+        report += f"- **高风险问题**: {len(high_risk)}个\n"
+        report += f"- **中风险问题**: {len(medium_risk)}个\n"
+        report += f"- **低风险问题**: {len(low_risk)}个\n\n"
+        
+        if high_risk:
+            report += "## 高风险问题\n\n"
+            for issue in high_risk:
+                report += f"### {issue['type']}\n\n"
+                report += f"- **风险等级**: {issue['risk']}\n"
+                report += f"- **问题描述**: {issue['message']}\n"
+                report += f"- **修复建议**: {issue['suggestion']}\n\n"
+        
+        if medium_risk:
+            report += "## 中风险问题\n\n"
+            for issue in medium_risk:
+                report += f"### {issue['type']}\n\n"
+                report += f"- **风险等级**: {issue['risk']}\n"
+                report += f"- **问题描述**: {issue['message']}\n"
+                report += f"- **修复建议**: {issue['suggestion']}\n\n"
+        
+        return report
+```
+
+**技术选型标准**：
+- **首选**: 自研轻量级 (量化特有需求，无成熟开源方案)
+- **集成**: MLflow (记录检测结果)
+- **集成**: Great Expectations (数据质量检查)
+
+**量化特有时间泄漏场景**：
+- **因子计算**: 使用未来数据计算因子
+- **回测模拟**: 前视偏差导致回测失真
+- **信号生成**: 使用未来信息生成交易信号
+
+**应用场景**：
+- 因子开发阶段验证
+- 策略回测前检查
+- 代码审查自动化
+
+---
+
 ## 三、数据模型设计
 ### 3.1 研究任务数据模型
 

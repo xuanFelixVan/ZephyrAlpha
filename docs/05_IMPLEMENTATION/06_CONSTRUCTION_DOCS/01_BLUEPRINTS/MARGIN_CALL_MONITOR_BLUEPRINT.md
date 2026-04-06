@@ -4,7 +4,7 @@ version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/ARCHITECTURE.md
-last_updated: 2026-04-05
+last_updated: '2026-04-06'
 created_date: 2026-04-05
 layer: Layer 6 (组合优化层 - 风险管理层)
 index: MARGIN_CALL_MONITOR_001
@@ -18,7 +18,11 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+open_source_dependency: 待补充
+estimated_effort: 待评估
+priority: P1
 ---
+
 
 # 爆仓线监控系统蓝图 v1.0
 
@@ -1043,3 +1047,14 @@ class MarginCallMonitorIntegrator:
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active | **下一步**: 技术规格书编写
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+
+---
+
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-05 | **状态**: Active

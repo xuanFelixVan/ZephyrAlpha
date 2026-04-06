@@ -4,7 +4,7 @@ version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-06
+last_updated: '2026-04-06'
 created_date: 2026-04-03
 layer: Layer 6 (组合优化层)
 index: MULTI_ASSET_ALLOCATION_001
@@ -24,6 +24,7 @@ ai_maintenance: true
 open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, cvxpy
 priority: P0
 ---
+
 
 # 多资产类别配置蓝?v1.0
 

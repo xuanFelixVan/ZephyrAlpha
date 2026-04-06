@@ -3,14 +3,18 @@ module_id: STRATEGY_SELECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-05
+last_updated: '2026-04-06'
 owner: 首席文档架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统架构设计
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+open_source_dependency: 待补充
+estimated_effort: 待评估
+priority: P1
 ---
+
 
 
 # 策略排名与选择系统技术蓝?
@@ -1011,3 +1015,14 @@ python strategy_selector.py query \
 **最后更?*: 2026-04-01  
 **维护?*: 策略研发中心  
 **预计开发时?*: 80小时?周全职开发）
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席文档架构师 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+
+---
+
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-01 | **状态**: Active

@@ -1,8 +1,14 @@
 ---
-title: AI工作流模块总索�?version: 1.0.0
+module_id: INDEX_AI_WORKFLOW_001
+title: AI工作流模块总索引
+version: 1.0.0
 created_date: 2026-04-02
-last_updated: 2026-04-04
-owner: 首席架构�?standard_type: 专业机构级索�?applicable_scope: AI工作流管�?compliance_level: 专业标准
+last_updated: 2026-04-06
+owner: 首席文档架构师
+standard_type: 专业量化机构索引
+applicable_scope: AI工作流管理
+compliance_level: 专业标准
+parent_document: ../INDEX.md
 ---
 
 # AI工作流模块总索�?

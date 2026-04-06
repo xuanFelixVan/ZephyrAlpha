@@ -4,9 +4,9 @@ version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-06
+last_updated: '2026-04-06'
 created_date: 2026-04-03
-layer: "Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构"
+layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 index: DYNAMIC_CORRELATION_MODELING_001
 estimated_hours: 80h
 estimated_effort: 2周
@@ -24,6 +24,7 @@ ai_maintenance: true
 open_source_dependency: arch, mgarch, numpy, pandas
 priority: P0
 ---
+
 
 # 跨资产相关性动态建模蓝?v1.0
 
