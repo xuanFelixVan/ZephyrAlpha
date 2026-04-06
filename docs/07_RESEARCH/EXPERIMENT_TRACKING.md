@@ -1,15 +1,15 @@
 ---
-module_id: DOC_DOC_001
-version: 1.0.0
+module_id: RESEARCH_EXPERIMENT_TRACKING_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 
@@ -17,8 +17,8 @@ implementation_status: 进行�?
 
 > 清风量化系统 v5.0 - AI实验追踪系统
 > **索引**: `EXP.TRACK.001`
-> **开发时�?*: 30h
-> **核心定位**: 使用wandb.ai自动追踪所有AI研究实验，实�?一次调用，全自动记�?
+> **开发时�?*: 30h
+> **核心定位**: 使用wandb.ai自动追踪所有AI研究实验，实�?一次调用，全自动记�?
 
 
 ## 1. 设计原则
@@ -26,8 +26,8 @@ implementation_status: 进行�?
 | 原则 | 说明 |
 |------|------|
 | **wandb Native** | 使用wandb.ai，不自研实验追踪 |
-| **零代码侵�?* | 通过decorator自动追踪，无需修改业务代码 |
-| **一次调�?* | `wandb.init()` 一行代码开始追�?|
+| **零代码侵�?* | 通过decorator自动追踪，无需修改业务代码 |
+| **一次调�?* | `wandb.init()` 一行代码开始追�?|
 | **AI原生** | 专为AI/LLM实验设计 |
 
 
@@ -35,25 +35,25 @@ implementation_status: 进行�?
 
 ### 2.1 wandb vs 自研对比
 
-| 方案 | 开发时�?| 功能 | 维护成本 |
+| 方案 | 开发时�?| 功能 | 维护成本 |
 |------|----------|------|----------|
-| **wandb.ai** | 30分钟 | ⭐⭐⭐⭐�?| �?(云端托管) |
-| 自研实验追踪 | 2-3个月 | ⭐⭐�?| ⭐⭐⭐⭐�?|
+| **wandb.ai** | 30分钟 | ⭐⭐⭐⭐�?| �?(云端托管) |
+| 自研实验追踪 | 2-3个月 | ⭐⭐�?| ⭐⭐⭐⭐�?|
 
 ### 2.2 wandb能力
 
 ```
 wandb能力:
 ├── 实验自动记录 (代码/参数/指标/文件)
-├── 超参数搜�?(贝叶斯优�?
-├── 实验对比看板 (一键对�?
+├── 超参数搜�?(贝叶斯优�?
+├── 实验对比看板 (一键对�?
 ├── 模型版本管理
-├── 实验协作与分�?
+├── 实验协作与分�?
 └── 云端存储 (100GB免费)
 ```
 
 
-## 3. wandb快速集�?
+## 3. wandb快速集�?
 
 ### 3.1 环境配置
 
@@ -70,13 +70,13 @@ wandb login
 ```python
 import wandb
 
-# 初始�?(一行代码开始追�?
+# 初始�?(一行代码开始追�?
 wandb.init(
     project="qingfeng-quant",
     entity="your_username",
     name="momentum_factor_v1",
     tags=["factor", "momentum"],
-    notes="测试动量因子20日窗�?
+    notes="测试动量因子20日窗�?
 )
 
 # 记录指标 (自动追踪)
@@ -157,7 +157,7 @@ class FactorResearchExperiment:
         wandb.log_artifact(artifact)
 
     def log_table(self, name: str, data: pd.DataFrame):
-        """记录数据�?
+        """记录数据�?
 
         参数:
             name: 表名
@@ -170,7 +170,7 @@ with FactorResearchExperiment({
     'factor_type': 'momentum',
     'period': 20,
     'version': 'v1',
-    'description': '测试20日动量因�?
+    'description': '测试20日动量因�?
 }) as exp:
     # 计算因子
     factor_values = calculate_momentum(data, period=20)
@@ -296,20 +296,20 @@ study.optimize(
 ### 5.1 因子研究看板
 
 wandb自动生成:
-- IC_IR散点�?
+- IC_IR散点�?
 - 超参数相关性热力图
 - 最佳实验对比表
-- 实验历史时间�?
+- 实验历史时间�?
 
 ### 5.2 策略回测看板
 
 wandb自动生成:
 - Sharpe比率分布
 - 回测权益曲线对比
-- 收益-回撤散点�?
+- 收益-回撤散点�?
 - 交易频率分析
 
-### 5.3 自定义看板配�?
+### 5.3 自定义看板配�?
 
 ```yaml
 # wandb-config.yaml
@@ -362,7 +362,7 @@ artifact.download()
 ```
 
 
-## 7. 与现有系统集�?
+## 7. 与现有系统集�?
 
 ### 7.1 与ResearchPipeline集成
 
@@ -386,7 +386,7 @@ def track_experiment(objective: dict, result: dict):
 ### 7.2 与知识库集成
 
 ```python
-# 实验完成后自动保存到知识�?
+# 实验完成后自动保存到知识�?
 def on_experiment_complete(experiment_id: str):
     """实验完成回调
 
@@ -406,7 +406,7 @@ def on_experiment_complete(experiment_id: str):
 ```
 
 
-## 8. 开发任务分�?
+## 8. 开发任务分�?
 
 ### 8.1 任务分解 (30h)
 
@@ -414,11 +414,11 @@ def on_experiment_complete(experiment_id: str):
 |------|------|------|
 | wandb账号配置 | 1h | 注册+配置 |
 | Python SDK集成 | 4h | wandb.init/log |
-| 因子实验类封�?| 6h | FactorResearchExperiment |
-| 策略实验类封�?| 6h | StrategyBacktestExperiment |
+| 因子实验类封�?| 6h | FactorResearchExperiment |
+| 策略实验类封�?| 6h | StrategyBacktestExperiment |
 | Optuna集成 | 4h | wandb_optuna_callback |
 | 看板设计 | 4h | wandb dashboard配置 |
-| 知识库集�?| 3h | on_experiment_complete |
+| 知识库集�?| 3h | on_experiment_complete |
 | 测试 | 2h | 集成测试 |
 
 
@@ -426,10 +426,10 @@ def on_experiment_complete(experiment_id: str):
 
 ### 9.1 关键指标
 
-| 指标 | 说明 | 阈�?|
+| 指标 | 说明 | 阈�?|
 |------|------|------|
-| experiment_count | 实验�?�?| - |
-| experiment_success_rate | 实验成功�?| >70% |
+| experiment_count | 实验�?�?| - |
+| experiment_success_rate | 实验成功�?| >70% |
 | avg_experiment_duration | 平均实验时长 | <30min |
 
 
@@ -438,11 +438,11 @@ def on_experiment_complete(experiment_id: str):
 ### 10.1 测试分层
 
 ```
-单元测试 (Experiment类测�?
-    �?
+单元测试 (Experiment类测�?
+    �?
 集成测试 (wandb API测试)
-    �?
-端到端测�?(完整实验追踪流程)
+    �?
+端到端测�?(完整实验追踪流程)
 ```
 
 ### 10.2 单元测试
@@ -462,17 +462,17 @@ class TestFactorResearchExperiment:
     """因子研究实验测试"""
 
     def setup_method(self):
-        """测试前准�?""
+        """测试前准�?""
         self.mock_wandb = MagicMock()
         self.patch_wandb = patch('src.experiment.tracking.wandb', self.mock_wandb)
         self.patch_wandb.start()
 
     def teardown_method(self):
-        """测试后清�?""
+        """测试后清�?""
         self.patch_wandb.stop()
 
     def test_init_experiment(self):
-        """测试实验初始�?""
+        """测试实验初始�?""
         experiment = FactorResearchExperiment(
             project="test_project",
             name="test_factor",
@@ -550,7 +550,7 @@ class TestStrategyBacktestExperiment:
         self.patch_wandb.stop()
 
     def test_init_strategy_experiment(self):
-        """测试策略实验初始�?""
+        """测试策略实验初始�?""
         experiment = StrategyBacktestExperiment(
             project="test_project",
             name="test_strategy",
@@ -593,7 +593,7 @@ class TestStrategyBacktestExperiment:
         self.mock_wandb.log.assert_called()
 
     def test_log_summary_metrics(self):
-        """测试汇总指�?""
+        """测试汇总指�?""
         experiment = StrategyBacktestExperiment(
             project="test_project",
             name="test_strategy"
@@ -624,7 +624,7 @@ class TestWandbIntegration:
 
     @pytest.fixture
     def tracker(self):
-        """创建实验追踪�?""
+        """创建实验追踪�?""
         return ExperimentTracker(
             project="test_qingfeng_quant",
             entity="test_user"
@@ -676,16 +676,16 @@ class TestWandbIntegration:
         assert study.best_value > 0
 ```
 
-### 10.4 端到端测�?
+### 10.4 端到端测�?
 
 ```python
 # tests/e2e/test_experiment_e2e.py
 
 class TestExperimentE2E:
-    """端到端测�?""
+    """端到端测�?""
 
     def test_full_research_to_tracking(self):
-        """测试从研究到追踪的完整流�?""
+        """测试从研究到追踪的完整流�?""
         # 1. 创建实验
         response = client.post("/api/v1/experiment/create", json={
             "project": "qingfeng-quant",
@@ -747,7 +747,7 @@ class ExperimentConfig(BaseModel):
     # 配置参数
     config: Dict = Field(default_factory=dict)
 
-    # 元数�?
+    # 元数�?
     tags: List[str] = Field(default_factory=list)
     notes: Optional[str] = None
 
@@ -756,7 +756,7 @@ class ExperimentConfig(BaseModel):
     started_at: Optional[datetime] = None
     finished_at: Optional[datetime] = None
 
-    # 状�?
+    # 状�?
     status: str = "pending"
 
 class FactorExperimentConfig(ExperimentConfig):
@@ -770,8 +770,8 @@ class FactorExperimentConfig(ExperimentConfig):
 
     # 因子特有配置
     factor_type: str = Field(..., description="因子类型: momentum, value, quality...")
-    universe: str = Field(default="hs300", description="股票�?)
-    period: int = Field(default=20, description="回望�?)
+    universe: str = Field(default="hs300", description="股票�?)
+    period: int = Field(default=20, description="回望�?)
     date_range: tuple = Field(..., description="回测日期范围")
 
 class StrategyExperimentConfig(ExperimentConfig):
@@ -791,22 +791,22 @@ class MetricRecord(BaseModel):
 ```
 
 
-## 12. wandb最佳实�?
+## 12. wandb最佳实�?
 
 ### 12.1 项目组织
 
 ```
 wandb项目结构:
 ├── qingfeng-quant-factor      # 因子研究项目
-�?  ├── momentum_*             # 动量因子实验
-�?  ├── value_*                # 价值因子实�?
-�?  └── quality_*               # 质量因子实验
-�?
+�?  ├── momentum_*             # 动量因子实验
+�?  ├── value_*                # 价值因子实�?
+�?  └── quality_*               # 质量因子实验
+�?
 ├── qingfeng-quant-strategy   # 策略回测项目
-�?  ├── trend_*                 # 趋势策略
-�?  ├── mean_reversion_*        # 均值回归策�?
-�?  └── arbitrage_*             # 套利策略
-�?
+�?  ├── trend_*                 # 趋势策略
+�?  ├── mean_reversion_*        # 均值回归策�?
+�?  └── arbitrage_*             # 套利策略
+�?
 └── qingfeng-quant-optimization # 参数优化项目
     ├── optuna_*                # Optuna优化
     └── grid_search_*           # 网格搜索
@@ -859,8 +859,8 @@ wandb:
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-29 | 初始版本 |
-| v1.1 | 2026-03-29 | 补充测试策略、数据模型、最佳实�?|
+| v1.1 | 2026-03-29 | 补充测试策略、数据模型、最佳实�?|
 
 
-**维护�?*: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `EXP.TRACK.001`

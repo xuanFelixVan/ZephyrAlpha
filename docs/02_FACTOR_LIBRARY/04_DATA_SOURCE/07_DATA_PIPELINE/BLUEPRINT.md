@@ -1,10 +1,9 @@
 ---
----
 module_id: DATA_PIPELINE_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席文档架构师
 standard_type: 数据处理文档
 applicable_scope: 数据流水线架构
@@ -12,11 +11,28 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
---- 0%
 ---
 
-
 # 数据流水线蓝图
+
+## 文档职责说明
+
+**本文档职责**: 数据流水线架构设计
+- 定义数据流水线的整体架构和设计原则
+- 设计数据流转和处理流程
+- 规划数据存储和缓存策略
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据采集实现 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
+| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
+| 数据质量管理 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 下游检查 | 数据质量控制体系 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义数据流水线的整体架构和设计原则
+- ❌ 本文档不负责: 具体的数据采集实现（由 DATA_ACQUISITION.md 负责）
+- ❌ 本文档不负责: 具体的数据清洗规则（由 03_CLEANING/BLUEPRINT.md 负责）
 
 > 清风量化系统 v5.0 的数据流水线架构
 > **索引**: `DAT_001`

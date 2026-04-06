@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_GUIDE_001
-version: 5.3.0
+module_id: IMPL_DEV_STANDARDS_001
+version: 1.0.15.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01

@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_REPORT_001
-version: 2.0.0
+module_id: IMPL_OPS_AUDIT_HANDOVER_001
+version: 1.0.12.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -239,7 +239,7 @@ python scripts/audit_documents.py
 
 ## 📚 相关文档索引
 
-| 文档 | 路径 | �?|
+| 文档 | 路径 | �?|
 |------|------|------|
 | 审查工作流程 | `docs/05_IMPLEMENTATION/07_OPERATIONS/DOCUMENT_AUDIT_WORKFLOW.md` | 主文?|
 | 审查检查清?| `docs/05_IMPLEMENTATION/07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md` | 执行模板 |
@@ -253,4 +253,4 @@ python scripts/audit_documents.py
 
 **交接完成**: 2026-03-31
 **下次审查触发条件**: 新蓝图或AI讨论新内容后
-**维护?*: 个人开�?
+**维护?*: 个人开�?
