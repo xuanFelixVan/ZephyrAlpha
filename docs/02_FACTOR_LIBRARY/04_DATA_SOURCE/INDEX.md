@@ -1,6 +1,6 @@
 ﻿---
 module_id: INDEX_DATA_SOURCE_001
-version: 1.0.2
+version: 1.0.3
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-06
@@ -94,4 +94,4 @@ implementation_status: 已完成
 
 ---
 
-**索引版本**: v1.0.2 | **创建日期**: 2026-04-03 | **维护者**: 首席文档架构师
+**索引版本**: v1.0.3 | **创建日期**: 2026-04-03 | **维护者**: 首席文档架构师

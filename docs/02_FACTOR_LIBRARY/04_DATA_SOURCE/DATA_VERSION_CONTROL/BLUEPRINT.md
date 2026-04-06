@@ -1,6 +1,6 @@
 ---
-module_id: DATA_VERSION_CONTROL_001
-version: 1.0.0
+module_id: FACTOR_DATA_VERSION_CONTROL_BP_001
+version: 1.0.1
 status: Blueprint
 created_date: 2026-04-06
 last_updated: 2026-04-06

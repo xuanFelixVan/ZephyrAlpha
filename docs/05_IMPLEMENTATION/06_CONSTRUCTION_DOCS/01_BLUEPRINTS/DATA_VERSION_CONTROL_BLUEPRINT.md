@@ -1,6 +1,6 @@
 ---
-module_id: DATA_VERSION_CONTROL_001
-version: 1.0.0
+module_id: IMPL_DATA_VERSION_CONTROL_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
@@ -378,4 +378,4 @@ dvc remote add -d myremote s3://mybucket/dvc-storage
 - v1.0.0 (2026-04-02): 初始版本，完成数据版本管理系统设?
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?
