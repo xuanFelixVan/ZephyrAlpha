@@ -34,39 +34,6 @@ implementation_status: 设计阶段---
 - 研究知识管理
 - 因子挖掘研究
 
----
-
-## 📚 核心文档
-
-### 蓝图文档
-
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| [研究与创新层蓝图](./BLUEPRINT.md) | Layer 9总体架构设计 | ⭐⭐⭐⭐⭐ |
-| [实施方案](./IMPLEMENTATION_GUIDE.md) | **个人开发+AI维护完整方案**，80%开源+专业治理 | ⭐⭐⭐⭐⭐ |
-
-### 归档文档
-
-历史版本已归档至 `_archive/` 目录，包括：
-- `MISSING_MODULES_SUPPLEMENT.md` (v1.0) - 早期缺失模块补充设计
-- `COMPLETE_SUPPLEMENT_v2.md` (v2.0) - 完整缺失模块补充方案
-- `COMPLETE_BLUEPRINT_V3.md` (v3.0) - 完整蓝图版本
-- `CRITICAL_MISSING_V4.md` (v4.0) - 关键缺失模块补充
-- `SYSTEM_MANIFEST_UPDATE_GUIDE.md` (临时文档) - System_Manifest更新指南
-
-**说明**: 这些归档文档保留了历史设计思路和决策过程，作为历史记录保留。最新内容已整合到主蓝图和实施方案中。
-
-### 子模块（规划中）
-
-| 目录名称 | 说明 | 状态 |
-|---------|------|------|
-| `01_ai_research_lab/` | AI虚拟研究实验室 | 🔄 规划中 |
-| `innovation_incubator/` | 创新孵化器 | 🔄 规划中 |
-| `academic_tracking/` | 学术前沿追踪 | 🔄 规划中 |
-| `knowledge_management/` | 研究知识管理 | 🔄 规划中 |
-| `factor_mining/` | 因子挖掘研究 | 🔄 规划中 |
-
----
 
 ## 🔍 与其他目录的边界
 
@@ -84,24 +51,6 @@ implementation_status: 设计阶段---
 - `09_RESEARCH_INNOVATION/` 定义**研究战略和架构**（研究体系设计）
 - `07_RESEARCH/` 提供**研究工具和方法**（如何做研究）
 
----
-
-## 📖 快速导航
-
-### 核心功能
-
-1. **AI虚拟研究实验室**: 模拟研究团队协作（GLM-4多角色）
-2. **创新孵化器**: 新想法快速验证与评估
-3. **学术前沿追踪**: 论文自动检索与解读（arXiv API + GLM-4）
-4. **研究知识管理**: RAG知识库（ChromaDB + Embedding）
-
-### 技术栈
-
-- **AI研究助手**: GLM-4.7-Flash
-- **论文检索**: arXiv API, Semantic Scholar
-- **知识库**: ChromaDB, LangChain
-
----
 
 ## 🔗 相关链接
 
@@ -112,17 +61,6 @@ implementation_status: 设计阶段---
 - [因子库 (Layer 2)](../02_FACTOR_LIBRARY/INDEX.md)
 - [治理与合规层 (Layer 10)](../10_GOVERNANCE_COMPLIANCE/INDEX.md)
 
----
-
-## 📊 文档统计
-
-| 统计项 | 数量 |
-|--------|------|
-| 蓝图文档 | 2 |
-| 归档文档 | 5 |
-| **总计** | **7** |
-
----
 
 ## 📝 维护说明
 
