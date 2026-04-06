@@ -3,11 +3,19 @@ module_id: DATA_AUGMENTATION_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+last_updated: 2026-04-07
+owner: 首席蓝图架构师
+layer: Layer 4 (机器学习层)
 standard_type: 高层架构蓝图
 priority: P2
-layer: Layer 3 (策略层)
+responsibility_boundary: |
+  本文档负责Layer 4机器学习层的数据增强系统设计，包括：
+  - 时序数据增强
+  - 特征扰动和噪声注入
+  - 合成样本生成
+  - 使用Albumentations和nlpaug开源项目
+  
+  数据预处理增强请参考：DATA_PREPROCESSING_LAYER_BLUEPRINT.md
 ---
 
 # 数据增强系统蓝图

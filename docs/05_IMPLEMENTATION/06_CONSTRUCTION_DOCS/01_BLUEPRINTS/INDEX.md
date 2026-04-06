@@ -293,7 +293,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 市场参与者模拟集成架构 | - | - | Active | 2026-04-02 | [链接](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md) |
+| 市场参与者模拟集成架构 | MARKET_PARTICIPANT_SIMULATION_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md) |
 
 ### 7.5 中观策略层
 
