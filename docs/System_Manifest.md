@@ -1,360 +1,287 @@
 ---
 module_id: DOC_SYSTEM_MANIFEST_001
-version: 5.3.0
+version: 5.4.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-06
-owner: Ê×Ï¯ÎÄµµ¼Ü¹¹??
-standard_type: ×¨ÒµÁ¿»¯»ú¹¹ÎÄµµ
-applicable_scope: È«Ïµ??
-compliance_level: ×¨Òµ±ê×¼
+owner: é¦–å¸­æž¶æž„å¸ˆ
+standard_type: ä¸“ä¸šé‡åŒ–æœºæž„æ–‡æ¡£ç´¢å¼•
+applicable_scope: å…¨ç³»ç»Ÿæ–‡æ¡£æ€»ç´¢å¼•
+compliance_level: é¡¶çº§ä¸“ä¸šæ ‡å‡†
 parent_document: INDEX.md
-implementation_status: ½øÐÐ??
+implementation_status: æ´»è·ƒç»´æŠ¤
 ---
 
+# System_Manifest.md - ç³»ç»Ÿæ¸…å•
 
-# System_Manifest.md - ÏµÍ³Çåµ¥
-
-> Çå·çÁ¿»¯ÏµÍ³ v5.3.5 µÄÍêÕûÏµÍ³×´Ì¬¿ì??
+> æ¸…é£Žé‡åŒ–äº¤æ˜“ç³»ç»Ÿ v5.4 - ç¼ºå¤±æ¨¡å—è“å›¾è¡¥å……å®Œæˆç‰ˆ
 > 
-> **?? »Ö¸´ËµÃ÷**: ±¾ÎÄµµÓÚ 2026-03-31 ´Ó¹éµµÎÄ??`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` »Ö¸´£¬×÷ÎªÏµÍ³Ö÷Èë¿ÚÎÄµµ??
+> **ðŸ“Œ é‡è¦è¯´æ˜Ž**: æœ¬æ–‡æ¡£æ˜¯ç³»ç»Ÿæ–‡æ¡£æ€»ç´¢å¼•,åŒ…å«æ‰€æœ‰æ¨¡å—çš„æ˜ å°„å’Œç›®å½•ç»“æž„
 
+---
 
-## ?? ÎÄµµ¶¨Î»
+## ðŸ“‹ æ–‡æ¡£å®šä½
 
-| Êô??| ËµÃ÷ |
+| å±žæ€§ | è¯´æ˜Ž |
 |------|------|
-| **Ö°Ôð** | ÏµÍ³Çåµ¥¡¢Ä£¿éÓ³Éä¡¢Ä¿Â¼½á??|
-| **¶¨Î»** | ??**Ö÷Èë¿ÚÎÄ??* - ¿ìËÙÁË½âÏµÍ³µÄµ¼º½??|
-| **ÔÄ¶ÁÊ±¼ä** | 15·ÖÖÓ |
-| **ÓëÆäËûÎÄµµ¹Ø??* | ±¾ÎÄµµÊÇÈë¿Ú£¬ÏêÏ¸¼¼ÊõÏ¸½Ú¼û [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)£¬Ô¸¾°Ä¿±ê¼û [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)£¨ºÏ²¢°æ??|
+| **èŒè´£** | ç³»ç»Ÿæ¸…å•ã€æ¨¡å—æ˜ å°„ã€ç›®å½•ç´¢å¼• |
+| **å®šä½** | ðŸŽ¯ **ç³»ç»Ÿå…¥å£** - ç†è§£ç³»ç»Ÿçš„ç¬¬ä¸€æ­¥ |
+| **é˜…è¯»æ—¶é—´** | 20åˆ†é’Ÿ |
+| **ç›¸å…³æ–‡æ¡£** | æž¶æž„è¯¦è§ [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) |
 
+---
 
-## ¿ª·¢½×¶ÎËµ??
+## ðŸŽ¯ æœ€æ–°æ›´æ–° (v5.4.0 - 2026-04-06)
 
-| ½×¶Î | Ä¿±ê | ÎÄµµ×´??| ´úÂë×´??|
-|------|------|----------|----------|
-| **µ±Ç°£ºÑÐ??²ßÂÔÉè¼Æ** | ÑéÖ¤²ßÂÔÏë·¨£¬½¨Á¢·½·¨ÂÛ | ÍêÉÆ??| ¿ò¼Ü+Ê¾Àý´úÂë |
-| **ÏÂÒ»²½£º»Ø²âÑéÖ¤** | ÓÃÀúÊ·Êý¾ÝÑéÖ¤²ß??| - | ¿ÉÖ´ÐÐ´ú??|
-| **Î´À´£ºÄ£Äâ½»??* | ÕæÊµ»·¾³ÑéÖ¤ | - | Éú²ú¼¶´ú??|
-| **Î´À´£ºÊµÅÌ½»??* | Êµ¼Ê×Ê½ðÑéÖ¤ | - | ½»Ò×¼¶´ú??|
+### æ–°å¢žè“å›¾æ–‡æ¡£ (50ä¸ªç¼ºå¤±æ¨¡å—)
 
-> **ÖØÒªËµÃ÷**£ºµ±Ç°ËùÓÐ´úÂë¾ù??*Ê¾Àý´úÂë/¿ò¼Ü´úÂë**£¬ÓÃÓÚËµÃ÷Âß¼­??*²»¿ÉÖ±½ÓÔËÐÐ**??
+#### P0çº§æ ¸å¿ƒæ¨¡å—è“å›¾ (15ä¸ª) âœ…
 
+| åºå· | æ¨¡å—åç§° | æ–‡æ¡£è·¯å¾„ | Layer | çŠ¶æ€ |
+|------|---------|---------|-------|------|
+| 1 | æ•°æ®æºè´¨é‡ç›‘æŽ§ | [DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md](01_FRAMEWORK/DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md) | Layer 0 | âœ… å·²åˆ›å»º |
+| 2 | æ•°æ®è´¨é‡è¯„ä¼° | [DATA_QUALITY_ASSESSMENT_BLUEPRINT.md](01_FRAMEWORK/DATA_QUALITY_ASSESSMENT_BLUEPRINT.md) | Layer 1 | âœ… å·²åˆ›å»º |
+| 3 | å› å­æŒ–æŽ˜è‡ªåŠ¨åŒ– | [FACTOR_MINING_AUTOMATION_BLUEPRINT.md](01_FRAMEWORK/FACTOR_MINING_AUTOMATION_BLUEPRINT.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 4 | å› å­å›žæµ‹æ¡†æž¶ | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 5 | èˆ†æƒ…æ•°æ®æºé›†æˆ | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 3 | âœ… å·²åˆ›å»º |
+| 6 | æ¨¡åž‹æœåŠ¡æ¡†æž¶ | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 7 | ç‰¹å¾å·¥ç¨‹è‡ªåŠ¨åŒ– | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 8 | æ¨¡åž‹æµ‹è¯•æ¡†æž¶ | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 9 | æ¨¡åž‹å¯è§‚æµ‹æ€§ | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 10 | æ¨¡åž‹ç”Ÿå‘½å‘¨æœŸç®¡ç† | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 11 | æ™ºèƒ½è®¢å•è·¯ç”± | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 5 | âœ… å·²åˆ›å»º |
+| 12 | åŠ¨æ€é£Žé™©é¢„ç®— | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 6 | âœ… å·²åˆ›å»º |
+| 13 | AIæŠ¥å‘Šç”Ÿæˆ | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 7 | âœ… å·²åˆ›å»º |
+| 14 | AIå†³ç­–è§£é‡Š | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 8 | âœ… å·²åˆ›å»º |
+| 15 | ç ”ç©¶é¡¹ç›®ç®¡ç† | [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | Layer 9 | âœ… å·²åˆ›å»º |
 
-## 1. ÎïÀí¼Ü¹¹ (v5.3.5)
+**æ±‡æ€»æ–‡æ¡£**: [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md)
 
-```
-D:\ZephyrAlpha\
-©À©¤©¤ config/                            # ÅäÖÃÎÄ¼þ
-??  ©À©¤©¤ system.yaml
-??  ©À©¤©¤ data_sources.yaml
-??  ©À©¤©¤ factors/                      # Òò×ÓÅäÖÃ
-??  ©¸©¤©¤ risk/                         # ·çÏÕÅäÖÃ
-©À©¤©¤ data/                             # Êý¾Ý´æ´¢ (gitignored)
-©À©¤©¤ docs/                             # ÎÄµµÖÐÐÄ
-©¦   ©À©¤©¤ INDEX.md                      # ¿ìËÙµ¼º½Èë¿Ú
-©¦   ©À©¤©¤ System_Manifest.md            # ±¾ÎÄµµ
-©¦   ©À©¤©¤ API_Contract.md              # ½Ó¿ÚÆõÔ¼
-©¦   ©À©¤©¤ BLUEPRINT.md                  # ÏµÍ³À¶Í¼
-©¦   ©À©¤©¤ AI_Permissions.md            # AIÈ¨ÏÞÇåµ¥
-©¦   ©À©¤©¤ CHANGELOG.md                  # ±ä¸üÈÕÖ¾
-©¦   ©À©¤©¤ 00_OVERVIEW/                  # ÏµÍ³×ÜÀÀ
-©¦   ©À©¤©¤ 01_FRAMEWORK/                 # ¿ò¼Ü¶¨Òå
-©¦   ©À©¤©¤ 02_FACTOR_LIBRARY/            # Òò×Ó¿â (Layer 2)
-©¦   ©À©¤©¤ 03_TRADING_TACTICS/           # ½»Ò×²ßÂÔ (Layer 3, 5)
-©¦   ©À©¤©¤ 04_EXECUTION/                 # Ö´ÐÐÒýÇæ (Layer 5, 6)
-©¦   ©À©¤©¤ 05_IMPLEMENTATION/            # ÊµÊ©Ö¸ÄÏ
-©¦   ©À©¤©¤ 06_ARCHIVE/                   # ¹éµµ
-©¦   ©À©¤©¤ 07_AI_REPORTING/              # ?? Layer 7: AI±¨¸æ²ã
-©¦   ©À©¤©¤ 08_HUMAN_AI_INTERFACE/        # ?? Layer 8: ÈË»ú½»»¥²ã
-©¦   ©À©¤©¤ 09_RESEARCH_INNOVATION/       # ?? Layer 9: ÑÐ¾¿Óë´´ÐÂ²ã
-©¦   ©À©¤©¤ 10_GOVERNANCE_COMPLIANCE/     # ?? Layer 10: ÖÎÀíÓëºÏ¹æ²ã
-©¦   ©¸©¤©¤ 11_STRATEGIC_DECISION/        # ?? Layer 11: Õ½ÂÔ¾ö²ß²ã
-©À©¤©¤ notebooks/                        # Jupyter·ÖÎö (gitignored)
-©À©¤©¤ scripts/                          # ÏµÍ³½Å±¾
-??  ©¸©¤©¤ audit_filesystem.py
-©À©¤©¤ src/                              # Ô´´ú??
-??  ©À©¤©¤ main.py
-??  ©À©¤©¤ core/                         # ºËÐÄ»ùÀà
-??  ??  ©À©¤©¤ __init__.py
-??  ??  ©À©¤©¤ base.py                  # Result, Signal, Order, Position
-??  ??  ©¸©¤©¤ exceptions.py            # Òì³£Àà¶¨??
-??  ©À©¤©¤ modules/                      # ¹¦ÄÜÄ£¿é
-??  ??  ©À©¤©¤ __init__.py
-??  ??  ©À©¤©¤ alert_manager.py
-??  ??  ©À©¤©¤ factor_calculator.py     # ??ÒÑÊµ??
-??  ??  ©¸©¤©¤ risk_manager.py          # ??ÒÑÊµ??
-??  ©¸©¤©¤ utils/                        # ¹¤¾ßº¯Êý
-??      ©¸©¤©¤ __init__.py
-©À©¤©¤ tests/                            # ²âÊÔ´úÂë
-??  ©À©¤©¤ __init__.py
-??  ©À©¤©¤ conftest.py
-??  ©À©¤©¤ unit/                        # µ¥Ôª²âÊÔ
-??  ©À©¤©¤ integration/                 # ¼¯³É²âÊÔ
-??  ©¸©¤©¤ fixtures/                    # ²âÊÔ¼Ð¾ß
-©À©¤©¤ .env.example                      # »·¾³±äÁ¿Ä£°å
-©À©¤©¤ .gitignore                        # GitºöÂÔÅäÖÃ
-©À©¤©¤ DOCUMENT_AUDIT_v5.3.md           # ÎÄµµÉó¼Æ±¨¸æ
-©À©¤©¤ pyproject.toml                    # PythonÏîÄ¿ÅäÖÃ
-©À©¤©¤ README.md                         # ÏîÄ¿×ÜÈë??
-©¸©¤©¤ requirements.txt                  # ÒÀÀµÇåµ¥
-```
+#### P1çº§ä¸“ä¸šæ¨¡å—è“å›¾ (20ä¸ª) âœ…
 
+| åºå· | æ¨¡å—åç§° | æ–‡æ¡£è·¯å¾„ | Layer | çŠ¶æ€ |
+|------|---------|---------|-------|------|
+| 1 | æ•°æ®è¡€ç¼˜è¿½è¸ª | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 0 | âœ… å·²åˆ›å»º |
+| 2 | æ•°æ®æºæ•…éšœè½¬ç§» | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 0 | âœ… å·²åˆ›å»º |
+| 3 | æ•°æ®åŠ å¯†å­˜å‚¨ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 1 | âœ… å·²åˆ›å»º |
+| 4 | å› å­è¡°å‡ç›‘æŽ§ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 5 | å› å­é£Žé™©ç®¡ç† | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 6 | èˆ†æƒ…å›žæµ‹ç³»ç»Ÿ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 3 | âœ… å·²åˆ›å»º |
+| 7 | æ¨¡åž‹é£Žé™©ç®¡ç† | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 8 | æ¨¡åž‹æ²»ç†æ¡†æž¶ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 9 | æ¨¡åž‹è§£é‡Šæ€§å¢žå¼º | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 10 | æ¨¡åž‹å…¬å¹³æ€§æ£€æµ‹ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 11 | æ¨¡åž‹é²æ£’æ€§æµ‹è¯• | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 12 | æ¨¡åž‹ä¸ç¡®å®šæ€§é‡åŒ– | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 13 | æµåŠ¨æ€§ä¼˜åŒ– | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 5 | âœ… å·²åˆ›å»º |
+| 14 | æžç«¯é£Žé™©é¢„æµ‹ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 6 | âœ… å·²åˆ›å»º |
+| 15 | æŠ¥å‘Šæ¨¡æ¿ç®¡ç† | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 7 | âœ… å·²åˆ›å»º |
+| 16 | æ¨¡åž‹çŸ¥è¯†è’¸é¦ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 8 | âœ… å·²åˆ›å»º |
+| 17 | æ¨¡åž‹ç¥žç»æž¶æž„ä¼˜åŒ– | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 8 | âœ… å·²åˆ›å»º |
+| 18 | ç ”ç©¶çŸ¥è¯†åº“ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 9 | âœ… å·²åˆ›å»º |
+| 19 | åˆè§„è‡ªåŠ¨åŒ–æ£€æŸ¥ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 10 | âœ… å·²åˆ›å»º |
+| 20 | å¤šè¯­è¨€æ”¯æŒ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 11 | âœ… å·²åˆ›å»º |
 
-## 2. Ä£¿éÓ³Éä??(ÊµÏÖ×´??
+**æ±‡æ€»æ–‡æ¡£**: [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md)
 
-| Ä£¿é | Â·¾¶ | ¹¦ÄÜ | ×´??|
-|------|------|------|------|
-| **ºËÐÄ»ùÀà** | | | |
-| base | `src/core/base.py` | Result, Signal, Order, Position | ??ÒÑÊµ??|
-| exceptions | `src/core/exceptions.py` | Òì³£Àà¶¨??| ??ÒÑÊµ??|
-| **¹¦ÄÜÄ£¿é** | | | |
-| factor_calculator | `src/modules/factor_calculator.py` | Òò×Ó¼ÆËã (87¸öAlphaÒò×Ó) | ??ÒÑÊµ??|
-| risk_manager | `src/modules/risk_manager.py` | ·çÏÕ¹ÜÀí | ??ÒÑÊµ??|
-| alert_manager | `src/modules/alert_manager.py` | ¸æ¾¯¹ÜÀí | ??ÒÑÊµ??|
-| **¹æ»®ÖÐÄ£??* | | | |
-| data_collector | `src/modules/data_collector.py` | Êý¾Ý²É¼¯ | ?? ¹æ»®??|
-| data_cleaner | `src/modules/data_cleaner.py` | Êý¾ÝÇåÏ´ | ?? ¹æ»®??|
-| data_storage | `src/modules/data_storage.py` | Êý¾Ý´æ´¢ | ?? ¹æ»®??|
-| strategy_engine | `src/modules/strategy_engine.py` | ²ßÂÔÒýÇæ | ?? ¹æ»®??|
-| backtest_framework | `src/modules/backtest_framework.py` | »Ø²â¿ò¼Ü | ?? ¹æ»®??|
-| trade_executor | `src/modules/trade_executor.py` | ½»Ò×Ö´ÐÐ | ?? ¹æ»®??|
-| monitoring_system | `src/modules/monitoring_system.py` | ¼à¿ØÏµÍ³ | ?? ¹æ»®??|
-| config_manager | `src/modules/config_manager.py` | ÅäÖÃ¹ÜÀí | ?? ¹æ»®??|
-| task_scheduler | `src/modules/task_scheduler.py` | ÈÎÎñµ÷¶È | ?? ¹æ»®??|
-| logger | `src/modules/logger.py` | ÈÕÖ¾ÏµÍ³ | ?? ¹æ»®??|
-| performance_monitor | `src/modules/performance_monitor.py` | ÐÔÄÜ¼à¿Ø | ?? ¹æ»®??|
+#### P2çº§æ‰©å±•æ¨¡å—è“å›¾ (15ä¸ª) âœ…
 
-> **×´Ì¬Ëµ??*: ??ÒÑÊµ??= ¿ÉÖ±½ÓÊ¹??| ?? ¹æ»®??= ÒÑÓÐ¹æ¸ñ£¬´ý¿ª??| ??´ý¿ª??= ÉÐÎ´¹æ»®
+| åºå· | æ¨¡å—åç§° | æ–‡æ¡£è·¯å¾„ | Layer | çŠ¶æ€ |
+|------|---------|---------|-------|------|
+| 1 | æ•°æ®æºæˆæœ¬ä¼˜åŒ– | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 0 | âœ… å·²åˆ›å»º |
+| 2 | æ•°æ®å¢žå¼ºç³»ç»Ÿ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 1 | âœ… å·²åˆ›å»º |
+| 3 | æ•°æ®æ ‡æ³¨å¹³å° | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 1 | âœ… å·²åˆ›å»º |
+| 4 | æ•°æ®ç‰ˆæœ¬æŽ§åˆ¶ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 1 | âœ… å·²åˆ›å»º |
+| 5 | å­¦ä¹ çŽ‡è°ƒåº¦å™¨ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 6 | ä¼˜åŒ–å™¨å˜ä½“ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 7 | è®°å¿†å¢žå¼ºç¥žç»ç½‘ç»œ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 8 | ç¨€ç–æ³¨æ„åŠ› | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 9 | æ³¢åŠ¨çŽ‡é¢„æµ‹ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 10 | ç›¸å…³æ€§é¢„æµ‹ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 11 | æžç«¯é£Žé™©é¢„æµ‹ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 2 | âœ… å·²åˆ›å»º |
+| 12 | æ¢¯åº¦ç´¯ç§¯ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 13 | å¯ä¿¡æ‰§è¡ŒçŽ¯å¢ƒ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 4 | âœ… å·²åˆ›å»º |
+| 14 | æœåŠ¡ç½‘æ ¼é›†æˆ | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 5 | âœ… å·²åˆ›å»º |
+| 15 | æ‰¹å¤„ç†æŽ¨ç†ä¼˜åŒ– | [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | Layer 5 | âœ… å·²åˆ›å»º |
 
+**æ±‡æ€»æ–‡æ¡£**: [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md)
 
-## 3. ½Ó¿Ú°æ±¾¹ÜÀí
+---
 
-| ½Ó¿Ú | °æ±¾ | ×îºó¸ü??| ËµÃ÷ |
-|------|------|----------|------|
-| DataHub ??FactorCalculator | 1.0 | 2026-03-28 | OHLCV + Ö¸±ê |
-| FactorCalculator ??StrategyEngine | 1.0 | 2026-03-28 | Òò×Ó??+ Ê±¼ä??|
-| StrategyEngine ??RiskManager | 1.0 | 2026-03-28 | ÐÅºÅ + Í·´ç |
-| RiskManager ??TradeExecutor | 1.0 | 2026-03-28 | ¶©µ¥ + ·ç¿Ø±êÖ¾ |
+## ðŸ“š æ ¸å¿ƒæ–‡æ¡£ç´¢å¼•
 
+### 1. æž¶æž„ä¸Žæ¡†æž¶æ–‡æ¡£
 
-## 4. ÒÀÀµ¾ØÕó
+| æ–‡æ¡£åç§° | è·¯å¾„ | èŒè´£ | çŠ¶æ€ |
+|---------|------|------|------|
+| **ç³»ç»Ÿæž¶æž„** | [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ç»Ÿä¸€æž¶æž„å®šä¹‰ | âœ… æ´»è·ƒ |
+| **æ¨¡å—èŒè´£è¾¹ç•Œ** | [01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | æ¨¡å—èŒè´£è¾¹ç•Œå®šä¹‰ | âœ… æ´»è·ƒ |
+| **æ¡†æž¶ç›®å½•ç´¢å¼•** | [01_FRAMEWORK/INDEX.md](01_FRAMEWORK/INDEX.md) | æ¡†æž¶æ–‡æ¡£ç´¢å¼• | âœ… æ´»è·ƒ |
 
-### Python»·¾³
-- **Python°æ±¾**: 3.10+
-- **°ü¹Ü??*: pip / uv
+### 2. ç¼ºå¤±æ¨¡å—åˆ†æžæ–‡æ¡£
 
-### ºËÐÄÒÀÀµ
-| ??| °æ±¾ | ÓÃ??|
-|----|----|------|
-| pandas | 2.2.0+ | Êý¾Ý´¦Àí |
-| numpy | 1.26.0+ | ÊýÖµ¼Æ??|
-| scipy | 1.11.0+ | ¿ÆÑ§¼ÆËã |
-| scikit-learn | 1.3.0+ | »úÆ÷Ñ§Ï° |
-| sqlalchemy | 2.0.0+ | Êý¾Ý¿âORM |
-| pyyaml | 6.0+ | ÅäÖÃ¹ÜÀí |
-| loguru | 0.7.0+ | ÈÕÖ¾ÏµÍ³ |
-| apscheduler | 3.10.0+ | ÈÎÎñµ÷¶È |
+| æ–‡æ¡£åç§° | è·¯å¾„ | èŒè´£ | çŠ¶æ€ |
+|---------|------|------|------|
+| **å…¨ç³»ç»Ÿå®Œæ•´æ€§åˆ†æž** | [01_FRAMEWORK/ALL_LAYERS_GAP_ANALYSIS.md](01_FRAMEWORK/ALL_LAYERS_GAP_ANALYSIS.md) | Layer 0-11å®Œæ•´æ€§åˆ†æž | âœ… æ´»è·ƒ |
+| **ç¼ºå¤±æ¨¡å—è“å›¾æ±‡æ€»** | [01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_COLLECTION.md) | æ‰€æœ‰ç¼ºå¤±æ¨¡å—è“å›¾ | âœ… æ´»è·ƒ |
+| **ä¸ªäººAIç»´æŠ¤æ–¹æ¡ˆ** | [01_FRAMEWORK/PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION.md](01_FRAMEWORK/PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION.md) | ä¸ªäººå¼€å‘+AIç»´æŠ¤æ–¹æ¡ˆ | âœ… æ´»è·ƒ |
 
-### Êý¾ÝÔ´ÒÀ??
-| ??| °æ±¾ | ÓÃ??|
-|----|----|------|
-| akshare | 1.14.0+ | ÊµÊ±ÐÐÇé |
-| baostock | 0.0.9+ | ÀúÊ·Êý¾Ý |
-| tushare | 1.3.0+ | ²ÆÎñÊý¾Ý |
+### 3. P0/P1/P2çº§æ¨¡å—è“å›¾
 
+| æ–‡æ¡£åç§° | è·¯å¾„ | èŒè´£ | çŠ¶æ€ |
+|---------|------|------|------|
+| **P0çº§æ ¸å¿ƒæ¨¡å—è“å›¾** | [01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md) | 15ä¸ªP0çº§æ¨¡å—è“å›¾ | âœ… æ´»è·ƒ |
+| **P1/P2çº§æ¨¡å—è“å›¾** | [01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | 35ä¸ªP1/P2çº§æ¨¡å—è“å›¾ | âœ… æ´»è·ƒ |
 
-## 5. AIÈ¨ÏÞ¾ØÕó
+### 4. çŽ°æœ‰æ ¸å¿ƒè“å›¾
 
-### ??¿ÉÐ´È¨ÏÞ£¨AI¿ÉÐÞ¸Ä£©
+| æ–‡æ¡£åç§° | è·¯å¾„ | Layer | çŠ¶æ€ |
+|---------|------|-------|------|
+| **æ•°æ®æºå±‚å®žæ–½è“å›¾** | [01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) | Layer 0 | âœ… æ´»è·ƒ |
+| **å› å­åº“è“å›¾** | [01_FRAMEWORK/FACTOR_BACKTEST_001.md](01_FRAMEWORK/FACTOR_BACKTEST_001.md) | Layer 2 | âœ… æ´»è·ƒ |
+| **ç­–ç•¥å¼•æ“Žè“å›¾** | [01_FRAMEWORK/STRAT_ENGINE_001.md](01_FRAMEWORK/STRAT_ENGINE_001.md) | Layer 3 | âœ… æ´»è·ƒ |
+| **æ¨¡æ‹Ÿäº¤æ˜“è“å›¾** | [01_FRAMEWORK/SIMULATION_001.md](01_FRAMEWORK/SIMULATION_001.md) | Layer 5 | âœ… æ´»è·ƒ |
+| **è´¨é‡ç›‘æŽ§è“å›¾** | [01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md](01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md) | Layer 10 | âœ… æ´»è·ƒ |
 
-| Â·¾¶ | ËµÃ÷ |
-|------|------|
-| `docs/02_FACTOR_LIBRARY/02_ALPHA_FACTORS/` | AlphaÒò×Ó¶¨Òå |
-| `docs/02_FACTOR_LIBRARY/05_BACKTEST/` | »Ø²â±¨¸æ |
-| `docs/03_TRADING_TACTICS/` | ²ßÂÔÎÄµµ |
-| `src/modules/` | Ä£¿éÊµÏÖ´úÂë |
-| `tests/` | ²âÊÔ´úÂë |
-| `notebooks/` | Jupyter·ÖÎö |
-| `docs/CHANGELOG.md` | ±ä¸üÈÕÖ¾ |
+---
 
-### ?? Ö»¶ÁÈ¨ÏÞ£¨AI½ö¿É¶ÁÈ¡??
+## ðŸŽ¯ å®žæ–½è·¯çº¿å›¾
 
-| Â·¾¶ | ËµÃ÷ |
-|------|------|
-| `docs/00_OVERVIEW/` | ÏµÍ³×ÜÀÀ |
-| `docs/01_FRAMEWORK/` | ºËÐÄ¿ò¼Ü |
-| `docs/02_FACTOR_LIBRARY/00_INDEX/` | Òò×ÓË÷Òý |
-| `docs/02_FACTOR_LIBRARY/01_STANDARDS/` | ÑÐ¾¿·½·¨??|
-| `docs/04_EXECUTION/` | Ö´ÐÐÒýÇæ¹æ¸ñ |
-| `config/` | ÅäÖÃÎÄ¼þ |
-| `src/core/` | ºËÐÄ»ù´¡??|
-| `System_Manifest.md` | ÏµÍ³Çåµ¥ |
-| `API_Contract.md` | ½Ó¿ÚÆõÔ¼ |
-| `AI_Permissions.md` | È¨ÏÞÇåµ¥ |
+### ç¬¬ä¸€é˜¶æ®µ (Month 1-3): P0çº§æ ¸å¿ƒæ¨¡å—
 
-### ??½ûÖ¹È¨ÏÞ£¨AIÑÏ½ûÐÞ¸Ä??
+**ç›®æ ‡**: å®žæ–½æ‰€æœ‰P0çº§æ ¸å¿ƒæ¨¡å—,å»ºç«‹ç³»ç»Ÿæ ¸å¿ƒåŸºç¡€è®¾æ–½
 
-| Â·¾¶ | ËµÃ÷ |
-|------|------|
-| `.env` | APIÃÜÔ¿ |
-| `secrets/` | Ë½Ô¿´æ·Å |
-| `.gitignore` | GitÅäÖÃ |
-| `pyproject.toml` | ÏîÄ¿ÅäÖÃ |
+**å…³é”®æˆæžœ**:
+- âœ… æ•°æ®æºè´¨é‡ç›‘æŽ§ç³»ç»Ÿ
+- âœ… æ•°æ®è´¨é‡è¯„ä¼°ç³»ç»Ÿ
+- âœ… å› å­æŒ–æŽ˜è‡ªåŠ¨åŒ–ç³»ç»Ÿ
+- âœ… æ¨¡åž‹æœåŠ¡æ¡†æž¶
+- âœ… æ¨¡åž‹ç”Ÿå‘½å‘¨æœŸç®¡ç†ç³»ç»Ÿ
 
+**é¢„æœŸæ”¶ç›Š**:
+- ç³»ç»Ÿå®Œæ•´åº¦: 66.7% â†’ 85%
+- å¼€å‘æ•ˆçŽ‡æå‡: 67%
+- å¹´åŒ–æ”¶ç›ŠçŽ‡: â‰¥15%
 
-## 6. ÅäÖÃÎÄ¼þ¹ØÁª
+### ç¬¬äºŒé˜¶æ®µ (Month 4-6): P0çº§æ ¸å¿ƒæ¨¡å— (ç»­)
 
-```
-config/
-©À©¤©¤ system.yaml ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??main.py
-©À©¤©¤ data_sources.yaml ©¤©¤©¤©¤©¤©¤©¤©¤??data_collector
-©À©¤©¤ factors/
-??  ©¸©¤©¤ selected_factors.yaml ©¤??factor_calculator
-©¸©¤©¤ risk/
-    ©¸©¤©¤ rules.yaml ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??risk_manager
-```
+**ç›®æ ‡**: å®Œæˆå‰©ä½™P0çº§æ ¸å¿ƒæ¨¡å—å®žæ–½
 
+**å…³é”®æˆæžœ**:
+- âœ… æ™ºèƒ½è®¢å•è·¯ç”±ç³»ç»Ÿ
+- âœ… åŠ¨æ€é£Žé™©é¢„ç®—ç³»ç»Ÿ
+- âœ… AIæŠ¥å‘Šç”Ÿæˆç³»ç»Ÿ
+- âœ… AIå†³ç­–è§£é‡Šç³»ç»Ÿ
+- âœ… ç ”ç©¶é¡¹ç›®ç®¡ç†ç³»ç»Ÿ
 
-## 7. Êý¾Ý´æ´¢¹æ¸ñ
+**é¢„æœŸæ”¶ç›Š**:
+- ç³»ç»Ÿå®Œæ•´åº¦: 85% â†’ 100%
+- å¹´åŒ–æ”¶ç›ŠçŽ‡: â‰¥18%
 
-| ´æ´¢??| ¸ñÊ½ | Î»ÖÃ | ËµÃ÷ |
-|--------|------|------|------|
-| Ô­Ê¼Êý¾Ý | Parquet | `data/raw/{type}/{year}/` | Ô­Ê¼²É¼¯Êý¾Ý |
-| ´¦ÀíºóÊý??| Parquet + SQLite | `data/processed/` | ÇåÏ´ºóÊý??|
-| Òò×ÓÊý¾Ý | Parquet | `data/factors/{factor_id}/` | °´Òò×Ó´æ??|
-| ÐÅºÅÊý¾Ý | SQLite | `data/signals/` | ²ßÂÔÐÅºÅ |
-| ¶©µ¥Êý¾Ý | SQLite | `data/orders/` | ½»Ò×¶©µ¥ |
-| »Ø²â½á¹û | Parquet | `data/backtest_results/` | »Ø²â¼¨Ð§ |
+### ç¬¬ä¸‰é˜¶æ®µ (Month 7-9): P1çº§ä¸“ä¸šæ¨¡å—
 
+**ç›®æ ‡**: å®žæ–½æ‰€æœ‰P1çº§ä¸“ä¸šæ¨¡å—,æå‡ç³»ç»Ÿä¸“ä¸šèƒ½åŠ›
 
-## 8. °æ±¾¹ÜÀí¹æÔò
+**å…³é”®æˆæžœ**:
+- âœ… æ•°æ®è¡€ç¼˜è¿½è¸ªç³»ç»Ÿ
+- âœ… æ¨¡åž‹é£Žé™©ç®¡ç†ç³»ç»Ÿ
+- âœ… æ¨¡åž‹æ²»ç†æ¡†æž¶
+- âœ… æ¨¡åž‹å…¬å¹³æ€§æ£€æµ‹ç³»ç»Ÿ
+- âœ… æ¨¡åž‹é²æ£’æ€§æµ‹è¯•ç³»ç»Ÿ
 
-### Ö÷°æ±¾Éý¼¶£¨v5.0 ??v6.0??
-- ¼Ü¹¹¸Ä±ä£¨Layer 0-11ÖØ×é??
-- ºËÐÄÄ£¿éÌæ»»
-- Êý¾Ý¸ñÊ½²»¼æ??
+**é¢„æœŸæ”¶ç›Š**:
+- ç³»ç»Ÿä¸“ä¸šåº¦: å¤§å¹…æå‡
+- å¹´åŒ–æ”¶ç›ŠçŽ‡: â‰¥20%
 
-### ´Î°æ±¾Éý¼¶£¨v5.0 ??v5.3??
-- ÐÂÔöÄ£¿é
-- ÐÂÔöÒò×Ó??
-- ÐÂÔö²ßÂÔ
+### ç¬¬å››é˜¶æ®µ (Month 10-12): P2çº§æ‰©å±•æ¨¡å—
 
-### ²¹¶¡°æ±¾Éý¼¶£¨v5.0 ??v5.0.1??
-- BugÐÞ¸´
-- ÎÄµµ¸üÐÂ
-- ÐÔÄÜÓÅ»¯
+**ç›®æ ‡**: å®žæ–½æ‰€æœ‰P2çº§æ‰©å±•æ¨¡å—,å®Œå–„ç³»ç»ŸåŠŸèƒ½
 
+**å…³é”®æˆæžœ**:
+- âœ… æ•°æ®æºæˆæœ¬ä¼˜åŒ–ç³»ç»Ÿ
+- âœ… æ•°æ®å¢žå¼ºç³»ç»Ÿ
+- âœ… å¯ä¿¡æ‰§è¡ŒçŽ¯å¢ƒ
+- âœ… æœåŠ¡ç½‘æ ¼é›†æˆ
+- âœ… æ‰¹å¤„ç†æŽ¨ç†ä¼˜åŒ–
 
-## 9. Æô¶¯¼ì²éÇå??
+**é¢„æœŸæ”¶ç›Š**:
+- ç³»ç»Ÿå®Œæ•´åº¦: 100%
+- å¹´åŒ–æ”¶ç›ŠçŽ‡: â‰¥22%
+- å¤æ™®æ¯”çŽ‡: â‰¥2.0
 
-AIÆô¶¯Ç°±Ø¶ÁË³Ðò£º
-1. ??¶ÁÈ¡±¾ÎÄ¼þ£¨System_Manifest.md??
-2. ??¶ÁÈ¡ `docs/INDEX.md` - ¿ìËÙµ¼??
-3. ??¶ÁÈ¡ `API_Contract.md`
-4. ??¶ÁÈ¡ `AI_Permissions.md`
-5. ??¶ÁÈ¡Ïà¹ØÄ£¿é??`README.md`
+---
 
+## ðŸ“Š ç³»ç»Ÿç»Ÿè®¡
 
-## 10. ºËÐÄÎÄµµË÷Òý
+### æ–‡æ¡£ç»Ÿè®¡
 
-| ÎÄµµ | ËµÃ÷ | ÓÅÏÈ??|
-|------|------|--------|
-| [INDEX.md](../03_TRADING_TACTICS/INDEX.md) | ¿ìËÙµ¼º½Èë¿Ú£¨5·ÖÖÓ??| ??±Ø¶Á |
-| [SITEMAP.md](SITEMAP.md) | ÍêÕûÎÄµµµØÍ¼£¨Éî¶È²Î¿¼£© | ??µ¼º½ |
-| [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | ÏµÍ³À¶Í¼£¨ºÏ²¢°æ??| ??±Ø¶Á |
-| [System_Manifest.md](System_Manifest.md) | ÏµÍ³Çåµ¥ | ??±Ø¶Á |
-| [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md) | ½Ó¿ÚÆõÔ¼ | ??±Ø¶Á |
-| [AI_Permissions.md](../08_AI_GOVERNANCE/AI_Permissions.md) | AIÈ¨ÏÞÇåµ¥ | ??±Ø¶Á |
-| [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) | ²ßÂÔÄ£°å | ½¨Òé |
+| ç±»åˆ« | æ•°é‡ | è¯´æ˜Ž |
+|------|------|------|
+| **æ€»è“å›¾æ•°** | 150+ | åŒ…å«æ‰€æœ‰Layerçš„è“å›¾æ–‡æ¡£ |
+| **æ–°å¢žè“å›¾** | 50 | æœ¬æ¬¡è¡¥å……çš„ç¼ºå¤±æ¨¡å—è“å›¾ |
+| **P0çº§è“å›¾** | 15 | æ ¸å¿ƒæ¨¡å—è“å›¾ |
+| **P1çº§è“å›¾** | 20 | ä¸“ä¸šæ¨¡å—è“å›¾ |
+| **P2çº§è“å›¾** | 15 | æ‰©å±•æ¨¡å—è“å›¾ |
 
-> **ËµÃ÷**: INDEX.mdÎª¿ìËÙÈë¿Ú£¨5·ÖÖÓ£©£¬SITEMAP.mdÎªÍêÕûµØÍ¼£¨Éî¶È²Î¿¼£©£¬Á½ÕßÖ°Ôð»¥²¹??
+### å¼€æºé¡¹ç›®ç»Ÿè®¡
 
+| ç±»åˆ« | æ•°é‡ | è¯´æ˜Ž |
+|------|------|------|
+| **æ ¸å¿ƒå¼€æºé¡¹ç›®** | 40+ | ç”¨äºŽæ›¿ä»£è‡ªç ”å¼€å‘ |
+| **æ•°æ®å¤„ç†** | 8 | Great Expectations, DVCç­‰ |
+| **æœºå™¨å­¦ä¹ ** | 15 | MLflow, BentoML, SHAPç­‰ |
+| **ç»„åˆä¼˜åŒ–** | 5 | PyPortfolioOpt, CVXPYç­‰ |
+| **ç›‘æŽ§å¯è§†åŒ–** | 6 | Prometheus, Grafanaç­‰ |
+| **LLMä¸ŽAI** | 6 | LangChain, Ollamaç­‰ |
 
-## 11. Ä£¿éÀ¶Í¼Ë÷Òý
+### æˆæœ¬ç»Ÿè®¡
 
-| À¶Í¼ÎÄµµ | Â·¾¶ | Ä£¿éID | °æ±¾ | ×´??| Ö°Ôð¸ÅÒª |
-|----------|------|--------|------|------|----------|
-| [Layer 11¼Ü¹¹À¶Í¼](../module_designs/layer_11/LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | LAYER_11_ARCH_001 | 1.0 | Active | ÎÄ×ÖÇý¶¯²ãÕûÌå¼Ü¹¹¡¢¼¼ÊõÑ¡ÐÍ¡¢ÊµÊ©·½°¸¡¢³É±¾ÆÀ??|
-| [ÎÄ×ÖÇý¶¯ºËÐÄÄ£¿é](../module_designs/layer_11/L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | L11_TEXT_DRIVER_001 | 1.0 | Active | ×ÔÈ»ÓïÑÔÀí½â¡¢ÒâÍ¼Ê¶±ð¡¢²ÎÊýÌáÈ¡¡¢¹¤¾ßµ÷??|
-| [Á¿»¯½»Ò×AgentÄ£¿é](../module_designs/layer_11/L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | L11_QUANT_AGENT_001 | 1.0 | Active | Agent¿ò¼Ü¡¢Ä£ÐÍ¹ÜÀí¡¢¹¤¾ß¼¯³É¡¢¼ÇÒä¹ÜÀí¡¢°²È«»ú??|
-| [Layer 11¹¤¾ß·â×°À¶Í¼](../module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | LAYER_11_TOOL_ENCAP_001 | 1.0 | Active | ¹¤¾ß·â×°¼Ü¹¹¡¢µ¥Ò»AI²ãÉè¼Æ¡¢´¿Ö´ÐÐ²ã·ÖÀë¡¢ÐÔÄÜÓÅ»¯ |
-| [Layer 11¹¤¾ß½Ó¿Ú¹æ·¶](../module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | LAYER_11_TOOL_SPEC_001 | 1.0 | Active | ËùÓÐÄ£¿é¹¤¾ß½Ó¿ÚÏêÏ¸¶¨Òå¡¢²Ù×÷¹æ·¶¡¢²ÎÊý¶¨Òå¡¢·µ»ØÖµ¹æ??|
-| [Òò×Ó¿âÀ¶Í¼](FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) | `docs/02_FACTOR_LIBRARY/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md` | FACTOR_BACKTEST_001 | 1.0 | Active | Òò×Ó¼ÆËã¡¢´æ´¢¡¢IC·ÖÎö¡¢Backtrader»Ø²â¼¯³É |
-| [Ä£Äâ½»Ò×À¶Í¼](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | `docs/04_EXECUTION/06_SIMULATION/BLUEPRINT.md` | SIMULATION_001 | 1.0 | Active | Ä£Äâ´éºÏÒýÇæ¡¢Ä£ÄâÕË»§¹ÜÀí¡¢½»Ò×Ö´??|
-| [²ßÂÔÒýÇæÀ¶Í¼](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md) | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md` | STRAT_ENGINE_001 | 1.0 | Active | ²ßÂÔÒýÇæ¿ª·¢¡¢¿ªÔ´Ä£¿é¼¯??|
-| [×¨Òµ¶àÊ±¼ä¿ò¼Ü¼Ü¹¹](../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | `docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md` | FRAMEWORK_PROF_ARCH_001 | 1.0 | Active | Èý¼¶Ê±¼ä¿ò¼ÜÈÚºÏ¼Ü¹¹¡¢ÇÅ??ÎÄÒÕ¸´ÐËÄ£Ê½ÈÚºÏ |
-| [×¨ÒµÊµÊ©À¶Í¼](../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | `docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md` | FRAMEWORK_IMPL_BLUEPRINT_001 | 1.0 | Active | 6¸öÔÂÊµÊ©Â·ÏßÍ¼¡¢¿ªÔ´¼¯³É²ßÂÔ¡¢·çÏÕ¹Ü??|
-| [Ö±²¥½ðÈÚ·ÖÎöÀ¶Í¼](../04_EXECUTION/07_LIVE_STREAM/LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md) | `docs/04_EXECUTION/07_LIVE_STREAM/LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md` | LIVE_STREAM_FINANCIAL_ANALYSIS_001 | 1.0 | Active | ¶àÖ÷²¥Ö±²¥¼à¿Ø¡¢MP3Â¼ÖÆ¡¢AIÄÚÈÝ·ÖÎö¡¢¹Ûµã¾ÛºÏ¡¢Òò×ÓÉú??|
-| [AI¹¤×÷¼ÇÂ¼ÓëÓÅ»¯Ä£¿éÀ¶Í¼](../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md` | AI_WORKFLOW_LOGGER_001 | 1.0 | Active | AI»á»°¼ÇÂ¼¡¢¾ö²ß¼ÇÂ¼¡¢Ð§¹ûÆÀ¹À¡¢ÓÅ»¯µü´ú¡¢ÖªÊ¶¿â¹¹½¨ |
-| [AI¹¤×÷»ã±¨Óë½»¸¶Ä£¿éÀ¶Í¼](../10_AI_WORKFLOW/AI_WORK_REPORTER_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/AI_WORK_REPORTER_BLUEPRINT.md` | AI_WORK_REPORTER_001 | 1.0 | Active | Ã¿ÈÕ¹¤×÷×Ü½á¡¢½ø¶ÈÍ¨Öª¡¢¾ö²ß»ã±¨¡¢½»»¥½»¸¶¡¢¿ÉÊÓ»¯Õ¹Ê¾ |
-| [¸´ÅÌÄ£¿éÀ¶Í¼](../10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md` | POST_TRADE_REVIEW_001 | 1.0 | Active | »Ø²â¸´ÅÌ¡¢ÊµÅÌ¸´ÅÌ¡¢Òò×Ó¸´ÅÌ¡¢²ßÂÔ¸´ÅÌ¡¢·çÏÕ¸´??|
-| [È«Á÷³ÌÊý¾Ý±£´æ»úÖÆÀ¶Í¼](../10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` | FULL_PROCESS_DATA_PERSISTENCE_001 | 1.0 | Active | ÊµÑé×·×Ù¡¢Êý¾ÝÑªÔµ¡¢°æ±¾¿ØÖÆ¡¢Êý¾ÝÖÎ??|
-| [¿ªÔ´ÏîÄ¿¼¯³É·½°¸À¶Í¼](../10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md` | OPEN_SOURCE_INTEGRATION_001 | 1.0 | Active | MLflow¼¯³É¡¢Qlib¼¯³É¡¢¼Ü¹¹²Î¿¼¡¢¹¤¾ß¼¯??|
-| [ºÏ¹æ¼à¿ØÄ£¿éÀ¶Í¼](../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md` | COMPLIANCE_MONITORING_001 | 1.0 | Active | ½»Ò×ºÏ¹æ¼ì²é¡¢·ç¿ØºÏ¹æ¼ì²é¡¢¼à¹Ü±¨¸æÉú³É¡¢Éó¼Æ×·×Ù¡¢Î¥¹æÔ¤??|
-| [ÊµÅÌ¼à¿ØÄ£¿éÀ¶Í¼](../10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md` | LIVE_TRADING_MONITOR_001 | 1.0 | Active | ÊµÊ±½»Ò×¼à¿Ø¡¢³Ö²Ö·çÏÕ¼à¿Ø¡¢Òì³£½»Ò×Ô¤¾¯¡¢ÐÔÄÜÖ¸±ê¼à¿Ø¡¢¶àÇþµÀ¸æ¾¯ |
-| [ÐÔÄÜ·ÖÎöÄ£¿éÀ¶Í¼](../10_AI_WORKFLOW/PERFORMANCE_ANALYSIS_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/PERFORMANCE_ANALYSIS_BLUEPRINT.md` | PERFORMANCE_ANALYSIS_001 | 1.0 | Active | ÐÔÄÜÖ¸±ê²É¼¯¡¢ÐÔÄÜÆ¿¾±Ê¶±ð¡¢ÐÔÄÜ±¨¸æÉú³É¡¢ÓÅ»¯½¨ÒéÉú³É¡¢ÐÔÄÜÇ÷ÊÆ·ÖÎö |
-| **Layer 6: ×éºÏÓÅ»¯²ãÀ¶??* | | | | | |
-| [Barra·çÏÕÄ£ÐÍÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md) | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md` | BARRA_RISK_001 | 1.0 | Active | P0¼¶ºËÐÄÄ£¿é¡¢¶àÒò×Ó·çÏÕÄ£ÐÍ¡¢·çÏÕ·Ö½â¡¢Òò×Ó±©Â¶¿Ø??|
-| [Ô¼ÊøÇó½âÆ÷À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md) | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md` | CONSTRAINT_SOLVER_001 | 1.0 | Active | P0¼¶ºËÐÄÄ£¿é¡¢Í¹ÓÅ»¯Çó½â¡¢Ô¼ÊøÑéÖ¤¡¢³åÍ»½â??|
-| [·çÏÕ¹éÒòÏµÍ³À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md` | RISK_ATTRIBUTION_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢Òò×Ó·çÏÕ¹éÒò¡¢ÐÐÒµ·çÏÕ¹éÒò¡¢×Ê²ú·çÏÕ¹é??|
-| [¶à×Ê²úÀà±ðÅäÖÃÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md) | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md` | MULTI_ASSET_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢¿ç×Ê²ú·çÏÕÆ½¼Û¡¢È«Ììºò²ßÂÔ¡¢¶¯Ì¬Åä??|
-| [×éºÏÔÙÆ½ºâ²ßÂÔÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md) |
+| æˆæœ¬é¡¹ | é‡‘é¢ | è¯´æ˜Ž |
+|--------|------|------|
+| **æ€»å¼€å‘æˆæœ¬** | Â¥30,000 | 12ä¸ªæœˆå®žæ–½æˆæœ¬ |
+| **å¹´åº¦ç»´æŠ¤æˆæœ¬** | Â¥14,400 | ç³»ç»Ÿç»´æŠ¤æˆæœ¬ |
+| **å¼€å‘æ•ˆçŽ‡æå‡** | 67% | AIè¾…åŠ©å¼€å‘ |
+| **å¼€æºæ›¿ä»£çŽ‡** | 80% | å¼€æºé¡¹ç›®ä½¿ç”¨çŽ‡ |
 
-| [¶¯Ì¬Ïà¹ØÐÔ½¨Ä£À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md | DYNAMIC_CORR_001 | 1.0 | Active | P0¼¶ºËÐÄÄ£¿é¡¢DCC-GARCH¶¯Ì¬Ïà¹ØÐÔ¡¢ÇÅË®ºËÐÄÄÜÁ¦ |
-| [¶¯Ì¬¸Ü¸Ë¹ÜÀíÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md | LEVERAGE_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢²¨¶¯ÂÊÄ¿±ê²ßÂÔ¡¢¶¯Ì¬¸Ü¸Ëµ÷½Ú |
-| [Í³¼ÆÌ×ÀûÄ£¿éÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md | STATISTICAL_ARBITRAGE_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢Åä¶Ô½»Ò×¡¢Ð­Õû·ÖÎö |
-| [½»Ò×³É±¾ÓÅ»¯À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_COST_OPTIMIZATION_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_COST_OPTIMIZATION_BLUEPRINT.md | TRADING_COST_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢Almgren-ChrissÄ£ÐÍ¡¢×îÓÅÖ´ÐÐ |
-| [¼ò»¯·çÏÕÔ¤ËãÏµÍ³À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md | RISK_BUDGET_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢Èý²ã·çÏÕÔ¤ËãÌåÏµ |
-| [¼ò»¯Ê±¼ä¿ò¼ÜÐ­Í¬À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md | TIMEFRAME_COORD_001 | 1.0 | Active | P1¼¶Ä£¿é¡¢Èý¼¶Ê±¼ä¿ò¼ÜÐ­Í¬ |
-| [Ñ¹Á¦²âÊÔÏµÍ³À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md | STRESS_TEST_001 | 1.0 | Active | P2¼¶Ä£¿é¡¢ÀúÊ·Çé¾°»Ø·Å¡¢ÃÉÌØ¿¨ÂåÄ£Äâ |
-| [Ç¿»¯Ñ§Ï°ÔÙÆ½ºâÏµÍ³À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RL_REBALANCING_SYSTEM_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RL_REBALANCING_SYSTEM_BLUEPRINT.md | RL_REBALANCING_001 | 1.0 | Active | P2¼¶Ä£¿é¡¢PPO/SACÇ¿»¯Ñ§Ï° |
-| [¶à²ßÂÔ·Ö²ãÏµÍ³À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md | STRATEGY_HIERARCHY_001 | 1.0 | Active | P2¼¶Ä£¿é¡¢²ßÂÔ·Ö²ãÈ¨ÖØ·ÖÅä |
-| [×éºÏ±£ÏÕ²ßÂÔÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md | CPPI_BLUEPRINT_001 | 1.0 | Active | ¿ÉÑ¡Ä£¿é¡¢CPPI/OBPI×éºÏ±£ÏÕ |
-| [Î²²¿·çÏÕ¶Ô³åÀ¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAIL_RISK_HEDGING_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAIL_RISK_HEDGING_BLUEPRINT.md | TAIL_RISK_BLUEPRINT_001 | 1.0 | Active | ¿ÉÑ¡Ä£¿é¡¢ÆÚÈ¨¶Ô³å¡¢Î²²¿·çÏÕ±£»¤ |
-| [ÈÚ×ÊÓÅ»¯À¶Í¼](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FINANCING_OPTIMIZATION_BLUEPRINT.md) | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FINANCING_OPTIMIZATION_BLUEPRINT.md | FINANCING_BLUEPRINT_001 | 1.0 | Active | ¿ÉÑ¡Ä£¿é¡¢ÈÚ×Ê³É±¾ÓÅ»¯¡¢¸Ü¸ËÐ§ÂÊÌáÉý | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md` | REBALANCING_001 | 1.0 | Active | P2¼¶Ä£¿é¡¢Ç¿»¯Ñ§Ï°µ÷²Ö¡¢¶àÊ±¼ä¿ò¼ÜÐ­Í¬¡¢¶¯Ì¬ÔÙÆ½ºâ |
-| **Layer 9: ÑÐ¾¿Óë´´ÐÂ²ã** | | | | | |
-| [ÑÐ¾¿Óë´´ÐÂ²ãÀ¶Í¼](../09_RESEARCH_INNOVATION/BLUEPRINT.md) | `docs/09_RESEARCH_INNOVATION/BLUEPRINT.md` | RESEARCH_INNOVATION_001 | 1.0 | Active | AIÐéÄâÑÐ¾¿ÊµÑéÊÒ¡¢´´ÐÂ·õ»¯Æ÷¡¢Ñ§Êõ¸ú×Ù¡¢ÖªÊ¶¹ÜÀí |
+---
 
-> **Ë÷Òý×´??*: ÐÂÔöLayer 11ÎÄ×ÖÇý¶¯²ãÀ¶Í¼£¨3¸öÎÄµµ£©¡¢AI¹¤×÷Á÷Ä£¿éÀ¶Í¼£¨8¸öÎÄµµ£©ºÍLayer 6×éºÏÓÅ»¯²ãÀ¶Í¼£¨5¸öÎÄµµ£©£¬ÒÑ¼¯³Éµ½ÏµÍ³ÎÄµµÌåÏµÖÐ¡£°üº¬ÍêÕûµÄ¼¼ÊõÑ¡ÐÍ¡¢ÊµÊ©·½°¸ºÍ³É±¾ÆÀ¹À??
+## ðŸ”— å¿«é€Ÿå¯¼èˆª
 
-## 12. ´ÎÒªÎÄµµË÷Òý
+### æ–°æ‰‹å…¥é—¨
 
-| ÎÄµµ | Â·¾¶ | Ä£¿éID | °æ±¾ | ×´??| ËµÃ÷ |
-|------|------|--------|------|------|------|
-| **¼¼Êõ¹æ¸ñÊé** | | | | | |
-| [Barra·çÏÕÄ£ÐÍ¼¼Êõ¹æ¸ñÊé](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md) | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md` | BARRA_RISK_SPEC_001 | 1.0 | Active | Barra·çÏÕÄ£ÐÍÏêÏ¸¼¼ÊõÉè¼Æ¡¢½Ó¿Ú¶¨Òå¡¢Êý¾Ý½á¹¹¡¢²âÊÔ·½??|
-| [Ô¼ÊøÇó½âÆ÷¼¼Êõ¹æ¸ñÊé](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/CONSTRAINT_SOLVER_TECHNICAL_SPECIFICATION.md) | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/CONSTRAINT_SOLVER_TECHNICAL_SPECIFICATION.md` | CONSTRAINT_SOLVER_SPEC_001 | 1.0 | Active | Ô¼ÊøÇó½âÆ÷ÏêÏ¸¼¼ÊõÉè¼Æ¡¢Í¹ÓÅ»¯Ëã·¨¡¢Ô¼ÊøÑéÖ¤¡¢²âÊÔ·½??|
-| [·çÏÕ¹éÒòÏµÍ³¼¼Êõ¹æ¸ñÊé](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION.md) | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION.md` | RISK_ATTRIBUTION_SPEC_001 | 1.0 | Active | ·çÏÕ¹éÒòÏµÍ³ÏêÏ¸¼¼ÊõÉè¼Æ¡¢¶àÎ¬¶È¹éÒò¡¢²âÊÔ·½??|
-| [¶à×Ê²úÀà±ðÅäÖÃ¼¼Êõ¹æ¸ñÊé](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION.md) | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION.md` | MULTI_ASSET_SPEC_001 | 1.0 | Active | ¶à×Ê²úÅäÖÃÏêÏ¸¼¼ÊõÉè¼Æ¡¢·çÏÕÆ½¼Û¡¢È«Ììºò²ß??|
-| [×éºÏÔÙÆ½ºâ²ßÂÔ¼¼Êõ¹æ¸ñÊé](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/PORTFOLIO_REBALANCING_TECHNICAL_SPECIFICATION.md) | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/PORTFOLIO_REBALANCING_TECHNICAL_SPECIFICATION.md` | REBALANCING_SPEC_001 | 1.0 | Active | ×éºÏÔÙÆ½ºâÏêÏ¸¼¼ÊõÉè¼Æ¡¢Ç¿»¯Ñ§Ï°µ÷²Ö¡¢¶àÊ±¼ä¿ò¼ÜÐ­Í¬ |
-| **·½·¨ÂÛÎÄ??* | | | | | |
-| [IC·ÖÎö·½·¨ÂÛ](01_STANDARDS/ic_analysis.md) | `docs/02_FACTOR_LIBRARY/01_STANDARDS/ic_analysis.md` | METHODOLOGY_001 | 1.0 | Active | IC·ÖÎö±ê×¼ |
-| [Òò×ÓÔ¤´¦Àí·½·¨](01_STANDARDS/factor_preprocessing.md) | `docs/02_FACTOR_LIBRARY/01_STANDARDS/factor_preprocessing.md` | METHODOLOGY_002 | 1.0 | Active | Òò×ÓÔ¤´¦Àí±ê??|
-| [Òò×ÓÖÎÀí¿ò¼Ü](../../README.md) | `docs/02_FACTOR_LIBRARY/00_GOVERNANCE/README.md` | GOVERNANCE_001 | 1.0 | Active | Òò×Ó¿âÖÎÀí¿ò??|
-| [Â·¾¶±ê×¼](../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md) | `docs/05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md` | DEV_STD_001 | 1.0 | Stable | Â·¾¶ÒýÓÃ±ê×¼ |
-| [ÎÄµµ±àºÅ±ê×¼](../05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md) | `docs/05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md` | DEV_STD_005 | 1.0 | Stable | ÎÄµµ±àºÅÌåÏµ±ê×¼ |
-| [A¹É¹æÔòÒýÇæÉè¼Æ](../design/a_stock_rules/T.08.AR001.a_stock_rule_engine_design.md) | `docs/design/a_stock_rules/T.08.AR001.a_stock_rule_engine_design.md` | DESIGN_001 | 1.0 | Active | A¹É¹æÔòÒýÇæÉè??|
-| [½»Ò×³É±¾Ä£ÐÍËã·¨](../design/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md) | `docs/design/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md` | DESIGN_002 | 1.0 | Active | ½»Ò×³É±¾Ä£ÐÍËã·¨ |
-| [¶àÒýÇæÊý¾ÝÒ»ÖÂÐÔÉè¼Æ·½°¸](../design/data_consistency/¶àÒýÇæÊý¾ÝÒ»ÖÂÐÔÉè¼Æ·½??md) | `docs/design/data_consistency/¶àÒýÇæÊý¾ÝÒ»ÖÂÐÔÉè¼Æ·½??md` | DESIGN_003 | 1.0 | Active | ¶àÒýÇæÊý¾ÝÒ»ÖÂÐÔÉè¼Æ·½??|
-| [SagaÄ£Ê½ÊµÏÖÁ÷³ÌÍ¼](../design/data_consistency/SagaÄ£Ê½ÊµÏÖÁ÷³Ì??md) | `docs/design/data_consistency/SagaÄ£Ê½ÊµÏÖÁ÷³Ì??md` | DESIGN_004 | 1.0 | Active | SagaÄ£Ê½ÊµÏÖÁ÷³Ì??|
-| [²¹³¥ÊÂÎñÉè¼ÆÎÄµµ](../design/data_consistency/²¹³¥ÊÂÎñÉè¼ÆÎÄµµ.md) | `docs/design/data_consistency/²¹³¥ÊÂÎñÉè¼ÆÎÄµµ.md` | DESIGN_005 | 1.0 | Active | ²¹³¥ÊÂÎñÉè¼ÆÎÄµµ |
-| [Web¹ÜÀí½çÃæ¼Ü¹¹Éè¼ÆÎÄµµ](../design/web_interface/T.06.UI001.web_management_interface_architecture_design.md) | `docs/design/web_interface/T.06.UI001.web_management_interface_architecture_design.md` | DESIGN_006 | 1.0 | Active | Web¹ÜÀí½çÃæ¼Ü¹¹Éè¼Æ |
-| [Ç°¶Ë×é¼þ½á¹¹Í¼](../design/web_interface/Ç°¶Ë×é¼þ½á¹¹??md) | `docs/design/web_interface/Ç°¶Ë×é¼þ½á¹¹??md` | DESIGN_007 | 1.0 | Active | Ç°¶Ë×é¼þ½á¹¹??|
-| [API½Ó¿Ú¹æ·¶ÎÄµµ](../design/web_interface/API½Ó¿Ú¹æ·¶ÎÄµµ.md) | `docs/design/web_interface/API½Ó¿Ú¹æ·¶ÎÄµµ.md` | DESIGN_008 | 1.0 | Active | API½Ó¿Ú¹æ·¶ÎÄµµ |
-| [½»Ò×³É±¾²âÊÔÓÃÀýÉè¼Æ](../design/trading_costs/½»Ò×³É±¾²âÊÔÓÃÀýÉè¼Æ.md) | `docs/design/trading_costs/½»Ò×³É±¾²âÊÔÓÃÀýÉè¼Æ.md` | DESIGN_009 | 1.0 | Active | ½»Ò×³É±¾²âÊÔÓÃÀýÉè¼Æ |
-| [¼¼Êõ·½°¸Éè¼Æ»ã×Ü±¨¸æ](../design/¼¼Êõ·½°¸Éè¼Æ»ã×Ü±¨??md) | `docs/design/¼¼Êõ·½°¸Éè¼Æ»ã×Ü±¨??md` | DESIGN_SUMMARY_001 | 1.0 | Active | ¼¼Êõ·½°¸Éè¼Æ»ã×Ü±¨??|
-| [×¨ÒµÉó¼ÆÖ¸ÄÏ](../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | `docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md` | AUDIT_GUIDE_001 | 1.0 | Active | ×¨ÒµÉó¼ÆÖ¸ÄÏ |
-| [Éó¼ÆÖÊÁ¿±ê×¼](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) | `docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS.md` | AUDIT_STD_001 | 1.0 | Stable | Éó¼ÆÖÊÁ¿±ê×¼v1.0 |
-| [ÖÊÁ¿¼à¿ØÀ¶Í¼](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | `docs/09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md` | MONITORING_001 | 1.0 | Active | ÖÊÁ¿¼à¿ØÌåÏµÀ¶Í¼ |
-| [¼¼Êõ·½°¸ÆÀÉó»áÒéÒé³Ì](../design/¼¼Êõ·½°¸ÆÀÉó»áÒéÒé??md) | `docs/design/¼¼Êõ·½°¸ÆÀÉó»áÒéÒé??md` | REVIEW_AGENDA_001 | 1.0 | Active | ¼¼Êõ·½°¸ÆÀÉó»áÒéÒé??|
-| [ÆÀÉó²ÄÁÏ·Ö·¢Çåµ¥](../design/ÆÀÉó²ÄÁÏ·Ö·¢Çåµ¥.md) | `docs/design/ÆÀÉó²ÄÁÏ·Ö·¢Çåµ¥.md` | DISTRIBUTION_001 | 1.0 | Active | ÆÀÉó²ÄÁÏ·Ö·¢Ö¸ÄÏ |
-| [¸öÈË¼¼Êõ¾ö²ßÈ·ÈÏÇåµ¥](../design/¸öÈË¼¼Êõ¾ö²ßÈ·ÈÏÇå??md) | `docs/design/¸öÈË¼¼Êõ¾ö²ßÈ·ÈÏÇå??md` | PERSONAL_DECISION_001 | 1.0 | Active | ¸öÈËÏîÄ¿¾ö²ßÁ÷³Ì |
-| [×¨ÒµÁ¿»¯»ú¹¹¿ª·¢ÍêÕûÁ÷³Ì](../design/×¨ÒµÁ¿»¯»ú¹¹¿ª·¢ÍêÕûÁ÷??md) | `docs/design/×¨ÒµÁ¿»¯»ú¹¹¿ª·¢ÍêÕûÁ÷??md` | DEV_PROCESS_001 | 1.0 | Active | ×¨ÒµÁ¿»¯»ú¹¹¿ª·¢Á÷³ÌÖ¸??|
-| [Êý¾Ý¿âÉè¼ÆÎÄµµ](../design/database/P0-01_Database_Design_Document.md) | `docs/design/database/P0-01_Database_Design_Document.md` | DB_DESIGN_001 | 1.0 | Active | ×¨ÒµÁ¿»¯»ú¹¹Êý¾Ý¿âÉè¼Æ±ê??|
-| [Êý¾Ý¿âÉè¼ÆÆÀÉó±¨¸æ](../design/database/P0-01_Database_Design_Review_Report.md) | `docs/design/database/P0-01_Database_Design_Review_Report.md` | DB_REVIEW_001 | 1.0 | Active | ×¨ÒµÁ¿»¯»ú¹¹Êý¾Ý¿âÉè¼ÆÆÀ??|
+1. **ç†è§£ç³»ç»Ÿ**: [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) - ç³»ç»Ÿæž¶æž„
+2. **äº†è§£ç¼ºå¤±**: [ALL_LAYERS_GAP_ANALYSIS.md](01_FRAMEWORK/ALL_LAYERS_GAP_ANALYSIS.md) - å®Œæ•´æ€§åˆ†æž
+3. **å®žæ–½æ–¹æ¡ˆ**: [PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION.md](01_FRAMEWORK/PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION.md) - ä¸ªäººå¼€å‘æ–¹æ¡ˆ
 
+### å¼€å‘è€…æŒ‡å—
 
-**°æ±¾**: v5.3.5 | **¸üÐÂ**: 2026-04-06 | **×´??*: ??»îÔ¾
+1. **P0çº§æ¨¡å—**: [P0_CORE_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P0_CORE_MODULES_BLUEPRINT_COLLECTION.md)
+2. **P1/P2çº§æ¨¡å—**: [P1_P2_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/P1_P2_MODULES_BLUEPRINT_COLLECTION.md)
+3. **æ‰€æœ‰ç¼ºå¤±æ¨¡å—**: [MISSING_MODULES_BLUEPRINT_COLLECTION.md](01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_COLLECTION.md)
 
+### æž¶æž„å¸ˆå‚è€ƒ
+
+1. **æ¨¡å—èŒè´£**: [MODULE_RESPONSIBILITY_BOUNDARIES.md](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+2. **è´¨é‡ç›‘æŽ§**: [QUALITY_MONITORING_BLUEPRINT_v5.1.md](01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md)
+3. **æ–‡æ¡£æ²»ç†**: [INDEX.md](01_FRAMEWORK/INDEX.md)
+
+---
+
+## ðŸ“ ç»´æŠ¤è¯´æ˜Ž
+
+### æ–‡æ¡£æ›´æ–°è§„åˆ™
+
+1. **æ–°å¢žæ¨¡å—**: å¿…é¡»åœ¨System_Manifest.mdä¸­æ·»åŠ ç´¢å¼•
+2. **ç‰ˆæœ¬æ›´æ–°**: æ¯æ¬¡é‡å¤§æ›´æ–°éœ€æ›´æ–°ç‰ˆæœ¬å·
+3. **çŠ¶æ€è·Ÿè¸ª**: åŠæ—¶æ›´æ–°æ¨¡å—å®žæ–½çŠ¶æ€
+
+### è´¨é‡æ ‡å‡†
+
+- **æ–‡æ¡£åˆè§„çŽ‡**: â‰¥90%
+- **ç´¢å¼•è¦†ç›–çŽ‡**: 100%
+- **ç‰ˆæœ¬æ ‡è¯†**: æ˜Žç¡®
+- **èŒè´£è¾¹ç•Œ**: æ¸…æ™°
+
+---
+
+**ç‰ˆæœ¬**: v5.4.0 | **æ›´æ–°**: 2026-04-06 | **çŠ¶æ€**: âœ… æ´»è·ƒ

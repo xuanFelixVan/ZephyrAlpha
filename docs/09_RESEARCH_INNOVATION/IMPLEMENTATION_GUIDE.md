@@ -1,6 +1,6 @@
 ---
-module_id: LAYER9_IMPLEMENTATION_GUIDE_V5
-version: 5.0.0
+module_id: LAYER9_IMPL_001
+version: 1.0.0
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
