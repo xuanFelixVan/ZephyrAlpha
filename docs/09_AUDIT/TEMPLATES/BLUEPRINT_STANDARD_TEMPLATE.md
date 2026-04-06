@@ -1,3 +1,15 @@
+---
+module_id: AUDIT_蓝图文件标准模板_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 审计系统
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # 蓝图文件标准模板
 
 > 本模板定义了专业量化机构蓝图文件的标准格式，确保文档治理的一致性和可维护性。

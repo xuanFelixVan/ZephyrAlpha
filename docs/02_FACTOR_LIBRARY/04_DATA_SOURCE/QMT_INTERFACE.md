@@ -1,3 +1,15 @@
+---
+module_id: FACTOR_QMT数据接口技术规格_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 因子工程团队
+standard_type: 通用文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: DATA_QMT_INTERFACE_001
 version: 1.0.1

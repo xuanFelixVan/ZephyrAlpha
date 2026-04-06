@@ -1,3 +1,15 @@
+---
+module_id: FRAMEWORK_AI_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席架构师
+standard_type: 通用文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # AIèæç ç©¶å¢éå®æ½è®¡å
 
 **é¡¹ç®ç¼å·**: AI-TEAM-2026-001  

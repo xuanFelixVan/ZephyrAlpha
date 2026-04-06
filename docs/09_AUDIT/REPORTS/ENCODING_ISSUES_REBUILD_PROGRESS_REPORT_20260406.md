@@ -1,3 +1,15 @@
+---
+module_id: AUDIT_编码问题文档重建完成报告_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 审计系统
+standard_type: 审计报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # 编码问题文档重建完成报告
 
 > **报告日期**: 2026-04-06

@@ -1,3 +1,15 @@
+---
+module_id: AUDIT_深度系统审计报告_V10_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 审计系统
+standard_type: 审计报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # 深度系统审计报告 V10
 
 **审计日期**: 2026-04-05

@@ -122,7 +122,6 @@ class Layer6DeepAuditor:
         
         # 1.3 检查路径引用
         print("\n1.3 路径引用检查...")
-")
         
         path_issues = []
         for filepath in BLUEPRINTS_DIR.glob("*.md"):

@@ -1,3 +1,15 @@
+---
+module_id: IMPL_模块注册中心_V1_0_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 通用文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # 模块注册中心 v1.0
 
 > **文档版本**: v1.0

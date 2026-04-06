@@ -1,3 +1,15 @@
+---
+module_id: IMPL_蓝图文档总索引_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿﻿---
 index_id: BLUEPRINTS_INDEX_001
 version: 1.3.1
