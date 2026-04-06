@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 2-4 (中观策略? | 业务架构: 三级时间框架融合架构
+layer: Layer 3 (中观策略层) | 业务架构: 三级时间框架融合架构
 index: MARKET_REGIME_SYSTEM_001
 estimated_hours: 160h
 review_status: Pending
@@ -34,7 +34,7 @@ implementation_status: 设计阶段
 
 **预期�?*?- 实现对市场状态的准确识别（准确率?0%?- 提前3-5天预警市场状态转?- 为策略选择提供市场环境上下?- 降低策略在不同市场状态下的失效风?
 ### 1.2 技术定位与架构层归?
-**Layer定位**: Layer 2-4 - 中观策略?
+**Layer定位**: Layer 3 - 中观策略层
 **模块类别**: 核心模块
 
 **架构角色**: 
@@ -57,7 +57,7 @@ implementation_status: 设计阶段
 
 ### 2.2 Layer定位详细说明
 
-**Layer归属**: Layer 2-4 - 中观策略?
+**Layer归属**: Layer 3 - 中观策略层
 **职责范围**: 
 - 识别当前市场状态（牛市/熊市/震荡?转折市）
 - 预测市场状态转换概?- 评估市场状态持续时?- 提供策略选择建议
@@ -266,7 +266,7 @@ CREATE TABLE market_regime_history (
           ?数据预处?(Layer 1)
     ├── 数据清洗
     ├── 特征工程
-    └── 数据标准?          ?模型推理 (Layer 2-4)
+    └── 数据标准?          ?模型推理 (Layer 3)
     ├── HMM模型推理
     ├── 技术指标分?    └── 多源融合决策
           ?结果存储 (Layer 1)
