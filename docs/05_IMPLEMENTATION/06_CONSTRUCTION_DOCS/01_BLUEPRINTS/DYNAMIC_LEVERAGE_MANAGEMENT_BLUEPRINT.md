@@ -1,3 +1,15 @@
+---
+module_id: V_017
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001
 version: 1.0.1
@@ -496,7 +508,7 @@ class LeverageRiskMonitor:
     
     def __init__(self, config: RiskMonitorConfig):
         self.config = config
-        self.alert_thresholds = config.alert_thresholds  # 预警�?        self.stop_loss_thresholds = config.stop_loss_thresholds  # 止损�?        
+        self.alert_thresholds = config.alert_thresholds  # 预警?        self.stop_loss_thresholds = config.stop_loss_thresholds  # 止损?        
     def monitor_leverage_risk(self, current_leverage: float,
                              portfolio_value: float,
                              market_data: pd.DataFrame) -> RiskMonitorResult:
@@ -504,7 +516,7 @@ class LeverageRiskMonitor:
         
         Args:
             current_leverage: 当前杠杆水平
-            portfolio_value: 组合�?            market_data: 市场数据
+            portfolio_value: 组合?            market_data: 市场数据
             
         Returns:
             RiskMonitorResult: 风险监控结果
@@ -733,7 +745,7 @@ class RiskAlert:
     alert_type: str                      # 预警类型
     severity: str                        # 严重程度
     message: str                         # 预警消息
-    current_value: float                 # 当前?    threshold: float                     # �?
+    current_value: float                 # 当前?    threshold: float                     # ?
 @dataclass
 class RiskMonitorResult:
     """风险监控结果"""
@@ -840,7 +852,7 @@ class DynamicLeverageManagementSystem:
         
         Args:
             current_leverage: 当前杠杆
-            portfolio_value: 组合�?            market_data: 市场数据
+            portfolio_value: 组合?            market_data: 市场数据
             
         Returns:
             RiskMonitorResult: 风险监控结果
@@ -954,7 +966,7 @@ class DynamicLeverageManagementSystem:
 
 **文档版本**: v1.0
 **最后更?*: 2026-04-02
-**审核�?*: 待审?**下一?*: 提交技术评审官审核
+**审核?*: 待审?**下一?*: 提交技术评审官审核
 
 ## 变更历史
 

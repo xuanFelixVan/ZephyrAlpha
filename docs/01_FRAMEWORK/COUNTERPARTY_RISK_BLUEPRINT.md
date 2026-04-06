@@ -1,3 +1,15 @@
+---
+module_id: COUNTERPARTYRISKBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: COUNTERPARTY_RISK_BLUEPRINT_001
 version: 1.0.1

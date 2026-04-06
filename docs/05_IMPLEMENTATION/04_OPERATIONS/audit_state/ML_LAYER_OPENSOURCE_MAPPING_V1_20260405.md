@@ -1,3 +1,15 @@
+---
+module_id: MLLAYEROPENSOURCEMAPPINGV1_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # 机器学习层开源项目映射指南
 
 > **版本**: v1.0

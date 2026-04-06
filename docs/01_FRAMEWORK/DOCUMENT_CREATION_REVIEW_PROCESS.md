@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_001_L01_DOC
+module_id: DOCUMENT_CREATION_REVIEW_PROCESS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

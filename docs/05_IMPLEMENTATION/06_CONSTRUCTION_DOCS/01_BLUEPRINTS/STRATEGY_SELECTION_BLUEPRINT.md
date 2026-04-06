@@ -1,3 +1,15 @@
+---
+module_id: STRATEGYSELECTIONBLUEPRINT_002
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0
@@ -16,8 +28,6 @@ priority: P1
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
 
-
-
 # 策略排名与选择系统技术蓝?
 
 > 清风量化交易系统 v5.3 - 策略排名与选择系统详细技术设?
@@ -26,7 +36,6 @@ layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 > **核心定位**: 策略工厂核心组件，支?20+策略多维度评分、智能排名、动态选择和市场适应性分?
 > **参考开?*: vn.py的StrategyRanking + quant-system策略选择模块 + 多准则决策分?MCDA)
 > **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于策略排名与选择功能
-
 
 ## 一、设计目标与约束
 
@@ -57,7 +66,6 @@ layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 | **ParameterOptimization系统** | 参数优化结果 | 获取最优参数配?|
 | **StrategyEngine核心** | 策略元数?| 获取策略类型、参数空间等信息 |
 | **MarketStateDetector** | 市场状态输?| 获取当前市场状态（牛市/熊市/震荡市） |
-
 
 ## 二、系统架构设?
 
@@ -134,7 +142,6 @@ layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 - 市场状态切换检?
 - 策略鲁棒性分?
 
-
 ## 三、核心组件设?
 
 ### 3.1 MultiCriteriaEvaluator 详细设计
@@ -205,9 +212,9 @@ class TOPSISEvaluator:
             'max_drawdown': 0.20,       # 最大回撤：风险控制
             'annual_return': 0.15,      # 年化收益：盈利能?
             'win_rate': 0.10,           # 胜率：交易质?
-            'stability_score': 0.10,    # 稳定性：绩效一�?
+            'stability_score': 0.10,    # 稳定性：绩效一?
             'adaptability_score': 0.10, # 适应性：市场环境适应能力
-            'complexity_score': 0.05,   # 复杂度：策略简�?
+            'complexity_score': 0.05,   # 复杂度：策略简?
             'turnover': 0.05           # 换手率：交易成本考虑
         }
         
@@ -224,8 +231,8 @@ class TOPSISEvaluator:
     def _calculate_ideal_solutions(self, weighted_matrix: pd.DataFrame) -> Tuple[pd.Series, pd.Series]:
         """计算正理想解和负理想?
         
-        对于效益型指标（越大越好）：正理想解取最大值，负理想解取最�?
-        对于成本型指标（越小越好）：正理想解取最小值，负理想解取最�?
+        对于效益型指标（越大越好）：正理想解取最大值，负理想解取最?
+        对于成本型指标（越小越好）：正理想解取最小值，负理想解取最?
         """
         # 定义指标类型
         benefit_criteria = ['sharpe_ratio', 'annual_return', 'win_rate', 
@@ -272,13 +279,13 @@ class DynamicWeightOptimizer:
         """优化评分权重
         
         基于以下因素动态调整权重：
-        1. 当前市场�?
+        1. 当前市场?
         2. 用户风险偏好
         3. 策略历史表现
         4. 经济周期阶段
         """
         
-        # 1. 获取当前市场�?
+        # 1. 获取当前市场?
         market_state = self.market_state_detector.get_current_state()
         
         # 2. 获取用户风险偏好
@@ -356,7 +363,7 @@ class DynamicWeightOptimizer:
         template = weight_templates.get(market_state.name, weight_templates['range_market'])
         
         # 根据市场状态强度调整权?
-        strength_factor = market_state.strength  # 0-1之间的强�?
+        strength_factor = market_state.strength  # 0-1之间的强?
         adjusted_weights = {}
         
         for criterion, base_weight in template.items():
@@ -548,7 +555,7 @@ class TimeWeightedPerformanceScorer:
         weights = self._exponential_decay_weights(len(rolling_dd))
         weighted_dd = (rolling_dd * weights).sum() / weights.sum()
         
-        return abs(weighted_dd)  # 返回�?
+        return abs(weighted_dd)  # 返回?
         
     def _exponential_decay_weights(self, n_periods: int) -> np.ndarray:
         """生成指数衰减权重向量"""
@@ -652,7 +659,7 @@ class StrategyCorrelationAnalyzer:
         diversification = pd.DataFrame(index=corr_matrix.index, columns=['diversification_score'])
         
         for strategy in corr_matrix.index:
-            # 计算该策略与其他策略的平均相�?
+            # 计算该策略与其他策略的平均相?
             other_correlations = [corr_matrix.loc[strategy, other] 
                                 for other in corr_matrix.index if other != strategy]
             
@@ -712,7 +719,6 @@ class StrategyCorrelationAnalyzer:
             
         return recommendations
 ```
-
 
 ## 四、AI辅助决策系统
 
@@ -794,7 +800,7 @@ class AIStrategyRecommender:
             if len(selected) >= n_strategies:
                 break
                 
-            # 检查相�?
+            # 检查相?
             if self._is_diversified(selected, strategy, diversification_weight):
                 selected.append(strategy)
                 # 基于预测得分分配权重
@@ -864,7 +870,6 @@ class AIStrategyRecommender:
         
         return "?.join(explanations)
 ```
-
 
 ## 五、用户接口设?
 
@@ -974,7 +979,6 @@ python strategy_selector.py query \
 - 数据库：SQLite（开发）?PostgreSQL（生产）
 - 可视化：Plotly、ECharts、Highcharts
 
-
 ## 六、开发里程碑
 
 ### Phase 1: 基础排名系统?周）
@@ -1001,7 +1005,6 @@ python strategy_selector.py query \
 - [ ] 性能优化和缓?
 - [ ] 完整文档和示?
 
-
 ## 七、相关文?
 
 | 文档 | 说明 |
@@ -1010,7 +1013,6 @@ python strategy_selector.py query \
 | [BATCH_EVALUATION_BLUEPRINT.md](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/BATCH_EVALUATION_BLUEPRINT.md) | 批量评估蓝图 |
 | [PARAMETER_OPTIMIZATION_BLUEPRINT.md](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/PARAMETER_OPTIMIZATION_BLUEPRINT.md) | 参数优化蓝图 |
 | [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | 组合优化蓝图 |
-
 
 **文档版本**: v1.0  
 **最后更?*: 2026-04-01  

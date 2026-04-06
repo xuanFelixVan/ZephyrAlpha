@@ -1,30 +1,18 @@
 ---
-module_id: FACTOR_5900因子筛选策_FACTOR_SCREENING_STR_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 因子工程团队
-standard_type: 通用文档
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: STANDARDS_SCREENING_001
 version: 1.0.0
 status: Active
 created_date: 2026-03-30
 last_updated: 2026-04-04
-owner: 首席文档架构�?
-standard_type: 因子筛选策略标�?
-applicable_scope: Layer 2 Alpha因子�?- 因子筛选流�?
+owner: 首席文档架构师
+standard_type: 因子筛选策略标准
+applicable_scope: Layer 2 Alpha因子层- 因子筛选流程
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 已实�?
+implementation_status: 已实施
 ---
 
-# 5900因子筛选策�?(Factor Screening Strategy)
+# 5900因子筛选策略(Factor Screening Strategy)
 
 > **版本**: v1.0
 > **创建日期**: 2026-03-30

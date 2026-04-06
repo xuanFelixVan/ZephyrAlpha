@@ -1,3 +1,15 @@
+---
+module_id: V_022
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.1
@@ -380,7 +392,7 @@ CREATE TABLE model_parameters (
 ### 5.1 线性冲击模型详细说?
 #### 5.1.1 模型原理
 
-**线性冲击模?*是最简单的市场冲击模型，假设冲击与订单规模呈幂律关�?
+**线性冲击模?*是最简单的市场冲击模型，假设冲击与订单规模呈幂律关?
 **数学模型**:
 ```
 Impact = α * (Q/ADV)^β * σ
@@ -421,7 +433,7 @@ def fit_linear_model(
 
 #### 5.2.1 模型原理
 
-**Almgren-Chriss模型**将市场冲击分为临时冲击和永久冲击两部�?
+**Almgren-Chriss模型**将市场冲击分为临时冲击和永久冲击两部?
 **数学模型**:
 ```
 临时冲击: I_temp = η * (Q/ADV) / T
@@ -473,7 +485,7 @@ def optimize_execution_time(
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 类别 | 技术选型 | 版本要求 | �?|
+| 类别 | 技术选型 | 版本要求 | ?|
 |------|----------|----------|------|
 | **编程语言** | Python | 3.9+ | 核心开发语言 |
 | **数值计?* | numpy | 1.24+ | 数值计?|
@@ -481,7 +493,7 @@ def optimize_execution_time(
 | **科学计算** | scipy | 1.11+ | 优化求解 |
 
 ### 6.2 第三方依?
-| 依赖?| 版本 | �?|
+| 依赖?| 版本 | ?|
 |--------|------|------|
 | scikit-learn | 1.3+ | 机器学习模型 |
 | statsmodels | 0.14+ | 统计建模 |
@@ -653,7 +665,7 @@ class TestMarketImpactModel:
 ---
 
 **蓝图编写?*: 首席架构?**蓝图日期**: 2026-04-02
-**蓝图�?*: ?已完?
+**蓝图?*: ?已完?
 ---
 
 **文档结束**

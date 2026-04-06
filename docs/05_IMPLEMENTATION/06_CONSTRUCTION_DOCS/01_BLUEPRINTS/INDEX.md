@@ -12,7 +12,7 @@ compliance_level: 专业标准
 
 ﻿﻿---
 index_id: BLUEPRINTS_INDEX_001
-version: 1.5.0
+version: 1.6.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-07
@@ -27,7 +27,7 @@ parent_document: ../INDEX.md
 
 > **索引编号**: `BLUEPRINTS_INDEX_001`
 > **最后更新**: 2026-04-07
-> **文档总数**: 92个（Active: 92个，Archived: 0个）
+> **文档总数**: 95个（Active: 95个，Archived: 0个）
 
 ---
 
@@ -216,6 +216,24 @@ parent_document: ../INDEX.md
 | 组合分散化度量蓝图 | PORTFOLIO_DIVERSIFICATION_METRIC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md) 🆕 |
 | 尾部风险度量扩展蓝图 | TAIL_RISK_METRICS_EXTENSION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./TAIL_RISK_METRICS_EXTENSION_BLUEPRINT.md) 🆕 |
 
+### 3.14 多期动态优化
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 多期动态优化蓝图 | MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md) 🆕 |
+
+### 3.15 因子暴露管理
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 因子暴露管理蓝图 | FACTOR_EXPOSURE_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-07 | [链接](./FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md) 🆕 |
+
+### 3.16 优化诊断与验证
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合优化诊断蓝图 | PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001 | v1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md) 🆕 |
+
 **模块关系说明**:
 - PORTFOLIO_REBALANCING: 基础再平衡框架，提供触发机制和决策引擎
 - TRANSACTION_COST_AWARE_REBALANCING: 高级成本感知再平衡，依赖基础框架
@@ -374,19 +392,19 @@ parent_document: ../INDEX.md
 
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
-| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 21.7% |
-| **组合优化层（Layer 6）** | 36个 | 36个 | 0个 | 39.1% |
-| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 2.2% |
-| **执行层（Layer 5）** | 12个 | 12个 | 0个 | 13.0% |
-| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.2% |
-| **其他** | 20个 | 20个 | 0个 | 21.7% |
-| **总计** | **92个** | **92个** | **0个** | **100%** |
+| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 21.1% |
+| **组合优化层（Layer 6）** | 39个 | 39个 | 0个 | 41.1% |
+| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 2.1% |
+| **执行层（Layer 5）** | 12个 | 12个 | 0个 | 12.6% |
+| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.1% |
+| **其他** | 20个 | 20个 | 0个 | 21.1% |
+| **总计** | **95个** | **95个** | **0个** | **100%** |
 
 ### 8.2 按状态统计
 
 | 状态 | 文档数量 | 占比 | 说明 |
 |------|---------|------|------|
-| **Active** | 92个 | 100% | 正常可用文档 |
+| **Active** | 95个 | 100% | 正常可用文档 |
 | **Archived** | 0个 | 0% | 无归档文档 |
 | **Draft** | 0个 | 0% | 草稿文档 |
 

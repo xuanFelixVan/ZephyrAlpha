@@ -1,3 +1,15 @@
+---
+module_id: V_035
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: SMART_EXECUTION_ENGINE_001
 version: 1.0.1
@@ -77,7 +89,7 @@ class OrderAnalyzer:
         分析订单特征，选择最优执行算?        
         分析维度:
         1. 订单规模: 相对ADV的比?        2. 紧急程? 执行时间窗口
-        3. 市场条件: 波动率、流�?        4. 风险偏好: 可接受的滑点范围
+        3. 市场条件: 波动率、流?        4. 风险偏好: 可接受的滑点范围
         
         输出:
         - 推荐算法
@@ -211,7 +223,7 @@ def monitor_execution(
     监控执行进度
     
     返回:
-    - ExecutionStatus: 执行�?      - progress: 执行进度?-1?      - filled_quantity: 已成交数?      - remaining_quantity: 剩余数量
+    - ExecutionStatus: 执行?      - progress: 执行进度?-1?      - filled_quantity: 已成交数?      - remaining_quantity: 剩余数量
       - current_price: 当前价格
       - estimated_cost: 预估成本
     """
@@ -407,7 +419,7 @@ class VolumePredictor:
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 类别 | 技术选型 | 版本要求 | �?|
+| 类别 | 技术选型 | 版本要求 | ?|
 |------|----------|----------|------|
 | **编程语言** | Python | 3.9+ | 核心开发语言 |
 | **异步框架** | asyncio | 内置 | 异步执行支持 |
@@ -416,7 +428,7 @@ class VolumePredictor:
 | **时间处理** | datetime | 内置 | 时间处理 |
 
 ### 6.2 第三方依?
-| 依赖?| 版本 | �?|
+| 依赖?| 版本 | ?|
 |--------|------|------|
 | zipline | 2.3+ | 执行算法参考实?|
 | QuantLib | 1.31+ | 金融计算?|
@@ -592,7 +604,7 @@ class TestSmartExecutionEngine:
 ---
 
 **蓝图编写?*: 首席架构?**蓝图日期**: 2026-04-02
-**蓝图�?*: ?已完?
+**蓝图?*: ?已完?
 ---
 
 **文档结束**

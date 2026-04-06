@@ -1,5 +1,5 @@
 ---
-module_id: BENCHMARK_MANAGEMENT_BLUEPRINT_001
+module_id: BENCHMARK_MANAGEMENT_FRAMEWORK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

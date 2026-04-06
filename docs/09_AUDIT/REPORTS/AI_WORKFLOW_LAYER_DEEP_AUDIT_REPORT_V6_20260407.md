@@ -1,3 +1,15 @@
+---
+module_id: AI_V_002
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 审计团队
+standard_type: 专业量化机构报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # AI工作流层深度审计报告 V6.0
 
 ## 1. 审计概要

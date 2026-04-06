@@ -1,3 +1,15 @@
+---
+module_id: AI_V_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: AI_PATTERN_RECOGNITION_ENGINE_001
 version: 1.0.2
@@ -23,9 +35,6 @@ open_source_dependency: tensorflow, pytorch, scikit-learn
 priority: P0
 ---
 
-
-
-
 # AI模式识别引擎蓝图 v1.0
 
 > 清风量化系统 v5.3 - AI模式识别引擎架构设计
@@ -37,7 +46,7 @@ priority: P0
 ## 1. 模块概述
 
 ### 1.1 业务背景与价值主?
-**业务需?*?- 当前系统缺失AI驱动的模式识别能力，无法捕捉市场非线性模?- 传统技术指标和线性模型难以识别复杂的市场�?- 需要实现Two Sigma风格的AI驱动策略，提升信号预测准确率
+**业务需?*?- 当前系统缺失AI驱动的模式识别能力，无法捕捉市场非线性模?- 传统技术指标和线性模型难以识别复杂的市场?- 需要实现Two Sigma风格的AI驱动策略，提升信号预测准确率
 
 **价值主?*?- 实现对市场非线性模式的准确识别（准确率?5%?- 提升信号预测的夏普比率（?.8?- 降低人为判断的主观性和偏差
 - 实现多时间框架的模式识别融合
@@ -347,7 +356,7 @@ class FeatureEngineer:
         """提取多维度特?        
         Args:
             market_data: 市场数据 (OHLCV)
-            sentiment_data: 情绪数据 (�?
+            sentiment_data: 情绪数据 (?
             
         Returns:
             np.ndarray: 特征矩阵 (n_samples, feature_dim)
@@ -375,7 +384,6 @@ class FeatureEngineer:
         from sklearn.preprocessing import RobustScaler
         scaler = RobustScaler()
         return scaler.fit_transform(features)
-
 
 class TechnicalFeatureExtractor:
     """技术指标特征提取器"""
@@ -498,7 +506,6 @@ class TechnicalFeatureExtractor:
         
         return adx.fillna(0).values
 
-
 class MicrostructureFeatureExtractor:
     """市场微观结构特征提取?""
     
@@ -559,7 +566,6 @@ class MicrostructureFeatureExtractor:
         jump_vol = np.sqrt(abs(realized_vol ** 2 - bipower_vol ** 2))
         
         return jump_vol.fillna(0).values
-
 
 class SentimentFeatureExtractor:
     """情绪特征提取?""
@@ -731,7 +737,6 @@ class AIPatternRecognitionResult:
     features_importance: Dict[str, float]  # 特征重要?    attention_analysis: Optional[Dict]     # 注意力分析（可选）
     risk_assessment: Dict[str, float]      # 风险评估
 
-
 class IPatternRecognizer(ABC):
     """模式识别器接?""
     
@@ -756,7 +761,6 @@ class IPatternRecognizer(ABC):
         """加载模型"""
         pass
 
-
 class IFeatureExtractor(ABC):
     """特征提取器接?""
     
@@ -764,7 +768,6 @@ class IFeatureExtractor(ABC):
     def extract(self, data: pd.DataFrame) -> np.ndarray:
         """提取特征"""
         pass
-
 
 class IModelEnsembler(ABC):
     """模型集成器接?""
@@ -802,7 +805,7 @@ class AIPatternRecognitionEngine:
         
         Args:
             market_data: 市场数据 (OHLCV)
-            sentiment_data: 情绪数据 (�?
+            sentiment_data: 情绪数据 (?
             horizon: 时间框架 ('short_term', 'mid_term', 'long_term')
             
         Returns:
@@ -921,7 +924,7 @@ class AIPatternRecognitionEngine:
 | **数据处理** | numpy, scipy | ?.21, ?.7 |
 | **模型解释** | SHAP, LIME | ?.40, ?.2 |
 | **可视?* | matplotlib, seaborn | ?.5, ?.11 |
-| **GPU�?* | CUDA, cuDNN | ?1.2, ?.1 |
+| **GPU?* | CUDA, cuDNN | ?1.2, ?.1 |
 
 ### 5.3 性能指标
 
@@ -997,7 +1000,7 @@ class AIPatternRecognitionEngine:
 
 **文档版本**: v1.0
 **最后更?*: 2026-04-02
-**审核�?*: 待审?**下一?*: 提交技术评审官审核
+**审核?*: 待审?**下一?*: 提交技术评审官审核
 
 ## 变更历史
 

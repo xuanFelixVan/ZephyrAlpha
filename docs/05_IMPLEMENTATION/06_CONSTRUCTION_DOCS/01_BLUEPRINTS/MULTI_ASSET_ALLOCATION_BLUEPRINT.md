@@ -1,4 +1,16 @@
 ---
+module_id: V_024
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
+﻿---
 module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
 spec_version: 1.0
@@ -30,7 +42,7 @@ priority: P0
 
 > 清风量化系统 v5.3 - 多资产类别配置详细设?> **索引**: `MULTI_ASSET_001`
 > **开发时?*: 120h（约3周）
-> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可�?*: ⭐⭐⭐⭐ 完全可行
+> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可?*: ⭐⭐⭐⭐ 完全可行
 > **AI维护难度**: ?
 ---
 
@@ -44,7 +56,7 @@ priority: P0
 - 无跨资产相关性建?- 无跨资产风险平价优化
 - 无跨资产风险预算分配
 
-**预期�?*?- 资产配置多样性：提升50%
+**预期?*?- 资产配置多样性：提升50%
 - 系统性风险分散：提升40%
 - 实现桥水全天候策略核心能?- 为多策略配置提供基础
 
@@ -109,7 +121,7 @@ class MultiAssetAllocator:
         """
         # 1. 获取多资产数?        asset_data = self.data_manager.get_asset_data(asset_classes)
         
-        # 2. 估计跨资产相�?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
+        # 2. 估计跨资产相?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
         
         # 3. 选择优化方法
         if optimization_method == 'risk_parity':
@@ -249,7 +261,7 @@ class CrossAssetCorrelationModeler:
     跨资产相关性建模器
     
     索引: MULTI_ASSET_001-M03
-    职责: 估计跨资产动态相�?    """
+    职责: 估计跨资产动态相?    """
     
     def __init__(self, config: CorrelationConfig):
         self.config = config
@@ -267,7 +279,7 @@ class CrossAssetCorrelationModeler:
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
         
-        # 2. 使用DCC-GARCH估计动态相�?        if self.config.use_dcc_garch:
+        # 2. 使用DCC-GARCH估计动态相?        if self.config.use_dcc_garch:
             correlation_matrix = self.dcc_garch.estimate(returns)
         else:
             # 使用历史相关?            correlation_matrix = returns.corr()
@@ -657,7 +669,7 @@ class BarraRiskModel:
 ## 8. 技术栈选择
 
 ### 8.1 核心依赖?
-| 库名 | 版本 | �?| 必要?|
+| 库名 | 版本 | ?| 必要?|
 |------|------|------|--------|
 | **pandas** | ?.5 | 数据处理 | 必需 |
 | **numpy** | ?.21 | 数值计?| 必需 |
@@ -705,7 +717,7 @@ pip install arch>=5.0
 ##### 6.7 多资产类别配?- **模块ID**: MULTI_ASSET_001
 - **蓝图文档**: [MULTI_ASSET_ALLOCATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md)
 - **技术规格书**: 待创?- **职责**: 跨资产配置、风险平价优化、跨资产风险监控
-- **�?*: 设计阶段
+- **?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界

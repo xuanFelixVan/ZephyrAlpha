@@ -1,4 +1,16 @@
 ---
+module_id: V_028
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
+﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.1
 spec_version: 1.0
@@ -31,7 +43,7 @@ priority: P0
 > 清风量化系统 v5.3 - 组合再平衡策略详细设?> **索引**: `PORTFOLIO_REBALANCING_001`
 > **开发时?*: 40h（约1周）
 > **核心定位**: 智能再平衡决策，平衡跟踪误差与交易成?> **对标机构**: 专业量化机构标准配置
-> **个人开发可�?*: ⭐⭐⭐⭐?完全可行
+> **个人开发可?*: ⭐⭐⭐⭐?完全可行
 > **AI维护难度**: ?
 ---
 
@@ -43,7 +55,7 @@ priority: P0
 - 无交易成本优?- 无再平衡效果评估
 - 无再平衡历史记录
 
-**预期�?*?- 再平衡策略完整性：提升40%
+**预期?*?- 再平衡策略完整性：提升40%
 - 交易成本优化：降?5-20%
 - 跟踪误差控制：提?0%
 - 系统化再平衡决策：新增能?
@@ -84,7 +96,7 @@ priority: P0
 
 ### 2.2 核心数据?
 ```
-组合状态监?    ?触发机制检测（定期/�?风险?    ?再平衡决策（成本收益分析?    ?交易成本优化（最优执行）
+组合状态监?    ?触发机制检测（定期/?风险?    ?再平衡决策（成本收益分析?    ?交易成本优化（最优执行）
     ?输出：再平衡订单、效果评估、历史记?```
 
 ---
@@ -118,7 +130,7 @@ class RebalancingStrategy:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            portfolio_value: 组合�?            
+            portfolio_value: 组合?            
         Returns:
             RebalancingSignal: 再平衡信?        """
         # 1. 检测触发条?        trigger_result = self.trigger_detector.detect(
@@ -155,7 +167,7 @@ class RebalancingStrategy:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            portfolio_value: 组合�?            
+            portfolio_value: 组合?            
         Returns:
             RebalancingResult: 再平衡结?        """
         # 1. 交易成本优化
@@ -246,7 +258,7 @@ class RebalancingTriggerDetector:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            portfolio_value: 组合�?            
+            portfolio_value: 组合?            
         Returns:
             TriggerResult: 触发结果
         """
@@ -336,7 +348,7 @@ class RebalancingDecisionEngine:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            portfolio_value: 组合�?            trigger_result: 触发结果
+            portfolio_value: 组合?            trigger_result: 触发结果
             
         Returns:
             Decision: 决策结果
@@ -362,7 +374,7 @@ class RebalancingDecisionEngine:
             expected_cost=expected_cost,
             expected_benefit=expected_benefit,
             net_benefit=net_benefit,
-            reason=f'净收益={net_benefit:.4f}, �?{self.config.min_net_benefit}'
+            reason=f'净收益={net_benefit:.4f}, ?{self.config.min_net_benefit}'
         )
     
     def _estimate_transaction_cost(self,
@@ -415,7 +427,7 @@ class TradingCostOptimizer:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            portfolio_value: 组合�?            
+            portfolio_value: 组合?            
         Returns:
             pd.Series: 最优交易量
         """
@@ -537,12 +549,12 @@ class RebalancingConfig:
 class TriggerConfig:
     """触发配置"""
     rebalance_frequency: int = 30  # 再平衡周期（天）
-    weight_threshold: float = 0.05  # 权重偏离�?    last_rebalance_date: datetime = None
+    weight_threshold: float = 0.05  # 权重偏离?    last_rebalance_date: datetime = None
     
 @dataclass
 class DecisionConfig:
     """决策配置"""
-    min_net_benefit: float = 0.001  # 最小净收益�?    transaction_cost_rate: float = 0.001  # 交易成本?    
+    min_net_benefit: float = 0.001  # 最小净收益?    transaction_cost_rate: float = 0.001  # 交易成本?    
 @dataclass
 class CostOptimizationConfig:
     """成本优化配置"""
@@ -559,9 +571,9 @@ class CostOptimizationConfig:
 ```python
 @dataclass
 class PortfolioState:
-    """组合�?""
+    """组合?""
     weights: pd.Series  # 当前权重
-    value: float  # 组合�?    timestamp: datetime
+    value: float  # 组合?    timestamp: datetime
 ```
 
 ### 4.2 输出数据模型
@@ -690,21 +702,21 @@ class TradingCostOptimizationModule:
 
 | 指标 | 当前水平 | 目标水平 | 提升幅度 |
 |------|---------|---------|---------|
-| **再平衡策略完�?* | 60% | 100% | +40% |
+| **再平衡策略完?* | 60% | 100% | +40% |
 | **交易成本优化** | 基准 | -15% | 降低15% |
 | **跟踪误差控制** | 基准 | +30% | 提升30% |
 | **系统化决?* | ?| ?| 新增能力 |
 
 ### 7.2 定性收?
 - ?系统化再平衡决策框架
-- ?多种触发机制（定?�?风险?- ?交易成本优化
+- ?多种触发机制（定??风险?- ?交易成本优化
 - ?再平衡效果评?- ?历史记录与回?
 ---
 
 ## 8. 技术栈选择
 
 ### 8.1 核心依赖?
-| 库名 | 版本 | �?| 必要?|
+| 库名 | 版本 | ?| 必要?|
 |------|------|------|--------|
 | **pandas** | ?.5 | 数据处理 | 必需 |
 | **numpy** | ?.21 | 数值计?| 必需 |
@@ -746,7 +758,7 @@ pip install numpy>=1.21
 #### Layer 6: 组合优化?
 ##### 6.8 组合再平衡策?- **模块ID**: REBALANCING_001
 - **蓝图文档**: [PORTFOLIO_REBALANCING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md)
-- **技术规格书**: 待创?- **职责**: 再平衡决策、交易成本优化、效果评?- **�?*: 设计阶段
+- **技术规格书**: 待创?- **职责**: 再平衡决策、交易成本优化、效果评?- **?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界
@@ -779,7 +791,7 @@ pip install numpy>=1.21
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
 
 ## 变更历史
 

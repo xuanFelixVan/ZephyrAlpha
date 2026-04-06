@@ -1,3 +1,15 @@
+---
+module_id: A_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理员
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 standard_type: èå¾æ å
 applicable_scope: å¨ç³»ç»?

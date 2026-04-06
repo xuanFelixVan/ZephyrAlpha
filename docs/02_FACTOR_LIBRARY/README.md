@@ -1,28 +1,18 @@
 ---
-module_id: FACTOR_02_FACTOR_LIBRARY_因子_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 因子工程团队
-standard_type: 说明文档
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: FACTOR_LIB_README_001
 version: 5.3.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?compliance_level: 研究标准
+owner: 首席文档架构师
+standard_type: 专业量化机构因子标准
+applicable_scope: 因子研究与管理
+compliance_level: 研究标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行中
+---
 
-# 02_FACTOR_LIBRARY - 因子�?
-> 清风量化交易系统的核心因子库，采用专业量化机构标准构�?
+# 02_FACTOR_LIBRARY - 因子库，采用专业量化机构标准构�?
 **版本**: v5.3 | **更新**: 2026-04-03 | **状�?*: 活跃
 
 ---
