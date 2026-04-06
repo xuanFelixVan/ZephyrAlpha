@@ -1,6 +1,6 @@
 ---
 module_id: DATA_QUALITY_GOVERNANCE_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
@@ -16,6 +16,19 @@ related_documents:
   - DATA_LINEAGE_TRACKING_BLUEPRINT.md
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 顶层治理）**：
+  - 数据质量治理体系顶层架构设计
+  - 四层架构（Layer 0/1/4/10）统一协调机制
+  - 数据质量治理标准制定
+  - 数据质量治理政策制定
+  - 跨层数据质量治理协调
+  
+  **与本文档职责边界**：
+  - Layer 0（数据源层）: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md - 负责数据源健康监控
+  - Layer 1（数据层）: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md - 负责多维度质量评估
+  - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
+  - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
 ---
 
 # 数据质量治理体系蓝图
