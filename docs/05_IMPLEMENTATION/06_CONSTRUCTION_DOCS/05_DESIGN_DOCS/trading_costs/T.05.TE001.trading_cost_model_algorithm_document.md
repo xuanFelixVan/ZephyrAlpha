@@ -1,4 +1,16 @@
 ---
+module_id: T_05_TE001_TRADING_COST_MODEL_ALGORITHM_DOCUMENT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 文档治理
+---
+
+---
 module_id: DESIGN_DOC_002
 version: 1.0.0
 status: Active

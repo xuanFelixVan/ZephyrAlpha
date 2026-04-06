@@ -1,4 +1,18 @@
 ---
+module_id: SYSTEM_ENHANCEMENT_MANUAL_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 风险预算
+  - 市场状态识别
+  - 因子计算
+---
+
+---
 module_id: ARCHIVE_SYS_ENHANCE_001
 version: 1.0.1
 status: Active

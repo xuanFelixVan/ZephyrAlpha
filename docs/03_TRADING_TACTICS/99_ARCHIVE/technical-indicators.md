@@ -1,4 +1,18 @@
 ---
+module_id: TECHNICAL_INDICATORS_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 系统架构
+---
+
+---
 module_id: TACTICS_ARCH_TECH_INDICATORS_001
 version: 1.0.1
 status: Active

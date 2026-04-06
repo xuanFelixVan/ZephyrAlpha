@@ -1,4 +1,18 @@
 ---
+module_id: FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 组合优化
+---
+
+---
 module_id: ARCHIVE_FACTOR_BT_INTEGRATION_001
 version: 2026.04.02
 status: Active

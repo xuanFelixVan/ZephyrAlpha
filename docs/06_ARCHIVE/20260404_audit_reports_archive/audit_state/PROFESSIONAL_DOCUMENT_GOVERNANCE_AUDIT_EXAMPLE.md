@@ -1,4 +1,18 @@
 ---
+module_id: PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 交易执行
+  - 系统架构
+  - 文档治理
+---
+
+---
 module_id: ARCHIVE_DOC_GOV_AUDIT_EXAMPLE_001
 version: 2026.04.02
 status: Active
