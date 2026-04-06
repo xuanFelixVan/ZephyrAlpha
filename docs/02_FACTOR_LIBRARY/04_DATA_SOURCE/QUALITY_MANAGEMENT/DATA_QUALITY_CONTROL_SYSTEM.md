@@ -1,19 +1,37 @@
 ---
----
 module_id: DATA_QUALITY_CONTROL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席文档架构师
 standard_type: 数据处理文档
 applicable_scope: 数据质量控制
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
----进行�?---
+---
 
 # 数据质量控制系统
+
+## 文档职责说明
+
+**本文档职责**: 数据质量控制体系设计
+- 定义数据质量维度和检查标准
+- 设计数据质量检查框架和规则引擎
+- 实现数据质量监控和告警机制
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 上游处理 | 数据清洗规则 |
+| 数据流水线 | [../07_DATA_PIPELINE/BLUEPRINT.md](../07_DATA_PIPELINE/BLUEPRINT.md) | 整体架构 | 数据流水线设计 |
+| 质量管理索引 | [INDEX.md](./INDEX.md) | 上级索引 | 质量管理模块索引 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义"如何检查数据质量"
+- ❌ 本文档不负责: 数据清洗规则（由 03_CLEANING/BLUEPRINT.md 负责）
+- ❌ 本文档不负责: 数据流水线架构（由 07_DATA_PIPELINE/BLUEPRINT.md 负责）
 
 > **模块编号**: M-DQ-001 (Data Quality)
 > **版本**: 1.0

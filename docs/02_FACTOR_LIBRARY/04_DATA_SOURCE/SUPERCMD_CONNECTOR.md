@@ -18,7 +18,7 @@ architecture_layer: 数据基础设施�?timeframe_support: [宏观配置�? �
 > **所属层�?*: 数据基础设施�?> **设计状�?*: �?设计完成
 > **优先�?*: P1 (重要)
 > **预计开发时�?*: 12小时
-> **迁移来源**: [L0_SUPERCMD.md](../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_SUPERCMD.md) (已归�?
+> **迁移来源**: <!-- 归档链接已注释 --> (已归档)(已归�?
 
 ---
 

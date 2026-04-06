@@ -193,6 +193,7 @@ applicable_scope: 全系统技术规格书（Layer 0-11�?compliance_level: 专
 |----------|-----------|------|------|----------|----------|
 | 约束求解器技术规格书 | CONSTRAINT_SOLVER_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./CONSTRAINT_SOLVER_TECHNICAL_SPECIFICATION.md) |
 | 动态杠杆管理技术规格书 | LEVERAGE_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DYNAMIC_LEVERAGE_MANAGEMENT_TECHNICAL_SPECIFICATION.md) |
+| 爆仓线监控技术规格书 | MARGIN_CALL_SPEC_001 | v1.0.0 | Active | 2026-04-05 | [链接](./MARGIN_CALL_MONITOR_TECHNICAL_SPECIFICATION.md) 🆕 |
 
 ### 6.3 相关性建模与风险预算
 

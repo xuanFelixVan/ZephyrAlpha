@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席蓝图架构师
-layer: Layer 10 (治理与合规层)
+layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 人机交互层战略规�?
 compliance_level: 顶级专业标准

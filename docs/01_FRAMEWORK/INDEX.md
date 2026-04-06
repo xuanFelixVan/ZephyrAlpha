@@ -63,7 +63,16 @@ implementation_status: 活跃维护
 | [AI信任校准蓝图](./AI_TRUST_CALIBRATION_BLUEPRINT.md) | AI信任动态调整机�?| ⭐⭐⭐⭐ |
 | [AI学习演进蓝图](./AI_EVOLUTION_LOOP_BLUEPRINT.md) | AI错误学习与持续改�?| ⭐⭐⭐⭐ |
 | [AI决策审计蓝图](./AI_DECISION_AUDIT_BLUEPRINT.md) | AI决策全链路审�?| ⭐⭐⭐⭐ |
-| [AI能力补充蓝图](./AI_CAPABILITY_GAP_BLUEPRINT.md) | AI能力差距与补充计�?| ⭐⭐⭐⭐ |
+| [AI能力补充蓝图](./AI_CAPABILITY_GAP_BLUEPRINT.md) | AI能力差距与补充计划 | ⭐⭐⭐⭐ |
+
+### Layer 8 人机交互界面组件 🆕
+
+| 文档名称 | 说明 | 重要度 |
+|---------|------|--------|
+| [移动端推送通知蓝图](./MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md) | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
+| [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |
+| [FastAPI认证权限蓝图](./FASTAPI_USERS_AUTH_BLUEPRINT.md) | FastAPI-Users认证权限系统 | ⭐⭐⭐⭐ |
+| [Streamlit回测界面蓝图](./STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md) | 交互式回测界面 | ⭐⭐⭐⭐ |
 
 ### Layer 11 文字驱动层 🆕
 

@@ -18,7 +18,7 @@ architecture_layer: 数据基础设施�?timeframe_support: [宏观配置�? �
 > **所属层�?*: 数据基础设施�?> **设计状�?*: �?设计完成
 > **优先�?*: P0 (紧�?
 > **预计开发时�?*: 20小时
-> **迁移来源**: [L0_IFIND.md](../../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_IFIND.md) (已归�?
+> **迁移来源**: <!-- 归档链接已注释 --> (已归档)(已归�?
 
 ---
 
