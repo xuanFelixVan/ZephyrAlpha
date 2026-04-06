@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 组合优化
+
 module_id: RESPONSIBILITY_SIMILARITY_REPORT_001
 version: 1.0.0
 status: Active

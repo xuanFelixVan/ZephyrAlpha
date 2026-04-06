@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 数据质量
+
 module_id: STRATEGIC_DECISION_BP_001
 version: 3.0.0
 status: Active

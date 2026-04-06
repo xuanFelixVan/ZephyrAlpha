@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 数据质量
+
 module_id: SPARSE_DIRECTORY_GOVERNANCE_REPORT_20260407_030248
 version: 1.0.0
 status: Active

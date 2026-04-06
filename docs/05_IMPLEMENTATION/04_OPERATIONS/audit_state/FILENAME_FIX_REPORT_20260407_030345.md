@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 组合优化
+
 module_id: FILENAME_FIX_REPORT_20260407_030345
 version: 1.0.0
 status: Active

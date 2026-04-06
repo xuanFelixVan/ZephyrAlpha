@@ -50,10 +50,12 @@ responsibility:
 |------|---------|---------|---------|---------|
 | 1 | [资产配置模型.md](./01_asset_allocation/资产配置模型.md) | 战略资产配置模型设计 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 1-2 |
 | 2 | [配置优化方法.md](./01_asset_allocation/配置优化方法.md) | 资产配置优化方法 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 3-4 |
-| 3 | [风险预算框架.md](./02_risk_budgeting/风险预算框架.md) | 风险预算分配框架 | Riskfolio-Lib, XQRiskCore | Week 1, Day 5-7 |
-| 4 | [策略选择框架.md](./03_strategy_selection/策略选择框架.md) | 投资策略选择框架 | skfolio, empyrical | Week 2, Day 1-3 |
-| 5 | [策略组合优化.md](./03_strategy_selection/策略组合优化.md) | 策略组合优化方法 | Multi-Strategy-Portfolio, skfolio | Week 2, Day 4-5 |
-| 6 | [战略调整机制.md](./04_strategic_adjustment/战略调整机制.md) | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | Week 2, Day 6-7 |
+| 3 | [战略调整机制.md](./04_strategic_adjustment/战略调整机制.md) | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | Week 2, Day 6-7 |
+
+**注意**: 以下P0级蓝图待补充：
+- 风险预算框架.md（待创建）
+- 策略选择框架.md（待创建）
+- 策略组合优化.md（待创建）
 
 ### 1.2 P1级蓝图（重要支持模块）
 
