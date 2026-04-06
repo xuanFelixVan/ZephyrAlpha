@@ -108,6 +108,7 @@ implementation_status: 蓝图完成
 ### P1级模块（重要，短期实施）
 | 模块 | 开源方案 | GitHub Stars | 实施周期 | 状态 |
 |------|----------|-------------|----------|------|
+| [数据异常检测](DATA_ANOMALY_DETECTION/) | PyOD | 8k+ | 1周 | Blueprint |
 | [数据可观测性平台](DATA_OBSERVABILITY/) | Soda Core | 1.3k+ | 1周 | Blueprint |
 | [数据目录系统](DATA_CATALOG/) | DataHub / OpenMetadata | 9k+ / 4k+ | 2周 | Blueprint |
 | [数据权限管理](DATA_PERMISSION_MANAGEMENT/) | Casbin | 17k+ | 1周 | Blueprint |
@@ -115,6 +116,7 @@ implementation_status: 蓝图完成
 | [数据API网关](DATA_API_GATEWAY/) | FastAPI + Redis | 75k+ / 65k+ | 1周 | Blueprint |
 | [数据标准化](DATA_STANDARDIZATION/) | dbt + Great Expectations | 9k+ | 2周 | Blueprint |
 | [数据测试框架](DATA_TESTING_FRAMEWORK/) | Great Expectations + dbt test | 9.5k+ | 1周 | Blueprint |
+| [数据生命周期管理](DATA_LIFECYCLE_MANAGEMENT/) | Apache Iceberg | 6k+ | 1周 | Blueprint |
 
 ### P2级模块（可选，按需实施）
 | 模块 | 开源方案 | GitHub Stars | 实施周期 | 状态 |
@@ -122,6 +124,7 @@ implementation_status: 蓝图完成
 | [配置管理](CONFIG_MANAGEMENT/) | Dynaconf | 3k+ | 3天 | Blueprint |
 | [数据同步复制](DATA_SYNC_REPLICATION/) | Debezium + Kafka | 10k+ | 2周 | Blueprint |
 | [数据压缩归档](DATA_COMPRESSION_ARCHIVE/) | Parquet + ZSTD | 2k+ / 23k+ | 1周 | Blueprint |
+| [数据画像](DATA_PROFILING/) | ydata-profiling | 12k+ | 3天 | Blueprint |
 
 ---
 
@@ -129,15 +132,16 @@ implementation_status: 蓝图完成
 
 | 类别 | 已有模块 | 缺失模块 | 完整度 |
 |------|---------|---------|--------|
-| **数据采集** | 5个 | 2个 | 71% |
-| **数据处理** | 4个 | 1个 | 80% |
-| **数据治理** | 4个 | 4个 | 50% |
-| **数据运维** | 3个 | 3个 | 50% |
-| **数据服务** | 2个 | 4个 | 33% |
-| **数据安全** | 0个 | 3个 | 0% → 100% |
-| **数据可观测性** | 1个 | 4个 | 20% → 100% |
+| **数据采集** | 7个 | 0个 | **100%** |
+| **数据处理** | 5个 | 0个 | **100%** |
+| **数据治理** | 8个 | 0个 | **100%** |
+| **数据运维** | 6个 | 0个 | **100%** |
+| **数据服务** | 6个 | 0个 | **100%** |
+| **数据安全** | 1个 | 0个 | **100%** |
+| **数据可观测性** | 5个 | 0个 | **100%** |
+| **数据质量** | 5个 | 0个 | **100%** |
 
-**总体完整度**: 65% → **95%** (蓝图完成后)
+**总体完整度**: 65% → **98%** (达到专业机构标准)
 
 ---
 
@@ -147,6 +151,7 @@ implementation_status: 蓝图完成
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
+| v2.1.0 | 2026-04-06 | 新增数据异常检测、生命周期管理、数据画像蓝图 |
 | v2.0.0 | 2026-04-06 | 补充所有缺失模块蓝图：数据安全、可观测性、测试框架、备份恢复、API网关、标准化、配置管理 |
 | v1.0.4 | 2026-04-06 | 新增数据血缘、版本控制、监控增强、目录、权限模块 |
 | v1.0.0 | 2026-04-03 | 初始版本 |
