@@ -5,11 +5,15 @@ compliance_level: όφμί╝ΠόιΘίΘΗ
 parent_document: ../INDEX.md
 implementation_status: ί╖▓ίχΝόΙ?
 owner: όΨΘόκμύχκύΡΗίΣ?
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 version: 1.0.0
 module_id: LINK_FIX_REPORT_20260402
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # όΞθίζΠώΥ╛όΟξϊ┐χίνΞόΛξίΣΛ
 
 **όΛξίΣΛόΩ╢ώΩ┤**: 2026-04-02 18:25

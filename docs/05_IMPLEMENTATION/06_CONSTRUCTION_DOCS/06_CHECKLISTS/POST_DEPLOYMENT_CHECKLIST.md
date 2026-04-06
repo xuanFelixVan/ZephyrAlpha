@@ -1,12 +1,16 @@
 ---
 standard_type: жЈҖжҹҘжё…еҚ?applicable_scope: е…Ёзі»з»?compliance_level: жӯЈејҸж ҮеҮҶ
+responsibility:
+  - 数据源
+  - 文档治理
+  - 审计系统
 parent_document: ../README.md
 implementation_status: е·Іе®ҢжҲ?owner: иҝҗз»ҙеӣўйҳҹ
 version: 1.0.0
 module_id: POST_DEPLOYMENT_CHECKLIST
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # йғЁзҪІеҗҺжЈҖжҹҘжё…еҚ?
 **ж–ҮжЎЈзүҲжң¬**: 1.0.0
 **жңҖеҗҺжӣҙж–?*: 2026-04-02

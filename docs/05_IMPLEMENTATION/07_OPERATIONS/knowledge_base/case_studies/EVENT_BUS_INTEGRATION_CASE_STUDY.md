@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﮔﮔﺁﮔ۰ﻛﺝﻝ ﻝ۸?applicable_scope: ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﮒ؟ﮔﺛ
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 机器学习
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
@@ -15,8 +19,8 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 > **ﮒ؟ﮔﺛﮔﭘﻠﺑ**: 2026-04-01 ﻟ?2026-04-02  
 > **ﮒ؟ﮔﺛﻛﭦﭦﮒ**: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
 > **ﮔ۰ﻛﺝﻛﭨﺓﮒ?*: ﮒﺎﻝ۳ﭦﮒ۵ﻛﺛﮒ؟ﻝﺍﻠ،ﮔ۶ﻟﺛﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
-
 ---
+
 
 ## ﻭ **ﮔ۰ﻛﺝﮔ۵ﻟﺟﺍ**
 

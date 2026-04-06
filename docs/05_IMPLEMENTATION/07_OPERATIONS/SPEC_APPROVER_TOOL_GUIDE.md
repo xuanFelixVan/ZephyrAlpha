@@ -5,11 +5,15 @@ compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲ﻛﭦ?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 version: 1.0.0
 module_id: IMP_SPEC_APPROVER_TOOL_G
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ?v1.0
 
 ## 1. ﮔ۵ﻟﺟﺍ

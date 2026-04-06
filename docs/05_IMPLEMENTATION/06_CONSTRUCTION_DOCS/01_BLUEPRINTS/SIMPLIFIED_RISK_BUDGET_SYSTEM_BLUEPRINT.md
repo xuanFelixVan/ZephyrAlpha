@@ -1,3 +1,17 @@
+---
+module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+responsibility:
+  - 风险预算
+  - 组合优化
+  - 回测系统
+standard_type: 专业量化机构文档
+layer: "Layer 6 (组合优化层)"---
+
 ﻿# 简化版动态风险预算系统蓝图
 
 > **核心定位**: 简化版动态风险预算系统蓝图的核心功能实现

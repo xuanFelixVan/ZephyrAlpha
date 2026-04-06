@@ -5,10 +5,14 @@ status: Archived
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
+responsibility:
+  - 交易执行
+  - 系统架构
+  - 文档治理
 standard_type: 归档说明
 applicable_scope: 市场参与者文档整合
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # 市场参与者文档整合归档说明
 

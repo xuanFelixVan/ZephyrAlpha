@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?applicable_scope: AIﮔﭦﻟﺛﻛﺛﮔﺛﮒﺓ۴ﮒﺟﻟﺁ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 机器学习
 parent_document: ./CONSTRUCTION_SPECIFICATION.md
-implementation_status: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
----
+implementation_status: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰---
+
 
 # AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?
 > **ﻭﺑ ﮒﺙﭦﮒﭘﻠﻟﺁﭨ**: AIﮔﭦﻟﺛﻛﺛﮒ۷ﮒﺙﮒ۶ﻛﭨﭨﻛﺛﮒﺙﮒﮔﮔﮔ۰۲ﮔﮒﭨﭦﻛﭨﭨﮒ۰ﮒﮒﺟﻠ۰ﭨﻠﻟﺁﭨﮔ؛ﮔﮔ۰۲

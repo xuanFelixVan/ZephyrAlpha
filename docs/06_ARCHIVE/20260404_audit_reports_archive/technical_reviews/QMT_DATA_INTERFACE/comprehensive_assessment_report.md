@@ -5,11 +5,15 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 owner: 实施负责�?
+responsibility:
+  - 风险预算
+  - 交易执行
+  - 系统架构
 version: 1.0.0
 module_id: ARCHIVE_QMT_COMPREHENSIVE_ASSESS_001
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # 综合评估报告
 
 生成时间: 2026-04-02 02:50:44

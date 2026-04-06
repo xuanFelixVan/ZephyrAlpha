@@ -13,9 +13,13 @@ review_status: Pending
 reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
----
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ---
+
 
 # ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 

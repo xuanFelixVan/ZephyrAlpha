@@ -1,13 +1,16 @@
 ---
 standard_type: ف║¤µحµëïف?applicable_scope: لثلآرق«ةق
+responsibility:
+  - 因子计算
+  - 文档治理
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md
 implementation_status: ف╖▓ف«îµê?owner: لخûف╕صلثلآرف«?version: 1.0.0
 module_id: EMERGENCY_RESPONSE_PLAN
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ف║¤µحلتµة?, "لثلآرق«ةق", "ف║¤µحفôف║?]
----
+tags: ["ف║¤µحلتµة?, "لثلآرق«ةق", "ف║¤µحفôف║?]---
+
 # ف║¤µحلتµةêµëïف?
 **µûçµةثقëêµ£ش**: 1.0.0
 **µ£فµؤ┤µû?*: 2026-04-02

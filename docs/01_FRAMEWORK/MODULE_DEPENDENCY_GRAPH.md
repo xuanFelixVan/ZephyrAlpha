@@ -1,12 +1,16 @@
 ---
 standard_type: ææ¯è§è?applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
+responsibility:
+  - 因子计算
+  - 数据源
+  - 系统架构
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?version: 1.0.0
 module_id: MODULE_DEPENDENCY_GRAPH
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["æ¨¡åä¾èµ", "ä¾èµå³ç³»", "æ¶æè®¾è®¡"]
----
+tags: ["æ¨¡åä¾èµ", "ä¾èµå³ç³»", "æ¶æè®¾è®¡"]---
+
 # ZephyrAlphaæ¨¡åä¾èµå³ç³»å?
 **ææ¡£çæ¬**: 1.0.0
 **æåæ´æ?*: 2026-04-02

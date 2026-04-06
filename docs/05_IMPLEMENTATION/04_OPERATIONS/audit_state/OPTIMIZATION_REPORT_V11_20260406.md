@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席文档架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 数据源
 standard_type: 专业量化机构文档优化报告
 applicable_scope: Alpha因子层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 优化完成
----
+implementation_status: 优化完成---
+
 
 # Alpha因子层第十一次优化报告
 

@@ -1,13 +1,16 @@
 ---
 standard_type: цФ╣ш┐ЫшобхИТ
+responsibility:
+  - 系统架构
+  - 文档治理
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: EXCELLENCE_STANDARD_IMPROVEMENT_PLAN
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫшобхИТ", "шпДхИЖцПРхНЗ"]
----
+tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫшобхИТ", "шпДхИЖцПРхНЗ"]---
+
 # ш╛╛хИ░ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхНУш╢КцаЗхЗЖцФ╣ш┐ЫшобхИТ
 
 **цЦЗцбгчЙИцЬм**: 1.0.0

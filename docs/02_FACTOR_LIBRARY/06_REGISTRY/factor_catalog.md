@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构师
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管理
 compliance_level: 研究标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
----
+implementation_status: 进行中---
+
 
 # 因子注册表(Factor Registry)
 

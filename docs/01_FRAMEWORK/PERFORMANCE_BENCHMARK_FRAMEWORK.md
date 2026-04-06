@@ -1,12 +1,16 @@
 ---
 standard_type: ææ¯è§è?applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
+responsibility:
+  - 因子计算
+  - 绩效分析
+  - 系统架构
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?version: 1.0.0
 module_id: PERFORMANCE_BENCHMARK_FRAMEWORK
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["æ§è½åºå", "æ§è½æµè¯", "æ§è½çæ§"]
----
+tags: ["æ§è½åºå", "æ§è½æµè¯", "æ§è½çæ§"]---
+
 # ZephyrAlphaæ§è½åºåæµè¯ä½ç³»
 
 **ææ¡£çæ¬**: 1.0.0

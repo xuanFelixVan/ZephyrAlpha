@@ -5,17 +5,28 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 standard_type: 通用文档
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 
 # 因子计算框架
 
+> **核心职责**: 因子计算引擎架构和调度系统设计
+> **职责边界**: 
+> - ✅ 本文档负责：因子计算引擎设计、调度系统架构、计算流程规范、性能优化标准
+> - ❌ 本文档不负责：具体因子实现、因子分类定义、因子回测流程
+> - 📋 相关文档：[因子分类学](FACTOR_TAXONOMY.md) - 因子分类体系定义
+> - 📋 相关文档：[因子管理标准](FACTOR_MANAGEMENT_STANDARD.md) - 因子生命周期管理
+>
 > **版本**: v1.0
 > **创建日期**: 2026-03-30
-> **Layer**: Layer 2 (因子计算�?
+> **Layer**: Layer 2 (因子计算层)
 > **专业机构标准**: 完整因子生命周期管理
 
 ---

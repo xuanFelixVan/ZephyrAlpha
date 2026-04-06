@@ -1,5 +1,9 @@
 ---
 standard_type: ق«ةقµبçفç
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 测试系统
 applicable_scope: لثلآرق«ةق
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../INDEX.md
@@ -7,8 +11,8 @@ implementation_status: ف╖▓ف«îµê?owner: لخûف╕صلثلآرف«?v
 module_id: RISK_MANAGEMENT_FRAMEWORK
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["لثلآرق«ةق", "لثلآرµةµئ╢", "غ╕ôغ╕أµبçفç"]
----
+tags: ["لثلآرق«ةق", "لثلآرµةµئ╢", "غ╕ôغ╕أµبçفç"]---
+
 # لثلآرق«ةقµةµئ╢
 
 **µûçµةثقëêµ£ش**: 1.0.0

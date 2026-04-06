@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзіҐеЉХ
+responsibility:
+  - 文档治理
 applicable_scope: дЇЛдїґеЉХжУОзЫЃељХ
 compliance_level: дЄУдЄЪж†ЗеЗЖ
 parent_document: ../INDEX.md
@@ -24,7 +26,7 @@ implementation_status: еЈ≤еЃМжИ?---
 
 - [EVENT_BUS.md](EVENT_BUS.md) - дЇЛдїґжАїзЇњж†ЄењГиЃЊиЃ°
 - [README.md](README.md) - дЇЛдїґеЉХжУОдљњзФ®жМЗеНЧ
-
 ---
+
 
 **зіҐеЉХзЙИжЬђ**: v1.0.0 | **еИЫеїЇжЧ•жЬЯ**: 2026-04-03 | **зїіжК§иА?*: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?

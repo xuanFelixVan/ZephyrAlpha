@@ -13,11 +13,15 @@ review_status: Approved
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 策略执行层负责人
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 组合优化
 standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
----
+implementation_status: 设计阶段---
+
 
 # AI模式识别引擎技术规格书 v1.0
 

@@ -13,6 +13,10 @@ review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: AI工程�?standard_type: 专业量化机构技术规格书
+responsibility:
+  - 数据质量
+  - 风险预算
+  - 组合优化
 applicable_scope: 强化学习系统
 compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/REINFORCEMENT_LEARNING_BLUEPRINT.md
@@ -23,8 +27,8 @@ implementation_status: 技术规格设计完�?---
 > 清风量化系统 v5.2 - 强化学习详细技术设�?> **索引**: `RL-001`
 > **开发时�?*: 80h
 > **核心定位**: 提供基于强化学习的交易执行、组合优化和风险控制能力
-
 ---
+
 
 ## 1. 概述
 

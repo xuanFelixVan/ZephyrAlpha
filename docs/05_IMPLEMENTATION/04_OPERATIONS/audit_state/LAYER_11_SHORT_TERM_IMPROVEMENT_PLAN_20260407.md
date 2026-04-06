@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 组合优化
 standard_type: 专业量化机构改进计划
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT.md
-implementation_status: 计划阶段
----
+implementation_status: 计划阶段---
+
 
 # Layer 11战略决策层短期改进计划
 

@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 系统架构�?standard_type: 专业量化机构目录索引
+responsibility:
+  - 交易执行
+  - 绩效分析
+  - 系统架构
 applicable_scope: Layer 7 - AI报告�?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
----
+implementation_status: 设计阶段---
+
 
 # Layer 7: AI报告层目录索�?
 > **版本**: v5.3

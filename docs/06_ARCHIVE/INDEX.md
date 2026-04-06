@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席文档架构�?standard_type: 专业量化机构索引
+responsibility:
+  - 因子计算
+  - 特征工程
+  - 机器学习
 applicable_scope: 历史归档
 compliance_level: 专业标准
 parent_document: ../INDEX.md
@@ -79,6 +83,6 @@ implementation_status: 已完�?---
 
 - **新架构文�?*: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
 - **架构迁移计划**: [../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md](../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
-
 ---
+
 *最后更�? 2026-04-03*

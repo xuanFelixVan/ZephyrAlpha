@@ -1,13 +1,17 @@
 ---
 standard_type: хоЮцЦ╜цКехСК
+responsibility:
+  - 因子计算
+  - 数据源
+  - 系统架构
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: EXCELLENCE_STANDARD_ACHIEVEMENT_REPORT_20260402
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫцКехСК", "цЬАч╗ИцИРцЮ?]
----
+tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫцКехСК", "цЬАч╗ИцИРцЮ?]---
+
 # ш╛╛хИ░ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхНУш╢КцаЗхЗЖхоМцИРцКехСК
 
 **цКехСКцЧ╢щЧ┤**: 2026-04-03 00:15

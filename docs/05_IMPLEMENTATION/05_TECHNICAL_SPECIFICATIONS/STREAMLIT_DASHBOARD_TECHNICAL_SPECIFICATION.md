@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 组合优化
 standard_type: 专业量化机构技术规?applicable_scope: Layer 8 - 人机交互?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
@@ -17,8 +21,8 @@ implementation_status: 待实?---
 > **Layer**: Layer 8 (人机交互?
 > **模块ID**: STREAMLIT_DASHBOARD_001
 > **索引**: L8.UI.DSH.001
-
 ---
+
 
 ## 1. 概述
 

@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔ?
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨ?
 compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: INDEX.md
-implementation_status: ﻟﺟﻟ۰?
----
+implementation_status: ﻟﺟﻟ۰?---
+
 
 
 # VERSIONING.md - ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ

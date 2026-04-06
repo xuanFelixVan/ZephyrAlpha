@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 standard_type: 索引文档
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 
 # strategy_reports - 策略回测报告

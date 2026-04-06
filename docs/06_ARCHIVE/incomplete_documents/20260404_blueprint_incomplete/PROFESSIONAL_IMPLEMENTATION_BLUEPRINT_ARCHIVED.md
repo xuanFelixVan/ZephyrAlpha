@@ -5,9 +5,11 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
+responsibility:
+  - 文档治理
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 **文档结束 - 专业量化系统实施蓝图 v1.0**

@@ -1,13 +1,17 @@
 ---
 standard_type: ﮔ ﺕﮒﺟﮔﮔ۰۲
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮒﻟ۶ﮒ؟?version: 1.0.0
 module_id: COMPLIANCE_AUDIT_SYSTEM
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﮒﻟ۶ﮒ؟۰ﻟ؟۰", "ﮒﻟ۶ﻝ؟۰ﻝ", "ﮒ؟۰ﻟ؟۰ﻛﺛﻝﺏﭨ"]
----
+tags: ["ﮒﻟ۶ﮒ؟۰ﻟ؟۰", "ﮒﻟ۶ﻝ؟۰ﻝ", "ﮒ؟۰ﻟ؟۰ﻛﺛﻝﺏﭨ"]---
+
 # ZephyrAlphaﮒﻟ۶ﮒ؟۰ﻟ؟۰ﻛﺛﻝﺏﭨ
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

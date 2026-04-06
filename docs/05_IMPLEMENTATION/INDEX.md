@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 实施层架构师
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 系统架构
 standard_type: 专业量化机构目录索引
 applicable_scope: 05_IMPLEMENTATION目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 活跃维护
----
+implementation_status: 活跃维护---
+
 
 # 实施层目录索?
 > **版本**: v5.3  

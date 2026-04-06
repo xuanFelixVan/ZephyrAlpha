@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席文档架构�?standard_type: 专业量化机构索引
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 系统架构
 applicable_scope: 研究支持
 compliance_level: 专业标准
 parent_document: ../INDEX.md
@@ -74,6 +78,6 @@ implementation_status: 已完�?---
 - **回测框架**: [../02_FACTOR_LIBRARY/05_BACKTEST/](../02_FACTOR_LIBRARY/05_BACKTEST/)
 - **AI工作流**: [../10_AI_WORKFLOW/INDEX.md](../10_AI_WORKFLOW/INDEX.md)
 - **研究战略层**: [../09_RESEARCH_INNOVATION/INDEX.md](../09_RESEARCH_INNOVATION/INDEX.md)
-
 ---
+
 *最后更�? 2026-04-03*

@@ -6,7 +6,12 @@ audit_scope: 人机交互层所有文档
 audit_standard: v5.1
 auditor: AI审计系统
 status: 完成
+responsibility:
+  - 交易执行
+  - 系统架构
+  - 文档治理
 ---
+
 
 # 人机交互层深度审计报告 v2
 

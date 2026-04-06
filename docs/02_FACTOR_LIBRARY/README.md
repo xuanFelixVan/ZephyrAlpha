@@ -5,15 +5,27 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
 owner: 首席文档架构师
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管理
 compliance_level: 研究标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
----
+implementation_status: 进行中---
 
-# 02_FACTOR_LIBRARY - 因子库，采用专业量化机构标准构�?
-**版本**: v5.3 | **更新**: 2026-04-03 | **状�?*: 活跃
+
+# 02_FACTOR_LIBRARY - 因子库，采用专业量化机构标准构建
+
+> **核心职责**: 因子库整体架构说明和导航入口
+> **职责边界**: 
+> - ✅ 本文档负责：因子库整体介绍、架构说明、导航指引、快速入门
+> - ❌ 本文档不负责：具体因子定义、计算流程、回测结果
+> - 📋 相关文档：[目录索引](INDEX.md) - 完整目录结构
+> - 📋 相关文档：[文档地图](SITEMAP.md) - 文档位置导航
+>
+> **版本**: v5.3 | **更新**: 2026-04-03 | **状态**: 活跃
 
 ---
 

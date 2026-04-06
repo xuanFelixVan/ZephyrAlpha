@@ -13,9 +13,13 @@ review_status: Pending
 reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶?applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 数据源
+  - 特征工程
 parent_document: ../INDEX.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
----
+implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ---
+
 
 # AIﮒ ﮒ­ﮔﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 

@@ -5,13 +5,17 @@ status: Active
 created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席蓝图架构师
+responsibility:
+  - 交易执行
+  - 系统架构
+  - 文档治理
 standard_type: 专业量化机构审计报告
 applicable_scope: Layer 1数据预处理层深度审计
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 audit_type: 深度审计
-audit_methodology: 三层审计标准 (L1-L3) + 专业量化机构五大原则
----
+audit_methodology: 三层审计标准 (L1-L3) + 专业量化机构五大原则---
+
 
 # 数据预处理层深度审计报告 V5
 

@@ -1,13 +1,17 @@
 ---
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 绩效分析
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﮒ؟
 version: 1.0.0
 module_id: FACTOR_RESEARCH_BEST_PRACTICES
 created_date: 2026-04-03
 last_updated: 2026-04-03
-tags: ["ﮔﻛﺛﺏﮒ؟ﻟﺓ?, "ﮒ ﮒ­ﻝ ﻝ۸ﭘ", "ﻝ ﻝ۸ﭘﮔﭖﻝ۷"]
----
+tags: ["ﮔﻛﺛﺏﮒ؟ﻟﺓ?, "ﮒ ﮒ­ﻝ ﻝ۸ﭘ", "ﻝ ﻝ۸ﭘﮔﭖﻝ۷"]---
+
 # ﮒ ﮒ­ﻝ ﻝ۸ﭘﮔﻛﺛﺏﮒ؟ﻟﺓ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-03

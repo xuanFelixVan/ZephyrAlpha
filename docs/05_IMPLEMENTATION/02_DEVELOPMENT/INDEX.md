@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДя┐?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДч┤вх╝Х
+responsibility:
+  - 数据源
+  - 文档治理
+  - 审计系统
 applicable_scope: х╝АхПСцаЗхЗЖчЫоя┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМя┐?---
@@ -50,7 +54,7 @@ implementation_status: х╖▓хоМя┐?---
 ### щЕНч╜очобчРЖ
 - [CONFIG_MANAGEMENT.md](CONFIG_MANAGEMENT.md) - щЕНч╜очобчРЖ
 - [VERSION_MANAGEMENT_STANDARD.md](VERSION_MANAGEMENT_STANDARD.md) - чЙИцЬмчобчРЖ
-
 ---
+
 
 **ч┤вх╝ХчЙИцЬм**: v1.0.0 | **хИЫх╗║цЧецЬЯ**: 2026-04-03 | **ч╗┤цКдя┐?*: щжЦх╕нцЦЗцбгцЮ╢цЮДя┐?

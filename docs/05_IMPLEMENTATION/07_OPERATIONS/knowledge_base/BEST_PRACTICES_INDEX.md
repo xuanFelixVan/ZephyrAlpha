@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцЮ╢цЮДх╕?standard_type: цЬАф╜│хоЮш╖╡ч┤вх╝?applicable_scope: хЕич│╗ч╗Ях╝АхПСцЬАф╜│хоЮш╖?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
+responsibility:
+  - 数据源
+  - 机器学习
+  - 绩效分析
 parent_document: ../README.md
-implementation_status: Active
----
+implementation_status: Active---
+
 
 # цЬАф╜│хоЮш╖╡х║Уч┤вх╝Х
 

@@ -1,5 +1,9 @@
 ---
 standard_type: ύ┤λί╝ΧόΨΘόκμ
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 文档治理
 applicable_scope: ύιΦύσ╢ό╡ΒύρΜ
 compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../STANDARDS/RESEARCH_MEMO_STANDARD.md
@@ -7,8 +11,8 @@ implementation_status: ί╖▓ίχΝόΙ?owner: ώοΨί╕φύιΦύσ╢ίΣ?
 module_id: RESEARCH_MEMO_INDEX
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ύιΦύσ╢ίνΘί┐αί╜?, "ύ┤λί╝Χ", "ύθξϋψΗί║?]
----
+tags: ["ύιΦύσ╢ίνΘί┐αί╜?, "ύ┤λί╝Χ", "ύθξϋψΗί║?]---
+
 # ύιΦύσ╢ίνΘί┐αί╜Χύ┤λί╝?
 **ύ┤λί╝ΧύΚΙόευ**: 1.0.0
 **όεΑίΡΟόδ┤όΨ?*: 2026-04-02

@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席蓝图架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 机器学习
 standard_type: 专业量化机构评估报告
 applicable_scope: 归档文档重新创建必要性评估
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # 归档文档重新创建必要性评估报告
 

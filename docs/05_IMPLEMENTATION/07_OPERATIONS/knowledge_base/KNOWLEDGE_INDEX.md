@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ϊ╕ςϊ║║ί╝ΑίΠ?standard_type: ύθξϋψΗύ┤λί╝ΧόΨΘόκμ
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 机器学习
 applicable_scope: ϊ╕ςϊ║║ύθξϋψΗύχκύΡΗ
 compliance_level: ύχΑίΝΨόιΘ?parent_document: ../README.md
-implementation_status: Active
----
+implementation_status: Active---
+
 
 # ύθξϋψΗύ┤λί╝ΧΎ╝Ιϊ╕ςϊ║║ί╝ΑίΠΣϋΑΖύΚΙ?
 > **ύΚΙόευ**: v1.0  

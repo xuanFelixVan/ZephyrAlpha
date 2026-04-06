@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?standard_type: 专业量化机构文档
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 系统架构
 applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 进行�?---
@@ -15,8 +19,8 @@ implementation_status: 进行�?---
 > **更新日期**: 2026-03-31
 > **维护�?*: 策略研发团队
 > **Layer**: Layer 5 (策略执行�?
-
 ---
+
 
 ## 快速导�?
 ### 核心模块

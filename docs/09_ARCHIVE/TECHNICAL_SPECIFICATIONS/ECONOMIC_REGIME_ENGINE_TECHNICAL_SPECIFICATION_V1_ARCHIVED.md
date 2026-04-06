@@ -13,11 +13,15 @@ review_status: Pending
 reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-02
 owner: ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+responsibility:
+  - 市场状态识别
+  - 交易执行
+  - 数据源
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
----
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ---
+
 
 # ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 

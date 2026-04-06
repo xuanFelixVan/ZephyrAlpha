@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 交易执行
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 审计追踪系统TigerBeetle集成
@@ -15,8 +19,8 @@ related_documents:
   - P0_MODULES_IMPLEMENTATION_PLAN.md
   - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
-implementation_status: 实施就绪
----
+implementation_status: 实施就绪---
+
 
 # 审计追踪系统TigerBeetle集成实施方案
 

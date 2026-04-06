@@ -1,13 +1,17 @@
 ---
 standard_type: æ¶æææ¡£
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 数据源
 applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?version: 2.0.0
 module_id: FACTOR_ENGINE_DETAILED_DESIGN
 created_date: 2026-04-03
 last_updated: 2026-04-03
-tags: ["æ¶æè®¾è®¡", "å å­å¼æ", "è¯¦ç»è®¾è®¡"]
----
+tags: ["æ¶æè®¾è®¡", "å å­å¼æ", "è¯¦ç»è®¾è®¡"]---
+
 # å å­å¼æè¯¦ç»è®¾è®¡ææ¡£
 
 **ææ¡£çæ¬**: 2.0.0

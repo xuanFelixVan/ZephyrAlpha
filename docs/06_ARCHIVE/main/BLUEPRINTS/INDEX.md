@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
+responsibility:
+  - 数据源
+  - 系统架构
+  - 文档治理
 standard_type: 索引文档
 applicable_scope: 蓝图文档管理
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # Blueprints索引
 

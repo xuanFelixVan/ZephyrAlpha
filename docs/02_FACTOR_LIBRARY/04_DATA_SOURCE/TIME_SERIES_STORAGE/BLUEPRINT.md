@@ -5,6 +5,10 @@ status: Blueprint
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 交易执行
 standard_type: 模块蓝图
 applicable_scope: 高性能时序存储系统
 compliance_level: 专业标准
@@ -12,8 +16,8 @@ parent_document: ../INDEX.md
 dependencies:
   - QuestDB
   - InfluxDB
-  - TimescaleDB
----
+  - TimescaleDB---
+
 
 # 高性能时序存储系统蓝图
 

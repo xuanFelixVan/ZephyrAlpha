@@ -1,13 +1,17 @@
 ---
 standard_type: ﮒ ﮒ­ﮔﮔ۰۲
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 日志系统
 applicable_scope: ﮒ ﮒ­ﮒﭦ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﻝ ﻝ۸ﭘﮒ؟?version: 1.0.0
 module_id: MOMENTUM_FACTOR_LIBRARY
 created_date: 2026-04-03
 last_updated: 2026-04-03
-tags: ["ﮒ ﮒ­ﮒﭦ?, "ﮒ۷ﻠﮒ ﮒ­", "ﮒ ﮒ­ﻝ ﻝ۸ﭘ"]
----
+tags: ["ﮒ ﮒ­ﮒﭦ?, "ﮒ۷ﻠﮒ ﮒ­", "ﮒ ﮒ­ﻝ ﻝ۸ﭘ"]---
+
 # ﮒ۷ﻠﮒ ﮒ­ﮒﭦ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-03

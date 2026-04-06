@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 交易对手风险管理系统
@@ -27,8 +31,8 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
----
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库---
+
 
 # 交易对手风险管理系统蓝图
 

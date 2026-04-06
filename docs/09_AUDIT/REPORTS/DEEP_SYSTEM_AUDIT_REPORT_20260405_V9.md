@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: Audit Sentinel
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 交易执行
 standard_type: 专业量化机构审计报告
 applicable_scope: 全系统文档治理
-compliance_level: 深度审计V9
----
+compliance_level: 深度审计V9---
+
 
 # 深度系统审计报告 V9
 

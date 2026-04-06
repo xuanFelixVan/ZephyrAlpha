@@ -4,13 +4,17 @@ version: 1.0.0
 status: Archived
 created_date: 2026-04-04
 owner: 审计系统架构�?standard_type: 归档索引
+responsibility:
+  - 交易执行
+  - 机器学习
+  - 系统架构
 applicable_scope: 审计报告归档
 archive_date: 2026-04-04
 archive_reason: 整理分散的审计报告，统一归档管理
 source_locations:
   - 05_IMPLEMENTATION/07_OPERATIONS/audit_state/
-  - 05_IMPLEMENTATION/07_OPERATIONS/review_reports/
----
+  - 05_IMPLEMENTATION/07_OPERATIONS/review_reports/---
+
 
 # 审计报告归档索引 (2026-04-04)
 

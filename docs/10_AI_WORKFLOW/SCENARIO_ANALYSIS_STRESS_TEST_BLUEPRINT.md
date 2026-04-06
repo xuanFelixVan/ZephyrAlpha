@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 组合优化
+  - 交易执行
 layer: Layer 6 (组合优化层)
 standard_type: 专业机构级蓝图
 applicable_scope: 情景分析与压力测试系统
@@ -26,8 +30,8 @@ open_source_solution:
   secondary: Zipline
   secondary_github: https://github.com/quantopian/zipline
   license: Apache 2.0
-  cost: 完全免费
----
+  cost: 完全免费---
+
 
 ## 文档职责说明
 

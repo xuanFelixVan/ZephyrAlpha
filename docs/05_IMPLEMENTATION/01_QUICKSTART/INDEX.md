@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ждќтИГТќЄТАБТъХТъё№┐?standard_type: СИЊСИџжЄЈтїќТю║Тъёу┤бт╝Ћ
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 文档治理
 applicable_scope: т┐ФжђЪтЁЦжЌеуЏ«№┐?compliance_level: СИЊСИџТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: ти▓т«ї№┐?---
@@ -30,7 +34,7 @@ implementation_status: ти▓т«ї№┐?---
 
 ### т«ъУихТїЄтЇЌ
 - [factor_design.md](factor_design.md) - тЏатГљУ«ЙУ«АтЁЦжЌе
-- [first-backtest.md](first-backtest.md) - уггСИђТгАтЏъ№┐?
----
+- [first-backtest.md](first-backtest.md) - уггСИђТгАтЏъ№┐?---
+
 
 **у┤бт╝ЋуЅѕТюг**: v1.0.0 | **тѕЏт╗║ТЌЦТюЪ**: 2026-04-03 | **у╗┤Тіц№┐?*: ждќтИГТќЄТАБТъХТъё№┐?

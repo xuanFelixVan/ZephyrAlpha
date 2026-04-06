@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ç³»ç»æ¶æ?standard_type: ä¸ä¸éåæºæææ¡£å°å¾
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 系统架构
 applicable_scope: 01_FRAMEWORKç®å½
 compliance_level: ä¸ä¸æ å
 parent_document: INDEX.md
-implementation_status: æ´»è·ç»´æ¤
----
+implementation_status: æ´»è·ç»´æ¤---
+
 
 # æ¡æ¶è®¾è®¡ææ¡£å°å¾ (SITEMAP)
 

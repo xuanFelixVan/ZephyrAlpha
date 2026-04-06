@@ -5,11 +5,14 @@ compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: ти▓т«їТѕ?
 owner: ТќЄТАБу«АуљєтЉ?
+responsibility:
+  - 文档治理
+  - 审计系统
 version: 1.0.0
 module_id: INTELLIGENT_LINK_FIX_REPORT_20260402
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ТЎ║УЃйжЊЙТјЦС┐«тцЇТіЦтЉі
 
 **ТіЦтЉіТЌХжЌ┤**: 2026-04-02 21:40

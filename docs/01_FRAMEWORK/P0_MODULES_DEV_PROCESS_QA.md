@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 数据源
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级开发流程
 applicable_scope: P0模块开发流程和质量保证
@@ -14,8 +18,8 @@ related_documents:
   - P0_MODULES_IMPLEMENTATION_PLAN.md
   - P0_MODULES_INTEGRATION_CONFIG.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
-implementation_status: 流程就绪
----
+implementation_status: 流程就绪---
+
 
 # P0模块开发流程和质量保证文档
 

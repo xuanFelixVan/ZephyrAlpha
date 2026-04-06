@@ -5,8 +5,12 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席蓝图架构�?standard_type: 专业量化机构归档报告
-applicable_scope: 内容不完整蓝图文档归�?compliance_level: 专业标准
----
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 机器学习
+applicable_scope: 内容不完整蓝图文档归�?compliance_level: 专业标准---
+
 
 # 内容不完整蓝图文档归档报�?
 > **报告编号**: `ARCHIVE_REPORT_20260404_001`

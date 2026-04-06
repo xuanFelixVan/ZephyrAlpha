@@ -5,11 +5,14 @@ compliance_level: όφμί╝ΠόιΘίΘΗ
 parent_document: ../INDEX.md
 implementation_status: ί╖▓ίχΝόΙ?
 owner: ώοΨί╕φόη╢όηΕί╕?
+responsibility:
+  - 因子计算
+  - 文档治理
 version: 1.0.0
 module_id: DOC_GOVERNANCE_IMPROVEMENT_CASES
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # όΨΘόκμό▓╗ύΡΗόΦ╣ϋ┐δόκΙϊ╛Μί║?
 
 **όΨΘόκμύΚΙόευ**: 1.0.0

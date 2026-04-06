@@ -5,14 +5,18 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席审计官
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 交易执行
 layer: Layer 5 (策略执行层)
 standard_type: 专业量化机构级深度审计报告
 applicable_scope: Layer 5策略执行层文档治理审计
 compliance_level: 专业标准
 audit_date: 2026-04-07
 audit_type: 深度审计（三层审计标准）
-audit_scope: L1文件系统层 + L2文档内容层 + L3专业标准层
----
+audit_scope: L1文件系统层 + L2文档内容层 + L3专业标准层---
+
 
 # Layer 5策略执行层深度审计报告 V2
 

@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: é¦å¸­ææ¡£æ¶æå¸?standard_type: ä¸ä¸éåæºæç´¢å¼
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 安全系统
 applicable_scope: AIèæç ç©¶å¢é
 compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
@@ -77,6 +81,6 @@ AIèæç ç©¶å¢é
 â?  âââ AIæéæ¸å
 âââ AIå·¥ä½æµ?(10_AI_WORKFLOW)
     âââ å·¥ä½æµææ¡?```
-
 ---
+
 *æåæ´æ? 2026-04-03*

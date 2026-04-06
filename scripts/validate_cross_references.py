@@ -178,8 +178,8 @@ class CrossReferenceValidator:
         print("📊 交叉引用验证报告")
         print("="*80)
         
+        print(f"\n扫描时间: {report['scan_time']}")
         summary = report['summary']
-        print(f"\n扫描时间: {summary['scan_time']}")
         print(f"文档总数: {summary['total_documents']}")
         print(f"链接总数: {summary['total_links']}")
         print(f"有效链接: {summary['valid_links']}")

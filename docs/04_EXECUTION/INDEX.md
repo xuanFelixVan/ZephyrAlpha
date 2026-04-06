@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 执行层架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 机器学习
 standard_type: 专业量化机构目录索引
 applicable_scope: 04_EXECUTION目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 活跃维护
----
+implementation_status: 活跃维护---
+
 
 # 执行层目录索�?
 > **版本**: v5.3  

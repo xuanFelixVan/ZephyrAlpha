@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 数据源
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha文档中心
@@ -13,8 +17,8 @@ parent_document: ../index.md
 implementation_status: 蓝图设计
 open_source_project: MkDocs
 github_url: https://github.com/mkdocs/mkdocs
-license: BSD-2-Clause
----
+license: BSD-2-Clause---
+
 
 # 文档中心模块蓝图
 

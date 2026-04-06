@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业机构级蓝图
 applicable_scope: 知识管理与传承系统
@@ -26,8 +30,8 @@ open_source_solution:
   secondary: LangChain Memory
   secondary_github: https://github.com/langchain-ai/langchain
   license: MIT
-  cost: 完全免费
----
+  cost: 完全免费---
+
 
 ## 文档职责说明
 

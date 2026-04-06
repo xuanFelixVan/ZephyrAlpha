@@ -1,13 +1,17 @@
 ---
 standard_type: у╗ЈжфїТђ╗у╗Њ
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 applicable_scope: СИфС║║т╝ђтЈ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
 implementation_status: ти▓т«їТѕ?owner: СИфС║║т╝ђтЈЉУђ?version: 1.0.0
 module_id: PERSONAL_DEV_LESSONS_LEARNED
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["СИфС║║т╝ђтЈ?, "у╗ЈжфїТЋЎУ«Г", "ТюђСй│т«ъУи?]
----
+tags: ["СИфС║║т╝ђтЈ?, "у╗ЈжфїТЋЎУ«Г", "ТюђСй│т«ъУи?]---
+
 # СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ
 
 **ТќЄТАБуЅѕТюг**: 1.0.0

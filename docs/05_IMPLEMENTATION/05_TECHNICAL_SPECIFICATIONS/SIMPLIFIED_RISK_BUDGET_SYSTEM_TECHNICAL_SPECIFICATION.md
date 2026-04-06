@@ -13,10 +13,12 @@ review_status: Pending
 reviewer: ��ϯ���������
 review_date: 2026-04-03
 owner: ����Ż��㸺����
+responsibility:
+  - 文档治理
 standard_type: רҵ�����������������
 applicable_scope: ȫϵͳ
-compliance_level: רҵ��׼
----
+compliance_level: רҵ��׼---
+
 
 # �򻯷���Ԥ��ϵͳ��������� v1.0
 

@@ -1,13 +1,17 @@
 ---
 standard_type: ίψ╣όψΦίΙΗόηΡ
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 applicable_scope: ίΖρύ│╗ύ╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../INDEX.md
 implementation_status: ί╖▓ίχΝόΙ?owner: ώοΨί╕φόη╢όηΕί╕?version: 2.0.0
 module_id: PROFESSIONAL_COMPARISON_ANALYSIS_FINAL
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ίψ╣όψΦίΙΗόηΡ", "ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕ", "όΨΘόκμό▓╗ύΡΗ", "όεΑύ╗ΙϋψΕϊ╝?]
----
+tags: ["ίψ╣όψΦίΙΗόηΡ", "ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕ", "όΨΘόκμό▓╗ύΡΗ", "όεΑύ╗ΙϋψΕϊ╝?]---
+
 # ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕίψ╣όψΦίΙΗόηΡόΛξίΣΛΎ╝ΙόεΑύ╗ΙύΚΙΎ╝?
 **όΛξίΣΛόΩ╢ώΩ┤**: 2026-04-02 22:45
 **όΛξίΣΛϋΝΔίδ┤**: ZephyrAlpha vs όκξό░┤ίθ║ώΘΣ/όΨΘϋΚ║ίνΞίΖ┤Ύ╝ΙόεΑύ╗ΙϋψΕϊ╝░Ύ╝Κ

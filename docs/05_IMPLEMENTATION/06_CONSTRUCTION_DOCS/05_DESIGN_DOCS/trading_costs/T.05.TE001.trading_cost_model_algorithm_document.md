@@ -5,12 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?
+responsibility:
+  - 文档治理
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшо╛шобцЦЗцбг
 applicable_scope: цибцЛЯф║дцШУч│╗ч╗Я
 compliance_level: цЮ╢цЮДцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: ш┐ЫшбМф╕?
----
+implementation_status: ш┐ЫшбМф╕?---
+
 
 # ф║дцШУцИРцЬмцибхЮЛчоЧц│ХцЦЗцбг
 

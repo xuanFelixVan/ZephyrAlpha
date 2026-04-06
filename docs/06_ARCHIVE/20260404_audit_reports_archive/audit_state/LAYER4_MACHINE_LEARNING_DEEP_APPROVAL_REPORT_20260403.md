@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
+responsibility:
+  - 数据质量
+  - 风险预算
+  - 因子计算
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # Layer 4 机器学习层深度审批报?
 > **审批编号**: DEEP-APPROVAL-L4-ML-20260403-001

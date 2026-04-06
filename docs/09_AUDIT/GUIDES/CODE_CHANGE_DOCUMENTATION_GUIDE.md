@@ -5,11 +5,15 @@ compliance_level: و­£ه¼ڈو ‡ه‡†
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ه·²ه®Œوˆ?
 owner: é¦–ه¸­و‍¶و‍„ه¸?
+responsibility:
+  - 数据源
+  - 特征工程
+  - 机器学习
 version: 1.0.0
 module_id: CODE_CHANGE_DOC_GUIDE
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ن»£ç پهڈکو›´و–‡و،£و›´و–°وŒ‡هچ—
 
 **و–‡و،£ç‰ˆوœ¬**: 1.0.0

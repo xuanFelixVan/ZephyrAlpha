@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 系统架构
 standard_type: 专业量化机构文档维护流程
 applicable_scope: 全系统文档维护
 compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/INDEX.md
-implementation_status: 活跃维护
----
+implementation_status: 活跃维护---
+
 
 # 文档维护流程
 

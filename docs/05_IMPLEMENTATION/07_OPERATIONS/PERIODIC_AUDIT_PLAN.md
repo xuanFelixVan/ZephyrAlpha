@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЮ╢цЮД?standard_type: хоЪцЬЯхобшобшобхИТ
+responsibility:
+  - 机器学习
+  - 系统架构
+  - 文档治理
 applicable_scope: хЕич│╗ч╗ЯцЦЗцбгхоб?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
-parent_document: ../INDEX.md
----
+parent_document: ../INDEX.md---
+
 
 # хоЪцЬЯхобшобшобхИТ
 

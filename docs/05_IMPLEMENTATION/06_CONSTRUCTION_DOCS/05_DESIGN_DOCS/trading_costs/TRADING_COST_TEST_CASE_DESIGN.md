@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 机器学习
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒ
 compliance_level: ﮔﭘﮔﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+
 
 # ﻛﭦ۳ﮔﮔﮔ؛ﮔﭖﻟﺁﻝ۷ﻛﺝﻟ؟ﺝﻟ؟۰
 

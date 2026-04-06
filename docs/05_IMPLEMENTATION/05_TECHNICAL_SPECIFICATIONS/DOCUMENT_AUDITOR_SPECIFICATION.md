@@ -1,12 +1,16 @@
 ---
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 文档治理
 compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_SPECIFICATION
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02

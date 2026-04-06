@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДц╖▒х║жхобшобцКехСК
+responsibility:
+  - 机器学习
+  - 绩效分析
+  - 系统架构
 applicable_scope: цХ░цНощвДхдДчРЖх▒ВхЕищЭвхобшоб
-compliance_level: ф╕Уф╕ЪцаЗхЗЖ
----
+compliance_level: ф╕Уф╕ЪцаЗхЗЖ---
+
 
 # ц╕ЕщгОщЗПхМЦч│╗ч╗ЯцХ░цНощвДхдДчРЖх▒Вц╖▒х║жхобшобцКехСК V3
 

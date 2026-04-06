@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﮔﭦﮔﻝﭦ۶ﮒﮔ?applicable_scope: ﻝ­ﻝ۴ﮒﺎAIﮔ۷۰ﮒﻠﮔﺎﮒﮔ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 机器学习
 parent_document: ../10_AI_WORKFLOW/INDEX.md
-implementation_status: ﮒﮔﮒ؟ﮔ
----
+implementation_status: ﮒﮔﮒ؟ﮔ---
+
 
 # ﻝ­ﻝ۴ﮒﺎAIﮔ۷۰ﮒﻠﮔﺎﮒﮔﮔ۴ﮒ?
 > **ﮒﮔﮔ۴ﮔ**: 2026-04-02

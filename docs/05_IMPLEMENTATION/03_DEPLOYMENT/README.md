@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
+responsibility:
+  - 数据源
+  - 系统架构
+  - 文档治理
 standard_type: 专业量化机构实施标准
 applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
----
+implementation_status: 进行�?---
+
 
 �? 部署指南 (Deployment Guide)
 

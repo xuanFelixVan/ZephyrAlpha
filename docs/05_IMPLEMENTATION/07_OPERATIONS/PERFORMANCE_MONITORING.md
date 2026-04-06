@@ -5,11 +5,15 @@ compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲ﻛﭦ?
+responsibility:
+  - 机器学习
+  - 绩效分析
+  - 文档治理
 version: 1.0.0
 module_id: IMP_PERFORMANCE_MONITORI
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛﮔ۶ﻟﺛﻝﮔ۶ v1.0
 
 ## 1. ﮔ۵ﻟﺟﺍ

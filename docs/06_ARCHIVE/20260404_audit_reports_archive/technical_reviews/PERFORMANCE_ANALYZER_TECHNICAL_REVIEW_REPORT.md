@@ -11,8 +11,12 @@ applicable_scope: 系统实施
 parent_document: ../INDEX.md
 implementation_status: 进行?
 owner: 实施负责?
-last_updated: 2026-04-02
----
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 组合优化
+last_updated: 2026-04-02---
+
 
 # PerformanceAnalyzer绩效分析器模块技术评审报?
 

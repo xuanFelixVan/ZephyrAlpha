@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­èå¾æ¶æ?standard_type: ä¸ä¸éåæºæèå¾
+responsibility:
+  - 数据源
+  - 机器学习
+  - 系统架构
 applicable_scope: ææ¯éåå³ç­
 compliance_level: é¡¶çº§ä¸ä¸æ å
 reference_models: ["Technology Decision Records Best Practices", "ADR (Architecture Decision Records)"]
@@ -12,8 +16,8 @@ related_documents:
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - ARCHITECTURE.md
 parent_document: ../ARCHITECTURE.md
-implementation_status: èå¾è®¾è®¡å®æ
----
+implementation_status: èå¾è®¾è®¡å®æ---
+
 
 # ææ¯éåå³ç­è®°å½ï¼æ¶æå³ç­ææ¡£å
 

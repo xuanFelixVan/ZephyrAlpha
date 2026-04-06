@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
+responsibility:
+  - 系统架构
+  - 文档治理
+  - 审计系统
 standard_type: 专业量化机构索引文档
 applicable_scope: 03_DEPLOYMENT目录
 compliance_level: 专业标准
-parent_document: ../INDEX.md
----
+parent_document: ../INDEX.md---
+
 
 # 03_DEPLOYMENT 部署指南索引
 

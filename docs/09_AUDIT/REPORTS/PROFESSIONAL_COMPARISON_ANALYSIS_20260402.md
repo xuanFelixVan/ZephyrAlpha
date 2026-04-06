@@ -1,13 +1,17 @@
 ---
 standard_type: хп╣цпФхИЖцЮР
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: PROFESSIONAL_COMPARISON_ANALYSIS
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["хп╣цпФхИЖцЮР", "ф╕Уф╕ЪщЗПхМЦцЬ║цЮД", "цЦЗцбгц▓╗чРЖ", "х╖ош╖ЭхИЖцЮР"]
----
+tags: ["хп╣цпФхИЖцЮР", "ф╕Уф╕ЪщЗПхМЦцЬ║цЮД", "цЦЗцбгц▓╗чРЖ", "х╖ош╖ЭхИЖцЮР"]---
+
 # ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцЦЗцбгц▓╗чРЖхп╣цпФхИЖцЮРцКехСК
 
 **цКехСКцЧ╢щЧ┤**: 2026-04-02 22:00

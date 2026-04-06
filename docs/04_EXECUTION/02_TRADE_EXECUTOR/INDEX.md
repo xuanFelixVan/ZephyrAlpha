@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
+responsibility:
+  - 系统架构
+  - 文档治理
+  - 审计系统
 standard_type: 索引文档
 applicable_scope: 文档索引导航
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # 02 Trade Executor索引
 

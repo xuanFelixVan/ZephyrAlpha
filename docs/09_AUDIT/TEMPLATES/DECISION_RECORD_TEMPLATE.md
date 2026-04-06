@@ -1,5 +1,7 @@
 ---
 standard_type: цЦЗцбгцибцЭ┐
+responsibility:
+  - 文档治理
 applicable_scope: хЖ│чнЦц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../STANDARDS/DECISION_RECORD_STANDARD.md
@@ -7,8 +9,8 @@ implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕
 module_id: DECISION_RECORD_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["хЖ│чнЦшо░х╜Х", "цибцЭ┐", "хЖ│чнЦц╡БчиЛ"]
----
+tags: ["хЖ│чнЦшо░х╜Х", "цибцЭ┐", "хЖ│чнЦц╡БчиЛ"]---
+
 # хЖ│чнЦшо░х╜ХцибцЭ┐
 
 > **ф╜┐чФишп┤цШО**: хдНхИ╢цндцибцЭ┐хИЫх╗║цЦ░чЪДхЖ│чнЦшо░х╜Хя╝МхблхЖЩцЙАцЬЙх┐ЕщЬАхнЧцо╡

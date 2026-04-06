@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
+responsibility:
+  - 机器学习
+  - 绩效分析
+  - 文档治理
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # ϋΙΗόΔΖίΙΗόηΡί▒ΓόΨΘόκμό╖▒ί║οίχκϋχκόΛξίΣΛΎ╝Ιϊ╕Υϊ╕γόιΘίΘΗύΚΙΎ╝Κ
 

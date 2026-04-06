@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计团队
+responsibility:
+  - 数据源
+  - 机器学习
+  - 绩效分析
 standard_type: 专业量化机构工作流
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # ﮔﺍﮒ۱ﮔﮔ۰۲ﮒﮒﭨﭦﮔﭖﻝ۷ﺅﺙﻛﺙﮒﻝﺅﺙ?
 **ﮔﮔ۰۲ID**: DOC_CREATION_WORKFLOW_001

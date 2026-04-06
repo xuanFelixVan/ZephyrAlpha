@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 数据源
 layer: Layer 11 (战略决策层)
 standard_type: 专业机构级蓝图
 applicable_scope: AI工作汇报与交付
@@ -18,8 +22,8 @@ reference_models:
 related_documents:
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
   - POST_TRADE_REVIEW_BLUEPRINT.md
-  - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
----
+  - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md---
+
 
 
 ## 文档职责说明

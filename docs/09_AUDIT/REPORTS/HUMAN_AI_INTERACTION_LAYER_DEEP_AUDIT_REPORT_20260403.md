@@ -5,7 +5,12 @@ audit_date: 2026-04-03
 audit_scope: ф║║цЬ║ф║дф║Тх▒ВцЙАцЬЙцЦЗцб?audit_standard: v5.1
 auditor: AIхобшобч│╗ч╗Я
 status: Completed
+responsibility:
+  - 机器学习
+  - 文档治理
+  - 审计系统
 ---
+
 
 # ф║║цЬ║ф║дф║Тх▒Вц╖▒х║жхобшобцКехС?
 > **хобшобцЧ╢щЧ┤**: 2026-04-03

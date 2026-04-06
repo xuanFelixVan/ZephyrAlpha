@@ -5,10 +5,14 @@ compliance_level: хИЭхзЛцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: щжЦх╕нхобшобхо?version: 1.0.0
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 module_id: DOC_ARCHITECTURE_ANALYSI
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # цЮ╢цЮДхИЖцЮРцКехСК
 > чФЯцИРцЧ╢щЧ┤: 2026-04-01
 > ч│╗ч╗ЯчЙИцЬм: v5.3

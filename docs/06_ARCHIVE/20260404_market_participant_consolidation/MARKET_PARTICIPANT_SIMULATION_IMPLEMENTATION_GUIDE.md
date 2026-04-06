@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 交易执行
 standard_type: ф╕кф║║х╝АхП?AIч╗┤цКдхоЮцЦ╜цМЗхНЧ
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
-implementation_status: шзДхИТщШ╢цо╡
----
+implementation_status: шзДхИТщШ╢цо╡---
+
 
 # х╕ВхЬ║хПВф╕ОшАЕшбМф╕║цибцЛЯч│╗ч╗ЯхоЮцЦ╜цМЗхН?
 > **чЙИцЬм**: v1.0

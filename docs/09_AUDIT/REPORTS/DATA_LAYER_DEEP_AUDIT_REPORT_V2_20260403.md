@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: لخûف╕صµئ╢µئف╕?standard_type: µ╖▒ف║خµûçµةثف«ةك«ةµèحفّè
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 回测系统
 applicable_scope: µـ░µ«µ║ف▒éµûçµةثغ╜ôق│╗
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../INDEX.md
-audit_type: غ╕ëف▒éµ╖▒ف║خف«ةك«ةي╝êL1/L2/L3ي╝?backup_tag: backup-before-deep-audit-20260403-v2
----
+audit_type: غ╕ëف▒éµ╖▒ف║خف«ةك«ةي╝êL1/L2/L3ي╝?backup_tag: backup-before-deep-audit-20260403-v2---
+
 
 # µـ░µ«µ║ف▒éµûçµةثµ╖▒ف║خف«ةك«ةµèحفّè V2
 

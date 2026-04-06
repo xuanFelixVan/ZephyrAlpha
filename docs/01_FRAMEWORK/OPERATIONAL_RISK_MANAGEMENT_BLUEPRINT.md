@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 交易执行
+  - 特征工程
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 操作风险管理系统架构设计
@@ -28,8 +32,8 @@ responsibility_boundary: |
   
   **与本文档职责边界**：
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（包含操作风险事件）
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪（包含操作风险审计）
----
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪（包含操作风险审计）---
+
 
 # 操作风险管理系统蓝图（蓝图阶段）
 

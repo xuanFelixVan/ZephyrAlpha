@@ -5,8 +5,12 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ждќтИГТъХТъётИ?standard_type: СИЊСИџжЄЈтїќТю║ТъёТБђТЪЦТИЁтЇ?applicable_scope: у│╗у╗ЪжЃеуй▓тЅЇТБђТЪ?compliance_level: СИЊСИџТаЄтЄє
-parent_document: ../README.md
----
+responsibility:
+  - 数据源
+  - 文档治理
+  - 审计系统
+parent_document: ../README.md---
+
 
 # жЃеуй▓тЅЇТБђТЪЦТИЁтЇ?
 > **уЅѕТюг**: v1.0

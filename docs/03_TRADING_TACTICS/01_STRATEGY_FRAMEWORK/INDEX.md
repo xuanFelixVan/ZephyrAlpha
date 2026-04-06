@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДч┤вх╝Х
+responsibility:
+  - 组合优化
+  - 回测系统
+  - 文档治理
 applicable_scope: чнЦчХецбЖцЮ╢чЫох╜Х
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
@@ -48,7 +52,7 @@ implementation_status: х╖▓хоМцИ?---
 - [STRATEGY_AI_MODULES_ANALYSIS.md](STRATEGY_AI_MODULES_ANALYSIS.md) - AIчнЦчХецибхЭЧхИЖцЮР
 - [RISK_CONTROL_AI_BLUEPRINT.md](RISK_CONTROL_AI_BLUEPRINT.md) - AIщгОщЩйцОзхИ╢
 - [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md) - AIч╗ДхРИф╝ШхМЦ
-
 ---
+
 
 **ч┤вх╝ХчЙИцЬм**: v1.0.0 | **хИЫх╗║цЧецЬЯ**: 2026-04-03 | **ч╗┤цКдшА?*: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?

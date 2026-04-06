@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 机器学习
+  - 系统架构
+  - 文档治理
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 合规报告界面
@@ -24,8 +28,8 @@ responsibility_boundary: |
   合规监控请参考：COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
   监管报告请参考：REGULATORY_REPORTING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成
----
+implementation_status: 蓝图设计完成---
+
 
 # 合规报告界面蓝图
 

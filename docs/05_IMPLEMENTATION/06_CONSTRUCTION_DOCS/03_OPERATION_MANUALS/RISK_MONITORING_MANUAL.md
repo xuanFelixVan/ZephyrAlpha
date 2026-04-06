@@ -1,13 +1,17 @@
 ---
 standard_type: ж“ҚдҪңжҢҮеҚ—
+responsibility:
+  - 数据源
+  - 文档治理
+  - 日志系统
 applicable_scope: е…Ёзі»з»?compliance_level: жӯЈејҸж ҮеҮҶ
 parent_document: ../README.md
 implementation_status: е·Іе®ҢжҲ?owner: йЈҺжҺ§еӣўйҳҹ
 version: 1.0.0
 module_id: RISK_MONITORING_MANUAL
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # йЈҺйҷ©зӣ‘жҺ§жүӢеҶҢ
 
 **ж–ҮжЎЈзүҲжң¬**: 1.0.0

@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席文档架构�?standard_type: 专业量化机构文档
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 applicable_scope: 全系�?compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 设计完成
----
+implementation_status: 设计完成---
+
 
 # Layer 11: 文字驱动层架构蓝�?
 > **版本**: v1.0  

@@ -5,11 +5,14 @@ compliance_level: цнгх╝ПцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?
 owner: щжЦх╕нцЮ╢цЮДх╕?
+responsibility:
+  - 文档治理
+  - 审计系统
 version: 1.0.0
 module_id: DOC_NON_STANDARD_MANAGEMENT_REPORT
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # щЭЮцаЗхЗЖхИЖч▒╗цЦЗцбгчобчРЖцКехС?
 
 **цКехСКцЧ╢щЧ┤**: 2026-04-02 13:09

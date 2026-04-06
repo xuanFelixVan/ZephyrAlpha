@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席蓝图架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 机器学习
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 审计日志查看器
@@ -25,8 +29,8 @@ responsibility_boundary: |
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
   AI决策审计请参考：AI_DECISION_AUDIT_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-implementation_status: 蓝图设计完成
----
+implementation_status: 蓝图设计完成---
+
 
 # 审计日志查看器蓝图
 

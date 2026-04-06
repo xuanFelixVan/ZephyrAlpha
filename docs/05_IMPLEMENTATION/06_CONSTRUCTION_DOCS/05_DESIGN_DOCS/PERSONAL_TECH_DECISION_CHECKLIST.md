@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻝﺏﭨﻝﭨﮒﺙﮒ?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 standard_type: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﮒﺏﻝ­ﮔﭖﻝ۷
 applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
 compliance_level: ﮒ؟ﻝ۷ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰?
----
+implementation_status: ﻟﺟﻟ۰?---
+
 
 # ﻛﺕ۹ﻛﭦﭦﮔﮔﺁﮒﺏﻝ­ﻝ۰؟ﻟ؟۳ﮔﺕ?
 

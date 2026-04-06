@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 交易执行
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 9 (监控层)"
----
+layer: "Layer 9 (监控层)"---
+
 ﻿# 监控面板增强蓝图
 
 > **核心定位**: 监控面板增强蓝图的核心功能实现

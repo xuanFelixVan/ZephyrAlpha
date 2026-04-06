@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: '2026-04-06'
 owner: 首席技术评审官
+responsibility:
+  - 因子计算
+  - 数据源
+  - 机器学习
 standard_type: 专业量化机构蓝图
 applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
 compliance_level: 专业标准
@@ -13,8 +17,8 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 open_source_dependency: pandas, numpy
 estimated_effort: 1.5周
-priority: P1
----
+priority: P1---
+
 
 
 # 数据成本管理系统蓝图

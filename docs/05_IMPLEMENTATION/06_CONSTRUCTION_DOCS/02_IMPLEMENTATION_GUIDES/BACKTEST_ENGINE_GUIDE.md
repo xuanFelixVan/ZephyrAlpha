@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 绩效分析
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﮒﮔﭖﮒﺙﮔﮔ۷۰ﮒﮒ؟ﮔﺛ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../README.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+
 
 # ﮒﮔﭖﮒﺙﮔﮒ؟ﮔﺛﮔﮒ
 

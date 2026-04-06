@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席架构师
+responsibility:
+  - 数据源
+  - 特征工程
+  - 机器学习
 standard_type: 专业机构级蓝图
 applicable_scope: 模型性能与版本管理模块
 compliance_level: 专业标准
@@ -14,8 +18,8 @@ priority: P0
 estimated_effort: 50h
 integrated_modules:
   - AIWF_MPM_001
-  - AIWF_MVM_001
----
+  - AIWF_MVM_001---
+
 
 
 ## 文档职责说明

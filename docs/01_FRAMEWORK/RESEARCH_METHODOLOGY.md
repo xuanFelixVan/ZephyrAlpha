@@ -1,13 +1,17 @@
 ---
 standard_type: æ ¸å¿ææ¡£
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­ç ç©¶å®?version: 1.0.0
 module_id: RESEARCH_METHODOLOGY
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ç ç©¶æ¹æ³è®?, "ç ç©¶æµç¨", "ç ç©¶æ å"]
----
+tags: ["ç ç©¶æ¹æ³è®?, "ç ç©¶æµç¨", "ç ç©¶æ å"]---
+
 # ZephyrAlphaç ç©¶æ¹æ³è®?
 **ææ¡£çæ¬**: 1.0.0
 **æåæ´æ?*: 2026-04-02

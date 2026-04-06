@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۷ﻠﻠ۷ﻝ۵
+responsibility:
+  - 数据源
+  - 机器学习
+  - 文档治理
 applicable_scope: ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۹ﻟﺁ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
-parent_document: ../README.md
----
+parent_document: ../README.md---
+
 
 # ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
 

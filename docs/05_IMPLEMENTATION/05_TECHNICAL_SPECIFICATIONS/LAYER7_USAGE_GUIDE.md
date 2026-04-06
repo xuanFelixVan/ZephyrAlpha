@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席技术评审官
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 组合优化
 standard_type: 使用指南
 applicable_scope: Layer 7 AI报告层
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # Layer 7 AI报告层 - 使用示例与最佳实践
 **文档ID**: LAYER7_USAGE_GUIDE_001

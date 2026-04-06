@@ -3,10 +3,13 @@ standard_type: жҠҖжңҜж–ҮжЎ?applicable_scope: е…Ёзі»з»?compl
 parent_document: ../INDEX.md
 implementation_status: и®ҫи®Ўйҳ¶ж®ө
 owner: ж–ҮжЎЈз»ҙжҠӨиҖ?version: 1.0.0
+responsibility:
+  - 系统架构
+  - 文档治理
 module_id: DOC_TEMPLATE
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ж–ҮжЎЈж Үйўҳ
 
 **ж–ҮжЎЈзүҲжң¬**: 1.0.0

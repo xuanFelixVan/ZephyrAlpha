@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 特征工程
 standard_type: ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻟ۰۴ﮒﮔﮔ۰۲
 applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
----
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ---
+
 
 # ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?- ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻟ۰۴ﮒﻟ؟ﺝﻟ؟?
 > **ﻝﮔ؛**: v1.0

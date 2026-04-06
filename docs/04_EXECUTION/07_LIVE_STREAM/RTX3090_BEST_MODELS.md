@@ -5,11 +5,15 @@ compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+responsibility:
+  - 数据源
+  - 机器学习
+  - 文档治理
 version: 1.0.0
 module_id: EXE_RTX3090_BEST_MODELS
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # RTX 3090 24GB ﮔﻛﺛﺏﮔ۷۰ﮒﻠﻝﺛ؟ﮔﺗﮔ۰?
 
 > ﻝ۰؛ﻛﭨﭘﻠﻝﺛ؟: RTX 3090 24GB + 64GB RAM + i7-12700KF

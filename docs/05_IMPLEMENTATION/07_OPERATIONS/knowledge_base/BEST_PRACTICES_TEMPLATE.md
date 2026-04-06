@@ -13,8 +13,10 @@ compliance_level: тѕЮтДІТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: У«ЙУ«АжўХТ«х
 owner: т«ъТќйУ┤ЪУ┤БС║?
-module_id: IMP_BEST_PRACTICES_TEMPL
----
+responsibility:
+  - 文档治理
+module_id: IMP_BEST_PRACTICES_TEMPL---
+
 
 # [СИ╗жбў]ТюђСй│т«ъУи?
 

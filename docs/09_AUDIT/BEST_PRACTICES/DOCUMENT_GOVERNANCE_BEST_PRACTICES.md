@@ -5,11 +5,15 @@ compliance_level: όφμί╝ΠόιΘίΘΗ
 parent_document: ../INDEX.md
 implementation_status: ί╖▓ίχΝόΙ?
 owner: ώοΨί╕φόη╢όηΕί╕?
+responsibility:
+  - 因子计算
+  - 数据源
+  - 机器学习
 version: 1.0.0
 module_id: DOC_GOVERNANCE_BEST_PRACTICES
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # όΨΘόκμό▓╗ύΡΗόεΑϊ╜│ίχηϋ╖╡ί║Υ
 
 **όΨΘόκμύΚΙόευ**: 1.0.0

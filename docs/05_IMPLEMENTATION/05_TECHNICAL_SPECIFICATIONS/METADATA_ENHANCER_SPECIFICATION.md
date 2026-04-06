@@ -1,11 +1,14 @@
 ---
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮒﮔﺍﮔ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+responsibility:
+  - 文档治理
+  - 审计系统
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: METADATA_ENHANCER_SPECIFICATION
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02

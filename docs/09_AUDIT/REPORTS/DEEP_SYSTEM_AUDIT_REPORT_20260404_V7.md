@@ -5,14 +5,18 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 审计系统架构�?standard_type: 专业文档治理审计报告
+responsibility:
+  - 交易执行
+  - 系统架构
+  - 文档治理
 applicable_scope: 全系统深度审�?compliance_level: 专业标准
 audit_type: 深度系统审计
 audit_scope: 全文档系�?audit_date: 2026-04-04
 audit_methodology: 三层审计标准 (L1-L3)
 reference_standards:
   - docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md
-  - docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md
----
+  - docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md---
+
 
 # 全系统深度审计报�?V7
 

@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
+responsibility:
+  - 因子计算
+  - 数据源
+  - 绩效分析
 standard_type: 专业量化机构索引文档
 applicable_scope: 07_OPERATIONS目录
 compliance_level: 专业标准
-parent_document: ../INDEX.md
----
+parent_document: ../INDEX.md---
+
 
 # 07_OPERATIONS 运维手册索引
 

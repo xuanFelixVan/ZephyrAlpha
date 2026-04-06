@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 交易执行
+  - 数据源
+  - 机器学习
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: ESG合规监控系统
@@ -27,8 +31,8 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
----
+  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪---
+
 
 # ESG合规监控系统蓝图
 

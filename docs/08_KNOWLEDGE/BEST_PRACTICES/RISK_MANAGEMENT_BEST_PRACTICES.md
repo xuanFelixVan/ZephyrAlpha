@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﻠ۲ﻠ۸ﮒ؟?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﻠ۲ﻠ۸ﻝ؟۰ﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 交易执行
 parent_document: ../INDEX.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﻠ۲ﻠ۸ﻝ؟۰ﻝ", "ﮔﻛﺛﺏﮒ؟ﻟﺓ?, "ﻛﺕﻛﺕﮔ ﮒ"]
----
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﻠ۲ﻠ۸ﻝ؟۰ﻝ", "ﮔﻛﺛﺏﮒ؟ﻟﺓ?, "ﻛﺕﻛﺕﮔ ﮒ"]---
+
 
 # ﻠ۲ﻠ۸ﻝ؟۰ﻝﮔﻛﺛﺏﮒ؟ﻟﺓ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

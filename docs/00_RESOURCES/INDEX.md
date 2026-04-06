@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ιΠ•εΗ≠φ•΅φΓΘφûΕφû³εΗ?standard_type: δΗ™δΗöι΅èε¨•φ€Κφû³γ¥ΔεΦï
+responsibility:
+  - 文档治理
 applicable_scope: εΛ•ιÉ®ηΒ³φΚê
 compliance_level: δΗ™δΗöφ†΅ε΅Ü
 parent_document: ../INDEX.md
@@ -32,6 +34,6 @@ implementation_status: εΖ≤ε°¨φà?---
 
 - **QMTφâßηΓ¨εô®η™ùε¦?*: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
 - **QMTφïΑφç°φéΞεèΘ**: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
-
 ---
+
 *φ€Äεêéφ¦¥φ•? 2026-04-03*

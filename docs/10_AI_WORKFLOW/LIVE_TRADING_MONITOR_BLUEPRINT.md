@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构师
+responsibility:
+  - 数据质量
+  - 风险预算
+  - 交易执行
 layer: Layer 7 (风控层)
 standard_type: 专业机构级蓝图
 applicable_scope: 实盘交易监控
@@ -18,8 +22,8 @@ reference_models:
 related_documents:
   - COMPLIANCE_MONITORING_BLUEPRINT.md
   - PERFORMANCE_ANALYSIS_BLUEPRINT.md
-  - REAL_TIME_MONITORING.md
----
+  - REAL_TIME_MONITORING.md---
+
 
 
 ## 文档职责说明

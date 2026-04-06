@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: Audit Sentinel
+responsibility:
+  - 交易执行
+  - 机器学习
+  - 系统架构
 standard_type: 专业量化机构审计报告
 applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准
 audit_methodology: 三层审计标准 (L1-L3)
-audit_depth: 深度审计 - 每个文档每个内容
----
+audit_depth: 深度审计 - 每个文档每个内容---
+
 
 # 深度系统审计报告 V8
 

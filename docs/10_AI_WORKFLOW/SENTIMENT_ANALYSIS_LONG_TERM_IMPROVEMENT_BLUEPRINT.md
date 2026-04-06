@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+responsibility:
+  - 交易执行
+  - 特征工程
+  - 机器学习
 layer: Layer 8 (人机交互层)
 standard_type: 专业机构级蓝图
 applicable_scope: 舆情分析层长期改进模块
@@ -13,8 +17,8 @@ parent_document: INDEX.md
 implementation_period: 6-12个月
 included_modules:
   - 多模态情感分析
-  - AI虚拟研究团队
----
+  - AI虚拟研究团队---
+
 
 
 ## 文档职责说明

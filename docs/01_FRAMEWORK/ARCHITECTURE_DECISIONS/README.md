@@ -1,5 +1,9 @@
 ---
 standard_type: ç´¢å¼ææ¡£
+responsibility:
+  - 因子计算
+  - 数据源
+  - 系统架构
 applicable_scope: æ¶æå³ç­
 compliance_level: ä¸ä¸æ å
 parent_document: ../STANDARDS/ADR_STANDARD.md
@@ -7,8 +11,8 @@ implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?vers
 module_id: ADR_INDEX
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["æ¶æå³ç­è®°å½", "ADR", "ç´¢å¼"]
----
+tags: ["æ¶æå³ç­è®°å½", "ADR", "ç´¢å¼"]---
+
 # æ¶æå³ç­è®°å½ï¼ADRï¼ç´¢å¼?
 **ç´¢å¼çæ¬**: 1.0.0
 **æåæ´æ?*: 2026-04-02

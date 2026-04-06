@@ -5,6 +5,10 @@ status: Planned
 created_date: 2026-04-03
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 layer: Layer 8 (人机交互层)
 standard_type: 专业机构级灾备蓝图
 applicable_scope: 全系统灾备
@@ -24,8 +28,8 @@ responsibility_boundary: |
   
   注意：本文档属于Layer 8 (人机交互层)，不属于Layer 4 (机器学习层)
   
-  机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md
----
+  机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md---
+
 
 # 灾备体系蓝图
 

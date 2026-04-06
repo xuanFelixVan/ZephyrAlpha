@@ -5,12 +5,16 @@ status: Stable
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮔ ﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﺁﮔﮔ۰?
 compliance_level: ﮒﺙﮒﮔ ﮒ?
 parent_document: ../INDEX.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?
----
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
+
 
 # ﮔﮔ۰۲ﻝﺙﮒﺓﻛﺛﻝﺏﭨﮔ ﮒ
 

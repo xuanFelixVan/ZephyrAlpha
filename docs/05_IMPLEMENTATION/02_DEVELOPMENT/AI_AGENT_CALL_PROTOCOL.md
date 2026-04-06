@@ -5,11 +5,15 @@ compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 文档治理
 version: 1.0.0
 module_id: IMP_AI_AGENT_CALL_PROTOC
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﮔﭦﻟﺛﻛﺛﻠﺑﻟﺍﻝ۷ﮒﻟ؟؟ v1.0
 
 ## 1. ﮔ۵ﻟﺟﺍ

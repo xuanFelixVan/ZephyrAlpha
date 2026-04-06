@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 数据质量
+  - 交易执行
+  - 回测系统
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 交易成本分析与优化
@@ -37,8 +41,8 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准
   - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
----
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统---
+
 
 # 交易成本分析系统蓝图
 

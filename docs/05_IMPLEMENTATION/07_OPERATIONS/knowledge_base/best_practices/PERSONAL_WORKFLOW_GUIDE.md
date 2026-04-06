@@ -1,13 +1,17 @@
 ---
 standard_type: ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
+responsibility:
+  - 数据源
+  - 特征工程
+  - 文档治理
 applicable_scope: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?version: 1.0.0
 module_id: PERSONAL_WORKFLOW_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?, "ﮒﺓ۴ﻛﺛﮔﭖﻝ۷", "ﮔﻝﮔﮒ"]
----
+tags: ["ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?, "ﮒﺓ۴ﻛﺛﮔﭖﻝ۷", "ﮔﻝﮔﮒ"]---
+
 # ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮒ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02

@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
----
+implementation_status: 进行�?---
+
 
 # 研究阶段系统
 

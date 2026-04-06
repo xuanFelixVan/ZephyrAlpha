@@ -1,13 +1,17 @@
 ---
 standard_type: т«ъТќйТіЦтЉі
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 applicable_scope: тЁеу│╗у╗?compliance_level: СИЊСИџТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: ти▓т«їТѕ?owner: ждќтИГТъХТъётИ?version: 1.0.0
 module_id: SYSTEM_OPTIMIZATION_REPORT_20260403
 created_date: 2026-04-03
 last_updated: 2026-04-03
-tags: ["С╝ўтїќТіЦтЉі", "уЪГТюЪС╝ўтїќ", "СИГТюЪС╝ўтїќ", "у│╗у╗ЪТћ╣У┐Џ"]
----
+tags: ["С╝ўтїќТіЦтЉі", "уЪГТюЪС╝ўтїќ", "СИГТюЪС╝ўтїќ", "у│╗у╗ЪТћ╣У┐Џ"]---
+
 # у│╗у╗ЪС╝ўтїќт«їТѕљТіЦтЉі
 
 **ТіЦтЉіТЌХжЌ┤**: 2026-04-03 00:30

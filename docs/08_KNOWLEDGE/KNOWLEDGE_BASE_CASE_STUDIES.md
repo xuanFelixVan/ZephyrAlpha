@@ -1,12 +1,16 @@
 ---
 standard_type: ﻝ۴ﻟﺁﮒﭦ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 文档治理
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﻝ۴ﻟﺁﮒ؟?version: 1.0.0
 module_id: KNOWLEDGE_BASE_CASE_STUDIES
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﻝ۴ﻟﺁﮒﭦ?, "ﮔ۰ﻛﺝﻝ ﻝ۸ﭘ", "ﮔﻛﺛﺏﮒ؟ﻟﺓ?]
----
+tags: ["ﻝ۴ﻟﺁﮒﭦ?, "ﮔ۰ﻛﺝﻝ ﻝ۸ﭘ", "ﮔﻛﺛﺏﮒ؟ﻟﺓ?]---
+
 # ZephyrAlphaﻝ۴ﻟﺁﮒﭦﮔ۰ﻛﺝﻝ ﻝ۸?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02

@@ -1,13 +1,17 @@
 ---
 standard_type: ﮒ؟۰ﻟ؟۰ﮔﭖﻝ۷
+responsibility:
+  - 绩效分析
+  - 文档治理
+  - 审计系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../STANDARDS/COMPLIANCE_AUDIT_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮒﻟ۶ﮒ؟?version: 1.0.0
 module_id: AUDIT_EXECUTION_PROCEDURES
 created_date: 2026-04-03
 last_updated: 2026-04-03
-tags: ["ﮒ؟۰ﻟ؟۰ﮔﭖﻝ۷", "ﮒﻟ۶ﮒ؟۰ﻟ؟۰", "ﮔ۶ﻟ۰ﻝ۷ﮒﭦ"]
----
+tags: ["ﮒ؟۰ﻟ؟۰ﮔﭖﻝ۷", "ﮒﻟ۶ﮒ؟۰ﻟ؟۰", "ﮔ۶ﻟ۰ﻝ۷ﮒﭦ"]---
+
 # ﮒﻟ۶ﮒ؟۰ﻟ؟۰ﮔ۶ﻟ۰ﻝ۷ﮒﭦ
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 数据源
+  - 特征工程
+  - 机器学习
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﮒﺝﮒ؟?risk_level: P1
----
+implementation_status: ﮒﺝﮒ؟?risk_level: P1---
+
 
 # ﮔ۷۰ﮒﮔﮒ۰ﮒﮔﭘﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 

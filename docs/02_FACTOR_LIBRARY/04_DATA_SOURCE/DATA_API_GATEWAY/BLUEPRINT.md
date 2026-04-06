@@ -5,14 +5,18 @@ status: Blueprint
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 数据源
+  - 系统架构
 standard_type: 模块蓝图
 applicable_scope: 数据API网关
 compliance_level: 专业标准
 parent_document: ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md
 dependencies:
   - FastAPI
-  - Redis
----
+  - Redis---
+
 
 # 数据API网关蓝图
 

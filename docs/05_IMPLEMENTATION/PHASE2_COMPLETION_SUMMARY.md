@@ -5,11 +5,15 @@ compliance_level: тѕЮтДІТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: У«ЙУ«АжўХТ«х
 owner: т«ъТќйУ┤ЪУ┤БС║?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 绩效分析
 version: 1.0.0
 module_id: IMP_PHASE2_COMPLETION_SU
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # уггС║їжўХТ«хтиЦСйют«їТѕљТђ╗у╗Њ
 
 ## ТдѓУ┐░

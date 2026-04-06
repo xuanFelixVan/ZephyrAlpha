@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # Layer 4 机器学习层专业机构差距分析报?
 > **分析编号**: GAP-ANALYSIS-L4-ML-20260403-001

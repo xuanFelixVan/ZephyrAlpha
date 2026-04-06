@@ -5,6 +5,8 @@ status: Archived
 created_date: 2026-04-01
 last_updated: 2026-04-04
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+responsibility:
+  - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
@@ -13,8 +15,8 @@ implementation_status: ﮒﺓﺎﮒﺛﮔ۰?
 archive_reason: 36ﻛﺕ۹ﻝﺁﻟﻟﺟﻛﭦﮒ۳ﮔﺅﺙﮒﻛﭦﭦﮔ ﮔﺏﻝﭨﺑﮔ۳
 archive_date: 2026-03-28
 archive_location: 99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md
-duplicate_note: ﮔ؛ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺓﺎﮒ۳ﮒﭘﮒﺍﮒﺛﮔ۰۲ﻝ؟ﮒﺛﺅﺙﻛﺟﻝﮔ­۳ﮔﻛﭨﭘﻛﺛﻛﺕﭦﮒﮒﺎﻟ؟ﺍﮒﺛ?
----
+duplicate_note: ﮔ؛ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺓﺎﮒ۳ﮒﭘﮒﺍﮒﺛﮔ۰۲ﻝ؟ﮒﺛﺅﺙﻛﺟﻝﮔ­۳ﮔﻛﭨﭘﻛﺛﻛﺕﭦﮒﮒﺎﻟ؟ﺍﮒﺛ?---
+
 
 
 # 36ﻝﺁﻟﮒﺏﻝ­ﮔ۰ﮔﭘﺅﺙﮒﺛﮔ۰۲ﺅﺙ

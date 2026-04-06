@@ -5,8 +5,12 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: й¶ЦеЄ≠иУЭеЫЊжЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзЯ≠жЬЯдЉШеМЦеЃМжИРжК•еСК
-applicable_scope: еЕ®з≥їзїЯжЦЗж°£ж≤їзРЖдЉШеМ?compliance_level: дЄУдЄЪж†ЗеЗЖ
----
+responsibility:
+  - 机器学习
+  - 文档治理
+  - 审计系统
+applicable_scope: еЕ®з≥їзїЯжЦЗж°£ж≤їзРЖдЉШеМ?compliance_level: дЄУдЄЪж†ЗеЗЖ---
+
 
 # жЄЕй£ОйЗПеМЦз≥їзїЯзЯ≠жЬЯдЉШеМЦеЃМжИРжК•еСК
 

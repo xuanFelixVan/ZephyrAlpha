@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+responsibility:
+  - 数据质量
+  - 交易执行
+  - 数据源
 layer: Layer 8 (人机交互层)
 standard_type: 专业机构级蓝图
 applicable_scope: 舆情分析层中期改进模块
@@ -14,8 +18,8 @@ implementation_period: 3-6个月
 included_modules:
   - 金融知识图谱
   - 流式处理架构
-  - 多语言支持
----
+  - 多语言支持---
+
 
 
 ## 文档职责说明

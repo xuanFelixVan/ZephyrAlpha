@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计团队
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 机器学习
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # Layer 7 AIόΛξίΣΛί▒Γό╖▒ί║οίχκϋχκόΛξίΣ?v2.0
 

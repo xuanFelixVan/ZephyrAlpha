@@ -1,5 +1,7 @@
 ---
 standard_type: цЦЗцбгцибцЭ┐
+responsibility:
+  - 文档治理
 applicable_scope: чаФчй╢ц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../STANDARDS/RESEARCH_MEMO_STANDARD.md
@@ -7,8 +9,8 @@ implementation_status: х╖▓хоМцИ?owner: щжЦх╕нчаФчй╢хС?
 module_id: RESEARCH_MEMO_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["чаФчй╢хдЗх┐Шх╜?, "цибцЭ┐", "чаФчй╢ц╡БчиЛ"]
----
+tags: ["чаФчй╢хдЗх┐Шх╜?, "цибцЭ┐", "чаФчй╢ц╡БчиЛ"]---
+
 # чаФчй╢хдЗх┐Шх╜ХцибцЭ?
 > **ф╜┐чФишп┤цШО**: хдНхИ╢цндцибцЭ┐хИЫх╗║цЦ░чЪДчаФчй╢хдЗх┐Шх╜Хя╝МхблхЖЩцЙАцЬЙх┐ЕщЬАхнЧцо╡
 

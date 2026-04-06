@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: Audit Sentinel
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 组合优化
 standard_type: 专业文档治理审计报告
 audit_scope: Layer 6 组合优化层所有文档
-audit_depth: 三层审计 (L1-L3)
----
+audit_depth: 三层审计 (L1-L3)---
+
 
 # Layer 6 组合优化层深度审计报告 V11
 

@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+responsibility:
+  - 交易执行
+  - 数据源
+  - 特征工程
 standard_type: 项目管理文档
 applicable_scope: 舆情分析层改进模块项目管
 compliance_level: 专业标准
-parent_document: INDEX.md
----
+parent_document: INDEX.md---
+
 
 
 ## 文档职责说明

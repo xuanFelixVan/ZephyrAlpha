@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æ?
+responsibility:
+  - 因子计算
+  - 数据源
+  - 机器学习
 standard_type: æ¶æè¿ç§»è®¡å
 applicable_scope: Layer 0-11æ¶æ ?ä¸çº§æ¶é´æ¡æ¶æ¶æè¿ç§» | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
 compliance_level: é¡¶çº§ä¸ä¸æ å
 parent_document: ../INDEX.md
-implementation_status: è®¡åå¶å®å®æ
----
+implementation_status: è®¡åå¶å®å®æ---
+
 
 # æ¶æè¿ç§»è®¡åï¼Layer 0-11 ?ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
 

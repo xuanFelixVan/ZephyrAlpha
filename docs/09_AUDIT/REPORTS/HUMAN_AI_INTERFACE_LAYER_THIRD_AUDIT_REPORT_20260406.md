@@ -6,7 +6,12 @@ audit_scope: 人机交互层所有文档（修复后第三次审计）
 audit_standard: v5.1
 auditor: AI审计系统
 status: 完成
+responsibility:
+  - 回测系统
+  - 数据源
+  - 机器学习
 ---
+
 
 # 人机交互层第三次深度审计报告
 

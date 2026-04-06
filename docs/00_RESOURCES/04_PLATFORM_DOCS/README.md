@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?standard_type: 专业量化机构文档
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?---
@@ -15,8 +19,8 @@ implementation_status: 进行�?---
 > 
 > **版本**: v1.0
 > **创建日期**: 2026-04-01
-> **维护�?*: 文档治理委员�?> **定位**: 存储各类交易平台、券商系统的官方文档和说�?
----
+> **维护�?*: 文档治理委员�?> **定位**: 存储各类交易平台、券商系统的官方文档和说�?---
+
 
 ## 📌 目录定位
 

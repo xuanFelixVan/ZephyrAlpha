@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 回测系统
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
----
+layer: "Layer 6 (组合优化层)"---
+
 ﻿> **索引**: `TIMEFRAME_COORD_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 双时间框架协同优化策略 + 中期波动度，实现信号融合和冲突解决

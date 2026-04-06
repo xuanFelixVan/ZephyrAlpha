@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构师
+responsibility:
+  - 数据质量
+  - 因子计算
+  - 回测系统
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管理
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行中
----
+implementation_status: 进行中---
+
 
 # 因子管理标准 (Factor Management Standard)
 

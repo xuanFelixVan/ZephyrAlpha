@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æ?standard_type: ä¸ä¸æºæçº§æ¶æå®¡?applicable_scope: å¨ç³»ç»æ¶æå®æ´æ§è¯?compliance_level: é¡¶çº§ä¸ä¸æ å
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 组合优化
 reference_models: ["Bridgewater", "Renaissance", "Two Sigma", "Citadel"]
 parent_document: ../INDEX.md
-implementation_status: å®¡è®¡å®æ
----
+implementation_status: å®¡è®¡å®æ---
+
 
 # ç³»ç»æ¶æå®æ´æ§å®¡è®¡æ¥?
 > **å®¡è®¡æ¥æ**: 2026-04-02

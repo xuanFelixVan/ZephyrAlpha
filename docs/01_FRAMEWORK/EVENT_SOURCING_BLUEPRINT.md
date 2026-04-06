@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 交易执行
+  - 机器学习
 layer: Layer 5 (执行层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 ﻿---
 module_id: EVENT_SOURCING_BLUEPRINT_001

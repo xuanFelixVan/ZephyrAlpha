@@ -5,11 +5,15 @@ compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+responsibility:
+  - 数据源
+  - 机器学习
+  - 文档治理
 version: 1.0.0
 module_id: EXE_RTX3090_CONFIGURATIO
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # RTX 3090 24GB ﻠﻝﺛ؟ﮒ؟ﮔﮔﭨﻝﭨ
 
 > ﻠﻝﺛ؟ﮔ۴ﮔ: 2026-04-02

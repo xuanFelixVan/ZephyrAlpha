@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级配置文件
 applicable_scope: P0模块统一集成配置
@@ -16,8 +20,8 @@ related_documents:
   - MODEL_RISK_MLFLOW_IMPLEMENTATION.md
   - REGULATORY_REPORTING_CDM_IMPLEMENTATION.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
-implementation_status: 配置就绪
----
+implementation_status: 配置就绪---
+
 
 # P0模块统一集成配置文件
 

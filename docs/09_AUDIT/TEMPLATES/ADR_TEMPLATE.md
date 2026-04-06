@@ -1,5 +1,7 @@
 ---
 standard_type: µûçµةثµذةµإ┐
+responsibility:
+  - 文档治理
 applicable_scope: µئ╢µئف│قصû
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../STANDARDS/ADR_STANDARD.md
@@ -7,8 +9,8 @@ implementation_status: ف╖▓ف«îµê?owner: لخûف╕صµئ╢µئف╕
 module_id: ADR_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["µئ╢µئف│قصûك«░ف╜ـ", "ADR", "µذةµإ┐"]
----
+tags: ["µئ╢µئف│قصûك«░ف╜ـ", "ADR", "µذةµإ┐"]---
+
 # µئ╢µئف│قصûك«░ف╜ـي╝êADRي╝ëµذةµإ?
 > **غ╜┐ق¤ذك»┤µء**: فجفê╢µصجµذةµإ┐فêؤف╗║µû░قأADRي╝îفةسفآµëµ£ëف┐àل£فصùµ«╡
 

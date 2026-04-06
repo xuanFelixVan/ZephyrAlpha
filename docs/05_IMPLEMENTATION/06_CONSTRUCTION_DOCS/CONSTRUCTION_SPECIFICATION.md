@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构?standard_type: 专业量化机构施工规范
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 applicable_scope: 全系统开发和文档构建
 compliance_level: 强制执行
 parent_document: ../README.md
-implementation_status: 强制执行
----
+implementation_status: 强制执行---
+
 
 # 蓝图施工说明?
 > **版本**: v1.0

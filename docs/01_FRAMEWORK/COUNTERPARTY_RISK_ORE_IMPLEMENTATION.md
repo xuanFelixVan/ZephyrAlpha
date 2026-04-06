@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 数据质量
+  - 风险预算
+  - 因子计算
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 交易对手风险管理系统 - ORE集成
@@ -14,8 +18,8 @@ related_documents:
   - COUNTERPARTY_RISK_BLUEPRINT.md
   - P0_MODULES_IMPLEMENTATION_PLAN.md
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
----
+implementation_status: 设计阶段---
+
 
 # 交易对手风险系统ORE集成实施方案
 

@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 市场状态识别
+  - 数据源
+  - 特征工程
 standard_type: цКАцЬпцЦ╣цбИшпДф╝░цКехС?applicable_scope: ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУО
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_REVIEW_REPORT.md
-implementation_status: шпДф╝░хоМцИР
----
+implementation_status: шпДф╝░хоМцИР---
+
 
 # ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУОхдЗщАЙцЦ╣цбИшпДф╝░цКехС?
 > **шпДф╝░ч╝ЦхП╖**: `ASSESS_ALT_20260402`

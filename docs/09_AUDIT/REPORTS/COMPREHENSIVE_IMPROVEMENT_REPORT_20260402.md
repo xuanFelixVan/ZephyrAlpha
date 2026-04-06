@@ -1,13 +1,17 @@
 ---
 standard_type: хоЮцЦ╜цКехСК
+responsibility:
+  - 因子计算
+  - 绩效分析
+  - 系统架构
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: COMPREHENSIVE_IMPROVEMENT_REPORT_20260402
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["цФ╣ш┐ЫцКехСК", "хЕищЭвцФ╣ш┐Ы", "ф╕Уф╕ЪцаЗхЗЖ"]
----
+tags: ["цФ╣ш┐ЫцКехСК", "хЕищЭвцФ╣ш┐Ы", "ф╕Уф╕ЪцаЗхЗЖ"]---
+
 # ZephyrAlphaхЕищЭвцФ╣ш┐ЫхоМцИРцКехСК
 
 **цКехСКцЧ╢щЧ┤**: 2026-04-02 23:30

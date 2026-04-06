@@ -5,10 +5,13 @@ status: Archived
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: لخûف╕صقاحك»ف«?standard_type: ف╜ْµةثك»┤µءµûçµةث
+responsibility:
+  - 因子计算
+  - 文档治理
 applicable_scope: قاحك»ف║ôف╜ْµةثق«ةق?compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../../INDEX.md
-implementation_status: ف╖▓ف╜ْµة?tags: ["ف╜ْµةث", "غ╝غ╕أق║دµû╣µة?, "غ╕زغ║║ف╝فّك?]
----
+implementation_status: ف╖▓ف╜ْµة?tags: ["ف╜ْµةث", "غ╝غ╕أق║دµû╣µة?, "غ╕زغ║║ف╝فّك?]---
+
 
 # غ╝غ╕أق║دµû╣µةêف╜ْµةثك»┤µء?
 **ف╜ْµةثµùحµ£ا**: 2026-04-03

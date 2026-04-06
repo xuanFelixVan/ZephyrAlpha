@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
@@ -14,8 +18,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 > **ﻝﮔ؛**ﺅﺙv5.3
 > **ﮔﺑﮔﺍﮔ۴ﮔ**ﺅﺙ?026-03-31
 > **ﻝﭘﮔ?*ﺅﺙﮒﺓﺎﮒ؟ﮔ
-
 ---
+
 
 ## 1. ﮒ؟ﮔﺑﮔﺍﮔ؟ﮔﭖﮒﺝ
 

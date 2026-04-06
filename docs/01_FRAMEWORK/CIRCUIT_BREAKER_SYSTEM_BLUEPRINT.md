@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 熔断机制系统架构设计
@@ -35,8 +39,8 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - KILL_SWITCH_SYSTEM_BLUEPRINT.md: 紧急停止开关（立即停止）
   - RISK_LIMIT_MANAGEMENT_BLUEPRINT.md: 风险限额管理（限额监控）
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
----
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）---
+
 
 # 熔断机制系统蓝图
 

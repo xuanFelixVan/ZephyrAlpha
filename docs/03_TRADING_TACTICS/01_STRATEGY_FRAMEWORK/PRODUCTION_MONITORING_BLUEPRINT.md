@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 交易策略团队
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 组合优化
 layer: Layer 7 (风控层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 ﻿---
 module_id: STRAT_PROD_MON_001

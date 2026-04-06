@@ -6,7 +6,12 @@ audit_scope: 人机交互层所有文档
 audit_standard: v5.1
 auditor: AI审计系统
 audit_duration: 30分钟
+responsibility:
+  - 回测系统
+  - 数据源
+  - 机器学习
 ---
+
 
 # 人机交互层第六次深度审计报告
 

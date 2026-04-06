@@ -13,8 +13,10 @@ compliance_level: ίΙζίπΜόιΘίΘΗ
 parent_document: ../INDEX.md
 implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: ίχηόΨ╜ϋ┤θϋ┤μ?
-module_id: IMP_CASE_STUDY_TEMPLATE
----
+responsibility:
+  - 文档治理
+module_id: IMP_CASE_STUDY_TEMPLATE---
+
 
 # [όρκίζΩίΡΞύπ░]όΛΑόεψϋψΕίχκόκΙϊ╛ΜύιΦ?
 

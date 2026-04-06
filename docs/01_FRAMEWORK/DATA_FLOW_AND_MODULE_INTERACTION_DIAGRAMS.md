@@ -1,12 +1,16 @@
 ---
 standard_type: æ¶æå?applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
+responsibility:
+  - 因子计算
+  - 数据源
+  - 绩效分析
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?version: 1.0.0
 module_id: DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["æ°æ®æµå¾", "æ¨¡åäº¤äº", "æ¶æè®¾è®¡"]
----
+tags: ["æ°æ®æµå¾", "æ¨¡åäº¤äº", "æ¶æè®¾è®¡"]---
+
 # ZephyrAlphaæ°æ®æµå¾ä¸æ¨¡åäº¤äºå¾
 
 **ææ¡£çæ¬**: 1.0.0

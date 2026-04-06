@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
+responsibility:
+  - 数据源
+  - 系统架构
+  - 文档治理
 layer: Layer 9 (治理层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 ﻿---
 module_id: ARCHIVE_SECURITY_BLUEPRINT_001

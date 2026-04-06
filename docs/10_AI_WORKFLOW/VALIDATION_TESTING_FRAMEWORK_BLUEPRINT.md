@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 standard_type: 专业机构级蓝图
 applicable_scope: 验证与测试框架模块
 compliance_level: 专业标准
@@ -14,8 +18,8 @@ priority: P1
 estimated_effort: 60h
 integrated_modules:
   - AIWF_ABTF_001
-  - AIWF_BVM_001
----
+  - AIWF_BVM_001---
+
 
 
 ## 文档职责说明

@@ -11,6 +11,10 @@ estimated_hours: 70
 review_status: Pending
 reviewer: 首席技术评审官
 owner: 量化研究�?standard_type: 专业量化机构技术规格书
+responsibility:
+  - 风险预算
+  - 组合优化
+  - 交易执行
 applicable_scope: 概率预测与不确定性量�?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
 implementation_status: 技术规格设计完�?---
@@ -19,8 +23,8 @@ implementation_status: 技术规格设计完�?---
 
 > 清风量化系统 v5.3 - 概率预测与不确定性量化详细技术设�?> **索引**: `PF-001`
 > **开发时�?*: 70h
-> **核心定位**: 提供概率预测、不确定性估计、置信区间、风险度�?
----
+> **核心定位**: 提供概率预测、不确定性估计、置信区间、风险度�?---
+
 
 ## 1. 概述
 

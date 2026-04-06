@@ -1,12 +1,16 @@
 ---
 standard_type: чобчРЖцаЗхЗЖ
+responsibility:
+  - 文档治理
+  - 审计系统
+  - 配置管理
 applicable_scope: хЕич│╗ч╗?compliance_level: цнгх╝ПцаЗхЗЖ
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: CONTINUOUS_IMPROVEMENT_PROCESS
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # цЦЗцбгц▓╗чРЖцМБч╗нцФ╣ш┐Ыц╡БчиЛ
 
 **цЦЗцбгчЙИцЬм**: 1.0.0

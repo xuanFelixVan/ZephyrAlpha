@@ -13,11 +13,15 @@ review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
+responsibility:
+  - 组合优化
+  - 交易执行
+  - 机器学习
 standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
----
+implementation_status: 设计阶段---
+
 
 # 组合再平衡策略技术规格书 v1.0
 

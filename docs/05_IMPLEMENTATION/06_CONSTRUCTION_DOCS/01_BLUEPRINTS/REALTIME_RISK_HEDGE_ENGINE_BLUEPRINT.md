@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
+responsibility:
+  - 风险预算
+  - 市场状态识别
+  - 组合优化
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 7 (风险管理层)"
----
+layer: "Layer 7 (风险管理层)"---
+
 ﻿# 文档职责说明
 
 > **索引**: `RISK_HEDGE_BLUEPRINT_001`

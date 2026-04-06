@@ -1,5 +1,8 @@
 ---
 standard_type: όκΙϊ╛ΜύιΦύσ╢
+responsibility:
+  - 因子计算
+  - 文档治理
 applicable_scope: όΨΘόκμό▓╗ύΡΗ
 compliance_level: όφμί╝ΠόιΘίΘΗ
 parent_document: ../README.md
@@ -7,8 +10,8 @@ implementation_status: ί╖▓ίχΝόΙ?owner: όΨΘόκμύχκύΡΗίΣ?ve
 module_id: LINK_FIX_CASE_STUDY
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["όκΙϊ╛ΜύιΦύσ╢", "ώΥ╛όΟξϊ┐χίνΞ", "ϋΘςίΛρίΝ?, "όεΑϊ╜│ίχηϋ╖?]
----
+tags: ["όκΙϊ╛ΜύιΦύσ╢", "ώΥ╛όΟξϊ┐χίνΞ", "ϋΘςίΛρίΝ?, "όεΑϊ╜│ίχηϋ╖?]---
+
 # ώΥ╛όΟξϊ┐χίνΞόκΙϊ╛ΜύιΦύσ╢
 
 **όΨΘόκμύΚΙόευ**: 1.0.0

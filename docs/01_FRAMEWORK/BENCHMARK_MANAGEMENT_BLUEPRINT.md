@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 特征工程
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 基准管理系统架构设计
@@ -31,8 +35,8 @@ responsibility_boundary: |
   
   **与本文档职责边界**：
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因（包含基准归因）
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）
----
+  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）---
+
 
 # 基准管理系统蓝图（蓝图阶段）
 

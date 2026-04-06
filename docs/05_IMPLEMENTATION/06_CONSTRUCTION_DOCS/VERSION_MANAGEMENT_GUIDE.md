@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?standard_type: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﻝﮔ؛ﮔ۶ﮒﭘ
+responsibility:
+  - 因子计算
+  - 数据源
+  - 文档治理
 compliance_level: ﻝ؟ﮒﮔ ﮒ?parent_document: ../README.md
-implementation_status: Active
----
+implementation_status: Active---
+
 
 # ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟﺅﺙﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟﻝﺅﺙ?
 > **ﻝﮔ؛**: v1.0  

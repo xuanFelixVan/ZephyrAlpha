@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﮒ؟ﮔﺛﮒﺎﮔﭘﮔﮒﺕ
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮒﺍﮒﺝ
 applicable_scope: 05_IMPLEMENTATIONﻝ؟ﮒﺛ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: INDEX.md
-implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳
----
+implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
+
 
 # ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)
 

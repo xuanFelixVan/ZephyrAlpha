@@ -5,11 +5,15 @@ compliance_level: хИЭхзЛцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: хоЮцЦ╜ш┤Яш┤г?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 文档治理
 version: 1.0.0
 module_id: IMP_QUALITY_GATE_MECHANI
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ш┤ищЗПщЧичжБцЬ║хИ╢ v1.0
 
 ## 1. цжВш┐░

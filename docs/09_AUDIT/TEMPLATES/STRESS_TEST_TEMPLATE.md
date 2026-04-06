@@ -1,5 +1,8 @@
 ---
 standard_type: жөӢиҜ•ж–ҮжЎЈ
+responsibility:
+  - 文档治理
+  - 测试系统
 applicable_scope: йЈҺйҷ©з®ЎзҗҶ
 compliance_level: дё“дёҡж ҮеҮҶ
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md
@@ -7,8 +10,8 @@ implementation_status: е·Іе®ҢжҲ?owner: йҰ–еёӯйЈҺйҷ©е®?ver
 module_id: STRESS_TEST_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["еҺӢеҠӣжөӢиҜ•", "йЈҺйҷ©з®ЎзҗҶ", "жөӢиҜ•жЁЎжқҝ"]
----
+tags: ["еҺӢеҠӣжөӢиҜ•", "йЈҺйҷ©з®ЎзҗҶ", "жөӢиҜ•жЁЎжқҝ"]---
+
 # еҺӢеҠӣжөӢиҜ•жЁЎжқҝ
 
 > **дҪҝз”ЁиҜҙжҳҺ**: еӨҚеҲ¶жӯӨжЁЎжқҝеҲӣе»әж–°зҡ„еҺӢеҠӣжөӢиҜ•жҠҘе‘ҠпјҢеЎ«еҶҷжүҖжңүеҝ…йңҖеӯ—ж®ө

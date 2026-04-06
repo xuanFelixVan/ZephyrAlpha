@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席知识�?standard_type: 专业量化机构索引文档
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 交易执行
 applicable_scope: 知识库导�?compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
----
+implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]---
+
 
 # 知识库索�?
 **文档版本**: 1.0.0

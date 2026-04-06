@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
+responsibility:
+  - 数据源
+  - 机器学习
+  - 文档治理
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # СИфС║║+AIтю║ТЎ»СИІуџёти«УиЮтЈ»УАїТђДтѕєТъљСИјт«ъТќйуГќуЋЦ
 

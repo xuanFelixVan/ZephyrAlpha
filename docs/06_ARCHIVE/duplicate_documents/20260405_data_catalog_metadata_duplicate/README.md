@@ -5,12 +5,16 @@ status: Archived
 created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席蓝图架构师
+responsibility:
+  - 交易执行
+  - 机器学习
+  - 系统架构
 standard_type: 专业量化机构归档说明
 applicable_scope: 职责重叠文档归档
 compliance_level: 专业标准
 parent_document: ../README.md
-archive_reason: 职责重叠 - 与DATA_CATALOG_BLUEPRINT.md重复
----
+archive_reason: 职责重叠 - 与DATA_CATALOG_BLUEPRINT.md重复---
+
 
 # 数据目录元数据蓝图归档说明
 

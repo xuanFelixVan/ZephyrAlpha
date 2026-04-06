@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝﺑ۱ﮒﺙ
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 applicable_scope: ﻝﺏﭨﻝﭨﮔﭨﻟ۶
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
@@ -44,6 +48,6 @@ docs/
 ﻗﻗﻗ 07_RESEARCH/          # ﻝ ﻝ۸ﭘﮔﺁﮔ
 ﻗﻗﻗ 09_AUDIT/             # ﮒ؟۰ﻟ؟۰
 ﻗﻗﻗ 10_AI_WORKFLOW/       # AIﮒﺓ۴ﻛﺛﮔﭖ?```
-
 ---
+
 *ﮔﮒﮔﺑﮔ? 2026-04-03*

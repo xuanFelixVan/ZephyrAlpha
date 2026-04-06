@@ -5,11 +5,15 @@ compliance_level: ÕêØÕºïµáçÕçå
 parent_document: ../INDEX.md
 implementation_status: Þ«¥Þ«íÚÿÂµ«Á
 owner: µëºÞíîÕ▒éÞ┤ƒÞ┤úõ║║
+responsibility:
+  - 数据源
+  - 机器学习
+  - 文档治理
 version: 1.0.0
 module_id: EXE_IMPORTANT_PYTHON_VER
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # RTX 3090 Úàìþ¢«Õ«îµêÉ - ÚçìÞªüÕÅæþÄ░
 
 > **Úàìþ¢«µùÑµ£ƒ**: 2026-04-02

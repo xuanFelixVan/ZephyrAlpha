@@ -1,5 +1,9 @@
 ---
 standard_type: ﻝ؟۰ﻝﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 文档治理
 applicable_scope: ﮒﺏﻝ­ﮔﭖﻝ۷
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
@@ -7,8 +11,8 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ
 module_id: DECISION_RECORD_STANDARD
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﮒﺏﻝ­ﻟ؟ﺍﮒﺛ", "ﮒ؟۰ﻟ؟۰ﻟﺟﺛﻟﺕ۹", "ﮒﺏﻝ­ﮔﭖﻝ۷", "ﻛﺕﻛﺕﮔ ﮒ"]
----
+tags: ["ﮒﺏﻝ­ﻟ؟ﺍﮒﺛ", "ﮒ؟۰ﻟ؟۰ﻟﺟﺛﻟﺕ۹", "ﮒﺏﻝ­ﮔﭖﻝ۷", "ﻛﺕﻛﺕﮔ ﮒ"]---
+
 # ﮒﺏﻝ­ﻟ؟ﺍﮒﺛﮒﭘﮒﭦ۵ﮔ ﮒ
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

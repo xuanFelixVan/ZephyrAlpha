@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+responsibility:
+  - 回测系统
+  - 数据源
+  - 机器学习
 layer: Layer 11
 module_type: ﮔ ﺕﮒﺟﮔ۷۰ﮒ
 priority: P0
@@ -13,8 +17,8 @@ standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
 compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+
 
 # L11_TEXT_DRIVER: ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 

@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 组合优化
+  - 交易执行
+  - 机器学习
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级深度审计报告
 applicable_scope: Layer 10治理与合规层第十次深度审计
-compliance_level: 顶级专业标准
----
+compliance_level: 顶级专业标准---
+
 
 # Layer 10治理与合规层第十次深度审计报告
 

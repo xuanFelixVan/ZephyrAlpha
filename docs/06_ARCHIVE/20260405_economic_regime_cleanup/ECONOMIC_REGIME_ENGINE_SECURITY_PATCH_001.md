@@ -5,13 +5,17 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 市场状态识别
+  - 数据源
+  - 机器学习
 standard_type: ﮒ؟ﮒ۷ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ
 applicable_scope: ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md
 implementation_status: ﻝ،ﮒﺏﻛﺟ؟ﮒ۳
-priority: P0
----
+priority: P0---
+
 
 # ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔP0ﻝﭦ۶ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ?
 > **ﻛﺟ؟ﮒ۳ﻝﺙﮒﺓ**: `SECURITY_PATCH_20260402_001`

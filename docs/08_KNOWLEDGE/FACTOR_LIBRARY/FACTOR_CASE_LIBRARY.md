@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮒ ﮒ­ﮒ؟?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ۰ﻛﺝﮒﭦ?applicable_scope: ﮒ ﮒ­ﻝ ﻝ۸ﭘﻛﺕﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 parent_document: ../INDEX.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒ ﮒ­ﮔ۰ﻛﺝ", "ﮔ۰ﻛﺝﮒﭦ?, "ﻛﺕﻛﺕﮔ ﮒ"]
----
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒ ﮒ­ﮔ۰ﻛﺝ", "ﮔ۰ﻛﺝﮒﭦ?, "ﻛﺕﻛﺕﮔ ﮒ"]---
+
 
 # ﮒ ﮒ­ﮔ۰ﻛﺝﮒﭦ?
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

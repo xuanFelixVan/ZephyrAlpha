@@ -3,6 +3,10 @@ document_type: P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ
 version: 1.0.0
 created_date: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 因子计算
+  - 数据源
+  - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻠ۲ﻠ۸ﻝ؟۰ﻝ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 status: ﮒﺝﮒ؟ﮔ?
@@ -10,8 +14,8 @@ applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 module_id: IMP_P1_RISK_MITIGATION_D
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 
 # P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 

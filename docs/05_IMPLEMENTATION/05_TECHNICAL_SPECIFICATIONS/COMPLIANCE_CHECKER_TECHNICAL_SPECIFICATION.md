@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 数据源
 applicable_scope: Layer 5 ﻝ­ﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
@@ -33,8 +37,8 @@ implementation_status: ﮒﺓﺎﮒ؟?regulatory_basis:
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻝﻝ؟۰ﮒﻟ۶ﮔ۲ﮔ۴ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﮔ۷۰ﮒID**: `COMPLIANCE_CHECKER_001`
 > **ﻝﮔ؛**: v1.1.0
 > **ﻝ?*: ?ﮔ­۲ﮒﺙ
-
 ---
+
 
 ## 1. ﮔ۵ﻟﺟﺍ
 

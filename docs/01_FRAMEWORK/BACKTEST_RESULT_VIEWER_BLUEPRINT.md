@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility:
+  - 回测系统
+  - 机器学习
+  - 绩效分析
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 回测结果查看器
@@ -24,8 +28,8 @@ responsibility_boundary: |
   回测配置请参考：STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
   绩效归因请参考：STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成
----
+implementation_status: 蓝图设计完成---
+
 
 # 回测结果查看器蓝图
 

@@ -13,6 +13,10 @@ review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: AI工程�?standard_type: 专业量化机构技术规格书
+responsibility:
+  - 风险预算
+  - 因子计算
+  - 数据源
 applicable_scope: 模型可解释性系�?compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/MODEL_INTERPRETABILITY_BLUEPRINT.md
 implementation_status: 技术规格设计完�?---
@@ -21,8 +25,8 @@ implementation_status: 技术规格设计完�?---
 
 > 清风量化系统 v5.3 - 模型可解释性详细技术设�?> **索引**: `MI-001`
 > **开发时�?*: 60h
-> **核心定位**: 提供模型决策解释、特征重要性分析和可视化能�?
----
+> **核心定位**: 提供模型决策解释、特征重要性分析和可视化能�?---
+
 
 ## 1. 概述
 

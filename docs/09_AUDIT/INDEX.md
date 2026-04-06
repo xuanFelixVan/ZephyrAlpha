@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 审计系统架构�?standard_type: 专业量化机构目录索引
+responsibility:
+  - 风险预算
+  - 系统架构
+  - 文档治理
 applicable_scope: 09_AUDIT目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 活跃维护
----
+implementation_status: 活跃维护---
+
 
 # 审计系统目录索引
 

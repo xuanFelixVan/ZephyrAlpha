@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师
+responsibility:
+  - 因子计算
+  - 绩效分析
+  - 系统架构
 standard_type: 专业量化机构工具
 applicable_scope: Markdown文档引用链接验证
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # Markdown引用链接验证工具
 

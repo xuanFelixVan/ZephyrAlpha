@@ -1,13 +1,17 @@
 ---
 standard_type: ﮔ ﺕﮒﺟﮔﮔ۰۲
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 日志系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﻝ۴ﻟﺁﮒ؟?version: 1.0.0
 module_id: KNOWLEDGE_TRANSFER_SYSTEM
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﻝ۴ﻟﺁﻛﺙ ﮔﺟ", "ﻝ۴ﻟﺁﻝ؟۰ﻝ", "ﻝ۴ﻟﺁﻛﺛﻝﺏﭨ"]
----
+tags: ["ﻝ۴ﻟﺁﻛﺙ ﮔﺟ", "ﻝ۴ﻟﺁﻝ؟۰ﻝ", "ﻝ۴ﻟﺁﻛﺛﻝﺏﭨ"]---
+
 # ZephyrAlphaﻝ۴ﻟﺁﻛﺙ ﮔﺟﻛﺛﻝﺏﭨ
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

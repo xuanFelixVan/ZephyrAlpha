@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 因子计算
+  - 绩效分析
+  - 系统架构
 standard_type: ц╖▒х║жхобшобцКехСК
 applicable_scope: Layer 0цХ░цНоц║Рх▒ВцЦЗцбгф╜Уч│╗
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: хобшобхоМцИР
----
+implementation_status: хобшобхоМцИР---
+
 
 # цХ░цНоц║Рх▒ВцЦЗцбгц╖▒х║жхобшобцКехСК
 

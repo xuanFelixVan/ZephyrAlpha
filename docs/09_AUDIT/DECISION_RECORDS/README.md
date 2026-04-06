@@ -1,5 +1,9 @@
 ---
 standard_type: зҙўеј•ж–ҮжЎЈ
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 文档治理
 applicable_scope: еҶізӯ–жөҒзЁӢ
 compliance_level: дё“дёҡж ҮеҮҶ
 parent_document: ../STANDARDS/DECISION_RECORD_STANDARD.md
@@ -7,8 +11,8 @@ implementation_status: е·Іе®ҢжҲ?owner: йҰ–еёӯжһ¶жһ„её?ve
 module_id: DECISION_RECORD_INDEX
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["еҶізӯ–и®°еҪ•", "зҙўеј•", "зҹҘиҜҶеә?]
----
+tags: ["еҶізӯ–и®°еҪ•", "зҙўеј•", "зҹҘиҜҶеә?]---
+
 # еҶізӯ–и®°еҪ•зҙўеј•
 
 **зҙўеј•зүҲжң¬**: 1.0.0

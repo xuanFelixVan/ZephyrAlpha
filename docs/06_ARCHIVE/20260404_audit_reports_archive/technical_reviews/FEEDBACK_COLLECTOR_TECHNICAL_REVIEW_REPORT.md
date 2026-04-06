@@ -4,13 +4,16 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-02
 owner: 首席技术评审官
+responsibility:
+  - 系统架构
+  - 文档治理
 standard_type: 专业量化机构技术评审报�?
 applicable_scope: Layer 8 - 人机交互�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 
 # FeedbackCollector反馈收集技术评审报�?
 

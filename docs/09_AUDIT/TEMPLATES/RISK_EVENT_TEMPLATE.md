@@ -1,5 +1,7 @@
 ---
 standard_type: ﮔﮔ۰۲ﮔ۷۰ﮔﺟ
+responsibility:
+  - 文档治理
 applicable_scope: ﻠ۲ﻠ۸ﻝ؟۰ﻝ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md
@@ -7,8 +9,8 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﻠ۲ﻠ�
 module_id: RISK_EVENT_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ", "ﻠ۲ﻠ۸ﻝ؟۰ﻝ", "ﮔ۷۰ﮔﺟ"]
----
+tags: ["ﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ", "ﻠ۲ﻠ۸ﻝ؟۰ﻝ", "ﮔ۷۰ﮔﺟ"]---
+
 # ﻠ۲ﻠ۸ﻛﭦﻛﭨﭘﻟ؟ﺍﮒﺛﮔ۷۰ﮔﺟ
 
 > **ﻛﺛﺟﻝ۷ﻟﺁﺑﮔ**: ﮒ۳ﮒﭘﮔ­۳ﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﺍﻝﻠ۲ﻠ۸ﻛﭦﻛﭨﭘﻟ؟ﺍﮒﺛﺅﺙﮒ۰،ﮒﮔﮔﮒﺟﻠﮒ­ﮔ؟ﭖ

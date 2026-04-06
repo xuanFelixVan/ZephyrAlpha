@@ -5,9 +5,13 @@ status: Archived
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构�?standard_type: 归档说明文档
+responsibility:
+  - 组合优化
+  - 系统架构
+  - 文档治理
 applicable_scope: 重复文档归档
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # PORTFOLIO_OPTIMIZATION_BLUEPRINT.md 归档说明
 

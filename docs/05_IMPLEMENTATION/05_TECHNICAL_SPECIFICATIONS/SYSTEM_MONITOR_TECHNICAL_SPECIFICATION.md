@@ -4,13 +4,17 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-02
 owner: 首席技术评审官
+responsibility:
+  - 数据源
+  - 机器学习
+  - 系统架构
 standard_type: 专业量化机构技术规�?
 applicable_scope: Layer 8 - 人机交互�?| 业务架构: 三级时间框架融合架构
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 
 # SystemMonitor系统监控技术规格书
 

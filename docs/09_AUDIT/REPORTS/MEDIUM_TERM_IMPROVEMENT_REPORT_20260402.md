@@ -1,13 +1,17 @@
 ---
 standard_type: хоЮцЦ╜цКехСК
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: MEDIUM_TERM_IMPROVEMENT_REPORT_20260402
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["цФ╣ш┐ЫцКехСК", "ф╕нцЬЯцФ╣ш┐Ы", "ф╕Уф╕ЪцаЗхЗЖ"]
----
+tags: ["цФ╣ш┐ЫцКехСК", "ф╕нцЬЯцФ╣ш┐Ы", "ф╕Уф╕ЪцаЗхЗЖ"]---
+
 # ф╕нцЬЯцФ╣ш┐ЫхоМцИРцКехСК
 
 **цКехСКцЧ╢щЧ┤**: 2026-04-02 22:30

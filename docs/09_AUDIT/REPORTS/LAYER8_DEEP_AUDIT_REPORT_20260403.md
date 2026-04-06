@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: хобшобч│╗ч╗Я
+responsibility:
+  - 文档治理
+  - 审计系统
+  - 安全系统
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 applicable_scope: Layer 8 ф║║цЬ║ф║дф║Тх▒?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 audit_type: ц╖▒х║жхобшоб
-audit_date: 2026-04-03
----
+audit_date: 2026-04-03---
+
 
 # Layer 8 ф║║цЬ║ф║дф║Тх▒Вц╖▒х║жхобшобцКехС?
 > **хобшобцЧ╢щЧ┤**: 2026-04-03

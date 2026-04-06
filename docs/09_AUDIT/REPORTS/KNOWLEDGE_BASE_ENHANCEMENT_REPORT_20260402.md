@@ -1,12 +1,16 @@
 ---
 standard_type: ﮒ؟ﮔﺛﮔ۴ﮒ
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: KNOWLEDGE_BASE_ENHANCEMENT_REPORT_20260402
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﻝ۴ﻟﺁﮒﭦﮒ؟ﮒﮔ۴ﮒ?
 **ﮔ۴ﮒﮔﭘﻠﺑ**: 2026-04-02 21:35
 **ﮔ۴ﮒﻟﮒﺑ**: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻝ۴ﻟﺁﮒﭦﮒ؟ﮒ

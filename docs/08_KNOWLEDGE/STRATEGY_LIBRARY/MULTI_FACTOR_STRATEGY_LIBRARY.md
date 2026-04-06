@@ -1,13 +1,17 @@
 ---
 standard_type: ﻝ­ﻝ۴ﮔﮔ۰۲
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 机器学习
 applicable_scope: ﻝ­ﻝ۴ﮒﭦ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﻟﭖﮒ؟?version: 1.0.0
 module_id: MULTI_FACTOR_STRATEGY_LIBRARY
 created_date: 2026-04-03
 last_updated: 2026-04-03
-tags: ["ﻝ­ﻝ۴ﮒﭦ?, "ﮒ۳ﮒ ﮒ­ﻝ­ﻝ?, "ﮔﻟﭖﻝ­ﻝ۴"]
----
+tags: ["ﻝ­ﻝ۴ﮒﭦ?, "ﮒ۳ﮒ ﮒ­ﻝ­ﻝ?, "ﮔﻟﭖﻝ­ﻝ۴"]---
+
 # ﮒ۳ﮒ ﮒ­ﻝ­ﻝ۴ﮒﭦ
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0

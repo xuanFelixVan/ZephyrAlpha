@@ -6,14 +6,18 @@ status: Completed
 created_date: 2026-04-02
 completed_date: 2026-04-02
 owner: 数据源层负责�?
+responsibility:
+  - 交易执行
+  - 数据源
+  - 系统架构
 standard_type: 技术培训计�?
 applicable_scope: 系统实施
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 version: 1.0.0
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 
 
 # QMT API学习计划与基础培训文档

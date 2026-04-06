@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 交易执行
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶?applicable_scope: Layer 8 - ﻛﭦﭦﮔﭦﻛﭦ۳ﻛﭦ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../ARCHITECTURE.md
 implementation_status: ﮒﺝﮒ؟?priority: P0
-estimated_hours: 40h
----
+estimated_hours: 40h---
+
 
 # ﮔﻝ،ﺁﮒﺕﮒﭦﮒﭦﮒﺁﺗﮔﭦﮒﭘﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 

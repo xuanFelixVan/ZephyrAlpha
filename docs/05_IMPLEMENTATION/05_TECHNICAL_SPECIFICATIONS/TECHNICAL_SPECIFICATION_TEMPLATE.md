@@ -13,12 +13,16 @@ review_status: Pending
 reviewer: [REVIEWER_NAME]
 review_date: [REVIEW_DATE]
 owner: ﮔ۷۰ﮔﺟﻟﺑﻟﺑ۲?
+responsibility:
+  - 因子计算
+  - 数据源
+  - 机器学习
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ۷۰ﮔﺟ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔ۷۰?
 compliance_level: ﮔ۷۰ﮔﺟﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰?
----
+implementation_status: ﻟﺟﻟ۰?---
+
 
 # [ﮔ۷۰ﮒﮒﻝ۶ﺍ]ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 

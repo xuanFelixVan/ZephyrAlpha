@@ -5,9 +5,11 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
+responsibility:
+  - 因子计算
 standard_type: ύιΦύσ╢ϋ╡ΕόΨβό▒Θύ╝Ψ
-applicable_scope: ί╕Γίε║ίΠΓϊ╕ΟϋΑΖϋκΝϊ╕║όρκόΜθύ│╗ύ╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
----
+applicable_scope: ί╕Γίε║ίΠΓϊ╕ΟϋΑΖϋκΝϊ╕║όρκόΜθύ│╗ύ╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ---
+
 
 # AϋΓκϊ╕╗ίΛδϋκΝϊ╕║ύιΦύσ╢ϋ╡ΕόΨβό▒Θύ╝?>
 > **όμΑύ┤λόΩ╢Ύ┐?*Ύ┐?026Ύ┐?Ύ┐?>

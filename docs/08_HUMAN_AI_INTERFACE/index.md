@@ -5,13 +5,17 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha人机交互层完整设计
 compliance_level: 专业标准
 parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
-implementation_status: 蓝图设计
----
+implementation_status: 蓝图设计---
+
 
 # Layer 8 人机交互层 - 系统蓝图索引
 

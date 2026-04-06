@@ -5,10 +5,14 @@ status: Archived
 created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席文档架构师
+responsibility:
+  - 市场状态识别
+  - 系统架构
+  - 文档治理
 standard_type: 归档说明
 applicable_scope: 经济周期引擎文档清理
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # 经济周期引擎文档清理归档说明
 

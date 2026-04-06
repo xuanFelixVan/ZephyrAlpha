@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 交易执行
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﮔ ﮒ?
 applicable_scope: ﮒ۳ﮒﺙﮔﮔ۴ﮒ۲ﻠﮔ?
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+
 
 # ﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ?
 
