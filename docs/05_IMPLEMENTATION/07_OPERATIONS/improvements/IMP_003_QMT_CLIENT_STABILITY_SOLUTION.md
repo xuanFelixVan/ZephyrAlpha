@@ -1,7 +1,7 @@
 ---
 improvement_id: IMP-003
 module_id: IMPL_OPS_IMP_003_QMT_STABILITY_001
-priority: P0P1
+priority: P1
 status: Completed
 created_date: 2026-04-02
 completed_date: 2026-04-02
