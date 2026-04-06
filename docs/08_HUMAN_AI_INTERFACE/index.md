@@ -99,6 +99,16 @@ implementation_status: 蓝图设计
 | 8.19 | CI_CD_INTEGRATION | CI/CD集成 | GitHub Actions | P1 | [GitHub Actions](https://github.com/features/actions) 公开免费 |
 | 8.20 | DATA_BACKUP | 数据备份系统 | Restic | P1 | [Restic](https://github.com/restic/restic) 25k+ |
 
+### 2.5 专业机构标准补充模块（必须实现）⭐新增
+
+| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 | 开源项目 |
+|------|--------|---------|---------|--------|---------|
+| 8.21 | ONLINE_RESEARCH_ENVIRONMENT | 在线研究环境 | JupyterLab | P0 | [JupyterLab](https://github.com/jupyterlab/jupyterlab) 14k+ |
+| 8.22 | PARAMETER_OPTIMIZATION | 参数优化界面 | Optuna + Streamlit | P0 | [Optuna](https://github.com/optuna/optuna) 8k+ |
+| 8.23 | LIVE_TRADING_INTERFACE | 实盘交易界面 | Streamlit | P0 | [Streamlit](https://github.com/streamlit/streamlit) 35k+ |
+
+**模块总计**: 23个模块（核心4个 + 重要6个 + 增强8个 + 专业补充5个 + 专业机构标准补充3个）
+
 ---
 
 ## 三、模块依赖关系

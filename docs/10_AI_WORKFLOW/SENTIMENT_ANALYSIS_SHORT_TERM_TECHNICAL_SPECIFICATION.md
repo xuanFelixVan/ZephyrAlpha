@@ -4,12 +4,12 @@ version: 1.1.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: é¦å¸­æ¶æå¸?
+owner: 首席架构师
 standard_type: 技术规格书
-applicable_scope: èæåæå±ç­ææ¹è¿æ¨¡å?
+applicable_scope: 舆情分析层短期改进模块
 compliance_level: 专业标准
 applicable_modules:
-  - æ°æ®æºæ©å±?
+  - 数据源扩展
   - 深度学习情感分析
   - 实时预警系统
 ---
