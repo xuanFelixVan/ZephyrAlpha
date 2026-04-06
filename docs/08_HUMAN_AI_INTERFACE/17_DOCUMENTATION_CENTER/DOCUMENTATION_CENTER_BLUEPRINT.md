@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENTATION_CENTER_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 文档中心，负责系统文档的集中展示、检索和维护，不负责知识库管理
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha文档中心

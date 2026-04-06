@@ -55,13 +55,13 @@ responsibility:
 | 1 | 风险预算框架.md | `docs/11_STRATEGIC_DECISION/02_risk_budgeting/风险预算框架.md` | ✅ 已创建 | 风险预算分配框架 |
 | 2 | 策略选择框架.md | `docs/11_STRATEGIC_DECISION/03_strategy_selection/策略选择框架.md` | ✅ 已创建 | 投资策略选择框架 |
 | 3 | 策略组合优化.md | `docs/11_STRATEGIC_DECISION/03_strategy_selection/策略组合优化.md` | ✅ 已创建 | 策略组合优化方法 |
-| 4 | 战略调整机制.md | `docs/11_STRATEGIC_DECISION/04_strategic_adjustment/战略调整机制.md` | ✅ 已创建 | 战略调整决策机制 |
+| 4 | STRATEGIC_ADJUSTMENT_MECHANISM.md | `docs/11_STRATEGIC_DECISION/04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md` | ✅ 已创建 | 战略调整决策机制 |
 
 ### 1.2 P1级蓝图文档（1个）
 
 | 序号 | 文档名称 | 路径 | 状态 | 核心功能 |
 |------|---------|------|------|---------|
-| 1 | 资产类别定义.md | `docs/11_STRATEGIC_DECISION/01_asset_allocation/资产类别定义.md` | ✅ 已创建 | 资产类别与风险特征 |
+| 1 | ASSET_CLASS_DEFINITION.md | `docs/11_STRATEGIC_DECISION/01_asset_allocation/ASSET_CLASS_DEFINITION.md` | ✅ 已创建 | 资产类别与风险特征 |
 
 ---
 
@@ -71,11 +71,11 @@ responsibility:
 
 | 序号 | 文档名称 | 核心功能 | 开源方案 | 预计时间 |
 |------|---------|---------|---------|---------|
-| 1 | 风险预算方法.md | 风险预算计算方法 | Riskfolio-Lib | 1.5小时 |
-| 2 | 风险调整机制.md | 风险预算动态调整 | - | 1小时 |
-| 3 | 策略评估标准.md | 策略评估标准与方法 | empyrical | 1.5小时 |
-| 4 | 市场环境评估.md | 市场环境评估框架 | hmmlearn | 1.5小时 |
-| 5 | 调整触发条件.md | 战略调整触发条件 | - | 1小时 |
+| 1 | RISK_BUDGETING_METHOD.md | 风险预算计算方法 | Riskfolio-Lib | 1.5小时 |
+| 2 | RISK_ADJUSTMENT_MECHANISM.md | 风险预算动态调整 | - | 1小时 |
+| 3 | STRATEGY_EVALUATION_CRITERIA.md | 策略评估标准与方法 | empyrical | 1.5小时 |
+| 4 | MARKET_ENVIRONMENT_ASSESSMENT.md | 市场环境评估框架 | hmmlearn | 1.5小时 |
+| 5 | ADJUSTMENT_TRIGGER_CONDITIONS.md | 战略调整触发条件 | - | 1小时 |
 
 ---
 
@@ -150,8 +150,8 @@ responsibility:
 **建议**：根据实际需求调整优先级
 
 **调整建议**：
-- 优先创建风险预算方法.md（风险预算框架的支持模块）
-- 优先创建策略评估标准.md（策略选择框架的支持模块）
+- 优先创建RISK_BUDGETING_METHOD.md（风险预算框架的支持模块）
+- 优先创建STRATEGY_EVALUATION_CRITERIA.md（策略选择框架的支持模块）
 - 其他蓝图可后续补充
 
 ---
@@ -163,11 +163,11 @@ responsibility:
 #### 选项1：继续创建剩余蓝图（推荐）
 
 **行动**：
-- 创建风险预算方法.md蓝图
-- 创建风险调整机制.md蓝图
-- 创建策略评估标准.md蓝图
-- 创建市场环境评估.md蓝图
-- 创建调整触发条件.md蓝图
+- 创建RISK_BUDGETING_METHOD.md蓝图
+- 创建RISK_ADJUSTMENT_MECHANISM.md蓝图
+- 创建STRATEGY_EVALUATION_CRITERIA.md蓝图
+- 创建MARKET_ENVIRONMENT_ASSESSMENT.md蓝图
+- 创建ADJUSTMENT_TRIGGER_CONDITIONS.md蓝图
 
 **预计时间**：6.5小时
 **完成进度**：100%
@@ -232,10 +232,10 @@ responsibility:
 - ✅ 风险预算框架.md
 - ✅ 策略选择框架.md
 - ✅ 策略组合优化.md
-- ✅ 战略调整机制.md
+- ✅ STRATEGIC_ADJUSTMENT_MECHANISM.md
 
 **P1级蓝图（1个）**：
-- ✅ 资产类别定义.md
+- ✅ ASSET_CLASS_DEFINITION.md
 
 **质量评估**：
 - 文档结构完整性：100%
@@ -245,11 +245,11 @@ responsibility:
 ### 7.2 剩余工作
 
 **P1级蓝图（5个）**：
-- ⏳ 风险预算方法.md
-- ⏳ 风险调整机制.md
-- ⏳ 策略评估标准.md
-- ⏳ 市场环境评估.md
-- ⏳ 调整触发条件.md
+- ⏳ RISK_BUDGETING_METHOD.md
+- ⏳ RISK_ADJUSTMENT_MECHANISM.md
+- ⏳ STRATEGY_EVALUATION_CRITERIA.md
+- ⏳ MARKET_ENVIRONMENT_ASSESSMENT.md
+- ⏳ ADJUSTMENT_TRIGGER_CONDITIONS.md
 
 **预计时间**：6.5小时（完整版）或3小时（简化版）
 

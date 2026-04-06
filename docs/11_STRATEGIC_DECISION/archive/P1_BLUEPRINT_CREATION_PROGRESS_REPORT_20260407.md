@@ -33,13 +33,13 @@ responsibility:
 ### 完成成果
 
 **已完成P1级蓝图文档（1个）**：
-- ✅ 风险预算方法.md
+- ✅ RISK_BUDGETING_METHOD.md
 
 **剩余P1级蓝图文档（4个）**：
-- ⏳ 风险调整机制.md
-- ⏳ 策略评估标准.md
-- ⏳ 市场环境评估.md
-- ⏳ 调整触发条件.md
+- ⏳ RISK_ADJUSTMENT_MECHANISM.md
+- ⏳ STRATEGY_EVALUATION_CRITERIA.md
+- ⏳ MARKET_ENVIRONMENT_ASSESSMENT.md
+- ⏳ ADJUSTMENT_TRIGGER_CONDITIONS.md
 
 **完成进度**：
 - P1级蓝图：20% (1/5)
@@ -52,7 +52,7 @@ responsibility:
 
 | 序号 | 文档名称 | 路径 | 状态 | 核心功能 |
 |------|---------|------|------|---------|
-| 1 | 风险预算方法.md | `docs/11_STRATEGIC_DECISION/02_risk_budgeting/风险预算方法.md` | ✅ 已创建 | 风险预算计算方法 |
+| 1 | RISK_BUDGETING_METHOD.md | `docs/11_STRATEGIC_DECISION/02_risk_budgeting/RISK_BUDGETING_METHOD.md` | ✅ 已创建 | 风险预算计算方法 |
 
 ---
 
@@ -62,10 +62,10 @@ responsibility:
 
 | 序号 | 文档名称 | 核心功能 | 开源方案 | 预计时间 |
 |------|---------|---------|---------|---------|
-| 1 | 风险调整机制.md | 风险预算动态调整 | - | 1小时 |
-| 2 | 策略评估标准.md | 策略评估标准与方法 | empyrical | 1.5小时 |
-| 3 | 市场环境评估.md | 市场环境评估框架 | hmmlearn | 1.5小时 |
-| 4 | 调整触发条件.md | 战略调整触发条件 | - | 1小时 |
+| 1 | RISK_ADJUSTMENT_MECHANISM.md | 风险预算动态调整 | - | 1小时 |
+| 2 | STRATEGY_EVALUATION_CRITERIA.md | 策略评估标准与方法 | empyrical | 1.5小时 |
+| 3 | MARKET_ENVIRONMENT_ASSESSMENT.md | 市场环境评估框架 | hmmlearn | 1.5小时 |
+| 4 | ADJUSTMENT_TRIGGER_CONDITIONS.md | 战略调整触发条件 | - | 1小时 |
 
 ---
 
@@ -73,7 +73,7 @@ responsibility:
 
 ### 3.1 已创建蓝图质量评估
 
-**风险预算方法.md质量评估**：
+**RISK_BUDGETING_METHOD.md质量评估**：
 
 | 质量维度 | 评分 | 说明 |
 |---------|------|------|
@@ -132,8 +132,8 @@ responsibility:
 **建议**：根据实际需求调整优先级
 
 **调整建议**：
-- 优先创建策略评估标准.md（策略选择框架的支持模块）
-- 优先创建市场环境评估.md（战略调整机制的支持模块）
+- 优先创建STRATEGY_EVALUATION_CRITERIA.md（策略选择框架的支持模块）
+- 优先创建MARKET_ENVIRONMENT_ASSESSMENT.md（战略调整机制的支持模块）
 - 其他蓝图可后续补充
 
 ---
@@ -145,10 +145,10 @@ responsibility:
 #### 选项1：继续创建剩余蓝图（完整版）
 
 **行动**：
-- 创建风险调整机制.md蓝图
-- 创建策略评估标准.md蓝图
-- 创建市场环境评估.md蓝图
-- 创建调整触发条件.md蓝图
+- 创建RISK_ADJUSTMENT_MECHANISM.md蓝图
+- 创建STRATEGY_EVALUATION_CRITERIA.md蓝图
+- 创建MARKET_ENVIRONMENT_ASSESSMENT.md蓝图
+- 创建ADJUSTMENT_TRIGGER_CONDITIONS.md蓝图
 
 **预计时间**：5小时
 **完成进度**：100%
@@ -207,7 +207,7 @@ responsibility:
 ### 7.1 已完成成果
 
 **P1级蓝图（1个）**：
-- ✅ 风险预算方法.md
+- ✅ RISK_BUDGETING_METHOD.md
 
 **质量评估**：
 - 文档结构完整性：100%
@@ -216,10 +216,10 @@ responsibility:
 ### 7.2 剩余工作
 
 **P1级蓝图（4个）**：
-- ⏳ 风险调整机制.md
-- ⏳ 策略评估标准.md
-- ⏳ 市场环境评估.md
-- ⏳ 调整触发条件.md
+- ⏳ RISK_ADJUSTMENT_MECHANISM.md
+- ⏳ STRATEGY_EVALUATION_CRITERIA.md
+- ⏳ MARKET_ENVIRONMENT_ASSESSMENT.md
+- ⏳ ADJUSTMENT_TRIGGER_CONDITIONS.md
 
 **预计时间**：5小时（完整版）或2小时（简化版）
 

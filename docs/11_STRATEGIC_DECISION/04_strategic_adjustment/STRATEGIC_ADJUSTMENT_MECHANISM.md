@@ -372,8 +372,8 @@ decision = adjustment.make_decision()
 
 | 文档 | 说明 |
 |------|------|
-| [市场环境评估.md](./市场环境评估.md) | 市场环境评估蓝图 |
-| [调整触发条件.md](./调整触发条件.md) | 调整触发条件蓝图 |
+| [MARKET_ENVIRONMENT_ASSESSMENT.md](./MARKET_ENVIRONMENT_ASSESSMENT.md) | 市场环境评估蓝图 |
+| [ADJUSTMENT_TRIGGER_CONDITIONS.md](./ADJUSTMENT_TRIGGER_CONDITIONS.md) | 调整触发条件蓝图 |
 | [策略选择框架.md](./策略选择框架.md) | 策略选择框架蓝图 |
 
 ---

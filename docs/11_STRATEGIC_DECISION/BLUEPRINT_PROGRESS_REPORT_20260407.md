@@ -57,12 +57,12 @@ responsibility:
 
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 状态 |
 |------|---------|---------|---------|------|
-| 1 | 资产配置模型.md | 战略资产配置模型设计 | PyPortfolioOpt, Riskfolio-Lib | ✅ 完成 |
-| 2 | 配置优化方法.md | 资产配置优化方法 | PyPortfolioOpt, Riskfolio-Lib | ✅ 完成 |
+| 1 | ASSET_ALLOCATION_MODEL.md | 战略资产配置模型设计 | PyPortfolioOpt, Riskfolio-Lib | ✅ 完成 |
+| 2 | ALLOCATION_OPTIMIZATION_METHOD.md | 资产配置优化方法 | PyPortfolioOpt, Riskfolio-Lib | ✅ 完成 |
 | 3 | 风险预算框架.md | 风险预算分配框架 | Riskfolio-Lib, XQRiskCore | ✅ 完成 |
 | 4 | 策略选择框架.md | 投资策略选择框架 | skfolio, empyrical | ✅ 完成 |
 | 5 | 策略组合优化.md | 策略组合优化方法 | Multi-Strategy-Portfolio, skfolio | ✅ 完成 |
-| 6 | 战略调整机制.md | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | ✅ 完成 |
+| 6 | STRATEGIC_ADJUSTMENT_MECHANISM.md | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | ✅ 完成 |
 
 ### 1.2 P0级蓝图质量评估
 
@@ -84,12 +84,12 @@ responsibility:
 
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 状态 |
 |------|---------|---------|---------|------|
-| 1 | 资产类别定义.md | 资产类别与风险特征 | yfinance, pandas-datareader | ✅ 完成 |
-| 2 | 风险预算方法.md | 风险预算计算方法 | Riskfolio-Lib, PyPortfolioOpt | ✅ 完成 |
-| 3 | 风险调整机制.md | 风险预算动态调整 | XQRiskCore, Riskfolio-Lib | ✅ 完成 |
-| 4 | 策略评估标准.md | 策略评估标准与方法 | empyrical, pyfolio, QuantStats | ✅ 完成 |
-| 5 | 市场环境评估.md | 市场环境评估框架 | hmmlearn, scikit-learn, yfinance | ✅ 完成 |
-| 6 | 调整触发条件.md | 战略调整触发条件 | 自定义规则引擎, Apache Airflow | ✅ 完成 |
+| 1 | ASSET_CLASS_DEFINITION.md | 资产类别与风险特征 | yfinance, pandas-datareader | ✅ 完成 |
+| 2 | RISK_BUDGETING_METHOD.md | 风险预算计算方法 | Riskfolio-Lib, PyPortfolioOpt | ✅ 完成 |
+| 3 | RISK_ADJUSTMENT_MECHANISM.md | 风险预算动态调整 | XQRiskCore, Riskfolio-Lib | ✅ 完成 |
+| 4 | STRATEGY_EVALUATION_CRITERIA.md | 策略评估标准与方法 | empyrical, pyfolio, QuantStats | ✅ 完成 |
+| 5 | MARKET_ENVIRONMENT_ASSESSMENT.md | 市场环境评估框架 | hmmlearn, scikit-learn, yfinance | ✅ 完成 |
+| 6 | ADJUSTMENT_TRIGGER_CONDITIONS.md | 战略调整触发条件 | 自定义规则引擎, Apache Airflow | ✅ 完成 |
 
 ### 2.2 P1级蓝图质量评估
 

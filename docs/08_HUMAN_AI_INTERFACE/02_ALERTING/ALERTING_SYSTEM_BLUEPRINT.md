@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化
+  - 告警通知系统，负责异常检测、告警规则配置和告警推送，不负责系统监控和日志记录
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: USER_PREFERENCES_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 系统架构
+  - 用户偏好设置，负责用户个性化配置、界面定制和偏好管理，不负责系统配置管理
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

@@ -40,32 +40,32 @@ parent_document: ../INDEX.md
 
 ## ✅ 成功修复文件列表
 
-1. 11_STRATEGIC_DECISION\01_asset_allocation\资产类别定义.md
-   - 旧文件名: 资产类别定义.md
+1. 11_STRATEGIC_DECISION\01_asset_allocation\ASSET_CLASS_DEFINITION.md
+   - 旧文件名: ASSET_CLASS_DEFINITION.md
    - 新文件名: ASSET_CLASS_DEFINITION.md
-2. 11_STRATEGIC_DECISION\01_asset_allocation\资产配置模型.md
-   - 旧文件名: 资产配置模型.md
+2. 11_STRATEGIC_DECISION\01_asset_allocation\ASSET_ALLOCATION_MODEL.md
+   - 旧文件名: ASSET_ALLOCATION_MODEL.md
    - 新文件名: ASSET_ALLOCATION_MODEL.md
-3. 11_STRATEGIC_DECISION\01_asset_allocation\配置优化方法.md
-   - 旧文件名: 配置优化方法.md
+3. 11_STRATEGIC_DECISION\01_asset_allocation\ALLOCATION_OPTIMIZATION_METHOD.md
+   - 旧文件名: ALLOCATION_OPTIMIZATION_METHOD.md
    - 新文件名: ALLOCATION_OPTIMIZATION_METHOD.md
-4. 11_STRATEGIC_DECISION\02_risk_budgeting\风险调整机制.md
-   - 旧文件名: 风险调整机制.md
+4. 11_STRATEGIC_DECISION\02_risk_budgeting\RISK_ADJUSTMENT_MECHANISM.md
+   - 旧文件名: RISK_ADJUSTMENT_MECHANISM.md
    - 新文件名: RISK_ADJUSTMENT_MECHANISM.md
-5. 11_STRATEGIC_DECISION\02_risk_budgeting\风险预算方法.md
-   - 旧文件名: 风险预算方法.md
+5. 11_STRATEGIC_DECISION\02_risk_budgeting\RISK_BUDGETING_METHOD.md
+   - 旧文件名: RISK_BUDGETING_METHOD.md
    - 新文件名: RISK_BUDGETING_METHOD.md
-6. 11_STRATEGIC_DECISION\03_strategy_selection\策略评估标准.md
-   - 旧文件名: 策略评估标准.md
+6. 11_STRATEGIC_DECISION\03_strategy_selection\STRATEGY_EVALUATION_CRITERIA.md
+   - 旧文件名: STRATEGY_EVALUATION_CRITERIA.md
    - 新文件名: STRATEGY_EVALUATION_CRITERIA.md
-7. 11_STRATEGIC_DECISION\04_strategic_adjustment\市场环境评估.md
-   - 旧文件名: 市场环境评估.md
+7. 11_STRATEGIC_DECISION\04_strategic_adjustment\MARKET_ENVIRONMENT_ASSESSMENT.md
+   - 旧文件名: MARKET_ENVIRONMENT_ASSESSMENT.md
    - 新文件名: MARKET_ENVIRONMENT_ASSESSMENT.md
-8. 11_STRATEGIC_DECISION\04_strategic_adjustment\战略调整机制.md
-   - 旧文件名: 战略调整机制.md
+8. 11_STRATEGIC_DECISION\04_strategic_adjustment\STRATEGIC_ADJUSTMENT_MECHANISM.md
+   - 旧文件名: STRATEGIC_ADJUSTMENT_MECHANISM.md
    - 新文件名: STRATEGIC_ADJUSTMENT_MECHANISM.md
-9. 11_STRATEGIC_DECISION\04_strategic_adjustment\调整触发条件.md
-   - 旧文件名: 调整触发条件.md
+9. 11_STRATEGIC_DECISION\04_strategic_adjustment\ADJUSTMENT_TRIGGER_CONDITIONS.md
+   - 旧文件名: ADJUSTMENT_TRIGGER_CONDITIONS.md
    - 新文件名: ADJUSTMENT_TRIGGER_CONDITIONS.md
 
 ---

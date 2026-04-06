@@ -300,8 +300,8 @@ weights = ef.max_sharpe()
 
 ### 6.2 相关模块文档
 
-- [风险预算方法.md](./RISK_BUDGETING_METHOD.md) - 风险预算计算方法
-- [风险调整机制.md](./RISK_ADJUSTMENT_MECHANISM.md) - 风险预算动态调整
+- [RISK_BUDGETING_METHOD.md](./RISK_BUDGETING_METHOD.md) - 风险预算计算方法
+- [RISK_ADJUSTMENT_MECHANISM.md](./RISK_ADJUSTMENT_MECHANISM.md) - 风险预算动态调整
 
 ---
 

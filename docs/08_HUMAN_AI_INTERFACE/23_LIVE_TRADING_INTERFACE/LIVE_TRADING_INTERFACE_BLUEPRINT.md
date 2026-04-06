@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIVE_TRADING_INTERFACE_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 风险预算
-  - 因子计算
-  - 交易执行
+  - 实盘交易界面，负责实盘交易操作、订单管理和交易监控，不负责策略回测和参数优化
 layer: Layer 5 (执行层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

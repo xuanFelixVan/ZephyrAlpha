@@ -624,8 +624,8 @@ w = port.rp_optimization(model='Classic', rm='MV', rf=0.02)
 
 | 文档 | 说明 |
 |------|------|
-| [配置优化方法.md](./配置优化方法.md) | 配置优化方法蓝图 |
-| [资产类别定义.md](./资产类别定义.md) | 资产类别定义蓝图 |
+| [ALLOCATION_OPTIMIZATION_METHOD.md](./ALLOCATION_OPTIMIZATION_METHOD.md) | 配置优化方法蓝图 |
+| [ASSET_CLASS_DEFINITION.md](./ASSET_CLASS_DEFINITION.md) | 资产类别定义蓝图 |
 | [风险预算框架.md](./风险预算框架.md) | 风险预算框架蓝图 |
 
 ### 9.2 参考文档

@@ -44,8 +44,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [风险调整机制](风险调整机制.md) - `RISK_ADJUSTMENT_MECHANISM_001`
-- [风险预算方法](风险预算方法.md) - `RISK_BUDGET_METHOD_001`
+- [风险调整机制](RISK_ADJUSTMENT_MECHANISM.md) - `RISK_ADJUSTMENT_MECHANISM_001`
+- [风险预算方法](RISK_BUDGETING_METHOD.md) - `RISK_BUDGET_METHOD_001`
 
 ---
 

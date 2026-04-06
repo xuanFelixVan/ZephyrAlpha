@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ONLINE_RESEARCH_ENVIRONMENT_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

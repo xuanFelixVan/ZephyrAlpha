@@ -372,8 +372,8 @@ portfolio_risk = np.sqrt(np.dot(weights.T, np.dot(S, weights)))
 | 文档 | 说明 |
 |------|------|
 | [风险预算框架.md](./风险预算框架.md) | 风险预算框架蓝图 |
-| [风险调整机制.md](./风险调整机制.md) | 风险调整机制蓝图 |
-| [资产配置模型.md](../01_asset_allocation/资产配置模型.md) | 资产配置模型蓝图 |
+| [RISK_ADJUSTMENT_MECHANISM.md](./RISK_ADJUSTMENT_MECHANISM.md) | 风险调整机制蓝图 |
+| [ASSET_ALLOCATION_MODEL.md](../01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | 资产配置模型蓝图 |
 
 ---
 

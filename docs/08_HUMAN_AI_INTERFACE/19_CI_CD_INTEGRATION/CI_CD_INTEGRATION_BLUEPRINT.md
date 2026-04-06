@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CI_CD_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 交易执行
+  - CI/CD集成，负责持续集成、持续部署和自动化流水线，不负责系统监控和告警
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

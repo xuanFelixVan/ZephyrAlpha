@@ -75,8 +75,8 @@ responsibility:
 
 | 文档名称 | 路径 | 优先级 | 说明 | 状态 |
 |---------|------|--------|------|------|
-| 资产配置模型.md | `docs/11_STRATEGIC_DECISION/01_asset_allocation/资产配置模型.md` | P0 | 战略资产配置模型设计 | ✅ 已创建 |
-| 配置优化方法.md | `docs/11_STRATEGIC_DECISION/01_asset_allocation/配置优化方法.md` | P0 | 配置优化方法设计 | ✅ 已创建 |
+| ASSET_ALLOCATION_MODEL.md | `docs/11_STRATEGIC_DECISION/01_asset_allocation/ASSET_ALLOCATION_MODEL.md` | P0 | 战略资产配置模型设计 | ✅ 已创建 |
+| ALLOCATION_OPTIMIZATION_METHOD.md | `docs/11_STRATEGIC_DECISION/01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md` | P0 | 配置优化方法设计 | ✅ 已创建 |
 
 ### 1.3 已有蓝图文档（21个）
 
@@ -120,18 +120,18 @@ responsibility:
 | 1 | 风险预算框架.md | 风险预算分配框架 | Riskfolio-Lib | 2小时 |
 | 2 | 策略选择框架.md | 投资策略选择框架 | skfolio | 2小时 |
 | 3 | 策略组合优化.md | 策略组合优化方法 | Multi-Strategy-Portfolio | 2小时 |
-| 4 | 战略调整机制.md | 战略调整决策机制 | AI-Hedge-Fund | 2小时 |
+| 4 | STRATEGIC_ADJUSTMENT_MECHANISM.md | 战略调整决策机制 | AI-Hedge-Fund | 2小时 |
 
 ### 2.2 P1级剩余蓝图（6个）
 
 | 序号 | 文档名称 | 核心功能 | 开源方案 | 预计时间 |
 |------|---------|---------|---------|---------|
-| 1 | 资产类别定义.md | 资产类别定义 | - | 1小时 |
-| 2 | 风险预算方法.md | 风险预算计算方法 | Riskfolio-Lib | 1.5小时 |
-| 3 | 风险调整机制.md | 风险预算动态调整 | - | 1小时 |
-| 4 | 策略评估标准.md | 策略评估标准与方法 | empyrical | 1.5小时 |
-| 5 | 市场环境评估.md | 市场环境评估框架 | hmmlearn | 1.5小时 |
-| 6 | 调整触发条件.md | 战略调整触发条件 | - | 1小时 |
+| 1 | ASSET_CLASS_DEFINITION.md | 资产类别定义 | - | 1小时 |
+| 2 | RISK_BUDGETING_METHOD.md | 风险预算计算方法 | Riskfolio-Lib | 1.5小时 |
+| 3 | RISK_ADJUSTMENT_MECHANISM.md | 风险预算动态调整 | - | 1小时 |
+| 4 | STRATEGY_EVALUATION_CRITERIA.md | 策略评估标准与方法 | empyrical | 1.5小时 |
+| 5 | MARKET_ENVIRONMENT_ASSESSMENT.md | 市场环境评估框架 | hmmlearn | 1.5小时 |
+| 6 | ADJUSTMENT_TRIGGER_CONDITIONS.md | 战略调整触发条件 | - | 1小时 |
 
 ### 2.3 现有蓝图补充工作
 
@@ -233,8 +233,8 @@ responsibility:
 ### 4.1 Week 1: P0级蓝图创建
 
 #### Day 1-2：资产配置模块（已完成）
-- [x] 创建资产配置模型.md蓝图 ✅
-- [x] 创建配置优化方法.md蓝图 ✅
+- [x] 创建ASSET_ALLOCATION_MODEL.md蓝图 ✅
+- [x] 创建ALLOCATION_OPTIMIZATION_METHOD.md蓝图 ✅
 
 #### Day 3-4：风险预算和策略选择模块
 - [ ] 创建风险预算框架.md蓝图
@@ -242,20 +242,20 @@ responsibility:
 - [ ] 创建策略组合优化.md蓝图
 
 #### Day 5-7：战略调整模块
-- [ ] 创建战略调整机制.md蓝图
+- [ ] 创建STRATEGIC_ADJUSTMENT_MECHANISM.md蓝图
 - [ ] 审核所有P0级蓝图
 
 ### 4.2 Week 2: P1级蓝图创建
 
 #### Day 1-3：资产配置和风险预算模块
-- [ ] 创建资产类别定义.md蓝图
-- [ ] 创建风险预算方法.md蓝图
-- [ ] 创建风险调整机制.md蓝图
+- [ ] 创建ASSET_CLASS_DEFINITION.md蓝图
+- [ ] 创建RISK_BUDGETING_METHOD.md蓝图
+- [ ] 创建RISK_ADJUSTMENT_MECHANISM.md蓝图
 
 #### Day 4-5：策略选择和战略调整模块
-- [ ] 创建策略评估标准.md蓝图
-- [ ] 创建市场环境评估.md蓝图
-- [ ] 创建调整触发条件.md蓝图
+- [ ] 创建STRATEGY_EVALUATION_CRITERIA.md蓝图
+- [ ] 创建MARKET_ENVIRONMENT_ASSESSMENT.md蓝图
+- [ ] 创建ADJUSTMENT_TRIGGER_CONDITIONS.md蓝图
 
 #### Day 6-7：蓝图补充和审核
 - [ ] 补充现有蓝图缺失章节
@@ -325,15 +325,15 @@ responsibility:
 - [ ] 创建风险预算框架.md蓝图（2小时）
 - [ ] 创建策略选择框架.md蓝图（2小时）
 - [ ] 创建策略组合优化.md蓝图（2小时）
-- [ ] 创建战略调整机制.md蓝图（2小时）
+- [ ] 创建STRATEGIC_ADJUSTMENT_MECHANISM.md蓝图（2小时）
 
 #### 优先级2：创建P1级蓝图（9小时）
-- [ ] 创建资产类别定义.md蓝图（1小时）
-- [ ] 创建风险预算方法.md蓝图（1.5小时）
-- [ ] 创建风险调整机制.md蓝图（1小时）
-- [ ] 创建策略评估标准.md蓝图（1.5小时）
-- [ ] 创建市场环境评估.md蓝图（1.5小时）
-- [ ] 创建调整触发条件.md蓝图（1小时）
+- [ ] 创建ASSET_CLASS_DEFINITION.md蓝图（1小时）
+- [ ] 创建RISK_BUDGETING_METHOD.md蓝图（1.5小时）
+- [ ] 创建RISK_ADJUSTMENT_MECHANISM.md蓝图（1小时）
+- [ ] 创建STRATEGY_EVALUATION_CRITERIA.md蓝图（1.5小时）
+- [ ] 创建MARKET_ENVIRONMENT_ASSESSMENT.md蓝图（1.5小时）
+- [ ] 创建ADJUSTMENT_TRIGGER_CONDITIONS.md蓝图（1小时）
 
 #### 优先级3：补充现有蓝图（10小时）
 - [ ] 补充功能设计章节（5小时）
@@ -360,8 +360,8 @@ responsibility:
 - ✅ 实施时间表和质量标准
 
 **示例蓝图**：
-- ✅ 资产配置模型.md（完整示例）
-- ✅ 配置优化方法.md（完整示例）
+- ✅ ASSET_ALLOCATION_MODEL.md（完整示例）
+- ✅ ALLOCATION_OPTIMIZATION_METHOD.md（完整示例）
 
 **工具支持**：
 - ✅ 文档完整性检查工具

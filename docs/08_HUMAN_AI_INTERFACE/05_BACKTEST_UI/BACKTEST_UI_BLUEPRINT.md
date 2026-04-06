@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BACKTEST_UI_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 交互式回测界面，负责策略回测的可视化展示、结果分析和报告生成，不负责实盘交易和参数优化
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

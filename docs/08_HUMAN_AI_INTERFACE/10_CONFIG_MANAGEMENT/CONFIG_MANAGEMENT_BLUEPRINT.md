@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONFIG_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化
+  - 配置管理系统，负责系统配置的集中管理、版本控制和配置同步，不负责用户偏好设置
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

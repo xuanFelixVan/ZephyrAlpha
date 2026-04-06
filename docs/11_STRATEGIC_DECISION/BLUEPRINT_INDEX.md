@@ -48,9 +48,9 @@ responsibility:
 
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 实施时间 |
 |------|---------|---------|---------|---------|
-| 1 | [资产配置模型.md](./01_asset_allocation/资产配置模型.md) | 战略资产配置模型设计 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 1-2 |
-| 2 | [配置优化方法.md](./01_asset_allocation/配置优化方法.md) | 资产配置优化方法 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 3-4 |
-| 3 | [战略调整机制.md](./04_strategic_adjustment/战略调整机制.md) | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | Week 2, Day 6-7 |
+| 1 | [ASSET_ALLOCATION_MODEL.md](./01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | 战略资产配置模型设计 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 1-2 |
+| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](./01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | 资产配置优化方法 | PyPortfolioOpt, Riskfolio-Lib | Week 1, Day 3-4 |
+| 3 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](./04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | 战略调整决策机制 | AI-Hedge-Fund, XQRiskCore | Week 2, Day 6-7 |
 
 **注意**: 以下P0级蓝图待补充：
 - 风险预算框架.md（待创建）
@@ -63,12 +63,12 @@ responsibility:
 
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 实施时间 |
 |------|---------|---------|---------|---------|
-| 1 | [资产类别定义.md](./01_asset_allocation/资产类别定义.md) | 资产类别与风险特征 | yfinance, pandas-datareader | Week 3, Day 1 |
-| 2 | [风险预算方法.md](./02_risk_budgeting/风险预算方法.md) | 风险预算计算方法 | Riskfolio-Lib, PyPortfolioOpt | Week 3, Day 2-3 |
-| 3 | [风险调整机制.md](./02_risk_budgeting/风险调整机制.md) | 风险预算动态调整 | XQRiskCore, Riskfolio-Lib | Week 3, Day 4-5 |
-| 4 | [策略评估标准.md](./03_strategy_selection/策略评估标准.md) | 策略评估标准与方法 | empyrical, pyfolio, QuantStats | Week 4, Day 1-2 |
-| 5 | [市场环境评估.md](./04_strategic_adjustment/市场环境评估.md) | 市场环境评估框架 | hmmlearn, scikit-learn, yfinance | Week 4, Day 3-4 |
-| 6 | [调整触发条件.md](./04_strategic_adjustment/调整触发条件.md) | 战略调整触发条件 | 自定义规则引擎, Apache Airflow | Week 4, Day 5 |
+| 1 | [ASSET_CLASS_DEFINITION.md](./01_asset_allocation/ASSET_CLASS_DEFINITION.md) | 资产类别与风险特征 | yfinance, pandas-datareader | Week 3, Day 1 |
+| 2 | [RISK_BUDGETING_METHOD.md](./02_risk_budgeting/RISK_BUDGETING_METHOD.md) | 风险预算计算方法 | Riskfolio-Lib, PyPortfolioOpt | Week 3, Day 2-3 |
+| 3 | [RISK_ADJUSTMENT_MECHANISM.md](./02_risk_budgeting/RISK_ADJUSTMENT_MECHANISM.md) | 风险预算动态调整 | XQRiskCore, Riskfolio-Lib | Week 3, Day 4-5 |
+| 4 | [STRATEGY_EVALUATION_CRITERIA.md](./03_strategy_selection/STRATEGY_EVALUATION_CRITERIA.md) | 策略评估标准与方法 | empyrical, pyfolio, QuantStats | Week 4, Day 1-2 |
+| 5 | [MARKET_ENVIRONMENT_ASSESSMENT.md](./04_strategic_adjustment/MARKET_ENVIRONMENT_ASSESSMENT.md) | 市场环境评估框架 | hmmlearn, scikit-learn, yfinance | Week 4, Day 3-4 |
+| 6 | [ADJUSTMENT_TRIGGER_CONDITIONS.md](./04_strategic_adjustment/ADJUSTMENT_TRIGGER_CONDITIONS.md) | 战略调整触发条件 | 自定义规则引擎, Apache Airflow | Week 4, Day 5 |
 
 ---
 

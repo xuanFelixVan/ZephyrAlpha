@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [策略评估标准](策略评估标准.md) - `STRATEGY_EVALUATION_CRITERIA_001`
+- [策略评估标准](STRATEGY_EVALUATION_CRITERIA.md) - `STRATEGY_EVALUATION_CRITERIA_001`
 
 ---
 

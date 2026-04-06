@@ -319,7 +319,7 @@ max_drawdown = (hist['Close'] / hist['Close'].cummax() - 1).min()
 
 | 文档 | 说明 |
 |------|------|
-| [资产配置模型.md](../01_asset_allocation/资产配置模型.md) | 资产配置模型蓝图 |
+| [ASSET_ALLOCATION_MODEL.md](../01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | 资产配置模型蓝图 |
 | [风险预算框架.md](../02_risk_budgeting/风险预算框架.md) | 风险预算框架蓝图 |
 
 ---

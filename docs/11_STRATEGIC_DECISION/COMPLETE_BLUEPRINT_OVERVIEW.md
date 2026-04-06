@@ -63,9 +63,9 @@ responsibility:
 
 | 文档名称 | 优先级 | 状态 | 说明 |
 |---------|--------|------|------|
-| **资产配置模型.md** | P0 | ✅ 已创建 | 战略资产配置模型设计 |
-| **配置优化方法.md** | P0 | ❌ 缺失 | 资产配置优化方法 |
-| **资产类别定义.md** | P1 | ❌ 缺失 | 资产类别与风险特征 |
+| **ASSET_ALLOCATION_MODEL.md** | P0 | ✅ 已创建 | 战略资产配置模型设计 |
+| **ALLOCATION_OPTIMIZATION_METHOD.md** | P0 | ❌ 缺失 | 资产配置优化方法 |
+| **ASSET_CLASS_DEFINITION.md** | P1 | ❌ 缺失 | 资产类别与风险特征 |
 
 ### 1.2 风险预算分配模块
 
@@ -81,8 +81,8 @@ responsibility:
 | 文档名称 | 优先级 | 状态 | 说明 |
 |---------|--------|------|------|
 | **风险预算框架.md** | P0 | ❌ 缺失 | 风险预算分配框架 |
-| **风险预算方法.md** | P1 | ❌ 缺失 | 风险预算计算方法 |
-| **风险调整机制.md** | P1 | ❌ 缺失 | 风险预算动态调整 |
+| **RISK_BUDGETING_METHOD.md** | P1 | ❌ 缺失 | 风险预算计算方法 |
+| **RISK_ADJUSTMENT_MECHANISM.md** | P1 | ❌ 缺失 | 风险预算动态调整 |
 
 ### 1.3 投资策略选择模块
 
@@ -97,7 +97,7 @@ responsibility:
 | 文档名称 | 优先级 | 状态 | 说明 |
 |---------|--------|------|------|
 | **策略选择框架.md** | P0 | ❌ 缺失 | 投资策略选择框架 |
-| **策略评估标准.md** | P1 | ❌ 缺失 | 策略评估标准与方法 |
+| **STRATEGY_EVALUATION_CRITERIA.md** | P1 | ❌ 缺失 | 策略评估标准与方法 |
 | **策略组合优化.md** | P0 | ❌ 缺失 | 策略组合优化方法 |
 
 ### 1.4 战略调整决策模块
@@ -113,9 +113,9 @@ responsibility:
 
 | 文档名称 | 优先级 | 状态 | 说明 |
 |---------|--------|------|------|
-| **战略调整机制.md** | P0 | ❌ 缺失 | 战略调整决策机制 |
-| **市场环境评估.md** | P1 | ❌ 缺失 | 市场环境评估框架 |
-| **调整触发条件.md** | P1 | ❌ 缺失 | 战略调整触发条件 |
+| **STRATEGIC_ADJUSTMENT_MECHANISM.md** | P0 | ❌ 缺失 | 战略调整决策机制 |
+| **MARKET_ENVIRONMENT_ASSESSMENT.md** | P1 | ❌ 缺失 | 市场环境评估框架 |
+| **ADJUSTMENT_TRIGGER_CONDITIONS.md** | P1 | ❌ 缺失 | 战略调整触发条件 |
 
 ### 1.5 支持模块
 
@@ -167,22 +167,22 @@ responsibility:
 
 | 序号 | 文档名称 | 所属模块 | 核心功能 | 开源方案 |
 |------|---------|---------|---------|---------|
-| 1 | **配置优化方法.md** | 资产配置 | 配置优化算法 | PyPortfolioOpt |
+| 1 | **ALLOCATION_OPTIMIZATION_METHOD.md** | 资产配置 | 配置优化算法 | PyPortfolioOpt |
 | 2 | **风险预算框架.md** | 风险预算 | 风险预算分配 | Riskfolio-Lib |
 | 3 | **策略选择框架.md** | 策略选择 | 策略选择决策 | skfolio |
 | 4 | **策略组合优化.md** | 策略选择 | 策略组合优化 | Multi-Strategy-Portfolio |
-| 5 | **战略调整机制.md** | 战略调整 | 战略调整决策 | AI-Hedge-Fund |
+| 5 | **STRATEGIC_ADJUSTMENT_MECHANISM.md** | 战略调整 | 战略调整决策 | AI-Hedge-Fund |
 
 ### 2.2 P1级缺失模块（6个）
 
 | 序号 | 文档名称 | 所属模块 | 核心功能 | 开源方案 |
 |------|---------|---------|---------|---------|
-| 1 | **资产类别定义.md** | 资产配置 | 资产类别定义 | - |
-| 2 | **风险预算方法.md** | 风险预算 | 风险预算计算 | Riskfolio-Lib |
-| 3 | **风险调整机制.md** | 风险预算 | 风险预算调整 | - |
-| 4 | **策略评估标准.md** | 策略选择 | 策略评估标准 | - |
-| 5 | **市场环境评估.md** | 战略调整 | 市场环境评估 | - |
-| 6 | **调整触发条件.md** | 战略调整 | 调整触发条件 | - |
+| 1 | **ASSET_CLASS_DEFINITION.md** | 资产配置 | 资产类别定义 | - |
+| 2 | **RISK_BUDGETING_METHOD.md** | 风险预算 | 风险预算计算 | Riskfolio-Lib |
+| 3 | **RISK_ADJUSTMENT_MECHANISM.md** | 风险预算 | 风险预算调整 | - |
+| 4 | **STRATEGY_EVALUATION_CRITERIA.md** | 策略选择 | 策略评估标准 | - |
+| 5 | **MARKET_ENVIRONMENT_ASSESSMENT.md** | 战略调整 | 市场环境评估 | - |
+| 6 | **ADJUSTMENT_TRIGGER_CONDITIONS.md** | 战略调整 | 调整触发条件 | - |
 
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_BACKUP_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 数据备份系统，负责数据备份、恢复和备份策略管理，不负责数据导入导出
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

@@ -115,7 +115,7 @@ responsibility:
 - ✅ 所有链接有效
 
 **说明**：
-- 审计脚本报告的6个死链接（资产配置模型.md等）为误报
+- 审计脚本报告的6个死链接（ASSET_ALLOCATION_MODEL.md等）为误报
 - 手动验证确认INDEX.md中不存在这些链接
 
 ---

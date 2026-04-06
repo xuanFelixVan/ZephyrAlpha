@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOBILE_PUSH_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 移动推送通知，负责移动端消息推送、通知管理和推送策略，不负责告警规则配置
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

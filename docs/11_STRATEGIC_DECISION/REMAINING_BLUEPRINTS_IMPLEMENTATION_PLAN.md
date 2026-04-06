@@ -34,8 +34,8 @@ responsibility:
 ### 实施现状
 
 **已完成蓝图**：
-- ✅ 资产配置模型.md（P0级）
-- ✅ 配置优化方法.md（P0级）
+- ✅ ASSET_ALLOCATION_MODEL.md（P0级）
+- ✅ ALLOCATION_OPTIMIZATION_METHOD.md（P0级）
 
 **剩余蓝图**：
 - P0级：4个
@@ -108,9 +108,9 @@ responsibility:
 - 数据模型：策略组合配置、优化结果
 - 开源集成：Multi-Strategy-Portfolio集成方案
 
-### 1.4 战略调整机制.md
+### 1.4 STRATEGIC_ADJUSTMENT_MECHANISM.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/04_strategic_adjustment/战略调整机制.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md`
 
 **核心功能**：
 - 调整触发判断（调整条件判断）
@@ -130,9 +130,9 @@ responsibility:
 
 ## 二、剩余P1级蓝图清单
 
-### 2.1 资产类别定义.md
+### 2.1 ASSET_CLASS_DEFINITION.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/01_asset_allocation/资产类别定义.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/01_asset_allocation/ASSET_CLASS_DEFINITION.md`
 
 **核心功能**：
 - 资产类别定义（股票、债券、商品、现金）
@@ -148,9 +148,9 @@ responsibility:
 - 数据模型：资产类别配置、资产特征数据
 - 实施路径：资产类别定义流程
 
-### 2.2 风险预算方法.md
+### 2.2 RISK_BUDGETING_METHOD.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/02_risk_budgeting/风险预算方法.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/02_risk_budgeting/RISK_BUDGETING_METHOD.md`
 
 **核心功能**：
 - VaR预算计算（VaR预算分配）
@@ -166,9 +166,9 @@ responsibility:
 - 数据模型：风险预算配置、计算结果
 - 开源集成：Riskfolio-Lib集成方案
 
-### 2.3 风险调整机制.md
+### 2.3 RISK_ADJUSTMENT_MECHANISM.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/02_risk_budgeting/风险调整机制.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/02_risk_budgeting/RISK_ADJUSTMENT_MECHANISM.md`
 
 **核心功能**：
 - 风险调整触发（调整条件判断）
@@ -184,9 +184,9 @@ responsibility:
 - 数据模型：调整配置、调整结果
 - 实施路径：风险调整流程
 
-### 2.4 策略评估标准.md
+### 2.4 STRATEGY_EVALUATION_CRITERIA.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/03_strategy_selection/策略评估标准.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/03_strategy_selection/STRATEGY_EVALUATION_CRITERIA.md`
 
 **核心功能**：
 - 绩效指标定义（夏普比率、卡玛比率、索提诺比率）
@@ -202,9 +202,9 @@ responsibility:
 - 数据模型：评估配置、评估结果
 - 开源集成：empyrical集成方案
 
-### 2.5 市场环境评估.md
+### 2.5 MARKET_ENVIRONMENT_ASSESSMENT.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/04_strategic_adjustment/市场环境评估.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/04_strategic_adjustment/MARKET_ENVIRONMENT_ASSESSMENT.md`
 
 **核心功能**：
 - 市场状态评估（趋势/震荡/极端）
@@ -220,9 +220,9 @@ responsibility:
 - 数据模型：评估配置、评估结果
 - 开源集成：hmmlearn集成方案
 
-### 2.6 调整触发条件.md
+### 2.6 ADJUSTMENT_TRIGGER_CONDITIONS.md
 
-**文档路径**：`docs/11_STRATEGIC_DECISION/04_strategic_adjustment/调整触发条件.md`
+**文档路径**：`docs/11_STRATEGIC_DECISION/04_strategic_adjustment/ADJUSTMENT_TRIGGER_CONDITIONS.md`
 
 **核心功能**：
 - 触发条件定义（调整触发条件）
@@ -406,8 +406,8 @@ implementation_status: 蓝图阶段
 ### 4.1 Week 1: P0级蓝图创建
 
 #### Day 1-2：资产配置模块（已完成）
-- [x] 创建资产配置模型.md蓝图 ✅
-- [x] 创建配置优化方法.md蓝图 ✅
+- [x] 创建ASSET_ALLOCATION_MODEL.md蓝图 ✅
+- [x] 创建ALLOCATION_OPTIMIZATION_METHOD.md蓝图 ✅
 
 #### Day 3-4：风险预算和策略选择模块
 - [ ] 创建风险预算框架.md蓝图
@@ -415,20 +415,20 @@ implementation_status: 蓝图阶段
 - [ ] 创建策略组合优化.md蓝图
 
 #### Day 5-7：战略调整模块
-- [ ] 创建战略调整机制.md蓝图
+- [ ] 创建STRATEGIC_ADJUSTMENT_MECHANISM.md蓝图
 - [ ] 审核所有P0级蓝图
 
 ### 4.2 Week 2: P1级蓝图创建
 
 #### Day 1-3：资产配置和风险预算模块
-- [ ] 创建资产类别定义.md蓝图
-- [ ] 创建风险预算方法.md蓝图
-- [ ] 创建风险调整机制.md蓝图
+- [ ] 创建ASSET_CLASS_DEFINITION.md蓝图
+- [ ] 创建RISK_BUDGETING_METHOD.md蓝图
+- [ ] 创建RISK_ADJUSTMENT_MECHANISM.md蓝图
 
 #### Day 4-5：策略选择和战略调整模块
-- [ ] 创建策略评估标准.md蓝图
-- [ ] 创建市场环境评估.md蓝图
-- [ ] 创建调整触发条件.md蓝图
+- [ ] 创建STRATEGY_EVALUATION_CRITERIA.md蓝图
+- [ ] 创建MARKET_ENVIRONMENT_ASSESSMENT.md蓝图
+- [ ] 创建ADJUSTMENT_TRIGGER_CONDITIONS.md蓝图
 
 #### Day 6-7：蓝图补充和审核
 - [ ] 补充现有蓝图缺失章节
@@ -546,8 +546,8 @@ implementation_status: 蓝图阶段
 
 | 文档 | 说明 |
 |------|------|
-| [资产配置模型.md](./01_asset_allocation/资产配置模型.md) | 资产配置模型蓝图 |
-| [配置优化方法.md](./01_asset_allocation/配置优化方法.md) | 配置优化方法蓝图 |
+| [ASSET_ALLOCATION_MODEL.md](./01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | 资产配置模型蓝图 |
+| [ALLOCATION_OPTIMIZATION_METHOD.md](./01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | 配置优化方法蓝图 |
 
 ### 9.2 规划文档
 

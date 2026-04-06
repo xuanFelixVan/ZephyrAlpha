@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTH_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 认证授权系统，负责用户身份认证、登录管理和基础权限验证，不负责细粒度权限控制
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_RATE_LIMITING_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - API限流系统，负责API访问频率控制、流量管理和限流策略，不负责API文档和权限管理
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

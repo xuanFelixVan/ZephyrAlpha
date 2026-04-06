@@ -101,7 +101,7 @@ responsibility:
 | LIQUIDITY_MANAGEMENT_BLUEPRINT.md | ./RISK_BUDGET_SYSTEM_BLUEPRINT.md | 文件不存在 |
 | PERFORMANCE_ATTRIBUTION_BLUEPRINT.md | ./RISK_BUDGET_SYSTEM_BLUEPRINT.md | 文件不存在 |
 | PORTFOLIO_INSURANCE_BLUEPRINT.md | ./RISK_BUDGET_SYSTEM_BLUEPRINT.md | 文件不存在 |
-| INDEX.md (01_asset_allocation/) | ./资产配置模型.md | 中文文件名 |
+| INDEX.md (01_asset_allocation/) | ./ASSET_ALLOCATION_MODEL.md | 中文文件名 |
 | INDEX.md (01_asset_allocation/) | ./风险预算框架.md | 中文文件名 |
 | INDEX.md (01_asset_allocation/) | ./策略选择框架.md | 中文文件名 |
 

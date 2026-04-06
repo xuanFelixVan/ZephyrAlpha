@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PARAMETER_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 参数优化界面，负责策略参数优化、参数搜索和优化结果展示，不负责策略回测和实盘交易
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
