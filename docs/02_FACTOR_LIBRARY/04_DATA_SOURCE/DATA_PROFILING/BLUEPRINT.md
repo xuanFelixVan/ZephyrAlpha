@@ -29,6 +29,28 @@ dependencies:
 
 # 数据画像蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据画像系统设计蓝图
+- 定义数据画像系统架构
+- 说明数据质量报告生成方案
+- 提供数据分布可视化和EDA方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析V2 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据质量控制 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 协同模块 | 数据质量规则 |
+| 数据可观测性 | [../DATA_OBSERVABILITY/](../DATA_OBSERVABILITY/) | 协同模块 | 数据监控 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据画像系统架构设计
+- ✅ 本文档负责: 数据质量报告生成、数据分布可视化方案
+- ❌ 本文档不负责: 数据质量规则定义（由 QUALITY_MANAGEMENT 负责）
+- ❌ 本文档不负责: 数据监控实施（由 DATA_OBSERVABILITY 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+
 > **优先级**: 🟢 P2 (可选)
 > **实施周期**: 3天
 > **开源方案**: ydata-profiling

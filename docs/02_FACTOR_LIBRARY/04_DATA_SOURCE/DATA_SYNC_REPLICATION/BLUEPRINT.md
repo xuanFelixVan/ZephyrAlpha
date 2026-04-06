@@ -29,6 +29,28 @@ dependencies:
 
 # 数据同步复制蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据同步复制系统设计蓝图
+- 定义数据同步复制架构
+- 说明CDC数据变更捕获方案
+- 提供多数据源整合和容灾方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 实时数据流 | [../REALTIME_DATA_STREAMING/](../REALTIME_DATA_STREAMING/) | 协同模块 | 实时数据流平台 |
+| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](../DATA_BACKUP_RECOVERY/) | 协同模块 | 数据备份方案 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据同步复制系统架构设计
+- ✅ 本文档负责: CDC数据变更捕获、多数据源整合方案
+- ❌ 本文档不负责: 实时数据流处理（由 REALTIME_DATA_STREAMING 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+- ❌ 本文档不负责: 数据质量管理（由 QUALITY_MANAGEMENT 负责）
+
 > **优先级**: 🟢 P2 (可选)
 > **实施周期**: 2周
 > **开源方案**: Debezium + Kafka + ClickHouse

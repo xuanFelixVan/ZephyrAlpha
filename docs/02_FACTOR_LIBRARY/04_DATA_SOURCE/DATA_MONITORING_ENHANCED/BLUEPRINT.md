@@ -29,6 +29,32 @@ dependencies:
 
 # 数据监控系统蓝图（增强）
 
+## 文档职责说明
+
+**本文档职责**: 数据监控系统（增强）设计蓝图
+- 定义数据质量监控执行架构
+- 说明数据质量检查执行方案
+- 提供异常检测、告警和SLA监控方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据质量控制 | [../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md](../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 协同模块 | 数据质量规则定义 |
+| 数据可观测性 | [../DATA_OBSERVABILITY/](../DATA_OBSERVABILITY/) | 协同模块 | 数据可观测性 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据质量监控执行架构设计
+- ✅ 本文档负责: 数据质量检查执行、异常检测、告警方案
+- ❌ 本文档不负责: 数据质量规则定义（由 DATA_QUALITY_CONTROL_SYSTEM 负责）
+- ❌ 本文档不负责: 数据可观测性监控（由 DATA_OBSERVABILITY 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+
+**与DATA_QUALITY_CONTROL_SYSTEM的关系**:
+- **DATA_QUALITY_CONTROL_SYSTEM**: 规则制定者 - 定义"什么是好数据"、"如何检查数据质量"
+- **本文档（DATA_MONITORING_ENHANCED）**: 规则执行者 - 执行质量检查、监控告警、生成报告
+
 > 清风量化系统 v5.4 - 数据监控模块（增强）
 > **优先级**: 🔴 P0级（立即实施）
 > **实施周期**: 1周

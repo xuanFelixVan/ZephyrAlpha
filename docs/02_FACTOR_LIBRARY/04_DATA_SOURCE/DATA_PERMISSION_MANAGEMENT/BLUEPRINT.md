@@ -29,6 +29,28 @@ dependencies:
 
 # 数据权限管理蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据权限管理系统设计蓝图
+- 定义数据权限管理架构
+- 说明RBAC权限控制方案
+- 提供数据访问审计和权限管理方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据安全隐私 | [../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/) | 协同模块 | 数据安全保护 |
+| 数据API网关 | [../DATA_API_GATEWAY/](../DATA_API_GATEWAY/) | 协同模块 | 数据访问接口 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据权限管理系统架构设计
+- ✅ 本文档负责: RBAC权限控制、访问审计方案
+- ❌ 本文档不负责: 数据安全隐私保护（由 DATA_SECURITY_PRIVACY 负责）
+- ❌ 本文档不负责: 数据API接口（由 DATA_API_GATEWAY 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+
 > **优先级**: 🟡 P1 (重要)
 > **实施周期**: 1周
 > **开源方案**: Casbin + 自研轻量方案

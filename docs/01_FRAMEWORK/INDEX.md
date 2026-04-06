@@ -73,6 +73,11 @@ implementation_status: 活跃维护
 | [决策仪表板蓝图](./DECISION_DASHBOARD_BLUEPRINT.md) | 决策入口整合、AI建议展示、审批流程 | ⭐⭐⭐⭐⭐ |
 | [策略配置界面蓝图](./STRATEGY_CONFIGURATION_INTERFACE_BLUEPRINT.md) | 策略参数配置、版本管理、回测验证 | ⭐⭐⭐⭐⭐ |
 | [审计日志查看器蓝图](./AUDIT_LOG_VIEWER_BLUEPRINT.md) | 决策审计追踪、日志查询分析 | ⭐⭐⭐⭐⭐ |
+| [性能分析界面蓝图](./PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md) | 策略性能分析、归因分析、风险分析 | ⭐⭐⭐⭐⭐ |
+| [数据探索界面蓝图](./DATA_EXPLORATION_INTERFACE_BLUEPRINT.md) | 数据浏览查询、可视化分析、质量检查 | ⭐⭐⭐⭐⭐ |
+| [设置管理界面蓝图](./SETTINGS_MANAGEMENT_INTERFACE_BLUEPRINT.md) | 系统配置、用户偏好、通知配置、安全设置 | ⭐⭐⭐⭐ |
+| [帮助系统蓝图](./HELP_SYSTEM_BLUEPRINT.md) | 文档浏览、FAQ、视频教程、学习路径 | ⭐⭐⭐⭐ |
+| [API管理界面蓝图](./API_MANAGEMENT_INTERFACE_BLUEPRINT.md) | API文档、测试工具、密钥管理、调用统计 | ⭐⭐⭐⭐ |
 | [人机交互层技术蓝图](./HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md) | 人机交互层技术实现（已归档） | ⭐⭐⭐⭐ |
 | [移动端推送通知蓝图](./MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md) | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
 | [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |

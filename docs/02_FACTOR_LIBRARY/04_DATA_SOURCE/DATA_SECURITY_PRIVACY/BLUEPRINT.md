@@ -28,6 +28,28 @@ dependencies:
 
 # 数据安全与隐私保护蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据安全与隐私保护系统设计蓝图
+- 定义数据安全与隐私保护架构
+- 说明PII识别和脱敏方案
+- 提供数据加密和访问审计方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
+| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](../DATA_BACKUP_RECOVERY/) | 协同模块 | 数据备份方案 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据安全与隐私保护系统架构设计
+- ✅ 本文档负责: PII识别、脱敏、加密、审计方案
+- ❌ 本文档不负责: 数据权限管理（由 DATA_PERMISSION_MANAGEMENT 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+- ❌ 本文档不负责: 数据质量管理（由 QUALITY_MANAGEMENT 负责）
+
 > **优先级**: 🔴 P0 (必备)
 > **实施周期**: 1周
 > **开源方案**: Microsoft Presidio
