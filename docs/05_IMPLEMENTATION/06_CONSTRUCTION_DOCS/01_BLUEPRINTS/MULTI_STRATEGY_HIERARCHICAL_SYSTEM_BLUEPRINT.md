@@ -1,22 +1,26 @@
 ---
-module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-version: 1.0.0
+module_id: IMPL_MULTI_STRATEGY_HIER_BP_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 created_date: 2026-04-02
-layer: Layer 6
+layer: "Layer 6 (组合优化层)"
 index: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 estimated_hours: 160h
+estimated_effort: 4周
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-02
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系?compliance_level: 专业标准
+applicable_scope: 全系统
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+open_source_dependency: numpy, pandas, scipy, cvxpy
+priority: P0
 ---
 
 # 多策略分层系统蓝?v1.0

@@ -1,21 +1,26 @@
 ---
-module_id: MARKET_IMPACT_MODEL_BLUEPRINT_001
-version: 1.0.0
+module_id: IMPL_MARKET_IMPACT_BP_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 created_date: 2026-04-02
-layer: Layer 5 (微观执行? | 业务架构: 三级时间框架融合架构
+layer: "Layer 5 (微观执行层) | 业务架构: 三级时间框架融合架构"
 index: MARKET_IMPACT_MODEL_BLUEPRINT_001
 estimated_hours: 60h
+estimated_effort: 1.5周
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-02
-owner: 个人开�?standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系?compliance_level: 专业标准
+owner: 个人开发者
+standard_type: 专业量化机构蓝图文档
+applicable_scope: 全系统
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+open_source_dependency: numpy, pandas, scipy
+priority: P0
 ---
 
 # 市场冲击模型蓝图 v1.0
