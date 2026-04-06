@@ -3,13 +3,13 @@ module_id: DATA_NEWS_SENTIMENT_001
 version: 2.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: 2026-04-06
+owner: 首席文档架构师
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管理
 compliance_level: 研究标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行中
 ---
 
 # 另类数据 - 新闻舆情

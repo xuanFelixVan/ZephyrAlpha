@@ -4,19 +4,23 @@ version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 created_date: 2026-04-02
-layer: Layer 6 (组合优化? | 业务架构: 三级时间框架融合架构
+layer: Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
 index: STATISTICAL_ARBITRAGE_MODULE_001
 estimated_hours: 160h
+estimated_effort: 4周
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-02
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系?compliance_level: 专业标准
+applicable_scope: 全系统
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+open_source_dependency: statsmodels, scipy, numpy, pandas
+priority: P0
 ---
 
 # 统计套利模块蓝图 v1.0
@@ -470,14 +474,24 @@ statistical_arbitrage:
 
 ---
 
-## 10. 关键里程?
-| 里程?| 时间 | 交付?| 验收标准 |
+## 10. 关键里程碑
+
+| 里程碑 | 时间 | 交付物 | 验收标准 |
 |--------|------|--------|----------|
 | **M1: 配对交易完成** | Week 2 | 配对交易模块 | 准确率≥60% |
-| **M2: 市场中性完?* | Week 4 | 市场中性组合模?| 净敞口?.1 |
-| **M3: 信号生成完成** | Week 6 | 信号生成与风控模?| 胜率?5% |
+| **M2: 市场中性完成** | Week 4 | 市场中性组合模块 | 净敞口≤0.1 |
+| **M3: 信号生成完成** | Week 6 | 信号生成与风控模块 | 胜率≥55% |
 | **M4: 测试通过** | Week 8 | 测试报告 | 所有测试通过 |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: Draft | **下一?*: 技术规格书编写
+## 11. 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段（open_source_dependency, priority） | 审计系统 |
+
+---
+
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Draft | **下一步**: 技术规格书编写

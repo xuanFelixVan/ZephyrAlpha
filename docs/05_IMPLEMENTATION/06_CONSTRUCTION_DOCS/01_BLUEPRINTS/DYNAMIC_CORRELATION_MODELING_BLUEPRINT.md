@@ -4,21 +4,25 @@ version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-03
+last_updated: 2026-04-06
 created_date: 2026-04-03
-layer: Layer 6 (组合优化? | 业务架构: 三级时间框架融合架构
+layer: Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
 index: DYNAMIC_CORRELATION_MODELING_001
 estimated_hours: 80h
+estimated_effort: 2周
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系?compliance_level: 专业标准
+applicable_scope: 全系统
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 personal_development: true
 ai_maintenance: true
+open_source_dependency: arch, mgarch, numpy, pandas
+priority: P0
 ---
 
 # 跨资产相关性动态建模蓝?v1.0
@@ -612,4 +616,13 @@ def test_integration_with_risk_parity():
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 技术规格书编写
+## 12. 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段（open_source_dependency, priority） | 审计系统 |
+
+---
+
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 技术规格书编写

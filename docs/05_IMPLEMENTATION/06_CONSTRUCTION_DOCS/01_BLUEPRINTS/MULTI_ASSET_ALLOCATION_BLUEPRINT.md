@@ -4,21 +4,25 @@ version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-03
+last_updated: 2026-04-06
 created_date: 2026-04-03
-layer: Layer 6 (组合优化?
+layer: Layer 6 (组合优化层)
 index: MULTI_ASSET_ALLOCATION_001
 estimated_hours: 120h
+estimated_effort: 3周
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
 standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系?compliance_level: 专业标准
+applicable_scope: 全系统
+compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 personal_development: true
 ai_maintenance: true
+open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, cvxpy
+priority: P0
 ---
 
 # 多资产类别配置蓝?v1.0
@@ -728,14 +732,24 @@ pip install arch>=5.0
 3. **多资产配?*:
    - Ang, A. (2014). "Asset Management: A Systematic Approach to Factor Investing"
 
-### B. 术语?
-| 术语 | 定义 | 上下?|
+### B. 术语表
+
+| 术语 | 定义 | 上下文 |
 |------|------|--------|
 | **风险平价** | 基于风险贡献度的资产配置方法 | 配置策略 |
-| **全天候策?* | 桥水基金的风险平价策?| 资产配置 |
-| **跨资产相�?* | 不同资产类别之间的相�?| 相关性建?|
+| **全天候策略** | 桥水基金的风险平价策略 | 资产配置 |
+| **跨资产相关性** | 不同资产类别之间的相关性 | 相关性建模 |
 | **资产类别** | 股票、债券、商品、外汇等大类资产 | 资产分类 |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 技术规格书编写
+## 11. 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段（open_source_dependency, priority） | 审计系统 |
+
+---
+
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 技术规格书编写

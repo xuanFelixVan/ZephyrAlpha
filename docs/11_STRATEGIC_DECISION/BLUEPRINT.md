@@ -573,10 +573,14 @@ class StrategySelection:
 | [MACRO_FACTOR_BLUEPRINT.md](./MACRO_FACTOR_BLUEPRINT.md) | **宏观因子系统蓝图** 🟡 P1级新增 |
 | [ESG_INVESTING_BLUEPRINT.md](./ESG_INVESTING_BLUEPRINT.md) | **ESG投资系统蓝图** 🟢 P2级新增 |
 | [TAX_MANAGEMENT_BLUEPRINT.md](./TAX_MANAGEMENT_BLUEPRINT.md) | **税务管理系统蓝图** 🟢 P2级新增 |
+| [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md) | **多策略协调系统蓝图** 🔴 P0级新增 |
+| [IPS_MANAGEMENT_BLUEPRINT.md](./IPS_MANAGEMENT_BLUEPRINT.md) | **投资政策声明(IPS)管理蓝图** 🟡 P1级新增 |
+| [CAPITAL_ALLOCATION_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | **资本配置系统蓝图** 🟡 P1级新增 |
+| [DECISION_AUDIT_BLUEPRINT.md](./DECISION_AUDIT_BLUEPRINT.md) | **投资决策审计系统蓝图** 🟢 P2级新增 |
 
 ---
 
-**版本**: v2.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
+**版本**: v2.1 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
 ---
 

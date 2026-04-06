@@ -142,6 +142,10 @@ Layer 0: 数据源层 (Data Sources)
 | 宏观因子系统 | 因子构建、暴露分析 | skfolio集成 |
 | ESG投资系统 | ESG评分、约束优化 | PyPortfolioOpt |
 | 税务管理系统 | 印花税计算、成本跟踪 | 批次管理器 |
+| 多策略协调系统 | 信号冲突解决、资金协调 | 协调引擎 |
+| IPS管理系统 | 投资政策声明、合规检查 | IPS管理器 |
+| 资本配置系统 | 资本分配、效率优化 | Riskfolio-Lib |
+| 投资决策审计 | 决策追溯、复盘分析 | 审计日志系统 |
 
 **详细蓝图**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md)
 
