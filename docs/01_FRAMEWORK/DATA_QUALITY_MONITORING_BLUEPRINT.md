@@ -8,8 +8,24 @@ owner: 首席架构师
 layer: Layer 4 (机器学习层)
 standard_type: 专业机构级数据质量监控蓝图专业机构级数据质量监控蓝?applicable_scope: 全系统数据质量管?compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Data Quality", "Two Sigma Data Governance", "Citadel Data Validation"]
+related_documents:
+  - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
+  - DATA_QUALITY_ASSESSMENT_BLUEPRINT.md
+  - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md
+  - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 4 机器学习层）**：
+  - 实时数据质量检查（完整性、准确性、时效性、一致性实时检查）
+  - 自动告警机制（质量降级告警、数据源自动切换、人工介入）
+  - 质量监控仪表盘（Grafana可视化、质量趋势图表）
+  
+  **与本文档职责边界**：
+  - Layer 0（数据源层）: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md - 负责数据源健康监控
+  - Layer 1（数据层）: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md - 负责多维度质量评估
+  - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
+  - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 ---
 
 # 数据质量监控系统蓝图

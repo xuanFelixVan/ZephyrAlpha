@@ -97,18 +97,38 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 |----------|--------|------|------|---------|---------|------|
 | [数据隐私合规系统蓝图](./DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md) | DATA_PRIVACY_COMPLIANCE_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐ | 数据分类分级、隐私保护、合规检查、隐私审计 |
 | [ESG合规监控系统蓝图](./ESG_COMPLIANCE_MONITORING_BLUEPRINT.md) | ESG_COMPLIANCE_MONITORING_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐ | ESG数据采集、评分计算、合规检查、报告生成 |
-| [数据质量管理系统蓝图](./DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | DATA_QUALITY_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 数据质量规则定义、自动化验证、质量报告生成 |
+| [数据质量治理体系蓝图](./DATA_QUALITY_GOVERNANCE_BLUEPRINT.md) | DATA_QUALITY_GOVERNANCE_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐⭐ | **顶层治理蓝图**：四层架构（Layer 0/1/4/10）、统一协调 |
 | [算法性能基准库蓝图](./ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md) | ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 性能基准定义、性能测试执行、性能退化检测 |
 
 **P2模块实施价值**：
 - ⚠️ **数据隐私合规**: 个人使用场景较少，可选实施
 - ⚠️ **ESG合规监控**: 个人使用场景较少，可选实施
-- ✅ **数据质量管理**: 对标Two Sigma数据治理标准，推荐实施
+- ✅ **数据质量治理**: **顶层治理蓝图**，整合四层架构，强烈推荐实施
 - ✅ **算法性能基准**: 对标Renaissance Technologies验证标准，推荐实施
 
 ---
 
-### 1.4 已有蓝图（参考）
+### 1.4 数据质量分层蓝图（专业机构标准）
+
+**专业量化机构采用分层治理模式**，数据质量管理体系分为四层：
+
+| Layer | 蓝图文档 | 核心职责 | 说明 |
+|-------|---------|---------|------|
+| **Layer 0** | [数据源质量监控蓝图](./DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md) | 源头保障 | 数据源健康监控、实时验证、异常告警 |
+| **Layer 1** | [数据质量评估蓝图](./DATA_QUALITY_ASSESSMENT_BLUEPRINT.md) | 质量评估 | 多维度评估、评分体系、趋势分析 |
+| **Layer 4** | [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 实时监控 | 实时检查、自动告警、Grafana仪表盘 |
+| **Layer 10** | [数据质量管理系统蓝图](./DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 治理管理 | 规则定义、改进跟踪、合规管理 |
+| **Layer 10** | [数据质量治理体系蓝图](./DATA_QUALITY_GOVERNANCE_BLUEPRINT.md) | **顶层协调** | **四层架构统一协调、职责边界定义** |
+
+**分层治理优势**：
+- ✅ **职责清晰**: 每层有明确的单一职责
+- ✅ **边界明确**: 各层职责边界清晰，避免重叠
+- ✅ **专业标准**: 符合Two Sigma、Citadel、Bridgewater等机构实践
+- ✅ **易于维护**: 分层管理，便于独立演进
+
+---
+
+### 1.5 已有蓝图（参考）
 
 | 蓝图文档 | 模块ID | 版本 | 状态 | 说明 |
 |----------|--------|------|------|------|

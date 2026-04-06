@@ -1,12 +1,12 @@
 ---
-module_id: DYNAMIC_CORRELATION_MODELING_001
-version: 1.0.0
+module_id: IMPL_DYNAMIC_CORRELATION_BP_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-06
 created_date: 2026-04-03
-layer: Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
+layer: "Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构"
 index: DYNAMIC_CORRELATION_MODELING_001
 estimated_hours: 80h
 estimated_effort: 2周

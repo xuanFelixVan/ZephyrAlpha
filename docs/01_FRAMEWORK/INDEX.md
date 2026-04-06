@@ -69,6 +69,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
+| [人机交互层技术蓝图](./HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md) | 人机交互层技术实现（已归档） | ⭐⭐⭐⭐ |
 | [移动端推送通知蓝图](./MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md) | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
 | [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |
 | [FastAPI认证权限蓝图](./FASTAPI_USERS_AUTH_BLUEPRINT.md) | FastAPI-Users认证权限系统 | ⭐⭐⭐⭐ |
