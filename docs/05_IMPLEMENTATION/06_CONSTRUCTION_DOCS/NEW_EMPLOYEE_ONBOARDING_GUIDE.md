@@ -4,227 +4,227 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构?standard_type: 专业量化机构新人入职指南
-applicable_scope: 所有新加入团队的开发人员和AI智能?compliance_level: 强制执行
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
+applicable_scope: ﮔﮔﮔﺍﮒ ﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../README.md
 implementation_status: Active
 ---
 
-# 新人入职指南
+# ﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-02
-> **职责**: 帮助新成员快速了解系统架构、开发流程和文档规范
-> **适用对象**: 新加入的开发人员、AI智能体、实习生
-> **完成时间**: 建议2周内完成所有必读内?
+> **ﻝﮔ؛**: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﻟﻟﺑ۲**: ﮒﺕ؟ﮒ۸ﮔﺍﮔﮒﮒﺟ،ﻠﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﭘﮔﻙﮒﺙﮒﮔﭖﻝ۷ﮒﮔﮔ۰۲ﻟ۶ﻟ
+> **ﻠﻝ۷ﮒﺁﺗﻟﺎ۰**: ﮔﺍﮒ ﮒ۴ﻝﮒﺙﮒﻛﭦﭦﮒﻙAIﮔﭦﻟﺛﻛﺛﻙﮒ؟ﻛﺗ ﻝ
+> **ﮒ؟ﮔﮔﭘﻠﺑ**: ﮒﭨﭦﻟ؟؟2ﮒ۷ﮒﮒ؟ﮔﮔﮔﮒﺟﻟﺁﭨﮒ?
 ---
 
-## 🎯 **入职目标**
+## ﻭﺁ **ﮒ۴ﻟﻝ؟ﮔ **
 
-### **?周目?*
+### **?ﮒ۷ﻝ؟?*
 
-- [ ] 了解系统整体架构和设计理?- [ ] 熟悉文档治理规范
-- [ ] 掌握开发环境配?- [ ] 完成第一个简单任?
-### **?周目?*
+- [ ] ﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﺑﻛﺛﮔﭘﮔﮒﻟ؟ﺝﻟ؟۰ﻝ?- [ ] ﻝﮔﮔﮔ۰۲ﮔﺎﭨﻝﻟ۶ﻟ
+- [ ] ﮔﮔ۰ﮒﺙﮒﻝﺁﮒ۱ﻠ?- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ؟ﮒﻛﭨﭨ?
+### **?ﮒ۷ﻝ؟?*
 
-- [ ] 深入理解核心模块设计
-- [ ] 熟悉施工规范和质量门?- [ ] 参与代码审查
-- [ ] 完成第一个完整功?
+- [ ] ﮔﺓﺎﮒ۴ﻝﻟ۶۲ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+- [ ] ﻝﮔﮔﺛﮒﺓ۴ﻟ۶ﻟﮒﻟﺑ۷ﻠﻠ۷?- [ ] ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴
+- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ؟ﮔﺑﮒ?
 ---
 
-## 📚 **必读文档清单**
+## ﻭ **ﮒﺟﻟﺁﭨﮔﮔ۰۲ﮔﺕﮒ**
 
-### **Day 1-2: 系统概览**
+### **Day 1-2: ﻝﺏﭨﻝﭨﮔ۵ﻟ۶**
 
-#### **1. 系统架构文档**
+#### **1. ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **系统架构总览** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30分钟 | 🔴 必读 |
-| **多时间框架架?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45分钟 | 🔴 必读 |
-| **实施蓝图** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60分钟 | 🔴 必读 |
+| **ﻝﺏﭨﻝﭨﮔﭘﮔﮔﭨﻟ۶** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒ؟ﮔﺛﻟﮒﺝ** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**学习目标**:
-- 理解Layer 0-11技术管道架?- 了解宏观配置层、中观策略层、微观执行层的设?- 掌握系统的整体实施计?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕ­ﻟ۶ﻝ­ﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
 ---
 
-#### **2. 模块职责边界**
+#### **2. ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **模块职责边界定义** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30分钟 | 🔴 必读 |
+| **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**学习目标**:
-- 理解每个模块的职责范?- 了解模块间的依赖关系
-- 掌握模块设计的原?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﻝﻟﻟﺑ۲ﻟ?- ﻛﭦﻟ۶۲ﮔ۷۰ﮒﻠﺑﻝﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+- ﮔﮔ۰ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﻝﮒ?
 ---
 
-### **Day 3-4: 开发规?*
+### **Day 3-4: ﮒﺙﮒﻟ۶?*
 
-#### **3. 施工规范文档**
+#### **3. ﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **蓝图施工说明?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](../CONSTRUCTION_SPECIFICATION.md) | 45分钟 | 🔴 必读 |
-| **AI施工快速参?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](../AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15分钟 | 🔴 必读 |
+| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](../CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](../AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**学习目标**:
-- 掌握文件夹结构规?- 熟悉命名规范
-- 了解施工流程和质量门?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
+- ﻛﭦﻟ۶۲ﮔﺛﮒﺓ۴ﮔﭖﻝ۷ﮒﻟﺑ۷ﻠﻠ۷?
 ---
 
-#### **4. 开发标准文?*
+#### **4. ﮒﺙﮒﮔ ﮒﮔ?*
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **开发规?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30分钟 | 🔴 必读 |
-| **代码质量标准** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](../02_DEVELOPMENT/CODE_QUALITY.md) | 20分钟 | 🔴 必读 |
-| **测试标准** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](../02_DEVELOPMENT/TESTING_STANDARD.md) | 20分钟 | 🟡 重要 |
+| **ﮒﺙﮒﻟ۶?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](../02_DEVELOPMENT/CODE_QUALITY.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮔﭖﻟﺁﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](../02_DEVELOPMENT/TESTING_STANDARD.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**学习目标**:
-- 掌握代码编写规范
-- 了解代码审查标准
-- 熟悉测试要求
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﮔﮔ۰ﻛﭨ۲ﻝ ﻝﺙﮒﻟ۶ﻟ
+- ﻛﭦﻟ۶۲ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
+- ﻝﮔﮔﭖﻟﺁﻟ۵ﮔﺎ
 
 ---
 
-### **Day 5-7: 核心模块设计**
+### **Day 5-7: ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰**
 
-#### **5. 策略引擎核心**
+#### **5. ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟ**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **策略引擎核心蓝图** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60分钟 | 🔴 必读 |
-| **策略工厂实施指南** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](../02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45分钟 | 🔴 必读 |
+| **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](../02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**学习目标**:
-- 理解策略工厂设计模式
-- 掌握BaseStrategy基类设计
-- 了解策略注册和加载机?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
+- ﮔﮔ۰BaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
+- ﻛﭦﻟ۶۲ﻝ­ﻝ۴ﮔﺏ۷ﮒﮒﮒ ﻟﺛﺛﮔﭦ?
 ---
 
-#### **6. 事件总线系统**
+#### **6. ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨ**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **事件总线实施指南** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](../02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45分钟 | 🔴 必读 |
+| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](../02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**学习目标**:
-- 理解事件驱动架构
-- 掌握事件发布订阅机制
-- 了解异步事件分发设计
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
+- ﮔﮔ۰ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠﮔﭦﮒﭘ
+- ﻛﭦﻟ۶۲ﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﻟ؟ﺝﻟ؟۰
 
 ---
 
-#### **7. 回测引擎集成**
+#### **7. ﮒﮔﭖﮒﺙﮔﻠﮔ**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **回测引擎集成指南** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45分钟 | 🔴 必读 |
+| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**学习目标**:
-- 理解Backtesting.py集成方案
-- 掌握策略适配器设?- 了解数据转换和结果格式化
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
+- ﮔﮔ۰ﻝ­ﻝ۴ﻠﻠﮒ۷ﻟ؟ﺝ?- ﻛﭦﻟ۶۲ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒﻝﭨﮔﮔ ﺙﮒﺙﮒ
 
 ---
 
-### **Day 8-10: 质量保证**
+### **Day 8-10: ﻟﺑ۷ﻠﻛﺟﻟﺁ**
 
-#### **8. 质量门禁机制**
+#### **8. ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **文档质量门禁** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](../06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30分钟 | 🔴 必读 |
-| **代码审查检查清?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20分钟 | 🔴 必读 |
-| **部署前检查清?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20分钟 | 🟡 重要 |
+| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](../06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**学习目标**:
-- 理解质量门禁机制
-- 掌握代码审查标准
-- 了解部署前检查要?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
+- ﮔﮔ۰ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
+- ﻛﭦﻟ۶۲ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﻟ۵?
 ---
 
-### **Day 11-14: 实践任务**
+### **Day 11-14: ﮒ؟ﻟﺓﭖﻛﭨﭨﮒ۰**
 
-#### **9. 配置模板**
+#### **9. ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ**
 
-| 文档名称 | 路径 | 阅读时间 | 重要程度 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **策略配置模板** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](../04_CONFIG_TEMPLATES/strategy_config_template.yaml) | 15分钟 | 🟡 重要 |
-| **回测配置模板** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](../04_CONFIG_TEMPLATES/backtest_config_template.yaml) | 15分钟 | 🟡 重要 |
-| **系统配置模板** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](../04_CONFIG_TEMPLATES/system_config_template.yaml) | 15分钟 | 🟡 重要 |
+| **ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](../04_CONFIG_TEMPLATES/strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](../04_CONFIG_TEMPLATES/backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](../04_CONFIG_TEMPLATES/system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**学习目标**:
-- 熟悉配置文件结构
-- 理解配置参数含义
-- 掌握配置修改方法
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ
+- ﻝﻟ۶۲ﻠﻝﺛ؟ﮒﮔﺍﮒ،ﻛﺗ
+- ﮔﮔ۰ﻠﻝﺛ؟ﻛﺟ؟ﮔﺗﮔﺗﮔﺏ
 
 ---
 
-## 🛠?**环境配置指南**
+## ﻭ ?**ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ**
 
-### **1. 开发环境要?*
+### **1. ﮒﺙﮒﻝﺁﮒ۱ﻟ۵?*
 
 ```yaml
-操作系统:
+ﮔﻛﺛﻝﺏﭨﻝﭨ:
   - Windows 10/11
   - Linux (Ubuntu 20.04+)
   - macOS 11+
 
-Python版本:
+Pythonﻝﮔ؛:
   - Python 3.9+
-  - 推荐使用Python 3.10
+  - ﮔ۷ﻟﻛﺛﺟﻝ۷Python 3.10
 
-必需工具:
+ﮒﺟﻠﮒﺓ۴ﮒﺓ:
   - Git
-  - VS Code (推荐)
-  - Docker (�?
+  - VS Code (ﮔ۷ﻟ)
+  - Docker (ﮒ?
 
-Python包管?
+Pythonﮒﻝ؟۰?
   - pip
-  - conda (推荐)
+  - conda (ﮔ۷ﻟ)
 ```
 
-### **2. 开发环境配置步?*
+### **2. ﮒﺙﮒﻝﺁﮒ۱ﻠﻝﺛ؟ﮔ­۴?*
 
-#### **Step 1: 克隆代码仓库**
+#### **Step 1: ﮒﻠﻛﭨ۲ﻝ ﻛﭨﮒﭦ**
 
 ```bash
-# 克隆仓库
+# ﮒﻠﻛﭨﮒﭦ
 git clone [repository_url]
 
-# 进入项目目录
+# ﻟﺟﮒ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ
 cd ZephyrAlpha
 ```
 
-#### **Step 2: 创建Python虚拟环境**
+#### **Step 2: ﮒﮒﭨﭦPythonﻟﮔﻝﺁﮒ۱**
 
 ```bash
-# 使用conda创建虚拟环境
+# ﻛﺛﺟﻝ۷condaﮒﮒﭨﭦﻟﮔﻝﺁﮒ۱
 conda create -n zephyr python=3.10
 
-# 激活虚拟环?conda activate zephyr
+# ﮔﺟﮔﺑﭨﻟﮔﻝﺁ?conda activate zephyr
 ```
 
-#### **Step 3: 安装依赖?*
+#### **Step 3: ﮒ؟ﻟ۲ﻛﺝﻟﭖ?*
 
 ```bash
-# 安装开发依?pip install -r requirements-dev.txt
+# ﮒ؟ﻟ۲ﮒﺙﮒﻛﺝ?pip install -r requirements-dev.txt
 
-# 安装项目依赖
+# ﮒ؟ﻟ۲ﻠ۰ﺗﻝ؟ﻛﺝﻟﭖ
 pip install -r requirements.txt
 ```
 
-#### **Step 4: 配置IDE**
+#### **Step 4: ﻠﻝﺛ؟IDE**
 
-**VS Code推荐扩展**:
+**VS Codeﮔ۷ﻟﮔ۸ﮒﺎ**:
 - Python
 - Pylance
 - Python Docstring Generator
 - GitLens
 - Markdown All in One
 
-**VS Code配置**:
+**VS Codeﻠﻝﺛ؟**:
 ```json
 {
   "python.linting.enabled": true,
@@ -237,29 +237,29 @@ pip install -r requirements.txt
 
 ---
 
-## 📝 **第一个任务指?*
+## ﻭ **ﻝ؛؛ﻛﺕﻛﺕ۹ﻛﭨﭨﮒ۰ﮔ?*
 
-### **任务1: 创建一个简单的策略**
+### **ﻛﭨﭨﮒ۰1: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﻝ­ﻝ۴**
 
-**目标**: 创建一个简单的均线策略，熟悉策略开发流?
-**步骤**:
+**ﻝ؟ﮔ **: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﮒﻝﭦﺟﻝ­ﻝ۴ﺅﺙﻝﮔﻝ­ﻝ۴ﮒﺙﮒﮔﭖ?
+**ﮔ­۴ﻠ۹۳**:
 
-1. **阅读策略基类文档**
+1. **ﻠﻟﺁﭨﻝ­ﻝ۴ﮒﭦﻝﺎﭨﮔﮔ۰۲**
    ```bash
-   # 阅读BaseStrategy基类设计
+   # ﻠﻟﺁﭨBaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
    docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md
    ```
 
-2. **创建策略文件**
+2. **ﮒﮒﭨﭦﻝ­ﻝ۴ﮔﻛﭨﭘ**
    ```python
-   # 文件位置: src/strategy/simple_ma_strategy.py
+   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: src/strategy/simple_ma_strategy.py
    
    from strategy.base import BaseStrategy
    from typing import Dict, Any, Optional
    
    class SimpleMAStrategy(BaseStrategy):
-       """简单均线策?       
-       使用快速均线和慢速均线交叉作为交易信?       """
+       """ﻝ؟ﮒﮒﻝﭦﺟﻝ­?       
+       ﻛﺛﺟﻝ۷ﮒﺟ،ﻠﮒﻝﭦﺟﮒﮔ۱ﻠﮒﻝﭦﺟﻛﭦ۳ﮒﻛﺛﻛﺕﭦﻛﭦ۳ﮔﻛﺟ۰?       """
        
        def __init__(self, strategy_id: str, config: Optional[Dict[str, Any]] = None):
            super().__init__(strategy_id, config)
@@ -267,23 +267,23 @@ pip install -r requirements.txt
            self.slow_period = self.config.get('slow_period', 30)
        
        def initialize(self, context: Dict[str, Any]) -> None:
-           """初始化策?""
-           self.logger.info(f"初始化策? {self.strategy_id}")
-           self.logger.info(f"快速均线周? {self.fast_period}")
-           self.logger.info(f"慢速均线周? {self.slow_period}")
+           """ﮒﮒ۶ﮒﻝ­?""
+           self.logger.info(f"ﮒﮒ۶ﮒﻝ­? {self.strategy_id}")
+           self.logger.info(f"ﮒﺟ،ﻠﮒﻝﭦﺟﮒ۷? {self.fast_period}")
+           self.logger.info(f"ﮔ۱ﻠﮒﻝﭦﺟﮒ۷? {self.slow_period}")
        
        def on_bar(self, bar: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-           """处理K线数?""
-           # 实现策略逻辑
+           """ﮒ۳ﻝKﻝﭦﺟﮔﺍ?""
+           # ﮒ؟ﻝﺍﻝ­ﻝ۴ﻠﭨﻟﺝ
            pass
    ```
 
-3. **创建策略配置**
+3. **ﮒﮒﭨﭦﻝ­ﻝ۴ﻠﻝﺛ؟**
    ```yaml
-   # 文件位置: config/strategies/simple_ma_strategy.yaml
+   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: config/strategies/simple_ma_strategy.yaml
    
    strategy_id: simple_ma_strategy_v1
-   strategy_name: 简单均线策?   strategy_type: trend_following
+   strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ­?   strategy_type: trend_following
    
    parameters:
      fast_period: 10
@@ -294,15 +294,15 @@ pip install -r requirements.txt
      take_profit_pct: 0.10
    ```
 
-4. **编写单元测试**
+4. **ﻝﺙﮒﮒﮒﮔﭖﻟﺁ**
    ```python
-   # 文件位置: tests/unit/strategy/test_simple_ma_strategy.py
+   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: tests/unit/strategy/test_simple_ma_strategy.py
    
    import pytest
    from strategy.simple_ma_strategy import SimpleMAStrategy
    
    def test_strategy_initialization():
-       """测试策略初始?""
+       """ﮔﭖﻟﺁﻝ­ﻝ۴ﮒﮒ۶?""
        config = {
            'fast_period': 10,
            'slow_period': 30
@@ -312,120 +312,120 @@ pip install -r requirements.txt
        assert strategy.slow_period == 30
    ```
 
-5. **运行测试**
+5. **ﻟﺟﻟ۰ﮔﭖﻟﺁ**
    ```bash
-   # 运行单元测试
+   # ﻟﺟﻟ۰ﮒﮒﮔﭖﻟﺁ
    pytest tests/unit/strategy/test_simple_ma_strategy.py -v
    ```
 
 ---
 
-## 🔍 **常见问题FAQ**
+## ﻭ **ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱FAQ**
 
-### **Q1: 如何找到相关文档?*
+### **Q1: ﮒ۵ﻛﺛﮔﺝﮒﺍﻝﺕﮒﺏﮔﮔ۰۲?*
 
-**A**: 使用文档索引?- 施工文档总索? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](../README.md)
-- 系统总索? [docs/INDEX.md](../../INDEX.md)
+**A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](../README.md)
+- ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../../INDEX.md)
 
-### **Q2: 如何创建新模块？**
+### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
 
-**A**: 遵循施工规范?1. 阅读[蓝图施工说明书](../CONSTRUCTION_SPECIFICATION.md)
-2. 使用LS命令检查现有文件夹结构
-3. 确认目标位置和命?4. 使用标准模板创建文件
-5. 通过质量门禁检?
-### **Q3: 如何参与代码审查?*
+**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../CONSTRUCTION_SPECIFICATION.md)
+2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
+3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
+5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
+### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴?*
 
-**A**: 遵循代码审查流程?1. 阅读[代码审查检查清单](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
-2. 检查代码规范、安全性、性能
-3. 提出建设性意?4. 确保所有阻断项通过
+**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
+2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝ ﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
+3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔ­ﻠ۰ﺗﻠﻟﺟ
 
-### **Q4: 如何运行回测?*
+### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
 
-**A**: 使用回测引擎?1. 阅读[回测引擎集成指南](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
-2. 准备策略和数?3. 配置回测参数
-4. 运行回测并分析结?
-### **Q5: 如何报告问题?*
+**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
+2. ﮒﮒ۳ﻝ­ﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
+4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
+### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*
 
-**A**: 使用问题跟踪系统?1. 在Git仓库创建Issue
-2. 描述问题详细信息
-3. 提供复现步骤
-4. 标记优先级和类型
+**A**: ﻛﺛﺟﻝ۷ﻠ؟ﻠ۱ﻟﺓﻟﺕ۹ﻝﺏﭨﻝﭨ?1. ﮒ۷GitﻛﭨﮒﭦﮒﮒﭨﭦIssue
+2. ﮔﻟﺟﺍﻠ؟ﻠ۱ﻟﺁ۵ﻝﭨﻛﺟ۰ﮔﺁ
+3. ﮔﻛﺝﮒ۳ﻝﺍﮔ­۴ﻠ۹۳
+4. ﮔ ﻟ؟ﺍﻛﺙﮒﻝﭦ۶ﮒﻝﺎﭨﮒ
 
 ---
 
-## 📊 **学习进度跟踪**
+## ﻭ **ﮒ­۵ﻛﺗ ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹**
 
-### **?周进度检?*
+### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
 
-| 任务 | 完成�?| 验证方式 |
+| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
 |------|---------|---------|
-| 阅读系统架构文档 | ?| 能描述Layer 0-11架构 |
-| 阅读施工规范文档 | ?| 能说出文件夹结构规范 |
-| 配置开发环?| ?| 能运行pytest测试 |
-| 完成第一个策?| ?| 代码通过审查 |
+| ﻠﻟﺁﭨﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍLayer 0-11ﮔﭘﮔ |
+| ﻠﻟﺁﭨﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲ | ?| ﻟﺛﻟﺁﺑﮒﭦﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶ﻟ |
+| ﻠﻝﺛ؟ﮒﺙﮒﻝﺁ?| ?| ﻟﺛﻟﺟﻟ۰pytestﮔﭖﻟﺁ |
+| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ­?| ?| ﻛﭨ۲ﻝ ﻠﻟﺟﮒ؟۰ﮔ۴ |
 
-### **?周进度检?*
+### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
 
-| 任务 | 完成�?| 验证方式 |
+| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
 |------|---------|---------|
-| 阅读核心模块文档 | ?| 能描述策略工厂设?|
-| 参与代码审查 | ?| 完成1次代码审?|
-| 完成第一个功?| ?| 功能通过测试 |
-| 通过质量门禁 | ?| 所有检查项通过 |
+| ﻠﻟﺁﭨﮔ ﺕﮒﺟﮔ۷۰ﮒﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝ?|
+| ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ | ?| ﮒ؟ﮔ1ﮔ؛۰ﻛﭨ۲ﻝ ﮒ؟۰?|
+| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ?| ?| ﮒﻟﺛﻠﻟﺟﮔﭖﻟﺁ |
+| ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ | ?| ﮔﮔﮔ۲ﮔ۴ﻠ۰ﺗﻠﻟﺟ |
 
 ---
 
-## 🎯 **学习资源**
+## ﻭﺁ **ﮒ­۵ﻛﺗ ﻟﭖﮔﭦ**
 
-### **内部资源**
+### **ﮒﻠ۷ﻟﭖﮔﭦ**
 
-- **知识?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](../07_OPERATIONS/knowledge_base/)
-- **案例研究**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](../07_OPERATIONS/knowledge_base/case_studies/)
-- **最佳实?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](../07_OPERATIONS/knowledge_base/best_practices/)
+- **ﻝ۴ﻟﺁ?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](../07_OPERATIONS/knowledge_base/)
+- **ﮔ۰ﻛﺝﻝ ﻝ۸ﭘ**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](../07_OPERATIONS/knowledge_base/case_studies/)
+- **ﮔﻛﺛﺏﮒ؟?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](../07_OPERATIONS/knowledge_base/best_practices/)
 
-### **外部资源**
+### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 
-- **Python官方文档**: https://docs.python.org/3/
-- **Backtesting.py文档**: https://kernc.github.io/backtesting.py/
-- **量化投资入门**: https://www.quantstart.com/
-
----
-
-## 📞 **支持与帮?*
-
-### **遇到问题怎么办？**
-
-1. **查阅文档**: 先查阅相关文档，大部分问题都有答?2. **搜索Issue**: 在Git仓库搜索是否有类似问?3. **提问**: 创建新Issue，详细描述问?4. **寻求帮助**: 联系导师或团队成?
-### **联系方式**
-
-- **技术问?*: 创建Git Issue
-- **文档问题**: 联系文档维护?- **流程问题**: 联系项目经理
+- **Pythonﮒ؟ﮔﺗﮔﮔ۰۲**: https://docs.python.org/3/
+- **Backtesting.pyﮔﮔ۰۲**: https://kernc.github.io/backtesting.py/
+- **ﻠﮒﮔﻟﭖﮒ۴ﻠ۷**: https://www.quantstart.com/
 
 ---
 
-## 📝 **更新记录**
+## ﻭ **ﮔﺁﮔﻛﺕﮒﺕ؟?*
 
-| 日期 | 版本 | 更新内容 | 更新?|
+### **ﻠﮒﺍﻠ؟ﻠ۱ﮔﻛﺗﮒﺅﺙ**
+
+1. **ﮔ۴ﻠﮔﮔ۰۲**: ﮒﮔ۴ﻠﻝﺕﮒﺏﮔﮔ۰۲ﺅﺙﮒ۳۶ﻠ۷ﮒﻠ؟ﻠ۱ﻠﺛﮔﻝ­?2. **ﮔﻝﺑ۱Issue**: ﮒ۷Gitﻛﭨﮒﭦﮔﻝﺑ۱ﮔﺁﮒ۵ﮔﻝﺎﭨﻛﺙﺙﻠ؟?3. **ﮔﻠ؟**: ﮒﮒﭨﭦﮔﺍIssueﺅﺙﻟﺁ۵ﻝﭨﮔﻟﺟﺍﻠ؟?4. **ﮒﺁﭨﮔﺎﮒﺕ؟ﮒ۸**: ﻟﻝﺏﭨﮒﺁﺙﮒﺕﮔﮒ۱ﻠﮔ?
+### **ﻟﻝﺏﭨﮔﺗﮒﺙ**
+
+- **ﮔﮔﺁﻠ؟?*: ﮒﮒﭨﭦGit Issue
+- **ﮔﮔ۰۲ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﮔﮔ۰۲ﻝﭨﺑﮔ۳?- **ﮔﭖﻝ۷ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﻠ۰ﺗﻝ؟ﻝﭨﻝ
+
+---
+
+## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
+
+| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建新人入职指南 | 首席架构?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔ?|
 
 ---
 
-## 📞 **联系方式**
+## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
-**文档维护?*: 首席架构? 
-**创建日期**: 2026-04-02  
-**最后更?*: 2026-04-02  
-**版本**: v1.0
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﮔﭘﮔ? 
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﻝﮔ؛**: v1.0
 
 ---
 
-## 🎉 **欢迎加入?*
+## ﻭ **ﮔ؛۱ﻟﺟﮒ ﮒ۴?*
 
-欢迎加入清风量化团队！我们相信，通过系统的学习和实践，你将快速成长为一名优秀的量化开发工程师?
-**记住**: 
-- 📚 文档是最好的老师
-- 🛠?实践是最好的学习
-- 🤝 团队是最好的支持
+ﮔ؛۱ﻟﺟﮒ ﮒ۴ﮔﺕﻠ۲ﻠﮒﮒ۱ﻠﺅﺙﮔﻛﭨ؛ﻝﺕﻛﺟ۰ﺅﺙﻠﻟﺟﻝﺏﭨﻝﭨﻝﮒ­۵ﻛﺗ ﮒﮒ؟ﻟﺓﭖﺅﺙﻛﺛ ﮒﺍﮒﺟ،ﻠﮔﻠﺟﻛﺕﭦﻛﺕﮒﻛﺙﻝ۶ﻝﻠﮒﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕ?
+**ﻟ؟ﺍﻛﺛ**: 
+- ﻭ ﮔﮔ۰۲ﮔﺁﮔﮒ۴ﺛﻝﻟﮒﺕ
+- ﻭ ?ﮒ؟ﻟﺓﭖﮔﺁﮔﮒ۴ﺛﻝﮒ­۵ﻛﺗ 
+- ﻭ۳ ﮒ۱ﻠﮔﺁﮔﮒ۴ﺛﻝﮔﺁﮔ
 
-**祝你学习顺利?* 🚀
+**ﻝ۴ﻛﺛ ﮒ­۵ﻛﺗ ﻠ۰ﭦﮒ۸?* ﻭ

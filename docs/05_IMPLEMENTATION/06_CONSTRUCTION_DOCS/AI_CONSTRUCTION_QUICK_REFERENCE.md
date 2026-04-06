@@ -4,105 +4,105 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构�?standard_type: AI施工快速参�?applicable_scope: AI智能体施工必�?compliance_level: 强制执行
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?applicable_scope: AIﮔﭦﻟﺛﻛﺛﮔﺛﮒﺓ۴ﮒﺟﻟﺁ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ./CONSTRUCTION_SPECIFICATION.md
-implementation_status: 强制执行
+implementation_status: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 ---
 
-# AI施工快速参�?
-> **🔴 强制阅读**: AI智能体在开始任何开发或文档构建任务前必须阅读本文档
-> **完整�?*: [蓝图施工说明书](./CONSTRUCTION_SPECIFICATION.md)
-> **版本**: v1.0 | **更新日期**: 2026-04-02
+# AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?
+> **ﻭﺑ ﮒﺙﭦﮒﭘﻠﻟﺁﭨ**: AIﮔﭦﻟﺛﻛﺛﮒ۷ﮒﺙﮒ۶ﻛﭨﭨﻛﺛﮒﺙﮒﮔﮔﮔ۰۲ﮔﮒﭨﭦﻛﭨﭨﮒ۰ﮒﮒﺟﻠ۰ﭨﻠﻟﺁﭨﮔ؛ﮔﮔ۰۲
+> **ﮒ؟ﮔﺑﻝ?*: [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](./CONSTRUCTION_SPECIFICATION.md)
+> **ﻝﮔ؛**: v1.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02
 
 ---
 
-## �?**5秒快速检�?*
+## ﻗ?**5ﻝ۶ﮒﺟ،ﻠﮔ۲ﮔ?*
 
 ```
-开始施工前，AI必须回答以下问题�?
-�?1. 我要创建什么类型的文件�?     - 代码文件 �?src/
-     - 文档文件 �?docs/
-     - 配置文件 �?config/
-     - 测试文件 �?tests/
+ﮒﺙﮒ۶ﮔﺛﮒﺓ۴ﮒﺅﺙAIﮒﺟﻠ۰ﭨﮒﻝ­ﻛﭨ۴ﻛﺕﻠ؟ﻠ۱ﺅﺙ?
+ﻗ?1. ﮔﻟ۵ﮒﮒﭨﭦﻛﭨﻛﺗﻝﺎﭨﮒﻝﮔﻛﭨﭘﺅﺙ?     - ﻛﭨ۲ﻝ ﮔﻛﭨﭘ ﻗ?src/
+     - ﮔﮔ۰۲ﮔﻛﭨﭘ ﻗ?docs/
+     - ﻠﻝﺛ؟ﮔﻛﭨﭘ ﻗ?config/
+     - ﮔﭖﻟﺁﮔﻛﭨﭘ ﻗ?tests/
 
-�?2. 目标文件夹是否存在？
-     - 使用 LS 命令检�?
-�?3. 文件命名是否正确�?     - Python文件: 小写+下划�?(strategy_factory.py)
-     - 文档文件: 大写+下划�?(STRATEGY_FACTORY_GUIDE.md)
-     - 配置文件: 小写+下划�?(strategy_config.yaml)
+ﻗ?2. ﻝ؟ﮔ ﮔﻛﭨﭘﮒ۳ﺗﮔﺁﮒ۵ﮒ­ﮒ۷ﺅﺙ
+     - ﻛﺛﺟﻝ۷ LS ﮒﺛﻛﭨ۳ﮔ۲ﮔ?
+ﻗ?3. ﮔﻛﭨﭘﮒﺛﮒﮔﺁﮒ۵ﮔ­۲ﻝ۰؟ﺅﺙ?     - Pythonﮔﻛﭨﭘ: ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?(strategy_factory.py)
+     - ﮔﮔ۰۲ﮔﻛﭨﭘ: ﮒ۳۶ﮒ+ﻛﺕﮒﻝﭦ?(STRATEGY_FACTORY_GUIDE.md)
+     - ﻠﻝﺛ؟ﮔﻛﭨﭘ: ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?(strategy_config.yaml)
 
-�?4. 是否使用标准模板�?     - 文档: 包含必需元数�?     - 代码: 包含必需注释
+ﻗ?4. ﮔﺁﮒ۵ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﺅﺙ?     - ﮔﮔ۰۲: ﮒﮒ،ﮒﺟﻠﮒﮔﺍﮔ?     - ﻛﭨ۲ﻝ : ﮒﮒ،ﮒﺟﻠﮔﺏ۷ﻠ
 ```
 
 ---
 
-## 📁 **核心文件夹结构（记住这个！）**
+## ﻭ **ﮔ ﺕﮒﺟﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﺅﺙﻟ؟ﺍﻛﺛﻟﺟﻛﺕ۹ﺅﺙﺅﺙ**
 
 ```
 ZephyrAlpha/
-├── docs/                    # 所有文�?�?  └── 05_IMPLEMENTATION/
-�?      └── 06_CONSTRUCTION_DOCS/  # 施工文档专区
-�?├── src/                     # 所有源代码
-�?  ├── strategy/           # 策略模块（不是strategies/�?�?  ├── event_bus/          # 事件总线（不是event/或events/�?�?  ├── backtest/           # 回测引擎（不是backtesting/�?�?  ├── risk/               # 风险管理（不是risk_management/�?�?  └── execution/          # 执行引擎（不是execution_engine/�?�?├── tests/                   # 所有测�?├── config/                  # 所有配�?├── scripts/                 # 所有脚�?├── data/                    # 所有数�?└── logs/                    # 所有日�?```
+ﻗﻗﻗ docs/                    # ﮔﮔﮔﮔ۰?ﻗ?  ﻗﻗﻗ 05_IMPLEMENTATION/
+ﻗ?      ﻗﻗﻗ 06_CONSTRUCTION_DOCS/  # ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﻛﺕﮒﭦ
+ﻗ?ﻗﻗﻗ src/                     # ﮔﮔﮔﭦﻛﭨ۲ﻝ 
+ﻗ?  ﻗﻗﻗ strategy/           # ﻝ­ﻝ۴ﮔ۷۰ﮒﺅﺙﻛﺕﮔﺁstrategies/ﺅﺙ?ﻗ?  ﻗﻗﻗ event_bus/          # ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﺅﺙﻛﺕﮔﺁevent/ﮔevents/ﺅﺙ?ﻗ?  ﻗﻗﻗ backtest/           # ﮒﮔﭖﮒﺙﮔﺅﺙﻛﺕﮔﺁbacktesting/ﺅﺙ?ﻗ?  ﻗﻗﻗ risk/               # ﻠ۲ﻠ۸ﻝ؟۰ﻝﺅﺙﻛﺕﮔﺁrisk_management/ﺅﺙ?ﻗ?  ﻗﻗﻗ execution/          # ﮔ۶ﻟ۰ﮒﺙﮔﺅﺙﻛﺕﮔﺁexecution_engine/ﺅﺙ?ﻗ?ﻗﻗﻗ tests/                   # ﮔﮔﮔﭖﻟﺁ?ﻗﻗﻗ config/                  # ﮔﮔﻠﻝﺛ?ﻗﻗﻗ scripts/                 # ﮔﮔﻟﮔ?ﻗﻗﻗ data/                    # ﮔﮔﮔﺍﮔ?ﻗﻗﻗ logs/                    # ﮔﮔﮔ۴ﮒﺟ?```
 
 ---
 
-## 🚫 **禁止创建的文件夹（记住这个！�?*
+## ﻭ، **ﻝ۵ﮔ­۱ﮒﮒﭨﭦﻝﮔﻛﭨﭘﮒ۳ﺗﺅﺙﻟ؟ﺍﻛﺛﻟﺟﻛﺕ۹ﺅﺙﺅﺙ?*
 
 ```
-�?src/strategies/          �?应使�?src/strategy/
-�?src/strategy_factory/    �?应使�?src/strategy/factory.py
-�?src/event/               �?应使�?src/event_bus/
-�?src/events/              �?应使�?src/event_bus/
-�?src/backtesting/         �?应使�?src/backtest/
-�?src/backtest_engine/     �?应使�?src/backtest/
-�?src/risk_management/     �?应使�?src/risk/
-�?src/execution_engine/    �?应使�?src/execution/
-�?docs/documentation/      �?应使�?docs/
-�?docs/docs/               �?应使�?docs/
+ﻗ?src/strategies/          ﻗ?ﮒﭦﻛﺛﺟﻝ?src/strategy/
+ﻗ?src/strategy_factory/    ﻗ?ﮒﭦﻛﺛﺟﻝ?src/strategy/factory.py
+ﻗ?src/event/               ﻗ?ﮒﭦﻛﺛﺟﻝ?src/event_bus/
+ﻗ?src/events/              ﻗ?ﮒﭦﻛﺛﺟﻝ?src/event_bus/
+ﻗ?src/backtesting/         ﻗ?ﮒﭦﻛﺛﺟﻝ?src/backtest/
+ﻗ?src/backtest_engine/     ﻗ?ﮒﭦﻛﺛﺟﻝ?src/backtest/
+ﻗ?src/risk_management/     ﻗ?ﮒﭦﻛﺛﺟﻝ?src/risk/
+ﻗ?src/execution_engine/    ﻗ?ﮒﭦﻛﺛﺟﻝ?src/execution/
+ﻗ?docs/documentation/      ﻗ?ﮒﭦﻛﺛﺟﻝ?docs/
+ﻗ?docs/docs/               ﻗ?ﮒﭦﻛﺛﺟﻝ?docs/
 ```
 
 ---
 
-## 📝 **命名规范速查�?*
+## ﻭ **ﮒﺛﮒﻟ۶ﻟﻠﮔ۴ﻟ۰?*
 
-| 文件类型 | 正确示例 | 错误示例 |
+| ﮔﻛﭨﭘﻝﺎﭨﮒ | ﮔ­۲ﻝ۰؟ﻝ۳ﭦﻛﺝ | ﻠﻟﺁﺁﻝ۳ﭦﻛﺝ |
 |---------|---------|---------|
-| **Python文件** | `strategy_factory.py` | `StrategyFactory.py` |
-| **文档文件** | `STRATEGY_FACTORY_GUIDE.md` | `strategy_factory_guide.md` |
-| **配置文件** | `strategy_config.yaml` | `StrategyConfig.yaml` |
-| **目录** | `src/strategy/` | `src/Strategy/` |
-| **变量** | `strategy_factory` | `strategyFactory` |
-| **函数** | `create_strategy()` | `createStrategy()` |
-| **�?* | `StrategyFactory` | `strategy_factory` |
-| **常量** | `MAX_POSITION` | `maxPosition` |
+| **Pythonﮔﻛﭨﭘ** | `strategy_factory.py` | `StrategyFactory.py` |
+| **ﮔﮔ۰۲ﮔﻛﭨﭘ** | `STRATEGY_FACTORY_GUIDE.md` | `strategy_factory_guide.md` |
+| **ﻠﻝﺛ؟ﮔﻛﭨﭘ** | `strategy_config.yaml` | `StrategyConfig.yaml` |
+| **ﻝ؟ﮒﺛ** | `src/strategy/` | `src/Strategy/` |
+| **ﮒﻠ** | `strategy_factory` | `strategyFactory` |
+| **ﮒﺛﮔﺍ** | `create_strategy()` | `createStrategy()` |
+| **ﻝﺎ?* | `StrategyFactory` | `strategy_factory` |
+| **ﮒﺕﺕﻠ** | `MAX_POSITION` | `maxPosition` |
 
 ---
 
-## 🔄 **标准施工流程**
+## ﻭ **ﮔ ﮒﮔﺛﮒﺓ۴ﮔﭖﻝ۷**
 
 ```
-Step 1: 检查现有结�?   �?LS d:\ZephyrAlpha\src\
-   �?LS d:\ZephyrAlpha\docs\
+Step 1: ﮔ۲ﮔ۴ﻝﺍﮔﻝﭨﮔ?   ﻗ?LS d:\ZephyrAlpha\src\
+   ﻗ?LS d:\ZephyrAlpha\docs\
 
-Step 2: 确认目标位置
-   �?查看本快速参考的文件夹结�?   �?确认正确路径
+Step 2: ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟
+   ﻗ?ﮔ۴ﻝﮔ؛ﮒﺟ،ﻠﮒﻟﻝﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ?   ﻗ?ﻝ۰؟ﻟ؟۳ﮔ­۲ﻝ۰؟ﻟﺓﺁﮒﺝ
 
-Step 3: 使用标准模板
-   �?文档: 包含必需元数�?   �?代码: 包含必需注释
+Step 3: ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟ
+   ﻗ?ﮔﮔ۰۲: ﮒﮒ،ﮒﺟﻠﮒﮔﺍﮔ?   ﻗ?ﻛﭨ۲ﻝ : ﮒﮒ،ﮒﺟﻠﮔﺏ۷ﻠ
 
-Step 4: 创建文件
-   �?使用正确路径
-   �?使用正确命名
-   �?添加标准内容
+Step 4: ﮒﮒﭨﭦﮔﻛﭨﭘ
+   ﻗ?ﻛﺛﺟﻝ۷ﮔ­۲ﻝ۰؟ﻟﺓﺁﮒﺝ
+   ﻗ?ﻛﺛﺟﻝ۷ﮔ­۲ﻝ۰؟ﮒﺛﮒ
+   ﻗ?ﮔﺓﭨﮒ ﮔ ﮒﮒﮒ؟ﺗ
 
-Step 5: 验证
-   �?LS 检查文件位�?   �?检查命名规�?   �?运行质量门禁
+Step 5: ﻠ۹ﻟﺁ
+   ﻗ?LS ﮔ۲ﮔ۴ﮔﻛﭨﭘﻛﺛﻝﺛ?   ﻗ?ﮔ۲ﮔ۴ﮒﺛﮒﻟ۶ﻟ?   ﻗ?ﻟﺟﻟ۰ﻟﺑ۷ﻠﻠ۷ﻝ۵
 ```
 
 ---
 
-## 📄 **文档必需元数�?*
+## ﻭ **ﮔﮔ۰۲ﮒﺟﻠﮒﮔﺍﮔ?*
 
 ```markdown
 ---
@@ -111,39 +111,39 @@ version: 1.0.0
 status: Active
 created_date: YYYY-MM-DD
 last_updated: YYYY-MM-DD
-owner: [负责人]
-standard_type: [文档类型]
-applicable_scope: [适用范围]
-compliance_level: [合规级别]
-parent_document: [父文档路径]
-implementation_status: [实施状态]
+owner: [ﻟﺑﻟﺑ۲ﻛﭦﭦ]
+standard_type: [ﮔﮔ۰۲ﻝﺎﭨﮒ]
+applicable_scope: [ﻠﻝ۷ﻟﮒﺑ]
+compliance_level: [ﮒﻟ۶ﻝﭦ۶ﮒ،]
+parent_document: [ﻝﭘﮔﮔ۰۲ﻟﺓﺁﮒﺝ]
+implementation_status: [ﮒ؟ﮔﺛﻝﭘﮔ]
 ---
 ```
 
 ---
 
-## 💻 **代码必需注释**
+## ﻭﭨ **ﻛﭨ۲ﻝ ﮒﺟﻠﮔﺏ۷ﻠ**
 
 ```python
 """
-[模块名称] - [模块职责]
+[ﮔ۷۰ﮒﮒﻝ۶ﺍ] - [ﮔ۷۰ﮒﻟﻟﺑ۲]
 
-版本: v1.0
-创建日期: YYYY-MM-DD
-作�? [作者]
+ﻝﮔ؛: v1.0
+ﮒﮒﭨﭦﮔ۴ﮔ: YYYY-MM-DD
+ﻛﺛﻟ? [ﻛﺛﻟ]
 """
 
 def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
-    """函数说明
+    """ﮒﺛﮔﺍﻟﺁﺑﮔ
     
     Args:
-        param1: 参数1说明
-        param2: 参数2说明（可选）
+        param1: ﮒﮔﺍ1ﻟﺁﺑﮔ
+        param2: ﮒﮔﺍ2ﻟﺁﺑﮔﺅﺙﮒﺁﻠﺅﺙ
     
     Returns:
-        返回值说�?    
+        ﻟﺟﮒﮒﺙﻟﺁﺑﮔ?    
     Raises:
-        ValueError: 异常说明
+        ValueError: ﮒﺙﮒﺕﺕﻟﺁﺑﮔ
     
     Example:
         >>> result = function_name("test")
@@ -154,55 +154,55 @@ def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
 
 ---
 
-## 🚨 **常见错误示例**
+## ﻭ۷ **ﮒﺕﺕﻟ۶ﻠﻟﺁﺁﻝ۳ﭦﻛﺝ**
 
-### **错误1: 文件夹命名错�?*
+### **ﻠﻟﺁﺁ1: ﮔﻛﭨﭘﮒ۳ﺗﮒﺛﮒﻠﻟﺁ?*
 
 ```bash
-# �?错误
+# ﻗ?ﻠﻟﺁﺁ
 src/strategies/factory.py
 
-# �?正确
+# ﻗ?ﮔ­۲ﻝ۰؟
 src/strategy/factory.py
 ```
 
-### **错误2: 文件命名错误**
+### **ﻠﻟﺁﺁ2: ﮔﻛﭨﭘﮒﺛﮒﻠﻟﺁﺁ**
 
 ```python
-# �?错误
+# ﻗ?ﻠﻟﺁﺁ
 StrategyFactory.py
 
-# �?正确
+# ﻗ?ﮔ­۲ﻝ۰؟
 strategy_factory.py
 ```
 
-### **错误3: 同一模块多个位置**
+### **ﻠﻟﺁﺁ3: ﮒﻛﺕﮔ۷۰ﮒﮒ۳ﻛﺕ۹ﻛﺛﻝﺛ؟**
 
 ```bash
-# �?错误
+# ﻗ?ﻠﻟﺁﺁ
 src/strategy/factory.py
 src/strategies/factory.py
 src/core/strategy_factory.py
 
-# �?正确（只保留一个）
+# ﻗ?ﮔ­۲ﻝ۰؟ﺅﺙﮒ۹ﻛﺟﻝﻛﺕﻛﺕ۹ﺅﺙ
 src/strategy/factory.py
 ```
 
 ---
 
-## 📞 **遇到问题�?*
+## ﻭ **ﻠﮒﺍﻠ؟ﻠ۱ﺅﺙ?*
 
-1. **查看完整�?*: [蓝图施工说明书](./CONSTRUCTION_SPECIFICATION.md)
-2. **检查现有结�?*: 使用 LS 命令
-3. **参考已有文�?*: 查看类似文件的结�?4. **询问用户**: 如果不确定，先询问用�?
+1. **ﮔ۴ﻝﮒ؟ﮔﺑﻝ?*: [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](./CONSTRUCTION_SPECIFICATION.md)
+2. **ﮔ۲ﮔ۴ﻝﺍﮔﻝﭨﮔ?*: ﻛﺛﺟﻝ۷ LS ﮒﺛﻛﭨ۳
+3. **ﮒﻟﮒﺓﺎﮔﮔﻛﭨ?*: ﮔ۴ﻝﻝﺎﭨﻛﺙﺙﮔﻛﭨﭘﻝﻝﭨﮔ?4. **ﻟﺁ۱ﻠ؟ﻝ۷ﮔﺓ**: ﮒ۵ﮔﻛﺕﻝ۰؟ﮒ؟ﺅﺙﮒﻟﺁ۱ﻠ؟ﻝ۷ﮔ?
 ---
 
-## 🎯 **记住这句�?*
+## ﻭﺁ **ﻟ؟ﺍﻛﺛﻟﺟﮒ۴ﻟﺁ?*
 
-> **"在创建任何文件前，先用LS检查现有结构，确认正确路径和命名，使用标准模板，遵循施工规范�?**
+> **"ﮒ۷ﮒﮒﭨﭦﻛﭨﭨﻛﺛﮔﻛﭨﭘﮒﺅﺙﮒﻝ۷LSﮔ۲ﮔ۴ﻝﺍﮔﻝﭨﮔﺅﺙﻝ۰؟ﻟ؟۳ﮔ­۲ﻝ۰؟ﻟﺓﺁﮒﺝﮒﮒﺛﮒﺅﺙﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﺅﺙﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟﻙ?**
 
 ---
 
-**文档维护�?*: 首席架构�? 
-**版本**: v1.0  
-**最后更�?*: 2026-04-02
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﻝﮔ؛**: v1.0  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02

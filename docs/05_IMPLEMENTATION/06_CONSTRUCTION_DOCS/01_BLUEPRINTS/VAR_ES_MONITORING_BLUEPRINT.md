@@ -55,6 +55,52 @@ priority: P0
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供组合权重数据 |
+| [组合情景分析蓝图](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 强依赖 | 提供情景分析结果 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 强依赖 | 风险贡献分析 |
+| [PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | 强依赖 | 组合绩效评估 |
+| [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依赖 | 压力测试系统 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **pyRisk** | 1.0+ | 风险指标计算 | [GitHub](https://github.com/quantopian/pyfolio) |
+| **arch** | 5.0+ | 波动率模型 | [官方文档](https://arch.readthedocs.io/) |
+| **pyfolio** | 0.9+ | 组合分析 | [GitHub](https://github.com/quantopian/pyfolio) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[组合优化引擎] --> B[VaR/ES监控]
+    C[组合情景分析] --> B
+    D[数据质量监控] --> B
+    
+    B --> E[风险贡献分析]
+    B --> F[组合绩效评估]
+    B --> G[压力测试系统]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+---
+
 ## 2. 架构设计
 
 ### 2.1 核心组件

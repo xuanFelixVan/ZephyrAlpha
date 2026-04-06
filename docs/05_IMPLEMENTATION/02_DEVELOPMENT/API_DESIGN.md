@@ -4,58 +4,58 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
-standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
-compliance_level: 初始标准
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
+applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
+compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
 
-# API设计规范
+# APIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ
 
-> 清风量化系统 v5.0 - API设计蓝图
-> **索引**: `DEV.API.001`
-> **开发时�?*: 5h
-> **核心定位**: 统一模块间通信接口，确保系统各层模块能有效交互
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - APIﻟ؟ﺝﻟ؟۰ﻟﮒﺝ
+> **ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
+> **ﮒﺙﮒﮔﭘﻠ?*: 5h
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﻛﺕﮔ۷۰ﮒﻠﺑﻠﻛﺟ۰ﮔ۴ﮒ۲ﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒﮒﺎﮔ۷۰ﮒﻟﺛﮔﮔﻛﭦ۳ﻛﭦ
 
 
-## 1. API设计原则
+## 1. APIﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-### 1.1 核心原则
+### 1.1 ﮔ ﺕﮒﺟﮒﮒ
 
-| 原则 | 说明 | 优先�?|
+| ﮒﮒ | ﻟﺁﺑﮔ | ﻛﺙﮒﻝﭦ?|
 |------|------|--------|
-| **一致�?* | 统一响应格式、错误码、命�?| 必须 |
-| **简洁�?* | 接口职责单一，不过度封装 | 必须 |
-| **可测�?* | 接口可独立于业务逻辑测试 | 必须 |
-| **版本�?* | API版本控制，支持平滑升�?| 应该 |
-| **文档�?* | 自动生成OpenAPI/Swagger文档 | 应该 |
+| **ﻛﺕﻟﺑﮔ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﻝ ﻙﮒﺛﮒ?| ﮒﺟﻠ۰ﭨ |
+| **ﻝ؟ﮔﺑﮔ?* | ﮔ۴ﮒ۲ﻟﻟﺑ۲ﮒﻛﺕﺅﺙﻛﺕﻟﺟﮒﭦ۵ﮒﺍﻟ۲ | ﮒﺟﻠ۰ﭨ |
+| **ﮒﺁﮔﭖﻟﺁ?* | ﮔ۴ﮒ۲ﮒﺁﻝ؛ﻝ،ﻛﭦﻛﺕﮒ۰ﻠﭨﻟﺝﮔﭖﻟﺁ | ﮒﺟﻠ۰ﭨ |
+| **ﻝﮔ؛ﮒ?* | APIﻝﮔ؛ﮔ۶ﮒﭘﺅﺙﮔﺁﮔﮒﺗﺏﮔﭨﮒﻝﭦ?| ﮒﭦﻟﺁ۴ |
+| **ﮔﮔ۰۲ﮒ?* | ﻟ۹ﮒ۷ﻝﮔOpenAPI/Swaggerﮔﮔ۰۲ | ﮒﭦﻟﺁ۴ |
 
-### 1.2 接口分层
+### 1.2 ﮔ۴ﮒ۲ﮒﮒﺎ
 
 ```
-┌─────────────────────────────────────────────�?
-�?          External API (外部接口)            �?
-�?   FastAPI Routes �?�?外部系统调用           �?
-└─────────────────────────────────────────────�?
-                    �?
-┌─────────────────────────────────────────────�?
-�?          Internal API (内部接口)             �?
-�?   Module Methods �?模块间调�?                �?
-└─────────────────────────────────────────────�?
-                    �?
-┌─────────────────────────────────────────────�?
-�?          Data Interface (数据接口)           �?
-�?   Repository Pattern �?数据访问              �?
-└─────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?          External API (ﮒ۳ﻠ۷ﮔ۴ﮒ۲)            ﻗ?
+ﻗ?   FastAPI Routes ﻗ?ﻛﭦ?ﮒ۳ﻠ۷ﻝﺏﭨﻝﭨﻟﺍﻝ۷           ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                    ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?          Internal API (ﮒﻠ۷ﮔ۴ﮒ۲)             ﻗ?
+ﻗ?   Module Methods ﻗ?ﮔ۷۰ﮒﻠﺑﻟﺍﻝ?                ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                    ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?          Data Interface (ﮔﺍﮔ؟ﮔ۴ﮒ۲)           ﻗ?
+ﻗ?   Repository Pattern ﻗ?ﮔﺍﮔ؟ﻟ؟ﺟﻠ؟              ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 
-## 2. 统一响应格式
+## 2. ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
 
-### 2.1 响应结构
+### 2.1 ﮒﮒﭦﻝﭨﮔ
 
 ```python
 from typing import Generic, TypeVar, Optional
@@ -64,12 +64,12 @@ from pydantic import BaseModel
 T = TypeVar('T')
 
 class APIResponse(BaseModel, Generic[T]):
-    """统一API响应格式"""
+    """ﻝﭨﻛﺕAPIﮒﮒﭦﮔ ﺙﮒﺙ"""
 
-    code: int = 0                    # 状态码: 0=成功, >0=错误
-    message: str = "success"          # 消息描述
-    data: Optional[T] = None         # 响应数据
-    request_id: Optional[str] = None # 请求追踪ID
+    code: int = 0                    # ﻝﭘﮔﻝ : 0=ﮔﮒ, >0=ﻠﻟﺁﺁ
+    message: str = "success"          # ﮔﭘﮔﺁﮔﻟﺟﺍ
+    data: Optional[T] = None         # ﮒﮒﭦﮔﺍﮔ؟
+    request_id: Optional[str] = None # ﻟﺁﺓﮔﺎﻟﺟﺛﻟﺕ۹ID
 
     class Config:
         json_schema_extra = {
@@ -82,50 +82,50 @@ class APIResponse(BaseModel, Generic[T]):
         }
 ```
 
-### 2.2 错误码定�?
+### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟ﻛﺗ?
 
-| 错误�?| 范围 | 说明 |
+| ﻠﻟﺁﺁﻝ ?| ﻟﮒﺑ | ﻟﺁﺑﮔ |
 |--------|------|------|
-| 0 | 0xx | 成功 |
-| 1000-1999 | 1xxx | 数据相关错误 |
-| 2000-2999 | 2xxx | 策略相关错误 |
-| 3000-3999 | 3xxx | 风控相关错误 |
-| 4000-4999 | 4xxx | 执行相关错误 |
-| 5000-5999 | 5xxx | 系统相关错误 |
+| 0 | 0xx | ﮔﮒ |
+| 1000-1999 | 1xxx | ﮔﺍﮔ؟ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 2000-2999 | 2xxx | ﻝ­ﻝ۴ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 3000-3999 | 3xxx | ﻠ۲ﮔ۶ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 4000-4999 | 4xxx | ﮔ۶ﻟ۰ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 5000-5999 | 5xxx | ﻝﺏﭨﻝﭨﻝﺕﮒﺏﻠﻟﺁﺁ |
 
 ```python
 class ErrorCode:
-    # 数据错误 (1000-1999)
+    # ﮔﺍﮔ؟ﻠﻟﺁﺁ (1000-1999)
     DATA_NOT_FOUND = 1001
     DATA_INVALID = 1002
     DATA_TIMEOUT = 1003
     DATA_SOURCE_UNAVAILABLE = 1004
 
-    # 策略错误 (2000-2999)
+    # ﻝ­ﻝ۴ﻠﻟﺁﺁ (2000-2999)
     STRATEGY_NOT_FOUND = 2001
     STRATEGY_INVALID = 2002
     STRATEGY_ALREADY_RUNNING = 2003
 
-    # 风控错误 (3000-3999)
+    # ﻠ۲ﮔ۶ﻠﻟﺁﺁ (3000-3999)
     RISK_LIMIT_EXCEEDED = 3001
     RISK_POSITION_LIMIT = 3002
     RISK_DRAWDOWN_LIMIT = 3003
 
-    # 执行错误 (4000-4999)
+    # ﮔ۶ﻟ۰ﻠﻟﺁﺁ (4000-4999)
     ORDER_REJECTED = 4001
     ORDER_TIMEOUT = 4002
     INSUFFICIENT_CAPITAL = 4003
 
-    # 系统错误 (5000-5999)
+    # ﻝﺏﭨﻝﭨﻠﻟﺁﺁ (5000-5999)
     SYSTEM_ERROR = 5001
     CONFIG_ERROR = 5002
     AUTH_ERROR = 5003
 ```
 
 
-## 3. 模块接口定义
+## 3. ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 DataHub接口
+### 3.1 DataHubﮔ۴ﮒ۲
 
 ```python
 from abc import ABC, abstractmethod
@@ -134,7 +134,7 @@ from datetime import datetime
 import pandas as pd
 
 class IDataHub(ABC):
-    """数据中心接口"""
+    """ﮔﺍﮔ؟ﻛﺕ­ﮒﺟﮔ۴ﮒ۲"""
 
     @abstractmethod
     def get_ohlcv(
@@ -144,20 +144,20 @@ class IDataHub(ABC):
         end_date: str,
         fields: Optional[List[str]] = None
     ) -> pd.DataFrame:
-        """获取OHLCV数据
+        """ﻟﺓﮒOHLCVﮔﺍﮔ؟
 
-        参数:
-            symbol: 股票代码 (e.g. "000001.SZ")
-            start_date: 开始日�?(e.g. "2026-01-01")
-            end_date: 结束日期 (e.g. "2026-03-28")
-            fields: 可选字段列�?
+        ﮒﮔﺍ:
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  (e.g. "000001.SZ")
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?(e.g. "2026-01-01")
+            end_date: ﻝﭨﮔﮔ۴ﮔ (e.g. "2026-03-28")
+            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
 
-        返回:
+        ﻟﺟﮒ:
             DataFrame with columns: date, open, high, low, close, volume
 
-        异常:
-            DataNotFoundError: 数据不存�?
-            DataTimeoutError: 数据获取超时
+        ﮒﺙﮒﺕﺕ:
+            DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?
+            DataTimeoutError: ﮔﺍﮔ؟ﻟﺓﮒﻟﭘﮔﭘ
         """
         pass
 
@@ -167,35 +167,35 @@ class IDataHub(ABC):
         symbol: str,
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """获取基本面数�?
+        """ﻟﺓﮒﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ?
 
-        参数:
-            symbol: 股票代码
-            fields: 可选字段列�?
+        ﮒﮔﺍ:
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
 
-        返回:
-            基本面数据字�?
+        ﻟﺟﮒ:
+            ﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ؟ﮒ­ﮒ?
         """
         pass
 
     @abstractmethod
     def list_symbols(self, market: str = "A") -> List[str]:
-        """获取股票列表
+        """ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
 
-        参数:
-            market: 市场代码 (e.g. "A", "HK")
+        ﮒﮔﺍ:
+            market: ﮒﺕﮒﭦﻛﭨ۲ﻝ  (e.g. "A", "HK")
 
-        返回:
-            股票代码列表
+        ﻟﺟﮒ:
+            ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
         """
         pass
 ```
 
-### 3.2 FactorCalculator接口
+### 3.2 FactorCalculatorﮔ۴ﮒ۲
 
 ```python
 class IFactorCalculator(ABC):
-    """因子计算器接�?""
+    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?""
 
     @abstractmethod
     def calculate(
@@ -205,16 +205,16 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """计算单个因子�?
+        """ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒ ﮒ­ﮒ?
 
-        参数:
-            factor_name: 因子名称
-            symbol: 股票代码
-            date: 日期
-            params: 因子参数
+        ﮒﮔﺍ:
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﮔ۴ﮔ
+            params: ﮒ ﮒ­ﮒﮔﺍ
 
-        返回:
-            因子值，None表示计算失败
+        ﻟﺟﮒ:
+            ﮒ ﮒ­ﮒﺙﺅﺙNoneﻟ۰۷ﻝ۳ﭦﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
         """
         pass
 
@@ -227,16 +227,16 @@ class IFactorCalculator(ABC):
         end_date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> pd.DataFrame:
-        """批量计算因子
+        """ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­
 
-        参数:
-            factor_name: 因子名称
-            symbols: 股票代码列表
-            start_date: 开始日�?
-            end_date: 结束日期
-            params: 因子参数
+        ﮒﮔﺍ:
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            symbols: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?
+            end_date: ﻝﭨﮔﮔ۴ﮔ
+            params: ﮒ ﮒ­ﮒﮔﺍ
 
-        返回:
+        ﻟﺟﮒ:
             DataFrame with columns: date, symbol, value
         """
         pass
@@ -247,23 +247,23 @@ class IFactorCalculator(ABC):
         factor_name: str,
         ic_threshold: float = 0.03
     ) -> Dict[str, Any]:
-        """验证因子有效�?
+        """ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﮔ?
 
-        参数:
-            factor_name: 因子名称
-            ic_threshold: IC阈�?
+        ﮒﮔﺍ:
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            ic_threshold: ICﻠﮒ?
 
-        返回:
+        ﻟﺟﮒ:
             {'ic': float, 'ir': float, 'valid': bool}
         """
         pass
 ```
 
-### 3.3 StrategyEngine接口
+### 3.3 StrategyEngineﮔ۴ﮒ۲
 
 ```python
 class IStrategyEngine(ABC):
-    """策略引擎接口"""
+    """ﻝ­ﻝ۴ﮒﺙﮔﮔ۴ﮒ۲"""
 
     @abstractmethod
     def generate_signals(
@@ -272,15 +272,15 @@ class IStrategyEngine(ABC):
         symbols: List[str],
         date: str
     ) -> List[Signal]:
-        """生成交易信号
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
 
-        参数:
-            strategy_id: 策略ID
-            symbols: 股票列表
-            date: 日期
+        ﮒﮔﺍ:
+            strategy_id: ﻝ­ﻝ۴ID
+            symbols: ﻟ۰ﻝ۴۷ﮒﻟ۰۷
+            date: ﮔ۴ﮔ
 
-        返回:
-            信号列表
+        ﻟﺟﮒ:
+            ﻛﺟ۰ﮒﺓﮒﻟ۰۷
         """
         pass
 
@@ -290,14 +290,14 @@ class IStrategyEngine(ABC):
         strategy_id: str,
         symbol: str
     ) -> Position:
-        """获取持仓
+        """ﻟﺓﮒﮔﻛﭨ
 
-        参数:
-            strategy_id: 策略ID
-            symbol: 股票代码
+        ﮒﮔﺍ:
+            strategy_id: ﻝ­ﻝ۴ID
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
 
-        返回:
-            持仓信息
+        ﻟﺟﮒ:
+            ﮔﻛﭨﻛﺟ۰ﮔﺁ
         """
         pass
 
@@ -309,22 +309,22 @@ class IStrategyEngine(ABC):
         volume: int,
         price: float
     ) -> None:
-        """更新持仓
+        """ﮔﺑﮔﺍﮔﻛﭨ
 
-        参数:
-            strategy_id: 策略ID
-            symbol: 股票代码
-            volume: 持仓量（正买入，负卖出）
-            price: 价格
+        ﮒﮔﺍ:
+            strategy_id: ﻝ­ﻝ۴ID
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            volume: ﮔﻛﭨﻠﺅﺙﮔ­۲ﻛﺗﺍﮒ۴ﺅﺙﻟﺑﮒﮒﭦﺅﺙ
+            price: ﻛﭨﺓﮔ ﺙ
         """
         pass
 ```
 
-### 3.4 RiskManager接口
+### 3.4 RiskManagerﮔ۴ﮒ۲
 
 ```python
 class IRiskManager(ABC):
-    """风险管理器接�?""
+    """ﻠ۲ﻠ۸ﻝ؟۰ﻝﮒ۷ﮔ۴ﮒ?""
 
     @abstractmethod
     def check_order(
@@ -332,13 +332,13 @@ class IRiskManager(ABC):
         order: Order,
         current_positions: List[Position]
     ) -> OrderCheckResult:
-        """检查订单是否通过风控
+        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮔﺁﮒ۵ﻠﻟﺟﻠ۲ﮔ۶
 
-        参数:
-            order: 订单
-            current_positions: 当前持仓
+        ﮒﮔﺍ:
+            order: ﻟ؟۱ﮒ
+            current_positions: ﮒﺛﮒﮔﻛﭨ
 
-        返回:
+        ﻟﺟﮒ:
             {'approved': bool, 'reason': str, 'modified': Order}
         """
         pass
@@ -349,14 +349,14 @@ class IRiskManager(ABC):
         positions: List[Position],
         portfolio_value: float
     ) -> RiskMetrics:
-        """计算风险指标
+        """ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ 
 
-        参数:
-            positions: 持仓列表
-            portfolio_value: 组合市�?
+        ﮒﮔﺍ:
+            positions: ﮔﻛﭨﮒﻟ۰۷
+            portfolio_value: ﻝﭨﮒﮒﺕﮒ?
 
-        返回:
-            风险指标
+        ﻟﺟﮒ:
+            ﻠ۲ﻠ۸ﮔﮔ 
         """
         pass
 
@@ -366,53 +366,53 @@ class IRiskManager(ABC):
         current_value: float,
         peak_value: float
     ) -> bool:
-        """检查回撤是否超�?
+        """ﮔ۲ﮔ۴ﮒﮔ۳ﮔﺁﮒ۵ﻟﭘﻠ?
 
-        参数:
-            current_value: 当前�?
-            peak_value: 历史峰�?
+        ﮒﮔﺍ:
+            current_value: ﮒﺛﮒﮒ?
+            peak_value: ﮒﮒﺎﮒﺏﺍﮒ?
 
-        返回:
-            True表示超限，需要处�?
+        ﻟﺟﮒ:
+            Trueﻟ۰۷ﻝ۳ﭦﻟﭘﻠﺅﺙﻠﻟ۵ﮒ۳ﻝ?
         """
         pass
 ```
 
 
-## 4. FastAPI路由设计
+## 4. FastAPIﻟﺓﺁﻝﺎﻟ؟ﺝﻟ؟۰
 
-### 4.1 路由结构
+### 4.1 ﻟﺓﺁﻝﺎﻝﭨﮔ
 
 ```
 /api/v1/
-├── /data
-�?  ├── GET  /ohlcv/{symbol}     # 获取K线数�?
-�?  ├── GET  /fundamental/{symbol} # 获取基本�?
-�?  └── GET  /symbols            # 获取股票列表
-�?
-├── /factors
-�?  ├── GET  /{factor_name}      # 计算因子
-�?  ├── POST /batch             # 批量计算
-�?  └── GET  /validate/{name}   # 验证因子
-�?
-├── /strategies
-�?  ├── GET  /                   # 策略列表
-�?  ├── POST /signals           # 生成信号
-�?  ├── GET  /{id}/positions    # 获取持仓
-�?  └── POST /{id}/orders      # 下单
-�?
-├── /risk
-�?  ├── POST /check_order       # 风控检�?
-�?  ├── GET  /metrics           # 风险指标
-�?  └── GET  /limits            # 风险限额
-�?
-└── /system
-    ├── GET  /health            # 健康检�?
-    ├── GET  /version           # 版本信息
-    └── GET  /config            # 配置信息
+ﻗﻗﻗ /data
+ﻗ?  ﻗﻗﻗ GET  /ohlcv/{symbol}     # ﻟﺓﮒKﻝﭦﺟﮔﺍﮔ?
+ﻗ?  ﻗﻗﻗ GET  /fundamental/{symbol} # ﻟﺓﮒﮒﭦﮔ؛ﻠ?
+ﻗ?  ﻗﻗﻗ GET  /symbols            # ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
+ﻗ?
+ﻗﻗﻗ /factors
+ﻗ?  ﻗﻗﻗ GET  /{factor_name}      # ﻟ؟۰ﻝ؟ﮒ ﮒ­
+ﻗ?  ﻗﻗﻗ POST /batch             # ﮔﺗﻠﻟ؟۰ﻝ؟
+ﻗ?  ﻗﻗﻗ GET  /validate/{name}   # ﻠ۹ﻟﺁﮒ ﮒ­
+ﻗ?
+ﻗﻗﻗ /strategies
+ﻗ?  ﻗﻗﻗ GET  /                   # ﻝ­ﻝ۴ﮒﻟ۰۷
+ﻗ?  ﻗﻗﻗ POST /signals           # ﻝﮔﻛﺟ۰ﮒﺓ
+ﻗ?  ﻗﻗﻗ GET  /{id}/positions    # ﻟﺓﮒﮔﻛﭨ
+ﻗ?  ﻗﻗﻗ POST /{id}/orders      # ﻛﺕﮒ
+ﻗ?
+ﻗﻗﻗ /risk
+ﻗ?  ﻗﻗﻗ POST /check_order       # ﻠ۲ﮔ۶ﮔ۲ﮔ?
+ﻗ?  ﻗﻗﻗ GET  /metrics           # ﻠ۲ﻠ۸ﮔﮔ 
+ﻗ?  ﻗﻗﻗ GET  /limits            # ﻠ۲ﻠ۸ﻠﻠ۱
+ﻗ?
+ﻗﻗﻗ /system
+    ﻗﻗﻗ GET  /health            # ﮒ۴ﮒﭦﺓﮔ۲ﮔ?
+    ﻗﻗﻗ GET  /version           # ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+    ﻗﻗﻗ GET  /config            # ﻠﻝﺛ؟ﻛﺟ۰ﮔﺁ
 ```
 
-### 4.2 示例路由
+### 4.2 ﻝ۳ﭦﻛﺝﻟﺓﺁﻝﺎ
 
 ```python
 from fastapi import APIRouter, HTTPException, Query
@@ -423,11 +423,11 @@ router = APIRouter(prefix="/api/v1", tags=["data"])
 @router.get("/data/ohlcv/{symbol}")
 async def get_ohlcv(
     symbol: str,
-    start_date: str = Query(..., description="开始日�?),
-    end_date: str = Query(..., description="结束日期"),
-    fields: Optional[str] = Query(None, description="字段列表，逗号分隔")
+    start_date: str = Query(..., description="ﮒﺙﮒ۶ﮔ۴ﮔ?),
+    end_date: str = Query(..., description="ﻝﭨﮔﮔ۴ﮔ"),
+    fields: Optional[str] = Query(None, description="ﮒ­ﮔ؟ﭖﮒﻟ۰۷ﺅﺙﻠﮒﺓﮒﻠ")
 ) -> APIResponse[pd.DataFrame]:
-    """获取OHLCV数据"""
+    """ﻟﺓﮒOHLCVﮔﺍﮔ؟"""
 
     try:
         field_list = fields.split(",") if fields else None
@@ -436,35 +436,35 @@ async def get_ohlcv(
     except DataNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.error(f"获取OHLCV失败: {e}")
-        raise HTTPException(status_code=500, detail="内部错误")
+        logger.error(f"ﻟﺓﮒOHLCVﮒ۳ﺎﻟﺑ۴: {e}")
+        raise HTTPException(status_code=500, detail="ﮒﻠ۷ﻠﻟﺁﺁ")
 ```
 
 
-## 5. 接口版本控制
+## 5. ﮔ۴ﮒ۲ﻝﮔ؛ﮔ۶ﮒﭘ
 
-### 5.1 URL版本控制
+### 5.1 URLﻝﮔ؛ﮔ۶ﮒﭘ
 
 ```
-/api/v1/data/ohlcv     # v1版本
-/api/v2/data/ohlcv     # v2版本
+/api/v1/data/ohlcv     # v1ﻝﮔ؛
+/api/v2/data/ohlcv     # v2ﻝﮔ؛
 ```
 
-### 5.2 兼容性策�?
+### 5.2 ﮒﺙﮒ؟ﺗﮔ۶ﻝ­ﻝ?
 
 ```python
-# v1 �?v2 兼容策略
+# v1 ﻗ?v2 ﮒﺙﮒ؟ﺗﻝ­ﻝ۴
 class DataAPIV2:
-    """v2版本数据API"""
+    """v2ﻝﮔ؛ﮔﺍﮔ؟API"""
 
     async def get_ohlcv(self, symbol: str, **kwargs):
-        # v2新增参数有默认值，兼容v1调用
+        # v2ﮔﺍﮒ۱ﮒﮔﺍﮔﻠﭨﻟ؟۳ﮒﺙﺅﺙﮒﺙﮒ؟ﺗv1ﻟﺍﻝ۷
         include_extended = kwargs.get('include_extended', False)
 
-        # 调用v1逻辑
+        # ﻟﺍﻝ۷v1ﻠﭨﻟﺝ
         result = await self.v1_get_ohlcv(symbol, **kwargs)
 
-        # v2扩展
+        # v2ﮔ۸ﮒﺎ
         if include_extended:
             result['extended'] = self._calculate_extended(result)
 
@@ -472,17 +472,17 @@ class DataAPIV2:
 ```
 
 
-## 6. 接口文档
+## 6. ﮔ۴ﮒ۲ﮔﮔ۰۲
 
-### 6.1 OpenAPI集成
+### 6.1 OpenAPIﻠﮔ
 
 ```python
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
 app = FastAPI(
-    title="清风量化交易系统API",
-    description="量化交易系统的RESTful API",
+    title="ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨAPI",
+    description="ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝRESTful API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -493,13 +493,13 @@ def custom_openapi():
         return app.openapi_schema
 
     openapi_schema = get_openapi(
-        title="清风量化交易系统API",
+        title="ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨAPI",
         version="1.0.0",
-        description="量化交易系统的RESTful API",
+        description="ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝRESTful API",
         routes=app.routes,
     )
 
-    # 添加认证信息
+    # ﮔﺓﭨﮒ ﻟ؟۳ﻟﺁﻛﺟ۰ﮔﺁ
     openapi_schema["components"]["securitySchemes"] = {
         "Bearer": {
             "type": "http",
@@ -515,27 +515,27 @@ app.openapi = custom_openapi
 ```
 
 
-## 7. 上下接口映射
+## 7. ﻛﺕﻛﺕﮔ۴ﮒ۲ﮔ ﮒﺍ
 
-| 接口 | 上游(调用�? | 下游(被调�? | 索引 |
+| ﮔ۴ﮒ۲ | ﻛﺕﮔﺕﺕ(ﻟﺍﻝ۷ﻟ? | ﻛﺕﮔﺕﺕ(ﻟ۱،ﻟﺍﻝ? | ﻝﺑ۱ﮒﺙ |
 |------|-------------|-------------|------|
-| DataHub.get_ohlcv | FactorCalculator, StrategyEngine | 数据�?AKShare/Tushare) | DATA.001 |
+| DataHub.get_ohlcv | FactorCalculator, StrategyEngine | ﮔﺍﮔ؟ﮔﭦ?AKShare/Tushare) | DATA.001 |
 | FactorCalculator.calculate | StrategyEngine | DataHub | FACT.001 |
 | StrategyEngine.generate_signals | API Layer | FactorCalculator, RiskManager | STRAT.001 |
 | RiskManager.check_order | StrategyEngine, TradeExecutor | Config, Positions | RISK.001 |
 | TradeExecutor.execute | StrategyEngine | Broker API | EXEC.001 |
 
 
-## 8. 开发任务分�?5h)
+## 8. ﮒﺙﮒﻛﭨﭨﮒ۰ﮒﻟ۶?5h)
 
-| 任务 | 时间 | 交付�?|
+| ﻛﭨﭨﮒ۰ | ﮔﭘﻠﺑ | ﻛﭦ۳ﻛﭨﻝ?|
 |------|------|--------|
-| 响应格式标准�?| 1h | APIResponse基类, ErrorCode定义 |
-| 模块接口定义 | 2h | IDataHub, IFactorCalculator等接�?|
-| FastAPI路由 | 1.5h | REST API实现 |
-| 文档集成 | 0.5h | OpenAPI/Swagger配置 |
+| ﮒﮒﭦﮔ ﺙﮒﺙﮔ ﮒﮒ?| 1h | APIResponseﮒﭦﻝﺎﭨ, ErrorCodeﮒ؟ﻛﺗ |
+| ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ | 2h | IDataHub, IFactorCalculatorﻝ­ﮔ۴ﮒ?|
+| FastAPIﻟﺓﺁﻝﺎ | 1.5h | REST APIﮒ؟ﻝﺍ |
+| ﮔﮔ۰۲ﻠﮔ | 0.5h | OpenAPI/Swaggerﻠﻝﺛ؟ |
 
 
-**维护�?*: 清风量化系统
-**索引**: `DEV.API.001`
-**最后更�?*: 2026-03-29
+**ﻝﭨﺑﮔ۳ﻟ?*: ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ
+**ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
+**ﮔﮒﮔﺑﮔ?*: 2026-03-29

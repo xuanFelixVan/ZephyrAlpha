@@ -4,67 +4,67 @@ version: 2.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书更新文档
-applicable_scope: 市场参与者行为模拟系�?compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔﺑﮔﺍﮔﮔ۰۲
+applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
-implementation_status: 设计阶段
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
 
-# 市场参与者行为模拟系统技术规格书更新文档
+# ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔﺑﮔﺍﮔﮔ۰۲
 
-> **版本**: v2.0
-> **创建日期**: 2026-04-03
-> **更新内容**: 术语标准化、资金流向监控接口、智能体参数配置、数据获取模�?> **依据文档**: MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md
+> **ﻝﮔ؛**: v2.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
+> **ﮔﺑﮔﺍﮒﮒ؟ﺗ**: ﮔﺁﻟﺁ­ﮔ ﮒﮒﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔ۴ﮒ۲ﻙﮔﭦﻟﺛﻛﺛﮒﮔﺍﻠﻝﺛ؟ﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒ?> **ﻛﺝﮔ؟ﮔﮔ۰۲**: MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md
 
 ---
 
-## 📝 一、术语标准化更新
+## ﻭ ﻛﺕﻙﮔﺁﻟﺁ­ﮔ ﮒﮒﮔﺑﮔﺍ
 
-### 1.1 核心术语替换对照�?
-根据专业量化机构标准，对技术规格书中的术语进行标准化更新：
+### 1.1 ﮔ ﺕﮒﺟﮔﺁﻟﺁ­ﮔﺟﮔ۱ﮒﺁﺗﻝ۶ﻟ۰?
+ﮔ ﺗﮔ؟ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙﮒﺁﺗﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻛﺕ­ﻝﮔﺁﻟﺁ­ﻟﺟﻟ۰ﮔ ﮒﮒﮔﺑﮔﺍﺅﺙ
 
-| 原术�?| 新术语（专业标准�?| 英文术语 | 替换范围 |
+| ﮒﮔﺁﻟﺁ?| ﮔﺍﮔﺁﻟﺁ­ﺅﺙﻛﺕﻛﺕﮔ ﮒﺅﺙ?| ﻟﺎﮔﮔﺁﻟﺁ­ | ﮔﺟﮔ۱ﻟﮒﺑ |
 |--------|-------------------|---------|---------|
-| 主力 | **机构资金** | Institutional Capital | 全文�?|
-| 主力资金 | **机构资金** | Institutional Capital | 全文�?|
-| 主力/游资智能�?| **机构/热钱智能�?* | Institutional/Hot Money Agent | 智能体名�?|
-| 主力控盘 | **机构控盘** | Institutional Control | 行为描述 |
-| 主力行为 | **机构资金行为** | Institutional Capital Behavior | 研究领域 |
-| 国家�?| **主权基金** | Sovereign Funds | 学术场景 |
-| 游资 | **热钱** | Hot Money | 风险监控场景 |
-| 散户 | **零售投资�?* | Retail Investors | 学术场景 |
+| ﻛﺕﭨﮒ | **ﮔﭦﮔﻟﭖﻠ** | Institutional Capital | ﮒ۷ﮔﮔ۰?|
+| ﻛﺕﭨﮒﻟﭖﻠ | **ﮔﭦﮔﻟﭖﻠ** | Institutional Capital | ﮒ۷ﮔﮔ۰?|
+| ﻛﺕﭨﮒ/ﮔﺕﺕﻟﭖﮔﭦﻟﺛﻛﺛ?| **ﮔﭦﮔ/ﻝ­ﻠﺎﮔﭦﻟﺛﻛﺛ?* | Institutional/Hot Money Agent | ﮔﭦﻟﺛﻛﺛﮒﻝ۶?|
+| ﻛﺕﭨﮒﮔ۶ﻝ | **ﮔﭦﮔﮔ۶ﻝ** | Institutional Control | ﻟ۰ﻛﺕﭦﮔﻟﺟﺍ |
+| ﻛﺕﭨﮒﻟ۰ﻛﺕﭦ | **ﮔﭦﮔﻟﭖﻠﻟ۰ﻛﺕﭦ** | Institutional Capital Behavior | ﻝ ﻝ۸ﭘﻠ۱ﮒ |
+| ﮒﺛﮒ؟ﭘﻠ?| **ﻛﺕﭨﮔﮒﭦﻠ** | Sovereign Funds | ﮒ­۵ﮔﺁﮒﭦﮔﺁ |
+| ﮔﺕﺕﻟﭖ | **ﻝ­ﻠﺎ** | Hot Money | ﻠ۲ﻠ۸ﻝﮔ۶ﮒﭦﮔﺁ |
+| ﮔ۲ﮔﺓ | **ﻠﭘﮒ؟ﮔﻟﭖﻟ?* | Retail Investors | ﮒ­۵ﮔﺁﮒﭦﮔﺁ |
 
-### 1.2 智能体命名规�?
-**更新后的智能体命名体�?*�?
+### 1.2 ﮔﭦﻟﺛﻛﺛﮒﺛﮒﻟ۶ﻟ?
+**ﮔﺑﮔﺍﮒﻝﮔﭦﻟﺛﻛﺛﮒﺛﮒﻛﺛﻝﺏ?*ﺅﺙ?
 ```
-一级分类（学术标准）：
-├── 机构投资者（Institutional Investors�?�?  ├── 主权基金智能体（Sovereign Fund Agent�?�?  �?  └── 代号：AGENT.SOVEREIGN_FUND.001
-�?  ├── 公募基金智能体（Mutual Fund Agent�?�?  �?  └── 代号：AGENT.MUTUAL_FUND.001
-�?  ├── 私募基金智能体（Private Equity Agent�?�?  �?  ├── 量化基金智能体（Quantitative Fund Agent�?�?  �?  �?  └── 代号：AGENT.QUANT_FUND.001
-�?  �?  └── 主观私募智能体（Discretionary PE Agent�?�?  �?      └── 代号：AGENT.DISCRETIONARY_PE.001
-�?  ├── 外资智能体（Foreign Capital Agent�?�?  �?  └── 代号：AGENT.FOREIGN_CAPITAL.001
-�?  ├── 保险资金智能体（Insurance Fund Agent�?�?  �?  └── 代号：AGENT.INSURANCE_FUND.001
-�?  └── 产业资本智能体（Industrial Capital Agent�?�?      └── 代号：AGENT.INDUSTRIAL_CAPITAL.001
-└── 零售投资者（Retail Investors�?    ├── 高净值个人智能体（High Net Worth Agent�?    �?  └── 代号：AGENT.HNW.001
-    └── 散户智能体（Retail Investor Agent�?        └── 代号：AGENT.RETAIL.001
+ﻛﺕﻝﭦ۶ﮒﻝﺎﭨﺅﺙﮒ­۵ﮔﺁﮔ ﮒﺅﺙﺅﺙ
+ﻗﻗﻗ ﮔﭦﮔﮔﻟﭖﻟﺅﺙInstitutional Investorsﺅﺙ?ﻗ?  ﻗﻗﻗ ﻛﺕﭨﮔﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙSovereign Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.SOVEREIGN_FUND.001
+ﻗ?  ﻗﻗﻗ ﮒ؛ﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙMutual Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.MUTUAL_FUND.001
+ﻗ?  ﻗﻗﻗ ﻝ۶ﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙPrivate Equity Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻠﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙQuantitative Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.QUANT_FUND.001
+ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﺕﭨﻟ۶ﻝ۶ﮒﮔﭦﻟﺛﻛﺛﺅﺙDiscretionary PE Agentﺅﺙ?ﻗ?  ﻗ?      ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.DISCRETIONARY_PE.001
+ﻗ?  ﻗﻗﻗ ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﺅﺙForeign Capital Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.FOREIGN_CAPITAL.001
+ﻗ?  ﻗﻗﻗ ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛﺅﺙInsurance Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.INSURANCE_FUND.001
+ﻗ?  ﻗﻗﻗ ﻛﭦ۶ﻛﺕﻟﭖﮔ؛ﮔﭦﻟﺛﻛﺛﺅﺙIndustrial Capital Agentﺅﺙ?ﻗ?      ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.INDUSTRIAL_CAPITAL.001
+ﻗﻗﻗ ﻠﭘﮒ؟ﮔﻟﭖﻟﺅﺙRetail Investorsﺅﺙ?    ﻗﻗﻗ ﻠ،ﮒﮒﺙﻛﺕ۹ﻛﭦﭦﮔﭦﻟﺛﻛﺛﺅﺙHigh Net Worth Agentﺅﺙ?    ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.HNW.001
+    ﻗﻗﻗ ﮔ۲ﮔﺓﮔﭦﻟﺛﻛﺛﺅﺙRetail Investor Agentﺅﺙ?        ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.RETAIL.001
 ```
 
 ---
 
-## 📊 二、资金流向监控指标接口设�?
-### 2.1 DDX/DDE/BBD数据获取接口
+## ﻭ ﻛﭦﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔﮔ ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟?
+### 2.1 DDX/DDE/BBDﮔﺍﮔ؟ﻟﺓﮒﮔ۴ﮒ۲
 
-#### 2.1.1 接口定义
+#### 2.1.1 ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-**接口名称**：CapitalFlowDataFetcher
+**ﮔ۴ﮒ۲ﮒﻝ۶ﺍ**ﺅﺙCapitalFlowDataFetcher
 
-**接口ID**：INTERFACE.CAPITAL_FLOW.001
+**ﮔ۴ﮒ۲ID**ﺅﺙINTERFACE.CAPITAL_FLOW.001
 
-**数据�?*：同花顺iFinD
+**ﮔﺍﮔ؟ﮔﭦ?*ﺅﺙﮒﻟﺎﻠ۰ﭦiFinD
 
-**更新频率**：实时（盘中）、日度（盘后�?
-**接口规范**�?
+**ﮔﺑﮔﺍﻠ۱ﻝ**ﺅﺙﮒ؟ﮔﭘﺅﺙﻝﻛﺕ­ﺅﺙﻙﮔ۴ﮒﭦ۵ﺅﺙﻝﮒﺅﺙ?
+**ﮔ۴ﮒ۲ﻟ۶ﻟ**ﺅﺙ?
 ```python
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -74,48 +74,48 @@ import pandas as pd
 
 @dataclass
 class DDXIndicator:
-    """DDX指标数据结构
+    """DDXﮔﮔ ﮔﺍﮔ؟ﻝﭨﮔ
     
-    索引: DATA.DDX.001
-    定义: 大单动向指标
-    公式: DDX = (超大单净买入 + 大单净买入) / 流通盘 × 10000
+    ﻝﺑ۱ﮒﺙ: DATA.DDX.001
+    ﮒ؟ﻛﺗ: ﮒ۳۶ﮒﮒ۷ﮒﮔﮔ 
+    ﮒ؛ﮒﺙ: DDX = (ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴ + ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴) / ﮔﭖﻠﻝ ﺣ 10000
     """
     stock_code: str
     timestamp: datetime
-    ddx_value: float  # DDX�?    ddx_ma5: float  # 5日均�?    ddx_ma10: float  # 10日均�?    ddx_consecutive_days: int  # 连续翻红/翻绿天数
-    super_large_net_buy: float  # 超大单净买入（万元）
-    large_net_buy: float  # 大单净买入（万元）
-    circulation_cap: float  # 流通盘（万元）
-    confidence: float  # 数据置信�?    
+    ddx_value: float  # DDXﮒ?    ddx_ma5: float  # 5ﮔ۴ﮒﮒ?    ddx_ma10: float  # 10ﮔ۴ﮒﮒ?    ddx_consecutive_days: int  # ﻟﺟﻝﭨ­ﻝﺟﭨﻝﭦ۱/ﻝﺟﭨﻝﭨﺟﮒ۳۸ﮔﺍ
+    super_large_net_buy: float  # ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴ﺅﺙﻛﺕﮒﺅﺙ
+    large_net_buy: float  # ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴ﺅﺙﻛﺕﮒﺅﺙ
+    circulation_cap: float  # ﮔﭖﻠﻝﺅﺙﻛﺕﮒﺅﺙ
+    confidence: float  # ﮔﺍﮔ؟ﻝﺛ؟ﻛﺟ۰ﮒﭦ?    
 @dataclass
 class DDEIndicator:
-    """DDE决策系统数据结构
+    """DDEﮒﺏﻝ­ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﻝﭨﮔ
     
-    索引: DATA.DDE.001
-    定义: 大单净量、散户数量、大单金�?    """
+    ﻝﺑ۱ﮒﺙ: DATA.DDE.001
+    ﮒ؟ﻛﺗ: ﮒ۳۶ﮒﮒﻠﻙﮔ۲ﮔﺓﮔﺍﻠﻙﮒ۳۶ﮒﻠﻠ۱?    """
     stock_code: str
     timestamp: datetime
-    large_order_net_ratio: float  # 大单净量（占流通盘比率�?    retail_participation: float  # 散户数量（参与度�?    large_order_amount: float  # 大单金额（万元）
-    net_inflow_amount: float  # 净流入金额（万元）
+    large_order_net_ratio: float  # ﮒ۳۶ﮒﮒﻠﺅﺙﮒ ﮔﭖﻠﻝﮔﺁﻝﺅﺙ?    retail_participation: float  # ﮔ۲ﮔﺓﮔﺍﻠﺅﺙﮒﻛﺕﮒﭦ۵ﺅﺙ?    large_order_amount: float  # ﮒ۳۶ﮒﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
+    net_inflow_amount: float  # ﮒﮔﭖﮒ۴ﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
     confidence: float
 
 @dataclass
 class BBDIndicator:
-    """BBD指标数据结构
+    """BBDﮔﮔ ﮔﺍﮔ؟ﻝﭨﮔ
     
-    索引: DATA.BBD.001
-    定义: 特大单买卖差�?    公式: BBD = 特大单流入净量金�?    """
+    ﻝﺑ۱ﮒﺙ: DATA.BBD.001
+    ﮒ؟ﻛﺗ: ﻝﺗﮒ۳۶ﮒﻛﺗﺍﮒﮒﺓ؟ﻠ۱?    ﮒ؛ﮒﺙ: BBD = ﻝﺗﮒ۳۶ﮒﮔﭖﮒ۴ﮒﻠﻠﻠ۱?    """
     stock_code: str
     timestamp: datetime
-    bbd_value: float  # BBD值（万元�?    super_large_inflow: float  # 特大单流入（万元�?    super_large_outflow: float  # 特大单流出（万元�?    total_amount: float  # 总成交额（万元）
-    cannibalization_rate: float  # 通吃�?= BBD / 成交�?× 100
+    bbd_value: float  # BBDﮒﺙﺅﺙﻛﺕﮒﺅﺙ?    super_large_inflow: float  # ﻝﺗﮒ۳۶ﮒﮔﭖﮒ۴ﺅﺙﻛﺕﮒﺅﺙ?    super_large_outflow: float  # ﻝﺗﮒ۳۶ﮒﮔﭖﮒﭦﺅﺙﻛﺕﮒﺅﺙ?    total_amount: float  # ﮔﭨﮔﻛﭦ۳ﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
+    cannibalization_rate: float  # ﻠﮒﻝ?= BBD / ﮔﻛﭦ۳ﻠ۱?ﺣ 100
     confidence: float
 
 class CapitalFlowDataFetcher(ABC):
-    """资金流向数据获取器抽象基�?    
-    索引: INTERFACE.CAPITAL_FLOW.001
-    职责: 从iFinD获取DDX、DDE、BBD数据
-    数据�? 同花顺iFinD
+    """ﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﻟﺓﮒﮒ۷ﮔﺛﻟﺎ۰ﮒﭦﻝﺎ?    
+    ﻝﺑ۱ﮒﺙ: INTERFACE.CAPITAL_FLOW.001
+    ﻟﻟﺑ۲: ﻛﭨiFinDﻟﺓﮒDDXﻙDDEﻙBBDﮔﺍﮔ؟
+    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinD
     """
     
     @abstractmethod
@@ -123,20 +123,20 @@ class CapitalFlowDataFetcher(ABC):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDXIndicator]]:
-        """获取DDX指标数据
+        """ﻟﺓﮒDDXﮔﮔ ﮔﺍﮔ؟
         
-        参数:
-            stock_codes: 股票代码列表（如 ['600519.SH', '000858.SZ']�?            start_date: 开始日�?            end_date: 结束日期
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷ﺅﺙﮒ۵ ['600519.SH', '000858.SZ']ﺅﺙ?            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
-        返回:
-            Dict[str, List[DDXIndicator]]: 股票代码 -> DDX指标列表
+        ﻟﺟﮒ:
+            Dict[str, List[DDXIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> DDXﮔﮔ ﮒﻟ۰۷
             
-        数据源映�?
-            iFinD函数: THS_DDX
-            字段映射:
+        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+            iFinDﮒﺛﮔﺍ: THS_DDX
+            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
                 - ddx_value: DDX
-                - super_large_net_buy: 超大单净买入
-                - large_net_buy: 大单净买入
+                - super_large_net_buy: ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴
+                - large_net_buy: ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴
         """
         pass
     
@@ -145,20 +145,20 @@ class CapitalFlowDataFetcher(ABC):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDEIndicator]]:
-        """获取DDE决策数据
+        """ﻟﺓﮒDDEﮒﺏﻝ­ﮔﺍﮔ؟
         
-        参数:
-            stock_codes: 股票代码列表
-            start_date: 开始日�?            end_date: 结束日期
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
-        返回:
-            Dict[str, List[DDEIndicator]]: 股票代码 -> DDE指标列表
+        ﻟﺟﮒ:
+            Dict[str, List[DDEIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> DDEﮔﮔ ﮒﻟ۰۷
             
-        数据源映�?
-            iFinD函数: THS_DDE
-            字段映射:
-                - large_order_net_ratio: 大单净�?                - retail_participation: 散户数量
-                - large_order_amount: 大单金额
+        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+            iFinDﮒﺛﮔﺍ: THS_DDE
+            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+                - large_order_net_ratio: ﮒ۳۶ﮒﮒﻠ?                - retail_participation: ﮔ۲ﮔﺓﮔﺍﻠ
+                - large_order_amount: ﮒ۳۶ﮒﻠﻠ۱
         """
         pass
     
@@ -167,40 +167,40 @@ class CapitalFlowDataFetcher(ABC):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[BBDIndicator]]:
-        """获取BBD指标数据
+        """ﻟﺓﮒBBDﮔﮔ ﮔﺍﮔ؟
         
-        参数:
-            stock_codes: 股票代码列表
-            start_date: 开始日�?            end_date: 结束日期
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
-        返回:
-            Dict[str, List[BBDIndicator]]: 股票代码 -> BBD指标列表
+        ﻟﺟﮒ:
+            Dict[str, List[BBDIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> BBDﮔﮔ ﮒﻟ۰۷
             
-        数据源映�?
-            iFinD函数: THS_BBD
-            字段映射:
-                - bbd_value: BBD�?                - super_large_inflow: 特大单流�?                - super_large_outflow: 特大单流�?        """
+        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+            iFinDﮒﺛﮔﺍ: THS_BBD
+            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+                - bbd_value: BBDﮒ?                - super_large_inflow: ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?                - super_large_outflow: ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?        """
         pass
     
     @abstractmethod
     def fetch_realtime_capital_flow(self,
                                     stock_codes: List[str]) -> Dict[str, Dict]:
-        """获取实时资金流向数据（盘中）
+        """ﻟﺓﮒﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﺅﺙﻝﻛﺕ­ﺅﺙ
         
-        参数:
-            stock_codes: 股票代码列表
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
             
-        返回:
-            Dict[str, Dict]: 股票代码 -> 实时资金流向数据
+        ﻟﺟﮒ:
+            Dict[str, Dict]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> ﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟
             
-        更新频率:
-            盘中: 3分钟延迟
-            盘后: 日度更新
+        ﮔﺑﮔﺍﻠ۱ﻝ:
+            ﻝﻛﺕ­: 3ﮒﻠﮒﭨﭘﻟﺟ
+            ﻝﮒ: ﮔ۴ﮒﭦ۵ﮔﺑﮔﺍ
         """
         pass
 ```
 
-#### 2.1.2 iFinD实现�?
+#### 2.1.2 iFinDﮒ؟ﻝﺍﻝﺎ?
 ```python
 import THSAPI as ths
 from datetime import datetime, timedelta
@@ -208,10 +208,10 @@ from typing import List, Dict
 import pandas as pd
 
 class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
-    """iFinD资金流向数据获取器实�?    
-    索引: IMPLEMENTATION.IFIND_CAPITAL_FLOW.001
-    数据�? 同花顺iFinD
-    依赖: THSAPI (iFinD Python接口)
+    """iFinDﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﻟﺓﮒﮒ۷ﮒ؟ﻝ?    
+    ﻝﺑ۱ﮒﺙ: IMPLEMENTATION.IFIND_CAPITAL_FLOW.001
+    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinD
+    ﻛﺝﻟﭖ: THSAPI (iFinD Pythonﮔ۴ﮒ۲)
     """
     
     def __init__(self, config: Dict):
@@ -222,13 +222,13 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDXIndicator]]:
-        """获取DDX指标数据
+        """ﻟﺓﮒDDXﮔﮔ ﮔﺍﮔ؟
         
-        iFinD调用示例:
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
                 'ths_ddx_stock',
                 stock_codes,
-                'ddx,超大单净买入,大单净买入',
+                'ddx,ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴,ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴',
                 start_date.strftime('%Y-%m-%d'),
                 end_date.strftime('%Y-%m-%d')
             )
@@ -240,7 +240,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                 df = self.ifs_client.ED_query(
                     'ths_ddx_stock',
                     stock_code,
-                    'ddx,超大单净买入,大单净买入,流通市�?,
+                    'ddx,ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴,ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴,ﮔﭖﻠﮒﺕﮒ?,
                     start_date.strftime('%Y-%m-%d'),
                     end_date.strftime('%Y-%m-%d')
                 )
@@ -254,9 +254,9 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                         ddx_ma5=self._calculate_ma(row['ddx'], 5),
                         ddx_ma10=self._calculate_ma(row['ddx'], 10),
                         ddx_consecutive_days=self._calculate_consecutive_days(row['ddx']),
-                        super_large_net_buy=row['超大单净买入'],
-                        large_net_buy=row['大单净买入'],
-                        circulation_cap=row['流通市�?],
+                        super_large_net_buy=row['ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴'],
+                        large_net_buy=row['ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴'],
+                        circulation_cap=row['ﮔﭖﻠﮒﺕﮒ?],
                         confidence=0.95
                     )
                     indicators.append(indicator)
@@ -273,13 +273,13 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDEIndicator]]:
-        """获取DDE决策数据
+        """ﻟﺓﮒDDEﮒﺏﻝ­ﮔﺍﮔ؟
         
-        iFinD调用示例:
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
                 'ths_dde_stock',
                 stock_codes,
-                '大单净�?散户数量,大单金额',
+                'ﮒ۳۶ﮒﮒﻠ?ﮔ۲ﮔﺓﮔﺍﻠ,ﮒ۳۶ﮒﻠﻠ۱',
                 start_date,
                 end_date
             )
@@ -291,7 +291,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                 df = self.ifs_client.ED_query(
                     'ths_dde_stock',
                     stock_code,
-                    '大单净�?散户数量,大单金额,净流入金额',
+                    'ﮒ۳۶ﮒﮒﻠ?ﮔ۲ﮔﺓﮔﺍﻠ,ﮒ۳۶ﮒﻠﻠ۱,ﮒﮔﭖﮒ۴ﻠﻠ۱',
                     start_date.strftime('%Y-%m-%d'),
                     end_date.strftime('%Y-%m-%d')
                 )
@@ -301,10 +301,10 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                     indicator = DDEIndicator(
                         stock_code=stock_code,
                         timestamp=row['time'],
-                        large_order_net_ratio=row['大单净�?],
-                        retail_participation=row['散户数量'],
-                        large_order_amount=row['大单金额'],
-                        net_inflow_amount=row['净流入金额'],
+                        large_order_net_ratio=row['ﮒ۳۶ﮒﮒﻠ?],
+                        retail_participation=row['ﮔ۲ﮔﺓﮔﺍﻠ'],
+                        large_order_amount=row['ﮒ۳۶ﮒﻠﻠ۱'],
+                        net_inflow_amount=row['ﮒﮔﭖﮒ۴ﻠﻠ۱'],
                         confidence=0.95
                     )
                     indicators.append(indicator)
@@ -321,13 +321,13 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[BBDIndicator]]:
-        """获取BBD指标数据
+        """ﻟﺓﮒBBDﮔﮔ ﮔﺍﮔ؟
         
-        iFinD调用示例:
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
                 'ths_bbd_stock',
                 stock_codes,
-                'BBD,特大单流�?特大单流�?总成交额',
+                'BBD,ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?ﮔﭨﮔﻛﭦ۳ﻠ۱',
                 start_date,
                 end_date
             )
@@ -339,22 +339,22 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                 df = self.ifs_client.ED_query(
                     'ths_bbd_stock',
                     stock_code,
-                    'BBD,特大单流�?特大单流�?总成交额',
+                    'BBD,ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?ﮔﭨﮔﻛﭦ۳ﻠ۱',
                     start_date.strftime('%Y-%m-%d'),
                     end_date.strftime('%Y-%m-%d')
                 )
                 
                 indicators = []
                 for _, row in df.iterrows():
-                    cannibalization_rate = (row['BBD'] / row['总成交额'] * 100) if row['总成交额'] > 0 else 0
+                    cannibalization_rate = (row['BBD'] / row['ﮔﭨﮔﻛﭦ۳ﻠ۱'] * 100) if row['ﮔﭨﮔﻛﭦ۳ﻠ۱'] > 0 else 0
                     
                     indicator = BBDIndicator(
                         stock_code=stock_code,
                         timestamp=row['time'],
                         bbd_value=row['BBD'],
-                        super_large_inflow=row['特大单流�?],
-                        super_large_outflow=row['特大单流�?],
-                        total_amount=row['总成交额'],
+                        super_large_inflow=row['ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?],
+                        super_large_outflow=row['ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?],
+                        total_amount=row['ﮔﭨﮔﻛﭦ۳ﻠ۱'],
                         cannibalization_rate=cannibalization_rate,
                         confidence=0.95
                     )
@@ -370,29 +370,29 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
     
     def fetch_realtime_capital_flow(self,
                                     stock_codes: List[str]) -> Dict[str, Dict]:
-        """获取实时资金流向数据（盘中）
+        """ﻟﺓﮒﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﺅﺙﻝﻛﺕ­ﺅﺙ
         
-        iFinD调用示例:
-            ths.HQ_query(stock_codes, '最新价,涨跌�?DDX,DDE,BBD')
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
+            ths.HQ_query(stock_codes, 'ﮔﮔﺍﻛﭨﺓ,ﮔﭘ۷ﻟﺓﮒﺗ?DDX,DDE,BBD')
         """
         result = {}
         
         try:
             df = self.ifs_client.HQ_query(
                 stock_codes,
-                '最新价,涨跌�?DDX,DDE,BBD,超大单净流入,大单净流入'
+                'ﮔﮔﺍﻛﭨﺓ,ﮔﭘ۷ﻟﺓﮒﺗ?DDX,DDE,BBD,ﻟﭘﮒ۳۶ﮒﮒﮔﭖﮒ۴,ﮒ۳۶ﮒﮒﮔﭖﮒ۴'
             )
             
             for _, row in df.iterrows():
-                stock_code = row['股票代码']
+                stock_code = row['ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ']
                 result[stock_code] = {
-                    'price': row['最新价'],
-                    'change_pct': row['涨跌�?],
+                    'price': row['ﮔﮔﺍﻛﭨﺓ'],
+                    'change_pct': row['ﮔﭘ۷ﻟﺓﮒﺗ?],
                     'ddx': row['DDX'],
                     'dde': row['DDE'],
                     'bbd': row['BBD'],
-                    'super_large_net_inflow': row['超大单净流入'],
-                    'large_net_inflow': row['大单净流入'],
+                    'super_large_net_inflow': row['ﻟﭘﮒ۳۶ﮒﮒﮔﭖﮒ۴'],
+                    'large_net_inflow': row['ﮒ۳۶ﮒﮒﮔﭖﮒ۴'],
                     'timestamp': datetime.now()
                 }
                 
@@ -402,13 +402,13 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
         return result
     
     def _calculate_ma(self, values: pd.Series, window: int) -> float:
-        """计算移动平均"""
+        """ﻟ؟۰ﻝ؟ﻝ۶ﭨﮒ۷ﮒﺗﺏﮒ"""
         if len(values) < window:
             return values.mean()
         return values.rolling(window=window).mean().iloc[-1]
     
     def _calculate_consecutive_days(self, ddx_series: pd.Series) -> int:
-        """计算DDX连续翻红/翻绿天数"""
+        """ﻟ؟۰ﻝ؟DDXﻟﺟﻝﭨ­ﻝﺟﭨﻝﭦ۱/ﻝﺟﭨﻝﭨﺟﮒ۳۸ﮔﺍ"""
         if len(ddx_series) == 0:
             return 0
         
@@ -424,37 +424,37 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
         return count
 ```
 
-### 2.2 龙虎榜数据解析接�?
-#### 2.2.1 接口定义
+### 2.2 ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﻟ۶۲ﮔﮔ۴ﮒ?
+#### 2.2.1 ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ```python
 @dataclass
 class DragonTigerListItem:
-    """龙虎榜数据项
+    """ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﻠ۰ﺗ
     
-    索引: DATA.DRAGON_TIGER.001
-    定义: 龙虎榜买卖明�?    """
+    ﻝﺑ۱ﮒﺙ: DATA.DRAGON_TIGER.001
+    ﮒ؟ﻛﺗ: ﻠﺝﻟﮔ۵ﻛﺗﺍﮒﮔﻝﭨ?    """
     stock_code: str
     stock_name: str
     trade_date: datetime
     close_price: float
     change_pct: float
     turnover_rate: float
-    reason: str  # 上榜原因
+    reason: str  # ﻛﺕﮔ۵ﮒﮒ 
     
-    buy_seats: List[Dict]  # 买入席位列表
-    sell_seats: List[Dict]  # 卖出席位列表
+    buy_seats: List[Dict]  # ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛﮒﻟ۰۷
+    sell_seats: List[Dict]  # ﮒﮒﭦﮒﺕ­ﻛﺛﮒﻟ۰۷
     
-    net_buy_amount: float  # 净买入金额（万元）
-    institutional_buy_count: int  # 机构买入席位数量
-    institutional_sell_count: int  # 机构卖出席位数量
+    net_buy_amount: float  # ﮒﻛﺗﺍﮒ۴ﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
+    institutional_buy_count: int  # ﮔﭦﮔﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛﮔﺍﻠ
+    institutional_sell_count: int  # ﮔﭦﮔﮒﮒﭦﮒﺕ­ﻛﺛﮔﺍﻠ
     
-    hot_money_flag: bool  # 是否有知名游�?    institutional_flag: bool  # 是否有机构专用席�?
+    hot_money_flag: bool  # ﮔﺁﮒ۵ﮔﻝ۴ﮒﮔﺕﺕﻟﭖ?    institutional_flag: bool  # ﮔﺁﮒ۵ﮔﮔﭦﮔﻛﺕﻝ۷ﮒﺕ­ﻛﺛ?
 class DragonTigerDataParser(ABC):
-    """龙虎榜数据解析器抽象基类
+    """ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﻟ۶۲ﮔﮒ۷ﮔﺛﻟﺎ۰ﮒﭦﻝﺎﭨ
     
-    索引: INTERFACE.DRAGON_TIGER.001
-    职责: 解析龙虎榜数据，识别机构席位和游资席�?    数据�? 同花顺iFinD、交易所公开数据
+    ﻝﺑ۱ﮒﺙ: INTERFACE.DRAGON_TIGER.001
+    ﻟﻟﺑ۲: ﻟ۶۲ﮔﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﺅﺙﻟﺁﮒ،ﮔﭦﮔﮒﺕ­ﻛﺛﮒﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛ?    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinDﻙﻛﭦ۳ﮔﮔﮒ؛ﮒﺙﮔﺍﮔ؟
     """
     
     @abstractmethod
@@ -462,80 +462,80 @@ class DragonTigerDataParser(ABC):
                                 start_date: datetime,
                                 end_date: datetime,
                                 reason_filter: Optional[List[str]] = None) -> List[DragonTigerListItem]:
-        """获取龙虎榜列�?        
-        参数:
-            start_date: 开始日�?            end_date: 结束日期
-            reason_filter: 上榜原因过滤（如 ['涨停', '跌停', '换手率异�?]�?            
-        返回:
-            List[DragonTigerListItem]: 龙虎榜数据列�?            
-        数据源映�?
-            iFinD函数: THS龙虎�?            字段映射:
-                - stock_code: 证券代码
-                - trade_date: 交易日期
-                - buy_seats: 买入席位
-                - sell_seats: 卖出席位
+        """ﻟﺓﮒﻠﺝﻟﮔ۵ﮒﻟ۰?        
+        ﮒﮔﺍ:
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
+            reason_filter: ﻛﺕﮔ۵ﮒﮒ ﻟﺟﮔﭨ۳ﺅﺙﮒ۵ ['ﮔﭘ۷ﮒ', 'ﻟﺓﮒ', 'ﮔ۱ﮔﻝﮒﺙﮒﺕ?]ﺅﺙ?            
+        ﻟﺟﮒ:
+            List[DragonTigerListItem]: ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﮒﻟ۰?            
+        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+            iFinDﮒﺛﮔﺍ: THSﻠﺝﻟﮔ۵?            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+                - stock_code: ﻟﺁﮒﺕﻛﭨ۲ﻝ 
+                - trade_date: ﻛﭦ۳ﮔﮔ۴ﮔ
+                - buy_seats: ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ
+                - sell_seats: ﮒﮒﭦﮒﺕ­ﻛﺛ
         """
         pass
     
     @abstractmethod
     def identify_institutional_seats(self,
                                     seats: List[Dict]) -> List[Dict]:
-        """识别机构专用席位
+        """ﻟﺁﮒ،ﮔﭦﮔﻛﺕﻝ۷ﮒﺕ­ﻛﺛ
         
-        参数:
-            seats: 席位列表
+        ﮒﮔﺍ:
+            seats: ﮒﺕ­ﻛﺛﮒﻟ۰۷
             
-        返回:
-            List[Dict]: 机构席位列表
+        ﻟﺟﮒ:
+            List[Dict]: ﮔﭦﮔﮒﺕ­ﻛﺛﮒﻟ۰۷
             
-        识别规则:
-            1. 席位名称包含"机构专用"
-            2. 席位名称包含"公募"�?社保"�?保险"
-            3. 席位代码符合机构席位编码规则
+        ﻟﺁﮒ،ﻟ۶ﮒ:
+            1. ﮒﺕ­ﻛﺛﮒﻝ۶ﺍﮒﮒ،"ﮔﭦﮔﻛﺕﻝ۷"
+            2. ﮒﺕ­ﻛﺛﮒﻝ۶ﺍﮒﮒ،"ﮒ؛ﮒ"ﻙ?ﻝ۳ﺝﻛﺟ"ﻙ?ﻛﺟﻠ۸"
+            3. ﮒﺕ­ﻛﺛﻛﭨ۲ﻝ ﻝ؛۵ﮒﮔﭦﮔﮒﺕ­ﻛﺛﻝﺙﻝ ﻟ۶ﮒ
         """
         pass
     
     @abstractmethod
     def identify_hot_money_seats(self,
                                 seats: List[Dict]) -> List[Dict]:
-        """识别知名游资席位
+        """ﻟﺁﮒ،ﻝ۴ﮒﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛ
         
-        参数:
-            seats: 席位列表
+        ﮒﮔﺍ:
+            seats: ﮒﺕ­ﻛﺛﮒﻟ۰۷
             
-        返回:
-            List[Dict]: 游资席位列表
+        ﻟﺟﮒ:
+            List[Dict]: ﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛﮒﻟ۰۷
             
-        识别规则:
-            1. 知名游资营业部名单（如：华鑫上海分公司、财通杭州体育场路等�?            2. 历史操作风格匹配
+        ﻟﺁﮒ،ﻟ۶ﮒ:
+            1. ﻝ۴ﮒﮔﺕﺕﻟﭖﻟ۴ﻛﺕﻠ۷ﮒﮒﺅﺙﮒ۵ﺅﺙﮒﻠ،ﻛﺕﮔﭖﺓﮒﮒ؛ﮒﺕﻙﻟﺑ۱ﻠﮔ­ﮒﺓﻛﺛﻟﺎﮒﭦﻟﺓﺁﻝ­ﺅﺙ?            2. ﮒﮒﺎﮔﻛﺛﻠ۲ﮔ ﺙﮒﺗﻠ
         """
         pass
     
     @abstractmethod
     def analyze_institutional_behavior(self,
                                        item: DragonTigerListItem) -> Dict:
-        """分析机构资金行为
+        """ﮒﮔﮔﭦﮔﻟﭖﻠﻟ۰ﻛﺕﭦ
         
-        参数:
-            item: 龙虎榜数据项
+        ﮒﮔﺍ:
+            item: ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﻠ۰ﺗ
             
-        返回:
-            Dict: 机构行为分析结果
+        ﻟﺟﮒ:
+            Dict: ﮔﭦﮔﻟ۰ﻛﺕﭦﮒﮔﻝﭨﮔ
             
-        分析维度:
-            1. 机构净买入金额
-            2. 机构买入/卖出席位数量对比
-            3. 机构协同度（多家机构同时买入�?            4. 游资与机构博弈情�?        """
+        ﮒﮔﻝﭨﺑﮒﭦ۵:
+            1. ﮔﭦﮔﮒﻛﺗﺍﮒ۴ﻠﻠ۱
+            2. ﮔﭦﮔﻛﺗﺍﮒ۴/ﮒﮒﭦﮒﺕ­ﻛﺛﮔﺍﻠﮒﺁﺗﮔﺁ
+            3. ﮔﭦﮔﮒﮒﮒﭦ۵ﺅﺙﮒ۳ﮒ؟ﭘﮔﭦﮔﮒﮔﭘﻛﺗﺍﮒ۴ﺅﺙ?            4. ﮔﺕﺕﻟﭖﻛﺕﮔﭦﮔﮒﮒﺙﮔﮒ?        """
         pass
 ```
 
-#### 2.2.2 iFinD实现�?
+#### 2.2.2 iFinDﮒ؟ﻝﺍﻝﺎ?
 ```python
 class IFindDragonTigerParser(DragonTigerDataParser):
-    """iFinD龙虎榜数据解析器实现
+    """iFinDﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﻟ۶۲ﮔﮒ۷ﮒ؟ﻝﺍ
     
-    索引: IMPLEMENTATION.IFIND_DRAGON_TIGER.001
-    数据�? 同花顺iFinD
+    ﻝﺑ۱ﮒﺙ: IMPLEMENTATION.IFIND_DRAGON_TIGER.001
+    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinD
     """
     
     def __init__(self, config: Dict):
@@ -543,23 +543,23 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         self.ifs_client = ths.THSApi()
         
         self.known_hot_money_seats = {
-            '华鑫证券有限责任公司上海分公�?: '知名游资',
-            '财通证券股份有限公司杭州体育场路证券营业部': '知名游资',
-            '国泰君安证券股份有限公司上海分公�?: '知名游资',
-            '中国中金财富证券有限公司北京分公�?: '知名游资',
-            '华泰证券股份有限公司深圳分公�?: '知名游资',
+            'ﮒﻠ،ﻟﺁﮒﺕﮔﻠﻟﺑ۲ﻛﭨﭨﮒ؛ﮒﺕﻛﺕﮔﭖﺓﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
+            'ﻟﺑ۱ﻠﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﮔ­ﮒﺓﻛﺛﻟﺎﮒﭦﻟﺓﺁﻟﺁﮒﺕﻟ۴ﻛﺕﻠ۷': 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
+            'ﮒﺛﮔﺏﺍﮒﮒ؟ﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﻛﺕﮔﭖﺓﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
+            'ﻛﺕ­ﮒﺛﻛﺕ­ﻠﻟﺑ۱ﮒﺁﻟﺁﮒﺕﮔﻠﮒ؛ﮒﺕﮒﻛﭦ؛ﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
+            'ﮒﮔﺏﺍﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﮔﺓﺎﮒﺏﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
         }
     
     def fetch_dragon_tiger_list(self,
                                 start_date: datetime,
                                 end_date: datetime,
                                 reason_filter: Optional[List[str]] = None) -> List[DragonTigerListItem]:
-        """获取龙虎榜列�?        
-        iFinD调用示例:
+        """ﻟﺓﮒﻠﺝﻟﮔ۵ﮒﻟ۰?        
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
-                'ths龙虎�?,
+                'thsﻠﺝﻟﮔ۵?,
                 '',
-                '证券代码,证券简�?交易日期,收盘�?涨跌�?换手�?上榜原因,买入席位,卖出席位',
+                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﻛﭦ۳ﮔﮔ۴ﮔ,ﮔﭘﻝﻛﭨ?ﮔﭘ۷ﻟﺓﮒﺗ?ﮔ۱ﮔﻝ?ﻛﺕﮔ۵ﮒﮒ ,ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ,ﮒﮒﭦﮒﺕ­ﻛﺛ',
                 start_date,
                 end_date
             )
@@ -568,19 +568,19 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         
         try:
             df = self.ifs_client.ED_query(
-                'ths龙虎�?,
+                'thsﻠﺝﻟﮔ۵?,
                 '',
-                '证券代码,证券简�?交易日期,收盘�?涨跌�?换手�?上榜原因,买入席位,卖出席位',
+                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﻛﭦ۳ﮔﮔ۴ﮔ,ﮔﭘﻝﻛﭨ?ﮔﭘ۷ﻟﺓﮒﺗ?ﮔ۱ﮔﻝ?ﻛﺕﮔ۵ﮒﮒ ,ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ,ﮒﮒﭦﮒﺕ­ﻛﺛ',
                 start_date.strftime('%Y-%m-%d'),
                 end_date.strftime('%Y-%m-%d')
             )
             
             if reason_filter:
-                df = df[df['上榜原因'].isin(reason_filter)]
+                df = df[df['ﻛﺕﮔ۵ﮒﮒ '].isin(reason_filter)]
             
             for _, row in df.iterrows():
-                buy_seats = self._parse_seats(row['买入席位'])
-                sell_seats = self._parse_seats(row['卖出席位'])
+                buy_seats = self._parse_seats(row['ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ'])
+                sell_seats = self._parse_seats(row['ﮒﮒﭦﮒﺕ­ﻛﺛ'])
                 
                 institutional_buy = self.identify_institutional_seats(buy_seats)
                 institutional_sell = self.identify_institutional_seats(sell_seats)
@@ -588,17 +588,17 @@ class IFindDragonTigerParser(DragonTigerDataParser):
                 hot_money_buy = self.identify_hot_money_seats(buy_seats)
                 hot_money_sell = self.identify_hot_money_seats(sell_seats)
                 
-                net_buy = sum([seat['买入金额'] for seat in buy_seats]) - \
-                         sum([seat['卖出金额'] for seat in sell_seats])
+                net_buy = sum([seat['ﻛﺗﺍﮒ۴ﻠﻠ۱'] for seat in buy_seats]) - \
+                         sum([seat['ﮒﮒﭦﻠﻠ۱'] for seat in sell_seats])
                 
                 item = DragonTigerListItem(
-                    stock_code=row['证券代码'],
-                    stock_name=row['证券简�?],
-                    trade_date=row['交易日期'],
-                    close_price=row['收盘�?],
-                    change_pct=row['涨跌�?],
-                    turnover_rate=row['换手�?],
-                    reason=row['上榜原因'],
+                    stock_code=row['ﻟﺁﮒﺕﻛﭨ۲ﻝ '],
+                    stock_name=row['ﻟﺁﮒﺕﻝ؟ﻝ۶?],
+                    trade_date=row['ﻛﭦ۳ﮔﮔ۴ﮔ'],
+                    close_price=row['ﮔﭘﻝﻛﭨ?],
+                    change_pct=row['ﮔﭘ۷ﻟﺓﮒﺗ?],
+                    turnover_rate=row['ﮔ۱ﮔﻝ?],
+                    reason=row['ﻛﺕﮔ۵ﮒﮒ '],
                     buy_seats=buy_seats,
                     sell_seats=sell_seats,
                     net_buy_amount=net_buy,
@@ -616,27 +616,27 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         return items
     
     def identify_institutional_seats(self, seats: List[Dict]) -> List[Dict]:
-        """识别机构专用席位"""
+        """ﻟﺁﮒ،ﮔﭦﮔﻛﺕﻝ۷ﮒﺕ­ﻛﺛ"""
         institutional_seats = []
         
         for seat in seats:
-            seat_name = seat.get('营业部名�?, '')
+            seat_name = seat.get('ﻟ۴ﻛﺕﻠ۷ﮒﻝ۶?, '')
             
-            if '机构专用' in seat_name or \
-               '公募' in seat_name or \
-               '社保' in seat_name or \
-               '保险' in seat_name or \
+            if 'ﮔﭦﮔﻛﺕﻝ۷' in seat_name or \
+               'ﮒ؛ﮒ' in seat_name or \
+               'ﻝ۳ﺝﻛﺟ' in seat_name or \
+               'ﻛﺟﻠ۸' in seat_name or \
                'QFII' in seat_name:
                 institutional_seats.append(seat)
         
         return institutional_seats
     
     def identify_hot_money_seats(self, seats: List[Dict]) -> List[Dict]:
-        """识别知名游资席位"""
+        """ﻟﺁﮒ،ﻝ۴ﮒﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛ"""
         hot_money_seats = []
         
         for seat in seats:
-            seat_name = seat.get('营业部名�?, '')
+            seat_name = seat.get('ﻟ۴ﻛﺕﻠ۷ﮒﻝ۶?, '')
             
             if seat_name in self.known_hot_money_seats:
                 hot_money_seats.append(seat)
@@ -644,18 +644,18 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         return hot_money_seats
     
     def analyze_institutional_behavior(self, item: DragonTigerListItem) -> Dict:
-        """分析机构资金行为"""
+        """ﮒﮔﮔﭦﮔﻟﭖﻠﻟ۰ﻛﺕﭦ"""
         institutional_buy_seats = self.identify_institutional_seats(item.buy_seats)
         institutional_sell_seats = self.identify_institutional_seats(item.sell_seats)
         
-        institutional_net_buy = sum([seat['买入金额'] for seat in institutional_buy_seats]) - \
-                               sum([seat['卖出金额'] for seat in institutional_sell_seats])
+        institutional_net_buy = sum([seat['ﻛﺗﺍﮒ۴ﻠﻠ۱'] for seat in institutional_buy_seats]) - \
+                               sum([seat['ﮒﮒﭦﻠﻠ۱'] for seat in institutional_sell_seats])
         
         hot_money_buy_seats = self.identify_hot_money_seats(item.buy_seats)
         hot_money_sell_seats = self.identify_hot_money_seats(item.sell_seats)
         
-        hot_money_net_buy = sum([seat['买入金额'] for seat in hot_money_buy_seats]) - \
-                           sum([seat['卖出金额'] for seat in hot_money_sell_seats])
+        hot_money_net_buy = sum([seat['ﻛﺗﺍﮒ۴ﻠﻠ۱'] for seat in hot_money_buy_seats]) - \
+                           sum([seat['ﮒﮒﭦﻠﻠ۱'] for seat in hot_money_sell_seats])
         
         return {
             'stock_code': item.stock_code,
@@ -674,7 +674,7 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         }
     
     def _parse_seats(self, seats_str: str) -> List[Dict]:
-        """解析席位字符�?""
+        """ﻟ۶۲ﮔﮒﺕ­ﻛﺛﮒ­ﻝ؛۵ﻛﺕ?""
         seats = []
         
         return seats
@@ -683,7 +683,7 @@ class IFindDragonTigerParser(DragonTigerDataParser):
                                    institutional_net_buy: float,
                                    institutional_count: int,
                                    total_net_buy: float) -> float:
-        """计算信号强度"""
+        """ﻟ؟۰ﻝ؟ﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵"""
         if total_net_buy == 0:
             return 0.0
         
@@ -695,65 +695,65 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         return min(max(strength, 0.0), 1.0)
 ```
 
-### 2.3 北向资金监控接口
+### 2.3 ﮒﮒﻟﭖﻠﻝﮔ۶ﮔ۴ﮒ۲
 
-#### 2.3.1 接口定义
+#### 2.3.1 ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ```python
 @dataclass
 class NorthboundCapitalFlow:
-    """北向资金流向数据结构
+    """ﮒﮒﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﻝﭨﮔ
     
-    索引: DATA.NORTHBOUND.001
-    定义: 北向资金（沪股�?深股通）流向数据
+    ﻝﺑ۱ﮒﺙ: DATA.NORTHBOUND.001
+    ﮒ؟ﻛﺗ: ﮒﮒﻟﭖﻠﺅﺙﮔﺎ۹ﻟ۰ﻠ?ﮔﺓﺎﻟ۰ﻠﺅﺙﮔﭖﮒﮔﺍﮔ؟
     """
     trade_date: datetime
-    shanghai_connect_net_buy: float  # 沪股通净买入（亿元）
-    shenzhen_connect_net_buy: float  # 深股通净买入（亿元）
-    total_net_buy: float  # 总净买入（亿元）
+    shanghai_connect_net_buy: float  # ﮔﺎ۹ﻟ۰ﻠﮒﻛﺗﺍﮒ۴ﺅﺙﻛﭦﺟﮒﺅﺙ
+    shenzhen_connect_net_buy: float  # ﮔﺓﺎﻟ۰ﻠﮒﻛﺗﺍﮒ۴ﺅﺙﻛﭦﺟﮒﺅﺙ
+    total_net_buy: float  # ﮔﭨﮒﻛﺗﺍﮒ۴ﺅﺙﻛﭦﺟﮒﺅﺙ
     
-    shanghai_connect_balance: float  # 沪股通余额（亿元�?    shenzhen_connect_balance: float  # 深股通余额（亿元�?    
-    top_buy_stocks: List[Dict]  # 买入�?0股票
-    top_sell_stocks: List[Dict]  # 卖出�?0股票
+    shanghai_connect_balance: float  # ﮔﺎ۹ﻟ۰ﻠﻛﺛﻠ۱ﺅﺙﻛﭦﺟﮒﺅﺙ?    shenzhen_connect_balance: float  # ﮔﺓﺎﻟ۰ﻠﻛﺛﻠ۱ﺅﺙﻛﭦﺟﮒﺅﺙ?    
+    top_buy_stocks: List[Dict]  # ﻛﺗﺍﮒ۴ﮒ?0ﻟ۰ﻝ۴۷
+    top_sell_stocks: List[Dict]  # ﮒﮒﭦﮒ?0ﻟ۰ﻝ۴۷
     
-    sector_allocation: Dict[str, float]  # 行业配置
+    sector_allocation: Dict[str, float]  # ﻟ۰ﻛﺕﻠﻝﺛ؟
 
 @dataclass
 class NorthboundHolding:
-    """北向资金持仓数据结构
+    """ﮒﮒﻟﭖﻠﮔﻛﭨﮔﺍﮔ؟ﻝﭨﮔ
     
-    索引: DATA.NORTHBOUND_HOLDING.001
-    定义: 北向资金持仓明细
+    ﻝﺑ۱ﮒﺙ: DATA.NORTHBOUND_HOLDING.001
+    ﮒ؟ﻛﺗ: ﮒﮒﻟﭖﻠﮔﻛﭨﮔﻝﭨ
     """
     stock_code: str
     stock_name: str
-    hold_amount: float  # 持股数量（万股）
-    hold_value: float  # 持股市值（万元�?    hold_ratio: float  # 持股占比�?�?    change_amount: float  # 持股变化（万股）
-    change_ratio: float  # 持股变化比例�?�?
+    hold_amount: float  # ﮔﻟ۰ﮔﺍﻠﺅﺙﻛﺕﻟ۰ﺅﺙ
+    hold_value: float  # ﮔﻟ۰ﮒﺕﮒﺙﺅﺙﻛﺕﮒﺅﺙ?    hold_ratio: float  # ﮔﻟ۰ﮒ ﮔﺁﺅﺙ?ﺅﺙ?    change_amount: float  # ﮔﻟ۰ﮒﮒﺅﺙﻛﺕﻟ۰ﺅﺙ
+    change_ratio: float  # ﮔﻟ۰ﮒﮒﮔﺁﻛﺝﺅﺙ?ﺅﺙ?
 class NorthboundCapitalMonitor(ABC):
-    """北向资金监控器抽象基�?    
-    索引: INTERFACE.NORTHBOUND.001
-    职责: 监控北向资金流向和持仓变�?    数据�? 同花顺iFinD、港交所公开数据
+    """ﮒﮒﻟﭖﻠﻝﮔ۶ﮒ۷ﮔﺛﻟﺎ۰ﮒﭦﻝﺎ?    
+    ﻝﺑ۱ﮒﺙ: INTERFACE.NORTHBOUND.001
+    ﻟﻟﺑ۲: ﻝﮔ۶ﮒﮒﻟﭖﻠﮔﭖﮒﮒﮔﻛﭨﮒﮒ?    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinDﻙﮔﺕﺁﻛﭦ۳ﮔﮒ؛ﮒﺙﮔﺍﮔ؟
     """
     
     @abstractmethod
     def fetch_daily_flow(self,
                         start_date: datetime,
                         end_date: datetime) -> List[NorthboundCapitalFlow]:
-        """获取北向资金日度流向
+        """ﻟﺓﮒﮒﮒﻟﭖﻠﮔ۴ﮒﭦ۵ﮔﭖﮒ
         
-        参数:
-            start_date: 开始日�?            end_date: 结束日期
+        ﮒﮔﺍ:
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
-        返回:
-            List[NorthboundCapitalFlow]: 日度流向数据列表
+        ﻟﺟﮒ:
+            List[NorthboundCapitalFlow]: ﮔ۴ﮒﭦ۵ﮔﭖﮒﮔﺍﮔ؟ﮒﻟ۰۷
             
-        数据源映�?
-            iFinD函数: THS北向资金
-            字段映射:
-                - total_net_buy: 北向资金净买入
-                - shanghai_connect_net_buy: 沪股通净买入
-                - shenzhen_connect_net_buy: 深股通净买入
+        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+            iFinDﮒﺛﮔﺍ: THSﮒﮒﻟﭖﻠ
+            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+                - total_net_buy: ﮒﮒﻟﭖﻠﮒﻛﺗﺍﮒ۴
+                - shanghai_connect_net_buy: ﮔﺎ۹ﻟ۰ﻠﮒﻛﺗﺍﮒ۴
+                - shenzhen_connect_net_buy: ﮔﺓﺎﻟ۰ﻠﮒﻛﺗﺍﮒ۴
         """
         pass
     
@@ -761,35 +761,35 @@ class NorthboundCapitalMonitor(ABC):
     def fetch_holdings(self,
                       stock_codes: Optional[List[str]] = None,
                       top_n: int = 100) -> List[NorthboundHolding]:
-        """获取北向资金持仓明细
+        """ﻟﺓﮒﮒﮒﻟﭖﻠﮔﻛﭨﮔﻝﭨ
         
-        参数:
-            stock_codes: 股票代码列表（可选，默认返回全部�?            top_n: 返回前N只股票（默认100�?            
-        返回:
-            List[NorthboundHolding]: 持仓明细列表
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷ﺅﺙﮒﺁﻠﺅﺙﻠﭨﻟ؟۳ﻟﺟﮒﮒ۷ﻠ۷ﺅﺙ?            top_n: ﻟﺟﮒﮒNﮒ۹ﻟ۰ﻝ۴۷ﺅﺙﻠﭨﻟ؟۳100ﺅﺙ?            
+        ﻟﺟﮒ:
+            List[NorthboundHolding]: ﮔﻛﭨﮔﻝﭨﮒﻟ۰۷
             
-        数据源映�?
-            iFinD函数: THS北向持股
-            字段映射:
-                - hold_amount: 持股数量
-                - hold_value: 持股市�?                - hold_ratio: 持股占比
+        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+            iFinDﮒﺛﮔﺍ: THSﮒﮒﮔﻟ۰
+            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+                - hold_amount: ﮔﻟ۰ﮔﺍﻠ
+                - hold_value: ﮔﻟ۰ﮒﺕﮒ?                - hold_ratio: ﮔﻟ۰ﮒ ﮔﺁ
         """
         pass
     
     @abstractmethod
     def analyze_sector_preference(self,
                                  flow_data: List[NorthboundCapitalFlow]) -> Dict[str, float]:
-        """分析北向资金行业偏好
+        """ﮒﮔﮒﮒﻟﭖﻠﻟ۰ﻛﺕﮒﮒ۴ﺛ
         
-        参数:
-            flow_data: 流向数据
+        ﮒﮔﺍ:
+            flow_data: ﮔﭖﮒﮔﺍﮔ؟
             
-        返回:
-            Dict[str, float]: 行业配置比例
+        ﻟﺟﮒ:
+            Dict[str, float]: ﻟ۰ﻛﺕﻠﻝﺛ؟ﮔﺁﻛﺝ
             
-        分析方法:
-            1. 统计买入/卖出�?0股票的行业分�?            2. 计算各行业净买入金额
-            3. 识别行业轮动趋势
+        ﮒﮔﮔﺗﮔﺏ:
+            1. ﻝﭨﻟ؟۰ﻛﺗﺍﮒ۴/ﮒﮒﭦﮒ?0ﻟ۰ﻝ۴۷ﻝﻟ۰ﻛﺕﮒﮒﺕ?            2. ﻟ؟۰ﻝ؟ﮒﻟ۰ﻛﺕﮒﻛﺗﺍﮒ۴ﻠﻠ۱
+            3. ﻟﺁﮒ،ﻟ۰ﻛﺕﻟﺛ؟ﮒ۷ﻟﭘﮒﺟ
         """
         pass
     
@@ -798,27 +798,27 @@ class NorthboundCapitalMonitor(ABC):
                                  flow_data: List[NorthboundCapitalFlow],
                                  threshold_days: int = 5,
                                  threshold_amount: float = 60.0) -> Dict:
-        """检测聪明钱信号
+        """ﮔ۲ﮔﭖﻟ۹ﮔﻠﺎﻛﺟ۰ﮒﺓ
         
-        参数:
-            flow_data: 流向数据
-            threshold_days: 连续天数阈值（默认5天）
-            threshold_amount: 净买入金额阈值（默认60亿元�?            
-        返回:
-            Dict: 聪明钱信�?            
-        信号规则:
-            1. 连续5日净买入�?0亿元：新能源、电子板块胜�?0%
-            2. 单日净流出�?0亿元：高估值消费股平均回撤5.3%
+        ﮒﮔﺍ:
+            flow_data: ﮔﭖﮒﮔﺍﮔ؟
+            threshold_days: ﻟﺟﻝﭨ­ﮒ۳۸ﮔﺍﻠﮒﺙﺅﺙﻠﭨﻟ؟۳5ﮒ۳۸ﺅﺙ
+            threshold_amount: ﮒﻛﺗﺍﮒ۴ﻠﻠ۱ﻠﮒﺙﺅﺙﻠﭨﻟ؟۳60ﻛﭦﺟﮒﺅﺙ?            
+        ﻟﺟﮒ:
+            Dict: ﻟ۹ﮔﻠﺎﻛﺟ۰ﮒ?            
+        ﻛﺟ۰ﮒﺓﻟ۶ﮒ:
+            1. ﻟﺟﻝﭨ­5ﮔ۴ﮒﻛﺗﺍﮒ۴ﻟﭘ?0ﻛﭦﺟﮒﺅﺙﮔﺍﻟﺛﮔﭦﻙﻝﭖﮒ­ﮔﺟﮒﻟﻝ?0%
+            2. ﮒﮔ۴ﮒﮔﭖﮒﭦﻟﭘ?0ﻛﭦﺟﮒﺅﺙﻠ،ﻛﺙﺍﮒﺙﮔﭘﻟﺑﺗﻟ۰ﮒﺗﺏﮒﮒﮔ۳5.3%
         """
         pass
 ```
 
-#### 2.3.2 iFinD实现�?
+#### 2.3.2 iFinDﮒ؟ﻝﺍﻝﺎ?
 ```python
 class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
-    """iFinD北向资金监控器实�?    
-    索引: IMPLEMENTATION.IFIND_NORTHBOUND.001
-    数据�? 同花顺iFinD
+    """iFinDﮒﮒﻟﭖﻠﻝﮔ۶ﮒ۷ﮒ؟ﻝ?    
+    ﻝﺑ۱ﮒﺙ: IMPLEMENTATION.IFIND_NORTHBOUND.001
+    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinD
     """
     
     def __init__(self, config: Dict):
@@ -828,13 +828,13 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
     def fetch_daily_flow(self,
                         start_date: datetime,
                         end_date: datetime) -> List[NorthboundCapitalFlow]:
-        """获取北向资金日度流向
+        """ﻟﺓﮒﮒﮒﻟﭖﻠﮔ۴ﮒﭦ۵ﮔﭖﮒ
         
-        iFinD调用示例:
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
-                'ths北向资金',
+                'thsﮒﮒﻟﭖﻠ',
                 '',
-                '交易日期,北向资金净买入,沪股通净买入,深股通净买入,沪股通余�?深股通余�?,
+                'ﻛﭦ۳ﮔﮔ۴ﮔ,ﮒﮒﻟﭖﻠﮒﻛﺗﺍﮒ۴,ﮔﺎ۹ﻟ۰ﻠﮒﻛﺗﺍﮒ۴,ﮔﺓﺎﻟ۰ﻠﮒﻛﺗﺍﮒ۴,ﮔﺎ۹ﻟ۰ﻠﻛﺛﻠ۱?ﮔﺓﺎﻟ۰ﻠﻛﺛﻠ۱?,
                 start_date,
                 end_date
             )
@@ -843,23 +843,23 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
         
         try:
             df = self.ifs_client.ED_query(
-                'ths北向资金',
+                'thsﮒﮒﻟﭖﻠ',
                 '',
-                '交易日期,北向资金净买入,沪股通净买入,深股通净买入,沪股通余�?深股通余�?,
+                'ﻛﭦ۳ﮔﮔ۴ﮔ,ﮒﮒﻟﭖﻠﮒﻛﺗﺍﮒ۴,ﮔﺎ۹ﻟ۰ﻠﮒﻛﺗﺍﮒ۴,ﮔﺓﺎﻟ۰ﻠﮒﻛﺗﺍﮒ۴,ﮔﺎ۹ﻟ۰ﻠﻛﺛﻠ۱?ﮔﺓﺎﻟ۰ﻠﻛﺛﻠ۱?,
                 start_date.strftime('%Y-%m-%d'),
                 end_date.strftime('%Y-%m-%d')
             )
             
             for _, row in df.iterrows():
                 flow = NorthboundCapitalFlow(
-                    trade_date=row['交易日期'],
-                    shanghai_connect_net_buy=row['沪股通净买入'] / 10000,
-                    shenzhen_connect_net_buy=row['深股通净买入'] / 10000,
-                    total_net_buy=row['北向资金净买入'] / 10000,
-                    shanghai_connect_balance=row['沪股通余�?] / 10000,
-                    shenzhen_connect_balance=row['深股通余�?] / 10000,
-                    top_buy_stocks=self._fetch_top_stocks(row['交易日期'], 'buy'),
-                    top_sell_stocks=self._fetch_top_stocks(row['交易日期'], 'sell'),
+                    trade_date=row['ﻛﭦ۳ﮔﮔ۴ﮔ'],
+                    shanghai_connect_net_buy=row['ﮔﺎ۹ﻟ۰ﻠﮒﻛﺗﺍﮒ۴'] / 10000,
+                    shenzhen_connect_net_buy=row['ﮔﺓﺎﻟ۰ﻠﮒﻛﺗﺍﮒ۴'] / 10000,
+                    total_net_buy=row['ﮒﮒﻟﭖﻠﮒﻛﺗﺍﮒ۴'] / 10000,
+                    shanghai_connect_balance=row['ﮔﺎ۹ﻟ۰ﻠﻛﺛﻠ۱?] / 10000,
+                    shenzhen_connect_balance=row['ﮔﺓﺎﻟ۰ﻠﻛﺛﻠ۱?] / 10000,
+                    top_buy_stocks=self._fetch_top_stocks(row['ﻛﭦ۳ﮔﮔ۴ﮔ'], 'buy'),
+                    top_sell_stocks=self._fetch_top_stocks(row['ﻛﭦ۳ﮔﮔ۴ﮔ'], 'sell'),
                     sector_allocation={}
                 )
                 
@@ -873,13 +873,13 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
     def fetch_holdings(self,
                       stock_codes: Optional[List[str]] = None,
                       top_n: int = 100) -> List[NorthboundHolding]:
-        """获取北向资金持仓明细
+        """ﻟﺓﮒﮒﮒﻟﭖﻠﮔﻛﭨﮔﻝﭨ
         
-        iFinD调用示例:
+        iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
-                'ths北向持股',
+                'thsﮒﮒﮔﻟ۰',
                 '',
-                '证券代码,证券简�?持股数量,持股市�?持股占比,持股变化,持股变化比例',
+                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﮔﻟ۰ﮔﺍﻠ,ﮔﻟ۰ﮒﺕﮒ?ﮔﻟ۰ﮒ ﮔﺁ,ﮔﻟ۰ﮒﮒ,ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ',
                 '',
                 ''
             )
@@ -888,27 +888,27 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
         
         try:
             df = self.ifs_client.ED_query(
-                'ths北向持股',
+                'thsﮒﮒﮔﻟ۰',
                 '',
-                '证券代码,证券简�?持股数量,持股市�?持股占比,持股变化,持股变化比例',
+                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﮔﻟ۰ﮔﺍﻠ,ﮔﻟ۰ﮒﺕﮒ?ﮔﻟ۰ﮒ ﮔﺁ,ﮔﻟ۰ﮒﮒ,ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ',
                 '',
                 ''
             )
             
             if stock_codes:
-                df = df[df['证券代码'].isin(stock_codes)]
+                df = df[df['ﻟﺁﮒﺕﻛﭨ۲ﻝ '].isin(stock_codes)]
             
             df = df.head(top_n)
             
             for _, row in df.iterrows():
                 holding = NorthboundHolding(
-                    stock_code=row['证券代码'],
-                    stock_name=row['证券简�?],
-                    hold_amount=row['持股数量'],
-                    hold_value=row['持股市�?],
-                    hold_ratio=row['持股占比'],
-                    change_amount=row['持股变化'],
-                    change_ratio=row['持股变化比例']
+                    stock_code=row['ﻟﺁﮒﺕﻛﭨ۲ﻝ '],
+                    stock_name=row['ﻟﺁﮒﺕﻝ؟ﻝ۶?],
+                    hold_amount=row['ﮔﻟ۰ﮔﺍﻠ'],
+                    hold_value=row['ﮔﻟ۰ﮒﺕﮒ?],
+                    hold_ratio=row['ﮔﻟ۰ﮒ ﮔﺁ'],
+                    change_amount=row['ﮔﻟ۰ﮒﮒ'],
+                    change_ratio=row['ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ']
                 )
                 
                 holdings.append(holding)
@@ -920,7 +920,7 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
     
     def analyze_sector_preference(self,
                                  flow_data: List[NorthboundCapitalFlow]) -> Dict[str, float]:
-        """分析北向资金行业偏好"""
+        """ﮒﮔﮒﮒﻟﭖﻠﻟ۰ﻛﺕﮒﮒ۴ﺛ"""
         sector_allocation = {}
         
         for flow in flow_data:
@@ -942,7 +942,7 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
                                  flow_data: List[NorthboundCapitalFlow],
                                  threshold_days: int = 5,
                                  threshold_amount: float = 60.0) -> Dict:
-        """检测聪明钱信号"""
+        """ﮔ۲ﮔﭖﻟ۹ﮔﻠﺎﻛﺟ۰ﮒﺓ"""
         if len(flow_data) < threshold_days:
             return {
                 'signal_type': 'INSUFFICIENT_DATA',
@@ -960,9 +960,9 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
                 'total_net_buy': total_buy,
                 'consecutive_days': threshold_days,
                 'confidence': 0.80,
-                'target_sectors': ['新能�?, '电子'],
+                'target_sectors': ['ﮔﺍﻟﺛﮔﭦ?, 'ﻝﭖﮒ­'],
                 'expected_win_rate': 0.80,
-                'reasoning': f'北向资金连续{threshold_days}日净买入超{threshold_amount}亿元，历史数据显示新能源、电子板块胜率达80%'
+                'reasoning': f'ﮒﮒﻟﭖﻠﻟﺟﻝﭨ­{threshold_days}ﮔ۴ﮒﻛﺗﺍﮒ۴ﻟﭘ{threshold_amount}ﻛﭦﺟﮒﺅﺙﮒﮒﺎﮔﺍﮔ؟ﮔﺝﻝ۳ﭦﮔﺍﻟﺛﮔﭦﻙﻝﭖﮒ­ﮔﺟﮒﻟﻝﻟﺝﺝ80%'
             }
         
         recent_flow = flow_data[-1]
@@ -971,19 +971,19 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
                 'signal_type': 'RISK_ALERT',
                 'net_outflow': abs(recent_flow.total_net_buy),
                 'confidence': 0.85,
-                'risk_sectors': ['高估值消费股'],
+                'risk_sectors': ['ﻠ،ﻛﺙﺍﮒﺙﮔﭘﻟﺑﺗﻟ۰'],
                 'expected_drawdown': 0.053,
-                'reasoning': f'北向资金单日净流出�?0亿元，历史数据显示高估值消费股平均回撤5.3%'
+                'reasoning': f'ﮒﮒﻟﭖﻠﮒﮔ۴ﮒﮔﭖﮒﭦﻟﭘ?0ﻛﭦﺟﮒﺅﺙﮒﮒﺎﮔﺍﮔ؟ﮔﺝﻝ۳ﭦﻠ،ﻛﺙﺍﮒﺙﮔﭘﻟﺑﺗﻟ۰ﮒﺗﺏﮒﮒﮔ۳5.3%'
             }
         
         return {
             'signal_type': 'NEUTRAL',
             'confidence': 0.50,
-            'reasoning': '北向资金流向未达到显著信号阈�?
+            'reasoning': 'ﮒﮒﻟﭖﻠﮔﭖﮒﮔ۹ﻟﺝﺝﮒﺍﮔﺝﻟﻛﺟ۰ﮒﺓﻠﮒ?
         }
     
     def _fetch_top_stocks(self, trade_date: datetime, direction: str) -> List[Dict]:
-        """获取买入/卖出�?0股票"""
+        """ﻟﺓﮒﻛﺗﺍﮒ۴/ﮒﮒﭦﮒ?0ﻟ۰ﻝ۴۷"""
         stocks = []
         
         return stocks
@@ -991,17 +991,17 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
 
 ---
 
-## 🤖 三�?类智能体详细参数配置
+## ﻭ۳ ﻛﺕﻙ?ﻝﺎﭨﮔﭦﻟﺛﻛﺛﻟﺁ۵ﻝﭨﮒﮔﺍﻠﻝﺛ؟
 
-### 3.1 主权基金智能体（Sovereign Fund Agent�?
-**代号**：AGENT.SOVEREIGN_FUND.001
+### 3.1 ﻛﺕﭨﮔﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙSovereign Fund Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.SOVEREIGN_FUND.001
 
-**行为特征**�?- 市场稳定器，政策驱动
-- ETF配置为主，长期持�?- 仅在市场异常波动时介�?
-**参数配置**�?
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﮒﺕﮒﭦﻝ۷ﺏﮒ؟ﮒ۷ﺅﺙﮔﺟﻝ­ﻠ۸ﺎﮒ۷
+- ETFﻠﻝﺛ؟ﻛﺕﭦﻛﺕﭨﺅﺙﻠﺟﮔﮔﮔ?- ﻛﭨﮒ۷ﮒﺕﮒﭦﮒﺙﮒﺕﺕﮔﺏ۱ﮒ۷ﮔﭘﻛﭨﮒ?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 sovereign_fund_agent:
-  name: "主权基金智能�?
+  name: "ﻛﺕﭨﮔﮒﭦﻠﮔﭦﻟﺛﻛﺛ?
   type: "institutional_investor"
   
   decision_model:
@@ -1020,15 +1020,15 @@ sovereign_fund_agent:
     hs300:
       weight: 0.60
       code: "510300.SH"
-      description: "沪深300ETF"
+      description: "ﮔﺎ۹ﮔﺓﺎ300ETF"
     zz500:
       weight: 0.25
       code: "510500.SH"
-      description: "中证500ETF"
+      description: "ﻛﺕ­ﻟﺁ500ETF"
     zz1000:
       weight: 0.15
       code: "512100.SH"
-      description: "中证1000ETF"
+      description: "ﻛﺕ­ﻟﺁ1000ETF"
   
   position_limit:
     max_single_etf: 0.05
@@ -1040,16 +1040,16 @@ sovereign_fund_agent:
     max_days: 365
   
   policy_signal_sources:
-    - "央行公告"
-    - "证监会公�?
-    - "国务院政策文�?
-    - "新华社社�?
+    - "ﮒ۳؟ﻟ۰ﮒ؛ﮒ"
+    - "ﻟﺁﻝﻛﺙﮒ؛ﮒ?
+    - "ﮒﺛﮒ۰ﻠ۱ﮔﺟﻝ­ﮔﻛﭨ?
+    - "ﮔﺍﮒﻝ۳ﺝﻝ۳ﺝﻟ؟?
   
   market_stability_indicators:
-    - "市场波动�?
-    - "流动性指�?
-    - "市场情绪指数"
-    - "蓝筹股资金流�?
+    - "ﮒﺕﮒﭦﮔﺏ۱ﮒ۷ﻝ?
+    - "ﮔﭖﮒ۷ﮔ۶ﮔﮔ ?
+    - "ﮒﺕﮒﭦﮔﻝﭨ۹ﮔﮔﺍ"
+    - "ﻟﻝ­ﺗﻟ۰ﻟﭖﻠﮔﭖﮒ?
   
   reward_function:
     market_stability_weight: 0.50
@@ -1062,17 +1062,17 @@ sovereign_fund_agent:
     stop_loss_threshold: -0.10
 ```
 
-### 3.2 公募基金智能体（Mutual Fund Agent�?
-**代号**：AGENT.MUTUAL_FUND.001
+### 3.2 ﮒ؛ﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙMutual Fund Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.MUTUAL_FUND.001
 
-**行为特征**�?- 赛道聚焦，高仓位运行
-- 基本面驱动，机构协同
-- 平均仓位86.40%
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻟﭖﻠﻟﻝ۵ﺅﺙﻠ،ﻛﭨﻛﺛﻟﺟﻟ۰
+- ﮒﭦﮔ؛ﻠ۱ﻠ۸ﺎﮒ۷ﺅﺙﮔﭦﮔﮒﮒ
+- ﮒﺗﺏﮒﻛﭨﻛﺛ86.40%
 
-**参数配置**�?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 mutual_fund_agent:
-  name: "公募基金智能�?
+  name: "ﮒ؛ﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛ?
   type: "institutional_investor"
   
   decision_model:
@@ -1084,23 +1084,23 @@ mutual_fund_agent:
   sector_focus:
     ai_computing:
       weight: 0.35
-      keywords: ["AI算力", "GPU", "数据中心"]
-      target_stocks: ["浪潮信息", "中科曙光", "寒武�?]
+      keywords: ["AIﻝ؟ﮒ", "GPU", "ﮔﺍﮔ؟ﻛﺕ­ﮒﺟ"]
+      target_stocks: ["ﮔﭖ۹ﮔﺛ؟ﻛﺟ۰ﮔﺁ", "ﻛﺕ­ﻝ۶ﮔﮒ", "ﮒﺁﮔ­۵ﻝﭦ?]
     
     medical_tech:
       weight: 0.25
-      keywords: ["医疗新科技", "创新�?, "医疗器械"]
-      target_stocks: ["恒瑞医药", "迈瑞医疗", "药明康德"]
+      keywords: ["ﮒﭨﻝﮔﺍﻝ۶ﮔ", "ﮒﮔﺍﻟ?, "ﮒﭨﻝﮒ۷ﮔ۱ﺍ"]
+      target_stocks: ["ﮔﻝﮒﭨﻟﺁ", "ﻟﺟﻝﮒﭨﻝ", "ﻟﺁﮔﮒﭦﺓﮒﺝﺓ"]
     
     humanoid_robot:
       weight: 0.20
-      keywords: ["人形机器�?, "伺服电机", "减速器"]
-      target_stocks: ["三花智控", "汇川技�?, "绿的谐波"]
+      keywords: ["ﻛﭦﭦﮒﺛ۱ﮔﭦﮒ۷ﻛﭦ?, "ﻛﺙﭦﮔﻝﭖﮔﭦ", "ﮒﻠﮒ۷"]
+      target_stocks: ["ﻛﺕﻟﺎﮔﭦﮔ۶", "ﮔﺎﮒﺓﮔﮔ?, "ﻝﭨﺟﻝﻟﺍﮔﺏ۱"]
     
     new_energy:
       weight: 0.20
-      keywords: ["新能�?, "光伏", "储能"]
-      target_stocks: ["宁德时代", "隆基绿能", "比亚�?]
+      keywords: ["ﮔﺍﻟﺛﮔﭦ?, "ﮒﻛﺙ", "ﮒ۷ﻟﺛ"]
+      target_stocks: ["ﮒ؟ﮒﺝﺓﮔﭘﻛﭨ۲", "ﻠﮒﭦﻝﭨﺟﻟﺛ", "ﮔﺁﻛﭦﻟﺟ?]
   
   fundamental_criteria:
     roe_min: 0.12
@@ -1135,16 +1135,16 @@ mutual_fund_agent:
     max_drawdown: -0.20
 ```
 
-### 3.3 外资智能体（Foreign Capital Agent�?
-**代号**：AGENT.FOREIGN_CAPITAL.001
+### 3.3 ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﺅﺙForeign Capital Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.FOREIGN_CAPITAL.001
 
-**行为特征**�?- 价值投资，板块轮动
-- 聪明钱效应，长期配置
-- 放弃传统核心资产，转向高成长制�?
-**参数配置**�?
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻛﭨﺓﮒﺙﮔﻟﭖﺅﺙﮔﺟﮒﻟﺛ؟ﮒ۷
+- ﻟ۹ﮔﻠﺎﮔﮒﭦﺅﺙﻠﺟﮔﻠﻝﺛ؟
+- ﮔﺝﮒﺙﻛﺙ ﻝﭨﮔ ﺕﮒﺟﻟﭖﻛﭦ۶ﺅﺙﻟﺛ؛ﮒﻠ،ﮔﻠﺟﮒﭘﻠ?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 foreign_capital_agent:
-  name: "外资智能�?
+  name: "ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛ?
   type: "institutional_investor"
   
   decision_model:
@@ -1162,15 +1162,15 @@ foreign_capital_agent:
   sector_rotation:
     growth_manufacturing:
       weight: 0.50
-      sectors: ["电子", "基础化工", "电力设备"]
+      sectors: ["ﻝﭖﮒ­", "ﮒﭦﻝ۰ﮒﮒﺓ۴", "ﻝﭖﮒﻟ؟ﺝﮒ۳"]
     
     traditional_core:
       weight: 0.20
-      sectors: ["食品饮料", "医药"]
+      sectors: ["ﻠ۲ﮒﻠ۴؟ﮔ", "ﮒﭨﻟﺁ"]
     
     scarce_assets:
       weight: 0.30
-      sectors: ["中药", "白酒"]
+      sectors: ["ﻛﺕ­ﻟﺁ", "ﻝﺛﻠ"]
   
   fx_factors:
     usd_cny_weight: 0.30
@@ -1180,7 +1180,7 @@ foreign_capital_agent:
   smart_money_signal:
     consecutive_buy_days: 5
     net_buy_threshold: 60.0
-    target_sectors: ["新能�?, "电子"]
+    target_sectors: ["ﮔﺍﻟﺛﮔﭦ?, "ﻝﭖﮒ­"]
     expected_win_rate: 0.80
   
   position_management:
@@ -1205,15 +1205,15 @@ foreign_capital_agent:
     fx_hedge_ratio: 0.50
 ```
 
-### 3.4 量化基金智能体（Quantitative Fund Agent�?
-**代号**：AGENT.QUANT_FUND.001
+### 3.4 ﻠﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙQuantitative Fund Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.QUANT_FUND.001
 
-**行为特征**�?- 高频交易，算法驱�?- 分散化，纪律性强
-- 持仓时间短至毫秒�?
-**参数配置**�?
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻠ،ﻠ۱ﻛﭦ۳ﮔﺅﺙﻝ؟ﮔﺏﻠ۸ﺎﮒ?- ﮒﮔ۲ﮒﺅﺙﻝﭦ۹ﮒﺝﮔ۶ﮒﺙﭦ
+- ﮔﻛﭨﮔﭘﻠﺑﻝ­ﻟﺏﮔﺁ،ﻝ۶ﻝﭦ?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 quantitative_fund_agent:
-  name: "量化基金智能�?
+  name: "ﻠﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛ?
   type: "institutional_investor"
   
   decision_model:
@@ -1273,15 +1273,15 @@ quantitative_fund_agent:
     data_feed: "level2_realtime"
 ```
 
-### 3.5 热钱智能体（Hot Money Agent�?
-**代号**：AGENT.HOT_MONEY.001
+### 3.5 ﻝ­ﻠﺎﮔﭦﻟﺛﻛﺛﺅﺙHot Money Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.HOT_MONEY.001
 
-**行为特征**�?- 打板手法，快进快�?- 题材驱动，情绪放�?- 持仓周期短（�?周）
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﮔﮔﺟﮔﮔﺏﺅﺙﮒﺟ،ﻟﺟﮒﺟ،ﮒ?- ﻠ۱ﮔﻠ۸ﺎﮒ۷ﺅﺙﮔﻝﭨ۹ﮔﺝﮒ۳?- ﮔﻛﭨﮒ۷ﮔﻝ­ﺅﺙﮔ?ﮒ۷ﺅﺙ
 
-**参数配置**�?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 hot_money_agent:
-  name: "热钱智能�?
+  name: "ﻝ­ﻠﺎﮔﭦﻟﺛﻛﺛ?
   type: "speculator"
   
   decision_model:
@@ -1309,9 +1309,9 @@ hot_money_agent:
   topic_detection:
     hot_keywords:
       - "AI"
-      - "人形机器�?
-      - "新能�?
-      - "并购重组"
+      - "ﻛﭦﭦﮒﺛ۱ﮔﭦﮒ۷ﻛﭦ?
+      - "ﮔﺍﻟﺛﮔﭦ?
+      - "ﮒﺗﭘﻟﺑ­ﻠﻝﭨ"
     
     sentiment_threshold: 0.70
     volume_surge_threshold: 2.0
@@ -1338,15 +1338,15 @@ hot_money_agent:
     position_reduce_after_loss: 0.50
 ```
 
-### 3.6 保险资金智能体（Insurance Fund Agent�?
-**代号**：AGENT.INSURANCE_FUND.001
+### 3.6 ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛﺅﺙInsurance Fund Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.INSURANCE_FUND.001
 
-**行为特征**�?- 长期配置，稳健投�?- 高股息偏好，风险厌恶
-- 持仓周期长（年度�?
-**参数配置**�?
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻠﺟﮔﻠﻝﺛ؟ﺅﺙﻝ۷ﺏﮒ۴ﮔﻟﭖ?- ﻠ،ﻟ۰ﮔﺁﮒﮒ۴ﺛﺅﺙﻠ۲ﻠ۸ﮒﮔﭘ
+- ﮔﻛﭨﮒ۷ﮔﻠﺟﺅﺙﮒﺗﺑﮒﭦ۵ﺅﺙ?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 insurance_fund_agent:
-  name: "保险资金智能�?
+  name: "ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛ?
   type: "institutional_investor"
   
   decision_model:
@@ -1364,19 +1364,19 @@ insurance_fund_agent:
   sector_preference:
     banking:
       weight: 0.35
-      reason: "高股息、低估�?
+      reason: "ﻠ،ﻟ۰ﮔﺁﻙﻛﺛﻛﺙﺍﮒ?
     
     infrastructure:
       weight: 0.25
-      reason: "现金流稳�?
+      reason: "ﻝﺍﻠﮔﭖﻝ۷ﺏﮒ؟?
     
     real_estate:
       weight: 0.15
-      reason: "长期配置"
+      reason: "ﻠﺟﮔﻠﻝﺛ؟"
     
     utilities:
       weight: 0.15
-      reason: "防御性强"
+      reason: "ﻠﺎﮒﺝ۰ﮔ۶ﮒﺙﭦ"
     
     other:
       weight: 0.10
@@ -1404,16 +1404,16 @@ insurance_fund_agent:
     liquidity_requirement: 0.30
 ```
 
-### 3.7 产业资本智能体（Industrial Capital Agent�?
-**代号**：AGENT.INDUSTRIAL_CAPITAL.001
+### 3.7 ﻛﭦ۶ﻛﺕﻟﭖﮔ؛ﮔﭦﻟﺛﻛﺛﺅﺙIndustrial Capital Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.INDUSTRIAL_CAPITAL.001
 
-**行为特征**�?- 信息优势，战略布局
-- 增持回购，价值认�?- 长期持有
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻛﺟ۰ﮔﺁﻛﺙﮒﺟﺅﺙﮔﻝ۴ﮒﺕﮒﺎ
+- ﮒ۱ﮔﮒﻟﺑ­ﺅﺙﻛﭨﺓﮒﺙﻟ؟۳ﮒ?- ﻠﺟﮔﮔﮔ
 
-**参数配置**�?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 industrial_capital_agent:
-  name: "产业资本智能�?
+  name: "ﻛﭦ۶ﻛﺕﻟﭖﮔ؛ﮔﭦﻟﺛﻛﺛ?
   type: "institutional_investor"
   
   decision_model:
@@ -1424,15 +1424,15 @@ industrial_capital_agent:
   strategic_focus:
     industry_chain_integration:
       weight: 0.40
-      description: "产业链整�?
+      description: "ﻛﭦ۶ﻛﺕﻠﺝﮔﺑﮒ?
     
     technology_acquisition:
       weight: 0.30
-      description: "技术获�?
+      description: "ﮔﮔﺁﻟﺓﮒ?
     
     market_share_expansion:
       weight: 0.30
-      description: "市场份额扩张"
+      description: "ﮒﺕﮒﭦﻛﭨﺛﻠ۱ﮔ۸ﮒﺙ "
   
   buyback_criteria:
     price_below_book: true
@@ -1458,16 +1458,16 @@ industrial_capital_agent:
     related_party_transaction_limit: 0.10
 ```
 
-### 3.8 零售投资者智能体（Retail Investor Agent�?
-**代号**：AGENT.RETAIL.001
+### 3.8 ﻠﭘﮒ؟ﮔﻟﭖﻟﮔﭦﻟﺛﻛﺛﺅﺙRetail Investor Agentﺅﺙ?
+**ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.RETAIL.001
 
-**行为特征**�?- 羊群效应，情绪驱�?- 追涨杀跌，短期持有
-- 信息劣势
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻝﺝﻝﺝ۳ﮔﮒﭦﺅﺙﮔﻝﭨ۹ﻠ۸ﺎﮒ?- ﻟﺟﺛﮔﭘ۷ﮔﻟﺓﺅﺙﻝ­ﮔﮔﮔ
+- ﻛﺟ۰ﮔﺁﮒ۲ﮒﺟ
 
-**参数配置**�?
+**ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 retail_investor_agent:
-  name: "零售投资者智能体"
+  name: "ﻠﭘﮒ؟ﮔﻟﭖﻟﮔﭦﻟﺛﻛﺛ"
   type: "retail_investor"
   
   decision_model:
@@ -1479,19 +1479,19 @@ retail_investor_agent:
   behavioral_biases:
     herding_effect:
       weight: 0.40
-      description: "跟随主流资金"
+      description: "ﻟﺓﻠﻛﺕﭨﮔﭖﻟﭖﻠ"
     
     disposition_effect:
       weight: 0.30
-      description: "卖出盈利股，持有亏损�?
+      description: "ﮒﮒﭦﻝﮒ۸ﻟ۰ﺅﺙﮔﮔﻛﭦﮔﻟ?
     
     overconfidence:
       weight: 0.20
-      description: "过度自信"
+      description: "ﻟﺟﮒﭦ۵ﻟ۹ﻛﺟ۰"
     
     loss_aversion:
       weight: 0.10
-      description: "损失厌恶"
+      description: "ﮔﮒ۳ﺎﮒﮔﭘ"
   
   emotion_indicators:
     fear_greed_index:
@@ -1500,7 +1500,7 @@ retail_investor_agent:
     
     social_media_sentiment:
       weight: 0.30
-      sources: ["雪球", "东方财富股吧"]
+      sources: ["ﻠ۹ﻝ", "ﻛﺕﮔﺗﻟﺑ۱ﮒﺁﻟ۰ﮒ۶"]
   
   position_management:
     max_single_position: 0.30
@@ -1525,8 +1525,8 @@ retail_investor_agent:
 
 ---
 
-## 📦 四、数据获取模块完整实�?
-### 4.1 统一数据获取�?
+## ﻭ۵ ﮒﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﮔﺑﮒ؟ﻝ?
+### 4.1 ﻝﭨﻛﺕﮔﺍﮔ؟ﻟﺓﮒﮒ?
 ```python
 from dataclasses import dataclass
 from datetime import datetime
@@ -1535,24 +1535,24 @@ import pandas as pd
 
 @dataclass
 class MarketParticipantDataBundle:
-    """市场参与者数据包
+    """ﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ؟ﮒ
     
-    索引: DATA.BUNDLE.001
-    用�? 整合所有市场参与者相关数�?    """
+    ﻝﺑ۱ﮒﺙ: DATA.BUNDLE.001
+    ﻝ۷ﻠ? ﮔﺑﮒﮔﮔﮒﺕﮒﭦﮒﻛﺕﻟﻝﺕﮒﺏﮔﺍﮔ?    """
     timestamp: datetime
     
-    capital_flow_data: Dict  # DDX/DDE/BBD数据
-    dragon_tiger_data: List  # 龙虎榜数�?    northbound_flow_data: Dict  # 北向资金流向
-    northbound_holdings: List  # 北向资金持仓
+    capital_flow_data: Dict  # DDX/DDE/BBDﮔﺍﮔ؟
+    dragon_tiger_data: List  # ﻠﺝﻟﮔ۵ﮔﺍﮔ?    northbound_flow_data: Dict  # ﮒﮒﻟﭖﻠﮔﭖﮒ
+    northbound_holdings: List  # ﮒﮒﻟﭖﻠﮔﻛﭨ
     
-    level2_data: Optional[Dict] = None  # Level-2行情
-    sentiment_data: Optional[Dict] = None  # 市场情绪
-    news_data: Optional[List] = None  # 新闻数据
+    level2_data: Optional[Dict] = None  # Level-2ﻟ۰ﮔ
+    sentiment_data: Optional[Dict] = None  # ﮒﺕﮒﭦﮔﻝﭨ۹
+    news_data: Optional[List] = None  # ﮔﺍﻠﭨﮔﺍﮔ؟
 
 class MarketParticipantDataFetcher:
-    """市场参与者数据统一获取�?    
-    索引: IMPLEMENTATION.DATA_FETCHER.001
-    职责: 统一获取所有市场参与者相关数�?    数据�? 同花顺iFinD
+    """ﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ؟ﻝﭨﻛﺕﻟﺓﮒﮒ?    
+    ﻝﺑ۱ﮒﺙ: IMPLEMENTATION.DATA_FETCHER.001
+    ﻟﻟﺑ۲: ﻝﭨﻛﺕﻟﺓﮒﮔﮔﮒﺕﮒﭦﮒﻛﺕﻟﻝﺕﮒﺏﮔﺍﮔ?    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinD
     """
     
     def __init__(self, config: Dict):
@@ -1566,13 +1566,13 @@ class MarketParticipantDataFetcher:
                       stock_codes: List[str],
                       start_date: datetime,
                       end_date: datetime) -> MarketParticipantDataBundle:
-        """获取所有市场参与者数�?        
-        参数:
-            stock_codes: 股票代码列表
-            start_date: 开始日�?            end_date: 结束日期
+        """ﻟﺓﮒﮔﮔﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ?        
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
-        返回:
-            MarketParticipantDataBundle: 整合数据�?        """
+        ﻟﺟﮒ:
+            MarketParticipantDataBundle: ﮔﺑﮒﮔﺍﮔ؟ﮒ?        """
         
         capital_flow_data = self.capital_flow_fetcher.fetch_ddx(
             stock_codes, start_date, end_date
@@ -1600,13 +1600,13 @@ class MarketParticipantDataFetcher:
     
     def fetch_realtime_data(self,
                            stock_codes: List[str]) -> MarketParticipantDataBundle:
-        """获取实时数据（盘中）
+        """ﻟﺓﮒﮒ؟ﮔﭘﮔﺍﮔ؟ﺅﺙﻝﻛﺕ­ﺅﺙ
         
-        参数:
-            stock_codes: 股票代码列表
+        ﮒﮔﺍ:
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
             
-        返回:
-            MarketParticipantDataBundle: 实时数据�?        """
+        ﻟﺟﮒ:
+            MarketParticipantDataBundle: ﮒ؟ﮔﭘﮔﺍﮔ؟ﮒ?        """
         
         capital_flow_data = self.capital_flow_fetcher.fetch_realtime_capital_flow(
             stock_codes
@@ -1621,7 +1621,7 @@ class MarketParticipantDataFetcher:
         )
 ```
 
-### 4.2 数据缓存与更新策�?
+### 4.2 ﮔﺍﮔ؟ﻝﺙﮒ­ﻛﺕﮔﺑﮔﺍﻝ­ﻝ?
 ```python
 from datetime import datetime, timedelta
 from typing import Dict, Optional
@@ -1629,9 +1629,9 @@ import redis
 import json
 
 class DataCacheManager:
-    """数据缓存管理�?    
-    索引: IMPLEMENTATION.CACHE.001
-    职责: 管理市场参与者数据缓�?    缓存介质: Redis
+    """ﮔﺍﮔ؟ﻝﺙﮒ­ﻝ؟۰ﻝﮒ?    
+    ﻝﺑ۱ﮒﺙ: IMPLEMENTATION.CACHE.001
+    ﻟﻟﺑ۲: ﻝ؟۰ﻝﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ؟ﻝﺙﮒ­?    ﻝﺙﮒ­ﻛﭨﻟﺑ۷: Redis
     """
     
     def __init__(self, config: Dict):
@@ -1653,13 +1653,13 @@ class DataCacheManager:
     def get_cached_data(self,
                        data_type: str,
                        key: str) -> Optional[Dict]:
-        """获取缓存数据
+        """ﻟﺓﮒﻝﺙﮒ­ﮔﺍﮔ؟
         
-        参数:
-            data_type: 数据类型（ddx_daily, ddx_realtime等）
-            key: 缓存�?            
-        返回:
-            Optional[Dict]: 缓存数据，不存在则返回None
+        ﮒﮔﺍ:
+            data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒﺅﺙddx_daily, ddx_realtimeﻝ­ﺅﺙ
+            key: ﻝﺙﮒ­ﻠ?            
+        ﻟﺟﮒ:
+            Optional[Dict]: ﻝﺙﮒ­ﮔﺍﮔ؟ﺅﺙﻛﺕﮒ­ﮒ۷ﮒﻟﺟﮒNone
         """
         cache_key = f"{data_type}:{key}"
         cached = self.redis_client.get(cache_key)
@@ -1673,11 +1673,11 @@ class DataCacheManager:
                        data_type: str,
                        key: str,
                        data: Dict) -> None:
-        """设置缓存数据
+        """ﻟ؟ﺝﻝﺛ؟ﻝﺙﮒ­ﮔﺍﮔ؟
         
-        参数:
-            data_type: 数据类型
-            key: 缓存�?            data: 数据内容
+        ﮒﮔﺍ:
+            data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒ
+            key: ﻝﺙﮒ­ﻠ?            data: ﮔﺍﮔ؟ﮒﮒ؟ﺗ
         """
         cache_key = f"{data_type}:{key}"
         ttl = self.cache_ttl.get(data_type, 3600)
@@ -1689,10 +1689,10 @@ class DataCacheManager:
         )
     
     def clear_cache(self, data_type: Optional[str] = None) -> None:
-        """清除缓存
+        """ﮔﺕﻠ۳ﻝﺙﮒ­
         
-        参数:
-            data_type: 数据类型（可选，不指定则清除所有）
+        ﮒﮔﺍ:
+            data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒﺅﺙﮒﺁﻠﺅﺙﻛﺕﮔﮒ؟ﮒﮔﺕﻠ۳ﮔﮔﺅﺙ
         """
         if data_type:
             pattern = f"{data_type}:*"
@@ -1706,16 +1706,16 @@ class DataCacheManager:
 
 ---
 
-## 📊 五、集成测试与验证
+## ﻭ ﻛﭦﻙﻠﮔﮔﭖﻟﺁﻛﺕﻠ۹ﻟﺁ
 
-### 5.1 数据获取接口测试用例
+### 5.1 ﮔﺍﮔ؟ﻟﺓﮒﮔ۴ﮒ۲ﮔﭖﻟﺁﻝ۷ﻛﺝ
 
 ```python
 import unittest
 from datetime import datetime, timedelta
 
 class TestCapitalFlowDataFetcher(unittest.TestCase):
-    """资金流向数据获取器测�?""
+    """ﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﻟﺓﮒﮒ۷ﮔﭖﻟﺁ?""
     
     def setUp(self):
         self.fetcher = IFindCapitalFlowFetcher(config={})
@@ -1724,7 +1724,7 @@ class TestCapitalFlowDataFetcher(unittest.TestCase):
         self.end_date = datetime.now()
     
     def test_fetch_ddx(self):
-        """测试DDX数据获取"""
+        """ﮔﭖﻟﺁDDXﮔﺍﮔ؟ﻟﺓﮒ"""
         result = self.fetcher.fetch_ddx(
             self.test_stocks,
             self.test_date,
@@ -1740,7 +1740,7 @@ class TestCapitalFlowDataFetcher(unittest.TestCase):
             self.assertIsNotNone(ddx_indicator.ddx_value)
     
     def test_fetch_dde(self):
-        """测试DDE数据获取"""
+        """ﮔﭖﻟﺁDDEﮔﺍﮔ؟ﻟﺓﮒ"""
         result = self.fetcher.fetch_dde(
             self.test_stocks,
             self.test_date,
@@ -1751,7 +1751,7 @@ class TestCapitalFlowDataFetcher(unittest.TestCase):
         self.assertIn('600519.SH', result)
     
     def test_fetch_bbd(self):
-        """测试BBD数据获取"""
+        """ﮔﭖﻟﺁBBDﮔﺍﮔ؟ﻟﺓﮒ"""
         result = self.fetcher.fetch_bbd(
             self.test_stocks,
             self.test_date,
@@ -1762,7 +1762,7 @@ class TestCapitalFlowDataFetcher(unittest.TestCase):
         self.assertIn('600519.SH', result)
     
     def test_fetch_realtime_capital_flow(self):
-        """测试实时资金流向获取"""
+        """ﮔﭖﻟﺁﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﻟﺓﮒ"""
         result = self.fetcher.fetch_realtime_capital_flow(
             self.test_stocks
         )
@@ -1771,7 +1771,7 @@ class TestCapitalFlowDataFetcher(unittest.TestCase):
         self.assertIn('600519.SH', result)
 
 class TestNorthboundCapitalMonitor(unittest.TestCase):
-    """北向资金监控器测�?""
+    """ﮒﮒﻟﭖﻠﻝﮔ۶ﮒ۷ﮔﭖﻟﺁ?""
     
     def setUp(self):
         self.monitor = IFindNorthboundCapitalMonitor(config={})
@@ -1779,7 +1779,7 @@ class TestNorthboundCapitalMonitor(unittest.TestCase):
         self.end_date = datetime.now()
     
     def test_fetch_daily_flow(self):
-        """测试日度流向获取"""
+        """ﮔﭖﻟﺁﮔ۴ﮒﭦ۵ﮔﭖﮒﻟﺓﮒ"""
         result = self.monitor.fetch_daily_flow(
             self.test_date,
             self.end_date
@@ -1792,7 +1792,7 @@ class TestNorthboundCapitalMonitor(unittest.TestCase):
             self.assertIsNotNone(flow.total_net_buy)
     
     def test_detect_smart_money_signal(self):
-        """测试聪明钱信号检�?""
+        """ﮔﭖﻟﺁﻟ۹ﮔﻠﺎﻛﺟ۰ﮒﺓﮔ۲ﮔﭖ?""
         flow_data = self.monitor.fetch_daily_flow(
             self.test_date,
             self.end_date
@@ -1807,11 +1807,11 @@ class TestNorthboundCapitalMonitor(unittest.TestCase):
 
 ---
 
-## 📝 六、更新日�?
-| 版本 | 日期 | 更新内容 | 作�?|
+## ﻭ ﮒ­ﻙﮔﺑﮔﺍﮔ۴ﮒﺟ?
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﻛﺛﻟ?|
 |------|------|----------|------|
-| v2.0 | 2026-04-03 | 术语标准化、资金流向监控接口、智能体参数配置、数据获取模�?| Spec-Approver |
+| v2.0 | 2026-04-03 | ﮔﺁﻟﺁ­ﮔ ﮒﮒﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔ۴ﮒ۲ﻙﮔﭦﻟﺛﻛﺛﮒﮔﺍﻠﻝﺛ؟ﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒ?| Spec-Approver |
 
 ---
 
-**版本**: v2.0 | **更新**: 2026-04-03 | **状�?*: �?已完�?
+**ﻝﮔ؛**: v2.0 | **ﮔﺑﮔﺍ**: 2026-04-03 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?

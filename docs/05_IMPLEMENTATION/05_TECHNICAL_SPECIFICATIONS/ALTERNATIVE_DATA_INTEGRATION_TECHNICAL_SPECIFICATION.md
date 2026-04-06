@@ -4,85 +4,85 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 2 Alpha因子�?- 另类数据源集�?| 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+applicable_scope: Layer 2 Alphaﮒ ﮒ­ﺅﺟ?- ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
-implementation_status: 规划阶段
+implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ
 ---
 
-# 另类数据源集成技术规格书
+# ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 
-> **规格书编�?*: SPEC-ALT-DATA-2026-001
-> **规格书版�?*: v1.0
-> **创建日期**: 2026-04-02
-> **技术评审官**: 首席技术评审官
-> **评审状�?*: �?已批�?
+> **ﻟ۶ﮔ ﺙﻛﺗ۵ﻝﺙﺅﺟ?*: SPEC-ALT-DATA-2026-001
+> **ﻟ۶ﮔ ﺙﻛﺗ۵ﻝﺅﺟ?*: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+> **ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ?
 ---
 
-## 📋 技术规格书概述
+## ﻭ ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔ۵ﻟﺟﺍ
 
-### 文档目的
+### ﮔﮔ۰۲ﻝ؟ﻝ
 
-本技术规格书详细定义了另类数据源集成项目的所有技术细节，包括架构设计、接口定义、数据模型、算法实现、测试策略等，为开发团队提供完整的技术指导�?
-### 适用范围
+ﮔ؛ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗﻛﭦﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﻠ۰ﺗﻝ؟ﻝﮔﮔﮔﮔﺁﻝﭨﻟﺅﺙﮒﮔ؛ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻙﮔﭖﻟﺁﻝ­ﻝ۴ﻝ­ﺅﺙﻛﺕﭦﮒﺙﮒﮒ۱ﻠﮔﻛﺝﮒ؟ﮔﺑﻝﮔﮔﺁﮔﮒﺁﺙﺅﺟﺛ?
+### ﻠﻝ۷ﻟﮒﺑ
 
-本规格书适用于：
-- 数据工程师：数据源接入和数据采集
-- NLP工程师：情感分析和事件提�?- 因子研究员：因子构建和验�?- 测试工程师：系统测试和质量保�?
+ﮔ؛ﻟ۶ﮔ ﺙﻛﺗ۵ﻠﻝ۷ﻛﭦﺅﺙ
+- ﮔﺍﮔ؟ﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﮒﮔﺍﮔ؟ﻠﻠ
+- NLPﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﮔﮔﮒﮔﮒﻛﭦﻛﭨﭘﮔﺅﺟ?- ﮒ ﮒ­ﻝ ﻝ۸ﭘﮒﺅﺙﮒ ﮒ­ﮔﮒﭨﭦﮒﻠ۹ﺅﺟ?- ﮔﭖﻟﺁﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻟﺑ۷ﻠﻛﺟﺅﺟ?
 ---
 
-## 一、概�?
-### 1.1 设计背景
+## ﻛﺕﻙﮔ۵ﺅﺟ?
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁ
 
-根据Layer 2 Alpha因子层技术评审结果，**数据源广度不�?*是P0级阻断性风险。当前系统仅依赖iFinD、Baostock、AkShare三个数据源，缺少新闻、社交媒体、分析师预期等另类数据，严重限制了因子研究深度和原创性�?
-### 1.2 技术定�?
-**Layer定位**: Layer 2 - Alpha因子层（数据源扩展）
+ﮔ ﺗﮔ؟Layer 2 Alphaﮒ ﮒ­ﮒﺎﮔﮔﺁﻟﺁﮒ؟۰ﻝﭨﮔﺅﺙ**ﮔﺍﮔ؟ﮔﭦﮒﺗﺟﮒﭦ۵ﻛﺕﺅﺟ?*ﮔﺁP0ﻝﭦ۶ﻠﭨﮔ­ﮔ۶ﻠ۲ﻠ۸ﻙﮒﺛﮒﻝﺏﭨﻝﭨﻛﭨﻛﺝﻟﭖiFinDﻙBaostockﻙAkShareﻛﺕﻛﺕ۹ﮔﺍﮔ؟ﮔﭦﺅﺙﻝﺙﭦﮒﺍﮔﺍﻠﭨﻙﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﻙﮒﮔﮒﺕﻠ۱ﮔﻝ­ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﺅﺙﻛﺕ۴ﻠﻠﮒﭘﻛﭦﮒ ﮒ­ﻝ ﻝ۸ﭘﮔﺓﺎﮒﭦ۵ﮒﮒﮒﮔ۶ﺅﺟﺛ?
+### 1.2 ﮔﮔﺁﮒ؟ﺅﺟ?
+**Layerﮒ؟ﻛﺛ**: Layer 2 - Alphaﮒ ﮒ­ﮒﺎﺅﺙﮔﺍﮔ؟ﮔﭦﮔ۸ﮒﺎﺅﺙ
 
-**技术成熟度**: 成熟（基于公开API和开源工具）
+**ﮔﮔﺁﮔﻝﮒﭦ۵**: ﮔﻝﺅﺙﮒﭦﻛﭦﮒ؛ﮒﺙAPIﮒﮒﺙﮔﭦﮒﺓ۴ﮒﺓﺅﺙ
 
-**实施复杂�?*: 中等（需要NLP处理和因子构建）
+**ﮒ؟ﮔﺛﮒ۳ﮔﺅﺟ?*: ﻛﺕ­ﻝ­ﺅﺙﻠﻟ۵NLPﮒ۳ﻝﮒﮒ ﮒ­ﮔﮒﭨﭦﺅﺙ
 
-### 1.3 版本信息
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
 
-| 版本 | 日期 | 变更说明 | 作�?|
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﮒﮔﺑﻟﺁﺑﮔ | ﻛﺛﺅﺟﺛ?|
 |------|------|---------|------|
-| v1.0 | 2026-04-02 | 初始版本 | 首席技术评审官 |
+| v1.0 | 2026-04-02 | ﮒﮒ۶ﻝﮔ؛ | ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ |
 
 ---
 
-## 二、详细架构设�?
-### 2.1 整体架构�?
+## ﻛﭦﻙﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﺅﺟ?
+### 2.1 ﮔﺑﻛﺛﮔﭘﮔﺅﺟ?
 ```
-┌─────────────────────────────────────────────────────────────────────�?�?                   另类数据源集成架�?                                �?├─────────────────────────────────────────────────────────────────────�?�?                                                                    �?�? Layer 1: 数据源层 (Data Sources)                                   �?�? ├── 新闻数据�?                                                    �?�? �?  ├── 财联社API (CailianNewsDataSource)                         �?�? �?  ├── 新浪财经API (SinaFinanceDataSource)                       �?�? �?  └── 东方财富API (EastMoneyDataSource)                         �?�? ├── 社交媒体数据�?                                                �?�? �?  ├── 微博API (WeiboDataSource)                                 �?�? �?  ├── 雪球网爬�?(XueqiuDataSource)                             �?�? �?  └── 东方财富股吧 (GubaDataSource)                             �?�? └── 分析师预期数据源                                               �?�?     ├── 东方财富分析师预�?(AnalystExpectationDataSource)          �?�?     └── 同花顺研�?(ResearchReportDataSource)                      �?�?                                                                    �?�? Layer 2: 数据采集�?(Data Collection)                              �?�? ├── API适配�?(APIAdapter)                                        �?�? �?  ├── 统一API调用接口                                           �?�? �?  ├── 错误处理和重试机�?                                        �?�? �?  └── 频率限制控制                                               �?�? ├── 爬虫引擎 (CrawlerEngine)                                      �?�? �?  ├── Scrapy框架                                                �?�? �?  ├── Selenium动态页�?                                         �?�? �?  └── 反爬虫策�?                                                �?�? ├── 实时数据�?(DataStream)                                       �?�? �?  ├── WebSocket连接                                             �?�? �?  └── Kafka消息队列（可选）                                      �?�? └── 数据调度�?(DataScheduler)                                    �?�?     ├── Apache Airflow                                            �?�?     └── 定时任务管理                                               �?�?                                                                    �?�? Layer 3: 数据处理�?(Data Processing)                              �?�? ├── 数据清洗 (DataCleaner)                                        �?�? �?  ├── 去重、去�?                                               �?�? �?  ├── 格式标准�?                                                �?�? �?  └── 异常检�?                                                  �?�? ├── NLP处理 (NLPProcessor)                                        �?�? �?  ├── 情感分析 (SentimentAnalyzer)                              �?�? �?  ├── 事件提取 (EventExtractor)                                 �?�? �?  ├── 实体识别 (EntityRecognizer)                               �?�? �?  └── 关系抽取 (RelationExtractor)                              �?�? └── 向量�?(Vectorizer)                                           �?�?     ├── 文本向量�?                                                �?�?     └── 向量存储                                                   �?�?                                                                    �?�? Layer 4: 因子构建�?(Factor Construction)                          �?�? ├── 新闻因子 (NewsFactors)                                        �?�? �?  ├── 情感因子 (SentimentFactor)                                �?�? �?  ├── 事件驱动因子 (EventDrivenFactor)                          �?�? �?  └── 热度因子 (HeatFactor)                                     �?�? ├── 情绪因子 (SentimentFactors)                                   �?�? �?  ├── 市场情绪 (MarketSentimentFactor)                          �?�? �?  └── 个股情绪 (StockSentimentFactor)                           �?�? ├── 预期因子 (ExpectationFactors)                                 �?�? �?  ├── 预期差异因子 (ExpectationGapFactor)                       �?�? �?  └── 评级变化因子 (RatingChangeFactor)                         �?�? └── 关注度因�?(AttentionFactors)                                 �?�?     └── 社交媒体热度因子 (SocialHeatFactor)                        �?�?                                                                    �?�? Layer 5: 因子管理�?(Factor Management)                            �?�? ├── 因子存储 (FactorStorage)                                      �?�? �?  ├── SQLite数据�?                                             �?�? �?  └── ChromaDB向量数据�?                                        �?�? ├── IC验证 (ICValidator)                                          �?�? �?  ├── IC计算                                                    �?�? �?  ├── ICIR计算                                                  �?�? �?  └── 有效性检�?                                                �?�? ├── 因子监控 (FactorMonitor)                                      �?�? �?  ├── 实时监控                                                   �?�? �?  └── 衰减检�?                                                  �?�? └── 因子注册 (FactorRegistry)                                     �?�?     ├── 自动注册                                                   �?�?     └── 元数据管�?                                                �?�?                                                                    �?└─────────────────────────────────────────────────────────────────────�?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺅﺟ?ﺅﺟ?                   ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﭘﺅﺟ?                                ﺅﺟ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺅﺟ?ﺅﺟ?                                                                    ﺅﺟ?ﺅﺟ? Layer 1: ﮔﺍﮔ؟ﮔﭦﮒﺎ (Data Sources)                                   ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮔﺍﻠﭨﮔﺍﮔ؟ﺅﺟ?                                                    ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻟﺑ۱ﻟﻝ۳ﺝAPI (CailianNewsDataSource)                         ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮔﺍﮔﭖ۹ﻟﺑ۱ﻝﭨAPI (SinaFinanceDataSource)                       ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻛﺕﮔﺗﻟﺑ۱ﮒﺁAPI (EastMoneyDataSource)                         ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟ﺅﺟ?                                                ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒﺝ؟ﮒAPI (WeiboDataSource)                                 ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻠ۹ﻝﻝﺛﻝ؛ﺅﺟ?(XueqiuDataSource)                             ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻛﺕﮔﺗﻟﺑ۱ﮒﺁﻟ۰ﮒ۶ (GubaDataSource)                             ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒﮔﮒﺕﻠ۱ﮔﮔﺍﮔ؟ﮔﭦ                                               ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﻛﺕﮔﺗﻟﺑ۱ﮒﺁﮒﮔﮒﺕﻠ۱ﺅﺟ?(AnalystExpectationDataSource)          ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﮒﻟﺎﻠ۰ﭦﻝ ﺅﺟ?(ResearchReportDataSource)                      ﺅﺟ?ﺅﺟ?                                                                    ﺅﺟ?ﺅﺟ? Layer 2: ﮔﺍﮔ؟ﻠﻠﺅﺟ?(Data Collection)                              ﺅﺟ?ﺅﺟ? ﻗﻗﻗ APIﻠﻠﺅﺟ?(APIAdapter)                                        ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻝﭨﻛﺕAPIﻟﺍﻝ۷ﮔ۴ﮒ۲                                           ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻠﻟﺁﺁﮒ۳ﻝﮒﻠﻟﺁﮔﭦﺅﺟ?                                        ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻠ۱ﻝﻠﮒﭘﮔ۶ﮒﭘ                                               ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﻝ؛ﻟ،ﮒﺙﮔ (CrawlerEngine)                                      ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ Scrapyﮔ۰ﮔﭘ                                                ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ Seleniumﮒ۷ﮔﻠ۰ﭖﺅﺟ?                                         ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒﻝ؛ﻟ،ﻝ­ﺅﺟ?                                                ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒ؟ﮔﭘﮔﺍﮔ؟ﺅﺟ?(DataStream)                                       ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ WebSocketﻟﺟﮔ۴                                             ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ Kafkaﮔﭘﮔﺁﻠﮒﺅﺙﮒﺁﻠﺅﺙ                                      ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮔﺍﮔ؟ﻟﺍﮒﭦ۵ﺅﺟ?(DataScheduler)                                    ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ Apache Airflow                                            ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﮒ؟ﮔﭘﻛﭨﭨﮒ۰ﻝ؟۰ﻝ                                               ﺅﺟ?ﺅﺟ?                                                                    ﺅﺟ?ﺅﺟ? Layer 3: ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?(Data Processing)                              ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮔﺍﮔ؟ﮔﺕﮔﺑ (DataCleaner)                                        ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒﭨﻠﻙﮒﭨﺅﺟ?                                               ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮔ ﺙﮒﺙﮔ ﮒﺅﺟ?                                                ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒﺙﮒﺕﺕﮔ۲ﺅﺟ?                                                  ﺅﺟ?ﺅﺟ? ﻗﻗﻗ NLPﮒ۳ﻝ (NLPProcessor)                                        ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮔﮔﮒﮔ (SentimentAnalyzer)                              ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻛﭦﻛﭨﭘﮔﮒ (EventExtractor)                                 ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒ؟ﻛﺛﻟﺁﮒ، (EntityRecognizer)                               ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒﺏﻝﺏﭨﮔﺛﮒ (RelationExtractor)                              ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒﻠﺅﺟ?(Vectorizer)                                           ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﮔﮔ؛ﮒﻠﺅﺟ?                                                ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﮒﻠﮒ­ﮒ۷                                                   ﺅﺟ?ﺅﺟ?                                                                    ﺅﺟ?ﺅﺟ? Layer 4: ﮒ ﮒ­ﮔﮒﭨﭦﺅﺟ?(Factor Construction)                          ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮔﺍﻠﭨﮒ ﮒ­ (NewsFactors)                                        ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮔﮔﮒ ﮒ­ (SentimentFactor)                                ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­ (EventDrivenFactor)                          ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻝ­ﮒﭦ۵ﮒ ﮒ­ (HeatFactor)                                     ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮔﻝﭨ۹ﮒ ﮒ­ (SentimentFactors)                                   ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒﺕﮒﭦﮔﻝﭨ۹ (MarketSentimentFactor)                          ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻛﺕ۹ﻟ۰ﮔﻝﭨ۹ (StockSentimentFactor)                           ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﻠ۱ﮔﮒ ﮒ­ (ExpectationFactors)                                 ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻠ۱ﮔﮒﺓ؟ﮒﺙﮒ ﮒ­ (ExpectationGapFactor)                       ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻟﺁﻝﭦ۶ﮒﮒﮒ ﮒ­ (RatingChangeFactor)                         ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒﺏﮔﺏ۷ﮒﭦ۵ﮒ ﺅﺟ?(AttentionFactors)                                 ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﻝ­ﮒﭦ۵ﮒ ﮒ­ (SocialHeatFactor)                        ﺅﺟ?ﺅﺟ?                                                                    ﺅﺟ?ﺅﺟ? Layer 5: ﮒ ﮒ­ﻝ؟۰ﻝﺅﺟ?(Factor Management)                            ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒ ﮒ­ﮒ­ﮒ۷ (FactorStorage)                                      ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ SQLiteﮔﺍﮔ؟ﺅﺟ?                                             ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ChromaDBﮒﻠﮔﺍﮔ؟ﺅﺟ?                                        ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ICﻠ۹ﻟﺁ (ICValidator)                                          ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ICﻟ؟۰ﻝ؟                                                    ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ICIRﻟ؟۰ﻝ؟                                                  ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮔﮔﮔ۶ﮔ۲ﺅﺟ?                                                ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒ ﮒ­ﻝﮔ۶ (FactorMonitor)                                      ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﮒ؟ﮔﭘﻝﮔ۶                                                   ﺅﺟ?ﺅﺟ? ﺅﺟ?  ﻗﻗﻗ ﻟ۰ﺍﮒﮔ۲ﺅﺟ?                                                  ﺅﺟ?ﺅﺟ? ﻗﻗﻗ ﮒ ﮒ­ﮔﺏ۷ﮒ (FactorRegistry)                                     ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﻟ۹ﮒ۷ﮔﺏ۷ﮒ                                                   ﺅﺟ?ﺅﺟ?     ﻗﻗﻗ ﮒﮔﺍﮔ؟ﻝ؟۰ﺅﺟ?                                                ﺅﺟ?ﺅﺟ?                                                                    ﺅﺟ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺅﺟ?```
 
-### 2.2 Layer定位说明
+### 2.2 Layerﮒ؟ﻛﺛﻟﺁﺑﮔ
 
-| Layer | 定位 | 职责 | 技术栈 |
+| Layer | ﮒ؟ﻛﺛ | ﻟﻟﺑ۲ | ﮔﮔﺁﮔ  |
 |-------|------|------|--------|
-| **Layer 1** | 数据源层 | 提供原始数据 | 公开API、爬�?|
-| **Layer 2** | 数据采集�?| 数据采集和调�?| Requests、Scrapy、Airflow |
-| **Layer 3** | 数据处理�?| 数据清洗和NLP处理 | GLM-4-Flash、正则表达式 |
-| **Layer 4** | 因子构建�?| 因子计算和构�?| NumPy、Pandas |
-| **Layer 5** | 因子管理�?| 因子存储和验�?| SQLite、ChromaDB |
+| **Layer 1** | ﮔﺍﮔ؟ﮔﭦﮒﺎ | ﮔﻛﺝﮒﮒ۶ﮔﺍﮔ؟ | ﮒ؛ﮒﺙAPIﻙﻝ؛ﺅﺟ?|
+| **Layer 2** | ﮔﺍﮔ؟ﻠﻠﺅﺟ?| ﮔﺍﮔ؟ﻠﻠﮒﻟﺍﺅﺟ?| RequestsﻙScrapyﻙAirflow |
+| **Layer 3** | ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?| ﮔﺍﮔ؟ﮔﺕﮔﺑﮒNLPﮒ۳ﻝ | GLM-4-Flashﻙﮔ­۲ﮒﻟ۰۷ﻟﺝﺝﮒﺙ |
+| **Layer 4** | ﮒ ﮒ­ﮔﮒﭨﭦﺅﺟ?| ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﮔﺅﺟ?| NumPyﻙPandas |
+| **Layer 5** | ﮒ ﮒ­ﻝ؟۰ﻝﺅﺟ?| ﮒ ﮒ­ﮒ­ﮒ۷ﮒﻠ۹ﺅﺟ?| SQLiteﻙChromaDB |
 
-### 2.3 模块职责边界
+### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ
 
 ```
-数据源层 �?数据采集�?�?数据处理�?�?因子构建�?�?因子管理�?    �?          �?          �?          �?          �? 原始数据    采集数据    清洗数据    因子数据    注册因子
+ﮔﺍﮔ؟ﮔﭦﮒﺎ ﺅﺟ?ﮔﺍﮔ؟ﻠﻠﺅﺟ?ﺅﺟ?ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?ﺅﺟ?ﮒ ﮒ­ﮔﮒﭨﭦﺅﺟ?ﺅﺟ?ﮒ ﮒ­ﻝ؟۰ﻝﺅﺟ?    ﺅﺟ?          ﺅﺟ?          ﺅﺟ?          ﺅﺟ?          ﺅﺟ? ﮒﮒ۶ﮔﺍﮔ؟    ﻠﻠﮔﺍﮔ؟    ﮔﺕﮔﺑﮔﺍﮔ؟    ﮒ ﮒ­ﮔﺍﮔ؟    ﮔﺏ۷ﮒﮒ ﮒ­
 ```
 
-**职责边界**:
-- **数据源层**: 仅负责提供原始数据，不涉及数据处�?- **数据采集�?*: 仅负责数据采集，不涉及业务逻辑
-- **数据处理�?*: 仅负责数据清洗和NLP处理，不涉及因子计算
-- **因子构建�?*: 仅负责因子计算，不涉及数据存�?- **因子管理�?*: 仅负责因子存储和验证，不涉及因子计算
+**ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
+- **ﮔﺍﮔ؟ﮔﭦﮒﺎ**: ﻛﭨﻟﺑﻟﺑ۲ﮔﻛﺝﮒﮒ۶ﮔﺍﮔ؟ﺅﺙﻛﺕﮔﭘﮒﮔﺍﮔ؟ﮒ۳ﺅﺟ?- **ﮔﺍﮔ؟ﻠﻠﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮔﺍﮔ؟ﻠﻠﺅﺙﻛﺕﮔﭘﮒﻛﺕﮒ۰ﻠﭨﻟﺝ
+- **ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮔﺍﮔ؟ﮔﺕﮔﺑﮒNLPﮒ۳ﻝﺅﺙﻛﺕﮔﭘﮒﮒ ﮒ­ﻟ؟۰ﻝ؟
+- **ﮒ ﮒ­ﮔﮒﭨﭦﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮒ ﮒ­ﻟ؟۰ﻝ؟ﺅﺙﻛﺕﮔﭘﮒﮔﺍﮔ؟ﮒ­ﺅﺟ?- **ﮒ ﮒ­ﻝ؟۰ﻝﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮒ ﮒ­ﮒ­ﮒ۷ﮒﻠ۹ﻟﺁﺅﺙﻛﺕﮔﭘﮒﮒ ﮒ­ﻟ؟۰ﻝ؟
 
 ---
 
-## 三、接口定�?
-### 3.1 数据源接�?
-#### 3.1.1 新闻数据源接�?
+## ﻛﺕﻙﮔ۴ﮒ۲ﮒ؟ﺅﺟ?
+### 3.1 ﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?
+#### 3.1.1 ﮔﺍﻠﭨﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?
 ```python
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional
@@ -90,23 +90,23 @@ from datetime import datetime
 import pandas as pd
 
 class NewsDataSource(ABC):
-    """新闻数据源基�?""
+    """ﮔﺍﻠﭨﮔﺍﮔ؟ﮔﭦﮒﭦﺅﺟ?""
     
     @abstractmethod
     def get_realtime_news(self, limit: int = 100) -> List[Dict]:
         """
-        获取实时新闻
+        ﻟﺓﮒﮒ؟ﮔﭘﮔﺍﻠﭨ
         
         Args:
-            limit: 返回新闻数量
+            limit: ﻟﺟﮒﮔﺍﻠﭨﮔﺍﻠ
             
         Returns:
-            新闻列表，每个新闻包含：
-            - news_id: 新闻ID
-            - title: 标题
-            - content: 内容
-            - publish_time: 发布时间
-            - source: 数据�?            - url: 链接
+            ﮔﺍﻠﭨﮒﻟ۰۷ﺅﺙﮔﺁﻛﺕ۹ﮔﺍﻠﭨﮒﮒ،ﺅﺙ
+            - news_id: ﮔﺍﻠﭨID
+            - title: ﮔ ﻠ۱
+            - content: ﮒﮒ؟ﺗ
+            - publish_time: ﮒﮒﺕﮔﭘﻠﺑ
+            - source: ﮔﺍﮔ؟ﺅﺟ?            - url: ﻠﺝﮔ۴
         """
         pass
     
@@ -116,14 +116,14 @@ class NewsDataSource(ABC):
                        start_date: datetime, 
                        end_date: datetime) -> List[Dict]:
         """
-        获取个股相关新闻
+        ﻟﺓﮒﻛﺕ۹ﻟ۰ﻝﺕﮒﺏﮔﺍﻠﭨ
         
         Args:
-            stock_code: 股票代码
-            start_date: 开始日�?            end_date: 结束日期
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            start_date: ﮒﺙﮒ۶ﮔ۴ﺅﺟ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         Returns:
-            新闻列表
+            ﮔﺍﻠﭨﮒﻟ۰۷
         """
         pass
     
@@ -133,49 +133,49 @@ class NewsDataSource(ABC):
                     start_date: datetime, 
                     end_date: datetime) -> List[Dict]:
         """
-        搜索新闻
+        ﮔﻝﺑ۱ﮔﺍﻠﭨ
         
         Args:
-            keyword: 关键�?            start_date: 开始日�?            end_date: 结束日期
+            keyword: ﮒﺏﻠ؟ﺅﺟ?            start_date: ﮒﺙﮒ۶ﮔ۴ﺅﺟ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         Returns:
-            新闻列表
+            ﮔﺍﻠﭨﮒﻟ۰۷
         """
         pass
 ```
 
-#### 3.1.2 社交媒体数据源接�?
+#### 3.1.2 ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?
 ```python
 class SocialMediaDataSource(ABC):
-    """社交媒体数据源基�?""
+    """ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟ﮔﭦﮒﭦﺅﺟ?""
     
     @abstractmethod
     def get_stock_posts(self, 
                         stock_code: str, 
                         page: int = 1) -> List[Dict]:
         """
-        获取股票相关讨论
+        ﻟﺓﮒﻟ۰ﻝ۴۷ﻝﺕﮒﺏﻟ؟۷ﻟ؟ﭦ
         
         Args:
-            stock_code: 股票代码
-            page: 页码
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            page: ﻠ۰ﭖﻝ 
             
         Returns:
-            讨论列表，每个讨论包含：
-            - post_id: 帖子ID
-            - user_id: 用户ID
-            - user_name: 用户�?            - content: 内容
-            - publish_time: 发布时间
-            - likes: 点赞�?            - comments: 评论�?            - reposts: 转发�?        """
+            ﻟ؟۷ﻟ؟ﭦﮒﻟ۰۷ﺅﺙﮔﺁﻛﺕ۹ﻟ؟۷ﻟ؟ﭦﮒﮒ،ﺅﺙ
+            - post_id: ﮒﺕﮒ­ID
+            - user_id: ﻝ۷ﮔﺓID
+            - user_name: ﻝ۷ﮔﺓﺅﺟ?            - content: ﮒﮒ؟ﺗ
+            - publish_time: ﮒﮒﺕﮔﭘﻠﺑ
+            - likes: ﻝﺗﻟﭖﺅﺟ?            - comments: ﻟﺁﻟ؟ﭦﺅﺟ?            - reposts: ﻟﺛ؛ﮒﺅﺟ?        """
         pass
     
     @abstractmethod
     def get_hot_topics(self) -> List[Dict]:
         """
-        获取热门话题
+        ﻟﺓﮒﻝ­ﻠ۷ﻟﺁﻠ۱
         
         Returns:
-            热门话题列表
+            ﻝ­ﻠ۷ﻟﺁﻠ۱ﮒﻟ۰۷
         """
         pass
     
@@ -184,51 +184,51 @@ class SocialMediaDataSource(ABC):
                        user_id: str, 
                        limit: int = 50) -> List[Dict]:
         """
-        获取用户发布内容
+        ﻟﺓﮒﻝ۷ﮔﺓﮒﮒﺕﮒﮒ؟ﺗ
         
         Args:
-            user_id: 用户ID
-            limit: 返回数量
+            user_id: ﻝ۷ﮔﺓID
+            limit: ﻟﺟﮒﮔﺍﻠ
             
         Returns:
-            用户发布内容列表
+            ﻝ۷ﮔﺓﮒﮒﺕﮒﮒ؟ﺗﮒﻟ۰۷
         """
         pass
 ```
 
-#### 3.1.3 分析师预期数据源接口
+#### 3.1.3 ﮒﮔﮒﺕﻠ۱ﮔﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۲
 
 ```python
 class AnalystExpectationDataSource(ABC):
-    """分析师预期数据源基类"""
+    """ﮒﮔﮒﺕﻠ۱ﮔﮔﺍﮔ؟ﮔﭦﮒﭦﻝﺎﭨ"""
     
     @abstractmethod
     def get_analyst_rating(self, stock_code: str) -> List[Dict]:
         """
-        获取分析师评�?        
+        ﻟﺓﮒﮒﮔﮒﺕﻟﺁﺅﺟ?        
         Args:
-            stock_code: 股票代码
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
             
         Returns:
-            评级列表，每个评级包含：
-            - analyst_name: 分析师姓�?            - institution: 机构名称
-            - rating: 评级
-            - target_price: 目标�?            - report_date: 报告日期
+            ﻟﺁﻝﭦ۶ﮒﻟ۰۷ﺅﺙﮔﺁﻛﺕ۹ﻟﺁﻝﭦ۶ﮒﮒ،ﺅﺙ
+            - analyst_name: ﮒﮔﮒﺕﮒ۶ﺅﺟ?            - institution: ﮔﭦﮔﮒﻝ۶ﺍ
+            - rating: ﻟﺁﻝﭦ۶
+            - target_price: ﻝ؟ﮔ ﺅﺟ?            - report_date: ﮔ۴ﮒﮔ۴ﮔ
         """
         pass
     
     @abstractmethod
     def get_consensus_forecast(self, stock_code: str) -> Dict:
         """
-        获取一致预�?        
+        ﻟﺓﮒﻛﺕﻟﺑﻠ۱ﺅﺟ?        
         Args:
-            stock_code: 股票代码
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
             
         Returns:
-            一致预期数据：
-            - eps_forecast: EPS预测
-            - revenue_forecast: 营收预测
-            - rating_consensus: 评级一致预�?        """
+            ﻛﺕﻟﺑﻠ۱ﮔﮔﺍﮔ؟ﺅﺙ
+            - eps_forecast: EPSﻠ۱ﮔﭖ
+            - revenue_forecast: ﻟ۴ﮔﭘﻠ۱ﮔﭖ
+            - rating_consensus: ﻟﺁﻝﭦ۶ﻛﺕﻟﺑﻠ۱ﺅﺟ?        """
         pass
     
     @abstractmethod
@@ -237,119 +237,119 @@ class AnalystExpectationDataSource(ABC):
                           start_date: datetime, 
                           end_date: datetime) -> List[Dict]:
         """
-        获取评级历史
+        ﻟﺓﮒﻟﺁﻝﭦ۶ﮒﮒﺎ
         
         Args:
-            stock_code: 股票代码
-            start_date: 开始日�?            end_date: 结束日期
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            start_date: ﮒﺙﮒ۶ﮔ۴ﺅﺟ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         Returns:
-            评级历史列表
+            ﻟﺁﻝﭦ۶ﮒﮒﺎﮒﻟ۰۷
         """
         pass
 ```
 
-### 3.2 NLP处理接口
+### 3.2 NLPﮒ۳ﻝﮔ۴ﮒ۲
 
-#### 3.2.1 情感分析接口
+#### 3.2.1 ﮔﮔﮒﮔﮔ۴ﮒ۲
 
 ```python
 class SentimentAnalyzer:
-    """情感分析�?""
+    """ﮔﮔﮒﮔﺅﺟ?""
     
     def analyze_sentiment(self, text: str) -> float:
         """
-        分析文本情感
+        ﮒﮔﮔﮔ؛ﮔﮔ
         
         Args:
-            text: 文本内容
+            text: ﮔﮔ؛ﮒﮒ؟ﺗ
             
         Returns:
-            情感得分�?1�?�?            -1: 极度负面
-            0: 中�?            1: 极度正面
+            ﮔﮔﮒﺝﮒﺅﺟ?1ﺅﺟ?ﺅﺟ?            -1: ﮔﮒﭦ۵ﻟﺑﻠ۱
+            0: ﻛﺕ­ﺅﺟﺛ?            1: ﮔﮒﭦ۵ﮔ­۲ﻠ۱
         """
         pass
     
     def batch_analyze(self, texts: List[str]) -> List[float]:
         """
-        批量情感分析
+        ﮔﺗﻠﮔﮔﮒﮔ
         
         Args:
-            texts: 文本列表
+            texts: ﮔﮔ؛ﮒﻟ۰۷
             
         Returns:
-            情感得分列表
+            ﮔﮔﮒﺝﮒﮒﻟ۰۷
         """
         pass
 ```
 
-#### 3.2.2 事件提取接口
+#### 3.2.2 ﻛﭦﻛﭨﭘﮔﮒﮔ۴ﮒ۲
 
 ```python
 class EventExtractor:
-    """事件提取�?""
+    """ﻛﭦﻛﭨﭘﮔﮒﺅﺟ?""
     
     def extract_events(self, text: str) -> Dict:
         """
-        提取新闻事件
+        ﮔﮒﮔﺍﻠﭨﻛﭦﻛﭨﭘ
         
         Args:
-            text: 新闻文本
+            text: ﮔﺍﻠﭨﮔﮔ؛
             
         Returns:
-            事件信息�?            - event_type: 事件类型
-            - event_summary: 事件摘要
-            - related_stocks: 相关股票
-            - impact_level: 影响等级（高/�?低）
-            - sentiment: 情感倾向（正�?负面/中性）
+            ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﺅﺟ?            - event_type: ﻛﭦﻛﭨﭘﻝﺎﭨﮒ
+            - event_summary: ﻛﭦﻛﭨﭘﮔﻟ۵
+            - related_stocks: ﻝﺕﮒﺏﻟ۰ﻝ۴۷
+            - impact_level: ﮒﺛﺎﮒﻝ­ﻝﭦ۶ﺅﺙﻠ،/ﺅﺟ?ﻛﺛﺅﺙ
+            - sentiment: ﮔﮔﮒﺝﮒﺅﺙﮔ­۲ﺅﺟ?ﻟﺑﻠ۱/ﻛﺕ­ﮔ۶ﺅﺙ
         """
         pass
 ```
 
-#### 3.2.3 实体识别接口
+#### 3.2.3 ﮒ؟ﻛﺛﻟﺁﮒ،ﮔ۴ﮒ۲
 
 ```python
 class EntityRecognizer:
-    """实体识别�?""
+    """ﮒ؟ﻛﺛﻟﺁﮒ،ﺅﺟ?""
     
     def extract_stocks(self, text: str) -> List[str]:
         """
-        提取股票代码
+        ﮔﮒﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
         
         Args:
-            text: 文本内容
+            text: ﮔﮔ؛ﮒﮒ؟ﺗ
             
         Returns:
-            股票代码列表
+            ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
         """
         pass
     
     def extract_companies(self, text: str) -> List[str]:
         """
-        提取公司名称
+        ﮔﮒﮒ؛ﮒﺕﮒﻝ۶ﺍ
         
         Args:
-            text: 文本内容
+            text: ﮔﮔ؛ﮒﮒ؟ﺗ
             
         Returns:
-            公司名称列表
+            ﮒ؛ﮒﺕﮒﻝ۶ﺍﮒﻟ۰۷
         """
         pass
 ```
 
-### 3.3 因子计算接口
+### 3.3 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔ۴ﮒ۲
 
-#### 3.3.1 因子计算基类
+#### 3.3.1 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭦﻝﺎﭨ
 
 ```python
 from abc import ABC, abstractmethod
 
 class AlternativeDataFactorCalculator(ABC):
-    """另类数据因子计算基类
+    """ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭦﻝﺎﭨ
     
-    职责边界说明:
-    - 本类专门用于另类数据因子（新闻情感、事件驱动等�?    - 基础因子（价值、成长、动量等）由FactorCalculator模块负责
-    - 参�? [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
+    ﻟﻟﺑ۲ﻟﺝﺗﻝﻟﺁﺑﮔ:
+    - ﮔ؛ﻝﺎﭨﻛﺕﻠ۷ﻝ۷ﻛﭦﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮒ ﮒ­ﺅﺙﮔﺍﻠﭨﮔﮔﻙﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﻝ­ﺅﺟ?    - ﮒﭦﻝ۰ﮒ ﮒ­ﺅﺙﻛﭨﺓﮒﺙﻙﮔﻠﺟﻙﮒ۷ﻠﻝ­ﺅﺙﻝﺎFactorCalculatorﮔ۷۰ﮒﻟﺑﻟﺑ۲
+    - ﮒﺅﺟﺛ? [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
     """
     
     @abstractmethod
@@ -358,14 +358,14 @@ class AlternativeDataFactorCalculator(ABC):
                   date: datetime, 
                   **kwargs) -> float:
         """
-        计算因子�?        
+        ﻟ؟۰ﻝ؟ﮒ ﮒ­ﺅﺟ?        
         Args:
-            stock_code: 股票代码
-            date: 计算日期
-            **kwargs: 其他参数
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
+            **kwargs: ﮒﭘﻛﭨﮒﮔﺍ
             
         Returns:
-            因子�?        """
+            ﮒ ﮒ­ﺅﺟ?        """
         pass
     
     @abstractmethod
@@ -373,95 +373,95 @@ class AlternativeDataFactorCalculator(ABC):
                        stock_codes: List[str], 
                        date: datetime) -> pd.Series:
         """
-        批量计算因子
+        ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­
         
         Args:
-            stock_codes: 股票代码列表
-            date: 计算日期
+            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             
         Returns:
-            因子值序列（index=stock_code�?        """
+            ﮒ ﮒ­ﮒﺙﮒﭦﮒﺅﺙindex=stock_codeﺅﺟ?        """
         pass
     
     def get_factor_info(self) -> Dict:
         """
-        获取因子信息
+        ﻟﺓﮒﮒ ﮒ­ﻛﺟ۰ﮔﺁ
         
         Returns:
-            因子信息�?            - factor_name: 因子名称
-            - factor_type: 因子类型
-            - description: 因子描述
-            - update_frequency: 更新频率
-            - data_window: 数据窗口
-            - expected_ic: 预期IC
+            ﮒ ﮒ­ﻛﺟ۰ﮔﺁﺅﺟ?            - factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            - factor_type: ﮒ ﮒ­ﻝﺎﭨﮒ
+            - description: ﮒ ﮒ­ﮔﻟﺟﺍ
+            - update_frequency: ﮔﺑﮔﺍﻠ۱ﻝ
+            - data_window: ﮔﺍﮔ؟ﻝ۹ﮒ۲
+            - expected_ic: ﻠ۱ﮔIC
         """
         pass
 ```
 
-#### 3.3.2 新闻因子接口
+#### 3.3.2 ﮔﺍﻠﭨﮒ ﮒ­ﮔ۴ﮒ۲
 
 ```python
 class NewsSentimentFactor(AlternativeDataFactorCalculator):
-    """新闻情感因子"""
+    """ﮔﺍﻠﭨﮔﮔﮒ ﮒ­"""
     
     def calculate(self, 
                   stock_code: str, 
                   date: datetime, 
                   window: int = 7) -> float:
         """
-        计算新闻情感因子
+        ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﮔﮔﮒ ﮒ­
         
         Args:
-            stock_code: 股票代码
-            date: 计算日期
-            window: 时间窗口（天�?            
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
+            window: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒ۳۸ﺅﺟ?            
         Returns:
-            因子值（-1�?�?        """
+            ﮒ ﮒ­ﮒﺙﺅﺙ-1ﺅﺟ?ﺅﺟ?        """
         pass
 
 class EventDrivenFactor(AlternativeDataFactorCalculator):
-    """事件驱动因子"""
+    """ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­"""
     
     def calculate(self, 
                   stock_code: str, 
                   date: datetime) -> float:
         """
-        计算事件驱动因子
+        ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­
         
         Args:
-            stock_code: 股票代码
-            date: 计算日期
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             
         Returns:
-            因子值（事件影响得分�?        """
+            ﮒ ﮒ­ﮒﺙﺅﺙﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒﺅﺟ?        """
         pass
 
 class NewsHeatFactor(AlternativeDataFactorCalculator):
-    """新闻热度因子"""
+    """ﮔﺍﻠﭨﻝ­ﮒﭦ۵ﮒ ﮒ­"""
     
     def calculate(self, 
                   stock_code: str, 
                   date: datetime, 
                   window: int = 7) -> float:
         """
-        计算新闻热度因子
+        ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﻝ­ﮒﭦ۵ﮒ ﮒ­
         
         Args:
-            stock_code: 股票代码
-            date: 计算日期
-            window: 时间窗口（天�?            
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
+            window: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒ۳۸ﺅﺟ?            
         Returns:
-            因子值（热度得分�?        """
+            ﮒ ﮒ­ﮒﺙﺅﺙﻝ­ﮒﭦ۵ﮒﺝﮒﺅﺟ?        """
         pass
 ```
 
-### 3.4 因子管理接口
+### 3.4 ﮒ ﮒ­ﻝ؟۰ﻝﮔ۴ﮒ۲
 
-#### 3.4.1 因子注册接口
+#### 3.4.1 ﮒ ﮒ­ﮔﺏ۷ﮒﮔ۴ﮒ۲
 
 ```python
 class FactorRegistry:
-    """因子注册�?""
+    """ﮒ ﮒ­ﮔﺏ۷ﮒﺅﺟ?""
     
     def register_factor(self, 
                        factor_name: str,
@@ -469,68 +469,68 @@ class FactorRegistry:
                        calculator: AlternativeDataFactorCalculator,
                        metadata: Dict) -> str:
         """
-        注册因子
+        ﮔﺏ۷ﮒﮒ ﮒ­
         
         Args:
-            factor_name: 因子名称
-            factor_type: 因子类型
-            calculator: 因子计算�?            metadata: 因子元数�?            
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            factor_type: ﮒ ﮒ­ﻝﺎﭨﮒ
+            calculator: ﮒ ﮒ­ﻟ؟۰ﻝ؟ﺅﺟ?            metadata: ﮒ ﮒ­ﮒﮔﺍﺅﺟ?            
         Returns:
-            因子ID
+            ﮒ ﮒ­ID
         """
         pass
     
     def get_factor(self, factor_id: str) -> Dict:
         """
-        获取因子信息
+        ﻟﺓﮒﮒ ﮒ­ﻛﺟ۰ﮔﺁ
         
         Args:
-            factor_id: 因子ID
+            factor_id: ﮒ ﮒ­ID
             
         Returns:
-            因子信息
+            ﮒ ﮒ­ﻛﺟ۰ﮔﺁ
         """
         pass
     
     def list_factors(self, factor_type: Optional[str] = None) -> List[Dict]:
         """
-        列出因子
+        ﮒﮒﭦﮒ ﮒ­
         
         Args:
-            factor_type: 因子类型（可选）
+            factor_type: ﮒ ﮒ­ﻝﺎﭨﮒﺅﺙﮒﺁﻠﺅﺙ
             
         Returns:
-            因子列表
+            ﮒ ﮒ­ﮒﻟ۰۷
         """
         pass
 ```
 
-#### 3.4.2 IC验证接口
+#### 3.4.2 ICﻠ۹ﻟﺁﮔ۴ﮒ۲
 
 ```python
 class ICValidator:
-    """IC验证�?""
+    """ICﻠ۹ﻟﺁﺅﺟ?""
     
     def calculate_ic(self, 
                      factor_values: pd.Series,
                      returns: pd.Series) -> float:
         """
-        计算IC�?        
+        ﻟ؟۰ﻝ؟ICﺅﺟ?        
         Args:
-            factor_values: 因子值序�?            returns: 收益率序�?            
+            factor_values: ﮒ ﮒ­ﮒﺙﮒﭦﺅﺟ?            returns: ﮔﭘﻝﻝﮒﭦﺅﺟ?            
         Returns:
-            IC�?        """
+            ICﺅﺟ?        """
         pass
     
     def calculate_icir(self, 
                       ic_series: pd.Series) -> float:
         """
-        计算ICIR�?        
+        ﻟ؟۰ﻝ؟ICIRﺅﺟ?        
         Args:
-            ic_series: IC时间序列
+            ic_series: ICﮔﭘﻠﺑﮒﭦﮒ
             
         Returns:
-            ICIR�?        """
+            ICIRﺅﺟ?        """
         pass
     
     def validate_factor(self, 
@@ -539,23 +539,23 @@ class ICValidator:
                        min_ic: float = 0.03,
                        min_icir: float = 1.0) -> Dict:
         """
-        验证因子有效�?        
+        ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﺅﺟ?        
         Args:
-            factor_values: 因子值（index=date, columns=stock_code�?            returns: 收益率（index=date, columns=stock_code�?            min_ic: 最小IC阈�?            min_icir: 最小ICIR阈�?            
+            factor_values: ﮒ ﮒ­ﮒﺙﺅﺙindex=date, columns=stock_codeﺅﺟ?            returns: ﮔﭘﻝﻝﺅﺙindex=date, columns=stock_codeﺅﺟ?            min_ic: ﮔﮒﺍICﻠﺅﺟﺛ?            min_icir: ﮔﮒﺍICIRﻠﺅﺟﺛ?            
         Returns:
-            验证结果�?            - ic_mean: IC均�?            - icir: ICIR
-            - ic_std: IC标准�?            - is_valid: 是否有效
+            ﻠ۹ﻟﺁﻝﭨﮔﺅﺟ?            - ic_mean: ICﮒﺅﺟﺛ?            - icir: ICIR
+            - ic_std: ICﮔ ﮒﺅﺟ?            - is_valid: ﮔﺁﮒ۵ﮔﮔ
         """
         pass
 ```
 
 ---
 
-## 四、数据模型与存储
+## ﮒﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ­ﮒ۷
 
-### 4.1 数据库表结构
+### 4.1 ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔ
 
-#### 4.1.1 新闻数据�?
+#### 4.1.1 ﮔﺍﻠﭨﮔﺍﮔ؟ﺅﺟ?
 ```sql
 CREATE TABLE news_data (
     news_id TEXT PRIMARY KEY,
@@ -579,24 +579,24 @@ CREATE INDEX idx_news_sentiment ON news_data(sentiment);
 CREATE INDEX idx_news_event_type ON news_data(event_type);
 ```
 
-**字段说明**:
-| 字段�?| 类型 | 说明 | 索引 |
+**ﮒ­ﮔ؟ﭖﻟﺁﺑﮔ**:
+| ﮒ­ﮔ؟ﭖﺅﺟ?| ﻝﺎﭨﮒ | ﻟﺁﺑﮔ | ﻝﺑ۱ﮒﺙ |
 |--------|------|------|------|
-| news_id | TEXT | 新闻唯一ID（主键） | PRIMARY |
-| title | TEXT | 新闻标题 | - |
-| content | TEXT | 新闻正文 | - |
-| publish_time | TIMESTAMP | 发布时间 | INDEX |
-| source | TEXT | 数据来源 | INDEX |
-| url | TEXT | 原文链接 | - |
-| stock_codes | TEXT | 相关股票代码（JSON�?| - |
-| sentiment | REAL | 情感得分�?1�?�?| INDEX |
-| event_type | TEXT | 事件类型 | INDEX |
-| event_summary | TEXT | 事件摘要 | - |
-| impact_level | TEXT | 影响等级 | - |
+| news_id | TEXT | ﮔﺍﻠﭨﮒﺁﻛﺕIDﺅﺙﻛﺕﭨﻠ؟ﺅﺙ | PRIMARY |
+| title | TEXT | ﮔﺍﻠﭨﮔ ﻠ۱ | - |
+| content | TEXT | ﮔﺍﻠﭨﮔ­۲ﮔ | - |
+| publish_time | TIMESTAMP | ﮒﮒﺕﮔﭘﻠﺑ | INDEX |
+| source | TEXT | ﮔﺍﮔ؟ﮔ۴ﮔﭦ | INDEX |
+| url | TEXT | ﮒﮔﻠﺝﮔ۴ | - |
+| stock_codes | TEXT | ﻝﺕﮒﺏﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﺅﺙJSONﺅﺟ?| - |
+| sentiment | REAL | ﮔﮔﮒﺝﮒﺅﺟ?1ﺅﺟ?ﺅﺟ?| INDEX |
+| event_type | TEXT | ﻛﭦﻛﭨﭘﻝﺎﭨﮒ | INDEX |
+| event_summary | TEXT | ﻛﭦﻛﭨﭘﮔﻟ۵ | - |
+| impact_level | TEXT | ﮒﺛﺎﮒﻝ­ﻝﭦ۶ | - |
 
 ---
 
-#### 4.1.2 社交媒体数据�?
+#### 4.1.2 ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟ﺅﺟ?
 ```sql
 CREATE TABLE social_posts (
     post_id TEXT PRIMARY KEY,
@@ -621,7 +621,7 @@ CREATE INDEX idx_posts_user ON social_posts(user_id);
 
 ---
 
-#### 4.1.3 分析师预期数据表
+#### 4.1.3 ﮒﮔﮒﺕﻠ۱ﮔﮔﺍﮔ؟ﻟ۰۷
 
 ```sql
 CREATE TABLE analyst_expectations (
@@ -644,7 +644,7 @@ CREATE INDEX idx_analyst_institution ON analyst_expectations(institution);
 
 ---
 
-#### 4.1.4 因子数据�?
+#### 4.1.4 ﮒ ﮒ­ﮔﺍﮔ؟ﺅﺟ?
 ```sql
 CREATE TABLE alternative_factors (
     factor_id TEXT PRIMARY KEY,
@@ -667,7 +667,7 @@ CREATE INDEX idx_factor_name ON alternative_factors(factor_name);
 
 ---
 
-#### 4.1.5 因子元数据表
+#### 4.1.5 ﮒ ﮒ­ﮒﮔﺍﮔ؟ﻟ۰۷
 
 ```sql
 CREATE TABLE factor_metadata (
@@ -691,15 +691,15 @@ CREATE INDEX idx_metadata_active ON factor_metadata(is_active);
 
 ---
 
-### 4.2 向量数据库设�?
-#### 4.2.1 ChromaDB Collection设计
+### 4.2 ﮒﻠﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﺅﺟ?
+#### 4.2.1 ChromaDB Collectionﻟ؟ﺝﻟ؟۰
 
 ```python
 from chromadb import Client
 from chromadb.config import Settings
 
 class VectorStore:
-    """向量存储"""
+    """ﮒﻠﮒ­ﮒ۷"""
     
     def __init__(self, persist_directory: str = "./data/vector_db"):
         self.client = Client(Settings(
@@ -707,80 +707,80 @@ class VectorStore:
             persist_directory=persist_directory
         ))
         
-        # 新闻向量集合
+        # ﮔﺍﻠﭨﮒﻠﻠﮒ
         self.news_collection = self.client.get_or_create_collection(
             name="news_vectors",
-            metadata={"description": "新闻文本向量"}
+            metadata={"description": "ﮔﺍﻠﭨﮔﮔ؛ﮒﻠ"}
         )
         
-        # 社交媒体向量集合
+        # ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮒﻠﻠﮒ
         self.posts_collection = self.client.get_or_create_collection(
             name="posts_vectors",
-            metadata={"description": "社交媒体文本向量"}
+            metadata={"description": "ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﮔ؛ﮒﻠ"}
         )
 ```
 
-#### 4.2.2 向量存储格式
+#### 4.2.2 ﮒﻠﮒ­ﮒ۷ﮔ ﺙﮒﺙ
 
-**新闻向量**:
+**ﮔﺍﻠﭨﮒﻠ**:
 ```python
 {
     "id": "news_001",
-    "embedding": [0.1, 0.2, ...],  # 768维向�?    "metadata": {
+    "embedding": [0.1, 0.2, ...],  # 768ﻝﭨﺑﮒﺅﺟ?    "metadata": {
         "news_id": "news_001",
-        "title": "新闻标题",
+        "title": "ﮔﺍﻠﭨﮔ ﻠ۱",
         "publish_time": "2026-04-02T10:00:00",
         "source": "cailian",
         "sentiment": 0.8
     },
-    "document": "新闻正文内容"
+    "document": "ﮔﺍﻠﭨﮔ­۲ﮔﮒﮒ؟ﺗ"
 }
 ```
 
-**社交媒体向量**:
+**ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮒﻠ**:
 ```python
 {
     "id": "post_001",
-    "embedding": [0.1, 0.2, ...],  # 768维向�?    "metadata": {
+    "embedding": [0.1, 0.2, ...],  # 768ﻝﭨﺑﮒﺅﺟ?    "metadata": {
         "post_id": "post_001",
         "platform": "weibo",
         "publish_time": "2026-04-02T10:00:00",
         "likes": 100,
         "sentiment": 0.6
     },
-    "document": "微博内容"
+    "document": "ﮒﺝ؟ﮒﮒﮒ؟ﺗ"
 }
 ```
 
 ---
 
-### 4.3 数据流设�?
+### 4.3 ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﺅﺟ?
 ```
-数据�?�?数据采集 �?数据清洗 �?NLP处理 �?因子计算 �?因子存储
-  �?        �?         �?         �?         �?         �?原始数据  采集数据   清洗数据   结构化数�? 因子数据   注册因子
+ﮔﺍﮔ؟ﺅﺟ?ﺅﺟ?ﮔﺍﮔ؟ﻠﻠ ﺅﺟ?ﮔﺍﮔ؟ﮔﺕﮔﺑ ﺅﺟ?NLPﮒ۳ﻝ ﺅﺟ?ﮒ ﮒ­ﻟ؟۰ﻝ؟ ﺅﺟ?ﮒ ﮒ­ﮒ­ﮒ۷
+  ﺅﺟ?        ﺅﺟ?         ﺅﺟ?         ﺅﺟ?         ﺅﺟ?         ﺅﺟ?ﮒﮒ۶ﮔﺍﮔ؟  ﻠﻠﮔﺍﮔ؟   ﮔﺕﮔﺑﮔﺍﮔ؟   ﻝﭨﮔﮒﮔﺍﺅﺟ? ﮒ ﮒ­ﮔﺍﮔ؟   ﮔﺏ۷ﮒﮒ ﮒ­
 ```
 
-**数据流转过程**:
+**ﮔﺍﮔ؟ﮔﭖﻟﺛ؛ﻟﺟﻝ۷**:
 
-1. **数据采集**: 从数据源获取原始数据
-2. **数据清洗**: 去重、去噪、格式标准化
-3. **NLP处理**: 情感分析、事件提取、实体识�?4. **因子计算**: 基于处理后的数据计算因子
-5. **因子存储**: 存储因子数据和元数据
-6. **因子注册**: 注册因子到因子库
+1. **ﮔﺍﮔ؟ﻠﻠ**: ﻛﭨﮔﺍﮔ؟ﮔﭦﻟﺓﮒﮒﮒ۶ﮔﺍﮔ؟
+2. **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: ﮒﭨﻠﻙﮒﭨﮒ۹ﻙﮔ ﺙﮒﺙﮔ ﮒﮒ
+3. **NLPﮒ۳ﻝ**: ﮔﮔﮒﮔﻙﻛﭦﻛﭨﭘﮔﮒﻙﮒ؟ﻛﺛﻟﺁﺅﺟ?4. **ﮒ ﮒ­ﻟ؟۰ﻝ؟**: ﮒﭦﻛﭦﮒ۳ﻝﮒﻝﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ ﮒ­
+5. **ﮒ ﮒ­ﮒ­ﮒ۷**: ﮒ­ﮒ۷ﮒ ﮒ­ﮔﺍﮔ؟ﮒﮒﮔﺍﮔ؟
+6. **ﮒ ﮒ­ﮔﺏ۷ﮒ**: ﮔﺏ۷ﮒﮒ ﮒ­ﮒﺍﮒ ﮒ­ﮒﭦ
 
 ---
 
-## 五、算法实现说�?
-### 5.1 情感分析算法
+## ﻛﭦﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﺅﺟ?
+### 5.1 ﮔﮔﮒﮔﻝ؟ﮔﺏ
 
-#### 5.1.1 算法原理
+#### 5.1.1 ﻝ؟ﮔﺏﮒﻝ
 
-使用GLM-4-Flash进行情感分析，通过Prompt Engineering引导模型输出情感得分�?
-#### 5.1.2 实现代码
+ﻛﺛﺟﻝ۷GLM-4-Flashﻟﺟﻟ۰ﮔﮔﮒﮔﺅﺙﻠﻟﺟPrompt Engineeringﮒﺙﮒﺁﺙﮔ۷۰ﮒﻟﺝﮒﭦﮔﮔﮒﺝﮒﺅﺟ?
+#### 5.1.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ 
 
 ```python
 class SentimentAnalyzer:
-    """情感分析�?""
+    """ﮔﮔﮒﮔﺅﺟ?""
     
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -789,30 +789,30 @@ class SentimentAnalyzer:
         
     def analyze_sentiment(self, text: str) -> float:
         """
-        分析文本情感
+        ﮒﮔﮔﮔ؛ﮔﮔ
         
         Args:
-            text: 文本内容
+            text: ﮔﮔ؛ﮒﮒ؟ﺗ
             
         Returns:
-            情感得分�?1�?�?        """
+            ﮔﮔﮒﺝﮒﺅﺟ?1ﺅﺟ?ﺅﺟ?        """
         prompt = f"""
-        请分析以下财经新闻的情感倾向，返�?1�?之间的情感得分：
-        -1表示极度负面�?表示中性，1表示极度正面
+        ﻟﺁﺓﮒﮔﻛﭨ۴ﻛﺕﻟﺑ۱ﻝﭨﮔﺍﻠﭨﻝﮔﮔﮒﺝﮒﺅﺙﻟﺟﺅﺟ?1ﺅﺟ?ﻛﺗﻠﺑﻝﮔﮔﮒﺝﮒﺅﺙ
+        -1ﻟ۰۷ﻝ۳ﭦﮔﮒﭦ۵ﻟﺑﻠ۱ﺅﺟ?ﻟ۰۷ﻝ۳ﭦﻛﺕ­ﮔ۶ﺅﺙ1ﻟ۰۷ﻝ۳ﭦﮔﮒﭦ۵ﮔ­۲ﻠ۱
         
-        新闻内容：{text}
+        ﮔﺍﻠﭨﮒﮒ؟ﺗﺅﺙ{text}
         
-        请只返回情感得分数值，不要其他解释�?        """
+        ﻟﺁﺓﮒ۹ﻟﺟﮒﮔﮔﮒﺝﮒﮔﺍﮒﺙﺅﺙﻛﺕﻟ۵ﮒﭘﻛﭨﻟ۶۲ﻠﺅﺟ?        """
         
         response = self._call_api(prompt)
         sentiment_score = float(response.strip())
         
-        # 确保得分在[-1, 1]范围�?        sentiment_score = max(-1.0, min(1.0, sentiment_score))
+        # ﻝ۰؟ﻛﺟﮒﺝﮒﮒ۷[-1, 1]ﻟﮒﺑﺅﺟ?        sentiment_score = max(-1.0, min(1.0, sentiment_score))
         
         return sentiment_score
     
     def _call_api(self, prompt: str) -> str:
-        """调用GLM-4 API"""
+        """ﻟﺍﻝ۷GLM-4 API"""
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
@@ -831,55 +831,55 @@ class SentimentAnalyzer:
         return result['choices'][0]['message']['content']
 ```
 
-#### 5.1.3 复杂度分�?
-- **时间复杂�?*: O(n)，其中n为文本长�?- **空间复杂�?*: O(1)
-- **API调用成本**: 0.1�?百万tokens
+#### 5.1.3 ﮒ۳ﮔﮒﭦ۵ﮒﺅﺟ?
+- **ﮔﭘﻠﺑﮒ۳ﮔﺅﺟ?*: O(n)ﺅﺙﮒﭘﻛﺕ­nﻛﺕﭦﮔﮔ؛ﻠﺟﺅﺟ?- **ﻝ۸ﭦﻠﺑﮒ۳ﮔﺅﺟ?*: O(1)
+- **APIﻟﺍﻝ۷ﮔﮔ؛**: 0.1ﺅﺟ?ﻝﺝﻛﺕtokens
 
 ---
 
-### 5.2 事件提取算法
+### 5.2 ﻛﭦﻛﭨﭘﮔﮒﻝ؟ﮔﺏ
 
-#### 5.2.1 算法原理
+#### 5.2.1 ﻝ؟ﮔﺏﮒﻝ
 
-使用GLM-4-Flash进行事件提取，识别新闻中的关键事件、影响等级和相关股票�?
-#### 5.2.2 实现代码
+ﻛﺛﺟﻝ۷GLM-4-Flashﻟﺟﻟ۰ﻛﭦﻛﭨﭘﮔﮒﺅﺙﻟﺁﮒ،ﮔﺍﻠﭨﻛﺕ­ﻝﮒﺏﻠ؟ﻛﭦﻛﭨﭘﻙﮒﺛﺎﮒﻝ­ﻝﭦ۶ﮒﻝﺕﮒﺏﻟ۰ﻝ۴۷ﺅﺟ?
+#### 5.2.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ 
 
 ```python
 class EventExtractor:
-    """事件提取�?""
+    """ﻛﭦﻛﭨﭘﮔﮒﺅﺟ?""
     
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.model = "glm-4-flash"
         self.event_types = [
-            '业绩公告', '并购重组', '股权变动', '高管变动',
-            '产品发布', '政策影响', '行业动�?, '市场事件'
+            'ﻛﺕﻝﭨ۸ﮒ؛ﮒ', 'ﮒﺗﭘﻟﺑ­ﻠﻝﭨ', 'ﻟ۰ﮔﮒﮒ۷', 'ﻠ،ﻝ؟۰ﮒﮒ۷',
+            'ﻛﭦ۶ﮒﮒﮒﺕ', 'ﮔﺟﻝ­ﮒﺛﺎﮒ', 'ﻟ۰ﻛﺕﮒ۷ﺅﺟﺛ?, 'ﮒﺕﮒﭦﻛﭦﻛﭨﭘ'
         ]
         
     def extract_events(self, text: str) -> Dict:
         """
-        提取新闻事件
+        ﮔﮒﮔﺍﻠﭨﻛﭦﻛﭨﭘ
         
         Args:
-            text: 新闻文本
+            text: ﮔﺍﻠﭨﮔﮔ؛
             
         Returns:
-            事件信息字典
+            ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﮒ­ﮒﺕ
         """
         prompt = f"""
-        请从以下财经新闻中提取关键事件信息：
+        ﻟﺁﺓﻛﭨﻛﭨ۴ﻛﺕﻟﺑ۱ﻝﭨﮔﺍﻠﭨﻛﺕ­ﮔﮒﮒﺏﻠ؟ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﺅﺙ
         
-        新闻内容：{text}
+        ﮔﺍﻠﭨﮒﮒ؟ﺗﺅﺙ{text}
         
-        请返回JSON格式�?        {{
-            "event_type": "事件类型（从以下选择：{', '.join(self.event_types)}�?,
-            "event_summary": "事件摘要�?0字以内）",
-            "related_stocks": ["相关股票代码"],
-            "impact_level": "影响等级（高/�?低）",
-            "sentiment": "情感倾向（正�?负面/中性）"
+        ﻟﺁﺓﻟﺟﮒJSONﮔ ﺙﮒﺙﺅﺟ?        {{
+            "event_type": "ﻛﭦﻛﭨﭘﻝﺎﭨﮒﺅﺙﻛﭨﻛﭨ۴ﻛﺕﻠﮔ۸ﺅﺙ{', '.join(self.event_types)}ﺅﺟ?,
+            "event_summary": "ﻛﭦﻛﭨﭘﮔﻟ۵ﺅﺟ?0ﮒ­ﻛﭨ۴ﮒﺅﺙ",
+            "related_stocks": ["ﻝﺕﮒﺏﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ "],
+            "impact_level": "ﮒﺛﺎﮒﻝ­ﻝﭦ۶ﺅﺙﻠ،/ﺅﺟ?ﻛﺛﺅﺙ",
+            "sentiment": "ﮔﮔﮒﺝﮒﺅﺙﮔ­۲ﺅﺟ?ﻟﺑﻠ۱/ﻛﺕ­ﮔ۶ﺅﺙ"
         }}
         
-        只返回JSON，不要其他解释�?        """
+        ﮒ۹ﻟﺟﮒJSONﺅﺙﻛﺕﻟ۵ﮒﭘﻛﭨﻟ۶۲ﻠﺅﺟﺛ?        """
         
         response = self._call_api(prompt)
         event_info = json.loads(response)
@@ -889,13 +889,13 @@ class EventExtractor:
 
 ---
 
-### 5.3 因子计算算法
+### 5.3 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 
-#### 5.3.1 新闻情感因子算法
+#### 5.3.1 ﮔﺍﻠﭨﮔﮔﮒ ﮒ­ﻝ؟ﮔﺏ
 
 ```python
 class NewsSentimentFactor(AlternativeDataFactorCalculator):
-    """新闻情感因子"""
+    """ﮔﺍﻠﭨﮔﮔﮒ ﮒ­"""
     
     def __init__(self, news_data_source, sentiment_analyzer):
         self.news_data_source = news_data_source
@@ -906,18 +906,18 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
                   date: datetime, 
                   window: int = 7) -> float:
         """
-        计算新闻情感因子
+        ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﮔﮔﮒ ﮒ­
         
-        算法步骤�?        1. 获取过去window天的相关新闻
-        2. 计算每条新闻的情感得�?        3. 加权平均（近期新闻权重更高）
+        ﻝ؟ﮔﺏﮔ­۴ﻠ۹۳ﺅﺟ?        1. ﻟﺓﮒﻟﺟﮒﭨwindowﮒ۳۸ﻝﻝﺕﮒﺏﮔﺍﻠﭨ
+        2. ﻟ؟۰ﻝ؟ﮔﺁﮔ۰ﮔﺍﻠﭨﻝﮔﮔﮒﺝﺅﺟ?        3. ﮒ ﮔﮒﺗﺏﮒﺅﺙﻟﺟﮔﮔﺍﻠﭨﮔﻠﮔﺑﻠ،ﺅﺙ
         
         Args:
-            stock_code: 股票代码
-            date: 计算日期
-            window: 时间窗口（天�?            
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
+            window: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒ۳۸ﺅﺟ?            
         Returns:
-            因子值（-1�?�?        """
-        # 1. 获取过去window天的相关新闻
+            ﮒ ﮒ­ﮒﺙﺅﺙ-1ﺅﺟ?ﺅﺟ?        """
+        # 1. ﻟﺓﮒﻟﺟﮒﭨwindowﮒ۳۸ﻝﻝﺕﮒﺏﮔﺍﻠﭨ
         start_date = date - timedelta(days=window)
         news_list = self.news_data_source.get_stock_news(
             stock_code, start_date, date
@@ -926,7 +926,7 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
         if not news_list:
             return 0.0
         
-        # 2. 计算每条新闻的情感得�?        sentiments = []
+        # 2. ﻟ؟۰ﻝ؟ﮔﺁﮔ۰ﮔﺍﻠﭨﻝﮔﮔﮒﺝﺅﺟ?        sentiments = []
         for news in news_list:
             if news.get('sentiment') is not None:
                 sentiment = news['sentiment']
@@ -936,7 +936,7 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
                 )
             sentiments.append(sentiment)
         
-        # 3. 加权平均（近期新闻权重更高）
+        # 3. ﮒ ﮔﮒﺗﺏﮒﺅﺙﻟﺟﮔﮔﺍﻠﭨﮔﻠﮔﺑﻠ،ﺅﺙ
         weights = np.exp(np.linspace(-1, 0, len(sentiments)))
         weights = weights / weights.sum()
         
@@ -945,27 +945,27 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
         return factor_value
 ```
 
-**算法复杂�?*:
-- 时间复杂�? O(n)，其中n为新闻数�?- 空间复杂�? O(n)
+**ﻝ؟ﮔﺏﮒ۳ﮔﺅﺟ?*:
+- ﮔﭘﻠﺑﮒ۳ﮔﺅﺟ? O(n)ﺅﺙﮒﭘﻛﺕ­nﻛﺕﭦﮔﺍﻠﭨﮔﺍﺅﺟ?- ﻝ۸ﭦﻠﺑﮒ۳ﮔﺅﺟ? O(n)
 
 ---
 
-#### 5.3.2 事件驱动因子算法
+#### 5.3.2 ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­ﻝ؟ﮔﺏ
 
 ```python
 class EventDrivenFactor(AlternativeDataFactorCalculator):
-    """事件驱动因子"""
+    """ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­"""
     
-    # 事件影响基准得分
+    # ﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﭦﮒﮒﺝﮒ
     EVENT_IMPACT_MAP = {
-        '业绩公告': 0.8,
-        '并购重组': 0.9,
-        '股权变动': 0.7,
-        '高管变动': 0.5,
-        '产品发布': 0.6,
-        '政策影响': 0.8,
-        '行业动�?: 0.4,
-        '市场事件': 0.3
+        'ﻛﺕﻝﭨ۸ﮒ؛ﮒ': 0.8,
+        'ﮒﺗﭘﻟﺑ­ﻠﻝﭨ': 0.9,
+        'ﻟ۰ﮔﮒﮒ۷': 0.7,
+        'ﻠ،ﻝ؟۰ﮒﮒ۷': 0.5,
+        'ﻛﭦ۶ﮒﮒﮒﺕ': 0.6,
+        'ﮔﺟﻝ­ﮒﺛﺎﮒ': 0.8,
+        'ﻟ۰ﻛﺕﮒ۷ﺅﺟﺛ?: 0.4,
+        'ﮒﺕﮒﭦﻛﭦﻛﭨﭘ': 0.3
     }
     
     def __init__(self, news_data_source, event_extractor):
@@ -974,31 +974,31 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
         
     def calculate(self, stock_code: str, date: datetime) -> float:
         """
-        计算事件驱动因子
+        ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­
         
-        算法步骤�?        1. 获取近期重大事件
-        2. 计算每个事件的影响得�?        3. 综合评估事件影响
+        ﻝ؟ﮔﺏﮔ­۴ﻠ۹۳ﺅﺟ?        1. ﻟﺓﮒﻟﺟﮔﻠﮒ۳۶ﻛﭦﻛﭨﭘ
+        2. ﻟ؟۰ﻝ؟ﮔﺁﻛﺕ۹ﻛﭦﻛﭨﭘﻝﮒﺛﺎﮒﮒﺝﺅﺟ?        3. ﻝﭨﺙﮒﻟﺁﻛﺙﺍﻛﭦﻛﭨﭘﮒﺛﺎﮒ
         
         Args:
-            stock_code: 股票代码
-            date: 计算日期
+            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             
         Returns:
-            因子值（事件影响得分�?        """
-        # 1. 获取近期重大事件
+            ﮒ ﮒ­ﮒﺙﺅﺙﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒﺅﺟ?        """
+        # 1. ﻟﺓﮒﻟﺟﮔﻠﮒ۳۶ﻛﭦﻛﭨﭘ
         start_date = date - timedelta(days=30)
         news_list = self.news_data_source.get_stock_news(
             stock_code, start_date, date
         )
         
-        # 2. 提取事件信息
+        # 2. ﮔﮒﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁ
         events = []
         for news in news_list:
             if news.get('event_type'):
                 event_info = {
                     'event_type': news['event_type'],
-                    'impact_level': news.get('impact_level', '�?),
-                    'sentiment': news.get('sentiment', '中�?),
+                    'impact_level': news.get('impact_level', 'ﺅﺟ?),
+                    'sentiment': news.get('sentiment', 'ﻛﺕ­ﺅﺟﺛ?),
                     'publish_time': news['publish_time']
                 }
                 events.append(event_info)
@@ -1006,30 +1006,30 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
         if not events:
             return 0.0
         
-        # 3. 计算事件影响得分
+        # 3. ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒ
         impact_scores = []
         for event in events:
-            # 基准得分
+            # ﮒﭦﮒﮒﺝﮒ
             base_score = self.EVENT_IMPACT_MAP.get(event['event_type'], 0.5)
             
-            # 影响等级乘数
-            level_multiplier = {'�?: 1.0, '�?: 0.6, '�?: 0.3}.get(
+            # ﮒﺛﺎﮒﻝ­ﻝﭦ۶ﻛﺗﮔﺍ
+            level_multiplier = {'ﺅﺟ?: 1.0, 'ﺅﺟ?: 0.6, 'ﺅﺟ?: 0.3}.get(
                 event['impact_level'], 0.6
             )
             
-            # 情感乘数
-            sentiment_multiplier = {'正面': 1.0, '负面': -1.0, '中�?: 0.0}.get(
+            # ﮔﮔﻛﺗﮔﺍ
+            sentiment_multiplier = {'ﮔ­۲ﻠ۱': 1.0, 'ﻟﺑﻠ۱': -1.0, 'ﻛﺕ­ﺅﺟﺛ?: 0.0}.get(
                 event['sentiment'], 0.0
             )
             
-            # 时间衰减（近期事件权重更高）
+            # ﮔﭘﻠﺑﻟ۰ﺍﮒﺅﺙﻟﺟﮔﻛﭦﻛﭨﭘﮔﻠﮔﺑﻠ،ﺅﺙ
             days_ago = (date - event['publish_time']).days
-            time_decay = np.exp(-days_ago / 30)  # 30天衰减周�?            
-            # 综合得分
+            time_decay = np.exp(-days_ago / 30)  # 30ﮒ۳۸ﻟ۰ﺍﮒﮒ۷ﺅﺟ?            
+            # ﻝﭨﺙﮒﮒﺝﮒ
             score = base_score * level_multiplier * sentiment_multiplier * time_decay
             impact_scores.append(score)
         
-        # 4. 综合评估
+        # 4. ﻝﭨﺙﮒﻟﺁﻛﺙﺍ
         factor_value = np.mean(impact_scores)
         
         return factor_value
@@ -1037,69 +1037,69 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 
 ---
 
-## 六、实施技术栈
+## ﮒ­ﻙﮒ؟ﮔﺛﮔﮔﺁﮔ 
 
-### 6.1 编程语言和框�?
-| 技术领�?| 技术选型 | 版本 | 说明 |
+### 6.1 ﻝﺙﻝ۷ﻟﺁ­ﻟ۷ﮒﮔ۰ﺅﺟ?
+| ﮔﮔﺁﻠ۱ﺅﺟ?| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ | ﻟﺁﺑﮔ |
 |---------|---------|------|------|
-| **编程语言** | Python | 3.9+ | 主要开发语言 |
-| **爬虫框架** | Scrapy | 2.11+ | 数据采集 |
-| **动态页�?* | Selenium | 4.15+ | JavaScript渲染 |
-| **HTTP请求** | Requests | 2.31+ | API调用 |
-| **数据处理** | Pandas | 2.1+ | 数据处理 |
-| **数值计�?* | NumPy | 1.26+ | 数值计�?|
+| **ﻝﺙﻝ۷ﻟﺁ­ﻟ۷** | Python | 3.9+ | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁ­ﻟ۷ |
+| **ﻝ؛ﻟ،ﮔ۰ﮔﭘ** | Scrapy | 2.11+ | ﮔﺍﮔ؟ﻠﻠ |
+| **ﮒ۷ﮔﻠ۰ﭖﺅﺟ?* | Selenium | 4.15+ | JavaScriptﮔﺕﺎﮔ |
+| **HTTPﻟﺁﺓﮔﺎ** | Requests | 2.31+ | APIﻟﺍﻝ۷ |
+| **ﮔﺍﮔ؟ﮒ۳ﻝ** | Pandas | 2.1+ | ﮔﺍﮔ؟ﮒ۳ﻝ |
+| **ﮔﺍﮒﺙﻟ؟۰ﺅﺟ?* | NumPy | 1.26+ | ﮔﺍﮒﺙﻟ؟۰ﺅﺟ?|
 
-### 6.2 第三方依�?
-| 依赖�?| 版本 | 用�?|
+### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝﺅﺟ?
+| ﻛﺝﻟﭖﺅﺟ?| ﻝﮔ؛ | ﻝ۷ﺅﺟﺛ?|
 |--------|------|------|
-| **chromadb** | 0.4.0+ | 向量数据�?|
+| **chromadb** | 0.4.0+ | ﮒﻠﮔﺍﮔ؟ﺅﺟ?|
 | **zhipuai** | 2.0.0+ | GLM-4 API |
-| **apache-airflow** | 2.7.0+ | 任务调度 |
-| **redis** | 5.0.0+ | 缓存 |
+| **apache-airflow** | 2.7.0+ | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ |
+| **redis** | 5.0.0+ | ﻝﺙﮒ­ |
 | **sqlalchemy** | 2.0.0+ | ORM |
 
-### 6.3 环境要求
+### 6.3 ﻝﺁﮒ۱ﻟ۵ﮔﺎ
 
-| 环境 | 要求 |
+| ﻝﺁﮒ۱ | ﻟ۵ﮔﺎ |
 |------|------|
-| **操作系统** | Windows 10/11, Linux, macOS |
-| **内存** | �?GB |
-| **存储** | �?0GB可用空间 |
-| **网络** | 稳定的互联网连接 |
+| **ﮔﻛﺛﻝﺏﭨﻝﭨ** | Windows 10/11, Linux, macOS |
+| **ﮒﮒ­** | ﺅﺟ?GB |
+| **ﮒ­ﮒ۷** | ﺅﺟ?0GBﮒﺁﻝ۷ﻝ۸ﭦﻠﺑ |
+| **ﻝﺛﻝﭨ** | ﻝ۷ﺏﮒ؟ﻝﻛﭦﻟﻝﺛﻟﺟﮔ۴ |
 
 ---
 
-## 七、测试策�?
-### 7.1 单元测试
+## ﻛﺕﻙﮔﭖﻟﺁﻝ­ﺅﺟ?
+### 7.1 ﮒﮒﮔﭖﻟﺁ
 
-#### 7.1.1 测试范围
+#### 7.1.1 ﮔﭖﻟﺁﻟﮒﺑ
 
-| 模块 | 测试内容 | 覆盖率目�?|
+| ﮔ۷۰ﮒ | ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟ﺅﺟ?|
 |------|---------|-----------|
-| **数据采集** | API调用、数据解�?| >85% |
-| **NLP处理** | 情感分析、事件提�?| >80% |
-| **因子计算** | 因子计算逻辑 | >90% |
-| **数据存储** | 数据库操�?| >85% |
+| **ﮔﺍﮔ؟ﻠﻠ** | APIﻟﺍﻝ۷ﻙﮔﺍﮔ؟ﻟ۶۲ﺅﺟ?| >85% |
+| **NLPﮒ۳ﻝ** | ﮔﮔﮒﮔﻙﻛﭦﻛﭨﭘﮔﺅﺟ?| >80% |
+| **ﮒ ﮒ­ﻟ؟۰ﻝ؟** | ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻠﭨﻟﺝ | >90% |
+| **ﮔﺍﮔ؟ﮒ­ﮒ۷** | ﮔﺍﮔ؟ﮒﭦﮔﺅﺟ?| >85% |
 
-#### 7.1.2 测试用例示例
+#### 7.1.2 ﮔﭖﻟﺁﻝ۷ﻛﺝﻝ۳ﭦﻛﺝ
 
 ```python
 import pytest
 from datetime import datetime
 
 class TestNewsSentimentFactor:
-    """新闻情感因子测试"""
+    """ﮔﺍﻠﭨﮔﮔﮒ ﮒ­ﮔﭖﻟﺁ"""
     
     def test_calculate_with_positive_news(self):
-        """测试正面新闻的因子计�?""
+        """ﮔﭖﻟﺁﮔ­۲ﻠ۱ﮔﺍﻠﭨﻝﮒ ﮒ­ﻟ؟۰ﺅﺟ?""
         factor = NewsSentimentFactor(mock_news_source, mock_sentiment_analyzer)
         
-        # 模拟正面新闻
+        # ﮔ۷۰ﮔﮔ­۲ﻠ۱ﮔﺍﻠﭨ
         mock_news_source.get_stock_news.return_value = [
             {
                 'news_id': '001',
-                'title': '利好消息',
-                'content': '公司业绩大幅增长',
+                'title': 'ﮒ۸ﮒ۴ﺛﮔﭘﮔﺁ',
+                'content': 'ﮒ؛ﮒﺕﻛﺕﻝﭨ۸ﮒ۳۶ﮒﺗﮒ۱ﻠﺟ',
                 'publish_time': datetime(2026, 4, 1),
                 'sentiment': 0.8
             }
@@ -1111,7 +1111,7 @@ class TestNewsSentimentFactor:
         assert factor_value <= 1
     
     def test_calculate_with_no_news(self):
-        """测试无新闻时的因子计�?""
+        """ﮔﭖﻟﺁﮔ ﮔﺍﻠﭨﮔﭘﻝﮒ ﮒ­ﻟ؟۰ﺅﺟ?""
         factor = NewsSentimentFactor(mock_news_source, mock_sentiment_analyzer)
         
         mock_news_source.get_stock_news.return_value = []
@@ -1123,161 +1123,161 @@ class TestNewsSentimentFactor:
 
 ---
 
-### 7.2 集成测试
+### 7.2 ﻠﮔﮔﭖﻟﺁ
 
-#### 7.2.1 测试场景
+#### 7.2.1 ﮔﭖﻟﺁﮒﭦﮔﺁ
 
-| 场景 | 测试内容 | 验收标准 |
+| ﮒﭦﮔﺁ | ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻠ۹ﮔﭘﮔ ﮒ |
 |------|---------|---------|
-| **数据采集流程** | 从数据源到数据库的完整流�?| 数据完整�?95% |
-| **NLP处理流程** | 从原始文本到结构化数�?| 准确�?80% |
-| **因子计算流程** | 从数据到因子的完整流�?| IC>0.03 |
+| **ﮔﺍﮔ؟ﻠﻠﮔﭖﻝ۷** | ﻛﭨﮔﺍﮔ؟ﮔﭦﮒﺍﮔﺍﮔ؟ﮒﭦﻝﮒ؟ﮔﺑﮔﭖﺅﺟ?| ﮔﺍﮔ؟ﮒ؟ﮔﺑﺅﺟ?95% |
+| **NLPﮒ۳ﻝﮔﭖﻝ۷** | ﻛﭨﮒﮒ۶ﮔﮔ؛ﮒﺍﻝﭨﮔﮒﮔﺍﺅﺟ?| ﮒﻝ۰؟ﺅﺟ?80% |
+| **ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔﭖﻝ۷** | ﻛﭨﮔﺍﮔ؟ﮒﺍﮒ ﮒ­ﻝﮒ؟ﮔﺑﮔﭖﺅﺟ?| IC>0.03 |
 
 ---
 
-### 7.3 性能测试
+### 7.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
-#### 7.3.1 性能指标
+#### 7.3.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **数据采集延迟** | <5分钟 | 压力测试 |
-| **因子计算延迟** | <10�?| 性能测试 |
-| **并发处理能力** | >100请求/�?| 并发测试 |
+| **ﮔﺍﮔ؟ﻠﻠﮒﭨﭘﻟﺟ** | <5ﮒﻠ | ﮒﮒﮔﭖﻟﺁ |
+| **ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | <10ﺅﺟ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ** | >100ﻟﺁﺓﮔﺎ/ﺅﺟ?| ﮒﺗﭘﮒﮔﭖﻟﺁ |
 
 ---
 
-## 八、风险与约束
+## ﮒ،ﻙﻠ۲ﻠ۸ﻛﺕﻝﭦ۵ﮔ
 
-### 8.1 技术风�?
-| 风险 | 影响 | 概率 | 缓解措施 |
+### 8.1 ﮔﮔﺁﻠ۲ﺅﺟ?
+| ﻠ۲ﻠ۸ | ﮒﺛﺎﮒ | ﮔ۵ﻝ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |------|------|------|---------|
-| **API频率限制** | �?| �?| 请求队列、多账号轮换 |
-| **数据质量不稳�?* | �?| �?| 数据清洗、异常检�?|
-| **NLP准确率不�?* | �?| �?| 模型优化、人工标�?|
-| **系统性能瓶颈** | �?| �?| 异步处理、缓存优�?|
+| **APIﻠ۱ﻝﻠﮒﭘ** | ﺅﺟ?| ﺅﺟ?| ﻟﺁﺓﮔﺎﻠﮒﻙﮒ۳ﻟﺑ۵ﮒﺓﻟﺛ؟ﮔ۱ |
+| **ﮔﺍﮔ؟ﻟﺑ۷ﻠﻛﺕﻝ۷ﺏﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﮔﺍﮔ؟ﮔﺕﮔﺑﻙﮒﺙﮒﺕﺕﮔ۲ﺅﺟ?|
+| **NLPﮒﻝ۰؟ﻝﻛﺕﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﮔ۷۰ﮒﻛﺙﮒﻙﻛﭦﭦﮒﺓ۴ﮔ ﺅﺟ?|
+| **ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﭘﻠ۱** | ﺅﺟ?| ﺅﺟ?| ﮒﺙﮔ­۴ﮒ۳ﻝﻙﻝﺙﮒ­ﻛﺙﺅﺟ?|
 
-### 8.2 实施风险
+### 8.2 ﮒ؟ﮔﺛﻠ۲ﻠ۸
 
-| 风险 | 影响 | 概率 | 缓解措施 |
+| ﻠ۲ﻠ۸ | ﮒﺛﺎﮒ | ﮔ۵ﻝ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |------|------|------|---------|
-| **进度延期** | �?| �?| 预留缓冲、并行开�?|
-| **资源不足** | �?| �?| 优先级管�?|
-| **需求变�?* | �?| �?| 需求冻�?|
+| **ﻟﺟﮒﭦ۵ﮒﭨﭘﮔ** | ﺅﺟ?| ﺅﺟ?| ﻠ۱ﻝﻝﺙﮒﺎﻙﮒﺗﭘﻟ۰ﮒﺙﺅﺟ?|
+| **ﻟﭖﮔﭦﻛﺕﻟﭘﺏ** | ﺅﺟ?| ﺅﺟ?| ﻛﺙﮒﻝﭦ۶ﻝ؟۰ﺅﺟ?|
+| **ﻠﮔﺎﮒﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﻠﮔﺎﮒﭨﺅﺟ?|
 
-### 8.3 约束条件
+### 8.3 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
 
-1. **数据源约�?*: 仅使用免费公开API
-2. **成本约束**: 月成�?200�?3. **时间约束**: 8周内完成
-4. **技术约�?*: 使用现有技术栈
+1. **ﮔﺍﮔ؟ﮔﭦﻝﭦ۵ﺅﺟ?*: ﻛﭨﻛﺛﺟﻝ۷ﮒﻟﺑﺗﮒ؛ﮒﺙAPI
+2. **ﮔﮔ؛ﻝﭦ۵ﮔ**: ﮔﮔﺅﺟ?200ﺅﺟ?3. **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: 8ﮒ۷ﮒﮒ؟ﮔ
+4. **ﮔﮔﺁﻝﭦ۵ﺅﺟ?*: ﻛﺛﺟﻝ۷ﻝﺍﮔﮔﮔﺁﮔ 
 
 ---
 
-## 九、验收标�?
-### 9.1 功能验收
+## ﻛﺗﻙﻠ۹ﮔﭘﮔ ﺅﺟ?
+### 9.1 ﮒﻟﺛﻠ۹ﮔﭘ
 
-| 功能 | 验收标准 | 测试方法 |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔ ﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|---------|---------|
-| **数据采集** | 数据完整�?95% | 数据质量检�?|
-| **NLP处理** | 情感分析准确�?80% | 人工标注验证 |
-| **因子计算** | 因子数量�?�?| 功能测试 |
-| **IC验证** | IC均�?0.03 | 统计检�?|
+| **ﮔﺍﮔ؟ﻠﻠ** | ﮔﺍﮔ؟ﮒ؟ﮔﺑﺅﺟ?95% | ﮔﺍﮔ؟ﻟﺑ۷ﻠﮔ۲ﺅﺟ?|
+| **NLPﮒ۳ﻝ** | ﮔﮔﮒﮔﮒﻝ۰؟ﺅﺟ?80% | ﻛﭦﭦﮒﺓ۴ﮔ ﮔﺏ۷ﻠ۹ﻟﺁ |
+| **ﮒ ﮒ­ﻟ؟۰ﻝ؟** | ﮒ ﮒ­ﮔﺍﻠﺅﺟ?ﺅﺟ?| ﮒﻟﺛﮔﭖﻟﺁ |
+| **ICﻠ۹ﻟﺁ** | ICﮒﺅﺟﺛ?0.03 | ﻝﭨﻟ؟۰ﮔ۲ﺅﺟ?|
 
-### 9.2 性能验收
+### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **数据采集延迟** | <5分钟 | 性能测试 |
-| **因子计算延迟** | <10�?| 性能测试 |
-| **系统可用�?* | >99% | 监控统计 |
+| **ﮔﺍﮔ؟ﻠﻠﮒﭨﭘﻟﺟ** | <5ﮒﻠ | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | <10ﺅﺟ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﻝﺏﭨﻝﭨﮒﺁﻝ۷ﺅﺟ?* | >99% | ﻝﮔ۶ﻝﭨﻟ؟۰ |
 
-### 9.3 质量验收
+### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘ
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **代码覆盖�?* | >80% | 单元测试 |
-| **文档完整�?* | 100% | 文档审查 |
-| **系统稳定�?* | >99% | 压力测试 |
+| **ﻛﭨ۲ﻝ ﻟ۵ﻝﺅﺟ?* | >80% | ﮒﮒﮔﭖﻟﺁ |
+| **ﮔﮔ۰۲ﮒ؟ﮔﺑﺅﺟ?* | 100% | ﮔﮔ۰۲ﮒ؟۰ﮔ۴ |
+| **ﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟ﺅﺟ?* | >99% | ﮒﮒﮔﭖﻟﺁ |
 
 ---
 
-## 十、实施路线图
+## ﮒﻙﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ
 
-### 10.1 Phase 1: 数据源接入（Week 1-3�?
-**目标**: 完成数据源接入和数据采集
+### 10.1 Phase 1: ﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﺅﺙWeek 1-3ﺅﺟ?
+**ﻝ؟ﮔ **: ﮒ؟ﮔﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﮒﮔﺍﮔ؟ﻠﻠ
 
-**关键任务**:
-1. 新闻数据源接�?2. 社交媒体数据源接�?3. 分析师预期数据源接入
-4. 数据库表结构设计
-5. 数据采集调度系统
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. ﮔﺍﻠﭨﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?2. ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?3. ﮒﮔﮒﺕﻠ۱ﮔﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴
+4. ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔﻟ؟ﺝﻟ؟۰
+5. ﮔﺍﮔ؟ﻠﻠﻟﺍﮒﭦ۵ﻝﺏﭨﻝﭨ
 
-**验收标准**:
-- 至少3个数据源接入
-- 数据质量>95%
-- 定时采集正常运行
-
----
-
-### 10.2 Phase 2: NLP处理（Week 4-5�?
-**目标**: 完成NLP处理模块
-
-**关键任务**:
-1. GLM-4-Flash API集成
-2. 情感分析模块开�?3. 事件提取模块开�?4. 实体识别模块开�?5. 向量数据库集�?
-**验收标准**:
-- 情感分析准确�?80%
-- 事件提取完整
-- 实体识别准确�?90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻟﺏﮒﺍ3ﻛﺕ۹ﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴
+- ﮔﺍﮔ؟ﻟﺑ۷ﻠ>95%
+- ﮒ؟ﮔﭘﻠﻠﮔ­۲ﮒﺕﺕﻟﺟﻟ۰
 
 ---
 
-### 10.3 Phase 3: 因子构建（Week 6-7�?
-**目标**: 完成因子构建和验�?
-**关键任务**:
-1. 新闻因子构建
-2. 情绪因子构建
-3. 预期因子构建
-4. 关注度因子构�?5. IC验证
+### 10.2 Phase 2: NLPﮒ۳ﻝﺅﺙWeek 4-5ﺅﺟ?
+**ﻝ؟ﮔ **: ﮒ؟ﮔNLPﮒ۳ﻝﮔ۷۰ﮒ
 
-**验收标准**:
-- 至少8个因�?- IC均�?0.03
-- 因子注册完成
-
----
-
-### 10.4 Phase 4: 测试验证（Week 8�?
-**目标**: 完成系统测试和项目验�?
-**关键任务**:
-1. 单元测试
-2. 集成测试
-3. 性能测试
-4. 回测验证
-5. 文档编写
-
-**验收标准**:
-- 所有测试通过
-- 文档完整
-- 项目交付
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. GLM-4-Flash APIﻠﮔ
+2. ﮔﮔﮒﮔﮔ۷۰ﮒﮒﺙﺅﺟ?3. ﻛﭦﻛﭨﭘﮔﮒﮔ۷۰ﮒﮒﺙﺅﺟ?4. ﮒ؟ﻛﺛﻟﺁﮒ،ﮔ۷۰ﮒﮒﺙﺅﺟ?5. ﮒﻠﮔﺍﮔ؟ﮒﭦﻠﺅﺟ?
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﮔﮔﮒﮔﮒﻝ۰؟ﺅﺟ?80%
+- ﻛﭦﻛﭨﭘﮔﮒﮒ؟ﮔﺑ
+- ﮒ؟ﻛﺛﻟﺁﮒ،ﮒﻝ۰؟ﺅﺟ?90%
 
 ---
 
-## 附录
+### 10.3 Phase 3: ﮒ ﮒ­ﮔﮒﭨﭦﺅﺙWeek 6-7ﺅﺟ?
+**ﻝ؟ﮔ **: ﮒ؟ﮔﮒ ﮒ­ﮔﮒﭨﭦﮒﻠ۹ﺅﺟ?
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. ﮔﺍﻠﭨﮒ ﮒ­ﮔﮒﭨﭦ
+2. ﮔﻝﭨ۹ﮒ ﮒ­ﮔﮒﭨﭦ
+3. ﻠ۱ﮔﮒ ﮒ­ﮔﮒﭨﭦ
+4. ﮒﺏﮔﺏ۷ﮒﭦ۵ﮒ ﮒ­ﮔﺅﺟ?5. ICﻠ۹ﻟﺁ
 
-### A. API文档
-
-详见: [ALTERNATIVE_DATA_API_DOCUMENTATION.md](./ALTERNATIVE_DATA_API_DOCUMENTATION.md)
-
-### B. 数据字典
-
-详见: [ALTERNATIVE_DATA_DICTIONARY.md](./ALTERNATIVE_DATA_DICTIONARY.md)
-
-### C. 测试报告
-
-详见: [ALTERNATIVE_DATA_TEST_REPORT.md](./ALTERNATIVE_DATA_TEST_REPORT.md)
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻟﺏﮒﺍ8ﻛﺕ۹ﮒ ﺅﺟ?- ICﮒﺅﺟﺛ?0.03
+- ﮒ ﮒ­ﮔﺏ۷ﮒﮒ؟ﮔ
 
 ---
 
-**技术规格书版本**: v1.0  
-**创建日期**: 2026-04-02  
-**评审状�?*: �?已批�? 
-**下一步行�?*: 开始Phase 1实施
+### 10.4 Phase 4: ﮔﭖﻟﺁﻠ۹ﻟﺁﺅﺙWeek 8ﺅﺟ?
+**ﻝ؟ﮔ **: ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻠ۰ﺗﻝ؟ﻠ۹ﺅﺟ?
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. ﮒﮒﮔﭖﻟﺁ
+2. ﻠﮔﮔﭖﻟﺁ
+3. ﮔ۶ﻟﺛﮔﭖﻟﺁ
+4. ﮒﮔﭖﻠ۹ﻟﺁ
+5. ﮔﮔ۰۲ﻝﺙﮒ
+
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﮔﮔﮔﭖﻟﺁﻠﻟﺟ
+- ﮔﮔ۰۲ﮒ؟ﮔﺑ
+- ﻠ۰ﺗﻝ؟ﻛﭦ۳ﻛﭨ
+
+---
+
+## ﻠﮒﺛ
+
+### A. APIﮔﮔ۰۲
+
+ﻟﺁ۵ﻟ۶: [ALTERNATIVE_DATA_API_DOCUMENTATION.md](./ALTERNATIVE_DATA_API_DOCUMENTATION.md)
+
+### B. ﮔﺍﮔ؟ﮒ­ﮒﺕ
+
+ﻟﺁ۵ﻟ۶: [ALTERNATIVE_DATA_DICTIONARY.md](./ALTERNATIVE_DATA_DICTIONARY.md)
+
+### C. ﮔﭖﻟﺁﮔ۴ﮒ
+
+ﻟﺁ۵ﻟ۶: [ALTERNATIVE_DATA_TEST_REPORT.md](./ALTERNATIVE_DATA_TEST_REPORT.md)
+
+---
+
+**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0  
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ? 
+**ﻛﺕﻛﺕﮔ­۴ﻟ۰ﺅﺟ?*: ﮒﺙﮒ۶Phase 1ﮒ؟ﮔﺛ

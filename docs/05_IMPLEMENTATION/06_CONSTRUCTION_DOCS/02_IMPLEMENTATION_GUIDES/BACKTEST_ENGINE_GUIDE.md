@@ -4,67 +4,67 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构�?
-standard_type: 专业量化机构实施指南
-applicable_scope: 回测引擎模块实施
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
+applicable_scope: ﮒﮔﭖﮒﺙﮔﮔ۷۰ﮒﮒ؟ﮔﺛ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../README.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 回测引擎实施指南
+# ﮒﮔﭖﮒﺙﮔﮒ؟ﮔﺛﮔﮒ
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-02
-> **职责**: 指导Backtesting.py回测引擎的集成和适配
-> **实施周期**: 2周（Week 3-4�?
-> **优先�?*: P0
-
----
-
-## 📋 实施概览
-
-### 目标
-
-集成Backtesting.py开源回测引擎，实现与系统策略框架的无缝对接�?
-
-### 核心功能
-
-- **策略适配**: 将系统策略适配为Backtesting.py格式
-- **数据转换**: 实现数据格式转换
-- **结果统一**: 统一回测结果格式
-- **性能优化**: 优化回测性能
-- **报告生成**: 自动生成回测报告
-
-### 参考蓝�?
-
-- [专业量化系统实施蓝图](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+> **ﻝﮔ؛**: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﻟﻟﺑ۲**: ﮔﮒﺁﺙBacktesting.pyﮒﮔﭖﮒﺙﮔﻝﻠﮔﮒﻠﻠ
+> **ﮒ؟ﮔﺛﮒ۷ﮔ**: 2ﮒ۷ﺅﺙWeek 3-4ﺅﺙ?
+> **ﻛﺙﮒﻝﭦ?*: P0
 
 ---
 
-## 🏗�?架构设计
+## ﻭ ﮒ؟ﮔﺛﮔ۵ﻟ۶
 
-### 模块结构
+### ﻝ؟ﮔ 
+
+ﻠﮔBacktesting.pyﮒﺙﮔﭦﮒﮔﭖﮒﺙﮔﺅﺙﮒ؟ﻝﺍﻛﺕﻝﺏﭨﻝﭨﻝ­ﻝ۴ﮔ۰ﮔﭘﻝﮔ ﻝﺙﮒﺁﺗﮔ۴ﻙ?
+
+### ﮔ ﺕﮒﺟﮒﻟﺛ
+
+- **ﻝ­ﻝ۴ﻠﻠ**: ﮒﺍﻝﺏﭨﻝﭨﻝ­ﻝ۴ﻠﻠﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ
+- **ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱**: ﮒ؟ﻝﺍﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱
+- **ﻝﭨﮔﻝﭨﻛﺕ**: ﻝﭨﻛﺕﮒﮔﭖﻝﭨﮔﮔ ﺙﮒﺙ
+- **ﮔ۶ﻟﺛﻛﺙﮒ**: ﻛﺙﮒﮒﮔﭖﮔ۶ﻟﺛ
+- **ﮔ۴ﮒﻝﮔ**: ﻟ۹ﮒ۷ﻝﮔﮒﮔﭖﮔ۴ﮒ
+
+### ﮒﻟﻟﮒ?
+
+- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+
+---
+
+## ﻭﺅﺕ?ﮔﭘﮔﻟ؟ﺝﻟ؟۰
+
+### ﮔ۷۰ﮒﻝﭨﮔ
 
 ```
 src/backtest/
-├── __init__.py                 # 模块初始�?
-├── adapter.py                  # BacktestingPyAdapter适配�?
-├── strategy_wrapper.py         # 策略包装�?
-├── data_converter.py           # 数据转换�?
-├── result_formatter.py         # 结果格式化器
-├── report_generator.py         # 报告生成�?
-├── exceptions.py               # 自定义异�?
-└── tests/                      # 单元测试
-    ├── test_adapter.py
-    ├── test_strategy_wrapper.py
-    ├── test_data_converter.py
-    └── test_result_formatter.py
+ﻗﻗﻗ __init__.py                 # ﮔ۷۰ﮒﮒﮒ۶ﮒ?
+ﻗﻗﻗ adapter.py                  # BacktestingPyAdapterﻠﻠﮒ?
+ﻗﻗﻗ strategy_wrapper.py         # ﻝ­ﻝ۴ﮒﻟ۲ﮒ?
+ﻗﻗﻗ data_converter.py           # ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒ?
+ﻗﻗﻗ result_formatter.py         # ﻝﭨﮔﮔ ﺙﮒﺙﮒﮒ۷
+ﻗﻗﻗ report_generator.py         # ﮔ۴ﮒﻝﮔﮒ?
+ﻗﻗﻗ exceptions.py               # ﻟ۹ﮒ؟ﻛﺗﮒﺙﮒﺕ?
+ﻗﻗﻗ tests/                      # ﮒﮒﮔﭖﻟﺁ
+    ﻗﻗﻗ test_adapter.py
+    ﻗﻗﻗ test_strategy_wrapper.py
+    ﻗﻗﻗ test_data_converter.py
+    ﻗﻗﻗ test_result_formatter.py
 ```
 
-### 类设�?
+### ﻝﺎﭨﻟ؟ﺝﻟ؟?
 
-#### BacktestingPyAdapter - 适配�?
+#### BacktestingPyAdapter - ﻠﻠﮒ?
 
 ```python
 from typing import Dict, Any, Optional, List
@@ -73,7 +73,7 @@ from backtesting.lib import crossover
 import pandas as pd
 
 class BacktestingPyAdapter:
-    """Backtesting.py适配�?- 将系统策略适配为Backtesting.py格式"""
+    """Backtesting.pyﻠﻠﮒ?- ﮒﺍﻝﺏﭨﻝﭨﻝ­ﻝ۴ﻠﻠﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ"""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
@@ -88,7 +88,7 @@ class BacktestingPyAdapter:
         commission: float = 0.002,
         **kwargs
     ) -> Dict[str, Any]:
-        """运行回测"""
+        """ﻟﺟﻟ۰ﮒﮔﭖ"""
         bt_strategy = StrategyWrapper.wrap(strategy)
         
         bt_data = self.data_converter.convert(data)
@@ -115,7 +115,7 @@ class BacktestingPyAdapter:
         maximize: str = "Return [%]",
         **kwargs
     ) -> Dict[str, Any]:
-        """优化策略参数"""
+        """ﻛﺙﮒﻝ­ﻝ۴ﮒﮔﺍ"""
         bt_strategy = StrategyWrapper.wrap(strategy)
         bt_data = self.data_converter.convert(data)
         
@@ -132,19 +132,19 @@ class BacktestingPyAdapter:
         return result
 ```
 
-#### StrategyWrapper - 策略包装�?
+#### StrategyWrapper - ﻝ­ﻝ۴ﮒﻟ۲ﮒ?
 
 ```python
 from backtesting import Strategy
 from typing import Dict, Any
 
 class StrategyWrapper(Strategy):
-    """策略包装�?- 将系统策略包装为Backtesting.py格式"""
+    """ﻝ­ﻝ۴ﮒﻟ۲ﮒ?- ﮒﺍﻝﺏﭨﻝﭨﻝ­ﻝ۴ﮒﻟ۲ﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ"""
     
     system_strategy = None
     
     def init(self):
-        """初始化策�?""
+        """ﮒﮒ۶ﮒﻝ­ﻝ?""
         if self.system_strategy:
             self.system_strategy.initialize({
                 "data": self.data,
@@ -152,7 +152,7 @@ class StrategyWrapper(Strategy):
             })
     
     def next(self):
-        """每个bar调用"""
+        """ﮔﺁﻛﺕ۹barﻟﺍﻝ۷"""
         if self.system_strategy:
             bar_data = {
                 "open": self.data.Open[-1],
@@ -168,7 +168,7 @@ class StrategyWrapper(Strategy):
                 self._execute_signal(signal)
     
     def _execute_signal(self, signal: Dict[str, Any]):
-        """执行信号"""
+        """ﮔ۶ﻟ۰ﻛﺟ۰ﮒﺓ"""
         action = signal.get("action")
         size = signal.get("size", 1)
         
@@ -181,7 +181,7 @@ class StrategyWrapper(Strategy):
     
     @classmethod
     def wrap(cls, system_strategy):
-        """包装系统策略"""
+        """ﮒﻟ۲ﻝﺏﭨﻝﭨﻝ­ﻝ۴"""
         class WrappedStrategy(cls):
             pass
         
@@ -190,17 +190,17 @@ class StrategyWrapper(Strategy):
         return WrappedStrategy
 ```
 
-#### DataConverter - 数据转换�?
+#### DataConverter - ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒ?
 
 ```python
 import pandas as pd
 from typing import Dict, Any
 
 class DataConverter:
-    """数据转换�?- 将系统数据格式转换为Backtesting.py格式"""
+    """ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒ?- ﮒﺍﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ"""
     
     def convert(self, data: pd.DataFrame) -> pd.DataFrame:
-        """转换数据格式"""
+        """ﻟﺛ؛ﮔ۱ﮔﺍﮔ؟ﮔ ﺙﮒﺙ"""
         bt_data = data.copy()
         
         column_mapping = {
@@ -221,7 +221,7 @@ class DataConverter:
         return bt_data
     
     def convert_from_bt(self, bt_data: pd.DataFrame) -> pd.DataFrame:
-        """从Backtesting.py格式转换回系统格�?""
+        """ﻛﭨBacktesting.pyﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﮒﻝﺏﭨﻝﭨﮔ ﺙﮒﺙ?""
         system_data = bt_data.copy()
         
         column_mapping = {
@@ -237,17 +237,17 @@ class DataConverter:
         return system_data
 ```
 
-#### ResultFormatter - 结果格式化器
+#### ResultFormatter - ﻝﭨﮔﮔ ﺙﮒﺙﮒﮒ۷
 
 ```python
 from typing import Dict, Any
 import pandas as pd
 
 class ResultFormatter:
-    """结果格式化器 - 统一回测结果格式"""
+    """ﻝﭨﮔﮔ ﺙﮒﺙﮒﮒ۷ - ﻝﭨﻛﺕﮒﮔﭖﻝﭨﮔﮔ ﺙﮒﺙ"""
     
     def format(self, stats) -> Dict[str, Any]:
-        """格式化回测结�?""
+        """ﮔ ﺙﮒﺙﮒﮒﮔﭖﻝﭨﮔ?""
         return {
             "performance": self._format_performance(stats),
             "trades": self._format_trades(stats),
@@ -257,7 +257,7 @@ class ResultFormatter:
         }
     
     def _format_performance(self, stats) -> Dict[str, Any]:
-        """格式化绩效指�?""
+        """ﮔ ﺙﮒﺙﮒﻝﭨ۸ﮔﮔﮔ ?""
         return {
             "total_return": stats["Return [%]"],
             "annual_return": stats["Return (Ann.) [%]"],
@@ -269,7 +269,7 @@ class ResultFormatter:
         }
     
     def _format_trades(self, stats) -> List[Dict[str, Any]]:
-        """格式化交易记�?""
+        """ﮔ ﺙﮒﺙﮒﻛﭦ۳ﮔﻟ؟ﺍﮒﺛ?""
         trades = []
         
         if hasattr(stats, "_trades"):
@@ -287,19 +287,19 @@ class ResultFormatter:
         return trades
     
     def _format_equity_curve(self, stats) -> pd.Series:
-        """格式化权益曲�?""
+        """ﮔ ﺙﮒﺙﮒﮔﻝﮔﺎﻝﭦ?""
         if hasattr(stats, "_equity_curve"):
             return stats._equity_curve
         return pd.Series()
     
     def _format_drawdown(self, stats) -> pd.Series:
-        """格式化回撤曲�?""
+        """ﮔ ﺙﮒﺙﮒﮒﮔ۳ﮔﺎﻝﭦ?""
         if hasattr(stats, "_drawdown"):
             return stats._drawdown
         return pd.Series()
     
     def _format_metrics(self, stats) -> Dict[str, Any]:
-        """格式化其他指�?""
+        """ﮔ ﺙﮒﺙﮒﮒﭘﻛﭨﮔﮔ ?""
         return {
             "start_date": stats["Start"],
             "end_date": stats["End"],
@@ -312,117 +312,117 @@ class ResultFormatter:
 
 ---
 
-## 📝 实施步骤
+## ﻭ ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳
 
-### Step 1: 安装依赖�?0分钟�?
+### Step 1: ﮒ؟ﻟ۲ﻛﺝﻟﭖﺅﺙ?0ﮒﻠﺅﺙ?
 
 ```bash
-# 安装Backtesting.py
+# ﮒ؟ﻟ۲Backtesting.py
 pip install backtesting
 
-# 安装其他依赖
+# ﮒ؟ﻟ۲ﮒﭘﻛﭨﻛﺝﻟﭖ
 pip install pandas numpy matplotlib
 ```
 
-### Step 2: 实现DataConverter�?小时�?
+### Step 2: ﮒ؟ﻝﺍDataConverterﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 实现数据格式转换
-- [ ] 处理缺失数据
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻝﺍﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱
+- [ ] ﮒ۳ﻝﻝﺙﭦﮒ۳ﺎﮔﺍﮔ؟
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?数据格式转换正确
-- �?缺失数据处理完善
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﮔ­۲ﻝ۰؟
+- ﻗ?ﻝﺙﭦﮒ۳ﺎﮔﺍﮔ؟ﮒ۳ﻝﮒ؟ﮒ
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 3: 实现StrategyWrapper�?小时�?
+### Step 3: ﮒ؟ﻝﺍStrategyWrapperﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 实现策略包装
-- [ ] 实现信号执行
-- [ ] 处理策略状�?
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻝﺍﻝ­ﻝ۴ﮒﻟ۲
+- [ ] ﮒ؟ﻝﺍﻛﺟ۰ﮒﺓﮔ۶ﻟ۰
+- [ ] ﮒ۳ﻝﻝ­ﻝ۴ﻝﭘﮔ?
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?策略包装正确
-- �?信号执行正确
-- �?状态管理完�?
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﻝ­ﻝ۴ﮒﻟ۲ﮔ­۲ﻝ۰؟
+- ﻗ?ﻛﺟ۰ﮒﺓﮔ۶ﻟ۰ﮔ­۲ﻝ۰؟
+- ﻗ?ﻝﭘﮔﻝ؟۰ﻝﮒ؟ﮒ?
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 4: 实现ResultFormatter�?小时�?
+### Step 4: ﮒ؟ﻝﺍResultFormatterﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 实现结果格式�?
-- [ ] 实现指标计算
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻝﺍﻝﭨﮔﮔ ﺙﮒﺙﮒ?
+- [ ] ﮒ؟ﻝﺍﮔﮔ ﻟ؟۰ﻝ؟
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?结果格式统一
-- �?指标计算正确
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﻝﭨﮔﮔ ﺙﮒﺙﻝﭨﻛﺕ
+- ﻗ?ﮔﮔ ﻟ؟۰ﻝ؟ﮔ­۲ﻝ۰؟
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 5: 实现BacktestingPyAdapter�?小时�?
+### Step 5: ﮒ؟ﻝﺍBacktestingPyAdapterﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 实现回测运行
-- [ ] 实现参数优化
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻝﺍﮒﮔﭖﻟﺟﻟ۰
+- [ ] ﮒ؟ﻝﺍﮒﮔﺍﻛﺙﮒ
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?回测运行正确
-- �?参数优化正确
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﮒﮔﭖﻟﺟﻟ۰ﮔ­۲ﻝ۰؟
+- ﻗ?ﮒﮔﺍﻛﺙﮒﮔ­۲ﻝ۰؟
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 6: 集成测试�?.5小时�?
+### Step 6: ﻠﮔﮔﭖﻟﺁﺅﺙ?.5ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 创建测试策略
-- [ ] 测试完整流程
-- [ ] 性能测试
-- [ ] 文档编写
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒﮒﭨﭦﮔﭖﻟﺁﻝ­ﻝ۴
+- [ ] ﮔﭖﻟﺁﮒ؟ﮔﺑﮔﭖﻝ۷
+- [ ] ﮔ۶ﻟﺛﮔﭖﻟﺁ
+- [ ] ﮔﮔ۰۲ﻝﺙﮒ
 
-**验收标准**:
-- �?完整流程可正常运�?
-- �?性能指标达标
-- �?文档完整
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﮒ؟ﮔﺑﮔﭖﻝ۷ﮒﺁﮔ­۲ﮒﺕﺕﻟﺟﻟ۰?
+- ﻗ?ﮔ۶ﻟﺛﮔﮔ ﻟﺝﺝﮔ 
+- ﻗ?ﮔﮔ۰۲ﮒ؟ﮔﺑ
 
 ---
 
-## �?验收标准
+## ﻗ?ﻠ۹ﮔﭘﮔ ﮒ
 
-### 功能验收
+### ﮒﻟﺛﻠ۹ﮔﭘ
 
-| 功能 | 验收标准 | 测试方法 |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔ ﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|---------|---------|
-| **策略适配** | 策略可正确适配 | 集成测试 |
-| **数据转换** | 数据格式转换正确 | 单元测试 |
-| **结果统一** | 结果格式统一 | 单元测试 |
-| **参数优化** | 参数优化正确 | 集成测试 |
-| **报告生成** | 报告可正确生�?| 集成测试 |
+| **ﻝ­ﻝ۴ﻠﻠ** | ﻝ­ﻝ۴ﮒﺁﮔ­۲ﻝ۰؟ﻠﻠ | ﻠﮔﮔﭖﻟﺁ |
+| **ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱** | ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﮔ­۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| **ﻝﭨﮔﻝﭨﻛﺕ** | ﻝﭨﮔﮔ ﺙﮒﺙﻝﭨﻛﺕ | ﮒﮒﮔﭖﻟﺁ |
+| **ﮒﮔﺍﻛﺙﮒ** | ﮒﮔﺍﻛﺙﮒﮔ­۲ﻝ۰؟ | ﻠﮔﮔﭖﻟﺁ |
+| **ﮔ۴ﮒﻝﮔ** | ﮔ۴ﮒﮒﺁﮔ­۲ﻝ۰؟ﻝﮔ?| ﻠﮔﮔﭖﻟﺁ |
 
-### 性能验收
+### ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **回测速度** | > 1000 bars/s | 性能测试 |
-| **内存占用** | < 500MB | 内存分析 |
-| **报告生成时间** | < 5s | 性能测试 |
+| **ﮒﮔﭖﻠﮒﭦ۵** | > 1000 bars/s | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒﮒ­ﮒ ﻝ۷** | < 500MB | ﮒﮒ­ﮒﮔ |
+| **ﮔ۴ﮒﻝﮔﮔﭘﻠﺑ** | < 5s | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
-### 质量验收
+### ﻟﺑ۷ﻠﻠ۹ﮔﭘ
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **单元测试覆盖�?* | > 90% | pytest --cov |
-| **代码复杂�?* | < 10 | radon cc |
-| **代码重复�?* | < 5% | pylint |
-| **文档完整�?* | 100% | 文档审查 |
+| **ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?* | > 90% | pytest --cov |
+| **ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?* | < 10 | radon cc |
+| **ﻛﭨ۲ﻝ ﻠﮒ۳ﻝ?* | < 5% | pylint |
+| **ﮔﮔ۰۲ﮒ؟ﮔﺑﮔ?* | 100% | ﮔﮔ۰۲ﮒ؟۰ﮔ۴ |
 
 ---
 
-## 🧪 测试策略
+## ﻭ۶۹ ﮔﭖﻟﺁﻝ­ﻝ۴
 
-### 单元测试
+### ﮒﮒﮔﭖﻟﺁ
 
 ```python
 # tests/test_adapter.py
@@ -453,7 +453,7 @@ class TestBacktestingPyAdapter:
         assert "Volume" in bt_data.columns
 ```
 
-### 集成测试
+### ﻠﮔﮔﭖﻟﺁ
 
 ```python
 # tests/test_integration.py
@@ -494,9 +494,9 @@ class TestBacktestIntegration:
 
 ---
 
-## 📊 性能优化
+## ﻭ ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 数据缓存
+### ﮔﺍﮔ؟ﻝﺙﮒ­
 
 ```python
 class DataConverter:
@@ -516,7 +516,7 @@ class DataConverter:
         return bt_data
 ```
 
-### 并行回测
+### ﮒﺗﭘﻟ۰ﮒﮔﭖ
 
 ```python
 from concurrent.futures import ProcessPoolExecutor
@@ -529,7 +529,7 @@ class BacktestingPyAdapter:
         data: pd.DataFrame,
         **kwargs
     ) -> List[Dict[str, Any]]:
-        """并行运行多个回测"""
+        """ﮒﺗﭘﻟ۰ﻟﺟﻟ۰ﮒ۳ﻛﺕ۹ﮒﮔﭖ"""
         with ProcessPoolExecutor() as executor:
             futures = [
                 executor.submit(self.run_backtest, strategy, data, **kwargs)
@@ -543,15 +543,15 @@ class BacktestingPyAdapter:
 
 ---
 
-## 🚨 常见问题
+## ﻭ۷ ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
 
-### Q1: 数据格式不匹�?
+### Q1: ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻛﺕﮒﺗﻠ?
 
-**问题**: ValueError: Missing required column: Open
+**ﻠ؟ﻠ۱**: ValueError: Missing required column: Open
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# 确保数据列名正确
+# ﻝ۰؟ﻛﺟﮔﺍﮔ؟ﮒﮒﮔ­۲ﻝ۰؟
 data = data.rename(columns={
     "open": "Open",
     "high": "High",
@@ -561,24 +561,24 @@ data = data.rename(columns={
 })
 ```
 
-### Q2: 策略初始化失�?
+### Q2: ﻝ­ﻝ۴ﮒﮒ۶ﮒﮒ۳ﺎﻟﺑ?
 
-**问题**: AttributeError: 'NoneType' object has no attribute 'initialize'
+**ﻠ؟ﻠ۱**: AttributeError: 'NoneType' object has no attribute 'initialize'
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# 确保策略正确包装
+# ﻝ۰؟ﻛﺟﻝ­ﻝ۴ﮔ­۲ﻝ۰؟ﮒﻟ۲
 class WrappedStrategy(StrategyWrapper):
     system_strategy = your_strategy
 ```
 
-### Q3: 内存占用过高
+### Q3: ﮒﮒ­ﮒ ﻝ۷ﻟﺟﻠ،
 
-**问题**: MemoryError: Unable to allocate array
+**ﻠ؟ﻠ۱**: MemoryError: Unable to allocate array
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# 分批处理数据
+# ﮒﮔﺗﮒ۳ﻝﮔﺍﮔ؟
 def run_backtest_in_batches(self, data, batch_size=10000):
     results = []
     
@@ -592,31 +592,31 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 ---
 
-## 📚 参考资�?
+## ﻭ ﮒﻟﻟﭖﮔ?
 
-### 内部文档
+### ﮒﻠ۷ﮔﮔ۰۲
 
-- [专业量化系统实施蓝图](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
-### 外部资源
+### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
 
-- [Backtesting.py官方文档](https://kernc.github.io/backtesting.py/)
+- [Backtesting.pyﮒ؟ﮔﺗﮔﮔ۰۲](https://kernc.github.io/backtesting.py/)
 - [Backtesting.py GitHub](https://github.com/kernc/backtesting.py)
-- [量化回测最佳实践](https://www.quantstart.com/articles/Quantitative-Trading-Research-Platform)
+- [ﻠﮒﮒﮔﭖﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](https://www.quantstart.com/articles/Quantitative-Trading-Research-Platform)
 
 ---
 
-## 📝 更新记录
+## ﻭ ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ
 
-| 日期 | 版本 | 更新内容 | 更新�?|
+| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建回测引擎实施指南 | 首席架构�?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮒﮔﭖﮒﺙﮔﮒ؟ﮔﺛﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
 
 ---
 
-## 📞 联系方式
+## ﻭ ﻟﻝﺏﭨﮔﺗﮒﺙ
 
-**文档维护�?*: 首席架构�? 
-**创建日期**: 2026-04-02  
-**最后更�?*: 2026-04-02  
-**版本**: v1.0
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﻝﮔ؛**: v1.0

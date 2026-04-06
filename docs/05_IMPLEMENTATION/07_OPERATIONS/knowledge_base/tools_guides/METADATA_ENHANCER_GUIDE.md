@@ -1,69 +1,69 @@
 ---
-standard_type: 工具指南
-applicable_scope: 元数据管�?compliance_level: 正式标准
+standard_type: тиЦтЁиТїЄтЇЌ
+applicable_scope: тЁЃТЋ░ТЇ«у«Ауљ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
-implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
+implementation_status: ти▓т«їТѕ?owner: ТќЄТАБу«АуљєтЉ?version: 1.0.0
 module_id: METADATA_ENHANCER_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["工具指南", "元数�?, "自动�?, "使用手册"]
+tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "Сй┐ућеТЅІтєї"]
 ---
-# 元数据增强工具使用指�?
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
----
-
-## 1. 工具概述
-
-### 1.1 工具简�?
-元数据增强工具用于自动推断和补充文档元数据，确保文档元数据完整性和规范性�?
-### 1.2 主要功能
-
-- �?自动推断元数�?- �?批量添加元数�?- �?验证元数据完整�?- �?生成增强报告
-
+# тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиСй┐ућеТїЄтЇ?
+**ТќЄТАБуЅѕТюг**: 1.0.0
+**ТюђтљјТЏ┤Тќ?*: 2026-04-02
+**ТќЄТАБТЅђТюЅУђ?*: ТќЄТАБу«АуљєтЉ?
 ---
 
-## 2. 快速开�?
-### 2.1 基本使用
+## 1. тиЦтЁиТдѓУ┐░
 
-**增强元数�?*:
+### 1.1 тиЦтЁиу«ђС╗?
+тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиућеС║јУЄфтіеТјеТќГтњїУАЦтЁЁТќЄТАБтЁЃТЋ░ТЇ«№╝їуА«С┐ЮТќЄТАБтЁЃТЋ░ТЇ«т«їТЋ┤ТђДтњїУДёУїЃТђДсђ?
+### 1.2 СИ╗УдЂтіЪУЃй
+
+- Рю?УЄфтіеТјеТќГтЁЃТЋ░ТЇ?- Рю?ТЅ╣жЄЈТи╗тіатЁЃТЋ░ТЇ?- Рю?жфїУ»ЂтЁЃТЋ░ТЇ«т«їТЋ┤Тђ?- Рю?ућЪТѕљтбът╝║ТіЦтЉі
+
+---
+
+## 2. т┐ФжђЪт╝ђтД?
+### 2.1 тЪ║ТюгСй┐уће
+
+**тбът╝║тЁЃТЋ░ТЇ?*:
 ```bash
 python scripts/metadata_enhancer.py
 ```
 
-**验证元数�?*:
+**жфїУ»ЂтЁЃТЋ░ТЇ?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
 
 ---
 
-## 3. 功能详解
+## 3. тіЪУЃйУ»дУДБ
 
-### 3.1 元数据推�?
-**推断规则**:
-- 从文件路径推断module_id
-- 从文件名推断标题
-- 从目录结构推断分�?
-**示例**:
+### 3.1 тЁЃТЋ░ТЇ«ТјеТќ?
+**ТјеТќГУДётѕЎ**:
+- С╗јТќЄС╗ХУи»тЙёТјеТќГmodule_id
+- С╗јТќЄС╗ХтљЇТјеТќГТаЄжбў
+- С╗јуЏ«тйЋу╗ЊТъёТјеТќГтѕєу▒?
+**уц║СЙІ**:
 ```
-文件路径: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
-推断结果:
+ТќЄС╗ХУи»тЙё: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
+ТјеТќГу╗ЊТъю:
   - module_id: MOMENTUM_FACTOR
   - category: 02_FACTOR_LIBRARY
-  - title: 动量因子
+  - title: тіежЄЈтЏатГљ
 ```
 
-### 3.2 元数据验�?
-**必需字段**:
+### 3.2 тЁЃТЋ░ТЇ«жфїУ»?
+**т┐ЁжюђтГЌТ«х**:
 - owner
 - version
 - module_id
 - created_date
 - last_updated
 
-**推荐字段**:
+**ТјеУЇљтГЌТ«х**:
 - standard_type
 - applicable_scope
 - compliance_level
@@ -71,9 +71,9 @@ python scripts/metadata_enhancer.py --validate
 
 ---
 
-## 4. 配置选项
+## 4. жЁЇуй«жђЅжА╣
 
-### 4.1 推断规则配置
+### 4.1 ТјеТќГУДётѕЎжЁЇуй«
 
 ```yaml
 inference_rules:
@@ -84,35 +84,35 @@ inference_rules:
   category:
     source: "directory"
     mapping:
-      "01_FRAMEWORK": "框架文档"
-      "02_FACTOR_LIBRARY": "因子�?
+      "01_FRAMEWORK": "ТАєТъХТќЄТАБ"
+      "02_FACTOR_LIBRARY": "тЏатГљт║?
 ```
 
 ---
 
-## 5. 最佳实�?
-### 5.1 使用模板
+## 5. ТюђСй│т«ъУи?
+### 5.1 Сй┐ућеТеАТЮ┐
 
-**创建文档时使用模�?*:
+**тѕЏт╗║ТќЄТАБТЌХСй┐ућеТеАТЮ?*:
 ```bash
-# 使用文档模板
+# Сй┐ућеТќЄТАБТеАТЮ┐
 cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md new_document.md
 ```
 
-### 5.2 定期验证
+### 5.2 т«џТюЪжфїУ»Ђ
 
-**每月验证元数据完整�?*:
+**Т»ЈТюѕжфїУ»ЂтЁЃТЋ░ТЇ«т«їТЋ┤Тђ?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
 
 ---
 
-## 6. 参考文�?
-- [元数据增强工具技术规范](../../05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
-- [文档模板](../../09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
+## 6. тЈѓУђЃТќЄТА?
+- [тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиТіђТю»УДёУїЃ](../../05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
+- [ТќЄТАБТеАТЮ┐](../../09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 
 ---
 
-**文档状�?*: 正式标准
-**下次更新**: 2026-07-02
+**ТќЄТАБуіХТђ?*: ТГБт╝ЈТаЄтЄє
+**СИІТгАТЏ┤Тќ░**: 2026-07-02

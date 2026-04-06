@@ -5,86 +5,86 @@ spec_version: 1.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-layer: Layer 4 (机器学习�? | 业务架构: AI模型服务
+layer: Layer 4 (ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ? | ﻛﺕﮒ۰ﮔﭘﮔ: AIﮔ۷۰ﮒﮔﮒ۰
 index: CI-001
 estimated_hours: 80
 review_status: Pending
-reviewer: 首席技术评审官
-owner: 量化研究�?standard_type: 专业量化机构技术规格书
-applicable_scope: 因果推断系统
-compliance_level: 顶级专业标准
+reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠﮒﻝ ﻝ۸ﭘﮒ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+applicable_scope: ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨ
+compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: 技术规格设计完�?---
+implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?---
 
-# 因果推断技术规格书 v1.0
+# ﮒ ﮔﮔ۷ﮔ­ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 
-> 清风量化系统 v5.3 - 因果推断详细技术设�?> **索引**: `CI-001`
-> **开发时�?*: 80h
-> **核心定位**: 区分因果与相关、因果发现、因果效应估计、反事实分析
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﮒ ﮔﮔ۷ﮔ­ﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝﻟ؟?> **ﻝﺑ۱ﮒﺙ**: `CI-001`
+> **ﮒﺙﮒﮔﭘﻠ?*: 80h
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒﭦﮒﮒ ﮔﻛﺕﻝﺕﮒﺏﻙﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮒﮔ
 
 ---
 
-## 1. 概述
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 设计背景与业务目�?
-**业务需�?*:
-- 区分因果性与相关性是量化核心能力
-- 避免虚假信号和过拟合
-- 提升策略稳健性和可解释�?- 支持策略归因分析
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟ﻝ?
+**ﻛﺕﮒ۰ﻠﮔﺎ?*:
+- ﮒﭦﮒﮒ ﮔﮔ۶ﻛﺕﻝﺕﮒﺏﮔ۶ﮔﺁﻠﮒﮔ ﺕﮒﺟﻟﺛﮒ
+- ﻠﺟﮒﻟﮒﻛﺟ۰ﮒﺓﮒﻟﺟﮔﮒ
+- ﮔﮒﻝ­ﻝ۴ﻝ۷ﺏﮒ۴ﮔ۶ﮒﮒﺁﻟ۶۲ﻠﮔ?- ﮔﺁﮔﻝ­ﻝ۴ﮒﺛﮒ ﮒﮔ
 
-**技术痛�?*:
-- 传统ML只学习相关性，无法识别因果
-- 因果图构建依赖专家知�?- 混杂因素处理困难
-- 反事实推断计算复�?
-**预期价�?*:
-- 策略稳健性提�?0%
-- 虚假信号识别率提�?0%
-- 策略归因准确性提�?0%
-- 过拟合风险降�?0%
+**ﮔﮔﺁﻝﻝ?*:
+- ﻛﺙ ﻝﭨMLﮒ۹ﮒ­۵ﻛﺗ ﻝﺕﮒﺏﮔ۶ﺅﺙﮔ ﮔﺏﻟﺁﮒ،ﮒ ﮔ
+- ﮒ ﮔﮒﺝﮔﮒﭨﭦﻛﺝﻟﭖﻛﺕﮒ؟ﭘﻝ۴ﻟﺁ?- ﮔﺓﺓﮔﮒ ﻝﺑ ﮒ۳ﻝﮒﺍﻠﺝ
+- ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﻟ؟۰ﻝ؟ﮒ۳ﮔ?
+**ﻠ۱ﮔﻛﭨﺓﮒ?*:
+- ﻝ­ﻝ۴ﻝ۷ﺏﮒ۴ﮔ۶ﮔﮒ?0%
+- ﻟﮒﻛﺟ۰ﮒﺓﻟﺁﮒ،ﻝﮔﮒ?0%
+- ﻝ­ﻝ۴ﮒﺛﮒ ﮒﻝ۰؟ﮔ۶ﮔﮒ?0%
+- ﻟﺟﮔﮒﻠ۲ﻠ۸ﻠﻛﺛ?0%
 
-### 1.2 技术定位与架构层归�?
-- **Layer定位**: Layer 4 - 机器学习层（AI模型服务�?- **模块类别**: 核心支撑模块
-- **架构角色**: 提供因果发现、因果效应估计、反事实分析
+### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛﮒﺎ?
+- **Layerﮒ؟ﻛﺛ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﺅﺙAIﮔ۷۰ﮒﮔﮒ۰ﺅﺙ?- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔ ﺕﮒﺟﮔﺁﮔﮔ۷۰ﮒ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: ﮔﻛﺝﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮒﮔ
 
-### 1.3 版本信息与变更记�?
-| 版本 | 日期 | 作�?| 变更说明 | 状�?|
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁﻛﺕﮒﮔﺑﻟ؟ﺍﮒﺛ?
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛﻟ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝﭘﮔ?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 | Active |
+| v1.0 | 2026-04-03 | ﻠﮒﻝ ﻝ۸ﭘﮒ?| ﮒﮒ۶ﻝﮔ؛ | Active |
 
 ---
 
-## 2. 详细架构设计
+## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 系统架构�?
+### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔﮒ?
 ```
-┌─────────────────────────────────────────────────────────────────�?�?                    因果推断系统架构                              �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            因果发现�?(Causal Discovery Layer)           �? �?�?�?├── PCAlgorithm (PC算法)                                 �? �?�?�?├── GESAlgorithm (GES算法)                               �? �?�?�?├── NOTEARSAlgorithm (NOTEARS算法)                       �? �?�?�?└── CausalGraphValidator (因果图验�?                    �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            因果效应估计�?(Effect Estimation Layer)      �? �?�?�?├── PropensityScoreMatching (倾向得分匹配)               �? �?�?�?├── InverseProbabilityWeighting (逆概率加�?             �? �?�?�?├── DoublyRobustEstimator (双重稳健估计)                 �? �?�?�?├── InstrumentalVariable (工具变量�?                    �? �?�?�?└── DifferenceInDifferences (双重差分)                   �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            反事实推断层 (Counterfactual Layer)           �? �?�?�?├── IndividualTreatmentEffect (个体处理效应)             �? �?�?�?├── AverageTreatmentEffect (平均处理效应)                �? �?�?�?├── ConditionalAverageTreatmentEffect (条件平均处理效应) �? �?�?�?└── CounterfactualPredictor (反事实预测器)               �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            应用�?(Application Layer)                    �? �?�?�?├── FactorCausalAnalysis (因子因果分析)                  �? �?�?�?├── StrategyAttribution (策略归因)                       �? �?�?�?├── MarketRegimeCausal (市场状态因�?                    �? �?�?�?└── InterventionSimulator (干预模拟�?                   �? �?�?└──────────────────────────────────────────────────────────�? �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                    ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨﮔﭘﮔ                              ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                                                                ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒ ﮔﮒﻝﺍﮒﺎ?(Causal Discovery Layer)           ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ PCAlgorithm (PCﻝ؟ﮔﺏ)                                 ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ GESAlgorithm (GESﻝ؟ﮔﺏ)                               ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ NOTEARSAlgorithm (NOTEARSﻝ؟ﮔﺏ)                       ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ CausalGraphValidator (ﮒ ﮔﮒﺝﻠ۹ﻟﺁ?                    ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                            ﻗ?                                  ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﮒﺎ?(Effect Estimation Layer)      ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ PropensityScoreMatching (ﮒﺝﮒﮒﺝﮒﮒﺗﻠ)               ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ InverseProbabilityWeighting (ﻠﮔ۵ﻝﮒ ﮔ?             ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ DoublyRobustEstimator (ﮒﻠﻝ۷ﺏﮒ۴ﻛﺙﺍﻟ؟۰)                 ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ InstrumentalVariable (ﮒﺓ۴ﮒﺓﮒﻠﮔﺏ?                    ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ DifferenceInDifferences (ﮒﻠﮒﺓ؟ﮒ)                   ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                            ﻗ?                                  ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﮒﺎ (Counterfactual Layer)           ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ IndividualTreatmentEffect (ﻛﺕ۹ﻛﺛﮒ۳ﻝﮔﮒﭦ)             ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ AverageTreatmentEffect (ﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ)                ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ ConditionalAverageTreatmentEffect (ﮔ۰ﻛﭨﭘﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ) ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ CounterfactualPredictor (ﮒﻛﭦﮒ؟ﻠ۱ﮔﭖﮒ۷)               ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                            ﻗ?                                  ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                    ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ FactorCausalAnalysis (ﮒ ﮒ­ﮒ ﮔﮒﮔ)                  ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ StrategyAttribution (ﻝ­ﻝ۴ﮒﺛﮒ )                       ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ MarketRegimeCausal (ﮒﺕﮒﭦﻝﭘﮔﮒ ﮔ?                    ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ InterventionSimulator (ﮒﺗﺎﻠ۱ﮔ۷۰ﮔﮒ?                   ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                                                                ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-### 2.2 Layer定位详细说明
+### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
 
-- **Layer归属**: Layer 4 - 机器学习�?- **职责范围**: 因果发现、因果效应估计、反事实推断、干预模�?- **上下层接�?*: 
-  - 上层依赖: Layer 5 (策略执行�? - 策略归因请求
-  - 下层依赖: Layer 4 (ML模型) - 特征数据
+- **Layerﮒﺛﮒﺎ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ?- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﻙﮒﺗﺎﻠ۱ﮔ۷۰ﮔ?- **ﻛﺕﻛﺕﮒﺎﮔ۴ﮒ?*: 
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 5 (ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎ? - ﻝ­ﻝ۴ﮒﺛﮒ ﻟﺁﺓﮔﺎ
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 4 (MLﮔ۷۰ﮒ) - ﻝﺗﮒﺝﮔﺍﮔ؟
 
-### 2.3 模块职责与边界定�?
-- **核心职责**: 因果推断分析
-- **职责边界**: 
-  - �?本模块负�? 因果发现、效应估计、反事实推断
-  - �?本模块不负责: 模型训练、特征工程、策略执�?- **接口契约**: 提供标准化的因果推断API
+### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟ﻛﺗ?
+- **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﮒ ﮔﮔ۷ﮔ­ﮒﮔ
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+  - ﻗ?ﮔ؛ﮔ۷۰ﮒﻟﺑﻟﺑ? ﮒ ﮔﮒﻝﺍﻙﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮔ۷ﮔ­
+  - ﻗ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮔ۷۰ﮒﻟ؟­ﻝﭨﻙﻝﺗﮒﺝﮒﺓ۴ﻝ۷ﻙﻝ­ﻝ۴ﮔ۶ﻟ۰?- **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﮔ ﮒﮒﻝﮒ ﮔﮔ۷ﮔ­API
 
-### 2.4 依赖关系与集成点
+### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨﻛﺕﻠﮔﻝﺗ
 
-| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+| ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
 |----------|----------|----------|----------|------|
-| DoWhy | 强依�?| Python�?| >=0.8.0 | 因果推断框架 |
-| CausalNex | 强依�?| Python�?| >=0.12.0 | 贝叶斯网�?|
-| EconML | 强依�?| Python�?| >=0.14.0 | 异质效应估计 |
-| CDT | 强依�?| Python�?| >=0.6.0 | 因果发现工具 |
+| DoWhy | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.8.0 | ﮒ ﮔﮔ۷ﮔ­ﮔ۰ﮔﭘ |
+| CausalNex | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.12.0 | ﻟﺑﮒﭘﮔﺁﻝﺛﻝﭨ?|
+| EconML | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.14.0 | ﮒﺙﻟﺑ۷ﮔﮒﭦﻛﺙﺍﻟ؟۰ |
+| CDT | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.6.0 | ﮒ ﮔﮒﻝﺍﮒﺓ۴ﮒﺓ |
 
 ---
 
-## 3. 接口定义
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 API接口规范
+### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
 
 ```python
 from typing import Dict, Any, List, Optional, Union, Tuple, Set
@@ -98,7 +98,7 @@ import networkx as nx
 
 
 class CausalRelationType(Enum):
-    """因果关系类型"""
+    """ﮒ ﮔﮒﺏﻝﺏﭨﻝﺎﭨﮒ"""
     DIRECT = "direct"
     INDIRECT = "indirect"
     CONFOUNDED = "confounded"
@@ -106,7 +106,7 @@ class CausalRelationType(Enum):
 
 
 class TreatmentType(Enum):
-    """处理类型"""
+    """ﮒ۳ﻝﻝﺎﭨﮒ"""
     BINARY = "binary"
     CONTINUOUS = "continuous"
     MULTIVALUE = "multivalue"
@@ -114,7 +114,7 @@ class TreatmentType(Enum):
 
 @dataclass
 class CausalEdge:
-    """因果�?""
+    """ﮒ ﮔﻟﺝ?""
     source: str
     target: str
     edge_type: CausalRelationType
@@ -124,36 +124,36 @@ class CausalEdge:
 
 @dataclass
 class CausalGraph:
-    """因果�?""
+    """ﮒ ﮔﮒ?""
     nodes: Set[str]
     edges: List[CausalEdge]
     adjacency_matrix: np.ndarray
     graph: nx.DiGraph
     
     def get_parents(self, node: str) -> List[str]:
-        """获取父节�?""
+        """ﻟﺓﮒﻝﭘﻟﻝ?""
         return list(self.graph.predecessors(node))
     
     def get_children(self, node: str) -> List[str]:
-        """获取子节�?""
+        """ﻟﺓﮒﮒ­ﻟﻝ?""
         return list(self.graph.successors(node))
     
     def get_ancestors(self, node: str) -> Set[str]:
-        """获取祖先节点"""
+        """ﻟﺓﮒﻝ۴ﮒﻟﻝﺗ"""
         return nx.ancestors(self.graph, node)
     
     def get_descendants(self, node: str) -> Set[str]:
-        """获取后代节点"""
+        """ﻟﺓﮒﮒﻛﭨ۲ﻟﻝﺗ"""
         return nx.descendants(self.graph, node)
     
     def find_confounders(self, treatment: str, outcome: str) -> Set[str]:
-        """寻找混杂因素"""
+        """ﮒﺁﭨﮔﺝﮔﺓﺓﮔﮒ ﻝﺑ """
         treatment_ancestors = self.get_ancestors(treatment)
         outcome_ancestors = self.get_ancestors(outcome)
         return treatment_ancestors & outcome_ancestors
     
     def find_backdoor_paths(self, treatment: str, outcome: str) -> List[List[str]]:
-        """寻找后门路径"""
+        """ﮒﺁﭨﮔﺝﮒﻠ۷ﻟﺓﺁﮒﺝ"""
         all_paths = list(nx.all_simple_paths(self.graph, treatment, outcome))
         backdoor_paths = []
         
@@ -171,7 +171,7 @@ class CausalGraph:
 
 @dataclass
 class CausalEffect:
-    """因果效应"""
+    """ﮒ ﮔﮔﮒﭦ"""
     treatment: str
     outcome: str
     effect_type: str
@@ -185,7 +185,7 @@ class CausalEffect:
 
 @dataclass
 class CounterfactualResult:
-    """反事实结�?""
+    """ﮒﻛﭦﮒ؟ﻝﭨﮔ?""
     sample_id: str
     factual_outcome: float
     counterfactual_outcome: float
@@ -195,9 +195,9 @@ class CounterfactualResult:
 
 
 class CausalDiscovery:
-    """因果发现
+    """ﮒ ﮔﮒﻝﺍ
     
-    从观测数据中发现因果结构
+    ﻛﭨﻟ۶ﮔﭖﮔﺍﮔ؟ﻛﺕ­ﮒﻝﺍﮒ ﮔﻝﭨﮔ
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -209,13 +209,13 @@ class CausalDiscovery:
         alpha: float = 0.05,
         indep_test: str = "fisherz"
     ) -> CausalGraph:
-        """PC算法因果发现
+        """PCﻝ؟ﮔﺏﮒ ﮔﮒﻝﺍ
         
         Args:
-            data: 观测数据
-            alpha: 显著性水�?            indep_test: 独立性检验方�?            
+            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            alpha: ﮔﺝﻟﮔ۶ﮔﺍﺑﮒﺗ?            indep_test: ﻝ؛ﻝ،ﮔ۶ﮔ۲ﻠ۹ﮔﺗﮔﺏ?            
         Returns:
-            CausalGraph: 因果�?        """
+            CausalGraph: ﮒ ﮔﮒ?        """
         from causallearn.search.ConstraintBased.PC import pc
         
         cg = pc(data.values, alpha, indep_test)
@@ -259,15 +259,15 @@ class CausalDiscovery:
         lambda1: float = 0.1,
         loss_type: str = "l2"
     ) -> CausalGraph:
-        """NOTEARS算法因果发现
+        """NOTEARSﻝ؟ﮔﺏﮒ ﮔﮒﻝﺍ
         
-        基于连续优化的因果发现方�?        
+        ﮒﭦﻛﭦﻟﺟﻝﭨ­ﻛﺙﮒﻝﮒ ﮔﮒﻝﺍﮔﺗﮔﺏ?        
         Args:
-            data: 观测数据
-            lambda1: L1正则化参�?            loss_type: 损失函数类型
+            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            lambda1: L1ﮔ­۲ﮒﮒﮒﮔ?            loss_type: ﮔﮒ۳ﺎﮒﺛﮔﺍﻝﺎﭨﮒ
             
         Returns:
-            CausalGraph: 因果�?        """
+            CausalGraph: ﮒ ﮔﮒ?        """
         from castle.algorithms import Notears
         
         notears = Notears(lambda1=lambda1, loss_type=loss_type)
@@ -308,13 +308,13 @@ class CausalDiscovery:
         data: pd.DataFrame,
         domain_knowledge: Optional[Dict[str, List[str]]] = None
     ) -> Dict[str, Any]:
-        """验证因果�?        
+        """ﻠ۹ﻟﺁﮒ ﮔﮒ?        
         Args:
-            graph: 因果�?            data: 观测数据
-            domain_knowledge: 领域知识约束
+            graph: ﮒ ﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            domain_knowledge: ﻠ۱ﮒﻝ۴ﻟﺁﻝﭦ۵ﮔ
             
         Returns:
-            Dict: 验证结果
+            Dict: ﻠ۹ﻟﺁﻝﭨﮔ
         """
         validation_result = {
             "is_valid": True,
@@ -325,7 +325,7 @@ class CausalDiscovery:
         
         if not nx.is_directed_acyclic_graph(graph.graph):
             validation_result["is_valid"] = False
-            validation_result["violations"].append("存在�?)
+            validation_result["violations"].append("ﮒ­ﮒ۷ﻝ?)
         
         if domain_knowledge:
             for constraint_type, constraints in domain_knowledge.items():
@@ -333,7 +333,7 @@ class CausalDiscovery:
                     for source, target in constraints:
                         if graph.graph.has_edge(source, target):
                             validation_result["violations"].append(
-                                f"禁止边存�? {source} -> {target}"
+                                f"ﻝ۵ﮔ­۱ﻟﺝﺗﮒ­ﮒ? {source} -> {target}"
                             )
         
         validation_result["score"] = self._calculate_graph_score(graph, data)
@@ -341,7 +341,7 @@ class CausalDiscovery:
         return validation_result
     
     def _calculate_graph_score(self, graph: CausalGraph, data: pd.DataFrame) -> float:
-        """计算图评�?""
+        """ﻟ؟۰ﻝ؟ﮒﺝﻟﺁﮒ?""
         from scipy.stats import pearsonr
         
         total_score = 0.0
@@ -357,8 +357,8 @@ class CausalDiscovery:
 
 
 class CausalEffectEstimator:
-    """因果效应估计�?    
-    估计处理对结果的因果效应
+    """ﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﮒ?    
+    ﻛﺙﺍﻟ؟۰ﮒ۳ﻝﮒﺁﺗﻝﭨﮔﻝﮒ ﮔﮔﮒﭦ
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -372,17 +372,17 @@ class CausalEffectEstimator:
         confounders: List[str],
         caliper: float = 0.2
     ) -> CausalEffect:
-        """倾向得分匹配估计
+        """ﮒﺝﮒﮒﺝﮒﮒﺗﻠﻛﺙﺍﻟ؟۰
         
         Args:
-            data: 数据
-            treatment: 处理变量
-            outcome: 结果变量
-            confounders: 混杂因素
-            caliper: 匹配容差
+            data: ﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
+            caliper: ﮒﺗﻠﮒ؟ﺗﮒﺓ؟
             
         Returns:
-            CausalEffect: 因果效应
+            CausalEffect: ﮒ ﮔﮔﮒﭦ
         """
         from sklearn.linear_model import LogisticRegression
         from scipy.stats import ttest_ind
@@ -441,15 +441,15 @@ class CausalEffectEstimator:
         outcome: str,
         confounders: List[str]
     ) -> CausalEffect:
-        """逆概率加权估�?        
+        """ﻠﮔ۵ﻝﮒ ﮔﻛﺙﺍﻟ؟?        
         Args:
-            data: 数据
-            treatment: 处理变量
-            outcome: 结果变量
-            confounders: 混杂因素
+            data: ﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
             
         Returns:
-            CausalEffect: 因果效应
+            CausalEffect: ﮒ ﮔﮔﮒﭦ
         """
         from sklearn.linear_model import LogisticRegression
         
@@ -494,16 +494,16 @@ class CausalEffectEstimator:
         outcome: str,
         confounders: List[str]
     ) -> CausalEffect:
-        """双重稳健估计
+        """ﮒﻠﻝ۷ﺏﮒ۴ﻛﺙﺍﻟ؟۰
         
         Args:
-            data: 数据
-            treatment: 处理变量
-            outcome: 结果变量
-            confounders: 混杂因素
+            data: ﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
             
         Returns:
-            CausalEffect: 因果效应
+            CausalEffect: ﮒ ﮔﮔﮒﭦ
         """
         from sklearn.linear_model import LogisticRegression, LinearRegression
         
@@ -553,9 +553,9 @@ class CausalEffectEstimator:
 
 
 class CounterfactualAnalyzer:
-    """反事实分析器
+    """ﮒﻛﭦﮒ؟ﮒﮔﮒ۷
     
-    进行反事实推�?    """
+    ﻟﺟﻟ۰ﮒﻛﭦﮒ؟ﮔ۷ﮔ?    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -568,17 +568,17 @@ class CounterfactualAnalyzer:
         outcome: str,
         sample_indices: Optional[List[int]] = None
     ) -> List[CounterfactualResult]:
-        """估计个体处理效应 (ITE)
+        """ﻛﺙﺍﻟ؟۰ﻛﺕ۹ﻛﺛﮒ۳ﻝﮔﮒﭦ (ITE)
         
         Args:
-            model: 因果模型
-            X: 特征数据
-            treatment: 处理变量
-            outcome: 结果变量
-            sample_indices: 样本索引
+            model: ﮒ ﮔﮔ۷۰ﮒ
+            X: ﻝﺗﮒﺝﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            sample_indices: ﮔ ﺓﮔ؛ﻝﺑ۱ﮒﺙ
             
         Returns:
-            List[CounterfactualResult]: 反事实结果列�?        """
+            List[CounterfactualResult]: ﮒﻛﭦﮒ؟ﻝﭨﮔﮒﻟ۰?        """
         if sample_indices is None:
             sample_indices = list(range(min(100, len(X))))
         
@@ -615,16 +615,16 @@ class CounterfactualAnalyzer:
         outcome: str,
         subgroups: Dict[str, pd.Series]
     ) -> Dict[str, float]:
-        """估计条件平均处理效应 (CATE)
+        """ﻛﺙﺍﻟ؟۰ﮔ۰ﻛﭨﭘﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ (CATE)
         
         Args:
-            model: 因果模型
-            X: 特征数据
-            treatment: 处理变量
-            outcome: 结果变量
-            subgroups: 子群体定�?            
+            model: ﮒ ﮔﮔ۷۰ﮒ
+            X: ﻝﺗﮒﺝﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            subgroups: ﮒ­ﻝﺝ۳ﻛﺛﮒ؟ﻛﺗ?            
         Returns:
-            Dict[str, float]: 各子群体的CATE
+            Dict[str, float]: ﮒﮒ­ﻝﺝ۳ﻛﺛﻝCATE
         """
         cate_results = {}
         
@@ -648,15 +648,15 @@ class CounterfactualAnalyzer:
         intervention: Dict[str, Any],
         outcome: str
     ) -> Dict[str, Any]:
-        """模拟干预效果
+        """ﮔ۷۰ﮔﮒﺗﺎﻠ۱ﮔﮔ
         
         Args:
-            causal_graph: 因果�?            data: 观测数据
-            intervention: 干预定义 {变量: 值}
-            outcome: 目标结果变量
+            causal_graph: ﮒ ﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            intervention: ﮒﺗﺎﻠ۱ﮒ؟ﻛﺗ {ﮒﻠ: ﮒﺙ}
+            outcome: ﻝ؟ﮔ ﻝﭨﮔﮒﻠ
             
         Returns:
-            Dict: 干预模拟结果
+            Dict: ﮒﺗﺎﻠ۱ﮔ۷۰ﮔﻝﭨﮔ
         """
         from causalnex.structure.notears import from_pandas
         from causalnex.network import BayesianNetwork
@@ -685,8 +685,8 @@ class CounterfactualAnalyzer:
 
 
 class FactorCausalAnalyzer:
-    """因子因果分析�?    
-    专门用于量化因子因果分析
+    """ﮒ ﮒ­ﮒ ﮔﮒﮔﮒ?    
+    ﻛﺕﻠ۷ﻝ۷ﻛﭦﻠﮒﮒ ﮒ­ﮒ ﮔﮒﮔ
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -701,13 +701,13 @@ class FactorCausalAnalyzer:
         returns: pd.Series,
         factor_names: List[str]
     ) -> Dict[str, Any]:
-        """分析因子因果�?        
+        """ﮒﮔﮒ ﮒ­ﮒ ﮔﮔ?        
         Args:
-            factor_data: 因子数据
-            returns: 收益率序�?            factor_names: 因子名称列表
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟
+            returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒ ﮒ­ﮒﻝ۶ﺍﮒﻟ۰۷
             
         Returns:
-            Dict: 因果分析结果
+            Dict: ﮒ ﮔﮒﮔﻝﭨﮔ
         """
         data = factor_data.copy()
         data['returns'] = returns
@@ -746,14 +746,14 @@ class FactorCausalAnalyzer:
         factor_names: List[str],
         threshold: float = 0.05
     ) -> List[str]:
-        """识别虚假信号
+        """ﻟﺁﮒ،ﻟﮒﻛﺟ۰ﮒﺓ
         
         Args:
-            factor_data: 因子数据
-            returns: 收益率序�?            factor_names: 因子名称列表
-            threshold: 效应阈�?            
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟
+            returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒ ﮒ­ﮒﻝ۶ﺍﮒﻟ۰۷
+            threshold: ﮔﮒﭦﻠﮒ?            
         Returns:
-            List[str]: 虚假信号因子列表
+            List[str]: ﻟﮒﻛﺟ۰ﮒﺓﮒ ﮒ­ﮒﻟ۰۷
         """
         analysis = self.analyze_factor_causality(factor_data, returns, factor_names)
         
@@ -767,9 +767,9 @@ class FactorCausalAnalyzer:
 
 ---
 
-## 4. 测试策略
+## 4. ﮔﭖﻟﺁﻝ­ﻝ۴
 
-### 4.1 单元测试
+### 4.1 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 import pytest
@@ -792,7 +792,7 @@ class TestCausalDiscovery:
         return pd.DataFrame({'X': X, 'Y': Y, 'Z': Z})
     
     def test_pc_algorithm(self, sample_data):
-        """测试PC算法"""
+        """ﮔﭖﻟﺁPCﻝ؟ﮔﺏ"""
         discovery = CausalDiscovery({})
         graph = discovery.discover_with_pc(sample_data)
         
@@ -801,7 +801,7 @@ class TestCausalDiscovery:
         assert 'Z' in graph.nodes
     
     def test_notears_algorithm(self, sample_data):
-        """测试NOTEARS算法"""
+        """ﮔﭖﻟﺁNOTEARSﻝ؟ﮔﺏ"""
         discovery = CausalDiscovery({})
         graph = discovery.discover_with_notears(sample_data)
         
@@ -811,7 +811,7 @@ class TestCausalDiscovery:
 class TestCausalEffectEstimator:
     
     def test_psm_estimation(self):
-        """测试倾向得分匹配"""
+        """ﮔﭖﻟﺁﮒﺝﮒﮒﺝﮒﮒﺗﻠ"""
         np.random.seed(42)
         n = 500
         
@@ -829,45 +829,45 @@ class TestCausalEffectEstimator:
 
 ---
 
-## 5. 风险与约�?
-### 5.1 技术风�?
-| 风险�?| 风险等级 | 缓解措施 |
+## 5. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵ﮔ?
+### 5.1 ﮔﮔﺁﻠ۲ﻠ?
+| ﻠ۲ﻠ۸ﻠ۰?| ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |--------|----------|----------|
-| 因果图错�?| P1 | 领域知识验证、多算法交叉验证 |
-| 未观测混�?| P1 | 敏感性分析、工具变�?|
-| 计算复杂度高 | P2 | 采样、并行计�?|
+| ﮒ ﮔﮒﺝﻠﻟﺁ?| P1 | ﻠ۱ﮒﻝ۴ﻟﺁﻠ۹ﻟﺁﻙﮒ۳ﻝ؟ﮔﺏﻛﭦ۳ﮒﻠ۹ﻟﺁ |
+| ﮔ۹ﻟ۶ﮔﭖﮔﺓﺓﮔ?| P1 | ﮔﮔﮔ۶ﮒﮔﻙﮒﺓ۴ﮒﺓﮒﻠ?|
+| ﻟ؟۰ﻝ؟ﮒ۳ﮔﮒﭦ۵ﻠ، | P2 | ﻠﮔ ﺓﻙﮒﺗﭘﻟ۰ﻟ؟۰ﻝ؟?|
 
 ---
 
-## 6. 验收标准
+## 6. ﻠ۹ﮔﭘﮔ ﮒ
 
-### 6.1 功能验收
+### 6.1 ﮒﻟﺛﻠ۹ﮔﭘ
 
-| 验收�?| 验收标准 |
+| ﻠ۹ﮔﭘﻠ۰?| ﻠ۹ﮔﭘﮔ ﮒ |
 |--------|----------|
-| 因果发现 | 支持PC、NOTEARS算法 |
-| 效应估计 | 支持PSM、IPW、双重稳�?|
-| 反事实推�?| 支持ITE、CATE估计 |
-| 因子分析 | 支持虚假信号识别 |
+| ﮒ ﮔﮒﻝﺍ | ﮔﺁﮔPCﻙNOTEARSﻝ؟ﮔﺏ |
+| ﮔﮒﭦﻛﺙﺍﻟ؟۰ | ﮔﺁﮔPSMﻙIPWﻙﮒﻠﻝ۷ﺏﮒ?|
+| ﮒﻛﭦﮒ؟ﮔ۷ﮔ?| ﮔﺁﮔITEﻙCATEﻛﺙﺍﻟ؟۰ |
+| ﮒ ﮒ­ﮒﮔ | ﮔﺁﮔﻟﮒﻛﺟ۰ﮒﺓﻟﺁﮒ، |
 
-### 6.2 性能验收
+### 6.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| 指标 | 目标�?|
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?|
 |------|--------|
-| 因果发现�?000样本�?| < 60�?|
-| 效应估计 | < 5�?|
-| 反事实推断（100样本�?| < 10�?|
+| ﮒ ﮔﮒﻝﺍﺅﺙ?000ﮔ ﺓﮔ؛ﺅﺙ?| < 60ﻝ۶?|
+| ﮔﮒﭦﻛﺙﺍﻟ؟۰ | < 5ﻝ۶?|
+| ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﺅﺙ100ﮔ ﺓﮔ؛ﺅﺙ?| < 10ﻝ۶?|
 
 ---
 
-## 7. 版本历史
+## 7. ﻝﮔ؛ﮒﮒﺎ
 
-| 版本 | 日期 | 作�?| 变更说明 |
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛﻟ?| ﮒﮔﺑﻟﺁﺑﮔ |
 |------|------|------|----------|
-| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 |
+| v1.0 | 2026-04-03 | ﻠﮒﻝ ﻝ۸ﭘﮒ?| ﮒﮒ۶ﻝﮔ؛ |
 
 ---
 
-**文档版本**: v1.0.0
-**最后更�?*: 2026-04-03
-**维护�?*: 量化研究�?
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-03
+**ﻝﭨﺑﮔ۳ﻟ?*: ﻠﮒﻝ ﻝ۸ﭘﮒ?

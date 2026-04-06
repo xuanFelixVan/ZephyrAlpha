@@ -6,62 +6,62 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (ﻝﭨﮒﻛﺙﮒﮒﺎ?
 index: STAT_ARB_SPEC_001
 estimated_hours: 160h
 review_status: Pending
-reviewer: 首席技术评审官
+reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构技术规格书
-applicable_scope: 全系�?compliance_level: 专业标准
+owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 ---
 
-# 统计套利模块技术规格书 v1.0
+# ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 
-> 清风量化系统 v5.3 - 统计套利模块详细技术设�?> **索引**: `STAT_ARB_SPEC_001`
-> **开发时�?*: 160h
-> **核心定位**: 配对交易、协整分析、文艺复兴核心能�?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝﻟ؟?> **ﻝﺑ۱ﮒﺙ**: `STAT_ARB_SPEC_001`
+> **ﮒﺙﮒﮔﭘﻠ?*: 160h
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻠﮒﺁﺗﻛﭦ۳ﮔﻙﮒﮔﺑﮒﮔﻙﮔﻟﭦﮒ۳ﮒﺑﮔ ﺕﮒﺟﻟﺛﮒ?
 ---
 
-## 1. 概述
+## 1. ﮔ۵ﻟﺟﺍ
 
-统计套利模块负责配对交易、协整分析和市场中性组合构建�?
-## 2. 接口定义
+ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﻟﺑﻟﺑ۲ﻠﮒﺁﺗﻛﭦ۳ﮔﻙﮒﮔﺑﮒﮔﮒﮒﺕﮒﭦﻛﺕ­ﮔ۶ﻝﭨﮒﮔﮒﭨﭦﻙ?
+## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ```python
 class StatisticalArbitrage:
-    """统计套利核心�?""
+    """ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ ﺕﮒﺟﻝﺎ?""
     
     def find_cointegrated_pairs(self, 
                                price_data: pd.DataFrame,
                                p_value_threshold: float = 0.05) -> List[Tuple[str, str]]:
-        """查找协整配对"""
+        """ﮔ۴ﮔﺝﮒﮔﺑﻠﮒﺁﺗ"""
         pass
     
     def calculate_spread(self, 
                         price1: pd.Series, 
                         price2: pd.Series) -> pd.Series:
-        """计算价差"""
+        """ﻟ؟۰ﻝ؟ﻛﭨﺓﮒﺓ؟"""
         pass
     
     def generate_signals(self, 
                         spread: pd.Series,
                         entry_threshold: float = 2.0,
                         exit_threshold: float = 0.5) -> pd.Series:
-        """生成交易信号"""
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ"""
         pass
 ```
 
-## 3. 算法实现
+## 3. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
 
 ```python
 def cointegration_test(price1: pd.Series, price2: pd.Series) -> Tuple[float, float]:
     """
-    协整检验（Engle-Granger两步法）
+    ﮒﮔﺑﮔ۲ﻠ۹ﺅﺙEngle-Grangerﻛﺕ۳ﮔ­۴ﮔﺏﺅﺙ
     
     Returns:
-        Tuple[float, float]: (协整系数, p�?
+        Tuple[float, float]: (ﮒﮔﺑﻝﺏﭨﮔﺍ, pﮒ?
     """
     from statsmodels.tsa.stattools import coint
     score, pvalue, _ = coint(price1, price2)
@@ -70,4 +70,4 @@ def cointegration_test(price1: pd.Series, price2: pd.Series) -> Tuple[float, flo
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final
+**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final

@@ -1,58 +1,58 @@
 ---
-standard_type: 操作指南
-applicable_scope: 全系�?compliance_level: 正式标准
+standard_type: ﮔﻛﺛﮔﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
-implementation_status: 已完�?owner: 运维团队
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
 module_id: MONITORING_MANUAL
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# 系统监控手册
+# ﻝﺏﭨﻝﭨﻝﮔ۶ﮔﮒ
 
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 运维团队
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 
 ---
 
-## 1. 监控概述
+## 1. ﻝﮔ۶ﮔ۵ﻟﺟﺍ
 
-### 1.1 监控目标
+### 1.1 ﻝﮔ۶ﻝ؟ﮔ 
 
-建立全面的系统监控体系，确保ZephyrAlpha量化交易系统稳定运行，及时发现和处理异常情况�?
-### 1.2 监控范围
+ﮒﭨﭦﻝ،ﮒ۷ﻠ۱ﻝﻝﺏﭨﻝﭨﻝﮔ۶ﻛﺛﻝﺏﭨﺅﺙﻝ۰؟ﻛﺟZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﺅﺙﮒﮔﭘﮒﻝﺍﮒﮒ۳ﻝﮒﺙﮒﺕﺕﮔﮒﭖﻙ?
+### 1.2 ﻝﮔ۶ﻟﮒﺑ
 
-- 系统性能监控
-- 应用性能监控
-- 业务指标监控
-- 安全事件监控
-- 日志监控
+- ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﮔ۶
+- ﮒﭦﻝ۷ﮔ۶ﻟﺛﻝﮔ۶
+- ﻛﺕﮒ۰ﮔﮔ ﻝﮔ۶
+- ﮒ؟ﮒ۷ﻛﭦﻛﭨﭘﻝﮔ۶
+- ﮔ۴ﮒﺟﻝﮔ۶
 
-### 1.3 监控工具
+### 1.3 ﻝﮔ۶ﮒﺓ۴ﮒﺓ
 
-- **Prometheus**: 指标收集和存�?- **Grafana**: 可视化监控面�?- **AlertManager**: 告警管理
-- **ELK Stack**: 日志收集和分�?
+- **Prometheus**: ﮔﮔ ﮔﭘﻠﮒﮒ­ﮒ?- **Grafana**: ﮒﺁﻟ۶ﮒﻝﮔ۶ﻠ۱ﮔ?- **AlertManager**: ﮒﻟ­۵ﻝ؟۰ﻝ
+- **ELK Stack**: ﮔ۴ﮒﺟﮔﭘﻠﮒﮒﮔ?
 ---
 
-## 2. 系统监控
+## 2. ﻝﺏﭨﻝﭨﻝﮔ۶
 
-### 2.1 CPU监控
+### 2.1 CPUﻝﮔ۶
 
-**监控指标**:
-- CPU使用�?- CPU负载
-- CPU核心使用�?
-**Prometheus查询**:
+**ﻝﮔ۶ﮔﮔ **:
+- CPUﻛﺛﺟﻝ۷ﻝ?- CPUﻟﺑﻟﺛﺛ
+- CPUﮔ ﺕﮒﺟﻛﺛﺟﻝ۷ﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# CPU使用�?100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+# CPUﻛﺛﺟﻝ۷ﻝ?100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
 
-# CPU负载
+# CPUﻟﺑﻟﺛﺛ
 node_load1
 node_load5
 node_load15
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighCPUUsage
   expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
@@ -60,22 +60,22 @@ node_load15
   labels:
     severity: warning
   annotations:
-    summary: "CPU使用率过�?
-    description: "CPU使用率超�?0%，当前�? {{ $value }}%"
+    summary: "CPUﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+    description: "CPUﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.2 内存监控
+### 2.2 ﮒﮒ­ﻝﮔ۶
 
-**监控指标**:
-- 内存使用�?- 内存使用�?- Swap使用�?
-**Prometheus查询**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?- ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?- Swapﻛﺛﺟﻝ۷ﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 内存使用�?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+# ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
 
-# 内存使用�?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
+# ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighMemoryUsage
   expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
@@ -83,26 +83,26 @@ node_load15
   labels:
     severity: warning
   annotations:
-    summary: "内存使用率过�?
-    description: "内存使用率超�?5%，当前�? {{ $value }}%"
+    summary: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+    description: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.3 磁盘监控
+### 2.3 ﻝ۲ﻝﻝﮔ۶
 
-**监控指标**:
-- 磁盘使用�?- 磁盘IO
-- 磁盘读写速度
+**ﻝﮔ۶ﮔﮔ **:
+- ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?- ﻝ۲ﻝIO
+- ﻝ۲ﻝﻟﺁﭨﮒﻠﮒﭦ۵
 
-**Prometheus查询**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 磁盘使用�?(1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
+# ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?(1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
 
-# 磁盘IO
+# ﻝ۲ﻝIO
 irate(node_disk_read_bytes_total[5m])
 irate(node_disk_written_bytes_total[5m])
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighDiskUsage
   expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
@@ -110,46 +110,46 @@ irate(node_disk_written_bytes_total[5m])
   labels:
     severity: warning
   annotations:
-    summary: "磁盘使用率过�?
-    description: "磁盘使用率超�?5%，当前�? {{ $value }}%"
+    summary: "ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+    description: "ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.4 网络监控
+### 2.4 ﻝﺛﻝﭨﻝﮔ۶
 
-**监控指标**:
-- 网络流量
-- 网络连接�?- 网络错误�?
-**Prometheus查询**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻝﺛﻝﭨﮔﭖﻠ
+- ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?- ﻝﺛﻝﭨﻠﻟﺁﺁﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 网络流量
+# ﻝﺛﻝﭨﮔﭖﻠ
 irate(node_network_receive_bytes_total[5m])
 irate(node_network_transmit_bytes_total[5m])
 
-# 网络连接�?node_netstat_Tcp_CurrEstab
+# ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?node_netstat_Tcp_CurrEstab
 ```
 
 ---
 
-## 3. 应用监控
+## 3. ﮒﭦﻝ۷ﻝﮔ۶
 
-### 3.1 API监控
+### 3.1 APIﻝﮔ۶
 
-**监控指标**:
-- 请求速率
-- 响应时间
-- 错误�?- 并发连接�?
-**Prometheus查询**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻟﺁﺓﮔﺎﻠﻝ
+- ﮒﮒﭦﮔﭘﻠﺑ
+- ﻠﻟﺁﺁﻝ?- ﮒﺗﭘﮒﻟﺟﮔ۴ﮔ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 请求速率
+# ﻟﺁﺓﮔﺎﻠﻝ
 rate(http_requests_total[5m])
 
-# 平均响应时间
+# ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑ
 rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
 
-# 错误�?rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
+# ﻠﻟﺁﺁﻝ?rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighErrorRate
   expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
@@ -157,8 +157,8 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: critical
   annotations:
-    summary: "API错误率过�?
-    description: "API错误率超�?0%，当前�? {{ $value | humanizePercentage }}"
+    summary: "APIﻠﻟﺁﺁﻝﻟﺟﻠ،?
+    description: "APIﻠﻟﺁﺁﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 
 - alert: SlowResponse
   expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) > 1
@@ -166,23 +166,23 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: warning
   annotations:
-    summary: "API响应时间过长"
-    description: "API平均响应时间超过1秒，当前�? {{ $value }}�?
+    summary: "APIﮒﮒﭦﮔﭘﻠﺑﻟﺟﻠﺟ"
+    description: "APIﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑﻟﭘﻟﺟ1ﻝ۶ﺅﺙﮒﺛﮒﮒ? {{ $value }}ﻝ۶?
 ```
 
-### 3.2 数据库监�?
-**监控指标**:
-- 连接�?- 查询性能
-- 慢查�?- 死锁
+### 3.2 ﮔﺍﮔ؟ﮒﭦﻝﮔ?
+**ﻝﮔ۶ﮔﮔ **:
+- ﻟﺟﮔ۴ﮔ?- ﮔ۴ﻟﺁ۱ﮔ۶ﻟﺛ
+- ﮔ۱ﮔ۴ﻟﺁ?- ﮔ­ﭨﻠ
 
-**Prometheus查询**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 连接�?pg_stat_activity_count
+# ﻟﺟﮔ۴ﮔ?pg_stat_activity_count
 
-# 慢查�?rate(pg_stat_statements_mean_exec_time_seconds[5m])
+# ﮔ۱ﮔ۴ﻟﺁ?rate(pg_stat_statements_mean_exec_time_seconds[5m])
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: TooManyDBConnections
   expr: pg_stat_activity_count > 100
@@ -190,8 +190,8 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: warning
   annotations:
-    summary: "数据库连接数过多"
-    description: "数据库连接数超过100，当前�? {{ $value }}"
+    summary: "ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔﺍﻟﺟﮒ۳"
+    description: "ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔﺍﻟﭘﻟﺟ100ﺅﺙﮒﺛﮒﮒ? {{ $value }}"
 
 - alert: SlowDBQuery
   expr: rate(pg_stat_statements_mean_exec_time_seconds[5m]) > 1
@@ -199,54 +199,54 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: warning
   annotations:
-    summary: "数据库查询过�?
-    description: "数据库平均查询时间超�?�?
+    summary: "ﮔﺍﮔ؟ﮒﭦﮔ۴ﻟﺁ۱ﻟﺟﮔ?
+    description: "ﮔﺍﮔ؟ﮒﭦﮒﺗﺏﮒﮔ۴ﻟﺁ۱ﮔﭘﻠﺑﻟﭘﻟﺟ?ﻝ۶?
 ```
 
-### 3.3 Redis监控
+### 3.3 Redisﻝﮔ۶
 
-**监控指标**:
-- 内存使用
-- 连接�?- 命令执行速率
-- 键空间命中率
+**ﻝﮔ۶ﮔﮔ **:
+- ﮒﮒ­ﻛﺛﺟﻝ۷
+- ﻟﺟﮔ۴ﮔ?- ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
+- ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
 
-**Prometheus查询**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 内存使用
+# ﮒﮒ­ﻛﺛﺟﻝ۷
 redis_memory_used_bytes
 
-# 连接�?redis_connected_clients
+# ﻟﺟﮔ۴ﮔ?redis_connected_clients
 
-# 命令执行速率
+# ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
 rate(redis_commands_processed_total[5m])
 
-# 键空间命中率
+# ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
 rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))
 ```
 
 ---
 
-## 4. 业务监控
+## 4. ﻛﺕﮒ۰ﻝﮔ۶
 
-### 4.1 交易监控
+### 4.1 ﻛﭦ۳ﮔﻝﮔ۶
 
-**监控指标**:
-- 订单数量
-- 成交数量
-- 成交金额
-- 拒单�?
-**Prometheus查询**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻟ؟۱ﮒﮔﺍﻠ
+- ﮔﻛﭦ۳ﮔﺍﻠ
+- ﮔﻛﭦ۳ﻠﻠ۱
+- ﮔﮒﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 订单数量
+# ﻟ؟۱ﮒﮔﺍﻠ
 rate(orders_total[5m])
 
-# 成交金额
+# ﮔﻛﭦ۳ﻠﻠ۱
 rate(trade_value_total[5m])
 
-# 拒单�?rate(orders_rejected_total[5m]) / rate(orders_total[5m])
+# ﮔﮒﻝ?rate(orders_rejected_total[5m]) / rate(orders_total[5m])
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighRejectionRate
   expr: rate(orders_rejected_total[5m]) / rate(orders_total[5m]) > 0.05
@@ -254,30 +254,30 @@ rate(trade_value_total[5m])
   labels:
     severity: warning
   annotations:
-    summary: "订单拒单率过�?
-    description: "订单拒单率超�?%，当前�? {{ $value | humanizePercentage }}"
+    summary: "ﻟ؟۱ﮒﮔﮒﻝﻟﺟﻠ،?
+    description: "ﻟ؟۱ﮒﮔﮒﻝﻟﭘﻟﺟ?%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 ```
 
-### 4.2 策略监控
+### 4.2 ﻝ­ﻝ۴ﻝﮔ۶
 
-**监控指标**:
-- 策略运行状�?- 策略收益
-- 策略回撤
-- 策略夏普比率
+**ﻝﮔ۶ﮔﮔ **:
+- ﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘﮔ?- ﻝ­ﻝ۴ﮔﭘﻝ
+- ﻝ­ﻝ۴ﮒﮔ۳
+- ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
 
-**Prometheus查询**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 策略收益
+# ﻝ­ﻝ۴ﮔﭘﻝ
 strategy_returns_total
 
-# 策略回撤
+# ﻝ­ﻝ۴ﮒﮔ۳
 strategy_drawdown
 
-# 策略夏普比率
+# ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
 strategy_sharpe_ratio
 ```
 
-**告警规则**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: StrategyDrawdown
   expr: strategy_drawdown > 0.1
@@ -285,32 +285,32 @@ strategy_sharpe_ratio
   labels:
     severity: critical
   annotations:
-    summary: "策略回撤过大"
-    description: "策略回撤超过10%，当前�? {{ $value | humanizePercentage }}"
+    summary: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﺟﮒ۳۶"
+    description: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﭘﻟﺟ10%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 ```
 
-### 4.3 风控监控
+### 4.3 ﻠ۲ﮔ۶ﻝﮔ۶
 
-**监控指标**:
-- 风控触发次数
-- 风控拦截次数
-- 风控规则命中�?
-**Prometheus查询**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
+- ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
+- ﻠ۲ﮔ۶ﻟ۶ﮒﮒﺛﻛﺕ­ﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# 风控触发次数
+# ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
 rate(risk_control_triggered_total[5m])
 
-# 风控拦截次数
+# ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
 rate(risk_control_blocked_total[5m])
 ```
 
 ---
 
-## 5. 日志监控
+## 5. ﮔ۴ﮒﺟﻝﮔ۶
 
-### 5.1 日志收集
+### 5.1 ﮔ۴ﮒﺟﮔﭘﻠ
 
-**配置Filebeat**:
+**ﻠﻝﺛ؟Filebeat**:
 ```yaml
 # filebeat.yml
 filebeat.inputs:
@@ -327,21 +327,21 @@ output.elasticsearch:
   index: "zephyr-%{+yyyy.MM.dd}"
 ```
 
-### 5.2 日志分析
+### 5.2 ﮔ۴ﮒﺟﮒﮔ
 
-**Kibana查询示例**:
+**Kibanaﮔ۴ﻟﺁ۱ﻝ۳ﭦﻛﺝ**:
 ```
-# 查找错误日志
+# ﮔ۴ﮔﺝﻠﻟﺁﺁﮔ۴ﮒﺟ
 level: ERROR
 
-# 查找特定API的日�?api: /api/orders AND level: ERROR
+# ﮔ۴ﮔﺝﻝﺗﮒ؟APIﻝﮔ۴ﮒﺟ?api: /api/orders AND level: ERROR
 
-# 查找慢请�?duration: >1000
+# ﮔ۴ﮔﺝﮔ۱ﻟﺁﺓﮔﺎ?duration: >1000
 ```
 
-### 5.3 日志告警
+### 5.3 ﮔ۴ﮒﺟﮒﻟ­۵
 
-**配置告警规则**:
+**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighErrorLogRate
   expr: rate(log_entries_total{level="ERROR"}[5m]) > 10
@@ -349,23 +349,23 @@ level: ERROR
   labels:
     severity: warning
   annotations:
-    summary: "错误日志过多"
-    description: "错误日志速率超过10�?分钟"
+    summary: "ﻠﻟﺁﺁﮔ۴ﮒﺟﻟﺟﮒ۳"
+    description: "ﻠﻟﺁﺁﮔ۴ﮒﺟﻠﻝﻟﭘﻟﺟ10ﮔ?ﮒﻠ"
 ```
 
 ---
 
-## 6. Grafana面板
+## 6. Grafanaﻠ۱ﮔﺟ
 
-### 6.1 系统监控面板
+### 6.1 ﻝﺏﭨﻝﭨﻝﮔ۶ﻠ۱ﮔﺟ
 
-**面板配置**:
+**ﻠ۱ﮔﺟﻠﻝﺛ؟**:
 ```json
 {
-  "title": "系统监控",
+  "title": "ﻝﺏﭨﻝﭨﻝﮔ۶",
   "panels": [
     {
-      "title": "CPU使用�?,
+      "title": "CPUﻛﺛﺟﻝ۷ﻝ?,
       "type": "graph",
       "targets": [
         {
@@ -374,7 +374,7 @@ level: ERROR
       ]
     },
     {
-      "title": "内存使用�?,
+      "title": "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?,
       "type": "graph",
       "targets": [
         {
@@ -386,15 +386,15 @@ level: ERROR
 }
 ```
 
-### 6.2 应用监控面板
+### 6.2 ﮒﭦﻝ۷ﻝﮔ۶ﻠ۱ﮔﺟ
 
-**面板配置**:
+**ﻠ۱ﮔﺟﻠﻝﺛ؟**:
 ```json
 {
-  "title": "应用监控",
+  "title": "ﮒﭦﻝ۷ﻝﮔ۶",
   "panels": [
     {
-      "title": "请求速率",
+      "title": "ﻟﺁﺓﮔﺎﻠﻝ",
       "type": "graph",
       "targets": [
         {
@@ -403,7 +403,7 @@ level: ERROR
       ]
     },
     {
-      "title": "响应时间",
+      "title": "ﮒﮒﭦﮔﭘﻠﺑ",
       "type": "graph",
       "targets": [
         {
@@ -417,11 +417,11 @@ level: ERROR
 
 ---
 
-## 7. 告警管理
+## 7. ﮒﻟ­۵ﻝ؟۰ﻝ
 
-### 7.1 告警渠道
+### 7.1 ﮒﻟ­۵ﮔﺕ ﻠ
 
-**配置通知渠道**:
+**ﻠﻝﺛ؟ﻠﻝ۴ﮔﺕ ﻠ**:
 ```yaml
 # alertmanager.yml
 global:
@@ -449,94 +449,94 @@ receivers:
     channel: '#alerts'
 ```
 
-### 7.2 告警分级
+### 7.2 ﮒﻟ­۵ﮒﻝﭦ۶
 
-**告警级别**:
-- **Critical**: 需要立即处�?- **Warning**: 需要关�?- **Info**: 信息通知
+**ﮒﻟ­۵ﻝﭦ۶ﮒ،**:
+- **Critical**: ﻠﻟ۵ﻝ،ﮒﺏﮒ۳ﻝ?- **Warning**: ﻠﻟ۵ﮒﺏﮔﺏ?- **Info**: ﻛﺟ۰ﮔﺁﻠﻝ۴
 
-**告警处理流程**:
-1. 接收告警通知
-2. 确认告警级别
-3. 查看监控面板
-4. 分析根本原因
-5. 执行修复措施
-6. 验证修复效果
-7. 记录处理过程
-
----
-
-## 8. 监控维护
-
-### 8.1 日常检�?
-**每日检查项**:
-- [ ] 检查系统资源使用情�?- [ ] 检查应用错误日�?- [ ] 检查告警历�?- [ ] 检查备份状�?
-### 8.2 定期维护
-
-**每周维护**:
-- 清理过期监控数据
-- 优化告警规则
-- 更新监控面板
-
-**每月维护**:
-- 评估监控覆盖�?- 调整告警阈�?- 优化监控性能
+**ﮒﻟ­۵ﮒ۳ﻝﮔﭖﻝ۷**:
+1. ﮔ۴ﮔﭘﮒﻟ­۵ﻠﻝ۴
+2. ﻝ۰؟ﻟ؟۳ﮒﻟ­۵ﻝﭦ۶ﮒ،
+3. ﮔ۴ﻝﻝﮔ۶ﻠ۱ﮔﺟ
+4. ﮒﮔﮔ ﺗﮔ؛ﮒﮒ 
+5. ﮔ۶ﻟ۰ﻛﺟ؟ﮒ۳ﮔ۹ﮔﺛ
+6. ﻠ۹ﻟﺁﻛﺟ؟ﮒ۳ﮔﮔ
+7. ﻟ؟ﺍﮒﺛﮒ۳ﻝﻟﺟﻝ۷
 
 ---
 
-## 9. 故障排查
+## 8. ﻝﮔ۶ﻝﭨﺑﮔ۳
 
-### 9.1 常见问题
+### 8.1 ﮔ۴ﮒﺕﺕﮔ۲ﮔ?
+**ﮔﺁﮔ۴ﮔ۲ﮔ۴ﻠ۰ﺗ**:
+- [ ] ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦﻛﺛﺟﻝ۷ﮔﮒ?- [ ] ﮔ۲ﮔ۴ﮒﭦﻝ۷ﻠﻟﺁﺁﮔ۴ﮒﺟ?- [ ] ﮔ۲ﮔ۴ﮒﻟ­۵ﮒﮒ?- [ ] ﮔ۲ﮔ۴ﮒ۳ﻛﭨﺛﻝﭘﮔ?
+### 8.2 ﮒ؟ﮔﻝﭨﺑﮔ۳
 
-**问题1: 监控数据缺失**
+**ﮔﺁﮒ۷ﻝﭨﺑﮔ۳**:
+- ﮔﺕﻝﻟﺟﮔﻝﮔ۶ﮔﺍﮔ؟
+- ﻛﺙﮒﮒﻟ­۵ﻟ۶ﮒ
+- ﮔﺑﮔﺍﻝﮔ۶ﻠ۱ﮔﺟ
+
+**ﮔﺁﮔﻝﭨﺑﮔ۳**:
+- ﻟﺁﻛﺙﺍﻝﮔ۶ﻟ۵ﻝﻝ?- ﻟﺍﮔﺑﮒﻟ­۵ﻠﮒ?- ﻛﺙﮒﻝﮔ۶ﮔ۶ﻟﺛ
+
+---
+
+## 9. ﮔﻠﮔﮔ۴
+
+### 9.1 ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
+
+**ﻠ؟ﻠ۱1: ﻝﮔ۶ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ**
 ```bash
-# 检查Prometheus状�?systemctl status prometheus
+# ﮔ۲ﮔ۴Prometheusﻝﭘﮔ?systemctl status prometheus
 
-# 检查数据采�?curl http://localhost:9090/api/v1/targets
+# ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻠﻠ?curl http://localhost:9090/api/v1/targets
 
-# 检查存储空�?df -h /var/lib/prometheus
+# ﮔ۲ﮔ۴ﮒ­ﮒ۷ﻝ۸ﭦﻠ?df -h /var/lib/prometheus
 ```
 
-**问题2: 告警未发�?*
+**ﻠ؟ﻠ۱2: ﮒﻟ­۵ﮔ۹ﮒﻠ?*
 ```bash
-# 检查AlertManager状�?systemctl status alertmanager
+# ﮔ۲ﮔ۴AlertManagerﻝﭘﮔ?systemctl status alertmanager
 
-# 检查告警规�?curl http://localhost:9090/api/v1/rules
+# ﮔ۲ﮔ۴ﮒﻟ­۵ﻟ۶ﮒ?curl http://localhost:9090/api/v1/rules
 
-# 检查通知渠道
+# ﮔ۲ﮔ۴ﻠﻝ۴ﮔﺕ ﻠ
 curl http://localhost:9093/api/v1/receivers
 ```
 
-**问题3: Grafana面板无法访问**
+**ﻠ؟ﻠ۱3: Grafanaﻠ۱ﮔﺟﮔ ﮔﺏﻟ؟ﺟﻠ؟**
 ```bash
-# 检查Grafana状�?systemctl status grafana-server
+# ﮔ۲ﮔ۴Grafanaﻝﭘﮔ?systemctl status grafana-server
 
-# 检查日�?tail -f /var/log/grafana/grafana.log
+# ﮔ۲ﮔ۴ﮔ۴ﮒﺟ?tail -f /var/log/grafana/grafana.log
 
-# 重启服务
+# ﻠﮒﺁﮔﮒ۰
 systemctl restart grafana-server
 ```
 
 ---
 
-## 10. 最佳实�?
-### 10.1 监控设计原则
+## 10. ﮔﻛﺛﺏﮒ؟ﻟﺓ?
+### 10.1 ﻝﮔ۶ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-1. **全面�?*: 覆盖所有关键指�?2. **及时�?*: 快速发现和响应问题
-3. **准确�?*: 避免误报和漏�?4. **可操作�?*: 提供可操作的告警信息
+1. **ﮒ۷ﻠ۱ﮔ?*: ﻟ۵ﻝﮔﮔﮒﺏﻠ؟ﮔﮔ ?2. **ﮒﮔﭘﮔ?*: ﮒﺟ،ﻠﮒﻝﺍﮒﮒﮒﭦﻠ؟ﻠ۱
+3. **ﮒﻝ۰؟ﮔ?*: ﻠﺟﮒﻟﺁﺁﮔ۴ﮒﮔﺙﮔ?4. **ﮒﺁﮔﻛﺛﮔ?*: ﮔﻛﺝﮒﺁﮔﻛﺛﻝﮒﻟ­۵ﻛﺟ۰ﮔﺁ
 
-### 10.2 告警设计原则
+### 10.2 ﮒﻟ­۵ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-1. **分级管理**: 根据严重程度分级
-2. **避免噪音**: 减少无效告警
-3. **提供上下�?*: 包含足够的诊断信�?4. **快速响�?*: 建立快速响应机�?
+1. **ﮒﻝﭦ۶ﻝ؟۰ﻝ**: ﮔ ﺗﮔ؟ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ﮒﻝﭦ۶
+2. **ﻠﺟﮒﮒ۹ﻠﺏ**: ﮒﮒﺍﮔ ﮔﮒﻟ­۵
+3. **ﮔﻛﺝﻛﺕﻛﺕﮔ?*: ﮒﮒ،ﻟﭘﺏﮒ۳ﻝﻟﺁﮔ­ﻛﺟ۰ﮔ?4. **ﮒﺟ،ﻠﮒﮒﭦ?*: ﮒﭨﭦﻝ،ﮒﺟ،ﻠﮒﮒﭦﮔﭦﮒ?
 ---
 
-## 11. 参考文�?
-- [部署手册](./DEPLOYMENT_MANUAL.md)
-- [风险监控手册](./RISK_MONITORING_MANUAL.md)
-- [维护手册](./MAINTENANCE_MANUAL.md)
-- [监控配置模板](../04_CONFIG_TEMPLATES/monitoring_config_template.yaml)
+## 11. ﮒﻟﮔﮔ۰?
+- [ﻠ۷ﻝﺛﺎﮔﮒ](./DEPLOYMENT_MANUAL.md)
+- [ﻠ۲ﻠ۸ﻝﮔ۶ﮔﮒ](./RISK_MONITORING_MANUAL.md)
+- [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
+- [ﻝﮔ۶ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/monitoring_config_template.yaml)
 
 ---
 
-**文档状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

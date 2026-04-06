@@ -1,149 +1,149 @@
 ---
-standard_type: 操作指南
-applicable_scope: 全系�?compliance_level: 正式标准
+standard_type: ﮔﻛﺛﮔﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
-implementation_status: 已完�?owner: 运维团队
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
 module_id: DEPLOYMENT_MANUAL
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# 系统部署手册
+# ﻝﺏﭨﻝﭨﻠ۷ﻝﺛﺎﮔﮒ
 
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 运维团队
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 
 ---
 
-## 1. 部署概述
+## 1. ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
 
-### 1.1 部署目标
+### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ 
 
-本文档提供ZephyrAlpha量化交易系统的完整部署指南，确保系统在生产环境中稳定运行�?
-### 1.2 部署范围
+ﮔ؛ﮔﮔ۰۲ﮔﻛﺝZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮒ؟ﮔﺑﻠ۷ﻝﺛﺎﮔﮒﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒ۷ﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﺕ­ﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﻙ?
+### 1.2 ﻠ۷ﻝﺛﺎﻟﮒﺑ
 
-- 生产环境部署
-- 测试环境部署
-- 开发环境部�?- 灾备环境部署
+- ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
+- ﮔﭖﻟﺁﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
+- ﮒﺙﮒﻝﺁﮒ۱ﻠ۷ﻝﺛ?- ﻝﺝﮒ۳ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
 
-### 1.3 部署前置条件
+### 1.3 ﻠ۷ﻝﺛﺎﮒﻝﺛ؟ﮔ۰ﻛﭨﭘ
 
 - Python 3.8+
 - PostgreSQL 12+
 - Redis 6+
-- Docker 20+（可选）
-- 8GB+ 内存
-- 100GB+ 磁盘空间
+- Docker 20+ﺅﺙﮒﺁﻠﺅﺙ
+- 8GB+ ﮒﮒ­
+- 100GB+ ﻝ۲ﻝﻝ۸ﭦﻠﺑ
 
 ---
 
-## 2. 环境准备
+## 2. ﻝﺁﮒ۱ﮒﮒ۳
 
-### 2.1 系统要求
+### 2.1 ﻝﺏﭨﻝﭨﻟ۵ﮔﺎ
 
-**操作系统**:
+**ﮔﻛﺛﻝﺏﭨﻝﭨ**:
 - Windows Server 2019+
 - Ubuntu 20.04+
 - CentOS 8+
 
-**硬件要求**:
-- CPU: 4核心+
-- 内存: 8GB+
-- 磁盘: 100GB+ SSD
-- 网络: 100Mbps+
+**ﻝ۰؛ﻛﭨﭘﻟ۵ﮔﺎ**:
+- CPU: 4ﮔ ﺕﮒﺟ+
+- ﮒﮒ­: 8GB+
+- ﻝ۲ﻝ: 100GB+ SSD
+- ﻝﺛﻝﭨ: 100Mbps+
 
-### 2.2 软件依赖
+### 2.2 ﻟﺛﺁﻛﭨﭘﻛﺝﻟﭖ
 
-**必需软件**:
+**ﮒﺟﻠﻟﺛﺁﻛﭨﭘ**:
 ```bash
-# Python环境
+# Pythonﻝﺁﮒ۱
 Python 3.8+
 pip 21+
 
-# 数据�?PostgreSQL 12+
+# ﮔﺍﮔ؟ﮒﭦ?PostgreSQL 12+
 Redis 6+
 
-# 可选容器化
+# ﮒﺁﻠﮒ؟ﺗﮒ۷ﮒ
 Docker 20+
 Docker Compose 2+
 ```
 
-**Python依赖**:
+**Pythonﻛﺝﻟﭖ**:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2.3 环境变量配置
+### 2.3 ﻝﺁﮒ۱ﮒﻠﻠﻝﺛ؟
 
-创建 `.env` 文件�?```bash
-# 数据库配�?DATABASE_URL=postgresql://user:password@localhost:5432/zephyr
+ﮒﮒﭨﭦ `.env` ﮔﻛﭨﭘﺅﺙ?```bash
+# ﮔﺍﮔ؟ﮒﭦﻠﻝﺛ?DATABASE_URL=postgresql://user:password@localhost:5432/zephyr
 REDIS_URL=redis://localhost:6379/0
 
-# API配置
+# APIﻠﻝﺛ؟
 API_HOST=0.0.0.0
 API_PORT=8000
 API_WORKERS=4
 
-# 日志配置
+# ﮔ۴ﮒﺟﻠﻝﺛ؟
 LOG_LEVEL=INFO
 LOG_FILE=logs/zephyr.log
 
-# 安全配置
+# ﮒ؟ﮒ۷ﻠﻝﺛ؟
 SECRET_KEY=your-secret-key
 JWT_SECRET=your-jwt-secret
 ```
 
 ---
 
-## 3. 数据库部�?
-### 3.1 PostgreSQL部署
+## 3. ﮔﺍﮔ؟ﮒﭦﻠ۷ﻝﺛ?
+### 3.1 PostgreSQLﻠ۷ﻝﺛﺎ
 
-**安装PostgreSQL**:
+**ﮒ؟ﻟ۲PostgreSQL**:
 ```bash
 # Ubuntu
 sudo apt-get install postgresql-12
 
 # Windows
-# 下载安装�? https://www.postgresql.org/download/windows/
+# ﻛﺕﻟﺛﺛﮒ؟ﻟ۲ﮒ? https://www.postgresql.org/download/windows/
 ```
 
-**创建数据�?*:
+**ﮒﮒﭨﭦﮔﺍﮔ؟ﮒﭦ?*:
 ```sql
 CREATE DATABASE zephyr;
 CREATE USER zephyr_user WITH PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE zephyr TO zephyr_user;
 ```
 
-**初始化表结构**:
+**ﮒﮒ۶ﮒﻟ۰۷ﻝﭨﮔ**:
 ```bash
 python scripts/init_database.py
 ```
 
-### 3.2 Redis部署
+### 3.2 Redisﻠ۷ﻝﺛﺎ
 
-**安装Redis**:
+**ﮒ؟ﻟ۲Redis**:
 ```bash
 # Ubuntu
 sudo apt-get install redis-server
 
 # Windows
-# 下载: https://github.com/microsoftarchive/redis/releases
+# ﻛﺕﻟﺛﺛ: https://github.com/microsoftarchive/redis/releases
 ```
 
-**配置Redis**:
+**ﻠﻝﺛ؟Redis**:
 ```bash
-# 编辑配置文件
+# ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
 sudo vi /etc/redis/redis.conf
 
-# 设置密码
+# ﻟ؟ﺝﻝﺛ؟ﮒﺁﻝ 
 requirepass your_redis_password
 
-# 设置最大内�?maxmemory 2gb
+# ﻟ؟ﺝﻝﺛ؟ﮔﮒ۳۶ﮒﮒ­?maxmemory 2gb
 maxmemory-policy allkeys-lru
 ```
 
-**启动Redis**:
+**ﮒﺁﮒ۷Redis**:
 ```bash
 sudo systemctl start redis
 sudo systemctl enable redis
@@ -151,57 +151,57 @@ sudo systemctl enable redis
 
 ---
 
-## 4. 应用部署
+## 4. ﮒﭦﻝ۷ﻠ۷ﻝﺛﺎ
 
-### 4.1 代码部署
+### 4.1 ﻛﭨ۲ﻝ ﻠ۷ﻝﺛﺎ
 
-**克隆代码**:
+**ﮒﻠﻛﭨ۲ﻝ **:
 ```bash
 git clone https://github.com/your-org/zephyr-alpha.git
 cd zephyr-alpha
 ```
 
-**安装依赖**:
+**ﮒ؟ﻟ۲ﻛﺝﻟﭖ**:
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux
-# �?venv\Scripts\activate  # Windows
+# ﮔ?venv\Scripts\activate  # Windows
 
 pip install -r requirements.txt
 ```
 
-**配置文件**:
+**ﻠﻝﺛ؟ﮔﻛﭨﭘ**:
 ```bash
-# 复制配置模板
+# ﮒ۳ﮒﭘﻠﻝﺛ؟ﮔ۷۰ﮔﺟ
 cp config/system_config_template.yaml config/system_config.yaml
 
-# 编辑配置文件
+# ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
 vi config/system_config.yaml
 ```
 
-### 4.2 数据初始�?
-**初始化数据库**:
+### 4.2 ﮔﺍﮔ؟ﮒﮒ۶ﮒ?
+**ﮒﮒ۶ﮒﮔﺍﮔ؟ﮒﭦ**:
 ```bash
 python scripts/init_database.py
 ```
 
-**导入初始数据**:
+**ﮒﺁﺙﮒ۴ﮒﮒ۶ﮔﺍﮔ؟**:
 ```bash
 python scripts/import_initial_data.py
 ```
 
-**验证数据**:
+**ﻠ۹ﻟﺁﮔﺍﮔ؟**:
 ```bash
 python scripts/verify_data.py
 ```
 
-### 4.3 服务启动
+### 4.3 ﮔﮒ۰ﮒﺁﮒ۷
 
-**启动API服务**:
+**ﮒﺁﮒ۷APIﮔﮒ۰**:
 ```bash
-# 开发模�?python -m uvicorn src.api.main:app --reload
+# ﮒﺙﮒﮔ۷۰ﮒﺙ?python -m uvicorn src.api.main:app --reload
 
-# 生产模式
+# ﻝﻛﭦ۶ﮔ۷۰ﮒﺙ
 gunicorn src.api.main:app \
     --workers 4 \
     --worker-class uvicorn.workers.UvicornWorker \
@@ -210,23 +210,23 @@ gunicorn src.api.main:app \
     --error-logfile logs/error.log
 ```
 
-**启动策略引擎**:
+**ﮒﺁﮒ۷ﻝ­ﻝ۴ﮒﺙﮔ**:
 ```bash
 python src/strategy_engine/main.py
 ```
 
-**启动监控服务**:
+**ﮒﺁﮒ۷ﻝﮔ۶ﮔﮒ۰**:
 ```bash
 python src/monitoring/main.py
 ```
 
 ---
 
-## 5. Docker部署
+## 5. Dockerﻠ۷ﻝﺛﺎ
 
-### 5.1 构建镜像
+### 5.1 ﮔﮒﭨﭦﻠﮒ
 
-**创建Dockerfile**:
+**ﮒﮒﭨﭦDockerfile**:
 ```dockerfile
 FROM python:3.8-slim
 
@@ -242,14 +242,14 @@ EXPOSE 8000
 CMD ["gunicorn", "src.api.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
 ```
 
-**构建镜像**:
+**ﮔﮒﭨﭦﻠﮒ**:
 ```bash
 docker build -t zephyr-alpha:latest .
 ```
 
-### 5.2 Docker Compose部署
+### 5.2 Docker Composeﻠ۷ﻝﺛﺎ
 
-**创建docker-compose.yml**:
+**ﮒﮒﭨﭦdocker-compose.yml**:
 ```yaml
 version: '3.8'
 
@@ -289,23 +289,23 @@ volumes:
   redis_data:
 ```
 
-**启动服务**:
+**ﮒﺁﮒ۷ﮔﮒ۰**:
 ```bash
 docker-compose up -d
 ```
 
 ---
 
-## 6. 生产环境配置
+## 6. ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠﻝﺛ؟
 
-### 6.1 Nginx配置
+### 6.1 Nginxﻠﻝﺛ؟
 
-**安装Nginx**:
+**ﮒ؟ﻟ۲Nginx**:
 ```bash
 sudo apt-get install nginx
 ```
 
-**配置反向代理**:
+**ﻠﻝﺛ؟ﮒﮒﻛﭨ۲ﻝ**:
 ```nginx
 upstream zephyr_api {
     server 127.0.0.1:8000;
@@ -324,40 +324,40 @@ server {
 }
 ```
 
-### 6.2 SSL配置
+### 6.2 SSLﻠﻝﺛ؟
 
-**安装Certbot**:
+**ﮒ؟ﻟ۲Certbot**:
 ```bash
 sudo apt-get install certbot python3-certbot-nginx
 ```
 
-**获取SSL证书**:
+**ﻟﺓﮒSSLﻟﺁﻛﺗ۵**:
 ```bash
 sudo certbot --nginx -d api.zephyr-alpha.com
 ```
 
-### 6.3 防火墙配�?
-**配置防火墙规�?*:
+### 6.3 ﻠﺎﻝ،ﮒ۱ﻠﻝﺛ?
+**ﻠﻝﺛ؟ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒ?*:
 ```bash
-# 允许HTTP和HTTPS
+# ﮒﻟ؟ﺕHTTPﮒHTTPS
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 
-# 允许SSH
+# ﮒﻟ؟ﺕSSH
 sudo ufw allow 22/tcp
 
-# 启用防火�?sudo ufw enable
+# ﮒﺁﻝ۷ﻠﺎﻝ،ﮒ۱?sudo ufw enable
 ```
 
 ---
 
-## 7. 监控部署
+## 7. ﻝﮔ۶ﻠ۷ﻝﺛﺎ
 
-### 7.1 日志管理
+### 7.1 ﮔ۴ﮒﺟﻝ؟۰ﻝ
 
-**配置日志轮转**:
+**ﻠﻝﺛ؟ﮔ۴ﮒﺟﻟﺛ؟ﻟﺛ؛**:
 ```bash
-# 创建日志轮转配置
+# ﮒﮒﭨﭦﮔ۴ﮒﺟﻟﺛ؟ﻟﺛ؛ﻠﻝﺛ؟
 sudo vi /etc/logrotate.d/zephyr
 
 /var/log/zephyr/*.log {
@@ -371,14 +371,14 @@ sudo vi /etc/logrotate.d/zephyr
 }
 ```
 
-### 7.2 性能监控
+### 7.2 ﮔ۶ﻟﺛﻝﮔ۶
 
-**安装监控工具**:
+**ﮒ؟ﻟ۲ﻝﮔ۶ﮒﺓ۴ﮒﺓ**:
 ```bash
 pip install prometheus-client grafana-api
 ```
 
-**配置Prometheus**:
+**ﻠﻝﺛ؟Prometheus**:
 ```yaml
 # prometheus.yml
 global:
@@ -390,9 +390,9 @@ scrape_configs:
       - targets: ['localhost:8000']
 ```
 
-### 7.3 告警配置
+### 7.3 ﮒﻟ­۵ﻠﻝﺛ؟
 
-**配置告警规则**:
+**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 # alert_rules.yml
 groups:
@@ -407,10 +407,10 @@ groups:
 
 ---
 
-## 8. 备份策略
+## 8. ﮒ۳ﻛﭨﺛﻝ­ﻝ۴
 
-### 8.1 数据库备�?
-**创建备份脚本**:
+### 8.1 ﮔﺍﮔ؟ﮒﭦﮒ۳ﻛﭨ?
+**ﮒﮒﭨﭦﮒ۳ﻛﭨﺛﻟﮔ؛**:
 ```bash
 #!/bin/bash
 # backup_database.sh
@@ -421,20 +421,20 @@ BACKUP_FILE="$BACKUP_DIR/zephyr_$DATE.sql"
 
 pg_dump -U zephyr_user zephyr > $BACKUP_FILE
 
-# 压缩备份
+# ﮒﻝﺙ۸ﮒ۳ﻛﭨﺛ
 gzip $BACKUP_FILE
 
-# 删除30天前的备�?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
+# ﮒ ﻠ۳30ﮒ۳۸ﮒﻝﮒ۳ﻛﭨ?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 ```
 
-**配置定时任务**:
+**ﻠﻝﺛ؟ﮒ؟ﮔﭘﻛﭨﭨﮒ۰**:
 ```bash
-# 每天凌晨2点备�?0 2 * * * /path/to/backup_database.sh
+# ﮔﺁﮒ۳۸ﮒﮔ۷2ﻝﺗﮒ۳ﻛﭨ?0 2 * * * /path/to/backup_database.sh
 ```
 
-### 8.2 配置备份
+### 8.2 ﻠﻝﺛ؟ﮒ۳ﻛﭨﺛ
 
-**备份配置文件**:
+**ﮒ۳ﻛﭨﺛﻠﻝﺛ؟ﮔﻛﭨﭘ**:
 ```bash
 #!/bin/bash
 # backup_config.sh
@@ -446,45 +446,45 @@ tar -czf $BACKUP_DIR/config_$DATE.tar.gz config/
 
 ---
 
-## 9. 故障排查
+## 9. ﮔﻠﮔﮔ۴
 
-### 9.1 常见问题
+### 9.1 ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
 
-**问题1: 数据库连接失�?*
+**ﻠ؟ﻠ۱1: ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?*
 ```bash
-# 检查数据库状�?sudo systemctl status postgresql
+# ﮔ۲ﮔ۴ﮔﺍﮔ؟ﮒﭦﻝﭘﮔ?sudo systemctl status postgresql
 
-# 检查连�?psql -U zephyr_user -d zephyr -h localhost
+# ﮔ۲ﮔ۴ﻟﺟﮔ?psql -U zephyr_user -d zephyr -h localhost
 ```
 
-**问题2: Redis连接失败**
+**ﻠ؟ﻠ۱2: Redisﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴**
 ```bash
-# 检查Redis状�?sudo systemctl status redis
+# ﮔ۲ﮔ۴Redisﻝﭘﮔ?sudo systemctl status redis
 
-# 测试连接
+# ﮔﭖﻟﺁﻟﺟﮔ۴
 redis-cli -a your_redis_password ping
 ```
 
-**问题3: API服务无响�?*
+**ﻠ؟ﻠ۱3: APIﮔﮒ۰ﮔ ﮒﮒﭦ?*
 ```bash
-# 检查进�?ps aux | grep gunicorn
+# ﮔ۲ﮔ۴ﻟﺟﻝ۷?ps aux | grep gunicorn
 
-# 检查端�?netstat -tlnp | grep 8000
+# ﮔ۲ﮔ۴ﻝ،ﺁﮒ?netstat -tlnp | grep 8000
 
-# 查看日志
+# ﮔ۴ﻝﮔ۴ﮒﺟ
 tail -f logs/error.log
 ```
 
-### 9.2 日志查看
+### 9.2 ﮔ۴ﮒﺟﮔ۴ﻝ
 
-**查看应用日志**:
+**ﮔ۴ﻝﮒﭦﻝ۷ﮔ۴ﮒﺟ**:
 ```bash
 tail -f logs/zephyr.log
 tail -f logs/access.log
 tail -f logs/error.log
 ```
 
-**查看系统日志**:
+**ﮔ۴ﻝﻝﺏﭨﻝﭨﮔ۴ﮒﺟ**:
 ```bash
 tail -f /var/log/syslog
 tail -f /var/log/nginx/access.log
@@ -492,27 +492,27 @@ tail -f /var/log/nginx/access.log
 
 ---
 
-## 10. 安全加固
+## 10. ﮒ؟ﮒ۷ﮒ ﮒﭦ
 
-### 10.1 系统安全
+### 10.1 ﻝﺏﭨﻝﭨﮒ؟ﮒ۷
 
-**更新系统**:
+**ﮔﺑﮔﺍﻝﺏﭨﻝﭨ**:
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
 ```
 
-**禁用不必要的服务**:
+**ﻝ۵ﻝ۷ﻛﺕﮒﺟﻟ۵ﻝﮔﮒ۰**:
 ```bash
 sudo systemctl disable bluetooth
 sudo systemctl disable cups
 ```
 
-### 10.2 应用安全
+### 10.2 ﮒﭦﻝ۷ﮒ؟ﮒ۷
 
-**配置安全�?*:
+**ﻠﻝﺛ؟ﮒ؟ﮒ۷ﮒ۳?*:
 ```python
-# 在API中添加安全头
+# ﮒ۷APIﻛﺕ­ﮔﺓﭨﮒ ﮒ؟ﮒ۷ﮒ۳ﺑ
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -524,7 +524,7 @@ app.add_middleware(
 )
 ```
 
-**配置速率限制**:
+**ﻠﻝﺛ؟ﻠﻝﻠﮒﭘ**:
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -539,10 +539,10 @@ async def endpoint():
 
 ---
 
-## 11. 性能优化
+## 11. ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 11.1 数据库优�?
-**配置连接�?*:
+### 11.1 ﮔﺍﮔ؟ﮒﭦﻛﺙﮒ?
+**ﻠﻝﺛ؟ﻟﺟﮔ۴ﮔﺎ?*:
 ```python
 # config/database.py
 from sqlalchemy import create_engine
@@ -557,15 +557,15 @@ engine = create_engine(
 )
 ```
 
-**创建索引**:
+**ﮒﮒﭨﭦﻝﺑ۱ﮒﺙ**:
 ```sql
--- 为常用查询创建索�?CREATE INDEX idx_strategy_name ON strategies(name);
+-- ﻛﺕﭦﮒﺕﺕﻝ۷ﮔ۴ﻟﺁ۱ﮒﮒﭨﭦﻝﺑ۱ﮒﺙ?CREATE INDEX idx_strategy_name ON strategies(name);
 CREATE INDEX idx_order_time ON orders(created_at);
 ```
 
-### 11.2 缓存优化
+### 11.2 ﻝﺙﮒ­ﻛﺙﮒ
 
-**配置Redis缓存**:
+**ﻠﻝﺛ؟Redisﻝﺙﮒ­**:
 ```python
 import redis
 from functools import wraps
@@ -594,26 +594,26 @@ def cache_result(expire=300):
 
 ---
 
-## 12. 部署检查清�?
-### 12.1 部署前检�?
-- [ ] 环境变量已配�?- [ ] 数据库已创建
-- [ ] Redis已启�?- [ ] 配置文件已更�?- [ ] 依赖已安�?- [ ] SSL证书已配�?- [ ] 防火墙规则已设置
+## 12. ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ?
+### 12.1 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
+- [ ] ﻝﺁﮒ۱ﮒﻠﮒﺓﺎﻠﻝﺛ?- [ ] ﮔﺍﮔ؟ﮒﭦﮒﺓﺎﮒﮒﭨﭦ
+- [ ] Redisﮒﺓﺎﮒﺁﮒ?- [ ] ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺓﺎﮔﺑﮔ?- [ ] ﻛﺝﻟﭖﮒﺓﺎﮒ؟ﻟ۲?- [ ] SSLﻟﺁﻛﺗ۵ﮒﺓﺎﻠﻝﺛ?- [ ] ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒﮒﺓﺎﻟ؟ﺝﻝﺛ؟
 
-### 12.2 部署后检�?
-- [ ] API服务正常响应
-- [ ] 数据库连接正�?- [ ] Redis连接正常
-- [ ] 日志正常输出
-- [ ] 监控正常工作
-- [ ] 备份任务已配�?- [ ] 告警规则已配�?
+### 12.2 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
+- [ ] APIﮔﮒ۰ﮔ­۲ﮒﺕﺕﮒﮒﭦ
+- [ ] ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔ­۲ﮒﺕ?- [ ] Redisﻟﺟﮔ۴ﮔ­۲ﮒﺕﺕ
+- [ ] ﮔ۴ﮒﺟﮔ­۲ﮒﺕﺕﻟﺝﮒﭦ
+- [ ] ﻝﮔ۶ﮔ­۲ﮒﺕﺕﮒﺓ۴ﻛﺛ
+- [ ] ﮒ۳ﻛﭨﺛﻛﭨﭨﮒ۰ﮒﺓﺎﻠﻝﺛ?- [ ] ﮒﻟ­۵ﻟ۶ﮒﮒﺓﺎﻠﻝﺛ?
 ---
 
-## 13. 参考文�?
-- [系统配置模板](../04_CONFIG_TEMPLATES/system_config_template.yaml)
-- [监控手册](./MONITORING_MANUAL.md)
-- [维护手册](./MAINTENANCE_MANUAL.md)
-- [预部署检查清单](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
+## 13. ﮒﻟﮔﮔ۰?
+- [ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/system_config_template.yaml)
+- [ﻝﮔ۶ﮔﮒ](./MONITORING_MANUAL.md)
+- [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
+- [ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
 
 ---
 
-**文档状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

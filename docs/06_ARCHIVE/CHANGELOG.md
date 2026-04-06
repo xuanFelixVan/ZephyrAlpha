@@ -4,172 +4,172 @@ version: 1.2.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
-standard_type: 专业量化机构文档
-applicable_scope: 全系�?
-compliance_level: 初始标准
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: INDEX.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
 
-# CHANGELOG.md - 变更日志
+# CHANGELOG.md - ﮒﮔﺑﮔ۴ﮒﺟ
 
-> 清风量化系统 v5.1 版本变更记录
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.1 ﻝﮔ؛ﮒﮔﺑﻟ؟ﺍﮒﺛ
 
 
 ## [v5.1.0] - 2026-03-31
 
-### 🧹 文档精简: v5.0 �?v5.1
+### ﻭ۶ﺗ ﮔﮔ۰۲ﻝﺎﺝﻝ؟: v5.0 ﻗ?v5.1
 
-> 按照专业量化机构文件治理方式进行文档治理
+> ﮔﻝ۶ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﻛﭨﭘﮔﺎﭨﻝﮔﺗﮒﺙﻟﺟﻟ۰ﮔﮔ۰۲ﮔﺎﭨﻝ
 
-#### 删除的冗余文�?
+#### ﮒ ﻠ۳ﻝﮒﻛﺛﮔﻛﭨ?
 
-| 文件路径 | 删除原因 |
+| ﮔﻛﭨﭘﻟﺓﺁﮒﺝ | ﮒ ﻠ۳ﮒﮒ  |
 |----------|----------|
-| `05_IMPLEMENTATION/07_OPERATIONS/faq.md` | �?`docs/FAQ.md` 重复 |
-| `00_OVERVIEW/VERSION_HISTORY.md` | �?`CHANGELOG.md` 重复 |
-| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft - 副本.md` | 冗余副本 |
-| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft_backup.md` | 冗余备份 |
-| `06_ARCHIVE/main/v4_development/清风量化交易系统4.0.txt` | 可从其他文档重建 |
-| `06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发细�?md` | 与粗稿重�?|
-| `06_ARCHIVE/main/FINAL_SYSTEM_AUDIT_archived.md` | 旧版本审�?|
-| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md` | 旧版本审�?|
-| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v3_archived.md` | 旧版本审�?|
-| `06_ARCHIVE/main/DOCUMENT_AUDIT_REPORT_v1.md` | 旧版本审�?|
-| `06_ARCHIVE/main/DEVELOPMENT_SEQUENCE_archived.md` | 过时文档 |
-| `06_ARCHIVE/main/RESEARCH_PIPELINE_archived.md` | 过时文档 |
-| `06_ARCHIVE/main/LEGACY_DOC_ANALYSIS_archived.md` | 过时分析 |
-| `06_ARCHIVE/main/README_v1.1_archived.md` | 极旧版本 |
-| `06_ARCHIVE/main/CODE_STATUS_archived.md` | 过时状�?|
-| `06_ARCHIVE/main/TEST_PLAN_archived.md` | 过时测试 |
-| `06_ARCHIVE/main/BLUEPRINTS/00_UNIFIED_ARCHITECTURE_archived.md` | 已合�?|
-| `06_ARCHIVE/old_v4_plan_archive.md` | 已废�?|
-| `06_ARCHIVE/旧文档务实评估_1人AI_一个月.md` | 临时评估 |
-| `06_ARCHIVE/旧文档分析报告_qingfeng_v4_draft_backup.md` | 冗余分析 |
+| `05_IMPLEMENTATION/07_OPERATIONS/faq.md` | ﻛﺕ?`docs/FAQ.md` ﻠﮒ۳ |
+| `00_OVERVIEW/VERSION_HISTORY.md` | ﻛﺕ?`CHANGELOG.md` ﻠﮒ۳ |
+| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft - ﮒﺁﮔ؛.md` | ﮒﻛﺛﮒﺁﮔ؛ |
+| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft_backup.md` | ﮒﻛﺛﮒ۳ﻛﭨﺛ |
+| `06_ARCHIVE/main/v4_development/ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ4.0.txt` | ﮒﺁﻛﭨﮒﭘﻛﭨﮔﮔ۰۲ﻠﮒﭨﭦ |
+| `06_ARCHIVE/main/v4_development/ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ4.0ﮒﺙﮒﻝﭨﻝ۷?md` | ﻛﺕﻝﺎﻝ۷ﺟﻠﮒ۳?|
+| `06_ARCHIVE/main/FINAL_SYSTEM_AUDIT_archived.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v3_archived.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/DOCUMENT_AUDIT_REPORT_v1.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/DEVELOPMENT_SEQUENCE_archived.md` | ﻟﺟﮔﭘﮔﮔ۰۲ |
+| `06_ARCHIVE/main/RESEARCH_PIPELINE_archived.md` | ﻟﺟﮔﭘﮔﮔ۰۲ |
+| `06_ARCHIVE/main/LEGACY_DOC_ANALYSIS_archived.md` | ﻟﺟﮔﭘﮒﮔ |
+| `06_ARCHIVE/main/README_v1.1_archived.md` | ﮔﮔ۶ﻝﮔ؛ |
+| `06_ARCHIVE/main/CODE_STATUS_archived.md` | ﻟﺟﮔﭘﻝﭘﮔ?|
+| `06_ARCHIVE/main/TEST_PLAN_archived.md` | ﻟﺟﮔﭘﮔﭖﻟﺁ |
+| `06_ARCHIVE/main/BLUEPRINTS/00_UNIFIED_ARCHITECTURE_archived.md` | ﮒﺓﺎﮒﮒﺗ?|
+| `06_ARCHIVE/old_v4_plan_archive.md` | ﮒﺓﺎﮒﭦﮒﺙ?|
+| `06_ARCHIVE/ﮔ۶ﮔﮔ۰۲ﮒ۰ﮒ؟ﻟﺁﻛﺙﺍ_1ﻛﭦﭦAI_ﻛﺕﻛﺕ۹ﮔ.md` | ﻛﺕﺑﮔﭘﻟﺁﻛﺙﺍ |
+| `06_ARCHIVE/ﮔ۶ﮔﮔ۰۲ﮒﮔﮔ۴ﮒ_qingfeng_v4_draft_backup.md` | ﮒﻛﺛﮒﮔ |
 
-#### v4_development 目录精简
+#### v4_development ﻝ؟ﮒﺛﻝﺎﺝﻝ؟
 
-| 精简�?| 精简�?|
+| ﻝﺎﺝﻝ؟ﮒ?| ﻝﺎﺝﻝ؟ﮒ?|
 |--------|--------|
-| 9个文�?| 2个文�?|
+| 9ﻛﺕ۹ﮔﻛﭨ?| 2ﻛﺕ۹ﮔﻛﭨ?|
 
-保留文件�?
-- `qingfeng_v4_draft.md` - 初始设计
-- `qingfeng_v4_development_plan.md` - 开发方�?
+ﻛﺟﻝﮔﻛﭨﭘﺅﺙ?
+- `qingfeng_v4_draft.md` - ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
+- `qingfeng_v4_development_plan.md` - ﮒﺙﮒﮔﺗﮔ۰?
 
-#### 更新的索引文�?
+#### ﮔﺑﮔﺍﻝﻝﺑ۱ﮒﺙﮔﮔ۰?
 
-- �?`INDEX.md` - v2.3，新�?DOCUMENT_AUDIT_v5.1.md 索引
-- �?`SITEMAP.md` - v2.2，反映最新结�?
-- �?`06_ARCHIVE/README.md` - v5.1，记录清理变�?
-- �?`DOCUMENT_AUDIT_v5.1.md` - 新建，文档审查报�?
+- ﻗ?`INDEX.md` - v2.3ﺅﺙﮔﺍﮒ۱?DOCUMENT_AUDIT_v5.1.md ﻝﺑ۱ﮒﺙ
+- ﻗ?`SITEMAP.md` - v2.2ﺅﺙﮒﮔ ﮔﮔﺍﻝﭨﮔ?
+- ﻗ?`06_ARCHIVE/README.md` - v5.1ﺅﺙﻟ؟ﺍﮒﺛﮔﺕﻝﮒﮔ?
+- ﻗ?`DOCUMENT_AUDIT_v5.1.md` - ﮔﺍﮒﭨﭦﺅﺙﮔﮔ۰۲ﮒ؟۰ﮔ۴ﮔ۴ﮒ?
 
-#### 待处理问�?
+#### ﮒﺝﮒ۳ﻝﻠ؟ﻠ۱?
 
-| 问题 | 严重程度 | 说明 |
+| ﻠ؟ﻠ۱ | ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ | ﻟﺁﺑﮔ |
 |------|----------|------|
-| System_Manifest.md 缺失 | 🔴 严重 | 需�?06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md 恢复 |
-| ARCHIVED.md 在非归档目录 | 🔴 严重 | docs/03/08/ �?docs/08/04/ 下各有一�?|
-| 索引引用断裂 | 🟡 中等 | 多个文档引用不存在的文件 |
+| System_Manifest.md ﻝﺙﭦﮒ۳ﺎ | ﻭﺑ ﻛﺕ۴ﻠ | ﻠﻛﭨ?06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md ﮔ۱ﮒ۳ |
+| ARCHIVED.md ﮒ۷ﻠﮒﺛﮔ۰۲ﻝ؟ﮒﺛ | ﻭﺑ ﻛﺕ۴ﻠ | docs/03/08/ ﮒ?docs/08/04/ ﻛﺕﮒﮔﻛﺕﻛﺕ?|
+| ﻝﺑ۱ﮒﺙﮒﺙﻝ۷ﮔ­ﻟ۲ | ﻭ۰ ﻛﺕ­ﻝ­ | ﮒ۳ﻛﺕ۹ﮔﮔ۰۲ﮒﺙﻝ۷ﻛﺕﮒ­ﮒ۷ﻝﮔﻛﭨﭘ |
 
-#### 统计数据
+#### ﻝﭨﻟ؟۰ﮔﺍﮔ؟
 
-| 指标 | 数�?|
+| ﮔﮔ  | ﮔﺍﮒ?|
 |------|------|
-| 删除文件 | 20�?|
-| 精简后文档总数 | ~80+ (从~150减少) |
-| v4_development精简 | 9�?�?2�?|
+| ﮒ ﻠ۳ﮔﻛﭨﭘ | 20ﻛﺕ?|
+| ﻝﺎﺝﻝ؟ﮒﮔﮔ۰۲ﮔﭨﮔﺍ | ~80+ (ﻛﭨ~150ﮒﮒﺍ) |
+| v4_developmentﻝﺎﺝﻝ؟ | 9ﻛﺕ?ﻗ?2ﻛﺕ?|
 
 
 ## [v5.0.0] - 2026-03-29
 
-### 🚀 重大升级: v4.0 �?v5.0
+### ﻭ ﻠﮒ۳۶ﮒﻝﭦ۶: v4.0 ﻗ?v5.0
 
-#### 版本标识统一
-- �?统一版本标识�?v5.0.0
-- �?更新 quant_system_v4/README.md
-- �?更新 quant_system_v4/config/system.yaml
-- �?更新 CHANGELOG.md
+#### ﻝﮔ؛ﮔ ﻟﺁﻝﭨﻛﺕ
+- ﻗ?ﻝﭨﻛﺕﻝﮔ؛ﮔ ﻟﺁﻛﺕ?v5.0.0
+- ﻗ?ﮔﺑﮔﺍ quant_system_v4/README.md
+- ﻗ?ﮔﺑﮔﺍ quant_system_v4/config/system.yaml
+- ﻗ?ﮔﺑﮔﺍ CHANGELOG.md
 
-#### 文档结构更新
-- �?重写 System_Manifest.md 以反�?v5.0 实际结构
-- �?标记模块实现状态（✅已实现 / 🔄规划�?/ ❌待开发）
-- �?归档旧文件到 06_ARCHIVE/
+#### ﮔﮔ۰۲ﻝﭨﮔﮔﺑﮔﺍ
+- ﻗ?ﻠﮒ System_Manifest.md ﻛﭨ۴ﮒﮔ?v5.0 ﮒ؟ﻠﻝﭨﮔ
+- ﻗ?ﮔ ﻟ؟ﺍﮔ۷۰ﮒﮒ؟ﻝﺍﻝﭘﮔﺅﺙﻗﮒﺓﺎﮒ؟ﻝﺍ / ﻭﻟ۶ﮒﻛﺕ?/ ﻗﮒﺝﮒﺙﮒﺅﺙ
+- ﻗ?ﮒﺛﮔ۰۲ﮔ۶ﮔﻛﭨﭘﮒﺍ 06_ARCHIVE/
 
-#### v5.0 目录结构
+#### v5.0 ﻝ؟ﮒﺛﻝﭨﮔ
 ```
 docs/
-├── 00_OVERVIEW/              # 系统总览
-├── 01_FRAMEWORK/             # 框架定义
-├── 02_FACTOR_LIBRARY/        # 因子�?(含治理框�?
-├── 03_TRADING_TACTICS/       # 交易策略
-├── 04_EXECUTION/             # 执行引擎
-├── 05_IMPLEMENTATION/        # 实施指南
-├── 06_ARCHIVE/               # 归档
-└── 07_RESEARCH/              # AI研究
+ﻗﻗﻗ 00_OVERVIEW/              # ﻝﺏﭨﻝﭨﮔﭨﻟ۶
+ﻗﻗﻗ 01_FRAMEWORK/             # ﮔ۰ﮔﭘﮒ؟ﻛﺗ
+ﻗﻗﻗ 02_FACTOR_LIBRARY/        # ﮒ ﮒ­ﮒﭦ?(ﮒ،ﮔﺎﭨﻝﮔ۰ﮔ?
+ﻗﻗﻗ 03_TRADING_TACTICS/       # ﻛﭦ۳ﮔﻝ­ﻝ۴
+ﻗﻗﻗ 04_EXECUTION/             # ﮔ۶ﻟ۰ﮒﺙﮔ
+ﻗﻗﻗ 05_IMPLEMENTATION/        # ﮒ؟ﮔﺛﮔﮒ
+ﻗﻗﻗ 06_ARCHIVE/               # ﮒﺛﮔ۰۲
+ﻗﻗﻗ 07_RESEARCH/              # AIﻝ ﻝ۸ﭘ
 ```
 
 
 ## [v4.0.2] - 2026-03-28
 
-### 🎯 主要改进
+### ﻭﺁ ﻛﺕﭨﻟ۵ﮔﺗﻟﺟ
 
-#### 阶段一交付完成
-- �?创建 `System_Manifest.md` - 系统清单
-- �?创建 `CONTEXT_SNAPSHOT.json` - 上下文快�?
-- �?创建 `API_Contract.md` - 接口契约
-- �?创建 `Strategy_Spec_S001.md` - 策略逻辑白皮�?
-- �?创建 `AI_Permissions.md` - AI权限清单
+#### ﻠﭘﮔ؟ﭖﻛﺕﻛﭦ۳ﻛﭨﮒ؟ﮔ
+- ﻗ?ﮒﮒﭨﭦ `System_Manifest.md` - ﻝﺏﭨﻝﭨﮔﺕﮒ
+- ﻗ?ﮒﮒﭨﭦ `CONTEXT_SNAPSHOT.json` - ﻛﺕﻛﺕﮔﮒﺟ،ﻝ?
+- ﻗ?ﮒﮒﭨﭦ `API_Contract.md` - ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
+- ﻗ?ﮒﮒﭨﭦ `Strategy_Spec_S001.md` - ﻝ­ﻝ۴ﻠﭨﻟﺝﻝﺛﻝ؟ﻛﺗ?
+- ﻗ?ﮒﮒﭨﭦ `AI_Permissions.md` - AIﮔﻠﮔﺕﮒ
 
-#### 因子库重�?
-- �?创建 `02_ALPHA_FACTORS_INDEX.md` - 单一索引表（87个因子）
-- �?删除7个重复的因子分类文件
-- �?备份旧文件到 `archives/02_ALPHA_FACTORS_OLD/`
+#### ﮒ ﮒ­ﮒﭦﻠﻝﭨ?
+- ﻗ?ﮒﮒﭨﭦ `02_ALPHA_FACTORS_INDEX.md` - ﮒﻛﺕﻝﺑ۱ﮒﺙﻟ۰۷ﺅﺙ87ﻛﺕ۹ﮒ ﮒ­ﺅﺙ
+- ﻗ?ﮒ ﻠ۳7ﻛﺕ۹ﻠﮒ۳ﻝﮒ ﮒ­ﮒﻝﺎﭨﮔﻛﭨﭘ
+- ﻗ?ﮒ۳ﻛﭨﺛﮔ۶ﮔﻛﭨﭘﮒﺍ `archives/02_ALPHA_FACTORS_OLD/`
 
-#### 回测报告分离
-- �?创建 `05_BACKTEST/ic_reports/` - 因子IC验证报告
-- �?创建 `05_BACKTEST/strategy_reports/` - 策略回测报告
-- �?分离因子IC验证 vs 策略回测
+#### ﮒﮔﭖﮔ۴ﮒﮒﻝ۵ﭨ
+- ﻗ?ﮒﮒﭨﭦ `05_BACKTEST/ic_reports/` - ﮒ ﮒ­ICﻠ۹ﻟﺁﮔ۴ﮒ
+- ﻗ?ﮒﮒﭨﭦ `05_BACKTEST/strategy_reports/` - ﻝ­ﻝ۴ﮒﮔﭖﮔ۴ﮒ
+- ﻗ?ﮒﻝ۵ﭨﮒ ﮒ­ICﻠ۹ﻟﺁ vs ﻝ­ﻝ۴ﮒﮔﭖ
 
 
 ## [v4.0.1] - 2026-03-28
 
-### 📋 初始版本
+### ﻭ ﮒﮒ۶ﻝﮔ؛
 
-- 完成系统架构设计（Layer 0-7�?
-- 完成因子库建设（87+个因子）
-- 完成策略池设计（120个策略框架）
-- 完成技术规格文�?
+- ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰ﺅﺙLayer 0-7ﺅﺙ?
+- ﮒ؟ﮔﮒ ﮒ­ﮒﭦﮒﭨﭦﻟ؟ﺝﺅﺙ87+ﻛﺕ۹ﮒ ﮒ­ﺅﺙ
+- ﮒ؟ﮔﻝ­ﻝ۴ﮔﺎ ﻟ؟ﺝﻟ؟۰ﺅﺙ120ﻛﺕ۹ﻝ­ﻝ۴ﮔ۰ﮔﭘﺅﺙ
+- ﮒ؟ﮔﮔﮔﺁﻟ۶ﮔ ﺙﮔﮔ۰?
 
 
 ## [v4.0] - 2026-03-28
 
-### 🚀 首次发布
+### ﻭ ﻠ۵ﮔ؛۰ﮒﮒﺕ
 
-- 清风量化交易系统 v4.0 正式发布
-- 采用Layer 0-7分层架构
-- 支持30-50种策略动态管�?
-- 支持AI因子挖掘和参数优�?
-
-
-## 版本管理规则
-
-### 主版本升级（v5.0 �?v6.0�?
-- 架构重大改变
-- 核心模块替换
-- 数据格式不兼�?
-
-### 次版本升级（v5.1 �?v5.2�?
-- 新增模块
-- 新增因子�?
-- 新增策略
-
-### 补丁版本升级（v5.1.0 �?v5.1.1�?
-- Bug修复
-- 文档更新
-- 性能优化
+- ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v4.0 ﮔ­۲ﮒﺙﮒﮒﺕ
+- ﻠﻝ۷Layer 0-7ﮒﮒﺎﮔﭘﮔ
+- ﮔﺁﮔ30-50ﻝ۶ﻝ­ﻝ۴ﮒ۷ﮔﻝ؟۰ﻝ?
+- ﮔﺁﮔAIﮒ ﮒ­ﮔﮔﮒﮒﮔﺍﻛﺙﮒ?
 
 
-**最后更�?*: 2026-03-31 | **维护�?*: 清风量化研究�?
+## ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﮒ
+
+### ﻛﺕﭨﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv5.0 ﻗ?v6.0ﺅﺙ?
+- ﮔﭘﮔﻠﮒ۳۶ﮔﺗﮒ
+- ﮔ ﺕﮒﺟﮔ۷۰ﮒﮔﺟﮔ۱
+- ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻛﺕﮒﺙﮒ؟?
+
+### ﮔ؛۰ﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv5.1 ﻗ?v5.2ﺅﺙ?
+- ﮔﺍﮒ۱ﮔ۷۰ﮒ
+- ﮔﺍﮒ۱ﮒ ﮒ­ﮒﭦ?
+- ﮔﺍﮒ۱ﻝ­ﻝ۴
+
+### ﻟ۰۴ﻛﺕﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv5.1.0 ﻗ?v5.1.1ﺅﺙ?
+- Bugﻛﺟ؟ﮒ۳
+- ﮔﮔ۰۲ﮔﺑﮔﺍ
+- ﮔ۶ﻟﺛﻛﺙﮒ
+
+
+**ﮔﮒﮔﺑﮔ?*: 2026-03-31 | **ﻝﭨﺑﮔ۳ﻟ?*: ﮔﺕﻠ۲ﻠﮒﻝ ﻝ۸ﭘﻠ?

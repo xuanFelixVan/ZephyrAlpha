@@ -1,65 +1,65 @@
 ---
-standard_type: 技术文�?
-applicable_scope: 交易执行
-compliance_level: 初始标准
+standard_type: µèÇµ£»µûçµí?
+applicable_scope: õ║ñµÿôµëºÞíî
+compliance_level: ÕêØÕºïµáçÕçå
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
-owner: 执行层负责人
+implementation_status: Þ«¥Þ«íÚÿÂµ«Á
+owner: µëºÞíîÕ▒éÞ┤ƒÞ┤úõ║║
 version: 1.0.0
 module_id: EXE_PYTHON_VERSION_FIX
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# Python版本问题解决方案
+# Pythonþëêµ£¼Úù«ÚóÿÞºúÕå│µû╣µíê
 
-## 问题诊断
+## Úù«ÚóÿÞ»èµû¡
 
 ```
-当前Python版本: Python 3.13.12
-问题: PyTorch目前不支持Python 3.13
-PyTorch支持版本: Python 3.8-3.12
+Õ¢ôÕëìPythonþëêµ£¼: Python 3.13.12
+Úù«Úóÿ: PyTorchþø«Õëìõ©ìµö»µîüPython 3.13
+PyTorchµö»µîüþëêµ£¼: Python 3.8-3.12
 ```
 
 ---
 
-## 解决方案
+## ÞºúÕå│µû╣µíê
 
-### 方案一：使用Conda创建Python 3.10环境（推荐）⭐⭐⭐⭐�?
+### µû╣µíêõ©Ç´╝Üõ¢┐þö¿CondaÕêøÕ╗║Python 3.10þÄ»Õóâ´╝êµÄ¿ÞìÉ´╝ëÔ¡ÉÔ¡ÉÔ¡ÉÔ¡ÉÔ¡?
 
-#### 步骤1: 安装Miniconda（如果未安装�?
+#### µ¡ÑÚ¬ñ1: Õ«ëÞúàMiniconda´╝êÕªéµ×£µ£¬Õ«ëÞúà´╝?
 
-下载地址: https://docs.conda.io/en/latest/miniconda.html
+õ©ïÞ¢¢Õ£░ÕØÇ: https://docs.conda.io/en/latest/miniconda.html
 
-#### 步骤2: 创建Python 3.10环境
+#### µ¡ÑÚ¬ñ2: ÕêøÕ╗║Python 3.10þÄ»Õóâ
 
 ```powershell
-# 创建新环�?
+# ÕêøÕ╗║µû░þÄ»Õó?
 conda create -n live-analysis python=3.10 -y
 
-# 激活环�?
+# µ┐Çµ┤╗þÄ»Õó?
 conda activate live-analysis
 
-# 验证Python版本
+# Ú¬îÞ»üPythonþëêµ£¼
 python --version
 ```
 
-#### 步骤3: 安装CUDA版本的PyTorch
+#### µ¡ÑÚ¬ñ3: Õ«ëÞúàCUDAþëêµ£¼þÜäPyTorch
 
 ```powershell
-# 安装PyTorch CUDA 12.1版本
+# Õ«ëÞúàPyTorch CUDA 12.1þëêµ£¼
 conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia -y
 
-# 或使用pip安装
+# µêûõ¢┐þö¿pipÕ«ëÞúà
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 ```
 
-#### 步骤4: 安装其他依赖
+#### µ¡ÑÚ¬ñ4: Õ«ëÞúàÕàÂõ╗ûõ¥ØÞÁû
 
 ```powershell
 pip install openai-whisper transformers accelerate requests ffmpeg-python
 ```
 
-#### 步骤5: 下载Whisper模型
+#### µ¡ÑÚ¬ñ5: õ©ïÞ¢¢Whisperµ¿íÕ×ï
 
 ```powershell
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
@@ -67,18 +67,18 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 ---
 
-### 方案二：安装Python 3.12（次选）⭐⭐⭐⭐
+### µû╣µíêõ║î´╝ÜÕ«ëÞúàPython 3.12´╝êµ¼íÚÇë´╝ëÔ¡ÉÔ¡ÉÔ¡ÉÔ¡É
 
-#### 步骤1: 下载Python 3.12
+#### µ¡ÑÚ¬ñ1: õ©ïÞ¢¢Python 3.12
 
-下载地址: https://www.python.org/downloads/release/python-3120/
+õ©ïÞ¢¢Õ£░ÕØÇ: https://www.python.org/downloads/release/python-3120/
 
-#### 步骤2: 安装时选择"Add Python to PATH"
+#### µ¡ÑÚ¬ñ2: Õ«ëÞúàµùÂÚÇëµï®"Add Python to PATH"
 
-#### 步骤3: 使用Python 3.12运行安装脚本
+#### µ¡ÑÚ¬ñ3: õ¢┐þö¿Python 3.12Þ┐ÉÞíîÕ«ëÞúàÞäÜµ£¼
 
 ```powershell
-# 使用py启动器指定版�?
+# õ¢┐þö¿pyÕÉ»Õè¿ÕÖ¿µîçÕ«Üþëêµ£?
 py -3.12 -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 py -3.12 -m pip install openai-whisper transformers accelerate requests ffmpeg-python
@@ -86,134 +86,134 @@ py -3.12 -m pip install openai-whisper transformers accelerate requests ffmpeg-p
 
 ---
 
-### 方案三：使用现有的CPU版本PyTorch（临时方案）⭐⭐�?
+### µû╣µíêõ©ë´╝Üõ¢┐þö¿þÄ░µ£ëþÜäCPUþëêµ£¼PyTorch´╝êõ©┤µùÂµû╣µíê´╝ëÔ¡ÉÔ¡ÉÔ¡?
 
-如果暂时不想安装新Python版本，可以继续使用CPU版本�?
+Õªéµ×£µÜéµùÂõ©ìµâ│Õ«ëÞúàµû░Pythonþëêµ£¼´╝îÕÅ»õ╗Ñþ╗ºþ╗¡õ¢┐þö¿CPUþëêµ£¼´╝?
 
 ```powershell
-# 安装CPU版本的PyTorch
+# Õ«ëÞúàCPUþëêµ£¼þÜäPyTorch
 pip install torch torchvision torchaudio
 
-# 安装Whisper
+# Õ«ëÞúàWhisper
 pip install openai-whisper
 
-# 安装其他依赖
+# Õ«ëÞúàÕàÂõ╗ûõ¥ØÞÁû
 pip install transformers accelerate requests ffmpeg-python
 ```
 
-**注意**: CPU版本速度较慢，但可以正常工作�?
+**µ│¿µäÅ**: CPUþëêµ£¼ÚÇƒÕ║ªÞ¥âµàó´╝îõ¢åÕÅ»õ╗Ñµ¡úÕ©©ÕÀÑõ¢£ÒÇ?
 
 ---
 
-## 推荐方案对比
+## µÄ¿ÞìÉµû╣µíêÕ»╣µ»ö
 
-| 方案 | 难度 | 性能 | 推荐�?|
+| µû╣µíê | ÚÜ¥Õ║ª | µÇºÞâ¢ | µÄ¿ÞìÉÕ║?|
 |------|------|------|--------|
-| Conda环境 | 中等 | 最�?| ⭐⭐⭐⭐�?|
-| Python 3.12 | 简�?| 最�?| ⭐⭐⭐⭐ |
-| CPU版本 | 最简�?| 较慢 | ⭐⭐�?|
+| CondaþÄ»Õóâ | õ©¡þ¡ë | µ£Çõ¢?| Ô¡ÉÔ¡ÉÔ¡ÉÔ¡ÉÔ¡?|
+| Python 3.12 | þ«ÇÕì?| µ£Çõ¢?| Ô¡ÉÔ¡ÉÔ¡ÉÔ¡É |
+| CPUþëêµ£¼ | µ£Çþ«ÇÕì?| Þ¥âµàó | Ô¡ÉÔ¡ÉÔ¡?|
 
 ---
 
-## 快速开始（Conda方案�?
+## Õ┐½ÚÇƒÕ╝ÇÕºï´╝êCondaµû╣µíê´╝?
 
 ```powershell
-# 1. 创建环境
+# 1. ÕêøÕ╗║þÄ»Õóâ
 conda create -n live-analysis python=3.10 -y
 
-# 2. 激活环�?
+# 2. µ┐Çµ┤╗þÄ»Õó?
 conda activate live-analysis
 
-# 3. 安装PyTorch
+# 3. Õ«ëÞúàPyTorch
 conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia -y
 
-# 4. 安装其他依赖
+# 4. Õ«ëÞúàÕàÂõ╗ûõ¥ØÞÁû
 pip install openai-whisper transformers accelerate requests ffmpeg-python
 
-# 5. 下载Whisper模型
+# 5. õ©ïÞ¢¢Whisperµ¿íÕ×ï
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
-# 6. 验证安装
+# 6. Ú¬îÞ»üÕ«ëÞúà
 python test_rtx3090_models.py
 ```
 
 ---
 
-## 验证安装
+## Ú¬îÞ»üÕ«ëÞúà
 
-运行测试脚本验证所有组件：
+Þ┐ÉÞíîµÁïÞ»òÞäÜµ£¼Ú¬îÞ»üµëÇµ£ëþ╗äõ╗Â´╝Ü
 
 ```powershell
 conda activate live-analysis
 python test_rtx3090_models.py
 ```
 
-**预期结果**:
+**Úóäµ£ƒþ╗ôµ×£**:
 
 ```
-�?CUDA: 通过
-�?OLLAMA: 通过
-�?WHISPER: 通过
-�?FINBERT: 通过
-�?OLLAMA_MODEL: 通过
+Ô£?CUDA: ÚÇÜÞ┐ç
+Ô£?OLLAMA: ÚÇÜÞ┐ç
+Ô£?WHISPER: ÚÇÜÞ┐ç
+Ô£?FINBERT: ÚÇÜÞ┐ç
+Ô£?OLLAMA_MODEL: ÚÇÜÞ┐ç
 
-总计: 5/5 测试通过
+µÇ╗Þ«í: 5/5 µÁïÞ»òÚÇÜÞ┐ç
 ```
 
 ---
 
-## 常见问题
+## Õ©©ÞºüÚù«Úóÿ
 
-### Q1: Conda安装速度�?
+### Q1: CondaÕ«ëÞúàÚÇƒÕ║ªµà?
 
-**解决方案**: 使用国内镜像
+**ÞºúÕå│µû╣µíê**: õ¢┐þö¿Õø¢ÕåàÚò£ÕâÅ
 
 ```powershell
-# 配置清华镜像
+# Úàìþ¢«µ©àÕìÄÚò£ÕâÅ
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
 conda config --set show_channel_urls yes
 ```
 
-### Q2: CUDA版本不匹�?
+### Q2: CUDAþëêµ£¼õ©ìÕî╣Úà?
 
-**解决方案**: 检查CUDA版本
+**ÞºúÕå│µû╣µíê**: µúÇµƒÑCUDAþëêµ£¼
 
 ```powershell
-# 检查CUDA版本
+# µúÇµƒÑCUDAþëêµ£¼
 nvidia-smi
 
-# 根据CUDA版本选择PyTorch版本
+# µá╣µì«CUDAþëêµ£¼ÚÇëµï®PyTorchþëêµ£¼
 # CUDA 12.1: pytorch-cuda=12.1
 # CUDA 11.8: pytorch-cuda=11.8
 ```
 
-### Q3: Whisper下载速度�?
+### Q3: Whisperõ©ïÞ¢¢ÚÇƒÕ║ªµà?
 
-**解决方案**: 使用国内镜像
+**ÞºúÕå│µû╣µíê**: õ¢┐þö¿Õø¢ÕåàÚò£ÕâÅ
 
 ```powershell
-# 设置HuggingFace镜像
+# Þ«¥þ¢«HuggingFaceÚò£ÕâÅ
 $env:HF_ENDPOINT = "https://hf-mirror.com"
 
-# 然后下载模型
+# þäÂÕÉÄõ©ïÞ¢¢µ¿íÕ×ï
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 ```
 
 ---
 
-## 下一�?
+## õ©ïõ©Çµ¡?
 
-安装完成后，请：
+Õ«ëÞúàÕ«îµêÉÕÉÄ´╝îÞ»À´╝Ü
 
-1. **验证安装**: `python test_rtx3090_models.py`
-2. **拉取更大模型**: `ollama pull qwen2.5:32b`
-3. **配置系统**: 编辑 `config_local_rtx3090.yaml`
-4. **启动系统**: `python main.py`
+1. **Ú¬îÞ»üÕ«ëÞúà**: `python test_rtx3090_models.py`
+2. **µïëÕÅûµø┤Õñºµ¿íÕ×ï**: `ollama pull qwen2.5:32b`
+3. **Úàìþ¢«þ│╗þ╗ƒ**: þ╝ûÞ¥æ `config_local_rtx3090.yaml`
+4. **ÕÉ»Õè¿þ│╗þ╗ƒ**: `python main.py`
 
 ---
 
-**创建日期**: 2026-04-02
-**问题**: Python 3.13不支持PyTorch
-**解决方案**: 使用Conda创建Python 3.10环境
+**ÕêøÕ╗║µùÑµ£ƒ**: 2026-04-02
+**Úù«Úóÿ**: Python 3.13õ©ìµö»µîüPyTorch
+**ÞºúÕå│µû╣µíê**: õ¢┐þö¿CondaÕêøÕ╗║Python 3.10þÄ»Õóâ

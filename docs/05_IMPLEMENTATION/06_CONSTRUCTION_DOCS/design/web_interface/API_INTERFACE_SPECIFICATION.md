@@ -4,138 +4,138 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构?
-standard_type: 专业量化机构设计标准
-applicable_scope: Web管理界面API接口规范
-compliance_level: 初始设计
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔ ﮒ
+applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
+compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
 parent_document: ../INDEX.md
-implementation_status: 进行?
+implementation_status: ﻟﺟﻟ۰?
 ---
 
-# API接口规范文档
+# APIﮔ۴ﮒ۲ﻟ۶ﻟﮔﮔ۰۲
 
-> 清风量化交易系统 v5.3 - Web管理界面API接口规范
-> **索引**: `DESIGN_005`
-> **关联文档**: 
-> - [Web管理界面架构设计](T.06.UI001.web_management_interface_architecture_design.md)
-> - [前端组件结构图](前端组件结构?md)
-> - [系统API设计规范](../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
+> ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
+> **ﻝﺑ۱ﮒﺙ**: `DESIGN_005`
+> **ﮒﺏﻟﮔﮔ۰۲**: 
+> - [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](T.06.UI001.web_management_interface_architecture_design.md)
+> - [ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ](ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md)
+> - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
 
-## 1. 概述
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 文档范围
-本规范定?*Web管理界面**专用的API接口，包括：
-- **RESTful API**: 前端与后端数据交互接?
-- **WebSocket API**: 实时数据推送接?
-- **认证授权API**: 用户认证和权限管理接?
-- **文件上传/下载API**: 配置文件导入导出接口
+### 1.1 ﮔﮔ۰۲ﻟﮒﺑ
+ﮔ؛ﻟ۶ﻟﮒ؟?*Webﻝ؟۰ﻝﻝﻠ۱**ﻛﺕﻝ۷ﻝAPIﮔ۴ﮒ۲ﺅﺙﮒﮔ؛ﺅﺙ
+- **RESTful API**: ﮒﻝ،ﺁﻛﺕﮒﻝ،ﺁﮔﺍﮔ؟ﻛﭦ۳ﻛﭦﮔ۴?
+- **WebSocket API**: ﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷ﻠﮔ۴?
+- **ﻟ؟۳ﻟﺁﮔﮔAPI**: ﻝ۷ﮔﺓﻟ؟۳ﻟﺁﮒﮔﻠﻝ؟۰ﻝﮔ۴?
+- **ﮔﻛﭨﭘﻛﺕﻛﺙ /ﻛﺕﻟﺛﺛAPI**: ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺁﺙﮒ۴ﮒﺁﺙﮒﭦﮔ۴ﮒ۲
 
-### 1.2 设计原则
-| 原则 | 说明 | 实现要求 |
+### 1.2 ﻟ؟ﺝﻟ؟۰ﮒﮒ
+| ﮒﮒ | ﻟﺁﺑﮔ | ﮒ؟ﻝﺍﻟ۵ﮔﺎ |
 |------|------|----------|
-| **RESTful设计** | 遵循RESTful架构风格 | 资源导向、HTTP方法语义?|
-| **一�?* | 统一响应格式、错误处?| 所有接口返回标准APIResponse格式 |
-| **安全?* | 认证授权、数据加?| JWT认证、HTTPS加密、输入验?|
-| **版本控制** | API版本管理 | URL路径版本控制 (v1, v2) |
-| **文档?* | 接口文档自动生成 | OpenAPI/Swagger文档自动生成 |
+| **RESTfulﻟ؟ﺝﻟ؟۰** | ﻠﭖﮒﺝ۹RESTfulﮔﭘﮔﻠ۲ﮔ ﺙ | ﻟﭖﮔﭦﮒﺁﺙﮒﻙHTTPﮔﺗﮔﺏﻟﺁ­ﻛﺗ?|
+| **ﻛﺕﻟ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﮒ۳?| ﮔﮔﮔ۴ﮒ۲ﻟﺟﮒﮔ ﮒAPIResponseﮔ ﺙﮒﺙ |
+| **ﮒ؟ﮒ۷?* | ﻟ؟۳ﻟﺁﮔﮔﻙﮔﺍﮔ؟ﮒ ?| JWTﻟ؟۳ﻟﺁﻙHTTPSﮒ ﮒﺁﻙﻟﺝﮒ۴ﻠ۹?|
+| **ﻝﮔ؛ﮔ۶ﮒﭘ** | APIﻝﮔ؛ﻝ؟۰ﻝ | URLﻟﺓﺁﮒﺝﻝﮔ؛ﮔ۶ﮒﭘ (v1, v2) |
+| **ﮔﮔ۰۲?* | ﮔ۴ﮒ۲ﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ | OpenAPI/Swaggerﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ |
 
-### 1.3 版本信息
-| 版本 | 发布时间 | 主要�?| 兼容?|
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+| ﻝﮔ؛ | ﮒﮒﺕﮔﭘﻠﺑ | ﻛﺕﭨﻟ۵ﻝ?| ﮒﺙﮒ؟ﺗ?|
 |------|----------|----------|--------|
-| v1.0 | 2026-04-02 | 基础CRUD接口、实时推?| 初始版本 |
-| v1.1 | 计划 | 批量操作、高级查?| 向下兼容v1.0 |
-| v2.0 | 计划 | GraphQL支持、流式响?| 不兼容v1.x |
+| v1.0 | 2026-04-02 | ﮒﭦﻝ۰CRUDﮔ۴ﮒ۲ﻙﮒ؟ﮔﭘﮔ۷?| ﮒﮒ۶ﻝﮔ؛ |
+| v1.1 | ﻟ؟۰ﮒ | ﮔﺗﻠﮔﻛﺛﻙﻠ،ﻝﭦ۶ﮔ۴?| ﮒﻛﺕﮒﺙﮒ؟ﺗv1.0 |
+| v2.0 | ﻟ؟۰ﮒ | GraphQLﮔﺁﮔﻙﮔﭖﮒﺙﮒ?| ﻛﺕﮒﺙﮒ؟ﺗv1.x |
 
-## 2. 基础规范
+## 2. ﮒﭦﻝ۰ﻟ۶ﻟ
 
-### 2.1 统一响应格式
+### 2.1 ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
 
-#### 2.1.1 成功响应
+#### 2.1.1 ﮔﮒﮒﮒﭦ
 ```json
 {
   "code": 0,
   "message": "success",
   "data": {
-    // 业务数据
+    // ﻛﺕﮒ۰ﮔﺍﮔ؟
   },
   "request_id": "req_abc123def456",
   "timestamp": "2026-04-02T12:00:00Z"
 }
 ```
 
-#### 2.1.2 错误响应
+#### 2.1.2 ﻠﻟﺁﺁﮒﮒﭦ
 ```json
 {
   "code": 1001,
-  "message": "数据不存?,
+  "message": "ﮔﺍﮔ؟ﻛﺕﮒ­?,
   "data": null,
   "request_id": "req_abc123def456",
   "timestamp": "2026-04-02T12:00:00Z",
   "details": {
     "field": "engine_id",
     "value": "engine_001",
-    "suggestion": "请检查引擎ID是否正确"
+    "suggestion": "ﻟﺁﺓﮔ۲ﮔ۴ﮒﺙﮔIDﮔﺁﮒ۵ﮔ­۲ﻝ۰؟"
   }
 }
 ```
 
-### 2.2 错误码定?
+### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟?
 
-#### 2.2.1 通用错误?(0-999)
-| 错误?| 说明 | HTTP状态码 |
+#### 2.2.1 ﻠﻝ۷ﻠﻟﺁﺁ?(0-999)
+| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
 |--------|------|------------|
-| 0 | 成功 | 200 |
-| 1 | 参数错误 | 400 |
-| 2 | 认证失败 | 401 |
-| 3 | 权限不足 | 403 |
-| 4 | 资源不存?| 404 |
-| 5 | 请求方法不允?| 405 |
-| 6 | 请求超时 | 408 |
-| 7 | 系统内部错误 | 500 |
-| 8 | 服务不可?| 503 |
+| 0 | ﮔﮒ | 200 |
+| 1 | ﮒﮔﺍﻠﻟﺁﺁ | 400 |
+| 2 | ﻟ؟۳ﻟﺁﮒ۳ﺎﻟﺑ۴ | 401 |
+| 3 | ﮔﻠﻛﺕﻟﭘﺏ | 403 |
+| 4 | ﻟﭖﮔﭦﻛﺕﮒ­?| 404 |
+| 5 | ﻟﺁﺓﮔﺎﮔﺗﮔﺏﻛﺕﮒ?| 405 |
+| 6 | ﻟﺁﺓﮔﺎﻟﭘﮔﭘ | 408 |
+| 7 | ﻝﺏﭨﻝﭨﮒﻠ۷ﻠﻟﺁﺁ | 500 |
+| 8 | ﮔﮒ۰ﻛﺕﮒﺁ?| 503 |
 
-#### 2.2.2 Web界面专用错误?(6000-6999)
-| 错误?| 说明 | HTTP状态码 |
+#### 2.2.2 Webﻝﻠ۱ﻛﺕﻝ۷ﻠﻟﺁﺁ?(6000-6999)
+| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
 |--------|------|------------|
-| 6001 | 仪表板数据获取失?| 500 |
-| 6002 | 交易数据查询失败 | 500 |
-| 6003 | 性能数据计算失败 | 500 |
-| 6004 | 配置保存失败 | 500 |
-| 6005 | 配置验证失败 | 400 |
-| 6006 | 系统健康检查失?| 500 |
-| 6007 | 日志查询失败 | 500 |
-| 6008 | 文件上传失败 | 500 |
-| 6009 | 文件下载失败 | 500 |
-| 6010 | 实时推送连接失?| 500 |
+| 6001 | ﻛﭨ۹ﻟ۰۷ﮔﺟﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎ?| 500 |
+| 6002 | ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6003 | ﮔ۶ﻟﺛﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6004 | ﻠﻝﺛ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6005 | ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒ۳ﺎﻟﺑ۴ | 400 |
+| 6006 | ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۳ﺎ?| 500 |
+| 6007 | ﮔ۴ﮒﺟﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6008 | ﮔﻛﭨﭘﻛﺕﻛﺙ ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6009 | ﮔﻛﭨﭘﻛﺕﻟﺛﺛﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6010 | ﮒ؟ﮔﭘﮔ۷ﻠﻟﺟﮔ۴ﮒ۳ﺎ?| 500 |
 
-### 2.3 认证与授?
+### 2.3 ﻟ؟۳ﻟﺁﻛﺕﮔ?
 
-#### 2.3.1 JWT认证
+#### 2.3.1 JWTﻟ؟۳ﻟﺁ
 ```http
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-#### 2.3.2 权限角色
-| 角色 | 权限说明 | API访问范围 |
+#### 2.3.2 ﮔﻠﻟ۶ﻟﺎ
+| ﻟ۶ﻟﺎ | ﮔﻠﻟﺁﺑﮔ | APIﻟ؟ﺟﻠ؟ﻟﮒﺑ |
 |------|----------|-------------|
-| **admin** | 管理?| 所有API |
-| **operator** | 操作?| 读写交易数据、只读配?|
-| **viewer** | 观察?| 只读所有数?|
-| **guest** | 访客 | 只读公开数据 |
+| **admin** | ﻝ؟۰ﻝ?| ﮔﮔAPI |
+| **operator** | ﮔﻛﺛ?| ﻟﺁﭨﮒﻛﭦ۳ﮔﮔﺍﮔ؟ﻙﮒ۹ﻟﺁﭨﻠ?|
+| **viewer** | ﻟ۶ﮒﺁ?| ﮒ۹ﻟﺁﭨﮔﮔﮔﺍ?|
+| **guest** | ﻟ؟ﺟﮒ؟۱ | ﮒ۹ﻟﺁﭨﮒ؛ﮒﺙﮔﺍﮔ؟ |
 
-### 2.4 请求限制
-| 限制类型 | 限制?| 说明 |
+### 2.4 ﻟﺁﺓﮔﺎﻠﮒﭘ
+| ﻠﮒﭘﻝﺎﭨﮒ | ﻠﮒﭘ?| ﻟﺁﺑﮔ |
 |----------|--------|------|
-| **频率限制** | 100?分钟 | 每个IP地址 |
-| **并发连接** | 10?| 每个用户 |
-| **请求体大?* | 10MB | 文件上传除外 |
-| **响应时间** | 30秒超?| 长请求需使用异步 |
+| **ﻠ۱ﻝﻠﮒﭘ** | 100?ﮒﻠ | ﮔﺁﻛﺕ۹IPﮒﺍﮒ |
+| **ﮒﺗﭘﮒﻟﺟﮔ۴** | 10?| ﮔﺁﻛﺕ۹ﻝ۷ﮔﺓ |
+| **ﻟﺁﺓﮔﺎﻛﺛﮒ۳۶?* | 10MB | ﮔﻛﭨﭘﻛﺕﻛﺙ ﻠ۳ﮒ۳ |
+| **ﮒﮒﭦﮔﭘﻠﺑ** | 30ﻝ۶ﻟﭘ?| ﻠﺟﻟﺁﺓﮔﺎﻠﻛﺛﺟﻝ۷ﮒﺙﮔ­۴ |
 
-## 3. RESTful API 接口
+## 3. RESTful API ﮔ۴ﮒ۲
 
-### 3.1 认证授权接口
+### 3.1 ﻟ؟۳ﻟﺁﮔﮔﮔ۴ﮒ۲
 
-#### 3.1.1 用户登录
+#### 3.1.1 ﻝ۷ﮔﺓﻝﭨﮒﺛ
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -146,11 +146,11 @@ Content-Type: application/json
 }
 ```
 
-**响应**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
-  "message": "登录成功",
+  "message": "ﻝﭨﮒﺛﮔﮒ",
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "user": {
@@ -164,27 +164,27 @@ Content-Type: application/json
 }
 ```
 
-#### 3.1.2 用户登出
+#### 3.1.2 ﻝ۷ﮔﺓﻝﭨﮒﭦ
 ```http
 POST /api/v1/auth/logout
 Authorization: Bearer {token}
 ```
 
-#### 3.1.3 获取当前用户信息
+#### 3.1.3 ﻟﺓﮒﮒﺛﮒﻝ۷ﮔﺓﻛﺟ۰ﮔﺁ
 ```http
 GET /api/v1/auth/me
 Authorization: Bearer {token}
 ```
 
-### 3.2 仪表板接?
+### 3.2 ﻛﭨ۹ﻟ۰۷ﮔﺟﮔ۴?
 
-#### 3.2.1 获取仪表板概览数?
+#### 3.2.1 ﻟﺓﮒﻛﭨ۹ﻟ۰۷ﮔﺟﮔ۵ﻟ۶ﮔﺍ?
 ```http
 GET /api/v1/dashboard/overview
 Authorization: Bearer {token}
 ```
 
-**响应**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -207,13 +207,13 @@ Authorization: Bearer {token}
         "trade_count_today": 56,
         "last_heartbeat": "2026-04-02T11:59:30Z"
       },
-      // 其他引擎�?
+      // ﮒﭘﻛﭨﮒﺙﮔﻝ?
     ],
     "recent_alerts": [
       {
         "id": "alert_001",
         "level": "warning",
-        "message": "引擎 vn.py 内存使用率超?0%",
+        "message": "ﮒﺙﮔ vn.py ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
         "timestamp": "2026-04-02T11:45:00Z",
         "acknowledged": false
       }
@@ -222,38 +222,38 @@ Authorization: Bearer {token}
 }
 ```
 
-#### 3.2.2 获取引擎详细�?
+#### 3.2.2 ﻟﺓﮒﮒﺙﮔﻟﺁ۵ﻝﭨﻝ?
 ```http
 GET /api/v1/dashboard/engines/{engine_id}/status
 Authorization: Bearer {token}
 ```
 
-#### 3.2.3 启动/停止引擎
+#### 3.2.3 ﮒﺁﮒ۷/ﮒﮔ­۱ﮒﺙﮔ
 ```http
 POST /api/v1/dashboard/engines/{engine_id}/start
 POST /api/v1/dashboard/engines/{engine_id}/stop
 Authorization: Bearer {token}
 ```
 
-### 3.3 交易监控接口
+### 3.3 ﻛﭦ۳ﮔﻝﮔ۶ﮔ۴ﮒ۲
 
-#### 3.3.1 查询交易记录
+#### 3.3.1 ﮔ۴ﻟﺁ۱ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛ
 ```http
 GET /api/v1/trades
 Authorization: Bearer {token}
 Query Parameters:
-  - start_date: string (YYYY-MM-DD)   # 开始日?
-  - end_date: string (YYYY-MM-DD)     # 结束日期
-  - symbol: string                    # 股票代码
-  - engine_id: string                 # 引擎ID
-  - side: string (buy/sell)           # 买卖方向
-  - page: integer = 1                 # 页码
-  - page_size: integer = 50           # 每页数量
-  - sort_by: string = "timestamp"     # 排序字段
-  - sort_order: string = "desc"       # 排序方向
+  - start_date: string (YYYY-MM-DD)   # ﮒﺙﮒ۶ﮔ۴?
+  - end_date: string (YYYY-MM-DD)     # ﻝﭨﮔﮔ۴ﮔ
+  - symbol: string                    # ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+  - engine_id: string                 # ﮒﺙﮔID
+  - side: string (buy/sell)           # ﻛﺗﺍﮒﮔﺗﮒ
+  - page: integer = 1                 # ﻠ۰ﭖﻝ 
+  - page_size: integer = 50           # ﮔﺁﻠ۰ﭖﮔﺍﻠ
+  - sort_by: string = "timestamp"     # ﮔﮒﭦﮒ­ﮔ؟ﭖ
+  - sort_order: string = "desc"       # ﮔﮒﭦﮔﺗﮒ
 ```
 
-**响应**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -291,34 +291,34 @@ Query Parameters:
 }
 ```
 
-#### 3.3.2 获取单笔交易详情
+#### 3.3.2 ﻟﺓﮒﮒﻝ؛ﻛﭦ۳ﮔﻟﺁ۵ﮔ
 ```http
 GET /api/v1/trades/{trade_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.3.3 导出交易数据
+#### 3.3.3 ﮒﺁﺙﮒﭦﻛﭦ۳ﮔﮔﺍﮔ؟
 ```http
 GET /api/v1/trades/export
 Authorization: Bearer {token}
-Query Parameters: (同查询接?
+Query Parameters: (ﮒﮔ۴ﻟﺁ۱ﮔ۴?
 Accept: text/csv, application/json
 ```
 
-### 3.4 性能分析接口
+### 3.4 ﮔ۶ﻟﺛﮒﮔﮔ۴ﮒ۲
 
-#### 3.4.1 获取性能指标
+#### 3.4.1 ﻟﺓﮒﮔ۶ﻟﺛﮔﮔ 
 ```http
 GET /api/v1/performance/metrics
 Authorization: Bearer {token}
 Query Parameters:
-  - time_range: string (1d, 7d, 30d, 90d, 1y)  # 时间范围
-  - engine_id: string                          # 引擎ID，可?
-  - strategy_id: string                        # 策略ID，可?
-  - metrics: string[]                          # 指标列表，可?
+  - time_range: string (1d, 7d, 30d, 90d, 1y)  # ﮔﭘﻠﺑﻟﮒﺑ
+  - engine_id: string                          # ﮒﺙﮔIDﺅﺙﮒﺁ?
+  - strategy_id: string                        # ﻝ­ﻝ۴IDﺅﺙﮒﺁ?
+  - metrics: string[]                          # ﮔﮔ ﮒﻟ۰۷ﺅﺙﮒﺁ?
 ```
 
-**响应**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -341,18 +341,18 @@ Query Parameters:
     "equity_curve": [
       {"date": "2026-03-01", "value": 1000000},
       {"date": "2026-03-02", "value": 1001250},
-      // 更多数据?
+      // ﮔﺑﮒ۳ﮔﺍﮔ؟?
     ],
     "drawdown_curve": [
       {"date": "2026-03-01", "value": 0},
       {"date": "2026-03-02", "value": -0.012},
-      // 更多数据?
+      // ﮔﺑﮒ۳ﮔﺍﮔ؟?
     ]
   }
 }
 ```
 
-#### 3.4.2 获取交易分布
+#### 3.4.2 ﻟﺓﮒﻛﭦ۳ﮔﮒﮒﺕ
 ```http
 GET /api/v1/performance/trade-distribution
 Authorization: Bearer {token}
@@ -361,7 +361,7 @@ Query Parameters:
   - group_by: string (symbol, engine, strategy, hour_of_day)
 ```
 
-#### 3.4.3 获取绩效报告
+#### 3.4.3 ﻟﺓﮒﻝﭨ۸ﮔﮔ۴ﮒ
 ```http
 GET /api/v1/performance/report
 Authorization: Bearer {token}
@@ -370,21 +370,21 @@ Query Parameters:
   - include_charts: boolean = true
 ```
 
-### 3.5 配置管理接口
+### 3.5 ﻠﻝﺛ؟ﻝ؟۰ﻝﮔ۴ﮒ۲
 
-#### 3.5.1 获取引擎配置
+#### 3.5.1 ﻟﺓﮒﮒﺙﮔﻠﻝﺛ؟
 ```http
 GET /api/v1/config/engines
 Authorization: Bearer {token}
 ```
 
-#### 3.5.2 获取单个引擎配置
+#### 3.5.2 ﻟﺓﮒﮒﻛﺕ۹ﮒﺙﮔﻠﻝﺛ؟
 ```http
 GET /api/v1/config/engines/{engine_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.5.3 更新引擎配置
+#### 3.5.3 ﮔﺑﮔﺍﮒﺙﮔﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/engines/{engine_id}
 Authorization: Bearer {token}
@@ -403,39 +403,39 @@ Content-Type: application/json
 }
 ```
 
-#### 3.5.4 获取策略配置
+#### 3.5.4 ﻟﺓﮒﻝ­ﻝ۴ﻠﻝﺛ؟
 ```http
 GET /api/v1/config/strategies
 Authorization: Bearer {token}
 ```
 
-#### 3.5.5 更新策略配置
+#### 3.5.5 ﮔﺑﮔﺍﻝ­ﻝ۴ﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/strategies/{strategy_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.5.6 获取风险限额配置
+#### 3.5.6 ﻟﺓﮒﻠ۲ﻠ۸ﻠﻠ۱ﻠﻝﺛ؟
 ```http
 GET /api/v1/config/risk-limits
 Authorization: Bearer {token}
 ```
 
-#### 3.5.7 更新风险限额配置
+#### 3.5.7 ﮔﺑﮔﺍﻠ۲ﻠ۸ﻠﻠ۱ﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/risk-limits/{limit_id}
 Authorization: Bearer {token}
 ```
 
-### 3.6 系统健康接口
+### 3.6 ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۴ﮒ۲
 
-#### 3.6.1 获取系统健康�?
+#### 3.6.1 ﻟﺓﮒﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﻝ?
 ```http
 GET /api/v1/system/health
 Authorization: Bearer {token}
 ```
 
-**响应**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -444,23 +444,23 @@ Authorization: Bearer {token}
     "overall_status": "healthy",
     "components": [
       {
-        "name": "数据?,
+        "name": "ﮔﺍﮔ؟?,
         "status": "healthy",
         "response_time": 45,
         "last_check": "2026-04-02T12:00:00Z"
       },
       {
-        "name": "Redis缓存",
+        "name": "Redisﻝﺙﮒ­",
         "status": "healthy",
         "response_time": 12,
         "last_check": "2026-04-02T12:00:00Z"
       },
       {
-        "name": "vn.py引擎",
+        "name": "vn.pyﮒﺙﮔ",
         "status": "degraded",
         "response_time": 350,
         "last_check": "2026-04-02T12:00:00Z",
-        "details": "内存使用?5%"
+        "details": "ﮒﮒ­ﻛﺛﺟﻝ۷?5%"
       }
     ],
     "metrics": {
@@ -474,7 +474,7 @@ Authorization: Bearer {token}
 }
 ```
 
-#### 3.6.2 查询系统日志
+#### 3.6.2 ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﮔ۴ﮒﺟ
 ```http
 GET /api/v1/system/logs
 Authorization: Bearer {token}
@@ -488,7 +488,7 @@ Query Parameters:
   - page_size: integer = 100
 ```
 
-#### 3.6.3 获取告警历史
+#### 3.6.3 ﻟﺓﮒﮒﻟ­۵ﮒﮒﺎ
 ```http
 GET /api/v1/system/alerts
 Authorization: Bearer {token}
@@ -499,34 +499,34 @@ Query Parameters:
   - end_time: string
 ```
 
-#### 3.6.4 确认告警
+#### 3.6.4 ﻝ۰؟ﻟ؟۳ﮒﻟ­۵
 ```http
 POST /api/v1/system/alerts/{alert_id}/acknowledge
 Authorization: Bearer {token}
 ```
 
-### 3.7 文件操作接口
+### 3.7 ﮔﻛﭨﭘﮔﻛﺛﮔ۴ﮒ۲
 
-#### 3.7.1 上传配置文件
+#### 3.7.1 ﻛﺕﻛﺙ ﻠﻝﺛ؟ﮔﻛﭨﭘ
 ```http
 POST /api/v1/files/upload
 Authorization: Bearer {token}
 Content-Type: multipart/form-data
 
 Form Data:
-  - file: File (配置文件)
+  - file: File (ﻠﻝﺛ؟ﮔﻛﭨﭘ)
   - file_type: string (engine_config, strategy_config, risk_config)
-  - engine_id: string (�?
-  - strategy_id: string (�?
+  - engine_id: string (ﮒ?
+  - strategy_id: string (ﮒ?
 ```
 
-#### 3.7.2 下载配置文件
+#### 3.7.2 ﻛﺕﻟﺛﺛﻠﻝﺛ؟ﮔﻛﭨﭘ
 ```http
 GET /api/v1/files/download/{file_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.7.3 获取文件列表
+#### 3.7.3 ﻟﺓﮒﮔﻛﭨﭘﮒﻟ۰۷
 ```http
 GET /api/v1/files
 Authorization: Bearer {token}
@@ -537,36 +537,36 @@ Query Parameters:
   - end_time: string
 ```
 
-## 4. WebSocket API 接口
+## 4. WebSocket API ﮔ۴ﮒ۲
 
-### 4.1 连接建立
+### 4.1 ﻟﺟﮔ۴ﮒﭨﭦﻝ،
 
-#### 4.1.1 连接URL
+#### 4.1.1 ﻟﺟﮔ۴URL
 ```
 ws://localhost:8000/api/v1/ws?token={jwt_token}
 ```
 
-#### 4.1.2 连接协议
+#### 4.1.2 ﻟﺟﮔ۴ﮒﻟ؟؟
 ```json
-// 客户端发送连接请?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﻟﺟﮔ۴ﻟﺁﺓ?
 {
   "type": "connect",
   "client_id": "web_ui_001",
   "subscriptions": ["trades", "engine_status", "alerts"]
 }
 
-// 服务端响?
+// ﮔﮒ۰ﻝ،ﺁﮒ?
 {
   "type": "connected",
   "server_time": "2026-04-02T12:00:00Z",
   "client_id": "web_ui_001",
-  "message": "连接成功"
+  "message": "ﻟﺟﮔ۴ﮔﮒ"
 }
 ```
 
-### 4.2 实时事件�?
+### 4.2 ﮒ؟ﮔﭘﻛﭦﻛﭨﭘﮔ?
 
-#### 4.2.1 交易执行事件
+#### 4.2.1 ﻛﭦ۳ﮔﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "trade_executed",
@@ -586,7 +586,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.2 引擎状态更新事?
+#### 4.2.2 ﮒﺙﮔﻝﭘﮔﮔﺑﮔﺍﻛﭦ?
 ```json
 {
   "type": "engine_status_updated",
@@ -603,14 +603,14 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.3 告警事件
+#### 4.2.3 ﮒﻟ­۵ﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "alert_triggered",
   "data": {
     "alert_id": "alert_002",
     "level": "warning",
-    "message": "引擎 vn.py CPU使用率超?0%",
+    "message": "ﮒﺙﮔ vn.py CPUﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
     "component": "engine_vnpy_001",
     "timestamp": "2026-04-02T12:01:00Z",
     "details": {
@@ -624,7 +624,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.4 性能指标更新事件
+#### 4.2.4 ﮔ۶ﻟﺛﮔﮔ ﮔﺑﮔﺍﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "performance_updated",
@@ -641,47 +641,47 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-### 4.3 客户端订阅管?
+### 4.3 ﮒ؟۱ﮔﺓﻝ،ﺁﻟ؟۱ﻠﻝ؟۰?
 
-#### 4.3.1 订阅事件
+#### 4.3.1 ﻟ؟۱ﻠﻛﭦﻛﭨﭘ
 ```json
-// 客户端发送订阅请?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﻟ؟۱ﻠﻟﺁﺓ?
 {
   "type": "subscribe",
   "subscriptions": ["trades", "engine_status", "alerts"]
 }
 
-// 服务端响?
+// ﮔﮒ۰ﻝ،ﺁﮒ?
 {
   "type": "subscription_updated",
   "data": {
     "current_subscriptions": ["trades", "engine_status", "alerts"],
-    "message": "订阅成功"
+    "message": "ﻟ؟۱ﻠﮔﮒ"
   }
 }
 ```
 
-#### 4.3.2 取消订阅
+#### 4.3.2 ﮒﮔﭘﻟ؟۱ﻠ
 ```json
-// 客户端发送取消订阅请?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﮒﮔﭘﻟ؟۱ﻠﻟﺁﺓ?
 {
   "type": "unsubscribe",
   "subscriptions": ["alerts"]
 }
 ```
 
-### 4.4 心跳与连接保?
+### 4.4 ﮒﺟﻟﺓﺏﻛﺕﻟﺟﮔ۴ﻛﺟ?
 
-#### 4.4.1 客户端心?
+#### 4.4.1 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺟ?
 ```json
-// 客户端定期发送心?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒ؟ﮔﮒﻠﮒﺟ?
 {
   "type": "ping",
   "client_id": "web_ui_001",
   "timestamp": "2026-04-02T12:00:00Z"
 }
 
-// 服务端响?
+// ﮔﮒ۰ﻝ،ﺁﮒ?
 {
   "type": "pong",
   "server_time": "2026-04-02T12:00:00Z",
@@ -689,16 +689,16 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.4.2 连接超时
-- 心跳间隔: 30?
-- 连接超时: 90?
-- 自动重连: 支持，最大重试次??
+#### 4.4.2 ﻟﺟﮔ۴ﻟﭘﮔﭘ
+- ﮒﺟﻟﺓﺏﻠﺑﻠ: 30?
+- ﻟﺟﮔ۴ﻟﭘﮔﭘ: 90?
+- ﻟ۹ﮒ۷ﻠﻟﺟ: ﮔﺁﮔﺅﺙﮔﮒ۳۶ﻠﻟﺁﮔ؛۰??
 
-## 5. 数据模型定义
+## 5. ﮔﺍﮔ؟ﮔ۷۰ﮒﮒ؟ﻛﺗ
 
-### 5.1 通用数据模型
+### 5.1 ﻠﻝ۷ﮔﺍﮔ؟ﮔ۷۰ﮒ
 
-#### 5.1.1 分页响应模型
+#### 5.1.1 ﮒﻠ۰ﭖﮒﮒﭦﮔ۷۰ﮒ
 ```python
 from pydantic import BaseModel
 from typing import Generic, TypeVar, List, Optional
@@ -706,7 +706,7 @@ from typing import Generic, TypeVar, List, Optional
 T = TypeVar('T')
 
 class PaginatedResponse(BaseModel, Generic[T]):
-    """分页响应模型"""
+    """ﮒﻠ۰ﭖﮒﮒﭦﮔ۷۰ﮒ"""
     items: List[T]
     total: int
     page: int
@@ -716,39 +716,39 @@ class PaginatedResponse(BaseModel, Generic[T]):
     has_prev: bool
 ```
 
-#### 5.1.2 时间范围模型
+#### 5.1.2 ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ
 ```python
 class TimeRange(BaseModel):
-    """时间范围模型"""
-    start: str  # ISO 8601格式
-    end: str    # ISO 8601格式
+    """ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ"""
+    start: str  # ISO 8601ﮔ ﺙﮒﺙ
+    end: str    # ISO 8601ﮔ ﺙﮒﺙ
     timezone: str = "UTC"
 ```
 
-### 5.2 业务数据模型
+### 5.2 ﻛﺕﮒ۰ﮔﺍﮔ؟ﮔ۷۰ﮒ
 
-#### 5.2.1 引擎状态模?
+#### 5.2.1 ﮒﺙﮔﻝﭘﮔﮔ۷۰?
 ```python
 class EngineStatus(BaseModel):
-    """引擎状态模?""
+    """ﮒﺙﮔﻝﭘﮔﮔ۷۰?""
     engine_id: str
     engine_type: str
     status: str  # running, stopped, error, starting, stopping
-    cpu_usage: float  # 百分?
+    cpu_usage: float  # ﻝﺝﮒ?
     memory_usage: float  # MB
     trade_count_today: int
     error_count: int
-    last_heartbeat: str  # ISO 8601格式
+    last_heartbeat: str  # ISO 8601ﮔ ﺙﮒﺙ
     start_time: Optional[str] = None
     uptime_seconds: Optional[int] = None
 ```
 
-#### 5.2.2 交易数据模型
+#### 5.2.2 ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ
 ```python
 class Trade(BaseModel):
-    """交易数据模型"""
+    """ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ"""
     trade_id: str
-    timestamp: str  # ISO 8601格式
+    timestamp: str  # ISO 8601ﮔ ﺙﮒﺙ
     symbol: str
     side: str  # buy, sell
     price: float
@@ -779,10 +779,10 @@ class Trade(BaseModel):
         }
 ```
 
-#### 5.2.3 性能指标模型
+#### 5.2.3 ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ
 ```python
 class PerformanceMetrics(BaseModel):
-    """性能指标模型"""
+    """ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ"""
     sharpe_ratio: float
     max_drawdown: float
     win_rate: float
@@ -798,12 +798,12 @@ class PerformanceMetrics(BaseModel):
     beta: Optional[float] = None
 ```
 
-### 5.3 配置数据模型
+### 5.3 ﻠﻝﺛ؟ﮔﺍﮔ؟ﮔ۷۰ﮒ
 
-#### 5.3.1 引擎配置模型
+#### 5.3.1 ﮒﺙﮔﻠﻝﺛ؟ﮔ۷۰ﮒ
 ```python
 class EngineConfig(BaseModel):
-    """引擎配置模型"""
+    """ﮒﺙﮔﻠﻝﺛ؟ﮔ۷۰ﮒ"""
     engine_id: str
     engine_type: str
     broker: str
@@ -833,33 +833,33 @@ class EngineConfig(BaseModel):
         }
 ```
 
-## 6. API测试规范
+## 6. APIﮔﭖﻟﺁﻟ۶ﻟ
 
-### 6.1 测试环境
-| 环境 | 地址 | �?|
+### 6.1 ﮔﭖﻟﺁﻝﺁﮒ۱
+| ﻝﺁﮒ۱ | ﮒﺍﮒ | ﻝ?|
 |------|------|------|
-| **开发环?* | http://localhost:8000 | 开发测?|
-| **测试环境** | http://test.api.qingfeng.com | 集成测试 |
-| **预生产环?* | http://staging.api.qingfeng.com | 预发布测?|
-| **生产环境** | https://api.qingfeng.com | 生产环境 |
+| **ﮒﺙﮒﻝﺁ?* | http://localhost:8000 | ﮒﺙﮒﮔﭖ?|
+| **ﮔﭖﻟﺁﻝﺁﮒ۱** | http://test.api.qingfeng.com | ﻠﮔﮔﭖﻟﺁ |
+| **ﻠ۱ﻝﻛﭦ۶ﻝﺁ?* | http://staging.api.qingfeng.com | ﻠ۱ﮒﮒﺕﮔﭖ?|
+| **ﻝﻛﭦ۶ﻝﺁﮒ۱** | https://api.qingfeng.com | ﻝﻛﭦ۶ﻝﺁﮒ۱ |
 
-### 6.2 测试工具
-| 工具 | �?| 配置 |
+### 6.2 ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ
+| ﮒﺓ۴ﮒﺓ | ﻝ?| ﻠﻝﺛ؟ |
 |------|------|------|
-| **pytest** | 单元测试和集成测?| `tests/api/` |
-| **Postman** | API测试和文?| Postman Collection |
-| **Swagger UI** | 交互式API文档 | http://localhost:8000/docs |
-| **Locust** | 性能测试 | `locustfile.py` |
+| **pytest** | ﮒﮒﮔﭖﻟﺁﮒﻠﮔﮔﭖ?| `tests/api/` |
+| **Postman** | APIﮔﭖﻟﺁﮒﮔ?| Postman Collection |
+| **Swagger UI** | ﻛﭦ۳ﻛﭦﮒﺙAPIﮔﮔ۰۲ | http://localhost:8000/docs |
+| **Locust** | ﮔ۶ﻟﺛﮔﭖﻟﺁ | `locustfile.py` |
 
-### 6.3 测试用例示例
+### 6.3 ﮔﭖﻟﺁﻝ۷ﻛﺝﻝ۳ﭦﻛﺝ
 
-#### 6.3.1 认证测试
+#### 6.3.1 ﻟ؟۳ﻟﺁﮔﭖﻟﺁ
 ```python
 import pytest
 from fastapi.testclient import TestClient
 
 def test_login_success(client: TestClient):
-    """测试登录成功"""
+    """ﮔﭖﻟﺁﻝﭨﮒﺛﮔﮒ"""
     response = client.post("/api/v1/auth/login", json={
         "username": "admin",
         "password": "password123"
@@ -872,7 +872,7 @@ def test_login_success(client: TestClient):
     assert data["data"]["user"]["username"] == "admin"
 
 def test_login_failure(client: TestClient):
-    """测试登录失败"""
+    """ﮔﭖﻟﺁﻝﭨﮒﺛﮒ۳ﺎﻟﺑ۴"""
     response = client.post("/api/v1/auth/login", json={
         "username": "admin",
         "password": "wrong_password"
@@ -883,10 +883,10 @@ def test_login_failure(client: TestClient):
     assert data["code"] == 2
 ```
 
-#### 6.3.2 交易查询测试
+#### 6.3.2 ﻛﭦ۳ﮔﮔ۴ﻟﺁ۱ﮔﭖﻟﺁ
 ```python
 def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
-    """测试带过滤条件的交易查询"""
+    """ﮔﭖﻟﺁﮒﺕ۵ﻟﺟﮔﭨ۳ﮔ۰ﻛﭨﭘﻝﻛﭦ۳ﮔﮔ۴ﻟﺁ۱"""
     response = client.get("/api/v1/trades", params={
         "start_date": "2026-04-01",
         "end_date": "2026-04-02",
@@ -903,20 +903,20 @@ def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
     assert len(data["data"]["trades"]) <= 10
 ```
 
-### 6.4 性能测试标准
-| 指标 | 目标?| 测试方法 |
+### 6.4 ﮔ۶ﻟﺛﮔﭖﻟﺁﮔ ﮒ
+| ﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|----------|
-| **API响应时间** | P95 < 200ms | 负载测试 |
-| **并发处理能力** | ?000 QPS | 压力测试 |
-| **WebSocket连接?* | ?00 并发连接 | 连接测试 |
-| **内存使用** | < 1GB | 内存分析 |
-| **错误?* | < 0.1% | 稳定性测?|
+| **APIﮒﮒﭦﮔﭘﻠﺑ** | P95 < 200ms | ﻟﺑﻟﺛﺛﮔﭖﻟﺁ |
+| **ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ** | ?000 QPS | ﮒﮒﮔﭖﻟﺁ |
+| **WebSocketﻟﺟﮔ۴?* | ?00 ﮒﺗﭘﮒﻟﺟﮔ۴ | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
+| **ﮒﮒ­ﻛﺛﺟﻝ۷** | < 1GB | ﮒﮒ­ﮒﮔ |
+| **ﻠﻟﺁﺁ?* | < 0.1% | ﻝ۷ﺏﮒ؟ﮔ۶ﮔﭖ?|
 
-## 7. 部署与运?
+## 7. ﻠ۷ﻝﺛﺎﻛﺕﻟﺟ?
 
-### 7.1 部署配置
+### 7.1 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
-#### 7.1.1 Docker部署
+#### 7.1.1 Dockerﻠ۷ﻝﺛﺎ
 ```dockerfile
 # Dockerfile
 FROM python:3.11-slim
@@ -931,9 +931,9 @@ COPY . .
 CMD ["uvicorn", "web_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-#### 7.1.2 环境变量配置
+#### 7.1.2 ﻝﺁﮒ۱ﮒﻠﻠﻝﺛ؟
 ```bash
-# .env 文件
+# .env ﮔﻛﭨﭘ
 API_HOST=0.0.0.0
 API_PORT=8000
 DATABASE_URL=postgresql://user:password@db:5432/qingfeng
@@ -942,21 +942,21 @@ JWT_SECRET_KEY=your-secret-key
 CORS_ORIGINS=["http://localhost:3000"]
 ```
 
-### 7.2 监控与告?
+### 7.2 ﻝﮔ۶ﻛﺕﮒ?
 
-#### 7.2.1 监控指标
-| 指标 | 采集方式 | 告警�?|
+#### 7.2.1 ﻝﮔ۶ﮔﮔ 
+| ﮔﮔ  | ﻠﻠﮔﺗﮒﺙ | ﮒﻟ­۵ﻠ?|
 |------|----------|----------|
-| **API请求?* | Prometheus | < 10 QPS ?> 1000 QPS |
-| **API错误?* | Prometheus | > 1% |
-| **API响应时间** | Prometheus | P95 > 500ms |
-| **WebSocket连接?* | Prometheus | > 1000 |
-| **内存使用?* | cAdvisor | > 80% |
-| **CPU使用?* | cAdvisor | > 70% |
+| **APIﻟﺁﺓﮔﺎ?* | Prometheus | < 10 QPS ?> 1000 QPS |
+| **APIﻠﻟﺁﺁ?* | Prometheus | > 1% |
+| **APIﮒﮒﭦﮔﭘﻠﺑ** | Prometheus | P95 > 500ms |
+| **WebSocketﻟﺟﮔ۴?* | Prometheus | > 1000 |
+| **ﮒﮒ­ﻛﺛﺟﻝ۷?* | cAdvisor | > 80% |
+| **CPUﻛﺛﺟﻝ۷?* | cAdvisor | > 70% |
 
-#### 7.2.2 日志配置
+#### 7.2.2 ﮔ۴ﮒﺟﻠﻝﺛ؟
 ```python
-# 日志配置
+# ﮔ۴ﮒﺟﻠﻝﺛ؟
 import logging
 from loguru import logger
 
@@ -965,17 +965,17 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
-# 结构化日?
+# ﻝﭨﮔﮒﮔ۴?
 logger.add("logs/api.log", 
            rotation="100 MB", 
            retention="30 days",
            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
-           serialize=True)  # 输出JSON格式
+           serialize=True)  # ﻟﺝﮒﭦJSONﮔ ﺙﮒﺙ
 ```
 
-### 7.3 安全配置
+### 7.3 ﮒ؟ﮒ۷ﻠﻝﺛ؟
 
-#### 7.3.1 CORS配置
+#### 7.3.1 CORSﻠﻝﺛ؟
 ```python
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -989,7 +989,7 @@ app.add_middleware(
 )
 ```
 
-#### 7.3.2 速率限制
+#### 7.3.2 ﻠﻝﻠﮒﭘ
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -998,8 +998,8 @@ limiter = Limiter(key_func=get_remote_address)
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    """速率限制中间?""
-    # 不同接口不同限制
+    """ﻠﻝﻠﮒﭘﻛﺕ­ﻠﺑ?""
+    # ﻛﺕﮒﮔ۴ﮒ۲ﻛﺕﮒﻠﮒﭘ
     if request.url.path.startswith("/api/v1/auth"):
         await limiter.check(request, "10/minute")
     elif request.url.path.startswith("/api/v1/trades"):
@@ -1011,31 +1011,31 @@ async def rate_limit_middleware(request: Request, call_next):
     return response
 ```
 
-## 8. 版本升级与兼�?
+## 8. ﻝﮔ؛ﮒﻝﭦ۶ﻛﺕﮒﺙﮒ؟?
 
-### 8.1 版本升级策略
-| 升级类型 | 描述 | 兼容性要?|
+### 8.1 ﻝﮔ؛ﮒﻝﭦ۶ﻝ­ﻝ۴
+| ﮒﻝﭦ۶ﻝﺎﭨﮒ | ﮔﻟﺟﺍ | ﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?|
 |----------|------|------------|
-| **补丁版本** (x.y.z ?x.y.z+1) | Bug修复、安全更?| 完全兼容 |
-| **次要版本** (x.y.z ?x.y+1.0) | 新增功能、API扩展 | 向前兼容 |
-| **主要版本** (x.y.z ?x+1.0.0) | 重大变更、API不兼?| 需要迁?|
+| **ﻟ۰۴ﻛﺕﻝﮔ؛** (x.y.z ?x.y.z+1) | Bugﻛﺟ؟ﮒ۳ﻙﮒ؟ﮒ۷ﮔﺑ?| ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ |
+| **ﮔ؛۰ﻟ۵ﻝﮔ؛** (x.y.z ?x.y+1.0) | ﮔﺍﮒ۱ﮒﻟﺛﻙAPIﮔ۸ﮒﺎ | ﮒﮒﮒﺙﮒ؟ﺗ |
+| **ﻛﺕﭨﻟ۵ﻝﮔ؛** (x.y.z ?x+1.0.0) | ﻠﮒ۳۶ﮒﮔﺑﻙAPIﻛﺕﮒﺙ?| ﻠﻟ۵ﻟﺟ?|
 
-### 8.2 API废弃策略
-1. **预告?*: 在文档中标记?已废?，持?个月
-2. **警告?*: 返回警告头`X-API-Deprecated: true`，持?个月
-3. **移除?*: 完全移除废弃API，返?10状态码
+### 8.2 APIﮒﭦﮒﺙﻝ­ﻝ۴
+1. **ﻠ۱ﮒ?*: ﮒ۷ﮔﮔ۰۲ﻛﺕ­ﮔ ﻟ؟ﺍ?ﮒﺓﺎﮒﭦ?ﺅﺙﮔ?ﻛﺕ۹ﮔ
+2. **ﻟ­۵ﮒ?*: ﻟﺟﮒﻟ­۵ﮒﮒ۳ﺑ`X-API-Deprecated: true`ﺅﺙﮔ?ﻛﺕ۹ﮔ
+3. **ﻝ۶ﭨﻠ۳?*: ﮒ؟ﮒ۷ﻝ۶ﭨﻠ۳ﮒﭦﮒﺙAPIﺅﺙﻟﺟ?10ﻝﭘﮔﻝ 
 
-### 8.3 客户端兼容性要?
-| 客户端类?| 最低API版本 | 升级要求 |
+### 8.3 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?
+| ﮒ؟۱ﮔﺓﻝ،ﺁﻝﺎﭨ?| ﮔﻛﺛAPIﻝﮔ؛ | ﮒﻝﭦ۶ﻟ۵ﮔﺎ |
 |------------|-------------|----------|
-| **Web界面** | v1.0 | 自动检测API版本，支持降?|
-| **移动端App** | v1.0 | 应用商店强制更新 |
-| **第三方集?* | v1.0 | 文档通知，提供迁移指?|
+| **Webﻝﻠ۱** | v1.0 | ﻟ۹ﮒ۷ﮔ۲ﮔﭖAPIﻝﮔ؛ﺅﺙﮔﺁﮔﻠ?|
+| **ﻝ۶ﭨﮒ۷ﻝ،ﺁApp** | v1.0 | ﮒﭦﻝ۷ﮒﮒﭦﮒﺙﭦﮒﭘﮔﺑﮔﺍ |
+| **ﻝ؛؛ﻛﺕﮔﺗﻠ?* | v1.0 | ﮔﮔ۰۲ﻠﻝ۴ﺅﺙﮔﻛﺝﻟﺟﻝ۶ﭨﮔ?|
 
 ---
 
-**文档版本**: 1.0.0  
-**最后更?*: 2026-04-02  
-**维护?*: 首席蓝图架构? 
-**索引**: `DESIGN_005`  
-**�?*: ?设计完成，待评审
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
+**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ? 
+**ﻝﺑ۱ﮒﺙ**: `DESIGN_005`  
+**ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰

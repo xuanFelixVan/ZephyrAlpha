@@ -4,64 +4,64 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构�?standard_type: 编码最佳实�?applicable_scope: Python代码编写
-compliance_level: 强制执行
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝ ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝ ﻝﺙﮒ
+compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../BEST_PRACTICES_INDEX.md
 implementation_status: Active
 ---
 
-# Python代码规范最佳实�?
-> **最佳实践编�?*: BP-001  
-> **版本**: v1.0  
-> **适用场景**: 所有Python代码编写  
-> **强制级别**: 🔴 **强制执行**
+# Pythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?
+> **ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﻝﺙﮒ?*: BP-001  
+> **ﻝﮔ؛**: v1.0  
+> **ﻠﻝ۷ﮒﭦﮔﺁ**: ﮔﮔPythonﻛﭨ۲ﻝ ﻝﺙﮒ  
+> **ﮒﺙﭦﮒﭘﻝﭦ۶ﮒ،**: ﻭﺑ **ﮒﺙﭦﮒﭘﮔ۶ﻟ۰**
 
 ---
 
-## 📋 **适用场景**
+## ﻭ **ﻠﻝ۷ﮒﭦﮔﺁ**
 
-### **何时使用**
+### **ﻛﺛﮔﭘﻛﺛﺟﻝ۷**
 
-- �?编写新的Python模块
-- �?重构现有代码
-- �?代码审查时检�?- �?团队协作开�?
-### **适用范围**
+- ﻗ?ﻝﺙﮒﮔﺍﻝPythonﮔ۷۰ﮒ
+- ﻗ?ﻠﮔﻝﺍﮔﻛﭨ۲ﻝ 
+- ﻗ?ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﮔ۲ﮔ?- ﻗ?ﮒ۱ﻠﮒﻛﺛﮒﺙﮒ?
+### **ﻠﻝ۷ﻟﮒﺑ**
 
-- 所有生产环境代�?- 所有测试代�?- 所有脚本代�?- 所有配置代�?
+- ﮔﮔﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﭨ۲ﻝ ?- ﮔﮔﮔﭖﻟﺁﻛﭨ۲ﻝ ?- ﮔﮔﻟﮔ؛ﻛﭨ۲ﻝ ?- ﮔﮔﻠﻝﺛ؟ﻛﭨ۲ﻝ ?
 ---
 
-## 🎯 **实施步骤**
+## ﻭﺁ **ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳**
 
-### **1. 命名规范**
+### **1. ﮒﺛﮒﻟ۶ﻟ**
 
-#### **变量命名**
+#### **ﮒﻠﮒﺛﮒ**
 
 ```python
-# �?正确 - 小写+下划�?strategy_factory = StrategyFactory()
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?strategy_factory = StrategyFactory()
 event_bus = EventBus()
 max_position_size = 0.95
 
-# �?错误 - 大驼峰或小驼�?strategyFactory = StrategyFactory()
+# ﻗ?ﻠﻟﺁﺁ - ﮒ۳۶ﻠ۸ﺙﮒﺏﺍﮔﮒﺍﻠ۸ﺙﮒﺏ?strategyFactory = StrategyFactory()
 eventBus = EventBus()
 MaxPositionSize = 0.95
 ```
 
-#### **常量命名**
+#### **ﮒﺕﺕﻠﮒﺛﮒ**
 
 ```python
-# �?正确 - 全大�?下划�?MAX_POSITION_SIZE = 0.95
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۷ﮒ۳۶ﮒ?ﻛﺕﮒﻝﭦ?MAX_POSITION_SIZE = 0.95
 DEFAULT_TIMEOUT = 30
 API_BASE_URL = "https://api.example.com"
 
-# �?错误 - 小写或驼�?max_position_size = 0.95
+# ﻗ?ﻠﻟﺁﺁ - ﮒﺍﮒﮔﻠ۸ﺙﮒﺏ?max_position_size = 0.95
 defaultTimeout = 30
 apiBaseUrl = "https://api.example.com"
 ```
 
-#### **函数命名**
+#### **ﮒﺛﮔﺍﮒﺛﮒ**
 
 ```python
-# �?正确 - 小写+下划线，动词开�?def create_strategy(strategy_type: str) -> Strategy:
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦﺟﺅﺙﮒ۷ﻟﺁﮒﺙﮒ۳?def create_strategy(strategy_type: str) -> Strategy:
     pass
 
 def calculate_position_size(capital: float) -> float:
@@ -70,17 +70,17 @@ def calculate_position_size(capital: float) -> float:
 def get_event_bus() -> EventBus:
     pass
 
-# �?错误 - 大驼峰或名词开�?def CreateStrategy(strategy_type: str) -> Strategy:
+# ﻗ?ﻠﻟﺁﺁ - ﮒ۳۶ﻠ۸ﺙﮒﺏﺍﮔﮒﻟﺁﮒﺙﮒ۳?def CreateStrategy(strategy_type: str) -> Strategy:
     pass
 
 def PositionSize(capital: float) -> float:
     pass
 ```
 
-#### **类命�?*
+#### **ﻝﺎﭨﮒﺛﮒ?*
 
 ```python
-# �?正确 - 大驼�?class StrategyFactory:
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۳۶ﻠ۸ﺙﮒﺏ?class StrategyFactory:
     pass
 
 class EventBus:
@@ -89,7 +89,7 @@ class EventBus:
 class BacktestAdapter:
     pass
 
-# �?错误 - 小写+下划�?class strategy_factory:
+# ﻗ?ﻠﻟﺁﺁ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?class strategy_factory:
     pass
 
 class event_bus:
@@ -98,12 +98,12 @@ class event_bus:
 
 ---
 
-### **2. 代码格式**
+### **2. ﻛﭨ۲ﻝ ﮔ ﺙﮒﺙ**
 
-#### **导入顺序**
+#### **ﮒﺁﺙﮒ۴ﻠ۰ﭦﮒﭦ**
 
 ```python
-# �?正确 - 标准�?�?第三方库 �?本地模块
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔ ﮒﮒﭦ?ﻗ?ﻝ؛؛ﻛﺕﮔﺗﮒﭦ ﻗ?ﮔ؛ﮒﺍﮔ۷۰ﮒ
 import os
 import sys
 from typing import Dict, Any, Optional, List
@@ -115,7 +115,7 @@ import numpy as np
 from strategy.base import BaseStrategy
 from event_bus.event import Event
 
-# �?错误 - 顺序混乱
+# ﻗ?ﻠﻟﺁﺁ - ﻠ۰ﭦﮒﭦﮔﺓﺓﻛﺗﺎ
 from strategy.base import BaseStrategy
 import pandas as pd
 import os
@@ -123,10 +123,10 @@ from typing import Dict
 import numpy as np
 ```
 
-#### **代码缩进**
+#### **ﻛﭨ۲ﻝ ﻝﺙ۸ﻟﺟ**
 
 ```python
-# �?正确 - 4个空格缩�?def calculate_position_size(
+# ﻗ?ﮔ­۲ﻝ۰؟ - 4ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﻝﺙ۸ﻟﺟ?def calculate_position_size(
     capital: float,
     risk_pct: float,
     entry_price: float,
@@ -137,16 +137,16 @@ import numpy as np
     position_size = risk_amount / price_diff
     return position_size
 
-# �?错误 - 2个空格或Tab
+# ﻗ?ﻠﻟﺁﺁ - 2ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﮔTab
 def calculate_position_size(capital, risk_pct):
   risk_amount = capital * risk_pct
   return risk_amount
 ```
 
-#### **行长度限�?*
+#### **ﻟ۰ﻠﺟﮒﭦ۵ﻠﮒ?*
 
 ```python
-# �?正确 - 每行不超�?00字符
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔﺁﻟ۰ﻛﺕﻟﭘﻟﺟ?00ﮒ­ﻝ؛۵
 result = self.strategy_factory.create_strategy(
     strategy_type="moving_average",
     strategy_id="ma_001",
@@ -156,52 +156,52 @@ result = self.strategy_factory.create_strategy(
     }
 )
 
-# �?错误 - 行过�?result = self.strategy_factory.create_strategy(strategy_type="moving_average", strategy_id="ma_001", config={"fast_period": 10, "slow_period": 30})
+# ﻗ?ﻠﻟﺁﺁ - ﻟ۰ﻟﺟﻠ?result = self.strategy_factory.create_strategy(strategy_type="moving_average", strategy_id="ma_001", config={"fast_period": 10, "slow_period": 30})
 ```
 
 ---
 
-### **3. 类型注解**
+### **3. ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
 
-#### **函数类型注解**
+#### **ﮒﺛﮔﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
 
 ```python
-# �?正确 - 完整的类型注�?def create_strategy(
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ؟ﮔﺑﻝﻝﺎﭨﮒﮔﺏ۷ﻟ۶?def create_strategy(
     strategy_type: str,
     strategy_id: str,
     config: Optional[Dict[str, Any]] = None
 ) -> BaseStrategy:
-    """创建策略实例
+    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
     
     Args:
-        strategy_type: 策略类型
-        strategy_id: 策略ID
-        config: 策略配置（可选）
+        strategy_type: ﻝ­ﻝ۴ﻝﺎﭨﮒ
+        strategy_id: ﻝ­ﻝ۴ID
+        config: ﻝ­ﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
     
     Returns:
-        策略实例
+        ﻝ­ﻝ۴ﮒ؟ﻛﺝ
     
     Raises:
-        ValueError: 如果策略类型未注�?    """
+        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?    """
     pass
 
-# �?错误 - 缺少类型注解
+# ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
 def create_strategy(strategy_type, strategy_id, config=None):
     pass
 ```
 
-#### **类属性类型注�?*
+#### **ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?*
 
 ```python
-# �?正确 - 类属性类型注�?class StrategyFactory:
-    """策略工厂"""
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?class StrategyFactory:
+    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ"""
     
     def __init__(self):
         self.registry: StrategyRegistry = StrategyRegistry()
         self._instances: Dict[str, BaseStrategy] = {}
         self._lock: Lock = Lock()
 
-# �?错误 - 缺少类型注解
+# ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
 class StrategyFactory:
     def __init__(self):
         self.registry = StrategyRegistry()
@@ -211,36 +211,36 @@ class StrategyFactory:
 
 ---
 
-### **4. 文档字符�?*
+### **4. ﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
 
-#### **模块文档字符�?*
+#### **ﮔ۷۰ﮒﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
 
 ```python
 """
-策略工厂模块 - 管理策略的创建和生命周期
+ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ - ﻝ؟۰ﻝﻝ­ﻝ۴ﻝﮒﮒﭨﭦﮒﻝﮒﺛﮒ۷ﮔ
 
-版本: v1.0
-创建日期: 2026-04-02
-作�? 首席架构�?
-主要组件:
-- BaseStrategy: 策略基类
-- StrategyFactory: 策略工厂
-- StrategyRegistry: 策略注册�?- StrategyLoader: 策略加载�?
-使用示例:
+ﻝﮔ؛: v1.0
+ﮒﮒﭨﭦﮔ۴ﮔ: 2026-04-02
+ﻛﺛﻟ? ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+ﻛﺕﭨﻟ۵ﻝﭨﻛﭨﭘ:
+- BaseStrategy: ﻝ­ﻝ۴ﮒﭦﻝﺎﭨ
+- StrategyFactory: ﻝ­ﻝ۴ﮒﺓ۴ﮒ
+- StrategyRegistry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?- StrategyLoader: ﻝ­ﻝ۴ﮒ ﻟﺛﺛﮒ?
+ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ:
     >>> factory = StrategyFactory()
     >>> strategy = factory.create_strategy("moving_average", "ma_001")
 """
 ```
 
-#### **类文档字符串**
+#### **ﻝﺎﭨﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕﺎ**
 
 ```python
 class StrategyFactory:
-    """策略工厂 - 创建和管理策略实�?    
-    策略工厂负责创建策略实例、管理策略生命周期、缓存策略实例�?    使用工厂模式确保策略创建的一致性和可扩展性�?    
+    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ - ﮒﮒﭨﭦﮒﻝ؟۰ﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
+    ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟﺑﻟﺑ۲ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝﻙﻝ؟۰ﻝﻝ­ﻝ۴ﻝﮒﺛﮒ۷ﮔﻙﻝﺙﮒ­ﻝ­ﻝ۴ﮒ؟ﻛﺝﻙ?    ﻛﺛﺟﻝ۷ﮒﺓ۴ﮒﮔ۷۰ﮒﺙﻝ۰؟ﻛﺟﻝ­ﻝ۴ﮒﮒﭨﭦﻝﻛﺕﻟﺑﮔ۶ﮒﮒﺁﮔ۸ﮒﺎﮔ۶ﻙ?    
     Attributes:
-        registry: 策略注册�?        _instances: 策略实例缓存
-        _lock: 线程�?    
+        registry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?        _instances: ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ­
+        _lock: ﻝﭦﺟﻝ۷ﻠ?    
     Example:
         >>> factory = StrategyFactory()
         >>> strategy = factory.create_strategy("moving_average", "ma_001")
@@ -249,7 +249,7 @@ class StrategyFactory:
     """
 ```
 
-#### **函数文档字符�?*
+#### **ﮒﺛﮔﺍﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
 
 ```python
 def create_strategy(
@@ -258,16 +258,16 @@ def create_strategy(
     strategy_id: str,
     config: Optional[Dict[str, Any]] = None
 ) -> BaseStrategy:
-    """创建策略实例
+    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
     
-    根据策略类型创建策略实例，并将其缓存到实例字典中�?    如果策略ID已存在，将返回缓存的实例�?    
+    ﮔ ﺗﮔ؟ﻝ­ﻝ۴ﻝﺎﭨﮒﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝﺅﺙﮒﺗﭘﮒﺍﮒﭘﻝﺙﮒ­ﮒﺍﮒ؟ﻛﺝﮒ­ﮒﺕﻛﺕ­ﻙ?    ﮒ۵ﮔﻝ­ﻝ۴IDﮒﺓﺎﮒ­ﮒ۷ﺅﺙﮒﺍﻟﺟﮒﻝﺙﮒ­ﻝﮒ؟ﻛﺝﻙ?    
     Args:
-        strategy_type: 策略类型名称（必须在注册表中注册�?        strategy_id: 策略实例的唯一标识�?        config: 策略配置字典（可选）
+        strategy_type: ﻝ­ﻝ۴ﻝﺎﭨﮒﮒﻝ۶ﺍﺅﺙﮒﺟﻠ۰ﭨﮒ۷ﮔﺏ۷ﮒﻟ۰۷ﻛﺕ­ﮔﺏ۷ﮒﺅﺙ?        strategy_id: ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﮒﺁﻛﺕﮔ ﻟﺁﻝ؛?        config: ﻝ­ﻝ۴ﻠﻝﺛ؟ﮒ­ﮒﺕﺅﺙﮒﺁﻠﺅﺙ
     
     Returns:
-        创建的策略实�?    
+        ﮒﮒﭨﭦﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
     Raises:
-        ValueError: 如果策略类型未注�?        KeyError: 如果策略类型不存�?    
+        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?        KeyError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﻛﺕﮒ­ﮒ?    
     Example:
         >>> factory = StrategyFactory()
         >>> config = {"fast_period": 10, "slow_period": 30}
@@ -280,12 +280,12 @@ def create_strategy(
 
 ---
 
-## ⚠️ **注意事项**
+## ﻗ ﺅﺕ **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**
 
-### **1. 避免的编码风�?*
+### **1. ﻠﺟﮒﻝﻝﺙﻝ ﻠ۲ﮔ ?*
 
 ```python
-# �?避免使用全局变量
+# ﻗ?ﻠﺟﮒﻛﺛﺟﻝ۷ﮒ۷ﮒﺎﮒﻠ
 strategy_factory = None
 
 def get_strategy_factory():
@@ -294,7 +294,7 @@ def get_strategy_factory():
         strategy_factory = StrategyFactory()
     return strategy_factory
 
-# �?使用单例模式或依赖注�?class StrategyFactory:
+# ﻗ?ﻛﺛﺟﻝ۷ﮒﻛﺝﮔ۷۰ﮒﺙﮔﻛﺝﻟﭖﮔﺏ۷ﮒ?class StrategyFactory:
     _instance = None
     
     def __new__(cls):
@@ -303,33 +303,33 @@ def get_strategy_factory():
         return cls._instance
 ```
 
-### **2. 避免魔法数字**
+### **2. ﻠﺟﮒﻠ­ﮔﺏﮔﺍﮒ­**
 
 ```python
-# �?魔法数字
+# ﻗ?ﻠ­ﮔﺏﮔﺍﮒ­
 if position_size > 0.95:
     pass
 
-# �?使用常量
+# ﻗ?ﻛﺛﺟﻝ۷ﮒﺕﺕﻠ
 MAX_POSITION_SIZE = 0.95
 
 if position_size > MAX_POSITION_SIZE:
     pass
 ```
 
-### **3. 避免深层嵌套**
+### **3. ﻠﺟﮒﮔﺓﺎﮒﺎﮒﭖﮒ۴**
 
 ```python
-# �?深层嵌套
+# ﻗ?ﮔﺓﺎﮒﺎﮒﭖﮒ۴
 def process_data(data):
     if data is not None:
         if 'items' in data:
             for item in data['items']:
                 if item['type'] == 'stock':
-                    # 处理逻辑
+                    # ﮒ۳ﻝﻠﭨﻟﺝ
                     pass
 
-# �?提前返回
+# ﻗ?ﮔﮒﻟﺟﮒ
 def process_data(data):
     if data is None:
         return
@@ -340,47 +340,47 @@ def process_data(data):
     for item in data['items']:
         if item['type'] != 'stock':
             continue
-        # 处理逻辑
+        # ﮒ۳ﻝﻠﭨﻟﺝ
 ```
 
 ---
 
-## 📊 **效果评估**
+## ﻭ **ﮔﮔﻟﺁﻛﺙﺍ**
 
-### **代码质量指标**
+### **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔﮔ **
 
-| 指标 | 目标 | 实际 | 状�?|
+| ﮔﮔ  | ﻝ؟ﮔ  | ﮒ؟ﻠ | ﻝﭘﮔ?|
 |------|------|------|------|
-| 代码可读�?| �?0�?| 95�?| �?|
-| 代码复杂�?| �?0 | 8 | �?|
-| 文档覆盖�?| �?0% | 90% | �?|
-| 类型注解覆盖�?| �?0% | 95% | �?|
+| ﻛﭨ۲ﻝ ﮒﺁﻟﺁﭨﮔ?| ﻗ?0ﮒ?| 95ﮒ?| ﻗ?|
+| ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?| ﻗ?0 | 8 | ﻗ?|
+| ﮔﮔ۰۲ﻟ۵ﻝﻝ?| ﻗ?0% | 90% | ﻗ?|
+| ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲ﻟ۵ﻝﻝ?| ﻗ?0% | 95% | ﻗ?|
 
-### **开发效率指�?*
+### **ﮒﺙﮒﮔﻝﮔﮔ ?*
 
-| 指标 | 改进�?| 改进�?| 提升 |
+| ﮔﮔ  | ﮔﺗﻟﺟﮒ?| ﮔﺗﻟﺟﮒ?| ﮔﮒ |
 |------|--------|--------|------|
-| 代码审查时间 | 2小时 | 1小时 | 50% |
-| Bug修复时间 | 4小时 | 2小时 | 50% |
-| 新人上手时间 | 2�?| 1�?| 50% |
+| ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﻠﺑ | 2ﮒﺍﮔﭘ | 1ﮒﺍﮔﭘ | 50% |
+| Bugﻛﺟ؟ﮒ۳ﮔﭘﻠﺑ | 4ﮒﺍﮔﭘ | 2ﮒﺍﮔﭘ | 50% |
+| ﮔﺍﻛﭦﭦﻛﺕﮔﮔﭘﻠﺑ | 2ﮒ?| 1ﮒ?| 50% |
 
 ---
 
-## 📚 **相关案例**
+## ﻭ **ﻝﺕﮒﺏﮔ۰ﻛﺝ**
 
-- [策略工厂实施案例](../case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
-- [事件总线集成案例](../case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
+- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](../case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
+- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](../case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
 
 ---
 
-## 📖 **参考资�?*
+## ﻭ **ﮒﻟﻟﭖﮔ?*
 
-### **内部文档**
+### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [蓝图施工说明书](../../../06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [代码质量标准](../../../02_DEVELOPMENT/CODE_QUALITY.md)
+- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../../../06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+- [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ](../../../02_DEVELOPMENT/CODE_QUALITY.md)
 
-### **外部资源**
+### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 
 - [PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
@@ -388,17 +388,17 @@ def process_data(data):
 
 ---
 
-## 📝 **更新记录**
+## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
 
-| 日期 | 版本 | 更新内容 | 更新�?|
+| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建Python代码规范最佳实�?| 首席架构�?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦPythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?| ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
 
 ---
 
-## 📞 **联系方式**
+## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
-**文档维护�?*: 首席架构�? 
-**创建日期**: 2026-04-02  
-**最后更�?*: 2026-04-02  
-**版本**: v1.0
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﻝﮔ؛**: v1.0

@@ -4,61 +4,61 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?
-standard_type: 专业量化机构订单管理标准
-applicable_scope: 订单服务模块
-compliance_level: 专业机构标准
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟۱ﮒﻝ؟۰ﻝﮔ ﮒ
+applicable_scope: ﻟ؟۱ﮒﮔﮒ۰ﮔ۷۰ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 订单管理详细设计（专业量化机构标准）
+# ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
 
-> 清风量化系统 v5.0 - 专业量化机构标准订单管理设计
-> **设计模式**: DDD领域驱动设计 + 状态机模式 + Saga事务
-> **核心职责**: 订单生命周期管理、订单执行、订单查�?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟ؟۱ﮒﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
+> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻝﭘﮔﮔﭦﮔ۷۰ﮒﺙ + Sagaﻛﭦﮒ۰
+> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ?
 
-## 📋 模块概述
+## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### 订单管理架构
+### ﻟ؟۱ﮒﻝ؟۰ﻝﮔﭘﮔ
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   应用�?(Application Layer)                �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         OrderApplicationService                      �? �?
-�? �? - 创建订单应用服务                                    �? �?
-�? �? - 执行订单应用服务                                    �? �?
-�? �? - 查询订单应用服务                                    �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   领域�?(Domain Layer)                     �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         OrderAggregate (订单聚合�?                  �? �?
-�? �? - Order (订单实体)                                   �? �?
-�? �? - Trade (交易记录实体)                               �? �?
-�? �? - OrderDomainService (领域服务)                      �? �?
-�? �? - OrderStateMachine (状态机)                         �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   基础设施�?(Infrastructure Layer)          �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         OrderRepository (订单仓储)                   �? �?
-�? �? - PostgreSQL (主数据库)                              �? �?
-�? �? - Redis (实时缓存)                                   �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         OrderApplicationService                      ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮒﮒﭨﭦﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮔ۶ﻟ۰ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         OrderAggregate (ﻟ؟۱ﮒﻟﮒﮔ ?                  ﻗ? ﻗ?
+ﻗ? ﻗ? - Order (ﻟ؟۱ﮒﮒ؟ﻛﺛ)                                   ﻗ? ﻗ?
+ﻗ? ﻗ? - Trade (ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ)                               ﻗ? ﻗ?
+ﻗ? ﻗ? - OrderDomainService (ﻠ۱ﮒﮔﮒ۰)                      ﻗ? ﻗ?
+ﻗ? ﻗ? - OrderStateMachine (ﻝﭘﮔﮔﭦ)                         ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(Infrastructure Layer)          ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         OrderRepository (ﻟ؟۱ﮒﻛﭨﮒ۷)                   ﻗ? ﻗ?
+ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
+ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 ---
 
-## 1. 领域模型设计
+## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-### 1.1 订单聚合�?(OrderAggregate)
+### 1.1 ﻟ؟۱ﮒﻟﮒﮔ ?(OrderAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -68,28 +68,28 @@ from datetime import datetime
 from enum import Enum
 
 class OrderDirection(Enum):
-    """订单方向"""
-    BUY = 'buy'    # 买入
-    SELL = 'sell'  # 卖出
+    """ﻟ؟۱ﮒﮔﺗﮒ"""
+    BUY = 'buy'    # ﻛﺗﺍﮒ۴
+    SELL = 'sell'  # ﮒﮒﭦ
 
 class OrderType(Enum):
-    """订单类型"""
-    MARKET = 'market'  # 市价�?
-    LIMIT = 'limit'    # 限价�?
+    """ﻟ؟۱ﮒﻝﺎﭨﮒ"""
+    MARKET = 'market'  # ﮒﺕﻛﭨﺓﮒ?
+    LIMIT = 'limit'    # ﻠﻛﭨﺓﮒ?
 
 class OrderStatus(Enum):
-    """订单状�?""
-    PENDING = 'pending'           # 待提�?
-    SUBMITTED = 'submitted'       # 已提�?
-    PARTIAL_FILLED = 'partial_filled'  # 部分成交
-    FILLED = 'filled'             # 完全成交
-    CANCELLED = 'cancelled'       # 已取�?
-    REJECTED = 'rejected'         # 已拒�?
-    EXPIRED = 'expired'           # 已过�?
+    """ﻟ؟۱ﮒﻝﭘﮔ?""
+    PENDING = 'pending'           # ﮒﺝﮔﻛﭦ?
+    SUBMITTED = 'submitted'       # ﮒﺓﺎﮔﻛﭦ?
+    PARTIAL_FILLED = 'partial_filled'  # ﻠ۷ﮒﮔﻛﭦ۳
+    FILLED = 'filled'             # ﮒ؟ﮒ۷ﮔﻛﭦ۳
+    CANCELLED = 'cancelled'       # ﮒﺓﺎﮒﮔﭘ?
+    REJECTED = 'rejected'         # ﮒﺓﺎﮔﻝﭨ?
+    EXPIRED = 'expired'           # ﮒﺓﺎﻟﺟﮔ?
 
 @dataclass
 class Order:
-    """订单实体"""
+    """ﻟ؟۱ﮒﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     order_code: str = ""
     account_id: int = 0
@@ -120,20 +120,20 @@ class Order:
     cancelled_at: Optional[datetime] = None
     
     def __post_init__(self):
-        """初始化后处理"""
+        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
         if not self.order_code:
             self.order_code = self._generate_order_code()
     
     def _generate_order_code(self) -> str:
-        """生成订单编码"""
+        """ﻝﮔﻟ؟۱ﮒﻝﺙﻝ """
         return f"ORD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{self.id or 'NEW'}"
     
     def can_submit(self) -> bool:
-        """是否可以提交"""
+        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﮔﻛﭦ۳"""
         return self.status == OrderStatus.PENDING
     
     def can_cancel(self) -> bool:
-        """是否可以取消"""
+        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﮒﮔﭘ"""
         return self.status in [
             OrderStatus.PENDING,
             OrderStatus.SUBMITTED,
@@ -141,7 +141,7 @@ class Order:
         ]
     
     def submit(self, broker_order_id: str) -> bool:
-        """提交订单"""
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
         if not self.can_submit():
             return False
         
@@ -162,7 +162,7 @@ class Order:
         transfer_fee: Decimal,
         total_cost: Decimal
     ) -> bool:
-        """成交订单"""
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
         if self.status not in [OrderStatus.SUBMITTED, OrderStatus.PARTIAL_FILLED]:
             return False
         
@@ -185,7 +185,7 @@ class Order:
         return True
     
     def cancel(self, reason: Optional[str] = None) -> bool:
-        """取消订单"""
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
         if not self.can_cancel():
             return False
         
@@ -199,7 +199,7 @@ class Order:
         return True
     
     def reject(self, reason: str) -> bool:
-        """拒绝订单"""
+        """ﮔﻝﭨﻟ؟۱ﮒ"""
         if self.status != OrderStatus.PENDING:
             return False
         
@@ -210,7 +210,7 @@ class Order:
         return True
     
     def is_active(self) -> bool:
-        """是否活跃订单"""
+        """ﮔﺁﮒ۵ﮔﺑﭨﻟﺓﻟ؟۱ﮒ"""
         return self.status in [
             OrderStatus.PENDING,
             OrderStatus.SUBMITTED,
@@ -218,7 +218,7 @@ class Order:
         ]
     
     def is_completed(self) -> bool:
-        """是否已完�?""
+        """ﮔﺁﮒ۵ﮒﺓﺎﮒ؟ﮔ?""
         return self.status in [
             OrderStatus.FILLED,
             OrderStatus.CANCELLED,
@@ -228,7 +228,7 @@ class Order:
 
 @dataclass
 class Trade:
-    """交易记录实体"""
+    """ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     trade_code: str = ""
     order_id: int = 0
@@ -249,28 +249,28 @@ class Trade:
     created_at: datetime = field(default_factory=datetime.now)
     
     def __post_init__(self):
-        """初始化后处理"""
+        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
         if not self.trade_code:
             self.trade_code = self._generate_trade_code()
     
     def _generate_trade_code(self) -> str:
-        """生成交易编码"""
+        """ﻝﮔﻛﭦ۳ﮔﻝﺙﻝ """
         return f"TRD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{self.id or 'NEW'}"
 ```
 
 ---
 
-## 2. 订单状态机设计
+## 2. ﻟ؟۱ﮒﻝﭘﮔﮔﭦﻟ؟ﺝﻟ؟۰
 
-### 2.1 状态机实现
+### 2.1 ﻝﭘﮔﮔﭦﮒ؟ﻝﺍ
 
 ```python
 from typing import Dict, Set
 
 class OrderStateMachine:
-    """订单状态机"""
+    """ﻟ؟۱ﮒﻝﭘﮔﮔﭦ"""
     
-    # 状态转换规�?
+    # ﻝﭘﮔﻟﺛ؛ﮔ۱ﻟ۶ﮒ?
     TRANSITIONS: Dict[OrderStatus, Set[OrderStatus]] = {
         OrderStatus.PENDING: {
             OrderStatus.SUBMITTED,
@@ -287,50 +287,50 @@ class OrderStateMachine:
             OrderStatus.FILLED,
             OrderStatus.CANCELLED
         },
-        OrderStatus.FILLED: set(),  # 终�?
-        OrderStatus.CANCELLED: set(),  # 终�?
-        OrderStatus.REJECTED: set(),  # 终�?
-        OrderStatus.EXPIRED: set()  # 终�?
+        OrderStatus.FILLED: set(),  # ﻝﭨﮔ?
+        OrderStatus.CANCELLED: set(),  # ﻝﭨﮔ?
+        OrderStatus.REJECTED: set(),  # ﻝﭨﮔ?
+        OrderStatus.EXPIRED: set()  # ﻝﭨﮔ?
     }
     
     @classmethod
     def can_transition(cls, from_status: OrderStatus, to_status: OrderStatus) -> bool:
-        """是否可以转换"""
+        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﻟﺛ؛ﮔ۱"""
         allowed_statuses = cls.TRANSITIONS.get(from_status, set())
         return to_status in allowed_statuses
     
     @classmethod
     def get_next_statuses(cls, current_status: OrderStatus) -> Set[OrderStatus]:
-        """获取可能的下一状�?""
+        """ﻟﺓﮒﮒﺁﻟﺛﻝﻛﺕﻛﺕﻝﭘﮔ?""
         return cls.TRANSITIONS.get(current_status, set())
     
     @classmethod
     def is_final_status(cls, status: OrderStatus) -> bool:
-        """是否是终�?""
+        """ﮔﺁﮒ۵ﮔﺁﻝﭨﮔ?""
         return len(cls.TRANSITIONS.get(status, set())) == 0
 ```
 
 ---
 
-## 3. 领域服务设计
+## 3. ﻠ۱ﮒﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 3.1 订单领域服务 (OrderDomainService)
+### 3.1 ﻟ؟۱ﮒﻠ۱ﮒﮔﮒ۰ (OrderDomainService)
 
 ```python
 from typing import Optional
 from decimal import Decimal
 
 class OrderDomainService:
-    """订单领域服务"""
+    """ﻟ؟۱ﮒﻠ۱ﮒﮔﮒ۰"""
     
     async def calculate_commission(
         self,
         trade_amount: Decimal,
         commission_rate: Decimal = Decimal('0.0003')
     ) -> Decimal:
-        """计算佣金"""
+        """ﻟ؟۰ﻝ؟ﻛﺛ۲ﻠ"""
         commission = trade_amount * commission_rate
-        # 最低佣�?�?
+        # ﮔﻛﺛﻛﺛ۲ﻠ?ﮒ?
         return max(commission, Decimal('5.0000'))
     
     async def calculate_stamp_tax(
@@ -339,7 +339,7 @@ class OrderDomainService:
         direction: OrderDirection,
         stamp_tax_rate: Decimal = Decimal('0.001')
     ) -> Decimal:
-        """计算印花税（仅卖出收取）"""
+        """ﻟ؟۰ﻝ؟ﮒﺍﻟﺎﻝ۷ﺅﺙﻛﭨﮒﮒﭦﮔﭘﮒﺅﺙ"""
         if direction == OrderDirection.SELL:
             return trade_amount * stamp_tax_rate
         return Decimal('0.0000')
@@ -349,7 +349,7 @@ class OrderDomainService:
         trade_quantity: int,
         transfer_fee_rate: Decimal = Decimal('0.00001')
     ) -> Decimal:
-        """计算过户�?""
+        """ﻟ؟۰ﻝ؟ﻟﺟﮔﺓﻟﺑ?""
         return Decimal(trade_quantity) * transfer_fee_rate
     
     async def calculate_total_cost(
@@ -360,12 +360,12 @@ class OrderDomainService:
         transfer_fee: Decimal,
         direction: OrderDirection
     ) -> Decimal:
-        """计算总成�?""
+        """ﻟ؟۰ﻝ؟ﮔﭨﮔﮔ?""
         if direction == OrderDirection.BUY:
-            # 买入：交易金�?+ 佣金 + 过户�?
+            # ﻛﺗﺍﮒ۴ﺅﺙﻛﭦ۳ﮔﻠﻠ۱?+ ﻛﺛ۲ﻠ + ﻟﺟﮔﺓﻟﺑ?
             return trade_amount + commission + transfer_fee
         else:
-            # 卖出：交易金�?- 佣金 - 印花�?- 过户�?
+            # ﮒﮒﭦﺅﺙﻛﭦ۳ﮔﻠﻠ۱?- ﻛﺛ۲ﻠ - ﮒﺍﻟﺎﻝ۷?- ﻟﺟﮔﺓﻟﺑ?
             return trade_amount - commission - stamp_tax - transfer_fee
     
     async def calculate_net_amount(
@@ -376,12 +376,12 @@ class OrderDomainService:
         transfer_fee: Decimal,
         direction: OrderDirection
     ) -> Decimal:
-        """计算净金额"""
+        """ﻟ؟۰ﻝ؟ﮒﻠﻠ۱"""
         if direction == OrderDirection.BUY:
-            # 买入：净支出
+            # ﻛﺗﺍﮒ۴ﺅﺙﮒﮔﺁﮒﭦ
             return trade_amount + commission + transfer_fee
         else:
-            # 卖出：净收入
+            # ﮒﮒﭦﺅﺙﮒﮔﭘﮒ۴
             return trade_amount - commission - stamp_tax - transfer_fee
     
     async def validate_order(
@@ -390,34 +390,34 @@ class OrderDomainService:
         account_balance: Decimal,
         available_position: int
     ) -> tuple[bool, Optional[str]]:
-        """验证订单"""
-        # 验证订单价格
+        """ﻠ۹ﻟﺁﻟ؟۱ﮒ"""
+        # ﻠ۹ﻟﺁﻟ؟۱ﮒﻛﭨﺓﮔ ﺙ
         if order.order_type == OrderType.LIMIT and order.order_price <= 0:
-            return False, "限价单价格必须大�?"
+            return False, "ﻠﻛﭨﺓﮒﻛﭨﺓﮔ ﺙﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ?"
         
-        # 验证订单数量
+        # ﻠ۹ﻟﺁﻟ؟۱ﮒﮔﺍﻠ
         if order.order_quantity <= 0:
-            return False, "订单数量必须大于0"
+            return False, "ﻟ؟۱ﮒﮔﺍﻠﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ0"
         
-        # 验证资金（买入）
+        # ﻠ۹ﻟﺁﻟﭖﻠﺅﺙﻛﺗﺍﮒ۴ﺅﺙ
         if order.direction == OrderDirection.BUY:
             required_amount = order.order_price * order.order_quantity
             if required_amount > account_balance:
-                return False, f"可用资金不足，需要{required_amount}，可用{account_balance}"
+                return False, f"ﮒﺁﻝ۷ﻟﭖﻠﻛﺕﻟﭘﺏﺅﺙﻠﻟ۵{required_amount}ﺅﺙﮒﺁﻝ۷{account_balance}"
         
-        # 验证持仓（卖出）
+        # ﻠ۹ﻟﺁﮔﻛﭨﺅﺙﮒﮒﭦﺅﺙ
         if order.direction == OrderDirection.SELL:
             if order.order_quantity > available_position:
-                return False, f"可用持仓不足，需要{order.order_quantity}，可用{available_position}"
+                return False, f"ﮒﺁﻝ۷ﮔﻛﭨﻛﺕﻟﭘﺏﺅﺙﻠﻟ۵{order.order_quantity}ﺅﺙﮒﺁﻝ۷{available_position}"
         
         return True, None
 ```
 
 ---
 
-## 4. 应用服务设计
+## 4. ﮒﭦﻝ۷ﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 4.1 订单应用服务 (OrderApplicationService)
+### 4.1 ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰ (OrderApplicationService)
 
 ```python
 from typing import List, Optional, Dict, Any
@@ -425,7 +425,7 @@ from decimal import Decimal
 from datetime import date
 
 class OrderApplicationService:
-    """订单应用服务"""
+    """ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰"""
     
     def __init__(
         self,
@@ -458,8 +458,8 @@ class OrderApplicationService:
         strategy_id: Optional[str] = None,
         engine_id: str = "VNPY_001"
     ) -> Dict[str, Any]:
-        """创建订单"""
-        # 创建订单实体
+        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
+        # ﮒﮒﭨﭦﻟ؟۱ﮒﮒ؟ﻛﺛ
         order = Order(
             account_id=account_id,
             signal_id=signal_id,
@@ -473,10 +473,10 @@ class OrderApplicationService:
             engine_id=engine_id
         )
         
-        # 验证订单
+        # ﻠ۹ﻟﺁﻟ؟۱ﮒ
         account = await self.account_service.get_account(account_id)
         if not account:
-            raise ValueError(f"账户不存�? {account_id}")
+            raise ValueError(f"ﻟﺑ۵ﮔﺓﻛﺕﮒ­ﮒ? {account_id}")
         
         if direction == 'buy':
             available_balance = Decimal(str(account['available_cash']))
@@ -497,10 +497,10 @@ class OrderApplicationService:
             await self.order_repository.create(order)
             raise ValueError(error_msg)
         
-        # 保存订单
+        # ﻛﺟﮒ­ﻟ؟۱ﮒ
         order = await self.order_repository.create(order)
         
-        # 发布订单创建事件
+        # ﮒﮒﺕﻟ؟۱ﮒﮒﮒﭨﭦﻛﭦﻛﭨﭘ
         await self.event_publisher.publish({
             'event_type': 'OrderCreated',
             'order_id': order.id,
@@ -526,17 +526,17 @@ class OrderApplicationService:
         }
     
     async def submit_order(self, order_id: int) -> Dict[str, Any]:
-        """提交订单"""
-        # 获取订单
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
+        # ﻟﺓﮒﻟ؟۱ﮒ
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
-            raise ValueError(f"订单不存�? {order_id}")
+            raise ValueError(f"ﻟ؟۱ﮒﻛﺕﮒ­ﮒ? {order_id}")
         
         if not order.can_submit():
-            raise ValueError(f"订单状态不允许提交: {order.status.value}")
+            raise ValueError(f"ﻟ؟۱ﮒﻝﭘﮔﻛﺕﮒﻟ؟ﺕﮔﻛﭦ۳: {order.status.value}")
         
-        # 创建并启动Saga
+        # ﮒﮒﭨﭦﮒﺗﭘﮒﺁﮒ۷Saga
         saga = await self._create_order_saga(order)
         saga_id = await self.saga_coordinator.start_saga(saga)
         
@@ -552,8 +552,8 @@ class OrderApplicationService:
         order_id: int,
         reason: Optional[str] = None
     ) -> bool:
-        """取消订单"""
-        # 获取订单
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
+        # ﻟﺓﮒﻟ؟۱ﮒ
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
@@ -562,7 +562,7 @@ class OrderApplicationService:
         if not order.can_cancel():
             return False
         
-        # 如果已提交到引擎，先从引擎取�?
+        # ﮒ۵ﮔﮒﺓﺎﮔﻛﭦ۳ﮒﺍﮒﺙﮔﺅﺙﮒﻛﭨﮒﺙﮔﮒﮔﭘ?
         if order.broker_order_id:
             engine = self.engine_manager.get_engine(order.engine_id)
             if engine:
@@ -570,11 +570,11 @@ class OrderApplicationService:
                 if not success:
                     return False
         
-        # 取消订单
+        # ﮒﮔﭘﻟ؟۱ﮒ
         order.cancel(reason)
         await self.order_repository.update(order)
         
-        # 释放冻结的资金或持仓
+        # ﻠﮔﺝﮒﭨﻝﭨﻝﻟﭖﻠﮔﮔﻛﭨ
         if order.direction == OrderDirection.BUY:
             frozen_amount = order.order_price * order.order_quantity
             await self.account_service.unfreeze_cash(order.account_id, frozen_amount)
@@ -585,7 +585,7 @@ class OrderApplicationService:
                 order.order_quantity
             )
         
-        # 发布订单取消事件
+        # ﮒﮒﺕﻟ؟۱ﮒﮒﮔﭘﻛﭦﻛﭨﭘ
         await self.event_publisher.publish({
             'event_type': 'OrderCancelled',
             'order_id': order.id,
@@ -597,7 +597,7 @@ class OrderApplicationService:
         return True
     
     async def get_order(self, order_id: int) -> Optional[Dict[str, Any]]:
-        """获取订单"""
+        """ﻟﺓﮒﻟ؟۱ﮒ"""
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
@@ -645,7 +645,7 @@ class OrderApplicationService:
         page: int = 1,
         page_size: int = 20
     ) -> Dict[str, Any]:
-        """获取订单列表"""
+        """ﻟﺓﮒﻟ؟۱ﮒﮒﻟ۰۷"""
         orders = await self.order_repository.find_all(
             account_id=account_id,
             stock_code=stock_code,
@@ -691,29 +691,29 @@ class OrderApplicationService:
         }
     
     async def _create_order_saga(self, order: Order) -> 'Saga':
-        """创建订单Saga"""
-        # TODO: 实现订单Saga创建逻辑
+        """ﮒﮒﭨﭦﻟ؟۱ﮒSaga"""
+        # TODO: ﮒ؟ﻝﺍﻟ؟۱ﮒSagaﮒﮒﭨﭦﻠﭨﻟﺝ
         pass
 ```
 
 ---
 
-## 5. 性能与监�?
+## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 5.1 性能指标
+### 5.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| 操作 | 响应时间 | 备注 |
+| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
-| **创建订单** | < 200ms | 包含验证和数据库写入 |
-| **提交订单** | < 500ms | 包含Saga启动 |
-| **取消订单** | < 500ms | 包含引擎取消 |
-| **查询订单** | < 100ms | Redis缓存命中 |
+| **ﮒﮒﭨﭦﻟ؟۱ﮒ** | < 200ms | ﮒﮒ،ﻠ۹ﻟﺁﮒﮔﺍﮔ؟ﮒﭦﮒﮒ۴ |
+| **ﮔﻛﭦ۳ﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،Sagaﮒﺁﮒ۷ |
+| **ﮒﮔﭘﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﮒﺙﮔﮒﮔﭘ |
+| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 100ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
 
-### 5.2 监控指标
+### 5.2 ﻝﮔ۶ﮔﮔ 
 
 ```python
 class OrderMonitor:
-    """订单监控"""
+    """ﻟ؟۱ﮒﻝﮔ۶"""
     
     def __init__(self):
         self.metrics = {
@@ -728,36 +728,36 @@ class OrderMonitor:
         }
     
     async def record_order_creation(self, order: Order) -> None:
-        """记录订单创建"""
+        """ﻟ؟ﺍﮒﺛﻟ؟۱ﮒﮒﮒﭨﭦ"""
         self.metrics['total_orders'] += 1
         
         if order.status == OrderStatus.PENDING:
             self.metrics['pending_orders'] += 1
     
     async def record_order_fill(self, order: Order) -> None:
-        """记录订单成交"""
+        """ﻟ؟ﺍﮒﺛﻟ؟۱ﮒﮔﻛﭦ۳"""
         self.metrics['filled_orders'] += 1
         
         if order.submitted_at and order.filled_at:
             fill_time = (order.filled_at - order.submitted_at).total_seconds()
-            # 更新平均成交时间
+            # ﮔﺑﮔﺍﮒﺗﺏﮒﮔﻛﭦ۳ﮔﭘﻠﺑ
             self.metrics['avg_fill_time'] = (
                 (self.metrics['avg_fill_time'] * (self.metrics['filled_orders'] - 1) + fill_time)
                 / self.metrics['filled_orders']
             )
         
-        # 更新成交�?
+        # ﮔﺑﮔﺍﮔﻛﭦ۳ﻝ?
         self.metrics['fill_rate'] = (
             self.metrics['filled_orders'] / self.metrics['total_orders']
             if self.metrics['total_orders'] > 0 else 0
         )
     
     async def get_metrics(self) -> Dict[str, Any]:
-        """获取监控指标"""
+        """ﻟﺓﮒﻝﮔ۶ﮔﮔ """
         return self.metrics
 ```
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
-**全部任务完成�?*
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﮒ۷ﻠ۷ﻛﭨﭨﮒ۰ﮒ؟ﮔﺅﺙ?*

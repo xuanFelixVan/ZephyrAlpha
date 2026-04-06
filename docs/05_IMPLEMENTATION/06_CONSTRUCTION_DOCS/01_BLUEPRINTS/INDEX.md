@@ -12,7 +12,7 @@ compliance_level: 专业标准
 
 ﻿﻿---
 index_id: BLUEPRINTS_INDEX_001
-version: 1.3.1
+version: 1.4.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-07
@@ -26,8 +26,8 @@ parent_document: ../INDEX.md
 # 蓝图文档总索引
 
 > **索引编号**: `BLUEPRINTS_INDEX_001`
-> **最后更新**: 2026-04-06
-> **文档总数**: 79个（Active: 79个，Archived: 0个）
+> **最后更新**: 2026-04-07
+> **文档总数**: 85个（Active: 85个，Archived: 0个）
 
 ---
 
@@ -111,13 +111,21 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
+| 均值方差优化基础框架蓝图 | MEAN_VARIANCE_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md) 🆕 |
 | 多资产配置蓝图 | MULTI_ASSET_ALLOCATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MULTI_ASSET_ALLOCATION_BLUEPRINT.md) |
 | 组合保险策略蓝图 | PORTFOLIO_INSURANCE_STRATEGY_001 | v1.0.0 | Active | 2026-04-05 | [链接](./PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md) |
-| Black-Litterman模型蓝图 | BLACK_LITTERMAN_MODEL_001 | v1.0.0 | Active | 2026-04-06 | [链接](./BLACK_LITTERMAN_MODEL_BLUEPRINT.md) 🆕 |
-| 风险平价策略蓝图 | RISK_PARITY_STRATEGY_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_PARITY_STRATEGY_BLUEPRINT.md) 🆕 |
-| 多目标优化蓝图 | MULTI_OBJECTIVE_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md) 🆕 |
+| Black-Litterman模型蓝图 | BLACK_LITTERMAN_MODEL_001 | v1.0.0 | Active | 2026-04-06 | [链接](./BLACK_LITTERMAN_MODEL_BLUEPRINT.md) |
+| 风险平价策略蓝图 | RISK_PARITY_STRATEGY_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_PARITY_STRATEGY_BLUEPRINT.md) |
+| 多目标优化蓝图 | MULTI_OBJECTIVE_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md) |
 
-### 3.2 约束求解与杠杆管理
+### 3.2 因子中性与鲁棒优化
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 因子中性优化蓝图 | FACTOR_NEUTRAL_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md) 🆕 |
+| 鲁棒优化蓝图 | ROBUST_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./ROBUST_OPTIMIZATION_BLUEPRINT.md) 🆕 |
+
+### 3.3 约束求解与杠杆管理
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -178,9 +186,22 @@ parent_document: ../INDEX.md
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 组合再平衡蓝图 | PORTFOLIO_REBALANCING_001 | v1.0.1 | Active | 2026-04-06 | [链接](./PORTFOLIO_REBALANCING_BLUEPRINT.md) |
-| 交易成本感知再平衡蓝图 | TRANSACTION_COST_AWARE_REBALANCING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) 🆕 |
+| 交易成本感知再平衡蓝图 | TRANSACTION_COST_AWARE_REBALANCING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) |
 | RL再平衡系统蓝图 | RL_REBALANCING_SYSTEM_001 | v1.0.1 | Active | 2026-04-06 | [链接](./RL_REBALANCING_SYSTEM_BLUEPRINT.md) |
-| 季度再平衡蓝图 | QUARTERLY_REBALANCE_001 | v1.0.0 | Active | 2026-04-07 | [链接](./QUARTERLY_REBALANCE_BLUEPRINT.md) 🆕 |
+| 季度再平衡蓝图 | QUARTERLY_REBALANCE_001 | v1.0.0 | Active | 2026-04-07 | [链接](./QUARTERLY_REBALANCE_BLUEPRINT.md) |
+
+### 3.10 税收优化与成本控制
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 税收优化（税损收割）蓝图 | TAX_LOSS_HARVESTING_001 | v1.0.0 | Active | 2026-04-07 | [链接](./TAX_LOSS_HARVESTING_BLUEPRINT.md) 🆕 |
+| 组合周转率控制蓝图 | TURNOVER_CONTROL_001 | v1.0.0 | Active | 2026-04-07 | [链接](./TURNOVER_CONTROL_BLUEPRINT.md) 🆕 |
+
+### 3.11 流动性与执行优化
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 流动性约束优化蓝图 | LIQUIDITY_CONSTRAINED_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-07 | [链接](./LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md) 🆕 |
 
 **模块关系说明**:
 - PORTFOLIO_REBALANCING: 基础再平衡框架，提供触发机制和决策引擎
@@ -340,19 +361,19 @@ parent_document: ../INDEX.md
 
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
-| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 25.3% |
-| **组合优化层（Layer 6）** | 27个 | 27个 | 0个 | 34.2% |
-| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 2.5% |
-| **执行层（Layer 5）** | 12个 | 12个 | 0个 | 15.2% |
-| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.5% |
-| **其他** | 16个 | 16个 | 0个 | 20.3% |
-| **总计** | **79个** | **79个** | **0个** | **100%** |
+| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 23.5% |
+| **组合优化层（Layer 6）** | 33个 | 33个 | 0个 | 38.8% |
+| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 2.4% |
+| **执行层（Layer 5）** | 12个 | 12个 | 0个 | 14.1% |
+| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.4% |
+| **其他** | 16个 | 16个 | 0个 | 18.8% |
+| **总计** | **85个** | **85个** | **0个** | **100%** |
 
 ### 8.2 按状态统计
 
 | 状态 | 文档数量 | 占比 | 说明 |
 |------|---------|------|------|
-| **Active** | 79个 | 100% | 正常可用文档 |
+| **Active** | 85个 | 100% | 正常可用文档 |
 | **Archived** | 0个 | 0% | 无归档文档 |
 | **Draft** | 0个 | 0% | 草稿文档 |
 

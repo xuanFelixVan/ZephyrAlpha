@@ -4,63 +4,63 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?
-standard_type: 专业量化机构第三方接口集成标�?
-applicable_scope: 多引擎接口集�?
-compliance_level: 专业机构标准
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﮔ ﮒ?
+applicable_scope: ﮒ۳ﮒﺙﮔﮔ۴ﮒ۲ﻠﮔ?
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 第三方接口集成设计（专业量化机构标准�?
+# ﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ?
 
-> 清风量化系统 v5.0 - 专业量化机构标准第三方接口集成设�?
-> **集成引擎**: vn.py, RQAlpha, Backtrader, QMT, Backtesting.py
-> **设计原则**: 接口统一、适配器模式、松耦合、易扩展
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟?
+> **ﻠﮔﮒﺙﮔ**: vn.py, RQAlpha, Backtrader, QMT, Backtesting.py
+> **ﻟ؟ﺝﻟ؟۰ﮒﮒ**: ﮔ۴ﮒ۲ﻝﭨﻛﺕﻙﻠﻠﮒ۷ﮔ۷۰ﮒﺙﻙﮔﺝﻟ۵ﮒﻙﮔﮔ۸ﮒﺎ
 
-## 📋 接口集成概述
+## ﻭ ﮔ۴ﮒ۲ﻠﮔﮔ۵ﻟﺟﺍ
 
-### 引擎集成架构
+### ﮒﺙﮔﻠﮔﮔﭘﮔ
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   统一引擎接口�?                            �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         EngineInterface (统一接口)                   �? �?
-�? �? - create_order()    创建订单                         �? �?
-�? �? - cancel_order()    取消订单                         �? �?
-�? �? - query_order()     查询订单                         �? �?
-�? �? - query_position()  查询持仓                         �? �?
-�? �? - query_account()   查询账户                         �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
-                            �?适配器模�?
-┌─────────────────────────────────────────────────────────────�?
-�?                   引擎适配器层                               �?
-�? ┌──────────�?┌──────────�?┌──────────�?┌──────────�?     �?
-�? │VnpyAdapter�?│RQAlphaAdapter�?│BacktraderAdapter�?│QMTAdapter�?�?
-�? └──────────�?└──────────�?└──────────�?└──────────�?     �?
-�? ┌──────────�?                                             �?
-�? │BacktestingAdapter�?                                     �?
-�? └──────────�?                                             �?
-└─────────────────────────────────────────────────────────────�?
-                            �?第三方引�?
-┌─────────────────────────────────────────────────────────────�?
-�?                   第三方引擎层                               �?
-�? ┌──────────�?┌──────────�?┌──────────�?┌──────────�?     �?
-�? �?  vn.py  �?�? RQAlpha �?│Backtrader�?�?  QMT    �?     �?
-�? └──────────�?└──────────�?└──────────�?└──────────�?     �?
-�? ┌──────────�?                                             �?
-�? │Backtesting.py�?                                         �?
-�? └──────────�?                                             �?
-└─────────────────────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﻝﭨﻛﺕﮒﺙﮔﮔ۴ﮒ۲ﮒﺎ?                            ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         EngineInterface (ﻝﭨﻛﺕﮔ۴ﮒ۲)                   ﻗ? ﻗ?
+ﻗ? ﻗ? - create_order()    ﮒﮒﭨﭦﻟ؟۱ﮒ                         ﻗ? ﻗ?
+ﻗ? ﻗ? - cancel_order()    ﮒﮔﭘﻟ؟۱ﮒ                         ﻗ? ﻗ?
+ﻗ? ﻗ? - query_order()     ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ                         ﻗ? ﻗ?
+ﻗ? ﻗ? - query_position()  ﮔ۴ﻟﺁ۱ﮔﻛﭨ                         ﻗ? ﻗ?
+ﻗ? ﻗ? - query_account()   ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ                         ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?ﻠﻠﮒ۷ﮔ۷۰ﮒﺙ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﺙﮔﻠﻠﮒ۷ﮒﺎ                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
+ﻗ? ﻗVnpyAdapterﻗ?ﻗRQAlphaAdapterﻗ?ﻗBacktraderAdapterﻗ?ﻗQMTAdapterﻗ?ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                             ﻗ?
+ﻗ? ﻗBacktestingAdapterﻗ?                                     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                             ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?ﻝ؛؛ﻛﺕﮔﺗﮒﺙﮔ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﻝ؛؛ﻛﺕﮔﺗﮒﺙﮔﮒﺎ                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
+ﻗ? ﻗ?  vn.py  ﻗ?ﻗ? RQAlpha ﻗ?ﻗBacktraderﻗ?ﻗ?  QMT    ﻗ?     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                             ﻗ?
+ﻗ? ﻗBacktesting.pyﻗ?                                         ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                             ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 ---
 
-## 1. 统一引擎接口 (EngineInterface)
+## 1. ﻝﭨﻛﺕﮒﺙﮔﮔ۴ﮒ۲ (EngineInterface)
 
-### 1.1 接口定义
+### 1.1 ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ```python
 from abc import ABC, abstractmethod
@@ -69,26 +69,26 @@ from decimal import Decimal
 from datetime import datetime
 
 class EngineInterface(ABC):
-    """统一引擎接口"""
+    """ﻝﭨﻛﺕﮒﺙﮔﮔ۴ﮒ۲"""
     
     @abstractmethod
     async def initialize(self, config: Dict[str, Any]) -> bool:
-        """初始化引�?""
+        """ﮒﮒ۶ﮒﮒﺙﮔ?""
         pass
     
     @abstractmethod
     async def connect(self) -> bool:
-        """连接引擎"""
+        """ﻟﺟﮔ۴ﮒﺙﮔ"""
         pass
     
     @abstractmethod
     async def disconnect(self) -> bool:
-        """断开连接"""
+        """ﮔ­ﮒﺙﻟﺟﮔ۴"""
         pass
     
     @abstractmethod
     async def health_check(self) -> Dict[str, Any]:
-        """健康检�?""
+        """ﮒ۴ﮒﭦﺓﮔ۲ﮔ?""
         pass
     
     @abstractmethod
@@ -102,7 +102,7 @@ class EngineInterface(ABC):
         price: Decimal,
         quantity: int
     ) -> Dict[str, Any]:
-        """创建订单"""
+        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
         pass
     
     @abstractmethod
@@ -110,7 +110,7 @@ class EngineInterface(ABC):
         self,
         order_id: str
     ) -> bool:
-        """取消订单"""
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
         pass
     
     @abstractmethod
@@ -118,7 +118,7 @@ class EngineInterface(ABC):
         self,
         order_id: str
     ) -> Dict[str, Any]:
-        """查询订单"""
+        """ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ"""
         pass
     
     @abstractmethod
@@ -127,7 +127,7 @@ class EngineInterface(ABC):
         account_id: int,
         status: Optional[str] = None
     ) -> List[Dict[str, Any]]:
-        """查询订单列表"""
+        """ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﻟ۰۷"""
         pass
     
     @abstractmethod
@@ -136,7 +136,7 @@ class EngineInterface(ABC):
         account_id: int,
         stock_code: str
     ) -> Dict[str, Any]:
-        """查询持仓"""
+        """ﮔ۴ﻟﺁ۱ﮔﻛﭨ"""
         pass
     
     @abstractmethod
@@ -144,7 +144,7 @@ class EngineInterface(ABC):
         self,
         account_id: int
     ) -> List[Dict[str, Any]]:
-        """查询持仓列表"""
+        """ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒﻟ۰۷"""
         pass
     
     @abstractmethod
@@ -152,7 +152,7 @@ class EngineInterface(ABC):
         self,
         account_id: int
     ) -> Dict[str, Any]:
-        """查询账户"""
+        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
         pass
     
     @abstractmethod
@@ -160,7 +160,7 @@ class EngineInterface(ABC):
         self,
         stock_codes: List[str]
     ) -> bool:
-        """订阅行情"""
+        """ﻟ؟۱ﻠﻟ۰ﮔ"""
         pass
     
     @abstractmethod
@@ -168,7 +168,7 @@ class EngineInterface(ABC):
         self,
         stock_codes: List[str]
     ) -> bool:
-        """取消订阅行情"""
+        """ﮒﮔﭘﻟ؟۱ﻠﻟ۰ﮔ"""
         pass
     
     @abstractmethod
@@ -176,15 +176,15 @@ class EngineInterface(ABC):
         self,
         stock_code: str
     ) -> Dict[str, Any]:
-        """获取行情数据"""
+        """ﻟﺓﮒﻟ۰ﮔﮔﺍﮔ؟"""
         pass
 ```
 
 ---
 
-## 2. vn.py引擎适配�?(VnpyAdapter)
+## 2. vn.pyﮒﺙﮔﻠﻠﮒ?(VnpyAdapter)
 
-### 2.1 适配器实�?
+### 2.1 ﻠﻠﮒ۷ﮒ؟ﻝ?
 
 ```python
 from typing import Dict, Any, List, Optional
@@ -200,7 +200,7 @@ from vnpy.trader.object import (
 )
 
 class VnpyAdapter(EngineInterface):
-    """vn.py引擎适配�?""
+    """vn.pyﮒﺙﮔﻠﻠﮒ?""
     
     def __init__(self, engine_id: str, config: Dict[str, Any]):
         self.engine_id = engine_id
@@ -210,44 +210,44 @@ class VnpyAdapter(EngineInterface):
         self.gateway_name = config.get('gateway', 'CTP')
     
     async def initialize(self, config: Dict[str, Any]) -> bool:
-        """初始化vn.py引擎"""
+        """ﮒﮒ۶ﮒvn.pyﮒﺙﮔ"""
         try:
             self.event_engine = EventEngine()
             self.main_engine = MainEngine(self.event_engine)
             
-            # 添加网关
+            # ﮔﺓﭨﮒ ﻝﺛﮒﺏ
             if self.gateway_name == 'CTP':
                 from vnpy.trader.gateway import CtpGateway
                 self.main_engine.add_gateway(CtpGateway)
             
             return True
         except Exception as e:
-            print(f"vn.py初始化失�? {e}")
+            print(f"vn.pyﮒﮒ۶ﮒﮒ۳ﺎﻟﺑ? {e}")
             return False
     
     async def connect(self) -> bool:
-        """连接vn.py引擎"""
+        """ﻟﺟﮔ۴vn.pyﮒﺙﮔ"""
         try:
-            # 连接网关
+            # ﻟﺟﮔ۴ﻝﺛﮒﺏ
             self.main_engine.connect(self.config, self.gateway_name)
             return True
         except Exception as e:
-            print(f"vn.py连接失败: {e}")
+            print(f"vn.pyﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def disconnect(self) -> bool:
-        """断开连接"""
+        """ﮔ­ﮒﺙﻟﺟﮔ۴"""
         try:
             self.main_engine.close()
             return True
         except Exception as e:
-            print(f"vn.py断开连接失败: {e}")
+            print(f"vn.pyﮔ­ﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def health_check(self) -> Dict[str, Any]:
-        """健康检�?""
+        """ﮒ۴ﮒﭦﺓﮔ۲ﮔ?""
         try:
-            # 检查引擎状�?
+            # ﮔ۲ﮔ۴ﮒﺙﮔﻝﭘﮔ?
             status = self.main_engine.get_gateway(self.gateway_name)
             
             return {
@@ -274,18 +274,18 @@ class VnpyAdapter(EngineInterface):
         price: Decimal,
         quantity: int
     ) -> Dict[str, Any]:
-        """创建订单"""
+        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
         try:
-            # 转换方向
+            # ﻟﺛ؛ﮔ۱ﮔﺗﮒ
             vn_direction = Direction.LONG if direction == 'buy' else Direction.SHORT
             
-            # 转换订单类型
+            # ﻟﺛ؛ﮔ۱ﻟ؟۱ﮒﻝﺎﭨﮒ
             vn_order_type = OrderType.LIMIT if order_type == 'limit' else OrderType.MARKET
             
-            # 转换交易所
+            # ﻟﺛ؛ﮔ۱ﻛﭦ۳ﮔﮔ
             vn_exchange = Exchange.SHFE if exchange == 'SH' else Exchange.CZCE
             
-            # 创建订单请求
+            # ﮒﮒﭨﭦﻟ؟۱ﮒﻟﺁﺓﮔﺎ
             req = OrderRequest(
                 symbol=stock_code,
                 exchange=vn_exchange,
@@ -296,7 +296,7 @@ class VnpyAdapter(EngineInterface):
                 reference=f"ZEPHYR_{account_id}"
             )
             
-            # 发送订�?
+            # ﮒﻠﻟ؟۱ﮒ?
             order_id = self.main_engine.send_order(req, self.gateway_name)
             
             return {
@@ -313,31 +313,31 @@ class VnpyAdapter(EngineInterface):
             }
     
     async def cancel_order(self, order_id: str) -> bool:
-        """取消订单"""
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
         try:
-            # 获取订单信息
+            # ﻟﺓﮒﻟ؟۱ﮒﻛﺟ۰ﮔﺁ
             order = self.main_engine.get_order(order_id)
             
             if not order:
                 return False
             
-            # 创建取消请求
+            # ﮒﮒﭨﭦﮒﮔﭘﻟﺁﺓﮔﺎ
             req = CancelRequest(
                 orderid=order_id,
                 symbol=order.symbol,
                 exchange=order.exchange
             )
             
-            # 取消订单
+            # ﮒﮔﭘﻟ؟۱ﮒ
             self.main_engine.cancel_order(req, self.gateway_name)
             
             return True
         except Exception as e:
-            print(f"取消订单失败: {e}")
+            print(f"ﮒﮔﭘﻟ؟۱ﮒﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def query_order(self, order_id: str) -> Dict[str, Any]:
-        """查询订单"""
+        """ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ"""
         try:
             order = self.main_engine.get_order(order_id)
             
@@ -357,7 +357,7 @@ class VnpyAdapter(EngineInterface):
                 'timestamp': order.datetime.isoformat()
             }
         except Exception as e:
-            print(f"查询订单失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
     
     async def query_orders(
@@ -365,7 +365,7 @@ class VnpyAdapter(EngineInterface):
         account_id: int,
         status: Optional[str] = None
     ) -> List[Dict[str, Any]]:
-        """查询订单列表"""
+        """ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﻟ۰۷"""
         try:
             orders = self.main_engine.get_all_orders()
             
@@ -387,7 +387,7 @@ class VnpyAdapter(EngineInterface):
             
             return result
         except Exception as e:
-            print(f"查询订单列表失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﻟ۰۷ﮒ۳ﺎﻟﺑ۴: {e}")
             return []
     
     async def query_position(
@@ -395,7 +395,7 @@ class VnpyAdapter(EngineInterface):
         account_id: int,
         stock_code: str
     ) -> Dict[str, Any]:
-        """查询持仓"""
+        """ﮔ۴ﻟﺁ۱ﮔﻛﭨ"""
         try:
             positions = self.main_engine.get_all_positions()
             
@@ -413,11 +413,11 @@ class VnpyAdapter(EngineInterface):
             
             return {}
         except Exception as e:
-            print(f"查询持仓失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
     
     async def query_positions(self, account_id: int) -> List[Dict[str, Any]]:
-        """查询持仓列表"""
+        """ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒﻟ۰۷"""
         try:
             positions = self.main_engine.get_all_positions()
             
@@ -435,11 +435,11 @@ class VnpyAdapter(EngineInterface):
             
             return result
         except Exception as e:
-            print(f"查询持仓列表失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒﻟ۰۷ﮒ۳ﺎﻟﺑ۴: {e}")
             return []
     
     async def query_account(self, account_id: int) -> Dict[str, Any]:
-        """查询账户"""
+        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
         try:
             accounts = self.main_engine.get_all_accounts()
             
@@ -455,27 +455,27 @@ class VnpyAdapter(EngineInterface):
             
             return {}
         except Exception as e:
-            print(f"查询账户失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
     
     async def subscribe_market_data(self, stock_codes: List[str]) -> bool:
-        """订阅行情"""
+        """ﻟ؟۱ﻠﻟ۰ﮔ"""
         try:
             for stock_code in stock_codes:
                 self.main_engine.subscribe(stock_code, self.gateway_name)
             
             return True
         except Exception as e:
-            print(f"订阅行情失败: {e}")
+            print(f"ﻟ؟۱ﻠﻟ۰ﮔﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def unsubscribe_market_data(self, stock_codes: List[str]) -> bool:
-        """取消订阅行情"""
-        # vn.py暂不支持取消订阅
+        """ﮒﮔﭘﻟ؟۱ﻠﻟ۰ﮔ"""
+        # vn.pyﮔﻛﺕﮔﺁﮔﮒﮔﭘﻟ؟۱ﻠ
         return True
     
     async def get_market_data(self, stock_code: str) -> Dict[str, Any]:
-        """获取行情数据"""
+        """ﻟﺓﮒﻟ۰ﮔﮔﺍﮔ؟"""
         try:
             tick = self.main_engine.get_tick(stock_code)
             
@@ -495,15 +495,15 @@ class VnpyAdapter(EngineInterface):
                 'timestamp': tick.datetime.isoformat()
             }
         except Exception as e:
-            print(f"获取行情数据失败: {e}")
+            print(f"ﻟﺓﮒﻟ۰ﮔﮔﺍﮔ؟ﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
 ```
 
 ---
 
-## 3. RQAlpha引擎适配�?(RQAlphaAdapter)
+## 3. RQAlphaﮒﺙﮔﻠﻠﮒ?(RQAlphaAdapter)
 
-### 3.1 适配器实�?
+### 3.1 ﻠﻠﮒ۷ﮒ؟ﻝ?
 
 ```python
 from typing import Dict, Any, List, Optional
@@ -512,7 +512,7 @@ import rqalpha as rq
 from rqalpha.const import SIDE, POSITION_EFFECT
 
 class RQAlphaAdapter(EngineInterface):
-    """RQAlpha引擎适配�?""
+    """RQAlphaﮒﺙﮔﻠﻠﮒ?""
     
     def __init__(self, engine_id: str, config: Dict[str, Any]):
         self.engine_id = engine_id
@@ -520,36 +520,36 @@ class RQAlphaAdapter(EngineInterface):
         self.env = None
     
     async def initialize(self, config: Dict[str, Any]) -> bool:
-        """初始化RQAlpha引擎"""
+        """ﮒﮒ۶ﮒRQAlphaﮒﺙﮔ"""
         try:
-            # 创建RQAlpha环境
+            # ﮒﮒﭨﭦRQAlphaﻝﺁﮒ۱
             self.env = rq.create_env(config)
             return True
         except Exception as e:
-            print(f"RQAlpha初始化失�? {e}")
+            print(f"RQAlphaﮒﮒ۶ﮒﮒ۳ﺎﻟﺑ? {e}")
             return False
     
     async def connect(self) -> bool:
-        """连接RQAlpha引擎"""
+        """ﻟﺟﮔ۴RQAlphaﮒﺙﮔ"""
         try:
-            # RQAlpha不需要连�?
+            # RQAlphaﻛﺕﻠﻟ۵ﻟﺟﮔ?
             return True
         except Exception as e:
-            print(f"RQAlpha连接失败: {e}")
+            print(f"RQAlphaﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def disconnect(self) -> bool:
-        """断开连接"""
+        """ﮔ­ﮒﺙﻟﺟﮔ۴"""
         try:
             if self.env:
                 self.env.stop()
             return True
         except Exception as e:
-            print(f"RQAlpha断开连接失败: {e}")
+            print(f"RQAlphaﮔ­ﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def health_check(self) -> Dict[str, Any]:
-        """健康检�?""
+        """ﮒ۴ﮒﭦﺓﮔ۲ﮔ?""
         try:
             return {
                 'engine_id': self.engine_id,
@@ -574,12 +574,12 @@ class RQAlphaAdapter(EngineInterface):
         price: Decimal,
         quantity: int
     ) -> Dict[str, Any]:
-        """创建订单"""
+        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
         try:
-            # 转换方向
+            # ﻟﺛ؛ﮔ۱ﮔﺗﮒ
             side = SIDE.BUY if direction == 'buy' else SIDE.SELL
             
-            # 创建订单
+            # ﮒﮒﭨﭦﻟ؟۱ﮒ
             order_id = self.env.portfolio.order(
                 id_or_ins=stock_code,
                 amount=quantity,
@@ -602,17 +602,17 @@ class RQAlphaAdapter(EngineInterface):
             }
     
     async def cancel_order(self, order_id: str) -> bool:
-        """取消订单"""
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
         try:
-            # RQAlpha不支持取消订�?
+            # RQAlphaﻛﺕﮔﺁﮔﮒﮔﭘﻟ؟۱ﮒ?
             return False
         except Exception as e:
-            print(f"取消订单失败: {e}")
+            print(f"ﮒﮔﭘﻟ؟۱ﮒﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def query_order(self, order_id: str) -> Dict[str, Any]:
-        """查询订单"""
-        # RQAlpha不支持查询订�?
+        """ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ"""
+        # RQAlphaﻛﺕﮔﺁﮔﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ?
         return {}
     
     async def query_orders(
@@ -620,8 +620,8 @@ class RQAlphaAdapter(EngineInterface):
         account_id: int,
         status: Optional[str] = None
     ) -> List[Dict[str, Any]]:
-        """查询订单列表"""
-        # RQAlpha不支持查询订单列�?
+        """ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﻟ۰۷"""
+        # RQAlphaﻛﺕﮔﺁﮔﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﻟ۰?
         return []
     
     async def query_position(
@@ -629,7 +629,7 @@ class RQAlphaAdapter(EngineInterface):
         account_id: int,
         stock_code: str
     ) -> Dict[str, Any]:
-        """查询持仓"""
+        """ﮔ۴ﻟﺁ۱ﮔﻛﭨ"""
         try:
             position = self.env.portfolio.positions.get(stock_code)
             
@@ -643,11 +643,11 @@ class RQAlphaAdapter(EngineInterface):
                 'market_value': Decimal(str(position.market_value))
             }
         except Exception as e:
-            print(f"查询持仓失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
     
     async def query_positions(self, account_id: int) -> List[Dict[str, Any]]:
-        """查询持仓列表"""
+        """ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒﻟ۰۷"""
         try:
             positions = self.env.portfolio.positions
             
@@ -662,11 +662,11 @@ class RQAlphaAdapter(EngineInterface):
             
             return result
         except Exception as e:
-            print(f"查询持仓列表失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﮔﻛﭨﮒﻟ۰۷ﮒ۳ﺎﻟﺑ۴: {e}")
             return []
     
     async def query_account(self, account_id: int) -> Dict[str, Any]:
-        """查询账户"""
+        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
         try:
             portfolio = self.env.portfolio
             
@@ -677,20 +677,20 @@ class RQAlphaAdapter(EngineInterface):
                 'pnl': Decimal(str(portfolio.pnl))
             }
         except Exception as e:
-            print(f"查询账户失败: {e}")
+            print(f"ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
     
     async def subscribe_market_data(self, stock_codes: List[str]) -> bool:
-        """订阅行情"""
-        # RQAlpha自动订阅
+        """ﻟ؟۱ﻠﻟ۰ﮔ"""
+        # RQAlphaﻟ۹ﮒ۷ﻟ؟۱ﻠ
         return True
     
     async def unsubscribe_market_data(self, stock_codes: List[str]) -> bool:
-        """取消订阅行情"""
+        """ﮒﮔﭘﻟ؟۱ﻠﻟ۰ﮔ"""
         return True
     
     async def get_market_data(self, stock_code: str) -> Dict[str, Any]:
-        """获取行情数据"""
+        """ﻟﺓﮒﻟ۰ﮔﮔﺍﮔ؟"""
         try:
             bar = self.env.get_bar(stock_code)
             
@@ -707,22 +707,22 @@ class RQAlphaAdapter(EngineInterface):
                 'timestamp': bar.datetime.isoformat()
             }
         except Exception as e:
-            print(f"获取行情数据失败: {e}")
+            print(f"ﻟﺓﮒﻟ۰ﮔﮔﺍﮔ؟ﮒ۳ﺎﻟﺑ۴: {e}")
             return {}
 ```
 
 ---
 
-## 4. 引擎管理服务 (EngineManagerService)
+## 4. ﮒﺙﮔﻝ؟۰ﻝﮔﮒ۰ (EngineManagerService)
 
-### 4.1 服务实现
+### 4.1 ﮔﮒ۰ﮒ؟ﻝﺍ
 
 ```python
 from typing import Dict, Any, List, Optional
 from enum import Enum
 
 class EngineType(Enum):
-    """引擎类型"""
+    """ﮒﺙﮔﻝﺎﭨﮒ"""
     VNPY = 'vnpy'
     RQALPHA = 'rqalpha'
     BACKTRADER = 'backtrader'
@@ -730,7 +730,7 @@ class EngineType(Enum):
     BACKTESTING = 'backtesting'
 
 class EngineManagerService:
-    """引擎管理服务"""
+    """ﮒﺙﮔﻝ؟۰ﻝﮔﮒ۰"""
     
     def __init__(self):
         self.engines: Dict[str, EngineInterface] = {}
@@ -742,17 +742,17 @@ class EngineManagerService:
         engine_type: EngineType,
         config: Dict[str, Any]
     ) -> bool:
-        """注册引擎"""
+        """ﮔﺏ۷ﮒﮒﺙﮔ"""
         try:
-            # 创建引擎适配�?
+            # ﮒﮒﭨﭦﮒﺙﮔﻠﻠﮒ?
             if engine_type == EngineType.VNPY:
                 adapter = VnpyAdapter(engine_id, config)
             elif engine_type == EngineType.RQALPHA:
                 adapter = RQAlphaAdapter(engine_id, config)
             else:
-                raise ValueError(f"不支持的引擎类型: {engine_type}")
+                raise ValueError(f"ﻛﺕﮔﺁﮔﻝﮒﺙﮔﻝﺎﭨﮒ: {engine_type}")
             
-            # 初始化引�?
+            # ﮒﮒ۶ﮒﮒﺙﮔ?
             success = await adapter.initialize(config)
             
             if success:
@@ -762,11 +762,11 @@ class EngineManagerService:
             
             return False
         except Exception as e:
-            print(f"注册引擎失败: {e}")
+            print(f"ﮔﺏ۷ﮒﮒﺙﮔﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def connect_engine(self, engine_id: str) -> bool:
-        """连接引擎"""
+        """ﻟﺟﮔ۴ﮒﺙﮔ"""
         try:
             engine = self.engines.get(engine_id)
             
@@ -775,11 +775,11 @@ class EngineManagerService:
             
             return await engine.connect()
         except Exception as e:
-            print(f"连接引擎失败: {e}")
+            print(f"ﻟﺟﮔ۴ﮒﺙﮔﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def disconnect_engine(self, engine_id: str) -> bool:
-        """断开引擎连接"""
+        """ﮔ­ﮒﺙﮒﺙﮔﻟﺟﮔ۴"""
         try:
             engine = self.engines.get(engine_id)
             
@@ -788,11 +788,11 @@ class EngineManagerService:
             
             return await engine.disconnect()
         except Exception as e:
-            print(f"断开引擎连接失败: {e}")
+            print(f"ﮔ­ﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def health_check_engine(self, engine_id: str) -> Dict[str, Any]:
-        """健康检查引�?""
+        """ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒﺙﮔ?""
         try:
             engine = self.engines.get(engine_id)
             
@@ -811,7 +811,7 @@ class EngineManagerService:
             }
     
     async def health_check_all(self) -> List[Dict[str, Any]]:
-        """健康检查所有引�?""
+        """ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﮔﮒﺙﮔ?""
         results = []
         
         for engine_id in self.engines:
@@ -821,47 +821,47 @@ class EngineManagerService:
         return results
     
     def get_engine(self, engine_id: str) -> Optional[EngineInterface]:
-        """获取引擎"""
+        """ﻟﺓﮒﮒﺙﮔ"""
         return self.engines.get(engine_id)
     
     def get_all_engines(self) -> List[str]:
-        """获取所有引擎ID"""
+        """ﻟﺓﮒﮔﮔﮒﺙﮔID"""
         return list(self.engines.keys())
 ```
 
 ---
 
-## 5. 接口集成规范
+## 5. ﮔ۴ﮒ۲ﻠﮔﻟ۶ﻟ
 
-### 5.1 数据格式转换
+### 5.1 ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱
 
-| 字段 | 系统格式 | vn.py格式 | RQAlpha格式 |
+| ﮒ­ﮔ؟ﭖ | ﻝﺏﭨﻝﭨﮔ ﺙﮒﺙ | vn.pyﮔ ﺙﮒﺙ | RQAlphaﮔ ﺙﮒﺙ |
 |------|----------|-----------|-------------|
-| **交易方向** | buy/sell | LONG/SHORT | BUY/SELL |
-| **订单类型** | limit/market | LIMIT/MARKET | LIMIT/MARKET |
-| **交易所** | SH/SZ | SHFE/SZSE | SH/SZ |
-| **订单状�?* | pending/submitted/filled | NOTTRADED/TRADED | pending/filled |
+| **ﻛﭦ۳ﮔﮔﺗﮒ** | buy/sell | LONG/SHORT | BUY/SELL |
+| **ﻟ؟۱ﮒﻝﺎﭨﮒ** | limit/market | LIMIT/MARKET | LIMIT/MARKET |
+| **ﻛﭦ۳ﮔﮔ** | SH/SZ | SHFE/SZSE | SH/SZ |
+| **ﻟ؟۱ﮒﻝﭘﮔ?* | pending/submitted/filled | NOTTRADED/TRADED | pending/filled |
 
-### 5.2 错误处理
+### 5.2 ﻠﻟﺁﺁﮒ۳ﻝ
 
-| 错误类型 | 处理方式 | 重试策略 |
+| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﮒ۳ﻝﮔﺗﮒﺙ | ﻠﻟﺁﻝ­ﻝ۴ |
 |----------|----------|----------|
-| **连接失败** | 记录日志，返回错�?| 重试3次，间隔5�?|
-| **订单失败** | 记录日志，返回错�?| 不重�?|
-| **查询失败** | 记录日志，返回空结果 | 重试2次，间隔2�?|
-| **超时** | 记录日志，返回超时错�?| 重试1�?|
+| **ﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴** | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠﻟﺁ?| ﻠﻟﺁ3ﮔ؛۰ﺅﺙﻠﺑﻠ5ﻝ۶?|
+| **ﻟ؟۱ﮒﮒ۳ﺎﻟﺑ۴** | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠﻟﺁ?| ﻛﺕﻠﻟﺁ?|
+| **ﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴** | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻝ۸ﭦﻝﭨﮔ | ﻠﻟﺁ2ﮔ؛۰ﺅﺙﻠﺑﻠ2ﻝ۶?|
+| **ﻟﭘﮔﭘ** | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻟﭘﮔﭘﻠﻟﺁ?| ﻠﻟﺁ1ﮔ؛?|
 
-### 5.3 性能要求
+### 5.3 ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-| 操作 | 响应时间 | 备注 |
+| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
-| **创建订单** | < 500ms | 包含网络延迟 |
-| **取消订单** | < 500ms | 包含网络延迟 |
-| **查询订单** | < 300ms | 本地缓存 |
-| **查询持仓** | < 300ms | 本地缓存 |
-| **查询账户** | < 300ms | 本地缓存 |
+| **ﮒﮒﭨﭦﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﻝﺛﻝﭨﮒﭨﭘﻟﺟ |
+| **ﮒﮔﭘﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﻝﺛﻝﭨﮒﭨﭘﻟﺟ |
+| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ­ |
+| **ﮔ۴ﻟﺁ۱ﮔﻛﭨ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ­ |
+| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ­ |
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
-**下一�?*: P0-5 多引擎协同器详细设计
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻛﺕﻛﺕﮔ­?*: P0-5 ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰

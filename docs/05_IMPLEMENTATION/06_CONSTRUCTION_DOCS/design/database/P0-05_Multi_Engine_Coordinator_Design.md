@@ -4,52 +4,52 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?
-standard_type: 专业量化机构多引擎协同器标准
-applicable_scope: 多引擎事务协�?
-compliance_level: 专业机构标准
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﮔ ﮒ
+applicable_scope: ﮒ۳ﮒﺙﮔﻛﭦﮒ۰ﮒﻟﺍ?
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 多引擎协同器详细设计（专业量化机构标准）
+# ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
 
-> 清风量化系统 v5.0 - 专业量化机构标准多引擎协同器设计
-> **设计模式**: Saga分布式事务模�?+ 事件驱动架构
-> **核心职责**: 多引擎事务协调、数据一致性保障、故障恢�?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟ؟ﺝﻟ؟۰
+> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: Sagaﮒﮒﺕﮒﺙﻛﭦﮒ۰ﮔ۷۰ﮒﺙ?+ ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
+> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﮒ۳ﮒﺙﮔﻛﭦﮒ۰ﮒﻟﺍﻙﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻛﺟﻠﻙﮔﻠﮔ۱ﮒ۳?
 
-## 📋 协同器概�?
+## ﻭ ﮒﮒﮒ۷ﮔ۵ﻟﺟ?
 
-### Saga事务架构
+### Sagaﻛﭦﮒ۰ﮔﭘﮔ
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   Saga协调�?(Saga Coordinator)             �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �? 1. 事务编排 (Transaction Orchestration)              �? �?
-�? �? 2. 状态管�?(State Management)                       �? �?
-�? �? 3. 补偿机制 (Compensation Mechanism)                 �? �?
-�? �? 4. 故障恢复 (Failure Recovery)                       �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
-                            �?事件驱动
-┌─────────────────────────────────────────────────────────────�?
-�?                   Saga执行步骤                              �?
-�? ┌──────────�?┌──────────�?┌──────────�?┌──────────�?     �?
-�? │Step 1    �?│Step 2    �?│Step 3    �?│Step 4    �?     �?
-�? │创建订�? │→│冻结资�? │→│提交引�? │→│更新持�? �?     �?
-�? �?         �?�?         �?�?         �?�?         �?     �?
-�? │Compensate�?│Compensate�?│Compensate�?│Compensate�?     �?
-�? │取消订�? �?│解冻资�? �?│取消订�? �?│回滚持�? �?     �?
-�? └──────────�?└──────────�?└──────────�?└──────────�?     �?
-└─────────────────────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   Sagaﮒﻟﺍﮒ?(Saga Coordinator)             ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ? 1. ﻛﭦﮒ۰ﻝﺙﮔ (Transaction Orchestration)              ﻗ? ﻗ?
+ﻗ? ﻗ? 2. ﻝﭘﮔﻝ؟۰ﻝ?(State Management)                       ﻗ? ﻗ?
+ﻗ? ﻗ? 3. ﻟ۰۴ﮒﺟﮔﭦﮒﭘ (Compensation Mechanism)                 ﻗ? ﻗ?
+ﻗ? ﻗ? 4. ﮔﻠﮔ۱ﮒ۳ (Failure Recovery)                       ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   Sagaﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳                              ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
+ﻗ? ﻗStep 1    ﻗ?ﻗStep 2    ﻗ?ﻗStep 3    ﻗ?ﻗStep 4    ﻗ?     ﻗ?
+ﻗ? ﻗﮒﮒﭨﭦﻟ؟۱ﮒ? ﻗﻗﻗﮒﭨﻝﭨﻟﭖﻠ? ﻗﻗﻗﮔﻛﭦ۳ﮒﺙﮔ? ﻗﻗﻗﮔﺑﮔﺍﮔﻛﭨ? ﻗ?     ﻗ?
+ﻗ? ﻗ?         ﻗ?ﻗ?         ﻗ?ﻗ?         ﻗ?ﻗ?         ﻗ?     ﻗ?
+ﻗ? ﻗCompensateﻗ?ﻗCompensateﻗ?ﻗCompensateﻗ?ﻗCompensateﻗ?     ﻗ?
+ﻗ? ﻗﮒﮔﭘﻟ؟۱ﮒ? ﻗ?ﻗﻟ۶۲ﮒﭨﻟﭖﻠ? ﻗ?ﻗﮒﮔﭘﻟ؟۱ﮒ? ﻗ?ﻗﮒﮔﭨﮔﻛﭨ? ﻗ?     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 ---
 
-## 1. Saga协调器核心设�?
+## 1. Sagaﮒﻟﺍﮒ۷ﮔ ﺕﮒﺟﻟ؟ﺝﻟ؟?
 
-### 1.1 Saga状态机
+### 1.1 Sagaﻝﭘﮔﮔﭦ
 
 ```python
 from enum import Enum
@@ -59,25 +59,25 @@ from decimal import Decimal
 import asyncio
 
 class SagaStatus(Enum):
-    """Saga状�?""
-    PENDING = 'pending'           # 待执�?
-    RUNNING = 'running'           # 执行�?
-    COMPLETED = 'completed'       # 已完�?
-    COMPENSATING = 'compensating' # 补偿�?
-    COMPENSATED = 'compensated'   # 已补�?
-    FAILED = 'failed'             # 失败
+    """Sagaﻝﭘﮔ?""
+    PENDING = 'pending'           # ﮒﺝﮔ۶ﻟ۰?
+    RUNNING = 'running'           # ﮔ۶ﻟ۰ﻛﺕ?
+    COMPLETED = 'completed'       # ﮒﺓﺎﮒ؟ﮔ?
+    COMPENSATING = 'compensating' # ﻟ۰۴ﮒﺟﻛﺕ?
+    COMPENSATED = 'compensated'   # ﮒﺓﺎﻟ۰۴ﮒ?
+    FAILED = 'failed'             # ﮒ۳ﺎﻟﺑ۴
 
 class StepStatus(Enum):
-    """步骤状�?""
-    PENDING = 'pending'           # 待执�?
-    RUNNING = 'running'           # 执行�?
-    COMPLETED = 'completed'       # 已完�?
-    COMPENSATING = 'compensating' # 补偿�?
-    COMPENSATED = 'compensated'   # 已补�?
-    FAILED = 'failed'             # 失败
+    """ﮔ­۴ﻠ۹۳ﻝﭘﮔ?""
+    PENDING = 'pending'           # ﮒﺝﮔ۶ﻟ۰?
+    RUNNING = 'running'           # ﮔ۶ﻟ۰ﻛﺕ?
+    COMPLETED = 'completed'       # ﮒﺓﺎﮒ؟ﮔ?
+    COMPENSATING = 'compensating' # ﻟ۰۴ﮒﺟﻛﺕ?
+    COMPENSATED = 'compensated'   # ﮒﺓﺎﻟ۰۴ﮒ?
+    FAILED = 'failed'             # ﮒ۳ﺎﻟﺑ۴
 
 class SagaStep:
-    """Saga步骤"""
+    """Sagaﮔ­۴ﻠ۹۳"""
     
     def __init__(
         self,
@@ -99,12 +99,12 @@ class SagaStep:
         self.completed_at: Optional[datetime] = None
     
     async def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """执行步骤"""
+        """ﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳"""
         self.status = StepStatus.RUNNING
         self.started_at = datetime.now()
         
         try:
-            # 执行步骤，带超时控制
+            # ﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳ﺅﺙﮒﺕ۵ﻟﭘﮔﭘﮔ۶ﮒﭘ
             result = await asyncio.wait_for(
                 self.execute_func(context),
                 timeout=self.timeout
@@ -117,7 +117,7 @@ class SagaStep:
             return result
         except asyncio.TimeoutError:
             self.status = StepStatus.FAILED
-            self.error = f"步骤执行超时: {self.timeout}�?
+            self.error = f"ﮔ­۴ﻠ۹۳ﮔ۶ﻟ۰ﻟﭘﮔﭘ: {self.timeout}ﻝ۶?
             raise Exception(self.error)
         except Exception as e:
             self.status = StepStatus.FAILED
@@ -125,11 +125,11 @@ class SagaStep:
             raise
     
     async def compensate(self, context: Dict[str, Any]) -> bool:
-        """补偿步骤"""
+        """ﻟ۰۴ﮒﺟﮔ­۴ﻠ۹۳"""
         self.status = StepStatus.COMPENSATING
         
         try:
-            # 执行补偿，带超时控制
+            # ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﺅﺙﮒﺕ۵ﻟﭘﮔﭘﮔ۶ﮒﭘ
             success = await asyncio.wait_for(
                 self.compensate_func(context, self.result),
                 timeout=self.timeout
@@ -139,11 +139,11 @@ class SagaStep:
             return success
         except Exception as e:
             self.status = StepStatus.FAILED
-            self.error = f"补偿失败: {str(e)}"
+            self.error = f"ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {str(e)}"
             return False
 
 class Saga:
-    """Saga事务"""
+    """Sagaﻛﭦﮒ۰"""
     
     def __init__(self, saga_id: str, saga_name: str):
         self.saga_id = saga_id
@@ -156,60 +156,60 @@ class Saga:
         self.updated_at = datetime.now()
     
     def add_step(self, step: SagaStep) -> None:
-        """添加步骤"""
+        """ﮔﺓﭨﮒ ﮔ­۴ﻠ۹۳"""
         self.steps.append(step)
     
     async def execute(self) -> bool:
-        """执行Saga"""
+        """ﮔ۶ﻟ۰Saga"""
         self.status = SagaStatus.RUNNING
         self.updated_at = datetime.now()
         
         try:
-            # 顺序执行所有步�?
+            # ﻠ۰ﭦﮒﭦﮔ۶ﻟ۰ﮔﮔﮔ­۴ﻠ۹?
             for i, step in enumerate(self.steps):
                 self.current_step_index = i
                 
-                # 执行步骤
+                # ﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳
                 result = await step.execute(self.context)
                 
-                # 更新上下�?
+                # ﮔﺑﮔﺍﻛﺕﻛﺕﮔ?
                 self.context.update(result)
                 self.updated_at = datetime.now()
             
-            # 所有步骤执行成�?
+            # ﮔﮔﮔ­۴ﻠ۹۳ﮔ۶ﻟ۰ﮔﮒ?
             self.status = SagaStatus.COMPLETED
             self.updated_at = datetime.now()
             return True
         
         except Exception as e:
-            # 执行失败，开始补�?
-            print(f"Saga执行失败: {e}")
+            # ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ﺅﺙﮒﺙﮒ۶ﻟ۰۴ﮒ?
+            print(f"Sagaﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴: {e}")
             await self.compensate()
             return False
     
     async def compensate(self) -> bool:
-        """补偿Saga"""
+        """ﻟ۰۴ﮒﺟSaga"""
         self.status = SagaStatus.COMPENSATING
         self.updated_at = datetime.now()
         
         try:
-            # 逆序补偿已完成的步骤
+            # ﻠﮒﭦﻟ۰۴ﮒﺟﮒﺓﺎﮒ؟ﮔﻝﮔ­۴ﻠ۹۳
             for i in range(self.current_step_index, -1, -1):
                 step = self.steps[i]
                 
                 if step.status == StepStatus.COMPLETED:
-                    # 补偿步骤
+                    # ﻟ۰۴ﮒﺟﮔ­۴ﻠ۹۳
                     success = await step.compensate(self.context)
                     
                     if not success:
-                        print(f"步骤补偿失败: {step.step_name}")
+                        print(f"ﮔ­۴ﻠ۹۳ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {step.step_name}")
             
             self.status = SagaStatus.COMPENSATED
             self.updated_at = datetime.now()
             return True
         
         except Exception as e:
-            print(f"Saga补偿失败: {e}")
+            print(f"Sagaﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {e}")
             self.status = SagaStatus.FAILED
             self.updated_at = datetime.now()
             return False
@@ -217,13 +217,13 @@ class Saga:
 
 ---
 
-## 2. 订单Saga设计
+## 2. ﻟ؟۱ﮒSagaﻟ؟ﺝﻟ؟۰
 
-### 2.1 订单Saga步骤
+### 2.1 ﻟ؟۱ﮒSagaﮔ­۴ﻠ۹۳
 
 ```python
 class OrderSaga:
-    """订单Saga"""
+    """ﻟ؟۱ﮒSaga"""
     
     def __init__(
         self,
@@ -238,55 +238,55 @@ class OrderSaga:
         self.engine_manager = engine_manager
     
     async def create_order_saga(self, order_data: Dict[str, Any]) -> Saga:
-        """创建订单Saga"""
+        """ﮒﮒﭨﭦﻟ؟۱ﮒSaga"""
         saga = Saga(
             saga_id=f"SAGA_ORDER_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-            saga_name="订单执行Saga"
+            saga_name="ﻟ؟۱ﮒﮔ۶ﻟ۰Saga"
         )
         
-        # Step 1: 创建订单
+        # Step 1: ﮒﮒﭨﭦﻟ؟۱ﮒ
         step1 = SagaStep(
             step_id="create_order",
-            step_name="创建订单",
+            step_name="ﮒﮒﭨﭦﻟ؟۱ﮒ",
             execute_func=self._create_order,
             compensate_func=self._cancel_order,
             timeout=10
         )
         
-        # Step 2: 冻结资金/持仓
+        # Step 2: ﮒﭨﻝﭨﻟﭖﻠ/ﮔﻛﭨ
         step2 = SagaStep(
             step_id="freeze_resource",
-            step_name="冻结资源",
+            step_name="ﮒﭨﻝﭨﻟﭖﮔﭦ",
             execute_func=self._freeze_resource,
             compensate_func=self._unfreeze_resource,
             timeout=10
         )
         
-        # Step 3: 提交到引�?
+        # Step 3: ﮔﻛﭦ۳ﮒﺍﮒﺙﮔ?
         step3 = SagaStep(
             step_id="submit_to_engine",
-            step_name="提交引擎",
+            step_name="ﮔﻛﭦ۳ﮒﺙﮔ",
             execute_func=self._submit_to_engine,
             compensate_func=self._cancel_from_engine,
             timeout=30
         )
         
-        # Step 4: 更新持仓
+        # Step 4: ﮔﺑﮔﺍﮔﻛﭨ
         step4 = SagaStep(
             step_id="update_position",
-            step_name="更新持仓",
+            step_name="ﮔﺑﮔﺍﮔﻛﭨ",
             execute_func=self._update_position,
             compensate_func=self._rollback_position,
             timeout=10
         )
         
-        # 添加步骤
+        # ﮔﺓﭨﮒ ﮔ­۴ﻠ۹۳
         saga.add_step(step1)
         saga.add_step(step2)
         saga.add_step(step3)
         saga.add_step(step4)
         
-        # 初始化上下文
+        # ﮒﮒ۶ﮒﻛﺕﻛﺕﮔ
         saga.context = {
             'order_data': order_data
         }
@@ -294,10 +294,10 @@ class OrderSaga:
         return saga
     
     async def _create_order(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """创建订单"""
+        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
         order_data = context['order_data']
         
-        # 创建订单
+        # ﮒﮒﭨﭦﻟ؟۱ﮒ
         order = await self.order_service.create_order(order_data)
         
         return {
@@ -307,20 +307,20 @@ class OrderSaga:
         }
     
     async def _cancel_order(self, context: Dict[str, Any], result: Dict[str, Any]) -> bool:
-        """取消订单"""
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
         order_id = result['order_id']
         
-        # 取消订单
-        success = await self.order_service.cancel_order(order_id, reason="Saga补偿")
+        # ﮒﮔﭘﻟ؟۱ﮒ
+        success = await self.order_service.cancel_order(order_id, reason="Sagaﻟ۰۴ﮒﺟ")
         
         return success
     
     async def _freeze_resource(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """冻结资源"""
+        """ﮒﭨﻝﭨﻟﭖﮔﭦ"""
         order = context['order']
         
         if order['direction'] == 'buy':
-            # 买入：冻结资�?
+            # ﻛﺗﺍﮒ۴ﺅﺙﮒﭨﻝﭨﻟﭖﻠ?
             frozen_amount = order['order_price'] * order['order_quantity']
             success = await self.account_service.freeze_cash(
                 order['account_id'],
@@ -332,7 +332,7 @@ class OrderSaga:
                 'frozen_type': 'cash'
             }
         else:
-            # 卖出：冻结持�?
+            # ﮒﮒﭦﺅﺙﮒﭨﻝﭨﮔﻛﭨ?
             success = await self.position_service.freeze_position(
                 order['account_id'],
                 order['stock_code'],
@@ -345,17 +345,17 @@ class OrderSaga:
             }
     
     async def _unfreeze_resource(self, context: Dict[str, Any], result: Dict[str, Any]) -> bool:
-        """解冻资源"""
+        """ﻟ۶۲ﮒﭨﻟﭖﮔﭦ"""
         order = context['order']
         
         if result['frozen_type'] == 'cash':
-            # 解冻资金
+            # ﻟ۶۲ﮒﭨﻟﭖﻠ
             success = await self.account_service.unfreeze_cash(
                 order['account_id'],
                 result['frozen_amount']
             )
         else:
-            # 解冻持仓
+            # ﻟ۶۲ﮒﭨﮔﻛﭨ
             success = await self.position_service.unfreeze_position(
                 order['account_id'],
                 order['stock_code'],
@@ -365,16 +365,16 @@ class OrderSaga:
         return success
     
     async def _submit_to_engine(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """提交到引�?""
+        """ﮔﻛﭦ۳ﮒﺍﮒﺙﮔ?""
         order = context['order']
         
-        # 获取引擎
+        # ﻟﺓﮒﮒﺙﮔ
         engine = self.engine_manager.get_engine(order['engine_id'])
         
         if not engine:
-            raise Exception(f"引擎不存�? {order['engine_id']}")
+            raise Exception(f"ﮒﺙﮔﻛﺕﮒ­ﮒ? {order['engine_id']}")
         
-        # 提交订单到引�?
+        # ﮔﻛﭦ۳ﻟ؟۱ﮒﮒﺍﮒﺙﮔ?
         result = await engine.create_order(
             account_id=order['account_id'],
             stock_code=order['stock_code'],
@@ -386,7 +386,7 @@ class OrderSaga:
         )
         
         if not result['success']:
-            raise Exception(f"引擎提交失败: {result.get('error')}")
+            raise Exception(f"ﮒﺙﮔﮔﻛﭦ۳ﮒ۳ﺎﻟﺑ۴: {result.get('error')}")
         
         return {
             'broker_order_id': result['order_id'],
@@ -394,34 +394,34 @@ class OrderSaga:
         }
     
     async def _cancel_from_engine(self, context: Dict[str, Any], result: Dict[str, Any]) -> bool:
-        """从引擎取消订�?""
+        """ﻛﭨﮒﺙﮔﮒﮔﭘﻟ؟۱ﮒ?""
         order = context['order']
         broker_order_id = result['broker_order_id']
         
-        # 获取引擎
+        # ﻟﺓﮒﮒﺙﮔ
         engine = self.engine_manager.get_engine(order['engine_id'])
         
         if not engine:
             return False
         
-        # 取消订单
+        # ﮒﮔﭘﻟ؟۱ﮒ
         success = await engine.cancel_order(broker_order_id)
         
         return success
     
     async def _update_position(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """更新持仓"""
+        """ﮔﺑﮔﺍﮔﻛﭨ"""
         order = context['order']
         
-        # 查询订单成交情况
+        # ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮔﻛﭦ۳ﮔﮒﭖ
         order_status = await self.order_service.query_order(order['id'])
         
         if order_status['status'] != 'filled':
-            raise Exception("订单未成�?)
+            raise Exception("ﻟ؟۱ﮒﮔ۹ﮔﻛﭦ?)
         
-        # 更新持仓
+        # ﮔﺑﮔﺍﮔﻛﭨ
         if order['direction'] == 'buy':
-            # 买入：增加持�?
+            # ﻛﺗﺍﮒ۴ﺅﺙﮒ۱ﮒ ﮔﻛﭨ?
             position = await self.position_service.increase_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -430,7 +430,7 @@ class OrderSaga:
                 trade_id=order_status.get('trade_id')
             )
         else:
-            # 卖出：减少持�?
+            # ﮒﮒﭦﺅﺙﮒﮒﺍﮔﻛﭨ?
             position = await self.position_service.decrease_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -444,13 +444,13 @@ class OrderSaga:
         }
     
     async def _rollback_position(self, context: Dict[str, Any], result: Dict[str, Any]) -> bool:
-        """回滚持仓"""
+        """ﮒﮔﭨﮔﻛﭨ"""
         order = context['order']
         position = result['position']
         
-        # 回滚持仓
+        # ﮒﮔﭨﮔﻛﭨ
         if order['direction'] == 'buy':
-            # 买入回滚：减少持�?
+            # ﻛﺗﺍﮒ۴ﮒﮔﭨﺅﺙﮒﮒﺍﮔﻛﭨ?
             success = await self.position_service.decrease_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -458,7 +458,7 @@ class OrderSaga:
                 price=position['avg_cost']
             )
         else:
-            # 卖出回滚：增加持�?
+            # ﮒﮒﭦﮒﮔﭨﺅﺙﮒ۱ﮒ ﮔﻛﭨ?
             success = await self.position_service.increase_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -471,9 +471,9 @@ class OrderSaga:
 
 ---
 
-## 3. Saga协调器服�?
+## 3. Sagaﮒﻟﺍﮒ۷ﮔﮒ?
 
-### 3.1 协调器实�?
+### 3.1 ﮒﻟﺍﮒ۷ﮒ؟ﻝ?
 
 ```python
 from typing import Dict, Any, Optional
@@ -481,59 +481,59 @@ import uuid
 import json
 
 class SagaCoordinator:
-    """Saga协调�?""
+    """Sagaﮒﻟﺍﮒ?""
     
     def __init__(self, saga_repository):
         self.saga_repository = saga_repository
         self.active_sagas: Dict[str, Saga] = {}
     
     async def start_saga(self, saga: Saga) -> str:
-        """启动Saga"""
-        # 保存Saga
+        """ﮒﺁﮒ۷Saga"""
+        # ﻛﺟﮒ­Saga
         await self.saga_repository.save_saga(saga)
         
-        # 添加到活跃列�?
+        # ﮔﺓﭨﮒ ﮒﺍﮔﺑﭨﻟﺓﮒﻟ۰?
         self.active_sagas[saga.saga_id] = saga
         
-        # 异步执行Saga
+        # ﮒﺙﮔ­۴ﮔ۶ﻟ۰Saga
         asyncio.create_task(self._execute_saga(saga))
         
         return saga.saga_id
     
     async def _execute_saga(self, saga: Saga) -> None:
-        """执行Saga"""
+        """ﮔ۶ﻟ۰Saga"""
         try:
-            # 执行Saga
+            # ﮔ۶ﻟ۰Saga
             success = await saga.execute()
             
-            # 更新Saga状�?
+            # ﮔﺑﮔﺍSagaﻝﭘﮔ?
             await self.saga_repository.update_saga_status(
                 saga.saga_id,
                 saga.status,
                 saga.context
             )
             
-            # 从活跃列表移�?
+            # ﻛﭨﮔﺑﭨﻟﺓﮒﻟ۰۷ﻝ۶ﭨﻠ?
             if saga.saga_id in self.active_sagas:
                 del self.active_sagas[saga.saga_id]
         
         except Exception as e:
-            print(f"Saga执行异常: {e}")
+            print(f"Sagaﮔ۶ﻟ۰ﮒﺙﮒﺕﺕ: {e}")
             
-            # 更新Saga状态为失败
+            # ﮔﺑﮔﺍSagaﻝﭘﮔﻛﺕﭦﮒ۳ﺎﻟﺑ۴
             await self.saga_repository.update_saga_status(
                 saga.saga_id,
                 SagaStatus.FAILED,
                 saga.context
             )
             
-            # 从活跃列表移�?
+            # ﻛﭨﮔﺑﭨﻟﺓﮒﻟ۰۷ﻝ۶ﭨﻠ?
             if saga.saga_id in self.active_sagas:
                 del self.active_sagas[saga.saga_id]
     
     async def get_saga_status(self, saga_id: str) -> Optional[Dict[str, Any]]:
-        """获取Saga状�?""
-        # 先查活跃列表
+        """ﻟﺓﮒSagaﻝﭘﮔ?""
+        # ﮒﮔ۴ﮔﺑﭨﻟﺓﮒﻟ۰۷
         if saga_id in self.active_sagas:
             saga = self.active_sagas[saga_id]
             return {
@@ -546,7 +546,7 @@ class SagaCoordinator:
                 'updated_at': saga.updated_at.isoformat()
             }
         
-        # 查数据库
+        # ﮔ۴ﮔﺍﮔ؟ﮒﭦ
         saga = await self.saga_repository.find_saga(saga_id)
         
         if not saga:
@@ -561,21 +561,21 @@ class SagaCoordinator:
         }
     
     async def compensate_saga(self, saga_id: str) -> bool:
-        """手动补偿Saga"""
+        """ﮔﮒ۷ﻟ۰۴ﮒﺟSaga"""
         saga = await self.saga_repository.find_saga(saga_id)
         
         if not saga:
             return False
         
-        # 重建Saga对象
+        # ﻠﮒﭨﭦSagaﮒﺁﺗﻟﺎ۰
         saga_obj = Saga(saga['saga_id'], saga['saga_name'])
         saga_obj.status = SagaStatus(saga['status'])
         saga_obj.context = json.loads(saga['context'])
         
-        # 执行补偿
+        # ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟ
         success = await saga_obj.compensate()
         
-        # 更新状�?
+        # ﮔﺑﮔﺍﻝﭘﮔ?
         await self.saga_repository.update_saga_status(
             saga_id,
             saga_obj.status,
@@ -587,12 +587,12 @@ class SagaCoordinator:
 
 ---
 
-## 4. Saga持久化设�?
+## 4. Sagaﮔﻛﺗﮒﻟ؟ﺝﻟ؟?
 
-### 4.1 Saga表结�?
+### 4.1 Sagaﻟ۰۷ﻝﭨﮔ?
 
 ```sql
--- Saga事务�?
+-- Sagaﻛﭦﮒ۰ﻟ۰?
 CREATE TABLE saga_transactions (
     id BIGSERIAL PRIMARY KEY,
     saga_id VARCHAR(100) NOT NULL UNIQUE,
@@ -607,7 +607,7 @@ CREATE TABLE saga_transactions (
     error_message TEXT
 );
 
--- Saga步骤�?
+-- Sagaﮔ­۴ﻠ۹۳ﻟ۰?
 CREATE TABLE saga_steps (
     id BIGSERIAL PRIMARY KEY,
     saga_id VARCHAR(100) NOT NULL,
@@ -622,7 +622,7 @@ CREATE TABLE saga_steps (
     FOREIGN KEY (saga_id) REFERENCES saga_transactions(saga_id)
 );
 
--- 索引
+-- ﻝﺑ۱ﮒﺙ
 CREATE INDEX idx_saga_transactions_status ON saga_transactions(status);
 CREATE INDEX idx_saga_transactions_created_at ON saga_transactions(created_at);
 CREATE INDEX idx_saga_steps_saga_id ON saga_steps(saga_id);
@@ -631,82 +631,82 @@ CREATE INDEX idx_saga_steps_status ON saga_steps(status);
 
 ---
 
-## 5. 故障恢复机制
+## 5. ﮔﻠﮔ۱ﮒ۳ﮔﭦﮒﭘ
 
-### 5.1 故障检�?
+### 5.1 ﮔﻠﮔ۲ﮔﭖ?
 
 ```python
 class SagaRecoveryService:
-    """Saga故障恢复服务"""
+    """Sagaﮔﻠﮔ۱ﮒ۳ﮔﮒ۰"""
     
     def __init__(self, saga_coordinator: SagaCoordinator, saga_repository):
         self.coordinator = saga_coordinator
         self.repository = saga_repository
     
     async def detect_failed_sagas(self) -> List[Dict[str, Any]]:
-        """检测失败的Saga"""
-        # 查询超时的Saga
+        """ﮔ۲ﮔﭖﮒ۳ﺎﻟﺑ۴ﻝSaga"""
+        # ﮔ۴ﻟﺁ۱ﻟﭘﮔﭘﻝSaga
         timeout_sagas = await self.repository.find_timeout_sagas(timeout_minutes=30)
         
-        # 查询异常状态的Saga
+        # ﮔ۴ﻟﺁ۱ﮒﺙﮒﺕﺕﻝﭘﮔﻝSaga
         failed_sagas = await self.repository.find_sagas_by_status(SagaStatus.FAILED)
         
         return timeout_sagas + failed_sagas
     
     async def recover_saga(self, saga_id: str) -> bool:
-        """恢复Saga"""
+        """ﮔ۱ﮒ۳Saga"""
         saga = await self.repository.find_saga(saga_id)
         
         if not saga:
             return False
         
-        # 根据状态决定恢复策�?
+        # ﮔ ﺗﮔ؟ﻝﭘﮔﮒﺏﮒ؟ﮔ۱ﮒ۳ﻝ­ﻝ?
         if saga['status'] == SagaStatus.RUNNING.value:
-            # 执行中的Saga：重新执�?
+            # ﮔ۶ﻟ۰ﻛﺕ­ﻝSagaﺅﺙﻠﮔﺍﮔ۶ﻟ۰?
             return await self._retry_saga(saga)
         elif saga['status'] == SagaStatus.COMPENSATING.value:
-            # 补偿中的Saga：继续补�?
+            # ﻟ۰۴ﮒﺟﻛﺕ­ﻝSagaﺅﺙﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒ?
             return await self._continue_compensate(saga)
         elif saga['status'] == SagaStatus.FAILED.value:
-            # 失败的Saga：手动处�?
+            # ﮒ۳ﺎﻟﺑ۴ﻝSagaﺅﺙﮔﮒ۷ﮒ۳ﻝ?
             return await self._manual_recovery(saga)
         
         return False
     
     async def _retry_saga(self, saga: Dict[str, Any]) -> bool:
-        """重试Saga"""
-        # TODO: 实现重试逻辑
+        """ﻠﻟﺁSaga"""
+        # TODO: ﮒ؟ﻝﺍﻠﻟﺁﻠﭨﻟﺝ
         return False
     
     async def _continue_compensate(self, saga: Dict[str, Any]) -> bool:
-        """继续补偿"""
-        # TODO: 实现继续补偿逻辑
+        """ﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒﺟ"""
+        # TODO: ﮒ؟ﻝﺍﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒﺟﻠﭨﻟﺝ
         return False
     
     async def _manual_recovery(self, saga: Dict[str, Any]) -> bool:
-        """手动恢复"""
-        # TODO: 实现手动恢复逻辑
+        """ﮔﮒ۷ﮔ۱ﮒ۳"""
+        # TODO: ﮒ؟ﻝﺍﮔﮒ۷ﮔ۱ﮒ۳ﻠﭨﻟﺝ
         return False
 ```
 
 ---
 
-## 6. 性能与监�?
+## 6. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 6.1 性能指标
+### 6.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| 指标 | 目标�?| 备注 |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮒ۳ﮔﺏ۷ |
 |------|--------|------|
-| **Saga执行时间** | < 5�?| 包含所有步�?|
-| **补偿时间** | < 10�?| 包含所有补偿步�?|
-| **并发Saga�?* | 100 | 同时执行的Saga数量 |
-| **成功�?* | �?99% | Saga成功完成�?|
+| **Sagaﮔ۶ﻟ۰ﮔﭘﻠﺑ** | < 5ﻝ۶?| ﮒﮒ،ﮔﮔﮔ­۴ﻠ۹?|
+| **ﻟ۰۴ﮒﺟﮔﭘﻠﺑ** | < 10ﻝ۶?| ﮒﮒ،ﮔﮔﻟ۰۴ﮒﺟﮔ­۴ﻠ۹?|
+| **ﮒﺗﭘﮒSagaﮔ?* | 100 | ﮒﮔﭘﮔ۶ﻟ۰ﻝSagaﮔﺍﻠ |
+| **ﮔﮒﻝ?* | ﻗ?99% | Sagaﮔﮒﮒ؟ﮔﻝ?|
 
-### 6.2 监控指标
+### 6.2 ﻝﮔ۶ﮔﮔ 
 
 ```python
 class SagaMonitor:
-    """Saga监控"""
+    """Sagaﻝﮔ۶"""
     
     def __init__(self):
         self.metrics = {
@@ -723,7 +723,7 @@ class SagaMonitor:
         saga: Saga,
         execution_time: float
     ) -> None:
-        """记录Saga完成"""
+        """ﻟ؟ﺍﮒﺛSagaﮒ؟ﮔ"""
         self.metrics['total_sagas'] += 1
         
         if saga.status == SagaStatus.COMPLETED:
@@ -733,14 +733,14 @@ class SagaMonitor:
         else:
             self.metrics['failed_sagas'] += 1
         
-        # 更新平均执行时间
+        # ﮔﺑﮔﺍﮒﺗﺏﮒﮔ۶ﻟ۰ﮔﭘﻠﺑ
         self.metrics['avg_execution_time'] = (
             (self.metrics['avg_execution_time'] * (self.metrics['total_sagas'] - 1) + execution_time)
             / self.metrics['total_sagas']
         )
     
     async def get_metrics(self) -> Dict[str, Any]:
-        """获取监控指标"""
+        """ﻟﺓﮒﻝﮔ۶ﮔﮔ """
         return {
             **self.metrics,
             'success_rate': (
@@ -752,5 +752,5 @@ class SagaMonitor:
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
-**下一�?*: P0-6 账户管理详细设计
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻛﺕﻛﺕﮔ­?*: P0-6 ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰

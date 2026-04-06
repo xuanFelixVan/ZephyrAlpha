@@ -4,63 +4,63 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?
-standard_type: 专业量化机构设计文档
-applicable_scope: 模拟交易系统
-compliance_level: 架构标准
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
+compliance_level: ﮔﭘﮔﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# A股规则引擎设计文�?
+# Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 
-> 清风量化系统 v5.0 - A股规则引擎详细设�?
-> **索引**: `DESIGN_A_STOCK_RULES_001`
-> **设计时间**: 3-5�?
-> **核心定位**: 统一管理A股市场交易规则，确保模拟交易符合真实市场规则
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟?
+> **ﻝﺑ۱ﮒﺙ**: `DESIGN_A_STOCK_RULES_001`
+> **ﻟ؟ﺝﻟ؟۰ﮔﭘﻠﺑ**: 3-5ﮒ۳?
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﻛﺕﻝ؟۰ﻝAﻟ۰ﮒﺕﮒﭦﻛﭦ۳ﮔﻟ۶ﮒﺅﺙﻝ۰؟ﻛﺟﮔ۷۰ﮔﻛﭦ۳ﮔﻝ؛۵ﮒﻝﮒ؟ﮒﺕﮒﭦﻟ۶ﮒ
 
-## 1. 设计原则
+## 1. ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-| 原则 | 说明 | 实现方式 |
+| ﮒﮒ | ﻟﺁﺑﮔ | ﮒ؟ﻝﺍﮔﺗﮒﺙ |
 |------|------|----------|
-| **规则即配�?* | 所有规则以YAML配置定义，不写死代码 | 规则配置文件 + 动态加�?|
-| **模块化设�?* | 不同规则类型独立模块，便于维护扩�?| 规则分类体系 + 插件机制 |
-| **高性能检�?* | 规则检查需高性能，不影响交易执行 | 规则缓存 + 并行检�?|
-| **完整覆盖** | 覆盖A股所有核心交易规�?| T+1、涨跌停、ST、费用、风�?|
-| **精确模拟** | 规则执行结果与真实市场一�?| 基于真实交易规则验证 |
+| **ﻟ۶ﮒﮒﺏﻠﻝﺛ?* | ﮔﮔﻟ۶ﮒﻛﭨ۴YAMLﻠﻝﺛ؟ﮒ؟ﻛﺗﺅﺙﻛﺕﮒﮔ­ﭨﻛﭨ۲ﻝ  | ﻟ۶ﮒﻠﻝﺛ؟ﮔﻛﭨﭘ + ﮒ۷ﮔﮒ ﻟﺛ?|
+| **ﮔ۷۰ﮒﮒﻟ؟ﺝﻟ؟?* | ﻛﺕﮒﻟ۶ﮒﻝﺎﭨﮒﻝ؛ﻝ،ﮔ۷۰ﮒﺅﺙﻛﺝﺟﻛﭦﻝﭨﺑﮔ۳ﮔ۸ﮒﺎ?| ﻟ۶ﮒﮒﻝﺎﭨﻛﺛﻝﺏﭨ + ﮔﻛﭨﭘﮔﭦﮒﭘ |
+| **ﻠ،ﮔ۶ﻟﺛﮔ۲ﮔ?* | ﻟ۶ﮒﮔ۲ﮔ۴ﻠﻠ،ﮔ۶ﻟﺛﺅﺙﻛﺕﮒﺛﺎﮒﻛﭦ۳ﮔﮔ۶ﻟ۰ | ﻟ۶ﮒﻝﺙﮒ­ + ﮒﺗﭘﻟ۰ﮔ۲ﮔ?|
+| **ﮒ؟ﮔﺑﻟ۵ﻝ** | ﻟ۵ﻝAﻟ۰ﮔﮔﮔ ﺕﮒﺟﻛﭦ۳ﮔﻟ۶ﮒ?| T+1ﻙﮔﭘ۷ﻟﺓﮒﻙSTﻙﻟﺑﺗﻝ۷ﻙﻠ۲ﻠ?|
+| **ﻝﺎﺝﻝ۰؟ﮔ۷۰ﮔ** | ﻟ۶ﮒﮔ۶ﻟ۰ﻝﭨﮔﻛﺕﻝﮒ؟ﮒﺕﮒﭦﻛﺕﻟ?| ﮒﭦﻛﭦﻝﮒ؟ﻛﭦ۳ﮔﻟ۶ﮒﻠ۹ﻟﺁ |
 
-## 2. 规则分类体系
+## 2. ﻟ۶ﮒﮒﻝﺎﭨﻛﺛﻝﺏﭨ
 
-### 2.1 交易规则类（Trade Rules�?
-- **T+1规则**：当日买入次日可卖出
-- **涨跌停规�?*：主�?0%、创业板/科创�?0%、ST�?%
-- **ST股票规则**：特殊交易限�?
-- **新股规则**：首日涨跌幅限制、临时停�?
-- **大宗交易规则**：大宗交易限�?
+### 2.1 ﻛﭦ۳ﮔﻟ۶ﮒﻝﺎﭨﺅﺙTrade Rulesﺅﺙ?
+- **T+1ﻟ۶ﮒ**ﺅﺙﮒﺛﮔ۴ﻛﺗﺍﮒ۴ﮔ؛۰ﮔ۴ﮒﺁﮒﮒﭦ
+- **ﮔﭘ۷ﻟﺓﮒﻟ۶ﮒ?*ﺅﺙﻛﺕﭨﮔ?0%ﻙﮒﻛﺕﮔﺟ/ﻝ۶ﮒﮔ?0%ﻙSTﻟ?%
+- **STﻟ۰ﻝ۴۷ﻟ۶ﮒ**ﺅﺙﻝﺗﮔ؟ﻛﭦ۳ﮔﻠﮒ?
+- **ﮔﺍﻟ۰ﻟ۶ﮒ**ﺅﺙﻠ۵ﮔ۴ﮔﭘ۷ﻟﺓﮒﺗﻠﮒﭘﻙﻛﺕﺑﮔﭘﮒﻝ?
+- **ﮒ۳۶ﮒ؟ﻛﭦ۳ﮔﻟ۶ﮒ**ﺅﺙﮒ۳۶ﮒ؟ﻛﭦ۳ﮔﻠﮒ?
 
-### 2.2 费用规则类（Fee Rules�?
-- **佣金规则**：万三，最�?元，双向收取
-- **印花税规�?*：千一，卖出时单向收取
-- **过户费规�?*：万0.1，沪深差异，双向收取
-- **规费规则**：万0.2，双向收�?
-- **滑点模型**：基于流动性的动态滑点计�?
+### 2.2 ﻟﺑﺗﻝ۷ﻟ۶ﮒﻝﺎﭨﺅﺙFee Rulesﺅﺙ?
+- **ﻛﺛ۲ﻠﻟ۶ﮒ**ﺅﺙﻛﺕﻛﺕﺅﺙﮔﻛﺛ?ﮒﺅﺙﮒﮒﮔﭘﮒ
+- **ﮒﺍﻟﺎﻝ۷ﻟ۶ﮒ?*ﺅﺙﮒﻛﺕﺅﺙﮒﮒﭦﮔﭘﮒﮒﮔﭘﮒ
+- **ﻟﺟﮔﺓﻟﺑﺗﻟ۶ﮒ?*ﺅﺙﻛﺕ0.1ﺅﺙﮔﺎ۹ﮔﺓﺎﮒﺓ؟ﮒﺙﺅﺙﮒﮒﮔﭘﮒ
+- **ﻟ۶ﻟﺑﺗﻟ۶ﮒ**ﺅﺙﻛﺕ0.2ﺅﺙﮒﮒﮔﭘﮒ?
+- **ﮔﭨﻝﺗﮔ۷۰ﮒ**ﺅﺙﮒﭦﻛﭦﮔﭖﮒ۷ﮔ۶ﻝﮒ۷ﮔﮔﭨﻝﺗﻟ؟۰ﻝ؟?
 
-### 2.3 风险规则类（Risk Rules�?
-- **单股仓位限制**：单票最大仓位比�?
-- **总仓位限�?*：总持仓市值限�?
-- **日换手率限制**：当日最大换手率
-- **黑名单限�?*：禁止交易的股票列表
-- **流动性限�?*：最小成交量要求
+### 2.3 ﻠ۲ﻠ۸ﻟ۶ﮒﻝﺎﭨﺅﺙRisk Rulesﺅﺙ?
+- **ﮒﻟ۰ﻛﭨﻛﺛﻠﮒﭘ**ﺅﺙﮒﻝ۴۷ﮔﮒ۳۶ﻛﭨﻛﺛﮔﺁﻛﺝ?
+- **ﮔﭨﻛﭨﻛﺛﻠﮒ?*ﺅﺙﮔﭨﮔﻛﭨﮒﺕﮒﺙﻠﮒ?
+- **ﮔ۴ﮔ۱ﮔﻝﻠﮒﭘ**ﺅﺙﮒﺛﮔ۴ﮔﮒ۳۶ﮔ۱ﮔﻝ
+- **ﻠﭨﮒﮒﻠﮒ?*ﺅﺙﻝ۵ﮔ­۱ﻛﭦ۳ﮔﻝﻟ۰ﻝ۴۷ﮒﻟ۰۷
+- **ﮔﭖﮒ۷ﮔ۶ﻠﮒ?*ﺅﺙﮔﮒﺍﮔﻛﭦ۳ﻠﻟ۵ﮔﺎ
 
-### 2.4 市场规则类（Market Rules�?
-- **交易时间规则**：开盘、收盘、午间休�?
-- **集合竞价规则**：开�?收盘集合竞价机制
-- **连续竞价规则**：价格优先、时间优�?
-- **临时停牌规则**：涨跌停触发的临时停�?
+### 2.4 ﮒﺕﮒﭦﻟ۶ﮒﻝﺎﭨﺅﺙMarket Rulesﺅﺙ?
+- **ﻛﭦ۳ﮔﮔﭘﻠﺑﻟ۶ﮒ**ﺅﺙﮒﺙﻝﻙﮔﭘﻝﻙﮒﻠﺑﻛﺙﮒﺕ?
+- **ﻠﮒﻝ،ﻛﭨﺓﻟ۶ﮒ**ﺅﺙﮒﺙﻝ?ﮔﭘﻝﻠﮒﻝ،ﻛﭨﺓﮔﭦﮒﭘ
+- **ﻟﺟﻝﭨ­ﻝ،ﻛﭨﺓﻟ۶ﮒ**ﺅﺙﻛﭨﺓﮔ ﺙﻛﺙﮒﻙﮔﭘﻠﺑﻛﺙﮒ?
+- **ﻛﺕﺑﮔﭘﮒﻝﻟ۶ﮒ**ﺅﺙﮔﭘ۷ﻟﺓﮒﻟ۶۵ﮒﻝﻛﺕﺑﮔﭘﮒﻝ?
 
-## 3. 架构设计
+## 3. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 3.1 类图设计
+### 3.1 ﻝﺎﭨﮒﺝﻟ؟ﺝﻟ؟۰
 
 ```mermaid
 classDiagram
@@ -112,11 +112,11 @@ classDiagram
         +check_turnover_limit(daily_turnover) RuleResult
     }
     
-    AStockRuleEngine --> BaseRule : 包含
-    BaseRule <|-- T1Rule : 继承
-    BaseRule <|-- LimitUpDownRule : 继承
-    BaseRule <|-- TradingFeeRule : 继承
-    BaseRule <|-- RiskRule : 继承
+    AStockRuleEngine --> BaseRule : ﮒﮒ،
+    BaseRule <|-- T1Rule : ﻝﭨ۶ﮔﺟ
+    BaseRule <|-- LimitUpDownRule : ﻝﭨ۶ﮔﺟ
+    BaseRule <|-- TradingFeeRule : ﻝﭨ۶ﮔﺟ
+    BaseRule <|-- RiskRule : ﻝﭨ۶ﮔﺟ
     
     class RuleResult {
         +passed: bool
@@ -135,7 +135,7 @@ classDiagram
     }
 ```
 
-### 3.2 核心接口定义
+### 3.2 ﮔ ﺕﮒﺟﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ```python
 from abc import ABC, abstractmethod
@@ -146,47 +146,47 @@ from enum import Enum
 
 
 class RuleCategory(str, Enum):
-    """规则分类"""
-    TRADE = "trade"      # 交易规则
-    FEE = "fee"          # 费用规则
-    RISK = "risk"        # 风险规则
-    MARKET = "market"    # 市场规则
+    """ﻟ۶ﮒﮒﻝﺎﭨ"""
+    TRADE = "trade"      # ﻛﭦ۳ﮔﻟ۶ﮒ
+    FEE = "fee"          # ﻟﺑﺗﻝ۷ﻟ۶ﮒ
+    RISK = "risk"        # ﻠ۲ﻠ۸ﻟ۶ﮒ
+    MARKET = "market"    # ﮒﺕﮒﭦﻟ۶ﮒ
 
 
 class RuleSeverity(str, Enum):
-    """规则严重程度"""
-    INFO = "info"        # 信息
-    WARNING = "warning"  # 警告
-    ERROR = "error"      # 错误
-    CRITICAL = "critical" # 严重
+    """ﻟ۶ﮒﻛﺕ۴ﻠﻝ۷ﮒﭦ۵"""
+    INFO = "info"        # ﻛﺟ۰ﮔﺁ
+    WARNING = "warning"  # ﻟ­۵ﮒ
+    ERROR = "error"      # ﻠﻟﺁﺁ
+    CRITICAL = "critical" # ﻛﺕ۴ﻠ
 
 
 @dataclass
 class RuleResult:
-    """规则检查结�?""
-    passed: bool                    # 是否通过
-    rule_id: str                    # 规则ID
-    rule_name: str                  # 规则名称
-    category: RuleCategory          # 规则分类
-    severity: RuleSeverity          # 严重程度
-    message: str                    # 检查结果消�?
-    details: Dict[str, Any] = None  # 详细结果
-    actions: List[str] = None       # 建议动作
+    """ﻟ۶ﮒﮔ۲ﮔ۴ﻝﭨﮔ?""
+    passed: bool                    # ﮔﺁﮒ۵ﻠﻟﺟ
+    rule_id: str                    # ﻟ۶ﮒID
+    rule_name: str                  # ﻟ۶ﮒﮒﻝ۶ﺍ
+    category: RuleCategory          # ﻟ۶ﮒﮒﻝﺎﭨ
+    severity: RuleSeverity          # ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵
+    message: str                    # ﮔ۲ﮔ۴ﻝﭨﮔﮔﭘﮔ?
+    details: Dict[str, Any] = None  # ﻟﺁ۵ﻝﭨﻝﭨﮔ
+    actions: List[str] = None       # ﮒﭨﭦﻟ؟؟ﮒ۷ﻛﺛ
 
 
 @dataclass
 class FeeResult:
-    """费用计算结果"""
-    commission: float = 0.0          # 佣金
-    stamp_tax: float = 0.0           # 印花�?
-    transfer_fee: float = 0.0        # 过户�?
-    misc_fee: float = 0.0            # 其他费用
-    total_fee: float = 0.0           # 总费�?
-    breakdown: Dict[str, float] = None  # 费用明细
+    """ﻟﺑﺗﻝ۷ﻟ؟۰ﻝ؟ﻝﭨﮔ"""
+    commission: float = 0.0          # ﻛﺛ۲ﻠ
+    stamp_tax: float = 0.0           # ﮒﺍﻟﺎﻝ۷?
+    transfer_fee: float = 0.0        # ﻟﺟﮔﺓﻟﺑ?
+    misc_fee: float = 0.0            # ﮒﭘﻛﭨﻟﺑﺗﻝ۷
+    total_fee: float = 0.0           # ﮔﭨﻟﺑﺗﻝ?
+    breakdown: Dict[str, float] = None  # ﻟﺑﺗﻝ۷ﮔﻝﭨ
 
 
 class BaseRule(ABC):
-    """规则基类"""
+    """ﻟ۶ﮒﮒﭦﻝﺎﭨ"""
     
     def __init__(self, rule_id: str, rule_name: str, category: RuleCategory, 
                  enabled: bool = True, config: Dict[str, Any] = None):
@@ -198,31 +198,31 @@ class BaseRule(ABC):
     
     @abstractmethod
     def check(self, context: Dict[str, Any]) -> RuleResult:
-        """检查规�?
+        """ﮔ۲ﮔ۴ﻟ۶ﮒ?
         
-        参数:
-            context: 检查上下文，包含订单、持仓、市场数据等
+        ﮒﮔﺍ:
+            context: ﮔ۲ﮔ۴ﻛﺕﻛﺕﮔﺅﺙﮒﮒ،ﻟ؟۱ﮒﻙﮔﻛﭨﻙﮒﺕﮒﭦﮔﺍﮔ؟ﻝ­
             
-        返回:
-            RuleResult: 规则检查结�?
+        ﻟﺟﮒ:
+            RuleResult: ﻟ۶ﮒﮔ۲ﮔ۴ﻝﭨﮔ?
         """
         pass
     
     def get_description(self) -> str:
-        """获取规则描述"""
+        """ﻟﺓﮒﻟ۶ﮒﮔﻟﺟﺍ"""
         return f"{self.rule_name} ({self.rule_id})"
     
     def enable(self):
-        """启用规则"""
+        """ﮒﺁﻝ۷ﻟ۶ﮒ"""
         self.enabled = True
     
     def disable(self):
-        """禁用规则"""
+        """ﻝ۵ﻝ۷ﻟ۶ﮒ"""
         self.enabled = False
 
 
 class AStockRuleEngine:
-    """A股规则引�?""
+    """Aﻟ۰ﻟ۶ﮒﮒﺙﮔ?""
     
     def __init__(self, config_path: str = None):
         self.rule_registry: Dict[str, BaseRule] = {}
@@ -233,18 +233,18 @@ class AStockRuleEngine:
             self._initialize_rules()
     
     def register_rule(self, rule: BaseRule):
-        """注册规则"""
+        """ﮔﺏ۷ﮒﻟ۶ﮒ"""
         self.rule_registry[rule.rule_id] = rule
     
     def check_order(self, order: Dict[str, Any], context: Dict[str, Any] = None) -> List[RuleResult]:
-        """检查订单合规�?
+        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮒﻟ۶ﮔ?
         
-        参数:
-            order: 订单数据
-            context: 额外上下文（持仓、账户、市场数据等�?
+        ﮒﮔﺍ:
+            order: ﻟ؟۱ﮒﮔﺍﮔ؟
+            context: ﻠ۱ﮒ۳ﻛﺕﻛﺕﮔﺅﺙﮔﻛﭨﻙﻟﺑ۵ﮔﺓﻙﮒﺕﮒﭦﮔﺍﮔ؟ﻝ­ﺅﺙ?
             
-        返回:
-            List[RuleResult]: 所有规则检查结�?
+        ﻟﺟﮒ:
+            List[RuleResult]: ﮔﮔﻟ۶ﮒﮔ۲ﮔ۴ﻝﭨﮔ?
         """
         results = []
         check_context = {"order": order}
@@ -255,7 +255,7 @@ class AStockRuleEngine:
             if not rule.enabled:
                 continue
             
-            # 只检查与订单相关的规�?
+            # ﮒ۹ﮔ۲ﮔ۴ﻛﺕﻟ؟۱ﮒﻝﺕﮒﺏﻝﻟ۶ﮒ?
             if rule.category in [RuleCategory.TRADE, RuleCategory.FEE, RuleCategory.RISK]:
                 result = rule.check(check_context)
                 results.append(result)
@@ -263,27 +263,27 @@ class AStockRuleEngine:
         return results
     
     def calculate_fees(self, order: Dict[str, Any], market_data: Dict[str, Any] = None) -> FeeResult:
-        """计算交易费用
+        """ﻟ؟۰ﻝ؟ﻛﭦ۳ﮔﻟﺑﺗﻝ۷
         
-        参数:
-            order: 订单数据
-            market_data: 市场数据（用于滑点计算等�?
+        ﮒﮔﺍ:
+            order: ﻟ؟۱ﮒﮔﺍﮔ؟
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟ﺅﺙﻝ۷ﻛﭦﮔﭨﻝﺗﻟ؟۰ﻝ؟ﻝ­ﺅﺙ?
             
-        返回:
-            FeeResult: 费用计算结果
+        ﻟﺟﮒ:
+            FeeResult: ﻟﺑﺗﻝ۷ﻟ؟۰ﻝ؟ﻝﭨﮔ
         """
-        # 获取费用规则
+        # ﻟﺓﮒﻟﺑﺗﻝ۷ﻟ۶ﮒ
         fee_rules = [r for r in self.rule_registry.values() 
                     if r.category == RuleCategory.FEE and r.enabled]
         
-        # 默认费用结果
+        # ﻠﭨﻟ؟۳ﻟﺑﺗﻝ۷ﻝﭨﮔ
         fee_result = FeeResult()
         
-        # 应用所有费用规�?
+        # ﮒﭦﻝ۷ﮔﮔﻟﺑﺗﻝ۷ﻟ۶ﮒ?
         for rule in fee_rules:
             if hasattr(rule, 'calculate_fees'):
                 rule_fee_result = rule.calculate_fees(order, market_data)
-                # 合并费用结果
+                # ﮒﮒﺗﭘﻟﺑﺗﻝ۷ﻝﭨﮔ
                 fee_result.commission += rule_fee_result.commission
                 fee_result.stamp_tax += rule_fee_result.stamp_tax
                 fee_result.transfer_fee += rule_fee_result.transfer_fee
@@ -299,97 +299,97 @@ class AStockRuleEngine:
         return fee_result
     
     def load_config(self, config_path: str):
-        """加载规则配置"""
+        """ﮒ ﻟﺛﺛﻟ۶ﮒﻠﻝﺛ؟"""
         import yaml
         with open(config_path, 'r', encoding='utf-8') as f:
             self.rule_configs = yaml.safe_load(f)
     
     def _initialize_rules(self):
-        """根据配置初始化规�?""
-        # 这里会根据配置创建具体的规则实例
-        # 实际实现中会使用工厂模式
+        """ﮔ ﺗﮔ؟ﻠﻝﺛ؟ﮒﮒ۶ﮒﻟ۶ﮒ?""
+        # ﻟﺟﻠﻛﺙﮔ ﺗﮔ؟ﻠﻝﺛ؟ﮒﮒﭨﭦﮒﺓﻛﺛﻝﻟ۶ﮒﮒ؟ﻛﺝ
+        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﻛﺙﻛﺛﺟﻝ۷ﮒﺓ۴ﮒﮔ۷۰ﮒﺙ
         pass
 ```
 
-## 4. 现有代码整合方案
+## 4. ﻝﺍﮔﻛﭨ۲ﻝ ﮔﺑﮒﮔﺗﮔ۰
 
-### 4.1 已有代码模块
+### 4.1 ﮒﺓﺎﮔﻛﭨ۲ﻝ ﮔ۷۰ﮒ
 
-#### 4.1.1 T+1交易系统（来�?technical_documentation.md�?
+#### 4.1.1 T+1ﻛﭦ۳ﮔﻝﺏﭨﻝﭨﺅﺙﮔ۴ﻟ?technical_documentation.mdﺅﺙ?
 ```python
 class T1TradingSystem:
-    """T+1交易制度量化"""
+    """T+1ﻛﭦ۳ﮔﮒﭘﮒﭦ۵ﻠﮒ"""
     T1_RULES = {
-        '当日买入锁定': True,
-        '次日解除限制': True,
-        '适用范围': 'A股市场所有品�?,
-        '例外情况': ['ETF基金', '可转�?, '期权']
+        'ﮒﺛﮔ۴ﻛﺗﺍﮒ۴ﻠﮒ؟': True,
+        'ﮔ؛۰ﮔ۴ﻟ۶۲ﻠ۳ﻠﮒﭘ': True,
+        'ﻠﻝ۷ﻟﮒﺑ': 'Aﻟ۰ﮒﺕﮒﭦﮔﮔﮒﻝ۶?,
+        'ﻛﺝﮒ۳ﮔﮒﭖ': ['ETFﮒﭦﻠ', 'ﮒﺁﻟﺛ؛ﮒ?, 'ﮔﮔ']
     }
     
     def check_sell_permission(self, position, buy_date, current_date):
-        """检查卖出权�?""
+        """ﮔ۲ﮔ۴ﮒﮒﭦﮔﻠ?""
         if buy_date == current_date:
             return {
                 'can_sell': False,
-                'reason': 'T+1制度：当日买入不能卖�?,
+                'reason': 'T+1ﮒﭘﮒﭦ۵ﺅﺙﮒﺛﮔ۴ﻛﺗﺍﮒ۴ﻛﺕﻟﺛﮒﮒ?,
                 'available_date': self.next_trading_day(buy_date)
             }
         return {'can_sell': True}
 ```
 
-**整合方案**�?
-- 重构�?`T1Rule` 类，继承 `BaseRule`
-- 保留核心算法，适配统一接口
-- 添加配置支持，支持例外品种配�?
+**ﮔﺑﮒﮔﺗﮔ۰**ﺅﺙ?
+- ﻠﮔﻛﺕ?`T1Rule` ﻝﺎﭨﺅﺙﻝﭨ۶ﮔﺟ `BaseRule`
+- ﻛﺟﻝﮔ ﺕﮒﺟﻝ؟ﮔﺏﺅﺙﻠﻠﻝﭨﻛﺕﮔ۴ﮒ۲
+- ﮔﺓﭨﮒ ﻠﻝﺛ؟ﮔﺁﮔﺅﺙﮔﺁﮔﻛﺝﮒ۳ﮒﻝ۶ﻠﻝﺛ?
 
-#### 4.1.2 涨跌停板系统（来�?technical_documentation.md�?
+#### 4.1.2 ﮔﭘ۷ﻟﺓﮒﮔﺟﻝﺏﭨﻝﭨﺅﺙﮔ۴ﻟ?technical_documentation.mdﺅﺙ?
 ```python
 class LimitUpDownSystem:
-    """涨跌停板制度量化"""
+    """ﮔﭘ۷ﻟﺓﮒﮔﺟﮒﭘﮒﭦ۵ﻠﮒ"""
     LIMIT_RULES = {
-        '主板（沪�?0/深市000�?: {
-            '涨跌停幅�?: 0.10,
-            'ST股票幅度': 0.05,
-            '首日上市幅度': 0.44
+        'ﻛﺕﭨﮔﺟﺅﺙﮔﺎ۹ﮒﺕ?0/ﮔﺓﺎﮒﺕ000ﺅﺙ?: {
+            'ﮔﭘ۷ﻟﺓﮒﮒﺗﮒﭦ?: 0.10,
+            'STﻟ۰ﻝ۴۷ﮒﺗﮒﭦ۵': 0.05,
+            'ﻠ۵ﮔ۴ﻛﺕﮒﺕﮒﺗﮒﭦ۵': 0.44
         },
-        '创业板（300�?: {
-            '涨跌停幅�?: 0.20,
-            'ST股票幅度': 0.20,
-            '首日上市幅度': 0.44
+        'ﮒﻛﺕﮔﺟﺅﺙ300ﺅﺙ?: {
+            'ﮔﭘ۷ﻟﺓﮒﮒﺗﮒﭦ?: 0.20,
+            'STﻟ۰ﻝ۴۷ﮒﺗﮒﭦ۵': 0.20,
+            'ﻠ۵ﮔ۴ﻛﺕﮒﺕﮒﺗﮒﭦ۵': 0.44
         },
-        '科创板（688�?: {
-            '涨跌停幅�?: 0.20,
-            'ST股票幅度': 0.20,
-            '首日上市幅度':无涨跌停
+        'ﻝ۶ﮒﮔﺟﺅﺙ688ﺅﺙ?: {
+            'ﮔﭘ۷ﻟﺓﮒﮒﺗﮒﭦ?: 0.20,
+            'STﻟ۰ﻝ۴۷ﮒﺗﮒﭦ۵': 0.20,
+            'ﻠ۵ﮔ۴ﻛﺕﮒﺕﮒﺗﮒﭦ۵':ﮔ ﮔﭘ۷ﻟﺓﮒ
         }
     }
 ```
 
-**整合方案**�?
-- 重构�?`LimitUpDownRule` �?
-- 扩展规则配置，支持更多板类型
-- 添加价格检查、涨跌停判断方法
+**ﮔﺑﮒﮔﺗﮔ۰**ﺅﺙ?
+- ﻠﮔﻛﺕ?`LimitUpDownRule` ﻝﺎ?
+- ﮔ۸ﮒﺎﻟ۶ﮒﻠﻝﺛ؟ﺅﺙﮔﺁﮔﮔﺑﮒ۳ﮔﺟﻝﺎﭨﮒ
+- ﮔﺓﭨﮒ ﻛﭨﺓﮔ ﺙﮔ۲ﮔ۴ﻙﮔﭘ۷ﻟﺓﮒﮒ۳ﮔ­ﮔﺗﮔﺏ
 
-#### 4.1.3 交易费用常量（来�?technical_documentation.md�?
+#### 4.1.3 ﻛﭦ۳ﮔﻟﺑﺗﻝ۷ﮒﺕﺕﻠﺅﺙﮔ۴ﻟ?technical_documentation.mdﺅﺙ?
 ```python
 TRADING_FEES = {
-    '佣金': {'rate': 0.0003, 'min': 5, '双向': True},
-    '印花�?: {'rate': 0.001, 'min': 0, '单向': 'sell'},
-    '过户�?: {'rate': 0.00001, 'min': 1, '双向': True, 'market': 'SH'},
-    '规费': {'rate': 0.00002, 'min': 0, '双向': True}
+    'ﻛﺛ۲ﻠ': {'rate': 0.0003, 'min': 5, 'ﮒﮒ': True},
+    'ﮒﺍﻟﺎﻝ۷?: {'rate': 0.001, 'min': 0, 'ﮒﮒ': 'sell'},
+    'ﻟﺟﮔﺓﻟﺑ?: {'rate': 0.00001, 'min': 1, 'ﮒﮒ': True, 'market': 'SH'},
+    'ﻟ۶ﻟﺑﺗ': {'rate': 0.00002, 'min': 0, 'ﮒﮒ': True}
 }
 ```
 
-**整合方案**�?
-- 重构�?`TradingFeeRule` �?
-- 实现精确的费用计算算�?
-- 支持沪深市场差异
-- 添加最低费用、阶梯费率支�?
+**ﮔﺑﮒﮔﺗﮔ۰**ﺅﺙ?
+- ﻠﮔﻛﺕ?`TradingFeeRule` ﻝﺎ?
+- ﮒ؟ﻝﺍﻝﺎﺝﻝ۰؟ﻝﻟﺑﺗﻝ۷ﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ?
+- ﮔﺁﮔﮔﺎ۹ﮔﺓﺎﮒﺕﮒﭦﮒﺓ؟ﮒﺙ
+- ﮔﺓﭨﮒ ﮔﻛﺛﻟﺑﺗﻝ۷ﻙﻠﭘﮔ۱ﺁﻟﺑﺗﻝﮔﺁﮔ?
 
-#### 4.1.4 风控规则引擎（来�?RISK_RULE_ENGINE.md�?
+#### 4.1.4 ﻠ۲ﮔ۶ﻟ۶ﮒﮒﺙﮔﺅﺙﮔ۴ﻟ?RISK_RULE_ENGINE.mdﺅﺙ?
 ```python
 class RiskRule:
-    """风控规则"""
+    """ﻠ۲ﮔ۶ﻟ۶ﮒ"""
     def __init__(self, rule_id, name, category, severity, condition, action, enabled=True):
         self.rule_id = rule_id
         self.name = name
@@ -400,44 +400,44 @@ class RiskRule:
         self.enabled = enabled
 ```
 
-**整合方案**�?
-- 重用现有 `RiskRule` 类设�?
-- 适配到统一规则接口
-- 扩展为A股特定风险规�?
+**ﮔﺑﮒﮔﺗﮔ۰**ﺅﺙ?
+- ﻠﻝ۷ﻝﺍﮔ `RiskRule` ﻝﺎﭨﻟ؟ﺝﻟ؟?
+- ﻠﻠﮒﺍﻝﭨﻛﺕﻟ۶ﮒﮔ۴ﮒ۲
+- ﮔ۸ﮒﺎﻛﺕﭦAﻟ۰ﻝﺗﮒ؟ﻠ۲ﻠ۸ﻟ۶ﮒ?
 
-#### 4.1.5 涨停板分析（来自 limit-up-analysis.md�?
+#### 4.1.5 ﮔﭘ۷ﮒﮔﺟﮒﮔﺅﺙﮔ۴ﻟ۹ limit-up-analysis.mdﺅﺙ?
 ```python
 class LimitUpAnalyzer:
-    """涨停板分�?""
+    """ﮔﭘ۷ﮒﮔﺟﮒﮔ?""
     def is_limit_up(self, stock_data, limit_rate=0.10):
-        """判断是否涨停"""
+        """ﮒ۳ﮔ­ﮔﺁﮒ۵ﮔﭘ۷ﮒ"""
         change_pct = stock_data['change_pct']
         return abs(change_pct - limit_rate * 100) < 0.1
 ```
 
-**整合方案**�?
-- 整合�?`LimitUpDownRule` 中作为辅助方�?
-- 用于市场数据分析和规则验�?
+**ﮔﺑﮒﮔﺗﮔ۰**ﺅﺙ?
+- ﮔﺑﮒﮒ?`LimitUpDownRule` ﻛﺕ­ﻛﺛﻛﺕﭦﻟﺝﮒ۸ﮔﺗﮔﺏ?
+- ﻝ۷ﻛﭦﮒﺕﮒﭦﮔﺍﮔ؟ﮒﮔﮒﻟ۶ﮒﻠ۹ﻟﺁ?
 
-### 4.2 代码迁移计划
+### 4.2 ﻛﭨ۲ﻝ ﻟﺟﻝ۶ﭨﻟ؟۰ﮒ
 
-1. **第一阶段�?-2天）**：创建基础框架
-   - 实现 `BaseRule`、`RuleResult`、`FeeResult` 等基础�?
-   - 实现 `AStockRuleEngine` 核心引擎
+1. **ﻝ؛؛ﻛﺕﻠﭘﮔ؟ﭖﺅﺙ?-2ﮒ۳۸ﺅﺙ**ﺅﺙﮒﮒﭨﭦﮒﭦﻝ۰ﮔ۰ﮔﭘ
+   - ﮒ؟ﻝﺍ `BaseRule`ﻙ`RuleResult`ﻙ`FeeResult` ﻝ­ﮒﭦﻝ۰ﻝﺎ?
+   - ﮒ؟ﻝﺍ `AStockRuleEngine` ﮔ ﺕﮒﺟﮒﺙﮔ
 
-2. **第二阶段�?-3天）**：迁移现有规�?
-   - 迁移 T+1 规则�?`T1Rule`
-   - 迁移涨跌停规则为 `LimitUpDownRule`
-   - 迁移费用规则�?`TradingFeeRule`
+2. **ﻝ؛؛ﻛﭦﻠﭘﮔ؟ﭖﺅﺙ?-3ﮒ۳۸ﺅﺙ**ﺅﺙﻟﺟﻝ۶ﭨﻝﺍﮔﻟ۶ﮒ?
+   - ﻟﺟﻝ۶ﭨ T+1 ﻟ۶ﮒﻛﺕ?`T1Rule`
+   - ﻟﺟﻝ۶ﭨﮔﭘ۷ﻟﺓﮒﻟ۶ﮒﻛﺕﭦ `LimitUpDownRule`
+   - ﻟﺟﻝ۶ﭨﻟﺑﺗﻝ۷ﻟ۶ﮒﻛﺕ?`TradingFeeRule`
 
-3. **第三阶段�?-2天）**：扩展功�?
-   - 添加ST股票规则
-   - 添加新股规则
-   - 添加风险规则集成
+3. **ﻝ؛؛ﻛﺕﻠﭘﮔ؟ﭖﺅﺙ?-2ﮒ۳۸ﺅﺙ**ﺅﺙﮔ۸ﮒﺎﮒﻟ?
+   - ﮔﺓﭨﮒ STﻟ۰ﻝ۴۷ﻟ۶ﮒ
+   - ﮔﺓﭨﮒ ﮔﺍﻟ۰ﻟ۶ﮒ
+   - ﮔﺓﭨﮒ ﻠ۲ﻠ۸ﻟ۶ﮒﻠﮔ
 
-## 5. 规则配置模板
+## 5. ﻟ۶ﮒﻠﻝﺛ؟ﮔ۷۰ﮔﺟ
 
-### 5.1 YAML配置结构
+### 5.1 YAMLﻠﻝﺛ؟ﻝﭨﮔ
 
 ```yaml
 # config/rules/a_stock_rules.yaml
@@ -446,42 +446,42 @@ engine: "AStockRuleEngine"
 last_updated: "2026-04-02"
 
 rules:
-  # ============ 交易规则 ============
+  # ============ ﻛﭦ۳ﮔﻟ۶ﮒ ============
   - rule_id: "TRADE_001"
-    rule_name: "T+1交易规则"
+    rule_name: "T+1ﻛﭦ۳ﮔﻟ۶ﮒ"
     category: "trade"
     enabled: true
     severity: "error"
     class: "T1Rule"
     config:
       lock_days: 1
-      exceptions: ["ETF", "可转�?, "期权"]
+      exceptions: ["ETF", "ﮒﺁﻟﺛ؛ﮒ?, "ﮔﮔ"]
       check_method: "check_sell_permission"
   
   - rule_id: "TRADE_002"
-    rule_name: "涨跌停规�?
+    rule_name: "ﮔﭘ۷ﻟﺓﮒﻟ۶ﮒ?
     category: "trade"
     enabled: true
     severity: "error"
     class: "LimitUpDownRule"
     config:
       limit_rates:
-        "主板":
+        "ﻛﺕﭨﮔﺟ":
           normal: 0.10
           st: 0.05
           first_day: 0.44
-        "创业�?:
+        "ﮒﻛﺕﮔ?:
           normal: 0.20
           st: 0.20
           first_day: 0.44
-        "科创�?:
+        "ﻝ۶ﮒﮔ?:
           normal: 0.20
           st: 0.20
-          first_day: null  # 无涨跌停
-      precision: 0.01  # 价格精度
+          first_day: null  # ﮔ ﮔﭘ۷ﻟﺓﮒ
+      precision: 0.01  # ﻛﭨﺓﮔ ﺙﻝﺎﺝﮒﭦ۵
   
   - rule_id: "TRADE_003"
-    rule_name: "ST股票规则"
+    rule_name: "STﻟ۰ﻝ۴۷ﻟ۶ﮒ"
     category: "trade"
     enabled: true
     severity: "warning"
@@ -489,103 +489,103 @@ rules:
     config:
       st_prefixes: ["*ST", "ST"]
       warning_days: 30
-      delisting_threshold: 3  # 连续3年亏�?
+      delisting_threshold: 3  # ﻟﺟﻝﭨ­3ﮒﺗﺑﻛﭦﮔ?
   
-  # ============ 费用规则 ============
+  # ============ ﻟﺑﺗﻝ۷ﻟ۶ﮒ ============
   - rule_id: "FEE_001"
-    rule_name: "佣金规则"
+    rule_name: "ﻛﺛ۲ﻠﻟ۶ﮒ"
     category: "fee"
     enabled: true
     severity: "info"
     class: "CommissionRule"
     config:
-      rate: 0.0003  # 万三
+      rate: 0.0003  # ﻛﺕﻛﺕ
       min_amount: 5.0
       both_sides: true
       calculate_method: "percentage_with_min"
   
   - rule_id: "FEE_002"
-    rule_name: "印花税规�?
+    rule_name: "ﮒﺍﻟﺎﻝ۷ﻟ۶ﮒ?
     category: "fee"
     enabled: true
     severity: "info"
     class: "StampTaxRule"
     config:
-      rate: 0.001  # 千一
-      apply_on: "sell"  # 卖出时收�?
-      exempt_categories: ["ETF", "国�?]
+      rate: 0.001  # ﮒﻛﺕ
+      apply_on: "sell"  # ﮒﮒﭦﮔﭘﮔﭘﮒ?
+      exempt_categories: ["ETF", "ﮒﺛﮒ?]
   
   - rule_id: "FEE_003"
-    rule_name: "过户费规�?
+    rule_name: "ﻟﺟﮔﺓﻟﺑﺗﻟ۶ﮒ?
     category: "fee"
     enabled: true
     severity: "info"
     class: "TransferFeeRule"
     config:
-      sh_rate: 0.00001  # 沪市�?.1
-      sz_rate: 0.00002  # 深市�?.2
+      sh_rate: 0.00001  # ﮔﺎ۹ﮒﺕﻛﺕ?.1
+      sz_rate: 0.00002  # ﮔﺓﺎﮒﺕﻛﺕ?.2
       min_amount: 1.0
       both_sides: true
   
   - rule_id: "FEE_004"
-    rule_name: "滑点模型"
+    rule_name: "ﮔﭨﻝﺗﮔ۷۰ﮒ"
     category: "fee"
     enabled: true
     severity: "info"
     class: "SlippageRule"
     config:
-      base_rate: 0.0002  # 基础滑点�?.02%
+      base_rate: 0.0002  # ﮒﭦﻝ۰ﮔﭨﻝﺗﻝ?.02%
       liquidity_factor: true
       volatility_factor: true
       market_cap_weight: true
   
-  # ============ 风险规则 ============
+  # ============ ﻠ۲ﻠ۸ﻟ۶ﮒ ============
   - rule_id: "RISK_001"
-    rule_name: "单股仓位限制"
+    rule_name: "ﮒﻟ۰ﻛﭨﻛﺛﻠﮒﭘ"
     category: "risk"
     enabled: true
     severity: "error"
     class: "PositionLimitRule"
     config:
-      max_position_ratio: 0.10  # 单股最�?0%
-      max_position_value: 1000000  # 单股最�?00�?
-      apply_to: ["A�?, "港股"]
+      max_position_ratio: 0.10  # ﮒﻟ۰ﮔﮒ۳?0%
+      max_position_value: 1000000  # ﮒﻟ۰ﮔﮒ۳?00ﻛﺕ?
+      apply_to: ["Aﻟ?, "ﮔﺕﺁﻟ۰"]
   
   - rule_id: "RISK_002"
-    rule_name: "总仓位限�?
+    rule_name: "ﮔﭨﻛﭨﻛﺛﻠﮒ?
     category: "risk"
     enabled: true
     severity: "error"
     class: "TotalPositionRule"
     config:
-      max_total_ratio: 0.80  # 总仓位最�?0%
-      cash_reserve_ratio: 0.05  # 现金储备5%
+      max_total_ratio: 0.80  # ﮔﭨﻛﭨﻛﺛﮔﮒ۳?0%
+      cash_reserve_ratio: 0.05  # ﻝﺍﻠﮒ۷ﮒ۳5%
   
   - rule_id: "RISK_003"
-    rule_name: "日换手率限制"
+    rule_name: "ﮔ۴ﮔ۱ﮔﻝﻠﮒﭘ"
     category: "risk"
     enabled: true
     severity: "warning"
     class: "TurnoverLimitRule"
     config:
-      max_daily_turnover: 0.30  # 日换手率不超�?0%
+      max_daily_turnover: 0.30  # ﮔ۴ﮔ۱ﮔﻝﻛﺕﻟﭘﻟﺟ?0%
       calculation_period: "daily"
   
-  # ============ 市场规则 ============
+  # ============ ﮒﺕﮒﭦﻟ۶ﮒ ============
   - rule_id: "MARKET_001"
-    rule_name: "交易时间规则"
+    rule_name: "ﻛﭦ۳ﮔﮔﭘﻠﺑﻟ۶ﮒ"
     category: "market"
     enabled: true
     severity: "error"
     class: "TradingHoursRule"
     config:
       market_hours:
-        "A�?:
+        "Aﻟ?:
           morning_open: "09:30"
           morning_close: "11:30"
           afternoon_open: "13:00"
           afternoon_close: "15:00"
-        "港股":
+        "ﮔﺕﺁﻟ۰":
           morning_open: "09:30"
           morning_close: "12:00"
           afternoon_open: "13:00"
@@ -593,87 +593,87 @@ rules:
       holidays: "config/holidays.yaml"
   
   - rule_id: "MARKET_002"
-    rule_name: "集合竞价规则"
+    rule_name: "ﻠﮒﻝ،ﻛﭨﺓﻟ۶ﮒ"
     category: "market"
     enabled: true
     severity: "info"
     class: "AuctionRule"
     config:
       auction_periods:
-        "开盘竞�?: "09:15-09:25"
-        "收盘竞价": "14:57-15:00"
+        "ﮒﺙﻝﻝ،ﻛﭨ?: "09:15-09:25"
+        "ﮔﭘﻝﻝ،ﻛﭨﺓ": "14:57-15:00"
       price_discovery: "volume_weighted"
       match_method: "price_time_priority"
 ```
 
-### 5.2 配置说明
+### 5.2 ﻠﻝﺛ؟ﻟﺁﺑﮔ
 
-1. **规则ID命名规范**：`{类别}_{序号}`，如 `TRADE_001`
-2. **类别枚举**：`trade`、`fee`、`risk`、`market`
-3. **严重程度**：`info`、`warning`、`error`、`critical`
-4. **类名引用**：规则实现类的全路径�?
-5. **配置参数**：每个规则特有的配置参数
+1. **ﻟ۶ﮒIDﮒﺛﮒﻟ۶ﻟ**ﺅﺙ`{ﻝﺎﭨﮒ،}_{ﮒﭦﮒﺓ}`ﺅﺙﮒ۵ `TRADE_001`
+2. **ﻝﺎﭨﮒ،ﮔﻛﺕﺝ**ﺅﺙ`trade`ﻙ`fee`ﻙ`risk`ﻙ`market`
+3. **ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵**ﺅﺙ`info`ﻙ`warning`ﻙ`error`ﻙ`critical`
+4. **ﻝﺎﭨﮒﮒﺙﻝ۷**ﺅﺙﻟ۶ﮒﮒ؟ﻝﺍﻝﺎﭨﻝﮒ۷ﻟﺓﺁﮒﺝﮒ?
+5. **ﻠﻝﺛ؟ﮒﮔﺍ**ﺅﺙﮔﺁﻛﺕ۹ﻟ۶ﮒﻝﺗﮔﻝﻠﻝﺛ؟ﮒﮔﺍ
 
-## 6. 集成到多引擎架构
+## 6. ﻠﮔﮒﺍﮒ۳ﮒﺙﮔﮔﭘﮔ
 
-### 6.1 与引擎适配器的集成
+### 6.1 ﻛﺕﮒﺙﮔﻠﻠﮒ۷ﻝﻠﮔ
 
 ```python
 class VnPySimulationAdapter(BaseEngineAdapter):
-    """vn.py模拟交易适配�?""
+    """vn.pyﮔ۷۰ﮔﻛﭦ۳ﮔﻠﻠﮒ?""
     
     def __init__(self, config: VnPyConfig):
         super().__init__(config)
-        # 初始化A股规则引�?
+        # ﮒﮒ۶ﮒAﻟ۰ﻟ۶ﮒﮒﺙﮔ?
         self.rule_engine = AStockRuleEngine("config/rules/a_stock_rules.yaml")
     
     def submit_order(self, order: UnifiedOrder) -> Result:
-        """提交订单"""
-        # 1. 规则检�?
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
+        # 1. ﻟ۶ﮒﮔ۲ﮔ?
         rule_results = self.rule_engine.check_order(order.to_dict())
         
-        # 2. 检查是否有错误级别的规则违�?
+        # 2. ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮔﻠﻟﺁﺁﻝﭦ۶ﮒ،ﻝﻟ۶ﮒﻟﺟﻟ۶?
         critical_errors = [r for r in rule_results 
                           if r.severity in [RuleSeverity.ERROR, RuleSeverity.CRITICAL] 
                           and not r.passed]
         
         if critical_errors:
             error_msg = "; ".join([f"{r.rule_name}: {r.message}" for r in critical_errors])
-            return Result.error(f"订单违反规则: {error_msg}")
+            return Result.error(f"ﻟ؟۱ﮒﻟﺟﮒﻟ۶ﮒ: {error_msg}")
         
-        # 3. 计算费用
+        # 3. ﻟ؟۰ﻝ؟ﻟﺑﺗﻝ۷
         fee_result = self.rule_engine.calculate_fees(order.to_dict())
         order.metadata['fees'] = fee_result
         
-        # 4. 执行订单
+        # 4. ﮔ۶ﻟ۰ﻟ؟۱ﮒ
         return self._execute_order(order)
 ```
 
-### 6.2 统一规则检查点
+### 6.2 ﻝﭨﻛﺕﻟ۶ﮒﮔ۲ﮔ۴ﻝﺗ
 
-1. **下单前检�?*：订单合规性、风险限�?
-2. **费用计算**：精确计算交易成�?
-3. **成交后验�?*：检查成交价格是否符合规�?
-4. **持仓监控**：持续监控持仓是否符合规�?
+1. **ﻛﺕﮒﮒﮔ۲ﮔ?*ﺅﺙﻟ؟۱ﮒﮒﻟ۶ﮔ۶ﻙﻠ۲ﻠ۸ﻠﮒ?
+2. **ﻟﺑﺗﻝ۷ﻟ؟۰ﻝ؟**ﺅﺙﻝﺎﺝﻝ۰؟ﻟ؟۰ﻝ؟ﻛﭦ۳ﮔﮔﮔ?
+3. **ﮔﻛﭦ۳ﮒﻠ۹ﻟﺁ?*ﺅﺙﮔ۲ﮔ۴ﮔﻛﭦ۳ﻛﭨﺓﮔ ﺙﮔﺁﮒ۵ﻝ؛۵ﮒﻟ۶ﮒ?
+4. **ﮔﻛﭨﻝﮔ۶**ﺅﺙﮔﻝﭨ­ﻝﮔ۶ﮔﻛﭨﮔﺁﮒ۵ﻝ؛۵ﮒﻟ۶ﮒ?
 
-## 7. 测试方案
+## 7. ﮔﭖﻟﺁﮔﺗﮔ۰
 
-### 7.1 单元测试
+### 7.1 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 import pytest
 from a_stock_rules import AStockRuleEngine, T1Rule, LimitUpDownRule
 
 class TestAStockRuleEngine:
-    """A股规则引擎测�?""
+    """Aﻟ۰ﻟ۶ﮒﮒﺙﮔﮔﭖﻟﺁ?""
     
     def setup_method(self):
         self.engine = AStockRuleEngine()
-        self.engine.register_rule(T1Rule("TRADE_001", "T+1规则", RuleCategory.TRADE))
-        self.engine.register_rule(LimitUpDownRule("TRADE_002", "涨跌停规�?, RuleCategory.TRADE))
+        self.engine.register_rule(T1Rule("TRADE_001", "T+1ﻟ۶ﮒ", RuleCategory.TRADE))
+        self.engine.register_rule(LimitUpDownRule("TRADE_002", "ﮔﭘ۷ﻟﺓﮒﻟ۶ﮒ?, RuleCategory.TRADE))
     
     def test_t1_rule_check(self):
-        """测试T+1规则检�?""
+        """ﮔﭖﻟﺁT+1ﻟ۶ﮒﮔ۲ﮔ?""
         order = {
             "symbol": "000001.SZ",
             "side": "SELL",
@@ -686,10 +686,10 @@ class TestAStockRuleEngine:
         t1_result = [r for r in results if r.rule_id == "TRADE_001"][0]
         
         assert not t1_result.passed
-        assert "T+1制度" in t1_result.message
+        assert "T+1ﮒﭘﮒﭦ۵" in t1_result.message
     
     def test_limit_up_rule_check(self):
-        """测试涨跌停规则检�?""
+        """ﮔﭖﻟﺁﮔﭘ۷ﻟﺓﮒﻟ۶ﮒﮔ۲ﮔ?""
         order = {
             "symbol": "000001.SZ",
             "side": "BUY",
@@ -702,10 +702,10 @@ class TestAStockRuleEngine:
         limit_result = [r for r in results if r.rule_id == "TRADE_002"][0]
         
         assert not limit_result.passed
-        assert "涨停" in limit_result.message
+        assert "ﮔﭘ۷ﮒ" in limit_result.message
     
     def test_fee_calculation(self):
-        """测试费用计算"""
+        """ﮔﭖﻟﺁﻟﺑﺗﻝ۷ﻟ؟۰ﻝ؟"""
         order = {
             "symbol": "000001.SZ",
             "side": "BUY",
@@ -715,111 +715,111 @@ class TestAStockRuleEngine:
         
         fee_result = self.engine.calculate_fees(order)
         
-        assert fee_result.commission == max(100000 * 0.0003, 5.0)  # 30元或最�?�?
-        assert fee_result.stamp_tax == 0  # 买入不收印花�?
+        assert fee_result.commission == max(100000 * 0.0003, 5.0)  # 30ﮒﮔﮔﻛﺛ?ﮒ?
+        assert fee_result.stamp_tax == 0  # ﻛﺗﺍﮒ۴ﻛﺕﮔﭘﮒﺍﻟﺎﻝ۷?
         assert fee_result.total_fee > 0
 ```
 
-### 7.2 集成测试
+### 7.2 ﻠﮔﮔﭖﻟﺁ
 
-1. **与vn.py集成测试**：验证规则引擎在vn.py适配器中的正确�?
-2. **多规则组合测�?*：测试多个规则同时生效的场景
-3. **性能测试**：测试规则检查的性能影响
-4. **边界条件测试**：测试各种边界情�?
+1. **ﻛﺕvn.pyﻠﮔﮔﭖﻟﺁ**ﺅﺙﻠ۹ﻟﺁﻟ۶ﮒﮒﺙﮔﮒ۷vn.pyﻠﻠﮒ۷ﻛﺕ­ﻝﮔ­۲ﻝ۰؟ﮔ?
+2. **ﮒ۳ﻟ۶ﮒﻝﭨﮒﮔﭖﻟﺁ?*ﺅﺙﮔﭖﻟﺁﮒ۳ﻛﺕ۹ﻟ۶ﮒﮒﮔﭘﻝﮔﻝﮒﭦﮔﺁ
+3. **ﮔ۶ﻟﺛﮔﭖﻟﺁ**ﺅﺙﮔﭖﻟﺁﻟ۶ﮒﮔ۲ﮔ۴ﻝﮔ۶ﻟﺛﮒﺛﺎﮒ
+4. **ﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁ**ﺅﺙﮔﭖﻟﺁﮒﻝ۶ﻟﺝﺗﻝﮔﮒ?
 
-### 7.3 测试数据
+### 7.3 ﮔﭖﻟﺁﮔﺍﮔ؟
 
-- **正常交易场景**：普通买卖订�?
-- **规则违规场景**：T+1违规、涨跌停违规、仓位超�?
-- **边界场景**：最低佣金、最大仓位、涨停价成交
-- **异常场景**：无效股票代码、异常价格、零数量
+- **ﮔ­۲ﮒﺕﺕﻛﭦ۳ﮔﮒﭦﮔﺁ**ﺅﺙﮔ؟ﻠﻛﺗﺍﮒﻟ؟۱ﮒ?
+- **ﻟ۶ﮒﻟﺟﻟ۶ﮒﭦﮔﺁ**ﺅﺙT+1ﻟﺟﻟ۶ﻙﮔﭘ۷ﻟﺓﮒﻟﺟﻟ۶ﻙﻛﭨﻛﺛﻟﭘﻠ?
+- **ﻟﺝﺗﻝﮒﭦﮔﺁ**ﺅﺙﮔﻛﺛﻛﺛ۲ﻠﻙﮔﮒ۳۶ﻛﭨﻛﺛﻙﮔﭘ۷ﮒﻛﭨﺓﮔﻛﭦ۳
+- **ﮒﺙﮒﺕﺕﮒﭦﮔﺁ**ﺅﺙﮔ ﮔﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﻙﮒﺙﮒﺕﺕﻛﭨﺓﮔ ﺙﻙﻠﭘﮔﺍﻠ
 
-## 8. 实施计划
+## 8. ﮒ؟ﮔﺛﻟ؟۰ﮒ
 
-### 8.1 阶段划分
+### 8.1 ﻠﭘﮔ؟ﭖﮒﮒ
 
-| 阶段 | 时间 | 目标 | 交付�?|
+| ﻠﭘﮔ؟ﭖ | ﮔﭘﻠﺑ | ﻝ؟ﮔ  | ﻛﭦ۳ﻛﭨﻝ?|
 |------|------|------|--------|
-| **设计阶段** | 3-5�?| 完成详细设计文档 | 本设计文档、接口定义、配置模�?|
-| **开发阶�?* | 10-15�?| 实现核心功能 | 规则引擎代码、规则实现类、单元测�?|
-| **测试阶段** | 5-7�?| 完成全面测试 | 测试用例、性能报告、集成测试结�?|
-| **集成阶段** | 3-5�?| 集成到多引擎架构 | 适配器集成代码、配置示�?|
-| **优化阶段** | 3-5�?| 性能优化和功能完�?| 优化代码、文档完善、示例策�?|
+| **ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ** | 3-5ﮒ۳?| ﮒ؟ﮔﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ | ﮔ؛ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﻠﻝﺛ؟ﮔ۷۰ﮔ?|
+| **ﮒﺙﮒﻠﭘﮔ؟?* | 10-15ﮒ۳?| ﮒ؟ﻝﺍﮔ ﺕﮒﺟﮒﻟﺛ | ﻟ۶ﮒﮒﺙﮔﻛﭨ۲ﻝ ﻙﻟ۶ﮒﮒ؟ﻝﺍﻝﺎﭨﻙﮒﮒﮔﭖﻟﺁ?|
+| **ﮔﭖﻟﺁﻠﭘﮔ؟ﭖ** | 5-7ﮒ۳?| ﮒ؟ﮔﮒ۷ﻠ۱ﮔﭖﻟﺁ | ﮔﭖﻟﺁﻝ۷ﻛﺝﻙﮔ۶ﻟﺛﮔ۴ﮒﻙﻠﮔﮔﭖﻟﺁﻝﭨﮔ?|
+| **ﻠﮔﻠﭘﮔ؟ﭖ** | 3-5ﮒ۳?| ﻠﮔﮒﺍﮒ۳ﮒﺙﮔﮔﭘﮔ | ﻠﻠﮒ۷ﻠﮔﻛﭨ۲ﻝ ﻙﻠﻝﺛ؟ﻝ۳ﭦﻛﺝ?|
+| **ﻛﺙﮒﻠﭘﮔ؟ﭖ** | 3-5ﮒ۳?| ﮔ۶ﻟﺛﻛﺙﮒﮒﮒﻟﺛﮒ؟ﮒ?| ﻛﺙﮒﻛﭨ۲ﻝ ﻙﮔﮔ۰۲ﮒ؟ﮒﻙﻝ۳ﭦﻛﺝﻝ­ﻝ?|
 
-### 8.2 资源需�?
+### 8.2 ﻟﭖﮔﭦﻠﮔﺎ?
 
-1. **开发资�?*�?
-   - 核心开发工程师�?人（10-15天）
-   - 测试工程师：0.5人（5-7天）
-   - 架构师支持：0.2人（评审和指导）
+1. **ﮒﺙﮒﻟﭖﮔﭦ?*ﺅﺙ?
+   - ﮔ ﺕﮒﺟﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕﺅﺙ?ﻛﭦﭦﺅﺙ10-15ﮒ۳۸ﺅﺙ
+   - ﮔﭖﻟﺁﮒﺓ۴ﻝ۷ﮒﺕﺅﺙ0.5ﻛﭦﭦﺅﺙ5-7ﮒ۳۸ﺅﺙ
+   - ﮔﭘﮔﮒﺕﮔﺁﮔﺅﺙ0.2ﻛﭦﭦﺅﺙﻟﺁﮒ؟۰ﮒﮔﮒﺁﺙﺅﺙ
 
-2. **技术资�?*�?
-   - 测试环境：A股历史数据、模拟交易环�?
-   - 开发工具：Python 3.8+、pytest、性能分析工具
-   - 文档工具：Markdown、Mermaid图表
+2. **ﮔﮔﺁﻟﭖﮔﭦ?*ﺅﺙ?
+   - ﮔﭖﻟﺁﻝﺁﮒ۱ﺅﺙAﻟ۰ﮒﮒﺎﮔﺍﮔ؟ﻙﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺁﮒ۱?
+   - ﮒﺙﮒﮒﺓ۴ﮒﺓﺅﺙPython 3.8+ﻙpytestﻙﮔ۶ﻟﺛﮒﮔﮒﺓ۴ﮒﺓ
+   - ﮔﮔ۰۲ﮒﺓ۴ﮒﺓﺅﺙMarkdownﻙMermaidﮒﺝﻟ۰۷
 
-### 8.3 风险评估与缓�?
+### 8.3 ﻠ۲ﻠ۸ﻟﺁﻛﺙﺍﻛﺕﻝﺙﻟ۶?
 
-| 风险 | 可能�?| 影响 | 缓解措施 |
+| ﻠ۲ﻠ۸ | ﮒﺁﻟﺛﮔ?| ﮒﺛﺎﮒ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |------|--------|------|----------|
-| **规则复杂�?* | �?| �?| 分阶段实现，先核心规则后扩展规则 |
-| **性能问题** | �?| �?| 实现规则缓存，优化检查算�?|
-| **配置复杂�?* | �?| �?| 提供详细配置示例和验证工�?|
-| **集成问题** | �?| �?| 设计清晰接口，提供集成示�?|
-| **维护成本** | �?| �?| 模块化设计，良好文档 |
+| **ﻟ۶ﮒﮒ۳ﮔﮔ?* | ﻠ،?| ﻛﺕ?| ﮒﻠﭘﮔ؟ﭖﮒ؟ﻝﺍﺅﺙﮒﮔ ﺕﮒﺟﻟ۶ﮒﮒﮔ۸ﮒﺎﻟ۶ﮒ |
+| **ﮔ۶ﻟﺛﻠ؟ﻠ۱** | ﻛﺕ?| ﻛﺕ?| ﮒ؟ﻝﺍﻟ۶ﮒﻝﺙﮒ­ﺅﺙﻛﺙﮒﮔ۲ﮔ۴ﻝ؟ﮔﺏ?|
+| **ﻠﻝﺛ؟ﮒ۳ﮔﮔ?* | ﻛﺕ?| ﻛﺛ?| ﮔﻛﺝﻟﺁ۵ﻝﭨﻠﻝﺛ؟ﻝ۳ﭦﻛﺝﮒﻠ۹ﻟﺁﮒﺓ۴ﮒ?|
+| **ﻠﮔﻠ؟ﻠ۱** | ﻛﺛ?| ﻠ،?| ﻟ؟ﺝﻟ؟۰ﮔﺕﮔﺍﮔ۴ﮒ۲ﺅﺙﮔﻛﺝﻠﮔﻝ۳ﭦﻛﺝ?|
+| **ﻝﭨﺑﮔ۳ﮔﮔ؛** | ﻛﺛ?| ﻛﺕ?| ﮔ۷۰ﮒﮒﻟ؟ﺝﻟ؟۰ﺅﺙﻟﺁﮒ۴ﺛﮔﮔ۰۲ |
 
-## 9. 后续扩展
+## 9. ﮒﻝﭨ­ﮔ۸ﮒﺎ
 
-### 9.1 短期扩展�?个月内）
+### 9.1 ﻝ­ﮔﮔ۸ﮒﺎﺅﺙ?ﻛﺕ۹ﮔﮒﺅﺙ
 
-1. **更多A股规�?*：大宗交易规则、融资融券规�?
-2. **港股规则**：港股市场交易规�?
-3. **美股规则**：美股市场交易规�?
-4. **规则可视�?*：规则配置和管理界面
+1. **ﮔﺑﮒ۳Aﻟ۰ﻟ۶ﮒ?*ﺅﺙﮒ۳۶ﮒ؟ﻛﭦ۳ﮔﻟ۶ﮒﻙﻟﻟﭖﻟﮒﺕﻟ۶ﮒ?
+2. **ﮔﺕﺁﻟ۰ﻟ۶ﮒ**ﺅﺙﮔﺕﺁﻟ۰ﮒﺕﮒﭦﻛﭦ۳ﮔﻟ۶ﮒ?
+3. **ﻝﺝﻟ۰ﻟ۶ﮒ**ﺅﺙﻝﺝﻟ۰ﮒﺕﮒﭦﻛﭦ۳ﮔﻟ۶ﮒ?
+4. **ﻟ۶ﮒﮒﺁﻟ۶ﮒ?*ﺅﺙﻟ۶ﮒﻠﻝﺛ؟ﮒﻝ؟۰ﻝﻝﻠ۱
 
-### 9.2 中期扩展�?个月内）
+### 9.2 ﻛﺕ­ﮔﮔ۸ﮒﺎﺅﺙ?ﻛﺕ۹ﮔﮒﺅﺙ
 
-1. **规则学习**：基于历史数据自动优化规则参�?
-2. **智能规则推荐**：根据市场状态推荐适用规则
-3. **规则回测**：规则对策略绩效的影响分�?
-4. **分布式规则引�?*：支持分布式规则检�?
+1. **ﻟ۶ﮒﮒ­۵ﻛﺗ **ﺅﺙﮒﭦﻛﭦﮒﮒﺎﮔﺍﮔ؟ﻟ۹ﮒ۷ﻛﺙﮒﻟ۶ﮒﮒﮔ?
+2. **ﮔﭦﻟﺛﻟ۶ﮒﮔ۷ﻟ**ﺅﺙﮔ ﺗﮔ؟ﮒﺕﮒﭦﻝﭘﮔﮔ۷ﻟﻠﻝ۷ﻟ۶ﮒ
+3. **ﻟ۶ﮒﮒﮔﭖ**ﺅﺙﻟ۶ﮒﮒﺁﺗﻝ­ﻝ۴ﻝﭨ۸ﮔﻝﮒﺛﺎﮒﮒﮔ?
+4. **ﮒﮒﺕﮒﺙﻟ۶ﮒﮒﺙﮔ?*ﺅﺙﮔﺁﮔﮒﮒﺕﮒﺙﻟ۶ﮒﮔ۲ﮔ?
 
-### 9.3 长期扩展�?年内�?
+### 9.3 ﻠﺟﮔﮔ۸ﮒﺎﺅﺙ?ﮒﺗﺑﮒﺅﺙ?
 
-1. **AI规则生成**：使用AI生成交易规则
-2. **实时规则调整**：根据市场波动实时调整规�?
-3. **跨市场规�?*：支持多市场统一规则管理
-4. **规则市场**：用户共享和交易规则模板
+1. **AIﻟ۶ﮒﻝﮔ**ﺅﺙﻛﺛﺟﻝ۷AIﻝﮔﻛﭦ۳ﮔﻟ۶ﮒ
+2. **ﮒ؟ﮔﭘﻟ۶ﮒﻟﺍﮔﺑ**ﺅﺙﮔ ﺗﮔ؟ﮒﺕﮒﭦﮔﺏ۱ﮒ۷ﮒ؟ﮔﭘﻟﺍﮔﺑﻟ۶ﮒ?
+3. **ﻟﺓ۷ﮒﺕﮒﭦﻟ۶ﮒ?*ﺅﺙﮔﺁﮔﮒ۳ﮒﺕﮒﭦﻝﭨﻛﺕﻟ۶ﮒﻝ؟۰ﻝ
+4. **ﻟ۶ﮒﮒﺕﮒﭦ**ﺅﺙﻝ۷ﮔﺓﮒﺎﻛﭦ،ﮒﻛﭦ۳ﮔﻟ۶ﮒﮔ۷۰ﮔﺟ
 
-## 10. 文档维护
+## 10. ﮔﮔ۰۲ﻝﭨﺑﮔ۳
 
-### 10.1 文档清单
+### 10.1 ﮔﮔ۰۲ﮔﺕﮒ
 
-1. **本设计文�?*：架构设计和接口定义
-2. **API文档**：规则引擎API参�?
-3. **配置指南**：规则配置详细指�?
-4. **集成指南**：与其他模块集成指南
-5. **用户手册**：最终用户使用手�?
-6. **开发指�?*：规则开发扩展指�?
+1. **ﮔ؛ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?*ﺅﺙﮔﭘﮔﻟ؟ﺝﻟ؟۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+2. **APIﮔﮔ۰۲**ﺅﺙﻟ۶ﮒﮒﺙﮔAPIﮒﻟ?
+3. **ﻠﻝﺛ؟ﮔﮒ**ﺅﺙﻟ۶ﮒﻠﻝﺛ؟ﻟﺁ۵ﻝﭨﮔﮒ?
+4. **ﻠﮔﮔﮒ**ﺅﺙﻛﺕﮒﭘﻛﭨﮔ۷۰ﮒﻠﮔﮔﮒ
+5. **ﻝ۷ﮔﺓﮔﮒ**ﺅﺙﮔﻝﭨﻝ۷ﮔﺓﻛﺛﺟﻝ۷ﮔﮒ?
+6. **ﮒﺙﮒﮔﮒ?*ﺅﺙﻟ۶ﮒﮒﺙﮒﮔ۸ﮒﺎﮔﮒ?
 
-### 10.2 更新机制
+### 10.2 ﮔﺑﮔﺍﮔﭦﮒﭘ
 
-1. **版本控制**：使用语义化版本控制
-2. **变更日志**：记录所有设计变�?
-3. **评审流程**：重大变更需经架构评�?
-4. **文档同步**：代码变更时同步更新文档
+1. **ﻝﮔ؛ﮔ۶ﮒﭘ**ﺅﺙﻛﺛﺟﻝ۷ﻟﺁ­ﻛﺗﮒﻝﮔ؛ﮔ۶ﮒﭘ
+2. **ﮒﮔﺑﮔ۴ﮒﺟ**ﺅﺙﻟ؟ﺍﮒﺛﮔﮔﻟ؟ﺝﻟ؟۰ﮒﮔ?
+3. **ﻟﺁﮒ؟۰ﮔﭖﻝ۷**ﺅﺙﻠﮒ۳۶ﮒﮔﺑﻠﻝﭨﮔﭘﮔﻟﺁﮒ؟?
+4. **ﮔﮔ۰۲ﮒﮔ­۴**ﺅﺙﻛﭨ۲ﻝ ﮒﮔﺑﮔﭘﮒﮔ­۴ﮔﺑﮔﺍﮔﮔ۰۲
 
 ---
 
-**设计评审要点**�?
-1. 规则分类体系是否完整覆盖A股需�?
-2. 接口设计是否清晰易用
-3. 配置模板是否灵活且不易出�?
-4. 性能设计是否能满足实时交易需�?
-5. 集成方案是否与现有架构兼�?
+**ﻟ؟ﺝﻟ؟۰ﻟﺁﮒ؟۰ﻟ۵ﻝﺗ**ﺅﺙ?
+1. ﻟ۶ﮒﮒﻝﺎﭨﻛﺛﻝﺏﭨﮔﺁﮒ۵ﮒ؟ﮔﺑﻟ۵ﻝAﻟ۰ﻠﮔﺎ?
+2. ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰ﮔﺁﮒ۵ﮔﺕﮔﺍﮔﻝ۷
+3. ﻠﻝﺛ؟ﮔ۷۰ﮔﺟﮔﺁﮒ۵ﻝﭖﮔﺑﭨﻛﺕﻛﺕﮔﮒﭦﻠ?
+4. ﮔ۶ﻟﺛﻟ؟ﺝﻟ؟۰ﮔﺁﮒ۵ﻟﺛﮔﭨ۰ﻟﭘﺏﮒ؟ﮔﭘﻛﭦ۳ﮔﻠﮔﺎ?
+5. ﻠﮔﮔﺗﮔ۰ﮔﺁﮒ۵ﻛﺕﻝﺍﮔﮔﭘﮔﮒﺙﮒ؟?
 
-**下一步行�?*�?
-1. 组织设计评审会议
-2. 根据评审意见修改设计
-3. 开始开发阶段任务分�?
-4. 创建开发环境和技术栈准备
+**ﻛﺕﻛﺕﮔ­۴ﻟ۰ﮒ?*ﺅﺙ?
+1. ﻝﭨﻝﭨﻟ؟ﺝﻟ؟۰ﻟﺁﮒ؟۰ﻛﺙﻟ؟؟
+2. ﮔ ﺗﮔ؟ﻟﺁﮒ؟۰ﮔﻟ۶ﻛﺟ؟ﮔﺗﻟ؟ﺝﻟ؟۰
+3. ﮒﺙﮒ۶ﮒﺙﮒﻠﭘﮔ؟ﭖﻛﭨﭨﮒ۰ﮒﻟ۶?
+4. ﮒﮒﭨﭦﮒﺙﮒﻝﺁﮒ۱ﮒﮔﮔﺁﮔ ﮒﮒ۳

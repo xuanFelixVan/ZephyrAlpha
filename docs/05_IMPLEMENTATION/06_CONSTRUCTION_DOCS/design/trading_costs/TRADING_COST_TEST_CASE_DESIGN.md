@@ -4,50 +4,50 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?
-standard_type: 专业量化机构测试设计文档
-applicable_scope: 交易成本模型
-compliance_level: 架构标准
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+applicable_scope: ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒ
+compliance_level: ﮔﭘﮔﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 交易成本测试用例设计
+# ﻛﭦ۳ﮔﮔﮔ؛ﮔﭖﻟﺁﻝ۷ﻛﺝﻟ؟ﺝﻟ؟۰
 
-> 清风量化系统 v5.0 - 交易成本模型测试用例详细设计
-> **索引**: `TEST_TRADING_COSTS_001`
-> **测试类型**: 单元测试、集成测试、性能测试、边界条件测�?
-> **核心目标**: 确保交易成本计算精确、可靠、高性能
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒﮔﭖﻟﺁﻝ۷ﻛﺝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
+> **ﻝﺑ۱ﮒﺙ**: `TEST_TRADING_COSTS_001`
+> **ﮔﭖﻟﺁﻝﺎﭨﮒ**: ﮒﮒﮔﭖﻟﺁﻙﻠﮔﮔﭖﻟﺁﻙﮔ۶ﻟﺛﮔﭖﻟﺁﻙﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁ?
+> **ﮔ ﺕﮒﺟﻝ؟ﮔ **: ﻝ۰؟ﻛﺟﻛﭦ۳ﮔﮔﮔ؛ﻟ؟۰ﻝ؟ﻝﺎﺝﻝ۰؟ﻙﮒﺁﻠ ﻙﻠ،ﮔ۶ﻟﺛ
 
-## 1. 测试策略
+## 1. ﮔﭖﻟﺁﻝ­ﻝ۴
 
-### 1.1 测试级别
+### 1.1 ﮔﭖﻟﺁﻝﭦ۶ﮒ،
 
-| 测试级别 | 测试目标 | 测试方法 | 测试工具 |
+| ﮔﭖﻟﺁﻝﭦ۶ﮒ، | ﮔﭖﻟﺁﻝ؟ﮔ  | ﮔﭖﻟﺁﮔﺗﮔﺏ | ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ |
 |----------|----------|----------|----------|
-| **单元测试** | 验证单个函数/方法正确�?| 白盒测试、边界值分�?| pytest、unittest |
-| **集成测试** | 验证模块间交互正确�?| 接口测试、数据流测试 | pytest、mock |
-| **系统测试** | 验证整个成本计算系统 | 端到端测试、场景测�?| pytest、集成环�?|
-| **性能测试** | 验证计算性能和资源使�?| 压力测试、负载测�?| pytest-benchmark、memory-profiler |
-| **回归测试** | 验证修改不影响现有功�?| 自动化测试套�?| pytest、GitHub Actions |
+| **ﮒﮒﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮒﻛﺕ۹ﮒﺛﮔﺍ/ﮔﺗﮔﺏﮔ­۲ﻝ۰؟ﮔ?| ﻝﺛﻝﮔﭖﻟﺁﻙﻟﺝﺗﻝﮒﺙﮒﮔ?| pytestﻙunittest |
+| **ﻠﮔﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮔ۷۰ﮒﻠﺑﻛﭦ۳ﻛﭦﮔ­۲ﻝ۰؟ﮔ?| ﮔ۴ﮒ۲ﮔﭖﻟﺁﻙﮔﺍﮔ؟ﮔﭖﮔﭖﻟﺁ | pytestﻙmock |
+| **ﻝﺏﭨﻝﭨﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮔﺑﻛﺕ۹ﮔﮔ؛ﻟ؟۰ﻝ؟ﻝﺏﭨﻝﭨ | ﻝ،ﺁﮒﺍﻝ،ﺁﮔﭖﻟﺁﻙﮒﭦﮔﺁﮔﭖﻟﺁ?| pytestﻙﻠﮔﻝﺁﮒ۱?|
+| **ﮔ۶ﻟﺛﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﮒﻟﭖﮔﭦﻛﺛﺟﻝ?| ﮒﮒﮔﭖﻟﺁﻙﻟﺑﻟﺛﺛﮔﭖﻟﺁ?| pytest-benchmarkﻙmemory-profiler |
+| **ﮒﮒﺛﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﻛﺟ؟ﮔﺗﻛﺕﮒﺛﺎﮒﻝﺍﮔﮒﻟ?| ﻟ۹ﮒ۷ﮒﮔﭖﻟﺁﮒ۴ﻛﭨ?| pytestﻙGitHub Actions |
 
-### 1.2 测试环境
+### 1.2 ﮔﭖﻟﺁﻝﺁﮒ۱
 
 ```yaml
-测试环境配置:
-  开发环�?
+ﮔﭖﻟﺁﻝﺁﮒ۱ﻠﻝﺛ؟:
+  ﮒﺙﮒﻝﺁﮒ۱?
     python_version: "3.13"
     os: "Windows/Linux/macOS"
-    内存: ">=8GB"
+    ﮒﮒ­: ">=8GB"
     
-  测试数据:
-    样本数量: 1000个测试订�?
-    市场类型: SH, SZ
-    证券类别: STOCK, ETF, BOND, CONVERTIBLE_BOND
-    价格范围: 0.1-1000�?
-    数量范围: 100-1000000�?
+  ﮔﭖﻟﺁﮔﺍﮔ؟:
+    ﮔ ﺓﮔ؛ﮔﺍﻠ: 1000ﻛﺕ۹ﮔﭖﻟﺁﻟ؟۱ﮒ?
+    ﮒﺕﮒﭦﻝﺎﭨﮒ: SH, SZ
+    ﻟﺁﮒﺕﻝﺎﭨﮒ،: STOCK, ETF, BOND, CONVERTIBLE_BOND
+    ﻛﭨﺓﮔ ﺙﻟﮒﺑ: 0.1-1000ﮒ?
+    ﮔﺍﻠﻟﮒﺑ: 100-1000000ﻟ?
     
-  依赖�?
+  ﻛﺝﻟﭖﮒﭦ?
     pytest: ">=7.0"
     pytest-benchmark: ">=3.4"
     pytest-mock: ">=3.10"
@@ -57,27 +57,27 @@ implementation_status: 进行�?
     pandas: ">=2.0"
 ```
 
-### 1.3 测试数据准备
+### 1.3 ﮔﭖﻟﺁﮔﺍﮔ؟ﮒﮒ۳
 
 ```python
-测试数据生成策略:
-  1. 基础测试数据: 手动编写的典型场�?
-  2. 随机测试数据: 随机生成的边界场�?
-  3. 实盘测试数据: 从实盘交易日志提�?
-  4. 异常测试数据: 非法输入、边界�?
+ﮔﭖﻟﺁﮔﺍﮔ؟ﻝﮔﻝ­ﻝ۴:
+  1. ﮒﭦﻝ۰ﮔﭖﻟﺁﮔﺍﮔ؟: ﮔﮒ۷ﻝﺙﮒﻝﮒﺕﮒﮒﭦﮔ?
+  2. ﻠﮔﭦﮔﭖﻟﺁﮔﺍﮔ؟: ﻠﮔﭦﻝﮔﻝﻟﺝﺗﻝﮒﭦﮔ?
+  3. ﮒ؟ﻝﮔﭖﻟﺁﮔﺍﮔ؟: ﻛﭨﮒ؟ﻝﻛﭦ۳ﮔﮔ۴ﮒﺟﮔﮒ?
+  4. ﮒﺙﮒﺕﺕﮔﭖﻟﺁﮔﺍﮔ؟: ﻠﮔﺏﻟﺝﮒ۴ﻙﻟﺝﺗﻝﮒ?
   
-测试数据文件:
-  - test_data/basic_orders.json: 基础测试订单
-  - test_data/random_orders_1000.json: 1000个随机测试订�?
-  - test_data/real_orders_sample.json: 实盘订单样本
-  - test_data/edge_cases.json: 边界条件测试数据
+ﮔﭖﻟﺁﮔﺍﮔ؟ﮔﻛﭨﭘ:
+  - test_data/basic_orders.json: ﮒﭦﻝ۰ﮔﭖﻟﺁﻟ؟۱ﮒ
+  - test_data/random_orders_1000.json: 1000ﻛﺕ۹ﻠﮔﭦﮔﭖﻟﺁﻟ؟۱ﮒ?
+  - test_data/real_orders_sample.json: ﮒ؟ﻝﻟ؟۱ﮒﮔ ﺓﮔ؛
+  - test_data/edge_cases.json: ﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁﮔﺍﮔ؟
 ```
 
-## 2. 单元测试设计
+## 2. ﮒﮒﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰
 
-### 2.1 CostCalculator 类测�?
+### 2.1 CostCalculator ﻝﺎﭨﮔﭖﻟﺁ?
 
-#### 2.1.1 佣金计算测试
+#### 2.1.1 ﻛﺛ۲ﻠﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
 
 ```python
 # test_commission.py
@@ -86,10 +86,10 @@ from decimal import Decimal
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestCommissionCalculation:
-    """佣金计算测试"""
+    """ﻛﺛ۲ﻠﻟ؟۰ﻝ؟ﮔﭖﻟﺁ"""
     
     def test_basic_commission(self):
-        """测试基础佣金计算"""
+        """ﮔﭖﻟﺁﮒﭦﻝ۰ﻛﺛ۲ﻠﻟ؟۰ﻝ؟"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -103,16 +103,16 @@ class TestCommissionCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 成交金额100,000元，佣金�?.03%，最�?�?
+        # ﮔﻛﭦ۳ﻠﻠ۱100,000ﮒﺅﺙﻛﺛ۲ﻠﻝ?.03%ﺅﺙﮔﻛﺛ?ﮒ?
         expected_commission = max(100000 * 0.0003, 5.0)
         assert result.commission == pytest.approx(expected_commission, rel=0.01)
     
     def test_min_commission(self):
-        """测试最低佣�?""
+        """ﮔﭖﻟﺁﮔﻛﺛﻛﺛ۲ﻠ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 小金额订单：1000元成�?
+        # ﮒﺍﻠﻠ۱ﻟ؟۱ﮒﺅﺙ1000ﮒﮔﻛﭦ?
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -123,65 +123,65 @@ class TestCommissionCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 1000元�?.03% = 0.3元，但最�?�?
+        # 1000ﮒﺣ?.03% = 0.3ﮒﺅﺙﻛﺛﮔﻛﺛ?ﮒ?
         assert result.commission == 5.0
     
     def test_tiered_commission(self):
-        """测试阶梯佣金"""
+        """ﮔﭖﻟﺁﻠﭘﮔ۱ﺁﻛﺛ۲ﻠ"""
         config = CostConfig()
         config.commission_tiered_rates = [
-            TieredRate(threshold=1000000, rate=0.0003),   # 100万以�?
-            TieredRate(threshold=5000000, rate=0.00025),  # 100-500�?
-            TieredRate(threshold=None, rate=0.0002)       # 500万以�?
+            TieredRate(threshold=1000000, rate=0.0003),   # 100ﻛﺕﻛﭨ۴ﻛﺕ?
+            TieredRate(threshold=5000000, rate=0.00025),  # 100-500ﻛﺕ?
+            TieredRate(threshold=None, rate=0.0002)       # 500ﻛﺕﻛﭨ۴ﻛﺕ?
         ]
         
         calculator = CostCalculator(config)
         
-        # 测试小金额：50万元
+        # ﮔﭖﻟﺁﮒﺍﻠﻠ۱ﺅﺙ50ﻛﺕﮒ
         order1 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=50000,
-            price=10.0,  # 50万元
+            price=10.0,  # 50ﻛﺕﮒ
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         result1 = calculator.calculate_total_cost(order1)
-        expected1 = max(500000 * 0.0003, 5.0)  # 150�?
+        expected1 = max(500000 * 0.0003, 5.0)  # 150ﮒ?
         assert result1.commission == pytest.approx(expected1, rel=0.01)
         
-        # 测试中金额：300万元
+        # ﮔﭖﻟﺁﻛﺕ­ﻠﻠ۱ﺅﺙ300ﻛﺕﮒ
         order2 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=100000,
-            price=30.0,  # 300万元
+            price=30.0,  # 300ﻛﺕﮒ
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         result2 = calculator.calculate_total_cost(order2)
-        expected2 = 3000000 * 0.00025  # 750�?
+        expected2 = 3000000 * 0.00025  # 750ﮒ?
         assert result2.commission == pytest.approx(expected2, rel=0.01)
         
-        # 测试大金额：1000万元
+        # ﮔﭖﻟﺁﮒ۳۶ﻠﻠ۱ﺅﺙ1000ﻛﺕﮒ
         order3 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=100000,
-            price=100.0,  # 1000万元
+            price=100.0,  # 1000ﻛﺕﮒ
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         result3 = calculator.calculate_total_cost(order3)
-        expected3 = 10000000 * 0.0002  # 2000�?
+        expected3 = 10000000 * 0.0002  # 2000ﮒ?
         assert result3.commission == pytest.approx(expected3, rel=0.01)
     
     def test_commission_exempt(self):
-        """测试免佣金证�?""
+        """ﮔﭖﻟﺁﮒﻛﺛ۲ﻠﻟﺁﮒ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 货币基金免佣�?
+        # ﻟﺑ۶ﮒﺕﮒﭦﻠﮒﻛﺛ۲ﻠ?
         order = OrderInfo(
             symbol="511880.SH",
             side=OrderSide.BUY,
@@ -195,17 +195,17 @@ class TestCommissionCalculation:
         assert result.commission == 0.0
     
     def test_commission_max_limit(self):
-        """测试最高佣金限�?""
+        """ﮔﭖﻟﺁﮔﻠ،ﻛﺛ۲ﻠﻠﮒ?""
         config = CostConfig()
-        config.max_commission = 1000.0  # 最高佣�?000�?
+        config.max_commission = 1000.0  # ﮔﻠ،ﻛﺛ۲ﻠ?000ﮒ?
         calculator = CostCalculator(config)
         
-        # 大额订单�?000万元，佣金应�?000元，但限制为1000�?
+        # ﮒ۳۶ﻠ۱ﻟ؟۱ﮒﺅﺙ?000ﻛﺕﮒﺅﺙﻛﺛ۲ﻠﮒﭦﻛﺕ?000ﮒﺅﺙﻛﺛﻠﮒﭘﻛﺕﭦ1000ﮒ?
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=100000,
-            price=100.0,  # 1000万元
+            price=100.0,  # 1000ﻛﺕﮒ
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
@@ -214,16 +214,16 @@ class TestCommissionCalculation:
         assert result.commission == 1000.0
     
     @pytest.mark.parametrize("amount,expected", [
-        (1000, 5.0),      # 最低佣�?
-        (10000, 5.0),     # 最低佣�?
-        (50000, 15.0),    # 50000×0.0003=15
-        (100000, 30.0),   # 100000×0.0003=30
-        (1000000, 300.0), # 1000000×0.0003=300
-        (5000000, 1250.0),# 5000000×0.00025=1250
-        (10000000, 2000.0),# 10000000×0.0002=2000
+        (1000, 5.0),      # ﮔﻛﺛﻛﺛ۲ﻠ?
+        (10000, 5.0),     # ﮔﻛﺛﻛﺛ۲ﻠ?
+        (50000, 15.0),    # 50000ﺣ0.0003=15
+        (100000, 30.0),   # 100000ﺣ0.0003=30
+        (1000000, 300.0), # 1000000ﺣ0.0003=300
+        (5000000, 1250.0),# 5000000ﺣ0.00025=1250
+        (10000000, 2000.0),# 10000000ﺣ0.0002=2000
     ])
     def test_commission_parametrized(self, amount, expected):
-        """参数化测试佣金计�?""
+        """ﮒﮔﺍﮒﮔﭖﻟﺁﻛﺛ۲ﻠﻟ؟۰ﻝ؟?""
         config = CostConfig()
         config.commission_tiered_rates = [
             TieredRate(threshold=1000000, rate=0.0003),
@@ -233,7 +233,7 @@ class TestCommissionCalculation:
         
         calculator = CostCalculator(config)
         
-        # 根据金额计算数量和价�?
+        # ﮔ ﺗﮔ؟ﻠﻠ۱ﻟ؟۰ﻝ؟ﮔﺍﻠﮒﻛﭨﺓﮔ ?
         price = 10.0
         quantity = int(amount / price)
         
@@ -250,7 +250,7 @@ class TestCommissionCalculation:
         assert result.commission == pytest.approx(expected, rel=0.01)
 ```
 
-#### 2.1.2 印花税计算测�?
+#### 2.1.2 ﮒﺍﻟﺎﻝ۷ﻟ؟۰ﻝ؟ﮔﭖﻟﺁ?
 
 ```python
 # test_stamp_tax.py
@@ -258,10 +258,10 @@ import pytest
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestStampTaxCalculation:
-    """印花税计算测�?""
+    """ﮒﺍﻟﺎﻝ۷ﻟ؟۰ﻝ؟ﮔﭖﻟﺁ?""
     
     def test_stamp_tax_on_sell(self):
-        """测试卖出时印花税"""
+        """ﮔﭖﻟﺁﮒﮒﭦﮔﭘﮒﺍﻟﺎﻝ۷"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -275,12 +275,12 @@ class TestStampTaxCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 卖出100,000元，印花�?.1% = 100�?
+        # ﮒﮒﭦ100,000ﮒﺅﺙﮒﺍﻟﺎﻝ۷?.1% = 100ﮒ?
         expected_stamp_tax = 100000 * 0.001
         assert result.stamp_tax == pytest.approx(expected_stamp_tax, rel=0.01)
     
     def test_stamp_tax_exempt_on_buy(self):
-        """测试买入时免印花�?""
+        """ﮔﭖﻟﺁﻛﺗﺍﮒ۴ﮔﭘﮒﮒﺍﻟﺎﻝ۷?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -297,11 +297,11 @@ class TestStampTaxCalculation:
         assert result.stamp_tax == 0.0
     
     def test_etf_stamp_tax_exempt(self):
-        """测试ETF免印花税"""
+        """ﮔﭖﻟﺁETFﮒﮒﺍﻟﺎﻝ۷"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # ETF卖出也应免印花税
+        # ETFﮒﮒﭦﻛﺗﮒﭦﮒﮒﺍﻟﺎﻝ۷
         order = OrderInfo(
             symbol="510300.SH",
             side=OrderSide.SELL,
@@ -315,11 +315,11 @@ class TestStampTaxCalculation:
         assert result.stamp_tax == 0.0
     
     def test_bond_stamp_tax_exempt(self):
-        """测试债券免印花税"""
+        """ﮔﭖﻟﺁﮒﭦﮒﺕﮒﮒﺍﻟﺎﻝ۷"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 债券卖出也应免印花税
+        # ﮒﭦﮒﺕﮒﮒﭦﻛﺗﮒﭦﮒﮒﺍﻟﺎﻝ۷
         order = OrderInfo(
             symbol="123456.SZ",
             side=OrderSide.SELL,
@@ -333,9 +333,9 @@ class TestStampTaxCalculation:
         assert result.stamp_tax == 0.0
     
     def test_stamp_tax_configurable(self):
-        """测试印花税可配置"""
+        """ﮔﭖﻟﺁﮒﺍﻟﺎﻝ۷ﮒﺁﻠﻝﺛ؟"""
         config = CostConfig()
-        config.stamp_tax_on_sell_only = False  # 买入也收印花�?
+        config.stamp_tax_on_sell_only = False  # ﻛﺗﺍﮒ۴ﻛﺗﮔﭘﮒﺍﻟﺎﻝ۷?
         calculator = CostCalculator(config)
         
         order = OrderInfo(
@@ -348,12 +348,12 @@ class TestStampTaxCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 买入时也收印花税
+        # ﻛﺗﺍﮒ۴ﮔﭘﻛﺗﮔﭘﮒﺍﻟﺎﻝ۷
         expected_stamp_tax = 100000 * 0.001
         assert result.stamp_tax == pytest.approx(expected_stamp_tax, rel=0.01)
 ```
 
-#### 2.1.3 过户费计算测�?
+#### 2.1.3 ﻟﺟﮔﺓﻟﺑﺗﻟ؟۰ﻝ؟ﮔﭖﻟﺁ?
 
 ```python
 # test_transfer_fee.py
@@ -361,10 +361,10 @@ import pytest
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestTransferFeeCalculation:
-    """过户费计算测�?""
+    """ﻟﺟﮔﺓﻟﺑﺗﻟ؟۰ﻝ؟ﮔﭖﻟﺁ?""
     
     def test_sh_transfer_fee_by_par_value(self):
-        """测试沪市过户费（按面额计算）"""
+        """ﮔﭖﻟﺁﮔﺎ۹ﮒﺕﻟﺟﮔﺓﻟﺑﺗﺅﺙﮔﻠ۱ﻠ۱ﻟ؟۰ﻝ؟ﺅﺙ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -379,12 +379,12 @@ class TestTransferFeeCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 沪市�?0000股�?元面值�?.001% = 0.1元，最�?�?
+        # ﮔﺎ۹ﮒﺕﺅﺙ?0000ﻟ۰ﺣ?ﮒﻠ۱ﮒﺙﺣ?.001% = 0.1ﮒﺅﺙﮔﻛﺛ?ﮒ?
         expected_fee = max(10000 * 1.0 * 0.00001, 1.0)
         assert result.transfer_fee == pytest.approx(expected_fee, rel=0.01)
     
     def test_sz_transfer_fee_by_amount(self):
-        """测试深市过户费（按成交金额计算）"""
+        """ﮔﭖﻟﺁﮔﺓﺎﮒﺕﻟﺟﮔﺓﻟﺑﺗﺅﺙﮔﮔﻛﭦ۳ﻠﻠ۱ﻟ؟۰ﻝ؟ﺅﺙ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -398,16 +398,16 @@ class TestTransferFeeCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 深市�?00,000元�?.002% = 2元，最�?�?
+        # ﮔﺓﺎﮒﺕﺅﺙ?00,000ﮒﺣ?.002% = 2ﮒﺅﺙﮔﻛﺛ?ﮒ?
         expected_fee = max(100000 * 0.00002, 1.0)
         assert result.transfer_fee == pytest.approx(expected_fee, rel=0.01)
     
     def test_min_transfer_fee(self):
-        """测试最低过户费"""
+        """ﮔﭖﻟﺁﮔﻛﺛﻟﺟﮔﺓﻟﺑﺗ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 小金额订单：1000元成交，深市
+        # ﮒﺍﻠﻠ۱ﻟ؟۱ﮒﺅﺙ1000ﮒﮔﻛﭦ۳ﺅﺙﮔﺓﺎﮒﺕ
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -418,15 +418,15 @@ class TestTransferFeeCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 1000元�?.002% = 0.02元，最�?�?
+        # 1000ﮒﺣ?.002% = 0.02ﮒﺅﺙﮔﻛﺛ?ﮒ?
         assert result.transfer_fee == 1.0
     
     def test_transfer_fee_exempt(self):
-        """测试免过户费证券"""
+        """ﮔﭖﻟﺁﮒﻟﺟﮔﺓﻟﺑﺗﻟﺁﮒﺕ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 债券免过户费
+        # ﮒﭦﮒﺕﮒﻟﺟﮔﺓﻟﺑﺗ
         order = OrderInfo(
             symbol="123456.SZ",
             side=OrderSide.BUY,
@@ -440,11 +440,11 @@ class TestTransferFeeCalculation:
         assert result.transfer_fee == 0.0
     
     def test_par_value_override(self):
-        """测试自定义面�?""
+        """ﮔﭖﻟﺁﻟ۹ﮒ؟ﻛﺗﻠ۱ﮒ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 股票面值不�?元的情况（理论上罕见�?
+        # ﻟ۰ﻝ۴۷ﻠ۱ﮒﺙﻛﺕﮔ?ﮒﻝﮔﮒﭖﺅﺙﻝﻟ؟ﭦﻛﺕﻝﺛﻟ۶ﺅﺙ?
         order = OrderInfo(
             symbol="600000.SH",
             side=OrderSide.BUY,
@@ -452,16 +452,16 @@ class TestTransferFeeCalculation:
             price=10.0,
             market=MarketType.SH,
             category=SecurityCategory.STOCK,
-            par_value=0.1  # 面�?.1�?
+            par_value=0.1  # ﻠ۱ﮒ?.1ﮒ?
         )
         
         result = calculator.calculate_total_cost(order)
-        # 沪市�?0000股�?.1元面值�?.001% = 0.01元，最�?�?
+        # ﮔﺎ۹ﮒﺕﺅﺙ?0000ﻟ۰ﺣ?.1ﮒﻠ۱ﮒﺙﺣ?.001% = 0.01ﮒﺅﺙﮔﻛﺛ?ﮒ?
         expected_fee = max(10000 * 0.1 * 0.00001, 1.0)
         assert result.transfer_fee == pytest.approx(expected_fee, rel=0.01)
 ```
 
-#### 2.1.4 规费计算测试
+#### 2.1.4 ﻟ۶ﻟﺑﺗﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
 
 ```python
 # test_regulatory_fees.py
@@ -469,10 +469,10 @@ import pytest
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestRegulatoryFeesCalculation:
-    """规费计算测试"""
+    """ﻟ۶ﻟﺑﺗﻟ؟۰ﻝ؟ﮔﭖﻟﺁ"""
     
     def test_basic_regulatory_fees(self):
-        """测试基础规费计算"""
+        """ﮔﭖﻟﺁﮒﭦﻝ۰ﻟ۶ﻟﺑﺗﻟ؟۰ﻝ؟"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -486,16 +486,16 @@ class TestRegulatoryFeesCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 规费�?00,000元�?.002% = 2�?
+        # ﻟ۶ﻟﺑﺗﺅﺙ?00,000ﮒﺣ?.002% = 2ﮒ?
         expected_fees = 100000 * 0.00002
         assert result.regulatory_fees == pytest.approx(expected_fees, rel=0.01)
     
     def test_regulatory_fees_exempt(self):
-        """测试免规费证�?""
+        """ﮔﭖﻟﺁﮒﻟ۶ﻟﺑﺗﻟﺁﮒ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 债券免规�?
+        # ﮒﭦﮒﺕﮒﻟ۶ﻟﺑ?
         order = OrderInfo(
             symbol="123456.SZ",
             side=OrderSide.BUY,
@@ -509,7 +509,7 @@ class TestRegulatoryFeesCalculation:
         assert result.regulatory_fees == 0.0
     
     def test_regulatory_components(self):
-        """测试规费组成明细"""
+        """ﮔﭖﻟﺁﻟ۶ﻟﺑﺗﻝﭨﮔﮔﻝﭨ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -524,7 +524,7 @@ class TestRegulatoryFeesCalculation:
         
         result = calculator.calculate_total_cost(order)
         
-        # 验证规费组成
+        # ﻠ۹ﻟﺁﻟ۶ﻟﺑﺗﻝﭨﮔ
         components = config.regulatory_components
         total_rate = sum(components.values())
         expected_fees = 100000 * total_rate
@@ -532,11 +532,11 @@ class TestRegulatoryFeesCalculation:
         assert result.regulatory_fees == pytest.approx(expected_fees, rel=0.01)
     
     def test_regulatory_fees_on_both_sides(self):
-        """测试规费双向收取"""
+        """ﮔﭖﻟﺁﻟ۶ﻟﺑﺗﮒﮒﮔﭘﮒ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 买入和卖出都应收取规�?
+        # ﻛﺗﺍﮒ۴ﮒﮒﮒﭦﻠﺛﮒﭦﮔﭘﮒﻟ۶ﻟﺑ?
         buy_order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -558,12 +558,12 @@ class TestRegulatoryFeesCalculation:
         buy_result = calculator.calculate_total_cost(buy_order)
         sell_result = calculator.calculate_total_cost(sell_order)
         
-        # 买入和卖出的规费应该相同
+        # ﻛﺗﺍﮒ۴ﮒﮒﮒﭦﻝﻟ۶ﻟﺑﺗﮒﭦﻟﺁ۴ﻝﺕﮒ
         assert buy_result.regulatory_fees == pytest.approx(sell_result.regulatory_fees, rel=0.01)
         assert buy_result.regulatory_fees > 0
 ```
 
-#### 2.1.5 滑点成本计算测试
+#### 2.1.5 ﮔﭨﻝﺗﮔﮔ؛ﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
 
 ```python
 # test_slippage.py
@@ -571,10 +571,10 @@ import pytest
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestSlippageCalculation:
-    """滑点成本计算测试"""
+    """ﮔﭨﻝﺗﮔﮔ؛ﻟ؟۰ﻝ؟ﮔﭖﻟﺁ"""
     
     def test_basic_slippage(self):
-        """测试基础滑点计算"""
+        """ﮔﭖﻟﺁﮒﭦﻝ۰ﮔﭨﻝﺗﻟ؟۰ﻝ؟"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -588,16 +588,16 @@ class TestSlippageCalculation:
         )
         
         result = calculator.calculate_total_cost(order)
-        # 基础滑点�?00,000元�?.02% = 20�?
+        # ﮒﭦﻝ۰ﮔﭨﻝﺗﺅﺙ?00,000ﮒﺣ?.02% = 20ﮒ?
         expected_slippage = 100000 * 0.0002
         assert result.slippage == pytest.approx(expected_slippage, rel=0.01)
     
     def test_slippage_with_market_data(self):
-        """测试带市场数据的滑点计算"""
+        """ﮔﭖﻟﺁﮒﺕ۵ﮒﺕﮒﭦﮔﺍﮔ؟ﻝﮔﭨﻝﺗﻟ؟۰ﻝ؟"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 高流动性股�?
+        # ﻠ،ﮔﭖﮒ۷ﮔ۶ﻟ۰ﻝ۴?
         order1 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -606,19 +606,19 @@ class TestSlippageCalculation:
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
             market_data={
-                "daily_volume": 50000000,  # 5000万，高流动�?
-                "volatility": 0.02,        # 2%波动率，中等
+                "daily_volume": 50000000,  # 5000ﻛﺕﺅﺙﻠ،ﮔﭖﮒ۷ﮔ?
+                "volatility": 0.02,        # 2%ﮔﺏ۱ﮒ۷ﻝﺅﺙﻛﺕ­ﻝ­
                 "avg_trade_size": 10000
             }
         )
         
         result1 = calculator.calculate_total_cost(order1)
-        # 高流动性：因子0.5，中等波动率：因�?.2
-        # 基础滑点�?.02% × 0.5 × 1.2 = 0.012%
+        # ﻠ،ﮔﭖﮒ۷ﮔ۶ﺅﺙﮒ ﮒ­0.5ﺅﺙﻛﺕ­ﻝ­ﮔﺏ۱ﮒ۷ﻝﺅﺙﮒ ﮒ­?.2
+        # ﮒﭦﻝ۰ﮔﭨﻝﺗﻝ?.02% ﺣ 0.5 ﺣ 1.2 = 0.012%
         expected_slippage1 = 100000 * 0.0002 * 0.5 * 1.2
         assert result1.slippage == pytest.approx(expected_slippage1, rel=0.01)
         
-        # 低流动性股�?
+        # ﻛﺛﮔﭖﮒ۷ﮔ۶ﻟ۰ﻝ۴?
         order2 = OrderInfo(
             symbol="000002.SZ",
             side=OrderSide.BUY,
@@ -627,28 +627,28 @@ class TestSlippageCalculation:
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
             market_data={
-                "daily_volume": 500000,    # 50万，低流动�?
-                "volatility": 0.04,        # 4%波动率，�?
+                "daily_volume": 500000,    # 50ﻛﺕﺅﺙﻛﺛﮔﭖﮒ۷ﮔ?
+                "volatility": 0.04,        # 4%ﮔﺏ۱ﮒ۷ﻝﺅﺙﻠ،?
                 "avg_trade_size": 5000
             }
         )
         
         result2 = calculator.calculate_total_cost(order2)
-        # 低流动性：因子2.0，高波动率：因子1.5
-        # 基础滑点�?.02% × 2.0 × 1.5 = 0.06%
+        # ﻛﺛﮔﭖﮒ۷ﮔ۶ﺅﺙﮒ ﮒ­2.0ﺅﺙﻠ،ﮔﺏ۱ﮒ۷ﻝﺅﺙﮒ ﮒ­1.5
+        # ﮒﭦﻝ۰ﮔﭨﻝﺗﻝ?.02% ﺣ 2.0 ﺣ 1.5 = 0.06%
         expected_slippage2 = 100000 * 0.0002 * 2.0 * 1.5
         assert result2.slippage == pytest.approx(expected_slippage2, rel=0.01)
     
     def test_slippage_order_size_factor(self):
-        """测试订单大小因子"""
+        """ﮔﭖﻟﺁﻟ؟۱ﮒﮒ۳۶ﮒﺍﮒ ﮒ­"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 小单
+        # ﮒﺍﮒ
         order1 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=1000,  # 小单
+            quantity=1000,  # ﮒﺍﮒ
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
@@ -660,15 +660,15 @@ class TestSlippageCalculation:
         )
         
         result1 = calculator.calculate_total_cost(order1)
-        # 小单：因�?.0
+        # ﮒﺍﮒﺅﺙﮒ ﮒ­?.0
         expected_slippage1 = 10000 * 0.0002 * 1.0 * 1.0 * 1.0
         assert result1.slippage == pytest.approx(expected_slippage1, rel=0.01)
         
-        # 大单
+        # ﮒ۳۶ﮒ
         order2 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=200000,  # 大单�?0倍平均成交额�?
+            quantity=200000,  # ﮒ۳۶ﮒﺅﺙ?0ﮒﮒﺗﺏﮒﮔﻛﭦ۳ﻠ۱ﺅﺙ?
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
@@ -680,16 +680,16 @@ class TestSlippageCalculation:
         )
         
         result2 = calculator.calculate_total_cost(order2)
-        # 大单：因�?.5
+        # ﮒ۳۶ﮒﺅﺙﮒ ﮒ­?.5
         expected_slippage2 = 2000000 * 0.0002 * 1.0 * 1.0 * 1.5
         assert result2.slippage == pytest.approx(expected_slippage2, rel=0.01)
     
     def test_slippage_time_factor(self):
-        """测试时间因子"""
+        """ﮔﭖﻟﺁﮔﭘﻠﺑﮒ ﮒ­"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 开盘时�?
+        # ﮒﺙﻝﮔﭘﮔ؟?
         order1 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -697,7 +697,7 @@ class TestSlippageCalculation:
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
-            timestamp="2026-04-02 09:15:00",  # 开盘时�?
+            timestamp="2026-04-02 09:15:00",  # ﮒﺙﻝﮔﭘﮔ؟?
             market_data={
                 "daily_volume": 10000000,
                 "volatility": 0.02,
@@ -706,11 +706,11 @@ class TestSlippageCalculation:
         )
         
         result1 = calculator.calculate_total_cost(order1)
-        # 开盘时段：因子1.5
+        # ﮒﺙﻝﮔﭘﮔ؟ﭖﺅﺙﮒ ﮒ­1.5
         expected_slippage1 = 100000 * 0.0002 * 1.0 * 1.0 * 1.0 * 1.5
         assert result1.slippage == pytest.approx(expected_slippage1, rel=0.01)
         
-        # 午间时段
+        # ﮒﻠﺑﮔﭘﮔ؟ﭖ
         order2 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -718,7 +718,7 @@ class TestSlippageCalculation:
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
-            timestamp="2026-04-02 12:30:00",  # 午间时段
+            timestamp="2026-04-02 12:30:00",  # ﮒﻠﺑﮔﭘﮔ؟ﭖ
             market_data={
                 "daily_volume": 10000000,
                 "volatility": 0.02,
@@ -727,43 +727,43 @@ class TestSlippageCalculation:
         )
         
         result2 = calculator.calculate_total_cost(order2)
-        # 午间时段：因�?.8
+        # ﮒﻠﺑﮔﭘﮔ؟ﭖﺅﺙﮒ ﮒ­?.8
         expected_slippage2 = 100000 * 0.0002 * 1.0 * 1.0 * 1.0 * 0.8
         assert result2.slippage == pytest.approx(expected_slippage2, rel=0.01)
     
     def test_slippage_max_rate(self):
-        """测试最大滑点率限制"""
+        """ﮔﭖﻟﺁﮔﮒ۳۶ﮔﭨﻝﺗﻝﻠﮒﭘ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 极端情况：所有因子都取最大�?
+        # ﮔﻝ،ﺁﮔﮒﭖﺅﺙﮔﮔﮒ ﮒ­ﻠﺛﮒﮔﮒ۳۶ﮒ?
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=200000,  # 大单
+            quantity=200000,  # ﮒ۳۶ﮒ
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
-            timestamp="2026-04-02 09:15:00",  # 开盘时�?
+            timestamp="2026-04-02 09:15:00",  # ﮒﺙﻝﮔﭘﮔ؟?
             market_data={
-                "daily_volume": 500000,    # 低流动�?
-                "volatility": 0.04,        # 高波动率
+                "daily_volume": 500000,    # ﻛﺛﮔﭖﮒ۷ﮔ?
+                "volatility": 0.04,        # ﻠ،ﮔﺏ۱ﮒ۷ﻝ
                 "avg_trade_size": 5000
             }
         )
         
         result = calculator.calculate_total_cost(order)
-        # 计算理论滑点率：0.02% × 2.0 × 1.5 × 1.5 × 1.5 = 0.135%
-        # 但最大限制为1%，所以应�?.135% < 1%，使用计算�?
-        # 如果超过1%，则限制�?%
+        # ﻟ؟۰ﻝ؟ﻝﻟ؟ﭦﮔﭨﻝﺗﻝﺅﺙ0.02% ﺣ 2.0 ﺣ 1.5 ﺣ 1.5 ﺣ 1.5 = 0.135%
+        # ﻛﺛﮔﮒ۳۶ﻠﮒﭘﻛﺕﭦ1%ﺅﺙﮔﻛﭨ۴ﮒﭦﻛﺕ?.135% < 1%ﺅﺙﻛﺛﺟﻝ۷ﻟ؟۰ﻝ؟ﮒ?
+        # ﮒ۵ﮔﻟﭘﻟﺟ1%ﺅﺙﮒﻠﮒﭘﻛﺕ?%
         
-        # 验证滑点率不超过1%
+        # ﻠ۹ﻟﺁﮔﭨﻝﺗﻝﻛﺕﻟﭘﻟﺟ1%
         amount = order.quantity * order.price
         slippage_rate = result.slippage / amount if amount > 0 else 0
-        assert slippage_rate <= 0.01  # 不超�?%
+        assert slippage_rate <= 0.01  # ﻛﺕﻟﭘﻟﺟ?%
 ```
 
-#### 2.1.6 总成本计算测�?
+#### 2.1.6 ﮔﭨﮔﮔ؛ﻟ؟۰ﻝ؟ﮔﭖﻟﺁ?
 
 ```python
 # test_total_cost.py
@@ -771,10 +771,10 @@ import pytest
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestTotalCostCalculation:
-    """总成本计算测�?""
+    """ﮔﭨﮔﮔ؛ﻟ؟۰ﻝ؟ﮔﭖﻟﺁ?""
     
     def test_total_cost_buy(self):
-        """测试买入总成�?""
+        """ﮔﭖﻟﺁﻛﺗﺍﮒ۴ﮔﭨﮔﮔ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -789,13 +789,13 @@ class TestTotalCostCalculation:
         
         result = calculator.calculate_total_cost(order)
         
-        # 计算各项成本
+        # ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ؛
         amount = 100000
-        commission = max(amount * 0.0003, 5.0)  # 30�?
-        stamp_tax = 0.0  # 买入免印花税
-        transfer_fee = max(amount * 0.00002, 1.0)  # 2�?
-        regulatory_fees = amount * 0.00002  # 2�?
-        slippage = amount * 0.0002  # 20�?
+        commission = max(amount * 0.0003, 5.0)  # 30ﮒ?
+        stamp_tax = 0.0  # ﻛﺗﺍﮒ۴ﮒﮒﺍﻟﺎﻝ۷
+        transfer_fee = max(amount * 0.00002, 1.0)  # 2ﮒ?
+        regulatory_fees = amount * 0.00002  # 2ﮒ?
+        slippage = amount * 0.0002  # 20ﮒ?
         
         expected_total = commission + stamp_tax + transfer_fee + regulatory_fees + slippage
         expected_percentage = expected_total / amount
@@ -805,7 +805,7 @@ class TestTotalCostCalculation:
         assert result.total_cost > 0
     
     def test_total_cost_sell(self):
-        """测试卖出总成�?""
+        """ﮔﭖﻟﺁﮒﮒﭦﮔﭨﮔﮔ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -820,13 +820,13 @@ class TestTotalCostCalculation:
         
         result = calculator.calculate_total_cost(order)
         
-        # 计算各项成本
+        # ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ؛
         amount = 100000
-        commission = max(amount * 0.0003, 5.0)  # 30�?
-        stamp_tax = amount * 0.001  # 100�?
-        transfer_fee = max(amount * 0.00002, 1.0)  # 2�?
-        regulatory_fees = amount * 0.00002  # 2�?
-        slippage = amount * 0.0002  # 20�?
+        commission = max(amount * 0.0003, 5.0)  # 30ﮒ?
+        stamp_tax = amount * 0.001  # 100ﮒ?
+        transfer_fee = max(amount * 0.00002, 1.0)  # 2ﮒ?
+        regulatory_fees = amount * 0.00002  # 2ﮒ?
+        slippage = amount * 0.0002  # 20ﮒ?
         
         expected_total = commission + stamp_tax + transfer_fee + regulatory_fees + slippage
         expected_percentage = expected_total / amount
@@ -834,11 +834,11 @@ class TestTotalCostCalculation:
         assert result.total_cost == pytest.approx(expected_total, rel=0.01)
         assert result.as_percentage == pytest.approx(expected_percentage, rel=0.0001)
         
-        # 卖出成本应高于买入成本（因为有印花税�?
+        # ﮒﮒﭦﮔﮔ؛ﮒﭦﻠ،ﻛﭦﻛﺗﺍﮒ۴ﮔﮔ؛ﺅﺙﮒ ﻛﺕﭦﮔﮒﺍﻟﺎﻝ۷ﺅﺙ?
         assert result.total_cost > (expected_total - stamp_tax)
     
     def test_total_cost_etf(self):
-        """测试ETF总成本（免印花税�?""
+        """ﮔﭖﻟﺁETFﮔﭨﮔﮔ؛ﺅﺙﮒﮒﺍﻟﺎﻝ۷ﺅﺙ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -853,10 +853,10 @@ class TestTotalCostCalculation:
         
         result = calculator.calculate_total_cost(order)
         
-        # ETF卖出免印花税
+        # ETFﮒﮒﭦﮒﮒﺍﻟﺎﻝ۷
         assert result.stamp_tax == 0.0
         
-        # 总成本应低于股票卖出成本
+        # ﮔﭨﮔﮔ؛ﮒﭦﻛﺛﻛﭦﻟ۰ﻝ۴۷ﮒﮒﭦﮔﮔ؛
         amount = 30000
         stock_order = OrderInfo(
             symbol="000001.SZ",
@@ -868,11 +868,11 @@ class TestTotalCostCalculation:
         )
         stock_result = calculator.calculate_total_cost(stock_order)
         
-        # ETF成本应低于股票成本（因为免印花税�?
+        # ETFﮔﮔ؛ﮒﭦﻛﺛﻛﭦﻟ۰ﻝ۴۷ﮔﮔ؛ﺅﺙﮒ ﻛﺕﭦﮒﮒﺍﻟﺎﻝ۷ﺅﺙ?
         assert result.total_cost < stock_result.total_cost
     
     def test_cost_breakdown(self):
-        """测试费用明细"""
+        """ﮔﭖﻟﺁﻟﺑﺗﻝ۷ﮔﻝﭨ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -888,18 +888,18 @@ class TestTotalCostCalculation:
         result = calculator.calculate_total_cost(order)
         breakdown = result.breakdown
         
-        # 验证明细包含所有成本类�?
+        # ﻠ۹ﻟﺁﮔﻝﭨﮒﮒ،ﮔﮔﮔﮔ؛ﻝﺎﭨﮒ?
         assert "commission" in breakdown
         assert "stamp_tax" in breakdown
         assert "transfer_fee" in breakdown
         assert "regulatory_fees" in breakdown
         assert "slippage" in breakdown
         
-        # 验证明细金额与总成本一�?
+        # ﻠ۹ﻟﺁﮔﻝﭨﻠﻠ۱ﻛﺕﮔﭨﮔﮔ؛ﻛﺕﻟ?
         total_from_breakdown = sum(breakdown.values())
         assert total_from_breakdown == pytest.approx(result.total_cost, rel=0.01)
         
-        # 验证明细金额与各项成本一�?
+        # ﻠ۹ﻟﺁﮔﻝﭨﻠﻠ۱ﻛﺕﮒﻠ۰ﺗﮔﮔ؛ﻛﺕﻟ?
         assert breakdown["commission"] == pytest.approx(result.commission, rel=0.01)
         assert breakdown["stamp_tax"] == pytest.approx(result.stamp_tax, rel=0.01)
         assert breakdown["transfer_fee"] == pytest.approx(result.transfer_fee, rel=0.01)
@@ -907,7 +907,7 @@ class TestTotalCostCalculation:
         assert breakdown["slippage"] == pytest.approx(result.slippage, rel=0.01)
     
     def test_cache_functionality(self):
-        """测试缓存功能"""
+        """ﮔﭖﻟﺁﻝﺙﮒ­ﮒﻟﺛ"""
         config = CostConfig()
         config.cache_enabled = True
         config.cache_ttl = 60
@@ -922,25 +922,25 @@ class TestTotalCostCalculation:
             category=SecurityCategory.STOCK
         )
         
-        # 第一次计�?
+        # ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟?
         result1 = calculator.calculate_total_cost(order)
         
-        # 第二次计算（应使用缓存）
+        # ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮒﭦﻛﺛﺟﻝ۷ﻝﺙﮒ­ﺅﺙ
         result2 = calculator.calculate_total_cost(order)
         
-        # 结果应该相同
+        # ﻝﭨﮔﮒﭦﻟﺁ۴ﻝﺕﮒ
         assert result1.total_cost == result2.total_cost
         
-        # 禁用缓存后重新计�?
+        # ﻝ۵ﻝ۷ﻝﺙﮒ­ﮒﻠﮔﺍﻟ؟۰ﻝ؟?
         config.cache_enabled = False
         calculator2 = CostCalculator(config)
         result3 = calculator2.calculate_total_cost(order)
         
-        # 结果应该仍然相同
+        # ﻝﭨﮔﮒﭦﻟﺁ۴ﻛﭨﻝﭘﻝﺕﮒ
         assert result1.total_cost == pytest.approx(result3.total_cost, rel=0.01)
 ```
 
-### 2.2 边界条件测试
+### 2.2 ﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁ
 
 ```python
 # test_edge_cases.py
@@ -949,17 +949,17 @@ from decimal import Decimal
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestEdgeCases:
-    """边界条件测试"""
+    """ﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁ"""
     
     def test_zero_quantity(self):
-        """测试零数�?""
+        """ﮔﭖﻟﺁﻠﭘﮔﺍﻠ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=0,  # 零数�?
+            quantity=0,  # ﻠﭘﮔﺍﻠ?
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
@@ -967,7 +967,7 @@ class TestEdgeCases:
         
         result = calculator.calculate_total_cost(order)
         
-        # 零数量订单，所有成本应�?
+        # ﻠﭘﮔﺍﻠﻟ؟۱ﮒﺅﺙﮔﮔﮔﮔ؛ﮒﭦﻛﺕ?
         assert result.total_cost == 0.0
         assert result.commission == 0.0
         assert result.stamp_tax == 0.0
@@ -977,7 +977,7 @@ class TestEdgeCases:
         assert result.as_percentage == 0.0
     
     def test_zero_price(self):
-        """测试零价�?""
+        """ﮔﭖﻟﺁﻠﭘﻛﭨﺓﮔ ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -985,14 +985,14 @@ class TestEdgeCases:
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=10000,
-            price=0.0,  # 零价�?
+            price=0.0,  # ﻠﭘﻛﭨﺓﮔ ?
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # 零价格订单，所有成本应�?
+        # ﻠﭘﻛﭨﺓﮔ ﺙﻟ؟۱ﮒﺅﺙﮔﮔﮔﮔ؛ﮒﭦﻛﺕ?
         assert result.total_cost == 0.0
         assert result.commission == 0.0
         assert result.stamp_tax == 0.0
@@ -1002,7 +1002,7 @@ class TestEdgeCases:
         assert result.as_percentage == 0.0
     
     def test_negative_price(self):
-        """测试负价格（异常情况�?""
+        """ﮔﭖﻟﺁﻟﺑﻛﭨﺓﮔ ﺙﺅﺙﮒﺙﮒﺕﺕﮔﮒﭖﺅﺙ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1010,30 +1010,30 @@ class TestEdgeCases:
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=10000,
-            price=-10.0,  # 负价�?
+            price=-10.0,  # ﻟﺑﻛﭨﺓﮔ ?
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # 负价格订单，成交金额为负，但成本计算应处�?
-        amount = order.quantity * order.price  # -100,000�?
+        # ﻟﺑﻛﭨﺓﮔ ﺙﻟ؟۱ﮒﺅﺙﮔﻛﭦ۳ﻠﻠ۱ﻛﺕﭦﻟﺑﺅﺙﻛﺛﮔﮔ؛ﻟ؟۰ﻝ؟ﮒﭦﮒ۳ﻝ?
+        amount = order.quantity * order.price  # -100,000ﮒ?
         
-        # 佣金：负金额×费率，但最�?元（应为0或异常）
-        # 实际实现中应处理负金额情�?
-        # 这里测试框架是否能正确处�?
-        assert result.total_cost <= 0  # 总成本可能为0或负
+        # ﻛﺛ۲ﻠﺅﺙﻟﺑﻠﻠ۱ﺣﻟﺑﺗﻝﺅﺙﻛﺛﮔﻛﺛ?ﮒﺅﺙﮒﭦﻛﺕﭦ0ﮔﮒﺙﮒﺕﺕﺅﺙ
+        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮒ۳ﻝﻟﺑﻠﻠ۱ﮔﮒ?
+        # ﻟﺟﻠﮔﭖﻟﺁﮔ۰ﮔﭘﮔﺁﮒ۵ﻟﺛﮔ­۲ﻝ۰؟ﮒ۳ﻝ?
+        assert result.total_cost <= 0  # ﮔﭨﮔﮔ؛ﮒﺁﻟﺛﻛﺕﭦ0ﮔﻟﺑ
     
     def test_negative_quantity(self):
-        """测试负数量（异常情况�?""
+        """ﮔﭖﻟﺁﻟﺑﮔﺍﻠﺅﺙﮒﺙﮒﺕﺕﮔﮒﭖﺅﺙ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=-10000,  # 负数�?
+            quantity=-10000,  # ﻟﺑﮔﺍﻠ?
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
@@ -1041,145 +1041,145 @@ class TestEdgeCases:
         
         result = calculator.calculate_total_cost(order)
         
-        # 负数量订单，成交金额为负
-        # 实际实现中应处理负数量情�?
-        assert result.total_cost <= 0  # 总成本可能为0或负
+        # ﻟﺑﮔﺍﻠﻟ؟۱ﮒﺅﺙﮔﻛﭦ۳ﻠﻠ۱ﻛﺕﭦﻟﺑ
+        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮒ۳ﻝﻟﺑﮔﺍﻠﮔﮒ?
+        assert result.total_cost <= 0  # ﮔﭨﮔﮔ؛ﮒﺁﻟﺛﻛﺕﭦ0ﮔﻟﺑ
     
     def test_very_small_amount(self):
-        """测试极小金额"""
+        """ﮔﭖﻟﺁﮔﮒﺍﻠﻠ۱"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=1,  # 1�?
-            price=0.01,  # 0.01�?
+            quantity=1,  # 1ﻟ?
+            price=0.01,  # 0.01ﮒ?
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # 极小金额�?.01�?
+        # ﮔﮒﺍﻠﻠ۱ﺅﺙ?.01ﮒ?
         amount = 0.01
         
-        # 佣金�?.01×0.03%=0.000003元，但最�?�?
-        # 实际应为5元，但金额小于佣金，可能特殊处理
-        # 过户费：0.01×0.002%=0.0000002元，但最�?�?
-        # 总成本可能超过成交金�?
+        # ﻛﺛ۲ﻠﺅﺙ?.01ﺣ0.03%=0.000003ﮒﺅﺙﻛﺛﮔﻛﺛ?ﮒ?
+        # ﮒ؟ﻠﮒﭦﻛﺕﭦ5ﮒﺅﺙﻛﺛﻠﻠ۱ﮒﺍﻛﭦﻛﺛ۲ﻠﺅﺙﮒﺁﻟﺛﻝﺗﮔ؟ﮒ۳ﻝ
+        # ﻟﺟﮔﺓﻟﺑﺗﺅﺙ0.01ﺣ0.002%=0.0000002ﮒﺅﺙﻛﺛﮔﻛﺛ?ﮒ?
+        # ﮔﭨﮔﮔ؛ﮒﺁﻟﺛﻟﭘﻟﺟﮔﻛﭦ۳ﻠﻠ۱?
         
-        # 验证计算不会崩溃
+        # ﻠ۹ﻟﺁﻟ؟۰ﻝ؟ﻛﺕﻛﺙﮒﺑ۸ﮔﭦ
         assert isinstance(result.total_cost, float)
     
     def test_very_large_amount(self):
-        """测试极大金额"""
+        """ﮔﭖﻟﺁﮔﮒ۳۶ﻠﻠ۱"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=10000000,  # 1000万股
-            price=1000.0,  # 1000�?
+            quantity=10000000,  # 1000ﻛﺕﻟ۰
+            price=1000.0,  # 1000ﮒ?
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # 极大金额�?00�?
+        # ﮔﮒ۳۶ﻠﻠ۱ﺅﺙ?00ﻛﭦ?
         amount = 10000000 * 1000.0
         
-        # 验证计算不会溢出
+        # ﻠ۹ﻟﺁﻟ؟۰ﻝ؟ﻛﺕﻛﺙﮔﭦ۱ﮒﭦ
         assert isinstance(result.total_cost, float)
         assert result.total_cost > 0
         
-        # 验证成本占比合理
-        assert 0 < result.as_percentage < 0.01  # 成本占比应小�?%
+        # ﻠ۹ﻟﺁﮔﮔ؛ﮒ ﮔﺁﮒﻝ
+        assert 0 < result.as_percentage < 0.01  # ﮔﮔ؛ﮒ ﮔﺁﮒﭦﮒﺍﻛﭦ?%
     
     def test_extreme_slippage_factors(self):
-        """测试极端滑点因子"""
+        """ﮔﭖﻟﺁﮔﻝ،ﺁﮔﭨﻝﺗﮒ ﮒ­"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 所有因子都取极端�?
+        # ﮔﮔﮒ ﮒ­ﻠﺛﮒﮔﻝ،ﺁﮒ?
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
-            quantity=200000,  # 极大�?
+            quantity=200000,  # ﮔﮒ۳۶ﮒ?
             price=10.0,
             market=MarketType.SZ,
             category=SecurityCategory.STOCK,
-            timestamp="2026-04-02 09:15:00",  # 开盘时�?
+            timestamp="2026-04-02 09:15:00",  # ﮒﺙﻝﮔﭘﮔ؟?
             market_data={
-                "daily_volume": 1000,        # 极低流动�?
-                "volatility": 0.1,           # 极高波动�?
+                "daily_volume": 1000,        # ﮔﻛﺛﮔﭖﮒ۷ﮔ?
+                "volatility": 0.1,           # ﮔﻠ،ﮔﺏ۱ﮒ۷ﻝ?
                 "avg_trade_size": 100
             }
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # 验证滑点不超过最大限�?
+        # ﻠ۹ﻟﺁﮔﭨﻝﺗﻛﺕﻟﭘﻟﺟﮔﮒ۳۶ﻠﮒ?
         amount = order.quantity * order.price
         slippage_rate = result.slippage / amount if amount > 0 else 0
-        assert slippage_rate <= 0.01  # 不超�?%
+        assert slippage_rate <= 0.01  # ﻛﺕﻟﭘﻟﺟ?%
     
     def test_rounding_edge_cases(self):
-        """测试舍入边界情况"""
+        """ﮔﭖﻟﺁﻟﮒ۴ﻟﺝﺗﻝﮔﮒﭖ"""
         config = CostConfig()
         config.precision = 2
         config.rounding_method = "ROUND"
         calculator = CostCalculator(config)
         
-        # 测试各种舍入情况
+        # ﮔﭖﻟﺁﮒﻝ۶ﻟﮒ۴ﮔﮒﭖ
         test_cases = [
-            (0.0049, 0.00),  # 四舍五入�?.0049 -> 0.00
-            (0.0050, 0.01),  # 四舍五入�?.0050 -> 0.01
-            (0.0149, 0.01),  # 四舍五入�?.0149 -> 0.01
-            (0.0150, 0.02),  # 四舍五入�?.0150 -> 0.02
-            (1.2345, 1.23),  # 四舍五入�?.2345 -> 1.23
-            (1.2350, 1.24),  # 四舍五入�?.2350 -> 1.24
+            (0.0049, 0.00),  # ﮒﻟﻛﭦﮒ۴ﺅﺙ?.0049 -> 0.00
+            (0.0050, 0.01),  # ﮒﻟﻛﭦﮒ۴ﺅﺙ?.0050 -> 0.01
+            (0.0149, 0.01),  # ﮒﻟﻛﭦﮒ۴ﺅﺙ?.0149 -> 0.01
+            (0.0150, 0.02),  # ﮒﻟﻛﭦﮒ۴ﺅﺙ?.0150 -> 0.02
+            (1.2345, 1.23),  # ﮒﻟﻛﭦﮒ۴ﺅﺙ?.2345 -> 1.23
+            (1.2350, 1.24),  # ﮒﻟﻛﭦﮒ۴ﺅﺙ?.2350 -> 1.24
         ]
         
         for value, expected in test_cases:
-            # 创建一个订单，使得佣金计算结果为value
-            # 简化测试：直接测试舍入方法
+            # ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻟ؟۱ﮒﺅﺙﻛﺛﺟﮒﺝﻛﺛ۲ﻠﻟ؟۰ﻝ؟ﻝﭨﮔﻛﺕﭦvalue
+            # ﻝ؟ﮒﮔﭖﻟﺁﺅﺙﻝﺑﮔ۴ﮔﭖﻟﺁﻟﮒ۴ﮔﺗﮔﺏ
             rounded = calculator._round(value)
-            assert rounded == expected, f"舍入错误：{value} -> {rounded}，预期：{expected}"
+            assert rounded == expected, f"ﻟﮒ۴ﻠﻟﺁﺁﺅﺙ{value} -> {rounded}ﺅﺙﻠ۱ﮔﺅﺙ{expected}"
     
     def test_different_rounding_methods(self):
-        """测试不同舍入方法"""
-        # 测试向上取整
+        """ﮔﭖﻟﺁﻛﺕﮒﻟﮒ۴ﮔﺗﮔﺏ"""
+        # ﮔﭖﻟﺁﮒﻛﺕﮒﮔﺑ
         config1 = CostConfig()
         config1.precision = 2
         config1.rounding_method = "CEIL"
         calculator1 = CostCalculator(config1)
         
-        assert calculator1._round(0.001) == 0.01  # 向上取整
-        assert calculator1._round(1.111) == 1.12   # 向上取整
+        assert calculator1._round(0.001) == 0.01  # ﮒﻛﺕﮒﮔﺑ
+        assert calculator1._round(1.111) == 1.12   # ﮒﻛﺕﮒﮔﺑ
         
-        # 测试向下取整
+        # ﮔﭖﻟﺁﮒﻛﺕﮒﮔﺑ
         config2 = CostConfig()
         config2.precision = 2
         config2.rounding_method = "FLOOR"
         calculator2 = CostCalculator(config2)
         
-        assert calculator2._round(0.009) == 0.00  # 向下取整
-        assert calculator2._round(1.119) == 1.11   # 向下取整
+        assert calculator2._round(0.009) == 0.00  # ﮒﻛﺕﮒﮔﺑ
+        assert calculator2._round(1.119) == 1.11   # ﮒﻛﺕﮒﮔﺑ
         
-        # 测试四舍五入
+        # ﮔﭖﻟﺁﮒﻟﻛﭦﮒ۴
         config3 = CostConfig()
         config3.precision = 2
         config3.rounding_method = "ROUND"
         calculator3 = CostCalculator(config3)
         
-        assert calculator3._round(0.004) == 0.00  # 四舍
-        assert calculator3._round(0.005) == 0.01  # 五入
+        assert calculator3._round(0.004) == 0.00  # ﮒﻟ
+        assert calculator3._round(0.005) == 0.01  # ﻛﭦﮒ۴
 ```
 
-### 2.3 配置验证测试
+### 2.3 ﻠﻝﺛ؟ﻠ۹ﻟﺁﮔﭖﻟﺁ
 
 ```python
 # test_config_validation.py
@@ -1188,13 +1188,13 @@ import yaml
 from cost_calculator import CostConfig, TieredRate
 
 class TestConfigValidation:
-    """配置验证测试"""
+    """ﻠﻝﺛ؟ﻠ۹ﻟﺁﮔﭖﻟﺁ"""
     
     def test_valid_config(self):
-        """测试有效配置"""
+        """ﮔﭖﻟﺁﮔﮔﻠﻝﺛ؟"""
         config = CostConfig()
         
-        # 验证基础配置
+        # ﻠ۹ﻟﺁﮒﭦﻝ۰ﻠﻝﺛ؟
         assert config.commission_rate == 0.0003
         assert config.min_commission == 5.0
         assert config.stamp_tax_rate == 0.001
@@ -1202,7 +1202,7 @@ class TestConfigValidation:
         assert config.sz_transfer_rate == 0.00002
         assert config.regulatory_rate == 0.00002
         
-        # 验证默认�?
+        # ﻠ۹ﻟﺁﻠﭨﻟ؟۳ﮒ?
         assert config.commission_tiered_rates is not None
         assert len(config.commission_tiered_rates) == 3
         assert config.stamp_tax_exempt_categories is not None
@@ -1211,36 +1211,36 @@ class TestConfigValidation:
         assert len(config.regulatory_components) == 3
     
     def test_invalid_rate_range(self):
-        """测试无效费率范围"""
-        # 佣金率超出范�?
+        """ﮔﭖﻟﺁﮔ ﮔﻟﺑﺗﻝﻟﮒﺑ"""
+        # ﻛﺛ۲ﻠﻝﻟﭘﮒﭦﻟﮒ?
         config = CostConfig()
-        config.commission_rate = 0.005  # 0.5%，超出合理范�?
+        config.commission_rate = 0.005  # 0.5%ﺅﺙﻟﭘﮒﭦﮒﻝﻟﮒ?
         
-        # 实际实现中应有验证机�?
-        # 这里测试配置对象能否创建
+        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮔﻠ۹ﻟﺁﮔﭦﮒ?
+        # ﻟﺟﻠﮔﭖﻟﺁﻠﻝﺛ؟ﮒﺁﺗﻟﺎ۰ﻟﺛﮒ۵ﮒﮒﭨﭦ
         
     def test_invalid_tiered_rates(self):
-        """测试无效阶梯费率"""
-        # 阈值不递增
+        """ﮔﭖﻟﺁﮔ ﮔﻠﭘﮔ۱ﺁﻟﺑﺗﻝ"""
+        # ﻠﮒﺙﻛﺕﻠﮒ۱
         config = CostConfig()
         config.commission_tiered_rates = [
             TieredRate(threshold=5000000, rate=0.0003),
-            TieredRate(threshold=1000000, rate=0.00025),  # 阈值小于前一�?
+            TieredRate(threshold=1000000, rate=0.00025),  # ﻠﮒﺙﮒﺍﻛﭦﮒﻛﺕﻛﺕ?
             TieredRate(threshold=None, rate=0.0002)
         ]
         
-        # 费率不递减
+        # ﻟﺑﺗﻝﻛﺕﻠﮒ
         config2 = CostConfig()
         config2.commission_tiered_rates = [
             TieredRate(threshold=1000000, rate=0.0003),
-            TieredRate(threshold=5000000, rate=0.00035),  # 费率大于前一�?
+            TieredRate(threshold=5000000, rate=0.00035),  # ﻟﺑﺗﻝﮒ۳۶ﻛﭦﮒﻛﺕﻛﺕ?
             TieredRate(threshold=None, rate=0.0002)
         ]
         
-        # 实际实现中应有验证机�?
+        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮔﻠ۹ﻟﺁﮔﭦﮒ?
     
     def test_config_from_yaml(self):
-        """测试从YAML加载配置"""
+        """ﮔﭖﻟﺁﻛﭨYAMLﮒ ﻟﺛﺛﻠﻝﺛ؟"""
         yaml_content = """
 cost_config:
   commission:
@@ -1268,22 +1268,22 @@ cost_config:
         config_dict = yaml.safe_load(yaml_content)["cost_config"]
         config = CostConfig(**config_dict)
         
-        # 验证配置加载
+        # ﻠ۹ﻟﺁﻠﻝﺛ؟ﮒ ﻟﺛﺛ
         assert config.commission_rate == 0.00025
         assert config.stamp_tax_rate == 0.001
         assert config.sh_transfer_rate == 0.00001
         assert config.slippage_base_rate == 0.0002
     
     def test_config_validation_tool(self):
-        """测试配置验证工具"""
-        # 创建配置验证工具测试
-        # 实际实现中应有专门的配置验证工具
+        """ﮔﭖﻟﺁﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓ"""
+        # ﮒﮒﭨﭦﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓﮔﭖﻟﺁ
+        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮔﻛﺕﻠ۷ﻝﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓ
         pass
 ```
 
-## 3. 集成测试设计
+## 3. ﻠﮔﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰
 
-### 3.1 多引擎适配器集成测�?
+### 3.1 ﮒ۳ﮒﺙﮔﻠﻠﮒ۷ﻠﮔﮔﭖﻟﺁ?
 
 ```python
 # test_integration_adapters.py
@@ -1293,25 +1293,25 @@ from engines.factory import EngineFactory
 from cost_calculator import CostCalculator, CostConfig
 
 class TestIntegrationWithAdapters:
-    """适配器集成测�?""
+    """ﻠﻠﮒ۷ﻠﮔﮔﭖﻟﺁ?""
     
     def test_vnpy_adapter_integration(self):
-        """测试vn.py适配器集�?""
-        # 创建vn.py适配器配�?
+        """ﮔﭖﻟﺁvn.pyﻠﻠﮒ۷ﻠﮔ?""
+        # ﮒﮒﭨﭦvn.pyﻠﻠﮒ۷ﻠﻝﺛ?
         vnpy_config = EngineConfig(
             engine_type="vnpy",
             config_path="config/vnpy_simulation.yaml"
         )
         
-        # 创建适配�?
+        # ﮒﮒﭨﭦﻠﻠﮒ?
         factory = EngineFactory()
         adapter = factory.create_adapter(vnpy_config)
         
-        # 验证适配器包含成本计算器
+        # ﻠ۹ﻟﺁﻠﻠﮒ۷ﮒﮒ،ﮔﮔ؛ﻟ؟۰ﻝ؟ﮒ۷
         assert hasattr(adapter, 'cost_calculator')
         assert isinstance(adapter.cost_calculator, CostCalculator)
         
-        # 创建统一订单
+        # ﮒﮒﭨﭦﻝﭨﻛﺕﻟ؟۱ﮒ
         order = UnifiedOrder(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -1320,7 +1320,7 @@ class TestIntegrationWithAdapters:
             order_type="LIMIT"
         )
         
-        # 测试成本估算
+        # ﮔﭖﻟﺁﮔﮔ؛ﻛﺙﺍﻝ؟
         cost_estimate = adapter.get_cost_estimate(order)
         assert "total_cost" in cost_estimate
         assert "commission" in cost_estimate
@@ -1330,18 +1330,18 @@ class TestIntegrationWithAdapters:
         assert "slippage" in cost_estimate
     
     def test_rqalpha_adapter_integration(self):
-        """测试RQAlpha适配器集�?""
-        # 类似vn.py适配器测�?
+        """ﮔﭖﻟﺁRQAlphaﻠﻠﮒ۷ﻠﮔ?""
+        # ﻝﺎﭨﻛﺙﺙvn.pyﻠﻠﮒ۷ﮔﭖﻟﺁ?
         pass
     
     def test_cost_report_generation(self):
-        """测试成本报告生成"""
-        # 测试订单执行后生成详细成本报�?
+        """ﮔﭖﻟﺁﮔﮔ؛ﮔ۴ﮒﻝﮔ"""
+        # ﮔﭖﻟﺁﻟ؟۱ﮒﮔ۶ﻟ۰ﮒﻝﮔﻟﺁ۵ﻝﭨﮔﮔ؛ﮔ۴ﮒ?
         pass
     
     def test_multiple_adapters_consistency(self):
-        """测试多适配器成本计算一致�?""
-        # 创建多个适配�?
+        """ﮔﭖﻟﺁﮒ۳ﻠﻠﮒ۷ﮔﮔ؛ﻟ؟۰ﻝ؟ﻛﺕﻟﺑﮔ?""
+        # ﮒﮒﭨﭦﮒ۳ﻛﺕ۹ﻠﻠﮒ?
         factory = EngineFactory()
         
         vnpy_adapter = factory.create_adapter(
@@ -1352,7 +1352,7 @@ class TestIntegrationWithAdapters:
             EngineConfig(engine_type="rqalpha")
         )
         
-        # 同一订单在不同适配器中成本应一�?
+        # ﮒﻛﺕﻟ؟۱ﮒﮒ۷ﻛﺕﮒﻠﻠﮒ۷ﻛﺕ­ﮔﮔ؛ﮒﭦﻛﺕﻟ?
         order = UnifiedOrder(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -1364,11 +1364,11 @@ class TestIntegrationWithAdapters:
         vnpy_cost = vnpy_adapter.get_cost_estimate(order)
         rqalpha_cost = rqalpha_adapter.get_cost_estimate(order)
         
-        # 成本计算应基本一致（允许微小差异�?
+        # ﮔﮔ؛ﻟ؟۰ﻝ؟ﮒﭦﮒﭦﮔ؛ﻛﺕﻟﺑﺅﺙﮒﻟ؟ﺕﮒﺝ؟ﮒﺍﮒﺓ؟ﮒﺙﺅﺙ?
         assert abs(vnpy_cost["total_cost"] - rqalpha_cost["total_cost"]) < 0.01
 ```
 
-### 3.2 配置管理集成测试
+### 3.2 ﻠﻝﺛ؟ﻝ؟۰ﻝﻠﮔﮔﭖﻟﺁ
 
 ```python
 # test_integration_config.py
@@ -1379,11 +1379,11 @@ import os
 from cost_calculator import CostCalculator, CostConfig
 
 class TestIntegrationWithConfig:
-    """配置管理集成测试"""
+    """ﻠﻝﺛ؟ﻝ؟۰ﻝﻠﮔﮔﭖﻟﺁ"""
     
     def test_config_file_loading(self):
-        """测试配置文件加载"""
-        # 创建临时配置文件
+        """ﮔﭖﻟﺁﻠﻝﺛ؟ﮔﻛﭨﭘﮒ ﻟﺛﺛ"""
+        # ﮒﮒﭨﭦﻛﺕﺑﮔﭘﻠﻝﺛ؟ﮔﻛﭨﭘ
         with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
             yaml_content = """
 cost_config:
@@ -1406,15 +1406,15 @@ cost_config:
             config_path = f.name
         
         try:
-            # 加载配置文件
+            # ﮒ ﻟﺛﺛﻠﻝﺛ؟ﮔﻛﭨﭘ
             with open(config_path, 'r') as f:
                 config_dict = yaml.safe_load(f)["cost_config"]
             
-            # 创建配置对象
+            # ﮒﮒﭨﭦﻠﻝﺛ؟ﮒﺁﺗﻟﺎ۰
             config = CostConfig(**config_dict)
             calculator = CostCalculator(config)
             
-            # 验证配置生效
+            # ﻠ۹ﻟﺁﻠﻝﺛ؟ﻝﮔ
             order = OrderInfo(
                 symbol="000001.SZ",
                 side=OrderSide.BUY,
@@ -1426,28 +1426,28 @@ cost_config:
             
             result = calculator.calculate_total_cost(order)
             
-            # 佣金率应�?.025%
+            # ﻛﺛ۲ﻠﻝﮒﭦﻛﺕ?.025%
             expected_commission = max(100000 * 0.00025, 5.0)
             assert result.commission == pytest.approx(expected_commission, rel=0.01)
             
         finally:
-            # 清理临时文件
+            # ﮔﺕﻝﻛﺕﺑﮔﭘﮔﻛﭨﭘ
             os.unlink(config_path)
     
     def test_config_hot_reload(self):
-        """测试配置热重�?""
-        # 测试运行时修改配�?
+        """ﮔﭖﻟﺁﻠﻝﺛ؟ﻝ­ﻠﻟﺛ?""
+        # ﮔﭖﻟﺁﻟﺟﻟ۰ﮔﭘﻛﺟ؟ﮔﺗﻠﻝﺛ?
         pass
     
     def test_config_validation_integration(self):
-        """测试配置验证集成"""
-        # 测试加载无效配置时的错误处理
+        """ﮔﭖﻟﺁﻠﻝﺛ؟ﻠ۹ﻟﺁﻠﮔ"""
+        # ﮔﭖﻟﺁﮒ ﻟﺛﺛﮔ ﮔﻠﻝﺛ؟ﮔﭘﻝﻠﻟﺁﺁﮒ۳ﻝ
         pass
 ```
 
-## 4. 性能测试设计
+## 4. ﮔ۶ﻟﺛﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰
 
-### 4.1 单次计算性能测试
+### 4.1 ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 # test_performance_basic.py
@@ -1456,10 +1456,10 @@ import time
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestPerformanceBasic:
-    """基础性能测试"""
+    """ﮒﭦﻝ۰ﮔ۶ﻟﺛﮔﭖﻟﺁ"""
     
     def test_single_calculation_performance(self):
-        """测试单次计算性能"""
+        """ﮔﭖﻟﺁﮒﮔ؛۰ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1472,24 +1472,24 @@ class TestPerformanceBasic:
             category=SecurityCategory.STOCK
         )
         
-        # 预热
+        # ﻠ۱ﻝ­
         for _ in range(10):
             calculator.calculate_total_cost(order)
         
-        # 性能测试
+        # ﮔ۶ﻟﺛﮔﭖﻟﺁ
         start_time = time.perf_counter()
         for _ in range(1000):
             calculator.calculate_total_cost(order)
         end_time = time.perf_counter()
         
         total_time = end_time - start_time
-        avg_time = total_time / 1000 * 1000  # 转换为毫�?
+        avg_time = total_time / 1000 * 1000  # ﻟﺛ؛ﮔ۱ﻛﺕﭦﮔﺁ،ﻝ۶?
         
-        print(f"单次计算平均时间: {avg_time:.3f}ms")
-        assert avg_time < 1.0  # 目标�?1ms
+        print(f"ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﮒﺗﺏﮒﮔﭘﻠﺑ: {avg_time:.3f}ms")
+        assert avg_time < 1.0  # ﻝ؟ﮔ ﺅﺙ?1ms
     
     def test_calculation_with_cache(self):
-        """测试带缓存的性能"""
+        """ﮔﭖﻟﺁﮒﺕ۵ﻝﺙﮒ­ﻝﮔ۶ﻟﺛ"""
         config = CostConfig()
         config.cache_enabled = True
         calculator = CostCalculator(config)
@@ -1503,31 +1503,31 @@ class TestPerformanceBasic:
             category=SecurityCategory.STOCK
         )
         
-        # 第一次计算（无缓存）
+        # ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔ ﻝﺙﮒ­ﺅﺙ
         start_time1 = time.perf_counter()
         result1 = calculator.calculate_total_cost(order)
         end_time1 = time.perf_counter()
         
         time1 = (end_time1 - start_time1) * 1000
         
-        # 第二次计算（有缓存）
+        # ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒ­ﺅﺙ
         start_time2 = time.perf_counter()
         result2 = calculator.calculate_total_cost(order)
         end_time2 = time.perf_counter()
         
         time2 = (end_time2 - start_time2) * 1000
         
-        print(f"第一次计算（无缓存）: {time1:.3f}ms")
-        print(f"第二次计算（有缓存）: {time2:.3f}ms")
+        print(f"ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔ ﻝﺙﮒ­ﺅﺙ: {time1:.3f}ms")
+        print(f"ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒ­ﺅﺙ: {time2:.3f}ms")
         
-        # 缓存命中后应更快
+        # ﻝﺙﮒ­ﮒﺛﻛﺕ­ﮒﮒﭦﮔﺑﮒﺟ،
         assert time2 < time1
         
-        # 结果应相�?
+        # ﻝﭨﮔﮒﭦﻝﺕﮒ?
         assert result1.total_cost == result2.total_cost
 ```
 
-### 4.2 批量计算性能测试
+### 4.2 ﮔﺗﻠﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 # test_performance_batch.py
@@ -1537,10 +1537,10 @@ import random
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestPerformanceBatch:
-    """批量性能测试"""
+    """ﮔﺗﻠﮔ۶ﻟﺛﮔﭖﻟﺁ"""
     
     def generate_test_orders(self, count=1000):
-        """生成测试订单"""
+        """ﻝﮔﮔﭖﻟﺁﻟ؟۱ﮒ"""
         orders = []
         symbols = ["000001.SZ", "000002.SZ", "600000.SH", "600036.SH"]
         sides = [OrderSide.BUY, OrderSide.SELL]
@@ -1563,18 +1563,18 @@ class TestPerformanceBatch:
         return orders
     
     def test_batch_calculation_performance(self):
-        """测试批量计算性能"""
+        """ﮔﭖﻟﺁﮔﺗﻠﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 生成1000个测试订�?
+        # ﻝﮔ1000ﻛﺕ۹ﮔﭖﻟﺁﻟ؟۱ﮒ?
         orders = self.generate_test_orders(1000)
         
-        # 预热
+        # ﻠ۱ﻝ­
         for order in orders[:100]:
             calculator.calculate_total_cost(order)
         
-        # 批量计算性能测试
+        # ﮔﺗﻠﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﮔﭖﻟﺁ
         start_time = time.perf_counter()
         
         results = []
@@ -1584,26 +1584,26 @@ class TestPerformanceBatch:
         
         end_time = time.perf_counter()
         
-        total_time = (end_time - start_time) * 1000  # 转换为毫�?
+        total_time = (end_time - start_time) * 1000  # ﻟﺛ؛ﮔ۱ﻛﺕﭦﮔﺁ،ﻝ۶?
         avg_time = total_time / len(orders)
         
-        print(f"批量计算 {len(orders)} 个订单，总时�? {total_time:.1f}ms")
-        print(f"平均每个订单计算时间: {avg_time:.3f}ms")
+        print(f"ﮔﺗﻠﻟ؟۰ﻝ؟ {len(orders)} ﻛﺕ۹ﻟ؟۱ﮒﺅﺙﮔﭨﮔﭘﻠ? {total_time:.1f}ms")
+        print(f"ﮒﺗﺏﮒﮔﺁﻛﺕ۹ﻟ؟۱ﮒﻟ؟۰ﻝ؟ﮔﭘﻠﺑ: {avg_time:.3f}ms")
         
-        assert avg_time < 0.5  # 目标�?0.5ms/订单
+        assert avg_time < 0.5  # ﻝ؟ﮔ ﺅﺙ?0.5ms/ﻟ؟۱ﮒ
         assert len(results) == len(orders)
     
     def test_concurrent_calculation(self):
-        """测试并发计算"""
-        # 测试多线�?多进程计算性能
+        """ﮔﭖﻟﺁﮒﺗﭘﮒﻟ؟۰ﻝ؟"""
+        # ﮔﭖﻟﺁﮒ۳ﻝﭦﺟﻝ۷?ﮒ۳ﻟﺟﻝ۷ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ
         pass
     
     def test_memory_usage(self):
-        """测试内存使用"""
+        """ﮔﭖﻟﺁﮒﮒ­ﻛﺛﺟﻝ۷"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # 测试缓存内存占用
+        # ﮔﭖﻟﺁﻝﺙﮒ­ﮒﮒ­ﮒ ﻝ۷
         orders = self.generate_test_orders(10000)
         
         import psutil
@@ -1612,20 +1612,20 @@ class TestPerformanceBatch:
         process = psutil.Process(os.getpid())
         memory_before = process.memory_info().rss / 1024 / 1024  # MB
         
-        # 计算大量订单，填充缓�?
+        # ﻟ؟۰ﻝ؟ﮒ۳۶ﻠﻟ؟۱ﮒﺅﺙﮒ۰،ﮒﻝﺙﮒ­?
         for order in orders[:1000]:
             calculator.calculate_total_cost(order)
         
         memory_after = process.memory_info().rss / 1024 / 1024  # MB
         memory_increase = memory_after - memory_before
         
-        print(f"内存使用增加: {memory_increase:.2f}MB")
+        print(f"ﮒﮒ­ﻛﺛﺟﻝ۷ﮒ۱ﮒ : {memory_increase:.2f}MB")
         
-        # 验证内存增加合理
-        assert memory_increase < 100  # 增加应小�?00MB
+        # ﻠ۹ﻟﺁﮒﮒ­ﮒ۱ﮒ ﮒﻝ
+        assert memory_increase < 100  # ﮒ۱ﮒ ﮒﭦﮒﺍﻛﭦ?00MB
 ```
 
-### 4.3 压力测试
+### 4.3 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 # test_performance_stress.py
@@ -1635,10 +1635,10 @@ import threading
 from cost_calculator import CostCalculator, CostConfig, OrderInfo, OrderSide, MarketType, SecurityCategory
 
 class TestPerformanceStress:
-    """压力测试"""
+    """ﮒﮒﮔﭖﻟﺁ"""
     
     def test_high_frequency_calculation(self):
-        """测试高频计算"""
+        """ﮔﭖﻟﺁﻠ،ﻠ۱ﻟ؟۰ﻝ؟"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1651,9 +1651,9 @@ class TestPerformanceStress:
             category=SecurityCategory.STOCK
         )
         
-        # 模拟高频交易�?秒内计算10000�?
+        # ﮔ۷۰ﮔﻠ،ﻠ۱ﻛﭦ۳ﮔﺅﺙ?ﻝ۶ﮒﻟ؟۰ﻝ؟10000ﮔ؛?
         calculations_per_second = 10000
-        duration = 1.0  # 1�?
+        duration = 1.0  # 1ﻝ۶?
         
         start_time = time.perf_counter()
         count = 0
@@ -1666,15 +1666,15 @@ class TestPerformanceStress:
         actual_duration = end_time - start_time
         actual_rate = count / actual_duration
         
-        print(f"实际计算速率: {actual_rate:.0f} �?�?)
-        print(f"目标计算速率: {calculations_per_second} �?�?)
-        print(f"完成计算次数: {count}")
+        print(f"ﮒ؟ﻠﻟ؟۰ﻝ؟ﻠﻝ: {actual_rate:.0f} ﮔ؛?ﻝ۶?)
+        print(f"ﻝ؟ﮔ ﻟ؟۰ﻝ؟ﻠﻝ: {calculations_per_second} ﮔ؛?ﻝ۶?)
+        print(f"ﮒ؟ﮔﻟ؟۰ﻝ؟ﮔ؛۰ﮔﺍ: {count}")
         
-        # 验证能够处理高频计算
-        assert actual_rate > calculations_per_second * 0.5  # 至少达到目标�?0%
+        # ﻠ۹ﻟﺁﻟﺛﮒ۳ﮒ۳ﻝﻠ،ﻠ۱ﻟ؟۰ﻝ؟
+        assert actual_rate > calculations_per_second * 0.5  # ﻟﺏﮒﺍﻟﺝﺝﮒﺍﻝ؟ﮔ ﻝ?0%
     
     def test_concurrent_stress(self):
-        """测试并发压力"""
+        """ﮔﭖﻟﺁﮒﺗﭘﮒﮒﮒ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1696,7 +1696,7 @@ class TestPerformanceStress:
                 with lock:
                     results.append((thread_id, i, result.total_cost))
         
-        # 创建多个线程并发计算
+        # ﮒﮒﭨﭦﮒ۳ﻛﺕ۹ﻝﭦﺟﻝ۷ﮒﺗﭘﮒﻟ؟۰ﻝ؟
         thread_count = 10
         calculations_per_thread = 1000
         
@@ -1710,11 +1710,11 @@ class TestPerformanceStress:
         
         start_time = time.perf_counter()
         
-        # 启动所有线�?
+        # ﮒﺁﮒ۷ﮔﮔﻝﭦﺟﻝ۷?
         for thread in threads:
             thread.start()
         
-        # 等待所有线程完�?
+        # ﻝ­ﮒﺝﮔﮔﻝﭦﺟﻝ۷ﮒ؟ﮔ?
         for thread in threads:
             thread.join()
         
@@ -1724,22 +1724,22 @@ class TestPerformanceStress:
         total_calculations = thread_count * calculations_per_thread
         calculations_per_second = total_calculations / total_time
         
-        print(f"并发计算完成: {total_calculations} 次计�?)
-        print(f"总时�? {total_time:.2f}�?)
-        print(f"计算速率: {calculations_per_second:.0f} �?�?)
+        print(f"ﮒﺗﭘﮒﻟ؟۰ﻝ؟ﮒ؟ﮔ: {total_calculations} ﮔ؛۰ﻟ؟۰ﻝ؟?)
+        print(f"ﮔﭨﮔﭘﻠ? {total_time:.2f}ﻝ۶?)
+        print(f"ﻟ؟۰ﻝ؟ﻠﻝ: {calculations_per_second:.0f} ﮔ؛?ﻝ۶?)
         
-        # 验证并发计算正确�?
+        # ﻠ۹ﻟﺁﮒﺗﭘﮒﻟ؟۰ﻝ؟ﮔ­۲ﻝ۰؟ﮔ?
         assert len(results) == total_calculations
         
-        # 所有计算结果应一�?
+        # ﮔﮔﻟ؟۰ﻝ؟ﻝﭨﮔﮒﭦﻛﺕﻟ?
         first_result = results[0][2]
         for _, _, result in results:
             assert result == pytest.approx(first_result, rel=0.01)
 ```
 
-## 5. 回归测试设计
+## 5. ﮒﮒﺛﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰
 
-### 5.1 测试自动�?
+### 5.1 ﮔﭖﻟﺁﻟ۹ﮒ۷ﮒ?
 
 ```python
 # test_regression.py
@@ -1750,16 +1750,16 @@ from pathlib import Path
 from cost_calculator import CostCalculator, CostConfig
 
 class TestRegression:
-    """回归测试"""
+    """ﮒﮒﺛﮔﭖﻟﺁ"""
     
     def load_regression_data(self):
-        """加载回归测试数据"""
+        """ﮒ ﻟﺛﺛﮒﮒﺛﮔﭖﻟﺁﮔﺍﮔ؟"""
         data_path = Path(__file__).parent / "test_data" / "regression_cases.json"
         with open(data_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     
     def test_regression_cases(self):
-        """回归测试用例"""
+        """ﮒﮒﺛﮔﭖﻟﺁﻝ۷ﻛﺝ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1768,35 +1768,35 @@ class TestRegression:
         failed_cases = []
         
         for case in regression_cases:
-            # 创建订单
+            # ﮒﮒﭨﭦﻟ؟۱ﮒ
             order = OrderInfo(**case["order"])
             
-            # 计算成本
+            # ﻟ؟۰ﻝ؟ﮔﮔ؛
             result = calculator.calculate_total_cost(order)
             
-            # 验证结果
+            # ﻠ۹ﻟﺁﻝﭨﮔ
             expected = case["expected"]
             
             errors = []
             
-            # 检查各项成�?
+            # ﮔ۲ﮔ۴ﮒﻠ۰ﺗﮔﮔ?
             if abs(result.commission - expected["commission"]) > 0.01:
-                errors.append(f"佣金不匹�? {result.commission} != {expected['commission']}")
+                errors.append(f"ﻛﺛ۲ﻠﻛﺕﮒﺗﻠ? {result.commission} != {expected['commission']}")
             
             if abs(result.stamp_tax - expected["stamp_tax"]) > 0.01:
-                errors.append(f"印花税不匹配: {result.stamp_tax} != {expected['stamp_tax']}")
+                errors.append(f"ﮒﺍﻟﺎﻝ۷ﻛﺕﮒﺗﻠ: {result.stamp_tax} != {expected['stamp_tax']}")
             
             if abs(result.transfer_fee - expected["transfer_fee"]) > 0.01:
-                errors.append(f"过户费不匹配: {result.transfer_fee} != {expected['transfer_fee']}")
+                errors.append(f"ﻟﺟﮔﺓﻟﺑﺗﻛﺕﮒﺗﻠ: {result.transfer_fee} != {expected['transfer_fee']}")
             
             if abs(result.regulatory_fees - expected["regulatory_fees"]) > 0.01:
-                errors.append(f"规费不匹�? {result.regulatory_fees} != {expected['regulatory_fees']}")
+                errors.append(f"ﻟ۶ﻟﺑﺗﻛﺕﮒﺗﻠ? {result.regulatory_fees} != {expected['regulatory_fees']}")
             
             if abs(result.slippage - expected["slippage"]) > 0.01:
-                errors.append(f"滑点不匹�? {result.slippage} != {expected['slippage']}")
+                errors.append(f"ﮔﭨﻝﺗﻛﺕﮒﺗﻠ? {result.slippage} != {expected['slippage']}")
             
             if abs(result.total_cost - expected["total_cost"]) > 0.01:
-                errors.append(f"总成本不匹配: {result.total_cost} != {expected['total_cost']}")
+                errors.append(f"ﮔﭨﮔﮔ؛ﻛﺕﮒﺗﻠ: {result.total_cost} != {expected['total_cost']}")
             
             if errors:
                 failed_cases.append({
@@ -1814,30 +1814,30 @@ class TestRegression:
                     "expected": expected
                 })
         
-        # 输出失败用例
+        # ﻟﺝﮒﭦﮒ۳ﺎﻟﺑ۴ﻝ۷ﻛﺝ
         if failed_cases:
-            print(f"回归测试失败用例�? {len(failed_cases)}")
-            for failed in failed_cases[:5]:  # 只显示前5个失败用�?
-                print(f"失败用例: {failed['case']}")
+            print(f"ﮒﮒﺛﮔﭖﻟﺁﮒ۳ﺎﻟﺑ۴ﻝ۷ﻛﺝﮔ? {len(failed_cases)}")
+            for failed in failed_cases[:5]:  # ﮒ۹ﮔﺝﻝ۳ﭦﮒ5ﻛﺕ۹ﮒ۳ﺎﻟﺑ۴ﻝ۷ﻛﺝ?
+                print(f"ﮒ۳ﺎﻟﺑ۴ﻝ۷ﻛﺝ: {failed['case']}")
                 for error in failed['errors']:
                     print(f"  {error}")
             
-            assert False, f"回归测试失败: {len(failed_cases)} 个用例未通过"
+            assert False, f"ﮒﮒﺛﮔﭖﻟﺁﮒ۳ﺎﻟﺑ۴: {len(failed_cases)} ﻛﺕ۹ﻝ۷ﻛﺝﮔ۹ﻠﻟﺟ"
     
     def test_backward_compatibility(self):
-        """测试向后兼容�?""
-        # 测试新版本与旧版本计算结果的兼容�?
+        """ﮔﭖﻟﺁﮒﮒﮒﺙﮒ؟ﺗﮔ?""
+        # ﮔﭖﻟﺁﮔﺍﻝﮔ؛ﻛﺕﮔ۶ﻝﮔ؛ﻟ؟۰ﻝ؟ﻝﭨﮔﻝﮒﺙﮒ؟ﺗﮔ?
         pass
     
     def test_config_compatibility(self):
-        """测试配置兼容�?""
-        # 测试新配置与旧配置的兼容�?
+        """ﮔﭖﻟﺁﻠﻝﺛ؟ﮒﺙﮒ؟ﺗﮔ?""
+        # ﮔﭖﻟﺁﮔﺍﻠﻝﺛ؟ﻛﺕﮔ۶ﻠﻝﺛ؟ﻝﮒﺙﮒ؟ﺗﮔ?
         pass
 ```
 
-## 6. 测试执行与报�?
+## 6. ﮔﭖﻟﺁﮔ۶ﻟ۰ﻛﺕﮔ۴ﮒ?
 
-### 6.1 测试执行脚本
+### 6.1 ﮔﭖﻟﺁﮔ۶ﻟ۰ﻟﮔ؛
 
 ```python
 #!/usr/bin/env python3
@@ -1849,15 +1849,15 @@ import time
 from pathlib import Path
 
 def run_all_tests():
-    """运行所有测�?""
+    """ﻟﺟﻟ۰ﮔﮔﮔﭖﻟﺁ?""
     print("=" * 80)
-    print("交易成本模型测试套件")
+    print("ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒﮔﭖﻟﺁﮒ۴ﻛﭨﭘ")
     print("=" * 80)
     
     test_dir = Path(__file__).parent / "tests"
     
-    # 运行单元测试
-    print("\n1. 运行单元测试...")
+    # ﻟﺟﻟ۰ﮒﮒﮔﭖﻟﺁ
+    print("\n1. ﻟﺟﻟ۰ﮒﮒﮔﭖﻟﺁ...")
     start_time = time.time()
     result = pytest.main([
         str(test_dir / "unit"),
@@ -1868,13 +1868,13 @@ def run_all_tests():
     unit_time = time.time() - start_time
     
     if result == 0:
-        print(f"�?单元测试通过，耗时: {unit_time:.1f}�?)
+        print(f"ﻗ?ﮒﮒﮔﭖﻟﺁﻠﻟﺟﺅﺙﻟﮔﭘ: {unit_time:.1f}ﻝ۶?)
     else:
-        print(f"�?单元测试失败，耗时: {unit_time:.1f}�?)
+        print(f"ﻗ?ﮒﮒﮔﭖﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﮔﭘ: {unit_time:.1f}ﻝ۶?)
         return False
     
-    # 运行集成测试
-    print("\n2. 运行集成测试...")
+    # ﻟﺟﻟ۰ﻠﮔﮔﭖﻟﺁ
+    print("\n2. ﻟﺟﻟ۰ﻠﮔﮔﭖﻟﺁ...")
     start_time = time.time()
     result = pytest.main([
         str(test_dir / "integration"),
@@ -1885,13 +1885,13 @@ def run_all_tests():
     integration_time = time.time() - start_time
     
     if result == 0:
-        print(f"�?集成测试通过，耗时: {integration_time:.1f}�?)
+        print(f"ﻗ?ﻠﮔﮔﭖﻟﺁﻠﻟﺟﺅﺙﻟﮔﭘ: {integration_time:.1f}ﻝ۶?)
     else:
-        print(f"�?集成测试失败，耗时: {integration_time:.1f}�?)
+        print(f"ﻗ?ﻠﮔﮔﭖﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﮔﭘ: {integration_time:.1f}ﻝ۶?)
         return False
     
-    # 运行性能测试
-    print("\n3. 运行性能测试...")
+    # ﻟﺟﻟ۰ﮔ۶ﻟﺛﮔﭖﻟﺁ
+    print("\n3. ﻟﺟﻟ۰ﮔ۶ﻟﺛﮔﭖﻟﺁ...")
     start_time = time.time()
     result = pytest.main([
         str(test_dir / "performance"),
@@ -1903,13 +1903,13 @@ def run_all_tests():
     performance_time = time.time() - start_time
     
     if result == 0:
-        print(f"�?性能测试完成，耗时: {performance_time:.1f}�?)
+        print(f"ﻗ?ﮔ۶ﻟﺛﮔﭖﻟﺁﮒ؟ﮔﺅﺙﻟﮔﭘ: {performance_time:.1f}ﻝ۶?)
     else:
-        print(f"�?性能测试失败，耗时: {performance_time:.1f}�?)
+        print(f"ﻗ?ﮔ۶ﻟﺛﮔﭖﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﮔﭘ: {performance_time:.1f}ﻝ۶?)
         return False
     
-    # 运行回归测试
-    print("\n4. 运行回归测试...")
+    # ﻟﺟﻟ۰ﮒﮒﺛﮔﭖﻟﺁ
+    print("\n4. ﻟﺟﻟ۰ﮒﮒﺛﮔﭖﻟﺁ...")
     start_time = time.time()
     result = pytest.main([
         str(test_dir / "regression"),
@@ -1920,23 +1920,23 @@ def run_all_tests():
     regression_time = time.time() - start_time
     
     if result == 0:
-        print(f"�?回归测试通过，耗时: {regression_time:.1f}�?)
+        print(f"ﻗ?ﮒﮒﺛﮔﭖﻟﺁﻠﻟﺟﺅﺙﻟﮔﭘ: {regression_time:.1f}ﻝ۶?)
     else:
-        print(f"�?回归测试失败，耗时: {regression_time:.1f}�?)
+        print(f"ﻗ?ﮒﮒﺛﮔﭖﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﮔﭘ: {regression_time:.1f}ﻝ۶?)
         return False
     
     total_time = unit_time + integration_time + performance_time + regression_time
     
     print("\n" + "=" * 80)
-    print("测试汇�?)
+    print("ﮔﭖﻟﺁﮔﺎﮔ?)
     print("=" * 80)
-    print(f"单元测试:     {unit_time:.1f}�?)
-    print(f"集成测试:     {integration_time:.1f}�?)
-    print(f"性能测试:     {performance_time:.1f}�?)
-    print(f"回归测试:     {regression_time:.1f}�?)
-    print(f"总计:         {total_time:.1f}�?)
+    print(f"ﮒﮒﮔﭖﻟﺁ:     {unit_time:.1f}ﻝ۶?)
+    print(f"ﻠﮔﮔﭖﻟﺁ:     {integration_time:.1f}ﻝ۶?)
+    print(f"ﮔ۶ﻟﺛﮔﭖﻟﺁ:     {performance_time:.1f}ﻝ۶?)
+    print(f"ﮒﮒﺛﮔﭖﻟﺁ:     {regression_time:.1f}ﻝ۶?)
+    print(f"ﮔﭨﻟ؟۰:         {total_time:.1f}ﻝ۶?)
     print("=" * 80)
-    print("�?所有测试通过!")
+    print("ﻗ?ﮔﮔﮔﭖﻟﺁﻠﻟﺟ!")
     
     return True
 
@@ -1945,7 +1945,7 @@ if __name__ == "__main__":
     sys.exit(0 if success else 1)
 ```
 
-### 6.2 测试报告生成
+### 6.2 ﮔﭖﻟﺁﮔ۴ﮒﻝﮔ
 
 ```python
 # generate_test_report.py

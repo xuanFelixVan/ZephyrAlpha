@@ -4,60 +4,60 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?
-standard_type: 专业量化机构账户管理标准
-applicable_scope: 账户服务模块
-compliance_level: 专业机构标准
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔ ﮒ
+applicable_scope: ﻟﺑ۵ﮔﺓﮔﮒ۰ﮔ۷۰ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 账户管理详细设计（专业量化机构标准）
+# ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
 
-> 清风量化系统 v5.0 - 专业量化机构标准账户管理设计
-> **设计模式**: DDD领域驱动设计 + 聚合根模�?
-> **核心职责**: 账户生命周期管理、资金管理、账户快�?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
+> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻟﮒﮔ ﺗﮔ۷۰ﮒﺙ?
+> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ?
 
-## 📋 模块概述
+## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### 账户管理架构
+### ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔﭘﮔ
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   应用�?(Application Layer)                �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         AccountApplicationService                    �? �?
-�? �? - 创建账户应用服务                                    �? �?
-�? �? - 查询账户应用服务                                    �? �?
-�? �? - 资金管理应用服务                                    �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   领域�?(Domain Layer)                     �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         AccountAggregate (账户聚合�?                �? �?
-�? �? - Account (账户实体)                                 �? �?
-�? �? - AccountSnapshot (账户快照实体)                     �? �?
-�? �? - AccountDomainService (领域服务)                    �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   基础设施�?(Infrastructure Layer)          �?
-�? ┌──────────────────────────────────────────────────────�? �?
-�? �?         AccountRepository (账户仓储)                 �? �?
-�? �? - PostgreSQL (主数据库)                              �? �?
-�? �? - Redis (实时缓存)                                   �? �?
-�? └──────────────────────────────────────────────────────�? �?
-└─────────────────────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         AccountApplicationService                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﻟﭖﻠﻝ؟۰ﻝﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         AccountAggregate (ﻟﺑ۵ﮔﺓﻟﮒﮔ ?                ﻗ? ﻗ?
+ﻗ? ﻗ? - Account (ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ)                                 ﻗ? ﻗ?
+ﻗ? ﻗ? - AccountSnapshot (ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ)                     ﻗ? ﻗ?
+ﻗ? ﻗ? - AccountDomainService (ﻠ۱ﮒﮔﮒ۰)                    ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(Infrastructure Layer)          ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         AccountRepository (ﻟﺑ۵ﮔﺓﻛﭨﮒ۷)                 ﻗ? ﻗ?
+ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
+ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 ---
 
-## 1. 领域模型设计
+## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-### 1.1 账户聚合�?(AccountAggregate)
+### 1.1 ﻟﺑ۵ﮔﺓﻟﮒﮔ ?(AccountAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -67,19 +67,19 @@ from datetime import datetime, date
 from enum import Enum
 
 class AccountType(Enum):
-    """账户类型"""
-    SIMULATION = 'simulation'  # 模拟账户
-    REAL = 'real'             # 实盘账户
+    """ﻟﺑ۵ﮔﺓﻝﺎﭨﮒ"""
+    SIMULATION = 'simulation'  # ﮔ۷۰ﮔﻟﺑ۵ﮔﺓ
+    REAL = 'real'             # ﮒ؟ﻝﻟﺑ۵ﮔﺓ
 
 class AccountStatus(Enum):
-    """账户状�?""
-    ACTIVE = 'active'         # 活跃
-    FROZEN = 'frozen'         # 冻结
-    CLOSED = 'closed'         # 关闭
+    """ﻟﺑ۵ﮔﺓﻝﭘﮔ?""
+    ACTIVE = 'active'         # ﮔﺑﭨﻟﺓ
+    FROZEN = 'frozen'         # ﮒﭨﻝﭨ
+    CLOSED = 'closed'         # ﮒﺏﻠ­
 
 @dataclass
 class Account:
-    """账户实体"""
+    """ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     account_code: str = ""
     account_name: str = ""
@@ -98,16 +98,16 @@ class Account:
     metadata: dict = field(default_factory=dict)
     
     def __post_init__(self):
-        """初始化后处理"""
+        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
         if not self.account_code:
             self.account_code = self._generate_account_code()
     
     def _generate_account_code(self) -> str:
-        """生成账户编码"""
+        """ﻝﮔﻟﺑ۵ﮔﺓﻝﺙﻝ """
         return f"ACC_{datetime.now().strftime('%Y%m%d')}_{self.id or 'NEW'}"
     
     def freeze_cash(self, amount: Decimal) -> bool:
-        """冻结资金"""
+        """ﮒﭨﻝﭨﻟﭖﻠ"""
         if amount <= 0:
             return False
         
@@ -121,7 +121,7 @@ class Account:
         return True
     
     def unfreeze_cash(self, amount: Decimal) -> bool:
-        """解冻资金"""
+        """ﻟ۶۲ﮒﭨﻟﭖﻠ"""
         if amount <= 0:
             return False
         
@@ -141,7 +141,7 @@ class Account:
         frozen_cash: Decimal,
         total_assets: Decimal
     ) -> None:
-        """更新资金"""
+        """ﮔﺑﮔﺍﻟﭖﻠ"""
         self.current_capital = current_capital
         self.available_cash = available_cash
         self.frozen_cash = frozen_cash
@@ -150,13 +150,13 @@ class Account:
         self.updated_at = datetime.now()
     
     def update_max_drawdown(self, drawdown: Decimal) -> None:
-        """更新最大回�?""
+        """ﮔﺑﮔﺍﮔﮒ۳۶ﮒﮔ?""
         if drawdown > self.max_drawdown:
             self.max_drawdown = drawdown
             self.updated_at = datetime.now()
     
     def freeze_account(self, reason: Optional[str] = None) -> bool:
-        """冻结账户"""
+        """ﮒﭨﻝﭨﻟﺑ۵ﮔﺓ"""
         if self.status == AccountStatus.CLOSED:
             return False
         
@@ -167,7 +167,7 @@ class Account:
         return True
     
     def unfreeze_account(self) -> bool:
-        """解冻账户"""
+        """ﻟ۶۲ﮒﭨﻟﺑ۵ﮔﺓ"""
         if self.status != AccountStatus.FROZEN:
             return False
         
@@ -178,7 +178,7 @@ class Account:
         return True
     
     def close_account(self) -> bool:
-        """关闭账户"""
+        """ﮒﺏﻠ­ﻟﺑ۵ﮔﺓ"""
         if self.status == AccountStatus.CLOSED:
             return False
         
@@ -189,7 +189,7 @@ class Account:
 
 @dataclass
 class AccountSnapshot:
-    """账户快照实体"""
+    """ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     account_id: int = 0
     snapshot_date: date = field(default_factory=date.today)
@@ -208,9 +208,9 @@ class AccountSnapshot:
 
 ---
 
-## 2. 领域服务设计
+## 2. ﻠ۱ﮒﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 2.1 账户领域服务 (AccountDomainService)
+### 2.1 ﻟﺑ۵ﮔﺓﻠ۱ﮒﮔﮒ۰ (AccountDomainService)
 
 ```python
 from typing import List, Optional
@@ -218,14 +218,14 @@ from decimal import Decimal
 from datetime import date
 
 class AccountDomainService:
-    """账户领域服务"""
+    """ﻟﺑ۵ﮔﺓﻠ۱ﮒﮔﮒ۰"""
     
     async def calculate_daily_pnl(
         self,
         account: Account,
         previous_snapshot: Optional[AccountSnapshot]
     ) -> Decimal:
-        """计算日盈�?""
+        """ﻟ؟۰ﻝ؟ﮔ۴ﻝﻛﭦ?""
         if not previous_snapshot:
             return Decimal('0.0000')
         
@@ -236,7 +236,7 @@ class AccountDomainService:
         account: Account,
         previous_snapshot: Optional[AccountSnapshot]
     ) -> Decimal:
-        """计算日盈亏百分比"""
+        """ﻟ؟۰ﻝ؟ﮔ۴ﻝﻛﭦﻝﺝﮒﮔﺁ"""
         if not previous_snapshot or previous_snapshot.total_assets == 0:
             return Decimal('0.000000')
         
@@ -247,14 +247,14 @@ class AccountDomainService:
         self,
         account: Account
     ) -> Decimal:
-        """计算累计盈亏"""
+        """ﻟ؟۰ﻝ؟ﻝﺑﺁﻟ؟۰ﻝﻛﭦ"""
         return account.total_assets - account.initial_capital
     
     async def calculate_cumulative_pnl_pct(
         self,
         account: Account
     ) -> Decimal:
-        """计算累计盈亏百分�?""
+        """ﻟ؟۰ﻝ؟ﻝﺑﺁﻟ؟۰ﻝﻛﭦﻝﺝﮒﮔﺁ?""
         if account.initial_capital == 0:
             return Decimal('0.000000')
         
@@ -265,7 +265,7 @@ class AccountDomainService:
         self,
         snapshots: List[AccountSnapshot]
     ) -> Decimal:
-        """计算最大回�?""
+        """ﻟ؟۰ﻝ؟ﮔﮒ۳۶ﮒﮔ?""
         if not snapshots:
             return Decimal('0.000000')
         
@@ -287,11 +287,11 @@ class AccountDomainService:
         snapshots: List[AccountSnapshot],
         risk_free_rate: Decimal = Decimal('0.03')
     ) -> Decimal:
-        """计算夏普比率"""
+        """ﻟ؟۰ﻝ؟ﮒ۳ﮔ؟ﮔﺁﻝ"""
         if len(snapshots) < 2:
             return Decimal('0.000000')
         
-        # 计算日收益率
+        # ﻟ؟۰ﻝ؟ﮔ۴ﮔﭘﻝﻝ
         daily_returns = []
         for i in range(1, len(snapshots)):
             daily_return = snapshots[i].daily_pnl_pct
@@ -300,17 +300,17 @@ class AccountDomainService:
         if not daily_returns:
             return Decimal('0.000000')
         
-        # 计算平均收益�?
+        # ﻟ؟۰ﻝ؟ﮒﺗﺏﮒﮔﭘﻝﻝ?
         avg_return = sum(daily_returns) / len(daily_returns)
         
-        # 计算标准�?
+        # ﻟ؟۰ﻝ؟ﮔ ﮒﮒﺓ?
         variance = sum((r - avg_return) ** 2 for r in daily_returns) / len(daily_returns)
         std_dev = variance ** Decimal('0.5')
         
         if std_dev == 0:
             return Decimal('0.000000')
         
-        # 计算夏普比率（年化）
+        # ﻟ؟۰ﻝ؟ﮒ۳ﮔ؟ﮔﺁﻝﺅﺙﮒﺗﺑﮒﺅﺙ
         annualized_return = avg_return * 252
         annualized_std = std_dev * (252 ** Decimal('0.5'))
         
@@ -322,7 +322,7 @@ class AccountDomainService:
         self,
         snapshots: List[AccountSnapshot]
     ) -> Decimal:
-        """计算胜率"""
+        """ﻟ؟۰ﻝ؟ﻟﻝ"""
         if not snapshots:
             return Decimal('0.000000')
         
@@ -334,9 +334,9 @@ class AccountDomainService:
 
 ---
 
-## 3. 应用服务设计
+## 3. ﮒﭦﻝ۷ﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 3.1 账户应用服务 (AccountApplicationService)
+### 3.1 ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰ (AccountApplicationService)
 
 ```python
 from typing import List, Optional, Dict, Any
@@ -344,7 +344,7 @@ from decimal import Decimal
 from datetime import date
 
 class AccountApplicationService:
-    """账户应用服务"""
+    """ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰"""
     
     def __init__(
         self,
@@ -363,8 +363,8 @@ class AccountApplicationService:
         initial_capital: Decimal,
         broker: Optional[str] = None
     ) -> Dict[str, Any]:
-        """创建账户"""
-        # 创建账户实体
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ"""
+        # ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ
         account = Account(
             account_name=account_name,
             account_type=AccountType(account_type),
@@ -374,10 +374,10 @@ class AccountApplicationService:
             broker=broker
         )
         
-        # 保存账户
+        # ﻛﺟﮒ­ﻟﺑ۵ﮔﺓ
         account = await self.account_repository.create(account)
         
-        # 发布账户创建事件
+        # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﮒﭨﭦﻛﭦﻛﭨﭘ
         await self.event_publisher.publish({
             'event_type': 'AccountCreated',
             'account_id': account.id,
@@ -399,7 +399,7 @@ class AccountApplicationService:
         }
     
     async def get_account(self, account_id: int) -> Optional[Dict[str, Any]]:
-        """获取账户"""
+        """ﻟﺓﮒﻟﺑ۵ﮔﺓ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -430,7 +430,7 @@ class AccountApplicationService:
         page: int = 1,
         page_size: int = 20
     ) -> Dict[str, Any]:
-        """获取账户列表"""
+        """ﻟﺓﮒﻟﺑ۵ﮔﺓﮒﻟ۰۷"""
         accounts = await self.account_repository.find_all(
             account_type=account_type,
             status=status,
@@ -466,7 +466,7 @@ class AccountApplicationService:
         account_id: int,
         amount: Decimal
     ) -> bool:
-        """冻结资金"""
+        """ﮒﭨﻝﭨﻟﭖﻠ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -477,7 +477,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # 发布资金冻结事件
+            # ﮒﮒﺕﻟﭖﻠﮒﭨﻝﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'CashFrozen',
                 'account_id': account.id,
@@ -492,7 +492,7 @@ class AccountApplicationService:
         account_id: int,
         amount: Decimal
     ) -> bool:
-        """解冻资金"""
+        """ﻟ۶۲ﮒﭨﻟﭖﻠ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -503,7 +503,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # 发布资金解冻事件
+            # ﮒﮒﺕﻟﭖﻠﻟ۶۲ﮒﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'CashUnfrozen',
                 'account_id': account.id,
@@ -521,7 +521,7 @@ class AccountApplicationService:
         frozen_cash: Decimal,
         total_assets: Decimal
     ) -> bool:
-        """更新账户资金"""
+        """ﮔﺑﮔﺍﻟﺑ۵ﮔﺓﻟﭖﻠ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -543,19 +543,19 @@ class AccountApplicationService:
         account_id: int,
         snapshot_date: date
     ) -> Dict[str, Any]:
-        """创建账户快照"""
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
             return {}
         
-        # 获取前一日快�?
+        # ﻟﺓﮒﮒﻛﺕﮔ۴ﮒﺟ،ﻝ?
         previous_snapshot = await self.account_repository.find_snapshot_by_date(
             account_id,
             snapshot_date
         )
         
-        # 计算各项指标
+        # ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ 
         daily_pnl = await self.domain_service.calculate_daily_pnl(
             account,
             previous_snapshot
@@ -569,7 +569,7 @@ class AccountApplicationService:
         cumulative_pnl = await self.domain_service.calculate_cumulative_pnl(account)
         cumulative_pnl_pct = await self.domain_service.calculate_cumulative_pnl_pct(account)
         
-        # 创建快照
+        # ﮒﮒﭨﭦﮒﺟ،ﻝ۶
         snapshot = AccountSnapshot(
             account_id=account_id,
             snapshot_date=snapshot_date,
@@ -583,7 +583,7 @@ class AccountApplicationService:
             max_drawdown=account.max_drawdown
         )
         
-        # 保存快照
+        # ﻛﺟﮒ­ﮒﺟ،ﻝ۶
         snapshot = await self.account_repository.create_snapshot(snapshot)
         
         return {
@@ -600,7 +600,7 @@ class AccountApplicationService:
         account_id: int,
         reason: Optional[str] = None
     ) -> bool:
-        """冻结账户"""
+        """ﮒﭨﻝﭨﻟﺑ۵ﮔﺓ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -611,7 +611,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # 发布账户冻结事件
+            # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﭨﻝﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'AccountFrozen',
                 'account_id': account.id,
@@ -622,7 +622,7 @@ class AccountApplicationService:
         return success
     
     async def unfreeze_account(self, account_id: int) -> bool:
-        """解冻账户"""
+        """ﻟ۶۲ﮒﭨﻟﺑ۵ﮔﺓ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -633,7 +633,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # 发布账户解冻事件
+            # ﮒﮒﺕﻟﺑ۵ﮔﺓﻟ۶۲ﮒﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'AccountUnfrozen',
                 'account_id': account.id,
@@ -645,9 +645,9 @@ class AccountApplicationService:
 
 ---
 
-## 4. 仓储实现设计
+## 4. ﻛﭨﮒ۷ﮒ؟ﻝﺍﻟ؟ﺝﻟ؟۰
 
-### 4.1 账户仓储实现 (AccountRepositoryImpl)
+### 4.1 ﻟﺑ۵ﮔﺓﻛﭨﮒ۷ﮒ؟ﻝﺍ (AccountRepositoryImpl)
 
 ```python
 from typing import List, Optional
@@ -656,14 +656,14 @@ from datetime import date
 import asyncpg
 
 class AccountRepositoryImpl:
-    """账户仓储实现"""
+    """ﻟﺑ۵ﮔﺓﻛﭨﮒ۷ﮒ؟ﻝﺍ"""
     
     def __init__(self, db_pool: asyncpg.Pool, redis_client):
         self.db_pool = db_pool
         self.redis_client = redis_client
     
     async def create(self, account: Account) -> Account:
-        """创建账户"""
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ"""
         async with self.db_pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -695,19 +695,19 @@ class AccountRepositoryImpl:
             account.id = row['id']
             account.account_code = row['account_code']
             
-            # 缓存账户信息
+            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
             await self._cache_account(account)
             
             return account
     
     async def find_by_id(self, account_id: int) -> Optional[Account]:
-        """根据ID查询账户"""
-        # 先查缓存
+        """ﮔ ﺗﮔ؟IDﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
+        # ﮒﮔ۴ﻝﺙﮒ­
         cached = await self._get_cached_account(account_id)
         if cached:
             return cached
         
-        # 查数据库
+        # ﮔ۴ﮔﺍﮔ؟ﮒﭦ
         async with self.db_pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -721,7 +721,7 @@ class AccountRepositoryImpl:
             
             account = self._row_to_account(row)
             
-            # 缓存账户信息
+            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
             await self._cache_account(account)
             
             return account
@@ -733,7 +733,7 @@ class AccountRepositoryImpl:
         page: int = 1,
         page_size: int = 20
     ) -> List[Account]:
-        """查询账户列表"""
+        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒﻟ۰۷"""
         async with self.db_pool.acquire() as conn:
             offset = (page - 1) * page_size
             
@@ -768,7 +768,7 @@ class AccountRepositoryImpl:
             return [self._row_to_account(row) for row in rows]
     
     async def update(self, account: Account) -> Account:
-        """更新账户"""
+        """ﮔﺑﮔﺍﻟﺑ۵ﮔﺓ"""
         async with self.db_pool.acquire() as conn:
             await conn.execute(
                 """
@@ -798,13 +798,13 @@ class AccountRepositoryImpl:
                 account.metadata
             )
             
-            # 更新缓存
+            # ﮔﺑﮔﺍﻝﺙﮒ­
             await self._cache_account(account)
             
             return account
     
     async def create_snapshot(self, snapshot: AccountSnapshot) -> AccountSnapshot:
-        """创建账户快照"""
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶"""
         async with self.db_pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -836,11 +836,11 @@ class AccountRepositoryImpl:
             return snapshot
     
     async def _cache_account(self, account: Account) -> None:
-        """缓存账户信息"""
+        """ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ"""
         key = f"account:{account.id}"
         await self.redis_client.setex(
             key,
-            300,  # 5分钟过期
+            300,  # 5ﮒﻠﻟﺟﮔ
             str({
                 'id': account.id,
                 'account_code': account.account_code,
@@ -853,18 +853,18 @@ class AccountRepositoryImpl:
         )
     
     async def _get_cached_account(self, account_id: int) -> Optional[Account]:
-        """获取缓存的账户信�?""
+        """ﻟﺓﮒﻝﺙﮒ­ﻝﻟﺑ۵ﮔﺓﻛﺟ۰ﮔ?""
         key = f"account:{account_id}"
         cached = await self.redis_client.get(key)
         
         if cached:
-            # TODO: 反序列化缓存数据
+            # TODO: ﮒﮒﭦﮒﮒﻝﺙﮒ­ﮔﺍﮔ؟
             return None
         
         return None
     
     def _row_to_account(self, row) -> Account:
-        """数据库行转账户实�?""
+        """ﮔﺍﮔ؟ﮒﭦﻟ۰ﻟﺛ؛ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ?""
         return Account(
             id=row['id'],
             account_code=row['account_code'],
@@ -887,26 +887,26 @@ class AccountRepositoryImpl:
 
 ---
 
-## 5. 性能与监�?
+## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 5.1 性能指标
+### 5.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| 操作 | 响应时间 | 备注 |
+| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
-| **创建账户** | < 300ms | 包含数据库写�?|
-| **查询账户** | < 50ms | Redis缓存命中 |
-| **更新资金** | < 200ms | 包含数据库更�?|
-| **创建快照** | < 500ms | 包含指标计算 |
+| **ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ** | < 300ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮒﮒ?|
+| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 50ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
+| **ﮔﺑﮔﺍﻟﭖﻠ** | < 200ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮔﺑﮔ?|
+| **ﮒﮒﭨﭦﮒﺟ،ﻝ۶** | < 500ms | ﮒﮒ،ﮔﮔ ﻟ؟۰ﻝ؟ |
 
-### 5.2 缓存策略
+### 5.2 ﻝﺙﮒ­ﻝ­ﻝ۴
 
-| 数据类型 | 缓存时间 | 缓存策略 |
+| ﮔﺍﮔ؟ﻝﺎﭨﮒ | ﻝﺙﮒ­ﮔﭘﻠﺑ | ﻝﺙﮒ­ﻝ­ﻝ۴ |
 |----------|----------|----------|
-| **账户基本信息** | 5分钟 | Redis缓存 |
-| **账户资金信息** | 1分钟 | Redis缓存 |
-| **账户快照** | 不缓�?| 实时查询 |
+| **ﻟﺑ۵ﮔﺓﮒﭦﮔ؛ﻛﺟ۰ﮔﺁ** | 5ﮒﻠ | Redisﻝﺙﮒ­ |
+| **ﻟﺑ۵ﮔﺓﻟﭖﻠﻛﺟ۰ﮔﺁ** | 1ﮒﻠ | Redisﻝﺙﮒ­ |
+| **ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶** | ﻛﺕﻝﺙﮒ­?| ﮒ؟ﮔﭘﮔ۴ﻟﺁ۱ |
 
 ---
 
-**版本**: 1.0.0 | **更新日期**: 2026-04-02 | **状�?*: �?已完�? 
-**下一�?*: P0-7 订单管理详细设计
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻛﺕﻛﺕﮔ­?*: P0-7 ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰

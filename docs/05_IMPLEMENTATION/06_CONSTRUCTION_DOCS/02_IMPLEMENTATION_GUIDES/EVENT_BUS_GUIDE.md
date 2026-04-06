@@ -4,67 +4,67 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构�?
-standard_type: 专业量化机构实施指南
-applicable_scope: 事件总线模块实施
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
+applicable_scope: ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﮒ؟ﮔﺛ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../README.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 
-# 事件总线实施指南
+# ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-02
-> **职责**: 指导事件总线模块的实施和部署
-> **实施周期**: 2周（Week 1-2�?
-> **优先�?*: P0
-
----
-
-## 📋 实施概览
-
-### 目标
-
-实现专业机构级事件总线系统，支持异步事件分发、订阅者管理和事件溯源�?
-
-### 核心功能
-
-- **事件发布订阅**: 支持多对多的事件发布订阅模式
-- **异步事件分发**: 高性能异步事件分发机制
-- **事件溯源**: 支持事件历史记录和回�?
-- **错误处理**: 完善的错误处理和重试机制
-- **性能监控**: 事件处理性能监控
-
-### 参考蓝�?
-
-- [专业量化系统实施蓝图](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+> **ﻝﮔ؛**: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﻟﻟﺑ۲**: ﮔﮒﺁﺙﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﻝﮒ؟ﮔﺛﮒﻠ۷ﻝﺛﺎ
+> **ﮒ؟ﮔﺛﮒ۷ﮔ**: 2ﮒ۷ﺅﺙWeek 1-2ﺅﺙ?
+> **ﻛﺙﮒﻝﭦ?*: P0
 
 ---
 
-## 🏗�?架构设计
+## ﻭ ﮒ؟ﮔﺛﮔ۵ﻟ۶
 
-### 模块结构
+### ﻝ؟ﮔ 
+
+ﮒ؟ﻝﺍﻛﺕﻛﺕﮔﭦﮔﻝﭦ۶ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨﺅﺙﮔﺁﮔﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﻙﻟ؟۱ﻠﻟﻝ؟۰ﻝﮒﻛﭦﻛﭨﭘﮔﭦﺁﮔﭦﻙ?
+
+### ﮔ ﺕﮒﺟﮒﻟﺛ
+
+- **ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠ**: ﮔﺁﮔﮒ۳ﮒﺁﺗﮒ۳ﻝﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠﮔ۷۰ﮒﺙ
+- **ﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒ**: ﻠ،ﮔ۶ﻟﺛﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﮔﭦﮒﭘ
+- **ﻛﭦﻛﭨﭘﮔﭦﺁﮔﭦ**: ﮔﺁﮔﻛﭦﻛﭨﭘﮒﮒﺎﻟ؟ﺍﮒﺛﮒﮒﮔ?
+- **ﻠﻟﺁﺁﮒ۳ﻝ**: ﮒ؟ﮒﻝﻠﻟﺁﺁﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒﭘ
+- **ﮔ۶ﻟﺛﻝﮔ۶**: ﻛﭦﻛﭨﭘﮒ۳ﻝﮔ۶ﻟﺛﻝﮔ۶
+
+### ﮒﻟﻟﮒ?
+
+- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+
+---
+
+## ﻭﺅﺕ?ﮔﭘﮔﻟ؟ﺝﻟ؟۰
+
+### ﮔ۷۰ﮒﻝﭨﮔ
 
 ```
 src/event_bus/
-├── __init__.py                 # 模块初始�?
-├── event_bus.py                # EventBus核心�?
-├── event.py                    # Event基类
-├── handler.py                  # EventHandler基类
-├── subscriber.py               # Subscriber管理
-├── dispatcher.py               # 事件分发�?
-├── exceptions.py               # 自定义异�?
-└── tests/                      # 单元测试
-    ├── test_event_bus.py
-    ├── test_event.py
-    ├── test_handler.py
-    └── test_dispatcher.py
+ﻗﻗﻗ __init__.py                 # ﮔ۷۰ﮒﮒﮒ۶ﮒ?
+ﻗﻗﻗ event_bus.py                # EventBusﮔ ﺕﮒﺟﻝﺎ?
+ﻗﻗﻗ event.py                    # Eventﮒﭦﻝﺎﭨ
+ﻗﻗﻗ handler.py                  # EventHandlerﮒﭦﻝﺎﭨ
+ﻗﻗﻗ subscriber.py               # Subscriberﻝ؟۰ﻝ
+ﻗﻗﻗ dispatcher.py               # ﻛﭦﻛﭨﭘﮒﮒﮒ?
+ﻗﻗﻗ exceptions.py               # ﻟ۹ﮒ؟ﻛﺗﮒﺙﮒﺕ?
+ﻗﻗﻗ tests/                      # ﮒﮒﮔﭖﻟﺁ
+    ﻗﻗﻗ test_event_bus.py
+    ﻗﻗﻗ test_event.py
+    ﻗﻗﻗ test_handler.py
+    ﻗﻗﻗ test_dispatcher.py
 ```
 
-### 类设�?
+### ﻝﺎﭨﻟ؟ﺝﻟ؟?
 
-#### Event - 事件基类
+#### Event - ﻛﭦﻛﭨﭘﮒﭦﻝﺎﭨ
 
 ```python
 from dataclasses import dataclass, field
@@ -73,7 +73,7 @@ from typing import Dict, Any, Optional
 from enum import Enum
 
 class EventType(Enum):
-    """事件类型枚举"""
+    """ﻛﭦﻛﭨﭘﻝﺎﭨﮒﮔﻛﺕﺝ"""
     MARKET_DATA = "market_data"
     ORDER = "order"
     TRADE = "trade"
@@ -83,7 +83,7 @@ class EventType(Enum):
 
 @dataclass
 class Event:
-    """事件基类"""
+    """ﻛﭦﻛﭨﭘﮒﭦﻝﺎﭨ"""
     
     event_type: EventType
     timestamp: datetime = field(default_factory=datetime.now)
@@ -97,7 +97,7 @@ class Event:
             self.event_id = f"{self.event_type.value}_{self.timestamp.timestamp()}"
     
     def to_dict(self) -> Dict[str, Any]:
-        """转换为字�?""
+        """ﻟﺛ؛ﮔ۱ﻛﺕﭦﮒ­ﮒ?""
         return {
             "event_id": self.event_id,
             "event_type": self.event_type.value,
@@ -109,7 +109,7 @@ class Event:
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Event':
-        """从字典创建事�?""
+        """ﻛﭨﮒ­ﮒﺕﮒﮒﭨﭦﻛﭦﻛﭨ?""
         return cls(
             event_type=EventType(data["event_type"]),
             timestamp=datetime.fromisoformat(data["timestamp"]),
@@ -120,7 +120,7 @@ class Event:
         )
 ```
 
-#### EventHandler - 事件处理器基�?
+#### EventHandler - ﻛﭦﻛﭨﭘﮒ۳ﻝﮒ۷ﮒﭦﻝﺎ?
 
 ```python
 from abc import ABC, abstractmethod
@@ -128,7 +128,7 @@ from typing import Optional, List
 from .event import Event
 
 class EventHandler(ABC):
-    """事件处理器基�?""
+    """ﻛﭦﻛﭨﭘﮒ۳ﻝﮒ۷ﮒﭦﻝﺎ?""
     
     def __init__(self, handler_id: str, event_types: Optional[List[EventType]] = None):
         self.handler_id = handler_id
@@ -136,21 +136,21 @@ class EventHandler(ABC):
     
     @abstractmethod
     async def handle(self, event: Event) -> Optional[Event]:
-        """处理事件"""
+        """ﮒ۳ﻝﻛﭦﻛﭨﭘ"""
         pass
     
     def can_handle(self, event: Event) -> bool:
-        """判断是否能处理该事件"""
+        """ﮒ۳ﮔ­ﮔﺁﮒ۵ﻟﺛﮒ۳ﻝﻟﺁ۴ﻛﭦﻛﭨﭘ"""
         if not self.event_types:
             return True
         return event.event_type in self.event_types
     
     def on_error(self, event: Event, error: Exception) -> None:
-        """错误处理"""
+        """ﻠﻟﺁﺁﮒ۳ﻝ"""
         pass
 ```
 
-#### EventBus - 事件总线
+#### EventBus - ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ
 
 ```python
 import asyncio
@@ -161,7 +161,7 @@ from .handler import EventHandler
 from .exceptions import EventBusError
 
 class EventBus:
-    """事件总线 - 管理事件的发布和订阅"""
+    """ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ - ﻝ؟۰ﻝﻛﭦﻛﭨﭘﻝﮒﮒﺕﮒﻟ؟۱ﻠ"""
     
     _instance = None
     _subscribers: Dict[EventType, List[EventHandler]] = defaultdict(list)
@@ -178,7 +178,7 @@ class EventBus:
         event_type: EventType, 
         handler: EventHandler
     ) -> None:
-        """订阅事件"""
+        """ﻟ؟۱ﻠﻛﭦﻛﭨﭘ"""
         if handler not in self._subscribers[event_type]:
             self._subscribers[event_type].append(handler)
     
@@ -187,12 +187,12 @@ class EventBus:
         event_type: EventType, 
         handler: EventHandler
     ) -> None:
-        """取消订阅"""
+        """ﮒﮔﭘﻟ؟۱ﻠ"""
         if handler in self._subscribers[event_type]:
             self._subscribers[event_type].remove(handler)
     
     async def publish(self, event: Event) -> None:
-        """发布事件"""
+        """ﮒﮒﺕﻛﭦﻛﭨﭘ"""
         self._add_to_history(event)
         
         handlers = self._subscribers.get(event.event_type, [])
@@ -210,7 +210,7 @@ class EventBus:
         handler: EventHandler, 
         event: Event
     ) -> None:
-        """处理事件"""
+        """ﮒ۳ﻝﻛﭦﻛﭨﭘ"""
         try:
             result = await handler.handle(event)
             if result:
@@ -220,7 +220,7 @@ class EventBus:
             raise EventBusError(f"Handler {handler.handler_id} failed: {e}")
     
     def _add_to_history(self, event: Event) -> None:
-        """添加到历史记�?""
+        """ﮔﺓﭨﮒ ﮒﺍﮒﮒﺎﻟ؟ﺍﮒﺛ?""
         self._event_history.append(event)
         
         if len(self._event_history) > self._max_history_size:
@@ -231,7 +231,7 @@ class EventBus:
         event_type: Optional[EventType] = None,
         limit: int = 100
     ) -> List[Event]:
-        """获取历史事件"""
+        """ﻟﺓﮒﮒﮒﺎﻛﭦﻛﭨﭘ"""
         if event_type:
             events = [e for e in self._event_history if e.event_type == event_type]
         else:
@@ -240,21 +240,21 @@ class EventBus:
         return events[-limit:]
     
     def clear_history(self) -> None:
-        """清空历史记录"""
+        """ﮔﺕﻝ۸ﭦﮒﮒﺎﻟ؟ﺍﮒﺛ"""
         self._event_history.clear()
 ```
 
 ---
 
-## 📝 实施步骤
+## ﻭ ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳
 
-### Step 1: 创建目录结构�?0分钟�?
+### Step 1: ﮒﮒﭨﭦﻝ؟ﮒﺛﻝﭨﮔﺅﺙ?0ﮒﻠﺅﺙ?
 
 ```bash
-# 创建事件总线模块目录
+# ﮒﮒﭨﭦﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﻝ؟ﮒﺛ
 mkdir -p src/event_bus/tests
 
-# 创建文件
+# ﮒﮒﭨﭦﮔﻛﭨﭘ
 touch src/event_bus/__init__.py
 touch src/event_bus/event_bus.py
 touch src/event_bus/event.py
@@ -264,113 +264,113 @@ touch src/event_bus/dispatcher.py
 touch src/event_bus/exceptions.py
 ```
 
-### Step 2: 实现Event基类�?小时�?
+### Step 2: ﮒ؟ﻝﺍEventﮒﭦﻝﺎﭨﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 定义事件类型枚举
-- [ ] 实现事件数据结构
-- [ ] 实现序列�?反序列化
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻛﺗﻛﭦﻛﭨﭘﻝﺎﭨﮒﮔﻛﺕﺝ
+- [ ] ﮒ؟ﻝﺍﻛﭦﻛﭨﭘﮔﺍﮔ؟ﻝﭨﮔ
+- [ ] ﮒ؟ﻝﺍﮒﭦﮒﮒ?ﮒﮒﭦﮒﮒ
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?事件类型定义完整
-- �?数据结构合理
-- �?序列化正�?
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﻛﭦﻛﭨﭘﻝﺎﭨﮒﮒ؟ﻛﺗﮒ؟ﮔﺑ
+- ﻗ?ﮔﺍﮔ؟ﻝﭨﮔﮒﻝ
+- ﻗ?ﮒﭦﮒﮒﮔ­۲ﻝ۰?
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 3: 实现EventHandler基类�?小时�?
+### Step 3: ﮒ؟ﻝﺍEventHandlerﮒﭦﻝﺎﭨﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 定义抽象方法
-- [ ] 实现事件过滤
-- [ ] 实现错误处理
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻛﺗﮔﺛﻟﺎ۰ﮔﺗﮔﺏ
+- [ ] ﮒ؟ﻝﺍﻛﭦﻛﭨﭘﻟﺟﮔﭨ۳
+- [ ] ﮒ؟ﻝﺍﻠﻟﺁﺁﮒ۳ﻝ
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?抽象方法定义完整
-- �?事件过滤正确
-- �?错误处理完善
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﮔﺛﻟﺎ۰ﮔﺗﮔﺏﮒ؟ﻛﺗﮒ؟ﮔﺑ
+- ﻗ?ﻛﭦﻛﭨﭘﻟﺟﮔﭨ۳ﮔ­۲ﻝ۰؟
+- ﻗ?ﻠﻟﺁﺁﮒ۳ﻝﮒ؟ﮒ
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 4: 实现EventBus核心类（2小时�?
+### Step 4: ﮒ؟ﻝﺍEventBusﮔ ﺕﮒﺟﻝﺎﭨﺅﺙ2ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 实现单例模式
-- [ ] 实现订阅/取消订阅
-- [ ] 实现异步事件发布
-- [ ] 实现事件历史记录
-- [ ] 编写单元测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻝﺍﮒﻛﺝﮔ۷۰ﮒﺙ
+- [ ] ﮒ؟ﻝﺍﻟ؟۱ﻠ/ﮒﮔﭘﻟ؟۱ﻠ
+- [ ] ﮒ؟ﻝﺍﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﺕ
+- [ ] ﮒ؟ﻝﺍﻛﭦﻛﭨﭘﮒﮒﺎﻟ؟ﺍﮒﺛ
+- [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**验收标准**:
-- �?单例模式正确实现
-- �?订阅机制正确
-- �?异步发布正确
-- �?历史记录完整
-- �?单元测试覆盖�?> 90%
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﮒﻛﺝﮔ۷۰ﮒﺙﮔ­۲ﻝ۰؟ﮒ؟ﻝﺍ
+- ﻗ?ﻟ؟۱ﻠﮔﭦﮒﭘﮔ­۲ﻝ۰؟
+- ﻗ?ﮒﺙﮔ­۴ﮒﮒﺕﮔ­۲ﻝ۰؟
+- ﻗ?ﮒﮒﺎﻟ؟ﺍﮒﺛﮒ؟ﮔﺑ
+- ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
-### Step 5: 性能优化�?小时�?
+### Step 5: ﮔ۶ﻟﺛﻛﺙﮒﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 实现事件批处�?
-- [ ] 实现事件过滤优化
-- [ ] 实现内存优化
-- [ ] 性能测试
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒ؟ﻝﺍﻛﭦﻛﭨﭘﮔﺗﮒ۳ﻝ?
+- [ ] ﮒ؟ﻝﺍﻛﭦﻛﭨﭘﻟﺟﮔﭨ۳ﻛﺙﮒ
+- [ ] ﮒ؟ﻝﺍﮒﮒ­ﻛﺙﮒ
+- [ ] ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
-**验收标准**:
-- �?事件处理吞吐�?> 10000 events/s
-- �?内存占用 < 100MB
-- �?延迟 < 10ms
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﻛﭦﻛﭨﭘﮒ۳ﻝﮒﮒﻠ?> 10000 events/s
+- ﻗ?ﮒﮒ­ﮒ ﻝ۷ < 100MB
+- ﻗ?ﮒﭨﭘﻟﺟ < 10ms
 
-### Step 6: 集成测试�?小时�?
+### Step 6: ﻠﮔﮔﭖﻟﺁﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
-**任务清单**:
-- [ ] 创建测试事件处理�?
-- [ ] 测试完整流程
-- [ ] 性能测试
-- [ ] 文档编写
+**ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
+- [ ] ﮒﮒﭨﭦﮔﭖﻟﺁﻛﭦﻛﭨﭘﮒ۳ﻝﮒ?
+- [ ] ﮔﭖﻟﺁﮒ؟ﮔﺑﮔﭖﻝ۷
+- [ ] ﮔ۶ﻟﺛﮔﭖﻟﺁ
+- [ ] ﮔﮔ۰۲ﻝﺙﮒ
 
-**验收标准**:
-- �?完整流程可正常运�?
-- �?性能指标达标
-- �?文档完整
+**ﻠ۹ﮔﭘﮔ ﮒ**:
+- ﻗ?ﮒ؟ﮔﺑﮔﭖﻝ۷ﮒﺁﮔ­۲ﮒﺕﺕﻟﺟﻟ۰?
+- ﻗ?ﮔ۶ﻟﺛﮔﮔ ﻟﺝﺝﮔ 
+- ﻗ?ﮔﮔ۰۲ﮒ؟ﮔﺑ
 
 ---
 
-## �?验收标准
+## ﻗ?ﻠ۹ﮔﭘﮔ ﮒ
 
-### 功能验收
+### ﮒﻟﺛﻠ۹ﮔﭘ
 
-| 功能 | 验收标准 | 测试方法 |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔ ﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|---------|---------|
-| **事件发布订阅** | 订阅者可正确接收事件 | 单元测试 |
-| **异步事件分发** | 分发延迟 < 10ms | 性能测试 |
-| **事件溯源** | 历史事件可回�?| 集成测试 |
-| **错误处理** | 错误可正确处�?| 异常测试 |
-| **性能监控** | 监控指标可获�?| 性能测试 |
+| **ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠ** | ﻟ؟۱ﻠﻟﮒﺁﮔ­۲ﻝ۰؟ﮔ۴ﮔﭘﻛﭦﻛﭨﭘ | ﮒﮒﮔﭖﻟﺁ |
+| **ﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒ** | ﮒﮒﮒﭨﭘﻟﺟ < 10ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﻛﭦﻛﭨﭘﮔﭦﺁﮔﭦ** | ﮒﮒﺎﻛﭦﻛﭨﭘﮒﺁﮒﮔ?| ﻠﮔﮔﭖﻟﺁ |
+| **ﻠﻟﺁﺁﮒ۳ﻝ** | ﻠﻟﺁﺁﮒﺁﮔ­۲ﻝ۰؟ﮒ۳ﻝ?| ﮒﺙﮒﺕﺕﮔﭖﻟﺁ |
+| **ﮔ۶ﻟﺛﻝﮔ۶** | ﻝﮔ۶ﮔﮔ ﮒﺁﻟﺓﮒ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
-### 性能验收
+### ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **事件吞吐�?* | > 10000 events/s | 性能测试 |
-| **事件延迟** | < 10ms | 性能测试 |
-| **内存占用** | < 100MB | 内存分析 |
-| **CPU占用** | < 30% | 性能监控 |
+| **ﻛﭦﻛﭨﭘﮒﮒﻠ?* | > 10000 events/s | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﻛﭦﻛﭨﭘﮒﭨﭘﻟﺟ** | < 10ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒﮒ­ﮒ ﻝ۷** | < 100MB | ﮒﮒ­ﮒﮔ |
+| **CPUﮒ ﻝ۷** | < 30% | ﮔ۶ﻟﺛﻝﮔ۶ |
 
-### 质量验收
+### ﻟﺑ۷ﻠﻠ۹ﮔﭘ
 
-| 指标 | 目标�?| 测试方法 |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **单元测试覆盖�?* | > 90% | pytest --cov |
-| **代码复杂�?* | < 10 | radon cc |
-| **代码重复�?* | < 5% | pylint |
-| **文档完整�?* | 100% | 文档审查 |
+| **ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?* | > 90% | pytest --cov |
+| **ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?* | < 10 | radon cc |
+| **ﻛﭨ۲ﻝ ﻠﮒ۳ﻝ?* | < 5% | pylint |
+| **ﮔﮔ۰۲ﮒ؟ﮔﺑﮔ?* | 100% | ﮔﮔ۰۲ﮒ؟۰ﮔ۴ |
 
 ---
 
-## 🧪 测试策略
+## ﻭ۶۹ ﮔﭖﻟﺁﻝ­ﻝ۴
 
-### 单元测试
+### ﮒﮒﮔﭖﻟﺁ
 
 ```python
 # tests/test_event_bus.py
@@ -421,7 +421,7 @@ class TestEventBus:
         assert len(handler.received_events) == 0
 ```
 
-### 性能测试
+### ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 # tests/test_performance.py
@@ -454,20 +454,20 @@ class TestEventBusPerformance:
 
 ---
 
-## 📊 性能优化
+## ﻭ ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 异步批处�?
+### ﮒﺙﮔ­۴ﮔﺗﮒ۳ﻝ?
 
 ```python
 class EventBus:
     
     async def publish_batch(self, events: List[Event]) -> None:
-        """批量发布事件"""
+        """ﮔﺗﻠﮒﮒﺕﻛﭦﻛﭨﭘ"""
         tasks = [self.publish(event) for event in events]
         await asyncio.gather(*tasks)
 ```
 
-### 事件过滤优化
+### ﻛﭦﻛﭨﭘﻟﺟﮔﭨ۳ﻛﺙﮒ
 
 ```python
 class EventBus:
@@ -478,7 +478,7 @@ class EventBus:
         handler: EventHandler,
         filter_func: Optional[Callable[[Event], bool]] = None
     ) -> None:
-        """订阅事件（带过滤�?""
+        """ﻟ؟۱ﻠﻛﭦﻛﭨﭘﺅﺙﮒﺕ۵ﻟﺟﮔﭨ۳ﺅﺙ?""
         self._subscribers[event_type].append({
             "handler": handler,
             "filter": filter_func
@@ -487,15 +487,15 @@ class EventBus:
 
 ---
 
-## 🚨 常见问题
+## ﻭ۷ ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
 
-### Q1: 事件处理阻塞
+### Q1: ﻛﭦﻛﭨﭘﮒ۳ﻝﻠﭨﮒ۰
 
-**问题**: 事件处理器执行时间过长，阻塞事件总线
+**ﻠ؟ﻠ۱**: ﻛﭦﻛﭨﭘﮒ۳ﻝﮒ۷ﮔ۶ﻟ۰ﮔﭘﻠﺑﻟﺟﻠﺟﺅﺙﻠﭨﮒ۰ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# 使用超时机制
+# ﻛﺛﺟﻝ۷ﻟﭘﮔﭘﮔﭦﮒﭘ
 async def _handle_event(self, handler: EventHandler, event: Event):
     try:
         await asyncio.wait_for(
@@ -506,13 +506,13 @@ async def _handle_event(self, handler: EventHandler, event: Event):
         handler.on_error(event, TimeoutError("Handler timeout"))
 ```
 
-### Q2: 内存占用过高
+### Q2: ﮒﮒ­ﮒ ﻝ۷ﻟﺟﻠ،
 
-**问题**: 事件历史记录占用过多内存
+**ﻠ؟ﻠ۱**: ﻛﭦﻛﭨﭘﮒﮒﺎﻟ؟ﺍﮒﺛﮒ ﻝ۷ﻟﺟﮒ۳ﮒﮒ­
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# 限制历史记录大小
+# ﻠﮒﭘﮒﮒﺎﻟ؟ﺍﮒﺛﮒ۳۶ﮒﺍ
 def _add_to_history(self, event: Event):
     self._event_history.append(event)
     
@@ -520,13 +520,13 @@ def _add_to_history(self, event: Event):
         self._event_history.pop(0)
 ```
 
-### Q3: 事件丢失
+### Q3: ﻛﭦﻛﭨﭘﻛﺕ۱ﮒ۳ﺎ
 
-**问题**: 高并发场景下事件丢失
+**ﻠ؟ﻠ۱**: ﻠ،ﮒﺗﭘﮒﮒﭦﮔﺁﻛﺕﻛﭦﻛﭨﭘﻛﺕ۱ﮒ۳ﺎ
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# 使用事件队列
+# ﻛﺛﺟﻝ۷ﻛﭦﻛﭨﭘﻠﮒ
 class EventBus:
     def __init__(self):
         self._event_queue = asyncio.Queue()
@@ -541,31 +541,31 @@ class EventBus:
 
 ---
 
-## 📚 参考资�?
+## ﻭ ﮒﻟﻟﭖﮔ?
 
-### 内部文档
+### ﮒﻠ۷ﮔﮔ۰۲
 
-- [专业量化系统实施蓝图](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](../01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
-### 外部资源
+### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
 
-- [Python asyncio文档](https://docs.python.org/3/library/asyncio.html)
-- [设计模式：观察者模式](https://refactoring.guru/design-patterns/observer)
-- [事件驱动架构](https://martinfowler.com/articles/201701-event-driven.html)
+- [Python asyncioﮔﮔ۰۲](https://docs.python.org/3/library/asyncio.html)
+- [ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙﺅﺙﻟ۶ﮒﺁﻟﮔ۷۰ﮒﺙ](https://refactoring.guru/design-patterns/observer)
+- [ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ](https://martinfowler.com/articles/201701-event-driven.html)
 
 ---
 
-## 📝 更新记录
+## ﻭ ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ
 
-| 日期 | 版本 | 更新内容 | 更新�?|
+| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | 创建事件总线实施指南 | 首席架构�?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
 
 ---
 
-## 📞 联系方式
+## ﻭ ﻟﻝﺏﭨﮔﺗﮒﺙ
 
-**文档维护�?*: 首席架构�? 
-**创建日期**: 2026-04-02  
-**最后更�?*: 2026-04-02  
-**版本**: v1.0
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﻝﮔ؛**: v1.0

@@ -1,114 +1,114 @@
 ---
-standard_type: 配置标准
-applicable_scope: 全系�?
-compliance_level: 正式标准
+standard_type: ﻠﻝﺛ؟ﮔ ﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
-implementation_status: 已完�?
-owner: 文档管理�?
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?
+owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 version: 1.0.0
 module_id: SCHEDULED_AUDIT_CONFIG
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# 定期审计任务配置
+# ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟
 
-**配置版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**配置所有�?*: 文档管理�?
+**ﻠﻝﺛ؟ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﻠﻝﺛ؟ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 
 ---
 
-## 1. 审计任务配置概览
+## 1. ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟ﮔ۵ﻟ۶
 
-### 1.1 审计任务类型
+### 1.1 ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻝﺎﭨﮒ
 
-| 任务名称 | 频率 | 执行时间 | 审计内容 | 输出位置 |
+| ﻛﭨﭨﮒ۰ﮒﻝ۶ﺍ | ﻠ۱ﻝ | ﮔ۶ﻟ۰ﮔﭘﻠﺑ | ﮒ؟۰ﻟ؟۰ﮒﮒ؟ﺗ | ﻟﺝﮒﭦﻛﺛﻝﺛ؟ |
 |---------|------|----------|----------|---------|
-| **快速审�?* | 每周一 | 凌晨2:00 | 链接有效性、元数据完整�?| audit_reports/weekly/ |
-| **标准审计** | 每月1�?| 凌晨3:00 | 文档分类、命名规范、索引完整�?| audit_reports/monthly/ |
-| **深度审计** | 每季度首�?| 工作时间 | 三层审计（L1-L3）、五大原则符合�?| audit_reports/quarterly/ |
-| **专项审计** | 事件触发 | 变更�?4小时�?| 变更影响范围、文档一致�?| audit_reports/adhoc/ |
+| **ﮒﺟ،ﻠﮒ؟۰ﻟ؟?* | ﮔﺁﮒ۷ﻛﺕ | ﮒﮔ۷2:00 | ﻠﺝﮔ۴ﮔﮔﮔ۶ﻙﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ?| audit_reports/weekly/ |
+| **ﮔ ﮒﮒ؟۰ﻟ؟۰** | ﮔﺁﮔ1ﮔ?| ﮒﮔ۷3:00 | ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?| audit_reports/monthly/ |
+| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰** | ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ?| ﮒﺓ۴ﻛﺛﮔﭘﻠﺑ | ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﻙﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ?| audit_reports/quarterly/ |
+| **ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰** | ﻛﭦﻛﭨﭘﻟ۶۵ﮒ | ﮒﮔﺑﮒ?4ﮒﺍﮔﭘﮒ?| ﮒﮔﺑﮒﺛﺎﮒﻟﮒﺑﻙﮔﮔ۰۲ﻛﺕﻟﺑﮔ?| audit_reports/adhoc/ |
 
-### 1.2 审计任务优先�?
+### 1.2 ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻛﺙﮒﻝﭦ?
 
-- **P0**: 快速审计（每周执行，确保基本质量）
-- **P1**: 标准审计（每月执行，确保规范符合�?
-- **P2**: 深度审计（每季度执行，确保专业标准）
-- **P3**: 专项审计（事件触发，确保变更一致性）
+- **P0**: ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮒ۷ﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﮒﭦﮔ؛ﻟﺑ۷ﻠﺅﺙ
+- **P1**: ﮔ ﮒﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮔﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﻟ۶ﻟﻝ؛۵ﮒﺅﺙ?
+- **P2**: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮒ­۲ﮒﭦ۵ﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﻛﺕﻛﺕﮔ ﮒﺅﺙ
+- **P3**: ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰ﺅﺙﻛﭦﻛﭨﭘﻟ۶۵ﮒﺅﺙﻝ۰؟ﻛﺟﮒﮔﺑﻛﺕﻟﺑﮔ۶ﺅﺙ
 
 ---
 
-## 2. Cron任务配置
+## 2. Cronﻛﭨﭨﮒ۰ﻠﻝﺛ؟
 
-### 2.1 Linux/Unix系统
+### 2.1 Linux/Unixﻝﺏﭨﻝﭨ
 
-**编辑crontab**:
+**ﻝﺙﻟﺝcrontab**:
 ```bash
 crontab -e
 ```
 
-**添加以下任务**:
+**ﮔﺓﭨﮒ ﻛﭨ۴ﻛﺕﻛﭨﭨﮒ۰**:
 
 ```bash
-# ZephyrAlpha文档治理定期审计任务
+# ZephyrAlphaﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰
 
-# 快速审�?- 每周一凌晨2:00执行
+# ﮒﺟ،ﻠﮒ؟۰ﻟ؟?- ﮔﺁﮒ۷ﻛﺕﮒﮔ۷2:00ﮔ۶ﻟ۰
 0 2 * * 1 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --quick --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 标准审计 - 每月1日凌�?:00执行
+# ﮔ ﮒﮒ؟۰ﻟ؟۰ - ﮔﺁﮔ1ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰
 0 3 1 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --all --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 深度审计 - 每季度首日凌�?:00执行�?月�?月�?月�?0月）
+# ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ - ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰ﺅﺙ?ﮔﻙ?ﮔﻙ?ﮔﻙ?0ﮔﺅﺙ
 0 3 1 1,4,7,10 * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --deep --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/quarterly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 元数据完整性检�?- 每周日凌�?:30执行
+# ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﮔﺁﮒ۷ﮔ۴ﮒﮔ?:30ﮔ۶ﻟ۰
 30 2 * * 0 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/metadata_enhancer.py --scan --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/metadata_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# 文档分类检�?- 每月15日凌�?:00执行
+# ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮔﺁﮔ15ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰
 0 3 15 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_classifier.py --scan --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/classification_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 ```
 
-### 2.2 Windows系统（任务计划程序）
+### 2.2 Windowsﻝﺏﭨﻝﭨﺅﺙﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﺅﺙ
 
-**创建任务计划**:
+**ﮒﮒﭨﭦﻛﭨﭨﮒ۰ﻟ؟۰ﮒ**:
 
-1. **快速审计任�?*:
-   - 名称: `ZephyrAlpha_Weekly_Audit`
-   - 触发�? 每周一凌晨2:00
-   - 操作: 启动程序
-   - 程序: `python`
-   - 参数: `scripts\document_auditor.py --quick --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
-   - 起始位置: `D:\ZephyrAlpha`
+1. **ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ?*:
+   - ﮒﻝ۶ﺍ: `ZephyrAlpha_Weekly_Audit`
+   - ﻟ۶۵ﮒﮒ? ﮔﺁﮒ۷ﻛﺕﮒﮔ۷2:00
+   - ﮔﻛﺛ: ﮒﺁﮒ۷ﻝ۷ﮒﭦ
+   - ﻝ۷ﮒﭦ: `python`
+   - ﮒﮔﺍ: `scripts\document_auditor.py --quick --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
+   - ﻟﭖﺓﮒ۶ﻛﺛﻝﺛ؟: `D:\ZephyrAlpha`
 
-2. **标准审计任务**:
-   - 名称: `ZephyrAlpha_Monthly_Audit`
-   - 触发�? 每月1日凌�?:00
-   - 操作: 启动程序
-   - 程序: `python`
-   - 参数: `scripts\document_auditor.py --all --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
-   - 起始位置: `D:\ZephyrAlpha`
+2. **ﮔ ﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
+   - ﮒﻝ۶ﺍ: `ZephyrAlpha_Monthly_Audit`
+   - ﻟ۶۵ﮒﮒ? ﮔﺁﮔ1ﮔ۴ﮒﮔ?:00
+   - ﮔﻛﺛ: ﮒﺁﮒ۷ﻝ۷ﮒﭦ
+   - ﻝ۷ﮒﭦ: `python`
+   - ﮒﮔﺍ: `scripts\document_auditor.py --all --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
+   - ﻟﭖﺓﮒ۶ﻛﺛﻝﺛ؟: `D:\ZephyrAlpha`
 
-3. **深度审计任务**:
-   - 名称: `ZephyrAlpha_Quarterly_Audit`
-   - 触发�? 每季度首日凌�?:00（手动设置）
-   - 操作: 启动程序
-   - 程序: `python`
-   - 参数: `scripts\document_auditor.py --deep --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\quarterly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
-   - 起始位置: `D:\ZephyrAlpha`
+3. **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
+   - ﮒﻝ۶ﺍ: `ZephyrAlpha_Quarterly_Audit`
+   - ﻟ۶۵ﮒﮒ? ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﺅﺙﮔﮒ۷ﻟ؟ﺝﻝﺛ؟ﺅﺙ
+   - ﮔﻛﺛ: ﮒﺁﮒ۷ﻝ۷ﮒﭦ
+   - ﻝ۷ﮒﭦ: `python`
+   - ﮒﮔﺍ: `scripts\document_auditor.py --deep --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\quarterly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
+   - ﻟﭖﺓﮒ۶ﻛﺛﻝﺛ؟: `D:\ZephyrAlpha`
 
 ---
 
-## 3. 审计脚本配置
+## 3. ﮒ؟۰ﻟ؟۰ﻟﮔ؛ﻠﻝﺛ؟
 
-### 3.1 快速审计脚�?
+### 3.1 ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻟﮔ?
 
-**文件**: `scripts/scheduled_quick_audit.py`
+**ﮔﻛﭨﭘ**: `scripts/scheduled_quick_audit.py`
 
 ```python
 #!/usr/bin/env python3
 """
-快速审计脚�?
-功能: 每周执行，检查链接有效性和元数据完整�?
+ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻟﮔ?
+ﮒﻟﺛ: ﮔﺁﮒ۷ﮔ۶ﻟ۰ﺅﺙﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ۶ﮒﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ?
 """
 
 import os
@@ -118,12 +118,12 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-# 添加项目根目录到路径
+# ﮔﺓﭨﮒ ﻠ۰ﺗﻝ؟ﮔ ﺗﻝ؟ﮒﺛﮒﺍﻟﺓﺁﮒﺝ
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.document_auditor import DocumentAuditor
 
-# 配置日志
+# ﻠﻝﺛ؟ﮔ۴ﮒﺟ
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -136,58 +136,58 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_quick_audit():
-    """执行快速审�?""
+    """ﮔ۶ﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?""
     try:
-        logger.info("开始快速审�?..")
+        logger.info("ﮒﺙﮒ۶ﮒﺟ،ﻠﮒ؟۰ﻟ؟?..")
         
-        # 初始化审计器
+        # ﮒﮒ۶ﮒﮒ؟۰ﻟ؟۰ﮒ۷
         auditor = DocumentAuditor(project_root='.')
         
-        # 执行快速审�?
+        # ﮔ۶ﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?
         results = auditor.quick_audit()
         
-        # 生成报告文件�?
+        # ﻝﮔﮔ۴ﮒﮔﻛﭨﭘﮒ?
         timestamp = datetime.now().strftime('%Y%m%d')
         output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_{timestamp}.json'
         
-        # 保存报告
+        # ﻛﺟﮒ­ﮔ۴ﮒ
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"快速审计完成，报告已保存到: {output_file}")
+        logger.info(f"ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ­ﮒﺍ: {output_file}")
         
-        # 检查是否有严重问题
+        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮔﻛﺕ۴ﻠﻠ؟ﻠ۱
         if results['summary']['total_issues'] > 0:
-            logger.warning(f"发现 {results['summary']['total_issues']} 个问�?)
+            logger.warning(f"ﮒﻝﺍ {results['summary']['total_issues']} ﻛﺕ۹ﻠ؟ﻠ۱?)
             
-            # 发送通知（可选）
+            # ﮒﻠﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ
             send_notification(results)
         
         return 0
         
     except Exception as e:
-        logger.error(f"快速审计失�? {str(e)}")
+        logger.error(f"ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒ۳ﺎﻟﺑ? {str(e)}")
         return 1
 
 def send_notification(results):
-    """发送审计通知（可选）"""
-    # 这里可以集成邮件、钉钉、企业微信等通知方式
-    # 示例：发送邮件通知
+    """ﮒﻠﮒ؟۰ﻟ؟۰ﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ"""
+    # ﻟﺟﻠﮒﺁﻛﭨ۴ﻠﮔﻠ؟ﻛﭨﭘﻙﻠﻠﻙﻛﺙﻛﺕﮒﺝ؟ﻛﺟ۰ﻝ­ﻠﻝ۴ﮔﺗﮒﺙ
+    # ﻝ۳ﭦﻛﺝﺅﺙﮒﻠﻠ؟ﻛﭨﭘﻠﻝ۴
     pass
 
 if __name__ == '__main__':
     sys.exit(run_quick_audit())
 ```
 
-### 3.2 标准审计脚本
+### 3.2 ﮔ ﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
 
-**文件**: `scripts/scheduled_standard_audit.py`
+**ﮔﻛﭨﭘ**: `scripts/scheduled_standard_audit.py`
 
 ```python
 #!/usr/bin/env python3
 """
-标准审计脚本
-功能: 每月执行，检查文档分类、命名规范、索引完整�?
+ﮔ ﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
+ﮒﻟﺛ: ﮔﺁﮔﮔ۶ﻟ۰ﺅﺙﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?
 """
 
 import os
@@ -213,9 +213,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_standard_audit():
-    """执行标准审计"""
+    """ﮔ۶ﻟ۰ﮔ ﮒﮒ؟۰ﻟ؟۰"""
     try:
-        logger.info("开始标准审�?..")
+        logger.info("ﮒﺙﮒ۶ﮔ ﮒﮒ؟۰ﻟ؟?..")
         
         auditor = DocumentAuditor(project_root='.')
         results = auditor.full_audit()
@@ -226,51 +226,51 @@ def run_standard_audit():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"标准审计完成，报告已保存�? {output_file}")
+        logger.info(f"ﮔ ﮒﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ­ﮒ? {output_file}")
         
-        # 生成审计摘要报告
+        # ﻝﮔﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ
         generate_summary_report(results, timestamp)
         
         return 0
         
     except Exception as e:
-        logger.error(f"标准审计失败: {str(e)}")
+        logger.error(f"ﮔ ﮒﮒ؟۰ﻟ؟۰ﮒ۳ﺎﻟﺑ۴: {str(e)}")
         return 1
 
 def generate_summary_report(results, timestamp):
-    """生成审计摘要报告"""
+    """ﻝﮔﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ"""
     summary_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_summary_{timestamp}.md'
     
     with open(summary_file, 'w', encoding='utf-8') as f:
-        f.write(f"# 月度文档审计摘要报告\n\n")
-        f.write(f"**审计时间**: {results['summary']['scan_time']}\n\n")
-        f.write(f"## 审计概要\n\n")
-        f.write(f"- 扫描文件�? {results['summary']['scanned_files']}\n")
-        f.write(f"- 问题总数: {results['summary']['total_issues']}\n\n")
+        f.write(f"# ﮔﮒﭦ۵ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ\n\n")
+        f.write(f"**ﮒ؟۰ﻟ؟۰ﮔﭘﻠﺑ**: {results['summary']['scan_time']}\n\n")
+        f.write(f"## ﮒ؟۰ﻟ؟۰ﮔ۵ﻟ۵\n\n")
+        f.write(f"- ﮔ،ﮔﮔﻛﭨﭘﮔ? {results['summary']['scanned_files']}\n")
+        f.write(f"- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {results['summary']['total_issues']}\n\n")
         
         if results['summary']['issues_by_severity']:
-            f.write(f"## 问题分布\n\n")
+            f.write(f"## ﻠ؟ﻠ۱ﮒﮒﺕ\n\n")
             for severity, count in results['summary']['issues_by_severity'].items():
-                f.write(f"- {severity}: {count}个\n")
+                f.write(f"- {severity}: {count}ﻛﺕ۹\n")
         
         if results['summary']['issues_by_type']:
-            f.write(f"\n## 问题类型\n\n")
+            f.write(f"\n## ﻠ؟ﻠ۱ﻝﺎﭨﮒ\n\n")
             for issue_type, count in results['summary']['issues_by_type'].items():
-                f.write(f"- {issue_type}: {count}个\n")
+                f.write(f"- {issue_type}: {count}ﻛﺕ۹\n")
 
 if __name__ == '__main__':
     sys.exit(run_standard_audit())
 ```
 
-### 3.3 深度审计脚本
+### 3.3 ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻟﮔ؛
 
-**文件**: `scripts/scheduled_deep_audit.py`
+**ﮔﻛﭨﭘ**: `scripts/scheduled_deep_audit.py`
 
 ```python
 #!/usr/bin/env python3
 """
-深度审计脚本
-功能: 每季度执行，执行三层审计（L1-L3）和五大原则符合性检�?
+ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻟﮔ؛
+ﮒﻟﺛ: ﮔﺁﮒ­۲ﮒﭦ۵ﮔ۶ﻟ۰ﺅﺙﮔ۶ﻟ۰ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﮒﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ۶ﮔ۲ﮔ?
 """
 
 import os
@@ -296,18 +296,18 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_deep_audit():
-    """执行深度审计"""
+    """ﮔ۶ﻟ۰ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰"""
     try:
-        logger.info("开始深度审�?..")
+        logger.info("ﮒﺙﮒ۶ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟?..")
         
         auditor = DocumentAuditor(project_root='.')
         
-        # 执行三层审计
+        # ﮔ۶ﻟ۰ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰
         l1_results = auditor.audit_layer1_file_system()
         l2_results = auditor.audit_layer2_content()
         l3_results = auditor.audit_layer3_professional_standards()
         
-        # 合并结果
+        # ﮒﮒﺗﭘﻝﭨﮔ
         results = {
             'summary': {
                 'scan_time': datetime.now().isoformat(),
@@ -330,49 +330,49 @@ def run_deep_audit():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"深度审计完成，报告已保存�? {output_file}")
+        logger.info(f"ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ­ﮒ? {output_file}")
         
-        # 生成详细报告
+        # ﻝﮔﻟﺁ۵ﻝﭨﮔ۴ﮒ
         generate_detailed_report(results, timestamp)
         
         return 0
         
     except Exception as e:
-        logger.error(f"深度审计失败: {str(e)}")
+        logger.error(f"ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒ۳ﺎﻟﺑ۴: {str(e)}")
         return 1
 
 def generate_detailed_report(results, timestamp):
-    """生成详细审计报告"""
+    """ﻝﮔﻟﺁ۵ﻝﭨﮒ؟۰ﻟ؟۰ﮔ۴ﮒ"""
     report_file = f'docs/09_AUDIT/REPORTS/QUARTERLY_AUDIT_REPORT_{timestamp}.md'
     
     with open(report_file, 'w', encoding='utf-8') as f:
-        f.write(f"# 季度文档治理审计报告\n\n")
-        f.write(f"**审计时间**: {results['summary']['scan_time']}\n")
-        f.write(f"**审计类型**: 深度审计\n\n")
+        f.write(f"# ﮒ­۲ﮒﭦ۵ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ\n\n")
+        f.write(f"**ﮒ؟۰ﻟ؟۰ﮔﭘﻠﺑ**: {results['summary']['scan_time']}\n")
+        f.write(f"**ﮒ؟۰ﻟ؟۰ﻝﺎﭨﮒ**: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰\n\n")
         
-        f.write(f"## 审计概要\n\n")
-        f.write(f"| 审计层级 | 问题数量 |\n")
+        f.write(f"## ﮒ؟۰ﻟ؟۰ﮔ۵ﻟ۵\n\n")
+        f.write(f"| ﮒ؟۰ﻟ؟۰ﮒﺎﻝﭦ۶ | ﻠ؟ﻠ۱ﮔﺍﻠ |\n")
         f.write(f"|---------|---------|\n")
-        f.write(f"| L1文件系统�?| {results['summary']['l1_issues']} |\n")
-        f.write(f"| L2文档内容�?| {results['summary']['l2_issues']} |\n")
-        f.write(f"| L3专业标准�?| {results['summary']['l3_issues']} |\n")
-        f.write(f"| **总计** | **{results['summary']['total_issues']}** |\n\n")
+        f.write(f"| L1ﮔﻛﭨﭘﻝﺏﭨﻝﭨﮒﺎ?| {results['summary']['l1_issues']} |\n")
+        f.write(f"| L2ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺎ?| {results['summary']['l2_issues']} |\n")
+        f.write(f"| L3ﻛﺕﻛﺕﮔ ﮒﮒﺎ?| {results['summary']['l3_issues']} |\n")
+        f.write(f"| **ﮔﭨﻟ؟۰** | **{results['summary']['total_issues']}** |\n\n")
         
-        # L1结果详情
+        # L1ﻝﭨﮔﻟﺁ۵ﮔ
         if results['l1_results'].get('issues'):
-            f.write(f"## L1文件系统层审计结果\n\n")
+            f.write(f"## L1ﮔﻛﭨﭘﻝﺏﭨﻝﭨﮒﺎﮒ؟۰ﻟ؟۰ﻝﭨﮔ\n\n")
             for issue in results['l1_results']['issues']:
                 f.write(f"- **{issue['file_path']}**: {issue['message']}\n")
         
-        # L2结果详情
+        # L2ﻝﭨﮔﻟﺁ۵ﮔ
         if results['l2_results'].get('issues'):
-            f.write(f"\n## L2文档内容层审计结果\n\n")
+            f.write(f"\n## L2ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺎﮒ؟۰ﻟ؟۰ﻝﭨﮔ\n\n")
             for issue in results['l2_results']['issues']:
                 f.write(f"- **{issue['file_path']}**: {issue['message']}\n")
         
-        # L3结果详情
+        # L3ﻝﭨﮔﻟﺁ۵ﮔ
         if results['l3_results'].get('issues'):
-            f.write(f"\n## L3专业标准层审计结果\n\n")
+            f.write(f"\n## L3ﻛﺕﻛﺕﮔ ﮒﮒﺎﮒ؟۰ﻟ؟۰ﻝﭨﮔ\n\n")
             for issue in results['l3_results']['issues']:
                 f.write(f"- **{issue['file_path']}**: {issue['message']}\n")
 
@@ -382,26 +382,26 @@ if __name__ == '__main__':
 
 ---
 
-## 4. 审计报告归档策略
+## 4. ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮒﺛﮔ۰۲ﻝ­ﻝ۴
 
-### 4.1 报告保留策略
+### 4.1 ﮔ۴ﮒﻛﺟﻝﻝ­ﻝ۴
 
-| 报告类型 | 保留期限 | 归档位置 |
+| ﮔ۴ﮒﻝﺎﭨﮒ | ﻛﺟﻝﮔﻠ | ﮒﺛﮔ۰۲ﻛﺛﻝﺛ؟ |
 |---------|---------|---------|
-| **快速审计报�?* | 3个月 | audit_reports/weekly/ |
-| **标准审计报告** | 1�?| audit_reports/monthly/ |
-| **深度审计报告** | 永久 | audit_reports/quarterly/ |
-| **专项审计报告** | 永久 | audit_reports/adhoc/ |
+| **ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?* | 3ﻛﺕ۹ﮔ | audit_reports/weekly/ |
+| **ﮔ ﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | 1ﮒﺗ?| audit_reports/monthly/ |
+| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | ﮔﺍﺕﻛﺗ | audit_reports/quarterly/ |
+| **ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | ﮔﺍﺕﻛﺗ | audit_reports/adhoc/ |
 
-### 4.2 报告清理脚本
+### 4.2 ﮔ۴ﮒﮔﺕﻝﻟﮔ؛
 
-**文件**: `scripts/cleanup_audit_reports.py`
+**ﮔﻛﭨﭘ**: `scripts/cleanup_audit_reports.py`
 
 ```python
 #!/usr/bin/env python3
 """
-审计报告清理脚本
-功能: 清理过期的审计报�?
+ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔﺕﻝﻟﮔ؛
+ﮒﻟﺛ: ﮔﺕﻝﻟﺟﮔﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?
 """
 
 import os
@@ -410,21 +410,21 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 def cleanup_old_reports():
-    """清理过期的审计报�?""
+    """ﮔﺕﻝﻟﺟﮔﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?""
     base_path = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
     
-    # 清理快速审计报告（保留3个月�?
+    # ﮔﺕﻝﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ3ﻛﺕ۹ﮔﺅﺙ?
     weekly_path = base_path / 'weekly'
     if weekly_path.exists():
         cleanup_reports(weekly_path, days=90)
     
-    # 清理标准审计报告（保�?年）
+    # ﮔﺕﻝﮔ ﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ?ﮒﺗﺑﺅﺙ
     monthly_path = base_path / 'monthly'
     if monthly_path.exists():
         cleanup_reports(monthly_path, days=365)
 
 def cleanup_reports(directory, days):
-    """清理指定目录中超过指定天数的报告"""
+    """ﮔﺕﻝﮔﮒ؟ﻝ؟ﮒﺛﻛﺕ­ﻟﭘﻟﺟﮔﮒ؟ﮒ۳۸ﮔﺍﻝﮔ۴ﮒ"""
     cutoff_date = datetime.now() - timedelta(days=days)
     
     for file_path in directory.glob('*.json'):
@@ -432,7 +432,7 @@ def cleanup_reports(directory, days):
         
         if file_date < cutoff_date:
             file_path.unlink()
-            print(f"已删除过期报�? {file_path}")
+            print(f"ﮒﺓﺎﮒ ﻠ۳ﻟﺟﮔﮔ۴ﮒ? {file_path}")
 
 if __name__ == '__main__':
     cleanup_old_reports()
@@ -440,11 +440,11 @@ if __name__ == '__main__':
 
 ---
 
-## 5. 审计通知配置
+## 5. ﮒ؟۰ﻟ؟۰ﻠﻝ۴ﻠﻝﺛ؟
 
-### 5.1 邮件通知配置
+### 5.1 ﻠ؟ﻛﭨﭘﻠﻝ۴ﻠﻝﺛ؟
 
-**文件**: `config/audit_notification.yaml`
+**ﮔﻛﭨﭘ**: `config/audit_notification.yaml`
 
 ```yaml
 email:
@@ -456,25 +456,25 @@ email:
     - "architect@example.com"
     - "doc-admin@example.com"
   
-  subject_template: "ZephyrAlpha文档审计报告 - {audit_type} - {date}"
+  subject_template: "ZephyrAlphaﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ - {audit_type} - {date}"
   
   body_template: |
-    尊敬的文档管理员�?
+    ﮒﺍﮔ؛ﻝﮔﮔ۰۲ﻝ؟۰ﻝﮒﺅﺙ?
     
-    {audit_type}审计已完成，以下是审计结果摘要：
+    {audit_type}ﮒ؟۰ﻟ؟۰ﮒﺓﺎﮒ؟ﮔﺅﺙﻛﭨ۴ﻛﺕﮔﺁﮒ؟۰ﻟ؟۰ﻝﭨﮔﮔﻟ۵ﺅﺙ
     
-    - 扫描文件�? {scanned_files}
-    - 问题总数: {total_issues}
-    - 严重问题: {critical_issues}
-    - 警告问题: {warning_issues}
+    - ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}
+    - ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}
+    - ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}
+    - ﻟ­۵ﮒﻠ؟ﻠ۱: {warning_issues}
     
-    详细报告请查�? {report_path}
+    ﻟﺁ۵ﻝﭨﮔ۴ﮒﻟﺁﺓﮔ۴ﻝ? {report_path}
     
-    此致
+    ﮔ­۳ﻟﺑ
     Audit Sentinel
 ```
 
-### 5.2 钉钉通知配置
+### 5.2 ﻠﻠﻠﻝ۴ﻠﻝﺛ؟
 
 ```yaml
 dingtalk:
@@ -485,8 +485,8 @@ dingtalk:
     {
       "msgtype": "markdown",
       "markdown": {
-        "title": "文档审计报告",
-<!-- 占位符链接已注释: "text": "### {audit_type}审计完成\n\n- 扫描文件�? {scanned_files}\n- 问题总数: {total_issues}\n- 严重问题: {critical_issues}\n\n[查看详细报告]({report_url})" -->
+        "title": "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ",
+<!-- ﮒ ﻛﺛﻝ؛۵ﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ: "text": "### {audit_type}ﮒ؟۰ﻟ؟۰ﮒ؟ﮔ\n\n- ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}\n- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}\n- ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}\n\n[ﮔ۴ﻝﻟﺁ۵ﻝﭨﮔ۴ﮒ]({report_url})" -->
 
       }
     }
@@ -494,17 +494,17 @@ dingtalk:
 
 ---
 
-## 6. 审计任务监控
+## 6. ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻝﮔ۶
 
-### 6.1 任务执行状态检�?
+### 6.1 ﻛﭨﭨﮒ۰ﮔ۶ﻟ۰ﻝﭘﮔﮔ۲ﮔ?
 
-**文件**: `scripts/check_audit_status.py`
+**ﮔﻛﭨﭘ**: `scripts/check_audit_status.py`
 
 ```python
 #!/usr/bin/env python3
 """
-审计任务状态检查脚�?
-功能: 检查定期审计任务是否正常执�?
+ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻝﭘﮔﮔ۲ﮔ۴ﻟﮔ?
+ﮒﻟﺛ: ﮔ۲ﮔ۴ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮔﺁﮒ۵ﮔ­۲ﮒﺕﺕﮔ۶ﻟ۰?
 """
 
 import os
@@ -512,29 +512,29 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 def check_audit_status():
-    """检查审计任务状�?""
+    """ﮔ۲ﮔ۴ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻝﭘﮔ?""
     base_path = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
     
-    # 检查快速审计（应该每周执行�?
+    # ﮔ۲ﮔ۴ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮒ۷ﮔ۶ﻟ۰ﺅﺙ?
     latest_weekly = get_latest_report(base_path / 'weekly')
     if latest_weekly:
         days_since_last = (datetime.now() - latest_weekly).days
         if days_since_last > 7:
-            print(f"⚠️  警告: 快速审计已 {days_since_last} 天未执行")
+            print(f"ﻗ ﺅﺕ  ﻟ­۵ﮒ: ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒﺓﺎ {days_since_last} ﮒ۳۸ﮔ۹ﮔ۶ﻟ۰")
         else:
-            print(f"�?快速审计状态正常，上次执行: {latest_weekly}")
+            print(f"ﻗ?ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ­۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_weekly}")
     
-    # 检查标准审计（应该每月执行�?
+    # ﮔ۲ﮔ۴ﮔ ﮒﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮔﮔ۶ﻟ۰ﺅﺙ?
     latest_monthly = get_latest_report(base_path / 'monthly')
     if latest_monthly:
         days_since_last = (datetime.now() - latest_monthly).days
         if days_since_last > 30:
-            print(f"⚠️  警告: 标准审计�?{days_since_last} 天未执行")
+            print(f"ﻗ ﺅﺕ  ﻟ­۵ﮒ: ﮔ ﮒﮒ؟۰ﻟ؟۰ﮒﺓ?{days_since_last} ﮒ۳۸ﮔ۹ﮔ۶ﻟ۰")
         else:
-            print(f"�?标准审计状态正常，上次执行: {latest_monthly}")
+            print(f"ﻗ?ﮔ ﮒﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ­۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_monthly}")
 
 def get_latest_report(directory):
-    """获取最新的审计报告时间"""
+    """ﻟﺓﮒﮔﮔﺍﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔﭘﻠﺑ"""
     if not directory.exists():
         return None
     
@@ -552,45 +552,45 @@ if __name__ == '__main__':
 
 ---
 
-## 7. 故障恢复
+## 7. ﮔﻠﮔ۱ﮒ۳
 
-### 7.1 审计任务失败处理
+### 7.1 ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮒ۳ﺎﻟﺑ۴ﮒ۳ﻝ
 
-如果审计任务失败，执行以下步骤：
+ﮒ۵ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮒ۳ﺎﻟﺑ۴ﺅﺙﮔ۶ﻟ۰ﻛﭨ۴ﻛﺕﮔ­۴ﻠ۹۳ﺅﺙ
 
-1. **检查日志文�?*:
+1. **ﮔ۲ﮔ۴ﮔ۴ﮒﺟﮔﻛﭨ?*:
    ```bash
    tail -f logs/audit.log
    ```
 
-2. **手动执行审计**:
+2. **ﮔﮒ۷ﮔ۶ﻟ۰ﮒ؟۰ﻟ؟۰**:
    ```bash
    python scripts/document_auditor.py --quick
    ```
 
-3. **检查系统资�?*:
+3. **ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦ?*:
    ```bash
-   df -h  # 检查磁盘空�?
-   free -m  # 检查内�?
+   df -h  # ﮔ۲ﮔ۴ﻝ۲ﻝﻝ۸ﭦﻠ?
+   free -m  # ﮔ۲ﮔ۴ﮒﮒ­?
    ```
 
-4. **重启审计任务**:
+4. **ﻠﮒﺁﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
    ```bash
    # Linux
    sudo systemctl restart cron
    
    # Windows
-   # 在任务计划程序中手动运行任务
+   # ﮒ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﻛﺕ­ﮔﮒ۷ﻟﺟﻟ۰ﻛﭨﭨﮒ۰
    ```
 
 ---
 
-## 8. 参考文�?
+## 8. ﮒﻟﮔﮔ۰?
 
-- [文档治理流程标准](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [文档审计工具使用手册](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
 
 ---
 
-**配置状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﻠﻝﺛ؟ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

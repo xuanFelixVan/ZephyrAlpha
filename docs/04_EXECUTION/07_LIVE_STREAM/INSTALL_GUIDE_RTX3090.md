@@ -1,165 +1,165 @@
 ---
-standard_type: 实施指南
-applicable_scope: 交易执行
-compliance_level: 初始标准
+standard_type: Õ«×µû¢µîçÕìù
+applicable_scope: õ║ñµÿôµëºÞíî
+compliance_level: ÕêØÕºïµáçÕçå
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
-owner: 执行层负责人
+implementation_status: Þ«¥Þ«íÚÿÂµ«Á
+owner: µëºÞíîÕ▒éÞ┤ƒÞ┤úõ║║
 version: 1.0.0
 module_id: EXE_INSTALL_GUIDE_RTX309
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# RTX 3090 环境配置安装指南
+# RTX 3090 þÄ»ÕóâÚàìþ¢«Õ«ëÞúàµîçÕìù
 
-> 测试日期: 2026-04-02
-> 硬件配置: RTX 3090 24GB + 64GB RAM + i7-12700KF
-
----
-
-## 📊 测试结果分析
-
-```
-�?Ollama服务: 正常
-�?FinBERT: 正常
-�?CUDA: PyTorch是CPU版本，需要重新安�?
-�?Whisper: 未安�?
-�?Ollama模型: deepseek-r1:14b响应超时（可能是CPU推理慢）
-```
+> µÁïÞ»òµùÑµ£ƒ: 2026-04-02
+> þí¼õ╗ÂÚàìþ¢«: RTX 3090 24GB + 64GB RAM + i7-12700KF
 
 ---
 
-## 🚀 快速修复方�?
+## ­ƒôè µÁïÞ»òþ╗ôµ×£Õêåµ×É
 
-### 步骤1: 安装CUDA版本的PyTorch
+```
+Ô£?Ollamaµ£ìÕèí: µ¡úÕ©©
+Ô£?FinBERT: µ¡úÕ©©
+ÔØ?CUDA: PyTorchµÿ»CPUþëêµ£¼´╝îÚ£ÇÞªüÚçìµû░Õ«ëÞú?
+ÔØ?Whisper: µ£¬Õ«ëÞú?
+ÔØ?Ollamaµ¿íÕ×ï: deepseek-r1:14bÕôìÕ║öÞÂàµùÂ´╝êÕÅ»Þâ¢µÿ»CPUµÄ¿þÉåµàó´╝ë
+```
 
-**问题**: 当前PyTorch是CPU版本�?.9.1+cpu），无法使用GPU
+---
 
-**解决方案**:
+## ­ƒÜÇ Õ┐½ÚÇƒõ┐«Õñìµû╣µí?
+
+### µ¡ÑÚ¬ñ1: Õ«ëÞúàCUDAþëêµ£¼þÜäPyTorch
+
+**Úù«Úóÿ**: Õ¢ôÕëìPyTorchµÿ»CPUþëêµ£¼´╝?.9.1+cpu´╝ë´╝îµùáµ│òõ¢┐þö¿GPU
+
+**ÞºúÕå│µû╣µíê**:
 
 ```powershell
-# 卸载CPU版本的PyTorch
+# Õì©Þ¢¢CPUþëêµ£¼þÜäPyTorch
 pip uninstall torch torchvision torchaudio
 
-# 安装CUDA 12.1版本的PyTorch
+# Õ«ëÞúàCUDA 12.1þëêµ£¼þÜäPyTorch
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 ```
 
-**验证安装**:
+**Ú¬îÞ»üÕ«ëÞúà**:
 
 ```python
 import torch
-print(f"PyTorch版本: {torch.__version__}")
-print(f"CUDA可用: {torch.cuda.is_available()}")
-print(f"CUDA版本: {torch.version.cuda}")
+print(f"PyTorchþëêµ£¼: {torch.__version__}")
+print(f"CUDAÕÅ»þö¿: {torch.cuda.is_available()}")
+print(f"CUDAþëêµ£¼: {torch.version.cuda}")
 print(f"GPU: {torch.cuda.get_device_name(0)}")
 ```
 
-**预期输出**:
+**Úóäµ£ƒÞ¥ôÕç║**:
 
 ```
-PyTorch版本: 2.x.x+cu121
-CUDA可用: True
-CUDA版本: 12.1
+PyTorchþëêµ£¼: 2.x.x+cu121
+CUDAÕÅ»þö¿: True
+CUDAþëêµ£¼: 12.1
 GPU: NVIDIA GeForce RTX 3090
 ```
 
 ---
 
-### 步骤2: 安装Whisper
+### µ¡ÑÚ¬ñ2: Õ«ëÞúàWhisper
 
 ```powershell
-# 安装OpenAI Whisper
+# Õ«ëÞúàOpenAI Whisper
 pip install openai-whisper
 
-# 验证安装
-python -c "import whisper; print('Whisper安装成功')"
+# Ú¬îÞ»üÕ«ëÞúà
+python -c "import whisper; print('WhisperÕ«ëÞúàµêÉÕèƒ')"
 ```
 
 ---
 
-### 步骤3: 下载Whisper large-v3模型
+### µ¡ÑÚ¬ñ3: õ©ïÞ¢¢Whisper large-v3µ¿íÕ×ï
 
 ```powershell
-# 下载并加载模型（会自动下载到本地�?
+# õ©ïÞ¢¢Õ╣ÂÕèáÞ¢¢µ¿íÕ×ï´╝êõ╝ÜÞç¬Õè¿õ©ïÞ¢¢Õê░µ£¼Õ£░´╝?
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 ```
 
-**预计时间**: 5-10分钟
-**下载大小**: ~3GB
+**ÚóäÞ«íµùÂÚù┤**: 5-10ÕêåÚÆƒ
+**õ©ïÞ¢¢ÕñºÕ░Å**: ~3GB
 
 ---
 
-### 步骤4: （可选）拉取更大的Ollama模型
+### µ¡ÑÚ¬ñ4: ´╝êÕÅ»ÚÇë´╝ëµïëÕÅûµø┤ÕñºþÜäOllamaµ¿íÕ×ï
 
 ```powershell
-# 拉取Qwen2.5 32B（推荐）
+# µïëÕÅûQwen2.5 32B´╝êµÄ¿ÞìÉ´╝ë
 ollama pull qwen2.5:32b
 
-# 或拉取DeepSeek-R1 32B
+# µêûµïëÕÅûDeepSeek-R1 32B
 ollama pull deepseek-r1:32b
 ```
 
-**预计时间**: 30-60分钟
-**下载大小**: ~20GB
+**ÚóäÞ«íµùÂÚù┤**: 30-60ÕêåÚÆƒ
+**õ©ïÞ¢¢ÕñºÕ░Å**: ~20GB
 
 ---
 
-## 🛠�?一键安装脚�?
+## ­ƒøá´©?õ©ÇÚö«Õ«ëÞúàÞäÜµ£?
 
-创建一个PowerShell脚本 `install_dependencies.ps1`:
+ÕêøÕ╗║õ©Çõ©¬PowerShellÞäÜµ£¼ `install_dependencies.ps1`:
 
 ```powershell
-# RTX 3090 环境配置一键安装脚�?
+# RTX 3090 þÄ»ÕóâÚàìþ¢«õ©ÇÚö«Õ«ëÞúàÞäÜµ£?
 
 Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "  RTX 3090 环境配置安装" -ForegroundColor Cyan
+Write-Host "  RTX 3090 þÄ»ÕóâÚàìþ¢«Õ«ëÞúà" -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# 1. 卸载CPU版本的PyTorch
-Write-Host "步骤1: 卸载CPU版本的PyTorch..." -ForegroundColor Yellow
+# 1. Õì©Þ¢¢CPUþëêµ£¼þÜäPyTorch
+Write-Host "µ¡ÑÚ¬ñ1: Õì©Þ¢¢CPUþëêµ£¼þÜäPyTorch..." -ForegroundColor Yellow
 pip uninstall -y torch torchvision torchaudio
 
-# 2. 安装CUDA版本的PyTorch
-Write-Host "步骤2: 安装CUDA版本的PyTorch..." -ForegroundColor Yellow
+# 2. Õ«ëÞúàCUDAþëêµ£¼þÜäPyTorch
+Write-Host "µ¡ÑÚ¬ñ2: Õ«ëÞúàCUDAþëêµ£¼þÜäPyTorch..." -ForegroundColor Yellow
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# 3. 安装Whisper
-Write-Host "步骤3: 安装Whisper..." -ForegroundColor Yellow
+# 3. Õ«ëÞúàWhisper
+Write-Host "µ¡ÑÚ¬ñ3: Õ«ëÞúàWhisper..." -ForegroundColor Yellow
 pip install openai-whisper
 
-# 4. 安装其他依赖
-Write-Host "步骤4: 安装其他依赖..." -ForegroundColor Yellow
+# 4. Õ«ëÞúàÕàÂõ╗ûõ¥ØÞÁû
+Write-Host "µ¡ÑÚ¬ñ4: Õ«ëÞúàÕàÂõ╗ûõ¥ØÞÁû..." -ForegroundColor Yellow
 pip install transformers accelerate requests
 
-# 5. 下载Whisper large-v3模型
-Write-Host "步骤5: 下载Whisper large-v3模型..." -ForegroundColor Yellow
+# 5. õ©ïÞ¢¢Whisper large-v3µ¿íÕ×ï
+Write-Host "µ¡ÑÚ¬ñ5: õ©ïÞ¢¢Whisper large-v3µ¿íÕ×ï..." -ForegroundColor Yellow
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
-# 6. 验证安装
-Write-Host "步骤6: 验证安装..." -ForegroundColor Yellow
+# 6. Ú¬îÞ»üÕ«ëÞúà
+Write-Host "µ¡ÑÚ¬ñ6: Ú¬îÞ»üÕ«ëÞúà..." -ForegroundColor Yellow
 python -c "
 import torch
-print(f'PyTorch版本: {torch.__version__}')
-print(f'CUDA可用: {torch.cuda.is_available()}')
+print(f'PyTorchþëêµ£¼: {torch.__version__}')
+print(f'CUDAÕÅ»þö¿: {torch.cuda.is_available()}')
 if torch.cuda.is_available():
     print(f'GPU: {torch.cuda.get_device_name(0)}')
 "
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
-Write-Host "  �?安装完成�? -ForegroundColor Green
+Write-Host "  Ô£?Õ«ëÞúàÕ«îµêÉ´╝? -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "下一�?" -ForegroundColor Cyan
-Write-Host "  1. 运行测试: python test_rtx3090_models.py"
-Write-Host "  2. 拉取更大模型: ollama pull qwen2.5:32b"
-Write-Host "  3. 启动系统: python main.py"
+Write-Host "õ©ïõ©Çµ¡?" -ForegroundColor Cyan
+Write-Host "  1. Þ┐ÉÞíîµÁïÞ»ò: python test_rtx3090_models.py"
+Write-Host "  2. µïëÕÅûµø┤Õñºµ¿íÕ×ï: ollama pull qwen2.5:32b"
+Write-Host "  3. ÕÉ»Õè¿þ│╗þ╗ƒ: python main.py"
 Write-Host ""
 ```
 
-**运行方式**:
+**Þ┐ÉÞíîµû╣Õ╝Å**:
 
 ```powershell
 .\install_dependencies.ps1
@@ -167,133 +167,133 @@ Write-Host ""
 
 ---
 
-## 📝 手动安装步骤
+## ­ƒôØ µëïÕè¿Õ«ëÞúàµ¡ÑÚ¬ñ
 
-### 1. 安装CUDA版本的PyTorch
+### 1. Õ«ëÞúàCUDAþëêµ£¼þÜäPyTorch
 
 ```powershell
-# 卸载旧版�?
+# Õì©Þ¢¢µùºþëêµ£?
 pip uninstall -y torch torchvision torchaudio
 
-# 安装CUDA 12.1版本
+# Õ«ëÞúàCUDA 12.1þëêµ£¼
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 ```
 
-### 2. 安装Whisper
+### 2. Õ«ëÞúàWhisper
 
 ```powershell
 pip install openai-whisper
 ```
 
-### 3. 安装其他依赖
+### 3. Õ«ëÞúàÕàÂõ╗ûõ¥ØÞÁû
 
 ```powershell
 pip install transformers accelerate requests ffmpeg-python
 ```
 
-### 4. 下载模型
+### 4. õ©ïÞ¢¢µ¿íÕ×ï
 
 ```powershell
 # Whisper large-v3
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
-# FinBERT（已下载�?
+# FinBERT´╝êÕÀ▓õ©ïÞ¢¢´╝?
 # python -c "from transformers import AutoModelForSequenceClassification; AutoModelForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone')"
 ```
 
 ---
 
-## �?验证安装
+## Ô£?Ú¬îÞ»üÕ«ëÞúà
 
-运行测试脚本验证所有组�?
+Þ┐ÉÞíîµÁïÞ»òÞäÜµ£¼Ú¬îÞ»üµëÇµ£ëþ╗äõ╗?
 
 ```powershell
 python test_rtx3090_models.py
 ```
 
-**预期结果**:
+**Úóäµ£ƒþ╗ôµ×£**:
 
 ```
-�?CUDA: 通过
-�?OLLAMA: 通过
-�?WHISPER: 通过
-�?FINBERT: 通过
-�?OLLAMA_MODEL: 通过
+Ô£?CUDA: ÚÇÜÞ┐ç
+Ô£?OLLAMA: ÚÇÜÞ┐ç
+Ô£?WHISPER: ÚÇÜÞ┐ç
+Ô£?FINBERT: ÚÇÜÞ┐ç
+Ô£?OLLAMA_MODEL: ÚÇÜÞ┐ç
 
-总计: 5/5 测试通过
-�?所有测试通过！系统可以正常运行�?
+µÇ╗Þ«í: 5/5 µÁïÞ»òÚÇÜÞ┐ç
+Ô£?µëÇµ£ëµÁïÞ»òÚÇÜÞ┐ç´╝üþ│╗þ╗ƒÕÅ»õ╗Ñµ¡úÕ©©Þ┐ÉÞíîÒÇ?
 ```
 
 ---
 
-## 🎯 推荐配置
+## ­ƒÄ» µÄ¿ÞìÉÚàìþ¢«
 
-### 方案一：使用现有模型（立即可用�?
+### µû╣µíêõ©Ç´╝Üõ¢┐þö¿þÄ░µ£ëµ¿íÕ×ï´╝êþ½ïÕì│ÕÅ»þö¿´╝?
 
 ```
-语音识别: Whisper large-v3 (本地)
-内容分析: deepseek-r1:14b (已有)
-情感分析: FinBERT (本地)
+Þ»¡Úƒ│Þ»åÕê½: Whisper large-v3 (µ£¼Õ£░)
+ÕåàÕ«╣Õêåµ×É: deepseek-r1:14b (ÕÀ▓µ£ë)
+µâàµäƒÕêåµ×É: FinBERT (µ£¼Õ£░)
 
-显存占用: ~20GB / 24GB
-性能评级: ⭐⭐⭐⭐�?
+µÿ¥Õ¡ÿÕìáþö¿: ~20GB / 24GB
+µÇºÞâ¢Þ»äþ║º: Ô¡ÉÔ¡ÉÔ¡ÉÔ¡ÉÔ¡?
 ```
 
-### 方案二：拉取更大模型（最佳性能�?
+### µû╣µíêõ║î´╝ÜµïëÕÅûµø┤Õñºµ¿íÕ×ï´╝êµ£Çõ¢│µÇºÞâ¢´╝?
 
 ```powershell
-# 拉取Qwen2.5 32B
+# µïëÕÅûQwen2.5 32B
 ollama pull qwen2.5:32b
 ```
 
 ```
-语音识别: Whisper large-v3 (本地)
-内容分析: qwen2.5:32b (推荐拉取)
-情感分析: FinBERT (本地)
+Þ»¡Úƒ│Þ»åÕê½: Whisper large-v3 (µ£¼Õ£░)
+ÕåàÕ«╣Õêåµ×É: qwen2.5:32b (µÄ¿ÞìÉµïëÕÅû)
+µâàµäƒÕêåµ×É: FinBERT (µ£¼Õ£░)
 
-显存占用: ~22GB / 24GB
-性能评级: ⭐⭐⭐⭐�?(最�?
+µÿ¥Õ¡ÿÕìáþö¿: ~22GB / 24GB
+µÇºÞâ¢Þ»äþ║º: Ô¡ÉÔ¡ÉÔ¡ÉÔ¡ÉÔ¡?(µ£ÇÚ½?
 ```
 
 ---
 
-## 🔧 常见问题
+## ­ƒöº Õ©©ÞºüÚù«Úóÿ
 
-### Q1: PyTorch CUDA版本安装失败
+### Q1: PyTorch CUDAþëêµ£¼Õ«ëÞúàÕñ▒Þ┤Ñ
 
-**解决方案**:
+**ÞºúÕå│µû╣µíê**:
 
 ```powershell
-# 尝试CUDA 11.8版本
+# Õ░ØÞ»òCUDA 11.8þëêµ£¼
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### Q2: Whisper下载速度�?
+### Q2: Whisperõ©ïÞ¢¢ÚÇƒÕ║ªµà?
 
-**解决方案**:
+**ÞºúÕå│µû╣µíê**:
 
 ```powershell
-# 使用国内镜像
+# õ¢┐þö¿Õø¢ÕåàÚò£ÕâÅ
 export HF_ENDPOINT=https://hf-mirror.com
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 ```
 
-### Q3: Ollama模型响应超时
+### Q3: Ollamaµ¿íÕ×ïÕôìÕ║öÞÂàµùÂ
 
-**原因**: CPU推理速度�?
+**ÕÄƒÕøá**: CPUµÄ¿þÉåÚÇƒÕ║ªµà?
 
-**解决方案**: 安装CUDA版本的PyTorch后，Ollama会自动使用GPU加�?
-
----
-
-## 📚 相关文档
-
-- [RTX 3090最佳模型配置](./RTX3090_BEST_MODELS.md)
-- [配置文件](./config_local_rtx3090.yaml)
-- [部署脚本](./deploy_rtx3090.ps1)
-- [测试脚本](./test_rtx3090_models.py)
+**ÞºúÕå│µû╣µíê**: Õ«ëÞúàCUDAþëêµ£¼þÜäPyTorchÕÉÄ´╝îOllamaõ╝ÜÞç¬Õè¿õ¢┐þö¿GPUÕèáÚÇ?
 
 ---
 
-**创建日期**: 2026-04-02
-**更新日期**: 2026-04-02
+## ­ƒôÜ þø©Õà│µûçµíú
+
+- [RTX 3090µ£Çõ¢│µ¿íÕ×ïÚàìþ¢«](./RTX3090_BEST_MODELS.md)
+- [Úàìþ¢«µûçõ╗Â](./config_local_rtx3090.yaml)
+- [Úâ¿þ¢▓ÞäÜµ£¼](./deploy_rtx3090.ps1)
+- [µÁïÞ»òÞäÜµ£¼](./test_rtx3090_models.py)
+
+---
+
+**ÕêøÕ╗║µùÑµ£ƒ**: 2026-04-02
+**µø┤µû░µùÑµ£ƒ**: 2026-04-02

@@ -1,82 +1,82 @@
 ---
-document_type: P1级风险缓解方案设�?
+document_type: P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
 version: 1.0.0
 created_date: 2026-04-02
-owner: 首席技术评审官
-standard_type: 专业量化机构风险管理
-compliance_level: 专业标准
-status: 待实�?
-applicable_scope: 系统实施
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻠ۲ﻠ۸ﻝ؟۰ﻝ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+status: ﮒﺝﮒ؟ﮔ?
+applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 module_id: IMP_P1_RISK_MITIGATION_D
 last_updated: 2026-04-02
 ---
 
-# P1级风险缓解方案设计文�?
+# P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 
-> **创建日期**: 2026-04-02
-> **风险等级**: P1 (�?
-> **风险数量**: 18�?
-> **处理原则**: 开发前设计方案，开发阶段实�?
-
----
-
-## 1. P1级风险清�?
-
-### 1.1 外部API依赖风险�?2个）
-
-| 风险ID | 风险描述 | 涉及模块 | 影响范围 |
-|--------|----------|----------|----------|
-| **R-LLM-001** | GLM-4-Flash API调用失败 | DailyReporter, MonthlyReporter, MarketAnalyzer | AI报告生成失败 |
-| **R-LLM-002** | GLM-4-Flash API超时 | DailyReporter, MonthlyReporter, MarketAnalyzer | 报告生成延迟 |
-| **R-LLM-003** | GLM-4-Flash API成本超支 | 所有LLM集成模块 | 成本控制失效 |
-| **R-QMT-001** | QMT客户端连接失�?| QMTDataInterface, QMTExecutor | 数据获取失败、交易执行失�?|
-| **R-QMT-002** | QMT API响应超时 | QMTDataInterface, QMTExecutor | 数据延迟、交易延�?|
-| **R-IFIND-001** | iFind数据源不可用 | iFindConnector | 因子数据缺失 |
-| **R-IFIND-002** | iFind API限流 | iFindConnector | 数据获取受限 |
-| **R-NEWS-001** | 新闻爬虫被封�?| NewsCrawler | 舆情数据缺失 |
-| **R-NEWS-002** | 新闻API不可�?| NewsCrawler | 舆情数据缺失 |
-| **R-DINGTALK-001** | 钉钉API不可�?| NotificationSystem | 通知发送失�?|
-| **R-WECHAT-001** | 企业微信API不可�?| NotificationSystem | 通知发送失�?|
-| **R-SMS-001** | 短信API不可�?| NotificationSystem | 通知发送失�?|
-
-### 1.2 数据源不可用风险�?个）
-
-| 风险ID | 风险描述 | 涉及模块 | 影响范围 |
-|--------|----------|----------|----------|
-| **R-DATA-001** | 上游数据源不可用 | 所有Layer 0模块 | 数据获取失败 |
-| **R-DATA-002** | 数据库连接失�?| DataStorage, PositionManager | 数据持久化失�?|
-| **R-DATA-003** | 缓存服务不可�?| 所有缓存模�?| 性能下降 |
-| **R-DATA-004** | 数据质量异常 | DataValidator, DataCleaner | 数据错误 |
-| **R-DATA-005** | 数据延迟过高 | 所有实时数据模�?| 实时性下�?|
-| **R-DATA-006** | 数据存储空间不足 | DataStorage, TradeAuditor | 数据保存失败 |
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶**: P1 (ﻠ،?
+> **ﻠ۲ﻠ۸ﮔﺍﻠ**: 18ﻛﺕ?
+> **ﮒ۳ﻝﮒﮒ**: ﮒﺙﮒﮒﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰ﺅﺙﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔ?
 
 ---
 
-## 2. 缓解方案设计
+## 1. P1ﻝﭦ۶ﻠ۲ﻠ۸ﮔﺕﮒ?
 
-### 2.1 LLM API依赖风险缓解方案
+### 1.1 ﮒ۳ﻠ۷APIﻛﺝﻟﭖﻠ۲ﻠ۸ﺅﺙ?2ﻛﺕ۹ﺅﺙ
 
-#### 方案概述
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﮔﭘﮒﮔ۷۰ﮒ | ﮒﺛﺎﮒﻟﮒﺑ |
+|--------|----------|----------|----------|
+| **R-LLM-001** | GLM-4-Flash APIﻟﺍﻝ۷ﮒ۳ﺎﻟﺑ۴ | DailyReporter, MonthlyReporter, MarketAnalyzer | AIﮔ۴ﮒﻝﮔﮒ۳ﺎﻟﺑ۴ |
+| **R-LLM-002** | GLM-4-Flash APIﻟﭘﮔﭘ | DailyReporter, MonthlyReporter, MarketAnalyzer | ﮔ۴ﮒﻝﮔﮒﭨﭘﻟﺟ |
+| **R-LLM-003** | GLM-4-Flash APIﮔﮔ؛ﻟﭘﮔﺁ | ﮔﮔLLMﻠﮔﮔ۷۰ﮒ | ﮔﮔ؛ﮔ۶ﮒﭘﮒ۳ﺎﮔ |
+| **R-QMT-001** | QMTﮒ؟۱ﮔﺓﻝ،ﺁﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?| QMTDataInterface, QMTExecutor | ﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎﻟﺑ۴ﻙﻛﭦ۳ﮔﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ?|
+| **R-QMT-002** | QMT APIﮒﮒﭦﻟﭘﮔﭘ | QMTDataInterface, QMTExecutor | ﮔﺍﮔ؟ﮒﭨﭘﻟﺟﻙﻛﭦ۳ﮔﮒﭨﭘﻟﺟ?|
+| **R-IFIND-001** | iFindﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ | iFindConnector | ﮒ ﮒ­ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
+| **R-IFIND-002** | iFind APIﻠﮔﭖ | iFindConnector | ﮔﺍﮔ؟ﻟﺓﮒﮒﻠ |
+| **R-NEWS-001** | ﮔﺍﻠﭨﻝ؛ﻟ،ﻟ۱،ﮒﺍﻝ۵?| NewsCrawler | ﻟﮔﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
+| **R-NEWS-002** | ﮔﺍﻠﭨAPIﻛﺕﮒﺁﻝ?| NewsCrawler | ﻟﮔﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
+| **R-DINGTALK-001** | ﻠﻠAPIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
+| **R-WECHAT-001** | ﻛﺙﻛﺕﮒﺝ؟ﻛﺟ۰APIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
+| **R-SMS-001** | ﻝ­ﻛﺟ۰APIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
 
-**核心策略**: 降级方案 + 重试机制 + 成本控制 + 多模型备�?
+### 1.2 ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻠ۲ﻠ۸ﺅﺙ?ﻛﺕ۹ﺅﺙ
 
-#### 2.1.1 降级方案设计
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﮔﭘﮒﮔ۷۰ﮒ | ﮒﺛﺎﮒﻟﮒﺑ |
+|--------|----------|----------|----------|
+| **R-DATA-001** | ﻛﺕﮔﺕﺕﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ | ﮔﮔLayer 0ﮔ۷۰ﮒ | ﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎﻟﺑ۴ |
+| **R-DATA-002** | ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?| DataStorage, PositionManager | ﮔﺍﮔ؟ﮔﻛﺗﮒﮒ۳ﺎﻟﺑ?|
+| **R-DATA-003** | ﻝﺙﮒ­ﮔﮒ۰ﻛﺕﮒﺁﻝ?| ﮔﮔﻝﺙﮒ­ﮔ۷۰ﮒ?| ﮔ۶ﻟﺛﻛﺕﻠ |
+| **R-DATA-004** | ﮔﺍﮔ؟ﻟﺑ۷ﻠﮒﺙﮒﺕﺕ | DataValidator, DataCleaner | ﮔﺍﮔ؟ﻠﻟﺁﺁ |
+| **R-DATA-005** | ﮔﺍﮔ؟ﮒﭨﭘﻟﺟﻟﺟﻠ، | ﮔﮔﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷۰ﮒ?| ﮒ؟ﮔﭘﮔ۶ﻛﺕﻠ?|
+| **R-DATA-006** | ﮔﺍﮔ؟ﮒ­ﮒ۷ﻝ۸ﭦﻠﺑﻛﺕﻟﭘﺏ | DataStorage, TradeAuditor | ﮔﺍﮔ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ |
+
+---
+
+## 2. ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰
+
+### 2.1 LLM APIﻛﺝﻟﭖﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
+
+#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
+
+**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﻠﻝﭦ۶ﮔﺗﮔ۰ + ﻠﻟﺁﮔﭦﮒﭘ + ﮔﮔ؛ﮔ۶ﮒﭘ + ﮒ۳ﮔ۷۰ﮒﮒ۳ﻛﭨ?
+
+#### 2.1.1 ﻠﻝﭦ۶ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰
 
 ```python
 class LLMFallbackStrategy:
-    """LLM降级策略
+    """LLMﻠﻝﭦ۶ﻝ­ﻝ۴
     
-    索引: RISK.LLM.FALLBACK.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.FALLBACK.001
     """
     
     def __init__(self):
         self.strategies = [
-            self._primary_llm,      # 主LLM (GLM-4-Flash)
-            self._backup_llm,       # 备用LLM (GPT-3.5-Turbo)
-            self._template_fallback, # 模板降级
-            self._cache_fallback    # 缓存降级
+            self._primary_llm,      # ﻛﺕﭨLLM (GLM-4-Flash)
+            self._backup_llm,       # ﮒ۳ﻝ۷LLM (GPT-3.5-Turbo)
+            self._template_fallback, # ﮔ۷۰ﮔﺟﻠﻝﭦ۶
+            self._cache_fallback    # ﻝﺙﮒ­ﻠﻝﭦ۶
         ]
         self.current_strategy = 0
         
@@ -85,13 +85,13 @@ class LLMFallbackStrategy:
         prompt: str,
         context: Dict[str, Any]
     ) -> str:
-        """带降级的生成
+        """ﮒﺕ۵ﻠﻝﭦ۶ﻝﻝﮔ
         
-        降级顺序:
-        1. 主LLM (GLM-4-Flash)
-        2. 备用LLM (GPT-3.5-Turbo)
-        3. 模板降级 (预定义模�?
-        4. 缓存降级 (历史缓存)
+        ﻠﻝﭦ۶ﻠ۰ﭦﮒﭦ:
+        1. ﻛﺕﭨLLM (GLM-4-Flash)
+        2. ﮒ۳ﻝ۷LLM (GPT-3.5-Turbo)
+        3. ﮔ۷۰ﮔﺟﻠﻝﭦ۶ (ﻠ۱ﮒ؟ﻛﺗﮔ۷۰ﮔ?
+        4. ﻝﺙﮒ­ﻠﻝﭦ۶ (ﮒﮒﺎﻝﺙﮒ­)
         """
         for strategy in self.strategies:
             try:
@@ -99,37 +99,37 @@ class LLMFallbackStrategy:
                 if result:
                     return result
             except Exception as e:
-                logger.warning(f"策略失败: {strategy.__name__}, 错误: {e}")
+                logger.warning(f"ﻝ­ﻝ۴ﮒ۳ﺎﻟﺑ۴: {strategy.__name__}, ﻠﻟﺁﺁ: {e}")
                 continue
         
-        raise LLMFallbackError("所有降级策略失�?)
+        raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝ­ﻝ۴ﮒ۳ﺎﻟﺑ?)
     
     async def _primary_llm(self, prompt: str, context: Dict) -> str:
-        """主LLM: GLM-4-Flash"""
+        """ﻛﺕﭨLLM: GLM-4-Flash"""
         return await self._call_glm4_flash(prompt, context)
     
     async def _backup_llm(self, prompt: str, context: Dict) -> str:
-        """备用LLM: GPT-3.5-Turbo"""
+        """ﮒ۳ﻝ۷LLM: GPT-3.5-Turbo"""
         return await self._call_gpt35_turbo(prompt, context)
     
     async def _template_fallback(self, prompt: str, context: Dict) -> str:
-        """模板降级: 使用预定义模�?""
+        """ﮔ۷۰ﮔﺟﻠﻝﭦ۶: ﻛﺛﺟﻝ۷ﻠ۱ﮒ؟ﻛﺗﮔ۷۰ﮔ?""
         template = self._get_template(context['report_type'])
         return template.render(context)
     
     async def _cache_fallback(self, prompt: str, context: Dict) -> str:
-        """缓存降级: 使用历史缓存"""
+        """ﻝﺙﮒ­ﻠﻝﭦ۶: ﻛﺛﺟﻝ۷ﮒﮒﺎﻝﺙﮒ­"""
         cache_key = self._generate_cache_key(prompt, context)
         return await self._get_from_cache(cache_key)
 ```
 
-#### 2.1.2 重试机制设计
+#### 2.1.2 ﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
 
 ```python
 class RetryStrategy:
-    """重试策略
+    """ﻠﻟﺁﻝ­ﻝ۴
     
-    索引: RISK.LLM.RETRY.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.RETRY.001
     """
     
     def __init__(
@@ -150,12 +150,12 @@ class RetryStrategy:
         *args,
         **kwargs
     ) -> Any:
-        """带重试的执行
+        """ﮒﺕ۵ﻠﻟﺁﻝﮔ۶ﻟ۰
         
-        重试策略:
-        - 最多重�?�?
-        - 指数退�? 1s, 2s, 4s
-        - 最大延�?0�?
+        ﻠﻟﺁﻝ­ﻝ۴:
+        - ﮔﮒ۳ﻠﻟﺁ?ﮔ؛?
+        - ﮔﮔﺍﻠﻠ? 1s, 2s, 4s
+        - ﮔﮒ۳۶ﮒﭨﭘﻟﺟ?0ﻝ۶?
         """
         last_exception = None
         
@@ -170,27 +170,27 @@ class RetryStrategy:
                         self.max_delay
                     )
                     logger.warning(
-                        f"第{attempt + 1}次重试失败，{delay}秒后重试: {e}"
+                        f"ﻝ؛؛{attempt + 1}ﮔ؛۰ﻠﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙ{delay}ﻝ۶ﮒﻠﻟﺁ: {e}"
                     )
                     await asyncio.sleep(delay)
         
         raise last_exception
 ```
 
-#### 2.1.3 成本控制设计
+#### 2.1.3 ﮔﮔ؛ﮔ۶ﮒﭘﻟ؟ﺝﻟ؟۰
 
 ```python
 class CostController:
-    """成本控制�?
+    """ﮔﮔ؛ﮔ۶ﮒﭘﮒ?
     
-    索引: RISK.LLM.COST.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.COST.001
     """
     
     def __init__(
         self,
-        daily_budget: float = 100.0,  # 日预�?00�?
-        monthly_budget: float = 2000.0,  # 月预�?000�?
-        alert_threshold: float = 0.8  # 80%告警
+        daily_budget: float = 100.0,  # ﮔ۴ﻠ۱ﻝ؟?00ﮒ?
+        monthly_budget: float = 2000.0,  # ﮔﻠ۱ﻝ؟?000ﮒ?
+        alert_threshold: float = 0.8  # 80%ﮒﻟ­۵
     ):
         self.daily_budget = daily_budget
         self.monthly_budget = monthly_budget
@@ -199,68 +199,68 @@ class CostController:
         self.monthly_cost = 0.0
         
     async def check_budget(self, estimated_cost: float) -> bool:
-        """检查预�?
+        """ﮔ۲ﮔ۴ﻠ۱ﻝ؟?
         
-        返回:
-            bool: 是否在预算范围内
+        ﻟﺟﮒ:
+            bool: ﮔﺁﮒ۵ﮒ۷ﻠ۱ﻝ؟ﻟﮒﺑﮒ
         """
         if self.daily_cost + estimated_cost > self.daily_budget:
-            logger.error(f"日预算超�? 当前{self.daily_cost}, 预算{self.daily_budget}")
+            logger.error(f"ﮔ۴ﻠ۱ﻝ؟ﻟﭘﮔ? ﮒﺛﮒ{self.daily_cost}, ﻠ۱ﻝ؟{self.daily_budget}")
             return False
             
         if self.monthly_cost + estimated_cost > self.monthly_budget:
-            logger.error(f"月预算超�? 当前{self.monthly_cost}, 预算{self.monthly_budget}")
+            logger.error(f"ﮔﻠ۱ﻝ؟ﻟﭘﮔ? ﮒﺛﮒ{self.monthly_cost}, ﻠ۱ﻝ؟{self.monthly_budget}")
             return False
             
         return True
     
     async def record_cost(self, actual_cost: float):
-        """记录成本"""
+        """ﻟ؟ﺍﮒﺛﮔﮔ؛"""
         self.daily_cost += actual_cost
         self.monthly_cost += actual_cost
         
-        # 检查告警阈�?
+        # ﮔ۲ﮔ۴ﮒﻟ­۵ﻠﮒ?
         if self.daily_cost > self.daily_budget * self.alert_threshold:
-            await self._send_alert("日预算即将超�?)
+            await self._send_alert("ﮔ۴ﻠ۱ﻝ؟ﮒﺏﮒﺍﻟﭘﮔ?)
         if self.monthly_cost > self.monthly_budget * self.alert_threshold:
-            await self._send_alert("月预算即将超�?)
+            await self._send_alert("ﮔﻠ۱ﻝ؟ﮒﺏﮒﺍﻟﭘﮔ?)
 ```
 
-#### 2.1.4 Token优化设计
+#### 2.1.4 Tokenﻛﺙﮒﻟ؟ﺝﻟ؟۰
 
 ```python
 class TokenOptimizer:
-    """Token优化�?
+    """Tokenﻛﺙﮒﮒ?
     
-    索引: RISK.LLM.TOKEN.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.TOKEN.001
     """
     
     def __init__(self, max_tokens: int = 2000):
         self.max_tokens = max_tokens
         
     def optimize_prompt(self, prompt: str, context: Dict) -> str:
-        """优化Prompt
+        """ﻛﺙﮒPrompt
         
-        优化策略:
-        1. 移除冗余信息
-        2. 压缩数据格式
-        3. 使用缩写
+        ﻛﺙﮒﻝ­ﻝ۴:
+        1. ﻝ۶ﭨﻠ۳ﮒﻛﺛﻛﺟ۰ﮔﺁ
+        2. ﮒﻝﺙ۸ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+        3. ﻛﺛﺟﻝ۷ﻝﺙ۸ﮒ
         """
-        # 移除冗余空白
+        # ﻝ۶ﭨﻠ۳ﮒﻛﺛﻝ۸ﭦﻝﺛ
         prompt = ' '.join(prompt.split())
         
-        # 压缩数据格式
+        # ﮒﻝﺙ۸ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
         if 'data' in context:
             context['data'] = self._compress_data(context['data'])
         
-        # 限制数据�?
+        # ﻠﮒﭘﮔﺍﮔ؟ﻠ?
         if len(str(context)) > self.max_tokens:
             context = self._truncate_context(context, self.max_tokens)
         
         return prompt.format(**context)
     
     def _compress_data(self, data: Any) -> str:
-        """压缩数据"""
+        """ﮒﻝﺙ۸ﮔﺍﮔ؟"""
         if isinstance(data, pd.DataFrame):
             return data.to_json(orient='records', double_precision=2)
         return str(data)
@@ -268,19 +268,19 @@ class TokenOptimizer:
 
 ---
 
-### 2.2 QMT API依赖风险缓解方案
+### 2.2 QMT APIﻛﺝﻟﭖﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
 
-#### 方案概述
+#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
 
-**核心策略**: 连接�?+ 心跳检�?+ 自动重连 + 降级方案
+**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﻟﺟﮔ۴ﮔﺎ?+ ﮒﺟﻟﺓﺏﮔ۲ﮔﭖ?+ ﻟ۹ﮒ۷ﻠﻟﺟ + ﻠﻝﭦ۶ﮔﺗﮔ۰
 
-#### 2.2.1 连接池管�?
+#### 2.2.1 ﻟﺟﮔ۴ﮔﺎ ﻝ؟۰ﻝ?
 
 ```python
 class QMTConnectionPool:
-    """QMT连接�?
+    """QMTﻟﺟﮔ۴ﮔﺎ?
     
-    索引: RISK.QMT.POOL.001
+    ﻝﺑ۱ﮒﺙ: RISK.QMT.POOL.001
     """
     
     def __init__(
@@ -296,19 +296,19 @@ class QMTConnectionPool:
         self.active_connections = {}
         
     async def get_connection(self) -> QMTConnection:
-        """获取连接"""
-        # 检查连接池
+        """ﻟﺓﮒﻟﺟﮔ۴"""
+        # ﮔ۲ﮔ۴ﻟﺟﮔ۴ﮔﺎ 
         if self.pool:
             conn = self.pool.pop()
             if await self._check_connection(conn):
                 return conn
         
-        # 创建新连�?
+        # ﮒﮒﭨﭦﮔﺍﻟﺟﮔ?
         conn = await self._create_connection()
         return conn
     
     async def _check_connection(self, conn: QMTConnection) -> bool:
-        """检查连接有效�?""
+        """ﮔ۲ﮔ۴ﻟﺟﮔ۴ﮔﮔﮔ?""
         try:
             await conn.ping()
             return True
@@ -316,20 +316,20 @@ class QMTConnectionPool:
             return False
     
     async def _create_connection(self) -> QMTConnection:
-        """创建新连�?""
+        """ﮒﮒﭨﭦﮔﺍﻟﺟﮔ?""
         conn = QMTConnection()
         await conn.connect()
         self._start_heartbeat(conn)
         return conn
 ```
 
-#### 2.2.2 自动重连机制
+#### 2.2.2 ﻟ۹ﮒ۷ﻠﻟﺟﮔﭦﮒﭘ
 
 ```python
 class QMTReconnectStrategy:
-    """QMT自动重连策略
+    """QMTﻟ۹ﮒ۷ﻠﻟﺟﻝ­ﻝ۴
     
-    索引: RISK.QMT.RECONNECT.001
+    ﻝﺑ۱ﮒﺙ: RISK.QMT.RECONNECT.001
     """
     
     def __init__(
@@ -348,27 +348,27 @@ class QMTReconnectStrategy:
         *args,
         **kwargs
     ) -> Any:
-        """带重连的执行"""
+        """ﮒﺕ۵ﻠﻟﺟﻝﮔ۶ﻟ۰"""
         for attempt in range(self.max_retries):
             try:
                 return await func(*args, **kwargs)
             except QMTConnectionError as e:
                 if attempt < self.max_retries - 1:
                     delay = self.retry_delay * (self.backoff_factor ** attempt)
-                    logger.warning(f"QMT连接失败，{delay}秒后重连: {e}")
+                    logger.warning(f"QMTﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴ﺅﺙ{delay}ﻝ۶ﮒﻠﻟﺟ: {e}")
                     await asyncio.sleep(delay)
                     await self._reconnect()
                 else:
                     raise
 ```
 
-#### 2.2.3 降级方案
+#### 2.2.3 ﻠﻝﭦ۶ﮔﺗﮔ۰
 
 ```python
 class QMTFallbackStrategy:
-    """QMT降级策略
+    """QMTﻠﻝﭦ۶ﻝ­ﻝ۴
     
-    索引: RISK.QMT.FALLBACK.001
+    ﻝﺑ۱ﮒﺙ: RISK.QMT.FALLBACK.001
     """
     
     async def get_data_with_fallback(
@@ -376,53 +376,53 @@ class QMTFallbackStrategy:
         data_type: str,
         params: Dict
     ) -> pd.DataFrame:
-        """带降级的数据获取
+        """ﮒﺕ۵ﻠﻝﭦ۶ﻝﮔﺍﮔ؟ﻟﺓﮒ
         
-        降级顺序:
-        1. QMT实时数据
-        2. 本地缓存数据
-        3. Baostock历史数据
+        ﻠﻝﭦ۶ﻠ۰ﭦﮒﭦ:
+        1. QMTﮒ؟ﮔﭘﮔﺍﮔ؟
+        2. ﮔ؛ﮒﺍﻝﺙﮒ­ﮔﺍﮔ؟
+        3. Baostockﮒﮒﺎﮔﺍﮔ؟
         """
         try:
-            # 尝试QMT实时数据
+            # ﮒﺍﻟﺁQMTﮒ؟ﮔﭘﮔﺍﮔ؟
             return await self._get_from_qmt(data_type, params)
         except:
             pass
         
         try:
-            # 尝试本地缓存
+            # ﮒﺍﻟﺁﮔ؛ﮒﺍﻝﺙﮒ­
             return await self._get_from_cache(data_type, params)
         except:
             pass
         
         try:
-            # 尝试Baostock历史数据
+            # ﮒﺍﻟﺁBaostockﮒﮒﺎﮔﺍﮔ؟
             return await self._get_from_baostock(data_type, params)
         except:
-            raise DataFallbackError("所有数据源降级失败")
+            raise DataFallbackError("ﮔﮔﮔﺍﮔ؟ﮔﭦﻠﻝﭦ۶ﮒ۳ﺎﻟﺑ۴")
 ```
 
 ---
 
-### 2.3 数据源不可用风险缓解方案
+### 2.3 ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
 
-#### 方案概述
+#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
 
-**核心策略**: 数据缓存 + 多源备份 + 健康检�?+ 降级方案
+**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﮔﺍﮔ؟ﻝﺙﮒ­ + ﮒ۳ﮔﭦﮒ۳ﻛﭨﺛ + ﮒ۴ﮒﭦﺓﮔ۲ﮔ?+ ﻠﻝﭦ۶ﮔﺗﮔ۰
 
-#### 2.3.1 数据缓存机制
+#### 2.3.1 ﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘ
 
 ```python
 class DataCacheManager:
-    """数据缓存管理�?
+    """ﮔﺍﮔ؟ﻝﺙﮒ­ﻝ؟۰ﻝﮒ?
     
-    索引: RISK.DATA.CACHE.001
+    ﻝﺑ۱ﮒﺙ: RISK.DATA.CACHE.001
     """
     
     def __init__(
         self,
-        cache_ttl: int = 600,  # 缓存有效�?0分钟
-        max_cache_size: int = 1000  # 最大缓存数�?
+        cache_ttl: int = 600,  # ﻝﺙﮒ­ﮔﮔﮔ?0ﮒﻠ
+        max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒ­ﮔﺍﻠ?
     ):
         self.cache_ttl = cache_ttl
         self.max_cache_size = max_cache_size
@@ -436,33 +436,33 @@ class DataCacheManager:
         *args,
         **kwargs
     ) -> Any:
-        """获取或拉取数�?""
-        # 检查缓�?
+        """ﻟﺓﮒﮔﮔﮒﮔﺍﮔ?""
+        # ﮔ۲ﮔ۴ﻝﺙﮒ­?
         if key in self.cache:
             timestamp = self.timestamps[key]
             if time.time() - timestamp < self.cache_ttl:
                 return self.cache[key]
         
-        # 拉取新数�?
+        # ﮔﮒﮔﺍﮔﺍﮔ?
         data = await fetch_func(*args, **kwargs)
         
-        # 更新缓存
+        # ﮔﺑﮔﺍﻝﺙﮒ­
         self.cache[key] = data
         self.timestamps[key] = time.time()
         
-        # 清理过期缓存
+        # ﮔﺕﻝﻟﺟﮔﻝﺙﮒ­
         await self._cleanup_cache()
         
         return data
 ```
 
-#### 2.3.2 多源备份机制
+#### 2.3.2 ﮒ۳ﮔﭦﮒ۳ﻛﭨﺛﮔﭦﮒﭘ
 
 ```python
 class MultiSourceDataManager:
-    """多源数据管理�?
+    """ﮒ۳ﮔﭦﮔﺍﮔ؟ﻝ؟۰ﻝﮒ?
     
-    索引: RISK.DATA.MULTI.001
+    ﻝﺑ۱ﮒﺙ: RISK.DATA.MULTI.001
     """
     
     def __init__(self):
@@ -477,7 +477,7 @@ class MultiSourceDataManager:
         data_type: str,
         params: Dict
     ) -> pd.DataFrame:
-        """获取数据（多源备份）"""
+        """ﻟﺓﮒﮔﺍﮔ؟ﺅﺙﮒ۳ﮔﭦﮒ۳ﻛﭨﺛﺅﺙ"""
         for priority, sources in self.sources.items():
             for source in sources:
                 try:
@@ -487,32 +487,32 @@ class MultiSourceDataManager:
                     if data is not None and not data.empty:
                         return data
                 except Exception as e:
-                    logger.warning(f"数据源{source}失败: {e}")
+                    logger.warning(f"ﮔﺍﮔ؟ﮔﭦ{source}ﮒ۳ﺎﻟﺑ۴: {e}")
                     continue
         
-        raise DataSourceError("所有数据源不可�?)
+        raise DataSourceError("ﮔﮔﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ?)
 ```
 
-#### 2.3.3 健康检查机�?
+#### 2.3.3 ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﭦﮒ?
 
 ```python
 class HealthChecker:
-    """健康检查器
+    """ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۷
     
-    索引: RISK.DATA.HEALTH.001
+    ﻝﺑ۱ﮒﺙ: RISK.DATA.HEALTH.001
     """
     
     def __init__(
         self,
-        check_interval: int = 60,  # 检查间�?0�?
-        timeout: int = 10  # 超时时间10�?
+        check_interval: int = 60,  # ﮔ۲ﮔ۴ﻠﺑﻠ?0ﻝ۶?
+        timeout: int = 10  # ﻟﭘﮔﭘﮔﭘﻠﺑ10ﻝ۶?
     ):
         self.check_interval = check_interval
         self.timeout = timeout
         self.health_status = {}
         
     async def check_all_sources(self) -> Dict[str, bool]:
-        """检查所有数据源健康状�?""
+        """ﮔ۲ﮔ۴ﮔﮔﮔﺍﮔ؟ﮔﭦﮒ۴ﮒﭦﺓﻝﭘﮔ?""
         tasks = []
         for source in self._get_all_sources():
             tasks.append(self._check_source(source))
@@ -525,7 +525,7 @@ class HealthChecker:
         return self.health_status
     
     async def _check_source(self, source: str) -> bool:
-        """检查单个数据源"""
+        """ﮔ۲ﮔ۴ﮒﻛﺕ۹ﮔﺍﮔ؟ﮔﭦ"""
         try:
             async with asyncio.timeout(self.timeout):
                 return await self._ping_source(source)
@@ -535,92 +535,92 @@ class HealthChecker:
 
 ---
 
-## 3. 实施计划
+## 3. ﮒ؟ﮔﺛﻟ؟۰ﮒ
 
-### 3.1 开发前准备（必须完成）
+### 3.1 ﮒﺙﮒﮒﮒﮒ۳ﺅﺙﮒﺟﻠ۰ﭨﮒ؟ﮔﺅﺙ
 
-| 任务 | 工时 | 负责�?| 完成标准 |
+| ﻛﭨﭨﮒ۰ | ﮒﺓ۴ﮔﭘ | ﻟﺑﻟﺑ۲ﻛﭦ?| ﮒ؟ﮔﮔ ﮒ |
 |------|------|--------|----------|
-| **LLM降级方案设计** | 4小时 | 架构�?| 设计文档完成 |
-| **QMT连接池设�?* | 3小时 | 架构�?| 设计文档完成 |
-| **数据缓存机制设计** | 3小时 | 架构�?| 设计文档完成 |
-| **监控告警方案设计** | 2小时 | 架构�?| 设计文档完成 |
+| **LLMﻠﻝﭦ۶ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰** | 4ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **QMTﻟﺟﮔ۴ﮔﺎ ﻟ؟ﺝﻟ؟?* | 3ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **ﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰** | 3ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **ﻝﮔ۶ﮒﻟ­۵ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰** | 2ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
 
-**总计**: 12小时�?.5天）
+**ﮔﭨﻟ؟۰**: 12ﮒﺍﮔﭘﺅﺙ?.5ﮒ۳۸ﺅﺙ
 
-### 3.2 开发阶段实�?
+### 3.2 ﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔ?
 
-| 阶段 | 任务 | 工时 | 优先�?|
+| ﻠﭘﮔ؟ﭖ | ﻛﭨﭨﮒ۰ | ﮒﺓ۴ﮔﭘ | ﻛﺙﮒﻝﭦ?|
 |------|------|------|--------|
-| **Phase 1** | 实现LLM降级方案 | 8小时 | P1 |
-| **Phase 1** | 实现QMT连接�?| 6小时 | P1 |
-| **Phase 1** | 实现数据缓存机制 | 6小时 | P1 |
-| **Phase 2** | 实现监控告警 | 4小时 | P1 |
-| **Phase 2** | 实现健康检�?| 4小时 | P1 |
+| **Phase 1** | ﮒ؟ﻝﺍLLMﻠﻝﭦ۶ﮔﺗﮔ۰ | 8ﮒﺍﮔﭘ | P1 |
+| **Phase 1** | ﮒ؟ﻝﺍQMTﻟﺟﮔ۴ﮔﺎ?| 6ﮒﺍﮔﭘ | P1 |
+| **Phase 1** | ﮒ؟ﻝﺍﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘ | 6ﮒﺍﮔﭘ | P1 |
+| **Phase 2** | ﮒ؟ﻝﺍﻝﮔ۶ﮒﻟ­۵ | 4ﮒﺍﮔﭘ | P1 |
+| **Phase 2** | ﮒ؟ﻝﺍﮒ۴ﮒﭦﺓﮔ۲ﮔ?| 4ﮒﺍﮔﭘ | P1 |
 
-**总计**: 28小时�?.5天）
+**ﮔﭨﻟ؟۰**: 28ﮒﺍﮔﭘﺅﺙ?.5ﮒ۳۸ﺅﺙ
 
-### 3.3 测试验证
+### 3.3 ﮔﭖﻟﺁﻠ۹ﻟﺁ
 
-| 测试�?| 工时 | 验收标准 |
+| ﮔﭖﻟﺁﻠ۰?| ﮒﺓ۴ﮔﭘ | ﻠ۹ﮔﭘﮔ ﮒ |
 |--------|------|----------|
-| **降级方案测试** | 4小时 | 所有降级路径可�?|
-| **重连机制测试** | 2小时 | 自动重连成功率≥95% |
-| **缓存机制测试** | 2小时 | 缓存命中率≥80% |
-| **监控告警测试** | 2小时 | 告警触发准确�?00% |
+| **ﻠﻝﭦ۶ﮔﺗﮔ۰ﮔﭖﻟﺁ** | 4ﮒﺍﮔﭘ | ﮔﮔﻠﻝﭦ۶ﻟﺓﺁﮒﺝﮒﺁﻝ?|
+| **ﻠﻟﺟﮔﭦﮒﭘﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﻟ۹ﮒ۷ﻠﻟﺟﮔﮒﻝﻗ۴95% |
+| **ﻝﺙﮒ­ﮔﭦﮒﭘﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝﻗ۴80% |
+| **ﻝﮔ۶ﮒﻟ­۵ﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﮒﻟ­۵ﻟ۶۵ﮒﮒﻝ۰؟ﻝ?00% |
 
-**总计**: 10小时�?.25天）
-
----
-
-## 4. 验收标准
-
-### 4.1 LLM API风险缓解
-
-| 指标 | 目标�?| 验证方法 |
-|------|--------|----------|
-| **降级成功�?* | �?5% | 模拟API失败测试 |
-| **重试成功�?* | �?0% | 模拟网络故障测试 |
-| **成本控制准确�?* | 100% | 成本监控测试 |
-| **Token优化�?* | �?0% | Token消耗对比测�?|
-
-### 4.2 QMT API风险缓解
-
-| 指标 | 目标�?| 验证方法 |
-|------|--------|----------|
-| **连接成功�?* | �?8% | 连接测试 |
-| **自动重连成功�?* | �?5% | 断线重连测试 |
-| **降级成功�?* | �?0% | 模拟故障测试 |
-
-### 4.3 数据源风险缓�?
-
-| 指标 | 目标�?| 验证方法 |
-|------|--------|----------|
-| **数据获取成功�?* | �?8% | 数据获取测试 |
-| **缓存命中�?* | �?0% | 缓存测试 |
-| **健康检查准确率** | 100% | 健康检查测�?|
+**ﮔﭨﻟ؟۰**: 10ﮒﺍﮔﭘﺅﺙ?.25ﮒ۳۸ﺅﺙ
 
 ---
 
-## 5. 监控指标
+## 4. ﻠ۹ﮔﭘﮔ ﮒ
 
-### 5.1 实时监控
+### 4.1 LLM APIﻠ۲ﻠ۸ﻝﺙﻟ۶۲
 
-| 监控�?| 告警阈�?| 告警级别 |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+|------|--------|----------|
+| **ﻠﻝﭦ۶ﮔﮒﻝ?* | ﻗ?5% | ﮔ۷۰ﮔAPIﮒ۳ﺎﻟﺑ۴ﮔﭖﻟﺁ |
+| **ﻠﻟﺁﮔﮒﻝ?* | ﻗ?0% | ﮔ۷۰ﮔﻝﺛﻝﭨﮔﻠﮔﭖﻟﺁ |
+| **ﮔﮔ؛ﮔ۶ﮒﭘﮒﻝ۰؟ﻝ?* | 100% | ﮔﮔ؛ﻝﮔ۶ﮔﭖﻟﺁ |
+| **Tokenﻛﺙﮒﻝ?* | ﻗ?0% | Tokenﮔﭘﻟﮒﺁﺗﮔﺁﮔﭖﻟﺁ?|
+
+### 4.2 QMT APIﻠ۲ﻠ۸ﻝﺙﻟ۶۲
+
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+|------|--------|----------|
+| **ﻟﺟﮔ۴ﮔﮒﻝ?* | ﻗ?8% | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
+| **ﻟ۹ﮒ۷ﻠﻟﺟﮔﮒﻝ?* | ﻗ?5% | ﮔ­ﻝﭦﺟﻠﻟﺟﮔﭖﻟﺁ |
+| **ﻠﻝﭦ۶ﮔﮒﻝ?* | ﻗ?0% | ﮔ۷۰ﮔﮔﻠﮔﭖﻟﺁ |
+
+### 4.3 ﮔﺍﮔ؟ﮔﭦﻠ۲ﻠ۸ﻝﺙﻟ۶?
+
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+|------|--------|----------|
+| **ﮔﺍﮔ؟ﻟﺓﮒﮔﮒﻝ?* | ﻗ?8% | ﮔﺍﮔ؟ﻟﺓﮒﮔﭖﻟﺁ |
+| **ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝ?* | ﻗ?0% | ﻝﺙﮒ­ﮔﭖﻟﺁ |
+| **ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒﻝ۰؟ﻝ** | 100% | ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﭖﻟﺁ?|
+
+---
+
+## 5. ﻝﮔ۶ﮔﮔ 
+
+### 5.1 ﮒ؟ﮔﭘﻝﮔ۶
+
+| ﻝﮔ۶ﻠ۰?| ﮒﻟ­۵ﻠﮒ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
 |--------|----------|----------|
-| **LLM API成功�?* | <90% | P1 |
-| **LLM成本超支** | >预算80% | P2 |
-| **QMT连接成功�?* | <95% | P1 |
-| **数据获取成功�?* | <95% | P1 |
-| **缓存命中�?* | <70% | P2 |
+| **LLM APIﮔﮒﻝ?* | <90% | P1 |
+| **LLMﮔﮔ؛ﻟﭘﮔﺁ** | >ﻠ۱ﻝ؟80% | P2 |
+| **QMTﻟﺟﮔ۴ﮔﮒﻝ?* | <95% | P1 |
+| **ﮔﺍﮔ؟ﻟﺓﮒﮔﮒﻝ?* | <95% | P1 |
+| **ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝ?* | <70% | P2 |
 
-### 5.2 日志记录
+### 5.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
 
 ```python
 class RiskMonitorLogger:
-    """风险监控日志
+    """ﻠ۲ﻠ۸ﻝﮔ۶ﮔ۴ﮒﺟ
     
-    索引: RISK.MONITOR.LOG.001
+    ﻝﺑ۱ﮒﺙ: RISK.MONITOR.LOG.001
     """
     
     @staticmethod
@@ -630,7 +630,7 @@ class RiskMonitorLogger:
         severity: str,
         details: Dict[str, Any]
     ):
-        """记录风险事件"""
+        """ﻟ؟ﺍﮒﺛﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ"""
         log_entry = {
             'timestamp': datetime.now().isoformat(),
             'risk_id': risk_id,
@@ -639,32 +639,32 @@ class RiskMonitorLogger:
             'details': details
         }
         
-        logger.warning(f"风险事件: {json.dumps(log_entry, ensure_ascii=False)}")
+        logger.warning(f"ﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ: {json.dumps(log_entry, ensure_ascii=False)}")
         
-        # 发送告�?
+        # ﮒﻠﮒﻟ­?
         if severity in ['P0', 'P1']:
             AlertManager.send_alert(log_entry)
 ```
 
 ---
 
-## 6. 总结
+## 6. ﮔﭨﻝﭨ
 
-### 6.1 关键要点
+### 6.1 ﮒﺏﻠ؟ﻟ۵ﻝﺗ
 
-1. �?**P1级风险不需要开发前全部修复**
-2. �?**开发前需要完成缓解方案设�?*
-3. �?**开发阶段实施缓解方�?*
-4. �?**建立监控告警机制**
+1. ﻗ?**P1ﻝﭦ۶ﻠ۲ﻠ۸ﻛﺕﻠﻟ۵ﮒﺙﮒﮒﮒ۷ﻠ۷ﻛﺟ؟ﮒ۳**
+2. ﻗ?**ﮒﺙﮒﮒﻠﻟ۵ﮒ؟ﮔﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?*
+3. ﻗ?**ﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔﺛﻝﺙﻟ۶۲ﮔﺗﮔ۰?*
+4. ﻗ?**ﮒﭨﭦﻝ،ﻝﮔ۶ﮒﻟ­۵ﮔﭦﮒﭘ**
 
-### 6.2 实施建议
+### 6.2 ﮒ؟ﮔﺛﮒﭨﭦﻟ؟؟
 
-1. **立即行动**: 完成缓解方案设计�?.5天）
-2. **开发阶�?*: 实施缓解方案�?.5天）
-3. **测试阶段**: 验证缓解效果�?.25天）
-4. **上线�?*: 持续监控优化
+1. **ﻝ،ﮒﺏﻟ۰ﮒ۷**: ﮒ؟ﮔﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﺅﺙ?.5ﮒ۳۸ﺅﺙ
+2. **ﮒﺙﮒﻠﭘﮔ؟?*: ﮒ؟ﮔﺛﻝﺙﻟ۶۲ﮔﺗﮔ۰ﺅﺙ?.5ﮒ۳۸ﺅﺙ
+3. **ﮔﭖﻟﺁﻠﭘﮔ؟ﭖ**: ﻠ۹ﻟﺁﻝﺙﻟ۶۲ﮔﮔﺅﺙ?.25ﮒ۳۸ﺅﺙ
+4. **ﻛﺕﻝﭦﺟﮒ?*: ﮔﻝﭨ­ﻝﮔ۶ﻛﺙﮒ
 
 ---
 
-**文档状�?*: �?已完�?
-**下一�?*: 开始缓解方案设�?
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
+**ﻛﺕﻛﺕﮔ­?*: ﮒﺙﮒ۶ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?

@@ -4,83 +4,83 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构?
-standard_type: 专业量化机构设计标准
-applicable_scope: Web管理界面前端组件结构
-compliance_level: 初始设计
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔ ﮒ
+applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ
+compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
 parent_document: ../INDEX.md
-implementation_status: 进行?
+implementation_status: ﻟﺟﻟ۰?
 ---
 
-# 前端组件结构?
+# ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?
 
-> 清风量化交易系统 v5.3 - Web管理界面前端组件结构
-> **索引**: `DESIGN_004`
-> **关联文档**: [Web管理界面架构设计](T.06.UI001.web_management_interface_architecture_design.md)
+> ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ
+> **ﻝﺑ۱ﮒﺙ**: `DESIGN_004`
+> **ﮒﺏﻟﮔﮔ۰۲**: [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](T.06.UI001.web_management_interface_architecture_design.md)
 
-## 1. 整体组件架构
+## 1. ﮔﺑﻛﺛﻝﭨﻛﭨﭘﮔﭘﮔ
 
-### 1.1 组件层次结构
+### 1.1 ﻝﭨﻛﭨﭘﮒﺎﮔ؛۰ﻝﭨﮔ
 
 ```mermaid
 graph TD
-    A[App 根组件] --> B[Layout 布局组件]
-    B --> C1[Header 头部栏]
-    B --> C2[Sidebar 侧边栏]
-    B --> C3[MainContent 主内容区]
-    B --> C4[Footer 底部栏]
+    A[App ﮔ ﺗﻝﭨﻛﭨﭘ] --> B[Layout ﮒﺕﮒﺎﻝﭨﻛﭨﭘ]
+    B --> C1[Header ﮒ۳ﺑﻠ۷ﮔ ]
+    B --> C2[Sidebar ﻛﺝ۶ﻟﺝﺗﮔ ]
+    B --> C3[MainContent ﻛﺕﭨﮒﮒ؟ﺗﮒﭦ]
+    B --> C4[Footer ﮒﭦﻠ۷ﮔ ]
     
-    C3 --> D1[DashboardPage 仪表板页面]
-    C3 --> D2[TradeMonitorPage 交易监控页面]
-    C3 --> D3[PerformancePage 性能页面]
-    C3 --> D4[ConfigPage 配置页面]
-    C3 --> D5[SystemHealthPage 系统健康页面]
+    C3 --> D1[DashboardPage ﻛﭨ۹ﻟ۰۷ﮔﺟﻠ۰ﭖﻠ۱]
+    C3 --> D2[TradeMonitorPage ﻛﭦ۳ﮔﻝﮔ۶ﻠ۰ﭖﻠ۱]
+    C3 --> D3[PerformancePage ﮔ۶ﻟﺛﻠ۰ﭖﻠ۱]
+    C3 --> D4[ConfigPage ﻠﻝﺛ؟ﻠ۰ﭖﻠ۱]
+    C3 --> D5[SystemHealthPage ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﻠ۰ﭖﻠ۱]
     
-    D1 --> E1[DashboardContainer 仪表板容器]
-    D2 --> E2[TradeMonitorContainer 交易监控容器]
-    D3 --> E3[PerformanceContainer 性能容器]
-    D4 --> E4[ConfigContainer 配置容器]
-    D5 --> E5[SystemHealthContainer 系统健康容器]
+    D1 --> E1[DashboardContainer ﻛﭨ۹ﻟ۰۷ﮔﺟﮒ؟ﺗﮒ۷]
+    D2 --> E2[TradeMonitorContainer ﻛﭦ۳ﮔﻝﮔ۶ﮒ؟ﺗﮒ۷]
+    D3 --> E3[PerformanceContainer ﮔ۶ﻟﺛﮒ؟ﺗﮒ۷]
+    D4 --> E4[ConfigContainer ﻠﻝﺛ؟ﮒ؟ﺗﮒ۷]
+    D5 --> E5[SystemHealthContainer ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮒ؟ﺗﮒ۷]
     
-    E1 --> F1[EngineStatusGrid 引擎状态网格]
-    E1 --> F2[MetricsCards 指标卡片组]
-    E1 --> F3[AlertPanel 告警面板]
+    E1 --> F1[EngineStatusGrid ﮒﺙﮔﻝﭘﮔﻝﺛﮔ ﺙ]
+    E1 --> F2[MetricsCards ﮔﮔ ﮒ۰ﻝﻝﭨ]
+    E1 --> F3[AlertPanel ﮒﻟ­۵ﻠ۱ﮔﺟ]
     
-    E2 --> F4[TradeTable 交易表格]
-    E2 --> F5[TradeFilters 交易过滤器]
-    E2 --> F6[TradeDetailModal 交易详情模态框]
+    E2 --> F4[TradeTable ﻛﭦ۳ﮔﻟ۰۷ﮔ ﺙ]
+    E2 --> F5[TradeFilters ﻛﭦ۳ﮔﻟﺟﮔﭨ۳ﮒ۷]
+    E2 --> F6[TradeDetailModal ﻛﭦ۳ﮔﻟﺁ۵ﮔﮔ۷۰ﮔﮔ۰]
     
-    E3 --> F7[PerformanceChart 性能图表]
-    E3 --> F8[TimeRangeSelector 时间范围选择器]
-    E3 --> F9[MetricSelector 指标选择器]
+    E3 --> F7[PerformanceChart ﮔ۶ﻟﺛﮒﺝﻟ۰۷]
+    E3 --> F8[TimeRangeSelector ﮔﭘﻠﺑﻟﮒﺑﻠﮔ۸ﮒ۷]
+    E3 --> F9[MetricSelector ﮔﮔ ﻠﮔ۸ﮒ۷]
     
-    E4 --> F10[EngineConfigForm 引擎配置表单]
-    E4 --> F11[StrategyConfigEditor 策略配置编辑器]
-    E4 --> F12[RiskLimitEditor 风险限额编辑器]
+    E4 --> F10[EngineConfigForm ﮒﺙﮔﻠﻝﺛ؟ﻟ۰۷ﮒ]
+    E4 --> F11[StrategyConfigEditor ﻝ­ﻝ۴ﻠﻝﺛ؟ﻝﺙﻟﺝﮒ۷]
+    E4 --> F12[RiskLimitEditor ﻠ۲ﻠ۸ﻠﻠ۱ﻝﺙﻟﺝﮒ۷]
     
-    E5 --> F13[HealthStatusPanel 健康状态面板]
-    E5 --> F14[LogViewer 日志查看器]
-    E5 --> F15[AlertHistory 告警历史]
+    E5 --> F13[HealthStatusPanel ﮒ۴ﮒﭦﺓﻝﭘﮔﻠ۱ﮔﺟ]
+    E5 --> F14[LogViewer ﮔ۴ﮒﺟﮔ۴ﻝﮒ۷]
+    E5 --> F15[AlertHistory ﮒﻟ­۵ﮒﮒﺎ]
 ```
 
-### 1.2 组件分类说明
+### 1.2 ﻝﭨﻛﭨﭘﮒﻝﺎﭨﻟﺁﺑﮔ
 
-| 组件层级 | 组件类型 | 职责说明 | 示例组件 |
+| ﻝﭨﻛﭨﭘﮒﺎﻝﭦ۶ | ﻝﭨﻛﭨﭘﻝﺎﭨﮒ | ﻟﻟﺑ۲ﻟﺁﺑﮔ | ﻝ۳ﭦﻛﺝﻝﭨﻛﭨﭘ |
 |----------|----------|----------|----------|
-| **根组?* | App Component | 应用入口，全局状态管?| `App.tsx` |
-| **布局组件** | Layout Components | 页面布局结构，导航框?| `Layout.tsx`, `Header.tsx` |
-| **页面组件** | Page Components | 路由对应的完整页?| `DashboardPage.tsx` |
-| **容器组件** | Container Components | 业务逻辑容器，状态管?| `DashboardContainer.tsx` |
-| **展示组件** | Presentational Components | 纯UI展示，无业务逻辑 | `MetricCard.tsx` |
-| **表单组件** | Form Components | 数据输入与验?| `EngineConfigForm.tsx` |
-| **图表组件** | Chart Components | 数据可视?| `PerformanceChart.tsx` |
-| **工具组件** | Utility Components | 通用工具组件 | `LoadingSpinner.tsx` |
+| **ﮔ ﺗﻝﭨ?* | App Component | ﮒﭦﻝ۷ﮒ۴ﮒ۲ﺅﺙﮒ۷ﮒﺎﻝﭘﮔﻝ؟۰?| `App.tsx` |
+| **ﮒﺕﮒﺎﻝﭨﻛﭨﭘ** | Layout Components | ﻠ۰ﭖﻠ۱ﮒﺕﮒﺎﻝﭨﮔﺅﺙﮒﺁﺙﻟ۹ﮔ۰?| `Layout.tsx`, `Header.tsx` |
+| **ﻠ۰ﭖﻠ۱ﻝﭨﻛﭨﭘ** | Page Components | ﻟﺓﺁﻝﺎﮒﺁﺗﮒﭦﻝﮒ؟ﮔﺑﻠ۰ﭖ?| `DashboardPage.tsx` |
+| **ﮒ؟ﺗﮒ۷ﻝﭨﻛﭨﭘ** | Container Components | ﻛﺕﮒ۰ﻠﭨﻟﺝﮒ؟ﺗﮒ۷ﺅﺙﻝﭘﮔﻝ؟۰?| `DashboardContainer.tsx` |
+| **ﮒﺎﻝ۳ﭦﻝﭨﻛﭨﭘ** | Presentational Components | ﻝﭦﺁUIﮒﺎﻝ۳ﭦﺅﺙﮔ ﻛﺕﮒ۰ﻠﭨﻟﺝ | `MetricCard.tsx` |
+| **ﻟ۰۷ﮒﻝﭨﻛﭨﭘ** | Form Components | ﮔﺍﮔ؟ﻟﺝﮒ۴ﻛﺕﻠ۹?| `EngineConfigForm.tsx` |
+| **ﮒﺝﻟ۰۷ﻝﭨﻛﭨﭘ** | Chart Components | ﮔﺍﮔ؟ﮒﺁﻟ۶?| `PerformanceChart.tsx` |
+| **ﮒﺓ۴ﮒﺓﻝﭨﻛﭨﭘ** | Utility Components | ﻠﻝ۷ﮒﺓ۴ﮒﺓﻝﭨﻛﭨﭘ | `LoadingSpinner.tsx` |
 
-## 2. 核心组件详细设计
+## 2. ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
 
-### 2.1 Layout 布局组件
+### 2.1 Layout ﮒﺕﮒﺎﻝﭨﻛﭨﭘ
 
-#### 2.1.1 Header 组件
+#### 2.1.1 Header ﻝﭨﻛﭨﭘ
 ```typescript
 interface HeaderProps {
   user: User | null;
@@ -95,26 +95,26 @@ const Header: React.FC<HeaderProps> = ({
   onLogout,
   onNotificationClick
 }) => {
-  // 实现?
+  // ﮒ؟ﻝﺍ?
 };
 ```
 
-**子组件结?*:
+**ﮒ­ﻝﭨﻛﭨﭘﻝﭨ?*:
 ```
 Header
-├── Logo (Logo组件)
-├── UserMenu (用户菜单)
-?  ├── UserAvatar (用户头像)
-?  ├── UserInfo (用户信息)
-?  └── LogoutButton (退出按?
-├── NotificationBell (通知铃铛)
-?  └── NotificationList (通知列表)
-└── QuickActions (快捷操作)
-    ├── RefreshButton (刷新按钮)
-    └── HelpButton (帮助按钮)
+ﻗﻗﻗ Logo (Logoﻝﭨﻛﭨﭘ)
+ﻗﻗﻗ UserMenu (ﻝ۷ﮔﺓﻟﮒ)
+?  ﻗﻗﻗ UserAvatar (ﻝ۷ﮔﺓﮒ۳ﺑﮒ)
+?  ﻗﻗﻗ UserInfo (ﻝ۷ﮔﺓﻛﺟ۰ﮔﺁ)
+?  ﻗﻗﻗ LogoutButton (ﻠﮒﭦﮔ?
+ﻗﻗﻗ NotificationBell (ﻠﻝ۴ﻠﻠ)
+?  ﻗﻗﻗ NotificationList (ﻠﻝ۴ﮒﻟ۰۷)
+ﻗﻗﻗ QuickActions (ﮒﺟ،ﮔﺓﮔﻛﺛ)
+    ﻗﻗﻗ RefreshButton (ﮒﺓﮔﺍﮔﻠ؟)
+    ﻗﻗﻗ HelpButton (ﮒﺕ؟ﮒ۸ﮔﻠ؟)
 ```
 
-#### 2.1.2 Sidebar 组件
+#### 2.1.2 Sidebar ﻝﭨﻛﭨﭘ
 ```typescript
 interface SidebarProps {
   activePath: string;
@@ -129,80 +129,80 @@ const Sidebar: React.FC<SidebarProps> = ({
   collapsed,
   onCollapseChange
 }) => {
-  // 实现?
+  // ﮒ؟ﻝﺍ?
 };
 ```
 
-**导航菜单?*:
+**ﮒﺁﺙﻟ۹ﻟﮒ?*:
 ```typescript
 const menuItems = [
   {
     key: 'dashboard',
     icon: <DashboardOutlined />,
-    label: '仪表?,
+    label: 'ﻛﭨ۹ﻟ۰۷?,
     path: '/dashboard'
   },
   {
     key: 'trades',
     icon: <TransactionOutlined />,
-    label: '交易监控',
+    label: 'ﻛﭦ۳ﮔﻝﮔ۶',
     path: '/trades'
   },
   {
     key: 'performance',
     icon: <LineChartOutlined />,
-    label: '性能分析',
+    label: 'ﮔ۶ﻟﺛﮒﮔ',
     path: '/performance'
   },
   {
     key: 'config',
     icon: <SettingOutlined />,
-    label: '配置管理',
+    label: 'ﻠﻝﺛ؟ﻝ؟۰ﻝ',
     path: '/config',
     children: [
-      { key: 'engines', label: '引擎配置', path: '/config/engines' },
-      { key: 'strategies', label: '策略配置', path: '/config/strategies' },
-      { key: 'risk', label: '风险限额', path: '/config/risk' }
+      { key: 'engines', label: 'ﮒﺙﮔﻠﻝﺛ؟', path: '/config/engines' },
+      { key: 'strategies', label: 'ﻝ­ﻝ۴ﻠﻝﺛ؟', path: '/config/strategies' },
+      { key: 'risk', label: 'ﻠ۲ﻠ۸ﻠﻠ۱', path: '/config/risk' }
     ]
   },
   {
     key: 'system',
     icon: <MonitorOutlined />,
-    label: '系统健康',
+    label: 'ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓ',
     path: '/system'
   }
 ];
 ```
 
-### 2.2 DashboardPage 仪表板页?
+### 2.2 DashboardPage ﻛﭨ۹ﻟ۰۷ﮔﺟﻠ۰ﭖ?
 
-#### 2.2.1 组件结构
+#### 2.2.1 ﻝﭨﻛﭨﭘﻝﭨﮔ
 ```
 DashboardPage
-└── DashboardContainer
-    ├── EngineStatusGrid
-    ?  ├── EngineStatusCard (×N)
-    ?  ?  ├── EngineIcon (引擎图标)
-    ?  ?  ├── EngineName (引擎名称)
-    ?  ?  ├── StatusIndicator (状态指示器)
-    ?  ?  ├── PerformanceMetrics (性能指标)
-    ?  ?  └── ActionButtons (操作按钮)
-    ?  └── AddEngineCard (添加引擎卡片)
-    ├── MetricsOverview
-    ?  ├── TotalTradesCard (总交易数)
-    ?  ├── TotalVolumeCard (总交易额)
-    ?  ├── ActiveEnginesCard (活跃引擎)
-    ?  └── SystemHealthCard (系统健康?
-    ├── RecentAlertsPanel
-    ?  ├── AlertItem (告警?
-    ?  └── ViewAllAlertsButton (查看全部)
-    └── QuickActionsPanel
-        ├── StartAllEnginesButton (启动所有引?
-        ├── StopAllEnginesButton (停止所有引?
-        └── RunHealthCheckButton (运行健康检?
+ﻗﻗﻗ DashboardContainer
+    ﻗﻗﻗ EngineStatusGrid
+    ?  ﻗﻗﻗ EngineStatusCard (ﺣN)
+    ?  ?  ﻗﻗﻗ EngineIcon (ﮒﺙﮔﮒﺝﮔ )
+    ?  ?  ﻗﻗﻗ EngineName (ﮒﺙﮔﮒﻝ۶ﺍ)
+    ?  ?  ﻗﻗﻗ StatusIndicator (ﻝﭘﮔﮔﻝ۳ﭦﮒ۷)
+    ?  ?  ﻗﻗﻗ PerformanceMetrics (ﮔ۶ﻟﺛﮔﮔ )
+    ?  ?  ﻗﻗﻗ ActionButtons (ﮔﻛﺛﮔﻠ؟)
+    ?  ﻗﻗﻗ AddEngineCard (ﮔﺓﭨﮒ ﮒﺙﮔﮒ۰ﻝ)
+    ﻗﻗﻗ MetricsOverview
+    ?  ﻗﻗﻗ TotalTradesCard (ﮔﭨﻛﭦ۳ﮔﮔﺍ)
+    ?  ﻗﻗﻗ TotalVolumeCard (ﮔﭨﻛﭦ۳ﮔﻠ۱)
+    ?  ﻗﻗﻗ ActiveEnginesCard (ﮔﺑﭨﻟﺓﮒﺙﮔ)
+    ?  ﻗﻗﻗ SystemHealthCard (ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓ?
+    ﻗﻗﻗ RecentAlertsPanel
+    ?  ﻗﻗﻗ AlertItem (ﮒﻟ­۵?
+    ?  ﻗﻗﻗ ViewAllAlertsButton (ﮔ۴ﻝﮒ۷ﻠ۷)
+    ﻗﻗﻗ QuickActionsPanel
+        ﻗﻗﻗ StartAllEnginesButton (ﮒﺁﮒ۷ﮔﮔﮒﺙ?
+        ﻗﻗﻗ StopAllEnginesButton (ﮒﮔ­۱ﮔﮔﮒﺙ?
+        ﻗﻗﻗ RunHealthCheckButton (ﻟﺟﻟ۰ﮒ۴ﮒﭦﺓﮔ۲?
 ```
 
-#### 2.2.2 EngineStatusCard 组件设计
+#### 2.2.2 EngineStatusCard ﻝﭨﻛﭨﭘﻟ؟ﺝﻟ؟۰
 ```typescript
 interface EngineStatusCardProps {
   engine: Engine;
@@ -236,68 +236,68 @@ const EngineStatusCard: React.FC<EngineStatusCardProps> = ({
         </div>
       }
       actions={[
-        <Tooltip title="启动">
+        <Tooltip title="ﮒﺁﮒ۷">
           <PlayCircleOutlined onClick={() => onStart(engine.id)} />
         </Tooltip>,
-        <Tooltip title="停止">
+        <Tooltip title="ﮒﮔ­۱">
           <StopOutlined onClick={() => onStop(engine.id)} />
         </Tooltip>,
-        <Tooltip title="配置">
+        <Tooltip title="ﻠﻝﺛ؟">
           <SettingOutlined onClick={() => onConfigure(engine.id)} />
         </Tooltip>,
-        <Tooltip title="详情">
+        <Tooltip title="ﻟﺁ۵ﮔ">
           <EyeOutlined onClick={() => onViewDetails(engine.id)} />
         </Tooltip>
       ]}
     >
       <div className="engine-metrics">
         <MetricItem label="CPU" value={`${engine.cpuUsage}%`} />
-        <MetricItem label="内存" value={`${engine.memoryUsage}%`} />
-        <MetricItem label="今日交易" value={engine.tradesToday} />
-        <MetricItem label="错误? value={engine.errorCount} />
+        <MetricItem label="ﮒﮒ­" value={`${engine.memoryUsage}%`} />
+        <MetricItem label="ﻛﭨﮔ۴ﻛﭦ۳ﮔ" value={engine.tradesToday} />
+        <MetricItem label="ﻠﻟﺁﺁ? value={engine.errorCount} />
       </div>
       <div className="engine-last-update">
-        最后更? {formatTime(engine.lastHeartbeat)}
+        ﮔﮒﮔﺑ? {formatTime(engine.lastHeartbeat)}
       </div>
     </Card>
   );
 };
 ```
 
-### 2.3 TradeMonitorPage 交易监控页面
+### 2.3 TradeMonitorPage ﻛﭦ۳ﮔﻝﮔ۶ﻠ۰ﭖﻠ۱
 
-#### 2.3.1 组件结构
+#### 2.3.1 ﻝﭨﻛﭨﭘﻝﭨﮔ
 ```
 TradeMonitorPage
-└── TradeMonitorContainer
-    ├── TradeFilters
-    ?  ├── DateRangePicker (日期范围选择?
-    ?  ├── SymbolSelector (标的选择?
-    ?  ├── EngineSelector (引擎选择?
-    ?  ├── SideFilter (买卖方向过滤?
-    ?  └── ApplyFiltersButton (应用过滤?
-    ├── TradeTable
-    ?  ├── TradeTableHeader (表格头部)
-    ?  ├── TradeTableRow (表格?×N)
-    ?  ?  ├── TradeIdCell (交易ID)
-    ?  ?  ├── TimestampCell (时间?
-    ?  ?  ├── SymbolCell (标的)
-    ?  ?  ├── SideCell (买卖方向)
-    ?  ?  ├── PriceCell (价格)
-    ?  ?  ├── QuantityCell (数量)
-    ?  ?  ├── VolumeCell (金额)
-    ?  ?  ├── EngineCell (引擎)
-    ?  ?  └── ActionsCell (操作)
-    ?  └── TradeTableFooter (表格底部)
-    ├── TradeStatsPanel
-    ?  ├── TotalTradesStat (总交易数)
-    ?  ├── TotalVolumeStat (总交易额)
-    ?  ├── AvgPriceStat (平均价格)
-    ?  └── TradeDistributionChart (交易分布?
-    └── TradeDetailModal (交易详情模态框)
+ﻗﻗﻗ TradeMonitorContainer
+    ﻗﻗﻗ TradeFilters
+    ?  ﻗﻗﻗ DateRangePicker (ﮔ۴ﮔﻟﮒﺑﻠﮔ۸?
+    ?  ﻗﻗﻗ SymbolSelector (ﮔ ﻝﻠﮔ۸?
+    ?  ﻗﻗﻗ EngineSelector (ﮒﺙﮔﻠﮔ۸?
+    ?  ﻗﻗﻗ SideFilter (ﻛﺗﺍﮒﮔﺗﮒﻟﺟﮔﭨ۳?
+    ?  ﻗﻗﻗ ApplyFiltersButton (ﮒﭦﻝ۷ﻟﺟﮔﭨ۳?
+    ﻗﻗﻗ TradeTable
+    ?  ﻗﻗﻗ TradeTableHeader (ﻟ۰۷ﮔ ﺙﮒ۳ﺑﻠ۷)
+    ?  ﻗﻗﻗ TradeTableRow (ﻟ۰۷ﮔ ﺙ?ﺣN)
+    ?  ?  ﻗﻗﻗ TradeIdCell (ﻛﭦ۳ﮔID)
+    ?  ?  ﻗﻗﻗ TimestampCell (ﮔﭘﻠﺑ?
+    ?  ?  ﻗﻗﻗ SymbolCell (ﮔ ﻝ)
+    ?  ?  ﻗﻗﻗ SideCell (ﻛﺗﺍﮒﮔﺗﮒ)
+    ?  ?  ﻗﻗﻗ PriceCell (ﻛﭨﺓﮔ ﺙ)
+    ?  ?  ﻗﻗﻗ QuantityCell (ﮔﺍﻠ)
+    ?  ?  ﻗﻗﻗ VolumeCell (ﻠﻠ۱)
+    ?  ?  ﻗﻗﻗ EngineCell (ﮒﺙﮔ)
+    ?  ?  ﻗﻗﻗ ActionsCell (ﮔﻛﺛ)
+    ?  ﻗﻗﻗ TradeTableFooter (ﻟ۰۷ﮔ ﺙﮒﭦﻠ۷)
+    ﻗﻗﻗ TradeStatsPanel
+    ?  ﻗﻗﻗ TotalTradesStat (ﮔﭨﻛﭦ۳ﮔﮔﺍ)
+    ?  ﻗﻗﻗ TotalVolumeStat (ﮔﭨﻛﭦ۳ﮔﻠ۱)
+    ?  ﻗﻗﻗ AvgPriceStat (ﮒﺗﺏﮒﻛﭨﺓﮔ ﺙ)
+    ?  ﻗﻗﻗ TradeDistributionChart (ﻛﭦ۳ﮔﮒﮒﺕ?
+    ﻗﻗﻗ TradeDetailModal (ﻛﭦ۳ﮔﻟﺁ۵ﮔﮔ۷۰ﮔﮔ۰)
 ```
 
-#### 2.3.2 TradeTable 组件设计
+#### 2.3.2 TradeTable ﻝﭨﻛﭨﭘﻟ؟ﺝﻟ؟۰
 ```typescript
 interface TradeTableProps {
   trades: Trade[];
@@ -321,14 +321,14 @@ const TradeTable: React.FC<TradeTableProps> = ({
 }) => {
   const columns = [
     {
-      title: '交易ID',
+      title: 'ﻛﭦ۳ﮔID',
       dataIndex: 'tradeId',
       key: 'tradeId',
       sorter: true,
       width: 120
     },
     {
-      title: '时间',
+      title: 'ﮔﭘﻠﺑ',
       dataIndex: 'timestamp',
       key: 'timestamp',
       sorter: true,
@@ -336,24 +336,24 @@ const TradeTable: React.FC<TradeTableProps> = ({
       width: 150
     },
     {
-      title: '标的',
+      title: 'ﮔ ﻝ',
       dataIndex: 'symbol',
       key: 'symbol',
       width: 100
     },
     {
-      title: '方向',
+      title: 'ﮔﺗﮒ',
       dataIndex: 'side',
       key: 'side',
       render: (side: string) => (
         <Tag color={side === 'buy' ? 'green' : 'red'}>
-          {side === 'buy' ? '买入' : '卖出'}
+          {side === 'buy' ? 'ﻛﺗﺍﮒ۴' : 'ﮒﮒﭦ'}
         </Tag>
       ),
       width: 80
     },
     {
-      title: '价格',
+      title: 'ﻛﭨﺓﮔ ﺙ',
       dataIndex: 'price',
       key: 'price',
       sorter: true,
@@ -361,14 +361,14 @@ const TradeTable: React.FC<TradeTableProps> = ({
       width: 100
     },
     {
-      title: '数量',
+      title: 'ﮔﺍﻠ',
       dataIndex: 'quantity',
       key: 'quantity',
       sorter: true,
       width: 100
     },
     {
-      title: '金额',
+      title: 'ﻠﻠ۱',
       dataIndex: 'volume',
       key: 'volume',
       sorter: true,
@@ -376,13 +376,13 @@ const TradeTable: React.FC<TradeTableProps> = ({
       width: 120
     },
     {
-      title: '引擎',
+      title: 'ﮒﺙﮔ',
       dataIndex: 'engineId',
       key: 'engineId',
       width: 100
     },
     {
-      title: '操作',
+      title: 'ﮔﻛﺛ',
       key: 'actions',
       render: (_: any, trade: Trade) => (
         <Button
@@ -390,7 +390,7 @@ const TradeTable: React.FC<TradeTableProps> = ({
           onClick={() => onRowClick(trade)}
           icon={<EyeOutlined />}
         >
-          详情
+          ﻟﺁ۵ﮔ
         </Button>
       ),
       width: 80
@@ -420,37 +420,37 @@ const TradeTable: React.FC<TradeTableProps> = ({
 };
 ```
 
-### 2.4 PerformancePage 性能分析页面
+### 2.4 PerformancePage ﮔ۶ﻟﺛﮒﮔﻠ۰ﭖﻠ۱
 
-#### 2.4.1 组件结构
+#### 2.4.1 ﻝﭨﻛﭨﭘﻝﭨﮔ
 ```
 PerformancePage
-└── PerformanceContainer
-    ├── ChartControls
-    ?  ├── TimeRangeSelector (时间范围选择?
-    ?  ├── MetricSelector (指标选择?
-    ?  ├── ChartTypeSelector (图表类型选择?
-    ?  ├── EngineFilter (引擎过滤?
-    ?  └── RefreshButton (刷新按钮)
-    ├── ChartArea
-    ?  ├── EquityCurveChart (权益曲线?
-    ?  ├── DrawdownChart (回撤?
-    ?  ├── SharpeRatioChart (夏普比率?
-    ?  ├── TradeDistributionChart (交易分布?
-    ?  └── PerformanceHeatmap (性能热力?
-    ├── PerformanceMetricsPanel
-    ?  ├── SharpeRatioCard (夏普比率)
-    ?  ├── MaxDrawdownCard (最大回?
-    ?  ├── WinRateCard (胜率)
-    ?  ├── AvgReturnCard (平均收益)
-    ?  └── VolatilityCard (波动?
-    └── ExportControls
-        ├── ExportCSVButton (导出CSV)
-        ├── ExportPNGButton (导出PNG)
-        └── ShareReportButton (分享报告)
+ﻗﻗﻗ PerformanceContainer
+    ﻗﻗﻗ ChartControls
+    ?  ﻗﻗﻗ TimeRangeSelector (ﮔﭘﻠﺑﻟﮒﺑﻠﮔ۸?
+    ?  ﻗﻗﻗ MetricSelector (ﮔﮔ ﻠﮔ۸?
+    ?  ﻗﻗﻗ ChartTypeSelector (ﮒﺝﻟ۰۷ﻝﺎﭨﮒﻠﮔ۸?
+    ?  ﻗﻗﻗ EngineFilter (ﮒﺙﮔﻟﺟﮔﭨ۳?
+    ?  ﻗﻗﻗ RefreshButton (ﮒﺓﮔﺍﮔﻠ؟)
+    ﻗﻗﻗ ChartArea
+    ?  ﻗﻗﻗ EquityCurveChart (ﮔﻝﮔﺎﻝﭦﺟ?
+    ?  ﻗﻗﻗ DrawdownChart (ﮒﮔ۳?
+    ?  ﻗﻗﻗ SharpeRatioChart (ﮒ۳ﮔ؟ﮔﺁﻝ?
+    ?  ﻗﻗﻗ TradeDistributionChart (ﻛﭦ۳ﮔﮒﮒﺕ?
+    ?  ﻗﻗﻗ PerformanceHeatmap (ﮔ۶ﻟﺛﻝ­ﮒ?
+    ﻗﻗﻗ PerformanceMetricsPanel
+    ?  ﻗﻗﻗ SharpeRatioCard (ﮒ۳ﮔ؟ﮔﺁﻝ)
+    ?  ﻗﻗﻗ MaxDrawdownCard (ﮔﮒ۳۶ﮒ?
+    ?  ﻗﻗﻗ WinRateCard (ﻟﻝ)
+    ?  ﻗﻗﻗ AvgReturnCard (ﮒﺗﺏﮒﮔﭘﻝ)
+    ?  ﻗﻗﻗ VolatilityCard (ﮔﺏ۱ﮒ۷?
+    ﻗﻗﻗ ExportControls
+        ﻗﻗﻗ ExportCSVButton (ﮒﺁﺙﮒﭦCSV)
+        ﻗﻗﻗ ExportPNGButton (ﮒﺁﺙﮒﭦPNG)
+        ﻗﻗﻗ ShareReportButton (ﮒﻛﭦ،ﮔ۴ﮒ)
 ```
 
-#### 2.4.2 PerformanceChart 组件设计
+#### 2.4.2 PerformanceChart ﻝﭨﻛﭨﭘﻟ؟ﺝﻟ؟۰
 ```typescript
 interface PerformanceChartProps {
   data: ChartData[];
@@ -530,13 +530,13 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
 };
 ```
 
-## 3. 组件交互关系
+## 3. ﻝﭨﻛﭨﭘﻛﭦ۳ﻛﭦﮒﺏﻝﺏﭨ
 
-### 3.1 数据流图
+### 3.1 ﮔﺍﮔ؟ﮔﭖﮒﺝ
 
 ```mermaid
 graph LR
-    A[后端API] --> B[API Service]
+    A[ﮒﻝ،ﺁAPI] --> B[API Service]
     B --> C[Redux Store]
     C --> D[Container Components]
     D --> E[Presentational Components]
@@ -551,9 +551,9 @@ graph LR
     J --> C
 ```
 
-### 3.2 状态管理设?
+### 3.2 ﻝﭘﮔﻝ؟۰ﻝﻟ؟ﺝ?
 
-#### 3.2.1 Redux Store 结构
+#### 3.2.1 Redux Store ﻝﭨﮔ
 ```typescript
 interface RootState {
   auth: AuthState;
@@ -592,9 +592,9 @@ interface UIState {
 }
 ```
 
-#### 3.2.2 关键Action定义
+#### 3.2.2 ﮒﺏﻠ؟Actionﮒ؟ﻛﺗ
 ```typescript
-// 引擎相关Action
+// ﮒﺙﮔﻝﺕﮒﺏAction
 const fetchEngines = createAsyncThunk('engines/fetch', async () => {
   const response = await engineAPI.getEngines();
   return response.data;
@@ -612,7 +612,7 @@ const updateEngineConfig = createAsyncThunk('engines/updateConfig',
   }
 );
 
-// 交易相关Action
+// ﻛﭦ۳ﮔﻝﺕﮒﺏAction
 const fetchTrades = createAsyncThunk('trades/fetch', 
   async (filters: TradeFilters) => {
     const response = await tradeAPI.getTrades(filters);
@@ -626,139 +626,139 @@ const websocketMessageReceived = createAction('websocket/message',
 );
 ```
 
-## 4. 组件开发规?
+## 4. ﻝﭨﻛﭨﭘﮒﺙﮒﻟ۶?
 
-### 4.1 命名规范
-| 组件类型 | 命名规则 | 示例 |
+### 4.1 ﮒﺛﮒﻟ۶ﻟ
+| ﻝﭨﻛﭨﭘﻝﺎﭨﮒ | ﮒﺛﮒﻟ۶ﮒ | ﻝ۳ﭦﻛﺝ |
 |----------|----------|------|
-| **页面组件** | `[PageName]Page` | `DashboardPage.tsx` |
-| **容器组件** | `[Feature]Container` | `DashboardContainer.tsx` |
-| **展示组件** | `[ComponentName]` | `MetricCard.tsx` |
-| **表单组件** | `[FormName]Form` | `EngineConfigForm.tsx` |
-| **图表组件** | `[ChartName]Chart` | `PerformanceChart.tsx` |
-| **工具组件** | `[UtilityName]` | `LoadingSpinner.tsx` |
+| **ﻠ۰ﭖﻠ۱ﻝﭨﻛﭨﭘ** | `[PageName]Page` | `DashboardPage.tsx` |
+| **ﮒ؟ﺗﮒ۷ﻝﭨﻛﭨﭘ** | `[Feature]Container` | `DashboardContainer.tsx` |
+| **ﮒﺎﻝ۳ﭦﻝﭨﻛﭨﭘ** | `[ComponentName]` | `MetricCard.tsx` |
+| **ﻟ۰۷ﮒﻝﭨﻛﭨﭘ** | `[FormName]Form` | `EngineConfigForm.tsx` |
+| **ﮒﺝﻟ۰۷ﻝﭨﻛﭨﭘ** | `[ChartName]Chart` | `PerformanceChart.tsx` |
+| **ﮒﺓ۴ﮒﺓﻝﭨﻛﭨﭘ** | `[UtilityName]` | `LoadingSpinner.tsx` |
 
-### 4.2 文件结构规范
+### 4.2 ﮔﻛﭨﭘﻝﭨﮔﻟ۶ﻟ
 ```
 src/
-├── components/
-?  ├── layout/           # 布局组件
-?  ?  ├── Header.tsx
-?  ?  ├── Sidebar.tsx
-?  ?  └── Layout.tsx
-?  ├── pages/           # 页面组件
-?  ?  ├── DashboardPage.tsx
-?  ?  ├── TradeMonitorPage.tsx
-?  ?  └── PerformancePage.tsx
-?  ├── containers/      # 容器组件
-?  ?  ├── DashboardContainer.tsx
-?  ?  ├── TradeMonitorContainer.tsx
-?  ?  └── PerformanceContainer.tsx
-?  ├── charts/         # 图表组件
-?  ?  ├── PerformanceChart.tsx
-?  ?  └── TradeDistributionChart.tsx
-?  ├── forms/          # 表单组件
-?  ?  ├── EngineConfigForm.tsx
-?  ?  └── StrategyConfigForm.tsx
-?  └── common/         # 通用组件
-?      ├── LoadingSpinner.tsx
-?      ├── ErrorBoundary.tsx
-?      └── NotFound.tsx
-├── services/           # 服务?
-?  ├── api.ts
-?  ├── websocket.ts
-?  └── auth.ts
-├── store/              # 状态管?
-?  ├── index.ts
-?  ├── actions.ts
-?  ├── reducers.ts
-?  └── selectors.ts
-├── hooks/              # 自定义Hook
-?  ├── useEngines.ts
-?  ├── useTrades.ts
-?  └── useWebSocket.ts
-├── utils/              # 工具函数
-?  ├── formatters.ts
-?  ├── validators.ts
-?  └── constants.ts
-└── types/              # TypeScript类型定义
-    ├── index.ts
-    ├── engine.ts
-    └── trade.ts
+ﻗﻗﻗ components/
+?  ﻗﻗﻗ layout/           # ﮒﺕﮒﺎﻝﭨﻛﭨﭘ
+?  ?  ﻗﻗﻗ Header.tsx
+?  ?  ﻗﻗﻗ Sidebar.tsx
+?  ?  ﻗﻗﻗ Layout.tsx
+?  ﻗﻗﻗ pages/           # ﻠ۰ﭖﻠ۱ﻝﭨﻛﭨﭘ
+?  ?  ﻗﻗﻗ DashboardPage.tsx
+?  ?  ﻗﻗﻗ TradeMonitorPage.tsx
+?  ?  ﻗﻗﻗ PerformancePage.tsx
+?  ﻗﻗﻗ containers/      # ﮒ؟ﺗﮒ۷ﻝﭨﻛﭨﭘ
+?  ?  ﻗﻗﻗ DashboardContainer.tsx
+?  ?  ﻗﻗﻗ TradeMonitorContainer.tsx
+?  ?  ﻗﻗﻗ PerformanceContainer.tsx
+?  ﻗﻗﻗ charts/         # ﮒﺝﻟ۰۷ﻝﭨﻛﭨﭘ
+?  ?  ﻗﻗﻗ PerformanceChart.tsx
+?  ?  ﻗﻗﻗ TradeDistributionChart.tsx
+?  ﻗﻗﻗ forms/          # ﻟ۰۷ﮒﻝﭨﻛﭨﭘ
+?  ?  ﻗﻗﻗ EngineConfigForm.tsx
+?  ?  ﻗﻗﻗ StrategyConfigForm.tsx
+?  ﻗﻗﻗ common/         # ﻠﻝ۷ﻝﭨﻛﭨﭘ
+?      ﻗﻗﻗ LoadingSpinner.tsx
+?      ﻗﻗﻗ ErrorBoundary.tsx
+?      ﻗﻗﻗ NotFound.tsx
+ﻗﻗﻗ services/           # ﮔﮒ۰?
+?  ﻗﻗﻗ api.ts
+?  ﻗﻗﻗ websocket.ts
+?  ﻗﻗﻗ auth.ts
+ﻗﻗﻗ store/              # ﻝﭘﮔﻝ؟۰?
+?  ﻗﻗﻗ index.ts
+?  ﻗﻗﻗ actions.ts
+?  ﻗﻗﻗ reducers.ts
+?  ﻗﻗﻗ selectors.ts
+ﻗﻗﻗ hooks/              # ﻟ۹ﮒ؟ﻛﺗHook
+?  ﻗﻗﻗ useEngines.ts
+?  ﻗﻗﻗ useTrades.ts
+?  ﻗﻗﻗ useWebSocket.ts
+ﻗﻗﻗ utils/              # ﮒﺓ۴ﮒﺓﮒﺛﮔﺍ
+?  ﻗﻗﻗ formatters.ts
+?  ﻗﻗﻗ validators.ts
+?  ﻗﻗﻗ constants.ts
+ﻗﻗﻗ types/              # TypeScriptﻝﺎﭨﮒﮒ؟ﻛﺗ
+    ﻗﻗﻗ index.ts
+    ﻗﻗﻗ engine.ts
+    ﻗﻗﻗ trade.ts
 ```
 
-### 4.3 组件开发原?
+### 4.3 ﻝﭨﻛﭨﭘﮒﺙﮒﮒ?
 
-#### 4.3.1 单一职责原则
-- 每个组件只负责一个功?
-- 容器组件负责状态管理和业务逻辑
-- 展示组件只负责UI渲染
+#### 4.3.1 ﮒﻛﺕﻟﻟﺑ۲ﮒﮒ
+- ﮔﺁﻛﺕ۹ﻝﭨﻛﭨﭘﮒ۹ﻟﺑﻟﺑ۲ﻛﺕﻛﺕ۹ﮒ?
+- ﮒ؟ﺗﮒ۷ﻝﭨﻛﭨﭘﻟﺑﻟﺑ۲ﻝﭘﮔﻝ؟۰ﻝﮒﻛﺕﮒ۰ﻠﭨﻟﺝ
+- ﮒﺎﻝ۳ﭦﻝﭨﻛﭨﭘﮒ۹ﻟﺑﻟﺑ۲UIﮔﺕﺎﮔ
 
-#### 4.3.2 可复用性原?
-- 提取通用组件到`common/`目录
-- 组件参数设计要灵?
-- 支持自定义样式和事件
+#### 4.3.2 ﮒﺁﮒ۳ﻝ۷ﮔ۶ﮒ?
+- ﮔﮒﻠﻝ۷ﻝﭨﻛﭨﭘﮒﺍ`common/`ﻝ؟ﮒﺛ
+- ﻝﭨﻛﭨﭘﮒﮔﺍﻟ؟ﺝﻟ؟۰ﻟ۵ﻝﭖ?
+- ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮔ ﺓﮒﺙﮒﻛﭦﻛﭨﭘ
 
-#### 4.3.3 可测试性原?
-- 组件逻辑与UI分离
-- 使用Props注入依赖
-- 提供测试友好的接?
+#### 4.3.3 ﮒﺁﮔﭖﻟﺁﮔ۶ﮒ?
+- ﻝﭨﻛﭨﭘﻠﭨﻟﺝﻛﺕUIﮒﻝ۵ﭨ
+- ﻛﺛﺟﻝ۷Propsﮔﺏ۷ﮒ۴ﻛﺝﻟﭖ
+- ﮔﻛﺝﮔﭖﻟﺁﮒﮒ۴ﺛﻝﮔ۴?
 
-#### 4.3.4 性能优化原则
-- 使用React.memo避免不必要的重渲?
-- 使用useMemo/useCallback优化计算
-- 实现虚拟滚动处理大数据列?
-- 按需加载大型组件
+#### 4.3.4 ﮔ۶ﻟﺛﻛﺙﮒﮒﮒ
+- ﻛﺛﺟﻝ۷React.memoﻠﺟﮒﻛﺕﮒﺟﻟ۵ﻝﻠﮔﺕﺎ?
+- ﻛﺛﺟﻝ۷useMemo/useCallbackﻛﺙﮒﻟ؟۰ﻝ؟
+- ﮒ؟ﻝﺍﻟﮔﮔﭨﮒ۷ﮒ۳ﻝﮒ۳۶ﮔﺍﮔ؟ﮒ?
+- ﮔﻠﮒ ﻟﺛﺛﮒ۳۶ﮒﻝﭨﻛﭨﭘ
 
-## 5. 实施指南
+## 5. ﮒ؟ﮔﺛﮔﮒ
 
-### 5.1 组件开发顺?
-1. **基础组件** (??
-   - Layout组件 (Header, Sidebar, Footer)
-   - 通用组件 (LoadingSpinner, ErrorBoundary)
-   - 工具函数和类型定?
+### 5.1 ﻝﭨﻛﭨﭘﮒﺙﮒﻠ۰ﭦ?
+1. **ﮒﭦﻝ۰ﻝﭨﻛﭨﭘ** (??
+   - Layoutﻝﭨﻛﭨﭘ (Header, Sidebar, Footer)
+   - ﻠﻝ۷ﻝﭨﻛﭨﭘ (LoadingSpinner, ErrorBoundary)
+   - ﮒﺓ۴ﮒﺓﮒﺛﮔﺍﮒﻝﺎﭨﮒﮒ؟?
 
-2. **页面框架** (??
-   - 页面路由配置
-   - 页面骨架组件
-   - 导航和权限控?
+2. **ﻠ۰ﭖﻠ۱ﮔ۰ﮔﭘ** (??
+   - ﻠ۰ﭖﻠ۱ﻟﺓﺁﻝﺎﻠﻝﺛ؟
+   - ﻠ۰ﭖﻠ۱ﻠ۹۷ﮔﭘﻝﭨﻛﭨﭘ
+   - ﮒﺁﺙﻟ۹ﮒﮔﻠﮔ۶?
 
-3. **核心功能组件** (?-4?
-   - Dashboard相关组件
-   - TradeMonitor相关组件
-   - Performance相关组件
+3. **ﮔ ﺕﮒﺟﮒﻟﺛﻝﭨﻛﭨﭘ** (?-4?
+   - Dashboardﻝﺕﮒﺏﻝﭨﻛﭨﭘ
+   - TradeMonitorﻝﺕﮒﺏﻝﭨﻛﭨﭘ
+   - Performanceﻝﺕﮒﺏﻝﭨﻛﭨﭘ
 
-4. **高级功能组件** (??
-   - Config相关组件
-   - SystemHealth相关组件
-   - 导出和分享功?
+4. **ﻠ،ﻝﭦ۶ﮒﻟﺛﻝﭨﻛﭨﭘ** (??
+   - Configﻝﺕﮒﺏﻝﭨﻛﭨﭘ
+   - SystemHealthﻝﺕﮒﺏﻝﭨﻛﭨﭘ
+   - ﮒﺁﺙﮒﭦﮒﮒﻛﭦ،ﮒ?
 
-5. **优化和测?* (?-7?
-   - 性能优化
-   - 响应式设?
-   - 单元测试和E2E测试
+5. **ﻛﺙﮒﮒﮔﭖ?* (?-7?
+   - ﮔ۶ﻟﺛﻛﺙﮒ
+   - ﮒﮒﭦﮒﺙﻟ؟ﺝ?
+   - ﮒﮒﮔﭖﻟﺁﮒE2Eﮔﭖﻟﺁ
 
-### 5.2 组件测试策略
-| 测试类型 | 测试工具 | 测试目标 | 覆盖率目?|
+### 5.2 ﻝﭨﻛﭨﭘﮔﭖﻟﺁﻝ­ﻝ۴
+| ﮔﭖﻟﺁﻝﺎﭨﮒ | ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ | ﮔﭖﻟﺁﻝ؟ﮔ  | ﻟ۵ﻝﻝﻝ؟?|
 |----------|----------|----------|------------|
-| **单元测试** | Jest + React Testing Library | 组件逻辑和渲?| ?0% |
-| **集成测试** | Cypress | 组件间交?| ?0% |
-| **E2E测试** | Cypress | 完整用户流程 | ?0% |
-| **性能测试** | Lighthouse | 加载和渲染性能 | 达标 |
-| **可视化测?* | Storybook + Chromatic | UI一致性和回归 | 100% |
+| **ﮒﮒﮔﭖﻟﺁ** | Jest + React Testing Library | ﻝﭨﻛﭨﭘﻠﭨﻟﺝﮒﮔﺕﺎ?| ?0% |
+| **ﻠﮔﮔﭖﻟﺁ** | Cypress | ﻝﭨﻛﭨﭘﻠﺑﻛﭦ۳?| ?0% |
+| **E2Eﮔﭖﻟﺁ** | Cypress | ﮒ؟ﮔﺑﻝ۷ﮔﺓﮔﭖﻝ۷ | ?0% |
+| **ﮔ۶ﻟﺛﮔﭖﻟﺁ** | Lighthouse | ﮒ ﻟﺛﺛﮒﮔﺕﺎﮔﮔ۶ﻟﺛ | ﻟﺝﺝﮔ  |
+| **ﮒﺁﻟ۶ﮒﮔﭖ?* | Storybook + Chromatic | UIﻛﺕﻟﺑﮔ۶ﮒﮒﮒﺛ | 100% |
 
-### 5.3 组件文档规范
-每个组件需要包含：
-1. **组件说明**: 用途、功能、使用场?
-2. **Props接口**: TypeScript接口定义
-3. **使用示例**: 代码示例
-4. **注意事项**: 使用限制和最佳实?
-5. **API文档**: 方法和事件说?
+### 5.3 ﻝﭨﻛﭨﭘﮔﮔ۰۲ﻟ۶ﻟ
+ﮔﺁﻛﺕ۹ﻝﭨﻛﭨﭘﻠﻟ۵ﮒﮒ،ﺅﺙ
+1. **ﻝﭨﻛﭨﭘﻟﺁﺑﮔ**: ﻝ۷ﻠﻙﮒﻟﺛﻙﻛﺛﺟﻝ۷ﮒﭦ?
+2. **Propsﮔ۴ﮒ۲**: TypeScriptﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+3. **ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ**: ﻛﭨ۲ﻝ ﻝ۳ﭦﻛﺝ
+4. **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**: ﻛﺛﺟﻝ۷ﻠﮒﭘﮒﮔﻛﺛﺏﮒ؟?
+5. **APIﮔﮔ۰۲**: ﮔﺗﮔﺏﮒﻛﭦﻛﭨﭘﻟﺁﺑ?
 
 ---
 
-**文档版本**: 1.0.0  
-**最后更?*: 2026-04-02  
-**维护?*: 首席蓝图架构? 
-**索引**: `DESIGN_004`  
-**�?*: ?设计完成，待评审
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
+**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ? 
+**ﻝﺑ۱ﮒﺙ**: `DESIGN_004`  
+**ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰
