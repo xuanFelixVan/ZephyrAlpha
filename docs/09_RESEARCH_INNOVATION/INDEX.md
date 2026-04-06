@@ -48,11 +48,13 @@ implementation_status: 设计阶段---
 ### 归档文档
 
 历史版本已归档至 `_archive/` 目录，包括：
-- `MISSING_MODULES_SUPPLEMENT.md` (v1.0)
-- `COMPLETE_SUPPLEMENT_v2.md` (v2.0)
-- `COMPLETE_BLUEPRINT_V3.md` (v3.0)
-- `CRITICAL_MISSING_V4.md` (v4.0)
-- `SYSTEM_MANIFEST_UPDATE_GUIDE.md` (临时文档)
+- `MISSING_MODULES_SUPPLEMENT.md` (v1.0) - 早期缺失模块补充设计
+- `COMPLETE_SUPPLEMENT_v2.md` (v2.0) - 完整缺失模块补充方案
+- `COMPLETE_BLUEPRINT_V3.md` (v3.0) - 完整蓝图版本
+- `CRITICAL_MISSING_V4.md` (v4.0) - 关键缺失模块补充
+- `SYSTEM_MANIFEST_UPDATE_GUIDE.md` (临时文档) - System_Manifest更新指南
+
+**说明**: 这些归档文档保留了历史设计思路和决策过程，作为历史记录保留。最新内容已整合到主蓝图和实施方案中。
 
 ### 子模块（规划中）
 
