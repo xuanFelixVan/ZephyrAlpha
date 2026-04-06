@@ -18,7 +18,7 @@ priority: P0
 # 多目标优化蓝图
 
 > 清风量化交易系统 v5.3 - 多目标组合优化详细设计
-> **索引**: `MULTI_OBJ_OPT_001`
+> **索引**: `MULTI_OBJECTIVE_OPTIMIZATION_001`
 > **开发周期**: 5-7天
 > **核心定位**: 同时优化多个目标函数（如收益、风险、成本），支持Pareto最优解集
 > **参考开源**: cvxpy, pymoo

@@ -194,15 +194,15 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 因子回测集成蓝图 | FACTOR_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) |
-| 另类数据集成蓝图 | ALT_DATA_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) |
+| 因子回测集成蓝图 | FACTOR_BACKTEST_INTEGRATION_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) |
+| 另类数据集成蓝图 | ALTERNATIVE_DATA_INTEGRATION_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) |
 
 ### 7.2 经济范式与策略选择
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 经济范式判断引擎蓝图 | ECONOMIC_REGIME_ENGINE_002 | v1.0.0 | Active | 2026-04-02 | [链接](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md) |
-| 策略选择蓝图 | TACTICS_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-01 | [链接](./STRATEGY_SELECTION_BLUEPRINT.md) |
+| 策略选择蓝图 | STRATEGY_SELECTION_001 | v1.0.0 | Active | 2026-04-01 | [链接](./STRATEGY_SELECTION_BLUEPRINT.md) |
 
 ### 7.3 系统架构与集成
 

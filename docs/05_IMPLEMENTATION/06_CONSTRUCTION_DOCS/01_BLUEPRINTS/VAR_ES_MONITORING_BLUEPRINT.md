@@ -18,7 +18,7 @@ priority: P0
 # VaR/ES实时监控蓝图
 
 > 清风量化交易系统 v5.3 - VaR/ES实时监控详细设计
-> **索引**: `VAR_ES_001`
+> **索引**: `VAR_ES_MONITORING_001`
 > **开发周期**: 5-7天
 > **核心定位**: 实时监控组合的VaR和ES风险指标，支持多种计算方法和回测验证
 > **参考开源**: pyRisk, arch, pyfolio

@@ -54,7 +54,8 @@ parent_document: INDEX.md
 
 ### 三、长期改进文档（6-12个月�?
 #### 3.1 蓝图文档
-| 文档名称 | 模块ID | 路径 | 说明 | 状态 |
+
+| 文档名称 | 模块ID | 路径 | 说明 | 状态 |
 |---------|--------|------|------|------|
 | **长期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md) | 多模态分析、AI虚拟研究团队 | ✓ 完成 |
 
@@ -101,18 +102,18 @@ parent_document: INDEX.md
 
 | 文档名称 | 模块ID | 路径 | 说明 | 状�?|
 |---------|--------|------|------|------|
-| **数据质量与血缘管理模块蓝�?* | L3_DQLM_001 | [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md) | 数据质量评分、异常检测、数据血缘追�?| �?完成 |
-| **模型性能与版本管理模块蓝�?* | L3_MPVM_001 | [MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md](./MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md) | 模型性能监控、漂移检测、模型版本管�?| �?完成 |
+| **数据质量与血缘管理模块蓝�?* | AIWF_DQLM_001 | [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md) | 数据质量评分、异常检测、数据血缘追�?| �?完成 |
+| **模型性能与版本管理模块蓝�?* | AIWF_MPVM_001 | [MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md](./MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md) | 模型性能监控、漂移检测、模型版本管�?| �?完成 |
 
 #### 8.2 P1级模块（高优先级�?
 | 文档名称 | 模块ID | 路径 | 说明 | 状�?|
 |---------|--------|------|------|------|
-| **验证与测试框架蓝�?* | L3_VTF_001 | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证、因子有效性验�?| �?完成 |
+| **验证与测试框架蓝�?* | AIWF_VTF_001 | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证、因子有效性验�?| �?完成 |
 
 #### 8.3 P2级模块（中优先级�?
 | 文档名称 | 模块ID | 路径 | 说明 | 状�?|
 |---------|--------|------|------|------|
-| **运维与知识管理模块蓝�?* | L3_OKM_001 | [OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 性能优化、数据安全、知识管�?| �?完成 |
+| **运维与知识管理模块蓝�?* | AIWF_OKM_001 | [OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 性能优化、数据安全、知识管�?| �?完成 |
 
 ---
 

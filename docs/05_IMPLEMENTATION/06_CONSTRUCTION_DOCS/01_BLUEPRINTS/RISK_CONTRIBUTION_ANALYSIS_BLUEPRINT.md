@@ -18,7 +18,7 @@ priority: P0
 # 风险贡献分析蓝图
 
 > 清风量化交易系统 v5.3 - 风险贡献分析详细设计
-> **索引**: `RISK_CONTRIB_001`
+> **索引**: `RISK_CONTRIBUTION_ANALYSIS_001`
 > **开发周期**: 2-3天
 > **核心定位**: 分解组合风险，计算各资产的风险贡献，支持风险预算管理
 > **参考开源**: PyPortfolioOpt, Riskfolio-Lib
