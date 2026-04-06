@@ -1,6 +1,6 @@
 ---
-module_id: FEATURE_STORE_TECHNICAL_SPECIFICATION_001
-version: 1.0.0
+module_id: IMPL_FEATURE_STORE_TECH_SPEC_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: docs/01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md

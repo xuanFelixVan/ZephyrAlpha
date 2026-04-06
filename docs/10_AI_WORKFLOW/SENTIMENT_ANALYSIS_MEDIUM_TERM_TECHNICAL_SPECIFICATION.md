@@ -39,7 +39,7 @@ applicable_modules:
 
 ### 1.1 模块概述
 
-**模块ID**: L3_FKG_001
+**模块ID**: AIWF_FKG_001
 **模块名称**: Financial Knowledge Graph (金融知识图谱)
 **版本**: v1.0.0
 **状�?*: 设计�?
@@ -598,7 +598,7 @@ for relation in relations:
 
 ### 2.1 模块概述
 
-**模块ID**: L3_SPA_001
+**模块ID**: AIWF_SPA_001
 **模块名称**: Stream Processing Architecture (流式处理架构)
 **版本**: v1.0.0
 **状�?*: 设计�?
@@ -829,7 +829,7 @@ print(f"作业状�? {status}")
 
 ### 3.1 模块概述
 
-**模块ID**: L3_MSA_001
+**模块ID**: AIWF_MSA_001
 **模块名称**: Multilingual Sentiment Analyzer (多语言情感分析�?
 **版本**: v1.0.0
 **状�?*: 设计�?

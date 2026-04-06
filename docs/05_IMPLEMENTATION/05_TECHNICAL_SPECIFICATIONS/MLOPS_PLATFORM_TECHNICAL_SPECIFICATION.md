@@ -1,6 +1,6 @@
 ---
-module_id: MLOPS_PLATFORM_TECHNICAL_SPECIFICATION_001
-version: 1.0.0
+module_id: IMPL_MLOPS_PLATFORM_TECH_SPEC_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: docs/01_FRAMEWORK/MLOPS_PLATFORM_BLUEPRINT.md

@@ -4,140 +4,140 @@ version: 1.1.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构�?
-standard_type: 技术规格书
-applicable_scope: 舆情分析层短期改进模�?
-compliance_level: 专业标准
+owner: é¦å¸­æ¶æå¸?
+standard_type: ææ¯è§æ ¼ä¹¦
+applicable_scope: èæåæå±ç­ææ¹è¿æ¨¡å?
+compliance_level: ä¸ä¸æ å
 applicable_modules:
-  - 数据源扩�?
-  - 深度学习情感分析
-  - 实时预警系统
+  - æ°æ®æºæ©å±?
+  - æ·±åº¦å­¦ä¹ ææåæ
+  - å®æ¶é¢è­¦ç³»ç»
 ---
 
-# 舆情分析层短期改进模块详细技术规格书
+# èæåæå±ç­ææ¹è¿æ¨¡åè¯¦ç»ææ¯è§æ ¼ä¹¦
 
-> **版本**: v1.1
-> **创建日期**: 2026-04-02
-> **最后更�?*: 2026-04-04
-> **适用模块**: 数据源扩展、深度学习情感分析、实时预警系�?
-> **标准**: 专业量化机构技术规格标�?
-
----
-
-## 📋 文档目录
-
-1. [数据源扩展模块技术规格](#一数据源扩展模块技术规�?
-2. [深度学习情感分析模块技术规格](#二深度学习情感分析模块技术规�?
-3. [实时预警系统模块技术规格](#三实时预警系统模块技术规�?
-4. [数据字典](#四数据字�?
-5. [API接口规范](#五api接口规范)
-6. [算法流程图](#六算法流程图)
-7. [性能指标定义](#七性能指标定义)
-8. [错误处理规范](#八错误处理规�?
+> **çæ¬**: v1.1
+> **åå»ºæ¥æ**: 2026-04-02
+> **æåæ´æ?*: 2026-04-04
+> **éç¨æ¨¡å**: æ°æ®æºæ©å±ãæ·±åº¦å­¦ä¹ ææåæãå®æ¶é¢è­¦ç³»ç»?
+> **æ å**: ä¸ä¸éåæºæææ¯è§æ ¼æ å?
 
 ---
 
-## 〇、环境准�?
+## ð ææ¡£ç®å½
 
-> **重要提示**: 在开始实施前，请先完成环境准备工作。详细的环境准备步骤请参考各模块蓝图文档�?
+1. [æ°æ®æºæ©å±æ¨¡åææ¯è§æ ¼](#ä¸æ°æ®æºæ©å±æ¨¡åææ¯è§æ ?
+2. [æ·±åº¦å­¦ä¹ ææåææ¨¡åææ¯è§æ ¼](#äºæ·±åº¦å­¦ä¹ ææåææ¨¡åææ¯è§æ ?
+3. [å®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ¼](#ä¸å®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ?
+4. [æ°æ®å­å¸](#åæ°æ®å­å?
+5. [APIæ¥å£è§è](#äºapiæ¥å£è§è)
+6. [ç®æ³æµç¨å¾](#å­ç®æ³æµç¨å¾)
+7. [æ§è½ææ å®ä¹](#ä¸æ§è½ææ å®ä¹)
+8. [éè¯¯å¤çè§è](#å«éè¯¯å¤çè§è?
 
-### 0.1 数据源扩展模块环境准�?
+---
 
-**参考文�?*: [另类数据集成模块蓝图](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备)
+## ããç¯å¢åå¤?
 
-**环境要求**:
+> **éè¦æç¤º**: å¨å¼å§å®æ½åï¼è¯·åå®æç¯å¢åå¤å·¥ä½ãè¯¦ç»çç¯å¢åå¤æ­¥éª¤è¯·åèåæ¨¡åèå¾ææ¡£ï¼?
+
+### 0.1 æ°æ®æºæ©å±æ¨¡åç¯å¢åå¤?
+
+**åèææ¡?*: [å¦ç±»æ°æ®éææ¨¡åèå¾](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-ç¯å¢åå¤)
+
+**ç¯å¢è¦æ±**:
 - Python 3.9+
 - PostgreSQL 12+
 - Redis 6+
-- API密钥（Twitter、Reddit、FRED�?
+- APIå¯é¥ï¼TwitterãRedditãFREDï¼?
 
-**快速验�?*:
+**å¿«ééªè¯?*:
 ```bash
-# 验证Python版本
+# éªè¯Pythonçæ¬
 python --version
 
-# 验证依赖�?
+# éªè¯ä¾èµåº?
 pip list | grep -E "tweepy|praw|requests|pandas"
 
-# 验证环境变量
+# éªè¯ç¯å¢åé
 python verify_environment.py
 ```
 
 ---
 
-### 0.2 深度学习情感分析模块环境准备
+### 0.2 æ·±åº¦å­¦ä¹ ææåææ¨¡åç¯å¢åå¤
 
-**参考文�?*: [深度学习情感分析模块蓝图](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md#511-环境准备)
+**åèææ¡?*: [æ·±åº¦å­¦ä¹ ææåææ¨¡åèå¾](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md#511-ç¯å¢åå¤)
 
-**环境要求**:
+**ç¯å¢è¦æ±**:
 - Python 3.9+
-- PyTorch 2.1.0+ (支持CUDA 11.8+)
+- PyTorch 2.1.0+ (æ¯æCUDA 11.8+)
 - Transformers 4.35.0+
-- GPU（推荐，可选）
+- GPUï¼æ¨èï¼å¯éï¼
 
-**快速验�?*:
+**å¿«ééªè¯?*:
 ```bash
-# 验证Python版本
+# éªè¯Pythonçæ¬
 python --version
 
-# 验证PyTorch和CUDA
+# éªè¯PyTorchåCUDA
 python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA: {torch.cuda.is_available()}')"
 
-# 验证Transformers
+# éªè¯Transformers
 python -c "import transformers; print(f'Transformers: {transformers.__version__}')"
 
-# 验证FinBERT模型
+# éªè¯FinBERTæ¨¡å
 python verify_finbert.py
 ```
 
 ---
 
-### 0.3 实时预警系统模块环境准备
+### 0.3 å®æ¶é¢è­¦ç³»ç»æ¨¡åç¯å¢åå¤
 
-**参考文�?*: [实时预警系统模块蓝图](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-环境准备)
+**åèææ¡?*: [å®æ¶é¢è­¦ç³»ç»æ¨¡åèå¾](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-ç¯å¢åå¤)
 
-**环境要求**:
+**ç¯å¢è¦æ±**:
 - Python 3.9+
 - FastAPI 0.104.1+
 - PostgreSQL 12+
 - Redis 6+
-- 推送服务配置（邮件、微信、Telegram�?
+- æ¨éæå¡éç½®ï¼é®ä»¶ãå¾®ä¿¡ãTelegramï¼?
 
-**快速验�?*:
+**å¿«ééªè¯?*:
 ```bash
-# 验证Python版本
+# éªè¯Pythonçæ¬
 python --version
 
-# 验证依赖�?
+# éªè¯ä¾èµåº?
 pip list | grep -E "fastapi|uvicorn|redis|yagmail"
 
-# 验证环境变量
+# éªè¯ç¯å¢åé
 python verify_environment.py
 ```
 
 ---
 
-## 一、数据源扩展模块技术规�?
+## ä¸ãæ°æ®æºæ©å±æ¨¡åææ¯è§æ ?
 
-### 1.1 模块概述
+### 1.1 æ¨¡åæ¦è¿°
 
-**模块ID**: L3_ADI_001
-**模块名称**: Alternative Data Integration (另类数据集成)
-**版本**: v1.0.0
-**状�?*: 设计�?
+**æ¨¡åID**: AIWF_ADI_001
+**æ¨¡ååç§°**: Alternative Data Integration (å¦ç±»æ°æ®éæ)
+**çæ¬**: v1.0.0
+**ç¶æ?*: è®¾è®¡ä¸?
 
-### 1.2 详细API接口定义
+### 1.2 è¯¦ç»APIæ¥å£å®ä¹
 
-#### 1.2.1 Twitter API适配器接�?
+#### 1.2.1 Twitter APIééå¨æ¥å?
 
-**接口名称**: TwitterAPIAdapter
+**æ¥å£åç§°**: TwitterAPIAdapter
 
-**类定�?*:
+**ç±»å®ä¹?*:
 ```python
 class TwitterAPIAdapter:
-    """Twitter API适配�?
+    """Twitter APIééå?
     
-    负责从Twitter采集财经相关推文数据
+    è´è´£ä»Twitterééè´¢ç»ç¸å³æ¨ææ°æ®
     """
     
     def __init__(
@@ -148,7 +148,7 @@ class TwitterAPIAdapter:
         access_token: str,
         access_token_secret: str
     ):
-        """初始化Twitter API适配�?
+        """åå§åTwitter APIééå?
         
         Args:
             bearer_token: Twitter Bearer Token
@@ -167,29 +167,29 @@ class TwitterAPIAdapter:
         end_time: Optional[datetime] = None,
         tweet_fields: List[str] = None
     ) -> Dict[str, Any]:
-        """搜索推文
+        """æç´¢æ¨æ
         
         Args:
-            query: 搜索查询字符�?
-            max_results: 最大结果数�?0-100�?
-            start_time: 开始时�?
-            end_time: 结束时间
-            tweet_fields: 推文字段列表
+            query: æç´¢æ¥è¯¢å­ç¬¦ä¸?
+            max_results: æå¤§ç»ææ°ï¼?0-100ï¼?
+            start_time: å¼å§æ¶é?
+            end_time: ç»ææ¶é´
+            tweet_fields: æ¨æå­æ®µåè¡¨
             
         Returns:
-            推文数据字典
+            æ¨ææ°æ®å­å¸
             
         Raises:
-            TwitterAPIError: Twitter API错误
-            RateLimitError: 速率限制错误
+            TwitterAPIError: Twitter APIéè¯¯
+            RateLimitError: éçéå¶éè¯¯
         """
         pass
     
     def get_stream_rules(self) -> List[Dict[str, Any]]:
-        """获取流式规则
+        """è·åæµå¼è§å
         
         Returns:
-            规则列表
+            è§ååè¡¨
         """
         pass
     
@@ -198,25 +198,25 @@ class TwitterAPIAdapter:
         value: str,
         tag: str
     ) -> Dict[str, Any]:
-        """添加流式规则
+        """æ·»å æµå¼è§å
         
         Args:
-            value: 规则�?
-            tag: 规则标签
+            value: è§åå?
+            tag: è§åæ ç­¾
             
         Returns:
-            添加结果
+            æ·»å ç»æ
         """
         pass
     
     def delete_stream_rule(self, rule_ids: List[str]) -> Dict[str, Any]:
-        """删除流式规则
+        """å é¤æµå¼è§å
         
         Args:
-            rule_ids: 规则ID列表
+            rule_ids: è§åIDåè¡¨
             
         Returns:
-            删除结果
+            å é¤ç»æ
         """
         pass
     
@@ -224,25 +224,25 @@ class TwitterAPIAdapter:
         self,
         callback: Callable[[Dict[str, Any]], None]
     ) -> None:
-        """流式采集推文
+        """æµå¼ééæ¨æ
         
         Args:
-            callback: 回调函数，处理每条推�?
+            callback: åè°å½æ°ï¼å¤çæ¯æ¡æ¨æ?
         """
         pass
     
     def get_rate_limit_status(self) -> Dict[str, Any]:
-        """获取速率限制状�?
+        """è·åéçéå¶ç¶æ?
         
         Returns:
-            速率限制状�?
+            éçéå¶ç¶æ?
         """
         pass
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```python
-# 初始化适配�?
+# åå§åééå?
 adapter = TwitterAPIAdapter(
     bearer_token="YOUR_BEARER_TOKEN",
     api_key="YOUR_API_KEY",
@@ -251,7 +251,7 @@ adapter = TwitterAPIAdapter(
     access_token_secret="YOUR_ACCESS_TOKEN_SECRET"
 )
 
-# 搜索推文
+# æç´¢æ¨æ
 results = adapter.search_tweets(
     query="$AAPL OR Apple stock",
     max_results=100,
@@ -260,14 +260,14 @@ results = adapter.search_tweets(
     tweet_fields=["created_at", "public_metrics", "entities"]
 )
 
-# 流式采集
+# æµå¼éé
 def process_tweet(tweet):
-    print(f"新推�? {tweet['text']}")
+    print(f"æ°æ¨æ? {tweet['text']}")
 
 adapter.stream_tweets(callback=process_tweet)
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
     "data": [
@@ -297,16 +297,16 @@ adapter.stream_tweets(callback=process_tweet)
 
 ---
 
-#### 1.2.2 Reddit API适配器接�?
+#### 1.2.2 Reddit APIééå¨æ¥å?
 
-**接口名称**: RedditAPIAdapter
+**æ¥å£åç§°**: RedditAPIAdapter
 
-**类定�?*:
+**ç±»å®ä¹?*:
 ```python
 class RedditAPIAdapter:
-    """Reddit API适配�?
+    """Reddit APIééå?
     
-    负责从Reddit采集财经相关帖子和评�?
+    è´è´£ä»Redditééè´¢ç»ç¸å³å¸å­åè¯è®?
     """
     
     def __init__(
@@ -315,12 +315,12 @@ class RedditAPIAdapter:
         client_secret: str,
         user_agent: str
     ):
-        """初始化Reddit API适配�?
+        """åå§åReddit APIééå?
         
         Args:
-            client_id: Reddit应用客户端ID
-            client_secret: Reddit应用客户端密�?
-            user_agent: 用户代理字符�?
+            client_id: Redditåºç¨å®¢æ·ç«¯ID
+            client_secret: Redditåºç¨å®¢æ·ç«¯å¯é?
+            user_agent: ç¨æ·ä»£çå­ç¬¦ä¸?
         """
         pass
     
@@ -330,15 +330,15 @@ class RedditAPIAdapter:
         limit: int = 100,
         params: Optional[Dict[str, Any]] = None
     ) -> List[Dict[str, Any]]:
-        """获取热门帖子
+        """è·åç­é¨å¸å­
         
         Args:
-            subreddit: 子版块名�?
-            limit: 返回数量限制
-            params: 额外参数
+            subreddit: å­çååç§?
+            limit: è¿åæ°ééå¶
+            params: é¢å¤åæ°
             
         Returns:
-            帖子列表
+            å¸å­åè¡¨
         """
         pass
     
@@ -347,14 +347,14 @@ class RedditAPIAdapter:
         subreddit: str,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """获取最新帖�?
+        """è·åææ°å¸å­?
         
         Args:
-            subreddit: 子版块名�?
-            limit: 返回数量限制
+            subreddit: å­çååç§?
+            limit: è¿åæ°ééå¶
             
         Returns:
-            帖子列表
+            å¸å­åè¡¨
         """
         pass
     
@@ -364,15 +364,15 @@ class RedditAPIAdapter:
         limit: int = 100,
         depth: int = 5
     ) -> List[Dict[str, Any]]:
-        """获取帖子评论
+        """è·åå¸å­è¯è®º
         
         Args:
-            post_id: 帖子ID
-            limit: 返回数量限制
-            depth: 评论深度
+            post_id: å¸å­ID
+            limit: è¿åæ°ééå¶
+            depth: è¯è®ºæ·±åº¦
             
         Returns:
-            评论列表
+            è¯è®ºåè¡¨
         """
         pass
     
@@ -383,47 +383,47 @@ class RedditAPIAdapter:
         sort: str = "relevance",
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """搜索帖子
+        """æç´¢å¸å­
         
         Args:
-            subreddit: 子版块名�?
-            query: 搜索查询
-            sort: 排序方式
-            limit: 返回数量限制
+            subreddit: å­çååç§?
+            query: æç´¢æ¥è¯¢
+            sort: æåºæ¹å¼
+            limit: è¿åæ°ééå¶
             
         Returns:
-            帖子列表
+            å¸å­åè¡¨
         """
         pass
     
     def get_subreddit_info(self, subreddit: str) -> Dict[str, Any]:
-        """获取子版块信�?
+        """è·åå­çåä¿¡æ?
         
         Args:
-            subreddit: 子版块名�?
+            subreddit: å­çååç§?
             
         Returns:
-            子版块信�?
+            å­çåä¿¡æ?
         """
         pass
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```python
-# 初始化适配�?
+# åå§åééå?
 adapter = RedditAPIAdapter(
     client_id="YOUR_CLIENT_ID",
     client_secret="YOUR_CLIENT_SECRET",
     user_agent="ZephyrAlpha/1.0"
 )
 
-# 获取热门帖子
+# è·åç­é¨å¸å­
 hot_posts = adapter.get_hot_posts(
     subreddit="wallstreetbets",
     limit=100
 )
 
-# 搜索帖子
+# æç´¢å¸å­
 search_results = adapter.search_posts(
     subreddit="stocks",
     query="AAPL Apple",
@@ -431,7 +431,7 @@ search_results = adapter.search_posts(
     limit=50
 )
 
-# 获取评论
+# è·åè¯è®º
 comments = adapter.get_post_comments(
     post_id="abc123",
     limit=100,
@@ -439,7 +439,7 @@ comments = adapter.get_post_comments(
 )
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
     "kind": "Listing",
@@ -449,7 +449,7 @@ comments = adapter.get_post_comments(
                 "kind": "t3",
                 "data": {
                     "id": "abc123",
-                    "title": "AAPL to the moon! 🚀",
+                    "title": "AAPL to the moon! ð",
                     "selftext": "Apple just reported amazing earnings...",
                     "author": "username",
                     "subreddit": "wallstreetbets",
@@ -466,23 +466,23 @@ comments = adapter.get_post_comments(
 
 ---
 
-#### 1.2.3 FRED API适配器接�?
+#### 1.2.3 FRED APIééå¨æ¥å?
 
-**接口名称**: FREDAPIAdapter
+**æ¥å£åç§°**: FREDAPIAdapter
 
-**类定�?*:
+**ç±»å®ä¹?*:
 ```python
 class FREDAPIAdapter:
-    """FRED API适配�?
+    """FRED APIééå?
     
-    负责从FRED采集美国宏观经济数据
+    è´è´£ä»FREDééç¾å½å®è§ç»æµæ°æ®
     """
     
     def __init__(self, api_key: str):
-        """初始化FRED API适配�?
+        """åå§åFRED APIééå?
         
         Args:
-            api_key: FRED API密钥
+            api_key: FRED APIå¯é¥
         """
         pass
     
@@ -493,27 +493,27 @@ class FREDAPIAdapter:
         observation_end: Optional[str] = None,
         frequency: Optional[str] = None
     ) -> Dict[str, Any]:
-        """获取经济数据序列
+        """è·åç»æµæ°æ®åºå
         
         Args:
-            series_id: 序列ID
-            observation_start: 开始日�?(YYYY-MM-DD)
-            observation_end: 结束日期 (YYYY-MM-DD)
-            frequency: 频率 (d, w, m, q, a)
+            series_id: åºåID
+            observation_start: å¼å§æ¥æ?(YYYY-MM-DD)
+            observation_end: ç»ææ¥æ (YYYY-MM-DD)
+            frequency: é¢ç (d, w, m, q, a)
             
         Returns:
-            序列数据
+            åºåæ°æ®
         """
         pass
     
     def get_series_info(self, series_id: str) -> Dict[str, Any]:
-        """获取序列信息
+        """è·ååºåä¿¡æ¯
         
         Args:
-            series_id: 序列ID
+            series_id: åºåID
             
         Returns:
-            序列信息
+            åºåä¿¡æ¯
         """
         pass
     
@@ -522,25 +522,25 @@ class FREDAPIAdapter:
         search_text: str,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """搜索序列
+        """æç´¢åºå
         
         Args:
-            search_text: 搜索文本
-            limit: 返回数量限制
+            search_text: æç´¢ææ¬
+            limit: è¿åæ°ééå¶
             
         Returns:
-            序列列表
+            åºååè¡¨
         """
         pass
     
     def get_categories(self, category_id: int = 0) -> List[Dict[str, Any]]:
-        """获取分类
+        """è·ååç±»
         
         Args:
-            category_id: 分类ID
+            category_id: åç±»ID
             
         Returns:
-            分类列表
+            åç±»åè¡¨
         """
         pass
     
@@ -549,24 +549,24 @@ class FREDAPIAdapter:
         release_id: Optional[int] = None,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """获取发布
+        """è·ååå¸
         
         Args:
-            release_id: 发布ID
-            limit: 返回数量限制
+            release_id: åå¸ID
+            limit: è¿åæ°ééå¶
             
         Returns:
-            发布列表
+            åå¸åè¡¨
         """
         pass
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```python
-# 初始化适配�?
+# åå§åééå?
 adapter = FREDAPIAdapter(api_key="YOUR_FRED_API_KEY")
 
-# 获取GDP数据
+# è·åGDPæ°æ®
 gdp_data = adapter.get_series(
     series_id="GDP",
     observation_start="2020-01-01",
@@ -574,17 +574,17 @@ gdp_data = adapter.get_series(
     frequency="q"
 )
 
-# 搜索序列
+# æç´¢åºå
 search_results = adapter.search_series(
     search_text="unemployment rate",
     limit=50
 )
 
-# 获取序列信息
+# è·ååºåä¿¡æ¯
 series_info = adapter.get_series_info(series_id="GDP")
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
     "realtime_start": "2026-04-02",
@@ -612,34 +612,34 @@ series_info = adapter.get_series_info(series_id="GDP")
 
 ---
 
-#### 1.2.4 SEC EDGAR API适配器接�?
+#### 1.2.4 SEC EDGAR APIééå¨æ¥å?
 
-**接口名称**: SECEdgARAPIAdapter
+**æ¥å£åç§°**: SECEdgARAPIAdapter
 
-**类定�?*:
+**ç±»å®ä¹?*:
 ```python
 class SECEdgARAPIAdapter:
-    """SEC EDGAR API适配�?
+    """SEC EDGAR APIééå?
     
-    负责从SEC EDGAR采集上市公司财务数据
+    è´è´£ä»SEC EDGARééä¸å¸å¬å¸è´¢å¡æ°æ®
     """
     
     def __init__(self, user_agent: str):
-        """初始化SEC EDGAR API适配�?
+        """åå§åSEC EDGAR APIééå?
         
         Args:
-            user_agent: 用户代理字符串（必须包含邮箱�?
+            user_agent: ç¨æ·ä»£çå­ç¬¦ä¸²ï¼å¿é¡»åå«é®ç®±ï¼?
         """
         pass
     
     def get_company_facts(self, cik: str) -> Dict[str, Any]:
-        """获取公司财务数据
+        """è·åå¬å¸è´¢å¡æ°æ®
         
         Args:
-            cik: 公司CIK�?
+            cik: å¬å¸CIKå?
             
         Returns:
-            公司财务数据
+            å¬å¸è´¢å¡æ°æ®
         """
         pass
     
@@ -649,15 +649,15 @@ class SECEdgARAPIAdapter:
         taxonomy: str,
         concept: str
     ) -> Dict[str, Any]:
-        """获取公司特定概念数据
+        """è·åå¬å¸ç¹å®æ¦å¿µæ°æ®
         
         Args:
-            cik: 公司CIK�?
-            taxonomy: 分类�?(us-gaap, ifrs-full)
-            concept: 概念名称
+            cik: å¬å¸CIKå?
+            taxonomy: åç±»æ³?(us-gaap, ifrs-full)
+            concept: æ¦å¿µåç§°
             
         Returns:
-            概念数据
+            æ¦å¿µæ°æ®
         """
         pass
     
@@ -668,16 +668,16 @@ class SECEdgARAPIAdapter:
         filing_date: Optional[str] = None,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """获取财报列表
+        """è·åè´¢æ¥åè¡¨
         
         Args:
-            cik: 公司CIK�?
-            form_type: 表格类型 (10-K, 10-Q, 8-K)
-            filing_date: 提交日期
-            limit: 返回数量限制
+            cik: å¬å¸CIKå?
+            form_type: è¡¨æ ¼ç±»å (10-K, 10-Q, 8-K)
+            filing_date: æäº¤æ¥æ
+            limit: è¿åæ°ééå¶
             
         Returns:
-            财报列表
+            è´¢æ¥åè¡¨
         """
         pass
     
@@ -686,25 +686,25 @@ class SECEdgARAPIAdapter:
         accession_number: str,
         document_name: str
     ) -> str:
-        """获取财报文档
+        """è·åè´¢æ¥ææ¡£
         
         Args:
-            accession_number: 登记�?
-            document_name: 文档名称
+            accession_number: ç»è®°å?
+            document_name: ææ¡£åç§°
             
         Returns:
-            文档内容
+            ææ¡£åå®¹
         """
         pass
     
     def get_company_info(self, cik: str) -> Dict[str, Any]:
-        """获取公司信息
+        """è·åå¬å¸ä¿¡æ¯
         
         Args:
-            cik: 公司CIK�?
+            cik: å¬å¸CIKå?
             
         Returns:
-            公司信息
+            å¬å¸ä¿¡æ¯
         """
         pass
     
@@ -713,50 +713,50 @@ class SECEdgARAPIAdapter:
         query: str,
         limit: int = 100
     ) -> List[Dict[str, Any]]:
-        """搜索公司
+        """æç´¢å¬å¸
         
         Args:
-            query: 搜索查询
-            limit: 返回数量限制
+            query: æç´¢æ¥è¯¢
+            limit: è¿åæ°ééå¶
             
         Returns:
-            公司列表
+            å¬å¸åè¡¨
         """
         pass
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```python
-# 初始化适配�?
+# åå§åééå?
 adapter = SECEdgARAPIAdapter(
     user_agent="ZephyrAlpha/1.0 (your.email@example.com)"
 )
 
-# 获取公司财务数据
+# è·åå¬å¸è´¢å¡æ°æ®
 company_facts = adapter.get_company_facts(cik="0000320193")  # Apple
 
-# 获取特定概念数据
+# è·åç¹å®æ¦å¿µæ°æ®
 revenue_data = adapter.get_company_concept(
     cik="0000320193",
     taxonomy="us-gaap",
     concept="Revenues"
 )
 
-# 获取财报列表
+# è·åè´¢æ¥åè¡¨
 filings = adapter.get_filings(
     cik="0000320193",
     form_type="10-K",
     limit=10
 )
 
-# 搜索公司
+# æç´¢å¬å¸
 companies = adapter.search_companies(
     query="Apple",
     limit=10
 )
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
     "cik": "0000320193",
@@ -786,27 +786,27 @@ companies = adapter.search_companies(
 
 ---
 
-## 二、深度学习情感分析模块技术规�?
+## äºãæ·±åº¦å­¦ä¹ ææåææ¨¡åææ¯è§æ ?
 
-### 2.1 模块概述
+### 2.1 æ¨¡åæ¦è¿°
 
-**模块ID**: L3_DLSA_001
-**模块名称**: Deep Learning Sentiment Analyzer (深度学习情感分析�?
-**版本**: v1.0.0
-**状�?*: 设计�?
+**æ¨¡åID**: AIWF_DLSA_001
+**æ¨¡ååç§°**: Deep Learning Sentiment Analyzer (æ·±åº¦å­¦ä¹ ææåæå?
+**çæ¬**: v1.0.0
+**ç¶æ?*: è®¾è®¡ä¸?
 
-### 2.2 详细API接口定义
+### 2.2 è¯¦ç»APIæ¥å£å®ä¹
 
-#### 2.2.1 深度学习情感分析器接�?
+#### 2.2.1 æ·±åº¦å­¦ä¹ ææåæå¨æ¥å?
 
-**接口名称**: DLSentimentAnalyzer
+**æ¥å£åç§°**: DLSentimentAnalyzer
 
-**类定�?*:
+**ç±»å®ä¹?*:
 ```python
 class DLSentimentAnalyzer:
-    """深度学习情感分析�?
+    """æ·±åº¦å­¦ä¹ ææåæå?
     
-    使用深度学习模型进行多维度情感分�?
+    ä½¿ç¨æ·±åº¦å­¦ä¹ æ¨¡åè¿è¡å¤ç»´åº¦ææåæ?
     """
     
     def __init__(
@@ -817,14 +817,14 @@ class DLSentimentAnalyzer:
         batch_size: int = 16,
         use_fp16: bool = False
     ):
-        """初始化情感分析器
+        """åå§åææåæå¨
         
         Args:
-            model_name: 模型名称或路�?
-            device: 设备类型 (cpu, cuda)
-            max_length: 最大序列长�?
-            batch_size: 批处理大�?
-            use_fp16: 是否使用FP16精度
+            model_name: æ¨¡ååç§°æè·¯å¾?
+            device: è®¾å¤ç±»å (cpu, cuda)
+            max_length: æå¤§åºåé¿åº?
+            batch_size: æ¹å¤çå¤§å°?
+            use_fp16: æ¯å¦ä½¿ç¨FP16ç²¾åº¦
         """
         pass
     
@@ -835,16 +835,16 @@ class DLSentimentAnalyzer:
         return_emotion: bool = True,
         return_intensity: bool = True
     ) -> SentimentResult:
-        """分析单条文本情感
+        """åæåæ¡ææ¬ææ
         
         Args:
-            text: 待分析文�?
-            return_all_scores: 是否返回所有分�?
-            return_emotion: 是否返回情绪分析
-            return_intensity: 是否返回强度分析
+            text: å¾åæææ?
+            return_all_scores: æ¯å¦è¿åææåæ?
+            return_emotion: æ¯å¦è¿åæç»ªåæ
+            return_intensity: æ¯å¦è¿åå¼ºåº¦åæ
             
         Returns:
-            情感分析结果
+            ææåæç»æ
         """
         pass
     
@@ -854,15 +854,15 @@ class DLSentimentAnalyzer:
         return_all_scores: bool = False,
         show_progress: bool = True
     ) -> List[SentimentResult]:
-        """批量分析文本情感
+        """æ¹éåæææ¬ææ
         
         Args:
-            texts: 文本列表
-            return_all_scores: 是否返回所有分�?
-            show_progress: 是否显示进度�?
+            texts: ææ¬åè¡¨
+            return_all_scores: æ¯å¦è¿åææåæ?
+            show_progress: æ¯å¦æ¾ç¤ºè¿åº¦æ?
             
         Returns:
-            情感分析结果列表
+            ææåæç»æåè¡¨
         """
         pass
     
@@ -870,13 +870,13 @@ class DLSentimentAnalyzer:
         self,
         text: str
     ) -> Dict[str, Any]:
-        """详细分析文本情感
+        """è¯¦ç»åæææ¬ææ
         
         Args:
-            text: 待分析文�?
+            text: å¾åæææ?
             
         Returns:
-            详细分析结果，包含情感、情绪、强度、关键词�?
+            è¯¦ç»åæç»æï¼åå«ææãæç»ªãå¼ºåº¦ãå³é®è¯ç­?
         """
         pass
     
@@ -891,44 +891,44 @@ class DLSentimentAnalyzer:
         warmup_steps: int = 500,
         save_steps: int = 500
     ) -> Dict[str, Any]:
-        """微调模型
+        """å¾®è°æ¨¡å
         
         Args:
-            train_data: 训练数据
-            val_data: 验证数据
-            output_dir: 输出目录
-            learning_rate: 学习�?
-            num_epochs: 训练轮数
-            batch_size: 批处理大�?
-            warmup_steps: 预热步数
-            save_steps: 保存步数
+            train_data: è®­ç»æ°æ®
+            val_data: éªè¯æ°æ®
+            output_dir: è¾åºç®å½
+            learning_rate: å­¦ä¹ ç?
+            num_epochs: è®­ç»è½®æ°
+            batch_size: æ¹å¤çå¤§å°?
+            warmup_steps: é¢ç­æ­¥æ°
+            save_steps: ä¿å­æ­¥æ°
             
         Returns:
-            训练结果
+            è®­ç»ç»æ
         """
         pass
     
     def save_model(self, output_dir: str) -> None:
-        """保存模型
+        """ä¿å­æ¨¡å
         
         Args:
-            output_dir: 输出目录
+            output_dir: è¾åºç®å½
         """
         pass
     
     def load_model(self, model_dir: str) -> None:
-        """加载模型
+        """å è½½æ¨¡å
         
         Args:
-            model_dir: 模型目录
+            model_dir: æ¨¡åç®å½
         """
         pass
     
     def get_model_info(self) -> Dict[str, Any]:
-        """获取模型信息
+        """è·åæ¨¡åä¿¡æ¯
         
         Returns:
-            模型信息
+            æ¨¡åä¿¡æ¯
         """
         pass
     
@@ -937,21 +937,21 @@ class DLSentimentAnalyzer:
         texts: List[str],
         num_runs: int = 10
     ) -> Dict[str, float]:
-        """性能基准测试
+        """æ§è½åºåæµè¯
         
         Args:
-            texts: 测试文本列表
-            num_runs: 运行次数
+            texts: æµè¯ææ¬åè¡¨
+            num_runs: è¿è¡æ¬¡æ°
             
         Returns:
-            性能指标
+            æ§è½ææ 
         """
         pass
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```python
-# 初始化分析器
+# åå§ååæå¨
 analyzer = DLSentimentAnalyzer(
     model_name="ProsusAI/finbert",
     device="cuda",
@@ -959,7 +959,7 @@ analyzer = DLSentimentAnalyzer(
     batch_size=16
 )
 
-# 单条文本分析
+# åæ¡ææ¬åæ
 result = analyzer.analyze(
     text="Apple's revenue increased by 20% in Q4, beating expectations.",
     return_all_scores=True,
@@ -967,7 +967,7 @@ result = analyzer.analyze(
     return_intensity=True
 )
 
-# 批量分析
+# æ¹éåæ
 texts = [
     "Apple's revenue increased by 20% in Q4.",
     "The company reported a significant loss.",
@@ -979,19 +979,19 @@ results = analyzer.analyze_batch(
     show_progress=True
 )
 
-# 详细分析
+# è¯¦ç»åæ
 detailed_result = analyzer.analyze_with_details(
     text="Apple's revenue increased by 20% in Q4, beating expectations."
 )
 
-# 性能基准测试
+# æ§è½åºåæµè¯
 benchmark_results = analyzer.benchmark(
     texts=texts,
     num_runs=10
 )
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
     "text": "Apple's revenue increased by 20% in Q4, beating expectations.",
@@ -1034,27 +1034,27 @@ benchmark_results = analyzer.benchmark(
 
 ---
 
-## 三、实时预警系统模块技术规�?
+## ä¸ãå®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ?
 
-### 3.1 模块概述
+### 3.1 æ¨¡åæ¦è¿°
 
-**模块ID**: L3_RTAS_001
-**模块名称**: Real-Time Alert System (实时预警系统)
-**版本**: v1.0.0
-**状�?*: 设计�?
+**æ¨¡åID**: AIWF_RTAS_001
+**æ¨¡ååç§°**: Real-Time Alert System (å®æ¶é¢è­¦ç³»ç»)
+**çæ¬**: v1.0.0
+**ç¶æ?*: è®¾è®¡ä¸?
 
-### 3.2 详细API接口定义
+### 3.2 è¯¦ç»APIæ¥å£å®ä¹
 
-#### 3.2.1 实时预警系统接口
+#### 3.2.1 å®æ¶é¢è­¦ç³»ç»æ¥å£
 
-**接口名称**: RealTimeAlertSystem
+**æ¥å£åç§°**: RealTimeAlertSystem
 
-**类定�?*:
+**ç±»å®ä¹?*:
 ```python
 class RealTimeAlertSystem:
-    """实时预警系统
+    """å®æ¶é¢è­¦ç³»ç»
     
-    实现实时监控、规则执行、多渠道预警推�?
+    å®ç°å®æ¶çæ§ãè§åæ§è¡ãå¤æ¸ éé¢è­¦æ¨é?
     """
     
     def __init__(
@@ -1062,60 +1062,60 @@ class RealTimeAlertSystem:
         config: Dict[str, Any],
         pusher_config: Dict[str, Any]
     ):
-        """初始化预警系�?
+        """åå§åé¢è­¦ç³»ç»?
         
         Args:
-            config: 系统配置
-            pusher_config: 推送器配置
+            config: ç³»ç»éç½®
+            pusher_config: æ¨éå¨éç½®
         """
         pass
     
     def start(self) -> None:
-        """启动预警系统"""
+        """å¯å¨é¢è­¦ç³»ç»"""
         pass
     
     def stop(self) -> None:
-        """停止预警系统"""
+        """åæ­¢é¢è­¦ç³»ç»"""
         pass
     
     def add_rule(self, rule: AlertRule) -> bool:
-        """添加预警规则
+        """æ·»å é¢è­¦è§å
         
         Args:
-            rule: 预警规则
+            rule: é¢è­¦è§å
             
         Returns:
-            是否添加成功
+            æ¯å¦æ·»å æå
         """
         pass
     
     def remove_rule(self, rule_id: str) -> bool:
-        """移除预警规则
+        """ç§»é¤é¢è­¦è§å
         
         Args:
-            rule_id: 规则ID
+            rule_id: è§åID
             
         Returns:
-            是否移除成功
+            æ¯å¦ç§»é¤æå
         """
         pass
     
     def update_rule(self, rule: AlertRule) -> bool:
-        """更新预警规则
+        """æ´æ°é¢è­¦è§å
         
         Args:
-            rule: 预警规则
+            rule: é¢è­¦è§å
             
         Returns:
-            是否更新成功
+            æ¯å¦æ´æ°æå
         """
         pass
     
     def get_rules(self) -> List[AlertRule]:
-        """获取所有预警规�?
+        """è·åææé¢è­¦è§å?
         
         Returns:
-            预警规则列表
+            é¢è­¦è§ååè¡¨
         """
         pass
     
@@ -1123,24 +1123,24 @@ class RealTimeAlertSystem:
         self,
         data: Dict[str, Any]
     ) -> Optional[Alert]:
-        """处理数据并触发预�?
+        """å¤çæ°æ®å¹¶è§¦åé¢è­?
         
         Args:
-            data: 监控数据
+            data: çæ§æ°æ®
             
         Returns:
-            预警信息（如果触发）
+            é¢è­¦ä¿¡æ¯ï¼å¦æè§¦åï¼
         """
         pass
     
     def push_alert(self, alert: Alert) -> bool:
-        """推送预�?
+        """æ¨éé¢è­?
         
         Args:
-            alert: 预警信息
+            alert: é¢è­¦ä¿¡æ¯
             
         Returns:
-            是否推送成�?
+            æ¯å¦æ¨éæå?
         """
         pass
     
@@ -1151,45 +1151,45 @@ class RealTimeAlertSystem:
         severity: Optional[AlertSeverity] = None,
         limit: int = 100
     ) -> List[Alert]:
-        """获取预警历史
+        """è·åé¢è­¦åå²
         
         Args:
-            start_time: 开始时�?
-            end_time: 结束时间
-            severity: 预警级别
-            limit: 返回数量限制
+            start_time: å¼å§æ¶é?
+            end_time: ç»ææ¶é´
+            severity: é¢è­¦çº§å«
+            limit: è¿åæ°ééå¶
             
         Returns:
-            预警历史列表
+            é¢è­¦åå²åè¡¨
         """
         pass
     
     def get_system_status(self) -> Dict[str, Any]:
-        """获取系统状�?
+        """è·åç³»ç»ç¶æ?
         
         Returns:
-            系统状�?
+            ç³»ç»ç¶æ?
         """
         pass
     
     def test_pusher(self, channel: str) -> bool:
-        """测试推送器
+        """æµè¯æ¨éå¨
         
         Args:
-            channel: 推送渠�?
+            channel: æ¨éæ¸ é?
             
         Returns:
-            是否测试成功
+            æ¯å¦æµè¯æå
         """
         pass
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```python
-# 初始化预警系�?
+# åå§åé¢è­¦ç³»ç»?
 alert_system = RealTimeAlertSystem(
     config={
-        "monitoring_interval": 60,  # �?
+        "monitoring_interval": 60,  # ç§?
         "max_alerts_per_hour": 100
     },
     pusher_config={
@@ -1209,11 +1209,11 @@ alert_system = RealTimeAlertSystem(
     }
 )
 
-# 添加预警规则
+# æ·»å é¢è­¦è§å
 rule = AlertRule(
     rule_id="sentiment_negative_spike",
-    rule_name="负面情感激�?,
-    description="负面情感分数突然下降超过20%",
+    rule_name="è´é¢æææ¿å¢?,
+    description="è´é¢ææåæ°çªç¶ä¸éè¶è¿20%",
     condition={
         "metric": "sentiment_score",
         "operator": "decrease_by",
@@ -1225,10 +1225,10 @@ rule = AlertRule(
 )
 alert_system.add_rule(rule)
 
-# 启动系统
+# å¯å¨ç³»ç»
 alert_system.start()
 
-# 处理数据
+# å¤çæ°æ®
 data = {
     "sentiment_score": 0.3,
     "previous_sentiment_score": 0.6,
@@ -1237,17 +1237,17 @@ data = {
 alert = alert_system.process_data(data)
 
 if alert:
-    print(f"触发预警: {alert.title}")
+    print(f"è§¦åé¢è­¦: {alert.title}")
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
     "alert_id": "alert_20260402_001",
     "rule_id": "sentiment_negative_spike",
     "severity": "high",
-    "title": "负面情感激增预�?,
-    "message": "负面情感分数�?.6下降�?.3，下降幅�?0%，超过阈�?0%",
+    "title": "è´é¢æææ¿å¢é¢è­?,
+    "message": "è´é¢ææåæ°ä»?.6ä¸éè?.3ï¼ä¸éå¹åº?0%ï¼è¶è¿éå?0%",
     "data": {
         "sentiment_score": 0.3,
         "previous_sentiment_score": 0.6,
@@ -1262,162 +1262,162 @@ if alert:
 
 ---
 
-## 四、数据字�?
+## åãæ°æ®å­å?
 
-### 4.1 Twitter数据表字段说�?
+### 4.1 Twitteræ°æ®è¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| tweet_id | TEXT | 推文ID | "1234567890" |
-| text | TEXT | 推文内容 | "Apple stock surges..." |
-| user_id | TEXT | 用户ID | "987654321" |
-| user_name | TEXT | 用户�?| "trader_john" |
-| user_followers_count | INTEGER | 粉丝�?| 5000 |
-| created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
-| lang | TEXT | 语言 | "en" |
-| hashtags | TEXT | 标签列表(JSON) | ["AAPL", "stocks"] |
-| symbols | TEXT | 股票代码(JSON) | ["$AAPL"] |
-| like_count | INTEGER | 点赞�?| 150 |
-| retweet_count | INTEGER | 转发�?| 45 |
-| reply_count | INTEGER | 回复�?| 12 |
-| collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:05:00" |
+| id | INTEGER | ä¸»é®ID | 1 |
+| tweet_id | TEXT | æ¨æID | "1234567890" |
+| text | TEXT | æ¨æåå®¹ | "Apple stock surges..." |
+| user_id | TEXT | ç¨æ·ID | "987654321" |
+| user_name | TEXT | ç¨æ·å?| "trader_john" |
+| user_followers_count | INTEGER | ç²ä¸æ?| 5000 |
+| created_at | TIMESTAMP | åå»ºæ¶é´ | "2026-04-02 10:00:00" |
+| lang | TEXT | è¯­è¨ | "en" |
+| hashtags | TEXT | æ ç­¾åè¡¨(JSON) | ["AAPL", "stocks"] |
+| symbols | TEXT | è¡ç¥¨ä»£ç (JSON) | ["$AAPL"] |
+| like_count | INTEGER | ç¹èµæ?| 150 |
+| retweet_count | INTEGER | è½¬åæ?| 45 |
+| reply_count | INTEGER | åå¤æ?| 12 |
+| collected_at | TIMESTAMP | ééæ¶é´ | "2026-04-02 10:05:00" |
 
-### 4.2 Reddit数据表字段说�?
+### 4.2 Redditæ°æ®è¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| post_id | TEXT | 帖子ID | "abc123" |
-| title | TEXT | 帖子标题 | "AAPL to the moon!" |
-| selftext | TEXT | 帖子内容 | "Apple just reported..." |
-| author | TEXT | 作�?| "username" |
-| subreddit | TEXT | 子版�?| "wallstreetbets" |
-| created_utc | TIMESTAMP | 创建时间(UTC) | "2026-04-02 10:00:00" |
-| score | INTEGER | 得分 | 1500 |
-| num_comments | INTEGER | 评论�?| 245 |
-| upvote_ratio | REAL | 点赞比例 | 0.95 |
-| collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:05:00" |
+| id | INTEGER | ä¸»é®ID | 1 |
+| post_id | TEXT | å¸å­ID | "abc123" |
+| title | TEXT | å¸å­æ é¢ | "AAPL to the moon!" |
+| selftext | TEXT | å¸å­åå®¹ | "Apple just reported..." |
+| author | TEXT | ä½è?| "username" |
+| subreddit | TEXT | å­çå?| "wallstreetbets" |
+| created_utc | TIMESTAMP | åå»ºæ¶é´(UTC) | "2026-04-02 10:00:00" |
+| score | INTEGER | å¾å | 1500 |
+| num_comments | INTEGER | è¯è®ºæ?| 245 |
+| upvote_ratio | REAL | ç¹èµæ¯ä¾ | 0.95 |
+| collected_at | TIMESTAMP | ééæ¶é´ | "2026-04-02 10:05:00" |
 
-### 4.3 FRED数据表字段说�?
+### 4.3 FREDæ°æ®è¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| series_id | TEXT | 序列ID | "GDP" |
-| title | TEXT | 序列标题 | "Gross Domestic Product" |
-| observation_date | DATE | 观察日期 | "2026-01-01" |
-| value | REAL | 数�?| 25000.0 |
-| frequency | TEXT | 频率 | "Quarterly" |
-| units | TEXT | 单位 | "Billions of Dollars" |
-| collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:00:00" |
+| id | INTEGER | ä¸»é®ID | 1 |
+| series_id | TEXT | åºåID | "GDP" |
+| title | TEXT | åºåæ é¢ | "Gross Domestic Product" |
+| observation_date | DATE | è§å¯æ¥æ | "2026-01-01" |
+| value | REAL | æ°å?| 25000.0 |
+| frequency | TEXT | é¢ç | "Quarterly" |
+| units | TEXT | åä½ | "Billions of Dollars" |
+| collected_at | TIMESTAMP | ééæ¶é´ | "2026-04-02 10:00:00" |
 
-### 4.4 SEC EDGAR数据表字段说�?
+### 4.4 SEC EDGARæ°æ®è¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| cik | TEXT | 公司CIK�?| "0000320193" |
-| company_name | TEXT | 公司名称 | "Apple Inc." |
-| form_type | TEXT | 表格类型 | "10-K" |
-| filed_at | DATE | 提交日期 | "2026-04-02" |
-| fiscal_year | INTEGER | 财年 | 2025 |
-| fiscal_period | TEXT | 财期 | "FY" |
-| document_url | TEXT | 文档URL | "https://www.sec.gov/..." |
-| parsed_data | TEXT | 解析数据(JSON) | {...} |
-| collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:00:00" |
+| id | INTEGER | ä¸»é®ID | 1 |
+| cik | TEXT | å¬å¸CIKå?| "0000320193" |
+| company_name | TEXT | å¬å¸åç§° | "Apple Inc." |
+| form_type | TEXT | è¡¨æ ¼ç±»å | "10-K" |
+| filed_at | DATE | æäº¤æ¥æ | "2026-04-02" |
+| fiscal_year | INTEGER | è´¢å¹´ | 2025 |
+| fiscal_period | TEXT | è´¢æ | "FY" |
+| document_url | TEXT | ææ¡£URL | "https://www.sec.gov/..." |
+| parsed_data | TEXT | è§£ææ°æ®(JSON) | {...} |
+| collected_at | TIMESTAMP | ééæ¶é´ | "2026-04-02 10:00:00" |
 
-### 4.5 情感分析结果表字段说�?
+### 4.5 ææåæç»æè¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| text_hash | TEXT | 文本哈希 | "a1b2c3d4..." |
-| text | TEXT | 原始文本 | "Apple's revenue..." |
-| source | TEXT | 数据�?| "twitter" |
-| basic_sentiment | TEXT | 基础情感(JSON) | {"label": "positive", ...} |
-| emotion | TEXT | 情绪(JSON) | {"fear": 0.05, ...} |
-| intensity | TEXT | 强度(JSON) | {"label": "strong", ...} |
-| time_horizon | TEXT | 时间维度(JSON) | {"short_term": 0.25, ...} |
-| keywords | TEXT | 关键�?JSON) | ["Apple", "revenue"] |
-| entities | TEXT | 实体(JSON) | ["Apple Inc."] |
-| confidence | REAL | 置信�?| 0.92 |
-| model_name | TEXT | 模型名称 | "ProsusAI/finbert" |
-| analyzed_at | TIMESTAMP | 分析时间 | "2026-04-02 10:00:00" |
+| id | INTEGER | ä¸»é®ID | 1 |
+| text_hash | TEXT | ææ¬åå¸ | "a1b2c3d4..." |
+| text | TEXT | åå§ææ¬ | "Apple's revenue..." |
+| source | TEXT | æ°æ®æº?| "twitter" |
+| basic_sentiment | TEXT | åºç¡ææ(JSON) | {"label": "positive", ...} |
+| emotion | TEXT | æç»ª(JSON) | {"fear": 0.05, ...} |
+| intensity | TEXT | å¼ºåº¦(JSON) | {"label": "strong", ...} |
+| time_horizon | TEXT | æ¶é´ç»´åº¦(JSON) | {"short_term": 0.25, ...} |
+| keywords | TEXT | å³é®è¯?JSON) | ["Apple", "revenue"] |
+| entities | TEXT | å®ä½(JSON) | ["Apple Inc."] |
+| confidence | REAL | ç½®ä¿¡åº?| 0.92 |
+| model_name | TEXT | æ¨¡ååç§° | "ProsusAI/finbert" |
+| analyzed_at | TIMESTAMP | åææ¶é´ | "2026-04-02 10:00:00" |
 
-### 4.6 预警规则表字段说�?
+### 4.6 é¢è­¦è§åè¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| rule_id | TEXT | 规则ID | "sentiment_negative_spike" |
-| rule_name | TEXT | 规则名称 | "负面情感激�? |
-| description | TEXT | 描述 | "负面情感分数突然下降..." |
-| condition | TEXT | 条件(JSON) | {"metric": "sentiment_score", ...} |
-| severity | TEXT | 严重级别 | "high" |
-| channels | TEXT | 推送渠�?JSON) | ["email", "wechat"] |
-| enabled | INTEGER | 是否启用 | 1 |
-| created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
-| updated_at | TIMESTAMP | 更新时间 | "2026-04-02 10:00:00" |
+| id | INTEGER | ä¸»é®ID | 1 |
+| rule_id | TEXT | è§åID | "sentiment_negative_spike" |
+| rule_name | TEXT | è§ååç§° | "è´é¢æææ¿å¢? |
+| description | TEXT | æè¿° | "è´é¢ææåæ°çªç¶ä¸é..." |
+| condition | TEXT | æ¡ä»¶(JSON) | {"metric": "sentiment_score", ...} |
+| severity | TEXT | ä¸¥éçº§å« | "high" |
+| channels | TEXT | æ¨éæ¸ é?JSON) | ["email", "wechat"] |
+| enabled | INTEGER | æ¯å¦å¯ç¨ | 1 |
+| created_at | TIMESTAMP | åå»ºæ¶é´ | "2026-04-02 10:00:00" |
+| updated_at | TIMESTAMP | æ´æ°æ¶é´ | "2026-04-02 10:00:00" |
 
-### 4.7 预警历史表字段说�?
+### 4.7 é¢è­¦åå²è¡¨å­æ®µè¯´æ?
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| å­æ®µå?| æ°æ®ç±»å | è¯´æ | ç¤ºä¾ |
 |--------|---------|------|------|
-| id | INTEGER | 主键ID | 1 |
-| alert_id | TEXT | 预警ID | "alert_20260402_001" |
-| rule_id | TEXT | 规则ID | "sentiment_negative_spike" |
-| severity | TEXT | 严重级别 | "high" |
-| title | TEXT | 标题 | "负面情感激增预�? |
-| message | TEXT | 消息 | "负面情感分数�?.6..." |
-| data | TEXT | 数据(JSON) | {...} |
-| triggered_at | TIMESTAMP | 触发时间 | "2026-04-02 10:30:00" |
-| channels | TEXT | 推送渠�?JSON) | ["email", "wechat"] |
-| status | TEXT | 状�?| "sent" |
-| sent_at | TIMESTAMP | 发送时�?| "2026-04-02 10:30:05" |
-| error_message | TEXT | 错误消息 | NULL |
+| id | INTEGER | ä¸»é®ID | 1 |
+| alert_id | TEXT | é¢è­¦ID | "alert_20260402_001" |
+| rule_id | TEXT | è§åID | "sentiment_negative_spike" |
+| severity | TEXT | ä¸¥éçº§å« | "high" |
+| title | TEXT | æ é¢ | "è´é¢æææ¿å¢é¢è­? |
+| message | TEXT | æ¶æ¯ | "è´é¢ææåæ°ä»?.6..." |
+| data | TEXT | æ°æ®(JSON) | {...} |
+| triggered_at | TIMESTAMP | è§¦åæ¶é´ | "2026-04-02 10:30:00" |
+| channels | TEXT | æ¨éæ¸ é?JSON) | ["email", "wechat"] |
+| status | TEXT | ç¶æ?| "sent" |
+| sent_at | TIMESTAMP | åéæ¶é?| "2026-04-02 10:30:05" |
+| error_message | TEXT | éè¯¯æ¶æ¯ | NULL |
 
 ---
 
-## 五、API接口规范
+## äºãAPIæ¥å£è§è
 
-### 5.1 RESTful API设计规范
+### 5.1 RESTful APIè®¾è®¡è§è
 
-#### 5.1.1 URL设计规范
+#### 5.1.1 URLè®¾è®¡è§è
 
-**基础URL**: `http://localhost:8000/api/v1`
+**åºç¡URL**: `http://localhost:8000/api/v1`
 
-**资源命名**:
-- 使用复数名词: `/tweets`, `/posts`, `/alerts`
-- 使用小写字母和连字符: `/sentiment-results`
-- 避免深层嵌套: 最�?�?
+**èµæºå½å**:
+- ä½¿ç¨å¤æ°åè¯: `/tweets`, `/posts`, `/alerts`
+- ä½¿ç¨å°åå­æ¯åè¿å­ç¬¦: `/sentiment-results`
+- é¿åæ·±å±åµå¥: æå¤?å±?
 
-**示例**:
+**ç¤ºä¾**:
 ```
-GET    /api/v1/tweets                    # 获取推文列表
-GET    /api/v1/tweets/{id}               # 获取单个推文
-POST   /api/v1/tweets                    # 创建推文
-PUT    /api/v1/tweets/{id}               # 更新推文
-DELETE /api/v1/tweets/{id}               # 删除推文
+GET    /api/v1/tweets                    # è·åæ¨æåè¡¨
+GET    /api/v1/tweets/{id}               # è·ååä¸ªæ¨æ
+POST   /api/v1/tweets                    # åå»ºæ¨æ
+PUT    /api/v1/tweets/{id}               # æ´æ°æ¨æ
+DELETE /api/v1/tweets/{id}               # å é¤æ¨æ
 
-GET    /api/v1/sentiment/analyze         # 情感分析
-POST   /api/v1/sentiment/analyze-batch   # 批量情感分析
+GET    /api/v1/sentiment/analyze         # ææåæ
+POST   /api/v1/sentiment/analyze-batch   # æ¹éææåæ
 
-GET    /api/v1/alerts                    # 获取预警列表
-POST   /api/v1/alerts/rules              # 创建预警规则
-PUT    /api/v1/alerts/rules/{id}         # 更新预警规则
+GET    /api/v1/alerts                    # è·åé¢è­¦åè¡¨
+POST   /api/v1/alerts/rules              # åå»ºé¢è­¦è§å
+PUT    /api/v1/alerts/rules/{id}         # æ´æ°é¢è­¦è§å
 ```
 
-#### 5.1.2 请求格式
+#### 5.1.2 è¯·æ±æ ¼å¼
 
-**请求�?*:
+**è¯·æ±å¤?*:
 ```
 Content-Type: application/json
 Authorization: Bearer {token}
 Accept: application/json
 ```
 
-**请求参数**:
+**è¯·æ±åæ°**:
 ```json
 {
     "query": "AAPL",
@@ -1427,16 +1427,16 @@ Accept: application/json
 }
 ```
 
-#### 5.1.3 响应格式
+#### 5.1.3 ååºæ ¼å¼
 
-**成功响应**:
+**æåååº**:
 ```json
 {
     "status": "success",
     "code": 200,
     "message": "Request successful",
     "data": {
-        // 响应数据
+        // ååºæ°æ®
     },
     "meta": {
         "total": 100,
@@ -1446,7 +1446,7 @@ Accept: application/json
 }
 ```
 
-**错误响应**:
+**éè¯¯ååº**:
 ```json
 {
     "status": "error",
@@ -1461,35 +1461,35 @@ Accept: application/json
 }
 ```
 
-#### 5.1.4 HTTP状态码
+#### 5.1.4 HTTPç¶æç 
 
-| 状态码 | 说明 | 使用场景 |
+| ç¶æç  | è¯´æ | ä½¿ç¨åºæ¯ |
 |--------|------|----------|
-| 200 | OK | 成功请求 |
-| 201 | Created | 成功创建资源 |
-| 204 | No Content | 成功删除资源 |
-| 400 | Bad Request | 请求参数错误 |
-| 401 | Unauthorized | 未授�?|
-| 403 | Forbidden | 禁止访问 |
-| 404 | Not Found | 资源不存�?|
-| 429 | Too Many Requests | 请求过于频繁 |
-| 500 | Internal Server Error | 服务器内部错�?|
+| 200 | OK | æåè¯·æ± |
+| 201 | Created | æååå»ºèµæº |
+| 204 | No Content | æåå é¤èµæº |
+| 400 | Bad Request | è¯·æ±åæ°éè¯¯ |
+| 401 | Unauthorized | æªææ?|
+| 403 | Forbidden | ç¦æ­¢è®¿é® |
+| 404 | Not Found | èµæºä¸å­å?|
+| 429 | Too Many Requests | è¯·æ±è¿äºé¢ç¹ |
+| 500 | Internal Server Error | æå¡å¨åé¨éè¯?|
 
 ---
 
-### 5.2 WebSocket API设计规范
+### 5.2 WebSocket APIè®¾è®¡è§è
 
-#### 5.2.1 连接建立
+#### 5.2.1 è¿æ¥å»ºç«
 
 **WebSocket URL**: `ws://localhost:8000/ws`
 
-**连接示例**:
+**è¿æ¥ç¤ºä¾**:
 ```javascript
 const ws = new WebSocket('ws://localhost:8000/ws');
 
 ws.onopen = function(event) {
-    console.log('WebSocket连接已建�?);
-    // 订阅频道
+    console.log('WebSocketè¿æ¥å·²å»ºç«?);
+    // è®¢éé¢é
     ws.send(JSON.stringify({
         action: 'subscribe',
         channel: 'sentiment_stream'
@@ -1498,21 +1498,21 @@ ws.onopen = function(event) {
 
 ws.onmessage = function(event) {
     const data = JSON.parse(event.data);
-    console.log('收到消息:', data);
+    console.log('æ¶å°æ¶æ¯:', data);
 };
 
 ws.onerror = function(error) {
-    console.error('WebSocket错误:', error);
+    console.error('WebSocketéè¯¯:', error);
 };
 
 ws.onclose = function(event) {
-    console.log('WebSocket连接已关�?);
+    console.log('WebSocketè¿æ¥å·²å³é?);
 };
 ```
 
-#### 5.2.2 消息格式
+#### 5.2.2 æ¶æ¯æ ¼å¼
 
-**订阅消息**:
+**è®¢éæ¶æ¯**:
 ```json
 {
     "action": "subscribe",
@@ -1523,7 +1523,7 @@ ws.onclose = function(event) {
 }
 ```
 
-**取消订阅消息**:
+**åæ¶è®¢éæ¶æ¯**:
 ```json
 {
     "action": "unsubscribe",
@@ -1531,7 +1531,7 @@ ws.onclose = function(event) {
 }
 ```
 
-**推送消�?*:
+**æ¨éæ¶æ?*:
 ```json
 {
     "channel": "sentiment_stream",
@@ -1546,224 +1546,224 @@ ws.onclose = function(event) {
 
 ---
 
-## 六、算法流程图
+## å­ãç®æ³æµç¨å¾
 
-### 6.1 数据源扩展模块流程图
-
-```
-开�?
-  �?
-初始化数据源适配�?
-  �?
-配置API密钥和参�?
-  �?
-建立API连接
-  �?
-[连接成功?]
-  ├─ �?�?记录错误日志 �?重试(最�?�? �?失败
-  └─ �?�?
-      开始数据采�?
-        �?
-      [采集模式?]
-        ├─ 实时流式 �?启动流式监听 �?接收数据 �?数据清洗
-        └─ 定时批量 �?设置定时任务 �?触发采集 �?数据清洗
-                �?
-            数据标准�?
-                �?
-            数据存储
-                �?
-            更新采集统计
-                �?
-            [继续采集?]
-                ├─ �?�?返回数据采集
-                └─ �?�?结束
-```
-
-### 6.2 深度学习情感分析模块流程�?
+### 6.1 æ°æ®æºæ©å±æ¨¡åæµç¨å¾
 
 ```
-开�?
-  �?
-加载预训练模�?
-  �?
-初始化分词器
-  �?
-接收文本输入
-  �?
-文本预处�?
-  ├─ 去除HTML标签
-  ├─ 去除特殊字符
-  ├─ 分词
-  └─ 编码
-  �?
-模型推理
-  �?
-获取情感分数
-  �?
-[需要详细分�?]
-  ├─ �?�?返回基础情感结果
-  └─ �?�?
-      多维度分�?
-        ├─ 情绪分析
-        ├─ 强度评估
-        ├─ 时间维度
-        └─ 关键词提�?
-          �?
-      结果融合
-          �?
-      返回详细结果
-          �?
-        结束
+å¼å§?
+  â?
+åå§åæ°æ®æºééå?
+  â?
+éç½®APIå¯é¥ååæ?
+  â?
+å»ºç«APIè¿æ¥
+  â?
+[è¿æ¥æå?]
+  ââ å?â?è®°å½éè¯¯æ¥å¿ â?éè¯(æå¤?æ¬? â?å¤±è´¥
+  ââ æ?â?
+      å¼å§æ°æ®éé?
+        â?
+      [ééæ¨¡å¼?]
+        ââ å®æ¶æµå¼ â?å¯å¨æµå¼çå¬ â?æ¥æ¶æ°æ® â?æ°æ®æ¸æ´
+        ââ å®æ¶æ¹é â?è®¾ç½®å®æ¶ä»»å¡ â?è§¦åéé â?æ°æ®æ¸æ´
+                â?
+            æ°æ®æ åå?
+                â?
+            æ°æ®å­å¨
+                â?
+            æ´æ°ééç»è®¡
+                â?
+            [ç»§ç»­éé?]
+                ââ æ?â?è¿åæ°æ®éé
+                ââ å?â?ç»æ
 ```
 
-### 6.3 实时预警系统模块流程�?
+### 6.2 æ·±åº¦å­¦ä¹ ææåææ¨¡åæµç¨å?
 
 ```
-开�?
-  �?
-初始化预警系�?
-  �?
-加载预警规则
-  �?
-启动监控线程
-  �?
-[监控模式?]
-  ├─ 被动模式 �?等待数据输入 �?接收数据
-  └─ 主动模式 �?定时采集数据 �?获取数据
-      �?
-  数据预处�?
-      �?
-  规则匹配
-      �?
-  [触发规则?]
-      ├─ �?�?更新监控指标 �?返回监控
-      └─ �?�?
-          生成预警信息
-              �?
-          [预警级别?]
-              ├─ Critical �?立即推�?
-              ├─ High �?5分钟内推�?
-              ├─ Medium �?15分钟内推�?
-              └─ Low �?汇总推�?
-                  �?
-              选择推送渠�?
-                  �?
-              [推送成�?]
-                  ├─ �?�?记录推送历�?�?更新统计 �?返回监控
-                  └─ �?�?重试(最�?�? �?[重试成功?]
-                              ├─ �?�?记录推送历�?�?返回监控
-                              └─ �?�?记录失败日志 �?使用备用渠道 �?返回监控
+å¼å§?
+  â?
+å è½½é¢è®­ç»æ¨¡å?
+  â?
+åå§ååè¯å¨
+  â?
+æ¥æ¶ææ¬è¾å¥
+  â?
+ææ¬é¢å¤ç?
+  ââ å»é¤HTMLæ ç­¾
+  ââ å»é¤ç¹æ®å­ç¬¦
+  ââ åè¯
+  ââ ç¼ç 
+  â?
+æ¨¡åæ¨ç
+  â?
+è·åææåæ°
+  â?
+[éè¦è¯¦ç»åæ?]
+  ââ å?â?è¿ååºç¡ææç»æ
+  ââ æ?â?
+      å¤ç»´åº¦åæ?
+        ââ æç»ªåæ
+        ââ å¼ºåº¦è¯ä¼°
+        ââ æ¶é´ç»´åº¦
+        ââ å³é®è¯æå?
+          â?
+      ç»æèå
+          â?
+      è¿åè¯¦ç»ç»æ
+          â?
+        ç»æ
+```
+
+### 6.3 å®æ¶é¢è­¦ç³»ç»æ¨¡åæµç¨å?
+
+```
+å¼å§?
+  â?
+åå§åé¢è­¦ç³»ç»?
+  â?
+å è½½é¢è­¦è§å
+  â?
+å¯å¨çæ§çº¿ç¨
+  â?
+[çæ§æ¨¡å¼?]
+  ââ è¢«å¨æ¨¡å¼ â?ç­å¾æ°æ®è¾å¥ â?æ¥æ¶æ°æ®
+  ââ ä¸»å¨æ¨¡å¼ â?å®æ¶ééæ°æ® â?è·åæ°æ®
+      â?
+  æ°æ®é¢å¤ç?
+      â?
+  è§åå¹é
+      â?
+  [è§¦åè§å?]
+      ââ å?â?æ´æ°çæ§ææ  â?è¿åçæ§
+      ââ æ?â?
+          çæé¢è­¦ä¿¡æ¯
+              â?
+          [é¢è­¦çº§å«?]
+              ââ Critical â?ç«å³æ¨é?
+              ââ High â?5åéåæ¨é?
+              ââ Medium â?15åéåæ¨é?
+              ââ Low â?æ±æ»æ¨é?
+                  â?
+              éæ©æ¨éæ¸ é?
+                  â?
+              [æ¨éæå?]
+                  ââ æ?â?è®°å½æ¨éåå?â?æ´æ°ç»è®¡ â?è¿åçæ§
+                  ââ å?â?éè¯(æå¤?æ¬? â?[éè¯æå?]
+                              ââ æ?â?è®°å½æ¨éåå?â?è¿åçæ§
+                              ââ å?â?è®°å½å¤±è´¥æ¥å¿ â?ä½¿ç¨å¤ç¨æ¸ é â?è¿åçæ§
 ```
 
 ---
 
-## 七、性能指标定义
+## ä¸ãæ§è½ææ å®ä¹
 
-### 7.1 数据源扩展模块性能指标
+### 7.1 æ°æ®æºæ©å±æ¨¡åæ§è½ææ 
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| ææ åç§° | ç®æ å?| æµéæ¹æ³ | è¯´æ |
 |---------|--------|---------|------|
-| 数据采集速度 | > 100�?分钟 | 统计单位时间采集数量 | 每个数据�?|
-| API响应时间 | < 2�?| 记录API调用耗时 | 平均响应时间 |
-| 数据完整�?| > 95% | 统计成功采集比例 | 成功�?总数 |
-| 数据准确�?| > 95% | 抽样验证数据质量 | 正确�?抽样�?|
-| 系统可用�?| > 99% | 监控系统运行时间 | 正常时间/总时�?|
-| 错误恢复时间 | < 5分钟 | 记录错误恢复耗时 | 从错误到恢复 |
+| æ°æ®éééåº¦ | > 100æ?åé | ç»è®¡åä½æ¶é´ééæ°é | æ¯ä¸ªæ°æ®æº?|
+| APIååºæ¶é´ | < 2ç§?| è®°å½APIè°ç¨èæ¶ | å¹³åååºæ¶é´ |
+| æ°æ®å®æ´æ?| > 95% | ç»è®¡æåééæ¯ä¾ | æåæ?æ»æ° |
+| æ°æ®åç¡®æ?| > 95% | æ½æ ·éªè¯æ°æ®è´¨é | æ­£ç¡®æ?æ½æ ·æ?|
+| ç³»ç»å¯ç¨æ?| > 99% | çæ§ç³»ç»è¿è¡æ¶é´ | æ­£å¸¸æ¶é´/æ»æ¶é?|
+| éè¯¯æ¢å¤æ¶é´ | < 5åé | è®°å½éè¯¯æ¢å¤èæ¶ | ä»éè¯¯å°æ¢å¤ |
 
-### 7.2 深度学习情感分析模块性能指标
+### 7.2 æ·±åº¦å­¦ä¹ ææåææ¨¡åæ§è½ææ 
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| ææ åç§° | ç®æ å?| æµéæ¹æ³ | è¯´æ |
 |---------|--------|---------|------|
-| 单条分析速度 | < 100ms (GPU) | 记录单次分析耗时 | 平均耗时 |
-| 批量分析速度 | > 100�?�?(GPU) | 统计批量处理速度 | 吞吐�?|
-| 模型准确�?| > 85% | 测试集评�?| Accuracy |
-| 模型精确�?| > 85% | 测试集评�?| Precision |
-| 模型召回�?| > 85% | 测试集评�?| Recall |
-| F1分数 | > 0.85 | 测试集评�?| F1 Score |
-| GPU利用�?| > 80% | 监控GPU使用�?| 平均利用�?|
-| 内存使用 | < 4GB | 监控内存使用 | 峰值内�?|
+| åæ¡åæéåº¦ | < 100ms (GPU) | è®°å½åæ¬¡åæèæ¶ | å¹³åèæ¶ |
+| æ¹éåæéåº¦ | > 100æ?ç§?(GPU) | ç»è®¡æ¹éå¤çéåº¦ | ååé?|
+| æ¨¡ååç¡®ç?| > 85% | æµè¯éè¯ä¼?| Accuracy |
+| æ¨¡åç²¾ç¡®ç?| > 85% | æµè¯éè¯ä¼?| Precision |
+| æ¨¡åå¬åç?| > 85% | æµè¯éè¯ä¼?| Recall |
+| F1åæ° | > 0.85 | æµè¯éè¯ä¼?| F1 Score |
+| GPUå©ç¨ç?| > 80% | çæ§GPUä½¿ç¨ç?| å¹³åå©ç¨ç?|
+| åå­ä½¿ç¨ | < 4GB | çæ§åå­ä½¿ç¨ | å³°å¼åå­?|
 
-### 7.3 实时预警系统模块性能指标
+### 7.3 å®æ¶é¢è­¦ç³»ç»æ¨¡åæ§è½ææ 
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| ææ åç§° | ç®æ å?| æµéæ¹æ³ | è¯´æ |
 |---------|--------|---------|------|
-| 监控延迟 | < 1分钟 | 记录数据到监控的时间 | 平均延迟 |
-| 规则执行速度 | < 100ms | 记录规则执行耗时 | 平均耗时 |
-| 预警推送延�?| < 30�?| 记录触发到推送的时间 | 平均延迟 |
-| 预警准确�?| > 90% | 验证预警有效�?| 有效预警/总预�?|
-| 预警误报�?| < 10% | 统计误报比例 | 误报�?总预�?|
-| 推送成功率 | > 95% | 统计推送成功比�?| 成功�?总数 |
-| 系统吞吐�?| > 100�?分钟 | 统计处理能力 | 每分钟处理数 |
+| çæ§å»¶è¿ | < 1åé | è®°å½æ°æ®å°çæ§çæ¶é´ | å¹³åå»¶è¿ |
+| è§åæ§è¡éåº¦ | < 100ms | è®°å½è§åæ§è¡èæ¶ | å¹³åèæ¶ |
+| é¢è­¦æ¨éå»¶è¿?| < 30ç§?| è®°å½è§¦åå°æ¨éçæ¶é´ | å¹³åå»¶è¿ |
+| é¢è­¦åç¡®ç?| > 90% | éªè¯é¢è­¦æææ?| ææé¢è­¦/æ»é¢è­?|
+| é¢è­¦è¯¯æ¥ç?| < 10% | ç»è®¡è¯¯æ¥æ¯ä¾ | è¯¯æ¥æ?æ»é¢è­?|
+| æ¨éæåç | > 95% | ç»è®¡æ¨éæåæ¯ä¾?| æåæ?æ»æ° |
+| ç³»ç»ååé?| > 100æ?åé | ç»è®¡å¤çè½å | æ¯åéå¤çæ° |
 
 ---
 
-## 八、错误处理规�?
+## å«ãéè¯¯å¤çè§è?
 
-### 8.1 错误分类
+### 8.1 éè¯¯åç±»
 
-#### 8.1.1 按严重程度分�?
+#### 8.1.1 æä¸¥éç¨åº¦åç±?
 
-**P0 - 阻断性错�?*:
-- 数据库连接失�?
-- 模型加载失败
-- API认证失败
-- 系统崩溃
+**P0 - é»æ­æ§éè¯?*:
+- æ°æ®åºè¿æ¥å¤±è´?
+- æ¨¡åå è½½å¤±è´¥
+- APIè®¤è¯å¤±è´¥
+- ç³»ç»å´©æº
 
-**P1 - 高优先级错误**:
-- 数据采集失败
-- 情感分析失败
-- 预警推送失�?
-- 数据存储失败
+**P1 - é«ä¼åçº§éè¯¯**:
+- æ°æ®ééå¤±è´¥
+- ææåæå¤±è´¥
+- é¢è­¦æ¨éå¤±è´?
+- æ°æ®å­å¨å¤±è´¥
 
-**P2 - 中优先级错误**:
-- 数据质量警告
-- 性能降级警告
-- 配置错误警告
+**P2 - ä¸­ä¼åçº§éè¯¯**:
+- æ°æ®è´¨éè­¦å
+- æ§è½éçº§è­¦å
+- éç½®éè¯¯è­¦å
 
-**P3 - 低优先级错误**:
-- 日志记录失败
-- 统计更新失败
-- 非关键功能失�?
+**P3 - ä½ä¼åçº§éè¯¯**:
+- æ¥å¿è®°å½å¤±è´¥
+- ç»è®¡æ´æ°å¤±è´¥
+- éå³é®åè½å¤±è´?
 
-#### 8.1.2 按错误类型分�?
+#### 8.1.2 æéè¯¯ç±»ååç±?
 
-**网络错误**:
-- 连接超时
-- 连接拒绝
-- DNS解析失败
-- SSL证书错误
+**ç½ç»éè¯¯**:
+- è¿æ¥è¶æ¶
+- è¿æ¥æç»
+- DNSè§£æå¤±è´¥
+- SSLè¯ä¹¦éè¯¯
 
-**API错误**:
-- 认证失败 (401)
-- 权限不足 (403)
-- 资源不存�?(404)
-- 速率限制 (429)
-- 服务器错�?(500)
+**APIéè¯¯**:
+- è®¤è¯å¤±è´¥ (401)
+- æéä¸è¶³ (403)
+- èµæºä¸å­å?(404)
+- éçéå¶ (429)
+- æå¡å¨éè¯?(500)
 
-**数据错误**:
-- 数据格式错误
-- 数据缺失
-- 数据重复
-- 数据异常
+**æ°æ®éè¯¯**:
+- æ°æ®æ ¼å¼éè¯¯
+- æ°æ®ç¼ºå¤±
+- æ°æ®éå¤
+- æ°æ®å¼å¸¸
 
-**系统错误**:
-- 内存不足
-- 磁盘空间不足
-- CPU过载
-- GPU内存不足
+**ç³»ç»éè¯¯**:
+- åå­ä¸è¶³
+- ç£çç©ºé´ä¸è¶³
+- CPUè¿è½½
+- GPUåå­ä¸è¶³
 
 ---
 
-### 8.2 错误处理策略
+### 8.2 éè¯¯å¤çç­ç¥
 
-#### 8.2.1 重试策略
+#### 8.2.1 éè¯ç­ç¥
 
-**重试条件**:
-- 网络错误（连接超时、连接拒绝）
-- API速率限制 (429)
-- 服务器临时错�?(500, 502, 503)
+**éè¯æ¡ä»¶**:
+- ç½ç»éè¯¯ï¼è¿æ¥è¶æ¶ãè¿æ¥æç»ï¼
+- APIéçéå¶ (429)
+- æå¡å¨ä¸´æ¶éè¯?(500, 502, 503)
 
-**重试策略**:
+**éè¯ç­ç¥**:
 ```python
 def retry_with_backoff(
     func: Callable,
@@ -1772,20 +1772,20 @@ def retry_with_backoff(
     max_delay: float = 60.0,
     backoff_factor: float = 2.0
 ) -> Any:
-    """指数退避重�?
+    """ææ°éé¿éè¯?
     
     Args:
-        func: 要执行的函数
-        max_retries: 最大重试次�?
-        base_delay: 基础延迟（秒�?
-        max_delay: 最大延迟（秒）
-        backoff_factor: 退避因�?
+        func: è¦æ§è¡çå½æ°
+        max_retries: æå¤§éè¯æ¬¡æ?
+        base_delay: åºç¡å»¶è¿ï¼ç§ï¼?
+        max_delay: æå¤§å»¶è¿ï¼ç§ï¼
+        backoff_factor: éé¿å å­?
         
     Returns:
-        函数执行结果
+        å½æ°æ§è¡ç»æ
         
     Raises:
-        Exception: 重试失败后抛出异�?
+        Exception: éè¯å¤±è´¥åæåºå¼å¸?
     """
     import time
     from functools import wraps
@@ -1801,41 +1801,41 @@ def retry_with_backoff(
             time.sleep(delay)
 ```
 
-#### 8.2.2 降级策略
+#### 8.2.2 éçº§ç­ç¥
 
-**降级条件**:
-- GPU不可�?�?使用CPU
-- 外部API不可�?�?使用缓存数据
-- 数据库不可用 �?使用文件存储
+**éçº§æ¡ä»¶**:
+- GPUä¸å¯ç?â?ä½¿ç¨CPU
+- å¤é¨APIä¸å¯ç?â?ä½¿ç¨ç¼å­æ°æ®
+- æ°æ®åºä¸å¯ç¨ â?ä½¿ç¨æä»¶å­å¨
 
-**降级示例**:
+**éçº§ç¤ºä¾**:
 ```python
 def analyze_sentiment(text: str) -> Dict[str, Any]:
-    """情感分析（带降级策略�?""
+    """ææåæï¼å¸¦éçº§ç­ç¥ï¼?""
     try:
-        # 尝试使用GPU
+        # å°è¯ä½¿ç¨GPU
         if torch.cuda.is_available():
             return analyze_with_gpu(text)
         else:
-            # 降级到CPU
+            # éçº§å°CPU
             return analyze_with_cpu(text)
     except Exception as e:
-        # 降级到基础方法
-        logger.warning(f"深度学习模型失败，降级到基础方法: {e}")
+        # éçº§å°åºç¡æ¹æ³
+        logger.warning(f"æ·±åº¦å­¦ä¹ æ¨¡åå¤±è´¥ï¼éçº§å°åºç¡æ¹æ³: {e}")
         return analyze_with_basic_method(text)
 ```
 
-#### 8.2.3 熔断策略
+#### 8.2.3 çæ­ç­ç¥
 
-**熔断条件**:
-- 连续失败次数超过阈值（�?次）
-- 错误率超过阈值（�?0%�?
-- 响应时间超过阈值（�?0秒）
+**çæ­æ¡ä»¶**:
+- è¿ç»­å¤±è´¥æ¬¡æ°è¶è¿éå¼ï¼å¦?æ¬¡ï¼
+- éè¯¯çè¶è¿éå¼ï¼å¦?0%ï¼?
+- ååºæ¶é´è¶è¿éå¼ï¼å¦?0ç§ï¼
 
-**熔断示例**:
+**çæ­ç¤ºä¾**:
 ```python
 class CircuitBreaker:
-    """熔断�?""
+    """çæ­å?""
     
     def __init__(
         self,
@@ -1845,9 +1845,9 @@ class CircuitBreaker:
     ):
         """
         Args:
-            failure_threshold: 失败阈�?
-            timeout: 熔断超时时间（秒�?
-            success_threshold: 成功阈值（半开状态）
+            failure_threshold: å¤±è´¥éå?
+            timeout: çæ­è¶æ¶æ¶é´ï¼ç§ï¼?
+            success_threshold: æåéå¼ï¼åå¼ç¶æï¼
         """
         self.failure_threshold = failure_threshold
         self.timeout = timeout
@@ -1858,13 +1858,13 @@ class CircuitBreaker:
         self.last_failure_time = None
     
     def call(self, func: Callable, *args, **kwargs) -> Any:
-        """调用函数（带熔断保护�?""
+        """è°ç¨å½æ°ï¼å¸¦çæ­ä¿æ¤ï¼?""
         if self.state == "open":
             if time.time() - self.last_failure_time > self.timeout:
                 self.state = "half-open"
                 self.success_count = 0
             else:
-                raise CircuitBreakerOpenError("熔断器处于打开状�?)
+                raise CircuitBreakerOpenError("çæ­å¨å¤äºæå¼ç¶æ?)
         
         try:
             result = func(*args, **kwargs)
@@ -1875,7 +1875,7 @@ class CircuitBreaker:
             raise e
     
     def _on_success(self):
-        """成功回调"""
+        """æååè°"""
         self.failure_count = 0
         if self.state == "half-open":
             self.success_count += 1
@@ -1883,7 +1883,7 @@ class CircuitBreaker:
                 self.state = "closed"
     
     def _on_failure(self):
-        """失败回调"""
+        """å¤±è´¥åè°"""
         self.failure_count += 1
         self.last_failure_time = time.time()
         
@@ -1895,34 +1895,34 @@ class CircuitBreaker:
 
 ---
 
-### 8.3 错误日志规范
+### 8.3 éè¯¯æ¥å¿è§è
 
-#### 8.3.1 日志级别
+#### 8.3.1 æ¥å¿çº§å«
 
-| 级别 | 说明 | 使用场景 |
+| çº§å« | è¯´æ | ä½¿ç¨åºæ¯ |
 |------|------|----------|
-| DEBUG | 调试信息 | 开发调�?|
-| INFO | 一般信�?| 正常操作 |
-| WARNING | 警告信息 | 潜在问题 |
-| ERROR | 错误信息 | 错误但可恢复 |
-| CRITICAL | 严重错误 | 系统崩溃 |
+| DEBUG | è°è¯ä¿¡æ¯ | å¼åè°è¯?|
+| INFO | ä¸è¬ä¿¡æ?| æ­£å¸¸æä½ |
+| WARNING | è­¦åä¿¡æ¯ | æ½å¨é®é¢ |
+| ERROR | éè¯¯ä¿¡æ¯ | éè¯¯ä½å¯æ¢å¤ |
+| CRITICAL | ä¸¥ééè¯¯ | ç³»ç»å´©æº |
 
-#### 8.3.2 日志格式
+#### 8.3.2 æ¥å¿æ ¼å¼
 
-**标准格式**:
+**æ åæ ¼å¼**:
 ```
-[时间] [级别] [模块] [函数] - 消息
-[2026-04-02 10:30:00] [ERROR] [twitter_adapter] [search_tweets] - API调用失败: 429 Too Many Requests
+[æ¶é´] [çº§å«] [æ¨¡å] [å½æ°] - æ¶æ¯
+[2026-04-02 10:30:00] [ERROR] [twitter_adapter] [search_tweets] - APIè°ç¨å¤±è´¥: 429 Too Many Requests
 ```
 
-**JSON格式**:
+**JSONæ ¼å¼**:
 ```json
 {
     "timestamp": "2026-04-02T10:30:00Z",
     "level": "ERROR",
     "module": "twitter_adapter",
     "function": "search_tweets",
-    "message": "API调用失败: 429 Too Many Requests",
+    "message": "APIè°ç¨å¤±è´¥: 429 Too Many Requests",
     "error_code": "TWITTER_API_429",
     "stack_trace": "...",
     "context": {
@@ -1932,30 +1932,30 @@ class CircuitBreaker:
 }
 ```
 
-#### 8.3.3 错误代码规范
+#### 8.3.3 éè¯¯ä»£ç è§è
 
-**格式**: `{模块}_{错误类型}_{具体错误}`
+**æ ¼å¼**: `{æ¨¡å}_{éè¯¯ç±»å}_{å·ä½éè¯¯}`
 
-**示例**:
-- `TWITTER_API_401`: Twitter API认证失败
-- `TWITTER_API_429`: Twitter API速率限制
-- `REDDIT_API_500`: Reddit API服务器错�?
-- `FRED_API_TIMEOUT`: FRED API连接超时
-- `SEC_API_NOT_FOUND`: SEC EDGAR资源不存�?
-- `MODEL_LOAD_ERROR`: 模型加载失败
-- `SENTIMENT_ANALYSIS_ERROR`: 情感分析失败
-- `ALERT_PUSH_ERROR`: 预警推送失�?
+**ç¤ºä¾**:
+- `TWITTER_API_401`: Twitter APIè®¤è¯å¤±è´¥
+- `TWITTER_API_429`: Twitter APIéçéå¶
+- `REDDIT_API_500`: Reddit APIæå¡å¨éè¯?
+- `FRED_API_TIMEOUT`: FRED APIè¿æ¥è¶æ¶
+- `SEC_API_NOT_FOUND`: SEC EDGARèµæºä¸å­å?
+- `MODEL_LOAD_ERROR`: æ¨¡åå è½½å¤±è´¥
+- `SENTIMENT_ANALYSIS_ERROR`: ææåæå¤±è´¥
+- `ALERT_PUSH_ERROR`: é¢è­¦æ¨éå¤±è´?
 
 ---
 
-## 九、配置文件规�?
+## ä¹ãéç½®æä»¶è§è?
 
-### 9.1 数据源配置文�?
+### 9.1 æ°æ®æºéç½®æä»?
 
-**文件**: `config/data_sources.yaml`
+**æä»¶**: `config/data_sources.yaml`
 
 ```yaml
-# Twitter API配置
+# Twitter APIéç½®
 twitter:
   enabled: true
   bearer_token: "${TWITTER_BEARER_TOKEN}"
@@ -1975,7 +1975,7 @@ twitter:
     - "elonmusk"
     - "tim_cook"
 
-# Reddit API配置
+# Reddit APIéç½®
 reddit:
   enabled: true
   client_id: "${REDDIT_CLIENT_ID}"
@@ -1993,7 +1993,7 @@ reddit:
     - name: "investing"
       limit: 50
 
-# FRED API配置
+# FRED APIéç½®
 fred:
   enabled: true
   api_key: "${FRED_API_KEY}"
@@ -2003,16 +2003,16 @@ fred:
     retry_delay: 5
   series:
     - id: "GDP"
-      name: "国内生产总�?
+      name: "å½åçäº§æ»å?
       frequency: "q"
     - id: "UNRATE"
-      name: "失业�?
+      name: "å¤±ä¸ç?
       frequency: "m"
     - id: "CPIAUCSL"
-      name: "消费者价格指�?
+      name: "æ¶è´¹èä»·æ ¼ææ?
       frequency: "m"
 
-# SEC EDGAR API配置
+# SEC EDGAR APIéç½®
 sec_edgar:
   enabled: true
   user_agent: "ZephyrAlpha/1.0 (your.email@example.com)"
@@ -2029,12 +2029,12 @@ sec_edgar:
       ticker: "BRK.A"
 ```
 
-### 9.2 情感分析配置文件
+### 9.2 ææåæéç½®æä»¶
 
-**文件**: `config/sentiment_analysis.yaml`
+**æä»¶**: `config/sentiment_analysis.yaml`
 
 ```yaml
-# 模型配置
+# æ¨¡åéç½®
 model:
   name: "ProsusAI/finbert"
   version: "1.0"
@@ -2043,13 +2043,13 @@ model:
   batch_size: 16
   use_fp16: false
   
-# 备用模型
+# å¤ç¨æ¨¡å
 fallback_model:
   enabled: true
   name: "bert-base-chinese"
   device: "cpu"
   
-# 分析配置
+# åæéç½®
 analysis:
   return_all_scores: true
   return_emotion: true
@@ -2057,14 +2057,14 @@ analysis:
   return_keywords: true
   return_entities: true
   
-# 性能配置
+# æ§è½éç½®
 performance:
   cache_enabled: true
   cache_size: 10000
-  cache_ttl: 3600  # �?
+  cache_ttl: 3600  # ç§?
   parallel_workers: 4
   
-# 微调配置
+# å¾®è°éç½®
 fine_tuning:
   enabled: false
   output_dir: "./models/finbert_finetuned"
@@ -2076,18 +2076,18 @@ fine_tuning:
   eval_steps: 500
 ```
 
-### 9.3 预警系统配置文件
+### 9.3 é¢è­¦ç³»ç»éç½®æä»¶
 
-**文件**: `config/alert_system.yaml`
+**æä»¶**: `config/alert_system.yaml`
 
 ```yaml
-# 系统配置
+# ç³»ç»éç½®
 system:
-  monitoring_interval: 60  # �?
+  monitoring_interval: 60  # ç§?
   max_alerts_per_hour: 100
   alert_history_days: 30
   
-# 推送渠道配�?
+# æ¨éæ¸ ééç½?
 pushers:
   email:
     enabled: true
@@ -2117,10 +2117,10 @@ pushers:
     to_numbers:
       - "+0987654321"
 
-# 默认预警规则
+# é»è®¤é¢è­¦è§å
 default_rules:
   - rule_id: "sentiment_negative_spike"
-    rule_name: "负面情感激�?
+    rule_name: "è´é¢æææ¿å¢?
     enabled: true
     condition:
       metric: "sentiment_score"
@@ -2131,7 +2131,7 @@ default_rules:
     channels: ["email", "wechat"]
     
   - rule_id: "news_volume_spike"
-    rule_name: "新闻量激�?
+    rule_name: "æ°é»éæ¿å¢?
     enabled: true
     condition:
       metric: "news_count"
@@ -2144,4 +2144,4 @@ default_rules:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃
+**çæ¬**: v1.0 | **æ´æ°**: 2026-04-02 | **ç¶æ?*: â?æ´»è·

@@ -37,7 +37,7 @@ applicable_modules:
 
 ### 1.1 模块概述
 
-**模块ID**: L3_MMSA_001
+**模块ID**: AIWF_MMSA_001
 **模块名称**: Multimodal Sentiment Analyzer (多模态情感分析器)
 **版本**: v1.0.0
 **状�?*: 设计�?
@@ -651,7 +651,7 @@ print(f"说话人情�? {emotion}")
 
 ### 2.1 模块概述
 
-**模块ID**: L3_AIVRT_001
+**模块ID**: AIWF_AIVRT_001
 **模块名称**: AI Virtual Research Team (AI虚拟研究团队)
 **版本**: v1.0.0
 **状�?*: 设计�?

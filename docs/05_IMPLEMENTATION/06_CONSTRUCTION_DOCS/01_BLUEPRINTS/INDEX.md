@@ -127,6 +127,26 @@ parent_document: ../INDEX.md
 | 策略组合优化蓝图 | STRATEGY_PORTFOLIO_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) 🆕 |
 | 交易成本感知再平衡蓝图 | TRANSACTION_COST_AWARE_REBALANCING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) 🆕 |
 
+### 3.5 绩效评估与归因分析
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合绩效评估模块蓝图 | PORTFOLIO_PERFORMANCE_EVALUATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) 🆕 |
+| 组合归因分析模块蓝图 | PORTFOLIO_ATTRIBUTION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) 🆕 |
+
+### 3.6 约束管理与情景分析
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合约束管理模块蓝图 | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md) 🆕 |
+| 组合情景分析模块蓝图 | PORTFOLIO_SCENARIO_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) 🆕 |
+
+### 3.7 优化引擎集成
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合优化引擎集成模块蓝图 | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) 🆕 |
+
 ---
 
 ## 4. 风险控制层蓝图（Layer 7）
