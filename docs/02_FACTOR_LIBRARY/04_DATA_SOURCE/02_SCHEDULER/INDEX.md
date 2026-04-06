@@ -6,13 +6,14 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 数据质量
-  - 交易执行
-  - 数据源
+- 02 SCHEDULER - 模块导航
+- 02 SCHEDULER - 模块导航
+- 数据源
 standard_type: 目录索引文档
 applicable_scope: 智能下载调度器
 compliance_level: 专业标准
-parent_document: ../INDEX.md---
+parent_document: ../INDEX.md
+---
 
 
 # 智能下载调度器

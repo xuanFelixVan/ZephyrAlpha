@@ -14,7 +14,7 @@ layer: "Layer 1 (数据预处理层)"
 
 # Layer 1 深度审计报告
 
-**审计时间**: 2026-04-07 03:13:20  
+**审计时间**: 2026-04-07 03:14:46  
 **审计对象**: Layer 1 (数据预处理层)  
 **审计标准**: 专业量化机构五大原则 + 三层审计标准  
 **文档总数**: 77
@@ -26,9 +26,9 @@ layer: "Layer 1 (数据预处理层)"
 | 审计层级 | 问题数量 | 高严重度 | 中严重度 | 低严重度 |
 |---------|---------|---------|---------|---------|
 | L1 文件系统层 | 23 | 0 | 0 | 23 |
-| L2 文档内容层 | 70 | 8 | 62 | 0 |
-| L3 专业标准层 | 2 | 0 | 0 | 2 |
-| **总计** | **95** | **8** | **62** | **25** |
+| L2 文档内容层 | 74 | 14 | 60 | 0 |
+| L3 专业标准层 | 0 | 0 | 0 | 0 |
+| **总计** | **97** | **14** | **60** | **23** |
 
 ---
 
@@ -198,7 +198,7 @@ layer: "Layer 1 (数据预处理层)"
 
 **位置**: `IFIND`
 
-**描述**: 目录下仅2个文件，建议整合
+**描述**: 目录下仅1个文件，建议整合
 
 ---
 
@@ -223,39 +223,23 @@ layer: "Layer 1 (数据预处理层)"
 
 ### 职责重叠 (高)
 
-**位置**: `A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, DOCUMENT_NAMING_STANDARD.md, FREE_DATA_SOURCES.md`
+**位置**: `A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md`
 
-**描述**: 职责"数据质量"出现在10个文档中
-
----
-
-### 职责重叠 (高)
-
-**位置**: `A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md`
-
-**描述**: 职责"因子计算"出现在16个文档中
+**描述**: 职责" - 蓝图设计"出现在3个文档中
 
 ---
 
 ### 职责重叠 (高)
 
-**位置**: `A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, FREE_DATA_SOURCES.md, MACRO_DATA.md`
+**位置**: `CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md, factor_master_index.md`
 
-**描述**: 职责"交易执行"出现在9个文档中
-
----
-
-### 职责重叠 (高)
-
-**位置**: `BAOSTOCK_CONNECTOR.md, DATA_ACQUISITION.md, DATA_REQUIREMENTS.md`
-
-**描述**: 职责"数据质量 (Layer 1)"出现在46个文档中
+**描述**: 职责"因子计算"出现在15个文档中
 
 ---
 
 ### 职责重叠 (高)
 
-**位置**: `CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md, MACRO_DATA.md`
+**位置**: `CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md, factor_master_index.md`
 
 **描述**: 职责"数据源"出现在19个文档中
 
@@ -271,25 +255,81 @@ layer: "Layer 1 (数据预处理层)"
 
 ### 职责重叠 (高)
 
-**位置**: `MACRO_DATA.md, CONFIG_MANAGEMENT\INDEX.md, DATA_ANOMALY_DETECTION\INDEX.md`
+**位置**: `DATA_ACQUISITION.md, DATA_REQUIREMENTS.md, DATA_SOURCE_ADAPTERS.md`
 
-**描述**: 职责"系统架构"出现在16个文档中
+**描述**: 职责"数据质量 (Layer 1)"出现在45个文档中
 
 ---
 
 ### 职责重叠 (高)
 
-**位置**: `CONFIG_MANAGEMENT\INDEX.md, DATA_ANOMALY_DETECTION\INDEX.md, DATA_API_GATEWAY\INDEX.md`
+**位置**: `DOCUMENT_NAMING_STANDARD.md, FREE_DATA_SOURCES.md, 07_DATA_PIPELINE\README.md`
 
-**描述**: 职责"文档治理"出现在12个文档中
+**描述**: 职责"数据质量"出现在7个文档中
 
 ---
 
-### 索引不完整 (中)
+### 职责重叠 (高)
 
-**位置**: `INDEX.md`
+**位置**: `FREE_DATA_SOURCES.md, MACRO_DATA.md, 02_SCHEDULER\SCHEDULER_API.md`
 
-**描述**: 未包含文档: DOCUMENT_NAMING_STANDARD.md
+**描述**: 职责"交易执行"出现在6个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `MACRO_DATA.md, DATA_BACKUP_RECOVERY\INDEX.md, DATA_COMPRESSION_ARCHIVE\INDEX.md`
+
+**描述**: 职责"系统架构"出现在12个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `02_SCHEDULER\BLUEPRINT.md, 02_SCHEDULER\BLUEPRINT.md`
+
+**描述**: 职责"02 SCHEDULER - 蓝图设计"出现在2个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `02_SCHEDULER\INDEX.md, 02_SCHEDULER\INDEX.md`
+
+**描述**: 职责"02 SCHEDULER - 模块导航"出现在2个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `CONFIG_MANAGEMENT\INDEX.md, CONFIG_MANAGEMENT\INDEX.md`
+
+**描述**: 职责"CONFIG MANAGEMENT - 模块导航"出现在2个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `DATA_ANOMALY_DETECTION\INDEX.md, DATA_ANOMALY_DETECTION\INDEX.md`
+
+**描述**: 职责"DATA ANOMALY DETECTION - 模块导航"出现在2个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `DATA_API_GATEWAY\INDEX.md, DATA_API_GATEWAY\INDEX.md`
+
+**描述**: 职责"DATA API GATEWAY - 模块导航"出现在2个文档中
+
+---
+
+### 职责重叠 (高)
+
+**位置**: `DATA_CONTRACT\INDEX.md, DATA_FEDERATION\INDEX.md, DATA_LIFECYCLE_MANAGEMENT\INDEX.md`
+
+**描述**: 职责"文档治理"出现在7个文档中
 
 ---
 
@@ -689,14 +729,6 @@ layer: "Layer 1 (数据预处理层)"
 
 **位置**: `INDEX.md`
 
-**描述**: 未包含文档: IFIND\factor_master_index.md
-
----
-
-### 索引不完整 (中)
-
-**位置**: `INDEX.md`
-
 **描述**: 未包含文档: IFIND\INDEX.md
 
 ---
@@ -784,50 +816,54 @@ layer: "Layer 1 (数据预处理层)"
 
 ## 🟢 L3 专业标准层问题
 
-### module_id格式不规范 (低)
-
-**位置**: `DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md`
-
-**描述**: module_id格式: DATA_SOURCE_LAYER_GAP_ANALYSIS_V2_001
-
----
-
-### module_id格式不规范 (低)
-
-**位置**: `07_DATA_PIPELINE\README.md`
-
-**描述**: module_id格式: FACTOR_001_L02_README
-
----
+✅ 无L3层问题
 
 
 ## 📝 修复建议
 
 ### 高优先级修复
 
-1. **职责重叠** - A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, DOCUMENT_NAMING_STANDARD.md, FREE_DATA_SOURCES.md
-   职责"数据质量"出现在10个文档中
+1. **职责重叠** - A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md
+   职责" - 蓝图设计"出现在3个文档中
 
-2. **职责重叠** - A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md
-   职责"因子计算"出现在16个文档中
+2. **职责重叠** - CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md, factor_master_index.md
+   职责"因子计算"出现在15个文档中
 
-3. **职责重叠** - A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, FREE_DATA_SOURCES.md, MACRO_DATA.md
-   职责"交易执行"出现在9个文档中
-
-4. **职责重叠** - BAOSTOCK_CONNECTOR.md, DATA_ACQUISITION.md, DATA_REQUIREMENTS.md
-   职责"数据质量 (Layer 1)"出现在46个文档中
-
-5. **职责重叠** - CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md, MACRO_DATA.md
+3. **职责重叠** - CORRELATION_ANALYSIS.md, DOCUMENT_NAMING_STANDARD.md, factor_master_index.md
    职责"数据源"出现在19个文档中
 
-6. **职责重叠** - CORRELATION_ANALYSIS.md, CONFIG_MANAGEMENT\BLUEPRINT.md
+4. **职责重叠** - CORRELATION_ANALYSIS.md, CONFIG_MANAGEMENT\BLUEPRINT.md
    职责"机器学习"出现在2个文档中
 
-7. **职责重叠** - MACRO_DATA.md, CONFIG_MANAGEMENT\INDEX.md, DATA_ANOMALY_DETECTION\INDEX.md
-   职责"系统架构"出现在16个文档中
+5. **职责重叠** - DATA_ACQUISITION.md, DATA_REQUIREMENTS.md, DATA_SOURCE_ADAPTERS.md
+   职责"数据质量 (Layer 1)"出现在45个文档中
 
-8. **职责重叠** - CONFIG_MANAGEMENT\INDEX.md, DATA_ANOMALY_DETECTION\INDEX.md, DATA_API_GATEWAY\INDEX.md
-   职责"文档治理"出现在12个文档中
+6. **职责重叠** - DOCUMENT_NAMING_STANDARD.md, FREE_DATA_SOURCES.md, 07_DATA_PIPELINE\README.md
+   职责"数据质量"出现在7个文档中
+
+7. **职责重叠** - FREE_DATA_SOURCES.md, MACRO_DATA.md, 02_SCHEDULER\SCHEDULER_API.md
+   职责"交易执行"出现在6个文档中
+
+8. **职责重叠** - MACRO_DATA.md, DATA_BACKUP_RECOVERY\INDEX.md, DATA_COMPRESSION_ARCHIVE\INDEX.md
+   职责"系统架构"出现在12个文档中
+
+9. **职责重叠** - 02_SCHEDULER\BLUEPRINT.md, 02_SCHEDULER\BLUEPRINT.md
+   职责"02 SCHEDULER - 蓝图设计"出现在2个文档中
+
+10. **职责重叠** - 02_SCHEDULER\INDEX.md, 02_SCHEDULER\INDEX.md
+   职责"02 SCHEDULER - 模块导航"出现在2个文档中
+
+11. **职责重叠** - CONFIG_MANAGEMENT\INDEX.md, CONFIG_MANAGEMENT\INDEX.md
+   职责"CONFIG MANAGEMENT - 模块导航"出现在2个文档中
+
+12. **职责重叠** - DATA_ANOMALY_DETECTION\INDEX.md, DATA_ANOMALY_DETECTION\INDEX.md
+   职责"DATA ANOMALY DETECTION - 模块导航"出现在2个文档中
+
+13. **职责重叠** - DATA_API_GATEWAY\INDEX.md, DATA_API_GATEWAY\INDEX.md
+   职责"DATA API GATEWAY - 模块导航"出现在2个文档中
+
+14. **职责重叠** - DATA_CONTRACT\INDEX.md, DATA_FEDERATION\INDEX.md, DATA_LIFECYCLE_MANAGEMENT\INDEX.md
+   职责"文档治理"出现在7个文档中
 
 
 ---
