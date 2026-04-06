@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 数据质量
+
 module_id: LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY_001
 version: 1.0.0
 status: Active

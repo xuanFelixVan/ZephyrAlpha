@@ -38,11 +38,11 @@ implementation_status: 活跃维护
 
 | 文档名称 | 路径 | 说明 | 优先级 |
 |---------|------|------|--------|
-| [机器学习层蓝图](../01_FRAMEWORK/MACHINE_LEARNING_LAYER_BLUEPRINT.md) | 01_FRAMEWORK | Layer 4整体架构设计 | ⭐⭐⭐⭐⭐ |
-| [MLOps平台蓝图](../01_FRAMEWORK/MLOPS_PLATFORM_BLUEPRINT.md) | 01_FRAMEWORK | MLOps平台架构 | ⭐⭐⭐⭐⭐ |
-| [模型注册中心蓝图](../01_FRAMEWORK/MODEL_REGISTRY_BLUEPRINT.md) | 01_FRAMEWORK | 模型版本管理 | ⭐⭐⭐⭐⭐ |
-| [特征存储蓝图](../01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md) | 01_FRAMEWORK | 特征管理系统 | ⭐⭐⭐⭐⭐ |
-| [实验追踪系统蓝图](../01_FRAMEWORK/EXPERIMENT_TRACKING_BLUEPRINT.md) | 01_FRAMEWORK | 实验记录与对比 | ⭐⭐⭐⭐⭐ |
+| [机器学习层蓝图](01_FRAMEWORK/MACHINE_LEARNING_LAYER_BLUEPRINT.md) | 01_FRAMEWORK | Layer 4整体架构设计 | ⭐⭐⭐⭐⭐ |
+| [MLOps平台蓝图](01_FRAMEWORK/MLOPS_PLATFORM_BLUEPRINT.md) | 01_FRAMEWORK | MLOps平台架构 | ⭐⭐⭐⭐⭐ |
+| [模型注册中心蓝图](01_FRAMEWORK/MODEL_REGISTRY_BLUEPRINT.md) | 01_FRAMEWORK | 模型版本管理 | ⭐⭐⭐⭐⭐ |
+| [特征存储蓝图](01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md) | 01_FRAMEWORK | 特征管理系统 | ⭐⭐⭐⭐⭐ |
+| [实验追踪系统蓝图](01_FRAMEWORK/EXPERIMENT_TRACKING_BLUEPRINT.md) | 01_FRAMEWORK | 实验记录与对比 | ⭐⭐⭐⭐⭐ |
 
 ---
 
@@ -53,145 +53,145 @@ implementation_status: 活跃维护
 #### 1.1 训练框架
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [分布式训练蓝图](../01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md) | 01_FRAMEWORK | 数据并行、模型并行、ZeRO优化 |
-| [混合精度训练蓝图](../01_FRAMEWORK/MIXED_PRECISION_TRAINING_BLUEPRINT.md) | 01_FRAMEWORK | FP16/FP32混合、显存优化 |
-| [梯度累积蓝图](../01_FRAMEWORK/GRADIENT_ACCUMULATION_BLUEPRINT.md) | 01_FRAMEWORK | 小显存大batch、等效批次 |
-| [梯度检查点蓝图](../01_FRAMEWORK/GRADIENT_CHECKPOINTING_BLUEPRINT.md) | 01_FRAMEWORK | 显存优化、大模型训练 |
-| [学习率调度器蓝图](../01_FRAMEWORK/LEARNING_RATE_SCHEDULER_BLUEPRINT.md) | 01_FRAMEWORK | 自适应学习率、余弦退火 |
+| [分布式训练蓝图](01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md) | 01_FRAMEWORK | 数据并行、模型并行、ZeRO优化 |
+| [混合精度训练蓝图](01_FRAMEWORK/MIXED_PRECISION_TRAINING_BLUEPRINT.md) | 01_FRAMEWORK | FP16/FP32混合、显存优化 |
+| [梯度累积蓝图](01_FRAMEWORK/GRADIENT_ACCUMULATION_BLUEPRINT.md) | 01_FRAMEWORK | 小显存大batch、等效批次 |
+| [梯度检查点蓝图](01_FRAMEWORK/GRADIENT_CHECKPOINTING_BLUEPRINT.md) | 01_FRAMEWORK | 显存优化、大模型训练 |
+| [学习率调度器蓝图](01_FRAMEWORK/LEARNING_RATE_SCHEDULER_BLUEPRINT.md) | 01_FRAMEWORK | 自适应学习率、余弦退火 |
 
 #### 1.2 优化技术
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [超参数优化蓝图](../01_FRAMEWORK/HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) | 01_FRAMEWORK | 自动调参、贝叶斯优化 |
-| [优化器变体蓝图](../01_FRAMEWORK/OPTIMIZER_VARIANTS_BLUEPRINT.md) | 01_FRAMEWORK | AdamW/LAMB/Lion/AdaBelief |
-| [模型剪枝蓝图](../01_FRAMEWORK/MODEL_PRUNING_BLUEPRINT.md) | 01_FRAMEWORK | 结构化剪枝、非结构化剪枝 |
-| [模型量化蓝图](../01_FRAMEWORK/MODEL_QUANTIZATION_BLUEPRINT.md) | 01_FRAMEWORK | 权重量化、激活量化 |
-| [知识蒸馏蓝图](../01_FRAMEWORK/KNOWLEDGE_DISTILLATION_BLUEPRINT.md) | 01_FRAMEWORK | 模型压缩、知识迁移 |
+| [超参数优化蓝图](01_FRAMEWORK/HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) | 01_FRAMEWORK | 自动调参、贝叶斯优化 |
+| [优化器变体蓝图](01_FRAMEWORK/OPTIMIZER_VARIANTS_BLUEPRINT.md) | 01_FRAMEWORK | AdamW/LAMB/Lion/AdaBelief |
+| [模型剪枝蓝图](01_FRAMEWORK/MODEL_PRUNING_BLUEPRINT.md) | 01_FRAMEWORK | 结构化剪枝、非结构化剪枝 |
+| [模型量化蓝图](01_FRAMEWORK/MODEL_QUANTIZATION_BLUEPRINT.md) | 01_FRAMEWORK | 权重量化、激活量化 |
+| [知识蒸馏蓝图](01_FRAMEWORK/KNOWLEDGE_DISTILLATION_BLUEPRINT.md) | 01_FRAMEWORK | 模型压缩、知识迁移 |
 
 #### 1.3 高级架构
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [混合专家模型蓝图](../01_FRAMEWORK/MIXTURE_OF_EXPERTS_BLUEPRINT.md) | 01_FRAMEWORK | 稀疏激活、模型容量 |
-| [神经架构搜索蓝图](../01_FRAMEWORK/NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md) | 01_FRAMEWORK | 自动架构设计 |
-| [元学习蓝图](../01_FRAMEWORK/META_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 学习如何学习 |
-| [课程学习蓝图](../01_FRAMEWORK/CURRICULUM_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 渐进学习、难度评估 |
-| [主动学习蓝图](../01_FRAMEWORK/ACTIVE_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 智能采样、标注效率 |
+| [混合专家模型蓝图](01_FRAMEWORK/MIXTURE_OF_EXPERTS_BLUEPRINT.md) | 01_FRAMEWORK | 稀疏激活、模型容量 |
+| [神经架构搜索蓝图](01_FRAMEWORK/NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md) | 01_FRAMEWORK | 自动架构设计 |
+| [元学习蓝图](01_FRAMEWORK/META_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 学习如何学习 |
+| [课程学习蓝图](01_FRAMEWORK/CURRICULUM_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 渐进学习、难度评估 |
+| [主动学习蓝图](01_FRAMEWORK/ACTIVE_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 智能采样、标注效率 |
 
 #### 1.4 学习范式
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [自监督学习蓝图](../01_FRAMEWORK/SELF_SUPERVISED_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 对比学习、掩码预测 |
-| [强化学习蓝图](../01_FRAMEWORK/REINFORCEMENT_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | RL算法、策略优化 |
-| [联邦学习蓝图](../01_FRAMEWORK/FEDERATED_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 隐私保护分布式训练 |
-| [在线学习蓝图](../01_FRAMEWORK/ONLINE_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 实时学习、增量更新 |
-| [迁移学习蓝图](../01_FRAMEWORK/TRANSFER_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 预训练模型迁移 |
+| [自监督学习蓝图](01_FRAMEWORK/SELF_SUPERVISED_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 对比学习、掩码预测 |
+| [强化学习蓝图](01_FRAMEWORK/REINFORCEMENT_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | RL算法、策略优化 |
+| [联邦学习蓝图](01_FRAMEWORK/FEDERATED_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 隐私保护分布式训练 |
+| [在线学习蓝图](01_FRAMEWORK/ONLINE_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 实时学习、增量更新 |
+| [迁移学习蓝图](01_FRAMEWORK/TRANSFER_LEARNING_BLUEPRINT.md) | 01_FRAMEWORK | 预训练模型迁移 |
 
 ### 2. 模型服务与推理 (15个文档)
 
 #### 2.1 推理优化
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [推理加速引擎蓝图](../01_FRAMEWORK/INFERENCE_ACCELERATION_BLUEPRINT.md) | 01_FRAMEWORK | 模型量化、算子融合 |
-| [批处理推理优化蓝图](../01_FRAMEWORK/BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md) | 01_FRAMEWORK | 离线推理、吞吐优化 |
-| [模型预热系统蓝图](../01_FRAMEWORK/MODEL_WARMUP_BLUEPRINT.md) | 01_FRAMEWORK | 冷启动优化 |
-| [模型服务框架蓝图](../01_FRAMEWORK/MODEL_SERVING_FRAMEWORK_BLUEPRINT.md) | 01_FRAMEWORK | 模型部署、服务架构 |
+| [推理加速引擎蓝图](01_FRAMEWORK/INFERENCE_ACCELERATION_BLUEPRINT.md) | 01_FRAMEWORK | 模型量化、算子融合 |
+| [批处理推理优化蓝图](01_FRAMEWORK/BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md) | 01_FRAMEWORK | 离线推理、吞吐优化 |
+| [模型预热系统蓝图](01_FRAMEWORK/MODEL_WARMUP_BLUEPRINT.md) | 01_FRAMEWORK | 冷启动优化 |
+| [模型服务框架蓝图](01_FRAMEWORK/MODEL_SERVING_FRAMEWORK_BLUEPRINT.md) | 01_FRAMEWORK | 模型部署、服务架构 |
 
 #### 2.2 模型管理
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [模型版本控制蓝图](../01_FRAMEWORK/MODEL_VERSIONING_BLUEPRINT.md) | 01_FRAMEWORK | 版本追踪、对比、回滚 |
-| [模型血缘追踪蓝图](../01_FRAMEWORK/MODEL_LINEAGE_BLUEPRINT.md) | 01_FRAMEWORK | 数据追溯、特征追溯 |
-| [模型A/B测试蓝图](../01_FRAMEWORK/MODEL_AB_TESTING_BLUEPRINT.md) | 01_FRAMEWORK | 在线对比、流量分配 |
-| [模型回滚机制蓝图](../01_FRAMEWORK/MODEL_ROLLBACK_BLUEPRINT.md) | 01_FRAMEWORK | 快速回退、自动触发 |
-| [模型卡片蓝图](../01_FRAMEWORK/MODEL_CARD_BLUEPRINT.md) | 01_FRAMEWORK | 模型透明、合规文档 |
+| [模型版本控制蓝图](01_FRAMEWORK/MODEL_VERSIONING_BLUEPRINT.md) | 01_FRAMEWORK | 版本追踪、对比、回滚 |
+| [模型血缘追踪蓝图](01_FRAMEWORK/MODEL_LINEAGE_BLUEPRINT.md) | 01_FRAMEWORK | 数据追溯、特征追溯 |
+| [模型A/B测试蓝图](01_FRAMEWORK/MODEL_AB_TESTING_BLUEPRINT.md) | 01_FRAMEWORK | 在线对比、流量分配 |
+| [模型回滚机制蓝图](01_FRAMEWORK/MODEL_ROLLBACK_BLUEPRINT.md) | 01_FRAMEWORK | 快速回退、自动触发 |
+| [模型卡片蓝图](01_FRAMEWORK/MODEL_CARD_BLUEPRINT.md) | 01_FRAMEWORK | 模型透明、合规文档 |
 
 #### 2.3 监控与调试
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [模型监控蓝图](../01_FRAMEWORK/MODEL_MONITORING_BLUEPRINT.md) | 01_FRAMEWORK | 性能监控、漂移检测 |
-| [模型调试工具蓝图](../01_FRAMEWORK/MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md) | 01_FRAMEWORK | 梯度分析、激活分析 |
-| [模型性能基准蓝图](../01_FRAMEWORK/MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md) | 01_FRAMEWORK | 标准化评估、横向对比 |
-| [漂移检测蓝图](../01_FRAMEWORK/DRIFT_DETECTION_BLUEPRINT.md) | 01_FRAMEWORK | 数据漂移、概念漂移 |
+| [模型监控蓝图](01_FRAMEWORK/MODEL_MONITORING_BLUEPRINT.md) | 01_FRAMEWORK | 性能监控、漂移检测 |
+| [模型调试工具蓝图](01_FRAMEWORK/MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md) | 01_FRAMEWORK | 梯度分析、激活分析 |
+| [模型性能基准蓝图](01_FRAMEWORK/MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md) | 01_FRAMEWORK | 标准化评估、横向对比 |
+| [漂移检测蓝图](01_FRAMEWORK/DRIFT_DETECTION_BLUEPRINT.md) | 01_FRAMEWORK | 数据漂移、概念漂移 |
 
 ### 3. 特征工程与数据处理 (10个文档)
 
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [特征存储蓝图](../01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md) | 01_FRAMEWORK | 特征管理、特征服务 |
-| [数据增强系统蓝图](../01_FRAMEWORK/DATA_AUGMENTATION_BLUEPRINT.md) | 01_FRAMEWORK | 时序增强、噪声注入 |
-| [数据标注平台蓝图](../01_FRAMEWORK/DATA_ANNOTATION_PLATFORM_BLUEPRINT.md) | 01_FRAMEWORK | 标注工具、质量控制 |
-| [合成数据生成蓝图](../01_FRAMEWORK/SYNTHETIC_DATA_GENERATION_BLUEPRINT.md) | 01_FRAMEWORK | GAN/VAE/Diffusion生成 |
-| [特征选择自动化蓝图](../01_FRAMEWORK/FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md) | 01_FRAMEWORK | 自动筛选、冗余消除 |
+| [特征存储蓝图](01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md) | 01_FRAMEWORK | 特征管理、特征服务 |
+| [数据增强系统蓝图](01_FRAMEWORK/DATA_AUGMENTATION_BLUEPRINT.md) | 01_FRAMEWORK | 时序增强、噪声注入 |
+| [数据标注平台蓝图](01_FRAMEWORK/DATA_ANNOTATION_PLATFORM_BLUEPRINT.md) | 01_FRAMEWORK | 标注工具、质量控制 |
+| [合成数据生成蓝图](01_FRAMEWORK/SYNTHETIC_DATA_GENERATION_BLUEPRINT.md) | 01_FRAMEWORK | GAN/VAE/Diffusion生成 |
+| [特征选择自动化蓝图](01_FRAMEWORK/FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md) | 01_FRAMEWORK | 自动筛选、冗余消除 |
 
 ### 4. 高级模型架构 (20个文档)
 
 #### 4.1 时序模型
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [DeepAR蓝图](../01_FRAMEWORK/DEEPAR_BLUEPRINT.md) | 01_FRAMEWORK | 概率预测、自回归结构 |
-| [N-BEATS蓝图](../01_FRAMEWORK/NBEATS_BLUEPRINT.md) | 01_FRAMEWORK | 时序预测模型 |
-| [时间融合Transformer蓝图](../01_FRAMEWORK/TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md) | 01_FRAMEWORK | 多尺度时序建模 |
+| [DeepAR蓝图](01_FRAMEWORK/DEEPAR_BLUEPRINT.md) | 01_FRAMEWORK | 概率预测、自回归结构 |
+| [N-BEATS蓝图](01_FRAMEWORK/NBEATS_BLUEPRINT.md) | 01_FRAMEWORK | 时序预测模型 |
+| [时间融合Transformer蓝图](01_FRAMEWORK/TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md) | 01_FRAMEWORK | 多尺度时序建模 |
 
 #### 4.2 新兴架构
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [扩散模型蓝图](../01_FRAMEWORK/DIFFUSION_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 高质量生成、可控生成 |
-| [Mamba/SSM蓝图](../01_FRAMEWORK/MAMBA_SSM_BLUEPRINT.md) | 01_FRAMEWORK | 线性复杂度、高效推理 |
-| [液体神经网络蓝图](../01_FRAMEWORK/LIQUID_NEURAL_NETWORK_BLUEPRINT.md) | 01_FRAMEWORK | 连续时间动态 |
-| [神经ODE蓝图](../01_FRAMEWORK/NEURAL_ODE_BLUEPRINT.md) | 01_FRAMEWORK | 连续深度、常微分方程 |
-| [记忆增强神经网络蓝图](../01_FRAMEWORK/MEMORY_AUGMENTED_NN_BLUEPRINT.md) | 01_FRAMEWORK | 外部记忆、长期依赖 |
+| [扩散模型蓝图](01_FRAMEWORK/DIFFUSION_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 高质量生成、可控生成 |
+| [Mamba/SSM蓝图](01_FRAMEWORK/MAMBA_SSM_BLUEPRINT.md) | 01_FRAMEWORK | 线性复杂度、高效推理 |
+| [液体神经网络蓝图](01_FRAMEWORK/LIQUID_NEURAL_NETWORK_BLUEPRINT.md) | 01_FRAMEWORK | 连续时间动态 |
+| [神经ODE蓝图](01_FRAMEWORK/NEURAL_ODE_BLUEPRINT.md) | 01_FRAMEWORK | 连续深度、常微分方程 |
+| [记忆增强神经网络蓝图](01_FRAMEWORK/MEMORY_AUGMENTED_NN_BLUEPRINT.md) | 01_FRAMEWORK | 外部记忆、长期依赖 |
 
 #### 4.3 注意力机制
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [稀疏注意力蓝图](../01_FRAMEWORK/SPARSE_ATTENTION_BLUEPRINT.md) | 01_FRAMEWORK | 线性复杂度、长序列处理 |
-| [图神经网络蓝图](../01_FRAMEWORK/GRAPH_NEURAL_NETWORK_BLUEPRINT.md) | 01_FRAMEWORK | 图结构建模、消息传递 |
+| [稀疏注意力蓝图](01_FRAMEWORK/SPARSE_ATTENTION_BLUEPRINT.md) | 01_FRAMEWORK | 线性复杂度、长序列处理 |
+| [图神经网络蓝图](01_FRAMEWORK/GRAPH_NEURAL_NETWORK_BLUEPRINT.md) | 01_FRAMEWORK | 图结构建模、消息传递 |
 
 #### 4.4 多模态与LLM
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [多模态大模型蓝图](../01_FRAMEWORK/MULTIMODAL_LLM_BLUEPRINT.md) | 01_FRAMEWORK | 文本/图像/音频融合 |
-| [LLM微调蓝图](../01_FRAMEWORK/LLM_FINE_TUNING_BLUEPRINT.md) | 01_FRAMEWORK | LoRA/QLoRA微调 |
-| [提示工程蓝图](../01_FRAMEWORK/PROMPT_ENGINEERING_BLUEPRINT.md) | 01_FRAMEWORK | 提示模板、Few-shot学习 |
-| [RAG系统蓝图](../01_FRAMEWORK/RAG_SYSTEM_BLUEPRINT.md) | 01_FRAMEWORK | 向量数据库、相似度搜索 |
-| [代码生成模型蓝图](../01_FRAMEWORK/CODE_GENERATION_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 自动编码、代码补全 |
-| [文本编码器蓝图](../01_FRAMEWORK/TEXT_ENCODER_BLUEPRINT.md) | 01_FRAMEWORK | 文本向量化、语义编码 |
+| [多模态大模型蓝图](01_FRAMEWORK/MULTIMODAL_LLM_BLUEPRINT.md) | 01_FRAMEWORK | 文本/图像/音频融合 |
+| [LLM微调蓝图](01_FRAMEWORK/LLM_FINE_TUNING_BLUEPRINT.md) | 01_FRAMEWORK | LoRA/QLoRA微调 |
+| [提示工程蓝图](01_FRAMEWORK/PROMPT_ENGINEERING_BLUEPRINT.md) | 01_FRAMEWORK | 提示模板、Few-shot学习 |
+| [RAG系统蓝图](01_FRAMEWORK/RAG_SYSTEM_BLUEPRINT.md) | 01_FRAMEWORK | 向量数据库、相似度搜索 |
+| [代码生成模型蓝图](01_FRAMEWORK/CODE_GENERATION_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 自动编码、代码补全 |
+| [文本编码器蓝图](01_FRAMEWORK/TEXT_ENCODER_BLUEPRINT.md) | 01_FRAMEWORK | 文本向量化、语义编码 |
 
 ### 5. 隐私与安全 (8个文档)
 
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [差分隐私ML蓝图](../01_FRAMEWORK/DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md) | 01_FRAMEWORK | 差分隐私、梯度裁剪 |
-| [同态加密ML蓝图](../01_FRAMEWORK/HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md) | 01_FRAMEWORK | 加密数据训练 |
-| [安全多方计算蓝图](../01_FRAMEWORK/SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT.md) | 01_FRAMEWORK | 跨机构隐私保护计算 |
-| [可信执行环境蓝图](../01_FRAMEWORK/TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md) | 01_FRAMEWORK | SGX/SEV、硬件级安全 |
-| [模型水印蓝图](../01_FRAMEWORK/MODEL_WATERMARK_BLUEPRINT.md) | 01_FRAMEWORK | 所有权证明、版权保护 |
-| [后门检测蓝图](../01_FRAMEWORK/BACKDOOR_DETECTION_BLUEPRINT.md) | 01_FRAMEWORK | 后门识别、触发器检测 |
-| [MIA防御蓝图](../01_FRAMEWORK/MIA_DEFENSE_BLUEPRINT.md) | 01_FRAMEWORK | 成员推理攻击防御 |
-| [模型安全扫描器蓝图](../01_FRAMEWORK/MODEL_SECURITY_SCANNER_BLUEPRINT.md) | 01_FRAMEWORK | 模型安全审计 |
+| [差分隐私ML蓝图](01_FRAMEWORK/DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md) | 01_FRAMEWORK | 差分隐私、梯度裁剪 |
+| [同态加密ML蓝图](01_FRAMEWORK/HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md) | 01_FRAMEWORK | 加密数据训练 |
+| [安全多方计算蓝图](01_FRAMEWORK/SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT.md) | 01_FRAMEWORK | 跨机构隐私保护计算 |
+| [可信执行环境蓝图](01_FRAMEWORK/TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md) | 01_FRAMEWORK | SGX/SEV、硬件级安全 |
+| [模型水印蓝图](01_FRAMEWORK/MODEL_WATERMARK_BLUEPRINT.md) | 01_FRAMEWORK | 所有权证明、版权保护 |
+| [后门检测蓝图](01_FRAMEWORK/BACKDOOR_DETECTION_BLUEPRINT.md) | 01_FRAMEWORK | 后门识别、触发器检测 |
+| [MIA防御蓝图](01_FRAMEWORK/MIA_DEFENSE_BLUEPRINT.md) | 01_FRAMEWORK | 成员推理攻击防御 |
+| [模型安全扫描器蓝图](01_FRAMEWORK/MODEL_SECURITY_SCANNER_BLUEPRINT.md) | 01_FRAMEWORK | 模型安全审计 |
 
 ### 6. 金融应用模型 (12个文档)
 
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [市场微观结构模型蓝图](../01_FRAMEWORK/MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 订单簿动态、流动性预测 |
-| [波动率预测蓝图](../01_FRAMEWORK/VOLATILITY_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | GARCH/LSTM-Vol、VaR计算 |
-| [相关性预测蓝图](../01_FRAMEWORK/CORRELATION_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | DCC-GARCH、动态相关矩阵 |
-| [极端风险预测蓝图](../01_FRAMEWORK/TAIL_RISK_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | EVT、VaR/ES、尾部风险建模 |
-| [订单流预测蓝图](../01_FRAMEWORK/ORDER_FLOW_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | 方向预测、量级预测 |
-| [高频信号处理蓝图](../01_FRAMEWORK/HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md) | 01_FRAMEWORK | 微秒级特征提取 |
-| [做市策略模型蓝图](../01_FRAMEWORK/MARKET_MAKING_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 报价优化、库存管理 |
-| [套利检测模型蓝图](../01_FRAMEWORK/ARBITRAGE_DETECTION_BLUEPRINT.md) | 01_FRAMEWORK | 空间套利、统计套利 |
-| [情感分析层蓝图](../01_FRAMEWORK/SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md) | 01_FRAMEWORK | 文本情感、舆情监控 |
+| [市场微观结构模型蓝图](01_FRAMEWORK/MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 订单簿动态、流动性预测 |
+| [波动率预测蓝图](01_FRAMEWORK/VOLATILITY_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | GARCH/LSTM-Vol、VaR计算 |
+| [相关性预测蓝图](01_FRAMEWORK/CORRELATION_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | DCC-GARCH、动态相关矩阵 |
+| [极端风险预测蓝图](01_FRAMEWORK/TAIL_RISK_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | EVT、VaR/ES、尾部风险建模 |
+| [订单流预测蓝图](01_FRAMEWORK/ORDER_FLOW_PREDICTION_BLUEPRINT.md) | 01_FRAMEWORK | 方向预测、量级预测 |
+| [高频信号处理蓝图](01_FRAMEWORK/HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md) | 01_FRAMEWORK | 微秒级特征提取 |
+| [做市策略模型蓝图](01_FRAMEWORK/MARKET_MAKING_MODEL_BLUEPRINT.md) | 01_FRAMEWORK | 报价优化、库存管理 |
+| [套利检测模型蓝图](01_FRAMEWORK/ARBITRAGE_DETECTION_BLUEPRINT.md) | 01_FRAMEWORK | 空间套利、统计套利 |
+| [情感分析层蓝图](01_FRAMEWORK/SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md) | 01_FRAMEWORK | 文本情感、舆情监控 |
 
 ### 7. AI Agent与自动化 (5个文档)
 
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [AI Agent框架蓝图](../01_FRAMEWORK/AI_AGENT_FRAMEWORK_BLUEPRINT.md) | 01_FRAMEWORK | 自主决策、工具调用 |
-| [AutoML流水线蓝图](../01_FRAMEWORK/AUTOML_PIPELINE_BLUEPRINT.md) | 01_FRAMEWORK | 自动特征工程、自动调参 |
-| [多模型编排器蓝图](../01_FRAMEWORK/MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md) | 01_FRAMEWORK | 模型组合、动态选择 |
-| [自适应模型系统蓝图](../01_FRAMEWORK/ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md) | 01_FRAMEWORK | 在线适应、概念漂移 |
+| [AI Agent框架蓝图](01_FRAMEWORK/AI_AGENT_FRAMEWORK_BLUEPRINT.md) | 01_FRAMEWORK | 自主决策、工具调用 |
+| [AutoML流水线蓝图](01_FRAMEWORK/AUTOML_PIPELINE_BLUEPRINT.md) | 01_FRAMEWORK | 自动特征工程、自动调参 |
+| [多模型编排器蓝图](01_FRAMEWORK/MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md) | 01_FRAMEWORK | 模型组合、动态选择 |
+| [自适应模型系统蓝图](01_FRAMEWORK/ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md) | 01_FRAMEWORK | 在线适应、概念漂移 |
 
 ---
 
@@ -208,10 +208,10 @@ implementation_status: 活跃维护
 
 ## 🔗 相关索引
 
-- [框架设计目录索引](../01_FRAMEWORK/INDEX.md) - Layer 4主要文档索引
-- [实施层索引](../05_IMPLEMENTATION/README.md) - 实施相关文档
-- [人机交互层索引](../08_HUMAN_AI_INTERFACE/INDEX.md) - 接口相关文档
-- [AI工作流索引](../10_AI_WORKFLOW/INDEX.md) - 工作流相关文档
+- [框架设计目录索引](01_FRAMEWORK/INDEX.md) - Layer 4主要文档索引
+- [实施层索引](05_IMPLEMENTATION/README.md) - 实施相关文档
+- [人机交互层索引](08_HUMAN_AI_INTERFACE/INDEX.md) - 接口相关文档
+- [AI工作流索引](10_AI_WORKFLOW/INDEX.md) - 工作流相关文档
 
 ---
 
