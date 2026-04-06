@@ -31,6 +31,18 @@ implementation_status: 规划中
 
 ---
 
+## 📋 规划说明
+
+> **当前状态**: 🔄 规划阶段
+> 
+> 本目录当前仅包含索引文件，所有详细文档将在实施阶段创建。
+> 
+> **详细设计参考**:
+> - 业务架构: [../BLUEPRINT.md](../BLUEPRINT.md) - AI虚拟研究实验室架构设计
+> - 技术实施: [../IMPLEMENTATION_GUIDE.md](../IMPLEMENTATION_GUIDE.md) - 开源工具选型与实施方案
+
+---
+
 ## 📚 核心文档
 
 ### 研究团队管理
