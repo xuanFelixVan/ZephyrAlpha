@@ -1,15 +1,3 @@
----
-module_id: RISK_ATTRIBUTION_REPORT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.1
@@ -37,16 +25,17 @@ open_source_dependency: numpy, pandas, scipy
 priority: P0
 layer: "Layer 7 (风险管理层)"
 ---
-
-
-
-
 > **索引**: `RISK_ATTRIBUTION_001`
 > **开发时?*: 80h（约2周）
 > **核心定位**: 多维度风险分解与归因分析，识别风险驱动因?> **对标机构**: Two Sigma
 > **个人开发可?*: ⭐⭐⭐⭐ 完全可行
 > **AI维护难度**: ?
 ---
+
+## 核心定位
+
+Risk Attribution System Blueprint模块，负责risk attribution system blueprint相关功能
+
 
 ## 1. 概述
 

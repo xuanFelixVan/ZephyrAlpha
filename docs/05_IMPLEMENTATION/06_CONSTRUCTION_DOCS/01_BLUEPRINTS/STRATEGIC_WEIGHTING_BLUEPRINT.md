@@ -1,15 +1,3 @@
----
-module_id: STRATEGICWEIGHTINGBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
@@ -36,6 +24,11 @@ open_source_dependency: cvxpy, pandas, numpy, scipy, PyPortfolioOpt
 > **开发周期**: 2.5周
 
 ---
+
+## 核心定位
+
+Strategic Weighting Blueprint模块，负责strategic weighting blueprint相关功能
+
 
 ## 📋 执行摘要
 

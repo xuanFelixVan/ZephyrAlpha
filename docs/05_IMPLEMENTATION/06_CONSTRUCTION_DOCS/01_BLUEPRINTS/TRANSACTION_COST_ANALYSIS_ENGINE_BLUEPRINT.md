@@ -1,15 +1,3 @@
----
-module_id: TRANSACTIONCOSTANALYSISENGI_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: TRANSACTION_COST_ANALYSIS_ENGINE_001
 version: 1.0.0
@@ -37,8 +25,6 @@ estimated_effort: 3周
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 交易成本分析引擎蓝图
 
 > **核心定位**: 交易成本分析引擎蓝图的核心功能实现
@@ -55,11 +41,8 @@ layer: "Layer 6 (组合优化层)"
 
 ### 核心定位
 
-交易成本分析引擎（TCA）是策略执行层的**成本分析核心**，负责：
-- 执行成本分析（显性成本、隐性成本）
-- 基准对比（VWAP、TWAP、Arrival Price、Implementation Shortfall）
-- 成本归因（市场冲击、时机成本、价差成本）
-- 执行质量评分
+Transaction Cost Analysis Engine Blueprint模块，负责transaction cost analysis engine blueprint相关功能
+
 
 ### 个人使用价值
 

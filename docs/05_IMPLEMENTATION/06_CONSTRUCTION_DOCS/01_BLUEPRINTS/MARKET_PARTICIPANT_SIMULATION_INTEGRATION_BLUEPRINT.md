@@ -1,15 +1,3 @@
----
-module_id: MARKETPARTICIPANTSIMULATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_001
 version: 1.0.0
@@ -23,8 +11,6 @@ parent_document: ./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md
 implementation_status: 设计阶段
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 市场参与者行为模拟系?- 多层次集成架构方?
 
 > **核心定位**: 市场参与者行为模拟系?- 多层次集成架构方?的核心功能实现
@@ -35,6 +21,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心问题**: 市场参与者模拟（国家队、主力、散户）如何集成到现有系统？
 > **答案**: 多层次集?- 同时作为因子、信号、决策三种形式介?
 ---
+
+## 核心定位
+
+Market Participant Simulation Integration Architecture模块，负责market participant simulation integration architecture相关功能
+
 
 ## 🎯 一、核心答案：多层次集成架?
 ### 1.1 不是单选题，而是多选题

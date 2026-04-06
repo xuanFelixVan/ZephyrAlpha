@@ -1,17 +1,4 @@
 ---
-module_id: OPERATIONS_KNOWLEDGE_MANAGEMENT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-layer: Layer 4 (机器学习层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: AIWF_OKM_001
 version: 1.0.0
 status: Active
@@ -19,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席架构师
 standard_type: 专业机构级蓝图
-applicable_scope: 运维与知识管理模
+applicable_scope: 运维与知识管理模块
 compliance_level: 专业标准
 parent_document: INDEX.md
 layer: 舆情分析

@@ -1,15 +1,3 @@
----
-module_id: DYNAMICASSETALLOCATIONBLUEP_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
@@ -27,8 +15,6 @@ open_source_dependency: Skfolio, PyPortfolioOpt
 estimated_effort: 1.5周
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 动态资产配置蓝图
 
 > **核心定位**: 动态资产配置蓝图的核心功能实现
@@ -41,6 +27,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 1.5周
 
 ---
+
+## 核心定位
+
+Dynamic Asset Allocation Blueprint模块，负责dynamic asset allocation blueprint相关功能
+
 
 ## 1. 模块概述
 

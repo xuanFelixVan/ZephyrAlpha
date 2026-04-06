@@ -1,15 +1,3 @@
----
-module_id: SIMPLIFIEDRISKBUDGETSYSTEM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
@@ -28,8 +16,6 @@ priority: P0
 simplified_version: true
 layer: "Layer 7 (风险管理层)"
 ---
-
-
 # 简化版动态风险预算系统蓝图
 
 > **核心定位**: 简化版动态风险预算系统蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 7 (风险管理层)"
 > **开发周期**: 60h（约1.5周）
 > **核心定位**: 基于VaR的风险预算 + 动态风险预算调整，实现风险预算动态化
 > **参考开源**: PyPortfolioOpt, Riskfolio-Lib
+
+## 核心定位
+
+Simplified Risk Budget System Blueprint模块，负责simplified risk budget system blueprint相关功能
+
 
 ## 1. 概述
 

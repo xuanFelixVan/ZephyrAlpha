@@ -1,15 +1,3 @@
----
-module_id: MULTIASSETALLOCATIONBLUEPRI_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
@@ -43,6 +31,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可?*: ⭐⭐⭐⭐ 完全可行
 > **AI维护难度**: ?
 ---
+
+## 核心定位
+
+Multi Asset Allocation Blueprint模块，负责multi asset allocation blueprint相关功能
+
 
 ## 1. 概述
 

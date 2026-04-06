@@ -1,15 +1,3 @@
----
-module_id: PORTFOLIOOPTIMIZERINTEGRATIO_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 5-7天
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
-
 # 组合优化引擎集成模块蓝图
 
 > **核心定位**: 组合优化引擎集成模块蓝图的核心功能实现
@@ -40,6 +25,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 统一优化器接口，多优化器集成，优化器选择策略
 > **参考开源**: PyPortfolioOpt + Riskfolio-Lib + skfolio + deepfolio + cvxpy
 > **专业对标**: 所有专业量化机构必备模块
+
+## 核心定位
+
+Portfolio Optimizer Integration Blueprint模块，负责portfolio optimizer integration blueprint相关功能
+
 
 ## 1. 概述
 

@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-layer: Layer 9 - 研究与创新层
+layer: Layer 9 (治理层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 研究项目管理模块
 compliance_level: 顶级专业标准

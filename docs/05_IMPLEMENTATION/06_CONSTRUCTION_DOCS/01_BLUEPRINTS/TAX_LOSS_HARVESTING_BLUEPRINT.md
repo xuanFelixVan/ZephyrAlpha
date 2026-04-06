@@ -1,15 +1,3 @@
----
-module_id: TAXLOSSHARVESTINGBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: TAX_LOSS_HARVESTING_001
 version: 1.0.0
@@ -27,8 +15,6 @@ open_source_dependency: rebalancer (参考), 自研核心
 estimated_effort: 2周
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 税收优化（税损收割）蓝图
 
 > **核心定位**: 税收优化（税损收割）蓝图的核心功能实现
@@ -41,6 +27,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 2周
 
 ---
+
+## 核心定位
+
+Tax Loss Harvesting Blueprint模块，负责tax loss harvesting blueprint相关功能
+
 
 ## 1. 模块概述
 
@@ -300,6 +291,51 @@ tax_loss_harvesting:
   substitute:
     correlation_threshold: 0.9
     max_tracking_error: 0.02
+```
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 提供成本分析 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依赖 | 组合再平衡 |
+| [周转率控制蓝图](./TURNOVER_CONTROL_BLUEPRINT.md) | TURNOVER_CONTROL_001 | 中依赖 | 周转率控制 |
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依赖 | 季度调仓决策 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[组合优化引擎] --> B[税损收割]
+    C[数据质量监控] --> B
+    D[交易成本分析引擎] --> B
+    
+    B --> E[组合再平衡]
+    B --> F[周转率控制]
+    B --> G[季度调仓]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
 ```
 
 ---

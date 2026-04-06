@@ -40,7 +40,6 @@ implementation_status: 进行�?
 
 | 目录名称 | 说明 | 状�?|
 |----------|------|------|
-| **00_GOVERNANCE** | 因子治理框架 |  已创�?|
 | **02_ALPHA_FACTORY** | Alpha 因子工厂 |  已创�?|
 | **03_RISK_MODELS** | 风险模型 |  已创�?|
 | **04_DATA_UNIVERSE** | 数据宇宙 |  已创�?|
@@ -53,7 +52,6 @@ implementation_status: 进行�?
 | 文档名称 | 位置 | 说明 | 状�?|
 |----------|------|------|------|
 | **README.md** | 02_FACTOR_LIBRARY/ | 总览和导�?|  已创�?|
-| **README.md** | 00_GOVERNANCE/ | 治理框架 |  已创�?|
 | **FACTOR_CATALOG.md** | 06_REGISTRY/ | 因子注册�?|  已创�?|
 | **99_AUDIT_REPORT.md** | 02_FACTOR_LIBRARY/ | 审计报告 |  已创�?|
 

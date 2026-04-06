@@ -1,15 +1,3 @@
----
-module_id: LAYER_AI_004
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: SYSTEM_INTEGRATION_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 待评估
 priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-
-
-
 # Layer 7 AI报告层 - 模块集成架构蓝图
 
 > **核心定位**: Layer 7 AI报告层 - 模块集成架构蓝图的核心功能实现
@@ -41,6 +26,11 @@ layer: "Layer 6 (组合优化层)"
 **状?*: 设计阶段
 **优先?*: P0级（核心集成?
 ---
+
+## 核心定位
+
+System Integration Blueprint模块，负责system integration blueprint相关功能
+
 
 ## 一、集成架构概?
 ### 1.1 集成目标

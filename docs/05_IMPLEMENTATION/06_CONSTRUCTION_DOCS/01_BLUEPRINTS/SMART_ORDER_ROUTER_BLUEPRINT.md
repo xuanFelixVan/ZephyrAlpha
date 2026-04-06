@@ -1,15 +1,3 @@
----
-module_id: SMARTORDERROUTERBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: SMART_ORDER_ROUTER_001
 version: 1.0.0
@@ -37,8 +25,6 @@ estimated_effort: 3周
 priority: P2
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 智能订单路由器蓝图
 
 > **核心定位**: 智能订单路由器蓝图的核心功能实现
@@ -55,11 +41,8 @@ layer: "Layer 6 (组合优化层)"
 
 ### 核心定位
 
-智能订单路由器（SOR）是策略执行层的**订单路由核心**，负责：
-- 订单拆分优化（大单拆分、时间拆分）
-- 执行路径选择（最优执行路径）
-- 流动性聚合（多流动性源聚合）
-- 执行监控（实时执行监控）
+Smart Order Router Blueprint模块，负责smart order router blueprint相关功能
+
 
 ### 个人使用价值
 
@@ -482,6 +465,48 @@ class SubOrder:
 ---
 
 ## 九、相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [智能执行引擎蓝图](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) | SMART_EXECUTION_ENGINE_001 | 强依赖 | 提供执行算法 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [市场冲击模型蓝图](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | 中依赖 | 提供市场冲击预测 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 强依赖 | 算法交易优化 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 交易成本分析 |
+| [执行策略回测器蓝图](./EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md) | EXECUTION_STRATEGY_BACKTESTER_001 | 中依赖 | 执行策略回测 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[智能执行引擎] --> B[智能订单路由器]
+    C[数据质量监控] --> B
+    D[市场冲击模型] --> B
+    
+    B --> E[算法交易优化器]
+    B --> F[交易成本分析引擎]
+    B --> G[执行策略回测器]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 相关蓝图文档
 
 | 文档名称 | 说明 |
 |---------|------|

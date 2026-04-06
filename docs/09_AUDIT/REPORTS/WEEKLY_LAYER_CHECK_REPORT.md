@@ -1,18 +1,6 @@
----
-module_id: LAYER_032
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 审计团队
-standard_type: 专业量化机构报告
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 # 定期Layer归属检查报告
 
-> **检查时间**: 2026-04-07 01:29:54
+> **检查时间**: 2026-04-07 01:33:26
 > **检查范围**: 全系统蓝图文件
 
 ## 📊 检查统计

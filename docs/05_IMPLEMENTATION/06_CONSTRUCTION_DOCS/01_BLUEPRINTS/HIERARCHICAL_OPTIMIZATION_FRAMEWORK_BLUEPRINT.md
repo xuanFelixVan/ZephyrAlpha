@@ -1,15 +1,3 @@
----
-module_id: HIERARCHICALOPTIMIZATIONFRAM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 version: 1.0.0
@@ -27,7 +15,6 @@ open_source_dependency: PyPortfolioOpt, cvxpy, scipy
 estimated_effort: 2周
 layer: "Layer 6 (组合优化层)"
 ---
-
 # 层次化优化框架蓝图
 
 > **模块ID**: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
@@ -35,6 +22,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 提供大规模资产池的分层优化能力，解决维度灾难问题
 
 ---
+
+## 核心定位
+
+Hierarchical Optimization Framework Blueprint模块，负责hierarchical optimization framework blueprint相关功能
+
 
 ## 1. 模块概述
 

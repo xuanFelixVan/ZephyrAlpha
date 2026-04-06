@@ -1,15 +1,3 @@
----
-module_id: MULTISTRATEGYHIERARCHICALSY_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.1
@@ -41,6 +29,11 @@ layer: "Layer 3 (策略层)"
 > **核心定位**: 实现策略分层权重分配、信号融合机制、策略协同优化，构建多策略协同的专业量化系统
 
 ---
+
+## 核心定位
+
+Multi Strategy Hierarchical System Blueprint模块，负责multi strategy hierarchical system blueprint相关功能
+
 
 ## 1. 模块概述
 

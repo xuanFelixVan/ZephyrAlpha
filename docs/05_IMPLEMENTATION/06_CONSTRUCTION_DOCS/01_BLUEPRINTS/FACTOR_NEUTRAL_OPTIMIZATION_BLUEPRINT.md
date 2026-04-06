@@ -1,15 +1,3 @@
----
-module_id: FACTORNEUTRALOPTIMIZATIONBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: FACTOR_NEUTRAL_OPTIMIZATION_001
 version: 1.0.0
@@ -25,10 +13,8 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 open_source_dependency: Riskfolio-Lib, cvxpy
 estimated_effort: 1.5周
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 2 (Alpha因子层)"
 ---
-
-
 # 因子中性优化蓝图
 
 > **核心定位**: 因子中性优化蓝图的核心功能实现
@@ -41,6 +27,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 1.5周
 
 ---
+
+## 核心定位
+
+Factor Neutral Optimization Blueprint模块，负责factor neutral optimization blueprint相关功能
+
 
 ## 1. 模块概述
 

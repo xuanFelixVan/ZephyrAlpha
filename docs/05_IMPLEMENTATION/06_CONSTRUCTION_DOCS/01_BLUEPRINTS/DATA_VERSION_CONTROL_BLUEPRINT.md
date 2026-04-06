@@ -1,15 +1,3 @@
----
-module_id: DATAVERSIONCONTROLBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: DATA_VERSION_CONTROL_001
 version: 1.0.0
@@ -28,8 +16,6 @@ estimated_effort: 2周
 priority: P2
 layer: "Layer 1 (数据源层)"
 ---
-
-
 # 数据版本控制蓝图
 
 > **核心定位**: 数据版本控制蓝图的核心功能实现
@@ -40,6 +26,11 @@ layer: "Layer 1 (数据源层)"
 > **实施周期**: Week 29-30（2周）
 > **优先级**: P2（优化）
 > **预期收益**: 提升数据可追溯性95%，支持数据回滚和审计
+
+## 核心定位
+
+Data Version Control Blueprint模块，负责data version control blueprint相关功能
+
 
 ## 一、设计背景与目标
 

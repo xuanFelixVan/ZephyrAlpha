@@ -1,15 +1,3 @@
----
-module_id: QUALITYSCORINGSYSTEMBLUEPRI_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
@@ -28,8 +16,6 @@ estimated_effort: 1周
 priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 数据质量评分系统蓝图
 
 > **核心定位**: 数据质量评分系统蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 6 (组合优化层)"
 > **实施周期**: Week 8-9（1周）
 > **优先级**: P1（重要）
 > **预期收益**: 提升数据质量透明度，降低数据问题风险50%
+
+## 核心定位
+
+Quality Scoring System Blueprint模块，负责quality scoring system blueprint相关功能
+
 
 ## 一、设计背景与目标
 

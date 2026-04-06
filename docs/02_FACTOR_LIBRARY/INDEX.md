@@ -35,7 +35,6 @@ implementation_status: 活跃维护
 | [系统清单](../System_Manifest.md) | 系统清单（全局�?| ⭐⭐⭐⭐�?|
 | [README](./README.md) | 因子库概�?| ⭐⭐⭐⭐�?|
 | [SITEMAP](./SITEMAP.md) | 因子库文档地�?| ⭐⭐⭐⭐�?|
-| [因子库对接蓝图](./00_INDEX/FACTOR_LIBRARY.md) | 因子库对接蓝�?| ⭐⭐⭐⭐�?|
 | [FAQ](./FAQ.md) | 常见问题解答 | ⭐⭐⭐⭐ |
 | [交接文档](./HANDOVER.md) | 项目交接文档 | ⭐⭐⭐⭐ |
 | [知识管理](./KNOWLEDGE_MANAGEMENT.md) | 知识管理体系 | ⭐⭐⭐⭐ |
@@ -223,8 +222,6 @@ implementation_status: 活跃维护
 ## 🗂�?子目�?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
-| [00_GOVERNANCE/](./00_GOVERNANCE/) | 治理文档 | 1 |
-| [00_INDEX/](./00_INDEX/) | 索引文档 | 3 |
 | [01_STANDARDS/](./01_STANDARDS/) | 方法论文�?| 13 |
 | [03_RISK_FACTORS/](./03_RISK_FACTORS/) | 风险因子 | 5 |
 | [04_DATA_SOURCE/](./04_DATA_SOURCE/) | 数据�?| 15+ |

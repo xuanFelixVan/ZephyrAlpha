@@ -1,15 +1,3 @@
----
-module_id: FACTORBACKTESTINTEGRATIONBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_001
 version: 1.0.0
@@ -25,10 +13,8 @@ implementation_status: 设计阶段
 open_source_dependency: 待补充
 estimated_effort: 待评估
 priority: P1
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 2 (Alpha因子层)"
 ---
-
-
 # 因子库与回测集成架构蓝图
 
 > **核心定位**: 因子库与回测集成架构蓝图的核心功能实现
@@ -37,6 +23,11 @@ layer: "Layer 6 (组合优化层)"
 > **索引**: `FAC_BT_001`
 > **开发时?*: 120h
 > **核心定位**: 实现"因子计算 ?因子存储 ?IC分析 ?Backtrader回测 ?组合优化 ?绩效归因"的完整量化研究闭?
+
+## 核心定位
+
+Factor Backtest Integration Blueprint模块，负责factor backtest integration blueprint相关功能
+
 
 ## 1. 设计原则
 

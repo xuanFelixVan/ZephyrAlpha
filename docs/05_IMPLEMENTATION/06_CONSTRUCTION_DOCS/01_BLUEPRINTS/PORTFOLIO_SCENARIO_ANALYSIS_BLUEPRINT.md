@@ -1,15 +1,3 @@
----
-module_id: PORTFOLIOSCENARIOANALYSISBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: PORTFOLIO_SCENARIO_ANALYSIS_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 5-7天
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
-
 # 组合情景分析模块蓝图
 
 > **核心定位**: 组合情景分析模块蓝图的核心功能实现
@@ -39,6 +24,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 5-7天
 > **核心定位**: 专业级组合情景分析，支持历史情景、假设情景、敏感性分析
 > **专业对标**: 所有专业量化机构必备模块
+
+## 核心定位
+
+Portfolio Scenario Analysis Blueprint模块，负责portfolio scenario analysis blueprint相关功能
+
 
 ## 1. 概述
 

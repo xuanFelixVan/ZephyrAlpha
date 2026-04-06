@@ -1,15 +1,3 @@
----
-module_id: RISKPARITYSTRATEGYBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 2-3天
 priority: P0
 layer: "Layer 3 (策略层)"
 ---
-
-
-
 # 风险平价策略蓝图
 
 > **核心定位**: 风险平价策略蓝图的核心功能实现
@@ -40,6 +25,11 @@ layer: "Layer 3 (策略层)"
 > **核心定位**: 基于风险贡献而非资金贡献的组合构建策略，实现真正的分散化投资
 > **参考开源**: PyPortfolioOpt (4.2k+ ⭐) + Riskfolio-Lib (3.1k+ ⭐) + skfolio (500+ ⭐)
 > **专业对标**: 桥水基金全天候策略、AQR风险平价策略
+
+## 核心定位
+
+Risk Parity Strategy Blueprint模块，负责risk parity strategy blueprint相关功能
+
 
 ## 1. 概述
 

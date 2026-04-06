@@ -1,15 +1,3 @@
----
-module_id: TAILRISKMETRICSEXTENSIONBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
@@ -27,8 +15,6 @@ open_source_dependency: Riskfolio-Lib, scipy
 estimated_effort: 1周
 layer: "Layer 4 (机器学习层)"
 ---
-
-
 # 尾部风险度量扩展蓝图
 
 > **核心定位**: 尾部风险度量扩展蓝图的核心功能实现
@@ -41,6 +27,11 @@ layer: "Layer 4 (机器学习层)"
 > **开发周期**: 1周
 
 ---
+
+## 核心定位
+
+Tail Risk Metrics Extension Blueprint模块，负责tail risk metrics extension blueprint相关功能
+
 
 ## 1. 模块概述
 
@@ -166,6 +157,51 @@ tail_risk_metrics:
   # 回撤配置
   drawdown:
     max_threshold: 0.20  # 最大回撤阈值
+```
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依赖 | 提供VaR/ES指标 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [组合情景分析蓝图](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 中依赖 | 提供情景分析 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [尾部风险对冲蓝图](./TAIL_RISK_HEDGING_BLUEPRINT.md) | TAIL_RISK_HEDGING_001 | 强依赖 | 尾部风险对冲 |
+| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依赖 | 压力测试 |
+| [风险归因系统蓝图](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) | RISK_ATTRIBUTION_SYSTEM_001 | 中依赖 | 风险归因 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[VaR/ES监控] --> B[尾部风险指标扩展]
+    C[数据质量监控] --> B
+    D[组合情景分析] --> B
+    
+    B --> E[尾部风险对冲]
+    B --> F[压力测试系统]
+    B --> G[风险归因系统]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
 ```
 
 ---

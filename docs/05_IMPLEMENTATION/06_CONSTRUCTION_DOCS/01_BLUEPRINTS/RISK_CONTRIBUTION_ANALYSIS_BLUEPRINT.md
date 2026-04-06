@@ -1,15 +1,3 @@
----
-module_id: RISKCONTRIBUTIONANALYSISBLU_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: RISK_CONTRIBUTION_ANALYSIS_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 2-3天
 priority: P0
 layer: "Layer 7 (风险管理层)"
 ---
-
-
-
 # 风险贡献分析蓝图
 
 > **核心定位**: 风险贡献分析蓝图的核心功能实现
@@ -39,6 +24,11 @@ layer: "Layer 7 (风险管理层)"
 > **开发周期**: 2-3天
 > **核心定位**: 分解组合风险，计算各资产的风险贡献，支持风险预算管理
 > **参考开源**: PyPortfolioOpt, Riskfolio-Lib
+
+## 核心定位
+
+Risk Contribution Analysis Blueprint模块，负责risk contribution analysis blueprint相关功能
+
 
 ## 1. 概述
 

@@ -43,7 +43,6 @@ implementation_status: 进行中
 
 ## 核心模块
 
-- **[治理框架](./00_GOVERNANCE/README.md)** - 因子治理、生命周期管理、质量标�?- **[方法论](./01_STANDARDS/README.md)** - IC分析、回测标准、因子定�?- **[数据层](./04_DATA_SOURCE/README.md)** - 数据接口、数据质�?- **[回测验证](./05_BACKTEST/README.md)** - IC报告、回测报�?- **[因子注册](./06_REGISTRY/FACTOR_CATALOG.md)** - 因子注册表、元数据
 - **[监控中心](./07_FACTOR_MONITORING/FACTOR_MONITORING.md)** - 实时监控、AI因子管家
 
 ---

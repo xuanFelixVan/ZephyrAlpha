@@ -1,15 +1,3 @@
----
-module_id: MULTIOBJECTIVEOPTIMIZATIONB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 5-7天
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
-
 # 多目标优化蓝图
 
 > **核心定位**: 多目标优化蓝图的核心功能实现
@@ -39,6 +24,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 5-7天
 > **核心定位**: 同时优化多个目标函数（如收益、风险、成本），支持Pareto最优解集
 > **参考开源**: cvxpy, pymoo
+
+## 核心定位
+
+Multi Objective Optimization Blueprint模块，负责multi objective optimization blueprint相关功能
+
 
 ## 1. 概述
 

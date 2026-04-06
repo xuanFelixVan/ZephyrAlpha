@@ -1,15 +1,3 @@
----
-module_id: RLREBALANCINGSYSTEMBLUEPRIN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: RL_REBALANCING_SYSTEM_001
 version: 1.0.1
@@ -42,6 +30,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 基于Stable-Baselines3实现强化学习调仓决策模型，动态优化组合权重和调仓时机
 
 ---
+
+## 核心定位
+
+Rl Rebalancing System Blueprint模块，负责rl rebalancing system blueprint相关功能
+
 
 ## 1. 模块概述
 

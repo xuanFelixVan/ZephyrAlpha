@@ -1,15 +1,3 @@
----
-module_id: HIGHPERFORMANCEDATAPIPELINE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
@@ -28,8 +16,6 @@ estimated_effort: 3周
 priority: P2
 layer: "Layer 1 (数据源层)"
 ---
-
-
 # 高性能数据管道蓝图
 
 > **核心定位**: 高性能数据管道蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 1 (数据源层)"
 > **实施周期**: Week 38-40（3周）
 > **优先级**: P2（优化）
 > **预期收益**: 提升数据处理性能10倍，降低延迟90%
+
+## 核心定位
+
+High Performance Data Pipeline Blueprint模块，负责high performance data pipeline blueprint相关功能
+
 
 ## 一、设计背景与目标
 

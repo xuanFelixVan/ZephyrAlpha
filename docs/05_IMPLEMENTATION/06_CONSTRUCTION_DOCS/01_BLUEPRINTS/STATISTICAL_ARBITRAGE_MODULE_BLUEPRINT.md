@@ -1,15 +1,3 @@
----
-module_id: STATISTICALARBITRAGEMODULEB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: STATISTICAL_ARBITRAGE_MODULE_001
 version: 1.0.1
@@ -40,6 +28,11 @@ priority: P0
 > **开发时?*: 160h
 > **核心定位**: 实现配对交易和市场中性策略，为文艺复兴风格的市场中性收益提供技术支?
 ---
+
+## 核心定位
+
+Statistical Arbitrage Module Blueprint模块，负责statistical arbitrage module blueprint相关功能
+
 
 ## 1. 模块概述
 

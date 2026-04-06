@@ -1,15 +1,3 @@
----
-module_id: ALTERNATIVEDATAINTEGRATIONB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.1
@@ -27,9 +15,6 @@ estimated_effort: 8周
 priority: P0
 layer: "Layer 1 (数据源层)"
 ---
-
-
-
 # 另类数据源集成项目蓝?
 
 > **核心定位**: 另类数据源集成项目蓝?的核心功能实现
@@ -40,6 +25,11 @@ layer: "Layer 1 (数据源层)"
 > **项目目标**: 扩展数据广度，提升因子研究深度，构建另类数据因子
 
 ---
+
+## 核心定位
+
+Alternative Data Integration Blueprint模块，负责alternative data integration blueprint相关功能
+
 
 ## 📋 项目执行摘要
 

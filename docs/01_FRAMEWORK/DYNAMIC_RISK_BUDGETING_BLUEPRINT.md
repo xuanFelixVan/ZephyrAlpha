@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-layer: Layer 6 - 组合优化层
+layer: Layer 6 (组合优化层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 动态风险预算模块
 compliance_level: 顶级专业标准

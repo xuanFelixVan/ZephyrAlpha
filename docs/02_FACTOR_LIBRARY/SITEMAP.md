@@ -152,8 +152,6 @@ docs/
 
 | Ŀ¼ | ˵�� |
 |------|------|
-| 00_GOVERNANCE/ | ����������� |
-| 00_INDEX/ | ���ӷ��ർ�� |
 | 01_STANDARDS/ | �����о�����?|
 | 02_ALPHA_FACTORS_INDEX.md | Alpha�������� |
 | 03_RISK_FACTORS/ | �������� |

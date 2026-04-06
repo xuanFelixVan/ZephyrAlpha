@@ -1,15 +1,3 @@
----
-module_id: LAYER_AI_002
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.2
@@ -28,8 +16,6 @@ estimated_effort: 1周
 priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # Layer 7 AI报告?- 模块职责边界定义
 
 > **核心定位**: Layer 7 AI报告?- 模块职责边界定义的核心功能实现
@@ -41,6 +27,11 @@ layer: "Layer 6 (组合优化层)"
 **状态**: Active
 **适用范围**: Layer 7 AI报告层所有模?
 ---
+
+## 核心定位
+
+Module Responsibility Boundaries Blueprint模块，负责module responsibility boundaries blueprint相关功能
+
 
 ## 一、文档目?
 ### 1.1 设计背景

@@ -1,15 +1,3 @@
----
-module_id: AUTOREPAIRENGINEBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
@@ -28,8 +16,6 @@ estimated_effort: 3周
 priority: P0
 layer: "Layer 4 (机器学习层)"
 ---
-
-
 # 自动化数据修复引擎蓝图
 
 > **核心定位**: 自动化数据修复引擎蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 4 (机器学习层)"
 > **实施周期**: Week 5-7（3周）
 > **优先级**: P0（核心）
 > **预期收益**: 减少70%人工干预，提高修复准确率85%
+
+## 核心定位
+
+Auto Repair Engine Blueprint模块，负责auto repair engine blueprint相关功能
+
 
 ## 一、设计背景与目标
 

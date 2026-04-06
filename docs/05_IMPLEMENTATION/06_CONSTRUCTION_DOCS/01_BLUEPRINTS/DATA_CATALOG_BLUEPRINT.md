@@ -1,15 +1,3 @@
----
-module_id: DATACATALOGBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: DATA_CATALOG_001
 version: 1.0.1
@@ -28,8 +16,6 @@ estimated_effort: 待评估
 priority: P1
 layer: "Layer 1 (数据源层)"
 ---
-
-
 # 数据目录/元数据管理平台蓝图
 
 > **核心定位**: 数据目录/元数据管理平台蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 1 (数据源层)"
 > **实施周期**: Week 5-6（2周）
 > **优先级**: P0（核心）
 > **预期收益**: 数据资产可发现性提升100%，元数据管理效率提升80%
+
+## 核心定位
+
+Data Catalog Blueprint模块，负责data catalog blueprint相关功能
+
 
 ## 一、设计背景与目标
 

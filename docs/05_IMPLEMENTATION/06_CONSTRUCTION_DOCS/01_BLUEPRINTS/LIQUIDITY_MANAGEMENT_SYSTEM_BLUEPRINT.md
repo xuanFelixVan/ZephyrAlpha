@@ -1,15 +1,3 @@
----
-module_id: LIQUIDITYMANAGEMENTSYSTEMBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.1
@@ -39,6 +27,11 @@ priority: P1
 > **开发时?*: 80h
 > **核心定位**: 监控资金流动性，预测资金需求，优化资金配置，实现桥水模式的流动性管理能?
 ---
+
+## 核心定位
+
+Liquidity Management System Blueprint模块，负责liquidity management system blueprint相关功能
+
 
 ## 1. 模块概述
 

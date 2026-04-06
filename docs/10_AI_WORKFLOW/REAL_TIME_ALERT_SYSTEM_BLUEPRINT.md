@@ -1,25 +1,13 @@
 ---
-module_id: REAL_TIME_ALERT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-layer: Layer 5 (执行层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: AIWF_RTAS_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+layer: Layer 8 (人机交互层)
 standard_type: 专业机构级蓝图
-applicable_scope: 舆情分析层专用预警模
+applicable_scope: 舆情分析层专用预警模块
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
@@ -30,9 +18,9 @@ related_documents:
     - SENTIMENT_ANALYZER_TECHNICAL_SPECIFICATION.md
     - NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md
 responsibility_boundary: |
-  本文档职 舆情专用预警模块
-  - 实时舆情监控和预警规则定
-  - 及时发现重要事件和情感变
+  本文档职责: 舆情专用预警模块
+  - 实时舆情监控和预警规则定义
+  - 及时发现重要事件和情感变化
   - 生成预警事件并发送到统一告警平台
   
   统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md

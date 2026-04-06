@@ -1,15 +1,3 @@
----
-module_id: QUALITYREPORTAUTOMATIONBLUE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
@@ -28,8 +16,6 @@ estimated_effort: 1周
 priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 质量报告自动化蓝图
 
 > **核心定位**: 质量报告自动化蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 6 (组合优化层)"
 > **实施周期**: Week 10-11（1周）
 > **优先级**: P1（重要）
 > **预期收益**: 减少90%报告生成时间，提高报告质量一致性
+
+## 核心定位
+
+Quality Report Automation Blueprint模块，负责quality report automation blueprint相关功能
+
 
 ## 一、设计背景与目标
 

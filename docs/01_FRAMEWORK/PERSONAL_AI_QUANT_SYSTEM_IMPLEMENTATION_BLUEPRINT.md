@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
-layer: Layer 0-11 (全系统)
+layer: Layer 0 (数据源层)
 standard_type: 专业量化机构级个人开发实施方案
 applicable_scope: 个人开发+AI维护量化系统
 compliance_level: 顶级专业标准

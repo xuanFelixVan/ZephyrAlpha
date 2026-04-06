@@ -1,15 +1,3 @@
----
-module_id: REALTIMERISKHEDGEENGINEBLU_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.1
@@ -40,6 +28,11 @@ priority: P0
 > **开发时?*: 100h
 > **核心定位**: 实时监控组合风险，自动生成对冲交易，实现桥水模式的宏观对冲能?
 ---
+
+## 核心定位
+
+Realtime Risk Hedge Engine Blueprint模块，负责realtime risk hedge engine blueprint相关功能
+
 
 ## 文档职责说明
 

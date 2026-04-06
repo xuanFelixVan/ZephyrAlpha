@@ -1,15 +1,3 @@
----
-module_id: TRADINGSIGNALVALIDATORBLUEP_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
@@ -37,8 +25,6 @@ estimated_effort: 3周
 priority: P1
 layer: "Layer 8 (执行层)"
 ---
-
-
 # 交易信号验证器蓝图
 
 > **核心定位**: 交易信号验证器蓝图的核心功能实现
@@ -55,11 +41,8 @@ layer: "Layer 8 (执行层)"
 
 ### 核心定位
 
-交易信号验证器是策略执行层的**信号质量核心**，负责：
-- 信号质量评估（IC、IR、Rank IC、胜率）
-- 信号稳定性验证（时间稳定性、市场稳定性）
-- 信号有效性验证（统计显著性、经济显著性）
-- 信号优化建议（参数调整、组合优化）
+Trading Signal Validator Blueprint模块，负责trading signal validator blueprint相关功能
+
 
 ### 个人使用价值
 
@@ -554,6 +537,51 @@ class ValidationResult:
 ---
 
 ## 九、相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供信号元数据 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 提供算法执行反馈 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [智能执行引擎蓝图](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) | SMART_EXECUTION_ENGINE_001 | 强依赖 | 智能执行引擎 |
+| [执行策略回测器蓝图](./EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md) | EXECUTION_STRATEGY_BACKTESTER_001 | 中依赖 | 执行策略回测 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 交易成本分析 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **pyqlib** | 0.9+ | 量化投资框架 | [官方文档](https://qlib.ai/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **scikit-learn** | 1.3+ | 机器学习 | [官方文档](https://scikit-learn.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[交易信号验证器]
+    C[数据目录] --> B
+    D[算法交易优化器] --> B
+    
+    B --> E[智能执行引擎]
+    B --> F[执行策略回测器]
+    B --> G[交易成本分析引擎]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 相关蓝图文档
 
 | 文档名称 | 说明 |
 |---------|------|

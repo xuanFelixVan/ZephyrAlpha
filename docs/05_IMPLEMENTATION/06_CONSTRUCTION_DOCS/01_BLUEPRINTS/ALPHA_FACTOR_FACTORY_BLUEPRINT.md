@@ -1,15 +1,3 @@
----
-module_id: ALPHAFACTORFACTORYBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: ALPHA_FACTOR_FACTORY_001
 version: 1.0.0
@@ -36,6 +24,11 @@ open_source_dependency: alphalens, pandas, numpy, scipy, scikit-learn
 > **开发周期**: 3周
 
 ---
+
+## 核心定位
+
+Alpha Factor Factory Blueprint模块，负责alpha factor factory blueprint相关功能
+
 
 ## 📋 执行摘要
 

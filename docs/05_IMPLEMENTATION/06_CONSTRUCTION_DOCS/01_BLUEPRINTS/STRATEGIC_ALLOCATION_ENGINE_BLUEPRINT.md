@@ -1,15 +1,3 @@
----
-module_id: STRATEGICALLOCATIONENGINEBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: STRATEGIC_ALLOCATION_ENGINE_001
 version: 1.0.0
@@ -36,9 +24,6 @@ estimated_effort: 待评估
 priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-
-
-
 # 战略配置引擎蓝图
 
 > **核心定位**: 战略配置引擎蓝图的核心功能实现
@@ -55,11 +40,8 @@ layer: "Layer 6 (组合优化层)"
 
 ### 核心定位
 
-Layer 11战略配置引擎是清风量化系统的**战略决策中枢**，负责：
-- 资产配置决策（战略资产配置）
-- 风险预算分配（风险平价配置）
-- 投资组合优化（均值方差优化）
-- 再平衡决策（动态再平衡）
+Strategic Allocation Engine Blueprint模块，负责strategic allocation engine blueprint相关功能
+
 
 ### 个人使用价值
 

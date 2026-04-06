@@ -1,15 +1,3 @@
----
-module_id: DATALIFECYCLEMANAGEMENTBLUE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: DATA_LIFECYCLE_MANAGEMENT_001
 version: 1.0.0
@@ -28,8 +16,6 @@ estimated_effort: 2周
 priority: P2
 layer: "Layer 1 (数据源层)"
 ---
-
-
 # 数据生命周期管理蓝图
 
 > **核心定位**: 数据生命周期管理蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 1 (数据源层)"
 > **实施周期**: Week 27-28（2周）
 > **优先级**: P2（优化）
 > **预期收益**: 降低存储成本50%，提升数据管理效率70%
+
+## 核心定位
+
+Data Lifecycle Management Blueprint模块，负责data lifecycle management blueprint相关功能
+
 
 ## 一、设计背景与目标
 

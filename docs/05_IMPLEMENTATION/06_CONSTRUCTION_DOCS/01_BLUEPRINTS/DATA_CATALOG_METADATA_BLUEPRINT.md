@@ -1,15 +1,3 @@
----
-module_id: DATACATALOGMETADATABLUEPRIN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: DATA_CATALOG_METADATA_001
 version: 1.0.1
@@ -28,8 +16,6 @@ estimated_effort: 2周
 priority: P2
 layer: "Layer 1 (数据源层)"
 ---
-
-
 # 数据目录与元数据管理系统蓝图
 
 > **核心定位**: 数据目录与元数据管理系统蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 1 (数据源层)"
 > **实施周期**: Week 24-25?周）
 > **优先?*: P2（一般）
 > **预期收益**: 提高数据发现效率80%，提升数据治理水?
+
+## 核心定位
+
+Data Catalog Metadata Blueprint模块，负责data catalog metadata blueprint相关功能
+
 
 ## 一、设计背景与目标
 

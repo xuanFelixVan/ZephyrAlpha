@@ -1,15 +1,3 @@
----
-module_id: ENHANCEDALERTSYSTEMBLUEPRIN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: ENHANCED_ALERT_SYSTEM_001
 version: 1.0.2
@@ -43,8 +31,6 @@ responsibility_boundary: |
     由该模块产生的告警会发送到本统一告警平台进行分发
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 实时告警系统增强蓝图
 
 > **核心定位**: 实时告警系统增强蓝图的核心功能实现
@@ -58,6 +44,11 @@ layer: "Layer 6 (组合优化层)"
 > **预期收益**: 提高告警覆盖率，减少告警噪音
 
 ---
+
+## 核心定位
+
+Enhanced Alert System Blueprint模块，负责enhanced alert system blueprint相关功能
+
 
 ## 文档层级关系
 

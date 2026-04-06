@@ -1,15 +1,3 @@
----
-module_id: MARGIN_CALL_MONITOR_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: MARGIN_CALL_MONITOR_BLUEPRINT_001
 version: 1.0.0
@@ -25,6 +13,11 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 # Margin Call Monitor
+
+## 核心定位
+
+Margin Call Monitor Blueprint模块，负责margin call monitor blueprint相关功能
+
 
 ## 1. 模块概述
 

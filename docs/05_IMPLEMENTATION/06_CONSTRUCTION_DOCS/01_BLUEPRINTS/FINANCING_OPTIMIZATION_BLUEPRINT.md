@@ -1,15 +1,3 @@
----
-module_id: FINANCINGOPTIMIZATIONBLUEPRI_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: FINANCING_OPTIMIZATION_001
 version: 1.0.1
@@ -41,6 +29,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发时?*: 40h
 > **核心定位**: 融资成本优化、杠杆效率提?
 ---
+
+## 核心定位
+
+Financing Optimization Blueprint模块，负责financing optimization blueprint相关功能
+
 
 ## 1. 概述
 

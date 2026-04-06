@@ -1,15 +1,3 @@
----
-module_id: PORTFOLIOINSURANCESTRATEGYB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.1
@@ -40,6 +28,11 @@ layer: "Layer 3 (策略层)"
 > **索引**: `CPPI_BLUEPRINT_001`
 > **开发时?*: 80h
 > **核心定位**: CPPI/OBPI组合保险策略?--
+
+## 核心定位
+
+Portfolio Insurance Strategy Blueprint模块，负责portfolio insurance strategy blueprint相关功能
+
 
 ## 1. 概述
 

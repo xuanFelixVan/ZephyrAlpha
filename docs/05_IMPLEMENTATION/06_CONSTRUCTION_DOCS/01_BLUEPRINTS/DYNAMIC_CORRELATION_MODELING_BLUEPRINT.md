@@ -1,15 +1,3 @@
----
-module_id: DYNAMICCORRELATIONMODELINGB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.1
@@ -42,6 +30,11 @@ priority: P0
 > **核心定位**: 使用DCC-GARCH模型实时更新资产间相关性，识别相关性突变，为风险平价优化提供动态相关性矩?> **个人开发可?*: ⭐⭐⭐⭐?完全可行
 > **AI维护难度**: ?
 ---
+
+## 核心定位
+
+相关性策略，负责相关性交易策略
+
 
 ## 1. 模块概述
 

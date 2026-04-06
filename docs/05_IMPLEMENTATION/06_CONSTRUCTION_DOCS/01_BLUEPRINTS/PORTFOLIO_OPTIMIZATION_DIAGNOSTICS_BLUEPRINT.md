@@ -1,15 +1,3 @@
----
-module_id: PORTFOLIOOPTIMIZATIONDIAGNOS_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
 version: 1.0.0
@@ -26,7 +14,6 @@ implementation_progress: 0%
 estimated_effort: 1周
 layer: "Layer 6 (组合优化层)"
 ---
-
 # 组合优化诊断蓝图
 
 > **模块ID**: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
@@ -34,6 +21,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 诊断组合优化问题的健康状况
 
 ---
+
+## 核心定位
+
+Portfolio Optimization Diagnostics Blueprint模块，负责portfolio optimization diagnostics blueprint相关功能
+
 
 ## 1. 模块概述
 

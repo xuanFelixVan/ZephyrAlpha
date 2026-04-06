@@ -1,15 +1,3 @@
----
-module_id: BLACK_LITTERMAN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0
@@ -27,8 +15,6 @@ estimated_effort: 2-3天
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # Black-Litterman组合优化模型蓝图
 
 > **核心定位**: Black-Litterman组合优化模型蓝图的核心功能实现
@@ -39,6 +25,11 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 结合市场均衡观点与投资者主观观点的组合优化模型，解决传统均值方差优化对输入参数敏感的问题
 > **参考开源**: PyPortfolioOpt (4.2k+ ⭐) + Riskfolio-Lib (3.1k+ ⭐)
 > **专业对标**: 文艺复兴科技、Two Sigma、Citadel等顶级量化机构标配模型
+
+## 核心定位
+
+Black Litterman Model Blueprint模块，负责black litterman model blueprint相关功能
+
 
 ## 1. 概述
 

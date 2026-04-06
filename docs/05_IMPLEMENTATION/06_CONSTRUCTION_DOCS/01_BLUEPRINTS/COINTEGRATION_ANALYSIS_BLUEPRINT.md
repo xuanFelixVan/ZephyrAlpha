@@ -1,15 +1,3 @@
----
-module_id: COINTEGRATIONANALYSISBLUEPRI_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: COINTEGRATION_ANALYSIS_001
 version: 1.0.0
@@ -27,8 +15,6 @@ estimated_effort: 2-3天
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
 # 协整分析蓝图
 
 > **核心定位**: 协整分析蓝图的核心功能实现
@@ -38,6 +24,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 2-3天
 > **核心定位**: 识别资产间的长期均衡关系，支持配对交易和统计套利策略
 > **参考开源**: statsmodels
+
+## 核心定位
+
+协整分析模块，负责识别资产间的长期均衡关系
+
 
 ## 1. 概述
 

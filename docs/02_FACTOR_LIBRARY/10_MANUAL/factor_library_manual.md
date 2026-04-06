@@ -32,7 +32,6 @@ implementation_status: 进行�?
 > **配套文档**�?
 > - 主文档：
 > - 战术手册：[../../trading-tactics/tactics_manual.md](../../06_ARCHIVE/tactics_manual.md)
-> - 因子库索引：[00_INDEX/INDEX.md](../00_INDEX/INDEX.md) | [因子分类学](../01_STANDARDS/FACTOR_TAXONOMY.md)
 > - THS_BD指标：[04_DATA_SOURCE/iFind/financial_statements/ths_bd_complete_indicator_list.md](../04_DATA_SOURCE/iFind/financial_statements/ths_bd_complete_indicator_list.md)
 >
 > **版本说明**�?

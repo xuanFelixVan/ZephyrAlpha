@@ -1,15 +1,3 @@
----
-module_id: BARRARISKMODELBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.3
@@ -37,9 +25,6 @@ open_source_dependency: numpy, pandas, scipy
 priority: P0
 layer: "Layer 7 (风险管理层)"
 ---
-
-
-
 > **索引**: `BARRA_RISK_001`
 > **开发时长**: 100h（约2.5周）
 > **核心定位**: 多因子风险模型，实现风险分解、因子暴露度量、风险预算
@@ -48,6 +33,11 @@ layer: "Layer 7 (风险管理层)"
 > **AI维护难度**: 中
 
 ---
+
+## 核心定位
+
+Barra Risk Model Blueprint模块，负责barra risk model blueprint相关功能
+
 
 ## 1. 概述
 

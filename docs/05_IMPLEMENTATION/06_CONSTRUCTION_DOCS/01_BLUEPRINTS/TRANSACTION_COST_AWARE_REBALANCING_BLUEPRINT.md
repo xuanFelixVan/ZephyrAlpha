@@ -1,15 +1,3 @@
----
-module_id: TRANSACTIONCOSTAWAREREBALAN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 ﻿---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
@@ -27,9 +15,6 @@ estimated_effort: 5-7天
 priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-
-
-
 # 交易成本感知再平衡蓝图
 
 > **核心定位**: 交易成本感知再平衡蓝图的核心功能实现
@@ -39,6 +24,11 @@ layer: "Layer 6 (组合优化层)"
 > **开发周期**: 5-7天
 > **核心定位**: 在再平衡决策中考虑交易成本，优化调整频率和幅度
 > **参考开源**: PyPortfolioOpt, Riskfolio-Lib
+
+## 核心定位
+
+Transaction Cost Aware Rebalancing Blueprint模块，负责transaction cost aware rebalancing blueprint相关功能
+
 
 ## 1. 概述
 
