@@ -1,5 +1,5 @@
 ---
-module_id: LAYER7_ENHANCEMENT_BLUEPRINT_001
+module_id: SYSTEM_ENHANCEMENT_001
 version: 2.0.0
 status: Active
 created_date: 2026-04-02

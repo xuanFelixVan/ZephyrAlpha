@@ -26,9 +26,12 @@ responsibility_boundary: |
   - 报告查看系统（报告查看引擎、交互式分析）
   - 协作决策系统（协作决策引擎、信任校准）
   
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-  界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
-  治理合规请参考：GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+  战略级定义请参考以下文档：
+  - 战略规划：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 决策权分配战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 信任校准战略定义：AI_TRUST_CALIBRATION_BLUEPRINT.md
+  - 界面设计：HUMAN_AI_INTEGRATION_BLUEPRINT.md
+  - 治理合规：GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
   
   注意：本文档已归档，内容可能被其他文档引用
 ---

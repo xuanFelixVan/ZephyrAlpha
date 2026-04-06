@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_HIGH_PERF_PIPELINE_BP_001
+module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

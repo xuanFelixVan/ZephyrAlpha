@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_DATA_SECURITY_BP_001
+module_id: DATA_SECURITY_COMPLIANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

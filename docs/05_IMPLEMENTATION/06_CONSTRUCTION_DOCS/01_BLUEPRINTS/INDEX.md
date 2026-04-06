@@ -68,14 +68,14 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据源管理蓝图 | DATA_SOURCE_MANAGEMENT_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SOURCE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据安全合规蓝图 | DATA_SECURITY_COMPLIANCE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SECURITY_COMPLIANCE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据源管理蓝图 | DATA_SOURCE_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) ✅ |
+| 数据安全合规蓝图 | DATA_SECURITY_COMPLIANCE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) ✅ |
 
 ### 2.6 高性能数据管道
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 高性能数据管道蓝图 | HIGH_PERFORMANCE_DATA_PIPELINE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 高性能数据管道蓝图 | HIGH_PERFORMANCE_DATA_PIPELINE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) ✅ |
 
 ### 2.7 告警系统
 
@@ -247,20 +247,20 @@ parent_document: ../INDEX.md
 
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
-| **数据预处理层（Layer 1）** | 19个 | 2个 | 17个 | 33.9% |
-| **组合优化层（Layer 6）** | 22个 | 22个 | 0个 | 39.3% |
-| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 3.6% |
-| **执行层（Layer 5）** | 5个 | 5个 | 0个 | 8.9% |
-| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 3.6% |
-| **其他** | 6个 | 6个 | 0个 | 10.7% |
-| **总计** | **56个** | **39个** | **17个** | **100%** |
+| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 26.0% |
+| **组合优化层（Layer 6）** | 27个 | 27个 | 0个 | 35.1% |
+| **风险控制层（Layer 7）** | 4个 | 4个 | 0个 | 5.2% |
+| **执行层（Layer 5）** | 8个 | 8个 | 0个 | 10.4% |
+| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.6% |
+| **其他** | 16个 | 16个 | 0个 | 20.8% |
+| **总计** | **77个** | **77个** | **0个** | **100%** |
 
 ### 8.2 按状态统计
 
 | 状态 | 文档数量 | 占比 | 说明 |
 |------|---------|------|------|
-| **Active** | 39个 | 69.6% | 正常可用文档 |
-| **Archived** | 17个 | 30.4% | 编码损坏已归档（2026-04-06） |
+| **Active** | 77个 | 100% | 正常可用文档 |
+| **Archived** | 0个 | 0% | 无归档文档 |
 | **Draft** | 0个 | 0% | 草稿文档 |
 
 ---
@@ -281,7 +281,8 @@ parent_document: ../INDEX.md
 - v1.0.0 (2026-04-04): 初始版本，完成蓝图文档索引创建
 - v1.0.1 (2026-04-05): 更新统计数字，修复编码问题
 - v1.1.0 (2026-04-06): 归档17个编码损坏文档，更新统计和状态
+- v1.2.0 (2026-04-06): 所有编码问题文档已重建并恢复Active状态，更新统计数据为77个Active文档
 
 ---
 
-**索引版本**: v1.1.0 | **创建日期**: 2026-04-04 | **维护者**: 首席蓝图架构师
+**索引版本**: v1.2.0 | **创建日期**: 2026-04-04 | **维护者**: 首席蓝图架构师

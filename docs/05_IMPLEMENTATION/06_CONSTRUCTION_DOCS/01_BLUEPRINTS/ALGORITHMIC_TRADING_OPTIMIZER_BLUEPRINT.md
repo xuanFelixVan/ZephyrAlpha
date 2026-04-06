@@ -1,5 +1,5 @@
 ---
-module_id: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT_001
+module_id: ALGORITHMIC_TRADING_OPTIMIZER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

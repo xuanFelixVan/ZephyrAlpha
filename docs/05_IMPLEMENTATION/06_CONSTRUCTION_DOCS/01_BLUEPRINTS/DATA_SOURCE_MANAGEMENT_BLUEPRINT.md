@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_DATA_SOURCE_MGMT_BP_001
+module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

@@ -1,5 +1,5 @@
 ---
-module_id: MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT_001
+module_id: MONITORING_DASHBOARD_ENHANCEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

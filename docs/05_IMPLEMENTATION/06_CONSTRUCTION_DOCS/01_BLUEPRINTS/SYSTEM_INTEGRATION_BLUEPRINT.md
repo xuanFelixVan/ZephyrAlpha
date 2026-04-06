@@ -1,5 +1,5 @@
 ---
-module_id: LAYER7_INTEGRATION_BLUEPRINT_001
+module_id: SYSTEM_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02

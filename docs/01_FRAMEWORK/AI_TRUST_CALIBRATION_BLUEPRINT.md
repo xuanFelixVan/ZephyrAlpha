@@ -15,6 +15,16 @@ related_documents:
   - MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  本文档负责AI信任动态校准体系设计，包括：
+  - 四维校准架构（历史表现、市场状态、置信度、风险贡献）
+  - 五级信任等级体系
+  - 信任等级动态调整机制
+  - 表现追踪与评估系统
+  
+  战略级定义请参考以下文档：
+  - 风险分级战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 人机协作边界战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
 ---
 
 # AI信任动态校准蓝图：基于表现的信任等级管�?
