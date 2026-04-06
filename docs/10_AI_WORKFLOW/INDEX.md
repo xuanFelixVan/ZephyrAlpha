@@ -139,6 +139,12 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 | 文档类型 | 文档名称 | 版本 | 状| 文档路径 | 核心职责 |
 |---------|---------|------|------|----------|----------|
 | **解决方案** | 开源模块解决方| 1.0 | Active | [OPEN_SOURCE_MODULE_SOLUTION.md](./OPEN_SOURCE_MODULE_SOLUTION.md) | 开源模块选型、集成方案、替代方|
+| **集成蓝图** | 开源项目集成方案蓝| 1.0 | Active | [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | MLflow集成、Qlib集成、架构参考、工具集|
+
+**📌 开源文档使用指南**:
+- **选型决策**: 先阅读[开源模块解决方案](./OPEN_SOURCE_MODULE_SOLUTION.md) - 了解全景图、对比分析、推荐理由
+- **技术实施**: 再阅读[开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) - 获取集成代码、部署方案、配置模板
+- **完整流程**: 按顺序阅读两个文档，先选型后实施
 
 ### 3.7 模块依赖关系
 
