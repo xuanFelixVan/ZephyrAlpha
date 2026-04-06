@@ -1,24 +1,24 @@
 ---
-module_id: ARCHIVE_BLUEPRINT_001
-version: 1.0.0
+module_id: ARCHIVE_BP_API_INTEGRATION_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
+applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 
-# API�?集成蓝图
+# API�?集成蓝图
 
 > 清风量化系统 v5.0 - API层与系统集成
 > **索引**: `API.001`
-> **开发时�?*: 40h
-> **核心定位**: 实现"各模�?�?统一API �?前端/外部"的完整集成方�?
+> **开发时�?*: 40h
+> **核心定位**: 实现"各模�?�?统一API �?前端/外部"的完整集成方�?
 
 
 ## 1. 设计原则
@@ -36,25 +36,25 @@ implementation_status: 设计阶段
 ### 2.1 API层级
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   API Gateway                                �?
-├─────────────────────────────────────────────────────────────�?
-�? ┌───────────────────────────────────────────────────────�?�?
-�? �?                   认证中间�?                          �?�?
-�? �? - JWT验证  - 限流  - CORS                           �?�?
-�? └───────────────────────────────────────────────────────�?�?
-�?                           �?                               �?
-�?                           �?                               �?
-�? ┌───────────────────────────────────────────────────────�?�?
-�? �?                   API Routes                          �?�?
-�? �? /api/v1/data - 数据接口                             �?�?
-�? �? /api/v1/factors - 因子接口                          �?�?
-�? �? /api/v1/backtest - 回测接口                         �?�?
-�? �? /api/v1/trading - 交易接口                          �?�?
-�? �? /api/v1/risk - 风控接口                             �?�?
-�? �? /api/v1/research - 研究接口                         �?�?
-�? └───────────────────────────────────────────────────────�?�?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────�?
+�?                   API Gateway                                �?
+├─────────────────────────────────────────────────────────────�?
+�? ┌───────────────────────────────────────────────────────�?�?
+�? �?                   认证中间�?                          �?�?
+�? �? - JWT验证  - 限流  - CORS                           �?�?
+�? └───────────────────────────────────────────────────────�?�?
+�?                           �?                               �?
+�?                           �?                               �?
+�? ┌───────────────────────────────────────────────────────�?�?
+�? �?                   API Routes                          �?�?
+�? �? /api/v1/data - 数据接口                             �?�?
+�? �? /api/v1/factors - 因子接口                          �?�?
+�? �? /api/v1/backtest - 回测接口                         �?�?
+�? �? /api/v1/trading - 交易接口                          �?�?
+�? �? /api/v1/risk - 风控接口                             �?�?
+�? �? /api/v1/research - 研究接口                         �?�?
+�? └───────────────────────────────────────────────────────�?�?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 API路由
@@ -90,7 +90,7 @@ app.include_router(research_router, prefix="/api/v1/research", tags=["研究"])
 ```
 
 
-## 3. 认证与授�?
+## 3. 认证与授�?
 
 ### 3.1 JWT认证
 
@@ -102,7 +102,7 @@ import jwt
 security = HTTPBearer()
 
 class AuthHandler:
-    """认证处理�?
+    """认证处理�?
 
     索引: API.001-M01
     """
@@ -141,7 +141,7 @@ class AuthHandler:
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
             return payload
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail="Token已过�?)
+            raise HTTPException(status_code=401, detail="Token已过�?)
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail="无效Token")
 
@@ -189,7 +189,7 @@ ROLES = {
 }
 
 def check_permission(role: str, permission: str) -> bool:
-    """检查权�?""
+    """检查权�?""
     if role not in ROLES:
         return False
     if '*' in ROLES[role]['permissions']:
@@ -226,7 +226,7 @@ class DataEndpoints:
         参数:
             symbol: 股票代码
             freq: 频率 (1m/5m/1d)
-            start_date: 开始日�?
+            start_date: 开始日�?
             end_date: 结束日期
 
         返回:
@@ -277,9 +277,9 @@ class BacktestEndpoints:
         返回:
             任务ID
         """
-        # 检查权�?
+        # 检查权�?
         if not check_permission(auth['role'], 'backtest:write'):
-            raise HTTPException(status_code=403, detail="无权�?)
+            raise HTTPException(status_code=403, detail="无权�?)
 
         # 创建回测任务
         task_id = BacktestEngine.create_task(
@@ -300,7 +300,7 @@ class BacktestEndpoints:
         """获取回测结果"""
         result = BacktestEngine.get_result(task_id)
         if not result:
-            raise HTTPException(status_code=404, detail="任务不存�?)
+            raise HTTPException(status_code=404, detail="任务不存�?)
         return result
 
     @backtest_router.post("/optimize")
@@ -343,7 +343,7 @@ class TradingEndpoints:
             订单响应
         """
         if not check_permission(auth['role'], 'trading:write'):
-            raise HTTPException(status_code=403, detail="无权�?)
+            raise HTTPException(status_code=403, detail="无权�?)
 
         # 生成订单
         order_obj = OrderGenerator.generate(order)
@@ -380,9 +380,9 @@ class TradingEndpoints:
 ```
 
 
-## 5. 中间�?
+## 5. 中间�?
 
-### 5.1 限流中间�?
+### 5.1 限流中间�?
 
 ```python
 from fastapi import Request
@@ -393,31 +393,31 @@ limiter = Limiter(key_func=get_remote_address)
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    """限流中间�?
+    """限流中间�?
 
     索引: API.001-M02
     """
     # 不同接口不同限流
     if "/api/v1/data" in request.url.path:
-        # 数据接口: 100�?分钟
+        # 数据接口: 100�?分钟
         await limiter.check(request, "100/minute")
     elif "/api/v1/backtest" in request.url.path:
-        # 回测接口: 10�?分钟
+        # 回测接口: 10�?分钟
         await limiter.check(request, "10/minute")
     elif "/api/v1/trading" in request.url.path:
-        # 交易接口: 60�?分钟
+        # 交易接口: 60�?分钟
         await limiter.check(request, "60/minute")
 
     response = await call_next(request)
     return response
 ```
 
-### 5.2 日志中间�?
+### 5.2 日志中间�?
 
 ```python
 @app.middleware("http")
 async def logging_middleware(request: Request, call_next):
-    """日志中间�?
+    """日志中间�?
 
     索引: API.001-M03
     """
@@ -474,7 +474,7 @@ class ErrorResponse(BaseResponse):
 ### 7.1 模块集成
 
 ```python
-# 模块初始�?
+# 模块初始�?
 MODULES = {
     'data': DataHub(),
     'factor': FactorLibrary(),
@@ -489,7 +489,7 @@ async def startup_event():
     """系统启动"""
     for name, module in MODULES.items():
         module.initialize()
-        logger.info(f"模块初始�? {name}")
+        logger.info(f"模块初始�? {name}")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -512,7 +512,7 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 ```
 
 
-## 8. 开发任务分�?
+## 8. 开发任务分�?
 
 ### 8.1 任务分解 (40h)
 
@@ -525,7 +525,7 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 | 回测API | 6h | BacktestEngine封装 |
 | 交易API | 6h | OrderExecutor封装 |
 | 风控API | 4h | RiskRuleEngine封装 |
-| 中间�?| 4h | 限流+日志 |
+| 中间�?| 4h | 限流+日志 |
 | 文档 | 3h | Swagger配置 |
 
 
@@ -536,5 +536,5 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 | v1.0 | 2026-03-29 | 初始版本 |
 
 
-**维护�?*: 清风量化系统
+**维护�?*: 清风量化系统
 **索引**: `API.001`

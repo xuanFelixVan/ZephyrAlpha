@@ -1,6 +1,6 @@
 ---
-module_id: DATA_IFIND_001
-version: 1.0.0
+module_id: DATA_IFIND_CONNECTOR_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
