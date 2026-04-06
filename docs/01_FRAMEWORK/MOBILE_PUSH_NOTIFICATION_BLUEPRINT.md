@@ -10,12 +10,12 @@ applicable_scope: Layer 8 - 移动端推送通知系统
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Real-time Alert System", "Two Sigma Mobile Notification", "Citadel Multi-channel Alerting"]
 related_documents:
-  - BLUEPRINT.md
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - REALTIME_RISK_MONITORING_BLUEPRINT.md
   - AI_TRUST_CALIBRATION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-layer: Layer 0 (数据源层)
+layer: Layer 8 (人机交互层)
 ---
 
 # 移动端推送通知系统蓝图

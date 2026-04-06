@@ -10,11 +10,11 @@ applicable_scope: Layer 8 - Streamlit交互式回测界面
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma Research Platform", "Citadel Quant Dashboard", "Renaissance Backtest Interface"]
 related_documents:
-  - BLUEPRINT.md
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - GRAFANA_MONITORING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-layer: Layer 2 (Alpha因子层)
+layer: Layer 8 (人机交互层)
 ---
 
 # Streamlit交互式回测界面蓝图

@@ -10,11 +10,11 @@ applicable_scope: Layer 8 - FastAPI-Users认证权限系统
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Access Control", "Two Sigma Authentication", "Citadel Permission Management"]
 related_documents:
-  - BLUEPRINT.md
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - GRAFANA_MONITORING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-layer: Layer 3 (策略层)
+layer: Layer 8 (人机交互层)
 ---
 
 # FastAPI-Users认证权限系统蓝图

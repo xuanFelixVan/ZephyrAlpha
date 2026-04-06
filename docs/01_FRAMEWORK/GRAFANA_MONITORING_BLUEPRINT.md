@@ -1,5 +1,5 @@
 ---
-module_id: GRAFANA_MONITORING_VISUALIZATION_BLUEPRINT_001
+module_id: GRAFANA_MONITORING_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -10,12 +10,12 @@ applicable_scope: Layer 8 - Grafana监控可视化系统
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Prometheus Monitoring", "Two Sigma Grafana Dashboards", "Citadel Real-time Monitoring"]
 related_documents:
-  - BLUEPRINT.md
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - REALTIME_RISK_MONITORING_BLUEPRINT.md
   - MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-layer: Layer 2 (Alpha因子层)
+layer: Layer 8 (人机交互层)
 ---
 
 # Grafana监控可视化系统蓝图
