@@ -6052,6 +6052,1337 @@ if __name__ == "__main__":
 
 ---
 
+### 2.29 研究笔记本管理系统 (Research Notebook Management) ⭐P0关键模块
+
+#### 2.29.1 系统定位与职责
+
+**核心定位**：
+- **研究环境标准化**：提供统一的Jupyter研究环境
+- **笔记本参数化执行**：支持批量实验和参数扫描
+- **版本控制集成**：Git友好的笔记本管理
+
+**核心职责**：
+1. **研究环境管理**：JupyterLab专业研究环境
+2. **参数化执行**：Papermill批量执行笔记本
+3. **版本控制**：NBDime笔记本差异比较和合并
+4. **笔记本转换**：nbconvert报告生成
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **JupyterLab** | 14k+ | 专业研究环境 | 日常研究开发 |
+| **Papermill** | 5k+ (Netflix) | 参数化执行 | 批量实验 |
+| **NBDime** | 2k+ | 版本控制 | Git集成 |
+| **nbconvert** | 内置 | 格式转换 | 报告生成 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：平缓（Jupyter生态）
+- 维护成本：低（成熟生态）
+- AI维护友好：高（配置文件化）
+- 开发周期：1周
+
+#### 2.29.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              研究笔记本管理系统架构                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              定义层 (Definition Layer)                   │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 笔记本模板库                                       │  │  │
+│  │  │ ├── 因子研究模板                                   │  │  │
+│  │  │ ├── 策略回测模板                                   │  │  │
+│  │  │ ├── 数据分析模板                                   │  │  │
+│  │  │ └── 模型训练模板                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              处理层 (Processing Layer)                   │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Papermill执行引擎                                  │  │  │
+│  │  │ ├── 参数注入                                       │  │  │
+│  │  │ ├── 批量执行                                       │  │  │
+│  │  │ ├── 错误处理                                       │  │  │
+│  │  │ └── 结果收集                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ nbconvert转换引擎                                  │  │  │
+│  │  │ ├── HTML报告生成                                   │  │  │
+│  │  │ ├── PDF报告生成                                    │  │  │
+│  │  │ ├── Python脚本导出                                 │  │  │
+│  │  │ └── Markdown导出                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              存储层 (Storage Layer)                      │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 笔记本存储                                         │  │  │
+│  │  │ ├── 本地文件系统                                   │  │  │
+│  │  │ ├── Git版本控制                                    │  │  │
+│  │  │ ├── S3云存储                                       │  │  │
+│  │  │ └── 执行结果存储                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              服务层 (Service Layer)                      │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ JupyterLab服务                                     │  │  │
+│  │  │ ├── 交互式编辑                                     │  │  │
+│  │  │ ├── 实时预览                                       │  │  │
+│  │  │ ├── 扩展插件                                       │  │  │
+│  │  │ └── 多用户支持                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ NBDime版本控制                                     │  │  │
+│  │  │ ├── 差异比较                                       │  │  │
+│  │  │ ├── 冲突合并                                       │  │  │
+│  │  │ ├── Git集成                                        │  │  │
+│  │  │ └── Web界面                                        │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.29.3 技术实现
+
+```python
+import papermill as pm
+from nbconvert import HTMLExporter, PDFExporter
+import nbformat
+from pathlib import Path
+from typing import Dict, List, Optional
+import subprocess
+import json
+
+class NotebookManagementSystem:
+    """研究笔记本管理系统 - 基于JupyterLab + Papermill + NBDime"""
+    
+    def __init__(self, 
+                 notebook_dir: str = "./notebooks",
+                 output_dir: str = "./notebooks/executed"):
+        self.notebook_dir = Path(notebook_dir)
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        
+    def execute_notebook(self,
+                        input_path: str,
+                        parameters: Dict,
+                        output_path: Optional[str] = None) -> Dict:
+        """执行单个笔记本"""
+        
+        if output_path is None:
+            input_name = Path(input_path).stem
+            output_path = self.output_dir / f"{input_name}_executed.ipynb"
+        
+        try:
+            result = pm.execute_notebook(
+                input_path=input_path,
+                output_path=str(output_path),
+                parameters=parameters,
+                report_mode=True,
+                progress_bar=True
+            )
+            
+            return {
+                'status': 'success',
+                'output_path': str(output_path),
+                'execution_count': result.metadata.papermill['execution_count']
+            }
+        except Exception as e:
+            return {
+                'status': 'failed',
+                'error': str(e)
+            }
+    
+    def batch_execute(self,
+                     template_path: str,
+                     parameter_list: List[Dict],
+                     naming_pattern: str = "{index}_{timestamp}") -> List[Dict]:
+        """批量执行笔记本"""
+        
+        results = []
+        
+        for idx, params in enumerate(parameter_list):
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_name = naming_pattern.format(index=idx, timestamp=timestamp)
+            output_path = self.output_dir / f"{output_name}.ipynb"
+            
+            result = self.execute_notebook(
+                input_path=template_path,
+                parameters=params,
+                output_path=str(output_path)
+            )
+            
+            result['index'] = idx
+            result['parameters'] = params
+            results.append(result)
+        
+        return results
+    
+    def convert_to_html(self, notebook_path: str, output_path: Optional[str] = None) -> str:
+        """转换为HTML报告"""
+        
+        if output_path is None:
+            output_path = Path(notebook_path).with_suffix('.html')
+        
+        exporter = HTMLExporter()
+        exporter.template_name = 'classic'
+        
+        with open(notebook_path, 'r', encoding='utf-8') as f:
+            nb = nbformat.read(f, as_version=4)
+        
+        body, resources = exporter.from_notebook_node(nb)
+        
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(body)
+        
+        return str(output_path)
+    
+    def convert_to_pdf(self, notebook_path: str, output_path: Optional[str] = None) -> str:
+        """转换为PDF报告"""
+        
+        if output_path is None:
+            output_path = Path(notebook_path).with_suffix('.pdf')
+        
+        exporter = PDFExporter()
+        
+        with open(notebook_path, 'r', encoding='utf-8') as f:
+            nb = nbformat.read(f, as_version=4)
+        
+        body, resources = exporter.from_notebook_node(nb)
+        
+        with open(output_path, 'wb') as f:
+            f.write(body)
+        
+        return str(output_path)
+    
+    def diff_notebooks(self, notebook1: str, notebook2: str) -> Dict:
+        """比较两个笔记本的差异"""
+        
+        result = subprocess.run(
+            ['nbdiff', notebook1, notebook2],
+            capture_output=True,
+            text=True
+        )
+        
+        return {
+            'diff': result.stdout,
+            'return_code': result.returncode
+        }
+    
+    def merge_notebooks(self, 
+                       base: str, 
+                       local: str, 
+                       remote: str,
+                       output: str) -> Dict:
+        """合并笔记本冲突"""
+        
+        result = subprocess.run(
+            ['nbmerge', base, local, remote, '--out', output],
+            capture_output=True,
+            text=True
+        )
+        
+        return {
+            'status': 'success' if result.returncode == 0 else 'failed',
+            'output': output,
+            'message': result.stdout if result.returncode == 0 else result.stderr
+        }
+
+class NotebookTemplateLibrary:
+    """笔记本模板库"""
+    
+    def __init__(self, template_dir: str = "./notebooks/templates"):
+        self.template_dir = Path(template_dir)
+        self.templates = self._load_templates()
+    
+    def _load_templates(self) -> Dict:
+        """加载模板"""
+        
+        templates = {}
+        
+        for template_file in self.template_dir.glob("*.ipynb"):
+            template_name = template_file.stem
+            templates[template_name] = {
+                'path': str(template_file),
+                'description': self._extract_description(template_file)
+            }
+        
+        return templates
+    
+    def _extract_description(self, template_path: Path) -> str:
+        """提取模板描述"""
+        
+        with open(template_path, 'r', encoding='utf-8') as f:
+            nb = nbformat.read(f, as_version=4)
+        
+        for cell in nb.cells:
+            if cell.cell_type == 'markdown':
+                first_line = cell.source.split('\n')[0]
+                if first_line.startswith('#'):
+                    return first_line.lstrip('# ').strip()
+        
+        return "无描述"
+    
+    def list_templates(self) -> List[Dict]:
+        """列出所有模板"""
+        
+        return [
+            {
+                'name': name,
+                'path': info['path'],
+                'description': info['description']
+            }
+            for name, info in self.templates.items()
+        ]
+    
+    def create_from_template(self,
+                            template_name: str,
+                            output_path: str,
+                            parameters: Dict) -> str:
+        """从模板创建笔记本"""
+        
+        if template_name not in self.templates:
+            raise ValueError(f"模板 {template_name} 不存在")
+        
+        template_path = self.templates[template_name]['path']
+        
+        pm.execute_notebook(
+            input_path=template_path,
+            output_path=output_path,
+            parameters=parameters
+        )
+        
+        return output_path
+```
+
+#### 2.29.4 核心功能
+
+1. **参数化执行**：支持批量参数扫描实验
+2. **模板管理**：标准化的研究模板库
+3. **格式转换**：自动生成HTML/PDF报告
+4. **版本控制**：Git友好的笔记本管理
+
+#### 2.29.5 应用场景
+
+- **因子研究**：批量测试不同因子参数
+- **策略回测**：标准化回测流程
+- **模型训练**：参数扫描和模型对比
+- **报告生成**：自动生成研究报告
+
+---
+
+### 2.30 实验可视化追踪系统 (Experiment Visualization & Tracking) ⭐P0关键模块
+
+#### 2.30.1 系统定位与职责
+
+**核心定位**：
+- **实验追踪可视化**：实时监控实验进度和结果
+- **深度学习可视化**：训练过程可视化分析
+- **实验对比分析**：多实验横向对比
+
+**核心职责**：
+1. **MLflow UI**：通用实验追踪可视化
+2. **TensorBoard**：深度学习专用可视化
+3. **实验对比**：多实验结果对比分析
+4. **实时监控**：实验进度实时追踪
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **MLflow UI** | 20k+ | 实验追踪可视化 | 通用ML实验 |
+| **TensorBoard** | 6k+ | 深度学习可视化 | 深度学习实验 |
+| **Plotly** | 15k+ | 交互式图表 | 自定义可视化 |
+| **Streamlit** | 35k+ | 快速仪表板 | 实时监控 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.30.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│            实验可视化追踪系统架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              数据采集层 (Data Collection)                │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ MLflow Tracking                                    │  │  │
+│  │  │ ├── 参数记录                                       │  │  │
+│  │  │ ├── 指标记录                                       │  │  │
+│  │  │ ├── 模型记录                                       │  │  │
+│  │  │ └── 工件记录                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ TensorBoard Logging                                │  │  │
+│  │  │ ├── 标量记录                                       │  │  │
+│  │  │ ├── 直方图记录                                     │  │  │
+│  │  │ ├── 图像记录                                       │  │  │
+│  │  │ └── 计算图记录                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              可视化层 (Visualization)                    │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ MLflow UI                                          │  │  │
+│  │  │ ├── 实验列表                                       │  │  │
+│  │  │ ├── 运行对比                                       │  │  │
+│  │  │ ├── 指标图表                                       │  │  │
+│  │  │ └── 模型版本                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ TensorBoard                                        │  │  │
+│  │  │ ├── 标量仪表板                                     │  │  │
+│  │  │ ├── 分布仪表板                                     │  │  │
+│  │  │ ├── 图像仪表板                                     │  │  │
+│  │  │ └── 图计算图                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              分析层 (Analysis)                           │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 实验对比分析                                       │  │  │
+│  │  │ ├── 多实验对比                                     │  │  │
+│  │  │ ├── 参数重要性分析                                 │  │  │
+│  │  │ ├── 指标相关性分析                                 │  │  │
+│  │  │ └── 最优实验识别                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              服务层 (Service)                            │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Web服务                                            │  │  │
+│  │  │ ├── MLflow Server (port 5000)                      │  │  │
+│  │  │ ├── TensorBoard Server (port 6006)                 │  │  │
+│  │  │ └── 自定义仪表板 (port 8501)                        │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.30.3 技术实现
+
+```python
+import mlflow
+from mlflow.tracking import MlflowClient
+import tensorboard
+from tensorboard.backend.event_processing import event_accumulator
+import plotly.graph_objects as go
+import plotly.express as px
+import pandas as pd
+import numpy as np
+from typing import Dict, List, Optional
+import subprocess
+import threading
+import time
+
+class ExperimentVisualizationSystem:
+    """实验可视化追踪系统 - 基于MLflow UI + TensorBoard"""
+    
+    def __init__(self, 
+                 mlflow_tracking_uri: str = "./mlruns",
+                 tensorboard_log_dir: str = "./logs"):
+        self.mlflow_tracking_uri = mlflow_tracking_uri
+        self.tensorboard_log_dir = tensorboard_log_dir
+        
+        mlflow.set_tracking_uri(f"file://{mlflow_tracking_uri}")
+        self.client = MlflowClient()
+        
+    def start_mlflow_ui(self, port: int = 5000):
+        """启动MLflow UI"""
+        
+        cmd = f"mlflow ui --port {port} --backend-store-uri file://{self.mlflow_tracking_uri}"
+        subprocess.Popen(cmd, shell=True)
+        
+        return f"http://localhost:{port}"
+    
+    def start_tensorboard(self, port: int = 6006):
+        """启动TensorBoard"""
+        
+        cmd = f"tensorboard --logdir {self.tensorboard_log_dir} --port {port}"
+        subprocess.Popen(cmd, shell=True)
+        
+        return f"http://localhost:{port}"
+    
+    def log_to_mlflow(self,
+                     experiment_name: str,
+                     run_name: str,
+                     parameters: Dict,
+                     metrics: Dict,
+                     artifacts: Optional[List[str]] = None):
+        """记录到MLflow"""
+        
+        mlflow.set_experiment(experiment_name)
+        
+        with mlflow.start_run(run_name=run_name):
+            mlflow.log_params(parameters)
+            mlflow.log_metrics(metrics)
+            
+            if artifacts:
+                for artifact in artifacts:
+                    mlflow.log_artifact(artifact)
+    
+    def log_to_tensorboard(self,
+                          log_dir: str,
+                          scalar_dict: Dict,
+                          step: int):
+        """记录到TensorBoard"""
+        
+        from torch.utils.tensorboard import SummaryWriter
+        
+        writer = SummaryWriter(log_dir)
+        
+        for tag, value in scalar_dict.items():
+            writer.add_scalar(tag, value, step)
+        
+        writer.close()
+    
+    def compare_experiments(self,
+                           experiment_ids: List[str]) -> pd.DataFrame:
+        """对比多个实验"""
+        
+        comparison_data = []
+        
+        for exp_id in experiment_ids:
+            runs = self.client.search_runs(experiment_ids=[exp_id])
+            
+            for run in runs:
+                run_data = {
+                    'experiment_id': exp_id,
+                    'run_id': run.info.run_id,
+                    'run_name': run.data.tags.get('mlflow.runName', ''),
+                    'status': run.info.status,
+                    'start_time': run.info.start_time,
+                    **run.data.params,
+                    **run.data.metrics
+                }
+                comparison_data.append(run_data)
+        
+        return pd.DataFrame(comparison_data)
+    
+    def plot_metric_comparison(self,
+                               df: pd.DataFrame,
+                               metric_name: str,
+                               x_axis: str = 'run_name'):
+        """绘制指标对比图"""
+        
+        fig = go.Figure()
+        
+        for exp_id in df['experiment_id'].unique():
+            exp_data = df[df['experiment_id'] == exp_id]
+            fig.add_trace(go.Bar(
+                name=exp_id,
+                x=exp_data[x_axis],
+                y=exp_data[metric_name],
+                text=exp_data[metric_name].round(4),
+                textposition='auto'
+            ))
+        
+        fig.update_layout(
+            title=f'{metric_name} 对比',
+            xaxis_title=x_axis,
+            yaxis_title=metric_name,
+            barmode='group'
+        )
+        
+        return fig
+    
+    def plot_training_curves(self, log_dir: str, metrics: List[str]):
+        """绘制训练曲线"""
+        
+        ea = event_accumulator.EventAccumulator(log_dir)
+        ea.Reload()
+        
+        fig = go.Figure()
+        
+        for metric in metrics:
+            if metric in ea.Tags()['scalars']:
+                events = ea.Scalars(metric)
+                steps = [e.step for e in events]
+                values = [e.value for e in events]
+                
+                fig.add_trace(go.Scatter(
+                    x=steps,
+                    y=values,
+                    mode='lines',
+                    name=metric
+                ))
+        
+        fig.update_layout(
+            title='训练曲线',
+            xaxis_title='Step',
+            yaxis_title='Value',
+            hovermode='x unified'
+        )
+        
+        return fig
+    
+    def get_best_run(self, 
+                     experiment_id: str, 
+                     metric_name: str,
+                     mode: str = 'max') -> Dict:
+        """获取最佳运行"""
+        
+        runs = self.client.search_runs(
+            experiment_ids=[experiment_id],
+            order_by=[f"metrics.{metric_name} {'DESC' if mode == 'max' else 'ASC'}"]
+        )
+        
+        if runs:
+            best_run = runs[0]
+            return {
+                'run_id': best_run.info.run_id,
+                'run_name': best_run.data.tags.get('mlflow.runName', ''),
+                'metric_value': best_run.data.metrics.get(metric_name),
+                'parameters': best_run.data.params
+            }
+        
+        return None
+
+class RealTimeMonitor:
+    """实时监控仪表板"""
+    
+    def __init__(self, refresh_interval: int = 10):
+        self.refresh_interval = refresh_interval
+        self.monitoring = False
+        
+    def start_monitoring(self, experiment_id: str):
+        """开始监控"""
+        
+        self.monitoring = True
+        
+        def monitor():
+            while self.monitoring:
+                self._update_dashboard(experiment_id)
+                time.sleep(self.refresh_interval)
+        
+        thread = threading.Thread(target=monitor)
+        thread.daemon = True
+        thread.start()
+    
+    def stop_monitoring(self):
+        """停止监控"""
+        
+        self.monitoring = False
+    
+    def _update_dashboard(self, experiment_id: str):
+        """更新仪表板"""
+        
+        pass
+```
+
+#### 2.30.4 核心功能
+
+1. **MLflow UI**：实验追踪可视化
+2. **TensorBoard**：深度学习训练可视化
+3. **实验对比**：多实验横向对比
+4. **实时监控**：实验进度实时追踪
+
+#### 2.30.5 应用场景
+
+- **模型训练监控**：实时监控训练进度
+- **超参数对比**：对比不同超参数效果
+- **模型选择**：识别最佳模型
+- **实验复现**：完整的实验记录
+
+---
+
+### 2.31 研究代码质量系统 (Research Code Quality) ⭐P0关键模块
+
+#### 2.31.1 系统定位与职责
+
+**核心定位**：
+- **代码质量检查**：自动化代码质量分析
+- **代码格式化**：统一代码风格
+- **Git Hooks管理**：提交前自动检查
+
+**核心职责**：
+1. **Ruff**：快速Linter（替代Pylint、Flake8）
+2. **Black**：自动代码格式化
+3. **Pre-commit**：Git Hooks自动化管理
+4. **质量报告**：代码质量报告生成
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Ruff** | 35k+ | 快速Linter | 代码检查 |
+| **Black** | 39k+ | 代码格式化 | 自动格式化 |
+| **Pre-commit** | 13k+ | Git Hooks | 自动化检查 |
+| **isort** | 6k+ | Import排序 | Import管理 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高（配置文件化）
+- 开发周期：1周
+
+#### 2.31.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              研究代码质量系统架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              检查层 (Check Layer)                        │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Ruff Linter                                        │  │  │
+│  │  │ ├── 语法错误检查                                   │  │  │
+│  │  │ ├── 代码风格检查                                   │  │  │
+│  │  │ ├── 复杂度检查                                     │  │  │
+│  │  │ ├── 安全漏洞检查                                   │  │  │
+│  │  │ └── 未使用导入检查                                 │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 类型检查 (mypy)                                    │  │  │
+│  │  │ ├── 类型注解检查                                   │  │  │
+│  │  │ ├── 类型推断                                       │  │  │
+│  │  │ └── 类型错误报告                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              格式化层 (Format Layer)                     │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Black格式化                                        │  │  │
+│  │  │ ├── 代码风格统一                                   │  │  │
+│  │  │ ├── 自动缩进                                       │  │  │
+│  │  │ ├── 空格规范化                                     │  │  │
+│  │  │ └── 行长度限制                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ isort导入排序                                      │  │  │
+│  │  │ ├── 标准库排序                                     │  │  │
+│  │  │ ├── 第三方库排序                                   │  │  │
+│  │  │ └── 本地模块排序                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              自动化层 (Automation Layer)                 │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Pre-commit Hooks                                   │  │  │
+│  │  │ ├── 提交前检查                                     │  │  │
+│  │  │ ├── 自动格式化                                     │  │  │
+│  │  │ ├── 自动修复                                       │  │  │
+│  │  │ └── 检查报告                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              报告层 (Report Layer)                       │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 质量报告生成                                       │  │  │
+│  │  │ ├── 问题统计                                       │  │  │
+│  │  │ ├── 趋势分析                                       │  │  │
+│  │  │ ├── 修复建议                                       │  │  │
+│  │  │ └── 评分卡                                         │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.31.3 技术实现
+
+```python
+import subprocess
+import json
+from pathlib import Path
+from typing import Dict, List, Optional
+import yaml
+
+class CodeQualitySystem:
+    """研究代码质量系统 - 基于Ruff + Black + Pre-commit"""
+    
+    def __init__(self, project_root: str = "."):
+        self.project_root = Path(project_root)
+        self.config_file = self.project_root / ".pre-commit-config.yaml"
+        self.ruff_config = self.project_root / "ruff.toml"
+        self.pyproject_config = self.project_root / "pyproject.toml"
+        
+    def setup_pre_commit(self):
+        """设置Pre-commit"""
+        
+        config = {
+            'repos': [
+                {
+                    'repo': 'https://github.com/astral-sh/ruff-pre-commit',
+                    'rev': 'v0.1.6',
+                    'hooks': [
+                        {
+                            'id': 'ruff',
+                            'args': ['--fix', '--exit-non-zero-on-fix']
+                        }
+                    ]
+                },
+                {
+                    'repo': 'https://github.com/psf/black',
+                    'rev': '23.12.1',
+                    'hooks': [
+                        {
+                            'id': 'black',
+                            'language_version': 'python3.11'
+                        }
+                    ]
+                },
+                {
+                    'repo': 'https://github.com/pycqa/isort',
+                    'rev': '5.13.2',
+                    'hooks': [
+                        {
+                            'id': 'isort',
+                            'args': ['--profile', 'black']
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        with open(self.config_file, 'w') as f:
+            yaml.dump(config, f, default_flow_style=False)
+        
+        subprocess.run(['pre-commit', 'install'], cwd=self.project_root)
+        
+    def run_ruff_check(self, path: str = ".") -> Dict:
+        """运行Ruff检查"""
+        
+        result = subprocess.run(
+            ['ruff', 'check', path, '--output-format', 'json'],
+            capture_output=True,
+            text=True,
+            cwd=self.project_root
+        )
+        
+        if result.stdout:
+            issues = json.loads(result.stdout)
+            return {
+                'status': 'failed' if issues else 'passed',
+                'issues': issues,
+                'count': len(issues)
+            }
+        
+        return {
+            'status': 'passed',
+            'issues': [],
+            'count': 0
+        }
+    
+    def run_ruff_fix(self, path: str = ".") -> Dict:
+        """运行Ruff自动修复"""
+        
+        result = subprocess.run(
+            ['ruff', 'check', path, '--fix'],
+            capture_output=True,
+            text=True,
+            cwd=self.project_root
+        )
+        
+        return {
+            'status': 'success',
+            'output': result.stdout,
+            'fixed': result.returncode == 0
+        }
+    
+    def run_black_format(self, path: str = ".") -> Dict:
+        """运行Black格式化"""
+        
+        result = subprocess.run(
+            ['black', path],
+            capture_output=True,
+            text=True,
+            cwd=self.project_root
+        )
+        
+        return {
+            'status': 'success',
+            'output': result.stdout,
+            'formatted': 'reformatted' in result.stdout
+        }
+    
+    def run_isort(self, path: str = ".") -> Dict:
+        """运行isort"""
+        
+        result = subprocess.run(
+            ['isort', path, '--profile', 'black'],
+            capture_output=True,
+            text=True,
+            cwd=self.project_root
+        )
+        
+        return {
+            'status': 'success',
+            'output': result.stdout
+        }
+    
+    def run_all_checks(self, path: str = ".") -> Dict:
+        """运行所有检查"""
+        
+        ruff_result = self.run_ruff_check(path)
+        black_result = self.run_black_format(path)
+        isort_result = self.run_isort(path)
+        
+        return {
+            'ruff': ruff_result,
+            'black': black_result,
+            'isort': isort_result,
+            'overall_status': 'passed' if ruff_result['count'] == 0 else 'failed'
+        }
+    
+    def generate_quality_report(self, path: str = ".") -> Dict:
+        """生成质量报告"""
+        
+        ruff_result = self.run_ruff_check(path)
+        
+        issues_by_type = {}
+        for issue in ruff_result['issues']:
+            code = issue.get('code', 'UNKNOWN')
+            if code not in issues_by_type:
+                issues_by_type[code] = []
+            issues_by_type[code].append(issue)
+        
+        report = {
+            'summary': {
+                'total_issues': ruff_result['count'],
+                'status': ruff_result['status'],
+                'files_checked': len(set(i['filename'] for i in ruff_result['issues']))
+            },
+            'issues_by_type': {
+                code: len(issues) 
+                for code, issues in issues_by_type.items()
+            },
+            'detailed_issues': ruff_result['issues'],
+            'recommendations': self._generate_recommendations(issues_by_type)
+        }
+        
+        return report
+    
+    def _generate_recommendations(self, issues_by_type: Dict) -> List[str]:
+        """生成修复建议"""
+        
+        recommendations = []
+        
+        if 'F401' in issues_by_type:
+            recommendations.append("删除未使用的导入语句")
+        
+        if 'E501' in issues_by_type:
+            recommendations.append("将长行拆分为多行（建议使用Black自动格式化）")
+        
+        if 'F841' in issues_by_type:
+            recommendations.append("删除未使用的局部变量")
+        
+        if 'C901' in issues_by_type:
+            recommendations.append("简化复杂的函数，降低圈复杂度")
+        
+        return recommendations
+
+class RuffConfig:
+    """Ruff配置管理"""
+    
+    @staticmethod
+    def create_config(output_path: str = "ruff.toml"):
+        """创建Ruff配置文件"""
+        
+        config = """
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "C",   # flake8-comprehensions
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"""
+        
+        with open(output_path, 'w') as f:
+            f.write(config)
+```
+
+#### 2.31.4 核心功能
+
+1. **快速检查**：Ruff快速Linter
+2. **自动格式化**：Black统一代码风格
+3. **Git集成**：Pre-commit自动检查
+4. **质量报告**：代码质量分析报告
+
+#### 2.31.5 应用场景
+
+- **代码审查**：提交前自动检查
+- **质量保证**：持续质量监控
+- **团队协作**：统一代码风格
+- **AI维护**：配置文件化管理
+
+---
+
+### 2.32 研究环境管理系统 (Research Environment Management) ⭐P0关键模块
+
+#### 2.32.1 系统定位与职责
+
+**核心定位**：
+- **依赖管理**：精确的依赖版本控制
+- **环境隔离**：独立的研究环境
+- **可复现性**：确保研究可复现
+
+**核心职责**：
+1. **Poetry**：现代Python依赖管理
+2. **Conda**：数据科学环境管理
+3. **环境导出**：环境配置导出
+4. **版本锁定**：依赖版本锁定
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Poetry** | 30k+ | 依赖管理 | 现代Python项目 |
+| **Conda** | 6k+ | 环境管理 | 数据科学环境 |
+| **pyenv** | 38k+ | Python版本管理 | 多版本Python |
+| **pip-tools** | 7k+ | 依赖锁定 | 传统项目 |
+
+**个人开发价值**：⭐⭐⭐⭐
+- 学习曲线：中等
+- 维护成本：低
+- AI维护友好：高（配置文件化）
+- 开发周期：1周
+
+#### 2.32.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              研究环境管理系统架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              依赖管理层 (Dependency Management)          │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Poetry依赖管理                                     │  │  │
+│  │  │ ├── pyproject.toml配置                             │  │  │
+│  │  │ ├── poetry.lock锁定                                │  │  │
+│  │  │ ├── 依赖安装                                       │  │  │
+│  │  │ └── 依赖更新                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Conda环境管理                                      │  │  │
+│  │  │ ├── 环境创建                                       │  │  │
+│  │  │ ├── 包安装                                         │  │  │
+│  │  │ ├── 环境导出                                       │  │  │
+│  │  │ └── 环境克隆                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              版本管理层 (Version Management)             │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ pyenv版本管理                                      │  │  │
+│  │  │ ├── Python版本安装                                 │  │  │
+│  │  │ ├── 版本切换                                       │  │  │
+│  │  │ ├── 全局版本设置                                   │  │  │
+│  │  │ └── 项目版本设置                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              隔离层 (Isolation Layer)                    │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 虚拟环境                                           │  │  │
+│  │  │ ├── venv创建                                       │  │  │
+│  │  │ ├── 环境激活                                       │  │  │
+│  │  │ ├── 环境停用                                       │  │  │
+│  │  │ └── 环境删除                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              导出层 (Export Layer)                       │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 环境导出                                           │  │  │
+│  │  │ ├── requirements.txt                               │  │  │
+│  │  │ ├── environment.yml                               │  │  │
+│  │  │ ├── Dockerfile                                    │  │  │
+│  │  │ └── pyproject.toml                                │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.32.3 技术实现
+
+```python
+import subprocess
+import yaml
+import toml
+from pathlib import Path
+from typing import Dict, List, Optional
+import json
+
+class EnvironmentManagementSystem:
+    """研究环境管理系统 - 基于Poetry + Conda"""
+    
+    def __init__(self, project_root: str = "."):
+        self.project_root = Path(project_root)
+        self.pyproject_file = self.project_root / "pyproject.toml"
+        self.poetry_lock_file = self.project_root / "poetry.lock"
+        self.environment_file = self.project_root / "environment.yml"
+        
+    def init_poetry_project(self, 
+                           project_name: str,
+                           python_version: str = "3.11"):
+        """初始化Poetry项目"""
+        
+        subprocess.run(
+            ['poetry', 'init', '--name', project_name, '--python', python_version],
+            cwd=self.project_root
+        )
+        
+    def add_dependency(self, 
+                      package: str, 
+                      group: Optional[str] = None,
+                      dev: bool = False):
+        """添加依赖"""
+        
+        cmd = ['poetry', 'add']
+        
+        if dev:
+            cmd.append('--group')
+            cmd.append('dev')
+        elif group:
+            cmd.append('--group')
+            cmd.append(group)
+        
+        cmd.append(package)
+        
+        subprocess.run(cmd, cwd=self.project_root)
+        
+    def install_dependencies(self):
+        """安装依赖"""
+        
+        subprocess.run(['poetry', 'install'], cwd=self.project_root)
+        
+    def update_dependencies(self):
+        """更新依赖"""
+        
+        subprocess.run(['poetry', 'update'], cwd=self.project_root)
+        
+    def export_requirements(self, output_path: str = "requirements.txt"):
+        """导出requirements.txt"""
+        
+        subprocess.run(
+            ['poetry', 'export', '-f', 'requirements.txt', '--output', output_path],
+            cwd=self.project_root
+        )
+        
+    def create_conda_environment(self, 
+                                env_name: str,
+                                python_version: str = "3.11"):
+        """创建Conda环境"""
+        
+        subprocess.run(
+            ['conda', 'create', '-n', env_name, f'python={python_version}', '-y']
+        )
+        
+    def export_conda_environment(self, output_path: str = "environment.yml"):
+        """导出Conda环境"""
+        
+        result = subprocess.run(
+            ['conda', 'env', 'export'],
+            capture_output=True,
+            text=True
+        )
+        
+        with open(output_path, 'w') as f:
+            f.write(result.stdout)
+            
+    def load_conda_environment(self, env_file: str = "environment.yml"):
+        """加载Conda环境"""
+        
+        subprocess.run(['conda', 'env', 'create', '-f', env_file])
+        
+    def get_installed_packages(self) -> List[Dict]:
+        """获取已安装的包"""
+        
+        result = subprocess.run(
+            ['poetry', 'show', '--tree'],
+            capture_output=True,
+            text=True,
+            cwd=self.project_root
+        )
+        
+        packages = []
+        for line in result.stdout.split('\n'):
+            if line and not line.startswith(' '):
+                parts = line.split()
+                if len(parts) >= 2:
+                    packages.append({
+                        'name': parts[0],
+                        'version': parts[1],
+                        'description': ' '.join(parts[2:]) if len(parts) > 2 else ''
+                    })
+        
+        return packages
+    
+    def check_security_vulnerabilities(self) -> Dict:
+        """检查安全漏洞"""
+        
+        result = subprocess.run(
+            ['poetry', 'audit'],
+            capture_output=True,
+            text=True,
+            cwd=self.project_root
+        )
+        
+        return {
+            'status': 'safe' if result.returncode == 0 else 'vulnerable',
+            'output': result.stdout
+        }
+    
+    def generate_dockerfile(self, output_path: str = "Dockerfile"):
+        """生成Dockerfile"""
+        
+        dockerfile = f"""
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
+
+RUN pip install poetry && \\
+    poetry config virtualenvs.create false && \\
+    poetry install --no-dev
+
+COPY . .
+
+CMD ["python", "main.py"]
+"""
+        
+        with open(output_path, 'w') as f:
+            f.write(dockerfile)
+            
+    def create_pyproject_config(self, 
+                                project_name: str,
+                                description: str = "",
+                                dependencies: Optional[Dict] = None):
+        """创建pyproject.toml配置"""
+        
+        config = {
+            'tool': {
+                'poetry': {
+                    'name': project_name,
+                    'version': '0.1.0',
+                    'description': description,
+                    'authors': ['Your Name <you@example.com>'],
+                    'python': '^3.11',
+                    'dependencies': dependencies or {}
+                }
+            },
+            'build-system': {
+                'requires': ['poetry-core'],
+                'build-backend': 'poetry.core.masonry.api'
+            }
+        }
+        
+        with open(self.pyproject_file, 'w') as f:
+            toml.dump(config, f)
+
+class EnvironmentSnapshot:
+    """环境快照管理"""
+    
+    def __init__(self, project_root: str = "."):
+        self.project_root = Path(project_root)
+        self.snapshot_dir = self.project_root / ".env_snapshots"
+        self.snapshot_dir.mkdir(exist_ok=True)
+        
+    def create_snapshot(self, snapshot_name: str):
+        """创建环境快照"""
+        
+        from datetime import datetime
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        snapshot_file = self.snapshot_dir / f"{snapshot_name}_{timestamp}.lock"
+        
+        subprocess.run(
+            ['poetry', 'lock'],
+            cwd=self.project_root
+        )
+        
+        import shutil
+        shutil.copy(
+            self.project_root / "poetry.lock",
+            snapshot_file
+        )
+        
+        return str(snapshot_file)
+    
+    def restore_snapshot(self, snapshot_file: str):
+        """恢复环境快照"""
+        
+        import shutil
+        shutil.copy(
+            snapshot_file,
+            self.project_root / "poetry.lock"
+        )
+        
+        subprocess.run(
+            ['poetry', 'install'],
+            cwd=self.project_root
+        )
+        
+    def list_snapshots(self) -> List[Dict]:
+        """列出所有快照"""
+        
+        snapshots = []
+        for snapshot_file in self.snapshot_dir.glob("*.lock"):
+            parts = snapshot_file.stem.rsplit('_', 2)
+            snapshots.append({
+                'name': parts[0] if len(parts) > 0 else snapshot_file.stem,
+                'timestamp': '_'.join(parts[1:]) if len(parts) > 1 else '',
+                'file': str(snapshot_file)
+            })
+        
+        return sorted(snapshots, key=lambda x: x['timestamp'], reverse=True)
+```
+
+#### 2.32.4 核心功能
+
+1. **依赖管理**：Poetry精确依赖控制
+2. **环境隔离**：Conda环境管理
+3. **版本锁定**：确保可复现性
+4. **环境导出**：多种格式导出
+
+#### 2.32.5 应用场景
+
+- **项目初始化**：快速创建研究环境
+- **依赖管理**：精确控制依赖版本
+- **环境复现**：确保研究可复现
+- **团队协作**：统一开发环境
+
+---
+
 ## 三、数据模型设计
 ### 3.1 研究任务数据模型
 
