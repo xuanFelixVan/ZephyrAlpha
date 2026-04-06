@@ -1,13 +1,13 @@
 ---
-module_id: ECONOMIC_REGIME_ENGINE_002
-version: 2.0.2
+module_id: ECONOMIC_REGIME_ENGINE_001
+version: 2.0.3
 spec_version: 2.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
+last_updated: '2026-04-07'
 created_date: 2026-04-02
 layer: 'Layer 5 (宏观配置层) | 业务架构: 三级时间框架融合架构'
-index: ECONOMIC_REGIME_002
+index: ECONOMIC_REGIME_001
 estimated_hours: 60h
 estimated_effort: 1.5-2周
 review_status: Approved

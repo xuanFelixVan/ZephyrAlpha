@@ -8987,6 +8987,867 @@ class ResearchTestSuite:
 
 ---
 
+### 2.38 研究缓存系统 (Research Caching System) ⭐P1重要模块
+
+#### 2.38.1 系统定位与职责
+
+**核心定位**：
+- **结果缓存**：缓存计算结果加速迭代
+- **数据缓存**：缓存频繁访问的数据
+- **分布式缓存**：支持分布式缓存
+
+**核心职责**：
+1. **Redis**：高性能分布式缓存
+2. **joblib**：Python专用磁盘缓存
+3. **cachetools**：轻量级内存缓存
+4. **缓存策略**：LRU、TTL等策略
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Redis** | 66k+ | 内存数据库 | 高性能缓存 |
+| **Memcached** | 13k+ | 分布式缓存 | 简单缓存 |
+| **joblib** | 4k+ | 磁盘缓存 | Python专用 |
+| **cachetools** | 2k+ | 内存缓存 | 轻量级 |
+
+**个人开发价值**：⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.38.2 技术实现
+
+```python
+import redis
+import joblib
+from cachetools import LRUCache, TTLCache
+from functools import wraps
+import hashlib
+import pickle
+from typing import Any, Callable, Optional
+from pathlib import Path
+import numpy as np
+import pandas as pd
+
+class ResearchCacheSystem:
+    """研究缓存系统 - 基于Redis + joblib"""
+    
+    def __init__(self,
+                 redis_host: str = "localhost",
+                 redis_port: int = 6379,
+                 cache_dir: str = "./cache",
+                 default_ttl: int = 3600):
+        self.redis_client = redis.Redis(
+            host=redis_host,
+            port=redis_port,
+            db=0,
+            decode_responses=True
+        )
+        
+        self.cache_dir = Path(cache_dir)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        
+        self.default_ttl = default_ttl
+        self.memory_cache = LRUCache(maxsize=1000)
+    
+    def _generate_key(self, *args, **kwargs) -> str:
+        """生成缓存键"""
+        
+        key_data = f"{args}_{sorted(kwargs.items())}"
+        return hashlib.md5(key_data.encode()).hexdigest()
+    
+    def set(self, key: str, value: Any, ttl: int = None) -> bool:
+        """设置缓存"""
+        
+        ttl = ttl or self.default_ttl
+        
+        try:
+            serialized = pickle.dumps(value)
+            self.redis_client.setex(key, ttl, serialized)
+            return True
+        except Exception:
+            self.memory_cache[key] = value
+            return False
+    
+    def get(self, key: str) -> Optional[Any]:
+        """获取缓存"""
+        
+        try:
+            serialized = self.redis_client.get(key)
+            if serialized:
+                return pickle.loads(serialized)
+        except Exception:
+            pass
+        
+        return self.memory_cache.get(key)
+    
+    def delete(self, key: str) -> bool:
+        """删除缓存"""
+        
+        try:
+            self.redis_client.delete(key)
+        except Exception:
+            pass
+        
+        if key in self.memory_cache:
+            del self.memory_cache[key]
+        
+        return True
+    
+    def clear_all(self) -> bool:
+        """清空所有缓存"""
+        
+        try:
+            self.redis_client.flushdb()
+        except Exception:
+            pass
+        
+        self.memory_cache.clear()
+        
+        return True
+
+def cache_function(backend: str = "memory", ttl: int = 3600):
+    """函数缓存装饰器"""
+    
+    def decorator(func: Callable):
+        cache = {}
+        
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            cache_key = f"{func.__name__}_{hash((args, tuple(sorted(kwargs.items()))))}"
+            
+            if backend == "memory":
+                if cache_key in cache:
+                    return cache[cache_key]
+                
+                result = func(*args, **kwargs)
+                cache[cache_key] = result
+                return result
+            
+            elif backend == "disk":
+                cache_file = Path(f"./cache/{cache_key}.joblib")
+                
+                if cache_file.exists():
+                    return joblib.load(cache_file)
+                
+                result = func(*args, **kwargs)
+                joblib.dump(result, cache_file)
+                return result
+            
+            else:
+                return func(*args, **kwargs)
+        
+        return wrapper
+    
+    return decorator
+
+class DataCacheManager:
+    """数据缓存管理器"""
+    
+    def __init__(self, cache_system: ResearchCacheSystem):
+        self.cache = cache_system
+    
+    def cache_data_fetch(self,
+                        fetch_func: Callable,
+                        symbols: list,
+                        start_date: str,
+                        end_date: str,
+                        interval: str = "1d") -> pd.DataFrame:
+        """缓存数据获取"""
+        
+        cache_key = f"data_{'_'.join(symbols)}_{start_date}_{end_date}_{interval}"
+        
+        cached_data = self.cache.get(cache_key)
+        
+        if cached_data is not None:
+            return cached_data
+        
+        data = fetch_func(symbols, start_date, end_date, interval)
+        
+        self.cache.set(cache_key, data, ttl=86400)
+        
+        return data
+    
+    def cache_factor_computation(self,
+                               factor_func: Callable,
+                               data: pd.DataFrame,
+                               factor_name: str) -> pd.Series:
+        """缓存因子计算"""
+        
+        cache_key = f"factor_{factor_name}_{hash(data.to_csv())}"
+        
+        cached_factor = self.cache.get(cache_key)
+        
+        if cached_factor is not None:
+            return cached_factor
+        
+        factor = factor_func(data)
+        
+        self.cache.set(cache_key, factor, ttl=3600)
+        
+        return factor
+```
+
+#### 2.38.3 核心功能
+
+1. **多级缓存**：内存+磁盘+Redis
+2. **自动过期**：TTL自动过期策略
+3. **LRU淘汰**：LRU缓存淘汰策略
+4. **分布式缓存**：支持Redis分布式缓存
+
+#### 2.38.4 应用场景
+
+- **数据缓存**：缓存行情数据，避免重复下载
+- **因子缓存**：缓存因子计算结果
+- **模型缓存**：缓存模型预测结果
+
+---
+
+### 2.39 研究通知系统 (Research Notification System) ⭐P1重要模块
+
+#### 2.39.1 系统定位与职责
+
+**核心定位**：
+- **多渠道通知**：支持多种通知渠道
+- **事件触发**：基于事件的通知
+- **告警通知**：关键告警通知
+
+**核心职责**：
+1. **Apprise**：多平台通知库
+2. **slack-sdk**：Slack集成
+3. **yagmail**：邮件通知
+4. **通知模板**：通知模板管理
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Apprise** | 12k+ | 通知库 | 多平台通知 |
+| **Notifiers** | 2k+ | 通知框架 | 简单集成 |
+| **slack-sdk** | 3k+ | Slack集成 | 团队协作 |
+| **yagmail** | 3k+ | 邮件发送 | 邮件通知 |
+
+**个人开发价值**：⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.39.2 技术实现
+
+```python
+import apprise
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+import yagmail
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+from enum import Enum
+
+class NotificationChannel(Enum):
+    SLACK = "slack"
+    EMAIL = "email"
+    DISCORD = "discord"
+    TELEGRAM = "telegram"
+    WEBHOOK = "webhook"
+
+class ResearchNotificationSystem:
+    """研究通知系统 - 基于Apprise + slack-sdk"""
+    
+    def __init__(self,
+                 slack_token: str = None,
+                 slack_channel: str = None,
+                 email_smtp: str = "smtp.gmail.com",
+                 email_port: int = 587,
+                 email_user: str = None,
+                 email_password: str = None):
+        self.slack_token = slack_token
+        self.slack_channel = slack_channel
+        
+        if slack_token:
+            self.slack_client = WebClient(token=slack_token)
+        
+        if email_user and email_password:
+            self.email_client = yagmail.SMTP(
+                user=email_user,
+                password=email_password,
+                host=email_smtp,
+                port=email_port
+            )
+        
+        self.apprise = apprise.Apprise()
+    
+    def add_slack_channel(self, webhook_url: str):
+        """添加Slack渠道"""
+        
+        self.apprise.add(apprise.plugins.Slack(webhook_url))
+    
+    def add_email_recipient(self, email: str):
+        """添加邮件接收者"""
+        
+        self.apprise.add(apprise.plugins.Mailgun(
+            host='api.mailgun.net',
+            user='postmaster@sandbox.mailgun.org',
+            to=email
+        ))
+    
+    def send_notification(self,
+                        title: str,
+                        body: str,
+                        channels: List[NotificationChannel] = None) -> bool:
+        """发送通知"""
+        
+        if channels is None:
+            channels = [NotificationChannel.SLACK]
+        
+        for channel in channels:
+            if channel == NotificationChannel.SLACK and self.slack_client:
+                try:
+                    self.slack_client.chat_postMessage(
+                        channel=self.slack_channel,
+                        text=f"*{title}*\n{body}"
+                    )
+                except SlackApiError as e:
+                    print(f"Slack error: {e}")
+            
+            elif channel == NotificationChannel.EMAIL and self.email_client:
+                try:
+                    self.email_client.send(
+                        to="research@example.com",
+                        subject=title,
+                        contents=body
+                    )
+                except Exception as e:
+                    print(f"Email error: {e}")
+        
+        return self.apprise.notify(
+            title=title,
+            body=body
+        )
+
+class ExperimentNotificationManager:
+    """实验通知管理器"""
+    
+    def __init__(self, notification_system: ResearchNotificationSystem):
+        self.notifier = notification_system
+    
+    def notify_experiment_start(self, experiment_name: str, config: Dict):
+        """通知实验开始"""
+        
+        title = f"实验开始: {experiment_name}"
+        body = f"""
+        实验配置:
+        - 模型: {config.get('model', 'N/A')}
+        - 数据范围: {config.get('data_range', 'N/A')}
+        - 参数: {config.get('params', {})}
+        """
+        
+        self.notifier.send_notification(title, body)
+    
+    def notify_experiment_complete(self, 
+                                  experiment_name: str, 
+                                  results: Dict):
+        """通知实验完成"""
+        
+        title = f"实验完成: {experiment_name}"
+        body = f"""
+        实验结果:
+        - 收益率: {results.get('return', 'N/A')}
+        - 夏普比率: {results.get('sharpe', 'N/A')}
+        - 最大回撤: {results.get('max_drawdown', 'N/A')}
+        """
+        
+        self.notifier.send_notification(title, body)
+    
+    def notify_experiment_failed(self,
+                               experiment_name: str,
+                               error: str):
+        """通知实验失败"""
+        
+        title = f"实验失败: {experiment_name}"
+        body = f"错误信息: {error}"
+        
+        self.notifier.send_notification(title, body)
+    
+    def notify_model_degraded(self,
+                            model_name: str,
+                            metrics: Dict):
+        """通知模型性能下降"""
+        
+        title = f"模型性能下降: {model_name}"
+        body = f"""
+        性能指标:
+        - 准确率: {metrics.get('accuracy', 'N/A')}
+        - 召回率: {metrics.get('recall', 'N/A')}
+        - F1分数: {metrics.get('f1', 'N/A')}
+        """
+        
+        self.notifier.send_notification(title, body)
+```
+
+#### 2.39.3 核心功能
+
+1. **多渠道通知**：支持Slack、Email、Discord等
+2. **事件触发**：实验开始/完成/失败自动通知
+3. **告警通知**：模型性能下降告警
+4. **通知模板**：自定义通知模板
+
+#### 2.39.4 应用场景
+
+- **实验通知**：实验开始/完成/失败通知
+- **模型告警**：模型性能下降告警
+- **系统告警**：系统异常告警
+
+---
+
+### 2.40 研究监控告警系统 (Research Monitoring & Alerting) ⭐P1重要模块
+
+#### 2.40.1 系统定位与职责
+
+**核心定位**：
+- **指标收集**：收集系统指标
+- **可视化**：Grafana可视化
+- **告警管理**：Alertmanager告警
+
+**核心职责**：
+1. **Prometheus**：指标收集
+2. **Grafana**：可视化仪表板
+3. **Loki**：日志聚合
+4. **Alertmanager**：告警管理
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Prometheus** | 55k+ | 监控系统 | 指标收集 |
+| **Grafana** | 64k+ | 可视化 | 仪表板 |
+| **Loki** | 24k+ | 日志聚合 | 日志管理 |
+| **Alertmanager** | 7k+ | 告警管理 | 告警系统 |
+
+**个人开发价值**：⭐⭐⭐⭐
+- 学习曲线：中等
+- 维护成本：中等
+- AI维护友好：中等
+- 开发周期：2周
+
+#### 2.40.2 技术实现
+
+```python
+from prometheus_client import Counter, Gauge, Histogram, Summary
+import logging
+from typing import Dict, Optional
+from datetime import datetime
+
+experiment_counter = Counter('research_experiments_total', 'Total experiments', ['status'])
+model_training_duration = Histogram('model_training_duration_seconds', 'Model training duration')
+prediction_accuracy = Gauge('model_prediction_accuracy', 'Model prediction accuracy')
+data_processing_time = Summary('data_processing_time_seconds', 'Data processing time')
+
+class MetricsCollector:
+    """指标收集器"""
+    
+    def __init__(self):
+        self.metrics = {}
+    
+    def record_experiment(self, status: str):
+        """记录实验"""
+        experiment_counter.labels(status=status).inc()
+    
+    def record_training_duration(self, duration: float):
+        """记录训练时长"""
+        model_training_duration.observe(duration)
+    
+    def record_prediction_accuracy(self, accuracy: float):
+        """记录预测准确率"""
+        prediction_accuracy.set(accuracy)
+    
+    def record_data_processing_time(self, duration: float):
+        """记录数据处理时间"""
+        data_processing_time.observe(duration)
+
+class ExperimentMonitor:
+    """实验监控器"""
+    
+    def __init__(self, metrics: MetricsCollector):
+        self.metrics = metrics
+    
+    def monitor_experiment(self, experiment_id: str):
+        """监控实验"""
+        
+        start_time = datetime.now()
+        
+        yield
+        
+        duration = (datetime.now() - start_time).total_seconds()
+        
+        self.metrics.record_training_duration(duration)
+        self.metrics.record_experiment('completed')
+    
+    def monitor_prediction(self, predictions, ground_truth):
+        """监控预测"""
+        
+        accuracy = sum(p == t for p, t in zip(predictions, ground_truth)) / len(ground_truth)
+        
+        self.metrics.record_prediction_accuracy(accuracy)
+        
+        return accuracy
+```
+
+#### 2.40.3 核心功能
+
+1. **指标收集**：收集实验和模型指标
+2. **可视化**：Grafana仪表板
+3. **日志聚合**：Loki日志收集
+4. **告警规则**：自定义告警规则
+
+#### 2.40.4 应用场景
+
+- **实验监控**：监控实验执行状态
+- **模型监控**：监控模型性能
+- **系统监控**：监控系统资源
+
+---
+
+### 2.41 研究数据质量系统 (Research Data Quality) ⭐P1重要模块
+
+#### 2.41.1 系统定位与职责
+
+**核心定位**：
+- **数据验证**：验证数据质量
+- **数据文档**：生成数据文档
+- **质量报告**：生成质量报告
+
+**核心职责**：
+1. **Great Expectations**：数据质量框架
+2. **Pandera**：Pandas数据验证
+3. **TFDV**：TensorFlow数据验证
+4. **质量规则**：自定义质量规则
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Great Expectations** | 9k+ | 数据质量 | 全面方案 |
+| **Deequ** | 3k+ | 数据质量 | AWS生态 |
+| **Pandera** | 3k+ | 数据验证 | Pandas专用 |
+| **TFDV** | 7k+ | 数据验证 | TensorFlow |
+
+**个人开发价值**：⭐⭐⭐⭐
+- 学习曲线：中等
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.41.2 技术实现
+
+```python
+import great_expectations as ge
+from great_expectations.dataset import PandasDataset
+import pandas as pd
+from typing import Dict, List, Optional
+
+class DataQualitySystem:
+    """研究数据质量系统 - 基于Great Expectations"""
+    
+    def __init__(self, data_context_path: str = "./great_expectations"):
+        self.context = ge.get_context()
+        self.data_context_path = data_context_path
+    
+    def create_expectation_suite(self, suite_name: str) -> str:
+        """创建期望套件"""
+        
+        suite = self.context.suites.add_suite(
+            ge.core.Suite(suite_name)
+        )
+        
+        return suite
+    
+    def validate_data(self,
+                     data: pd.DataFrame,
+                     expectations: List[Dict]) -> Dict:
+        """验证数据"""
+        
+        dataset = PandasDataset(data)
+        
+        for expectation in expectations:
+            expectation_type = expectation['type']
+            expectation_kwargs = expectation.get('kwargs', {})
+            
+            getattr(dataset, expectation_type)(**expectation_kwargs)
+        
+        results = dataset.validate()
+        
+        return {
+            'success': results.success,
+            'statistics': results.statistics,
+            'results': results.results
+        }
+    
+    def check_column_exists(self, data: pd.DataFrame, column: str) -> bool:
+        """检查列是否存在"""
+        
+        return column in data.columns
+    
+    def check_null_percentage(self, 
+                            data: pd.DataFrame, 
+                            column: str, 
+                            max_percentage: float = 0.05) -> bool:
+        """检查空值百分比"""
+        
+        null_percentage = data[column].isnull().sum() / len(data)
+        
+        return null_percentage <= max_percentage
+    
+    def check_data_range(self,
+                        data: pd.DataFrame,
+                        column: str,
+                        min_value: float,
+                        max_value: float) -> bool:
+        """检查数据范围"""
+        
+        if data[column].dropna().empty:
+            return True
+        
+        min_actual = data[column].min()
+        max_actual = data[column].max()
+        
+        return min_actual >= min_value and max_actual <= max_value
+    
+    def generate_data_quality_report(self, data: pd.DataFrame) -> Dict:
+        """生成数据质量报告"""
+        
+        report = {
+            'total_rows': len(data),
+            'total_columns': len(data.columns),
+            'columns': {}
+        }
+        
+        for column in data.columns:
+            col_info = {
+                'dtype': str(data[column].dtype),
+                'null_count': int(data[column].isnull().sum()),
+                'null_percentage': float(data[column].isnull().sum() / len(data)),
+                'unique_count': int(data[column].nunique())
+            }
+            
+            if pd.api.types.is_numeric_dtype(data[column]):
+                col_info.update({
+                    'min': float(data[column].min()) if not data[column].isnull().all() else None,
+                    'max': float(data[column].max()) if not data[column].isnull().all() else None,
+                    'mean': float(data[column].mean()) if not data[column].isnull().all() else None,
+                    'std': float(data[column].std()) if not data[column].isnull().all() else None
+                })
+            
+            report['columns'][column] = col_info
+        
+        return report
+```
+
+#### 2.41.3 核心功能
+
+1. **数据验证**：验证数据完整性和准确性
+2. **质量报告**：生成详细质量报告
+3. **数据文档**：自动生成数据文档
+4. **告警**：数据质量异常告警
+
+#### 2.41.4 应用场景
+
+- **数据入库验证**：验证新数据质量
+- **数据质量监控**：持续监控数据质量
+- **数据问题诊断**：诊断数据问题
+
+---
+
+### 2.42 研究消息队列系统 (Research Message Queue) ⭐P1重要模块
+
+#### 2.42.1 系统定位与职责
+
+**核心定位**：
+- **异步通信**：异步消息传递
+- **任务队列**：分布式任务队列
+- **事件流**：事件流处理
+
+**核心职责**：
+1. **RabbitMQ**：企业级消息队列
+2. **Redis Streams**：轻量级流处理
+3. **消息模式**：发布/订阅、队列模式
+4. **消息确认**：消息确认机制
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **RabbitMQ** | 12k+ | 消息队列 | 企业级 |
+| **Redis Streams** | 66k+ | 流处理 | 轻量级 |
+| **Kafka** | 28k+ | 事件流 | 大规模 |
+| **ZeroMQ** | 10k+ | 消息库 | 高性能 |
+
+**个人开发价值**：⭐⭐⭐⭐
+- 学习曲线：中等
+- 维护成本：中等
+- AI维护友好：中等
+- 开发周期：2周
+
+#### 2.42.2 技术实现
+
+```python
+import pika
+import json
+from typing import Dict, List, Optional, Callable
+import redis
+from datetime import datetime
+
+class ResearchMessageQueue:
+    """研究消息队列 - 基于RabbitMQ + Redis Streams"""
+    
+    def __init__(self,
+                 rabbitmq_host: str = "localhost",
+                 rabbitmq_port: int = 5672,
+                 redis_host: str = "localhost",
+                 redis_port: int = 6379):
+        self.rabbitmq_connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=rabbitmq_host,
+                port=rabbitmq_port
+            )
+        )
+        self.rabbitmq_channel = self.rabbitmq_connection.channel()
+        
+        self.redis_client = redis.Redis(
+            host=redis_host,
+            port=redis_port,
+            db=0,
+            decode_responses=True
+        )
+    
+    def declare_queue(self, queue_name: str):
+        """声明队列"""
+        
+        self.rabbitmq_channel.queue_declare(queue=queue_name, durable=True)
+    
+    def publish_message(self, queue_name: str, message: Dict):
+        """发布消息"""
+        
+        self.rabbitmq_channel.basic_publish(
+            exchange='',
+            routing_key=queue_name,
+            body=json.dumps(message),
+            properties=pika.BasicProperties(
+                delivery_mode=2,
+                content_type='application/json'
+            )
+        )
+    
+    def consume_messages(self, 
+                       queue_name: str, 
+                       callback: Callable[[Dict], None]):
+        """消费消息"""
+        
+        def wrapped_callback(ch, method, properties, body):
+            message = json.loads(body)
+            callback(message)
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        
+        self.rabbitmq_channel.basic_qos(prefetch_count=1)
+        self.rabbitmq_channel.basic_consume(
+            queue=queue_name,
+            on_message_callback=wrapped_callback
+        )
+        
+        self.rabbitmq_channel.start_consuming()
+
+class EventStreamManager:
+    """事件流管理器 - 基于Redis Streams"""
+    
+    def __init__(self, redis_client: redis.Redis):
+        self.redis = redis_client
+    
+    def add_event(self, stream_name: str, event_data: Dict) -> str:
+        """添加事件"""
+        
+        event_id = self.redis.xadd(
+            stream_name,
+            event_data,
+            maxlen=1000
+        )
+        
+        return event_id
+    
+    def read_events(self,
+                   stream_name: str,
+                   count: int = 10,
+                   last_id: str = "0") -> List[Dict]:
+        """读取事件"""
+        
+        events = self.redis.xread(
+            {stream_name: last_id},
+            count=count
+        )
+        
+        results = []
+        
+        if events:
+            for stream, messages in events:
+                for msg_id, msg_data in messages:
+                    results.append({
+                        'id': msg_id,
+                        'data': msg_data
+                    })
+        
+        return results
+    
+    def create_consumer_group(self, stream_name: str, group_name: str):
+        """创建消费者组"""
+        
+        try:
+            self.redis.xgroup_create(
+                stream_name,
+                group_name,
+                id='0',
+                mkstream=True
+            )
+        except:
+            pass
+    
+    def consume_group_events(self,
+                           stream_name: str,
+                           group_name: str,
+                           consumer_name: str,
+                           count: int = 10) -> List[Dict]:
+        """消费组事件"""
+        
+        events = self.redis.xreadgroup(
+            groupname=group_name,
+            consumername=consumer_name,
+            streams={stream_name: '>'},
+            count=count
+        )
+        
+        results = []
+        
+        if events:
+            for stream, messages in events:
+                for msg_id, msg_data in messages:
+                    results.append({
+                        'id': msg_id,
+                        'data': msg_data
+                    })
+        
+        return results
+```
+
+#### 2.42.3 核心功能
+
+1. **消息队列**：异步消息传递
+2. **发布/订阅**：发布订阅模式
+3. **消费者组**：支持消费者组
+4. **消息确认**：消息确认机制
+
+#### 2.42.4 应用场景
+
+- **异步任务**：异步执行任务
+- **事件驱动**：事件驱动架构
+- **解耦系统**：系统间解耦
+
+---
+
 ## 三、数据模型设计
 ### 3.1 研究任务数据模型
 

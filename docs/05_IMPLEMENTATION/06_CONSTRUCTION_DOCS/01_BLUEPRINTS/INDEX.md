@@ -1,9 +1,9 @@
 ﻿﻿---
 index_id: BLUEPRINTS_INDEX_001
-version: 1.2.0
+version: 1.3.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席蓝图架构师
 standard_type: 专业量化机构索引
 applicable_scope: 蓝图文档目录

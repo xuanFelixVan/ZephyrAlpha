@@ -1,9 +1,9 @@
 ---
-module_id: LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES_001
-version: 1.0.1
+module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
+version: 1.0.2
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 7 AI报告层
