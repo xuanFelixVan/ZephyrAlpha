@@ -51,6 +51,50 @@ priority: P2
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 提供联邦治理策略 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供数据产品目录 |
+| [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 中依赖 | 提供数据产品存储 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 中依赖 | 提供分布式数据处理 |
+| [数据编织蓝图](./DATA_FABRIC_BLUEPRINT.md) | DATA_FABRIC_001 | 中依赖 | 提供数据集成服务 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **DataHub** | 0.10+ | 数据产品目录 | [官方文档](https://datahubproject.io/) |
+| **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
+| **OpenMetadata** | 1.2+ | 元数据管理 | [官方文档](https://docs.open-metadata.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据治理平台] --> D[数据网格]
+    B[数据目录] --> D
+    C[实时数据湖] --> D
+    
+    D --> E[高性能数据管道]
+    D --> F[数据编织]
+    
+    style D fill:#ff6b6b
+    style A fill:#4ecdc4
+    style B fill:#45b7d1
+    style C fill:#96ceb4
+```
+
+---
+
 ## 二、系统架构设计
 
 ### 2.1 整体架构图
