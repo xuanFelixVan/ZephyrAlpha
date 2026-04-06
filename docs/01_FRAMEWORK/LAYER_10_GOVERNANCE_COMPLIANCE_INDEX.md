@@ -97,6 +97,9 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | [监管变更追踪系统蓝图](./REGULATORY_CHANGE_TRACKING_BLUEPRINT.md) | REGULATORY_CHANGE_TRACKING_BLUEPRINT_001 | 1.0 | Active | 1.5周 | ⭐⭐⭐⭐ | 监管监控、变更识别、影响分析、实施跟踪 |
 | [数据主权合规系统蓝图](./DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md) | DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐ | 数据本地化、跨境传输、数据驻留、主权合规 |
 | [业务连续性管理系统蓝图](./BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT.md) | BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 灾难恢复、备份管理、业务影响分析、连续性测试 |
+| [算法清单管理系统蓝图](./ALGORITHM_INVENTORY_MANAGEMENT_BLUEPRINT.md) | ALGORITHM_INVENTORY_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 1-2周 | ⭐⭐⭐⭐⭐ | 算法注册、生命周期管理、审批流程、状态追踪 |
+| [市场滥用监控系统蓝图](./MARKET_ABUSE_SURVEILLANCE_BLUEPRINT.md) | MARKET_ABUSE_SURVEILLANCE_BLUEPRINT_001 | 1.0 | Active | 2-3周 | ⭐⭐⭐⭐ | 市场操纵检测、内幕交易识别、可疑交易报告 |
+| [最佳执行监控系统蓝图](./BEST_EXECUTION_MONITORING_BLUEPRINT.md) | BEST_EXECUTION_MONITORING_BLUEPRINT_001 | 1.0 | Active | 1-2周 | ⭐⭐⭐⭐⭐ | 执行质量评估、订单监控、执行报告、策略优化 |
 
 **P0模块实施价值**：
 - ✅ **审计追踪系统**: 对标TigerBeetle金融审计标准，确保所有操作可追溯
@@ -108,6 +111,9 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 - ✅ **监管变更追踪**: 对标Claude GRC Skills开源项目，95%变更识别率
 - ✅ **数据主权合规**: 对标Apache Atlas开源项目，98%合规准确率
 - ✅ **业务连续性管理**: 对标Backrest+Velero开源项目，RTO<4小时
+- ✅ **算法清单管理**: 对标NautilusTrader开源项目，满足FCA 2025算法交易控制审查要求
+- ✅ **市场滥用监控**: 对标EquiAnalytics开源项目，满足FCA MAR要求
+- ✅ **最佳执行监控**: 对标NexusTrader开源项目，满足FINRA最佳执行要求
 
 ---
 
