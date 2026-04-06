@@ -51,6 +51,52 @@ priority: P2
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供数据资产元数据 |
+| [数据血缘追踪蓝图](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | 强依赖 | 提供数据血缘关系 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供质量监控指标 |
+| [自动修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 中依赖 | 提供修复监控指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 弱依赖 | 接收可观测性报告 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Elementary** | 1.0+ | 数据可观测性 | [官方文档](https://www.elementary-data.com/) |
+| **Monte Carlo** | - | 数据可观测性 | [官方文档](https://www.montecarlodata.com/) |
+| **Prometheus** | 2.40+ | 监控指标采集 | [官方文档](https://prometheus.io/) |
+| **Grafana** | 9.0+ | 可视化展示 | [官方文档](https://grafana.com/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据目录] --> E[数据可观测性]
+    B[数据血缘追踪] --> E
+    C[数据质量监控] --> E
+    D[自动修复引擎] --> E
+    
+    E --> F[质量报告自动化]
+    
+    style E fill:#ff6b6b
+    style A fill:#4ecdc4
+    style B fill:#45b7d1
+    style C fill:#96ceb4
+    style D fill:#feca57
+```
+
+---
+
 ## 二、系统架构设计
 
 ### 2.1 整体架构图
