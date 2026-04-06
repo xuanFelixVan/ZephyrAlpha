@@ -4,11 +4,11 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
-owner: 首席架构�?
-standard_type: 专业机构级蓝�?
-applicable_scope: 数据质量与血缘管理模�?
+owner: 首席架构师
+standard_type: 专业机构级蓝图
+applicable_scope: 数据质量与血缘管理模
 compliance_level: 专业标准
-layer: 舆情分析�?
+layer: 舆情分析
 priority: P0
 estimated_effort: 40h
 integrated_modules:
@@ -16,85 +16,85 @@ integrated_modules:
   - AIWF_DLT_001
 ---
 
-# 数据质量与血缘管理模块蓝�?(Data Quality & Lineage Management Blueprint)
+# 数据质量与血缘管理模块蓝(Data Quality & Lineage Management Blueprint)
 
 > **模块ID**: AIWF_DQLM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
-> **Layer定位**: Layer 3 - 舆情分析�?
-> **优先�?*: P0 (阻断�?
-> **预计工作�?*: 40小时
-> **整合模块**: AIWF_DQM_001 (数据质量管理) + AIWF_DLT_001 (数据血缘追�?
+> **Layer定位**: Layer 3 - 舆情分析
+> **优先*: P0 (阻断
+> **预计工作*: 40小时
+> **整合模块**: AIWF_DQM_001 (数据质量管理) + AIWF_DLT_001 (数据血缘追
 
 ---
 
-## 一、模块概�?
+## 一、模块概述
 
 ### 1.1 设计背景
 
-**业务需�?*:
-- 确保舆情分析数据的质量和可靠�?
-- 追踪数据来源和处理流�?
-- 建立数据质量改进的闭环机�?
+**业务需*:
+- 确保舆情分析数据的质量和可靠
+- 追踪数据来源和处理流
+- 建立数据质量改进的闭环机
 - 支持数据问题的快速定位和修复
 
-**技术痛�?*:
+**技术痛*:
 - 当前缺少数据质量验证机制
 - 无法追溯数据来源
 - 缺少数据清洗验证流程
-- 缺少数据质量监控和告�?
+- 缺少数据质量监控和告
 
-**预期价�?*:
+**预期价值:
 - 数据质量提升20%以上
 - 数据问题定位时间减少80%
-- 建立完整的数据血缘体�?
-- 提升情感分析准确�?
+- 建立完整的数据血缘体
+- 提升情感分析准确
 
 ### 1.2 模块定位
 
-**Layer归属**: Layer 3 - 舆情分析�?
-**模块类别**: 支撑性模�?
-**架构角色**: 数据质量保障组件，为情感分析提供高质量数�?
+**Layer归属**: Layer 3 - 舆情分析
+**模块类别**: 支撑性模
+**架构角色**: 数据质量保障组件，为情感分析提供高质量数
 
 ---
 
-## 二、详细架构设�?
+## 二、详细架构设
 
-### 2.1 系统架构�?
+### 2.1 系统架构
 
 ```
-┌─────────────────────────────────────────────────────────────────────�?
-�?             数据质量与血缘管理模块架�?                              �?
-├─────────────────────────────────────────────────────────────────────�?
-�?                                                                    �?
-�? ┌──────────────────────────────────────────────────────────────�? �?
-�? �?     DataQualityManager (数据质量管理�?                      �? �?
-�? �? - 质量评分                                                   �? �?
-�? �? - 异常检�?                                                  �? �?
-�? �? - 清洗验证                                                   �? �?
-�? └──────────────────────────────────────────────────────────────�? �?
-�?                          �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────�? �?
-�? �?     DataLineageTracker (数据血缘追踪器)                      �? �?
-�? �? - 来源追踪                                                   �? �?
-�? �? - 流程记录                                                   �? �?
-�? �? - 血缘可视化                                                 �? �?
-�? └──────────────────────────────────────────────────────────────�? �?
-�?                          �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────�? �?
-�? �?     开源工具集�?                                            �? �?
-�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? ┌──────�?�? �?
-�? �? │Great        �? │Pandas       �? │SQLite       �? │Streamlit�?�?
-�? �? │Expectations �? │Profiling    �? │Lineage DB   �? │Dashboard�?�?
-�? �? └─────────────�? └─────────────�? └─────────────�? └──────�?�? �?
-�? └──────────────────────────────────────────────────────────────�? �?
-�?                                                                    �?
-└─────────────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────────────
+             数据质量与血缘管理模块架构                              
+├─────────────────────────────────────────────────────────────────────
+                                                                    
+ ┌────────────────────────────────────────────────────────────── 
+      DataQualityManager (数据质量管理                       
+  - 质量评分                                                    
+  - 异常检                                                   
+  - 清洗验证                                                    
+ └────────────────────────────────────────────────────────────── 
+                                                                   
+ ┌────────────────────────────────────────────────────────────── 
+      DataLineageTracker (数据血缘追踪器)                       
+  - 来源追踪                                                    
+  - 流程记录                                                    
+  - 血缘可视化                                                  
+ └────────────────────────────────────────────────────────────── 
+                                                                   
+ ┌────────────────────────────────────────────────────────────── 
+      开源工具集                                             
+  ┌───────────── ┌───────────── ┌───────────── ┌────── 
+  │Great         │Pandas        │SQLite        │Streamlit
+  │Expectations  │Profiling     │Lineage DB    │Dashboard
+  └───────────── └───────────── └───────────── └────── 
+ └────────────────────────────────────────────────────────────── 
+                                                                    
+└─────────────────────────────────────────────────────────────────────
 ```
 
 ### 2.2 核心组件设计
 
-#### 2.2.1 数据质量管理�?(DataQualityManager)
+#### 2.2.1 数据质量管理(DataQualityManager)
 
 **功能设计**:
 
@@ -108,15 +108,15 @@ from dataclasses import dataclass
 @dataclass
 class QualityScore:
     """数据质量评分"""
-    completeness: float  # 完整性评�?(0-1)
-    accuracy: float      # 准确性评�?(0-1)
-    consistency: float   # 一致性评�?(0-1)
-    timeliness: float    # 及时性评�?(0-1)
+    completeness: float  # 完整性评(0-1)
+    accuracy: float      # 准确性评(0-1)
+    consistency: float   # 一致性评(0-1)
+    timeliness: float    # 及时性评(0-1)
     overall: float       # 综合评分 (0-1)
 
 
 class DataQualityManager:
-    """数据质量管理�?
+    """数据质量管理
     
     负责数据质量评分、异常检测和清洗验证
     """
@@ -143,7 +143,7 @@ class DataQualityManager:
         """计算数据质量评分
         
         Args:
-            data: 待评估数�?
+            data: 待评估数
             data_type: 数据类型 (news, twitter, reddit, etc.)
             
         Returns:
@@ -156,11 +156,11 @@ class DataQualityManager:
         data: pd.DataFrame,
         detection_methods: List[str] = None
     ) -> pd.DataFrame:
-        """检测数据异�?
+        """检测数据异
         
         Args:
-            data: 待检测数�?
-            detection_methods: 检测方法列�?
+            data: 待检测数
+            detection_methods: 检测方法列
             
         Returns:
             异常数据
@@ -177,7 +177,7 @@ class DataQualityManager:
         
         Args:
             original_data: 原始数据
-            cleaned_data: 清洗后数�?
+            cleaned_data: 清洗后数
             cleaning_rules: 清洗规则
             
         Returns:
@@ -193,7 +193,7 @@ class DataQualityManager:
         """生成数据质量报告
         
         Args:
-            data: 待评估数�?
+            data: 待评估数
             output_path: 输出路径
             
         Returns:
@@ -204,25 +204,25 @@ class DataQualityManager:
 
 **质量评分维度**:
 
-1. **完整性评�?* (Completeness):
-   - 缺失值比例检�?
-   - 必填字段完整性检�?
-   - 数据记录完整性检�?
+1. **完整性评* (Completeness):
+   - 缺失值比例检
+   - 必填字段完整性检
+   - 数据记录完整性检
 
-2. **准确性评�?* (Accuracy):
-   - 异常值检测（IQR、Z-Score�?
+2. **准确性评* (Accuracy):
+   - 异常值检测（IQR、Z-Score
    - 数据格式验证
    - 数据范围验证
 
-3. **一致性评�?* (Consistency):
-   - 数据冲突检�?
-   - 重复数据检�?
-   - 数据逻辑一致性检�?
+3. **一致性评* (Consistency):
+   - 数据冲突检
+   - 重复数据检
+   - 数据逻辑一致性检
 
-4. **及时性评�?* (Timeliness):
-   - 数据延迟检�?
-   - 数据更新频率检�?
-   - 数据时效性评�?
+4. **及时性评* (Timeliness):
+   - 数据延迟检
+   - 数据更新频率检
+   - 数据时效性评
 
 ---
 
@@ -239,13 +239,13 @@ import json
 
 @dataclass
 class LineageRecord:
-    """数据血缘记�?""
+    """数据血缘记""
     data_id: str              # 数据ID
-    source: str               # 数据�?
-    timestamp: datetime       # 时间�?
+    source: str               # 数据
+    timestamp: datetime       # 时间
     processing_steps: List[Dict[str, Any]]  # 处理步骤
     parent_ids: List[str]     # 父数据ID
-    metadata: Dict[str, Any]  # 元数�?
+    metadata: Dict[str, Any]  # 元数
 
 
 class DataLineageTracker:
@@ -293,8 +293,8 @@ class DataLineageTracker:
         
         Args:
             data_id: 数据ID
-            source: 数据�?
-            metadata: 元数�?
+            source: 数据
+            metadata: 元数
         """
         pass
     
@@ -320,11 +320,11 @@ class DataLineageTracker:
         data_id: str,
         max_depth: int = 10
     ) -> Dict[str, Any]:
-        """获取数据血�?
+        """获取数据血
         
         Args:
             data_id: 数据ID
-            max_depth: 最大深�?
+            max_depth: 最大深
             
         Returns:
             血缘关系图
@@ -336,31 +336,31 @@ class DataLineageTracker:
         data_id: str,
         output_path: str = None
     ) -> str:
-        """可视化数据血�?
+        """可视化数据血
         
         Args:
             data_id: 数据ID
             output_path: 输出路径
             
         Returns:
-            可视化文件路�?
+            可视化文件路
         """
         pass
 ```
 
 ---
 
-### 2.3 开源工具集�?
+### 2.3 开源工具集
 
 #### Great Expectations集成
 
-**安装和配�?*:
+**安装和配*:
 
 ```bash
 # 安装Great Expectations
 pip install great_expectations
 
-# 初始化项�?
+# 初始化项
 great_expectations init
 ```
 
@@ -418,7 +418,7 @@ def generate_data_quality_report(
     """生成数据质量报告
     
     Args:
-        data: 待评估数�?
+        data: 待评估数
         output_path: 输出路径
         
     Returns:
@@ -437,7 +437,7 @@ def generate_data_quality_report(
 
 ---
 
-## 三、接口定�?
+## 三、接口定
 
 ### 3.1 主接口类
 
@@ -447,7 +447,7 @@ import pandas as pd
 
 
 class DataQualityAndLineageManager:
-    """数据质量与血缘管理主�?""
+    """数据质量与血缘管理主""
     
     def __init__(
         self,
@@ -473,7 +473,7 @@ class DataQualityAndLineageManager:
         
         Args:
             data: 原始数据
-            data_source: 数据�?
+            data_source: 数据
             processing_pipeline: 处理管道
             
         Returns:
@@ -485,13 +485,13 @@ class DataQualityAndLineageManager:
         self,
         data_sources: List[str] = None
     ) -> Dict[str, Any]:
-        """获取数据质量仪表板数�?
+        """获取数据质量仪表板数
         
         Args:
-            data_sources: 数据源列�?
+            data_sources: 数据源列
             
         Returns:
-            仪表板数�?
+            仪表板数
         """
         pass
     
@@ -499,7 +499,7 @@ class DataQualityAndLineageManager:
         self,
         output_path: str = "./reports/lineage_report.html"
     ) -> str:
-        """导出血缘报�?
+        """导出血缘报
         
         Args:
             output_path: 输出路径
@@ -512,9 +512,9 @@ class DataQualityAndLineageManager:
 
 ---
 
-## 四、数据模�?
+## 四、数据模
 
-### 4.1 数据质量评分�?
+### 4.1 数据质量评分
 
 ```sql
 CREATE TABLE data_quality_scores (
@@ -550,7 +550,7 @@ CREATE TABLE lineage_records (
 );
 ```
 
-### 4.3 数据处理日志�?
+### 4.3 数据处理日志
 
 ```sql
 CREATE TABLE processing_logs (
@@ -570,68 +570,68 @@ CREATE TABLE processing_logs (
 
 ---
 
-## 五、实施计�?
+## 五、实施计
 
-### 5.1 �?�? 数据质量管理器开�?
+### 5.1  数据质量管理器开
 
 **任务清单**:
 - [ ] 安装和配置Great Expectations
-- [ ] 开发质量评分引�?
-- [ ] 开发异常检测模�?
-- [ ] 开发清洗验证模�?
+- [ ] 开发质量评分引
+- [ ] 开发异常检测模
+- [ ] 开发清洗验证模
 - [ ] 集成Pandas Profiling
-- [ ] 测试和验�?
+- [ ] 测试和验
 
-**交付�?*:
+**交付*:
 - DataQualityManager代码
 - Great Expectations配置文件
 - 测试报告
 
 ---
 
-### 5.2 �?�? 数据血缘追踪器开�?
+### 5.2  数据血缘追踪器开
 
 **任务清单**:
 - [ ] 设计血缘数据库模型
-- [ ] 开发来源追踪模�?
-- [ ] 开发流程记录模�?
+- [ ] 开发来源追踪模
+- [ ] 开发流程记录模
 - [ ] 开发血缘可视化模块
-- [ ] 开发血缘查询接�?
-- [ ] 测试和验�?
+- [ ] 开发血缘查询接
+- [ ] 测试和验
 
-**交付�?*:
+**交付*:
 - DataLineageTracker代码
 - 血缘数据库
 - 测试报告
 
 ---
 
-### 5.3 �?�? 集成和测�?
+### 5.3  集成和测
 
 **任务清单**:
 - [ ] 开发主管理器类
-- [ ] 开发Streamlit仪表�?
-- [ ] 集成到现有系�?
-- [ ] 开发单元测�?
-- [ ] 开发集成测�?
-- [ ] 性能测试和优�?
+- [ ] 开发Streamlit仪表
+- [ ] 集成到现有系
+- [ ] 开发单元测
+- [ ] 开发集成测
+- [ ] 性能测试和优
 
-**交付�?*:
+**交付*:
 - 集成后的系统
-- Streamlit仪表�?
+- Streamlit仪表
 - 测试报告
 
 ---
 
-## 六、测试策�?
+## 六、测试策
 
 ### 6.1 单元测试
 
 **测试范围**:
 - 质量评分功能测试
-- 异常检测功能测�?
+- 异常检测功能测
 - 清洗验证功能测试
-- 血缘追踪功能测�?
+- 血缘追踪功能测
 
 **测试工具**:
 - pytest
@@ -642,9 +642,9 @@ CREATE TABLE processing_logs (
 ### 6.2 集成测试
 
 **测试范围**:
-- 端到端数据处理流程测�?
-- 质量检查集成测�?
-- 血缘追踪集成测�?
+- 端到端数据处理流程测
+- 质量检查集成测
+- 血缘追踪集成测
 
 **测试数据**:
 - 使用真实新闻数据
@@ -652,37 +652,37 @@ CREATE TABLE processing_logs (
 
 ---
 
-## 七、风险管�?
+## 七、风险管
 
-### 7.1 技术风�?
+### 7.1 技术风
 
-| 风险�?| 概率 | 影响 | 缓解措施 |
+| 风险| 概率 | 影响 | 缓解措施 |
 |--------|------|------|----------|
-| Great Expectations学习曲线 | �?| �?| 使用官方教程，参考示例代�?|
-| 血缘追踪性能问题 | �?| �?| 使用索引优化，定期清理历史数�?|
-| 质量评分不准�?| �?| �?| 结合多种评分方法，人工验�?|
+| Great Expectations学习曲线 | | | 使用官方教程，参考示例代|
+| 血缘追踪性能问题 | | | 使用索引优化，定期清理历史数|
+| 质量评分不准| | | 结合多种评分方法，人工验|
 
 ---
 
-## 八、验收标�?
+## 八、验收标
 
 ### 8.1 功能验收
 
 - [ ] 数据质量评分功能正常
-- [ ] 异常检测功能正�?
+- [ ] 异常检测功能正
 - [ ] 清洗验证功能正常
-- [ ] 血缘追踪功能正�?
+- [ ] 血缘追踪功能正
 - [ ] 血缘可视化功能正常
 
 ### 8.2 性能验收
 
-- [ ] 质量评分速度 < 5�?1000条记�?
-- [ ] 血缘查询速度 < 1�?
-- [ ] 血缘可视化生成速度 < 3�?
+- [ ] 质量评分速度 < 51000条记
+- [ ] 血缘查询速度 < 1
+- [ ] 血缘可视化生成速度 < 3
 
 ### 8.3 质量验收
 
-- [ ] 代码覆盖�?> 80%
+- [ ] 代码覆盖> 80%
 - [ ] 所有单元测试通过
 - [ ] 所有集成测试通过
 
@@ -694,4 +694,4 @@ CREATE TABLE processing_logs (
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-03 | **状�?*: �?活跃
+**版本**: v1.0 | **更新**: 2026-04-03 | **状*: 活跃

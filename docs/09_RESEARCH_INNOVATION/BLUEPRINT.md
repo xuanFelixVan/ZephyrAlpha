@@ -2802,6 +2802,1329 @@ class TemporalLeakageDetector:
 
 ---
 
+### 2.14 Qlib + RD-Agent深度集成 ⭐P1关键模块
+
+#### 2.14.1 系统定位与职责
+
+**核心职责**：
+1. **自动化因子挖掘**：从论文到因子实现的全自动化流程
+2. **智能研究代理**：AI驱动的量化研究助手
+3. **知识驱动研发**：基于知识图谱的研究推理
+4. **持续学习优化**：从历史研究中学习改进
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│         Qlib + RD-Agent 深度集成架构                     │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         知识输入层 (Knowledge Input)             │   │
+│  │  - 论文自动检索 (arXiv API)                      │   │
+│  │  - 论文智能解读 (GLM-4)                          │   │
+│  │  - 因子假设提取                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         代码生成层 (Code Generation)             │   │
+│  │  - 因子代码自动生成                              │   │
+│  │  - 策略逻辑自动实现                              │   │
+│  │  - 代码质量自动检查                              │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         验证执行层 (Validation & Execution)      │   │
+│  │  - Qlib回测引擎                                  │   │
+│  │  - IC/Sharpe自动评估                            │   │
+│  │  - 多周期稳定性验证                              │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         分析优化层 (Analysis & Optimization)     │   │
+│  │  - 结果智能分析                                  │   │
+│  │  - 改进方向建议                                  │   │
+│  │  - 迭代优化循环                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import qlib
+from qlib.workflow import R
+from rd_agent import RDAgent, PaperReader, FactorGenerator
+
+class QlibRDAgentIntegration:
+    """Qlib + RD-Agent深度集成系统"""
+    
+    def __init__(self, qlib_config: Dict):
+        qlib.init(provider=qlib_config['provider'])
+        self.rd_agent = RDAgent(
+            llm_model="glm-4",
+            knowledge_base="chromadb"
+        )
+        self.paper_reader = PaperReader()
+        self.factor_generator = FactorGenerator()
+    
+    def automated_factor_discovery(self,
+                                   research_topic: str,
+                                   max_iterations: int = 10) -> Dict:
+        """自动化因子发现流程"""
+        results = []
+        
+        for iteration in range(max_iterations):
+            with R.start(experiment_name=f"auto_factor_{iteration}"):
+                papers = self.paper_reader.search_papers(
+                    topic=research_topic,
+                    max_results=5
+                )
+                
+                for paper in papers:
+                    hypothesis = self.rd_agent.extract_hypothesis(paper)
+                    
+                    factor_code = self.factor_generator.generate(
+                        hypothesis=hypothesis,
+                        template="qlib_factor"
+                    )
+                    
+                    backtest_result = self._run_backtest(factor_code)
+                    
+                    if backtest_result['ic'] > 0.05:
+                        results.append({
+                            'paper': paper,
+                            'hypothesis': hypothesis,
+                            'factor_code': factor_code,
+                            'ic': backtest_result['ic'],
+                            'sharpe': backtest_result['sharpe']
+                        })
+                
+                if len(results) >= 3:
+                    break
+                
+                research_topic = self.rd_agent.suggest_improvements(
+                    results,
+                    research_topic
+                )
+        
+        return {
+            'discovered_factors': results,
+            'total_iterations': iteration + 1,
+            'success_rate': len(results) / (iteration + 1)
+        }
+    
+    def _run_backtest(self, factor_code: str) -> Dict:
+        """运行Qlib回测"""
+        from qlib.contrib.evaluate import backtest
+        
+        result = backtest(
+            factor_code,
+            start_time="2020-01-01",
+            end_time="2023-12-31"
+        )
+        
+        return {
+            'ic': result['ic'],
+            'sharpe': result['sharpe'],
+            'max_drawdown': result['max_drawdown']
+        }
+    
+    def knowledge_driven_reasoning(self,
+                                   factor_performance: Dict) -> Dict:
+        """知识驱动的研究推理"""
+        reasoning = self.rd_agent.reason(
+            context=factor_performance,
+            knowledge_sources=['papers', 'historical_factors', 'market_conditions']
+        )
+        
+        return {
+            'failure_analysis': reasoning['failure_reasons'],
+            'improvement_suggestions': reasoning['suggestions'],
+            'similar_cases': reasoning['similar_cases']
+        }
+```
+
+**技术选型标准**：
+- **核心平台**: Microsoft Qlib (40k+ stars, AI量化平台标准)
+- **研究代理**: RD-Agent (2k+ stars, Microsoft开源)
+- **LLM引擎**: GLM-4.7-Flash (中文友好，成本低)
+- **知识库**: ChromaDB (向量数据库)
+
+**自动化流程**：
+```
+论文检索 → 假设提取 → 代码生成 → 回测验证 → 结果分析 → 改进建议 → 循环迭代
+```
+
+**应用场景**：
+- 自动化因子挖掘
+- 策略快速原型验证
+- 研究知识积累
+
+---
+
+### 2.15 研究模板库 ⭐P1关键模块
+
+#### 2.15.1 系统定位与职责
+
+**核心职责**：
+1. **标准化研究流程**：提供统一的研究项目模板
+2. **快速项目启动**：减少重复配置工作
+3. **最佳实践固化**：将成功经验固化为模板
+4. **质量一致性保障**：确保研究项目结构一致
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│              研究模板库架构                              │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         模板管理层 (Template Management)         │   │
+│  │  - 因子研究模板                                  │   │
+│  │  - 策略研究模板                                  │   │
+│  │  - 模型研究模板                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         配置生成层 (Configuration Generation)    │   │
+│  │  - Hydra配置生成                                 │   │
+│  │  - MLflow配置生成                                │   │
+│  │  - DVC配置生成                                   │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         代码骨架层 (Code Skeleton)               │   │
+│  │  - 标准目录结构                                  │   │
+│  │  - 必要文件生成                                  │   │
+│  │  - 测试框架集成                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         文档生成层 (Documentation Generation)    │   │
+│  │  - README生成                                    │   │
+│  │  - API文档生成                                   │   │
+│  │  - 使用指南生成                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from pathlib import Path
+import json
+from cookiecutter.main import cookiecutter
+
+class ResearchTemplateLibrary:
+    """研究模板库 - 基于Cookiecutter"""
+    
+    def __init__(self, templates_dir: str = "templates/"):
+        self.templates_dir = Path(templates_dir)
+        self.templates = {
+            'factor': 'factor_template',
+            'strategy': 'strategy_template',
+            'model': 'model_template'
+        }
+    
+    def create_research_project(self,
+                               project_type: str,
+                               project_name: str,
+                               output_dir: str = ".") -> str:
+        """创建研究项目"""
+        template_name = self.templates.get(project_type)
+        
+        if not template_name:
+            raise ValueError(f"Unknown project type: {project_type}")
+        
+        project_path = cookiecutter(
+            str(self.templates_dir / template_name),
+            output_dir=output_dir,
+            no_input=True,
+            extra_context={
+                'project_name': project_name,
+                'author': 'ZephyrAlpha',
+                'version': '1.0.0'
+            }
+        )
+        
+        return project_path
+    
+    def get_template_structure(self, project_type: str) -> Dict:
+        """获取模板结构"""
+        template_dir = self.templates_dir / self.templates[project_type]
+        
+        structure = {}
+        for path in template_dir.rglob("*"):
+            if path.is_file():
+                relative_path = path.relative_to(template_dir)
+                structure[str(relative_path)] = {
+                    'type': 'file',
+                    'template': path.name
+                }
+        
+        return structure
+
+# 因子研究模板配置示例
+FACTOR_TEMPLATE_CONFIG = {
+    "project_name": "my_factor_project",
+    "factor_name": "momentum",
+    "factor_type": "technical",
+    "author_name": "Your Name",
+    "description": "A momentum factor",
+    "version": "1.0.0",
+    "python_version": "3.10",
+    "use_mlflow": "y",
+    "use_dvc": "y",
+    "use_tests": "y"
+}
+
+# 因子研究模板目录结构
+FACTOR_TEMPLATE_STRUCTURE = """
+{{project_name}}/
+├── configs/
+│   ├── factor.yaml           # 因子配置
+│   ├── backtest.yaml         # 回测配置
+│   └── mlflow.yaml           # MLflow配置
+├── src/
+│   ├── __init__.py
+│   ├── factor.py             # 因子实现
+│   ├── preprocessing.py      # 数据预处理
+│   └── validation.py         # 因子验证
+├── tests/
+│   ├── __init__.py
+│   ├── test_factor.py        # 单元测试
+│   └── test_integration.py   # 集成测试
+├── notebooks/
+│   └── exploration.ipynb     # 探索性分析
+├── docs/
+│   └── README.md             # 项目文档
+├── .env.example              # 环境变量模板
+├── requirements.txt          # Python依赖
+├── setup.py                  # 包安装配置
+└── README.md                 # 项目说明
+"""
+```
+
+**技术选型标准**：
+- **首选**: Cookiecutter (22k+ stars, 项目模板标准)
+- **备选**: Copier (现代化模板引擎)
+- **备选**: 自研模板系统
+
+**模板类型**：
+- **因子研究模板**: 因子计算、验证、回测
+- **策略研究模板**: 策略逻辑、回测、优化
+- **模型研究模板**: 模型训练、评估、部署
+
+**应用场景**：
+- 新研究项目快速启动
+- 研究流程标准化
+- 最佳实践传承
+
+---
+
+### 2.16 GitHub Actions CI/CD ⭐P1关键模块
+
+#### 2.16.1 系统定位与职责
+
+**核心职责**：
+1. **自动化代码检查**：代码质量、风格、安全检查
+2. **自动化测试执行**：单元测试、集成测试、回测验证
+3. **自动化部署流程**：模型部署、服务发布
+4. **研究质量门禁**：确保研究代码质量
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           GitHub Actions CI/CD架构                       │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         触发层 (Triggers)                        │   │
+│  │  - Push触发                                      │   │
+│  │  - Pull Request触发                              │   │
+│  │  - 定时触发                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         检查层 (Checks)                          │   │
+│  │  - 代码风格检查 (Black, Flake8)                  │   │
+│  │  - 类型检查 (MyPy)                               │   │
+│  │  - 安全检查 (Bandit)                             │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         测试层 (Tests)                           │   │
+│  │  - 单元测试 (Pytest)                             │   │
+│  │  - 集成测试                                      │   │
+│  │  - 回测验证                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         部署层 (Deployment)                      │   │
+│  │  - 模型注册                                      │   │
+│  │  - 服务部署                                      │   │
+│  │  - 文档发布                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```yaml
+# .github/workflows/research-ci.yml
+name: Research CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * *'  # 每天凌晨2点
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install black flake8 mypy bandit
+    
+    - name: Run Black
+      run: black --check src/ tests/
+    
+    - name: Run Flake8
+      run: flake8 src/ tests/
+    
+    - name: Run MyPy
+      run: mypy src/
+    
+    - name: Run Bandit
+      run: bandit -r src/
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: code-quality
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    
+    - name: Run unit tests
+      run: pytest tests/unit -v --cov=src
+    
+    - name: Run integration tests
+      run: pytest tests/integration -v
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+
+  research-validation:
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check temporal leakage
+      run: python scripts/check_temporal_leakage.py
+    
+    - name: Validate data contracts
+      run: python scripts/validate_data_contracts.py
+    
+    - name: Run backtest validation
+      run: python scripts/run_backtest_validation.py
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: research-validation
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Register model
+      run: python scripts/register_model.py
+    
+    - name: Deploy service
+      run: python scripts/deploy_service.py
+```
+
+**技术选型标准**：
+- **首选**: GitHub Actions (免费、集成度高)
+- **备选**: GitLab CI (自托管)
+- **备选**: Jenkins (企业级)
+
+**CI/CD流程**：
+```
+代码提交 → 质量检查 → 测试执行 → 研究验证 → 自动部署
+```
+
+**应用场景**：
+- 研究代码质量保障
+- 自动化测试执行
+- 模型自动部署
+
+---
+
+### 2.17 研究审计日志系统 ⭐P1关键模块
+
+#### 2.17.1 系统定位与职责
+
+**核心职责**：
+1. **研究决策记录**：记录所有研究决策及其理由
+2. **操作追溯**：追溯所有研究操作历史
+3. **合规审计支持**：支持监管审计需求
+4. **责任归属**：明确研究责任归属
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           研究审计日志系统架构                           │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         日志采集层 (Log Collection)              │   │
+│  │  - 研究操作日志                                  │   │
+│  │  - 决策记录日志                                  │   │
+│  │  - 系统事件日志                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         日志存储层 (Log Storage)                 │   │
+│  │  - 结构化存储 (PostgreSQL)                       │   │
+│  │  - 归档存储 (S3)                                 │   │
+│  │  - 索引优化                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         日志分析层 (Log Analysis)                │   │
+│  │  - 操作统计分析                                  │   │
+│  │  - 异常检测                                      │   │
+│  │  - 趋势分析                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         审计报告层 (Audit Reporting)             │   │
+│  │  - 审计报告生成                                  │   │
+│  │  - 合规检查                                      │   │
+│  │  - 导出功能                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import json
+import mlflow
+
+class ResearchAuditLogger:
+    """研究审计日志系统 - 基于MLflow"""
+    
+    def __init__(self, tracking_uri: str):
+        mlflow.set_tracking_uri(tracking_uri)
+        self.audit_db = "postgresql://audit:password@localhost:5432/audit"
+    
+    def log_decision(self,
+                    decision_type: str,
+                    rationale: str,
+                    outcome: str,
+                    metadata: Dict = None) -> str:
+        """记录研究决策"""
+        audit_id = self._generate_audit_id()
+        
+        with mlflow.start_run(run_name=f"decision_{audit_id}"):
+            mlflow.log_param("decision_type", decision_type)
+            mlflow.log_param("rationale", rationale)
+            mlflow.log_param("outcome", outcome)
+            mlflow.log_param("timestamp", datetime.now().isoformat())
+            
+            if metadata:
+                mlflow.log_params(metadata)
+        
+        self._store_to_db(audit_id, {
+            'decision_type': decision_type,
+            'rationale': rationale,
+            'outcome': outcome,
+            'metadata': metadata
+        })
+        
+        return audit_id
+    
+    def log_operation(self,
+                     operation_type: str,
+                     details: Dict,
+                     user: str = "system") -> str:
+        """记录研究操作"""
+        audit_id = self._generate_audit_id()
+        
+        operation_record = {
+            'audit_id': audit_id,
+            'operation_type': operation_type,
+            'details': details,
+            'user': user,
+            'timestamp': datetime.now()
+        }
+        
+        self._store_to_db(audit_id, operation_record)
+        
+        return audit_id
+    
+    def query_audit_trail(self,
+                         start_date: datetime,
+                         end_date: datetime,
+                         filters: Dict = None) -> List[Dict]:
+        """查询审计轨迹"""
+        query = f"""
+            SELECT * FROM audit_log
+            WHERE timestamp BETWEEN '{start_date}' AND '{end_date}'
+        """
+        
+        if filters:
+            for key, value in filters.items():
+                query += f" AND {key} = '{value}'"
+        
+        results = self._execute_query(query)
+        
+        return results
+    
+    def generate_audit_report(self,
+                             start_date: datetime,
+                             end_date: datetime) -> str:
+        """生成审计报告"""
+        operations = self.query_audit_trail(start_date, end_date)
+        
+        report = f"""
+# 研究审计报告
+
+## 时间范围
+- 开始时间: {start_date}
+- 结束时间: {end_date}
+
+## 操作统计
+- 总操作数: {len(operations)}
+- 决策记录: {len([o for o in operations if o['operation_type'] == 'decision'])}
+- 研究操作: {len([o for o in operations if o['operation_type'] == 'research'])}
+
+## 详细记录
+"""
+        
+        for op in operations[:100]:
+            report += f"\n### {op['audit_id']}\n"
+            report += f"- 类型: {op['operation_type']}\n"
+            report += f"- 时间: {op['timestamp']}\n"
+            report += f"- 用户: {op['user']}\n"
+        
+        return report
+```
+
+**技术选型标准**：
+- **首选**: MLflow + PostgreSQL (开源、功能完整)
+- **备选**: ELK Stack (企业级日志)
+- **备选**: 自研轻量级
+
+**审计内容**：
+- 研究决策记录
+- 操作历史追溯
+- 异常行为检测
+- 合规报告生成
+
+**应用场景**：
+- 监管审计支持
+- 研究责任追溯
+- 操作合规检查
+
+---
+
+### 2.18 成本管理系统 ⭐P1关键模块
+
+#### 2.18.1 系统定位与职责
+
+**核心职责**：
+1. **计算成本追踪**：追踪CPU、GPU、内存使用成本
+2. **数据成本追踪**：追踪数据采购、存储成本
+3. **成本预算管理**：管理研究预算和成本控制
+4. **成本优化建议**：提供成本优化建议
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│             成本管理系统架构                             │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         成本采集层 (Cost Collection)             │   │
+│  │  - 计算资源监控                                  │   │
+│  │  - 数据成本追踪                                  │   │
+│  │  - API调用统计                                   │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         成本计算层 (Cost Calculation)            │   │
+│  │  - 资源定价模型                                  │   │
+│  │  - 成本分摊算法                                  │   │
+│  │  - 预算消耗计算                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         成本分析层 (Cost Analysis)               │   │
+│  │  - 成本趋势分析                                  │   │
+│  │  - 异常成本检测                                  │   │
+│  │  - 成本对比分析                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         成本报告层 (Cost Reporting)              │   │
+│  │  - 成本报告生成                                  │   │
+│  │  - 预算告警                                      │   │
+│  │  - 优化建议                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime, timedelta
+import sqlite3
+
+class ResearchCostManager:
+    """研究成本管理系统"""
+    
+    def __init__(self, db_path: str = "data/costs.db"):
+        self.db_path = db_path
+        self._init_db()
+        
+        self.pricing = {
+            'cpu_per_hour': 0.05,
+            'gpu_per_hour': 0.50,
+            'memory_per_gb_hour': 0.01,
+            'storage_per_gb_month': 0.02
+        }
+    
+    def track_compute_cost(self,
+                          experiment_id: str,
+                          duration_hours: float,
+                          resources: Dict) -> float:
+        """追踪计算成本"""
+        cpu_cost = resources.get('cpu_cores', 0) * duration_hours * self.pricing['cpu_per_hour']
+        gpu_cost = resources.get('gpu_count', 0) * duration_hours * self.pricing['gpu_per_hour']
+        memory_cost = resources.get('memory_gb', 0) * duration_hours * self.pricing['memory_per_gb_hour']
+        
+        total_cost = cpu_cost + gpu_cost + memory_cost
+        
+        self._store_cost(experiment_id, {
+            'type': 'compute',
+            'cpu_cost': cpu_cost,
+            'gpu_cost': gpu_cost,
+            'memory_cost': memory_cost,
+            'total_cost': total_cost,
+            'duration_hours': duration_hours,
+            'timestamp': datetime.now()
+        })
+        
+        return total_cost
+    
+    def track_data_cost(self,
+                       data_source: str,
+                       data_size_gb: float,
+                       cost_type: str = 'purchase') -> float:
+        """追踪数据成本"""
+        if cost_type == 'purchase':
+            cost = data_size_gb * 0.10
+        else:
+            cost = data_size_gb * self.pricing['storage_per_gb_month']
+        
+        self._store_cost(f"data_{datetime.now().strftime('%Y%m%d')}", {
+            'type': 'data',
+            'data_source': data_source,
+            'data_size_gb': data_size_gb,
+            'cost_type': cost_type,
+            'cost': cost,
+            'timestamp': datetime.now()
+        })
+        
+        return cost
+    
+    def get_cost_summary(self,
+                        start_date: datetime,
+                        end_date: datetime) -> Dict:
+        """获取成本摘要"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT 
+                type,
+                SUM(total_cost) as total_cost,
+                COUNT(*) as count
+            FROM costs
+            WHERE timestamp BETWEEN ? AND ?
+            GROUP BY type
+        """, (start_date, end_date))
+        
+        results = cursor.fetchall()
+        conn.close()
+        
+        summary = {
+            'total_cost': 0,
+            'by_type': {}
+        }
+        
+        for row in results:
+            cost_type, total_cost, count = row
+            summary['by_type'][cost_type] = {
+                'total_cost': total_cost,
+                'count': count
+            }
+            summary['total_cost'] += total_cost
+        
+        return summary
+    
+    def check_budget_alert(self,
+                          monthly_budget: float) -> List[Dict]:
+        """检查预算告警"""
+        now = datetime.now()
+        month_start = datetime(now.year, now.month, 1)
+        
+        summary = self.get_cost_summary(month_start, now)
+        
+        alerts = []
+        
+        if summary['total_cost'] > monthly_budget * 0.8:
+            alerts.append({
+                'type': 'budget_warning',
+                'message': f"本月成本已达到预算的80%: ${summary['total_cost']:.2f}/${monthly_budget:.2f}",
+                'severity': 'warning'
+            })
+        
+        if summary['total_cost'] > monthly_budget:
+            alerts.append({
+                'type': 'budget_exceeded',
+                'message': f"本月成本已超出预算: ${summary['total_cost']:.2f}/${monthly_budget:.2f}",
+                'severity': 'critical'
+            })
+        
+        return alerts
+```
+
+**技术选型标准**：
+- **首选**: 自研轻量级 (个人开发适用)
+- **备选**: Prometheus + Grafana (企业级)
+- **备选**: AWS Cost Explorer (云服务)
+
+**成本类型**：
+- 计算资源成本 (CPU/GPU/内存)
+- 数据成本 (采购/存储)
+- API调用成本
+
+**应用场景**：
+- 研究预算管理
+- 成本优化决策
+- 资源使用效率分析
+
+---
+
+### 2.19 研究沙盒环境 ⭐P1关键模块
+
+#### 2.19.1 系统定位与职责
+
+**核心职责**：
+1. **环境隔离**：隔离实验环境，避免相互干扰
+2. **快速环境创建**：快速创建和销毁实验环境
+3. **环境一致性**：确保环境配置一致性
+4. **资源限制**：限制实验资源使用
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│            研究沙盒环境架构                             │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         环境管理层 (Environment Management)      │   │
+│  │  - Docker容器管理                                │   │
+│  │  - 环境模板管理                                  │   │
+│  │  - 资源配额管理                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         数据隔离层 (Data Isolation)              │   │
+│  │  - 数据卷管理                                    │   │
+│  │  - 数据访问控制                                  │   │
+│  │  - 数据快照                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         网络隔离层 (Network Isolation)           │   │
+│  │  - 网络命名空间                                  │   │
+│  │  - 端口映射                                      │   │
+│  │  - 访问控制                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         监控层 (Monitoring)                      │   │
+│  │  - 资源使用监控                                  │   │
+│  │  - 性能监控                                      │   │
+│  │  - 异常检测                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import docker
+import uuid
+
+class ResearchSandbox:
+    """研究沙盒环境 - 基于Docker"""
+    
+    def __init__(self):
+        self.client = docker.from_env()
+        self.sandboxes = {}
+    
+    def create_sandbox(self,
+                      name: str,
+                      template: str = "base",
+                      resources: Dict = None) -> str:
+        """创建沙盒环境"""
+        sandbox_id = str(uuid.uuid4())[:8]
+        
+        container = self.client.containers.run(
+            f"zephyr/research-{template}:latest",
+            name=f"sandbox_{sandbox_id}",
+            detach=True,
+            environment={
+                'SANDBOX_ID': sandbox_id,
+                'SANDBOX_NAME': name
+            },
+            volumes={
+                f'sandbox_{sandbox_id}_data': {'bind': '/data', 'mode': 'rw'},
+                f'sandbox_{sandbox_id}_output': {'bind': '/output', 'mode': 'rw'}
+            },
+            mem_limit=resources.get('memory', '2g') if resources else '2g',
+            cpu_quota=resources.get('cpu_quota', 100000) if resources else 100000,
+            network='sandbox_network'
+        )
+        
+        self.sandboxes[sandbox_id] = {
+            'container_id': container.id,
+            'name': name,
+            'template': template,
+            'created_at': datetime.now(),
+            'status': 'running'
+        }
+        
+        return sandbox_id
+    
+    def execute_in_sandbox(self,
+                          sandbox_id: str,
+                          command: str) -> Dict:
+        """在沙盒中执行命令"""
+        if sandbox_id not in self.sandboxes:
+            raise ValueError(f"Sandbox {sandbox_id} not found")
+        
+        container = self.client.containers.get(
+            self.sandboxes[sandbox_id]['container_id']
+        )
+        
+        exit_code, output = container.exec_run(command)
+        
+        return {
+            'exit_code': exit_code,
+            'output': output.decode('utf-8'),
+            'timestamp': datetime.now()
+        }
+    
+    def destroy_sandbox(self, sandbox_id: str) -> None:
+        """销毁沙盒环境"""
+        if sandbox_id not in self.sandboxes:
+            return
+        
+        container = self.client.containers.get(
+            self.sandboxes[sandbox_id]['container_id']
+        )
+        
+        container.stop()
+        container.remove()
+        
+        del self.sandboxes[sandbox_id]
+    
+    def list_sandboxes(self) -> List[Dict]:
+        """列出所有沙盒"""
+        return [
+            {
+                'sandbox_id': sid,
+                **info
+            }
+            for sid, info in self.sandboxes.items()
+        ]
+```
+
+**技术选型标准**：
+- **首选**: Docker (容器化标准)
+- **备选**: Conda环境 (Python环境隔离)
+- **备选**: Virtualenv (轻量级隔离)
+
+**沙盒类型**：
+- 因子研究沙盒
+- 策略回测沙盒
+- 模型训练沙盒
+
+**应用场景**：
+- 隔离实验环境
+- 快速环境创建
+- 资源使用限制
+
+---
+
+### 2.20 研究回滚系统 ⭐P2关键模块
+
+#### 2.20.1 系统定位与职责
+
+**核心职责**：
+1. **检查点管理**：管理研究检查点
+2. **快速回滚**：支持快速回滚到历史版本
+3. **版本对比**：对比不同版本差异
+4. **回滚验证**：验证回滚后系统状态
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│            研究回滚系统架构                             │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         检查点层 (Checkpoint Management)         │   │
+│  │  - 自动检查点创建                                │   │
+│  │  - 手动检查点创建                                │   │
+│  │  - 检查点清理                                    │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         版本管理层 (Version Management)          │   │
+│  │  - Git版本控制                                   │   │
+│  │  - DVC数据版本                                   │   │
+│  │  - MLflow模型版本                                │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         回滚执行层 (Rollback Execution)          │   │
+│  │  - 代码回滚                                      │   │
+│  │  - 数据回滚                                      │   │
+│  │  - 模型回滚                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         验证层 (Validation)                      │   │
+│  │  - 回滚后验证                                    │   │
+│  │  - 系统状态检查                                  │   │
+│  │  - 功能测试                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import subprocess
+import mlflow
+import dvc.api
+
+class ResearchRollbackSystem:
+    """研究回滚系统 - 基于Git + DVC + MLflow"""
+    
+    def __init__(self, repo_path: str):
+        self.repo_path = repo_path
+        self.mlflow_client = mlflow.tracking.MlflowClient()
+    
+    def create_checkpoint(self,
+                         checkpoint_name: str,
+                         description: str = "") -> str:
+        """创建检查点"""
+        checkpoint_id = f"checkpoint_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        git_commit = subprocess.check_output(
+            ['git', 'rev-parse', 'HEAD'],
+            cwd=self.repo_path
+        ).decode('utf-8').strip()
+        
+        dvc_version = dvc.api.get_url('data/processed', self.repo_path)
+        
+        mlflow_run = mlflow.active_run()
+        mlflow_run_id = mlflow_run.info.run_id if mlflow_run else None
+        
+        checkpoint = {
+            'checkpoint_id': checkpoint_id,
+            'checkpoint_name': checkpoint_name,
+            'description': description,
+            'git_commit': git_commit,
+            'dvc_version': dvc_version,
+            'mlflow_run_id': mlflow_run_id,
+            'created_at': datetime.now()
+        }
+        
+        self._store_checkpoint(checkpoint)
+        
+        return checkpoint_id
+    
+    def rollback(self, checkpoint_id: str) -> Dict:
+        """回滚到检查点"""
+        checkpoint = self._load_checkpoint(checkpoint_id)
+        
+        if not checkpoint:
+            raise ValueError(f"Checkpoint {checkpoint_id} not found")
+        
+        subprocess.run(
+            ['git', 'checkout', checkpoint['git_commit']],
+            cwd=self.repo_path,
+            check=True
+        )
+        
+        subprocess.run(
+            ['dvc', 'checkout', checkpoint['dvc_version']],
+            cwd=self.repo_path,
+            check=True
+        )
+        
+        if checkpoint['mlflow_run_id']:
+            mlflow.tracking.MlflowClient().restore_run(
+                checkpoint['mlflow_run_id']
+            )
+        
+        validation_result = self._validate_rollback(checkpoint)
+        
+        return {
+            'checkpoint_id': checkpoint_id,
+            'rollback_status': 'success',
+            'validation': validation_result,
+            'timestamp': datetime.now()
+        }
+    
+    def list_checkpoints(self,
+                        limit: int = 10) -> List[Dict]:
+        """列出检查点"""
+        checkpoints = self._load_all_checkpoints()
+        
+        return checkpoints[:limit]
+    
+    def _validate_rollback(self, checkpoint: Dict) -> Dict:
+        """验证回滚"""
+        return {
+            'git_status': 'ok',
+            'dvc_status': 'ok',
+            'mlflow_status': 'ok',
+            'tests_passed': True
+        }
+```
+
+**技术选型标准**：
+- **首选**: Git + DVC + MLflow (开源组合)
+- **备选**: 自研检查点系统
+- **备选**: 云服务快照
+
+**回滚内容**：
+- 代码版本回滚
+- 数据版本回滚
+- 模型版本回滚
+
+**应用场景**：
+- 研究失败后恢复
+- 版本对比分析
+- 系统故障恢复
+
+---
+
+### 2.21 数据契约管理 ⭐P2关键模块
+
+#### 2.21.1 系统定位与职责
+
+**核心职责**：
+1. **数据契约定义**：定义数据格式、质量、约束
+2. **契约验证**：验证数据是否符合契约
+3. **契约版本管理**：管理数据契约版本
+4. **契约变更通知**：通知契约变更
+
+**架构设计**：
+
+```
+┌─────────────────────────────────────────────────────────┐
+│           数据契约管理系统架构                           │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         契约定义层 (Contract Definition)         │   │
+│  │  - 数据模式定义                                  │   │
+│  │  - 质量规则定义                                  │   │
+│  │  - 约束条件定义                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         契约验证层 (Contract Validation)         │   │
+│  │  - 数据格式验证                                  │   │
+│  │  - 数据质量验证                                  │   │
+│  │  - 约束条件验证                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         契约管理层 (Contract Management)         │   │
+│  │  - 契约版本控制                                  │   │
+│  │  - 契约变更管理                                  │   │
+│  │  - 契约审计                                      │   │
+│  └─────────────────────────────────────────────────┘   │
+│                        ↓                               │
+│  ┌─────────────────────────────────────────────────┐   │
+│  │         通知层 (Notification)                    │   │
+│  │  - 契约变更通知                                  │   │
+│  │  - 验证失败通知                                  │   │
+│  │  - 审计报告通知                                  │   │
+│  └─────────────────────────────────────────────────┘   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**技术实现**：
+
+```python
+from typing import Dict, List, Optional
+from datetime import datetime
+import great_expectations as ge
+from great_expectations.dataset import PandasDataset
+
+class DataContractManager:
+    """数据契约管理系统 - 基于Great Expectations"""
+    
+    def __init__(self, project_dir: str = "great_expectations"):
+        self.context = ge.data_context.DataContext(project_dir)
+    
+    def define_contract(self,
+                       contract_name: str,
+                       schema: Dict,
+                       quality_rules: List[Dict],
+                       constraints: List[Dict]) -> str:
+        """定义数据契约"""
+        expectation_suite = self.context.create_expectation_suite(
+            contract_name,
+            overwrite_existing=True
+        )
+        
+        for field, field_type in schema.items():
+            expectation_suite.add_expectation({
+                'expectation_type': 'expect_column_to_exist',
+                'kwargs': {'column': field}
+            })
+            
+            if field_type == 'float':
+                expectation_suite.add_expectation({
+                    'expectation_type': 'expect_column_values_to_be_in_type_list',
+                    'kwargs': {
+                        'column': field,
+                        'type_list': ['float', 'float64']
+                    }
+                })
+        
+        for rule in quality_rules:
+            expectation_suite.add_expectation(rule)
+        
+        for constraint in constraints:
+            expectation_suite.add_expectation(constraint)
+        
+        self.context.save_expectation_suite(expectation_suite)
+        
+        return contract_name
+    
+    def validate_contract(self,
+                         data,
+                         contract_name: str) -> Dict:
+        """验证数据契约"""
+        batch = self.context.get_batch(
+            PandasDataset(data),
+            contract_name
+        )
+        
+        results = self.context.run_validation_operator(
+            "action_list_operator",
+            assets_to_validate=[batch],
+            run_name=f"validation_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        )
+        
+        return {
+            'success': results.success,
+            'statistics': results.statistics,
+            'failed_expectations': [
+                exp for exp in results.results
+                if not exp.success
+            ]
+        }
+    
+    def list_contracts(self) -> List[Dict]:
+        """列出所有契约"""
+        suites = self.context.list_expectation_suites()
+        
+        return [
+            {
+                'contract_name': suite.expectation_suite_name,
+                'expectations_count': len(suite.expectations),
+                'created_at': suite.meta.get('created_at', 'unknown')
+            }
+            for suite in suites
+        ]
+```
+
+**技术选型标准**：
+- **首选**: Great Expectations (18k+ stars, 数据质量标准)
+- **备选**: Pandera (数据验证库)
+- **备选**: 自研契约系统
+
+**契约内容**：
+- 数据模式定义
+- 数据质量规则
+- 数据约束条件
+
+**应用场景**：
+- 数据质量保障
+- 数据接口验证
+- 数据变更管理
+
+---
+
 ## 三、数据模型设计
 ### 3.1 研究任务数据模型
 

@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 
 > **索引编号**: `BLUEPRINTS_INDEX_001`
 > **最后更新**: 2026-04-06
-> **文档总数**: 58个（Active: 41个，Archived: 17个）
+> **文档总数**: 56个（Active: 39个，Archived: 17个）
 
 ---
 
@@ -91,7 +91,6 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 组合优化蓝图 | IMPL_PORTFOLIO_OPT_BP_001 | v1.0.1 | Active | 2026-04-03 | [链接](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) |
 | 组合再平衡蓝图 | PORTFOLIO_REBALANCING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./PORTFOLIO_REBALANCING_BLUEPRINT.md) |
 | 多资产配置蓝图 | MULTI_ASSET_ALLOCATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MULTI_ASSET_ALLOCATION_BLUEPRINT.md) |
 | 组合保险策略蓝图 | PORTFOLIO_INSURANCE_STRATEGY_001 | v1.0.0 | Active | 2026-04-05 | [链接](./PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md) |
@@ -114,7 +113,6 @@ parent_document: ../INDEX.md
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 动态相关性建模蓝图 | DYNAMIC_CORRELATION_MODELING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) |
-| 简化风险预算系统蓝图 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) |
 | 协整分析蓝图 | COINTEGRATION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./COINTEGRATION_ANALYSIS_BLUEPRINT.md) 🆕 |
 | 风险贡献分析蓝图 | RISK_CONTRIBUTION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) 🆕 |
 | 层级风险预算蓝图 | HIERARCHICAL_RISK_BUDGET_001 | v1.0.0 | Active | 2026-04-06 | [链接](./HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md) 🆕 |
@@ -248,20 +246,20 @@ parent_document: ../INDEX.md
 
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
-| **数据预处理层（Layer 1）** | 19个 | 2个 | 17个 | 32.8% |
-| **组合优化层（Layer 6）** | 20个 | 20个 | 0个 | 34.5% |
-| **风险控制层（Layer 7）** | 5个 | 5个 | 0个 | 8.6% |
-| **执行层（Layer 5）** | 5个 | 5个 | 0个 | 8.6% |
-| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 3.4% |
-| **其他** | 7个 | 7个 | 0个 | 12.1% |
-| **总计** | **58个** | **41个** | **17个** | **100%** |
+| **数据预处理层（Layer 1）** | 19个 | 2个 | 17个 | 33.9% |
+| **组合优化层（Layer 6）** | 18个 | 18个 | 0个 | 32.1% |
+| **风险控制层（Layer 7）** | 5个 | 5个 | 0个 | 8.9% |
+| **执行层（Layer 5）** | 5个 | 5个 | 0个 | 8.9% |
+| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 3.6% |
+| **其他** | 7个 | 7个 | 0个 | 12.5% |
+| **总计** | **56个** | **39个** | **17个** | **100%** |
 
 ### 8.2 按状态统计
 
 | 状态 | 文档数量 | 占比 | 说明 |
 |------|---------|------|------|
-| **Active** | 41个 | 70.7% | 正常可用文档 |
-| **Archived** | 17个 | 29.3% | 编码损坏已归档（2026-04-06） |
+| **Active** | 39个 | 69.6% | 正常可用文档 |
+| **Archived** | 17个 | 30.4% | 编码损坏已归档（2026-04-06） |
 | **Draft** | 0个 | 0% | 草稿文档 |
 
 ---
