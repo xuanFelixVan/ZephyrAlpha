@@ -164,6 +164,21 @@ parent_document: ../INDEX.md
 |----------|-----------|------|------|----------|----------|
 | 组合优化引擎集成模块蓝图 | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) 🆕 |
 
+### 3.9 再平衡策略
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合再平衡蓝图 | PORTFOLIO_REBALANCING_001 | v1.0.1 | Active | 2026-04-06 | [链接](./PORTFOLIO_REBALANCING_BLUEPRINT.md) |
+| 交易成本感知再平衡蓝图 | TRANSACTION_COST_AWARE_REBALANCING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) 🆕 |
+| RL再平衡系统蓝图 | RL_REBALANCING_SYSTEM_001 | v1.0.1 | Active | 2026-04-06 | [链接](./RL_REBALANCING_SYSTEM_BLUEPRINT.md) |
+| 季度再平衡蓝图 | QUARTERLY_REBALANCE_001 | v1.0.0 | Active | 2026-04-07 | [链接](./QUARTERLY_REBALANCE_BLUEPRINT.md) 🆕 |
+
+**模块关系说明**:
+- PORTFOLIO_REBALANCING: 基础再平衡框架，提供触发机制和决策引擎
+- TRANSACTION_COST_AWARE_REBALANCING: 高级成本感知再平衡，依赖基础框架
+- RL_REBALANCING_SYSTEM: 强化学习智能调仓，依赖基础框架
+- QUARTERLY_REBALANCE: 季度调仓决策，属于定期再平衡策略
+
 ---
 
 ## 4. 风险控制层蓝图（Layer 7）
@@ -234,7 +249,6 @@ parent_document: ../INDEX.md
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 战略权重配置蓝图 | STRATEGIC_WEIGHTING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./STRATEGIC_WEIGHTING_BLUEPRINT.md) 🆕 |
-| 季度再平衡蓝图 | QUARTERLY_REBALANCE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./QUARTERLY_REBALANCE_BLUEPRINT.md) 🆕 |
 
 ---
 

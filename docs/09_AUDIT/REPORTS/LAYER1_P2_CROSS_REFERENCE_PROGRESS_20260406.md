@@ -187,6 +187,7 @@ graph LR
 **发现2：技术栈共享度高**
 
 多个文档共享相同的技术栈：
+
 - **Great Expectations**: 5个文档使用
 - **Apache Kafka**: 8个文档使用
 - **Prometheus**: 4个文档使用
