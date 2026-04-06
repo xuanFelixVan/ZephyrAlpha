@@ -1,6 +1,6 @@
 ---
 module_id: COUNTERPARTY_RISK_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
@@ -16,6 +16,18 @@ related_documents:
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - 交易对手信用评估（信用评级、违约概率）
+  - CVA/DVA计算（信用价值调整、债务价值调整）
+  - 敞口监控（潜在敞口、当前敞口）
+  - 风险缓释（抵押品管理、净额结算）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
+  - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
 ---
 
 # 交易对手风险管理系统蓝图

@@ -1,10 +1,11 @@
 ---
-module_id: NATURAL_LANGUAGE_MODULE_ANALYSIS_001
+module_id: NATURAL_LANGUAGE_MODULE_ANALYSIS_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席架构师
+layer: Layer 11 (文字驱动层)
 standard_type: 专业机构级分析
 applicable_scope: 全系统文字交互需求分析
 compliance_level: 专业标准

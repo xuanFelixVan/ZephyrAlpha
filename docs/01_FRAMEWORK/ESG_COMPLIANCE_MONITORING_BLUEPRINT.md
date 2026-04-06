@@ -1,6 +1,6 @@
 ---
 module_id: ESG_COMPLIANCE_MONITORING_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
@@ -16,6 +16,18 @@ related_documents:
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - ESG数据采集（环境、社会、治理数据）
+  - ESG评分计算（ESG综合评分、分项评分）
+  - ESG合规检查（ESG披露要求、投资限制）
+  - ESG报告生成（ESG报告、可持续投资报告）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
+  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
 ---
 
 # ESG合规监控系统蓝图

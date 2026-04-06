@@ -1,6 +1,6 @@
 ---
 module_id: DATA_PRIVACY_COMPLIANCE_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
@@ -16,6 +16,18 @@ related_documents:
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - 数据分类分级（敏感数据识别、数据分级）
+  - 隐私保护措施（数据脱敏、差分隐私）
+  - 合规检查（GDPR/PIPL合规检查）
+  - 隐私审计（隐私影响评估、审计日志）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
 ---
 
 # 数据隐私合规系统蓝图

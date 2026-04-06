@@ -166,4 +166,286 @@ class DataLifecycleManager:
         if source_tier == 'hot' and target_tier == 'warm':
             self._migrate_hot_to_warm(data_ids)
         elif source_tier == 'warm' and target_tier == 'cold':
-            self._migrate_warm_to_cold
+            self._migrate_warm_to_cold(data_ids)
+        elif source_tier == 'cold' and target_tier == 'archive':
+            self._migrate_cold_to_archive(data_ids)
+        
+        self._log_migration(migration_result)
+        return migration_result
+    
+    def apply_retention_policy(self, table_name: str) -> Dict:
+        retention_config = self.config['retention_policies'].get(table_name, {})
+        policy_result = {
+            'table': table_name,
+            'deleted': 0,
+            'archived': 0,
+            'retained': 0
+        }
+        
+        if retention_config.get('delete_after'):
+            deleted = self._delete_expired_data(
+                table_name, 
+                retention_config['delete_after']
+            )
+            policy_result['deleted'] = deleted
+        
+        if retention_config.get('archive_after'):
+            archived = self._archive_old_data(
+                table_name,
+                retention_config['archive_after']
+            )
+            policy_result['archived'] = archived
+        
+        return policy_result
+    
+    def get_storage_metrics(self) -> Dict:
+        metrics = {
+            'hot': self._get_tier_metrics('hot'),
+            'warm': self._get_tier_metrics('warm'),
+            'cold': self._get_tier_metrics('cold'),
+            'archive': self._get_tier_metrics('archive')
+        }
+        metrics['total_size_gb'] = sum(
+            m['size_gb'] for m in metrics.values()
+        )
+        metrics['total_cost'] = self._calculate_total_cost(metrics)
+        return metrics
+    
+    def _migrate_hot_to_warm(self, data_ids: List[str]):
+        pass
+    
+    def _migrate_warm_to_cold(self, data_ids: List[str]):
+        pass
+    
+    def _migrate_cold_to_archive(self, data_ids: List[str]):
+        pass
+```
+
+### 3.2 保留策略配置
+
+```yaml
+retention_policies:
+  tick_data:
+    hot_days: 3
+    warm_days: 30
+    cold_days: 365
+    archive_days: 2555
+    delete_after: null
+    
+  kline_daily:
+    hot_days: 30
+    warm_days: 365
+    cold_days: 1825
+    archive_days: null
+    delete_after: null
+    
+  factor_data:
+    hot_days: 7
+    warm_days: 90
+    cold_days: 365
+    archive_days: 1825
+    delete_after: 3650
+    
+  trade_records:
+    hot_days: 30
+    warm_days: 365
+    cold_days: 1825
+    archive_days: 3650
+    delete_after: null
+    compliance_hold: true
+
+migration_schedule:
+  hot_to_warm:
+    cron: "0 2 * * *"
+    batch_size: 100000
+    
+  warm_to_cold:
+    cron: "0 3 * * 0"
+    batch_size: 500000
+    
+  cold_to_archive:
+    cron: "0 4 1 * *"
+    batch_size: 1000000
+```
+
+### 3.3 自动化迁移任务
+
+```python
+from apscheduler.schedulers.background import BackgroundScheduler
+
+class LifecycleScheduler:
+    def __init__(self, lifecycle_manager: DataLifecycleManager):
+        self.manager = lifecycle_manager
+        self.scheduler = BackgroundScheduler()
+    
+    def start(self):
+        self.scheduler.add_job(
+            self._migrate_hot_to_warm,
+            'cron', hour=2, minute=0
+        )
+        self.scheduler.add_job(
+            self._migrate_warm_to_cold,
+            'cron', day_of_week='sun', hour=3, minute=0
+        )
+        self.scheduler.add_job(
+            self._apply_retention_policies,
+            'cron', hour=5, minute=0
+        )
+        self.scheduler.add_job(
+            self._generate_storage_report,
+            'cron', day=1, hour=6, minute=0
+        )
+        self.scheduler.start()
+    
+    def _migrate_hot_to_warm(self):
+        hot_data = self.manager.get_tier_data('hot')
+        candidates = [d for d in hot_data 
+                      if self.manager.should_migrate(d, 'warm')]
+        if candidates:
+            self.manager.migrate_data('hot', 'warm', candidates)
+    
+    def _apply_retention_policies(self):
+        for table in self.manager.get_all_tables():
+            self.manager.apply_retention_policy(table)
+```
+
+---
+
+## 4. 数据模型
+
+### 4.1 生命周期元数据表
+
+```sql
+CREATE TABLE data_lifecycle_metadata (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    table_name VARCHAR(100) NOT NULL,
+    data_id VARCHAR(100) NOT NULL,
+    current_tier ENUM('hot', 'warm', 'cold', 'archive') NOT NULL,
+    storage_location VARCHAR(500),
+    created_at DATETIME NOT NULL,
+    last_accessed DATETIME,
+    last_migrated DATETIME,
+    size_bytes BIGINT,
+    retention_policy VARCHAR(50),
+    compliance_hold BOOLEAN DEFAULT FALSE,
+    INDEX idx_table_tier (table_name, current_tier),
+    INDEX idx_created (created_at),
+    INDEX idx_accessed (last_accessed)
+);
+```
+
+### 4.2 迁移记录表
+
+```sql
+CREATE TABLE data_migration_log (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    migration_id VARCHAR(50) NOT NULL,
+    source_tier VARCHAR(20) NOT NULL,
+    target_tier VARCHAR(20) NOT NULL,
+    table_name VARCHAR(100) NOT NULL,
+    data_count INT NOT NULL,
+    size_bytes BIGINT,
+    started_at DATETIME NOT NULL,
+    completed_at DATETIME,
+    status ENUM('running', 'success', 'failed') DEFAULT 'running',
+    error_message TEXT,
+    INDEX idx_migration (migration_id),
+    INDEX idx_status (status)
+);
+```
+
+---
+
+## 5. 实施路径
+
+### Phase 1: 基础分层存储 (1周)
+
+**目标**: 实现数据分层存储
+
+**任务清单**:
+- [ ] 配置存储层级（热/温/冷）
+- [ ] 实现数据分类逻辑
+- [ ] 开发手动迁移功能
+- [ ] 建立存储监控
+
+**验收标准**:
+- 数据正确分类到各层级
+- 手动迁移功能可用
+
+### Phase 2: 自动化迁移 (1周)
+
+**目标**: 实现自动化数据迁移
+
+**任务清单**:
+- [ ] 实现定时迁移任务
+- [ ] 开发保留策略引擎
+- [ ] 添加迁移审计日志
+- [ ] 集成告警通知
+
+**验收标准**:
+- 自动迁移按时执行
+- 迁移记录完整可追溯
+
+### Phase 3: 成本优化 (可选)
+
+**目标**: 优化存储成本
+
+**任务清单**:
+- [ ] 开发成本分析功能
+- [ ] 实现智能分层建议
+- [ ] 添加容量预测
+- [ ] 生成成本报告
+
+---
+
+## 6. 文档治理
+
+### 6.1 索引集成
+
+本蓝图已集成到:
+- `System_Manifest.md` - 系统总索引
+- `INDEX.md` - 数据源层索引
+
+### 6.2 职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **数据生命周期管理** | 管理数据分层和保留 | 不负责数据内容 |
+| **数据备份恢复** | 数据备份和恢复 | 不负责分层管理 |
+| **数据压缩归档** | 数据压缩存储 | 不负责生命周期策略 |
+
+---
+
+## 7. 风险评估
+
+### 7.1 技术风险
+
+| 风险 | 等级 | 缓解措施 |
+|------|------|----------|
+| 迁移数据丢失 | P0 | 迁移前校验，迁移后验证 |
+| 存储空间不足 | P1 | 容量监控预警 |
+| 性能影响 | P2 | 低峰期执行迁移 |
+
+### 7.2 合规风险
+
+| 风险 | 等级 | 缓解措施 |
+|------|------|----------|
+| 数据过早删除 | P0 | 合规保留标记 |
+| 审计记录缺失 | P1 | 完整迁移日志 |
+
+---
+
+## 8. 维护成本
+
+| 维护项目 | 频率 | 时间 |
+|----------|------|------|
+| 策略调整 | 每月 | 30分钟 |
+| 迁移检查 | 每周 | 15分钟 |
+| 容量监控 | 每日 | 10分钟 |
+| 成本报告 | 每月 | 30分钟 |
+
+**总维护成本**: 约 **1.5小时/月**
+
+---
+
+**版本**: 1.0 | **状态**: Blueprint

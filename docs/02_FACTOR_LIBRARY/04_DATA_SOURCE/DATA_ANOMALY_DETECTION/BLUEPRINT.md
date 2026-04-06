@@ -166,4 +166,221 @@ class DataAnomalyDetector:
         }
     
     def _extract_features(self, prices: pd.Series) -> np.ndarray:
-        returns = prices.pct_change().dropna().values.reshape(-1, 1
+        returns = prices.pct_change().dropna().values.reshape(-1, 1)
+        volatility = returns.rolling(20).std().dropna().values.reshape(-1, 1)
+        volume_ratio = self._get_volume_ratio(prices)
+        return np.hstack([returns[-len(volatility):], volatility, volume_ratio])
+```
+
+### 3.2 时间序列异常检测
+
+```python
+from adtk.detector import ThresholdAD, QuantileAD, LevelShiftAD
+from adtk.visualization import plot
+
+class TimeSeriesAnomalyDetector:
+    def detect_level_shift(self, data: pd.Series):
+        detector = LevelShiftAD(c=3.0, side='both', window=10)
+        anomalies = detector.fit_detect(data)
+        return anomalies
+    
+    def detect_threshold_violation(self, data: pd.Series, 
+                                    lower: float, upper: float):
+        detector = ThresholdAD(low=lower, high=upper)
+        anomalies = detector.detect(data)
+        return anomalies
+    
+    def detect_seasonal_anomaly(self, data: pd.Series):
+        detector = SeasonalAD(c=3.0, side='both')
+        anomalies = detector.fit_detect(data)
+        return anomalies
+```
+
+### 3.3 告警与通知
+
+```python
+class AnomalyAlerter:
+    def __init__(self, config: dict):
+        self.config = config
+        self.alert_history = []
+    
+    def send_alert(self, anomaly_info: dict):
+        message = self._format_message(anomaly_info)
+        if self.config.get('email'):
+            self._send_email(message)
+        if self.config.get('dingtalk'):
+            self._send_dingtalk(message)
+        self.alert_history.append({
+            'timestamp': datetime.now(),
+            'anomaly': anomaly_info
+        })
+    
+    def _format_message(self, info: dict) -> str:
+        return f"""
+        [数据异常告警]
+        时间: {datetime.now()}
+        数据源: {info.get('source')}
+        异常类型: {info.get('type')}
+        异常数量: {info.get('count')}
+        置信度: {info.get('confidence')}
+        建议: {info.get('suggestion')}
+        """
+```
+
+---
+
+## 4. 数据模型
+
+### 4.1 异常记录表
+
+```sql
+CREATE TABLE data_anomalies (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    data_source VARCHAR(50) NOT NULL,
+    data_type VARCHAR(50) NOT NULL,
+    anomaly_type VARCHAR(50) NOT NULL,
+    anomaly_score FLOAT NOT NULL,
+    confidence FLOAT,
+    detected_at DATETIME NOT NULL,
+    resolved_at DATETIME,
+    status ENUM('active', 'resolved', 'ignored') DEFAULT 'active',
+    details JSON,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_source (data_source),
+    INDEX idx_detected (detected_at),
+    INDEX idx_status (status)
+);
+```
+
+### 4.2 检测规则配置
+
+```yaml
+anomaly_rules:
+  price_anomaly:
+    enabled: true
+    algorithms:
+      - iforest
+      - lof
+    contamination: 0.01
+    window_size: 100
+    alert_threshold: 0.8
+    
+  volume_anomaly:
+    enabled: true
+    algorithms:
+      - hbos
+      - knn
+    contamination: 0.02
+    window_size: 50
+    
+  data_quality:
+    enabled: true
+    checks:
+      - missing_rate
+      - duplicate_rate
+      - format_consistency
+    thresholds:
+      missing_rate: 0.01
+      duplicate_rate: 0.001
+```
+
+---
+
+## 5. 实施路径
+
+### Phase 1: 基础检测能力 (1周)
+
+**目标**: 实现基础异常检测功能
+
+**任务清单**:
+- [ ] 安装配置PyOD库
+- [ ] 实现价格异常检测
+- [ ] 实现成交量异常检测
+- [ ] 集成到数据清洗流程
+
+**验收标准**:
+- 价格异常检测准确率 > 95%
+- 检测延迟 < 1秒/万条记录
+
+### Phase 2: 高级检测能力 (1周)
+
+**目标**: 增强异常检测能力
+
+**任务清单**:
+- [ ] 实现多算法集成投票
+- [ ] 添加时间序列异常检测
+- [ ] 实现动态阈值调整
+- [ ] 开发告警通知功能
+
+**验收标准**:
+- 多算法集成准确率 > 单算法
+- 告警通知延迟 < 1分钟
+
+### Phase 3: 智能化升级 (可选)
+
+**目标**: 提升异常检测智能化水平
+
+**任务清单**:
+- [ ] 实现自动异常分类
+- [ ] 添加异常原因分析
+- [ ] 开发自动修复建议
+- [ ] 建立异常知识库
+
+---
+
+## 6. 文档治理
+
+### 6.1 索引集成
+
+本蓝图已集成到:
+- `System_Manifest.md` - 系统总索引
+- `INDEX.md` - 数据源层索引
+
+### 6.2 职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **数据异常检测** | 检测数据异常 | 不负责数据修复 |
+| **数据质量监控** | 监控数据质量指标 | 不负责异常检测 |
+| **数据清洗** | 清洗和修复数据 | 不负责异常检测 |
+
+### 6.3 版本管理
+
+- 当前版本: v1.0.0
+- 下一版本计划: v1.1.0 (添加深度学习异常检测)
+
+---
+
+## 7. 风险评估
+
+### 7.1 技术风险
+
+| 风险 | 等级 | 缓解措施 |
+|------|------|----------|
+| 误报率高 | P1 | 多算法集成投票降低误报 |
+| 检测延迟 | P2 | 使用HBOS等快速算法 |
+| 模型漂移 | P2 | 定期重新训练模型 |
+
+### 7.2 实施风险
+
+| 风险 | 等级 | 缓解措施 |
+|------|------|----------|
+| 学习曲线 | P2 | PyOD文档完善，易于上手 |
+| 集成复杂 | P2 | 提供标准化接口 |
+
+---
+
+## 8. 维护成本
+
+| 维护项目 | 频率 | 时间 |
+|----------|------|------|
+| 模型重训练 | 每月 | 1小时 |
+| 规则调整 | 每周 | 30分钟 |
+| 告警检查 | 每日 | 10分钟 |
+| 文档更新 | 按需 | 30分钟 |
+
+**总维护成本**: 约 **2小时/月**
+
+---
+
+**版本**: 1.0 | **状态**: Blueprint
