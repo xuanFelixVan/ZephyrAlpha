@@ -51,6 +51,52 @@ priority: P2
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接 |
+| [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 强依赖 | 提供数据存储 |
+| [数据网格蓝图](./DATA_MESH_BLUEPRINT.md) | DATA_MESH_001 | 中依赖 | 提供分布式数据处理 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量检查点 |
+| [数据虚拟化蓝图](./DATA_VIRTUALIZATION_BLUEPRINT.md) | DATA_VIRTUALIZATION_001 | 强依赖 | 提供数据虚拟化服务 |
+| [数据编织蓝图](./DATA_FABRIC_BLUEPRINT.md) | DATA_FABRIC_001 | 中依赖 | 提供数据集成服务 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Spark** | 3.5+ | 大规模数据处理 | [官方文档](https://spark.apache.org/) |
+| **Apache Flink** | 1.19+ | 流式数据处理 | [官方文档](https://flink.apache.org/) |
+| **Ray** | 2.10+ | 分布式计算 | [官方文档](https://www.ray.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据源管理] --> D[高性能数据管道]
+    B[实时数据湖] --> D
+    C[数据网格] --> D
+    
+    D --> E[数据质量监控]
+    D --> F[数据虚拟化]
+    D --> G[数据编织]
+    
+    style D fill:#ff6b6b
+    style A fill:#4ecdc4
+    style B fill:#45b7d1
+    style C fill:#96ceb4
+```
+
+---
+
 ## 二、系统架构设计
 
 ### 2.1 整体架构图
