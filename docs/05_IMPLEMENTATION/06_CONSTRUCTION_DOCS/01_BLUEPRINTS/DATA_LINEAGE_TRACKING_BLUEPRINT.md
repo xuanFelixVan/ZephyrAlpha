@@ -1,23 +1,26 @@
 ---
-module_id: DATA_LINEAGE_001
-version: 1.0.0
+module_id: IMPL_DATA_LINEAGE_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
+applicable_scope: "Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构"
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+open_source_dependency: pandas, numpy, openlineage
+estimated_effort: 2周
+priority: P1
 ---
 
 # 数据血缘追踪系统蓝?
 > 清风量化系统 v5.3 - 数据血缘追踪系统详细设?> **模块ID**: `DATA_LINEAGE_001`
 > **实施周期**: Week 1-2?周）
 > **优先?*: P0（核心）
-> **预期收益**: 提高数据可追�?0%，减少问题排查时?0%
+> **预期收益**: 提高数据可追?0%，减少问题排查时?0%
 
 
 ## 一、设计背景与目标
@@ -607,14 +610,14 @@ CREATE INDEX lineage_node_type_index FOR (n:LineageNode) ON (n.node_type);
 ## 五、自动化血缘更?
 ### 5.1 设计背景
 
-**传统血缘更新的局�?*:
+**传统血缘更新的局?*:
 - ?血缘更新依赖人工配置，效率?- ?数据变更后血缘关系不及时更新
 - ?血缘关系容易过时，准确性低
 - ?维护成本高，难以持续
 
 **自动化血缘更新的优势**:
 - ?实时捕获数据变更，自动更新血?- ?血缘关系始终保持最新状?- ?减少人工干预90%
-- ?提高血缘准�?0%
+- ?提高血缘准?0%
 
 ### 5.2 自动化血缘更新机?
 #### 5.2.1 基于CDC的血缘更?
@@ -1229,7 +1232,7 @@ class LineageChangeNotifier:
         
         msg.attach(MIMEText(body, 'plain'))
         
-        # 连接SMTP服务器并�?        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+        # 连接SMTP服务器并?        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
             server.starttls()
             server.login(self.sender_email, self.sender_password)
             server.send_message(msg)
@@ -1269,10 +1272,10 @@ class LineageChangeNotifier:
 
 ### 5.6 预期收益
 
-| 收益?| 当前�?| 自动化血缘更新后 | 提升幅度 |
+| 收益?| 当前?| 自动化血缘更新后 | 提升幅度 |
 |--------|---------|----------------|---------|
-| **血缘更新及�?* | 24小时 | 实时 | -100% |
-| **血缘准�?* | 70% | 95% | +25% |
+| **血缘更新及?* | 24小时 | 实时 | -100% |
+| **血缘准?* | 70% | 95% | +25% |
 | **人工干预时间** | 100% | 10% | -90% |
 | **血缘覆盖率** | 80% | 98% | +18% |
 | **维护成本** | ?| ?| -80% |
@@ -1444,4 +1447,4 @@ src/
 - v1.0.0 (2026-04-02): 初始版本，完成数据血缘追踪系统设?
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?

@@ -1,22 +1,25 @@
 ---
-module_id: DATA_SOURCE_MANAGEMENT_001
-version: 1.0.0
+module_id: IMPL_DATA_SOURCE_MGMT_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
+applicable_scope: "Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构"
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+open_source_dependency: pandas, numpy
+estimated_effort: 1.5周
+priority: P1
 ---
 
 # 数据源管理系统蓝?
 > 清风量化系统 v5.3 - 数据源管理系统详细设?> **模块ID**: `DATA_SOURCE_MANAGEMENT_001`
 > **实施周期**: Week 13-14?周）
-> **优先?*: P0（必需?> **预期收益**: 提高数据源可�?9.9%，减少故障影响时?0%
+> **优先?*: P0（必需?> **预期收益**: 提高数据源可?9.9%，减少故障影响时?0%
 
 
 ## 一、设计背景与目标
@@ -33,7 +36,7 @@ implementation_progress: 0%
 ### 1.2 技术目?
 | 指标 | 目标?| 说明 |
 |------|--------|------|
-| **数据源可�?* | ?9.9% | 数据源可用性≥99.9% |
+| **数据源可?* | ?9.9% | 数据源可用性≥99.9% |
 | **故障发现时间** | <30?| 故障发现时间<30?|
 | **主备切换时间** | <60?| 主备切换时间<60?|
 | **成本追踪覆盖?* | 100% | 所有数据源成本可追?|
@@ -434,7 +437,7 @@ class SourceHealthMonitor:
         更新数据源状?        
         Args:
             source: 数据?            result: 健康检查结?        """
-        # 根据连续失败次数判断�?        failure_count = self.failure_counts.get(source.source_id, 0)
+        # 根据连续失败次数判断?        failure_count = self.failure_counts.get(source.source_id, 0)
         
         if failure_count >= self.unhealthy_threshold:
             source.status = SourceStatus.UNHEALTHY
@@ -599,7 +602,7 @@ class SourcePriorityManager:
 
 ### 4.1 支持的数据源类型
 
-| 数据源类?| 接入方式 | 认证方式 | 付费�?| 数据类型 | 优先?|
+| 数据源类?| 接入方式 | 认证方式 | 付费?| 数据类型 | 优先?|
 |-----------|---------|---------|---------|---------|--------|
 | **iFind** | REST API | Token | ?已有 | 行情数据、财务数?| P0（主数据源） |
 | **QMT** | Python API | 券商账户 | 🆓 免费 | 行情数据、交易数?| P0（交易执行） |
@@ -744,7 +747,7 @@ src/
 
 | 指标 | 目标?| 测试方法 |
 |------|--------|---------|
-| **数据源可�?* | ?9.9% | 监控统计 |
+| **数据源可?* | ?9.9% | 监控统计 |
 | **故障发现时间** | <30?| 性能测试 |
 | **主备切换时间** | <60?| 功能测试 |
 | **连接池效?* | ?5% | 性能测试 |
@@ -757,7 +760,7 @@ src/
 | 风险?| 风险等级 | 影响 | 缓解措施 |
 |--------|---------|------|---------|
 | 数据源API变更 | P1 | 接入失败 | 版本锁定，适配器模?|
-| 网络延迟 | P2 | 监控误判 | 调整超时�?|
+| 网络延迟 | P2 | 监控误判 | 调整超时?|
 | 连接池耗尽 | P2 | 请求失败 | 限流控制，扩?|
 
 ---
@@ -778,4 +781,4 @@ src/
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?

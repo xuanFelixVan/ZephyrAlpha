@@ -1,16 +1,19 @@
 ---
-module_id: QUALITY_SCORING_SYSTEM_001
-version: 1.0.0
+module_id: IMPL_QUALITY_SCORING_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
+applicable_scope: "Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构"
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+open_source_dependency: pandas, numpy
+estimated_effort: 1.5周
+priority: P1
 ---
 
 # 数据质量评分系统蓝图
@@ -48,8 +51,8 @@ implementation_progress: 0%
 |------|------|---------|---------|
 | **完整?* | 25% | 缺失值比?| 1 - (缺失值数 / 总值数) |
 | **准确?* | 25% | 异常值比?| 1 - (异常值数 / 总值数) |
-| **时效?* | 20% | 数据更新延迟 | max(0, 1 - 延迟时间 / �? |
-| **一�?* | 15% | 数据一�?| 一致记录数 / 总记录数 |
+| **时效?* | 20% | 数据更新延迟 | max(0, 1 - 延迟时间 / ? |
+| **一?* | 15% | 数据一?| 一致记录数 / 总记录数 |
 | **有效?* | 15% | 格式正确?| 格式正确?/ 总数 |
 
 ### 2.2 评分等级
@@ -346,9 +349,9 @@ class QualityScorer:
 
 ### 4.1 设计背景
 
-**传统规则配置的局�?*:
+**传统规则配置的局?*:
 - ?规则配置依赖人工经验，效率低
-- ?规则难以适应数据变化，缺乏灵�?- ?规则覆盖不全，容易遗漏质量问?- ?规则维护成本高，难以规模?
+- ?规则难以适应数据变化，缺乏灵?- ?规则覆盖不全，容易遗漏质量问?- ?规则维护成本高，难以规模?
 **自动化规则生成的优势**:
 - ?基于数据特征自动生成规则
 - ?动态适应数据变化
@@ -605,7 +608,7 @@ class MLRuleGenerator:
             'model': model,
             'scaler': scaler,
             'features': list(numeric_columns),
-            'threshold': -0.5,  # 异常分数�?            'confidence': 0.85,
+            'threshold': -0.5,  # 异常分数?            'confidence': 0.85,
             'source': 'machine_learning'
         }
         
@@ -985,7 +988,7 @@ class RuleDeployer:
 
 ### 4.6 预期收益
 
-| 收益?| 当前�?| 自动化规则生成后 | 提升幅度 |
+| 收益?| 当前?| 自动化规则生成后 | 提升幅度 |
 |--------|---------|----------------|---------|
 | **规则覆盖?* | 60% | 95% | +35% |
 | **规则生成时间** | 2小时/?| 5分钟/?| -96% |
@@ -1028,4 +1031,4 @@ class RuleDeployer:
 - v1.0.0 (2026-04-02): 初始版本，完成数据质量评分系统设?
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?

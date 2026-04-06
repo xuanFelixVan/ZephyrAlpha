@@ -1,16 +1,19 @@
 ---
-module_id: DATA_COST_MANAGEMENT_001
-version: 1.0.0
+module_id: IMPL_DATA_COST_MGMT_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
+applicable_scope: "Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构"
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+open_source_dependency: pandas, numpy
+estimated_effort: 1.5周
+priority: P1
 ---
 
 # 数据成本管理系统蓝图
@@ -228,4 +231,4 @@ class CostOptimizer:
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?

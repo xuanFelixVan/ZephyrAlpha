@@ -110,7 +110,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [数据源概述](./04_DATA_SOURCE/README.md) | 数据源概�?| ⭐⭐⭐⭐�?|
+| [数据源概述](./04_DATA_SOURCE/INDEX.md) | 数据源概述 | ⭐⭐⭐⭐�?|
 | [数据需求](./04_DATA_SOURCE/DATA_REQUIREMENTS.md) | 数据需求分�?| ⭐⭐⭐⭐�?|
 | [数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据采集流程 |  |`n| [文档命名标准](./04_DATA_SOURCE/DOCUMENT_NAMING_STANDARD.md) | 文档命名规范 |  |`n| [数据质量](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 |  |
 | [数据源适配器](./04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) | 数据源适配�?| ⭐⭐⭐⭐�?|
