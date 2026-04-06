@@ -1,6 +1,6 @@
 ﻿﻿---
 index_id: BLUEPRINTS_INDEX_001
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-06
