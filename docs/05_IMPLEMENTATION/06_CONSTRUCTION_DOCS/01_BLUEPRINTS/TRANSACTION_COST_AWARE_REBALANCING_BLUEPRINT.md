@@ -49,6 +49,23 @@ priority: P0
 | **开源依赖** | PyPortfolioOpt, Riskfolio-Lib |
 | **预计工时** | 5-7天 |
 
+### 1.3 与交易成本优化模块的关系
+
+本模块与TRADING_COST_OPTIMIZATION形成互补关系：
+
+| 模块 | 核心定位 | 适用场景 | 关系说明 |
+|------|----------|----------|----------|
+| **TRADING_COST_OPTIMIZATION** | 交易成本建模 | 市场冲击建模、执行算法 | 提供成本估算能力 |
+| **TRANSACTION_COST_AWARE_REBALANCING** (本模块) | 成本感知再平衡 | 再平衡决策优化 | 依赖成本建模结果 |
+
+**职责边界**:
+- TRADING_COST_OPTIMIZATION: 专注于市场冲击建模和执行算法（VWAP/TWAP/IS）
+- 本模块: 专注于在再平衡决策中考虑交易成本，优化调整频率和幅度
+
+**推荐实施路径**:
+1. 先实现 TRADING_COST_OPTIMIZATION (60h) - 建立成本建模能力
+2. 再实现本模块 (5-7天) - 在再平衡中应用成本感知
+
 ---
 
 ## 2. 技术实现

@@ -49,6 +49,23 @@ priority: P0
 | **开源依赖** | PyPortfolioOpt, Riskfolio-Lib |
 | **预计工时** | 5-7天 |
 
+### 1.3 与多策略分层系统的关系
+
+本模块与MULTI_STRATEGY_HIERARCHICAL_SYSTEM形成互补关系：
+
+| 模块 | 核心定位 | 适用场景 | 关系说明 |
+|------|----------|----------|----------|
+| **STRATEGY_PORTFOLIO_OPTIMIZATION** (本模块) | 策略组合优化 | 策略权重优化、相关性建模 | 提供优化算法支持 |
+| **MULTI_STRATEGY_HIERARCHICAL_SYSTEM** | 多策略分层管理 | 策略分层、信号融合、协同优化 | 使用本模块的优化结果 |
+
+**职责边界**:
+- 本模块: 专注于策略层面的组合优化，计算最优策略权重
+- MULTI_STRATEGY_HIERARCHICAL_SYSTEM: 专注于策略分层管理、信号融合和协同优化
+
+**推荐实施路径**:
+1. 先实现本模块 (5-7天) - 建立策略组合优化能力
+2. 再实现 MULTI_STRATEGY_HIERARCHICAL_SYSTEM (160h) - 构建完整的分层管理系统
+
 ---
 
 ## 2. 技术实现

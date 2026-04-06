@@ -48,6 +48,21 @@ priority: P0
 | **开源依赖** | Riskfolio-Lib, skfolio |
 | **预计工时** | 5-7天 |
 
+### 1.3 与其他风险预算模块的关系
+
+本模块是风险预算体系中的**高级多层级模块**，与其他模块形成层级关系：
+
+| 模块 | 核心定位 | 适用场景 | 关系说明 |
+|------|----------|----------|----------|
+| **RISK_CONTRIBUTION_ANALYSIS** | 风险贡献分析 | 基础分析能力 | 本模块依赖其计算风险贡献 |
+| **SIMPLIFIED_RISK_BUDGET_SYSTEM** | 简化风险预算 | 个人开发、快速实现 | 本模块是其高级扩展版本 |
+| **HIERARCHICAL_RISK_BUDGET** (本模块) | 层级风险预算 | 多层级复杂组合 | 支持资产类→策略→因子多层级 |
+
+**推荐实施路径**:
+1. 先实现 RISK_CONTRIBUTION_ANALYSIS (2-3天) - 基础分析能力
+2. 再实现 SIMPLIFIED_RISK_BUDGET_SYSTEM (60h) - 简化版本
+3. 最后实现 HIERARCHICAL_RISK_BUDGET (5-7天) - 高级多层级
+
 ---
 
 ## 2. 技术实现

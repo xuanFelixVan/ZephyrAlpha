@@ -15,7 +15,7 @@ implementation_status: 进行??
 
 # System_Manifest.md - 系统清单
 
-> 清风量化系统 v5.3.2 的完整系统状态快??
+> 清风量化系统 v5.3.3 的完整系统状态快??
 > 
 > **?? 恢复说明**: 本文档于 2026-03-31 从归档文??`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` 恢复，作为系统主入口文档??
 
@@ -42,7 +42,7 @@ implementation_status: 进行??
 > **重要说明**：当前所有代码均??*示例代码/框架代码**，用于说明逻辑??*不可直接运行**??
 
 
-## 1. 物理架构 (v5.3.2)
+## 1. 物理架构 (v5.3.3)
 
 ```
 D:\ZephyrAlpha\
@@ -319,6 +319,7 @@ AI启动前必读顺序：
 | [缺失模块补充设计](../09_RESEARCH_INNOVATION/MISSING_MODULES_SUPPLEMENT.md) | `docs/09_RESEARCH_INNOVATION/MISSING_MODULES_SUPPLEMENT.md` | LAYER9_SUPPLEMENT_001 | 1.0 | Active | 特征存储、模型注册表、研究仪表板 |
 | [完整缺失模块补充方案v2.0](../09_RESEARCH_INNOVATION/COMPLETE_SUPPLEMENT_v2.md) | `docs/09_RESEARCH_INNOVATION/COMPLETE_SUPPLEMENT_v2.md` | LAYER9_COMPLETE_002 | 2.0 | Active | 数据版本控制、超参数优化、模型解释性、A/B测试、审计日志、成本管理 |
 | [完整蓝图v3.0](../09_RESEARCH_INNOVATION/COMPLETE_BLUEPRINT_V3.md) | `docs/09_RESEARCH_INNOVATION/COMPLETE_BLUEPRINT_V3.md` | LAYER9_COMPLETE_V3 | 3.0 | Active | 完整专业级蓝图，覆盖所有8大平台 |
+| [关键缺失模块补充v4.0](../09_RESEARCH_INNOVATION/CRITICAL_MISSING_V4.md) | `docs/09_RESEARCH_INNOVATION/CRITICAL_MISSING_V4.md` | LAYER9_CRITICAL_V4 | 4.0 | Active | 10个关键缺失模块：RD-Agent、时间泄漏控制、数据契约等 |
 
 > **索引状??*: 新增Layer 11文字驱动层蓝图（3个文档）、AI工作流模块蓝图（8个文档）和Layer 6组合优化层蓝图（5个文档），已集成到系统文档体系中。包含完整的技术选型、实施方案和成本评估??
 
@@ -359,5 +360,5 @@ AI启动前必读顺序：
 | [数据库设计评审报告](../design/database/P0-01_Database_Design_Review_Report.md) | `docs/design/database/P0-01_Database_Design_Review_Report.md` | DB_REVIEW_001 | 1.0 | Active | 专业量化机构数据库设计评??|
 
 
-**版本**: v5.3.2 | **更新**: 2026-04-06 | **状??*: ??活跃
+**版本**: v5.3.3 | **更新**: 2026-04-06 | **状??*: ??活跃
 

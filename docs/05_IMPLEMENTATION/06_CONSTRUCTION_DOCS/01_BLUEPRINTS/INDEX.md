@@ -89,7 +89,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 组合优化蓝图 | PORTFOLIO_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) |
+| 组合优化蓝图 | IMPL_PORTFOLIO_OPT_BP_001 | v1.0.1 | Active | 2026-04-03 | [链接](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) |
 | 组合再平衡蓝图 | PORTFOLIO_REBALANCING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./PORTFOLIO_REBALANCING_BLUEPRINT.md) |
 | 多资产配置蓝图 | MULTI_ASSET_ALLOCATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MULTI_ASSET_ALLOCATION_BLUEPRINT.md) |
 | 组合保险策略蓝图 | PORTFOLIO_INSURANCE_STRATEGY_001 | v1.0.0 | Active | 2026-04-05 | [链接](./PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md) |
