@@ -10,6 +10,9 @@ applicable_scope: 全系统架构设�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # 清风量化系统5.0 阶段性开发路线图

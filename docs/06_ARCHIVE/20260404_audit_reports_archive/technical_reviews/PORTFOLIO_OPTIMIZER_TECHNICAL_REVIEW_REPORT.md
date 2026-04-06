@@ -12,6 +12,8 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 owner: 实施负责?
 last_updated: 2026-04-02
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # PortfolioOptimizer组合优化器模块技术评审报?

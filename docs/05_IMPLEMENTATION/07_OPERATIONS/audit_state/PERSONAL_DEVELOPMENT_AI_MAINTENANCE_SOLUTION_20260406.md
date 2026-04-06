@@ -9,6 +9,9 @@ standard_type: 专业量化机构级方案
 applicable_scope: 个人开发、AI维护、个人使用
 compliance_level: 专业标准
 reference_models: ["Citadel", "Two Sigma", "文艺复兴", "DE Shaw"]
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 1)
 ---
 
 # 个人开发AI维护专业量化系统完整方案

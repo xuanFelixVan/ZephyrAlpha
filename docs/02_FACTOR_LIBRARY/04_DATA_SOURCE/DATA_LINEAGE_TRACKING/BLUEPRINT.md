@@ -13,6 +13,8 @@ dependencies:
   - OpenLineage
   - Marquez
   - Prefect
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据血缘追踪系统蓝图

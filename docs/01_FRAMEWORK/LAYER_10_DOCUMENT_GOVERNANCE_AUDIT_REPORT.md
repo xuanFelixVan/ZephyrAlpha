@@ -7,6 +7,8 @@ auditor: 首席架构师
 audit_scope: Layer 10治理与合规层所有文档
 audit_standard: 专业量化机构五大原则 + 三层审计标准
 compliance_level: 顶级专业标准
+responsibility:
+  - 数据质量 (Layer 10)
 ---
 
 # Layer 10治理与合规层文档治理审计报告

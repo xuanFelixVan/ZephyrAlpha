@@ -9,6 +9,10 @@ applicable_scope: 01_FRAMEWORK目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # 框架设计目录索引

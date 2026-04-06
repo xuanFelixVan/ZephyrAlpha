@@ -14,6 +14,9 @@ related_documents:
   - 03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md (风控规则体系框架)
   - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成�?
   - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风险监控仪表�?
+responsibility:
+  - 风险预算 (Layer 3)
+  - 市场状态识别 (Layer 4)
 ---
 
 # 风控规则引擎

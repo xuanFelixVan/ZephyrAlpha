@@ -13,6 +13,8 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 version: 1.0.0
 last_updated: 2026-04-02
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

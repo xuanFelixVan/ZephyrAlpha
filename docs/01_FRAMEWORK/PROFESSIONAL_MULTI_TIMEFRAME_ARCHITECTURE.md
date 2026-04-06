@@ -11,6 +11,8 @@ compliance_level: é¡¶çº§ä¸ä¸æ å
 reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two Sigma"]
 parent_document: ../INDEX.md
 implementation_status: è¿è¡?
+responsibility:
+  - 市场状态识别 (Layer 4)
 ---
 
 # ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶?

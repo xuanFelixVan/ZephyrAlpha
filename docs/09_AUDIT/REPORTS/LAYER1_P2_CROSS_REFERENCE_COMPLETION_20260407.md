@@ -8,6 +8,8 @@ owner: 首席蓝图架构师
 standard_type: 专业量化机构完成报告
 applicable_scope: 数据预处理层P2文档交叉引用更新完成
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据预处理层P2文档交叉引用更新完成报告

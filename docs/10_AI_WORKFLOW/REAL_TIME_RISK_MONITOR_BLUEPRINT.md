@@ -27,6 +27,8 @@ open_source_solution:
   secondary_github: https://github.com/quantopian/zipline
   license: Apache 2.0
   cost: 完全免费
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 ## 文档职责说明

@@ -10,6 +10,8 @@ applicable_scope: 数据源层文档治理
 compliance_level: 专业标准
 parent_document: ../../09_AUDIT/INDEX.md
 implementation_status: 已完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据源层深度审计报告 V4

@@ -8,19 +8,10 @@ owner: 因子工程团队
 standard_type: 操作手册
 applicable_scope: 全系统
 compliance_level: 专业标准
+responsibility:
+  - 市场状态识别 (Layer 4)
 ---
 
-﻿---
-module_id: FACTOR_VALIDATION_GUIDE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构因子验证指南
-applicable_scope: 因子研究与开�?compliance_level: 专业标准
-parent_document: ./FACTOR_MANAGEMENT_STANDARD.md
-implementation_status: 活跃维护
----
 
 # 因子验证指南 (Factor Validation Guide)
 

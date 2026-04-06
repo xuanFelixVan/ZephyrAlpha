@@ -10,6 +10,10 @@ applicable_scope: 建设文档目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 已完成
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # 建设文档目录索引

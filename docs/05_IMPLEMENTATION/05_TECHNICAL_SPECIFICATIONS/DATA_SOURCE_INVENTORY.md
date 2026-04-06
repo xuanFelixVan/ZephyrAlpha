@@ -9,6 +9,8 @@ standard_type: 数据接口清单
 applicable_scope: 全系统数据源管理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 清风量化系统数据接口清单

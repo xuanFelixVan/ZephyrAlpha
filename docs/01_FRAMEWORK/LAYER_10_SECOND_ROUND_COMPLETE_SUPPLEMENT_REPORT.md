@@ -9,6 +9,8 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级第二轮完整补充报告
 applicable_scope: Layer 10治理与合规层第二轮补充完成报告
 compliance_level: 顶级专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 10治理与合规层第二轮完整补充报告

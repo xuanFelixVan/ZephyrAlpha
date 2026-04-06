@@ -12,6 +12,8 @@ parent_document: INDEX.md
 layer: 舆情分析层
 priority: P0
 estimated_effort: 40h
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

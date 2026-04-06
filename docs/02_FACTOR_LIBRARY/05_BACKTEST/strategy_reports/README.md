@@ -10,19 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 ---
 
-﻿---
-module_id: FACTOR_STRATEGY_REPORTS_001_L02_README
-version: 1.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-04
-owner: 首席文档架构师
-standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
-compliance_level: 初始标准
-parent_document: ../INDEX.md
-implementation_status: 进行中
----
 
 
 # strategy_reports/ - 策略回测报告

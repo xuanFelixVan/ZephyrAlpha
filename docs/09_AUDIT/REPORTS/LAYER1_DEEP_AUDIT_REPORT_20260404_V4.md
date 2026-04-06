@@ -7,6 +7,8 @@ last_updated: 2026-04-04
 owner: 首席蓝图架构�?standard_type: 专业量化机构深度审计报告
 applicable_scope: 数据预处理层全面审计
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 清风量化系统数据预处理层深度审计报告 V4

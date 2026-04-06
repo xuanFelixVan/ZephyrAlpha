@@ -11,6 +11,8 @@ compliance_level: 专业标准
 parent_document: ../../INDEX.md
 audit_type: 深度文档治理审计
 audit_layers: L1, L2, L3
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据源层深度文档治理审计报告

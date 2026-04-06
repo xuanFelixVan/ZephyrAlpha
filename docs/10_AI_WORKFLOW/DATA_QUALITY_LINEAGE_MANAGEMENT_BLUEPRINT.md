@@ -15,6 +15,8 @@ estimated_effort: 40h
 integrated_modules:
   - AIWF_DQM_001
   - AIWF_DLT_001
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

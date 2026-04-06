@@ -12,6 +12,10 @@ parent_document: ../INDEX.md
 audit_type: 三层深度审计 (L1/L2/L3)
 audit_date: 2026-04-06
 audit_scope: 全系统所有文档文件
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # 清风量化系统深度文档治理审计报告 V12

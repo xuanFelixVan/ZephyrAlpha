@@ -16,6 +16,8 @@ related_documents:
   - P1_P2_MODULES_BLUEPRINT_COLLECTION.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计阶段
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 4 P2级前沿技术模块蓝图汇总

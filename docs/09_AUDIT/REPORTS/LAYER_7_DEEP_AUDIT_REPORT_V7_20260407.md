@@ -10,6 +10,8 @@ applicable_scope: Layer 7 AI报告层深度审计
 compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 审计完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 7 AI报告层深度审计报告 V7

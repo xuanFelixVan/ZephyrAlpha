@@ -13,6 +13,8 @@ dependencies:
   - Soda Core
   - Prometheus
   - Grafana
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据可观测性平台蓝图

@@ -10,6 +10,8 @@ applicable_scope: 全系统缺失模块补充
 compliance_level: 专业标准
 reference_models: ["Citadel", "Two Sigma", "文艺复兴", "DE Shaw", "Jump Trading"]
 target_users: ["个人开发者", "AI维护", "个人使用"]
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 清风量化系统完整专业实施方案

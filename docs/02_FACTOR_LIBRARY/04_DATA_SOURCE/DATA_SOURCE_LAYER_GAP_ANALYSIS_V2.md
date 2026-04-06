@@ -9,6 +9,8 @@ standard_type: 架构分析报告
 applicable_scope: 数据源层架构完整性评估
 compliance_level: 专业标准
 parent_document: ./INDEX.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据源层架构完整性深度评估报告 v2.0

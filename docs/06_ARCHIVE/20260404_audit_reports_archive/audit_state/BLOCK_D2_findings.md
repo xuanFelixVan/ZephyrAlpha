@@ -10,6 +10,8 @@ applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # BLOCK_D2_findings.md - D2块审计发?

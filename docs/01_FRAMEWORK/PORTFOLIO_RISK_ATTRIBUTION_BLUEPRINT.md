@@ -38,6 +38,8 @@ responsibility_boundary: |
   - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因
   - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 组合风险归因系统蓝图

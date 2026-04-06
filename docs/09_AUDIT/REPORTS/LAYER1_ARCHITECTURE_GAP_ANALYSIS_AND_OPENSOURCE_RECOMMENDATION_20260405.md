@@ -11,6 +11,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 audit_type: 架构评估与开源推荐
 audit_methodology: 专业机构标准对比 + GitHub成熟项目调研
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据预处理层架构完整性评估与开源方案推荐报告

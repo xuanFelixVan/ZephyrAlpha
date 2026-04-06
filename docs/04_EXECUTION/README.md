@@ -10,6 +10,8 @@ applicable_scope: 交易执行与监�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 风险预算 (Layer 3)
 ---
 
 # 04_EXECUTION - 执行与运行阶�?

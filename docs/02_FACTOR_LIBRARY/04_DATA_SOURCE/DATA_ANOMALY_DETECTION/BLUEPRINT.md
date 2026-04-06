@@ -13,6 +13,8 @@ dependencies:
   - PyOD
   - PyTorch
   - Scikit-learn
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据异常检测蓝图

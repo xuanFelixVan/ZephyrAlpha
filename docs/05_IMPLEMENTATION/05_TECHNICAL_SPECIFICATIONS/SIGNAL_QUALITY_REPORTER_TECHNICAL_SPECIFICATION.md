@@ -14,7 +14,10 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 7 AI报告�?---
+applicable_scope: Layer 7 AI报告�?
+responsibility:
+  - 数据质量 (Layer 1)
+---
 
 # 信号质量监控报告器技术规格书
 

@@ -12,6 +12,8 @@ parent_document: ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md
 dependencies:
   - Microsoft Presidio
   - cryptography
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据安全与隐私保护蓝图

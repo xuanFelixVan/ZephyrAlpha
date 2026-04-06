@@ -27,6 +27,12 @@ responsibility_boundary: |
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
   - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
+responsibility: 市场状态识别
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 10)
+  responsibility_layer: Layer 10
+  responsibility_layer: Layer 4
 ---
 
 # AI治理框架蓝图：AI行为准则与治理机�?

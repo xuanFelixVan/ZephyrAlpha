@@ -15,6 +15,9 @@ related_documents:
   - ARCHITECTURE.md
 parent_document: ../System_Manifest.md
 implementation_status: 评估阶段
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 10: 治理与合规层完整性差距分析报告

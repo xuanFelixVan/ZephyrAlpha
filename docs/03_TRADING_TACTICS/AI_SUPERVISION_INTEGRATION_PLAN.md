@@ -10,6 +10,8 @@ applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 风险预算 (Layer 3)
 ---
 
 # AI监督集成方案 - 专业机构级设�?

@@ -11,6 +11,9 @@ applicable_scope: Layer 10治理与合规层所有蓝图
 compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 10)
 ---
 
 # Layer 10: 治理与合规层蓝图索引

@@ -8,6 +8,8 @@ owner: 首席蓝图架构师
 standard_type: 专业量化机构进度报告
 applicable_scope: 第三阶段P2文档第一批完成报告
 compliance_level: 专业标准
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 第三阶段P2文档第一批完成报告

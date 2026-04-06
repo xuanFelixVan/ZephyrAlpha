@@ -9,6 +9,8 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级第二轮差距分析
 applicable_scope: Layer 10治理与合规层深度完整性评估
 compliance_level: 顶级专业标准
+responsibility:
+  - 市场状态识别 (Layer 4)
 ---
 
 # Layer 10治理与合规层第二轮深度差距分析

@@ -10,6 +10,8 @@ applicable_scope: 因子研究与管理
 compliance_level: 研究标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 另类数据 - 新闻舆情

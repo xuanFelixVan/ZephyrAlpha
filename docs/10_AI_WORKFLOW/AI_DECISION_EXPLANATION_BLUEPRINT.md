@@ -28,6 +28,8 @@ open_source_solution:
   secondary_stars: 11000+
   license: MIT / BSD
   cost: 完全免费
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 ## 文档职责说明

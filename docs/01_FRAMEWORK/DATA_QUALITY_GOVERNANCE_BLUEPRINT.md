@@ -29,6 +29,8 @@ responsibility_boundary: |
   - Layer 1（数据层）: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md - 负责多维度质量评估
   - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
+responsibility:
+  - 数据质量 (Layer 10)
 ---
 
 # 数据质量治理体系蓝图

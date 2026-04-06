@@ -9,6 +9,8 @@ standard_type: 专业量化机构级审计报告
 applicable_scope: 全系统蓝图完整性审计
 compliance_level: 专业标准
 reference_models: ["Citadel", "Two Sigma", "文艺复兴", "DE Shaw", "Jump Trading"]
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 清风量化系统蓝图完整性审计报告

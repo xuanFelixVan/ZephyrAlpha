@@ -8,6 +8,8 @@ owner: 首席蓝图架构师
 standard_type: 专业量化机构验证报告
 applicable_scope: 已更新文档引用链接验证
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 引用链接验证报告

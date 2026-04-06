@@ -29,6 +29,9 @@ responsibility_boundary: |
   - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
   - MODEL_REGISTRY_BLUEPRINT.md: 模型版本管理
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 1)
 ---
 
 # 模型风险管理系统蓝图

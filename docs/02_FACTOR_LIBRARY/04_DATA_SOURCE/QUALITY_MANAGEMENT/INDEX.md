@@ -9,6 +9,8 @@ standard_type: 目录索引文档
 applicable_scope: 数据质量管理系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据质量管理系统

@@ -8,6 +8,8 @@ owner: 首席蓝图架构师
 standard_type: 专业量化机构综合总结
 applicable_scope: 第三阶段综合进度总结
 compliance_level: 专业标准
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 第三阶段综合进度总结报告

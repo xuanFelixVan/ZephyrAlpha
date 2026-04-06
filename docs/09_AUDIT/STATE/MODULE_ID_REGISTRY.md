@@ -8,6 +8,10 @@ owner: 审计系统
 standard_type: 审计管理文档
 applicable_scope: 全系统module_id管理
 compliance_level: 专业标准
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # Module ID 注册表

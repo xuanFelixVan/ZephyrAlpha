@@ -10,6 +10,8 @@ applicable_scope: Layer 3 舆情分析?| 业务架构: 三级时间框架融合�
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # NewsCrawler新闻爬虫模块技术规格书

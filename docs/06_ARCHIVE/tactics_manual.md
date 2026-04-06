@@ -10,6 +10,9 @@ applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
 ---
 
 # 战术手册 v1.0

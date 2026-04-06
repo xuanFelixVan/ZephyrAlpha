@@ -16,6 +16,8 @@ reference_models:
   - "FinRL-X Framework"
 parent_document: ./BLUEPRINT.md
 implementation_status: 完整设计阶段
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 9 完整缺失模块补充方案 v2.0

@@ -10,6 +10,10 @@ applicable_scope: Layer 7 AI报告层完整性分析
 compliance_level: 顶级专业标准
 parent_document: System_Manifest.md
 implementation_status: 蓝图阶段
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 7 AI报告层完整蓝图补充报告

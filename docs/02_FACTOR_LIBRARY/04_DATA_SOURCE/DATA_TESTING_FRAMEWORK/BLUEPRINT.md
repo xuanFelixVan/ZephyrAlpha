@@ -13,6 +13,8 @@ dependencies:
   - Great Expectations
   - dbt
   - pytest
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据测试框架蓝图

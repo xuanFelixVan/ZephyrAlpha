@@ -15,6 +15,8 @@ related_documents:
   - LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md
 parent_document: ../System_Manifest.md
 implementation_status: 审计完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 10: 治理与合规层深度审计报告（最终版）

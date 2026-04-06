@@ -26,6 +26,8 @@ responsibility_boundary: |
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 设置管理界面蓝图

@@ -26,6 +26,8 @@ responsibility_boundary: |
   统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
   - 接收所有子系统的告警（包括本模块）
   - 提供告警聚合、抑制、路由、多渠道分发
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

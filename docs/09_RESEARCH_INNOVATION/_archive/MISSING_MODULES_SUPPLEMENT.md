@@ -11,6 +11,8 @@ compliance_level: 顶级专业标准
 reference_models: ["Two Sigma Research Infrastructure", "Citadel Quant Research Platform"]
 parent_document: ./BLUEPRINT.md
 implementation_status: 设计阶段
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 9 缺失模块补充设计

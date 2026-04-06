@@ -13,6 +13,8 @@ dependencies:
   - DataHub
   - OpenLineage
   - Docker
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据目录系统蓝图

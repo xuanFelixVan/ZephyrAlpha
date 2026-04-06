@@ -9,6 +9,8 @@ applicable_scope: 风险管理文档
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 风险管理文档索引

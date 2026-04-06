@@ -10,6 +10,8 @@ applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 持续改进执行报告

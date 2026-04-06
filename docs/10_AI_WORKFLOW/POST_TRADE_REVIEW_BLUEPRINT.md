@@ -19,6 +19,8 @@ related_documents:
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
   - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
   - QUALITY_MONITORING_BLUEPRINT.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

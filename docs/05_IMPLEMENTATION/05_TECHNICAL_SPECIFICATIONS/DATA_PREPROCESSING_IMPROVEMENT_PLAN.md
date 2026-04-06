@@ -9,7 +9,10 @@ standard_type: 专业量化机构实施计划
 applicable_scope: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+responsibility:
+  - 数据质量 (Layer 2)
+---
 
 # Layer 1数据预处理层改进实施计划
 

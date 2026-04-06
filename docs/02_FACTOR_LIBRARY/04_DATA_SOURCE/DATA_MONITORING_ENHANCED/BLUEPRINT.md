@@ -13,6 +13,8 @@ dependencies:
   - Great Expectations
   - Prefect
   - Prometheus
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据监控系统蓝图（增强）

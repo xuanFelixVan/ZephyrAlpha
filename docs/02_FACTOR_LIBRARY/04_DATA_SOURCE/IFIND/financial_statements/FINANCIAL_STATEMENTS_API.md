@@ -10,6 +10,8 @@ applicable_scope: iFind财务数据API
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 implementation_status: 已完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # iFind财务数据API参考

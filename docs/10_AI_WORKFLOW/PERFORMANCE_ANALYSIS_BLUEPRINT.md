@@ -19,6 +19,8 @@ related_documents:
   - LIVE_TRADING_MONITOR_BLUEPRINT.md
   - QUALITY_MONITORING_BLUEPRINT.md
   - PERFORMANCE_MONITORING.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

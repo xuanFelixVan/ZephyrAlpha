@@ -1,9 +1,9 @@
 {
-  "check_time": "2026-04-07 01:45:39",
+  "check_time": "2026-04-07 01:49:37",
   "total_blueprints": 366,
-  "with_layer": 272,
-  "missing_layer": 94,
-  "coverage_rate": 74.31693989071039,
+  "with_layer": 274,
+  "missing_layer": 92,
+  "coverage_rate": 74.86338797814209,
   "layer_stats": {
     "Layer 4": 68,
     "Layer 3": 36,
@@ -11,7 +11,7 @@
     "Layer 11": 15,
     "Layer 10": 23,
     "Layer 7": 9,
-    "Layer 8": 39,
+    "Layer 8": 41,
     "Layer 0": 8,
     "Layer 6": 9,
     "Layer 1": 1,
@@ -110,8 +110,6 @@
     "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md",
     "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TURNOVER_CONTROL_BLUEPRINT.md",
     "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md",
-    "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\VAR_ES_MONITORING_BLUEPRINT.md",
-    "docs\\10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md",
-    "docs\\10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md"
+    "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\VAR_ES_MONITORING_BLUEPRINT.md"
   ]
 }

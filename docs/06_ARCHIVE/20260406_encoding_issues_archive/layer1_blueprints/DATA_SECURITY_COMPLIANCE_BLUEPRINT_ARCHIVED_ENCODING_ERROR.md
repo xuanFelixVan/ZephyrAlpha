@@ -16,6 +16,8 @@ estimated_effort: 2周
 priority: P0
 archive_reason: 编码错误归档
 archive_date: 2026-04-06
+responsibility:
+  - 数据质量 (Layer 10)
 ---
 
 

@@ -8,6 +8,8 @@ owner: Audit Sentinel
 standard_type: GitHub Issue创建清单
 applicable_scope: TODO标记转换
 compliance_level: 专业标准
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # GitHub Issue创建清单

@@ -10,6 +10,8 @@ applicable_scope: 系统实施与部�?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # ERROR_HANDLING.md - 错误处理规范

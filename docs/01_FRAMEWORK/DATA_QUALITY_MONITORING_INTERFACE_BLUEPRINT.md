@@ -25,6 +25,8 @@ responsibility_boundary: |
   数据治理请参考：DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据质量监控界面蓝图

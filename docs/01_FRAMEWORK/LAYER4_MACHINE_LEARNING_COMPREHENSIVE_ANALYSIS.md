@@ -17,6 +17,8 @@ related_documents:
   - P1_P2_MODULES_BLUEPRINT_COLLECTION.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 分析阶段
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 4机器学习层完整性综合分析报告

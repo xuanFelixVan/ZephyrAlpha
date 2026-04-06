@@ -10,19 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 ---
 
-﻿---
-module_id: INDEX_MANUAL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席文档架构师
-standard_type: 专业量化机构目录索引
-applicable_scope: 10_MANUAL目录
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已实施
----
 
 # 10_MANUAL - 因子库手册
 

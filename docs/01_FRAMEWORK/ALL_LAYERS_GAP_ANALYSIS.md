@@ -10,6 +10,13 @@ standard_type: 专业量化机构级完整性分析报告
 applicable_scope: 全系统架构完整性评估
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
+responsibility: 风险预算
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
+  responsibility_layer: Layer 1
+  responsibility_layer: Layer 4
+  responsibility_layer: Layer 11
 ---
 
 # 全系统Layer 0-11完整性深度分析报告

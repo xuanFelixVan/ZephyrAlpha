@@ -10,6 +10,8 @@ applicable_scope: 02_FACTOR_LIBRARY目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 因子库目录索引

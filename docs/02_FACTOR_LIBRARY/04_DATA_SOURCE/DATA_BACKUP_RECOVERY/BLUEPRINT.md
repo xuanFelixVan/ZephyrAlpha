@@ -12,6 +12,8 @@ parent_document: ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md
 dependencies:
   - Restic
   - rclone
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据备份恢复蓝图

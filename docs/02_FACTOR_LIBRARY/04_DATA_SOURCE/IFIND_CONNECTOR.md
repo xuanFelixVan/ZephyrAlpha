@@ -12,6 +12,8 @@ parent_document: ../INDEX.md
 implementation_status: 设计完成
 architecture_layer: 数据基础设施层
 timeframe_support: [宏观配置层, 中观策略层, 微观执行层]
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # iFind连接器技术规格

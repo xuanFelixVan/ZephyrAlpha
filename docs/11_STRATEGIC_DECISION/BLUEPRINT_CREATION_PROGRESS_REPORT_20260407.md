@@ -10,6 +10,8 @@ applicable_scope: Layer 11 - 战略决策层蓝图创建
 compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT_IMPLEMENTATION_STATUS_REPORT_20260407.md
 implementation_status: 实施中
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 蓝图创建进度报告

@@ -1,5 +1,5 @@
 ---
-module_id: INDEX_CASE_STUDIES_001
+module_id: INDEX_CASE_STUDIES_OPS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

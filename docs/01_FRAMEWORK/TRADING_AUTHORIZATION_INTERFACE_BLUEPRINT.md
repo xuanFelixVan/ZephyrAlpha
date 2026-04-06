@@ -25,6 +25,8 @@ responsibility_boundary: |
   决策仪表板请参考：DECISION_DASHBOARD_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+  - 风险预算 (Layer 3)
 ---
 
 # 交易授权界面蓝图

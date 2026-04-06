@@ -9,6 +9,11 @@ layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
+responsibility: 市场状态识别
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
+  responsibility_layer: Layer 1
+  responsibility_layer: Layer 4
 ---
 
 ﻿---

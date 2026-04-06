@@ -32,6 +32,9 @@ responsibility_boundary: |
   - 定义合规监控的整体架构和设计原则
   - 分析专业机构的合规实
   - 规划核心组件和接
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 10)
 ---
 
 

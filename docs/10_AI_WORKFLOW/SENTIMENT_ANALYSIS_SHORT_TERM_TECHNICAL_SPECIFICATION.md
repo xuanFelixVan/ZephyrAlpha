@@ -13,6 +13,8 @@ applicable_modules:
   - 数据源扩展
   - 深度学习情感分析
   - 实时预警系统
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 ## 文档职责说明

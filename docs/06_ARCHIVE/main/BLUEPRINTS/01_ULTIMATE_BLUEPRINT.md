@@ -9,6 +9,8 @@ layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 ﻿---

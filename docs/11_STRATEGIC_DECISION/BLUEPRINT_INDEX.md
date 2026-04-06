@@ -10,6 +10,8 @@ applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 parent_document: ./INDEX.md
 implementation_status: 索引阶段
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # Layer 11 战略决策层蓝图索引

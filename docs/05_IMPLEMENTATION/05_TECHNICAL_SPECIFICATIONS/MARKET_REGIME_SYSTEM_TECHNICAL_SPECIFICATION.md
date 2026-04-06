@@ -17,6 +17,9 @@ standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # 市场状态识别系统技术规格书 v1.0

@@ -27,6 +27,9 @@ responsibility_boundary: |
   初步分析请参考：HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 1)
 ---
 
 # 人机交互层完整补充蓝图

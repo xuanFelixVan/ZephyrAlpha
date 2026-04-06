@@ -15,6 +15,8 @@ related_documents:
   - ALL_LAYERS_GAP_ANALYSIS.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # P1级专业模块 + P2级扩展模块蓝图汇总

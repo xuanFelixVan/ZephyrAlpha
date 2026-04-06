@@ -6,6 +6,8 @@ module_id: SYSTEM_ARCHITECTURE_DIAGRAM
 created_date: 2026-04-02
 last_updated: 2026-04-02
 tags: ["æ¶æå?, "ç³»ç»å¨æ¯", "æ¶æè®¾è®¡"]
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 # ZephyrAlphaç³»ç»æ¶æå¨æ¯å?
 **ææ¡£çæ¬**: 1.0.0

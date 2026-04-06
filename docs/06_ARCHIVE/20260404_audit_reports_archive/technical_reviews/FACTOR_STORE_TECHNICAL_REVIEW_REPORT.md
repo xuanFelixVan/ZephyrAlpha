@@ -10,6 +10,8 @@ applicable_scope: Layer 2 Alpha因子?
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 因子存储管理模块技术评审报?

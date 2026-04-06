@@ -10,6 +10,8 @@ applicable_scope: 战略资产配置
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 规划中
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 战略资产配置目录索引

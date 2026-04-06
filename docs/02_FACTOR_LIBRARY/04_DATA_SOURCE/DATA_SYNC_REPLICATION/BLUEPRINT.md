@@ -13,6 +13,8 @@ dependencies:
   - Debezium
   - Kafka
   - ClickHouse
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据同步复制蓝图

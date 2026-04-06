@@ -14,6 +14,8 @@ implementation_progress: 0%
 open_source_dependency: pandas, numpy
 estimated_effort: 2周
 priority: P0
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

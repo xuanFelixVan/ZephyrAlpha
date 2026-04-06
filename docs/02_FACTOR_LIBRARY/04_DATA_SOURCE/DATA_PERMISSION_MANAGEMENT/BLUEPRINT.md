@@ -13,6 +13,8 @@ dependencies:
   - FastAPI
   - Redis
   - SQLAlchemy
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据权限管理蓝图

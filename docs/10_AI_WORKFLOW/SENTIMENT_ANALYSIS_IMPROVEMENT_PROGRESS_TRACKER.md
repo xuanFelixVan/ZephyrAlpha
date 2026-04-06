@@ -6,6 +6,8 @@ created_date: 2026-04-02
 last_updated: 2026-04-05
 owner: 首席架构师standard_type: 专业机构级索引applicable_scope: 舆情分析层改进文档索compliance_level: 专业标准
 parent_document: INDEX.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

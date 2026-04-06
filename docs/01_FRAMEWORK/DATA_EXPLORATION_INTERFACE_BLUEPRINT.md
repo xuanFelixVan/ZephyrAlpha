@@ -26,6 +26,8 @@ responsibility_boundary: |
   性能分析请参考：PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据探索界面蓝图

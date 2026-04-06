@@ -10,6 +10,8 @@ applicable_scope: Layer 1数据预处理层 | 业务架构: 三级时间框架�
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+responsibility:
+  - 数据质量 (Layer 2)
 ---
 
 # DataCleaner数据清洗器模块技术规格书

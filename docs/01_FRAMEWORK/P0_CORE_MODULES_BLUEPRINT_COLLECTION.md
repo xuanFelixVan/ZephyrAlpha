@@ -15,6 +15,9 @@ related_documents:
   - PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 1)
 ---
 
 # P0级核心模块蓝图汇总

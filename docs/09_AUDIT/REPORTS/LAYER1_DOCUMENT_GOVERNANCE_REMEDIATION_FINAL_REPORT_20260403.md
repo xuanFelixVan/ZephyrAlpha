@@ -6,6 +6,8 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构�?standard_type: 专业量化机构文档治理整改最终报�?applicable_scope: Layer 1数据预处理层文档治理整改
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 10)
 ---
 
 # Layer 1数据预处理层文档治理整改最终报�?

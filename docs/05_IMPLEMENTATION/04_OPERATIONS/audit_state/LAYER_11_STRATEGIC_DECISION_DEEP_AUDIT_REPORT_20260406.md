@@ -10,6 +10,9 @@ applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
 implementation_status: 审计完成
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
 ---
 
 # Layer 11 战略决策层深度审计报告

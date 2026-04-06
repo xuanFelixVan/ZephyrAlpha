@@ -16,6 +16,8 @@ related_documents:
   - P1_P2_MODULES_BLUEPRINT_COLLECTION.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 新发现缺失模块蓝图汇总

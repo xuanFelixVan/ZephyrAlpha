@@ -10,6 +10,9 @@ standard_type: 专业量化机构级完整性分析报告
 applicable_scope: Layer 10治理与合规层完整性评估与补充方案
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw", "Capstone Investment Advisors"]
+responsibility:
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 10)
 ---
 
 # Layer 10治理与合规层完整性分析报告

@@ -13,6 +13,8 @@ dependencies:
   - Apache Iceberg
   - Delta Lake
   - Apache Parquet
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据生命周期管理蓝图

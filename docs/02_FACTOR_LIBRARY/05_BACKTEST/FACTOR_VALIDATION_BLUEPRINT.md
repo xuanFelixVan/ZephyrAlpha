@@ -11,19 +11,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 ---
 
-﻿---
-module_id: FACTOR_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
-compliance_level: 初始标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
----
 
 
 # 因子验证框架蓝图

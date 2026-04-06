@@ -36,6 +36,8 @@ responsibility_boundary: |
   **与DATA_QUALITY_GOVERNANCE_BLUEPRINT.md的区别**：
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 顶层架构设计、跨层协调、标准制定（治理视角）
   - 本文档: 规则定义、验证执行、改进跟踪、报告生成（执行视角）
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据质量管理系统蓝图

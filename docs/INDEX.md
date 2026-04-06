@@ -7,6 +7,9 @@ owner: 系统架构�?version: 1.1.1
 module_id: INDEX_ROOT_001
 created_date: 2026-04-02
 last_updated: 2026-04-04
+responsibility: 风险预算
+  - 风险预算 (Layer 11)
+  responsibility_layer: Layer 11
 ---
 
 # 清风量化系统文档索引

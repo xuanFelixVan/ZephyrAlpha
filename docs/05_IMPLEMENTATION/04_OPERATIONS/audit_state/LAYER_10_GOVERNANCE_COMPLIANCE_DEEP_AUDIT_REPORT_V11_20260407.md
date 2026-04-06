@@ -9,6 +9,8 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级深度审计报告
 applicable_scope: Layer 10治理与合规层第十一次深度审计
 compliance_level: 顶级专业标准
+responsibility:
+  - 数据质量 (Layer 10)
 ---
 
 # Layer 10治理与合规层第十一次深度审计报告

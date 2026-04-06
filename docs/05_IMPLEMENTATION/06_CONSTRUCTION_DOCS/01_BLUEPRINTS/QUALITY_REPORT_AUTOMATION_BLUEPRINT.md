@@ -1,3 +1,15 @@
+---
+module_id: QUALITY_REPORT_AUTOMATION_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 数据质量 (Layer 1)
+
+---
 ﻿---
 module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
@@ -640,11 +652,49 @@ volumes:
 
 ---
 
-## 十、相关文档
+## 📚 相关文档
 
-- [数据质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md)
-- 实时数据质量监控蓝图
-- [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 强依赖 | 提供监控数据 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [系统集成蓝图](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | 中依赖 | 提供系统集成数据 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依赖 | 质量评分系统 |
+| [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | 中依赖 | 增强告警系统 |
+| [系统增强蓝图](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) | SYSTEM_ENHANCEMENT_001 | 中依赖 | 系统增强 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Jinja2** | 3.1+ | 模板引擎 | [官方文档](https://jinja.palletsprojects.com/) |
+| **WeasyPrint** | 60+ | PDF生成 | [官方文档](https://weasyprint.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[监控仪表板增强] --> B[质量报告自动化]
+    C[数据质量监控] --> B
+    D[系统集成] --> B
+    
+    B --> E[质量评分系统]
+    B --> F[增强告警系统]
+    B --> G[系统增强]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
 
 ---
 

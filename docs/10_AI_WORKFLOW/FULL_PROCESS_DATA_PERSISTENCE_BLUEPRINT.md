@@ -19,6 +19,8 @@ related_documents:
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
   - POST_TRADE_REVIEW_BLUEPRINT.md
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

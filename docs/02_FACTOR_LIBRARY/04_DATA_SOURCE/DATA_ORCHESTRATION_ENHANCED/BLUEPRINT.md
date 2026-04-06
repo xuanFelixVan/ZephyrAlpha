@@ -13,6 +13,8 @@ dependencies:
   - Prefect
   - Dagster (可选)
   - Apache Airflow (可选)
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据编排增强蓝图

@@ -10,6 +10,9 @@ applicable_scope: Layer 11 - 战略决策层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
 ---
 
 # Layer 11: 战略决策层目录索引

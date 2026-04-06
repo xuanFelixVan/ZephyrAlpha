@@ -8,6 +8,8 @@ owner: 审计系统
 standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # Layer 6架构完整性审查报告

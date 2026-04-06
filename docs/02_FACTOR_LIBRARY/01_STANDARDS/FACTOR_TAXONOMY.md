@@ -10,15 +10,20 @@ applicable_scope: 因子研究与管理
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
-# 因子分类�?(Factor Taxonomy)
+# 因子分类学(Factor Taxonomy)
 
-> 因子分类体系与参数配置标�?
+> 因子分类体系与参数配置标准
 >
-> **职责**: 定义因子分类体系和参数配�?
-> **注册�?*: [../06_REGISTRY/FACTOR_CATALOG.md](../06_REGISTRY/FACTOR_CATALOG.md) - 因子清单和元数据
-> **计算框架**: [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 计算引擎和调度器
+> **核心职责**: 定义因子分类体系架构和参数配置标准
+> **职责边界**: 
+> - ✅ 本文档负责：因子分类体系定义、分类标准、参数配置规范
+> - ❌ 本文档不负责：具体因子清单、因子元数据、因子注册管理
+> - 📋 相关文档：[因子注册表](../06_REGISTRY/factor_catalog.md) - 因子清单和元数据管理
+> - 📋 相关文档：[因子计算框架](FACTOR_CALCULATION_FRAMEWORK.md) - 计算引擎和调度器
 
 ---
 

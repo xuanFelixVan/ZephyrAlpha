@@ -10,19 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 ---
 
-﻿---
-module_id: DOC_SITEMAP_001
-version: 5.3.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-04
-owner: ��ϯ�ĵ��ܹ�ʦ
-standard_type: רҵ���������ĵ�
-applicable_scope: ȫϵͳ
-compliance_level: רҵ��׼
-parent_document: INDEX.md
-implementation_status: ������
----
 
 
 # �ĵ���ͼ (SITEMAP)

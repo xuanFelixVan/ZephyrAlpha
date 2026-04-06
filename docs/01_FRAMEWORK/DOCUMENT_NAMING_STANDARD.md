@@ -7,6 +7,8 @@ last_updated: 2026-04-03
 owner: 首席文档架构�?standard_type: 专业量化机构文档命名规范
 applicable_scope: 全系统文档管�?compliance_level: 专业标准
 parent_document: docs/01_FRAMEWORK/DOCUMENT_NUMBERING_STANDARD.md
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 清风量化系统文档命名规范标准

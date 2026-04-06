@@ -10,6 +10,9 @@ applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 parent_document: ./COMPLETE_BLUEPRINT_OVERVIEW.md
 implementation_status: 实施阶段
+responsibility:
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
 ---
 
 # Layer 11战略决策层蓝图实施状态报告

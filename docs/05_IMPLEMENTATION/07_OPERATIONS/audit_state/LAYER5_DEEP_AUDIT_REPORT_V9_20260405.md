@@ -9,6 +9,8 @@ standard_type: 专业文档治理深度审计报告
 applicable_scope: 05_IMPLEMENTATION 策略执行层全目录
 compliance_level: 专业标准
 audit_methodology: 三层审计标准 (L1-L3)
+responsibility:
+  - 市场状态识别 (Layer 4)
 ---
 
 # 策略执行层深度审计报告 V9

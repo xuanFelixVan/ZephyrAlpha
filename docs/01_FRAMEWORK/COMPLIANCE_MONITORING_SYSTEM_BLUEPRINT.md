@@ -20,7 +20,12 @@ responsibility_boundary: |
   - 规划合规监控系统的核心组件和接口
   
   实现层文�? 10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md
-  - 合规监控模块的具体实现方�?  - 技术栈选型和详细设�?  - 代码示例和部署方�?---
+  - 合规监控模块的具体实现方�?  - 技术栈选型和详细设�?  - 代码示例和部署方�?
+responsibility: 数据质量
+  - 风险预算 (Layer 11)
+  - 数据质量 (Layer 10)
+  responsibility_layer: Layer 10
+---
 
 # 合规监控系统蓝图
 

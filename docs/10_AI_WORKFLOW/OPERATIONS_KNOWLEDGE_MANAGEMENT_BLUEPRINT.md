@@ -17,6 +17,8 @@ integrated_modules:
   - AIWF_DSM_001
   - AIWF_POM_001
   - AIWF_KMM_001
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 

@@ -10,23 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 ---
 
-﻿---
-module_id: INDEX_RISK_FACTORS_001
-version: 1.0.1
-status: Active
-created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席文档架构�?standard_type: 目录索引
-applicable_scope: 风险因子
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已完�?---
-
-# 风险因子目录索引
-
-> 风险因子的核心索引文件，提供Barra风格因子、行业因子等风险管理工具
-
----
 
 ## 📂 目录结构
 

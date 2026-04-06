@@ -10,6 +10,8 @@ applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 数据质量 (Layer 2)
 ---
 
 # L1_CLEANER 数据清洗器模块设�?

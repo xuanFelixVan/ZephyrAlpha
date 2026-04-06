@@ -8,6 +8,8 @@ owner: 审计系统
 standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # AI工作流层最终确认审计报告 V5

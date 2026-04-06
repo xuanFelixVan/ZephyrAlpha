@@ -13,6 +13,8 @@ dependencies:
   - ydata-profiling
   - pandas
   - sweetviz
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据画像蓝图

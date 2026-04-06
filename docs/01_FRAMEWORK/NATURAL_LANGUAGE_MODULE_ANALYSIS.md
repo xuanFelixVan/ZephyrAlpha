@@ -18,6 +18,9 @@ responsibility_boundary: |
   
   整体架构设计请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 implementation_status: 分析完成
+responsibility:
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
 ---
 
 # Layer 11 全模块文字交互需求分?

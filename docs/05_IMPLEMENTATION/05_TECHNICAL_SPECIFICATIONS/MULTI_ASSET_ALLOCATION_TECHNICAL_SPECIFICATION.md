@@ -17,6 +17,8 @@ standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 风险预算 (Layer 11)
 ---
 
 # 多资产类别配置技术规格书 v1.0

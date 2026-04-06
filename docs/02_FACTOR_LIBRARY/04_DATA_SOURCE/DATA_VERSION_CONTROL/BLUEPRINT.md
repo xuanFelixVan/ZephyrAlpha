@@ -13,6 +13,8 @@ dependencies:
   - DVC
   - Delta Lake
   - Git
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据版本控制系统蓝图

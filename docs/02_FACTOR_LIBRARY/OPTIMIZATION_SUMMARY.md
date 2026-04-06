@@ -8,21 +8,10 @@ owner: 因子工程团队
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
-﻿---
-module_id: MISC_OPT_SUMMARY_001
-version: 4.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
-standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
-compliance_level: 研究标准
-parent_document: ../INDEX.md
-implementation_status: 进行�?
----
 
 �? 因子库优化总结 (Factor Library Optimization Summary)
 

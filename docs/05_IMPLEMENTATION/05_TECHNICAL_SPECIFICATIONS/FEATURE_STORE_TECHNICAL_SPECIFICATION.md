@@ -16,7 +16,10 @@ owner: 数据工程�?standard_type: 专业量化机构技术规格书
 applicable_scope: 特征存储系统
 compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md
-implementation_status: 技术规格设计完�?---
+implementation_status: 技术规格设计完�?
+responsibility:
+  - 数据质量 (Layer 4)
+---
 
 # 特征存储技术规格书 v1.0
 

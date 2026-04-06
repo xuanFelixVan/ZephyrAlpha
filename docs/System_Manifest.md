@@ -10,6 +10,13 @@ applicable_scope: 全系统文档总索引
 compliance_level: 顶级专业标准
 parent_document: INDEX.md
 implementation_status: 活跃维护
+responsibility: 风险预算
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 1)
+  responsibility_layer: Layer 1
+  responsibility_layer: Layer 4
+  responsibility_layer: Layer 11
 ---
 
 # System_Manifest.md - 系统清单

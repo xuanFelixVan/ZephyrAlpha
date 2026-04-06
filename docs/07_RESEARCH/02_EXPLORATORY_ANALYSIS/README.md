@@ -10,6 +10,8 @@ applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
+responsibility:
+  - 市场状态识别 (Layer 4)
 ---
 
 # 探索性分析工�?

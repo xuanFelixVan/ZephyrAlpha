@@ -1,3 +1,15 @@
+---
+module_id: QUALITY_SCORING_SYSTEM_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 数据质量 (Layer 1)
+
+---
 ﻿---
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
@@ -647,11 +659,49 @@ volumes:
 
 ---
 
-## 十、相关文档
+## 📚 相关文档
 
-- 实时数据质量监控蓝图
-- [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md)
-- [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md)
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 强依赖 | 提供质量报告数据 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供数据元数据 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 强依赖 | 自动化数据修复 |
+| [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | 中依赖 | 增强告警系统 |
+| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依赖 | 监控仪表板增强 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
+| **PostgreSQL** | 15+ | 数据库 | [官方文档](https://www.postgresql.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[质量评分系统]
+    C[质量报告自动化] --> B
+    D[数据目录] --> B
+    
+    B --> E[自动化数据修复引擎]
+    B --> F[增强告警系统]
+    B --> G[监控仪表板增强]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
 
 ---
 

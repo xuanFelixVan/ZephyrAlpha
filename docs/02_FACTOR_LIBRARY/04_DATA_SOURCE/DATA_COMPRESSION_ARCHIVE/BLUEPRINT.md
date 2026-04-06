@@ -13,6 +13,8 @@ dependencies:
   - Parquet
   - ZSTD
   - Delta Lake
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据压缩归档蓝图

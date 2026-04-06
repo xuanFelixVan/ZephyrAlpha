@@ -27,6 +27,8 @@ responsibility_boundary: |
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 压力测试场景库蓝图
