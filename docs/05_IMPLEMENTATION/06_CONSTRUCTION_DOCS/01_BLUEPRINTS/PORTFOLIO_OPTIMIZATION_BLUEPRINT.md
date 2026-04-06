@@ -1,13 +1,18 @@
 ---
 module_id: IMPL_PORTFOLIO_OPT_BP_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?compliance_level: 初始标准
+last_updated: 2026-04-06
+owner: 首席文档架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统架构设计
+compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+open_source_dependency: PyPortfolioOpt, CVXPY, Riskfolio-Lib
+estimated_effort: 140小时
+priority: P0
 ---
 
 

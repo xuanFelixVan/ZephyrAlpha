@@ -211,9 +211,9 @@ class YAMLBatchFixer:
         if limit:
             blueprint_files = blueprint_files[:limit]
         
-        print(f"📁 找到 {len(blueprint_files)} 个蓝图文件")
+        print(f"[INFO] 找到 {len(blueprint_files)} 个蓝图文件")
         if dry_run:
-            print("🔍 预览模式：不会实际修改文件")
+            print("[INFO] 预览模式：不会实际修改文件")
         
         for i, file_path in enumerate(blueprint_files, 1):
             print(f"\n[{i}/{len(blueprint_files)}] 处理: {file_path.name}")
@@ -221,7 +221,8 @@ class YAMLBatchFixer:
             self.results.append(result)
             
             if result.error:
-                print(f"  ❌ 错误: {result.error}")
+                error_msg = result.error.encode('gbk', errors='ignore').decode('gbk')
+                print(f"  [ERROR] 错误: {error_msg}")
             else:
                 fixes = []
                 if result.yaml_fixed:
@@ -232,9 +233,9 @@ class YAMLBatchFixer:
                     fixes.append("编码已转换为UTF-8")
                 
                 if fixes:
-                    print(f"  ✅ {'; '.join(fixes)}")
+                    print(f"  [OK] {'; '.join(fixes)}")
                 else:
-                    print(f"  ℹ️  无需修复")
+                    print(f"  [INFO] 无需修复")
         
         return self.results
     
@@ -248,7 +249,7 @@ class YAMLBatchFixer:
         
         summary = [
             "\n" + "="*60,
-            "📊 修复摘要",
+            "修复摘要",
             "="*60,
             f"总文件数: {total}",
             f"YAML字段已补充: {yaml_fixed}",
@@ -275,8 +276,8 @@ def main():
     project_root = script_dir.parent
     blueprints_dir = project_root / "docs" / "05_IMPLEMENTATION" / "06_CONSTRUCTION_DOCS" / "01_BLUEPRINTS"
     
-    print(f"🔧 开始批量修复YAML字段...")
-    print(f"📁 蓝图目录: {blueprints_dir}")
+    print(f"[INFO] 开始批量修复YAML字段...")
+    print(f"[INFO] 蓝图目录: {blueprints_dir}")
     
     fixer = YAMLBatchFixer(str(blueprints_dir))
     results = fixer.fix_all(dry_run=args.dry_run, limit=args.limit)
@@ -284,7 +285,7 @@ def main():
     print(fixer.generate_summary())
     
     if args.dry_run:
-        print("\n💡 提示: 这是预览模式。要实际修复文件，请去掉 --dry-run 参数")
+        print("\n[INFO] 提示: 这是预览模式。要实际修复文件，请去掉 --dry-run 参数")
 
 if __name__ == "__main__":
     main()

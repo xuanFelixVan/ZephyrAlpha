@@ -1,13 +1,18 @@
 ---
-module_id: ALTERNATIVE_DATA_INTEGRATION_001
-version: 1.0.0
+module_id: IMPL_ALTERNATIVE_DATA_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席架构�?standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alpha因子�?- 另类数据源集�?compliance_level: 专业标准
+last_updated: 2026-04-06
+owner: 首席架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 2 Alpha因子层 - 另类数据源集成
+compliance_level: 专业标准
 parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
 implementation_status: 规划阶段
+open_source_dependency: pandas, numpy, requests
+estimated_effort: 8周
+priority: P0
 ---
 
 # 另类数据源集成项目蓝�?
