@@ -1,6 +1,6 @@
 ﻿---
 module_id: INDEX_DATA_SOURCE_001
-version: 1.0.3
+version: 1.0.4
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-06
@@ -81,23 +81,37 @@ implementation_status: 已完成
 - [DATA_VERSION_CONTROL/](DATA_VERSION_CONTROL/) - 数据版本控制（DVC+Delta Lake）
 - [DATA_MONITORING_ENHANCED/](DATA_MONITORING_ENHANCED/) - 数据监控增强（Great Expectations）
 - [DATA_CATALOG/](DATA_CATALOG/) - 数据目录（DataHub）
+- [DATA_PERMISSION_MANAGEMENT/](DATA_PERMISSION_MANAGEMENT/) - 数据权限管理（Casbin）
+- [DATA_BACKUP_RECOVERY/](DATA_BACKUP_RECOVERY/) - 数据备份恢复（Restic+rclone）
+- [DATA_API_GATEWAY/](DATA_API_GATEWAY/) - 数据API网关（FastAPI+Redis）
+- [DATA_STANDARDIZATION/](DATA_STANDARDIZATION/) - 数据标准化（dbt+Great Expectations）
+- [DATA_SYNC_REPLICATION/](DATA_SYNC_REPLICATION/) - 数据同步复制（Debezium+Kafka）
+- [DATA_COMPRESSION_ARCHIVE/](DATA_COMPRESSION_ARCHIVE/) - 数据压缩归档（Parquet+ZSTD）
 
 ## 🔧 补充模块（开源方案）
 
-### P0级模块（立即实施）
-| 模块 | 开源方案 | 实施周期 |
-|------|----------|----------|
-| 数据血缘追踪 | OpenLineage + Marquez | 1周 |
-| 数据版本控制 | DVC + Delta Lake | 1周 |
-| 数据监控增强 | Great Expectations | 1周 |
+### P0级模块（必备）
+| 模块 | 开源方案 | 实施周期 | 状态 |
+|------|----------|----------|------|
+| 数据血缘追踪 | OpenLineage + Marquez | 1周 | Blueprint |
+| 数据版本控制 | DVC + Delta Lake | 1周 | Blueprint |
+| 数据监控增强 | Great Expectations | 1周 | Blueprint |
 
-### P1级模块（短期实施）
-| 模块 | 开源方案 | 实施周期 |
-|------|----------|----------|
-| 数据目录系统 | DataHub | 2周 |
-| 数据API网关 | FastAPI + Redis | 1周 |
-| 数据备份恢复 | 自研 | 1周 |
+### P1级模块（重要）
+| 模块 | 开源方案 | 实施周期 | 状态 |
+|------|----------|----------|------|
+| 数据目录系统 | DataHub | 2周 | Blueprint |
+| 数据权限管理 | Casbin | 1周 | Blueprint |
+| 数据备份恢复 | Restic + rclone | 1周 | Blueprint |
+| 数据API网关 | FastAPI + Redis | 1周 | Blueprint |
+| 数据标准化 | dbt + Great Expectations | 2周 | Blueprint |
+
+### P2级模块（可选）
+| 模块 | 开源方案 | 实施周期 | 状态 |
+|------|----------|----------|------|
+| 数据同步复制 | Debezium + Kafka | 2周 | Blueprint |
+| 数据压缩归档 | Parquet + ZSTD | 1周 | Blueprint |
 
 ---
 
-**索引版本**: v1.0.3 | **创建日期**: 2026-04-03 | **维护者**: 首席文档架构师
+**索引版本**: v1.0.4 | **创建日期**: 2026-04-03 | **维护者**: 首席文档架构师

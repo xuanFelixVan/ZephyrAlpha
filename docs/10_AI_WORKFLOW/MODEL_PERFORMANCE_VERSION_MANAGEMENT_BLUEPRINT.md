@@ -4,11 +4,11 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-04
-owner: 首席架构�?
-standard_type: 专业机构级蓝�?
-applicable_scope: 模型性能与版本管理模�?
+owner: 首席架构师
+standard_type: 专业机构级蓝图
+applicable_scope: 模型性能与版本管理模
 compliance_level: 专业标准
-layer: 舆情分析�?
+layer: 舆情分析
 priority: P0
 estimated_effort: 50h
 integrated_modules:
@@ -16,86 +16,86 @@ integrated_modules:
   - AIWF_MVM_001
 ---
 
-# 模型性能与版本管理模块蓝�?(Model Performance & Version Management Blueprint)
+# 模型性能与版本管理模块蓝(Model Performance & Version Management Blueprint)
 
 > **模块ID**: AIWF_MPVM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
-> **Layer定位**: Layer 3 - 舆情分析�?
-> **优先�?*: P0 (阻断�?
-> **预计工作�?*: 50小时
+> **Layer定位**: Layer 3 - 舆情分析
+> **优先*: P0 (阻断
+> **预计工作*: 50小时
 > **整合模块**: AIWF_MPM_001 (模型性能监控) + AIWF_MVM_001 (模型版本管理)
 
 ---
 
-## 一、模块概�?
+## 一、模块概述
 
 ### 1.1 设计背景
 
-**业务需�?*:
+**业务需*:
 - 实时监控模型性能，及时发现性能下降
-- 检测模型漂移，自动触发重训�?
+- 检测模型漂移，自动触发重训
 - 管理模型版本，支持模型对比和回滚
-- 跟踪实验过程，积累最佳实�?
+- 跟踪实验过程，积累最佳实
 
-**技术痛�?*:
+**技术痛*:
 - 当前缺少模型性能监控机制
-- 无法检测模型漂移问�?
+- 无法检测模型漂移问
 - 缺少模型版本管理
-- 缺少实验跟踪和对比能�?
+- 缺少实验跟踪和对比能
 
-**预期价�?*:
+**预期价*:
 - 模型性能问题发现时间减少90%
 - 模型漂移检测准确率>95%
 - 模型管理效率提升80%
-- 实验复现�?00%
+- 实验复现00%
 
 ### 1.2 模块定位
 
-**Layer归属**: Layer 3 - 舆情分析�?
-**模块类别**: 支撑性模�?
-**架构角色**: 模型性能保障组件，确保情感分析模型的持续有效�?
+**Layer归属**: Layer 3 - 舆情分析
+**模块类别**: 支撑性模
+**架构角色**: 模型性能保障组件，确保情感分析模型的持续有效
 
 ---
 
-## 二、详细架构设�?
+## 二、详细架构设
 
-### 2.1 系统架构�?
+### 2.1 系统架构
 
 ```
-┌─────────────────────────────────────────────────────────────────────�?
-�?           模型性能与版本管理模块架�?                                �?
-├─────────────────────────────────────────────────────────────────────�?
-�?                                                                    �?
-�? ┌──────────────────────────────────────────────────────────────�? �?
-�? �?         ModelPerformanceManager (性能管理�?                �? �?
-�? �? - 准确率监�?                                                �? �?
-�? �? - 漂移检�?                                                  �? �?
-�? �? - 自动重训�?                                                �? �?
-�? └──────────────────────────────────────────────────────────────�? �?
-�?                          �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────�? �?
-�? �?         ModelVersionManager (版本管理�?                     �? �?
-�? �? - 模型注册                                                   �? �?
-�? �? - 实验跟踪                                                   �? �?
-�? �? - 模型部署                                                   �? �?
-�? └──────────────────────────────────────────────────────────────�? �?
-�?                          �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────�? �?
-�? �?         开源工具层                                           �? �?
-�? �? ┌─────────────�? ┌─────────────�? ┌─────────────�? ┌──────�?�? �?
-�? �? │MLflow       �? │Evidently    �? │Prometheus   �? │Grafana�?�? �?
-�? �? │Model        �? │AI           �? │Monitoring   �? │Dashboard�?�?
-�? �? │Registry     �? │Testing      �? �?            �? �?       �?�? �?
-�? �? └─────────────�? └─────────────�? └─────────────�? └──────�?�? �?
-�? └──────────────────────────────────────────────────────────────�? �?
-�?                                                                    �?
-└─────────────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────────────
+           模型性能与版本管理模块架构                                
+├─────────────────────────────────────────────────────────────────────
+                                                                    
+ ┌────────────────────────────────────────────────────────────── 
+          ModelPerformanceManager (性能管理                 
+  - 准确率监                                                 
+  - 漂移检                                                   
+  - 自动重训                                                 
+ └────────────────────────────────────────────────────────────── 
+                                                                   
+ ┌────────────────────────────────────────────────────────────── 
+          ModelVersionManager (版本管理                      
+  - 模型注册                                                    
+  - 实验跟踪                                                    
+  - 模型部署                                                    
+ └────────────────────────────────────────────────────────────── 
+                                                                   
+ ┌────────────────────────────────────────────────────────────── 
+          开源工具层                                            
+  ┌───────────── ┌───────────── ┌───────────── ┌────── 
+  │MLflow        │Evidently     │Prometheus    │Grafana 
+  │Model         │AI            │Monitoring    │Dashboard
+  │Registry      │Testing                            
+  └───────────── └───────────── └───────────── └────── 
+ └────────────────────────────────────────────────────────────── 
+                                                                    
+└─────────────────────────────────────────────────────────────────────
 ```
 
 ### 2.2 核心组件设计
 
-#### 2.2.1 模型性能管理�?(ModelPerformanceManager)
+#### 2.2.1 模型性能管理(ModelPerformanceManager)
 
 **功能设计**:
 
@@ -110,18 +110,18 @@ from dataclasses import dataclass
 @dataclass
 class PerformanceMetrics:
     """性能指标"""
-    accuracy: float           # 准确�?
-    precision: float          # 精确�?
-    recall: float             # 召回�?
+    accuracy: float           # 准确
+    precision: float          # 精确
+    recall: float             # 召回
     f1_score: float          # F1分数
     latency_ms: float        # 延迟（毫秒）
-    throughput: float        # 吞吐量（�?秒）
-    timestamp: datetime      # 时间�?
+    throughput: float        # 吞吐量（秒）
+    timestamp: datetime      # 时间
 
 
 @dataclass
 class DriftDetectionResult:
-    """漂移检测结�?""
+    """漂移检测结""
     has_drift: bool          # 是否存在漂移
     drift_type: str          # 漂移类型 (data_drift, concept_drift, model_drift)
     drift_score: float       # 漂移分数
@@ -130,13 +130,13 @@ class DriftDetectionResult:
 
 
 class ModelPerformanceManager:
-    """模型性能管理�?
+    """模型性能管理
     
-    负责模型性能监控、漂移检测和自动重训�?
+    负责模型性能监控、漂移检测和自动重训
     """
     
     def __init__(self, config: Dict[str, Any]):
-        """初始化模型性能管理�?
+        """初始化模型性能管理
         
         Args:
             config: 配置参数
@@ -185,15 +185,15 @@ class ModelPerformanceManager:
         current_data: pd.DataFrame,
         drift_type: str = "data_drift"
     ) -> DriftDetectionResult:
-        """检测模型漂�?
+        """检测模型漂
         
         Args:
-            reference_data: 参考数�?
+            reference_data: 参考数
             current_data: 当前数据
             drift_type: 漂移类型
             
         Returns:
-            漂移检测结�?
+            漂移检测结
         """
         pass
     
@@ -206,7 +206,7 @@ class ModelPerformanceManager:
         
         Args:
             current_metrics: 当前性能指标
-            threshold: 阈�?
+            threshold: 阈
             
         Returns:
             是否存在性能下降
@@ -218,14 +218,14 @@ class ModelPerformanceManager:
         model_id: str,
         reason: str
     ) -> Dict[str, Any]:
-        """触发模型重训�?
+        """触发模型重训
         
         Args:
             model_id: 模型ID
             reason: 触发原因
             
         Returns:
-            重训练任务信�?
+            重训练任务信
         """
         pass
     
@@ -246,26 +246,26 @@ class ModelPerformanceManager:
         pass
 ```
 
-**漂移检测方�?*:
+**漂移检测方*:
 
-1. **数据漂移检�?* (Data Drift):
-   - KS检�?(Kolmogorov-Smirnov Test)
+1. **数据漂移检* (Data Drift):
+   - KS检(Kolmogorov-Smirnov Test)
    - PSI (Population Stability Index)
    - Wasserstein Distance
 
-2. **概念漂移检�?* (Concept Drift):
+2. **概念漂移检* (Concept Drift):
    - ADWIN (Adaptive Windowing)
    - DDM (Drift Detection Method)
    - EDDM (Early Drift Detection Method)
 
-3. **模型漂移检�?* (Model Drift):
+3. **模型漂移检* (Model Drift):
    - 性能指标监控
    - 预测分布监控
-   - 置信度分布监�?
+   - 置信度分布监
 
 ---
 
-#### 2.2.2 模型版本管理�?(ModelVersionManager)
+#### 2.2.2 模型版本管理(ModelVersionManager)
 
 **功能设计**:
 
@@ -278,7 +278,7 @@ import os
 
 
 class ModelVersionManager:
-    """模型版本管理�?
+    """模型版本管理
     
     负责模型注册、实验跟踪和模型部署
     """
@@ -292,7 +292,7 @@ class ModelVersionManager:
         
         Args:
             mlflow_tracking_uri: MLflow跟踪URI
-            model_registry_name: 模型注册表名�?
+            model_registry_name: 模型注册表名
         """
         self.mlflow_tracking_uri = mlflow_tracking_uri
         self.model_registry_name = model_registry_name
@@ -424,11 +424,11 @@ class ModelVersionManager:
 
 ---
 
-### 2.3 开源工具集�?
+### 2.3 开源工具集
 
 #### MLflow集成
 
-**安装和配�?*:
+**安装和配*:
 
 ```bash
 # 安装MLflow
@@ -487,7 +487,7 @@ def log_model_training(
 
 #### Evidently集成
 
-**漂移检测报�?*:
+**漂移检测报*:
 
 ```python
 from evidently.dashboard import Dashboard
@@ -501,22 +501,22 @@ def generate_drift_report(
     current_data: pd.DataFrame,
     output_path: str = "./reports/drift_report.html"
 ) -> str:
-    """生成漂移检测报�?
+    """生成漂移检测报
     
     Args:
-        reference_data: 参考数�?
+        reference_data: 参考数
         current_data: 当前数据
         output_path: 输出路径
         
     Returns:
         报告路径
     """
-    # 创建列映�?
+    # 创建列映
     column_mapping = ColumnMapping()
     column_mapping.target = "sentiment"
     column_mapping.prediction = "predicted_sentiment"
     
-    # 创建仪表�?
+    # 创建仪表
     dashboard = Dashboard(tabs=[DataDriftTab()])
     
     # 计算漂移
@@ -534,7 +534,7 @@ def generate_drift_report(
 
 ---
 
-## 三、接口定�?
+## 三、接口定
 
 ### 3.1 RESTful API接口
 
@@ -581,7 +581,7 @@ async def detect_drift(
     reference_data_path: str,
     current_data_path: str
 ):
-    """检测模型漂�?""
+    """检测模型漂""
     pass
 ```
 
@@ -626,9 +626,9 @@ async def transition_model_stage(
 
 ---
 
-## 四、数据模�?
+## 四、数据模
 
-### 4.1 性能指标记录�?
+### 4.1 性能指标记录
 
 ```sql
 CREATE TABLE performance_metrics (
@@ -667,66 +667,66 @@ CREATE TABLE drift_detection_records (
 
 ---
 
-## 五、实施计�?
+## 五、实施计
 
-### 5.1 �?-2�? MLflow集成和模型版本管�?
+### 5.1 -2 MLflow集成和模型版本管
 
 **任务清单**:
 - [ ] 安装和配置MLflow
-- [ ] 开发模型注册功�?
-- [ ] 开发实验跟踪功�?
-- [ ] 开发模型对比功�?
-- [ ] 开发模型加载功�?
-- [ ] 测试和验�?
+- [ ] 开发模型注册功
+- [ ] 开发实验跟踪功
+- [ ] 开发模型对比功
+- [ ] 开发模型加载功
+- [ ] 测试和验
 
-**交付�?*:
+**交付*:
 - ModelVersionManager代码
 - MLflow配置文件
 - 测试报告
 
 ---
 
-### 5.2 �?�? 性能监控和漂移检�?
+### 5.2  性能监控和漂移检
 
 **任务清单**:
 - [ ] 安装和配置Evidently
 - [ ] 开发性能监控模块
-- [ ] 开发漂移检测模�?
-- [ ] 开发自动重训练触发�?
+- [ ] 开发漂移检测模
+- [ ] 开发自动重训练触发
 - [ ] 集成Prometheus监控
-- [ ] 测试和验�?
+- [ ] 测试和验
 
-**交付�?*:
+**交付*:
 - ModelPerformanceManager代码
 - Evidently配置文件
 - 测试报告
 
 ---
 
-### 5.3 �?�? 集成和测�?
+### 5.3  集成和测
 
 **任务清单**:
 - [ ] 开发RESTful API
-- [ ] 开发Grafana仪表�?
-- [ ] 集成到现有系�?
-- [ ] 开发单元测�?
-- [ ] 开发集成测�?
-- [ ] 性能测试和优�?
+- [ ] 开发Grafana仪表
+- [ ] 集成到现有系
+- [ ] 开发单元测
+- [ ] 开发集成测
+- [ ] 性能测试和优
 
-**交付�?*:
+**交付*:
 - 集成后的系统
-- Grafana仪表�?
+- Grafana仪表
 - 测试报告
 
 ---
 
-## 六、测试策�?
+## 六、测试策
 
 ### 6.1 单元测试
 
 **测试范围**:
 - 性能指标计算测试
-- 漂移检测功能测�?
+- 漂移检测功能测
 - 模型注册功能测试
 - 实验跟踪功能测试
 
@@ -749,37 +749,37 @@ CREATE TABLE drift_detection_records (
 
 ---
 
-## 七、风险管�?
+## 七、风险管
 
-### 7.1 技术风�?
+### 7.1 技术风
 
-| 风险�?| 概率 | 影响 | 缓解措施 |
+| 风险| 概率 | 影响 | 缓解措施 |
 |--------|------|------|----------|
-| MLflow学习曲线 | �?| �?| 使用官方教程，参考示例代�?|
-| 漂移检测误�?| �?| �?| 调整阈值，结合多种检测方�?|
-| 性能监控开销 | �?| �?| 使用采样策略，异步监�?|
+| MLflow学习曲线 | | | 使用官方教程，参考示例代|
+| 漂移检测误| | | 调整阈值，结合多种检测方|
+| 性能监控开销 | | | 使用采样策略，异步监|
 
 ---
 
-## 八、验收标�?
+## 八、验收标
 
 ### 8.1 功能验收
 
 - [ ] 模型注册功能正常
 - [ ] 实验跟踪功能正常
 - [ ] 性能监控功能正常
-- [ ] 漂移检测功能正�?
-- [ ] 自动重训练功能正�?
+- [ ] 漂移检测功能正
+- [ ] 自动重训练功能正
 
 ### 8.2 性能验收
 
-- [ ] 性能指标计算速度 < 1�?
-- [ ] 漂移检测速度 < 5�?
-- [ ] 模型加载速度 < 3�?
+- [ ] 性能指标计算速度 < 1
+- [ ] 漂移检测速度 < 5
+- [ ] 模型加载速度 < 3
 
 ### 8.3 质量验收
 
-- [ ] 代码覆盖�?> 80%
+- [ ] 代码覆盖> 80%
 - [ ] 所有单元测试通过
 - [ ] 所有集成测试通过
 
@@ -791,4 +791,4 @@ CREATE TABLE drift_detection_records (
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-03 | **状�?*: �?活跃
+**版本**: v1.0 | **更新**: 2026-04-03 | **状*: 活跃
