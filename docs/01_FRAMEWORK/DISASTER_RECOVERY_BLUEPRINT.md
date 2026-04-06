@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_DISASTER_RECOVERY_001
+module_id: DISASTER_RECOVERY_BLUEPRINT_001
 version: 1.0.0
 status: Planned
 created_date: 2026-04-03

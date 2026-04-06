@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_CRITICAL_MODULES_001
+module_id: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02

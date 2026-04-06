@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_IMPL_BLUEPRINT_001
+module_id: PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_001
 version: 1.2.0
 status: Active
 created_date: 2026-04-02

@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_ARCH_AUDIT_001
+module_id: ARCHITECTURE_AUDIT_REPORT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02

@@ -1,5 +1,5 @@
 -------
-module_id: FRAMEWORK_ARCH_001
+module_id: ARCHITECTURE_001
 version: 5.5.0
 status: Active
 created_date: 2026-04-01

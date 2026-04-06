@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_MODULE_RESPONSIBILITY_001
+module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 5.3.1
 status: Active
 created_date: 2026-04-01

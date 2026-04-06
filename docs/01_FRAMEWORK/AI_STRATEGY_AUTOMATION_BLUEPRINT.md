@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_AI_AUTO_001
+module_id: AI_STRATEGY_AUTOMATION_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02

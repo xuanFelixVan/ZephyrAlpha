@@ -1,5 +1,5 @@
 ---
-module_id: FRAMEWORK_PROF_ARCH_001
+module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
