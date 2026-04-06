@@ -10,6 +10,9 @@ applicable_scope: Layer 9 - 研究与创新层文档深度审计总结
 compliance_level: 专业机构标准
 audit_date: 2026-04-07
 audit_type: 深度审计
+responsibility:
+  - 文档深度审计总结
+
 ---
 
 # Layer 9文档治理深度审计总结

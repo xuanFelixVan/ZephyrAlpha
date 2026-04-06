@@ -384,7 +384,15 @@ class Layer1DeepAuditor:
     def _add_issue(self, level: str, issue_type: str, location: str, 
                    description: str, severity: str):
         """添加问题"""
-        self.audit_results[level].append({
+        # 映射层级名称
+        level_map = {
+            'L1': 'L1_file_system',
+            'L2': 'L2_content',
+            'L3': 'L3_professional'
+        }
+        actual_level = level_map.get(level, level)
+        
+        self.audit_results[actual_level].append({
             'type': issue_type,
             'location': location,
             'description': description,

@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 文档周维护
 
 module_id: LAYER9_WEEKLY_MAINTENANCE_REPORT_001
 version: 1.0.0
