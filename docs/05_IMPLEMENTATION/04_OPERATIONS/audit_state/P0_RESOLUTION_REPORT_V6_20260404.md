@@ -11,7 +11,7 @@
 
 ### 任务目标
 
-修复第六轮深度审计发现的P0级问题：module_id重复（7个文件使用相同的module_id: FACTOR_README_001）
+修复第六轮深度审计发现的P0级问题：module_id重复（7个文件使用相同的module_id: AUDIT_P0_REPORT_REF_002）
 
 ### 执行结果
 
@@ -127,7 +127,7 @@ implementation_status: 进行?
 **修复后**:
 ```yaml
 ---
-module_id: GOVERNANCE_README_001
+module_id: AUDIT_P0_REPORT_REF_001
 owner: 首席文档架构师
 applicable_scope: 因子研究与管理
 implementation_status: 进行中

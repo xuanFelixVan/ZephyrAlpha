@@ -199,15 +199,15 @@ applicable_scope: 全系统技术规格书（Layer 0-11�?compliance_level: 专
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 动态相关性建模技术规格书 | DYNAMIC_CORRELATION_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DYNAMIC_CORRELATION_MODELING_TECHNICAL_SPECIFICATION.md) |
-| 简化风险预算系统技术规格书 | RISK_BUDGET_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./SIMPLIFIED_RISK_BUDGET_SYSTEM_TECHNICAL_SPECIFICATION.md) |
+| 动态相关性建模技术规格书 | DYNAMIC_CORRELATION_MODELING_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DYNAMIC_CORRELATION_MODELING_TECHNICAL_SPECIFICATION.md) |
+| 简化风险预算系统技术规格书 | SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./SIMPLIFIED_RISK_BUDGET_SYSTEM_TECHNICAL_SPECIFICATION.md) |
 
 ### 6.4 时间框架协调与多资产配置
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 简化时间框架协调技术规格书 | TIMEFRAME_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./SIMPLIFIED_TIMEFRAME_COORDINATION_TECHNICAL_SPECIFICATION.md) |
-| 多资产类别配置技术规格书 | MULTI_ASSET_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION.md) |
+| 简化时间框架协调技术规格书 | SIMPLIFIED_TIMEFRAME_COORDINATION_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./SIMPLIFIED_TIMEFRAME_COORDINATION_TECHNICAL_SPECIFICATION.md) |
+| 多资产类别配置技术规格书 | MULTI_ASSET_ALLOCATION_SPEC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION.md) |
 
 ---
 

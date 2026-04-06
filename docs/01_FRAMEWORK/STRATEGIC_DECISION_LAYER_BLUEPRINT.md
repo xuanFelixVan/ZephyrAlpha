@@ -1,6 +1,6 @@
 ---
-module_id: STRATEGIC_DECISION_LAYER_BLUEPRINT_001
-version: 1.0.0
+module_id: FRAMEWORK_STRATEGIC_DECISION_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
