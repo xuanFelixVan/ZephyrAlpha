@@ -27,9 +27,7 @@ priority: P0
 ---
 
 
-# 简化版多时间框架协同优化蓝图 v1.0
 
-> 清风量化系统 v5.3 - 简化版多时间框架协同优化架构设计
 > **索引**: `TIMEFRAME_COORD_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 双时间框架协同优化策略 + 中期波动度，实现信号融合和冲突解决
@@ -275,6 +273,9 @@ class SignalFusion:
 
 ```python
 # 信号协同接口
+
+> **核心定位**: 信号协同接口的核心功能实现
+
 def coordinate_signals(
     short_term_signals: Dict[str, Signal],
     medium_term_signals: Dict[str, Signal],

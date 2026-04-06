@@ -17,7 +17,6 @@ open_source_dependency: alphalens, pandas, numpy, scipy, scikit-learn
 ---
 
 
-# 阿尔法因子工厂蓝图 v1.0
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

@@ -17,7 +17,6 @@ open_source_dependency: scikit-learn, hmmlearn, pandas, numpy, scipy
 ---
 
 
-# 市场状态识别系统蓝图 v1.0
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

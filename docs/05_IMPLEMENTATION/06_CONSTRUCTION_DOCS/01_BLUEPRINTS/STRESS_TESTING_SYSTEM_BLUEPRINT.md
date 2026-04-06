@@ -26,9 +26,7 @@ priority: P0
 ---
 
 
-# 压力测试与情景分析系统蓝图 v1.0
 
-> 清风量化系统 v5.3 - 压力测试与情景分析系统架构设计
 > **索引**: `STRESS_TEST_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 极端市场情景下的风险暴露，提供应急预警
@@ -250,6 +248,9 @@ class ScenarioAnalyzer:
 
 ```python
 # 压力测试接口
+
+> **核心定位**: 压力测试接口的核心功能实现
+
 def run_stress_test(
     portfolio: Portfolio,
     scenarios: List[Scenario]

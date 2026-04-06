@@ -28,9 +28,7 @@ layer: 'Layer 5 (策略执行层)'
 
 
 
-# 风险归因系统蓝图 v1.0
 
-> 清风量化系统 v5.3 - 风险归因系统详细设计
 > **索引**: `RISK_ATTRIBUTION_001`
 > **开发时?*: 80h（约2周）
 > **核心定位**: 多维度风险分解与归因分析，识别风险驱动因?> **对标机构**: Two Sigma
@@ -550,6 +548,9 @@ class AttributionReportGenerator:
         """生成报告内容"""
         content = f"""
 # Risk Attribution Report
+
+> **核心定位**: Risk Attribution Report的核心功能实现
+
 
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 

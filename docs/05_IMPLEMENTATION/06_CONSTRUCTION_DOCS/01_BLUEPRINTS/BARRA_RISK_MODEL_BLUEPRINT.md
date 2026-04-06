@@ -27,9 +27,7 @@ layer: 'Layer 5 (策略执行层)'
 ---
 
 
-# Barra风险模型蓝图 v1.0
 
-> 清风量化系统 v5.3 - Barra风险模型详细设计
 > **索引**: `BARRA_RISK_001`
 > **开发时长**: 100h（约2.5周）
 > **核心定位**: 多因子风险模型，实现风险分解、因子暴露度量、风险预算
@@ -254,6 +252,9 @@ class BarraRiskModel:
 
 ```python
 # 因子暴露计算接口
+
+> **核心定位**: 因子暴露计算接口的核心功能实现
+
 def calculate_factor_exposure(
     factor_data: pd.DataFrame,
     returns_data: pd.DataFrame
