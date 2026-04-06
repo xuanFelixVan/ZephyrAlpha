@@ -4,367 +4,367 @@ version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-04
-owner: Ê×Ï¯ÎÄµµ¼Ü¹¹Ê¦
-standard_type: ×¨ÒµÁ¿»¯»ú¹¹ÎÄµµ
+owner: ï¿½ï¿½Ï¯ï¿½Äµï¿½ï¿½Ü¹ï¿½Ê¦
+standard_type: ×¨Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½
 applicable_scope: È«ÏµÍ³
-compliance_level: ×¨Òµ±ê×¼
+compliance_level: ×¨Òµï¿½ï¿½×¼
 parent_document: INDEX.md
-implementation_status: ½øÐÐÖÐ
+implementation_status: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ---
 
 
-# ÎÄµµµØÍ¼ (SITEMAP)
+# ï¿½Äµï¿½ï¿½ï¿½Í¼ (SITEMAP)
 
-> Çå·çÁ¿»¯ÏµÍ³ v5.3 µÄÍêÕûÎÄµµµ¼º½µØ?
+> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ v5.3 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 >
-> **Ö°ÔðÇø·Ö**:
-> - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) = ¿ìËÙÈë¿Ú£¨5·ÖÖÓµ¼º½?
-> - **±¾ÎÄ?* = ÍêÕûµØÍ¼£¨Éî¶È²Î¿¼£©
+> **Ö°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½**:
+> - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½5ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½?
+> - **ï¿½ï¿½ï¿½ï¿½?* = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½È²Î¿ï¿½ï¿½ï¿½
 
 
-## ?? ÎÄµµÎ»ÖÃµ¼º½ (v5.3)
+## ?? ï¿½Äµï¿½Î»ï¿½Ãµï¿½ï¿½ï¿½ (v5.3)
 
-### Ò»¼¶µ¼?
+### Ò»ï¿½ï¿½ï¿½ï¿½?
 
 ```
 docs/
-©À©¤©¤ ºËÐÄÎÄµµ (6?
-?  ©À©¤©¤ INDEX.md                   # ¿ìËÙÈë?¡û©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?
-?  ©À©¤©¤ BLUEPRINT.md               # À¶Í¼×ÜÀÀ                  ?
-?  ©À©¤©¤ API_Contract.md            # ½Ó¿ÚÆõÔ¼                  ?
-?  ©À©¤©¤ AI_Permissions.md          # AIÈ¨ÏÞÇåµ¥               ?
-?  ©À©¤©¤ BLUEPRINT_CHECKLIST.md     # À¶Í¼¼ì²éÇå?             ?
-?  ©¸©¤©¤ CHANGELOG.md               # ±ä¸üÈÕÖ¾                   ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ (6?
+?  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ INDEX.md                   # ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
+?  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BLUEPRINT.md               # ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½                  ?
+?  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ API_Contract.md            # ï¿½Ó¿ï¿½ï¿½ï¿½Ô¼                  ?
+?  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AI_Permissions.md          # AIÈ¨ï¿½ï¿½ï¿½åµ¥               ?
+?  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BLUEPRINT_CHECKLIST.md     # ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½?             ?
+?  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CHANGELOG.md               # ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾                   ?
 ?                                                           ?
-©À©¤©¤ 00_OVERVIEW/                   # ÏµÍ³×ÜÀÀ                  ?
-©À©¤©¤ 01_FRAMEWORK/                   # ¿ò¼Ü¶¨Òå (Layer 0-11)    ?
-©À©¤©¤ 02_FACTOR_LIBRARY/            # Òò×Ó?(128+Òò×Ó)         ?
-©À©¤©¤ 03_TRADING_TACTICS/           # ½»Ò×²ßÂÔ?                ?
-©À©¤©¤ 04_EXECUTION/                   # Ö´ÐÐÒýÇæ                  ?
-©À©¤©¤ 05_IMPLEMENTATION/            # ÊµÊ©Ö¸ÄÏ                  ?
-©À©¤©¤ 06_ARCHIVE/                    # ¹éµµ                     ?
-©À©¤©¤ 07_RESEARCH/                   # AIÑÐ¾¿                   ?
-©¸©¤©¤ 09_AUDIT/                      # ÏµÍ³ÖÎÀíÉó¼Æ              ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 00_OVERVIEW/                   # ÏµÍ³ï¿½ï¿½ï¿½ï¿½                  ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 01_FRAMEWORK/                   # ï¿½ï¿½Ü¶ï¿½ï¿½ï¿½ (Layer 0-11)    ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 02_FACTOR_LIBRARY/            # ï¿½ï¿½ï¿½ï¿½?(128+ï¿½ï¿½ï¿½ï¿½)         ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 03_TRADING_TACTICS/           # ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½?                ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 04_EXECUTION/                   # Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½                  ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 05_IMPLEMENTATION/            # ÊµÊ©Ö¸ï¿½ï¿½                  ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 06_ARCHIVE/                    # ï¿½éµµ                     ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 07_RESEARCH/                   # AIï¿½Ð¾ï¿½                   ?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 09_AUDIT/                      # ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½              ?
                                                             ?
-¡û©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ ¿ìËÙÈë?/ ÍêÕûµØÍ¼ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?/ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 ```
 
 
-## ???°´ÓÃÍ¾²é?
+## ???ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½?
 
-### ÎÒÊÇÐÂÊÖ
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-**¿ìËÙÉÏÊÖÂ·?* (30·ÖÖÓ):
-1. ÔÄ¶Á [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ¿ìËÙÈë?(5·ÖÖÓ)
-2. ÔÄ¶Á [00_OVERVIEW/README.md](../../README.md) - ÏµÍ³×ÜÀÀ (10·ÖÖÓ)
-3. ÔÄ¶Á [05_IMPLEMENTATION/01_QUICKSTART/README.md](../../README.md) - ¿ìËÙ¿ª?(15·ÖÖÓ)
-
-
-### ÎÒÒªÀí½â¼Ü¹¹
-
-**¼Ü¹¹Ñ§Ï°Â·Ïß** (2Ð¡Ê±):
-1. ÔÄ¶Á [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³À¶Í¼ (30·ÖÖÓ)
-2. ÔÄ¶Á [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11Í³Ò»¼Ü¹¹ (30·ÖÖÓ)
-3. ÔÄ¶Á [01_FRAMEWORK/README.md](../../README.md) - ¿ò¼ÜÎÄµµË÷Òý (20·ÖÖÓ)
-4. ÔÄ¶Á [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIÈ¨ÏÞÇåµ¥ (20·ÖÖÓ)
+**ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·?* (30ï¿½ï¿½ï¿½ï¿½):
+1. ï¿½Ä¶ï¿½ [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?(5ï¿½ï¿½ï¿½ï¿½)
+2. ï¿½Ä¶ï¿½ [00_OVERVIEW/README.md](../../README.md) - ÏµÍ³ï¿½ï¿½ï¿½ï¿½ (10ï¿½ï¿½ï¿½ï¿½)
+3. ï¿½Ä¶ï¿½ [05_IMPLEMENTATION/01_QUICKSTART/README.md](../../README.md) - ï¿½ï¿½ï¿½Ù¿ï¿½?(15ï¿½ï¿½ï¿½ï¿½)
 
 
-### ÎÒÒª¿ª·¢²ß?
+### ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ü¹ï¿½
 
-**²ßÂÔ¿ª·¢Â·?* (4Ð¡Ê±):
-1. ÔÄ¶Á [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³À¶Í¼ (30·ÖÖÓ)
-2. ÔÄ¶Á [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ²ßÂÔÄ£°å (30·ÖÖÓ)
-3. ÔÄ¶Á [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ²ßÂÔË÷Òý (20·ÖÖÓ)
-4. ÔÄ¶Á [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - Òò×Ó?(30·ÖÖÓ)
-5. ÔÄ¶Á  - ¿ª·¢¹æ?(1Ð¡Ê±)
-6. Êµ¼ù±àÐ´²ßÂÔ´úÂë (1.5Ð¡Ê±)
+**ï¿½Ü¹ï¿½Ñ§Ï°Â·ï¿½ï¿½** (2Ð¡Ê±):
+1. ï¿½Ä¶ï¿½ [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³ï¿½ï¿½Í¼ (30ï¿½ï¿½ï¿½ï¿½)
+2. ï¿½Ä¶ï¿½ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11Í³Ò»ï¿½Ü¹ï¿½ (30ï¿½ï¿½ï¿½ï¿½)
+3. ï¿½Ä¶ï¿½ [01_FRAMEWORK/README.md](../../README.md) - ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ (20ï¿½ï¿½ï¿½ï¿½)
+4. ï¿½Ä¶ï¿½ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIÈ¨ï¿½ï¿½ï¿½åµ¥ (20ï¿½ï¿½ï¿½ï¿½)
 
 
-### ÎÒÒª²¿ÊðÏµÍ³
+### ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 
-**²¿ÊðÂ·Ïß** (3Ð¡Ê±):
-1. ÔÄ¶Á [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³À¶Í¼ (30·ÖÖÓ)
-2. ÔÄ¶Á [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ²¿Êð·½°¸ (30·ÖÖÓ)
-3. Ö´ÐÐ²¿Êð½Å±¾ (2Ð¡Ê±)
-
-
-### ÎÒÀí½â°²?
-
-**°²È«Ñ§Ï°Â·Ïß** (1.5Ð¡Ê±):
-1. ÔÄ¶Á [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIÈ¨ÏÞÇåµ¥ (20·ÖÖÓ)
-2. ÔÄ¶Á [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - °²È«¹æ·¶ (25·ÖÖÓ)
-3. ÔÄ¶Á [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - ÈÏÖ¤ÊÚÈ¨ (20·ÖÖÓ)
+**ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½Â·?* (4Ð¡Ê±):
+1. ï¿½Ä¶ï¿½ [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³ï¿½ï¿½Í¼ (30ï¿½ï¿½ï¿½ï¿½)
+2. ï¿½Ä¶ï¿½ [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ (30ï¿½ï¿½ï¿½ï¿½)
+3. ï¿½Ä¶ï¿½ [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (20ï¿½ï¿½ï¿½ï¿½)
+4. ï¿½Ä¶ï¿½ [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - ï¿½ï¿½ï¿½ï¿½?(30ï¿½ï¿½ï¿½ï¿½)
+5. ï¿½Ä¶ï¿½  - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?(1Ð¡Ê±)
+6. Êµï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ (1.5Ð¡Ê±)
 
 
-### ÎÒÓöµ½ÎÊ?
+### ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ÏµÍ³
 
-**¹ÊÕÏÅÅ²éÂ·Ïß** (30·ÖÖÓ):
-1. ²é¿´ [FAQ.md](./FAQ.md) - ³£¼ûÎÊÌâ (10·ÖÖÓ)
-2. ²é¿´ [05_IMPLEMENTATION/07_OPERATIONS/README.md](../../README.md) - ÔËÎ¬ÊÖ²á (10·ÖÖÓ)
-3. ²é¿´ [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - °æ±¾±ä¸ü (5·ÖÖÓ)
-4. ²é¿´ÏµÍ³ÈÕÖ¾ (5·ÖÖÓ)
-
-### ÎÒÒªÉó¼ÆÏµÍ³
-
-**Éó¼Æ¹¤×÷Â·Ïß** (1-2Ð¡Ê±):
-1. ·ÃÎÊ [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - Éó¼ÆÃÅ»§Ê×Ò³ (5·ÖÖÓ)
-2. Ñ¡ÔñÉó¼ÆÄ£Ê½: ¸öÈËÄ£Ê½(5·ÖÖÓ)»òAIÄ£Ê½(30·ÖÖÓ)
-3. °´Éó¼Æ±ê×¼Ö´? [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - Éó¼Æ±ê×¼ (15·ÖÖÓ)
-4. ×ñÑ­¹¤×÷Á÷³Ì: [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - ¸öÈËÉó¼ÆÁ÷³Ì (10·ÖÖÓ)
-5. Éú³ÉÉó¼Æ±¨¸æ (30-60·ÖÖÓ)
+**ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½** (3Ð¡Ê±):
+1. ï¿½Ä¶ï¿½ [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³ï¿½ï¿½Í¼ (30ï¿½ï¿½ï¿½ï¿½)
+2. ï¿½Ä¶ï¿½ [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ï¿½ï¿½ï¿½ð·½°ï¿½ (30ï¿½ï¿½ï¿½ï¿½)
+3. Ö´ï¿½Ð²ï¿½ï¿½ï¿½Å±ï¿½ (2Ð¡Ê±)
 
 
-## ?? °´Ä¿Â¼²é?(v5.3)
+### ï¿½ï¿½ï¿½ï¿½ï¿½â°²?
 
-### 00_OVERVIEW/ - ÏµÍ³×ÜÀÀ
+**ï¿½ï¿½È«Ñ§Ï°Â·ï¿½ï¿½** (1.5Ð¡Ê±):
+1. ï¿½Ä¶ï¿½ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIÈ¨ï¿½ï¿½ï¿½åµ¥ (20ï¿½ï¿½ï¿½ï¿½)
+2. ï¿½Ä¶ï¿½ [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - ï¿½ï¿½È«ï¿½æ·¶ (25ï¿½ï¿½ï¿½ï¿½)
+3. ï¿½Ä¶ï¿½ [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - ï¿½ï¿½Ö¤ï¿½ï¿½È¨ (20ï¿½ï¿½ï¿½ï¿½)
 
-| ÎÄ¼þ | ËµÃ÷ | ÔÄ¶ÁÊ±¼ä |
+
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
+
+**ï¿½ï¿½ï¿½ï¿½ï¿½Å²ï¿½Â·ï¿½ï¿½** (30ï¿½ï¿½ï¿½ï¿½):
+1. ï¿½é¿´ [FAQ.md](./FAQ.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (10ï¿½ï¿½ï¿½ï¿½)
+2. ï¿½é¿´ [05_IMPLEMENTATION/07_OPERATIONS/README.md](../../README.md) - ï¿½ï¿½Î¬ï¿½Ö²ï¿½ (10ï¿½ï¿½ï¿½ï¿½)
+3. ï¿½é¿´ [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - ï¿½æ±¾ï¿½ï¿½ï¿½ (5ï¿½ï¿½ï¿½ï¿½)
+4. ï¿½é¿´ÏµÍ³ï¿½ï¿½Ö¾ (5ï¿½ï¿½ï¿½ï¿½)
+
+### ï¿½ï¿½Òªï¿½ï¿½ï¿½ÏµÍ³
+
+**ï¿½ï¿½Æ¹ï¿½ï¿½ï¿½Â·ï¿½ï¿½** (1-2Ð¡Ê±):
+1. ï¿½ï¿½ï¿½ï¿½ [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½Ò³ (5ï¿½ï¿½ï¿½ï¿½)
+2. Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½: ï¿½ï¿½ï¿½ï¿½Ä£Ê½(5ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½AIÄ£Ê½(30ï¿½ï¿½ï¿½ï¿½)
+3. ï¿½ï¿½ï¿½ï¿½Æ±ï¿½×¼Ö´? [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - ï¿½ï¿½Æ±ï¿½×¼ (15ï¿½ï¿½ï¿½ï¿½)
+4. ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (10ï¿½ï¿½ï¿½ï¿½)
+5. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ (30-60ï¿½ï¿½ï¿½ï¿½)
+
+
+## ?? ï¿½ï¿½Ä¿Â¼ï¿½ï¿½?(v5.3)
+
+### 00_OVERVIEW/ - ÏµÍ³ï¿½ï¿½ï¿½ï¿½
+
+| ï¿½Ä¼ï¿½ | Ëµï¿½ï¿½ | ï¿½Ä¶ï¿½Ê±ï¿½ï¿½ |
 |------|------|----------|
-| README.md | ÏµÍ³¼ò?| 10·ÖÖÓ |
-|  | Êý¾ÝÁ÷ÓëÄ£¿éÒÀÀµ | 15·ÖÖÓ |
-| CHANGELOG.md | °æ±¾ÀúÊ·£¨ÒÑºÏ²¢?| 5·ÖÖÓ |
+| README.md | ÏµÍ³ï¿½ï¿½?| 10ï¿½ï¿½ï¿½ï¿½ |
+|  | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ | 15ï¿½ï¿½ï¿½ï¿½ |
+| CHANGELOG.md | ï¿½æ±¾ï¿½ï¿½Ê·ï¿½ï¿½ï¿½ÑºÏ²ï¿½?| 5ï¿½ï¿½ï¿½ï¿½ |
 
 
-### 01_FRAMEWORK/ - ¿ò¼Ü¶¨Òå
+### 01_FRAMEWORK/ - ï¿½ï¿½Ü¶ï¿½ï¿½ï¿½
 
-| ÎÄ¼þ | ËµÃ÷ | ÔÄ¶ÁÊ±¼ä |
+| ï¿½Ä¼ï¿½ | Ëµï¿½ï¿½ | ï¿½Ä¶ï¿½Ê±ï¿½ï¿½ |
 |------|------|----------|
-| README.md | ¿ò¼ÜÎÄµµË÷Òý | 10·ÖÖÓ |
-| ARCHITECTURE.md | Layer 0-11Í³Ò»¼Ü¹¹ | 30·ÖÖÓ |
-| MARKET_REGIME.md | ÊÐ³¡×´Ì¬Ê¶?| 20·ÖÖÓ |
-| HUMAN_AI_FLOW.md | ÈË»úÐ­×÷Á÷³Ì | 15·ÖÖÓ |
-| TECH_STACK.md | ¼¼ÊõÕ»Ñ¡Ôñ | 15·ÖÖÓ |
+| README.md | ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ | 10ï¿½ï¿½ï¿½ï¿½ |
+| ARCHITECTURE.md | Layer 0-11Í³Ò»ï¿½Ü¹ï¿½ | 30ï¿½ï¿½ï¿½ï¿½ |
+| MARKET_REGIME.md | ï¿½Ð³ï¿½×´Ì¬Ê¶?| 20ï¿½ï¿½ï¿½ï¿½ |
+| HUMAN_AI_FLOW.md | ï¿½Ë»ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ | 15ï¿½ï¿½ï¿½ï¿½ |
+| TECH_STACK.md | ï¿½ï¿½ï¿½ï¿½Õ»Ñ¡ï¿½ï¿½ | 15ï¿½ï¿½ï¿½ï¿½ |
 
 
-### 02_FACTOR_LIBRARY/ - Òò×Ó?
+### 02_FACTOR_LIBRARY/ - ï¿½ï¿½ï¿½ï¿½?
 
-| Ä¿Â¼ | ËµÃ÷ |
+| Ä¿Â¼ | Ëµï¿½ï¿½ |
 |------|------|
-| 00_GOVERNANCE/ | Òò×ÓÖÎÀí¿ò¼Ü |
-| 00_INDEX/ | Òò×Ó·ÖÀàµ¼º½ |
-| 01_STANDARDS/ | Òò×ÓÑÐ¾¿·½·¨?|
-| 02_ALPHA_FACTORS_INDEX.md | AlphaÒò×ÓË÷Òý |
-| 03_RISK_FACTORS/ | ·çÏÕÒò×Ó |
-| 04_DATA_SOURCE/ | Êý¾ÝÔ´Ëµ?|
-| 05_BACKTEST/ | »Ø²â±¨¸æ |
-| 06_REGISTRY/ | Òò×Ó×¢²á |
-| 07_FACTOR_MONITORING/ | ¼à¿ØÖÐÐÄ |
-| 10_MANUAL/ | Òò×Ó¿âÊÖ?|
+| 00_GOVERNANCE/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 00_INDEX/ | ï¿½ï¿½ï¿½Ó·ï¿½ï¿½àµ¼ï¿½ï¿½ |
+| 01_STANDARDS/ | ï¿½ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½ï¿½?|
+| 02_ALPHA_FACTORS_INDEX.md | Alphaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 03_RISK_FACTORS/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 04_DATA_SOURCE/ | ï¿½ï¿½ï¿½ï¿½Ô´Ëµ?|
+| 05_BACKTEST/ | ï¿½Ø²â±¨ï¿½ï¿½ |
+| 06_REGISTRY/ | ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ |
+| 07_FACTOR_MONITORING/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 10_MANUAL/ | ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½?|
 
 
-### 03_TRADING_TACTICS/ - ²ßÂÔ?
+### 03_TRADING_TACTICS/ - ï¿½ï¿½ï¿½ï¿½?
 
-| ÎÄ¼þ/Ä¿Â¼ | ËµÃ÷ |
+| ï¿½Ä¼ï¿½/Ä¿Â¼ | Ëµï¿½ï¿½ |
 |------|------|
-| INDEX.md | ²ßÂÔµ¼º½ |
-| README.md | ²ßÂÔÎÄµµË÷Òý |
-| Strategy_Spec_S001.md | ²ßÂÔÄ£°å |
-| 01_STRATEGY_FRAMEWORK/ | ²ßÂÔ¿ò¼Ü |
-| 03_ADVANCED_TACTICS/ | ¸ß¼¶Õ½Êõ |
-| 04_YOUZI_STRATEGIES/ | ÓÎ×Ê²ßÂÔ |
-| 05_STRATEGY_POOL/ | ²ßÂÔ³ØË÷?|
-| 06_POSITION_MANAGEMENT/ | ²ÖÎ»¹ÜÀí |
-| 07_ORDER_GENERATION/ | ¶©µ¥Éú³É |
-| 09_RISK_RULES/ | ·çÏÕ¹æÔò |
+| INDEX.md | ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ |
+| README.md | ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ |
+| Strategy_Spec_S001.md | ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ |
+| 01_STRATEGY_FRAMEWORK/ | ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ |
+| 03_ADVANCED_TACTICS/ | ï¿½ß¼ï¿½Õ½ï¿½ï¿½ |
+| 04_YOUZI_STRATEGIES/ | ï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½ |
+| 05_STRATEGY_POOL/ | ï¿½ï¿½ï¿½Ô³ï¿½ï¿½ï¿½?|
+| 06_POSITION_MANAGEMENT/ | ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ |
+| 07_ORDER_GENERATION/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 09_RISK_RULES/ | ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ |
 
 
-### 04_EXECUTION/ - Ö´ÐÐÒýÇæ
+### 04_EXECUTION/ - Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-| Ä¿Â¼ | ËµÃ÷ |
+| Ä¿Â¼ | Ëµï¿½ï¿½ |
 |------|------|
-| 01_EVENT_ENGINE/ | ÊÂ¼þÇý¶¯ÒýÇæ |
-| 01_ORDER_EXECUTION/ | ¶©µ¥Ö´ÐÐ |
-| 02_TRADE_EXECUTOR/ | ½»Ò×Ö´ÐÐ |
-| 03_MONITORING/ | ÊµÊ±¼à¿Ø |
+| 01_EVENT_ENGINE/ | ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 01_ORDER_EXECUTION/ | ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ |
+| 02_TRADE_EXECUTOR/ | ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ |
+| 03_MONITORING/ | ÊµÊ±ï¿½ï¿½ï¿½ |
 | 04_AI_COMMITTEE/ | AIÎ¯Ô±?|
-| 05_RISK_ENGINE/ | ·çÏÕÒýÇæ |
-| 06_SIMULATION/ | ·ÂÕæ²âÊÔ |
+| 05_RISK_ENGINE/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 06_SIMULATION/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ |
 
 
-### 05_IMPLEMENTATION/ - ÊµÊ©Ö¸ÄÏ
+### 05_IMPLEMENTATION/ - ÊµÊ©Ö¸ï¿½ï¿½
 
-| Ä¿Â¼ | ËµÃ÷ |
+| Ä¿Â¼ | Ëµï¿½ï¿½ |
 |------|------|
-| 01_QUICKSTART/ | ¿ìËÙ¿ª?|
-| 02_DEVELOPMENT/ | ¿ª·¢¹æ?|
-| 03_DEPLOYMENT/ | ²¿ÊðÖ¸ÄÏ |
-| 04_INFRASTRUCTURE/ | »ù´¡ÉèÊ© |
-| 07_OPERATIONS/ | ÔËÎ¬ÊÖ²á |
-| 99_ARCHIVE/ | ¹éµµ |
+| 01_QUICKSTART/ | ï¿½ï¿½ï¿½Ù¿ï¿½?|
+| 02_DEVELOPMENT/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?|
+| 03_DEPLOYMENT/ | ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ |
+| 04_INFRASTRUCTURE/ | ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê© |
+| 07_OPERATIONS/ | ï¿½ï¿½Î¬ï¿½Ö²ï¿½ |
+| 99_ARCHIVE/ | ï¿½éµµ |
 
 
-### 06_ARCHIVE/ - ¹éµµ
+### 06_ARCHIVE/ - ï¿½éµµ
 
-| Ä¿Â¼/ÎÄ¼þ | ËµÃ÷ |
+| Ä¿Â¼/ï¿½Ä¼ï¿½ | Ëµï¿½ï¿½ |
 |------|------|
-| README.md | ¹éµµËµÃ÷£¨v5.3¾«¼ò°æ£© |
-| main/BLUEPRINTS/ | À¶Í¼ÀúÊ·¹éµµ?¸ö£© |
-| main/v4_development/ | v4.0¿ª·¢ÎÄµµ£¨¾«¼ò?¸ö£© |
-| factor-library/ | Òò×Ó¿âÀú?|
-| tactics_manual.md | v1.0Õ½ÊõÊÖ²á |
-| technical_documentation.md | v1.0¼¼ÊõÎÄ?|
+| README.md | ï¿½éµµËµï¿½ï¿½ï¿½ï¿½v5.3ï¿½ï¿½ï¿½ï¿½æ£© |
+| main/BLUEPRINTS/ | ï¿½ï¿½Í¼ï¿½ï¿½Ê·ï¿½éµµ?ï¿½ï¿½ï¿½ï¿½ |
+| main/v4_development/ | v4.0ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½ï¿½ï¿½ |
+| factor-library/ | ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½?|
+| tactics_manual.md | v1.0Õ½ï¿½ï¿½ï¿½Ö²ï¿½ |
+| technical_documentation.md | v1.0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?|
 
 
-### 07_RESEARCH/ - AIÑÐ¾¿
+### 07_RESEARCH/ - AIï¿½Ð¾ï¿½
 
-| Ä¿Â¼ | ËµÃ÷ |
+| Ä¿Â¼ | Ëµï¿½ï¿½ |
 |------|------|
-| 01_ENVIRONMENT/ | ÑÐ¾¿»·¾³ |
-| 02_EXPLORATORY_ANALYSIS/ | Ì½Ë÷ÐÔ·Ö?|
-| 03_PATTERN_RECOGNITION/ | Ä£Ê½Ê¶±ð |
-| 04_EXPERIMENT_TRACKING/ | ÊµÑé×·×Ù |
+| 01_ENVIRONMENT/ | ï¿½Ð¾ï¿½ï¿½ï¿½ï¿½ï¿½ |
+| 02_EXPLORATORY_ANALYSIS/ | Ì½ï¿½ï¿½ï¿½Ô·ï¿½?|
+| 03_PATTERN_RECOGNITION/ | Ä£Ê½Ê¶ï¿½ï¿½ |
+| 04_EXPERIMENT_TRACKING/ | Êµï¿½ï¿½×·ï¿½ï¿½ |
 
-### 09_AUDIT/ - ÏµÍ³ÖÎÀíÉó¼Æ
+### 09_AUDIT/ - ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-| Ä¿Â¼/ÎÄ¼þ | ËµÃ÷ |
+| Ä¿Â¼/ï¿½Ä¼ï¿½ | Ëµï¿½ï¿½ |
 |------|------|
-| README.md | Éó¼ÆÌåÏµ×ÜÀÀ |
-| INDEX_AUDIT.md | Éó¼ÆÃÅ»§Ê×Ò³ |
-| STANDARDS/ | Éó¼Æ±ê×¼ |
-| PROCEDURES/ | Éó¼Æ³ÌÐò |
+| README.md | ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ |
+| INDEX_AUDIT.md | ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½Ò³ |
+| STANDARDS/ | ï¿½ï¿½Æ±ï¿½×¼ |
+| PROCEDURES/ | ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ |
 
 
-## ?? °´¹Ø¼ü´Ê²éÕÒ
+## ?? ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½Ê²ï¿½ï¿½ï¿½
 
-### ¼Ü¹¹Ïà¹Ø
+### ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½
 
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³À¶Í¼
-- [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11¼Ü¹¹
-- [01_FRAMEWORK/MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) - ÊÐ³¡×´Ì¬Ê¶?
+- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³ï¿½ï¿½Í¼
+- [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ï¿½Ü¹ï¿½
+- [01_FRAMEWORK/MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) - ï¿½Ð³ï¿½×´Ì¬Ê¶?
 
-### Ä£¿éÏà¹Ø
+### Ä£ï¿½ï¿½ï¿½ï¿½ï¿½
 
-- [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md) - ½Ó¿ÚÆõÔ¼
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - Ä£¿éÀ¶Í¼
-- [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIÈ¨ÏÞ
+- [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md) - ï¿½Ó¿ï¿½ï¿½ï¿½Ô¼
+- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - Ä£ï¿½ï¿½ï¿½ï¿½Í¼
+- [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIÈ¨ï¿½ï¿½
 
-### ²ßÂÔÏà¹Ø
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-- [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ²ßÂÔÄ£°å
-- [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ²ßÂÔË÷Òý
-- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - Òò×Ó?
+- [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+- [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - ï¿½ï¿½ï¿½ï¿½?
 
-### Òò×ÓÏà¹Ø
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - AlphaÒò×Ó
--  - ·çÏÕÒò×Ó
--  - Òò×Ó·½·¨?
-- [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md](01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) - Òò×Ó¹ÜÀí±ê×¼
-- [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md](01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) - Òò×ÓÉ¸Ñ¡²ß?
+- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - Alphaï¿½ï¿½ï¿½ï¿½
+-  - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+-  - ï¿½ï¿½ï¿½Ó·ï¿½ï¿½ï¿½?
+- [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md](01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) - ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½×¼
+- [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md](01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) - ï¿½ï¿½ï¿½ï¿½É¸Ñ¡ï¿½ï¿½?
 
-### ²¿ÊðÏà¹Ø
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³À¶Í¼
-- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ²¿Êð·½°¸
+- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ÏµÍ³ï¿½ï¿½Í¼
+- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ï¿½ï¿½ï¿½ð·½°ï¿½
 
-### ¿ª·¢Ïà?
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
 
--  - ¿ª·¢¹æ?
-- [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - ±ä¸üÈÕÖ¾
+-  - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
+- [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾
 
-### AIÑÐ¾¿Ïà¹Ø
+### AIï¿½Ð¾ï¿½ï¿½ï¿½ï¿½
 
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AIÑÐ¾¿¿ò¼Ü£¨¼û¸½Â¼?
-- [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) - ÊµÑé×·×Ù
-- [KNOWLEDGE_MANAGEMENT.md](./KNOWLEDGE_MANAGEMENT.md) - ÖªÊ¶¹ÜÀí
+- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AIï¿½Ð¾ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Â¼?
+- [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) - Êµï¿½ï¿½×·ï¿½ï¿½
+- [KNOWLEDGE_MANAGEMENT.md](./KNOWLEDGE_MANAGEMENT.md) - ÖªÊ¶ï¿½ï¿½ï¿½ï¿½
 
-### ÔËÎ¬Ïà¹Ø
+### ï¿½ï¿½Î¬ï¿½ï¿½ï¿½
 
--  - ÔËÎ¬ÊÖ²á
-- [FAQ.md](./FAQ.md) - ³£¼ûÎÊÌâ
+-  - ï¿½ï¿½Î¬ï¿½Ö²ï¿½
+- [FAQ.md](./FAQ.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-### Éó¼ÆÏà¹Ø
+### ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-- [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - Éó¼ÆÃÅ»§Ê×Ò³
-- [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - Éó¼Æ±ê×¼
-- [09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md) - AIÉó¼ÆÖ¸ÄÏ
-- [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - ¸öÈËÉó¼ÆÁ÷³Ì
+- [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½Ò³
+- [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - ï¿½ï¿½Æ±ï¿½×¼
+- [09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md) - AIï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+- [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
-## ?? ÎÄµµÍ³¼Æ (v5.3)
+## ?? ï¿½Äµï¿½Í³ï¿½ï¿½ (v5.3)
 
-| ÀàÐÍ | ÊýÁ¿ | ËµÃ÷ |
+| ï¿½ï¿½ï¿½ï¿½ | ï¿½ï¿½ï¿½ï¿½ | Ëµï¿½ï¿½ |
 |------|------|------|
-| ºËÐÄÎÄµµ | 6?| ±Ø¶Á |
-| Ë÷ÒýÎÄ¼þ | 2?| µ¼º½ |
-| Ò»¼¶Ä¿?| 8?| ·ÖÀà |
-| **¾«¼ò?* | **~80+ÎÄµµ** | ½Ïv5.0¼õÉÙ?0?|
+| ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ | 6?| ï¿½Ø¶ï¿½ |
+| ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ | 2?| ï¿½ï¿½ï¿½ï¿½ |
+| Ò»ï¿½ï¿½Ä¿?| 8?| ï¿½ï¿½ï¿½ï¿½ |
+| **ï¿½ï¿½ï¿½ï¿½?* | **~80+ï¿½Äµï¿½** | ï¿½ï¿½v5.0ï¿½ï¿½ï¿½ï¿½?0?|
 
 
-## ?? ÍÆ¼öÔÄ¶ÁË³Ðò
-
-### ??(2Ð¡Ê±)
-
-1. INDEX.md (5·ÖÖÓ)
-2. 00_OVERVIEW/README.md (10·ÖÖÓ)
-3. BLUEPRINT.md (30·ÖÖÓ)
-4. 01_FRAMEWORK/ARCHITECTURE.md (30·ÖÖÓ)
-5. 05_IMPLEMENTATION/01_QUICKSTART/README.md (15·ÖÖÓ)
+## ?? ï¿½Æ¼ï¿½ï¿½Ä¶ï¿½Ë³ï¿½ï¿½
 
 ### ??(2Ð¡Ê±)
 
-1. AI_Permissions.md (20·ÖÖÓ)
-2. API_Contract.md (15·ÖÖÓ)
-3. Strategy_Spec_S001.md (30·ÖÖÓ)
-4. 03_TRADING_TACTICS/INDEX.md (20·ÖÖÓ)
-5. FAQ.md (15·ÖÖÓ)
+1. INDEX.md (5ï¿½ï¿½ï¿½ï¿½)
+2. 00_OVERVIEW/README.md (10ï¿½ï¿½ï¿½ï¿½)
+3. BLUEPRINT.md (30ï¿½ï¿½ï¿½ï¿½)
+4. 01_FRAMEWORK/ARCHITECTURE.md (30ï¿½ï¿½ï¿½ï¿½)
+5. 05_IMPLEMENTATION/01_QUICKSTART/README.md (15ï¿½ï¿½ï¿½ï¿½)
 
 ### ??(2Ð¡Ê±)
 
-1. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md (30·ÖÖÓ)
-2. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md (30·ÖÖÓ)
-3. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30·ÖÖÓ)
-4. CHANGELOG.md (15·ÖÖÓ)
+1. AI_Permissions.md (20ï¿½ï¿½ï¿½ï¿½)
+2. API_Contract.md (15ï¿½ï¿½ï¿½ï¿½)
+3. Strategy_Spec_S001.md (30ï¿½ï¿½ï¿½ï¿½)
+4. 03_TRADING_TACTICS/INDEX.md (20ï¿½ï¿½ï¿½ï¿½)
+5. FAQ.md (15ï¿½ï¿½ï¿½ï¿½)
+
+### ??(2Ð¡Ê±)
+
+1. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md (30ï¿½ï¿½ï¿½ï¿½)
+2. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md (30ï¿½ï¿½ï¿½ï¿½)
+3. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30ï¿½ï¿½ï¿½ï¿½)
+4. CHANGELOG.md (15ï¿½ï¿½ï¿½ï¿½)
 
 
-## ?? ÎÄµµ¹ØÏµ?
+## ?? ï¿½Äµï¿½ï¿½ï¿½Ïµ?
 
 ```
-INDEX.md (¿ìËÙÈë?
+INDEX.md (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
     ?
-    ©À¡ú 00_OVERVIEW/ (ÏµÍ³×ÜÀÀ)
+    ï¿½ï¿½ï¿½ï¿½ 00_OVERVIEW/ (ÏµÍ³ï¿½ï¿½ï¿½ï¿½)
     ?
-    ©À¡ú 01_FRAMEWORK/ (¿ò¼Ü¶¨Òå)
-    ?  ©¸¡ú ARCHITECTURE.md (Layer 0-11)
+    ï¿½ï¿½ï¿½ï¿½ 01_FRAMEWORK/ (ï¿½ï¿½Ü¶ï¿½ï¿½ï¿½)
+    ?  ï¿½ï¿½ï¿½ï¿½ ARCHITECTURE.md (Layer 0-11)
     ?
-    ©À¡ú BLUEPRINT.md (ÏµÍ³À¶Í¼)
+    ï¿½ï¿½ï¿½ï¿½ BLUEPRINT.md (ÏµÍ³ï¿½ï¿½Í¼)
     ?
-    ©À¡ú 02_FACTOR_LIBRARY/ (Òò×Ó?
-    ?  ©À¡ú 01_STANDARDS/ (·½·¨?
-    ?  ?  ©À¡ú FACTOR_MANAGEMENT_STANDARD.md (Òò×Ó¹ÜÀí±ê×¼)
-    ?  ?  ©¸¡ú FACTOR_SCREENING_STRATEGY.md (É¸Ñ¡²ß?
-    ?  ©¸¡ú 02_ALPHA_FACTORS_INDEX.md (Òò×ÓË÷Òý)
+    ï¿½ï¿½ï¿½ï¿½ 02_FACTOR_LIBRARY/ (ï¿½ï¿½ï¿½ï¿½?
+    ?  ï¿½ï¿½ï¿½ï¿½ 01_STANDARDS/ (ï¿½ï¿½ï¿½ï¿½?
+    ?  ?  ï¿½ï¿½ï¿½ï¿½ FACTOR_MANAGEMENT_STANDARD.md (ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½×¼)
+    ?  ?  ï¿½ï¿½ï¿½ï¿½ FACTOR_SCREENING_STRATEGY.md (É¸Ñ¡ï¿½ï¿½?
+    ?  ï¿½ï¿½ï¿½ï¿½ 02_ALPHA_FACTORS_INDEX.md (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     ?
-    ©À¡ú 03_TRADING_TACTICS/ (½»Ò×²ßÂÔ)
-    ?  ©¸¡ú Strategy_Spec_S001.md (²ßÂÔÄ£°å)
+    ï¿½ï¿½ï¿½ï¿½ 03_TRADING_TACTICS/ (ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½)
+    ?  ï¿½ï¿½ï¿½ï¿½ Strategy_Spec_S001.md (ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½)
     ?
-    ©À¡ú 04_EXECUTION/ (Ö´ÐÐÒýÇæ)
+    ï¿½ï¿½ï¿½ï¿½ 04_EXECUTION/ (Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     ?
-    ©À¡ú 05_IMPLEMENTATION/ (ÊµÊ©Ö¸ÄÏ)
-    ?  ©À¡ú 01_QUICKSTART/
-    ?  ©À¡ú 02_DEVELOPMENT/
-    ?  ©À¡ú 03_DEPLOYMENT/
-    ?  ©¸¡ú 07_OPERATIONS/
+    ï¿½ï¿½ï¿½ï¿½ 05_IMPLEMENTATION/ (ÊµÊ©Ö¸ï¿½ï¿½)
+    ?  ï¿½ï¿½ï¿½ï¿½ 01_QUICKSTART/
+    ?  ï¿½ï¿½ï¿½ï¿½ 02_DEVELOPMENT/
+    ?  ï¿½ï¿½ï¿½ï¿½ 03_DEPLOYMENT/
+    ?  ï¿½ï¿½ï¿½ï¿½ 07_OPERATIONS/
     ?
-    ©À¡ú 06_ARCHIVE/ (¹éµµ)
-    ?  ©¸¡ú main/BLUEPRINTS/ (ÀúÊ·À¶Í¼)
+    ï¿½ï¿½ï¿½ï¿½ 06_ARCHIVE/ (ï¿½éµµ)
+    ?  ï¿½ï¿½ï¿½ï¿½ main/BLUEPRINTS/ (ï¿½ï¿½Ê·ï¿½ï¿½Í¼)
     ?
-    ©À¡ú 07_RESEARCH/ (AIÑÐ¾¿)
+    ï¿½ï¿½ï¿½ï¿½ 07_RESEARCH/ (AIï¿½Ð¾ï¿½)
     ?
-    ©¸¡ú 09_AUDIT/ (ÏµÍ³ÖÎÀíÉó¼Æ)
+    ï¿½ï¿½ï¿½ï¿½ 09_AUDIT/ (ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 ```
 
 
-## ?? ÒÆ¶¯¶Ë·Ã?
+## ?? ï¿½Æ¶ï¿½ï¿½Ë·ï¿½?
 
-ËùÓÐÎÄµµ¾ùÖ§³ÖMarkdown¸ñÊ½£¬¿ÉÔÚÒÔÏÂÆ½Ì¨²é?
-- GitHub (ÔÚÏß²é¿´)
-- GitLab (ÔÚÏß²é¿´)
-- ±¾µØ±à¼­?(VS Code¡¢Sublime?
-- MarkdownÔÄ¶Á?(Typora¡¢Obsidian?
+ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½Ö§ï¿½ï¿½Markdownï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ï¿½ï¿½?
+- GitHub (ï¿½ï¿½ï¿½ß²é¿´)
+- GitLab (ï¿½ï¿½ï¿½ß²é¿´)
+- ï¿½ï¿½ï¿½Ø±à¼­?(VS Codeï¿½ï¿½Sublime?
+- Markdownï¿½Ä¶ï¿½?(Typoraï¿½ï¿½Obsidian?
 
 
-**×îºó¸ü?*: 2026-03-31
-**Î¬»¤?*: Çå·çÁ¿»¯ÏµÍ³
-**°æ±¾**: v5.3
+**ï¿½ï¿½ï¿½ï¿½?*: 2026-03-31
+**Î¬ï¿½ï¿½?*: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³
+**ï¿½æ±¾**: v5.3
 

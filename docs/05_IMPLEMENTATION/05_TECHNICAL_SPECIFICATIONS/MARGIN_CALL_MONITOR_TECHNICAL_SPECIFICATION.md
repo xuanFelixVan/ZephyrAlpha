@@ -96,3 +96,195 @@ implementation_status: 设计阶段
                                                      │
                     ┌────────────────────────────────┼────────────────┐
                     ▼                                ▼                ▼
+          ┌─────────────────┐            ┌─────────────────┐  ┌─────────────┐
+          │ 动态杠杆管理系统  │            │  压力测试系统    │  │  风控系统    │
+          └─────────────────┘            └─────────────────┘  └─────────────┘
+```
+
+**组件说明**:
+- **数据采集层**: 实时采集雪球产品、融资盘、市场行情数据
+- **风险计算层**: 基于蒙特卡洛模拟计算爆仓概率
+- **预警决策层**: 多级预警机制（P0-P3）
+- **集成接口层**: 与现有系统无缝集成
+
+### 2.2 Layer定位详细说明
+
+**Layer归属**: Layer 6 - 组合优化层（风险管理层）
+
+**职责范围**:
+- 实时监控雪球产品敲入风险
+- 融资盘维持担保比例监控
+- 市场杠杆集中度分析
+- 系统性风险识别与预警
+
+**上下层接口**:
+- **上层依赖**: Layer 7（风险控制层）- 接收压力测试结果
+- **下层依赖**: Layer 2（数据层）- 获取市场行情数据
+
+### 2.3 模块职责与边界定义
+
+**核心职责**:
+- 雪球产品敲入概率计算与预警
+- 融资盘爆仓风险监控
+- 市场杠杆风险识别
+- 多级预警信号生成
+
+**职责边界**:
+
+✅ **本模块负责**:
+- 爆仓风险计算与预警
+- 风险等级判定（P0-P3）
+- 预警信号生成与推送
+- 风险指标监控
+
+❌ **本模块不负责**:
+- 交易执行（由执行层负责）
+- 风险对冲（由风险对冲引擎负责）
+- 融资优化（由融资优化模块负责）
+- 杠杆调整（由动态杠杆管理负责）
+
+**接口契约**:
+- 输入: 雪球产品参数、融资盘数据、市场行情
+- 输出: 爆仓风险等级、预警信号、风险指标
+
+### 2.4 依赖关系与集成点
+
+| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+|----------|----------|----------|----------|------|
+| 动态杠杆管理系统 | 强依赖 | API调用 | v1.0+ | 杠杆数据同步 |
+| 压力测试系统 | 弱依赖 | 事件订阅 | v1.0+ | 极端情景模拟 |
+| 数据层(Layer 2) | 强依赖 | 数据查询 | v1.0+ | 行情数据获取 |
+| 风控系统 | 弱依赖 | 消息队列 | v1.0+ | 预警信号推送 |
+
+---
+
+## 3. 接口定义
+
+### 3.1 API接口规范
+
+```python
+from dataclasses import dataclass
+from typing import List, Dict, Optional
+from datetime import datetime
+import pandas as pd
+import numpy as np
+
+class MarginCallMonitorAPI:
+    """爆仓线监控API接口"""
+    
+    def __init__(self, config: MarginCallConfig):
+        """
+        初始化爆仓线监控器
+        
+        Args:
+            config: 爆仓线监控配置参数
+        """
+        pass
+    
+    def calculate_snowball_knock_in_probability(
+        self,
+        product: SnowballProduct,
+        current_price: float,
+        volatility: float,
+        risk_free_rate: float = 0.03
+    ) -> KnockInProbabilityResult:
+        """
+        计算雪球产品敲入概率
+        
+        Args:
+            product: 雪球产品参数
+            current_price: 当前标的价格
+            volatility: 波动率
+            risk_free_rate: 无风险利率
+            
+        Returns:
+            KnockInProbabilityResult: 敲入概率结果
+            
+        Raises:
+            ValueError: 参数无效时抛出
+        """
+        pass
+    
+    def monitor_margin_call_risk(
+        self,
+        margin_account: MarginAccount,
+        market_data: pd.DataFrame
+    ) -> MarginCallRiskResult:
+        """
+        监控融资盘爆仓风险
+        
+        Args:
+            margin_account: 融资账户数据
+            market_data: 市场行情数据
+            
+        Returns:
+            MarginCallRiskResult: 爆仓风险结果
+        """
+        pass
+    
+    def assess_market_leverage_risk(
+        self,
+        market_leverage_data: pd.DataFrame,
+        threshold: float = 0.7
+    ) -> MarketLeverageRiskResult:
+        """
+        评估市场杠杆风险
+        
+        Args:
+            market_leverage_data: 市场杠杆数据
+            threshold: 风险阈值
+            
+        Returns:
+            MarketLeverageRiskResult: 市场杠杆风险结果
+        """
+        pass
+    
+    def generate_alert_signal(
+        self,
+        risk_level: str,
+        risk_metrics: Dict[str, float],
+        message: str
+    ) -> AlertSignal:
+        """
+        生成预警信号
+        
+        Args:
+            risk_level: 风险等级（P0/P1/P2/P3）
+            risk_metrics: 风险指标字典
+            message: 预警消息
+            
+        Returns:
+            AlertSignal: 预警信号对象
+        """
+        pass
+    
+    def get_risk_dashboard(self) -> RiskDashboard:
+        """
+        获取风险监控面板数据
+        
+        Returns:
+            RiskDashboard: 风险面板数据
+        """
+        pass
+```
+
+### 3.2 数据格式与协议定义
+
+```python
+@dataclass
+class SnowballProduct:
+    """雪球产品参数"""
+    product_id: str
+    underlying: str
+    knock_in_price: float
+    knock_out_price: float
+    coupon_rate: float
+    maturity_days: int
+    leverage_ratio: float = 1.0
+    observation_frequency: str = "daily"
+
+@dataclass
+class KnockInProbabilityResult:
+    """敲入概率计算结果"""
+    product_id: str
+    knock_in_probability
