@@ -1,6 +1,6 @@
 ?---
-module_id: BARRA_RISK_MODEL_001
-version: 1.0.0
+module_id: IMPL_BARRA_RISK_MODEL_BP_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md

@@ -568,10 +568,15 @@ class StrategySelection:
 | [REBALANCING_BLUEPRINT.md](./REBALANCING_BLUEPRINT.md) | **再平衡决策系统蓝图** 🔴 P0级新增 |
 | [BENCHMARK_MANAGEMENT_BLUEPRINT.md](./BENCHMARK_MANAGEMENT_BLUEPRINT.md) | **基准管理系统蓝图** 🟡 P1级新增 |
 | [SCENARIO_ANALYSIS_BLUEPRINT.md](./SCENARIO_ANALYSIS_BLUEPRINT.md) | **情景分析系统蓝图** 🟡 P1级新增 |
+| [MARKET_REGIME_BLUEPRINT.md](./MARKET_REGIME_BLUEPRINT.md) | **市场状态识别增强蓝图** 🔴 P0级新增 |
+| [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | **投资限制管理系统蓝图** 🟡 P1级新增 |
+| [MACRO_FACTOR_BLUEPRINT.md](./MACRO_FACTOR_BLUEPRINT.md) | **宏观因子系统蓝图** 🟡 P1级新增 |
+| [ESG_INVESTING_BLUEPRINT.md](./ESG_INVESTING_BLUEPRINT.md) | **ESG投资系统蓝图** 🟢 P2级新增 |
+| [TAX_MANAGEMENT_BLUEPRINT.md](./TAX_MANAGEMENT_BLUEPRINT.md) | **税务管理系统蓝图** 🟢 P2级新增 |
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-03 | **状�?*: 🆕 全新蓝图
+**版本**: v2.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
 ---
 
