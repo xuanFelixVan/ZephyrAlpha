@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_因子预处理方_001
+module_id: FACTOR_PREPROCESSING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

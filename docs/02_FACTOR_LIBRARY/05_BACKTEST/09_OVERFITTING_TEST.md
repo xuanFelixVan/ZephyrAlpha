@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_过拟合检验框_001
+module_id: OVERFITTING_TEST_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,16 +1,4 @@
 ---
-module_id: TURNOVERCONTROLBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: TURNOVER_CONTROL_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ open_source_dependency: Riskfolio-Lib, PyPortfolioOpt
 estimated_effort: 1周
 layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # 组合周转率控制蓝图
 

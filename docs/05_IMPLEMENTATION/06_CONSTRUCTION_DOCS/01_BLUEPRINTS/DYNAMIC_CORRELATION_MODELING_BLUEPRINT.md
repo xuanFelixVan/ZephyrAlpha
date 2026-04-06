@@ -1,16 +1,4 @@
 ---
-module_id: V_016
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.1
 spec_version: 1.0
@@ -36,6 +24,7 @@ ai_maintenance: true
 open_source_dependency: arch, mgarch, numpy, pandas
 priority: P0
 ---
+
 
 
 # 跨资产相关性动态建模蓝?v1.0
@@ -66,6 +55,52 @@ priority: P0
 
 1. **DCC-GARCH动态相关性估?*: 实时估计资产间动态相?2. **相关性突变检?*: 识别相关性结构性突变点
 3. **极端市场相关性建?*: 在极端市场环境下调整相关性估?4. **相关性预测与预警**: 预测未来相关性变化并发出预警
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供资产元数据 |
+| [数据血缘追踪蓝图](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) | DATA_LINEAGE_TRACKING_001 | 中依赖 | 提供数据血缘 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 强依赖 | 风险平价策略 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | VaR/ES监控 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **arch** | 5.0+ | GARCH模型 | [官方文档](https://arch.readthedocs.io/) |
+| **mgarch** | 0.1+ | 多元GARCH | [官方文档](https://github.com/abbass2/mgarch) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[动态相关性建模]
+    C[数据目录] --> B
+    D[数据血缘追踪] --> B
+    
+    B --> E[风险平价策略]
+    B --> F[组合优化引擎]
+    B --> G[VaR/ES监控]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
 
 ---
 
@@ -649,7 +684,7 @@ def test_integration_with_risk_parity():
 #### Layer 6: 组合优化层
 ##### 6.001. Dynamic Correlation Modeling
 - **模块ID**: DYNAMIC_CORRELATION_MODELING_001
-- **蓝图文档**: [DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md)
+- **蓝图文档**: DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

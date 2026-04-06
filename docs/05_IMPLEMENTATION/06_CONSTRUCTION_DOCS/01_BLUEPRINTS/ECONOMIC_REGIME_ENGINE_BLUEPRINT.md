@@ -1,16 +1,4 @@
 ---
-module_id: V_018
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: ECONOMIC_REGIME_ENGINE_001
 version: 2.0.3
 spec_version: 2.0
@@ -40,13 +28,14 @@ priority: P0
 ---
 
 
+
 # 经济范式判断引擎蓝图 v2.0
 
 > **?当前有效版本** | v1.0已归?>
 > 清风量化系统 v5.3 - 经济范式判断引擎架构设计
 > **索引**: `ECONOMIC_REGIME_001`
 > **开发时?*: 60h（个人开发，时间灵活?> **核心定位**: 基于随机森林模型识别宏观经济周期阶段，为桥水全天候策略提供经济范式判断能?>
-> **技术规格书**: [ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md](../../05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md)
+> **技术规格书**: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md
 
 ---
 
@@ -467,7 +456,7 @@ economic_regime_engine:
 #### Layer 5: 宏观配置层
 ##### 6.001. Economic Regime Engine
 - **模块ID**: ECONOMIC_REGIME_ENGINE_001
-- **蓝图文档**: [ECONOMIC_REGIME_ENGINE_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
+- **蓝图文档**: ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_AI因子管家_ALPHA_FACTOR_AGENT_001
+module_id: AI_FACTOR_AGENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

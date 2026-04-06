@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_因子计算框架_001
+module_id: FACTOR_CALCULATION_FRAMEWORK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

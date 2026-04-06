@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_10_MANUAL_因子库手册_001
+module_id: MANUAL_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

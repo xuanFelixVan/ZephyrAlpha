@@ -1,16 +1,4 @@
 ---
-module_id: LAYER_AI_003
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: SYSTEM_ENHANCEMENT_001
 version: 2.0.0
 status: Active
@@ -27,6 +15,7 @@ estimated_effort: 待评估
 priority: P1
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 
 # Layer 7 AI报告层增强蓝图
@@ -355,18 +344,18 @@ class CrossAssetCorrelationReport:
 
 ### 3.2 API接口概述
 
-**说明**: 详细的API接口定义请参?[LAYER7_API_REFERENCE.md](../../05_TECHNICAL_SPECIFICATIONS/LAYER7_API_REFERENCE.md)
+**说明**: 详细的API接口定义请参?LAYER7_API_REFERENCE.md
 
 #### 3.2.1 核心模块API接口
 
 | 模块 | API路径 | 功能描述 | 详细文档位置 |
 |------|---------|---------|-------------|
-| 情景分析?| POST /api/v1/reports/scenario/analyze | 执行情景分析 | [SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md) |
+| 情景分析?| POST /api/v1/reports/scenario/analyze | 执行情景分析 | SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md |
 | 压力测试 | POST /api/v1/reports/stress-test/run | 执行压力测试 | [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
-| 实时风险监控 | GET /api/v1/reports/realtime-risk/current | 获取实时风险指标 | [REALTIME_RISK_MONITORING_BLUEPRINT.md](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) |
+| 实时风险监控 | GET /api/v1/reports/realtime-risk/current | 获取实时风险指标 | REALTIME_RISK_MONITORING_BLUEPRINT.md |
 | 多时间框架融?| POST /api/v1/reports/multi-timeframe/fuse | 融合多层报告 | 本文?2.1?|
-| 经济范式分析 | POST /api/v1/reports/economic-regime/analyze | 分析经济范式 | [ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md) |
-| 信号质量监控 | POST /api/v1/reports/signal-quality/analyze | 分析信号质量 | [SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md) |
+| 经济范式分析 | POST /api/v1/reports/economic-regime/analyze | 分析经济范式 | ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md |
+| 信号质量监控 | POST /api/v1/reports/signal-quality/analyze | 分析信号质量 | SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md |
 | 策略生命周期 | GET /api/v1/reports/strategy-lifecycle/{strategy_id} | 获取策略生命周期报告 | 本文?2.2?|
 | 监管合规 | POST /api/v1/reports/regulatory/generate | 生成监管合规报告 | 本文?2.2?|
 | AI可解释?| POST /api/v1/reports/ai-explainability/analyze | AI决策可解释性分?| 本文?2.2?|
@@ -382,7 +371,7 @@ class CrossAssetCorrelationReport:
 
 ### 3.3 职责边界说明
 
-**说明**: 详细的模块职责边界定义请参?[LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES.md](./LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES.md)
+**说明**: 详细的模块职责边界定义请参?LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES.md
 
 **核心原则**:
 - **单一职责原则**: 每个模块只负责一个核心功?- **接口隔离原则**: 模块间通过明确定义的接口通信
@@ -401,7 +390,7 @@ class CrossAssetCorrelationReport:
 |---------|------|-------------|
 | Portfolio | 投资组合数据 | 各模块技术规格书 |
 | Position | 持仓数据 | 各模块技术规格书 |
-| RiskMetrics | 风险指标数据 | [REALTIME_RISK_MONITORING_BLUEPRINT.md](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) |
+| RiskMetrics | 风险指标数据 | REALTIME_RISK_MONITORING_BLUEPRINT.md |
 | BaseReport | 报告基础数据 | 各模块技术规格书 |
 
 ### 4.2 数据流向?
@@ -558,9 +547,9 @@ class CrossAssetCorrelationReport:
 
 ## 八、附?
 ### 8.1 参考文?
-- [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - 系统架构定义
-- [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) - 模块职责边界
-- [TECHNICAL_SPECIFICATION_TEMPLATE.md](TECHNICAL_SPECIFICATION_TEMPLATE.md) - 技术规格模?
+- ARCHITECTURE.md - 系统架构定义
+- MODULE_RESPONSIBILITY_BOUNDARIES.md - 模块职责边界
+- TECHNICAL_SPECIFICATION_TEMPLATE.md - 技术规格模?
 ### 8.2 术语?
 | 术语 | 定义 |
 |------|------|
@@ -601,7 +590,7 @@ class CrossAssetCorrelationReport:
 #### Layer 6: 组合优化层
 ##### 6.001. System Enhancement
 - **模块ID**: SYSTEM_ENHANCEMENT_001
-- **蓝图文档**: [SYSTEM_ENHANCEMENT_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SYSTEM_ENHANCEMENT_BLUEPRINT.md)
+- **蓝图文档**: SYSTEM_ENHANCEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 7 AI报告层
 - **状态**: Active

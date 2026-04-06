@@ -1,16 +1,4 @@
 ---
-module_id: V_027
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.1
 spec_version: 1.0
@@ -33,7 +21,9 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 open_source_dependency: numpy, pandas, scipy
 priority: P1
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 组合保险策略蓝图 v1.0
@@ -121,7 +111,7 @@ def cppi_adjust(portfolio_value: float,
 #### Layer 6: 组合优化层
 ##### 6.001. Portfolio Insurance Strategy
 - **模块ID**: PORTFOLIO_INSURANCE_STRATEGY_001
-- **蓝图文档**: [PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md)
+- **蓝图文档**: PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

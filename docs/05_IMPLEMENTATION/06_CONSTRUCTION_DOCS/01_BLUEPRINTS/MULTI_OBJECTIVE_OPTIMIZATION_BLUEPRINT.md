@@ -1,16 +1,4 @@
 ---
-module_id: MULTIOBJECTIVEOPTIMIZATIONB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ estimated_effort: 5-7天
 priority: P0
 layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 
 # 多目标优化蓝图
@@ -257,7 +246,7 @@ class MultiObjectiveAPI:
 #### Layer 6: 组合优化层
 ##### 6.001. Multi Objective Optimization
 - **模块ID**: MULTI_OBJECTIVE_OPTIMIZATION_001
-- **蓝图文档**: [MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md)
+- **蓝图文档**: MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 6 组合优化层
 - **状态**: Active

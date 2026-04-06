@@ -1,38 +1,4 @@
 ---
-module_id: MARGIN_CALL_MONITOR_001
-version: 1.0.0
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-05
-layer: Layer 6 (组合优化层 - 风险管理层)
-index: MARGIN_CALL_MONITOR_001
-estimated_hours: 120h
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-05
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: 待补充
-estimated_effort: 待评估
-priority: P1
----
-
-
-# 爆仓线监控系统蓝图 v1.0
-
-> 清风量化系统 v5.3 - 爆仓线监控系统架构设计
-> **索引**: `MARGIN_CALL_001`
-> **开发时间**: 120h
-> **核心定位**: 雪球产品爆仓线监控、融资盘爆仓预警、市场杠杆风险监控
-
----
-
 ## 1. 模块概述
 
 ### 1.1 业务背景与价值主张
@@ -70,7 +36,10 @@ priority: P1
 ### 1.3 核心功能清单
 
 | 功能模块 | 优先级 | 功能描述 | 实现复杂度 |
-|---------|--------|----------|-----------|
+|
+layer: 'Layer 5 (策略执行层)'
+---
+------|--------|----------|-----------|
 | **雪球产品爆仓线监控** | P0 | 实时监控敲入线、敲出线、爆仓概率 | 高 |
 | **融资盘爆仓预警** | P0 | 监控维持担保比例、强平预警 | 中 |
 | **市场杠杆风险监控** | P1 | 市场整体杠杆水平、集中度分析 | 高 |

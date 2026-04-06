@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_T_03_RF002_申万行业因子_001
+module_id: INDUSTRY_FACTORS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

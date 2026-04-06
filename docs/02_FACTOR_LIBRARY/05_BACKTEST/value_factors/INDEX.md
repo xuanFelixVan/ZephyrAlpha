@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_VALUE_FACTORS_价值因子回测报告_001
+module_id: VALUE_FACTORS_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

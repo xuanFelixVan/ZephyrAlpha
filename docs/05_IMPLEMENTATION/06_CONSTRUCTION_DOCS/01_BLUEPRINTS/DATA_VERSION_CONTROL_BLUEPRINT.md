@@ -1,16 +1,4 @@
 ---
-module_id: DATAVERSIONCONTROLBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: DATA_VERSION_CONTROL_001
 version: 1.0.0
 status: Active
@@ -28,6 +16,7 @@ estimated_effort: 2周
 priority: P2
 layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # 数据版本控制蓝图
 
@@ -470,7 +459,7 @@ volumes:
 ## 八、相关文档
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
-- [数据血缘追踪蓝图](./DATA_LINEAGE_TRACKING_BLUEPRINT.md)
+- 数据血缘追踪蓝图
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 
 ---
@@ -486,7 +475,7 @@ volumes:
 #### Layer 6: 组合优化层
 ##### 6.001. Data Version Control
 - **模块ID**: DATA_VERSION_CONTROL_001
-- **蓝图文档**: [DATA_VERSION_CONTROL_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VERSION_CONTROL_BLUEPRINT.md)
+- **蓝图文档**: DATA_VERSION_CONTROL_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
 - **状态**: Active

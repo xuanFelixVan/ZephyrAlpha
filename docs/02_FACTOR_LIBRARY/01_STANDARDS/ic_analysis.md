@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_IC分析体系_001
+module_id: IC_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

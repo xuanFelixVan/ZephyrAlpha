@@ -1,16 +1,4 @@
 ---
-module_id: FACTORBACKTESTINTEGRATIONBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ estimated_effort: 待评估
 priority: P1
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # 因子库与回测集成架构蓝图
 
@@ -1381,7 +1370,7 @@ python scripts/migrate.py
 #### Layer 6: 组合优化层
 ##### 6.001. Factor Backtest Integration
 - **模块ID**: FACTOR_BACKTEST_INTEGRATION_001
-- **蓝图文档**: [FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md)
+- **蓝图文档**: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设计
 - **状态**: Active

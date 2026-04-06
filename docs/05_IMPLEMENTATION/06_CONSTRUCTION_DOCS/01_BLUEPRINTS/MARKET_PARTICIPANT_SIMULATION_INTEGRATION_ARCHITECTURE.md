@@ -1,16 +1,4 @@
 ---
-module_id: MARKETPARTICIPANTSIMULATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_001
 version: 1.0.0
 status: Active
@@ -23,6 +11,7 @@ parent_document: ./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md
 implementation_status: 设计阶段
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # 市场参与者行为模拟系?- 多层次集成架构方?
 > **版本**: v1.0

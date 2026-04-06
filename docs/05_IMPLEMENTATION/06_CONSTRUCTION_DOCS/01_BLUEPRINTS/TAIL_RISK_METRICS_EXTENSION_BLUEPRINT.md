@@ -1,16 +1,4 @@
 ---
-module_id: TAILRISKMETRICSEXTENSIONBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
 status: Active
@@ -25,7 +13,9 @@ implementation_status: 设计阶段
 implementation_progress: 0%
 open_source_dependency: Riskfolio-Lib, scipy
 estimated_effort: 1周
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 # 尾部风险度量扩展蓝图
 

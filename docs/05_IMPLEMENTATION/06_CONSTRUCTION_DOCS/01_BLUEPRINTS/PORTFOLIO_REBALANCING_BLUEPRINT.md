@@ -1,16 +1,4 @@
 ---
-module_id: V_028
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.1
 spec_version: 1.0
@@ -35,7 +23,9 @@ personal_development: true
 ai_maintenance: true
 open_source_dependency: numpy, pandas, scipy
 priority: P0
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 组合再平衡策略蓝?v1.0
@@ -757,7 +747,7 @@ pip install numpy>=1.21
 ```markdown
 #### Layer 6: 组合优化?
 ##### 6.8 组合再平衡策?- **模块ID**: REBALANCING_001
-- **蓝图文档**: [PORTFOLIO_REBALANCING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md)
+- **蓝图文档**: PORTFOLIO_REBALANCING_BLUEPRINT.md
 - **技术规格书**: 待创?- **职责**: 再平衡决策、交易成本优化、效果评?- **?*: 设计阶段
 ```
 

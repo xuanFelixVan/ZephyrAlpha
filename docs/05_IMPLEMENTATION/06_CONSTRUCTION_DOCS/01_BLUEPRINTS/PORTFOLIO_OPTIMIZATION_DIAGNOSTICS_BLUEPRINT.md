@@ -1,30 +1,4 @@
 ---
-module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: 自研, numpy, scipy
-estimated_effort: 1周
----
-
-# 组合优化诊断蓝图
-
-> **模块ID**: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 诊断组合优化问题的健康状况，识别潜在问题
-> **索引**: `PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001`
-> **开发周期**: 1周
-
----
-
 ## 1. 模块概述
 
 ### 1.1 核心职责
@@ -35,8 +9,9 @@ estimated_effort: 1周
 - ✅ 负责: 数值稳定性检查、约束可行性诊断、优化结果验证
 - ❌ 不负责: 执行优化（由各优化模块负责）
 - ❌ 不负责: 数据质量检查（由Layer 1负责）
-
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 ## 2. 功能设计
 

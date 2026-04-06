@@ -1,16 +1,4 @@
 ---
-module_id: DATACATALOGMETADATABLUEPRIN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: DATA_CATALOG_METADATA_001
 version: 1.0.1
 status: Active
@@ -28,6 +16,7 @@ estimated_effort: 2周
 priority: P2
 layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # 数据目录与元数据管理系统蓝图
 
@@ -286,7 +275,7 @@ class DataLineageTracker:
 #### Layer 6: 组合优化层
 ##### 6.001. Data Catalog Metadata
 - **模块ID**: DATA_CATALOG_METADATA_001
-- **蓝图文档**: [DATA_CATALOG_METADATA_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_CATALOG_METADATA_BLUEPRINT.md)
+- **蓝图文档**: DATA_CATALOG_METADATA_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
 - **状态**: Active

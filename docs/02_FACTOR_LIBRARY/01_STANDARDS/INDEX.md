@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_因子方法论目录索_001
+module_id: STANDARDS_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,0 +1,34 @@
+﻿# 文档质量监控报告
+
+**检查时间**: 2026-04-07 01:12:29
+**检查范围**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS
+
+---
+
+## 📊 质量统计
+
+- **总文档数**: 91
+- **有问题文档数**: 6
+- **总问题数**: 13
+- **合规率**: 93.4%
+
+---
+
+## 🟡 P1级问题
+
+- **DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md**: 死链接 - 发现 1 个死链接
+
+## 🟢 P2级问题
+
+- **FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md**: YAML字段缺失 - 缺少字段: module_id, version, status, created_date, owner
+- **FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md**: 主标题缺失 - 文档缺少主标题
+- **FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md**: 文档治理章节缺失 - 文档缺少文档治理章节
+- **MARGIN_CALL_MONITOR_BLUEPRINT.md**: YAML字段缺失 - 缺少字段: module_id, version, status, created_date, owner
+- **MARGIN_CALL_MONITOR_BLUEPRINT.md**: 主标题缺失 - 文档缺少主标题
+- **MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md**: YAML字段缺失 - 缺少字段: module_id, version, status, created_date, owner
+- **MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md**: YAML字段缺失 - 缺少字段: module_id, version, status, created_date, owner
+- **MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md**: 主标题缺失 - 文档缺少主标题
+- **MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md**: 文档治理章节缺失 - 文档缺少文档治理章节
+- **PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md**: YAML字段缺失 - 缺少字段: module_id, version, status, created_date, owner
+- **PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md**: 主标题缺失 - 文档缺少主标题
+- **PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md**: 文档治理章节缺失 - 文档缺少文档治理章节

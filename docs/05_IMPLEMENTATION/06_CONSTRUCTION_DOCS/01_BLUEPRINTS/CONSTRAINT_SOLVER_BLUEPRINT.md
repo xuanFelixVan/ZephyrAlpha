@@ -1,16 +1,4 @@
 ---
-module_id: V_014
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0
 spec_version: 1.0
@@ -35,7 +23,9 @@ personal_development: true
 ai_maintenance: true
 open_source_dependency: cvxpy, scipy, numpy
 priority: P0
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 # 约束求解器蓝?v1.0
 
@@ -431,9 +421,7 @@ class ConstraintRelaxer:
             method = self._select_relaxation_method(conflict)
             
             # 松弛冲突约束
-            relaxed = self.relaxation_methods[method](
-                conflict.constraint1, conflict.constraint2
-            )
+            relaxed = self.relaxation_methodsmethod
             
             # 替换原约?            relaxed_constraints = self._replace_constraints(
                 relaxed_constraints, [conflict.constraint1, conflict.constraint2], relaxed
@@ -836,7 +824,7 @@ pip install pandas>=1.5
 ```markdown
 #### Layer 6: 组合优化?
 ##### 6.5 约束求解?- **模块ID**: CONSTRAINT_SOLVER_001
-- **蓝图文档**: [CONSTRAINT_SOLVER_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md)
+- **蓝图文档**: CONSTRAINT_SOLVER_BLUEPRINT.md
 - **技术规格书**: 待创?- **职责**: 约束处理、凸优化求解、约束冲突解?- **?*: 设计阶段
 ```
 

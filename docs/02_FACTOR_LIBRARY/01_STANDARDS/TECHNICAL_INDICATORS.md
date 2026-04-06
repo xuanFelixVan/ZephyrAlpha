@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_技术指标完整参数表_001
+module_id: TECHNICAL_INDICATORS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

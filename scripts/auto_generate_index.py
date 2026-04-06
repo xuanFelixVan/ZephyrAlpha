@@ -246,11 +246,11 @@ compliance_level: 专业标准
             with open(index_path, "w", encoding="utf-8") as f:
                 f.write(content)
 
-            print(f"✅ 已创建: {index_path.relative_to(self.docs_root.parent)}")
+            print(f"[OK] 已创建: {index_path.relative_to(self.docs_root.parent)}")
             self.stats["generated"] += 1
             return True
         except Exception as e:
-            print(f"❌ 创建失败: {index_path} - {e}")
+            print(f"[ERROR] 创建失败: {index_path} - {e}")
             self.stats["skipped"] += 1
             return False
 
@@ -267,7 +267,7 @@ compliance_level: 专业标准
         missing_dirs = self.scan_missing_index_directories(min_files)
 
         if not missing_dirs:
-            print("✅ 所有目录都有INDEX.md")
+            print("[OK] 所有目录都有INDEX.md")
             return
 
         print(f"发现 {len(missing_dirs)} 个目录缺失INDEX.md")
@@ -292,6 +292,8 @@ compliance_level: 专业标准
         for dir_info in missing_dirs:
             # 分析目录内容
             analyzed = self.analyze_directory_content(dir_info["path"])
+            # 添加relative_path字段
+            analyzed["relative_path"] = dir_info["relative_path"]
 
             # 生成INDEX.md
             self.generate_index_file(analyzed, dry_run)

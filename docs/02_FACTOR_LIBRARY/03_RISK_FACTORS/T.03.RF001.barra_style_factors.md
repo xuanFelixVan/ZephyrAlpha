@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_T_03_RF001_BARRA风格因子_A股适配版_001
+module_id: BARRA_STYLE_FACTORS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

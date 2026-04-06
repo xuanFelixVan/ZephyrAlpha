@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_研究项目管理_001
+module_id: RESEARCH_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

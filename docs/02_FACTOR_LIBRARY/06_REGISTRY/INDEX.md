@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_因子注册表目录索_001
+module_id: REGISTRY_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

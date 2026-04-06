@@ -1,16 +1,4 @@
 ---
-module_id: LAYER_AI_002
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.2
 status: Active
@@ -28,6 +16,7 @@ estimated_effort: 1周
 priority: P1
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # Layer 7 AI报告?- 模块职责边界定义
 
@@ -312,9 +301,9 @@ report = reporter.get_report_result(task_id)
 ---
 
 ## 七、参考文?
-- [LAYER7_ENHANCEMENT_BLUEPRINT.md](./LAYER7_ENHANCEMENT_BLUEPRINT.md)
-- [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
-- [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- LAYER7_ENHANCEMENT_BLUEPRINT.md
+- ARCHITECTURE.md
+- MODULE_RESPONSIBILITY_BOUNDARIES.md
 
 ## 变更历史
 
@@ -336,7 +325,7 @@ report = reporter.get_report_result(task_id)
 #### Layer 6: 组合优化层
 ##### 6.001. Module Responsibility Boundaries
 - **模块ID**: MODULE_RESPONSIBILITY_BOUNDARIES_001
-- **蓝图文档**: [MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md)
+- **蓝图文档**: MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 7 AI报告层
 - **状态**: Active

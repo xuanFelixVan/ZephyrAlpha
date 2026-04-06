@@ -1,16 +1,4 @@
 ---
-module_id: V_038
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.2
 spec_version: 1.0
@@ -36,6 +24,7 @@ ai_maintenance: true
 open_source_dependency: numpy, pandas, scipy
 priority: P0
 ---
+
 
 # 压力测试与情景分析系统蓝图 v1.0
 
@@ -347,7 +336,7 @@ def generate_scenarios(
 #### Layer 6: 组合优化层
 ##### 6.001. Stress Testing System
 - **模块ID**: STRESS_TESTING_SYSTEM_001
-- **蓝图文档**: [STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: STRESS_TESTING_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

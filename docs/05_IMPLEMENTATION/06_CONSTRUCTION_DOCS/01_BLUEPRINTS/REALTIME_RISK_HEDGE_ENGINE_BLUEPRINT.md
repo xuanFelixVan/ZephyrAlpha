@@ -1,16 +1,4 @@
 ---
-module_id: V_030
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.1
 spec_version: 1.0
@@ -36,6 +24,7 @@ priority: P0
 ---
 
 
+
 # 实时风险对冲引擎蓝图 v1.0
 
 > 清风量化系统 v5.3 - 实时风险对冲引擎架构设计
@@ -47,7 +36,7 @@ priority: P0
 ## 文档职责说明
 
 **本文档职?*: 实施层具体实?- 提供实时风险对冲引擎的具体实现方?- 设计核心子系统和技术细?- 提供代码示例和部署方?- 制定实施路径和测试方?
-**框架层文?*: [实时风险监控仪表板蓝图](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md)
+**框架层文?*: 实时风险监控仪表板蓝图
 - 定义整体架构和设计原?- 分析专业机构实践
 - 规划系统架构层次
 
@@ -703,12 +692,12 @@ class TestRiskHedgeEngine:
 
 ### 11.1 架构文档
 
-- [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
 ### 11.2 相关模块
 
 - [ECONOMIC_REGIME_ENGINE_BLUEPRINT.md](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md) - 经济范式判断引擎
-- [ALL_WEATHER_OPTIMIZER_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) - 全天候配置优化器
+- ALL_WEATHER_OPTIMIZER_BLUEPRINT.md - 全天候配置优化器
 
 ---
 
@@ -738,7 +727,7 @@ class TestRiskHedgeEngine:
 #### Layer 5: 中观策略层
 ##### 6.001. Realtime Risk Hedge Engine
 - **模块ID**: REALTIME_RISK_HEDGE_ENGINE_001
-- **蓝图文档**: [REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
+- **蓝图文档**: REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

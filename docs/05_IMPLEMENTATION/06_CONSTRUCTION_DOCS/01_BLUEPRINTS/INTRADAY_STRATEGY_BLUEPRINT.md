@@ -1,16 +1,4 @@
 ---
-module_id: V_020
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: INTRADAY_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ layer: "Layer 1 (微观执行层) | 业务架构: 三级时间框架融合架构
 estimated_effort: 2.5周
 open_source_dependency: pandas, numpy, scipy, scikit-learn
 ---
+
 
 # 盘中策略模块蓝图 v1.0
 
@@ -286,7 +275,7 @@ class VolumeAnalyzer:
 
 - [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
 - [秒级风险控制系统蓝图](./RISK_CONTROL_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- 专业多时间框架策略架构
 
 ---
 
@@ -310,7 +299,7 @@ class VolumeAnalyzer:
 #### Layer 1: 微观执行层
 ##### 6.001. Intraday Strategy
 - **模块ID**: INTRADAY_STRATEGY_001
-- **蓝图文档**: [INTRADAY_STRATEGY_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INTRADAY_STRATEGY_BLUEPRINT.md)
+- **蓝图文档**: INTRADAY_STRATEGY_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 微观执行层盘中策略
 - **状态**: Active

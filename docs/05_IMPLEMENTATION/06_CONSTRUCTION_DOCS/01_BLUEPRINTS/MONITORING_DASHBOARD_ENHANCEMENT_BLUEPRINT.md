@@ -1,16 +1,4 @@
 ---
-module_id: MONITORINGDASHBOARDENHANCEME_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MONITORING_DASHBOARD_ENHANCEMENT_001
 version: 1.0.0
 status: Active
@@ -34,7 +22,9 @@ opensource_project: Streamlit
 open_source_dependency: 待补充
 estimated_effort: 待评估
 priority: P1
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 监控面板增强蓝图
@@ -601,8 +591,8 @@ class AlertMessage:
 
 | 文档 | 说明 |
 |------|------|
-| [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
-| [STREAMLIT_DASHBOARD_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/STREAMLIT_DASHBOARD_TECHNICAL_SPECIFICATION.md) | Streamlit技术规格 |
+| ARCHITECTURE.md | 系统架构 |
+| STREAMLIT_DASHBOARD_TECHNICAL_SPECIFICATION.md | Streamlit技术规格 |
 
 ---
 
@@ -631,7 +621,7 @@ class AlertMessage:
 #### Layer 8: 人机交互层
 ##### 6.001. Monitoring Dashboard Enhancement
 - **模块ID**: MONITORING_DASHBOARD_ENHANCEMENT_001
-- **蓝图文档**: [MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md)
+- **蓝图文档**: MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - 人机交互层
 - **状态**: Active

@@ -12,25 +12,12 @@ parent_document: ../INDEX.md
 implementation_status: 活跃维护
 ---
 
-﻿---
-module_id: INDEX_FACTOR_LIBRARY_001
-version: 2.0.1
-status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-04
-owner: 因子库架构师
-standard_type: 专业量化机构目录索引
-applicable_scope: 02_FACTOR_LIBRARY目录
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 活跃维护
----
+# 因子库目录索引
 
-# 因子库目录索�?
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
-> **最后更�?*: 2026-04-03  
-> **维护�?*: 因子库架构师
+> **最后更新**: 2026-04-03  
+> **维护者**: 因子库架构师
 
 ---
 

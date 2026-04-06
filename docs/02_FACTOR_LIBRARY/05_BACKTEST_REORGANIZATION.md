@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_05_BACKTEST_目录重组方案_001
+module_id: BACKTEST_REORGANIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

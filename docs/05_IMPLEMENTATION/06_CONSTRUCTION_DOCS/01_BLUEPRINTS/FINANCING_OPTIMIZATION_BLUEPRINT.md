@@ -1,16 +1,4 @@
 ---
-module_id: V_019
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: FINANCING_OPTIMIZATION_001
 version: 1.0.1
 spec_version: 1.0
@@ -33,7 +21,9 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 open_source_dependency: numpy, pandas, scipy
 priority: P1
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 融资优化蓝图 v1.0
@@ -56,6 +46,51 @@ priority: P1
 - **成本优化**: 降低融资成本
 - **效率提升**: 提高资金使用效率
 - **风险管理**: 控制融资风险
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [流动性管理系统蓝图](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) | LIQUIDITY_MANAGEMENT_SYSTEM_001 | 强依赖 | 提供流动性数据 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | 提供风险指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [动态杠杆管理蓝图](./DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) | DYNAMIC_LEVERAGE_MANAGEMENT_001 | 强依赖 | 杠杆管理 |
+| [保证金监控蓝图](./MARGIN_CALL_MONITOR_BLUEPRINT.md) | MARGIN_CALL_MONITOR_001 | 中依赖 | 保证金监控 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 组合优化 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[流动性管理系统] --> B[融资优化]
+    C[数据质量监控] --> B
+    D[VaR/ES监控] --> B
+    
+    B --> E[动态杠杆管理]
+    B --> F[保证金监控]
+    B --> G[组合优化引擎]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
 
 ---
 
@@ -120,7 +155,7 @@ def optimize_financing(capital_needed: float,
 #### Layer 6: 组合优化层
 ##### 6.001. Financing Optimization
 - **模块ID**: FINANCING_OPTIMIZATION_001
-- **蓝图文档**: [FINANCING_OPTIMIZATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FINANCING_OPTIMIZATION_BLUEPRINT.md)
+- **蓝图文档**: FINANCING_OPTIMIZATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

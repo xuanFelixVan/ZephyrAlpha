@@ -1,16 +1,4 @@
 ---
-module_id: SMARTORDERROUTERBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: SMART_ORDER_ROUTER_001
 version: 1.0.0
 status: Active
@@ -35,7 +23,9 @@ opensource_project: 自研简化版
 open_source_dependency: pandas, numpy
 estimated_effort: 3周
 priority: P2
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 # 智能订单路由器蓝图
 
@@ -480,9 +470,9 @@ class SubOrder:
 
 | 文档名称 | 说明 |
 |---------|------|
-| [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构文档 |
-| [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](../../../01_FRAMEWORK/STRATEGY_EXECUTION_LAYER_BLUEPRINT.md) | 策略执行层蓝图 |
-| [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md) | QMT执行器技术规格 |
+| ARCHITECTURE.md | 系统架构文档 |
+| STRATEGY_EXECUTION_LAYER_BLUEPRINT.md | 策略执行层蓝图 |
+| QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md | QMT执行器技术规格 |
 
 ---
 
@@ -510,7 +500,7 @@ class SubOrder:
 #### Layer 5: 策略执行层
 ##### 6.001. Smart Order Router
 - **模块ID**: SMART_ORDER_ROUTER_001
-- **蓝图文档**: [SMART_ORDER_ROUTER_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SMART_ORDER_ROUTER_BLUEPRINT.md)
+- **蓝图文档**: SMART_ORDER_ROUTER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 5 - 策略执行层
 - **状态**: Active

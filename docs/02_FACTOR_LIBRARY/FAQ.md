@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_FAQ_MD_常见问题_001
+module_id: FAQ_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

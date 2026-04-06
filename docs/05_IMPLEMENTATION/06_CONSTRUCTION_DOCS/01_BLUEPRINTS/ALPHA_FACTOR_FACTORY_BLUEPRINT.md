@@ -1,16 +1,4 @@
 ---
-module_id: V_013
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: ALPHA_FACTOR_FACTORY_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ layer: "Layer 3 (中观策略层) | 业务架构: 三级时间框架融合架构
 estimated_effort: 3周
 open_source_dependency: alphalens, pandas, numpy, scipy, scikit-learn
 ---
+
 
 # 阿尔法因子工厂蓝图 v1.0
 
@@ -398,8 +387,8 @@ class AlphaFactorFactory:
 ## 🔗 相关文档
 
 - [市场状态识别系统蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
-- [多因子合成引擎蓝图](./MULTI_FACTOR_SYNTHESIS_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- 多因子合成引擎蓝图
+- 专业多时间框架策略架构
 
 ---
 
@@ -423,7 +412,7 @@ class AlphaFactorFactory:
 #### Layer 3: 中观策略层
 ##### 6.001. Alpha Factor Factory
 - **模块ID**: ALPHA_FACTOR_FACTORY_001
-- **蓝图文档**: [ALPHA_FACTOR_FACTORY_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
+- **蓝图文档**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 中观策略层因子生产
 - **状态**: Active

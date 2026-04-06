@@ -1,30 +1,4 @@
 ---
-module_id: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: Cvxportfolio, cvxpy
-estimated_effort: 2周
----
-
-# 多期动态优化蓝图
-
-> **模块ID**: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 考虑未来多期的动态优化，而非单期静态优化
-> **索引**: `MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001`
-> **开发周期**: 2周
-
----
-
 ## 1. 模块概述
 
 ### 1.1 核心职责
@@ -39,7 +13,10 @@ estimated_effort: 2周
 ### 1.2 开源依赖
 
 | 库名 | 版本 | 用途 |
-|------|------|------|
+|
+layer: 'Layer 5 (策略执行层)'
+---
+---|------|------|
 | Cvxportfolio | >=1.2.0 | 多期优化框架 |
 | cvxpy | >=1.4.0 | 凸优化求解 |
 

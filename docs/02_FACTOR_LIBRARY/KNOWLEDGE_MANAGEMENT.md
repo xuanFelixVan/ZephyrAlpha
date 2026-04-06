@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_知识管理蓝图_001
+module_id: KNOWLEDGE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

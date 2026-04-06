@@ -1,16 +1,4 @@
 ---
-module_id: V_023
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MARKET_REGIME_DETECTION_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ layer: "Layer 3 (中观策略层) | 业务架构: 三级时间框架融合架构
 estimated_effort: 2.5周
 open_source_dependency: scikit-learn, hmmlearn, pandas, numpy, scipy
 ---
+
 
 # 市场状态识别系统蓝图 v1.0
 
@@ -1107,8 +1096,8 @@ def test_hmm_model():
 ## 🔗 相关文档
 
 - [阿尔法因子工厂蓝图](./ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
-- [多因子合成引擎蓝图](./MULTI_FACTOR_SYNTHESIS_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- 多因子合成引擎蓝图
+- 专业多时间框架策略架构
 
 ---
 
@@ -1132,7 +1121,7 @@ def test_hmm_model():
 #### Layer 3: 中观策略层
 ##### 6.001. Meso Market Regime
 - **模块ID**: MARKET_REGIME_DETECTION_001
-- **蓝图文档**: [MARKET_REGIME_DETECTION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_REGIME_DETECTION_BLUEPRINT.md)
+- **蓝图文档**: MARKET_REGIME_DETECTION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 中观策略层市场状态识别
 - **状态**: Active

@@ -1,16 +1,4 @@
 ---
-module_id: V_025
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
@@ -33,7 +21,9 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 open_source_dependency: numpy, pandas, scipy, cvxpy
 priority: P0
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 多策略分层系统蓝?v1.0
@@ -1026,9 +1016,9 @@ class MultiStrategyHierarchicalSystem:
 
 ### 8.3 相关文档
 
-- [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-- [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)
-- [API_Contract.md](../../../01_FRAMEWORK/API_Contract.md)
+- PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+- PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+- API_Contract.md
 
 ---
 
@@ -1056,7 +1046,7 @@ class MultiStrategyHierarchicalSystem:
 #### Layer 6: 组合优化层
 ##### 6.001. Multi Strategy Hierarchical System
 - **模块ID**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-- **蓝图文档**: [MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

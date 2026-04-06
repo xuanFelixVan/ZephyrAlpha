@@ -1,16 +1,4 @@
 ---
-module_id: V_022
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.1
 spec_version: 1.0
@@ -34,6 +22,7 @@ implementation_status: 设计阶段
 open_source_dependency: numpy, pandas, scipy
 priority: P0
 ---
+
 
 
 # 市场冲击模型蓝图 v1.0
@@ -68,6 +57,52 @@ priority: P0
 2. **执行成本估算**: 估算订单执行的总成?3. **最优执行策?*: 基于冲击预测优化执行策略
 4. **实时冲击监控**: 监控实际冲击与预测的偏差
 5. **模型持续优化**: 根据实际数据持续优化模型
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供市场数据元数据 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 提供优化器基础接口 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [交易成本优化模型蓝图](./TRADING_COST_OPTIMIZATION_BLUEPRINT.md) | TRADING_COST_OPTIMIZATION_001 | 强依赖 | 交易成本优化 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 强依赖 | 算法交易执行 |
+| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依赖 | 订单路由优化 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **Statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[市场冲击模型]
+    C[数据目录] --> B
+    D[组合优化引擎] --> B
+    
+    B --> E[交易成本优化模型]
+    B --> F[算法交易优化器]
+    B --> G[智能订单路由]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
 
 ---
 
@@ -652,15 +687,15 @@ class TestMarketImpactModel:
 
 ### 11.1 技术规格书
 
-- [MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md](../05_TECHNICAL_SPECIFICATIONS/MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md)
+- MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md
 
 ### 11.2 改进计划
 
-- [SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md](../07_OPERATIONS/improvement_plans/SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md)
+- SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md
 
 ### 11.3 架构文档
 
-- [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
 ---
 
@@ -690,7 +725,7 @@ class TestMarketImpactModel:
 #### Layer 5: 微观执行层
 ##### 6.001. Market Impact Model
 - **模块ID**: MARKET_IMPACT_MODEL_001
-- **蓝图文档**: [MARKET_IMPACT_MODEL_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_IMPACT_MODEL_BLUEPRINT.md)
+- **蓝图文档**: MARKET_IMPACT_MODEL_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

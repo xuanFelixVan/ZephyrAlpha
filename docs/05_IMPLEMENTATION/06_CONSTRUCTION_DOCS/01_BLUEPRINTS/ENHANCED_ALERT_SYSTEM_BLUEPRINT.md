@@ -1,16 +1,4 @@
 ---
-module_id: ENHANCEDALERTSYSTEMBLUEPRIN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: ENHANCED_ALERT_SYSTEM_001
 version: 1.0.2
 status: Active
@@ -44,6 +32,7 @@ responsibility_boundary: |
 layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架构'
 ---
 
+
 # 实时告警系统增强蓝图
 
 > 清风量化系统 v5.3 - 实时告警系统增强详细设计
@@ -61,7 +50,7 @@ layer: 'Layer 1 (数据预处理层) | 业务架构: 三级时间框架融合架
 ```
 ┌─────────────────────────────────────────────────────────────?? 本文? 统一告警平台 - 接收所有子系统的告警并统一分发         ?└─────────────────────────────────────────────────────────────?                              ?        ┌─────────────────────┼─────────────────────?        ?                    ?                    ?┌───────┴───────?  ┌────────┴────────?  ┌───────┴───────??舆情预警模块   ?  ?数据质量监控    ?  ?风险控制系统   ??(REAL_TIME_   ?  ?(DATA_QUALITY)  ?  ?(RISK_ENGINE)  ??ALERT_SYSTEM) ?  ?                ?  ?              ?└───────────────?  └─────────────────?  └───────────────?```
 
-**子系统预警模?*: [舆情预警模块](../../../10_AI_WORKFLOW/REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) - 舆情专用预警，告警发送到本平?
+**子系统预警模?*: 舆情预警模块 - 舆情专用预警，告警发送到本平?
 ---
 
 > **职责说明**: 本蓝图是全系统统一告警平台，负责接收来自各个系统的告警（包括数据质量监控系统、风险控制系统、执行系统、舆情分析系统等），提供告警聚合、告警抑制、告警路由、多渠道分发等功能?
@@ -581,7 +570,7 @@ class MultiChannelNotifier:
 #### Layer 6: 组合优化层
 ##### 6.001. Enhanced Alert System
 - **模块ID**: ENHANCED_ALERT_SYSTEM_001
-- **蓝图文档**: [ENHANCED_ALERT_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统统一告警平台
 - **状态**: Active

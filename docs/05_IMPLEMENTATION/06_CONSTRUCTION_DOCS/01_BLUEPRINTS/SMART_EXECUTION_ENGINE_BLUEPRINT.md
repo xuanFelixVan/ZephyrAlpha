@@ -1,16 +1,4 @@
 ---
-module_id: V_035
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: SMART_EXECUTION_ENGINE_001
 version: 1.0.1
 spec_version: 1.0
@@ -34,6 +22,7 @@ implementation_status: 设计阶段
 open_source_dependency: numpy, pandas, scipy
 priority: P0
 ---
+
 
 
 # 智能执行算法引擎蓝图 v1.0
@@ -591,15 +580,15 @@ class TestSmartExecutionEngine:
 
 ### 11.1 技术规格书
 
-- [SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md](../05_TECHNICAL_SPECIFICATIONS/SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md)
+- SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md
 
 ### 11.2 改进计划
 
-- [SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md](../07_OPERATIONS/improvement_plans/SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md)
+- SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md
 
 ### 11.3 架构文档
 
-- [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
 ---
 
@@ -629,7 +618,7 @@ class TestSmartExecutionEngine:
 #### Layer 5: 微观执行层
 ##### 6.001. Smart Execution Engine
 - **模块ID**: SMART_EXECUTION_ENGINE_001
-- **蓝图文档**: [SMART_EXECUTION_ENGINE_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SMART_EXECUTION_ENGINE_BLUEPRINT.md)
+- **蓝图文档**: SMART_EXECUTION_ENGINE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

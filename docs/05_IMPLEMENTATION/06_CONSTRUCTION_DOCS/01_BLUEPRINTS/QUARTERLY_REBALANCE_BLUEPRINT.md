@@ -1,16 +1,4 @@
 ---
-module_id: V_029
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
@@ -26,7 +14,9 @@ priority: P0
 layer: Layer 6 (组合优化层)
 estimated_effort: 2周
 open_source_dependency: pandas, numpy, scipy, cvxpy
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 # 季度调仓决策系统蓝图 v1.0
 
@@ -313,7 +303,7 @@ class RebalancingTimingOptimizer:
 
 - [战略资产权重分配系统蓝图](./STRATEGIC_WEIGHTING_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- 专业多时间框架策略架构
 
 ---
 
@@ -337,7 +327,7 @@ class RebalancingTimingOptimizer:
 #### Layer 6: 组合优化层
 ##### 6.001. Quarterly Rebalance
 - **模块ID**: QUARTERLY_REBALANCE_001
-- **蓝图文档**: [QUARTERLY_REBALANCE_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/QUARTERLY_REBALANCE_BLUEPRINT.md)
+- **蓝图文档**: QUARTERLY_REBALANCE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 组合优化层季度调仓
 - **状态**: Active

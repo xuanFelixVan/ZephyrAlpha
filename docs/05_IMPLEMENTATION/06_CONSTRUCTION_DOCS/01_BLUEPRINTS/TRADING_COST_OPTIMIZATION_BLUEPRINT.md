@@ -1,16 +1,4 @@
 ---
-module_id: V_040
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.1
 spec_version: 1.0
@@ -36,6 +24,7 @@ ai_maintenance: true
 open_source_dependency: numpy, pandas, scipy
 priority: P0
 ---
+
 
 
 # 交易成本优化模型蓝图 v1.0
@@ -75,6 +64,52 @@ priority: P0
 1. **市场冲击成本建模**: 使用Almgren-Chriss模型估计市场冲击
 2. **最优执行算?*: 提供VWAP/TWAP/IS等执行算?3. **交易成本感知优化**: 在组合优化中考虑交易成本
 4. **执行计划生成**: 生成最优执行计划和时间?
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 强依赖 | 提供成本分析数据 |
+| [市场冲击模型蓝图](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | 强依赖 | 提供市场冲击预测 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依赖 | 成本感知再平衡 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
+| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依赖 | 订单路由优化 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **CVXPY** | 1.4+ | 凸优化 | [官方文档](https://www.cvxpy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[交易成本分析引擎] --> B[交易成本优化模型]
+    C[市场冲击模型] --> B
+    D[组合优化引擎] --> B
+    
+    B --> E[交易成本感知再平衡]
+    B --> F[算法交易优化器]
+    B --> G[智能订单路由]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
 ---
 
 ## 2. 架构设计
@@ -808,7 +843,7 @@ def test_integration_with_portfolio_optimizer():
 #### Layer 5: 执行层
 ##### 6.001. Trading Cost Optimization
 - **模块ID**: TRADING_COST_OPTIMIZATION_001
-- **蓝图文档**: [TRADING_COST_OPTIMIZATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_COST_OPTIMIZATION_BLUEPRINT.md)
+- **蓝图文档**: TRADING_COST_OPTIMIZATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

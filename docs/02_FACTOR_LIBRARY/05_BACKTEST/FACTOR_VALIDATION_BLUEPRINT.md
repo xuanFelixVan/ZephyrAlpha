@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_因子验证框架蓝图_001
+module_id: FACTOR_VALIDATION_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

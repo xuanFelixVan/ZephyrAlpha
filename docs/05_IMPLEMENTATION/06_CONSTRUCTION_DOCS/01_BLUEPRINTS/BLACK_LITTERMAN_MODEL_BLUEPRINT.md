@@ -1,16 +1,4 @@
 ---
-module_id: BLACK_LITTERMAN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ estimated_effort: 2-3天
 priority: P0
 layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # Black-Litterman组合优化模型蓝图
 
@@ -786,7 +775,7 @@ class BlackLittermanAPI:
 
 ### 10.3 相关蓝图
 
-- [组合优化蓝图](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)
+- 组合优化蓝图
 - [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md)
 - [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
 

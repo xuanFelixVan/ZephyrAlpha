@@ -1,43 +1,4 @@
 ---
-module_id: MEANVARIANCEOPTIMIZATIONBLU_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
-module_id: MEAN_VARIANCE_OPTIMIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: PyPortfolioOpt, cvxpy, scipy
-estimated_effort: 1周
-layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
----
-
-# 均值方差优化基础框架蓝图
-
-> **模块ID**: MEAN_VARIANCE_OPTIMIZATION_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 提供Markowitz均值方差优化的基础框架，作为组合优化层的核心求解引擎
-> **索引**: `MEAN_VARIANCE_OPTIMIZATION_001`
-> **开发周期**: 1周
-
----
-
 ## 1. 模块概述
 
 ### 1.1 核心职责
@@ -53,7 +14,10 @@ layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构
 ### 1.2 开源依赖
 
 | 库名 | 版本 | 用途 | GitHub Stars |
-|------|------|------|--------------|
+|
+layer: 'Layer 5 (策略执行层)'
+---
+---|------|------|--------------|
 | PyPortfolioOpt | >=1.5.0 | 核心优化引擎 | 4.2k+ |
 | cvxpy | >=1.4.0 | 凸优化求解器 | 4.5k+ |
 | scipy | >=1.10.0 | 数值优化 | 12k+ |

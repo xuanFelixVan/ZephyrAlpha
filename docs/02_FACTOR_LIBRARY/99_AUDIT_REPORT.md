@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_因子库审计报告与优化总结_FACTOR_LIBRARY_AU_001
+module_id: AUDIT_REPORT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

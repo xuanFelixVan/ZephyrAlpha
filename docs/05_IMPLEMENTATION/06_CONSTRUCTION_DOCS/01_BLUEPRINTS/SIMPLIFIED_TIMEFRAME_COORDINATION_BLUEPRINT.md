@@ -1,16 +1,4 @@
 ---
-module_id: V_034
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_001
 version: 1.0.2
 spec_version: 1.0
@@ -37,6 +25,7 @@ simplified_version: true
 open_source_dependency: numpy, pandas, scipy
 priority: P0
 ---
+
 
 # 简化版多时间框架协同优化蓝图 v1.0
 
@@ -372,7 +361,7 @@ def resolve_conflicts(
 #### Layer 6: 组合优化层
 ##### 6.001. Simplified Timeframe Coordination
 - **模块ID**: SIMPLIFIED_TIMEFRAME_COORDINATION_001
-- **蓝图文档**: [SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md)
+- **蓝图文档**: SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

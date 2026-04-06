@@ -1,16 +1,4 @@
 ---
-module_id: STRATEGYSELECTIONBLUEPRINT_002
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0
 status: Active
@@ -28,6 +16,7 @@ priority: P1
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
 
+
 # 策略排名与选择系统技术蓝?
 
 > 清风量化交易系统 v5.3 - 策略排名与选择系统详细技术设?
@@ -35,7 +24,7 @@ layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 > **开发周?*: 80小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支?20+策略多维度评分、智能排名、动态选择和市场适应性分?
 > **参考开?*: vn.py的StrategyRanking + quant-system策略选择模块 + 多准则决策分?MCDA)
-> **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于策略排名与选择功能
+> **补充文档**: 本蓝图是STRATEGY_ENGINE_CORE_BLUEPRINT.md的技术补充，专注于策略排名与选择功能
 
 ## 一、设计目标与约束
 
@@ -1009,10 +998,10 @@ python strategy_selector.py query \
 
 | 文档 | 说明 |
 |------|------|
-| [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 策略引擎核心蓝图 |
-| [BATCH_EVALUATION_BLUEPRINT.md](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/BATCH_EVALUATION_BLUEPRINT.md) | 批量评估蓝图 |
-| [PARAMETER_OPTIMIZATION_BLUEPRINT.md](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/PARAMETER_OPTIMIZATION_BLUEPRINT.md) | 参数优化蓝图 |
-| [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | 组合优化蓝图 |
+| STRATEGY_ENGINE_CORE_BLUEPRINT.md | 策略引擎核心蓝图 |
+| BATCH_EVALUATION_BLUEPRINT.md | 批量评估蓝图 |
+| PARAMETER_OPTIMIZATION_BLUEPRINT.md | 参数优化蓝图 |
+| PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 **文档版本**: v1.0  
 **最后更?*: 2026-04-01  
@@ -1039,7 +1028,7 @@ python strategy_selector.py query \
 #### Layer 6: 组合优化层
 ##### 6.001. Strategy Selection
 - **模块ID**: STRATEGY_SELECTION_001
-- **蓝图文档**: [STRATEGY_SELECTION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_SELECTION_BLUEPRINT.md)
+- **蓝图文档**: STRATEGY_SELECTION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设计
 - **状态**: Active

@@ -1,16 +1,4 @@
 ---
-module_id: V_037
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
 status: Active
@@ -27,6 +15,7 @@ layer: "Layer 5 (宏观配置层) | 业务架构: 三级时间框架融合架构
 estimated_effort: 2.5周
 open_source_dependency: cvxpy, pandas, numpy, scipy, PyPortfolioOpt
 ---
+
 
 # 战略资产权重分配系统蓝图 v1.0
 
@@ -425,7 +414,7 @@ class ConstraintHandler:
 
 - [季度调仓决策系统蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- 专业多时间框架策略架构
 
 ---
 
@@ -449,7 +438,7 @@ class ConstraintHandler:
 #### Layer 5: 宏观配置层
 ##### 6.001. Strategic Weighting
 - **模块ID**: STRATEGIC_WEIGHTING_001
-- **蓝图文档**: [STRATEGIC_WEIGHTING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_WEIGHTING_BLUEPRINT.md)
+- **蓝图文档**: STRATEGIC_WEIGHTING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 宏观配置层战略资产配置
 - **状态**: Active

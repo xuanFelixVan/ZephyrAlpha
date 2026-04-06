@@ -1,16 +1,4 @@
 ---
-module_id: STRATEGICALLOCATIONENGINEBL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: STRATEGIC_ALLOCATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -34,7 +22,9 @@ opensource_project: PyPortfolioOpt
 open_source_dependency: 待补充
 estimated_effort: 待评估
 priority: P1
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 战略配置引擎蓝图
@@ -583,8 +573,8 @@ graph LR
 
 | 文档 | 说明 |
 |------|------|
-| [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
-| [PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md) | 组合优化层蓝图 |
+| ARCHITECTURE.md | 系统架构 |
+| PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md | 组合优化层蓝图 |
 
 ---
 
@@ -613,7 +603,7 @@ graph LR
 #### Layer 11: 战略决策层
 ##### 6.001. Strategic Allocation Engine
 - **模块ID**: STRATEGIC_ALLOCATION_ENGINE_001
-- **蓝图文档**: [STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md)
+- **蓝图文档**: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11 - 战略决策层
 - **状态**: Active

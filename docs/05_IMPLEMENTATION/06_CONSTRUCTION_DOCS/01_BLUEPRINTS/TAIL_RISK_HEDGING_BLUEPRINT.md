@@ -1,16 +1,4 @@
 ---
-module_id: V_039
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: TAIL_RISK_HEDGING_001
 version: 1.0.1
 spec_version: 1.0
@@ -33,7 +21,9 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 open_source_dependency: numpy, pandas, scipy
 priority: P1
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 尾部风险对冲蓝图 v1.0
@@ -115,7 +105,7 @@ def calculate_hedge_ratio(portfolio_var: float,
 #### Layer 7: 风险控制层
 ##### 6.001. Tail Risk Hedging
 - **模块ID**: TAIL_RISK_HEDGING_001
-- **蓝图文档**: [TAIL_RISK_HEDGING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAIL_RISK_HEDGING_BLUEPRINT.md)
+- **蓝图文档**: TAIL_RISK_HEDGING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

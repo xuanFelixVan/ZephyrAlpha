@@ -1,16 +1,4 @@
 ---
-module_id: SIMPLIFIEDRISKBUDGETSYSTEM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -28,6 +16,7 @@ priority: P0
 simplified_version: true
 layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 # 简化版动态风险预算系统蓝图
 
@@ -286,7 +275,7 @@ class SimplifiedRiskBudgetAPI:
 #### Layer 6: 组合优化层
 ##### 6.001. Simplified Risk Budget System
 - **模块ID**: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
-- **蓝图文档**: [SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 6 组合优化层
 - **状态**: Active

@@ -1,16 +1,4 @@
 ---
-module_id: TRADINGSIGNALVALIDATORBLUEP_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
 status: Active
@@ -35,7 +23,9 @@ opensource_project: Qlib
 open_source_dependency: pyqlib, pandas, numpy, scipy, scikit-learn
 estimated_effort: 3周
 priority: P1
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 # 交易信号验证器蓝图
 
@@ -552,9 +542,9 @@ class ValidationResult:
 
 | 文档名称 | 说明 |
 |---------|------|
-| [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构文档 |
-| [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](../../../01_FRAMEWORK/STRATEGY_EXECUTION_LAYER_BLUEPRINT.md) | 策略执行层蓝图 |
-| [SIGNAL_GENERATOR_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/SIGNAL_GENERATOR_TECHNICAL_SPECIFICATION.md) | 信号生成器技术规格 |
+| ARCHITECTURE.md | 系统架构文档 |
+| STRATEGY_EXECUTION_LAYER_BLUEPRINT.md | 策略执行层蓝图 |
+| SIGNAL_GENERATOR_TECHNICAL_SPECIFICATION.md | 信号生成器技术规格 |
 
 ---
 
@@ -582,7 +572,7 @@ class ValidationResult:
 #### Layer 5: 策略执行层
 ##### 6.001. Trading Signal Validator
 - **模块ID**: TRADING_SIGNAL_VALIDATOR_001
-- **蓝图文档**: [TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md)
+- **蓝图文档**: TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 5 - 策略执行层
 - **状态**: Active

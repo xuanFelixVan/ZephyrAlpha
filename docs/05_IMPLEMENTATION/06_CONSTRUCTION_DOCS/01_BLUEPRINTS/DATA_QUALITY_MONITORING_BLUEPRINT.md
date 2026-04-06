@@ -1,16 +1,4 @@
 ---
-module_id: V_015
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: DATA_QUALITY_MONITORING_001
 version: 1.0.0
 status: Active
@@ -26,7 +14,9 @@ priority: P0
 layer: "贯穿支撑系统 | 业务架构: 三级时间框架融合架构"
 estimated_effort: 2周
 open_source_dependency: Great Expectations, Apache Griffin, Deequ
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 # 数据质量监控系统蓝图 v1.0
 
@@ -1586,7 +1576,7 @@ def test_quality_scorer():
 
 - [统一数据基础设施蓝图](./UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- 专业多时间框架策略架构
 
 ---
 
@@ -1617,7 +1607,7 @@ def test_quality_scorer():
 #### Layer 6: 组合优化层
 ##### 6.001. Data Quality Monitoring
 - **模块ID**: DATA_QUALITY_MONITORING_001
-- **蓝图文档**: [DATA_QUALITY_MONITORING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: DATA_QUALITY_MONITORING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统数据质量保障
 - **状态**: Active

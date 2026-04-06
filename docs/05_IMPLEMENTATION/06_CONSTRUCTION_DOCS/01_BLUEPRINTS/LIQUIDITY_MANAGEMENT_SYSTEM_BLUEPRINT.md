@@ -1,16 +1,4 @@
 ---
-module_id: V_021
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
@@ -34,6 +22,7 @@ implementation_status: 设计阶段
 open_source_dependency: pandas, numpy, scipy
 priority: P1
 ---
+
 
 
 # 流动性管理系统蓝?v1.0
@@ -62,6 +51,52 @@ priority: P1
 
 1. **资金流动性监?*: 实时监控账户资金流动情况
 2. **资金需求预?*: 预测未来资金需求和现金?3. **流动性风险预?*: 资金紧张时自动预?4. **资金优化配置**: 优化资金配置，提高使用效?5. **流动性报告生?*: 生成流动性分析报?
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供资金数据元数据 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | 提供风险指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [融资优化蓝图](./FINANCING_OPTIMIZATION_BLUEPRINT.md) | FINANCING_OPTIMIZATION_001 | 强依赖 | 融资优化 |
+| [动态杠杆管理蓝图](./DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) | DYNAMIC_LEVERAGE_MANAGEMENT_001 | 中依赖 | 杠杆管理 |
+| [保证金监控蓝图](./MARGIN_CALL_MONITOR_BLUEPRINT.md) | MARGIN_CALL_MONITOR_001 | 中依赖 | 保证金监控 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **Matplotlib** | 3.7+ | 可视化 | [官方文档](https://matplotlib.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[流动性管理系统]
+    C[数据目录] --> B
+    D[VaR/ES监控] --> B
+    
+    B --> E[融资优化]
+    B --> F[动态杠杆管理]
+    B --> G[保证金监控]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
 ---
 
 ## 2. 架构设计
@@ -732,7 +767,7 @@ class TestLiquidityManagementSystem:
 
 ### 11.1 架构文档
 
-- [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
 ### 11.2 相关模块
 
@@ -767,7 +802,7 @@ class TestLiquidityManagementSystem:
 #### Layer 5: 中观策略层
 ##### 6.001. Liquidity Management System
 - **模块ID**: LIQUIDITY_MANAGEMENT_SYSTEM_001
-- **蓝图文档**: [LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统
 - **状态**: Active

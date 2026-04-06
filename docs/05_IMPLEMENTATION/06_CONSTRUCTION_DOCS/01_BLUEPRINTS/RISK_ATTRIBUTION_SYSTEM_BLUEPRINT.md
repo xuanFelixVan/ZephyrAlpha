@@ -1,16 +1,4 @@
 ---
-module_id: V_031
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
@@ -35,7 +23,9 @@ personal_development: true
 ai_maintenance: true
 open_source_dependency: numpy, pandas, scipy
 priority: P0
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 风险归因系统蓝图 v1.0
@@ -571,19 +561,19 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ## 2. Factor Risk Attribution
 
-![Factor Risk Contribution]({charts['factor_risk']})
+!Factor Risk Contribution
 
 {attribution_result.factor_attribution.to_markdown()}
 
 ## 3. Industry Risk Attribution
 
-![Industry Risk Contribution]({charts['industry_risk']})
+!Industry Risk Contribution
 
 {attribution_result.industry_attribution.to_markdown()}
 
 ## 4. Asset Risk Attribution (Top 20)
 
-![Asset Risk Contribution]({charts['asset_risk']})
+!Asset Risk Contribution
 
 {attribution_result.asset_attribution.nlargest(20, 'Risk_Contribution').to_markdown()}
 """
@@ -794,7 +784,7 @@ pip install jinja2>=3.0
 #### Layer 6: 组合优化?
 ##### 6.6 风险归因系统
 - **模块ID**: RISK_ATTRIBUTION_001
-- **蓝图文档**: [RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创?- **职责**: 多维度风险归因、风险预算监控、归因报告生?- **?*: 设计阶段
 ```
 

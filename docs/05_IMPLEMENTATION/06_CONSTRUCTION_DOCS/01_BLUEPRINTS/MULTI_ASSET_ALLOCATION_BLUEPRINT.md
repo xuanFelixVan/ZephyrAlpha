@@ -1,16 +1,4 @@
 ---
-module_id: V_024
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
 spec_version: 1.0
@@ -35,7 +23,9 @@ personal_development: true
 ai_maintenance: true
 open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, cvxpy
 priority: P0
+layer: 'Layer 5 (策略执行层)'
 ---
+
 
 
 # 多资产类别配置蓝?v1.0
@@ -715,7 +705,7 @@ pip install arch>=5.0
 ```markdown
 #### Layer 6: 组合优化?
 ##### 6.7 多资产类别配?- **模块ID**: MULTI_ASSET_001
-- **蓝图文档**: [MULTI_ASSET_ALLOCATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md)
+- **蓝图文档**: MULTI_ASSET_ALLOCATION_BLUEPRINT.md
 - **技术规格书**: 待创?- **职责**: 跨资产配置、风险平价优化、跨资产风险监控
 - **?*: 设计阶段
 ```

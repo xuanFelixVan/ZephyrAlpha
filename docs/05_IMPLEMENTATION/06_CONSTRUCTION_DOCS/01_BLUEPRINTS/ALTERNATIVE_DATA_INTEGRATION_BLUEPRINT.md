@@ -1,16 +1,4 @@
 ---
-module_id: ALTERNATIVEDATAINTEGRATIONB_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
-﻿---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.1
 status: Active
@@ -27,6 +15,7 @@ estimated_effort: 8周
 priority: P0
 layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
 ---
+
 
 
 # 另类数据源集成项目蓝?
@@ -1025,7 +1014,7 @@ class VectorStore:
 #### Layer 6: 组合优化层
 ##### 6.001. Alternative Data Integration
 - **模块ID**: ALTERNATIVE_DATA_INTEGRATION_001
-- **蓝图文档**: [ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md)
+- **蓝图文档**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 2 Alpha因子层 - 另类数据源集成
 - **状态**: Active

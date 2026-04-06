@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_PE_TTM_单因子回测报_001
+module_id: PE_TTM_BACKTEST_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
