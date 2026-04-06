@@ -1,9 +1,9 @@
 ---
 module_id: OPEN_SOURCE_INTEGRATION_BP_001
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构级开源集成蓝图

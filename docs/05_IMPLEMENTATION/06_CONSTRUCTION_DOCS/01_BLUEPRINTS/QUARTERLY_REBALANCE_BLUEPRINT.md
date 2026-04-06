@@ -3,15 +3,15 @@ module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席架构师
 standard_type: 专业量化机构蓝图
-applicable_scope: 宏观配置层季度调仓
+applicable_scope: 组合优化层季度调仓
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 priority: P0
-layer: "Layer 5 (宏观配置层) | 业务架构: 三级时间框架融合架构"
+layer: Layer 6 (组合优化层)
 estimated_effort: 2周
 open_source_dependency: pandas, numpy, scipy, cvxpy
 ---

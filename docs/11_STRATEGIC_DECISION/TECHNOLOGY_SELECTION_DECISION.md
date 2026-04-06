@@ -1,9 +1,9 @@
 ---
 module_id: TECH_SELECTION_DECISION_001
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 技术选型决策文档
