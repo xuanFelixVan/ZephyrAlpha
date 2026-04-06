@@ -7,12 +7,12 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-02
 created_date: 2026-04-02
 layer: Layer 5 (中观策略? | 业务架构: 三级时间框架融合架构
-index: LIQUIDITY_MGMT_001
+index: LIQUIDITY_MANAGEMENT_SYSTEM_SPEC_001
 estimated_hours: 80h
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-02
-owner: 个人开�?standard_type: 专业量化机构技术规格书
+owner: 个人开�?standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -31,7 +31,7 @@ implementation_status: 设计阶段
 **业务需?*?- 当前系统缺乏流动性管理能力，无法预测资金需?- 资金使用效率低，闲置资金过多或资金紧?- 缺乏流动性风险预警机?- 需要实现桥水模式的流动性管理能?
 **技术痛?*?- 无资金流动性监控系?- 无现金流预测模型
 - 无流动性风险预警机?- 无资金优化配置系?
-**预期�?*?- 实时监控资金流动性，提前预警资金风险
+**预期�?*?- 实时监控资金流动性，提前预警资金风险
 - 预测资金需求，优化资金配置
 - 提高资金使用效率20-30%
 - 实现桥水模式的流动性管理能?
@@ -43,7 +43,7 @@ implementation_status: 设计阶段
 **架构角色**: 
 - 作为中观策略层的基础设施，监控和管理资金流动?- 作为风险控制的重要环节，预防流动性风?- 作为桥水模式的关键实现，提供流动性管理能?- 作为资金优化系统，提高资金使用效?
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Draft |
 
@@ -221,7 +221,7 @@ class LiquidityWarning:
     timestamp: datetime              # 时间?
 @dataclass
 class WarningItem:
-    warning_type: str                # 预警类型（CASH_RATIO/AVAILABLE_FUND/OUTFLOW_PRESSURE?    current_value: float             # 当前?    threshold: float                 # �?    severity: str                    # 严重程度（LOW/MEDIUM/HIGH?```
+    warning_type: str                # 预警类型（CASH_RATIO/AVAILABLE_FUND/OUTFLOW_PRESSURE?    current_value: float             # 当前?    threshold: float                 # �?    severity: str                    # 严重程度（LOW/MEDIUM/HIGH?```
 
 ---
 
@@ -368,7 +368,7 @@ class TurnoverRatioCalculator:
 ### 5.2 现金流预测算?
 #### 5.2.1 算法原理
 
-**现金流预?*基于历史数据预测未来的资金流入流�?
+**现金流预?*基于历史数据预测未来的资金流入流�?
 **预测方法**:
 1. **历史平均?*: 简单但不够准确
 2. **时间序列模型**: ARIMA/Prophet，适合周期性数?3. **机器学习模型**: LSTM，适合复杂模式
@@ -419,7 +419,7 @@ class CashFlowPredictor:
 ### 5.3 流动性风险评估算?
 #### 5.3.1 算法原理
 
-**流动性风险评?*综合多个指标评估流动性风�?
+**流动性风险评?*综合多个指标评估流动性风�?
 **评估维度**:
 1. **现金比例**: 可用资金/总资?2. **可用资金**: 绝对金额是否充足
 3. **流出压力**: 预期流出是否过大
@@ -478,7 +478,7 @@ class LiquidityRiskAssessor:
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 类别 | 技术选型 | 版本要求 | �?|
+| 类别 | 技术选型 | 版本要求 | �?|
 |------|----------|----------|------|
 | **编程语言** | Python | 3.9+ | 核心开发语言 |
 | **异步框架** | asyncio | 内置 | 异步监控支持 |
@@ -486,7 +486,7 @@ class LiquidityRiskAssessor:
 | **数据处理** | pandas | 2.0+ | 数据处理和分?|
 
 ### 6.2 第三方依?
-| 依赖?| 版本 | �?|
+| 依赖?| 版本 | �?|
 |--------|------|------|
 | prophet | 1.1+ | 时间序列预测（可选） |
 | scipy | 1.11+ | 统计计算 |
@@ -663,7 +663,7 @@ class TestLiquidityManagementSystem:
 
 **技术规格书编写?*: 首席技术评审官
 **技术规格书日期**: 2026-04-02
-**技术规格书�?*: ?已完?
+**技术规格书�?*: ?已完?
 ---
 
 **文档结束**
