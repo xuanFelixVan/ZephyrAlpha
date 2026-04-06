@@ -29,6 +29,28 @@ dependencies:
 
 # 数据生命周期管理蓝图
 
+## 文档职责说明
+
+**本文档职责**: 数据生命周期管理系统设计蓝图
+- 定义数据生命周期管理架构
+- 说明数据分层存储和归档方案
+- 提供数据保留策略和成本优化方案
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 差距分析V2 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
+| 数据压缩归档 | [../DATA_COMPRESSION_ARCHIVE/](../DATA_COMPRESSION_ARCHIVE/) | 协同模块 | 数据压缩存储 |
+| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](../DATA_BACKUP_RECOVERY/) | 协同模块 | 数据备份方案 |
+
+**职责边界**:
+- ✅ 本文档负责: 数据生命周期管理系统架构设计
+- ✅ 本文档负责: 数据分层存储、归档、保留策略方案
+- ❌ 本文档不负责: 数据压缩归档实施（由 DATA_COMPRESSION_ARCHIVE 负责）
+- ❌ 本文档不负责: 数据备份恢复（由 DATA_BACKUP_RECOVERY 负责）
+- ❌ 本文档不负责: 数据质量管理（由 QUALITY_MANAGEMENT 负责）
+
 > **优先级**: 🟡 P1 (重要)
 > **实施周期**: 1周
 > **开源方案**: Apache Iceberg + Delta Lake
