@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LIQUIDITYCONSTRAINEDOPTIMIZA_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 组合优化
+  - 流动性约束优化，包括流动性建模、约束处理、优化求解、交易成本
   - 交易执行
   - 机器学习
 standard_type: 专业量化机构蓝图

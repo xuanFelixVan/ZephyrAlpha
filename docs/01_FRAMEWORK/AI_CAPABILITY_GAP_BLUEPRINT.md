@@ -9,13 +9,22 @@ layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-responsibility: 市场状态识别
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+responsibility:
+  - **本文档职责（Layer 10 治理与合规层）**：
+AI能力差距分析（对标专业机构能力）
+AI能力补充计划（补齐能力短板）
+AI能力提升路径（从85%到95%完整度）
+AI能力评估体系（能力成熟度评估）
+  
+  **与本文档职责边界**：
+GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+AI_STRATEGY_AUTOMATION_BLUEPRINT.md: AI策略自动化
+MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
+--
   responsibility_layer: Layer 1
   responsibility_layer: Layer 4
 ---
-
 ﻿---
 module_id: AI_CAPABILITY_GAP_BLUEPRINT_001
 version: 1.0.0

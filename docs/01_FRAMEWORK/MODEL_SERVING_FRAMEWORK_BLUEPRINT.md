@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 数据源
-  - 特征工程
-  - 机器学习
+  - 数据源管理与数据接入，包括数据采集、数据清洗、数据存储、数据服务
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 模型服务框架模块
@@ -24,7 +22,6 @@ reference_models: ["Two Sigma", "Citadel", "Bridgewater"]---
 > **实施周期**: 1周
 
 ---
-
 ## 一、模块概述
 
 ### 1.1 核心定位

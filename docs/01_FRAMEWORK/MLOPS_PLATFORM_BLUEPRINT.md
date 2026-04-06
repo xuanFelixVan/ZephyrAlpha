@@ -11,9 +11,7 @@ last_updated: 2026-04-03
 
 owner: 首席蓝图架构师
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 本文档负责Layer 4机器学习层的MLOps平台设计，包括流水线管理、实验跟踪、模型部署等核心功能。---
 
 layer: Layer 4 (机器学习层)
 
@@ -60,9 +58,6 @@ responsibility_boundary: |
 
 
 ---
-
-
-
 ## 📊 一、概�?
 
 ### 1.1 设计背景与业务目�?

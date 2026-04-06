@@ -1,4 +1,6 @@
 ---
+module_id: LAYER5_DEEP_AUDIT_REPORT_V10_20260405_001
+
 report_id: LAYER5_DEEP_AUDIT_REPORT_V10_20260405
 version: 10.0.0
 status: Active

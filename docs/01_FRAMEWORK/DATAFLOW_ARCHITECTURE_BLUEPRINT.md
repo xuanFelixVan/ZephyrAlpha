@@ -22,14 +22,10 @@ applicable_scope: 三级时间框架架构
 compliance_level: 专业标准
 
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-responsibility: 风险预算
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+responsibility:
+  - 本文档负责Layer 4机器学习层的数据流架构设计，包括流式处理、批处理、混合处理等核心功能。
   responsibility_layer: Layer 11
 ---
-
-
-
 # 三级时间框架数据流架构蓝�?
 
 > **版本**: v1.0

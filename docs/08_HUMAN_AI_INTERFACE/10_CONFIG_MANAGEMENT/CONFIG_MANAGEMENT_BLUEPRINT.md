@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -31,7 +29,6 @@ compliance_level: 专业标准
 parent_document: ../index.md
 implementation_status: 蓝图设计
 ---
-
 # 配置管理界面模块蓝图
 
 > **版本**: v1.0

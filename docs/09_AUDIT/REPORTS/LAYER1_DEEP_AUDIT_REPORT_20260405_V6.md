@@ -1,4 +1,6 @@
 ---
+module_id: LAYER1_DEEP_AUDIT_REPORT_20260405_V6_001
+
 audit_id: LAYER1_DEEP_AUDIT_REPORT_20260405_V6
 version: 1.0.0
 status: Active

@@ -9,13 +9,20 @@ layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-responsibility: 风险预算
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+responsibility:
+  - 本文档负责AI信任动态校准体系设计，包括：
+四维校准架构（历史表现、市场状态、置信度、风险贡献）
+五级信任等级体系
+信任等级动态调整机制
+表现追踪与评估系统
+  
+  战略级定义请参考以下文档：
+风险分级战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+人机协作边界战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+--
   responsibility_layer: Layer 4
   responsibility_layer: Layer 11
 ---
-
 ﻿---
 module_id: AI_TRUST_CALIBRATION_BLUEPRINT_001
 version: 1.0.0

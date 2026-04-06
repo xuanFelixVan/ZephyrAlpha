@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 机器学习
-  - 系统架构
-  - 文档治理
+  - 本文档负责Layer 4机器学习层的梯度检查点设计，包括内存优化、计算重用、训练加速等核心功能。
 
 standard_type: 高层架构蓝图
 
@@ -23,10 +21,6 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的梯度检查点设计，包括内存优化、计算重用、训练加速等核心功能。
 layer: Layer 4 (机器学习层)
 ---
-
-
-
-
 # 梯度检查点蓝图
 
 

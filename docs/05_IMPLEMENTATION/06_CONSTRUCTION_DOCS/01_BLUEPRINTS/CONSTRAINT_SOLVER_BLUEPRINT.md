@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONSTRAINTSOLVERBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 风险预算
+  - 约束求解器，包括约束建模、求解算法、优化引擎、约束验证
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构蓝图

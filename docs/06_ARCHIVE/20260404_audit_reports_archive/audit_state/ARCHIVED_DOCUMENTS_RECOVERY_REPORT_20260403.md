@@ -1,4 +1,6 @@
 ---
+module_id: ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403_001
+
 recovery_id: ARCHIVED_DOCUMENTS_RECOVERY_REPORT_001
 version: 1.0.0
 status: Active

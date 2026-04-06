@@ -1,4 +1,6 @@
 ---
+module_id: LAYER5_DEEP_AUDIT_REPORT_V8_20260404_001
+
 report_id: LAYER5_DEEP_AUDIT_REPORT_V8_20260404
 version: 8.0.0
 status: Active

@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 数据源
-  - 机器学习
-  - 系统架构
+  - 本文档负责Layer 4机器学习层的数据标注平台设计，包括标注工具、质量控制、标注流程等核心功能。
 
 standard_type: 高层架构蓝图
 
@@ -23,10 +21,6 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的数据标注平台设计，包括标注工具、质量控制、标注流程等核心功能。
 layer: Layer 4 (机器学习层)
 ---
-
-
-
-
 # 数据标注平台蓝图
 
 

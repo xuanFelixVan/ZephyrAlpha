@@ -11,9 +11,7 @@ last_updated: 2026-04-07
 
 owner: 首席蓝图架构师
 responsibility:
-  - 特征工程
-  - 机器学习
-  - 系统架构
+  - 本文档负责Layer 4机器学习层的数据增强系统设计，包括：
 
 layer: Layer 4 (机器学习层)
 
@@ -37,10 +35,6 @@ responsibility_boundary: |
 
   数据预处理增强请参考：DATA_PREPROCESSING_LAYER_BLUEPRINT.md
 ---
-
-
-
-
 # 数据增强系统蓝图
 
 

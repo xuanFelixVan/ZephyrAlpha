@@ -11,5 +11,18 @@
       "sparse_dirs": 97
     },
     "compliance_rate": 99.05
+  },
+  {
+    "timestamp": "2026-04-07T02:16:11.010701",
+    "stats": {
+      "total_files": 1659,
+      "total_dirs": 222,
+      "files_with_yaml": 1593,
+      "files_with_responsibility": 1584,
+      "files_with_module_id": 1593,
+      "encoding_issues": 0,
+      "sparse_dirs": 96
+    },
+    "compliance_rate": 96.88
   }
 ]

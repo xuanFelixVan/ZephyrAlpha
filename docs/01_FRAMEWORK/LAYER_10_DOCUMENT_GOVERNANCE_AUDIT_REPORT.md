@@ -1,4 +1,6 @@
 ---
+module_id: LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT_001
+
 audit_id: LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_001
 version: 1.0.0
 status: Active

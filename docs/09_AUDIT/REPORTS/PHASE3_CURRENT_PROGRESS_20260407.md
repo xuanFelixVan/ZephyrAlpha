@@ -1,4 +1,6 @@
 ---
+module_id: PHASE3_CURRENT_PROGRESS_20260407_001
+
 progress_id: PHASE3_CURRENT_PROGRESS_20260407
 version: 1.0.0
 status: Active

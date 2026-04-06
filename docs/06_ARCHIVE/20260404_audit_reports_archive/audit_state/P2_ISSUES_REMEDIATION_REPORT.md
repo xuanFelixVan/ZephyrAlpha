@@ -1,4 +1,6 @@
 ---
+module_id: P2_ISSUES_REMEDIATION_REPORT_001
+
 remediation_id: P2_ISSUES_REMEDIATION_REPORT_001
 version: 1.0.0
 status: Completed

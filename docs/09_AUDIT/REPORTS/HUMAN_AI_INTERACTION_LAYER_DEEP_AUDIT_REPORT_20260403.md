@@ -1,4 +1,6 @@
 ---
+module_id: HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_REPORT_20260403_001
+
 audit_id: HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_001
 audit_type: ц╖▒х║жхобшоб
 audit_date: 2026-04-03

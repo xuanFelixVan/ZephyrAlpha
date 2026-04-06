@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 交易执行
-  - 数据源
-  - 机器学习
+  - 本文档负责Layer 4机器学习层的AI智能体框架设计，包括智能体架构、任务规划、工具调用等核心功能。
 
 standard_type: 高层架构蓝图
 
@@ -23,10 +21,6 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的AI智能体框架设计，包括智能体架构、任务规划、工具调用等核心功能。
 layer: Layer 4 (机器学习层)
 ---
-
-
-
-
 # AI Agent框架蓝图
 
 

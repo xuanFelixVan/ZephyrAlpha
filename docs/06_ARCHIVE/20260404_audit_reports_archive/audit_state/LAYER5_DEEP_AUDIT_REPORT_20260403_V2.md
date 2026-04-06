@@ -1,4 +1,6 @@
 ---
+module_id: LAYER5_DEEP_AUDIT_REPORT_20260403_V2_001
+
 audit_id: LAYER5_DEEP_AUDIT_REPORT_20260403_V2
 version: 2.0.0
 status: Completed

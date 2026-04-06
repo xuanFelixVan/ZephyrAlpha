@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 机器学习
-  - 系统架构
-  - 文档治理
+  - 本文档负责Layer 4机器学习层的合成数据生成系统设计，包括GAN生成、VAE生成、Diffusion模型等核心功能。
 
 standard_type: é«å±æ¶æèå¾
 
@@ -23,10 +21,6 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的合成数据生成系统设计，包括GAN生成、VAE生成、Diffusion模型等核心功能。
 layer: Layer 4 (机器学习层)
 ---
-
-
-
-
 # åææ°æ®çæèå¾
 
 

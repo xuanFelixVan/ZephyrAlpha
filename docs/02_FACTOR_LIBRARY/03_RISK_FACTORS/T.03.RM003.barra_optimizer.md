@@ -16,6 +16,11 @@ compliance_level: 专业标准---
 
 
 # T.03.RM003.barra_optimizer
+> **核心职责**: Barra风险模型和组合优化器设计
+> **职责边界**: 
+> - ✅ 本文档负责：Barra风险模型和组合优化器设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > Barra risk model and portfolio optimizer
 >

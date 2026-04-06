@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 交易执行
-  - 特征工程
-  - 机器学习
+  - 本文档负责Layer 4机器学习层的图神经网络设计，包括图结构建模、消息传递、节点分类等核心功能。
 
 standard_type: 高层架构蓝图
 
@@ -23,10 +21,6 @@ responsibility_boundary: |
   本文档负责Layer 4机器学习层的图神经网络设计，包括图结构建模、消息传递、节点分类等核心功能。
 layer: Layer 4 (机器学习层)
 ---
-
-
-
-
 # 图神经网�?GNN)蓝图
 
 

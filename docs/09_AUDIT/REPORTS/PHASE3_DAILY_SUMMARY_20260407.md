@@ -1,4 +1,6 @@
 ---
+module_id: PHASE3_DAILY_SUMMARY_20260407_001
+
 summary_id: PHASE3_DAILY_SUMMARY_20260407
 version: 1.0.0
 status: Active

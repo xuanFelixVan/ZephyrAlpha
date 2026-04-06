@@ -1,4 +1,6 @@
 ---
+module_id: README_001
+
 archive_id: PORTFOLIO_OPTIMIZATION_DUPLICATE_ARCHIVE_20260403
 version: 1.0.0
 status: Archived

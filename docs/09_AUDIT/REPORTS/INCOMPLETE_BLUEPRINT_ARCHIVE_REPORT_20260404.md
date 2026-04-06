@@ -1,4 +1,6 @@
 ---
+module_id: INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404_001
+
 archive_report_id: ARCHIVE_REPORT_20260404_001
 version: 1.0.0
 status: Active

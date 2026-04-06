@@ -6,9 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 风险预算
-  - 因子计算
-  - 组合优化
+  - 风险预算管理与分配，包括风险限额设定、预算动态调整、风险预算监控与预警
 layer: Layer 4 (机器学习层)
 standard_type: 专业机构级蓝图
 applicable_scope: 开源项目集成与管理
@@ -51,7 +49,6 @@ related_documents:
 > **技术栈**: MLflow + Qlib + QuantHedgeFund
 
 ---
-
 ## 一、概
 
 ### 1.1 蓝图定位

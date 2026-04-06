@@ -11,9 +11,7 @@ last_updated: 2026-04-07
 
 owner: 首席蓝图架构师
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 本文档负责Layer 4机器学习层的生产级实验追踪系统设计，包括：
 
 layer: Layer 4 (机器学习层)
 
@@ -35,10 +33,6 @@ responsibility_boundary: |
 
   研究级实验追踪（wandb.ai方案）请参考：docs/07_RESEARCH/EXPERIMENT_TRACKING.md
 ---
-
-
-
-
 # 实验追踪系统蓝图
 
 

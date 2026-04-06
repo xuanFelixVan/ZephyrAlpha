@@ -1,4 +1,6 @@
 ---
+module_id: HUMAN_AI_INTERFACE_LAYER_REAUDIT_REPORT_20260405_001
+
 audit_id: HUMAN_AI_INTERFACE_LAYER_REAUDIT_001
 audit_type: 复审审计
 audit_date: 2026-04-05

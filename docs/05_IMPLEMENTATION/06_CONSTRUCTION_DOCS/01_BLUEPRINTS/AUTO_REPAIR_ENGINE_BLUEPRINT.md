@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 个人开发者
 responsibility:
-  - 数据质量
+  - 自动修复引擎，包括问题检测、修复策略、自动修复、修复验证
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
