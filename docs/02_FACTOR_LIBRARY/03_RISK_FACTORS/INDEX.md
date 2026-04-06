@@ -53,7 +53,7 @@ implementation_status: 已完�?---
 ## 📚 相关文档
 
 - [因子分类体系](../01_STANDARDS/FACTOR_TAXONOMY.md)
-- [风险管理规则](../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md)
+- [风险管理规则](../../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md)
 - [因子监控](../07_FACTOR_MONITORING/FACTOR_MONITORING.md)
 
 ---

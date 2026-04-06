@@ -5,74 +5,74 @@ spec_version: 1.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-layer: Layer 4 (机器学习�? | 业务架构: AI模型服务
-index: PF-001
+layer: Layer 4 (机器学习�? | 业务架构: AI模型服务
+index: PROBABILISTIC_FORECASTING_001
 estimated_hours: 70
 review_status: Pending
 reviewer: 首席技术评审官
-owner: 量化研究�?standard_type: 专业量化机构技术规格书
-applicable_scope: 概率预测与不确定性量�?compliance_level: 顶级专业标准
+owner: 量化研究�?standard_type: 专业量化机构技术规格书
+applicable_scope: 概率预测与不确定性量�?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
-implementation_status: 技术规格设计完�?---
+implementation_status: 技术规格设计完�?---
 
 # 概率预测技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 概率预测与不确定性量化详细技术设�?> **索引**: `PF-001`
-> **开发时�?*: 70h
-> **核心定位**: 提供概率预测、不确定性估计、置信区间、风险度�?
+> 清风量化系统 v5.3 - 概率预测与不确定性量化详细技术设�?> **索引**: `PF-001`
+> **开发时�?*: 70h
+> **核心定位**: 提供概率预测、不确定性估计、置信区间、风险度�?
 ---
 
 ## 1. 概述
 
-### 1.1 设计背景与业务目�?
-**业务需�?*:
+### 1.1 设计背景与业务目�?
+**业务需�?*:
 - 金融市场不确定性高，点预测不足
-- 风险管理需要不确定性估�?- 投资决策需要置信区�?- 组合优化需要分布预�?
-**技术痛�?*:
+- 风险管理需要不确定性估�?- 投资决策需要置信区�?- 组合优化需要分布预�?
+**技术痛�?*:
 - 传统模型只输出点预测
 - 不确定性估计方法不统一
 - 置信区间校准困难
-- 极端事件预测能力�?
-**预期价�?*:
+- 极端事件预测能力�?
+**预期价�?*:
 - 风险管理精度提升40%
-- 投资决策置信度提�?0%
+- 投资决策置信度提�?0%
 - 极端事件预警能力提升30%
 - 组合优化效果提升25%
 
-### 1.2 技术定位与架构层归�?
-- **Layer定位**: Layer 4 - 机器学习层（AI模型服务�?- **模块类别**: 核心支撑模块
-- **架构角色**: 提供概率预测、不确定性量化、置信区间估�?
-### 1.3 版本信息与变更记�?
-| 版本 | 日期 | 作�?| 变更说明 | 状�?|
+### 1.2 技术定位与架构层归�?
+- **Layer定位**: Layer 4 - 机器学习层（AI模型服务�?- **模块类别**: 核心支撑模块
+- **架构角色**: 提供概率预测、不确定性量化、置信区间估�?
+### 1.3 版本信息与变更记�?
+| 版本 | 日期 | 作�?| 变更说明 | 状�?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 | Active |
+| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 | Active |
 
 ---
 
 ## 2. 详细架构设计
 
-### 2.1 系统架构�?
+### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────────�?�?                  概率预测系统架构                                �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            贝叶斯深度学习层 (Bayesian Deep Learning)     �? �?�?�?├── BayesianNeuralNetwork (贝叶斯神经网�?               �? �?�?�?├── VariationalInference (变分推断)                      �? �?�?�?├── BayesianLSTM (贝叶斯LSTM)                            �? �?�?�?└── BayesianTransformer (贝叶斯Transformer)              �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            不确定性估计层 (Uncertainty Estimation)       �? �?�?�?├── MonteCarloDropout (MC Dropout)                       �? �?�?�?├── DeepEnsembles (深度集成)                             �? �?�?�?├── ConcreteDropout (Concrete Dropout)                   �? �?�?�?└── FlipoutEstimator (Flipout估计�?                     �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            概率预测�?(Probabilistic Forecasting)        �? �?�?�?├── QuantileRegression (分位数回�?                      �? �?�?�?├── DistributionalRegression (分布回归)                  �? �?�?�?├── ProbabilisticTimeSeries (概率时序模型)               �? �?�?�?└── DensityEstimator (密度估计�?                        �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            校准与评估层 (Calibration & Evaluation)       �? �?�?�?├── ReliabilityDiagram (可靠性图)                        �? �?�?�?├── CalibrationError (校准误差)                          �? �?�?�?├── CRPSScore (CRPS评分)                                 �? �?�?�?└── ProbabilityMetrics (概率指标)                        �? �?�?└──────────────────────────────────────────────────────────�? �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
+┌─────────────────────────────────────────────────────────────────�?�?                  概率预测系统架构                                �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            贝叶斯深度学习层 (Bayesian Deep Learning)     �? �?�?�?├── BayesianNeuralNetwork (贝叶斯神经网�?               �? �?�?�?├── VariationalInference (变分推断)                      �? �?�?�?├── BayesianLSTM (贝叶斯LSTM)                            �? �?�?�?└── BayesianTransformer (贝叶斯Transformer)              �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            不确定性估计层 (Uncertainty Estimation)       �? �?�?�?├── MonteCarloDropout (MC Dropout)                       �? �?�?�?├── DeepEnsembles (深度集成)                             �? �?�?�?├── ConcreteDropout (Concrete Dropout)                   �? �?�?�?└── FlipoutEstimator (Flipout估计�?                     �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            概率预测�?(Probabilistic Forecasting)        �? �?�?�?├── QuantileRegression (分位数回�?                      �? �?�?�?├── DistributionalRegression (分布回归)                  �? �?�?�?├── ProbabilisticTimeSeries (概率时序模型)               �? �?�?�?└── DensityEstimator (密度估计�?                        �? �?�?└──────────────────────────────────────────────────────────�? �?�?                            �?                                  �?�?┌──────────────────────────────────────────────────────────�? �?�?�?            校准与评估层 (Calibration & Evaluation)       �? �?�?�?├── ReliabilityDiagram (可靠性图)                        �? �?�?�?├── CalibrationError (校准误差)                          �? �?�?�?├── CRPSScore (CRPS评分)                                 �? �?�?�?└── ProbabilityMetrics (概率指标)                        �? �?�?└──────────────────────────────────────────────────────────�? �?�?                                                                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 Layer定位详细说明
 
-- **Layer归属**: Layer 4 - 机器学习�?- **职责范围**: 概率预测、不确定性估计、置信区间、校准评�?- **上下层接�?*: 
-  - 上层依赖: Layer 5 (策略执行�? - 预测请求
+- **Layer归属**: Layer 4 - 机器学习�?- **职责范围**: 概率预测、不确定性估计、置信区间、校准评�?- **上下层接�?*: 
+  - 上层依赖: Layer 5 (策略执行�? - 预测请求
   - 下层依赖: Layer 4 (ML模型) - 基础模型
 
-### 2.3 模块职责与边界定�?
-- **核心职责**: 概率预测与不确定性量�?- **职责边界**: 
-  - �?本模块负�? 概率分布预测、不确定性估计、置信区间、校�?  - �?本模块不负责: 模型训练、特征工程、策略执�?- **接口契约**: 提供标准化的概率预测API
+### 2.3 模块职责与边界定�?
+- **核心职责**: 概率预测与不确定性量�?- **职责边界**: 
+  - �?本模块负�? 概率分布预测、不确定性估计、置信区间、校�?  - �?本模块不负责: 模型训练、特征工程、策略执�?- **接口契约**: 提供标准化的概率预测API
 
 ### 2.4 依赖关系与集成点
 
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| PyTorch | 强依�?| Python�?| >=2.0.0 | 深度学习框架 |
-| Pyro | 强依�?| Python�?| >=1.8.0 | 概率编程 |
-| GPyTorch | 强依�?| Python�?| >=1.11.0 | 高斯过程 |
-| GluonTS | 强依�?| Python�?| >=0.13.0 | 概率时序 |
+| PyTorch | 强依�?| Python�?| >=2.0.0 | 深度学习框架 |
+| Pyro | 强依�?| Python�?| >=1.8.0 | 概率编程 |
+| GPyTorch | 强依�?| Python�?| >=1.11.0 | 高斯过程 |
+| GluonTS | 强依�?| Python�?| >=0.13.0 | 概率时序 |
 
 ---
 
@@ -94,7 +94,7 @@ import torch.nn.functional as F
 
 
 class UncertaintyType(Enum):
-    """不确定性类�?""
+    """不确定性类�?""
     ALEATORIC = "aleatoric"
     EPISTEMIC = "epistemic"
     TOTAL = "total"
@@ -144,8 +144,8 @@ class CalibrationResult:
 
 
 class MonteCarloDropout:
-    """MC Dropout不确定性估�?    
-    通过多次前向传播估计预测不确定�?    """
+    """MC Dropout不确定性估�?    
+    通过多次前向传播估计预测不确定�?    """
     
     def __init__(
         self,
@@ -217,13 +217,13 @@ class MonteCarloDropout:
         )
     
     def _estimate_aleatoric(self, predictions: np.ndarray) -> float:
-        """估计偶然不确定�?""
+        """估计偶然不确定�?""
         return np.mean(np.var(predictions, axis=0))
 
 
 class DeepEnsembles:
-    """深度集成不确定性估�?    
-    通过多个独立训练的模型估计不确定�?    """
+    """深度集成不确定性估�?    
+    通过多个独立训练的模型估计不确定�?    """
     
     def __init__(
         self,
@@ -286,8 +286,8 @@ class DeepEnsembles:
 
 
 class BayesianNeuralNetwork(nn.Module):
-    """贝叶斯神经网�?    
-    使用变分推断进行贝叶斯深度学�?    """
+    """贝叶斯神经网�?    
+    使用变分推断进行贝叶斯深度学�?    """
     
     def __init__(
         self,
@@ -447,8 +447,8 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 class QuantileRegression:
-    """分位数回�?    
-    直接预测条件分位�?    """
+    """分位数回�?    
+    直接预测条件分位�?    """
     
     def __init__(
         self,
@@ -464,7 +464,7 @@ class QuantileRegression:
         targets: torch.Tensor,
         quantile: float
     ) -> torch.Tensor:
-        """分位数损�?""
+        """分位数损�?""
         errors = targets - predictions
         return torch.mean(
             torch.max(
@@ -477,7 +477,7 @@ class QuantileRegression:
         self,
         X: torch.Tensor
     ) -> Dict[float, float]:
-        """预测分位�?""
+        """预测分位�?""
         self.model.eval()
         
         with torch.no_grad():
@@ -525,8 +525,8 @@ class QuantileRegression:
 
 
 class ProbabilisticForecaster:
-    """概率预测�?    
-    统一的概率预测接�?    """
+    """概率预测�?    
+    统一的概率预测接�?    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -610,7 +610,7 @@ class ProbabilisticForecaster:
         
         Args:
             X: 输入数据
-            y: 真实�?            method: 预测方法
+            y: 真实�?            method: 预测方法
             
         Returns:
             CalibrationResult: 校准结果
@@ -659,7 +659,7 @@ class ProbabilisticForecaster:
         
         Args:
             X: 输入数据
-            y: 真实�?            model_id: 模型ID
+            y: 真实�?            model_id: 模型ID
             
         Returns:
             Dict: 概率预测报告
@@ -737,7 +737,7 @@ class TestMonteCarloDropout:
         return SimpleModel()
     
     def test_uncertainty_estimation(self, simple_model):
-        """测试不确定性估�?""
+        """测试不确定性估�?""
         mc_dropout = MonteCarloDropout(simple_model, num_samples=50)
         X = torch.randn(32, 10)
         
@@ -752,7 +752,7 @@ class TestMonteCarloDropout:
 class TestBayesianNeuralNetwork:
     
     def test_bayesian_prediction(self):
-        """测试贝叶斯预�?""
+        """测试贝叶斯预�?""
         model = BayesianNeuralNetwork(
             input_dim=10,
             hidden_dims=[20, 20],
@@ -769,13 +769,13 @@ class TestBayesianNeuralNetwork:
 
 ---
 
-## 5. 风险与约�?
-### 5.1 技术风�?
-| 风险�?| 风险等级 | 缓解措施 |
+## 5. 风险与约�?
+### 5.1 技术风�?
+| 风险�?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| 计算开销�?| P2 | GPU加速、采样优�?|
-| 校准不准�?| P1 | 多方法验证、温度缩�?|
-| 极端事件预测�?| P1 | 重尾分布、极值理�?|
+| 计算开销�?| P2 | GPU加速、采样优�?|
+| 校准不准�?| P1 | 多方法验证、温度缩�?|
+| 极端事件预测�?| P1 | 重尾分布、极值理�?|
 
 ---
 
@@ -783,31 +783,31 @@ class TestBayesianNeuralNetwork:
 
 ### 6.1 功能验收
 
-| 验收�?| 验收标准 |
+| 验收�?| 验收标准 |
 |--------|----------|
 | MC Dropout | 支持任意神经网络 |
 | 贝叶斯NN | 支持变分推断 |
-| 分位数回�?| 支持多分位数预测 |
+| 分位数回�?| 支持多分位数预测 |
 | 校准评估 | 提供ECE、MCE指标 |
 
 ### 6.2 性能验收
 
-| 指标 | 目标�?|
+| 指标 | 目标�?|
 |------|--------|
-| 单样本预�?| < 100ms |
-| 不确定性估计（100样本�?| < 1�?|
-| 校准评估 | < 5�?|
+| 单样本预�?| < 100ms |
+| 不确定性估计（100样本�?| < 1�?|
+| 校准评估 | < 5�?|
 
 ---
 
 ## 7. 版本历史
 
-| 版本 | 日期 | 作�?| 变更说明 |
+| 版本 | 日期 | 作�?| 变更说明 |
 |------|------|------|----------|
-| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 |
+| v1.0 | 2026-04-03 | 量化研究�?| 初始版本 |
 
 ---
 
 **文档版本**: v1.0.0
-**最后更�?*: 2026-04-03
-**维护�?*: 量化研究�?
+**最后更�?*: 2026-04-03
+**维护�?*: 量化研究�?

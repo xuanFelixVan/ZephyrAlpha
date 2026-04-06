@@ -1,6 +1,6 @@
 ---
-module_id: DATA_QMT_001
-version: 1.0.0
+module_id: DATA_QMT_INTERFACE_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02

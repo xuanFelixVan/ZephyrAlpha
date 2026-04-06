@@ -370,9 +370,9 @@ docs/module_designs/
 4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](./04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md))
 
 **Layer 1 - 数据预处理层 (100%完成)**
-5. **L1_CLEANER** - 数据清洗?([设计文档](../../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md))
-6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](../../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_NORMALIZER.md))
-7. **L1_VALIDATOR** - 数据校验?([设计文档](../../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md))
+5. **L1_CLEANER** - 数据清洗器 ([设计文档](../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md))
+6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_NORMALIZER.md))
+7. **L1_VALIDATOR** - 数据校验器 ([设计文档](../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md))
 
 ### 设计质量评估
 | 评估维度 | �?| 说明 |

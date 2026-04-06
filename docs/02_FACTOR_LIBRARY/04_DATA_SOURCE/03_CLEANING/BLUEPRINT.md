@@ -3,7 +3,7 @@ module_id: DATA_CLEANING_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席文档架构师
 standard_type: 数据处理文档
 applicable_scope: 数据清洗引擎
@@ -11,16 +11,33 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
---- 0%
 ---
-
 
 # 数据清洗引擎蓝图
 
-> 清风量化系统 v5.0 - 自动化数据清洗引�?
+## 文档职责说明
+
+**本文档职责**: 数据清洗引擎设计
+- 定义数据清洗规则和策略
+- 设计异常数据检测和处理机制
+- 实现数据质量评分和报告系统
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据采集系统 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 上游采集 | 数据采集实现方案 |
+| 数据质量管理 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 下游检查 | 数据质量控制体系 |
+| 清洗规则索引 | [INDEX.md](./INDEX.md) | 上级索引 | 清洗模块索引 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义"如何清洗数据"
+- ❌ 本文档不负责: 数据采集实现（由 DATA_ACQUISITION.md 负责）
+- ❌ 本文档不负责: 数据质量检查（由 QUALITY_MANAGEMENT/ 负责）
+
+> 清风量化系统 v5.0 - 自动化数据清洗引擎
 > **索引**: `DATA.CLN.001`
-> **开发时�?*: 10h
-> **核心定位**: 确保数据质量，为因子计算和策略回测提供可靠数�?
+> **开发时间**: 10h
+> **核心定位**: 确保数据质量，为因子计算和策略回测提供可靠数据
 
 
 ## 1. 设计原则
