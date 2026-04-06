@@ -4,14 +4,14 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 数据架构�?
+owner: 数据架构师
 standard_type: 专业量化机构文档
 applicable_scope: 数据源层
 compliance_level: 专业标准
-parent_document: ../README.md
+parent_document: ../INDEX.md
 implementation_status: 设计完成
-architecture_layer: 数据基础设施�?
-timeframe_support: [宏观配置�? 中观策略�? 微观执行层]
+architecture_layer: 数据基础设施层
+timeframe_support: [宏观配置层, 中观策略层, 微观执行层]
 ---
 
 # QMT数据接口技术规格
