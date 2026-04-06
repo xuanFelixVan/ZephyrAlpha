@@ -4,78 +4,78 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构�?
+owner: 首席架构�?
 standard_type: 测试计划
-applicable_scope: 舆情分析层改进模块测�?
+applicable_scope: 舆情分析层改进模块测�?
 compliance_level: 专业标准
 ---
 
-# 舆情分析层改进模块测试计划文�?
+# 舆情分析层改进模块测试计划文�?
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **文档类型**: 测试计划
-> **状�?*: �?活跃
+> **状�?*: �?活跃
 
 ---
 
 ## 📋 文档目录
 
 1. [测试策略](#一测试策略)
-2. [单元测试计划](#二单元测试计�?
-3. [集成测试计划](#三集成测试计�?
+2. [单元测试计划](#二单元测试计�?
+3. [集成测试计划](#三集成测试计�?
 4. [性能测试计划](#四性能测试计划)
-5. [验收测试计划](#五验收测试计�?
-6. [测试数据准备](#六测试数据准�?
+5. [验收测试计划](#五验收测试计�?
+6. [测试数据准备](#六测试数据准�?
 
 ---
 
-## 一、测试策�?
+## 一、测试策�?
 
 ### 1.1 测试目标
 
-确保Layer 3改进模块的功能正确性、性能达标、稳定可靠，满足专业量化机构技术标准�?
+确保Layer 3改进模块的功能正确性、性能达标、稳定可靠，满足专业量化机构技术标准�?
 
 ### 1.2 测试范围
 
 | 模块 | 测试类型 | 测试范围 |
 |------|---------|---------|
-| **数据源扩展模�?* | 单元测试、集成测试、性能测试 | Twitter、Reddit、FRED、SEC EDGAR API适配�?|
-| **深度学习情感分析模块** | 单元测试、集成测试、性能测试 | FinBERT模型、多维度分析、批量处�?|
-| **实时预警系统模块** | 单元测试、集成测试、性能测试 | 规则引擎、预警推送、历史记�?|
-| **知识图谱模块** | 单元测试、集成测试、性能测试 | 实体识别、关系抽取、图谱查�?|
-| **流式处理架构** | 单元测试、集成测试、性能测试 | Kafka、Spark Streaming、消息处�?|
+| **数据源扩展模�?* | 单元测试、集成测试、性能测试 | Twitter、Reddit、FRED、SEC EDGAR API适配�?|
+| **深度学习情感分析模块** | 单元测试、集成测试、性能测试 | FinBERT模型、多维度分析、批量处�?|
+| **实时预警系统模块** | 单元测试、集成测试、性能测试 | 规则引擎、预警推送、历史记�?|
+| **知识图谱模块** | 单元测试、集成测试、性能测试 | 实体识别、关系抽取、图谱查�?|
+| **流式处理架构** | 单元测试、集成测试、性能测试 | Kafka、Spark Streaming、消息处�?|
 | **多语言支持模块** | 单元测试、集成测试、性能测试 | 语言检测、翻译、多语言情感分析 |
-| **多模态分析模�?* | 单元测试、集成测试、性能测试 | 文本、图像、音频、视频分�?|
-| **AI虚拟研究团队** | 单元测试、集成测试、性能测试 | AI助手、知识管理、报告生�?|
+| **多模态分析模�?* | 单元测试、集成测试、性能测试 | 文本、图像、音频、视频分�?|
+| **AI虚拟研究团队** | 单元测试、集成测试、性能测试 | AI助手、知识管理、报告生�?|
 
 ### 1.3 测试工具
 
-| 工具类型 | 工具名称 | 用�?|
+| 工具类型 | 工具名称 | 用�?|
 |---------|---------|------|
 | 单元测试 | pytest | Python单元测试框架 |
 | 集成测试 | pytest + requests | API集成测试 |
 | 性能测试 | Locust | 负载测试和性能测试 |
-| 代码覆盖�?| pytest-cov | 代码覆盖率统�?|
-| 持续集成 | GitHub Actions | 自动化测试流�?|
+| 代码覆盖�?| pytest-cov | 代码覆盖率统�?|
+| 持续集成 | GitHub Actions | 自动化测试流�?|
 | 测试数据 | Faker | 生成测试数据 |
 
 ### 1.4 测试环境
 
-| 环境 | 配置 | 用�?|
+| 环境 | 配置 | 用�?|
 |------|------|------|
-| **开发环�?* | 本地开发机�?| 开发和调试 |
-| **测试环境** | 独立测试服务�?| 集成测试和性能测试 |
-| **预生产环�?* | 生产环境副本 | 验收测试 |
-| **生产环境** | 生产服务�?| 生产运行 |
+| **开发环�?* | 本地开发机�?| 开发和调试 |
+| **测试环境** | 独立测试服务�?| 集成测试和性能测试 |
+| **预生产环�?* | 生产环境副本 | 验收测试 |
+| **生产环境** | 生产服务�?| 生产运行 |
 
 ---
 
-## 二、单元测试计�?
+## 二、单元测试计�?
 
-### 2.1 数据源扩展模块单元测�?
+### 2.1 数据源扩展模块单元测�?
 
-#### Twitter API适配器测�?
+#### Twitter API适配器测�?
 
 **测试文件**: `tests/unit/test_twitter_adapter.py`
 
@@ -87,11 +87,11 @@ from src.adapters.twitter_adapter import TwitterAPIAdapter
 
 
 class TestTwitterAPIAdapter:
-    """Twitter API适配器单元测�?""
+    """Twitter API适配器单元测�?""
     
     @pytest.fixture
     def twitter_adapter(self):
-        """创建Twitter适配器实�?""
+        """创建Twitter适配器实�?""
         return TwitterAPIAdapter(
             bearer_token="test_bearer_token",
             api_key="test_api_key",
@@ -101,7 +101,7 @@ class TestTwitterAPIAdapter:
         )
     
     def test_init(self, twitter_adapter):
-        """测试初始�?""
+        """测试初始�?""
         assert twitter_adapter.bearer_token == "test_bearer_token"
         assert twitter_adapter.api_key == "test_api_key"
     
@@ -172,7 +172,7 @@ class TestTwitterAPIAdapter:
         mock_stream_instance.filter.assert_called_once()
 ```
 
-#### 深度学习情感分析器测�?
+#### 深度学习情感分析器测�?
 
 **测试文件**: `tests/unit/test_sentiment_analyzer.py`
 
@@ -184,11 +184,11 @@ from src.analyzers.dl_sentiment_analyzer import DLSentimentAnalyzer, SentimentRe
 
 
 class TestDLSentimentAnalyzer:
-    """深度学习情感分析器单元测�?""
+    """深度学习情感分析器单元测�?""
     
     @pytest.fixture
     def sentiment_analyzer(self):
-        """创建情感分析器实�?""
+        """创建情感分析器实�?""
         with patch('transformers.AutoTokenizer.from_pretrained') as mock_tokenizer, \
              patch('transformers.AutoModelForSequenceClassification.from_pretrained') as mock_model:
             
@@ -251,7 +251,7 @@ class TestDLSentimentAnalyzer:
         assert result.confidence > 0.5
     
     def test_extract_keywords(self, sentiment_analyzer):
-        """测试关键词提�?""
+        """测试关键词提�?""
         text = "Apple Inc. announced $AAPL stock buyback program"
         
         keywords = sentiment_analyzer._extract_keywords(text)
@@ -306,7 +306,7 @@ class TestRealTimeAlertSystem:
         """创建示例规则"""
         return AlertRule(
             rule_id="sentiment_negative_spike",
-            rule_name="负面情感激�?,
+            rule_name="负面情感激�?,
             description="负面情感分数突然下降超过20%",
             condition={
                 "metric": "sentiment_score",
@@ -348,10 +348,10 @@ class TestRealTimeAlertSystem:
         
         assert alert is not None
         assert alert.severity == AlertSeverity.HIGH
-        assert "负面情感激�? in alert.title
+        assert "负面情感激�? in alert.title
     
     def test_process_data_no_alert(self, alert_system, sample_rule):
-        """测试处理数据不触发预�?""
+        """测试处理数据不触发预�?""
         alert_system.add_rule(sample_rule)
         
         data = {
@@ -366,7 +366,7 @@ class TestRealTimeAlertSystem:
     
     @patch('src.alert_system.pushers.EmailPusher.push')
     def test_push_alert_success(self, mock_push, alert_system):
-        """测试推送预警成�?""
+        """测试推送预警成�?""
         mock_push.return_value = True
         
         alert = Alert(
@@ -388,7 +388,7 @@ class TestRealTimeAlertSystem:
     
     def test_get_alert_history(self, alert_system):
         """测试获取预警历史"""
-        # 添加一些预警历�?
+        # 添加一些预警历�?
         # ...
         
         history = alert_system.get_alert_history(limit=10)
@@ -398,7 +398,7 @@ class TestRealTimeAlertSystem:
 
 ---
 
-## 三、集成测试计�?
+## 三、集成测试计�?
 
 ### 3.1 API集成测试
 
@@ -417,7 +417,7 @@ class TestAPIIntegration:
     """API集成测试"""
     
     def test_health_check(self):
-        """测试健康检�?""
+        """测试健康检�?""
         response = client.get("/health")
         
         assert response.status_code == 200
@@ -511,7 +511,7 @@ class TestAPIIntegration:
         assert isinstance(data["alerts"], list)
 ```
 
-### 3.2 数据库集成测�?
+### 3.2 数据库集成测�?
 
 **测试文件**: `tests/integration/test_database_integration.py`
 
@@ -523,17 +523,17 @@ from src.database.models import Base, Tweet, SentimentResult
 from src.database.connection import get_db
 
 
-# 测试数据库配�?
+# 测试数据库配�?
 TEST_DATABASE_URL = "postgresql://test:test@localhost:5432/test_zephyr_alpha"
 
 
 @pytest.fixture(scope="function")
 def db_session():
-    """创建测试数据库会�?""
+    """创建测试数据库会�?""
     engine = create_engine(TEST_DATABASE_URL)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     
-    # 创建�?
+    # 创建�?
     Base.metadata.create_all(bind=engine)
     
     session = SessionLocal()
@@ -546,7 +546,7 @@ def db_session():
 
 
 class TestDatabaseIntegration:
-    """数据库集成测�?""
+    """数据库集成测�?""
     
     def test_insert_tweet(self, db_session):
         """测试插入推文"""
@@ -592,7 +592,7 @@ class TestDatabaseIntegration:
         assert saved.basic_sentiment["label"] == "positive"
     
     def test_query_tweets_by_date_range(self, db_session):
-        """测试按日期范围查询推�?""
+        """测试按日期范围查询推�?""
         # 插入测试数据
         # ...
         
@@ -681,7 +681,7 @@ class TestPerformanceBenchmark:
     
     @pytest.fixture
     def analyzer(self):
-        """创建分析器实�?""
+        """创建分析器实�?""
         return DLSentimentAnalyzer(
             model_name="ProsusAI/finbert",
             device="cuda"
@@ -706,12 +706,12 @@ class TestPerformanceBenchmark:
         assert avg_latency < 0.1, f"平均延迟 {avg_latency}s 超过目标 0.1s"
     
     def test_batch_analysis_throughput(self, analyzer):
-        """测试批量分析吞吐�?""
+        """测试批量分析吞吐�?""
         texts = [
             "Apple's revenue increased by 20%.",
             "The company reported a significant loss.",
             "Market remains stable with moderate growth."
-        ] * 100  # 300条文�?
+        ] * 100  # 300条文�?
         
         start_time = time.time()
         results = analyzer.analyze_batch(texts, batch_size=16)
@@ -719,8 +719,8 @@ class TestPerformanceBenchmark:
         
         throughput = len(texts) / (end_time - start_time)
         
-        # 验证吞吐�?> 100�?�?
-        assert throughput > 100, f"吞吐�?{throughput}�?�?低于目标 100�?�?
+        # 验证吞吐�?> 100�?�?
+        assert throughput > 100, f"吞吐�?{throughput}�?�?低于目标 100�?�?
     
     def test_api_response_time(self):
         """测试API响应时间"""
@@ -750,66 +750,66 @@ class TestPerformanceBenchmark:
 
 ---
 
-## 五、验收测试计�?
+## 五、验收测试计�?
 
 ### 5.1 功能验收测试清单
 
-#### 数据源扩展模块验�?
+#### 数据源扩展模块验�?
 
-| 测试�?| 验收标准 | 测试方法 | 状�?|
+| 测试�?| 验收标准 | 测试方法 | 状�?|
 |--------|---------|---------|------|
-| Twitter API连接 | 成功连接并获取数�?| 执行API调用 | �?待测�?|
-| Twitter数据采集 | 采集速度>100�?分钟 | 性能测试 | �?待测�?|
-| Reddit API连接 | 成功连接并获取数�?| 执行API调用 | �?待测�?|
-| FRED API连接 | 成功获取经济数据 | 执行API调用 | �?待测�?|
-| SEC EDGAR API连接 | 成功获取财务数据 | 执行API调用 | �?待测�?|
-| 数据存储 | 数据正确存储到数据库 | 数据验证 | �?待测�?|
+| Twitter API连接 | 成功连接并获取数�?| 执行API调用 | �?待测�?|
+| Twitter数据采集 | 采集速度>100�?分钟 | 性能测试 | �?待测�?|
+| Reddit API连接 | 成功连接并获取数�?| 执行API调用 | �?待测�?|
+| FRED API连接 | 成功获取经济数据 | 执行API调用 | �?待测�?|
+| SEC EDGAR API连接 | 成功获取财务数据 | 执行API调用 | �?待测�?|
+| 数据存储 | 数据正确存储到数据库 | 数据验证 | �?待测�?|
 
 #### 深度学习情感分析模块验收
 
-| 测试�?| 验收标准 | 测试方法 | 状�?|
+| 测试�?| 验收标准 | 测试方法 | 状�?|
 |--------|---------|---------|------|
-| 模型加载 | 成功加载FinBERT模型 | 功能测试 | �?待测�?|
-| 单条分析 | 分析速度<100ms | 性能测试 | �?待测�?|
-| 批量分析 | 吞吐�?100�?�?| 性能测试 | �?待测�?|
-| 模型准确�?| Accuracy>85% | 测试集评�?| �?待测�?|
-| 多维度分�?| 返回情感、情绪、强度等 | 功能测试 | �?待测�?|
+| 模型加载 | 成功加载FinBERT模型 | 功能测试 | �?待测�?|
+| 单条分析 | 分析速度<100ms | 性能测试 | �?待测�?|
+| 批量分析 | 吞吐�?100�?�?| 性能测试 | �?待测�?|
+| 模型准确�?| Accuracy>85% | 测试集评�?| �?待测�?|
+| 多维度分�?| 返回情感、情绪、强度等 | 功能测试 | �?待测�?|
 
 #### 实时预警系统模块验收
 
-| 测试�?| 验收标准 | 测试方法 | 状�?|
+| 测试�?| 验收标准 | 测试方法 | 状�?|
 |--------|---------|---------|------|
-| 规则引擎 | 正确执行预警规则 | 功能测试 | �?待测�?|
-| 预警触发 | 触发延迟<30�?| 性能测试 | �?待测�?|
-| 预警推�?| 推送成功率>95% | 功能测试 | �?待测�?|
-| 历史记录 | 正确记录预警历史 | 数据验证 | �?待测�?|
+| 规则引擎 | 正确执行预警规则 | 功能测试 | �?待测�?|
+| 预警触发 | 触发延迟<30�?| 性能测试 | �?待测�?|
+| 预警推�?| 推送成功率>95% | 功能测试 | �?待测�?|
+| 历史记录 | 正确记录预警历史 | 数据验证 | �?待测�?|
 
 ### 5.2 性能验收测试清单
 
-| 指标 | 目标�?| 实际�?| 状�?|
+| 指标 | 目标�?| 实际�?| 状�?|
 |------|--------|--------|------|
-| API平均响应时间 | <200ms | - | �?待测�?|
-| API吞吐�?| >100 req/s | - | �?待测�?|
-| 情感分析延迟 | <100ms | - | �?待测�?|
-| 批量分析吞吐�?| >100�?�?| - | �?待测�?|
-| 预警触发延迟 | <30�?| - | �?待测�?|
-| 系统可用�?| >99% | - | �?待测�?|
+| API平均响应时间 | <200ms | - | �?待测�?|
+| API吞吐�?| >100 req/s | - | �?待测�?|
+| 情感分析延迟 | <100ms | - | �?待测�?|
+| 批量分析吞吐�?| >100�?�?| - | �?待测�?|
+| 预警触发延迟 | <30�?| - | �?待测�?|
+| 系统可用�?| >99% | - | �?待测�?|
 
 ### 5.3 安全验收测试清单
 
-| 测试�?| 验收标准 | 测试方法 | 状�?|
+| 测试�?| 验收标准 | 测试方法 | 状�?|
 |--------|---------|---------|------|
-| API认证 | 未授权请求被拒绝 | 安全测试 | �?待测�?|
-| SQL注入 | 无SQL注入漏洞 | 安全扫描 | �?待测�?|
-| XSS攻击 | 无XSS漏洞 | 安全扫描 | �?待测�?|
-| 数据加密 | 敏感数据加密存储 | 安全审计 | �?待测�?|
-| 访问控制 | 权限正确控制 | 功能测试 | �?待测�?|
+| API认证 | 未授权请求被拒绝 | 安全测试 | �?待测�?|
+| SQL注入 | 无SQL注入漏洞 | 安全扫描 | �?待测�?|
+| XSS攻击 | 无XSS漏洞 | 安全扫描 | �?待测�?|
+| 数据加密 | 敏感数据加密存储 | 安全审计 | �?待测�?|
+| 访问控制 | 权限正确控制 | 功能测试 | �?待测�?|
 
 ---
 
-## 六、测试数据准�?
+## 六、测试数据准�?
 
-### 6.1 测试数据�?
+### 6.1 测试数据�?
 
 #### 情感分析测试数据
 
@@ -843,7 +843,7 @@ class TestPerformanceBenchmark:
 [
     {
         "rule_id": "test_sentiment_spike",
-        "rule_name": "情感激增测�?,
+        "rule_name": "情感激增测�?,
         "condition": {
             "metric": "sentiment_score",
             "operator": "increase_by",
@@ -956,24 +956,24 @@ if __name__ == "__main__":
 
 ---
 
-## 七、测试执行流�?
+## 七、测试执行流�?
 
 ### 7.1 测试执行步骤
 
 ```
 1. 准备测试环境
    ├─ 安装依赖
-   ├─ 配置数据�?
+   ├─ 配置数据�?
    └─ 启动服务
 
 2. 执行单元测试
    ├─ 运行pytest
-   └─ 生成覆盖率报�?
+   └─ 生成覆盖率报�?
 
 3. 执行集成测试
    ├─ API集成测试
-   ├─ 数据库集成测�?
-   └─ 第三方服务集成测�?
+   ├─ 数据库集成测�?
+   └─ 第三方服务集成测�?
 
 4. 执行性能测试
    ├─ 负载测试
@@ -986,7 +986,7 @@ if __name__ == "__main__":
    └─ 安全验收
 
 6. 生成测试报告
-   ├─ 测试结果汇�?
+   ├─ 测试结果汇�?
    ├─ 问题清单
    └─ 改进建议
 ```
@@ -994,16 +994,16 @@ if __name__ == "__main__":
 ### 7.2 测试命令
 
 ```bash
-# 运行所有单元测�?
+# 运行所有单元测�?
 pytest tests/unit/ -v --cov=src --cov-report=html
 
-# 运行所有集成测�?
+# 运行所有集成测�?
 pytest tests/integration/ -v
 
 # 运行性能测试
 pytest tests/performance/ -v
 
-# 运行所有测�?
+# 运行所有测�?
 pytest tests/ -v --cov=src --cov-report=html
 
 # 生成测试报告
@@ -1012,4 +1012,4 @@ pytest tests/ --html=reports/test_report.html --self-contained-html
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃

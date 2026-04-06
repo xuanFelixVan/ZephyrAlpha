@@ -287,4 +287,266 @@ class SnowballProduct:
 class KnockInProbabilityResult:
     """敲入概率计算结果"""
     product_id: str
-    knock_in_probability
+    knock_in_probability: float
+    knock_out_probability: float
+    neither_probability: float
+    expected_loss: float
+    risk_level: str
+    alert_level: str
+    timestamp: datetime
+    details: Dict[str, float]
+
+@dataclass
+class MarginAccount:
+    """融资账户数据"""
+    account_id: str
+    total_assets: float
+    total_debt: float
+    maintenance_margin_ratio: float
+    positions: List[Dict[str, float]]
+    margin_call_price: float
+
+@dataclass
+class MarginCallRiskResult:
+    """爆仓风险结果"""
+    account_id: str
+    maintenance_ratio: float
+    distance_to_margin_call: float
+    margin_call_probability: float
+    risk_level: str
+    alert_level: str
+    recommended_actions: List[str]
+    timestamp: datetime
+
+@dataclass
+class MarketLeverageRiskResult:
+    """市场杠杆风险结果"""
+    market_leverage_ratio: float
+    leverage_concentration_hhi: float
+    cascade_probability: float
+    systemic_risk_level: str
+    high_risk_sectors: List[str]
+    timestamp: datetime
+
+@dataclass
+class AlertSignal:
+    """预警信号"""
+    signal_id: str
+    risk_level: str
+    risk_type: str
+    message: str
+    risk_metrics: Dict[str, float]
+    recommended_actions: List[str]
+    timestamp: datetime
+    acknowledged: bool = False
+
+@dataclass
+class MarginCallConfig:
+    """爆仓线监控配置"""
+    n_simulations: int = 10000
+    random_seed: int = 42
+    knock_in_warning_threshold: float = 0.3
+    margin_call_warning_threshold: float = 1.5
+    systemic_risk_threshold: float = 0.7
+    alert_cooldown_minutes: int = 30
+```
+
+### 3.3 性能指标与SLA要求
+
+| 指标 | 目标值 | 测量方法 | 备注 |
+|------|--------|----------|------|
+| **敲入概率计算** | <500ms | P95延迟 | 蒙特卡洛10000次 |
+| **融资盘监控** | <100ms | P95延迟 | 实时监控 |
+| **市场风险评估** | <1s | P95延迟 | 全市场扫描 |
+| **预警信号生成** | <50ms | P95延迟 | 实时预警 |
+| **可用性** | ≥99.9% | 每月宕机时间 | 生产环境 |
+| **错误率** | <0.1% | 错误请求比例 | 生产环境 |
+
+### 3.4 安全与认证机制
+
+**认证方式**: API密钥认证
+
+**授权机制**: 
+- 管理员: 全部权限
+- 风控人员: 查看权限 + 预警确认
+- 普通用户: 仅查看权限
+
+**数据加密**: 
+- 传输加密: HTTPS/TLS 1.3
+- 存储加密: AES-256
+
+**审计日志**: 
+- 所有预警信号生成记录
+- 所有配置变更记录
+- 所有API调用记录
+
+---
+
+## 4. 数据模型与存储
+
+### 4.1 数据库表结构设计
+
+```sql
+-- 雪球产品表
+CREATE TABLE IF NOT EXISTS snowball_products (
+    product_id VARCHAR(50) PRIMARY KEY,
+    underlying VARCHAR(20) NOT NULL,
+    knock_in_price DECIMAL(10, 2) NOT NULL,
+    knock_out_price DECIMAL(10, 2) NOT NULL,
+    coupon_rate DECIMAL(5, 4) NOT NULL,
+    maturity_days INTEGER NOT NULL,
+    leverage_ratio DECIMAL(5, 2) DEFAULT 1.0,
+    observation_frequency VARCHAR(20) DEFAULT 'daily',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_underlying (underlying),
+    INDEX idx_maturity (maturity_days)
+);
+
+-- 敲入概率计算结果表
+CREATE TABLE IF NOT EXISTS knock_in_probability_results (
+    result_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id VARCHAR(50) NOT NULL,
+    knock_in_probability DECIMAL(5, 4) NOT NULL,
+    knock_out_probability DECIMAL(5, 4) NOT NULL,
+    neither_probability DECIMAL(5, 4) NOT NULL,
+    expected_loss DECIMAL(10, 2),
+    risk_level VARCHAR(10) NOT NULL,
+    alert_level VARCHAR(10) NOT NULL,
+    current_price DECIMAL(10, 2) NOT NULL,
+    volatility DECIMAL(5, 4) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES snowball_products(product_id),
+    INDEX idx_product_time (product_id, timestamp),
+    INDEX idx_risk_level (risk_level)
+);
+
+-- 融资账户表
+CREATE TABLE IF NOT EXISTS margin_accounts (
+    account_id VARCHAR(50) PRIMARY KEY,
+    total_assets DECIMAL(15, 2) NOT NULL,
+    total_debt DECIMAL(15, 2) NOT NULL,
+    maintenance_margin_ratio DECIMAL(5, 4) NOT NULL,
+    margin_call_price DECIMAL(10, 2),
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_maintenance_ratio (maintenance_margin_ratio)
+);
+
+-- 爆仓风险结果表
+CREATE TABLE IF NOT EXISTS margin_call_risk_results (
+    result_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id VARCHAR(50) NOT NULL,
+    maintenance_ratio DECIMAL(5, 4) NOT NULL,
+    distance_to_margin_call DECIMAL(10, 2) NOT NULL,
+    margin_call_probability DECIMAL(5, 4) NOT NULL,
+    risk_level VARCHAR(10) NOT NULL,
+    alert_level VARCHAR(10) NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (account_id) REFERENCES margin_accounts(account_id),
+    INDEX idx_account_time (account_id, timestamp),
+    INDEX idx_risk_level (risk_level)
+);
+
+-- 市场杠杆风险表
+CREATE TABLE IF NOT EXISTS market_leverage_risk_results (
+    result_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    market_leverage_ratio DECIMAL(5, 4) NOT NULL,
+    leverage_concentration_hhi DECIMAL(5, 4) NOT NULL,
+    cascade_probability DECIMAL(5, 4) NOT NULL,
+    systemic_risk_level VARCHAR(20) NOT NULL,
+    high_risk_sectors TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_timestamp (timestamp),
+    INDEX idx_systemic_risk (systemic_risk_level)
+);
+
+-- 预警信号表
+CREATE TABLE IF NOT EXISTS alert_signals (
+    signal_id VARCHAR(50) PRIMARY KEY,
+    risk_level VARCHAR(10) NOT NULL,
+    risk_type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    risk_metrics TEXT NOT NULL,
+    recommended_actions TEXT,
+    acknowledged BOOLEAN DEFAULT FALSE,
+    acknowledged_by VARCHAR(50),
+    acknowledged_at TIMESTAMP,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_risk_level (risk_level),
+    INDEX idx_timestamp (timestamp),
+    INDEX idx_acknowledged (acknowledged)
+);
+
+-- 预警配置表
+CREATE TABLE IF NOT EXISTS alert_configurations (
+    config_id VARCHAR(50) PRIMARY KEY,
+    risk_type VARCHAR(50) NOT NULL,
+    threshold_value DECIMAL(10, 4) NOT NULL,
+    alert_level VARCHAR(10) NOT NULL,
+    cooldown_minutes INTEGER DEFAULT 30,
+    enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_risk_type (risk_type)
+);
+```
+
+### 4.2 数据流与ETL流程
+
+```
+数据源 → 提取 → 转换 → 加载 → 存储 → 服务
+  │       │       │       │       │       │
+  ├─ 雪球产品数据  ├─ 数据清洗  ├─ 数据验证  ├─ 数据库存储  ├─ API服务
+  ├─ 融资盘数据    ├─ 格式转换  ├─ 异常检测  ├─ 缓存存储    ├─ 预警推送
+  └─ 市场行情数据  └─ 指标计算  └─ 数据质量  └─ 归档存储    └─ 监控面板
+```
+
+**数据源**:
+- 雪球产品数据: 券商API、Wind金融终端
+- 融资盘数据: 券商融资融券数据
+- 市场行情数据: 实时行情数据源
+
+**ETL步骤**:
+1. **提取**: 从数据源获取原始数据
+2. **清洗**: 去除异常值、填充缺失值
+3. **转换**: 计算衍生指标、格式标准化
+4. **验证**: 数据质量检查、一致性验证
+5. **加载**: 写入数据库、更新缓存
+
+**数据质量**:
+- 完整性检查: 必填字段非空验证
+- 准确性检查: 数值范围验证
+- 一致性检查: 跨表关联验证
+- 时效性检查: 数据更新频率验证
+
+### 4.3 缓存策略与数据一致性方案
+
+**缓存类型**: 
+- 内存缓存: Redis（热点数据）
+- 本地缓存: Python字典（配置数据）
+
+**缓存策略**:
+- **LRU**: 最近最少使用淘汰
+- **TTL**: 雪球产品数据5分钟，融资盘数据1分钟，市场行情数据10秒
+- **写穿透**: 先更新数据库，再更新缓存
+
+**一致性保证**: 最终一致性
+- 数据库为主数据源
+- 缓存失效后从数据库重新加载
+- 关键操作使用分布式锁
+
+**失效策略**:
+- 主动失效: 数据更新时主动清除缓存
+- 被动失效: TTL到期自动清除
+- 定期刷新: 每小时全量刷新热点数据
+
+### 4.4 备份与恢复方案
+
+**备份策略**:
+- **全量备份**: 每日凌晨2:00
+- **增量备份**: 每4小时一次
+- **实时备份**: 关键表实时同步
+
+**恢复点目标(RPO)**: 1小时
+
+**恢复时间目标(RTO

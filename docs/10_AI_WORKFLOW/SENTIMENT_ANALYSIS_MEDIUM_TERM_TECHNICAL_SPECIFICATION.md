@@ -4,9 +4,9 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构�?
+owner: 首席架构�?
 standard_type: 技术规格书
-applicable_scope: 舆情分析层中期改进模�?
+applicable_scope: 舆情分析层中期改进模�?
 compliance_level: 专业标准
 applicable_modules:
   - 知识图谱
@@ -19,43 +19,43 @@ applicable_modules:
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **适用模块**: 知识图谱、流式处理架构、多语言支持
-> **标准**: 专业量化机构技术规格标�?
+> **标准**: 专业量化机构技术规格标�?
 
 ---
 
 ## 📋 文档目录
 
-1. [知识图谱模块技术规格](#一知识图谱模块技术规�?
-2. [流式处理架构技术规格](#二流式处理架构技术规�?
-3. [多语言支持模块技术规格](#三多语言支持模块技术规�?
-4. [数据字典](#四数据字�?
+1. [知识图谱模块技术规格](#一知识图谱模块技术规�?
+2. [流式处理架构技术规格](#二流式处理架构技术规�?
+3. [多语言支持模块技术规格](#三多语言支持模块技术规�?
+4. [数据字典](#四数据字�?
 5. [API接口规范](#五api接口规范)
 6. [算法流程图](#六算法流程图)
 7. [性能指标定义](#七性能指标定义)
 
 ---
 
-## 一、知识图谱模块技术规�?
+## 一、知识图谱模块技术规�?
 
 ### 1.1 模块概述
 
 **模块ID**: L3_FKG_001
 **模块名称**: Financial Knowledge Graph (金融知识图谱)
 **版本**: v1.0.0
-**状�?*: 设计�?
+**状�?*: 设计�?
 
 ### 1.2 详细API接口定义
 
-#### 1.2.1 知识图谱管理器接�?
+#### 1.2.1 知识图谱管理器接�?
 
 **接口名称**: FinancialKnowledgeGraph
 
-**类定�?*:
+**类定�?*:
 ```python
 class FinancialKnowledgeGraph:
-    """金融知识图谱管理�?
+    """金融知识图谱管理�?
     
-    负责图谱构建、查询、推理和可视�?
+    负责图谱构建、查询、推理和可视�?
     """
     
     def __init__(
@@ -69,9 +69,9 @@ class FinancialKnowledgeGraph:
         
         Args:
             neo4j_uri: Neo4j数据库URI
-            neo4j_user: 用户�?
+            neo4j_user: 用户�?
             neo4j_password: 密码
-            database: 数据库名�?
+            database: 数据库名�?
         """
         pass
     
@@ -86,7 +86,7 @@ class FinancialKnowledgeGraph:
         Args:
             entity_type: 实体类型 (Company, Person, Product, Event, Concept, Industry)
             entity_id: 实体ID
-            properties: 实体属�?
+            properties: 实体属�?
             
         Returns:
             是否添加成功
@@ -106,7 +106,7 @@ class FinancialKnowledgeGraph:
             from_entity_id: 起始实体ID
             to_entity_id: 目标实体ID
             relation_type: 关系类型 (INVEST, COOPERATE, COMPETE, SUPPLY_CHAIN, BELONG_TO, INFLUENCE)
-            properties: 关系属�?
+            properties: 关系属�?
             
         Returns:
             是否添加成功
@@ -156,7 +156,7 @@ class FinancialKnowledgeGraph:
         Args:
             from_entity_id: 起始实体ID
             to_entity_id: 目标实体ID
-            max_depth: 最大深�?
+            max_depth: 最大深�?
             
         Returns:
             路径列表
@@ -172,7 +172,7 @@ class FinancialKnowledgeGraph:
         
         Args:
             event_id: 事件ID
-            time_window: 时间窗口（天�?
+            time_window: 时间窗口（天�?
             
         Returns:
             关联分析结果
@@ -190,7 +190,7 @@ class FinancialKnowledgeGraph:
         Args:
             entity_id: 实体ID
             impact_type: 影响类型 (positive, negative)
-            max_depth: 最大深�?
+            max_depth: 最大深�?
             
         Returns:
             影响传导分析结果
@@ -347,14 +347,14 @@ print(f"事件关联: {correlation}")
 
 ---
 
-#### 1.2.2 实体识别器接�?
+#### 1.2.2 实体识别器接�?
 
 **接口名称**: EntityRecognizer
 
-**类定�?*:
+**类定�?*:
 ```python
 class EntityRecognizer:
-    """实体识别�?
+    """实体识别�?
     
     从文本中识别金融实体
     """
@@ -368,7 +368,7 @@ class EntityRecognizer:
         
         Args:
             model_name: spaCy模型名称
-            custom_patterns: 自定义模�?
+            custom_patterns: 自定义模�?
         """
         pass
     
@@ -409,7 +409,7 @@ class EntityRecognizer:
         entity_type: str,
         patterns: List[str]
     ) -> None:
-        """添加自定义模�?
+        """添加自定义模�?
         
         Args:
             entity_type: 实体类型
@@ -418,7 +418,7 @@ class EntityRecognizer:
         pass
     
     def get_entity_types(self) -> List[str]:
-        """获取支持的实体类�?
+        """获取支持的实体类�?
         
         Returns:
             实体类型列表
@@ -488,14 +488,14 @@ for entity in entities:
 
 ---
 
-#### 1.2.3 关系抽取器接�?
+#### 1.2.3 关系抽取器接�?
 
 **接口名称**: RelationExtractor
 
-**类定�?*:
+**类定�?*:
 ```python
 class RelationExtractor:
-    """关系抽取�?
+    """关系抽取�?
     
     从文本中抽取实体关系
     """
@@ -546,7 +546,7 @@ class RelationExtractor:
         pass
     
     def get_relation_types(self) -> List[str]:
-        """获取支持的关系类�?
+        """获取支持的关系类�?
         
         Returns:
             关系类型列表
@@ -573,7 +573,7 @@ relations = extractor.extract(text, entities)
 
 for relation in relations:
     print(f"关系: {relation['from']} -> {relation['type']} -> {relation['to']}")
-    print(f"置信�? {relation['confidence']}")
+    print(f"置信�? {relation['confidence']}")
 ```
 
 **响应示例**:
@@ -594,25 +594,25 @@ for relation in relations:
 
 ---
 
-## 二、流式处理架构技术规�?
+## 二、流式处理架构技术规�?
 
 ### 2.1 模块概述
 
 **模块ID**: L3_SPA_001
 **模块名称**: Stream Processing Architecture (流式处理架构)
 **版本**: v1.0.0
-**状�?*: 设计�?
+**状�?*: 设计�?
 
 ### 2.2 详细API接口定义
 
-#### 2.2.1 流式处理管理器接�?
+#### 2.2.1 流式处理管理器接�?
 
 **接口名称**: StreamProcessingManager
 
-**类定�?*:
+**类定�?*:
 ```python
 class StreamProcessingManager:
-    """流式处理管理�?
+    """流式处理管理�?
     
     管理Kafka消息队列和Spark Streaming应用
     """
@@ -642,7 +642,7 @@ class StreamProcessingManager:
         
         Args:
             topic_name: 主题名称
-            num_partitions: 分区�?
+            num_partitions: 分区�?
             replication_factor: 副本因子
             
         Returns:
@@ -660,11 +660,11 @@ class StreamProcessingManager:
         
         Args:
             topic: 主题名称
-            key: 消息�?
-            value: 消息�?
+            key: 消息�?
+            value: 消息�?
             
         Returns:
-            是否发送成�?
+            是否发送成�?
         """
         pass
     
@@ -711,13 +711,13 @@ class StreamProcessingManager:
         pass
     
     def get_job_status(self, job_name: str) -> Dict[str, Any]:
-        """获取作业状�?
+        """获取作业状�?
         
         Args:
             job_name: 作业名称
             
         Returns:
-            作业状�?
+            作业状�?
         """
         pass
     
@@ -767,7 +767,7 @@ manager.produce_message(
 
 # 定义处理逻辑
 def process_news_stream(df):
-    """处理新闻�?""
+    """处理新闻�?""
     from pyspark.sql.functions import col, from_json
     from pyspark.sql.types import StructType, StructField, StringType, TimestampType
     
@@ -797,9 +797,9 @@ manager.start_streaming_job(
     processing_logic=process_news_stream
 )
 
-# 获取作业状�?
+# 获取作业状�?
 status = manager.get_job_status(job_name="news_sentiment_analysis")
-print(f"作业状�? {status}")
+print(f"作业状�? {status}")
 ```
 
 **响应示例**:
@@ -825,27 +825,27 @@ print(f"作业状�? {status}")
 
 ---
 
-## 三、多语言支持模块技术规�?
+## 三、多语言支持模块技术规�?
 
 ### 3.1 模块概述
 
 **模块ID**: L3_MSA_001
-**模块名称**: Multilingual Sentiment Analyzer (多语言情感分析�?
+**模块名称**: Multilingual Sentiment Analyzer (多语言情感分析�?
 **版本**: v1.0.0
-**状�?*: 设计�?
+**状�?*: 设计�?
 
 ### 3.2 详细API接口定义
 
-#### 3.2.1 多语言情感分析器接�?
+#### 3.2.1 多语言情感分析器接�?
 
 **接口名称**: MultilingualSentimentAnalyzer
 
-**类定�?*:
+**类定�?*:
 ```python
 class MultilingualSentimentAnalyzer:
-    """多语言情感分析�?
+    """多语言情感分析�?
     
-    支持多语言文本的情感分�?
+    支持多语言文本的情感分�?
     """
     
     def __init__(
@@ -854,7 +854,7 @@ class MultilingualSentimentAnalyzer:
         sentiment_models: Optional[Dict[str, str]] = None,
         device: str = "cpu"
     ):
-        """初始化多语言情感分析�?
+        """初始化多语言情感分析�?
         
         Args:
             translation_model: 翻译模型
@@ -903,7 +903,7 @@ class MultilingualSentimentAnalyzer:
         Args:
             text: 文本
             source_lang: 源语言（可选，自动检测）
-            translate_to_en: 是否翻译为英�?
+            translate_to_en: 是否翻译为英�?
             
         Returns:
             情感分析结果
@@ -937,7 +937,7 @@ class MultilingualSentimentAnalyzer:
 
 **请求示例**:
 ```python
-# 初始化多语言情感分析�?
+# 初始化多语言情感分析�?
 analyzer = MultilingualSentimentAnalyzer(
     translation_model="Helsinki-NLP/opus-mt",
     sentiment_models={
@@ -952,14 +952,14 @@ analyzer = MultilingualSentimentAnalyzer(
 )
 
 # 分析中文文本
-zh_text = "苹果公司发布了新产品，市场反应积极�?
+zh_text = "苹果公司发布了新产品，市场反应积极�?
 result = analyzer.analyze(zh_text)
 print(f"语言: {result['language']}")
 print(f"情感: {result['sentiment']}")
 print(f"翻译: {result['translation']}")
 
 # 分析日文文本
-ja_text = "アップルが新製品を発表し、市場は好意的に反応しました�?
+ja_text = "アップルが新製品を発表し、市場は好意的に反応しました�?
 result = analyzer.analyze(ja_text)
 print(f"语言: {result['language']}")
 print(f"情感: {result['sentiment']}")
@@ -967,8 +967,8 @@ print(f"情感: {result['sentiment']}")
 # 批量分析
 texts = [
     "Apple's revenue increased by 20%.",
-    "苹果公司营收增长20%�?,
-    "Appleの売上高�?0%増加しました�?
+    "苹果公司营收增长20%�?,
+    "Appleの売上高�?0%増加しました�?
 ]
 results = analyzer.analyze_batch(texts)
 
@@ -980,7 +980,7 @@ for i, result in enumerate(results):
 **响应示例**:
 ```json
 {
-    "text": "苹果公司发布了新产品，市场反应积极�?,
+    "text": "苹果公司发布了新产品，市场反应积极�?,
     "language": "zh",
     "translation": "Apple released a new product, and the market reacted positively.",
     "sentiment": {
@@ -1011,51 +1011,51 @@ for i, result in enumerate(results):
 
 ---
 
-## 四、数据字�?
+## 四、数据字�?
 
-### 4.1 知识图谱数据表字段说�?
+### 4.1 知识图谱数据表字段说�?
 
-#### 实体�?(entities)
+#### 实体�?(entities)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | TEXT | 实体ID | "AAPL" |
 | type | TEXT | 实体类型 | "Company" |
 | name | TEXT | 实体名称 | "Apple Inc." |
-| properties | TEXT | 属�?JSON) | {"ticker": "AAPL", "sector": "Technology"} |
+| properties | TEXT | 属�?JSON) | {"ticker": "AAPL", "sector": "Technology"} |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 | updated_at | TIMESTAMP | 更新时间 | "2026-04-02 10:00:00" |
 
-#### 关系�?(relations)
+#### 关系�?(relations)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | from_entity_id | TEXT | 起始实体ID | "tim_cook" |
 | to_entity_id | TEXT | 目标实体ID | "AAPL" |
 | type | TEXT | 关系类型 | "BELONG_TO" |
-| properties | TEXT | 属�?JSON) | {"role": "CEO"} |
-| confidence | REAL | 置信�?| 0.95 |
+| properties | TEXT | 属�?JSON) | {"role": "CEO"} |
+| confidence | REAL | 置信�?| 0.95 |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 
-### 4.2 流式处理数据表字段说�?
+### 4.2 流式处理数据表字段说�?
 
-#### 消息�?(stream_messages)
+#### 消息�?(stream_messages)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | topic | TEXT | 主题名称 | "news-stream" |
-| partition | INTEGER | 分区�?| 0 |
-| offset | INTEGER | 偏移�?| 12345 |
-| key | TEXT | 消息�?| "news_001" |
-| value | TEXT | 消息�?JSON) | {...} |
-| timestamp | TIMESTAMP | 时间�?| "2026-04-02 10:00:00" |
+| partition | INTEGER | 分区�?| 0 |
+| offset | INTEGER | 偏移�?| 12345 |
+| key | TEXT | 消息�?| "news_001" |
+| value | TEXT | 消息�?JSON) | {...} |
+| timestamp | TIMESTAMP | 时间�?| "2026-04-02 10:00:00" |
 | processed | INTEGER | 是否处理 | 1 |
 
-#### 处理结果�?(stream_results)
+#### 处理结果�?(stream_results)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | message_id | INTEGER | 消息ID | 1 |
@@ -1064,26 +1064,26 @@ for i, result in enumerate(results):
 | processing_time | REAL | 处理时间(ms) | 85.5 |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 
-### 4.3 多语言支持数据表字段说�?
+### 4.3 多语言支持数据表字段说�?
 
 #### 语言检测表 (language_detections)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | text_hash | TEXT | 文本哈希 | "a1b2c3..." |
 | text | TEXT | 原始文本 | "苹果公司..." |
 | detected_language | TEXT | 检测语言 | "zh" |
-| confidence | REAL | 置信�?| 0.98 |
+| confidence | REAL | 置信�?| 0.98 |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 
-#### 翻译�?(translations)
+#### 翻译�?(translations)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | text_hash | TEXT | 文本哈希 | "a1b2c3..." |
-| source_text | TEXT | 源文�?| "苹果公司..." |
+| source_text | TEXT | 源文�?| "苹果公司..." |
 | source_lang | TEXT | 源语言 | "zh" |
 | target_lang | TEXT | 目标语言 | "en" |
 | translated_text | TEXT | 翻译文本 | "Apple Inc..." |
@@ -1131,7 +1131,7 @@ GET    /messages                    # 消费消息
 
 POST   /jobs                        # 启动作业
 GET    /jobs                        # 获取作业列表
-GET    /jobs/{name}                 # 获取作业状�?
+GET    /jobs/{name}                 # 获取作业状�?
 DELETE /jobs/{name}                 # 停止作业
 
 GET    /metrics/kafka               # 获取Kafka指标
@@ -1155,115 +1155,115 @@ GET    /languages                   # 获取支持的语言
 
 ## 六、算法流程图
 
-### 6.1 知识图谱构建流程�?
+### 6.1 知识图谱构建流程�?
 
 ```
-开�?
-  �?
-数据源接�?
-  �?
+开�?
+  �?
+数据源接�?
+  �?
 实体识别
   ├─ 使用spaCy识别实体
-  ├─ 使用自定义模式识�?
+  ├─ 使用自定义模式识�?
   └─ 合并识别结果
-  �?
+  �?
 关系抽取
   ├─ 基于规则抽取
   ├─ 基于模型抽取
   └─ 合并抽取结果
-  �?
+  �?
 实体消歧
-  ├─ 名称标准�?
+  ├─ 名称标准�?
   ├─ 实体对齐
   └─ 实体融合
-  �?
+  �?
 关系验证
-  ├─ 置信度评�?
-  ├─ 冲突检�?
+  ├─ 置信度评�?
+  ├─ 冲突检�?
   └─ 关系过滤
-  �?
+  �?
 图谱存储
   ├─ 存储实体
   ├─ 存储关系
   └─ 建立索引
-  �?
+  �?
 图谱更新
   ├─ 增量更新
   ├─ 全量更新
   └─ 版本管理
-  �?
+  �?
 结束
 ```
 
-### 6.2 流式处理流程�?
+### 6.2 流式处理流程�?
 
 ```
-开�?
-  �?
+开�?
+  �?
 初始化Kafka和Spark
-  �?
+  �?
 创建Kafka主题
-  �?
-启动消息生产�?
-  �?
-[数据源类�?]
-  ├─ 实时API �?监听API �?接收数据 �?发送到Kafka
-  └─ 定时任务 �?触发采集 �?获取数据 �?发送到Kafka
-      �?
+  �?
+启动消息生产�?
+  �?
+[数据源类�?]
+  ├─ 实时API �?监听API �?接收数据 �?发送到Kafka
+  └─ 定时任务 �?触发采集 �?获取数据 �?发送到Kafka
+      �?
   Spark Streaming消费
-      �?
+      �?
   数据处理
       ├─ 数据清洗
       ├─ 情感分析
-      ├─ 事件检�?
+      ├─ 事件检�?
       └─ 结果聚合
-          �?
+          �?
       结果输出
           ├─ 存储到数据库
           ├─ 发送到预警系统
           └─ 推送到WebSocket
-              �?
+              �?
           [继续处理?]
-              ├─ �?�?返回Spark Streaming消费
-              └─ �?�?结束
+              ├─ �?�?返回Spark Streaming消费
+              └─ �?�?结束
 ```
 
-### 6.3 多语言分析流程�?
+### 6.3 多语言分析流程�?
 
 ```
-开�?
-  �?
+开�?
+  �?
 接收文本输入
-  �?
-语言检�?
+  �?
+语言检�?
   ├─ 使用langdetect
   ├─ 使用fasttext
   └─ 确定语言
-  �?
-[是否需要翻�?]
-  ├─ �?�?直接分析
-  └─ �?�?
+  �?
+[是否需要翻�?]
+  ├─ �?�?直接分析
+  └─ �?�?
       选择翻译模型
-          �?
+          �?
       执行翻译
-          �?
+          �?
       翻译质量评估
-          �?
+          �?
       [翻译质量达标?]
-          ├─ �?�?使用原文分析
-          └─ �?�?使用译文分析
-              �?
+          ├─ �?�?使用原文分析
+          └─ �?�?使用译文分析
+              �?
           选择情感分析模型
-              �?
+              �?
           执行情感分析
-              �?
+              �?
           结果融合
               ├─ 原文分析结果
               ├─ 译文分析结果
               └─ 加权融合
-                  �?
+                  �?
               返回结果
-                  �?
+                  �?
                 结束
 ```
 
@@ -1273,40 +1273,40 @@ GET    /languages                   # 获取支持的语言
 
 ### 7.1 知识图谱模块性能指标
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
-| 实体识别准确�?| > 85% | 人工标注验证 | 正确识别�?总数 |
-| 关系抽取准确�?| > 80% | 人工标注验证 | 正确抽取�?总数 |
-| 图谱查询响应时间 | < 1�?| 记录查询耗时 | 平均响应时间 |
-| 图谱构建速度 | > 100实体/分钟 | 统计构建速度 | 构建吞吐�?|
-| 图谱存储大小 | < 10GB | 监控存储空间 | 图谱数据库大�?|
-| 社区发现准确�?| > 75% | 人工评估 | 模块度评�?|
+| 实体识别准确�?| > 85% | 人工标注验证 | 正确识别�?总数 |
+| 关系抽取准确�?| > 80% | 人工标注验证 | 正确抽取�?总数 |
+| 图谱查询响应时间 | < 1�?| 记录查询耗时 | 平均响应时间 |
+| 图谱构建速度 | > 100实体/分钟 | 统计构建速度 | 构建吞吐�?|
+| 图谱存储大小 | < 10GB | 监控存储空间 | 图谱数据库大�?|
+| 社区发现准确�?| > 75% | 人工评估 | 模块度评�?|
 
 ### 7.2 流式处理模块性能指标
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
-| 消息吞吐�?| > 1000�?�?| 统计处理速度 | 每秒处理消息�?|
-| 处理延迟 | < 100ms | 记录端到端延�?| 从接收到处理完成 |
-| 系统可用�?| > 99.9% | 监控运行时间 | 正常时间/总时�?|
-| 消息丢失�?| < 0.01% | 统计丢失消息 | 丢失�?总数 |
+| 消息吞吐�?| > 1000�?�?| 统计处理速度 | 每秒处理消息�?|
+| 处理延迟 | < 100ms | 记录端到端延�?| 从接收到处理完成 |
+| 系统可用�?| > 99.9% | 监控运行时间 | 正常时间/总时�?|
+| 消息丢失�?| < 0.01% | 统计丢失消息 | 丢失�?总数 |
 | Kafka延迟 | < 10ms | 监控Kafka延迟 | 消息在Kafka中的延迟 |
-| Spark处理时间 | < 50ms | 记录Spark处理耗时 | 每批次处理时�?|
+| Spark处理时间 | < 50ms | 记录Spark处理耗时 | 每批次处理时�?|
 
 ### 7.3 多语言支持模块性能指标
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
 | 语言检测准确率 | > 95% | 人工标注验证 | 正确检测数/总数 |
 | 翻译质量(BLEU) | > 30 | BLEU分数评估 | 机器翻译质量 |
-| 翻译速度 | > 50�?�?| 统计翻译速度 | 每秒翻译句子�?|
-| 多语言情感分析准确�?| > 80% | 测试集评�?| 各语言平均准确�?|
+| 翻译速度 | > 50�?�?| 统计翻译速度 | 每秒翻译句子�?|
+| 多语言情感分析准确�?| > 80% | 测试集评�?| 各语言平均准确�?|
 | 支持语言数量 | > 5 | 统计支持语言 | 支持的语言种类 |
-| 内存使用 | < 8GB | 监控内存使用 | 峰值内�?|
+| 内存使用 | < 8GB | 监控内存使用 | 峰值内�?|
 
 ---
 
-## 八、配置文件规�?
+## 八、配置文件规�?
 
 ### 8.1 知识图谱配置文件
 
@@ -1349,7 +1349,7 @@ relation_extraction:
 # 图谱更新配置
 graph_update:
   mode: "incremental"  # incremental, full
-  update_interval: 3600  # �?
+  update_interval: 3600  # �?
   batch_size: 100
 ```
 
@@ -1405,7 +1405,7 @@ jobs:
 **文件**: `config/multilingual.yaml`
 
 ```yaml
-# 语言检测配�?
+# 语言检测配�?
 language_detection:
   model: "fasttext"
   supported_languages:
@@ -1422,7 +1422,7 @@ translation:
   model: "Helsinki-NLP/opus-mt"
   cache_enabled: true
   cache_size: 10000
-  cache_ttl: 3600  # �?
+  cache_ttl: 3600  # �?
   
 # 情感分析模型配置
 sentiment_models:
@@ -1443,4 +1443,4 @@ performance:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃

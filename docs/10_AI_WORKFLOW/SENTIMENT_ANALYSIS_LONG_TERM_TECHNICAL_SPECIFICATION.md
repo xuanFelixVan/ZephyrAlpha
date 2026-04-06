@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
-owner: 首席架构�?
+owner: 首席架构�?
 standard_type: 技术规格书
-applicable_scope: 舆情分析层长期改进模�?
+applicable_scope: 舆情分析层长期改进模�?
 compliance_level: 专业标准
 applicable_modules:
-  - 多模态分�?
+  - 多模态分�?
   - AI虚拟研究团队
 ---
 
@@ -18,29 +18,29 @@ applicable_modules:
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **适用模块**: 多模态分析、AI虚拟研究团队
-> **标准**: 专业量化机构技术规格标�?
+> **标准**: 专业量化机构技术规格标�?
 
 ---
 
 ## 📋 文档目录
 
-1. [多模态分析模块技术规格](#一多模态分析模块技术规�?
-2. [AI虚拟研究团队技术规格](#二ai虚拟研究团队技术规�?
-3. [数据字典](#三数据字�?
+1. [多模态分析模块技术规格](#一多模态分析模块技术规�?
+2. [AI虚拟研究团队技术规格](#二ai虚拟研究团队技术规�?
+3. [数据字典](#三数据字�?
 4. [API接口规范](#四api接口规范)
 5. [算法流程图](#五算法流程图)
 6. [性能指标定义](#六性能指标定义)
 
 ---
 
-## 一、多模态分析模块技术规�?
+## 一、多模态分析模块技术规�?
 
 ### 1.1 模块概述
 
 **模块ID**: L3_MMSA_001
 **模块名称**: Multimodal Sentiment Analyzer (多模态情感分析器)
 **版本**: v1.0.0
-**状�?*: 设计�?
+**状�?*: 设计�?
 
 ### 1.2 详细API接口定义
 
@@ -48,12 +48,12 @@ applicable_modules:
 
 **接口名称**: MultimodalSentimentAnalyzer
 
-**类定�?*:
+**类定�?*:
 ```python
 class MultimodalSentimentAnalyzer:
     """多模态情感分析器
     
-    支持文本、图像、音频、视频的多模态情感分�?
+    支持文本、图像、音频、视频的多模态情感分�?
     """
     
     def __init__(
@@ -149,7 +149,7 @@ class MultimodalSentimentAnalyzer:
         video_path: Optional[str] = None,
         weights: Optional[Dict[str, float]] = None
     ) -> Dict[str, Any]:
-        """多模态情感分�?
+        """多模态情感分�?
         
         Args:
             text: 文本内容（可选）
@@ -159,7 +159,7 @@ class MultimodalSentimentAnalyzer:
             weights: 各模态权重（可选）
             
         Returns:
-            多模态融合情感分析结�?
+            多模态融合情感分析结�?
         """
         pass
     
@@ -171,7 +171,7 @@ class MultimodalSentimentAnalyzer:
         """提取特征向量
         
         Args:
-            modality: 模态类�?(text, image, audio, video)
+            modality: 模态类�?(text, image, audio, video)
             content: 内容
             
         Returns:
@@ -187,7 +187,7 @@ class MultimodalSentimentAnalyzer:
         """融合特征向量
         
         Args:
-            features: 各模态特征向�?
+            features: 各模态特征向�?
             strategy: 融合策略（可选）
             
         Returns:
@@ -261,7 +261,7 @@ video_result = analyzer.analyze_video(
 )
 print(f"视频情感: {video_result['sentiment']}")
 
-# 多模态融合分�?
+# 多模态融合分�?
 multimodal_result = analyzer.analyze_multimodal(
     text="Apple announced record-breaking sales in Q4.",
     image_path="./images/apple_store.jpg",
@@ -275,7 +275,7 @@ multimodal_result = analyzer.analyze_multimodal(
     }
 )
 print(f"融合情感: {multimodal_result['sentiment']}")
-print(f"各模态贡�? {multimodal_result['contributions']}")
+print(f"各模态贡�? {multimodal_result['contributions']}")
 ```
 
 **响应示例**:
@@ -327,14 +327,14 @@ print(f"各模态贡�? {multimodal_result['contributions']}")
 
 ---
 
-#### 1.2.2 图像情感分析器接�?
+#### 1.2.2 图像情感分析器接�?
 
 **接口名称**: ImageSentimentAnalyzer
 
-**类定�?*:
+**类定�?*:
 ```python
 class ImageSentimentAnalyzer:
-    """图像情感分析�?
+    """图像情感分析�?
     
     使用视觉模型分析图像情感
     """
@@ -389,11 +389,11 @@ class ImageSentimentAnalyzer:
         image_path: str,
         confidence_threshold: float = 0.5
     ) -> List[Dict[str, Any]]:
-        """检测图像中的对�?
+        """检测图像中的对�?
         
         Args:
             image_path: 图像路径
-            confidence_threshold: 置信度阈�?
+            confidence_threshold: 置信度阈�?
             
         Returns:
             对象列表
@@ -432,13 +432,13 @@ result = image_analyzer.analyze(
 )
 print(f"图像情感: {result['sentiment']}")
 
-# 检测对�?
+# 检测对�?
 objects = image_analyzer.detect_objects(
     image_path="./images/apple_store.jpg",
     confidence_threshold=0.5
 )
 for obj in objects:
-    print(f"对象: {obj['label']}, 置信�? {obj['confidence']}")
+    print(f"对象: {obj['label']}, 置信�? {obj['confidence']}")
 
 # 提取颜色
 colors = image_analyzer.extract_colors(
@@ -491,14 +491,14 @@ for color in colors:
 
 ---
 
-#### 1.2.3 音频情感分析器接�?
+#### 1.2.3 音频情感分析器接�?
 
 **接口名称**: AudioSentimentAnalyzer
 
-**类定�?*:
+**类定�?*:
 ```python
 class AudioSentimentAnalyzer:
-    """音频情感分析�?
+    """音频情感分析�?
     
     使用音频模型分析语音情感
     """
@@ -570,7 +570,7 @@ class AudioSentimentAnalyzer:
             audio_path: 音频路径
             
         Returns:
-            情感检测结�?
+            情感检测结�?
         """
         pass
 ```
@@ -606,7 +606,7 @@ print(f"音频特征: {features}")
 emotion = audio_analyzer.detect_speaker_emotion(
     audio_path="./audio/earnings_call.wav"
 )
-print(f"说话人情�? {emotion}")
+print(f"说话人情�? {emotion}")
 ```
 
 **响应示例**:
@@ -647,14 +647,14 @@ print(f"说话人情�? {emotion}")
 
 ---
 
-## 二、AI虚拟研究团队技术规�?
+## 二、AI虚拟研究团队技术规�?
 
 ### 2.1 模块概述
 
 **模块ID**: L3_AIVRT_001
 **模块名称**: AI Virtual Research Team (AI虚拟研究团队)
 **版本**: v1.0.0
-**状�?*: 设计�?
+**状�?*: 设计�?
 
 ### 2.2 详细API接口定义
 
@@ -662,7 +662,7 @@ print(f"说话人情�? {emotion}")
 
 **接口名称**: AIResearchAssistant
 
-**类定�?*:
+**类定�?*:
 ```python
 class AIResearchAssistant:
     """AI研究助手
@@ -680,7 +680,7 @@ class AIResearchAssistant:
         
         Args:
             llm_model: 大语言模型名称
-            knowledge_base_path: 知识库路�?
+            knowledge_base_path: 知识库路�?
             memory_size: 记忆大小
         """
         pass
@@ -696,7 +696,7 @@ class AIResearchAssistant:
         Args:
             question: 问题
             context: 上下文（可选）
-            use_knowledge_base: 是否使用知识�?
+            use_knowledge_base: 是否使用知识�?
             
         Returns:
             回答结果
@@ -753,7 +753,7 @@ class AIResearchAssistant:
         Args:
             data: 数据列表
             time_column: 时间列名
-            value_column: 数值列�?
+            value_column: 数值列�?
             analysis_type: 分析类型 (basic, comprehensive, advanced)
             
         Returns:
@@ -787,7 +787,7 @@ class AIResearchAssistant:
         """建议行动
         
         Args:
-            context: 上下�?
+            context: 上下�?
             goal: 目标
             
         Returns:
@@ -801,7 +801,7 @@ class AIResearchAssistant:
         category: str,
         tags: Optional[List[str]] = None
     ) -> bool:
-        """学习新知�?
+        """学习新知�?
         
         Args:
             content: 内容
@@ -905,7 +905,7 @@ suggestions = assistant.suggest_actions(
 for suggestion in suggestions:
     print(f"建议: {suggestion['action']}, 理由: {suggestion['reason']}")
 
-# 学习新知�?
+# 学习新知�?
 assistant.learn(
     content="Apple announced a new AI-powered feature for iPhone",
     category="product_news",
@@ -973,14 +973,14 @@ for item in knowledge:
 
 ---
 
-#### 2.2.2 知识管理器接�?
+#### 2.2.2 知识管理器接�?
 
 **接口名称**: KnowledgeManager
 
-**类定�?*:
+**类定�?*:
 ```python
 class KnowledgeManager:
-    """知识管理�?
+    """知识管理�?
     
     管理知识库的存储、检索、更新和版本控制
     """
@@ -995,7 +995,7 @@ class KnowledgeManager:
         
         Args:
             storage_path: 存储路径
-            vector_db: 向量数据库类�?
+            vector_db: 向量数据库类�?
             embedding_model: 嵌入模型名称
         """
         pass
@@ -1011,7 +1011,7 @@ class KnowledgeManager:
         
         Args:
             content: 内容
-            metadata: 元数�?
+            metadata: 元数�?
             category: 分类（可选）
             tags: 标签（可选）
             
@@ -1081,7 +1081,7 @@ class KnowledgeManager:
         pass
     
     def get_categories(self) -> List[str]:
-        """获取所有分�?
+        """获取所有分�?
         
         Returns:
             分类列表
@@ -1089,7 +1089,7 @@ class KnowledgeManager:
         pass
     
     def get_tags(self) -> List[str]:
-        """获取所有标�?
+        """获取所有标�?
         
         Returns:
             标签列表
@@ -1101,7 +1101,7 @@ class KnowledgeManager:
         output_path: str,
         format: str = "json"
     ) -> bool:
-        """导出知识�?
+        """导出知识�?
         
         Args:
             output_path: 输出路径
@@ -1117,7 +1117,7 @@ class KnowledgeManager:
         input_path: str,
         format: str = "json"
     ) -> int:
-        """导入知识�?
+        """导入知识�?
         
         Args:
             input_path: 输入路径
@@ -1167,7 +1167,7 @@ results = km.search(
 )
 for result in results:
     print(f"内容: {result['content']}")
-    print(f"相似�? {result['similarity']}")
+    print(f"相似�? {result['similarity']}")
 
 # 更新知识
 km.update_knowledge(
@@ -1179,13 +1179,13 @@ km.update_knowledge(
 knowledge = km.get_knowledge(knowledge_id)
 print(f"知识: {knowledge}")
 
-# 获取分类和标�?
+# 获取分类和标�?
 categories = km.get_categories()
 tags = km.get_tags()
 print(f"分类: {categories}")
 print(f"标签: {tags}")
 
-# 导出知识�?
+# 导出知识�?
 km.export_knowledge(
     output_path="./knowledge_export.json",
     format="json"
@@ -1227,13 +1227,13 @@ print(f"统计: {stats}")
 
 ---
 
-## 三、数据字�?
+## 三、数据字�?
 
 ### 3.1 多模态分析数据表字段说明
 
 #### 多模态分析结果表 (multimodal_results)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | analysis_id | TEXT | 分析ID | "mma_20260402_001" |
@@ -1246,28 +1246,28 @@ print(f"统计: {stats}")
 | audio_sentiment | TEXT | 音频情感(JSON) | {"label": "positive", ...} |
 | video_sentiment | TEXT | 视频情感(JSON) | {"label": "positive", ...} |
 | fused_sentiment | TEXT | 融合情感(JSON) | {"label": "positive", ...} |
-| contributions | TEXT | 各模态贡�?JSON) | {"text": 0.38, ...} |
+| contributions | TEXT | 各模态贡�?JSON) | {"text": 0.38, ...} |
 | analyzed_at | TIMESTAMP | 分析时间 | "2026-04-02 10:00:00" |
 
-### 3.2 AI虚拟研究团队数据表字段说�?
+### 3.2 AI虚拟研究团队数据表字段说�?
 
 #### 知识库表 (knowledge_base)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | knowledge_id | TEXT | 知识ID | "kb_20260402_001" |
 | content | TEXT | 内容 | "Apple announced..." |
-| metadata | TEXT | 元数�?JSON) | {"source": "...", ...} |
+| metadata | TEXT | 元数�?JSON) | {"source": "...", ...} |
 | category | TEXT | 分类 | "product_news" |
 | tags | TEXT | 标签(JSON) | ["Apple", "AI"] |
 | embedding | BLOB | 向量嵌入 | ... |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 | updated_at | TIMESTAMP | 更新时间 | "2026-04-02 10:00:00" |
 
-#### 研究会话�?(research_sessions)
+#### 研究会话�?(research_sessions)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | session_id | TEXT | 会话ID | "rs_20260402_001" |
@@ -1278,9 +1278,9 @@ print(f"统计: {stats}")
 | insights | TEXT | 洞察(JSON) | [...] |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 
-#### 报告�?(reports)
+#### 报告�?(reports)
 
-| 字段�?| 数据类型 | 说明 | 示例 |
+| 字段�?| 数据类型 | 说明 | 示例 |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | report_id | TEXT | 报告ID | "rpt_20260402_001" |
@@ -1305,7 +1305,7 @@ POST   /analyze/text                # 分析文本
 POST   /analyze/image               # 分析图像
 POST   /analyze/audio               # 分析音频
 POST   /analyze/video               # 分析视频
-POST   /analyze/multimodal          # 多模态融合分�?
+POST   /analyze/multimodal          # 多模态融合分�?
 POST   /features/extract            # 提取特征
 POST   /features/fuse               # 融合特征
 GET    /model/info                  # 获取模型信息
@@ -1340,54 +1340,54 @@ GET    /knowledge/stats             # 获取统计
 ### 5.1 多模态情感分析流程图
 
 ```
-开�?
-  �?
-接收多模态输�?
-  �?
+开�?
+  �?
+接收多模态输�?
+  �?
 [输入类型?]
-  ├─ 文本 �?文本预处�?�?文本情感分析 �?文本特征提取
-  ├─ 图像 �?图像预处�?�?图像情感分析 �?图像特征提取
-  ├─ 音频 �?音频预处�?�?音频情感分析 �?音频特征提取
-  └─ 视频 �?视频预处�?�?视频情感分析 �?视频特征提取
-      �?
+  ├─ 文本 �?文本预处�?�?文本情感分析 �?文本特征提取
+  ├─ 图像 �?图像预处�?�?图像情感分析 �?图像特征提取
+  ├─ 音频 �?音频预处�?�?音频情感分析 �?音频特征提取
+  └─ 视频 �?视频预处�?�?视频情感分析 �?视频特征提取
+      �?
   特征融合
       ├─ [融合策略?]
-      �?  ├─ concat �?特征拼接
-      �?  ├─ attention �?注意力融�?
-      �?  └─ gated �?门控融合
-      �?
+      �?  ├─ concat �?特征拼接
+      �?  ├─ attention �?注意力融�?
+      �?  └─ gated �?门控融合
+      �?
   融合情感预测
-      �?
+      �?
   结果整合
-      ├─ 各模态结�?
+      ├─ 各模态结�?
       ├─ 融合结果
-      └─ 贡献度分�?
-          �?
+      └─ 贡献度分�?
+          �?
       返回结果
-          �?
+          �?
         结束
 ```
 
-### 5.2 AI研究助手工作流程�?
+### 5.2 AI研究助手工作流程�?
 
 ```
-开�?
-  �?
+开�?
+  �?
 接收用户请求
-  �?
+  �?
 [请求类型?]
-  ├─ 提问 �?检索知识库 �?构建上下�?�?LLM推理 �?返回答案
-  ├─ 研究 �?分解主题 �?多源检�?�?信息整合 �?生成研究发现
-  ├─ 报告 �?收集数据 �?结构化组�?�?内容生成 �?图表生成
-  └─ 建议 �?分析上下�?�?识别目标 �?生成方案 �?优先级排�?
-      �?
+  ├─ 提问 �?检索知识库 �?构建上下�?�?LLM推理 �?返回答案
+  ├─ 研究 �?分解主题 �?多源检�?�?信息整合 �?生成研究发现
+  ├─ 报告 �?收集数据 �?结构化组�?�?内容生成 �?图表生成
+  └─ 建议 �?分析上下�?�?识别目标 �?生成方案 �?优先级排�?
+      �?
   学习反馈
       ├─ 用户评价
       ├─ 结果验证
       └─ 知识更新
-          �?
+          �?
       更新记忆
-          �?
+          �?
         结束
 ```
 
@@ -1397,38 +1397,38 @@ GET    /knowledge/stats             # 获取统计
 
 ### 6.1 多模态分析模块性能指标
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
 | 文本分析速度 | < 100ms | 记录分析耗时 | GPU模式 |
 | 图像分析速度 | < 200ms | 记录分析耗时 | GPU模式 |
 | 音频分析速度 | < 500ms | 记录分析耗时 | GPU模式 |
 | 视频分析速度 | < 2s/分钟 | 记录分析耗时 | GPU模式 |
 | 多模态融合速度 | < 300ms | 记录融合耗时 | GPU模式 |
-| 文本情感准确�?| > 85% | 测试集评�?| Accuracy |
-| 图像情感准确�?| > 80% | 测试集评�?| Accuracy |
-| 音频情感准确�?| > 75% | 测试集评�?| Accuracy |
-| 视频情感准确�?| > 75% | 测试集评�?| Accuracy |
-| 多模态融合准确率 | > 88% | 测试集评�?| Accuracy |
-| GPU内存使用 | < 8GB | 监控GPU内存 | 峰值内�?|
+| 文本情感准确�?| > 85% | 测试集评�?| Accuracy |
+| 图像情感准确�?| > 80% | 测试集评�?| Accuracy |
+| 音频情感准确�?| > 75% | 测试集评�?| Accuracy |
+| 视频情感准确�?| > 75% | 测试集评�?| Accuracy |
+| 多模态融合准确率 | > 88% | 测试集评�?| Accuracy |
+| GPU内存使用 | < 8GB | 监控GPU内存 | 峰值内�?|
 
 ### 6.2 AI虚拟研究团队性能指标
 
-| 指标名称 | 目标�?| 测量方法 | 说明 |
+| 指标名称 | 目标�?| 测量方法 | 说明 |
 |---------|--------|---------|------|
-| 提问响应时间 | < 3�?| 记录响应耗时 | 平均响应时间 |
+| 提问响应时间 | < 3�?| 记录响应耗时 | 平均响应时间 |
 | 研究完成时间 | < 5分钟 | 记录研究耗时 | 深度研究 |
 | 报告生成时间 | < 2分钟 | 记录生成耗时 | 详细报告 |
-| 知识检索速度 | < 100ms | 记录检索耗时 | 向量检�?|
-| 知识检索准确率 | > 90% | 人工评估 | Top-5准确�?|
-| 知识库容�?| > 10000�?| 统计知识数量 | 支持的知识条�?|
+| 知识检索速度 | < 100ms | 记录检索耗时 | 向量检�?|
+| 知识检索准确率 | > 90% | 人工评估 | Top-5准确�?|
+| 知识库容�?| > 10000�?| 统计知识数量 | 支持的知识条�?|
 | 知识更新速度 | < 50ms | 记录更新耗时 | 单条更新 |
-| LLM调用成功�?| > 95% | 统计调用成功 | 成功�?总数 |
+| LLM调用成功�?| > 95% | 统计调用成功 | 成功�?总数 |
 
 ---
 
-## 七、配置文件规�?
+## 七、配置文件规�?
 
-### 7.1 多模态分析配置文�?
+### 7.1 多模态分析配置文�?
 
 **文件**: `config/multimodal.yaml`
 
@@ -1484,7 +1484,7 @@ llm:
   max_tokens: 2000
   api_key: "${OPENAI_API_KEY}"
   
-# 知识库配�?
+# 知识库配�?
 knowledge_base:
   storage_path: "./knowledge_base"
   vector_db: "chromadb"
@@ -1518,4 +1518,4 @@ report:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **状�?*: �?活跃
