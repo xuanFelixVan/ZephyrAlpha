@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
 layer: Layer 2-4 (中观策略? | 业务架构: 三级时间框架融合架构
-index: MARKET_REGIME_001
+index: MARKET_REGIME_SYSTEM_001
 estimated_hours: 160h
 review_status: Pending
 reviewer: 首席技术评审官
@@ -32,7 +32,7 @@ implementation_status: 设计阶段
 **业务需?*?- 当前系统缺失市场层面的状态识别能力，无法实现文艺复兴基金的统计套利策?- 策略执行层缺乏对市场环境的感知，导致策略在不同市场状态下表现不稳?- 需要实现跨市场状态的稳定超额收益，降低策略失效风?
 **技术痛?*?- 无市场状态识别模?- 无多时间框架状态融合机?- 无状态转换预警机?- 无基于市场状态的策略选择建议
 
-**预期�?*?- 实现对市场状态的准确识别（准确率?0%?- 提前3-5天预警市场状态转?- 为策略选择提供市场环境上下?- 降低策略在不同市场状态下的失效风?
+**预期�?*?- 实现对市场状态的准确识别（准确率?0%?- 提前3-5天预警市场状态转?- 为策略选择提供市场环境上下?- 降低策略在不同市场状态下的失效风?
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 2-4 - 中观策略?
 **模块类别**: 核心模块
@@ -43,7 +43,7 @@ implementation_status: 设计阶段
 - 作为日线组合优化的决策依据，指导权重调整
 
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-03 | 首席技术评审官 | 初始版本 | Draft |
 
@@ -79,7 +79,7 @@ implementation_status: 设计阶段
 |----------|----------|----------|----------|------|
 | **宏观配置?* | 弱依?| API调用 | v1.0+ | 接收经济范式判断 |
 | **数据源层** | 强依?| 数据库查?| v1.0+ | 获取市场数据 |
-| **Alpha因子工厂** | 下游依赖 | 事件发布 | v1.0+ | 提供市场�?|
+| **Alpha因子工厂** | 下游依赖 | 事件发布 | v1.0+ | 提供市场�?|
 | **绩效归因?* | 弱依?| 日志记录 | v1.0+ | 记录决策过程 |
 
 ---
@@ -104,7 +104,7 @@ class MarketDataInput:
 @dataclass
 class MarketStateOutput:
     """市场状态输?""
-    market_regime: str                   # 市场�?(bull/bear/sideways/transition)
+    market_regime: str                   # 市场�?(bull/bear/sideways/transition)
     trend_strength: float                # 趋势强度 [0, 1]
     volatility_level: float              # 波动率水?[0, 1]
     liquidity_score: float               # 流动性评?[0, 1]
@@ -117,7 +117,7 @@ class IMarketRegimeSystem(ABC):
     
     @abstractmethod
     def identify_regime(self, market_data: MarketDataInput) -> MarketStateOutput:
-        """识别市场�?        
+        """识别市场�?        
         Args:
             market_data: 市场数据输入
             
@@ -133,7 +133,7 @@ class IMarketRegimeSystem(ABC):
     def get_regime_probability(self, regime: str) -> float:
         """获取状态概?        
         Args:
-            regime: 市场�?            
+            regime: 市场�?            
         Returns:
             float: 状态概?        """
         pass
@@ -227,7 +227,7 @@ class IMarketRegimeSystem(ABC):
 CREATE TABLE market_regime_results (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     trade_date DATE NOT NULL COMMENT '交易日期',
-    market_regime VARCHAR(20) NOT NULL COMMENT '市场�?,
+    market_regime VARCHAR(20) NOT NULL COMMENT '市场�?,
     trend_strength DECIMAL(5,4) COMMENT '趋势强度',
     volatility_level DECIMAL(5,4) COMMENT '波动率水?,
     liquidity_score DECIMAL(5,4) COMMENT '流动性评?,
@@ -248,8 +248,8 @@ CREATE TABLE market_regime_results (
 CREATE TABLE market_regime_history (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     trade_date DATE NOT NULL COMMENT '交易日期',
-    actual_regime VARCHAR(20) COMMENT '实际�?,
-    predicted_regime VARCHAR(20) COMMENT '预测�?,
+    actual_regime VARCHAR(20) COMMENT '实际�?,
+    predicted_regime VARCHAR(20) COMMENT '预测�?,
     prediction_accuracy DECIMAL(5,4) COMMENT '预测准确?,
     model_version VARCHAR(20) COMMENT '模型版本',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -278,7 +278,7 @@ CREATE TABLE market_regime_history (
 
 | 缓存类型 | 缓存内容 | 过期时间 | 更新策略 |
 |---------|---------|---------|---------|
-| **Redis缓存** | 当日市场�?| 1?| 每日更新 |
+| **Redis缓存** | 当日市场�?| 1?| 每日更新 |
 | **内存缓存** | 模型参数 | 1?| 模型重新训练时更?|
 | **本地缓存** | 技术指?| 1小时 | 实时计算更新 |
 
@@ -326,7 +326,7 @@ class HMMRegimeClassifier:
         self.model.fit(returns.values.reshape(-1, 1))
         
     def predict(self, price_data: pd.DataFrame) -> tuple:
-        """预测市场�?        
+        """预测市场�?        
         Args:
             price_data: 价格数据
             
@@ -378,7 +378,7 @@ class TechnicalRegimeIndicator:
         
         # 计算波动率得?        volatility_score = self._calculate_volatility_score(volatility_indicators)
         
-        # 综合判断市场�?        if trend_score > 0.6 and momentum_score > 0.6:
+        # 综合判断市场�?        if trend_score > 0.6 and momentum_score > 0.6:
             regime = 'bull'
         elif trend_score < 0.4 and momentum_score < 0.4:
             regime = 'bear'
@@ -409,7 +409,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
     """多源融合决策
     
     Args:
-        hmm_state: HMM识别�?        hmm_prob: HMM置信?        tech_state: 技术指标状?        microstructure: 微观结构分析结果
+        hmm_state: HMM识别�?        hmm_prob: HMM置信?        tech_state: 技术指标状?        microstructure: 微观结构分析结果
         
     Returns:
         str: 最终市场状?    """
@@ -446,7 +446,7 @@ def _fuse_decisions(self, hmm_state: str, hmm_prob: float,
 
 ### 6.1 语言框架
 
-| 技术组?| 技术选型 | 版本要求 | �?|
+| 技术组?| 技术选型 | 版本要求 | �?|
 |---------|---------|---------|------|
 | **编程语言** | Python | 3.9+ | 主要开发语言 |
 | **机器学习框架** | scikit-learn | 1.3+ | 模型训练与推?|
@@ -635,16 +635,16 @@ def test_market_regime_identification():
 | 术语 | 定义 | 上下?|
 |------|------|--------|
 | **HMM** | 隐马尔可夫模?| 市场状态识别模?|
-| **市场�?* | 市场的整体运行状?| 牛市、熊市、震荡市、转折市 |
+| **市场�?* | 市场的整体运行状?| 牛市、熊市、震荡市、转折市 |
 | **状态转?* | 市场从一个状态转换到另一个状?| 转换预警 |
 | **多源融合** | 多个信号源的融合决策 | 提高识别准确?|
 
 ### C. 变更记录
 
-| 版本 | 日期 | 变更内容 | �?|
+| 版本 | 日期 | 变更内容 | �?|
 |------|------|----------|------|
 | v1.0 | 2026-04-03 | 初始版本 | 首席技术评审官 |
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Draft | **下一?*: 技术评?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Draft | **下一?*: 技术评?

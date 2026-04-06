@@ -3,7 +3,7 @@ module_id: DATA_FREE_SOURCES_001
 version: 3.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席文档架构师
 standard_type: 数据源文档
 applicable_scope: 免费数据源
@@ -13,6 +13,25 @@ implementation_status: 设计阶段
 ---
 
 # T.01.DS001.免费数据源技术规格书
+
+## 文档职责说明
+
+**本文档职责**: 免费数据源技术规格定义
+- 整合和评估可用的免费数据源
+- 定义免费数据源的技术规格和接入方式
+- 提供数据源选型建议和对比分析
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据源适配器 | [DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md) | 架构层 | 数据源适配器架构 |
+| Baostock接口 | [BAOSTOCK_CONNECTOR.md](./BAOSTOCK_CONNECTOR.md) | 实现层 | Baostock数据源实现 |
+| 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义免费数据源的技术规格和选型建议
+- ❌ 本文档不负责: 数据源适配器架构（由 DATA_SOURCE_ADAPTERS.md 负责）
+- ❌ 本文档不负责: 具体数据源实现（由各CONNECTOR文档负责）
 
 > 清风量化系统 ZephyrAlpha
 >
