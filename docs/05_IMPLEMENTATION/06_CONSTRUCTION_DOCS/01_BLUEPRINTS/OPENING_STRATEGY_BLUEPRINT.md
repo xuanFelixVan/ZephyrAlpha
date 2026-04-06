@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# OPENING STRATEGY BLUEPRINT
+
+> **核心职责**: Opening Strategy蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Opening Strategy蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: OPENING_STRATEGY_BLUEPRINT_001
 version: 1.0.0

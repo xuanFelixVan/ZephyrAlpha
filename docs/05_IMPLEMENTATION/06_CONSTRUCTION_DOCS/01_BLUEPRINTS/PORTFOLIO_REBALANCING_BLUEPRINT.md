@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# PORTFOLIO REBALANCING BLUEPRINT
+
+> **核心职责**: Portfolio Rebalancing蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Portfolio Rebalancing蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.0

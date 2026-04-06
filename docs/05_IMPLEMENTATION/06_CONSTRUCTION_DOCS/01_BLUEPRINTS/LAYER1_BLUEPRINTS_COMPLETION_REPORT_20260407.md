@@ -1,4 +1,11 @@
 ---
+module_id: LAYER1_BLUEPRINTS_COMPLETION_REPORT_20260407_001
+
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 数据质量
+
 report_type: 蓝图补充完成报告
 created_date: 2026-04-07
 layer: "Layer 1 (数据预处理层)"

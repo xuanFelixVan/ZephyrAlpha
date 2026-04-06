@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# HIERARCHICAL RISK BUDGET BLUEPRINT
+
+> **核心职责**: Hierarchical Risk Budget蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Hierarchical Risk Budget蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0

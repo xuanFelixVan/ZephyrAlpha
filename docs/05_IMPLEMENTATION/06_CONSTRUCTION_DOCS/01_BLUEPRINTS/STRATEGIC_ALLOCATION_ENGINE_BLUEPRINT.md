@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# STRATEGIC ALLOCATION ENGINE BLUEPRINT
+
+> **核心职责**: Strategic Allocation Engine蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Strategic Allocation Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT_001
 version: 1.0.0

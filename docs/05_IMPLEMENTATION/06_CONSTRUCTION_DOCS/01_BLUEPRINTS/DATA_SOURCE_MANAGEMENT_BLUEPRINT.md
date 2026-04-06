@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# DATA SOURCE MANAGEMENT BLUEPRINT
+
+> **核心职责**: Data Source Management蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Source Management蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: DATASOURCEMANAGEMENTBLUEPRI_001
 version: 1.0.0

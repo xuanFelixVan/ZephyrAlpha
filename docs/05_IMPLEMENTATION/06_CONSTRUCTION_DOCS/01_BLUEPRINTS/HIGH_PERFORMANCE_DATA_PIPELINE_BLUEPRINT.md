@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# HIGH PERFORMANCE DATA PIPELINE BLUEPRINT
+
+> **核心职责**: High Performance Data Pipeline蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：High Performance Data Pipeline蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0

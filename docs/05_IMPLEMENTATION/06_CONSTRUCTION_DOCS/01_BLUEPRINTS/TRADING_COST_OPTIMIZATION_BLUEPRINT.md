@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# TRADING COST OPTIMIZATION BLUEPRINT
+
+> **核心职责**: Trading Cost Optimization蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Trading Cost Optimization蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: TRADINGCOSTOPTIMIZATIONBLUE_001
 version: 1.0.0

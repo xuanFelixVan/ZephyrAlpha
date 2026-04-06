@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# DATA SECURITY COMPLIANCE BLUEPRINT
+
+> **核心职责**: Data Security Compliance蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Security Compliance蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: DATASECURITYCOMPLIANCEBLUEP_001
 version: 1.0.0

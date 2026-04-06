@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# MARKET PARTICIPANT SIMULATION INTEGRATION BLUEPRINT
+
+> **核心职责**: Market Participant Simulation Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Market Participant Simulation Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT_001
 version: 1.0.0

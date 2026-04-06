@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# REALTIME RISK HEDGE ENGINE BLUEPRINT
+
+> **核心职责**: Realtime Risk Hedge Engine蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Realtime Risk Hedge Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: REALTIMERISKHEDGEENGINEBLU_001
 version: 1.0.0

@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# MARKET IMPACT MODEL BLUEPRINT
+
+> **核心职责**: Market Impact Model蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Market Impact Model蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.0

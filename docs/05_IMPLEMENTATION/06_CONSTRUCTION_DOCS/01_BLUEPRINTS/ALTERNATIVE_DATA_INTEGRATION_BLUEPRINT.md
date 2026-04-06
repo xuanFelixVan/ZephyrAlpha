@@ -11,6 +11,14 @@ responsibility:
 
 layer: "Layer 1 (数据源层)"
 ---
+
+# ALTERNATIVE DATA INTEGRATION BLUEPRINT
+
+> **核心职责**: Alternative Data Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Alternative Data Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿# 另类数据源集成项目蓝?
 
 > **核心定位**: 另类数据源集成项目蓝?的核心功能实现

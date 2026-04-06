@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# ROBUST OPTIMIZATION BLUEPRINT
+
+> **核心职责**: Robust Optimization蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Robust Optimization蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: ROBUSTOPTIMIZATIONBLUEPRINT_001
 version: 1.0.0

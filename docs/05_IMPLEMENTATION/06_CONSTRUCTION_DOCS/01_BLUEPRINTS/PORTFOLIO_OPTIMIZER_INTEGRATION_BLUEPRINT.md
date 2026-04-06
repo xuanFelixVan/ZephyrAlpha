@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# PORTFOLIO OPTIMIZER INTEGRATION BLUEPRINT
+
+> **核心职责**: Portfolio Optimizer Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Portfolio Optimizer Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0

@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# DATA CATALOG BLUEPRINT
+
+> **核心职责**: Data Catalog蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Catalog蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: DATA_CATALOG_001
 version: 1.0.0

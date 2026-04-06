@@ -34,8 +34,13 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构
   - System_Manifest.md: 系统总清单
 ---
-
 # Layer 10治理与合规层完整性分析最终报告
+
+> **核心职责**: 完整性分析和评估报告
+> **职责边界**: 
+> - ✅ 本文档负责：完整性分析和评估报告相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-07  

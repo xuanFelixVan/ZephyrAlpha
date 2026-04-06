@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# MONITORING DASHBOARD ENHANCEMENT BLUEPRINT
+
+> **核心职责**: Monitoring Dashboard Enhancement蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Monitoring Dashboard Enhancement蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: MONITORINGDASHBOARDENHANCEME_001
 version: 1.0.0

@@ -11,6 +11,14 @@ responsibility:
 
 layer: "Layer 6 (组合优化层)"
 ---
+
+# QUARTERLY REBALANCE BLUEPRINT
+
+> **核心职责**: Quarterly Rebalance蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Quarterly Rebalance蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿# 📋 执行摘要
 
 > **版本**: v1.0

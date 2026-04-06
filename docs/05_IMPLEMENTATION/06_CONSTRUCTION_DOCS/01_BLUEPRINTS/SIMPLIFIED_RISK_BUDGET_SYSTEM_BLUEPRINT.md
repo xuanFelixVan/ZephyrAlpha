@@ -10,6 +10,13 @@ responsibility:
   - 因子计算
 ---
 
+# SIMPLIFIED RISK BUDGET SYSTEM BLUEPRINT
+
+> **核心职责**: Simplified Risk Budget System蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Simplified Risk Budget System蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 ﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
