@@ -14,6 +14,23 @@ implementation_status: 已完成
 
 # iFind财务数据API参考
 
+## 文档职责说明
+
+**本文档职责**: iFind财务数据API接口文档
+- 提供完整的iFind财务数据API接口说明
+- 说明财务报表获取和指标计算方法
+- 提供API使用示例和最佳实践
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 财务索引 | [INDEX.md](./INDEX.md) | 上级索引 | 财务数据模块索引 |
+| 指标清单 | [THS_BD_COMPLETE_INDICATOR_LIST.md](./THS_BD_COMPLETE_INDICATOR_LIST.md) | 参考资料 | 完整指标清单 |
+
+**职责边界**:
+- ✅ 本文档负责: 财务数据API接口定义和使用说明
+- ❌ 本文档不负责: 指标详细清单（由 THS_BD_COMPLETE_INDICATOR_LIST.md 负责）
+
 > 清风量化系统 - 同花顺iFind财务数据API文档
 > **核心定位**: 提供完整的iFind财务数据API接口说明，指导财务数据获取和使用
 

@@ -13,6 +13,23 @@ parent_document: ../../INDEX.md
 
 # iFind财务数据
 
+## 文档职责说明
+
+**本文档职责**: iFind财务数据模块索引
+- 提供财务数据模块的目录导航
+- 说明财务数据指标体系
+- 管理财务数据API和指标清单文档
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| iFind索引 | [../INDEX.md](../INDEX.md) | 上级索引 | iFind数据源总索引 |
+| 财务API | [FINANCIAL_STATEMENTS_API.md](./FINANCIAL_STATEMENTS_API.md) | 详细文档 | 财务数据API参考 |
+
+**职责边界**:
+- ✅ 本文档负责: 财务数据模块索引和导航
+- ❌ 本文档不负责: API详细说明（由 FINANCIAL_STATEMENTS_API.md 负责）
+
 > 清风量化系统 - 同花顺iFind财务数据集成
 > **核心定位**: 提供完整的财务数据指标体系，支持基本面因子研究
 
