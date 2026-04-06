@@ -142,6 +142,13 @@ implementation_status: 活跃维护
 | **策略引擎蓝图** | [01_FRAMEWORK/STRAT_ENGINE_001.md](01_FRAMEWORK/STRAT_ENGINE_001.md) | Layer 3 | ✅ 活跃 |
 | **模拟交易蓝图** | [01_FRAMEWORK/SIMULATION_001.md](01_FRAMEWORK/SIMULATION_001.md) | Layer 5 | ✅ 活跃 |
 | **质量监控蓝图** | [01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md](01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md) | Layer 10 | ✅ 活跃 |
+| **战略决策层蓝图** | [11_STRATEGIC_DECISION/BLUEPRINT.md](11_STRATEGIC_DECISION/BLUEPRINT.md) | Layer 11 | ✅ 活跃 |
+
+### 5. 开源项目集成蓝图
+
+| 文档名称 | 路径 | Layer | 状态 |
+|---------|------|-------|------|
+| **开源项目集成蓝图** | [11_STRATEGIC_DECISION/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](11_STRATEGIC_DECISION/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | Layer 11 | ✅ 活跃 |
 
 ---
 
