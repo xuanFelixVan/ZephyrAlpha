@@ -40,7 +40,7 @@ implementation_status: ш┐ЫшбМф╕?---
 |------|------|----------|
 | [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | тн?ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| 30хИЖщТЯ |
 | [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД | 30хИЖщТЯ |
-| [AI_Permissions.md](../08_AI_GOVERNANCE/AI_Permissions.md) | AIцЭГщЩРц╕ЕхНХ | 10хИЖщТЯ |
+| | AIцЭГщЩРц╕ЕхНХ | 10хИЖщТЯ |
 | [API_Contract.md](API_Contract.md) | цибхЭЧцОехПгхеСч║ж | 15хИЖщТЯ |
 | [Strategy_Spec_S001.md](Strategy_Spec_S001.md) | чнЦчХещА╗ш╛СчЩ╜чЪоф╣?| 30хИЖщТЯ |
 | [BLUEPRINT_CHECKLIST.md](../09_AUDIT/BLUEPRINT_CHECKLIST.md) | шУЭхЫ╛хоМцХ┤цАзцгАцЯец╕ЕхН?| 20хИЖщТЯ |
@@ -81,7 +81,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | [MODULE_DESIGN_TEMPLATE.md](../05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) | цибхЭЧшо╛шобцибцЭ┐ |
 | [MODULE_DESIGN_PLAN.md](../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md) | цибхЭЧшо╛шобшобхИТ |
 | [MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) | х╕ВхЬ║чК╢цАБшпЖхИ?|
-| [HUMAN_AI_FLOW.md](../01_FRAMEWORK/HUMAN_AI_FLOW.md) | ф║║цЬ║хНПф╜Ьц╡БчиЛ |
+| | ф║║цЬ║хНПф╜Ьц╡БчиЛ |
 | [TECH_STACK.md](../01_FRAMEWORK/TECH_STACK.md) | цКАцЬпцаИщАЙцЛй |
 
 ### 02_FACTOR_LIBRARY - хЫахнРх║?(v5.0цЮ╢цЮД)
@@ -193,7 +193,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | [CODE_EXAMPLES.md](../05_IMPLEMENTATION/CODE_EXAMPLES.md) | ф╗гчаБчд║ф╛Л | х╝АхПСхПВшА?|
 | [HANDOVER.md](../02_FACTOR_LIBRARY/HANDOVER.md) | ф║дцОецЦЗцбг | щб╣чЫоф║дцОехПВшА?|
 | [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) | хоЮщкМш┐╜ш╕к | AIчаФчй╢хПВшА?|
-| [DOCUMENT_AUDIT_v5.3.md](../../DOCUMENT_AUDIT_v5.3.md) | цЦЗцбгхобцЯецКехСК | цЦЗцбгц▓╗чРЖхПВшА?|
+| | цЦЗцбгхобцЯецКехСК | цЦЗцбгц▓╗чРЖхПВшА?|
 
 ### хЫахнРх║УшбехЕЕцЦЗцб?
 | цЦЗцбг | шп┤цШО |

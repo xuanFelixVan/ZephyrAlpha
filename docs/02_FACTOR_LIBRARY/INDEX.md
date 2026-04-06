@@ -158,7 +158,7 @@ implementation_status: 活跃维护
 | [宏观数据](./04_DATA_SOURCE/MACRO_DATA.md) | 宏观数据�?| ⭐⭐⭐⭐ |
 | [新闻情感数据源](./04_DATA_SOURCE/NEWS_SENTIMENT_DATA_SOURCE.md) | 新闻情感数据�?| ⭐⭐⭐⭐ |
 | [A股历史数据处理蓝图](./04_DATA_SOURCE/A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md) | A股历史数据处理蓝图 | ⭐⭐⭐⭐ |
-| [数据源层差距分析](./04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 数据源层差距分析 | ⭐⭐⭐⭐ |
+| [数据源层差距分析](./04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 数据源层差距分析 | ⭐⭐⭐⭐ |
 | [数据源层差距分析V2](./04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 数据源层差距分析V2 | ⭐⭐⭐⭐ |
 
 ### iFind数据

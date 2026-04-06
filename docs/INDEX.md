@@ -25,7 +25,7 @@ last_updated: 2026-04-04
 | **系统蓝图** | [实施蓝图](./05_IMPLEMENTATION/BLUEPRINT.md) | 系统总体实施蓝图 | 核心架构 |
 | **架构文档** | [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构 | 架构设计 |
 | **完整架构** | [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11完整架构体系 | 架构设计 |
-| **因子�?* | [因子库系统清单](./02_FACTOR_LIBRARY/System_Manifest.md) | 因子库系统清�?| 因子管理 |
+| **因子�?* | | 因子库系统清�?| 因子管理 |
 | **交易战术** | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易策略和战术索�?| 策略设计 |
 | **审计标准** | [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计标准 | 审计规范 |
 
@@ -56,7 +56,7 @@ docs/
 | 时间框架 | 层级 | 核心职责 | 关键文档 |
 |---------|------|---------|---------|
 | **宏观配置�?* | Macro | 投资原则、风险预算、策略配�?| [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) |
-| **中观策略�?* | Meso | 因子计算、信号生成、组合优�?| [因子库系统清单](./02_FACTOR_LIBRARY/System_Manifest.md) |
+| **中观策略�?* | Meso | 因子计算、信号生成、组合优�?| |
 | **微观执行�?* | Micro | 订单执行、风险控制、实时监�?| [交易战术索引](./03_TRADING_TACTICS/INDEX.md) |
 
 ### 架构文档
@@ -84,7 +84,7 @@ docs/
 | **Layer 5** | 策略执行�?| 策略运行、信号生�?| [执行层索引](./04_EXECUTION/INDEX.md) |
 | **Layer 4** | 机器学习�?| AI预测、特征工�?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 3** | 舆情分析�?| 新闻分析、情感分�?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 2** | Alpha因子�?| 因子计算、因子库 | [因子库系统清单](./02_FACTOR_LIBRARY/System_Manifest.md) |
+| **Layer 2** | Alpha因子�?| 因子计算、因子库 | |
 | **Layer 1** | 数据预处理层 | 数据清洗、标准化 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 0** | 数据源层 | 数据采集、数据接�?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 
@@ -119,10 +119,10 @@ docs/
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [系统清单](./02_FACTOR_LIBRARY/System_Manifest.md) | 因子库系统清�?| ⭐⭐⭐⭐�?|
-| [因子注册表](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md) | 因子注册�?| ⭐⭐⭐⭐�?|
+| | 因子库系统清�?| ⭐⭐⭐⭐�?|
+| | 因子注册�?| ⭐⭐⭐⭐�?|
 | [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | ⭐⭐⭐⭐ |
-| [数据源接口](./02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md) | 数据源接口文�?| ⭐⭐⭐⭐ |
+| | 数据源接口文�?| ⭐⭐⭐⭐ |
 
 ### 3. 交易战术 (03_TRADING_TACTICS)
 
@@ -130,7 +130,7 @@ docs/
 |---------|------|--------|
 | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易战术总索�?| ⭐⭐⭐⭐�?|
 | [策略框架](./03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md) | 策略框架概览 | ⭐⭐⭐⭐ |
-| [风险规则](./03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md) | 风险规则引擎 | ⭐⭐⭐⭐ |
+| | 风险规则引擎 | ⭐⭐⭐⭐ |
 
 ### 4. 实施�?(05_IMPLEMENTATION)
 
@@ -161,37 +161,29 @@ docs/
 
 **核心文档**：
 1. [研究与创新层蓝图](./09_RESEARCH_INNOVATION/BLUEPRINT.md)
-2. [因子注册表](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
-3. [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
+2. 3. [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
 
 ### 治理与合规负责人 🆕
 
 **核心文档**：
 1. [治理与合规层蓝图](./10_GOVERNANCE_COMPLIANCE/BLUEPRINT.md)
-2. [风险规则引擎](./03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md)
-3. [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+2. 3. [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ### 战略决策负责人 🆕
 
 **核心文档**：
 1. [战略决策层蓝图](./11_STRATEGIC_DECISION/BLUEPRINT.md)
 2. [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-3. [风险规则引擎](./03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md)
-
-### 因子研究�?
-**核心文档**�?1. [因子注册表](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
-2. [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
-3. [数据源接口](./02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md)
-
-### 策略开发人�?
+3. ### 因子研究�?
+**核心文档**�?1. 2. [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
+3. ### 策略开发人�?
 **核心文档**�?1. [交易战术索引](./03_TRADING_TACTICS/INDEX.md)
 2. [策略框架](./03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md)
 3. [开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
 
 ### 风险管理人员
 
-**核心文档**�?1. [风险规则引擎](./03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md)
-2. [风险规则蓝图](./03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md)
+**核心文档**�?1. 2. [风险规则蓝图](./03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md)
 3. [风险报告](./03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md)
 
 ### 审计人员

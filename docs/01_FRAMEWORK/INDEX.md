@@ -100,7 +100,7 @@ implementation_status: 活跃维护
 |---------|------|--------|---------|
 | [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 实时数据质量监控、自动告警、质量报�?| ⭐⭐⭐⭐�?| 2�?|
 | [实时风险监控蓝图](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控仪表板、风险预警系�?| ⭐⭐⭐⭐�?| 2�?|
-| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 历史情景压力测试、敏感性分�?| ⭐⭐⭐⭐�?| 2�?|
+| | 历史情景压力测试、敏感性分�?| ⭐⭐⭐⭐�?| 2�?|
 | [合规监控系统蓝图](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 监管合规监控、内部合规流�?| ⭐⭐⭐⭐�?| 2�?|
 
 ### AI增强系统 (P0�?
@@ -108,7 +108,7 @@ implementation_status: 活跃维护
 | 文档名称 | 说明 | 重要�?| 实施周期 |
 |---------|------|--------|---------|
 | [AI可解释性工具蓝图](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md) | 基于桥水"安全花园"的AI决策可解释性工�?| ⭐⭐⭐⭐�?| 2�?|
-| [RAG知识系统蓝图](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md) | 检索增强生成知识系�?| ⭐⭐⭐⭐�?| 2�?|
+| | 检索增强生成知识系�?| ⭐⭐⭐⭐�?| 2�?|
 | [自适应模型系统蓝图](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md) | HMM市场状态识�?动态模型选择 | ⭐⭐⭐⭐�?| 2�?|
 | [实施加速方案蓝图](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md) | 8个月加速实施计�?| ⭐⭐⭐⭐�?| 8个月 |
 
@@ -189,7 +189,7 @@ implementation_status: 活跃维护
 | [课程学习蓝图](./CURRICULUM_LEARNING_BLUEPRINT.md) | CURR-001 | 渐进学习、难度评估、训练调�?| P2 |
 | [主动学习蓝图](./ACTIVE_LEARNING_BLUEPRINT.md) | AL-001 | 智能采样、标注效率、不确定性采�?| P2 |
 | [模型卡片蓝图](./MODEL_CARD_BLUEPRINT.md) | MC-001 | 模型透明、合规文档、责任追�?| P2 |
-| [合规审计日志蓝图](./COMPLIANCE_AUDIT_LOG_BLUEPRINT.md) | AUDIT-001 | 操作记录、不可篡改、审计追�?| P2 |
+| | AUDIT-001 | 操作记录、不可篡改、审计追�?| P2 |
 | [灰度发布系统蓝图](./GRAYSCALE_RELEASE_BLUEPRINT.md) | GRAY-001 | 渐进发布、风险控制、自动回�?| P2 |
 | [模型性能基准蓝图](./MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md) | BENCH-001 | 标准化评估、横向对比、纵向追�?| P2 |
 | [模型水印蓝图](./MODEL_WATERMARK_BLUEPRINT.md) | WM-001 | 所有权证明、版权保护、盗用检�?| P2 |
@@ -198,7 +198,7 @@ implementation_status: 活跃维护
 | [特征选择自动化蓝图](./FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md) | FSA-001 | 自动筛选、冗余消除、效率提�?| P2 |
 | [数据质量评估蓝图](./DATA_QUALITY_ASSESSMENT_BLUEPRINT.md) | DQA-001 | 质量监控、异常检测、质量报�?| P2 |
 | [AI Agent框架蓝图](./AI_AGENT_FRAMEWORK_BLUEPRINT.md) | AGENT-001 | 自主决策、工具调用、多Agent协作 | P2 |
-| [模型压缩蓝图](./MODEL_COMPRESSION_BLUEPRINT.md) | COMP-001 | 量化、剪枝、知识蒸馏 | P2 |
+| | COMP-001 | 量化、剪枝、知识蒸馏 | P2 |
 | [学习率调度器蓝图](./LEARNING_RATE_SCHEDULER_BLUEPRINT.md) | LRS-001 | 自适应学习率、余弦退火、预热 | P2 |
 | [优化器变体蓝图](./OPTIMIZER_VARIANTS_BLUEPRINT.md) | OPT-001 | AdamW/LAMB/Lion/AdaBelief | P2 |
 | [记忆增强神经网络蓝图](./MEMORY_AUGMENTED_NN_BLUEPRINT.md) | MANN-001 | 外部记忆、长期依赖、NTM/DNC | P2 |
@@ -212,7 +212,7 @@ implementation_status: 活跃维护
 | [批处理推理优化蓝图](./BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md) | BATCH-001 | 离线推理、吞吐优化 | P2 |
 | [数据增强系统蓝图](./DATA_AUGMENTATION_BLUEPRINT.md) | AUG-001 | 时序增强、噪声注入、Mixup | P2 |
 | [数据标注平台蓝图](./DATA_ANNOTATION_PLATFORM_BLUEPRINT.md) | ANNO-001 | 标注工具、质量控制、协作管理 | P2 |
-| [数据版本控制蓝图](./DATA_VERSION_CONTROL_BLUEPRINT.md) | DVC-001 | 数据集版本管理、回滚能力 | P2 |
+| | DVC-001 | 数据集版本管理、回滚能力 | P2 |
 | [液体神经网络蓝图](./LIQUID_NEURAL_NETWORK_BLUEPRINT.md) | LNN-001 | 连续时间动态、自适应推理 | P2 |
 
 ---

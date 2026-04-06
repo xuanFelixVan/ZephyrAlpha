@@ -273,7 +273,7 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 |------|------|
 | [系统架构文档](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11统一架构定义 |
 | [模块职责边界文档](../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 模块职责边界定义 |
-| [系统总索引](../02_FACTOR_LIBRARY/System_Manifest.md) | 系统总索|
+| | 系统总索|
 | [技术栈文档](../01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 |
 
 ---

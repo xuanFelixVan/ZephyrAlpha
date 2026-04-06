@@ -48,7 +48,7 @@ applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专�
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
 | 经济范式判断引擎技术规格书 v2.0 | ECONOMIC_REGIME_ENGINE_002 | v2.0.0 | Active | 2026-04-02 | [链接](./ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md) | � 当前有效版本 |
-| 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | [归档](../09_ARCHIVE/TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V1_ARCHIVED.md) | 已归�?|
+| 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | | 已归�?|
 
 ### 2.6 策略引擎核心
 
@@ -230,7 +230,7 @@ applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专�
 
 | 文档名称 | module_id | 版本 | 状�?| 归档日期 | 归档路径 | 归档原因 |
 |----------|-----------|------|------|----------|----------|----------|
-| 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | [归档](../09_ARCHIVE/TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V1_ARCHIVED.md) | 被v2.0替代 |
+| 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | | 被v2.0替代 |
 
 ---
 

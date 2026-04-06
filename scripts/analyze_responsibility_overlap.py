@@ -1,234 +1,178 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Layer 11职责重叠深度分析工具
-用途：深度分析文档职责重叠问题
-版本：v1.0
-创建日期：2026-04-06
+职责重叠详细分析脚本
+用途：详细分析职责重叠的文档组合
+创建时间：2026-04-07
 """
 
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Tuple
 from collections import defaultdict
 
-LAYER11_DIR = Path("docs/11_STRATEGIC_DECISION")
+BLUEPRINTS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
+
+
+def read_document(filepath: Path) -> str:
+    """读取文档内容"""
+    encodings = ['utf-8-sig', 'utf-8', 'gbk', 'gb2312', 'latin-1']
+    for encoding in encodings:
+        try:
+            with open(filepath, 'r', encoding=encoding) as f:
+                return f.read()
+        except (UnicodeDecodeError, UnicodeError):
+            continue
+    return ""
+
+
+def extract_yaml_header(content: str) -> dict:
+    """提取YAML头部"""
+    yaml_match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+    if not yaml_match:
+        return {}
+    
+    yaml_content = yaml_match.group(1)
+    yaml_dict = {}
+    
+    for line in yaml_content.split('\n'):
+        if ':' in line:
+            key, value = line.split(':', 1)
+            yaml_dict[key.strip()] = value.strip().strip('"\'')
+    
+    return yaml_dict
 
 
 def extract_responsibility(content: str) -> str:
-    """提取文档职责描述"""
+    """提取职责描述"""
     patterns = [
-        r'##\s*文档职责说明\s*\n(.*?)(?=\n##|\Z)',
-        r'\*\*本文档职责\*\*:\s*(.*?)(?=\n\n|\n##|\Z)',
-        r'##\s*职责说明\s*\n(.*?)(?=\n##|\Z)',
+        r'职责[：:]\s*(.+?)(?:\n|$)',
+        r'responsibility[：:]\s*(.+?)(?:\n|$)',
+        r'本文档职责[：:]\s*(.+?)(?:\n|$)',
     ]
     
     for pattern in patterns:
-        match = re.search(pattern, content, re.DOTALL)
+        match = re.search(pattern, content, re.IGNORECASE)
         if match:
             return match.group(1).strip()
     
     return ""
 
 
-def extract_core_content(content: str) -> Set[str]:
-    """提取核心内容关键词"""
-    keywords = set()
+def extract_module_summary(content: str) -> str:
+    """提取模块摘要"""
+    # 提取第一个标题后的第一段
+    lines = content.split('\n')
+    summary_lines = []
+    in_summary = False
     
-    patterns = [
-        r'##\s*一、(.*?)(?=\n##|\Z)',
-        r'##\s*二、(.*?)(?=\n##|\Z)',
-        r'##\s*三、(.*?)(?=\n##|\Z)',
-    ]
+    for i, line in enumerate(lines):
+        if line.startswith('# ') and i > 0:
+            in_summary = True
+            continue
+        if in_summary:
+            if line.startswith('##'):
+                break
+            if line.strip() and not line.startswith('>'):
+                summary_lines.append(line.strip())
     
-    for pattern in patterns:
-        match = re.search(pattern, content, re.DOTALL)
-        if match:
-            section = match.group(1)
-            words = re.findall(r'[\u4e00-\u9fa5]{2,8}', section)
-            keywords.update(words)
+    return ' '.join(summary_lines[:3])  # 只取前3行
+
+
+def analyze_responsibility_overlap():
+    """分析职责重叠"""
+    print("="*80)
+    print("职责重叠详细分析")
+    print("="*80)
     
-    return keywords
-
-
-def extract_module_id(content: str) -> str:
-    """提取module_id"""
-    match = re.search(r'module_id:\s*(\S+)', content)
-    return match.group(1) if match else ""
-
-
-def extract_applicable_scope(content: str) -> str:
-    """提取适用范围"""
-    match = re.search(r'applicable_scope:\s*(.+)', content)
-    return match.group(1).strip() if match else ""
-
-
-def calculate_overlap(set1: Set[str], set2: Set[str]) -> float:
-    """计算两个集合的重叠度"""
-    if not set1 or not set2:
-        return 0.0
+    # 构建职责映射
+    responsibility_map = defaultdict(list)
+    documents_info = {}
     
-    intersection = set1 & set2
-    union = set1 | set2
-    
-    return len(intersection) / len(union) if union else 0.0
-
-
-def analyze_document(file_path: Path) -> Dict:
-    """分析单个文档"""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+    for filepath in BLUEPRINTS_DIR.glob("*.md"):
+        if filepath.name == "INDEX.md":
+            continue
         
-        return {
-            'file_name': file_path.name,
-            'module_id': extract_module_id(content),
-            'applicable_scope': extract_applicable_scope(content),
-            'responsibility': extract_responsibility(content),
-            'core_keywords': extract_core_content(content),
+        content = read_document(filepath)
+        yaml_header = extract_yaml_header(content)
+        responsibility = yaml_header.get('applicable_scope', '') or extract_responsibility(content)
+        summary = extract_module_summary(content)
+        
+        if responsibility:
+            responsibility_map[responsibility].append(filepath.name)
+        
+        documents_info[filepath.name] = {
+            "yaml": yaml_header,
+            "responsibility": responsibility,
+            "summary": summary[:200],  # 限制长度
+            "layer": yaml_header.get('layer', 'Unknown')
         }
-    except Exception as e:
-        print(f"  ✗ 分析失败 {file_path.name}: {e}")
-        return None
-
-
-def check_responsibility_overlap(doc1: Dict, doc2: Dict) -> Dict:
-    """检查两个文档的职责重叠"""
-    overlap_result = {
-        'file1': doc1['file_name'],
-        'file2': doc2['file_name'],
-        'scope_overlap': False,
-        'responsibility_overlap': False,
-        'keyword_overlap': 0.0,
-        'overlap_score': 0.0,
-        'issues': [],
-    }
     
-    if doc1['applicable_scope'] and doc2['applicable_scope']:
-        scope1_words = set(doc1['applicable_scope'].split())
-        scope2_words = set(doc2['applicable_scope'].split())
+    # 找出重叠组
+    overlap_groups = {k: v for k, v in responsibility_map.items() if len(v) > 1}
+    
+    print(f"\n发现 {len(overlap_groups)} 组职责重叠\n")
+    
+    for i, (responsibility, files) in enumerate(overlap_groups.items(), 1):
+        print("="*80)
+        print(f"重叠组 #{i}")
+        print("="*80)
+        print(f"\n职责描述: {responsibility}")
+        print(f"涉及文档数: {len(files)}")
+        print("\n涉及文档:")
         
-        if scope1_words & scope2_words:
-            overlap_result['scope_overlap'] = True
-            overlap_result['issues'].append(f"适用范围重叠: {doc1['applicable_scope']} vs {doc2['applicable_scope']}")
-    
-    if doc1['responsibility'] and doc2['responsibility']:
-        resp1_words = set(re.findall(r'[\u4e00-\u9fa5]{2,}', doc1['responsibility']))
-        resp2_words = set(re.findall(r'[\u4e00-\u9fa5]{2,}', doc2['responsibility']))
+        for j, filename in enumerate(files, 1):
+            info = documents_info.get(filename, {})
+            print(f"\n  {j}. {filename}")
+            print(f"     Layer: {info.get('layer', 'Unknown')}")
+            print(f"     摘要: {info.get('summary', 'N/A')[:100]}...")
+            
+            # 读取更多细节
+            filepath = BLUEPRINTS_DIR / filename
+            content = read_document(filepath)
+            
+            # 提取核心功能
+            core_functions = []
+            if '核心功能' in content or '核心职责' in content:
+                lines = content.split('\n')
+                for k, line in enumerate(lines):
+                    if '核心功能' in line or '核心职责' in line:
+                        # 提取接下来的几行
+                        for m in range(k+1, min(k+6, len(lines))):
+                            if lines[m].strip().startswith('-'):
+                                core_functions.append(lines[m].strip())
+            
+            if core_functions:
+                print(f"     核心功能:")
+                for func in core_functions[:5]:
+                    print(f"       {func}")
         
-        resp_overlap = calculate_overlap(resp1_words, resp2_words)
-        if resp_overlap > 0.3:
-            overlap_result['responsibility_overlap'] = True
-            overlap_result['issues'].append(f"职责描述重叠度: {resp_overlap:.2%}")
+        print("\n" + "-"*80)
+        print("分析建议:")
+        
+        # 分析是否真正重复
+        layers = [documents_info[f].get('layer', '') for f in files]
+        unique_layers = set(layers)
+        
+        if len(unique_layers) == 1:
+            print("  🔴 高风险: 所有文档属于同一Layer，可能存在真正重复")
+            print("  建议: 合并文档或明确划分职责边界")
+        else:
+            print("  ⚠️ 中风险: 文档属于不同Layer，可能是跨层协作")
+            print("  建议: 明确各文档在不同Layer中的职责定位")
+        
+        print("="*80 + "\n")
     
-    keyword_overlap = calculate_overlap(doc1['core_keywords'], doc2['core_keywords'])
-    overlap_result['keyword_overlap'] = keyword_overlap
-    
-    overlap_score = 0.0
-    if overlap_result['scope_overlap']:
-        overlap_score += 0.3
-    if overlap_result['responsibility_overlap']:
-        overlap_score += 0.4
-    overlap_score += keyword_overlap * 0.3
-    
-    overlap_result['overlap_score'] = overlap_score
-    
-    return overlap_result
-
-
-def main():
-    """主函数"""
-    print("=" * 80)
-    print("Layer 11职责重叠深度分析工具")
-    print("=" * 80)
-    print()
-    
-    if not LAYER11_DIR.exists():
-        print(f"✗ 目录不存在: {LAYER11_DIR}")
-        return
-    
-    md_files = list(LAYER11_DIR.glob("*.md"))
-    print(f"发现 {len(md_files)} 个Markdown文件")
-    print()
-    
-    print("=" * 80)
-    print("第一阶段：文档分析")
-    print("=" * 80)
-    print()
-    
-    documents = []
-    for md_file in sorted(md_files):
-        print(f"  分析: {md_file.name}")
-        doc = analyze_document(md_file)
-        if doc:
-            documents.append(doc)
-    
-    print()
-    print("=" * 80)
-    print("第二阶段：职责重叠检查")
-    print("=" * 80)
-    print()
-    
-    overlap_results = []
-    
-    for i in range(len(documents)):
-        for j in range(i + 1, len(documents)):
-            overlap = check_responsibility_overlap(documents[i], documents[j])
-            if overlap['overlap_score'] > 0.1:
-                overlap_results.append(overlap)
-    
-    overlap_results.sort(key=lambda x: x['overlap_score'], reverse=True)
-    
-    print(f"发现 {len(overlap_results)} 对文档存在潜在职责重叠")
-    print()
-    
-    print("=" * 80)
-    print("高风险职责重叠（重叠度 > 0.3）")
-    print("=" * 80)
-    print()
-    
-    high_risk = [r for r in overlap_results if r['overlap_score'] > 0.3]
-    for i, result in enumerate(high_risk[:20], 1):
-        print(f"{i}. {result['file1']} <-> {result['file2']}")
-        print(f"   重叠度: {result['overlap_score']:.2%}")
-        for issue in result['issues']:
-            print(f"   - {issue}")
-        print()
-    
-    print("=" * 80)
-    print("中风险职责重叠（重叠度 0.1-0.3）")
-    print("=" * 80)
-    print()
-    
-    medium_risk = [r for r in overlap_results if 0.1 < r['overlap_score'] <= 0.3]
-    for i, result in enumerate(medium_risk[:20], 1):
-        print(f"{i}. {result['file1']} <-> {result['file2']}")
-        print(f"   重叠度: {result['overlap_score']:.2%}")
-        print()
-    
-    print("=" * 80)
-    print("职责重叠统计")
-    print("=" * 80)
-    print()
-    print(f"高风险重叠: {len(high_risk)} 对")
-    print(f"中风险重叠: {len(medium_risk)} 对")
-    print(f"低风险重叠: {len(overlap_results) - len(high_risk) - len(medium_risk)} 对")
-    print()
-    
-    print("=" * 80)
-    print("建议整改措施")
-    print("=" * 80)
-    print()
-    
-    if high_risk:
-        print("🔴 高风险问题需要立即整改:")
-        for result in high_risk[:5]:
-            print(f"  - {result['file1']} 和 {result['file2']} 存在职责重叠")
-        print()
-    
-    print("✅ 分析完成")
+    return overlap_groups
 
 
 if __name__ == "__main__":
-    main()
+    overlap_groups = analyze_responsibility_overlap()
+    
+    print("\n" + "="*80)
+    print("总结")
+    print("="*80)
+    print(f"\n总重叠组数: {len(overlap_groups)}")
+    print(f"总涉及文档数: {sum(len(v) for v in overlap_groups.values())}")
+    print("\n建议优先处理:")
+    for responsibility, files in list(overlap_groups.items())[:3]:
+        print(f"  - {responsibility}: {len(files)}个文档")

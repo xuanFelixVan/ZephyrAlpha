@@ -47,10 +47,10 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 ### 按场景导�?
 | 场景 | 推荐文档 |
 |------|---------|
-| **学习风险管理** | [风险管理最佳实践](BEST_PRACTICES/RISK_MANAGEMENT_BEST_PRACTICES.md) |
-| **学习回测方法** | [回测最佳实践](BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md) |
-| **学习策略开�?* | [策略案例库](STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md) |
-| **学习因子研究** | [因子案例库](FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md) |
+| **学习风险管理** | |
+| **学习回测方法** | |
+| **学习策略开�?* | |
+| **学习因子研究** | |
 
 ---
 
@@ -58,9 +58,7 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 
 ### 1. 最佳实践（BEST_PRACTICES�?
 #### 1.1 风险管理最佳实�?
-**文档**: [RISK_MANAGEMENT_BEST_PRACTICES.md](BEST_PRACTICES/RISK_MANAGEMENT_BEST_PRACTICES.md)
-
-**核心内容**:
+**文档**: **核心内容**:
 - 风险管理框架
 - VaR计算方法
 - 压力测试
@@ -73,9 +71,7 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 - 最大回撤控�?- 流动性风险管�?- 尾部风险对冲
 
 #### 1.2 回测最佳实�?
-**文档**: [BACKTEST_BEST_PRACTICES.md](BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md)
-
-**核心内容**:
+**文档**: **核心内容**:
 - 回测框架设计
 - 绩效指标计算
 - 常见陷阱规避
@@ -94,9 +90,7 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 
 ### 2. 策略案例库（STRATEGY_LIBRARY�?
 #### 2.1 策略案例�?
-**文档**: [STRATEGY_CASE_LIBRARY.md](STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md)
-
-**核心内容**:
+**文档**: **核心内容**:
 - 因子策略案例（动量、价值、质量）
 - 技术策略案例（趋势跟踪、均值回归）
 - 机器学习策略案例（随机森林、深度学习）
@@ -112,9 +106,7 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 
 ### 3. 因子案例库（FACTOR_LIBRARY�?
 #### 3.1 因子案例�?
-**文档**: [FACTOR_CASE_LIBRARY.md](FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md)
-
-**核心内容**:
+**文档**: **核心内容**:
 - 动量因子案例（价格动量、盈利动量）
 - 价值因子案例（估值因子、质量因子）
 - 波动率因子案例（低波动率因子�?- 流动性因子案例（换手率因子）
@@ -135,50 +127,15 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 ### 按关键词检�?
 | 关键�?| 相关文档 |
 |--------|---------|
-| **风险管理** | [风险管理最佳实践](BEST_PRACTICES/RISK_MANAGEMENT_BEST_PRACTICES.md) |
-| **VaR** | [风险管理最佳实践](BEST_PRACTICES/RISK_MANAGEMENT_BEST_PRACTICES.md#var计算方法) |
-| **回测** | [回测最佳实践](BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md) |
-| **过拟�?* | [回测最佳实践](BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md#常见陷阱) |
-| **动量因子** | [因子案例库](FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md#动量因子案例) |
-| **价值因�?* | [因子案例库](FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md#价值因子案�? |
-| **趋势策略** | [策略案例库](STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md#趋势跟踪策略案例) |
-| **多因�?* | [策略案例库](STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md#多因子组合策略案�? |
-
----
-
-## 📊 知识库统�?
-### 文档统计
-
-| 类别 | 文档�?| 状�?|
-|------|--------|------|
-| **最佳实�?* | 2�?| �?已完�?|
-| **策略案例�?* | 1�?| �?已完�?|
-| **因子案例�?* | 1�?| �?已完�?|
-| **总计** | 4�?| �?已完�?|
-
-### 知识点统�?
-| 类别 | 知识点数 | 覆盖�?|
-|------|---------|--------|
-| **风险管理** | 15�?| 100% |
-| **回测方法** | 12�?| 100% |
-| **策略案例** | 10�?| 100% |
-| **因子案例** | 12�?| 100% |
-| **总计** | 49�?| 100% |
-
----
-
-## 🚀 知识库使用指�?
-### 新人学习路径
-
-**�?�?*: 学习最佳实�?- 阅读[风险管理最佳实践](BEST_PRACTICES/RISK_MANAGEMENT_BEST_PRACTICES.md)
-- 阅读[回测最佳实践](BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md)
-
-**�?�?*: 学习策略案例
-- 阅读[策略案例库](STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md)
-- 复现1-2个经典策�?
+| **风险管理** | |
+| **VaR** | |
+| **回测** | |
+| **过拟�?* | |
+| **动量因子** | |
+| **价值因�?* | |
+| **多因�?* | - 复现1-2个经典策�?
 **�?�?*: 学习因子案例
-- 阅读[因子案例库](FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md)
-- 复现1-2个经典因�?
+- 阅读- 复现1-2个经典因�?
 **�?�?*: 实践应用
 - 开发自己的策略
 - 应用最佳实�?
@@ -222,10 +179,7 @@ implementation_status: 已完�?tags: ["知识�?, "索引", "导航"]
 
 ### 相关文档
 - [因子库文档](../02_FACTOR_LIBRARY/INDEX.md)
-- [策略引擎文档](../03_STRATEGY_ENGINE/INDEX.md)
-- [风险控制文档](../04_RISK_CONTROL/INDEX.md)
-
----
+- - ---
 
 **文档版本**: v1.0.0
 **创建日期**: 2026-04-03

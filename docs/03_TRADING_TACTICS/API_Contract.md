@@ -4,31 +4,31 @@ version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?standard_type: 专业量化机构文档
-applicable_scope: 全系�?compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: INDEX.md
-implementation_status: 进行�?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# API_Contract.md - 接口契约
+# API_Contract.md - ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
 
-> 清风量化系统模块间通信规范
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﮔ۷۰ﮒﻠﺑﻠﻛﺟ۰ﻟ۶ﻟ
 
 
-## 1. 通信原则
+## 1. ﻠﻛﺟ۰ﮒﮒ
 
-- **格式**: JSON
-- **编码**: UTF-8
-- **时间�?*: ISO 8601 格式（UTC�?- **数值精�?*: float64�?字节浮点数）
-- **错误处理**: 返回 `error` 字段，包含错误码和消�?
+- **ﮔ ﺙﮒﺙ**: JSON
+- **ﻝﺙﻝ **: UTF-8
+- **ﮔﭘﻠﺑﮔ?*: ISO 8601 ﮔ ﺙﮒﺙﺅﺙUTCﺅﺙ?- **ﮔﺍﮒﺙﻝﺎﺝﮒﭦ?*: float64ﺅﺙ?ﮒ­ﻟﮔﭖ؟ﻝﺗﮔﺍﺅﺙ
+- **ﻠﻟﺁﺁﮒ۳ﻝ**: ﻟﺟﮒ `error` ﮒ­ﮔ؟ﭖﺅﺙﮒﮒ،ﻠﻟﺁﺁﻝ ﮒﮔﭘﮔ?
 
-## 2. 核心接口定义
+## 2. ﮔ ﺕﮒﺟﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 2.1 DataHub �?FactorCalculator
+### 2.1 DataHub ﻗ?FactorCalculator
 
-**功能**: 传递标准化市场数据
+**ﮒﻟﺛ**: ﻛﺙ ﻠﮔ ﮒﮒﮒﺕﮒﭦﮔﺍﮔ؟
 
-**请求格式**:
+**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -53,7 +53,7 @@ implementation_status: 进行�?---
 }
 ```
 
-**响应格式**:
+**ﮒﮒﭦﮔ ﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -64,7 +64,7 @@ implementation_status: 进行�?---
 }
 ```
 
-**错误响应**:
+**ﻠﻟﺁﺁﮒﮒﭦ**:
 ```json
 {
   "status": "error",
@@ -75,10 +75,10 @@ implementation_status: 进行�?---
 ```
 
 
-### 2.2 FactorCalculator �?StrategyEngine
+### 2.2 FactorCalculator ﻗ?StrategyEngine
 
-**功能**: 传递计算后的因子�?
-**请求格式**:
+**ﮒﻟﺛ**: ﻛﺙ ﻠﻟ؟۰ﻝ؟ﮒﻝﮒ ﮒ­ﮒ?
+**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -105,7 +105,7 @@ implementation_status: 进行�?---
 }
 ```
 
-**响应格式**:
+**ﮒﮒﭦﮔ ﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -117,11 +117,11 @@ implementation_status: 进行�?---
 ```
 
 
-### 2.3 StrategyEngine �?RiskManager
+### 2.3 StrategyEngine ﻗ?RiskManager
 
-**功能**: 传递策略信号和头寸信息
+**ﮒﻟﺛ**: ﻛﺙ ﻠﻝ­ﻝ۴ﻛﺟ۰ﮒﺓﮒﮒ۳ﺑﮒﺁﺕﻛﺟ۰ﮔﺁ
 
-**请求格式**:
+**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -147,7 +147,7 @@ implementation_status: 进行�?---
 }
 ```
 
-**响应格式**:
+**ﮒﮒﭦﮔ ﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -163,7 +163,7 @@ implementation_status: 进行�?---
 }
 ```
 
-**拒绝响应**:
+**ﮔﻝﭨﮒﮒﭦ**:
 ```json
 {
   "status": "rejected",
@@ -175,10 +175,10 @@ implementation_status: 进行�?---
 ```
 
 
-### 2.4 RiskManager �?TradeExecutor
+### 2.4 RiskManager ﻗ?TradeExecutor
 
-**功能**: 传递已批准的交易订�?
-**请求格式**:
+**ﮒﻟﺛ**: ﻛﺙ ﻠﮒﺓﺎﮔﺗﮒﻝﻛﭦ۳ﮔﻟ؟۱ﮒ?
+**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -197,7 +197,7 @@ implementation_status: 进行�?---
 }
 ```
 
-**响应格式**:
+**ﮒﮒﭦﮔ ﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -212,34 +212,34 @@ implementation_status: 进行�?---
 ```
 
 
-## 3. 错误码规�?
-| 错误�?| 含义 | 处理方式 |
+## 3. ﻠﻟﺁﺁﻝ ﻟ۶ﻟ?
+| ﻠﻟﺁﺁﻝ ?| ﮒ،ﻛﺗ | ﮒ۳ﻝﮔﺗﮒﺙ |
 |--------|------|---------|
-| DATA_001 | 数据格式错误 | 记录日志，跳过该数据 |
-| DATA_002 | 数据缺失 | 使用前向填充 |
-| FACTOR_001 | 因子计算失败 | 使用备选因�?|
-| SIGNAL_001 | 信号生成失败 | 不发出交易信�?|
-| RISK_001 | 风险检查失�?| 拒绝交易 |
-| EXEC_001 | 执行失败 | 重试3次，失败则告�?|
+| DATA_001 | ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ۴ﮔﺍﮔ؟ |
+| DATA_002 | ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ | ﻛﺛﺟﻝ۷ﮒﮒﮒ۰،ﮒ |
+| FACTOR_001 | ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | ﻛﺛﺟﻝ۷ﮒ۳ﻠﮒ ﮒ­?|
+| SIGNAL_001 | ﻛﺟ۰ﮒﺓﻝﮔﮒ۳ﺎﻟﺑ۴ | ﻛﺕﮒﮒﭦﻛﭦ۳ﮔﻛﺟ۰ﮒ?|
+| RISK_001 | ﻠ۲ﻠ۸ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ?| ﮔﻝﭨﻛﭦ۳ﮔ |
+| EXEC_001 | ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﻠﻟﺁ3ﮔ؛۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﮒﮒﻟ­?|
 
 
-## 4. 数据类型规范
+## 4. ﮔﺍﮔ؟ﻝﺎﭨﮒﻟ۶ﻟ
 
-### 基础类型
+### ﮒﭦﻝ۰ﻝﺎﭨﮒ
 
-| 类型 | 说明 | 示例 |
+| ﻝﺎﭨﮒ | ﻟﺁﺑﮔ | ﻝ۳ﭦﻛﺝ |
 |------|------|------|
-| timestamp | ISO 8601 UTC时间 | "2026-03-28T10:00:00Z" |
-| symbol | 股票代码 | "000001.SZ" |
-| float | 浮点�?| 101.5 |
-| int | 整数 | 1000 |
-| string | 字符�?| "BUY" |
-| boolean | 布尔�?| true/false |
+| timestamp | ISO 8601 UTCﮔﭘﻠﺑ | "2026-03-28T10:00:00Z" |
+| symbol | ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  | "000001.SZ" |
+| float | ﮔﭖ؟ﻝﺗﮔ?| 101.5 |
+| int | ﮔﺑﮔﺍ | 1000 |
+| string | ﮒ­ﻝ؛۵ﻛﺕ?| "BUY" |
+| boolean | ﮒﺕﮒﺍﮒ?| true/false |
 
-### 复合类型
+### ﮒ۳ﮒﻝﺎﭨﮒ
 
 ```python
-# OHLCV 数据
+# OHLCV ﮔﺍﮔ؟
 class OHLCV:
     open: float
     high: float
@@ -247,13 +247,13 @@ class OHLCV:
     close: float
     volume: int
 
-# 因子�?class FactorValue:
+# ﮒ ﮒ­ﮒ?class FactorValue:
     value: float
     signal: str  # "BUY" / "SELL" / "HOLD"
     confidence: float  # 0.0 - 1.0
     calculation_time_ms: int
 
-# 交易信号
+# ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
 class TradeSignal:
     action: str  # "BUY" / "SELL" / "HOLD"
     confidence: float
@@ -262,16 +262,16 @@ class TradeSignal:
 ```
 
 
-## 5. 版本协商
+## 5. ﻝﮔ؛ﮒﮒ
 
-### 版本号格�?```
+### ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙ?```
 {major}.{minor}.{patch}
 ```
 
-### 兼容性规�?- **主版本不兼容**: 接口结构改变
-- **次版本向后兼�?*: 新增可选字�?- **补丁版本向后兼容**: Bug修复
+### ﮒﺙﮒ؟ﺗﮔ۶ﻟ۶ﮒ?- **ﻛﺕﭨﻝﮔ؛ﻛﺕﮒﺙﮒ؟ﺗ**: ﮔ۴ﮒ۲ﻝﭨﮔﮔﺗﮒ
+- **ﮔ؛۰ﻝﮔ؛ﮒﮒﮒﺙﮒ؟?*: ﮔﺍﮒ۱ﮒﺁﻠﮒ­ﮔ؟?- **ﻟ۰۴ﻛﺕﻝﮔ؛ﮒﮒﮒﺙﮒ؟ﺗ**: Bugﻛﺟ؟ﮒ۳
 
-### 版本检�?```json
+### ﻝﮔ؛ﮔ۲ﮔ?```json
 {
   "interface_version": "1.0",
   "supported_versions": ["1.0", "1.1"]
@@ -279,31 +279,31 @@ class TradeSignal:
 ```
 
 
-## 6. 超时规范
+## 6. ﻟﭘﮔﭘﻟ۶ﻟ
 
-| 操作 | 超时时间 | 说明 |
+| ﮔﻛﺛ | ﻟﭘﮔﭘﮔﭘﻠﺑ | ﻟﺁﺑﮔ |
 |------|----------|------|
-| 数据采集 | 30s | 单次API调用 |
-| 因子计算 | 5s | 单个因子 |
-| 策略信号 | 2s | 单个策略 |
-| 风险检�?| 1s | 风控审批 |
-| 交易执行 | 10s | 订单提交 |
+| ﮔﺍﮔ؟ﻠﻠ | 30s | ﮒﮔ؛۰APIﻟﺍﻝ۷ |
+| ﮒ ﮒ­ﻟ؟۰ﻝ؟ | 5s | ﮒﻛﺕ۹ﮒ ﮒ­ |
+| ﻝ­ﻝ۴ﻛﺟ۰ﮒﺓ | 2s | ﮒﻛﺕ۹ﻝ­ﻝ۴ |
+| ﻠ۲ﻠ۸ﮔ۲ﮔ?| 1s | ﻠ۲ﮔ۶ﮒ؟۰ﮔﺗ |
+| ﻛﭦ۳ﮔﮔ۶ﻟ۰ | 10s | ﻟ؟۱ﮒﮔﻛﭦ۳ |
 
 
-## 7. 重试策略
+## 7. ﻠﻟﺁﻝ­ﻝ۴
 
 ```
-重试条件: 网络错误、超时、临时服务不可用
-重试次数: 最�?�?重试间隔: 指数退避（1s, 2s, 4s�?最大等�? 7s
+ﻠﻟﺁﮔ۰ﻛﭨﭘ: ﻝﺛﻝﭨﻠﻟﺁﺁﻙﻟﭘﮔﭘﻙﻛﺕﺑﮔﭘﮔﮒ۰ﻛﺕﮒﺁﻝ۷
+ﻠﻟﺁﮔ؛۰ﮔﺍ: ﮔﮒ۳?ﮔ؛?ﻠﻟﺁﻠﺑﻠ: ﮔﮔﺍﻠﻠﺟﺅﺙ1s, 2s, 4sﺅﺙ?ﮔﮒ۳۶ﻝ­ﮒﺝ? 7s
 ```
 
 
-## 8. 日志规范
+## 8. ﮔ۴ﮒﺟﻟ۶ﻟ
 
-每个接口调用必须记录�?```json
+ﮔﺁﻛﺕ۹ﮔ۴ﮒ۲ﻟﺍﻝ۷ﮒﺟﻠ۰ﭨﻟ؟ﺍﮒﺛﺅﺙ?```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
-  "interface": "FactorCalculator �?StrategyEngine",
+  "interface": "FactorCalculator ﻗ?StrategyEngine",
   "request_id": "REQ_20260328_000001",
   "status": "success",
   "latency_ms": 12,
@@ -312,19 +312,19 @@ class TradeSignal:
 ```
 
 
-## 9. 模块接口定义
+## 9. ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 9.1 DataHub接口
+### 9.1 DataHubﮔ۴ﮒ۲
 
 ```python
 class IDataHub(ABC):
-    """数据中心接口
+    """ﮔﺍﮔ؟ﻛﺕ­ﮒﺟﮔ۴ﮒ۲
 
-    索引: API.DH.001
+    ﻝﺑ۱ﮒﺙ: API.DH.001
     Layer: Layer 0
-    上游: 数据�?AKShare/Tushare)
-    下游: FactorCalculator, Monitor
-    状�? 规划�?(v5.3阶段尚未实现)
+    ﻛﺕﮔﺕﺕ: ﮔﺍﮔ؟ﮔﭦ?AKShare/Tushare)
+    ﻛﺕﮔﺕﺕ: FactorCalculator, Monitor
+    ﻝﭘﮔ? ﻟ۶ﮒﻛﺕ?(v5.3ﻠﭘﮔ؟ﭖﮒﺍﮔ۹ﮒ؟ﻝﺍ)
     """
 
     @abstractmethod
@@ -335,7 +335,7 @@ class IDataHub(ABC):
         end_date: str,
         fields: Optional[List[str]] = None
     ) -> pd.DataFrame:
-        """获取OHLCV数据"""
+        """ﻟﺓﮒOHLCVﮔﺍﮔ؟"""
         pass
 
     @abstractmethod
@@ -344,24 +344,24 @@ class IDataHub(ABC):
         symbol: str,
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """获取基本面数�?""
+        """ﻟﺓﮒﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ?""
         pass
 
     @abstractmethod
     def list_symbols(self, market: str = "A") -> List[str]:
-        """获取股票列表"""
+        """ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷"""
         pass
 ```
 
-### 9.2 FactorCalculator接口
+### 9.2 FactorCalculatorﮔ۴ﮒ۲
 
 ```python
 class IFactorCalculator(ABC):
-    """因子计算器接�?
-    索引: API.FC.001
+    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?
+    ﻝﺑ۱ﮒﺙ: API.FC.001
     Layer: Layer 2
-    上游: DataHub
-    下游: StrategyEngine
+    ﻛﺕﮔﺕﺕ: DataHub
+    ﻛﺕﮔﺕﺕ: StrategyEngine
     """
 
     @abstractmethod
@@ -372,7 +372,7 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """计算单个因子�?""
+        """ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒ ﮒ­ﮒ?""
         pass
 
     @abstractmethod
@@ -384,20 +384,20 @@ class IFactorCalculator(ABC):
         end_date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> pd.DataFrame:
-        """批量计算因子"""
+        """ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­"""
         pass
 ```
 
-### 9.3 StrategyEngine接口
+### 9.3 StrategyEngineﮔ۴ﮒ۲
 
 ```python
 class IStrategyEngine(ABC):
-    """策略引擎接口
+    """ﻝ­ﻝ۴ﮒﺙﮔﮔ۴ﮒ۲
 
-    索引: API.SE.001
+    ﻝﺑ۱ﮒﺙ: API.SE.001
     Layer: Layer 3
-    上游: FactorCalculator, RiskManager
-    下游: RiskManager, TradeExecutor
+    ﻛﺕﮔﺕﺕ: FactorCalculator, RiskManager
+    ﻛﺕﮔﺕﺕ: RiskManager, TradeExecutor
     """
 
     @abstractmethod
@@ -407,7 +407,7 @@ class IStrategyEngine(ABC):
         symbols: List[str],
         date: str
     ) -> List[Signal]:
-        """生成交易信号"""
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ"""
         pass
 
     @abstractmethod
@@ -416,19 +416,19 @@ class IStrategyEngine(ABC):
         strategy_id: str,
         symbol: str
     ) -> Position:
-        """获取持仓"""
+        """ﻟﺓﮒﮔﻛﭨ"""
         pass
 ```
 
-### 9.4 RiskManager接口
+### 9.4 RiskManagerﮔ۴ﮒ۲
 
 ```python
 class IRiskManager(ABC):
-    """风险管理器接�?
-    索引: API.RM.001
+    """ﻠ۲ﻠ۸ﻝ؟۰ﻝﮒ۷ﮔ۴ﮒ?
+    ﻝﺑ۱ﮒﺙ: API.RM.001
     Layer: Layer 3
-    上游: StrategyEngine, TradeExecutor
-    下游: StrategyEngine, TradeExecutor
+    ﻛﺕﮔﺕﺕ: StrategyEngine, TradeExecutor
+    ﻛﺕﮔﺕﺕ: StrategyEngine, TradeExecutor
     """
 
     @abstractmethod
@@ -437,7 +437,7 @@ class IRiskManager(ABC):
         order: Order,
         current_positions: List[Position]
     ) -> OrderCheckResult:
-        """检查订单是否通过风控"""
+        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮔﺁﮒ۵ﻠﻟﺟﻠ۲ﮔ۶"""
         pass
 
     @abstractmethod
@@ -446,43 +446,43 @@ class IRiskManager(ABC):
         positions: List[Position],
         portfolio_value: float
     ) -> RiskMetrics:
-        """计算风险指标"""
+        """ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ """
         pass
 ```
 
-### 9.5 模块依赖关系�?
+### 9.5 ﮔ۷۰ﮒﻛﺝﻟﭖﮒﺏﻝﺏﭨﮒ?
 ```
-                    ┌─────────────�?                    �?  DataHub   │◄────────── 数据�?(AKShare/Tushare)
-                    └──────┬──────�?                           �?push/pull
-                           �?                    ┌─────────────�?                    │FactorCalc   �?                    └──────┬──────�?                           �?push
-                           �?                    ┌─────────────�?                    │StrategyEng  �?                    └──────┬──────�?                           �?push
-                           �?                    ┌─────────────�?                    │RiskManager  �?                    └──────┬──────�?                           �?callback/block
-                           �?                    ┌─────────────�?                    │TradeExecutor�?                    └──────┬──────�?                           �?report
-                           �?                    ┌─────────────�?                    �?  Monitor   �?                    └──────┬──────�?                           �?alert
-                           �?                    ┌─────────────�?                    �?  �?监督)  �?                    └─────────────�?```
+                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗ?  DataHub   ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ ﮔﺍﮔ؟ﮔﭦ?(AKShare/Tushare)
+                    ﻗﻗﻗﻗﻗﻗﻗﻗ؛ﻗﻗﻗﻗﻗﻗﻗ?                           ﻗ?push/pull
+                           ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗFactorCalc   ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗ؛ﻗﻗﻗﻗﻗﻗﻗ?                           ﻗ?push
+                           ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗStrategyEng  ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗ؛ﻗﻗﻗﻗﻗﻗﻗ?                           ﻗ?push
+                           ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗRiskManager  ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗ؛ﻗﻗﻗﻗﻗﻗﻗ?                           ﻗ?callback/block
+                           ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗTradeExecutorﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗ؛ﻗﻗﻗﻗﻗﻗﻗ?                           ﻗ?report
+                           ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗ?  Monitor   ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗ؛ﻗﻗﻗﻗﻗﻗﻗ?                           ﻗ?alert
+                           ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                    ﻗ?  ﻛﭦ?ﻝﻝ۲)  ﻗ?                    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-### 9.6 版本管理
+### 9.6 ﻝﮔ؛ﻝ؟۰ﻝ
 
-| 模块 | 版本 | 状�?| 最后更�?|
+| ﮔ۷۰ﮒ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?|
 |------|------|------|----------|
-| DataHub | 1.0 | �?稳定 | 2026-03-28 |
-| FactorCalculator | 1.0 | �?稳定 | 2026-03-28 |
-| StrategyEngine | 1.0 | �?稳定 | 2026-03-28 |
-| RiskManager | 1.0 | �?稳定 | 2026-03-28 |
-| TradeExecutor | 1.0 | �?稳定 | 2026-03-28 |
-| Monitor | 1.0 | �?稳定 | 2026-03-28 |
+| DataHub | 1.0 | ﻗ?ﻝ۷ﺏﮒ؟ | 2026-03-28 |
+| FactorCalculator | 1.0 | ﻗ?ﻝ۷ﺏﮒ؟ | 2026-03-28 |
+| StrategyEngine | 1.0 | ﻗ?ﻝ۷ﺏﮒ؟ | 2026-03-28 |
+| RiskManager | 1.0 | ﻗ?ﻝ۷ﺏﮒ؟ | 2026-03-28 |
+| TradeExecutor | 1.0 | ﻗ?ﻝ۷ﺏﮒ؟ | 2026-03-28 |
+| Monitor | 1.0 | ﻗ?ﻝ۷ﺏﮒ؟ | 2026-03-28 |
 
 
-## 10. 索引清单
+## 10. ﻝﺑ۱ﮒﺙﮔﺕﮒ
 
-| 索引 | 模块/接口 | Layer | 状�?|
+| ﻝﺑ۱ﮒﺙ | ﮔ۷۰ﮒ/ﮔ۴ﮒ۲ | Layer | ﻝﭘﮔ?|
 |------|-----------|-------|------|
-| API.DH.001 | DataHub接口 | 0 | �?|
-| API.FC.001 | FactorCalculator接口 | 2 | �?|
-| API.SE.001 | StrategyEngine接口 | 3 | �?|
-| API.RM.001 | RiskManager接口 | 3 | �?|
-| API.TE.001 | TradeExecutor接口 | 4 | �?|
-| API.MO.001 | Monitor接口 | 6 | �?|
+| API.DH.001 | DataHubﮔ۴ﮒ۲ | 0 | ﻗ?|
+| API.FC.001 | FactorCalculatorﮔ۴ﮒ۲ | 2 | ﻗ?|
+| API.SE.001 | StrategyEngineﮔ۴ﮒ۲ | 3 | ﻗ?|
+| API.RM.001 | RiskManagerﮔ۴ﮒ۲ | 3 | ﻗ?|
+| API.TE.001 | TradeExecutorﮔ۴ﮒ۲ | 4 | ﻗ?|
+| API.MO.001 | Monitorﮔ۴ﮒ۲ | 6 | ﻗ?|
 
 
-**版本**: 1.1 | **更新**: 2026-03-29 | **状�?*: �?活跃
+**ﻝﮔ؛**: 1.1 | **ﮔﺑﮔﺍ**: 2026-03-29 | **ﻝﭘﮔ?*: ﻗ?ﮔﺑﭨﻟﺓ

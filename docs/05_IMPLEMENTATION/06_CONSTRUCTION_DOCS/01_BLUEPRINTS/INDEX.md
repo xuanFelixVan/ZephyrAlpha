@@ -35,7 +35,7 @@ parent_document: ../INDEX.md
 
 本索引列出了清风量化系统的所有蓝图文档，按Layer架构组织，包括文档名称、module_id、版本、状态和最后更新日期。
 
-**✅ 状态更新**: 2026-04-06所有编码问题文档已成功重建并恢复Active状态。详见[立即行动执行报告](../../09_AUDIT/REPORTS/IMMEDIATE_ACTION_EXECUTION_REPORT_20260406.md)。
+**✅ 状态更新**: 2026-04-06所有编码问题文档已成功重建并恢复Active状态。详见。
 
 ---
 
