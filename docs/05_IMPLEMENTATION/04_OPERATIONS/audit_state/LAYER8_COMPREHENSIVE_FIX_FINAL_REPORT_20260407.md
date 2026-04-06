@@ -13,8 +13,13 @@ standard_type: 专业量化机构报告
 applicable_scope: Layer 8 人机交互层
 compliance_level: 专业标准
 ---
-
 # Layer 8 人机交互层综合修复最终报告
+
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 **执行日期**: 2026-04-07  
 **执行范围**: docs/08_HUMAN_AI_INTERFACE  

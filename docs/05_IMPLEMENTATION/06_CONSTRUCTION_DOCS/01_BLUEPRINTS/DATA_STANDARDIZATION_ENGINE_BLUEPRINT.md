@@ -12,8 +12,13 @@ responsibility:
   - 数据字段映射
 layer: "Layer 1 (数据预处理层)"
 ---
-
 # 数据标准化引擎蓝图
+
+> **核心职责**: Data Standardization Engine蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Standardization Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **核心定位**: 数据标准化解决方案，为量化交易系统提供统一的数据格式和标准
 

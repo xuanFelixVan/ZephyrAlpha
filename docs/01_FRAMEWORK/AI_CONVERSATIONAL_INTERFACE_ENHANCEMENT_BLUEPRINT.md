@@ -38,6 +38,12 @@ responsibility:
 
 # AI对话式交互增强蓝图
 
+> **核心职责**: Ai Conversational Interface Enhancement蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Ai Conversational Interface Enhancement蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
 > **版本**: v1.0
 > **创建日期**: 2026-04-07
 > **实施周期**: 3周

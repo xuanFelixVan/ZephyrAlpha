@@ -12,8 +12,13 @@ responsibility:
   - 数据发现
 layer: "Layer 1 (数据预处理层)"
 ---
-
 # 元数据管理增强蓝图
+
+> **核心职责**: Metadata Management Enhancement蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Metadata Management Enhancement蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **核心定位**: 专业元数据管理解决方案，为量化交易系统提供完整的数据资产目录和血缘追踪
 

@@ -12,8 +12,13 @@ responsibility:
   - 数据访问控制
 layer: "Layer 1 (数据预处理层)"
 ---
-
 # 统一数据API网关蓝图
+
+> **核心职责**: Unified Data Api Gateway蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Unified Data Api Gateway蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **核心定位**: 统一数据访问接口，为量化交易系统提供标准化的数据服务
 

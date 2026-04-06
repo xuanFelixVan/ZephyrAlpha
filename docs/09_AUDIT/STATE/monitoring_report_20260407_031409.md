@@ -1,3 +1,24 @@
+---
+responsibility:
+  - 因子计算
+  - 审计系统
+  - 文档治理
+
+module_id: MONITORING_REPORT_20260407_031409_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+# monitoring report 20260407 031409
+
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 # 文档治理监控报告
 
 > **监控时间**: 2026-04-07 03:14:09
@@ -33,3 +54,4 @@
 
 - **建议频率**: 每日运行一次
 - **运行命令**: `python scripts/continuous_monitoring.py`
+

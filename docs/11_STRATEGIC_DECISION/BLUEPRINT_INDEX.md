@@ -13,8 +13,13 @@ implementation_status: 索引阶段
 responsibility:
   - 风险预算 (Layer 11)
 ---
-
 # Layer 11 战略决策层蓝图索引
+
+> **核心职责**: Blueprint Index.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint Index.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-07

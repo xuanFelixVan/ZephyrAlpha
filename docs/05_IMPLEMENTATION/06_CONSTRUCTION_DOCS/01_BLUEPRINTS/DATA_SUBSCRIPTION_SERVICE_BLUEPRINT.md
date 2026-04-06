@@ -12,8 +12,13 @@ responsibility:
   - 消息队列
 layer: "Layer 1 (数据预处理层)"
 ---
-
 # 数据订阅服务蓝图
+
+> **核心职责**: Data Subscription Service蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Subscription Service蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **核心定位**: 实时数据分发解决方案，为量化交易系统提供可靠的数据订阅服务
 

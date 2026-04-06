@@ -52,8 +52,13 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - AML_MONITORING_SYSTEM_BLUEPRINT.md: 反洗钱监控（AML特定）
 ---
-
 # 市场滥用监控系统蓝图
+
+> **核心职责**: Market Abuse Surveillance蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Market Abuse Surveillance蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0.0  
 > **创建日期**: 2026-04-07  

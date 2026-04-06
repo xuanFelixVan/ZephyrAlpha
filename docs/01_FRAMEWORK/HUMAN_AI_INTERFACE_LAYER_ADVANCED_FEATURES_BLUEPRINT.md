@@ -28,8 +28,13 @@ responsibility:
   - 高级特性
   - 用户体验
 ---
-
 # 人机交互层高级特性补充蓝图
+
+> **核心职责**: Human Ai Interface Layer Advanced Features蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Human Ai Interface Layer Advanced Features蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-07
