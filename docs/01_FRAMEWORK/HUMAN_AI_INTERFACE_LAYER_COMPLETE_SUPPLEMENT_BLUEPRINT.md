@@ -17,10 +17,6 @@ related_documents:
   - INDEX.md
 responsibility_boundary: |
   本文档负责人机交互层完整补充方案，包括：
-  - 深度缺失模块识别
-  - 开源项目替代方案
-  - 实施优先级建议
-  - 个人开发适配方案
   
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
@@ -28,8 +24,9 @@ responsibility_boundary: |
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # 人机交互层完整补充蓝图

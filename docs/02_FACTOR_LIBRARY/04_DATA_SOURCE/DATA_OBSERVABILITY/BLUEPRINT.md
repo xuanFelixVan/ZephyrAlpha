@@ -10,11 +10,12 @@ applicable_scope: 数据可观测性平台
 compliance_level: 专业标准
 parent_document: ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md
 dependencies:
-  - Soda Core
-  - Prometheus
-  - Grafana
+- Soda Core
+- Prometheus
+- Grafana
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据可观测性平台蓝图

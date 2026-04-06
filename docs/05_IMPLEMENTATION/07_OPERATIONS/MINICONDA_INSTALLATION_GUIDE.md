@@ -6,11 +6,12 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 机器学习
-  - 测试系统
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构指南
 applicable_scope: 全系统
-compliance_level: 专业标准---
+compliance_level: 专业标准
+---
+---
 
 
 # Minicondaﮒ؟ﻟ۲ﮔﮒﺅﺙ?ﮒﻠﺅﺙ?

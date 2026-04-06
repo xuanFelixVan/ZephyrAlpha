@@ -6,13 +6,13 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобцбЖцЮ╢
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 审计系统
+  - 扩展功能、辅助模块
 applicable_scope: хЕич│╗ч╗ЯхдзшзДцибцЦЗф╗╢хобшоб
 compliance_level: цЮ╢цЮДцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: ш┐ЫшбМф╕?---
+implementation_status: ш┐ЫшбМф╕?
+---
+---
 
 # хдзшзДцибцЦЗф╗╢ч│╗ч╗Яц╖▒х║жхобшобцбЖцЮ?
 > **核心职责**: 审计报告和审计记录

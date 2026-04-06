@@ -23,8 +23,10 @@ compliance_level: 专业标准
 
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 responsibility:
-  - 本文档负责Layer 4机器学习层的数据流架构设计，包括流式处理、批处理、混合处理等核心功能。
+  - 扩展功能、辅助模块
   responsibility_layer: Layer 11
+---
+---
 ---
 ---
 # 三级时间框架数据流架构蓝�?

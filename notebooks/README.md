@@ -9,6 +9,9 @@ version: 1.0.0
 module_id: DOC_README
 created_date: 2026-03-31
 last_updated: 2026-04-03
+responsibility:
+  - 模块说明、快速入门、使用指南
+---
 ---
 # 研发笔记规范 (Notebooks Standards)
 

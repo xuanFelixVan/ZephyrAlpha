@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮД?
 responsibility:
-  - 因子计算
-  - 回测系统
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшо╛шобцЦЗцбг
 applicable_scope: цибцЛЯф║дцШУч│╗ч╗Я
 compliance_level: цЮ╢цЮДцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: ш┐ЫшбМ?---
+implementation_status: ш┐ЫшбМ?
+---
+---
 
 
 # цКАцЬпцЦ╣цбИшо╛шобц▒ЗцА╗цКе?

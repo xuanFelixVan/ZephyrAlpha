@@ -6,13 +6,13 @@ parent_document: ../INDEX.md
 implementation_status: Þ«¥Þ«íÚÿÂµ«Á
 owner: µëºÞíîÕ▒éÞ┤ƒÞ┤úõ║║
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 配置管理
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: EXE_PYTHON_VERSION_FIX
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # Pythonþëêµ£¼Úù«ÚóÿÞºúÕå│µû╣µíê
 > **核心职责**: 文档内容说明

@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 文档维护总结
+  - 扩展功能、辅助模块
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY_001
 version: 1.0.0
@@ -11,6 +11,7 @@ owner: 首席蓝图架构师
 standard_type: 文档治理维护总结
 applicable_scope: Layer 9 - 研究与创新层文档维护总结
 compliance_level: 专业机构标准
+---
 ---
 
 # Layer 9文档治理维护总结

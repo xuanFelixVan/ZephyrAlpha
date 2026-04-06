@@ -11,7 +11,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # PortfolioOptimizer组合优化器模块技术规格书

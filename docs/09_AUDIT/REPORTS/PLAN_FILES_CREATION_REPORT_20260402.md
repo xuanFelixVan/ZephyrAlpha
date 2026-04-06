@@ -1,15 +1,15 @@
 ---
 standard_type: т«ъТќйТіЦтЉі
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 applicable_scope: тЁеу│╗у╗?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: ти▓т«їТѕ?owner: ТќЄТАБу«АуљєтЉ?version: 1.0.0
 module_id: PLAN_FILES_CREATION_REPORT_20260402
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # У«АтѕњТќЄС╗ХтѕЏт╗║т«їТѕљТіЦтЉі
 > **核心职责**: 分析报告和评估结果

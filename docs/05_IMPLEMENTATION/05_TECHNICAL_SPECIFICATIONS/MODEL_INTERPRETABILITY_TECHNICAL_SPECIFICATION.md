@@ -14,10 +14,12 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: AI工程�?standard_type: 专业量化机构技术规格书
 responsibility:
-  - 风险预算管理与分配，包括风险限额设定、预算动态调整、风险预算监控与预警
+  - 扩展功能、辅助模块
 applicable_scope: 模型可解释性系�?compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/MODEL_INTERPRETABILITY_BLUEPRINT.md
-implementation_status: 技术规格设计完�?---
+implementation_status: 技术规格设计完�?
+---
+---
 
 # 模型可解释性技术规格书 v1.0
 

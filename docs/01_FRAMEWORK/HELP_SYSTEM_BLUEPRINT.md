@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
 responsibility:
-  - 风险预算
-  - 因子计算
-  - 交易执行
+  - 扩展功能、辅助模块
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 帮助系统
@@ -20,16 +18,15 @@ related_documents:
   - AI_VIRTUAL_RESEARCH_TEAM/INDEX.md
 responsibility_boundary: |
   本文档负责帮助系统设计，包括：
-  - 系统使用文档
-  - 操作指南
-  - FAQ常见问题
-  - 视频教程
   
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   自然语言界面请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
   AI研究团队请参考：AI_VIRTUAL_RESEARCH_TEAM/INDEX.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
+---
 
 
 # 帮助系统蓝图

@@ -10,11 +10,12 @@ applicable_scope: 数据目录系统
 compliance_level: 专业标准
 parent_document: ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md
 dependencies:
-  - DataHub
-  - OpenLineage
-  - Docker
+- DataHub
+- OpenLineage
+- Docker
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据目录系统蓝图

@@ -16,7 +16,8 @@ reference_models:
 parent_document: ./COMPLETE_BLUEPRINT_V3.md
 implementation_status: 关键缺失补充阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 9: 研究与创新层关键缺失模块补充 v4.0

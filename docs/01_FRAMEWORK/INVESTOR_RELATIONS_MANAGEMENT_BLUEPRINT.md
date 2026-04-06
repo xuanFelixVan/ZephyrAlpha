@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: INVESTOR_RELATIONS_MANAGEMENT_BLUEPRINT_001
 version: 1.0.0
@@ -39,16 +37,13 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 投资者关系管理系统架构设计
-  - 投资者信息管理
-  - 沟通记录追踪
-  - 报告发送管理
-  - 合规披露管理
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+---
+---
 ---
 
 # 投资者关系管理系统蓝图

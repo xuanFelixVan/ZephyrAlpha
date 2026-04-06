@@ -10,7 +10,8 @@ owner: 首席技术评审官
 standard_type: 文档索引
 applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 技术规格书总索�?

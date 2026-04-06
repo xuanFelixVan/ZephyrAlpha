@@ -6,12 +6,12 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
-compliance_level: 专业标准---
+compliance_level: 专业标准
+---
+---
 
 
 # QMTф║дцШУцОехПгш┐ЮцОещЧощвШцОТцЯецМЗхНЧ

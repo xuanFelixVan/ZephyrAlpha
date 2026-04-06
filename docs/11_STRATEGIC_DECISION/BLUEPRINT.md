@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: STRATEGIC_DECISION_BP_001
 version: 3.0.0
@@ -20,6 +18,7 @@ related_documents:
   - PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+---
 ---
 
 # Layer 11: 战略决策层蓝图

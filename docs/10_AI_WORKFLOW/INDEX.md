@@ -11,8 +11,8 @@ applicable_scope: AI工作流管理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

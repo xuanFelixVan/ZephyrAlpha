@@ -16,8 +16,9 @@ related_documents:
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计阶段
 responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # 数据源层专业实施蓝图

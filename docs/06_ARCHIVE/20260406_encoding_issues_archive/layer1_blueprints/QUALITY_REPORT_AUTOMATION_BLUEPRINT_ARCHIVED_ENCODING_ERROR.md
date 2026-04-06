@@ -15,7 +15,8 @@ open_source_dependency: pandas, numpy, jinja2
 estimated_effort: 1.5周
 priority: P1
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

@@ -6,11 +6,11 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 交易执行
+  - 扩展功能、辅助模块
 standard_type: ﮔﭦﻟﺛﻛﺛﮒﻝﺎﭨﻟ۶ﻟ?applicable_scope: Layer 2.5 ﮒﺕﮒﭦﮒﻛﺕﻟﮔ۷۰ﮔﮒﺎ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ---
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+---
+---
 
 
 # Aﻟ۰ﮒﺕﮒﭦﮒﻛﺕﻟﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒﻝﺎﭨ

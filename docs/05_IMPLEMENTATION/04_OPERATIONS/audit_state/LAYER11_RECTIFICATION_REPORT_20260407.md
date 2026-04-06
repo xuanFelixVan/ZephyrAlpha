@@ -9,9 +9,8 @@ standard_type: 专业量化机构整改报告
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 responsibility:
-  - 整改审计发现的问题
-  - 提升文档质量
-  - 确保符合专业标准
+  - 扩展功能、辅助模块
+---
 ---
 # Layer 11战略决策层整改报告
 

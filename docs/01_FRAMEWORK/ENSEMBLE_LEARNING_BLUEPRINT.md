@@ -15,14 +15,9 @@ related_documents:
   - AUTOML_AUTOMATION_BLUEPRINT.md
   - MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md
 responsibility:
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 responsibility_boundary: |
   本文档负责模型集成学习，包括：
-  - 多模型集成策略
-  - 集成权重优化
-  - 集成模型评估
-  - 集成模型部署
   
   AutoML自动化请参考：AUTOML_AUTOMATION_BLUEPRINT.md
   模型服务框架请参考：MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
@@ -31,6 +26,8 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 1.5周
 open_source_solution: XGBoost + LightGBM + CatBoost + Scikit-learn
+---
+---
 ---
 ---
 

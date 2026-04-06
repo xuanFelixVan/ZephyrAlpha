@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构师
 responsibility:
-  - 本文档负责可信执行环境(TEE)设计，包括：
+  - 扩展功能、辅助模块
 
 layer: Layer 4 (机器学习层)
 
@@ -34,6 +34,7 @@ responsibility_boundary: |
   
 
   机器学习层架构请参考：MACHINE_LEARNING_LAYER_BLUEPRINT.md
+---
 ---
 # 可信执行环境(TEE)蓝图
 > **核心职责**: Trusted Execution Environment蓝图设计

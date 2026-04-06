@@ -12,10 +12,10 @@ parent_document: ../INDEX.md
 implementation_status: ш┐ЫшбМ?
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 数据源
-  - 机器学习
-  - 系统架构
-last_updated: 2026-04-02---
+  - 扩展功能、辅助模块
+last_updated: 2026-04-02
+---
+---
 
 
 # StrategyEngineчнЦчХех╝ХцУОцибхЭЧцКАцЬпшпДхобцКе?

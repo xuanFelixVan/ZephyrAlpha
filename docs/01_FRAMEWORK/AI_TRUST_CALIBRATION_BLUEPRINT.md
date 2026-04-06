@@ -10,7 +10,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 本文档负责AI信任动态校准体系设计，包括：
+  - 扩展功能、辅助模块
 四维校准架构（历史表现、市场状态、置信度、风险贡献）
 五级信任等级体系
 信任等级动态调整机制
@@ -22,6 +22,8 @@ responsibility:
 --
   responsibility_layer: Layer 4
   responsibility_layer: Layer 11
+---
+---
 ---
 ---
 ﻿---

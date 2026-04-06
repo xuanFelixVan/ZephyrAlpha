@@ -6,14 +6,14 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?
+---
+---
 
 
 # L9_FACTOR_MINER: AI因子挖掘模块设计

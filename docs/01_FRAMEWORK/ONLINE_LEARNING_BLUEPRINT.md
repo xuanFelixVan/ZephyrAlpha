@@ -40,8 +40,8 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的在线学习系统设计，包括增量学习、概念漂移、实时更新等核心功能。
 responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

@@ -6,13 +6,13 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΛΑόεψϋπΕόι╝ϊ╣οϋκξίΖΖόΨΘόκμ
 applicable_scope: ί╕Γίε║ίΠΓϊ╕ΟϋΑΖϋκΝϊ╕║όρκόΜθύ│╗ύ╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
-implementation_status: ύιΦύσ╢ώα╢όχ╡---
+implementation_status: ύιΦύσ╢ώα╢όχ╡
+---
+---
 
 
 # ί╕Γίε║ίΠΓϊ╕ΟϋΑΖϋκΝϊ╕║ύιΦύσ╢ϋ╡ΕόΨβό▒Θύ╝?

@@ -6,12 +6,12 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: Audit Sentinel
 responsibility:
-  - 组合优化
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: 审计问题修复总结报告
 applicable_scope: 全系统文档
-compliance_level: 专业标准---
+compliance_level: 专业标准
+---
+---
 
 
 # 深度文档治理审计问题修复总结报告

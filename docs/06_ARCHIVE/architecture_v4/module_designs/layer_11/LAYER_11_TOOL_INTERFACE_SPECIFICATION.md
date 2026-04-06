@@ -6,13 +6,13 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﮒﺝ
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 回测系统
+  - 扩展功能、辅助模块
 applicable_scope: Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: ./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ---
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+---
+---
 
 
 # Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ

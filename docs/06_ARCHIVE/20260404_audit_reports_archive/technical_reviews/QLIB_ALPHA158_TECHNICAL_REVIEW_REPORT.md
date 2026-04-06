@@ -13,7 +13,8 @@ implementation_status: 进行?
 owner: 实施负责?
 last_updated: 2026-04-02
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # QlibAlpha158因子模型模块技术评审报?

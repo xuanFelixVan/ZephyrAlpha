@@ -14,7 +14,8 @@ parent_document: ../INDEX.md
 audit_type: 深度审计
 audit_methodology: 三层审计标准 (L1-L3)
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据预处理层深度审计报告 V6

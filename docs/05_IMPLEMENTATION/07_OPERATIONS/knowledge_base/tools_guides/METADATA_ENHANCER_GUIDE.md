@@ -1,16 +1,16 @@
 ---
 standard_type: тиЦтЁиТїЄтЇЌ
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 applicable_scope: тЁЃТЋ░ТЇ«у«Ауљ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
 implementation_status: ти▓т«їТѕ?owner: ТќЄТАБу«АуљєтЉ?version: 1.0.0
 module_id: METADATA_ENHANCER_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "Сй┐ућеТЅІтєї"]---
+tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "Сй┐ућеТЅІтєї"]
+---
+---
 
 # тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиСй┐ућеТїЄтЇ?
 > **核心职责**: 文档内容说明

@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔ?
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﭖﻝ۷ﮔ ?
 applicable_scope: ﻝﺏﭨﻝﭨﻝﮔ؛ﮒﮒﺕ
 compliance_level: ﮔﭖﻝ۷ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰?---
+implementation_status: ﻟﺟﻟ۰?
+---
+---
 
 
 # ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮒﮒﺕﮔ۲ﮔ۴ﮔﺕ?

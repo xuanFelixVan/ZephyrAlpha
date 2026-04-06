@@ -6,16 +6,16 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 交易执行
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 standard_type: 专业机构级蓝图
 applicable_scope: 深度学习情感分析模块
 compliance_level: 专业标准
 parent_document: INDEX.md
 layer: 舆情分析
 priority: P0
-estimated_effort: 60h---
+estimated_effort: 60h
+---
+---
 
 
 

@@ -28,19 +28,14 @@ open_source_projects:
     features: 决策解释、特征重要性分析
 responsibility_boundary: |
   本文档职责（Layer 11 战略决策层）：
-  - 战略决策建议（资产配置、风险预算、策略选择）
-  - 决策解释分析（决策依据、影响因素、敏感性分析）
-  - 决策效果评估（决策质量、执行效果、改进建议）
-  - 决策知识沉淀（决策案例、经验总结、最佳实践）
   
   与其他文档职责边界：
   - STRATEGIC_DECISION_LAYER_BLUEPRINT.md: Layer 11总体架构设计
   - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md: 动态风险预算
   - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md: 组合优化层
 responsibility:
-  - AI决策
-  - 强化学习
-  - 决策解释
+  - 扩展功能、辅助模块
+---
 ---
 
 # 战略决策AI辅助系统蓝图

@@ -6,10 +6,10 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцЬАч╗ИщкМшпБхобшобцКехС?applicable_scope: хЕич│╗ч╗ЯцЦЗцбгц▓╗чРЖщкМшп?compliance_level: цЬАч╗ИщкМшп?parent_document: ../INDEX.md
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 审计系统
-implementation_status: х╖▓хоМцИ?---
+  - 扩展功能、辅助模块
+implementation_status: х╖▓хоМцИ?
+---
+---
 
 # цЬАч╗ИщкМшпБхобшобцКехС?
 > **核心职责**: 文档内容说明

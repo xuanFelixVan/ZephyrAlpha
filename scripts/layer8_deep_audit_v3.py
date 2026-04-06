@@ -51,10 +51,26 @@ class Layer8DeepAuditorV3:
         if yaml_match:
             yaml_content = yaml_match.group(1)
             yaml_dict = {}
+            current_key = None
+            current_value = []
+            
             for line in yaml_content.split('\n'):
-                if ':' in line:
+                if ':' in line and not line.startswith(' '):
+                    # 保存之前的键值对
+                    if current_key:
+                        yaml_dict[current_key] = '\n'.join(current_value).strip()
+                    # 开始新的键值对
                     key, value = line.split(':', 1)
-                    yaml_dict[key.strip()] = value.strip()
+                    current_key = key.strip()
+                    current_value = [value.strip()] if value.strip() else []
+                elif line.startswith(' ') and current_key:
+                    # 多行值的续行
+                    current_value.append(line)
+            
+            # 保存最后一个键值对
+            if current_key:
+                yaml_dict[current_key] = '\n'.join(current_value).strip()
+            
             return yaml_dict
         return {}
     
@@ -359,16 +375,29 @@ class Layer8DeepAuditorV3:
                     "suggestion": "补充缺失的YAML字段"
                 })
             
-            # 检查双YAML头部
-            yaml_count = len(re.findall(r'^---\s*$', content, re.MULTILINE))
-            if yaml_count > 2:
-                self.issues["L3_专业标准层"].append({
-                    "type": "双YAML头部",
-                    "severity": "P1",
-                    "location": str(filepath.relative_to(LAYER8_DIR)),
-                    "description": f"检测到{yaml_count}个YAML分隔符",
-                    "suggestion": "合并为单一YAML头部"
-                })
+            # 检查双YAML头部（只检查文档开头前30行）
+            # YAML头部应该只在文档开头，前30行内只应该有2个---
+            lines = content.split('\n')[:30]
+            yaml_sep_lines = [i for i, line in enumerate(lines) if line.strip() == '---']
+            
+            # 如果前30行有超过2个---，检查是否是双YAML头部
+            if len(yaml_sep_lines) > 2:
+                # 检查第1和第2个---之间是否有内容（第一个YAML）
+                # 检查第3和第4个---之间是否有内容（第二个YAML）
+                if len(yaml_sep_lines) >= 4:
+                    # 检查是否是双YAML模式
+                    first_yaml_end = yaml_sep_lines[1]
+                    second_yaml_start = yaml_sep_lines[2]
+                    # 如果两个YAML之间只有空行，说明是双YAML头部
+                    between = lines[first_yaml_end+1:second_yaml_start]
+                    if all(line.strip() == '' or line.strip().startswith('\ufeff') for line in between):
+                        self.issues["L3_专业标准层"].append({
+                            "type": "双YAML头部",
+                            "severity": "P1",
+                            "location": str(filepath.relative_to(LAYER8_DIR)),
+                            "description": f"检测到双YAML头部结构",
+                            "suggestion": "合并为单一YAML头部"
+                        })
         
         # 3.2 文档分类检查
         print("\n3.2 文档分类检查...")

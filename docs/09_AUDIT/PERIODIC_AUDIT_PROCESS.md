@@ -6,13 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 系统架构师
 responsibility:
-  - 建立文档治理的定期审计流程
+  - 扩展功能、辅助模块
 layer: Layer 9 (监控层)
 standard_type: 专业量化机构级流程文档
 applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准
 parent_document: ../09_AUDIT/INDEX.md
 implementation_status: 活跃维护
+---
 ---
 
 # 文档治理定期审计流程

@@ -6,11 +6,11 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 因子计算
-  - 回测系统
-  - 特征工程
+  - 扩展功能、辅助模块
 standard_type: ﮔﭘﮔﮒﺏﻝﺏﭨﮒ?applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ---
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+---
+---
 
 
 # ﮔ۷۰ﮒﮒﺏﻝﺏﭨﮒﺝﻛﺕﻟﻟﺑ۲ﻟﺝﺗﻝﻟﺁﺑﮔ v1.0

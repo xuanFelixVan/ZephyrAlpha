@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_FINAL_001
 version: 1.0.0
@@ -23,16 +21,13 @@ parent_document: ../System_Manifest.md
 implementation_status: 蓝图设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10完整性分析）**：
-  - 深度分析Layer 10治理与合规层完整性
-  - 对标专业机构治理合规最佳实践
-  - 识别所有缺失模块和功能
-  - 推荐GitHub成熟开源项目替代方案
-  - 提供完整的补充方案
   
   **与本文档职责边界**：
   - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10蓝图索引
   - BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN.md: 蓝图阶段完整补充方案
   - MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md: 缺失模块蓝图补充
+---
+---
 ---
 
 # Layer 10治理与合规层完整性分析报告（最终版）

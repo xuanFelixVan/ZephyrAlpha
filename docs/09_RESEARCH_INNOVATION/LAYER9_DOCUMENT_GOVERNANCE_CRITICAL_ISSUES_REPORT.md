@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_CRITICAL_ISSUES_REPORT_001
 version: 1.0.0
@@ -15,6 +13,7 @@ applicable_scope: Layer 9 - 研究与创新层文档严重问题
 compliance_level: 专业机构标准
 audit_date: 2026-04-07
 audit_type: 深度审计 - 严重问题发现
+---
 ---
 # Layer 9文档治理严重问题报告
 

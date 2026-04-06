@@ -6,14 +6,14 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
+  - 扩展功能、辅助模块
 layer: Layer 5 (策略执行层)
 standard_type: 专业量化机构级审计报告
 applicable_scope: Layer 5 - 策略执行层完整性审计
 compliance_level: 专业标准
-reference_models: ["Citadel Execution Services", "Two Sigma Trading Systems", "Jump Trading Execution", "DE Shaw Trading"]---
+reference_models: ["Citadel Execution Services", "Two Sigma Trading Systems", "Jump Trading Execution", "DE Shaw Trading"]
+---
+---
 
 
 # Layer 5: 策略执行层完整性审计报告

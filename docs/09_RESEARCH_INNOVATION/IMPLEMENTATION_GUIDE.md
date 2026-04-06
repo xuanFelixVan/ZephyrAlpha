@@ -16,7 +16,8 @@ reference_models:
 target_user: 个人开发者 + AI辅助维护
 open_source_ratio: 80%
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 9: 研究与创新层完整实施方案 v5.0

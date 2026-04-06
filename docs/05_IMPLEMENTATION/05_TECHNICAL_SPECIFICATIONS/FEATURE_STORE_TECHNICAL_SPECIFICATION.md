@@ -18,7 +18,8 @@ compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/FEATURE_STORE_BLUEPRINT.md
 implementation_status: 技术规格设计完�?
 responsibility:
-  - 数据质量 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 特征存储技术规格书 v1.0

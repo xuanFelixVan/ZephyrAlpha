@@ -8,10 +8,10 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构�?standard_type: 专业量化机构文档治理P2问题整改报告
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 机器学习
-applicable_scope: 全系统文档治理优�?compliance_level: 专业标准---
+  - 扩展功能、辅助模块
+applicable_scope: 全系统文档治理优�?compliance_level: 专业标准
+---
+---
 
 
 # 清风量化系统文档治理P2问题整改报告

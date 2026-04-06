@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 
 standard_type: é«å±æ¶æèå¾
 
@@ -22,6 +20,8 @@ priority: P1
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的大语言模型微调设计，包括指令微调、领域适应、参数高效微调等核心功能。
 layer: Layer 2 (Alpha因子层)
+---
+---
 ---
 
 

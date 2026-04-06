@@ -6,15 +6,15 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 风险预算
-  - 因子计算
-  - 组合优化
+  - 扩展功能、辅助模块
 standard_type: 开源方案选型推荐
 applicable_scope: 开源模块选型与推荐
 compliance_level: 专业标准
 parent_document: INDEX.md
 related_documents:
-  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md---
+  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+---
+---
 
 
 

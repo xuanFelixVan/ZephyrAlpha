@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: THIRD_PARTY_RISK_MANAGEMENT_BLUEPRINT_001
 version: 1.0.0
@@ -40,17 +38,13 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 第三方风险管理系统架构设计
-  - 供应商风险评估
-  - 第三方尽职调查
-  - 风险监控与预警
-  - 合同合规管理
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - COUNTERPARTY_RISK_BLUEPRINT.md: 交易对手风险管理
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）
+---
 ---
 
 # 第三方风险管理系统蓝图

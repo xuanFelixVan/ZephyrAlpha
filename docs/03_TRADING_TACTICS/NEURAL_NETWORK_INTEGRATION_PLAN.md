@@ -11,7 +11,8 @@ compliance_level: ﮔﭘﮔﮔ ﮒ
 parent_document: INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 # ﻝ۴ﻝﭨﻝﺛﻝﭨﻠﮔﮔﺗﮔ۰ (NEURAL_NETWORK_INTEGRATION_PLAN)

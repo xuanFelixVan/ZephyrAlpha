@@ -6,11 +6,11 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: 系统清单索引更新
-applicable_scope: System_Manifest.md Layer 9索引补充---
+applicable_scope: System_Manifest.md Layer 9索引补充
+---
+---
 
 
 # System_Manifest.md Layer 9索引更新指南

@@ -6,13 +6,13 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпц╝Фш┐Ыш╖пч║┐хЫ╛
 applicable_scope: хЕич│╗ч╗ЯцКАцЬпц╝Фш┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: шзДхИТхоМцИР---
+implementation_status: шзДхИТхоМцИР
+---
+---
 
 
 # ц╕ЕщгОщЗПхМЦч│╗ч╗Я6ф╕кцЬИцКАцЬпц╝Фш┐Ыш╖пч║┐хЫ╛

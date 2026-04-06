@@ -19,7 +19,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 爆仓线监控技术规格书 v1.0

@@ -11,8 +11,8 @@ compliance_level: 专业机构标准
 audit_date: 2026-04-07
 audit_type: 深度审计
 responsibility:
-  - 文档深度审计总结
-
+  - 扩展功能、辅助模块
+---
 ---
 # Layer 9文档治理深度审计总结
 

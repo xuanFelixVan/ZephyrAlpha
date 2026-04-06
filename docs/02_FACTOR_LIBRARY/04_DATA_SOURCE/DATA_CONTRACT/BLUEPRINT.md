@@ -6,17 +6,17 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 数据质量
-  - 因子计算
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: 模块蓝图
 applicable_scope: 数据契约管理系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 dependencies:
-  - Schemathesis
-  - Pact
-  - OpenAPI---
+- Schemathesis
+- Pact
+- OpenAPI
+---
+---
 
 
 # 数据契约管理系统蓝图

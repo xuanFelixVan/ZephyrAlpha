@@ -6,12 +6,12 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 交易执行
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: 文档恢复执行报告
 applicable_scope: 策略执行层文档恢复
-compliance_level: 专业标准---
+compliance_level: 专业标准
+---
+---
 
 
 # 文档恢复执行报告

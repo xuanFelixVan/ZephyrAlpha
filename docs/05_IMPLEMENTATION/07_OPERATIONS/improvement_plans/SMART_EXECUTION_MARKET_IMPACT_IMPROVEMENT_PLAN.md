@@ -6,10 +6,10 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﺅﺟﺛ?standard_type: ﮔﮔﺁﮔﺗﻟﺟﻟ؟۰ﺅﺟ?applicable_scope: Layer 5 ﻝ­ﻝ۴ﮔ۶ﻟ۰ﺅﺟ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 交易执行
-implementation_status: ﻟ؟۰ﮒﮒﭘﮒ؟---
+  - 扩展功能、辅助模块
+implementation_status: ﻟ؟۰ﮒﮒﭘﮒ؟
+---
+---
 
 
 # ﮔﭦﻟﺛﮔ۶ﻟ۰ﻝ؟ﮔﺏﮒﺙﮔﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔﺗﻟﺟﻟ؟۰ﺅﺟ?

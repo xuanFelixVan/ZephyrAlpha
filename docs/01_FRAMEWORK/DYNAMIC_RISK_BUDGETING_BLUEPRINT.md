@@ -10,9 +10,11 @@ standard_type: 专业量化机构级蓝图
 applicable_scope: 动态风险预算模块
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater", "AQR", "Two Sigma"]
-responsibility: 风险预算
-  - 风险预算 (Layer 11)
+responsibility:
+  - 风险预算文档说明、使用指南
   responsibility_layer: Layer 11
+---
+---
 ---
 
 # 动态风险预算蓝图

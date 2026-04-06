@@ -14,8 +14,8 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 风险管理 (Layer 7)
+  - 扩展功能、辅助模块
+---
 ---
 # 风险预算框架蓝图
 

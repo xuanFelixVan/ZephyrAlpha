@@ -12,10 +12,12 @@ review_status: Pending
 reviewer: 首席技术评审官
 owner: 量化研究�?standard_type: 专业量化机构技术规格书
 responsibility:
-  - 风险预算管理与分配，包括风险限额设定、预算动态调整、风险预算监控与预警
+  - 扩展功能、辅助模块
 applicable_scope: 概率预测与不确定性量�?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
-implementation_status: 技术规格设计完�?---
+implementation_status: 技术规格设计完�?
+---
+---
 
 # 概率预测技术规格书 v1.0
 

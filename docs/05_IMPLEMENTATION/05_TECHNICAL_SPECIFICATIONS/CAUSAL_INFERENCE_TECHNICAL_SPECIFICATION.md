@@ -12,11 +12,13 @@ review_status: Pending
 reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 owner: ﻠﮒﻝ ﻝ۸ﭘﮒ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 responsibility:
-  - 市场状态识别与分类，包括市场环境判断、状态转换检测、状态预测模型
+  - 扩展功能、辅助模块
 applicable_scope: ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨ
 compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?---
+implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
+---
+---
 
 # ﮒ ﮔﮔ۷ﮔ­ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明

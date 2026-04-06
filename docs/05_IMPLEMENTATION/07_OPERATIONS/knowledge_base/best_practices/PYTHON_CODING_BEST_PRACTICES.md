@@ -6,12 +6,12 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝ ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝ ﻝﺙﮒ
 responsibility:
-  - 因子计算
-  - 回测系统
-  - 数据源
+  - 扩展功能、辅助模块
 compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../BEST_PRACTICES_INDEX.md
-implementation_status: Active---
+implementation_status: Active
+---
+---
 
 
 # Pythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?

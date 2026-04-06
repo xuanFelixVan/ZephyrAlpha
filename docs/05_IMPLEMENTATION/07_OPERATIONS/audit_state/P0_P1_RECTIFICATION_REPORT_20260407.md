@@ -6,14 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席审计官
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 交易执行
+  - 扩展功能、辅助模块
 layer: Layer 5 (策略执行层)
 standard_type: 专业量化机构级修复报告
 applicable_scope: Layer 5策略执行层P0/P1级问题修复
 compliance_level: 专业标准
-audit_date: 2026-04-07---
+audit_date: 2026-04-07
+---
+---
 
 
 # Layer 5策略执行层P0/P1级问题修复报告

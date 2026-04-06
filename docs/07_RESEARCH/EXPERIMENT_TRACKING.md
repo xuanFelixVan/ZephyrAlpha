@@ -6,9 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 初始标准
@@ -16,11 +14,10 @@ parent_document: INDEX.md
 implementation_status: 进行中
 responsibility_boundary: |
   本文档负责Layer 7研究层的轻量级实验追踪设计，包括：
-  - wandb.ai云端方案的快速集成
-  - 个人研究场景的零代码侵入追踪
-  - AI/LLM实验的快速原型验证
   
-  生产级实验追踪（MLflow方案）请参考：docs/01_FRAMEWORK/EXPERIMENT_TRACKING_BLUEPRINT.md---
+  生产级实验追踪（MLflow方案）请参考：docs/01_FRAMEWORK/EXPERIMENT_TRACKING_BLUEPRINT.md
+---
+---
  进行�?
 ---
 

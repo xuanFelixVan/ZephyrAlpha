@@ -1,9 +1,7 @@
 ---
 standard_type: ﮒﺓ۴ﮒﺓﮔﮒ
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰
 compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
@@ -11,7 +9,9 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝ
 module_id: DOCUMENT_AUDITOR_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﮒﺓ۴ﮒﺓﮔﮒ", "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰", "ﻟ۹ﮒ۷ﮒ?, "ﻛﺛﺟﻝ۷ﮔﮒ"]---
+tags: ["ﮒﺓ۴ﮒﺓﮔﮒ", "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰", "ﻟ۹ﮒ۷ﮒ?, "ﻛﺛﺟﻝ۷ﮔﮒ"]
+---
+---
 
 # ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ
 > **核心职责**: 文档内容说明

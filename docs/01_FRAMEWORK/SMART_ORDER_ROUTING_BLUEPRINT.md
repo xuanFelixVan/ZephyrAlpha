@@ -6,14 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 风险预算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 layer: Layer 5 (执行层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 智能订单路由模块
 compliance_level: 顶级专业标准
-reference_models: ["Citadel", "Two Sigma", "Jump Trading"]---
+reference_models: ["Citadel", "Two Sigma", "Jump Trading"]
+---
+---
 
 
 # 智能订单路由蓝图

@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - API管理界面
@@ -20,16 +18,15 @@ related_documents:
   - HELP_SYSTEM_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责API管理界面设计，包括：
-  - API文档浏览
-  - API测试工具
-  - API密钥管理
-  - API调用统计
   
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   认证权限请参考：FASTAPI_USERS_AUTH_BLUEPRINT.md
   帮助系统请参考：HELP_SYSTEM_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
+---
 
 
 # API管理界面蓝图

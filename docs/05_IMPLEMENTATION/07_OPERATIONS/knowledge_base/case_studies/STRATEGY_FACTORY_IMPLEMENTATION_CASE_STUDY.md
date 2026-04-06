@@ -6,12 +6,12 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﮔﮔﺁﮔ۰ﻛﺝﻝ ﻝ۸?applicable_scope: ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒﮒ؟ﮔﺛ
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../README.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?
+---
+---
 
 # ﮔ۰ﻛﺝﻝ ﻝ۸ﭘﺅﺙﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒﮒ؟ﮔ?
 > **核心职责**: 文档内容说明

@@ -7,8 +7,8 @@ owner: 首席架构师
 priority: P1
 implementation_status: 蓝图阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 市场环境评估蓝图

@@ -6,13 +6,13 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲?
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: IMP_DOCUMENT_QUALITY_GAT
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ ﮒ
 > **核心职责**: 文档内容说明

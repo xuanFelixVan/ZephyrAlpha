@@ -6,9 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ίχκϋχκύ│╗ύ╗θ
 responsibility:
-  - 因子计算
-  - 数据源
-  - 特征工程
+  - 扩展功能、辅助模块
 standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕίχκϋχκόΛξίΣΛ
 applicable_scope: docs/ύδχί╜ΧίΖρύ│╗ύ╗θόΨΘόκμό▓╗ύΡ?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../INDEX.md
@@ -16,7 +14,9 @@ audit_type: ό╖▒ί║οίΖρώζλίχκϋχκ
 audit_date: 2026-04-03
 audit_scope: D:\ZephyrAlpha\docs
 total_files_audited: 450+
-audit_duration: 30ίΙΗώΤθ---
+audit_duration: 30ίΙΗώΤθ
+---
+---
 
 
 # ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗό╖▒ί║οίχκϋχκόΛξίΣΛ

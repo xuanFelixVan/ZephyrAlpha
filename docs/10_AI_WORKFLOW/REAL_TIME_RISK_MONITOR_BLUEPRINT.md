@@ -28,7 +28,8 @@ open_source_solution:
   license: Apache 2.0
   cost: 完全免费
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 ## 文档职责说明

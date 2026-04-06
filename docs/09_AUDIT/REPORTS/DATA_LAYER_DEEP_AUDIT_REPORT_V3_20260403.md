@@ -6,13 +6,13 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόη╢όηΕί╕?standard_type: ό╖▒ί║οίχκϋχκόΛξίΣΛ
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 applicable_scope: όΧ░όΞχό║Ρί▒ΓόΨΘόκμϊ╜Υύ│╗
 compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../INDEX.md
-audit_type: ύυυϊ╕Κόυκό╖▒ί║οίχκϋχ?audit_date: 2026-04-03---
+audit_type: ύυυϊ╕Κόυκό╖▒ί║οίχκϋχ?audit_date: 2026-04-03
+---
+---
 
 
 # όΧ░όΞχό║Ρί▒ΓόΨΘόκμό╖▒ί║οίχκϋχκόΛξίΣΛV3

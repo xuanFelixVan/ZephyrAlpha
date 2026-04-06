@@ -11,7 +11,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # DataValidator数据校验器模块技术评审报?

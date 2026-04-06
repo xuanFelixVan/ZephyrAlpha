@@ -27,8 +27,10 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 responsibility:
-  - 本文档负责Layer 4机器学习层的自适应模型系统设计，包括在线适应、概念漂移、模型更新等核心功能。
+  - 扩展功能、辅助模块
   responsibility_layer: Layer 4
+---
+---
 ---
 ---
 # 统一自适应模型系统蓝图

@@ -6,14 +6,14 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: é¦–ه¸­و–‡و،£و‍¶و‍„ه¸?
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 日志系统
+  - 扩展功能、辅助模块
 standard_type: ن¸“ن¸ڑé‡ڈهŒ–وœ؛و‍„و–‡و،£
 applicable_scope: ه…¨ç³»ç»?
 compliance_level: ن¸“ن¸ڑو ‡ه‡†
 parent_document: ../INDEX.md
-implementation_status: è؟›è،Œن¸?---
+implementation_status: è؟›è،Œن¸?
+---
+---
 
 
 # ن¸»و–‡و،£ç‰ˆوœ¬هژ†هڈ?

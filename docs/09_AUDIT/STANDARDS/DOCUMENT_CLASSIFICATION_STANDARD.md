@@ -1,15 +1,15 @@
 ---
 standard_type: ﻝ؟۰ﻝﮔ ﮒ
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 扩展功能、辅助模块
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?version: 1.0.0
 module_id: DOC_CLASSIFICATION_STANDARD
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ﮔﮔ۰۲ﮒﻝﺎﭨﻟ۶ﻟﮔ ﮒ
 > **核心职责**: 标准规范制定

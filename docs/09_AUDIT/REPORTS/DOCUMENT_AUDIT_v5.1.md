@@ -6,13 +6,13 @@ parent_document: ../INDEX.md
 implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: όΨΘόκμύ╗┤όΛνϋΑ?
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 回测系统
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: DOC_DOCUMENT_AUDIT_V5.1
 created_date: 2026-03-31
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ό╕ΖώμΟώΘΠίΝΨύ│╗ύ╗θ v5.1 όΨΘόκμίχκόθξόΛξίΣΛ
 > **核心职责**: 分析报告和评估结果

@@ -6,13 +6,13 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟۰ﻟ؟۰ﮔ ﮒ
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: ﮔﮒ؟ﻝ؟ﮒﺛﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰
 compliance_level: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰
 parent_document: ../INDEX.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?
+---
+---
 
 # ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 > **核心职责**: 文档内容说明

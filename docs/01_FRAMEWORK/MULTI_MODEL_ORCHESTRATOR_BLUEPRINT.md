@@ -31,7 +31,8 @@ parent_document: ../ARCHITECTURE.md
 
 implementation_status: 蓝图设计完成
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 

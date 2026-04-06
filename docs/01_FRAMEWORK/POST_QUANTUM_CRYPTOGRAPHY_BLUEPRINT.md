@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: POST_QUANTUM_CRYPTOGRAPHY_BLUEPRINT_001
 version: 1.0.0
@@ -40,17 +38,13 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 后量子密码学合规系统架构设计
-  - 量子安全评估
-  - 密码学迁移规划
-  - 量子密钥管理
-  - 合规报告生成
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md: 数据隐私合规
   - CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md: 网络安全事件响应
+---
 ---
 
 # 后量子密码学合规系统蓝图

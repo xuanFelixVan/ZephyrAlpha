@@ -17,7 +17,9 @@ related_documents:
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # Layer 4 P2级前沿技术模块蓝图汇总

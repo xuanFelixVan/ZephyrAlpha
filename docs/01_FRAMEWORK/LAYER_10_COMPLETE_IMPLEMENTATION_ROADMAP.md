@@ -6,9 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
+  - 扩展功能、辅助模块
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施路线图
 applicable_scope: Layer 10治理与合规层完整实施
@@ -18,7 +16,10 @@ related_documents:
   - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
   - P0_MODULES_IMPLEMENTATION_PLAN.md
 parent_document: ../System_Manifest.md
-implementation_status: 设计阶段---
+implementation_status: 设计阶段
+---
+---
+---
 
 
 # Layer 10: 治理与合规层完整实施路线图

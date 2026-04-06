@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 风险预算
-  - 因子计算
-  - 交易执行
+  - 扩展功能、辅助模块
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 止损管理系统架构设计
@@ -33,16 +31,14 @@ open_source_projects:
     features: 向量化回测、止损管理、风险管理
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 止损管理系统架构设计
-  - 止损规则设置（固定止损、移动止损、时间止损）
-  - 止损触发监控（实时监控、触发执行）
-  - 止损记录管理（止损记录、止损分析）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - KILL_SWITCH_SYSTEM_BLUEPRINT.md: 紧急停止开关（立即停止）
   - CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md: 熔断机制系统（自动暂停）
-  - RISK_LIMIT_MANAGEMENT_BLUEPRINT.md: 风险限额管理（限额监控）---
+  - RISK_LIMIT_MANAGEMENT_BLUEPRINT.md: 风险限额管理（限额监控）
+---
+---
 
 
 # 止损管理系统蓝图

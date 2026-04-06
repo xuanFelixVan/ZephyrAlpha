@@ -18,7 +18,8 @@ integrated_modules:
   - AIWF_POM_001
   - AIWF_KMM_001
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

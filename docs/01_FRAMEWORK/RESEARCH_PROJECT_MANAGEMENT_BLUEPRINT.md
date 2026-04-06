@@ -6,14 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 layer: Layer 9 (治理层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 研究项目管理模块
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma Research", "Citadel Research", "Jane Street Research"]---
+reference_models: ["Two Sigma Research", "Citadel Research", "Jane Street Research"]
+---
+---
 
 
 # 研究项目管理蓝图

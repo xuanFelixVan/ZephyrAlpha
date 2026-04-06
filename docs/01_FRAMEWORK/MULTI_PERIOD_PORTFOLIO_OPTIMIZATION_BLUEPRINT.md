@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_BLUEPRINT_001
 version: 1.0.0
@@ -21,10 +19,6 @@ related_documents:
   - PORTFOLIO_REBALANCING_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责多周期组合优化，包括：
-  - 多时间周期优化
-  - 动态权重调整
-  - 跨周期风险管理
-  - 多周期绩效评估
   
   动态风险预算请参考：DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
   组合再平衡请参考：PORTFOLIO_REBALANCING_BLUEPRINT.md
@@ -33,6 +27,7 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 2周
 open_source_solution: CVXPY + PyPortfolioOpt + Riskfolio-Lib
+---
 ---
 
 # 多周期组合优化蓝图

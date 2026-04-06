@@ -1,9 +1,7 @@
 ---
 standard_type: чобчРЖцаЗхЗЖ
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 applicable_scope: чаФчй╢ц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
@@ -11,7 +9,9 @@ implementation_status: х╖▓хоМцИ?owner: щжЦх╕нчаФчй╢хС?
 module_id: RESEARCH_MEMO_STANDARD
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["чаФчй╢хдЗх┐Шх╜?, "чаФчй╢ц╡БчиЛ", "цЦЗцбгхМ?, "ф╕Уф╕ЪцаЗхЗЖ"]---
+tags: ["чаФчй╢хдЗх┐Шх╜?, "чаФчй╢ц╡БчиЛ", "цЦЗцбгхМ?, "ф╕Уф╕ЪцаЗхЗЖ"]
+---
+---
 
 # чаФчй╢хдЗх┐Шх╜ХхИ╢х║жцаЗхЗ?
 > **核心职责**: 标准规范制定

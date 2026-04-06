@@ -10,8 +10,7 @@ applicable_scope: 数据源适配器
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 implementation_status: 进行中
-responsibility:
-  - 数据质量 (Layer 1)
+responsibility: 数据源适配器设计与统一接口实现
 ---
 
 # 数据源适配器

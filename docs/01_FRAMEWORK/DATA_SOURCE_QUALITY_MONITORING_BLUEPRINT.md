@@ -20,9 +20,6 @@ parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 0 数据源层）**：
-  - 数据源健康状态监控（连接状态、性能监控、可用性）
-  - 数据质量实时验证（完整性检查、准确性验证）
-  - 异常数据告警（异常检测、告警通知）
   
   **与本文档职责边界**：
   - Layer 1（数据层）: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md - 负责多维度质量评估
@@ -30,7 +27,9 @@ responsibility_boundary: |
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 ---
 

@@ -18,20 +18,17 @@ implementation_status: 设计阶段
 layer: Layer 10 (治理与合规层)
 responsibility_boundary: |
   **本文档职责（Layer 10 总体架构）**：
-  - Layer 10治理与合规层整体架构设计
-  - 内部控制体系框架定义（交易授权、操作审计、风险控制）
-  - 合规监控系统框架定义（监管合规、交易规则、持仓限制）
-  - 决策审计追踪框架定义（AI决策审计、人工决策记录）
-  - 风险治理框架定义（风险委员会、风险预算管理）
   
   **与本文档职责边界**：
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 负责合规监控系统的具体实现
   - AI_GOVERNANCE_BLUEPRINT.md: 负责AI治理框架的具体实现
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 负责审计追踪系统的具体实现
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 负责模型风险管理系统的具体实现
-responsibility: 风险预算
-  - 风险预算 (Layer 11)
+responsibility:
+  - 风险预算集成接口、数据交换
   responsibility_layer: Layer 11
+---
+---
 ---
 
 # Layer 10: 治理与合规层蓝图

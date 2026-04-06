@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: COMPREHENSIVE_OPTIMIZATION_REPORT_20260407
 version: 1.0.0
@@ -14,6 +12,7 @@ standard_type: 综合优化报告
 applicable_scope: 全系统文档治理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+---
 ---
 # 综合优化报告
 

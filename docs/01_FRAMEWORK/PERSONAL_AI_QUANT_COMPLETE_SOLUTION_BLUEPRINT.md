@@ -17,9 +17,8 @@ related_documents:
 parent_document: INDEX.md
 implementation_status: 规划阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 清风量化系统完整解决方案蓝图

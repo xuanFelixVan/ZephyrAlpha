@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 棣栧腑钃濆浘鏋舵瀯甯?layer: Layer 4 (鏈哄櫒瀛︿範灞?
 responsibility:
-  - 本文档负责Layer 4机器学习层的波动率预测模型设计，包括波动率建模、GARCH模型、神经网络预测等核心功能。
+  - 扩展功能、辅助模块
 
 standard_type: 楂樺眰鏋舵瀯钃濆浘
 
@@ -20,6 +20,7 @@ priority: P2
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的波动率预测模型设计，包括波动率建模、GARCH模型、神经网络预测等核心功能。
 layer: Layer 4 (机器学习层)
+---
 ---
 # 娉㈠姩鐜囬娴嬫ā鍨嬭摑鍥?
 > **核心职责**: Volatility Prediction蓝图设计

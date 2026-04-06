@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: RESPONSIBILITY_OVERLAP_FIX_REPORT_001
 version: 1.0.0
@@ -15,6 +13,7 @@ standard_type: 专业量化机构级修复报告
 applicable_scope: Layer 5策略执行层职责重叠问题修复
 compliance_level: 专业标准
 fix_date: 2026-04-07
+---
 ---
 
 # 职责重叠问题修复报告

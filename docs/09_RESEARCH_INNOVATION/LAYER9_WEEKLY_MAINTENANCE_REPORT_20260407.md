@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 文档周维护
+  - 扩展功能、辅助模块
 
 module_id: LAYER9_WEEKLY_MAINTENANCE_REPORT_001
 version: 1.0.0
@@ -13,6 +13,7 @@ applicable_scope: Layer 9 - 研究与创新层文档周维护
 compliance_level: 专业机构标准
 maintenance_date: 2026-04-07
 maintenance_type: 每周检查
+---
 ---
 # Layer 9文档治理周维护报告
 

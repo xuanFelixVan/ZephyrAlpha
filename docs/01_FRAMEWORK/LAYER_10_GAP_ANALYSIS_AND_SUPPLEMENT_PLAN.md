@@ -10,7 +10,9 @@ standard_type: 专业量化机构级差距分析
 applicable_scope: Layer 10治理与合规层缺失模块识别与补充
 compliance_level: 顶级专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # Layer 10治理与合规层差距分析与补充方案

@@ -10,8 +10,9 @@ applicable_scope: Layer 0-11全系统
 compliance_level: 专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # 全系统缺失模块蓝图补充方案

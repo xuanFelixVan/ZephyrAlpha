@@ -28,19 +28,14 @@ open_source_projects:
     features: PDF报告生成、图表嵌入、格式化输出
 responsibility_boundary: |
   本文档职责（Layer 7 AI报告层）：
-  - 自然语言报告生成（日报、周报、月报、季报）
-  - 报告模板管理（模板定义、模板渲染）
-  - 报告内容生成（绩效分析、风险分析、市场分析）
-  - 报告格式转换（Markdown、PDF、HTML）
   
   与其他文档职责边界：
   - AI_REPORT_GENERATION_BLUEPRINT.md: Layer 7总体架构设计
   - RAG_SYSTEM_BLUEPRINT.md: 知识检索和问答
   - PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md: 绩效分析界面
 responsibility:
-  - 自然语言生成
-  - 报告自动化
-  - 多模态输出
+  - 扩展功能、辅助模块
+---
 ---
 
 # 自然语言报告生成系统蓝图

@@ -11,7 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT_INDEX.md
 implementation_status: 实施中
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 11战略决策层蓝图统一进度报告

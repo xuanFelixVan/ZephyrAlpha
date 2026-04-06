@@ -11,8 +11,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 技术栈选择 (TECH STACK)

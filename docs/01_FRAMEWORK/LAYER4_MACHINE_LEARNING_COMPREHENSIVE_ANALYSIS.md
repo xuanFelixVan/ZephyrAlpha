@@ -18,7 +18,9 @@ related_documents:
 parent_document: ../ARCHITECTURE.md
 implementation_status: 分析阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # Layer 4机器学习层完整性综合分析报告

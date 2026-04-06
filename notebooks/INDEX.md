@@ -9,6 +9,9 @@ version: 1.0.0
 module_id: INDEX_NOTEBOOKS
 created_date: 2026-04-03
 last_updated: 2026-04-03
+responsibility:
+  - 文档索引、导航导航、快速查找
+---
 ---
 # 研发笔记目录索引
 

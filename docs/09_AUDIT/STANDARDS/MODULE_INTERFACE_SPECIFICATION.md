@@ -1,15 +1,15 @@
 ---
 standard_type: ﮔﮔﺁﮔ ﮒ?applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?version: 1.0.0
 module_id: MODULE_INTERFACE_SPECIFICATION
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔ ﮒ?, "ﻛﺕﻛﺕﮔ ﮒ"]---
+tags: ["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔ ﮒ?, "ﻛﺕﻛﺕﮔ ﮒ"]
+---
+---
 
 # ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗﻟ۶ﻟ
 > **核心职责**: 标准规范制定

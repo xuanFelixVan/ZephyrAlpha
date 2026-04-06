@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 特征工程
+  - 扩展功能、辅助模块
 
 standard_type: é«å±æ¶æèå¾
 
@@ -22,6 +20,7 @@ priority: P1
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的订单流预测模型设计，包括订单流分析、市场微观结构、价格预测等核心功能。
 layer: Layer 2 (Alpha因子层)
+---
 ---
 
 

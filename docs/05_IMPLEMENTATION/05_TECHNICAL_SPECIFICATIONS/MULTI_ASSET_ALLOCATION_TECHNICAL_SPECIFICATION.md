@@ -18,7 +18,8 @@ applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 多资产类别配置技术规格书 v1.0

@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ждќтИГТіђТю»У»ёт«Ат«ў
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 测试系统
+  - 扩展功能、辅助模块
 standard_type: СИЊСИџжЄЈтїќТю║ТъёУхёТ║љтЄєтцЄТИЁтЇЋ
 applicable_scope: Layer 0ТЋ░ТЇ«Т║љт▒ѓт«ъТќй
 compliance_level: жАХу║ДСИЊСИџТаЄтЄє
 parent_document: ../INDEX.md
-implementation_status: тЄєтцЄжўХТ«х---
+implementation_status: тЄєтцЄжўХТ«х
+---
+---
 
 
 # ТЋ░ТЇ«Т║љт▒ѓт«ъТќйУхёТ║љтЄєтцЄТИЁтЇЋ

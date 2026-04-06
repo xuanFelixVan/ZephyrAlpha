@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔ?
 responsibility:
-  - 数据源
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒﺙﮒﮔ ?
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﻝﮔ؛ﻝ؟۰?
 compliance_level: ﮒﺙﮒﮔ ?
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰?---
+implementation_status: ﻟﺟﻟ۰?
+---
+---
 
 
 # ﻝﮔ؛ﻝ؟۰ﻝﮔﻛﺛﺏﮔﺗ?

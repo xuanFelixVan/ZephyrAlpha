@@ -1,84 +1,50 @@
 """
 Layer 8 人机交互层综合修复脚本
-用途：修复P1和P2级问题，包括职责重叠、索引完备性、编号规范等
-创建时间：2026-04-07
+修复：双YAML头部、Layer定位、职责描述
 """
 
 import re
 from pathlib import Path
 from datetime import datetime
-from collections import defaultdict
 
-LAYER8_DIR = Path("docs/08_HUMAN_AI_INTERFACE")
-OUTPUT_DIR = Path("docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state")
+LAYER8_DIR = Path("docs/08_human_ai_interface")
 
 
 class Layer8ComprehensiveFixer:
-    """Layer 8 人机交互层综合修复器"""
+    """Layer 8 综合修复器"""
     
     def __init__(self):
         self.stats = {
+            "double_yaml_fixed": 0,
+            "layer_fixed": 0,
             "responsibility_fixed": 0,
-            "index_updated": 0,
-            "subdir_index_added": 0,
-            "module_id_fixed": 0,
-            "content_structure_fixed": 0,
-            "links_fixed": 0,
-            "total_processed": 0
+            "errors": []
         }
         
-        # 定义职责映射（基于文件名）
         self.responsibility_map = {
-            "MONITORING_DASHBOARD": "系统监控仪表板，负责实时监控系统运行状态和关键指标",
-            "ALERTING_SYSTEM": "告警通知系统，负责异常检测和告警推送",
-            "AUTH_SYSTEM": "认证授权系统，负责用户身份认证和权限管理",
-            "API_DOCS": "API文档系统，负责API接口文档的生成和展示",
-            "BACKTEST_UI": "交互式回测界面，负责策略回测的可视化展示",
-            "REPORTING": "报告生成系统，负责投资报告和风险报告的生成",
-            "AUDIT_LOG": "审计日志系统，负责操作审计和日志记录",
-            "MOBILE_PUSH": "移动推送通知，负责移动端消息推送",
-            "TRADING_JOURNAL": "交易日志系统，负责交易记录的展示和分析",
-            "CONFIG_MANAGEMENT": "配置管理系统，负责系统配置的集中管理",
-            "USER_PREFERENCES": "用户偏好设置，负责用户个性化配置",
-            "SYSTEM_STATUS": "系统状态监控，负责系统健康状态检查",
-            "DATA_MANAGEMENT": "数据管理界面，负责数据的导入导出和管理",
-            "STRATEGY_MANAGEMENT": "策略管理界面，负责策略的配置和管理",
-            "PERMISSION_MANAGEMENT": "权限管理系统，负责细粒度权限控制",
-            "API_RATE_LIMITING": "API限流系统，负责API访问频率控制",
-            "DOCUMENTATION_CENTER": "文档中心，负责系统文档的集中展示",
-            "KNOWLEDGE_BASE": "知识库系统，负责知识管理和检索",
-            "CI_CD_INTEGRATION": "CI/CD集成，负责持续集成和部署",
-            "DATA_BACKUP": "数据备份系统，负责数据备份和恢复",
-            "ONLINE_RESEARCH_ENVIRONMENT": "在线研究环境，负责交互式研究和分析",
-            "PARAMETER_OPTIMIZATION": "参数优化界面，负责策略参数优化",
-            "LIVE_TRADING_INTERFACE": "实盘交易界面，负责实盘交易操作"
-        }
-        
-        # 定义module_id映射
-        self.module_id_map = {
-            "8.1": "MONITORING_DASHBOARD_001",
-            "8.2": "ALERTING_SYSTEM_001",
-            "8.3": "AUTH_SYSTEM_001",
-            "8.4": "API_DOCS_001",
-            "8.5": "BACKTEST_UI_001",
-            "8.6": "REPORTING_001",
-            "8.7": "AUDIT_LOG_001",
-            "8.8": "MOBILE_PUSH_001",
-            "8.9": "TRADING_JOURNAL_001",
-            "8.10": "CONFIG_MANAGEMENT_001",
-            "8.11": "USER_PREFERENCES_001",
-            "8.12": "SYSTEM_STATUS_001",
-            "8.13": "DATA_MANAGEMENT_001",
-            "8.14": "STRATEGY_MANAGEMENT_001",
-            "8.15": "PERMISSION_MANAGEMENT_001",
-            "8.16": "API_RATE_LIMITING_001",
-            "8.17": "DOCUMENTATION_CENTER_001",
-            "8.18": "KNOWLEDGE_BASE_001",
-            "8.19": "CI_CD_INTEGRATION_001",
-            "8.20": "DATA_BACKUP_001",
-            "8.21": "ONLINE_RESEARCH_ENVIRONMENT_001",
-            "8.22": "PARAMETER_OPTIMIZATION_001",
-            "8.23": "LIVE_TRADING_INTERFACE_001"
+            "MONITORING_DASHBOARD_BLUEPRINT.md": "系统监控仪表板，负责实时监控系统运行状态、关键指标展示和性能监控，不负责告警推送和日志记录",
+            "ALERTING_SYSTEM_BLUEPRINT.md": "告警通知系统，负责异常检测、告警规则配置和告警推送，不负责系统监控和日志记录",
+            "AUTH_SYSTEM_BLUEPRINT.md": "认证授权系统，负责用户身份认证、登录管理和基础权限验证，不负责细粒度权限控制",
+            "API_DOCS_BLUEPRINT.md": "API文档系统，负责API接口文档的自动生成、展示和维护，不负责API限流和权限管理",
+            "BACKTEST_UI_BLUEPRINT.md": "交互式回测界面，负责策略回测的可视化展示、结果分析和报告生成，不负责实盘交易和参数优化",
+            "REPORTING_BLUEPRINT.md": "报告生成系统，负责投资报告、风险报告和绩效报告的自动生成，不负责实时监控和告警",
+            "AUDIT_LOG_BLUEPRINT.md": "审计日志系统，负责操作审计、日志记录和审计追踪，不负责系统监控和告警",
+            "MOBILE_PUSH_BLUEPRINT.md": "移动推送通知，负责移动端消息推送、通知管理和推送策略，不负责告警规则配置",
+            "TRADING_JOURNAL_BLUEPRINT.md": "交易日志系统，负责交易记录的展示、分析和归档，不负责实盘交易操作和策略管理",
+            "CONFIG_MANAGEMENT_BLUEPRINT.md": "配置管理系统，负责系统配置的集中管理、版本控制和配置同步，不负责用户偏好设置",
+            "USER_PREFERENCES_BLUEPRINT.md": "用户偏好设置，负责用户个性化配置、界面定制和偏好管理，不负责系统配置管理",
+            "SYSTEM_STATUS_BLUEPRINT.md": "系统状态监控，负责系统健康状态检查、服务可用性监控和状态展示，不负责性能监控和告警",
+            "DATA_MANAGEMENT_BLUEPRINT.md": "数据管理界面，负责数据的导入导出、数据质量管理和数据生命周期管理，不负责数据备份",
+            "STRATEGY_MANAGEMENT_BLUEPRINT.md": "策略管理界面，负责策略的配置、部署和生命周期管理，不负责策略回测和参数优化",
+            "PERMISSION_MANAGEMENT_BLUEPRINT.md": "权限管理系统，负责细粒度权限控制、角色管理和权限审计，不负责基础认证授权",
+            "API_RATE_LIMITING_BLUEPRINT.md": "API限流系统，负责API访问频率控制、流量管理和限流策略，不负责API文档和权限管理",
+            "DOCUMENTATION_CENTER_BLUEPRINT.md": "文档中心，负责系统文档的集中展示、检索和维护，不负责知识库管理",
+            "KNOWLEDGE_BASE_BLUEPRINT.md": "知识库系统，负责知识管理、知识检索和知识共享，不负责文档中心管理",
+            "CI_CD_INTEGRATION_BLUEPRINT.md": "CI/CD集成，负责持续集成、持续部署和自动化流水线，不负责系统监控和告警",
+            "DATA_BACKUP_BLUEPRINT.md": "数据备份系统，负责数据备份、恢复和备份策略管理，不负责数据导入导出",
+            "ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md": "在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化",
+            "PARAMETER_OPTIMIZATION_BLUEPRINT.md": "参数优化界面，负责策略参数优化、参数搜索和优化结果展示，不负责策略回测和实盘交易",
+            "LIVE_TRADING_INTERFACE_BLUEPRINT.md": "实盘交易界面，负责实盘交易操作、订单管理和交易监控，不负责策略回测和参数优化"
         }
     
     def read_document(self, filepath: Path) -> str:
@@ -88,472 +54,170 @@ class Layer8ComprehensiveFixer:
             try:
                 with open(filepath, 'r', encoding=encoding) as f:
                     return f.read()
-            except (UnicodeDecodeError, UnicodeError):
+            except:
                 continue
         return ""
     
-    def extract_yaml(self, content: str) -> tuple:
-        """提取YAML头部"""
-        yaml_match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
-        if yaml_match:
-            yaml_content = yaml_match.group(1)
-            rest_content = content[yaml_match.end():]
-            return yaml_content, rest_content
-        return "", content
-    
-    def infer_responsibility(self, filename: str) -> str:
-        """从文件名推断职责"""
-        filename_upper = filename.upper().replace("_BLUEPRINT.MD", "")
-        
-        for keyword, responsibility in self.responsibility_map.items():
-            if keyword in filename_upper:
-                return responsibility
-        
-        return "负责人机交互相关的核心功能实现"
-    
-    def infer_module_id(self, filename: str, yaml_data: dict) -> str:
-        """推断或生成module_id"""
-        # 如果已有module_id，检查是否需要更新
-        if 'module_id' in yaml_data:
-            old_id = yaml_data['module_id']
-            if old_id in self.module_id_map:
-                return self.module_id_map[old_id]
-        
-        # 根据文件名生成
-        filename_upper = filename.upper().replace("_BLUEPRINT.MD", "").replace(".MD", "")
-        return f"{filename_upper}_001"
-    
-    def fix_responsibility(self, filepath: Path, content: str) -> tuple:
-        """修复职责字段"""
-        yaml_content, rest_content = self.extract_yaml(content)
-        modified = False
-        
-        # 推断职责
-        responsibility = self.infer_responsibility(filepath.name)
-        
-        # 检查是否已有responsibility字段
-        if not re.search(r'^responsibility:\s*', yaml_content, re.MULTILINE):
-            # 添加responsibility字段
-            yaml_content += f'\nresponsibility:\n  - {responsibility}'
-            modified = True
-        
-        if modified:
-            new_content = f"---\n{yaml_content}\n---\n" + rest_content
-            return True, new_content
-        
-        return False, content
-    
-    def fix_module_id(self, filepath: Path, content: str) -> tuple:
-        """修复module_id"""
-        yaml_content, rest_content = self.extract_yaml(content)
-        modified = False
-        
-        # 提取YAML数据
-        yaml_data = {}
-        for line in yaml_content.split('\n'):
-            if ':' in line and not line.startswith(' '):
-                key, value = line.split(':', 1)
-                yaml_data[key.strip()] = value.strip().strip('"\'')
-        
-        # 推断正确的module_id
-        correct_id = self.infer_module_id(filepath.name, yaml_data)
-        
-        # 检查当前module_id
-        module_id_match = re.search(r'^module_id:\s*["\']?(.*?)["\']?\s*$', yaml_content, re.MULTILINE)
-        
-        if module_id_match:
-            current_id = module_id_match.group(1).strip()
-            if current_id != correct_id:
-                # 更新module_id
-                yaml_content = re.sub(
-                    r'^module_id:\s*["\']?.*?["\']?\s*$',
-                    f'module_id: {correct_id}',
-                    yaml_content,
-                    flags=re.MULTILINE
-                )
-                modified = True
-        else:
-            # 添加module_id字段
-            yaml_content = f'module_id: {correct_id}\n' + yaml_content
-            modified = True
-        
-        if modified:
-            new_content = f"---\n{yaml_content}\n---\n" + rest_content
-            return True, new_content
-        
-        return False, content
-    
-    def fix_content_structure(self, filepath: Path, content: str) -> tuple:
-        """修复内容结构"""
-        yaml_content, rest_content = self.extract_yaml(content)
-        modified = False
-        
-        # 检查是否有概述章节
-        if '## 概述' not in rest_content and '## 📋 概述' not in rest_content:
-            # 在主标题后添加概述章节
-            title_match = re.search(r'^#\s+.+?\n', rest_content, re.MULTILINE)
-            if title_match:
-                overview_section = f"\n## 📋 概述\n\n本文档定义了{filepath.name.replace('_BLUEPRINT.md', '').replace('_', ' ')}的核心功能和技术实现。\n\n"
-                rest_content = rest_content[:title_match.end()] + overview_section + rest_content[title_match.end():]
-                modified = True
-        
-        # 检查是否有变更记录
-        if '变更历史' not in rest_content and '变更记录' not in rest_content:
-            # 在文档末尾添加变更记录
-            change_history = """
-
----
-
-## 📊 文档治理
-
-### 变更记录
-
-| 版本 | 日期 | 变更内容 | 变更人 |
-|------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-
----
-"""
-            rest_content += change_history
-            modified = True
-        
-        if modified:
-            new_content = f"---\n{yaml_content}\n---\n" + rest_content
-            return True, new_content
-        
-        return False, content
-    
-    def fix_links(self, filepath: Path, content: str) -> tuple:
-        """修复链接引用"""
-        modified = False
-        
-        # 修复错误的路径分隔符
-        content = content.replace('\\', '/')
-        
-        # 修复相对路径引用
-        # 将 ./08_HUMAN_AI_INTERFACE/... 改为相对路径
-        wrong_pattern = r'\./08_HUMAN_AI_INTERFACE/([^\)]+)'
-        if re.search(wrong_pattern, content):
-            # 计算正确的相对路径
-            depth = len(filepath.relative_to(LAYER8_DIR).parts) - 1
-            prefix = '../' * depth
-            content = re.sub(wrong_pattern, f'{prefix}\\1', content)
-            modified = True
-        
-        return modified, content
-    
-    def update_main_index(self):
-        """更新主索引文件"""
-        print("更新主索引文件...")
-        
-        index_file = LAYER8_DIR / "index.md"
-        if not index_file.exists():
-            print(f"  主索引文件不存在: {index_file}")
-            return
-        
-        # 读取当前索引内容
-        index_content = self.read_document(index_file)
-        
-        # 收集所有蓝图文档
-        blueprint_files = list(LAYER8_DIR.glob("**/*_BLUEPRINT.md"))
-        
-        # 检查索引是否包含所有文档
-        missing_docs = []
-        for blueprint_file in blueprint_files:
-            if blueprint_file.name not in index_content:
-                missing_docs.append(blueprint_file)
-        
-        if missing_docs:
-            # 在索引末尾添加缺失的文档
-            addition = "\n\n## 📄 新增蓝图文档\n\n"
-            for doc in missing_docs:
-                relative_path = doc.relative_to(LAYER8_DIR)
-                doc_name = doc.name.replace("_BLUEPRINT.md", "").replace("_", " ")
-                addition += f"- [{doc_name}]({relative_path})\n"
-            
-            index_content += addition
-            
-            # 保存更新后的索引
-            with open(index_file, 'w', encoding='utf-8-sig') as f:
-                f.write(index_content)
-            
-            self.stats['index_updated'] = len(missing_docs)
-            print(f"  已添加 {len(missing_docs)} 个缺失文档到主索引")
-        else:
-            print("  主索引已包含所有文档")
-    
-    def add_subdir_indexes(self):
-        """为缺少INDEX.md的子目录添加导航文件"""
-        print("为子目录添加索引文件...")
-        
-        for subdir in LAYER8_DIR.iterdir():
-            if subdir.is_dir():
-                index_file = subdir / "INDEX.md"
-                if not index_file.exists():
-                    # 创建索引文件
-                    dir_name = subdir.name
-                    module_name = dir_name.split('_', 1)[1] if '_' in dir_name else dir_name
-                    
-                    index_content = f"""---
-module_id: {module_name.upper()}_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-responsibility:
-  - 人机交互
-  - 文档导航
-standard_type: 专业量化机构索引
-applicable_scope: Layer 8 人机交互层
-compliance_level: 专业标准
----
-
-# {module_name.replace('_', ' ')} 模块索引
-
-本目录包含 {module_name.replace('_', ' ')} 相关的蓝图文档。
-
----
-
-## 📋 文档列表
-
-"""
-                    
-                    # 添加目录中的所有文档
-                    md_files = list(subdir.glob("*.md"))
-                    for md_file in md_files:
-                        if md_file.name != "INDEX.md":
-                            doc_name = md_file.name.replace("_BLUEPRINT.md", "").replace("_", " ")
-                            index_content += f"- [{doc_name}]({md_file.name})\n"
-                    
-                    index_content += """
-
----
-
-**创建时间**: 2026-04-07  
-**维护团队**: 实施团队
-"""
-                    
-                    # 保存索引文件
-                    with open(index_file, 'w', encoding='utf-8-sig') as f:
-                        f.write(index_content)
-                    
-                    self.stats['subdir_index_added'] += 1
-                    print(f"  已创建: {index_file}")
-    
-    def process_document(self, filepath: Path):
-        """处理单个文档"""
-        self.stats['total_processed'] += 1
-        
+    def fix_double_yaml(self, filepath: Path) -> tuple:
+        """修复双YAML头部"""
         content = self.read_document(filepath)
         if not content:
-            return
+            return False, content
         
-        changes = []
+        # 检测双YAML头部模式
+        # 模式1: ---\n...\n---\n\n---\n...\n---\n
+        pattern1 = r'^---\s*\n(.*?)\n---\s*\n\s*\ufeff?---\s*\n(.*?)\n---\s*\n'
+        match1 = re.match(pattern1, content, re.DOTALL)
         
-        # 1. 修复职责字段
-        modified, content = self.fix_responsibility(filepath, content)
-        if modified:
-            changes.append("职责")
-            self.stats['responsibility_fixed'] += 1
+        if match1:
+            first_yaml = match1.group(1).strip()
+            second_yaml = match1.group(2).strip()
+            rest_content = content[match1.end():]
+            
+            # 合并YAML，优先使用第二个（更完整的）
+            merged = self.merge_yaml_headers(first_yaml, second_yaml)
+            
+            new_content = f"---\n{merged}\n---\n" + rest_content
+            return True, new_content
         
-        # 2. 修复module_id
-        modified, content = self.fix_module_id(filepath, content)
-        if modified:
-            changes.append("module_id")
-            self.stats['module_id_fixed'] += 1
+        # 模式2: 检查是否有两个独立的YAML块
+        yaml_blocks = list(re.finditer(r'^---\s*\n(.*?)\n---\s*\n', content[:2000], re.DOTALL | re.MULTILINE))
         
-        # 3. 修复内容结构
-        modified, content = self.fix_content_structure(filepath, content)
-        if modified:
-            changes.append("内容结构")
-            self.stats['content_structure_fixed'] += 1
+        if len(yaml_blocks) >= 2:
+            first_yaml = yaml_blocks[0].group(1).strip()
+            second_yaml = yaml_blocks[1].group(1).strip()
+            rest_content = content[yaml_blocks[1].end():]
+            
+            merged = self.merge_yaml_headers(first_yaml, second_yaml)
+            
+            new_content = f"---\n{merged}\n---\n" + rest_content
+            return True, new_content
         
-        # 4. 修复链接
-        modified, content = self.fix_links(filepath, content)
-        if modified:
-            changes.append("链接")
-            self.stats['links_fixed'] += 1
+        return False, content
+    
+    def merge_yaml_headers(self, first: str, second: str) -> str:
+        """合并两个YAML头部"""
+        # 解析第二个YAML（通常更完整）
+        yaml_dict = {}
+        for line in second.split('\n'):
+            if ':' in line and not line.startswith(' '):
+                key, value = line.split(':', 1)
+                yaml_dict[key.strip()] = value.strip()
+            elif line.startswith(' ') and yaml_dict:
+                # 处理多行值
+                last_key = list(yaml_dict.keys())[-1]
+                yaml_dict[last_key] += '\n' + line
         
-        # 保存修改
-        if changes:
-            try:
-                with open(filepath, 'w', encoding='utf-8-sig') as f:
-                    f.write(content)
-                print(f"✅ {filepath.name}: 修复 {', '.join(changes)}")
-            except Exception as e:
-                print(f"❌ {filepath.name}: 保存失败 - {e}")
+        # 从第一个YAML补充缺失的字段
+        for line in first.split('\n'):
+            if ':' in line and not line.startswith(' '):
+                key, value = line.split(':', 1)
+                key = key.strip()
+                if key not in yaml_dict:
+                    yaml_dict[key] = value.strip()
+        
+        # 确保layer字段正确
+        if 'layer' not in yaml_dict or 'Layer 8' not in yaml_dict.get('layer', ''):
+            yaml_dict['layer'] = 'Layer 8 (人机交互层)'
+        
+        # 确保responsibility字段正确
+        if 'responsibility' not in yaml_dict:
+            yaml_dict['responsibility'] = '\n  - 待定义'
+        
+        # 重建YAML
+        lines = []
+        for key, value in yaml_dict.items():
+            if '\n' in str(value):
+                lines.append(f"{key}:{value}")
+            else:
+                lines.append(f"{key}: {value}")
+        
+        return '\n'.join(lines)
+    
+    def fix_document(self, filepath: Path):
+        """修复单个文档"""
+        print(f"  处理: {filepath.name}")
+        
+        # 1. 修复双YAML头部
+        fixed, content = self.fix_double_yaml(filepath)
+        if fixed:
+            self.stats['double_yaml_fixed'] += 1
+            print(f"    ✅ 双YAML已修复")
+        
+        # 2. 确保layer正确
+        if 'layer: Layer 8 (人机交互层)' not in content:
+            content = re.sub(
+                r'layer:\s*Layer\s*\d+\s*\([^)]+\)',
+                'layer: Layer 8 (人机交互层)',
+                content
+            )
+            if 'layer:' not in content.split('---\n')[1] if '---\n' in content else True:
+                # 在YAML头部添加layer
+                content = re.sub(
+                    r'(---\n.*?)(---\n)',
+                    r'\1layer: Layer 8 (人机交互层)\n\2',
+                    content,
+                    count=1,
+                    flags=re.DOTALL
+                )
+            self.stats['layer_fixed'] += 1
+            print(f"    ✅ Layer已修复")
+        
+        # 3. 确保responsibility正确
+        responsibility = self.responsibility_map.get(filepath.name)
+        if responsibility:
+            if responsibility not in content:
+                # 更新responsibility字段
+                content = re.sub(
+                    r'responsibility:\s*\n\s*-\s*[^\n]+',
+                    f'responsibility:\n  - {responsibility}',
+                    content
+                )
+                self.stats['responsibility_fixed'] += 1
+                print(f"    ✅ 职责已修复")
+        
+        # 保存文件
+        try:
+            with open(filepath, 'w', encoding='utf-8-sig') as f:
+                f.write(content)
+        except Exception as e:
+            print(f"    ❌ 保存失败: {e}")
+            self.stats['errors'].append(f"{filepath.name}: {e}")
     
     def run_fix(self):
         """执行修复"""
-        print("="*80)
+        print("="*60)
         print("Layer 8 人机交互层综合修复")
-        print("="*80)
+        print("="*60)
         print(f"执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"修复范围: {LAYER8_DIR}")
-        print("="*80)
+        print("="*60)
         
-        # 处理所有蓝图文档
         md_files = list(LAYER8_DIR.glob("**/*_BLUEPRINT.md"))
         
+        print(f"\n发现 {len(md_files)} 个蓝图文件")
+        print("\n开始修复...")
+        
         for filepath in md_files:
-            self.process_document(filepath)
+            self.fix_document(filepath)
         
-        # 更新主索引
-        self.update_main_index()
-        
-        # 添加子目录索引
-        self.add_subdir_indexes()
-        
-        print("\n" + "="*80)
+        print("\n" + "="*60)
         print("修复完成")
-        print("="*80)
-        print(f"总处理文档: {self.stats['total_processed']}")
+        print("="*60)
+        print(f"双YAML修复: {self.stats['double_yaml_fixed']}")
+        print(f"Layer修复: {self.stats['layer_fixed']}")
         print(f"职责修复: {self.stats['responsibility_fixed']}")
-        print(f"module_id修复: {self.stats['module_id_fixed']}")
-        print(f"内容结构修复: {self.stats['content_structure_fixed']}")
-        print(f"链接修复: {self.stats['links_fixed']}")
-        print(f"主索引更新: {self.stats['index_updated']}")
-        print(f"子目录索引添加: {self.stats['subdir_index_added']}")
+        
+        if self.stats['errors']:
+            print(f"\n错误: {len(self.stats['errors'])}")
+            for err in self.stats['errors']:
+                print(f"  - {err}")
         
         return self.stats
 
 
 def main():
-    """主函数"""
     fixer = Layer8ComprehensiveFixer()
-    stats = fixer.run_fix()
-    
-    # 生成修复报告
-    report = f"""---
-module_id: LAYER8COMPREHENSIVEFIX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-responsibility:
-  - 人机交互
-  - 文档治理
-  - 审计
-standard_type: 专业量化机构报告
-applicable_scope: Layer 8 人机交互层
-compliance_level: 专业标准
----
-
-# Layer 8 人机交互层综合修复报告
-
-**执行日期**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
-**执行范围**: docs/08_HUMAN_AI_INTERFACE  
-**Git备份分支**: backup/layer8-comprehensive-fix-20260407
-
----
-
-## 📊 修复统计
-
-- **总处理文档**: {stats['total_processed']}
-- **职责修复**: {stats['responsibility_fixed']}
-- **module_id修复**: {stats['module_id_fixed']}
-- **内容结构修复**: {stats['content_structure_fixed']}
-- **链接修复**: {stats['links_fixed']}
-- **主索引更新**: {stats['index_updated']}
-- **子目录索引添加**: {stats['subdir_index_added']}
-
----
-
-## 🎯 修复内容详解
-
-### 1. P1级问题修复
-
-#### 1.1 职责重叠问题 ✅ 已修复
-
-**修复方法**：
-- 为每个文档添加明确的responsibility字段
-- 确保每个文档有唯一的职责描述
-
-**修复数量**: {stats['responsibility_fixed']}个文档
-
----
-
-#### 1.2 索引完备性问题 ✅ 已修复
-
-**修复方法**：
-- 更新主索引，添加缺失的文档链接
-- 为缺少INDEX.md的子目录创建导航文件
-
-**修复数量**: 
-- 主索引更新: {stats['index_updated']}个文档
-- 子目录索引添加: {stats['subdir_index_added']}个
-
----
-
-### 2. P2级问题修复
-
-#### 2.1 编号规范化 ✅ 已修复
-
-**修复方法**：
-- 统一module_id命名格式
-- 将旧格式（如8.1, 8.2）更新为标准格式（如MONITORING_DASHBOARD_001）
-
-**修复数量**: {stats['module_id_fixed']}个文档
-
----
-
-#### 2.2 内容结构优化 ✅ 已修复
-
-**修复方法**：
-- 为缺少概述章节的文档补充内容
-- 为缺少变更记录的文档添加变更历史
-
-**修复数量**: {stats['content_structure_fixed']}个文档
-
----
-
-#### 2.3 链接修复 ✅ 已修复
-
-**修复方法**：
-- 修复错误的路径分隔符
-- 更新相对路径引用
-
-**修复数量**: {stats['links_fixed']}个文档
-
----
-
-## 📈 预期效果
-
-### 修复前问题
-
-- P1级问题: 3个
-- P2级问题: 97个
-
-### 修复后预期
-
-- ✅ P1级问题: 0个
-- ✅ P2级问题: 大幅减少
-- ✅ 文档质量显著提升
-
----
-
-## 🔄 后续行动
-
-### 验证修复结果
-
-1. 运行优化后的审计脚本
-2. 检查问题是否已解决
-3. 验证文档质量
-
----
-
-**修复完成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  
-**修复执行人**: Audit Sentinel  
-**修复状态**: ✅ 完成
-"""
-    
-    report_file = OUTPUT_DIR / f"LAYER8_COMPREHENSIVE_FIX_REPORT_{datetime.now().strftime('%Y%m%d')}.md"
-    with open(report_file, 'w', encoding='utf-8-sig') as f:
-        f.write(report)
-    
-    print(f"\n修复报告已保存至: {report_file}")
+    fixer.run_fix()
 
 
 if __name__ == "__main__":

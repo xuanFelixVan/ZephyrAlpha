@@ -15,7 +15,8 @@ open_source_dependency: pandas, numpy, delta-lake
 estimated_effort: 3周
 priority: P0
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

@@ -19,7 +19,8 @@ implementation_status: 开发阶?development_mode: 个人开?+ AI维护
 current_version: true
 archived_versions: [ECONOMIC_REGIME_ENGINE_001]
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 经济范式判断引擎技术规格书 v2.0

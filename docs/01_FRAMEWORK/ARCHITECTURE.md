@@ -6,13 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
-responsibility: 风险预算
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+responsibility:
+  - 风险预算监控告警、性能分析
   responsibility_layer: Layer 1
   responsibility_layer: Layer 4
 responsibility_layer: Layer 11
+---
+---
 ---
 -------
 module_id: ARCHITECTURE_001

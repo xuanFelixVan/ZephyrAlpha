@@ -20,7 +20,8 @@ related_documents:
   - POST_TRADE_REVIEW_BLUEPRINT.md
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

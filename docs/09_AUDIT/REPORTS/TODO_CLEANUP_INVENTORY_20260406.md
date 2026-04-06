@@ -6,13 +6,13 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: Audit Sentinel
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: TODO清理清单
 applicable_scope: 全系统文档
 compliance_level: 专业标准
-audit_type: P1问题修复---
+audit_type: P1问题修复
+---
+---
 
 
 # TODO/TBD标记清理清单

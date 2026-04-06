@@ -11,7 +11,7 @@ last_updated: 2026-04-05
 
 owner: 首席架构师
 responsibility:
-  - 本文档负责Layer 4机器学习层的整体架构设计，包括模块划分、接口定义、技术选型等核心功能。
+  - 扩展功能、辅助模块
 
 layer: Layer 4 (机器学习层)
 
@@ -36,6 +36,8 @@ related_documents:
 parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
+---
+---
 ---
 # Layer 4: 机器学习层蓝图
 > **核心职责**: Machine Learning Layer蓝图设计

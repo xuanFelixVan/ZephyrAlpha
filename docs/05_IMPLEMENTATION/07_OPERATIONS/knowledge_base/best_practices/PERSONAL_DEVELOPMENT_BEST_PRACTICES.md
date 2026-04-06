@@ -1,15 +1,15 @@
 ---
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?version: 1.0.0
 module_id: PERSONAL_DEV_BEST_PRACTICES
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?, "ﮔﻛﺛﺏﮒ؟ﻟﺓ?, "ﮔﮔ۰۲ﮔﺎﭨﻝ", "ﻟ۹ﮒ۷ﮒ?]---
+tags: ["ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?, "ﮔﻛﺛﺏﮒ؟ﻟﺓ?, "ﮔﮔ۰۲ﮔﺎﭨﻝ", "ﻟ۹ﮒ۷ﮒ?]
+---
+---
 
 # ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓ?
 > **核心职责**: 文档内容说明

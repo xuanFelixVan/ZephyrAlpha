@@ -14,8 +14,8 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 资产配置模型蓝图

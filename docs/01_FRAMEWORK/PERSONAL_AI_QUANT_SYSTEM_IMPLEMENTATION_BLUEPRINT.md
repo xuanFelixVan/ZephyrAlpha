@@ -11,8 +11,8 @@ applicable_scope: 个人开发+AI维护量化系统
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma Engineering", "Bridgewater AI Systems", "Citadel Technology"]
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 个人开发+AI维护量化系统完整实施方案

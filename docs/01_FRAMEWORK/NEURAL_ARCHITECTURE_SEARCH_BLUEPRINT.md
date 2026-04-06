@@ -11,9 +11,7 @@ last_updated: 2026-04-03
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 机器学习
-  - 系统架构
-  - 文档治理
+  - 扩展功能、辅助模块
 
 standard_type: é«å±æ¶æèå¾
 
@@ -22,6 +20,7 @@ priority: P2
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的神经架构搜索设计，包括搜索空间、搜索策略、性能评估等核心功能。
 layer: Layer 3 (策略层)
+---
 ---
 
 

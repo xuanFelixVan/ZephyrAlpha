@@ -11,8 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT.md
 implementation_status: 审计完成
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 11战略决策层深度审计报告 V2.0

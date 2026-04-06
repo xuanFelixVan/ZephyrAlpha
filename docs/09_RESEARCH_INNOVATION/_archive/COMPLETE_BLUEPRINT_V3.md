@@ -16,7 +16,8 @@ reference_models:
 parent_document: ./BLUEPRINT.md
 implementation_status: 完整蓝图阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 9: 研究与创新层完整蓝图 v3.0

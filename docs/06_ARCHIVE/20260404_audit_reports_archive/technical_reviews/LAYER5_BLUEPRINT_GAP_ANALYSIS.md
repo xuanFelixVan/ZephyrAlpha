@@ -6,13 +6,13 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 市场状态识别
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 standard_type: шУЭхЫ╛х╖ош╖ЭхИЖцЮРцКехСК
 applicable_scope: Layer 5чнЦчХецЙзшбМя┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two Sigma"]
-parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md---
+parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+---
+---
 
 
 # Layer 5чнЦчХецЙзшбМх▒ВшУЭхЫ╛х╖ош╖ЭхИЖцЮРцКея┐?

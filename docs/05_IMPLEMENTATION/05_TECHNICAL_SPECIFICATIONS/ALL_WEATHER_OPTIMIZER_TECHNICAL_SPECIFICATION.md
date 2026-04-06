@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 风险预算
-  - 市场状态识别
-  - 因子计算
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 6 组合优化?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 待实?risk_level: P1---
+implementation_status: 待实?risk_level: P1
+---
+---
 
 
 # 全天候配置优化器技术规格书

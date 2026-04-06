@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT_001
 version: 1.0.0
@@ -21,10 +19,6 @@ related_documents:
   - DATA_LINEAGE_TRACKING_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责多数据源协同管理，包括：
-  - 数据源统一接入
-  - 数据源切换策略
-  - 数据源负载均衡
-  - 数据源协同调度
   
   数据源质量监控请参考：DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
   数据源故障转移请参考：DATA_SOURCE_FAILOVER_BLUEPRINT.md
@@ -33,6 +27,7 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 1周
 open_source_solution: Apache Kafka + Debezium + Apache Airflow
+---
 ---
 
 # 多数据源协同管理蓝图

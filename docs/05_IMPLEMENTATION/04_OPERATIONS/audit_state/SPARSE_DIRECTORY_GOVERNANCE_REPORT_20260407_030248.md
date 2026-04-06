@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: SPARSE_DIRECTORY_GOVERNANCE_REPORT_20260407_030248
 version: 1.0.0
@@ -14,6 +12,7 @@ standard_type: 稀疏目录治理报告
 applicable_scope: 全系统稀疏目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+---
 ---
 # 稀疏目录治理报告
 

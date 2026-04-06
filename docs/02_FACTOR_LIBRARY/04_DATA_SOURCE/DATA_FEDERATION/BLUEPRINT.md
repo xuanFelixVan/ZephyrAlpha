@@ -5,18 +5,16 @@ status: Blueprint
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
-responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+responsibility: 数据联邦架构与跨源数据访问
 standard_type: 模块蓝图
 applicable_scope: 数据联邦查询系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 dependencies:
-  - DuckDB
-  - Trino
-  - Apache Arrow---
+- DuckDB
+- Trino
+- Apache Arrow
+---
 
 
 # 数据联邦查询系统蓝图

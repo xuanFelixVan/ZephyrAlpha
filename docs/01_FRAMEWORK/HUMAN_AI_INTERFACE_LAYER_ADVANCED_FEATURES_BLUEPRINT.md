@@ -17,16 +17,12 @@ parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 responsibility_boundary: |
   本文档负责人机交互层高级特性补充，包括：
-  - 移动端原生应用
-  - AI辅助决策增强
-  - 用户体验优化
-  - 高级可视化功能
-  - 智能通知系统
   
   基础功能请参考：HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 responsibility:
-  - 高级特性
-  - 用户体验
+  - 扩展功能、辅助模块
+---
+---
 ---
 # 人机交互层高级特性补充蓝图
 

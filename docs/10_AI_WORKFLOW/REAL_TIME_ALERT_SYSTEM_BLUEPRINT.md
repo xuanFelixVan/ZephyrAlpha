@@ -19,15 +19,13 @@ related_documents:
     - NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md
 responsibility_boundary: |
   本文档职责: 舆情专用预警模块
-  - 实时舆情监控和预警规则定义
-  - 及时发现重要事件和情感变化
-  - 生成预警事件并发送到统一告警平台
   
   统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
   - 接收所有子系统的告警（包括本模块）
   - 提供告警聚合、抑制、路由、多渠道分发
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

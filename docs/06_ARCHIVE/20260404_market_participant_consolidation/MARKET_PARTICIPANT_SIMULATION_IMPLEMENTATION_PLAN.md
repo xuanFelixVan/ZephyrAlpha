@@ -6,13 +6,13 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 组合优化
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕﻛﺕﮒ؟ﮔﺛﮔﺗﮔ۰
 applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ---
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+---
+---
 
 
 # ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?- ﻛﺕ۹ﻛﭦﭦﮒﺙﮒAIﻝﭨﺑﮔ۳ﮒ؟ﮔﺑﮒ؟ﮔﺛﮔﺗﮔ۰

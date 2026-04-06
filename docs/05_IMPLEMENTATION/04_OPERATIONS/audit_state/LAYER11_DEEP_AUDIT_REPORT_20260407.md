@@ -9,9 +9,8 @@ standard_type: 专业量化机构深度审计报告
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 responsibility:
-  - 审计战略决策层文档治理
-  - 检查职责边界清晰度
-  - 验证文档质量标准
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 11战略决策层深度审计报告

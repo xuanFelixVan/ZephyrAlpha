@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: RESPONSIBILITY_DESCRIPTION_BEST_PRACTICES_001
 version: 1.0.0
@@ -14,6 +12,7 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构知识库文档
 applicable_scope: 全系统职责描述最佳实践
 compliance_level: 专业标准
+---
 ---
 # 职责描述最佳实践指南
 

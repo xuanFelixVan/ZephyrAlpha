@@ -9,8 +9,7 @@ standard_type: 专业量化机构目录索引
 applicable_scope: 数据剖析系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-responsibility:
-  - 数据质量 (Layer 1)
+responsibility: 数据分析模块导航
 ---
 
 # 数据剖析系统

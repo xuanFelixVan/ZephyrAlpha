@@ -10,8 +10,7 @@ applicable_scope: 数据采集系统
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 implementation_status: 进行中
-responsibility:
-  - 数据质量 (Layer 1)
+responsibility: 数据采集策略制定与数据源管理
 ---
 
 # 数据采集蓝图

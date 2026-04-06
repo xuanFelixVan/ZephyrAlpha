@@ -6,9 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮД?
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 审计系统
+  - 扩展功能、辅助模块
 decision_type: цКАцЬпцЮ╢цЮДхЖ│?
 decision_status: х╖▓щЗЗ?
 implementation_status: хоЮцЦ╜?
@@ -17,7 +15,9 @@ impact_level: ?(х╜▒хУНцЦЗцбгц▓╗чРЖф╜Уч│╗я╝Мф
 standard_type: цКАцЬпцЦЗ?
 applicable_scope: ч│╗ч╗ЯхоЮцЦ╜
 compliance_level: хИЭхзЛцаЗхЗЖ
-parent_document: ../INDEX.md---
+parent_document: ../INDEX.md
+---
+---
 
 
 # чЙИцЬмчобчРЖхЖ│чнЦшо░х╜Х

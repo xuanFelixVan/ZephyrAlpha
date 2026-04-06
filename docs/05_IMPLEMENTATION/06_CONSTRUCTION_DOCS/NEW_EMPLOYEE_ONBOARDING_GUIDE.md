@@ -6,12 +6,12 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
 responsibility:
-  - 因子计算
-  - 回测系统
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: ﮔﮔﮔﺍﮒ ﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../README.md
-implementation_status: Active---
+implementation_status: Active
+---
+---
 
 
 # ﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ

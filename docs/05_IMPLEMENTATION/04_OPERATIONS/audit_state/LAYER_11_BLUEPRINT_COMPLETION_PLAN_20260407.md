@@ -11,8 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT.md
 implementation_status: 规划阶段
 responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 11战略决策层蓝图补充方案

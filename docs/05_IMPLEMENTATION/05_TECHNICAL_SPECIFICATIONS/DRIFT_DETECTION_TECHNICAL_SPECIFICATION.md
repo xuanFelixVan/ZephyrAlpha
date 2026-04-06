@@ -14,10 +14,12 @@ reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: AIﮒﺓ۴ﻝ۷?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 responsibility:
-  - 因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化
+  - 扩展功能、辅助模块
 applicable_scope: ﮔﺍﮔ؟ﮔﺙﻝ۶ﭨﮔ۲ﮔﭖﻝﺏﭨ?compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../01_FRAMEWORK/DRIFT_DETECTION_BLUEPRINT.md
-implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟?---
+implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟?
+---
+---
 
 # ﮔﺍﮔ؟ﮔﺙﻝ۶ﭨﮔ۲ﮔﭖﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明

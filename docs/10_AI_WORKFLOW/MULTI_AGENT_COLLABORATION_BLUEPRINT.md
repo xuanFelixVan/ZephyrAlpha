@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
+  - 扩展功能、辅助模块
 layer: Layer 11 (战略决策层)
 standard_type: 专业机构级蓝图
 applicable_scope: 多智能体协作系统
@@ -31,7 +29,9 @@ open_source_solution:
   secondary_github: https://github.com/HuaYaoAI/FinGenius
   secondary_stars: 1000+
   license: Apache 2.0 / MIT
-  cost: 完全免费---
+  cost: 完全免费
+---
+---
 
 
 ## 文档职责说明

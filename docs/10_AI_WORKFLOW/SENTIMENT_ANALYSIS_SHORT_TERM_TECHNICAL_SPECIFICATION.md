@@ -14,7 +14,8 @@ applicable_modules:
   - 深度学习情感分析
   - 实时预警系统
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 ## 文档职责说明

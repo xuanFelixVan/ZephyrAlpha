@@ -8,11 +8,11 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: لخûف╕صµèµ£»ك»ف«ةف«ء
 responsibility:
-  - 绩效分析
-  - 系统架构
-  - 文档治理
+  - 扩展功能、辅助模块
 standard_type: غ╕ôغ╕أµûçµةثµ▓╗قف«ةك«ةµèحفّè
-applicable_scope: Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗ق?compliance_level: غ╕ôغ╕أµبçفç---
+applicable_scope: Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗ق?compliance_level: غ╕ôغ╕أµبçفç
+---
+---
 
 
 # Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗قµ╖▒ف║خف«ةك«ةµèحفّ?V2

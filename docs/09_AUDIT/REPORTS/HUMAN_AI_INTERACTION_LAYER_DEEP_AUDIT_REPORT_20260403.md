@@ -8,9 +8,8 @@ audit_scope: ф║║цЬ║ф║дф║Тх▒ВцЙАцЬЙцЦЗцб?audit_st
 auditor: AIхобшобч│╗ч╗Я
 status: Completed
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 审计系统
+  - 扩展功能、辅助模块
+---
 ---
 
 

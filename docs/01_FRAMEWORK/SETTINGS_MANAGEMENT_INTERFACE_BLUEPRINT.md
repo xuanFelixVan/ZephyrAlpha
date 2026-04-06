@@ -16,10 +16,6 @@ related_documents:
   - GRAFANA_MONITORING_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责设置管理界面设计，包括：
-  - 系统参数配置
-  - 用户偏好设置
-  - 通知配置
-  - 安全设置
   
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   认证权限请参考：FASTAPI_USERS_AUTH_BLUEPRINT.md
@@ -27,7 +23,8 @@ responsibility_boundary: |
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 设置管理界面蓝图

@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 文档深度审计
+  - 扩展功能、辅助模块
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_001
 version: 1.0.0
@@ -14,6 +14,7 @@ compliance_level: 专业机构标准
 audit_date: 2026-04-07
 audit_scope: Layer 9所有文档文件（深度审计）
 audit_standard: 五大原则 + 三层审计标准 + 用户提供的审计清单
+---
 ---
 
 # Layer 9文档治理深度审计报告

@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: WEEKLY_AUDIT_REPORT_20260407_022518
 version: 1.0.0
@@ -13,6 +11,7 @@ owner: 首席文档架构师
 standard_type: 定期审计报告
 applicable_scope: 全系统文档治理
 compliance_level: 专业标准
+---
 ---
 
 # 每周文档治理审计报告

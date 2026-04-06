@@ -1,16 +1,16 @@
 ---
 standard_type: хоЮцЦ╜цКехСК
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0
 module_id: PROFESSIONAL_STANDARD_IMPROVEMENT_REPORT_20260402
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбгц▓╗чРЖ"]---
+tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбгц▓╗чРЖ"]
+---
+---
 
 # ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцаЗхЗЖцФ╣ш┐ЫхоМцИРцКехСК
 > **核心职责**: 分析报告和评估结果

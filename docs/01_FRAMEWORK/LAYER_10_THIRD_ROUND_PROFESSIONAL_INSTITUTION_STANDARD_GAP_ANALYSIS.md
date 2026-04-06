@@ -10,8 +10,9 @@ standard_type: 专业量化机构级第三轮深度差距分析
 applicable_scope: Layer 10治理与合规层专业机构标准对比
 compliance_level: 顶级专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # Layer 10治理与合规层第三轮专业机构标准深度差距分析

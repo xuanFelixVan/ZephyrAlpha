@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 组合优化
+  - 扩展功能、辅助模块
 
 module_id: COMMON_ISSUES_SOLUTIONS_001
 version: 1.0.0
@@ -14,6 +12,7 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构知识库文档
 applicable_scope: 全系统文档治理常见问题解决方案
 compliance_level: 专业标准
+---
 ---
 # 文档治理常见问题解决方案
 

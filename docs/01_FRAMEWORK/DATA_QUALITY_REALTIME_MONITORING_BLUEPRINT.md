@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT_001
 version: 1.0.0
@@ -21,10 +19,6 @@ related_documents:
   - DATA_GOVERNANCE_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责数据质量实时监控，包括：
-  - 实时数据质量检测
-  - 数据质量告警
-  - 数据质量趋势分析
-  - 数据质量报告生成
   
   数据质量评估请参考：DATA_QUALITY_ASSESSMENT_BLUEPRINT.md
   数据质量监控界面请参考：DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT.md
@@ -33,6 +27,8 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 1周
 open_source_solution: Great Expectations + Grafana + Prometheus
+---
+---
 ---
 
 # 数据质量实时监控蓝图

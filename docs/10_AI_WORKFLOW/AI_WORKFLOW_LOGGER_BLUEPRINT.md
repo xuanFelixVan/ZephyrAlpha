@@ -6,9 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构师
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 扩展功能、辅助模块
 layer: Layer 11 (战略决策层)
 standard_type: 专业机构级蓝图
 applicable_scope: AI工作记录与优化
@@ -22,7 +20,9 @@ reference_models:
 related_documents:
   - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
   - AI_WORK_REPORTER_BLUEPRINT.md
-  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md---
+  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+---
+---
 
 
 

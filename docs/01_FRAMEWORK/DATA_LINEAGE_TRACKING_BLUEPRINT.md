@@ -17,10 +17,6 @@ parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 数据血缘关系追踪（数据来源、转换、使用路径）
-  - 数据资产管理（数据目录、分类、标签）
-  - 数据质量监控（数据验证、质量评分）
-  - 数据合规管理（数据访问控制、隐私保护）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
@@ -28,7 +24,9 @@ responsibility_boundary: |
   - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md: 数据质量管理执行
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md: 数据隐私合规
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 ---
 

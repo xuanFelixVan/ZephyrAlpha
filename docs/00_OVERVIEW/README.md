@@ -6,13 +6,13 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: йҰ–еёӯж–ҮжЎЈжһ¶жһ„её?standard_type: дё“дёҡйҮҸеҢ–жңәжһ„ж–ҮжЎЈ
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 测试验证、质量保证
 applicable_scope: е…Ёзі»з»?compliance_level: дё“дёҡж ҮеҮҶ
 parent_document: ../INDEX.md
 implementation_status: иҝӣиЎҢдё?
 layer: Layer 4
+---
+---
 ---
 ---
 ---

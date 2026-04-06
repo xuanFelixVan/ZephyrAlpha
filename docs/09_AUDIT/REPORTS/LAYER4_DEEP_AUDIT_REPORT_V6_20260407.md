@@ -7,9 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 数据质量
-  - 风险预算
-  - 市场状态识别
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 4深度审计报告

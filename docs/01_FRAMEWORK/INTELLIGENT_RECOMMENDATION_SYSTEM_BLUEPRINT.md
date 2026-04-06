@@ -20,16 +20,12 @@ open_source_projects:
     features: 策略推荐、风险推荐、报告推荐
 responsibility_boundary: |
   本文档负责智能推荐系统设计，包括：
-  - 策略优化推荐
-  - 风险关注推荐
-  - 报告阅读推荐
-  - 参数调整推荐
-  - 设置优化推荐
   
   AI对话增强请参考：AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md
 responsibility:
-  - 智能推荐
-  - 个性化建议
+  - 扩展功能、辅助模块
+---
+---
 ---
 # 智能推荐系统蓝图
 

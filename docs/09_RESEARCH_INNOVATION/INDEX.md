@@ -6,14 +6,14 @@ created_date: 2026-04-04
 last_updated: 2026-04-06
 owner: 系统架构师
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构目录索引
 applicable_scope: Layer 9 - 研究与创新层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 设计阶段---
+implementation_status: 设计阶段
+---
+---
 
 
 # Layer 9: 研究与创新层目录索引

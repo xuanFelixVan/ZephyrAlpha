@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_FINAL_REPORT_001
 version: 1.0.0
@@ -23,16 +21,13 @@ parent_document: ../System_Manifest.md
 implementation_status: 蓝图设计完成
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - Layer 10治理与合规层完整性分析
-  - 专业机构标准对比
-  - 缺失模块识别
-  - 开源项目推荐
-  - 个人开发方案制定
   
   **与本文档职责边界**：
   - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构
   - System_Manifest.md: 系统总清单
+---
+---
 ---
 # Layer 10治理与合规层完整性分析最终报告
 

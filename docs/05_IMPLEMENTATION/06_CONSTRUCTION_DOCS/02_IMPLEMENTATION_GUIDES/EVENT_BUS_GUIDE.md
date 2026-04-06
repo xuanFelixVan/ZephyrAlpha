@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﮒ؟ﮔﺛ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../README.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+---
+---
 
 
 # ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ

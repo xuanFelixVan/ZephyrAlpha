@@ -6,15 +6,14 @@ created_date: 2026-04-01
 last_updated: 2026-04-05
 owner: 首席文档架构师
 responsibility:
-- 02 SCHEDULER - 蓝图设计
-- 因子计算
-- 02 SCHEDULER - 蓝图设计
+  - 扩展功能、辅助模块
 standard_type: 数据处理文档
 applicable_scope: 数据调度系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+---
 ---
 
 

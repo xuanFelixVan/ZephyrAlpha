@@ -15,14 +15,9 @@ related_documents:
   - HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md
   - NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md
 responsibility:
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 responsibility_boundary: |
   本文档负责AutoML自动化机器学习，包括：
-  - 自动特征工程
-  - 自动模型选择
-  - 自动超参数优化
-  - 自动模型评估
   
   模型服务框架请参考：MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
   超参数优化请参考：HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md
@@ -31,6 +26,8 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 2周
 open_source_solution: AutoGluon + MLflow + Optuna
+---
+---
 ---
 ---
 

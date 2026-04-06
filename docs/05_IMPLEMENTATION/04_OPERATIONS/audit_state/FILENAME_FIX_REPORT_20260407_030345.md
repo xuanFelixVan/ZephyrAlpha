@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 组合优化
+  - 扩展功能、辅助模块
 
 module_id: FILENAME_FIX_REPORT_20260407_030345
 version: 1.0.0
@@ -14,6 +12,7 @@ standard_type: 文件名修复报告
 applicable_scope: 全系统文档
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+---
 ---
 # 文件名修复报告
 

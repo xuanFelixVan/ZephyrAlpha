@@ -10,10 +10,9 @@ applicable_scope: 数据备份恢复系统
 compliance_level: 专业标准
 parent_document: ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md
 dependencies:
-  - Restic
-  - rclone
-responsibility:
-  - 数据质量 (Layer 1)
+- Restic
+- rclone
+responsibility: 数据备份恢复策略与灾难恢复
 ---
 
 # 数据备份恢复蓝图

@@ -6,16 +6,16 @@ created_date: 2026-04-03
 last_updated: 2026-04-05
 owner: 首席架构�?standard_type: 专业量化机构级蓝�?applicable_scope: Layer 11 - 战略决策�?compliance_level: 顶级专业标准
 responsibility:
-  - 风险预算
-  - 市场状态识别
-  - 因子计算
+  - 扩展功能、辅助模块
 reference_models: ["Bridgewater Investment Committee", "Renaissance Technologies Strategic Allocation", "Two Sigma Portfolio Strategy", "Citadel Multi-Strategy Framework"]
 related_documents:
   - ARCHITECTURE.md
   - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
   - PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md
 parent_document: ../INDEX.md
-implementation_status: 设计阶段---
+implementation_status: 设计阶段
+---
+---
 
 
 # Layer 11: 战略决策层蓝�?

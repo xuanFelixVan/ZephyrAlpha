@@ -9,9 +9,8 @@ standard_type: 审计管理文档
 applicable_scope: 全系统职责边界管理
 compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 职责边界地图

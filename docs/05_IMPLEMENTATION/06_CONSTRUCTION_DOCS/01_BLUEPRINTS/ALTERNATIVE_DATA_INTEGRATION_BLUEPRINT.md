@@ -7,9 +7,10 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
 
 layer: "Layer 1 (数据源层)"
+---
 ---
 
 # ALTERNATIVE DATA INTEGRATION BLUEPRINT

@@ -12,7 +12,8 @@ reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two S
 parent_document: ../INDEX.md
 implementation_status: è¿è¡?
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 # ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶?

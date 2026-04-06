@@ -6,13 +6,13 @@ parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: х╖▓хоМцИ?
 owner: щжЦх╕нцЮ╢цЮДх╕?
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: DOC_GOVERNANCE_TRAINING
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # цЦЗцбгц▓╗чРЖхЯ╣шонцЙЛхЖМ
 > **核心职责**: 文档内容说明

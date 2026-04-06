@@ -9,9 +9,8 @@ audit_standard: v5.1
 auditor: AI审计系统
 audit_duration: 15分钟
 responsibility:
-  - 回测系统
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
+---
 ---
 
 

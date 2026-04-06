@@ -9,9 +9,8 @@ standard_type: 专业量化机构代码一致性验证报告
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 responsibility:
-  - 验证文档与代码的一致性
-  - 检查开源方案可用性
-  - 识别实施差距
+  - 扩展功能、辅助模块
+---
 ---
 # Layer 11战略决策层代码一致性验证报告
 

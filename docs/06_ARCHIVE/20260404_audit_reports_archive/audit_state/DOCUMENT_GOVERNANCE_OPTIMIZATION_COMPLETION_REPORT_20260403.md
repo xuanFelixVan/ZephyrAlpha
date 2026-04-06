@@ -6,11 +6,11 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ТќЄТАБТъХТъётИ?standard_type: ТќЄТАБТ▓╗уљєС╝ўтїќт«їТѕљТіЦтЉі
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 applicable_scope: тЁеу│╗у╗ЪТќЄТАБТ▓╗уљ?compliance_level: СИЊСИџТаЄтЄє
-parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md---
+parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md
+---
+---
 
 
 # ТќЄТАБТ▓╗уљєС╝ўтїќт«їТѕљТіЦтЉі

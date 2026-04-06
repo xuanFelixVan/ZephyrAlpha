@@ -9,9 +9,8 @@ standard_type: 技术规格书
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 ??---

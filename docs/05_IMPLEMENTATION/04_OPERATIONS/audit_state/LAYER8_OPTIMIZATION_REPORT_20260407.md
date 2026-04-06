@@ -6,12 +6,11 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 人机交互层优化
-  - 文档治理
-  - 审计
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构报告
 applicable_scope: Layer 8 人机交互层
 compliance_level: 专业标准
+---
 ---
 # Layer 8 人机交互层优化报告
 

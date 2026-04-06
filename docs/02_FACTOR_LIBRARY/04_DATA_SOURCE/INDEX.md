@@ -10,8 +10,7 @@ applicable_scope: 数据源目录
 compliance_level: 专业标准
 parent_document: ../../INDEX.md
 implementation_status: 蓝图完成
-responsibility:
-  - 数据质量 (Layer 1)
+responsibility: Layer 1数据预处理层总索引与模块导航
 ---
 
 # 数据源目录索引

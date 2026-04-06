@@ -11,7 +11,8 @@ audit_scope: 组合优化层(Layer 6) + 风险控制层(Layer 7)相关文档
 audit_type: 三层深度审计(L1+L2+L3)
 compliance_standard: 专业量化机构五大原则
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 组合优化层深度审计报告 v6.0

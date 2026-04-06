@@ -7,7 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块
+---
 ---
 
 ﻿---
@@ -18,7 +19,6 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 layer: Layer 8 (人机交互层)
-module_id: PERMISSION_MANAGEMENT_001
 module_name: 权限管理界面
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha权限管理

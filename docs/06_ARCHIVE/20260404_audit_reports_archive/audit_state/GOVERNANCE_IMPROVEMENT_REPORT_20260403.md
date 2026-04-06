@@ -6,12 +6,12 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόΨΘόκμόη╢όηΕί╕?standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕό▓╗ύΡΗόΦ╣ϋ┐δόΛξίΣΛ
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: ίΖρύ│╗ύ╗θόΨΘόκμό▓╗ύΡ?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../INDEX.md
-implementation_status: ί╖▓ίχΝόΙ?---
+implementation_status: ί╖▓ίχΝόΙ?
+---
+---
 
 # ϊ╕Υϊ╕γόε║όηΕόΨΘόκμό▓╗ύΡΗόΦ╣ϋ┐δόΛξίΣΛ
 > **核心职责**: 文档内容说明

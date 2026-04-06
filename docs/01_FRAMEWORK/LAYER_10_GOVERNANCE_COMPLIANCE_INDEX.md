@@ -1,9 +1,9 @@
 ---
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_INDEX_001
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级索引
@@ -12,8 +12,9 @@ compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 10)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # Layer 10: 治理与合规层蓝图索引
@@ -23,8 +24,9 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0
+> **版本**: v1.1
 > **创建日期**: 2026-04-06
+> **最后更新**: 2026-04-07
 > **状态**: 活跃
 > **说明**: 专业机构标准治理与合规模块完整索引
 
@@ -125,12 +127,16 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | [数据血缘追踪系统蓝图](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) | DATA_LINEAGE_TRACKING_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 数据血缘追踪、数据资产管理、数据质量监控 |
 | [压力测试场景库蓝图](./STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md) | STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐⭐ | 历史危机场景库、假设场景生成、自动化压力测试 |
 | [风险事件追踪系统蓝图](./RISK_EVENT_TRACKING_BLUEPRINT.md) | RISK_EVENT_TRACKING_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 风险事件记录、事件处理流程、事件统计分析 |
+| [算法交易测试框架蓝图](./ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT.md) | ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT_001 | 1.0 | Active | 1-2周 | ⭐⭐⭐⭐⭐ | 功能测试、性能测试、风险测试、测试报告 |
+| [算法部署控制系统蓝图](./ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT.md) | ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐⭐ | 部署流程、审批控制、版本管理、回滚机制 |
 
 **P1模块实施价值**：
 - ⚠️ **交易对手风险**: 个人使用场景较少，可选实施
 - ✅ **数据血缘追踪**: 对标Two Sigma数据治理标准，强烈推荐实施
 - ✅ **压力测试场景库**: 对标Bridgewater极端测试标准，强烈推荐实施
 - ✅ **风险事件追踪**: 对标D.E. Shaw风险管理标准，推荐实施
+- ✅ **算法交易测试框架**: 对标NautilusTrader开源项目，满足FCA 2025算法交易控制审查要求
+- ✅ **算法部署控制**: 对标MLflow开源项目，满足FCA 2025算法交易控制审查要求
 
 ---
 
@@ -273,6 +279,60 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 
 ---
 
+### 2.7 算法清单管理系统
+
+| 开源项目 | 项目地址 | 核心优势 | 个人使用适配度 |
+|---------|---------|---------|--------------|
+| **NautilusTrader** | https://github.com/nautechsystems/nautilus_trader | 高性能算法交易平台、策略管理、生命周期追踪 | ⭐⭐⭐⭐⭐ |
+| **NexusTrader** | https://github.com/barfinex/nexustrader | 开源量化交易平台、多策略管理、部署控制 | ⭐⭐⭐⭐⭐ |
+
+**推荐方案**: NautilusTrader（Rust+Python、高性能、文档完善）
+
+---
+
+### 2.8 市场滥用监控系统
+
+| 开源项目 | 项目地址 | 核心优势 | 个人使用适配度 |
+|---------|---------|---------|--------------|
+| **EquiAnalytics** | https://github.com/SrabanaBaidya/EquiAnalytics | SQL基础市场滥用检测、内幕交易识别、洗售检测 | ⭐⭐⭐⭐ |
+
+**推荐方案**: EquiAnalytics（开源免费、易于集成、SQL基础）
+
+---
+
+### 2.9 最佳执行监控系统
+
+| 开源项目 | 项目地址 | 核心优势 | 个人使用适配度 |
+|---------|---------|---------|--------------|
+| **NexusTrader** | https://github.com/barfinex/nexustrader | 开源量化交易平台、执行监控、订单管理 | ⭐⭐⭐⭐⭐ |
+| **NautilusTrader** | https://github.com/nautechsystems/nautilus_trader | 高性能算法交易平台、执行质量分析 | ⭐⭐⭐⭐⭐ |
+
+**推荐方案**: NexusTrader（开源免费、多交易所支持、执行监控完善）
+
+---
+
+### 2.10 算法交易测试框架
+
+| 开源项目 | 项目地址 | 核心优势 | 个人使用适配度 |
+|---------|---------|---------|--------------|
+| **NautilusTrader** | https://github.com/nautechsystems/nautilus_trader | 高性能回测框架、策略测试、性能分析 | ⭐⭐⭐⭐⭐ |
+| **Backtrader** | https://github.com/mementum/backtrader | Python回测框架、策略测试、多数据源支持 | ⭐⭐⭐⭐⭐ |
+
+**推荐方案**: NautilusTrader（高性能、事件驱动、完整测试套件）
+
+---
+
+### 2.11 算法部署控制系统
+
+| 开源项目 | 项目地址 | 核心优势 | 个人使用适配度 |
+|---------|---------|---------|--------------|
+| **MLflow** | https://github.com/mlflow/mlflow | 机器学习生命周期管理、模型版本控制、部署管理 | ⭐⭐⭐⭐⭐ |
+| **Kubeflow** | https://github.com/kubeflow/kubeflow | Kubernetes机器学习平台、模型部署、流水线管理 | ⭐⭐⭐⭐ |
+
+**推荐方案**: MLflow（开源免费、Python支持、部署管理完善）
+
+---
+
 ## 三、实施路线
 
 ### 3.1 Phase 1: P0模块实施（第1-2周）
@@ -393,7 +453,8 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|---------|--------|
 | v1.0 | 2026-04-06 | 初始版本，创建Layer 10治理与合规层蓝图索引 | 首席架构师 |
+| v1.1 | 2026-04-07 | 新增5个缺失模块：算法清单管理、市场滥用监控、最佳执行监控、算法交易测试框架、算法部署控制 | 首席架构师 |
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
+**版本**: v1.1 | **更新**: 2026-04-07 | **状态**: 活跃

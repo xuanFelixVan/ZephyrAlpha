@@ -6,13 +6,13 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобщкМшпБцКехСК
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: цМЗхоЪчЫох╜Хц▓╗чРЖщкМшпБ
 compliance_level: щкМшпБхобшоб
 parent_document: ../INDEX.md
-implementation_status: х╖▓хоМцИ?---
+implementation_status: х╖▓хоМцИ?
+---
+---
 
 # цЦЗцбгц▓╗чРЖщкМшпБхобшобцКехСК
 > **核心职责**: 文档内容说明

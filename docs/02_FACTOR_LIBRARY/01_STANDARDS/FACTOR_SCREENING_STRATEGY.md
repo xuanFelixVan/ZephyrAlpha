@@ -6,14 +6,14 @@ created_date: 2026-03-30
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 数据质量
-  - 因子计算
-  - 回测系统
+  - 扩展功能、辅助模块
 standard_type: 因子筛选策略标准
 applicable_scope: Layer 2 Alpha因子层- 因子筛选流程
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 已实施---
+implementation_status: 已实施
+---
+---
 
 
 # 5900因子筛选策略(Factor Screening Strategy)

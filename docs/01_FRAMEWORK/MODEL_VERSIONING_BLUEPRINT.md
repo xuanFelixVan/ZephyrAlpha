@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 本文档负责Layer 4机器学习层的模型版本管理系统设计，包括版本控制、变更追踪、回滚机制等核心功能。
+  - 扩展功能、辅助模块
 
 standard_type: é«å±æ¶æèå¾
 
@@ -20,6 +20,8 @@ priority: P1
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的模型版本管理系统设计，包括版本控制、变更追踪、回滚机制等核心功能。
 layer: Layer 4 (机器学习层)
+---
+---
 ---
 # æ¨¡åçæ¬æ§å¶èå¾
 > **核心职责**: Model Versioning蓝图设计

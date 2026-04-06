@@ -6,13 +6,13 @@ created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 审计系统
 responsibility:
-  - 机器学习
-  - 系统架构
-  - 文档治理
+  - 扩展功能、辅助模块
 standard_type: 专业文档治理审计报告
 applicable_scope: 人机交互层文档深度审计
 compliance_level: 专业标准
-parent_document: ../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md---
+parent_document: ../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md
+---
+---
 
 
 # 人机交互层文档深度审计报告

@@ -12,7 +12,8 @@ reference_models: ["Two Sigma Research Infrastructure", "Citadel Quant Research 
 parent_document: ./BLUEPRINT.md
 implementation_status: 设计阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 9 缺失模块补充设计

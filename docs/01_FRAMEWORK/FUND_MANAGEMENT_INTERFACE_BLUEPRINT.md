@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 数据源
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 资金管理界面
@@ -19,14 +17,12 @@ related_documents:
   - POSITION_MANAGEMENT_INTERFACE_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责资金管理界面设计，包括：
-  - 资金流水查看
-  - 账户余额监控
-  - 资金效率分析
-  - 资金调拨管理
   
   持仓管理请参考：POSITION_MANAGEMENT_INTERFACE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+---
+---
 ---
 ---
 

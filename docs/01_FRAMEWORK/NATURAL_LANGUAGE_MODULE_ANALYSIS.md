@@ -12,15 +12,12 @@ compliance_level: 专业标准
 parent_document: ./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责Layer 11全模块文字交互需求分析，包括：
-  - Layer 0-11所有模块的文字交互需求梳理
-  - 每个模块的意图类型、工具定义、数据需求分析
-  - 文字交互场景设计和实现建议
   
   整体架构设计请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 implementation_status: 分析完成
 responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 11 全模块文字交互需求分?

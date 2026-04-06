@@ -15,8 +15,7 @@ timeframe_support:
 - 宏观配置层
 - 中观策略层
 - 微观执行层
-responsibility:
-- BAOSTOCK数据源连接器
+responsibility: Baostock数据源接入与数据获取
 ---
 
 # Baostock连接器技术规格

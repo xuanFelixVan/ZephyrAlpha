@@ -12,7 +12,8 @@ parent_document: ../INDEX.md
 audit_type: 第六次深度审计
 audit_date: 2026-04-06
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据源层文档深度审计报告V6

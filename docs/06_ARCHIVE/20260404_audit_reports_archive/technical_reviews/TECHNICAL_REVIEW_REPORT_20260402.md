@@ -8,9 +8,8 @@ compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 decision: ﮔﺗﮒﮒ؟ﮔﺛ
 overall_score: 83.9
 responsibility:
-  - 组合优化
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
+---
 ---
 
 

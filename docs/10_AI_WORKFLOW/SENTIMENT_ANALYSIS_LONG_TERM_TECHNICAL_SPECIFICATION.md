@@ -6,16 +6,16 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: 技术规格书
 applicable_scope: 舆情分析层长期改进模
 compliance_level: 专业标准
 parent_document: INDEX.md
 applicable_modules:
   - 多模态分
-  - AI虚拟研究团队---
+  - AI虚拟研究团队
+---
+---
 
 
 

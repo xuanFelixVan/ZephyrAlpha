@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席蓝图架构�?
 responsibility:
-  - 数据质量
-  - 因子计算
-  - 交易执行
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构数据库设计标�?
 applicable_scope: 全系统数据存�?
 compliance_level: 专业机构标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?
+---
+---
 
 
 # 数据库设计文�?

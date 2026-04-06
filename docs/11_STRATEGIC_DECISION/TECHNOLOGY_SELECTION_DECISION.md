@@ -16,8 +16,8 @@ related_documents:
   - BLUEPRINT.md
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 11技术选型决策文档

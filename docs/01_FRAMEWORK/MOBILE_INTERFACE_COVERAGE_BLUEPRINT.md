@@ -21,16 +21,12 @@ open_source_projects:
     github: https://github.com/python-telegram-bot/python-telegram-bot
 responsibility_boundary: |
   本文档负责移动端界面覆盖设计，包括：
-  - Telegram Bot开发
-  - Streamlit移动端优化
-  - 移动端查询功能
-  - 移动端审批功能
-  - 实时告警推送
   
   推送通知请参考：MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 responsibility:
-  - 移动端覆盖
-  - 随时随地访问
+  - 扩展功能、辅助模块
+---
+---
 ---
 # 移动端界面覆盖蓝图
 

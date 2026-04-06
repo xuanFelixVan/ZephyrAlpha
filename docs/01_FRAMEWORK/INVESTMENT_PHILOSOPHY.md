@@ -1,9 +1,7 @@
 ---
 standard_type: æ ¸å¿ææ¡£
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æèµå®?version: 1.0.0
@@ -12,6 +10,8 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 tags: ["æèµå²å­¦", "æ ¸å¿çå¿µ", "æèµåå"]
 layer: Layer 4
+---
+---
 ---
 ---
 

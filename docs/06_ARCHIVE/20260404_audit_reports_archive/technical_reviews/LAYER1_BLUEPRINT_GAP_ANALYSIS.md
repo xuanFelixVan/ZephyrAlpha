@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДх╖ош╖ЭхИЖцЮРцКехСК
 applicable_scope: Layer 1цХ░цНощвДхдДчРЖх▒В | ф╕ЪхКбцЮ╢цЮД: ф╕Йч║зцЧ╢щЧ┤цбЖцЮ╢шЮНхРИцЮ╢цЮД
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: ш┐ЫшбМ?---
+implementation_status: ш┐ЫшбМ?
+---
+---
 
 # Layer 1цХ░цНощвДхдДчРЖх▒ВшУЭхЫ╛хоМцХ┤цАзхИЖцЮРцКе?
 > **核心职责**: Layer1 Blueprint Gap Analysis.Md蓝图设计

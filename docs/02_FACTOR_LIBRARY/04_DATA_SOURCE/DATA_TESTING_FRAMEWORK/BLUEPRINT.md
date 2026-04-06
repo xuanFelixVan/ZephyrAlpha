@@ -10,11 +10,12 @@ applicable_scope: 数据测试框架
 compliance_level: 专业标准
 parent_document: ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md
 dependencies:
-  - Great Expectations
-  - dbt
-  - pytest
+- Great Expectations
+- dbt
+- pytest
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据测试框架蓝图

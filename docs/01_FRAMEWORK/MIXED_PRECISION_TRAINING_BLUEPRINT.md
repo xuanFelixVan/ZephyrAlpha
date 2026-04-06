@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 本文档负责Layer 4机器学习层的混合精度训练设计，包括精度优化、内存管理、训练加速等核心功能。
+  - 扩展功能、辅助模块
 
 standard_type: 高层架构蓝图
 
@@ -20,6 +20,8 @@ priority: P1
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的混合精度训练设计，包括精度优化、内存管理、训练加速等核心功能。
 layer: Layer 4 (机器学习层)
+---
+---
 ---
 # 混合精度训练蓝图
 > **核心职责**: Mixed Precision Training蓝图设计

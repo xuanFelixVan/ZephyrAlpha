@@ -40,7 +40,9 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的特征存储系统设计，包括特征管理、特征服务、特征版本控制等核心功能。
 responsibility:
-  - 数据质量 (Layer 4)
+  - 扩展功能、辅助模块
+---
+---
 ---
 ---
 

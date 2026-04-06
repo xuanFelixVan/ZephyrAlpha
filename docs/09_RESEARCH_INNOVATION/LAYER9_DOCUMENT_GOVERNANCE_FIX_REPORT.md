@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 文档修复
+  - 扩展功能、辅助模块
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_FIX_REPORT_001
 version: 1.0.0
@@ -13,6 +13,7 @@ applicable_scope: Layer 9 - 研究与创新层文档修复
 compliance_level: 专业机构标准
 fix_date: 2026-04-07
 fix_scope: Layer 9所有文档文件
+---
 ---
 
 # Layer 9文档治理修复报告

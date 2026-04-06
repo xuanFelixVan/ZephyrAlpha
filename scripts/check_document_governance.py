@@ -93,7 +93,7 @@ class DocumentGovernanceChecker:
     def extract_yaml_headers(self, content: str) -> List[str]:
         """
         提取YAML头部（只检查文档开头）
-        改进：只检查文档开头的YAML头部，忽略文档中间的---
+        改进：只检查文档开头的第一个YAML头部，忽略文档中间的---
         """
         yaml_headers = []
         
@@ -104,28 +104,24 @@ class DocumentGovernanceChecker:
         # 分割文档为行
         lines = content.split('\n')
         
-        # 查找所有YAML头部
+        # 查找第一个YAML头部
         in_yaml = False
-        yaml_start = 0
         yaml_lines = []
+        found_first_yaml = False
         
         for i, line in enumerate(lines):
             if line.strip() == '---':
-                if not in_yaml:
-                    # 开始YAML头部
+                if not in_yaml and not found_first_yaml:
+                    # 开始第一个YAML头部
                     in_yaml = True
-                    yaml_start = i
                     yaml_lines = []
-                else:
-                    # 结束YAML头部
+                elif in_yaml:
+                    # 结束第一个YAML头部
                     yaml_content = '\n'.join(yaml_lines)
                     yaml_headers.append(yaml_content)
+                    found_first_yaml = True
                     in_yaml = False
-                    
-                    # 如果已经找到一个YAML头部，继续查找下一个
-                    # 但只查找文档开头的前50行
-                    if i > 50:
-                        break
+                    break  # 找到第一个YAML头部后立即退出
             elif in_yaml:
                 yaml_lines.append(line)
         

@@ -5,10 +5,7 @@ status: Blueprint
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
-responsibility:
-- 因子计算
-- 数据源
-- DATA API GATEWAY - 蓝图设计
+responsibility: 统一数据API网关设计与接口管理
 standard_type: 模块蓝图
 applicable_scope: 数据API网关
 compliance_level: 专业标准

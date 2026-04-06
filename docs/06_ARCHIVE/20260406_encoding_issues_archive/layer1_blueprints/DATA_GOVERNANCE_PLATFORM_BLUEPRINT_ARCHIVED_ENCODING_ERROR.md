@@ -15,7 +15,8 @@ open_source_dependency: pandas, numpy, great_expectations
 estimated_effort: 4周
 priority: P1
 responsibility:
-  - 数据质量 (Layer 10)
+  - 扩展功能、辅助模块
+---
 ---
 
 

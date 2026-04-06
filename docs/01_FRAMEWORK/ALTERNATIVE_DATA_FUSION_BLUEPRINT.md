@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 因子计算
-  - 数据源
-  - 特征工程
+  - 扩展功能、辅助模块
 
 standard_type: 高层架构蓝图
 
@@ -22,6 +20,8 @@ priority: P1
 responsibility_boundary: |
   本文档负责Layer 0数据源层的另类数据融合设计，包括卫星数据、社交媒体、信用卡数据等核心功能。
 layer: Layer 0 (数据源层)
+---
+---
 ---
 ---
 

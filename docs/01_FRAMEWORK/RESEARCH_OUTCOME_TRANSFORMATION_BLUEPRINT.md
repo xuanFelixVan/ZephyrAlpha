@@ -28,19 +28,14 @@ open_source_projects:
     features: 工作流调度、任务编排
 responsibility_boundary: |
   本文档职责（Layer 9 研究与创新层）：
-  - 研究成果评估（可行性分析、收益预期、风险评估）
-  - 策略转化流程（代码重构、性能优化、合规检查）
-  - 部署管理（灰度发布、监控告警、回滚机制）
-  - 知识沉淀（文档归档、经验总结、最佳实践）
   
   与其他文档职责边界：
   - RESEARCH_INNOVATION_LAYER_BLUEPRINT.md: Layer 9总体架构设计
   - RESEARCH_PROJECT_MANAGEMENT_BLUEPRINT.md: 研究项目管理
   - STRATEGY_EXECUTION_LAYER_BLUEPRINT.md: 策略执行层
 responsibility:
-  - 研究转化
-  - 策略部署
-  - 知识管理
+  - 扩展功能、辅助模块
+---
 ---
 
 # 研究成果转化系统蓝图

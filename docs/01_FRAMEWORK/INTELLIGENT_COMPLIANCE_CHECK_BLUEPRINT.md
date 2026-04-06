@@ -28,19 +28,15 @@ open_source_projects:
     features: 数据验证、质量检查、合规验证
 responsibility_boundary: |
   本文档职责（Layer 10 治理与合规层）：
-  - 合规规则管理（规则定义、规则更新、规则版本控制）
-  - 智能合规检查（交易合规、持仓合规、风控合规）
-  - 合规报告生成（违规报告、合规报告、审计报告）
-  - 合规预警系统（实时预警、风险提示、整改建议）
   
   与其他文档职责边界：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告系统
 responsibility:
-  - 合规检查
-  - 规则引擎
-  - 智能预警
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # 智能合规检查系统蓝图

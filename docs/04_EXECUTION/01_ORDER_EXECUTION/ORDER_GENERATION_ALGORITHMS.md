@@ -6,14 +6,14 @@ created_date: 2026-04-01
 last_updated: 2026-04-04
 owner: 首席文档架构�?
 responsibility:
-  - 交易执行
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构文档
 applicable_scope: 订单生成算法
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?
+---
+---
 
 
 # 订单生成算法

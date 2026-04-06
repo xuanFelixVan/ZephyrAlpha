@@ -5,15 +5,13 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-06
 owner: 首席文档架构师
-responsibility:
-  - 交易执行
-  - 数据源
-  - 系统架构
+responsibility: 宏观经济数据获取与处理
 standard_type: 数据源文档
 applicable_scope: 宏观经济数据
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行中---
+implementation_status: 进行中
+---
 
 
 # 宏观数据源

@@ -10,11 +10,12 @@ applicable_scope: 数据压缩归档系统
 compliance_level: 专业标准
 parent_document: ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md
 dependencies:
-  - Parquet
-  - ZSTD
-  - Delta Lake
+- Parquet
+- ZSTD
+- Delta Lake
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据压缩归档蓝图

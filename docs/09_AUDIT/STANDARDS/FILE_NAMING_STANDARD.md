@@ -6,13 +6,12 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 文档治理
-  - 命名规范
-  - 质量标准
+  - 扩展功能、辅助模块
 standard_type: 文档治理规范
 applicable_scope: 全系统文件命名规范
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+---
 ---
 
 # 文件命名规范标准

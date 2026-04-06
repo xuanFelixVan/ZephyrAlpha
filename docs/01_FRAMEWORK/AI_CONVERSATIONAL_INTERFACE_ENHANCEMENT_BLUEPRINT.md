@@ -22,17 +22,13 @@ open_source_projects:
     github: https://github.com/langchain-ai/langchain
 responsibility_boundary: |
   本文档负责AI对话式交互增强设计，包括：
-  - 多轮对话管理
-  - 上下文理解
-  - 智能问答系统
-  - 策略逻辑解释
-  - 决策原因分析
   
   基础自然语言界面请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
   报告问答请参考：REPORT_INTELLIGENT_QA_BLUEPRINT.md
 responsibility:
-  - AI对话
-  - 智能交互
+  - 扩展功能、辅助模块
+---
+---
 ---
 ---
 

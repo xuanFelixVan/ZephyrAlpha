@@ -15,7 +15,8 @@ applicable_scope: 模型治理与合�?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
 implementation_status: 技术规格设计完�?regulatory_framework: SR 11-7, OCC 2011-12, Basel III
 responsibility:
-  - 数据质量 (Layer 10)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 模型治理与合规技术规格书 v1.0

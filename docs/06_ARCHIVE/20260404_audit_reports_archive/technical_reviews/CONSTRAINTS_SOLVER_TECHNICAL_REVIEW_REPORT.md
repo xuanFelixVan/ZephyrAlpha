@@ -12,10 +12,10 @@ parent_document: ../INDEX.md
 implementation_status: 进行�?
 owner: 实施负责�?
 responsibility:
-  - 组合优化
-  - 交易执行
-  - 数据源
-last_updated: 2026-04-02---
+  - 扩展功能、辅助模块
+last_updated: 2026-04-02
+---
+---
 
 
 # ConstraintsSolver约束求解器模块技术评审报�?

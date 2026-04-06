@@ -6,9 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 数据质量
-  - 交易执行
-  - 回测系统
+  - 扩展功能、辅助模块
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 交易成本分析与优化
@@ -32,16 +30,14 @@ open_source_projects:
     features: 滑点模型、交易成本模拟、回测引擎
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 交易成本分析（佣金、滑点、市场冲击）
-  - 执行效率评估（执行质量、成交率、时间效率）
-  - 成本优化建议（降低成本、提高效率）
-  - 成本报告生成（日报、周报、月报）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准
   - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统---
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
+---
+---
 
 
 # 交易成本分析系统蓝图

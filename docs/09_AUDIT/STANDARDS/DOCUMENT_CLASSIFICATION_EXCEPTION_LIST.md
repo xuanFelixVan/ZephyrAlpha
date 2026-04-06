@@ -1,15 +1,15 @@
 ---
 standard_type: у«АуљєТаЄтЄє
 responsibility:
-  - 因子计算
-  - 机器学习
-  - 系统架构
+  - 扩展功能、辅助模块
 applicable_scope: тЁеу│╗у╗?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: DOCUMENT_CLASSIFICATION_STANDARD.md
 implementation_status: ти▓т«їТѕ?owner: ждќтИГТъХТъётИ?version: 1.0.0
 module_id: DOC_EXCEPTION_LIST
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ТќЄТАБтѕєу▒╗СЙІтцќТИЁтЇЋ
 > **核心职责**: 标准规范制定

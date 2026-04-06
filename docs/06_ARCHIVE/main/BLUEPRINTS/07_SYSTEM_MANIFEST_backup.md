@@ -11,7 +11,8 @@ compliance_level: 架构标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 

@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: FACTOR_PORTFOLIO_OPTIMIZATION_BLUEPRINT_001
 version: 1.0.0
@@ -21,10 +19,6 @@ related_documents:
   - FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责因子组合优化，包括：
-  - 因子权重优化
-  - 因子组合构建
-  - 因子相关性分析
-  - 因子组合回测
   
   因子挖掘请参考：FACTOR_MINING_AUTOMATION_BLUEPRINT.md
   因子回测请参考：FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md
@@ -33,6 +27,8 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 1.5周
 open_source_solution: PyPortfolioOpt + CVXPY + Riskfolio-Lib
+---
+---
 ---
 
 # 因子组合优化蓝图

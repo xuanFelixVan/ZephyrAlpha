@@ -9,7 +9,8 @@ standard_type: 文档恢复评估报告
 applicable_scope: 策略执行层文档恢复
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Git备份删除文件价值评估报告

@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: INVESTMENT_DECISION_AUDIT_BLUEPRINT_001
 version: 1.0.0
@@ -40,17 +38,14 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 投资决策审计系统架构设计
-  - 决策流程追踪
-  - 决策依据记录
-  - 决策影响分析
-  - 审计报告生成
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
+---
+---
 ---
 
 # 投资决策审计系统蓝图

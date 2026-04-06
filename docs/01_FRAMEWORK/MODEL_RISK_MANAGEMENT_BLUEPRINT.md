@@ -18,11 +18,6 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 模型生命周期管理（开发、验证、部署、监控、退役）
-  - 模型风险评估（模型风险识别、量化、监控）
-  - 模型验证测试（回测验证、压力测试、敏感性分析）
-  - 模型文档管理（模型文档、验证报告、审批记录）
-  - MLflow集成实施
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
@@ -30,8 +25,9 @@ responsibility_boundary: |
   - MODEL_REGISTRY_BLUEPRINT.md: 模型版本管理
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
+---
 ---
 
 # 模型风险管理系统蓝图

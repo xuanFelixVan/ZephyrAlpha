@@ -6,15 +6,15 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: Audit Sentinel
 responsibility:
-  - 机器学习
-  - 文档治理
-  - 审计系统
+  - 扩展功能、辅助模块
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 applicable_scope: цЦ╜х╖ецЦЗцбгф╕УхМ║ц╖▒х║жхобшоб
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../README.md
 audit_type: ф╕Йх▒Вц╖▒х║жхобшоб
-audit_date: 2026-04-03---
+audit_date: 2026-04-03
+---
+---
 
 
 # цЦ╜х╖ецЦЗцбгф╕УхМ║ц╖▒х║жхобшобцКехСК

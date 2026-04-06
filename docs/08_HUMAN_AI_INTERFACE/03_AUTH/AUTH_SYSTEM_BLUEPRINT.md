@@ -18,7 +18,6 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 layer: Layer 8 (人机交互层)
-module_id: AUTH_SYSTEM_001
 module_name: 认证授权系统
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha认证授权

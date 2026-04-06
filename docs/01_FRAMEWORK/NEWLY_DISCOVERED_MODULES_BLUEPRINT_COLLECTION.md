@@ -17,7 +17,8 @@ related_documents:
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 新发现缺失模块蓝图汇总

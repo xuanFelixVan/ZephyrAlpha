@@ -17,7 +17,8 @@ related_documents:
 parent_document: ../System_Manifest.md
 implementation_status: 审计完成
 responsibility:
-  - 数据质量 (Layer 10)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 10: 治理与合规层第四次深度审计报告

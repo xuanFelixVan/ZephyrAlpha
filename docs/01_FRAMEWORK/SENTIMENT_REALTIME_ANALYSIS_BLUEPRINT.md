@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: SENTIMENT_REALTIME_ANALYSIS_BLUEPRINT_001
 version: 1.0.0
@@ -21,10 +19,6 @@ related_documents:
   - DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责舆情实时分析，包括：
-  - 实时舆情数据流处理
-  - 实时情感分析
-  - 实时事件检测
-  - 实时交易信号生成
   
   舆情数据集成请参考：SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md
   深度学习情感分析请参考：DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md
@@ -33,6 +27,7 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 2周
 open_source_solution: Apache Kafka + Spark Streaming + Hugging Face Transformers
+---
 ---
 
 # 舆情实时分析引擎蓝图

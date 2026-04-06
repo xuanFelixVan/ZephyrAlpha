@@ -9,7 +9,8 @@ standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据源层（Layer 1）深度审计报告 V1

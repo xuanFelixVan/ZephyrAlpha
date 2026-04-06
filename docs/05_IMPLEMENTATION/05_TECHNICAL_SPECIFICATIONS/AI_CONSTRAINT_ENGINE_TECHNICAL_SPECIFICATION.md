@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶?applicable_scope: Layer 8 - ﻛﭦﭦﮔﭦﻛﭦ۳ﻛﭦ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../ARCHITECTURE.md
 implementation_status: ﮒﺝﮒ؟?priority: P0
-estimated_hours: 60h---
+estimated_hours: 60h
+---
+---
 
 
 # AIﻟ۰ﻛﺕﭦﻝﭦ۵ﮔﮒﺙﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵

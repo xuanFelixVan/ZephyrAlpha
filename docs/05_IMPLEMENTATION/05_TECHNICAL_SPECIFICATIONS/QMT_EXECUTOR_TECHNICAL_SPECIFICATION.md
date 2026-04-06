@@ -6,9 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 applicable_scope: Layer 5 ﻝ­ﻝ۴ﮔ۶ﻟ۰ﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
@@ -17,7 +15,9 @@ implementation_status: ﻟﺟﻟ۰ﺅﺟ?
 regulatory_compliance:
   - module: COMPLIANCE_CHECKER_001
     version: 1.0.0
-    integration_date: 2026-04-03---
+    integration_date: 2026-04-03
+---
+---
 
 
 # QMTExecutorﻛﭦ۳ﮔﮔ۶ﻟ۰ﮒ۷ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵

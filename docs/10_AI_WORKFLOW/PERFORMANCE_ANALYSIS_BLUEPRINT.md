@@ -20,7 +20,8 @@ related_documents:
   - QUALITY_MONITORING_BLUEPRINT.md
   - PERFORMANCE_MONITORING.md
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 

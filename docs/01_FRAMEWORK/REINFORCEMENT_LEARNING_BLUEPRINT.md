@@ -40,7 +40,8 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的强化学习系统设计，包括策略优化、价值函数、环境建模等核心功能。
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 扩展功能、辅助模块
+---
 ---
 
 

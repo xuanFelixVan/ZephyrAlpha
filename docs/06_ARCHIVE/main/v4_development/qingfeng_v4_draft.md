@@ -11,9 +11,8 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # A股量化交易系�?.0开发方�?- 思维树状�?

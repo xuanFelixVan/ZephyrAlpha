@@ -6,13 +6,13 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: Audit Sentinel
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 applicable_scope: хЕич│╗ч╗ЯцЦЗцб?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: хобшобхоМцИР---
+implementation_status: хобшобхоМцИР
+---
+---
 
 
 # хЕич│╗ч╗Яц╖▒х║жцЦЗцбгц▓╗чРЖхобшобцКехС?

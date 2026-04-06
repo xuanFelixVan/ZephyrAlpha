@@ -10,6 +10,9 @@ applicable_scope: 评估报告目录
 compliance_level: 专业标准
 parent_document: ../README.md
 implementation_status: 已完成
+responsibility:
+  - 文档索引、导航导航、快速查找
+---
 ---
 
 # 评估报告索引

@@ -1,3 +1,14 @@
+---
+module_id: SKILL_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+responsibility:
+  - 审计检查、质量评估、合规验证
+---
+
 ***
 
 name: "audit-sentinel"

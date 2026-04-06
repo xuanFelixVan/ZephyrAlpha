@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: P2_KNOWLEDGE_BASE_IMPLEMENTATION_REPORT_001
 version: 1.0.0
@@ -15,6 +13,7 @@ standard_type: 专业量化机构级实施报告
 applicable_scope: P2级知识库建设实施报告
 compliance_level: 专业标准
 implementation_date: 2026-04-07
+---
 ---
 # P2级知识库建设实施报告
 

@@ -1,16 +1,16 @@
 ---
 standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
 module_id: MONITORING_MANUAL
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ﻝﺏﭨﻝﭨﻝﮔ۶ﮔﮒ
 > **核心职责**: 文档内容说明

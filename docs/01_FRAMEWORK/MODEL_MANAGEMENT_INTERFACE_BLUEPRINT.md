@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 机器学习
-  - 绩效分析
-  - 系统架构
+  - 扩展功能、辅助模块
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 模型管理界面
@@ -20,15 +18,14 @@ related_documents:
   - MODEL_VERSIONING_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责模型管理界面设计，包括：
-  - 模型版本查看
-  - 模型性能监控
-  - 模型切换
-  - 模型A/B测试
   
   模型注册请参考：MODEL_REGISTRY_BLUEPRINT.md
   模型版本请参考：MODEL_VERSIONING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-implementation_status: 蓝图设计完成---
+implementation_status: 蓝图设计完成
+---
+---
+---
 
 
 # 模型管理界面蓝图

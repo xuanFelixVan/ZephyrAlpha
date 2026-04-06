@@ -6,12 +6,12 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 组合优化
+  - 扩展功能、辅助模块
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒﺁﺗﮔﺁﮒﮔﮔ۴ﮒ
 applicable_scope: Layer 6ﻝﭨﮒﻛﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
-parent_document: ../INDEX.md---
+parent_document: ../INDEX.md
+---
+---
 
 
 # Layer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻟﮒﺝﮒﺁﺗﮔﺁﮒﮔﮔ۴?

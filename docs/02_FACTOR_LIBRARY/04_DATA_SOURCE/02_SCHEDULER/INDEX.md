@@ -5,10 +5,7 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
-responsibility:
-- 02 SCHEDULER - 模块导航
-- 02 SCHEDULER - 模块导航
-- 数据源
+responsibility: 调度器模块导航
 standard_type: 目录索引文档
 applicable_scope: 智能下载调度器
 compliance_level: 专业标准

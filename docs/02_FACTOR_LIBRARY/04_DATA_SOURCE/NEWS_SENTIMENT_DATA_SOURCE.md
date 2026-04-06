@@ -11,7 +11,8 @@ compliance_level: 研究标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 另类数据 - 新闻舆情

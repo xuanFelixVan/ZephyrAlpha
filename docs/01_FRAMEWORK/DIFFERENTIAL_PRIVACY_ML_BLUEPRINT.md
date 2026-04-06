@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 本文档负责Layer 4机器学习层的差分隐私机器学习设计，包括噪声添加、隐私预算、隐私保护等核心功能。
+  - 扩展功能、辅助模块
 
 standard_type: 高层架构蓝图
 
@@ -20,6 +20,8 @@ priority: P1
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的差分隐私机器学习设计，包括噪声添加、隐私预算、隐私保护等核心功能。
 layer: Layer 4 (机器学习层)
+---
+---
 ---
 ---
 # 隐私保护ML(差分隐私)蓝图

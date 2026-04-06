@@ -18,8 +18,8 @@ compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/ONLINE_LEARNING_BLUEPRINT.md
 implementation_status: 技术规格设计完?
 responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 在线学习技术规格书 v1.0

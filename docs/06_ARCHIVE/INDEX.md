@@ -6,13 +6,13 @@ created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席文档架构�?standard_type: 专业量化机构索引
 responsibility:
-  - 因子计算
-  - 特征工程
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: 历史归档
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完�?---
+implementation_status: 已完�?
+---
+---
 
 # 归档目录索引
 > **核心职责**: 目录导航和文档索引

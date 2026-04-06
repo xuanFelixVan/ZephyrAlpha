@@ -10,11 +10,12 @@ applicable_scope: 数据权限管理系统
 compliance_level: 专业标准
 parent_document: ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md
 dependencies:
-  - FastAPI
-  - Redis
-  - SQLAlchemy
+- FastAPI
+- Redis
+- SQLAlchemy
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据权限管理蓝图

@@ -11,7 +11,8 @@ applicable_scope: 舆情数据源集成模块
 compliance_level: 顶级专业标准
 reference_models: ["Bloomberg Terminal", "Refinitiv", "Wind"]
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 舆情数据源集成蓝图

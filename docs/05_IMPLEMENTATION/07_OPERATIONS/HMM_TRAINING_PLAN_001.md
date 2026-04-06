@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 市场状态识别
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: цКАцЬпхЯ╣шоншобхИ?applicable_scope: ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУОхЫвщШЯ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md
 implementation_status: шобхИТхИ╢хоЪ
-duration: 2хС?---
+duration: 2хС?
+---
+---
 
 # HMMцибхЮЛцКАцЬпхЯ╣шоншобхИ?
 > **核心职责**: 文档内容说明

@@ -11,7 +11,7 @@ last_updated: 2026-04-03
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 本文档负责Layer 4机器学习层的文本编码器设计，包括文本向量化、语义编码、多语言支持等核心功能。
+  - 扩展功能、辅助模块
 
 standard_type: é«å±æ¶æèå¾
 
@@ -20,6 +20,7 @@ priority: P2
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的文本编码器设计，包括文本向量化、语义编码、多语言支持等核心功能。
 layer: Layer 4 (机器学习层)
+---
 ---
 # ææ¬ç¼ç å¨èå?
 > **核心职责**: Text Encoder蓝图设计

@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: RESPONSIBILITY_REVIEW_MECHANISM_001
 version: 1.0.0
@@ -14,6 +12,7 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构文档治理标准
 applicable_scope: 全系统文档职责审查
 compliance_level: 专业标准
+---
 ---
 
 # 职责审查机制

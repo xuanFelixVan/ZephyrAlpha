@@ -10,11 +10,10 @@ applicable_scope: 数据版本控制系统
 compliance_level: 专业标准
 parent_document: ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md
 dependencies:
-  - DVC
-  - Delta Lake
-  - Git
-responsibility:
-  - 数据质量 (Layer 1)
+- DVC
+- Delta Lake
+- Git
+responsibility: 数据版本控制策略与变更追踪
 ---
 
 # 数据版本控制系统蓝图

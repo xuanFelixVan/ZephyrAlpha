@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席文档架构�?
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 组合优化
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构文档
 applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行�?
+---
+---
 
 
 # L9_MODEL_ENSEMBLER: AI模型集成模块设计

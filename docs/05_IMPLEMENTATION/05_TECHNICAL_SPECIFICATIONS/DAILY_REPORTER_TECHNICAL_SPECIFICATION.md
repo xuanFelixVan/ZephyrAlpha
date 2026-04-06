@@ -6,13 +6,13 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构技术规�?applicable_scope: Layer 7 - AI报告�?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
-implementation_status: 待实�?---
+implementation_status: 待实�?
+---
+---
 
 # DailyReporter日报生成器技术规格书
 > **核心职责**: 文档内容说明

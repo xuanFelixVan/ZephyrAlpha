@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+  - 扩展功能、辅助模块
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 3 舆情分析?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
+---
 
 
 # SentimentAnalyzer情感分析模块技术规格书

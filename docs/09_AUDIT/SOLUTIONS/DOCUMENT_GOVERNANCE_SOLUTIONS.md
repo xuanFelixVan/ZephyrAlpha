@@ -6,13 +6,13 @@ parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: DOC_GOVERNANCE_SOLUTIONS
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ﮔﮔ۰۲ﮔﺎﭨﻝﮒﺕﮒﻠ؟ﻠ۱ﻟ۶۲ﮒﺏﮔﺗﮔ۰ﮒﭦ?
 > **核心职责**: 文档内容说明

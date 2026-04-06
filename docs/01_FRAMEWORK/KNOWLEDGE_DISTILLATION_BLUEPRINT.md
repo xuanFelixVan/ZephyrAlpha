@@ -11,9 +11,7 @@ last_updated: 2026-04-03
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 因子计算
-  - 特征工程
-  - 机器学习
+  - 扩展功能、辅助模块
 
 standard_type: é«å±æ¶æèå¾
 
@@ -22,6 +20,8 @@ priority: P2
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的知识蒸馏系统设计，包括教师学生模型、蒸馏损失、模型压缩等核心功能。
 layer: Layer 2 (Alpha因子层)
+---
+---
 ---
 
 

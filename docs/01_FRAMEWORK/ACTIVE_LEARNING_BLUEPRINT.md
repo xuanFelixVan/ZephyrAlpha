@@ -11,9 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 特征工程
-  - 机器学习
-  - 系统架构
+  - 部署运维、环境配置
 
 standard_type: 高层架构蓝图
 
@@ -22,6 +20,8 @@ priority: P2
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的主动学习系统设计，包括样本选择、标注策略、迭代学习等核心功能。
 layer: Layer 3 (策略层)
+---
+---
 ---
 ---
 

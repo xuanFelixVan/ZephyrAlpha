@@ -6,14 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
 responsibility:
-  - 风险预算
-  - 因子计算
-  - 组合优化
+  - 扩展功能、辅助模块
 layer: 全系统
 standard_type: 蓝图阶段最终完成报告
 applicable_scope: 蓝图阶段所有内容确认
 compliance_level: 专业机构标准
 reference_models: ["Two Sigma", "Citadel", "文艺复兴", "桥水基金", "Google", "Netflix"]
+---
+---
 ---
 ---
 

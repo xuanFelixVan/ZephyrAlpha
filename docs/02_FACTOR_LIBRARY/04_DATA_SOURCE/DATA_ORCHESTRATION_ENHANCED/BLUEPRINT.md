@@ -10,11 +10,12 @@ applicable_scope: 数据编排增强系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 dependencies:
-  - Prefect
-  - Dagster (可选)
-  - Apache Airflow (可选)
+- Prefect
+- Dagster (可选)
+- Apache Airflow (可选)
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 数据编排增强蓝图

@@ -5,15 +5,13 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
-responsibility:
-  - 因子计算
-  - 交易执行
-  - 数据源
+responsibility: 调度器API接口定义与使用说明
 standard_type: API参考文档
 applicable_scope: 智能下载调度器API
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 已完成---
+implementation_status: 已完成
+---
 
 
 # 智能下载调度器API参考

@@ -1,8 +1,6 @@
 ---
 responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
+  - 扩展功能、辅助模块
 
 module_id: COMPLIANCE_DOCUMENT_MANAGEMENT_BLUEPRINT_001
 version: 1.0.0
@@ -39,16 +37,13 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
-  - 合规文档管理系统架构设计
-  - 文档存储与检索
-  - 版本控制管理
-  - 访问权限管理
-  - 合规文档归档
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+---
+---
 ---
 ---
 

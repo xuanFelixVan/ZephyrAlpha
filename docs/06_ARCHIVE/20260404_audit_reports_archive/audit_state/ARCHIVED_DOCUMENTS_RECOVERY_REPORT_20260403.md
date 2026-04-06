@@ -9,12 +9,12 @@ last_updated: 2026-04-03
 auditor: Audit Sentinel
 standard_type: ϊ╕Υϊ╕γόΨΘόκμόΒλίνΞϋψΕϊ╝░όΛξίΣΛ
 responsibility:
-  - 数据源
-  - 特征工程
-  - 机器学习
+  - 扩展功能、辅助模块
 compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 applicable_scope: Layer 5ύφΨύΧξόΚπϋκΝί▒Γί╜ΤόκμόΨΘόκ?parent_document: ../AUDIT_STANDARDS_v5.1.md
-implementation_status: ί╖▓ίχΝόΙ?---
+implementation_status: ί╖▓ίχΝόΙ?
+---
+---
 
 # ί╜ΤόκμόΨΘόκμόΒλίνΞϋψΕϊ╝░όΛξίΣΛ
 > **核心职责**: 文档内容说明

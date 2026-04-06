@@ -9,7 +9,8 @@ standard_type: 文档治理审计报告
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
+  - 扩展功能、辅助模块
+---
 ---
 
 # Layer 6 组合优化层深度文档治理审计报告

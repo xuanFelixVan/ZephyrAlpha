@@ -6,12 +6,13 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 系统架构?standard_type: 专业量化机构文档地图
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 配置管理、参数优化
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: INDEX.md
-implementation_status: 活跃维护---
+implementation_status: 活跃维护
+---
+---
+---
 
 
 # 系统文档地图 (SITEMAP)

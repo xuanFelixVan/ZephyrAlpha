@@ -6,12 +6,12 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 市场状态识别
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпшпДхобцКе?applicable_scope: Layer 4 цЬ║хЩихнжф╣ах▒ВцКАцЬпц╝Ф?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: шпДхобхоМцИР---
+implementation_status: шпДхобхоМцИР
+---
+---
 
 
 # ц╕ЕщгОщЗПхМЦч│╗ч╗ЯLayer 4цКАцЬпц╝Фш┐Ыч╗╝хРИшпДхобцКе?

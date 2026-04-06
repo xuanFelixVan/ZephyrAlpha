@@ -6,13 +6,12 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 文档治理
-  - 机制建设
-  - 质量保证
+  - 扩展功能、辅助模块
 standard_type: 机制建设报告
 applicable_scope: 全系统长期优化机制
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+---
 ---
 
 # 长期优化机制建设报告

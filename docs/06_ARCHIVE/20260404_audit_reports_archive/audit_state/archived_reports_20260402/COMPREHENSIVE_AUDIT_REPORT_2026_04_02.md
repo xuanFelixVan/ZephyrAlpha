@@ -6,13 +6,13 @@ parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: IMP_COMPREHENSIVE_AUDIT_
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 > **核心职责**: 文档内容说明

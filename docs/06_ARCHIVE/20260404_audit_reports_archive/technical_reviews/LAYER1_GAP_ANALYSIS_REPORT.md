@@ -6,14 +6,14 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ждќтИГТіђТю»У»ёт«Ат«ў
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 standard_type: СИЊСИџжЄЈтїќТю║Тъёти«УиЮтѕєТъљТіЦтЉі
 applicable_scope: Layer 1ТЋ░ТЇ«жбётцёуљєт▒ѓ
 compliance_level: СИЊСИџТаЄтЄє
 parent_document: ../INDEX.md
-implementation_status: У┐ЏУАї?---
+implementation_status: У┐ЏУАї?
+---
+---
 
 # Layer 1ТЋ░ТЇ«жбётцёуљєт▒ѓСИЊСИџТю║Тъёт»╣Т»ћтѕєТъљТіЦтЉі
 > **核心职责**: 文档内容说明

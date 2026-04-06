@@ -9,12 +9,13 @@ standard_type: 蓝图阶段完整补充方案
 applicable_scope: 全系统缺失模块蓝图设计
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater"]
-responsibility: 风险预算
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+responsibility:
+  - 风险预算测试验证、质量保证
   responsibility_layer: Layer 1
   responsibility_layer: Layer 11
 last_updated: 2026-04-07
+---
+---
 ---
 ---
 

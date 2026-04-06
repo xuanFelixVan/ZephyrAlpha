@@ -11,7 +11,8 @@ standard_type: 专业量化机构进度报告
 applicable_scope: 第三阶段P0/P1核心文档更新完成
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 扩展功能、辅助模块
+---
 ---
 
 # 第三阶段P0/P1核心文档更新完成报告

@@ -6,12 +6,12 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобщкМшпБцКехСК
 responsibility:
-  - 因子计算
-  - 数据源
-  - 机器学习
+  - 扩展功能、辅助模块
 applicable_scope: ф╗гчаБчЫох╜ХхТМф╕┤цЧ╢цЦЗф╗╢ц▓╗чРЖщкМшп?compliance_level: щкМшпБхобшоб
 parent_document: ../INDEX.md
-implementation_status: х╖▓хоМцИ?---
+implementation_status: х╖▓хоМцИ?
+---
+---
 
 # щкМшпБхобшобцКехСКя╝Ъф╗гчаБчЫох╜Хф╕Оф╕┤цЧ╢цЦЗф╗╢ц▓╗чРЖ
 > **核心职责**: 文档内容说明

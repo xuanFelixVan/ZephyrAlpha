@@ -6,13 +6,13 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
-  - 数据源
-  - 机器学习
-  - 文档治理
+  - 扩展功能、辅助模块
 version: 1.0.0
 module_id: EXE_README_RTX3090
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
+---
 
 # ﮒ۳ﻛﺕﭨﮔ­ﻝﺑﮔ­ﻠﻟﮒﮔﻝﺏﭨﻝﭨ?- RTX 3090 ﻠﻝﺛ؟
 > **核心职责**: 文档内容说明

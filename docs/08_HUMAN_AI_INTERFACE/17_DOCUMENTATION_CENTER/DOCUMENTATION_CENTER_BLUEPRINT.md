@@ -7,7 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块
+---
 ---
 
 ﻿---
@@ -28,20 +29,12 @@ implementation_status: 蓝图设计
 open_source_project: MkDocs
 github_url: https://github.com/mkdocs/mkdocs
 license: BSD-2-Clause---
-
-
-# 文档中心模块蓝图
 > **核心职责**: Documentation Center蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Documentation Center蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **开源项目**: [MkDocs](https://github.com/mkdocs/mkdocs)
 > **Stars**: 19k+ | **License**: BSD-2-Clause
-
 ---
 ## 一、模块概述
 

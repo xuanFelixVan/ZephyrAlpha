@@ -14,11 +14,13 @@ reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: AI工程�?standard_type: 专业量化机构技术规格书
 responsibility:
-  - 数据质量监控与治理，包括数据完整性检查、一致性验证、异常检测、数据修复
+  - 扩展功能、辅助模块
 applicable_scope: MLOps平台
 compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/MLOPS_PLATFORM_BLUEPRINT.md
-implementation_status: 技术规格设计完�?---
+implementation_status: 技术规格设计完�?
+---
+---
 
 # MLOps平台技术规格书 v1.0
 
