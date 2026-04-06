@@ -88,6 +88,16 @@ implementation_status: 蓝图设计
 | 8.14 | STRATEGY_MANAGEMENT | 策略管理界面 | Streamlit + SQLite | P2 |
 | 8.15 | PERMISSION_MANAGEMENT | 权限管理界面 | Streamlit + FastAPI-Users | P2 |
 
+### 2.4 专业补充模块（必须实现）
+
+| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 | 开源项目 |
+|------|--------|---------|---------|--------|---------|
+| 8.16 | API_RATE_LIMITING | API限流保护 | slowapi | P0 | [slowapi](https://github.com/laurentS/slowapi) 1.2k+ |
+| 8.17 | DOCUMENTATION_CENTER | 文档中心 | MkDocs | P0 | [MkDocs](https://github.com/mkdocs/mkdocs) 19k+ |
+| 8.18 | KNOWLEDGE_BASE | 知识库系统 | Obsidian | P0 | [Obsidian](https://obsidian.md) 免费个人使用 |
+| 8.19 | CI_CD_INTEGRATION | CI/CD集成 | GitHub Actions | P1 | [GitHub Actions](https://github.com/features/actions) 公开免费 |
+| 8.20 | DATA_BACKUP | 数据备份系统 | Restic | P1 | [Restic](https://github.com/restic/restic) 25k+ |
+
 ---
 
 ## 三、模块依赖关系

@@ -1,10 +1,11 @@
 ---
 module_id: INDEX_RESEARCH_INNOVATION_001
-version: 1.0.1
+version: 2.0.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 系统架构�?standard_type: 专业量化机构目录索引
+last_updated: 2026-04-06
+owner: 系统架构师
+standard_type: 专业量化机构目录索引
 applicable_scope: Layer 9 - 研究与创新层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
@@ -13,15 +14,19 @@ implementation_status: 设计阶段
 
 # Layer 9: 研究与创新层目录索引
 
-> **版本**: v5.3
+> **版本**: v2.0
 > **架构**: Layer 9 - 研究与创新层
-> **最后更�?*: 2026-04-04
-> **维护�?*: 系统架构�?
+> **最后更新**: 2026-04-06
+> **维护者**: 系统架构师
+
 ---
 
 ## 🎯 目录职责
 
-本目录存放Layer 9研究与创新层的所有文档，包括�?- AI虚拟研究实验�?- 创新孵化�?- 学术前沿追踪
+本目录存放Layer 9研究与创新层的所有文档，包括：
+- AI虚拟研究实验室
+- 创新孵化器
+- 学术前沿追踪
 - 研究知识管理
 - 因子挖掘研究
 
@@ -34,22 +39,26 @@ implementation_status: 设计阶段
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
 | [研究与创新层蓝图](./BLUEPRINT.md) | Layer 9总体架构设计 | ⭐⭐⭐⭐⭐ |
-| [缺失模块补充设计](./MISSING_MODULES_SUPPLEMENT.md) | 特征存储、模型注册表、研究仪表板 | ⭐⭐⭐⭐⭐ |
-| [完整缺失模块补充方案v2.0](./COMPLETE_SUPPLEMENT_v2.md) | 数据版本控制、超参数优化、模型解释性、A/B测试等 | ⭐⭐⭐⭐⭐ |
-| [完整蓝图v3.0](./COMPLETE_BLUEPRINT_V3.md) | **完整专业级蓝图**，覆盖所有8大平台 | ⭐⭐⭐⭐⭐ |
-| [关键缺失模块补充v4.0](./CRITICAL_MISSING_V4.md) | **10个关键缺失模块**，RD-Agent、时间泄漏控制等 | ⭐⭐⭐⭐⭐ |
-| [完整实施方案v5.0](./IMPLEMENTATION_GUIDE_V5.md) | **个人开发+AI维护完整方案**，80%开源+专业治理 | ⭐⭐⭐⭐⭐ |
-| [System_Manifest更新指南](./SYSTEM_MANIFEST_UPDATE_GUIDE.md) | System_Manifest.md索引更新说明 | ⭐⭐⭐⭐ |
+| [实施方案](./IMPLEMENTATION_GUIDE.md) | **个人开发+AI维护完整方案**，80%开源+专业治理 | ⭐⭐⭐⭐⭐ |
+
+### 归档文档
+
+历史版本已归档至 `_archive/` 目录，包括：
+- `MISSING_MODULES_SUPPLEMENT.md` (v1.0)
+- `COMPLETE_SUPPLEMENT_v2.md` (v2.0)
+- `COMPLETE_BLUEPRINT_V3.md` (v3.0)
+- `CRITICAL_MISSING_V4.md` (v4.0)
+- `SYSTEM_MANIFEST_UPDATE_GUIDE.md` (临时文档)
 
 ### 子模块（规划中）
 
-| 目录名称 | 说明 | 状�?|
+| 目录名称 | 说明 | 状态 |
 |---------|------|------|
-| `ai_research_lab/` | AI虚拟研究实验�?| 🔄 规划�?|
-| `innovation_incubator/` | 创新孵化�?| 🔄 规划�?|
-| `academic_tracking/` | 学术前沿追踪 | 🔄 规划�?|
-| `knowledge_management/` | 研究知识管理 | 🔄 规划�?|
-| `factor_mining/` | 因子挖掘研究 | 🔄 规划�?|
+| `01_ai_research_lab/` | AI虚拟研究实验室 | 🔄 规划中 |
+| `innovation_incubator/` | 创新孵化器 | 🔄 规划中 |
+| `academic_tracking/` | 学术前沿追踪 | 🔄 规划中 |
+| `knowledge_management/` | 研究知识管理 | 🔄 规划中 |
+| `factor_mining/` | 因子挖掘研究 | 🔄 规划中 |
 
 ---
 
@@ -69,7 +78,10 @@ implementation_status: 设计阶段
 - `09_RESEARCH_INNOVATION/` 定义**研究战略和架构**（研究体系设计）
 - `07_RESEARCH/` 提供**研究工具和方法**（如何做研究）
 
+---
+
 ## 📖 快速导航
+
 ### 核心功能
 
 1. **AI虚拟研究实验室**: 模拟研究团队协作（GLM-4多角色）
@@ -83,18 +95,15 @@ implementation_status: 设计阶段
 - **论文检索**: arXiv API, Semantic Scholar
 - **知识库**: ChromaDB, LangChain
 
+---
+
 ## 🔗 相关链接
 
 - **研究工具支持**: [../07_RESEARCH/INDEX.md](../07_RESEARCH/INDEX.md)
 - **实验管理**: MLflow, Weights & Biases
-
----
-
-## 🔗 相关文档
-
 - [统一架构 (Layer 0-11)](../01_FRAMEWORK/ARCHITECTURE.md)
 - [AI虚拟研究团队](../01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/INDEX.md)
-- [因子�?(Layer 2)](../02_FACTOR_LIBRARY/INDEX.md)
+- [因子库 (Layer 2)](../02_FACTOR_LIBRARY/INDEX.md)
 - [治理与合规层 (Layer 10)](../10_GOVERNANCE_COMPLIANCE/INDEX.md)
 
 ---
@@ -103,9 +112,8 @@ implementation_status: 设计阶段
 
 | 统计项 | 数量 |
 |--------|------|
-| 蓝图文档 | 7 |
-| 技术文档 | 0 |
-| 实施文档 | 0 |
+| 蓝图文档 | 2 |
+| 归档文档 | 5 |
 | **总计** | **7** |
 
 ---
