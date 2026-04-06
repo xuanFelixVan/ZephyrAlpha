@@ -146,6 +146,16 @@ implementation_status: 蓝图设计
 │  │  (Streamlit) │   │  (Streamlit) │                              │
 │  └──────────────┘   └──────────────┘                              │
 │                                                                      │
+│  专业补充模块：                                                     │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐          │
+│  │  API限流     │   │  文档中心    │   │  知识库      │          │
+│  │  (slowapi)   │   │  (MkDocs)    │   │  (Obsidian)  │          │
+│  └──────────────┘   └──────────────┘   └──────────────┘          │
+│  ┌──────────────┐   ┌──────────────┐                              │
+│  │  CI/CD集成   │   │  数据备份    │                              │
+│  │(GitHub Actions)│  │  (Restic)    │                              │
+│  └──────────────┘   └──────────────┘                              │
+│                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -246,6 +256,16 @@ implementation_status: 蓝图设计
 | Day 30-31 | 策略管理界面 | 策略管理功能 |
 | Day 32-33 | 权限管理界面 | 权限管理功能 |
 
+### 5.5 第五阶段：专业补充（必须）
+
+| 周 | 任务 | 交付物 |
+|----|------|--------|
+| Day 34-34 | API限流保护 | slowapi集成 |
+| Day 35-35 | 文档中心 | MkDocs部署 |
+| Day 36-36 | 知识库系统 | Obsidian配置 |
+| Day 37-38 | CI/CD集成 | GitHub Actions配置 |
+| Day 39-39 | 数据备份系统 | Restic备份配置 |
+
 ---
 
 ## 六、模块详情索引
@@ -279,6 +299,16 @@ implementation_status: 蓝图设计
 | 数据管理蓝图 | [DATA_MANAGEMENT_BLUEPRINT.md](13_DATA_MANAGEMENT/DATA_MANAGEMENT_BLUEPRINT.md) | 数据管理方案 |
 | 策略管理蓝图 | [STRATEGY_MANAGEMENT_BLUEPRINT.md](14_STRATEGY_MANAGEMENT/STRATEGY_MANAGEMENT_BLUEPRINT.md) | 策略管理方案 |
 | 权限管理蓝图 | [PERMISSION_MANAGEMENT_BLUEPRINT.md](15_PERMISSION_MANAGEMENT/PERMISSION_MANAGEMENT_BLUEPRINT.md) | 权限管理方案 |
+
+### 6.4 专业补充模块
+
+| 文档 | 位置 | 说明 |
+|------|------|------|
+| API限流蓝图 | [API_RATE_LIMITING_BLUEPRINT.md](16_API_RATE_LIMITING/API_RATE_LIMITING_BLUEPRINT.md) | slowapi限流方案 |
+| 文档中心蓝图 | [DOCUMENTATION_CENTER_BLUEPRINT.md](17_DOCUMENTATION_CENTER/DOCUMENTATION_CENTER_BLUEPRINT.md) | MkDocs文档方案 |
+| 知识库蓝图 | [KNOWLEDGE_BASE_BLUEPRINT.md](18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md) | Obsidian知识库方案 |
+| CI/CD蓝图 | [CI_CD_INTEGRATION_BLUEPRINT.md](19_CI_CD_INTEGRATION/CI_CD_INTEGRATION_BLUEPRINT.md) | GitHub Actions方案 |
+| 数据备份蓝图 | [DATA_BACKUP_BLUEPRINT.md](20_DATA_BACKUP/DATA_BACKUP_BLUEPRINT.md) | Restic备份方案 |
 
 ---
 
