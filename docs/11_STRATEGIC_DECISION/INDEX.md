@@ -112,8 +112,8 @@ implementation_status: 设计阶段
 ### 相关层级
 
 - [组合优化层 (Layer 6)](../04_EXECUTION/INDEX.md)
-- [风险管理层 (Layer 7)](../07_RISK_MANAGEMENT/INDEX.md)
-- [报告层 (Layer 8)](../08_REPORTING/INDEX.md)
+- [风险管理层 (Layer 7)](../01_FRAMEWORK/ARCHITECTURE.md#layer-7-风险管理层) - 详见架构文档
+- [报告层 (Layer 8)](../01_FRAMEWORK/ARCHITECTURE.md#layer-8-报告层) - 详见架构文档
 - [治理与合规层 (Layer 10)](../10_GOVERNANCE_COMPLIANCE/INDEX.md)
 
 ---
