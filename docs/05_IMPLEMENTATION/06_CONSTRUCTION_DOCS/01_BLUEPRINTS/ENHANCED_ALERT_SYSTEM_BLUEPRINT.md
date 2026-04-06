@@ -1,9 +1,9 @@
 ---
 module_id: ENHANCED_ALERT_SYSTEM_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: 2026-04-06
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统统一告警平台
@@ -11,6 +11,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+open_source_dependency: prometheus, grafana, alertmanager
+estimated_effort: 2周
+priority: P1
 related_documents:
   upstream:
     - 01_FRAMEWORK/ARCHITECTURE.md (系统架构)
@@ -18,12 +21,14 @@ related_documents:
     - 10_AI_WORKFLOW/REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md (舆情预警模块)
     - 01_FRAMEWORK/DATA_QUALITY_MONITORING_BLUEPRINT.md (数据质量监控)
 responsibility_boundary: |
-  本文档职�? 统一告警平台
-  - 接收来自所有子系统的告警（数据质量、风险控制、执行系统、舆情分析等�?  - 提供告警聚合、告警抑制、告警路由、多渠道分发
-  - 告警趋势分析和统�?  
-  子系统专用预警模�?
+  本文档职责: 统一告警平台
+  - 接收来自所有子系统的告警（数据质量、风险控制、执行系统、舆情分析等）
+  - 提供告警聚合、告警抑制、告警路由、多渠道分发
+  - 告警趋势分析和统计
+  
+  子系统专用预警模块:
   - 10_AI_WORKFLOW/REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md (舆情专用预警)
-    �?该模块产生的告警会发送到本统一告警平台进行分发
+    由该模块产生的告警会发送到本统一告警平台进行分发
 ---
 
 # 实时告警系统增强蓝图

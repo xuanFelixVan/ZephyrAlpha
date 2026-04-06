@@ -75,6 +75,8 @@ open_source_ratio: 80%
 | **SHAP** | 22k+ | 模型解释性 | 3.4 | ⭐⭐⭐⭐⭐ | 低 |
 | **Prefect** | 15k+ | 工作流编排 | 跨平台 | ⭐⭐⭐⭐ | 中 |
 | **Great Expectations** | 18k+ | 数据质量 | 1.4, 3.1 | ⭐⭐⭐⭐⭐ | 低 |
+| **Evidently AI** | 5k+ | 模型监控、漂移检测 | 2.11 | ⭐⭐⭐⭐⭐ | 低 |
+| **HypEx** | - | A/B测试、因果推断 | 2.12 | ⭐⭐⭐⭐ | 中 |
 | **Grafana** | 65k+ | 监控告警 | 8.3 | ⭐⭐⭐⭐ | 中 |
 | **FastAPI** | 75k+ | API开发 | 8.4 | ⭐⭐⭐⭐⭐ | 低 |
 | **Hydra** | 8k+ | 配置管理 | 8.2 | ⭐⭐⭐⭐⭐ | 低 |
@@ -91,8 +93,8 @@ open_source_ratio: 80%
 | **Weights & Biases** | 8k+ | 实验追踪(替代MLflow) | ⭐⭐⭐⭐ |
 | **DataHub** | 9k+ | 数据血缘 | ⭐⭐⭐ |
 | **BentoML** | 7k+ | 模型服务 | ⭐⭐⭐⭐ |
-| **Evidently AI** | 5k+ | 模型监控 | ⭐⭐⭐⭐⭐ |
-| **NannyML** | 3k+ | 漂移检测 | ⭐⭐⭐⭐ |
+| **NannyML** | 3k+ | 漂移检测(替代Evidently) | ⭐⭐⭐⭐ |
+| **Deepchecks** | 3k+ | 模型验证 | ⭐⭐⭐⭐ |
 | **ChromaDB** | 12k+ | 向量数据库 | ⭐⭐⭐⭐⭐ |
 | **LangChain** | 90k+ | LLM应用 | ⭐⭐⭐⭐⭐ |
 
