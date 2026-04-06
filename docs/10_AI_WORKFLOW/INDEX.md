@@ -2,6 +2,7 @@
 module_id: INDEX_AI_WORKFLOW_001
 title: AI工作流模块总索引
 version: 1.0.0
+status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-06
 owner: 首席文档架构师
