@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 数据质量
+
 module_id: LAYER6_DEEP_AUDIT_V2_20260407_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 审计系统
+  - 文档治理
+
 module_id: MONITORING_REPORT_20260407_021137_001
 version: 1.0.0
 status: Active

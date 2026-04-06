@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 交易执行
+
 module_id: LAYER9_DOCUMENT_GOVERNANCE_FIX_REPORT_001
 version: 1.0.0
 status: Active
