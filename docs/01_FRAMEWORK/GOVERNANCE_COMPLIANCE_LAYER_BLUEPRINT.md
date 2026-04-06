@@ -4,9 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席架构师
-layer: Layer 10 (治理与合规层)
-standard_type: 专业量化机构级蓝图专业量化机构级蓝�?applicable_scope: Layer 10 - 治理与合规层
+owner: 首席架构�?standard_type: 专业量化机构级蓝�?applicable_scope: Layer 10 - 治理与合规层
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Governance", "Citadel Compliance", "Two Sigma Risk Governance", "SEC/CFA Institute Standards"]
 related_documents:

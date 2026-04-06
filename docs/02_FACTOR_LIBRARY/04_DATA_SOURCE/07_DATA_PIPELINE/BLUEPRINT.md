@@ -1,4 +1,5 @@
-------
+---
+---
 module_id: DATA_PIPELINE_BLUEPRINT_001
 version: 1.0.0
 status: Active

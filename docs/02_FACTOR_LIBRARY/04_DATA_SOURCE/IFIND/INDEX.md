@@ -130,7 +130,6 @@ df = connector.get_financial_data(
 
 - 🟡 IFIND_API.md - API详细文档
 - 🟡 IFIND_DATA_MODELS.md - 数据模型文档
-- 🟡 IFIND_DATA_QUALITY.md - 数据质量报告
 
 ---
 
