@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SMART_EXECUTION_ENGINE_001
 version: 1.0.1
 spec_version: 1.0
@@ -25,6 +25,9 @@ priority: P0
 
 
 
+
+
+# 模块概述
 
 > **索引**: `SMART_EXEC_BLUEPRINT_001`
 > **开发时?*: 80h

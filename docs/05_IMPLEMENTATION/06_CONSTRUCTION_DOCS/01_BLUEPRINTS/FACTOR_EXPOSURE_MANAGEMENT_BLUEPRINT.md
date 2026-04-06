@@ -1,4 +1,29 @@
 ---
+module_id: FACTOR_EXPOSURE_MANAGEMENT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席蓝图架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+implementation_progress: 0%
+open_source_dependency: Riskfolio-Lib, pyfolio
+estimated_effort: 1周
+layer: 'Layer 6 (组合优化层)'
+---
+
+# 因子暴露管理蓝图
+
+> **模块ID**: FACTOR_EXPOSURE_MANAGEMENT_001
+> **创建日期**: 2026-04-07
+> **核心定位**: 监控、分析和调整组合的因子暴露
+
+---
+
 ## 1. 模块概述
 
 ### 1.1 核心职责
@@ -13,10 +38,7 @@
 ### 1.2 开源依赖
 
 | 库名 | 版本 | 用途 |
-|
-layer: 'Layer 5 (策略执行层)'
----
----|------|------|
+|------|------|------|
 | Riskfolio-Lib | >=7.0.0 | 因子暴露计算 |
 | pyfolio | >=0.9.0 | 因子分析 |
 
@@ -32,141 +54,64 @@ class FactorExposureManager:
     因子暴露管理器
     """
     
-    def __init__(
-        self,
-        factor_model: str = 'barra',
-        risk_factors: List[str] = None
-    ):
-        self.factor_model = factor_model
-        self.risk_factors = risk_factors or [
-            'market', 'size', 'value', 'momentum', 
-            'quality', 'volatility', 'liquidity'
-        ]
-    
     def calculate_exposure(
         self,
         portfolio_weights: np.ndarray,
-        factor_loadings: pd.DataFrame
-    ) -> Dict[str, float]:
+        factor_loadings: np.ndarray
+    ) -> np.ndarray:
         """
         计算组合因子暴露
         
         参数:
             portfolio_weights: 组合权重
-            factor_loadings: 因子载荷矩阵 (N × K)
+            factor_loadings: 因子载荷矩阵
             
         返回:
-            各因子暴露值
+            因子暴露向量
         """
         pass
     
-    def monitor_exposure_drift(
+    def monitor_exposure(
         self,
-        current_exposure: Dict[str, float],
-        target_exposure: Dict[str, float],
+        current_exposure: np.ndarray,
+        target_exposure: np.ndarray,
         tolerance: float = 0.1
     ) -> Dict:
         """
         监控因子暴露偏离
-        
-        返回偏离报告和调整建议
         """
         pass
     
-    def generate_adjustment_trades(
+    def suggest_adjustment(
         self,
         current_weights: np.ndarray,
-        target_exposure: Dict[str, float],
-        factor_loadings: pd.DataFrame,
-        constraints: Dict
-    ) -> Dict:
+        target_exposure: np.ndarray,
+        factor_loadings: np.ndarray
+    ) -> np.ndarray:
         """
-        生成因子暴露调整交易
-        
-        返回需要调整的持仓和交易量
-        """
-        pass
-```
-
-### 2.2 因子暴露分析
-
-```python
-class FactorExposureAnalyzer:
-    """
-    因子暴露分析器
-    """
-    
-    def exposure_decomposition(
-        self,
-        portfolio_return: np.ndarray,
-        factor_returns: pd.DataFrame,
-        factor_loadings: pd.DataFrame
-    ) -> Dict:
-        """
-        因子暴露归因分析
-        
-        将组合收益分解为各因子贡献
-        """
-        pass
-    
-    def exposure_risk_contribution(
-        self,
-        factor_exposure: Dict[str, float],
-        factor_covariance: np.ndarray
-    ) -> Dict[str, float]:
-        """
-        计算各因子对组合风险的贡献
+        建议权重调整以达目标暴露
         """
         pass
 ```
 
 ---
 
-## 3. 配置参数
+## 3. 实施路径
 
-```yaml
-factor_exposure_management:
-  # 因子定义
-  factors:
-    style_factors:
-      - size
-      - value
-      - momentum
-      - quality
-      - volatility
-      - liquidity
-    sector_factors:
-      - technology
-      - healthcare
-      - financial
-      - consumer
-      
-  # 暴露限制
-  exposure_limits:
-    market:
-      min: 0.0
-      max: 1.0
-    size:
-      min: -0.5
-      max: 0.5
-    value:
-      min: -0.3
-      max: 0.3
-      
-  # 监控参数
-  monitoring:
-    drift_tolerance: 0.1
-    rebalance_threshold: 0.2
-    alert_threshold: 0.3
-```
+### Phase 1: 核心功能 (1周)
+- [ ] 实现因子暴露计算
+- [ ] 实现暴露监控
+- [ ] 实现调整建议
 
 ---
 
-## 4. 变更历史
+## 4. 文档治理
+
+### 4.1 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本 | 首席蓝图架构师 |
 
 ---
 

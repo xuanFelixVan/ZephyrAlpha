@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.1
 spec_version: 1.0
@@ -25,6 +25,9 @@ priority: P0
 
 
 
+
+
+# 文档职责说明
 
 > **索引**: `RISK_HEDGE_BLUEPRINT_001`
 > **开发时?*: 100h

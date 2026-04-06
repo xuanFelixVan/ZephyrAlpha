@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
@@ -26,6 +26,9 @@ layer: 'Layer 5 (策略执行层)'
 
 
 
+
+
+# 模块概述
 
 > **开发时?*: 160h
 > **核心定位**: 实现策略分层权重分配、信号融合机制、策略协同优化，构建多策略协同的专业量化系统

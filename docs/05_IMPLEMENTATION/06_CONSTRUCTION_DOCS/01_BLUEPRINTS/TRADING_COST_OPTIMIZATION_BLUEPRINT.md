@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.1
 spec_version: 1.0
@@ -27,6 +27,9 @@ priority: P0
 
 
 
+
+
+# 模块概述
 
 > **索引**: `TRADING_COST_001`
 > **开发时?*: 60h（约1.5周）

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RL_REBALANCING_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
@@ -26,6 +26,9 @@ layer: 'Layer 5 (策略执行层)'
 
 
 
+
+
+# 模块概述
 
 > **索引**: `RL_REBALANCING_SYSTEM_001`
 > **开发时?*: 200h

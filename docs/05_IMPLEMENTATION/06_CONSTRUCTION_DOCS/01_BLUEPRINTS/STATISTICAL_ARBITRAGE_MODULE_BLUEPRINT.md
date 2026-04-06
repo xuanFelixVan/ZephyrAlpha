@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STATISTICAL_ARBITRAGE_MODULE_001
 version: 1.0.1
 spec_version: 1.0
@@ -25,6 +25,9 @@ priority: P0
 
 
 
+
+
+# 模块概述
 
 > **索引**: `STATISTICAL_ARBITRAGE_001`
 > **开发时?*: 160h

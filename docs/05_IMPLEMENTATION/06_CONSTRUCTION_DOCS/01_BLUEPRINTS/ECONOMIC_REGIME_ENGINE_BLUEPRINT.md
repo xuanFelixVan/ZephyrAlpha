@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ECONOMIC_REGIME_ENGINE_001
 version: 2.0.3
 spec_version: 2.0
@@ -29,6 +29,9 @@ priority: P0
 
 
 
+
+
+# 版本演进说明
 
 > **?当前有效版本** | v1.0已归?>
 > **索引**: `ECONOMIC_REGIME_001`

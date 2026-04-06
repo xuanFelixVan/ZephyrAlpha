@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TAIL_RISK_HEDGING_001
 version: 1.0.1
 spec_version: 1.0
@@ -26,6 +26,9 @@ layer: 'Layer 5 (策略执行层)'
 
 
 
+
+
+# 概述
 
 > **索引**: `TAIL_RISK_BLUEPRINT_001`
 > **开发时?*: 60h

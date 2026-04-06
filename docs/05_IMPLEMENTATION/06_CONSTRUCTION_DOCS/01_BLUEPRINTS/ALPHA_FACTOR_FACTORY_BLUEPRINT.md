@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALPHA_FACTOR_FACTORY_001
 version: 1.0.0
 status: Active
@@ -17,6 +17,9 @@ open_source_dependency: alphalens, pandas, numpy, scipy, scikit-learn
 ---
 
 
+
+
+# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

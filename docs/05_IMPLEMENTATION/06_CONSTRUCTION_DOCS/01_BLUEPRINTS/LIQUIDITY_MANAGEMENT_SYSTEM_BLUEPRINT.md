@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
@@ -25,6 +25,9 @@ priority: P1
 
 
 
+
+
+# 模块概述
 
 > **开发时?*: 80h
 > **核心定位**: 监控资金流动性，预测资金需求，优化资金配置，实现桥水模式的流动性管理能?

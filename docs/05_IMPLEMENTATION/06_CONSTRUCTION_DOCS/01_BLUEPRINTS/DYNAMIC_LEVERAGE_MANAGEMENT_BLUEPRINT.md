@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001
 version: 1.0.1
 spec_version: 1.0
@@ -25,6 +25,9 @@ priority: P0
 
 
 
+
+
+# 模块概述
 
 > **开发时?*: 140h
 > **核心定位**: 基于市场波动率和风险预算动态调整杠杆水平，实现风险调整后收益最大化

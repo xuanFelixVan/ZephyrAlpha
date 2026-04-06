@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.1
 spec_version: 1.0
@@ -27,6 +27,9 @@ priority: P0
 
 
 
+
+
+# 模块概述
 
 > **开发时?*: 80h（约2周）
 > **核心定位**: 使用DCC-GARCH模型实时更新资产间相关性，识别相关性突变，为风险平价优化提供动态相关性矩?> **个人开发可?*: ⭐⭐⭐⭐?完全可行
@@ -64,7 +67,7 @@ priority: P0
 |---------|-----------|---------|------|
 | [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
 | [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供资产元数据 |
-| [数据血缘追踪蓝图](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) | DATA_LINEAGE_TRACKING_001 | 中依赖 | 提供数据血缘 |
+| 数据血缘追踪蓝图 | DATA_LINEAGE_TRACKING_001 | 中依赖 | 提供数据血缘 |
 
 ### 下游依赖
 

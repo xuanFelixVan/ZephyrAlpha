@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OPENING_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -17,6 +17,9 @@ open_source_dependency: pandas, numpy, scipy
 ---
 
 
+
+
+# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

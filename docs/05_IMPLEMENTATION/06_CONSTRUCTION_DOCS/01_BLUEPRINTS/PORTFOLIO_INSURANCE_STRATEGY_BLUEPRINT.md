@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.1
 spec_version: 1.0
@@ -26,6 +26,9 @@ layer: 'Layer 5 (策略执行层)'
 
 
 
+
+
+# 概述
 
 > **索引**: `CPPI_BLUEPRINT_001`
 > **开发时?*: 80h

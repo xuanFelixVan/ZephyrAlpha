@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
@@ -18,6 +18,9 @@ layer: 'Layer 5 (策略执行层)'
 ---
 
 
+
+
+# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

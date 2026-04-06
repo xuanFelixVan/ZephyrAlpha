@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_PATTERN_RECOGNITION_ENGINE_001
 version: 1.0.2
 spec_version: 1.0
@@ -24,6 +24,9 @@ priority: P0
 ---
 
 
+
+
+# 模块概述
 
 > **索引**: `AI_PATTERN_001`
 > **开发时?*: 180h
