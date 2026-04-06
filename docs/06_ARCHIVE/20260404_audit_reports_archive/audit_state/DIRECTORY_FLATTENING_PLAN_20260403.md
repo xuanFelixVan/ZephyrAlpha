@@ -4,312 +4,312 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 文档架构�?standard_type: 目录扁平化方�?applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/
-compliance_level: 专业标准
+owner: µצחµíúµ₧╢µ₧הσ╕?standard_type: τ¢«σ╜ץµיבσ╣│σלצµצ╣µí?applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/
+compliance_level: Σ╕ףΣ╕תµáחσחז
 parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md
 ---
 
-# 目录扁平化方�?
-> **方案编号**: FLATTEN_001
-> **创建日期**: 2026-04-03
-> **目标**: 减少目录深度，提高文档可访问�?
+# τ¢«σ╜ץµיבσ╣│σלצµצ╣µí?
+> **µצ╣µíטτ╝צσן╖**: FLATTEN_001
+> **σט¢σ╗║µקÑµ£ƒ**: 2026-04-03
+> **τ¢«µáח**: σחןσ░סτ¢«σ╜ץµ╖▒σ║ª∩╝לµןנΘ½רµצחµíúσן»Φ«┐Θק«µא?
 ---
 
-## 📋 问题分析
+## ≡ƒףכ Θק«Θóרσטזµ₧נ
 
-### 当前目录结构问题
+### σ╜ףσיםτ¢«σ╜ץτ╗ףµ₧הΘק«Θóר
 
-根据文档治理审计报告，发现以下目录深度超�?层：
+µá╣µם«µצחµíúµ▓╗τנזσ«íΦ«íµךÑσסך∩╝לσןסτמ░Σ╗ÑΣ╕כτ¢«σ╜ץµ╖▒σ║ªΦ╢וΦ┐?σ▒ג∩╝ת
 
-| 目录路径 | 当前深度 | 问题描述 |
+| τ¢«σ╜ץΦ╖»σ╛ה | σ╜ףσיםµ╖▒σ║ª | Θק«ΘóרµןןΦ┐░ |
 |---------|---------|---------|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/web_interface/` | 6�?| 嵌套过深，难以导�?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/` | 6�?| 嵌套过深，难以导�?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/data_consistency/` | 6�?| 嵌套过深，难以导�?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/trading_costs/` | 6�?| 嵌套过深，难以导�?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/a_stock_rules/` | 6�?| 嵌套过深，难以导�?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/web_interface/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/data_consistency/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/trading_costs/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/a_stock_rules/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
 
-### 影响评估
+### σ╜▒σףםΦ»הΣ╝░
 
-**负面影响**:
-1. **导航困难**: 用户需要多次点击才能访问文�?2. **路径冗长**: 文件路径过长，不利于引用
-3. **维护成本�?*: 目录结构复杂，增加维护难�?4. **违反最佳实�?*: 专业量化机构建议目录深度不超�?�?
+**Φ┤ƒΘ¥óσ╜▒σףם**:
+1. **σ»╝Φט¬σ¢░Θת╛**: τפ¿µט╖Θ£אΦªבσñתµ¼íτג╣σח╗µיםΦד╜Φ«┐Θק«µצחµí?2. **Φ╖»σ╛הσזקΘץ┐**: µצחΣ╗╢Φ╖»σ╛הΦ┐חΘץ┐∩╝לΣ╕םσט⌐Σ║מσ╝ץτפ¿
+3. **τ╗┤µךñµטנµ£¼Θ½?*: τ¢«σ╜ץτ╗ףµ₧הσñםµ¥ג∩╝לσó₧σךáτ╗┤µךñΘת╛σ║?4. **Φ┐¥σןםµ£אΣ╜│σ«₧Φ╖?*: Σ╕ףΣ╕תΘחןσלצµ£║µ₧הσ╗║Φ««τ¢«σ╜ץµ╖▒σ║ªΣ╕םΦ╢וΦ┐?σ▒?
 ---
 
-## 🎯 扁平化目�?
-### 目标目录深度
+## ≡ƒמ» µיבσ╣│σלצτ¢«µá?
+### τ¢«µáחτ¢«σ╜ץµ╖▒σ║ª
 
-| 目标 | 当前 | 目标 |
+| τ¢«µáח | σ╜ףσים | τ¢«µáח |
 |------|------|------|
-| **最大目录深�?* | 6�?| 4�?|
-| **平均目录深度** | 5�?| 3�?|
+| **µ£אσñºτ¢«σ╜ץµ╖▒σ║?* | 6σ▒?| 4σ▒?|
+| **σ╣│σ¥חτ¢«σ╜ץµ╖▒σ║ª** | 5σ▒?| 3σ▒?|
 
-### 扁平化原�?
-1. **保持职责清晰**: 扁平化后目录职责不变
-2. **减少嵌套层级**: 将深层目录提升到上层
-3. **保持文件命名规范**: 扁平化后文件命名保持一�?4. **更新所有引�?*: 扁平化后更新所有文档引�?
+### µיבσ╣│σלצσמƒσט?
+1. **Σ┐¥µלבΦבלΦ┤úµ╕וµש░**: µיבσ╣│σלצσנמτ¢«σ╜ץΦבלΦ┤úΣ╕םσןר
+2. **σחןσ░סσ╡לσÑקσ▒גτ║º**: σ░זµ╖▒σ▒גτ¢«σ╜ץµןנσםחσט░Σ╕ךσ▒ג
+3. **Σ┐¥µלבµצחΣ╗╢σס╜σנםΦºהΦלד**: µיבσ╣│σלצσנמµצחΣ╗╢σס╜σנםΣ┐¥µלבΣ╕אΦח?4. **µ¢┤µצ░µיאµ£יσ╝ץτפ?*: µיבσ╣│σלצσנמµ¢┤µצ░µיאµ£יµצחµíúσ╝ץτפ?
 ---
 
-## 📐 扁平化方�?
-### 方案A: 完全扁平化（推荐�?
-**操作步骤**:
+## ≡ƒףנ µיבσ╣│σלצµצ╣µí?
+### µצ╣µíטA: σ«לσו¿µיבσ╣│σלצ∩╝טµמ¿Φםנ∩╝?
+**µףםΣ╜£µ¡ÑΘ¬ñ**:
 
-#### 1. web_interface目录扁平�?
-**当前结构**:
+#### 1. web_interfaceτ¢«σ╜ץµיבσ╣│σל?
+**σ╜ףσיםτ╗ףµ₧ה**:
 ```
 design/
-├── web_interface/
-�?  ├── API_INTERFACE_SPECIFICATION.md
-�?  ├── FRONTEND_COMPONENT_STRUCTURE.md
-�?  └── T.06.UI001.web_management_interface_architecture_design.md
+Γפ£ΓפאΓפא web_interface/
+Γפ?  Γפ£ΓפאΓפא API_INTERFACE_SPECIFICATION.md
+Γפ?  Γפ£ΓפאΓפא FRONTEND_COMPONENT_STRUCTURE.md
+Γפ?  ΓפפΓפאΓפא T.06.UI001.web_management_interface_architecture_design.md
 ```
 
-**扁平化后**:
+**µיבσ╣│σלצσנמ**:
 ```
 design/
-├── WEB_INTERFACE_API_SPECIFICATION.md
-├── WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md
-└── WEB_INTERFACE_ARCHITECTURE_DESIGN.md
+Γפ£ΓפאΓפא WEB_INTERFACE_API_SPECIFICATION.md
+Γפ£ΓפאΓפא WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md
+ΓפפΓפאΓפא WEB_INTERFACE_ARCHITECTURE_DESIGN.md
 ```
 
-**文件重命�?*:
-- `API_INTERFACE_SPECIFICATION.md` �?`WEB_INTERFACE_API_SPECIFICATION.md`
-- `FRONTEND_COMPONENT_STRUCTURE.md` �?`WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md`
-- `T.06.UI001.web_management_interface_architecture_design.md` �?`WEB_INTERFACE_ARCHITECTURE_DESIGN.md`
+**µצחΣ╗╢Θחםσס╜σנ?*:
+- `API_INTERFACE_SPECIFICATION.md` Γז?`WEB_INTERFACE_API_SPECIFICATION.md`
+- `FRONTEND_COMPONENT_STRUCTURE.md` Γז?`WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md`
+- `T.06.UI001.web_management_interface_architecture_design.md` Γז?`WEB_INTERFACE_ARCHITECTURE_DESIGN.md`
 
-#### 2. database目录扁平�?
-**当前结构**:
+#### 2. databaseτ¢«σ╜ץµיבσ╣│σל?
+**σ╜ףσיםτ╗ףµ₧ה**:
 ```
 design/
-├── database/
-�?  ├── P0-01_Database_Design_Document.md
-�?  ├── P0-01_Database_Design_Review_Report.md
-�?  ├── P0-02_Data_Dictionary.md
-�?  ├── P0-03_Internal_Service_Interface_Design.md
-�?  ├── P0-04_Third_Party_Interface_Integration_Design.md
-�?  ├── P0-05_Multi_Engine_Coordinator_Design.md
-�?  ├── P0-06_Account_Management_Detailed_Design.md
-�?  └── P0-07_Order_Management_Detailed_Design.md
+Γפ£ΓפאΓפא database/
+Γפ?  Γפ£ΓפאΓפא P0-01_Database_Design_Document.md
+Γפ?  Γפ£ΓפאΓפא P0-01_Database_Design_Review_Report.md
+Γפ?  Γפ£ΓפאΓפא P0-02_Data_Dictionary.md
+Γפ?  Γפ£ΓפאΓפא P0-03_Internal_Service_Interface_Design.md
+Γפ?  Γפ£ΓפאΓפא P0-04_Third_Party_Interface_Integration_Design.md
+Γפ?  Γפ£ΓפאΓפא P0-05_Multi_Engine_Coordinator_Design.md
+Γפ?  Γפ£ΓפאΓפא P0-06_Account_Management_Detailed_Design.md
+Γפ?  ΓפפΓפאΓפא P0-07_Order_Management_Detailed_Design.md
 ```
 
-**扁平化后**:
+**µיבσ╣│σלצσנמ**:
 ```
 design/
-├── DATABASE_DESIGN_DOCUMENT.md
-├── DATABASE_DESIGN_REVIEW_REPORT.md
-├── DATABASE_DATA_DICTIONARY.md
-├── DATABASE_INTERNAL_SERVICE_INTERFACE_DESIGN.md
-├── DATABASE_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN.md
-├── DATABASE_MULTI_ENGINE_COORDINATOR_DESIGN.md
-├── DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md
-└── DATABASE_ORDER_MANAGEMENT_DETAILED_DESIGN.md
+Γפ£ΓפאΓפא DATABASE_DESIGN_DOCUMENT.md
+Γפ£ΓפאΓפא DATABASE_DESIGN_REVIEW_REPORT.md
+Γפ£ΓפאΓפא DATABASE_DATA_DICTIONARY.md
+Γפ£ΓפאΓפא DATABASE_INTERNAL_SERVICE_INTERFACE_DESIGN.md
+Γפ£ΓפאΓפא DATABASE_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN.md
+Γפ£ΓפאΓפא DATABASE_MULTI_ENGINE_COORDINATOR_DESIGN.md
+Γפ£ΓפאΓפא DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md
+ΓפפΓפאΓפא DATABASE_ORDER_MANAGEMENT_DETAILED_DESIGN.md
 ```
 
-**文件重命�?*:
-- `P0-01_Database_Design_Document.md` �?`DATABASE_DESIGN_DOCUMENT.md`
-- `P0-01_Database_Design_Review_Report.md` �?`DATABASE_DESIGN_REVIEW_REPORT.md`
-- `P0-02_Data_Dictionary.md` �?`DATABASE_DATA_DICTIONARY.md`
-- `P0-03_Internal_Service_Interface_Design.md` �?`DATABASE_INTERNAL_SERVICE_INTERFACE_DESIGN.md`
-- `P0-04_Third_Party_Interface_Integration_Design.md` �?`DATABASE_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN.md`
-- `P0-05_Multi_Engine_Coordinator_Design.md` �?`DATABASE_MULTI_ENGINE_COORDINATOR_DESIGN.md`
-- `P0-06_Account_Management_Detailed_Design.md` �?`DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md`
-- `P0-07_Order_Management_Detailed_Design.md` �?`DATABASE_ORDER_MANAGEMENT_DETAILED_DESIGN.md`
+**µצחΣ╗╢Θחםσס╜σנ?*:
+- `P0-01_Database_Design_Document.md` Γז?`DATABASE_DESIGN_DOCUMENT.md`
+- `P0-01_Database_Design_Review_Report.md` Γז?`DATABASE_DESIGN_REVIEW_REPORT.md`
+- `P0-02_Data_Dictionary.md` Γז?`DATABASE_DATA_DICTIONARY.md`
+- `P0-03_Internal_Service_Interface_Design.md` Γז?`DATABASE_INTERNAL_SERVICE_INTERFACE_DESIGN.md`
+- `P0-04_Third_Party_Interface_Integration_Design.md` Γז?`DATABASE_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN.md`
+- `P0-05_Multi_Engine_Coordinator_Design.md` Γז?`DATABASE_MULTI_ENGINE_COORDINATOR_DESIGN.md`
+- `P0-06_Account_Management_Detailed_Design.md` Γז?`DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md`
+- `P0-07_Order_Management_Detailed_Design.md` Γז?`DATABASE_ORDER_MANAGEMENT_DETAILED_DESIGN.md`
 
-#### 3. data_consistency目录扁平�?
-**当前结构**:
+#### 3. data_consistencyτ¢«σ╜ץµיבσ╣│σל?
+**σ╜ףσיםτ╗ףµ₧ה**:
 ```
 design/
-├── data_consistency/
-�?  ├── COMPENSATING_TRANSACTION_DESIGN.md
-�?  ├── MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
-�?  └── SAGA_IMPLEMENTATION_FLOWCHART.md
+Γפ£ΓפאΓפא data_consistency/
+Γפ?  Γפ£ΓפאΓפא COMPENSATING_TRANSACTION_DESIGN.md
+Γפ?  Γפ£ΓפאΓפא MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
+Γפ?  ΓפפΓפאΓפא SAGA_IMPLEMENTATION_FLOWCHART.md
 ```
 
-**扁平化后**:
+**µיבσ╣│σלצσנמ**:
 ```
 design/
-├── DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md
-├── DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md
-└── DATA_CONSISTENCY_SAGA_IMPLEMENTATION_FLOWCHART.md
+Γפ£ΓפאΓפא DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md
+Γפ£ΓפאΓפא DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md
+ΓפפΓפאΓפא DATA_CONSISTENCY_SAGA_IMPLEMENTATION_FLOWCHART.md
 ```
 
-**文件重命�?*:
-- `COMPENSATING_TRANSACTION_DESIGN.md` �?`DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md`
-- `MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md` �?`DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md`
-- `SAGA_IMPLEMENTATION_FLOWCHART.md` �?`DATA_CONSISTENCY_SAGA_IMPLEMENTATION_FLOWCHART.md`
+**µצחΣ╗╢Θחםσס╜σנ?*:
+- `COMPENSATING_TRANSACTION_DESIGN.md` Γז?`DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md`
+- `MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md` Γז?`DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md`
+- `SAGA_IMPLEMENTATION_FLOWCHART.md` Γז?`DATA_CONSISTENCY_SAGA_IMPLEMENTATION_FLOWCHART.md`
 
-#### 4. trading_costs目录扁平�?
-**当前结构**:
+#### 4. trading_costsτ¢«σ╜ץµיבσ╣│σל?
+**σ╜ףσיםτ╗ףµ₧ה**:
 ```
 design/
-├── trading_costs/
-�?  ├── T.05.TE001.trading_cost_model_algorithm_document.md
-�?  ├── TRADING_COST_TEST_CASE_DESIGN.md
-�?  └── trading_cost_config_template.yaml
+Γפ£ΓפאΓפא trading_costs/
+Γפ?  Γפ£ΓפאΓפא T.05.TE001.trading_cost_model_algorithm_document.md
+Γפ?  Γפ£ΓפאΓפא TRADING_COST_TEST_CASE_DESIGN.md
+Γפ?  ΓפפΓפאΓפא trading_cost_config_template.yaml
 ```
 
-**扁平化后**:
+**µיבσ╣│σלצσנמ**:
 ```
 design/
-├── TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md
-├── TRADING_COST_TEST_CASE_DESIGN.md
-└── TRADING_COST_CONFIG_TEMPLATE.yaml
+Γפ£ΓפאΓפא TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md
+Γפ£ΓפאΓפא TRADING_COST_TEST_CASE_DESIGN.md
+ΓפפΓפאΓפא TRADING_COST_CONFIG_TEMPLATE.yaml
 ```
 
-**文件重命�?*:
-- `T.05.TE001.trading_cost_model_algorithm_document.md` �?`TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md`
-- `TRADING_COST_TEST_CASE_DESIGN.md` �?`TRADING_COST_TEST_CASE_DESIGN.md` (保持不变)
-- `trading_cost_config_template.yaml` �?`TRADING_COST_CONFIG_TEMPLATE.yaml`
+**µצחΣ╗╢Θחםσס╜σנ?*:
+- `T.05.TE001.trading_cost_model_algorithm_document.md` Γז?`TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md`
+- `TRADING_COST_TEST_CASE_DESIGN.md` Γז?`TRADING_COST_TEST_CASE_DESIGN.md` (Σ┐¥µלבΣ╕םσןר)
+- `trading_cost_config_template.yaml` Γז?`TRADING_COST_CONFIG_TEMPLATE.yaml`
 
-#### 5. a_stock_rules目录扁平�?
-**当前结构**:
+#### 5. a_stock_rulesτ¢«σ╜ץµיבσ╣│σל?
+**σ╜ףσיםτ╗ףµ₧ה**:
 ```
 design/
-├── a_stock_rules/
-�?  ├── T.08.AR001.a_stock_rule_engine_design.md
-�?  └── a_stock_rules_config.yaml
+Γפ£ΓפאΓפא a_stock_rules/
+Γפ?  Γפ£ΓפאΓפא T.08.AR001.a_stock_rule_engine_design.md
+Γפ?  ΓפפΓפאΓפא a_stock_rules_config.yaml
 ```
 
-**扁平化后**:
+**µיבσ╣│σלצσנמ**:
 ```
 design/
-├── A_STOCK_RULE_ENGINE_DESIGN.md
-└── A_STOCK_RULES_CONFIG.yaml
+Γפ£ΓפאΓפא A_STOCK_RULE_ENGINE_DESIGN.md
+ΓפפΓפאΓפא A_STOCK_RULES_CONFIG.yaml
 ```
 
-**文件重命�?*:
-- `T.08.AR001.a_stock_rule_engine_design.md` �?`A_STOCK_RULE_ENGINE_DESIGN.md`
-- `a_stock_rules_config.yaml` �?`A_STOCK_RULES_CONFIG.yaml`
+**µצחΣ╗╢Θחםσס╜σנ?*:
+- `T.08.AR001.a_stock_rule_engine_design.md` Γז?`A_STOCK_RULE_ENGINE_DESIGN.md`
+- `a_stock_rules_config.yaml` Γז?`A_STOCK_RULES_CONFIG.yaml`
 
 ---
 
-## 📊 扁平化效果评�?
-### 目录深度对比
+## ≡ƒףך µיבσ╣│σלצµץטµ₧£Φ»הΣ╝?
+### τ¢«σ╜ץµ╖▒σ║ªσ»╣µ»פ
 
-| 目录 | 扁平化前 | 扁平化后 | 改进 |
+| τ¢«σ╜ץ | µיבσ╣│σלצσים | µיבσ╣│σלצσנמ | µפ╣Φ┐¢ |
 |------|---------|---------|------|
-| **web_interface** | 6�?| 5�?| -1�?|
-| **database** | 6�?| 5�?| -1�?|
-| **data_consistency** | 6�?| 5�?| -1�?|
-| **trading_costs** | 6�?| 5�?| -1�?|
-| **a_stock_rules** | 6�?| 5�?| -1�?|
+| **web_interface** | 6σ▒?| 5σ▒?| -1σ▒?|
+| **database** | 6σ▒?| 5σ▒?| -1σ▒?|
+| **data_consistency** | 6σ▒?| 5σ▒?| -1σ▒?|
+| **trading_costs** | 6σ▒?| 5σ▒?| -1σ▒?|
+| **a_stock_rules** | 6σ▒?| 5σ▒?| -1σ▒?|
 
-### 文件数量统计
+### µצחΣ╗╢µץ░Θחןτ╗ƒΦ«í
 
-| 操作 | 数量 |
+| µףםΣ╜£ | µץ░Θחן |
 |------|------|
-| **移动文件** | 19�?|
-| **重命名文�?* | 16�?|
-| **删除目录** | 5�?|
+| **τº╗σך¿µצחΣ╗╢** | 19Σ╕?|
+| **Θחםσס╜σנםµצחΣ╗?* | 16Σ╕?|
+| **σטáΘשñτ¢«σ╜ץ** | 5Σ╕?|
 
 ---
 
-## ⚠️ 风险评估
+## Γתá∩╕ן ΘúמΘש⌐Φ»הΣ╝░
 
-### 潜在风险
+### µ╜£σ£¿ΘúמΘש⌐
 
-| 风险 | 影响 | 缓解措施 |
+| ΘúמΘש⌐ | σ╜▒σףם | τ╝ףΦºúµמ¬µצ╜ |
 |------|------|---------|
-| **引用断裂** | �?| 更新所有文档引�?|
-| **Git历史丢失** | �?| 使用git mv保留历史 |
-| **用户习惯改变** | �?| 更新文档导航 |
-| **IDE书签失效** | �?| 通知用户更新书签 |
+| **σ╝ץτפ¿µצ¡Φúג** | Θ½?| µ¢┤µצ░µיאµ£יµצחµíúσ╝ץτפ?|
+| **Gitσמזσן▓Σ╕óσñ▒** | Σ╕?| Σ╜┐τפ¿git mvΣ┐¥τץשσמזσן▓ |
+| **τפ¿µט╖Σ╣áµד»µפ╣σןר** | Σ╜?| µ¢┤µצ░µצחµíúσ»╝Φט¬ |
+| **IDEΣ╣ªτ¡╛σñ▒µץט** | Σ╜?| ΘאתτƒÑτפ¿µט╖µ¢┤µצ░Σ╣ªτ¡╛ |
 
-### 缓解措施
+### τ╝ףΦºúµמ¬µצ╜
 
-1. **创建Git备份**: 扁平化前创建备份分支
-2. **更新引用**: 使用脚本批量更新文档引用
-3. **更新索引**: 更新所有INDEX.md文件
-4. **通知用户**: 通知团队成员文件位置变更
+1. **σט¢σ╗║GitσñחΣ╗╜**: µיבσ╣│σלצσיםσט¢σ╗║σñחΣ╗╜σטזµפ»
+2. **µ¢┤µצ░σ╝ץτפ¿**: Σ╜┐τפ¿Φהתµ£¼µי╣Θחןµ¢┤µצ░µצחµíúσ╝ץτפ¿
+3. **µ¢┤µצ░τ┤óσ╝ץ**: µ¢┤µצ░µיאµ£יINDEX.mdµצחΣ╗╢
+4. **ΘאתτƒÑτפ¿µט╖**: ΘאתτƒÑσ¢óΘרƒµטנσסרµצחΣ╗╢Σ╜םτ╜«σןרµ¢┤
 
 ---
 
-## 📅 实施计划
+## ≡ƒףו σ«₧µצ╜Φ«íσטע
 
-### 阶段1: 准备阶段�?小时�?
-1. **创建备份分支**:
+### Θר╢µ«╡1: σחזσñחΘר╢µ«╡∩╝?σ░ןµק╢∩╝?
+1. **σט¢σ╗║σñחΣ╗╜σטזµפ»**:
    ```bash
    git checkout -b backup-before-flattening-20260403
    git add .
-   git commit -m "备份：目录扁平化前的完整状�?
+   git commit -m "σñחΣ╗╜∩╝תτ¢«σ╜ץµיבσ╣│σלצσיםτתהσ«לµץ┤τך╢µא?
    ```
 
-2. **扫描引用**:
-   - 扫描所有文档引�?   - 生成引用更新列表
+2. **µי½µןןσ╝ץτפ¿**:
+   - µי½µןןµיאµ£יµצחµíúσ╝ץτפ?   - τפƒµטנσ╝ץτפ¿µ¢┤µצ░σטקΦí¿
 
-### 阶段2: 执行阶段�?小时�?
-1. **移动文件**:
-   - 使用git mv移动文件
-   - 保留Git历史
+### Θר╢µ«╡2: µיºΦíלΘר╢µ«╡∩╝?σ░ןµק╢∩╝?
+1. **τº╗σך¿µצחΣ╗╢**:
+   - Σ╜┐τפ¿git mvτº╗σך¿µצחΣ╗╢
+   - Σ┐¥τץשGitσמזσן▓
 
-2. **重命名文�?*:
-   - 使用git mv重命名文�?   - 符合命名规范
+2. **Θחםσס╜σנםµצחΣ╗?*:
+   - Σ╜┐τפ¿git mvΘחםσס╜σנםµצחΣ╗?   - τ¼ªσנטσס╜σנםΦºהΦלד
 
-3. **删除空目�?*:
-   - 删除扁平化后的空目录
+3. **σטáΘשñτ⌐║τ¢«σ╜?*:
+   - σטáΘשñµיבσ╣│σלצσנמτתהτ⌐║τ¢«σ╜ץ
 
-### 阶段3: 验证阶段�?小时�?
-1. **更新引用**:
-   - 更新所有文档引�?   - 更新INDEX.md文件
+### Θר╢µ«╡3: Θ¬לΦ»בΘר╢µ«╡∩╝?σ░ןµק╢∩╝?
+1. **µ¢┤µצ░σ╝ץτפ¿**:
+   - µ¢┤µצ░µיאµ£יµצחµíúσ╝ץτפ?   - µ¢┤µצ░INDEX.mdµצחΣ╗╢
 
-2. **验证链接**:
-   - 检查所有文档链�?   - 修复断裂链接
+2. **Θ¬לΦ»בΘף╛µמÑ**:
+   - µúאµƒÑµיאµ£יµצחµíúΘף╛µמ?   - Σ┐«σñםµצ¡ΦúגΘף╛µמÑ
 
-3. **提交更改**:
+3. **µןנΣ║ñµ¢┤µפ╣**:
    ```bash
    git add .
-   git commit -m "目录扁平化：减少目录深度，提高文档可访问�?
+   git commit -m "τ¢«σ╜ץµיבσ╣│σלצ∩╝תσחןσ░סτ¢«σ╜ץµ╖▒σ║ª∩╝לµןנΘ½רµצחµíúσן»Φ«┐Θק«µא?
    ```
 
 ---
 
-## 🎯 预期成果
+## ≡ƒמ» Θóהµ£ƒµטנµ₧£
 
-### 目录结构优化
+### τ¢«σ╜ץτ╗ףµ₧הΣ╝רσלצ
 
-**扁平化前**:
+**µיבσ╣│σלצσים**:
 ```
 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/
-├── web_interface/ (6�?
-├── database/ (6�?
-├── data_consistency/ (6�?
-├── trading_costs/ (6�?
-└── a_stock_rules/ (6�?
+Γפ£ΓפאΓפא web_interface/ (6σ▒?
+Γפ£ΓפאΓפא database/ (6σ▒?
+Γפ£ΓפאΓפא data_consistency/ (6σ▒?
+Γפ£ΓפאΓפא trading_costs/ (6σ▒?
+ΓפפΓפאΓפא a_stock_rules/ (6σ▒?
 ```
 
-**扁平化后**:
+**µיבσ╣│σלצσנמ**:
 ```
-docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/ (5�?
-├── WEB_INTERFACE_*.md
-├── DATABASE_*.md
-├── DATA_CONSISTENCY_*.md
-├── TRADING_COST_*.md
-└── A_STOCK_*.md
+docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/ (5σ▒?
+Γפ£ΓפאΓפא WEB_INTERFACE_*.md
+Γפ£ΓפאΓפא DATABASE_*.md
+Γפ£ΓפאΓפא DATA_CONSISTENCY_*.md
+Γפ£ΓפאΓפא TRADING_COST_*.md
+ΓפפΓפאΓפא A_STOCK_*.md
 ```
 
-### 质量指标提升
+### Φ┤¿Θחןµלחµáחµןנσםח
 
-| 指标 | 扁平化前 | 扁平化后 | 改进 |
+| µלחµáח | µיבσ╣│σלצσים | µיבσ╣│σלצσנמ | µפ╣Φ┐¢ |
 |------|---------|---------|------|
-| **最大目录深�?* | 6�?| 5�?| -1�?|
-| **平均目录深度** | 5�?| 4�?| -1�?|
-| **文档可访问�?* | �?| �?| +1�?|
-| **维护成本** | �?| �?| -1�?|
+| **µ£אσñºτ¢«σ╜ץµ╖▒σ║?* | 6σ▒?| 5σ▒?| -1σ▒?|
+| **σ╣│σ¥חτ¢«σ╜ץµ╖▒σ║ª** | 5σ▒?| 4σ▒?| -1σ▒?|
+| **µצחµíúσן»Φ«┐Θק«µא?* | Σ╕?| Θ½?| +1τ║?|
+| **τ╗┤µךñµטנµ£¼** | Θ½?| Σ╕?| -1τ║?|
 
 ---
 
-## 📝 后续建议
+## ≡ƒף¥ σנמτ╗¡σ╗║Φ««
 
-### 立即行动
+### τ½כσם│Φíלσך¿
 
-1. **审查方案**: 团队审查扁平化方�?2. **创建备份**: 创建Git备份分支
-3. **执行扁平�?*: 按照方案执行扁平�?
-### 持续改进
+1. **σ«íµƒÑµצ╣µíט**: σ¢óΘרƒσ«íµƒÑµיבσ╣│σלצµצ╣µí?2. **σט¢σ╗║σñחΣ╗╜**: σט¢σ╗║GitσñחΣ╗╜σטזµפ»
+3. **µיºΦíלµיבσ╣│σל?*: µליτוºµצ╣µíטµיºΦíלµיבσ╣│σל?
+### µלבτ╗¡µפ╣Φ┐¢
 
-1. **建立目录深度检�?*: 配置pre-commit hook检查目录深�?2. **定期审查**: 每月审查目录结构
-3. **优化其他目录**: 逐步优化其他深层目录
+1. **σ╗║τ½כτ¢«σ╜ץµ╖▒σ║ªµúאµƒ?*: Θוםτ╜«pre-commit hookµúאµƒÑτ¢«σ╜ץµ╖▒σ║?2. **σ«תµ£ƒσ«íµƒÑ**: µ»ןµ£טσ«íµƒÑτ¢«σ╜ץτ╗ףµ₧ה
+3. **Σ╝רσלצσו╢Σ╗צτ¢«σ╜ץ**: Θאנµ¡ÑΣ╝רσלצσו╢Σ╗צµ╖▒σ▒גτ¢«σ╜ץ
 
 ---
 
-**方案编写**: 文档架构�?**方案日期**: 2026-04-03
-**方案状�?*: 待审�?
+**µצ╣µíטτ╝צσזש**: µצחµíúµ₧╢µ₧הσ╕?**µצ╣µíטµקÑµ£ƒ**: 2026-04-03
+**µצ╣µíטτך╢µא?*: σ╛וσ«íµƒ?

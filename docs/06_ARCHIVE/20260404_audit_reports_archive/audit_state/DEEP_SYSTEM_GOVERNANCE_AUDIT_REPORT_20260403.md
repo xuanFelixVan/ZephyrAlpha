@@ -4,352 +4,352 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 系统架构?standard_type: 专业量化机构深度审计报告
-applicable_scope: 全系统文档治?compliance_level: 专业标准
+owner: ق│╗ق╗اµئ╢µئ?standard_type: غ╕ôغ╕ألçفîûµ£║µئµ╖▒ف║خف«ةك«ةµèحفّè
+applicable_scope: فàذق│╗ق╗اµûçµةثµ▓╗?compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../INDEX.md
-implementation_status: 已完?---
+implementation_status: ف╖▓ف«î?---
 
-# 深度系统文档治理审计报告
+# µ╖▒ف║خق│╗ق╗اµûçµةثµ▓╗قف«ةك«ةµèحفّè
 
-> **审计日期**: 2026-04-03  
-> **审计范围**: 全系统所有文? 
-> **审计重点**: 职责不清、文件乱放、入口不清晰、功能重? 
-> **审计方法**: 三层审计（L1文件系统?+ L2文档内容?+ L3专业标准层）
+> **ف«ةك«ةµùحµ£ا**: 2026-04-03  
+> **ف«ةك«ةكîâفؤ┤**: فàذق│╗ق╗اµëµ£ëµûç? 
+> **ف«ةك«ةلçقé╣**: كîك┤ثغ╕µ╕àعµûçغ╗╢غ╣▒µ¤╛عفàحفثغ╕µ╕àµآ░عفèاكâ╜لç? 
+> **ف«ةك«ةµû╣µ│ـ**: غ╕ëف▒éف«ةك«ةي╝êL1µûçغ╗╢ق│╗ق╗ا?+ L2µûçµةثفàف«╣?+ L3غ╕ôغ╕أµبçفçف▒éي╝ë
 
 ---
 
-## 📊 审计概要
+## ≡اôè ف«ةك«ةµخéكخ
 
-### 审计结论
+### ف«ةك«ةق╗ôك«║
 
-本次深度审计发现 **4类严重问?*，共识别?**23个具体问题点**，其中：
-- 🔴 **P0级（阻断性）**: 8?- 需立即处理
-- 🟡 **P1级（重要?*: 10?- 本周内处?- 🟢 **P2级（一般）**: 5?- 本月内处?
-### 总体合规?
-| 审计层级 | 合规?| �?|
+µ£شµشةµ╖▒ف║خف«ةك«ةفّق░ **4ق▒╗غ╕حلçلù«?*ي╝îفà▒ك»فêس?**23غ╕زفà╖غ╜ôلù«لتءقé╣**ي╝îفà╢غ╕صي╝أ
+- ≡ا¤┤ **P0ق║دي╝êلء╗µûصµدي╝ë**: 8?- ل£قسïف│فجق
+- ≡ااة **P1ق║دي╝êلçكخ?*: 10?- µ£شفّذفàفج?- ≡اات **P2ق║دي╝êغ╕كêشي╝ë**: 5?- µ£شµ£êفàفج?
+### µ╗غ╜ôفêكد?
+| ف«ةك«ةف▒éق║د | فêكد?| قè?|
 |---------|--------|------|
-| **L1 文件系统?* | 72% | 🟡 需改进 |
-| **L2 文档内容?* | 68% | 🟡 需改进 |
-| **L3 专业标准?* | 75% | 🟡 需改进 |
-| **总体合规?* | **71.7%** | 🟡 需改进 |
+| **L1 µûçغ╗╢ق│╗ق╗ا?* | 72% | ≡ااة ل£µ¤╣ك┐ؤ |
+| **L2 µûçµةثفàف«╣?* | 68% | ≡ااة ل£µ¤╣ك┐ؤ |
+| **L3 غ╕ôغ╕أµبçفç?* | 75% | ≡ااة ل£µ¤╣ك┐ؤ |
+| **µ╗غ╜ôفêكد?* | **71.7%** | ≡ااة ل£µ¤╣ك┐ؤ |
 
 ---
 
-## 🔍 详细审计发现
+## ≡ا¤ ك»خق╗ف«ةك«ةفّق░
 
-### 一、L1 文件系统层审计结?
-#### 1.1 目录结构问题 🔴 P0
+### غ╕عL1 µûçغ╗╢ق│╗ق╗اف▒éف«ةك«ةق╗ô?
+#### 1.1 قؤ«ف╜ـق╗ôµئلù«لتء ≡ا¤┤ P0
 
-**问题1: 根目录存在漂移目?*
+**لù«لتء1: µب╣قؤ«ف╜ـفصءف£ذµ╝éقد╗قؤ«?*
 
-| 目录路径 | 问题类型 | 严重程度 | 建议 |
+| قؤ«ف╜ـك╖»ف╛ | لù«لتءق▒╗فئï | غ╕حلçقذïف║خ | ف╗║ك«« |
 |---------|---------|---------|------|
-| `docs/module_designs/` | 目录漂移 | 🔴 P0 | 应归档至 `06_ARCHIVE/architecture_v4/module_designs/` |
-| `docs/design/` | 目录漂移 | 🔴 P0 | 应整合至 `05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` |
+| `docs/module_designs/` | قؤ«ف╜ـµ╝éقد╗ | ≡ا¤┤ P0 | ف║¤ف╜ْµةثكç│ `06_ARCHIVE/architecture_v4/module_designs/` |
+| `docs/design/` | قؤ«ف╜ـµ╝éقد╗ | ≡ا¤┤ P0 | ف║¤µـ┤فêكç│ `05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` |
 
-**证据**:
-- `docs/module_designs/` 包含12个旧架构文档（layer_1, layer_4, layer_9, layer_11?- `docs/design/` 包含数据库设计、交易成本、Web接口等设计文档，应属于实施层
+**ك»µ«**:
+- `docs/module_designs/` فîàفس12غ╕زµùدµئ╢µئµûçµةثي╝êlayer_1, layer_4, layer_9, layer_11?- `docs/design/` فîàفسµـ░µ«ف║ôك«╛ك«ةعغ║جµءôµêµ£شعWebµحفثقصëك«╛ك«ةµûçµةثي╝îف║¤ف▒ئغ║ف«ئµû╜ف▒é
 
-**影响**: 违反目录神圣性原则，导致文档查找困难
+**ف╜▒فô**: ك┐إفقؤ«ف╜ـقحئف£ثµدفافêآي╝îف»╝كç┤µûçµةثµاحµë╛فؤ░لأ╛
 
 ---
 
-**问题2: 稀疏目录问?*
+**لù«لتء2: قذقûقؤ«ف╜ـلù«?*
 
-| 目录路径 | 文件数量 | 问题 | 建议 |
+| قؤ«ف╜ـك╖»ف╛ | µûçغ╗╢µـ░لç | لù«لتء | ف╗║ك«« |
 |---------|---------|------|------|
-| `docs/08_AI_GOVERNANCE/` | 1个文?| 内容过少 | 整合?`01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` |
-| `docs/08_USER_EXPERIENCE/` | 4个文?| 内容稀?| 整合?`05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` |
-| `docs/07_RESEARCH/` | 7个文?| 职责重叠 | ?`02_FACTOR_LIBRARY/01_STANDARDS/` 整合 |
+| `docs/08_AI_GOVERNANCE/` | 1غ╕زµûç?| فàف«╣ك┐çف░ّ | µـ┤فê?`01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` |
+| `docs/08_USER_EXPERIENCE/` | 4غ╕زµûç?| فàف«╣قذ?| µـ┤فê?`05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` |
+| `docs/07_RESEARCH/` | 7غ╕زµûç?| كîك┤ثلçفب | ?`02_FACTOR_LIBRARY/01_STANDARDS/` µـ┤فê |
 
-**影响**: 目录碎片化，降低文档可维�?
+**ف╜▒فô**: قؤ«ف╜ـقتقëçفîûي╝îلآغ╜µûçµةثف»ق╗┤µè?
 ---
 
-#### 1.2 文件命名问题 🟡 P1
+#### 1.2 µûçغ╗╢فّ╜فلù«لتء ≡ااة P1
 
-**问题3: 旧架构命名残?*
+**لù«لتء3: µùدµئ╢µئفّ╜فµ«ï?*
 
-发现以下文件仍使用旧架构命名?
-| 文件路径 | 问题命名 | 建议命名 |
+فّق░غ╗حغ╕ïµûçغ╗╢غ╗غ╜┐ق¤ذµùدµئ╢µئفّ╜ف?
+| µûçغ╗╢ك╖»ف╛ | لù«لتءفّ╜ف | ف╗║ك««فّ╜ف |
 |---------|---------|---------|
 | `docs/01_FRAMEWORK/LAYER11_MODULE_ANALYSIS.md` | LAYER11 | NL_INTERFACE_MODULE_ANALYSIS.md |
 | `docs/01_FRAMEWORK/LAYER11_NL_INTERFACE_BLUEPRINT.md` | LAYER11 | NL_INTERFACE_BLUEPRINT.md |
 | `docs/01_FRAMEWORK/LAYER8_INTEGRATION_BLUEPRINT.md` | LAYER8 | HUMAN_AI_INTEGRATION_BLUEPRINT.md |
 
-**影响**: 命名不一致，影响文档理解
+**ف╜▒فô**: فّ╜فغ╕غ╕كç┤ي╝îف╜▒فôµûçµةثقكدث
 
 ---
 
-### 二、L2 文档内容层审计结?
-#### 2.1 职责驱动原则违反 🔴 P0
+### غ║îعL2 µûçµةثفàف«╣ف▒éف«ةك«ةق╗ô?
+#### 2.1 كîك┤ثلر▒فèذفافêآك┐إف ≡ا¤┤ P0
 
-**问题4: 策略引擎文档职责重叠严重**
+**لù«لتء4: قصûقـحف╝ـµôµûçµةثكîك┤ثلçفبغ╕حلç**
 
-发现 **3?* 策略引擎相关文档，职责高度重叠：
+فّق░ **3?* قصûقـحف╝ـµôقؤ╕فà│µûçµةثي╝îكîك┤ثلسءف║خلçفبي╝أ
 
-| 文档路径 | 文档类型 | 职责描述 | 问题 |
+| µûçµةثك╖»ف╛ | µûçµةثق▒╗فئï | كîك┤ثµك┐░ | لù«لتء |
 |---------|---------|---------|------|
-| `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md` | 蓝图 | 策略引擎总体设计 | 与其他文档职责重?|
-| `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md` | 技术规?| 策略引擎技术规?| 与蓝图内容重?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md` | 核心蓝图 | 策略引擎核心设计 | 与其他文档职责重?|
+| `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md` | كôإفؤ╛ | قصûقـحف╝ـµôµ╗غ╜ôك«╛ك«ة | غ╕فà╢غ╗ûµûçµةثكîك┤ثلç?|
+| `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md` | µèµ£»كد?| قصûقـحف╝ـµôµèµ£»كد?| غ╕كôإفؤ╛فàف«╣لç?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md` | µب╕ف┐âكôإفؤ╛ | قصûقـحف╝ـµôµب╕ف┐âك«╛ك«ة | غ╕فà╢غ╗ûµûçµةثكîك┤ثلç?|
 
-**建议**: 
-1. 保留 `STRATEGY_ENGINE_BLUEPRINT.md` 作为总体设计文档
-2. 保留 `STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md` 作为技术规?3. 删除 `STRATEGY_ENGINE_CORE_BLUEPRINT.md`，内容合并至蓝图
+**ف╗║ك««**: 
+1. غ┐إقـآ `STRATEGY_ENGINE_BLUEPRINT.md` غ╜£غ╕║µ╗غ╜ôك«╛ك«ةµûçµةث
+2. غ┐إقـآ `STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md` غ╜£غ╕║µèµ£»كد?3. فêبلآج `STRATEGY_ENGINE_CORE_BLUEPRINT.md`ي╝îفàف«╣فêف╣╢كç│كôإفؤ╛
 
 ---
 
-**问题5: 另类数据集成文档职责不清**
+**لù«لتء5: فخق▒╗µـ░µ«لؤµêµûçµةثكîك┤ثغ╕µ╕à**
 
-发现 **2?* 另类数据集成文档，职责边界模糊：
+فّق░ **2?* فخق▒╗µـ░µ«لؤµêµûçµةثي╝îكîك┤ثك╛╣قـîµذةق│èي╝أ
 
-| 文档路径 | 所属目?| 职责描述 | 问题 |
+| µûçµةثك╖»ف╛ | µëف▒ئقؤ«?| كîك┤ثµك┐░ | لù«لتء |
 |---------|---------|---------|------|
-| `docs/02_FACTOR_LIBRARY/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` | 因子?| Layer 2 Alpha因子?- 另类数据源集?| 职责重叠 |
-| `docs/10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` | AI工作?| Layer 3 - 舆情分析?- 另类数据集成 | 职责重叠 |
+| `docs/02_FACTOR_LIBRARY/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` | فؤبفص?| Layer 2 Alphaفؤبفص?- فخق▒╗µـ░µ«µ║لؤ?| كîك┤ثلçفب |
+| `docs/10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` | AIف╖حغ╜£?| Layer 3 - كêµâàفêµئ?- فخق▒╗µـ░µ«لؤµê | كîك┤ثلçفب |
 
-**分析**:
-- 第一个文档定位为"Layer 2 Alpha因子?
-- 第二个文档定位为"Layer 3 舆情分析?
-- 两者内容高度相似，但归属不同层?
-**建议**: 
-1. 保留 `02_FACTOR_LIBRARY/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
-2. ?`10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` 改名?`SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md`，专注于舆情数据
+**فêµئ**:
+- قششغ╕غ╕زµûçµةثف«أغ╜غ╕║"Layer 2 Alphaفؤبفص?
+- قششغ║îغ╕زµûçµةثف«أغ╜غ╕║"Layer 3 كêµâàفêµئ?
+- غ╕جكàفàف«╣لسءف║خقؤ╕غ╝╝ي╝îغ╜ف╜ْف▒ئغ╕فîف▒é?
+**ف╗║ك««**: 
+1. غ┐إقـآ `02_FACTOR_LIBRARY/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
+2. ?`10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` µ¤╣ف?`SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md`ي╝îغ╕ôµ│ذغ║كêµâàµـ░µ«
 
 ---
 
-**问题6: 专业实施蓝图完全重复**
+**لù«لتء6: غ╕ôغ╕أف«ئµû╜كôإفؤ╛ف«îفàذلçفج**
 
-发现 **2个完全相?* 的专业实施蓝图文档：
+فّق░ **2غ╕زف«îفàذقؤ╕?* قأغ╕ôغ╕أف«ئµû╜كôإفؤ╛µûçµةثي╝أ
 
-| 文档路径 | module_id | 内容对比 |
+| µûçµةثك╖»ف╛ | module_id | فàف«╣ف»╣µ»¤ |
 |---------|-----------|---------|
-| `docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md` | FRAMEWORK_IMPL_BLUEPRINT_001 | 原始文档 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md` | FRAMEWORK_IMPL_BLUEPRINT_001 | 完全相同 |
+| `docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md` | FRAMEWORK_IMPL_BLUEPRINT_001 | فافدïµûçµةث |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md` | FRAMEWORK_IMPL_BLUEPRINT_001 | ف«îفàذقؤ╕فî |
 
-**建议**: 删除 `05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md`，保留框架层文档
+**ف╗║ك««**: فêبلآج `05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md`ي╝îغ┐إقـآµةµئ╢ف▒éµûçµةث
 
 ---
 
-**问题7: AI虚拟研究团队文档分散**
+**لù«لتء7: AIكآأµïاقب¤قر╢فؤتلءاµûçµةثفêµـث**
 
-发现 **3?* AI虚拟研究团队相关文档，分散在不同阶段?
-| 文档路径 | 文档类型 | 阶段 |
+فّق░ **3?* AIكآأµïاقب¤قر╢فؤتلءاقؤ╕فà│µûçµةثي╝îفêµـثف£ذغ╕فîلء╢µ«╡?
+| µûçµةثك╖»ف╛ | µûçµةثق▒╗فئï | لء╢µ«╡ |
 |---------|---------|------|
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md` | 蓝图 | 规划阶段 |
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md` | 实施计划 | 实施阶段 |
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md` | 项目启动 | 启动阶段 |
+| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md` | كôإفؤ╛ | كدفêْلء╢µ«╡ |
+| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md` | ف«ئµû╜ك«ةفêْ | ف«ئµû╜لء╢µ«╡ |
+| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md` | لة╣قؤ«ف»فèذ | ف»فèذلء╢µ«╡ |
 
-**问题**: 
-- 三个文档职责不同，但分散管理
-- 缺少统一的索引文?
-**建议**: 创建 `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/` 子目录，整合所有相关文?
+**لù«لتء**: 
+- غ╕ëغ╕زµûçµةثكîك┤ثغ╕فîي╝îغ╜فêµـثق«ةق
+- ق╝║ف░ّق╗اغ╕قأق┤تف╝ـµûç?
+**ف╗║ك««**: فêؤف╗║ `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/` فصقؤ«ف╜ـي╝îµـ┤فêµëµ£ëقؤ╕فà│µûç?
 ---
 
-#### 2.2 索引完备性审?🟡 P1
+#### 2.2 ق┤تف╝ـف«îفجçµدف«ة?≡ااة P1
 
-**问题8: 部分目录缺少INDEX.md**
+**لù«لتء8: لâذفêقؤ«ف╜ـق╝║ف░ّINDEX.md**
 
-| 目录路径 | INDEX.md�?| 建议 |
+| قؤ«ف╜ـك╖»ف╛ | INDEX.mdقè?| ف╗║ك«« |
 |---------|-------------|------|
-| `docs/00_OVERVIEW/` | ?缺失 | 创建索引 |
-| `docs/00_RESOURCES/` | ?缺失 | 创建索引 |
-| `docs/06_ARCHIVE/` | ?缺失 | 创建索引 |
-| `docs/07_RESEARCH/` | ?缺失 | 创建索引 |
-| `docs/08_AI_GOVERNANCE/` | ?缺失 | 创建索引（或整合后删除目录） |
-| `docs/08_USER_EXPERIENCE/` | ?缺失 | 创建索引（或整合后删除目录） |
-| `docs/10_AI_WORKFLOW/` | ?存在 | - |
+| `docs/00_OVERVIEW/` | ?ق╝║فج▒ | فêؤف╗║ق┤تف╝ـ |
+| `docs/00_RESOURCES/` | ?ق╝║فج▒ | فêؤف╗║ق┤تف╝ـ |
+| `docs/06_ARCHIVE/` | ?ق╝║فج▒ | فêؤف╗║ق┤تف╝ـ |
+| `docs/07_RESEARCH/` | ?ق╝║فج▒ | فêؤف╗║ق┤تف╝ـ |
+| `docs/08_AI_GOVERNANCE/` | ?ق╝║فج▒ | فêؤف╗║ق┤تف╝ـي╝êµêûµـ┤فêففêبلآجقؤ«ف╜ـي╝ë |
+| `docs/08_USER_EXPERIENCE/` | ?ق╝║فج▒ | فêؤف╗║ق┤تف╝ـي╝êµêûµـ┤فêففêبلآجقؤ«ف╜ـي╝ë |
+| `docs/10_AI_WORKFLOW/` | ?فصءف£ذ | - |
 
-**已存在INDEX.md的目?* (8?:
+**ف╖▓فصءف£ذINDEX.mdقأقؤ«?* (8?:
 - `docs/INDEX.md` ?- `docs/01_FRAMEWORK/INDEX.md` ?- `docs/02_FACTOR_LIBRARY/INDEX.md` ?- `docs/03_TRADING_TACTICS/INDEX.md` ?- `docs/04_EXECUTION/INDEX.md` ?- `docs/05_IMPLEMENTATION/INDEX.md` ?- `docs/09_AUDIT/INDEX.md` ?- `docs/10_AI_WORKFLOW/INDEX.md` ?
 ---
 
-#### 2.3 版本隔离原则违反 🔴 P0
+#### 2.3 قëêµ£شلأ¤قخ╗فافêآك┐إف ≡ا¤┤ P0
 
-**问题9: 归档目录存在重复内容**
+**لù«لتء9: ف╜ْµةثقؤ«ف╜ـفصءف£ذلçفجفàف«╣**
 
-| 归档路径 | 问题 | 建议 |
+| ف╜ْµةثك╖»ف╛ | لù«لتء | ف╗║ك«« |
 |---------|------|------|
-| `docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` | ?`docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST_backup.md` 重复 | 删除backup文件 |
-| `docs/06_ARCHIVE/factor-library/` | ?`docs/02_FACTOR_LIBRARY/` 内容可能重复 | 需详细比对 |
+| `docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` | ?`docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST_backup.md` لçفج | فêبلآجbackupµûçغ╗╢ |
+| `docs/06_ARCHIVE/factor-library/` | ?`docs/02_FACTOR_LIBRARY/` فàف«╣ف»كâ╜لçفج | ل£ك»خق╗µ»¤ف»╣ |
 
 ---
 
-### 三、L3 专业标准层审计结?
-#### 3.1 五大原则符合性评?
-| 原则 | 符合?| 问题?| �?|
+### غ╕ëعL3 غ╕ôغ╕أµبçفçف▒éف«ةك«ةق╗ô?
+#### 3.1 غ║¤فجدفافêآقشخفêµدك»?
+| فافêآ | قشخفê?| لù«لتء?| قè?|
 |------|--------|--------|------|
-| **职责驱动原则** | 70% | 15?| 🟡 需改进 |
-| **索引完备性原?* | 85% | 6?| 🟢 良好 |
-| **版本隔离原则** | 75% | 8?| 🟡 需改进 |
-| **文档代码对应原则** | 待验?| - | ?待审?|
-| **命名规范原则** | 80% | 10?| 🟡 需改进 |
+| **كîك┤ثلر▒فèذفافêآ** | 70% | 15?| ≡ااة ل£µ¤╣ك┐ؤ |
+| **ق┤تف╝ـف«îفجçµدفا?* | 85% | 6?| ≡اات كë»فح╜ |
+| **قëêµ£شلأ¤قخ╗فافêآ** | 75% | 8?| ≡ااة ل£µ¤╣ك┐ؤ |
+| **µûçµةثغ╗ثقبف»╣ف║¤فافêآ** | ف╛àلزî?| - | ?ف╛àف«ة?|
+| **فّ╜فكدكîâفافêآ** | 80% | 10?| ≡ااة ل£µ¤╣ك┐ؤ |
 
 ---
 
-#### 3.2 功能重复文档清单 🔴 P0
+#### 3.2 فèاكâ╜لçفجµûçµةثµ╕àفـ ≡ا¤┤ P0
 
-| 功能领域 | 重复文档?| 文档列表 | 优先?|
+| فèاكâ╜لتفاا | لçفجµûçµةث?| µûçµةثفêùكةذ | غ╝ءفàê?|
 |---------|-----------|---------|--------|
-| **策略引擎** | 3?| STRATEGY_ENGINE_BLUEPRINT.md, STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md, STRATEGY_ENGINE_CORE_BLUEPRINT.md | P0 |
-| **另类数据集成** | 2?| 02_FACTOR_LIBRARY/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md, 10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md | P0 |
-| **专业实施蓝图** | 2?| 01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md, 05_IMPLEMENTATION/.../PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md | P0 |
-| **因子挖掘** | 2?| module_designs/layer_9/L9_FACTOR_MINER.md, 02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md | P1 |
-| **策略选择** | 2?| 03_TRADING_TACTICS/.../STRATEGY_SELECTION_BLUEPRINT.md, 05_IMPLEMENTATION/.../STRATEGY_SELECTION_BLUEPRINT.md | P1 |
+| **قصûقـحف╝ـµô** | 3?| STRATEGY_ENGINE_BLUEPRINT.md, STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md, STRATEGY_ENGINE_CORE_BLUEPRINT.md | P0 |
+| **فخق▒╗µـ░µ«لؤµê** | 2?| 02_FACTOR_LIBRARY/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md, 10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md | P0 |
+| **غ╕ôغ╕أف«ئµû╜كôإفؤ╛** | 2?| 01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md, 05_IMPLEMENTATION/.../PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md | P0 |
+| **فؤبفصµîûµء** | 2?| module_designs/layer_9/L9_FACTOR_MINER.md, 02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md | P1 |
+| **قصûقـحلëµïر** | 2?| 03_TRADING_TACTICS/.../STRATEGY_SELECTION_BLUEPRINT.md, 05_IMPLEMENTATION/.../STRATEGY_SELECTION_BLUEPRINT.md | P1 |
 
 ---
 
-#### 3.3 入口清晰度审?🟡 P1
+#### 3.3 فàحفثµ╕àµآ░ف║خف«ة?≡ااة P1
 
-**问题10: 根入口文档不够清?*
+**لù«لتء10: µب╣فàحفثµûçµةثغ╕فجاµ╕à?*
 
-`docs/INDEX.md` 存在以下问题?1. 缺少"快速开?章节
-2. 缺少"文档阅读路径"指引
-3. 核心文档入口不够突出
+`docs/INDEX.md` فصءف£ذغ╗حغ╕ïلù«لتء?1. ق╝║ف░ّ"ف┐سلاف╝?قسبكèé
+2. ق╝║ف░ّ"µûçµةثلءàك»╗ك╖»ف╛"µîçف╝ـ
+3. µب╕ف┐âµûçµةثفàحفثغ╕فجاقزفç║
 
-**建议**: 优化 `docs/INDEX.md` 结构，增加：
-- 🚀 快速开始（5分钟入门?- 📖 文档阅读路径（新?开�?架构师）
-- 🎯 核心文档入口（突出显示）
+**ف╗║ك««**: غ╝ءفîû `docs/INDEX.md` ق╗ôµئي╝îفتئفèبي╝أ
+- ≡اأ ف┐سلاف╝فدïي╝ê5فêلْافàحلùذ?- ≡اôû µûçµةثلءàك»╗ك╖»ف╛ي╝êµû░?ف╝ف?µئ╢µئف╕êي╝ë
+- ≡ا» µب╕ف┐âµûçµةثفàحفثي╝êقزفç║µء╛قج║ي╝ë
 
 ---
 
-## 📈 量化指标统计
+## ≡اôê لçفîûµîçµبçق╗اك«ة
 
-### 问题分布统计
+### لù«لتءفêف╕âق╗اك«ة
 
-| 问题类型 | P0?| P1?| P2?| 合计 |
+| لù«لتءق▒╗فئï | P0?| P1?| P2?| فêك«ة |
 |---------|------|------|------|------|
-| **职责不清** | 4 | 3 | 1 | 8 |
-| **文件乱放** | 2 | 2 | 1 | 5 |
-| **入口不清?* | 0 | 2 | 1 | 3 |
-| **功能重复** | 2 | 3 | 2 | 7 |
-| **合计** | **8** | **10** | **5** | **23** |
+| **كîك┤ثغ╕µ╕à** | 4 | 3 | 1 | 8 |
+| **µûçغ╗╢غ╣▒µ¤╛** | 2 | 2 | 1 | 5 |
+| **فàحفثغ╕µ╕à?* | 0 | 2 | 1 | 3 |
+| **فèاكâ╜لçفج** | 2 | 3 | 2 | 7 |
+| **فêك«ة** | **8** | **10** | **5** | **23** |
 
-### 目录健康度统?
-| 目录 | 文件?| INDEX.md | 健康?| 建议 |
+### قؤ«ف╜ـفحف║╖ف║خق╗ا?
+| قؤ«ف╜ـ | µûçغ╗╢?| INDEX.md | فحف║╖?| ف╗║ك«« |
 |------|--------|----------|--------|------|
-| `01_FRAMEWORK/` | 45+ | ?| 🟢 良好 | 整合AI团队文档 |
-| `02_FACTOR_LIBRARY/` | 50+ | ?| 🟢 良好 | 清理重复文档 |
-| `03_TRADING_TACTICS/` | 30+ | ?| 🟡 需改进 | 整合策略引擎文档 |
-| `04_EXECUTION/` | 20+ | ?| 🟢 良好 | - |
-| `05_IMPLEMENTATION/` | 100+ | ?| 🟡 需改进 | 清理重复蓝图 |
-| `06_ARCHIVE/` | 20+ | ?| 🟡 需改进 | 创建索引 |
-| `07_RESEARCH/` | 7 | ?| 🔴 整合 | 整合至因子库 |
-| `08_AI_GOVERNANCE/` | 1 | ?| 🔴 整合 | 整合至框架层 |
-| `08_USER_EXPERIENCE/` | 4 | ?| 🔴 整合 | 整合至实施层 |
-| `09_AUDIT/` | 50+ | ?| 🟢 良好 | - |
-| `10_AI_WORKFLOW/` | 15+ | ?| 🟡 需改进 | 清理重复文档 |
+| `01_FRAMEWORK/` | 45+ | ?| ≡اات كë»فح╜ | µـ┤فêAIفؤتلءاµûçµةث |
+| `02_FACTOR_LIBRARY/` | 50+ | ?| ≡اات كë»فح╜ | µ╕àقلçفجµûçµةث |
+| `03_TRADING_TACTICS/` | 30+ | ?| ≡ااة ل£µ¤╣ك┐ؤ | µـ┤فêقصûقـحف╝ـµôµûçµةث |
+| `04_EXECUTION/` | 20+ | ?| ≡اات كë»فح╜ | - |
+| `05_IMPLEMENTATION/` | 100+ | ?| ≡ااة ل£µ¤╣ك┐ؤ | µ╕àقلçفجكôإفؤ╛ |
+| `06_ARCHIVE/` | 20+ | ?| ≡ااة ل£µ¤╣ك┐ؤ | فêؤف╗║ق┤تف╝ـ |
+| `07_RESEARCH/` | 7 | ?| ≡ا¤┤ µـ┤فê | µـ┤فêكç│فؤبفصف║ô |
+| `08_AI_GOVERNANCE/` | 1 | ?| ≡ا¤┤ µـ┤فê | µـ┤فêكç│µةµئ╢ف▒é |
+| `08_USER_EXPERIENCE/` | 4 | ?| ≡ا¤┤ µـ┤فê | µـ┤فêكç│ف«ئµû╜ف▒é |
+| `09_AUDIT/` | 50+ | ?| ≡اات كë»فح╜ | - |
+| `10_AI_WORKFLOW/` | 15+ | ?| ≡ااة ل£µ¤╣ك┐ؤ | µ╕àقلçفجµûçµةث |
 
 ---
 
-## 🎯 改进建议与行动计?
-### 立即行动?4小时内）🔴 P0
+## ≡ا» µ¤╣ك┐ؤف╗║ك««غ╕كةîفèذك«ة?
+### قسïف│كةîفèذ?4ف░µù╢فàي╝ë≡ا¤┤ P0
 
-#### 行动1: 清理功能重复文档
+#### كةîفèذ1: µ╕àقفèاكâ╜لçفجµûçµةث
 
-**执行步骤**:
-1. 删除 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md`（重复）
-2. 删除 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md`（重复）
-3. 重命?`docs/10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` ?`SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md`
-4. 更新所有相关引用链?
-**预期效果**: 减少4个重复文档，提升文档清晰?
+**µëدكةîµصحلزج**:
+1. فêبلآج `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md`ي╝êلçفجي╝ë
+2. فêبلآج `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md`ي╝êلçفجي╝ë
+3. لçفّ╜?`docs/10_AI_WORKFLOW/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` ?`SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md`
+4. µؤ┤µû░µëµ£ëقؤ╕فà│ف╝ـق¤ذلô╛?
+**لتµ£اµـêµئ£**: فçف░ّ4غ╕زلçفجµûçµةثي╝îµفçµûçµةثµ╕àµآ░?
 ---
 
-#### 行动2: 归档漂移目录
+#### كةîفèذ2: ف╜ْµةثµ╝éقد╗قؤ«ف╜ـ
 
-**执行步骤**:
-1. ?`docs/module_designs/` 移动?`docs/06_ARCHIVE/architecture_v4/module_designs/`
-2. ?`docs/design/` 内容整合?`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/`
-3. 更新 `docs/SITEMAP.md` 和相关索?
-**预期效果**: 恢复目录神圣性，提升文档可维�?
+**µëدكةîµصحلزج**:
+1. ?`docs/module_designs/` قد╗فèذ?`docs/06_ARCHIVE/architecture_v4/module_designs/`
+2. ?`docs/design/` فàف«╣µـ┤فê?`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/`
+3. µؤ┤µû░ `docs/SITEMAP.md` فْîقؤ╕فà│ق┤ت?
+**لتµ£اµـêµئ£**: µتفجقؤ«ف╜ـقحئف£ثµدي╝îµفçµûçµةثف»ق╗┤µè?
 ---
 
-#### 行动3: 整合稀疏目?
-**执行步骤**:
-1. ?`docs/08_AI_GOVERNANCE/AI_Permissions.md` 内容整合?`docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md`
-2. ?`docs/08_USER_EXPERIENCE/` 内容整合?`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ui_design/`
-3. 删除空目?
-**预期效果**: 减少目录碎片化，提升文档集中?
+#### كةîفèذ3: µـ┤فêقذقûقؤ«?
+**µëدكةîµصحلزج**:
+1. ?`docs/08_AI_GOVERNANCE/AI_Permissions.md` فàف«╣µـ┤فê?`docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md`
+2. ?`docs/08_USER_EXPERIENCE/` فàف«╣µـ┤فê?`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ui_design/`
+3. فêبلآجقر║قؤ«?
+**لتµ£اµـêµئ£**: فçف░ّقؤ«ف╜ـقتقëçفîûي╝îµفçµûçµةثلؤغ╕ص?
 ---
 
-### 短期行动（本周内�?P1
+### قاصµ£اكةîفèذي╝êµ£شفّذفàي╝?P1
 
-#### 行动4: 创建缺失索引
+#### كةîفèذ4: فêؤف╗║ق╝║فج▒ق┤تف╝ـ
 
-**执行步骤**:
-1. 创建 `docs/06_ARCHIVE/INDEX.md`
-2. 创建 `docs/00_OVERVIEW/INDEX.md`
-3. 创建 `docs/00_RESOURCES/INDEX.md`
-
----
-
-#### 行动5: 整合AI虚拟研究团队文档
-
-**执行步骤**:
-1. 创建 `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/` 目录
-2. 移动相关文档至该目录
-3. 创建子目录索?
----
-
-#### 行动6: 重命名旧架构文档
-
-**执行步骤**:
-1. 重命?`LAYER11_MODULE_ANALYSIS.md` ?`NL_INTERFACE_MODULE_ANALYSIS.md`
-2. 重命?`LAYER11_NL_INTERFACE_BLUEPRINT.md` ?`NL_INTERFACE_BLUEPRINT.md`
-3. 重命?`LAYER8_INTEGRATION_BLUEPRINT.md` ?`HUMAN_AI_INTEGRATION_BLUEPRINT.md`
-4. 更新所有引用链?
----
-
-### 长期行动（本月内�?P2
-
-#### 行动7: 优化根入口文?
-**执行步骤**:
-1. 重构 `docs/INDEX.md` 结构
-2. 增加"快速开?章节
-3. 增加"文档阅读路径"指引
-4. 突出核心文档入口
+**µëدكةîµصحلزج**:
+1. فêؤف╗║ `docs/06_ARCHIVE/INDEX.md`
+2. فêؤف╗║ `docs/00_OVERVIEW/INDEX.md`
+3. فêؤف╗║ `docs/00_RESOURCES/INDEX.md`
 
 ---
 
-#### 行动8: 建立文档治理机制
+#### كةîفèذ5: µـ┤فêAIكآأµïاقب¤قر╢فؤتلءاµûçµةث
 
-**执行步骤**:
-1. 制定文档创建审批流程
-2. 建立文档重复检测机?3. 定期执行文档治理审计
+**µëدكةîµصحلزج**:
+1. فêؤف╗║ `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/` قؤ«ف╜ـ
+2. قد╗فèذقؤ╕فà│µûçµةثكç│ك»حقؤ«ف╜ـ
+3. فêؤف╗║فصقؤ«ف╜ـق┤ت?
+---
+
+#### كةîفèذ6: لçفّ╜فµùدµئ╢µئµûçµةث
+
+**µëدكةîµصحلزج**:
+1. لçفّ╜?`LAYER11_MODULE_ANALYSIS.md` ?`NL_INTERFACE_MODULE_ANALYSIS.md`
+2. لçفّ╜?`LAYER11_NL_INTERFACE_BLUEPRINT.md` ?`NL_INTERFACE_BLUEPRINT.md`
+3. لçفّ╜?`LAYER8_INTEGRATION_BLUEPRINT.md` ?`HUMAN_AI_INTEGRATION_BLUEPRINT.md`
+4. µؤ┤µû░µëµ£ëف╝ـق¤ذلô╛?
+---
+
+### لـ┐µ£اكةîفèذي╝êµ£شµ£êفàي╝?P2
+
+#### كةîفèذ7: غ╝ءفîûµب╣فàحفثµûç?
+**µëدكةîµصحلزج**:
+1. لçµئ `docs/INDEX.md` ق╗ôµئ
+2. فتئفèب"ف┐سلاف╝?قسبكèé
+3. فتئفèب"µûçµةثلءàك»╗ك╖»ف╛"µîçف╝ـ
+4. قزفç║µب╕ف┐âµûçµةثفàحفث
 
 ---
 
-## 📋 审计质量声明
+#### كةîفèذ8: ف╗║قسïµûçµةثµ▓╗قµ£║فê╢
 
-### 审计局�?
-1. **文档代码对应原则**: 本次审计未深入验证文档与代码的一致性，需后续专项审计
-2. **内容深度审计**: 部分文档内容未完全审计，仅基于标题和元数据分?3. **链接有效?*: 未验证所有文档内部链接的有效?
-### 质量保证
-
-- ?审计覆盖全系统所有目?- ?审计方法符合专业量化机构标准
-- ?审计结论基于可验证证?- ?改进建议具有可操�?
-### 后续审计建议
-
-1. **专项审计**: 文档与代码对应性审?2. **链接审计**: 全系统链接有效性检?3. **内容审计**: 重点文档内容深度审计
+**µëدكةîµصحلزج**:
+1. فê╢ف«أµûçµةثفêؤف╗║ف«ةµë╣µ╡قذï
+2. ف╗║قسïµûçµةثلçفجµثµ╡ïµ£║?3. ف«أµ£اµëدكةîµûçµةثµ▓╗قف«ةك«ة
 
 ---
 
-## 📎 附录
+## ≡اôï ف«ةك«ةك┤ذلçفث░µء
 
-### A. 审计工作底稿
+### ف«ةك«ةف▒لآ?
+1. **µûçµةثغ╗ثقبف»╣ف║¤فافêآ**: µ£شµشةف«ةك«ةµ£زµ╖▒فàحلزîك»µûçµةثغ╕غ╗ثقبقأغ╕كç┤µدي╝îل£فق╗صغ╕ôلة╣ف«ةك«ة
+2. **فàف«╣µ╖▒ف║خف«ةك«ة**: لâذفêµûçµةثفàف«╣µ£زف«îفàذف«ةك«ةي╝îغ╗àفا║غ║µبçلتءفْîفàâµـ░µ«فê?3. **لô╛µحµ£ëµـê?*: µ£زلزîك»µëµ£ëµûçµةثفàلâذلô╛µحقأµ£ëµـê?
+### ك┤ذلçغ┐إك»
 
-- 全系统目录结构扫描结?- 功能重复文档对比分析
-- 索引完备性检查清?
-### B. 参考标准文?
-- [专业文档治理审计指南](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计标准v5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+- ?ف«ةك«ةكخقؤûفàذق│╗ق╗اµëµ£ëقؤ«?- ?ف«ةك«ةµû╣µ│ـقشخفêغ╕ôغ╕ألçفîûµ£║µئµبçفç
+- ?ف«ةك«ةق╗ôك«║فا║غ║ف»لزîك»ك»?- ?µ¤╣ك┐ؤف╗║ك««فà╖µ£ëف»µôغ╜?
+### فق╗صف«ةك«ةف╗║ك««
 
-### C. 术语?
-- **职责驱动原则**: 每个文件只承担一种核心职?- **索引完备性原?*: 所有活跃文档必须被索引
-- **版本隔离原则**: 同一内容只保留最新版?- **目录神圣?*: src/仅存放执行代码，docs/仅存放说明文?
+1. **غ╕ôلة╣ف«ةك«ة**: µûçµةثغ╕غ╗ثقبف»╣ف║¤µدف«ة?2. **لô╛µحف«ةك«ة**: فàذق│╗ق╗الô╛µحµ£ëµـêµدµث?3. **فàف«╣ف«ةك«ة**: لçقé╣µûçµةثفàف«╣µ╖▒ف║خف«ةك«ة
+
 ---
 
-**审计完成时间**: 2026-04-03  
-**审计执行?*: 系统架构? 
-**下次审计建议**: 2026-04-10
+## ≡اô لآف╜ـ
+
+### A. ف«ةك«ةف╖حغ╜£ف║ـقذ┐
+
+- فàذق│╗ق╗اقؤ«ف╜ـق╗ôµئµëسµق╗ô?- فèاكâ╜لçفجµûçµةثف»╣µ»¤فêµئ
+- ق┤تف╝ـف«îفجçµدµثµاحµ╕à?
+### B. فéكâµبçفçµûç?
+- [غ╕ôغ╕أµûçµةثµ▓╗قف«ةك«ةµîçفù](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [µûçµةثµ▓╗قف«ةك«ةµثµاحµ╕àفـ](../../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [ف«ةك«ةµبçفçv5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+
+### C. µ£»ك»ص?
+- **كîك┤ثلر▒فèذفافêآ**: µ»غ╕زµûçغ╗╢فزµë┐µïàغ╕قدµب╕ف┐âكî?- **ق┤تف╝ـف«îفجçµدفا?*: µëµ£ëµ┤╗ك╖âµûçµةثف┐àلة╗كتسق┤تف╝ـ
+- **قëêµ£شلأ¤قخ╗فافêآ**: فîغ╕فàف«╣فزغ┐إقـآµ£µû░قëê?- **قؤ«ف╜ـقحئف£ث?*: src/غ╗àفصءµ¤╛µëدكةîغ╗ثقبي╝îdocs/غ╗àفصءµ¤╛ك»┤µءµûç?
+---
+
+**ف«ةك«ةف«îµêµù╢لù┤**: 2026-04-03  
+**ف«ةك«ةµëدكةî?*: ق│╗ق╗اµئ╢µئ? 
+**غ╕ïµشةف«ةك«ةف╗║ك««**: 2026-04-10
