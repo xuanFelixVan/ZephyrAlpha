@@ -13,20 +13,20 @@ priority: P2
 estimated_effort: 70h
 integrated_modules:
   - AIWF_CAM_001
-  - L3_DSM_001
-  - L3_POM_001
-  - L3_KMM_001
+  - AIWF_DSM_001
+  - AIWF_POM_001
+  - AIWF_KMM_001
 ---
 
 # 运维与知识管理模块蓝�?(Operations & Knowledge Management Blueprint)
 
-> **模块ID**: L3_OKM_001
+> **模块ID**: AIWF_OKM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
 > **Layer定位**: Layer 3 - 舆情分析�?
 > **优先�?*: P2 (中优先级)
 > **预计工作�?*: 70小时
-> **整合模块**: L3_CAM_001 (合规审计) + L3_DSM_001 (数据安全) + L3_POM_001 (性能优化) + L3_KMM_001 (知识管理)
+> **整合模块**: AIWF_CAM_001 (合规审计) + AIWF_DSM_001 (数据安全) + AIWF_POM_001 (性能优化) + AIWF_KMM_001 (知识管理)
 
 ---
 

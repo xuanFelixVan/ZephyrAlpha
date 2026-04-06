@@ -29,7 +29,7 @@ responsibility_boundary: |
 
 # 实时预警系统模块蓝图 (Real-Time Alert System Blueprint)
 
-> **模块ID**: L3_RTAS_001
+> **模块ID**: AIWF_RTAS_001
 > **版本**: v1.0.1
 > **创建日期**: 2026-04-02
 > **更新日期**: 2026-04-04

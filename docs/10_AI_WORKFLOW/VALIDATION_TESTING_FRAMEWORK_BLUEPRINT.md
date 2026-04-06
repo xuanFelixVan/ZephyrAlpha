@@ -13,18 +13,18 @@ priority: P1
 estimated_effort: 60h
 integrated_modules:
   - AIWF_ABTF_001
-  - L3_BVM_001
+  - AIWF_BVM_001
 ---
 
 # 验证与测试框架蓝�?(Validation & Testing Framework Blueprint)
 
-> **模块ID**: L3_VTF_001
+> **模块ID**: AIWF_VTF_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
 > **Layer定位**: Layer 3 - 舆情分析�?
 > **优先�?*: P1 (高优先级)
 > **预计工作�?*: 60小时
-> **整合模块**: L3_ABTF_001 (A/B测试框架) + L3_BVM_001 (回测验证模块)
+> **整合模块**: AIWF_ABTF_001 (A/B测试框架) + AIWF_BVM_001 (回测验证模块)
 
 ---
 

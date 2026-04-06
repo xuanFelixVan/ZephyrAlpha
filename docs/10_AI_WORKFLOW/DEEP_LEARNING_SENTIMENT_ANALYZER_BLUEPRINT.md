@@ -15,7 +15,7 @@ estimated_effort: 60h
 
 # 深度学习情感分析模块蓝图 (Deep Learning Sentiment Analyzer Blueprint)
 
-> **模块ID**: L3_DLSA_001
+> **模块ID**: AIWF_DLSA_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **Layer定位**: Layer 3 - 舆情分析�?

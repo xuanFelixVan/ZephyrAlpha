@@ -13,18 +13,18 @@ priority: P0
 estimated_effort: 50h
 integrated_modules:
   - AIWF_MPM_001
-  - L3_MVM_001
+  - AIWF_MVM_001
 ---
 
 # 模型性能与版本管理模块蓝�?(Model Performance & Version Management Blueprint)
 
-> **模块ID**: L3_MPVM_001
+> **模块ID**: AIWF_MPVM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
 > **Layer定位**: Layer 3 - 舆情分析�?
 > **优先�?*: P0 (阻断�?
 > **预计工作�?*: 50小时
-> **整合模块**: L3_MPM_001 (模型性能监控) + L3_MVM_001 (模型版本管理)
+> **整合模块**: AIWF_MPM_001 (模型性能监控) + AIWF_MVM_001 (模型版本管理)
 
 ---
 

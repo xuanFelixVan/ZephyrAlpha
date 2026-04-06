@@ -12,7 +12,25 @@ implementation_status: 设计完成
 architecture_layer: 数据基础设施�?timeframe_support: [宏观配置�? 中观策略�? 微观执行层]
 ---
 
-# SuperCommand连接器技术规�?
+# SuperCommand连接器技术规格
+
+## 文档职责说明
+
+**本文档职责**: SuperCommand数据源连接器技术规格
+- 定义SuperCommand数据源接口规范
+- 说明实时行情和选股策略数据获取方法
+- 提供SuperCommand API调用示例和最佳实践
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据源适配器 | [DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md) | 上层架构 | 数据源统一适配器 |
+| 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
+
+**职责边界**:
+- ✅ 本文档负责: SuperCommand数据源接口定义和使用说明
+- ❌ 本文档不负责: 选股策略实现（由策略层负责）
+
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **所属层�?*: 数据基础设施�?> **设计状�?*: �?设计完成

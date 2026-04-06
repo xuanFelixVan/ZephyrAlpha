@@ -13,18 +13,18 @@ priority: P0
 estimated_effort: 40h
 integrated_modules:
   - AIWF_DQM_001
-  - L3_DLT_001
+  - AIWF_DLT_001
 ---
 
 # 数据质量与血缘管理模块蓝�?(Data Quality & Lineage Management Blueprint)
 
-> **模块ID**: L3_DQLM_001
+> **模块ID**: AIWF_DQLM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
 > **Layer定位**: Layer 3 - 舆情分析�?
 > **优先�?*: P0 (阻断�?
 > **预计工作�?*: 40小时
-> **整合模块**: L3_DQM_001 (数据质量管理) + L3_DLT_001 (数据血缘追�?
+> **整合模块**: AIWF_DQM_001 (数据质量管理) + AIWF_DLT_001 (数据血缘追�?
 
 ---
 
