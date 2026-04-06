@@ -826,6 +826,51 @@ pip install jinja2>=3.0
 
 **蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [BARRA风险模型蓝图](./BARRA_RISK_MODEL_BLUEPRINT.md) | BARRA_RISK_MODEL_001 | 强依赖 | 提供因子风险模型 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依赖 | 提供VaR/ES指标 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依赖 | 提供数据质量指标 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合绩效评估蓝图](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | 强依赖 | 组合绩效评估 |
+| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 中依赖 | 风险贡献分析 |
+| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依赖 | 压力测试 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[BARRA风险模型] --> B[风险归因系统]
+    C[VaR/ES监控] --> B
+    D[数据质量监控] --> B
+    
+    B --> E[组合绩效评估]
+    B --> F[风险贡献分析]
+    B --> G[压力测试系统]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+---
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_001
 version: 1.0.0
 status: Active
@@ -121,7 +121,7 @@ compliance_level: 专业标准
 | 流动性管理系统蓝?v1.0 | V_021 | 1.0.0 | Active | 2026-04-07 | [链接](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) |
 | 爆仓线监控系统蓝图 v1.0 | MARGIN_CALL_MONITOR_001 | 1.0.0 | Active | 2026-04-05 | [链接](./MARGIN_CALL_MONITOR_BLUEPRINT.md) |
 | 市场冲击模型蓝图 v1.0 | V_022 | 1.0.0 | Active | 2026-04-07 | [链接](./MARKET_IMPACT_MODEL_BLUEPRINT.md) |
-| 市场参与者行为模拟系?- 多层次集成架构方? | MARKETPARTICIPANTSIMULATION_001 | 1.0.0 | Active | 2026-04-07 | [链接](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md) |
+| 市场参与者行为模拟系?- 多层次集成架构方? | MARKETPARTICIPANTSIMULATION_001 | 1.0.0 | Active | 2026-04-07 | [链接](./MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md) |
 | 市场状态识别系统蓝图 v1.0 | V_023 | 1.0.0 | Active | 2026-04-07 | [链接](./MARKET_REGIME_DETECTION_BLUEPRINT.md) |
 | 均值方差优化基础框架蓝图 | MEAN_VARIANCE_OPTIMIZATION_001 | 1.0.0 | Active | 2026-04-07 | [链接](./MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md) |
 | Layer 7 AI报告?- 模块职责边界定义 | LAYER_AI_002 | 1.0.0 | Active | 2026-04-07 | [链接](./MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md) |

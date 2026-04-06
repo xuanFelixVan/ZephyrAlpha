@@ -92,7 +92,7 @@ def weekly_layer_check():
     
     # 扫描所有蓝图
     blueprints = scan_all_blueprints()
-    print(f'📊 扫描到 {len(blueprints)} 个蓝图文件')
+    print(f'扫描到 {len(blueprints)} 个蓝图文件')
     print()
     
     # 检查每个蓝图的Layer归属
@@ -112,13 +112,13 @@ def weekly_layer_check():
                 layer_stats[layer_key] = layer_stats.get(layer_key, 0) + 1
     
     # 输出结果
-    print('📋 Layer归属统计:')
+    print('Layer归属统计:')
     for layer_num in sorted(layer_stats.keys(), key=lambda x: int(x.split()[1])):
         count = layer_stats[layer_num]
         print(f'  {layer_num}: {count}个文档')
     
     print()
-    print(f'⚠️  缺少Layer归属的文档: {len(missing_layer)}个')
+    print(f'缺少Layer归属的文档: {len(missing_layer)}个')
     
     if missing_layer:
         print()
@@ -130,7 +130,7 @@ def weekly_layer_check():
     coverage_rate = (len(blueprints) - len(missing_layer)) / len(blueprints) * 100
     
     print()
-    print(f'📈 Layer覆盖率: {coverage_rate:.1f}%')
+    print(f'Layer覆盖率: {coverage_rate:.1f}%')
     
     # 保存检查结果
     result = {
@@ -151,7 +151,7 @@ def weekly_layer_check():
         json.dump(result, f, ensure_ascii=False, indent=2)
     
     print()
-    print(f'✅ 检查结果已保存: {result_path}')
+    print(f'检查结果已保存: {result_path}')
     
     # 生成报告
     report_path = Path('docs/09_AUDIT/REPORTS/WEEKLY_LAYER_CHECK_REPORT.md')
@@ -161,7 +161,7 @@ def weekly_layer_check():
         f.write(f'> **检查时间**: {result["check_time"]}\n')
         f.write(f'> **检查范围**: 全系统蓝图文件\n\n')
         
-        f.write('## 📊 检查统计\n\n')
+        f.write('## 检查统计\n\n')
         f.write(f'| 指标 | 数值 |\n')
         f.write(f'|------|------|\n')
         f.write(f'| 总蓝图数 | {result["total_blueprints"]} |\n')
@@ -169,7 +169,7 @@ def weekly_layer_check():
         f.write(f'| 缺少Layer归属 | {result["missing_layer"]} |\n')
         f.write(f'| Layer覆盖率 | {result["coverage_rate"]:.1f}% |\n\n')
         
-        f.write('## 📋 Layer归属分布\n\n')
+        f.write('## Layer归属分布\n\n')
         f.write(f'| Layer | 文档数 |\n')
         f.write(f'|-------|--------|\n')
         for layer_num in sorted(layer_stats.keys(), key=lambda x: int(x.split()[1])):
@@ -178,19 +178,19 @@ def weekly_layer_check():
         f.write('\n')
         
         if missing_layer:
-            f.write('## ⚠️ 缺少Layer归属的文档\n\n')
+            f.write('## 缺少Layer归属的文档\n\n')
             for doc in missing_layer:
                 f.write(f'- {doc}\n')
             f.write('\n')
         
-        f.write('## ✅ 改进建议\n\n')
+        f.write('## 改进建议\n\n')
         if missing_layer:
             f.write('1. 运行 `scripts/batch_add_layer_fields.py` 为缺少Layer归属的文档添加layer字段\n')
             f.write('2. 重新运行本脚本验证修复效果\n')
         else:
-            f.write('✅ 所有文档都有正确的Layer归属，无需改进。\n')
+            f.write('所有文档都有正确的Layer归属，无需改进。\n')
     
-    print(f'✅ 检查报告已保存: {report_path}')
+    print(f'检查报告已保存: {report_path}')
     
     return result
 
