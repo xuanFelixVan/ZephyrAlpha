@@ -96,15 +96,18 @@ class RegimeReport:
 ```
 
 #### 2.2.2 功能�?
-**RegimeClassifier**: 经济范式分类�?- `classify(macro_data)`: 判断当前经济范式
-- `calculate_probability(macro_data, regime)`: 计算范式概率
+**EconomicRegimeEngineClient**: 经济范式引擎客户端
+- `get_current_regime()`: 调用Layer 5经济范式判断引擎API获取当前范式
+- `get_regime_probability()`: 获取范式概率分布
+- `get_transition_warning()`: 获取范式转换预警信号
 
 **MacroFactorModel**: 宏观因子模型
 - `calculate_exposure(macro_data, portfolio_data)`: 计算宏观因子暴露
 
 **StrategicAllocator**: 战略配置�?- `suggest_allocation(regime, factor_exposure)`: 提供战略配置建议
 
-**TransitionRiskAssessor**: 转换风险评估�?- `assess_transition_risk(macro_data, current_regime)`: 评估范式转换风险
+**ReportGenerator**: 报告生成�?- `generate_regime_report(regime_data)`: 生成经济范式分析报告
+- `generate_transition_risk_report(warning_data)`: 生成范式转换风险报告
 
 ---
 
@@ -184,15 +187,19 @@ class MacroDataInput:
 ---
 
 ## 四、算法实现说�?
-### 4.1 经济范式分类算法
+### 4.1 经济范式数据获取
 
 **算法原理**:
-基于宏观经济指标的范围匹配，计算各范式的匹配度得�?
-**算法步骤**:
-1. 提取最新宏观经济指�?2. 对每个范式，计算指标匹配得分
-3. 选择得分最高的范式作为当前范式
+调用Layer 5经济范式判断引擎API，获取经济范式判断结果和预警信号
 
-**复杂度分�?*: O(n*m)，其中n为指标数量，m为范式数�?
+**算法步骤**:
+1. 调用经济范式判断引擎API
+2. 获取当前经济范式和概率分布
+3. 获取范式转换预警信号
+4. 返回范式数据供报告生成使用
+
+**复杂度分�?*: O(1)，API调用
+
 ### 4.2 宏观因子暴露计算
 
 **算法原理**:
@@ -217,8 +224,9 @@ class MacroDataInput:
 ### 5.1 单元测试
 
 **测试范围**:
-- RegimeClassifier.classify(): 测试范式分类准确�?- MacroFactorModel.calculate_exposure(): 测试因子暴露计算
-- StrategicAllocator.suggest_allocation(): 测试配置建议合理�?- TransitionRiskAssessor.assess_transition_risk(): 测试风险评估
+- EconomicRegimeEngineClient.get_current_regime(): 测试API调用正确性
+- MacroFactorModel.calculate_exposure(): 测试因子暴露计算
+- StrategicAllocator.suggest_allocation(): 测试配置建议合理�?- ReportGenerator.generate_regime_report(): 测试报告生成质量
 
 **测试覆盖�?*: �?0%
 
@@ -256,10 +264,10 @@ class MacroDataInput:
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| 范式判断 | 准确率≥80% | 历史数据验证 |
+| API调用 | 成功率≥99% | API测试 |
 | 因子暴露计算 | 误差�?% | 专家评审 |
 | 配置建议 | 合理性≥85% | 回测验证 |
-| 预警信号 | 覆盖率≥90% | 历史事件验证 |
+| 报告生成 | 完整性≥95% | 文档审查 |
 
 ### 7.2 性能验收
 
@@ -288,6 +296,7 @@ class MacroDataInput:
 ### 8.2 依赖关系
 
 **上游依赖**:
+- Layer 5: 经济范式判断引擎（ECONOMIC_REGIME_ENGINE_BLUEPRINT.md）
 - Layer 2: 宏观经济数据
 - Layer 4: 组合数据
 

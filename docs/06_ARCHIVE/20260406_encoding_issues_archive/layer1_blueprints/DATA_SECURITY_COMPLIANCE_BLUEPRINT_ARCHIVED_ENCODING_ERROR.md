@@ -1,7 +1,7 @@
 ---
-module_id: IMPL_DATA_SECURITY_BP_001
+module_id: ARCHIVED_IMPL_DATA_SECURITY_BP_001
 version: 1.0.1
-status: Active
+status: Archived
 created_date: 2026-04-02
 last_updated: '2026-04-06'
 owner: 首席技术评审官
@@ -14,6 +14,8 @@ implementation_progress: 0%
 open_source_dependency: pandas, numpy
 estimated_effort: 2周
 priority: P0
+archive_reason: 编码错误归档
+archive_date: 2026-04-06
 ---
 
 

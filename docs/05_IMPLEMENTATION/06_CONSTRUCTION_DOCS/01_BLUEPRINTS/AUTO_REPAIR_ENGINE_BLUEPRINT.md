@@ -51,6 +51,53 @@ priority: P0
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供质量异常检测结果 |
+| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 中依赖 | 提供数据源元数据 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供数据血缘信息 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依赖 | 提供修复后质量评分 |
+| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依赖 | 提供修复历史记录 |
+| [数据可观测性蓝图](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 弱依赖 | 提供修复监控指标 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **scikit-learn** | 1.3.0+ | 机器学习模型 | [官方文档](https://scikit-learn.org/) |
+| **PyOD** | 1.1.0+ | 异常检测 | [官方文档](https://pyod.readthedocs.io/) |
+| **Great Expectations** | 0.18+ | 数据验证 | [官方文档](https://docs.greatexpectations.io/) |
+| **Prophet** | 1.1.0+ | 时序预测 | [官方文档](https://facebook.github.io/prophet/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[自动修复引擎]
+    C[数据源管理] --> B
+    D[数据目录] --> B
+    
+    B --> E[质量评分系统]
+    B --> F[质量报告自动化]
+    B --> G[数据可观测性]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+    style D fill:#96ceb4
+```
+
+---
+
 ## 二、系统架构设计
 
 ### 2.1 整体架构图

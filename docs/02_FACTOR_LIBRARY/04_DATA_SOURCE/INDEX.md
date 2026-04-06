@@ -70,6 +70,8 @@ implementation_status: 蓝图完成
 | [TIME_SERIES_STORAGE/](TIME_SERIES_STORAGE/) | 高性能时序存储系统 | Blueprint |
 | [DATA_FEDERATION/](DATA_FEDERATION/) | 数据联邦查询系统 | Blueprint |
 | [DATA_CONTRACT/](DATA_CONTRACT/) | 数据契约管理系统 | Blueprint |
+| [REALTIME_DATA_STREAMING/](REALTIME_DATA_STREAMING/) | 实时数据流平台 | Blueprint |
+| [DATA_ORCHESTRATION_ENHANCED/](DATA_ORCHESTRATION_ENHANCED/) | 数据编排增强系统 | Blueprint |
 | [DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 数据源层架构完整性深度评估报告 | Active |
 
 ## 📖 核心文档
