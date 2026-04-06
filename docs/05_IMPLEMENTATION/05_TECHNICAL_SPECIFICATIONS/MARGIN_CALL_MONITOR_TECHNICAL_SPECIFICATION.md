@@ -673,4 +673,379 @@ margin_call_monitor:
   
   # 预警阈值配置
   alert_thresholds:
-    knock_in
+    knock_in_warning: 0.3  # 敲入概率预警阈值
+    margin_call_warning: 1.5  # 维持担保比例预警阈值
+    systemic_risk_warning: 0.7  # 系统性风险预警阈值
+  
+  # 预警冷却时间
+  alert_cooldown:
+    p0_minutes: 5  # P0级预警冷却时间
+    p1_minutes: 15  # P1级预警冷却时间
+    p2_minutes: 30  # P2级预警冷却时间
+    p3_minutes: 60  # P3级预警冷却时间
+  
+  # 数据更新频率
+  update_frequency:
+    snowball_products: 300  # 雪球产品数据更新频率（秒）
+    margin_accounts: 60  # 融资账户数据更新频率（秒）
+    market_data: 10  # 市场行情数据更新频率（秒）
+  
+  # 性能优化
+  performance:
+    cache_ttl: 300  # 缓存过期时间（秒）
+    batch_size: 100  # 批量处理大小
+    max_workers: 8  # 最大工作线程数
+```
+
+### 5.4 测试用例设计
+
+```python
+import pytest
+import numpy as np
+from margin_call_monitor import MarginCallMonitorAPI, SnowballProduct
+
+class TestSnowballKnockInCalculator:
+    """雪球产品敲入概率计算器测试"""
+    
+    def test_normal_knock_in_scenario(self):
+        """测试正常敲入场景"""
+        product = SnowballProduct(
+            product_id="TEST_001",
+            underlying="000300.SH",
+            knock_in_price=3000,
+            knock_out_price=4500,
+            coupon_rate=0.15,
+            maturity_days=365,
+            leverage_ratio=1.0
+        )
+        
+        monitor = MarginCallMonitorAPI(config)
+        result = monitor.calculate_snowball_knock_in_probability(
+            product=product,
+            current_price=3200,
+            volatility=0.20,
+            risk_free_rate=0.03
+        )
+        
+        assert 0 <= result.knock_in_probability <= 1
+        assert result.knock_in_probability > 0.1
+        assert result.risk_level in ['P0', 'P1', 'P2', 'P3']
+    
+    def test_extreme_market_condition(self):
+        """测试极端市场条件"""
+        product = SnowballProduct(
+            product_id="TEST_002",
+            underlying="000300.SH",
+            knock_in_price=3000,
+            knock_out_price=4500,
+            coupon_rate=0.15,
+            maturity_days=365,
+            leverage_ratio=1.0
+        )
+        
+        monitor = MarginCallMonitorAPI(config)
+        result = monitor.calculate_snowball_knock_in_probability(
+            product=product,
+            current_price=3100,  # 接近敲入价格
+            volatility=0.40,  # 高波动率
+            risk_free_rate=0.03
+        )
+        
+        assert result.knock_in_probability > 0.5
+        assert result.risk_level == 'P0'
+    
+    def test_boundary_conditions(self):
+        """测试边界条件"""
+        product = SnowballProduct(
+            product_id="TEST_003",
+            underlying="000300.SH",
+            knock_in_price=3000,
+            knock_out_price=4500,
+            coupon_rate=0.15,
+            maturity_days=365,
+            leverage_ratio=1.0
+        )
+        
+        monitor = MarginCallMonitorAPI(config)
+        
+        # 测试价格等于敲入价格
+        result = monitor.calculate_snowball_knock_in_probability(
+            product=product,
+            current_price=3000,
+            volatility=0.20,
+            risk_free_rate=0.03
+        )
+        assert result.knock_in_probability >= 0.9
+        
+        # 测试价格等于敲出价格
+        result = monitor.calculate_snowball_knock_in_probability(
+            product=product,
+            current_price=4500,
+            volatility=0.20,
+            risk_free_rate=0.03
+        )
+        assert result.knock_out_probability >= 0.9
+
+class TestMarginCallRiskMonitor:
+    """融资盘爆仓风险监控测试"""
+    
+    def test_normal_margin_account(self):
+        """测试正常融资账户"""
+        account = MarginAccount(
+            account_id="MARGIN_001",
+            total_assets=1000000,
+            total_debt=500000,
+            maintenance_margin_ratio=1.3,
+            positions=[],
+            margin_call_price=800000
+        )
+        
+        monitor = MarginCallMonitorAPI(config)
+        result = monitor.monitor_margin_call_risk(
+            margin_account=account,
+            market_data=pd.DataFrame()
+        )
+        
+        assert result.maintenance_ratio > 1.0
+        assert result.margin_call_probability < 0.3
+        assert result.risk_level in ['P2', 'P3']
+    
+    def test_high_risk_margin_account(self):
+        """测试高风险融资账户"""
+        account = MarginAccount(
+            account_id="MARGIN_002",
+            total_assets=1000000,
+            total_debt=800000,
+            maintenance_margin_ratio=1.1,
+            positions=[],
+            margin_call_price=950000
+        )
+        
+        monitor = MarginCallMonitorAPI(config)
+        result = monitor.monitor_margin_call_risk(
+            margin_account=account,
+            market_data=pd.DataFrame()
+        )
+        
+        assert result.maintenance_ratio < 1.3
+        assert result.margin_call_probability > 0.5
+        assert result.risk_level in ['P0', 'P1']
+
+class TestMarketLeverageRiskAssessor:
+    """市场杠杆风险评估测试"""
+    
+    def test_normal_market_condition(self):
+        """测试正常市场条件"""
+        leverage_data = pd.DataFrame({
+            'leverage_ratio': [1.2, 1.3, 1.1, 1.4],
+            'weight': [0.25, 0.25, 0.25, 0.25]
+        })
+        
+        monitor = MarginCallMonitorAPI(config)
+        result = monitor.assess_market_leverage_risk(
+            market_leverage_data=leverage_data,
+            threshold=0.7
+        )
+        
+        assert result.market_leverage_ratio < 1.5
+        assert result.leverage_concentration_hhi < 0.3
+        assert result.systemic_risk_level in ['LOW', 'MEDIUM']
+    
+    def test_high_leverage_concentration(self):
+        """测试高杠杆集中度"""
+        leverage_data = pd.DataFrame({
+            'leverage_ratio': [2.5, 2.8, 2.3, 2.6],
+            'weight': [0.4, 0.3, 0.2, 0.1]
+        })
+        
+        monitor = MarginCallMonitorAPI(config)
+        result = monitor.assess_market_leverage_risk(
+            market_leverage_data=leverage_data,
+            threshold=0.7
+        )
+        
+        assert result.market_leverage_ratio > 2.0
+        assert result.leverage_concentration_hhi > 0.25
+        assert result.systemic_risk_level in ['HIGH', 'CRITICAL']
+```
+
+---
+
+## 6. 实施技术栈
+
+### 6.1 编程语言与框架版本
+
+| 技术组件 | 版本 | 选择理由 | 替代方案 |
+|----------|------|----------|----------|
+| Python | 3.11+ | 量化生态完善，NumPy/Pandas支持好 | - |
+| NumPy | 1.24+ | 高性能数值计算 | - |
+| Pandas | 2.0+ | 数据处理与分析 | - |
+| SciPy | 1.11+ | 科学计算（统计函数） | - |
+| FastAPI | 0.104+ | 高性能API框架 | Flask |
+| SQLAlchemy | 2.0+ | ORM框架 | Django ORM |
+| Redis | 7.0+ | 高性能缓存 | Memcached |
+| SQLite | 3.40+ | 轻量级数据库 | PostgreSQL |
+
+### 6.2 第三方库依赖与版本约束
+
+```txt
+# requirements.txt
+python>=3.11
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.11.0
+fastapi>=0.104.0
+sqlalchemy>=2.0.0
+redis>=4.5.0
+pydantic>=2.0.0
+python-dateutil>=2.8.0
+pytz>=2023.3
+```
+
+### 6.3 开发环境要求
+
+- **CPU**: 8核心以上（蒙特卡洛模拟需要并行计算）
+- **内存**: 16GB以上（大数据处理）
+- **存储**: 100GB可用空间（历史数据存储）
+- **操作系统**: Windows 10/11, Ubuntu 20.04+, macOS 12+
+- **Python环境**: Miniconda/Anaconda
+
+### 6.4 部署架构与基础设施
+
+**部署模式**: 容器化部署（Docker）
+
+**基础设施**: 
+- 开发环境: 本地Docker容器
+- 生产环境: Kubernetes集群
+
+**监控系统**: 
+- Prometheus: 指标收集
+- Grafana: 可视化监控面板
+- AlertManager: 告警管理
+
+**日志系统**: 
+- ELK Stack: 日志收集、存储、分析
+- Filebeat: 日志采集
+- Logstash: 日志处理
+- Elasticsearch: 日志存储
+- Kibana: 日志可视化
+
+---
+
+## 7. 测试策略
+
+### 7.1 单元测试范围与覆盖率要求
+
+**覆盖率目标**: ≥90% 代码覆盖率
+
+**测试范围**: 
+- 所有公共API接口
+- 核心算法实现
+- 数据模型验证
+- 异常处理逻辑
+
+**测试框架**: pytest + coverage
+
+**持续集成**: 每次提交自动运行测试
+
+```bash
+# 运行单元测试
+pytest tests/unit_tests/ -v --cov=margin_call_monitor --cov-report=html
+
+# 生成覆盖率报告
+coverage report -m
+```
+
+### 7.2 集成测试场景设计
+
+| 测试场景 | 测试目标 | 预期结果 | 通过标准 |
+|----------|----------|----------|----------|
+| 雪球产品监控集成 | 与数据层集成 | 实时数据获取 | 数据延迟<5s |
+| 融资盘监控集成 | 与券商API集成 | 融资数据同步 | 数据准确率100% |
+| 预警信号推送 | 与风控系统集成 | 预警信号送达 | 送达率100% |
+| 压力测试集成 | 与压力测试系统集成 | 极端情景模拟 | 模拟准确率≥90% |
+| 性能测试 | 并发处理能力 | 响应时间<500ms | P95延迟达标 |
+
+### 7.3 性能测试基准与指标
+
+```yaml
+performance_benchmarks:
+  # 负载测试
+  load_test:
+    concurrent_users: 100
+    duration: 5m
+    target_response_time: <500ms
+    target_throughput: >100 QPS
+    
+  # 压力测试
+  stress_test:
+    concurrent_users: 1000
+    duration: 10m
+    target_error_rate: <1%
+    target_response_time: <1000ms
+    
+  # 蒙特卡洛模拟性能测试
+  monte_carlo_performance:
+    n_simulations: 10000
+    n_paths: 365
+    target_time: <500ms
+    parallel_workers: 4
+    
+  # 内存使用测试
+  memory_usage:
+    max_memory: 4GB
+    cache_size: 1GB
+    target_memory_efficiency: >80%
+```
+
+### 7.4 安全测试方案
+
+**OWASP Top 10覆盖**: 全部10项安全检查
+
+**漏洞扫描**: 
+- 工具: OWASP ZAP, SonarQube
+- 频率: 每周自动扫描
+- 要求: 无高危漏洞
+
+**渗透测试**: 
+- 频率: 年度渗透测试
+- 范围: API接口、数据存储、认证机制
+
+**合规检查**: 
+- 数据保护: 符合《个人信息保护法》
+- 访问控制: 基于角色的权限控制
+- 审计要求: 所有操作可追溯
+
+---
+
+## 8. 风险与约束
+
+### 8.1 技术风险识别与缓解措施
+
+#### P0（高风险-阻断型）
+
+1. **风险**: 数据源不可用导致监控失效
+   - **影响**: 无法实时监控爆仓风险，可能导致重大损失
+   - **概率**: 中等
+   - **缓解措施**: 
+     - 多数据源备份（主数据源+备用数据源）
+     - 数据缓存机制（缓存最近1小时数据）
+     - 数据源健康检查（每分钟检查一次）
+   - **责任人**: 数据层负责人
+
+2. **风险**: 蒙特卡洛模拟性能不足
+   - **影响**: 敲入概率计算延迟，预警不及时
+   - **概率**: 中等
+   - **缓解措施**: 
+     - 并行计算优化（多进程/多线程）
+     - GPU加速（CUDA）
+     - 模拟路径数动态调整（根据市场波动率）
+   - **责任人**: 算法工程师
+
+#### P1（高风险）
+
+1. **风险**: 预警信号误报/漏报
+   - **影响**: 误报导致资源浪费，漏报导致风险暴露
+   - **概率**: 中等
+   - **缓解措施**: 
+     - 多

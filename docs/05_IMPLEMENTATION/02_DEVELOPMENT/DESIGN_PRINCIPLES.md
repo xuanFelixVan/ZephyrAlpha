@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_DOC_001
-version: 5.3.0
+module_id: IMPL_DEV_PRINCIPLES_001
+version: 1.0.15.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -196,7 +196,7 @@ class GracefulShutdown:
 2. 设置shutdown_requested标志
 3. 取消所有pending任务
 4. 等待active任务完成（最?0秒）
-5. 保存关键�?
+5. 保存关键�?
 6. 关闭数据库连?
 7. 退出进?
 ```
@@ -208,7 +208,7 @@ class GracefulShutdown:
 | **回测进度** | 每完?0%或收到关闭信?| 从检查点恢复 |
 | **配置变更** | 变更后立即保?| 重新加载配置 |
 | **缓存数据** | 定期持久?| 重新加载缓存 |
-| **连接�?* | 关闭时记?| 重新建立连接 |
+| **连接�?* | 关闭时记?| 重新建立连接 |
 
 
 ## 五、系统自愈能?
@@ -233,7 +233,7 @@ class HealthChecker:
         参数:
             name: 检查名?
             check_fn: 检查函数，返回(bool, str)
-            threshold: 连续失败�?
+            threshold: 连续失败�?
         """
         self.checks[name] = check_fn
         self.failure_count[name] = 0

@@ -112,8 +112,7 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [数据源概述](./04_DATA_SOURCE/README.md) | 数据源概�?| ⭐⭐⭐⭐�?|
 | [数据需求](./04_DATA_SOURCE/DATA_REQUIREMENTS.md) | 数据需求分�?| ⭐⭐⭐⭐�?|
-| [数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据采集流程 | ⭐⭐⭐⭐�?|
-| [数据质量](./04_DATA_SOURCE/DATA_QUALITY.md) | 数据质量管理 | ⭐⭐⭐⭐�?|
+| [数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据采集流程 | ⭐⭐⭐⭐�?|| [数据质量](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |⭐⭐⭐⭐�?|
 | [数据源适配器](./04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) | 数据源适配�?| ⭐⭐⭐⭐�?|
 
 ### 数据接口

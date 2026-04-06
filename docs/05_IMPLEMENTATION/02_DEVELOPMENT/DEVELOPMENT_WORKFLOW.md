@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_DOC_001
-version: 5.3.0
+module_id: IMPL_DEV_WORKFLOW_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -42,7 +42,7 @@ implementation_status: 进行?
    git add .
    git commit -m "feat: 描述"
 
-5. �?
+5. �?
    git push origin feature/xxx
 
 6. 合并（审核后?

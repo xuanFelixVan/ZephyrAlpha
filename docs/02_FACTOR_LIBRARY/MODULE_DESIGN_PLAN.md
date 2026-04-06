@@ -34,15 +34,15 @@ implementation_status: 进行?
 ### 设计质量标准
 1. **功能?*: 模块功能描述清晰，输入输出明?
 2. **可行?*: 技术方案可实现，依赖技术栈成熟
-3. **一�?*: 设计符合整体架构规范
-4. **可维�?*: 设计支持长期演进和修?
+3. **一�?*: 设计符合整体架构规范
+4. **可维�?*: 设计支持长期演进和修?
 
 ---
 
 ## 📋 模块清单总览
 
 ### Layer 0: 数据源层 (4个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L0_QMT | QMT数据接口 | QMT行情/财务/交易数据接入 | ?设计完成(已补? | P0 | 16h |
 | L0_IFIND | iFind连接?| iFind 5700+因子和舆情数?| ?设计完成 | P0 | 20h |
@@ -50,21 +50,21 @@ implementation_status: 进行?
 | L0_BAOSTOCK | Baostock适配?| 免费财务数据验证 | ?设计完成 | P2 | 8h |
 
 ### Layer 1: 数据预处理层 (3个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L1_CLEANER | DataCleaner | 缺失?异常值处?复权 | ?设计完成 | P0 | 12h |
 | L1_NORMALIZER | DataNormalizer | 数据标准?对齐 | ?设计完成 | P0 | 10h |
 | L1_VALIDATOR | DataValidator | 数据质量校验 | ?设计完成 | P0 | 8h |
 
 ### Layer 2: Alpha因子?(3个类?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L2_IFIND_FACTORS | iFind因子?| 5700+个专业因?| ?已有蓝图 | P0 | 参考因子库蓝图 |
 | L2_TECH_FACTORS | 技术因子库 | 100+个技术指?| 🔲 未开?| P1 | 15h |
 | L2_QLIB_FACTORS | Qlib Alpha158 | AI验证因子?| 🔲 未开?| P1 | 12h |
 
 ### Layer 3: 舆情分析?(4个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L3_NEWS_CRAWLER | NewsCrawler | 财联?同花顺新闻爬?| 🔲 未开?| P1 | 18h |
 | L3_SENTIMENT | SentimentAnalyzer | 新闻情感分析 | 🔲 未开?| P1 | 20h |
@@ -72,7 +72,7 @@ implementation_status: 进行?
 | L3_NEWS_MATCHER | NewsStockMatcher | 新闻-股票匹配 | 🔲 未开?| P2 | 12h |
 
 ### Layer 4: 机器学习?(4个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L4_FEATURE_ENG | FeatureEngineering | 自动特征工程 | ?已完?| P1 | 25h |
 | L4_LSTM | LSTMModel | LSTM股价预测模型 | 🔲 未开?| P2 | 30h |
@@ -80,7 +80,7 @@ implementation_status: 进行?
 | L4_QLIB_INTEG | QlibAlpha158集成 | Qlib AI因子库集?| 🔲 未开?| P1 | 15h |
 
 ### Layer 5: 策略执行?(5个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L5_STRATEGY_ENGINE | StrategyEngine | 策略运行引擎 | ?已有蓝图 | P0 | 参考策略引擎蓝?|
 | L5_SIGNAL_GEN | SignalGenerator | 交易信号生成 | 🔲 未开?| P0 | 15h |
@@ -89,14 +89,14 @@ implementation_status: 进行?
 | L5_TRADE_AUDITOR | TradeAuditor | AI下单前审?| 🔲 未开?| P1 | 10h |
 
 ### Layer 6: 组合优化?(3个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L6_PORTFOLIO_OPT | PortfolioOptimizer | 均值方?风险平价优化 | 🔲 未开?| P1 | 25h |
 | L6_BARRA_RISK | BarraRiskModel | Barra风格因子风险模型 | 🔲 未开?| P2 | 30h |
 | L6_CONSTRAINTS | ConstraintsSolver | 投资约束求解 | 🔲 未开?| P2 | 20h |
 
 ### Layer 7: AI报告?(4个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L7_PERFORMANCE | PerformanceAnalyzer | 绩效归因分析 | 🔲 未开?| P1 | 18h |
 | L7_DAILY_REPORT | DailyReporter | AI日报生成 | 🔲 未开?| P2 | 15h |
@@ -104,18 +104,18 @@ implementation_status: 进行?
 | L7_MARKET_ANALYZER | MarketAnalyzer | 市场分析报告 | 🔲 未开?| P2 | 10h |
 
 ### Layer 8: 人机交互?(7个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L8_STREAMLIT | StreamlitDashboard | 可视化仪表板 | 🔲 未开?| P1 | 25h |
 | L8_APPROVAL_UI | ApprovalUI | 交易授权确认界面 | 🔲 未开?| P0 | 15h |
 | L8_GRAFANA | GrafanaMonitor | 监控大屏 | 🔲 未开?| P2 | 20h |
-| L8_WECHAT_ALERT | WeChatAlert | 微信告警�?| 🔲 未开?| P1 | 12h |
+| L8_WECHAT_ALERT | WeChatAlert | 微信告警�?| 🔲 未开?| P1 | 12h |
 | L8_BULLISH_DEBATER | BullishDebater | 多头辩论AI | 🔲 未开?| P2 | 30h |
 | L8_BEARISH_DEBATER | BearishDebater | 空头辩论AI | 🔲 未开?| P2 | 30h |
 | L8_AI_ARBITRATOR | AIArbitrator | AI仲裁决策 | 🔲 未开?| P2 | 25h |
 
 ### Layer 9: AI增强?(6个模?
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L9_FACTOR_MINER | AI因子挖掘 | gplearn遗传编程因子挖掘 | ?已完?| P1 | 25h |
 | L9_MARKET_DETECTOR | AI市场状态识?| HMM市场状态识别引?| ?已完?| P1 | 20h |
@@ -125,13 +125,13 @@ implementation_status: 进行?
 | L9_ANOMALY_DETECTOR | AI异常检?| pyod异常检测框?| ?已完?| P1 | 20h |
 
 ### Layer 11: 文字驱动?(3个模? ?新增
-| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
+| 模块ID | 模块名称 | 功能概要 | 设计�?| 优先?| 预计工时 |
 |--------|----------|----------|----------|--------|----------|
 | L11_ARCHITECTURE | 文字驱动层架?| 整体架构设计、技术选型、实施方?| ?设计完成 | P0 | 10h |
 | L11_TEXT_DRIVER | 文字驱动核心 | 自然语言理解、意图识别、参数提?| ?设计完成 | P0 | 40h |
 | L11_QUANT_AGENT | 量化交易Agent | Agent框架、模型管理、工具集?| ?设计完成 | P0 | 30h |
 
-> **Layer 11说明**: 文字驱动层是用户交互核心层，实现"零代?操作量化交易系统。基于本地LLM（RTX 3090支持? LangChain 1.0构建，支持本地优?云端备份的混合架�?
+> **Layer 11说明**: 文字驱动层是用户交互核心层，实现"零代?操作量化交易系统。基于本地LLM（RTX 3090支持? LangChain 1.0构建，支持本地优?云端备份的混合架�?
 
 ---
 
@@ -146,7 +146,7 @@ implementation_status: 进行?
 | **??* | 2026-04-08 ~ 04-14 | Layer 5全部 | 5?| 12/44 |
 
 ### 阶段2: 关键增值模?(?-4?
-**目标**: 完成P1优先级模块设计，增加系统�?
+**目标**: 完成P1优先级模块设计，增加系统�?
 
 | 周次 | 日期范围 | 设计模块 | 数量 | 累计完成 |
 |------|----------|----------|------|----------|
@@ -210,7 +210,7 @@ implementation_status: 进行?
   - 根据复杂度填写选填部分
 
 ?? AI辅助优化 (0.5?
-  - 使用AI工具检查设计完�?
+  - 使用AI工具检查设计完�?
   - AI建议改进?
   - 生成代码框架和测试用例草?
 
@@ -221,7 +221,7 @@ implementation_status: 进行?
 
 ?? 归档与跟?(0.1?
   - 保存到模块设计库
-  - 更新设计�?
+  - 更新设计�?
   - 记录设计决策
 ```
 
@@ -264,8 +264,8 @@ docs/module_designs/
 
 ## 📈 进度跟踪
 
-### 当前�?(2026-04-01)
-| 指标 | �?| 进度 |
+### 当前�?(2026-04-01)
+| 指标 | �?| 进度 |
 |------|------|------|
 | 总模块数 | 44?| 100% |
 | 已设计模?| 9?| 20% |
@@ -289,9 +289,9 @@ docs/module_designs/
 ### 按优先级进度
 | 优先?| 模块?| 已设?| 进行?| 未开?| 进度 |
 |--------|--------|--------|--------|--------|------|
-| P0 (�? | 12 | 2 | 0 | 10 | 17% |
+| P0 (�? | 12 | 2 | 0 | 10 | 17% |
 | P1 (重要) | 16 | 6 | 0 | 10 | 38% |
-| P2 (�? | 10 | 1 | 0 | 9 | 10% |
+| P2 (�? | 10 | 1 | 0 | 9 | 10% |
 
 ---
 
@@ -330,13 +330,13 @@ docs/module_designs/
 | 设计过度工程 | ?| ?| 坚持最小可行设计原?|
 | 进度延迟 | ?| ?| 每周调整计划，保持弹?|
 | 技术可行性问?| ?| ?| 早期原型验证技术方?|
-| 设计不一?| ?| ?| 定期检查架构一�?|
+| 设计不一?| ?| ?| 定期检查架构一�?|
 
 ### 质量控制措施
 1. **每周设计评审**: 每周日检查当周设计质?
 2. **架构一致性检?*: 新设计与ARCHITECTURE.md对齐
 3. **技术可行性验?*: 复杂模块先做技术原?
-4. **进度跟踪**: 每日更新设计�?
+4. **进度跟踪**: 每日更新设计�?
 
 ---
 
@@ -345,9 +345,9 @@ docs/module_designs/
 ### 设计参考资?
 1. [架构设计文档](../01_FRAMEWORK/ARCHITECTURE.md) - 模块定义和层级关?
 2. [模块设计模板](../05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) - 设计填写模板
-3. [因子库蓝图](FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) - 已有设计�?
-4. [策略引擎蓝图](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md) - 已有设计�?
-5. [模拟交易蓝图](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 已有设计�?
+3. [因子库蓝图](FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) - 已有设计�?
+4. [策略引擎蓝图](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md) - 已有设计�?
+5. [模拟交易蓝图](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 已有设计�?
 
 ### 技术参考资?
 1. [QMT API文档] - 交易接口文档 (需要获?
@@ -364,10 +364,10 @@ docs/module_designs/
 
 #### ?已完成设?(7个模?
 **Layer 0 - 数据源层 (100%完成)**
-1. **L0_QMT** - QMT数据接口 ([新架构文档](./04_DATA_SOURCE/QMT_INTERFACE.md) \| [归档文档](../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md))
-2. **L0_IFIND** - iFind连接?([新架构文档](./04_DATA_SOURCE/IFIND_CONNECTOR.md) \| [归档文档](../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_IFIND.md))
-3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](./04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) \| [归档文档](../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_SUPERCMD.md))
-4. **L0_BAOSTOCK** - Baostock适配?([新架构文档](./04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md) \| [归档文档](../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_BAOSTOCK.md))
+1. **L0_QMT** - QMT数据接口 ([新架构文档](./04_DATA_SOURCE/QMT_INTERFACE.md))
+2. **L0_IFIND** - iFind连接器 ([新架构文档](./04_DATA_SOURCE/IFIND_CONNECTOR.md))
+3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](./04_DATA_SOURCE/SUPERCMD_CONNECTOR.md))
+4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](./04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md))
 
 **Layer 1 - 数据预处理层 (100%完成)**
 5. **L1_CLEANER** - 数据清洗?([设计文档](../../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md))
@@ -375,13 +375,13 @@ docs/module_designs/
 7. **L1_VALIDATOR** - 数据校验?([设计文档](../../06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md))
 
 ### 设计质量评估
-| 评估维度 | �?| 说明 |
+| 评估维度 | �?| 说明 |
 |----------|------|------|
 | **设计完整?* | ?优秀 | 所有模块设计文档超?000行，内容完整 |
-| **架构一�?* | ?优秀 | 符合Layer 0-11架构规范 |
-| **技术可�?* | ?良好 | 基于成熟技术栈，风险可?|
+| **架构一�?* | ?优秀 | 符合Layer 0-11架构规范 |
+| **技术可�?* | ?良好 | 基于成熟技术栈，风险可?|
 | **文档规范?* | ?优秀 | 符合专业机构设计文档标准 |
-| **实施可操�?* | ?良好 | 详细接口定义和实施路?|
+| **实施可操�?* | ?良好 | 详细接口定义和实施路?|
 
 ### 设计产出统计
 - **总设计文?*: 7?(Layer 0: 4? Layer 1: 3?
@@ -392,7 +392,7 @@ docs/module_designs/
 ### 第一阶段设计经验总结
 1. **方法论验?*: "先完善蓝图再逐步施工"方法论在实践中证明有?
 2. **模板优势**: 标准化设计模板大幅提高设计质量和效率
-3. **AI辅助效率**: AI辅助设计显著提升设计速度和一�?
+3. **AI辅助效率**: AI辅助设计显著提升设计速度和一�?
 4. **进度控制**: 分模块设?进度跟踪确保设计任务有序完成
 
 ### 下一阶段建议
@@ -454,7 +454,7 @@ docs/module_designs/
 
 2. **开始第一个模块设?*
    - 选择: L0_QMT数据接口 (优先级最?
-   - �? QMT API文档和架构文?
+   - �? QMT API文档和架构文?
    - 模板: 使用MODULE_DESIGN_TEMPLATE.md
 
 3. **设置进度跟踪**
@@ -466,4 +466,4 @@ docs/module_designs/
 ?(决策/审核) ?AI (设计助手) ?模块设计文档 ??(审核完善) ?归档
 ```
 
-> **提示**: 作为个人开发者，建议每天完成1个模块设计，保持可持续的工作节奏。周末可用于复习和优�
+> **提示**: 作为个人开发者，建议每天完成1个模块设计，保持可持续的工作节奏。周末可用于复习和优�

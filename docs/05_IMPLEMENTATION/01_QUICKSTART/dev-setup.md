@@ -1,18 +1,18 @@
 ---
-module_id: IMPL_DOC_001
-version: 1.0.0
+module_id: IMPL_QUICKSTART_DEVSETUP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
+applicable_scope: 系统实施与部�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 开发环境搭�?(5 分钟)
+# 开发环境搭�?(5 分钟)
 
 > **适用**: Windows/Linux/Mac  
 > **时间**: 5 分钟  
@@ -23,9 +23,9 @@ implementation_status: 进行�?
 ##  目标
 
 完成本指南后，你将：
--  拥有完整�?Python 开发环�?
+-  拥有完整�?Python 开发环�?
 -  能够运行项目代码
--  可以开始编写策�?
+-  可以开始编写策�?
 
 ---
 
@@ -37,19 +37,19 @@ implementation_status: 进行�?
 
 ---
 
-##  快速搭�?
+##  快速搭�?
 
-### Step 1: 检�?Python 版本
+### Step 1: 检�?Python 版本
 
 ```bash
 python --version
-# �?
+# �?
 python3 --version
 ```
 
-**要求**: Python 3.8 或更高版�?
+**要求**: Python 3.8 或更高版�?
 
-如果未安装，前往 [python.org](https://www.python.org/downloads/) 下载�?
+如果未安装，前往 [python.org](https://www.python.org/downloads/) 下载�?
 
 ### Step 2: 克隆项目（如已有代码可跳过）
 
@@ -72,7 +72,7 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-激活后，命令行前缀应显�?`(venv)`�?
+激活后，命令行前缀应显�?`(venv)`�?
 
 ### Step 4: 安装依赖
 
@@ -81,7 +81,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-**国内加�?**
+**国内加�?**
 ```bash
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
@@ -93,11 +93,11 @@ python -c "import sys; print(f'Python: {sys.version}')"
 python -c "import pandas; print(f'Pandas: {pandas.__version__}')"
 ```
 
-无错误输出即表示成功�?
+无错误输出即表示成功�?
 
 ---
 
-##  可选配�?
+##  可选配�?
 
 ### 1. 配置 IDE
 
@@ -110,13 +110,13 @@ python -c "import pandas; print(f'Pandas: {pandas.__version__}')"
 1. File  Settings  Project  Python Interpreter
 2. 添加  Existing Environment  选择 `venv/bin/python`
 
-### 2. 安装开发工�?
+### 2. 安装开发工�?
 
 ```bash
-# 代码格式�?
+# 代码格式�?
 pip install black isort
 
-# 代码检�?
+# 代码检�?
 pip install flake8 pylint
 
 # 测试
@@ -135,7 +135,7 @@ git config --global user.email "your.email@example.com"
 ##  验证清单
 
 - [ ] Python 版本 >= 3.8
-- [ ] 虚拟环境已激�?
+- [ ] 虚拟环境已激�?
 - [ ] 依赖安装成功
 - [ ] 能够导入 pandas、numpy
 
@@ -156,7 +156,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-### Q2: 虚拟环境激活失�?
+### Q2: 虚拟环境激活失�?
 
 **Windows 错误**: `无法加载文件，因为在此系统上禁止运行脚本`
 
@@ -172,7 +172,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 **解决方案**:
 ```bash
-# 删除虚拟环境，重新创�?
+# 删除虚拟环境，重新创�?
 rm -rf venv  # Linux/Mac
 rmdir /s venv  # Windows
 
@@ -182,7 +182,7 @@ pip install -r requirements.txt
 
 ---
 
-##  下一�?
+##  下一�?
 
 环境搭建完成后：
 
@@ -192,5 +192,5 @@ pip install -r requirements.txt
 
 ---
 
-**最后更�?*: 2026-03-28  
-**状�?*:  可用
+**最后更�?*: 2026-03-28  
+**状�?*:  可用
