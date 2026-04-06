@@ -1,9 +1,9 @@
----
+-------
 module_id: FRAMEWORK_ARCH_001
-version: 5.4.0
+version: 5.5.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席文档架构�?standard_type: 专业量化机构文档
 applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
@@ -227,4 +227,4 @@ Layer 0: 数据源层 (Data Sources)
 
 ---
 
-**版本**: v5.3 | **更新**: 2026-04-03 | **状�?*: �?活跃
+**版本**: v5.5 | **更新**: 2026-04-06 | **状�?*: �?活跃
