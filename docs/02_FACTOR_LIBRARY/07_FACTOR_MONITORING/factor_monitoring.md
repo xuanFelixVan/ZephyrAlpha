@@ -1,25 +1,25 @@
----
+﻿---
 module_id: MONITORING_FACTOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 因子监控
 
-> 因子IC监控、衰减预警、生命周期管�?
+> 因子IC监控、衰减预警、生命周期管�?
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先�?*: P1 - 核心模块
-> **Layer**: Layer 2 (因子�?
+> **优先�?*: P1 - 核心模块
+> **Layer**: Layer 2 (因子�?
 > **索引**: F.05.MON.001
 
 ---
@@ -48,7 +48,7 @@ class FactorICMonitor:
 
     def __init__(self, thresholds: dict = None):
         """
-        thresholds: IC告警阈值配�?
+        thresholds: IC告警阈值配�?
         """
         self.thresholds = thresholds or {
             'ic_ir_excellent': 1.0,
@@ -98,7 +98,7 @@ class FactorICMonitor:
 
     def evaluate_status(self, metrics: dict) -> dict:
         """
-        评估因子状�?
+        评估因子状�?
 
         Returns:
         --------
@@ -129,14 +129,14 @@ class FactorICMonitor:
             status = 'FAILED'
             alerts.append({
                 'level': 'CRITICAL',
-                'message': f"IC_IR={metrics['ic_ir']:.3f}已失�?
+                'message': f"IC_IR={metrics['ic_ir']:.3f}已失�?
             })
 
         # 胜率评估
         if metrics['ic_win_rate'] < self.thresholds['ic_win_rate_critical']:
             alerts.append({
                 'level': 'CRITICAL',
-                'message': f"胜率={metrics['ic_win_rate']:.1%}低于临界�?
+                'message': f"胜率={metrics['ic_win_rate']:.1%}低于临界�?
             })
         elif metrics['ic_win_rate'] < self.thresholds['ic_win_rate_warning']:
             alerts.append({
@@ -144,11 +144,11 @@ class FactorICMonitor:
                 'message': f"胜率={metrics['ic_win_rate']:.1%}偏低"
             })
 
-        # 近期衰减检�?
+        # 近期衰减检�?
         if metrics['recent_ic_ir'] < metrics['ic_ir'] * 0.7:
             alerts.append({
                 'level': 'WARNING',
-                'message': "因子近期IC_IR明显下降，可能存在衰�?
+                'message': "因子近期IC_IR明显下降，可能存在衰�?
             })
 
         return {
@@ -182,7 +182,7 @@ class FactorDecayDetector:
         factor_id: str
     ) -> dict:
         """
-        检测因子衰�?
+        检测因子衰�?
 
         Parameters:
         -----------
@@ -193,15 +193,15 @@ class FactorDecayDetector:
 
         Returns:
         --------
-        dict: 衰减检测结�?
+        dict: 衰减检测结�?
         """
         baseline_ic = ic_series.tail(self.decay_thresholds['baseline_window']).mean()
         recent_ic = ic_series.tail(self.decay_thresholds['rolling_window']).mean()
 
-        # 计算衰减�?
+        # 计算衰减�?
         decay_rate = (baseline_ic - recent_ic) / baseline_ic if baseline_ic > 0 else 0
 
-        # IC随时间衰减分�?
+        # IC随时间衰减分�?
         ic_by_month = ic_series.groupby(ic_series.index.to_period('M')).mean()
         monthly_decay = ic_by_month.pct_change().dropna()
 
@@ -226,11 +226,11 @@ class FactorDecayDetector:
 
     def _get_recommendation(self, decay_rate: float) -> str:
         if decay_rate < 0.2:
-            return "因子表现稳定，继续使�?
+            return "因子表现稳定，继续使�?
         elif decay_rate < 0.3:
             return "因子有轻微衰减，密切监控"
         elif decay_rate < 0.5:
-            return "因子衰减明显，建议降低权�?
+            return "因子衰减明显，建议降低权�?
         else:
             return "因子严重衰减，建议暂停使用或优化"
 ```
@@ -243,14 +243,14 @@ class FactorDecayDetector:
 
 ```python
 class FactorLifecycleManager:
-    """因子生命周期管理�?""
+    """因子生命周期管理�?""
 
     STATES = {
-        'TESTING': '测试�?,
-        'ACTIVE': '运行�?,
-        'WARNING': '预警�?,
+        'TESTING': '测试�?,
+        'ACTIVE': '运行�?,
+        'WARNING': '预警�?,
         'DEGRADED': '降级使用',
-        'DEPRECATED': '已废�?,
+        'DEPRECATED': '已废�?,
         'ARCHIVED': '归档'
     }
 
@@ -271,12 +271,12 @@ class FactorLifecycleManager:
         reason: str = None
     ) -> dict:
         """
-        状态转�?
+        状态转�?
 
         Parameters:
         -----------
         current_state : str
-            当前状�?
+            当前状�?
         event : str
             触发事件
         reason : str
@@ -288,7 +288,7 @@ class FactorLifecycleManager:
         """
         allowed_states = self.state_transitions.get(current_state, [])
 
-        # 根据事件确定目标状�?
+        # 根据事件确定目标状�?
         target_state = self._event_to_state(event)
 
         if target_state not in allowed_states:
@@ -327,7 +327,7 @@ class FactorLifecycleManager:
 
 ```python
 class MonitoringDashboard:
-    """监控面板数据生成�?""
+    """监控面板数据生成�?""
 
     def generate_factor_status(
         self,
@@ -392,7 +392,7 @@ class MonitoringDashboard:
 
 ```python
 class AlertManager:
-    """告警管理�?""
+    """告警管理�?""
 
     def __init__(self):
         self.rules = [
@@ -400,7 +400,7 @@ class AlertManager:
                 'name': 'ic_ir_critical',
                 'condition': lambda m: m.get('ic_ir', 0) < 0.3,
                 'level': 'CRITICAL',
-                'message': '因子IC_IR低于临界�?.3'
+                'message': '因子IC_IR低于临界�?.3'
             },
             {
                 'name': 'ic_decay_warning',
@@ -423,7 +423,7 @@ class AlertManager:
         ]
 
     def check_alerts(self, metrics: dict) -> list:
-        """检查告�?""
+        """检查告�?""
         alerts = []
 
         for rule in self.rules:
@@ -445,7 +445,7 @@ class AlertManager:
 ```yaml
 # config/factor_monitoring.yaml
 factor_monitoring:
-  # IC告警阈�?
+  # IC告警阈�?
   ic_thresholds:
     ir_excellent: 1.0
     ir_good: 0.5
@@ -454,7 +454,7 @@ factor_monitoring:
     win_rate_warning: 0.50
     win_rate_critical: 0.45
 
-  # 衰减阈�?
+  # 衰减阈�?
   decay_thresholds:
     warning: 0.3    # 30%
     critical: 0.5   # 50%
@@ -462,8 +462,8 @@ factor_monitoring:
   # 监控窗口
   windows:
     rolling_ic: 20      # 滚动IC窗口
-    baseline_ic: 252    # 基线窗口(一�?
-    decay_check: 60     # 衰减检测窗�?
+    baseline_ic: 252    # 基线窗口(一�?
+    decay_check: 60     # 衰减检测窗�?
 
   # 告警配置
   alerts:
@@ -483,16 +483,16 @@ factor_monitoring:
 ```
 02_FACTOR_LIBRARY/
 ├── 01_STANDARDS/
-�?  ├── IC_ANALYSIS.md
-�?  ├── FACTOR_RETURN_ANALYSIS.md
-�?  └── FACTOR_NEUTRALIZATION.md
+�?  ├── IC_ANALYSIS.md
+�?  ├── FACTOR_RETURN_ANALYSIS.md
+�?  └── FACTOR_NEUTRALIZATION.md
 ├── 05_BACKTEST/
-�?  └── ic_reports/
+�?  └── ic_reports/
 ├── 06_REGISTRY/
-�?  └── FACTOR_CATALOG.md
-└── 07_FACTOR_MONITORING/           # �?新目�?
+�?  └── FACTOR_CATALOG.md
+└── 07_FACTOR_MONITORING/           # �?新目�?
     ├── README.md
-    └── FACTOR_MONITORING.md        # 本文�?
+    └── FACTOR_MONITORING.md        # 本文�?
 ```
 
 ---
@@ -504,7 +504,7 @@ factor_monitoring:
 | **上游接口** | 因子计算引擎、IC分析系统 |
 | **下游接口** | 因子筛选、组合优化、告警通知 |
 | **输入格式** | IC时间序列、因子元数据 |
-| **输出格式** | 监控指标、告警列表、状态转�?|
+| **输出格式** | 监控指标、告警列表、状态转�?|
 
 ---
 
@@ -513,3 +513,11 @@ factor_monitoring:
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 |
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

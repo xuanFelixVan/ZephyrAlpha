@@ -1,42 +1,42 @@
----
+﻿---
 module_id: BACKTEST_OVERFITTING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 过拟合检验框�?
+# 过拟合检验框�?
 
-> Layer 2: Alpha因子计算 - Walk-Forward、蒙特卡洛、参数敏感性、泛化能力评�?
+> Layer 2: Alpha因子计算 - Walk-Forward、蒙特卡洛、参数敏感性、泛化能力评�?
 
 ---
 
 ## 1. 框架概述
 
-过拟合是量化策略开发中的核心风险，过拟合检验确保策略在样本外具有真实的预测能力�?
+过拟合是量化策略开发中的核心风险，过拟合检验确保策略在样本外具有真实的预测能力�?
 
 ```
-过拟合检验架�?
+过拟合检验架�?
 ├── Walk-Forward分析
-�?  ├── 滚动窗口验证
-�?  ├── 逐步扩展窗口
-�?  └── 蒙特卡洛模拟
-├── 参数敏感性分�?
-�?  ├── 参数曲面
-�?  ├── 稳定性区�?
-�?  └── 最优参数鲁棒�?
+�?  ├── 滚动窗口验证
+�?  ├── 逐步扩展窗口
+�?  └── 蒙特卡洛模拟
+├── 参数敏感性分�?
+�?  ├── 参数曲面
+�?  ├── 稳定性区�?
+�?  └── 最优参数鲁棒�?
 ├── 泛化能力评估
-�?  ├── 训练/测试收益�?
-�?  ├── 信息衰减�?
-�?  └── 样本外IC稳定�?
-└── 过拟合诊断报�?
+�?  ├── 训练/测试收益�?
+�?  ├── 信息衰减�?
+�?  └── 样本外IC稳定�?
+└── 过拟合诊断报�?
     ├── 综合评分
     ├── 风险预警
     └── 改进建议
@@ -69,7 +69,7 @@ class WalkForwardResult:
 
 
 class WalkForwardAnalyzer:
-    """Walk-Forward分析�?""
+    """Walk-Forward分析�?""
 
     def __init__(
         self,
@@ -77,7 +77,7 @@ class WalkForwardAnalyzer:
         test_window: int = 63,
         step_size: int = 21
     ):
-        """初始�?
+        """初始�?
 
         参数:
             train_window: 训练窗口天数
@@ -151,12 +151,12 @@ class WalkForwardAnalyzer:
         results: List[WalkForwardResult],
         metric: str = "sharpe"
     ) -> float:
-        """计算过拟合比�?
+        """计算过拟合比�?
 
-        过拟合比�?= (训练收益 - 测试收益) / 训练收益
+        过拟合比�?= (训练收益 - 测试收益) / 训练收益
 
         返回:
-            过拟合比�?(越小越好�?0.2 为良�?
+            过拟合比�?(越小越好�?0.2 为良�?
         """
         if not results:
             return 0
@@ -188,15 +188,15 @@ class WalkForwardAnalyzer:
         of_ratio = self.calculate_overfitting_ratio(results)
 
         lines.append("")
-        lines.append(f"平均样本外夏�? {avg_oos:.3f}")
-        lines.append(f"过拟合比�? {of_ratio:.1%}")
+        lines.append(f"平均样本外夏�? {avg_oos:.3f}")
+        lines.append(f"过拟合比�? {of_ratio:.1%}")
 
         if of_ratio < 0.2:
-            lines.append("状�? �?良好 (过拟合比�?< 20%)")
+            lines.append("状�? �?良好 (过拟合比�?< 20%)")
         elif of_ratio < 0.4:
-            lines.append("状�? ⚠️ 警告 (过拟合比�?20-40%)")
+            lines.append("状�? ⚠️ 警告 (过拟合比�?20-40%)")
         else:
-            lines.append("状�? �?危险 (过拟合比�?> 40%)")
+            lines.append("状�? �?危险 (过拟合比�?> 40%)")
 
         return "\n".join(lines)
 ```
@@ -209,7 +209,7 @@ class WalkForwardAnalyzer:
 
 ```python
 class MonteCarloOverfittingTester:
-    """蒙特卡洛过拟合检�?""
+    """蒙特卡洛过拟合检�?""
 
     def __init__(self, n_simulations: int = 1000):
         self.n_simulations = n_simulations
@@ -221,16 +221,16 @@ class MonteCarloOverfittingTester:
         returns: pd.Series,
         n_samples: int = 100
     ) -> Dict:
-        """检验参数稳定�?
+        """检验参数稳定�?
 
         参数:
             strategy_fn: 策略函数
             parameter_space: 参数空间
-            returns: 收益率序�?
+            returns: 收益率序�?
             n_samples: 采样次数
 
         返回:
-            稳定性分析结�?
+            稳定性分析结�?
         """
         param_names = list(parameter_space.keys())
 
@@ -273,16 +273,16 @@ class MonteCarloOverfittingTester:
         train_ratio: float = 0.7,
         n_iterations: int = 500
     ) -> Dict:
-        """训练/测试收益比检�?
+        """训练/测试收益比检�?
 
         参数:
             strategy_fn: 策略函数
-            returns: 收益率序�?
-            train_ratio: 训练集比�?
+            returns: 收益率序�?
+            train_ratio: 训练集比�?
             n_iterations: 迭代次数
 
         返回:
-            收益比分析结�?
+            收益比分析结�?
         """
         n = len(returns)
         train_size = int(n * train_ratio)
@@ -320,7 +320,7 @@ class MonteCarloOverfittingTester:
         }
 
     def _sample_parameters(self, parameter_space: Dict[str, Tuple]) -> Dict:
-        """从参数空间采�?""
+        """从参数空间采�?""
         params = {}
 
         for name, bounds in parameter_space.items():
@@ -334,7 +334,7 @@ class MonteCarloOverfittingTester:
 
 ---
 
-## 4. 参数敏感性分�?
+## 4. 参数敏感性分�?
 
 ### 4.1 敏感性分析器
 
@@ -352,16 +352,16 @@ class ParameterSensitivityAnalyzer:
         parameter_ranges: Dict[str, List[float]],
         returns: pd.Series
     ) -> Dict:
-        """分析参数敏感�?
+        """分析参数敏感�?
 
         参数:
             strategy_fn: 策略函数
             base_params: 基准参数
             parameter_ranges: 参数范围
-            returns: 收益率序�?
+            returns: 收益率序�?
 
         返回:
-            敏感性分析结�?
+            敏感性分析结�?
         """
         results = {}
 
@@ -461,11 +461,11 @@ class ParameterSensitivityAnalyzer:
 
 ## 5. 泛化能力评估
 
-### 5.1 泛化评估�?
+### 5.1 泛化评估�?
 
 ```python
 class GeneralizationEvaluator:
-    """泛化能力评估�?""
+    """泛化能力评估�?""
 
     def __init__(self, ic_threshold: float = 0.02):
         self.ic_threshold = ic_threshold
@@ -479,7 +479,7 @@ class GeneralizationEvaluator:
         """评估因子泛化能力
 
         参数:
-            factor_values: 因子�?
+            factor_values: 因子�?
             forward_returns: 未来收益
             n_periods: 评估期数
 
@@ -523,7 +523,7 @@ class GeneralizationEvaluator:
         return ic_series.dropna()
 
     def _calculate_decay_rate(self, ic_series: pd.Series) -> float:
-        """计算IC衰减�?""
+        """计算IC衰减�?""
         if len(ic_series) < 12:
             return 0
 
@@ -536,7 +536,7 @@ class GeneralizationEvaluator:
         return (earlier_ic - recent_ic) / earlier_ic
 
     def _calculate_hit_rate(self, ic_series: pd.Series) -> float:
-        """计算命中�?(IC > 0的比�?"""
+        """计算命中�?(IC > 0的比�?"""
         if len(ic_series) == 0:
             return 0
 
@@ -588,7 +588,7 @@ class GeneralizationEvaluator:
 
 ```python
 class OverfittingDiagnosisReport:
-    """过拟合诊断综合报�?""
+    """过拟合诊断综合报�?""
 
     def __init__(self):
         self.wf_analyzer = WalkForwardAnalyzer()
@@ -603,7 +603,7 @@ class OverfittingDiagnosisReport:
         parameter_space: Dict[str, Tuple]
     ) -> str:
         """生成综合诊断报告"""
-        lines = ["=" * 80, "策略过拟合诊断报�?, "=" * 80, ""]
+        lines = ["=" * 80, "策略过拟合诊断报�?, "=" * 80, ""]
 
         wf_results = self.wf_analyzer.analyze(strategy_fn, factor_data)
         wf_report = self.wf_analyzer.generate_report(wf_results)
@@ -615,12 +615,12 @@ class OverfittingDiagnosisReport:
         return "\n".join(lines)
 
     def get_overfitting_score(self, results: Dict) -> float:
-        """计算综合过拟合评�?
+        """计算综合过拟合评�?
 
         0-100分，分数越低过拟合越严重
 
         返回:
-            过拟合评�?
+            过拟合评�?
         """
         wf_score = 100 * (1 - abs(results.get("walk_forward", {}).get("of_ratio", 0)))
         mc_score = 100 * (1 - abs(results.get("monte_carlo", {}).get("sharpe_cv", 0)))
@@ -634,6 +634,14 @@ class OverfittingDiagnosisReport:
 **版本**: 1.0
 **更新**: 2026-03-28
 **Layer**: Layer 2 (Alpha因子计算)
-**索引**: BLUEPRINTS.md �?因子验证框架蓝图
+**索引**: BLUEPRINTS.md �?因子验证框架蓝图
 **上游接口**: FactorCalculator (M02), DataHub (M01)
 **下游接口**: FactorLibrary (M02.5), StrategyEngine (M03)
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

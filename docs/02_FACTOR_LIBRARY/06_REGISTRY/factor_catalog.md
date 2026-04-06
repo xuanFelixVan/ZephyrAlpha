@@ -1,24 +1,24 @@
----
+﻿---
 module_id: REGISTRY_CATALOG_001
 version: 4.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 研究标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-�? 因子注册�?(Factor Registry)
+�? 因子注册�?(Factor Registry)
 
 > 清风量化因子库的完整因子清单和元数据
 >
 > **版本**: v4.0
 > **更新日期**: 2026-03-28
-> **状�?*: 持续更新
+> **状�?*: 持续更新
 
 ---
 
@@ -26,41 +26,41 @@ implementation_status: 进行�?
 
 ### Alpha 因子 (ALPHA)
 
-| 因子 ID | 因子名称 | 分类 | 版本 | 评级 | IC_IR | 夏普 | 状�?|
+| 因子 ID | 因子名称 | 分类 | 版本 | 评级 | IC_IR | 夏普 | 状�?|
 |---------|----------|------|------|------|-------|------|------|
-| ALPHA_TREND_001 | 5 日均线因�?| 趋势跟踪 | v1.0 | A | 1.25 | 1.8 | ACTIVE |
+| ALPHA_TREND_001 | 5 日均线因�?| 趋势跟踪 | v1.0 | A | 1.25 | 1.8 | ACTIVE |
 | ALPHA_TREND_002 | MACD 因子 | 趋势跟踪 | v1.2 | A | 1.15 | 1.6 | ACTIVE |
 | ALPHA_TREND_003 | ADX 趋势强度 | 趋势跟踪 | v1.0 | B | 0.85 | 1.3 | ACTIVE |
-| ALPHA_MRV_001 | RSI 超买超卖 | 均值回�?| v1.1 | A | 1.05 | 1.5 | ACTIVE |
-| ALPHA_MRV_002 | 布林带因�?| 均值回�?| v1.0 | B | 0.78 | 1.2 | ACTIVE |
-| ALPHA_VALUE_001 | EP 因子 | 价值因�?| v2.0 | A | 1.32 | 1.9 | ACTIVE |
-| ALPHA_VALUE_002 | BP 因子 | 价值因�?| v2.0 | A | 1.28 | 1.7 | ACTIVE |
+| ALPHA_MRV_001 | RSI 超买超卖 | 均值回�?| v1.1 | A | 1.05 | 1.5 | ACTIVE |
+| ALPHA_MRV_002 | 布林带因�?| 均值回�?| v1.0 | B | 0.78 | 1.2 | ACTIVE |
+| ALPHA_VALUE_001 | EP 因子 | 价值因�?| v2.0 | A | 1.32 | 1.9 | ACTIVE |
+| ALPHA_VALUE_002 | BP 因子 | 价值因�?| v2.0 | A | 1.28 | 1.7 | ACTIVE |
 | ALPHA_GROWTH_001 | 营收增长因子 | 成长因子 | v1.5 | B | 0.92 | 1.4 | ACTIVE |
 | ALPHA_QUALITY_001 | ROE 因子 | 质量因子 | v1.3 | A | 1.45 | 2.1 | ACTIVE |
-| ALPHA_MOM_001 | 12 月动量因�?| 动量因子 | v1.0 | B | 0.88 | 1.35 | ACTIVE |
+| ALPHA_MOM_001 | 12 月动量因�?| 动量因子 | v1.0 | B | 0.88 | 1.35 | ACTIVE |
 | ALPHA_SENT_001 | 北向资金因子 | 情绪因子 | v1.2 | A | 1.18 | 1.65 | ACTIVE |
 
 ### 风险因子 (RISK)
 
-| 因子 ID | 因子名称 | 分类 | 版本 | 评级 | 说明 | 状�?|
+| 因子 ID | 因子名称 | 分类 | 版本 | 评级 | 说明 | 状�?|
 |---------|----------|------|------|------|------|------|
-| RISK_STYLE_SIZE | 市值因�?| 风格因子 | v2.1 | A | 对数市�?| ACTIVE |
+| RISK_STYLE_SIZE | 市值因�?| 风格因子 | v2.1 | A | 对数市�?| ACTIVE |
 | RISK_STYLE_BETA | Beta 因子 | 风格因子 | v1.5 | A | 市场 Beta | ACTIVE |
 | RISK_STYLE_MOMENTUM | 动量因子 | 风格因子 | v1.3 | B | 12M 动量 | ACTIVE |
-| RISK_STYLE_LIQUIDITY | 流动性因�?| 风格因子 | v1.2 | B | 换手�?| ACTIVE |
-| RISK_VOLATILITY | 波动率因�?| 风险因子 | v1.4 | A | 20 日波动率 | ACTIVE |
+| RISK_STYLE_LIQUIDITY | 流动性因�?| 风格因子 | v1.2 | B | 换手�?| ACTIVE |
+| RISK_VOLATILITY | 波动率因�?| 风险因子 | v1.4 | A | 20 日波动率 | ACTIVE |
 | RISK_LEVERAGE | 杠杆因子 | 风险因子 | v1.1 | B | 资产负债率 | ACTIVE |
 
 ---
 
-## 因子状态说�?
+## 因子状态说�?
 
-| 状态代�?| 说明 | 使用场景 |
+| 状态代�?| 说明 | 使用场景 |
 |----------|------|----------|
-| **ACTIVE** | 活跃 | 可用于实盘交�?|
-| **INACTIVE** | 非活�?| 暂停使用，待观察 |
-| **PENDING** | 待审�?| 新因子，等待入库审批 |
-| **DEPRECATED** | 已废�?| 不再使用，保留历�?|
+| **ACTIVE** | 活跃 | 可用于实盘交�?|
+| **INACTIVE** | 非活�?| 暂停使用，待观察 |
+| **PENDING** | 待审�?| 新因子，等待入库审批 |
+| **DEPRECATED** | 已废�?| 不再使用，保留历�?|
 
 ---
 
@@ -68,13 +68,21 @@ implementation_status: 进行�?
 
 | 评级 | IC_IR | 夏普比率 | 说明 |
 |------|-------|----------|------|
-| **A** | > 1.0 | > 1.5 | 核心因子，重点配�?|
+| **A** | > 1.0 | > 1.5 | 核心因子，重点配�?|
 | **B** | 0.5-1.0 | 1.0-1.5 | 重要因子，适度配置 |
-| **C** | 0.3-0.5 | 0.5-1.0 | 观察因子，少量配�?|
+| **C** | 0.3-0.5 | 0.5-1.0 | 观察因子，少量配�?|
 | **D** | < 0.3 | < 0.5 | 待优化，暂不配置 |
 
 ---
 
-**维护部门**: 清风量化因子治理委员�? 
-**最后更�?*: 2026-03-28  
+**维护部门**: 清风量化因子治理委员�? 
+**最后更�?*: 2026-03-28  
 **下次审查日期**: 2026-06-28
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

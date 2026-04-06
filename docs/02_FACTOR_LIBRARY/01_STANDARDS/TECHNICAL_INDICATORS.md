@@ -1,15 +1,15 @@
----
+﻿---
 module_id: STANDARDS_TECH_INDICATORS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 技术指标完整参数表
@@ -21,36 +21,36 @@ implementation_status: 进行�?
 ## 1. 指标分类体系
 
 ```
-技术指�?
+技术指�?
 ├── 趋势跟踪指标
-�?  ├── 移动平均�?(MA, EMA, SMA, WMA)
-�?  ├── 趋势强度�?(ADX, Aroon)
-�?  └── 趋势轨道�?(BBANDS, SAR, Keltner)
+�?  ├── 移动平均�?(MA, EMA, SMA, WMA)
+�?  ├── 趋势强度�?(ADX, Aroon)
+�?  └── 趋势轨道�?(BBANDS, SAR, Keltner)
 ├── 动量振荡指标
-�?  ├── 振荡器类 (RSI, Stoch, W%R, CCI)
-�?  └── 动量�?(MOM, ROC, CMF)
-├── 成交量指�?
-�?  ├── 量价�?(OBV, VWAP, MFI, VR)
-�?  └── 量价确认�?(VPT, AD)
-├── 波动率指�?
-�?  ├── 波动率类 (ATR, StdDev)
-�?  └── 通道�?(BBANDS, KC)
+�?  ├── 振荡器类 (RSI, Stoch, W%R, CCI)
+�?  └── 动量�?(MOM, ROC, CMF)
+├── 成交量指�?
+�?  ├── 量价�?(OBV, VWAP, MFI, VR)
+�?  └── 量价确认�?(VPT, AD)
+├── 波动率指�?
+�?  ├── 波动率类 (ATR, StdDev)
+�?  └── 通道�?(BBANDS, KC)
 └── 市场广度指标
-    ├── 广度�?(ADR, ADL, MCL)
-    └── 情绪�?(put_call_ratio, VIX)
+    ├── 广度�?(ADR, ADL, MCL)
+    └── 情绪�?(put_call_ratio, VIX)
 ```
 
 ---
 
 ## 2. 趋势跟踪指标
 
-### 2.1 移动平均�?
+### 2.1 移动平均�?
 
-#### SMA - 简单移动平�?
+#### SMA - 简单移动平�?
 
 ```python
 def sma(close: pd.Series, period: int) -> pd.Series:
-    """简单移动平�?
+    """简单移动平�?
 
     公式: SMA = (P1 + P2 + ... + Pn) / n
 
@@ -62,7 +62,7 @@ def sma(close: pd.Series, period: int) -> pd.Series:
     return close.rolling(window=period).mean()
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 20 | 5, 10, 20, 30, 60 | 计算周期 |
 
@@ -81,11 +81,11 @@ def ema(close: pd.Series, period: int) -> pd.Series:
     return close.ewm(span=period, adjust=False).mean()
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 12 | 12, 26, 9, 50, 200 | 计算周期 |
 
-#### MACD - 指数平滑异同移动平均�?
+#### MACD - 指数平滑异同移动平均�?
 
 ```python
 def macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
@@ -98,7 +98,7 @@ def macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
     参数:
         fast: 快线周期 (默认12)
         slow: 慢线周期 (默认26)
-        signal: 信号线周�?(默认9)
+        signal: 信号线周�?(默认9)
     """
     ema_fast = close.ewm(span=fast, adjust=False).mean()
     ema_slow = close.ewm(span=slow, adjust=False).mean()
@@ -114,15 +114,15 @@ def macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
     })
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | fast_period | 12 | 12 | 快线周期 |
 | slow_period | 26 | 26 | 慢线周期 |
-| signal_period | 9 | 9 | 信号线周�?|
+| signal_period | 9 | 9 | 信号线周�?|
 
 ---
 
-### 2.2 趋势强度�?
+### 2.2 趋势强度�?
 
 #### ADX - 平均趋向指数
 
@@ -130,15 +130,15 @@ def macd(close: pd.Series, fast: int = 12, slow: int = 26, signal: int = 9):
 def adx(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14):
     """ADX平均趋向指数
 
-    +DI = (上升动向的N日平均�?/ TR) * 100
-    -DI = (下降动向的N日平均�?/ TR) * 100
+    +DI = (上升动向的N日平均�?/ TR) * 100
+    -DI = (下降动向的N日平均�?/ TR) * 100
     DX = (|+DI - -DI| / |+DI + -DI|) * 100
-    ADX = DX的N日平均�?
+    ADX = DX的N日平均�?
 
     参数:
         high: 最高价
         low: 最低价
-        close: 收盘�?
+        close: 收盘�?
         period: 计算周期 (默认14)
     """
     # 计算True Range
@@ -153,7 +153,7 @@ def adx(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14):
     minus_dm = where((low.shift(1) - low) > (high - high.shift(1)),
                       where((low.shift(1) - low) > 0, low.shift(1) - low, 0), 0)
 
-    # 计算平滑�?
+    # 计算平滑�?
     plus_di = 100 * (plus_dm.rolling(period).mean() / tr.rolling(period).mean())
     minus_di = 100 * (minus_dm.rolling(period).mean() / tr.rolling(period).mean())
 
@@ -167,19 +167,19 @@ def adx(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 14):
     })
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 14 | 14, 7 | 计算周期 |
 
 ---
 
-### 2.3 趋势轨道�?
+### 2.3 趋势轨道�?
 
-#### BBANDS - 布林�?
+#### BBANDS - 布林�?
 
 ```python
 def bbands(close: pd.Series, period: int = 20, std_dev: float = 2.0):
-    """布林�?
+    """布林�?
 
     中轨 = MA(close, period)
     上轨 = 中轨 + std_dev * StdDev(close, period)
@@ -207,20 +207,20 @@ def bbands(close: pd.Series, period: int = 20, std_dev: float = 2.0):
     })
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 20 | 20 | 中轨周期 |
 | std_dev | 2.0 | 2.0 | 标准差倍数 |
 
-#### SAR - 抛物线指�?
+#### SAR - 抛物线指�?
 
 ```python
 def psar(high, low, af_start: float = 0.02, af_max: float = 0.2):
     """抛物线SAR
 
     参数:
-        af_start: 初始加速因�?(默认0.02)
-        af_max: 最大加速因�?(默认0.2)
+        af_start: 初始加速因�?(默认0.02)
+        af_max: 最大加速因�?(默认0.2)
     """
     import numpy as np
 
@@ -266,10 +266,10 @@ def psar(high, low, af_start: float = 0.02, af_max: float = 0.2):
     })
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
-| af_start | 0.02 | 0.02 | 初始加速因�?|
-| af_max | 0.20 | 0.20 | 最大加速因�?|
+| af_start | 0.02 | 0.02 | 初始加速因�?|
+| af_max | 0.20 | 0.20 | 最大加速因�?|
 
 ---
 
@@ -304,7 +304,7 @@ def rsi(close: pd.Series, period: int = 14):
     return rsi
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 14 | 6, 12, 24 | 计算周期 |
 
@@ -332,7 +332,7 @@ def cci(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 20):
     return cci
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 20 | 14, 20 | 计算周期 |
 
@@ -343,7 +343,7 @@ def williams_r(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 
     """威廉指标
 
     公式:
-    W%R = (N日最高价 - 收盘�? / (N日最高价 - N日最低价) * 100
+    W%R = (N日最高价 - 收盘�? / (N日最高价 - N日最低价) * 100
 
     参数:
         period: 计算周期 (默认14)
@@ -356,13 +356,13 @@ def williams_r(high: pd.Series, low: pd.Series, close: pd.Series, period: int = 
     return wr
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 14 | 10, 14, 6 | 计算周期 |
 
 ---
 
-### 3.2 动量�?
+### 3.2 动量�?
 
 #### MOM - 动量指标
 
@@ -371,7 +371,7 @@ def momentum(close: pd.Series, period: int = 10):
     """动量指标
 
     公式:
-    MOM = 收盘�?- N日前收盘�?
+    MOM = 收盘�?- N日前收盘�?
 
     参数:
         period: 计算周期 (默认10)
@@ -379,14 +379,14 @@ def momentum(close: pd.Series, period: int = 10):
     return close - close.shift(period)
 ```
 
-#### ROC - 变动率指�?
+#### ROC - 变动率指�?
 
 ```python
 def roc(close: pd.Series, period: int = 12):
-    """变动率指�?
+    """变动率指�?
 
     公式:
-    ROC = (收盘�?- N日前收盘�? / N日前收盘�?* 100
+    ROC = (收盘�?- N日前收盘�? / N日前收盘�?* 100
 
     参数:
         period: 计算周期 (默认12)
@@ -394,27 +394,27 @@ def roc(close: pd.Series, period: int = 12):
     return ((close - close.shift(period)) / close.shift(period)) * 100
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 10 | 10, 12, 25 | 计算周期 |
 
 ---
 
-## 4. 成交量指�?
+## 4. 成交量指�?
 
-### 4.1 量价�?
+### 4.1 量价�?
 
-#### OBV - 能量�?
+#### OBV - 能量�?
 
 ```python
 def obv(close: pd.Series, volume: pd.Series) -> pd.Series:
-    """能量�?
+    """能量�?
 
     公式:
-    OBV = 累计(IF 收盘 > 前收 THEN +成交�?ELSE -成交�?
+    OBV = 累计(IF 收盘 > 前收 THEN +成交�?ELSE -成交�?
 
     参数:
-        无额外参�?
+        无额外参�?
     """
     obv = pd.Series(index=close.index, dtype=float)
     obv.iloc[0] = volume.iloc[0]
@@ -440,8 +440,8 @@ def mfi(high: pd.Series, low: pd.Series, close: pd.Series,
     公式:
     TP = (High + Low + Close) / 3
     MF = TP * Volume
-    PMF = N日内正资金流量之�?
-    NMF = N日内负资金流量之�?
+    PMF = N日内正资金流量之�?
+    NMF = N日内负资金流量之�?
     MFR = PMF / NMF
     MFI = 100 - 100 / (1 + MFR)
 
@@ -463,20 +463,20 @@ def mfi(high: pd.Series, low: pd.Series, close: pd.Series,
     return mfi
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 14 | 14 | 计算周期 |
 
 ---
 
-### 4.2 量价确认�?
+### 4.2 量价确认�?
 
-#### AD - 累积/派发�?
+#### AD - 累积/派发�?
 
 ```python
 def ad(high: pd.Series, low: pd.Series, close: pd.Series,
        volume: pd.Series) -> pd.Series:
-    """累积/派发�?
+    """累积/派发�?
 
     公式:
     MFV = ((Close - Low) - (High - Close)) / (High - Low) * Volume
@@ -489,7 +489,7 @@ def ad(high: pd.Series, low: pd.Series, close: pd.Series,
 
 ---
 
-## 5. 波动率指�?
+## 5. 波动率指�?
 
 ### 5.1 波动率类
 
@@ -517,15 +517,15 @@ def atr(high: pd.Series, low: pd.Series, close: pd.Series,
     return atr
 ```
 
-| 参数 | 默认�?| 常用�?| 说明 |
+| 参数 | 默认�?| 常用�?| 说明 |
 |------|--------|--------|------|
 | period | 14 | 14, 20 | 计算周期 |
 
-#### STDDEV - 标准�?
+#### STDDEV - 标准�?
 
 ```python
 def stddev(close: pd.Series, period: int = 20) -> pd.Series:
-    """标准�?
+    """标准�?
 
     公式:
     STDDEV = StdDev(Close, period)
@@ -538,47 +538,47 @@ def stddev(close: pd.Series, period: int = 20) -> pd.Series:
 
 ---
 
-## 6. 指标参数速查�?
+## 6. 指标参数速查�?
 
-### 6.1 趋势类指�?
+### 6.1 趋势类指�?
 
-| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
+| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
 |------|------|--------|--------|---------|
-| SMA | period | 20 | 5,10,20,30,60 | 趋势判断、支撑阻�?|
-| EMA | period | 12 | 12,26,50,200 | 趋势跟踪、均线交�?|
-| MACD | fast,slow,signal | 12,26,9 | 12,26,9 | 趋势转折、动能判�?|
+| SMA | period | 20 | 5,10,20,30,60 | 趋势判断、支撑阻�?|
+| EMA | period | 12 | 12,26,50,200 | 趋势跟踪、均线交�?|
+| MACD | fast,slow,signal | 12,26,9 | 12,26,9 | 趋势转折、动能判�?|
 | ADX | period | 14 | 14,7 | 趋势强度 |
 | BBANDS | period,std | 20,2.0 | 20,2.0 | 超买超卖、波动率 |
-| SAR | af_start,af_max | 0.02,0.2 | 0.02,0.2 | 止损、趋势跟�?|
+| SAR | af_start,af_max | 0.02,0.2 | 0.02,0.2 | 止损、趋势跟�?|
 | KELTNER | period,multiplier | 20,2.0 | 20,2.0 | 趋势通道 |
 
-### 6.2 动量类指�?
+### 6.2 动量类指�?
 
-| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
+| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
 |------|------|--------|--------|---------|
 | RSI | period | 14 | 6,12,24 | 超买超卖 |
 | CCI | period | 20 | 14,20 | 趋势转折 |
 | W%R | period | 14 | 10,6 | 超买超卖 |
 | MOM | period | 10 | 10,12 | 动能判断 |
-| ROC | period | 12 | 12,25 | 变化�?|
+| ROC | period | 12 | 12,25 | 变化�?|
 | Stoch | k,d,slowk,slowd | 14,3,3 | 14,3,3 | 超买超卖 |
 
 ### 6.3 成交量类指标
 
-| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
+| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
 |------|------|--------|--------|---------|
 | OBV | - | - | - | 量价确认 |
 | MFI | period | 14 | 14 | 资金流向 |
-| VR | period | 26 | 26 | 成交量强�?|
+| VR | period | 26 | 26 | 成交量强�?|
 | AD | - | - | - | 累积派发 |
 | VWAP | - | - | - | 日内基准 |
 
 ### 6.4 波动率类指标
 
-| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
+| 指标 | 参数 | 默认�?| 常用�?| 适用场景 |
 |------|------|--------|--------|---------|
 | ATR | period | 14 | 14,20 | 止损设置 |
-| STDDEV | period | 20 | 20 | 波动率量�?|
+| STDDEV | period | 20 | 20 | 波动率量�?|
 | BBANDS_WIDTH | period,std | 20,2.0 | 20,2.0 | 波动变化 |
 
 ---
@@ -603,3 +603,11 @@ INDICATOR_DEPENDENCIES = {
 ---
 
 **版本**: 1.0 | **更新**: 2026-03-28
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

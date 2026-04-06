@@ -1,24 +1,24 @@
----
+﻿---
 module_id: INDEX_LIBRARY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 
-# 因子库对接蓝�?
+# 因子库对接蓝�?
 
-> 清风量化系统 v5.0 - 因子库系�?
+> 清风量化系统 v5.0 - 因子库系�?
 > **索引**: `DATA.003`
-> **开发时�?*: 25h
-> **核心定位**: 实现"因子定义 �?计算 �?验证 �?存储 �?查询"的完整因子生命周期管�?
+> **开发时�?*: 25h
+> **核心定位**: 实现"因子定义 �?计算 �?验证 �?存储 �?查询"的完整因子生命周期管�?
 
 
 ## 1. 设计原则
@@ -26,7 +26,7 @@ implementation_status: 进行�?
 | 原则 | 说明 |
 |------|------|
 | **复用Talib** | 技术指标使用TA-Lib，不重复实现 |
-| **模板化因�?* | 新因子通过模板快速定�?|
+| **模板化因�?* | 新因子通过模板快速定�?|
 | **IC验证** | 因子入库前必须通过IC验证 |
 | **版本管理** | 因子版本完整记录 |
 
@@ -37,10 +37,10 @@ implementation_status: 进行�?
 
 | 类别 | 说明 | 示例 |
 |------|------|------|
-| 技术因�?| TA-Lib计算 | MA, RSI, MACD |
+| 技术因�?| TA-Lib计算 | MA, RSI, MACD |
 | 量价因子 | 量价关系 | Momentum, Volume |
 | 财务因子 | 财务数据 | PE, PB, ROE |
-| 另类因子 | 非传统数�?| 舆情、研�?|
+| 另类因子 | 非传统数�?| 舆情、研�?|
 
 ### 2.2 因子定义
 
@@ -67,18 +67,18 @@ class Factor:
         self.params = params or {}
 
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """计算因子�?
+        """计算因子�?
 
         参数:
             data: OHLCV数据
 
         返回:
-            因子值序�?
+            因子值序�?
         """
         return self.calculator(data, **self.params)
 
     def to_dict(self) -> dict:
-        """转换为字�?""
+        """转换为字�?""
         return {
             'id': self.id,
             'name': self.name,
@@ -89,7 +89,7 @@ class Factor:
 ```
 
 
-## 3. 核心因子�?
+## 3. 核心因子�?
 
 ### 3.1 TA-Lib因子模板
 
@@ -108,7 +108,7 @@ class TALibFactor:
         return Factor(
             name=f"ma_{period}",
             category="technical",
-            description=f"{period}日移动平�?,
+            description=f"{period}日移动平�?,
             calculator=calc,
             params={'period': period}
         )
@@ -149,7 +149,7 @@ class TALibFactor:
 
     @staticmethod
     def create_bollinger(period: int = 20, std: float = 2.0) -> Factor:
-        """创建布林带因�?""
+        """创建布林带因�?""
         def calc(data, period, std):
             ma = data['close'].rolling(period).mean()
             std_dev = data['close'].rolling(period).std()
@@ -159,7 +159,7 @@ class TALibFactor:
         return Factor(
             name=f"bb_{period}_{std}",
             category="technical",
-            description="布林带位�?,
+            description="布林带位�?,
             calculator=calc,
             params={'period': period, 'std': std}
         )
@@ -169,7 +169,7 @@ class TALibFactor:
 
 ```python
 class PriceVolumeFactor:
-    """量价因子�?
+    """量价因子�?
 
     索引: DATA.003-M03
     """
@@ -182,14 +182,14 @@ class PriceVolumeFactor:
         return Factor(
             name=f"momentum_{period}",
             category="price_volume",
-            description=f"{period}日动�?,
+            description=f"{period}日动�?,
             calculator=calc,
             params={'period': period}
         )
 
     @staticmethod
     def volume_ratio(period: int = 20) -> Factor:
-        """成交量比�?""
+        """成交量比�?""
         def calc(data, period):
             avg_volume = data['volume'].rolling(period).mean()
             return data['volume'] / avg_volume
@@ -203,7 +203,7 @@ class PriceVolumeFactor:
 
     @staticmethod
     def turnover_rate(period: int = 20) -> Factor:
-        """换手率因�?""
+        """换手率因�?""
         def calc(data, period):
             return data['volume'].rolling(period).sum() / data['float_share']
         return Factor(
@@ -218,11 +218,11 @@ class PriceVolumeFactor:
 
 ## 4. 因子验证
 
-### 4.1 IC验证�?
+### 4.1 IC验证�?
 
 ```python
 class FactorValidator:
-    """因子验证�?
+    """因子验证�?
 
     索引: DATA.003-M04
     上游: FactorCalculator
@@ -238,8 +238,8 @@ class FactorValidator:
         """验证因子
 
         参数:
-            factor_values: 因子�?(index=date, columns=symbols)
-            returns: 收益�?
+            factor_values: 因子�?(index=date, columns=symbols)
+            returns: 收益�?
             thresholds: 验证门槛
 
         返回:
@@ -309,21 +309,21 @@ class ValidationResult:
 
     def to_report(self) -> str:
         """生成验证报告"""
-        status = "�?通过" if self.passed else "�?未通过"
+        status = "�?通过" if self.passed else "�?未通过"
         return f"""
 # 因子验证报告
 
 ## 验证结果: {status}
 
 ## IC指标
-| 指标 | �?| 门槛 | 判定 |
+| 指标 | �?| 门槛 | 判定 |
 |------|-----|------|------|
-| IC均�?| {self.ic_mean:.4f} | {self.thresholds['ic_mean_min']} | {'�? if self.ic_mean >= self.thresholds['ic_mean_min'] else '�?} |
-| IC_IR | {self.ic_ir:.4f} | {self.thresholds['ic_ir_min']} | {'�? if self.ic_ir >= self.thresholds['ic_ir_min'] else '�?} |
-| IC衰减 | {self.ic_decay:.2%} | {self.thresholds['decay_max']} | {'�? if self.ic_decay <= self.thresholds['decay_max'] else '�?} |
+| IC均�?| {self.ic_mean:.4f} | {self.thresholds['ic_mean_min']} | {'�? if self.ic_mean >= self.thresholds['ic_mean_min'] else '�?} |
+| IC_IR | {self.ic_ir:.4f} | {self.thresholds['ic_ir_min']} | {'�? if self.ic_ir >= self.thresholds['ic_ir_min'] else '�?} |
+| IC衰减 | {self.ic_decay:.2%} | {self.thresholds['decay_max']} | {'�? if self.ic_decay <= self.thresholds['decay_max'] else '�?} |
 
 ## IC时序
-![IC时序图] (已移�? ic_series.png)
+![IC时序图] (已移�? ic_series.png)
 """
 ```
 
@@ -372,7 +372,7 @@ class FactorRepository:
 
     def get_factor(self, factor_id: str) -> Factor:
         """获取因子"""
-        # 优先从缓�?
+        # 优先从缓�?
         cached = self.cache.get(f"factor:{factor_id}")
         if cached:
             return Factor(**cached)
@@ -436,19 +436,27 @@ class FactorAPI:
         end_date: str,
         symbols: List[str] = None
     ) -> pd.DataFrame:
-        """获取因子�?""
+        """获取因子�?""
 ```
 
 
-## 7. 开发任务分�?
+## 7. 开发任务分�?
 
 ### 7.1 任务分解 (25h)
 
 | 任务 | 时间 | 说明 |
 |------|------|------|
-| TA-Lib因子封装 | 4h | MA/RSI/MACD等封�?|
-| 量价因子�?| 4h | Momentum/Volume�?|
-| IC验证�?| 6h | IC计算和判�?|
+| TA-Lib因子封装 | 4h | MA/RSI/MACD等封�?|
+| 量价因子�?| 4h | Momentum/Volume�?|
+| IC验证�?| 6h | IC计算和判�?|
 | 因子仓库 | 4h | PostgreSQL存储 |
 | 因子API | 3h | REST API |
 | 测试 | 4h | 单元测试 |
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

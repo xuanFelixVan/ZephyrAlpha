@@ -1,52 +1,52 @@
----
+﻿---
 module_id: BACKTEST_LAYERED_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
 # 分层回测框架
 
-> Layer 2: Alpha因子计算 - 分组测试、多空组合、收益单调性分�?
+> Layer 2: Alpha因子计算 - 分组测试、多空组合、收益单调性分�?
 
 ---
 
 ## 1. 框架概述
 
-分层回测是验证因子有效性的核心方法，通过将股票按因子值分组，检验因子对股票收益率的区分能力�?
+分层回测是验证因子有效性的核心方法，通过将股票按因子值分组，检验因子对股票收益率的区分能力�?
 
 ```
 分层回测架构
 ├── 分组模块 (Grouper)
-�?  ├── 等数量分�?
-�?  ├── 等市值分�?
-�?  └── 行业中性分�?
+�?  ├── 等数量分�?
+�?  ├── 等市值分�?
+�?  └── 行业中性分�?
 ├── 组合构建 (Portfolio Builder)
-�?  ├── 多空组合
-�?  ├── 纯多头组�?
-�?  └── 市场中性强组合
+�?  ├── 多空组合
+�?  ├── 纯多头组�?
+�?  └── 市场中性强组合
 ├── 收益分析 (Return Analyzer)
-�?  ├── 分组收益
-�?  ├── 累计收益
-�?  └── Monotonicity检�?
-└── 统计检�?(Statistical Test)
-    ├── t检�?
+�?  ├── 分组收益
+�?  ├── 累计收益
+�?  └── Monotonicity检�?
+└── 统计检�?(Statistical Test)
+    ├── t检�?
     ├── ANOVA
-    └── 因子有效性检�?
+    └── 因子有效性检�?
 ```
 
 ---
 
 ## 2. 分组模块
 
-### 2.1 分组器基�?
+### 2.1 分组器基�?
 
 ```python
 from abc import ABC, abstractmethod
@@ -68,7 +68,7 @@ class GroupResult:
 
 
 class BaseGrouper(ABC):
-    """分组器基�?""
+    """分组器基�?""
 
     def __init__(self, n_groups: int = 10):
         self.n_groups = n_groups
@@ -84,9 +84,9 @@ class BaseGrouper(ABC):
         """执行分组
 
         参数:
-            factor_values: 因子�?(index=stock_code)
-            stock_returns: 股票收益�?(index=date, columns=stock_code)
-            market_caps: 市�?(index=stock_code)
+            factor_values: 因子�?(index=stock_code)
+            stock_returns: 股票收益�?(index=date, columns=stock_code)
+            market_caps: 市�?(index=stock_code)
             industries: 行业分类 (index=stock_code)
 
         返回:
@@ -104,7 +104,7 @@ class BaseGrouper(ABC):
 
         参数:
             stocks: 股票列表
-            market_caps: 市�?
+            market_caps: 市�?
             method: 权重方法 ('equal', 'value_weighted')
         """
         n = len(stocks)
@@ -118,11 +118,11 @@ class BaseGrouper(ABC):
             return np.ones(n) / n
 ```
 
-### 2.2 常用分组器实�?
+### 2.2 常用分组器实�?
 
 ```python
 class EqualNumberGrouper(BaseGrouper):
-    """等数量分�?""
+    """等数量分�?""
 
     def group(
         self,
@@ -131,7 +131,7 @@ class EqualNumberGrouper(BaseGrouper):
         market_caps: Optional[pd.Series] = None,
         industries: Optional[pd.Series] = None
     ) -> List[GroupResult]:
-        """按因子值排序，等数量分入各�?""
+        """按因子值排序，等数量分入各�?""
 
         valid_stocks = factor_values.dropna().index.tolist()
         sorted_stocks = valid_stocks[np.argsort(factor_values[valid_stocks].values)]
@@ -160,7 +160,7 @@ class EqualNumberGrouper(BaseGrouper):
 
 
 class EqualMarketCapGrouper(BaseGrouper):
-    """等市值分�?""
+    """等市值分�?""
 
     def group(
         self,
@@ -169,7 +169,7 @@ class EqualMarketCapGrouper(BaseGrouper):
         market_caps: Optional[pd.Series] = None,
         industries: Optional[pd.Series] = None
     ) -> List[GroupResult]:
-        """按市值加权分组，使每组市值接�?""
+        """按市值加权分组，使每组市值接�?""
 
         if market_caps is None:
             raise ValueError("Market caps required for EqualMarketCapGrouper")
@@ -218,7 +218,7 @@ class EqualMarketCapGrouper(BaseGrouper):
 
 
 class IndustryNeutralGrouper(BaseGrouper):
-    """行业中性分�?""
+    """行业中性分�?""
 
     def __init__(self, n_groups: int = 10):
         super().__init__(n_groups)
@@ -231,7 +231,7 @@ class IndustryNeutralGrouper(BaseGrouper):
         market_caps: Optional[pd.Series] = None,
         industries: Optional[pd.Series] = None
     ) -> List[GroupResult]:
-        """在每个行业内分组，然后合�?""
+        """在每个行业内分组，然后合�?""
 
         if industries is None:
             raise ValueError("Industries required for IndustryNeutralGrouper")
@@ -262,11 +262,11 @@ class IndustryNeutralGrouper(BaseGrouper):
 
 ## 3. 组合构建模块
 
-### 3.1 组合构建�?
+### 3.1 组合构建�?
 
 ```python
 class PortfolioBuilder:
-    """组合构建�?""
+    """组合构建�?""
 
     def __init__(self):
         self.rebalance_frequency = "monthly"
@@ -309,11 +309,11 @@ class PortfolioBuilder:
         top_groups: List[int] = None,
         bottom_groups: List[int] = None
     ) -> Dict:
-        """构建纯多头组�?
+        """构建纯多头组�?
 
         参数:
             groups: 分组结果
-            top_groups: 入选组号列�?
+            top_groups: 入选组号列�?
             bottom_groups: 排除组号列表
         """
         if top_groups is None:
@@ -363,7 +363,7 @@ class GroupReturn:
 
 
 class ReturnAnalyzer:
-    """收益分析�?""
+    """收益分析�?""
 
     def __init__(self, risk_free_rate: float = 0.03):
         self.risk_free_rate = risk_free_rate
@@ -374,7 +374,7 @@ class ReturnAnalyzer:
         stock_returns: pd.DataFrame,
         weights_list: List[np.ndarray] = None
     ) -> List[GroupReturn]:
-        """计算各分组收�?""
+        """计算各分组收�?""
 
         if weights_list is None:
             weights_list = [g.weights for g in groups]
@@ -417,10 +417,10 @@ class ReturnAnalyzer:
         self,
         group_returns: List[GroupReturn]
     ) -> Dict:
-        """分析收益单调�?
+        """分析收益单调�?
 
         返回:
-            单调性分析结�?
+            单调性分析结�?
         """
         returns = [g.return_value for g in group_returns]
         groups = [g.group_id for g in group_returns]
@@ -453,7 +453,7 @@ class ReturnAnalyzer:
 
         lines.append("分组收益:")
         lines.append("-" * 80)
-        lines.append(f"{'组号':<8}{'收益�?:<12}{'年化波动':<12}{'夏普比率':<12}{'最大回�?:<12}")
+        lines.append(f"{'组号':<8}{'收益�?:<12}{'年化波动':<12}{'夏普比率':<12}{'最大回�?:<12}")
         lines.append("-" * 80)
 
         for g in group_returns:
@@ -465,19 +465,19 @@ class ReturnAnalyzer:
         lines.append("-" * 80)
 
         lines.append("")
-        lines.append("单调性分�?")
+        lines.append("单调性分�?")
         lines.append(f"  斯皮尔曼相关系数: {monotonicity['spearman_correlation']:.4f}")
         lines.append(f"  多头-空头利差: {monotonicity['top_bottom_spread']:.2%}")
-        lines.append(f"  是否单调递增: {'�? if monotonicity['is_monotonic_increasing'] else '�?}")
+        lines.append(f"  是否单调递增: {'�? if monotonicity['is_monotonic_increasing'] else '�?}")
 
         return "\n".join(lines)
 ```
 
 ---
 
-## 5. 统计检验模�?
+## 5. 统计检验模�?
 
-### 5.1 因子有效性检�?
+### 5.1 因子有效性检�?
 
 ```python
 from scipy import stats
@@ -494,12 +494,12 @@ class StatisticalTester:
         portfolio_returns: pd.Series,
         benchmark: float = 0
     ) -> Dict:
-        """单样本t检�?
+        """单样本t检�?
 
         检验组合收益是否显著不同于基准
 
         返回:
-            t检验结�?
+            t检验结�?
         """
         returns = portfolio_returns.dropna()
 
@@ -522,13 +522,13 @@ class StatisticalTester:
         stock_returns: pd.Series,
         risk_factors: pd.DataFrame = None
     ) -> Dict:
-        """横截面回归分�?
+        """横截面回归分�?
 
-        检验因子收益率的显著�?
+        检验因子收益率的显著�?
 
         参数:
-            factor_values: 因子�?(index=date, columns=factor_names)
-            stock_returns: 股票收益�?
+            factor_values: 因子�?(index=date, columns=factor_names)
+            stock_returns: 股票收益�?
             risk_factors: 风险因子
 
         返回:
@@ -583,12 +583,12 @@ class StatisticalTester:
         """计算并检验因子收益率
 
         参数:
-            factor_values: 因子�?
+            factor_values: 因子�?
             stock_returns: 股票收益
-            holding_period: 持有�?
+            holding_period: 持有�?
 
         返回:
-            因子收益率时间序�?
+            因子收益率时间序�?
         """
         factor_df = factor_values.to_frame("factor")
         merged = stock_returns.join(factor_df, how="inner")
@@ -621,7 +621,7 @@ class StatisticalTester:
         self,
         returns: pd.Series
     ) -> Dict:
-        """GARCH波动率模型检�?""
+        """GARCH波动率模型检�?""
         from arch import arch_model
 
         try:
@@ -691,6 +691,14 @@ def run_layered_backtest():
 **版本**: 1.0
 **更新**: 2026-03-28
 **Layer**: Layer 2 (Alpha因子计算)
-**索引**: BLUEPRINTS.md �?因子验证框架蓝图
+**索引**: BLUEPRINTS.md �?因子验证框架蓝图
 **上游接口**: FactorCalculator (M02), DataHub (M01)
 **下游接口**: FactorLibrary (M02.5), StrategyEngine (M03)
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

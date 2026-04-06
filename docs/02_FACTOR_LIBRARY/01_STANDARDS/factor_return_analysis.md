@@ -1,42 +1,42 @@
----
+﻿---
 module_id: STANDARDS_RETURN_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管�?
+applicable_scope: 因子研究与管�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 因子收益率分�?
+# 因子收益率分�?
 
-> 因子收益率的横截面分析、回测评估、分组测�?
+> 因子收益率的横截面分析、回测评估、分组测�?
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先�?*: P1 - 核心模块
-> **Layer**: Layer 2 (因子�?
+> **优先�?*: P1 - 核心模块
+> **Layer**: Layer 2 (因子�?
 > **索引**: F.03.RET.001
 
 ---
 
 ## 1. 概述
 
-因子收益率分析是因子验证的核心，通过以下方式评估因子预测能力�?
-- 横截面回归分�?
-- 分组回测（十分组测试�?
-- 单调性分�?
+因子收益率分析是因子验证的核心，通过以下方式评估因子预测能力�?
+- 横截面回归分�?
+- 分组回测（十分组测试�?
+- 单调性分�?
 - 多空组合分析
 
 ---
 
-## 2. 因子收益率计�?
+## 2. 因子收益率计�?
 
-### 2.1 横截面回�?
+### 2.1 横截面回�?
 
 ```python
 import pandas as pd
@@ -58,15 +58,15 @@ class FactorReturnAnalyzer:
         Parameters:
         -----------
         factor_data : pd.DataFrame
-            因子值，�?日期，列=股票代码
+            因子值，�?日期，列=股票代码
         returns : pd.Series
-            股票收益率，�?日期，列=股票代码
+            股票收益率，�?日期，列=股票代码
         lag : int
             滞后期数
 
         Returns:
         --------
-        pd.DataFrame: 每日因子收益�?
+        pd.DataFrame: 每日因子收益�?
         """
         factor_shifted = factor_data.shift(lag)
         factor_returns = []
@@ -78,7 +78,7 @@ class FactorReturnAnalyzer:
             factor_vals = factor_shifted.loc[date].dropna()
             future_returns = returns.loc[date][factor_vals.index].dropna()
 
-            # 取交�?
+            # 取交�?
             common = factor_vals.index.intersection(future_returns.index)
             if len(common) < 10:
                 continue
@@ -86,7 +86,7 @@ class FactorReturnAnalyzer:
             X = factor_vals[common].values.reshape(-1, 1)
             y = future_returns[common].values
 
-            # 线性回�?
+            # 线性回�?
             model = LinearRegression()
             model.fit(X, y)
 
@@ -105,7 +105,7 @@ class FactorReturnAnalyzer:
 
 ## 3. 分组回测分析
 
-### 3.1 十分组测�?
+### 3.1 十分组测�?
 
 ```python
 class GroupBacktest:
@@ -119,18 +119,18 @@ class GroupBacktest:
         holding_period: int = 1
     ) -> dict:
         """
-        执行十分组回�?
+        执行十分组回�?
 
         Parameters:
         -----------
         factor_data : pd.DataFrame
-            因子�?
+            因子�?
         returns : pd.Series
-            收益�?
+            收益�?
         n_groups : int
             分组数量
         holding_period : int
-            持有�?
+            持有�?
 
         Returns:
         --------
@@ -142,7 +142,7 @@ class GroupBacktest:
             'long_short_return': None
         }
 
-        # 计算每期的分组收�?
+        # 计算每期的分组收�?
         all_dates = factor_data.index.intersection(returns.index)
 
         for date in all_dates:
@@ -177,8 +177,8 @@ class GroupBacktest:
 
         # 计算多空组合
         if 0 in results['group_returns'] and n_groups - 1 in results['group_returns']:
-            long_returns = pd.Series(results['group_returns'][0])  # Top�?因子值最�?
-            short_returns = pd.Series(results['group_returns'][n_groups - 1])  # Bottom�?
+            long_returns = pd.Series(results['group_returns'][0])  # Top�?因子值最�?
+            short_returns = pd.Series(results['group_returns'][n_groups - 1])  # Bottom�?
             results['long_short_return'] = long_returns - short_returns
             results['long_short_cum'] = (1 + results['long_short_return']).cumprod()
 
@@ -186,7 +186,7 @@ class GroupBacktest:
 
     def analyze_monotonicity(self, group_returns: dict) -> dict:
         """
-        分析收益的单调�?
+        分析收益的单调�?
 
         Returns:
         --------
@@ -194,8 +194,8 @@ class GroupBacktest:
         """
         group_means = [np.mean(returns) for returns in group_returns.values()]
 
-        # 计算单调性得�?
-        # 完美单调：得�?1
+        # 计算单调性得�?
+        # 完美单调：得�?1
         n = len(group_means)
         inversions = 0
         for i in range(n - 1):
@@ -235,7 +235,7 @@ class LongShortAnalyzer:
         Parameters:
         -----------
         top_pct : float
-            多头比例（如0.2表示�?0%�?
+            多头比例（如0.2表示�?0%�?
         bottom_pct : float
             空头比例
 
@@ -256,7 +256,7 @@ class LongShortAnalyzer:
             if len(common) < 10:
                 continue
 
-            # 计算分位数阈�?
+            # 计算分位数阈�?
             long_threshold = factor_vals[common].quantile(1 - top_pct)
             short_threshold = factor_vals[common].quantile(bottom_pct)
 
@@ -292,7 +292,7 @@ class LongShortAnalyzer:
         }
 
     def _calculate_max_drawdown(self, returns: pd.Series) -> float:
-        """计算最大回�?""
+        """计算最大回�?""
         cum_returns = (1 + returns).cumprod()
         running_max = cum_returns.expanding().max()
         drawdown = (cum_returns - running_max) / running_max
@@ -301,13 +301,13 @@ class LongShortAnalyzer:
 
 ---
 
-## 5. 换手率分�?
+## 5. 换手率分�?
 
-### 5.1 因子换手�?
+### 5.1 因子换手�?
 
 ```python
 class TurnoverAnalyzer:
-    """换手率分�?""
+    """换手率分�?""
 
     def calculate_turnover(
         self,
@@ -315,11 +315,11 @@ class TurnoverAnalyzer:
         top_pct: float = 0.2
     ) -> pd.Series:
         """
-        计算因子换手�?
+        计算因子换手�?
 
         Returns:
         --------
-        pd.Series: 每日换手�?
+        pd.Series: 每日换手�?
         """
         turnovers = []
 
@@ -332,11 +332,11 @@ class TurnoverAnalyzer:
             prev_factor = factor_data.loc[prev_date].dropna()
             curr_factor = factor_data.loc[curr_date].dropna()
 
-            # 计算分位数阈�?
+            # 计算分位数阈�?
             prev_long = prev_factor >= prev_factor.quantile(1 - top_pct)
             curr_long = curr_factor >= curr_factor.quantile(1 - top_pct)
 
-            # 取交�?
+            # 取交�?
             common = prev_long.index.intersection(curr_long.index)
             if len(common) == 0:
                 continue
@@ -344,7 +344,7 @@ class TurnoverAnalyzer:
             prev_set = set(common[prev_long[common]])
             curr_set = set(common[curr_long[common]])
 
-            # 换手�?= (买入+卖出) / 2 / 总持�?
+            # 换手�?= (买入+卖出) / 2 / 总持�?
             changed = len(prev_set.symmetric_difference(curr_set))
             total = len(prev_set.union(curr_set))
 
@@ -382,7 +382,7 @@ class TurnoverAnalyzer:
             'avg_turnover': avg_turnover,
             'one_way_cost': one_way_cost,
             'annual_turnover_cost': total_cost * 252,
-            'cost_adjusted_sharpe': None  # 需要结合收益计�?
+            'cost_adjusted_sharpe': None  # 需要结合收益计�?
         }
 ```
 
@@ -431,7 +431,7 @@ class GroupStatistics:
         return report
 
     def _calculate_mdd(self, returns: pd.Series) -> float:
-        """计算最大回�?""
+        """计算最大回�?""
         cum = (1 + returns).cumprod()
         running_max = cum.expanding().max()
         drawdown = (cum - running_max) / running_max
@@ -453,10 +453,10 @@ factor_return_analysis:
 
   # 多空组合配置
   long_short:
-    top_pct: 0.2       # 多头�?0%
-    bottom_pct: 0.2    # 空头�?0%
+    top_pct: 0.2       # 多头�?0%
+    bottom_pct: 0.2    # 空头�?0%
 
-  # 换手率配�?
+  # 换手率配�?
   turnover:
     window: 20         # 计算窗口
     commission_rate: 0.0003
@@ -477,9 +477,9 @@ factor_return_analysis:
 02_FACTOR_LIBRARY/01_STANDARDS/
 ├── README.md
 ├── IC_ANALYSIS.md              # IC分析
-├── FACTOR_PREPROCESSING.md     # 因子预处�?
-├── FACTOR_RETURN_ANALYSIS.md   # 本文�?�?
-└── FACTOR_NEUTRALIZATION.md    # 中性化处理(待创�?
+├── FACTOR_PREPROCESSING.md     # 因子预处�?
+├── FACTOR_RETURN_ANALYSIS.md   # 本文�?�?
+└── FACTOR_NEUTRALIZATION.md    # 中性化处理(待创�?
 ```
 
 ---
@@ -489,7 +489,7 @@ factor_return_analysis:
 | 接口 | 说明 |
 |------|------|
 | **上游接口** | 因子计算引擎、因子预处理 |
-| **下游接口** | 因子筛选、组合优化、策略信�?|
+| **下游接口** | 因子筛选、组合优化、策略信�?|
 | **输入格式** | factor_data: pd.DataFrame, returns: pd.Series |
 | **输出格式** | 分组统计、多空收益、换手率 |
 
@@ -500,3 +500,11 @@ factor_return_analysis:
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 |
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |

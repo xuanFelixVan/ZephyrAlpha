@@ -7383,6 +7383,1610 @@ class EnvironmentSnapshot:
 
 ---
 
+### 2.33 研究数据管道编排系统 (Research Pipeline Orchestration) ⭐P0关键模块
+
+#### 2.33.1 系统定位与职责
+
+**核心定位**：
+- **工作流编排**：自动化研究数据管道
+- **依赖管理**：管理复杂的数据依赖关系
+- **任务调度**：定时和事件驱动的任务执行
+
+**核心职责**：
+1. **Prefect**：现代Python工作流编排
+2. **Airflow**：行业标准DAG编排
+3. **任务依赖**：自动管理任务依赖关系
+4. **失败重试**：自动重试和错误处理
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Prefect** | 16k+ | 现代工作流 | Python原生 |
+| **Apache Airflow** | 36k+ | DAG编排 | 行业标准 |
+| **Dagster** | 11k+ | 数据资产 | 类型安全 |
+| **Luigi** | 17k+ | 管道构建 | Spotify开源 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：中等
+- 维护成本：低
+- AI维护友好：高（配置文件化）
+- 开发周期：1周
+
+#### 2.33.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│          研究数据管道编排系统架构                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              定义层 (Definition Layer)                   │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ DAG定义                                            │  │  │
+│  │  │ ├── 任务节点定义                                   │  │  │
+│  │  │ ├── 依赖关系定义                                   │  │  │
+│  │  │ ├── 执行参数定义                                   │  │  │
+│  │  │ └── 触发条件定义                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              调度层 (Scheduling Layer)                   │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Prefect调度器                                      │  │  │
+│  │  │ ├── 任务队列                                       │  │  │
+│  │  │ ├── 优先级调度                                     │  │  │
+│  │  │ ├── 并发控制                                       │  │  │
+│  │  │ └── 资源分配                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Airflow调度器                                      │  │  │
+│  │  │ ├── DAG解析                                        │  │  │
+│  │  │ ├── 任务实例化                                     │  │  │
+│  │  │ ├── 执行器管理                                     │  │  │
+│  │  │ └── 状态跟踪                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              执行层 (Execution Layer)                    │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 任务执行器                                         │  │  │
+│  │  │ ├── 本地执行器                                     │  │  │
+│  │  │ ├── Docker执行器                                   │  │  │
+│  │  │ ├── Kubernetes执行器                               │  │  │
+│  │  │ └── 分布式执行器                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              监控层 (Monitoring Layer)                   │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 执行监控                                           │  │  │
+│  │  │ ├── 任务状态跟踪                                   │  │  │
+│  │  │ ├── 性能指标收集                                   │  │  │
+│  │  │ ├── 日志聚合                                       │  │  │
+│  │  │ └── 告警通知                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.33.3 技术实现
+
+```python
+from prefect import flow, task
+from prefect.task_runners import SequentialTaskRunner
+import apache_airflow as airflow
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+import pandas as pd
+
+class PipelineOrchestrationSystem:
+    """研究数据管道编排系统 - 基于Prefect + Airflow"""
+    
+    def __init__(self, 
+                 prefect_backend: str = "http://localhost:4200",
+                 airflow_dags_folder: str = "./dags"):
+        self.prefect_backend = prefect_backend
+        self.airflow_dags_folder = airflow_dags_folder
+    
+    @task
+    def fetch_data(self, source: str, params: Dict) -> pd.DataFrame:
+        """获取数据任务"""
+        import yfinance as yf
+        
+        data = yf.download(source, **params)
+        return data
+    
+    @task
+    def process_data(self, data: pd.DataFrame, process_config: Dict) -> pd.DataFrame:
+        """数据处理任务"""
+        processed = data.copy()
+        
+        if process_config.get('dropna'):
+            processed = processed.dropna()
+        
+        if process_config.get('normalize'):
+            from sklearn.preprocessing import StandardScaler
+            scaler = StandardScaler()
+            processed = pd.DataFrame(
+                scaler.fit_transform(processed),
+                columns=processed.columns
+            )
+        
+        return processed
+    
+    @task
+    def save_data(self, data: pd.DataFrame, output_path: str) -> str:
+        """保存数据任务"""
+        data.to_parquet(output_path)
+        return output_path
+    
+    @flow(task_runner=SequentialTaskRunner())
+    def research_pipeline(self, 
+                         source: str,
+                         params: Dict,
+                         process_config: Dict,
+                         output_path: str):
+        """研究数据管道"""
+        
+        data = self.fetch_data(source, params)
+        processed = self.process_data(data, process_config)
+        result = self.save_data(processed, output_path)
+        
+        return result
+    
+    def create_airflow_dag(self,
+                          dag_id: str,
+                          schedule_interval: str,
+                          tasks: List[Dict]) -> DAG:
+        """创建Airflow DAG"""
+        
+        default_args = {
+            'owner': 'research',
+            'depends_on_past': False,
+            'start_date': datetime(2024, 1, 1),
+            'retries': 3,
+            'retry_delay': timedelta(minutes=5),
+        }
+        
+        dag = DAG(
+            dag_id,
+            default_args=default_args,
+            schedule_interval=schedule_interval,
+            catchup=False
+        )
+        
+        task_operators = {}
+        
+        for task_def in tasks:
+            task_id = task_def['id']
+            task_func = task_def['function']
+            task_args = task_def.get('args', {})
+            
+            task_operators[task_id] = PythonOperator(
+                task_id=task_id,
+                python_callable=task_func,
+                op_kwargs=task_args,
+                dag=dag
+            )
+        
+        for task_def in tasks:
+            task_id = task_def['id']
+            dependencies = task_def.get('depends_on', [])
+            
+            for dep_id in dependencies:
+                task_operators[dep_id] >> task_operators[task_id]
+        
+        return dag
+
+class DataPipelineBuilder:
+    """数据管道构建器"""
+    
+    def __init__(self):
+        self.tasks = []
+        self.dependencies = {}
+    
+    def add_task(self, 
+                task_id: str,
+                task_func: callable,
+                args: Optional[Dict] = None):
+        """添加任务"""
+        
+        self.tasks.append({
+            'id': task_id,
+            'function': task_func,
+            'args': args or {}
+        })
+        
+        return self
+    
+    def add_dependency(self, task_id: str, depends_on: List[str]):
+        """添加依赖关系"""
+        
+        self.dependencies[task_id] = depends_on
+        return self
+    
+    def build_prefect_flow(self):
+        """构建Prefect Flow"""
+        
+        @flow
+        def pipeline():
+            results = {}
+            
+            for task in self.tasks:
+                task_id = task['id']
+                task_func = task['function']
+                task_args = task['args']
+                
+                if task_id in self.dependencies:
+                    for dep_id in self.dependencies[task_id]:
+                        if dep_id in results:
+                            task_args = {**task_args, 'input': results[dep_id]}
+                
+                results[task_id] = task_func(**task_args)
+            
+            return results
+        
+        return pipeline
+```
+
+#### 2.33.4 核心功能
+
+1. **DAG编排**：可视化定义工作流
+2. **任务调度**：定时和事件驱动执行
+3. **依赖管理**：自动管理任务依赖
+4. **失败重试**：自动重试和错误处理
+
+#### 2.33.5 应用场景
+
+- **数据ETL**：自动化数据提取、转换、加载
+- **模型训练**：自动化模型训练流程
+- **报告生成**：定时生成研究报告
+- **数据质量检查**：自动化数据质量验证
+
+---
+
+### 2.34 研究调度系统 (Research Scheduling) ⭐P0关键模块
+
+#### 2.34.1 系统定位与职责
+
+**核心定位**：
+- **分布式任务调度**：大规模并行任务执行
+- **异步任务处理**：后台任务异步执行
+- **资源优化**：高效利用计算资源
+
+**核心职责**：
+1. **Celery**：分布式任务队列
+2. **Ray**：大规模分布式计算
+3. **任务队列**：异步任务管理
+4. **结果存储**：任务结果持久化
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Celery** | 24k+ | 分布式任务队列 | 异步任务 |
+| **Ray** | 33k+ | 分布式计算 | 大规模并行 |
+| **Dask** | 12k+ | 并行计算 | 数据分析 |
+| **RQ** | 10k+ | 简单任务队列 | 轻量级 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：中等
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.34.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              研究调度系统架构                                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              任务提交层 (Task Submission)                │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 任务定义                                           │  │  │
+│  │  │ ├── 任务函数                                       │  │  │
+│  │  │ ├── 任务参数                                       │  │  │
+│  │  │ ├── 任务优先级                                     │  │  │
+│  │  │ └── 任务超时                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              队列层 (Queue Layer)                        │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Celery队列                                         │  │  │
+│  │  │ ├── 任务队列                                       │  │  │
+│  │  │ ├── 优先级队列                                     │  │  │
+│  │  │ ├── 延迟队列                                       │  │  │
+│  │  │ └── 死信队列                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Ray任务队列                                        │  │  │
+│  │  │ ├── Actor任务                                      │  │  │
+│  │  │ ├── 远程函数                                       │  │  │
+│  │  │ ├── 对象存储                                       │  │  │
+│  │  │ └── 资源管理                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              执行层 (Execution Layer)                    │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Worker节点                                         │  │  │
+│  │  │ ├── 任务执行                                       │  │  │
+│  │  │ ├── 资源隔离                                       │  │  │
+│  │  │ ├── 并发控制                                       │  │  │
+│  │  │ └── 状态报告                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              存储层 (Storage Layer)                      │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 结果存储                                           │  │  │
+│  │  │ ├── Redis后端                                      │  │  │
+│  │  │ ├── 数据库后端                                     │  │  │
+│  │  │ ├── 文件系统后端                                   │  │  │
+│  │  │ └── 云存储后端                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.34.3 技术实现
+
+```python
+from celery import Celery, Task
+import ray
+from ray import remote
+from typing import Dict, List, Any, Optional
+import redis
+import json
+from datetime import datetime
+
+class ResearchSchedulingSystem:
+    """研究调度系统 - 基于Celery + Ray"""
+    
+    def __init__(self,
+                 celery_broker: str = "redis://localhost:6379/0",
+                 celery_backend: str = "redis://localhost:6379/1",
+                 ray_address: str = "auto"):
+        self.celery_app = Celery(
+            'research_tasks',
+            broker=celery_broker,
+            backend=celery_backend
+        )
+        
+        self.celery_app.conf.update(
+            task_serializer='json',
+            accept_content=['json'],
+            result_serializer='json',
+            timezone='UTC',
+            enable_utc=True,
+            task_track_started=True,
+            task_time_limit=3600,
+            task_soft_time_limit=3300,
+            worker_prefetch_multiplier=1,
+            worker_max_tasks_per_child=100
+        )
+        
+        if not ray.is_initialized():
+            ray.init(address=ray_address, ignore_reinit_error=True)
+    
+    def create_celery_task(self, 
+                          name: str,
+                          func: callable,
+                          max_retries: int = 3,
+                          retry_delay: int = 60):
+        """创建Celery任务"""
+        
+        @self.celery_app.task(
+            bind=True,
+            name=name,
+            max_retries=max_retries,
+            default_retry_delay=retry_delay
+        )
+        def task_wrapper(self, *args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as exc:
+                raise self.retry(exc=exc)
+        
+        return task_wrapper
+    
+    def submit_task(self,
+                   task_name: str,
+                   args: tuple = (),
+                   kwargs: dict = None,
+                   queue: str = "default",
+                   priority: int = 5,
+                   countdown: int = None) -> str:
+        """提交Celery任务"""
+        
+        task = self.celery_app.send_task(
+            task_name,
+            args=args,
+            kwargs=kwargs or {},
+            queue=queue,
+            priority=priority,
+            countdown=countdown
+        )
+        
+        return task.id
+    
+    def get_task_result(self, task_id: str, timeout: int = 10) -> Any:
+        """获取任务结果"""
+        
+        result = self.celery_app.AsyncResult(task_id)
+        
+        if result.ready():
+            return result.get(timeout=timeout)
+        else:
+            return None
+    
+    def get_task_status(self, task_id: str) -> Dict:
+        """获取任务状态"""
+        
+        result = self.celery_app.AsyncResult(task_id)
+        
+        return {
+            'task_id': task_id,
+            'status': result.state,
+            'result': result.result if result.ready() else None,
+            'traceback': result.traceback if result.failed() else None
+        }
+
+@remote
+class RayTaskExecutor:
+    """Ray远程执行器"""
+    
+    def __init__(self, resources: Dict = None):
+        self.resources = resources or {}
+    
+    def execute(self, func: callable, *args, **kwargs) -> Any:
+        """执行任务"""
+        return func(*args, **kwargs)
+    
+    def execute_batch(self, tasks: List[Dict]) -> List[Any]:
+        """批量执行任务"""
+        results = []
+        
+        for task in tasks:
+            func = task['function']
+            args = task.get('args', ())
+            kwargs = task.get('kwargs', {})
+            
+            result = func(*args, **kwargs)
+            results.append(result)
+        
+        return results
+
+class DistributedTaskManager:
+    """分布式任务管理器"""
+    
+    def __init__(self, 
+                 celery_app: Celery,
+                 ray_address: str = "auto"):
+        self.celery_app = celery_app
+        
+        if not ray.is_initialized():
+            ray.init(address=ray_address, ignore_reinit_error=True)
+    
+    def submit_celery_task(self,
+                          task_name: str,
+                          args: tuple = (),
+                          kwargs: dict = None) -> str:
+        """提交Celery任务"""
+        
+        result = self.celery_app.send_task(task_name, args=args, kwargs=kwargs or {})
+        return result.id
+    
+    def submit_ray_task(self,
+                       func: callable,
+                       args: tuple = (),
+                       kwargs: dict = None,
+                       num_cpus: int = 1,
+                       num_gpus: int = 0) -> ray.ObjectRef:
+        """提交Ray任务"""
+        
+        @remote(num_cpus=num_cpus, num_gpus=num_gpus)
+        def ray_task():
+            return func(*args, **(kwargs or {}))
+        
+        return ray_task.remote()
+    
+    def submit_batch_tasks(self,
+                          tasks: List[Dict],
+                          backend: str = "ray") -> List:
+        """批量提交任务"""
+        
+        if backend == "celery":
+            results = []
+            for task in tasks:
+                task_id = self.submit_celery_task(
+                    task['name'],
+                    task.get('args', ()),
+                    task.get('kwargs', {})
+                )
+                results.append(task_id)
+            return results
+        
+        elif backend == "ray":
+            results = []
+            for task in tasks:
+                ref = self.submit_ray_task(
+                    task['function'],
+                    task.get('args', ()),
+                    task.get('kwargs', {}),
+                    task.get('num_cpus', 1),
+                    task.get('num_gpus', 0)
+                )
+                results.append(ref)
+            return results
+```
+
+#### 2.34.4 核心功能
+
+1. **分布式任务**：大规模并行任务执行
+2. **异步处理**：后台任务异步执行
+3. **任务监控**：实时监控任务状态
+4. **结果存储**：任务结果持久化
+
+#### 2.34.5 应用场景
+
+- **模型训练**：分布式模型训练
+- **数据处理**：大规模数据处理
+- **回测执行**：并行策略回测
+- **报告生成**：异步生成报告
+
+---
+
+### 2.35 研究性能分析系统 (Research Performance Profiling) ⭐P0关键模块
+
+#### 2.35.1 系统定位与职责
+
+**核心定位**：
+- **性能分析**：识别代码性能瓶颈
+- **内存分析**：检测内存泄漏和优化内存使用
+- **CPU分析**：优化CPU使用效率
+
+**核心职责**：
+1. **Scalene**：CPU、内存、GPU综合分析
+2. **Py-Spy**：采样分析器（无需修改代码）
+3. **Memray**：内存分析器
+4. **性能报告**：生成性能优化建议
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Scalene** | 12k+ | CPU/内存/GPU分析 | 综合分析 |
+| **Py-Spy** | 13k+ | 采样分析器 | 生产环境 |
+| **Memray** | 13k+ | 内存分析器 | 内存泄漏 |
+| **cProfile** | 内置 | 性能分析 | 标准工具 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.35.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│          研究性能分析系统架构                                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              数据采集层 (Data Collection)                │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Scalene采集器                                      │  │  │
+│  │  │ ├── CPU时间采样                                    │  │  │
+│  │  │ ├── 内存使用采样                                   │  │  │
+│  │  │ ├── GPU使用采样                                    │  │  │
+│  │  │ └── 逐行分析                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Py-Spy采集器                                       │  │  │
+│  │  │ ├── 采样频率控制                                   │  │  │
+│  │  │ ├── 进程监控                                       │  │  │
+│  │  │ ├── 调用栈收集                                     │  │  │
+│  │  │ └── 低开销运行                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              分析层 (Analysis Layer)                     │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 性能分析                                           │  │  │
+│  │  │ ├── 热点函数识别                                   │  │  │
+│  │  │ ├── 时间消耗分析                                   │  │  │
+│  │  │ ├── 内存分配分析                                   │  │  │
+│  │  │ └── GPU利用率分析                                  │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 内存分析                                           │  │  │
+│  │  │ ├── 内存泄漏检测                                   │  │  │
+│  │  │ ├── 内存分配追踪                                   │  │  │
+│  │  │ ├── 对象生命周期                                   │  │  │
+│  │  │ └── 内存优化建议                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              报告层 (Report Layer)                       │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 性能报告                                           │  │  │
+│  │  │ ├── 执行时间统计                                   │  │  │
+│  │  │ ├── 内存使用统计                                   │  │  │
+│  │  │ ├── 热点代码定位                                   │  │  │
+│  │  │ └── 优化建议                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              可视化层 (Visualization Layer)              │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 火焰图                                             │  │  │
+│  │  │ ├── CPU火焰图                                      │  │  │
+│  │  │ ├── 内存火焰图                                     │  │  │
+│  │  │ ├── 调用栈可视化                                   │  │  │
+│  │  │ └── 时间线视图                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.35.3 技术实现
+
+```python
+import subprocess
+import json
+from pathlib import Path
+from typing import Dict, List, Optional
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+class PerformanceProfilingSystem:
+    """研究性能分析系统 - 基于Scalene + Py-Spy"""
+    
+    def __init__(self, output_dir: str = "./profiling"):
+        self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+    
+    def profile_with_scalene(self,
+                            script_path: str,
+                            args: List[str] = None,
+                            output_file: str = None) -> Dict:
+        """使用Scalene分析性能"""
+        
+        if output_file is None:
+            output_file = self.output_dir / "scalene_profile.json"
+        
+        cmd = [
+            "scalene",
+            "--json",
+            "--outfile", str(output_file),
+            script_path
+        ]
+        
+        if args:
+            cmd.extend(args)
+        
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            with open(output_file, 'r') as f:
+                profile_data = json.load(f)
+            
+            return {
+                'status': 'success',
+                'profile': profile_data,
+                'output_file': str(output_file)
+            }
+        else:
+            return {
+                'status': 'failed',
+                'error': result.stderr
+            }
+    
+    def profile_with_pyspy(self,
+                          pid: int,
+                          duration: int = 60,
+                          output_file: str = None) -> Dict:
+        """使用Py-Spy分析性能"""
+        
+        if output_file is None:
+            output_file = self.output_dir / "pyspy_profile.svg"
+        
+        cmd = [
+            "py-spy",
+            "record",
+            "--pid", str(pid),
+            "--duration", str(duration),
+            "--output", str(output_file),
+            "--format", "flamegraph"
+        ]
+        
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        return {
+            'status': 'success' if result.returncode == 0 else 'failed',
+            'output_file': str(output_file),
+            'message': result.stdout if result.returncode == 0 else result.stderr
+        }
+    
+    def analyze_memory(self,
+                      script_path: str,
+                      args: List[str] = None) -> Dict:
+        """分析内存使用"""
+        
+        import tracemalloc
+        import linecache
+        
+        tracemalloc.start()
+        
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("script", script_path)
+        module = importlib.util.module_from_spec(spec)
+        
+        try:
+            spec.loader.exec_module(module)
+        except Exception as e:
+            return {
+                'status': 'failed',
+                'error': str(e)
+            }
+        
+        snapshot = tracemalloc.take_snapshot()
+        tracemalloc.stop()
+        
+        top_stats = snapshot.statistics('lineno')
+        
+        memory_issues = []
+        for stat in top_stats[:10]:
+            frame = stat.traceback[0]
+            memory_issues.append({
+                'file': frame.filename,
+                'line': frame.lineno,
+                'size_kb': stat.size / 1024,
+                'count': stat.count
+            })
+        
+        return {
+            'status': 'success',
+            'memory_issues': memory_issues
+        }
+    
+    def generate_performance_report(self,
+                                   profile_data: Dict) -> Dict:
+        """生成性能报告"""
+        
+        report = {
+            'summary': {
+                'total_time': profile_data.get('total_time', 0),
+                'total_memory': profile_data.get('total_memory', 0),
+                'total_gpu': profile_data.get('total_gpu', 0)
+            },
+            'hotspots': [],
+            'recommendations': []
+        }
+        
+        functions = profile_data.get('functions', {})
+        
+        sorted_functions = sorted(
+            functions.items(),
+            key=lambda x: x[1].get('time', 0),
+            reverse=True
+        )
+        
+        for func_name, func_data in sorted_functions[:10]:
+            report['hotspots'].append({
+                'function': func_name,
+                'time': func_data.get('time', 0),
+                'memory': func_data.get('memory', 0),
+                'calls': func_data.get('calls', 0)
+            })
+        
+        for hotspot in report['hotspots']:
+            if hotspot['time'] > report['summary']['total_time'] * 0.1:
+                report['recommendations'].append(
+                    f"优化函数 {hotspot['function']}，占用时间过长"
+                )
+            
+            if hotspot['memory'] > 100 * 1024 * 1024:
+                report['recommendations'].append(
+                    f"函数 {hotspot['function']} 内存使用过高，考虑优化"
+                )
+        
+        return report
+    
+    def visualize_flamegraph(self,
+                            profile_data: Dict,
+                            output_file: str = None):
+        """可视化火焰图"""
+        
+        if output_file is None:
+            output_file = self.output_dir / "flamegraph.png"
+        
+        fig, ax = plt.subplots(figsize=(12, 8))
+        
+        functions = profile_data.get('functions', {})
+        
+        names = list(functions.keys())[:20]
+        times = [functions[name].get('time', 0) for name in names]
+        
+        ax.barh(names, times)
+        ax.set_xlabel('Time (seconds)')
+        ax.set_ylabel('Function')
+        ax.set_title('Performance Hotspots')
+        
+        plt.tight_layout()
+        plt.savefig(output_file)
+        plt.close()
+        
+        return str(output_file)
+
+class MemoryProfiler:
+    """内存分析器"""
+    
+    def __init__(self):
+        self.snapshots = []
+    
+    def start(self):
+        """开始内存分析"""
+        import tracemalloc
+        tracemalloc.start()
+        self.snapshots = []
+    
+    def take_snapshot(self, label: str = ""):
+        """拍摄内存快照"""
+        import tracemalloc
+        snapshot = tracemalloc.take_snapshot()
+        self.snapshots.append({
+            'label': label,
+            'snapshot': snapshot,
+            'timestamp': pd.Timestamp.now()
+        })
+    
+    def compare_snapshots(self, 
+                         snapshot1_idx: int,
+                         snapshot2_idx: int) -> Dict:
+        """比较两个快照"""
+        
+        if snapshot1_idx >= len(self.snapshots) or snapshot2_idx >= len(self.snapshots):
+            return {'error': 'Invalid snapshot index'}
+        
+        snap1 = self.snapshots[snapshot1_idx]['snapshot']
+        snap2 = self.snapshots[snapshot2_idx]['snapshot']
+        
+        stats = snap2.compare_to(snap1, 'lineno')
+        
+        differences = []
+        for stat in stats[:10]:
+            frame = stat.traceback[0]
+            differences.append({
+                'file': frame.filename,
+                'line': frame.lineno,
+                'size_diff_kb': stat.size_diff / 1024,
+                'count_diff': stat.count_diff
+            })
+        
+        return {
+            'differences': differences
+        }
+    
+    def stop(self):
+        """停止内存分析"""
+        import tracemalloc
+        tracemalloc.stop()
+```
+
+#### 2.35.4 核心功能
+
+1. **CPU分析**：识别CPU热点函数
+2. **内存分析**：检测内存泄漏
+3. **GPU分析**：优化GPU使用
+4. **性能报告**：生成优化建议
+
+#### 2.35.5 应用场景
+
+- **代码优化**：识别性能瓶颈
+- **内存泄漏**：检测和修复内存泄漏
+- **算法优化**：优化算法性能
+- **资源优化**：优化计算资源使用
+
+---
+
+### 2.36 研究配置中心 (Research Configuration Management) ⭐P0关键模块
+
+#### 2.36.1 系统定位与职责
+
+**核心定位**：
+- **配置管理**：集中管理研究配置
+- **环境切换**：支持多环境配置
+- **参数管理**：管理实验参数和超参数
+
+**核心职责**：
+1. **Hydra**：层次化配置管理
+2. **OmegaConf**：配置解析和合并
+3. **环境变量**：环境变量配置支持
+4. **配置版本**：配置版本控制
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Hydra** | 9k+ | 配置框架 | 复杂配置 |
+| **Dynaconf** | 3k+ | 配置管理 | 多环境 |
+| **OmegaConf** | 2k+ | 配置库 | Hydra底层 |
+| **python-dotenv** | 6k+ | 环境变量 | 简单配置 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.36.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              研究配置中心架构                                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              配置定义层 (Configuration Definition)        │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ YAML配置文件                                        │  │  │
+│  │  │ ├── 主配置文件                                     │  │  │
+│  │  │ ├── 环境配置                                       │  │  │
+│  │  │ ├── 模块配置                                       │  │  │
+│  │  │ └── 实验配置                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 环境变量                                           │  │  │
+│  │  │ ├── .env文件                                       │  │  │
+│  │  │ ├── 系统环境变量                                   │  │  │
+│  │  │ └── 容器环境变量                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              配置解析层 (Configuration Parsing)          │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Hydra解析器                                        │  │  │
+│  │  │ ├── 配置加载                                       │  │  │
+│  │  │ ├── 配置合并                                       │  │  │
+│  │  │ ├── 配置覆盖                                       │  │  │
+│  │  │ └── 配置验证                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ OmegaConf解析器                                    │  │  │
+│  │  │ ├── DictConfig解析                                 │  │  │
+│  │  │ ├── ListConfig解析                                 │  │  │
+│  │  │ └── 配置合并                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              配置管理层 (Configuration Management)         │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 配置存储                                           │  │  │
+│  │  │ ├── 本地存储                                       │  │  │
+│  │  │ ├── Redis存储                                      │  │  │
+│  │  │ └── 数据库存储                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 版本控制                                           │  │  │
+│  │  │ ├── 配置版本                                       │  │  │
+│  │  │ ├── 配置回滚                                       │  │  │
+│  │  │ └── 配置对比                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              配置应用层 (Configuration Application)        │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 配置注入                                           │  │  │
+│  │  │ ├── 运行时注入                                     │  │  │
+│  │  │ ├── 环境变量注入                                   │  │  │
+│  │  │ └── 对象属性注入                                   │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.36.3 技术实现
+
+```python
+import hydra
+from omegaconf import DictConfig, OmegaConf
+from hydra.core.config_store import ConfigStore
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Any
+import os
+from pathlib import Path
+
+@dataclass
+class DataConfig:
+    source: str = "yahoo"
+    symbols: List[str] = None
+    start_date: str = "2020-01-01"
+    end_date: str = "2024-12-31"
+    interval: str = "1d"
+
+@dataclass
+class ModelConfig:
+    name: str = "linear"
+    params: DictConfig = None
+
+@dataclass
+class ExperimentConfig:
+    name: str = "default"
+    data: DataConfig = None
+    model: ModelConfig = None
+    seed: int = 42
+
+class ConfigurationManager:
+    """研究配置中心 - 基于Hydra"""
+    
+    def __init__(self, config_dir: str = "./config"):
+        self.config_dir = Path(config_dir)
+        self.cs = ConfigStore.instance()
+        self._register_configs()
+    
+    def _register_configs(self):
+        """注册配置"""
+        self.cs.store(name="experiment", node=ExperimentConfig)
+        self.cs.store(name="data", node=DataConfig)
+        self.cs.store(name="model", node=ModelConfig)
+    
+    def load_config(self, config_path: str) -> DictConfig:
+        """加载配置"""
+        return OmegaConf.load(config_path)
+    
+    def merge_configs(self, *configs: DictConfig) -> DictConfig:
+        """合并配置"""
+        return OmegaConf.merge(*configs)
+    
+    def override_config(self, 
+                       config: DictConfig, 
+                       overrides: List[str]) -> DictConfig:
+        """覆盖配置"""
+        return OmegaConf.merge(config, OmegaConf.from_dotlist(overrides))
+    
+    def validate_config(self, config: DictConfig, schema: Any) -> bool:
+        """验证配置"""
+        try:
+            OmegaConf.validate(config, schema)
+            return True
+        except Exception:
+            return False
+    
+    def save_config(self, config: DictConfig, output_path: str):
+        """保存配置"""
+        OmegaConf.save(config, output_path)
+    
+    def compare_configs(self, 
+                       config1: DictConfig, 
+                       config2: DictConfig) -> Dict:
+        """对比配置"""
+        diff = OmegaConf.diff(config1, config2)
+        return {
+            'added': diff[0] if len(diff) > 0 else {},
+            'removed': diff[1] if len(diff) > 1 else {},
+            'modified': diff[2] if len(diff) > 2 else {}
+        }
+
+class ExperimentConfigManager:
+    """实验配置管理器"""
+    
+    def __init__(self, base_dir: str = "./configs"):
+        self.base_dir = Path(base_dir)
+        self.base_dir.mkdir(parents=True, exist_ok=True)
+        self.config_manager = ConfigurationManager(str(self.base_dir))
+    
+    def create_experiment_config(self,
+                                name: str,
+                                data_config: Dict,
+                                model_config: Dict,
+                                output_dir: str = None) -> str:
+        """创建实验配置"""
+        
+        experiment_config = {
+            'name': name,
+            'data': data_config,
+            'model': model_config,
+            'seed': 42
+        }
+        
+        if output_dir is None:
+            output_dir = self.base_dir / f"{name}.yaml"
+        
+        OmegaConf.save(
+            OmegaConf.create(experiment_config),
+            str(output_dir)
+        )
+        
+        return str(output_dir)
+    
+    def load_experiment_config(self, name: str) -> DictConfig:
+        """加载实验配置"""
+        
+        config_path = self.base_dir / f"{name}.yaml"
+        
+        if not config_path.exists():
+            raise FileNotFoundError(f"Config {name} not found")
+        
+        return OmegaConf.load(str(config_path))
+    
+    def list_experiments(self) -> List[str]:
+        """列出所有实验配置"""
+        
+        return [f.stem for f in self.base_dir.glob("*.yaml")]
+    
+    def duplicate_config(self, 
+                        source_name: str, 
+                        target_name: str) -> str:
+        """复制配置"""
+        
+        source_path = self.base_dir / f"{source_name}.yaml"
+        target_path = self.base_dir / f"{target_name}.yaml"
+        
+        if not source_path.exists():
+            raise FileNotFoundError(f"Source config {source_name} not found")
+        
+        import shutil
+        shutil.copy(source_path, target_path)
+        
+        return str(target_path)
+
+class MultiEnvironmentConfig:
+    """多环境配置管理"""
+    
+    def __init__(self, base_config_path: str):
+        self.base_config = OmegaConf.load(base_config_path)
+        self.env_configs = {}
+    
+    def load_env_config(self, env: str, env_config_path: str):
+        """加载环境配置"""
+        
+        self.env_configs[env] = OmegaConf.load(env_config_path)
+    
+    def get_merged_config(self, env: str) -> DictConfig:
+        """获取合并后的配置"""
+        
+        if env not in self.env_configs:
+            return self.base_config
+        
+        return OmegaConf.merge(self.base_config, self.env_configs[env])
+    
+    def get_config_for_env(self, env: str = "dev") -> DictConfig:
+        """获取指定环境的配置"""
+        
+        env_override = os.getenv("CONFIG_OVERRIDE", "")
+        overrides = env_override.split(",") if env_override else []
+        
+        config = self.get_merged_config(env)
+        
+        if overrides:
+            config = OmegaConf.merge(config, OmegaConf.from_dotlist(overrides))
+        
+        return config
+```
+
+#### 2.36.4 核心功能
+
+1. **层次化配置**：支持多级配置继承
+2. **配置覆盖**：运行时覆盖配置参数
+3. **多环境支持**：dev、staging、prod环境
+4. **配置验证**：自动验证配置合法性
+
+#### 2.36.5 应用场景
+
+- **实验配置**：管理实验参数和超参数
+- **环境切换**：快速切换开发/测试/生产环境
+- **参数调优**：网格搜索和随机搜索参数
+- **配置版本**：版本控制和回滚
+
+---
+
+### 2.37 研究测试框架 (Research Testing Framework) ⭐P0关键模块
+
+#### 2.37.1 系统定位与职责
+
+**核心定位**：
+- **单元测试**：函数和模块测试
+- **属性测试**：基于属性的测试
+- **覆盖率**：代码覆盖率分析
+
+**核心职责**：
+1. **Pytest**：Python标准测试框架
+2. **Hypothesis**：属性测试库
+3. **pytest-cov**：覆盖率插件
+4. **测试报告**：生成测试报告
+
+**技术选型**：
+| 工具 | GitHub Stars | 功能 | 适用场景 |
+|------|-------------|------|---------|
+| **Pytest** | 12k+ | 测试框架 | 标准方案 |
+| **Hypothesis** | 7k+ | 属性测试 | 边界测试 |
+| **pytest-cov** | 2k+ | 覆盖率 | 质量保证 |
+| **unittest** | 内置 | 单元测试 | 标准库 |
+
+**个人开发价值**：⭐⭐⭐⭐⭐
+- 学习曲线：平缓
+- 维护成本：低
+- AI维护友好：高
+- 开发周期：1周
+
+#### 2.37.2 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│              研究测试框架架构                                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              测试定义层 (Test Definition)                │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 单元测试                                           │  │  │
+│  │  │ ├── 函数测试                                        │  │  │
+│  │  │ ├── 类测试                                          │  │  │
+│  │  │ └── 模块测试                                        │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 属性测试                                           │  │  │
+│  │  │ ├── 生成器定义                                     │  │  │
+│  │  │ ├── 假设检验                                       │  │  │
+│  │  │ └── 边界覆盖                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 集成测试                                           │  │  │
+│  │  │ ├── 模块集成                                       │  │  │
+│  │  │ ├── API测试                                        │  │  │
+│  │  │ └── 端到端测试                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              测试执行层 (Test Execution)                   │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Pytest执行器                                       │  │  │
+│  │  │ ├── 测试发现                                       │  │  │
+│  │  │ ├── 测试执行                                       │  │  │
+│  │  │ ├── 断言验证                                       │  │  │
+│  │  │ └── Fixture管理                                    │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ Hypothesis执行器                                   │  │  │
+│  │  │ ├── 数据生成                                       │  │  │
+│  │  │ ├── 假设验证                                       │  │  │
+│  │  │ └── shrink过程                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              覆盖率层 (Coverage)                          │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 覆盖率收集                                          │  │  │
+│  │  │ ├── 行覆盖率                                       │  │  │
+│  │  │ ├── 分支覆盖率                                     │  │  │
+│  │  │ ├── 函数覆盖率                                     │  │  │
+│  │  │ └── 类覆盖率                                       │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 覆盖率报告                                          │  │  │
+│  │  │ ├── HTML报告                                       │  │  │
+│  │  │ ├── XML报告                                        │  │  │
+│  │  │ └── 覆盖率阈值                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              报告层 (Reporting)                          │  │
+│  │  ┌────────────────────────────────────────────────────┐  │  │
+│  │  │ 测试报告                                           │  │  │
+│  │  │ ├── 执行结果                                       │  │  │
+│  │  │ ├── 失败详情                                       │  │  │
+│  │  │ ├── 性能指标                                       │  │  │
+│  │  │ └── 覆盖率统计                                     │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 2.37.3 技术实现
+
+```python
+import pytest
+from hypothesis import given, settings, assume, example
+from hypothesis import strategies as st
+from dataclasses import dataclass
+from typing import Dict, List, Optional, Any
+import numpy as np
+import pandas as pd
+
+class ResearchTestingFramework:
+    """研究测试框架 - 基于Pytest + Hypothesis"""
+    
+    def __init__(self, 
+                 test_dir: str = "./tests",
+                 coverage_threshold: float = 0.8):
+        self.test_dir = test_dir
+        self.coverage_threshold = coverage_threshold
+    
+    def run_tests(self,
+                 test_path: str = None,
+                 markers: List[str] = None,
+                 verbose: bool = True) -> Dict:
+        """运行测试"""
+        
+        args = [self.test_dir]
+        
+        if test_path:
+            args = [test_path]
+        
+        if markers:
+            for marker in markers:
+                args.extend(["-m", marker])
+        
+        if verbose:
+            args.append("-v")
+        
+        args.extend(["--cov", "src"])
+        args.extend(["--cov-report", "html"])
+        args.extend(["--cov-report", "term-missing"])
+        args.extend(["--cov-fail-under", str(int(self.coverage_threshold * 100))])
+        
+        exit_code = pytest.main(args)
+        
+        return {
+            'passed': exit_code == 0,
+            'exit_code': exit_code
+        }
+    
+    def run_specific_test(self, test_name: str) -> Dict:
+        """运行特定测试"""
+        
+        args = ["-k", test_name, "-v"]
+        
+        exit_code = pytest.main(args)
+        
+        return {
+            'passed': exit_code == 0,
+            'test_name': test_name
+        }
+    
+    def generate_coverage_report(self, output_format: str = "html") -> str:
+        """生成覆盖率报告"""
+        
+        output_file = f"./coverage_report.{output_format}"
+        
+        args = [
+            "--cov=src",
+            f"--cov-report={output_format}",
+            f"--cov-report=term-missing",
+            self.test_dir
+        ]
+        
+        pytest.main(args)
+        
+        return output_file
+    
+    def check_coverage_threshold(self) -> bool:
+        """检查覆盖率是否达标"""
+        
+        import coverage
+        cov = coverage.Coverage()
+        cov.load()
+        
+        total_coverage = cov.report()
+        
+        return total_coverage >= self.coverage_threshold * 100
+
+class PropertyBasedTests:
+    """属性测试"""
+    
+    @given(st.lists(st.floats(min_value=-1000, max_value=1000), 
+                    min_size=1, 
+                    max_size=100))
+    @settings(max_examples=100)
+    def test_statistics_mean(self, values):
+        """测试统计平均值属性"""
+        
+        mean = np.mean(values)
+        
+        assert min(values) <= mean <= max(values)
+    
+    @given(st.lists(st.floats(min_value=-1000, max_value=1000), 
+                    min_size=1, 
+                    max_size=100))
+    @settings(max_examples=100)
+    def test_statistics_std(self, values):
+        """测试统计标准差属性"""
+        
+        std = np.std(values)
+        
+        assert std >= 0
+    
+    @given(st.lists(st.integers(min_value=1, max_value=100), 
+                    min_size=1))
+    @settings(max_examples=100)
+    def test_portfolio_weights_sum(self, weights):
+        """测试投资组合权重"""
+        
+        normalized_weights = np.array(weights) / sum(weights)
+        
+        assert abs(sum(normalized_weights) - 1.0) < 1e-6
+        assert all(w >= 0 for w in normalized_weights)
+    
+    @given(st.floats(min_value=0.001, max_value=0.5))
+    @settings(max_examples=100)
+    def test_sharpe_ratio(self, returns):
+        """测试夏普比率"""
+        
+        assume(np.std(returns) > 0)
+        
+        sharpe = returns / np.std(returns)
+        
+        assert sharpe >= -10 and sharpe <= 10
+    
+    @given(st.lists(st.floats(min_value=-1, max_value=1), 
+                    min_size=2, 
+                    max_size=100))
+    @settings(max_examples=100)
+    def test_correlation_matrix(self, values):
+        """测试相关系数矩阵"""
+        
+        assume(len(values) >= 2)
+        
+        arr = np.array(values).reshape(-1, 2)
+        
+        corr = np.corrcoef(arr.T)
+        
+        assert np.allclose(np.diag(corr), 1.0)
+        assert np.all(abs(corr) <= 1.0)
+
+class TestFixtures:
+    """测试Fixture"""
+    
+    @pytest.fixture
+    def sample_data(self):
+        """样本数据Fixture"""
+        return pd.DataFrame({
+            'date': pd.date_range('2020-01-01', periods=100),
+            'open': np.random.randn(100).cumsum() + 100,
+            'high': np.random.randn(100).cumsum() + 102,
+            'low': np.random.randn(100).cumsum() + 98,
+            'close': np.random.randn(100).cumsum() + 100,
+            'volume': np.random.randint(1000, 10000, 100)
+        })
+    
+    @pytest.fixture
+    def mock_config(self):
+        """模拟配置Fixture"""
+        return {
+            'data': {
+                'source': 'yahoo',
+                'symbols': ['AAPL', 'GOOGL'],
+                'start_date': '2020-01-01',
+                'end_date': '2024-12-31'
+            },
+            'model': {
+                'name': 'linear',
+                'params': {
+                    'alpha': 0.01,
+                    'max_iter': 1000
+                }
+            }
+        }
+    
+    @pytest.fixture
+    def temp_model_dir(self, tmp_path):
+        """临时模型目录"""
+        model_dir = tmp_path / "models"
+        model_dir.mkdir()
+        return model_dir
+
+class ResearchTestSuite:
+    """研究测试套件"""
+    
+    def __init__(self):
+        self.tests = []
+    
+    def add_unit_test(self, name: str, func: callable):
+        """添加单元测试"""
+        
+        self.tests.append({
+            'type': 'unit',
+            'name': name,
+            'function': func
+        })
+    
+    def add_property_test(self, name: str, func: callable, strategies: List):
+        """添加属性测试"""
+        
+        self.tests.append({
+            'type': 'property',
+            'name': name,
+            'function': func,
+            'strategies': strategies
+        })
+    
+    def add_integration_test(self, name: str, func: callable):
+        """添加集成测试"""
+        
+        self.tests.append({
+            'type': 'integration',
+            'name': name,
+            'function': func
+        })
+    
+    def run_all(self) -> Dict:
+        """运行所有测试"""
+        
+        results = []
+        
+        for test in self.tests:
+            try:
+                if test['type'] == 'unit':
+                    test['function']()
+                    results.append({'name': test['name'], 'status': 'passed'})
+                
+                elif test['type'] == 'property':
+                    test['function']()
+                    results.append({'name': test['name'], 'status': 'passed'})
+                
+                elif test['type'] == 'integration':
+                    test['function']()
+                    results.append({'name': test['name'], 'status': 'passed'})
+            
+            except Exception as e:
+                results.append({
+                    'name': test['name'],
+                    'status': 'failed',
+                    'error': str(e)
+                })
+        
+        passed = sum(1 for r in results if r['status'] == 'passed')
+        
+        return {
+            'total': len(results),
+            'passed': passed,
+            'failed': len(results) - passed,
+            'results': results
+        }
+```
+
+#### 2.37.4 核心功能
+
+1. **单元测试**：函数和模块级别测试
+2. **属性测试**：基于属性的测试，发现边界情况
+3. **覆盖率**：代码覆盖率分析
+4. **测试报告**：详细测试结果报告
+
+#### 2.37.5 应用场景
+
+- **因子测试**：验证因子计算正确性
+- **策略测试**：验证策略逻辑正确性
+- **数据测试**：验证数据处理正确性
+- **边界测试**：发现边界情况和异常
+
+---
+
 ## 三、数据模型设计
 ### 3.1 研究任务数据模型
 
