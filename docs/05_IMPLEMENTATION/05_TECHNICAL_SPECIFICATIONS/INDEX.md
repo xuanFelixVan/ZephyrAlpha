@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-05
 owner: 首席技术评审官
 standard_type: 文档索引
-applicable_scope: 全系统技术规格书（Layer 0-11�?compliance_level: 专业标准
+applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专业标准
 ---
 
 # 技术规格书总索�?

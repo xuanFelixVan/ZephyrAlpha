@@ -10421,6 +10421,822 @@ class MetadataManager:
 
 ---
 
+### 2.38 研究模型优化系统 ⭐P0关键模块
+
+#### 2.38.1 系统定位与职责
+
+**Layer定位**：Layer 9 - 研究与创新层
+
+**核心职责**：
+- 模型压缩与量化
+- 模型剪枝与蒸馏
+- 推理性能优化
+- 模型部署加速
+
+**系统边界**：
+```
+研究模型优化系统边界：
+├── 输入：训练完成的模型
+├── 处理：模型压缩、量化、剪枝、蒸馏
+├── 输出：优化后的模型
+└── 不包含：模型训练、模型评估
+```
+
+#### 2.38.2 架构设计
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                研究模型优化系统架构 (ONNX + TensorRT)          │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  模型转换层  │  │  模型优化层  │  │  模型部署层  │      │
+│  │  (ONNX)      │  │  (TensorRT)  │  │  (Runtime)   │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│         │                  │                  │              │
+│         ▼                  ▼                  ▼              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              模型优化流程 (Optimization Pipeline)     │  │
+│  │  1. 模型转换 (PyTorch/TF → ONNX)                     │  │
+│  │  2. 模型优化 (ONNX Optimization)                     │  │
+│  │  3. 模型量化 (FP32 → FP16/INT8)                      │  │
+│  │  4. 模型剪枝 (Pruning)                               │  │
+│  │  5. 模型蒸馏 (Distillation)                          │  │
+│  │  6. 模型部署 (TensorRT Engine)                       │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              性能监控层 (Performance Monitor)         │  │
+│  │  - 推理延迟监控                                       │  │
+│  │  - 内存使用监控                                       │  │
+│  │  - 吞吐量监控                                         │  │
+│  │  - 精度损失监控                                       │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+#### 2.38.3 技术实现
+
+```python
+import onnx
+import onnxruntime as ort
+import torch
+import torch.nn as nn
+import tensorrt as trt
+import numpy as np
+from typing import Dict, List, Optional, Tuple, Any
+from pathlib import Path
+import json
+
+class ModelOptimizationSystem:
+    """研究模型优化系统 - 基于ONNX + TensorRT"""
+    
+    def __init__(self, 
+                 model_dir: str = "./models",
+                 optimized_dir: str = "./optimized_models"):
+        self.model_dir = Path(model_dir)
+        self.optimized_dir = Path(optimized_dir)
+        self.optimized_dir.mkdir(parents=True, exist_ok=True)
+        
+        self.optimization_history = []
+    
+    def convert_to_onnx(self,
+                       model: nn.Module,
+                       model_name: str,
+                       input_shape: Tuple[int, ...],
+                       opset_version: int = 11) -> Path:
+        """将PyTorch模型转换为ONNX格式"""
+        
+        model.eval()
+        
+        onnx_path = self.optimized_dir / f"{model_name}.onnx"
+        
+        dummy_input = torch.randn(*input_shape)
+        
+        torch.onnx.export(
+            model,
+            dummy_input,
+            str(onnx_path),
+            export_params=True,
+            opset_version=opset_version,
+            do_constant_folding=True,
+            input_names=['input'],
+            output_names=['output'],
+            dynamic_axes={
+                'input': {0: 'batch_size'},
+                'output': {0: 'batch_size'}
+            }
+        )
+        
+        onnx_model = onnx.load(str(onnx_path))
+        onnx.checker.check_model(onnx_model)
+        
+        return onnx_path
+    
+    def optimize_onnx_model(self,
+                           onnx_path: Path,
+                           optimization_level: str = 'all') -> Path:
+        """优化ONNX模型"""
+        
+        import onnxoptimizer
+        
+        model = onnx.load(str(onnx_path))
+        
+        passes = onnxoptimizer.get_fuse_and_elimination_passes()
+        
+        if optimization_level == 'all':
+            passes = onnxoptimizer.get_available_passes()
+        
+        optimized_model = onnxoptimizer.optimize(model, passes)
+        
+        optimized_path = onnx_path.parent / f"{onnx_path.stem}_optimized.onnx"
+        onnx.save(optimized_model, str(optimized_path))
+        
+        return optimized_path
+    
+    def quantize_model(self,
+                      onnx_path: Path,
+                      calibration_data: np.ndarray,
+                      precision: str = 'fp16') -> Path:
+        """模型量化"""
+        
+        if precision == 'fp16':
+            from onnxruntime.transformers import optimizer
+            from onnxruntime.transformers.fusion_options import FusionOptions
+            
+            optimized_model = optimizer.optimize_model(
+                str(onnx_path),
+                model_type='bert',
+                num_heads=12,
+                hidden_size=768
+            )
+            
+            quantized_path = onnx_path.parent / f"{onnx_path.stem}_fp16.onnx"
+            optimized_model.save_model_to_file(str(quantized_path))
+            
+        elif precision == 'int8':
+            from onnxruntime.quantization import quantize_dynamic, QuantType
+            
+            quantized_path = onnx_path.parent / f"{onnx_path.stem}_int8.onnx"
+            
+            quantize_dynamic(
+                str(onnx_path),
+                str(quantized_path),
+                weight_type=QuantType.QUInt8
+            )
+        
+        return quantized_path
+    
+    def build_tensorrt_engine(self,
+                             onnx_path: Path,
+                             precision: str = 'fp16',
+                             max_batch_size: int = 32,
+                             max_workspace_size: int = 1 << 30) -> Path:
+        """构建TensorRT引擎"""
+        
+        logger = trt.Logger(trt.Logger.WARNING)
+        builder = trt.Builder(logger)
+        network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
+        parser = trt.OnnxParser(network, logger)
+        
+        with open(onnx_path, 'rb') as f:
+            if not parser.parse(f.read()):
+                for error in range(parser.num_errors):
+                    print(f"TensorRT Parser Error: {parser.get_error(error)}")
+                raise RuntimeError("Failed to parse ONNX model")
+        
+        config = builder.create_builder_config()
+        config.max_workspace_size = max_workspace_size
+        
+        if precision == 'fp16':
+            config.set_flag(trt.BuilderFlag.FP16)
+        elif precision == 'int8':
+            config.set_flag(trt.BuilderFlag.INT8)
+        
+        profile = builder.create_optimization_profile()
+        input_tensor = network.get_input(0)
+        profile.set_shape(
+            input_tensor.name,
+            min=(1, *input_tensor.shape[1:]),
+            opt=(max_batch_size // 2, *input_tensor.shape[1:]),
+            max=(max_batch_size, *input_tensor.shape[1:])
+        )
+        config.add_optimization_profile(profile)
+        
+        engine = builder.build_engine(network, config)
+        
+        engine_path = onnx_path.parent / f"{onnx_path.stem}_{precision}.engine"
+        with open(engine_path, 'wb') as f:
+            f.write(engine.serialize())
+        
+        return engine_path
+    
+    def benchmark_model(self,
+                       model_path: Path,
+                       test_data: np.ndarray,
+                       num_iterations: int = 100) -> Dict:
+        """模型性能基准测试"""
+        
+        if model_path.suffix == '.onnx':
+            session = ort.InferenceSession(str(model_path))
+            
+            input_name = session.get_inputs()[0].name
+            
+            latencies = []
+            for _ in range(num_iterations):
+                start_time = time.time()
+                session.run(None, {input_name: test_data})
+                latencies.append(time.time() - start_time)
+            
+        elif model_path.suffix == '.engine':
+            logger = trt.Logger(trt.Logger.WARNING)
+            with open(model_path, 'rb') as f:
+                engine = trt.Runtime(logger).deserialize_cuda_engine(f.read())
+            
+            context = engine.create_execution_context()
+            
+            latencies = []
+            for _ in range(num_iterations):
+                start_time = time.time()
+                
+                context.set_binding_shape(0, test_data.shape)
+                bindings = [test_data.ctypes.data_as(trt.c_void_p)]
+                context.execute_v2(bindings)
+                
+                latencies.append(time.time() - start_time)
+        
+        return {
+            'mean_latency_ms': np.mean(latencies) * 1000,
+            'std_latency_ms': np.std(latencies) * 1000,
+            'p50_latency_ms': np.percentile(latencies, 50) * 1000,
+            'p95_latency_ms': np.percentile(latencies, 95) * 1000,
+            'p99_latency_ms': np.percentile(latencies, 99) * 1000,
+            'throughput_fps': 1.0 / np.mean(latencies)
+        }
+    
+    def optimize_pipeline(self,
+                         model: nn.Module,
+                         model_name: str,
+                         input_shape: Tuple[int, ...],
+                         test_data: np.ndarray,
+                         optimizations: List[str] = ['onnx', 'fp16', 'int8', 'tensorrt']) -> Dict:
+        """完整优化流程"""
+        
+        results = {
+            'model_name': model_name,
+            'optimizations': {},
+            'performance_comparison': {}
+        }
+        
+        if 'onnx' in optimizations:
+            onnx_path = self.convert_to_onnx(model, model_name, input_shape)
+            optimized_onnx_path = self.optimize_onnx_model(onnx_path)
+            
+            results['optimizations']['onnx'] = {
+                'path': str(optimized_onnx_path),
+                'benchmark': self.benchmark_model(optimized_onnx_path, test_data)
+            }
+        
+        if 'fp16' in optimizations:
+            fp16_path = self.quantize_model(optimized_onnx_path, test_data, 'fp16')
+            
+            results['optimizations']['fp16'] = {
+                'path': str(fp16_path),
+                'benchmark': self.benchmark_model(fp16_path, test_data)
+            }
+        
+        if 'int8' in optimizations:
+            int8_path = self.quantize_model(optimized_onnx_path, test_data, 'int8')
+            
+            results['optimizations']['int8'] = {
+                'path': str(int8_path),
+                'benchmark': self.benchmark_model(int8_path, test_data)
+            }
+        
+        if 'tensorrt' in optimizations:
+            trt_fp16_path = self.build_tensorrt_engine(optimized_onnx_path, 'fp16')
+            trt_int8_path = self.build_tensorrt_engine(optimized_onnx_path, 'int8')
+            
+            results['optimizations']['tensorrt_fp16'] = {
+                'path': str(trt_fp16_path),
+                'benchmark': self.benchmark_model(trt_fp16_path, test_data)
+            }
+            
+            results['optimizations']['tensorrt_int8'] = {
+                'path': str(trt_int8_path),
+                'benchmark': self.benchmark_model(trt_int8_path, test_data)
+            }
+        
+        self.optimization_history.append(results)
+        
+        return results
+
+class ModelPruner:
+    """模型剪枝工具"""
+    
+    def __init__(self, model: nn.Module):
+        self.model = model
+        self.pruning_masks = {}
+    
+    def compute_importance_scores(self,
+                                  dataloader: torch.utils.data.DataLoader,
+                                  criterion: nn.Module) -> Dict[str, np.ndarray]:
+        """计算权重重要性分数"""
+        
+        importance_scores = {}
+        
+        for name, param in self.model.named_parameters():
+            if 'weight' in name:
+                importance_scores[name] = torch.zeros_like(param.data)
+        
+        self.model.eval()
+        
+        for data, target in dataloader:
+            self.model.zero_grad()
+            output = self.model(data)
+            loss = criterion(output, target)
+            loss.backward()
+            
+            for name, param in self.model.named_parameters():
+                if 'weight' in name and param.grad is not None:
+                    importance_scores[name] += param.grad.data.abs()
+        
+        for name in importance_scores:
+            importance_scores[name] /= len(dataloader)
+        
+        return importance_scores
+    
+    def prune_model(self,
+                   sparsity: float = 0.5,
+                   importance_scores: Optional[Dict[str, np.ndarray]] = None) -> nn.Module:
+        """剪枝模型"""
+        
+        if importance_scores is None:
+            for name, param in self.model.named_parameters():
+                if 'weight' in name:
+                    importance_scores[name] = param.data.abs()
+        
+        for name, param in self.model.named_parameters():
+            if 'weight' in name:
+                score = importance_scores[name]
+                threshold = torch.quantile(score.flatten(), sparsity)
+                
+                mask = (score > threshold).float()
+                param.data *= mask
+                
+                self.pruning_masks[name] = mask
+        
+        return self.model
+    
+    def fine_tune(self,
+                 train_loader: torch.utils.data.DataLoader,
+                 epochs: int = 10,
+                 lr: float = 1e-4) -> None:
+        """微调剪枝后的模型"""
+        
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        criterion = nn.CrossEntropyLoss()
+        
+        self.model.train()
+        
+        for epoch in range(epochs):
+            for batch_idx, (data, target) in enumerate(train_loader):
+                optimizer.zero_grad()
+                output = self.model(data)
+                loss = criterion(output, target)
+                loss.backward()
+                optimizer.step()
+                
+                for name, param in self.model.named_parameters():
+                    if name in self.pruning_masks:
+                        param.data *= self.pruning_masks[name]
+```
+
+#### 2.38.4 核心功能
+
+1. **模型转换**：PyTorch/TensorFlow → ONNX
+2. **模型优化**：ONNX优化、算子融合
+3. **模型量化**：FP32 → FP16/INT8
+4. **模型剪枝**：权重剪枝、结构化剪枝
+5. **模型蒸馏**：知识蒸馏
+6. **性能基准**：推理延迟、吞吐量测试
+
+#### 2.38.5 应用场景
+
+- **模型部署**：优化模型以适应生产环境
+- **推理加速**：降低推理延迟，提升吞吐量
+- **资源优化**：降低模型大小和内存占用
+- **边缘部署**：优化模型以适应边缘设备
+
+#### 2.38.6 技术选型
+
+- **首选**: ONNX (17k+ stars) + TensorRT (10k+ stars)
+- **备选**: OpenVINO (7k+ stars) + ONNX Runtime
+- **量化工具**: TensorRT Model Optimizer
+- **剪枝工具**: PyTorch Pruning API
+
+---
+
+### 2.39 研究模型解释系统 ⭐P0关键模块
+
+#### 2.39.1 系统定位与职责
+
+**Layer定位**：Layer 9 - 研究与创新层
+
+**核心职责**：
+- 模型可解释性分析
+- 特征重要性评估
+- 模型决策理解
+- 解释可视化
+
+**系统边界**：
+```
+研究模型解释系统边界：
+├── 输入：训练完成的模型、测试数据
+├── 处理：特征重要性计算、局部解释、全局解释
+├── 输出：解释结果、可视化报告
+└── 不包含：模型训练、模型优化
+```
+
+#### 2.39.2 架构设计
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                研究模型解释系统架构 (SHAP + LIME)              │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  全局解释层  │  │  局部解释层  │  │  可视化层    │      │
+│  │  (SHAP)      │  │  (LIME)      │  │  (Plots)     │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│         │                  │                  │              │
+│         ▼                  ▼                  ▼              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              解释引擎层 (Interpretation Engine)       │  │
+│  │  1. 特征重要性分析 (Feature Importance)              │  │
+│  │  2. SHAP值计算 (Shapley Values)                      │  │
+│  │  3. LIME局部解释 (Local Interpretable Models)        │  │
+│  │  4. 部分依赖图 (Partial Dependence Plots)            │  │
+│  │  5. 交互效应分析 (Interaction Effects)               │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │              报告生成层 (Report Generator)            │  │
+│  │  - 解释报告生成                                       │  │
+│  │  - 可视化图表                                         │  │
+│  │  - 合规文档                                           │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+#### 2.39.3 技术实现
+
+```python
+import shap
+import lime
+import lime.lime_tabular
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from typing import Dict, List, Optional, Tuple, Any
+from sklearn.inspection import partial_dependence, permutation_importance
+from sklearn.base import BaseEstimator
+import warnings
+warnings.filterwarnings('ignore')
+
+class ModelInterpretationSystem:
+    """研究模型解释系统 - 基于SHAP + LIME"""
+    
+    def __init__(self,
+                 model: BaseEstimator,
+                 feature_names: List[str],
+                 class_names: Optional[List[str]] = None):
+        self.model = model
+        self.feature_names = feature_names
+        self.class_names = class_names or [f"Class_{i}" for i in range(model.n_classes_)]
+        
+        self.shap_explainer = None
+        self.lime_explainer = None
+        self.interpretation_results = {}
+    
+    def fit_shap_explainer(self,
+                          X_train: np.ndarray,
+                          explainer_type: str = 'tree') -> None:
+        """拟合SHAP解释器"""
+        
+        if explainer_type == 'tree':
+            self.shap_explainer = shap.TreeExplainer(self.model)
+        elif explainer_type == 'kernel':
+            self.shap_explainer = shap.KernelExplainer(
+                self.model.predict_proba,
+                shap.kmeans(X_train, 10)
+            )
+        elif explainer_type == 'linear':
+            self.shap_explainer = shap.LinearExplainer(
+                self.model,
+                X_train,
+                feature_dependence='independent'
+            )
+    
+    def compute_shap_values(self,
+                           X: np.ndarray,
+                           check_additivity: bool = True) -> np.ndarray:
+        """计算SHAP值"""
+        
+        if self.shap_explainer is None:
+            raise ValueError("SHAP explainer not fitted. Call fit_shap_explainer first.")
+        
+        shap_values = self.shap_explainer.shap_values(X, check_additivity=check_additivity)
+        
+        return shap_values
+    
+    def fit_lime_explainer(self,
+                          X_train: np.ndarray,
+                          mode: str = 'classification') -> None:
+        """拟合LIME解释器"""
+        
+        if mode == 'classification':
+            self.lime_explainer = lime.lime_tabular.LimeTabularExplainer(
+                X_train,
+                feature_names=self.feature_names,
+                class_names=self.class_names,
+                mode='classification'
+            )
+        elif mode == 'regression':
+            self.lime_explainer = lime.lime_tabular.LimeTabularExplainer(
+                X_train,
+                feature_names=self.feature_names,
+                mode='regression'
+            )
+    
+    def explain_instance_lime(self,
+                             instance: np.ndarray,
+                             num_features: int = 10,
+                             num_samples: int = 5000) -> Dict:
+        """使用LIME解释单个样本"""
+        
+        if self.lime_explainer is None:
+            raise ValueError("LIME explainer not fitted. Call fit_lime_explainer first.")
+        
+        explanation = self.lime_explainer.explain_instance(
+            instance,
+            self.model.predict_proba,
+            num_features=num_features,
+            num_samples=num_samples
+        )
+        
+        lime_results = {
+            'local_prediction': explanation.local_pred,
+            'intercept': explanation.intercept,
+            'feature_weights': explanation.as_list(),
+            'score': explanation.score
+        }
+        
+        return lime_results
+    
+    def global_feature_importance(self,
+                                  X: np.ndarray,
+                                  y: np.ndarray,
+                                  n_repeats: int = 10) -> Dict:
+        """全局特征重要性分析"""
+        
+        perm_importance = permutation_importance(
+            self.model,
+            X,
+            y,
+            n_repeats=n_repeats,
+            random_state=42
+        )
+        
+        importance_df = pd.DataFrame({
+            'feature': self.feature_names,
+            'importance_mean': perm_importance.importances_mean,
+            'importance_std': perm_importance.importances_std
+        }).sort_values('importance_mean', ascending=False)
+        
+        self.interpretation_results['global_importance'] = importance_df
+        
+        return importance_df.to_dict('records')
+    
+    def partial_dependence_analysis(self,
+                                   X: np.ndarray,
+                                   features: List[int],
+                                   kind: str = 'average') -> Dict:
+        """部分依赖分析"""
+        
+        pdp_results = {}
+        
+        for feature_idx in features:
+            pdp = partial_dependence(
+                self.model,
+                X,
+                [feature_idx],
+                kind=kind,
+                grid_resolution=50
+            )
+            
+            pdp_results[self.feature_names[feature_idx]] = {
+                'values': pdp['values'][0],
+                'average': pdp['average'][0] if kind == 'average' else None,
+                'individual': pdp['individual'][0] if kind == 'individual' else None
+            }
+        
+        return pdp_results
+    
+    def interaction_analysis(self,
+                            X: np.ndarray,
+                            feature_pairs: List[Tuple[int, int]]) -> Dict:
+        """特征交互分析"""
+        
+        interaction_results = {}
+        
+        shap_values = self.compute_shap_values(X)
+        
+        for feat1, feat2 in feature_pairs:
+            interaction_values = shap.common.approximate_interactions(
+                feat1,
+                shap_values,
+                X,
+                feature_names=self.feature_names
+            )
+            
+            interaction_results[f"{self.feature_names[feat1]}_x_{self.feature_names[feat2]}"] = {
+                'interaction_strength': interaction_values[feat2] if feat2 < len(interaction_values) else None
+            }
+        
+        return interaction_results
+    
+    def generate_interpretation_report(self,
+                                      X: np.ndarray,
+                                      y: np.ndarray,
+                                      output_dir: str = './interpretation_reports') -> Dict:
+        """生成解释报告"""
+        
+        import os
+        os.makedirs(output_dir, exist_ok=True)
+        
+        report = {
+            'global_importance': self.global_feature_importance(X, y),
+            'shap_summary': None,
+            'sample_explanations': []
+        }
+        
+        if self.shap_explainer is not None:
+            shap_values = self.compute_shap_values(X[:100])
+            
+            plt.figure(figsize=(12, 8))
+            shap.summary_plot(shap_values, X[:100], feature_names=self.feature_names, show=False)
+            plt.tight_layout()
+            plt.savefig(f"{output_dir}/shap_summary.png", dpi=300, bbox_inches='tight')
+            plt.close()
+            
+            report['shap_summary'] = f"{output_dir}/shap_summary.png"
+        
+        if self.lime_explainer is not None:
+            for i in range(min(5, len(X))):
+                lime_exp = self.explain_instance_lime(X[i])
+                report['sample_explanations'].append({
+                    'sample_idx': i,
+                    'explanation': lime_exp
+                })
+        
+        import json
+        with open(f"{output_dir}/interpretation_report.json", 'w') as f:
+            json.dump(report, f, indent=2, default=str)
+        
+        return report
+
+class ModelDiagnostics:
+    """模型诊断工具"""
+    
+    def __init__(self, model: BaseEstimator):
+        self.model = model
+    
+    def check_fairness(self,
+                      X: np.ndarray,
+                      y: np.ndarray,
+                      sensitive_features: List[str],
+                      feature_names: List[str]) -> Dict:
+        """检查模型公平性"""
+        
+        fairness_results = {}
+        
+        for sensitive_feat in sensitive_features:
+            feat_idx = feature_names.index(sensitive_feat)
+            
+            unique_values = np.unique(X[:, feat_idx])
+            
+            group_metrics = {}
+            for val in unique_values:
+                mask = X[:, feat_idx] == val
+                group_pred = self.model.predict(X[mask])
+                group_true = y[mask]
+                
+                from sklearn.metrics import accuracy_score, precision_score, recall_score
+                
+                group_metrics[f"group_{val}"] = {
+                    'accuracy': accuracy_score(group_true, group_pred),
+                    'precision': precision_score(group_true, group_pred, average='weighted'),
+                    'recall': recall_score(group_true, group_pred, average='weighted'),
+                    'sample_count': mask.sum()
+                }
+            
+            fairness_results[sensitive_feat] = group_metrics
+        
+        return fairness_results
+    
+    def check_robustness(self,
+                        X: np.ndarray,
+                        y: np.ndarray,
+                        perturbation_scale: float = 0.1) -> Dict:
+        """检查模型鲁棒性"""
+        
+        original_pred = self.model.predict(X)
+        
+        perturbed_X = X + np.random.randn(*X.shape) * perturbation_scale * X.std(axis=0)
+        perturbed_pred = self.model.predict(perturbed_X)
+        
+        from sklearn.metrics import accuracy_score
+        
+        robustness_metrics = {
+            'prediction_stability': accuracy_score(original_pred, perturbed_pred),
+            'perturbation_scale': perturbation_scale,
+            'num_changed_predictions': (original_pred != perturbed_pred).sum()
+        }
+        
+        return robustness_metrics
+    
+    def check_counterfactual(self,
+                            instance: np.ndarray,
+                            desired_class: int,
+                            feature_names: List[str],
+                            max_iterations: int = 100) -> Dict:
+        """生成反事实解释"""
+        
+        current_instance = instance.copy()
+        original_pred = self.model.predict(current_instance.reshape(1, -1))[0]
+        
+        if original_pred == desired_class:
+            return {
+                'status': 'already_desired_class',
+                'original_prediction': original_pred
+            }
+        
+        feature_importance = np.abs(self.model.coef_[0]) if hasattr(self.model, 'coef_') else np.ones(len(instance))
+        
+        changes = []
+        for iteration in range(max_iterations):
+            pred = self.model.predict(current_instance.reshape(1, -1))[0]
+            
+            if pred == desired_class:
+                break
+            
+            most_important_idx = np.argmax(feature_importance)
+            
+            original_value = current_instance[most_important_idx]
+            current_instance[most_important_idx] += 0.1 * np.sign(feature_importance[most_important_idx])
+            
+            changes.append({
+                'feature': feature_names[most_important_idx],
+                'original_value': original_value,
+                'new_value': current_instance[most_important_idx]
+            })
+        
+        return {
+            'status': 'counterfactual_found' if pred == desired_class else 'not_found',
+            'original_instance': instance,
+            'counterfactual_instance': current_instance,
+            'changes': changes,
+            'iterations': iteration + 1
+        }
+```
+
+#### 2.39.4 核心功能
+
+1. **全局解释**：特征重要性、部分依赖图
+2. **局部解释**：LIME局部解释、SHAP值
+3. **交互分析**：特征交互效应
+4. **可视化**：解释结果可视化
+5. **报告生成**：解释报告自动生成
+
+#### 2.39.5 应用场景
+
+- **模型调试**：理解模型决策过程
+- **合规审计**：满足监管要求
+- **特征工程**：识别重要特征
+- **模型优化**：发现模型弱点
+
+#### 2.39.6 技术选型
+
+- **首选**: SHAP (22k+ stars) + LIME (11k+ stars)
+- **备选**: InterpretML (3k+ stars)
+- **可视化**: Matplotlib + Plotly
+- **报告**: Jupyter Notebook + HTML
+
+---
+
 ## 三、数据模型设计
 ### 3.1 研究任务数据模型
 
