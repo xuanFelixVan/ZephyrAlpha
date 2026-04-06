@@ -333,6 +333,11 @@ implementation_status: 蓝图设计
 | 数据管理 | 可管理数据 | 数据操作 |
 | 策略管理 | 可管理策略 | 策略操作 |
 | 权限管理 | 可管理权限 | 权限操作 |
+| API限流 | 可限制请求频率 | 限流测试 |
+| 文档中心 | 可访问文档 | 在线访问 |
+| 知识库 | 可检索知识 | 搜索测试 |
+| CI/CD | 自动化测试部署 | CI运行 |
+| 数据备份 | 可备份恢复数据 | 备份测试 |
 
 ### 7.2 性能验收
 
@@ -400,6 +405,11 @@ implementation_status: 蓝图设计
 | 指标收集 | Prometheus | 2.x |
 | 告警管理 | Alertmanager | 0.25+ |
 | 日志收集 | Loki | 2.x |
+| API限流 | slowapi | 最新 |
+| 文档中心 | MkDocs | 1.5+ |
+| 知识库 | Obsidian | 最新 |
+| CI/CD | GitHub Actions | - |
+| 数据备份 | Restic | 0.16+ |
 | 数据可视化 | Streamlit | 1.30+ |
 | 报告生成 | Quantstats | 最新 |
 | 数据库 | SQLite | 3.x |
