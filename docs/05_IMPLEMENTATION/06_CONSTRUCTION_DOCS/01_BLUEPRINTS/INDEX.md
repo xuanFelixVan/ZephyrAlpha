@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 
 > **索引编号**: `BLUEPRINTS_INDEX_001`
 > **最后更新**: 2026-04-06
-> **文档总数**: 77个（Active: 77个，Archived: 0个）
+> **文档总数**: 79个（Active: 79个，Archived: 0个）
 
 ---
 
@@ -82,6 +82,14 @@ parent_document: ../INDEX.md
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 实时告警系统增强蓝图 | ENHANCED_ALERT_SYSTEM_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) |
+
+### 2.8 微观执行策略
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 风险控制蓝图 | RISK_CONTROL_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_CONTROL_BLUEPRINT.md) 🆕 |
+| 开盘策略蓝图 | OPENING_STRATEGY_001 | v1.0.0 | Active | 2026-04-06 | [链接](./OPENING_STRATEGY_BLUEPRINT.md) 🆕 |
+| 日内策略蓝图 | INTRADAY_STRATEGY_001 | v1.0.0 | Active | 2026-04-06 | [链接](./INTRADAY_STRATEGY_BLUEPRINT.md) 🆕 |
 
 ---
 
@@ -195,31 +203,38 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 智能订单路由蓝图 | SMART_ORDER_ROUTER_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./SMART_ORDER_ROUTER_BLUEPRINT.md) |
+| 智能订单路由蓝图 | SMART_ORDER_ROUTER_001 | v1.0.0 | Active | 2026-04-06 | [链接](./SMART_ORDER_ROUTER_BLUEPRINT.md) |
 
 ### 5.5 交易信号验证
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 交易信号验证器蓝图 | TRADING_SIGNAL_VALIDATOR_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md) |
+| 交易信号验证器蓝图 | TRADING_SIGNAL_VALIDATOR_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md) |
 
 ### 5.6 算法交易优化
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 算法交易优化器蓝图 | ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) |
+| 算法交易优化器蓝图 | ALGORITHMIC_TRADING_OPTIMIZER_001 | v1.0.0 | Active | 2026-04-06 | [链接](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) |
 
 ### 5.7 交易成本分析
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 交易成本分析引擎蓝图 | TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) |
+| 交易成本分析引擎蓝图 | TRANSACTION_COST_ANALYSIS_ENGINE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) |
 
 ### 5.8 执行策略回测
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 执行策略回测器蓝图 | EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md) |
+| 执行策略回测器蓝图 | EXECUTION_STRATEGY_BACKTESTER_001 | v1.0.0 | Active | 2026-04-06 | [链接](./EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md) |
+
+### 5.9 宏观配置
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 战略权重配置蓝图 | STRATEGIC_WEIGHTING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./STRATEGIC_WEIGHTING_BLUEPRINT.md) 🆕 |
+| 季度再平衡蓝图 | QUARTERLY_REBALANCE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./QUARTERLY_REBALANCE_BLUEPRINT.md) 🆕 |
 
 ---
 
@@ -277,19 +292,19 @@ parent_document: ../INDEX.md
 
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
-| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 26.0% |
-| **组合优化层（Layer 6）** | 27个 | 27个 | 0个 | 35.1% |
-| **风险控制层（Layer 7）** | 4个 | 4个 | 0个 | 5.2% |
-| **执行层（Layer 5）** | 8个 | 8个 | 0个 | 10.4% |
-| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.6% |
-| **其他** | 16个 | 16个 | 0个 | 20.8% |
-| **总计** | **77个** | **77个** | **0个** | **100%** |
+| **数据预处理层（Layer 1）** | 20个 | 20个 | 0个 | 25.3% |
+| **组合优化层（Layer 6）** | 27个 | 27个 | 0个 | 34.2% |
+| **风险控制层（Layer 7）** | 4个 | 4个 | 0个 | 5.1% |
+| **执行层（Layer 5）** | 10个 | 10个 | 0个 | 12.7% |
+| **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 2.5% |
+| **其他** | 16个 | 16个 | 0个 | 20.3% |
+| **总计** | **79个** | **79个** | **0个** | **100%** |
 
 ### 8.2 按状态统计
 
 | 状态 | 文档数量 | 占比 | 说明 |
 |------|---------|------|------|
-| **Active** | 77个 | 100% | 正常可用文档 |
+| **Active** | 79个 | 100% | 正常可用文档 |
 | **Archived** | 0个 | 0% | 无归档文档 |
 | **Draft** | 0个 | 0% | 草稿文档 |
 

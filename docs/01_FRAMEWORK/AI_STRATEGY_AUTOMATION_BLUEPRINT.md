@@ -14,6 +14,18 @@ related_documents:
   - STRATEGY_ENGINE_CORE_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - AI策略工厂架构（自动化策略生成流水线）
+  - AI决策自动化（95%自动化 + 5%人工审核）
+  - 策略生命周期管理（生成、验证、部署、监控）
+  - AI代理集成（AgentQuant、FinRobot、RD-Agent）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
+  - AI_EVOLUTION_LOOP_BLUEPRINT.md: AI学习演进闭环
 ---
 
 # AI策略自动化集成蓝?
