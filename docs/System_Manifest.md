@@ -173,6 +173,7 @@ responsibility: 风险预算
 | **系统架构** | [01_FRAMEWORK/ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11统一架构定义 | ✅ 活跃 |
 | **模块职责边界** | [01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 模块职责边界定义 | ✅ 活跃 |
 | **框架目录索引** | [01_FRAMEWORK/INDEX.md](01_FRAMEWORK/INDEX.md) | 框架文档索引 | ✅ 活跃 |
+| **Layer 4总索引** | [LAYER4_MASTER_INDEX.md](LAYER4_MASTER_INDEX.md) | Layer 4机器学习层文档总索引 | ✅ 活跃 |
 
 ### 2. 缺失模块分析文档
 

@@ -191,13 +191,35 @@ responsibility:
 
 ---
 
-## 四、实施路径规划
+## 四、相关文档
 
-### 4.1 Phase 1: 核心模块实施（Week 1-2）
+> **整体架构设计**: [BLUEPRINT.md](./BLUEPRINT.md)
+> **完整模块清单**: [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md)
+> **统一进度报告**: [BLUEPRINT_PROGRESS_REPORT_20260407.md](./BLUEPRINT_PROGRESS_REPORT_20260407.md)
 
-#### Week 1: 资产配置与风险预算
+---
 
-**Day 1-2: 资产配置模型**
+## 五、总结
+
+### 5.1 蓝图体系完整性
+
+- ✅ P0级蓝图：100%完成（6个）
+- ✅ P1级蓝图：100%完成（6个）
+- ✅ 总体蓝图：100%完成（12个）
+
+### 5.2 索引功能说明
+
+本文档聚焦于蓝图索引和导航功能：
+- ✅ 提供完整的蓝图清单
+- ✅ 说明蓝图依赖关系
+- ✅ 提供实施优先级参考
+
+**详细实施路径**: 请参考 [BLUEPRINT.md](./BLUEPRINT.md)
+**完整模块清单**: 请参考 [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md)
+
+---
+
+**版本**: v1.0 | **创建日期**: 2026-04-07 | **状态**: ✅ 索引完成
 - [ ] 实现资产配置模型核心功能
 - [ ] 集成PyPortfolioOpt
 - [ ] 单元测试

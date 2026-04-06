@@ -366,37 +366,25 @@ Layer 11战略决策层是清风量化系统的**战略大脑**，负责：
 
 ## 六、相关文档
 
-### 6.1 核心模块蓝图
+### 6.1 核心索引文档
 
-| 文档 | 说明 | 优先级 |
-|------|------|--------|
-| [CAPITAL_ALLOCATION_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 资本配置系统蓝图 | P1 |
-| [MARKET_REGIME_BLUEPRINT.md](./MARKET_REGIME_BLUEPRINT.md) | 市场状态识别蓝图 | P0 |
-| [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md) | 多策略协调系统蓝图 | P0 |
-| [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | 业绩归因系统蓝图 | P0 |
-| [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | 交易成本分析系统蓝图 | P0 |
-| [REBALANCING_BLUEPRINT.md](./REBALANCING_BLUEPRINT.md) | 再平衡决策系统蓝图 | P0 |
+> **完整模块索引**: [BLUEPRINT_INDEX.md](./BLUEPRINT_INDEX.md)
+> **完整模块清单**: [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md)
+> **统一进度报告**: [BLUEPRINT_PROGRESS_REPORT_20260407.md](./BLUEPRINT_PROGRESS_REPORT_20260407.md)
 
-### 6.2 支持模块蓝图
+### 6.2 架构设计说明
 
-| 文档 | 说明 | 优先级 |
-|------|------|--------|
-| [PORTFOLIO_INSURANCE_BLUEPRINT.md](./PORTFOLIO_INSURANCE_BLUEPRINT.md) | 投资组合保险系统蓝图 | P2 |
-| [LEVERAGE_MANAGEMENT_BLUEPRINT.md](./LEVERAGE_MANAGEMENT_BLUEPRINT.md) | 融资融券管理系统蓝图 | P2 |
-| [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md) | 流动性管理系统蓝图 | P1 |
-| [BENCHMARK_MANAGEMENT_BLUEPRINT.md](./BENCHMARK_MANAGEMENT_BLUEPRINT.md) | 基准管理系统蓝图 | P1 |
-| [SCENARIO_ANALYSIS_BLUEPRINT.md](./SCENARIO_ANALYSIS_BLUEPRINT.md) | 情景分析系统蓝图 | P1 |
-| [MACRO_FACTOR_BLUEPRINT.md](./MACRO_FACTOR_BLUEPRINT.md) | 宏观因子系统蓝图 | P1 |
-| [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统蓝图 | P1 |
-| [IPS_MANAGEMENT_BLUEPRINT.md](./IPS_MANAGEMENT_BLUEPRINT.md) | 投资政策声明(IPS)管理蓝图 | P1 |
+本文档聚焦于Layer 11的整体架构设计，包括：
+- 战略资产配置系统架构
+- 风险预算分配系统架构
+- 投资策略选择系统架构
+- 战略调整决策系统架构
 
-### 6.3 扩展模块蓝图
+### 6.3 模块详细文档
 
-| 文档 | 说明 | 优先级 |
-|------|------|--------|
-| [ESG_INVESTING_BLUEPRINT.md](./ESG_INVESTING_BLUEPRINT.md) | ESG投资系统蓝图 | P2 |
-| [TAX_MANAGEMENT_BLUEPRINT.md](./TAX_MANAGEMENT_BLUEPRINT.md) | 税务管理系统蓝图 | P2 |
-| [DECISION_AUDIT_BLUEPRINT.md](./DECISION_AUDIT_BLUEPRINT.md) | 投资决策审计系统蓝图 | P2 |
+各模块的详细蓝图请参考：
+- [BLUEPRINT_INDEX.md](./BLUEPRINT_INDEX.md) - 完整蓝图索引和导航
+- [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md) - 完整模块清单
 
 ### 6.4 开源集成文档
 
