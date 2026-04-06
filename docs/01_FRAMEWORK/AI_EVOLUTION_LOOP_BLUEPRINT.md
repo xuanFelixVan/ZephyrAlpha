@@ -15,6 +15,18 @@ related_documents:
   - PRINCIPLE_CODIFIER_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - 错误转化为规则（桥水错误→规则系统）
+  - 知识持续沉淀（知识库建设、经验积累）
+  - 反馈循环优化（持续改进机制）
+  - 能力不断提升（AI能力演进）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+  - PRINCIPLE_CODIFIER_BLUEPRINT.md: 投资原则算法化
+  - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计追踪
 ---
 
 # AI学习演进闭环蓝图：从错误到改进的持续优化

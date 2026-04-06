@@ -10,6 +10,18 @@ standard_type: 专业机构级可解释性工具蓝图专业机构级可解释�
 reference_models: ["Bridgewater AIA", "SHAP", "LIME", "Captum"]
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - AI决策可解释性（SHAP、LIME、Captum集成）
+  - 决策路径追踪（信号来源、推理过程）
+  - 异常信号定位（根因分析、影响评估）
+  - 因果关系图谱（决策推理可视化）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+  - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计追踪
+  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
 ---
 
 # AI可解释性工具蓝�?

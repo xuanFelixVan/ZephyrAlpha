@@ -14,6 +14,18 @@ related_documents:
   - AI_GOVERNANCE_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - 投资原则分类体系（核心原则、操作原则）
+  - 投资原则算法化（原则转化为可执行代码）
+  - 原则验证机制（原则有效性验证）
+  - 原则演进机制（原则持续优化）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+  - AI_EVOLUTION_LOOP_BLUEPRINT.md: AI学习演进闭环
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
 ---
 
 # 投资原则算法化蓝图：从理念到代码

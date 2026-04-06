@@ -15,6 +15,18 @@ related_documents:
   - PRINCIPLE_CODIFIER_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - 全链路决策追踪（决策路径、信号来源）
+  - 可解释记录（决策理由、推理过程）
+  - 明确责任归属（责任认定、问责机制）
+  - 效果评估与历史回顾（决策效果、历史分析）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统
+  - AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md: AI可解释性工具
 ---
 
 # AI决策审计追踪蓝图：全链路决策追溯与责任归�?
