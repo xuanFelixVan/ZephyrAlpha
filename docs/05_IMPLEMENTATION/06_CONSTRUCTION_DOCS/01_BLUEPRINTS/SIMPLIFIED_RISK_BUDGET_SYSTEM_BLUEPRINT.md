@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 风险预算 (Layer 11)
 
----
-﻿---
-module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-03
-last_updated: '2026-04-06'
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
-estimated_effort: 60h
-priority: P0
-simplified_version: true
 layer: "Layer 7 (风险管理层)"
 ---
-# 简化版动态风险预算系统蓝图
+﻿# 简化版动态风险预算系统蓝图
 
 > **核心定位**: 简化版动态风险预算系统蓝图的核心功能实现
 
@@ -40,7 +23,7 @@ layer: "Layer 7 (风险管理层)"
 
 ## 核心定位
 
-Simplified Risk Budget System Blueprint模块，负责simplified risk budget system blueprint相关功能
+简化风险预算系统，负责实施基于风险预算的资产配置策略
 
 
 ## 1. 概述

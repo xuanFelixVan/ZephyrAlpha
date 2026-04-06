@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: TURNOVER_CONTROL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: Riskfolio-Lib, PyPortfolioOpt
-estimated_effort: 1周
 layer: "Layer 6 (组合优化层)"
 ---
-# 组合周转率控制蓝图
+﻿# 组合周转率控制蓝图
 
 > **核心定位**: 组合周转率控制蓝图的核心功能实现
 
@@ -42,7 +26,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-换手率控制，负责投资组合换手率控制
+换手率控制模块，负责控制投资组合换手率，平衡交易成本和策略收益
 
 
 ## 1. 模块概述

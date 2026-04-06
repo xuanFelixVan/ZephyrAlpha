@@ -9,35 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: PORTFOLIO_REBALANCING_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 6 (组合优化层)"
-index: PORTFOLIO_REBALANCING_001
-estimated_hours: 40h
-estimated_effort: 1周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 概述
+﻿# 概述
 
 > **开发时?*: 40h（约1周）
 > **核心定位**: 智能再平衡决策，平衡跟踪误差与交易成?> **对标机构**: 专业量化机构标准配置
@@ -47,7 +21,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Portfolio Rebalancing Blueprint模块，负责portfolio rebalancing blueprint相关功能
+组合再平衡模块，负责定期或触发式调整投资组合权重，维持目标配置
 
 
 ## 1. 概述

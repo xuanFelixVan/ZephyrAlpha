@@ -8,36 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_001
-version: 1.0.2
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
 layer: "Layer 6 (组合优化层)"
-index: SIMPLIFIED_TIMEFRAME_COORDINATION_001
-estimated_hours: 80h
-estimated_effort: 2周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-simplified_version: true
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 ---
-> **索引**: `TIMEFRAME_COORD_001`
+﻿> **索引**: `TIMEFRAME_COORD_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 双时间框架协同优化策略 + 中期波动度，实现信号融合和冲突解决
 > **个人开发可行性**: 完全可行（简化版）
@@ -47,7 +20,7 @@ priority: P0
 
 ## 核心定位
 
-Simplified Timeframe Coordination Blueprint模块，负责simplified timeframe coordination blueprint相关功能
+简化时间框架协调模块，负责协调不同时间尺度的交易信号
 
 
 ## 1. 模块概述

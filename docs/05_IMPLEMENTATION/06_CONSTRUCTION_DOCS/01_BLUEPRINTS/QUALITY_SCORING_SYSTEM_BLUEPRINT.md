@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: QUALITY_SCORING_SYSTEM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: great_expectations, dbt
-estimated_effort: 1周
-priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-# 数据质量评分系统蓝图
+﻿# 数据质量评分系统蓝图
 
 > **核心定位**: 数据质量评分系统蓝图的核心功能实现
 
@@ -40,7 +23,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Quality Scoring System Blueprint模块，负责quality scoring system blueprint相关功能
+质量评分系统，负责对系统和数据质量进行量化评分，建立质量基准
 
 
 ## 一、设计背景与目标

@@ -8,36 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: CONSTRAINT_SOLVER_001
-version: 1.0.0
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 4 (机器学习层)"
-index: CONSTRAINT_SOLVER_001
-estimated_hours: 60h
-estimated_effort: 1.5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-open_source_dependency: cvxpy, scipy, numpy
-priority: P0
 layer: "Layer 4 (机器学习层)"
 ---
-# 概述
+﻿# 概述
 
 > **开发时?*: 60h（约1.5周）
 > **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求?> **对标机构**: 专业量化机构标准配置
@@ -47,7 +20,7 @@ layer: "Layer 4 (机器学习层)"
 
 ## 核心定位
 
-Constraint Solver Blueprint模块，负责constraint solver blueprint相关功能
+约束求解器，负责在投资组合优化中处理各类约束条件（如风险预算、行业限制、流动性约束等）
 
 
 ## 1. 概述

@@ -10,21 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 市场状态识别 (Layer 4)
 
----
-﻿---
-module_id: MARKET_PARTICIPANT_SIMULATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 架构集成方案
-applicable_scope: 市场参与者行为模拟系统集?compliance_level: 专业标准
-parent_document: ./MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md
-implementation_status: 设计阶段
 layer: "Layer 6 (组合优化层)"
 ---
-# 市场参与者行为模拟系?- 多层次集成架构方?
+﻿# 市场参与者行为模拟系?- 多层次集成架构方?
 
 > **核心定位**: 市场参与者行为模拟系?- 多层次集成架构方?的核心功能实现
 
@@ -37,7 +25,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Market Participant Simulation Integration Architecture模块，负责market participant simulation integration architecture相关功能
+市场参与者模拟集成模块，负责模拟不同市场参与者的行为
 
 
 ## 🎯 一、核心答案：多层次集成架?

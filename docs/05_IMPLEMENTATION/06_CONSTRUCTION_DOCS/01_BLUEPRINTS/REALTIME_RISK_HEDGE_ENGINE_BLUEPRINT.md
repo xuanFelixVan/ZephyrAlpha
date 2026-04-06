@@ -8,33 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: REALTIME_RISK_HEDGE_ENGINE_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
 layer: "Layer 7 (风险管理层)"
-index: REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT_001
-estimated_hours: 100h
-estimated_effort: 2.5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 个人开发者
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 ---
-# 文档职责说明
+﻿# 文档职责说明
 
 > **索引**: `RISK_HEDGE_BLUEPRINT_001`
 > **开发时?*: 100h
@@ -43,7 +19,7 @@ priority: P0
 
 ## 核心定位
 
-Realtime Risk Hedge Engine Blueprint模块，负责realtime risk hedge engine blueprint相关功能
+实时风险对冲引擎，负责动态对冲投资组合风险暴露，实施Delta中性策略
 
 
 ## 文档职责说明

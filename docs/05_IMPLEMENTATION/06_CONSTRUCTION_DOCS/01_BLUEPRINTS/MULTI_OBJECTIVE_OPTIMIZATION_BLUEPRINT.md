@@ -10,25 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: cvxpy, pymoo
-estimated_effort: 5-7天
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 多目标优化蓝图
+﻿# 多目标优化蓝图
 
 > **核心定位**: 多目标优化蓝图的核心功能实现
 
@@ -40,7 +24,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Multi Objective Optimization Blueprint模块，负责multi objective optimization blueprint相关功能
+多目标优化模块，负责同时优化收益、风险、流动性等多个目标，生成帕累托最优解
 
 
 ## 1. 概述

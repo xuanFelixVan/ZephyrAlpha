@@ -9,36 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: ECONOMIC_REGIME_ENGINE_001
-version: 2.0.3
-spec_version: 2.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-07'
-created_date: 2026-04-02
 layer: "Layer 6 (组合优化层)"
-index: ECONOMIC_REGIME_001
-estimated_hours: 60h
-estimated_effort: 1.5-2周
-review_status: Approved
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 个人开发者
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 开发阶段
-development_mode: 个人开发 + AI维护
-current_version: true
-archived_versions:
-- ECONOMIC_REGIME_ENGINE_001
-open_source_dependency: scikit-learn, pandas, numpy
-priority: P0
 ---
-# 版本演进说明
+﻿# 版本演进说明
 
 > **?当前有效版本** | v1.0已归?>
 > **索引**: `ECONOMIC_REGIME_001`
@@ -49,7 +22,7 @@ priority: P0
 
 ## 核心定位
 
-Economic Regime Engine Blueprint模块，负责economic regime engine blueprint相关功能
+经济周期识别引擎，负责识别当前经济周期阶段（扩张、衰退、复苏等），支持宏观驱动的投资决策
 
 
 ## 版本演进说明

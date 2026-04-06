@@ -10,25 +10,9 @@ responsibility:
   - 市场状态识别 (Layer 4)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: STRATEGY_SELECTION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: '2026-04-06'
-owner: 首席文档架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
-compliance_level: 初始标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: 待补充
-estimated_effort: 待评估
-priority: P1
 layer: "Layer 3 (策略层)"
 ---
-# 策略排名与选择系统技术蓝?
+﻿# 策略排名与选择系统技术蓝?
 
 > **核心定位**: 策略排名与选择系统技术蓝?的核心功能实现
 
@@ -41,7 +25,7 @@ layer: "Layer 3 (策略层)"
 
 ## 核心定位
 
-Strategy Selection Blueprint模块，负责strategy selection blueprint相关功能
+策略选择模块，负责根据市场环境动态选择最优策略组合
 
 
 ## 一、设计目标与约束

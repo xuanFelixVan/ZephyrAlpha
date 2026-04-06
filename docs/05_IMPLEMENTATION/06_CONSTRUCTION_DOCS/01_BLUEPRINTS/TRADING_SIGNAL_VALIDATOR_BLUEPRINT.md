@@ -9,35 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: TRADING_SIGNAL_VALIDATOR_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-layer: "Layer 8 (执行层)"
-standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 5 - 策略执行层
-compliance_level: 专业标准
-reference_models:
-- Two Sigma Signal Validation
-- Citadel Signal Quality
-- AQR Signal Research
-related_documents:
-- ARCHITECTURE.md
-- STRATEGY_EXECUTION_LAYER_BLUEPRINT.md
-- SIGNAL_GENERATOR_TECHNICAL_SPECIFICATION.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-opensource_project: Qlib
-open_source_dependency: pyqlib, pandas, numpy, scipy, scikit-learn
-estimated_effort: 3周
-priority: P1
 layer: "Layer 8 (执行层)"
 ---
-# 交易信号验证器蓝图
+﻿# 交易信号验证器蓝图
 
 > **核心定位**: 交易信号验证器蓝图的核心功能实现
 
@@ -53,7 +27,7 @@ layer: "Layer 8 (执行层)"
 
 ### 核心定位
 
-Trading Signal Validator Blueprint模块，负责trading signal validator blueprint相关功能
+交易信号验证器，负责验证交易信号的有效性，过滤虚假信号
 
 
 ### 个人使用价值

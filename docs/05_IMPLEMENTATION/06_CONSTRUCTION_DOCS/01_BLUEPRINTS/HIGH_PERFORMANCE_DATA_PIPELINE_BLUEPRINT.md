@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: apache-spark, apache-flink, ray
-estimated_effort: 3周
-priority: P2
 layer: "Layer 1 (数据源层)"
 ---
-# 高性能数据管道蓝图
+﻿# 高性能数据管道蓝图
 
 > **核心定位**: 高性能数据管道蓝图的核心功能实现
 
@@ -40,7 +23,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-High Performance Data Pipeline Blueprint模块，负责high performance data pipeline blueprint相关功能
+高性能数据管道，负责构建低延迟、高吞吐的数据处理流水线
 
 
 ## 一、设计背景与目标

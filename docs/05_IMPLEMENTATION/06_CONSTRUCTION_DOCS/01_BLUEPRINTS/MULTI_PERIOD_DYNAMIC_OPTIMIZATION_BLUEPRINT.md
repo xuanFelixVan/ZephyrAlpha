@@ -8,26 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: Cvxportfolio, cvxpy
-estimated_effort: 1.5周
 layer: "Layer 6 (组合优化层)"
 ---
-# 多期动态优化蓝图
+﻿# 多期动态优化蓝图
 
 > **模块ID**: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
 > **创建日期**: 2026-04-07
@@ -37,7 +20,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Multi Period Dynamic Optimization Blueprint模块，负责multi period dynamic optimization blueprint相关功能
+多期动态优化模块，负责考虑跨期决策的投资组合优化，支持动态再平衡策略
 
 
 ## 1. 模块概述

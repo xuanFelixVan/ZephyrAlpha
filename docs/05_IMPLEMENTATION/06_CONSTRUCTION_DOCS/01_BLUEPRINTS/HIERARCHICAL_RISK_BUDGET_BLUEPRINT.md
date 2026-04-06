@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 风险预算 (Layer 5)
 
----
-﻿---
-module_id: HIERARCHICAL_RISK_BUDGET_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: Riskfolio-Lib, skfolio
-estimated_effort: 5-7天
-priority: P0
 layer: "Layer 7 (风险管理层)"
 ---
-# 层级风险预算蓝图
+﻿# 层级风险预算蓝图
 
 > **核心定位**: 层级风险预算蓝图的核心功能实现
 
@@ -39,7 +23,7 @@ layer: "Layer 7 (风险管理层)"
 
 ## 核心定位
 
-Hierarchical Risk Budget Blueprint模块，负责hierarchical risk budget blueprint相关功能
+分层风险预算模块，负责在多个层级分配风险预算
 
 
 ## 1. 概述

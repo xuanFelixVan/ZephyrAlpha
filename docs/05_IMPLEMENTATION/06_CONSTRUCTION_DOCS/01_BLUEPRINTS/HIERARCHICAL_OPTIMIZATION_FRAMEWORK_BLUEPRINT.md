@@ -8,26 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: PyPortfolioOpt, cvxpy, scipy
-estimated_effort: 2周
 layer: "Layer 6 (组合优化层)"
 ---
-# 层次化优化框架蓝图
+﻿# 层次化优化框架蓝图
 
 > **模块ID**: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 > **创建日期**: 2026-04-07
@@ -37,7 +20,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Hierarchical Optimization Framework Blueprint模块，负责hierarchical optimization framework blueprint相关功能
+分层优化框架，负责实施多层级投资组合优化
 
 
 ## 1. 模块概述

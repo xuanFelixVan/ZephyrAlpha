@@ -10,25 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: FACTOR_BACKTEST_INTEGRATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: '2026-04-06'
-owner: 首席文档架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设计
-compliance_level: 初始标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: 待补充
-estimated_effort: 待评估
-priority: P1
 layer: "Layer 2 (Alpha因子层)"
 ---
-# 因子库与回测集成架构蓝图
+﻿# 因子库与回测集成架构蓝图
 
 > **核心定位**: 因子库与回测集成架构蓝图的核心功能实现
 
@@ -39,7 +23,7 @@ layer: "Layer 2 (Alpha因子层)"
 
 ## 核心定位
 
-Factor Backtest Integration Blueprint模块，负责factor backtest integration blueprint相关功能
+因子回测集成模块，负责集成因子回测框架，支持因子验证
 
 
 ## 1. 设计原则

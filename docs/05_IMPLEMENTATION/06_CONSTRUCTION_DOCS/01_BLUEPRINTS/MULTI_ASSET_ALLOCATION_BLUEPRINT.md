@@ -10,35 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: MULTI_ASSET_ALLOCATION_001
-version: 1.0.0
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 6 (组合优化层)"
-index: MULTI_ASSET_ALLOCATION_001
-estimated_hours: 120h
-estimated_effort: 3周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, cvxpy
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 概述
+﻿# 概述
 
 > **开发时?*: 120h（约3周）
 > **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可?*: ⭐⭐⭐⭐ 完全可行
@@ -47,7 +21,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Multi Asset Allocation Blueprint模块，负责multi asset allocation blueprint相关功能
+多资产配置模块，负责跨股票、债券、商品、外汇等多资产类别的战略配置
 
 
 ## 1. 概述

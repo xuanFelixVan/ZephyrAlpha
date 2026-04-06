@@ -10,32 +10,9 @@ responsibility:
   - 市场状态识别 (Layer 4)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: AI_PATTERN_RECOGNITION_ENGINE_001
-version: 1.0.2
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
 layer: "Layer 4 (机器学习层)"
-index: AI_PATTERN_RECOGNITION_ENGINE_001
-estimated_hours: 180h
-estimated_effort: 4-5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 策略执行层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: tensorflow, pytorch, scikit-learn
-priority: P0
 ---
-# 模块概述
+﻿# 模块概述
 
 > **索引**: `AI_PATTERN_001`
 > **开发时?*: 180h
@@ -44,7 +21,7 @@ priority: P0
 
 ## 核心定位
 
-Ai Pattern Recognition Engine Blueprint模块，负责ai pattern recognition engine blueprint相关功能
+AI模式识别引擎，负责利用机器学习技术识别市场交易模式，包括趋势识别、反转信号检测、异常波动预警等功能
 
 
 ## 1. 模块概述

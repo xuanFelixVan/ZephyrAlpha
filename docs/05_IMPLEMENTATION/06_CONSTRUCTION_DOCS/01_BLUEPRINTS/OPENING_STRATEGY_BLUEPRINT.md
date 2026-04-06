@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 市场状态识别 (Layer 4)
 
----
-﻿---
-module_id: OPENING_STRATEGY_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 微观执行层开盘策略
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
 layer: "Layer 3 (策略层)"
-estimated_effort: 2周
-open_source_dependency: pandas, numpy, scipy
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -39,7 +23,7 @@ open_source_dependency: pandas, numpy, scipy
 
 ## 核心定位
 
-Opening Strategy Blueprint模块，负责opening strategy blueprint相关功能
+开盘策略模块，负责开发和管理开盘时段的交易策略，利用开盘价偏差和流动性特征
 
 
 ## 📋 执行摘要

@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: DATA_CATALOG_METADATA_001
-version: 1.0.1
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-06
-owner: 首席技术评审官
-standard_type: 专业量化机构蓝图
-applicable_scope: "Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构"
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: pandas, numpy, apache-atlas
-estimated_effort: 2周
-priority: P2
 layer: "Layer 1 (数据源层)"
 ---
-# 数据目录与元数据管理系统蓝图
+﻿# 数据目录与元数据管理系统蓝图
 
 > **核心定位**: 数据目录与元数据管理系统蓝图的核心功能实现
 
@@ -40,7 +23,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-Data Catalog Metadata Blueprint模块，负责data catalog metadata blueprint相关功能
+数据目录系统，负责数据资产的注册、发现、血缘追踪和元数据管理，提升数据治理能力
 
 
 ## 一、设计背景与目标

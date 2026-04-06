@@ -10,25 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: VAR_ES_MONITORING_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: pyRisk, arch, pyfolio
-estimated_effort: 5-7天
-priority: P0
 layer: "Layer 9 (监控层)"
 ---
-# VaR/ES实时监控蓝图
+﻿# VaR/ES实时监控蓝图
 
 > **核心定位**: VaR/ES实时监控蓝图的核心功能实现
 
@@ -40,7 +24,7 @@ layer: "Layer 9 (监控层)"
 
 ## 核心定位
 
-Var Es Monitoring Blueprint模块，负责var es monitoring blueprint相关功能
+VaR/ES监控系统，负责实时监控投资组合的风险价值和预期损失
 
 
 ## 1. 概述

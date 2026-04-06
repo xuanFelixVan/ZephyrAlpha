@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: AUTO_REPAIR_ENGINE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: scikit-learn, pyod, great_expectations
-estimated_effort: 3周
-priority: P0
 layer: "Layer 4 (机器学习层)"
 ---
-# 自动化数据修复引擎蓝图
+﻿# 自动化数据修复引擎蓝图
 
 > **核心定位**: 自动化数据修复引擎蓝图的核心功能实现
 
@@ -40,7 +23,7 @@ layer: "Layer 4 (机器学习层)"
 
 ## 核心定位
 
-Auto Repair Engine Blueprint模块，负责auto repair engine blueprint相关功能
+自动修复引擎，负责系统故障的自动诊断、定位和修复，确保系统高可用性和稳定性
 
 
 ## 一、设计背景与目标

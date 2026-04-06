@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, skfolio
-estimated_effort: 3-5天
-priority: P0
 layer: "Layer 4 (机器学习层)"
 ---
-# 组合约束管理模块蓝图
+﻿# 组合约束管理模块蓝图
 
 > **核心定位**: 组合约束管理模块蓝图的核心功能实现
 
@@ -40,7 +24,7 @@ layer: "Layer 4 (机器学习层)"
 
 ## 核心定位
 
-Portfolio Constraint Management Blueprint模块，负责portfolio constraint management blueprint相关功能
+组合约束管理模块，负责定义和管理投资组合约束条件，确保合规性和风险控制
 
 
 ## 1. 概述

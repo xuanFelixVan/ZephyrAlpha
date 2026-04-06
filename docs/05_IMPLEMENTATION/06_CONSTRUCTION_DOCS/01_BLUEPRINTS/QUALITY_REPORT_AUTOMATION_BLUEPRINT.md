@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: QUALITY_REPORT_AUTOMATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: jinja2, weasyprint, plotly
-estimated_effort: 1周
-priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-# 质量报告自动化蓝图
+﻿# 质量报告自动化蓝图
 
 > **核心定位**: 质量报告自动化蓝图的核心功能实现
 
@@ -40,7 +23,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Quality Report Automation Blueprint模块，负责quality report automation blueprint相关功能
+质量报告自动化模块，负责自动生成系统和数据质量报告，支持治理决策
 
 
 ## 一、设计背景与目标

@@ -9,33 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: TAIL_RISK_HEDGING_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 4 (机器学习层)"
-index: TAIL_RISK_HEDGING_001
-estimated_hours: 60h
-estimated_effort: 1.5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy
-priority: P1
 layer: "Layer 4 (机器学习层)"
 ---
-# 概述
+﻿# 概述
 
 > **索引**: `TAIL_RISK_BLUEPRINT_001`
 > **开发时?*: 60h
@@ -44,7 +20,7 @@ layer: "Layer 4 (机器学习层)"
 
 ## 核心定位
 
-Tail Risk Hedging Blueprint模块，负责tail risk hedging blueprint相关功能
+尾部风险对冲模块，负责购买尾部风险保护，如期权、VIX期货等
 
 
 ## 1. 概述

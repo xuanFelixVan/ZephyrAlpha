@@ -1,26 +1,14 @@
----
-module_id: LAYER_032
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 审计团队
-standard_type: 专业量化机构报告
-applicable_scope: 全系统
-compliance_level: 专业标准
----
-
 # 定期Layer归属检查报告
 
-> **检查时间**: 2026-04-07 01:49:37
+> **检查时间**: 2026-04-07 01:55:37
 > **检查范围**: 全系统蓝图文件
 
 ## 检查统计
 
 | 指标 | 数值 |
 |------|------|
-| 总蓝图数 | 366 |
-| 有Layer归属 | 274 |
+| 总蓝图数 | 367 |
+| 有Layer归属 | 275 |
 | 缺少Layer归属 | 92 |
 | Layer覆盖率 | 74.9% |
 
@@ -38,7 +26,7 @@ compliance_level: 专业标准
 | Layer 7 | 9 |
 | Layer 8 | 41 |
 | Layer 9 | 6 |
-| Layer 10 | 23 |
+| Layer 10 | 24 |
 | Layer 11 | 15 |
 
 ## 缺少Layer归属的文档

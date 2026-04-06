@@ -8,26 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: Riskfolio-Lib, 自研流动性评分
-estimated_effort: 1周
 layer: "Layer 4 (机器学习层)"
 ---
-# 流动性约束优化蓝图
+﻿# 流动性约束优化蓝图
 
 > **核心定位**: 流动性约束优化蓝图的核心功能实现
 
@@ -42,7 +25,7 @@ layer: "Layer 4 (机器学习层)"
 
 ## 核心定位
 
-Liquidity Constrained Optimization Blueprint模块，负责liquidity constrained optimization blueprint相关功能
+流动性约束优化模块，负责在流动性约束下优化投资组合
 
 
 ## 1. 模块概述

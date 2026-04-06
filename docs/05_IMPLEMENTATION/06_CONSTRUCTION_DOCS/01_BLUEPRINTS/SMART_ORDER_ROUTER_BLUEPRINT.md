@@ -9,35 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: SMART_ORDER_ROUTER_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-layer: "Layer 6 (组合优化层)"
-standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 5 - 策略执行层
-compliance_level: 专业标准
-reference_models:
-- Citadel Smart Order Router
-- Two Sigma Order Routing
-- Jump Trading SOR
-related_documents:
-- ARCHITECTURE.md
-- STRATEGY_EXECUTION_LAYER_BLUEPRINT.md
-- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-opensource_project: 自研简化版
-open_source_dependency: pandas, numpy
-estimated_effort: 3周
-priority: P2
 layer: "Layer 6 (组合优化层)"
 ---
-# 智能订单路由器蓝图
+﻿# 智能订单路由器蓝图
 
 > **核心定位**: 智能订单路由器蓝图的核心功能实现
 
@@ -53,7 +27,7 @@ layer: "Layer 6 (组合优化层)"
 
 ### 核心定位
 
-Smart Order Router Blueprint模块，负责smart order router blueprint相关功能
+智能订单路由器，负责将大额订单拆分并路由至最优交易场所
 
 
 ### 个人使用价值

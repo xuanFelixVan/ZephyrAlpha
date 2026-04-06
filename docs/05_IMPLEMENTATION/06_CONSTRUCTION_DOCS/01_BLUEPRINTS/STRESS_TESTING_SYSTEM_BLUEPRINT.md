@@ -10,34 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: STRESS_TESTING_SYSTEM_001
-version: 1.0.2
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
 layer: "Layer 6 (组合优化层)"
-index: STRESS_TESTING_SYSTEM_001
-estimated_hours: 80h
-estimated_effort: 2周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 ---
-> **索引**: `STRESS_TEST_001`
+﻿> **索引**: `STRESS_TEST_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 极端市场情景下的风险暴露，提供应急预警
 > **个人开发可行性**: 完全可行
@@ -47,7 +22,7 @@ priority: P0
 
 ## 核心定位
 
-Stress Testing System Blueprint模块，负责stress testing system blueprint相关功能
+压力测试系统，负责模拟极端市场情景，评估投资组合的抗压能力
 
 
 ## 1. 模块概述

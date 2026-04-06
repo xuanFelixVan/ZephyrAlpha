@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, skfolio, deepfolio, cvxpy
-estimated_effort: 5-7天
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 组合优化引擎集成模块蓝图
+﻿# 组合优化引擎集成模块蓝图
 
 > **核心定位**: 组合优化引擎集成模块蓝图的核心功能实现
 
@@ -40,7 +24,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Portfolio Optimizer Integration Blueprint模块，负责portfolio optimizer integration blueprint相关功能
+组合优化器集成模块，负责集成多种优化算法（凸优化、遗传算法等），提供统一接口
 
 
 ## 1. 概述

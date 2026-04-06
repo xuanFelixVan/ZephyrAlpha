@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: ALTERNATIVE_DATA_INTEGRATION_001
-version: 1.0.1
-status: Active
-created_date: 2026-04-02
-last_updated: '2026-04-06'
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alpha因子层 - 另类数据源集成
-compliance_level: 专业标准
-parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
-implementation_status: 规划阶段
-open_source_dependency: pandas, numpy, requests
-estimated_effort: 8周
-priority: P0
 layer: "Layer 1 (数据源层)"
 ---
-# 另类数据源集成项目蓝?
+﻿# 另类数据源集成项目蓝?
 
 > **核心定位**: 另类数据源集成项目蓝?的核心功能实现
 
@@ -40,7 +24,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-Alternative Data Integration Blueprint模块，负责alternative data integration blueprint相关功能
+另类数据集成模块，负责整合非传统数据源（如社交媒体、卫星图像、新闻舆情等），提供独特的投资信号
 
 
 ## 📋 项目执行摘要

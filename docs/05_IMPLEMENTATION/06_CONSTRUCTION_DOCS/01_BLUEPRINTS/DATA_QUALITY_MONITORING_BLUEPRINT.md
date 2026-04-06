@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: DATA_QUALITY_MONITORING_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统数据质量保障
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
-layer: "Layer 1 (数据源层)"
-estimated_effort: 2周
-open_source_dependency: Great Expectations, Apache Griffin, Deequ
 layer: "Layer 1 (数据源层)"
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -40,7 +23,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-Data Quality Monitoring Blueprint模块，负责data quality monitoring blueprint相关功能
+数据质量监控系统，负责实时检测数据异常、缺失、延迟等问题，确保数据质量符合交易要求
 
 
 ## 📋 执行摘要

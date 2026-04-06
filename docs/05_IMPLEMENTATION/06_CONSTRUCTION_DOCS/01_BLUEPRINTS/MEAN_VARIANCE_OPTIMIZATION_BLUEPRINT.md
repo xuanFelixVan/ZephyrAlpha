@@ -8,27 +8,13 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: MEAN_VARIANCE_OPTIMIZATION_BLU_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
 layer: "Layer 6 (组合优化层)"
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
 ---
-# Mean Variance Optimization
+﻿# Mean Variance Optimization
 
 ## 核心定位
 
-Mean Variance Optimization Blueprint模块，负责mean variance optimization blueprint相关功能
+均值方差优化器，负责基于预期收益和风险协方差矩阵，求解最优投资组合权重
 
 
 ## 1. 模块概述

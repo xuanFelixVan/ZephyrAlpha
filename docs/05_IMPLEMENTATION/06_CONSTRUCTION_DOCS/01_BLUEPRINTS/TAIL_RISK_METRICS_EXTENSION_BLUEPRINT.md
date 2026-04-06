@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: TAIL_RISK_METRICS_EXTENSION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: Riskfolio-Lib, scipy
-estimated_effort: 1周
 layer: "Layer 4 (机器学习层)"
 ---
-# 尾部风险度量扩展蓝图
+﻿# 尾部风险度量扩展蓝图
 
 > **核心定位**: 尾部风险度量扩展蓝图的核心功能实现
 
@@ -42,7 +26,7 @@ layer: "Layer 4 (机器学习层)"
 
 ## 核心定位
 
-Tail Risk Metrics Extension Blueprint模块，负责tail risk metrics extension blueprint相关功能
+尾部风险度量扩展模块，负责计算VaR、CVaR等尾部风险指标
 
 
 ## 1. 模块概述

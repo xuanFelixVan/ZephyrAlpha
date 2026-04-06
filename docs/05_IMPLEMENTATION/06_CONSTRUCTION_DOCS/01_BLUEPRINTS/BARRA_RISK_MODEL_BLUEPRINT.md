@@ -10,35 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: BARRA_RISK_MODEL_001
-version: 1.0.3
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 7 (风险管理层)"
-index: BARRA_RISK_MODEL_001
-estimated_hours: 100h
-estimated_effort: 2.5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 layer: "Layer 7 (风险管理层)"
 ---
-> **索引**: `BARRA_RISK_001`
+﻿> **索引**: `BARRA_RISK_001`
 > **开发时长**: 100h（约2.5周）
 > **核心定位**: 多因子风险模型，实现风险分解、因子暴露度量、风险预算
 > **对标机构**: 桥水基金（Bridgewater Associates）
@@ -49,7 +23,7 @@ layer: "Layer 7 (风险管理层)"
 
 ## 核心定位
 
-Barra Risk Model Blueprint模块，负责barra risk model blueprint相关功能
+Barra风险模型，负责实施多因子风险模型，支持风险分解和对冲
 
 
 ## 1. 概述

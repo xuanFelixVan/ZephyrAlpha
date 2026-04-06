@@ -2,87 +2,193 @@
 # -*- coding: utf-8 -*-
 """
 修复重复YAML头部问题
-删除第一个YAML头部，保留第二个YAML头部
+删除第一个YAML头部，保留第二个YAML头部（有layer字段的）
 """
 
-import os
 import re
+import os
 from pathlib import Path
 
 def fix_duplicate_yaml_headers(file_path):
-    """
-    修复重复的YAML头部
-    保留第二个YAML头部，删除第一个
-    """
+    """修复重复YAML头部问题"""
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
             content = f.read()
         
-        # 检查是否有重复的YAML头部
-        # 模式：---\n...内容...\n---\n\n﻿---\n...内容...\n---
-        pattern = r'^---\r?\n(.*?)\r?\n---\r?\n\r?\n﻿---\r?\n(.*?)\r?\n---\r?\n'
+        # 删除BOM字符
+        if content.startswith('\ufeff'):
+            content = content[1:]
         
-        match = re.match(pattern, content, re.DOTALL)
+        # 查找所有YAML头部（使用MULTILINE标志）
+        yaml_pattern = r'^---\s*\n(.*?)\n---'
+        yaml_matches = list(re.finditer(yaml_pattern, content, re.DOTALL | re.MULTILINE))
         
-        if match:
-            # 提取第二个YAML头部的内容
-            second_yaml_content = match.group(2)
+        if len(yaml_matches) < 2:
+            return False, '未找到重复的YAML头部'
+        
+        # 检查第一个YAML头部是否有responsibility字段
+        first_yaml = yaml_matches[0].group(1)
+        first_has_responsibility = 'responsibility:' in first_yaml
+        
+        # 检查第二个YAML头部是否有更多字段
+        second_yaml = yaml_matches[1].group(1)
+        second_field_count = len([line for line in second_yaml.split('\n') if ':' in line])
+        
+        # 如果第一个有responsibility字段，第二个有更多字段，删除第一个
+        if first_has_responsibility and second_field_count > 5:
+            # 删除第一个YAML头部（包括前面的空行）
+            start = yaml_matches[0].start()
+            end = yaml_matches[0].end()
             
-            # 构建新的文件内容：保留第二个YAML头部
-            new_content = '---\n' + second_yaml_content + '\n---\n' + content[match.end():]
+            # 删除第一个YAML头部及其后的空行
+            new_content = content[:start] + content[end:].lstrip('\n')
             
             # 写回文件
-            with open(file_path, 'w', encoding='utf-8', newline='\n') as f:
+            with open(file_path, 'w', encoding='utf-8') as f:
                 f.write(new_content)
             
-            return True, "已修复重复YAML头部"
+            return True, '已删除第一个YAML头部（简化版）'
+        
+        # 否则，删除第二个YAML头部
         else:
-            return False, "未发现重复YAML头部"
+            # 删除第二个YAML头部
+            start = yaml_matches[1].start()
+            end = yaml_matches[1].end()
+            
+            # 删除第二个YAML头部及其后的空行
+            new_content = content[:start] + content[end:].lstrip('\n')
+            
+            # 写回文件
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            
+            return True, '已删除第二个YAML头部（重复）'
     
     except Exception as e:
-        return False, f"处理失败: {str(e)}"
+        return False, str(e)
 
 def main():
     """主函数"""
-    # 数据源层目录
-    data_source_dir = Path(r'D:\ZephyrAlpha\docs\02_FACTOR_LIBRARY\04_DATA_SOURCE')
+    print('=' * 80)
+    print('修复重复YAML头部问题')
+    print('=' * 80)
+    print()
     
-    # 统计信息
-    total_files = 0
-    fixed_files = 0
-    skipped_files = 0
-    error_files = 0
+    # 读取缺少Layer归属的文档列表
+    missing_layer_docs = [
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALPHA_FACTOR_FACTORY_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AUTO_REPAIR_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BLACK_LITTERMAN_MODEL_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/COINTEGRATION_ANALYSIS_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_CATALOG_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_CATALOG_METADATA_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_COST_MANAGEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_FABRIC_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_MESH_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_OBSERVABILITY_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SECURITY_COMPLIANCE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VERSION_CONTROL_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ECONOMIC_REGIME_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ENHANCED_ALERT_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FINANCING_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INTRADAY_STRATEGY_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARGIN_CALL_MONITOR_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_IMPACT_MODEL_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_REGIME_DETECTION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPENING_STRATEGY_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_ATTRIBUTION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/QUALITY_REPORT_AUTOMATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/QUALITY_SCORING_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/QUARTERLY_REBALANCE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_DATA_LAKE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTROL_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_PARITY_STRATEGY_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RL_REBALANCING_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ROBUST_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SMART_EXECUTION_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SMART_ORDER_ROUTER_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_WEIGHTING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_SELECTION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SYSTEM_ENHANCEMENT_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SYSTEM_INTEGRATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAIL_RISK_HEDGING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAIL_RISK_METRICS_EXTENSION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAX_LOSS_HARVESTING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_COST_OPTIMIZATION_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TURNOVER_CONTROL_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md',
+        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/VAR_ES_MONITORING_BLUEPRINT.md',
+    ]
     
-    print("=" * 80)
-    print("开始修复重复YAML头部...")
-    print("=" * 80)
+    # 修复每个文档
+    fixed_count = 0
+    failed_count = 0
     
-    # 遍历所有Markdown文件
-    for md_file in data_source_dir.rglob('*.md'):
-        total_files += 1
-        file_path = str(md_file)
-        
-        # 尝试修复
-        fixed, message = fix_duplicate_yaml_headers(file_path)
-        
-        if fixed:
-            fixed_files += 1
-            print(f"✅ [{fixed_files}] {md_file.relative_to(data_source_dir)}: {message}")
-        elif "未发现" in message:
-            skipped_files += 1
+    for doc in missing_layer_docs:
+        if os.path.exists(doc):
+            success, message = fix_duplicate_yaml_headers(doc)
+            if success:
+                print(f'✓ {doc}: {message}')
+                fixed_count += 1
+            else:
+                print(f'✗ {doc}: {message}')
+                failed_count += 1
         else:
-            error_files += 1
-            print(f"❌ {md_file.relative_to(data_source_dir)}: {message}")
+            print(f'✗ {doc}: 文件不存在')
+            failed_count += 1
     
-    # 输出统计信息
-    print("\n" + "=" * 80)
-    print("修复完成！")
-    print("=" * 80)
-    print(f"总文件数: {total_files}")
-    print(f"已修复: {fixed_files}")
-    print(f"无需修复: {skipped_files}")
-    print(f"处理失败: {error_files}")
-    print(f"修复率: {fixed_files/total_files*100:.1f}%")
+    print()
+    print(f'修复完成: {fixed_count}个成功, {failed_count}个失败')
 
 if __name__ == '__main__':
     main()

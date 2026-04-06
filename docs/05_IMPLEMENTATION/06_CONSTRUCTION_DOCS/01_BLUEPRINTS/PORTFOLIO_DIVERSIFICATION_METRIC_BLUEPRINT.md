@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 风险预算 (Layer 11)
 
----
-﻿---
-module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: 自研, numpy, scipy
-estimated_effort: 1周
 layer: "Layer 6 (组合优化层)"
 ---
-# 组合分散化度量蓝图
+﻿# 组合分散化度量蓝图
 
 > **核心定位**: 组合分散化度量蓝图的核心功能实现
 
@@ -42,7 +26,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Portfolio Diversification Metric Blueprint模块，负责portfolio diversification metric blueprint相关功能
+组合分散化度量模块，负责评估投资组合的分散化程度，优化资产配置
 
 
 ## 1. 模块概述

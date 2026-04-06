@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: QUARTERLY_REBALANCE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-07
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 组合优化层季度调仓
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
-layer: "Layer 6 (组合优化层)"
-estimated_effort: 2周
-open_source_dependency: pandas, numpy, scipy, cvxpy
 layer: "Layer 6 (组合优化层)"
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -40,7 +23,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Quarterly Rebalance Blueprint模块，负责quarterly rebalance blueprint相关功能
+季度再平衡模块，负责实施季度投资组合再平衡，考虑交易成本和税收影响
 
 
 ## 📋 执行摘要

@@ -9,32 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: MARKET_IMPACT_MODEL_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
 layer: "Layer 6 (组合优化层)"
-index: MARKET_IMPACT_MODEL_BLUEPRINT_001
-estimated_hours: 60h
-estimated_effort: 1.5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 个人开发者
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 ---
-# 模块概述
+﻿# 模块概述
 
 > **索引**: `MARKET_IMPACT_BLUEPRINT_001`
 > **开发时?*: 60h
@@ -44,7 +21,7 @@ priority: P0
 
 ## 核心定位
 
-Market Impact Model Blueprint模块，负责market impact model blueprint相关功能
+市场冲击模型，负责预测交易对市场价格的影响，优化交易规模和时机选择
 
 
 ## 1. 模块概述

@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 风险预算 (Layer 11)
 
----
-﻿---
-module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
-version: 1.0.2
-status: Active
-created_date: 2026-04-02
-last_updated: '2026-04-07'
-owner: 首席技术评审官
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 7 AI报告层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: None
-estimated_effort: 1周
-priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-# Layer 7 AI报告?- 模块职责边界定义
+﻿# Layer 7 AI报告?- 模块职责边界定义
 
 > **核心定位**: Layer 7 AI报告?- 模块职责边界定义的核心功能实现
 
@@ -42,7 +25,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Module Responsibility Boundaries Blueprint模块，负责module responsibility boundaries blueprint相关功能
+模块职责边界定义，负责明确各模块的职责范围和接口规范
 
 
 ## 一、文档目?

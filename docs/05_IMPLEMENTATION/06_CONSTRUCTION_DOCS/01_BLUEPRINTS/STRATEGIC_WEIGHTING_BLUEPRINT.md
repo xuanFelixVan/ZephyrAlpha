@@ -11,25 +11,9 @@ responsibility:
   - 市场状态识别 (Layer 4)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: STRATEGIC_WEIGHTING_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 宏观配置层战略资产配置
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
 layer: "Layer 6 (组合优化层)"
-estimated_effort: 2.5周
-open_source_dependency: cvxpy, pandas, numpy, scipy, PyPortfolioOpt
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -41,7 +25,7 @@ open_source_dependency: cvxpy, pandas, numpy, scipy, PyPortfolioOpt
 
 ## 核心定位
 
-Strategic Weighting Blueprint模块，负责strategic weighting blueprint相关功能
+战略权重配置模块，负责确定各类资产的长期战略权重
 
 
 ## 📋 执行摘要

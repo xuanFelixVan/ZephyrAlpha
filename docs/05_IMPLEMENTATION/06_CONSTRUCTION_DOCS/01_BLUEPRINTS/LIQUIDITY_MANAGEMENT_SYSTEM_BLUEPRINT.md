@@ -9,32 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
 layer: "Layer 6 (组合优化层)"
-index: LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT_001
-estimated_hours: 80h
-estimated_effort: 2周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 个人开发者
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: pandas, numpy, scipy
-priority: P1
 ---
-# 模块概述
+﻿# 模块概述
 
 > **开发时?*: 80h
 > **核心定位**: 监控资金流动性，预测资金需求，优化资金配置，实现桥水模式的流动性管理能?
@@ -42,7 +19,7 @@ priority: P1
 
 ## 核心定位
 
-Liquidity Management System Blueprint模块，负责liquidity management system blueprint相关功能
+流动性管理系统，负责监控市场流动性状况，优化交易执行，管理流动性风险
 
 
 ## 1. 模块概述

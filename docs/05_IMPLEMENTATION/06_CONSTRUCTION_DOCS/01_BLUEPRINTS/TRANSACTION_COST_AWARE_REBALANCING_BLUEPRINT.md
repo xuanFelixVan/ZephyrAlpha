@@ -8,26 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: TRANSACTION_COST_AWARE_REBALANCING_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
-estimated_effort: 5-7天
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 交易成本感知再平衡蓝图
+﻿# 交易成本感知再平衡蓝图
 
 > **核心定位**: 交易成本感知再平衡蓝图的核心功能实现
 
@@ -39,7 +22,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Transaction Cost Aware Rebalancing Blueprint模块，负责transaction cost aware rebalancing blueprint相关功能
+交易成本感知再平衡模块，负责在再平衡决策中考虑交易成本
 
 
 ## 1. 概述

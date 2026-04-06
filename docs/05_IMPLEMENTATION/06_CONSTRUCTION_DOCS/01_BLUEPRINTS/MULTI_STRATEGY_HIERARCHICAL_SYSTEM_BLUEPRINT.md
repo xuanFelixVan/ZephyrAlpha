@@ -9,33 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 风险预算 (Layer 5)
 
----
-﻿---
-module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
-layer: "Layer 3 (策略层)"
-index: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-estimated_hours: 160h
-estimated_effort: 4周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy, cvxpy
-priority: P0
 layer: "Layer 3 (策略层)"
 ---
-# 模块概述
+﻿# 模块概述
 
 > **开发时?*: 160h
 > **核心定位**: 实现策略分层权重分配、信号融合机制、策略协同优化，构建多策略协同的专业量化系统
@@ -44,7 +20,7 @@ layer: "Layer 3 (策略层)"
 
 ## 核心定位
 
-Multi Strategy Hierarchical System Blueprint模块，负责multi strategy hierarchical system blueprint相关功能
+多策略分层系统，负责协调和管理多个交易策略的信号生成、风险分配和执行
 
 
 ## 1. 模块概述

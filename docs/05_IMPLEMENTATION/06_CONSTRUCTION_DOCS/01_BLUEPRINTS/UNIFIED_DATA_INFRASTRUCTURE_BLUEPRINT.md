@@ -9,26 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: UNIFIED_DATA_INFRASTRUCTURE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统数据基础设施
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
-layer: "Layer 1 (数据源层)"
-estimated_effort: 3周
-open_source_dependency: Apache Spark, Delta Lake, Apache Flink, InfluxDB, QuestDB
 layer: "Layer 1 (数据源层)"
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -40,7 +23,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-Unified Data Infrastructure Blueprint模块，负责unified data infrastructure blueprint相关功能
+统一数据基础设施，负责建立统一的数据平台，支持数据共享和治理
 
 
 ## 📋 执行摘要

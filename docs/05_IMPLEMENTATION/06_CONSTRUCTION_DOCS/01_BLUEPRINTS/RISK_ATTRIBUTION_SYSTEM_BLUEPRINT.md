@@ -10,35 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: RISK_ATTRIBUTION_SYSTEM_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 7 (风险管理层)"
-index: RISK_ATTRIBUTION_SYSTEM_001
-estimated_hours: 80h
-estimated_effort: 2周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-personal_development: true
-ai_maintenance: true
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 layer: "Layer 7 (风险管理层)"
 ---
-> **索引**: `RISK_ATTRIBUTION_001`
+﻿> **索引**: `RISK_ATTRIBUTION_001`
 > **开发时?*: 80h（约2周）
 > **核心定位**: 多维度风险分解与归因分析，识别风险驱动因?> **对标机构**: Two Sigma
 > **个人开发可?*: ⭐⭐⭐⭐ 完全可行
@@ -47,7 +21,7 @@ layer: "Layer 7 (风险管理层)"
 
 ## 核心定位
 
-Risk Attribution System Blueprint模块，负责risk attribution system blueprint相关功能
+风险归因系统，负责分解投资组合风险来源，识别主要风险因子
 
 
 ## 1. 概述

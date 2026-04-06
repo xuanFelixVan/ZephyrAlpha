@@ -9,24 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6组合优化层 | 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-estimated_effort: 1周
 layer: "Layer 6 (组合优化层)"
 ---
-# 组合优化诊断蓝图
+﻿# 组合优化诊断蓝图
 
 > **模块ID**: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
 > **创建日期**: 2026-04-07
@@ -36,7 +21,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Portfolio Optimization Diagnostics Blueprint模块，负责portfolio optimization diagnostics blueprint相关功能
+组合优化诊断模块，负责诊断优化问题的数值稳定性、约束冲突等
 
 
 ## 1. 模块概述

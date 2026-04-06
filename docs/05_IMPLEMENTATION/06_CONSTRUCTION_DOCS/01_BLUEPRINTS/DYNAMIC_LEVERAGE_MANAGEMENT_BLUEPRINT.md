@@ -9,32 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 风险预算 (Layer 11)
 
----
-﻿---
-module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
 layer: "Layer 6 (组合优化层)"
-index: DYNAMIC_LEVERAGE_MANAGEMENT_001
-estimated_hours: 140h
-estimated_effort: 3-4周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy
-priority: P0
 ---
-# 模块概述
+﻿# 模块概述
 
 > **开发时?*: 140h
 > **核心定位**: 基于市场波动率和风险预算动态调整杠杆水平，实现风险调整后收益最大化
@@ -43,7 +20,7 @@ priority: P0
 
 ## 核心定位
 
-Dynamic Leverage Management Blueprint模块，负责dynamic leverage management blueprint相关功能
+动态杠杆管理模块，负责根据市场波动和风险预算动态调整杠杆水平，优化资金使用效率
 
 
 ## 1. 模块概述

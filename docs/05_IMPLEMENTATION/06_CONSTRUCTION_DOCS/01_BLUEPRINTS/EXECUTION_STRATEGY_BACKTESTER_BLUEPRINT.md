@@ -9,35 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: EXECUTION_STRATEGY_BACKTESTER_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-layer: "Layer 3 (策略层)"
-standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 5 - 策略执行层
-compliance_level: 专业标准
-reference_models:
-- QuantConnect Lean
-- Backtrader
-- VeighNa Framework
-related_documents:
-- ARCHITECTURE.md
-- STRATEGY_EXECUTION_LAYER_BLUEPRINT.md
-- SMART_EXECUTION_ENGINE_BLUEPRINT.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-opensource_project: Backtrader + VeighNa
-open_source_dependency: backtrader, vnpy, pandas, numpy, matplotlib
-estimated_effort: 4周
-priority: P0
 layer: "Layer 3 (策略层)"
 ---
-# 执行策略回测器蓝图
+﻿# 执行策略回测器蓝图
 
 > **核心定位**: 执行策略回测器蓝图的核心功能实现
 
@@ -53,7 +27,7 @@ layer: "Layer 3 (策略层)"
 
 ### 核心定位
 
-Execution Strategy Backtester Blueprint模块，负责execution strategy backtester blueprint相关功能
+执行策略回测器，负责模拟和评估交易执行策略的效果，优化执行算法参数
 
 
 ### 个人使用价值

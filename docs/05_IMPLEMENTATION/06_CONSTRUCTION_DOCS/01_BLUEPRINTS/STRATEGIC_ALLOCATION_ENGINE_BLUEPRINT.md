@@ -10,34 +10,9 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: STRATEGIC_ALLOCATION_ENGINE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-layer: "Layer 6 (组合优化层)"
-standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 11 - 战略决策层
-compliance_level: 专业标准
-reference_models:
-- Bridgewater Associates
-- AQR Capital Management
-- BlackRock
-related_documents:
-- ARCHITECTURE.md
-- PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-opensource_project: PyPortfolioOpt
-open_source_dependency: 待补充
-estimated_effort: 待评估
-priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-# 战略配置引擎蓝图
+﻿# 战略配置引擎蓝图
 
 > **核心定位**: 战略配置引擎蓝图的核心功能实现
 
@@ -53,7 +28,7 @@ layer: "Layer 6 (组合优化层)"
 
 ### 核心定位
 
-Strategic Allocation Engine Blueprint模块，负责strategic allocation engine blueprint相关功能
+战略配置引擎，负责长期资产配置决策，考虑投资目标、风险偏好和市场环境
 
 
 ### 个人使用价值

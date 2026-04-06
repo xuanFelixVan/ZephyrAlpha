@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 市场状态识别 (Layer 4)
 
----
-﻿---
-module_id: ALPHA_FACTOR_FACTORY_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 中观策略层因子生产
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
 layer: "Layer 2 (Alpha因子层)"
-estimated_effort: 3周
-open_source_dependency: alphalens, pandas, numpy, scipy, scikit-learn
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -39,7 +23,7 @@ open_source_dependency: alphalens, pandas, numpy, scipy, scikit-learn
 
 ## 核心定位
 
-Alpha Factor Factory Blueprint模块，负责alpha factor factory blueprint相关功能
+Alpha因子工厂，负责系统化生成、验证和管理Alpha因子，包括因子挖掘、因子测试、因子组合和因子库管理
 
 
 ## 📋 执行摘要

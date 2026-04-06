@@ -9,35 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: ALGORITHMIC_TRADING_OPTIMIZER_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-layer: "Layer 8 (执行层)"
-standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 5 - 策略执行层
-compliance_level: 专业标准
-reference_models:
-- Citadel Algorithmic Trading
-- Two Sigma Execution Optimization
-- Jump Trading Algorithms
-related_documents:
-- ARCHITECTURE.md
-- STRATEGY_EXECUTION_LAYER_BLUEPRINT.md
-- SMART_EXECUTION_ENGINE_BLUEPRINT.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-opensource_project: VeighNa algo_trading
-open_source_dependency: vnpy, numpy, pandas, scipy
-estimated_effort: 4周
-priority: P1
 layer: "Layer 8 (执行层)"
 ---
-# 算法交易优化器蓝图
+﻿# 算法交易优化器蓝图
 
 > **核心定位**: 算法交易优化器蓝图的核心功能实现
 
@@ -53,7 +27,7 @@ layer: "Layer 8 (执行层)"
 
 ### 核心定位
 
-Algorithmic Trading Optimizer Blueprint模块，负责algorithmic trading optimizer blueprint相关功能
+算法交易优化器，负责优化算法交易策略参数，提升执行效率
 
 
 ### 个人使用价值

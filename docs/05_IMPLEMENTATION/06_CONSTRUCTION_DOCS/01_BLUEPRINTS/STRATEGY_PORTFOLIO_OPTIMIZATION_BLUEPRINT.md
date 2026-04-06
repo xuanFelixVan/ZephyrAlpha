@@ -10,25 +10,9 @@ responsibility:
   - 风险预算 (Layer 5)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
-estimated_effort: 5-7天
-priority: P0
 layer: "Layer 3 (策略层)"
 ---
-# 策略组合优化蓝图
+﻿# 策略组合优化蓝图
 
 > **核心定位**: 策略组合优化蓝图的核心功能实现
 
@@ -40,7 +24,7 @@ layer: "Layer 3 (策略层)"
 
 ## 核心定位
 
-Strategy Portfolio Optimization Blueprint模块，负责strategy portfolio optimization blueprint相关功能
+策略组合优化模块，负责优化多个策略的资金分配和风险预算
 
 
 ## 1. 概述

@@ -9,33 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: FINANCING_OPTIMIZATION_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-03
-layer: "Layer 6 (组合优化层)"
-index: FINANCING_OPTIMIZATION_001
-estimated_hours: 40h
-estimated_effort: 1周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy
-priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-# 概述
+﻿# 概述
 
 > **索引**: `FINANCING_OPTIMIZATION_001`
 > **开发时?*: 40h
@@ -44,7 +20,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Financing Optimization Blueprint模块，负责financing optimization blueprint相关功能
+融资优化模块，负责优化融资结构和成本，包括保证金管理、证券借贷、回购协议等
 
 
 ## 1. 概述

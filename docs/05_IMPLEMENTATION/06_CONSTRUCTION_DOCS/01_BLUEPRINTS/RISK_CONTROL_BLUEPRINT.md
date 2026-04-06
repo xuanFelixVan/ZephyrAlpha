@@ -8,26 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
-
-﻿---
-module_id: RISK_CONTROL_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: 微观执行层实时风控
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
 layer: "Layer 7 (风险管理层)"
-estimated_effort: 2.5周
-open_source_dependency: pandas, numpy, scipy, redis
 ---
-# 📋 执行摘要
+﻿# 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -39,7 +22,7 @@ open_source_dependency: pandas, numpy, scipy, redis
 
 ## 核心定位
 
-Risk Control Blueprint模块，负责risk control blueprint相关功能
+风险控制模块，负责实施风险限额管理、止损策略、风险预警等风险控制措施
 
 
 ## 📋 执行摘要

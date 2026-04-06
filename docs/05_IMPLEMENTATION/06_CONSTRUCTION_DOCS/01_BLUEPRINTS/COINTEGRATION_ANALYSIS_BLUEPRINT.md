@@ -9,25 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: COINTEGRATION_ANALYSIS_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: statsmodels
-estimated_effort: 2-3天
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 协整分析蓝图
+﻿# 协整分析蓝图
 
 > **核心定位**: 协整分析蓝图的核心功能实现
 
@@ -39,7 +23,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-协整分析模块，负责识别资产间的长期均衡关系
+协整分析模块，负责识别资产间的长期均衡关系，支持统计套利和配对交易策略
 
 
 ## 1. 概述

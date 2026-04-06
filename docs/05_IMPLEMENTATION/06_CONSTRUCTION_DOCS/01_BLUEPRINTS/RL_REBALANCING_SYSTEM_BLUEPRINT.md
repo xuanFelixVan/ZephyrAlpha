@@ -11,33 +11,9 @@ responsibility:
   - 市场状态识别 (Layer 4)
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: RL_REBALANCING_SYSTEM_001
-version: 1.0.1
-spec_version: 1.0
-status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
-layer: "Layer 6 (组合优化层)"
-index: RL_REBALANCING_SYSTEM_001
-estimated_hours: 200h
-estimated_effort: 5周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: stable-baselines3, gym, numpy, pandas
-priority: P1
 layer: "Layer 6 (组合优化层)"
 ---
-# 模块概述
+﻿# 模块概述
 
 > **索引**: `RL_REBALANCING_SYSTEM_001`
 > **开发时?*: 200h
@@ -47,7 +23,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-Rl Rebalancing System Blueprint模块，负责rl rebalancing system blueprint相关功能
+强化学习再平衡系统，负责利用强化学习算法优化再平衡决策
 
 
 ## 1. 模块概述

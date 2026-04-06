@@ -9,35 +9,9 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
----
-﻿---
-module_id: TRANSACTION_COST_ANALYSIS_ENGINE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席架构师
-layer: "Layer 6 (组合优化层)"
-standard_type: 专业量化机构级蓝图
-applicable_scope: Layer 5 - 策略执行层
-compliance_level: 专业标准
-reference_models:
-- Citadel Execution Services
-- Two Sigma Trading Systems
-- Jump Trading Execution
-related_documents:
-- ARCHITECTURE.md
-- STRATEGY_EXECUTION_LAYER_BLUEPRINT.md
-- SMART_EXECUTION_ENGINE_BLUEPRINT.md
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-opensource_project: tcapy
-open_source_dependency: tcapy, pandas, numpy, matplotlib
-estimated_effort: 3周
-priority: P0
 layer: "Layer 6 (组合优化层)"
 ---
-# 交易成本分析引擎蓝图
+﻿# 交易成本分析引擎蓝图
 
 > **核心定位**: 交易成本分析引擎蓝图的核心功能实现
 
@@ -53,7 +27,7 @@ layer: "Layer 6 (组合优化层)"
 
 ### 核心定位
 
-Transaction Cost Analysis Engine Blueprint模块，负责transaction cost analysis engine blueprint相关功能
+交易成本分析引擎，负责分析交易成本的构成，优化执行策略
 
 
 ### 个人使用价值
