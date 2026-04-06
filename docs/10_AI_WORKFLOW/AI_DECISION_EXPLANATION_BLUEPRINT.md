@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+layer: Layer 11 (战略决策层)
 standard_type: 专业机构级蓝图
 applicable_scope: AI决策解释系统
 compliance_level: 专业标准

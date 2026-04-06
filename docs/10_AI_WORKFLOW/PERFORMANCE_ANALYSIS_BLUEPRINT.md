@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构师
+layer: Layer 6 (组合优化层)
 standard_type: 专业机构级蓝图
 applicable_scope: 系统性能分析与优
 compliance_level: 专业标准

@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+layer: Layer 9 (治理层)
 standard_type: 专业机构级蓝图
 applicable_scope: 合规监控模块实现
 compliance_level: 专业标准

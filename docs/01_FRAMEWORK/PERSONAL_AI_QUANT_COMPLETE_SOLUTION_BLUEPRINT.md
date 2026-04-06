@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构级方案
 applicable_scope: 全系统
 compliance_level: 顶级专业标准
