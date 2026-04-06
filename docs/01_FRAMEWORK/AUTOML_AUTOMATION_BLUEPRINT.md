@@ -14,6 +14,9 @@ related_documents:
   - MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
   - HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md
   - NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md
+responsibility:
+  - 机器学习
+  - 系统架构
 responsibility_boundary: |
   本文档负责AutoML自动化机器学习，包括：
   - 自动特征工程
