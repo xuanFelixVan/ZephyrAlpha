@@ -49,7 +49,6 @@ implementation_status: 蓝图完成
 | [03_CLEANING/](03_CLEANING/) | 数据清洗 | Active |
 | [07_DATA_PIPELINE/](07_DATA_PIPELINE/) | 数据管道 | Active |
 | [QUALITY_MANAGEMENT/](QUALITY_MANAGEMENT/) | 数据质量管理 | Active |
-| [DATA_SOURCE_LAYER_GAP_ANALYSIS.md](DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 数据源层架构缺失分析 | Active |
 | [DATA_LINEAGE_TRACKING/](DATA_LINEAGE_TRACKING/) | 数据血缘追踪系统 | Blueprint |
 | [DATA_VERSION_CONTROL/](DATA_VERSION_CONTROL/) | 数据版本控制系统 | Blueprint |
 | [DATA_MONITORING_ENHANCED/](DATA_MONITORING_ENHANCED/) | 数据监控系统（增强） | Blueprint |
@@ -87,7 +86,7 @@ implementation_status: 蓝图完成
 - [DATA_REQUIREMENTS.md](DATA_REQUIREMENTS.md) - 数据需求规格
 - [DATA_SOURCE_ADAPTERS.md](DATA_SOURCE_ADAPTERS.md) - 数据源适配器
 - [QUALITY_MANAGEMENT/](QUALITY_MANAGEMENT/) - 数据质量管理系统
-- [DATA_SOURCE_LAYER_GAP_ANALYSIS.md](DATA_SOURCE_LAYER_GAP_ANALYSIS.md) - 架构缺失分析与补充方案
+- [DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) - 架构完整性深度评估报告
 
 ### 增强模块（专业机构标准）
 - [DATA_LINEAGE_TRACKING/](DATA_LINEAGE_TRACKING/) - 数据血缘追踪（OpenLineage+Marquez）
