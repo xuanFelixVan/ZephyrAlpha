@@ -114,7 +114,7 @@ interface_contract: IFactorCalculator v1.0
 ### 3.2 ALPHA_FACTOR_FACTORY_001
 
 ```yaml
-module_id: ALPHA_FACTOR_FACTORY_001
+module_id: IMPL_MODULE_REGISTRY_ALPHA_REF_001
 name: Alpha因子工厂
 layer: Layer 2-4 - 中观策略�?status: Active
 version: 1.0.0

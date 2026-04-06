@@ -1,6 +1,6 @@
 ---
-module_id: PREP_CLEAN_001
-version: 1.0.0
+module_id: IMPL_DATA_CLEANER_TECH_SPEC_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
@@ -17,7 +17,7 @@ implementation_status: 进行?
 > 清风量化系统 v5.3 - DataCleaner数据清洗器模块详细技术设?
 > **模块ID**: `PREP_CLEAN_001`
 > **版本**: v1.0.0
-> **�?*: ?正式
+> **�?*: ?正式
 
 
 ## 1. 概述
@@ -27,9 +27,9 @@ implementation_status: 进行?
 - **技术痛?*: 
   - 多数据源格式不一致，需要统一标准?
   - 缺失值和异常值影响因子计算和模型训练
-  - 价格复权处理复杂，影响回测准�?
+  - 价格复权处理复杂，影响回测准�?
   - 数据质量缺乏有效评估机制
-- **预期�?*: 
+- **预期�?*: 
   - 提供高质量、标准化的数据输?
   - 降低上层模块的数据处理复杂度
   - 提升因子计算和模型训练的准确?
@@ -41,7 +41,7 @@ implementation_status: 进行?
 - **架构角色**: Layer 1核心模块，为上层分析提供干净、一致的数据输入
 
 ### 1.3 版本信息
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | �?| 变更说明 | �?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -306,7 +306,7 @@ class DataQuality:
     """数据质量"""
     completeness: float      # 完整?
     accuracy: float          # 准确?
-    consistency: float       # 一�?
+    consistency: float       # 一�?
     timeliness: float        # 及时?
     overall_score: float     # 综合评分
 ```
@@ -363,9 +363,9 @@ def detect_outliers(
     异常值检测算?
     
     算法原理:
-    1. iqr: 四分位距法，识别超出Q1-1.5*IQR和Q3+1.5*IQR�?
-    2. zscore: Z分数法，识别|Z|>threshold�?
-    3. mad: 中位数绝对偏差法，识别超出中位数±threshold*MAD�?
+    1. iqr: 四分位距法，识别超出Q1-1.5*IQR和Q3+1.5*IQR�?
+    2. zscore: Z分数法，识别|Z|>threshold�?
+    3. mad: 中位数绝对偏差法，识别超出中位数±threshold*MAD�?
     4. isolation_forest: 孤立森林算法
     
     复杂? O(n) n为数据点?
@@ -411,7 +411,7 @@ def evaluate_quality(
     算法原理:
     1. 完整?= (非缺失值数?/ 总数据量) * 100%
     2. 准确?= (合理值数?/ 总数据量) * 100%
-    3. 一�?= (一致数据数?/ 总数据量) * 100%
+    3. 一�?= (一致数据数?/ 总数据量) * 100%
     4. 及时?= (最新数据时?/ 当前时间) * 100%
     5. 综合评分 = Σ(weight_i * score_i)
     
@@ -425,7 +425,7 @@ def evaluate_quality(
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 技术选型 | 版本要求 | �?| 选择理由 |
+| 技术选型 | 版本要求 | �?| 选择理由 |
 |----------|----------|------|----------|
 | Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
 | pandas | >=1.3.0 | 数据处理 | 数据分析标准?|

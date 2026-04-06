@@ -1,6 +1,6 @@
 ---
-module_id: AI_PATTERN_RECOGNITION_ENGINE_001
-version: 1.0.0
+module_id: IMPL_AI_PATTERN_RECOGNITION_BP_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md

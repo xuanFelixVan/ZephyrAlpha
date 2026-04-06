@@ -49,6 +49,11 @@ implementation_status: 已完成
 | [03_CLEANING/](03_CLEANING/) | 数据清洗 | Active |
 | [07_DATA_PIPELINE/](07_DATA_PIPELINE/) | 数据管道 | Active |
 | [QUALITY_MANAGEMENT/](QUALITY_MANAGEMENT/) | 数据质量管理 | Active |
+| [DATA_SOURCE_LAYER_GAP_ANALYSIS.md](DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 数据源层架构缺失分析 | Active |
+| [DATA_LINEAGE_TRACKING/](DATA_LINEAGE_TRACKING/) | 数据血缘追踪系统 | Blueprint |
+| [DATA_VERSION_CONTROL/](DATA_VERSION_CONTROL/) | 数据版本控制系统 | Blueprint |
+| [DATA_MONITORING_ENHANCED/](DATA_MONITORING_ENHANCED/) | 数据监控系统（增强） | Blueprint |
+| [DATA_CATALOG/](DATA_CATALOG/) | 数据目录系统 | Blueprint |
 
 ## 📖 核心文档
 
@@ -63,6 +68,29 @@ implementation_status: 已完成
 - [DATA_REQUIREMENTS.md](DATA_REQUIREMENTS.md) - 数据需求规格
 - [DATA_SOURCE_ADAPTERS.md](DATA_SOURCE_ADAPTERS.md) - 数据源适配器
 - [QUALITY_MANAGEMENT/](QUALITY_MANAGEMENT/) - 数据质量管理系统
+- [DATA_SOURCE_LAYER_GAP_ANALYSIS.md](DATA_SOURCE_LAYER_GAP_ANALYSIS.md) - 架构缺失分析与补充方案
+
+### 增强模块（专业机构标准）
+- [DATA_LINEAGE_TRACKING/](DATA_LINEAGE_TRACKING/) - 数据血缘追踪（OpenLineage+Marquez）
+- [DATA_VERSION_CONTROL/](DATA_VERSION_CONTROL/) - 数据版本控制（DVC+Delta Lake）
+- [DATA_MONITORING_ENHANCED/](DATA_MONITORING_ENHANCED/) - 数据监控增强（Great Expectations）
+- [DATA_CATALOG/](DATA_CATALOG/) - 数据目录（DataHub）
+
+## 🔧 补充模块（开源方案）
+
+### P0级模块（立即实施）
+| 模块 | 开源方案 | 实施周期 |
+|------|----------|----------|
+| 数据血缘追踪 | OpenLineage + Marquez | 1周 |
+| 数据版本控制 | DVC + Delta Lake | 1周 |
+| 数据监控增强 | Great Expectations | 1周 |
+
+### P1级模块（短期实施）
+| 模块 | 开源方案 | 实施周期 |
+|------|----------|----------|
+| 数据目录系统 | DataHub | 2周 |
+| 数据API网关 | FastAPI + Redis | 1周 |
+| 数据备份恢复 | 自研 | 1周 |
 
 ---
 

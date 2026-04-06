@@ -36,6 +36,7 @@ implementation_status: 设计阶段
 | [研究与创新层蓝图](./BLUEPRINT.md) | Layer 9总体架构设计 | ⭐⭐⭐⭐⭐ |
 | [缺失模块补充设计](./MISSING_MODULES_SUPPLEMENT.md) | 特征存储、模型注册表、研究仪表板 | ⭐⭐⭐⭐⭐ |
 | [完整缺失模块补充方案v2.0](./COMPLETE_SUPPLEMENT_v2.md) | 数据版本控制、超参数优化、模型解释性、A/B测试等 | ⭐⭐⭐⭐⭐ |
+| [完整蓝图v3.0](./COMPLETE_BLUEPRINT_V3.md) | **完整专业级蓝图**，覆盖所有8大平台 | ⭐⭐⭐⭐⭐ |
 | [System_Manifest更新指南](./SYSTEM_MANIFEST_UPDATE_GUIDE.md) | System_Manifest.md索引更新说明 | ⭐⭐⭐⭐ |
 
 ### 子模块（规划中）
@@ -100,10 +101,10 @@ implementation_status: 设计阶段
 
 | 统计项 | 数量 |
 |--------|------|
-| 蓝图文档 | 4 |
+| 蓝图文档 | 5 |
 | 技术文档 | 0 |
 | 实施文档 | 0 |
-| **总计** | **4** |
+| **总计** | **5** |
 
 ---
 
