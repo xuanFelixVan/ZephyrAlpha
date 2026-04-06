@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_INTRADAY_STRATEGY_BP_001
+module_id: INTRADAY_STRATEGY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

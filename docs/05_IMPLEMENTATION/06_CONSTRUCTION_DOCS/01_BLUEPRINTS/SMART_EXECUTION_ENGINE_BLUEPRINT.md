@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_SMART_EXECUTION_BP_001
+module_id: SMART_EXECUTION_ENGINE_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

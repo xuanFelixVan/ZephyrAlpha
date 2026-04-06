@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_TAIL_RISK_HEDGE_BP_001
+module_id: TAIL_RISK_HEDGING_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

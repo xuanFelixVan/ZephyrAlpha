@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_STATISTICAL_ARBITRAGE_BP_001
+module_id: STATISTICAL_ARBITRAGE_MODULE_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

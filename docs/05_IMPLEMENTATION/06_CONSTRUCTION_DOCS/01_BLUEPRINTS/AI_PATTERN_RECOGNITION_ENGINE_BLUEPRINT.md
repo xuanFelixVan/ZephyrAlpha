@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_AI_PATTERN_RECOGNITION_BP_001
+module_id: AI_PATTERN_RECOGNITION_ENGINE_001
 version: 1.0.2
 spec_version: 1.0
 status: Active

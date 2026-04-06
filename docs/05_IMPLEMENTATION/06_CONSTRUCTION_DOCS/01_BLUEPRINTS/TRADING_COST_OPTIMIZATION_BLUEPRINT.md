@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_TRADING_COST_OPT_BP_001
+module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

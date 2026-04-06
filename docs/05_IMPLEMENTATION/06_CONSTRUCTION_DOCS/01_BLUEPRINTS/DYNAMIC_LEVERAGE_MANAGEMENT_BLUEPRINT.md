@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_DYNAMIC_LEVERAGE_BP_001
+module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

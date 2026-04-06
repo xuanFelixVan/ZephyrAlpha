@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_RL_REBALANCING_BP_001
+module_id: RL_REBALANCING_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

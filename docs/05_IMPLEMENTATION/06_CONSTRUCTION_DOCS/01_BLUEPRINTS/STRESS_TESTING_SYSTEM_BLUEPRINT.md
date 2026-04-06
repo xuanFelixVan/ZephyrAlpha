@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_STRESS_TESTING_BP_001
+module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.2
 spec_version: 1.0
 status: Active

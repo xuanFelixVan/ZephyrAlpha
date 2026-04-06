@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_ECONOMIC_REGIME_BP_002
+module_id: ECONOMIC_REGIME_ENGINE_002
 version: 2.0.2
 spec_version: 2.0
 status: Active

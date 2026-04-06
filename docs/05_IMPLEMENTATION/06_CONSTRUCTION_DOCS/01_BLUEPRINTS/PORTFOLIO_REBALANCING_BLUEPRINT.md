@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_PORTFOLIO_REBAL_BP_001
+module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

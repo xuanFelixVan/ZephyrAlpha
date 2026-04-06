@@ -126,7 +126,7 @@ parent_document: ../INDEX.md
 | 风险归因系统蓝图 | RISK_ATTRIBUTION_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) |
 | 压力测试系统蓝图 | STRESS_TESTING_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
 
-### 3.4 时间框架协调与多策略
+### 3.5 时间框架协调与多策略
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -136,21 +136,21 @@ parent_document: ../INDEX.md
 | 策略组合优化蓝图 | STRATEGY_PORTFOLIO_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) 🆕 |
 | 交易成本感知再平衡蓝图 | TRANSACTION_COST_AWARE_REBALANCING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) 🆕 |
 
-### 3.5 绩效评估与归因分析
+### 3.6 绩效评估与归因分析
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 组合绩效评估模块蓝图 | PORTFOLIO_PERFORMANCE_EVALUATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) 🆕 |
 | 组合归因分析模块蓝图 | PORTFOLIO_ATTRIBUTION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) 🆕 |
 
-### 3.6 约束管理与情景分析
+### 3.7 约束管理与情景分析
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 组合约束管理模块蓝图 | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md) 🆕 |
 | 组合情景分析模块蓝图 | PORTFOLIO_SCENARIO_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) 🆕 |
 
-### 3.7 优化引擎集成
+### 3.8 优化引擎集成
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -160,20 +160,12 @@ parent_document: ../INDEX.md
 
 ## 4. 风险控制层蓝图（Layer 7）
 
-### 4.1 风险模型与归因
-
-| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
-|----------|-----------|------|------|----------|----------|
-| Barra风险模型蓝图 | BARRA_RISK_MODEL_001 | v1.0.0 | Active | 2026-04-03 | [链接](./BARRA_RISK_MODEL_BLUEPRINT.md) |
-| 风险归因系统蓝图 | RISK_ATTRIBUTION_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) |
-
-### 4.2 风险对冲与压力测试
+### 4.1 风险对冲
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 实时风险对冲引擎蓝图 | REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) |
 | 尾部风险对冲蓝图 | TAIL_RISK_HEDGING_001 | v1.0.0 | Active | 2026-04-05 | [链接](./TAIL_RISK_HEDGING_BLUEPRINT.md) |
-| 压力测试系统蓝图 | STRESS_TESTING_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
 
 ---
 
@@ -256,11 +248,11 @@ parent_document: ../INDEX.md
 | 层级 | 文档数量 | Active | Archived | 占比 |
 |------|---------|--------|----------|------|
 | **数据预处理层（Layer 1）** | 19个 | 2个 | 17个 | 33.9% |
-| **组合优化层（Layer 6）** | 18个 | 18个 | 0个 | 32.1% |
-| **风险控制层（Layer 7）** | 5个 | 5个 | 0个 | 8.9% |
+| **组合优化层（Layer 6）** | 22个 | 22个 | 0个 | 39.3% |
+| **风险控制层（Layer 7）** | 2个 | 2个 | 0个 | 3.6% |
 | **执行层（Layer 5）** | 5个 | 5个 | 0个 | 8.9% |
 | **AI增强层（Layer 9）** | 2个 | 2个 | 0个 | 3.6% |
-| **其他** | 7个 | 7个 | 0个 | 12.5% |
+| **其他** | 6个 | 6个 | 0个 | 10.7% |
 | **总计** | **56个** | **39个** | **17个** | **100%** |
 
 ### 8.2 按状态统计

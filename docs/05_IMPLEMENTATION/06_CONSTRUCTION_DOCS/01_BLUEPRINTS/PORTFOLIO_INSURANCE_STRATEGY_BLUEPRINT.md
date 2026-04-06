@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_PORTFOLIO_INSURANCE_BP_001
+module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

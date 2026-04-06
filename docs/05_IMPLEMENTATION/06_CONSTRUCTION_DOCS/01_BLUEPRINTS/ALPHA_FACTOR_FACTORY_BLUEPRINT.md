@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_ALPHA_FACTOR_FACTORY_BP_001
+module_id: ALPHA_FACTOR_FACTORY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

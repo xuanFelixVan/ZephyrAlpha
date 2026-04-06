@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_QUARTERLY_REBALANCE_BP_001
+module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

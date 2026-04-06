@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_SIMPLIFIED_TIMEFRAME_COORD_BP_001
+module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_001
 version: 1.0.2
 spec_version: 1.0
 status: Active

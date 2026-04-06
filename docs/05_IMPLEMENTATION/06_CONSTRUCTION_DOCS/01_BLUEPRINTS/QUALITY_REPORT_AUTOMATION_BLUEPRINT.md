@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_QUALITY_REPORT_AUTO_BP_001
+module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

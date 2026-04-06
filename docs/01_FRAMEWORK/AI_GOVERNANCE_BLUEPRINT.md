@@ -1,9 +1,9 @@
 ---
 module_id: AI_GOVERNANCE_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: 2026-04-06
 owner: 首席蓝图架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构蓝图
@@ -15,6 +15,18 @@ related_documents:
   - AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - AI行为准则体系（核心行为准则、操作行为准则）
+  - AI决策透明度（决策解释、决策记录、决策审计）
+  - AI错误责任归属（错误分类、责任认定、改进机制）
+  - AI持续改进机制（性能监控、反馈学习、模型更新）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
 ---
 
 # AI治理框架蓝图：AI行为准则与治理机�?

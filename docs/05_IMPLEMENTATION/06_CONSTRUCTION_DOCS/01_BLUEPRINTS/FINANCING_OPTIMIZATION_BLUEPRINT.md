@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_FINANCING_OPT_BP_001
+module_id: FINANCING_OPTIMIZATION_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_DYNAMIC_CORRELATION_BP_001
+module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

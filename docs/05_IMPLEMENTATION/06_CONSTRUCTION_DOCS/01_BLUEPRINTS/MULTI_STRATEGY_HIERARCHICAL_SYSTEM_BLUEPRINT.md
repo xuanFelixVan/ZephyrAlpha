@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_MULTI_STRATEGY_HIER_BP_001
+module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

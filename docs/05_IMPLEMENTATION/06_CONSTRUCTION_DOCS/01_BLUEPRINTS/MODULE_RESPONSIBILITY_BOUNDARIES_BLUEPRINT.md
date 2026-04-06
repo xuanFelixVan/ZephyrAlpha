@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_MODULE_RESPONSIBILITY_BP_001
+module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02

@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_AUTO_REPAIR_ENGINE_BP_001
+module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

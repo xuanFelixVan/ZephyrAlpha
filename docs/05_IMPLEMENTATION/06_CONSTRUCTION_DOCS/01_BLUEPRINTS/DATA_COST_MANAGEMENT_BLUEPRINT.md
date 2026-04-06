@@ -1,0 +1,494 @@
+---
+module_id: IMPL_DATA_COST_MGMT_BP_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-06
+last_updated: '2026-04-06'
+owner: 首席蓝图架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: 'Layer 0数据源层 | 业务架构: 三级时间框架融合架构'
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+implementation_progress: 0%
+open_source_dependency: kubecost, openmeter, aws-cost-explorer
+estimated_effort: 2周
+priority: P2
+---
+
+# 数据成本管理蓝图
+
+> 清风量化系统 v5.3 - 数据成本管理系统详细设计
+> **模块ID**: `DATA_COST_MGMT_001`
+> **实施周期**: Week 31-32（2周）
+> **优先级**: P2（优化）
+> **预期收益**: 降低数据成本30%，提升成本透明度100%
+
+## 一、设计背景与目标
+
+### 1.1 业务需求
+
+**当前痛点**:
+- 数据成本不透明
+- 成本归属不清晰
+- 缺少成本优化建议
+- 成本预算难以控制
+
+**业务目标**:
+- 建立数据成本追踪体系
+- 实现成本归属和分摊
+- 提供成本优化建议
+- 支持成本预算管理
+
+### 1.2 技术目标
+
+| 指标 | 目标值 | 说明 |
+|------|--------|------|
+| **成本追踪覆盖率** | 100% | 所有数据资产成本追踪 |
+| **成本归属准确率** | ≥95% | 成本归属准确率≥95% |
+| **成本降低** | ≥30% | 数据成本降低30% |
+| **预算控制准确率** | ≥90% | 预算控制准确率≥90% |
+
+---
+
+## 二、系统架构设计
+
+### 2.1 整体架构图
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                数据成本管理架构                              │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           成本采集层 (Cost Collection)               │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
+│  │  │存储成本     │ │计算成本     │ │网络成本     │   │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
+│  │  ┌─────────────┐ ┌─────────────┐                   │   │
+│  │  │API成本      │ │人力成本     │                   │   │
+│  │  └─────────────┘ └─────────────┘                   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           成本归属层 (Cost Attribution)              │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
+│  │  │成本分摊     │ │成本分配     │ │成本标签     │   │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           成本分析层 (Cost Analysis)                 │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
+│  │  │成本趋势     │ │成本对比     │ │成本预测     │   │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                          ↓                                  │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           成本优化层 (Cost Optimization)             │   │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
+│  │  │优化建议     │ │预算控制     │ │成本告警     │   │   │
+│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 技术选型
+
+| 组件 | 技术方案 | 版本要求 | 选型理由 |
+|------|---------|---------|---------|
+| **成本监控** | Kubecost | 1.100+ | Kubernetes成本监控 |
+| **计量计费** | OpenMeter | 1.0+ | 开源计量计费平台 |
+| **成本分析** | AWS Cost Explorer | - | 云成本分析 |
+| **可视化** | Grafana | 10.0+ | 成本可视化仪表板 |
+
+---
+
+## 三、核心模块设计
+
+### 3.1 成本采集器 (CostCollector)
+
+```python
+from dataclasses import dataclass, field
+from typing import Dict, List, Any, Optional
+from datetime import datetime, timedelta
+from enum import Enum
+
+class CostType(Enum):
+    """成本类型"""
+    STORAGE = "storage"
+    COMPUTE = "compute"
+    NETWORK = "network"
+    API = "api"
+    HUMAN = "human"
+
+@dataclass
+class CostRecord:
+    """成本记录"""
+    record_id: str
+    cost_type: CostType
+    resource_id: str
+    amount: float
+    currency: str
+    timestamp: datetime = field(default_factory=datetime.now)
+    tags: Dict[str, str] = field(default_factory=dict)
+    details: Dict[str, Any] = field(default_factory=dict)
+
+class CostCollector:
+    """成本采集器"""
+    
+    def __init__(self):
+        self.cost_records: List[CostRecord] = []
+    
+    def collect_storage_cost(self, resource_id: str,
+                             size_bytes: int,
+                             cost_per_gb: float) -> CostRecord:
+        """采集存储成本"""
+        size_gb = size_bytes / (1024 ** 3)
+        amount = size_gb * cost_per_gb
+        
+        record = CostRecord(
+            record_id=f"storage_{resource_id}_{datetime.now().timestamp()}",
+            cost_type=CostType.STORAGE,
+            resource_id=resource_id,
+            amount=amount,
+            currency="USD",
+            details={"size_gb": size_gb, "cost_per_gb": cost_per_gb}
+        )
+        
+        self.cost_records.append(record)
+        return record
+    
+    def collect_compute_cost(self, resource_id: str,
+                             cpu_hours: float,
+                             memory_gb_hours: float,
+                             cost_per_cpu_hour: float,
+                             cost_per_gb_hour: float) -> CostRecord:
+        """采集计算成本"""
+        cpu_cost = cpu_hours * cost_per_cpu_hour
+        memory_cost = memory_gb_hours * cost_per_gb_hour
+        amount = cpu_cost + memory_cost
+        
+        record = CostRecord(
+            record_id=f"compute_{resource_id}_{datetime.now().timestamp()}",
+            cost_type=CostType.COMPUTE,
+            resource_id=resource_id,
+            amount=amount,
+            currency="USD",
+            details={
+                "cpu_hours": cpu_hours,
+                "memory_gb_hours": memory_gb_hours,
+                "cpu_cost": cpu_cost,
+                "memory_cost": memory_cost
+            }
+        )
+        
+        self.cost_records.append(record)
+        return record
+    
+    def collect_api_cost(self, resource_id: str,
+                         api_calls: int,
+                         cost_per_call: float) -> CostRecord:
+        """采集API成本"""
+        amount = api_calls * cost_per_call
+        
+        record = CostRecord(
+            record_id=f"api_{resource_id}_{datetime.now().timestamp()}",
+            cost_type=CostType.API,
+            resource_id=resource_id,
+            amount=amount,
+            currency="USD",
+            details={"api_calls": api_calls, "cost_per_call": cost_per_call}
+        )
+        
+        self.cost_records.append(record)
+        return record
+    
+    def get_costs_by_type(self, cost_type: CostType,
+                          start_time: datetime = None,
+                          end_time: datetime = None) -> List[CostRecord]:
+        """按类型获取成本"""
+        filtered = [r for r in self.cost_records if r.cost_type == cost_type]
+        
+        if start_time:
+            filtered = [r for r in filtered if r.timestamp >= start_time]
+        
+        if end_time:
+            filtered = [r for r in filtered if r.timestamp <= end_time]
+        
+        return filtered
+```
+
+### 3.2 成本归属管理器 (CostAttributionManager)
+
+```python
+from typing import Dict, List, Any
+from datetime import datetime
+
+@dataclass
+class CostAllocation:
+    """成本分配"""
+    allocation_id: str
+    resource_id: str
+    team: str
+    project: str
+    percentage: float
+    amount: float
+    timestamp: datetime
+
+class CostAttributionManager:
+    """成本归属管理器"""
+    
+    def __init__(self):
+        self.allocations: List[CostAllocation] = []
+        self.attribution_rules: Dict[str, Dict[str, Any]] = {}
+    
+    def define_attribution_rule(self, resource_pattern: str,
+                                 team: str,
+                                 project: str,
+                                 percentage: float = 100.0):
+        """定义归属规则"""
+        self.attribution_rules[resource_pattern] = {
+            "team": team,
+            "project": project,
+            "percentage": percentage
+        }
+    
+    def allocate_cost(self, cost_record: CostRecord) -> List[CostAllocation]:
+        """分配成本"""
+        allocations = []
+        
+        for pattern, rule in self.attribution_rules.items():
+            if pattern in cost_record.resource_id:
+                allocation = CostAllocation(
+                    allocation_id=f"alloc_{cost_record.record_id}_{pattern}",
+                    resource_id=cost_record.resource_id,
+                    team=rule["team"],
+                    project=rule["project"],
+                    percentage=rule["percentage"],
+                    amount=cost_record.amount * rule["percentage"] / 100,
+                    timestamp=datetime.now()
+                )
+                
+                allocations.append(allocation)
+        
+        self.allocations.extend(allocations)
+        return allocations
+    
+    def get_team_costs(self, team: str,
+                       start_time: datetime = None,
+                       end_time: datetime = None) -> Dict[str, float]:
+        """获取团队成本"""
+        filtered = [a for a in self.allocations if a.team == team]
+        
+        if start_time:
+            filtered = [a for a in filtered if a.timestamp >= start_time]
+        
+        if end_time:
+            filtered = [a for a in filtered if a.timestamp <= end_time]
+        
+        costs = {}
+        for allocation in filtered:
+            project = allocation.project
+            costs[project] = costs.get(project, 0) + allocation.amount
+        
+        return costs
+```
+
+### 3.3 成本优化建议器 (CostOptimizationAdvisor)
+
+```python
+from typing import Dict, List, Any, Tuple
+from datetime import datetime, timedelta
+import pandas as pd
+
+@dataclass
+class OptimizationRecommendation:
+    """优化建议"""
+    recommendation_id: str
+    resource_id: str
+    recommendation_type: str
+    potential_savings: float
+    description: str
+    priority: str
+    created_at: datetime = field(default_factory=datetime.now)
+
+class CostOptimizationAdvisor:
+    """成本优化建议器"""
+    
+    def __init__(self, cost_collector: CostCollector):
+        self.cost_collector = cost_collector
+        self.recommendations: List[OptimizationRecommendation] = []
+    
+    def analyze_storage_optimization(self) -> List[OptimizationRecommendation]:
+        """分析存储优化"""
+        recommendations = []
+        
+        storage_costs = self.cost_collector.get_costs_by_type(CostType.STORAGE)
+        
+        for cost in storage_costs:
+            if cost.details.get("size_gb", 0) > 100:
+                recommendation = OptimizationRecommendation(
+                    recommendation_id=f"rec_{cost.resource_id}_storage",
+                    resource_id=cost.resource_id,
+                    recommendation_type="storage_tiering",
+                    potential_savings=cost.amount * 0.3,
+                    description="Move cold data to cheaper storage tier",
+                    priority="medium"
+                )
+                recommendations.append(recommendation)
+        
+        self.recommendations.extend(recommendations)
+        return recommendations
+    
+    def analyze_compute_optimization(self) -> List[OptimizationRecommendation]:
+        """分析计算优化"""
+        recommendations = []
+        
+        compute_costs = self.cost_collector.get_costs_by_type(CostType.COMPUTE)
+        
+        for cost in compute_costs:
+            cpu_hours = cost.details.get("cpu_hours", 0)
+            memory_gb_hours = cost.details.get("memory_gb_hours", 0)
+            
+            if cpu_hours > 0 and memory_gb_hours / cpu_hours > 8:
+                recommendation = OptimizationRecommendation(
+                    recommendation_id=f"rec_{cost.resource_id}_compute",
+                    resource_id=cost.resource_id,
+                    recommendation_type="right_sizing",
+                    potential_savings=cost.amount * 0.2,
+                    description="Right-size compute resources",
+                    priority="high"
+                )
+                recommendations.append(recommendation)
+        
+        self.recommendations.extend(recommendations)
+        return recommendations
+    
+    def get_total_potential_savings(self) -> float:
+        """获取总潜在节省"""
+        return sum(r.potential_savings for r in self.recommendations)
+```
+
+---
+
+## 四、接口设计
+
+### 4.1 RESTful API
+
+#### 4.1.1 获取成本统计
+
+```http
+GET /api/v1/cost/statistics?start_date=2026-04-01&end_date=2026-04-30
+```
+
+**响应示例**:
+```json
+{
+  "total_cost": 15000.50,
+  "cost_by_type": {
+    "storage": 5000.00,
+    "compute": 8000.00,
+    "network": 1500.50,
+    "api": 500.00
+  },
+  "cost_by_team": {
+    "data_team": 8000.00,
+    "research_team": 5000.50,
+    "ops_team": 2000.00
+  }
+}
+```
+
+#### 4.1.2 获取优化建议
+
+```http
+GET /api/v1/cost/recommendations
+```
+
+**响应示例**:
+```json
+{
+  "recommendations": [
+    {
+      "resource_id": "data_warehouse",
+      "recommendation_type": "storage_tiering",
+      "potential_savings": 1500.00,
+      "priority": "medium"
+    }
+  ],
+  "total_potential_savings": 4500.00
+}
+```
+
+---
+
+## 五、部署架构
+
+```yaml
+version: '3.8'
+services:
+  kubecost:
+    image: kubecost/cost-analyzer:latest
+    ports:
+      - "9090:9090"
+    environment:
+      - KUBECOST_TOKEN=your-token
+  
+  openmeter:
+    image: openmeter/openmeter:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/openmeter
+  
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+  
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=openmeter
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+```
+
+---
+
+## 六、监控指标
+
+| 指标名称 | 指标类型 | 说明 |
+|---------|---------|------|
+| `cost_total_dollars` | Gauge | 总成本 |
+| `cost_by_type_dollars` | Gauge | 按类型成本 |
+| `cost_by_team_dollars` | Gauge | 按团队成本 |
+| `cost_savings_potential_dollars` | Gauge | 潜在节省 |
+
+---
+
+## 七、实施计划
+
+| 阶段 | 任务 | 预计时间 |
+|------|------|---------|
+| **阶段1** | 搭建成本采集系统 | 2天 |
+| **阶段2** | 开发成本归属管理器 | 3天 |
+| **阶段3** | 开发成本优化建议器 | 3天 |
+| **阶段4** | 开发成本仪表板 | 2天 |
+| **阶段5** | 测试和优化 | 2天 |
+
+---
+
+## 八、相关文档
+
+- [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
+- [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
+- [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
+
+---
+
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师

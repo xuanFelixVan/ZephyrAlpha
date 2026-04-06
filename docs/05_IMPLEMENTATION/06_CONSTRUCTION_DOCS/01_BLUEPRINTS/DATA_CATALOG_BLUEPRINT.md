@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_DATA_CATALOG_BP_001
+module_id: DATA_CATALOG_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-05

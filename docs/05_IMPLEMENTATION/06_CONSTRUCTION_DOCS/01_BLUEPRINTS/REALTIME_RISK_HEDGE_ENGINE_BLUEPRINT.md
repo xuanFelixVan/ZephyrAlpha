@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_REALTIME_RISK_HEDGE_BP_001
+module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

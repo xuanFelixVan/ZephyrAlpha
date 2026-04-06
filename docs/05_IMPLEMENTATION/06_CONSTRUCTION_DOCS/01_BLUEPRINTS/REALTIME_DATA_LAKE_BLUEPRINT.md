@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_REALTIME_DATA_LAKE_BP_001
+module_id: REALTIME_DATA_LAKE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

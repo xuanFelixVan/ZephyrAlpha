@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_MARKET_IMPACT_BP_001
+module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

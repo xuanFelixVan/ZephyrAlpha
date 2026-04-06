@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_UNIFIED_DATA_INFRASTRUCTURE_BP_001
+module_id: UNIFIED_DATA_INFRASTRUCTURE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

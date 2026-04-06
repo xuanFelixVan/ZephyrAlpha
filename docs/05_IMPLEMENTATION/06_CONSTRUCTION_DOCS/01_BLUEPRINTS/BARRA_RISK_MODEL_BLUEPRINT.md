@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_BARRA_RISK_MODEL_BP_001
+module_id: BARRA_RISK_MODEL_001
 version: 1.0.3
 spec_version: 1.0
 status: Active

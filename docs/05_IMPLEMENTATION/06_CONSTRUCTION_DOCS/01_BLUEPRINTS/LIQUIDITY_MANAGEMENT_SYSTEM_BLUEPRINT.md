@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_LIQUIDITY_MGMT_BP_001
+module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
 status: Active

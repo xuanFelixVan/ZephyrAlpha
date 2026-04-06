@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_RISK_ATTRIBUTION_BP_001
+module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.1
 spec_version: 1.0
 status: Active
