@@ -1,5 +1,5 @@
 ---
-module_id: SYSTEMSTATUSBLUEPRINT_001
+module_id: SYSTEM_STATUS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -16,14 +16,14 @@ compliance_level: 专业标准---
 
 
 ﻿---
-module_id: SYSTEM_STATUS_BLUEPRINT_001
+module_id: SYSTEM_STATUS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 layer: Layer 8 (人机交互层)
-module_id: 8.12
+module_id: SYSTEM_STATUS_001
 module_name: 系统状态面板
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha系统状态
@@ -31,8 +31,17 @@ compliance_level: 专业标准
 parent_document: ../index.md
 implementation_status: 蓝图设计
 ---
-
 # 系统状态面板模块蓝图
+> **核心职责**: System Status蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：System Status蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 概述
+
+本文档定义了SYSTEM STATUS的核心功能和技术实现。
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -402,7 +411,7 @@ if st.button("立即刷新"):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.12
-- **蓝图文档**: [SYSTEM_STATUS_BLUEPRINT.md](./08_HUMAN_AI_INTERFACE\12_SYSTEM_STATUS\SYSTEM_STATUS_BLUEPRINT.md)
+- **蓝图文档**: [SYSTEM_STATUS_BLUEPRINT.md](../12_SYSTEM_STATUS/SYSTEM_STATUS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha系统状态
 - **状态**: Active
@@ -423,3 +432,16 @@ if st.button("立即刷新"):
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+---
+
+## 📊 文档治理
+
+### 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+---

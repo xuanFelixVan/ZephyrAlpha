@@ -1,0 +1,23 @@
+{
+  "check_time": "2026-04-07T03:01:42.421270",
+  "layer_path": "D:\\ZephyrAlpha\\docs\\09_RESEARCH_INNOVATION",
+  "stats": {
+    "total_docs": 14,
+    "docs_with_issues": 0,
+    "total_issues": 1,
+    "p0_issues": 0,
+    "p1_issues": 1,
+    "p2_issues": 0
+  },
+  "compliance_rate": 92.85714285714286,
+  "issues": [
+    {
+      "file_path": "09_RESEARCH_INNOVATION\\BLUEPRINT.md",
+      "issue_type": "YAML头部缺失",
+      "description": "文档缺少YAML头部",
+      "severity": "P1",
+      "suggestion": "添加标准YAML头部",
+      "timestamp": "2026-04-07T03:01:42.413607"
+    }
+  ]
+}

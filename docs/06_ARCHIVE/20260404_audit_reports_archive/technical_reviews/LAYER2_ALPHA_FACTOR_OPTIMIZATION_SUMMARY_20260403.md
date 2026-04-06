@@ -14,6 +14,11 @@ parent_document: LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md
 implementation_status: ти▓т«ї?---
 
 # AlphaтЏатГљт▒ѓТќЄТАБС╝ўтїќТђ╗у╗ЊТіЦтЉі
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **С╝ўтїќТЌЦТюЪ**: 2026-04-03
 > **С╝ўтїќУїЃтЏ┤**: docs/02_FACTOR_LIBRARY/

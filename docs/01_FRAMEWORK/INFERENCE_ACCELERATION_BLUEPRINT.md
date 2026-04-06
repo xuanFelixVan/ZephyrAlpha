@@ -22,6 +22,11 @@ responsibility_boundary: |
 layer: Layer 4 (机器学习层)
 ---
 # 推理加速引擎蓝�?
+> **核心职责**: Inference Acceleration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Inference Acceleration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **蓝图编号**: `INF-001`
 

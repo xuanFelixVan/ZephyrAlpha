@@ -14,6 +14,11 @@ parent_document: ../INDEX.md---
 
 
 # Layer 6ч╗ДхРИф╝ШхМЦх▒ВшУЭхЫ╛хоМцХ┤х║жшпДф╝░цКехСК v1.0
+> **核心职责**: Layer6 Blueprint Comprehensive Assessment.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Layer6 Blueprint Comprehensive Assessment.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > ц╕ЕщгОщЗПхМЦч│╗ч╗Я v5.3 - Layer 6ч╗ДхРИф╝ШхМЦх▒ВшУЭхЫ╛хоМцХ┤х║жхЕищЭвшпДф╝░
 > **шпДф╝░цЧецЬЯ**: 2026-04-03

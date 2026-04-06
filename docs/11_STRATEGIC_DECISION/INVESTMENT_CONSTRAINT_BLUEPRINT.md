@@ -30,6 +30,11 @@ priority: P1
 ---
 
 # 投资限制管理系统蓝图
+> **核心职责**: Investment Constraint蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Investment Constraint蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 📋 文档职责说明
 

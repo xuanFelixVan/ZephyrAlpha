@@ -20,6 +20,11 @@ responsibility:
 
 
 # ʵʱϵͳͼ
+> **核心职责**: Realtime Quality Monitor Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Realtime Quality Monitor Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > ϵͳ v5.3 - ʵʱϵͳϸ
 > **ģID**: `REALTIME_QUALITY_MONITOR_001`

@@ -46,6 +46,11 @@ responsibility_boundary: |
 
 
 # 模型监控蓝图：实时模型健康度管理系统
+> **核心职责**: Model Monitoring蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Model Monitoring蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

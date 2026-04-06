@@ -17,6 +17,11 @@ responsibility: 风险预算
 ---
 
 # 蓝图阶段完整补充方案
+> **核心职责**: Comprehensive Blueprint Supplement Plan.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Comprehensive Blueprint Supplement Plan.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-07  

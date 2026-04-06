@@ -36,6 +36,11 @@ responsibility_boundary: |
   机器学习层架构请参考：MACHINE_LEARNING_LAYER_BLUEPRINT.md
 ---
 # 可信执行环境(TEE)蓝图
+> **核心职责**: Trusted Execution Environment蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Trusted Execution Environment蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

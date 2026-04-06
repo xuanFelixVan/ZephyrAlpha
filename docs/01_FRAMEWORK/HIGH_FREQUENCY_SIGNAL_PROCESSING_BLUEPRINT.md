@@ -28,6 +28,11 @@ layer: Layer 3 (策略层)
 
 
 # 高频信号处理蓝图
+> **核心职责**: High Frequency Signal Processing蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：High Frequency Signal Processing蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

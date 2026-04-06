@@ -28,6 +28,11 @@ layer: Layer 2 (Alpha因子层)
 
 
 # 超参数优化系统蓝�?
+> **核心职责**: Hyperparameter Optimization蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Hyperparameter Optimization蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **蓝图编号**: `HPO-001`
 

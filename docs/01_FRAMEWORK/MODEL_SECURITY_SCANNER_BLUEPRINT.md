@@ -28,6 +28,11 @@ layer: Layer 2 (Alpha因子层)
 
 
 # æ¨¡åå®å¨æ«æèå¾
+> **核心职责**: Model Security Scanner蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Model Security Scanner蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

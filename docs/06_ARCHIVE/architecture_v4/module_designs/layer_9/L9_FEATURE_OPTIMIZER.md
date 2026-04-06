@@ -17,6 +17,11 @@ implementation_status: 进行�?---
 
 
 # L9_FEATURE_OPTIMIZER: AI特征选择优化模块设计
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **模块ID**: L9_FEATURE_OPTIMIZER  
 > **模块名称**: AI特征选择优化  

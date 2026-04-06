@@ -28,6 +28,11 @@ layer: Layer 2 (Alpha因子层)
 
 
 # åå¸ç­ç¥æ¨¡åèå¾
+> **核心职责**: Market Making Model蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Market Making Model蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

@@ -59,6 +59,11 @@ responsibility:
 
 
 # 数据质量监控系统蓝图
+> **核心职责**: Data Quality Monitoring蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Quality Monitoring蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

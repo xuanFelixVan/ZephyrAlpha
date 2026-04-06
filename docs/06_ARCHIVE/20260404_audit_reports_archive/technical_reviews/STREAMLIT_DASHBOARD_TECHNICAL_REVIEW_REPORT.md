@@ -15,6 +15,11 @@ implementation_status: 评审通过---
 
 
 # StreamlitDashboard可视化仪表板技术评审报?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > **评审日期**: 2026-04-02
 > **评审对象**: StreamlitDashboard可视化仪表板 (STREAMLIT_DASHBOARD_001)
 > **评审版本**: v1.0

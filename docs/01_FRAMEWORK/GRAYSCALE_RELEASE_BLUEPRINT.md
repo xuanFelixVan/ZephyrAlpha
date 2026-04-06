@@ -28,6 +28,11 @@ layer: Layer 3 (策略层)
 
 
 # 灰度发布系统蓝图
+> **核心职责**: Grayscale Release蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Grayscale Release蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

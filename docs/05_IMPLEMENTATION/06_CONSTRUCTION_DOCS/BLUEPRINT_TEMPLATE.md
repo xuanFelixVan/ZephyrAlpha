@@ -15,6 +15,11 @@ compliance_level: 专业标准---
 
 
 # 蓝图文档模板
+> **核心职责**: Blueprint Template.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint Template.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 **版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状态**: Active
 

@@ -13,6 +13,11 @@ responsibility:
 ---
 
 # ﻟﮔﮒﮔﮒﺎﻟﮒﺝﮔ؛ ﻝﺙﭦﮒﮔﮔ۴ﮒ?
+> **核心职责**: Sentiment Analysis Blueprint Gap Analysis.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Sentiment Analysis Blueprint Gap Analysis.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **ﻝﮔ؛**: v1.1
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03

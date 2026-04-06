@@ -32,6 +32,11 @@ implementation_status: 设计阶段---
 
 
 # 因子库与回测集成蓝图完整性专项审计报?
+> **核心职责**: Factor Backtest Blueprint Completeness Audit Report.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Factor Backtest Blueprint Completeness Audit Report.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > ZephyrAlpha v5.3 因子库与回测集成系统蓝图完整性评?
 > 

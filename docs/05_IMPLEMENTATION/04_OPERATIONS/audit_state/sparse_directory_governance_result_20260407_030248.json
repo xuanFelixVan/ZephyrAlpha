@@ -1,0 +1,706 @@
+{
+  "timestamp": "2026-04-07T03:02:48.601708",
+  "total_sparse_dirs": 100,
+  "evaluations": [
+    {
+      "path": "00_RESOURCES",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "资源目录，内容按需补充"
+    },
+    {
+      "path": "00_RESOURCES\\04_PLATFORM_DOCS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "资源目录，内容按需补充"
+    },
+    {
+      "path": "01_FRAMEWORK\\ARCHITECTURE_DECISIONS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "架构决策目录，记录重要决策即可"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "保持现状",
+      "reason": "数据源模块子目录，蓝图阶段特征明显"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\05_BACKTEST\\ic_reports",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\05_BACKTEST\\strategy_reports",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\06_REGISTRY",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\10_MANUAL",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\02_TACTICS_MERGED",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\05_STRATEGY_POOL",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\06_POSITION_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "04_EXECUTION\\02_TRADE_EXECUTOR",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "04_EXECUTION\\04_AI_COMMITTEE",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "04_EXECUTION\\05_RISK_ENGINE",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\a_stock_rules",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design",
+      "file_count": 2,
+      "is_blueprint_stage": true,
+      "recommendation": "保持现状",
+      "reason": "蓝图阶段目录，内容将在后续开发中补充"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design\\01_UI_DESIGN",
+      "file_count": 2,
+      "is_blueprint_stage": true,
+      "recommendation": "保持现状",
+      "reason": "蓝图阶段目录，内容将在后续开发中补充"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_PROGRESS_TRACKING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\lessons_learned",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\risk_management",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\training_plans",
+      "file_count": 2,
+      "is_blueprint_stage": true,
+      "recommendation": "保持现状",
+      "reason": "蓝图阶段目录，内容将在后续开发中补充"
+    },
+    {
+      "path": "06_ARCHIVE\\05_IMPLEMENTATION\\database",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\sample_validation_2026-04-02",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\IFIND_CONNECTOR",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\QMT_DATA_INTERFACE",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_4",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\duplicate_documents\\20260403_layer1_infrastructure_audit",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\duplicate_documents\\20260403_layer7_audit",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\duplicate_documents\\20260403_portfolio_optimization_duplicate",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_ARCHIVE\\duplicate_documents\\20260405_data_catalog_metadata_duplicate",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "06_CONSTRUCTION_DOCS\\01_BLUEPRINTS",
+      "file_count": 2,
+      "is_blueprint_stage": true,
+      "recommendation": "保持现状",
+      "reason": "蓝图阶段目录，内容将在后续开发中补充"
+    },
+    {
+      "path": "07_AI_REPORTING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\01_MOBILE_PUSH",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\01_MONITORING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\02_ALERTING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\02_MONITORING",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\03_AUTH",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\03_AUTHENTICATION",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\04_API_DOCS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\04_BACKTEST_INTERFACE",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\05_BACKTEST_UI",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\06_REPORTING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\07_AUDIT_LOG",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\08_MOBILE_PUSH",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\09_TRADING_JOURNAL",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\10_CONFIG_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\11_USER_PREFERENCES",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\12_SYSTEM_STATUS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\13_DATA_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\14_STRATEGY_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\15_PERMISSION_MANAGEMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\16_API_RATE_LIMITING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\17_DOCUMENTATION_CENTER",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\18_KNOWLEDGE_BASE",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\19_CI_CD_INTEGRATION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\20_DATA_BACKUP",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\21_ONLINE_RESEARCH_ENVIRONMENT",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\22_PARAMETER_OPTIMIZATION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "08_HUMAN_AI_INTERFACE\\23_LIVE_TRADING_INTERFACE",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\BEST_PRACTICES",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\CASE_STUDIES",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\CONFIGURATION",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\DECISION_RECORDS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\PROCESSES",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\RESEARCH_MEMOS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\SOLUTIONS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\TOOLS",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_AUDIT\\TRAINING",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "09_RESEARCH_INNOVATION\\01_ai_research_lab",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "10_GOVERNANCE_COMPLIANCE\\01_internal_controls",
+      "file_count": 1,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    },
+    {
+      "path": "11_STRATEGIC_DECISION\\03_strategy_selection",
+      "file_count": 2,
+      "is_blueprint_stage": false,
+      "recommendation": "评估补充",
+      "reason": "需要评估是否补充内容或整合到父目录"
+    }
+  ]
+}

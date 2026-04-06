@@ -47,6 +47,11 @@ responsibility:
 
 
 # 在线学习蓝图：实时模型自适应系统
+> **核心职责**: Online Learning蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Online Learning蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

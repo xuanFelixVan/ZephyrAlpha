@@ -15,6 +15,11 @@ compliance_level: 专业标准---
 
 
 # 蓝图文件治理优化报告
+> **核心职责**: Blueprint Governance Optimization Report 20260407.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint Governance Optimization Report 20260407.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 **执行日期**: 2026-04-07  
 **执行范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS  

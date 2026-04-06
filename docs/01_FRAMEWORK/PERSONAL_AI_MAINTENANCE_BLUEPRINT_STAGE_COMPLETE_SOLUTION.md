@@ -14,6 +14,11 @@ responsibility:
 ---
 
 # 个人开发+AI维护+个人使用完整方案（蓝图阶段）
+> **核心职责**: Personal Ai Maintenance Blueprint Stage Complete Solution.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Personal Ai Maintenance Blueprint Stage Complete Solution.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **方案日期**: 2026-04-06
 > **方案类型**: 完整解决方案

@@ -14,6 +14,11 @@ layer: "Layer 1 (数据预处理层)"
 ---
 
 # TimescaleDB时序数据库集成蓝图
+> **核心职责**: Timescaledb Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Timescaledb Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **核心定位**: 专业时序数据存储解决方案，为量化交易系统提供高性能的时序数据管理能力
 

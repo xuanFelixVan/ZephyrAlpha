@@ -16,6 +16,11 @@ responsibility:
 ---
 
 # Layer 11战略决策层完整系统蓝图总览
+> **核心职责**: Complete Blueprint Overview.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Complete Blueprint Overview.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-07

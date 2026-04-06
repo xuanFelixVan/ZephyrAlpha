@@ -100,6 +100,11 @@ layer: "Layer 2 (Alpha因子层)"
 #### **Feast (Uber开? - 因子中间?*
 ```python
 # 定制化量化数据模?
+> **核心职责**: Factor Backtest Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Factor Backtest Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 核心职责
 

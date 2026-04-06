@@ -15,6 +15,11 @@ responsibility: 数据质量
 ---
 
 # 蓝图阶段vs施工阶段模块需求分析
+> **核心职责**: Blueprint Stage Vs Implementation Stage Analysis.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint Stage Vs Implementation Stage Analysis.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **分析日期**: 2026-04-06
 > **分析类型**: 阶段性需求分析

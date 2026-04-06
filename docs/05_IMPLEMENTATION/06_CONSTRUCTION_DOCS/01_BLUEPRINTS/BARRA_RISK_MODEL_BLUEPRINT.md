@@ -251,6 +251,11 @@ class BarraRiskModel:
 
 ```python
 # 因子暴露计算接口
+> **核心职责**: Barra Risk Model蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Barra Risk Model蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 核心职责
 

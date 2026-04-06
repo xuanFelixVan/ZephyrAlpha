@@ -32,6 +32,11 @@ layer: Layer 0 (数据源层)
 ---
 
 # Layer 9: 研究与创新层蓝图
+> **核心职责**: Research Innovation Layer蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Research Innovation Layer蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-03

@@ -15,6 +15,11 @@ parent_document: ../ARCHITECTURE.md
 implementation_status: 待实�?---
 
 # MonthlyReporter月报生成器技术规格书
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02

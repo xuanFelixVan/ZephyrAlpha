@@ -38,6 +38,11 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11 文字驱动层架构蓝?
+> **核心职责**: Natural Language Interface蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Natural Language Interface蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化交易系统 v5.3 - Layer 11文字驱动层完整架构设?> **索引**: `LAYER11.NL.INTERFACE.001`
 > **开发周?*: 200小时（基础设施搭建 + 工具集成?> **核心定位**: 全系统文字交互层，实现零代码操作量化交易系统
 > **技术栈**: Open WebUI + LangChain 1.0 + Ollama + VNPY

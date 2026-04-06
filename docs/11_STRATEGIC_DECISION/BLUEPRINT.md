@@ -1,20 +1,4 @@
 ---
-module_id: LAYER_014
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理员
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
-responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
----
-
-﻿---
 module_id: STRATEGIC_DECISION_BP_001
 version: 3.0.0
 status: Active
@@ -34,6 +18,11 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11: 战略决策层蓝图
+> **核心职责**: Blueprint.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v3.0
 > **创建日期**: 2026-04-03

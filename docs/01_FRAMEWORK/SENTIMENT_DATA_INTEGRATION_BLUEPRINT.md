@@ -15,6 +15,11 @@ responsibility:
 ---
 
 # 舆情数据源集成蓝图
+> **核心职责**: Sentiment Data Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Sentiment Data Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-07  

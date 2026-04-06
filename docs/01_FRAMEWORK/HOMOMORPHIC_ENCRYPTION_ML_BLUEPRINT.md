@@ -22,6 +22,11 @@ responsibility_boundary: |
 layer: Layer 4 (机器学习层)
 ---
 # 同态加密ML蓝图
+> **核心职责**: Homomorphic Encryption Ml蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Homomorphic Encryption Ml蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

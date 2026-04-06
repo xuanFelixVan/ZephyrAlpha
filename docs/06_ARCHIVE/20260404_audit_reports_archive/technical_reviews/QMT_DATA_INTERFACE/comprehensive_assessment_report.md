@@ -15,6 +15,11 @@ created_date: 2026-04-02
 last_updated: 2026-04-02---
 
 # 综合评估报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 生成时间: 2026-04-02 02:50:44
 评估文件: docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md

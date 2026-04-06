@@ -34,6 +34,11 @@ responsibility_boundary: |
   研究级实验追踪（wandb.ai方案）请参考：docs/07_RESEARCH/EXPERIMENT_TRACKING.md
 ---
 # 实验追踪系统蓝图
+> **核心职责**: Experiment Tracking蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Experiment Tracking蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

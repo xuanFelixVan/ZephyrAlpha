@@ -15,6 +15,11 @@ compliance_level: 专业标准---
 
 
 # YAML字段完整性检查报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 **生成时间**: 2026-04-06 22:26:14
 **检查范围**: D:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS

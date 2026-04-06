@@ -15,6 +15,11 @@ parent_document: ./LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403.md
 implementation_status: ف╖▓ف«îµê?---
 
 # P2ق║دلù«لتءµـ┤µ¤╣µèحفّ?V3
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **µـ┤µ¤╣ق╝ûف╖**: `P2_REMEDIATION_V3_001`
 > **µـ┤µ¤╣µùحµ£ا**: 2026-04-03

@@ -18,6 +18,11 @@ implementation_status: 蓝图设计---
 
 
 # Layer 8 人机交互层 - 系统蓝图索引
+> **核心职责**: 蓝图设计和规划
+> **职责边界**: 
+> - ✅ 本文档负责：蓝图设计和规划相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.2
 > **创建日期**: 2026-04-06
@@ -487,3 +492,10 @@ implementation_status: 蓝图设计---
 **文档状态**: 🟢 活跃
 **下次更新**: 2026-04-13
 **维护周期**: 每周审查
+
+
+## 📄 新增蓝图文档
+
+- [ONLINE RESEARCH ENVIRONMENT](21_ONLINE_RESEARCH_ENVIRONMENT\ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md)
+- [PARAMETER OPTIMIZATION](22_PARAMETER_OPTIMIZATION\PARAMETER_OPTIMIZATION_BLUEPRINT.md)
+- [LIVE TRADING INTERFACE](23_LIVE_TRADING_INTERFACE\LIVE_TRADING_INTERFACE_BLUEPRINT.md)

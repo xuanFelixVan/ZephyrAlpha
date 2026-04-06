@@ -29,6 +29,11 @@ implementation_status: 设计阶段
 
 
 # 参数优化系统技术蓝�?
+> **核心职责**: Parameter Optimization蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Parameter Optimization蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化交易系统 v5.3 - 参数优化系统详细技术设�?> **索引**: `STRAT.PARAM.OPT.001`
 > **开发周�?*: 100小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支持网格搜索、贝叶斯优化、遗传算法等多种优化方法，自动寻找最优策略参�?> **参考开�?*: RQAlpha的ParameterOptimization + Optuna贝叶斯优化框�?+ DEAP遗传算法�?> **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于参数优化功�?

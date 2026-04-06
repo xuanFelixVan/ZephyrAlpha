@@ -16,6 +16,11 @@ compliance_level: 专业标准---
 
 
 # PORTFOLIO_OPTIMIZATION_BLUEPRINT.md 归档说明
+> **核心职责**: 模块说明和快速入门指南
+> **职责边界**: 
+> - ✅ 本文档负责：模块说明和快速入门指南相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **归档编号**: `ARCHIVE_PORTFOLIO_OPT_DUP_001`
 > **归档日期**: 2026-04-03

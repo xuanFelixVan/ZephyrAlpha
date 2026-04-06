@@ -35,6 +35,11 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.6: 融资融券管理系统蓝图
+> **核心职责**: Leverage Management蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Leverage Management蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 📋 文档职责说明
 

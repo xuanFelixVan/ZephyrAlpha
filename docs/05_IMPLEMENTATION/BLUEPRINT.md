@@ -31,6 +31,11 @@ implementation_progress: 100%
 
 
 # 清风量化系统蓝图 (BLUEPRINT)
+> **核心职责**: Blueprint.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v6.0 (AI增强专业机构�?
 > **系统版本**: v6.0

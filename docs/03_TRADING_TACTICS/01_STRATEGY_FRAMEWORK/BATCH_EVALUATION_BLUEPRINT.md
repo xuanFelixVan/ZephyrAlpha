@@ -29,6 +29,11 @@ implementation_status: 设计阶段
 
 
 # 批量策略评估系统技术蓝�?
+> **核心职责**: Batch Evaluation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Batch Evaluation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化交易系统 v5.3 - 批量策略评估系统详细技术设�?> **索引**: `STRAT.BATCH.EVAL.001`
 > **开发周�?*: 120小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支�?20+策略并行回测、结果对比、性能分析的批量评估系�?> **参考开�?*: quant-system的BatchBacktester + RQAlpha的并行回测框�?> **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于批量评估功�?

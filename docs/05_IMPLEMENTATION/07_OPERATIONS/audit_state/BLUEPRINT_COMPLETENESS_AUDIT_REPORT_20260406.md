@@ -14,6 +14,11 @@ responsibility:
 ---
 
 # 清风量化系统蓝图完整性审计报告
+> **核心职责**: Blueprint Completeness Audit Report 20260406.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Blueprint Completeness Audit Report 20260406.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **审计日期**: 2026-04-06

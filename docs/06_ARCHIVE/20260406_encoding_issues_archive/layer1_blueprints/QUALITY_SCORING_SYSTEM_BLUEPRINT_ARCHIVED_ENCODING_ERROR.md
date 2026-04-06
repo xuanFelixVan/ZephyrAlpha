@@ -20,6 +20,11 @@ responsibility:
 
 
 # 数据质量评分系统蓝图
+> **核心职责**: Quality Scoring System Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Quality Scoring System Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.3 - 数据质量评分系统详细设计
 > **模块ID**: `QUALITY_SCORING_SYSTEM_001`

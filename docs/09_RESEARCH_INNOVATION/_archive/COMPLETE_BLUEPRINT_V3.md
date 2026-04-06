@@ -20,6 +20,11 @@ responsibility:
 ---
 
 # Layer 9: 研究与创新层完整蓝图 v3.0
+> **核心职责**: Complete Blueprint V3.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Complete Blueprint V3.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v3.0 (完整版)
 > **创建日期**: 2026-04-06

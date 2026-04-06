@@ -38,6 +38,11 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 # Layer 4: 机器学习层蓝图
+> **核心职责**: Machine Learning Layer蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Machine Learning Layer蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

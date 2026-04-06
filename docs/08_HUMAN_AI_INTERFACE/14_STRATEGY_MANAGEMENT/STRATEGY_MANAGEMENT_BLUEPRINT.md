@@ -1,5 +1,5 @@
 ---
-module_id: STRATEGYMANAGEMENTBLUEPRINT_001
+module_id: STRATEGY_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -16,14 +16,14 @@ compliance_level: 专业标准---
 
 
 ﻿---
-module_id: STRATEGY_MANAGEMENT_BLUEPRINT_001
+module_id: STRATEGY_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 layer: Layer 8 (人机交互层)
-module_id: 8.14
+module_id: STRATEGY_MANAGEMENT_001
 module_name: 策略管理界面
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha策略管理
@@ -31,8 +31,17 @@ compliance_level: 专业标准
 parent_document: ../index.md
 implementation_status: 蓝图设计
 ---
-
 # 策略管理界面模块蓝图
+> **核心职责**: Strategy Management蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Strategy Management蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 概述
+
+本文档定义了STRATEGY MANAGEMENT的核心功能和技术实现。
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -504,7 +513,7 @@ elif action == "创建策略":
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.14
-- **蓝图文档**: [STRATEGY_MANAGEMENT_BLUEPRINT.md](./08_HUMAN_AI_INTERFACE\14_STRATEGY_MANAGEMENT\STRATEGY_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [STRATEGY_MANAGEMENT_BLUEPRINT.md](../14_STRATEGY_MANAGEMENT/STRATEGY_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha策略管理
 - **状态**: Active
@@ -525,3 +534,16 @@ elif action == "创建策略":
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+---
+
+## 📊 文档治理
+
+### 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+---

@@ -1,5 +1,5 @@
 ---
-module_id: KNOWLEDGEBASEBLUEPRINT_001
+module_id: KNOWLEDGE_BASE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -32,8 +32,17 @@ open_source_project: Obsidian
 github_url: https://github.com/obsidianmd/obsidian-releases
 license: Proprietary (Free for personal use)
 ---
-
 # 知识库模块蓝图
+> **核心职责**: Knowledge Base蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Knowledge Base蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 概述
+
+本文档定义了KNOWLEDGE BASE的核心功能和技术实现。
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -398,7 +407,7 @@ class KnowledgeGraph:
             
             with open(md_file, 'r', encoding='utf-8') as f:
                 content = f.read()
-                links = re.findall(r'\[\[([^\]]+)\]\]', content)
+                links = re.findall(r'/[/[([^/]]+)/]/]', content)
                 
                 for link in links:
                     link_name = link.split('|')[0].split('#')[0]
@@ -520,7 +529,7 @@ class KnowledgeGraph:
 #### Layer 8: 人机交互层
 ##### 0.001. Knowledge Base
 - **模块ID**: KNOWLEDGE_BASE_001
-- **蓝图文档**: [KNOWLEDGE_BASE_BLUEPRINT.md](./08_HUMAN_AI_INTERFACE\18_KNOWLEDGE_BASE\KNOWLEDGE_BASE_BLUEPRINT.md)
+- **蓝图文档**: [KNOWLEDGE_BASE_BLUEPRINT.md](../18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha知识库系统
 - **状态**: Active
@@ -541,3 +550,16 @@ class KnowledgeGraph:
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+---
+
+## 📊 文档治理
+
+### 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+---

@@ -46,6 +46,11 @@ implementation_status: 进行�?---
 
 ```bash
 # 创建数据目录
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 mkdir -p data/raw data/processed output
 
 # 验证目录

@@ -27,6 +27,11 @@ responsibility:
   responsibility_layer: Layer 11
 ---
 # 三级时间框架数据流架构蓝�?
+> **核心职责**: Dataflow Architecture蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Dataflow Architecture蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 

@@ -17,6 +17,11 @@ responsibility:
 ---
 
 # Layer 7 AI报告层完整蓝图补充报告
+> **核心职责**: Layer 7 Complete Blueprint Supplement Report.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Layer 7 Complete Blueprint Supplement Report.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-07  

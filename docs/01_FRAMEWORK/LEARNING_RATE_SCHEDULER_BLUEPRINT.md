@@ -28,6 +28,11 @@ layer: Layer 3 (策略层)
 
 
 # 学习率调度器蓝图
+> **核心职责**: Learning Rate Scheduler蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Learning Rate Scheduler蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

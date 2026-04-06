@@ -22,6 +22,11 @@ responsibility:
 
 
 # 数据安全合规系统蓝图
+> **核心职责**: Data Security Compliance Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Security Compliance Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.3 - 数据安全合规系统详细设计
 > **模块ID**: `DATA_SECURITY_COMPLIANCE_001`

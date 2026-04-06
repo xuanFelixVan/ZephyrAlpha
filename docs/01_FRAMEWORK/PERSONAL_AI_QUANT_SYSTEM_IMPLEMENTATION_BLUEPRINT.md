@@ -16,6 +16,11 @@ responsibility:
 ---
 
 # 个人开发+AI维护量化系统完整实施方案
+> **核心职责**: Personal Ai Quant System Implementation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Personal Ai Quant System Implementation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-06  

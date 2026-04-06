@@ -20,6 +20,11 @@ responsibility:
 
 
 # 自动化数据修复引擎蓝?
+> **核心职责**: Auto Repair Engine Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Auto Repair Engine Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化系统 v5.3 - 自动化数据修复引擎详细设?> **模块ID**: `AUTO_REPAIR_ENGINE_001`
 > **实施周期**: Week 5-7?周）
 > **优先?*: P0（核心）

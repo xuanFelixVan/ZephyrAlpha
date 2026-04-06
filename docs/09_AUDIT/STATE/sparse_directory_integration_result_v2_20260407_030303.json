@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-04-07T03:03:03.923305",
+  "total": 5,
+  "success": 4,
+  "failed": 1,
+  "results": [
+    {
+      "sparse_dir": "03_TRADING_TACTICS/05_STRATEGY_POOL",
+      "target_dir": "03_TRADING_TACTICS",
+      "success": true,
+      "files_moved": [],
+      "files_skipped": [
+        "index.md"
+      ],
+      "error": "目录非空，无法删除: ['index.md']"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260404_audit_reports_archive",
+      "target_dir": "06_ARCHIVE",
+      "success": true,
+      "files_moved": [],
+      "files_skipped": [
+        "INDEX.md"
+      ],
+      "error": "目录非空，无法删除: ['audit_state', 'INDEX.md', 'technical_reviews']"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260406_encoding_issues_archive",
+      "target_dir": "06_ARCHIVE",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "error": "稀疏目录中没有Markdown文件: 06_ARCHIVE/20260406_encoding_issues_archive"
+    },
+    {
+      "sparse_dir": "09_RESEARCH_INNOVATION/01_ai_research_lab",
+      "target_dir": "09_RESEARCH_INNOVATION",
+      "success": true,
+      "files_moved": [],
+      "files_skipped": [
+        "INDEX.md"
+      ],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "10_GOVERNANCE_COMPLIANCE/01_internal_controls",
+      "target_dir": "10_GOVERNANCE_COMPLIANCE",
+      "success": true,
+      "files_moved": [],
+      "files_skipped": [
+        "INDEX.md"
+      ],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    }
+  ]
+}

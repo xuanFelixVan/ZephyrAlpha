@@ -28,6 +28,11 @@ layer: Layer 3 (策略层)
 
 
 # 特征选择自动化蓝�?
+> **核心职责**: Feature Selection Automation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Feature Selection Automation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **蓝图编号**: `FSA-001`
 

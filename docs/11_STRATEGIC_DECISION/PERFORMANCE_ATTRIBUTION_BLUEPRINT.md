@@ -34,6 +34,11 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.7: 业绩归因系统蓝图
+> **核心职责**: Performance Attribution蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Performance Attribution蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 📋 文档职责说明
 

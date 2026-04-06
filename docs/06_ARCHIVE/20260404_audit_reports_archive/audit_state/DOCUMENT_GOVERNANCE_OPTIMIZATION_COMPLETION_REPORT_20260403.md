@@ -14,6 +14,11 @@ parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md--
 
 
 # ТќЄТАБТ▓╗уљєС╝ўтїќт«їТѕљТіЦтЉі
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **ТіЦтЉіу╝ќтЈи**: OPTIMIZATION_COMPLETION_001
 > **тѕЏт╗║ТЌЦТюЪ**: 2026-04-03

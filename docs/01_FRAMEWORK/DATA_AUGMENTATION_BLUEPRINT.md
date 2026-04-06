@@ -36,6 +36,11 @@ responsibility_boundary: |
   数据预处理增强请参考：DATA_PREPROCESSING_LAYER_BLUEPRINT.md
 ---
 # 数据增强系统蓝图
+> **核心职责**: Data Augmentation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Augmentation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

@@ -1,5 +1,5 @@
 ---
-module_id: DATABACKUPBLUEPRINT_001
+module_id: DATA_BACKUP_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -32,8 +32,17 @@ open_source_project: Restic
 github_url: https://github.com/restic/restic
 license: BSD-2-Clause
 ---
-
 # 数据备份模块蓝图
+> **核心职责**: Data Backup蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Backup蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 概述
+
+本文档定义了DATA BACKUP的核心功能和技术实现。
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -184,18 +193,18 @@ echo "Starting backup at $(date)"
 for path in "${BACKUP_PATHS[@]}"; do
     if [ -e "$path" ]; then
         echo "Backing up $path"
-        restic backup "$path" \
-            --tag "automated" \
+        restic backup "$path" /
+            --tag "automated" /
             --tag "$(date +%Y-%m-%d)"
     fi
 done
 
 echo "Pruning old backups"
-restic forget \
-    --keep-daily 7 \
-    --keep-weekly 4 \
-    --keep-monthly 12 \
-    --keep-yearly 3 \
+restic forget /
+    --keep-daily 7 /
+    --keep-weekly 4 /
+    --keep-monthly 12 /
+    --keep-yearly 3 /
     --prune
 
 echo "Backup completed at $(date)"
@@ -226,11 +235,11 @@ crontab -e
 ### 4.2 保留策略
 
 ```bash
-restic forget \
-    --keep-daily 7 \      # 保留最近7天的每日备份
-    --keep-weekly 4 \     # 保留最近4周的每周备份
-    --keep-monthly 12 \   # 保留最近12个月的每月备份
-    --keep-yearly 3 \     # 保留最近3年的每年备份
+restic forget /
+    --keep-daily 7 /      # 保留最近7天的每日备份
+    --keep-weekly 4 /     # 保留最近4周的每周备份
+    --keep-monthly 12 /   # 保留最近12个月的每月备份
+    --keep-yearly 3 /     # 保留最近3年的每年备份
     --prune               # 清理不需要的数据
 ```
 
@@ -482,7 +491,7 @@ restic backup /data
 #### Layer 8: 人机交互层
 ##### 0.001. Data Backup
 - **模块ID**: DATA_BACKUP_001
-- **蓝图文档**: [DATA_BACKUP_BLUEPRINT.md](./08_HUMAN_AI_INTERFACE\20_DATA_BACKUP\DATA_BACKUP_BLUEPRINT.md)
+- **蓝图文档**: [DATA_BACKUP_BLUEPRINT.md](../20_DATA_BACKUP/DATA_BACKUP_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha数据备份系统
 - **状态**: Active
@@ -503,3 +512,16 @@ restic backup /data
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+---
+
+## 📊 文档治理
+
+### 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+---

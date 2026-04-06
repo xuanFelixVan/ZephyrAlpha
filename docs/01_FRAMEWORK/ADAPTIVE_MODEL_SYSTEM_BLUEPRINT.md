@@ -31,6 +31,11 @@ responsibility:
   responsibility_layer: Layer 4
 ---
 # 统一自适应模型系统蓝图
+> **核心职责**: Adaptive Model System蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Adaptive Model System蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

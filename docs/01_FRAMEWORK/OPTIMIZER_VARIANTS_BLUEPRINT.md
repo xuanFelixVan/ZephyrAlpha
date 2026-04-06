@@ -28,6 +28,11 @@ layer: Layer 2 (Alpha因子层)
 
 
 # 优化器变体蓝�?
+> **核心职责**: Optimizer Variants蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Optimizer Variants蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **蓝图编号**: `OPT-001`
 

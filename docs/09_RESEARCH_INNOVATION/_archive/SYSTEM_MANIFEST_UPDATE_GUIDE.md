@@ -14,6 +14,11 @@ applicable_scope: System_Manifest.md Layer 9索引补充---
 
 
 # System_Manifest.md Layer 9索引更新指南
+> **核心职责**: 使用指南和教程
+> **职责边界**: 
+> - ✅ 本文档负责：使用指南和教程相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **创建日期**: 2026-04-06
 > **目的**: 更新System_Manifest.md，添加Layer 9研究与创新层新文档索引

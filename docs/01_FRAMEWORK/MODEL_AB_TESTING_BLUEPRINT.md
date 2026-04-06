@@ -22,6 +22,11 @@ responsibility_boundary: |
 layer: Layer 4 (机器学习层)
 ---
 # æ¨¡åA/Bæµè¯èå¾
+> **核心职责**: Model Ab Testing蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Model Ab Testing蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

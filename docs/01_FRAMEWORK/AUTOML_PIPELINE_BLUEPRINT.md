@@ -22,6 +22,11 @@ responsibility_boundary: |
 layer: Layer 4 (机器学习层)
 ---
 # AutoMLæµæ°´çº¿èå?
+> **核心职责**: Automl Pipeline蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Automl Pipeline蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **èå¾ç¼å·**: `AUTOML-001`
 

@@ -20,6 +20,11 @@ responsibility:
 
 
 # 数据可观测性平台蓝图
+> **核心职责**: Data Observability Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Observability Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.3 - 数据可观测性平台详细设计
 > **模块ID**: `DATA_OBSERVABILITY_001`

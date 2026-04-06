@@ -32,6 +32,11 @@ responsibility_boundary: |
 
 
 # 灾备体系蓝图
+> **核心职责**: Disaster Recovery蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Disaster Recovery蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统灾备体系设计文档
 >

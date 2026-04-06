@@ -22,6 +22,11 @@ responsibility_boundary: |
 layer: Layer 4 (机器学习层)
 ---
 # 娉㈠姩鐜囬娴嬫ā鍨嬭摑鍥?
+> **核心职责**: Volatility Prediction蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Volatility Prediction蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **钃濆浘缂栧彿**: `VOL-001`
 

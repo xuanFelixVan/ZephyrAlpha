@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-04-07T03:02:13.084768",
+  "total": 6,
+  "success": 1,
+  "failed": 5,
+  "results": [
+    {
+      "sparse_dir": "03_TRADING_TACTICS/05_STRATEGY_POOL",
+      "target_dir": "03_TRADING_TACTICS",
+      "success": false,
+      "files_moved": [],
+      "error": "目标文件已存在: index.md"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260404_audit_reports_archive",
+      "target_dir": "06_ARCHIVE",
+      "success": false,
+      "files_moved": [],
+      "error": "目标文件已存在: INDEX.md"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260406_encoding_issues_archive",
+      "target_dir": "06_ARCHIVE",
+      "success": false,
+      "files_moved": [
+        "ARCHIVE_README.md"
+      ],
+      "error": "目录非空，无法删除: 06_ARCHIVE/20260406_encoding_issues_archive"
+    },
+    {
+      "sparse_dir": "09_RESEARCH_INNOVATION/01_ai_research_lab",
+      "target_dir": "09_RESEARCH_INNOVATION",
+      "success": false,
+      "files_moved": [],
+      "error": "目标文件已存在: INDEX.md"
+    },
+    {
+      "sparse_dir": "10_GOVERNANCE_COMPLIANCE/01_internal_controls",
+      "target_dir": "10_GOVERNANCE_COMPLIANCE",
+      "success": false,
+      "files_moved": [],
+      "error": "目标文件已存在: INDEX.md"
+    },
+    {
+      "sparse_dir": "11_STRATEGIC_DECISION/archive/2026-Q1",
+      "target_dir": "11_STRATEGIC_DECISION/archive",
+      "success": true,
+      "files_moved": [
+        "BLUEPRINT_CREATION_PROGRESS_REPORT_20260407.md",
+        "BLUEPRINT_IMPLEMENTATION_STATUS_REPORT_20260407.md",
+        "BLUEPRINT_v2.0.1_backup.md",
+        "P1_BLUEPRINT_CREATION_PROGRESS_REPORT_20260407.md"
+      ],
+      "error": null
+    }
+  ]
+}

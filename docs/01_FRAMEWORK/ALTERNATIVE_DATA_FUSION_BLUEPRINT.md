@@ -28,6 +28,11 @@ layer: Layer 0 (数据源层)
 
 
 # 另类数据融合蓝图
+> **核心职责**: Alternative Data Fusion蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Alternative Data Fusion蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 
 

@@ -22,6 +22,11 @@ priority: P0---
 
 
 # 高性能数据管道系统蓝图
+> **核心职责**: High Performance Data Pipeline Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：High Performance Data Pipeline Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.3 - 高性能数据管道系统详细设计
 > **模块ID**: `HIGH_PERFORMANCE_DATA_PIPELINE_001`

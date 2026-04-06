@@ -34,6 +34,11 @@ responsibility_boundary: |
 
 
 # 风险事件追踪系统蓝图
+> **核心职责**: Risk Event Tracking蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Risk Event Tracking蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

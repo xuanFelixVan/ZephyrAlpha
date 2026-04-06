@@ -28,6 +28,11 @@ layer: Layer 3 (策略层)
 
 
 # 分布式训练框架蓝�?
+> **核心职责**: Distributed Training蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Distributed Training蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **蓝图编号**: `DIST-001`
 

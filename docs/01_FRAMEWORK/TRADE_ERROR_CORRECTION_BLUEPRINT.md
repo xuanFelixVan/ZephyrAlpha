@@ -42,6 +42,11 @@ responsibility:
 ---
 
 # 交易错误纠正系统蓝图
+> **核心职责**: Trade Error Correction蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Trade Error Correction蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0.0
 > **创建日期**: 2026-04-07

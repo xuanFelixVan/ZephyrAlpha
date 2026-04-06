@@ -1,5 +1,5 @@
 ---
-module_id: ALERTINGSYSTEMBLUEPRINT_001
+module_id: ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -14,14 +14,14 @@ compliance_level: 专业标准---
 
 
 ﻿---
-module_id: ALERTING_SYSTEM_BLUEPRINT_001
+module_id: ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 layer: Layer 8 (人机交互层)
-module_id: 8.2
+module_id: ALERTING_SYSTEM_001
 module_name: 告警通知系统
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha告警通知
@@ -30,6 +30,16 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 ---
 # 告警通知系统模块蓝图
+> **核心职责**: Alerting System蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Alerting System蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 概述
+
+本文档定义了ALERTING SYSTEM的核心功能和技术实现。
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -408,7 +418,7 @@ async def wechat_webhook(request: Request):
         message = {
             "msgtype": "markdown",
             "markdown": {
-                "content": f"**{status.upper()}: {summary}**\n\n{description}"
+                "content": f"**{status.upper()}: {summary}**/n/n{description}"
             }
         }
         requests.post(webhook_url, json=message)
@@ -486,7 +496,7 @@ async def wechat_webhook(request: Request):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.2
-- **蓝图文档**: [ALERTING_SYSTEM_BLUEPRINT.md](./08_HUMAN_AI_INTERFACE\02_ALERTING\ALERTING_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: [ALERTING_SYSTEM_BLUEPRINT.md](../02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha告警通知
 - **状态**: Active
@@ -507,3 +517,16 @@ async def wechat_webhook(request: Request):
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+---
+
+## 📊 文档治理
+
+### 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+---

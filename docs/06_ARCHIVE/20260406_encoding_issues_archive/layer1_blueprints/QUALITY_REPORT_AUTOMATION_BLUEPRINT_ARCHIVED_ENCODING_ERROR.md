@@ -20,6 +20,11 @@ responsibility:
 
 
 # 数据质量报告自动化蓝?
+> **核心职责**: Quality Report Automation Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Quality Report Automation Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化系统 v5.3 - 数据质量报告自动化详细设?> **模块ID**: `QUALITY_REPORT_AUTOMATION_001`
 > **实施周期**: Week 11?周）
 > **优先?*: P1（核心）

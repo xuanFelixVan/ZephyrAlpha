@@ -17,6 +17,11 @@ implementation_status: 进行?---
 
 
 # U1块审计发?- 核心索引文档
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计时间**: 2026-03-31
 > **审计范围**: INDEX.md, SITEMAP.md, System_Manifest.md, BLUEPRINT.md

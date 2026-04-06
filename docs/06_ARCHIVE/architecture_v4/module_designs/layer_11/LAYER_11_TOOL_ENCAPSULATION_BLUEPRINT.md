@@ -28,6 +28,11 @@ implementation_status: è®¾è®¡é¶æ®µ
 ---
 
 # Layer 11å·¥å·å°è£æ¹æ¡èå¾
+> **核心职责**: Layer 11 Tool Encapsulation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Layer 11 Tool Encapsulation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > æ¸é£éåäº¤æç³»ç» v5.2 - Layer 11å·¥å·å°è£è¯¦ç»è®¾è®¡
 > **ç´¢å¼**: `LAYER_11_TOOL_ENCAP_001`

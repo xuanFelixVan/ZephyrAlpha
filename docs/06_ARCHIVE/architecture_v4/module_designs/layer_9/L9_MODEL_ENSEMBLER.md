@@ -17,6 +17,11 @@ implementation_status: 进行�?---
 
 
 # L9_MODEL_ENSEMBLER: AI模型集成模块设计
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **模块ID**: L9_MODEL_ENSEMBLER  
 > **模块名称**: AI模型集成  

@@ -546,6 +546,11 @@ class AttributionReportGenerator:
         """生成报告内容"""
         content = f"""
 # Risk Attribution Report
+> **核心职责**: Risk Attribution System蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Risk Attribution System蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 核心职责
 

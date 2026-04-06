@@ -366,6 +366,11 @@ factor_neutral_optimization:
 
 ```python
 # 基于Riskfolio-Lib的实现
+> **核心职责**: Factor Neutral Optimization蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Factor Neutral Optimization蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 核心职责
 

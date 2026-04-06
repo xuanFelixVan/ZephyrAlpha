@@ -28,6 +28,11 @@ layer: Layer 3 (策略层)
 
 
 # 相关性预测模型蓝�?
+> **核心职责**: Correlation Prediction蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Correlation Prediction蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **蓝图编号**: `CORR-001`
 

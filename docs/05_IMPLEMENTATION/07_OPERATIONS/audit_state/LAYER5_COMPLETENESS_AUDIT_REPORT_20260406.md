@@ -17,6 +17,11 @@ reference_models: ["Citadel Execution Services", "Two Sigma Trading Systems", "J
 
 
 # Layer 5: 策略执行层完整性审计报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **审计日期**: 2026-04-06

@@ -15,6 +15,11 @@ applicable_scope: 内容不完整蓝图文档归�?compliance_level: 专业标�
 
 
 # 内容不完整蓝图文档归档报�?
+> **核心职责**: Incomplete Blueprint Archive Report 20260404.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Incomplete Blueprint Archive Report 20260404.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > **报告编号**: `ARCHIVE_REPORT_20260404_001`
 > **归档日期**: 2026-04-04
 > **归档原因**: 文档内容不完整，无法正常使用

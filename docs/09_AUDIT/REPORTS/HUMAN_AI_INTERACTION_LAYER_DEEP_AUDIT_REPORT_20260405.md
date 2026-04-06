@@ -16,6 +16,11 @@ parent_document: ../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md---
 
 
 # 人机交互层文档深度审计报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计日期**: 2026-04-05  
 > **审计范围**: docs/01_FRAMEWORK/ 人机交互层相关文档  

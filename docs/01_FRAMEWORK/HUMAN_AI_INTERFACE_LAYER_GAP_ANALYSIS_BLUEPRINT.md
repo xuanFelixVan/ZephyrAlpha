@@ -43,6 +43,11 @@ implementation_status: 蓝图设计完成
 ---
 
 # 人机交互层缺失模块分析与补充蓝图
+> **核心职责**: Human Ai Interface Layer Gap Analysis蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Human Ai Interface Layer Gap Analysis蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

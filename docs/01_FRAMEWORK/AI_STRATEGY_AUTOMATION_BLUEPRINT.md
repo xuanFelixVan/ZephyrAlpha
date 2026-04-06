@@ -46,6 +46,11 @@ responsibility_boundary: |
 ---
 
 # AI策略自动化集成蓝?
+> **核心职责**: Ai Strategy Automation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Ai Strategy Automation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **实施周期**: 10个月?0周）

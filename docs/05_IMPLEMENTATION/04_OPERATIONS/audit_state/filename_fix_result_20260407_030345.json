@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-04-07T03:03:45.294777",
+  "total_chinese_files": 9,
+  "total_renamed": 9,
+  "total_failed": 0,
+  "success_rate": 100.0,
+  "renamed_files": [
+    {
+      "old_path": "11_STRATEGIC_DECISION\\01_asset_allocation\\资产类别定义.md",
+      "old_name": "资产类别定义.md",
+      "new_name": "ASSET_CLASS_DEFINITION.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\01_asset_allocation\\资产配置模型.md",
+      "old_name": "资产配置模型.md",
+      "new_name": "ASSET_ALLOCATION_MODEL.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\01_asset_allocation\\配置优化方法.md",
+      "old_name": "配置优化方法.md",
+      "new_name": "ALLOCATION_OPTIMIZATION_METHOD.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\02_risk_budgeting\\风险调整机制.md",
+      "old_name": "风险调整机制.md",
+      "new_name": "RISK_ADJUSTMENT_MECHANISM.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\02_risk_budgeting\\风险预算方法.md",
+      "old_name": "风险预算方法.md",
+      "new_name": "RISK_BUDGETING_METHOD.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\03_strategy_selection\\策略评估标准.md",
+      "old_name": "策略评估标准.md",
+      "new_name": "STRATEGY_EVALUATION_CRITERIA.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\04_strategic_adjustment\\市场环境评估.md",
+      "old_name": "市场环境评估.md",
+      "new_name": "MARKET_ENVIRONMENT_ASSESSMENT.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\04_strategic_adjustment\\战略调整机制.md",
+      "old_name": "战略调整机制.md",
+      "new_name": "STRATEGIC_ADJUSTMENT_MECHANISM.md"
+    },
+    {
+      "old_path": "11_STRATEGIC_DECISION\\04_strategic_adjustment\\调整触发条件.md",
+      "old_name": "调整触发条件.md",
+      "new_name": "ADJUSTMENT_TRIGGER_CONDITIONS.md"
+    }
+  ],
+  "failed_files": []
+}

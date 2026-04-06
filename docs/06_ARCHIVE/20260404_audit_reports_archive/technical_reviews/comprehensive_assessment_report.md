@@ -14,6 +14,11 @@ compliance_level: 专业标准---
 
 
 # 综合评估报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 生成时间: 2026-04-02 21:42:40
 评估文件: docs/01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md

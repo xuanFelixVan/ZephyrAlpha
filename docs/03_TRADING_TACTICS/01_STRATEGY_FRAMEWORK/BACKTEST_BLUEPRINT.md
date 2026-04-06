@@ -31,6 +31,11 @@ implementation_status: 设计阶段
 
 
 # Backtrader回测蓝图
+> **核心职责**: Backtest蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Backtest蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.0 - Backtrader回测系统
 > **索引**: `STRAT.001`
