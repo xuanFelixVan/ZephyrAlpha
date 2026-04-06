@@ -164,7 +164,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 实时风险对冲引擎蓝图 | REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) |
+| 实时风险对冲引擎蓝图 | REALTIME_RISK_HEDGE_ENGINE_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) |
 | 尾部风险对冲蓝图 | TAIL_RISK_HEDGING_001 | v1.0.0 | Active | 2026-04-05 | [链接](./TAIL_RISK_HEDGING_BLUEPRINT.md) |
 
 ---
@@ -175,21 +175,51 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 智能执行引擎蓝图 | SMART_EXECUTION_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) |
-| 市场冲击模型蓝图 | MARKET_IMPACT_MODEL_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MARKET_IMPACT_MODEL_BLUEPRINT.md) |
+| 智能执行引擎蓝图 | SMART_EXECUTION_ENGINE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) |
+| 市场冲击模型蓝图 | MARKET_IMPACT_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MARKET_IMPACT_MODEL_BLUEPRINT.md) |
 | 交易成本优化蓝图 | TRADING_COST_OPTIMIZATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./TRADING_COST_OPTIMIZATION_BLUEPRINT.md) |
 
 ### 5.2 流动性管理
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 流动性管理系统蓝图 | LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) |
+| 流动性管理系统蓝图 | LIQUIDITY_MANAGEMENT_SYSTEM_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) |
 
 ### 5.3 统计套利
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 统计套利模块蓝图 | STATISTICAL_ARBITRAGE_MODULE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) |
+
+### 5.4 智能订单路由
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 智能订单路由蓝图 | SMART_ORDER_ROUTER_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./SMART_ORDER_ROUTER_BLUEPRINT.md) |
+
+### 5.5 交易信号验证
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 交易信号验证器蓝图 | TRADING_SIGNAL_VALIDATOR_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md) |
+
+### 5.6 算法交易优化
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 算法交易优化器蓝图 | ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) |
+
+### 5.7 交易成本分析
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 交易成本分析引擎蓝图 | TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) |
+
+### 5.8 执行策略回测
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 执行策略回测器蓝图 | EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md) |
 
 ---
 
@@ -230,8 +260,8 @@ parent_document: ../INDEX.md
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 模块职责边界蓝图 | MODULE_RESPONSIBILITY_BOUNDARIES_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md) |
-| 系统集成蓝图 | LAYER7_INTEGRATION_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-05 | [链接](./SYSTEM_INTEGRATION_BLUEPRINT.md) |
-| 系统增强蓝图 | LAYER7_ENHANCEMENT_BLUEPRINT_001 | v2.0.0 | Active | 2026-04-05 | [链接](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) |
+| 系统集成蓝图 | SYSTEM_INTEGRATION_001 | v1.0.0 | Active | 2026-04-05 | [链接](./SYSTEM_INTEGRATION_BLUEPRINT.md) |
+| 系统增强蓝图 | SYSTEM_ENHANCEMENT_001 | v2.0.0 | Active | 2026-04-05 | [链接](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) |
 
 ### 7.4 市场参与者模拟
 
