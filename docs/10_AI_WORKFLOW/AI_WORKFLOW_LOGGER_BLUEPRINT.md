@@ -20,7 +20,7 @@ related_documents:
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 ---
 
-# AI工作记录与优化模块蓝
+# AI工作记录与优化模块蓝图
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
