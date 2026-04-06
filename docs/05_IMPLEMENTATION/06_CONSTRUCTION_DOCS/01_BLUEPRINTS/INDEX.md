@@ -116,6 +116,15 @@ parent_document: ../INDEX.md
 | 协整分析蓝图 | COINTEGRATION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./COINTEGRATION_ANALYSIS_BLUEPRINT.md) 🆕 |
 | 风险贡献分析蓝图 | RISK_CONTRIBUTION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) 🆕 |
 | 层级风险预算蓝图 | HIERARCHICAL_RISK_BUDGET_001 | v1.0.0 | Active | 2026-04-06 | [链接](./HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md) 🆕 |
+| 简化版风险预算系统蓝图 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | v1.0.0 | Active | 2026-04-06 | [链接](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) 🆕 |
+
+### 3.4 风险模型与归因
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| Barra风险模型蓝图 | BARRA_RISK_MODEL_001 | v1.0.0 | Active | 2026-04-03 | [链接](./BARRA_RISK_MODEL_BLUEPRINT.md) |
+| 风险归因系统蓝图 | RISK_ATTRIBUTION_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) |
+| 压力测试系统蓝图 | STRESS_TESTING_SYSTEM_001 | v1.0.0 | Active | 2026-04-03 | [链接](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
 
 ### 3.4 时间框架协调与多策略
 
