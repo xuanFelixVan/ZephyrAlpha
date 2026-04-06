@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 
 > **索引编号**: `BLUEPRINTS_INDEX_001`
 > **最后更新**: 2026-04-06
-> **文档总数**: 56个（Active: 39个，Archived: 17个）
+> **文档总数**: 77个（Active: 77个，Archived: 0个）
 
 ---
 
@@ -23,7 +23,7 @@ parent_document: ../INDEX.md
 
 本索引列出了清风量化系统的所有蓝图文档，按Layer架构组织，包括文档名称、module_id、版本、状态和最后更新日期。
 
-**⚠️ 重要通知**: 2026-04-06发现17个数据预处理层蓝图文档存在编码损坏问题，已全部归档。详见[编码问题审计报告](../../09_AUDIT/REPORTS/CRITICAL_ENCODING_ISSUES_AUDIT_REPORT_20260406.md)。
+**✅ 状态更新**: 2026-04-06所有编码问题文档已成功重建并恢复Active状态。详见[立即行动执行报告](../../09_AUDIT/REPORTS/IMMEDIATE_ACTION_EXECUTION_REPORT_20260406.md)。
 
 ---
 
@@ -33,36 +33,36 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 实时数据质量监控蓝图 | REALTIME_QUALITY_MONITOR_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_QUALITY_MONITOR_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 质量评分系统蓝图 | QUALITY_SCORING_SYSTEM_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_SCORING_SYSTEM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 质量报告自动化蓝图 | QUALITY_REPORT_AUTOMATION_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_REPORT_AUTOMATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 自动修复引擎蓝图 | AUTO_REPAIR_ENGINE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/AUTO_REPAIR_ENGINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 质量评分系统蓝图 | QUALITY_SCORING_SYSTEM_001 | v1.0.0 | Active | 2026-04-06 | [链接](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) ✅ |
+| 质量报告自动化蓝图 | QUALITY_REPORT_AUTOMATION_001 | v1.0.0 | Active | 2026-04-06 | [链接](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) ✅ |
+| 自动修复引擎蓝图 | AUTO_REPAIR_ENGINE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) ✅ |
+| 数据质量监控蓝图 | DATA_QUALITY_MONITORING_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_QUALITY_MONITORING_BLUEPRINT.md) ✅ |
 
 ### 2.2 数据架构与治理
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 实时数据湖蓝图 | REALTIME_DATA_LAKE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_DATA_LAKE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据虚拟化蓝图 | DATA_VIRTUALIZATION_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VIRTUALIZATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据网格蓝图 | DATA_MESH_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_MESH_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据编织蓝图 | DATA_FABRIC_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_FABRIC_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据治理平台蓝图 | DATA_GOVERNANCE_PLATFORM_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_GOVERNANCE_PLATFORM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 实时数据湖蓝图 | REALTIME_DATA_LAKE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./REALTIME_DATA_LAKE_BLUEPRINT.md) ✅ |
+| 数据网格蓝图 | DATA_MESH_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_MESH_BLUEPRINT.md) ✅ |
+| 数据编织蓝图 | DATA_FABRIC_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_FABRIC_BLUEPRINT.md) ✅ |
+| 数据治理平台蓝图 | DATA_GOVERNANCE_PLATFORM_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) ✅ |
+| 统一数据基础设施蓝图 | UNIFIED_DATA_INFRASTRUCTURE_001 | v1.0.0 | Active | 2026-04-06 | [链接](./UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md) ✅ |
 
 ### 2.3 数据血缘与目录
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据血缘追踪蓝图 | DATA_LINEAGE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LINEAGE_TRACKING_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据目录/元数据管理蓝图 | DATA_CATALOG_001 | v1.0.0 | Active | 2026-04-05 | [链接](./DATA_CATALOG_BLUEPRINT.md) 🆕 |
-| 数据可观测性蓝图 | DATA_OBSERVABILITY_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_OBSERVABILITY_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据目录蓝图 | DATA_CATALOG_001 | v1.0.1 | Active | 2026-04-05 | [链接](./DATA_CATALOG_BLUEPRINT.md) ✅ |
+| 数据目录元数据蓝图 | DATA_CATALOG_METADATA_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_CATALOG_METADATA_BLUEPRINT.md) ✅ |
+| 数据可观测性蓝图 | DATA_OBSERVABILITY_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_OBSERVABILITY_BLUEPRINT.md) ✅ |
 
 ### 2.4 数据生命周期管理
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据生命周期管理蓝图 | DATA_LIFECYCLE_MANAGEMENT_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据版本控制蓝图 | DATA_VERSION_CONTROL_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VERSION_CONTROL_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
-| 数据成本管理蓝图 | DATA_COST_MANAGEMENT_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_COST_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据生命周期管理蓝图 | DATA_LIFECYCLE_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) ✅ |
+| 数据版本控制蓝图 | DATA_VERSION_CONTROL_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_VERSION_CONTROL_BLUEPRINT.md) ✅ |
+| 数据成本管理蓝图 | DATA_COST_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-06 | [链接](./DATA_COST_MANAGEMENT_BLUEPRINT.md) ✅ |
 
 ### 2.5 数据源与安全
 

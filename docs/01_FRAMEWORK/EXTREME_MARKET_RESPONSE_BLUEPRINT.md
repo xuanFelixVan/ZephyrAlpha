@@ -1,13 +1,14 @@
 ---
 module_id: EXTREME_MARKET_RESPONSE_BLUEPRINT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: 2026-04-06
 owner: 首席蓝图架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构蓝图
-applicable_scope: 极端市场应对与人机切�?compliance_level: 顶级专业标准
+applicable_scope: 极端市场应对与人机切换
+compliance_level: 顶级专业标准
 reference_models: ["Bridgewater Extreme Market Protocol", "Citadel Circuit Breaker System", "Renaissance Technologies Emergency Response"]
 related_documents:
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
@@ -15,6 +16,18 @@ related_documents:
   - AI_TRUST_CALIBRATION_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  **本文档职责（Layer 10 治理与合规层）**：
+  - 极端市场识别（波动率异常、流动性枯竭）
+  - AI权限动态降级（自动降级、人工接管）
+  - 人机平滑切换（应急响应、快速恢复）
+  - 断路器机制（Citadel断路器系统集成）
+  
+  **与本文档职责边界**：
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+  - AI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制
+  - AI_TRUST_CALIBRATION_BLUEPRINT.md: AI信任动态校准
+  - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
 ---
 
 # 极端市场应对机制蓝图：人机切换与应急响�?

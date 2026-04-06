@@ -15,6 +15,17 @@ related_documents:
   - EXTREME_MARKET_RESPONSE_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
+responsibility_boundary: |
+  本文档负责人机协作场景细化与动态调整，包括：
+  - 四维场景架构（市场状态、策略类型、交易规模、流动性）
+  - 协作模式定义与切换机制
+  - 场景化人机分工策略
+  
+  战略级定义请参考以下文档：
+  - 决策权分配战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 人机协作边界战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 风险分级战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 信任校准战略定义：AI_TRUST_CALIBRATION_BLUEPRINT.md
 ---
 
 # 人机协作场景细化蓝图：多维度动态协作模�?
