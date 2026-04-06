@@ -3,44 +3,60 @@ module_id: INDEX_CONSTRUCTION_DOCS
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构索引
+last_updated: 2026-04-06
+owner: 首席文档架构师
+standard_type: 专业量化机构索引
 applicable_scope: 建设文档目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完�?---
+implementation_status: 已完成
+---
 
 # 建设文档目录索引
 
-> **目录职责**: 蓝图文档、实施指南、建设规�?
+> **目录职责**: 蓝图文档、实施指南、建设规范
+
 ## 📁 目录结构
 
-| 子目�?| 职责 | 文件�?|
+| 子目录 | 职责 | 文件数 |
 |--------|------|--------|
 | [01_BLUEPRINTS/](01_BLUEPRINTS/) | 蓝图文档 | 25+ |
 | [02_IMPLEMENTATION_GUIDES/](02_IMPLEMENTATION_GUIDES/) | 实施指南 | 5+ |
 
 ## 📖 核心蓝图文档
 
-### 组合优化�?| 文件 | 职责 |
+### 组合优化类
+
+| 文件 | 职责 |
 |------|------|
 | [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | 组合优化蓝图 |
-| [PORTFOLIO_REBALANCING_BLUEPRINT.md](01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md) | 组合再平衡蓝�?|
-| [MULTI_ASSET_ALLOCATION_BLUEPRINT.md](01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md) | 多资产配置蓝�?|
+| [PORTFOLIO_REBALANCING_BLUEPRINT.md](01_BLUEPRINTS/PORTFOLIO_REBALANCING_BLUEPRINT.md) | 组合再平衡蓝图 |
+| [MULTI_ASSET_ALLOCATION_BLUEPRINT.md](01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRINT.md) | 多资产配置蓝图 |
 
-### 风险管理�?| 文件 | 职责 |
+### 风险管理类
+
+| 文件 | 职责 |
 |------|------|
 | [BARRA_RISK_MODEL_BLUEPRINT.md](01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md) | Barra风险模型蓝图 |
 | [RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md](01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) | 风险归因系统蓝图 |
 | [STRESS_TESTING_SYSTEM_BLUEPRINT.md](01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 压力测试系统蓝图 |
 
-### 执行优化�?| 文件 | 职责 |
+### 执行优化类
+
+| 文件 | 职责 |
 |------|------|
 | [SMART_EXECUTION_ENGINE_BLUEPRINT.md](01_BLUEPRINTS/SMART_EXECUTION_ENGINE_BLUEPRINT.md) | 智能执行引擎蓝图 |
 | [TRADING_COST_OPTIMIZATION_BLUEPRINT.md](01_BLUEPRINTS/TRADING_COST_OPTIMIZATION_BLUEPRINT.md) | 交易成本优化蓝图 |
 | [MARKET_IMPACT_MODEL_BLUEPRINT.md](01_BLUEPRINTS/MARKET_IMPACT_MODEL_BLUEPRINT.md) | 市场冲击模型蓝图 |
 
+### 数据治理类
+
+| 文件 | 职责 |
+|------|------|
+| [DATA_CATALOG_METADATA_BLUEPRINT.md](01_BLUEPRINTS/DATA_CATALOG_METADATA_BLUEPRINT.md) | 数据目录元数据蓝图（已恢复）|
+
 ### 系统架构类
+
 | 文件 | 职责 |
 |------|------|
 | [MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md](01_BLUEPRINTS/MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md) | 模块职责边界蓝图 |
@@ -48,7 +64,6 @@ implementation_status: 已完�?---
 | [SYSTEM_INTEGRATION_BLUEPRINT.md](01_BLUEPRINTS/SYSTEM_INTEGRATION_BLUEPRINT.md) | 系统集成蓝图 |
 | [PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 专业实施蓝图（已恢复）|
 | [STRATEGY_ENGINE_CORE_BLUEPRINT.md](01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 策略引擎核心蓝图（已恢复）|
-| [DATA_CATALOG_METADATA_BLUEPRINT.md](01_BLUEPRINTS/DATA_CATALOG_METADATA_BLUEPRINT.md) | 数据目录元数据蓝图（已恢复）|策略引擎核心蓝图（已恢复�?|
 
 ## 📋 建设规范
 
@@ -56,9 +71,9 @@ implementation_status: 已完�?---
 |------|------|
 | [CONSTRUCTION_SPECIFICATION.md](CONSTRUCTION_SPECIFICATION.md) | 建设规范总纲 |
 | [VERSION_MANAGEMENT_GUIDE.md](VERSION_MANAGEMENT_GUIDE.md) | 版本管理指南 |
-| [NEW_EMPLOYEE_ONBOARDING_GUIDE.md](NEW_EMPLOYEE_ONBOARDING_GUIDE.md) | 新员工入职指�?|
+| [NEW_EMPLOYEE_ONBOARDING_GUIDE.md](NEW_EMPLOYEE_ONBOARDING_GUIDE.md) | 新员工入职指南 |
 | [README.md](README.md) | 建设文档概述 |
 
 ---
 
-**索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护�?*: 首席文档架构�?
+**索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护人**: 首席文档架构师
