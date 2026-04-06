@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_FACTOR_LIBRARY_001
 version: 2.0.1
 status: Active
@@ -112,7 +112,7 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [数据源概述](./04_DATA_SOURCE/README.md) | 数据源概�?| ⭐⭐⭐⭐�?|
 | [数据需求](./04_DATA_SOURCE/DATA_REQUIREMENTS.md) | 数据需求分�?| ⭐⭐⭐⭐�?|
-| [数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据采集流程 | ⭐⭐⭐⭐�?|| [数据质量](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |⭐⭐⭐⭐�?|
+| [数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据采集流程 |  |`n| [文档命名标准](./04_DATA_SOURCE/DOCUMENT_NAMING_STANDARD.md) | 文档命名规范 |  |`n| [数据质量](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 |  |
 | [数据源适配器](./04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) | 数据源适配�?| ⭐⭐⭐⭐�?|
 
 ### 数据接口
@@ -125,6 +125,18 @@ implementation_status: 活跃维护
 | [SuperCmd连接器](./04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) | SuperCmd数据接口 | ⭐⭐⭐⭐ |
 | [免费数据源](./04_DATA_SOURCE/FREE_DATA_SOURCES.md) | 免费数据源列�?| ⭐⭐⭐⭐ |
 
+
+### 数据调度
+
+| 文档名称 | 说明 | 重要度 |
+|---------|------|--------|
+| [调度器API](./04_DATA_SOURCE/02_SCHEDULER/SCHEDULER_API.md) | 数据调度器接口 |  |
+
+### 数据清洗
+
+| 文档名称 | 说明 | 重要度 |
+|---------|------|--------|
+| [清洗规则](./04_DATA_SOURCE/03_CLEANING/CLEANING_RULES.md) | 数据清洗规则 |  |
 ### 数据分析
 
 | 文档名称 | 说明 | 重要�?|
@@ -141,12 +153,14 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [因子主索引](./04_DATA_SOURCE/IFIND/FACTOR_MASTER_INDEX.md) | iFind因子主索�?| ⭐⭐⭐⭐�?|
 | [THS_BD完整指标列表](./04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) | THS_BD完整指标列表 | ⭐⭐⭐⭐�?|
+| [财务报表API](./04_DATA_SOURCE/IFIND/financial_statements/FINANCIAL_STATEMENTS_API.md) | 财务报表接口 |  |
 
 ### 质量管理
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
 | [数据质量控制体系](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 | ⭐⭐⭐⭐�?|
+| [质量指标](./04_DATA_SOURCE/QUALITY_MANAGEMENT/QUALITY_METRICS.md) | 数据质量指标体系 |  |
 
 ---
 

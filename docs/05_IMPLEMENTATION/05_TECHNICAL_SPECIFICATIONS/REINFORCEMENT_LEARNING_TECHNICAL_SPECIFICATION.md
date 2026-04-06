@@ -1,6 +1,6 @@
 ---
-module_id: REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION_001
-version: 1.0.0
+module_id: IMPL_RL_TECH_SPEC_001
+version: 1.0.1
 spec_version: 1.0
 status: Active
 parent_doc: docs/01_FRAMEWORK/REINFORCEMENT_LEARNING_BLUEPRINT.md

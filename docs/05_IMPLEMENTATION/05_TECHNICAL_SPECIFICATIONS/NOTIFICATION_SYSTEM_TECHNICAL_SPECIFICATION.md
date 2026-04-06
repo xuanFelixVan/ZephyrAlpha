@@ -1,6 +1,6 @@
 ---
-module_id: NOTIFICATION_SYSTEM_001
-version: 1.0.0
+module_id: IMPL_NOTIFICATION_TECH_SPEC_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
@@ -51,7 +51,7 @@ NotificationSystem是Layer 8（人机交互层）的核心模块，负责系统�
 ### 2.2 Layer定位与职责边?
 | 维度 | 定义 |
 |------|------|
-| **Layer定位** | Layer 8: 人机交互?- 通知�?|
+| **Layer定位** | Layer 8: 人机交互?- 通知�?|
 | **核心职责** | 多渠道通知、通知模板管理、通知规则配置、通知历史记录 |
 | **职责边界** | 不负责业务逻辑（Layer 2-7）、不负责事件生成（上游模块） |
 | **数据流向** | 上游模块 ?NotificationSystem ?用户 |
@@ -156,7 +156,7 @@ class NotificationSystemAPI:
         self,
         message_id: str
     ) -> Optional[NotificationResult]:
-        """获取通知�?        
+        """获取通知�?        
         参数:
             message_id: 消息ID
             
@@ -464,7 +464,7 @@ class TemplateRenderer:
 | 类别 | 技术选型 | 版本要求 | 说明 |
 |------|----------|----------|------|
 | **编程语言** | Python | ?.10 | 类型提示、dataclass支持 |
-| **邮件�?* | SMTP | - | 邮件发送协?|
+| **邮件�?* | SMTP | - | 邮件发送协?|
 | **钉钉API** | dingtalk-sdk | ?.0 | 钉钉机器人API |
 | **企业微信API** | requests | ?.28 | 企业微信机器人API |
 
@@ -488,7 +488,7 @@ jinja2 = ">=3.1"
 
 | 测试类别 | 覆盖率要?| 测试重点 |
 |----------|-----------|----------|
-| **通知�?* | ?5% | 发送逻辑、重试机?|
+| **通知�?* | ?5% | 发送逻辑、重试机?|
 | **模板渲染** | ?0% | 模板渲染准确?|
 | **规则匹配** | ?5% | 规则匹配逻辑 |
 
@@ -532,7 +532,7 @@ class TestNotificationIntegration:
 
 | 功能?| 验收标准 | 验证方法 |
 |--------|----------|----------|
-| **通知�?* | 多渠道通知正常�?| 功能测试 |
+| **通知�?* | 多渠道通知正常�?| 功能测试 |
 | **模板管理** | 模板创建、渲染正?| 功能测试 |
 | **规则配置** | 规则匹配、触发正?| 功能测试 |
 
@@ -557,7 +557,7 @@ class TestNotificationIntegration:
 | 规则引擎模块开?| 1?| RuleEngine |
 
 **验收标准**:
-- ?多渠道通知正常�?- ?模板渲染准确
+- ?多渠道通知正常�?- ?模板渲染准确
 - ?规则匹配正确
 
 ### 10.2 Phase 2: 集成与测试（1天）
@@ -607,4 +607,4 @@ class TestNotificationIntegration:
 
 ---
 
-**文档�?*: ?已完?**下一?*: 生成技术评审报?
+**文档�?*: ?已完?**下一?*: 生成技术评审报?

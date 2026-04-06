@@ -1,6 +1,6 @@
 ---
-module_id: RESEARCH_EXPERIMENT_TRACKING_001
-version: 1.0.1
+module_id: RESEARCH_EXP_TRACKING_SUB_001
+version: 1.0.2
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01

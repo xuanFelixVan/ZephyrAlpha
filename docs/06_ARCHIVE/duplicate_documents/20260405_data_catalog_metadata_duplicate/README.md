@@ -69,7 +69,7 @@ archive_reason: 职责重叠 - 与DATA_CATALOG_BLUEPRINT.md重复
 ### 2.2 文档元数据
 
 ```yaml
-module_id: DATA_CATALOG_METADATA_001
+module_id: ARCHIVE_DATA_CATALOG_META_README_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-02
