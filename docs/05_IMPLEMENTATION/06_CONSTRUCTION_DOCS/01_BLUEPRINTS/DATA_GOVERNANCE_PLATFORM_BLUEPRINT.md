@@ -1,16 +1,19 @@
 ---
-module_id: DATA_GOVERNANCE_PLATFORM_001
-version: 1.0.0
+module_id: IMPL_DATA_GOVERNANCE_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: 2026-04-06
 owner: 首席蓝图架构师
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
+applicable_scope: "Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构"
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
+open_source_dependency: pandas, numpy, great_expectations
+estimated_effort: 4周
+priority: P1
 ---
 
 # 数据治理平台蓝图
