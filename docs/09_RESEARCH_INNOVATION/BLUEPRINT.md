@@ -1,3 +1,15 @@
+---
+module_id: BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+  - 因子计算
+---
+
 ﻿---
 module_id: RESEARCH_INNOVATION_BP_001
 version: 1.0.1
@@ -13,6 +25,9 @@ related_documents:
   - AI_STRATEGY_AUTOMATION_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 策略研究
+  - 系统架构
 ---
 
 # Layer 9: 研究与创新层蓝图

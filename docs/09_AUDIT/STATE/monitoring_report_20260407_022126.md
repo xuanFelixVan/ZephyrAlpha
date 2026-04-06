@@ -1,3 +1,15 @@
+---
+module_id: MONITORING_REPORT_20260407_022126_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 审计系统
+standard_type: 监控报告
+responsibility:
+  - 审计系统
+  - 文档治理
+---
 # 文档治理监控报告
 
 > **监控时间**: 2026-04-07 02:21:26

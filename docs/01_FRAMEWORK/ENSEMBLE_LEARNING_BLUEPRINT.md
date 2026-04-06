@@ -14,6 +14,9 @@ related_documents:
   - MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
   - AUTOML_AUTOMATION_BLUEPRINT.md
   - MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md
+responsibility:
+  - 机器学习
+  - 系统架构
 responsibility_boundary: |
   本文档负责模型集成学习，包括：
   - 多模型集成策略

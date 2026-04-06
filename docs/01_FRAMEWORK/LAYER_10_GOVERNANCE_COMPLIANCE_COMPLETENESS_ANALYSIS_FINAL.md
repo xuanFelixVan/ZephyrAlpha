@@ -1,4 +1,9 @@
 ---
+responsibility:
+  - 因子计算
+  - 风险预算
+  - 数据质量
+
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_FINAL_001
 version: 1.0.0
 status: Active
@@ -31,6 +36,11 @@ responsibility_boundary: |
 ---
 
 # Layer 10治理与合规层完整性分析报告（最终版）
+> **核心职责**: Layer 10治理与合规层完整性分析
+> **职责边界**: 
+> - ✅ 本文档负责：Layer 10治理与合规层完整性分析相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-07  
