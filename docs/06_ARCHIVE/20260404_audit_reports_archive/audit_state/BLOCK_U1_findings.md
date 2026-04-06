@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_DOC_001
-version: 1.0.0
+module_id: ARCHIVE_BLOCK_U1_FINDINGS_001
+version: 4.0.11.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -23,18 +23,18 @@ implementation_status: 进行?
 
 ## 📊 审计摘要
 
-| 指标 | �?| 说明 |
+| 指标 | �?| 说明 |
 |------|------|------|
 | **审查文件?* | 4?| INDEX.md, SITEMAP.md, System_Manifest.md, BLUEPRINT.md |
 | **发现问题?* | 待计?| P0/P1/P2分类统计 |
 | **文件存在?* | 全部存在 | ?所有核心文件均存在 |
-| **版本一�?* | 待验?| System_Manifest.md v5.3 vs 其他文档 |
+| **版本一�?* | 待验?| System_Manifest.md v5.3 vs 其他文档 |
 
 ---
 
 ## 🔍 文件存在性检?
 
-| 文件 | 预期位置 | 实际位置 | �?|
+| 文件 | 预期位置 | 实际位置 | �?|
 |------|----------|----------|------|
 | INDEX.md | 根目?| `docs/INDEX.md` | ⚠️ 位置偏移 |
 | SITEMAP.md | 根目?| `docs/SITEMAP.md` | ⚠️ 位置偏移 |
@@ -81,7 +81,7 @@ implementation_status: 进行?
 
 **修复建议**:
 1. 明确INDEX.md?5分钟快速入?
-2. 明确SITEMAP.md?完整深度�?
+2. 明确SITEMAP.md?完整深度�?
 3. 移除重复的目录列表，保持各文件独特价?
 
 **优先?*: 🟠 建议本周内处?
@@ -126,7 +126,7 @@ implementation_status: 进行?
 ## 📝 详细分析
 
 ### 1. INDEX.md 分析
-**文件�?*: `docs/INDEX.md` (存在)
+**文件�?*: `docs/INDEX.md` (存在)
 **版本标识**: 需要进一步读取确?
 **职责定位**: 快速入?(5分钟导航)
 
@@ -135,9 +135,9 @@ implementation_status: 进行?
 - 可能包含与SITEMAP.md重叠的目录结?
 
 ### 2. SITEMAP.md 分析
-**文件�?*: `docs/SITEMAP.md` (存在)
+**文件�?*: `docs/SITEMAP.md` (存在)
 **版本标识**: v2.2 (SITEMAP_001)
-**职责定位**: 完整文档地图 (深度�?
+**职责定位**: 完整文档地图 (深度�?
 
 **初步发现**:
 - 明确区分与INDEX.md的职?
@@ -145,9 +145,9 @@ implementation_status: 进行?
 - 版本标识清晰
 
 ### 3. System_Manifest.md 分析
-**文件�?*: `docs/System_Manifest.md` (存在)
+**文件�?*: `docs/System_Manifest.md` (存在)
 **版本标识**: v5.3 (SYSTEM_MANIFEST_001)
-**恢复�?*: 从归档恢?(2026-03-31)
+**恢复�?*: 从归档恢?(2026-03-31)
 
 **初步发现**:
 - 版本标识正确 (v5.3)
@@ -155,9 +155,9 @@ implementation_status: 进行?
 - 作为系统主入口文档定位明?
 
 ### 4. BLUEPRINT.md 分析
-**文件�?*: `docs/BLUEPRINT.md` (存在)
+**文件�?*: `docs/BLUEPRINT.md` (存在)
 **版本标识**: v1.0 (需确认是否应与v5.3对齐)
-**合并�?*: 7个蓝图文档的合并版本
+**合并�?*: 7个蓝图文档的合并版本
 
 **初步发现**:
 - 版本v1.0可能与系统v5.3不匹?
@@ -176,10 +176,10 @@ implementation_status: 进行?
 
 **建议优化**:
 - INDEX.md聚焦?5分钟快速导?，移除详细的目录列表
-- SITEMAP.md作为"完整�?，保留详细目录结构和按用途查?
+- SITEMAP.md作为"完整�?，保留详细目录结构和按用途查?
 
 ### 2. 版本标识不一致问?
-| 文件 | 版本标识 | 系统版本 | �?|
+| 文件 | 版本标识 | 系统版本 | �?|
 |------|----------|----------|------|
 | System_Manifest.md | v5.3 | v5.3 | ?正确 |
 | INDEX.md | v2.3 | v5.3 | ⚠️ 版本号独立但可接?|
@@ -200,7 +200,7 @@ implementation_status: 进行?
 - BLUEPRINT.md引用可能断裂（引用的是归档版本而非合并版）
 
 ### 4. 已知断裂引用验证
-| 引用 | �?| 说明 |
+| 引用 | �?| 说明 |
 |------|------|------|
 | System_Manifest.md ?UNIFIED_ARCHITECTURE.md | ?断裂 | 已知问题，DOCUMENT_AUDIT_v5.3.md已报?|
 | System_Manifest.md ?ULTIMATE_BLUEPRINT.md | ⚠️ 归档引用 | 引用的是归档版本，需确认是否应更新为BLUEPRINT.md |
@@ -208,9 +208,9 @@ implementation_status: 进行?
 
 ---
 
-## 🔗 引用与链接有�?
+## 🔗 引用与链接有�?
 
-| 引用?| 引用目标 | �?| 验证结果 |
+| 引用?| 引用目标 | �?| 验证结果 |
 |--------|----------|------|----------|
 | SITEMAP.md | INDEX.md | ?有效 | 相对路径正确 |
 | BLUEPRINT.md | System_Manifest.md | ⚠️ 待验?| 需要检查链?|
@@ -230,7 +230,7 @@ implementation_status: 进行?
 
 3. **下次审查** (P2):
    - 优化BLUEPRINT.md合并说明
-   - 统一版本标识 (v5.3一�?
+   - 统一版本标识 (v5.3一�?
 
 ---
 
@@ -238,7 +238,7 @@ implementation_status: 进行?
 
 ### 2026-03-31 修复操作
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | �?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | U1-P0-001 | 核心索引文件位置漂移 - 保持现状（docs/目录），记录路径约定 | ?已处?| 2026-03-31 |
 | 2 | U1-P1-001 | System_Manifest.md未索引SITEMAP.md - 已添加索引记?| ?已修?| 2026-03-31 |

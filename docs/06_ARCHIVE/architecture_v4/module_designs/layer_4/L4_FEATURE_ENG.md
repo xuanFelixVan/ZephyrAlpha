@@ -1,25 +1,25 @@
 ---
-module_id: DOC_DOC_001
-version: 1.0.0
+module_id: ARCHIVE_L4_FEATURE_ENG_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# L4_FEATURE_ENG: 自动化特征工程模块设�?
+# L4_FEATURE_ENG: 自动化特征工程模块设�?
 
 > **模块ID**: L4_FEATURE_ENG  
-> **模块名称**: 自动化特征工�? 
-> **所属层�?*: Layer 4 - 机器学习�? 
-> **优先�?*: P1  
+> **模块名称**: 自动化特征工�? 
+> **所属层�?*: Layer 4 - 机器学习�? 
+> **优先�?*: P1  
 > **预计工时**: 25小时  
-> **设计状�?*: 🟡 设计�? 
+> **设计状�?*: 🟡 设计�? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: [BLUEPRINT.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
 
@@ -28,46 +28,46 @@ implementation_status: 进行�?
 ## 📋 模块概述
 
 ### 1.1 功能定位
-**L4_FEATURE_ENG** 是机器学习层的第一个模块，负责为量化交易模型提供自动化、智能化的特征工程能力。该模块集成多种特征工程技术，包括特征选择、特征生成、特征变换、特征降维等，旨在从原始数据中提取最具预测能力的特征，提升机器学习模型的性能�?
+**L4_FEATURE_ENG** 是机器学习层的第一个模块，负责为量化交易模型提供自动化、智能化的特征工程能力。该模块集成多种特征工程技术，包括特征选择、特征生成、特征变换、特征降维等，旨在从原始数据中提取最具预测能力的特征，提升机器学习模型的性能�?
 
 ### 1.2 设计原则
-- **自动化流�?*: 实现端到端的自动化特征工程流水线
-- **多样性支�?*: 支持多种特征工程技术和方法
-- **性能优化**: 以模型预测性能为导向优化特征工�?
-- **可解释�?*: 特征工程过程可解释、可追溯
-- **高效�?*: 支持大规模数据的高效特征工程处理
+- **自动化流�?*: 实现端到端的自动化特征工程流水线
+- **多样性支�?*: 支持多种特征工程技术和方法
+- **性能优化**: 以模型预测性能为导向优化特征工�?
+- **可解释�?*: 特征工程过程可解释、可追溯
+- **高效�?*: 支持大规模数据的高效特征工程处理
 - **集成友好**: 与Layer 2因子层、Layer 4其他机器学习模块无缝集成
 
 ### 1.3 输入输出
 | 项目 | 描述 |
 |------|------|
-| **输入** | 原始数据（因子数据、价格数据、基本面数据等）、目标变量、特征工程配�?|
-| **输出** | 工程化特征集、特征重要性排名、特征工程报告、特征转换管�?|
-| **控制参数** | 特征选择方法、特征生成策略、特征变换技术、时间预算、资源限�?|
+| **输入** | 原始数据（因子数据、价格数据、基本面数据等）、目标变量、特征工程配�?|
+| **输出** | 工程化特征集、特征重要性排名、特征工程报告、特征转换管�?|
+| **控制参数** | 特征选择方法、特征生成策略、特征变换技术、时间预算、资源限�?|
 
 ---
 
-## 🏗�?架构设计
+## 🏗�?架构设计
 
 ### 2.1 模块结构
 ```
 L4_FEATURE_ENG/
-├── feature_engineering_pipeline.py   # 特征工程流水�?
-├── feature_selector.py               # 特征选择�?
-├── feature_generator.py              # 特征生成�?
-├── feature_transformer.py            # 特征变换�?
-├── feature_evaluator.py              # 特征评估�?
+├── feature_engineering_pipeline.py   # 特征工程流水�?
+├── feature_selector.py               # 特征选择�?
+├── feature_generator.py              # 特征生成�?
+├── feature_transformer.py            # 特征变换�?
+├── feature_evaluator.py              # 特征评估�?
 ├── config/
-�?  └── feature_engineering_config.yaml  # 配置文件
+�?  └── feature_engineering_config.yaml  # 配置文件
 ├── tests/
-�?  ├── test_feature_selector.py
-�?  ├── test_feature_generator.py
-�?  └── test_feature_pipeline.py
+�?  ├── test_feature_selector.py
+�?  ├── test_feature_generator.py
+�?  └── test_feature_pipeline.py
 └── monitoring/
     └── feature_engineering_monitor.py
 ```
 
-### 2.2 核心类设�?
+### 2.2 核心类设�?
 ```python
 # feature_engineering_pipeline.py
 import pandas as pd
@@ -104,7 +104,7 @@ class FeatureEngineeringResult:
     config: FeatureEngineeringConfig
 
 class FeatureEngineeringPipeline:
-    """特征工程流水�?""
+    """特征工程流水�?""
     
     def __init__(self, config: FeatureEngineeringConfig):
         self.config = config
@@ -120,7 +120,7 @@ class FeatureEngineeringPipeline:
         y: Optional[pd.Series] = None,
         fit_mode: str = 'supervised'
     ) -> FeatureEngineeringResult:
-        """拟合并转换特�?""
+        """拟合并转换特�?""
         
         # 1. 特征生成
         if self.config.feature_generation.get('enabled', True):
@@ -142,7 +142,7 @@ class FeatureEngineeringPipeline:
         else:
             evaluation_report = {}
         
-        # 5. 构建特征重要性报�?
+        # 5. 构建特征重要性报�?
         feature_importance = self._compute_feature_importance(X, y)
         
         # 6. 构建特征工程报告
@@ -160,7 +160,7 @@ class FeatureEngineeringPipeline:
         )
     
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """转换新数�?""
+        """转换新数�?""
         # 应用相同的特征工程流程（使用训练好的状态）
         if self.config.feature_generation.get('enabled', True):
             X = self.feature_generator.transform_features(X)
@@ -178,7 +178,7 @@ class FeatureEngineeringPipeline:
         X: pd.DataFrame,
         y: Optional[pd.Series] = None
     ) -> pd.DataFrame:
-        """计算特征重要�?""
+        """计算特征重要�?""
         importance_methods = self.config.feature_evaluation.get('importance_methods', [])
         
         importance_results = {}
@@ -197,9 +197,9 @@ class FeatureEngineeringPipeline:
                 
                 importance_results[method] = importance
             except Exception as e:
-                print(f"特征重要性方�?{method} 失败: {str(e)}")
+                print(f"特征重要性方�?{method} 失败: {str(e)}")
         
-        # 合并重要性结�?
+        # 合并重要性结�?
         if importance_results:
             importance_df = pd.DataFrame(importance_results)
             importance_df['combined_importance'] = importance_df.mean(axis=1)
@@ -210,7 +210,7 @@ class FeatureEngineeringPipeline:
 
 # feature_selector.py
 class FeatureSelector:
-    """特征选择�?""
+    """特征选择�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -273,7 +273,7 @@ class FeatureSelector:
 
 # feature_generator.py
 class FeatureGenerator:
-    """特征生成�?""
+    """特征生成�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -284,7 +284,7 @@ class FeatureGenerator:
         X: pd.DataFrame,
         y: Optional[pd.Series] = None
     ) -> pd.DataFrame:
-        """生成新特�?""
+        """生成新特�?""
         X_extended = X.copy()
         
         # 时间特征
@@ -299,11 +299,11 @@ class FeatureGenerator:
         if self.config.get('generate_interaction_features', False):
             X_extended = self._generate_interaction_features(X_extended)
         
-        # 多项式特�?
+        # 多项式特�?
         if self.config.get('generate_polynomial_features', False):
             X_extended = self._generate_polynomial_features(X_extended)
         
-        # 技术指标特�?
+        # 技术指标特�?
         if self.config.get('generate_technical_features', False):
             X_extended = self._generate_technical_features(X_extended)
         
@@ -348,7 +348,7 @@ class FeatureGenerator:
         
         self.generated_features_info.extend([
             {'type': 'time', 'name': 'hour', 'description': '小时'},
-            {'type': 'time', 'name': 'day_of_week', 'description': '星期�?},
+            {'type': 'time', 'name': 'day_of_week', 'description': '星期�?},
             {'type': 'time', 'name': 'day_of_month', 'description': '月内日期'},
             {'type': 'time', 'name': 'month', 'description': '月份'},
             {'type': 'time', 'name': 'quarter', 'description': '季度'},
@@ -366,7 +366,7 @@ class FeatureGenerator:
 
 # feature_transformer.py
 class FeatureTransformer:
-    """特征变换�?""
+    """特征变换�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -430,7 +430,7 @@ feature_engineering:
       enabled: true
       windows: [5, 10, 20, 60]  # 时间窗口
       functions: ["mean", "std", "min", "max", "median", "skew", "kurtosis"]
-      columns: ["price", "volume", "returns"]  # 应用�?
+      columns: ["price", "volume", "returns"]  # 应用�?
     
     # 交互特征
     interaction_features:
@@ -439,13 +439,13 @@ feature_engineering:
       interaction_only: false
       include_bias: false
     
-    # 多项式特�?
+    # 多项式特�?
     polynomial_features:
-      enabled: false  # 谨慎使用，可能导致维度爆�?
+      enabled: false  # 谨慎使用，可能导致维度爆�?
       degree: 2
       interaction_only: true
     
-    # 技术指标特�?
+    # 技术指标特�?
     technical_features:
       enabled: true
       indicators:
@@ -483,25 +483,25 @@ feature_engineering:
   feature_transformation:
     enabled: true
     
-    # 标准�?归一�?
+    # 标准�?归一�?
     scaling:
       enabled: true
       method: "standard"  # standard | minmax | robust | quantile | power
       with_mean: true
       with_std: true
       
-      # 分位数变�?
+      # 分位数变�?
       quantile:
         n_quantiles: 1000
         output_distribution: "normal"
         random_state: 42
       
-      # 幂变�?
+      # 幂变�?
       power:
         method: "yeo-johnson"  # yeo-johnson | box-cox
         standardize: true
     
-    # 离散�?
+    # 离散�?
     discretization:
       enabled: false
       method: "kbins"  # kbins | quantile | uniform
@@ -512,7 +512,7 @@ feature_engineering:
     # 编码
     encoding:
       enabled: true
-      categorical_columns: []  # 分类列列�?
+      categorical_columns: []  # 分类列列�?
       method: "onehot"  # onehot | ordinal | target | count
       handle_unknown: "ignore"  # error | ignore
       drop_first: true
@@ -524,7 +524,7 @@ feature_engineering:
       n_bins: 10
       encode: "ordinal"
     
-    # 异常值处�?
+    # 异常值处�?
     outlier_handling:
       enabled: true
       method: "clip"  # clip | remove | winsorize | ignore
@@ -539,20 +539,20 @@ feature_engineering:
     # 选择方法
     method: "mutual_info"  # variance_threshold | correlation_threshold | mutual_info | rf_importance | lasso | pca | auto_ml
     
-    # 方差阈�?
+    # 方差阈�?
     variance_threshold: 0.01
     
-    # 相关性阈�?
+    # 相关性阈�?
     correlation_threshold: 0.95
     correlation_method: "pearson"  # pearson | spearman | kendall
     
-    # 互信�?
+    # 互信�?
     mutual_info:
       n_neighbors: 3
       random_state: 42
       discrete_features: "auto"
     
-    # 随机森林重要�?
+    # 随机森林重要�?
     rf_importance:
       n_estimators: 100
       random_state: 42
@@ -568,13 +568,13 @@ feature_engineering:
     
     # PCA选择
     pca:
-      n_components: 0.95  # 保留的方差比�?
+      n_components: 0.95  # 保留的方差比�?
       svd_solver: "auto"
       random_state: 42
     
     # 自动化机器学习选择
     auto_ml:
-      time_limit: 300  # �?
+      time_limit: 300  # �?
       eval_metric: "rmse"
       presets: "medium_quality"
       hyperparameters: "default"
@@ -586,7 +586,7 @@ feature_engineering:
     # 选择策略
     strategy: "filter"  # filter | wrapper | embedded | hybrid
     
-    # 包装器方�?
+    # 包装器方�?
     wrapper:
       enabled: false
       method: "rfecv"  # rfecv | sequential
@@ -606,17 +606,17 @@ feature_engineering:
   feature_evaluation:
     enabled: true
     
-    # 重要性计算方�?
+    # 重要性计算方�?
     importance_methods: ["mutual_info", "correlation", "permutation", "shap"]
     
-    # 置换重要�?
+    # 置换重要�?
     permutation:
       n_repeats: 10
       random_state: 42
       scoring: "neg_mean_squared_error"
       n_jobs: -1
     
-    # SHAP重要�?
+    # SHAP重要�?
     shap:
       model: "lightgbm"  # lightgbm | xgboost | random_forest
       n_samples: 1000
@@ -628,7 +628,7 @@ feature_engineering:
       threshold: 0.8
       method: "correlation"
     
-    # 特征稳定性分�?
+    # 特征稳定性分�?
     stability_analysis:
       enabled: true
       n_splits: 5
@@ -652,11 +652,11 @@ feature_engineering:
     use_disk_cache: false
     cache_dir: "/tmp/feature_engineering_cache"
     
-    # 批处�?
+    # 批处�?
     batch_size: 10000
     chunk_size: 1000
     
-    # GPU加�?
+    # GPU加�?
     use_gpu: false
     gpu_device: 0
     
@@ -680,7 +680,7 @@ feature_engineering:
       include_charts: true
       chart_theme: "plotly_white"
     
-    # 元数据输�?
+    # 元数据输�?
     metadata:
       enabled: true
       format: "json"
@@ -710,15 +710,15 @@ pandas>=1.3.0
 numpy>=1.21.0
 scipy>=1.7.0
 statsmodels>=0.13.0
-ta>=0.10.0  # 技术指�?
-featuretools>=1.0.0  # 自动化特征工�?
+ta>=0.10.0  # 技术指�?
+featuretools>=1.0.0  # 自动化特征工�?
 tsfresh>=0.20.0  # 时间序列特征
 category_encoders>=2.5.0  # 分类编码
 shap>=0.41.0  # SHAP解释
 joblib>=1.1.0
 pyarrow>=7.0.0  # Parquet格式
 fastparquet>=0.8.0
-tqdm>=4.64.0  # 进度�?
+tqdm>=4.64.0  # 进度�?
 ```
 
 ---
@@ -754,7 +754,7 @@ class FeatureEngineeringAPI:
         target: pd.Series,
         methods: List[str] = ["mutual_info", "permutation", "shap"]
     ) -> Dict[str, pd.DataFrame]:
-        """评估特征重要�?""
+        """评估特征重要�?""
         pass
     
     @staticmethod
@@ -783,7 +783,7 @@ class FeatureEngineeringAPI:
 ```python
 # 与Layer 2因子层的接口
 class FactorLayerIntegration:
-    """因子层集成接�?""
+    """因子层集成接�?""
     
     def get_factor_data(
         self,
@@ -801,12 +801,12 @@ class FactorLayerIntegration:
         data: pd.DataFrame,
         factor_config: Dict[str, Any]
     ) -> pd.DataFrame:
-        """用因子数据丰富特�?""
+        """用因子数据丰富特�?""
         pass
 
-# 与Layer 4其他机器学习模块的接�?
+# 与Layer 4其他机器学习模块的接�?
 class MachineLearningLayerIntegration:
-    """机器学习层集成接�?""
+    """机器学习层集成接�?""
     
     def prepare_training_data(
         self,
@@ -823,7 +823,7 @@ class MachineLearningLayerIntegration:
         model_type: str,
         validation_config: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """验证特征对模型的适用�?""
+        """验证特征对模型的适用�?""
         pass
     
     def optimize_features_for_model(
@@ -833,12 +833,12 @@ class MachineLearningLayerIntegration:
         model_type: str,
         optimization_config: Dict[str, Any]
     ) -> pd.DataFrame:
-        """为特定模型优化特�?""
+        """为特定模型优化特�?""
         pass
 
 # 与Layer 5策略执行层的接口
 class StrategyExecutionLayerIntegration:
-    """策略执行层集成接�?""
+    """策略执行层集成接�?""
     
     def get_trading_signals(
         self,
@@ -853,7 +853,7 @@ class StrategyExecutionLayerIntegration:
         features: pd.DataFrame,
         validation_config: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """验证特征对交易的适用�?""
+        """验证特征对交易的适用�?""
         pass
 ```
 
@@ -865,9 +865,9 @@ class FeatureEngineeringData:
     
     def __init__(self):
         self.raw_data: pd.DataFrame  # 原始数据
-        self.engineered_features: pd.DataFrame  # 工程化特�?
+        self.engineered_features: pd.DataFrame  # 工程化特�?
         self.target: Optional[pd.Series] = None  # 目标变量
-        self.metadata: Dict[str, Any]  # 元数�?
+        self.metadata: Dict[str, Any]  # 元数�?
         self.feature_info: Dict[str, Any]  # 特征信息
         
     @classmethod
@@ -877,7 +877,7 @@ class FeatureEngineeringData:
         target_column: Optional[str] = None,
         feature_config: Dict[str, Any] = None
     ) -> "FeatureEngineeringData":
-        """从原始数据创�?""
+        """从原始数据创�?""
         instance = cls()
         instance.raw_data = raw_data
         
@@ -917,7 +917,7 @@ import numpy as np
 from L4_FEATURE_ENG.feature_selector import FeatureSelector
 
 class TestFeatureSelector:
-    """特征选择器测�?""
+    """特征选择器测�?""
     
     def setup_method(self):
         self.config = {
@@ -931,14 +931,14 @@ class TestFeatureSelector:
         n_samples = 1000
         n_features = 20
         
-        # 创建高方差特�?
+        # 创建高方差特�?
         np.random.seed(42)
         self.X = pd.DataFrame(
             np.random.randn(n_samples, n_features),
             columns=[f'feature_{i}' for i in range(n_features)]
         )
         
-        # 创建低方差特征（接近常数�?
+        # 创建低方差特征（接近常数�?
         self.X['low_var_feature'] = np.ones(n_samples) + np.random.randn(n_samples) * 0.001
         
         # 创建目标变量
@@ -948,12 +948,12 @@ class TestFeatureSelector:
         """测试方差阈值选择"""
         X_selected, report = self.selector._variance_threshold_selection(self.X)
         
-        assert len(X_selected.columns) == 20  # 低方差特征应被移�?
+        assert len(X_selected.columns) == 20  # 低方差特征应被移�?
         assert 'low_var_feature' not in X_selected.columns
         assert report['method'] == 'variance_threshold'
         assert report['selected_features'] == 20
         assert report['original_features'] == 21
-        assert 0.04 < report['variance_removed'] < 0.05  # 大约移除1/21个特�?
+        assert 0.04 < report['variance_removed'] < 0.05  # 大约移除1/21个特�?
     
     def test_correlation_threshold_selection(self):
         """测试相关性阈值选择"""
@@ -961,20 +961,20 @@ class TestFeatureSelector:
         self.config['correlation_threshold'] = 0.8
         selector = FeatureSelector(self.config)
         
-        # 创建高度相关的特�?
+        # 创建高度相关的特�?
         X_corr = self.X.copy()
         X_corr['feature_corr_1'] = X_corr['feature_0'] * 1.1 + np.random.randn(n_samples) * 0.1
         X_corr['feature_corr_2'] = X_corr['feature_0'] * 0.9 + np.random.randn(n_samples) * 0.1
         
         X_selected, report = selector._correlation_threshold_selection(X_corr, self.y)
         
-        # 高度相关的特征应被移�?
+        # 高度相关的特征应被移�?
         assert len(X_selected.columns) <= len(X_corr.columns)
         assert report['method'] == 'correlation_threshold'
 
 # tests/test_feature_generator.py
 class TestFeatureGenerator:
-    """特征生成器测�?""
+    """特征生成器测�?""
     
     def test_time_feature_generation(self):
         """测试时间特征生成"""
@@ -983,7 +983,7 @@ class TestFeatureGenerator:
         }
         generator = FeatureGenerator(config)
         
-        # 创建带时间戳的数�?
+        # 创建带时间戳的数�?
         dates = pd.date_range('2026-01-01', periods=100, freq='D')
         X = pd.DataFrame({
             'timestamp': dates,
@@ -993,25 +993,25 @@ class TestFeatureGenerator:
         
         X_extended = generator._generate_time_features(X)
         
-        # 检查时间特征是否添�?
+        # 检查时间特征是否添�?
         assert 'hour' in X_extended.columns
         assert 'day_of_week' in X_extended.columns
         assert 'month' in X_extended.columns
         assert 'is_weekend' in X_extended.columns
         
-        # 检查原始特征是否保�?
+        # 检查原始特征是否保�?
         assert 'price' in X_extended.columns
         assert 'volume' in X_extended.columns
         
-        # 检查特征数�?
-        assert len(X_extended.columns) == len(X.columns) + 12  # 12个时间特�?
+        # 检查特征数�?
+        assert len(X_extended.columns) == len(X.columns) + 12  # 12个时间特�?
 
 # tests/test_feature_pipeline.py
 class TestFeatureEngineeringPipeline:
-    """特征工程流水线测�?""
+    """特征工程流水线测�?""
     
     def test_full_pipeline(self):
-        """测试完整流水�?""
+        """测试完整流水�?""
         config = {
             'feature_generation': {'enabled': True},
             'feature_transformation': {'enabled': True, 'methods': ['standardization']},
@@ -1034,17 +1034,17 @@ class TestFeatureEngineeringPipeline:
         # 执行特征工程
         result = pipeline.fit_transform(X, y)
         
-        # 检查结�?
+        # 检查结�?
         assert result.engineered_features is not None
         assert result.feature_importance is not None
         assert result.feature_generation_report is not None
         assert result.feature_selection_report is not None
         assert result.feature_transformation_report is not None
         
-        # 检查特征数�?
+        # 检查特征数�?
         assert len(result.engineered_features.columns) >= 3  # 至少保留原始特征
         
-        # 检查特征重要�?
+        # 检查特征重要�?
         assert len(result.feature_importance) > 0
 ```
 
@@ -1055,8 +1055,8 @@ class TestFeatureEngineeringIntegration:
     """特征工程集成测试"""
     
     def test_integration_with_factor_layer(self):
-        """测试与因子层的集�?""
-        # 模拟因子层数�?
+        """测试与因子层的集�?""
+        # 模拟因子层数�?
         factor_data = pd.DataFrame({
             'timestamp': pd.date_range('2026-01-01', periods=100, freq='D'),
             'symbol': ['AAPL'] * 100,
@@ -1080,12 +1080,12 @@ class TestFeatureEngineeringIntegration:
         assert 'pe_ratio' in result.engineered_features.columns or \
                'pe_ratio' in result.feature_importance.index
         
-        # 验证特征重要性计�?
+        # 验证特征重要性计�?
         if len(result.feature_importance) > 0:
             assert result.feature_importance['combined_importance'].sum() > 0
     
     def test_integration_with_ml_layer(self):
-        """测试与机器学习层的集�?""
+        """测试与机器学习层的集�?""
         from sklearn.model_selection import train_test_split
         from sklearn.ensemble import RandomForestRegressor
         from sklearn.metrics import mean_squared_error
@@ -1117,14 +1117,14 @@ class TestFeatureEngineeringIntegration:
         mse = mean_squared_error(y_test, y_pred)
         
         # 验证特征工程提升了模型性能
-        # 比较基准模型（无特征工程�?
+        # 比较基准模型（无特征工程�?
         model_baseline = RandomForestRegressor(n_estimators=100, random_state=42)
-        model_baseline.fit(X_train.iloc[:, :10], y_train)  # 只使用原始特�?
+        model_baseline.fit(X_train.iloc[:, :10], y_train)  # 只使用原始特�?
         y_pred_baseline = model_baseline.predict(X_test.iloc[:, :10])
         mse_baseline = mean_squared_error(y_test, y_pred_baseline)
         
         # 特征工程应改善性能
-        assert mse <= mse_baseline * 1.1  # 允许10%的波�?
+        assert mse <= mse_baseline * 1.1  # 允许10%的波�?
 ```
 
 ### 5.3 性能测试
@@ -1134,10 +1134,10 @@ class TestFeatureEngineeringPerformance:
     """特征工程性能测试"""
     
     def test_scalability_large_data(self):
-        """测试大数据可扩展�?""
+        """测试大数据可扩展�?""
         import time
         
-        # 创建大规模数�?
+        # 创建大规模数�?
         n_samples = 100000
         n_features = 50
         X = pd.DataFrame(
@@ -1164,12 +1164,12 @@ class TestFeatureEngineeringPerformance:
         execution_time = end_time - start_time
         samples_per_second = n_samples / execution_time
         
-        print(f"样本�? {n_samples}, 特征�? {n_features}")
-        print(f"执行时间: {execution_time:.2f}�?)
-        print(f"样本/�? {samples_per_second:.0f}")
+        print(f"样本�? {n_samples}, 特征�? {n_features}")
+        print(f"执行时间: {execution_time:.2f}�?)
+        print(f"样本/�? {samples_per_second:.0f}")
         
         # 验证性能要求
-        assert execution_time < 300  # 5分钟内完�?
+        assert execution_time < 300  # 5分钟内完�?
         assert samples_per_second > 500  # 每秒处理500样本以上
         
         # 验证结果
@@ -1193,7 +1193,7 @@ class TestFeatureEngineeringPerformance:
         
         config = {
             'feature_generation': {'enabled': True},
-            'feature_selection': {'enabled': False},  # 禁用选择以减少内�?
+            'feature_selection': {'enabled': False},  # 禁用选择以减少内�?
             'performance': {'memory_limit': '2GB'}
         }
         
@@ -1209,8 +1209,8 @@ class TestFeatureEngineeringPerformance:
         print(f"内存增加: {memory_increase:.2f}MB")
         
         # 验证内存使用
-        assert memory_increase < 2048  # 增加不超�?GB
-        assert memory_increase / n_samples < 0.05  # 每样本增加小�?.05MB
+        assert memory_increase < 2048  # 增加不超�?GB
+        assert memory_increase / n_samples < 0.05  # 每样本增加小�?.05MB
 ```
 
 ---
@@ -1244,7 +1244,7 @@ class FeatureEngineeringMonitor:
         self.alerts = []
         
     def record_pipeline_metrics(self, result: FeatureEngineeringResult, execution_info: Dict[str, Any]):
-        """记录流水线指�?""
+        """记录流水线指�?""
         metrics = {
             'timestamp': datetime.now(),
             'data_volume': len(result.engineered_features),
@@ -1268,22 +1268,22 @@ class FeatureEngineeringMonitor:
         return metrics
     
     def _calculate_feature_importance_variance(self, feature_importance: pd.DataFrame) -> float:
-        """计算特征重要性方�?""
+        """计算特征重要性方�?""
         if len(feature_importance) == 0:
             return 0.0
         importance_values = feature_importance.get('combined_importance', feature_importance.mean(axis=1))
         return importance_values.var()
     
     def _calculate_feature_redundancy(self, features: pd.DataFrame) -> float:
-        """计算特征冗余�?""
+        """计算特征冗余�?""
         if len(features.columns) < 2:
             return 0.0
         
-        # 计算特征间相关�?
+        # 计算特征间相关�?
         correlation_matrix = features.corr().abs()
         np.fill_diagonal(correlation_matrix.values, 0)
         
-        # 计算平均相关�?
+        # 计算平均相关�?
         n_features = len(features.columns)
         total_correlations = n_features * (n_features - 1) / 2
         if total_correlations > 0:
@@ -1291,12 +1291,12 @@ class FeatureEngineeringMonitor:
         return 0.0
     
     def _calculate_feature_stability(self, features: pd.DataFrame) -> float:
-        """计算特征稳定�?""
+        """计算特征稳定�?""
         if len(features) < 2:
             return 1.0
         
-        # 计算特征在不同时间段的稳定�?
-        # 这里使用简单的标准差倒数作为稳定性指�?
+        # 计算特征在不同时间段的稳定�?
+        # 这里使用简单的标准差倒数作为稳定性指�?
         std_values = features.std()
         mean_values = features.mean().abs()
         mean_values = mean_values.replace(0, 1)  # 避免除零
@@ -1304,7 +1304,7 @@ class FeatureEngineeringMonitor:
         return stability_scores.mean()
     
     def _check_alerts(self, metrics: Dict[str, Any]):
-        """检查告警规�?""
+        """检查告警规�?""
         alert_rules = [
             {
                 'condition': lambda m: m['total_execution_time'] > 300,
@@ -1319,17 +1319,17 @@ class FeatureEngineeringMonitor:
             {
                 'condition': lambda m: m['feature_redundancy_score'] > 0.8,
                 'level': 'WARNING',
-                'message': '特征冗余度过�?
+                'message': '特征冗余度过�?
             },
             {
                 'condition': lambda m: m['feature_stability_score'] < 0.3,
                 'level': 'ERROR',
-                'message': '特征稳定性过�?
+                'message': '特征稳定性过�?
             },
             {
                 'condition': lambda m: m['engineered_feature_count'] > 1000,
                 'level': 'INFO',
-                'message': '生成特征数量超过1000�?
+                'message': '生成特征数量超过1000�?
             }
         ]
         
@@ -1381,7 +1381,7 @@ class FeatureEngineeringMonitor:
 alerts:
   execution_time:
     enabled: true
-    threshold: 300  # �?
+    threshold: 300  # �?
     level: WARNING
     message: "特征工程执行时间超过5分钟"
   
@@ -1395,19 +1395,19 @@ alerts:
     enabled: true
     threshold: 0.8
     level: WARNING
-    message: "特征冗余度过高（平均相关�?0.8�?
+    message: "特征冗余度过高（平均相关�?0.8�?
   
   feature_stability:
     enabled: true
     threshold: 0.3
     level: ERROR
-    message: "特征稳定性过低（<0.3�?
+    message: "特征稳定性过低（<0.3�?
   
   feature_count:
     enabled: true
     threshold: 1000
     level: INFO
-    message: "生成特征数量超过1000�?
+    message: "生成特征数量超过1000�?
   
   performance_degradation:
     enabled: true
@@ -1440,17 +1440,17 @@ class FeatureEngineeringDashboard:
         for key, value in metrics_summary.items():
             if key.endswith('_mean'):
                 metric_name = key.replace('_mean', '')
-                report.append(f"- {metric_name}: {value:.2f} (均�?")
+                report.append(f"- {metric_name}: {value:.2f} (均�?")
         
         # 告警摘要
         report.append("### 告警摘要")
         if alerts_summary['total_alerts'] > 0:
             for level, count in alerts_summary['alert_counts'].items():
-                report.append(f"- {level}: {count}个告�?)
+                report.append(f"- {level}: {count}个告�?)
             for alert in alerts_summary['recent_alerts']:
                 report.append(f"  - {alert['timestamp']}: {alert['level']} - {alert['message']}")
         else:
-            report.append("- 无告�?)
+            report.append("- 无告�?)
         
         return "\n".join(report)
     
@@ -1464,11 +1464,11 @@ class FeatureEngineeringDashboard:
         # 特征统计
         report.append("### 特征统计")
         report.append(f"- 原始特征数量: {len(result.feature_importance)}")
-        report.append(f"- 工程后特征数�? {len(result.engineered_features.columns)}")
-        report.append(f"- 特征重要性方�? {result.feature_importance['combined_importance'].var():.4f}")
+        report.append(f"- 工程后特征数�? {len(result.engineered_features.columns)}")
+        report.append(f"- 特征重要性方�? {result.feature_importance['combined_importance'].var():.4f}")
         
-        # 特征重要性排�?
-        report.append("### Top 10特征重要性排�?)
+        # 特征重要性排�?
+        report.append("### Top 10特征重要性排�?)
         top_features = result.feature_importance.head(10)
         for idx, (feature, row) in enumerate(top_features.iterrows(), 1):
             importance = row['combined_importance']
@@ -1483,20 +1483,20 @@ class FeatureEngineeringDashboard:
 
 ### 7.1 部署架构
 ```
-部署环境: Docker容器化部�?
+部署环境: Docker容器化部�?
 ├── 特征工程服务 (feature-engineering-service)
-�?  ├── API接口: RESTful API for feature engineering
-�?  ├── 批处理任�? Scheduled batch feature engineering
-�?  ├── 实时处理: Real-time feature transformation
-�?  └── 监控端点: Prometheus metrics endpoint
+�?  ├── API接口: RESTful API for feature engineering
+�?  ├── 批处理任�? Scheduled batch feature engineering
+�?  ├── 实时处理: Real-time feature transformation
+�?  └── 监控端点: Prometheus metrics endpoint
 ├── 特征存储服务 (feature-store-service)
-�?  ├── 特征版本管理: Feature version control
-�?  ├── 特征元数�? Feature metadata management
-�?  └── 特征检�? Feature retrieval API
+�?  ├── 特征版本管理: Feature version control
+�?  ├── 特征元数�? Feature metadata management
+�?  └── 特征检�? Feature retrieval API
 └── 监控服务 (monitoring-service)
     ├── 性能监控: Performance metrics collection
     ├── 告警系统: Alerting system
-    └── 可视化看�? Grafana dashboard
+    └── 可视化看�? Grafana dashboard
 ```
 
 ### 7.2 Docker配置
@@ -1525,7 +1525,7 @@ COPY . .
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# 健康检�?
+# 健康检�?
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health')"
 
@@ -1627,7 +1627,7 @@ class FeatureEngineeringResponse(BaseModel):
 
 @app.on_event("startup")
 async def startup_event():
-    """启动时加载特征工程管�?""
+    """启动时加载特征工程管�?""
     global feature_pipeline
     try:
         # 加载预训练的特征工程管道
@@ -1639,12 +1639,12 @@ async def startup_event():
 
 @app.get("/health")
 async def health_check():
-    """健康检查端�?""
+    """健康检查端�?""
     return {"status": "healthy", "service": "feature-engineering"}
 
 @app.get("/ready")
 async def readiness_check():
-    """就绪检查端�?""
+    """就绪检查端�?""
     if feature_pipeline is not None:
         return {"status": "ready", "pipeline_loaded": True}
     return {"status": "not_ready", "pipeline_loaded": False}
@@ -1660,7 +1660,7 @@ async def engineer_features(request: FeatureEngineeringRequest):
         df = pd.DataFrame(request.data)
         
         if request.mode == "fit_transform" or feature_pipeline is None:
-            # 训练新管�?
+            # 训练新管�?
             from feature_engineering_pipeline import FeatureEngineeringPipeline, FeatureEngineeringConfig
             
             config = FeatureEngineeringConfig(**request.config) if request.config else FeatureEngineeringConfig()
@@ -1721,7 +1721,7 @@ import numpy as np
 from typing import List, Callable, Any
 
 class ParallelFeatureProcessor:
-    """并行特征处理�?""
+    """并行特征处理�?""
     
     def __init__(self, n_jobs: int = -1):
         self.n_jobs = multiprocessing.cpu_count() if n_jobs == -1 else n_jobs
@@ -1762,7 +1762,7 @@ class ParallelFeatureProcessor:
                 except Exception as e:
                     print(f"并行特征选择失败: {e}")
         
-        # 去重并保留特�?
+        # 去重并保留特�?
         selected_features = list(set(selected_features_list))
         return X[selected_features] if selected_features else X
 ```
@@ -1788,7 +1788,7 @@ class MemoryOptimizedFeatureEngineering:
         for i in range(0, len(X), chunk_size):
             chunk = X.iloc[i:i+chunk_size]
             
-            # 处理当前�?
+            # 处理当前�?
             processed_chunk = process_func(chunk)
             results.append(processed_chunk)
             
@@ -1796,7 +1796,7 @@ class MemoryOptimizedFeatureEngineering:
             del chunk
             gc.collect()
             
-            # 检查内存使�?
+            # 检查内存使�?
             if self._get_memory_usage() > self.memory_limit_mb:
                 print(f"警告: 内存使用超过{self.memory_limit_mb}MB")
                 break
@@ -1812,7 +1812,7 @@ class MemoryOptimizedFeatureEngineering:
         return process.memory_info().rss / 1024 / 1024  # MB
     
     def optimize_data_types(self, X: pd.DataFrame) -> pd.DataFrame:
-        """优化数据类型以减少内存使�?""
+        """优化数据类型以减少内存使�?""
         X_optimized = X.copy()
         
         for col in X_optimized.columns:
@@ -1824,7 +1824,7 @@ class MemoryOptimizedFeatureEngineering:
                     X_optimized[col] = X_optimized[col].astype('float32')
             
             elif col_type == 'int64':
-                # 检查是否可以转换为更小的整数类�?
+                # 检查是否可以转换为更小的整数类�?
                 min_val = X_optimized[col].min()
                 max_val = X_optimized[col].max()
                 
@@ -1864,8 +1864,8 @@ class FeatureEngineeringCache:
         os.makedirs(cache_dir, exist_ok=True)
         
     def _generate_cache_key(self, X: pd.DataFrame, func_name: str, params: dict) -> str:
-        """生成缓存�?""
-        # 基于数据哈希、函数名和参数生成唯一�?
+        """生成缓存�?""
+        # 基于数据哈希、函数名和参数生成唯一�?
         data_hash = hashlib.md5(pd.util.hash_pandas_object(X).values.tobytes()).hexdigest()
         params_str = str(sorted(params.items()))
         cache_key = f"{func_name}_{data_hash}_{hash(params_str)}"
@@ -1876,23 +1876,23 @@ class FeatureEngineeringCache:
         cache_key = self._generate_cache_key(X, func.__name__, kwargs)
         cache_file = os.path.join(self.cache_dir, f"{cache_key}.pkl")
         
-        # 检查缓存是否有�?
+        # 检查缓存是否有�?
         if os.path.exists(cache_file):
             cache_time = datetime.fromtimestamp(os.path.getmtime(cache_file))
             if datetime.now() - cache_time < timedelta(hours=cache_ttl_hours):
                 try:
-                    print(f"从缓存加�? {cache_key}")
+                    print(f"从缓存加�? {cache_key}")
                     return joblib.load(cache_file)
                 except:
-                    print(f"缓存加载失败，重新计�? {cache_key}")
+                    print(f"缓存加载失败，重新计�? {cache_key}")
         
         # 执行转换
         result = func(X, **kwargs)
         
-        # 保存到缓�?
+        # 保存到缓�?
         try:
             joblib.dump(result, cache_file)
-            print(f"结果已缓�? {cache_key}")
+            print(f"结果已缓�? {cache_key}")
         except Exception as e:
             print(f"缓存保存失败: {e}")
         
@@ -1903,52 +1903,52 @@ class FeatureEngineeringCache:
 
 ## 📋 实施路径
 
-### 9.1 分阶段实施计�?
+### 9.1 分阶段实施计�?
 
-#### Phase 1: 基础功能 (1-2�?
-- �?核心特征工程流水线开�?
-- �?基础特征选择算法实现
-- �?简单特征生成功�?
-- �?单元测试框架搭建
-- �?基础配置文件设计
+#### Phase 1: 基础功能 (1-2�?
+- �?核心特征工程流水线开�?
+- �?基础特征选择算法实现
+- �?简单特征生成功�?
+- �?单元测试框架搭建
+- �?基础配置文件设计
 
-#### Phase 2: 高级功能 (2-3�?
+#### Phase 2: 高级功能 (2-3�?
 - 🔄 高级特征生成算法集成
 - 🔄 多种特征选择方法实现
-- 🔄 特征变换技术集�?
-- 🔄 特征评估指标开�?
+- 🔄 特征变换技术集�?
+- 🔄 特征评估指标开�?
 - 🔄 性能监控系统搭建
 
-#### Phase 3: 优化完善 (1-2�?
-- �?并行处理优化
-- �?内存优化技术实�?
-- �?缓存机制开�?
-- �?部署配置完善
-- �?文档和示例更�?
+#### Phase 3: 优化完善 (1-2�?
+- �?并行处理优化
+- �?内存优化技术实�?
+- �?缓存机制开�?
+- �?部署配置完善
+- �?文档和示例更�?
 
-#### Phase 4: 生产部署 (1�?
-- �?Docker容器化配�?
-- �?Kubernetes部署配置
-- �?监控告警系统集成
-- �?性能测试和调�?
-- �?生产环境验证
+#### Phase 4: 生产部署 (1�?
+- �?Docker容器化配�?
+- �?Kubernetes部署配置
+- �?监控告警系统集成
+- �?性能测试和调�?
+- �?生产环境验证
 
-### 9.2 资源需�?
-| 资源类型 | 开发阶�?| 测试阶段 | 生产阶段 |
+### 9.2 资源需�?
+| 资源类型 | 开发阶�?| 测试阶段 | 生产阶段 |
 |----------|----------|----------|----------|
 | **计算资源** | 4核CPU, 8GB内存 | 8核CPU, 16GB内存 | 16核CPU, 32GB内存 |
 | **存储资源** | 100GB SSD | 500GB SSD | 1TB SSD + 对象存储 |
-| **网络资源** | 标准带宽 | 高速带�?| 专用网络连接 |
-| **软件依赖** | Python 3.9+, scikit-learn | 相同 + 测试框架 | 相同 + 容器化环�?|
+| **网络资源** | 标准带宽 | 高速带�?| 专用网络连接 |
+| **软件依赖** | Python 3.9+, scikit-learn | 相同 + 测试框架 | 相同 + 容器化环�?|
 
-### 9.3 风险评估与缓�?
+### 9.3 风险评估与缓�?
 | 风险类型 | 风险描述 | 影响等级 | 缓解措施 |
 |----------|----------|----------|----------|
-| **技术风�?* | 特征工程算法不适用于特定数�?| �?| 实现多种算法，提供可配置选项 |
-| **性能风险** | 大规模数据时性能下降 | �?| 实现分块处理、并行计算、内存优�?|
-| **质量风险** | 生成的特征质量不�?| �?| 实现特征评估指标，提供质量报�?|
-| **集成风险** | 与其他模块集成困�?| �?| 定义清晰接口，提供适配器模�?|
-| **部署风险** | 生产环境部署问题 | �?| 提供完整Docker和Kubernetes配置 |
+| **技术风�?* | 特征工程算法不适用于特定数�?| �?| 实现多种算法，提供可配置选项 |
+| **性能风险** | 大规模数据时性能下降 | �?| 实现分块处理、并行计算、内存优�?|
+| **质量风险** | 生成的特征质量不�?| �?| 实现特征评估指标，提供质量报�?|
+| **集成风险** | 与其他模块集成困�?| �?| 定义清晰接口，提供适配器模�?|
+| **部署风险** | 生产环境部署问题 | �?| 提供完整Docker和Kubernetes配置 |
 
 ---
 
@@ -1956,69 +1956,69 @@ class FeatureEngineeringCache:
 
 ### 10.1 模块索引
 - **模块ID**: L4_FEATURE_ENG
-- **所属层�?*: Layer 4 - 机器学习�?
-- **依赖模块**: L2_FACTOR_LIB (因子�?, L4_ML_PIPELINE (机器学习流水�?
-- **被依赖模�?*: L4_ML_MODELS (机器学习模型), L5_STRATEGY_ENGINE (策略引擎)
-- **文档状�?*: 🟢 设计完成
+- **所属层�?*: Layer 4 - 机器学习�?
+- **依赖模块**: L2_FACTOR_LIB (因子�?, L4_ML_PIPELINE (机器学习流水�?
+- **被依赖模�?*: L4_ML_MODELS (机器学习模型), L5_STRATEGY_ENGINE (策略引擎)
+- **文档状�?*: 🟢 设计完成
 - **归档位置**: `docs/module_designs/layer_4/L4_FEATURE_ENG.md`
 
-### 10.2 质量检查清�?
-- �?架构设计完整
-- �?核心类实现详�?
-- �?配置系统完善
-- �?测试覆盖全面
-- �?监控系统设计
-- �?部署方案完整
-- �?性能优化方案
-- �?实施路径清晰
-- �?风险评估全面
-- �?文档索引完整
+### 10.2 质量检查清�?
+- �?架构设计完整
+- �?核心类实现详�?
+- �?配置系统完善
+- �?测试覆盖全面
+- �?监控系统设计
+- �?部署方案完整
+- �?性能优化方案
+- �?实施路径清晰
+- �?风险评估全面
+- �?文档索引完整
 
 ### 10.3 版本管理
 - **初始版本**: v1.0.0 (2026-04-01)
 - **当前版本**: v1.0.0
-- **版本更新策略**: 遵循语义化版本控�?(SemVer)
-- **兼容性保�?*: 主要版本更新可能包含不兼容变�?
+- **版本更新策略**: 遵循语义化版本控�?(SemVer)
+- **兼容性保�?*: 主要版本更新可能包含不兼容变�?
 
 ---
 
 ## 🎯 总结
 
-### 11.1 核心价�?
+### 11.1 核心价�?
 **L4_FEATURE_ENG模块** 为清风量化系统提供了专业级的自动化特征工程能力，具有以下核心价值：
 
-1. **智能化特征工�?*: 集成多种特征工程技术，实现端到端的自动化特征工程流水线
+1. **智能化特征工�?*: 集成多种特征工程技术，实现端到端的自动化特征工程流水线
 2. **高性能处理**: 支持大规模数据的高效处理，具备并行计算、内存优化和缓存机制
-3. **全面监控**: 提供完整的性能监控、告警系统和可视化看�?
-4. **企业级部�?*: 支持Docker容器化和Kubernetes部署，满足生产环境需�?
-5. **可扩展架�?*: 模块化设计，支持新算法和技术的快速集�?
+3. **全面监控**: 提供完整的性能监控、告警系统和可视化看�?
+4. **企业级部�?*: 支持Docker容器化和Kubernetes部署，满足生产环境需�?
+5. **可扩展架�?*: 模块化设计，支持新算法和技术的快速集�?
 
-### 11.2 技术亮�?
-- **算法多样�?*: 支持20+特征选择算法�?5+特征生成技术�?0+特征变换方法
+### 11.2 技术亮�?
+- **算法多样�?*: 支持20+特征选择算法�?5+特征生成技术�?0+特征变换方法
 - **性能优化**: 分块处理、并行计算、内存优化、缓存机制四重性能保障
-- **监控全面**: 13项核心监控指标，5级告警规则，实时可视化看�?
+- **监控全面**: 13项核心监控指标，5级告警规则，实时可视化看�?
 - **部署灵活**: 支持本地部署、Docker容器化、Kubernetes集群部署
 - **集成友好**: RESTful API接口，与现有系统无缝集成
 
 ### 11.3 后续规划
 1. **算法扩展**: 集成更多先进的特征工程算法（如深度学习特征提取）
 2. **性能提升**: 进一步优化大规模数据处理性能
-3. **云原�?*: 加强云原生特性支持（如Serverless部署�?
-4. **AI增强**: 集成AI驱动的智能特征工程（如强化学习特征选择�?
+3. **云原�?*: 加强云原生特性支持（如Serverless部署�?
+4. **AI增强**: 集成AI驱动的智能特征工程（如强化学习特征选择�?
 
 ---
 
-## 📖 参考文�?
+## 📖 参考文�?
 
-1. **特征工程最佳实�?*: 
+1. **特征工程最佳实�?*: 
    - *Feature Engineering for Machine Learning* by Alice Zheng
    - *Practical Feature Engineering* by Max Kuhn
 
-2. **性能优化技�?*:
+2. **性能优化技�?*:
    - *High Performance Python* by Micha Gorelick
    - *Python High Performance* by Gabriele Lanaro
 
-3. **监控和部�?*:
+3. **监控和部�?*:
    - *Site Reliability Engineering* by Google
    - *Kubernetes in Action* by Marko Luksa
 
@@ -2029,7 +2029,7 @@ class FeatureEngineeringCache:
 ---
 
 > **设计完成时间**: 2026-04-02  
-> **设计状�?*: �?已完�? 
+> **设计状�?*: �?已完�? 
 > **下一阶段**: 进入编码实施阶段  
 > **关联文档**: [MODULE_DESIGN_PLAN.md](../../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md), [BLUEPRINT.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
             'feature_transformation_time': execution_info.get('transformation_time',

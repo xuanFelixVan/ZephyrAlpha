@@ -24,8 +24,8 @@ parent_document: INDEX.md
 
 | 文档名称 | 模块ID | 路径 | 说明 | 状�?|
 |---------|--------|------|------|------|
-| **深度学习情感分析模块蓝图** | L3_DLSA_001 | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | FinBERT模型集成、多维度情感分析 | �?完成 |
-| **实时预警系统模块蓝图** | L3_RTAS_001 | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时监控、预警规则引擎、多渠道推�?| �?完成 |
+| **深度学习情感分析模块蓝图** | AIWF_DLSA_001 | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | FinBERT模型集成、多维度情感分析 | �?完成 |
+| **实时预警系统模块蓝图** | AIWF_RTAS_001 | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时监控、预警规则引擎、多渠道推�?| �?完成 |
 
 #### 1.2 技术规格文�?
 | 文档名称 | 文档类型 | 路径 | 说明 | 状�?|
@@ -42,8 +42,8 @@ parent_document: INDEX.md
 | **中期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md) | 知识图谱、流式处理、多语言支持 | �?完成 |
 
 **包含模块**:
-- **知识图谱模块** (L3_FKG_001): 金融实体关系图谱、事件关联分�?- **流式处理架构** (L3_SPA_001): Apache Kafka + Spark Streaming
-- **多语言支持模块** (L3_MSA_001): 多语言翻译、多语言情感分析
+- **知识图谱模块** (AIWF_FKG_001): 金融实体关系图谱、事件关联分�?- **流式处理架构** (AIWF_SPA_001): Apache Kafka + Spark Streaming
+- **多语言支持模块** (AIWF_MSA_001): 多语言翻译、多语言情感分析
 
 #### 2.2 技术规格文�?
 | 文档名称 | 文档类型 | 路径 | 说明 | 状�?|

@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-02
 created_date: 2026-04-02
 layer: Layer 6 (组合优化? | 业务架构: 三级时间框架融合架构
-index: LEVERAGE_001
+index: DYNAMIC_LEVERAGE_MANAGEMENT_001
 estimated_hours: 140h
 review_status: Pending
 reviewer: 首席技术评审官
@@ -21,7 +21,7 @@ implementation_status: 设计阶段
 
 # 动态杠杆管理系统蓝?v1.0
 
-> 清风量化系统 v5.3 - 动态杠杆管理系统架构设?> **索引**: `LEVERAGE_001`
+> 清风量化系统 v5.3 - 动态杠杆管理系统架构设?> **索引**: `DYNAMIC_LEVERAGE_MANAGEMENT_001`
 > **开发时?*: 140h
 > **核心定位**: 基于市场波动率和风险预算动态调整杠杆水平，实现风险调整后收益最大化
 
@@ -491,7 +491,7 @@ class LeverageRiskMonitor:
     
     def __init__(self, config: RiskMonitorConfig):
         self.config = config
-        self.alert_thresholds = config.alert_thresholds  # 预警�?        self.stop_loss_thresholds = config.stop_loss_thresholds  # 止损�?        
+        self.alert_thresholds = config.alert_thresholds  # 预警�?        self.stop_loss_thresholds = config.stop_loss_thresholds  # 止损�?        
     def monitor_leverage_risk(self, current_leverage: float,
                              portfolio_value: float,
                              market_data: pd.DataFrame) -> RiskMonitorResult:
@@ -499,7 +499,7 @@ class LeverageRiskMonitor:
         
         Args:
             current_leverage: 当前杠杆水平
-            portfolio_value: 组合�?            market_data: 市场数据
+            portfolio_value: 组合�?            market_data: 市场数据
             
         Returns:
             RiskMonitorResult: 风险监控结果
@@ -728,7 +728,7 @@ class RiskAlert:
     alert_type: str                      # 预警类型
     severity: str                        # 严重程度
     message: str                         # 预警消息
-    current_value: float                 # 当前?    threshold: float                     # �?
+    current_value: float                 # 当前?    threshold: float                     # �?
 @dataclass
 class RiskMonitorResult:
     """风险监控结果"""
@@ -835,7 +835,7 @@ class DynamicLeverageManagementSystem:
         
         Args:
             current_leverage: 当前杠杆
-            portfolio_value: 组合�?            market_data: 市场数据
+            portfolio_value: 组合�?            market_data: 市场数据
             
         Returns:
             RiskMonitorResult: 风险监控结果
@@ -949,4 +949,4 @@ class DynamicLeverageManagementSystem:
 
 **文档版本**: v1.0
 **最后更?*: 2026-04-02
-**审核�?*: 待审?**下一?*: 提交技术评审官审核
+**审核�?*: 待审?**下一?*: 提交技术评审官审核

@@ -1,6 +1,6 @@
 ---
-module_id: TACTICS_DOC_001
-version: 0.1.0
+module_id: TACTICS_ARCH_DECISION_FRAMEWORK_001
+version: 0.1.1
 status: Archived
 created_date: 2026-04-01
 last_updated: 2026-04-04

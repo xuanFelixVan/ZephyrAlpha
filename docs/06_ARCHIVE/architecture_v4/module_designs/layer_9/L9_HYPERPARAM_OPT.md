@@ -1,25 +1,25 @@
 ---
-module_id: DOC_DOC_001
-version: 1.0.0
+module_id: ARCHIVE_L9_HYPERPARAM_OPT_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# L9_HYPERPARAM_OPT: AI超参数优化模块设�?
+# L9_HYPERPARAM_OPT: AI超参数优化模块设�?
 
 > **模块ID**: L9_HYPERPARAM_OPT  
-> **模块名称**: AI超参数优�? 
-> **所属层�?*: Layer 9 - AI增强�? 
-> **优先�?*: P1  
+> **模块名称**: AI超参数优�? 
+> **所属层�?*: Layer 9 - AI增强�? 
+> **优先�?*: P1  
 > **预计工时**: 24小时  
-> **设计状�?*: 🟡 设计�? 
+> **设计状�?*: 🟡 设计�? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: [AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md](../../02_FACTOR_LIBRARY/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md)
 
@@ -28,12 +28,12 @@ implementation_status: 进行�?
 ## 📋 模块概述
 
 ### 1.1 功能定位
-**L9_HYPERPARAM_OPT** 是AI增强层的第四个模块，负责使用optuna超参数优化框架自动化优化机器学习模型和AI算法的超参数。该模块通过智能搜索算法（贝叶斯优化、TPE、CMA-ES等）自动寻找最优超参数配置，大幅提升模型性能和训练效率�?
+**L9_HYPERPARAM_OPT** 是AI增强层的第四个模块，负责使用optuna超参数优化框架自动化优化机器学习模型和AI算法的超参数。该模块通过智能搜索算法（贝叶斯优化、TPE、CMA-ES等）自动寻找最优超参数配置，大幅提升模型性能和训练效率�?
 
 ### 1.2 设计原则
-- **自动�?*: 全自动超参数搜索与优化，支持多目标优�?
-- **高效�?*: 利用贝叶斯优化等先进算法减少搜索时间
-- **可复现�?*: 确保优化过程可复现，结果可验�?
+- **自动�?*: 全自动超参数搜索与优化，支持多目标优�?
+- **高效�?*: 利用贝叶斯优化等先进算法减少搜索时间
+- **可复现�?*: 确保优化过程可复现，结果可验�?
 - **集成友好**: 与Layer 4机器学习层无缝集成，支持多种模型框架
 - **资源感知**: 智能分配计算资源，支持提前停止和并行优化
 
@@ -42,34 +42,34 @@ implementation_status: 进行�?
 |------|------|
 | **输入** | 机器学习模型、训练数据、验证数据、超参数搜索空间 |
 | **输出** | 最优超参数配置、优化过程记录、性能比较报告 |
-| **控制参数** | 优化算法、试验次数、并行度、时间限制、资源约�?|
+| **控制参数** | 优化算法、试验次数、并行度、时间限制、资源约�?|
 
 ---
 
-## 🏗�?架构设计
+## 🏗�?架构设计
 
 ### 2.1 模块结构
 ```
 L9_HYPERPARAM_OPT/
-├── optuna_integration.py           # optuna集成核心�?
+├── optuna_integration.py           # optuna集成核心�?
 ├── hyperparam_optimization_pipeline.py  # 超参数优化流水线
-├── search_space_designer.py        # 搜索空间设计�?
-├── objective_function_creator.py   # 目标函数创建�?
-├── early_stopping_manager.py       # 提前停止管理�?
+├── search_space_designer.py        # 搜索空间设计�?
+├── objective_function_creator.py   # 目标函数创建�?
+├── early_stopping_manager.py       # 提前停止管理�?
 ├── config/
-�?  └── optuna_config.yaml          # 配置文件
+�?  └── optuna_config.yaml          # 配置文件
 ├── tests/
-�?  ├── test_optuna_integration.py
-�?  └── test_hyperparam_pipeline.py
+�?  ├── test_optuna_integration.py
+�?  └── test_hyperparam_pipeline.py
 └── monitoring/
     └── hyperparam_optimization_monitor.py
 ```
 
-### 2.2 核心类设�?
+### 2.2 核心类设�?
 ```python
 # optuna_integration.py
 class OptunaHyperparameterOptimizer:
-    """optuna超参数优化集�?""
+    """optuna超参数优化集�?""
     
     def __init__(self, config: HyperparamOptimizationConfig):
         self.config = config
@@ -111,7 +111,7 @@ class OptunaHyperparameterOptimizer:
             catch=(Exception,)
         )
         
-        # 4. 获取最优结�?
+        # 4. 获取最优结�?
         self.best_trial = self.study.best_trial
         best_params = self.best_trial.params
         
@@ -126,7 +126,7 @@ class OptunaHyperparameterOptimizer:
         )
     
     def _create_sampler(self) -> optuna.samplers.BaseSampler:
-        """创建采样�?""
+        """创建采样�?""
         sampler_type = self.config.sampler.get('type', 'tpe')
         
         if sampler_type == 'tpe':
@@ -145,10 +145,10 @@ class OptunaHyperparameterOptimizer:
         elif sampler_type == 'random':
             return optuna.samplers.RandomSampler(seed=self.config.random_state)
         else:
-            raise ValueError(f"未知采样器类�? {sampler_type}")
+            raise ValueError(f"未知采样器类�? {sampler_type}")
     
     def _create_pruner(self) -> Optional[optuna.pruners.BasePruner]:
-        """创建剪枝�?""
+        """创建剪枝�?""
         if not self.config.pruning_enabled:
             return None
             
@@ -174,7 +174,7 @@ class OptunaHyperparameterOptimizer:
                 reduction_factor=self.config.pruner.get('reduction_factor', 3)
             )
         else:
-            raise ValueError(f"未知剪枝器类�? {pruner_type}")
+            raise ValueError(f"未知剪枝器类�? {pruner_type}")
     
     def _create_objective_function(
         self,
@@ -187,7 +187,7 @@ class OptunaHyperparameterOptimizer:
     ) -> Callable[[optuna.trial.Trial], float]:
         """创建目标函数"""
         def objective(trial: optuna.trial.Trial) -> float:
-            # 从搜索空间中采样超参�?
+            # 从搜索空间中采样超参�?
             hyperparams = {}
             for param_name, param_space in search_space.items():
                 if param_space.type == 'float':
@@ -253,7 +253,7 @@ class OptunaHyperparameterOptimizer:
         return np.corrcoef(y_true, y_pred)[0, 1]
 ```
 
-### 2.3 数据流水�?
+### 2.3 数据流水�?
 ```python
 # hyperparam_optimization_pipeline.py
 class HyperparameterOptimizationPipeline:
@@ -272,7 +272,7 @@ class HyperparameterOptimizationPipeline:
         data_config: DataConfig,
         optimization_mode: str = 'single_model'
     ) -> PipelineResult:
-        """运行完整优化流水�?""
+        """运行完整优化流水�?""
         results = {}
         
         # 1. 数据准备
@@ -297,7 +297,7 @@ class HyperparameterOptimizationPipeline:
         )
         results['optimization_result'] = optimization_result
         
-        # 4. 最终验�?
+        # 4. 最终验�?
         best_model = self._train_best_model(
             model_class, optimization_result.best_params, train_data, val_data
         )
@@ -307,7 +307,7 @@ class HyperparameterOptimizationPipeline:
         # 5. 生成优化报告
         results['final_report'] = self._generate_final_report(results)
         
-        # 6. 保存最优配�?
+        # 6. 保存最优配�?
         self._save_best_configuration(optimization_result.best_params, test_performance)
         
         return PipelineResult(**results)
@@ -320,7 +320,7 @@ class HyperparameterOptimizationPipeline:
         # 特征工程
         features = self._engineer_features(raw_data, data_config.feature_config)
         
-        # 划分数据�?
+        # 划分数据�?
         train_data, val_data, test_data = self._split_data(
             features, 
             data_config.split_config
@@ -348,7 +348,7 @@ hyperparameter_optimization:
       multivariate: true
       group: true
     cmaes:
-      x0: null  # 初始�?
+      x0: null  # 初始�?
       sigma0: 0.1
     
   # 剪枝配置
@@ -370,8 +370,8 @@ hyperparameter_optimization:
     
   # 优化参数
   optimization:
-    n_trials: 100  # 总试验次�?
-    timeout: 3600  # 超时时间（秒�?
+    n_trials: 100  # 总试验次�?
+    timeout: 3600  # 超时时间（秒�?
     direction: "maximize"  # maximize | minimize
     metric: "ic"  # ic | r2 | mse | mae
     n_jobs: -1  # 并行度（-1表示使用所有核心）
@@ -405,7 +405,7 @@ hyperparameter_optimization:
   early_stopping:
     enabled: true
     patience: 20  # 耐心轮数
-    min_delta: 0.001  # 最小改进阈�?
+    min_delta: 0.001  # 最小改进阈�?
     mode: "maximize"  # maximize | minimize
     
   # 性能配置
@@ -423,7 +423,7 @@ hyperparameter_optimization:
     alert_thresholds:
       optimization_stagnation: 50  # 停滞试验次数
       memory_usage: "6GB"
-      execution_time: 7200  # �?
+      execution_time: 7200  # �?
 ```
 
 ### 3.2 环境依赖
@@ -438,7 +438,7 @@ lightgbm>=3.3.0
 plotly>=5.10.0
 sqlalchemy>=1.4.0  # 用于optuna存储
 joblib>=1.1.0
-tqdm>=4.64.0  # 进度�?
+tqdm>=4.64.0  # 进度�?
 ```
 
 ---
@@ -460,7 +460,7 @@ class HyperparameterOptimizationAPI:
         y_val: pd.Series,
         optimization_config: Optional[Dict[str, Any]] = None
     ) -> OptimizationResult:
-        """优化模型超参�?""
+        """优化模型超参�?""
         pass
     
     @staticmethod
@@ -478,7 +478,7 @@ class HyperparameterOptimizationAPI:
         storage_url: str,
         additional_trials: int = 50
     ) -> OptimizationResult:
-        """恢复中断的优化研�?""
+        """恢复中断的优化研�?""
         pass
     
     @staticmethod
@@ -494,7 +494,7 @@ class HyperparameterOptimizationAPI:
 ```python
 # 与Layer 4机器学习层的接口
 class MachineLearningLayerIntegration:
-    """机器学习层集成接�?""
+    """机器学习层集成接�?""
     
     def get_model_configurations(self, model_type: str) -> Dict[str, Any]:
         """获取模型配置"""
@@ -507,7 +507,7 @@ class MachineLearningLayerIntegration:
         hyperparameters: Dict[str, Any],
         performance_metrics: Dict[str, float]
     ) -> bool:
-        """注册优化后的模型到模型仓�?""
+        """注册优化后的模型到模型仓�?""
         pass
     
     def get_training_data(self, data_config: DataConfig) -> Tuple[pd.DataFrame, pd.Series]:
@@ -519,7 +519,7 @@ class MachineLearningLayerIntegration:
 ```python
 # 优化数据格式
 class HyperparameterOptimizationData:
-    """超参数优化数据格�?""
+    """超参数优化数据格�?""
     
     def __init__(self):
         self.X_train: pd.DataFrame  # 训练特征
@@ -549,7 +549,7 @@ from L9_HYPERPARAM_OPT.optuna_integration import OptunaHyperparameterOptimizer
 from sklearn.ensemble import RandomForestRegressor
 
 class TestOptunaHyperparameterOptimizer:
-    """optuna超参数优化测�?""
+    """optuna超参数优化测�?""
     
     def setup_method(self):
         self.config = {
@@ -644,7 +644,7 @@ class TestOptunaHyperparameterOptimizer:
         
         metric = optimizer._calculate_metric(y_true, y_pred)
         
-        # MSE应该为负数（因为我们要最大化负MSE�?
+        # MSE应该为负数（因为我们要最大化负MSE�?
         expected_mse = -mean_squared_error(y_true, y_pred)
         assert abs(metric - expected_mse) < 1e-10
     
@@ -684,7 +684,7 @@ class TestHyperparameterOptimizationPipeline:
             'model_params': {'random_state': 42}
         }
         
-        # 运行流水�?
+        # 运行流水�?
         result = pipeline.run(
             model_class=RandomForestRegressor,
             model_config=model_config,
@@ -699,7 +699,7 @@ class TestHyperparameterOptimizationPipeline:
         assert 'test_performance' in result
         assert 'final_report' in result
         assert result.optimization_result.best_params is not None
-        assert result.test_performance['r2'] > 0.5  # 预期有一定预测能�?
+        assert result.test_performance['r2'] > 0.5  # 预期有一定预测能�?
 ```
 
 ### 5.3 性能测试
@@ -709,7 +709,7 @@ class TestOptunaPerformance:
     """optuna性能测试"""
     
     def test_optimization_scalability(self):
-        """测试优化可扩展�?""
+        """测试优化可扩展�?""
         import time
         
         config = {
@@ -718,7 +718,7 @@ class TestOptunaPerformance:
             'metric': 'r2',
             'n_trials': 50,
             'timeout': None,
-            'n_jobs': 4,  # 使用4个并行任�?
+            'n_jobs': 4,  # 使用4个并行任�?
             'random_state': 42,
             'sampler': {'type': 'tpe'},
             'pruning_enabled': True
@@ -759,16 +759,16 @@ class TestOptunaPerformance:
         trials_per_second = config['n_trials'] / optimization_time
         
         print(f"优化时间: {optimization_time:.2f}s")
-        print(f"每秒试验�? {trials_per_second:.2f}")
-        print(f"最优�? {result.best_value:.4f}")
+        print(f"每秒试验�? {trials_per_second:.2f}")
+        print(f"最优�? {result.best_value:.4f}")
         
         # 性能要求
-        assert optimization_time < 300  # 5分钟内完�?0次试�?
-        assert trials_per_second > 0.2  # 每秒至少0.2次试�?
-        assert result.best_value > 0.5  # 有一定优化效�?
+        assert optimization_time < 300  # 5分钟内完�?0次试�?
+        assert trials_per_second > 0.2  # 每秒至少0.2次试�?
+        assert result.best_value > 0.5  # 有一定优化效�?
     
     def test_memory_usage_large_search_space(self):
-        """测试大搜索空间内存使�?""
+        """测试大搜索空间内存使�?""
         import psutil
         import os
         
@@ -788,7 +788,7 @@ class TestOptunaPerformance:
         
         optimizer = OptunaHyperparameterOptimizer(config)
         
-        # 大搜索空�?
+        # 大搜索空�?
         search_space = {}
         for i in range(50):  # 50个超参数
             search_space[f'param_{i}'] = {
@@ -805,7 +805,7 @@ class TestOptunaPerformance:
         
         print(f"内存增加: {memory_increase:.2f}MB")
         
-        assert memory_increase < 500  # 内存增加不超�?00MB
+        assert memory_increase < 500  # 内存增加不超�?00MB
 ```
 
 ---
@@ -816,7 +816,7 @@ class TestOptunaPerformance:
 ```python
 # monitoring/hyperparam_optimization_monitor.py
 class HyperparameterOptimizationMonitor:
-    """超参数优化监�?""
+    """超参数优化监�?""
     
     METRICS = [
         'trials_completed',
@@ -855,14 +855,14 @@ class HyperparameterOptimizationMonitor:
         
         self.metrics_history.append(trial_metrics)
         
-        # 更新可视化数�?
+        # 更新可视化数�?
         self._update_visualization_data(trial)
         
-        # 检查异�?
+        # 检查异�?
         self._check_trial_anomalies(trial)
     
     def _check_trial_anomalies(self, trial: optuna.trial.FrozenTrial):
-        """检查试验异�?""
+        """检查试验异�?""
         # 试验值异常低
         if trial.value is not None and trial.value < -1e6:
             self.alerts.append({
@@ -873,14 +873,14 @@ class HyperparameterOptimizationMonitor:
                 'message': f"试验{trial.number}的值异常低: {trial.value}"
             })
         
-        # 试验时间异常�?
+        # 试验时间异常�?
         if trial.duration and trial.duration.total_seconds() > 300:  # 5分钟
             self.alerts.append({
                 'type': 'long_trial_duration',
                 'trial_number': trial.number,
                 'duration': trial.duration.total_seconds(),
                 'severity': 'warning',
-                'message': f"试验{trial.number}耗时过长: {trial.duration.total_seconds():.1f}�?
+                'message': f"试验{trial.number}耗时过长: {trial.duration.total_seconds():.1f}�?
             })
         
         # 连续失败试验
@@ -893,15 +893,15 @@ class HyperparameterOptimizationMonitor:
                 'type': 'consecutive_failures',
                 'count': len(recent_failures),
                 'severity': 'warning',
-                'message': f"连续{len(recent_failures)}次试验失�?
+                'message': f"连续{len(recent_failures)}次试验失�?
             })
     
     def _update_visualization_data(self, trial: optuna.trial.FrozenTrial):
-        """更新可视化数�?""
+        """更新可视化数�?""
         if 'best_value_history' not in self.visualization_data:
             self.visualization_data['best_value_history'] = []
         
-        # 更新最佳值历�?
+        # 更新最佳值历�?
         current_best = max(
             [t.get('value', -float('inf')) for t in self.metrics_history if t.get('value') is not None],
             default=-float('inf')
@@ -912,7 +912,7 @@ class HyperparameterOptimizationMonitor:
             'best_value': current_best
         })
         
-        # 更新参数重要性（采样�?
+        # 更新参数重要性（采样�?
         if trial.params:
             for param_name, param_value in trial.params.items():
                 if 'param_values' not in self.visualization_data:
@@ -933,7 +933,7 @@ class HyperparameterOptimizationMonitor:
 # monitoring/dashboard_config.yaml
 grafana_dashboards:
   hyperparameter_optimization:
-    title: "超参数优化监�?
+    title: "超参数优化监�?
     panels:
       - title: "优化进展"
         type: "line"
@@ -948,7 +948,7 @@ grafana_dashboards:
           - "optuna_trials_pruned"
           - "optuna_trials_failed"
       
-      - title: "参数重要�?
+      - title: "参数重要�?
         type: "bar"
         metrics:
           - "optuna_param_importance"
@@ -984,12 +984,12 @@ grafana_dashboards:
 ## 🚀 部署设计
 
 ### 7.1 部署环境
-| 环境 | 配置 | 用�?|
+| 环境 | 配置 | 用�?|
 |------|------|------|
-| **开发环�?* | CPU: 8�? RAM: 32GB, GPU: 可�?| 功能验证和调�?|
-| **测试环境** | CPU: 16�? RAM: 64GB, GPU: RTX 4090 | 性能验证和集成测�?|
-| **生产环境** | CPU: 32�? RAM: 128GB, GPU: A100 | 生产级超参数优化 |
-| **分布式环�?* | 多节点集群，每节�? CPU 16�? RAM 64GB | 大规模分布式优化 |
+| **开发环�?* | CPU: 8�? RAM: 32GB, GPU: 可�?| 功能验证和调�?|
+| **测试环境** | CPU: 16�? RAM: 64GB, GPU: RTX 4090 | 性能验证和集成测�?|
+| **生产环境** | CPU: 32�? RAM: 128GB, GPU: A100 | 生产级超参数优化 |
+| **分布式环�?* | 多节点集群，每节�? CPU 16�? RAM 64GB | 大规模分布式优化 |
 
 ### 7.2 部署脚本
 ```bash
@@ -1012,7 +1012,7 @@ pip install optuna==3.3.0
 pip install xgboost==1.6.0
 pip install lightgbm==3.3.0
 
-# 安装可选依�?
+# 安装可选依�?
 if [ "$USE_GPU" = "true" ]; then
     pip install cupy-cuda11x
     pip install optuna-integration
@@ -1023,7 +1023,7 @@ python -m L9_HYPERPARAM_OPT.db_initializer
 
 # 创建optuna存储
 if [ ! -f "optuna_studies.db" ]; then
-    echo "创建optuna数据�?.."
+    echo "创建optuna数据�?.."
     python -c "import optuna; optuna.create_study(storage='sqlite:///optuna_studies.db', study_name='init')"
 fi
 
@@ -1045,7 +1045,7 @@ schedules:
   # 每日模型优化
   daily_model_optimization:
     enabled: true
-    cron: "0 1 * * *"  # 每天凌晨1�?
+    cron: "0 1 * * *"  # 每天凌晨1�?
     models:
       - xgboost
       - lightgbm
@@ -1055,10 +1055,10 @@ schedules:
     n_trials: 50
     timeout: 1800  # 30分钟
     
-  # 每周流水线优�?
+  # 每周流水线优�?
   weekly_pipeline_optimization:
     enabled: true
-    cron: "0 3 * * 0"  # 每周日凌�?�?
+    cron: "0 3 * * 0"  # 每周日凌�?�?
     task: "full_pipeline_optimization"
     pipeline_config: "production_pipeline"
     optimization_mode: "pipeline"
@@ -1068,7 +1068,7 @@ schedules:
   # 月度深度优化
   monthly_deep_optimization:
     enabled: true
-    cron: "0 5 1 * *"  # 每月1日凌�?�?
+    cron: "0 5 1 * *"  # 每月1日凌�?�?
     task: "deep_hyperparameter_search"
     models: "all"
     data_source: "full_history"
@@ -1080,7 +1080,7 @@ schedules:
   # 季度重新优化
   quarterly_retraining:
     enabled: true
-    cron: "0 7 1 1,4,7,10 *"  # 每季度第一天凌�?�?
+    cron: "0 7 1 1,4,7,10 *"  # 每季度第一天凌�?�?
     task: "retrain_all_models"
     action: "retrain_with_optimization"
     full_optimization: true
@@ -1090,36 +1090,36 @@ schedules:
 
 ## 📈 成功标准
 
-### 8.1 技术成功标�?
+### 8.1 技术成功标�?
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
-| **功能完整�?* | 所有设计功能实�?| 单元测试通过�?> 95% |
+| **功能完整�?* | 所有设计功能实�?| 单元测试通过�?> 95% |
 | **优化效果** | 优化后模型性能提升 > 10% | A/B测试验证 |
-| **搜索效率** | 找到95%最优解的时�?< 目标时间 | 效率分析 |
+| **搜索效率** | 找到95%最优解的时�?< 目标时间 | 效率分析 |
 | **内存控制** | 内存使用 < 配置限制 | 内存监控验证 |
-| **稳定�?* | 连续运行48小时无崩�?| 稳定性测�?|
-| **可复现�?* | 相同配置优化结果差异 < 5% | 重复实验验证 |
+| **稳定�?* | 连续运行48小时无崩�?| 稳定性测�?|
+| **可复现�?* | 相同配置优化结果差异 < 5% | 重复实验验证 |
 
 ### 8.2 业务成功标准
 | 标准 | 要求 | 验证方法 |
 |------|------|----------|
 | **模型性能提升** | 最终模型IC > 基准模型IC + 0.02 | 回测验证 |
-| **时间效率** | 超参数优化时间减�?> 70% | 时间对比分析 |
-| **资源利用** | CPU/GPU利用�?> 80% | 资源监控 |
+| **时间效率** | 超参数优化时间减�?> 70% | 时间对比分析 |
+| **资源利用** | CPU/GPU利用�?> 80% | 资源监控 |
 | **ROI** | 优化收益 > 优化成本 × 3 | 成本效益分析 |
-| **用户满意�?* | 用户手动干预减少 > 90% | 用户反馈收集 |
+| **用户满意�?* | 用户手动干预减少 > 90% | 用户反馈收集 |
 
-### 8.3 验收检查清�?
-- [ ] **设计文档完整**: 本设计文档完成审�?
-- [ ] **代码实现完成**: 所有核心功能代码实�?
+### 8.3 验收检查清�?
+- [ ] **设计文档完整**: 本设计文档完成审�?
+- [ ] **代码实现完成**: 所有核心功能代码实�?
 - [ ] **测试用例通过**: 单元测试、集成测试、性能测试通过
-- [ ] **优化效果验证**: 在测试数据集上验证优化效�?
-- [ ] **监控就绪**: 监控指标和告警配置完�?
-- [ ] **部署就绪**: 部署脚本和环境配置完�?
-- [ ] **文档完整**: API文档、用户手册、配置手册完�?
+- [ ] **优化效果验证**: 在测试数据集上验证优化效�?
+- [ ] **监控就绪**: 监控指标和告警配置完�?
+- [ ] **部署就绪**: 部署脚本和环境配置完�?
+- [ ] **文档完整**: API文档、用户手册、配置手册完�?
 - [ ] **集成测试**: 与Layer 4机器学习层集成测试通过
 - [ ] **安全审计**: 代码安全审计完成
-- [ ] **性能基准**: 建立性能基准�?
+- [ ] **性能基准**: 建立性能基准�?
 
 ---
 
@@ -1130,47 +1130,47 @@ schedules:
 |------|------|----------|
 | **v1.0** | 基础optuna集成，单模型优化 | 2026-04-20 |
 | **v1.1** | 多目标优化，并行优化支持 | 2026-04-30 |
-| **v2.0** | 分布式优化，GPU加速支�?| 2026-05-15 |
-| **v2.1** | 自动搜索空间设计，智能剪�?| 2026-05-31 |
-| **v3.0** | 集成多优化框架，元优化支�?| 2026-06-15 |
+| **v2.0** | 分布式优化，GPU加速支�?| 2026-05-15 |
+| **v2.1** | 自动搜索空间设计，智能剪�?| 2026-05-31 |
+| **v3.0** | 集成多优化框架，元优化支�?| 2026-06-15 |
 
-### 9.2 技术债管�?
-| 技术�?| 优先�?| 解决计划 |
+### 9.2 技术债管�?
+| 技术�?| 优先�?| 解决计划 |
 |--------|--------|----------|
-| **GPU加速集�?* | P1 | v2.0版本集成CUDA和GPU优化 |
-| **分布式优�?* | P1 | v2.0版本支持多节点并行优�?|
+| **GPU加速集�?* | P1 | v2.0版本集成CUDA和GPU优化 |
+| **分布式优�?* | P1 | v2.0版本支持多节点并行优�?|
 | **自动搜索空间** | P1 | v2.1版本集成自动搜索空间设计 |
-| **多框架支�?* | P2 | v3.0版本集成hyperopt、skopt�?|
-| **元优�?* | P2 | v3.0版本支持优化算法的优�?|
-| **可解释性增�?* | P3 | 未来版本增加优化过程可视�?|
+| **多框架支�?* | P2 | v3.0版本集成hyperopt、skopt�?|
+| **元优�?* | P2 | v3.0版本支持优化算法的优�?|
+| **可解释性增�?* | P3 | 未来版本增加优化过程可视�?|
 
 ---
 
 ## 📝 设计决策记录
 
 ### 10.1 关键设计决策
-| 决策ID | 决策内容 | 决策理由 | 备选方�?|
+| 决策ID | 决策内容 | 决策理由 | 备选方�?|
 |--------|----------|----------|----------|
-| DD_HP_001 | 选择optuna而非hyperopt | 活跃度高，功能丰富，API设计优秀 | hyperopt（更早但维护较少�?|
-| DD_HP_002 | 默认使用TPE采样�?| 贝叶斯优化效果好，适合连续空间 | 随机搜索（简单但低效�?|
-| DD_HP_003 | 集成剪枝机制 | 大幅减少无效试验，提高效�?| 无剪枝（完整搜索但耗时�?|
-| DD_HP_004 | 支持并行优化 | 充分利用多核CPU，加速优�?| 串行优化（简单但慢） |
-| DD_HP_005 | 设计完整监控体系 | 实时监控优化过程，及时发现问�?| 基本日志记录 |
+| DD_HP_001 | 选择optuna而非hyperopt | 活跃度高，功能丰富，API设计优秀 | hyperopt（更早但维护较少�?|
+| DD_HP_002 | 默认使用TPE采样�?| 贝叶斯优化效果好，适合连续空间 | 随机搜索（简单但低效�?|
+| DD_HP_003 | 集成剪枝机制 | 大幅减少无效试验，提高效�?| 无剪枝（完整搜索但耗时�?|
+| DD_HP_004 | 支持并行优化 | 充分利用多核CPU，加速优�?| 串行优化（简单但慢） |
+| DD_HP_005 | 设计完整监控体系 | 实时监控优化过程，及时发现问�?| 基本日志记录 |
 
-### 10.2 技术决�?
+### 10.2 技术决�?
 1. **优化算法选择**: 以TPE为主，支持多种采样器适应不同场景
-2. **剪枝策略**: 使用中位数剪枝，平衡探索与开�?
+2. **剪枝策略**: 使用中位数剪枝，平衡探索与开�?
 3. **并行架构**: 基于joblib实现进程级并行，避免GIL限制
 4. **存储设计**: 使用SQLite存储优化历史，支持恢复和比较
 5. **监控体系**: 设计多层次监控，覆盖技术指标和业务指标
 
 ---
 
-> **设计状�?*: 本设计文档为L9_HYPERPARAM_OPT模块的详细施工图纸，基于AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md的架构设计细化实现细节。实施前需要完成代码评审和技术验证�?
+> **设计状�?*: 本设计文档为L9_HYPERPARAM_OPT模块的详细施工图纸，基于AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md的架构设计细化实现细节。实施前需要完成代码评审和技术验证�?
 
-**下一步行�?*: 
-1. 评审本设计文�?
+**下一步行�?*: 
+1. 评审本设计文�?
 2. 开始v1.0版本代码实现
 3. 设置optuna开发和测试环境
-4. 运行初步技术验�?
-5. 集成到Layer 4机器学习�
+4. 运行初步技术验�?
+5. 集成到Layer 4机器学习�

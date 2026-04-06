@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-02
 created_date: 2026-04-02
 layer: Layer 6
-index: STRATEGY_HIERARCHY_001
+index: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 estimated_hours: 160h
 review_status: Pending
 reviewer: 首席技术评审官
@@ -160,7 +160,7 @@ class StrategyPerformanceEvaluator:
         # VaR (95%置信?
         var_95 = np.percentile(returns, 5)
         
-        # CVaR (条件风险�?
+        # CVaR (条件风险�?
         cvar_95 = returns[returns <= var_95].mean()
         
         # 最大回?        cumulative = (1 + returns).cumprod()
@@ -624,7 +624,7 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # 低相关性或负相�?= 协同效应
+                    # 低相关性或负相�?= 协同效应
                     if -0.3 <= corr <= 0.3:
                         synergy_type = 'diversification' if corr >= 0 else 'hedging'
                         synergies.append(StrategySynergy(
@@ -640,7 +640,7 @@ class StrategySynergyOptimizer:
     def _identify_conflicts(self, correlation_matrix: pd.DataFrame) -> List[StrategyConflict]:
         """识别冲突策略
         
-        冲突策略：相�?0.7的策略组?        """
+        冲突策略：相�?0.7的策略组?        """
         conflicts = []
         
         strategies = correlation_matrix.columns
@@ -649,7 +649,7 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # 高相�?= 冲突
+                    # 高相�?= 冲突
                     if corr > 0.7:
                         conflicts.append(StrategyConflict(
                             strategy1=strat1,
@@ -1017,4 +1017,4 @@ class MultiStrategyHierarchicalSystem:
 
 **文档版本**: v1.0
 **最后更?*: 2026-04-02
-**审核�?*: 待审?**下一?*: 提交技术评审官审核
+**审核�?*: 待审?**下一?*: 提交技术评审官审核

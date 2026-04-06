@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_DOC_001
-version: 5.0.0
+module_id: ARCHIVE_BLOCK_D2_FINDINGS_001
+version: 4.0.15.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -103,7 +103,7 @@ implementation_status: 进行?
 - 缺少版本信息（仅有老版本v2.0标签?
 - 缺少模块目录说明
 
-**当前�?*:
+**当前�?*:
 ```markdown
 # 03_TRADING_TACTICS - 交易战术?
 
@@ -245,7 +245,7 @@ implementation_status: 进行?
 ├── 03_RISK_FACTORS/         # 风险因子 (46?
 ```
 
-**修复**: 已在D1块修复中统一?"87 Alpha + 46 Risk"，确认此处一�?
+**修复**: 已在D1块修复中统一?"87 Alpha + 46 Risk"，确认此处一�?
 
 ---
 
@@ -253,7 +253,7 @@ implementation_status: 进行?
 
 ### 2026-03-31 D2块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | �?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | D2-P1-001 | 02_FACTOR_LIBRARY/README.md版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | D2-P1-002 | 03_TRADING_TACTICS/README.md内容补充 | ?已修?| 2026-03-31 |

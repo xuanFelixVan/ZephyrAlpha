@@ -20,7 +20,7 @@ applicable_scope: 全系�?compliance_level: 专业标准
 # 融资优化蓝图 v1.0
 
 > 清风量化系统 v5.3 - 融资优化架构设计
-> **索引**: `FINANCING_BLUEPRINT_001`
+> **索引**: `FINANCING_OPTIMIZATION_001`
 > **开发时�?*: 40h
 > **核心定位**: 融资成本优化、杠杆效率提�?
 ---

@@ -1,6 +1,6 @@
 ---
-module_id: IMPL_DOC_001
-version: 5.0.0
+module_id: ARCHIVE_BLOCK_E2_FINDINGS_001
+version: 4.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
@@ -126,7 +126,7 @@ __version__ = "5.1.0"
 
 ### 2026-03-31 E2块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | �?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | E2-P1-001 | src/__init__.py版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | E2-P1-002 | src/core/__init__.py版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |

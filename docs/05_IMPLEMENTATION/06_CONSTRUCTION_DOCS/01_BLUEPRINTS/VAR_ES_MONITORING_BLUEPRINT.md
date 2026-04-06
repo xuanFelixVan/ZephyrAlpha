@@ -1,0 +1,221 @@
+---
+module_id: VAR_ES_MONITORING_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-06
+last_updated: 2026-04-06
+owner: 首席蓝图架构师
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 蓝图设计阶段
+open_source_dependency: pyRisk, arch, pyfolio
+estimated_effort: 5-7天
+priority: P0
+---
+
+# VaR/ES实时监控蓝图
+
+> 清风量化交易系统 v5.3 - VaR/ES实时监控详细设计
+> **索引**: `VAR_ES_001`
+> **开发周期**: 5-7天
+> **核心定位**: 实时监控组合的VaR和ES风险指标，支持多种计算方法和回测验证
+> **参考开源**: pyRisk, arch, pyfolio
+
+## 1. 概述
+
+### 1.1 模块定位
+
+**Layer定位**: Layer 6 - 组合优化层（风险管理模块）
+
+**核心价值**:
+- 实时监控投资组合的VaR（风险价值）和ES（预期 shortfall）指标
+- 支持历史模拟法、参数法、蒙特卡洛模拟等多种计算方法
+- 提供完整的回测验证功能
+- 专业机构风险管理的核心指标
+
+**业务价值**:
+- 量化投资组合的下行风险
+- 设置风险预警阈值
+- 满足合规监管要求
+- 支持风险预算管理
+
+### 1.2 版本信息
+
+| 项目 | 内容 |
+|------|------|
+| **模块ID** | VAR_ES_MONITORING_001 |
+| **版本** | v1.0.0 |
+| **状态** | Active |
+| **创建日期** | 2026-04-06 |
+| **开源依赖** | pyRisk, arch, pyfolio |
+| **预计工时** | 5-7天 |
+
+---
+
+## 2. 架构设计
+
+### 2.1 核心组件
+
+```mermaid
+graph TB
+    subgraph "数据输入"
+        A[组合持仓] --> D[VaR/ES计算器]
+        B[收益率序列] --> D
+        C[市场数据] --> D
+    end
+    
+    subgraph "计算方法"
+        D --> E[历史模拟法]
+        D --> F[参数法]
+        D --> G[蒙特卡洛法]
+        D --> H[极值理论法]
+    end
+    
+    subgraph "监控层"
+        I[风险阈值检查]
+        J[预警信号生成]
+        K[回测验证]
+    end
+    
+    subgraph "输出"
+        L[实时监控面板]
+        M[风险报告]
+        N[历史记录]
+    end
+    
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    I --> J
+    J --> L
+    J --> M
+    K --> N
+```
+
+---
+
+## 3. 技术实现
+
+### 3.1 核心API
+
+```python
+from dataclasses import dataclass
+from typing import Optional, List, Dict
+import numpy as np
+import pandas as pd
+
+class VaRESCalculator:
+    """VaR/ES计算器"""
+    
+    def __init__(self, confidence_level: float = 0.95):
+        self.confidence_level = confidence_level
+        
+    def historical_var(
+        self,
+        returns: np.ndarray,
+        confidence: float = 0.95
+    ) -> float:
+        """历史模拟法VaR"""
+        return -np.percentile(returns, (1 - confidence) * 100)
+    
+    def parametric_var(
+        self,
+        returns: np.ndarray,
+        confidence: float = 0.95
+    ) -> float:
+        """参数法VaR (正态分布)"""
+        mu = np.mean(returns)
+        sigma = np.std(returns)
+        z = stats.norm.ppf(1 - confidence)
+        return -(mu + z * sigma)
+    
+    def historical_es(
+        self,
+        returns: np.ndarray,
+        confidence: float = 0.95
+    ) -> float:
+        """历史模拟法ES"""
+        var = -self.historical_var(returns, confidence)
+        tail_returns = returns[returns <= -var]
+        return -np.mean(tail_returns) if len(tail_returns) > 0 else var
+    
+    def parametric_es(
+        self,
+        returns: np.ndarray,
+        confidence: float = 0.95
+    ) -> float:
+        """参数法ES"""
+        mu = np.mean(returns)
+        sigma = np.std(returns)
+        z = stats.norm.ppf(1 - confidence)
+        es = -(mu - sigma * stats.norm.pdf(z) / (1 - confidence))
+        return es
+```
+
+### 3.2 性能要求
+
+| 指标 | 目标值 |
+|------|--------|
+| 计算时间 | <100ms |
+| 内存占用 | <50MB |
+| 实时更新频率 | 1分钟 |
+| 支持资产数 | 1000+ |
+
+---
+
+## 4. 接口定义
+
+```python
+class VaRESAPI:
+    """VaR/ES API接口"""
+    
+    @endpoint("/api/v1/var_es/calculate")
+    async def calculate(
+        self,
+        portfolio_id: str,
+        method: str = "historical"
+    ) -> VaRESResult:
+        """计算VaR和ES"""
+        
+    @endpoint("/api/v1/var_es/backtest")
+    async def backtest(
+        self,
+        portfolio_id: str,
+        start_date: str,
+        end_date: str
+    ) -> BacktestResult:
+        """VaR回测验证"""
+        
+    @endpoint("/api/v1/var_es/alerts")
+    async def get_alerts(
+        self,
+        portfolio_id: str
+    ) -> List[Alert]:
+        """获取风险预警"""
+```
+
+---
+
+## 5. 实施路径
+
+| 阶段 | 任务 | 工时 |
+|------|------|------|
+| Phase 1 | 核心计算模块实现 | 16h |
+| Phase 2 | 多方法支持、回测验证 | 16h |
+| Phase 3 | API开发、实时监控面板 | 16h |
+
+---
+
+## 6. 文档治理
+
+**索引位置**: Layer 6 - 组合优化层 - 风险管理模块
+
+**版本管理**:
+- v1.0.0: 初始版本 (2026-04-06)
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅

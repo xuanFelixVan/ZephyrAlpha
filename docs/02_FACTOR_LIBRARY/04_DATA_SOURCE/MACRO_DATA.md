@@ -3,27 +3,46 @@ module_id: DATA_MACRO_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 数据源文�?applicable_scope: 宏观经济数据
+last_updated: 2026-04-06
+owner: 首席文档架构师
+standard_type: 数据源文档
+applicable_scope: 宏观经济数据
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-implementation_status: 进行�?--- 进行�?
+implementation_status: 进行中
 ---
 
-# 宏观数据�?
+# 宏观数据源
 
-> 中国及全球宏观数据整�?
+## 文档职责说明
+
+**本文档职责**: 宏观经济数据源定义
+- 整合中国及全球宏观经济数据
+- 定义宏观数据指标体系
+- 提供宏观数据获取接口
+
+**相关文档引用**:
+| 文档 | 路径 | 关系 | 说明 |
+|------|------|------|------|
+| 数据源适配器 | [DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md) | 架构层 | 数据源适配器架构 |
+| 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
+
+**职责边界**:
+- ✅ 本文档负责: 定义宏观经济数据指标和获取方式
+- ❌ 本文档不负责: 数据源适配器架构（由 DATA_SOURCE_ADAPTERS.md 负责）
+
+> 中国及全球宏观数据整合
 
 ---
 
 ## 1. 宏观数据分类
 
-| 类别 | 数据内容 | 更新频率 | 数据�?|
+| 类别 | 数据内容 | 更新频率 | 数据源 |
 |------|---------|---------|--------|
 | 中国经济 | GDP、PMI、CPI、PPI、失业率 | 月频 | 国家统计局 |
 | 货币政策 | LPR、存款准备金率、公开市场操作 | 实时 | 央行 |
 | 全球经济 | ISM、CPI、GDP | 月频 | macrotrends |
-| 债市 | 国债收益率、信用利�?| 日频 |  Wind/iFind |
+| 债市 | 国债收益率、信用利差 | 日频 | Wind/iFind |
 | 大宗商品 | 原油、黄金、铜、农产品 | 日频 | 期货交易所 |
 
 ---
@@ -34,7 +53,7 @@ implementation_status: 进行�?--- 进行�?
 
 ```python
 MACRO_INDICATORS_CN = {
-    # 增长�?
+    # 增长类
     'gdp_yoy': {
         'name': 'GDP同比',
         'unit': '%',
@@ -50,14 +69,14 @@ MACRO_INDICATORS_CN = {
         'category': '增长'
     },
     'industrial_added_value': {
-        'name': '工业增加值同�?,
+        'name': '工业增加值同比',
         'unit': '%',
         'source': '国家统计局',
         'frequency': '月度',
         'category': '增长'
     },
 
-    # 通胀�?
+    # 通胀类
     'cpi_yoy': {
         'name': 'CPI同比',
         'unit': '%',
@@ -73,7 +92,7 @@ MACRO_INDICATORS_CN = {
         'category': '通胀'
     },
 
-    # 货币�?
+    # 货币类
     'lpr_1y': {
         'name': 'LPR 1年期',
         'unit': '%',
@@ -85,13 +104,13 @@ MACRO_INDICATORS_CN = {
         'name': '存款准备金率',
         'unit': '%',
         'source': '央行',
-        'frequency': '不定�?,
+        'frequency': '不定期',
         'category': '货币'
     },
 
-    # 就业�?
+    # 就业类
     'urban_unemployment_rate': {
-        'name': '城镇调查失业�?,
+        'name': '城镇调查失业率',
         'unit': '%',
         'source': '国家统计局',
         'frequency': '月度',
@@ -158,7 +177,7 @@ MACRO_INDICATORS_GLOBAL = {
         'frequency': '日频'
     },
     'us_10y_2y_spread': {
-        'name': '美�?0Y-2Y利差',
+        'name': '美债10Y-2Y利差',
         'region': '美国',
         'source': 'FRED',
         'frequency': '日频'
@@ -170,7 +189,7 @@ MACRO_INDICATORS_GLOBAL = {
         'frequency': '日频'
     },
 
-    # 欧元�?
+    # 欧元区
     'eu_gdp_yoy': {
         'name': '欧元区GDP同比',
         'region': '欧盟',
@@ -178,10 +197,10 @@ MACRO_INDICATORS_GLOBAL = {
         'frequency': '季度'
     },
     'ecb_rate': {
-        'name': '欧央行利�?,
+        'name': '欧央行利率',
         'region': '欧盟',
         'source': 'ECB',
-        'frequency': '不定�?
+        'frequency': '不定期'
     },
 
     # 全球
@@ -199,172 +218,3 @@ MACRO_INDICATORS_GLOBAL = {
     }
 }
 ```
-
-### 3.2 数据源URL
-
-| 数据 | URL | 说明 |
-|------|-----|------|
-| 美联储指�?| https://fred.stlouisfed.org | 联邦基金利率、国债收益率 |
-| CPI/PPI | https://stats.bls.gov | 美国CPI、PPI |
-| GDP | https://bea.gov | 美国GDP |
-| VIX | https://www.cboe.com/indices | VIX指数 |
-
----
-
-## 4. 国债收益率曲线
-
-```python
-class BondYieldCurve:
-    """国债收益率曲线"""
-
-    def get_china_yield_curve(self) -> pd.DataFrame:
-        """获取中国国债收益率曲线"""
-        return ak.bond_china_yield()
-
-    def get_us_yield_curve(self) -> pd.DataFrame:
-        """获取美国国债收益率曲线"""
-        return ak.bond_ust_10y()
-
-    def calculate_spread(
-        self,
-        yield_curve: pd.DataFrame,
-        tenor1: str = '2Y',
-        tenor2: str = '10Y'
-    ) -> float:
-        """计算利差"""
-        rate1 = yield_curve[tenor1].iloc[-1]
-        rate2 = yield_curve[tenor2].iloc[-1]
-        return rate2 - rate1
-```
-
----
-
-## 5. 大宗商品数据
-
-```python
-COMMODITIES_DATA = {
-    'energy': {
-        'wti_oil': {
-            'name': 'WTI原油',
-            'exchange': 'NYMEX',
-            'symbol': 'CL',
-            'unit': 'USD/�?
-        },
-        'brent_oil': {
-            'name': '布伦特原�?,
-            'exchange': 'ICE',
-            'symbol': 'BZ',
-            'unit': 'USD/�?
-        },
-        'natural_gas': {
-            'name': '天然�?,
-            'exchange': 'NYMEX',
-            'symbol': 'NG',
-            'unit': 'USD/MMBtu'
-        }
-    },
-    'metals': {
-        'gold': {
-            'name': '黄金',
-            'exchange': 'COMEX',
-            'symbol': 'GC',
-            'unit': 'USD/盎司'
-        },
-        'silver': {
-            'name': '白银',
-            'exchange': 'COMEX',
-            'symbol': 'SI',
-            'unit': 'USD/盎司'
-        },
-        'copper': {
-            'name': '�?,
-            'exchange': 'COMEX',
-            'symbol': 'HG',
-            'unit': 'USD/�?
-        }
-    },
-    'agriculture': {
-        'corn': {
-            'name': '玉米',
-            'exchange': 'CBOT',
-            'symbol': 'C',
-            'unit': '美分/蒲式�?
-        },
-        'wheat': {
-            'name': '小麦',
-            'exchange': 'CBOT',
-            'symbol': 'W',
-            'unit': '美分/蒲式�?
-        },
-        'soybean': {
-            'name': '大豆',
-            'exchange': 'CBOT',
-            'symbol': 'S',
-            'unit': '美分/蒲式�?
-        }
-    }
-}
-```
-
----
-
-## 6. 宏观因子构建
-
-```python
-class MacroFactorBuilder:
-    """宏观因子构建"""
-
-    def build_money_flow_factor(self) -> pd.Series:
-        """流动性因�?""
-        # M2同比 - GDP同比
-        m2 = self.get_m2_yoy()
-        gdp = self.get_gdp_yoy()
-        return m2 - gdp
-
-    def build_rate_spread_factor(self) -> pd.Series:
-        """利率差因�?""
-        lpr = self.get_lpr()
-        cpi = self.get_cpi_yoy()
-        return lpr - cpi  # 实际利率
-
-    def build_credit_cycle_factor(self) -> pd.Series:
-        """信用周期因子"""
-        # 社会融资规模存量增�?- 名义GDP增�?
-        credit = self.get_total_social_financing()
-        gdp_nominal = self.get_nominal_gdp()
-        return credit - gdp_nominal
-```
-
----
-
-## 7. 数据更新调度
-
-```yaml
-macro_data_schedule:
-  daily:
-    - time: "09:30"
-      task: "更新前日宏观数据"
-      data: ["国债收益率", "汇率"]
-    - time: "17:00"
-      task: "更新大宗商品数据"
-      data: ["原油", "黄金", "�?]
-    - time: "20:00"
-      task: "更新海外宏观数据"
-      data: ["美�?, "VIX", "美股"]
-
-  monthly:
-    - date: "每月�?个工作日"
-      task: "更新CPI/PPI数据"
-    - date: "每月�?0个工作日"
-      task: "更新PMI数据"
-    - date: "每月�?5个工作日"
-      task: "更新GDP数据"
-
-  realtime:
-    - event: "央行政策发布"
-      task: "立即更新LPR/RRR数据"
-```
-
----
-
-**版本**: 1.0 | **更新**: 2026-03-28

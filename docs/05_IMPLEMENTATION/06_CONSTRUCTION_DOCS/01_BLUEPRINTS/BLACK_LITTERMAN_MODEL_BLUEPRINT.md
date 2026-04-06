@@ -18,7 +18,7 @@ priority: P0
 # Black-Litterman组合优化模型蓝图
 
 > 清风量化交易系统 v5.3 - Black-Litterman组合优化模型详细设计
-> **索引**: `BLACK_LITTERMAN_001`
+> **索引**: `BLACK_LITTERMAN_MODEL_001`
 > **开发周期**: 2-3天（集成开源项目）
 > **核心定位**: 结合市场均衡观点与投资者主观观点的组合优化模型，解决传统均值方差优化对输入参数敏感的问题
 > **参考开源**: PyPortfolioOpt (4.2k+ ⭐) + Riskfolio-Lib (3.1k+ ⭐)

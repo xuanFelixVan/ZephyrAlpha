@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-02
 created_date: 2026-04-02
 layer: Layer 5 (微观执行? | 业务架构: 三级时间框架融合架构
-index: AI_PATTERN_001
+index: AI_PATTERN_RECOGNITION_ENGINE_001
 estimated_hours: 180h
 review_status: Pending
 reviewer: 首席技术评审官
@@ -30,7 +30,7 @@ implementation_status: 设计阶段
 ## 1. 模块概述
 
 ### 1.1 业务背景与价值主?
-**业务需?*?- 当前系统缺失AI驱动的模式识别能力，无法捕捉市场非线性模?- 传统技术指标和线性模型难以识别复杂的市场�?- 需要实现Two Sigma风格的AI驱动策略，提升信号预测准确率
+**业务需?*?- 当前系统缺失AI驱动的模式识别能力，无法捕捉市场非线性模?- 传统技术指标和线性模型难以识别复杂的市场�?- 需要实现Two Sigma风格的AI驱动策略，提升信号预测准确率
 
 **价值主?*?- 实现对市场非线性模式的准确识别（准确率?5%?- 提升信号预测的夏普比率（?.8?- 降低人为判断的主观性和偏差
 - 实现多时间框架的模式识别融合
@@ -340,7 +340,7 @@ class FeatureEngineer:
         """提取多维度特?        
         Args:
             market_data: 市场数据 (OHLCV)
-            sentiment_data: 情绪数据 (�?
+            sentiment_data: 情绪数据 (�?
             
         Returns:
             np.ndarray: 特征矩阵 (n_samples, feature_dim)
@@ -795,7 +795,7 @@ class AIPatternRecognitionEngine:
         
         Args:
             market_data: 市场数据 (OHLCV)
-            sentiment_data: 情绪数据 (�?
+            sentiment_data: 情绪数据 (�?
             horizon: 时间框架 ('short_term', 'mid_term', 'long_term')
             
         Returns:
@@ -914,7 +914,7 @@ class AIPatternRecognitionEngine:
 | **数据处理** | numpy, scipy | ?.21, ?.7 |
 | **模型解释** | SHAP, LIME | ?.40, ?.2 |
 | **可视?* | matplotlib, seaborn | ?.5, ?.11 |
-| **GPU�?* | CUDA, cuDNN | ?1.2, ?.1 |
+| **GPU�?* | CUDA, cuDNN | ?1.2, ?.1 |
 
 ### 5.3 性能指标
 
@@ -990,4 +990,4 @@ class AIPatternRecognitionEngine:
 
 **文档版本**: v1.0
 **最后更?*: 2026-04-02
-**审核�?*: 待审?**下一?*: 提交技术评审官审核
+**审核�?*: 待审?**下一?*: 提交技术评审官审核

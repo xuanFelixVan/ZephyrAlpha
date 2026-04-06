@@ -4,46 +4,46 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
-standard_type: 高层架构蓝图
+owner: 棣栧腑钃濆浘鏋舵瀯甯?layer: Layer 4 (鏈哄櫒瀛︿範灞?
+standard_type: 楂樺眰鏋舵瀯钃濆浘
 priority: P2
 ---
 
-# 波动率预测模型蓝�?
-> **蓝图编号**: `VOL-001`
-> **创建日期**: 2026-04-04
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+# 娉㈠姩鐜囬娴嬫ā鍨嬭摑鍥?
+> **钃濆浘缂栧彿**: `VOL-001`
+> **鍒涘缓鏃ユ湡**: 2026-04-04
+> **Layer**: Layer 4 - 鏈哄櫒瀛︿範灞?> **浼樺厛绾?*: P2 (寤鸿琛ュ厖)
 
 ---
 
-## 1. 概述
+## 1. 姒傝堪
 
-波动率预测是风险管理的核心：
+娉㈠姩鐜囬娴嬫槸椋庨櫓绠＄悊鐨勬牳蹇冿細
 
-- **已实现波动率**: 基于高频数据
-- **隐含波动�?*: 基于期权价格
-- **GARCH�?*: 传统计量模型
-- **深度学习**: 神经网络预测
+- **宸插疄鐜版尝鍔ㄧ巼**: 鍩轰簬楂橀鏁版嵁
+- **闅愬惈娉㈠姩鐜?*: 鍩轰簬鏈熸潈浠锋牸
+- **GARCH鏃?*: 浼犵粺璁￠噺妯″瀷
+- **娣卞害瀛︿範**: 绁炵粡缃戠粶棰勬祴
 
 ---
 
-## 2. 模型类型
+## 2. 妯″瀷绫诲瀷
 
-| 模型 | 说明 | 适用场景 |
+| 妯″瀷 | 璇存槑 | 閫傜敤鍦烘櫙 |
 |------|------|----------|
-| GARCH | 条件异方�?| 传统金融 |
-| EGARCH | 指数GARCH | 杠杆效应 |
-| Realized GARCH | 高频数据 | 日内波动 |
-| LSTM-Vol | 深度学习 | 复杂模式 |
-| Transformer-Vol | 注意力机�?| 长序�?|
+| GARCH | 鏉′欢寮傛柟宸?| 浼犵粺閲戣瀺 |
+| EGARCH | 鎸囨暟GARCH | 鏉犳潌鏁堝簲 |
+| Realized GARCH | 楂橀鏁版嵁 | 鏃ュ唴娉㈠姩 |
+| LSTM-Vol | 娣卞害瀛︿範 | 澶嶆潅妯″紡 |
+| Transformer-Vol | 娉ㄦ剰鍔涙満鍒?| 闀垮簭鍒?|
 
 ---
 
-## 3. 接口设计
+## 3. 鎺ュ彛璁捐
 
 ```python
 class VolatilityPredictor:
-    """波动率预测模�?""
+    """娉㈠姩鐜囬娴嬫ā鍨?""
     
     def __init__(
         self,
@@ -51,11 +51,11 @@ class VolatilityPredictor:
         lookback: int = 252,
         horizon: int = 22
     ):
-        """初始化波动率预测�?        
+        """鍒濆鍖栨尝鍔ㄧ巼棰勬祴鍣?        
         Args:
-            model_type: 模型类型
-            lookback: 回看窗口
-            horizon: 预测窗口
+            model_type: 妯″瀷绫诲瀷
+            lookback: 鍥炵湅绐楀彛
+            horizon: 棰勬祴绐楀彛
         """
         pass
     
@@ -63,11 +63,11 @@ class VolatilityPredictor:
         self,
         returns: pd.Series
     ) -> np.ndarray:
-        """预测波动�?        
+        """棰勬祴娉㈠姩鐜?        
         Args:
-            returns: 收益率序�?            
+            returns: 鏀剁泭鐜囧簭鍒?            
         Returns:
-            np.ndarray: 预测波动�?        """
+            np.ndarray: 棰勬祴娉㈠姩鐜?        """
         pass
     
     def compute_var(
@@ -75,16 +75,16 @@ class VolatilityPredictor:
         volatility: float,
         confidence: float = 0.95
     ) -> float:
-        """计算VaR
+        """璁＄畻VaR
         
         Args:
-            volatility: 波动�?            confidence: 置信水平
+            volatility: 娉㈠姩鐜?            confidence: 缃俊姘村钩
             
         Returns:
-            float: VaR�?        """
+            float: VaR鍊?        """
         pass
 ```
 
 ---
 
-**蓝图版本**: v1.0
+**钃濆浘鐗堟湰**: v1.0
