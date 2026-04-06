@@ -1,6 +1,6 @@
 ---
 module_id: DOC_SYSTEM_MANIFEST_001
-version: 5.5.0
+version: 5.6.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-06
@@ -14,7 +14,7 @@ implementation_status: 活跃维护
 
 # System_Manifest.md - 系统清单
 
-> 清风量化交易系统 v5.5 - 完整蓝图体系建立版
+> 清风量化交易系统 v5.6 - P2级前沿技术模块补充版
 > 
 > **📌 重要说明**: 本文档是系统文档总索引,包含所有模块的映射和目录结构
 
@@ -366,4 +366,4 @@ implementation_status: 活跃维护
 
 ---
 
-**版本**: v5.5.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
+**版本**: v5.6.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
