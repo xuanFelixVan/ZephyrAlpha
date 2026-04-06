@@ -40,19 +40,19 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 实时数据湖蓝图 | REALTIME_DATA_LAKE_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REALTIME_DATA_LAKE_BLUEPRINT.md) |
-| 数据虚拟化蓝图 | DATA_VIRTUALIZATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DATA_VIRTUALIZATION_BLUEPRINT.md) |
-| 数据网格蓝图 | DATA_MESH_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DATA_MESH_BLUEPRINT.md) |
-| 数据编织蓝图 | DATA_FABRIC_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DATA_FABRIC_BLUEPRINT.md) |
-| 数据治理平台蓝图 | DATA_GOVERNANCE_PLATFORM_001 | v1.0.0 | Active | 2026-04-05 | [链接](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) 🆕 |
+| 实时数据湖蓝图 | REALTIME_DATA_LAKE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_DATA_LAKE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据虚拟化蓝图 | DATA_VIRTUALIZATION_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VIRTUALIZATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据网格蓝图 | DATA_MESH_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_MESH_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据编织蓝图 | DATA_FABRIC_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_FABRIC_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据治理平台蓝图 | DATA_GOVERNANCE_PLATFORM_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_GOVERNANCE_PLATFORM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
 
 ### 2.3 数据血缘与目录
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据血缘追踪蓝图 | DATA_LINEAGE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) |
+| 数据血缘追踪蓝图 | DATA_LINEAGE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LINEAGE_TRACKING_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
 | 数据目录/元数据管理蓝图 | DATA_CATALOG_001 | v1.0.0 | Active | 2026-04-05 | [链接](./DATA_CATALOG_BLUEPRINT.md) 🆕 |
-| 数据可观测性蓝图 | DATA_OBSERVABILITY_001 | v1.0.0 | Active | 2026-04-05 | [链接](./DATA_OBSERVABILITY_BLUEPRINT.md) 🆕 |
+| 数据可观测性蓝图 | DATA_OBSERVABILITY_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_OBSERVABILITY_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
 
 ### 2.4 数据生命周期管理
 
