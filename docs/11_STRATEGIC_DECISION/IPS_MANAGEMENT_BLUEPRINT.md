@@ -868,7 +868,7 @@ class IPSGenerator:
 |------|------|
 | [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
-| [RISK_BUDGET_BLUEPRINT.md](./RISK_BUDGET_BLUEPRINT.md) | 风险预算分配系统 |
+| [RISK_BUDGET_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算分配系统 |
 
 ---
 
