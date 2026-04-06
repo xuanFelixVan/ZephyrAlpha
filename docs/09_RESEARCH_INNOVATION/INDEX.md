@@ -38,6 +38,7 @@ implementation_status: 设计阶段
 | [完整缺失模块补充方案v2.0](./COMPLETE_SUPPLEMENT_v2.md) | 数据版本控制、超参数优化、模型解释性、A/B测试等 | ⭐⭐⭐⭐⭐ |
 | [完整蓝图v3.0](./COMPLETE_BLUEPRINT_V3.md) | **完整专业级蓝图**，覆盖所有8大平台 | ⭐⭐⭐⭐⭐ |
 | [关键缺失模块补充v4.0](./CRITICAL_MISSING_V4.md) | **10个关键缺失模块**，RD-Agent、时间泄漏控制等 | ⭐⭐⭐⭐⭐ |
+| [完整实施方案v5.0](./IMPLEMENTATION_GUIDE_V5.md) | **个人开发+AI维护完整方案**，80%开源+专业治理 | ⭐⭐⭐⭐⭐ |
 | [System_Manifest更新指南](./SYSTEM_MANIFEST_UPDATE_GUIDE.md) | System_Manifest.md索引更新说明 | ⭐⭐⭐⭐ |
 
 ### 子模块（规划中）
@@ -102,10 +103,10 @@ implementation_status: 设计阶段
 
 | 统计项 | 数量 |
 |--------|------|
-| 蓝图文档 | 6 |
+| 蓝图文档 | 7 |
 | 技术文档 | 0 |
 | 实施文档 | 0 |
-| **总计** | **6** |
+| **总计** | **7** |
 
 ---
 
