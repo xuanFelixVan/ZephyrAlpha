@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
 layer: Layer 6 (����Ż�?? | ҵ��ܹ�: ����ʱ�����ںϼܹ�
-index: STRESS_TEST_001
+index: STRESS_TESTING_SYSTEM_001
 estimated_hours: 80h
 review_status: Pending
 reviewer: ��ϯ���������

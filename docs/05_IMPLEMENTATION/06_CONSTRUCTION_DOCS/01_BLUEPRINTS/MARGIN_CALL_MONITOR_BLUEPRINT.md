@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/ARCHITECTURE.md
 last_updated: 2026-04-05
 created_date: 2026-04-05
 layer: Layer 6 (组合优化层 - 风险管理层)
-index: MARGIN_CALL_001
+index: MARGIN_CALL_MONITOR_001
 estimated_hours: 120h
 review_status: Pending
 reviewer: 首席技术评审官

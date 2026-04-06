@@ -399,4 +399,338 @@ def market_implied_prior_returns(
 **核心公式**:
 
 ```
-E[R] = [(τΣ)^(-1) + P'Ω^(-1)P]^(-1) * [(τΣ)^(-1)π
+E[R] = [(τΣ)^(-1) + P'Ω^(-1)P]^(-1) * [(τΣ)^(-1)π + P'Ω^(-1)Q]
+```
+
+其中：
+- E[R]: 后验预期收益
+- τ: 缩放因子（通常取0.01-0.05）
+- Σ: 协方差矩阵
+- P: 观点矩阵
+- Ω: 观点置信度矩阵
+- π: 市场均衡收益
+- Q: 观点向量
+
+**实现代码**:
+
+```python
+def black_litterman_formula(
+    pi: np.ndarray,
+    P: np.ndarray,
+    Q: np.ndarray,
+    Sigma: np.ndarray,
+    Omega: np.ndarray,
+    tau: float = 0.02
+) -> tuple:
+    """
+    Black-Litterman核心公式
+    
+    Args:
+        pi: 市场均衡收益
+        P: 观点矩阵
+        Q: 观点向量
+        Sigma: 协方差矩阵
+        Omega: 观点置信度矩阵
+        tau: 缩放因子
+        
+    Returns:
+        (后验收益, 后验协方差)
+    """
+    tau_Sigma_inv = np.linalg.inv(tau * Sigma)
+    Omega_inv = np.linalg.inv(Omega)
+    
+    M = np.linalg.inv(tau_Sigma_inv + P.T @ Omega_inv @ P)
+    
+    bl_return = M @ (tau_Sigma_inv @ pi + P.T @ Omega_inv @ Q)
+    
+    bl_cov = Sigma + M
+    
+    return bl_return, bl_cov
+```
+
+### 3.3 性能要求
+
+| 性能指标 | 目标值 | 说明 |
+|---------|--------|------|
+| **优化计算时间** | <500ms | 100个资产以内 |
+| **内存占用** | <100MB | 单次优化 |
+| **并发支持** | 10 QPS | 支持多策略并行优化 |
+| **数值稳定性** | 条件数<1000 | 协方差矩阵正定性检查 |
+
+---
+
+## 4. 数据模型
+
+### 4.1 输入数据结构
+
+```python
+@dataclass
+class BlackLittermanInput:
+    """Black-Litterman输入数据"""
+    market_prices: pd.DataFrame
+    market_caps: Dict[str, float]
+    views: Dict[str, float]
+    confidence: Dict[str, float]
+    risk_aversion: float = 2.5
+    tau: float = 0.02
+    risk_free_rate: float = 0.02
+```
+
+### 4.2 输出数据结构
+
+```python
+@dataclass
+class BlackLittermanResult:
+    """Black-Litterman优化结果"""
+    weights: Dict[str, float]
+    expected_return: float
+    volatility: float
+    sharpe_ratio: float
+    bl_returns: pd.Series
+    bl_covariance: pd.DataFrame
+    risk_contribution: Dict[str, float]
+    view_impact: Dict[str, float]
+    timestamp: datetime
+```
+
+### 4.3 数据库表设计
+
+```sql
+CREATE TABLE IF NOT EXISTS black_litterman_views (
+    view_id VARCHAR(50) PRIMARY KEY,
+    asset_symbol VARCHAR(20) NOT NULL,
+    view_type VARCHAR(20) NOT NULL,
+    expected_return DECIMAL(10, 6),
+    confidence DECIMAL(5, 4),
+    source VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    valid_until TIMESTAMP,
+    INDEX idx_asset (asset_symbol),
+    INDEX idx_created (created_at)
+);
+
+CREATE TABLE IF NOT EXISTS black_litterman_results (
+    result_id VARCHAR(50) PRIMARY KEY,
+    portfolio_id VARCHAR(50) NOT NULL,
+    weights_json TEXT NOT NULL,
+    expected_return DECIMAL(10, 6),
+    volatility DECIMAL(10, 6),
+    sharpe_ratio DECIMAL(10, 4),
+    bl_returns_json TEXT,
+    bl_covariance_json TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_portfolio (portfolio_id),
+    INDEX idx_created (created_at)
+);
+```
+
+---
+
+## 5. 接口定义
+
+### 5.1 API接口
+
+```python
+class BlackLittermanAPI:
+    """Black-Litterman API接口"""
+    
+    @endpoint("/api/v1/black_litterman/optimize")
+    async def optimize_portfolio(
+        self,
+        request: OptimizationRequest
+    ) -> OptimizationResponse:
+        """
+        执行Black-Litterman组合优化
+        
+        Args:
+            request: 优化请求
+            
+        Returns:
+            优化结果
+        """
+        pass
+    
+    @endpoint("/api/v1/black_litterman/views")
+    async def submit_views(
+        self,
+        views: List[ViewInput]
+    ) -> ViewResponse:
+        """
+        提交主观观点
+        
+        Args:
+            views: 观点列表
+            
+        Returns:
+            观点确认结果
+        """
+        pass
+    
+    @endpoint("/api/v1/black_litterman/market_equilibrium")
+    async def get_market_equilibrium(
+        self,
+        assets: List[str]
+    ) -> EquilibriumResponse:
+        """
+        获取市场均衡收益
+        
+        Args:
+            assets: 资产列表
+            
+        Returns:
+            市场均衡收益数据
+        """
+        pass
+```
+
+### 5.2 与其他模块接口
+
+| 接口类型 | 对接模块 | 接口格式 | 数据内容 |
+|---------|---------|---------|---------|
+| **输入接口** | 因子库模块 | Parquet | 因子预测信号 |
+| **输入接口** | 策略引擎模块 | JSON | 策略观点矩阵 |
+| **输出接口** | 组合优化模块 | JSON | 优化后权重 |
+| **输出接口** | 风险预算系统 | JSON | 风险贡献数据 |
+
+---
+
+## 6. 实施路径
+
+### 6.1 Phase 1: 核心功能实现（1周）
+
+**目标**: 完成基础Black-Litterman优化功能
+
+| 任务 | 工时 | 交付物 |
+|------|------|--------|
+| PyPortfolioOpt集成 | 4h | 集成代码、单元测试 |
+| 市场均衡收益计算 | 4h | 计算模块、测试用例 |
+| 观点矩阵构建 | 4h | 观点处理模块 |
+| 优化求解实现 | 4h | 优化器实现 |
+
+### 6.2 Phase 2: 功能增强（1周）
+
+**目标**: 增强功能和系统集成
+
+| 任务 | 工时 | 交付物 |
+|------|------|--------|
+| Riskfolio-Lib集成 | 4h | 备选优化器 |
+| 数据库表创建 | 2h | SQL脚本 |
+| API接口开发 | 4h | REST API |
+| 与因子库集成 | 4h | 集成代码 |
+
+### 6.3 Phase 3: 测试与文档（0.5周）
+
+**目标**: 完成测试和文档
+
+| 任务 | 工时 | 交付物 |
+|------|------|--------|
+| 单元测试 | 4h | 测试代码 |
+| 集成测试 | 4h | 测试报告 |
+| 文档编写 | 4h | 用户手册、API文档 |
+
+---
+
+## 7. 文档治理
+
+### 7.1 System_Manifest.md索引
+
+**索引位置**: Layer 6 - 组合优化层 - 组合构建模块
+
+**索引条目**:
+```markdown
+| Black-Litterman模型蓝图 | BLACK_LITTERMAN_MODEL_001 | v1.0.0 | Active | 2026-04-06 | [链接](./BLACK_LITTERMAN_MODEL_BLUEPRINT.md) |
+```
+
+### 7.2 模块职责边界
+
+**与因子库模块边界**:
+- 因子库负责因子计算和预测
+- Black-Litterman负责将因子预测转化为观点矩阵
+
+**与策略引擎模块边界**:
+- 策略引擎负责策略信号生成
+- Black-Litterman负责将策略信号转化为组合权重
+
+**与组合优化模块边界**:
+- 组合优化模块提供优化框架
+- Black-Litterman是其中一种优化方法
+
+### 7.3 版本管理策略
+
+| 版本 | 变更内容 | 发布日期 |
+|------|---------|---------|
+| v1.0.0 | 初始版本，基础Black-Litterman功能 | 2026-04-06 |
+| v1.1.0 | 增加因子观点自动生成 | TBD |
+| v1.2.0 | 增加动态观点置信度调整 | TBD |
+
+---
+
+## 8. 风险评估
+
+### 8.1 技术风险
+
+| 风险项 | 风险等级 | 影响范围 | 缓解措施 |
+|--------|---------|---------|---------|
+| 协方差矩阵病态 | P1 | 优化结果不稳定 | 使用收缩估计、正则化 |
+| 观点置信度设定主观 | P1 | 优化结果偏差 | 提供历史回测校准方法 |
+| 市场均衡收益估计误差 | P2 | 先验不准确 | 使用多数据源交叉验证 |
+
+### 8.2 实施风险
+
+| 风险项 | 风险等级 | 影响范围 | 缓解措施 |
+|--------|---------|---------|---------|
+| 开源项目API变更 | P2 | 集成失败 | 锁定版本、定期更新 |
+| 数据质量问题 | P1 | 计算错误 | 数据清洗、异常检测 |
+
+### 8.3 治理风险
+
+| 风险项 | 风险等级 | 影响范围 | 缓解措施 |
+|--------|---------|---------|---------|
+| 文档索引缺失 | P2 | 可维护性下降 | 及时更新System_Manifest.md |
+| 版本管理混乱 | P2 | 追踪困难 | 严格执行版本管理策略 |
+
+---
+
+## 9. 质量保证
+
+### 9.1 测试策略
+
+| 测试类型 | 覆盖率目标 | 测试工具 |
+|---------|-----------|---------|
+| 单元测试 | ≥80% | pytest |
+| 集成测试 | ≥70% | pytest + mock |
+| 性能测试 | 关键路径 | pytest-benchmark |
+| 回测验证 | 历史数据 | Backtrader |
+
+### 9.2 验收标准
+
+| 验收项 | 标准 | 验证方法 |
+|--------|------|---------|
+| 功能完整性 | 所有API正常工作 | 单元测试 |
+| 性能达标 | 优化时间<500ms | 性能测试 |
+| 数值稳定性 | 条件数<1000 | 数值检查 |
+| 文档完整性 | 文档覆盖率≥90% | 文档审计 |
+
+---
+
+## 10. 参考资料
+
+### 10.1 学术论文
+
+1. Black, F., & Litterman, R. (1992). "Global Portfolio Optimization". Financial Analysts Journal.
+2. He, G., & Litterman, R. (1999). "The Intuition Behind Black-Litterman Model Portfolios". Goldman Sachs.
+
+### 10.2 开源项目文档
+
+1. PyPortfolioOpt Documentation: https://pyportfolioopt.readthedocs.io/
+2. Riskfolio-Lib Tutorials: https://riskfolio-lib.readthedocs.io/
+
+### 10.3 相关蓝图
+
+- [组合优化蓝图](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)
+- [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md)
+- [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅

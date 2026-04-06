@@ -14,7 +14,7 @@ implementation_status: 设计阶段
 # 策略组合优化系统技术蓝?
 
 > 清风量化交易系统 v5.3 - 策略组合优化系统详细技术设?
-> **索引**: `STRAT.PORTFOLIO.OPT.001`
+> **索引**: `PORTFOLIO_OPTIMIZATION_001`
 > **开发周?*: 140小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支持多策略组合优化、资金分配、风险预算管理、动态调仓的智能组合系统
 > **参考开?*: PyPortfolioOpt + CVXPY + Riskfolio-Lib + 桥水全天候组合优化思想

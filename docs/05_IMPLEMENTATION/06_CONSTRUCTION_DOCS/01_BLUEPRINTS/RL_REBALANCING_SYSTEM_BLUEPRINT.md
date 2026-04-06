@@ -7,7 +7,7 @@ parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: 2026-04-02
 created_date: 2026-04-02
 layer: Layer 6
-index: RL_REBALANCING_001
+index: RL_REBALANCING_SYSTEM_001
 estimated_hours: 200h
 review_status: Pending
 reviewer: 首席技术评审官
