@@ -20,6 +20,12 @@ related_documents:
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 ---
 
+
+## 文档职责说明
+
+**本文档职责**: AI工作记录与优化模块蓝图
+- AI会话记录、决策记录、效果评估、优化迭代、知识库构建
+
 # AI工作记录与优化模块蓝图
 
 > **版本**: v1.0

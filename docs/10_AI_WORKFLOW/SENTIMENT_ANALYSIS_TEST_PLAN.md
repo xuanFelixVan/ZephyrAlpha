@@ -8,7 +8,14 @@ owner: 首席架构师
 standard_type: 测试计划
 applicable_scope: 舆情分析层改进模块测
 compliance_level: 专业标准
+parent_document: INDEX.md
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 测试计划文档
+- 测试策略、单元测试、集成测试、性能测试
 
 # 舆情分析层改进模块测试计划文
 

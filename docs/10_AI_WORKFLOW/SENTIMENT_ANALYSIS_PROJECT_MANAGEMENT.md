@@ -8,7 +8,14 @@ owner: 首席架构师
 standard_type: 项目管理文档
 applicable_scope: 舆情分析层改进模块项目管
 compliance_level: 专业标准
+parent_document: INDEX.md
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 项目管理文档
+- WBS分解、甘特图、里程碑计划、资源分配
 
 # 舆情分析层改进模块项目管理文
 

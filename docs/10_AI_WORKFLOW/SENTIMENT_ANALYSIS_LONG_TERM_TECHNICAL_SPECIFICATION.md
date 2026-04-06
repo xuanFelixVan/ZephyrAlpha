@@ -8,10 +8,17 @@ owner: 首席架构师
 standard_type: 技术规格书
 applicable_scope: 舆情分析层长期改进模
 compliance_level: 专业标准
+parent_document: INDEX.md
 applicable_modules:
   - 多模态分
   - AI虚拟研究团队
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 长期改进技术规格书
+- 多模态分析、AI虚拟研究团队技术规格
 
 # 舆情分析层长期改进模块详细技术规格书
 

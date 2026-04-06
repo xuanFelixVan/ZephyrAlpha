@@ -8,6 +8,7 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 验证与测试框架模
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析
 priority: P1
 estimated_effort: 60h
@@ -15,6 +16,12 @@ integrated_modules:
   - AIWF_ABTF_001
   - AIWF_BVM_001
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 验证与测试框架模块蓝图
+- A/B测试框架、回测验证模块、模型验证、策略验证
 
 # 验证与测试框架蓝(Validation & Testing Framework Blueprint)
 

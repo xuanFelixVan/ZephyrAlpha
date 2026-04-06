@@ -8,10 +8,17 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 舆情因子库模块
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析层
 priority: P0
 estimated_effort: 50h
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 舆情因子库模块蓝图
+- 因子定义、因子计算、因子评估、因子优化
 
 # 舆情因子库模块蓝图 (Sentiment Factor Library Blueprint)
 

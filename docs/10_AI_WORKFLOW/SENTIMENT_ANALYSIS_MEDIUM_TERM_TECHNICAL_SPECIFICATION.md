@@ -8,11 +8,18 @@ owner: 首席架构师
 standard_type: 技术规格书
 applicable_scope: 舆情分析层中期改进模
 compliance_level: 专业标准
+parent_document: INDEX.md
 applicable_modules:
   - 知识图谱
   - 流式处理架构
   - 多语言支持
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 中期改进技术规格书
+- 知识图谱、流式处理、多语言支持技术规格
 
 # 舆情分析层中期改进模块详细技术规格书
 

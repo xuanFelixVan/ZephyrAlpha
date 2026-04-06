@@ -8,10 +8,17 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 数据源扩展模块
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析层
 priority: P0
 estimated_effort: 40h
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 数据源扩展模块蓝图
+- Twitter/Reddit/FRED/SEC EDGAR数据采集、数据源管理
 
 # 数据源扩展模块蓝图 (Data Source Extension Blueprint)
 

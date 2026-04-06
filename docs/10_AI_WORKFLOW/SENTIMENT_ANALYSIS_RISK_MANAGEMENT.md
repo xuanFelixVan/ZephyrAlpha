@@ -8,7 +8,14 @@ owner: 首席架构师
 standard_type: 风险管理文档
 applicable_scope: 舆情分析层改进模块风险管
 compliance_level: 专业标准
+parent_document: INDEX.md
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 风险管理文档
+- 风险识别、风险评估、风险缓解措施
 
 # 舆情分析层改进模块风险管理文
 

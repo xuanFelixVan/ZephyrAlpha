@@ -22,6 +22,12 @@ related_documents:
   - OPEN_SOURCE_MODULE_SOLUTION.md
 ---
 
+
+## 文档职责说明
+
+**本文档职责**: 开源项目集成方案蓝图
+- MLflow集成、Qlib集成、架构参考、工具集成
+
 # 开源项目集成方案蓝
 
 > **版本**: v1.0

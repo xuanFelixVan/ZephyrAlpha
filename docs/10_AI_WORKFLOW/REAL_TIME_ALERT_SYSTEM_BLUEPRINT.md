@@ -27,6 +27,12 @@ responsibility_boundary: |
   - 提供告警聚合、抑制、路由、多渠道分发
 ---
 
+
+## 文档职责说明
+
+**本文档职责**: 实时预警系统模块蓝图
+- 实时预警、多渠道推送、规则引擎、预警历史管理
+
 # 实时预警系统模块蓝图 (Real-Time Alert System Blueprint)
 
 > **模块ID**: AIWF_RTAS_001

@@ -8,10 +8,17 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 实时监控仪表盘模块
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析层
 priority: P0
 estimated_effort: 30h
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 实时监控仪表盘模块蓝图
+- 舆情热力图、情感趋势图、预警时间线
 
 # 实时监控仪表盘模块蓝图 (Real-time Monitoring Dashboard Blueprint)
 

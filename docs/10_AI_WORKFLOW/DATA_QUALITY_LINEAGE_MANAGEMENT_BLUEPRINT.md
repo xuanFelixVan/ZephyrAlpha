@@ -8,6 +8,7 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 数据质量与血缘管理模
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析
 priority: P0
 estimated_effort: 40h
@@ -15,6 +16,12 @@ integrated_modules:
   - AIWF_DQM_001
   - AIWF_DLT_001
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 数据质量与血缘管理模块蓝图
+- 数据质量评分、数据血缘追踪、异常检测、质量报告
 
 # 数据质量与血缘管理模块蓝(Data Quality & Lineage Management Blueprint)
 

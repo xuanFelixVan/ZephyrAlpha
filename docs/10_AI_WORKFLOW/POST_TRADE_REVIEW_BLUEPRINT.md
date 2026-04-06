@@ -20,6 +20,12 @@ related_documents:
   - QUALITY_MONITORING_BLUEPRINT.md
 ---
 
+
+## 文档职责说明
+
+**本文档职责**: 复盘模块蓝图
+- 回测复盘、实盘复盘、因子复盘、策略复盘、风险复盘
+
 # 复盘模块蓝图
 
 > **版本**: v1.0

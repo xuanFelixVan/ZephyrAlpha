@@ -20,6 +20,12 @@ related_documents:
   - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
 ---
 
+
+## 文档职责说明
+
+**本文档职责**: AI工作汇报与交付模块蓝图
+- 每日工作总结、进度通知、决策汇报、交互交付、可视化展示
+
 # AI工作汇报与交付模块蓝
 
 > **版本**: v1.0

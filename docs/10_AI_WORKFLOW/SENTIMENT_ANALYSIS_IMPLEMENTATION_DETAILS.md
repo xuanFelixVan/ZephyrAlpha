@@ -8,7 +8,14 @@ owner: 首席架构师
 standard_type: 实施指南
 applicable_scope: 舆情分析层改进模块实
 compliance_level: 专业标准
+parent_document: INDEX.md
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 实施细节文档
+- 环境搭建、代码示例、配置模板、部署架构
 
 # 舆情分析层改进模块实施细节文
 

@@ -20,6 +20,12 @@ related_documents:
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 ---
 
+
+## 文档职责说明
+
+**本文档职责**: 全流程数据保存机制蓝图
+- 实验追踪、数据血缘、版本控制、数据治理
+
 # 全流程数据保存机制蓝
 
 > **版本**: v1.0

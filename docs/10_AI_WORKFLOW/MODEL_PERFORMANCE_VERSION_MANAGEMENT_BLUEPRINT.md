@@ -8,6 +8,7 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 模型性能与版本管理模
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析
 priority: P0
 estimated_effort: 50h
@@ -15,6 +16,12 @@ integrated_modules:
   - AIWF_MPM_001
   - AIWF_MVM_001
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 模型性能与版本管理模块蓝图
+- 模型版本控制、性能监控、模型回滚、性能对比
 
 # 模型性能与版本管理模块蓝(Model Performance & Version Management Blueprint)
 

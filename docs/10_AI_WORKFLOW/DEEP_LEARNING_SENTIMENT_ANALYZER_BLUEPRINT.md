@@ -8,10 +8,17 @@ owner: 首席架构师
 standard_type: 专业机构级蓝图
 applicable_scope: 深度学习情感分析模块
 compliance_level: 专业标准
+parent_document: INDEX.md
 layer: 舆情分析
 priority: P0
 estimated_effort: 60h
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 深度学习情感分析模块蓝图
+- 深度学习情感分析、多维度情感评估、金融领域专业模型
 
 # 深度学习情感分析模块蓝图 (Deep Learning Sentiment Analyzer Blueprint)
 

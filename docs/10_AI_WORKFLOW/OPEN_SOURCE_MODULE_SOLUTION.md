@@ -8,9 +8,16 @@ owner: 首席架构师
 standard_type: 开源方案选型推荐
 applicable_scope: 开源模块选型与推荐
 compliance_level: 专业标准
+parent_document: INDEX.md
 related_documents:
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 ---
+
+
+## 文档职责说明
+
+**本文档职责**: 开源模块完整方案
+- 开源模块全景图、架构映射、选型对比、推荐理由
 
 # 个人量化系统开源模块完整方
 
