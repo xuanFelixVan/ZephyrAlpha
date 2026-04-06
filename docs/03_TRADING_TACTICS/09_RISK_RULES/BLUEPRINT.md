@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TACTICS_RISK_RULES_BP_001
 version: 1.0.2
 status: Active
@@ -622,3 +622,34 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 
 **维护�?*: 清风量化系统
 **索引**: `RSK_001`
+---
+
+## 11. 文档治理
+
+### 11.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Tactics Risk Rules Bp
+- **模块ID**: TACTICS_RISK_RULES_BP_001
+- **蓝图文档**: [BLUEPRINT.md](./03_TRADING_TACTICS\09_RISK_RULES\BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 全系统架构设�?
+- **状态**: Active
+```
+
+### 11.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Tactics Risk Rules Bp** | 全系统架构设�? | **核心模块** |
+
+### 11.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active

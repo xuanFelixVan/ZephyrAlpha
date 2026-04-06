@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: '2026-04-07'
 created_date: 2026-04-02
-layer: 'Layer 5 (宏观配置层) | 业务架构: 三级时间框架融合架构'
+layer: 'Layer 5 (策略执行层) | 业务架构: 三级时间框架融合架构'
 index: ECONOMIC_REGIME_001
 estimated_hours: 60h
 estimated_effort: 1.5-2周

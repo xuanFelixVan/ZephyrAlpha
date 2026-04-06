@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REBALANCING_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -1184,3 +1184,34 @@ class SuspendedStockRebalance:
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 创建基准管理系统蓝图
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Rebalancing Blueprint
+- **模块ID**: REBALANCING_BLUEPRINT_001
+- **蓝图文档**: [REBALANCING_BLUEPRINT.md](./11_STRATEGIC_DECISION\REBALANCING_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: Layer 11.10 - 再平衡决策系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Rebalancing Blueprint** | Layer 11.10 - 再平衡决策系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

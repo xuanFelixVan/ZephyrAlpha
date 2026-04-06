@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NATURAL_LANGUAGE_INTERFACE_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -1553,3 +1553,34 @@ Layer 11是清风量化交易系统的文字驱动层，提供自然语言交互
 **文档结束**
 
 > 本蓝图由首席架构师设计，遵循专业量化机构标准，确保系统架构的完整性、一致性和可扩展�?
+---
+
+## 3. 文档治理
+
+### 3.1 System_Manifest.md索引
+
+```markdown
+#### Layer 11: 文字驱动层
+##### 0.001. Natural Language Interface Blueprint
+- **模块ID**: NATURAL_LANGUAGE_INTERFACE_BLUEPRINT_001
+- **蓝图文档**: [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./01_FRAMEWORK\NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 全系统文字交互层
+- **状态**: Active
+```
+
+### 3.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Natural Language Interface Blueprint** | 全系统文字交互层 | **核心模块** |
+
+### 3.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active

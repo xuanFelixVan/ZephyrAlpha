@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -522,3 +522,34 @@ class RebalanceSignal:
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 6: 组合优化层
+##### 0.001. Portfolio Optimization Layer Blueprint
+- **模块ID**: PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT_001
+- **蓝图文档**: [PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md](./01_FRAMEWORK\PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: Layer 6 - 组合优化层
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Portfolio Optimization Layer Blueprint** | Layer 6 - 组合优化层 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

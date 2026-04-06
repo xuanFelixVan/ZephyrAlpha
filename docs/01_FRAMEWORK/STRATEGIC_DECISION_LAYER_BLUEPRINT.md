@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FRAMEWORK_STRATEGIC_DECISION_BP_001
 version: 1.0.1
 status: Active
@@ -572,3 +572,34 @@ class StrategySelection:
 - �?战略资产配置专业（经济范式判�?配置优化�?- �?风险预算分配科学（风险贡献分�?动态调整）
 - �?投资策略选择优化（策略评�?组合优化�?- �?战略调整决策及时（环境监�?调整引擎�?
 **实施周期**: 2�?**预期效果**: 战略决策准确率≥70%，达到专业机构战略决策能�?
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 2: Alpha因子层
+##### 0.001. Framework Strategic Decision Bp
+- **模块ID**: FRAMEWORK_STRATEGIC_DECISION_BP_001
+- **蓝图文档**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./01_FRAMEWORK\STRATEGIC_DECISION_LAYER_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 核心功能实现
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Framework Strategic Decision Bp** | 核心功能实现 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

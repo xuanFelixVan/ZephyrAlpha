@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_LAYER_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -533,3 +533,34 @@ class AnalystForecast:
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 3: 舆情分析层
+##### 0.001. Sentiment Analysis Layer Blueprint
+- **模块ID**: SENTIMENT_ANALYSIS_LAYER_BLUEPRINT_001
+- **蓝图文档**: [SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md](./01_FRAMEWORK\SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: Layer 3 - 舆情分析层
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Sentiment Analysis Layer Blueprint** | Layer 3 - 舆情分析层 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

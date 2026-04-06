@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AIWF_MPVM_001
 version: 1.0.0
 status: Active
@@ -799,3 +799,34 @@ CREATE TABLE drift_detection_records (
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-03 | **状*: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Aiwf Mpvm
+- **模块ID**: AIWF_MPVM_001
+- **蓝图文档**: [MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md](./10_AI_WORKFLOW\MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 模型性能与版本管理模
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Aiwf Mpvm** | 模型性能与版本管理模 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

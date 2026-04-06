@@ -1,10 +1,10 @@
----
-standard_type: 蓝图标准
-applicable_scope: 交易执行
-compliance_level: 初始标准
+﻿---
+standard_type: èå¾æ å
+applicable_scope: äº¤ææ§è¡
+compliance_level: åå§æ å
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
-owner: 执行层负责人
+implementation_status: è®¾è®¡é¶æ®µ
+owner: æ§è¡å±è´è´£äºº
 version: 1.0.0
 module_id: EXE_BLUEPRINT
 created_date: 2026-03-28
@@ -15,130 +15,130 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: 首席文档架构�?
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
-compliance_level: 初始标准
+owner: é¦å¸­ææ¡£æ¶æå¸?
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: å¨ç³»ç»æ¶æè®¾è®?
+compliance_level: åå§æ å
 parent_document: ../README.md
-implementation_status: 设计阶段
+implementation_status: è®¾è®¡é¶æ®µ
 implementation_progress: 0%
 ---
 ---
 
 
-# 监控告警系统蓝图（简化版�?
+# çæ§åè­¦ç³»ç»èå¾ï¼ç®åçï¼?
 
-> 清风量化系统 v5.0 的监控告警方�?
-> **索引**: `MON_001`
-> **注意**: 本蓝图采�?购买而非自研"策略，使用成熟的Grafana+Prometheus方案
+> æ¸é£éåç³»ç» v5.0 ççæ§åè­¦æ¹æ¡?
+> **ç´¢å¼**: `MON_001`
+> **æ³¨æ**: æ¬èå¾éç?è´­ä¹°èéèªç "ç­ç¥ï¼ä½¿ç¨æççGrafana+Prometheusæ¹æ¡
 
 
-## 1. 设计原则
+## 1. è®¾è®¡åå
 
-| 原则 | 说明 |
+| åå | è¯´æ |
 |------|------|
-| 购买而非自研 | 使用成熟开源方案，不自研监控面�?|
-| 监控即代�?| 监控配置纳入版本控制 |
-| 告警即触�?| 告警规则明确，触发动作自动化 |
+| è´­ä¹°èéèªç  | ä½¿ç¨æçå¼æºæ¹æ¡ï¼ä¸èªç çæ§é¢æ?|
+| çæ§å³ä»£ç ?| çæ§éç½®çº³å¥çæ¬æ§å¶ |
+| åè­¦å³è§¦å?| åè­¦è§åæç¡®ï¼è§¦åå¨ä½èªå¨å |
 
 
-## 2. 监控方案选型
+## 2. çæ§æ¹æ¡éå
 
-### 2.1 方案对比
+### 2.1 æ¹æ¡å¯¹æ¯
 
-| 方案 | 自研监控 | Grafana+Prometheus(推荐) |
+| æ¹æ¡ | èªç çæ§ | Grafana+Prometheus(æ¨è) |
 |------|----------|-------------------------|
-| 开发时�?| 2-3个月 | 1-2�?|
-| 功能完整�?| 60% | 95% |
-| 维护成本 | �?| 极低 |
-| 可扩展�?| 受限 | �?|
-| 社区支持 | �?| 强大 |
+| å¼åæ¶é?| 2-3ä¸ªæ | 1-2å¤?|
+| åè½å®æ´åº?| 60% | 95% |
+| ç»´æ¤ææ¬ | é«?| æä½ |
+| å¯æ©å±æ?| åé | å¼?|
+| ç¤¾åºæ¯æ | æ?| å¼ºå¤§ |
 
-### 2.2 最终选择
+### 2.2 æç»éæ©
 
-**采用 Grafana + Prometheus + AlertManager 方案**
+**éç¨ Grafana + Prometheus + AlertManager æ¹æ¡**
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                     Grafana 仪表�?                        �?
-�?  (策略绩效 / 风控指标 / 系统状�?/ 告警历史)                �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   AlertManager 告警管理                      �?
-�?  (告警路由 / 抑制 / 分组 / 升级)                           �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                     Prometheus 监控                        �?
-�?  (指标采集 / 存储 / 查询)                                  �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                  Exporters (被监控目�?                    �?
-�?  - TradeExecutor / RiskMonitor / DataHub                  �?
-�?  - Node Exporter (系统指标)                                �?
-�?  - Custom Exporters (业务指标)                             �?
-└─────────────────────────────────────────────────────────────�?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                     Grafana ä»ªè¡¨æ?                        â?
+â?  (ç­ç¥ç»©æ / é£æ§ææ  / ç³»ç»ç¶æ?/ åè­¦åå²)                â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+                            â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                   AlertManager åè­¦ç®¡ç                      â?
+â?  (åè­¦è·¯ç± / æå¶ / åç» / åçº§)                           â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+                            â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                     Prometheus çæ§                        â?
+â?  (ææ éé / å­å¨ / æ¥è¯¢)                                  â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+                            â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                  Exporters (è¢«çæ§ç®æ ?                    â?
+â?  - TradeExecutor / RiskMonitor / DataHub                  â?
+â?  - Node Exporter (ç³»ç»ææ )                                â?
+â?  - Custom Exporters (ä¸å¡ææ )                             â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
 
-## 3. 监控指标定义
+## 3. çæ§ææ å®ä¹
 
-### 3.1 业务指标
+### 3.1 ä¸å¡ææ 
 
 ```yaml
 # prometheus/metrics/business.yaml
 
 metrics:
-  # 策略指标
+  # ç­ç¥ææ 
   - name: strategy_signal_count
     type: counter
-    description: 策略信号数量
+    description: ç­ç¥ä¿¡å·æ°é
     labels: [strategy_id, signal_type]
 
   - name: strategy_signal_latency
     type: histogram
-    description: 信号生成延迟
+    description: ä¿¡å·çæå»¶è¿
     labels: [strategy_id]
     buckets: [0.01, 0.05, 0.1, 0.5, 1.0]
 
-  # 交易指标
+  # äº¤æææ 
   - name: order_submit_count
     type: counter
-    description: 订单提交数量
+    description: è®¢åæäº¤æ°é
     labels: [symbol, action, status]
 
   - name: order_execution_latency
     type: histogram
-    description: 订单执行延迟
+    description: è®¢åæ§è¡å»¶è¿
     labels: [order_type]
     buckets: [0.01, 0.05, 0.1, 0.5, 1.0]
 
-  # 风控指标
+  # é£æ§ææ 
   - name: risk_violation_count
     type: counter
-    description: 风控违规次数
+    description: é£æ§è¿è§æ¬¡æ°
     labels: [rule_id, severity]
 
   - name: risk_position_value
     type: gauge
-    description: 持仓风险�?
+    description: æä»é£é©å?
     labels: [symbol]
 
-  # 因子指标
+  # å å­ææ 
   - name: factor_ic_value
     type: gauge
-    description: 因子IC�?
+    description: å å­ICå?
     labels: [factor_id]
 
   - name: factor_calculation_latency
     type: histogram
-    description: 因子计算延迟
+    description: å å­è®¡ç®å»¶è¿
     labels: [factor_id]
 ```
 
-### 3.2 系统指标
+### 3.2 ç³»ç»ææ 
 
 ```yaml
 # prometheus/metrics/system.yaml
@@ -146,78 +146,78 @@ metrics:
 metrics:
   - name: cpu_usage_percent
     type: gauge
-    description: CPU使用�?
+    description: CPUä½¿ç¨ç?
 
   - name: memory_usage_bytes
     type: gauge
-    description: 内存使用�?
+    description: åå­ä½¿ç¨é?
 
   - name: disk_usage_bytes
     type: gauge
-    description: 磁盘使用�?
+    description: ç£çä½¿ç¨é?
 
   - name: network_io_bytes
     type: counter
-    description: 网络IO
+    description: ç½ç»IO
 
   - name: python_gc_count
     type: counter
-    description: Python GC次数
+    description: Python GCæ¬¡æ°
     labels: [generation]
 ```
 
 
-## 4. Grafana仪表板设�?
+## 4. Grafanaä»ªè¡¨æ¿è®¾è®?
 
-### 4.1 仪表板列�?
+### 4.1 ä»ªè¡¨æ¿åè¡?
 
-| 仪表�?| 用�?| 刷新频率 |
+| ä»ªè¡¨æ?| ç¨é?| å·æ°é¢ç |
 |--------|------|----------|
-| 系统概览 | 全局状态一目了�?| 10s |
-| 策略绩效 | 各策略表�?| 1min |
-| 风控监控 | 风险指标实时 | 5s |
-| 因子状�?| 因子IC监控 | 1min |
-| 交易明细 | 订单执行情况 | 10s |
-| 系统资源 | 服务器状�?| 30s |
+| ç³»ç»æ¦è§ | å¨å±ç¶æä¸ç®äºç?| 10s |
+| ç­ç¥ç»©æ | åç­ç¥è¡¨ç?| 1min |
+| é£æ§çæ§ | é£é©ææ å®æ¶ | 5s |
+| å å­ç¶æ?| å å­ICçæ§ | 1min |
+| äº¤ææç» | è®¢åæ§è¡æåµ | 10s |
+| ç³»ç»èµæº | æå¡å¨ç¶æ?| 30s |
 
-### 4.2 系统概览仪表�?
+### 4.2 ç³»ç»æ¦è§ä»ªè¡¨æ?
 
 ```json
 {
-  "title": "清风量化 - 系统概览",
+  "title": "æ¸é£éå - ç³»ç»æ¦è§",
   "panels": [
     {
-      "title": "策略信号",
+      "title": "ç­ç¥ä¿¡å·",
       "type": "stat",
       "targets": [
         {
           "expr": "sum(rate(strategy_signal_count[5m]))",
-          "legendFormat": "信号/�?
+          "legendFormat": "ä¿¡å·/ç§?
         }
       ]
     },
     {
-      "title": "订单执行",
+      "title": "è®¢åæ§è¡",
       "type": "stat",
       "targets": [
         {
           "expr": "sum(rate(order_submit_count[5m]))",
-          "legendFormat": "订单/�?
+          "legendFormat": "è®¢å/ç§?
         }
       ]
     },
     {
-      "title": "风控事件",
+      "title": "é£æ§äºä»¶",
       "type": "stat",
       "targets": [
         {
           "expr": "sum(rate(risk_violation_count[5m]))",
-          "legendFormat": "违规/�?
+          "legendFormat": "è¿è§/ç§?
         }
       ]
     },
     {
-      "title": "策略绩效热力�?,
+      "title": "ç­ç¥ç»©æç­åå?,
       "type": "heatmap",
       "targets": [
         {
@@ -231,9 +231,9 @@ metrics:
 ```
 
 
-## 5. 告警规则
+## 5. åè­¦è§å
 
-### 5.1 告警规则定义
+### 5.1 åè­¦è§åå®ä¹
 
 ```yaml
 # alertmanager/rules/quant_system.yaml
@@ -247,8 +247,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "策略信号延迟过高"
-          description: "{{ $labels.strategy_id }} 延迟 {{ $value }}s"
+          summary: "ç­ç¥ä¿¡å·å»¶è¿è¿é«"
+          description: "{{ $labels.strategy_id }} å»¶è¿ {{ $value }}s"
 
       - alert: StrategyNoSignal
         expr: rate(strategy_signal_count[10m]) == 0
@@ -256,8 +256,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "策略无信�?
-          description: "{{ $labels.strategy_id }} �?0分钟无信�?
+          summary: "ç­ç¥æ ä¿¡å?
+          description: "{{ $labels.strategy_id }} å·?0åéæ ä¿¡å?
 
   - name: risk_alerts
     rules:
@@ -267,8 +267,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "风控违规频繁"
-          description: "5分钟内发�?{{ $value }} 次违�?
+          summary: "é£æ§è¿è§é¢ç¹"
+          description: "5åéååç?{{ $value }} æ¬¡è¿è§?
 
       - alert: RiskExposureHigh
         expr: risk_position_value > 0.8
@@ -276,8 +276,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "风险敞口过高"
-          description: "当前敞口 {{ $value }}"
+          summary: "é£é©æå£è¿é«"
+          description: "å½åæå£ {{ $value }}"
 
   - name: system_alerts
     rules:
@@ -287,8 +287,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "CPU使用率高"
-          description: "CPU使用�?{{ $value }}%"
+          summary: "CPUä½¿ç¨çé«"
+          description: "CPUä½¿ç¨ç?{{ $value }}%"
 
       - alert: HighMemory
         expr: memory_usage_bytes > 8e9
@@ -296,11 +296,11 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "内存使用率高"
-          description: "内存使用 {{ $value | humanize1024 }}"
+          summary: "åå­ä½¿ç¨çé«"
+          description: "åå­ä½¿ç¨ {{ $value | humanize1024 }}"
 ```
 
-### 5.2 告警通知配置
+### 5.2 åè­¦éç¥éç½®
 
 ```yaml
 # alertmanager/config.yaml
@@ -338,9 +338,9 @@ receivers:
 ```
 
 
-## 6. 快速部�?
+## 6. å¿«éé¨ç½?
 
-### 6.1 Docker Compose配置
+### 6.1 Docker Composeéç½®
 
 ```yaml
 # docker-compose.monitoring.yml
@@ -381,36 +381,36 @@ services:
       - "9100:9100"
 ```
 
-### 6.2 启动命令
+### 6.2 å¯å¨å½ä»¤
 
 ```bash
-# 启动监控服务
+# å¯å¨çæ§æå¡
 docker-compose -f docker-compose.monitoring.yml up -d
 
-# 访问
+# è®¿é®
 # Grafana: http://localhost:3000 (admin/admin)
 # Prometheus: http://localhost:9090
 # AlertManager: http://localhost:9093
 ```
 
 
-## 7. 指标导出代码示例
+## 7. ææ å¯¼åºä»£ç ç¤ºä¾
 
-### 7.1 自定义指标导�?
+### 7.1 èªå®ä¹ææ å¯¼å?
 
 ```python
 from prometheus_client import Counter, Histogram, Gauge, start_http_server
 
-# 定义指标
-signal_count = Counter('strategy_signal_count', '策略信号数量',
+# å®ä¹ææ 
+signal_count = Counter('strategy_signal_count', 'ç­ç¥ä¿¡å·æ°é',
                        ['strategy_id', 'signal_type'])
-signal_latency = Histogram('strategy_signal_latency', '信号生成延迟',
+signal_latency = Histogram('strategy_signal_latency', 'ä¿¡å·çæå»¶è¿',
                           ['strategy_id'])
-risk_violation = Counter('risk_violation_count', '风控违规次数',
+risk_violation = Counter('risk_violation_count', 'é£æ§è¿è§æ¬¡æ°',
                        ['rule_id', 'severity'])
-factor_ic = Gauge('factor_ic_value', '因子IC�?, ['factor_id'])
+factor_ic = Gauge('factor_ic_value', 'å å­ICå?, ['factor_id'])
 
-# 在代码中使用
+# å¨ä»£ç ä¸­ä½¿ç¨
 class StrategyMonitor:
     def on_signal(self, strategy_id: str, signal_type: str):
         signal_count.labels(strategy_id=strategy_id, signal_type=signal_type).inc()
@@ -418,17 +418,48 @@ class StrategyMonitor:
     def on_risk_violation(self, rule_id: str, severity: str):
         risk_violation.labels(rule_id=rule_id, severity=severity).inc()
 
-# 启动指标服务�?
+# å¯å¨ææ æå¡å?
 start_http_server(8000)
 ```
 
 
-## 8. 更新记录
+## 8. æ´æ°è®°å½
 
-| 版本 | 日期 | 变更内容 |
+| çæ¬ | æ¥æ | åæ´åå®¹ |
 |------|------|----------|
-| v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
+| v1.0 | 2026-03-28 | åå§çæ¬ - ç®åçè®¾è®¡ |
 
 
-**维护�?*: 清风量化系统
-**索引**: `MON_001`
+**ç»´æ¤è?*: æ¸é£éåç³»ç»
+**ç´¢å¼**: `MON_001`
+---
+
+## 9. 文档治理
+
+### 9.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.BLUEPRINT. Exe
+- **模块ID**: EXE_BLUEPRINT
+- **蓝图文档**: [BLUEPRINT.md](./04_EXECUTION\03_MONITORING\BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: äº¤ææ§è¡
+- **状态**: Active
+```
+
+### 9.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Exe** | äº¤ææ§è¡ | **核心模块** |
+
+### 9.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-03-28 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-03-28 | **状态**: Active

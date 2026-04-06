@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AIWF_SFL_001
 version: 1.0.0
 status: Active
@@ -733,3 +733,34 @@ class FactorBacktestEngine:
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Aiwf Sfl
+- **模块ID**: AIWF_SFL_001
+- **蓝图文档**: [SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md](./10_AI_WORKFLOW\SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 舆情因子库模块
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Aiwf Sfl** | 舆情因子库模块 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

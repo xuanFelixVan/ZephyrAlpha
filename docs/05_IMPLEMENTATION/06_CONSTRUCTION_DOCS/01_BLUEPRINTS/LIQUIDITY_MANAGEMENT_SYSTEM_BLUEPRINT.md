@@ -6,7 +6,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: '2026-04-06'
 created_date: 2026-04-02
-layer: 'Layer 5 (中观策略层) | 业务架构: 三级时间框架融合架构'
+layer: 'Layer 5 (策略执行层) | 业务架构: 三级时间框架融合架构'
 index: LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT_001
 estimated_hours: 80h
 estimated_effort: 2周

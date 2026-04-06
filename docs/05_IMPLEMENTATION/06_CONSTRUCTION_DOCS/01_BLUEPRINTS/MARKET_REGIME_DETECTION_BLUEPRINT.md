@@ -1,5 +1,5 @@
 ﻿---
-module_id: MESO_MARKET_REGIME_001
+module_id: MARKET_REGIME_DETECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
@@ -21,7 +21,7 @@ open_source_dependency: scikit-learn, hmmlearn, pandas, numpy, scipy
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **核心定位**: 为中观策略层提供市场状态识别能力
-> **索引**: `MESO_MARKET_REGIME_001`
+> **索引**: `MARKET_REGIME_DETECTION_001`
 > **开发周期**: 2.5周
 
 ---
@@ -1119,7 +1119,7 @@ def test_hmm_model():
 ```markdown
 #### Layer 3: 中观策略层
 ##### 6.001. Meso Market Regime
-- **模块ID**: MESO_MARKET_REGIME_001
+- **模块ID**: MARKET_REGIME_DETECTION_001
 - **蓝图文档**: [MARKET_REGIME_DETECTION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_REGIME_DETECTION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 中观策略层市场状态识别

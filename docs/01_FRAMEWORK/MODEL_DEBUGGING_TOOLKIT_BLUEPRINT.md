@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_DEBUGGING_TOOLKIT_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -280,3 +280,34 @@ captum>=0.7.0
 **èå¾çæ¬**: v1.0
 **åå»ºæ¥æ**: 2026-04-04
 **ç»´æ¤è?*: æºå¨å­¦ä¹ å±è´è´£äºº
+---
+
+## 9. 文档治理
+
+### 9.1 System_Manifest.md索引
+
+```markdown
+#### Layer 4: 机器学习层
+##### 0.001. Model Debugging Toolkit Blueprint
+- **模块ID**: MODEL_DEBUGGING_TOOLKIT_BLUEPRINT_001
+- **蓝图文档**: [MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md](./01_FRAMEWORK\MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 核心功能实现
+- **状态**: Active
+```
+
+### 9.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Model Debugging Toolkit Blueprint** | 核心功能实现 | **核心模块** |
+
+### 9.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-04 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-04 | **状态**: Active

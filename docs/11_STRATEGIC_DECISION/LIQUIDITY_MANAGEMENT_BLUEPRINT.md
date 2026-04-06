@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_MANAGEMENT_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -1235,3 +1235,34 @@ class SuspendedStockLiquidityManager:
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 更新Layer 11主蓝图文档
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Liquidity Management Blueprint
+- **模块ID**: LIQUIDITY_MANAGEMENT_BLUEPRINT_001
+- **蓝图文档**: [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./11_STRATEGIC_DECISION\LIQUIDITY_MANAGEMENT_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: Layer 11.8 - 流动性管理系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Liquidity Management Blueprint** | Layer 11.8 - 流动性管理系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
