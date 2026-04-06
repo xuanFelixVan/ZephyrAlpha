@@ -23,43 +23,6 @@ layer: "Layer 6 (组合优化层)"
 > **索引**: `DYNAMIC_ASSET_ALLOCATION_001`
 > **开发周期**: 1.5周
 
----
-
-## 核心定位
-
-动态资产配置模块，负责根据市场条件动态调整资产配置
-
-
-## 1. 模块概述
-
-### 1.1 核心职责
-
-**单一职责**: 基于市场状态和经济周期动态调整资产配置权重
-
-**职责边界**:
-- ✅ 负责: 市场状态识别、动态权重调整、战略资产配置、战术资产配置
-- ❌ 不负责: 市场状态检测（由MARKET_REGIME_DETECTION负责）
-- ❌ 不负责: 基础优化求解（由MEAN_VARIANCE_OPTIMIZATION负责）
-
-### 1.2 开源依赖
-
-| 库名 | 版本 | 用途 |
-|------|------|------|
-| Skfolio | >=0.2.0 | 动态权重优化 |
-| PyPortfolioOpt | >=1.5.0 | 资产配置优化 |
-
-### 1.3 与现有模块关系
-
-```
-DYNAMIC_ASSET_ALLOCATION (本模块)
-├── 依赖 MARKET_REGIME_DETECTION 的市场状态信号
-├── 依赖 ECONOMIC_REGIME_ENGINE 的经济周期判断
-├── 为 MULTI_STRATEGY_HIERARCHICAL_SYSTEM 提供配置决策
-└── 为 STRATEGIC_ALLOCATION_ENGINE 提供动态调整
-```
-
----
-
 ## 2. 功能设计
 
 ### 2.1 核心功能

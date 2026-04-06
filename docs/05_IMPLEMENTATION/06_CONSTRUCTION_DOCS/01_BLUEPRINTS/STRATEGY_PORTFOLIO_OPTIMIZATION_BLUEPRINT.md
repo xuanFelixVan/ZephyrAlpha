@@ -1,17 +1,3 @@
----
-module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 5)
-  - 数据质量 (Layer 1)
-
-layer: "Layer 3 (策略层)"
----
 ﻿# 策略组合优化蓝图
 
 > **核心定位**: 策略组合优化蓝图的核心功能实现

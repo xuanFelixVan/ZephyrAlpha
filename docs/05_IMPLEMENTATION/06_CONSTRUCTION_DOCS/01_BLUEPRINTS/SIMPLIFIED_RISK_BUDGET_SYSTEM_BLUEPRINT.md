@@ -1,16 +1,3 @@
----
-module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-
-layer: "Layer 7 (风险管理层)"
----
 ﻿# 简化版动态风险预算系统蓝图
 
 > **核心定位**: 简化版动态风险预算系统蓝图的核心功能实现

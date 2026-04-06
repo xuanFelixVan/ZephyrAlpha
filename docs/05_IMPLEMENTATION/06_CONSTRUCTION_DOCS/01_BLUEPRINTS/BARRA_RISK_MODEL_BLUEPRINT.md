@@ -1,17 +1,3 @@
----
-module_id: BARRA_RISK_MODEL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
-
-layer: "Layer 7 (风险管理层)"
----
 ﻿> **索引**: `BARRA_RISK_001`
 > **开发时长**: 100h（约2.5周）
 > **核心定位**: 多因子风险模型，实现风险分解、因子暴露度量、风险预算

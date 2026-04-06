@@ -20,36 +20,6 @@ layer: "Layer 6 (组合优化层)"
 **创建日期**: 2026-04-02
 **状?*: 设计阶段
 **优先?*: P0级（核心集成?
----
-
-## 核心定位
-
-系统集成模块，负责整合各子系统，确保数据流和控制流的顺畅
-
-
-## 一、集成架构概?
-### 1.1 集成目标
-
-**核心目标**?1. ?实现8个新模块与现有Layer 7系统的无缝集?2. ?建立统一的数据流和控制流
-3. ?确保模块间的松耦合和高内聚
-4. ?提供统一的API网关和报告分发机?
-**集成原则**?- **松耦合原则**: 模块间通过接口通信，不直接依赖实现
-- **单一职责原则**: 每个模块只负责一个核心功?- **依赖倒置原则**: 高层模块不依赖低层模块，都依赖抽?- **开闭原?*: 对扩展开放，对修改关?
-### 1.2 集成范围
-
-**新增模块?个）**?- P0-01: 情景分析?(ScenarioAnalyzer)
-- P0-02: 压力测试报告生成?(StressTestReporter)
-- P0-03: 实时风险监控报告?(RealTimeRiskReporter)
-- P0-04: 多时间框架报告融合器 (MultiTimeframeReportFusion)
-- P1-01: 策略生命周期报告?(StrategyLifecycleReporter)
-- P1-02: 监管合规报告?(RegulatoryReporter)
-- P1-03: AI决策可解释性报告器 (AIExplainabilityReporter)
-- P1-04: 执行成本分析报告?(ExecutionCostReporter)
-
-**现有模块（集成对象）**?- DailyReporter（日度报告器?- MonthlyReporter（月度报告器?- PerformanceAnalyzer（性能分析器）
-- StreamlitDashboard（仪表板?
----
-
 ## 二、集成架构设?
 ### 2.1 整体架构?
 ```

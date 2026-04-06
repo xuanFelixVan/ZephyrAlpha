@@ -1,16 +1,3 @@
----
-module_id: MARKET_IMPACT_MODEL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
-layer: "Layer 6 (组合优化层)"
----
 ﻿# 模块概述
 
 > **索引**: `MARKET_IMPACT_BLUEPRINT_001`

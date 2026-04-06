@@ -21,44 +21,6 @@ layer: "Layer 2 (Alpha因子层)"
 > **索引**: `FACTOR_NEUTRAL_OPTIMIZATION_001`
 > **开发周期**: 1.5周
 
----
-
-## 核心定位
-
-因子中性优化模块，负责构建因子中性投资组合
-
-
-## 1. 模块概述
-
-### 1.1 核心职责
-
-**单一职责**: 在组合优化中实现因子暴露约束，确保组合对特定因子保持中性或目标暴露
-
-**职责边界**:
-- ✅ 负责: 因子暴露约束、行业中性、风格因子中性、市场中性
-- ❌ 不负责: 因子模型构建（由BARRA_RISK_MODEL负责）
-- ❌ 不负责: 基础优化求解（由MEAN_VARIANCE_OPTIMIZATION负责）
-- ❌ 不负责: 跟踪误差优化（单独模块）
-
-### 1.2 开源依赖
-
-| 库名 | 版本 | 用途 | GitHub Stars |
-|------|------|------|--------------|
-| Riskfolio-Lib | >=7.0.0 | 因子约束优化 | 3.1k+ |
-| cvxpy | >=1.4.0 | 凸优化求解器 | 4.5k+ |
-
-### 1.3 与现有模块关系
-
-```
-FACTOR_NEUTRAL_OPTIMIZATION (本模块)
-├── 依赖 BARRA_RISK_MODEL 的因子定义
-├── 依赖 MEAN_VARIANCE_OPTIMIZATION 的优化框架
-├── 为 CONSTRAINT_SOLVER 提供因子约束支持
-└── 为 MULTI_STRATEGY_HIERARCHICAL_SYSTEM 提供中性化策略
-```
-
----
-
 ## 2. 功能设计
 
 ### 2.1 核心功能

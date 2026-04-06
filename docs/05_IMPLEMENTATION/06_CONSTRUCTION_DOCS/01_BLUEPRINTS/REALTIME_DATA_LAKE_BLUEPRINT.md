@@ -50,54 +50,6 @@ layer: "Layer 1 (数据源层)"
 | **数据压缩率** | ≥60% | 数据压缩率≥60% |
 | **并发查询** | ≥100 | 支持至少100个并发查询 |
 
----
-
-## 📚 相关文档
-
-### 上游依赖
-
-| 文档名称 | module_id | 依赖类型 | 说明 |
-|---------|-----------|---------|------|
-| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源接入配置 |
-| [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | 强依赖 | 提供数据存储策略 |
-| [数据成本管理蓝图](./DATA_COST_MANAGEMENT_BLUEPRINT.md) | DATA_COST_MANAGEMENT_001 | 中依赖 | 提供存储成本优化建议 |
-
-### 下游依赖
-
-| 文档名称 | module_id | 依赖类型 | 说明 |
-|---------|-----------|---------|------|
-| [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据存储服务 |
-| 数据虚拟化蓝图 | DATA_VIRTUALIZATION_001 | 强依赖 | 提供统一数据访问 |
-| [数据网格蓝图](./DATA_MESH_BLUEPRINT.md) | DATA_MESH_001 | 中依赖 | 提供数据产品存储 |
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **Delta Lake** | 3.0+ | 数据湖表格式 | [官方文档](https://delta.io/) |
-| **Apache Iceberg** | 1.5+ | 表格式和数据版本 | [官方文档](https://iceberg.apache.org/) |
-| **MinIO** | 2024+ | 对象存储 | [官方文档](https://min.io/) |
-
-### 引用关系图
-
-```mermaid
-graph LR
-    A[数据源管理] --> D[实时数据湖]
-    B[数据生命周期管理] --> D
-    C[数据成本管理] --> D
-    
-    D --> E[高性能数据管道]
-    D --> F[数据虚拟化]
-    D --> G[数据网格]
-    
-    style D fill:#ff6b6b
-    style A fill:#4ecdc4
-    style B fill:#45b7d1
-    style C fill:#96ceb4
-```
-
----
-
 ## 二、系统架构设计
 
 ### 2.1 整体架构图

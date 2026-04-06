@@ -1,17 +1,3 @@
----
-module_id: AI_ENHANCEMENT_INTEGRATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
-
-layer: "Layer 4 (机器学习层)"
----
 ﻿# AI增强项目集成蓝图
 
 > **核心定位**: AI增强项目集成蓝图的核心功能实现

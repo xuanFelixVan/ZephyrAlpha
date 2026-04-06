@@ -34,24 +34,6 @@ layer: "Layer 6 (组合优化层)"
 | 库名 | 版本 | 用途 | GitHub Stars |
 |
 layer: "Layer 6 (组合优化层)"
----
----|------|------|--------------|
-| PyPortfolioOpt | >=1.5.0 | 核心优化引擎 | 4.2k+ |
-| cvxpy | >=1.4.0 | 凸优化求解器 | 4.5k+ |
-| scipy | >=1.10.0 | 数值优化 | 12k+ |
-
-### 1.3 与现有模块关系
-
-```
-MEAN_VARIANCE_OPTIMIZATION (本模块)
-├── 为 BLACK_LITTERMAN_MODEL 提供基础框架
-├── 为 RISK_PARITY_STRATEGY 提供对比基准
-├── 为 MULTI_OBJECTIVE_OPTIMIZATION 提供核心求解器
-└── 为 CONSTRAINT_SOLVER 提供优化接口
-```
-
----
-
 ## 2. 功能设计
 
 ### 2.1 核心功能

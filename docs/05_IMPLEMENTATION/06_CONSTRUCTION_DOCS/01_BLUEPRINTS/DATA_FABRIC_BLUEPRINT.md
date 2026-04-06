@@ -50,52 +50,6 @@ layer: "Layer 1 (数据源层)"
 | **数据一致性** | ≥99.9% | 数据一致性≥99.9% |
 | **并发连接** | ≥200 | 支持至少200个并发连接 |
 
----
-
-## 📚 相关文档
-
-### 上游依赖
-
-| 文档名称 | module_id | 依赖类型 | 说明 |
-|---------|-----------|---------|------|
-| [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 提供数据集成策略 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供数据源元数据 |
-| [数据网格蓝图](./DATA_MESH_BLUEPRINT.md) | DATA_MESH_001 | 中依赖 | 提供数据产品集成 |
-
-### 下游依赖
-
-| 文档名称 | module_id | 依赖类型 | 说明 |
-|---------|-----------|---------|------|
-| [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 中依赖 | 提供数据集成服务 |
-| 数据虚拟化蓝图 | DATA_VIRTUALIZATION_001 | 中依赖 | 提供统一数据访问 |
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **Apache Kafka** | 3.7+ | 流式数据平台 | [官方文档](https://kafka.apache.org/) |
-| **Debezium** | 2.6+ | CDC变更捕获 | [官方文档](https://debezium.io/) |
-| **Strimzi** | 0.40+ | Kafka Operator | [官方文档](https://strimzi.io/) |
-
-### 引用关系图
-
-```mermaid
-graph LR
-    A[数据治理平台] --> D[数据编织]
-    B[数据目录] --> D
-    C[数据网格] --> D
-    
-    D --> E[高性能数据管道]
-    D --> F[数据虚拟化]
-    
-    style D fill:#ff6b6b
-    style A fill:#4ecdc4
-    style B fill:#45b7d1
-    style C fill:#96ceb4
-```
-
----
-
 ## 二、系统架构设计
 
 ### 2.1 整体架构图
