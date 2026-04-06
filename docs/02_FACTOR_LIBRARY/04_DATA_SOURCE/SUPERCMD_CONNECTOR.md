@@ -286,7 +286,7 @@ def _initialize_supercmd_client(self) -> None:
 - [数据源索引](./README.md)
 - [QMT数据接口](./QMT_INTERFACE.md)
 - [iFind连接器](./IFIND_CONNECTOR.md)
-- [专业多时间框架架构](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+- [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 
 ---
 

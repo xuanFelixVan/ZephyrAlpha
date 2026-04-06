@@ -100,6 +100,11 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 | **REAL_TIME_RISK_MONITOR_001** | 实时风险监控系统 | 1.0 | Active | [REAL_TIME_RISK_MONITOR_BLUEPRINT.md](./REAL_TIME_RISK_MONITOR_BLUEPRINT.md) | 实时风险监控、多维度风险评估、动态预警机制、风险报告生成、风险限额管理 |
 | **KNOWLEDGE_MANAGEMENT_001** | 知识管理与传承系统 | 1.0 | Active | [KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 知识库构建、知识检索、知识图谱、经验传承、学习路径规划 |
 | **SCENARIO_ANALYSIS_STRESS_TEST_001** | 情景分析与压力测试系统 | 1.0 | Active | [SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md](./SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md) | 历史情景分析、假设情景模拟、压力测试引擎、情景报告生成、情景库管理 |
+| **AI_DECISION_EXPLANATION_001** | AI决策解释系统 | 1.0 | Active | [AI_DECISION_EXPLANATION_BLUEPRINT.md](./AI_DECISION_EXPLANATION_BLUEPRINT.md) | SHAP解释引擎、LIME解释引擎、特征重要性分析、决策路径可视化、解释报告生成 |
+| **INTELLIGENT_QA_SYSTEM_001** | 智能问答系统 | 1.0 | Active | [INTELLIGENT_QA_SYSTEM_BLUEPRINT.md](./INTELLIGENT_QA_SYSTEM_BLUEPRINT.md) | 自然语言理解、知识检索引擎、RAG生成引擎、上下文管理、智能推荐引擎 |
+| **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
+| **MODEL_DRIFT_DETECTION_001** | 模型漂移检测系统 | 1.0 | Active | [MODEL_DRIFT_DETECTION_BLUEPRINT.md](./MODEL_DRIFT_DETECTION_BLUEPRINT.md) | 数据漂移检测、模型性能漂移检测、概念漂移检测、漂移告警引擎、漂移报告生成 |
+| **INTELLIGENT_SCHEDULER_001** | 智能调度系统 | 1.0 | Active | [INTELLIGENT_SCHEDULER_BLUEPRINT.md](./INTELLIGENT_SCHEDULER_BLUEPRINT.md) | 任务调度引擎、工作流管理引擎、依赖管理引擎、失败重试引擎、监控告警引擎 |
 
 ### 3.2 舆情分析模块
 

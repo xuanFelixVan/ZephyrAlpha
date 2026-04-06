@@ -1,3 +1,15 @@
+---
+module_id: UNIFIEDDATAINFRASTRUCTUREBL_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: UNIFIED_DATA_INFRASTRUCTURE_001
 version: 1.0.0
@@ -11,16 +23,11 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 priority: P0
-layer: '贯穿支撑系统 | 业务架构: 三级时间框架融合架构'
+layer: "Layer 1 (数据源层)"
 estimated_effort: 3周
 open_source_dependency: Apache Spark, Delta Lake, Apache Flink, InfluxDB, QuestDB
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 1 (数据源层)"
 ---
-
-
-
-
-
 # 📋 执行摘要
 
 > **版本**: v1.0

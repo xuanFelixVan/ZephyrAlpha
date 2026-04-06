@@ -1,3 +1,15 @@
+---
+module_id: CONSTRAINTSOLVERBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0
@@ -6,7 +18,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: '2026-04-06'
 created_date: 2026-04-03
-layer: Layer 6 (组合优化层)
+layer: "Layer 4 (机器学习层)"
 index: CONSTRAINT_SOLVER_001
 estimated_hours: 60h
 estimated_effort: 1.5周
@@ -23,12 +35,8 @@ personal_development: true
 ai_maintenance: true
 open_source_dependency: cvxpy, scipy, numpy
 priority: P0
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 4 (机器学习层)"
 ---
-
-
-
-
 # 概述
 
 > **开发时?*: 60h（约1.5周）

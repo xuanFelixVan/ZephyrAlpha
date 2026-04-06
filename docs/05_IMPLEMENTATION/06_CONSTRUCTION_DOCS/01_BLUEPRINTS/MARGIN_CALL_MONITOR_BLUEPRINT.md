@@ -1,4 +1,31 @@
+---
+module_id: MARGIN_CALL_MONITOR_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
+module_id: MARGIN_CALL_MONITOR_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+layer: "Layer 7 (风险管理层)"
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+implementation_status: 设计阶段
+---
+# Margin Call Monitor
+
 ## 1. 模块概述
 
 ### 1.1 业务背景与价值主张
@@ -37,7 +64,7 @@
 
 | 功能模块 | 优先级 | 功能描述 | 实现复杂度 |
 |
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 7 (风险管理层)"
 ---
 
 # 模块概述

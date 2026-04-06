@@ -1,3 +1,15 @@
+---
+module_id: OPENINGSTRATEGYBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: OPENING_STRATEGY_001
 version: 1.0.0
@@ -11,14 +23,10 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 priority: P0
-layer: "Layer 1 (微观执行层) | 业务架构: 三级时间框架融合架构"
+layer: "Layer 3 (策略层)"
 estimated_effort: 2周
 open_source_dependency: pandas, numpy, scipy
 ---
-
-
-
-
 # 📋 执行摘要
 
 > **版本**: v1.0

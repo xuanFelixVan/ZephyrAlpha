@@ -1,4 +1,16 @@
 ---
+module_id: SIMPLIFIEDRISKBUDGETSYSTEM_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
+﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -14,7 +26,7 @@ open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
 estimated_effort: 60h
 priority: P0
 simplified_version: true
-layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
+layer: "Layer 7 (风险管理层)"
 ---
 
 

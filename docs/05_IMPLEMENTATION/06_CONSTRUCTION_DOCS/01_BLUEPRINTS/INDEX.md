@@ -1,3 +1,15 @@
+---
+module_id: INDEX_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: IMPL_蓝图文档总索引_001
 version: 1.0.0
@@ -24,8 +36,8 @@ compliance_level: 专业标准
 
 ## 📊 文档统计
 
-- **总文档数**: 91
-- **Active文档**: 91
+- **总文档数**: 92
+- **Active文档**: 92
 - **更新日期**: 2026-04-07
 
 ---
@@ -90,7 +102,7 @@ compliance_level: 专业标准
 
 ## 6. Layer 6 (组合优化层)
 
-**文档数**: 46
+**文档数**: 47
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -105,6 +117,7 @@ compliance_level: 专业标准
 | 因子暴露管理蓝图 | FACTOR_EXPOSURE_MANAGEMENT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md) |
 | 因子中性优化蓝图 | FACTORNEUTRALOPTIMIZATIONBL_001 | 1.0.0 | Active | 2026-04-07 | [链接](./FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md) |
 | 融资优化蓝图 v1.0 | V_019 | 1.0.0 | Active | 2026-04-07 | [链接](./FINANCING_OPTIMIZATION_BLUEPRINT.md) |
+| 层次化优化框架蓝图 | HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001 | 1.0.0 | Active | 2026-04-07 | [链接](./HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md) |
 | 流动性管理系统蓝?v1.0 | V_021 | 1.0.0 | Active | 2026-04-07 | [链接](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) |
 | 爆仓线监控系统蓝图 v1.0 | MARGIN_CALL_MONITOR_001 | 1.0.0 | Active | 2026-04-05 | [链接](./MARGIN_CALL_MONITOR_BLUEPRINT.md) |
 | 市场冲击模型蓝图 v1.0 | V_022 | 1.0.0 | Active | 2026-04-07 | [链接](./MARKET_IMPACT_MODEL_BLUEPRINT.md) |

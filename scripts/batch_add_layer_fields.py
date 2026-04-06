@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 批量为缺少Layer归属的文档添加layer字段
+增强版：使用与weekly_layer_check.py相同的检测逻辑
 """
 
 import re
@@ -24,6 +25,83 @@ LAYER_KEYWORDS = {
     'Layer 10 (治理层)': ['治理', '合规', '监管', 'GOVERNANCE', 'COMPLIANCE', '监管合规'],
     'Layer 11 (战略决策层)': ['战略', '决策', '战略决策', 'STRATEGIC', 'DECISION', '投资决策'],
 }
+
+def get_yaml_layer(file_path):
+    """从YAML头部获取Layer信息 - 增强版"""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # 查找所有YAML头部
+        yaml_pattern = r'^---\s*\n(.*?)\n---'
+        yaml_matches = list(re.finditer(yaml_pattern, content, re.DOTALL))
+        
+        # 从所有YAML头部中查找layer字段
+        for match in yaml_matches:
+            yaml_content = match.group(1)
+            
+            # 尝试多种layer字段格式
+            # 格式1: layer: Layer 4 (机器学习层)
+            layer_match = re.search(r'^layer:\s*(.+)$', yaml_content, re.MULTILINE)
+            if layer_match:
+                layer_value = layer_match.group(1).strip()
+                
+                # 检查是否是标准格式
+                if re.match(r'^Layer \d+ \(.+\)$', layer_value):
+                    return layer_value
+                
+                # 如果不是标准格式，提取Layer编号并返回标准格式
+                layer_num_match = re.search(r'Layer (\d+)', layer_value)
+                if layer_num_match:
+                    layer_num = layer_num_match.group(1)
+                    layer_names = {
+                        '0': 'Layer 0 (数据源层)',
+                        '1': 'Layer 1 (数据层)',
+                        '2': 'Layer 2 (Alpha因子层)',
+                        '3': 'Layer 3 (策略层)',
+                        '4': 'Layer 4 (机器学习层)',
+                        '5': 'Layer 5 (执行层)',
+                        '6': 'Layer 6 (组合优化层)',
+                        '7': 'Layer 7 (风控层)',
+                        '8': 'Layer 8 (人机交互层)',
+                        '9': 'Layer 9 (治理层)',
+                        '10': 'Layer 10 (治理层)',
+                        '11': 'Layer 11 (战略决策层)',
+                    }
+                    return layer_names.get(layer_num, f'Layer {layer_num}')
+                
+                return layer_value
+            
+            # 格式2: layer: "Layer 3 (中观策略层) | 业务架构: xxx"
+            layer_match = re.search(r'^layer:\s*["\'](.+?)["\']', yaml_content, re.MULTILINE)
+            if layer_match:
+                layer_value = layer_match.group(1).strip()
+                # 提取Layer编号
+                layer_num_match = re.search(r'Layer (\d+)', layer_value)
+                if layer_num_match:
+                    layer_num = layer_num_match.group(1)
+                    layer_names = {
+                        '0': 'Layer 0 (数据源层)',
+                        '1': 'Layer 1 (数据层)',
+                        '2': 'Layer 2 (Alpha因子层)',
+                        '3': 'Layer 3 (策略层)',
+                        '4': 'Layer 4 (机器学习层)',
+                        '5': 'Layer 5 (执行层)',
+                        '6': 'Layer 6 (组合优化层)',
+                        '7': 'Layer 7 (风控层)',
+                        '8': 'Layer 8 (人机交互层)',
+                        '9': 'Layer 9 (治理层)',
+                        '10': 'Layer 10 (治理层)',
+                        '11': 'Layer 11 (战略决策层)',
+                    }
+                    return layer_names.get(layer_num, f'Layer {layer_num}')
+                
+                return layer_value.strip()
+        
+    except Exception as e:
+        pass
+    
+    return None
 
 def infer_layer_from_filename(filename):
     """从文件名推断Layer归属"""
@@ -131,17 +209,9 @@ def batch_add_layer_fields():
     # 找出缺少Layer归属的文档
     missing_layer = []
     for blueprint in blueprints:
-        try:
-            with open(blueprint, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
-            if yaml_match:
-                yaml_content = yaml_match.group(1)
-                if 'layer:' not in yaml_content:
-                    missing_layer.append(blueprint)
-        except:
-            pass
+        yaml_layer = get_yaml_layer(blueprint)
+        if not yaml_layer:
+            missing_layer.append(blueprint)
     
     print(f'⚠️  发现 {len(missing_layer)} 个缺少Layer归属的文档')
     print()

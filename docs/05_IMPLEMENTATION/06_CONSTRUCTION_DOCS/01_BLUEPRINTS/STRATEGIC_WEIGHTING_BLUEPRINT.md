@@ -1,3 +1,15 @@
+---
+module_id: STRATEGICWEIGHTINGBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
@@ -11,14 +23,10 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 priority: P0
-layer: "Layer 5 (宏观配置层) | 业务架构: 三级时间框架融合架构"
+layer: "Layer 6 (组合优化层)"
 estimated_effort: 2.5周
 open_source_dependency: cvxpy, pandas, numpy, scipy, PyPortfolioOpt
 ---
-
-
-
-
 # 📋 执行摘要
 
 > **版本**: v1.0
@@ -412,7 +420,51 @@ class ConstraintHandler:
 
 ---
 
-## 🔗 相关文档
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [策略选择系统蓝图](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | 强依赖 | 提供策略选择结果 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依赖 | 提供风险平价模型 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 强依赖 | 季度调仓决策 |
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 组合优化 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **CVXPY** | 1.4+ | 凸优化 | [官方文档](https://www.cvxpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[策略选择系统] --> B[战略权重分配]
+    C[数据质量监控] --> B
+    D[风险平价策略] --> B
+    
+    B --> E[季度调仓]
+    B --> F[组合再平衡]
+    B --> G[组合优化引擎]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 相关蓝图文档
 
 - [季度调仓决策系统蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)

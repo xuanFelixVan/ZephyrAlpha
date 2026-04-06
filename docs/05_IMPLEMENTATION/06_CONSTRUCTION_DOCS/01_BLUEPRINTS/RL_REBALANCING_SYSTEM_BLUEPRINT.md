@@ -1,3 +1,15 @@
+---
+module_id: RLREBALANCINGSYSTEMBLUEPRIN_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: RL_REBALANCING_SYSTEM_001
 version: 1.0.1
@@ -6,7 +18,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: '2026-04-06'
 created_date: 2026-04-02
-layer: Layer 6 (组合优化层)
+layer: "Layer 6 (组合优化层)"
 index: RL_REBALANCING_SYSTEM_001
 estimated_hours: 200h
 estimated_effort: 5周
@@ -21,13 +33,8 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 open_source_dependency: stable-baselines3, gym, numpy, pandas
 priority: P1
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 6 (组合优化层)"
 ---
-
-
-
-
-
 # 模块概述
 
 > **索引**: `RL_REBALANCING_SYSTEM_001`
@@ -1111,6 +1118,50 @@ class RLRebalancingSystem:
 3. **OpenAI Gym**: https://gym.openai.com/
 
 ### 8.3 相关文档
+
+#### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依赖 | 提供基础再平衡框架 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [市场状态识别蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md) | MARKET_REGIME_DETECTION_001 | 中依赖 | 提供市场状态识别 |
+
+#### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | VaR/ES监控 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
+
+#### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **stable-baselines3** | 2.0+ | 强化学习框架 | [官方文档](https://stable-baselines3.readthedocs.io/) |
+| **gym** | 0.26+ | 环境接口 | [官方文档](https://gym.openai.com/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+
+#### 引用关系图
+
+```mermaid
+graph LR
+    A[组合再平衡] --> B[强化学习调仓系统]
+    C[数据质量监控] --> B
+    D[市场状态识别] --> B
+    
+    B --> E[组合优化引擎]
+    B --> F[VaR/ES监控]
+    B --> G[算法交易优化器]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+#### 相关蓝图文档
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 - PORTFOLIO_OPTIMIZATION_BLUEPRINT.md

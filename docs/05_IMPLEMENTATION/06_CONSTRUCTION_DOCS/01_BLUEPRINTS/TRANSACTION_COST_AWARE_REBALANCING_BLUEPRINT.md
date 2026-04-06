@@ -1,4 +1,16 @@
 ---
+module_id: TRANSACTIONCOSTAWAREREBALAN_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
+﻿---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -13,7 +25,7 @@ implementation_status: 蓝图设计阶段
 open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
 estimated_effort: 5-7天
 priority: P0
-layer: 'Layer 6 (组合优化层) | 业务架构: 三级时间框架融合架构'
+layer: "Layer 6 (组合优化层)"
 ---
 
 

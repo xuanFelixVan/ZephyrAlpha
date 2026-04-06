@@ -1,3 +1,15 @@
+---
+module_id: QUARTERLYREBALANCEBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
@@ -11,15 +23,11 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 priority: P0
-layer: Layer 6 (组合优化层)
+layer: "Layer 6 (组合优化层)"
 estimated_effort: 2周
 open_source_dependency: pandas, numpy, scipy, cvxpy
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 6 (组合优化层)"
 ---
-
-
-
-
 # 📋 执行摘要
 
 > **版本**: v1.0
@@ -301,7 +309,51 @@ class RebalancingTimingOptimizer:
 
 ---
 
-## 🔗 相关文档
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [战略权重分配蓝图](./STRATEGIC_WEIGHTING_BLUEPRINT.md) | STRATEGIC_WEIGHTING_001 | 强依赖 | 提供目标权重方案 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 提供成本分析 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依赖 | 组合再平衡 |
+| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 中依赖 | 成本感知再平衡 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **CVXPY** | 1.4+ | 凸优化 | [官方文档](https://www.cvxpy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[战略权重分配] --> B[季度调仓]
+    C[数据质量监控] --> B
+    D[交易成本分析引擎] --> B
+    
+    B --> E[组合再平衡]
+    B --> F[交易成本感知再平衡]
+    B --> G[算法交易优化器]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 相关蓝图文档
 
 - [战略资产权重分配系统蓝图](./STRATEGIC_WEIGHTING_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)

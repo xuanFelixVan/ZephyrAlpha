@@ -1,11 +1,23 @@
 ---
+module_id: TRANSACTIONCOSTANALYSISENGI_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
+﻿---
 module_id: TRANSACTION_COST_ANALYSIS_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
 last_updated: '2026-04-06'
 owner: 首席架构师
-layer: Layer 5 (策略执行层)
+layer: "Layer 6 (组合优化层)"
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 5 - 策略执行层
 compliance_level: 专业标准
@@ -23,7 +35,7 @@ opensource_project: tcapy
 open_source_dependency: tcapy, pandas, numpy, matplotlib
 estimated_effort: 3周
 priority: P0
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 6 (组合优化层)"
 ---
 
 
@@ -511,6 +523,50 @@ class CostAnalysisResult:
 ---
 
 ## 九、相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [市场冲击模型蓝图](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | 强依赖 | 提供市场冲击预测 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供资产元数据 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [智能执行引擎蓝图](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) | SMART_EXECUTION_ENGINE_001 | 强依赖 | 智能执行引擎 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 强依赖 | 算法交易优化 |
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **tcapy** | 0.5+ | 交易成本分析 | [官方文档](https://github.com/hamishramsay/tcapy) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Matplotlib** | 3.7+ | 可视化 | [官方文档](https://matplotlib.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[交易成本分析引擎]
+    C[市场冲击模型] --> B
+    D[数据目录] --> B
+    
+    B --> E[智能执行引擎]
+    B --> F[算法交易优化器]
+    B --> G[组合再平衡]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 相关蓝图文档
 
 | 文档名称 | 说明 |
 |---------|------|

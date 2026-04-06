@@ -1,3 +1,15 @@
+---
+module_id: LAYER_003
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 审计团队
+standard_type: 专业量化机构报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # 批量添加Layer字段报告
 
 > **处理日期**: 2026-04-07
@@ -7,154 +19,105 @@
 
 | 指标 | 数值 |
 |------|------|
-| 总文档数 | 143 |
-| 成功处理 | 143 |
-| 失败数 | 0 |
-| 成功率 | 100.0% |
+| 总文档数 | 91 |
+| 成功处理 | 0 |
+| 失败数 | 91 |
+| 成功率 | 0.0% |
 
 ## ✅ 成功处理的文档
 
-- **AI_CAPABILITY_GAP_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **AI_DECISION_AUDIT_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AI_EVOLUTION_LOOP_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AI_GOVERNANCE_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AI_STRATEGY_AUTOMATION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **AI_TRUST_CALIBRATION_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **ALPHA_FACTOR_LAYER_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **COUNTERPARTY_RISK_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **DATA_PREPROCESSING_LAYER_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **DATA_QUALITY_ASSESSMENT_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **DATA_QUALITY_GOVERNANCE_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **DATA_QUALITY_MANAGEMENT_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **DATA_SOURCE_LAYER_BLUEPRINT.md**: Layer 0 (数据源层) (推断方法: content)
-- **DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md**: Layer 0 (数据源层) (推断方法: content)
-- **DECISION_DASHBOARD_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **ESG_COMPLIANCE_MONITORING_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **EVENT_SOURCING_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **EXTREME_MARKET_RESPONSE_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **FACTOR_MINING_AUTOMATION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **FASTAPI_USERS_AUTH_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **GRAFANA_MONITORING_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **HUMAN_AI_INTEGRATION_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **HUMAN_AI_INTERACTION_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **IMPLEMENTATION_ACCELERATION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **INTERFACE_CONTRACT_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **MODEL_REGISTRY_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **PERSONAL_AI_QUANT_COMPLETE_SOLUTION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **PERSONAL_DEVELOPMENT_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **PRINCIPLE_CODIFIER_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **REALTIME_RISK_MONITORING_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **RESEARCH_INNOVATION_LAYER_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **RISK_EVENT_TRACKING_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **STRATEGIC_DECISION_LAYER_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **STRATEGY_EXECUTION_LAYER_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **TRANSACTION_COST_ANALYSIS_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **FACTOR_VALIDATION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **BACKTEST_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **BATCH_EVALUATION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **PARAMETER_OPTIMIZATION_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **PRODUCTION_MONITORING_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **RISK_CONTROL_AI_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **STRATEGY_ENGINE_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **STRATEGY_ENGINE_CORE_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **STRATEGY_LIFECYCLE_AI_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **STRATEGY_SELECTION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **ORDER_EXECUTION_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **QMT_EXECUTOR_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **MULTI_ENGINE_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **SECURITY_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **01_ULTIMATE_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **02_DEPLOYMENT_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **03_SECURITY_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **04_API_INTEGRATION_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **A_STOCK_DATA_PROCESSING_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **MONITORING_DASHBOARD_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **ALERTING_SYSTEM_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **AUTH_SYSTEM_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **API_DOCS_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **BACKTEST_UI_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **REPORTING_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **AUDIT_LOG_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **MOBILE_PUSH_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **TRADING_JOURNAL_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **CONFIG_MANAGEMENT_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **USER_PREFERENCES_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **SYSTEM_STATUS_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **DATA_MANAGEMENT_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **STRATEGY_MANAGEMENT_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **PERMISSION_MANAGEMENT_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **API_RATE_LIMITING_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **KNOWLEDGE_BASE_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **CI_CD_INTEGRATION_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **DATA_BACKUP_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **PARAMETER_OPTIMIZATION_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **LIVE_TRADING_INTERFACE_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **QUALITY_MONITORING_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **AI_DECISION_EXPLANATION_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AI_WORKFLOW_LOGGER_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AI_WORK_REPORTER_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **AUTO_REPORT_GENERATION_BLUEPRINT.md**: Layer 0 (数据源层) (推断方法: content)
-- **COMPLIANCE_MONITORING_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md**: Layer 0 (数据源层) (推断方法: content)
-- **DATA_SOURCE_EXTENSION_BLUEPRINT.md**: Layer 0 (数据源层) (推断方法: content)
-- **DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **INTELLIGENT_QA_SYSTEM_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **KNOWLEDGE_MANAGEMENT_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **LIVE_TRADING_MONITOR_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **MODEL_DRIFT_DETECTION_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **MULTI_AGENT_COLLABORATION_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **OPEN_SOURCE_INTEGRATION_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **PERFORMANCE_ANALYSIS_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **PERFORMANCE_ATTRIBUTION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **POST_TRADE_REVIEW_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **REAL_TIME_RISK_MONITOR_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **BENCHMARK_MANAGEMENT_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **CAPITAL_ALLOCATION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **DECISION_AUDIT_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **ESG_INVESTING_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **INVESTMENT_CONSTRAINT_BLUEPRINT.md**: Layer 9 (治理层) (推断方法: content)
-- **IPS_MANAGEMENT_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **LEVERAGE_MANAGEMENT_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **LIQUIDITY_MANAGEMENT_BLUEPRINT.md**: Layer 8 (人机交互层) (推断方法: content)
-- **MACRO_FACTOR_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **MARKET_REGIME_BLUEPRINT.md**: Layer 4 (机器学习层) (推断方法: content)
-- **MULTI_STRATEGY_COORDINATION_BLUEPRINT.md**: Layer 3 (策略层) (推断方法: content)
-- **OPEN_SOURCE_INTEGRATION_BLUEPRINT.md**: Layer 7 (风控层) (推断方法: content)
-- **PERFORMANCE_ATTRIBUTION_BLUEPRINT.md**: Layer 2 (Alpha因子层) (推断方法: content)
-- **PORTFOLIO_INSURANCE_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **REBALANCING_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
-- **SCENARIO_ANALYSIS_BLUEPRINT.md**: Layer 6 (组合优化层) (推断方法: content)
-- **TAX_MANAGEMENT_BLUEPRINT.md**: Layer 11 (战略决策层) (推断方法: content)
-- **TCA_BLUEPRINT.md**: Layer 5 (执行层) (推断方法: content)
+
+## ❌ 处理失败的文档
+
+- **AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md**: 未找到YAML头部
+- **AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md**: 未找到YAML头部
+- **ALPHA_FACTOR_FACTORY_BLUEPRINT.md**: 未找到YAML头部
+- **ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md**: 未找到YAML头部
+- **AUTO_REPAIR_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **BARRA_RISK_MODEL_BLUEPRINT.md**: 未找到YAML头部
+- **BLACK_LITTERMAN_MODEL_BLUEPRINT.md**: 未找到YAML头部
+- **COINTEGRATION_ANALYSIS_BLUEPRINT.md**: 未找到YAML头部
+- **CONSTRAINT_SOLVER_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_CATALOG_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_CATALOG_METADATA_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_COST_MANAGEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_FABRIC_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_MESH_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_OBSERVABILITY_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_QUALITY_MONITORING_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_SECURITY_COMPLIANCE_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_SOURCE_MANAGEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **DATA_VERSION_CONTROL_BLUEPRINT.md**: 未找到YAML头部
+- **DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md**: 未找到YAML头部
+- **DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md**: 未找到YAML头部
+- **DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **ECONOMIC_REGIME_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **ENHANCED_ALERT_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md**: 未找到YAML头部
+- **FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md**: 未找到YAML头部
+- **FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **FINANCING_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md**: 未找到YAML头部
+- **HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md**: 未找到YAML头部
+- **HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md**: 未找到YAML头部
+- **INTRADAY_STRATEGY_BLUEPRINT.md**: 未找到YAML头部
+- **LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **MARGIN_CALL_MONITOR_BLUEPRINT.md**: 未找到YAML头部
+- **MARKET_IMPACT_MODEL_BLUEPRINT.md**: 未找到YAML头部
+- **MARKET_REGIME_DETECTION_BLUEPRINT.md**: 未找到YAML头部
+- **MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md**: 未找到YAML头部
+- **MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **MULTI_ASSET_ALLOCATION_BLUEPRINT.md**: 未找到YAML头部
+- **MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **OPENING_STRATEGY_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_ATTRIBUTION_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_REBALANCING_BLUEPRINT.md**: 未找到YAML头部
+- **PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md**: 未找到YAML头部
+- **QUALITY_REPORT_AUTOMATION_BLUEPRINT.md**: 未找到YAML头部
+- **QUALITY_SCORING_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **QUARTERLY_REBALANCE_BLUEPRINT.md**: 未找到YAML头部
+- **REALTIME_DATA_LAKE_BLUEPRINT.md**: 未找到YAML头部
+- **REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md**: 未找到YAML头部
+- **RISK_CONTROL_BLUEPRINT.md**: 未找到YAML头部
+- **RISK_PARITY_STRATEGY_BLUEPRINT.md**: 未找到YAML头部
+- **RL_REBALANCING_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **ROBUST_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md**: 未找到YAML头部
+- **SMART_EXECUTION_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **SMART_ORDER_ROUTER_BLUEPRINT.md**: 未找到YAML头部
+- **STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md**: 未找到YAML头部
+- **STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **STRATEGIC_WEIGHTING_BLUEPRINT.md**: 未找到YAML头部
+- **STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **STRATEGY_SELECTION_BLUEPRINT.md**: 未找到YAML头部
+- **STRESS_TESTING_SYSTEM_BLUEPRINT.md**: 未找到YAML头部
+- **SYSTEM_ENHANCEMENT_BLUEPRINT.md**: 未找到YAML头部
+- **SYSTEM_INTEGRATION_BLUEPRINT.md**: 未找到YAML头部
+- **TAIL_RISK_HEDGING_BLUEPRINT.md**: 未找到YAML头部
+- **TAIL_RISK_METRICS_EXTENSION_BLUEPRINT.md**: 未找到YAML头部
+- **TAX_LOSS_HARVESTING_BLUEPRINT.md**: 未找到YAML头部
+- **TRADING_COST_OPTIMIZATION_BLUEPRINT.md**: 未找到YAML头部
+- **TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md**: 未找到YAML头部
+- **TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md**: 未找到YAML头部
+- **TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md**: 未找到YAML头部
+- **TURNOVER_CONTROL_BLUEPRINT.md**: 未找到YAML头部
+- **UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md**: 未找到YAML头部
+- **VAR_ES_MONITORING_BLUEPRINT.md**: 未找到YAML头部
 

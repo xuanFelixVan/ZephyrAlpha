@@ -1,5 +1,5 @@
 ---
-module_id: INDEX_BEST_PRACTICES_001
+module_id: INDEX_BEST_PRACTICES_OPS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

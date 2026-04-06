@@ -1,5 +1,5 @@
 ---
-module_id: KNOWLEDGE_MANAGEMENT_001
+module_id: KNOWLEDGE_MANAGEMENT_FACTOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -11,7 +11,7 @@ compliance_level: 专业标准
 ---
 
 ﻿---
-module_id: DOC_KNOWLEDGE_001
+module_id: KNOWLEDGE_MANAGEMENT_FACTOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01

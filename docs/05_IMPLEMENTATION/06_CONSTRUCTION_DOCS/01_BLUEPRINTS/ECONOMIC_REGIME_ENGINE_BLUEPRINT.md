@@ -1,3 +1,15 @@
+---
+module_id: ECONOMICREGIMEENGINEBLUEPRI_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: ECONOMIC_REGIME_ENGINE_001
 version: 2.0.3
@@ -6,7 +18,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: '2026-04-07'
 created_date: 2026-04-02
-layer: 'Layer 5 (策略执行层) | 业务架构: 三级时间框架融合架构'
+layer: "Layer 6 (组合优化层)"
 index: ECONOMIC_REGIME_001
 estimated_hours: 60h
 estimated_effort: 1.5-2周
@@ -26,11 +38,6 @@ archived_versions:
 open_source_dependency: scikit-learn, pandas, numpy
 priority: P0
 ---
-
-
-
-
-
 # 版本演进说明
 
 > **?当前有效版本** | v1.0已归?>

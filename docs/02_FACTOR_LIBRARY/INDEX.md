@@ -1,5 +1,5 @@
 ---
-module_id: INDEX_FACTOR_LIBRARY_001
+module_id: INDEX_FACTOR_LIBRARY_MAIN_001
 version: 2.0.1
 status: Active
 created_date: 2026-04-03

@@ -1,5 +1,5 @@
 ---
-module_id: KNOWLEDGE_MANAGEMENT_001
+module_id: KNOWLEDGE_MANAGEMENT_AI_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,0 +1,70 @@
+{
+  "timestamp": "2026-04-07T01:30:49.720426",
+  "stats": {
+    "total_files": 1233,
+    "files_with_module_id": 1180,
+    "total_issues": 3
+  },
+  "issues": {
+    "module_id_duplicates": [],
+    "responsibility_overlap": [
+      {
+        "responsibility": "风险预算",
+        "count": 119,
+        "files": [
+          "docs\\INDEX.md",
+          "docs\\System_Manifest.md",
+          "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+          "docs\\01_FRAMEWORK\\COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
+          "docs\\01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\DYNAMIC_RISK_BUDGETING_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md"
+        ]
+      },
+      {
+        "responsibility": "市场状态识别",
+        "count": 121,
+        "files": [
+          "docs\\System_Manifest.md",
+          "docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md"
+        ]
+      },
+      {
+        "responsibility": "数据质量",
+        "count": 263,
+        "files": [
+          "docs\\System_Manifest.md",
+          "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_DECISION_AUDIT_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+          "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md"
+        ]
+      }
+    ],
+    "missing_index": [],
+    "missing_yaml": [],
+    "encoding_issues": []
+  },
+  "summary": {
+    "total_issues": 3,
+    "critical_issues": 0,
+    "important_issues": 3,
+    "minor_issues": 0
+  }
+}

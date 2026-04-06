@@ -1,4 +1,16 @@
 ---
+module_id: STRATEGYSELECTIONBLUEPRINT_002
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
+﻿---
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0
 status: Active
@@ -13,7 +25,7 @@ implementation_status: 设计阶段
 open_source_dependency: 待补充
 estimated_effort: 待评估
 priority: P1
-layer: 'Layer 0 (系统架构) | 业务架构: 三级时间框架融合架构'
+layer: "Layer 3 (策略层)"
 ---
 
 
@@ -996,7 +1008,50 @@ python strategy_selector.py query \
 - [ ] 性能优化和缓?
 - [ ] 完整文档和示?
 
-## 七、相关文?
+## 七、相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供策略元数据 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 提供优化器基础接口 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [战略权重分配蓝图](./STRATEGIC_WEIGHTING_BLUEPRINT.md) | STRATEGIC_WEIGHTING_001 | 强依赖 | 战略权重分配 |
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依赖 | 季度调仓决策 |
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[策略选择系统]
+    C[数据目录] --> B
+    D[组合优化引擎] --> B
+    
+    B --> E[战略权重分配]
+    B --> F[季度调仓]
+    B --> G[组合再平衡]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+### 相关蓝图文档
 
 | 文档 | 说明 |
 |------|------|
@@ -1006,9 +1061,9 @@ python strategy_selector.py query \
 | PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 **文档版本**: v1.0  
-**最后更?*: 2026-04-01  
-**维护?*: 策略研发中心  
-**预计开发时?*: 80小时?周全职开发）
+**最后更新**: 2026-04-01  
+**维护者**: 策略研发中心  
+**预计开发时间**: 80小时（2周全职开发）
 
 ## 变更历史
 

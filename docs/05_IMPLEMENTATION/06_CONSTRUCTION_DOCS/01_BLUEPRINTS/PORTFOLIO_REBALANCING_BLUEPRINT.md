@@ -1,3 +1,15 @@
+---
+module_id: PORTFOLIOREBALANCINGBLUEPRIN_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 ﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.1
@@ -6,7 +18,7 @@ status: Active
 parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 last_updated: '2026-04-06'
 created_date: 2026-04-03
-layer: Layer 6 (组合优化层)
+layer: "Layer 6 (组合优化层)"
 index: PORTFOLIO_REBALANCING_001
 estimated_hours: 40h
 estimated_effort: 1周
@@ -23,13 +35,8 @@ personal_development: true
 ai_maintenance: true
 open_source_dependency: numpy, pandas, scipy
 priority: P0
-layer: 'Layer 5 (策略执行层)'
+layer: "Layer 6 (组合优化层)"
 ---
-
-
-
-
-
 # 概述
 
 > **开发时?*: 40h（约1周）
@@ -741,15 +748,63 @@ pip install numpy>=1.21
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 强依赖 | 提供调仓决策 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 提供成本分析 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [强化学习调仓系统蓝图](./RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | 强依赖 | AI增强调仓 |
+| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依赖 | 成本感知再平衡 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[季度调仓] --> B[组合再平衡]
+    C[数据质量监控] --> B
+    D[交易成本分析引擎] --> B
+    
+    B --> E[强化学习调仓系统]
+    B --> F[交易成本感知再平衡]
+    B --> G[算法交易优化器]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+---
+
 ## 10. 文档治理
 
 ### 10.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化?
-##### 6.8 组合再平衡策?- **模块ID**: REBALANCING_001
+#### Layer 6: 组合优化层
+##### 6.8 组合再平衡策略
+- **模块ID**: REBALANCING_001
 - **蓝图文档**: PORTFOLIO_REBALANCING_BLUEPRINT.md
-- **技术规格书**: 待创?- **职责**: 再平衡决策、交易成本优化、效果评?- **?*: 设计阶段
+- **技术规格书**: 待创建
+- **职责**: 再平衡决策、交易成本优化、效果评估
+- **状态**: 设计阶段
 ```
 
 ### 10.2 模块职责边界
