@@ -4,46 +4,46 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构索引
-applicable_scope: 系统总览
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝﺑ۱ﮒﺙ
+applicable_scope: ﻝﺏﭨﻝﭨﮔﭨﻟ۶
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: 已完�?---
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 
-# 系统总览目录索引
+# ﻝﺏﭨﻝﭨﮔﭨﻟ۶ﻝ؟ﮒﺛﻝﺑ۱ﮒﺙ
 
-> **目录职责**: 提供系统全局视图、数据流向、快速入门指�?
-## 📁 目录结构
+> **ﻝ؟ﮒﺛﻟﻟﺑ۲**: ﮔﻛﺝﻝﺏﭨﻝﭨﮒ۷ﮒﺎﻟ۶ﮒﺝﻙﮔﺍﮔ؟ﮔﭖﮒﻙﮒﺟ،ﻠﮒ۴ﻠ۷ﮔﮒﺙ?
+## ﻭ ﻝ؟ﮒﺛﻝﭨﮔ
 
-| 文件/目录 | 职责 | 状�?|
+| ﮔﻛﭨﭘ/ﻝ؟ﮒﺛ | ﻟﻟﺑ۲ | ﻝﭘﮔ?|
 |----------|------|------|
-| [README.md](README.md) | 系统总入口说�?| Active |
-| [DATA_FLOW.md](DATA_FLOW.md) | 系统数据流向�?| Active |
+| [README.md](README.md) | ﻝﺏﭨﻝﭨﮔﭨﮒ۴ﮒ۲ﻟﺁﺑﮔ?| Active |
+| [DATA_FLOW.md](DATA_FLOW.md) | ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﭖﮒﮒ?| Active |
 
-## 🔗 快速导�?
-### 核心文档
-- **系统架构**: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
-- **因子�?*: [../02_FACTOR_LIBRARY/INDEX.md](../02_FACTOR_LIBRARY/INDEX.md)
-- **交易策略**: [../03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)
-- **执行�?*: [../04_EXECUTION/INDEX.md](../04_EXECUTION/INDEX.md)
-- **实施指南**: [../05_IMPLEMENTATION/INDEX.md](../05_IMPLEMENTATION/INDEX.md)
+## ﻭ ﮒﺟ،ﻠﮒﺁﺙﻟ?
+### ﮔ ﺕﮒﺟﮔﮔ۰۲
+- **ﻝﺏﭨﻝﭨﮔﭘﮔ**: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
+- **ﮒ ﮒ­ﮒﭦ?*: [../02_FACTOR_LIBRARY/INDEX.md](../02_FACTOR_LIBRARY/INDEX.md)
+- **ﻛﭦ۳ﮔﻝ­ﻝ۴**: [../03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)
+- **ﮔ۶ﻟ۰ﮒﺎ?*: [../04_EXECUTION/INDEX.md](../04_EXECUTION/INDEX.md)
+- **ﮒ؟ﮔﺛﮔﮒ**: [../05_IMPLEMENTATION/INDEX.md](../05_IMPLEMENTATION/INDEX.md)
 
-### 外部资源
-- **平台文档**: [../00_RESOURCES/04_PLATFORM_DOCS/](../00_RESOURCES/04_PLATFORM_DOCS/)
+### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
+- **ﮒﺗﺏﮒﺍﮔﮔ۰۲**: [../00_RESOURCES/04_PLATFORM_DOCS/](../00_RESOURCES/04_PLATFORM_DOCS/)
 
-## 📊 目录定位
+## ﻭ ﻝ؟ﮒﺛﮒ؟ﻛﺛ
 
 ```
 docs/
-├── 00_OVERVIEW/          �?当前目录（系统总览�?�?  ├── README.md         # 系统入口
-�?  └── DATA_FLOW.md      # 数据流向
-├── 01_FRAMEWORK/         # 核心框架
-├── 02_FACTOR_LIBRARY/    # 因子�?├── 03_TRADING_TACTICS/   # 交易策略
-├── 04_EXECUTION/         # 执行�?├── 05_IMPLEMENTATION/    # 实施指南
-├── 06_ARCHIVE/           # 归档
-├── 07_RESEARCH/          # 研究支持
-├── 09_AUDIT/             # 审计
-└── 10_AI_WORKFLOW/       # AI工作�?```
+ﻗﻗﻗ 00_OVERVIEW/          ﻗ?ﮒﺛﮒﻝ؟ﮒﺛﺅﺙﻝﺏﭨﻝﭨﮔﭨﻟ۶ﺅﺙ?ﻗ?  ﻗﻗﻗ README.md         # ﻝﺏﭨﻝﭨﮒ۴ﮒ۲
+ﻗ?  ﻗﻗﻗ DATA_FLOW.md      # ﮔﺍﮔ؟ﮔﭖﮒ
+ﻗﻗﻗ 01_FRAMEWORK/         # ﮔ ﺕﮒﺟﮔ۰ﮔﭘ
+ﻗﻗﻗ 02_FACTOR_LIBRARY/    # ﮒ ﮒ­ﮒﭦ?ﻗﻗﻗ 03_TRADING_TACTICS/   # ﻛﭦ۳ﮔﻝ­ﻝ۴
+ﻗﻗﻗ 04_EXECUTION/         # ﮔ۶ﻟ۰ﮒﺎ?ﻗﻗﻗ 05_IMPLEMENTATION/    # ﮒ؟ﮔﺛﮔﮒ
+ﻗﻗﻗ 06_ARCHIVE/           # ﮒﺛﮔ۰۲
+ﻗﻗﻗ 07_RESEARCH/          # ﻝ ﻝ۸ﭘﮔﺁﮔ
+ﻗﻗﻗ 09_AUDIT/             # ﮒ؟۰ﻟ؟۰
+ﻗﻗﻗ 10_AI_WORKFLOW/       # AIﮒﺓ۴ﻛﺛﮔﭖ?```
 
 ---
-*最后更�? 2026-04-03*
+*ﮔﮒﮔﺑﮔ? 2026-04-03*

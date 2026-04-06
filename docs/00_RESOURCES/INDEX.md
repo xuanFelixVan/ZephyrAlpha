@@ -4,34 +4,34 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构索引
-applicable_scope: 外部资源
-compliance_level: 专业标准
+owner: ιΠ•εΗ≠φ•΅φΓΘφûΕφû³εΗ?standard_type: δΗ™δΗöι΅èε¨•φ€Κφû³γ¥ΔεΦï
+applicable_scope: εΛ•ιÉ®ηΒ³φΚê
+compliance_level: δΗ™δΗöφ†΅ε΅Ü
 parent_document: ../INDEX.md
-implementation_status: 已完�?---
+implementation_status: εΖ≤ε°¨φà?---
 
-# 外部资源目录索引
+# εΛ•ιÉ®ηΒ³φΚêγ¦°εΫïγ¥ΔεΦï
 
-> **目录职责**: 存放外部平台文档、第三方资源、参考材�?
-## 📁 目录结构
+> **γ¦°εΫïη¹¨η¥Θ**: ε≠‰φîΨεΛ•ιÉ®εΙ≥εèΑφ•΅φΓΘψÄ¹γ§§δΗâφ•ΙηΒ³φΚêψÄ¹εè²ηÄÉφùêφ•?
+## πü™¹ γ¦°εΫïγΜ™φû³
 
-| 文件/目录 | 职责 | 状�?|
+| φ•΅δΜΕ/γ¦°εΫï | η¹¨η¥Θ | γäΕφÄ?|
 |----------|------|------|
-| [README.md](README.md) | 资源目录说明 | Active |
-| [04_PLATFORM_DOCS/](04_PLATFORM_DOCS/) | 平台文档 | Active |
+| [README.md](README.md) | ηΒ³φΚêγ¦°εΫïη·¥φ‰é | Active |
+| [04_PLATFORM_DOCS/](04_PLATFORM_DOCS/) | εΙ≥εèΑφ•΅φΓΘ | Active |
 
-## 📂 子目录详�?
-### 04_PLATFORM_DOCS - 平台文档
+## πü™² ε≠êγ¦°εΫïη·ΠφÉ?
+### 04_PLATFORM_DOCS - εΙ≥εèΑφ•΅φΓΘ
 
-| 文件 | 说明 |
+| φ•΅δΜΕ | η·¥φ‰é |
 |------|------|
-| [README.md](04_PLATFORM_DOCS/README.md) | 平台文档说明 |
-| [xuntou_qmt_trading_system_documentation.pdf](04_PLATFORM_DOCS/xuntou_qmt_trading_system_documentation.pdf) | 迅投QMT交易系统文档 |
+| [README.md](04_PLATFORM_DOCS/README.md) | εΙ≥εèΑφ•΅φΓΘη·¥φ‰é |
+| [xuntou_qmt_trading_system_documentation.pdf](04_PLATFORM_DOCS/xuntou_qmt_trading_system_documentation.pdf) | ηΩÖφäïQMTδΚΛφ‰™γ≥ΜγΜüφ•΅φΓΘ |
 
-## 🔗 相关链接
+## πüî½ γ¦ΗεÖ≥ι™ΨφéΞ
 
-- **QMT执行器蓝�?*: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
-- **QMT数据接口**: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
+- **QMTφâßηΓ¨εô®η™ùε¦?*: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
+- **QMTφïΑφç°φéΞεèΘ**: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
 
 ---
-*最后更�? 2026-04-03*
+*φ€Äεêéφ¦¥φ•? 2026-04-03*

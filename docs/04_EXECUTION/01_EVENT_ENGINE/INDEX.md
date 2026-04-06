@@ -4,27 +4,27 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构索引
-applicable_scope: 事件引擎目录
-compliance_level: 专业标准
+owner: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзіҐеЉХ
+applicable_scope: дЇЛдїґеЉХжУОзЫЃељХ
+compliance_level: дЄУдЄЪж†ЗеЗЖ
 parent_document: ../INDEX.md
-implementation_status: 已完�?---
+implementation_status: еЈ≤еЃМжИ?---
 
-# 事件引擎目录索引
+# дЇЛдїґеЉХжУОзЫЃељХзіҐеЉХ
 
-> **目录职责**: 事件总线、事件驱动架�?
-## 📁 目录结构
+> **зЫЃељХиБМиі£**: дЇЛдїґжАїзЇњгАБдЇЛдїґй©±еК®жЮґжЮ?
+## рЯУБ зЫЃељХзїУжЮД
 
-| 文件 | 职责 | 状�?|
+| жЦЗдїґ | иБМиі£ | зКґжА?|
 |------|------|------|
-| [README.md](README.md) | 事件引擎概述 | Active |
-| [EVENT_BUS.md](EVENT_BUS.md) | 事件总线设计 | Active |
+| [README.md](README.md) | дЇЛдїґеЉХжУОж¶Вињ∞ | Active |
+| [EVENT_BUS.md](EVENT_BUS.md) | дЇЛдїґжАїзЇњиЃЊиЃ° | Active |
 
-## 📖 核心文档
+## рЯУЦ ж†ЄењГжЦЗж°£
 
-- [EVENT_BUS.md](EVENT_BUS.md) - 事件总线核心设计
-- [README.md](README.md) - 事件引擎使用指南
+- [EVENT_BUS.md](EVENT_BUS.md) - дЇЛдїґжАїзЇњж†ЄењГиЃЊиЃ°
+- [README.md](README.md) - дЇЛдїґеЉХжУОдљњзФ®жМЗеНЧ
 
 ---
 
-**索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护�?*: 首席文档架构�?
+**зіҐеЉХзЙИжЬђ**: v1.0.0 | **еИЫеїЇжЧ•жЬЯ**: 2026-04-03 | **зїіжК§иА?*: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?
