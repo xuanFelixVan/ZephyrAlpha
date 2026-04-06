@@ -32,7 +32,7 @@ priority: P0
 
 > **�?当前有效版本** | v1.0已归�?>
 > 清风量化系统 v5.3 - 经济范式判断引擎架构设计
-> **索引**: `ECONOMIC_REGIME_002`
+> **索引**: `ECONOMIC_REGIME_001`
 > **开发时�?*: 60h（个人开发，时间灵活�?> **核心定位**: 基于随机森林模型识别宏观经济周期阶段，为桥水全天候策略提供经济范式判断能�?>
 > **技术规格书**: [ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md](../../05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md)
 

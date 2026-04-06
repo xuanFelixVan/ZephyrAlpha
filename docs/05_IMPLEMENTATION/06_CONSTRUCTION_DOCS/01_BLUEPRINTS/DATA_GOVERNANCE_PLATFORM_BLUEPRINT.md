@@ -51,6 +51,52 @@ priority: P2
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供数据资产元数据 |
+| [数据血缘追踪蓝图](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | 强依赖 | 提供数据血缘关系 |
+| [数据安全合规蓝图](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依赖 | 提供合规策略标准 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | 强依赖 | 执行生命周期治理策略 |
+| [数据版本控制蓝图](./DATA_VERSION_CONTROL_BLUEPRINT.md) | DATA_VERSION_CONTROL_001 | 中依赖 | 执行版本管理策略 |
+| [数据成本管理蓝图](./DATA_COST_MANAGEMENT_BLUEPRINT.md) | DATA_COST_MANAGEMENT_001 | 中依赖 | 执行成本优化策略 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
+| **DataHub** | 0.10+ | 元数据管理 | [官方文档](https://datahubproject.io/) |
+| **OpenMetadata** | 1.2+ | 数据目录 | [官方文档](https://docs.open-metadata.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据目录] --> D[数据治理平台]
+    B[数据血缘追踪] --> D
+    C[数据安全合规] --> D
+    
+    D --> E[数据生命周期管理]
+    D --> F[数据版本控制]
+    D --> G[数据成本管理]
+    
+    style D fill:#ff6b6b
+    style A fill:#4ecdc4
+    style B fill:#45b7d1
+    style C fill:#96ceb4
+```
+
+---
+
 ## 二、系统架构设计
 
 ### 2.1 整体架构图

@@ -18,10 +18,10 @@ priority: P1
 
 # Layer 7 AI报告?- 模块职责边界定义
 
-**文档ID**: LAYER7_MODULE_RESPONSIBILITY_BOUNDARIES_001
-**版本**: v1.0.0
+**文档ID**: MODULE_RESPONSIBILITY_BOUNDARIES_001
+**版本**: v1.0.2
 **创建日期**: 2026-04-03
-**状?*: Active
+**状态**: Active
 **适用范围**: Layer 7 AI报告层所有模?
 ---
 
