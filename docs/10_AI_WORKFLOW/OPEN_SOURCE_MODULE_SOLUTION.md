@@ -118,9 +118,7 @@ related_documents:
 
 ### 2.1 AI驱动的量化研究平
 
-#### **Qlib (微软开 - 核心推荐**
-
-**GitHub**: https://github.com/microsoft/qlib
+#### **Qlib (微软开 - 核心推荐**GitHub**: https://github.com/microsoft/qlib
 **Star*: 15,000+
 **开源协*: MIT License (完全免费)
 
@@ -143,15 +141,13 @@ related_documents:
 **为什么选择Qlib**:
 1. 微软官方开源，质量有保
 2. AI驱动的量化研究，符合您的需
-3. 完整的工作流，避免重复造轮
+3. 完整的工作流，避免重复造轮子
 4. 支持A股市场，适合国内环境
 5. 社区活跃，文档完
 
 ---
 
-#### **FinRL-X (AI4Finance Foundation) - 强化学习交易**
-
-**GitHub**: https://github.com/AI4Finance-Foundation/FinRL-Trading
+#### **FinRL-X (AI4Finance Foundation) - 强化学习交易**GitHub**: https://github.com/AI4Finance-Foundation/FinRL-Trading
 **Star*: 10,000+ (FinRL系列)
 **开源协*: MIT License (完全免费)
 
@@ -211,7 +207,7 @@ related_documents:
 
 ### 2.2 多智能体AI分析系统
 
-#### **TradingAgents-CN - 多智能体LLM框架**
+#### **TradingAgents-CN - 多智能体LLM框架构*
 
 **GitHub**: https://github.com/hsliuping/TradingAgents-CN
 **Star*: 15,300+
@@ -241,9 +237,7 @@ related_documents:
 
 ---
 
-#### **daily_stock_analysis - AI智能分析系统**
-
-**GitHub**: https://github.com/ZhuLinsen/daily_stock_analysis
+#### **daily_stock_analysis - AI智能分析系统**GitHub**: https://github.com/ZhuLinsen/daily_stock_analysis
 **Star*: 5,500+
 **开源协*: MIT License (完全免费)
 
@@ -303,9 +297,7 @@ related_documents:
 
 ### 2.3 另类数据处理
 
-#### **Financial-News-Modelling - 金融新闻主题建模**
-
-**GitHub**: https://github.com/Adeleye-Emmanuel/Financial-News-Modelling
+#### **Financial-News-Modelling - 金融新闻主题建模**GitHub**: https://github.com/Adeleye-Emmanuel/Financial-News-Modelling
 **Star*: 500+
 **开源协*: MIT License (完全免费)
 
@@ -333,9 +325,7 @@ related_documents:
 
 ---
 
-#### **新闻情感分析工具**
-
-**推荐工具**:
+#### **新闻情感分析工具**推荐工具**:
 1. **HuggingFace Transformers** (免费)
    - 预训练的情感分析模型
    - 支持中文
@@ -387,9 +377,7 @@ related_documents:
 
 ---
 
-#### **Portfolio_Analysis - 投资组合管理系统**
-
-**GitHub**: https://github.com/imnotkeril/Portfolio_Analysis
+#### **Portfolio_Analysis - 投资组合管理系统**GitHub**: https://github.com/imnotkeril/Portfolio_Analysis
 **Star*: 300+
 **开源协*: MIT License (完全免费)
 
@@ -554,7 +542,7 @@ related_documents:
    pip install -r requirements.txt
    ```
 
-**个月: 因子研究框架**
+**个月: 因子研究框架构*
 1. 建立宏观经济因子体系
    - 使用Qlib内置因子
    - 开发自定义宏观因子
@@ -567,7 +555,7 @@ related_documents:
    - 配置TradingAgents-CN
    - 自定义智能体角色
 
-**个月: 验证和优*
+**个月: 验证和优化
 1. 因子验证
    - 使用Qlib的IC验证
    - 回测验证
@@ -689,7 +677,7 @@ related_documents:
    - 使用Dask进行分布式模型训
    - 优化训练速度
 
-**0-12个月: 实盘交易和优*
+**0-12个月: 实盘交易和优化
 1. 实盘交易集成
    - 安装vn.py
    - 配置QMT交易接口
@@ -801,7 +789,7 @@ related_documents:
 |------|-------------|-------------|----------|
 | **数据* | 数千万美| 0| 100% |
 | **研究团队** | 数百万美| 0(AI辅助) | 100% |
-| **技术架* | 数百万美| 0| 100% |
+| **技术架构 | 数百万美| 0| 100% |
 | **风险管理** | 数十万美| 0| 100% |
 | **计算资源** | 数十万美| 0-500| 99%+ |
 | **总计** | 数千万美| 0-6000| 99%+ |

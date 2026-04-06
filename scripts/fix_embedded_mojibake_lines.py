@@ -22,6 +22,7 @@ import shutil
 
 
 MOJI_RE = re.compile(r"(?:Ã.|Â.|â.|å.|ä.|é.|è.|ç.|æ.|ï¿½|Â¿)")
+CONTROL_RE = re.compile(r"[\u0080-\u009f]")
 
 
 def cjk_count(s: str) -> int:
@@ -33,10 +34,10 @@ def moji_count(s: str) -> int:
 
 
 def reverse_latin1_utf8(s: str) -> str | None:
-    try:
-        raw = s.encode("latin-1")
-    except UnicodeEncodeError:
+    # 仅当整行都可视为 latin-1 字节时才尝试反转
+    if any(ord(ch) > 255 for ch in s):
         return None
+    raw = bytes((ord(ch) for ch in s))
     try:
         return raw.decode("utf-8")
     except UnicodeDecodeError:
@@ -50,17 +51,20 @@ def fix_text(text: str) -> tuple[str, int]:
     for line in lines:
         before_moji = moji_count(line)
         before_cjk = cjk_count(line)
-        # 只要 mojibake 迹象明显，就尝试修复；若该行含大量中文且本来正常，
-        # reverse_latin1_utf8 会因无法 latin-1 编码而自动跳过。
-        if before_moji >= 2:
+        before_ctl = len(CONTROL_RE.findall(line))
+        # 触发条件：
+        # - mojibake token 明显，或含控制字符（常见于 `æ` 这类序列）
+        if before_moji >= 2 or before_ctl >= 1:
             cand = reverse_latin1_utf8(line)
             if cand is not None:
                 after_moji = moji_count(cand)
                 after_cjk = cjk_count(cand)
+                after_ctl = len(CONTROL_RE.findall(cand))
                 if after_moji < before_moji or after_cjk > before_cjk:
-                    out.append(cand)
-                    changed += 1
-                    continue
+                    if after_ctl <= before_ctl:
+                        out.append(cand)
+                        changed += 1
+                        continue
         out.append(line)
     fixed = "\n".join(out)
     if text.endswith("\n"):
