@@ -298,4 +298,227 @@ def retrieve_knowledge(query: str, agent_id: str) -> List[dict]:
 |--------|------|------|------|
 | task_id | VARCHAR(64) | 任务ID (主键) | task_20260407_001 |
 | task_type | VARCHAR(32) | 任务类型 | factor_research |
-| task_description | TEXT | 任务描述 | "分析动量因子在
+| task_description | TEXT | 任务描述 | "分析动量因子在A股市场的表现" |
+| assigned_agents | JSON | 分配的智能体 | ["researcher_001", "risk_manager_001"] |
+| status | VARCHAR(16) | 状态 | pending/running/completed |
+| result | TEXT | 任务结果 | "..." |
+| created_at | DATETIME | 创建时间 | 2026-04-07 10:00:00 |
+| completed_at | DATETIME | 完成时间 | 2026-04-07 11:00:00 |
+
+**索引**:
+- PRIMARY KEY: task_id
+- INDEX: task_type
+- INDEX: status
+
+### 3.3 智能体决策表 (agent_decisions)
+
+| 字段名 | 类型 | 说明 | 示例 |
+|--------|------|------|------|
+| decision_id | VARCHAR(64) | 决策ID (主键) | decision_20260407_001 |
+| task_id | VARCHAR(64) | 任务ID (外键) | task_20260407_001 |
+| agent_id | VARCHAR(64) | 智能体ID | researcher_001 |
+| decision_content | TEXT | 决策内容 | "建议买入动量因子Top10股票" |
+| confidence | FLOAT | 置信度 | 0.85 |
+| reasoning | TEXT | 推理过程 | "基于历史数据分析..." |
+| created_at | DATETIME | 创建时间 | 2026-04-07 10:30:00 |
+
+**索引**:
+- PRIMARY KEY: decision_id
+- FOREIGN KEY: task_id collaboration_tasks.task_id
+- INDEX: agent_id
+
+### 3.4 知识库表 (knowledge_base)
+
+| 字段名 | 类型 | 说明 | 示例 |
+|--------|------|------|------|
+| knowledge_id | VARCHAR(64) | 知识ID (主键) | knowledge_20260407_001 |
+| knowledge_type | VARCHAR(32) | 知识类型 | factor_insight |
+| knowledge_content | TEXT | 知识内容 | "动量因子在牛市表现优于熊市" |
+| source_agent | VARCHAR(64) | 来源智能体 | researcher_001 |
+| confidence | FLOAT | 置信度 | 0.90 |
+| usage_count | INTEGER | 使用次数 | 15 |
+| created_at | DATETIME | 创建时间 | 2026-04-07 10:00:00 |
+
+**索引**:
+- PRIMARY KEY: knowledge_id
+- INDEX: knowledge_type
+- INDEX: source_agent
+
+---
+
+## 四、开源项目集成方案
+
+### 4.1 TradingAgents-CN集成方案
+
+**项目地址**: https://github.com/hsliuping/TradingAgents-CN
+
+**集成步骤**:
+
+#### 步骤1: 安装TradingAgents-CN
+
+```bash
+git clone https://github.com/hsliuping/TradingAgents-CN.git
+cd TradingAgents-CN
+pip install -r requirements.txt
+```
+
+#### 步骤2: 配置智能体角色
+
+```yaml
+config/agents.yaml:
+researcher:
+  role: "量化研究员"
+  model: "gpt-4"
+  system_prompt: |
+    你是一个专业的量化研究员,擅长因子研究和策略分析。
+    你的职责是:
+    1. 分析市场数据和因子表现
+    2. 提出新的因子假设
+    3. 评估策略的有效性
+    
+  tools:
+    - factor_analysis
+    - backtest_engine
+    - data_visualization
+
+risk_manager:
+  role: "风控经理"
+  model: "gpt-4"
+  system_prompt: |
+    你是一个专业的风控经理,负责风险评估和控制。
+    你的职责是:
+    1. 评估策略的风险敞口
+    2. 进行压力测试
+    3. 确保合规性
+    
+  tools:
+    - risk_calculator
+    - stress_test_engine
+    - compliance_checker
+
+trader:
+  role: "交易员"
+  model: "gpt-4"
+  system_prompt: |
+    你是一个专业的交易员,负责订单执行和仓位管理。
+    你的职责是:
+    1. 执行交易策略
+    2. 管理仓位和风险
+    3. 优化交易成本
+    
+  tools:
+    - order_executor
+    - position_manager
+    - slippage_controller
+```
+
+#### 步骤3: 与现有系统集成
+
+```python
+from trading_agents import MultiAgentSystem
+from ai_workflow_logger import AIWorkflowLogger
+from ai_work_reporter import AIWorkReporter
+
+class MultiAgentCollaboration:
+    """多智能体协作系统"""
+    
+    def __init__(self):
+        self.agent_system = MultiAgentSystem(config="config/agents.yaml")
+        self.workflow_logger = AIWorkflowLogger()
+        self.work_reporter = AIWorkReporter()
+    
+    def conduct_research(self, task: str) -> dict:
+        """开展研究任务"""
+        
+        self.workflow_logger.log_session(
+            user_input=task,
+            session_type="multi_agent_research"
+        )
+        
+        result = self.agent_system.collaborate(
+            task=task,
+            agents=["researcher", "risk_manager", "trader"],
+            method="sequential"
+        )
+        
+        final_decision = self.agent_system.fuse_decisions(
+            method="weighted_voting",
+            weights={"researcher": 0.4, "risk_manager": 0.3, "trader": 0.3}
+        )
+        
+        report = self.work_reporter.generate_daily_report(
+            date=datetime.now().strftime("%Y-%m-%d")
+        )
+        
+        return {
+            "task": task,
+            "agent_results": result,
+            "final_decision": final_decision,
+            "report": report
+        }
+```
+
+### 4.2 FinGenius集成方案
+
+**项目地址**: https://github.com/HuaYaoAI/FinGenius
+
+**核心能力**:
+- 16位AI专家协作
+- A股特色因子分析
+- 记忆系统
+- 实时数据处理
+
+**集成价值**:
+- 更丰富的智能体角色
+- A股市场专业分析
+- 个性化投资建议
+
+---
+
+## 五、实施路径
+
+### 5.1 Phase 1: 基础架构搭建 (Week 1)
+
+**目标**: 搭建多智能体协作基础框架
+
+**任务清单**:
+- [ ] 安装TradingAgents-CN
+- [ ] 配置3个核心智能体(研究员、风控经理、交易员)
+- [ ] 实现基础的消息通信机制
+- [ ] 搭建共享知识库
+- [ ] 编写集成文档
+
+**验收标准**:
+- 3个智能体可以正常通信
+- 能够完成简单的协作任务
+- 知识库可以正常读写
+
+### 5.2 Phase 2: 协作机制优化 (Week 2)
+
+**目标**: 优化协作机制和决策融合
+
+**任务清单**:
+- [ ] 实现任务自动分配算法
+- [ ] 开发决策融合引擎
+- [ ] 实现知识共享机制
+- [ ] 优化智能体之间的通信协议
+- [ ] 性能测试和优化
+
+**验收标准**:
+- 任务可以自动分配给合适的智能体
+- 多智能体决策可以正确融合
+- 知识可以在智能体之间共享
+
+### 5.3 Phase 3: 系统集成与测试 (Week 3)
+
+**目标**: 与现有系统集成并测试
+
+**任务清单**:
+- [ ] 集成到AI工作汇报模块
+- [ ] 集成到复盘模块
+- [ ] 开发可视化界面
+- [ ] 编写使用文档
+- [ ] 端到端测试
+
+**验收标准**:
+- 与现有系统无缝集成

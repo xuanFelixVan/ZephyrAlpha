@@ -16,22 +16,30 @@ implementation_status: 进行中
 
 ## 文档职责说明
 
-**本文档职责**: 数据质量控制体系设计
-- 定义数据质量维度和检查标准
-- 设计数据质量检查框架和规则引擎
-- 实现数据质量监控和告警机制
+**本文档职责**: 数据质量规则定义与检查框架设计
+- 定义数据质量维度和检查标准（完整性、有效性、一致性、时效性、准确性、去重性）
+- 设计数据质量检查框架和规则引擎（规则制定者）
+- 提供数据质量检查的Python类和API接口
 
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 上游处理 | 数据清洗规则 |
 | 数据流水线 | [../07_DATA_PIPELINE/BLUEPRINT.md](../07_DATA_PIPELINE/BLUEPRINT.md) | 整体架构 | 数据流水线设计 |
+| 数据监控增强 | [../DATA_MONITORING_ENHANCED/BLUEPRINT.md](../DATA_MONITORING_ENHANCED/BLUEPRINT.md) | 执行层 | 数据质量监控执行 |
 | 质量管理索引 | [INDEX.md](./INDEX.md) | 上级索引 | 质量管理模块索引 |
 
 **职责边界**:
-- ✅ 本文档负责: 定义"如何检查数据质量"
+- ✅ 本文档负责: 定义"数据质量规则和检查框架"（规则制定者）
+- ✅ 本文档负责: 提供数据质量检查的Python类和API
+- ❌ 本文档不负责: 数据质量监控执行（由 DATA_MONITORING_ENHANCED/BLUEPRINT.md 负责）
 - ❌ 本文档不负责: 数据清洗规则（由 03_CLEANING/BLUEPRINT.md 负责）
 - ❌ 本文档不负责: 数据流水线架构（由 07_DATA_PIPELINE/BLUEPRINT.md 负责）
+
+**与DATA_MONITORING_ENHANCED的关系**:
+- **本文档（DATA_QUALITY_CONTROL_SYSTEM）**: 规则制定者 - 定义"什么是好数据"、"如何检查数据质量"
+- **DATA_MONITORING_ENHANCED**: 规则执行者 - 执行质量检查、监控告警、生成报告
+- **协作模式**: 本文档定义规则 → DATA_MONITORING_ENHANCED执行检查 → 反馈结果
 
 > **模块编号**: M-DQ-001 (Data Quality)
 > **版本**: 1.0

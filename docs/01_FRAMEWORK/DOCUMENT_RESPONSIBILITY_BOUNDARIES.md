@@ -1,3 +1,15 @@
+---
+module_id: FRAMEWORK__001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席架构师
+standard_type: 通用文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+
 # ææ¡£èè´£è¾¹çå®ä¹
 
 **ææ¡£çæ¬**: v1.0.0  
