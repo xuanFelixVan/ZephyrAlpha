@@ -360,6 +360,48 @@ volumes:
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
 
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接 |
+| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据处理管道 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 注册数据湖资产 |
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依赖 | 提供数据质量检查点 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Iceberg** | 1.4+ | 表格式 | [官方文档](https://iceberg.apache.org/) |
+| **Delta Lake** | 3.0+ | 数据湖 | [官方文档](https://delta.io/) |
+| **MinIO** | latest | 对象存储 | [官方文档](https://min.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA SOURCE MAN"] --> B
+    U1["HIGH PERFORMANC"] --> B
+    B["REALTIME DATA L"]
+    B --> D0["DATA CATALOG BL"]
+    B --> D1["DATA QUALITY MO"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |

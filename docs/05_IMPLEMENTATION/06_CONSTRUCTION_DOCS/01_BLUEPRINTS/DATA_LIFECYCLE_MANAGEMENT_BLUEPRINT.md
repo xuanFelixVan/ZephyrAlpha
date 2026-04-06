@@ -442,6 +442,45 @@ volumes:
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
 
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供数据资产元数据 |
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依赖 | 提供生命周期策略 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 中依赖 | 执行数据归档 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Iceberg** | 1.4+ | 表格式 | [官方文档](https://iceberg.apache.org/) |
+| **Apache Hudi** | 0.14+ | 数据湖 | [官方文档](https://hudi.apache.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA CATALOG BL"] --> B
+    U1["DATA GOVERNANCE"] --> B
+    B["DATA LIFECYCLE "]
+    B --> D0["REALTIME DATA L"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |

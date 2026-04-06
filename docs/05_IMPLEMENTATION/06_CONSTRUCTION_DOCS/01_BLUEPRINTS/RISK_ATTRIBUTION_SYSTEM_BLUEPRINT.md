@@ -535,6 +535,11 @@ class AttributionReportGenerator:
         content = f"""
 # Risk Attribution Report
 
+## 核心职责
+
+风险归因系统，负责风险来源的分析和归因
+
+
 ---
 
 ## 📋 概述

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT_001
 version: 1.0.0
 status: Active

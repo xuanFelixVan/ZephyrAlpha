@@ -995,6 +995,47 @@ class VectorStore:
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
 ---
 
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接和配置 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 接收另类数据进行质量检查 |
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 注册另类数据资产 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Scrapy** | 2.11+ | 数据采集 | [官方文档](https://scrapy.org/) |
+| **Selenium** | 4.15+ | 动态页面抓取 | [官方文档](https://www.selenium.dev/) |
+| **GLM-4-Flash** | latest | NLP处理 | [官方文档](https://open.bigmodel.cn/) |
+| **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA SOURCE MAN"] --> B
+    B["ALTERNATIVE DAT"]
+    B --> D0["DATA QUALITY MO"]
+    B --> D1["DATA CATALOG BL"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
 ## 1. 文档治理
 
 ### 1.1 System_Manifest.md索引

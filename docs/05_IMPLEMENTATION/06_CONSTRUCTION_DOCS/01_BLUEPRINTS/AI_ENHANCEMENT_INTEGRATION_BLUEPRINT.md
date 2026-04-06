@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_ENHANCEMENT_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -92,7 +92,6 @@ graph TD
 # AI增强模块统一接口规范
 
 ---
-
 ## 📋 概述
 
 本文档定义了AI ENHANCEMENT INTEGRATION的核心功能和技术实现。
@@ -153,6 +152,11 @@ class AIEnhancementModule:
 ### 3.3 集成架构设计
 ```python
 # L9_FACTOR_MINER/gplearn_integration.py
+
+## 核心职责
+
+AI增强集成，负责AI技术在交易系统中的应用
+
 class GplearnFactorMiner:
     """gplearn因子挖掘集成"""
     

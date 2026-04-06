@@ -496,6 +496,47 @@ services:
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
 
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 中依赖 | 获取数据源信息 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供敏感数据标记 |
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 执行合规策略 |
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依赖 | 提供安全检查规则 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Ranger** | 2.4+ | 权限管理 | [官方文档](https://ranger.apache.org/) |
+| **HashiCorp Vault** | 1.15+ | 密钥管理 | [官方文档](https://www.vaultproject.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA SOURCE MAN"] --> B
+    B["DATA SECURITY C"]
+    B --> D0["DATA CATALOG BL"]
+    B --> D1["DATA GOVERNANCE"]
+    B --> D2["DATA QUALITY MO"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |

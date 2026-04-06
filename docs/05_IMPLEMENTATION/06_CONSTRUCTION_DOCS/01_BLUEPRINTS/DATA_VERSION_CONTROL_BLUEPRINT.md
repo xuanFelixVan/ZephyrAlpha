@@ -415,6 +415,44 @@ volumes:
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
 ---
 
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 获取数据资产信息 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依赖 | 提供版本管理支持 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **DVC** | 3.0+ | 数据版本控制 | [官方文档](https://dvc.org/) |
+| **Git** | 2.40+ | 版本管理 | [官方文档](https://git-scm.com/) |
+| **LakeFS** | 1.0+ | 数据湖版本控制 | [官方文档](https://lakefs.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA CATALOG BL"] --> B
+    B["DATA VERSION CO"]
+    B --> D0["DATA GOVERNANCE"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
 ## 1. 文档治理
 
 ### 1.1 System_Manifest.md索引

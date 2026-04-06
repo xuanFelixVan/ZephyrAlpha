@@ -1310,6 +1310,41 @@ def test_query_performance():
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
 ---
 
+
+---
+
+## 📚 相关文档
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供基础设施支持 |
+| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据处理引擎 |
+| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 强依赖 | 提供存储架构 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Spark** | 3.5+ | 数据处理 | [官方文档](https://spark.apache.org/) |
+| **Apache Kafka** | 3.5+ | 消息队列 | [官方文档](https://kafka.apache.org/) |
+| **PostgreSQL** | 15+ | 关系数据库 | [官方文档](https://www.postgresql.org/) |
+| **Redis** | 7.0+ | 缓存 | [官方文档](https://redis.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    B["UNIFIED DATA IN"]
+    B --> D0["DATA SOURCE MAN"]
+    B --> D1["HIGH PERFORMANC"]
+    B --> D2["REALTIME DATA L"]
+    
+    style B fill:#ff6b6b
+    style D0 fill:#45b7d1
+```
+
 ## 1. 文档治理
 
 ### 1.1 System_Manifest.md索引

@@ -469,6 +469,41 @@ services:
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
 
+
+---
+
+## 📚 相关文档
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供数据源元数据 |
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据源连接 |
+| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据源连接 |
+| [ALTERNATIVE DATA INTEGRATION BLUEPRINT](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) | ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT_001 | 强依赖 | 提供数据源配置 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
+| **Redis** | 7.0+ | 连接池管理 | [官方文档](https://redis.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    B["DATA SOURCE MAN"]
+    B --> D0["DATA CATALOG BL"]
+    B --> D1["DATA QUALITY MO"]
+    B --> D2["HIGH PERFORMANC"]
+    B --> D3["ALTERNATIVE DAT"]
+    
+    style B fill:#ff6b6b
+    style D0 fill:#45b7d1
+```
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |

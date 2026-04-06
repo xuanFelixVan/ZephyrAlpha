@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FINANCING_OPTIMIZATION_BLUEPRINT_001
 version: 1.0.0
 status: Active

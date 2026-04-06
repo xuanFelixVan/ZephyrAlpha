@@ -402,6 +402,11 @@ class OptimizationMethodSelector:
 ```python
 # 三层优化示例
 
+## 核心职责
+
+分层优化框架，负责多层级组合优化
+
+
 ---
 
 ## 📋 概述

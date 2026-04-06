@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_BLUEPRINT_001
 version: 1.0.0
 status: Active

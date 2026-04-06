@@ -442,6 +442,11 @@ mean_variance_optimization:
 ```python
 # 基于PyPortfolioOpt的实现
 
+## 核心职责
+
+均值方差优化，负责基于风险收益的组合优化
+
+
 ---
 
 ## 📋 概述

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_CATALOG_METADATA_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -248,6 +248,48 @@ class DataLineageTracker:
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
 | v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
 ---
+
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源元数据 |
+| [DATA SECURITY COMPLIANCE BLUEPRINT](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依赖 | 提供敏感数据分类 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 提供元数据支持 |
+| [DATA OBSERVABILITY BLUEPRINT](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 中依赖 | 提供数据资产监控 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **OpenMetadata** | 1.2+ | 元数据管理 | [官方文档](https://docs.open-metadata.org/) |
+| **Apache Atlas** | 2.3+ | 数据血缘 | [官方文档](https://atlas.apache.org/) |
+| **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA SOURCE MAN"] --> B
+    U1["DATA SECURITY C"] --> B
+    B["DATA CATALOG ME"]
+    B --> D0["DATA GOVERNANCE"]
+    B --> D1["DATA OBSERVABIL"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
 
 ## 1. 文档治理
 

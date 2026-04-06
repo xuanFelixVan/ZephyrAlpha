@@ -355,6 +355,11 @@ factor_neutral_optimization:
 ```python
 # 基于Riskfolio-Lib的实现
 
+## 核心职责
+
+因子中性优化，负责因子风险对冲的组合优化
+
+
 ---
 
 ## 📋 概述

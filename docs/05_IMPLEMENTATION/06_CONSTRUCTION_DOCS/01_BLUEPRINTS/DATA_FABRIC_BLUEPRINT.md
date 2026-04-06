@@ -467,6 +467,48 @@ volumes:
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
 
+
+---
+
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接 |
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供数据资产目录 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据集成服务 |
+| [DATA OBSERVABILITY BLUEPRINT](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 中依赖 | 提供数据可观测性 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Apache Kafka** | 3.5+ | 数据流 | [官方文档](https://kafka.apache.org/) |
+| **Apache Flink** | 1.19+ | 流处理 | [官方文档](https://flink.apache.org/) |
+| **Trino** | 430+ | 分布式查询 | [官方文档](https://trino.io/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    U0["DATA SOURCE MAN"] --> B
+    U1["DATA CATALOG BL"] --> B
+    B["DATA FABRIC BLU"]
+    B --> D0["HIGH PERFORMANC"]
+    B --> D1["DATA OBSERVABIL"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |

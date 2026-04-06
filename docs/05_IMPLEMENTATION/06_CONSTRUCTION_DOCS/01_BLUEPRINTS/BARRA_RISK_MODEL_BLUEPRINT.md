@@ -240,6 +240,11 @@ class BarraRiskModel:
 ```python
 # 因子暴露计算接口
 
+## 核心职责
+
+Barra风险模型，负责多因子风险模型的实施
+
+
 ---
 
 ## 📋 概述

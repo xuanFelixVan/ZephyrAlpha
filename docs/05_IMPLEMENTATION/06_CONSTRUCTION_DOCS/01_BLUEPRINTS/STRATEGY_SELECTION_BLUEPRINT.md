@@ -869,6 +869,11 @@ class AIStrategyRecommender:
 ```yaml
 # config/strategy_selection.yaml
 
+## 核心职责
+
+策略选择，负责交易策略的评估和选择
+
+
 ---
 
 ## 📋 概述

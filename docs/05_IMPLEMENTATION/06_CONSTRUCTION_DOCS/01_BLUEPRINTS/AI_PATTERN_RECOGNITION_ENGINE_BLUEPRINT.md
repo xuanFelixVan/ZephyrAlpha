@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT_001
 version: 1.0.0
 status: Active
