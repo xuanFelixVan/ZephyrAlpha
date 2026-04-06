@@ -13,6 +13,7 @@ related_documents:
   - AI_GOVERNANCE_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: èå¾è®¾è®¡å®æ
+layer: Layer 4 (机器学习层)
 ---
 
 # éªæ¶æ åèå¾ï¼è´¨éä¿è¯ä½ï¿?

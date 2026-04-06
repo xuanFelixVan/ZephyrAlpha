@@ -15,6 +15,7 @@ related_documents:
   - MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+layer: Layer 2 (Alpha因子层)
 ---
 
 # Grafana监控可视化系统蓝图

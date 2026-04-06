@@ -14,6 +14,7 @@ related_documents:
   - GRAFANA_MONITORING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+layer: Layer 3 (策略层)
 ---
 
 # FastAPI-Users认证权限系统蓝图

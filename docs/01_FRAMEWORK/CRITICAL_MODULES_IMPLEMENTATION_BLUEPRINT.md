@@ -13,6 +13,7 @@ related_documents:
   - DATA_LAYER_BLUEPRINT_GAP_ANALYSIS.md
 parent_document: ../INDEX.md
 implementation_status: ç«å³å¯å¨
+layer: Layer 2 (Alpha因子层)
 ---
 
 # æ°æ®æºå±å³é®æ¨¡åå®æ½èå¾

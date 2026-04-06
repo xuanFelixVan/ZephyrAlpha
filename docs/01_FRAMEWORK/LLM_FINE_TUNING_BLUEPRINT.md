@@ -7,6 +7,7 @@ last_updated: 2026-04-04
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 standard_type: é«å±æ¶æèå¾
 priority: P1
+layer: Layer 2 (Alpha因子层)
 ---
 
 # åºç¡æ¨¡åå¾®è°èå¾

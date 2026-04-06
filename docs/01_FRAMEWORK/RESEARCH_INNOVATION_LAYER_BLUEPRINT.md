@@ -13,6 +13,7 @@ related_documents:
   - AI_STRATEGY_AUTOMATION_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+layer: Layer 0 (数据源层)
 ---
 
 # Layer 9: 研究与创新层蓝图

@@ -1,40 +1,40 @@
 ---
-module_id: TACTICS_DOC_001
-version: 1.0.0
+module_id: TACTICS_ARCH_PATTERN_RECOG_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构�?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系�?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行�?
 ---
 
-# 形态识�?
+# 形态识�?
 
-> K线形态量化识�?
+> K线形态量化识�?
 >
-> **配套文档**�?
+> **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
 > - 技术指标：[technical-indicators.md](./technical-indicators.md)
 
 ***
 
-## 1. 底部反转形�?
+## 1. 底部反转形�?
 
-### 1.1 锤子线（Hammer�?
+### 1.1 锤子线（Hammer�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 锤子�?|
-| 形态类�?| 底部反转 |
+| 形态名�?| 锤子�?|
+| 形态类�?| 底部反转 |
 | 量化标准 | 下影线≥2倍实体，上影线≤10%全长 |
 
 ```python
 class HammerPattern:
-    """锤子线识�?""
+    """锤子线识�?""
 
     def identify(self, df, index):
         candle = df.iloc[index]
@@ -50,17 +50,17 @@ class HammerPattern:
 
 ***
 
-### 1.2 吞没形态（Engulfing�?
+### 1.2 吞没形态（Engulfing�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 吞没形�?|
-| 形态类�?| 底部反转 |
-| 量化标准 | 第一根K线实体小，第二根完全包裹第一�?|
+| 形态名�?| 吞没形�?|
+| 形态类�?| 底部反转 |
+| 量化标准 | 第一根K线实体小，第二根完全包裹第一�?|
 
 ```python
 class EngulfingPattern:
-    """吞没形态识�?""
+    """吞没形态识�?""
 
     def identify(self, df, index):
         if index < 1:
@@ -89,12 +89,12 @@ class EngulfingPattern:
 
 ***
 
-### 1.3 早晨之星（Morning Star�?
+### 1.3 早晨之星（Morning Star�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 早晨之星 |
-| 形态类�?| 底部反转 |
+| 形态名�?| 早晨之星 |
+| 形态类�?| 底部反转 |
 | 量化标准 | 三日组合：下跌→十字星→上涨 |
 
 ```python
@@ -121,14 +121,14 @@ class MorningStarPattern:
 
 ***
 
-## 2. 顶部反转形�?
+## 2. 顶部反转形�?
 
-### 2.1 射击之星（Shooting Star�?
+### 2.1 射击之星（Shooting Star�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 射击之星 |
-| 形态类�?| 顶部反转 |
+| 形态名�?| 射击之星 |
+| 形态类�?| 顶部反转 |
 | 量化标准 | 上影线≥2倍实体，下影线≤10%全长 |
 
 ```python
@@ -149,13 +149,13 @@ class ShootingStarPattern:
 
 ***
 
-### 2.2 乌云盖顶（Dark Cloud Cover�?
+### 2.2 乌云盖顶（Dark Cloud Cover�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 乌云盖顶 |
-| 形态类�?| 顶部反转 |
-| 量化标准 | 上涨后高开低走，跌破前一日实�?0% |
+| 形态名�?| 乌云盖顶 |
+| 形态类�?| 顶部反转 |
+| 量化标准 | 上涨后高开低走，跌破前一日实�?0% |
 
 ```python
 class DarkCloudCoverPattern:
@@ -182,14 +182,14 @@ class DarkCloudCoverPattern:
 
 ***
 
-## 3. 持续形�?
+## 3. 持续形�?
 
-### 3.1 旗形整理（Flag�?
+### 3.1 旗形整理（Flag�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 旗形整理 |
-| 形态类�?| 持续 |
+| 形态名�?| 旗形整理 |
+| 形态类�?| 持续 |
 | 量化标准 | 急涨/急跌后窄幅整理，量能萎缩 |
 
 ```python
@@ -222,17 +222,17 @@ class FlagPattern:
 
 ***
 
-### 3.2 三角形整理（Triangle�?
+### 3.2 三角形整理（Triangle�?
 
-| 属�?| 内容 |
+| 属�?| 内容 |
 |------|------|
-| 形态名�?| 三角形整�?|
-| 形态类�?| 持续 |
+| 形态名�?| 三角形整�?|
+| 形态类�?| 持续 |
 | 量化标准 | 高点下降+低点上升，收敛至顶点 |
 
 ```python
 class TrianglePattern:
-    """三角形整理识�?""
+    """三角形整理识�?""
 
     def identify(self, df, index, lookback=20):
         if index < lookback:
@@ -259,11 +259,11 @@ class TrianglePattern:
 
 ***
 
-## 4. 形态识别引�?
+## 4. 形态识别引�?
 
 ```python
 class PatternRecognitionEngine:
-    """形态识别引�?""
+    """形态识别引�?""
 
     def __init__(self):
         self.patterns = {
@@ -277,7 +277,7 @@ class PatternRecognitionEngine:
         }
 
     def scan_all_patterns(self, df, index):
-        """扫描所有形�?""
+        """扫描所有形�?""
         results = {}
 
         for pattern_name, pattern in self.patterns.items():

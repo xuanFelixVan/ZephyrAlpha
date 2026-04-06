@@ -10,6 +10,7 @@ compliance_level: ä¸ä¸æ å
 reference_models: ["Bridgewater AIA Research Team", "Two Sigma AI Research", "Renaissance Technologies Research"]
 parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
 implementation_status: è§åé¶æ®µ
+layer: Layer 2 (Alpha因子层)
 ---
 
 # AIèæç ç©¶å¢éèå¾

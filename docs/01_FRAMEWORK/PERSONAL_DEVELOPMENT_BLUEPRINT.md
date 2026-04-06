@@ -11,6 +11,7 @@ related_documents:
   - PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: è®¾è®¡é¶æ®µ
+layer: Layer 2 (Alpha因子层)
 ---
 
 # ä¸ªäººå¼ååå¥½å®æ½æ¹?

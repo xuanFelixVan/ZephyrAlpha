@@ -15,6 +15,7 @@ related_documents:
   - AI_TRUST_CALIBRATION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+layer: Layer 0 (数据源层)
 ---
 
 # 移动端推送通知系统蓝图

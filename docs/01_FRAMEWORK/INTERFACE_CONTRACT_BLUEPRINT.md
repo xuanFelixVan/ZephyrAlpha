@@ -8,6 +8,7 @@ owner: é¦å¸­æ¶æå¸?standard_type: ä¸ä¸éåæ�
 applicable_scope: ä¸çº§æ¶é´æ¡æ¶æ¶æ
 compliance_level: ä¸ä¸æ å
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+layer: Layer 2 (Alpha因子层)
 ---
 
 # ä¸çº§æ¶é´æ¡æ¶æ¥å£å¥çº¦èå¾

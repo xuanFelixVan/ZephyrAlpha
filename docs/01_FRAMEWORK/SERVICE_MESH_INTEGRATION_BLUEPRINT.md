@@ -7,6 +7,7 @@ last_updated: 2026-04-04
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 standard_type: 高层架构蓝图
 priority: P2
+layer: Layer 2 (Alpha因子层)
 ---
 
 # 服务网格集成蓝图

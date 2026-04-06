@@ -7,6 +7,7 @@ last_updated: 2026-04-04
 owner: 棣栧腑钃濆浘鏋舵瀯甯?layer: Layer 4 (鏈哄櫒瀛︿範灞?
 standard_type: 楂樺眰鏋舵瀯钃濆浘
 priority: P2
+layer: Layer 4 (机器学习层)
 ---
 
 # 娉㈠姩鐜囬娴嬫ā鍨嬭摑鍥?

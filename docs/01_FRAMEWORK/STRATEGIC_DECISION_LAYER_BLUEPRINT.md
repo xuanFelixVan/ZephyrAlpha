@@ -12,6 +12,7 @@ related_documents:
   - PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+layer: Layer 2 (Alpha因子层)
 ---
 
 # Layer 11: 战略决策层蓝�?

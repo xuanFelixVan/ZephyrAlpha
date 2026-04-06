@@ -15,6 +15,7 @@ related_documents:
   - STRATEGY_SELECTION_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: è®¾è®¡é¶æ®µ
+layer: Layer 2 (Alpha因子层)
 ---
 
 # ä¸ä¸éåç³»ç»å®æ½èå¾

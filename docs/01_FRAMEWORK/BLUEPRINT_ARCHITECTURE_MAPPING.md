@@ -7,6 +7,7 @@ last_updated: 2026-04-02
 owner: é¦å¸­æ¶æ?standard_type: æ¶ææ å°ææ¡£
 applicable_scope: å¨ç³»?compliance_level: ä¸ä¸æ å
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+layer: Layer 2 (Alpha因子层)
 ---
 
 # èå¾æ¶ææ å°ä¸ææ¯è§æ ¼ä¹¦å¯¹åºå³ç³»

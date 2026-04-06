@@ -13,6 +13,7 @@ related_documents:
   - AI_DECISION_AUDIT_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+layer: Layer 3 (策略层)
 ---
 
 # Layer 10: 治理与合规层蓝图

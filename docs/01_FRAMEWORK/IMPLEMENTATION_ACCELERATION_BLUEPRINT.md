@@ -8,6 +8,7 @@ owner: é¦å¸­æ¶æï¿?standard_type: ä¸ä¸æºæçº�
 reference_models: ["AI-Assisted Development", "Open Source Integration", "Agile Implementation"]
 parent_document: ../INDEX.md
 implementation_status: è®¾è®¡é¶æ®µ
+layer: Layer 2 (Alpha因子层)
 ---
 
 # å®æ½å éæ¹æ¡èï¿?

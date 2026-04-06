@@ -59,8 +59,8 @@ parent_document: INDEX.md
 | **长期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md) | 多模态分析、AI虚拟研究团队 | ✓ 完成 |
 
 **包含模块**:
-- **多模态分析模�?* (L3_MMSA_001): 文本+图像+音频情感分析
-- **AI虚拟研究团队** (L3_AIVRT_001): AI研究助手、知识传承机�?
+- **多模态分析模块** (AIWF_MMSA_001): 文本+图像+音频情感分析
+- **AI虚拟研究团队** (AIWF_AIVRT_001): AI研究助手、知识传承机�?
 #### 3.2 技术规格文�?
 | 文档名称 | 文档类型 | 路径 | 说明 | 状�?|
 |---------|---------|------|------|------|
