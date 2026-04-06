@@ -1,6 +1,6 @@
 ---
-module_id: PORTFOLIO_OPTIMIZATION_001
-version: 1.0.0
+module_id: IMPL_PORTFOLIO_OPT_BP_001
+version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03

@@ -1,6 +1,6 @@
 ---
-module_id: UX_README_001
-version: 5.3.0
+module_id: IMPL_UI_DESIGN_README_001
+version: 5.3.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01

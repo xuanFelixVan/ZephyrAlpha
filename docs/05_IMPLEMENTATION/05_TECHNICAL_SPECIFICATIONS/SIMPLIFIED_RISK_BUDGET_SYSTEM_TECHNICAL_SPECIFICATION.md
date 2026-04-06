@@ -1,56 +1,56 @@
 ---
-module_id: RISK_BUDGET_SPEC_001
+module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (×éºÏÓÅ»¯²ã)
-index: RISK_BUDGET_SPEC_001
+layer: Layer 6 (ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½)
+index: SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001
 estimated_hours: 60h
 review_status: Pending
-reviewer: Ê×Ï¯¼¼ÊõÆÀÉó¹Ù
+reviewer: ï¿½ï¿½Ï¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 review_date: 2026-04-03
-owner: ×éºÏÓÅ»¯²ã¸ºÔðÈË
-standard_type: ×¨ÒµÁ¿»¯»ú¹¹¼¼Êõ¹æ¸ñÊé
+owner: ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ã¸ºï¿½ï¿½ï¿½ï¿½
+standard_type: ×¨Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 applicable_scope: È«ÏµÍ³
-compliance_level: ×¨Òµ±ê×¼
+compliance_level: ×¨Òµï¿½ï¿½×¼
 ---
 
-# ¼ò»¯·çÏÕÔ¤ËãÏµÍ³¼¼Êõ¹æ¸ñÊé v1.0
+# ï¿½ò»¯·ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ v1.0
 
-> Çå·çÁ¿»¯ÏµÍ³ v5.3 - ·çÏÕÔ¤ËãÏµÍ³ÏêÏ¸¼¼ÊõÉè¼Æ
-> **Ë÷Òý**: `RISK_BUDGET_SPEC_001`
-> **¿ª·¢Ê±¼ä**: 60h
-> **ºËÐÄ¶¨Î»**: Èý²ã·çÏÕÔ¤Ëã¡¢VaR/CVaR¶¯Ì¬·ÖÅä
+> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ v5.3 - ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ÏµÍ³ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+> **ï¿½ï¿½ï¿½ï¿½**: `RISK_BUDGET_SPEC_001`
+> **ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½**: 60h
+> **ï¿½ï¿½ï¿½Ä¶ï¿½Î»**: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ã¡¢VaR/CVaRï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½
 
 ---
 
-## 1. ¸ÅÊö
+## 1. ï¿½ï¿½ï¿½ï¿½
 
-·çÏÕÔ¤ËãÏµÍ³¸ºÔð×éºÏ/²ßÂÔ/×Ê²úÈý²ã·çÏÕÔ¤Ëã·ÖÅä¡£
+ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½/ï¿½Ê²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ä¡£
 
-## 2. ½Ó¿Ú¶¨Òå
+## 2. ï¿½Ó¿Ú¶ï¿½ï¿½ï¿½
 
 ```python
 class RiskBudgetSystem:
-    """·çÏÕÔ¤ËãÏµÍ³"""
+    """ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ÏµÍ³"""
     
     def allocate_risk_budget(self,
                             total_risk: float,
                             strategy_ids: List[str],
                             risk_contributions: Dict[str, float]) -> Dict[str, float]:
-        """·ÖÅä·çÏÕÔ¤Ëã"""
+        """ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½"""
         pass
     
     def calculate_var_budget(self,
                             positions: pd.Series,
                             confidence: float = 0.95) -> float:
-        """¼ÆËãVaRÔ¤Ëã"""
+        """ï¿½ï¿½ï¿½ï¿½VaRÔ¤ï¿½ï¿½"""
         pass
 ```
 
 ---
 
-**¼¼Êõ¹æ¸ñÊé°æ±¾**: v1.0 | **´´½¨ÈÕÆÚ**: 2026-04-03 | **×´Ì¬**: Final
+**ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾**: v1.0 | **ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½**: 2026-04-03 | **×´Ì¬**: Final

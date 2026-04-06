@@ -1,55 +1,55 @@
 ---
-module_id: TIMEFRAME_SPEC_001
+module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_SPEC_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (×éºÏÓÅ»¯²ã)
-index: TIMEFRAME_SPEC_001
+layer: Layer 6 (ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½)
+index: SIMPLIFIED_TIMEFRAME_COORDINATION_SPEC_001
 estimated_hours: 80h
 review_status: Pending
-reviewer: Ê×Ï¯¼¼ÊõÆÀÉó¹Ù
+reviewer: ï¿½ï¿½Ï¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 review_date: 2026-04-03
-owner: ×éºÏÓÅ»¯²ã¸ºÔðÈË
-standard_type: ×¨ÒµÁ¿»¯»ú¹¹¼¼Êõ¹æ¸ñÊé
+owner: ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ã¸ºï¿½ï¿½ï¿½ï¿½
+standard_type: ×¨Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 applicable_scope: È«ÏµÍ³
-compliance_level: ×¨Òµ±ê×¼
+compliance_level: ×¨Òµï¿½ï¿½×¼
 ---
 
-# ¼ò»¯Ê±¼ä¿ò¼ÜÐ­Í¬¼¼Êõ¹æ¸ñÊé v1.0
+# ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð­Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ v1.0
 
-> Çå·çÁ¿»¯ÏµÍ³ v5.3 - Ê±¼ä¿ò¼ÜÐ­Í¬ÏêÏ¸¼¼ÊõÉè¼Æ
-> **Ë÷Òý**: `TIMEFRAME_SPEC_001`
-> **¿ª·¢Ê±¼ä**: 80h
-> **ºËÐÄ¶¨Î»**: Èý¼¶Ê±¼ä¿ò¼ÜÐ­Í¬¡¢ÐÅºÅÈÚºÏ
+> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ v5.3 - Ê±ï¿½ï¿½ï¿½ï¿½Ð­Í¬ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+> **ï¿½ï¿½ï¿½ï¿½**: `TIMEFRAME_SPEC_001`
+> **ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½**: 80h
+> **ï¿½ï¿½ï¿½Ä¶ï¿½Î»**: ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð­Í¬ï¿½ï¿½ï¿½Åºï¿½ï¿½Úºï¿½
 
 ---
 
-## 1. ¸ÅÊö
+## 1. ï¿½ï¿½ï¿½ï¿½
 
-Ê±¼ä¿ò¼ÜÐ­Í¬Ä£¿é¸ºÔðºê¹Û/ÖÐ¹Û/Î¢¹ÛÈý¼¶Ê±¼ä¿ò¼ÜµÄÐÅºÅÈÚºÏ¡£
+Ê±ï¿½ï¿½ï¿½ï¿½Ð­Í¬Ä£ï¿½é¸ºï¿½ï¿½ï¿½ï¿½/ï¿½Ð¹ï¿½/Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Üµï¿½ï¿½Åºï¿½ï¿½ÚºÏ¡ï¿½
 
-## 2. ½Ó¿Ú¶¨Òå
+## 2. ï¿½Ó¿Ú¶ï¿½ï¿½ï¿½
 
 ```python
 class TimeframeCoordinator:
-    """Ê±¼ä¿ò¼ÜÐ­µ÷Æ÷"""
+    """Ê±ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½"""
     
     def fuse_signals(self,
                     macro_signal: pd.Series,
                     medium_signal: pd.Series,
                     micro_signal: pd.Series) -> pd.Series:
-        """ÈÚºÏÐÅºÅ"""
+        """ï¿½Úºï¿½ï¿½Åºï¿½"""
         pass
     
     def resolve_conflicts(self,
                          signals: Dict[str, pd.Series]) -> pd.Series:
-        """½â¾öÐÅºÅ³åÍ»"""
+        """ï¿½ï¿½ï¿½ï¿½ÅºÅ³ï¿½Í»"""
         pass
 ```
 
 ---
 
-**¼¼Êõ¹æ¸ñÊé°æ±¾**: v1.0 | **´´½¨ÈÕÆÚ**: 2026-04-03 | **×´Ì¬**: Final
+**ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾**: v1.0 | **ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½**: 2026-04-03 | **×´Ì¬**: Final

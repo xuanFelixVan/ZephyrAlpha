@@ -1,5 +1,5 @@
 ---
-module_id: MULTI_ASSET_SPEC_001
+module_id: MULTI_ASSET_ALLOCATION_SPEC_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
@@ -7,7 +7,7 @@ parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_ALLOCATION_BLUEPRI
 last_updated: 2026-04-03
 created_date: 2026-04-03
 layer: Layer 6 (组合优化?
-index: MULTI_ASSET_SPEC_001
+index: MULTI_ASSET_ALLOCATION_SPEC_001
 estimated_hours: 80h
 review_status: Pending
 reviewer: 首席技术评审官
@@ -21,7 +21,7 @@ implementation_status: 设计阶段
 
 # 多资产类别配置技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 多资产类别配置详细技术设?> **索引**: `MULTI_ASSET_SPEC_001`
+> 清风量化系统 v5.3 - 多资产类别配置详细技术设?> **索引**: `MULTI_ASSET_ALLOCATION_SPEC_001`
 > **开发时?*: 80h
 > **核心定位**: 跨资产风险平价配置，全天候策略实?
 ---
@@ -219,4 +219,4 @@ class TestMultiAssetAllocation:
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?
