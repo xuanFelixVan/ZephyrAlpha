@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTORNEUTRALOPTIMIZATIONBL_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 2 (Alpha因子层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 因子中性优化蓝图
 
 > **核心定位**: 因子中性优化蓝图的核心功能实现
@@ -217,7 +216,6 @@ class TrackingErrorController:
 ```
 
 ---
-
 ## 3. 技术规格
 
 ### 3.1 接口设计
@@ -356,6 +354,13 @@ factor_neutral_optimization:
 
 ```python
 # 基于Riskfolio-Lib的实现
+
+---
+
+## 📋 概述
+
+本文档定义了FACTOR NEUTRAL OPTIMIZATION的核心功能和技术实现。
+
 import riskfolio as rp
 
 class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):

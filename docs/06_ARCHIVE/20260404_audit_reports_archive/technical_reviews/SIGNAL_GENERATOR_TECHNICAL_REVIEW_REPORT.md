@@ -11,8 +11,12 @@ applicable_scope: ύ│╗ύ╗θίχηόΨ╜
 parent_document: ../INDEX.md
 implementation_status: ϋ┐δϋκΝ?
 owner: ίχηόΨ╜ϋ┤θϋ┤μ?
-last_updated: 2026-04-02
----
+responsibility:
+  - 因子计算
+  - 数据源
+  - 系统架构
+last_updated: 2026-04-02---
+
 
 # SignalGeneratorϊ┐κίΠ╖ύΦθόΙΡίβρόρκίζΩόΛΑόεψϋψΕίχκόΛξ?
 

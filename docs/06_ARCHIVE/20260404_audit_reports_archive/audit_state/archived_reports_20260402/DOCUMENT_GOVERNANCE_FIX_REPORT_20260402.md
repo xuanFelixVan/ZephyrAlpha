@@ -7,11 +7,15 @@ implementation_status: ти▓т«ї?
 audit_date: 2026-04-02
 audit_version: v5.3
 owner: т«ъТќйУ┤ЪУ┤Б?
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 version: 1.0.0
 module_id: IMP_DOCUMENT_GOVERNANCE_
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ТќЄТАБТ▓╗уљєС┐«тцЇТЅДУАїТіЦтЉі
 
 **С┐«тцЇТЌХжЌ┤**: 2026-04-02 12:48

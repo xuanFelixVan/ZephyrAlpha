@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕίχκϋχκόιΘίΘΗ
 applicable_scope: Layer 2 AlphaίδιίφΡ?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../BLUEPRINT_COMPLETENESS_ANALYSIS_REPORT.md
-implementation_status: ίχκϋχκίχΝόΙΡ
----
+implementation_status: ίχκϋχκίχΝόΙΡ---
+
 
 # Layer 2 AlphaίδιίφΡί▒Γό╖▒ί║οόΨΘόκμίχκϋχκόΛξίΣΛΎ╝Ιύυυϊ║ΝόυκΎ╝Κ
 

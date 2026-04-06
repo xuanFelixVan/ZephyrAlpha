@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 组合优化
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпшпДхобцКе?applicable_scope: ф╕ншзВчнЦчХех▒ВцКАцЬпшзДца╝ф╣жшпДхоб
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: шпДхобхоМцИР
----
+implementation_status: шпДхобхоМцИР---
+
 
 # ф╕ншзВчнЦчХех▒ВцКАцЬпшзДца╝ф╣жч╗╝хРИшпДхобцКехСК
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIMEDATALAKEBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 1 (数据源层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 实时数据湖蓝图
 
 > **核心定位**: 实时数据湖蓝图的核心功能实现
@@ -105,7 +104,6 @@ layer: "Layer 1 (数据源层)"---
 | **元数据** | PostgreSQL | 15.0+ | 可靠的元数据存储 |
 
 ---
-
 ## 三、核心模块设计
 
 ### 3.1 数据湖管理器 (DataLakeManager)

@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ждќтИГТіђТю»У»ёт«Ат«ў
+responsibility:
+  - 市场状态识别
+  - 组合优化
+  - 机器学习
 standard_type: УЊЮтЏЙжўХТ«хТђ╗у╗ЊТіЦтЉі
 applicable_scope: Layer 5уГќуЋЦТЅДУАї№┐?compliance_level: СИЊСИџТаЄтЄє
-implementation_status: УЊЮтЏЙжўХТ«хт«їТѕљ
----
+implementation_status: УЊЮтЏЙжўХТ«хт«їТѕљ---
+
 
 # Layer 5уГќуЋЦТЅДУАїт▒ѓУЊЮтЏЙжўХТ«хт«їТѕљТђ╗у╗ЊТіЦтЉі
 

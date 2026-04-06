@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATAFABRICBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 1 (数据源层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 数据编织蓝图
 
 > **核心定位**: 数据编织蓝图的核心功能实现
@@ -109,7 +108,6 @@ layer: "Layer 1 (数据源层)"---
 | **缓存** | Redis | 7.0+ | 高性能缓存 |
 
 ---
-
 ## 三、核心模块设计
 
 ### 3.1 数据采集器 (DataIngestionManager)

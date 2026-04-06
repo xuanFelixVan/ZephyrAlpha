@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 层级风险预算蓝图
 
 > **核心定位**: 层级风险预算蓝图的核心功能实现
@@ -68,7 +67,6 @@ layer: "Layer 6 (组合优化层)"---
 3. 最后实现 HIERARCHICAL_RISK_BUDGET (5-7天) - 高级多层级
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

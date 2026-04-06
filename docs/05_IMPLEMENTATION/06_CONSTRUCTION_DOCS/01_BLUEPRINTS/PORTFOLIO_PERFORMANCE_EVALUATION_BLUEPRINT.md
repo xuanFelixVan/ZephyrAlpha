@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 组合绩效评估模块蓝图
 
 > **核心定位**: 组合绩效评估模块蓝图的核心功能实现
@@ -69,7 +68,6 @@ layer: "Layer 6 (组合优化层)"---
 | **协同工作** | 组合归因分析 | PORTFOLIO_ATTRIBUTION_001 | 绩效归因分析 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

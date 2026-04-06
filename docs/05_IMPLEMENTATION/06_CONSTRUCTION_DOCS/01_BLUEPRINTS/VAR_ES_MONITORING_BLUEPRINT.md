@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VAR_ES_MONITORING_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 7 (风控层)"---
-
+layer: "Layer 7 (风险管理层)"
 ﻿# VaR/ES实时监控蓝图
 
 > **核心定位**: VaR/ES实时监控蓝图的核心功能实现
@@ -57,7 +56,6 @@ VaR/ES监控系统，负责实时监控投资组合的风险价值和预期损�
 | **预计工时** | 5-7天 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

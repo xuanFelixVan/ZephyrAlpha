@@ -6,9 +6,13 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 auditor: Audit Sentinel
 standard_type: СИЊСИџТќЄТАБТ▓╗уљєт«АУ«АТіЦтЉі
+responsibility:
+  - 特征工程
+  - 机器学习
+  - 系统架构
 applicable_scope: уГќуЋЦТЅДУАїт▒?Layer 5)тйњТАБТќЄТАБТЂбтцЇУ»ёС╝░
-compliance_level: СИЊСИџТаЄтЄє
----
+compliance_level: СИЊСИџТаЄтЄє---
+
 
 # уГќуЋЦТЅДУАїт▒ѓтйњТАБТќЄТАБТЂбтцЇУ»ёС╝░ТіЦтЉ?V2
 

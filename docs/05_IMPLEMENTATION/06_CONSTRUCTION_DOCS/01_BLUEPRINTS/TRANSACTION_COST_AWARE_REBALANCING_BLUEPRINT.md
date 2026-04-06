@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRANSACTIONCOSTAWAREREBALAN_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 5 (交易成本层)"
 ﻿# 交易成本感知再平衡蓝图
 
 > **核心定位**: 交易成本感知再平衡蓝图的核心功能实现
@@ -186,7 +185,6 @@ class TransactionCostAwareRebalancer:
 ```
 
 ---
-
 ## 3. 接口定义
 
 ```python

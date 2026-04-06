@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TAIL_RISK_METRICS_EXTENSION_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
-layer: "Layer 4 (机器学习层)"
+layer: "Layer 7 (风险管理层)"
 ---
 ﻿# 尾部风险度量扩展蓝图
 

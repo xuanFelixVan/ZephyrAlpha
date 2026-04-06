@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 4 (机器学习层)"---
-
+layer: "Layer 9 (监控层)"
 ﻿# 自动化数据修复引擎蓝图
 
 > **核心定位**: 自动化数据修复引擎蓝图的核心功能实现
@@ -53,7 +52,6 @@ layer: "Layer 4 (机器学习层)"---
 | **修复覆盖率** | ≥80% | 覆盖80%以上的数据问题类型 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

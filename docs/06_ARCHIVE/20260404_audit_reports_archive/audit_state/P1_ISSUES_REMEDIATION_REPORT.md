@@ -5,9 +5,13 @@ status: Completed
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 市场状态识别
+  - 特征工程
+  - 机器学习
 standard_type: цХ┤цФ╣хоМцИРцКехСК
-applicable_scope: Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗я┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
----
+applicable_scope: Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗я┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ---
+
 
 # P1ч║зщЧощвШцХ┤цФ╣хоМцИРцКея┐?
 > **цХ┤цФ╣ч╝ЦхП╖**: `P1_REMEDIATION_20260402`

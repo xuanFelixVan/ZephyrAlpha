@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_ATTRIBUTION_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 组合归因分析模块蓝图
 
 > **核心定位**: 组合归因分析模块蓝图的核心功能实现
@@ -55,7 +54,6 @@ layer: "Layer 6 (组合优化层)"---
 | **预计工时** | 3-5天 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

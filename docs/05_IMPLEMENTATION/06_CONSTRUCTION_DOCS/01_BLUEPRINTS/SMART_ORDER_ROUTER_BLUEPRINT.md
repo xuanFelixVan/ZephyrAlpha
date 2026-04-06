@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SMART_ORDER_ROUTER_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 8 (执行层)"
 ---
 ﻿# 智能订单路由器蓝图
 

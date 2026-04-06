@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMPLIFIEDTIMEFRAMECOORDINAT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿> **索引**: `TIMEFRAME_COORD_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 双时间框架协同优化策略 + 中期波动度，实现信号融合和冲突解决
@@ -81,7 +80,6 @@ layer: "Layer 6 (组合优化层)"---
 ```
 
 ---
-
 ## 3. 核心模块设计
 
 ### 3.1 时间框架协同优化系统（SimplifiedTimeframeCoordination）
@@ -202,6 +200,13 @@ class SignalFusion:
 
 ```python
 # 信号协同接口
+
+---
+
+## 📋 概述
+
+本文档定义了SIMPLIFIED TIMEFRAME COORDINATION的核心功能和技术实现。
+
 
 > **核心定位**: 信号协同接口的核心功能实现
 

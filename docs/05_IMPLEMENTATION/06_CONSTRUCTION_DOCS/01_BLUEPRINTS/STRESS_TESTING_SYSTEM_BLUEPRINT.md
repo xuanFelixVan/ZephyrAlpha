@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 7 (风控层)"---
-
+layer: "Layer 7 (风险管理层)"
 ﻿> **索引**: `STRESS_TEST_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 极端市场情景下的风险暴露，提供应急预警
@@ -19,7 +18,6 @@ layer: "Layer 7 (风控层)"---
 > **AI维护难度**: 低
 
 ---
-
 ## 核心定位
 
 压力测试系统，负责模拟极端市场情景，评估投资组合的抗压能力
@@ -238,6 +236,13 @@ class ScenarioAnalyzer:
 
 ```python
 # 压力测试接口
+
+---
+
+## 📋 概述
+
+本文档定义了STRESS TESTING SYSTEM的核心功能和技术实现。
+
 
 > **核心定位**: 压力测试接口的核心功能实现
 

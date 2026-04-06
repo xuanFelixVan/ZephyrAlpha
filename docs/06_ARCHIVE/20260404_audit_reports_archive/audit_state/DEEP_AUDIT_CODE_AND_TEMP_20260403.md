@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобцКехСК
+responsibility:
+  - 因子计算
+  - 数据源
+  - 机器学习
 applicable_scope: ф╗гчаБчЫох╜ХхТМф╕┤цЧ╢цЦЗф╗╢хобшо?compliance_level: ц╖▒х║жхобшоб
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?---
@@ -394,8 +398,8 @@ scripts/
 
 - **х╜УхЙНхИЖцФп**: master
 - **хдЗф╗╜хИЖцФп**: `backup/before-cleanup-20260403`
-- **х╛ЕцПРф║дхПШцЫ?*: 7ф╕кцЦЗф╗?
----
+- **х╛ЕцПРф║дхПШцЫ?*: 7ф╕кцЦЗф╗?---
+
 
 **хобшобхоМцИРцЧ╢щЧ┤**: 2026-04-03
 **хобшобхС?*: Audit Sentinel (щжЦх╕нцЦЗцбгцЮ╢цЮДх╕Иф╕Охобшобхо?

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONSTRAINTSOLVERBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 4 (机器学习层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 概述
 
 > **开发时?*: 60h（约1.5周）
@@ -35,7 +34,6 @@ layer: "Layer 4 (机器学习层)"---
     ?输出：优化结果、约束状态、求解报?```
 
 ---
-
 ## 3. 核心模块设计
 
 ### 3.1 约束求解器核心类（ConstraintSolver?

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 7 (风控层)"---
-
+layer: "Layer 7 (风险管理层)"
 ﻿> **索引**: `BARRA_RISK_001`
 > **开发时长**: 100h（约2.5周）
 > **核心定位**: 多因子风险模型，实现风险分解、因子暴露度量、风险预算
@@ -20,7 +19,6 @@ layer: "Layer 7 (风控层)"---
 > **AI维护难度**: 中
 
 ---
-
 ## 核心定位
 
 Barra风险模型，负责实施多因子风险模型，支持风险分解和对冲
@@ -241,6 +239,13 @@ class BarraRiskModel:
 
 ```python
 # 因子暴露计算接口
+
+---
+
+## 📋 概述
+
+本文档定义了BARRA RISK MODEL的核心功能和技术实现。
+
 
 > **核心定位**: 因子暴露计算接口的核心功能实现
 

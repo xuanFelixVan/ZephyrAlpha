@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HIERARCHICALOPTIMIZATIONFRAM_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 层次化优化框架蓝图
 
 > **模块ID**: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
@@ -232,7 +231,6 @@ class CrossLayerConstraintCoordinator:
 ```
 
 ---
-
 ## 3. 功能设计
 
 ### 3.1 核心功能
@@ -403,6 +401,13 @@ class OptimizationMethodSelector:
 
 ```python
 # 三层优化示例
+
+---
+
+## 📋 概述
+
+本文档定义了HIERARCHICAL OPTIMIZATION FRAMEWORK的核心功能和技术实现。
+
 optimizer = HierarchicalOptimizer(n_layers=3)
 
 # Layer 1: 区域层

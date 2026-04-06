@@ -1,4 +1,4 @@
----
+﻿---
 module_id: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
-layer: "Layer 1 (数据源层)"
+layer: "Layer 6 (组合优化层)"
 ---
 ﻿# 📋 执行摘要
 
@@ -18,6 +18,25 @@ layer: "Layer 1 (数据源层)"
 > **核心定位**: 支持多时间框架数据需求的统一数据基础设施
 > **索引**: `UNIFIED_DATA_INFRASTRUCTURE_001`
 > **开发周期**: 3周
+
+
+## 核心定位
+
+**单一职责**: 统一数据基础设施，构建统一的数据采集、存储和处理基础设施
+
+### 职责边界
+
+**✅ 核心职责**:
+
+- 数据采集框架
+- 数据存储架构
+- 数据处理引擎
+- 基础设施管理
+
+**❌ 非职责范围**:
+- 业务数据处理
+- 数据质量监控
+- 数据治理
 
 ## 🎯 模块定位与职责
 

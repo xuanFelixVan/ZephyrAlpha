@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席审计官
+responsibility:
+  - 交易执行
+  - 文档治理
+  - 审计系统
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级检查报告
 applicable_scope: Layer 5策略执行层职责重叠和重复文档检查
 compliance_level: 专业标准
-check_date: 2026-04-07
----
+check_date: 2026-04-07---
+
 
 # 职责重叠和重复文档检查报告
 

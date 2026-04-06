@@ -7,11 +7,15 @@ implementation_status: х╖▓хоМ?
 audit_date: 2026-04-02
 audit_version: v5.3
 owner: хоЮцЦ╜ш┤Яш┤г?
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 文档治理
 version: 1.0.0
 module_id: IMP_PROFESSIONAL_DOCUMEN
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 
 **хобшобцЧ╢щЧ┤**: 2026-04-02 12:44

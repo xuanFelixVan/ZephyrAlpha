@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 市场状态识别
+  - 组合优化
+  - 机器学习
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшУЭхЫ╛хоМцХ┤х║жшпДф╝░цКе?applicable_scope: Layer 6ч╗ДхРИф╝ШхМЦ?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
-parent_document: ../INDEX.md
----
+parent_document: ../INDEX.md---
+
 
 # Layer 6ч╗ДхРИф╝ШхМЦх▒ВшУЭхЫ╛хоМцХ┤х║жшпДф╝░цКехСК v1.0
 

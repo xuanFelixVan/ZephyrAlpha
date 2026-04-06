@@ -5,6 +5,10 @@ status: Completed
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: Audit Sentinel
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 数据源
 standard_type: P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?applicable_scope: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﮔﮔ۰۲ﮔﺎﭨﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V3_20260403.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
@@ -13,8 +17,8 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 
 > **ﮔﺑﮔﺗﻝﺙﮒﺓ**: `P2_REMEDIATION_V2_001`
 > **ﮔﺑﮔﺗﮔ۴ﮔ**: 2026-04-03
-> **ﮔﺑﮔﺗﻟﮒﺑ**: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎP2ﻝﭦ۶ﻠ؟ﻠ۱?> **ﮔﺑﮔﺗﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
----
+> **ﮔﺑﮔﺗﻟﮒﺑ**: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎP2ﻝﭦ۶ﻠ؟ﻠ۱?> **ﮔﺑﮔﺗﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?---
+
 
 ## ﻭ ﻛﺕﻙﮔﺑﮔﺗﮔ۵ﻟ۵?
 ### 1.1 ﮔﺑﮔﺗﻝ؟ﮔ 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RL_REBALANCING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 市场状态识别
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 4 (机器学习层)"
 ﻿# 模块概述
 
 > **索引**: `RL_REBALANCING_SYSTEM_001`
@@ -19,7 +18,6 @@ layer: "Layer 6 (组合优化层)"---
 > **核心定位**: 基于Stable-Baselines3实现强化学习调仓决策模型，动态优化组合权重和调仓时机
 
 ---
-
 ## 核心定位
 
 强化学习再平衡系统，负责利用强化学习算法优化再平衡决策

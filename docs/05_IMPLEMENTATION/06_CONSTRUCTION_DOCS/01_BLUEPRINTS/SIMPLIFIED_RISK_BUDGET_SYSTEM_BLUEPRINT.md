@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 组合优化
   - 回测系统
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 简化版动态风险预算系统蓝图
 
 > **核心定位**: 简化版动态风险预算系统蓝图的核心功能实现
@@ -70,7 +69,6 @@ layer: "Layer 6 (组合优化层)"---
 3. 最后实现 HIERARCHICAL_RISK_BUDGET (5-7天) - 高级多层级
 
 ---
-
 ## 2. 技术实现
 
 ### 2.1 核心API

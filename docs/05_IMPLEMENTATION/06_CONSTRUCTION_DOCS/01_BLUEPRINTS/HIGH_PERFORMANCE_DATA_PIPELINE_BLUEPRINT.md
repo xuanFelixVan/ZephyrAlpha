@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 1 (数据层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 高性能数据管道蓝图
 
 > **核心定位**: 高性能数据管道蓝图的核心功能实现
@@ -53,7 +52,6 @@ layer: "Layer 1 (数据层)"---
 | **扩展性** | 线性扩展 | 支持线性水平扩展 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

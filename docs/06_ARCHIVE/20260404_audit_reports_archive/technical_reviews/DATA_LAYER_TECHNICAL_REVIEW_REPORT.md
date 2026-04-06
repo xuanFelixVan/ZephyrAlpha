@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 数据源
+  - 机器学习
+  - 系统架构
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпшпДхобцКе?applicable_scope: Layer 0цХ░цНоц║Рх▒В
 compliance_level: щб╢ч║зф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
-implementation_status: шпДхобхоМцИР
----
+implementation_status: шпДхобхоМцИР---
+
 
 # цХ░цНоц║Рх▒Вф╕Уф╕ЪхоЮцЦ╜шУЭхЫ╛цКАцЬпшпДхобцКе?
 > ц╕ЕщгОщЗПхМЦч│╗ч╗Я v5.3 - цКАцЬпцЦ╣цбИшпД?> **шпДхобID**: `REVIEW_DATA_LAYER_20260402_001`

@@ -5,11 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
 standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΛΑόεψϋψΕ?applicable_scope: Layer 2 AlphaίδιίφΡί▒Γόη╢?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 reference_models: ["Bridgewater Associates", "Renaissance Technologies", "Two Sigma"]
 parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
-implementation_status: ϋψΕίχκίχΝόΙΡ
----
+implementation_status: ϋψΕίχκίχΝόΙΡ---
+
 
 # Layer 2 AlphaίδιίφΡί▒Γόη╢όηΕόΛΑόεψϋψΕίχκόΛξ?
 > **ϋψΕίχκύΚΙόευ**: v1.0

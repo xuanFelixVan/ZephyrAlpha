@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOREXPOSUREMANAGEMENTBLU_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 2 (Alpha因子层)"---
-
+layer: "Layer 2 (Alpha因子层)"
 ﻿# 因子暴露管理蓝图
 
 > **模块ID**: FACTOR_EXPOSURE_MANAGEMENT_001
@@ -71,7 +70,6 @@ class FactorExposureManager:
 ```
 
 ---
-
 ## 3. 实施路径
 
 ### Phase 1: 核心功能 (1周)

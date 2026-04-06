@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONITORINGDASHBOARDENHANCEME_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 9 (监控层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 监控面板增强蓝图
 
 > **核心定位**: 监控面板增强蓝图的核心功能实现
@@ -77,7 +76,6 @@ layer: "Layer 9 (监控层)"---
 | **系统监控** | 系统状态可视化 | 性能、可用性 | 系统状态 | Layer 0-11 |
 
 ---
-
 ## 二、开源项目集成方案
 
 ### 2.1 Streamlit集成

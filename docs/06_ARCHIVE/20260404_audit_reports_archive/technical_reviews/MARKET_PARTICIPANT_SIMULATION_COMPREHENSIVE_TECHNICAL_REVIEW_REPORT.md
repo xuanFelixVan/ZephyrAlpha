@@ -5,10 +5,14 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 因子计算
+  - 组合优化
+  - 交易执行
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпшпДхобцКе?applicable_scope: х╕ВхЬ║хПВф╕ОшАЕшбМф╕║цибцЛЯч│╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../QUALITY_GATE_MECHANISM.md
-implementation_status: шпДхобхоМцИР
----
+implementation_status: шпДхобхоМцИР---
+
 
 # х╕ВхЬ║хПВф╕ОшАЕшбМф╕║цибцЛЯч│╗?- ч╗╝хРИцКАцЬпшпДхобцКе?
 > **шпДхобчЙИцЬм**: v1.0

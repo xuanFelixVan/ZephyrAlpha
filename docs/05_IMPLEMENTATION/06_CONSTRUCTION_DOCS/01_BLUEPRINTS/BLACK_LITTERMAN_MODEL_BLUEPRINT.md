@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# Black-Litterman组合优化模型蓝图
 
 > **核心定位**: Black-Litterman组合优化模型蓝图的核心功能实现
@@ -69,7 +68,6 @@ Black-Litterman资产配置模型，负责结合市场均衡收益和投资者�
 | **输出目标** | 风险预算系统 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 提供风险贡献分析 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

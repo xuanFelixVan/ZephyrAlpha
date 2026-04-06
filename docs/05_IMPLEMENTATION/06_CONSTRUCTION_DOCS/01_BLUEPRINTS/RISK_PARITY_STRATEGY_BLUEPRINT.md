@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 市场状态识别
 standard_type: 专业量化机构文档
-layer: "Layer 3 (策略层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 风险平价策略蓝图
 
 > **核心定位**: 风险平价策略蓝图的核心功能实现
@@ -69,7 +68,6 @@ layer: "Layer 3 (策略层)"---
 | **协同工作** | Black-Litterman模型 | BLACK_LITTERMAN_MODEL_001 | 可选的收益增强 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

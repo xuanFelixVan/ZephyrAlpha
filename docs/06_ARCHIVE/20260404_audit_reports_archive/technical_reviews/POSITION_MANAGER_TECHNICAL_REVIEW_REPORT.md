@@ -11,8 +11,12 @@ applicable_scope: ч│╗ч╗ЯхоЮцЦ╜
 parent_document: ../INDEX.md
 implementation_status: ш┐ЫшбМ?
 owner: хоЮцЦ╜ш┤Яш┤г?
-last_updated: 2026-04-02
----
+responsibility:
+  - 数据源
+  - 系统架构
+  - 文档治理
+last_updated: 2026-04-02---
+
 
 # PositionManagerцМБф╗УчобчРЖхЩицибхЭЧцКАцЬпшпДхобцКе?
 

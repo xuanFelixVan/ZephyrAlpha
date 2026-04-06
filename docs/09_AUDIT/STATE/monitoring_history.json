@@ -1,0 +1,15 @@
+[
+  {
+    "timestamp": "2026-04-07T02:11:37.970443",
+    "stats": {
+      "total_files": 1650,
+      "total_dirs": 222,
+      "files_with_yaml": 1649,
+      "files_with_responsibility": 1648,
+      "files_with_module_id": 1590,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 99.05
+  }
+]

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_MESH_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 1 (数据层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 数据网格蓝图
 
 > **核心定位**: 数据网格蓝图的核心功能实现
@@ -53,7 +52,6 @@ layer: "Layer 1 (数据层)"---
 | **数据质量SLA** | ≥95% | 数据质量SLA达成率≥95% |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

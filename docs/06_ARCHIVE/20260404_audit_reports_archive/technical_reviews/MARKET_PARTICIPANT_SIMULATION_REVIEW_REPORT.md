@@ -8,7 +8,12 @@ reviewer: щжЦх╕нцКАцЬпшпДхобхоШ (Spec-Approver)
 review_type: цаЗхЗЖшпДхобцибх╝П (30хИЖщТЯ)
 review_standard: v5.3
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
+responsibility:
+  - 因子计算
+  - 系统架构
+  - 审计系统
 ---
+
 
 # х╕ВхЬ║хПВф╕ОшАЕшбМф╕║цибцЛЯч│╗ч╗ЯцКАцЬпшпДхобцКе?
 > **шпДхобч╝ЦхП╖**: TECH_REVIEW_MARKET_PARTICIPANT_SIM_001

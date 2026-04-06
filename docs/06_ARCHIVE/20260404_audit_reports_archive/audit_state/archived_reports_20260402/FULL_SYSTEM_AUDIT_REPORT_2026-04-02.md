@@ -5,12 +5,16 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: Audit Sentinel
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобцаЗхЗЖ
 applicable_scope: хЕич│╗ч╗ЯцЦЗцбгц▓╗чРЖхоб?
 compliance_level: хобшобцКехСК
 parent_document: ../INDEX.md
-implementation_status: ш┐ЫшбМ?
----
+implementation_status: ш┐ЫшбМ?---
+
 
 # ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -10,7 +10,7 @@ responsibility:
   - 风险预算 (Layer 11)
   - 数据质量 (Layer 1)
 
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 3 (策略层)"
 ---
 ﻿# 模块概述
 

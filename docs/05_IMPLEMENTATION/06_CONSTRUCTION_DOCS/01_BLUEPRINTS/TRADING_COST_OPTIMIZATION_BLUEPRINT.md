@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADINGCOSTOPTIMIZATIONBLUE_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 5 (交易成本层)"
 ﻿# 模块概述
 
 > **索引**: `TRADING_COST_001`
@@ -66,7 +65,6 @@ graph LR
 ```
 
 ---
-
 ## 2. 架构设计
 
 ### 2.1 系统架构?

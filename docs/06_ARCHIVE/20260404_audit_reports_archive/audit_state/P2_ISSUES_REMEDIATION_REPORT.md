@@ -5,9 +5,13 @@ status: Completed
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ждќтИГТіђТю»У»ёт«Ат«ў
+responsibility:
+  - 因子计算
+  - 特征工程
+  - 机器学习
 standard_type: ТЋ┤Тћ╣т«їТѕљТіЦтЉі
-applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗?compliance_level: СИЊСИџТаЄтЄє
----
+applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗?compliance_level: СИЊСИџТаЄтЄє---
+
 
 # P2у║ДжЌ«жбўТЋ┤Тћ╣т«їТѕљТіЦ?
 > **ТЋ┤Тћ╣у╝ќтЈи**: `P2_REMEDIATION_20260402`

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -88,6 +88,13 @@ layer: "Layer 2 (Alpha因子层)"
 #### **Feast (Uber开? - 因子中间?*
 ```python
 # 定制化量化数据模?
+
+---
+
+## 📋 概述
+
+本文档定义了FACTOR BACKTEST INTEGRATION的核心功能和技术实现。
+
 from feast import FeatureStore, Entity, FeatureView, ValueType
 from datetime import timedelta
 

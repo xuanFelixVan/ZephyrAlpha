@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIMERISKHEDGEENGINEBLU_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 7 (风险管理层)"---
-
+layer: "Layer 7 (风险管理层)"
 ﻿# 文档职责说明
 
 > **索引**: `RISK_HEDGE_BLUEPRINT_001`
@@ -43,7 +42,6 @@ layer: "Layer 7 (风险管理层)"---
 2. **风险预警机制**: 风险超限时自动预?3. **对冲交易生成**: 自动生成对冲交易建议
 4. **动态对冲调?*: 根据市场变化动态调整对冲比?5. **对冲效果评估**: 评估对冲效果，持续优?
 ---
-
 ## 2. 架构设计
 
 ### 2.1 系统架构?

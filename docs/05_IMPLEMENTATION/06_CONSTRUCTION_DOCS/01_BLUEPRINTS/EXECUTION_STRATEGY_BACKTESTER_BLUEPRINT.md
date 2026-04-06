@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
-layer: "Layer 3 (策略层)"
+layer: "Layer 8 (执行层)"
 ---
 ﻿# 执行策略回测器蓝图
 

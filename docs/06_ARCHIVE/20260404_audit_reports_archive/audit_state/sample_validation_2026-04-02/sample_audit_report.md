@@ -5,11 +5,15 @@ compliance_level: хИЭхзЛцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: хоЮцЦ╜ш┤Яш┤г?
+responsibility:
+  - 因子计算
+  - 机器学习
+  - 系统架构
 version: 1.0.0
 module_id: IMP_SAMPLE_AUDIT_REPORT
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # хдзшзДцибхобшобцбЖцЮ╢ца╖цЬмщкМшпБцКе?
 
 > ц╕ЕщгОщЗПхМЦч│╗ч╗Я v5.3 хдзшзДцибцЦЗф╗╢ч│╗ч╗Яц╖▒х║жхобшобцбЖцЮ╢щкМ?

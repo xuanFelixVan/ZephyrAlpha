@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 组合优化
   - 数据源
 standard_type: 专业量化机构文档
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 多目标优化蓝图
 
 > **核心定位**: 多目标优化蓝图的核心功能实现
@@ -53,7 +52,6 @@ layer: "Layer 6 (组合优化层)"---
 | **预计工时** | 5-7天 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

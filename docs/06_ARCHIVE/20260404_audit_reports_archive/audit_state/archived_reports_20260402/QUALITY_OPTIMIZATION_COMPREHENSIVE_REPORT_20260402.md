@@ -5,11 +5,15 @@ compliance_level: тѕЮтДІТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: У«ЙУ«АжўХТ«х
 owner: т«ъТќйУ┤ЪУ┤БС║?
+responsibility:
+  - 因子计算
+  - 数据源
+  - 文档治理
 version: 1.0.0
 module_id: IMP_QUALITY_OPTIMIZATION
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ТќЄТАБУ┤ежЄЈС╝ўтїќу╗╝тљѕТіЦтЉі
 
 **ућЪТѕљТЌХжЌ┤**: 2026-04-02

@@ -5,9 +5,13 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: µצחµíúµ₧╢µ₧הσ╕?standard_type: τ¢«σ╜ץµיבσ╣│σלצµצ╣µí?applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/
+responsibility:
+  - 交易执行
+  - 数据源
+  - 机器学习
 compliance_level: Σ╕ףΣ╕תµáחσחז
-parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md
----
+parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md---
+
 
 # τ¢«σ╜ץµיבσ╣│σלצµצ╣µí?
 > **µצ╣µíטτ╝צσן╖**: FLATTEN_001

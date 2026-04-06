@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_CATALOG_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 1 (数据层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 数据目录/元数据管理平台蓝图
 
 > **核心定位**: 数据目录/元数据管理平台蓝图的核心功能实现
@@ -53,7 +52,6 @@ layer: "Layer 1 (数据层)"---
 | **血缘可视化** | 支持 | 列级血缘关系可视化 |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

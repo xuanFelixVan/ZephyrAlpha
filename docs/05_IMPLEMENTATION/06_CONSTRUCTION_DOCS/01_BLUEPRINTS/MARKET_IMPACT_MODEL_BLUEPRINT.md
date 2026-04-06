@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 5 (执行层)"---
-
+layer: "Layer 5 (交易成本层)"
 ﻿# 模块概述
 
 > **索引**: `MARKET_IMPACT_BLUEPRINT_001`
@@ -19,7 +18,6 @@ layer: "Layer 5 (执行层)"---
 > **核心定位**: 预测和控制交易行为对市场价格的影响，优化执行策略，实现文艺复兴模式的市场冲击控制能力
 
 ---
-
 ## 核心定位
 
 市场冲击模型，负责预测交易对市场价格的影响，优化交易规模和时机选择

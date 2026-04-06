@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 3 (策略层)"---
-
+layer: "Layer 3 (策略层)"
 ﻿# 策略组合优化蓝图
 
 > **核心定位**: 策略组合优化蓝图的核心功能实现
@@ -71,7 +70,6 @@ layer: "Layer 3 (策略层)"---
 2. 再实现 MULTI_STRATEGY_HIERARCHICAL_SYSTEM (160h) - 构建完整的分层管理系统
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

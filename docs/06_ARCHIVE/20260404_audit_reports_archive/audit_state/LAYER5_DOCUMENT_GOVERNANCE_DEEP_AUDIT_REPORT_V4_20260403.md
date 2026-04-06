@@ -6,6 +6,10 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 auditor: Audit Sentinel
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК
+responsibility:
+  - 市场状态识别
+  - 机器学习
+  - 文档治理
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 applicable_scope: Layer 5чнЦчХецЙзшбМх▒ВхЕич│╗ч╗ЯцЦЗцбг
 parent_document: ../AUDIT_STANDARDS_v5.1.md
@@ -16,8 +20,8 @@ implementation_status: х╖▓хоМцИ?---
 > **хобшобч╝ЦхП╖**: `LAYER5_DEEP_AUDIT_V4_001`
 > **хобшобцЧецЬЯ**: 2026-04-03
 > **хобшобшМГхЫ┤**: Layer 5чнЦчХецЙзшбМх▒ВхЕищГицЦЗцб?> **хобшобцаЗхЗЖ**: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДф║ФхдзхОЯхИЩ + ф╕Йх▒ВхобшобцаЗхЗЖ v5.1
-
 ---
+
 
 ## ЁЯУЛ ф╕АуАБхобшобцжВшж?
 ### 1.1 хобшобчЫоцаЗ

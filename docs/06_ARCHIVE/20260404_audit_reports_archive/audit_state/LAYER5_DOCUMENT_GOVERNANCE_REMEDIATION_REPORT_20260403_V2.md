@@ -5,9 +5,13 @@ status: Completed
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ждќтИГТіђТю»У»ёт«Ат«ў
+responsibility:
+  - 市场状态识别
+  - 绩效分析
+  - 系统架构
 standard_type: СИЊСИџТќЄТАБТ▓╗уљєТЋ┤Тћ╣ТіЦтЉі
-applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљ?compliance_level: СИЊСИџТаЄтЄє
----
+applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљ?compliance_level: СИЊСИџТаЄтЄє---
+
 
 # Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТЋ┤Тћ╣ТіЦтЉ?V2
 

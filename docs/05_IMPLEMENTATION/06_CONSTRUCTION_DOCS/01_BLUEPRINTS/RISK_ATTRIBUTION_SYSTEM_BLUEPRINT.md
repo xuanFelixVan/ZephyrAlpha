@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -10,15 +10,13 @@ responsibility:
   - 风险预算
   - 因子计算
 standard_type: 专业量化机构文档
-layer: "Layer 7 (风控层)"---
-
+layer: "Layer 7 (风险管理层)"
 ﻿> **索引**: `RISK_ATTRIBUTION_001`
 > **开发时?*: 80h（约2周）
 > **核心定位**: 多维度风险分解与归因分析，识别风险驱动因?> **对标机构**: Two Sigma
 > **个人开发可?*: ⭐⭐⭐⭐ 完全可行
 > **AI维护难度**: ?
 ---
-
 ## 核心定位
 
 风险归因系统，负责分解投资组合风险来源，识别主要风险因子
@@ -536,6 +534,13 @@ class AttributionReportGenerator:
         """生成报告内容"""
         content = f"""
 # Risk Attribution Report
+
+---
+
+## 📋 概述
+
+本文档定义了RISK ATTRIBUTION SYSTEM的核心功能和技术实现。
+
 
 > **核心定位**: Risk Attribution Report的核心功能实现
 

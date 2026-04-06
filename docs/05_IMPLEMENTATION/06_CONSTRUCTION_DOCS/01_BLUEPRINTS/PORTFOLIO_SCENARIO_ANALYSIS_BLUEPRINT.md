@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIOSCENARIOANALYSISBL_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 组合情景分析模块蓝图
 
 > **核心定位**: 组合情景分析模块蓝图的核心功能实现
@@ -154,7 +153,6 @@ class ScenarioAnalyzer:
 | **流动性枯竭** | 假设情景 | - | 流动性冲击 |
 
 ---
-
 ## 3. 接口定义
 
 ```python

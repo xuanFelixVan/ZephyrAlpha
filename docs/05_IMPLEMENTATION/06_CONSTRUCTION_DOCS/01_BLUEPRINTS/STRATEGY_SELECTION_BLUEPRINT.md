@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_SELECTION_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -868,6 +868,13 @@ class AIStrategyRecommender:
 
 ```yaml
 # config/strategy_selection.yaml
+
+---
+
+## 📋 概述
+
+本文档定义了STRATEGY SELECTION的核心功能和技术实现。
+
 strategy_selection:
   # 用户偏好配置
   user_preferences:

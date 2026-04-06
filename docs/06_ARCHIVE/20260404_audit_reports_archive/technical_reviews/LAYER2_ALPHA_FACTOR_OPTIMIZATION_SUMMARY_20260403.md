@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ждќтИГТќЄТАБТъХТъё?standard_type: СИЊСИџжЄЈтїќТю║ТъёТќЄТАБС╝ўтїќТіЦтЉі
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 文档治理
 applicable_scope: AlphaтЏатГљт▒ѓТќЄТАБТ▓╗?compliance_level: СИЊСИџТаЄтЄє
 parent_document: LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md
 implementation_status: ти▓т«ї?---
@@ -14,8 +18,8 @@ implementation_status: ти▓т«ї?---
 > **С╝ўтїќТЌЦТюЪ**: 2026-04-03
 > **С╝ўтїќУїЃтЏ┤**: docs/02_FACTOR_LIBRARY/
 > **С╝ўтїќСЙЮТЇ«**: [LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md](./LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md)
-> **С╝ўтїќуЏ«ТаЄ**: ТХѕжЎцжЄЇтцЇтєЁт«╣сђЂТўјуА«УЂїУ┤БУЙ╣уЋїсђЂС╝ўтїќТќЄТАБу╗Њ?
----
+> **С╝ўтїќуЏ«ТаЄ**: ТХѕжЎцжЄЇтцЇтєЁт«╣сђЂТўјуА«УЂїУ┤БУЙ╣уЋїсђЂС╝ўтїќТќЄТАБу╗Њ?---
+
 
 ## 1. ТЅДУАїТЉўУдЂ
 

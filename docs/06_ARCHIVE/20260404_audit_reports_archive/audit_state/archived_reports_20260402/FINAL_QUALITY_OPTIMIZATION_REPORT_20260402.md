@@ -5,11 +5,15 @@ compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲ﻛﭦ?
+responsibility:
+  - 因子计算
+  - 文档治理
+  - 审计系统
 version: 1.0.0
 module_id: IMP_FINAL_QUALITY_OPTIMI
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 # ﮔﮔ۰۲ﻟﺑ۷ﻠﮔﻝﭨ­ﻛﺙﮒﮔﻝﭨﮔ۴ﮒ?
 
 **ﻝﮔﮔﭘﻠﺑ**: 2026-04-02 10:56

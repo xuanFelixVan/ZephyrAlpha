@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COINTEGRATION_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 2 (Alpha因子层)"---
-
+layer: "Layer 2 (Alpha因子层)"
 ﻿# 协整分析蓝图
 
 > **核心定位**: 协整分析蓝图的核心功能实现
@@ -54,7 +53,6 @@ layer: "Layer 2 (Alpha因子层)"---
 | **预计工时** | 2-3天 |
 
 ---
-
 ## 2. 技术实现
 
 ### 2.1 核心API

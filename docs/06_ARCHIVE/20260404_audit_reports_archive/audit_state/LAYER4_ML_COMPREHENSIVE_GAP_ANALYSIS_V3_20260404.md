@@ -5,8 +5,12 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?standard_type: ц╖▒х║жх╖ош╖ЭхИЖцЮРцКехСК
-applicable_scope: Layer 4 цЬ║хЩихнжф╣ах▒?compliance_level: щб╢ч║зф╕Уф╕ЪцаЗхЗЖ
----
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 特征工程
+applicable_scope: Layer 4 цЬ║хЩихнжф╣ах▒?compliance_level: щб╢ч║зф╕Уф╕ЪцаЗхЗЖ---
+
 
 # Layer 4 цЬ║хЩихнжф╣ах▒Вц╖▒х║жх╖ош╖ЭхИЖцЮРцКехС?v3.0
 

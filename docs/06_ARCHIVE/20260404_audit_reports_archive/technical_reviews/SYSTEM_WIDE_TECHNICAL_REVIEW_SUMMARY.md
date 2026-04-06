@@ -3,14 +3,18 @@ report_type: ч│╗ч╗Яч║зцКАцЬпшпДхобцА╗ч╗УцКе�
 version: 1.0.0
 created_date: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
+responsibility:
+  - 因子计算
+  - 数据源
+  - 文档治理
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпшпД?
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 applicable_scope: ч│╗ч╗ЯхоЮцЦ╜
 parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 module_id: IMP_SYSTEM_WIDE_TECHNICA
-last_updated: 2026-04-02
----
+last_updated: 2026-04-02---
+
 
 # ц╕ЕщгОщЗПхМЦч│╗ч╗ЯхЕицибхЭЧцКАцЬпшпДхобцА╗ч╗УцКехСК
 

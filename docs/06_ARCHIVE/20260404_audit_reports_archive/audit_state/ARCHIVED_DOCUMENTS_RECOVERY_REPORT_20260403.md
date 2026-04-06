@@ -6,6 +6,10 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 auditor: Audit Sentinel
 standard_type: ϊ╕Υϊ╕γόΨΘόκμόΒλίνΞϋψΕϊ╝░όΛξίΣΛ
+responsibility:
+  - 数据源
+  - 特征工程
+  - 机器学习
 compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 applicable_scope: Layer 5ύφΨύΧξόΚπϋκΝί▒Γί╜ΤόκμόΨΘόκ?parent_document: ../AUDIT_STANDARDS_v5.1.md
 implementation_status: ί╖▓ίχΝόΙ?---
@@ -16,8 +20,8 @@ implementation_status: ί╖▓ίχΝόΙ?---
 > **ϋψΕϊ╝░όΩξόεθ**: 2026-04-03
 > **ϋψΕϊ╝░ϋΝΔίδ┤**: docs/06_ARCHIVE/duplicate_documents/20260403_blueprint_spec_audit/
 > **ϋψΕϊ╝░όιΘίΘΗ**: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΨΘόκμό▓╗ύΡΗίΟθίΙβ
-
 ---
+
 
 ## ΏθΥΜ ϊ╕ΑήΑΒϋψΕϊ╝░όοΓϋο?
 ### 1.1 ϋψΕϊ╝░ύδχόιΘ

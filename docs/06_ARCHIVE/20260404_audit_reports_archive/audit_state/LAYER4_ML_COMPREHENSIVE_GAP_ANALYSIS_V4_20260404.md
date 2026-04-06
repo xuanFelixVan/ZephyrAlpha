@@ -5,8 +5,12 @@ status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?layer: Layer 4 (цЬ║хЩихнжф╣ах▒?
-standard_type: х╖ош╖ЭхИЖцЮРцКехСК
----
+responsibility:
+  - 因子计算
+  - 特征工程
+  - 机器学习
+standard_type: х╖ош╖ЭхИЖцЮРцКехСК---
+
 
 # Layer 4 цЬ║хЩихнжф╣ах▒ВхЕищЭвх╖ош╖ЭхИЖцЮРцКехС?v4.0
 

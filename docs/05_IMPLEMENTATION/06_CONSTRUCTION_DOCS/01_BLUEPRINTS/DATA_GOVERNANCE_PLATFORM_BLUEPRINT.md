@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_GOVERNANCE_PLATFORM_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 1 (数据层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 数据治理平台蓝图
 
 > **核心定位**: 数据治理平台蓝图的核心功能实现
@@ -53,7 +52,6 @@ layer: "Layer 1 (数据层)"---
 | **治理效率提升** | ≥80% | 治理效率提升80% |
 
 ---
-
 ## 📚 相关文档
 
 ### 上游依赖

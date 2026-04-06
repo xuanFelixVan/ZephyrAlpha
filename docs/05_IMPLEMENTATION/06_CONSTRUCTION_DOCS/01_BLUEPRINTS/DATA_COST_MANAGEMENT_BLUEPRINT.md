@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATACOSTMANAGEMENTBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 1 (数据源层)"---
-
+layer: "Layer 1 (数据源层)"
 ﻿# 数据成本管理蓝图
 
 > **核心定位**: 数据成本管理蓝图的核心功能实现
@@ -321,7 +320,6 @@ class CostOptimizationAdvisor:
 ```
 
 ---
-
 ## 四、接口设计
 
 ### 4.1 RESTful API

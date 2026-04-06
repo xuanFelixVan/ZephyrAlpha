@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: хобшобч│╗ч╗Я
+responsibility:
+  - 因子计算
+  - 数据源
+  - 特征工程
 standard_type: цЦЗцбгц▓╗чРЖф┐охдНхоМцИРцКехСК
 applicable_scope: docs/чЫох╜ХцЦЗцбгц▓╗чРЖф┐охдН
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
@@ -13,8 +17,8 @@ audit_type: ф┐охдНхоМцИРцКехСК
 fix_date: 2026-04-03
 fix_scope: D:\ZephyrAlpha\docs
 total_files_fixed: 16
-fix_duration: 15хИЖщТЯ
----
+fix_duration: 15хИЖщТЯ---
+
 
 # цЦЗцбгц▓╗чРЖхобшобф┐охдНхоМцИРцКехСК
 

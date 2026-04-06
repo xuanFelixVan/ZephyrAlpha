@@ -5,6 +5,10 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ύ│╗ύ╗θόη╢όηΕ?standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΚπϋκΝόΛξίΣΛ
+responsibility:
+  - 市场状态识别
+  - 因子计算
+  - 回测系统
 applicable_scope: ίΖρύ│╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../DEEP_SYSTEM_AUDIT_REPORT_ROUND2_20260403.md
 implementation_status: ί╖▓ίχΝ?---
@@ -15,8 +19,8 @@ implementation_status: ί╖▓ίχΝ?---
 > **όΚπϋκΝ?*: ύ│╗ύ╗θόη╢όηΕ? 
 > **ϊ╗╗ίΛκόζξό║Ρ**: ό╖▒ί║ού│╗ύ╗θίχκϋχκόΛξίΣΛΎ╝Ιύυυϊ║Νϋ╜χ? 
 > **όΚπϋκΝύΛ?*: ?ίΖρώΔρίχΝόΙΡ
-
 ---
+
 
 ## ΏθΥΜ όΚπϋκΝόΣαϋοΒ
 

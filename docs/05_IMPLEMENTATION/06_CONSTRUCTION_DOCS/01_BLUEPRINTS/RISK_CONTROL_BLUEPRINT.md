@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISKCONTROLBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-layer: "Layer 7 (风险管理层)"---
-
+layer: "Layer 6 (组合优化层)"
 ﻿# 📋 执行摘要
 
 > **版本**: v1.0
@@ -34,7 +33,6 @@ layer: "Layer 7 (风险管理层)"---
 | **风险报告** | 生成风险报告 | 风险报告 |
 
 ---
-
 ## 🏗️ 架构设计
 
 ### 风险控制维度
