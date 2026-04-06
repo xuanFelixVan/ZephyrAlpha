@@ -13,8 +13,7 @@ dependencies:
 - Prefect
 - Dagster (可选)
 - Apache Airflow (可选)
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据编排增强功能与工作流管理
 ---
 ---
 

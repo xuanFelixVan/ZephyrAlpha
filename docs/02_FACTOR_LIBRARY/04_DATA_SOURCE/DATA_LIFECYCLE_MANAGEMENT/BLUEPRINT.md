@@ -13,8 +13,7 @@ dependencies:
 - Apache Iceberg
 - Delta Lake
 - Apache Parquet
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据生命周期管理与归档策略
 ---
 ---
 

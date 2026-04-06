@@ -5,8 +5,7 @@ status: Blueprint
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 实时数据流处理架构与Kafka集成
 standard_type: 模块蓝图
 applicable_scope: 实时数据流平台
 compliance_level: 专业标准

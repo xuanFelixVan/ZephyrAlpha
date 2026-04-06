@@ -5,8 +5,7 @@ status: Blueprint
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据契约定义与服务级别协议
 standard_type: 模块蓝图
 applicable_scope: 数据契约管理系统
 compliance_level: 专业标准

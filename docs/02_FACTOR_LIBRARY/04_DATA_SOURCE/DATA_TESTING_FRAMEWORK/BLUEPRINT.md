@@ -13,8 +13,7 @@ dependencies:
 - Great Expectations
 - dbt
 - pytest
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据测试框架设计与测试用例管理
 ---
 ---
 

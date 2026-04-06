@@ -13,8 +13,7 @@ dependencies:
 - PyOD
 - PyTorch
 - Scikit-learn
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据异常检测算法与告警机制
 ---
 ---
 

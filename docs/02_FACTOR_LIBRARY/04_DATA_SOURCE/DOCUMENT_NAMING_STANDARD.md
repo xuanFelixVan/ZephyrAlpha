@@ -5,8 +5,7 @@ status: Active
 created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席文档架构师
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 文档命名规范与标准化指南
 standard_type: 文档治理标准
 applicable_scope: 数据源层文档命名
 compliance_level: 专业标准

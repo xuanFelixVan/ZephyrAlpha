@@ -5,8 +5,7 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-06
 owner: 首席文档架构师
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: A股历史数据处理流程设计与实施
 layer: Layer 2 (Alpha因子层)
 standard_type: 数据处理文档
 applicable_scope: A股历史数据处理

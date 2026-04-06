@@ -13,8 +13,7 @@ dependencies:
 - Soda Core
 - Prometheus
 - Grafana
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据可观测性架构与监控指标
 ---
 ---
 

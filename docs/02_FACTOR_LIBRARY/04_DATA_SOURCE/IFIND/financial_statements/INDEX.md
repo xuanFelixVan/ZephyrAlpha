@@ -9,8 +9,7 @@ standard_type: 目录索引文档
 applicable_scope: iFind财务数据
 compliance_level: 专业标准
 parent_document: ../../INDEX.md
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 财务报表数据模块导航
 ---
 ---
 

@@ -13,8 +13,7 @@ dependencies:
 - ydata-profiling
 - pandas
 - sweetviz
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据分析与统计特征提取
 ---
 ---
 

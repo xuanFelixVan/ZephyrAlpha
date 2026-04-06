@@ -15,8 +15,7 @@ timeframe_support:
 - 宏观配置层
 - 中观策略层
 - 微观执行层
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: QMT交易接口对接与行情数据获取
 ---
 ---
 

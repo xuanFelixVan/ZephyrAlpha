@@ -10,8 +10,7 @@ applicable_scope: 数据质量指标定义
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 implementation_status: 已完成
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据质量指标定义与监控
 ---
 ---
 

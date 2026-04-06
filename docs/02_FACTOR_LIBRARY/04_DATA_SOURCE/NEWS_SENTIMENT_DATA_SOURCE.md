@@ -10,8 +10,7 @@ applicable_scope: 因子研究与管理
 compliance_level: 研究标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 新闻情感数据源与文本分析
 ---
 ---
 

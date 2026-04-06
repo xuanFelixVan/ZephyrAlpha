@@ -9,8 +9,7 @@ standard_type: 架构分析报告
 applicable_scope: 数据源层架构完整性评估
 compliance_level: 专业标准
 parent_document: ./INDEX.md
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据源层架构差距分析与改进建议
 ---
 ---
 

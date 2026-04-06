@@ -13,8 +13,7 @@ dependencies:
 - Debezium
 - Kafka
 - ClickHouse
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据同步复制策略与一致性保证
 ---
 ---
 

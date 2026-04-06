@@ -10,8 +10,7 @@ applicable_scope: 数据清洗规则配置
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 implementation_status: 已完成
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据清洗规则库与异常数据处理
 ---
 ---
 

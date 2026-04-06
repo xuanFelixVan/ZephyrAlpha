@@ -11,8 +11,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据管道架构设计与编排流程
 ---
 ---
 

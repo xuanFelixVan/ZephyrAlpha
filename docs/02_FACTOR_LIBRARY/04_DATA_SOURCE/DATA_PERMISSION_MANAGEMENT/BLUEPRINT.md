@@ -13,8 +13,7 @@ dependencies:
 - FastAPI
 - Redis
 - SQLAlchemy
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据权限管理策略与访问控制
 ---
 ---
 

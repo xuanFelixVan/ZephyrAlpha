@@ -13,8 +13,7 @@ dependencies:
 - OpenLineage
 - Marquez
 - Prefect
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据血缘追踪与数据流向分析
 ---
 ---
 

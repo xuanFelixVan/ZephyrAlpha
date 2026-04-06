@@ -13,8 +13,7 @@ dependencies:
 - Parquet
 - ZSTD
 - Delta Lake
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据压缩归档策略与存储优化
 ---
 ---
 

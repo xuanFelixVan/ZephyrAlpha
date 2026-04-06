@@ -13,8 +13,7 @@ dependencies:
 - DataHub
 - OpenLineage
 - Docker
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据目录管理与元数据组织
 ---
 ---
 

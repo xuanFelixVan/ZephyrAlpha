@@ -5,8 +5,7 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-05
 owner: 首席文档架构师
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 任务调度器设计与调度策略
 standard_type: 数据处理文档
 applicable_scope: 数据调度系统
 compliance_level: 专业标准

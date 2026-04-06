@@ -13,8 +13,7 @@ dependencies:
 - Great Expectations
 - Prefect
 - Prometheus
-responsibility:
-  - 扩展功能、辅助模块
+responsibility: 数据监控增强功能与可视化
 ---
 ---
 
