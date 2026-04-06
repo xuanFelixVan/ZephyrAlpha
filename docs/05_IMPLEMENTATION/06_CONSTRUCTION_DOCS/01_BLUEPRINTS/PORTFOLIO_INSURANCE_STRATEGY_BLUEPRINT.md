@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.1
 spec_version: 1.0
@@ -99,3 +99,34 @@ def cppi_adjust(portfolio_value: float,
 ---
 
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Active
+---
+
+## 4. 文档治理
+
+### 4.1 System_Manifest.md索引
+
+```markdown
+#### Layer 6: 组合优化层
+##### 6.001. Portfolio Insurance Strategy
+- **模块ID**: PORTFOLIO_INSURANCE_STRATEGY_001
+- **蓝图文档**: [PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 全系统
+- **状态**: Active
+```
+
+### 4.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Portfolio Insurance Strategy** | 全系统 | **核心模块** |
+
+### 4.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.1
 spec_version: 1.0
@@ -627,3 +627,34 @@ def test_integration_with_risk_parity():
 ---
 
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 技术规格书编写
+---
+
+## 13. 文档治理
+
+### 13.1 System_Manifest.md索引
+
+```markdown
+#### Layer 6: 组合优化层
+##### 6.001. Dynamic Correlation Modeling
+- **模块ID**: DYNAMIC_CORRELATION_MODELING_001
+- **蓝图文档**: [DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 全系统
+- **状态**: Active
+```
+
+### 13.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Dynamic Correlation Modeling** | 全系统 | **核心模块** |
+
+### 13.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

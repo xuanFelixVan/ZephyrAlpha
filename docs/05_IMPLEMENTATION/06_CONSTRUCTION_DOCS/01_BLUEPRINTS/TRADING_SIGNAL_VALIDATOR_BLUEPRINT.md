@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
 status: Active
@@ -556,6 +556,37 @@ class ValidationResult:
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 5: 策略执行层
+##### 6.001. Trading Signal Validator
+- **模块ID**: TRADING_SIGNAL_VALIDATOR_001
+- **蓝图文档**: [TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: Layer 5 - 策略执行层
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Trading Signal Validator** | Layer 5 - 策略执行层 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
 
 ---
 
