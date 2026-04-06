@@ -54,6 +54,52 @@ priority: P0
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标输入 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供组合元数据管理 |
+| [STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](./STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | STRATEGY_PORTFOLIO_OPTIMIZATION_001 | 强依赖 | 提供组合优化需求 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md](./MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md) | MULTI_OBJECTIVE_OPTIMIZATION_001 | 强依赖 | 多目标优化扩展 |
+| [STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | 强依赖 | 战略资产配置 |
+| [PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md](./PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md) | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 | 强依赖 | 组合约束管理 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
+| **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
+| **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
+| **CVXPY** | 1.5+ | 凸优化 | [官方文档](https://www.cvxpy.org/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[组合优化引擎]
+    C[数据目录] --> B
+    D[策略组合优化] --> B
+    
+    B --> E[多目标优化]
+    B --> F[战略资产配置]
+    B --> G[组合约束管理]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style D fill:#45b7d1
+```
+
+---
+
 ## 2. 技术实现
 
 ### 2.1 核心API

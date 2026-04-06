@@ -69,6 +69,10 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
+| [人机交互层缺失模块分析](./HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md) | 人机交互层缺失模块分析与补充 | ⭐⭐⭐⭐⭐ |
+| [决策仪表板蓝图](./DECISION_DASHBOARD_BLUEPRINT.md) | 决策入口整合、AI建议展示、审批流程 | ⭐⭐⭐⭐⭐ |
+| [策略配置界面蓝图](./STRATEGY_CONFIGURATION_INTERFACE_BLUEPRINT.md) | 策略参数配置、版本管理、回测验证 | ⭐⭐⭐⭐⭐ |
+| [审计日志查看器蓝图](./AUDIT_LOG_VIEWER_BLUEPRINT.md) | 决策审计追踪、日志查询分析 | ⭐⭐⭐⭐⭐ |
 | [人机交互层技术蓝图](./HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md) | 人机交互层技术实现（已归档） | ⭐⭐⭐⭐ |
 | [移动端推送通知蓝图](./MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md) | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
 | [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |
