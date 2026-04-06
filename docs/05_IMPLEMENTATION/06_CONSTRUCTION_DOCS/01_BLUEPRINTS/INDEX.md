@@ -58,16 +58,16 @@ parent_document: ../INDEX.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据生命周期管理蓝图 | DATA_LIFECYCLE_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) |
-| 数据版本控制蓝图 | DATA_VERSION_CONTROL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_VERSION_CONTROL_BLUEPRINT.md) |
-| 数据成本管理蓝图 | DATA_COST_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_COST_MANAGEMENT_BLUEPRINT.md) |
+| 数据生命周期管理蓝图 | DATA_LIFECYCLE_MANAGEMENT_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据版本控制蓝图 | DATA_VERSION_CONTROL_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VERSION_CONTROL_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据成本管理蓝图 | DATA_COST_MANAGEMENT_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_COST_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
 
 ### 2.5 数据源与安全
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 数据源管理蓝图 | DATA_SOURCE_MANAGEMENT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) |
-| 数据安全合规蓝图 | DATA_SECURITY_COMPLIANCE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) |
+| 数据源管理蓝图 | DATA_SOURCE_MANAGEMENT_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SOURCE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
+| 数据安全合规蓝图 | DATA_SECURITY_COMPLIANCE_001 | v1.0.0 | Archived | 2026-04-06 | [已归档](../../06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SECURITY_COMPLIANCE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) ⚠️ |
 
 ### 2.6 高性能数据管道
 
