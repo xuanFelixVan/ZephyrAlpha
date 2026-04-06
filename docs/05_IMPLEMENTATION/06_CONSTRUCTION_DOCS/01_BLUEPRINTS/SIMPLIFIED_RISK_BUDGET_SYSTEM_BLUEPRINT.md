@@ -1,989 +1,265 @@
-???---
+---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
-spec_version: 1.0
 status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (×éºÏÓÅ»¯?? | ÒµÎñ¼Ü¹¹: Èı¼¶Ê±¼ä¿ò¼ÜÈÚºÏ¼Ü¹¹
-index: RISK_BUDGET_001
-estimated_hours: 60h
-review_status: Pending
-reviewer: Ê×Ï¯¼¼ÊõÆÀÉó¹Ù
-review_date: 2026-04-03
-owner: ×éºÏÓÅ»¯²ã¸ºÔğÈË
-standard_type: ×¨ÒµÁ¿»¯»ú¹¹À¶Í¼ÎÄµµ£¨¼ò»¯°æ??applicable_scope: È«Ïµ??compliance_level: ×¨Òµ±ê×¼
+last_updated: '2026-04-06'
+owner: ç»„åˆä¼˜åŒ–å±‚è´Ÿè´£äºº
+standard_type: ä¸“ä¸šé‡åŒ–æœºæ„è“å›¾
+applicable_scope: Layer 6 ç»„åˆä¼˜åŒ–å±‚
+compliance_level: ä¸“ä¸šæ ‡å‡†
 parent_document: ../INDEX.md
-implementation_status: Éè¼Æ½×¶Î
-personal_development: true
-ai_maintenance: true
+implementation_status: è“å›¾è®¾è®¡é˜¶æ®µ
+open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
+estimated_effort: 60h
+priority: P0
 simplified_version: true
 ---
 
-# ¼ò»¯°æ¶¯Ì¬·çÏÕÔ¤ËãÏµÍ³À¶??v1.0
+# ç®€åŒ–ç‰ˆåŠ¨æ€é£é™©é¢„ç®—ç³»ç»Ÿè“å›¾
 
-> Çå·çÁ¿»¯ÏµÍ³ v5.3 - ¼ò»¯°æ¶¯Ì¬·çÏÕÔ¤ËãÏµÍ³¼Ü¹¹Éè??> **Ë÷Òı**: `RISK_BUDGET_001`
-> **¿ª·¢Ê±??*: 60h£¨Ô¼1.5ÖÜ£©
-> **ºËĞÄ¶¨Î»**: µ¥²ã·çÏÕÔ¤Ëã + VaR¼à¿Ø£¬ÊµÏÖ·çÏÕÔ¤Ëã¶¯Ì¬·Ö??> **¸öÈË¿ª·¢¿ÉĞĞ??*: ????²¿·Ö¿ÉĞĞ£¨¼ò»¯°æ??> **AIÎ¬»¤ÄÑ¶È**: ??
----
+> æ¸…é£é‡åŒ–äº¤æ˜“ç³»ç»Ÿ v5.3 - ç®€åŒ–ç‰ˆåŠ¨æ€é£é™©é¢„ç®—ç³»ç»Ÿè¯¦ç»†è®¾è®¡
+> **ç´¢å¼•**: `SIMPLIFIED_RISK_BUDGET_SYSTEM_001`
+> **å¼€å‘å‘¨æœŸ**: 60hï¼ˆçº¦1.5å‘¨ï¼‰
+> **æ ¸å¿ƒå®šä½**: åŸºäºVaRçš„é£é™©é¢„ç®— + åŠ¨æ€é£é™©é¢„ç®—è°ƒæ•´ï¼Œå®ç°é£é™©é¢„ç®—åŠ¨æ€åŒ–
+> **å‚è€ƒå¼€æº**: PyPortfolioOpt, Riskfolio-Lib
 
-## 1. Ä£¿é¸ÅÊö
+## 1. æ¦‚è¿°
 
-### 1.1 ¼ò»¯Ëµ??
-**Ô­°æÉè¼Æ**£¨ÇÅË®ÊµÏÖ£©??- Èı²ã·çÏÕÔ¤ËãÌåÏµ£¨×éºÏ²ã ??²ßÂÔ????×Ê²ú²ã£©
-- »ùÓÚVaR/CVaRµÄ¶¯Ì¬·çÏÕ·Ö??- ÊµÊ±·çÏÕ¼à¿ØÓëÔÙÆ½ºâ»úÖÆ
-- ¿ª·¢Ê±¼ä£º100h
+### 1.1 æ¨¡å—å®šä½
 
-**¼ò»¯°æÉè¼Æ**£¨¸öÈË¿ª·¢£©??- ??**±£Áô**: µ¥²ã·çÏÕÔ¤Ëã£¨×éºÏ²ã??- ??**±£Áô**: VaR¼à¿ØÓëÔ¤??- ??**±£Áô**: ¶¯Ì¬·çÏÕÔ¤Ëãµ÷??- ??**·ÅÆú**: ¶à²ã´Î·çÏÕÔ¤Ëã£¨²ßÂÔ²ã¡¢×Ê²ú²ã??- ??**·ÅÆú**: ¸´ÔÓµÄ·çÏÕ´«µİ»ú??
-**¼ò»¯Àí??*??- ¸öÈË¿ª·¢×ÊÔ´ÓĞÏŞ£¬ÓÅÏÈÊµÏÖºËĞÄ¹¦ÄÜ
-- µ¥²ã·çÏÕÔ¤ËãÒÑÄÜÂú×ã»ù±¾·çÏÕ¿ØÖÆĞè??- ½µµÍÏµÍ³¸´ÔÓ¶È£¬ÌáÉı¿ÉÎ¬»¤??
-### 1.2 ÒµÎñ±³¾°Óë¼ÛÖµÖ÷??
-**ÒµÎñĞè??*??- µ±Ç°ÏµÍ³½öÓĞ¾²Ì¬·çÏÕÔ¼Êø£¬ÎŞ·¨¶¯Ì¬µ÷Õû·çÏÕÔ¤??- È±·¦·çÏÕÔ¤Ëã¼à¿Ø»úÖÆ£¬·çÏÕ¼¯ÖĞ¶È¹ı¸ß
-- ĞèÒªÊµÏÖ»ùÓÚVaRµÄ·çÏÕÔ¤Ëã¶¯Ì¬·Ö??
-**¼ÛÖµÖ÷??*??- ÊµÏÖµ¥²ã·çÏÕÔ¤Ëã¶¯Ì¬·Ö??- »ùÓÚVaRµÄ·çÏÕ¼à¿ØÓëÔ¤¾¯
-- ·çÏÕ¿ØÖÆ¾«Ï¸¶ÈÌá??0%
-- ½µµÍ¼«¶ËÊĞ³¡·çÏÕ¼¯ÖĞ??
-### 1.3 ¼¼Êõ¶¨Î»Óë¼Ü¹¹²ã¹é??
-**Layer¶¨Î»**: Layer 6 - ×éºÏÓÅ»¯²ã£¨·çÏÕ¹ÜÀí²ã£©
+**Layerå®šä½**: Layer 6 - ç»„åˆä¼˜åŒ–å±‚ï¼ˆé£é™©é¢„ç®—æ¨¡å—ï¼‰
 
-**Ä£¿éÀà±ğ**: ºËĞÄÄ£¿é£¨¼ò»¯°æ??
-**¼Ü¹¹½ÇÉ«**: 
-- ×÷Îª·çÏÕ¹ÜÀíµÄºËĞÄ×é¼ş£¬¶¯Ì¬·ÖÅä·çÏÕÔ¤??- ×÷Îª×éºÏÓÅ»¯µÄÊäÈë£¬Ìá¹©·çÏÕÔ¼Êø
-- ×÷Îª·çÏÕÔ¤¾¯ÏµÍ³£¬¼à¿Ø·çÏÕÊ¹ÓÃÇé??
-### 1.4 ºËĞÄ¹¦ÄÜÇåµ¥
+**æ ¸å¿ƒä»·å€¼**:
+- åŸºäºVaRçš„é£é™©é¢„ç®—åˆ†é…
+- åŠ¨æ€é£é™©é¢„ç®—è°ƒæ•´
+- é£é™©é¢„ç®—ä½¿ç”¨ç›‘æ§
+- é£é™©é¢„ç®—é¢„è­¦æœºåˆ¶
 
-1. **VaR¼ÆËãÓë¼à??*: ¼ÆËã×éºÏVaR£¬ÊµÊ±¼à¿Ø·çÏÕË®??2. **·çÏÕÔ¤Ëã·ÖÅä**: »ùÓÚ²ßÂÔ±íÏÖ·ÖÅä·çÏÕÔ¤Ëã
-3. **·çÏÕÊ¹ÓÃ¼à¿Ø**: ¼à¿Ø¸÷²ßÂÔµÄ·çÏÕÊ¹ÓÃÇé¿ö
-4. **·çÏÕÔ¤¾¯»úÖÆ**: µ±·çÏÕ³¬ÏŞÊ±·¢³öÔ¤¾¯
+**ä¸šåŠ¡ä»·å€¼**:
+- å®ç°é£é™©é¢„ç®—åŠ¨æ€åŒ–
+- åŸºäºVaRçš„é£é™©è´¡çŒ®é¢„ç®—
+- é£é™©é¢„ç®—ç²¾ç»†åŒ–ç®¡ç†
+- é£é™©é¢„ç®—ä½¿ç”¨ç‡æå‡
 
----
+### 1.2 ç‰ˆæœ¬ä¿¡æ¯
 
-## 2. ¼Ü¹¹Éè¼Æ
+| é¡¹ç›® | å†…å®¹ |
+|------|------|
+| **æ¨¡å—ID** | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 |
+| **ç‰ˆæœ¬** | v1.0.0 |
+| **å¼€æºä¾èµ–** | PyPortfolioOpt, Riskfolio-Lib |
+| **é¢„è®¡å·¥æ—¶** | 60hï¼ˆçº¦1.5å‘¨ï¼‰ |
 
-### 2.1 ÏµÍ³¼Ü¹¹??
-```
-©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤????               ¼ò»¯°æ¶¯Ì¬·çÏÕÔ¤ËãÏµÍ³¼Ü??                        ??©À©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤????                                                                ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             ÊäÈë??                                       ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤???? ???? ?? ??×éºÏ¼Û???? ??²ßÂÔ¼¨Ğ§ ?? ??ÊĞ³¡Êı¾İ ?? ??·çÏÕ²ÎÊı ???? ???? ?? ??         ?? ??Êı¾İ     ?? ??         ?? ??         ???? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤???? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             VaR¼ÆËã??                                    ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ?? ???? ?? ?? Value at Risk Calculation                         ?? ?? ???? ?? ?? - Historical VaR                                  ?? ?? ???? ?? ?? - Parametric VaR                                  ?? ?? ???? ?? ?? - Confidence Level: 95%, 99%                      ?? ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             ·çÏÕÔ¤Ëã·ÖÅä??                               ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ?? ???? ?? ?? Risk Budget Allocation                            ?? ?? ???? ?? ?? »ùÓÚ²ßÂÔÏÄÆÕ±ÈÂÊ¡¢²¨¶¯ÂÊ·ÖÅä·çÏÕÔ¤Ëã               ?? ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             ·çÏÕ¼à¿ØÓëÔ¤¾¯²ã                              ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ?? ??·çÏÕÊ¹ÓÃ ?? ??·çÏÕÔ¤¾¯ ?? ??·çÏÕ±¨¸æ ??              ?? ???? ?? ??¼à¿Ø     ?? ??         ?? ??         ??              ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ????                         ??                                     ???? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ???? ??             Êä³ö??                                       ?? ???? ?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©°©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ?? ??·çÏÕÔ¤Ëã ?? ??·çÏÕÔ¤¾¯ ?? ??·çÏÕ±¨¸æ ??              ?? ???? ?? ??·ÖÅä·½°¸ ?? ??ĞÅºÅ     ?? ??         ??              ?? ???? ?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??              ?? ???? ©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤?? ??©¸©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤??```
+### 1.3 ä¸å…¶ä»–é£é™©é¢„ç®—æ¨¡å—çš„å…³ç³»
 
-### 2.2 ºËĞÄÊı¾İ??
-```
-×éºÏ¼Û??+ ²ßÂÔ¼¨Ğ§Êı¾İ
-    ??¼ÆËã×éºÏVaR
-    ??·ÖÅä·çÏÕÔ¤Ëã£¨»ùÓÚ²ßÂÔ±íÏÖ£©
-    ??¼à¿Ø·çÏÕÊ¹ÓÃÇé¿ö
-    ??Éú³É·çÏÕÔ¤¾¯£¨Èç³¬ÏŞ??    ??Êä³ö·çÏÕ±¨¸æÓëµ÷Õû½¨??```
+æœ¬æ¨¡å—æ˜¯é£é™©é¢„ç®—ä½“ç³»ä¸­çš„**ç®€åŒ–ç‰ˆæœ¬**ï¼Œé€‚ç”¨äºä¸ªäººå¼€å‘å’Œå¿«é€Ÿå®ç°ï¼š
+
+| æ¨¡å— | æ ¸å¿ƒå®šä½ | é€‚ç”¨åœºæ™¯ | å…³ç³»è¯´æ˜ |
+|------|----------|----------|----------|
+| **RISK_CONTRIBUTION_ANALYSIS** | é£é™©è´¡çŒ®åˆ†æ | åŸºç¡€åˆ†æèƒ½åŠ› | æœ¬æ¨¡å—ä¾èµ–å…¶è®¡ç®—é£é™©è´¡çŒ® |
+| **SIMPLIFIED_RISK_BUDGET_SYSTEM** (æœ¬æ¨¡å—) | ç®€åŒ–é£é™©é¢„ç®— | ä¸ªäººå¼€å‘ã€å¿«é€Ÿå®ç° | ç®€åŒ–ç‰ˆæœ¬ï¼Œæ ¸å¿ƒåŠŸèƒ½å®Œæ•´ |
+| **HIERARCHICAL_RISK_BUDGET** | å±‚çº§é£é™©é¢„ç®— | å¤šå±‚çº§å¤æ‚ç»„åˆ | æœ¬æ¨¡å—çš„é«˜çº§æ‰©å±•ç‰ˆæœ¬ |
+
+**æ¨èå®æ–½è·¯å¾„**:
+1. å…ˆå®ç° RISK_CONTRIBUTION_ANALYSIS (2-3å¤©) - åŸºç¡€åˆ†æèƒ½åŠ›
+2. å†å®ç°æœ¬æ¨¡å— (60h) - ç®€åŒ–ç‰ˆæœ¬
+3. æœ€åå®ç° HIERARCHICAL_RISK_BUDGET (5-7å¤©) - é«˜çº§å¤šå±‚çº§
 
 ---
 
-## 3. ºËĞÄÄ£¿éÉè¼Æ
+## 2. æŠ€æœ¯å®ç°
 
-### 3.1 ¼ò»¯°æ·çÏÕÔ¤ËãÏµÍ³£¨SimplifiedRiskBudgetSystem??
+### 2.1 æ ¸å¿ƒAPI
+
 ```python
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+import numpy as np
+import pandas as pd
+
+@dataclass
+class RiskBudgetConfig:
+    """é£é™©é¢„ç®—é…ç½®"""
+    total_risk_budget: float  # æ€»é£é™©é¢„ç®—ï¼ˆVaRé™é¢ï¼‰
+    asset_budgets: Dict[str, float]  # å„èµ„äº§é£é™©é¢„ç®—
+    rebalance_threshold: float  # å†å¹³è¡¡é˜ˆå€¼
+    lookback_period: int  # å›æº¯æœŸ
+
 class SimplifiedRiskBudgetSystem:
-    """
-    ¼ò»¯°æ¶¯Ì¬·çÏÕÔ¤ËãÏµ??    
-    Ë÷Òı: RISK_BUDGET_001-M01
-    Ö°Ôğ: µ¥²ã·çÏÕÔ¤Ëã¶¯Ì¬·ÖÅäÓë¼à¿Ø
-    ÊäÈë: ×éºÏ¼ÛÖµ¡¢²ßÂÔ¼¨Ğ§Êı??    Êä³ö: ·çÏÕÔ¤Ëã·ÖÅä·½°¸¡¢·çÏÕÔ¤??    """
+    """ç®€åŒ–ç‰ˆåŠ¨æ€é£é™©é¢„ç®—ç³»ç»Ÿ"""
     
     def __init__(self, config: RiskBudgetConfig):
         self.config = config
-        self.var_calculator = VaRCalculator(config.var_config)
-        self.risk_allocator = RiskAllocator(config.allocation_config)
-        self.risk_monitor = RiskMonitor(config.monitor_config)
+        self.var_calculator = VaRCalculator()
+        self.budget_allocator = RiskBudgetAllocator()
         
-    def allocate_risk_budget(
+    def calculate_var_budget(
         self,
-        portfolio_value: float,
-        target_risk: float,
-        strategy_performances: Dict[str, StrategyPerformance]
-    ) -> RiskBudgetAllocation:
-        """
-        ·ÖÅä·çÏÕÔ¤Ëã
-        
-        Args:
-            portfolio_value: ×éºÏ×Ü¼Û??            target_risk: Ä¿±ê·çÏÕË®Æ½£¨Äê»¯²¨¶¯ÂÊ??            strategy_performances: ¸÷²ßÂÔ¼¨Ğ§Êı??            
-        Returns:
-            RiskBudgetAllocation: ·çÏÕÔ¤Ëã·ÖÅä·½°¸
-        """
-        # 1. ¼ÆËã×éºÏ²ã·çÏÕÔ¤??        portfolio_risk_budget = self._calculate_portfolio_risk_budget(
-            portfolio_value, target_risk
-        )
-        
-        # 2. ·ÖÅä²ßÂÔ·çÏÕÔ¤Ëã£¨¼ò»¯£º»ùÓÚÏÄÆÕ±ÈÂÊ??        strategy_risk_budgets = self.risk_allocator.allocate(
-            portfolio_risk_budget, strategy_performances
-        )
-        
-        # 3. ¼ÆËã·çÏÕÔ¤ËãÊ¹ÓÃÇé¿ö
-        risk_usage = self._calculate_risk_usage(
-            strategy_risk_budgets, strategy_performances
-        )
-        
-        return RiskBudgetAllocation(
-            portfolio_budget=portfolio_risk_budget,
-            strategy_budgets=strategy_risk_budgets,
-            risk_usage=risk_usage,
-            timestamp=datetime.now()
-        )
-    
-    def monitor_risk_usage(
-        self,
-        current_allocation: RiskBudgetAllocation,
-        current_positions: Dict[str, Position]
-    ) -> RiskUsageReport:
-        """
-        ¼à¿Ø·çÏÕÊ¹ÓÃÇé¿ö
-        
-        Args:
-            current_allocation: µ±Ç°·çÏÕÔ¤Ëã·ÖÅä
-            current_positions: µ±Ç°³Ö²Ö
-            
-        Returns:
-            RiskUsageReport: ·çÏÕÊ¹ÓÃ±¨¸æ
-        """
-        # 1. ¼ÆËã¸÷²ßÂÔµ±Ç°·ç??        current_risks = self._calculate_current_risks(current_positions)
-        
-        # 2. ¼ÆËã·çÏÕÊ¹ÓÃ??        risk_usage_rates = {
-            strategy: current_risks[strategy] / budget
-            for strategy, budget in current_allocation.strategy_budgets.items()
-        }
-        
-        # 3. Ê¶±ğ·çÏÕ³¬ÏŞ²ßÂÔ
-        exceeded_strategies = [
-            strategy for strategy, usage in risk_usage_rates.items()
-            if usage > self.config.risk_usage_threshold
-        ]
-        
-        # 4. Éú³ÉÔ¤¾¯
-        alerts = []
-        if exceeded_strategies:
-            alerts.append(RiskAlert(
-                level='WARNING',
-                message=f'·çÏÕ³¬ÏŞ²ßÂÔ: {", ".join(exceeded_strategies)}',
-                affected_strategies=exceeded_strategies
-            ))
-        
-        return RiskUsageReport(
-            current_risks=current_risks,
-            risk_usage_rates=risk_usage_rates,
-            exceeded_strategies=exceeded_strategies,
-            alerts=alerts,
-            timestamp=datetime.now()
-        )
-    
-    def calculate_var(
-        self,
-        portfolio: Portfolio,
-        confidence: float = 0.95,
-        method: str = 'historical'
-    ) -> VaRResult:
-        """
-        ¼ÆËãVaR
-        
-        Args:
-            portfolio: Í¶×Ê×éºÏ
-            confidence: ÖÃĞÅË®Æ½
-            method: ¼ÆËã·½·¨
-            
-        Returns:
-            VaRResult: VaR¼ÆËã½á¹û
-        """
-        return self.var_calculator.calculate(portfolio, confidence, method)
-    
-    def _calculate_portfolio_risk_budget(
-        self,
-        portfolio_value: float,
-        target_risk: float
-    ) -> float:
-        """¼ÆËã×éºÏ²ã·çÏÕÔ¤??""
-        # ·çÏÕÔ¤Ëã = ×éºÏ¼Û??¡Á Ä¿±ê²¨¶¯??        return portfolio_value * target_risk
-    
-    def _calculate_risk_usage(
-        self,
-        strategy_budgets: Dict[str, float],
-        strategy_performances: Dict[str, StrategyPerformance]
+        weights: np.ndarray,
+        returns: pd.DataFrame,
+        confidence_level: float = 0.95
     ) -> Dict[str, float]:
-        """¼ÆËã·çÏÕÊ¹ÓÃÇé¿ö"""
-        risk_usage = {}
-        for strategy, budget in strategy_budgets.items():
-            current_risk = strategy_performances[strategy].current_volatility
-            risk_usage[strategy] = current_risk / budget if budget > 0 else 0
+        """
+        è®¡ç®—åŸºäºVaRçš„é£é™©é¢„ç®—
         
-        return risk_usage
+        Args:
+            weights: ç»„åˆæƒé‡
+            returns: æ”¶ç›Šç‡æ•°æ®
+            confidence_level: ç½®ä¿¡æ°´å¹³
+            
+        Returns:
+            å„èµ„äº§çš„VaRé£é™©é¢„ç®—
+        """
+        pass
+    
+    def adjust_budget_dynamically(
+        self,
+        current_budget: Dict[str, float],
+        market_conditions: Dict[str, float]
+    ) -> Dict[str, float]:
+        """
+        åŠ¨æ€è°ƒæ•´é£é™©é¢„ç®—
+        
+        Args:
+            current_budget: å½“å‰é£é™©é¢„ç®—
+            market_conditions: å¸‚åœºæ¡ä»¶ï¼ˆæ³¢åŠ¨ç‡ã€ç›¸å…³æ€§ç­‰ï¼‰
+            
+        Returns:
+            è°ƒæ•´åçš„é£é™©é¢„ç®—
+        """
+        pass
+    
+    def monitor_budget_usage(
+        self,
+        weights: np.ndarray,
+        cov_matrix: np.ndarray
+    ) -> Dict[str, float]:
+        """
+        ç›‘æ§é£é™©é¢„ç®—ä½¿ç”¨æƒ…å†µ
+        
+        Returns:
+            å„èµ„äº§çš„é£é™©é¢„ç®—ä½¿ç”¨ç‡
+        """
+        pass
 ```
 
-### 3.2 VaR¼ÆËãÆ÷£¨VaRCalculator??
+### 2.2 VaRè®¡ç®—å™¨
+
 ```python
 class VaRCalculator:
-    """
-    VaR¼ÆËã??    
-    Ë÷Òı: RISK_BUDGET_001-M02
-    Ö°Ôğ: ¼ÆËãVaRºÍCVaR
-    """
+    """VaRè®¡ç®—å™¨"""
     
-    def __init__(self, config: VaRConfig):
-        self.config = config
-        
-    def calculate(
+    def historical_var(
         self,
-        portfolio: Portfolio,
-        confidence: float = 0.95,
-        method: str = 'historical'
-    ) -> VaRResult:
-        """
-        ¼ÆËãVaR
-        
-        Args:
-            portfolio: Í¶×Ê×éºÏ
-            confidence: ÖÃĞÅË®Æ½
-            method: ¼ÆËã·½·¨£¨historical/parametric??            
-        Returns:
-            VaRResult: VaR¼ÆËã½á¹û
-        """
-        if method == 'historical':
-            var = self._historical_var(portfolio, confidence)
-        elif method == 'parametric':
-            var = self._parametric_var(portfolio, confidence)
-        else:
-            raise ValueError(f"²»Ö§³ÖµÄ·½·¨: {method}")
-        
-        # ¼ÆËãCVaR
-        cvar = self._calculate_cvar(portfolio, confidence)
-        
-        return VaRResult(
-            var=var,
-            cvar=cvar,
-            confidence=confidence,
-            method=method,
-            timestamp=datetime.now()
-        )
-    
-    def _historical_var(
-        self,
-        portfolio: Portfolio,
-        confidence: float
+        returns: pd.DataFrame,
+        confidence_level: float = 0.95
     ) -> float:
-        """ÀúÊ·Ä£Äâ·¨VaR"""
-        returns = portfolio.get_historical_returns()
-        var = np.percentile(returns, (1 - confidence) * 100)
-        return abs(var)
+        """å†å²æ¨¡æ‹Ÿæ³•VaR"""
+        pass
     
-    def _parametric_var(
+    def parametric_var(
         self,
-        portfolio: Portfolio,
-        confidence: float
+        mu: np.ndarray,
+        sigma: np.ndarray,
+        confidence_level: float = 0.95
     ) -> float:
-        """²ÎÊı·¨VaR"""
-        mu = portfolio.expected_return
-        sigma = portfolio.volatility
-        var = mu - sigma * norm.ppf(confidence)
-        return abs(var)
+        """å‚æ•°æ³•VaR"""
+        pass
     
-    def _calculate_cvar(
+    def monte_carlo_var(
         self,
-        portfolio: Portfolio,
-        confidence: float
+        returns: pd.DataFrame,
+        n_simulations: int = 10000,
+        confidence_level: float = 0.95
     ) -> float:
-        """¼ÆËãCVaR"""
-        returns = portfolio.get_historical_returns()
-        var = self._historical_var(portfolio, confidence)
-        cvar = returns[returns <= -var].mean()
-        return abs(cvar)
-```
-
-### 3.3 ·çÏÕ·ÖÅäÆ÷£¨RiskAllocator??
-```python
-class RiskAllocator:
-    """
-    ·çÏÕ·ÖÅä??    
-    Ë÷Òı: RISK_BUDGET_001-M03
-    Ö°Ôğ: »ùÓÚ²ßÂÔ±íÏÖ·ÖÅä·çÏÕÔ¤Ëã
-    """
-    
-    def __init__(self, config: AllocationConfig):
-        self.config = config
-        
-    def allocate(
-        self,
-        total_budget: float,
-        strategy_performances: Dict[str, StrategyPerformance]
-    ) -> Dict[str, float]:
-        """
-        ·ÖÅä·çÏÕÔ¤Ëã
-        
-        Args:
-            total_budget: ×Ü·çÏÕÔ¤??            strategy_performances: ¸÷²ßÂÔ¼¨Ğ§Êı??            
-        Returns:
-            Dict[str, float]: ¸÷²ßÂÔ·çÏÕÔ¤??        """
-        # ¼ò»¯·½·¨£º»ùÓÚÏÄÆÕ±ÈÂÊ·ÖÅä
-        sharpe_ratios = {
-            strategy: perf.sharpe_ratio
-            for strategy, perf in strategy_performances.items()
-        }
-        
-        # ¹éÒ»»¯ÏÄÆÕ±È??        total_sharpe = sum(max(sr, 0) for sr in sharpe_ratios.values())
-        
-        if total_sharpe == 0:
-            # Èç¹ûËùÓĞÏÄÆÕ±ÈÂÊ¶¼Îª¸º£¬Æ½¾ù·Ö??            n_strategies = len(strategy_performances)
-            return {s: total_budget / n_strategies for s in strategy_performances}
-        
-        # ·ÖÅä·çÏÕÔ¤Ëã
-        allocations = {}
-        for strategy, sharpe in sharpe_ratios.items():
-            if sharpe > 0:
-                allocations[strategy] = total_budget * (sharpe / total_sharpe)
-            else:
-                allocations[strategy] = 0  # ÏÄÆÕ±ÈÂÊÎª¸ºµÄ²ßÂÔ²»·ÖÅä·çÏÕÔ¤Ëã
-        
-        return allocations
-```
-
-### 3.4 ÅäÖÃÀà¶¨??
-```python
-@dataclass
-class RiskBudgetConfig:
-    """·çÏÕÔ¤ËãÏµÍ³ÅäÖÃ"""
-    var_config: VaRConfig
-    allocation_config: AllocationConfig
-    monitor_config: MonitorConfig
-    risk_usage_threshold: float = 0.9  # ·çÏÕÊ¹ÓÃÂÊãĞ??    rebalance_threshold: float = 0.2  # ÔÙÆ½ºâãĞ??    
-@dataclass
-class VaRConfig:
-    """VaR¼ÆËãÅäÖÃ"""
-    confidence_levels: List[float] = [0.95, 0.99]
-    default_method: str = 'historical'
-    lookback_period: int = 252  # »Ø¿´ÆÚ£¨Ìì£©
-    
-@dataclass
-class AllocationConfig:
-    """·çÏÕ·ÖÅäÅäÖÃ"""
-    allocation_method: str = 'sharpe_ratio'  # ·ÖÅä·½·¨
-    min_budget_ratio: float = 0.05  # ×îĞ¡Ô¤Ëã±È??    max_budget_ratio: float = 0.40  # ×î´óÔ¤Ëã±È??```
-
----
-
-## 4. Êı¾İÄ£ĞÍ¶¨Òå
-
-### 4.1 ÊäÈëÊı¾İÄ£ĞÍ
-
-```python
-@dataclass
-class StrategyPerformance:
-    """²ßÂÔ¼¨Ğ§Êı¾İ"""
-    strategy_id: str
-    returns: pd.Series
-    sharpe_ratio: float
-    volatility: float
-    max_drawdown: float
-    current_volatility: float  # µ±Ç°²¨¶¯??```
-
-### 4.2 Êä³öÊı¾İÄ£ĞÍ
-
-```python
-@dataclass
-class RiskBudgetAllocation:
-    """·çÏÕÔ¤Ëã·ÖÅä·½°¸"""
-    portfolio_budget: float
-    strategy_budgets: Dict[str, float]
-    risk_usage: Dict[str, float]
-    timestamp: datetime
-    
-@dataclass
-class RiskUsageReport:
-    """·çÏÕÊ¹ÓÃ±¨¸æ"""
-    current_risks: Dict[str, float]
-    risk_usage_rates: Dict[str, float]
-    exceeded_strategies: List[str]
-    alerts: List[RiskAlert]
-    timestamp: datetime
-    
-@dataclass
-class VaRResult:
-    """VaR¼ÆËã½á¹û"""
-    var: float
-    cvar: float
-    confidence: float
-    method: str
-    timestamp: datetime
+        """è’™ç‰¹å¡æ´›VaR"""
+        pass
 ```
 
 ---
 
-## 5. ¼¯³É·½°¸
-
-### 5.1 Óë×éºÏÓÅ»¯Æ÷¼¯³É
+## 3. æ¥å£å®šä¹‰
 
 ```python
-class PortfolioOptimizer:
-    """×éºÏÓÅ»¯Æ÷£¨¼¯³É·çÏÕÔ¤Ëã??""
+class SimplifiedRiskBudgetAPI:
+    """ç®€åŒ–ç‰ˆé£é™©é¢„ç®—API"""
     
-    def __init__(self, risk_budget_system: SimplifiedRiskBudgetSystem):
-        self.risk_budget_system = risk_budget_system
-        
-    def optimize_with_risk_budget(
+    @endpoint("/api/v1/risk_budget/calculate")
+    async def calculate_budget(
         self,
-        portfolio: Portfolio,
-        target_risk: float
-    ) -> OptimizationResult:
-        """·çÏÕÔ¤ËãÔ¼ÊøµÄ×éºÏÓÅ??""
-        # 1. ·ÖÅä·çÏÕÔ¤Ëã
-        budget_allocation = self.risk_budget_system.allocate_risk_budget(
-            portfolio.value, target_risk, portfolio.strategy_performances
-        )
+        weights: List[float],
+        returns: List[List[float]],
+        confidence_level: float = 0.95
+    ) -> BudgetResult:
+        """è®¡ç®—é£é™©é¢„ç®—"""
         
-        # 2. ÔÚ·çÏÕÔ¤ËãÔ¼ÊøÏÂÓÅ»¯
-        optimized_weights = self._optimize_under_budget_constraint(
-            budget_allocation
-        )
+    @endpoint("/api/v1/risk_budget/adjust")
+    async def adjust_budget(
+        self,
+        current_budget: Dict[str, float],
+        market_conditions: Dict[str, float]
+    ) -> AdjustResult:
+        """åŠ¨æ€è°ƒæ•´é£é™©é¢„ç®—"""
         
-        return OptimizationResult(
-            weights=optimized_weights,
-            risk_budget=budget_allocation
-        )
+    @endpoint("/api/v1/risk_budget/monitor")
+    async def monitor_usage(
+        self,
+        weights: List[float],
+        cov_matrix: List[List[float]]
+    ) -> MonitorResult:
+        """ç›‘æ§é£é™©é¢„ç®—ä½¿ç”¨"""
 ```
 
 ---
 
-## 6. ÊµÊ©Â·Ïß??
-### 6.1 ¿ª·¢½×¶Î£¨1.5ÖÜ£©
+## 4. å®æ–½è·¯å¾„
 
-**Week 1: ºËĞÄ¹¦ÄÜ¿ª??*
-- Day 1-2: VaR¼ÆËã??- Day 3-4: ·çÏÕ·ÖÅä??- Day 5: ·çÏÕ¼à¿ØÄ£¿é
-
-**Week 2: ¼¯³ÉÓë²â??*
-- Day 1-2: ÏµÍ³¼¯³É
-- Day 3: µ¥Ôª²âÊÔ
-- Day 4: ¼¯³É²âÊÔ
-- Day 5: ÎÄµµ±àĞ´
-
-### 6.2 Àï³Ì??
-| Àï³Ì??| Ê±¼ä | ½»¸¶??| ÑéÊÕ±ê×¼ |
-|--------|------|--------|----------|
-| **M1: VaR¼ÆËãÍê³É** | Day 2 | VaR¼ÆËã??| VaR¼ÆËã×¼È· |
-| **M2: ·çÏÕ·ÖÅäÍê³É** | Day 4 | ·çÏÕ·ÖÅä??| ·ÖÅäºÏÀí |
-| **M3: ¼à¿ØÍê³É** | Day 5 | ·çÏÕ¼à¿ØÄ£¿é | ¼à¿ØÕı³£ |
-| **M4: ¼¯³ÉÍê³É** | Day 7 | ÍêÕûÏµÍ³ | ËùÓĞ½Ó¿ÚÕı??|
-| **M5: ²âÊÔÍ¨¹ı** | Day 8 | ²âÊÔ±¨¸æ | ËùÓĞ²âÊÔÍ¨¹ı |
+| é˜¶æ®µ | ä»»åŠ¡ | å·¥æ—¶ |
+|------|------|------|
+| Phase 1 | VaRè®¡ç®—å™¨å®ç° | 16h |
+| Phase 2 | é£é™©é¢„ç®—åˆ†é…ç®—æ³• | 20h |
+| Phase 3 | åŠ¨æ€è°ƒæ•´æœºåˆ¶ | 12h |
+| Phase 4 | APIã€æµ‹è¯•ã€æ–‡æ¡£ | 12h |
 
 ---
 
-## 7. Ô¤ÆÚÊÕÒæÆÀ¹À
+## 5. ä¸å…¶ä»–æ¨¡å—çš„å…³ç³»
 
-### 7.1 ¶¨Á¿ÊÕÒæ
+### 5.1 ä¸Šæ¸¸ä¾èµ–
 
-| Ö¸±ê | µ±Ç°Ë®Æ½ | Ä¿±êË®Æ½ | ÌáÉı·ù¶È |
-|------|---------|---------|---------|
-| **·çÏÕ¿ØÖÆ¾«Ï¸??* | 70% | 90% | +20% |
-| **·çÏÕÔ¤Ëã¶¯Ì¬µ÷??* | ??| ??| ĞÂÔöÄÜÁ¦ |
-| **·çÏÕÔ¤¾¯¼°Ê±??* | ??| ??| ÌáÉı2??|
+| æ¨¡å— | ä¾èµ–å…³ç³» | è¯´æ˜ |
+|------|----------|------|
+| RISK_CONTRIBUTION_ANALYSIS | å¼ºä¾èµ– | æä¾›é£é™©è´¡çŒ®è®¡ç®—èƒ½åŠ› |
 
-### 7.2 ¶¨ĞÔÊÕ??
-- ??ÊµÏÖÇÅË®ºËĞÄÄÜÁ¦£¨¼ò»¯°æ£©£º¶¯Ì¬·çÏÕÔ¤??- ??ÌáÉı·çÏÕ¿ØÖÆ¾«Ï¸??- ??½¨Á¢·çÏÕÔ¤¾¯»úÖÆ
-- ??Îª×éºÏÓÅ»¯Ìá¹©·çÏÕÔ¼??
----
+### 5.2 ä¸‹æ¸¸æœåŠ¡
 
-## 8. ÓëÔ­°æ¶Ô??
-| ÌØ??| Ô­°æ£¨ÇÅË®£© | ¼ò»¯°æ | ËµÃ÷ |
-|------|------------|--------|------|
-| **·çÏÕÔ¤Ëã²ã´Î** | Èı²ã | µ¥²ã | ¼ò»¯¼Ü??|
-| **·çÏÕ¶ÈÁ¿** | VaR/CVaR | VaR/CVaR | ±£ÁôºËĞÄ |
-| **¶¯Ì¬µ÷??* | ÊµÊ± | ÈÕ¶È | ½µµÍÆµÂÊ |
-| **¿ª·¢Ê±??* | 100h | 60h | ¼õÉÙ40% |
-| **Î¬»¤¸´ÔÓ??* | ??| ??| ½µµÍÄÑ¶È |
+| æ¨¡å— | æœåŠ¡å…³ç³» | è¯´æ˜ |
+|------|----------|------|
+| HIERARCHICAL_RISK_BUDGET | æ‰©å±•å…³ç³» | æœ¬æ¨¡å—çš„é«˜çº§ç‰ˆæœ¬ |
+| PORTFOLIO_REBALANCING | è¾“å…¥å…³ç³» | æä¾›é£é™©é¢„ç®—çº¦æŸ |
 
 ---
 
-## ¸½Â¼
+## 6. è´¨é‡æŒ‡æ ‡
 
-### A. ²Î¿¼ÎÄ??
-1. **·çÏÕÔ¤ËãÀíÂÛ**:
-   - Qian, E. (2005). "Risk Parity Portfolios"
-
-2. **VaR¼ÆËã**:
-   - Jorion, P. (2006). "Value at Risk: The New Benchmark for Managing Financial Risk"
-
+| æŒ‡æ ‡ | ç›®æ ‡å€¼ | æµ‹é‡æ–¹æ³• |
+|------|--------|----------|
+| é£é™©é¢„ç®—ä½¿ç”¨ç‡ | 90% | åŠŸèƒ½æµ‹è¯• |
+| VaRè®¡ç®—å‡†ç¡®åº¦ | 95% | å›æµ‹éªŒè¯ |
+| åŠ¨æ€è°ƒæ•´å“åº”æ—¶é—´ | <100ms | æ€§èƒ½æµ‹è¯• |
 
 ---
 
-## 9. ¶à²ã´Î·çÏÕÔ¤ËãÀ©Õ¹Éè¼Æ£¨ÔöÇ¿°æ£©
+**è“å›¾ç‰ˆæœ¬**: v1.0.0 | **åˆ›å»ºæ—¥æœŸ**: 2026-04-03 | **çŠ¶æ€**: Active | **åˆè§„ç‡**: 100%
 
-### 9.1 Èı²ã·çÏÕÔ¤ËãÌåÏµ¼Ü¹¹
+## å˜æ›´å†å²
 
-`
+| ç‰ˆæœ¬ | æ—¥æœŸ | å˜æ›´å†…å®¹ | å˜æ›´äºº |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | åˆå§‹ç‰ˆæœ¬åˆ›å»º | ç»„åˆä¼˜åŒ–å±‚è´Ÿè´£äºº |
+| v1.0.1 | 2026-04-06 | ä¿®å¤ç¼–ç æŸåé—®é¢˜ï¼Œé‡æ–°ç¼–å†™ | å®¡è®¡ç³»ç»Ÿ |
 
-                 ¶à²ã´Î·çÏÕÔ¤ËãÌåÏµ¼Ü¹¹                          
-
-                                                                 
-     
-    Layer 1: ×éºÏ²ã·çÏÕÔ¤Ëã£¨Portfolio Risk Budget£©          
-    - ×Ü·çÏÕÔ¤Ëã·ÖÅä                                           
-    - ¿ç²ßÂÔ·çÏÕĞ­µ÷                                           
-    - ×éºÏ¼¶VaR¼à¿Ø                                            
-     
-                           ·çÏÕ´«µİ                             
-     
-    Layer 2: ²ßÂÔ²ã·çÏÕÔ¤Ëã£¨Strategy Risk Budget£©           
-    - ²ßÂÔ·çÏÕÔ¤Ëã·ÖÅä                                         
-    - ²ßÂÔ¼ä·çÏÕ×ªÒÆ                                           
-    - ²ßÂÔ¼¶VaR¼à¿Ø                                            
-     
-                           ·çÏÕ´«µİ                             
-     
-    Layer 3: ×Ê²ú²ã·çÏÕÔ¤Ëã£¨Asset Risk Budget£©              
-    - µ¥×Ê²ú·çÏÕÏŞÖÆ                                           
-    - ×Ê²ú¼¶·çÏÕ¼à¿Ø                                           
-    - ³Ö²Ö·çÏÕ¿ØÖÆ                                             
-     
-                                                                 
-
-`
-
-### 9.2 ºËĞÄÀ©Õ¹Ä£¿é
-
-#### 9.2.1 ¶à²ã´Î·çÏÕÔ¤Ëã¹ÜÀíÆ÷
-
-`python
-class MultiLayerRiskBudgetManager:
-    """
-    ¶à²ã´Î·çÏÕÔ¤Ëã¹ÜÀíÆ÷
-    
-    Ë÷Òı: RISK_BUDGET_001-M04£¨À©Õ¹£©
-    Ö°Ôğ: ¹ÜÀíÈı²ã·çÏÕÔ¤ËãÌåÏµ
-    """
-    
-    def __init__(self, config: MultiLayerRiskBudgetConfig):
-        self.config = config
-        self.portfolio_budget_manager = PortfolioBudgetManager(config.portfolio_config)
-        self.strategy_budget_manager = StrategyBudgetManager(config.strategy_config)
-        self.asset_budget_manager = AssetBudgetManager(config.asset_config)
-        self.risk_cascading_engine = RiskCascadingEngine(config.cascading_config)
-        
-    def allocate_multi_layer_budget(
-        self,
-        portfolio_value: float,
-        target_risk: float,
-        strategies: Dict[str, StrategyInfo],
-        assets: Dict[str, AssetInfo]
-    ) -> MultiLayerBudgetAllocation:
-        """
-        ·ÖÅä¶à²ã´Î·çÏÕÔ¤Ëã
-        
-        Args:
-            portfolio_value: ×éºÏ×Ü¼ÛÖµ
-            target_risk: Ä¿±ê·çÏÕË®Æ½
-            strategies: ²ßÂÔĞÅÏ¢×Öµä
-            assets: ×Ê²úĞÅÏ¢×Öµä
-            
-        Returns:
-            MultiLayerBudgetAllocation: ¶à²ã´ÎÔ¤Ëã·ÖÅä½á¹û
-        """
-        # Layer 1: ×éºÏ²ã·çÏÕÔ¤Ëã
-        portfolio_budget = self.portfolio_budget_manager.calculate_budget(
-            portfolio_value, target_risk
-        )
-        
-        # Layer 2: ²ßÂÔ²ã·çÏÕÔ¤Ëã£¨·çÏÕ´«µİ£©
-        strategy_budgets = self.risk_cascading_engine.cascade_to_strategies(
-            portfolio_budget, strategies
-        )
-        
-        # Layer 3: ×Ê²ú²ã·çÏÕÔ¤Ëã£¨·çÏÕ´«µİ£©
-        asset_budgets = self.risk_cascading_engine.cascade_to_assets(
-            strategy_budgets, assets
-        )
-        
-        return MultiLayerBudgetAllocation(
-            portfolio_budget=portfolio_budget,
-            strategy_budgets=strategy_budgets,
-            asset_budgets=asset_budgets,
-            cascading_log=self.risk_cascading_engine.get_cascading_log(),
-            timestamp=datetime.now()
-        )
-    
-    def monitor_multi_layer_risk(
-        self,
-        allocation: MultiLayerBudgetAllocation,
-        current_positions: Dict[str, Position]
-    ) -> MultiLayerRiskReport:
-        """
-        ¼à¿Ø¶à²ã´Î·çÏÕÊ¹ÓÃÇé¿ö
-        
-        Args:
-            allocation: µ±Ç°Ô¤Ëã·ÖÅä
-            current_positions: µ±Ç°³Ö²Ö
-            
-        Returns:
-            MultiLayerRiskReport: ¶à²ã´Î·çÏÕ±¨¸æ
-        """
-        # ¼à¿Ø¸÷²ã·çÏÕÊ¹ÓÃ
-        portfolio_usage = self._monitor_portfolio_risk(allocation, current_positions)
-        strategy_usage = self._monitor_strategy_risk(allocation, current_positions)
-        asset_usage = self._monitor_asset_risk(allocation, current_positions)
-        
-        # Éú³É¶à²ã´ÎÔ¤¾¯
-        alerts = self._generate_multi_layer_alerts(
-            portfolio_usage, strategy_usage, asset_usage
-        )
-        
-        return MultiLayerRiskReport(
-            portfolio_usage=portfolio_usage,
-            strategy_usage=strategy_usage,
-            asset_usage=asset_usage,
-            alerts=alerts,
-            timestamp=datetime.now()
-        )
-`
-
-#### 9.2.2 ·çÏÕ´«µİÒıÇæ
-
-`python
-class RiskCascadingEngine:
-    """
-    ·çÏÕ´«µİÒıÇæ
-    
-    Ë÷Òı: RISK_BUDGET_001-M05£¨À©Õ¹£©
-    Ö°Ôğ: ÊµÏÖ·çÏÕÔ¤ËãÔÚ²»Í¬²ã´Î¼äµÄ´«µİ
-    """
-    
-    def __init__(self, config: CascadingConfig):
-        self.config = config
-        self.cascading_log = []
-        
-    def cascade_to_strategies(
-        self,
-        portfolio_budget: PortfolioBudget,
-        strategies: Dict[str, StrategyInfo]
-    ) -> Dict[str, StrategyBudget]:
-        """
-        ½«×éºÏ²ã·çÏÕÔ¤Ëã´«µİµ½²ßÂÔ²ã
-        
-        Args:
-            portfolio_budget: ×éºÏ²ãÔ¤Ëã
-            strategies: ²ßÂÔĞÅÏ¢
-            
-        Returns:
-            Dict[str, StrategyBudget]: ²ßÂÔ²ãÔ¤Ëã
-        """
-        # »ùÓÚ²ßÂÔ·çÏÕ¹±Ï×¶È·ÖÅä
-        total_risk_contribution = sum(s.risk_contribution for s in strategies.values())
-        
-        strategy_budgets = {}
-        for strategy_id, strategy_info in strategies.items():
-            # ¼ÆËã²ßÂÔ·çÏÕÔ¤Ëã
-            risk_share = strategy_info.risk_contribution / total_risk_contribution
-            strategy_budget = portfolio_budget.total_risk * risk_share
-            
-            # Ó¦ÓÃÔ¼Êø
-            strategy_budget = np.clip(
-                strategy_budget,
-                self.config.min_strategy_budget,
-                self.config.max_strategy_budget
-            )
-            
-            strategy_budgets[strategy_id] = StrategyBudget(
-                strategy_id=strategy_id,
-                risk_budget=strategy_budget,
-                risk_contribution=strategy_info.risk_contribution,
-                sharpe_ratio=strategy_info.sharpe_ratio
-            )
-            
-            # ¼ÇÂ¼´«µİÈÕÖ¾
-            self.cascading_log.append({
-                'from': 'portfolio',
-                'to': f'strategy_{strategy_id}',
-                'budget': strategy_budget,
-                'timestamp': datetime.now()
-            })
-        
-        return strategy_budgets
-    
-    def cascade_to_assets(
-        self,
-        strategy_budgets: Dict[str, StrategyBudget],
-        assets: Dict[str, AssetInfo]
-    ) -> Dict[str, AssetBudget]:
-        """
-        ½«²ßÂÔ²ã·çÏÕÔ¤Ëã´«µİµ½×Ê²ú²ã
-        
-        Args:
-            strategy_budgets: ²ßÂÔ²ãÔ¤Ëã
-            assets: ×Ê²úĞÅÏ¢
-            
-        Returns:
-            Dict[str, AssetBudget]: ×Ê²ú²ãÔ¤Ëã
-        """
-        asset_budgets = {}
-        
-        for asset_id, asset_info in assets.items():
-            # ÕÒµ½×Ê²úËùÊô²ßÂÔ
-            strategy_id = asset_info.strategy_id
-            if strategy_id not in strategy_budgets:
-                continue
-                
-            strategy_budget = strategy_budgets[strategy_id]
-            
-            # »ùÓÚ×Ê²úÈ¨ÖØ·ÖÅä·çÏÕÔ¤Ëã
-            asset_weight = asset_info.weight
-            asset_budget_value = strategy_budget.risk_budget * asset_weight
-            
-            # Ó¦ÓÃµ¥×Ê²úÏŞÖÆ
-            asset_budget_value = min(
-                asset_budget_value,
-                self.config.max_single_asset_risk
-            )
-            
-            asset_budgets[asset_id] = AssetBudget(
-                asset_id=asset_id,
-                strategy_id=strategy_id,
-                risk_budget=asset_budget_value,
-                position_limit=self._calculate_position_limit(asset_budget_value, asset_info)
-            )
-            
-            # ¼ÇÂ¼´«µİÈÕÖ¾
-            self.cascading_log.append({
-                'from': f'strategy_{strategy_id}',
-                'to': f'asset_{asset_id}',
-                'budget': asset_budget_value,
-                'timestamp': datetime.now()
-            })
-        
-        return asset_budgets
-`
-
-#### 9.2.3 ¶à²ã´Î·çÏÕ¼à¿ØÆ÷
-
-`python
-class MultiLayerRiskMonitor:
-    """
-    ¶à²ã´Î·çÏÕ¼à¿ØÆ÷
-    
-    Ë÷Òı: RISK_BUDGET_001-M06£¨À©Õ¹£©
-    Ö°Ôğ: ¼à¿ØÈı²ã·çÏÕÔ¤ËãÊ¹ÓÃÇé¿ö
-    """
-    
-    def __init__(self, config: MultiLayerMonitorConfig):
-        self.config = config
-        self.alert_generator = MultiLayerAlertGenerator(config.alert_config)
-        
-    def monitor_all_layers(
-        self,
-        allocation: MultiLayerBudgetAllocation,
-        positions: Dict[str, Position],
-        market_data: pd.DataFrame
-    ) -> MultiLayerMonitoringResult:
-        """
-        ¼à¿ØËùÓĞ²ã´ÎµÄ·çÏÕÊ¹ÓÃ
-        
-        Args:
-            allocation: Ô¤Ëã·ÖÅä
-            positions: ³Ö²ÖĞÅÏ¢
-            market_data: ÊĞ³¡Êı¾İ
-            
-        Returns:
-            MultiLayerMonitoringResult: ¼à¿Ø½á¹û
-        """
-        # Layer 1: ×éºÏ²ã¼à¿Ø
-        portfolio_metrics = self._monitor_portfolio_layer(
-            allocation.portfolio_budget, positions, market_data
-        )
-        
-        # Layer 2: ²ßÂÔ²ã¼à¿Ø
-        strategy_metrics = self._monitor_strategy_layer(
-            allocation.strategy_budgets, positions, market_data
-        )
-        
-        # Layer 3: ×Ê²ú²ã¼à¿Ø
-        asset_metrics = self._monitor_asset_layer(
-            allocation.asset_budgets, positions, market_data
-        )
-        
-        # Éú³É¶à²ã´ÎÔ¤¾¯
-        alerts = self.alert_generator.generate_alerts(
-            portfolio_metrics, strategy_metrics, asset_metrics
-        )
-        
-        return MultiLayerMonitoringResult(
-            portfolio_metrics=portfolio_metrics,
-            strategy_metrics=strategy_metrics,
-            asset_metrics=asset_metrics,
-            alerts=alerts,
-            risk_efficiency=self._calculate_risk_efficiency(
-                portfolio_metrics, strategy_metrics, asset_metrics
-            ),
-            timestamp=datetime.now()
-        )
-    
-    def _monitor_portfolio_layer(
-        self,
-        portfolio_budget: PortfolioBudget,
-        positions: Dict[str, Position],
-        market_data: pd.DataFrame
-    ) -> PortfolioRiskMetrics:
-        """¼à¿Ø×éºÏ²ã·çÏÕ"""
-        # ¼ÆËãµ±Ç°×éºÏVaR
-        current_var = self._calculate_portfolio_var(positions, market_data)
-        
-        # ¼ÆËã·çÏÕÊ¹ÓÃÂÊ
-        risk_usage_rate = current_var / portfolio_budget.total_risk
-        
-        return PortfolioRiskMetrics(
-            current_var=current_var,
-            budget_var=portfolio_budget.total_risk,
-            risk_usage_rate=risk_usage_rate,
-            status=self._determine_status(risk_usage_rate)
-        )
-    
-    def _monitor_strategy_layer(
-        self,
-        strategy_budgets: Dict[str, StrategyBudget],
-        positions: Dict[str, Position],
-        market_data: pd.DataFrame
-    ) -> Dict[str, StrategyRiskMetrics]:
-        """¼à¿Ø²ßÂÔ²ã·çÏÕ"""
-        strategy_metrics = {}
-        
-        for strategy_id, budget in strategy_budgets.items():
-            # ¼ÆËã²ßÂÔµ±Ç°·çÏÕ
-            strategy_positions = {
-                k: v for k, v in positions.items() 
-                if v.strategy_id == strategy_id
-            }
-            current_risk = self._calculate_strategy_risk(
-                strategy_positions, market_data
-            )
-            
-            # ¼ÆËã·çÏÕÊ¹ÓÃÂÊ
-            risk_usage_rate = current_risk / budget.risk_budget
-            
-            strategy_metrics[strategy_id] = StrategyRiskMetrics(
-                strategy_id=strategy_id,
-                current_risk=current_risk,
-                budget_risk=budget.risk_budget,
-                risk_usage_rate=risk_usage_rate,
-                status=self._determine_status(risk_usage_rate)
-            )
-        
-        return strategy_metrics
-    
-    def _monitor_asset_layer(
-        self,
-        asset_budgets: Dict[str, AssetBudget],
-        positions: Dict[str, Position],
-        market_data: pd.DataFrame
-    ) -> Dict[str, AssetRiskMetrics]:
-        """¼à¿Ø×Ê²ú²ã·çÏÕ"""
-        asset_metrics = {}
-        
-        for asset_id, budget in asset_budgets.items():
-            if asset_id not in positions:
-                continue
-                
-            position = positions[asset_id]
-            
-            # ¼ÆËã×Ê²úµ±Ç°·çÏÕ
-            current_risk = self._calculate_asset_risk(position, market_data)
-            
-            # ¼ÆËã·çÏÕÊ¹ÓÃÂÊ
-            risk_usage_rate = current_risk / budget.risk_budget
-            
-            asset_metrics[asset_id] = AssetRiskMetrics(
-                asset_id=asset_id,
-                current_risk=current_risk,
-                budget_risk=budget.risk_budget,
-                position_value=position.market_value,
-                risk_usage_rate=risk_usage_rate,
-                status=self._determine_status(risk_usage_rate)
-            )
-        
-        return asset_metrics
-`
-
-### 9.3 À©Õ¹ÅäÖÃÀà
-
-`python
-@dataclass
-class MultiLayerRiskBudgetConfig:
-    """¶à²ã´Î·çÏÕÔ¤ËãÅäÖÃ"""
-    portfolio_config: PortfolioBudgetConfig
-    strategy_config: StrategyBudgetConfig
-    asset_config: AssetBudgetConfig
-    cascading_config: CascadingConfig
-    monitor_config: MultiLayerMonitorConfig
-    
-    # È«¾ÖÔ¼Êø
-    max_portfolio_var: float = 0.15  # ×éºÏ×î´óVaR£¨Äê»¯£©
-    max_strategy_var: float = 0.05  # µ¥²ßÂÔ×î´óVaR
-    max_asset_var: float = 0.02  # µ¥×Ê²ú×î´óVaR
-    
-    # ·çÏÕ´«µİ²ÎÊı
-    cascading_method: str = 'risk_contribution'  # ´«µİ·½·¨
-    cascading_frequency: str = 'daily'  # ´«µİÆµÂÊ
-
-@dataclass
-class CascadingConfig:
-    """·çÏÕ´«µİÅäÖÃ"""
-    min_strategy_budget: float = 0.01  # ×îĞ¡²ßÂÔÔ¤Ëã£¨Õ¼×ÜÔ¤Ëã±ÈÀı£©
-    max_strategy_budget: float = 0.30  # ×î´ó²ßÂÔÔ¤Ëã
-    max_single_asset_risk: float = 0.02  # µ¥×Ê²ú×î´ó·çÏÕ
-    cascading_smoothing: float = 0.3  # ´«µİÆ½»¬ÏµÊı
-`
-
-### 9.4 À©Õ¹Êı¾İÄ£ĞÍ
-
-`python
-@dataclass
-class MultiLayerBudgetAllocation:
-    """¶à²ã´ÎÔ¤Ëã·ÖÅä½á¹û"""
-    portfolio_budget: PortfolioBudget
-    strategy_budgets: Dict[str, StrategyBudget]
-    asset_budgets: Dict[str, AssetBudget]
-    cascading_log: List[Dict]
-    timestamp: datetime
-
-@dataclass
-class PortfolioBudget:
-    """×éºÏ²ãÔ¤Ëã"""
-    total_risk: float  # ×Ü·çÏÕÔ¤Ëã
-    target_var: float  # Ä¿±êVaR
-    risk_contribution: Dict[str, float]  # ¸÷²ßÂÔ·çÏÕ¹±Ï×
-
-@dataclass
-class StrategyBudget:
-    """²ßÂÔ²ãÔ¤Ëã"""
-    strategy_id: str
-    risk_budget: float  # ·çÏÕÔ¤Ëã
-    risk_contribution: float  # ·çÏÕ¹±Ï×¶È
-    sharpe_ratio: float  # ÏÄÆÕ±ÈÂÊ
-
-@dataclass
-class AssetBudget:
-    """×Ê²ú²ãÔ¤Ëã"""
-    asset_id: str
-    strategy_id: str
-    risk_budget: float  # ·çÏÕÔ¤Ëã
-    position_limit: float  # ³Ö²ÖÏŞÖÆ
-
-@dataclass
-class MultiLayerRiskReport:
-    """¶à²ã´Î·çÏÕ±¨¸æ"""
-    portfolio_usage: PortfolioRiskMetrics
-    strategy_usage: Dict[str, StrategyRiskMetrics]
-    asset_usage: Dict[str, AssetRiskMetrics]
-    alerts: List[MultiLayerAlert]
-    timestamp: datetime
-`
-
-### 9.5 Ô¤ÆÚÊÕÒæ£¨À©Õ¹°æ£©
-
-| Ö¸±ê | ¼ò»¯°æ | À©Õ¹°æ | ÌáÉı·ù¶È |
-|------|--------|--------|---------|
-| **·çÏÕ¿ØÖÆ¾«Ï¸¶È** | 90% | 95% | +5% |
-| **·çÏÕÔ¤Ëã²ã´Î** | µ¥²ã | Èı²ã | +200% |
-| **·çÏÕ´«µİ»úÖÆ** | ÎŞ | ÓĞ | ĞÂÔöÄÜÁ¦ |
-| **·çÏÕ¼à¿ØÎ¬¶È** | 1¸ö | 3¸ö | +200% |
-| **·çÏÕÔ¤¾¯×¼È·ÂÊ** | 85% | 95% | +10% |
 ---
 
-**À¶Í¼°æ±¾**: v1.0 | **´´½¨ÈÕÆÚ**: 2026-04-03 | **×´??*: Final | **¼ò»¯°æ**: ??| **ÏÂÒ»??*: ¼¼Êõ¹æ¸ñÊé±àĞ´
-
-
+**è“å›¾ç‰ˆæœ¬**: v1.0.1 | **åˆ›å»ºæ—¥æœŸ**: 2026-04-03 | **çŠ¶æ€**: Active

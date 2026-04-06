@@ -59,6 +59,13 @@ priority: P0
 - **职责边界**: 本文档负责基础触发机制和交易成本优化，RL模块负责AI增强的智能决策
 - **推荐实施路径**: 先实现本文档（40h），再实施RL增强（200h）
 
+**与TRANSACTION_COST_AWARE_REBALANCING的关系**:
+- 本文档是**基础再平衡框架**，提供触发机制和决策引擎
+- [TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md)是**高级成本感知再平衡模块**，在再平衡决策中显式考虑交易成本
+- **职责边界**: 本文档负责基础再平衡决策，TRANSACTION_COST_AWARE负责成本优化决策
+- **依赖关系**: TRANSACTION_COST_AWARE_REBALANCING依赖本文档的触发机制和决策框架
+- **推荐实施路径**: 先实现本文档（40h），再实施成本感知增强（5-7天）
+
 **架构角色**: 
 - 作为组合优化的执行层，负责再平衡决策
 - 作为交易成本优化的执行者，平衡成本与跟踪误?- 作为风险控制的执行者，维持组合风险目标
