@@ -77,6 +77,56 @@ open_source_dependency: Great Expectations, Apache Griffin, Deequ
 
 ---
 
+## 📚 相关文档
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接和元数据 |
+| [数据安全合规蓝图](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依赖 | 提供数据安全策略 |
+| [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供实时数据流 |
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+| [自动修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 强依赖 | 接收质量异常进行修复 |
+| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依赖 | 接收质量检测结果评分 |
+| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依赖 | 接收质量数据生成报告 |
+| [数据可观测性蓝图](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 中依赖 | 提供质量监控指标 |
+
+### 技术依赖
+
+| 技术组件 | 版本 | 用途 | 文档 |
+|---------|------|------|------|
+| **Great Expectations** | 0.18+ | 数据质量验证 | [官方文档](https://docs.greatexpectations.io/) |
+| **Apache Griffin** | 0.5+ | 数据质量度量 | [官方文档](https://griffin.apache.org/) |
+| **Deequ** | 2.0+ | 数据质量测试 | [官方文档](https://github.com/awslabs/deequ) |
+| **Prometheus** | 2.40+ | 监控指标采集 | [官方文档](https://prometheus.io/) |
+| **Grafana** | 9.0+ | 可视化展示 | [官方文档](https://grafana.com/) |
+
+### 引用关系图
+
+```mermaid
+graph LR
+    A[数据源管理] --> B[数据质量监控]
+    C[数据安全合规] --> B
+    D[高性能数据管道] --> B
+    
+    B --> E[自动修复引擎]
+    B --> F[质量评分系统]
+    B --> G[质量报告自动化]
+    B --> H[数据可观测性]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+    style D fill:#96ceb4
+```
+
+---
+
 ## 🏗️ 架构设计
 
 ### 整体架构
