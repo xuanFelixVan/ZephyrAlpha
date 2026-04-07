@@ -171,10 +171,7 @@ auth_backend = AuthenticationBackend(
     get_strategy=get_jwt_strategy,
 )
 
-fastapi_users = FastAPIUsers[User, int](
-    get_user_db,
-    [auth_backend],
-)
+fastapi_users = FastAPIUsersUser, int
 
 app = FastAPI()
 

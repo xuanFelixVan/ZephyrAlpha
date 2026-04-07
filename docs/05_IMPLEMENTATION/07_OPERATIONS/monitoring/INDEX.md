@@ -55,7 +55,7 @@ last_updated: 2026-04-07
 ## 🔗 相关文档
 
 - [运营标准](../standards/INDEX.md)
-- [运营流程](../processes/INDEX.md)
+- 运营流程
 - [运营检查清单](../checklists/INDEX.md)
 
 ---

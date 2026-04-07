@@ -157,25 +157,25 @@
 
 ### 标准文档
 
-1. **[FACTOR_REGISTRY.md](file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)** - 因子注册表标准
-2. **[RESPONSIBILITY_DESCRIPTION_STANDARD.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)** - 职责描述标准化指南
+1. **FACTOR_REGISTRY.md** - 因子注册表标准
+2. **RESPONSIBILITY_DESCRIPTION_STANDARD.md** - 职责描述标准化指南
 
 ### 蓝图文档
 
-1. **[INTELLIGENT_SCHEDULER_BLUEPRINT.md](file:///D:/ZephyrAlpha/docs/10_AI_WORKFLOW/INTELLIGENT_SCHEDULER_BLUEPRINT.md)** - 智能调度器蓝图
+1. **INTELLIGENT_SCHEDULER_BLUEPRINT.md** - 智能调度器蓝图
 
 ### 工具脚本
 
-1. **[responsibility_detector.py](file:///D:/ZephyrAlpha/scripts/responsibility_detector.py)** - 自动化职责检测工具
-2. **[analyze_system_manifest_dead_links.py](file:///D:/ZephyrAlpha/scripts/analyze_system_manifest_dead_links.py)** - System_Manifest.md死链接分析工具
-3. **[fix_system_manifest_dead_links.py](file:///D:/ZephyrAlpha/scripts/fix_system_manifest_dead_links.py)** - System_Manifest.md死链接修复工具
+1. **responsibility_detector.py** - 自动化职责检测工具
+2. **analyze_system_manifest_dead_links.py** - System_Manifest.md死链接分析工具
+3. **fix_system_manifest_dead_links.py** - System_Manifest.md死链接修复工具
 
 ### 索引文件
 
-1. **[ARCHITECTURE_DECISIONS/INDEX.md](file:///D:/ZephyrAlpha/docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/INDEX.md)** - 架构决策记录索引
-2. **[00_GOVERNANCE/INDEX.md](file:///D:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/00_GOVERNANCE/INDEX.md)** - 因子库治理索引
-3. **[checklists/INDEX.md](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/checklists/INDEX.md)** - 运营检查清单索引
-4. **[monitoring/INDEX.md](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring/INDEX.md)** - 运营监控索引
+1. **ARCHITECTURE_DECISIONS/INDEX.md** - 架构决策记录索引
+2. **00_GOVERNANCE/INDEX.md** - 因子库治理索引
+3. **checklists/INDEX.md** - 运营检查清单索引
+4. **monitoring/INDEX.md** - 运营监控索引
 
 ---
 

@@ -63,7 +63,7 @@ fix_date: 2026-04-07
 - ✅ 索引完备性从0%提升到100%
 - ✅ 创建新的"其他蓝图"分类
 
-**修复文件**: [fix_index_completeness.py](file:///d:/ZephyrAlpha/scripts/fix_index_completeness.py)
+**修复文件**: fix_index_completeness.py
 
 ---
 
@@ -81,7 +81,7 @@ fix_date: 2026-04-07
 - ✅ 文档分类从69.2%提升到100%
 - ✅ 所有文件都有正确的layer归属
 
-**修复文件**: [fix_document_classification.py](file:///d:/ZephyrAlpha/scripts/fix_document_classification.py)
+**修复文件**: fix_document_classification.py
 
 **修复文件列表**（前10个）:
 1. ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md
@@ -113,7 +113,7 @@ fix_date: 2026-04-07
 - ✅ 统一版本标识格式
 - ✅ 版本管理更加规范
 
-**修复文件**: [optimize_version_management.py](file:///d:/ZephyrAlpha/scripts/optimize_version_management.py)
+**修复文件**: optimize_version_management.py
 
 **修复文件列表**（前10个）:
 1. AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
@@ -143,7 +143,7 @@ fix_date: 2026-04-07
 - ✅ 职责描述从75%提升到100%
 - ✅ 所有文件都有明确的核心定位
 
-**修复文件**: [complete_responsibility_description.py](file:///d:/ZephyrAlpha/scripts/complete_responsibility_description.py)
+**修复文件**: complete_responsibility_description.py
 
 **修复文件列表**（前10个）:
 1. AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md

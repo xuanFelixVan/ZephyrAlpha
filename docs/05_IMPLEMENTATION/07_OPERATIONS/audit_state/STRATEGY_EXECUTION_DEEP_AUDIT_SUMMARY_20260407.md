@@ -198,7 +198,7 @@
 | 19 | FINANCING_OPTIMIZATION_BLUEPRINT.md | 职责描述缺失 | 缺少核心定位章节 |
 | 20 | HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md | 职责描述缺失 | 缺少核心定位章节 |
 
-**完整问题清单**: 参见 [LAYER5_DEEP_CONTENT_AUDIT_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER5_DEEP_CONTENT_AUDIT_REPORT_20260407.md)
+**完整问题清单**: 参见 LAYER5_DEEP_CONTENT_AUDIT_REPORT_20260407.md
 
 ---
 
@@ -287,14 +287,14 @@
 
 ### 审计报告
 
-- [Layer 5深度内容审计报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER5_DEEP_CONTENT_AUDIT_REPORT_20260407.md)
+- Layer 5深度内容审计报告
 
 ### 审计工具
 
-- [layer5_deep_content_auditor.py](file:///d:/ZephyrAlpha/scripts/layer5_deep_content_auditor.py) - 深度内容审计工具
+- layer5_deep_content_auditor.py - 深度内容审计工具
 
 ### 参考标准
 
-- [专业文档治理审计指南](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
+- 审计质量标准v5.1

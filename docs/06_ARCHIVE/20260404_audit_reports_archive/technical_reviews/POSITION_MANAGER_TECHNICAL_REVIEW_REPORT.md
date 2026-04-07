@@ -258,7 +258,7 @@ last_updated: 2026-04-02---
 ### 8.1 шпДхобф╛ЭцНоцЦЗцбг
 - [цЮ╢цЮДхоЪф╣Й](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [цибхЭЧшБМш┤гш╛╣чХМ](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [цХ░цНох║Ушо╛шоб](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+- цХ░цНох║Ушо╛шоб
 - [цКАцЬпшпДхобцаЗхЗЖv5.3](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 
 ### 8.2 шпДхобш┐ЗчиЛшо░х╜Х

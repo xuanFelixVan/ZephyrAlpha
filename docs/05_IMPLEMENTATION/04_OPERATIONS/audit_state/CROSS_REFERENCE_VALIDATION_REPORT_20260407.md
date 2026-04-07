@@ -145,34 +145,34 @@ version: 1.0.0
 
 #### 05_IMPLEMENTATION\04_OPERATIONS\audit_state\P1_P2_OPTIMIZATION_REPORT_20260406.md (36个问题)
 
-- 行58: [数据质量](04_DATA_SOURCE/DATA_QUALITY.md) - 目标文件不存在
+- 行58: 数据质量 - 目标文件不存在
 - 行59: [数据质量](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) - 目标文件不存在
 - 行68: [MODULE_DESIGN_PLAN.md](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md) - 目标文件不存在
 - 行75: [新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) - 目标文件不存在
-- 行75: [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md) - 目标文件不存在
+- 行75: 归档文档 - 目标文件不存在
 - ... 还有 31 个问题
 
 #### 09_AUDIT\STANDARDS\PATH_REFERENCE_STANDARD.md (34个问题)
 
-- 行77: [ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) - 目标文件不存在
-- 行77: [ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) - 目标文件不存在
-- 行78: [ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) - 目标文件不存在
-- 行78: [ﮔﮔ۰۲](05_IMPLEMENTATION\SIBLING\doc.md) - 目标文件不存在
-- 行82: [ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) - 目标文件不存在
+- 行77: ﮔﮔ۰۲ - 目标文件不存在
+- 行77: ﮔﮔ۰۲ - 目标文件不存在
+- 行78: ﮔﮔ۰۲ - 目标文件不存在
+- 行78: ﮔﮔ۰۲ - 目标文件不存在
+- 行82: ﮔﮔ۰۲ - 目标文件不存在
 - ... 还有 29 个问题
 
 #### 01_FRAMEWORK\LAYER4_ML\COMPLETE_MISSING_MODULES_OVERVIEW.md (28个问题)
 
 - 行86: [DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) - 目标文件不存在
 - 行140: [DISTRIBUTED_TRAINING_BLUEPRINT.md](01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md) - 目标文件不存在
-- 行166: [AUTO_RETRAINING_BLUEPRINT.md](AUTO_RETRAINING_BLUEPRINT.md) - 目标文件不存在
-- 行192: [MODEL_PERFORMANCE_DEGRADATION_BLUEPRINT.md](MODEL_PERFORMANCE_DEGRADATION_BLUEPRINT.md) - 目标文件不存在
-- 行272: [TRANSFORMER_ARCHITECTURE_BLUEPRINT.md](TRANSFORMER_ARCHITECTURE_BLUEPRINT.md) - 目标文件不存在
+- 行166: AUTO_RETRAINING_BLUEPRINT.md - 目标文件不存在
+- 行192: MODEL_PERFORMANCE_DEGRADATION_BLUEPRINT.md - 目标文件不存在
+- 行272: TRANSFORMER_ARCHITECTURE_BLUEPRINT.md - 目标文件不存在
 - ... 还有 23 个问题
 
 #### System_Manifest.md (25个问题)
 
-- 行92: [Layer 4深度审计报告v4](09_AUDIT/REPORTS/LAYER4_DEEP_AUDIT_REPORT_V4_20260407.md) - 目标文件不存在
+- 行92: Layer 4深度审计报告v4 - 目标文件不存在
 - 行93: [Layer 4修复工作总结报告v4](09_AUDIT/REPORTS/FIX_SUMMARY_REPORT_V4_20260407.md) - 目标文件不存在
 - 行242: [MODEL_DRIFT_DETECTION_BLUEPRINT.md](01_FRAMEWORK/LAYER4_ML/MODEL_DRIFT_DETECTION_BLUEPRINT.md) - 目标文件不存在
 - 行243: [INTELLIGENT_SCHEDULER_BLUEPRINT.md](10_AI_WORKFLOW/INTELLIGENT_SCHEDULER_BLUEPRINT.md) - 目标文件不存在
@@ -199,29 +199,29 @@ version: 1.0.0
 
 #### 09_AUDIT\STANDARDS\DOC_REFERENCE_STANDARD.md (21个问题)
 
-- 行89: [ίχηόΨ╜όΨΘόκμίΡΞύπ░](05_IMPLEMENTATION\04_OPERATIONS\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IMPLEMENTATION_DOC.md) - 目标文件不存在
+- 行89: ίχηόΨ╜όΨΘόκμίΡΞύπ░ - 目标文件不存在
 - 行101: [ίχηόΩ╢ώμΟώβσίψ╣ίΗ▓ί╝ΧόΥΟϋΥζίδ╛](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) - 目标文件不存在
-- 行113: [όκΗόη╢όΨΘόκμίΡΞύπ░](05_IMPLEMENTATION\01_FRAMEWORK\FRAMEWORK_DOC.md) - 目标文件不存在
+- 行113: όκΗόη╢όΨΘόκμίΡΞύπ░ - 目标文件不存在
 - 行123: [ίχηόΩ╢ώμΟώβσύδΣόΟπϊ╗ςϋκρόζ┐ϋΥζίδ╛](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 目标文件不存在
-- 行137: [ϋΥζίδ╛όΨΘόκμίΡΞύπ░](05_IMPLEMENTATION\04_OPERATIONS\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BLUEPRINT_DOC.md) - 目标文件不存在
+- 行137: ϋΥζίδ╛όΨΘόκμίΡΞύπ░ - 目标文件不存在
 - ... 还有 16 个问题
 
 #### 11_STRATEGIC_DECISION\archive\BLUEPRINT_v2.0.1_backup.md (21个问题)
 
 - 行569: [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) - 目标文件不存在
 - 行570: [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md) - 目标文件不存在
-- 行571: [STRATEGY_SELECTION_BLUEPRINT.md](05_IMPLEMENTATION\04_OPERATIONS\03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_SELECTION_BLUEPRINT.md) - 目标文件不存在
+- 行571: STRATEGY_SELECTION_BLUEPRINT.md - 目标文件不存在
 - 行572: [PORTFOLIO_INSURANCE_BLUEPRINT.md](11_STRATEGIC_DECISION/PORTFOLIO_INSURANCE_BLUEPRINT.md) - 目标文件不存在
 - 行573: [LEVERAGE_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION/LEVERAGE_MANAGEMENT_BLUEPRINT.md) - 目标文件不存在
 - ... 还有 16 个问题
 
 #### 05_IMPLEMENTATION\07_OPERATIONS\knowledge_base\BEST_PRACTICES_INDEX.md (20个问题)
 
-- 行37: [х╝Вцнеч╝ЦчиЛцЬАф╜│хоЮш╖╡](best_practices/ASYNC_PROGRAMMING_BEST_PRACTICES.md) - 目标文件不存在
-- 行38: [щФЩшппхдДчРЖцЬАф╜│хоЮш╖╡](best_practices/ERROR_HANDLING_BEST_PRACTICES.md) - 目标文件不存在
-- 行39: [цЧех┐Чшо░х╜ХцЬАф╜│хоЮш╖╡](best_practices/LOGGING_BEST_PRACTICES.md) - 目标文件不存在
-- 行51: [цибхЭЧхМЦшо╛шобцЬАф╜│хоЮш╖╡](best_practices/MODULAR_DESIGN_BEST_PRACTICES.md) - 目标文件不存在
-- 行52: [шо╛шобцибх╝Пх║ФчФицЬАф╜│хоЮш╖╡](best_practices/DESIGN_PATTERNS_BEST_PRACTICES.md) - 目标文件不存在
+- 行37: х╝Вцнеч╝ЦчиЛцЬАф╜│хоЮш╖╡ - 目标文件不存在
+- 行38: щФЩшппхдДчРЖцЬАф╜│хоЮш╖╡ - 目标文件不存在
+- 行39: цЧех┐Чшо░х╜ХцЬАф╜│хоЮш╖╡ - 目标文件不存在
+- 行51: цибхЭЧхМЦшо╛шобцЬАф╜│хоЮш╖╡ - 目标文件不存在
+- 行52: шо╛шобцибх╝Пх║ФчФицЬАф╜│хоЮш╖╡ - 目标文件不存在
 - ... 还有 15 个问题
 
 #### 05_IMPLEMENTATION\07_OPERATIONS\knowledge_base\KNOWLEDGE_INDEX.md (20个问题)
@@ -245,10 +245,10 @@ version: 1.0.0
 #### 05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\05_DESIGN_DOCS\TECHNICAL_SOLUTION_SUMMARY_REPORT.md (18个问题)
 
 - 行38: [AшВбшзДхИЩх╝ХцУОшо╛шобцЦЗцбг](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/T.08.AR001.a_stock_rule_engine_design.md) - 目标文件不存在
-- 行39: [ф║дцШУцИРцЬмц╡ЛшпХчФиф╛Лшо╛шоб](trading_costs/ф║дцШУцИРцЬмц╡ЛшпХчФиф╛Лшо╛шоб.md) - 目标文件不存在
-- 行40: [хдЪх╝ХцУОцХ░цНоф╕АшЗ┤цАзшо╛шобцЦ╣цбИ](data_consistency/хдЪх╝ХцУОцХ░цНоф╕АшЗ┤цАзшо╛шобцЦ╣?md) - 目标文件不存在
-- 行40: [Sagaцибх╝ПхоЮчО░ц╡БчиЛхЫ╛](data_consistency/Sagaцибх╝ПхоЮчО░ц╡БчиЛ?md) - 目标文件不存在
-- 行40: [шбехБ┐ф║ЛхКбшо╛шобцЦЗцбг](data_consistency/шбехБ┐ф║ЛхКбшо╛шобцЦЗцбг.md) - 目标文件不存在
+- 行39: ф║дцШУцИРцЬмц╡ЛшпХчФиф╛Лшо╛шоб - 目标文件不存在
+- 行40: хдЪх╝ХцУОцХ░цНоф╕АшЗ┤цАзшо╛шобцЦ╣цбИ - 目标文件不存在
+- 行40: Sagaцибх╝ПхоЮчО░ц╡БчиЛхЫ╛ - 目标文件不存在
+- 行40: шбехБ┐ф║ЛхКбшо╛шобцЦЗцбг - 目标文件不存在
 - ... 还有 13 个问题
 
 #### 06_ARCHIVE\20260404_audit_reports_archive\audit_state\DEAD_LINKS_FIX_REPORT_20260404.md (18个问题)
@@ -289,11 +289,11 @@ version: 1.0.0
 
 #### 05_IMPLEMENTATION\04_OPERATIONS\audit_state\MEDIUM_LONG_TERM_IMPROVEMENT_IMPLEMENTATION_REPORT_20260407.md (17个问题)
 
-- 行56: [intelligent_audit_workflow.py](file:///D:/ZephyrAlpha/scripts/intelligent_audit_workflow.py) - 目标文件不存在
+- 行56: intelligent_audit_workflow.py - 目标文件不存在
 - 行87: [intelligent_audit_report_20260407_113439.md](09_AUDIT/STATE/intelligent_audit_report_20260407_113439.md) - 目标文件不存在
-- 行95: [automated_workflow.py](file:///D:/ZephyrAlpha/scripts/automated_workflow.py) - 目标文件不存在
+- 行95: automated_workflow.py - 目标文件不存在
 - 行148: [automated_workflow_report_20260407_113557.md](09_AUDIT/STATE/automated_workflow_report_20260407_113557.md) - 目标文件不存在
-- 行156: [early_warning_system.py](file:///D:/ZephyrAlpha/scripts/early_warning_system.py) - 目标文件不存在
+- 行156: early_warning_system.py - 目标文件不存在
 - ... 还有 12 个问题
 
 #### 09_AUDIT\RISK_MANAGEMENT_DOCUMENT_INDEX.md (14个问题)

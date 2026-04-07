@@ -164,13 +164,13 @@ responsibility:
 
 本次整合创建的工具脚本：
 
-1. [analyze_drift_directories.py](file:///d:/ZephyrAlpha/scripts/analyze_drift_directories.py) - 漂移目录分析
-2. [integrate_drift_directories.py](file:///d:/ZephyrAlpha/scripts/integrate_drift_directories.py) - 漂移目录整合
-3. [optimize_document_format_v2.py](file:///d:/ZephyrAlpha/scripts/optimize_document_format_v2.py) - 文档格式优化
-4. [add_main_titles.py](file:///d:/ZephyrAlpha/scripts/add_main_titles.py) - 添加一级标题
-5. [fix_yaml_headers.py](file:///d:/ZephyrAlpha/scripts/fix_yaml_headers.py) - 修复YAML头部
-6. [fix_layer_v3.py](file:///d:/ZephyrAlpha/scripts/fix_layer_v3.py) - 修复Layer定位
-7. [fix_double_yaml_v3.py](file:///d:/ZephyrAlpha/scripts/fix_double_yaml_v3.py) - 修复双重YAML头部
+1. analyze_drift_directories.py - 漂移目录分析
+2. integrate_drift_directories.py - 漂移目录整合
+3. optimize_document_format_v2.py - 文档格式优化
+4. add_main_titles.py - 添加一级标题
+5. fix_yaml_headers.py - 修复YAML头部
+6. fix_layer_v3.py - 修复Layer定位
+7. fix_double_yaml_v3.py - 修复双重YAML头部
 
 ---
 

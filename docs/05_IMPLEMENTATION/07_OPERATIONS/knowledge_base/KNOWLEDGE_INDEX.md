@@ -60,7 +60,7 @@ implementation_status: Active
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
 | **ύφΨύΧξί╝ΧόΥΟόι╕ί┐Δ** | [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | BaseStrategyήΑΒύφΨύΧξύΦθίΣ╜ίΣρόεθήΑΒύφΨύΧξόΟξ?| ΏθΦ┤ όι╕ί┐Δ |
-| **ύφΨύΧξώΑΚόΜσύ│╗ύ╗θ** | [STRATEGY_SELECTION_BLUEPRINT.md](05_IMPLEMENTATION\03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_SELECTION_BLUEPRINT.md) | ύφΨύΧξώΑΚόΜσήΑΒίΛρόΑΒίΙΘόΞλήΑΒόΑπϋΔ╜ϋψΕϊ╝░ | Ώθθκ ώΘΞϋοΒ |
+| **ύφΨύΧξώΑΚόΜσύ│╗ύ╗θ** | STRATEGY_SELECTION_BLUEPRINT.md | ύφΨύΧξώΑΚόΜσήΑΒίΛρόΑΒίΙΘόΞλήΑΒόΑπϋΔ╜ϋψΕϊ╝░ | Ώθθκ ώΘΞϋοΒ |
 | **ύφΨύΧξί╖ξίΟΓόΝΘίΞΩ** | [STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | StrategyFactoryήΑΒύφΨύΧξό│ρίΗΝήΑΒίΛρόΑΒίΛι?| ΏθΦ┤ όι╕ί┐Δ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `ύφΨύΧξ` `BaseStrategy` `ύφΨύΧξί╖ξίΟΓ` `ύφΨύΧξό│ρίΗΝ` `ίΛρόΑΒίΛιϋ╜╜`
@@ -73,7 +73,7 @@ implementation_status: Active
 |---------|---------|--------|---------|
 | **ϊ║Μϊ╗╢όΑ╗ύ║┐όΝΘίΞΩ** | [EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | EventBusήΑΒϊ║Μϊ╗╢ίΠΣί╕ΔϋχλώαΖήΑΒί╝Γόφξϊ║Μ?| ΏθΦ┤ όι╕ί┐Δ |
 | **ϊ║Μϊ╗╢ίνΕύΡΗ?* | [EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | Backtesting.pyήΑΒύφΨύΧξώΑΓώΖΞήΑΒόΧ░όΞχϋ╜υ?| ΏθΦ┤ όι╕ί┐Δ |
-| **ίδηό╡ΜώΖΞύ╜χ** | [backtest_config_template.yaml](05_IMPLEMENTATION\07_OPERATIONS\06_CONSTRUCTION_DOCS\04_CONFIG_TEMPLATES\backtest_config_template.yaml) | ίδηό╡ΜίΠΓόΧ░ήΑΒόΧ░όΞχώΖΞύ╜χήΑΒόΑπϋΔ╜όΝΘόιΘ | Ώθθκ ώΘΞϋοΒ |
+| **ίδηό╡ΜώΖΞύ╜χ** | backtest_config_template.yaml | ίδηό╡ΜίΠΓόΧ░ήΑΒόΧ░όΞχώΖΞύ╜χήΑΒόΑπϋΔ╜όΝΘόιΘ | Ώθθκ ώΘΞϋοΒ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `ίδηό╡Μ` `Backtesting.py` `ύφΨύΧξώΑΓώΖΞ` `όΧ░όΞχϋ╜υόΞλ` `ίδηό╡ΜόΛξίΣΛ`
 

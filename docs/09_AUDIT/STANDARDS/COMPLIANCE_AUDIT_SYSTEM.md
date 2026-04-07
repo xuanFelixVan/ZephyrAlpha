@@ -434,7 +434,7 @@ tags: ["ﮒﻟ۶ﮒ؟۰ﻟ؟۰", "ﮒﻟ۶ﻝ؟۰ﻝ", "ﮒ؟۰ﻟ؟۰ﻛﺛﻝ�
 ## 7. ﮒﻟﮔﮔ۰?
 - [ﻠ۲ﻠ۸ﻝ؟۰ﻝﮔ۰ﮔﭘ](09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔﮒv5.3](09_AUDIT\09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.3.md)
+- ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔﮒv5.3
 
 ---
 

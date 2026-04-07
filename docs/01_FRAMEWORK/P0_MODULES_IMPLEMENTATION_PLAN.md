@@ -519,7 +519,7 @@ networks:
 
 | 文档 | 说明 |
 |------|------|
-| [Layer 10治理与合规层索引](layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
+| Layer 10治理与合规层索引 | 完整的蓝图索引 |
 | [审计追踪系统蓝图](./AUDIT_TRAIL_SYSTEM_BLUEPRINT.md) | 审计追踪系统详细设计 |
 | [模型风险管理系统蓝图](./MODEL_RISK_MANAGEMENT_BLUEPRINT.md) | 模型风险管理详细设计 |
 | [监管报告自动化系统蓝图](./REGULATORY_REPORTING_BLUEPRINT.md) | 监管报告自动化详细设计 |

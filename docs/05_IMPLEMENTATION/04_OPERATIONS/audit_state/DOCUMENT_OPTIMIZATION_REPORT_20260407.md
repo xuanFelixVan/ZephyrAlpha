@@ -23,8 +23,8 @@
 **问题**: 23个INDEX.md文件包含重复的统计表格和维护指南内容
 
 **解决方案**:
-- 创建标准化索引模板 [INDEX_TEMPLATE.md](file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/INDEX_TEMPLATE.md)
-- 开发自动化优化脚本 [optimize_index_files.py](file:///D:/ZephyrAlpha/scripts/optimize_index_files.py)
+- 创建标准化索引模板 INDEX_TEMPLATE.md
+- 开发自动化优化脚本 optimize_index_files.py
 - 应用最小化模板到所有INDEX.md文件
 
 **修复结果**:
@@ -75,7 +75,7 @@ status: Active
 
 | 文档名称 | 类型 | 状态 | 说明 |
 |---------|------|------|------|
-| [MONITORING DASHBOARD BLUEPRINT](MONITORING_DASHBOARD_BLUEPRINT.md) | 蓝图 | 活跃 | 模块功能设计和实现方案 |
+| MONITORING DASHBOARD BLUEPRINT | 蓝图 | 活跃 | 模块功能设计和实现方案 |
 
 ---
 
@@ -89,8 +89,8 @@ status: Active
 **问题**: BLUEPRINT文件使用中文数字章节命名（一、二、三...），格式不统一
 
 **解决方案**:
-- 创建章节命名规范 [BLUEPRINT_CHAPTER_NAMING_STANDARD.md](file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/BLUEPRINT_CHAPTER_NAMING_STANDARD.md)
-- 开发章节命名优化脚本 [optimize_blueprint_files.py](file:///D:/ZephyrAlpha/scripts/optimize_blueprint_files.py)
+- 创建章节命名规范 BLUEPRINT_CHAPTER_NAMING_STANDARD.md
+- 开发章节命名优化脚本 optimize_blueprint_files.py
 - 应用标准化章节命名到所有BLUEPRINT文件
 
 **修复结果**:
@@ -227,9 +227,9 @@ status: Active
 
 ## 🔗 相关文档
 
-- [索引模板规范](file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/INDEX_TEMPLATE.md)
-- [章节命名规范](file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/BLUEPRINT_CHAPTER_NAMING_STANDARD.md)
-- [文档版本号命名标准](file:///D:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/DOCUMENT_VERSION_NAMING_STANDARD.md)
+- 索引模板规范
+- 章节命名规范
+- 文档版本号命名标准
 
 ---
 

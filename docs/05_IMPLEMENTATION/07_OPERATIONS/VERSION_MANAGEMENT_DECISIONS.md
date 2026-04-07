@@ -171,7 +171,7 @@ parent_document: ../INDEX.md
 3. [DOCUMENT_NUMBERING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md) - цЦЗцбгч╝ЦхП╖цаЗхЗЖ
 
 ### чЫ╕хЕ│хобшоб
-1. [FULL_SYSTEM_AUDIT_REPORT_2026-04-02.md](06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FULL_SYSTEM_AUDIT_REPORT_2026-04-02.md) - хЕич│╗ч╗ЯхобшобцКе?
+1. FULL_SYSTEM_AUDIT_REPORT_2026-04-02.md - хЕич│╗ч╗ЯхобшобцКе?
 2. [P1_FIXES_COMPLETED.md](06_ARCHIVE/20260404_audit_reports_archive/audit_state/P1_FIXES_COMPLETED.md) - P1щЧощвШф┐охдНхоМцИРшо░х╜Х
 
 ### хоЮцЦ╜шпБцНо

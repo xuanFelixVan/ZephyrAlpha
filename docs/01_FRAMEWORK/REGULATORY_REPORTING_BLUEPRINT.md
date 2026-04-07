@@ -408,11 +408,11 @@ class TradeReportGenerator:
 
 ### 2.1 交易金额分布
 
-![交易金额分布]({{ charts.trade_amounts }})
+!交易金额分布
 
 ### 2.2 持仓分布
 
-![持仓分布]({{ charts.position_distribution }})
+!持仓分布
 
 ## 三、风险提示
 

@@ -41,13 +41,13 @@ compliance_level: СИЊСИџТаЄтЄє
   - жБјжЎЕСИју║д№┐?  - жфїТћХТаЄтЄє
 - тъТќйУиу║┐№┐?
 #### 2. ТаИт┐ЃС╗БуаЂтъуј░ №┐?
-##### 2.1 СИ╗ТјЦтЈБТеА№┐?- **ТќЄС╗Х**: [ai_factor_miner.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/ai_factor_miner.py)
+##### 2.1 СИ╗ТјЦтЈБТеА№┐?- **ТќЄС╗Х**: ai_factor_miner.py
 - **тіЪУЃй**: 
 - у╗ЪСИђуАуљєСИЅтцДAIТїќТјўт╝ЋТЊј
 - ТЈљСЙЏтЏатГљТїќТјўсђЂУёС╝░сђЂТ│етєїуџётїТЋ┤ТхЂуеІ
 - ТЋ░ТЇжфїУЂтњїт╝ѓтИИтцё№┐?- **тЁ│жћ№┐?*: `AIFactorMiner`
 
-##### 2.2 Ти▒т║дтГдС╣атЏатГљТїќТјў№┐?- **ТќЄС╗Х**: [deep_learning_miner.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/deep_learning_miner.py)
+##### 2.2 Ти▒т║дтГдС╣атЏатГљТїќТјў№┐?- **ТќЄС╗Х**: deep_learning_miner.py
 - **ТіђТюТаѕ**: PyTorch
 - **ТћТїЂуџёТеА№┐?*:
 - LSTM (жЋ┐уЪГТюЪУ░т┐єуйЉ№┐?
@@ -57,7 +57,7 @@ compliance_level: СИЊСИџТаЄтЄє
 - УЄфтіеТЌХт║ЈуфЌтЈБУЙуй
 - GPUтіажђЪТћ№┐?  - ТЌЕтЂюТю║тѕХ
 - ТеАтъІтцЇТЮѓт║дУА№┐?
-##### 2.3 т╝║тїќтГдС╣атЏатГљС╝ўтїќ№┐?- **ТќЄС╗Х**: [reinforcement_learning_miner.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/reinforcement_learning_miner.py)
+##### 2.3 т╝║тїќтГдС╣атЏатГљС╝ўтїќ№┐?- **ТќЄС╗Х**: reinforcement_learning_miner.py
 - **ТіђТюТаѕ**: Stable-Baselines3 + Gymnasium
 - **ТћТїЂуџёуЌ№┐?*:
   - DQN (Ти▒т║дQуйЉу╗ю)
@@ -67,25 +67,25 @@ compliance_level: СИЊСИџТаЄтЄє
 - УЄфтџС╣ЅтЏатГљС╝ўтїќуј№┐?  - тіеТђЂтЏатГљжђЅТІЕ
   - ТЮЃжЄЇС╝ўтїќ
 
-##### 2.4 жЂЌС╝ауЌТ│ЋтЏатГљтЈЉуј░№┐?- **ТќЄС╗Х**: [genetic_algorithm_miner.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/genetic_algorithm_miner.py)
+##### 2.4 жЂЌС╝ауЌТ│ЋтЏатГљтЈЉуј░№┐?- **ТќЄС╗Х**: genetic_algorithm_miner.py
 - **ТіђТюТаѕ**: DEAP
 - **тЁ│жћуЅ╣№┐й?*:
 - жЂЌС╝ау╝ќуеІУЄфтіетЈЉуј░тЏатГљУАеУЙЙ№┐?  - жЄЈтїќСИЊућетЄйТЋ░№┐?  - тцЇТЮѓт║дТјД№┐?  - У┐ЏтїќтЈѓТЋ░тЈжЁЇ№┐?
-##### 2.5 тЏатГљУёС╝░№┐?- **ТќЄС╗Х**: [factor_evaluator.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/factor_evaluator.py)
+##### 2.5 тЏатГљУёС╝░№┐?- **ТќЄС╗Х**: factor_evaluator.py
 - **тіЪУЃй**:
 - IC/ICIRУАуЌ
 - уе│тџТђДУё№┐?  - тЇЋУ░ЃТђДТБђ№┐?  - жўѕтђ╝У┐Є№┐?
-##### 2.6 тЏатГљТ│етєї№┐?- **ТќЄС╗Х**: [factor_registry.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/factor_registry.py)
+##### 2.6 тЏатГљТ│етєї№┐?- **ТќЄС╗Х**: factor_registry.py
 - **тіЪУЃй**:
 - SQLiteТЋ░ТЇт║ЊтГў№┐?  - тЏатГљуЅѕТюгуАуљє
 - уіХТђЂТхЂУйгТјД№┐?  - тЁЃТЋ░ТЇуА№┐?
-#### 3. жЁЇуйТќЄС╗Х №┐?- **ТќЄС╗Х**: [ai_factor_miner_config.yaml](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/config/ai_factor_miner_config.yaml)
+#### 3. жЁЇуйТќЄС╗Х №┐?- **ТќЄС╗Х**: ai_factor_miner_config.yaml
 - **тєЁт╣**:
 - СИЅтцДт╝ЋТЊјУду╗єжЁЇуй
 - УёС╝░тЈѓТЋ░УЙуй
 - ТђДУЃйС╝ўтїќжЁЇуй
   - уЏЉТјДтњїтГўтѓежЁЇ№┐?
-#### 4. СЙЮУхќуАуљє №┐?- **ТќЄС╗Х**: [requirements.txt](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/requirements.txt)
+#### 4. СЙЮУхќуАуљє №┐?- **ТќЄС╗Х**: requirements.txt
 - **тїЁтљФ**:
   - Ти▒т║дтГдС╣аТАєТъХ (PyTorch)
   - т╝║тїќтГдС╣аТАєТъХ (Stable-Baselines3)
@@ -93,7 +93,7 @@ compliance_level: СИЊСИџТаЄтЄє
   - уЅ╣тЙЂтГўтѓе (Feast)
 - ТеАтъІуАуљє (MLflow)
 
-#### 5. Сй┐ућеуц║СЙІ №┐?- **ТќЄС╗Х**: [example_usage.py](file:///d:/ZephyrAlpha/src/modules/ai_factor_miner/examples/example_usage.py)
+#### 5. Сй┐ућеуц║СЙІ №┐?- **ТќЄС╗Х**: example_usage.py
 - **тїЁтљФ**:
   - Ти▒т║дтГдС╣аТїќТјўуц║СЙІ
 - жЂЌС╝ауЌТ│ЋТїќТјўуц║СЙІ

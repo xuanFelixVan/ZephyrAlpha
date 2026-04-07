@@ -35,7 +35,7 @@ responsibility: 数据压缩归档策略与存储优化
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 差距分析 | ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据生命周期 | [../DATA_LIFECYCLE_MANAGEMENT/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | 协同模块 | 数据生命周期管理 |
 | 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_BACKUP_RECOVERY_BLUEPRINT.md) | 协同模块 | 数据备份方案 |

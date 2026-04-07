@@ -39,21 +39,21 @@ implementation_status: ти▓тї№┐?---
 | ТќЄС╗Х | УЂїУ┤Б | уіХ№┐й?|
 |------|------|------|
 | [README.md](API_README.md) | т┐ФжђЪтЁЦжЌеТдѓ№┐?| Active |
-| [dev-setup.md](05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md) | т╝ђтЈЉујтбЃжЁЇуйТїЄ№┐?| Active |
+| dev-setup.md | т╝ђтЈЉујтбЃжЁЇуйТїЄ№┐?| Active |
 | [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) | тГдС╣аУитЙёУДётѕњ | Active |
 | [ROADMAP.md](05_IMPLEMENTATION/01_QUICKSTART/ROADMAP.md) | т╝ђтЈЉУиу║┐тЏЙ | Active |
 | [PHASE1_DESIGN.md](05_IMPLEMENTATION/01_QUICKSTART/PHASE1_DESIGN.md) | уггСИђжўХТхУЙУА | Active |
 | [factor_design.md](05_IMPLEMENTATION/01_QUICKSTART/factor_design.md) | тЏатГљУЙУАтЁЦжЌе | Active |
-| [first-backtest.md](05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) | уггСИђТгАтЏъТхІТїЄ№┐?| Active |
+| first-backtest.md | уггСИђТгАтЏъТхІТїЄ№┐?| Active |
 
 ## ЪЊќ ТаИт┐ЃТќЄТАБ
 
 ### тЁЦжЌет┐ЁУ╗
-1. [README.md](API_README.md) - т┐ФжђЪтЁЦжЌеТдѓ№┐?2. [dev-setup.md](05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md) - т╝ђтЈЉујтбЃжЁЇ№┐?3. [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) - тГдС╣аУитЙё
+1. [README.md](API_README.md) - т┐ФжђЪтЁЦжЌеТдѓ№┐?2. dev-setup.md - т╝ђтЈЉујтбЃжЁЇ№┐?3. [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) - тГдС╣аУитЙё
 
 ### тъУихТїЄтЇЌ
 - [factor_design.md](05_IMPLEMENTATION/01_QUICKSTART/factor_design.md) - тЏатГљУЙУАтЁЦжЌе
-- [first-backtest.md](05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) - уггСИђТгАтЏъ№┐?---
+- first-backtest.md - уггСИђТгАтЏъ№┐?---
 
 
 **у┤бт╝ЋуЅѕТюг**: v1.0.0 | **тѕЏт╗║ТЌЦТюЪ**: 2026-04-03 | **у╗┤Тіц№┐?*: ждќтИГТќЄТАБТъХТъё№┐?

@@ -325,7 +325,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现订单Saga模式，确保订单创建的原子性和一致性。
 
 ## 相关文档
-- [P0-07_Order_Management_Detailed_Design.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-07_Order_Management_Detailed_Design.md)
+- P0-07_Order_Management_Detailed_Design.md
 
 ## 预计时间
 1天
@@ -345,7 +345,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现缓存数据的反序列化逻辑。
 
 ## 相关文档
-- [P0-06_Account_Management_Detailed_Design.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-06_Account_Management_Detailed_Design.md)
+- P0-06_Account_Management_Detailed_Design.md
 
 ## 预计时间
 0.5天
@@ -365,7 +365,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现多引擎协调器的重试逻辑，提高系统容错能力。
 
 ## 相关文档
-- [P0-05_Multi_Engine_Coordinator_Design.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-05_Multi_Engine_Coordinator_Design.md)
+- P0-05_Multi_Engine_Coordinator_Design.md
 
 ## 预计时间
 0.5天
@@ -385,7 +385,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现多引擎协调器的继续补偿逻辑。
 
 ## 相关文档
-- [P0-05_Multi_Engine_Coordinator_Design.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-05_Multi_Engine_Coordinator_Design.md)
+- P0-05_Multi_Engine_Coordinator_Design.md
 
 ## 预计时间
 0.5天
@@ -405,7 +405,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现多引擎协调器的手动恢复逻辑。
 
 ## 相关文档
-- [P0-05_Multi_Engine_Coordinator_Design.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-05_Multi_Engine_Coordinator_Design.md)
+- P0-05_Multi_Engine_Coordinator_Design.md
 
 ## 预计时间
 0.5天
@@ -425,7 +425,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 从数据库查询历史验证结果，用于趋势分析。
 
 ## 相关文档
-- [DATA_MONITORING_ENHANCED/BLUEPRINT.md](09_AUDIT\docs\02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_MONITORING_ENHANCED\BLUEPRINT.md#L994)
+- DATA_MONITORING_ENHANCED/BLUEPRINT.md
 
 ## 预计时间
 0.5天
@@ -445,7 +445,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 从数据库查询历史异常数据，用于异常模式分析。
 
 ## 相关文档
-- [DATA_MONITORING_ENHANCED/BLUEPRINT.md](09_AUDIT\docs\02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_MONITORING_ENHANCED\BLUEPRINT.md#L1002)
+- DATA_MONITORING_ENHANCED/BLUEPRINT.md
 
 ## 预计时间
 0.5天
@@ -465,7 +465,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 生成HTML格式的数据监控报告，便于查看和分享。
 
 ## 相关文档
-- [DATA_MONITORING_ENHANCED/BLUEPRINT.md](09_AUDIT\docs\02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_MONITORING_ENHANCED\BLUEPRINT.md#L1010)
+- DATA_MONITORING_ENHANCED/BLUEPRINT.md
 
 ## 预计时间
 1天
@@ -487,7 +487,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 为数据血缘追踪系统集成告警系统，支持邮件、钉钉等告警渠道。
 
 ## 相关文档
-- [DATA_LINEAGE_TRACKING/BLUEPRINT.md](09_AUDIT\docs\02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_LINEAGE_TRACKING\BLUEPRINT.md#L700)
+- DATA_LINEAGE_TRACKING/BLUEPRINT.md
 
 ## 预计时间
 1天

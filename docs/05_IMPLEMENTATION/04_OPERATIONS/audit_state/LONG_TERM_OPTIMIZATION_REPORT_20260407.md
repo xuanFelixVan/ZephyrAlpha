@@ -76,7 +76,7 @@ parent_document: ../INDEX.md
 
 #### 2.1 定期审计脚本
 
-**脚本路径**: [weekly_audit_mechanism.py](file:///D:/ZephyrAlpha/scripts/weekly_audit_mechanism.py)
+**脚本路径**: weekly_audit_mechanism.py
 
 **审计内容**:
 - 检查职责描述缺失

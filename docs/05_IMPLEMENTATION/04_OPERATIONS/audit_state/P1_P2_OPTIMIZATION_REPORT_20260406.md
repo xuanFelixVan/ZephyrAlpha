@@ -55,7 +55,7 @@ responsibility:
 
 **修复**:
 ```markdown
-修复前: | [数据质量](04_DATA_SOURCE/DATA_QUALITY.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |
+修复前: | 数据质量 | 数据质量控制体系 | ⭐⭐⭐⭐ |
 修复后: | [数据质量](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |
 ```
 
@@ -72,10 +72,10 @@ responsibility:
 **修复**:
 ```markdown
 修复前（layer_0链接）:
-1. **L0_QMT** - QMT数据接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md))
-2. **L0_IFIND** - iFind连接器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_IFIND.md))
-3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md))
-4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_BAOSTOCK.md))
+1. **L0_QMT** - QMT数据接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) | 归档文档)
+2. **L0_IFIND** - iFind连接器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) | 归档文档)
+3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) | 归档文档)
+4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md) | 归档文档)
 
 修复后（删除归档链接）:
 1. **L0_QMT** - QMT数据接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md))
@@ -106,7 +106,7 @@ responsibility:
 
 **修复**:
 ```markdown
-修复前: - [风险管理规则](05_IMPLEMENTATION\04_OPERATIONS\03_TRADING_TACTICS\09_RISK_RULES\RISK_RULE_ENGINE.md)
+修复前: - 风险管理规则
 修复后: - [风险管理规则](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 ```
 
@@ -126,7 +126,7 @@ responsibility:
 
 **修复**:
 ```markdown
-修复前: > **迁移来源**: [L0_SUPERCMD.md](06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md) (已归档)
+修复前: > **迁移来源**: L0_SUPERCMD.md (已归档)
 修复后: > **迁移来源**: <!-- 归档链接已注释 --> (已归档)
 ```
 

@@ -98,7 +98,7 @@ class MarkdownLinkValidator:
             return
         
         # 提取所有链接
-        # 匹配格式: [链接文本](链接URL)
+        # 匹配格式: 链接文本
         links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
         
         for link_text, link_url in links:
@@ -237,7 +237,7 @@ class MarkdownLinkValidator:
             if self.valid_links:
                 f.write('## 4. 有效链接示例（前10个）\n\n')
                 for i, link in enumerate(self.valid_links[:10], 1):
-                    f.write(f'{i}. [{link.get("text", "N/A")}]({link.get("target", "N/A")}) ({link.get("type", "N/A")})\n')
+                    f.write(f'{i}. {link.get("text", "N/A")}}) ({link.get("type", "N/A")})\n')
     
     def _get_current_time(self) -> str:
         """获取当前时间"""

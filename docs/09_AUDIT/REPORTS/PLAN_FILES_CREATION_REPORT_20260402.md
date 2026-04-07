@@ -185,7 +185,7 @@ last_updated: 2026-04-02
 - т║ћТђЦтцёуљєТхЂуе?
 ### 4.5 уЏЉТјДжЁЇуйТеАТЮ┐
 
-**ТќЄС╗Х**: [monitoring_config_template.yaml](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/monitoring_config_template.yaml)
+**ТќЄС╗Х**: monitoring_config_template.yaml
 
 **тєЁт╣**:
 - PrometheusжЁЇуй

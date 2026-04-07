@@ -329,7 +329,7 @@ def process_case_knowledge(case_data):
 ```
 ﻝ۷ﮔﺓ: ﻝﻝ۴ﮒﺙﮔﮒ۵ﻛﺛﮔ۶ﻟ۰ﻟ؟۱ﮒﺅﺙ?ﻝﺏﭨﻝﭨ: ﻝﻝ۴ﮒﺙﮔﮔ۶ﻟ۰ﻟ؟۱ﮒﻝﻛﭨ۲ﻝﮒ؟ﻝﺍﮒ۵ﻛﺕﺅﺙ
 
-**ﮔﺕﮒﺟﻛﭨ۲ﻝ**: [QMTExecutor](file:///path/to/qmt_executor.py#L125-145)
+**ﮔﺕﮒﺟﻛﭨ۲ﻝ**: QMTExecutor
 
 ```python
 def execute_order(self, order):
@@ -352,7 +352,7 @@ def execute_order(self, order):
     return result
 ```
 
-**ﻝﺕﮒﺏﮔﮔ۰۲**: [QMTﮔ۶ﻟ۰ﮒ۷ﮔﮔﺁﻟ۶ﮔﺙ](file:///path/to/qmt_executor_spec.md)
+**ﻝﺕﮒﺏﮔﮔ۰۲**: QMTﮔ۶ﻟ۰ﮒ۷ﮔﮔﺁﻟ۶ﮔﺙ
 ```
 
 ### 5.3 ﻝ۴ﻟﺁﮒ۵ﻛﺗ
@@ -368,9 +368,9 @@ def execute_order(self, order):
 **ﮒﻟﮔﮔ۰?*: [ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲](01_FRAMEWORK/ARCHITECTURE.md)
 
 **ﮒ۵ﻛﺗﻟﺓﺁﮒﺝﮒﭨﭦﻟ؟؟**:
-1. ﮒﮒ۵ﻛﺗ[ﮒﺟ،ﻠﮒﺙﮒ۶](file:///path/to/quickstart.md)
+1. ﮒﮒ۵ﻛﺗﮒﺟ،ﻠﮒﺙﮒ۶
 2. ﮒﮒ۵ﻛﺗ[ﮒﮒﮒﭦ](10_AI_WORKFLOW/SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md)
-3. ﮔﮒﮒ۵ﻛﺗ[ﻝﻝ۴ﮒﺙﮒ](file:///path/to/strategy_development.md)
+3. ﮔﮒﮒ۵ﻛﺗﻝﻝ۴ﮒﺙﮒ
 ```
 
 ---

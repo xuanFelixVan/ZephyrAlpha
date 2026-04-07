@@ -491,7 +491,7 @@ class TestDispersedInvestmentRule:
 ### 6.1 核心参考文?
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [Layer 8总体蓝图](LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
+| Layer 8总体蓝图 | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
 | [AI治理框架蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | `docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` | AI行为准则和治理机?|
 | [AI行为约束引擎技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) | 技术规格书 | 约束引擎实现方案 |
 

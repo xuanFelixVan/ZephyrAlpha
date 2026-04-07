@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Document Governance Best Practices](DOCUMENT_GOVERNANCE_BEST_PRACTICES.md) - `DOC_GOVERNANCE_BEST_PRACTICES`
+- Document Governance Best Practices - `DOC_GOVERNANCE_BEST_PRACTICES`
 
 ---
 

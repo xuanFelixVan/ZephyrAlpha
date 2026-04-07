@@ -171,14 +171,14 @@ standard_type: 专业量化机构文档
 
 | 脚本名称 | 用途 | 处理数量 |
 |----------|------|----------|
-| [l1_delete_duplicate_files.py](file:///D:/ZephyrAlpha/scripts/l1_delete_duplicate_files.py) | 删除重复Layer命名文件 | 5个 |
+| l1_delete_duplicate_files.py | 删除重复Layer命名文件 | 5个 |
 
 ### 生成的报告
 
 | 报告名称 | 用途 | 路径 |
 |----------|------|------|
 | [FINAL_OPTIMIZATION_COMPLETION_REPORT_V3_20260407.md](09_AUDIT/REPORTS/FINAL_OPTIMIZATION_COMPLETION_REPORT_V3_20260407.md) | L1+L2最终修复报告 | docs/09_AUDIT/REPORTS/ |
-| [comprehensive_deep_audit_20260407_130425.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/comprehensive_deep_audit_20260407_130425.json) | 最终审计数据 | docs/09_AUDIT/STATE/ |
+| comprehensive_deep_audit_20260407_130425.json | 最终审计数据 | docs/09_AUDIT/STATE/ |
 
 ---
 

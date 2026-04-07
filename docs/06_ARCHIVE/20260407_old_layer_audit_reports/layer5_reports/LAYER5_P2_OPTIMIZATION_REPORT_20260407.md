@@ -37,8 +37,8 @@ version: 1.0.0
 ### 2.1 实施成果
 
 **创建工具**:
-- [responsibility_similarity_analyzer.py](file:///d:/ZephyrAlpha/scripts/responsibility_similarity_analyzer.py) - 职责描述相似度分析工具
-- [optimized_responsibility_generator.py](file:///d:/ZephyrAlpha/scripts/optimized_responsibility_generator.py) - 优化后的职责描述生成工具
+- responsibility_similarity_analyzer.py - 职责描述相似度分析工具
+- optimized_responsibility_generator.py - 优化后的职责描述生成工具
 
 **生成报告**:
 - [职责描述相似度分析报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
@@ -90,7 +90,7 @@ version: 1.0.0
 ### 3.1 实施成果
 
 **创建工具**:
-- [weekly_audit_scheduler.py](file:///d:/ZephyrAlpha/scripts/weekly_audit_scheduler.py) - 每周审计调度器
+- weekly_audit_scheduler.py - 每周审计调度器
 
 **功能特性**:
 - ✅ 自动检查审计时间
@@ -273,15 +273,15 @@ version: 1.0.0
 
 ### 7.2 实施工具
 
-- [responsibility_similarity_analyzer.py](file:///d:/ZephyrAlpha/scripts/responsibility_similarity_analyzer.py) - 职责描述相似度分析工具
-- [optimized_responsibility_generator.py](file:///d:/ZephyrAlpha/scripts/optimized_responsibility_generator.py) - 优化后的职责描述生成工具
-- [weekly_audit_scheduler.py](file:///d:/ZephyrAlpha/scripts/weekly_audit_scheduler.py) - 每周审计调度器
+- responsibility_similarity_analyzer.py - 职责描述相似度分析工具
+- optimized_responsibility_generator.py - 优化后的职责描述生成工具
+- weekly_audit_scheduler.py - 每周审计调度器
 
 ### 7.3 参考标准
 
 - [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 审计质量标准v5.1
 
 ---
 

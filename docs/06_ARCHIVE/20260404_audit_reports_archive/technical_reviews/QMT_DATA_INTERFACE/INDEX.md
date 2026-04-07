@@ -29,7 +29,7 @@ standard_type: 专业量化机构文档
 
 ## 📚 文档列表
 
-- [comprehensive_assessment_report](comprehensive_assessment_report.md)
+- comprehensive_assessment_report
 
 
 ---

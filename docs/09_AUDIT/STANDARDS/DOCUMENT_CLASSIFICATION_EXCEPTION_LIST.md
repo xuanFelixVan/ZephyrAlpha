@@ -215,7 +215,7 @@ last_updated: 2026-04-02
 ---
 
 ## 10. тЈѓУђЃТќЄТА?
-- [ТќЄТАБтѕєу▒╗УДёУїЃТаЄтЄє](DOCUMENT_CLASSIFICATION_STANDARD.md)
+- ТќЄТАБтѕєу▒╗УДёУїЃТаЄтЄє
 - [ТќЄТАБТ▓╗уљєтАУАТїЄтЇЌ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [ТќЄТАБТеАТЮ┐](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 

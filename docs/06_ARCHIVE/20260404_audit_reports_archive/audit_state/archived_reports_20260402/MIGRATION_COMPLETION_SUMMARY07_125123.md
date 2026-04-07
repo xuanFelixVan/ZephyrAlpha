@@ -93,7 +93,7 @@ compliance_level: 专业标准---
 
 **迁移结果**:
 - 新文? [QMT_INTERFACE.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
-- 归档文档: [L0_QMT.md](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md)
+- 归档文档: L0_QMT.md
 - 迁移日志: [MIGRATION_LOG_L0_QMT_20260402.md](./MIGRATION_LOG_L0_QMT_20260402.md)
 
 ### 第二批：L0_IFIND.md迁移
@@ -109,7 +109,7 @@ compliance_level: 专业标准---
 
 **迁移结果**:
 - 新文? [IFIND_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md)
-- 归档文档: [L0_IFIND.md](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_IFIND.md)
+- 归档文档: L0_IFIND.md
 - 迁移日志: [MIGRATION_LOG_L0_IFIND_20260402.md](./MIGRATION_LOG_L0_IFIND_20260402.md)
 
 ### 第三批：L0_SUPERCMD.md迁移
@@ -125,7 +125,7 @@ compliance_level: 专业标准---
 
 **迁移结果**:
 - 新文? [SUPERCMD_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md)
-- 归档文档: [L0_SUPERCMD.md](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md)
+- 归档文档: L0_SUPERCMD.md
 - 迁移日志: [MIGRATION_LOG_L0_SUPERCMD_20260402.md](./MIGRATION_LOG_L0_SUPERCMD_20260402.md)
 
 ### 第四批：L0_BAOSTOCK.md迁移
@@ -141,7 +141,7 @@ compliance_level: 专业标准---
 
 **迁移结果**:
 - 新文? [BAOSTOCK_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)
-- 归档文档: [L0_BAOSTOCK.md](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_BAOSTOCK.md)
+- 归档文档: L0_BAOSTOCK.md
 - 迁移日志: [MIGRATION_LOG_L0_BAOSTOCK_20260402.md](./MIGRATION_LOG_L0_BAOSTOCK_20260402.md)
 
 ---

@@ -44,16 +44,16 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Retail-Strategies-C](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-c.md) - `TACTICS_YOUZI_OTHER_C_001`
-- [Retail-Strategies-D](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-d.md) - `TACTICS_YOUZI_OTHER_D_001`
-- [Retail-Strategies-E](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-e.md) - `TACTICS_YOUZI_OTHER_E_001`
-- [Retail-Strategies-F](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-f.md) - `TACTICS_YOUZI_OTHER_F_001`
-- [Retail-Strategies-G](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-g.md) - `TACTICS_YOUZI_OTHER_G_001`
-- [Retail-Strategies-H](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-h.md) - `TACTICS_YOUZI_OTHER_H_001`
-- [Retail-Strategies-I](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-i.md) - `TACTICS_YOUZI_OTHER_I_001`
-- [Retail-Strategies-J](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-j.md) - `TACTICS_YOUZI_OTHER_J_001`
-- [Retail-Strategies-K](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-k.md) - `TACTICS_YOUZI_OTHER_K_001`
-- [Retail-Strategies-L](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-l.md) - `TACTICS_YOUZI_OTHER_L_001`
+- Retail-Strategies-C - `TACTICS_YOUZI_OTHER_C_001`
+- Retail-Strategies-D - `TACTICS_YOUZI_OTHER_D_001`
+- Retail-Strategies-E - `TACTICS_YOUZI_OTHER_E_001`
+- Retail-Strategies-F - `TACTICS_YOUZI_OTHER_F_001`
+- Retail-Strategies-G - `TACTICS_YOUZI_OTHER_G_001`
+- Retail-Strategies-H - `TACTICS_YOUZI_OTHER_H_001`
+- Retail-Strategies-I - `TACTICS_YOUZI_OTHER_I_001`
+- Retail-Strategies-J - `TACTICS_YOUZI_OTHER_J_001`
+- Retail-Strategies-K - `TACTICS_YOUZI_OTHER_K_001`
+- Retail-Strategies-L - `TACTICS_YOUZI_OTHER_L_001`
 
 ---
 

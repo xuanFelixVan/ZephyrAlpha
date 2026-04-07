@@ -322,10 +322,10 @@ python scripts/intelligent_link_fixer.py --report audit_report.json --apply
 
 ## 📄 生成的报?
 
-1. [intelligent_link_fix_result.json](intelligent_link_fix_result.json) - 智能链接修复结果
-2. [metadata_enhancement_report.json](metadata_enhancement_report.json) - 元数据完善结?
-3. [document_classification_scan.json](document_classification_scan.json) - 文档分类扫描结果
-4. [final_quality_report_round3.json](final_quality_report_round3.json) - 最终质量检查报?
+1. intelligent_link_fix_result.json - 智能链接修复结果
+2. metadata_enhancement_report.json - 元数据完善结?
+3. document_classification_scan.json - 文档分类扫描结果
+4. final_quality_report_round3.json - 最终质量检查报?
 
 ---
 

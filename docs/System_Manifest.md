@@ -89,7 +89,7 @@ responsibility:
 | Layer归属 | 7个 | 6个 | ✅ 85.7% |
 
 **相关文档**:
-- [Layer 4深度审计报告v4](09_AUDIT/REPORTS/LAYER4_DEEP_AUDIT_REPORT_V4_20260407.md)
+- Layer 4深度审计报告v4
 - [Layer 4修复工作总结报告v4](09_AUDIT/REPORTS/FIX_SUMMARY_REPORT_V4_20260407.md)
 
 ---

@@ -333,7 +333,7 @@ implementation_status: 蓝图设计完成
 ### 4.1 核心参考文?
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [Layer 8总体蓝图](LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
+| Layer 8总体蓝图 | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
 | [系统架构](./ARCHITECTURE.md) | `docs/01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-11架构定义 |
 | [技术栈选择](./TECH_STACK.md) | `docs/01_FRAMEWORK/TECH_STACK.md` | 技术栈详细说明 |
 

@@ -332,9 +332,9 @@ ZephyrAlpha系统经历了从概念到成熟的完整演进过程，主要分为
 ---
 
 ## 6. 参考文?
-- [系统架构蓝图](SYSTEM_ARCHITECTURE_BLUEPRINT.md)
+- 系统架构蓝图
 - [模块职责边界定义](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [技术规范文档](TECHNICAL_SPECIFICATIONS.md)
+- 技术规范文档
 
 ---
 

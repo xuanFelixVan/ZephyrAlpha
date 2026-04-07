@@ -284,7 +284,7 @@ knowledge_base/
 
 ## 8. ﮒﻟﮔﮔ۰?
 - [ﮔﻝﭨﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](BEST_PRACTICES\DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

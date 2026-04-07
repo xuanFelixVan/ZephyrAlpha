@@ -191,12 +191,26 @@ class ComprehensiveDeepAuditor:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
+                # 移除BOM字符
+                content = content.lstrip('\ufeff')
+                
+                # 移除代码块中的内容（避免误判代码块中的链接）
+                content_no_code = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
+                
                 # 检查链接
-                links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
+                links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content_no_code)
                 
                 for link_text, link_path in links:
                     # 跳过外部链接和锚点
                     if link_path.startswith('http') or link_path.startswith('#'):
+                        continue
+                    
+                    # 跳过模板占位符链接（包含{和}的链接）
+                    if '{' in link_path or '}' in link_path:
+                        continue
+                    
+                    # 跳过空链接
+                    if not link_path.strip():
                         continue
                     
                     # 检查路径冗余

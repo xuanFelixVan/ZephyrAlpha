@@ -74,13 +74,13 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)        # ﮒﻝﭦ۶ﮒﻝ؟ﮒﺛ?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)              # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)           # ﻛﺕﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](SIBLING\doc.md)        # ﻛﺕﻛﺕﻝﭦ۶ﮒﮒﺙﻝ؟ﮒﺛ?```
+ﮔﮔ۰۲        # ﮒﻝﭦ۶ﮒﻝ؟ﮒﺛ?ﮔﮔ۰۲              # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ
+ﮔﮔ۰۲           # ﻛﺕﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ?ﮔﮔ۰۲        # ﻛﺕﻛﺕﻝﭦ۶ﮒﮒﺙﻝ؟ﮒﺛ?```
 
 ﻗ?**ﻛﺕﮔ۷ﻟ?*:
 ```markdown
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)        # 3ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻛﺕﮔ۷ﻟﺅﺙ
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)     # 4ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ۱ﺅﺙ?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)  # 5ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ۱ﺅﺙ?```
+ﮔﮔ۰۲        # 3ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻛﺕﮔ۷ﻟﺅﺙ
+ﮔﮔ۰۲     # 4ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ۱ﺅﺙ?ﮔﮔ۰۲  # 5ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ۱ﺅﺙ?```
 
 **ﻝﺗﮔ؟ﮔﮒﭖﮒ۳ﻝ**:
 - ﮒ۵ﮔﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷4ﮒﺎﻛﭨ۴ﻛﺕﻟﺓﺁﮒﺝﺅﺙﮒﭦﻟﻟﺅﺙ?  1. ﻠﮔﺍﻝﭨﻝﭨﻝ؟ﮒﺛﻝﭨﮔ
@@ -94,13 +94,13 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+ﮔﮔ۰۲
+ﮔﮔ۰۲
 ```
 
 ﻗ?**ﻝ۵ﮔ۱**:
 ```markdown
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)        # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)    # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?```
+ﮔﮔ۰۲        # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?ﮔﮔ۰۲    # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?```
 
 ### 3.3 ﻟﺓﺁﮒﺝﮒ۳۶ﮒﺍﮒﻟ۶ﻟ?
 **ﻟ۶ﮒ**: ﻟﺓﺁﮒﺝﮒ۳۶ﮒﺍﮒﮒﭦﻛﺕﮒ؟ﻠﮔﻛﭨﭘﮒﻛﺕﻟ?
@@ -108,11 +108,11 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](Blueprints/STRATEGY_ENGINE.md)  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻟ?```
+ﮔﮔ۰۲  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻟ?```
 
 ﻗ?**ﻝ۵ﮔ۱**:
 ```markdown
-[ﮔﮔ۰۲](blueprints/strategy_engine.md)  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻛﺕﻟ?```
+ﮔﮔ۰۲  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻛﺕﻟ?```
 
 ---
 
@@ -124,12 +124,12 @@ compliance_level: 专业标准---
 **ﮔ۷ﻟﮔﺙﮒﺙ**:
 ```markdown
 # ﮒﻝﭦ۶ﮔﮔ۰۲
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+ﮔﮔ۰۲
 
-# ﮒﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+# ﮒﻝ؟ﮒﺛﮔﮔ۰?ﮔﮔ۰۲
 
 # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛﮔﮔ۰۲
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+ﮔﮔ۰۲
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
@@ -150,10 +150,10 @@ compliance_level: 专业标准---
 **ﮔ۷ﻟﮔﺙﮒﺙ**:
 ```markdown
 # ﻛﺛﺟﻝ۷ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﺅﺙﻗ۳3ﮒﺎﺅﺙ
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+ﮔﮔ۰۲
 
 # ﮒ۵ﮔﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶>3ﺅﺙﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﻝﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝ
-[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+ﮔﮔ۰۲
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
@@ -203,16 +203,16 @@ compliance_level: 专业标准---
 
 **ﮔ۷ﻟﮔﺙﮒﺙ**:
 ```markdown
-[ﮔﮔ۰۲ﮒﻝ۶ﺍﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ](06_ARCHIVE\CATEGORY\DATE_MODULE\document_ARCHIVED.md)
+ﮔﮔ۰۲ﮒﻝ۶ﺍﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮒﺙﻝ۷ﮒﺛﮔ۰۲ﮔﮔ۰۲
-[Layer 7ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ](06_ARCHIVE\duplicate_documents\20260403_layer7_audit\LAYER7_DEEP_AUDIT_REPORT_20260403_ARCHIVED.md)
+Layer 7ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ
 
 # ﮒﺙﻝ۷ﮒﺛﮔ۰۲ﻟﺁﺑﮔ
-[ﮒﺛﮔ۰۲ﻟﺁﺑﮔ](06_ARCHIVE\duplicate_documents\20260403_layer7_audit\ARCHIVE_README.md)
+ﮒﺛﮔ۰۲ﻟﺁﺑﮔ
 ```
 
 ### 4.5 ﮒ۳ﻠ۷ﻠﺝﮔ۴ﮒﺙﻝ۷

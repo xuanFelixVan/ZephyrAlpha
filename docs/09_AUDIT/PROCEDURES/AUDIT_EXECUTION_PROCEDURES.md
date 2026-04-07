@@ -594,7 +594,7 @@ def verify_remediation(
 
 ## 8. ﮒﻟﮔﮔ۰?
 - [ﮒﻟ۶ﮒ؟۰ﻟ؟۰ﻛﺛﻝﺏﭨ](09_AUDIT/STANDARDS/COMPLIANCE_AUDIT_SYSTEM.md)
-- [ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔﮒv5.3](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.3.md)
+- ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔﮒv5.3
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---

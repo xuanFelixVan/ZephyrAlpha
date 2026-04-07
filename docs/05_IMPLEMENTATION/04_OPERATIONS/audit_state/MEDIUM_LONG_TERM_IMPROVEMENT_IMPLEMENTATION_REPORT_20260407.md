@@ -53,7 +53,7 @@ parent_document: ../INDEX.md
 
 #### 1.1 实施内容
 
-**创建工具**: [intelligent_audit_workflow.py](file:///D:/ZephyrAlpha/scripts/intelligent_audit_workflow.py)
+**创建工具**: intelligent_audit_workflow.py
 
 **核心功能**:
 - 智能问题分类
@@ -92,7 +92,7 @@ parent_document: ../INDEX.md
 
 #### 2.1 实施内容
 
-**创建工具**: [automated_workflow.py](file:///D:/ZephyrAlpha/scripts/automated_workflow.py)
+**创建工具**: automated_workflow.py
 
 **核心功能**:
 - 6步自动化工作流
@@ -153,7 +153,7 @@ parent_document: ../INDEX.md
 
 #### 3.1 实施内容
 
-**创建工具**: [early_warning_system.py](file:///D:/ZephyrAlpha/scripts/early_warning_system.py)
+**创建工具**: early_warning_system.py
 
 **核心功能**:
 - 合规率预警
@@ -349,9 +349,9 @@ parent_document: ../INDEX.md
 
 ### 1. 自动化脚本（3个）
 
-- [intelligent_audit_workflow.py](file:///D:/ZephyrAlpha/scripts/intelligent_audit_workflow.py)
-- [automated_workflow.py](file:///D:/ZephyrAlpha/scripts/automated_workflow.py)
-- [early_warning_system.py](file:///D:/ZephyrAlpha/scripts/early_warning_system.py)
+- intelligent_audit_workflow.py
+- automated_workflow.py
+- early_warning_system.py
 
 ### 2. 标准规范文档（2个）
 

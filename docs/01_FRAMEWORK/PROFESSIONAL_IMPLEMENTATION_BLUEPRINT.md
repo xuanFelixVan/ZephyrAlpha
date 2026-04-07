@@ -1929,7 +1929,7 @@ ZephyrAlpha/
 
 | 蓝图文档 | 说明 | 实施周期 |
 |---------|------|---------|
-| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | RAG知识系统 - AI利用历史知识 | 2?|
+| **RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md** | RAG知识系统 - AI利用历史知识 | 2?|
 助开?0% | 8个月 |
 
 

@@ -58,7 +58,7 @@ responsibility:
 
 **修复示例**：
 ```
-修复前: [AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md](05_IMPLEMENTATION\04_OPERATIONS\05_IMPLEMENTATION\...)
+修复前: AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
 修复后: AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
 ```
 
@@ -200,10 +200,10 @@ layer_keywords = {
 
 本次修复创建的工具脚本：
 
-1. [fix_p1_issues.py](file:///d:/ZephyrAlpha/scripts/fix_p1_issues.py) - P1级问题修复
-2. [generate_complete_index.py](file:///d:/ZephyrAlpha/scripts/generate_complete_index.py) - 完整索引生成
-3. [fix_p2_issues_v2.py](file:///d:/ZephyrAlpha/scripts/fix_p2_issues_v2.py) - P2级问题修复
-4. [document_quality_monitor.py](file:///d:/ZephyrAlpha/scripts/document_quality_monitor.py) - 文档质量监控
+1. fix_p1_issues.py - P1级问题修复
+2. generate_complete_index.py - 完整索引生成
+3. fix_p2_issues_v2.py - P2级问题修复
+4. document_quality_monitor.py - 文档质量监控
 
 ---
 
@@ -269,8 +269,8 @@ layer_keywords = {
 
 ## 📄 相关文档
 
-1. **审计报告**: [LAYER6_DEEP_AUDIT_V6_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V6_20260407.md)
-2. **审计总结**: [LAYER6_DEEP_AUDIT_SUMMARY_V6_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_SUMMARY_V6_20260407.md)
+1. **审计报告**: LAYER6_DEEP_AUDIT_V6_20260407.md
+2. **审计总结**: LAYER6_DEEP_AUDIT_SUMMARY_V6_20260407.md
 3. **质量监控报告**: [quality_monitoring_report_20260407_011229.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_011229.md)
 
 ---

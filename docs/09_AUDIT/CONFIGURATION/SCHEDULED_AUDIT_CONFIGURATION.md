@@ -495,7 +495,7 @@ dingtalk:
       "msgtype": "markdown",
       "markdown": {
         "title": "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ",
-<!-- ﮒﻛﺛﻝ؛۵ﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ: "text": "### {audit_type}ﮒ؟۰ﻟ؟۰ﮒ؟ﮔ\n\n- ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}\n- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}\n- ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}\n\n[ﮔ۴ﻝﻟﺁ۵ﻝﭨﮔ۴ﮒ]({report_url})" -->
+<!-- ﮒﻛﺛﻝ؛۵ﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ: "text": "### {audit_type}ﮒ؟۰ﻟ؟۰ﮒ؟ﮔ\n\n- ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}\n- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}\n- ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}\n\nﮔ۴ﻝﻟﺁ۵ﻝﭨﮔ۴ﮒ" -->
 
       }
     }

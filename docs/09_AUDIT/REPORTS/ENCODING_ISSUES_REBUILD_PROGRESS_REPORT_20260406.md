@@ -290,7 +290,7 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 ### A. 相关文档
 
 - [严重编码问题审计报告](./CRITICAL_ENCODING_ISSUES_AUDIT_REPORT_20260406.md)
-- [归档说明文档](06_ARCHIVE\20260406_encoding_issues_archive\ARCHIVE_README.md)
+- 归档说明文档
 - [蓝图文档索引](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)
 
 ### B. 验证脚本

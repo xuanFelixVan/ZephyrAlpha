@@ -20,14 +20,14 @@ implementation_status: εΖ≤εφ?---
 
 |----------|------|------|
 
-| [04_PLATFORM_DOCS/](04_PLATFORM_DOCS/) | εΙ≥εΑφ•΅φΓΘ | Active |
+| 04_PLATFORM_DOCS/ | εΙ≥εΑφ•΅φΓΘ | Active |
 
 ### 04_PLATFORM_DOCS - εΙ≥εΑφ•΅φΓΘ
 
 | φ•΅δΜΕ | ηφ‰ |
 |------|------|
 | [README.md](API_README.md) | εΙ≥εΑφ•΅φΓΘηφ‰ |
-| [xuntou_qmt_trading_system_documentation.pdf](04_PLATFORM_DOCS/xuntou_qmt_trading_system_documentation.pdf) | ηΩφQMTδΚΛφ‰™γ≥ΜγΜφ•΅φΓΘ |
+| xuntou_qmt_trading_system_documentation.pdf | ηΩφQMTδΚΛφ‰™γ≥ΜγΜφ•΅φΓΘ |
 
 
 - **QMTφΑφφΞεΘ**: [../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)

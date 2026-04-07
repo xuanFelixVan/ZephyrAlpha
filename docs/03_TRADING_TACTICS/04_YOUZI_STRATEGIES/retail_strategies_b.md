@@ -42,7 +42,7 @@ implementation_status: 进行?---
 > **配套文档**?
 > - 主文档：
 > - 策略池索引：[index.md](08_HUMAN_AI_INTERFACE/index.md)
-> - 游资策略第一部分：[retail-strategies-a.md](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/retail-strategies-a.md)
+> - 游资策略第一部分：retail-strategies-a.md
 
 ***
 

@@ -206,7 +206,7 @@ version: 1.0.0
 
 ### 修复工具
 
-- [layer5_deep_audit_v4.py](file:///d:/ZephyrAlpha/scripts/layer5_deep_audit_v4.py) - Layer 5深度审计工具
+- layer5_deep_audit_v4.py - Layer 5深度审计工具
 
 ---
 

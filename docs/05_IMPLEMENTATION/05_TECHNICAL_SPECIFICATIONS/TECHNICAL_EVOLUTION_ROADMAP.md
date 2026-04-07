@@ -61,7 +61,7 @@ Month 1-2 (Phase 1): P1ч║зщгОщЩйф┐охд?- хЯ║чбАшо╛цЦ
 - [ ] хоПшзВцХ░цНощЗЗщЫЖцибхЭЧх╝АхП?(AkShareщЫЖцИР)
 - [ ] HMMцибхЮЛшонч╗Гф╕ОщкМшп?- [ ] ч╗Пц╡ОшМГх╝ПшпЖхИлAPIх╝АхП?- [ ] хНХхЕГц╡ЛшпХф╕ОщЫЖцИРц╡Лшп?
 **ф║дф╗ШчЙ?*:
-- тЬ?[ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md](ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md)
+- тЬ?ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md
 - тЬ?хоПшзВцХ░цНощЗЗщЫЖцибхЭЧф╗гчаБ
 - тЬ?HMMцибхЮЛшонч╗ГшДЪцЬм
 - тЬ?APIцЬНхКбщГич╜▓

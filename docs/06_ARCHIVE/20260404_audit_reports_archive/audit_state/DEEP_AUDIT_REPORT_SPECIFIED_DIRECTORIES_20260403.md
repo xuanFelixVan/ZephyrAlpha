@@ -432,9 +432,9 @@ cat > data/assessments/INDEX.md << 'EOF'
 ﮔ؛ﻝ؟ﮒﺛﮒﮒ۷ﮔﮔﺁﻟ۶ﻟﻝﻟﺁﻛﺙﺍﮔ۴ﮒﻙ?
 ## ﻟﺁﻛﺙﺍﮒﺁﺗﻟﺎ۰
 
-1. [ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ](market_impact/market_impact_assessment_report.md)
-2. [ﻝﭨﮔﭖﮒ۷ﮔﮒﺙﮔ](economic_regime/economic_regime_assessment_report.md)
-3. [ﮔﭦﻟﺛﮔ۶ﻟ۰ﮒﺙﮔ](smart_execution/smart_execution_assessment_report.md)
+1. ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ
+2. ﻝﭨﮔﭖﮒ۷ﮔﮒﺙﮔ
+3. ﮔﭦﻟﺛﮔ۶ﻟ۰ﮒﺙﮔ
 EOF
 ```
 

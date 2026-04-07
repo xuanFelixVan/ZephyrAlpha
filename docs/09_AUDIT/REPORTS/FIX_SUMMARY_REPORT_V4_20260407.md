@@ -82,7 +82,7 @@ responsibility:
 
 **修复示例**:
 ```markdown
-修复前: [Layer 8总体蓝图](LAYER_8_MASTER_BLUEPRINT.md)
+修复前: Layer 8总体蓝图
 修复后: [Layer 8总体蓝图](#)
 ```
 
@@ -230,7 +230,7 @@ responsibility:
 
 ### 7.1 相关文档
 
-- [Layer 4深度审计报告v4](LAYER4_DEEP_AUDIT_REPORT_V4_20260407.md)
+- Layer 4深度审计报告v4
 - [持续监控配置指南](09_AUDIT/AUTOMATION/CONTINUOUS_MONITORING_CONFIG.md)
 - [修复日志](../STATE/layer4_fix_log_v4_20260407_123607.json)
 

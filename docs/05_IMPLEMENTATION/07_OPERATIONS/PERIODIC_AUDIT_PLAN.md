@@ -293,7 +293,7 @@ python scripts/document_auditor.py --mode deep
 ## ЁЯУЪ хЕлуАБхПВшАГш╡Д?
 ### 8.1 чЫ╕хЕ│цЦЗцбг
 
-- [цЦЗцбгц▓╗чРЖцЬ║хИ╢](DOCUMENT_GOVERNANCE_MECHANISM.md)
+- цЦЗцбгц▓╗чРЖцЬ║хИ╢
 - [цЦЗцбгхС╜хРНшзДшМГ](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
 - [цЦЗцбгш┤ищЗПщЧичжБцаЗхЗЖ](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_QUALITY_GATE_STANDARD.md)
 

@@ -57,7 +57,7 @@ parent_document: ../INDEX.md
 
 #### 1.2 修复方法
 
-**脚本**: [fix_missing_responsibility.py](file:///D:/ZephyrAlpha/scripts/fix_missing_responsibility.py)
+**脚本**: fix_missing_responsibility.py
 
 **修复流程**:
 ```
@@ -85,7 +85,7 @@ parent_document: ../INDEX.md
 | **缺少职责描述** | 63个 | **0个** | -63个 |
 | **职责描述覆盖率** | 96.4% | **99.9%** | +3.5% |
 
-**详细报告**: [fix_missing_responsibility_20260407_031710.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/fix_missing_responsibility_20260407_031710.json)
+**详细报告**: fix_missing_responsibility_20260407_031710.json
 
 ---
 
@@ -99,7 +99,7 @@ parent_document: ../INDEX.md
 
 #### 2.2 优化方法
 
-**脚本**: [check_naming_compliance.py](file:///D:/ZephyrAlpha/scripts/check_naming_compliance.py)
+**脚本**: check_naming_compliance.py
 
 **优化流程**:
 ```
@@ -132,7 +132,7 @@ parent_document: ../INDEX.md
 - 包含空格: 0个 ✅
 - 不符合标准格式: 92个 ⚠️
 
-**详细报告**: [naming_compliance_check_20260407_031813.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/naming_compliance_check_20260407_031813.json)
+**详细报告**: naming_compliance_check_20260407_031813.json
 
 ---
 
@@ -235,16 +235,16 @@ parent_document: ../INDEX.md
 
 ### 1. 自动化脚本
 
-- **职责修复脚本**: [fix_missing_responsibility.py](file:///D:/ZephyrAlpha/scripts/fix_missing_responsibility.py)
-- **命名检查脚本**: [check_naming_compliance.py](file:///D:/ZephyrAlpha/scripts/check_naming_compliance.py)
-- **批量重命名脚本**: [batch_rename_files.py](file:///D:/ZephyrAlpha/scripts/batch_rename_files.py)
-- **清理重复文件脚本**: [clean_duplicate_files.py](file:///D:/ZephyrAlpha/scripts/clean_duplicate_files.py)
+- **职责修复脚本**: fix_missing_responsibility.py
+- **命名检查脚本**: check_naming_compliance.py
+- **批量重命名脚本**: batch_rename_files.py
+- **清理重复文件脚本**: clean_duplicate_files.py
 
 ### 2. 审计报告
 
-- **职责修复报告**: [fix_missing_responsibility_20260407_031710.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/fix_missing_responsibility_20260407_031710.json)
-- **命名检查报告**: [naming_compliance_check_20260407_031813.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/naming_compliance_check_20260407_031813.json)
-- **批量重命名报告**: [batch_rename_result_20260407_031848.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/batch_rename_result_20260407_031848.json)
+- **职责修复报告**: fix_missing_responsibility_20260407_031710.json
+- **命名检查报告**: naming_compliance_check_20260407_031813.json
+- **批量重命名报告**: batch_rename_result_20260407_031848.json
 
 ---
 

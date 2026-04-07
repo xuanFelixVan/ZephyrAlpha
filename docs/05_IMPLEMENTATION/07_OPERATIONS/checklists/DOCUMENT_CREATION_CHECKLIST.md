@@ -252,20 +252,20 @@ python scripts/layer5_section_completer.py
 
 ### 文档模板
 
-- [蓝图文档模板](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/templates/BLUEPRINT_TEMPLATE.md)
-- [指南文档模板](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/templates/GUIDE_TEMPLATE.md)
-- [标准文档模板](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/templates/STANDARD_TEMPLATE.md)
+- 蓝图文档模板
+- 指南文档模板
+- 标准文档模板
 
 ### 检查工具
 
-- [文档质量检查工具](file:///d:/ZephyrAlpha/scripts/document_quality_checker.py)
-- [职责描述检查工具](file:///d:/ZephyrAlpha/scripts/check_responsibility.py)
-- [链接有效性检查工具](file:///d:/ZephyrAlpha/scripts/check_links.py)
+- 文档质量检查工具
+- 职责描述检查工具
+- 链接有效性检查工具
 
 ### 参考标准
 
-- [文档质量标准](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/standards/DOCUMENT_QUALITY_STANDARDS.md)
-- [层级标识标准](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/standards/LAYER_IDENTIFICATION_STANDARD.md)
+- 文档质量标准
+- 层级标识标准
 
 ---
 

@@ -90,7 +90,7 @@ compliance_level: 专业标准
 **问题**: 开源文档职责可能重叠
 
 **影响文件**:
-1. [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](file:///d:/ZephyrAlpha/docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md)
+1. OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
    - 职责：开源项目集成方案蓝图
    - 内容：实施方案和技术细节、架构设计和集成策略、核心开源项目集成代码示例
 
@@ -335,7 +335,7 @@ compliance_level: 专业标准
 
 - [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 审计质量标准v5.1
 
 ### Git备份
 

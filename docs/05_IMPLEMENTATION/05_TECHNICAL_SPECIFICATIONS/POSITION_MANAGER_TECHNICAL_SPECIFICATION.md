@@ -1283,7 +1283,7 @@ position_manager:
 ### C. ﮒﻟﮔ?
 - [ﮔﭘﮔﮒ؟ﻛﺗ](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+- ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ

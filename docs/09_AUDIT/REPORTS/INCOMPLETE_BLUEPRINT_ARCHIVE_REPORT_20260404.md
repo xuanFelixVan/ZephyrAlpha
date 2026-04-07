@@ -224,7 +224,7 @@ docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/
 - [蓝图文档总索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 
 ### 审计报告
-- [数据预处理层深度审计报告 V4](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_REPORT_20260404_V4.md)
+- 数据预处理层深度审计报告 V4
 
 ---
 

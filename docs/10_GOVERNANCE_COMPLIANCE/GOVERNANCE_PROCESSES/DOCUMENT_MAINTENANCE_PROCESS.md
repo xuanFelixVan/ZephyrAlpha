@@ -195,7 +195,7 @@ python scripts/fix_invalid_links.py
 INDEX.md格式:
 | 文件 | 模块ID | 说明 |
 |------|--------|------|
-| [DOCUMENT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) | DOCUMENT_001 | 文档说明 |
+| DOCUMENT.md | DOCUMENT_001 | 文档说明 |
 
 System_Manifest.md格式:
 #### [层级]

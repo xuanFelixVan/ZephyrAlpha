@@ -260,9 +260,9 @@ compliance_level: 专业标准
 
 ## 📄 相关文档
 
-1. **详细审计报告**: [LAYER6_DEEP_AUDIT_V2_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V2_20260407.md)
-2. **JSON结果**: [layer6_deep_audit_v2_result_20260407_020548.json](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6_deep_audit_v2_result_20260407_020548.json)
-3. **审计脚本**: [layer6_deep_audit_v2.py](file:///d:/ZephyrAlpha/scripts/layer6_deep_audit_v2.py)
+1. **详细审计报告**: LAYER6_DEEP_AUDIT_V2_20260407.md
+2. **JSON结果**: layer6_deep_audit_v2_result_20260407_020548.json
+3. **审计脚本**: layer6_deep_audit_v2.py
 
 ---
 

@@ -26,7 +26,7 @@ responsibility:
 
 | 序号 | 文档名称 | 职责描述 | 状态 |
 |------|---------|---------|------|
-| 1 | [DOCUMENT_GOVERNANCE_BEST_PRACTICES.md](DOCUMENT_GOVERNANCE_BEST_PRACTICES.md) | 文档治理最佳实践指南 | Active |
+| 1 | DOCUMENT_GOVERNANCE_BEST_PRACTICES.md | 文档治理最佳实践指南 | Active |
 
 ---
 
@@ -34,7 +34,7 @@ responsibility:
 
 ### 核心文档
 
-- **[文档治理最佳实践指南](DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)** - 专业量化机构文档治理标准实践
+- **文档治理最佳实践指南** - 专业量化机构文档治理标准实践
 
 ---
 

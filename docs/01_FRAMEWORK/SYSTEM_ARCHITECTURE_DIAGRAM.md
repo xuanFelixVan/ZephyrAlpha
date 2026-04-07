@@ -60,7 +60,7 @@ responsibility:
 ---
 
 ## 4. ?
-- [系统架构蓝图](SYSTEM_ARCHITECTURE_BLUEPRINT.md)
+- 系统架构蓝图
 - [模块职责边界定义](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
 
 ---

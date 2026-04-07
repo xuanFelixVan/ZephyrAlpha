@@ -159,7 +159,7 @@ responsibility:
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
 | [资本配置系统蓝图](11_STRATEGIC_DECISION/CAPITAL_ALLOCATION_BLUEPRINT.md) | 战略资产配置、资本分配决策 | P1 | ✅ 已创建 |
-| [市场状态识别蓝图](MARKET_REGIME_BLUEPRINT.md) | 市场状态判断、范式转换预警 | P0 | ✅ 已创建 |
+| 市场状态识别蓝图 | 市场状态判断、范式转换预警 | P0 | ✅ 已创建 |
 | [宏观因子系统蓝图](11_STRATEGIC_DECISION/MACRO_FACTOR_BLUEPRINT.md) | 宏观因子分析、因子暴露控制 | P1 | ✅ 已创建 |
 | [再平衡决策系统蓝图](11_STRATEGIC_DECISION/REBALANCING_BLUEPRINT.md) | 再平衡策略、成本优化 | P0 | ✅ 已创建 |
 

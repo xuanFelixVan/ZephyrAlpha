@@ -229,7 +229,7 @@ Files: 2 files changed, 354 insertions(+)
 - 预计时间和验收标准
 
 ### 6. Issue创建脚本
-**文件**: [scripts/create_github_issues.sh](file:///D:/ZephyrAlpha/scripts/create_github_issues.sh)
+**文件**: scripts/create_github_issues.sh
 
 **功能**:
 - 批量创建GitHub Issue
@@ -393,7 +393,7 @@ bash scripts/create_github_issues.sh
 
 - [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md)
+- 审计质量标准v5.1
 
 ### C. 相关文档链接
 

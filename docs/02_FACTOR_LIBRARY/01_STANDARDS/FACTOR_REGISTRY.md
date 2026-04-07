@@ -245,10 +245,10 @@ stateDiagram-v2
 
 ## 📚 八、参考文档
 
-- [因子定义标准](FACTOR_DEFINITION.md)
-- [因子计算框架](FACTOR_CALCULATION_FRAMEWORK.md)
-- [因子验证指南](FACTOR_VALIDATION_GUIDE.md)
-- [因子分类标准](FACTOR_TAXONOMY.md)
+- 因子定义标准
+- 因子计算框架
+- 因子验证指南
+- 因子分类标准
 
 ---
 

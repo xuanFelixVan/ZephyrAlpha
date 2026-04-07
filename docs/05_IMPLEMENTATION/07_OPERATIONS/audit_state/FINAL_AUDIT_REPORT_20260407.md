@@ -158,15 +158,15 @@ audit_date: 2026-04-07---
 
 | 工具名称 | 功能 | 状态 |
 |---------|------|------|
-| [fix_index_completeness.py](file:///d:/ZephyrAlpha/scripts/fix_index_completeness.py) | 修复索引完备性问题 | ✅ 已创建 |
-| [fix_document_classification.py](file:///d:/ZephyrAlpha/scripts/fix_document_classification.py) | 修复文档分类问题 | ✅ 已创建 |
-| [optimize_version_management.py](file:///d:/ZephyrAlpha/scripts/optimize_version_management.py) | 优化版本管理 | ✅ 已创建 |
-| [complete_responsibility_description.py](file:///d:/ZephyrAlpha/scripts/complete_responsibility_description.py) | 完善职责描述 | ✅ 已创建 |
-| [layer5_deep_audit.py](file:///d:/ZephyrAlpha/scripts/layer5_deep_audit.py) | Layer 5深度审计 | ✅ 已创建 |
-| [build_document_code_mapping.py](file:///d:/ZephyrAlpha/scripts/build_document_code_mapping.py) | 文档代码映射 | ✅ 已创建 |
-| [check_document_code_consistency.py](file:///d:/ZephyrAlpha/scripts/check_document_code_consistency.py) | 自动化检查 | ✅ 已创建 |
-| [check_responsibility_overlap.py](file:///d:/ZephyrAlpha/scripts/check_responsibility_overlap.py) | 职责重叠检查 | ✅ 已创建 |
-| [fix_responsibility_overlap.py](file:///d:/ZephyrAlpha/scripts/fix_responsibility_overlap.py) | 职责重叠修复 | ✅ 已创建 |
+| fix_index_completeness.py | 修复索引完备性问题 | ✅ 已创建 |
+| fix_document_classification.py | 修复文档分类问题 | ✅ 已创建 |
+| optimize_version_management.py | 优化版本管理 | ✅ 已创建 |
+| complete_responsibility_description.py | 完善职责描述 | ✅ 已创建 |
+| layer5_deep_audit.py | Layer 5深度审计 | ✅ 已创建 |
+| build_document_code_mapping.py | 文档代码映射 | ✅ 已创建 |
+| check_document_code_consistency.py | 自动化检查 | ✅ 已创建 |
+| check_responsibility_overlap.py | 职责重叠检查 | ✅ 已创建 |
+| fix_responsibility_overlap.py | 职责重叠修复 | ✅ 已创建 |
 
 ---
 

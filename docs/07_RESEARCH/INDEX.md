@@ -26,10 +26,10 @@ implementation_status: 已完?
 
 | 目录 | 职责 | 状?|
 |------|------|------|
-| [01_ENVIRONMENT/](01_ENVIRONMENT/) | 研究环境配置 | Active |
-| [02_EXPLORATORY_ANALYSIS/](02_EXPLORATORY_ANALYSIS/) | 探索性分析工?| Active |
-| [03_PATTERN_RECOGNITION/](03_PATTERN_RECOGNITION/) | 模式识别研究 | Active |
-| [04_EXPERIMENT_TRACKING/](04_EXPERIMENT_TRACKING/) | 实验追踪 | Active |
+| 01_ENVIRONMENT/ | 研究环境配置 | Active |
+| 02_EXPLORATORY_ANALYSIS/ | 探索性分析工?| Active |
+| 03_PATTERN_RECOGNITION/ | 模式识别研究 | Active |
+| 04_EXPERIMENT_TRACKING/ | 实验追踪 | Active |
 
 ## 📂 子目录详?
 ### 01_ENVIRONMENT - 研究环境

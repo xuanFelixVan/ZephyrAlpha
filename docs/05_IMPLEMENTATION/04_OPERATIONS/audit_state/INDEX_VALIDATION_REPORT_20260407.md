@@ -87,7 +87,7 @@ responsibility:
 文件: 09_AUDIT\INDEX.md
 无效链接:
   - [DECISION_RECORDS/](01_FRAMEWORK/TECH_DECISION_RECORDS.md)
-  - [RESEARCH_MEMOS/](RESEARCH_MEMOS/)
+  - RESEARCH_MEMOS/
 ```
 
 **根本原因**: 这两个目录尚未创建
@@ -103,8 +103,8 @@ responsibility:
 ```
 文件: 09_AUDIT\REPORTS\INDEX.md
 无效链接:
-  - [Layer4 Deep Audit Report V3 20260407](LAYER4_DEEP_AUDIT_REPORT_V3_20260407.md)
-  - [Layer4 Deep Audit Report V4 20260407](LAYER4_DEEP_AUDIT_REPORT_V4_20260407.md)
+  - Layer4 Deep Audit Report V3 20260407
+  - Layer4 Deep Audit Report V4 20260407
   - [Layer4 Deep Audit Report V5 20260407](01_FRAMEWORK/LAYER4_ML/DEEP_AUDIT_REPORT_V5_20260407.md)
   - [Layer4 Machine Learning Governance Deep Audit Report 20260407](01_FRAMEWORK/LAYER4_ML/MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407.md)
 ```
@@ -122,7 +122,7 @@ responsibility:
 ```
 文件: 10_AI_WORKFLOW\INDEX.md
 无效链接:
-  - [FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md](FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md)
+  - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
 ```
 
 **根本原因**: 蓝图文件尚未创建
@@ -138,7 +138,7 @@ responsibility:
 ```
 文件: 11_STRATEGIC_DECISION\INDEX.md
 无效链接:
-  - [市场状态识别蓝图](MARKET_REGIME_BLUEPRINT.md)
+  - 市场状态识别蓝图
 ```
 
 **根本原因**: 市场状态识别蓝图文件尚未创建

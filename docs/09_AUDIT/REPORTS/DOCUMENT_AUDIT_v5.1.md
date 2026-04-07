@@ -346,10 +346,10 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 **όφμύκχϋ╖ψί╛Εί║Φϊ╕║**Ύ╝?
 ```markdown
-| **όΧ░όΞχίχΘίχβ** | όΧ░όΞχό║ΡήΑΒόΧ░όΞχϋ┤ρώΘ?| [04_DATA_SOURCE](docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/) |
-| **ίδηό╡Μύ╗Υόηε** | IC όΛξίΣΛήΑΒίδηό╡ΜόΛξίΣ?| [05_BACKTEST](docs/02_FACTOR_LIBRARY/05_BACKTEST/) |
-| **ίδιίφΡό│ρίΗΝ** | ίδιίφΡό│ρίΗΝϋκρήΑΒίΖΔόΧ░όΞχ | [06_FACTOR_REGISTRY](docs/02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/) |
-| **ύδΣόΟπϊ╕φί┐Δ** | ίχηόΩ╢ύδΣόΟπήΑΒόεΙί║οόΛξίΣΛήΑΒAIίδιίφΡύχκίχ╢ | [07_FACTOR_MONITORING](docs/02_FACTOR_LIBRARY/07_FACTOR_MONITORING/) |
+| **όΧ░όΞχίχΘίχβ** | όΧ░όΞχό║ΡήΑΒόΧ░όΞχϋ┤ρώΘ?| 04_DATA_SOURCE |
+| **ίδηό╡Μύ╗Υόηε** | IC όΛξίΣΛήΑΒίδηό╡ΜόΛξίΣ?| 05_BACKTEST |
+| **ίδιίφΡό│ρίΗΝ** | ίδιίφΡό│ρίΗΝϋκρήΑΒίΖΔόΧ░όΞχ | 06_FACTOR_REGISTRY |
+| **ύδΣόΟπϊ╕φί┐Δ** | ίχηόΩ╢ύδΣόΟπήΑΒόεΙί║οόΛξίΣΛήΑΒAIίδιίφΡύχκίχ╢ | 07_FACTOR_MONITORING |
 ```
 
 ---

@@ -81,7 +81,7 @@ compliance_level: 专业标准
 
 **典型死链接示例**：
 ```
-[AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md](05_IMPLEMENTATION\04_OPERATIONS\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\...)
+AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
 [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../../01_FRAMEWORK/...)
 [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)
 ```
@@ -262,14 +262,14 @@ compliance_level: 专业标准
 
 本次审计使用的工具脚本：
 
-1. [layer6_deep_audit_v6.py](file:///d:/ZephyrAlpha/scripts/layer6_deep_audit_v6.py) - 三层审计主脚本
+1. layer6_deep_audit_v6.py - 三层审计主脚本
 
 ---
 
 ## 📄 完整审计报告
 
 完整审计报告已保存至：  
-[LAYER6_DEEP_AUDIT_V6_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V6_20260407.md)
+LAYER6_DEEP_AUDIT_V6_20260407.md
 
 ---
 

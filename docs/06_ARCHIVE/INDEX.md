@@ -26,11 +26,11 @@ implementation_status: 已完?
 
 | 目录 | 说明 | 归档日期 |
 |------|------|---------|
-| [20260404_audit_reports_archive/](20260404_audit_reports_archive/) | 审计报告归档（audit_state + review_reports?| 2026-04-04 |
-| [duplicate_documents/](duplicate_documents/) | 重复文档归档 | 2026-04-03 |
-| [integrated_documents/](integrated_documents/) | 整合文档归档 | 2026-04-03 |
-| [architecture_v4/](architecture_v4/) | v4架构归档（Layer 0-8技术流水线?| 2026-04-03 |
-| [factor-library/](factor-library/) | 因子库历史版?| 2026-04-02 |
+| 20260404_audit_reports_archive/ | 审计报告归档（audit_state + review_reports?| 2026-04-04 |
+| duplicate_documents/ | 重复文档归档 | 2026-04-03 |
+| integrated_documents/ | 整合文档归档 | 2026-04-03 |
+| architecture_v4/ | v4架构归档（Layer 0-8技术流水线?| 2026-04-03 |
+| factor-library/ | 因子库历史版?| 2026-04-02 |
 | [main/](01_FRAMEWORK/PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION.md) | 主系统历史文?| 2026-04-01 |
 
 ## 📂 子目录详?
@@ -40,8 +40,8 @@ implementation_status: 已完?
 
 | 子目?| 内容 | 文件?|
 |--------|------|--------|
-| [audit_state/](20260404_audit_reports_archive/audit_state/) | 审计状态报告、深度审计报?| 128 |
-| [technical_reviews/](20260404_audit_reports_archive/technical_reviews/) | 技术审查报告、可行性评?| 98 |
+| audit_state/ | 审计状态报告、深度审计报?| 128 |
+| technical_reviews/ | 技术审查报告、可行性评?| 98 |
 
 **来源位置**:
 - `05_IMPLEMENTATION/07_OPERATIONS/audit_state/`
@@ -51,7 +51,7 @@ implementation_status: 已完?
 
 | 子目录 | 说明 |
 |--------|------|
-| [20260404_layer7_audit_reports/](duplicate_documents/20260404_layer7_audit_reports/) | Layer 7审计报告重复 |
+| 20260404_layer7_audit_reports/ | Layer 7审计报告重复 |
 
 ### architecture_v4 - v4架构归档
 
@@ -59,7 +59,7 @@ implementation_status: 已完?
 
 | 子目?| 内容 |
 |--------|------|
-| [module_designs/](architecture_v4/module_designs/) | Layer模块设计文档 |
+| module_designs/ | Layer模块设计文档 |
 | └── layer_1/ | 数据预处理层模块 |
 | └── layer_4/ | 特征工程层模?|
 | └── layer_9/ | 模型优化层模?|
@@ -69,7 +69,7 @@ implementation_status: 已完?
 | 文件 | 说明 |
 |------|------|
 | [ifind_factors_list.md](06_ARCHIVE/factor-library/ifind_factors_list.md) | iFind因子列表 |
-| [ifind_factors_raw.json](factor-library/ifind_factors_raw.json) | iFind因子原始数据 |
+| ifind_factors_raw.json | iFind因子原始数据 |
 
 ### main - 主系统历?
 | 文件/目录 | 说明 |

@@ -83,7 +83,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 |------|------|
 | 理解系统架构 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | 了解大盘择时 | [MARKET_REGIME.md](./MARKET_REGIME.md) |
-| 理解人机协作 | [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) |
+| 理解人机协作 | HUMAN_AI_FLOW.md |
 | 查看技术选型 | [TECH_STACK.md](./TECH_STACK.md) |
 | 零代码操作系?| [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
@@ -99,7 +99,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 | Layer 5 | [执行文档](../04_EXECUTION/README.md) |
 | Layer 6 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 7 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Layer 8 | [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) |
+| Layer 8 | HUMAN_AI_FLOW.md |
 | Layer 11 | [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
 ---

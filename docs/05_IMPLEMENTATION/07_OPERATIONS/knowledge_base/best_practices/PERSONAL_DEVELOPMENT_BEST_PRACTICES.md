@@ -377,7 +377,7 @@ alias enhance-meta='python scripts/metadata_enhancer.py'
 ## 9. ﮒﻟﮔﮔ۰?
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [ﻛﭨ۲ﻝﮒﮔﺑﮔﮔ۰۲ﮔﺑﮔﺍﮔﮒ](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](05_IMPLEMENTATION\07_OPERATIONS\09_AUDIT\BEST_PRACTICES\DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ
 - [ﮔﻝﭨﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
 
 ---

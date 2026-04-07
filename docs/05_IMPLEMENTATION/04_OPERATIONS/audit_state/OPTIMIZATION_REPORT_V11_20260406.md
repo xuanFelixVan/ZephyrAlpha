@@ -74,7 +74,7 @@ implementation_status: 优化完成---
 **修复代码**:
 ```markdown
 添加到INDEX.md:
-| [数据源层差距分析](04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 数据源层差距分析 | ⭐⭐⭐⭐ |
+| 数据源层差距分析 | 数据源层差距分析 | ⭐⭐⭐⭐ |
 ```
 
 **验证结果**:

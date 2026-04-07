@@ -61,7 +61,7 @@ compliance_level: 专业标准---
 **غ╜ق╜**: docs/01_FRAMEWORK/ARCHITECTURE.md قش?86كة?
 **فال╛?*:
 ```markdown
-| [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) | غ║║║فغ╜╡قذ |
+| HUMAN_AI_FLOW.md | غ║║║فغ╜╡قذ |
 ```
 
 **غ┐فجف?*:

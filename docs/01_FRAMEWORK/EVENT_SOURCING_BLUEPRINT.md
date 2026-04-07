@@ -452,7 +452,7 @@ class EventReplayer:
         
         for event in events:
             if event.event_type in self.handlers:
-                state = self.handlers[event.event_type](state, event)
+                state = self.handlersevent.event_type
         
         return state
     
@@ -492,7 +492,7 @@ class EventReplayer:
             )
             
             if event.event_type in self.handlers:
-                state = self.handlers[event.event_type](state, event)
+                state = self.handlersevent.event_type
         
         return state
 ```
@@ -587,7 +587,7 @@ class Subscription:
 | 文档 | 说明 |
 |------|------|
 | [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](./STRATEGY_EXECUTION_LAYER_BLUEPRINT.md) | 策略执行层蓝图 |
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| RISK_MANAGEMENT_LAYER_BLUEPRINT.md | 风险管理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---

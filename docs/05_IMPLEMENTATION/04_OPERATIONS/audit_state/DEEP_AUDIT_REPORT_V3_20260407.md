@@ -60,10 +60,7 @@ compliance_level: 专业标准
 ### 死链接 [P2]
 
 - **位置**: 03_AUTH\AUTH_SYSTEM_BLUEPRINT.md
-- **描述**: 死链接: [User, int](
-    get_user_manager,
-    [auth_backend],
-)
+- **描述**: 死链接: User, int
 - **建议**: 修复或删除链接
 
 ---

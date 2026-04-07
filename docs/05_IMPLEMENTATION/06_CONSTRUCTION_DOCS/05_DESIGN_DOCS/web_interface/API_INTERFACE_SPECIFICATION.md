@@ -27,7 +27,7 @@ implementation_status: ﻟﺟﻟ۰?
 > **ﻝﺑ۱ﮒﺙ**: `DESIGN_005`
 > **ﮒﺏﻟﮔﮔ۰۲**: 
 > - [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md)
-> - [ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ](ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md)
+> - ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ
 > - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
 
 ## 1. ﮔ۵ﻟﺟﺍ

@@ -1255,7 +1255,7 @@ class QueryLogger:
 
 **本文档在系统中的位置**:
 - 架构文档: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
-- Layer 1文档: [Layer_1_Data_Preprocessing.md](01_FRAMEWORK\layers\Layer_1_Data_Preprocessing.md)
+- Layer 1文档: Layer_1_Data_Preprocessing.md
 - 实时数据? [REALTIME_DATA_LAKE_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_DATA_LAKE_BLUEPRINT.md)
 
 ### 9.2 版本管理

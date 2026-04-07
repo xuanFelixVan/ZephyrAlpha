@@ -538,7 +538,7 @@ class RebalanceSignal:
 | 文档 | 说明 |
 |------|------|
 | [ALPHA_FACTOR_LAYER_BLUEPRINT.md](./ALPHA_FACTOR_LAYER_BLUEPRINT.md) | Alpha因子层蓝图 |
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| RISK_MANAGEMENT_LAYER_BLUEPRINT.md | 风险管理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---

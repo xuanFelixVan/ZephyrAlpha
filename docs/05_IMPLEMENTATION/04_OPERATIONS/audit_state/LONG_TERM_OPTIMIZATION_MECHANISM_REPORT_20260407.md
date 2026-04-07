@@ -51,7 +51,7 @@ parent_document: ../INDEX.md
 
 #### 1.1 机制概述
 
-**文档**: [automated_check_mechanism.py](file:///D:/ZephyrAlpha/scripts/automated_check_mechanism.py)  
+**文档**: automated_check_mechanism.py  
 **功能**: 定期检查文档治理质量，自动生成检查报告
 
 #### 1.2 检查内容

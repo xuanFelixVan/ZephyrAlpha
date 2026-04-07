@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Changelog](CHANGELOG.md) - `ARCHIVE_CHANGELOG_001`
+- Changelog - `ARCHIVE_CHANGELOG_001`
 - [Complete Document Audit Report V2](06_ARCHIVE/main/COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md) - `ARCHIVE_COMPLETE_AUDIT_V2_001`
 - [Final Audit Report V5](06_ARCHIVE/main/FINAL_AUDIT_REPORT_V5.md) - `ARCHIVE_FINAL_AUDIT_V5_001`
 - [Nozyio Reference](06_ARCHIVE/main/NOZYIO_REFERENCE.md) - `ARCHIVE_NOZYIO_REF_001`

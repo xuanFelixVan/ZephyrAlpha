@@ -52,7 +52,7 @@ parent_document: ../INDEX.md
 
 **失败原因**: 1个文件已有职责描述，无需修复
 
-**详细报告**: [manual_fix_result_20260407_030658.json](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/manual_fix_result_20260407_030658.json)
+**详细报告**: manual_fix_result_20260407_030658.json
 
 #### 1.2 更新引用链接
 
@@ -83,7 +83,7 @@ parent_document: ../INDEX.md
 | 战略调整机制.md | STRATEGIC_ADJUSTMENT_MECHANISM.md |
 | 调整触发条件.md | ADJUSTMENT_TRIGGER_CONDITIONS.md |
 
-**详细报告**: [reference_update_result_20260407_030855.json](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/reference_update_result_20260407_030855.json)
+**详细报告**: reference_update_result_20260407_030855.json
 
 ### 2. 本周修复 ✅
 

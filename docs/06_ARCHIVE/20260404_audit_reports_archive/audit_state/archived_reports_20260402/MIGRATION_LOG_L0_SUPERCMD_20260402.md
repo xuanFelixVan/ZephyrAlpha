@@ -203,7 +203,7 @@ compliance_level: 专业标准---
 ### 新架构文?1. [专业多时间框架架构](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 2. [专业实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
-### 迁移后文?1. [SuperCommand连接器技术规范](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) - 新文?2. [L0_SUPERCMD.md归档文档](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md) - 归档文档
+### 迁移后文?1. [SuperCommand连接器技术规范](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) - 新文?2. L0_SUPERCMD.md归档文档 - 归档文档
 
 ---
 

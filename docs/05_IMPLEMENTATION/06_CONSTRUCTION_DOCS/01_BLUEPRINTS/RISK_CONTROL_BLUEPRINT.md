@@ -460,7 +460,7 @@ class RiskActionExecutor:
     def execute(self, action: str, context: Dict[str, Any]) -> bool:
         """执行风险处置动作"""
         if action in self.action_handlers:
-            return self.action_handlers[action](context)
+            return self.action_handlersaction
         return False
     
     def _reduce_position_50(self, context: Dict[str, Any]) -> bool:

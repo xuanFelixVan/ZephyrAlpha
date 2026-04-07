@@ -22,7 +22,7 @@ compliance_level: 专业标准
 
 | 文档名称 | 类型 | 状态 | 说明 |
 |---------|------|------|------|
-| [TRADING JOURNAL BLUEPRINT](TRADING_JOURNAL_BLUEPRINT.md) | 蓝图 | 活跃 | 模块功能设计和实现方案 |
+| TRADING JOURNAL BLUEPRINT | 蓝图 | 活跃 | 模块功能设计和实现方案 |
 
 ---
 

@@ -180,7 +180,7 @@ version: 1.0.0
 
 ### 6.3 修复工具
 
-- [layer5_responsibility_fixer.py](file:///d:/ZephyrAlpha/scripts/layer5_responsibility_fixer.py) - 职责描述修复工具
+- layer5_responsibility_fixer.py - 职责描述修复工具
 
 ---
 

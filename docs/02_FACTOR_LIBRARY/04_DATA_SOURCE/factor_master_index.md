@@ -88,7 +88,7 @@ implementation_status: 进行中
 | ths_rsi | RSI | 均值回归 | 待验证 | - | - |
 | ths_turnover_rate | 换手率 | 情绪 | 待验证 | - | - |
 
-**完整因子清单**: [factor_list.csv](factor_list.csv)
+**完整因子清单**: factor_list.csv
 
 ---
 

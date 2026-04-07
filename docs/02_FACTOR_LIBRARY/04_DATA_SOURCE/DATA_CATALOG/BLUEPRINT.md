@@ -35,7 +35,7 @@ responsibility: 数据目录管理与元数据组织
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 差距分析 | ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 协同模块 | 数据血缘关系 |
 | 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
@@ -638,7 +638,7 @@ for result in results:
 ## 🔗 相关文档
 
 - [DataHub官方文档](https://datahubproject.io/docs/)
-- [数据源层架构缺失分析](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md)
+- 数据源层架构缺失分析
 
 ---
 

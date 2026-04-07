@@ -150,7 +150,7 @@ audit_date: 2026-04-07
    - 发现问题: TRADING_LOG_ANALYZER_BLUEPRINT.md已被删除，但INDEX.md仍有引用
 2. ✅ 删除死链接
    - 修复文件: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md
-   - 删除行: "| [TRADING_LOG_ANALYZER_BLUEPRINT.md](01_BLUEPRINTS/TRADING_LOG_ANALYZER_BLUEPRINT.md) | 交易日志分析器蓝图（P1级）|"
+   - 删除行: "| TRADING_LOG_ANALYZER_BLUEPRINT.md | 交易日志分析器蓝图（P1级）|"
 
 **修复结果**: ✅ **100%完成**
 

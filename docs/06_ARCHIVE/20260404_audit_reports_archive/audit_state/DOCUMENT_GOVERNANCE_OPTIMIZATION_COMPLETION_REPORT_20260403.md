@@ -68,7 +68,7 @@ parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md
 #### 3. тѕЏт╗║ТќЄТАБтЉйтљЇУДёУїЃТБђТЪЦУёџТю?Рю?
 **тїТѕљТЌХжЌ┤**: 2026-04-03
 **ТЅДУАїтєЁт╣**:
-- тѕЏт╗║С║?[scripts/check_document_naming.py](file:///D:/ZephyrAlpha/scripts/check_document_naming.py)
+- тѕЏт╗║С║?scripts/check_document_naming.py
 - тъуј░С║єСИГТќЄтГЌугдТБђТх?- тъуј░С║єтЉйтљЇУДёУїЃТБђТЪ?- тъуј░С║єТЅЕт▒ЋтљЇТБђТЪ?
 **тіЪУЃйуЅ╣Тђ?*:
 - УЄфтіеТЅФТЈЈТќЄТАБуЏтйЋ
@@ -82,7 +82,7 @@ python scripts/check_document_naming.py docs/
 #### 4. тѕЏт╗║жЄЇтцЇТќЄТАБТБђТхІтиЦтЁ?Рю?
 **тїТѕљТЌХжЌ┤**: 2026-04-03
 **ТЅДУАїтєЁт╣**:
-- тѕЏт╗║С║?[scripts/detect_duplicate_documents.py](file:///D:/ZephyrAlpha/scripts/detect_duplicate_documents.py)
+- тѕЏт╗║С║?scripts/detect_duplicate_documents.py
 **тіЪУЃйуЅ╣Тђ?*:
 - УЄфтіеТБђТхІжЄЇтцЇТќЄТА?- УєтѕФBLUEPRINTСИјSPECIFICATIONжЄЇтцЇ
 - ТБђТхІуЏИС╝╝ТќЄС╗ХтљЇ
@@ -96,7 +96,7 @@ python scripts/detect_duplicate_documents.py docs/
 #### 5. тѕЏт╗║INDEX.mdУЄфтіеућЪТѕљтиЦтЁи Рю?
 **тїТѕљТЌХжЌ┤**: 2026-04-03
 **ТЅДУАїтєЁт╣**:
-- тѕЏт╗║С║?[scripts/generate_index.py](file:///D:/ZephyrAlpha/scripts/generate_index.py)
+- тѕЏт╗║С║?scripts/generate_index.py
 - тъуј░С║єуЏтйЋТЅФТЈЈтіЪУЃ?- тъуј░С║єТќЄТАБтѕєу▒╗тіЪУЃ?- тъуј░С║єТаЄтЄєтїќу┤бт╝ЋућЪТѕљ
 
 **тіЪУЃйуЅ╣Тђ?*:

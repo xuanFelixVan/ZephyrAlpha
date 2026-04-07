@@ -166,7 +166,7 @@ python scripts/check_links.py --report link_report.md
 - [专业文档治理审计指南](../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 单](../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [文档职责边界定义](./DOCUMENT_RESPONSIBILITY_BOUNDARIES.md)
-- [编码规范标准](.editorconfig)
+- 编码规范标准
 
 ---
 

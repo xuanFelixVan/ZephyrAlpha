@@ -46,7 +46,7 @@ implementation_status: ш┐ЫшбМф╕?---
 тЖ?[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ч╗Яф╕АцЮ╢цЮД
 
 ### цИСшжБх╝АхПСчнЦчХ?тЖ?[Strategy_Spec_S001.md](03_TRADING_TACTICS/Strategy_Spec_S001.md) - чнЦчХецибцЭ┐я╝?0хИЖщТЯя╝?
-### цИСшжБцЯехЫахн?тЖ?[02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) - хЫахнРч┤вх╝Хя╝?0хИЖщТЯя╝?
+### цИСшжБцЯехЫахн?тЖ?02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРч┤вх╝Хя╝?0хИЖщТЯя╝?
 ### цИСшжБщГич╜▓ч│╗ч╗Я
 тЖ? - щГич╜▓цМЗхНЧя╝?0хИЖщТЯя╝?
 ### цИСщБЗхИ░щЧощв?тЖ?[FAQ.md](02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) - х╕╕шзБщЧощвШя╝?хИЖщТЯя╝?
@@ -110,7 +110,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | [README.md](API_README.md) | хЫахнРх║УцА╗шзИ |
 |  | хЫахнРхИЖч▒╗хп╝шИк |
 |  | хЫахнРчаФчй╢цЦ╣ц│Хшо?|
-| [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) | 87ф╕кAlphaхЫахнРч┤вх╝Х |
+| 02_ALPHA_FACTORS_INDEX.md | 87ф╕кAlphaхЫахнРч┤вх╝Х |
 |  | 46ф╕кщгОщЩйхЫахн?|
 |  | цХ░цНоц║Ршп┤цШ?|
 |  | хЫЮц╡ЛцКехСК |
@@ -177,7 +177,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 ## ЁЯФН цМЙчФищАФцЯецЙ?
 ### чнЦчХех╝АхПСшА?1. [Strategy_Spec_S001.md](03_TRADING_TACTICS/Strategy_Spec_S001.md) - чнЦчХецибцЭ┐
-2. [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
+2. 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
 ### ч│╗ч╗ЯцЮДх╗║
 1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛
 2. [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - ч╗Яф╕АцЮ╢цЮД

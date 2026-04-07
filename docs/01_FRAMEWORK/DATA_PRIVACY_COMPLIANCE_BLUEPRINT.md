@@ -354,7 +354,7 @@ class DataMasker:
         """脱敏数据"""
         
         if field_name in self.masking_rules:
-            return self.masking_rules[field_name](value, masking_type)
+            return self.masking_rulesfield_name
         
         return self._default_mask(value, masking_type)
     
@@ -564,7 +564,7 @@ class DataBreachEvent:
 
 | 文档 | 说明 |
 |------|------|
-| [DATA_GOVERNANCE_LAYER_BLUEPRINT.md](DATA_GOVERNANCE_LAYER_BLUEPRINT.md) | 数据治理层蓝图 |
+| DATA_GOVERNANCE_LAYER_BLUEPRINT.md | 数据治理层蓝图 |
 | [DATA_LINEAGE_TRACKING_BLUEPRINT.md](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 数据血缘追踪蓝图 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | 治理与合规层蓝图 |
 

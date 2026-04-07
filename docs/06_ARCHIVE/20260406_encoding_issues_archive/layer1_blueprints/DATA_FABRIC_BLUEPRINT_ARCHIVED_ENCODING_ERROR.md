@@ -789,7 +789,7 @@ class PredictiveAnalytics:
 
 **本文档在系统中的位置**:
 - 架构文档: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
-- Layer 1文档: [Layer_1_Data_Preprocessing.md](01_FRAMEWORK\layers\Layer_1_Data_Preprocessing.md)
+- Layer 1文档: Layer_1_Data_Preprocessing.md
 - 数据网格: [DATA_MESH_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_MESH_BLUEPRINT.md)
 
 ### 6.2 版本管理

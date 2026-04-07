@@ -48,7 +48,7 @@ standard_type: 专业量化机构文档
 - [BLUEPRINT_COMPREHENSIVE_ASSESSMENT](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/BLUEPRINT_COMPREHENSIVE_ASSESSMENT.md)
 - [BLUEPRINT_GAP_ANALYSIS](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/BLUEPRINT_GAP_ANALYSIS.md)
 - [BLUEPRINT_STAGE_SUMMARY](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/BLUEPRINT_STAGE_SUMMARY.md)
-- [comprehensive_assessment_report](comprehensive_assessment_report.md)
+- comprehensive_assessment_report
 - [COMPREHENSIVE_TECHNICAL_REVIEW_REPORT](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/COMPREHENSIVE_TECHNICAL_REVIEW_REPORT.md)
 - [CONFIG_MANAGER_TECHNICAL_REVIEW_REPORT](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/CONFIG_MANAGER_TECHNICAL_REVIEW_REPORT.md)
 - [CONSTRAINTS_SOLVER_TECHNICAL_REVIEW_REPORT](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/CONSTRAINTS_SOLVER_TECHNICAL_REVIEW_REPORT.md)

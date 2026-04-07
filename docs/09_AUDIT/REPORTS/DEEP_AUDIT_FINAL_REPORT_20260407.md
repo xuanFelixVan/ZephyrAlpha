@@ -178,10 +178,10 @@ git commit -m "backup: Layer 1深度审计前备份"
 
 ## 📁 生成的审计报告
 
-1. **详细审计数据**: [reports/layer1_deep_audit_report.json](file:///d:/ZephyrAlpha/reports/layer1_deep_audit_report.json)
-2. **审计报告**: [docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_REPORT_20260407.md)
-3. **修复报告**: [docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FIX_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FIX_REPORT_20260407.md)
-4. **最终完成报告**: [docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FINAL_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FINAL_REPORT_20260407.md)
+1. **详细审计数据**: reports/layer1_deep_audit_report.json
+2. **审计报告**: docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_REPORT_20260407.md
+3. **修复报告**: docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FIX_REPORT_20260407.md
+4. **最终完成报告**: docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FINAL_REPORT_20260407.md
 
 ---
 

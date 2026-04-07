@@ -206,8 +206,8 @@ compliance_level: 专业标准
 
 本次修复使用的工具脚本：
 
-1. [check_p2_issues.py](file:///d:/ZephyrAlpha/scripts/check_p2_issues.py) - P2级问题检查
-2. [fix_p2_issues.py](file:///d:/ZephyrAlpha/scripts/fix_p2_issues.py) - P2级问题修复
+1. check_p2_issues.py - P2级问题检查
+2. fix_p2_issues.py - P2级问题修复
 
 ---
 

@@ -44,7 +44,7 @@ compliance_level: 专业标准
 
 ### 1. 优化审计脚本
 
-**创建文件**: [blueprint_auditor_v8.py](file:///d:/ZephyrAlpha/scripts/blueprint_auditor_v8.py)
+**创建文件**: blueprint_auditor_v8.py
 
 **优化内容**：
 
@@ -196,8 +196,8 @@ layer: "[Layer定位]"
 #### 2.3 自动化文档格式验证
 
 **创建工具**：
-- [simple_fix_layer.py](file:///d:/ZephyrAlpha/scripts/simple_fix_layer.py) - 自动修复Layer定位
-- [fix_layer_and_changelog.py](file:///d:/ZephyrAlpha/scripts/fix_layer_and_changelog.py) - 自动修复Layer和变更记录
+- simple_fix_layer.py - 自动修复Layer定位
+- fix_layer_and_changelog.py - 自动修复Layer和变更记录
 
 **功能**：
 - 自动检测缺失的Layer字段
@@ -211,7 +211,7 @@ layer: "[Layer定位]"
 
 ### 1. 整合目录结构
 
-**创建文件**: [integrate_directory_structure.py](file:///d:/ZephyrAlpha/scripts/integrate_directory_structure.py)
+**创建文件**: integrate_directory_structure.py
 
 **整合操作**：
 
@@ -288,10 +288,10 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 ### 审计工具
 
-1. [blueprint_auditor_v8.py](file:///d:/ZephyrAlpha/scripts/blueprint_auditor_v8.py) - 优化版审计脚本
-2. [simple_fix_layer.py](file:///d:/ZephyrAlpha/scripts/simple_fix_layer.py) - Layer定位修复工具
-3. [fix_layer_and_changelog.py](file:///d:/ZephyrAlpha/scripts/fix_layer_and_changelog.py) - Layer和变更记录修复工具
-4. [integrate_directory_structure.py](file:///d:/ZephyrAlpha/scripts/integrate_directory_structure.py) - 目录整合工具
+1. blueprint_auditor_v8.py - 优化版审计脚本
+2. simple_fix_layer.py - Layer定位修复工具
+3. fix_layer_and_changelog.py - Layer和变更记录修复工具
+4. integrate_directory_structure.py - 目录整合工具
 
 ### 文档模板
 
@@ -305,8 +305,8 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 ## 📄 相关文档
 
-1. **深度审计报告**: [LAYER6_DEEP_AUDIT_V7_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V7_20260407.md)
-2. **审计总结报告**: [LAYER6_DEEP_AUDIT_SUMMARY_V7_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_SUMMARY_V7_20260407.md)
+1. **深度审计报告**: LAYER6_DEEP_AUDIT_V7_20260407.md
+2. **审计总结报告**: LAYER6_DEEP_AUDIT_SUMMARY_V7_20260407.md
 3. **质量监控报告**: [quality_monitoring_report_20260407_014237.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_014237.md)
 
 ---

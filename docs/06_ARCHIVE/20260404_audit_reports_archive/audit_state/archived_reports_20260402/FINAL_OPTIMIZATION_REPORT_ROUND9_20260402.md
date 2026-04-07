@@ -281,9 +281,9 @@ last_updated: 2026-04-02
 
 ## 📄 生成的报?
 
-1. [metadata_enhancement_round9.json](metadata_enhancement_report.json) - 第九轮元数据完善结果
-2. [document_classification_round8.json](document_classification_report.json) - 第八轮文档分类结?
-3. [final_quality_report_round13.json](final_quality_report_round13.json) - 最终质量检查报?
+1. metadata_enhancement_round9.json - 第九轮元数据完善结果
+2. document_classification_round8.json - 第八轮文档分类结?
+3. final_quality_report_round13.json - 最终质量检查报?
 
 ---
 

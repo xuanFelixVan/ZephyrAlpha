@@ -213,10 +213,10 @@ version: 1.0.0
 
 ### 7.2 修复工具
 
-- [layer9_issue_fixer.py](file:///d:/ZephyrAlpha/scripts/layer9_issue_fixer.py) - 主要问题修复工具
-- [layer9_supplementary_fixer.py](file:///d:/ZephyrAlpha/scripts/layer9_supplementary_fixer.py) - 补充修复工具
-- [layer9_final_fixer.py](file:///d:/ZephyrAlpha/scripts/layer9_final_fixer.py) - 最终修复工具
-- [layer9_comprehensive_audit.py](file:///d:/ZephyrAlpha/scripts/layer9_comprehensive_audit.py) - 全面审计工具
+- layer9_issue_fixer.py - 主要问题修复工具
+- layer9_supplementary_fixer.py - 补充修复工具
+- layer9_final_fixer.py - 最终修复工具
+- layer9_comprehensive_audit.py - 全面审计工具
 
 ---
 

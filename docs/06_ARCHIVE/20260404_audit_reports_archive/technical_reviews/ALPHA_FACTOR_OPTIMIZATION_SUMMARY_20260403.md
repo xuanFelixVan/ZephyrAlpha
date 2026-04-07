@@ -270,7 +270,7 @@ implementation_status: ти▓тї?---
 ### B. тЈѓУђЃТаЄтЄєТќЄ?
 - [СИЊСИџТќЄТАБТ▓╗уљєтАУАТїЄтЇЌ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [ТќЄТАБТ▓╗уљєтАУАТБђТЪЦТИЁтЇЋ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [тАУАУ┤ежЄЈТаЄтЄєv5.3](06_ARCHIVE\09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.3.md)
+- тАУАУ┤ежЄЈТаЄтЄєv5.3
 
 ### C. ТюУГ?
 | ТюУГ | тџС╣Ѕ |

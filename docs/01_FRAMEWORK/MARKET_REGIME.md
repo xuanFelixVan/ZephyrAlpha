@@ -184,7 +184,7 @@ MARKET_TIMING_INDICATORS = {
 | 文档 | 说明 |
 |------|------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 统一架构 |
-| [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) | 人机协作流程 |
+| HUMAN_AI_FLOW.md | 人机协作流程 |
 | [README.md](API_README.md) | 框架总览 |
 
 ---

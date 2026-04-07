@@ -206,8 +206,8 @@ python scripts/move_to_archive.py --doc docs/PATH/TO/DOC.md --archive-dir docs/0
 
 **ﮔﺑﮔﺍﮒﺅﺙﮔﮔﺟﻛﭨ۲ﺅﺙ**:
 ```markdown
-ﮒﻟ۶ [ﻝﻝ۴ﮒﺙﮔﻟﮒﺝv2.0](09_AUDIT\BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT_V2.md)
-> **ﮔﺏ۷ﮔ**: ﮔ۶ﻝﮔ؛[v1.0](06_ARCHIVE\replaced_documents\20260403_version_update\STRATEGY_ENGINE_BLUEPRINT_ARCHIVED.md)ﮒﺓﺎﮒﺛﮔ۰?```
+ﮒﻟ۶ ﻝﻝ۴ﮒﺙﮔﻟﮒﺝv2.0
+> **ﮔﺏ۷ﮔ**: ﮔ۶ﻝﮔ؛v1.0ﮒﺓﺎﮒﺛﮔ۰?```
 
 **ﮔﺑﮔﺍﮒﺅﺙﮔﮔﺟﻛﭨ۲ﺅﺙ**:
 ```markdown

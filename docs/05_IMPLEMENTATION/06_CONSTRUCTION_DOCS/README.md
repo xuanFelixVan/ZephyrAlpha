@@ -96,7 +96,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 | [ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ](./02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | v1.0 | Active | 2026-04-02 | ﻝﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒﮒ؟ﮔﺛﮔﮒ |
 | [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ](./02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | v1.0 | Active | 2026-04-02 | ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﮒ؟ﮔﺛﮔﮒ |
 | [ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](./02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | v1.0 | Active | 2026-04-02 | Backtesting.pyﻠﮔﮔﮒ |
-<!-- ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: | <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﻝﭨﮔﭖﻟﮒﺙﮒﺙﮔﮒ؟ﮔﺛﮔﮒ](02_IMPLEMENTATION_GUIDES/ECONOMIC_REGIME_GUIDE.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?| -->
+<!-- ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: | <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? ﻝﭨﮔﭖﻟﮒﺙﮒﺙﮔﮒ؟ﮔﺛﮔﮒ --> | - | Pending | - | ﮒﺝﮒﮒﭨ?| -->
 
 
 **ﮔﮔ۰۲ﮔﺍﻠ**: 3  
@@ -149,8 +149,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﻟﺁﺑﮔ |
 |---------|------|------|---------|------|
 | [ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﮔﭨﻟ۶](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/IMPLEMENTATION_PROGRESS.md) | v1.0 | Active | 2026-04-02 | ﮒ؟ﮔﭘﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ |
-| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﮒ۷ﮔ۴ﮒﺛﮔ۰۲](05_PROGRESS_TRACKING/WEEKLY_REPORTS/) --> | - | Active | 2026-04-02 | ﮔﺁﮒ۷ﻟﺟﮒﭦ۵ﮔ۴ﮒ |
-| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﻠﻝ۷ﻝ۱ﻟ؟ﺍﮒﺛ](05_PROGRESS_TRACKING/MILESTONES.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
+| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? ﮒ۷ﮔ۴ﮒﺛﮔ۰۲ --> | - | Active | 2026-04-02 | ﮔﺁﮒ۷ﻟﺟﮒﭦ۵ﮔ۴ﮒ |
+| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? ﻠﻝ۷ﻝ۱ﻟ؟ﺍﮒﺛ --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 
 **ﮔﮔ۰۲ﮔﺍﻠ**: 1  
 **ﮒ؟ﮔﮒﭦ?*: 100%  
@@ -166,7 +166,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 | [ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | v1.0 | Active | 2026-04-02 | ﻠ۷ﻝﺛﺎﮒﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?|
 | [ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/POST_DEPLOYMENT_CHECKLIST.md) | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 | [ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | v1.0 | Active | 2026-04-02 | ﻛﭨ۲ﻝﻟﺑ۷ﻠﮒ؟۰ﮔ۴ﮔﮒ |
-| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮔﺕﮒ](06_CHECKLISTS/DOCUMENT_QUALITY_CHECKLIST.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
+| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮔﺕﮒ --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 
 **ﮔﮔ۰۲ﮔﺍﻠ**: 2  
 **ﮒ؟ﮔﮒﭦ?*: 50%  

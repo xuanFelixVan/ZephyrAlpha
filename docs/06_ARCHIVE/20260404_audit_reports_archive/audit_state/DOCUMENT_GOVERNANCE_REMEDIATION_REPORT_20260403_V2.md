@@ -258,7 +258,7 @@ applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљ
 ### 7.2 уЏИтЁ│ТќЄТАБ
 
 **ТЋ┤Тћ╣уЏИтЁ│ТќЄТАБ**:
-1. [Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дтАУАТіЦтЉ?V2](LAYER5_DEEP_AUDIT_REPORT_20260403_V2.md)
+1. Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дтАУАТіЦтЉ?V2
 2. [ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
 3. [ТіђТюУДёТа╝С╣ду┤бт╝Ћ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 

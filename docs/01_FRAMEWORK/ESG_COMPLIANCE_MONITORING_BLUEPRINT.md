@@ -257,7 +257,7 @@ class ESGDataCollector:
         
         for data_type in data_types:
             if data_type in self.data_sources:
-                data = self.data_sources[data_type](company_id)
+                data = self.data_sourcesdata_type
                 environmental_data.extend(data)
         
         return environmental_data

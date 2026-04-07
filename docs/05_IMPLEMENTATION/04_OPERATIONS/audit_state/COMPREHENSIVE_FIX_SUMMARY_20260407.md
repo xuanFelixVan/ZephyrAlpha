@@ -253,9 +253,9 @@ compliance_level: 专业标准
 
 ## 📄 相关文档
 
-1. **修复报告**: [LAYER6_COMPREHENSIVE_FIX_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_COMPREHENSIVE_FIX_REPORT_20260407.md)
-2. **审计报告**: [LAYER6_DEEP_AUDIT_V2_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V2_20260407.md)
-3. **修复脚本**: [layer6_comprehensive_fix.py](file:///d:/ZephyrAlpha/scripts/layer6_comprehensive_fix.py)
+1. **修复报告**: LAYER6_COMPREHENSIVE_FIX_REPORT_20260407.md
+2. **审计报告**: LAYER6_DEEP_AUDIT_V2_20260407.md
+3. **修复脚本**: layer6_comprehensive_fix.py
 
 ---
 

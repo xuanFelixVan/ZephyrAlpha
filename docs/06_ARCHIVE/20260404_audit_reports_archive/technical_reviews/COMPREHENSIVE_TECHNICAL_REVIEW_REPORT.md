@@ -264,7 +264,7 @@ Phase 1 (Month 1-2): P1ч║зщгОщЩйф┐о?    ?Phase 2 (Month 3-4): P2ч
 ### 9.1 х╖▓хоМцИРф║дф╗ШчЙй ?
 | ф║дф╗Ш?| цЦЗф╗╢ш╖пх╛Д | чК?|
 |--------|---------|------|
-| **ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУОцКАцЬпшзДца╝ф╣ж** | [ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md](ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|
+| **ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУОцКАцЬпшзДца╝ф╣ж** | ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md | ?х╖▓хоМ?|
 | **хЕихдйхАЩщЕНч╜оф╝ШхМЦхЩицКАцЬпшзДца╝ф╣ж** | [ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|
 | **цибхЮЛшонч╗Гц╡Бц░┤ч║┐цКАцЬпшзДца╝ф╣ж** | [MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|
 | **цибхЮЛцЬНхКбхМЦцЮ╢цЮДцКАцЬпшзДца╝ф╣ж** | [MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|

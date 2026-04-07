@@ -121,9 +121,9 @@ version: 3.0.0
 |------|---------|---------|---------|---------|
 | 1 | [ASSET_ALLOCATION_MODEL.md](11_STRATEGIC_DECISION/01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
 | 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](11_STRATEGIC_DECISION/01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
-| 3 | [风险预算框架.md](02_risk_budgeting/风险预算框架.md) | ... | ❌ 死链接
-| 4 | [策略选择框架.md](03_strategy_selection/策略选择框架.md) | ... | ❌ 死链接
-| 5 | [策略组合优化.md](03_strategy_selection/策略组合优化.md) | ... | ❌ 死链接
+| 3 | 风险预算框架.md | ... | ❌ 死链接
+| 4 | 策略选择框架.md | ... | ❌ 死链接
+| 5 | 策略组合优化.md | ... | ❌ 死链接
 | 6 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](11_STRATEGIC_DECISION/04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
 ```
 

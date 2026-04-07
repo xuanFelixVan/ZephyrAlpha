@@ -46,7 +46,7 @@ layer: "Layer 1 (数据预处理层)"
 ### 2.1 P0级核心模块（6个）
 
 |------|---------|---------|---------|------|
-| [UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md](01_BLUEPRINTS/UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md) | FastAPI | ? |
+| UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md | FastAPI | ? |
 
 ### 2.2 P1级重要模块（4个）
 

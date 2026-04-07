@@ -412,7 +412,7 @@ audit_type: ύυυϊ╕Κόυκό╖▒ί║οίχκϋχ?audit_date: 2026-04-03
 ## ΏθΥγ ίΠΓϋΑΔϋ╡Εό║?
 ### ύδ╕ίΖ│όΨΘόκμ
 
-- [όΨΘόκμό▓╗ύΡΗόε║ίΙ╢](05_IMPLEMENTATION\02_DEVELOPMENT\DOCUMENT_GOVERNANCE_MECHANISM.md)
+- όΨΘόκμό▓╗ύΡΗόε║ίΙ╢
 - [ίχγόεθίχκϋχκϋχκίΙΤ](../../05_IMPLEMENTATION/07_OPERATIONS/PERIODIC_AUDIT_PLAN.md)
 - [όΧ░όΞχό║Ρί▒ΓόΨΘόκμό╖▒ί║οίχκϋχκόΛξίΣΛV2](./DATA_LAYER_DEEP_AUDIT_REPORT_V2_20260403.md)
 

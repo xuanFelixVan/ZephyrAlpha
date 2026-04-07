@@ -271,9 +271,9 @@ last_updated: 2026-04-02
 
 ## 📄 生成的报?
 
-1. [metadata_enhancement_report.json](metadata_enhancement_report.json) - 元数据完善结?
-2. [document_classification_report.json](document_classification_report.json) - 文档分类结果
-3. [final_quality_report_round4.json](final_quality_report_round4.json) - 最终质量检查报?
+1. metadata_enhancement_report.json - 元数据完善结?
+2. document_classification_report.json - 文档分类结果
+3. final_quality_report_round4.json - 最终质量检查报?
 
 ---
 

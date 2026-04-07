@@ -22,7 +22,7 @@ compliance_level: 专业标准
 
 | 文档名称 | 类型 | 状态 | 说明 |
 |---------|------|------|------|
-| [ALERTING SYSTEM BLUEPRINT](ALERTING_SYSTEM_BLUEPRINT.md) | 蓝图 | 活跃 | 模块功能设计和实现方案 |
+| ALERTING SYSTEM BLUEPRINT | 蓝图 | 活跃 | 模块功能设计和实现方案 |
 
 ---
 

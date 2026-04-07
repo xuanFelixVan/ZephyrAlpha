@@ -124,7 +124,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 |---------|------|--------|
 | [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ | ﻗﻗﻗﻗ |
 | [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?| ﻗﻗﻗﻗ |
-| [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md) | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗﻗﻗﻗ |
+| ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗﻗﻗﻗ |
 
 ### ﻟﺟﻝﭨﺑ
 
@@ -150,7 +150,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﻠ۷ﻝﺛﺎﮒﺏﻠ؟?
 - **ﻠ۷ﻝﺛﺎ**: [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
 - **ﮔﭖﮔﺍﺑ?*: [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
-- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md)
+- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: ﮔﺍﮔ؟ﮔﺕﮔﺑ
 
 ### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
 - **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md)

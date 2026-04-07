@@ -22,7 +22,7 @@ compliance_level: 专业标准
 
 | 文档名称 | 类型 | 状态 | 说明 |
 |---------|------|------|------|
-| [MONITORING DASHBOARD BLUEPRINT](MONITORING_DASHBOARD_BLUEPRINT.md) | 蓝图 | 活跃 | 模块功能设计和实现方案 |
+| MONITORING DASHBOARD BLUEPRINT | 蓝图 | 活跃 | 模块功能设计和实现方案 |
 
 ---
 

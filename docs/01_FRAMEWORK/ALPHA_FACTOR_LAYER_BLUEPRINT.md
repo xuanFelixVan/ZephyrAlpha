@@ -345,10 +345,7 @@ class ICAnalyzer:
             aligned = pd.concat([factor, returns], axis=1).dropna()
             
             if len(aligned) > 10:
-                ic = self.ic_methods[method](
-                    aligned.iloc[:, 0],
-                    aligned.iloc[:, 1]
-                )
+                ic = self.ic_methodsmethod
                 ic_list.append({'date': date, 'ic': ic})
         
         return pd.DataFrame(ic_list).set_index('date')['ic']
@@ -465,7 +462,7 @@ class FactorEvaluation:
 | 文档 | 说明 |
 |------|------|
 | [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./DATA_PREPROCESSING_LAYER_BLUEPRINT.md) | 数据预处理层蓝图 |
-| [FACTOR_RESEARCH_BLUEPRINT.md](FACTOR_RESEARCH_BLUEPRINT.md) | 因子研究蓝图 |
+| FACTOR_RESEARCH_BLUEPRINT.md | 因子研究蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---

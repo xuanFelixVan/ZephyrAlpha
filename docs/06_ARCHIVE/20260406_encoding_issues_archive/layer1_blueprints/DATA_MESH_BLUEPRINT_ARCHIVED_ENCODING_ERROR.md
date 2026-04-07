@@ -749,7 +749,7 @@ class DataProductAccessService:
 
 **本文档在系统中的位置**:
 - 架构文档: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
-- Layer 1文档: [Layer_1_Data_Preprocessing.md](01_FRAMEWORK\layers\Layer_1_Data_Preprocessing.md)
+- Layer 1文档: Layer_1_Data_Preprocessing.md
 
 ### 5.2 版本管理
 

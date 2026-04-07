@@ -175,15 +175,15 @@ standard_type: 专业量化机构文档
 
 | 脚本名称 | 用途 | 处理数量 |
 |----------|------|----------|
-| [l1_link_batch_fixer_v2.py](file:///D:/ZephyrAlpha/scripts/l1_link_batch_fixer_v2.py) | 批量修复死链接 | 495个链接 |
-| [l2_responsibility_batch_fixer_v2.py](file:///D:/ZephyrAlpha/scripts/l2_responsibility_batch_fixer_v2.py) | 批量优化职责描述 | 34个文件 |
+| l1_link_batch_fixer_v2.py | 批量修复死链接 | 495个链接 |
+| l2_responsibility_batch_fixer_v2.py | 批量优化职责描述 | 34个文件 |
 
 ### 生成的报告
 
 | 报告名称 | 用途 | 路径 |
 |----------|------|------|
 | [FINAL_OPTIMIZATION_COMPLETION_REPORT_V5_20260407.md](09_AUDIT/REPORTS/FINAL_OPTIMIZATION_COMPLETION_REPORT_V5_20260407.md) | L1+L3最终修复报告 | docs/09_AUDIT/REPORTS/ |
-| [comprehensive_deep_audit_20260407_132711.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/comprehensive_deep_audit_20260407_132711.json) | 最终审计数据 | docs/09_AUDIT/STATE/ |
+| comprehensive_deep_audit_20260407_132711.json | 最终审计数据 | docs/09_AUDIT/STATE/ |
 
 ---
 

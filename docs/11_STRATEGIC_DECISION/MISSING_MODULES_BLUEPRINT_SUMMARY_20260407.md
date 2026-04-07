@@ -69,7 +69,7 @@ version: 1.0.0
 
 ### 2. 战术资产配置系统（TAA）
 
-**蓝图文档**: [TACTICAL_ASSET_ALLOCATION_BLUEPRINT.md](TACTICAL_ASSET_ALLOCATION_BLUEPRINT.md)
+**蓝图文档**: TACTICAL_ASSET_ALLOCATION_BLUEPRINT.md
 
 **核心功能**:
 - 短期资产配置调整（月度/周度）
@@ -117,7 +117,7 @@ def tactical_allocation(prices, strategic_weights, max_deviation=0.1):
 
 ### 3. 风险平价模型系统
 
-**蓝图文档**: [RISK_PARITY_MODEL_BLUEPRINT.md](RISK_PARITY_MODEL_BLUEPRINT.md)
+**蓝图文档**: RISK_PARITY_MODEL_BLUEPRINT.md
 
 **核心功能**:
 - 风险平价权重计算（等风险贡献）
@@ -240,7 +240,7 @@ class StrategyLifecycleManager:
 
 ### 6. 市场情报系统
 
-**蓝图文档**: [MARKET_INTELLIGENCE_BLUEPRINT.md](MARKET_INTELLIGENCE_BLUEPRINT.md)
+**蓝图文档**: MARKET_INTELLIGENCE_BLUEPRINT.md
 
 **核心功能**:
 - 市场新闻采集（RSS + API）
@@ -264,7 +264,7 @@ class StrategyLifecycleManager:
 
 ### 7. 投资观点管理系统
 
-**蓝图文档**: [INVESTMENT_THESIS_MANAGEMENT_BLUEPRINT.md](INVESTMENT_THESIS_MANAGEMENT_BLUEPRINT.md)
+**蓝图文档**: INVESTMENT_THESIS_MANAGEMENT_BLUEPRINT.md
 
 **核心功能**:
 - 投资观点记录（结构化记录）
@@ -287,7 +287,7 @@ class StrategyLifecycleManager:
 
 ### 8. 宏观经济预测系统
 
-**蓝图文档**: [MACRO_ECONOMIC_FORECASTING_BLUEPRINT.md](MACRO_ECONOMIC_FORECASTING_BLUEPRINT.md)
+**蓝图文档**: MACRO_ECONOMIC_FORECASTING_BLUEPRINT.md
 
 **核心功能**:
 - 经济指标预测（时间序列）
@@ -311,7 +311,7 @@ class StrategyLifecycleManager:
 
 ### 9. 行业轮动模型
 
-**蓝图文档**: [SECTOR_ROTATION_MODEL_BLUEPRINT.md](SECTOR_ROTATION_MODEL_BLUEPRINT.md)
+**蓝图文档**: SECTOR_ROTATION_MODEL_BLUEPRINT.md
 
 **核心功能**:
 - 行业景气度分析（多因子模型）
@@ -334,7 +334,7 @@ class StrategyLifecycleManager:
 
 ### 10. 风格轮动模型
 
-**蓝图文档**: [STYLE_ROTATION_MODEL_BLUEPRINT.md](STYLE_ROTATION_MODEL_BLUEPRINT.md)
+**蓝图文档**: STYLE_ROTATION_MODEL_BLUEPRINT.md
 
 **核心功能**:
 - 风格因子分析（Fama-French）
@@ -359,7 +359,7 @@ class StrategyLifecycleManager:
 
 ### 11. 蒙特卡洛模拟引擎
 
-**蓝图文档**: [MONTE_CARLO_SIMULATION_BLUEPRINT.md](MONTE_CARLO_SIMULATION_BLUEPRINT.md)
+**蓝图文档**: MONTE_CARLO_SIMULATION_BLUEPRINT.md
 
 **核心功能**:
 - 资产收益模拟（随机过程）
@@ -383,7 +383,7 @@ class StrategyLifecycleManager:
 
 ### 12. 决策树分析工具
 
-**蓝图文档**: [DECISION_TREE_ANALYSIS_BLUEPRINT.md](DECISION_TREE_ANALYSIS_BLUEPRINT.md)
+**蓝图文档**: DECISION_TREE_ANALYSIS_BLUEPRINT.md
 
 **核心功能**:
 - 决策树构建（机器学习）
@@ -406,7 +406,7 @@ class StrategyLifecycleManager:
 
 ### 13. 敏感性分析工具
 
-**蓝图文档**: [SENSITIVITY_ANALYSIS_BLUEPRINT.md](SENSITIVITY_ANALYSIS_BLUEPRINT.md)
+**蓝图文档**: SENSITIVITY_ANALYSIS_BLUEPRINT.md
 
 **核心功能**:
 - 参数敏感性分析（参数扫描）

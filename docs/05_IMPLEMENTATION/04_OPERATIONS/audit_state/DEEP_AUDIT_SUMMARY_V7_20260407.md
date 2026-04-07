@@ -262,19 +262,19 @@ pattern = r'^---\s*\n.*?\n---\s*\n\s*\ufeff?---\s*\n(.*?)\n---\s*\n'
 
 本次审计创建的工具脚本：
 
-1. [layer6_deep_audit_v7.py](file:///d:/ZephyrAlpha/scripts/layer6_deep_audit_v7.py) - 深度审计脚本
-2. [fix_yaml_and_layer_comprehensive.py](file:///d:/ZephyrAlpha/scripts/fix_yaml_and_layer_comprehensive.py) - 全面修复YAML和Layer
-3. [fix_remaining_audit_issues.py](file:///d:/ZephyrAlpha/scripts/fix_remaining_audit_issues.py) - 修复剩余问题
-4. [reintegrate_drift_directories_v2.py](file:///d:/ZephyrAlpha/scripts/reintegrate_drift_directories_v2.py) - 重新整合漂移目录
-5. [fix_implementation_progress_tracking.py](file:///d:/ZephyrAlpha/scripts/fix_implementation_progress_tracking.py) - 修复进度跟踪文档
-6. [fix_index_and_add_progress.py](file:///d:/ZephyrAlpha/scripts/fix_index_and_add_progress.py) - 修复INDEX.md
-7. [fix_final_5_issues.py](file:///d:/ZephyrAlpha/scripts/fix_final_5_issues.py) - 修复最后5个问题
+1. layer6_deep_audit_v7.py - 深度审计脚本
+2. fix_yaml_and_layer_comprehensive.py - 全面修复YAML和Layer
+3. fix_remaining_audit_issues.py - 修复剩余问题
+4. reintegrate_drift_directories_v2.py - 重新整合漂移目录
+5. fix_implementation_progress_tracking.py - 修复进度跟踪文档
+6. fix_index_and_add_progress.py - 修复INDEX.md
+7. fix_final_5_issues.py - 修复最后5个问题
 
 ---
 
 ## 📄 相关文档
 
-1. **深度审计报告**: [LAYER6_DEEP_AUDIT_V7_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V7_20260407.md)
+1. **深度审计报告**: LAYER6_DEEP_AUDIT_V7_20260407.md
 2. **质量监控报告**: [quality_monitoring_report_20260407_014237.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_014237.md)
 
 ---

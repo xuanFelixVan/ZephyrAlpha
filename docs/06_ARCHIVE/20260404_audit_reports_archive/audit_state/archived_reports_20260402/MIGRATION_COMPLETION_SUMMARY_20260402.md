@@ -144,17 +144,17 @@ compliance_level: 专业标准
 **更新详情**:
 
 #### MODULE_DESIGN_PLAN.md
-- **更新位置**: ?67?- **更新?*: `[设计文档](06_ARCHIVE\20260404_audit_reports_archive\audit_state\module_designs\layer_0\L0_QMT.md)`
-- **更新?*: `[新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) \| [归档文档](06_ARCHIVE\20260404_audit_reports_archive\audit_state\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md)`
+- **更新位置**: ?67?- **更新?*: `设计文档`
+- **更新?*: `[新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) \| 归档文档`
 - **更新说明**: 同时提供新文档和归档文档链接，确保历史可追溯
 
 #### BLUEPRINT.md
-- **更新位置**: ?74?- **更新?*: `[module_designs/layer_0/L0_QMT.md](06_ARCHIVE\20260404_audit_reports_archive\audit_state\module_designs\layer_0\L0_QMT.md)`
+- **更新位置**: ?74?- **更新?*: `module_designs/layer_0/L0_QMT.md`
 - **更新?*: `[QMT_INTERFACE.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)`
 - **更新说明**: 更新为新文档路径
 
 #### CODING_ROADMAP.md
-- **更新位置**: ?12?- **更新?*: `[module_designs/layer_0/L0_QMT.md](06_ARCHIVE\20260404_audit_reports_archive\audit_state\module_designs\layer_0\L0_QMT.md)`
+- **更新位置**: ?12?- **更新?*: `module_designs/layer_0/L0_QMT.md`
 - **更新?*: `[QMT_INTERFACE.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)`
 - **更新说明**: 更新为新文档路径
 
@@ -246,7 +246,7 @@ compliance_level: 专业标准
    - 大小: ?5KB?08行）
    - ? ?活跃
 
-2. **归档文档**: [L0_QMT.md](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md)
+2. **归档文档**: L0_QMT.md
    - 路径: docs/06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_QMT.md
    - 大小: ?0KB（完整保留）
    - ? ?已归?

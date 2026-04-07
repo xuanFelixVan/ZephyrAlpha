@@ -415,13 +415,13 @@ python scripts/fix_invalid_links.py
 **方案1: 使用相对路径**
 ```markdown
 <!-- 正确 -->
-[文档](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
-[子目录文档](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
-[上级文档](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+文档
+子目录文档
+上级文档
 
 <!-- 错误 -->
-[文档](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
-[文档](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+文档
+文档
 ```
 
 **方案2: 简化路径**
@@ -542,7 +542,7 @@ mv docs/OLD_DOCUMENT.md docs/archive/2026-Q1/
 
 | 文件 | 模块ID |
 |------|--------|
-| [DOCUMENT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) | DOCUMENT_001 |
+| DOCUMENT.md | DOCUMENT_001 |
 ```
 
 **方案2: 自动生成索引**
@@ -590,7 +590,7 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 | 文件 | 模块ID | 说明 |
 |------|--------|------|
-| [DOCUMENT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) | DOCUMENT_001 | 文档说明 |
+| DOCUMENT.md | DOCUMENT_001 | 文档说明 |
 
 ## 📊 统计信息
 

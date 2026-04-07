@@ -274,9 +274,9 @@ standard_type: 专业量化机构文档
 
 ### 7.1 实施报告
 
-- [Layer 9 职责描述修复报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER9_RESPONSIBILITY_FIX_REPORT_20260407.md)
-- [Layer 9 归档文档清理分析报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER9_ARCHIVE_CLEANUP_REPORT_20260407.md)
-- [Layer 9 文档质量周度监控报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER9_WEEKLY_QUALITY_REPORT_20260407.md)
+- Layer 9 职责描述修复报告
+- Layer 9 归档文档清理分析报告
+- Layer 9 文档质量周度监控报告
 
 ### 7.2 监控机制
 

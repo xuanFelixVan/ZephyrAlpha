@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Archive Readme](ARCHIVE_README.md) - `ARCHIVE_ECONOMIC_REGIME_CLEANUP_001`
+- Archive Readme - `ARCHIVE_ECONOMIC_REGIME_CLEANUP_001`
 - [Economic Regime Engine Alternative Assessment](06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_ALTERNATIVE_ASSESSMENT.md) - `ALTERNATIVE_SOLUTION_ASSESSMENT_001`
 - [Economic Regime Engine Security Patch 001](06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001.md) - `ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001`
 - [Economic Regime Engine Technical Specification V2](06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md) - `ARCHIVE_ECONOMIC_REGIME_SPEC_V2_002`

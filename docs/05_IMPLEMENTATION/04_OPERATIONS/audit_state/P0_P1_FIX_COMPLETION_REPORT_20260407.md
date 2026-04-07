@@ -50,7 +50,7 @@ responsibility:
 **修复方案**: 创建完整的市场状态识别蓝图文件
 
 **修复内容**:
-- 创建了 [MARKET_REGIME_BLUEPRINT.md](file:///d:/ZephyrAlpha/docs/11_STRATEGIC_DECISION/MARKET_REGIME_BLUEPRINT.md)
+- 创建了 MARKET_REGIME_BLUEPRINT.md
 - 包含市场状态分类体系（牛市、熊市、震荡市、转折点）
 - 包含市场状态识别方法（HMM、统计规则、机器学习）
 - 包含核心模块设计（特征工程、状态识别、状态预测）
@@ -101,7 +101,7 @@ responsibility:
 **修复方案**: 创建完整的全流程数据持久化蓝图文件
 
 **修复内容**:
-- 创建了 [FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md](file:///d:/ZephyrAlpha/docs/10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md)
+- 创建了 FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
 - 包含数据持久化架构（实验追踪、数据血缘、版本控制、数据治理）
 - 包含核心模块设计（实验追踪、数据血缘、版本控制、数据治理）
 - 包含数据存储设计（SQLite、文件存储、备份存储）

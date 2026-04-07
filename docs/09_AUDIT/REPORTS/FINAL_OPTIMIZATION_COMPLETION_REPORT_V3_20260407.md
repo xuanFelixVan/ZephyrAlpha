@@ -225,16 +225,16 @@ standard_type: 专业量化机构文档
 
 | 脚本名称 | 用途 | 处理数量 |
 |----------|------|----------|
-| [l1_naming_final_fixer.py](file:///D:/ZephyrAlpha/scripts/l1_naming_final_fixer.py) | 修复文件命名问题 | 40个 |
-| [l1_link_batch_fixer_v2.py](file:///D:/ZephyrAlpha/scripts/l1_link_batch_fixer_v2.py) | 批量修复死链接 | 500个 |
-| [l2_responsibility_batch_fixer_v2.py](file:///D:/ZephyrAlpha/scripts/l2_responsibility_batch_fixer_v2.py) | 批量优化职责描述 | 46个 |
+| l1_naming_final_fixer.py | 修复文件命名问题 | 40个 |
+| l1_link_batch_fixer_v2.py | 批量修复死链接 | 500个 |
+| l2_responsibility_batch_fixer_v2.py | 批量优化职责描述 | 46个 |
 
 ### 生成的报告
 
 | 报告名称 | 用途 | 路径 |
 |----------|------|------|
 | [FINAL_OPTIMIZATION_COMPLETION_REPORT_V2_20260407.md](09_AUDIT/REPORTS/FINAL_OPTIMIZATION_COMPLETION_REPORT_V2_20260407.md) | L1+L2修复报告 | docs/09_AUDIT/REPORTS/ |
-| [comprehensive_deep_audit_20260407_125957.json](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/comprehensive_deep_audit_20260407_125957.json) | 最终审计数据 | docs/09_AUDIT/STATE/ |
+| comprehensive_deep_audit_20260407_125957.json | 最终审计数据 | docs/09_AUDIT/STATE/ |
 
 ---
 

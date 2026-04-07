@@ -131,7 +131,7 @@ d:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\
 
 **证据**：
 ```markdown
-| [TRADING_LOG_ANALYZER_BLUEPRINT.md](01_BLUEPRINTS/TRADING_LOG_ANALYZER_BLUEPRINT.md) | 交易日志分析器蓝图（P1级）|
+| TRADING_LOG_ANALYZER_BLUEPRINT.md | 交易日志分析器蓝图（P1级）|
 ```
 
 **修复建议**：

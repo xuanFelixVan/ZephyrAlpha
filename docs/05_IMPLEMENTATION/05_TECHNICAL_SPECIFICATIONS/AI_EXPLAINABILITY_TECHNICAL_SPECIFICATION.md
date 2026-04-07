@@ -819,7 +819,7 @@ performance_benchmarks:
 ### B. ﮒﻟﮔ?
 1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ﮔﭘﮔﮒ؟ﻛﺗ
 2. [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) - ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ
-3. [HUMAN_AI_FLOW.md](01_FRAMEWORK\HUMAN_AI_FLOW.md) - ﻛﭦﭦﮔﭦﮒﻛﺛﮔﭖﻝ۷
+3. HUMAN_AI_FLOW.md - ﻛﭦﭦﮔﭦﮒﻛﺛﮔﭖﻝ۷
 4. [TECHNICAL_SPECIFICATION_TEMPLATE.md](./TECHNICAL_SPECIFICATION_TEMPLATE.md) - ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۷۰ﮔﺟ
 5. ﮔ۰۴ﮔﺍﺑﮒﭦﻠAYAﻝﺏﭨﻝﭨﮒﺁﻟ۶۲ﻠﮔ۶ﮒ؟?ﮒﻠ۷ﮒﻟﻟﭖ?
 

@@ -76,7 +76,7 @@ def check_index_links(filepath):
         if not url.startswith('http'):
             target_path = os.path.normpath(os.path.join(index_file_dir, url))
             if not os.path.exists(target_path):
-                return False, f"发现无效链接: [{text}]({url})"
+                return False, f"发现无效链接: {text}"
     
     return True, "链接有效性检查通过"
 ```
@@ -363,10 +363,10 @@ python scripts/fix_invalid_links.py
 ## 🔗 七、相关文档
 
 - [文档编码规范](10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)
-- [文档治理Git Hook](.git/hooks/pre-commit)
-- [链接验证脚本](scripts/validate_index_links.py)
-- [链接分析脚本](scripts/analyze_invalid_links.py)
-- [链接修复脚本](scripts/fix_invalid_links.py)
+- 文档治理Git Hook
+- 链接验证脚本
+- 链接分析脚本
+- 链接修复脚本
 
 ---
 

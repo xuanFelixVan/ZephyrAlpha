@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Archive Readme](ARCHIVE_README.md) - `ARCHIVEREADME_002`
+- Archive Readme - `ARCHIVEREADME_002`
 - [Document Restore Report](06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/DOCUMENT_RESTORE_REPORT.md) - `DOCUMENTRESTOREREPORT_001`
 - [Sentiment Analysis Deep Audit Report](06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT.md) - `SENTIMENTANALYSISDEEPAUDIT_001`
 - [Sentiment Analysis Document Audit Report](06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/SENTIMENT_ANALYSIS_DOCUMENT_AUDIT_REPORT.md) - `LAYER_031`

@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Archive Readme](ARCHIVE_README.md) - `ARCHIVE_MARKET_PARTICIPANT_CONSOLIDATION_001`
+- Archive Readme - `ARCHIVE_MARKET_PARTICIPANT_CONSOLIDATION_001`
 - [Ashare Market Participant Agent Classification](06_ARCHIVE/20260404_market_participant_consolidation/ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md) - `ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION_001`
 - [A Stock Main Force Behavior Research](06_ARCHIVE/20260404_market_participant_consolidation/A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH.md) - `A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH_001`
 - [Market Participant Behavior Research Supplement](06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md) - `TECH_SPEC_MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_001`

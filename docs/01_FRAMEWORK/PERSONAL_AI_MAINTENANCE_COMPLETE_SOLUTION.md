@@ -121,11 +121,11 @@ responsibility_boundary: |
 # System_Manifest.md结构
 
 ## Layer 0: 数据源层
-- [数据源层蓝图](DATA_LAYER_BLUEPRINT.md) - module_id: DATA_LAYER_001
+- 数据源层蓝图 - module_id: DATA_LAYER_001
 - [数据质量监控](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) - module_id: DQM_001
 
 ## Layer 1: 数据预处理层
-- [数据清洗蓝图](DATA_CLEANING_BLUEPRINT.md) - module_id: DC_001
+- 数据清洗蓝图 - module_id: DC_001
 ```
 
 **检查清单**:

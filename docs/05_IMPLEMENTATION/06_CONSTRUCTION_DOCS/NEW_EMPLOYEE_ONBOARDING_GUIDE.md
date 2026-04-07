@@ -159,9 +159,9 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
-| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
-| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ

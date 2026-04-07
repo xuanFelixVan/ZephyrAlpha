@@ -214,21 +214,21 @@ version: 1.0.0
 - [职责描述相似度分析报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
 - [职责描述个性化优化报告v1.0](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_PERSONALIZATION_REPORT_20260407.md)
 - [职责描述个性化优化总结报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_PERSONALIZATION_SUMMARY_20260407.md)
-- [职责描述个性化优化报告v2.0](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_PERSONALIZATION_REPORT_v2_20260407.md)
+- 职责描述个性化优化报告v2.0
 
 ### 6.2 优化工具
 
-- [responsibility_similarity_analyzer.py](file:///d:/ZephyrAlpha/scripts/responsibility_similarity_analyzer.py) - 职责描述相似度分析工具
-- [optimized_responsibility_generator.py](file:///d:/ZephyrAlpha/scripts/optimized_responsibility_generator.py) - 优化后的职责描述生成工具
-- [responsibility_personalizer.py](file:///d:/ZephyrAlpha/scripts/responsibility_personalizer.py) - 职责描述个性化优化应用工具
-- [responsibility_personalizer_v2.py](file:///d:/ZephyrAlpha/scripts/responsibility_personalizer_v2.py) - 职责描述个性化优化应用工具v2.0
-- [responsibility_reviewer.py](file:///d:/ZephyrAlpha/scripts/responsibility_reviewer.py) - 职责描述审查工具
+- responsibility_similarity_analyzer.py - 职责描述相似度分析工具
+- optimized_responsibility_generator.py - 优化后的职责描述生成工具
+- responsibility_personalizer.py - 职责描述个性化优化应用工具
+- responsibility_personalizer_v2.py - 职责描述个性化优化应用工具v2.0
+- responsibility_reviewer.py - 职责描述审查工具
 
 ### 6.3 参考标准
 
 - [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 审计质量标准v5.1
 
 ---
 

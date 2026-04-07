@@ -168,9 +168,9 @@ compliance_level: 专业标准
 | **旧架构残留清?* | 🔴 失败 | 114 | 114个文件仍包含旧架构残?|
 | **架构文档一?* | 🔴 失败 | 3 | 关键架构文档仍使用旧命名 |
 
-**关键问题文档**?1. [LAYER_8_MASTER_BLUEPRINT.md](D:\ZephyrAlpha\docs\01_FRAMEWORK\LAYER_8_MASTER_BLUEPRINT.md) - 仍使用Layer 8命名
-2. [LAYER1_IMPROVEMENT_PLAN.md](D:\ZephyrAlpha\docs\05_IMPLEMENTATION\05_TECHNICAL_SPECIFICATIONS\LAYER1_IMPROVEMENT_PLAN.md) - 仍使用Layer 1命名
-3. [LAYER3_LONG_TERM_IMPROVEMENT_BLUEPRINT.md](D:\ZephyrAlpha\docs\10_AI_WORKFLOW\LAYER3_LONG_TERM_IMPROVEMENT_BLUEPRINT.md) - 仍使用Layer 3命名
+**关键问题文档**?1. LAYER_8_MASTER_BLUEPRINT.md - 仍使用Layer 8命名
+2. LAYER1_IMPROVEMENT_PLAN.md - 仍使用Layer 1命名
+3. LAYER3_LONG_TERM_IMPROVEMENT_BLUEPRINT.md - 仍使用Layer 3命名
 
 #### 3.3 文档分类体系规范性验?
 | 检查项 | ?| 问题数量 | 说明 |

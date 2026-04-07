@@ -41,7 +41,7 @@ implementation_status: 进行?---
 >
 > **配套文档**?
 > - 主文档：
-> - 形态识别：[pattern-recognition.md](03_TRADING_TACTICS/99_ARCHIVE/pattern-recognition.md)
+> - 形态识别：pattern-recognition.md
 
 ***
 

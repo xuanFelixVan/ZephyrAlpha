@@ -34,7 +34,7 @@ responsibility: 数据版本控制策略与变更追踪
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 差距分析 | ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 协同模块 | 数据血缘关系 |
 | 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_BACKUP_RECOVERY_BLUEPRINT.md) | 协同模块 | 数据备份方案 |
@@ -1021,7 +1021,7 @@ dvc_manager.checkout_version(
 
 - [DVC官方文档](https://dvc.org/doc)
 - [Delta Lake官方文档](https://docs.delta.io/)
-- [数据源层架构缺失分析](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md)
+- 数据源层架构缺失分析
 
 ---
 

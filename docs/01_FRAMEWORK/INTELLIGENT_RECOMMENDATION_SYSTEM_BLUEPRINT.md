@@ -175,7 +175,7 @@ class RuleBasedRecommender:
         
         for category, rules in self.rules.items():
             for rule in rules:
-                if rule['condition'](context):
+                if rule'condition':
                     recommendations.append({
                         'category': category,
                         'recommendation': rule['recommendation'],

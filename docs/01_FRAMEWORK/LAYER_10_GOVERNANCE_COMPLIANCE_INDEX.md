@@ -132,8 +132,8 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | [交易错误纠正系统蓝图](./TRADE_ERROR_CORRECTION_BLUEPRINT.md) | TRADE_ERROR_CORRECTION_BLUEPRINT_001 | 1.0 | Active | 3天 | ⭐⭐⭐⭐⭐ | 错误识别、错误评估、错误纠正、错误记录 |
 | [合规知识库管理系统蓝图](./COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md) | COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 合规知识库、法规查询、最佳实践库、培训资料管理 |
 | [治理仪表盘系统蓝图](./GOVERNANCE_DASHBOARD_BLUEPRINT.md) | GOVERNANCE_DASHBOARD_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 治理可视化、合规监控仪表盘、风险预警、报告生成 |
-| [合规工作流引擎蓝图](COMPLIANCE_WORKFLOW_ENGINE_BLUEPRINT.md) | COMPLIANCE_WORKFLOW_ENGINE_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 工作流定义、任务调度、审批流程、自动化执行 |
-| [政策与程序管理系统蓝图](POLICY_PROCEDURE_MANAGEMENT_BLUEPRINT.md) | POLICY_PROCEDURE_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 政策文档管理、程序流程管理、审批流程、合规映射 |
+| 合规工作流引擎蓝图 | COMPLIANCE_WORKFLOW_ENGINE_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 工作流定义、任务调度、审批流程、自动化执行 |
+| 政策与程序管理系统蓝图 | POLICY_PROCEDURE_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 政策文档管理、程序流程管理、审批流程、合规映射 |
 
 **P0模块实施价值**：
 - ✅ **审计追踪系统**: 对标TigerBeetle金融审计标准，确保所有操作可追溯
@@ -167,10 +167,10 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | [算法交易测试框架蓝图](./ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT.md) | ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT_001 | 1.0 | Active | 1-2周 | ⭐⭐⭐⭐⭐ | 功能测试、性能测试、风险测试、测试报告 |
 | [算法部署控制系统蓝图](./ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT.md) | ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐⭐ | 部署流程、审批控制、版本管理、回滚机制 |
 | [事后分析系统蓝图](./POST_MORTEM_ANALYSIS_BLUEPRINT.md) | POST_MORTEM_ANALYSIS_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 事件分析、根本原因分析、改进措施、知识积累 |
-| [内部审计管理系统蓝图](INTERNAL_AUDIT_MANAGEMENT_BLUEPRINT.md) | INTERNAL_AUDIT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐⭐ | 审计计划管理、审计执行跟踪、审计发现管理、整改跟踪 |
-| [合规事件管理系统蓝图](COMPLIANCE_EVENT_MANAGEMENT_BLUEPRINT.md) | COMPLIANCE_EVENT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 事件报告与记录、事件分类与分级、事件处理流程、事件统计分析 |
-| [合规数据仓库蓝图](COMPLIANCE_DATA_WAREHOUSE_BLUEPRINT.md) | COMPLIANCE_DATA_WAREHOUSE_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 合规数据集成、数据清洗与转换、数据存储与管理、数据查询与分析 |
-| [合规分析平台蓝图](COMPLIANCE_ANALYTICS_PLATFORM_BLUEPRINT.md) | COMPLIANCE_ANALYTICS_PLATFORM_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 数据可视化、报表生成、高级分析、机器学习模型 |
+| 内部审计管理系统蓝图 | INTERNAL_AUDIT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐⭐ | 审计计划管理、审计执行跟踪、审计发现管理、整改跟踪 |
+| 合规事件管理系统蓝图 | COMPLIANCE_EVENT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 事件报告与记录、事件分类与分级、事件处理流程、事件统计分析 |
+| 合规数据仓库蓝图 | COMPLIANCE_DATA_WAREHOUSE_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 合规数据集成、数据清洗与转换、数据存储与管理、数据查询与分析 |
+| 合规分析平台蓝图 | COMPLIANCE_ANALYTICS_PLATFORM_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 数据可视化、报表生成、高级分析、机器学习模型 |
 
 **P1模块实施价值**：
 - ⚠️ **交易对手风险**: 个人使用场景较少，可选实施

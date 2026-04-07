@@ -300,10 +300,10 @@ python scripts/fix_encoding_issues.py
 
 ## 🔗 七、相关文档
 
-- [文档治理Git Hook](.git/hooks/pre-commit)
-- [编码检查脚本](scripts/check_encoding_issues.py)
-- [编码修复脚本](scripts/fix_encoding_issues.py)
-- [链接验证脚本](scripts/validate_index_links.py)
+- 文档治理Git Hook
+- 编码检查脚本
+- 编码修复脚本
+- 链接验证脚本
 
 ---
 

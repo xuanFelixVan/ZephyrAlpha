@@ -758,7 +758,7 @@ supercommand:
 ### C. 参考文?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [SuperCommand设计文档](module_designs\layer_0\L0_SUPERCMD.md)
+- SuperCommand设计文档
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据源层负责?

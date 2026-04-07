@@ -790,9 +790,7 @@ class DataAugmentationSystem:
             raise ValueError(f"不支持的增强方法: {method}")
         
         # 应用增强方法
-        augmented_data = self.augmentation_methods[method](
-            data, augmentation_ratio
-        )
+        augmented_data = self.augmentation_methodsmethod
         
         return augmented_data
     

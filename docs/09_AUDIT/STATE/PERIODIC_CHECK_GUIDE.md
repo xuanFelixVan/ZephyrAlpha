@@ -161,14 +161,14 @@ parent_document: ../INDEX.md
 
 ### 6.1 检查脚本
 
-- [reference_link_auto_check.py](file:///D:/ZephyrAlpha/scripts/reference_link_auto_check.py)
-- [automated_document_check.py](file:///D:/ZephyrAlpha/scripts/automated_document_check.py)
-- [short_term_improvement.py](file:///D:/ZephyrAlpha/scripts/short_term_improvement.py)
+- reference_link_auto_check.py
+- automated_document_check.py
+- short_term_improvement.py
 
 ### 6.2 相关文档
 
-- [引用链接检查报告](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/REFERENCE_LINK_CHECK_REPORT_20260407_155353.md)
-- [短期改进报告](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/SHORT_TERM_IMPROVEMENT_REPORT_20260407_161012.md)
+- 引用链接检查报告
+- 短期改进报告
 
 ---
 

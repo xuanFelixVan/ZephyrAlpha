@@ -648,7 +648,7 @@ w = port.rp_optimization(model='Classic', rm='MV', rf=0.02)
 |------|------|
 | [ASSET_ALLOCATION_MODEL.md](./ASSET_ALLOCATION_MODEL.md) | 资产配置模型蓝图 |
 | [ASSET_CLASS_DEFINITION.md](./ASSET_CLASS_DEFINITION.md) | 资产类别定义蓝图 |
-| [风险预算框架.md](风险预算框架.md) | 风险预算框架蓝图 |
+| 风险预算框架.md | 风险预算框架蓝图 |
 
 ### 9.2 参考文档
 

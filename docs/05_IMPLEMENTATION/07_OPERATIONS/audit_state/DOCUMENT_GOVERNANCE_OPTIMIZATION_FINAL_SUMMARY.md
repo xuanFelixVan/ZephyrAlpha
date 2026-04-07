@@ -42,9 +42,9 @@
 - 已有核心定位: 19个
 - 修复率: 100%
 
-**修复工具**: [layer5_responsibility_fixer.py](file:///d:/ZephyrAlpha/scripts/layer5_responsibility_fixer.py)
+**修复工具**: layer5_responsibility_fixer.py
 
-**修复报告**: [STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407.md)
+**修复报告**: STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407.md
 
 #### 3. 处理高严重度重复内容
 
@@ -55,9 +55,9 @@
 - 中优先级: 453对
 - 低优先级: 312对
 
-**处理工具**: [layer5_duplicate_handler.py](file:///d:/ZephyrAlpha/scripts/layer5_duplicate_handler.py)
+**处理工具**: layer5_duplicate_handler.py
 
-**处理报告**: [STRATEGY_EXECUTION_DUPLICATE_HANDLING_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/STRATEGY_EXECUTION_DUPLICATE_HANDLING_REPORT_20260407.md)
+**处理报告**: STRATEGY_EXECUTION_DUPLICATE_HANDLING_REPORT_20260407.md
 
 ---
 
@@ -75,9 +75,9 @@
 - 添加章节: 设计目标、核心功能、实现方案
 - 确保文档结构完整性
 
-**修复工具**: [layer5_section_completer.py](file:///d:/ZephyrAlpha/scripts/layer5_section_completer.py)
+**修复工具**: layer5_section_completer.py
 
-**修复报告**: [STRATEGY_EXECUTION_SECTION_COMPLETION_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/STRATEGY_EXECUTION_SECTION_COMPLETION_REPORT_20260407.md)
+**修复报告**: STRATEGY_EXECUTION_SECTION_COMPLETION_REPORT_20260407.md
 
 #### 2. 优化87个职责描述质量问题
 
@@ -91,9 +91,9 @@
 - 扩展过短职责描述: 25个
 - 精简过长职责描述: 62个
 
-**优化工具**: [layer5_responsibility_optimizer.py](file:///d:/ZephyrAlpha/scripts/layer5_responsibility_optimizer.py)
+**优化工具**: layer5_responsibility_optimizer.py
 
-**优化报告**: [STRATEGY_EXECUTION_RESPONSIBILITY_OPTIMIZATION_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/STRATEGY_EXECUTION_RESPONSIBILITY_OPTIMIZATION_REPORT_20260407.md)
+**优化报告**: STRATEGY_EXECUTION_RESPONSIBILITY_OPTIMIZATION_REPORT_20260407.md
 
 ---
 
@@ -110,7 +110,7 @@
 - 质量检查机制
 - 定期审计机制
 
-**标准文档**: [DOCUMENT_QUALITY_STANDARDS.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/standards/DOCUMENT_QUALITY_STANDARDS.md)
+**标准文档**: DOCUMENT_QUALITY_STANDARDS.md
 
 #### 2. 优化文档创建流程
 
@@ -119,9 +119,9 @@
 - Git pre-commit hook
 - 培训文档创建者
 
-**检查清单**: [DOCUMENT_CREATION_CHECKLIST.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md)
+**检查清单**: DOCUMENT_CREATION_CHECKLIST.md
 
-**Hook脚本**: [install_pre_commit_hook.py](file:///d:/ZephyrAlpha/scripts/install_pre_commit_hook.py)
+**Hook脚本**: install_pre_commit_hook.py
 
 #### 3. 建立持续监控机制
 
@@ -132,7 +132,7 @@
 - 监控报告
 - 持续改进机制
 
-**监控机制**: [CONTINUOUS_MONITORING_MECHANISM.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring/CONTINUOUS_MONITORING_MECHANISM.md)
+**监控机制**: CONTINUOUS_MONITORING_MECHANISM.md
 
 ---
 
@@ -340,16 +340,16 @@
 ## 📁 相关文档
 
 ### 审计报告
-- [Layer 5深度审计总结](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/STRATEGY_EXECUTION_DEEP_AUDIT_SUMMARY_20260407.md)
+- Layer 5深度审计总结
 
 ### 标准文档
-- [文档质量标准](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/standards/DOCUMENT_QUALITY_STANDARDS.md)
-- [文档创建检查清单](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md)
-- [持续监控机制](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring/CONTINUOUS_MONITORING_MECHANISM.md)
+- 文档质量标准
+- 文档创建检查清单
+- 持续监控机制
 
 ### 审计工具
-- [layer5_responsibility_fixer.py](file:///d:/ZephyrAlpha/scripts/layer5_responsibility_fixer.py)
-- [layer5_duplicate_handler.py](file:///d:/ZephyrAlpha/scripts/layer5_duplicate_handler.py)
-- [layer5_section_completer.py](file:///d:/ZephyrAlpha/scripts/layer5_section_completer.py)
-- [layer5_responsibility_optimizer.py](file:///d:/ZephyrAlpha/scripts/layer5_responsibility_optimizer.py)
-- [install_pre_commit_hook.py](file:///d:/ZephyrAlpha/scripts/install_pre_commit_hook.py)
+- layer5_responsibility_fixer.py
+- layer5_duplicate_handler.py
+- layer5_section_completer.py
+- layer5_responsibility_optimizer.py
+- install_pre_commit_hook.py

@@ -347,10 +347,10 @@ last_updated: 2026-04-02---
 
 ## 📄 生成的报?
 
-1. [link_fix_report.json](link_fix_report.json) - 链接修复结果
-2. [metadata_enhancement_report.json](metadata_enhancement_report.json) - 元数据完善结?
-3. [document_classification_report.json](document_classification_report.json) - 文档分类结果
-4. [final_quality_report_round2.json](final_quality_report_round2.json) - 质量检查报?
+1. link_fix_report.json - 链接修复结果
+2. metadata_enhancement_report.json - 元数据完善结?
+3. document_classification_report.json - 文档分类结果
+4. final_quality_report_round2.json - 质量检查报?
 
 ---
 

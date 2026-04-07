@@ -118,7 +118,7 @@ applicable_scope: 模块职责描述
 #### Layer N: 层级名称
 ##### N.1. 模块名称
 - **模块ID**: MODULE_NAME_001
-- **蓝图文档**: [MODULE_NAME_BLUEPRINT.md](path/to/MODULE_NAME_BLUEPRINT.md)
+- **蓝图文档**: MODULE_NAME_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 模块职责描述
 - **状态**: Active
@@ -206,7 +206,7 @@ DOCS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
 ## 📚 相关文档
 
 - [文档治理五大原则](01_FRAMEWORK/ARCHITECTURE.md)
-- [蓝图质量验证工具](scripts\blueprint_validator.py)
+- 蓝图质量验证工具
 - [系统总索引](System_Manifest.md)
 
 ---
