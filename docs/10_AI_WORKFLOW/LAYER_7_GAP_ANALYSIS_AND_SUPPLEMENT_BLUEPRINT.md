@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_LAYER_7_GAP_ANALYSIS_AND_SUPPLEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

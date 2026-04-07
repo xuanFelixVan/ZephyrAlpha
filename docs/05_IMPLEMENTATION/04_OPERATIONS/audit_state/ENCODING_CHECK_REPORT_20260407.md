@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_ENCODING_CHECK_REPORT_20260407
 version: 1.0.0
 status: Active

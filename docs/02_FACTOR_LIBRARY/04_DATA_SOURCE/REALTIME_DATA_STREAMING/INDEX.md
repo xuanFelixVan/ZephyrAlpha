@@ -1,20 +1,17 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_REALTIME_DATA_STREAMING_001
-
-
-## 🔧 维护成本
-
 | 任务 | 频率 | 时间 |
 |responsibility:
-  - 提供目录索引
+- 提供目录索引
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
-------|------|------|
+---
+
+# Index
+---|------|------|
 | 集群监控 | 每日 | 10分钟 |
 | 日志清理 | 每周 | 15分钟 |
 | 容量规划 | 每月 | 30分钟 |

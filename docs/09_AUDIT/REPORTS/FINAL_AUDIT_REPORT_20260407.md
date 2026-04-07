@@ -1,3 +1,14 @@
+---
+module_id: 09_AUDIT_REPORTS_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 提供文档支持
+---
+
 # 文档治理最终审计报告
 
 ## 📋 审计概要

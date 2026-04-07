@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUICK_AUDIT_REPORT_20260407_173336
 version: 1.0.0
 status: Active

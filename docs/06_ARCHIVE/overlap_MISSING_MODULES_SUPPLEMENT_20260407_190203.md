@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MISSING_MODULES_SUPPLEMENT
 version: 1.0.0
 status: Active

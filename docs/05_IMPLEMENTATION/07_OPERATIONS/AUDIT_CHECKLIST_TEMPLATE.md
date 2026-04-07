@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AUDIT_CHECKLIST_TEMPLATE
 version: 1.0.0
 status: Active

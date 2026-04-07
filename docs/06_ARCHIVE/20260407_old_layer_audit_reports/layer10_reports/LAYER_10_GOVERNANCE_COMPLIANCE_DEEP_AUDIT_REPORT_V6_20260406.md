@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V6_20260406
 version: 1.0.0
 status: Active

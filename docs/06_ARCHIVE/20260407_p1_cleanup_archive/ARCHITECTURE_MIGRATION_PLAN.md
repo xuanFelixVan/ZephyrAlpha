@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_ARCHITECTURE_MIGRATION_PLAN
 version: 1.0.0
 status: Active

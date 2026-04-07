@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RTX3090_BEST_MODELS
 version: 1.0.0
 status: Active

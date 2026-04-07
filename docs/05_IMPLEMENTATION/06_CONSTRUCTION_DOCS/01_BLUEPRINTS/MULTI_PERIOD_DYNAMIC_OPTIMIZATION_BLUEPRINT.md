@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 多期动态优化
-  - 多期规划
-  - 动态调整
-  - 长期优化
-
+- 多期动态优化
+- 多期规划
+- 动态调整
+- 长期优化
 layer: Layer 5 (策略执行层)
 ---
 

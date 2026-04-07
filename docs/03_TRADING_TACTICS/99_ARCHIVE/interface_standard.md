@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INTERFACE_STANDARD
 version: 1.0.0
 status: Active

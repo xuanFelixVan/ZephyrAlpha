@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_39_THIRD_PARTY_INTEGRATION_001
-
-
-## 11. 相关文档
-
 - [n8n官方文档](https://github.com/n8n)
-
 responsibility:
-  - 第三方集成设计与实施方案与优化维护
+- 第三方集成设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

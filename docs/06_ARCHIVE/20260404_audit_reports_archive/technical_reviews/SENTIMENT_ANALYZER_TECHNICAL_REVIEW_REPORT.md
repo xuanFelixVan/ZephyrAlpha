@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SENTIMENT_ANALYZER_TECHNICAL_REVIEW_REPORT
 version: 1.0.0
 status: Active

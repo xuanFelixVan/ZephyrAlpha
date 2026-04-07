@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CRITICAL_MISSING
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOC_RECREATION_EVALUATION_REPORT_20260404
 version: 1.0.0
 status: Active

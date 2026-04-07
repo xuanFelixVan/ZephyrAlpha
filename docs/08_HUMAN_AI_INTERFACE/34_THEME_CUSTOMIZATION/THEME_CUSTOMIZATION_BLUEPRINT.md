@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_34_THEME_CUSTOMIZATION_001
-
-
-## 11. 相关文档
-
 - [Tailwind CSS官方文档](https://github.com/tailwind-css)
-
 responsibility:
-  - 主题定制系统设计与实施方案与优化维护
+- 主题定制系统设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

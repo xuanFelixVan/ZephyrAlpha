@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: EXCELLENCE_STANDARD_ACHIEVEMENT_REPORT_20260402
 version: 1.0.0
 status: Active

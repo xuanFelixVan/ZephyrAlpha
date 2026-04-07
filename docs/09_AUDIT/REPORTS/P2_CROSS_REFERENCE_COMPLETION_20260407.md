@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: P2_CROSS_REFERENCE_COMPLETION_20260407
 version: 1.0.0
 status: Active

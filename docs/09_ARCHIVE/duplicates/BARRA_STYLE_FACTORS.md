@@ -1,29 +1,19 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
-
-
-# T.03.RF001.Barra风格因子（A股适配版）
 > **核心职责**: Barra风格因子体系定义（A股适配版），涉及风格因子
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：Barra风格因子体系定义（A股适配版）相关内容
 > - ❌ 本文档不负责：其他模块内容
-
 > Barra风格因子体系（A股适配?
 >
 > **配套文档**?
 > - 主文档：[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 > - 因子库索引：../../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md
 > - 风险因子：风险因子 README
-
 ***
-
-## 1. 因子概述
-
 | 属?| 内容 |
 |responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

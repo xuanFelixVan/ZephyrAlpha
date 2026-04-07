@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

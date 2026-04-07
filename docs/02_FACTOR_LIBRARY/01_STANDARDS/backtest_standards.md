@@ -1,20 +1,17 @@
 ---
-
-
 module_id: STANDARDS_BACKTEST_STANDARDS
-
-
-## 7. 更新记录
-
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - 定义测试规范
+- 定义测试规范
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
-------|------|----------|
+---
+
+# Backtest Standards
+---|------|----------|
 | v1.1 | 2026-03-28 | 增加过拟合检验、滚动验证、敏感性分?|
 | v1.0 | 2026-03-28 | 初始版本 |
 

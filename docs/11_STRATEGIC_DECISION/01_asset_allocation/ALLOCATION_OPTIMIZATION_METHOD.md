@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALLOCATION_OPTIMIZATION_METHOD
 version: 1.0.0
 status: Active

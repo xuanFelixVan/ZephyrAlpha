@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALTERNATIVE_DATA_INTEGRATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

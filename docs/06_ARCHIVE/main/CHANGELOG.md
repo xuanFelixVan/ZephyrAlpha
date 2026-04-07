@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_MAIN_CHANGELOG
 version: 1.0.0
 status: Active

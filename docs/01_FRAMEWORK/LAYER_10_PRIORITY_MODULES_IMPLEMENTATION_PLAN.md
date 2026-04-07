@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_10_PRIORITY_MODULES_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active

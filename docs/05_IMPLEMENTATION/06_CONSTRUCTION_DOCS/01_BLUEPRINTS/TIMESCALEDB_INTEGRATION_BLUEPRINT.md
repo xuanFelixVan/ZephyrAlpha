@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TIMESCALEDB_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - TimescaleDB集成
-  - 时序数据库
-  - 时间序列
-  - 高效存储
-
+- TimescaleDB集成
+- 时序数据库
+- 时间序列
+- 高效存储
 layer: Layer 5.1 (数据处理)
 ---
 

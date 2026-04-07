@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RISK_ADJUSTMENT_MECHANISM
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_GOVERNANCE_COMPLIANCE_TRAINING_SYSTEM_INDEX
 version: 1.0.0
 status: Active

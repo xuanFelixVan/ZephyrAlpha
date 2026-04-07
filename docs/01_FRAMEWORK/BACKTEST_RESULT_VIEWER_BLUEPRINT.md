@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: BACKTEST_RESULT_VIEWER_BLUEPRINT
 version: 1.0.0
 status: Active

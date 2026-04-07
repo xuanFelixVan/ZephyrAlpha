@@ -1,17 +1,11 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
-
-
 **设计原则**: 工具简单、流程清晰、持续积?
-
 **维护?*: 清风量化系统
 **版本**: v1.0
 **最后更?*: 2026-03-28
-
 responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

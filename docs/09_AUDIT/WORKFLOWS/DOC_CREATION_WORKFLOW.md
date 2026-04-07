@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOC_CREATION_WORKFLOW
 version: 1.0.0
 status: Active

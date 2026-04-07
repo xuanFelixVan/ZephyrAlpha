@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LIQUIDITY_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

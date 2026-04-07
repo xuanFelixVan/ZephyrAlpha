@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

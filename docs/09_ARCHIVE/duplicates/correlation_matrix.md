@@ -1,15 +1,10 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
-
-
 > **维护部门**: 清风量化研究?
 > **分析日期**: 2026-03-28
 > **下次更新**: 2026-06-28（季度更新）
-
 responsibility:
-  - 定义测试规范
+- 定义测试规范
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

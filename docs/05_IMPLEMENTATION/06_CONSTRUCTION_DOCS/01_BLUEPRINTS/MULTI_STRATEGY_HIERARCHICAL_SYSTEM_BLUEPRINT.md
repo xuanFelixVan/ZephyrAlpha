@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active

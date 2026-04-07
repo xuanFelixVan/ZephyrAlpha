@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT
 version: 1.0.0
 status: Active

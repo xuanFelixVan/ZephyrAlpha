@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V9_20260407
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MAINTENANCE_MANUAL
 version: 1.0.0
 status: Active

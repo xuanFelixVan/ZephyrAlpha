@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESPONSIBILITY_FIX_REPORT_20260407_030139
 version: 1.0.0
 status: Active

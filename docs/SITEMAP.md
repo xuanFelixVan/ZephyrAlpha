@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SITEMAP
 version: 1.0.0
 status: Active
@@ -196,7 +196,7 @@ docs/
 
 - **数据?*: [数据源概述](01_FRAMEWORK\README.md)
 - **QMT接口**: [QMT接口](./02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
-- **iFind连接?*: [iFind连接器](./02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md)
+- **iFind连接?*: `iFind连接器`
 
 ### 审计相关
 

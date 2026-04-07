@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - VaR/ES监控
-  - 风险价值
-  - 期望损失
-  - VaR/ES风险实时监控
-
+- VaR/ES监控
+- 风险价值
+- 期望损失
+- VaR/ES风险实时监控
 module_id: VAR_ES_MONITORING_001
 version: 1.0.0
 status: Active

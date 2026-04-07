@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ADJUSTMENT_TRIGGER_CONDITIONS
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESPONSIBILITY_REVIEW_MECHANISM
 version: 1.0.0
 status: Active

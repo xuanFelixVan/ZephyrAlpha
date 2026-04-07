@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_24_RISK_DASHBOARD_README
 version: 1.0.0
 status: Active

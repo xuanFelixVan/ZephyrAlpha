@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: API_CONTRACT
 version: 1.0.0
 status: Active

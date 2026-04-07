@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: EMERGENCY_RESPONSE_PLAN
 version: 1.0.0
 status: Active

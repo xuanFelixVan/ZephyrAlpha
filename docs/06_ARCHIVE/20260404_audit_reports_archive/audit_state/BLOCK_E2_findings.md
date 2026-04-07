@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_E2_FINDINGS
 version: 1.0.0
 status: Active

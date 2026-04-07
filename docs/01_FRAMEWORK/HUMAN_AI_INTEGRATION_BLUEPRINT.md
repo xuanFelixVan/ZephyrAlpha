@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HUMAN_AI_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active

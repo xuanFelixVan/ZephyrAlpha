@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_P1_REMAINING_ISSUES_FINAL_REPORT_20260407
 version: 1.0.0
 status: Active

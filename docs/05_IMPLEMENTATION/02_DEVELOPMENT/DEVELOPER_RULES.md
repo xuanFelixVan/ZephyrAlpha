@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DEVELOPER_RULES
 version: 1.0.0
 status: Active

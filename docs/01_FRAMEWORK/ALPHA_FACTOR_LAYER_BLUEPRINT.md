@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active

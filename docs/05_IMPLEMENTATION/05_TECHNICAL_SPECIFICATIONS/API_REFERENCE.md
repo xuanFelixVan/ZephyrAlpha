@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: API_REFERENCE
 version: 1.0.0
 status: Active

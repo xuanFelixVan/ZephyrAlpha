@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMPORTANT_PYTHON_VERSION
 version: 1.0.0
 status: Active

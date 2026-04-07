@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_MODEL_RISK_MLFLOW_IMPLEMENTATION
 version: 1.0.0
 status: Active

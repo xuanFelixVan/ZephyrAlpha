@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: EARLY_WARNING_REPORT_20260407_113727
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_STRATEGY_DYNAMIC_ALLOCATION_BLUEPRINT
 version: 1.0.0
 status: Active

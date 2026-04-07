@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 07_RESEARCH_02_EXPLORATORY_ANALYSIS_README
 version: 1.0.0
 status: Active

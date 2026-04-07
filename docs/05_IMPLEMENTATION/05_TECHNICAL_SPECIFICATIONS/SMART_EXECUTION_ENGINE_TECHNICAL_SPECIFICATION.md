@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

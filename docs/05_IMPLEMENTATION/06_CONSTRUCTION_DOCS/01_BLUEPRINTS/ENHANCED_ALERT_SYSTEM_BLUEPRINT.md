@@ -1,18 +1,4 @@
-﻿---
-module_id: ENHANCED_ALERT_SYSTEM_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 增强告警系统
-  - 智能告警聚合
-  - 告警降噪
-  - 告警优先级排序
-
-
-﻿
+---
 module_id: ENHANCED_ALERT_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -22,9 +8,13 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 增强告警系统
+  - 智能告警聚合
+  - 告警降噪
+  - 告警优先级排序
 layer: Layer 5 (策略执行层)
 ---
+
 
 
 # ENHANCED ALERT SYSTEM BLUEPRINT

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: GIT_CORRUPTED_FILE_RECOVERY_HANDOVER_20260406
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RISK_MANAGEMENT_DOCUMENT_INDEX
 version: 1.0.0
 status: Active

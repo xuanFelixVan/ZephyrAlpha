@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 高性能数据管道
-  - 流式处理
-  - 低延迟
-  - 高吞吐
-
+- 高性能数据管道
+- 流式处理
+- 低延迟
+- 高吞吐
 layer: Layer 5.1 (数据处理)
 ---
 

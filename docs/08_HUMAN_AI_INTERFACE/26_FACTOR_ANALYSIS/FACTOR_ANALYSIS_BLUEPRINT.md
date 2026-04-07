@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_26_FACTOR_ANALYSIS_001
-
-
-## 11. 相关文档
-
 - [Alphalens官方文档](https://github.com/alphalens)
-
 responsibility:
-  - 因子分析工具设计与实施方案与优化维护
+- 因子分析工具设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

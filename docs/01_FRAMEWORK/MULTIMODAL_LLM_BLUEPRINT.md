@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTIMODAL_LLM_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
 version: 1.0.0
 status: Active

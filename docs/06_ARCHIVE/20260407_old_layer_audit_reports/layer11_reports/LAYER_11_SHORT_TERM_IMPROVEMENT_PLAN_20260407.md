@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_11_SHORT_TERM_IMPROVEMENT_PLAN_20260407
 version: 1.0.0
 status: Active

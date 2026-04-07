@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: OPTIMIZED_QUICK_AUDIT_REPORT_20260407_175046
 version: 1.0.0
 status: Active

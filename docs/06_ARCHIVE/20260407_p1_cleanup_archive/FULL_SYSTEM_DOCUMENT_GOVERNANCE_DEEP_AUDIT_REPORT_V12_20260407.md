@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FULL_SYSTEM_AUDIT_V12_001
 version: 12.0.0
 status: Active

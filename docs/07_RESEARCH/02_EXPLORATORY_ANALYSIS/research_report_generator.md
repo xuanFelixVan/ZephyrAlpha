@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESEARCH_REPORT_GENERATOR
 version: 1.0.0
 status: Active

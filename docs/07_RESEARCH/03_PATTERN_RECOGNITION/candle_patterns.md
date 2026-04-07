@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CANDLE_PATTERNS
 version: 1.0.0
 status: Active

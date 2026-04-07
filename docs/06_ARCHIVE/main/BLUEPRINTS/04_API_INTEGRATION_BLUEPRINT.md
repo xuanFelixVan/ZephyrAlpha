@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 04_API_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active

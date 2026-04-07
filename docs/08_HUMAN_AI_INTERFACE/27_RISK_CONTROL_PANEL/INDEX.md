@@ -1,9 +1,5 @@
-﻿---
-
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_27_RISK_CONTROL_PANEL_INDEX
-## 📄 文档列表
-
 | 文档名称 | 类型 | 状态 | 说明 |
 |version: 1.0.0
 status: Active

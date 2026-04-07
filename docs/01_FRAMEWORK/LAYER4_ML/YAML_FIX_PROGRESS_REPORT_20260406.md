@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: YAML_FIX_PROGRESS_REPORT_20260406
 version: 1.0.0
 status: Active

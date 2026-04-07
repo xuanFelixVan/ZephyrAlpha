@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CDC_CHANGE_DATA_CAPTURE_BLUEPRINT
 version: 1.0.0
 status: Active

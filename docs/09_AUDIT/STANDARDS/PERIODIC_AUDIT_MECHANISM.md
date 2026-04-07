@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PERIODIC_AUDIT_MECHANISM
 version: 1.0.0
 status: Active

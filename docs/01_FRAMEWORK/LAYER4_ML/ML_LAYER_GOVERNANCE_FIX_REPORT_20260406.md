@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ML_LAYER_GOVERNANCE_FIX_REPORT_20260406
 version: 1.0.0
 status: Active

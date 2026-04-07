@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_GOVERNANCE_RE_AUDIT_REPORT
 version: 1.0.0
 status: Active

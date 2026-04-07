@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: GRAYSCALE_RELEASE_BLUEPRINT
 version: 1.0.0
 status: Active

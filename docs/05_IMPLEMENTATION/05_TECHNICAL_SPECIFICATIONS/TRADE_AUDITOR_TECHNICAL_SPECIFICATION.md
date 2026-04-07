@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TRADE_AUDITOR_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

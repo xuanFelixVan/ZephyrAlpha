@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT
 version: 1.0.0
 status: Active

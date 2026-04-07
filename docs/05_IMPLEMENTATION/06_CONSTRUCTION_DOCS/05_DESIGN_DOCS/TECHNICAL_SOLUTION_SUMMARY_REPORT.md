@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TECHNICAL_SOLUTION_SUMMARY_REPORT
 version: 1.0.0
 status: Active

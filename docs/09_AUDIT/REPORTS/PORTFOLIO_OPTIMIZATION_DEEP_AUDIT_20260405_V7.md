@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V7
 version: 1.0.0
 status: Active

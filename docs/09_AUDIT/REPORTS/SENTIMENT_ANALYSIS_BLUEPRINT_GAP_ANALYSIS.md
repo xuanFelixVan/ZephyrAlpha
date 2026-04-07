@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS
 version: 1.0.0
 status: Active

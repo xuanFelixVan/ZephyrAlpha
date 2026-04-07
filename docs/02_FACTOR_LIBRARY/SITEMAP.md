@@ -1,8 +1,5 @@
 ---
-
 module_id: FACTOR_LIBRARY_SITEMAP
-
-
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

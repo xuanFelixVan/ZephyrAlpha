@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PYTHON_VERSION_FIX
 version: 1.0.0
 status: Active

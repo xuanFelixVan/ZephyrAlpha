@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ARCHITECTURE_GAP_ANALYSIS_AND_OPENSOURCE_RECOMMENDATION_20260405
 version: 1.0.0
 status: Active

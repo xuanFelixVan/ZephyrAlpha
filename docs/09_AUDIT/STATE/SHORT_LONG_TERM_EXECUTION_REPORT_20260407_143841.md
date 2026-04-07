@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SHORT_LONG_TERM_EXECUTION_REPORT_20260407_143841
 version: 1.0.0
 status: Active

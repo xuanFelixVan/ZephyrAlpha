@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V15_20260406
 version: 1.0.0
 status: Active

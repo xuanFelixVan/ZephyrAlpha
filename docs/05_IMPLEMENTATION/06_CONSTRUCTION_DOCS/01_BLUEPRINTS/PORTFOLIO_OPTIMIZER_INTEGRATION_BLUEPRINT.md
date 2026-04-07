@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 优化器集成
-  - 接口封装
-  - 优化器协调
-  - 结果整合
-
+- 优化器集成
+- 接口封装
+- 优化器协调
+- 结果整合
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0
 status: Active

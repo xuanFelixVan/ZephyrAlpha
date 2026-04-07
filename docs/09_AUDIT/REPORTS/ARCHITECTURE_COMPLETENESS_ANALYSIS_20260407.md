@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ARCHITECTURE_COMPLETENESS_ANALYSIS_20260407
 version: 1.0.0
 status: Active

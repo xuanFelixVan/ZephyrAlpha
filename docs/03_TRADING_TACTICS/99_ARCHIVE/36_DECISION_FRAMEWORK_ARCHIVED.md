@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 36_DECISION_FRAMEWORK_ARCHIVED
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PERIODIC_REVIEW_PLAN_V2
 version: 1.0.0
 status: Active

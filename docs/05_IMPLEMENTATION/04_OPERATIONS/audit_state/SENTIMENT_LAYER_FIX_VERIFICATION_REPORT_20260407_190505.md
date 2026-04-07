@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SENTIMENT_LAYER_FIX_VERIFICATION_REPORT_20260407_190505_001
 version: 20.0.0
 status: Active

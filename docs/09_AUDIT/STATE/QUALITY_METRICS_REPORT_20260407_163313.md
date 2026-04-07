@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_METRICS_REPORT_20260407_163313
 version: 1.0.0
 status: Active

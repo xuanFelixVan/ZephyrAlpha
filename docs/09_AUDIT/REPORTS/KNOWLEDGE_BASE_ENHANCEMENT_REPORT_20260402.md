@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KNOWLEDGE_BASE_ENHANCEMENT_REPORT_20260402
 version: 1.0.0
 status: Active

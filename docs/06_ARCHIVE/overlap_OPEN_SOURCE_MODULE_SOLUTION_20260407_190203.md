@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_OPEN_SOURCE_MODULE_SOLUTION
 version: 1.0.0
 status: Active

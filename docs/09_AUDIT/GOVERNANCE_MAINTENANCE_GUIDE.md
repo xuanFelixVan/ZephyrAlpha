@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: GOVERNANCE_MAINTENANCE_GUIDE
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_INDEX
 version: 1.0.0
 status: Active

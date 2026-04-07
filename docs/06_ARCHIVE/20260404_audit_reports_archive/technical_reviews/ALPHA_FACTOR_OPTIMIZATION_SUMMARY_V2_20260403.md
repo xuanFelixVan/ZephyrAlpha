@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_OPTIMIZATION_SUMMARY_V2_20260403
 version: 1.0.0
 status: Active

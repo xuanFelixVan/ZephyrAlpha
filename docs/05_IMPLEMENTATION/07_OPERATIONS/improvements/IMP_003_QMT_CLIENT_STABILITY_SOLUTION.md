@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMP_003_QMT_CLIENT_STABILITY_SOLUTION
 version: 1.0.0
 status: Active

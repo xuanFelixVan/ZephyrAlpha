@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TECH_STACK
 version: 1.0.0
 status: Active

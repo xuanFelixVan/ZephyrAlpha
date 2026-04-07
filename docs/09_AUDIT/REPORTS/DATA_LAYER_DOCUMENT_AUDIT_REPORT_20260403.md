@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403
 version: 1.0.0
 status: Active

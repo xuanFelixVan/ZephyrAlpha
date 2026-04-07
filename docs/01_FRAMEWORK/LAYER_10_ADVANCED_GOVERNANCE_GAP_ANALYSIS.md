@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_10_ADVANCED_GOVERNANCE_GAP_ANALYSIS
 version: 1.0.0
 status: Active

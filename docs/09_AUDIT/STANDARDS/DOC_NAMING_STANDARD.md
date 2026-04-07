@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOC_NAMING_STANDARD
 version: 1.0.0
 status: Active

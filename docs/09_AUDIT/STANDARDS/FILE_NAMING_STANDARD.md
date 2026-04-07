@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FILE_NAMING_STANDARD
 version: 1.0.0
 status: Active

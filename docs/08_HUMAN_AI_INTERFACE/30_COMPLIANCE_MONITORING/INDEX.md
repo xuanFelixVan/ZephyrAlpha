@@ -1,9 +1,5 @@
-﻿---
-
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_INDEX
-## 📄 文档列表
-
 | 文档名称 | 类型 | 状态 | 说明 |
 |version: 1.0.0
 status: Active

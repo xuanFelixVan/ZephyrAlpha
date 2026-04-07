@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,8 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - STRATEGIC_WEIGHTING蓝图设计
-
-  - 长期权重优化
+- STRATEGIC_WEIGHTING蓝图设计
+- 长期权重优化
 layer: Layer 5 (策略执行层)
 ---
 

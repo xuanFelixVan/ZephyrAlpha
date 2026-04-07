@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active

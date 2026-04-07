@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: UI_LAYOUT_STANDARD
 version: 1.0.0
 status: Active

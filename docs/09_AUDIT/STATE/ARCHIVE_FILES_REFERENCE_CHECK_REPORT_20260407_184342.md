@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ARCHIVE_FILES_REFERENCE_CHECK_REPORT_20260407_184342
 version: 1.0.0
 status: Active

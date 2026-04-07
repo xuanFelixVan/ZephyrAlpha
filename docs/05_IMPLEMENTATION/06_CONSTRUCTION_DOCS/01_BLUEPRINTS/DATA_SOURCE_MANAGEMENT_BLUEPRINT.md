@@ -6,12 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 数据源管理
-  - 数据源注册
-  - 连接管理
-  - 元数据采集
-
-
+- 数据源管理
+- 数据源注册
+- 连接管理
+- 元数据采集
 ﻿
 module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0

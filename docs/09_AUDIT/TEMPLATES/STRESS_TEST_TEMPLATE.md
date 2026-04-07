@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STRESS_TEST_TEMPLATE
 version: 1.0.0
 status: Active

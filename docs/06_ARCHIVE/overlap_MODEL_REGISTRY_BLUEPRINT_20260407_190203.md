@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_MODEL_REGISTRY_BLUEPRINT
 version: 1.0.0
 status: Active

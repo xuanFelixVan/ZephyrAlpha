@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_GOVERNANCE_DEEP_AUDIT_SUMMARY
 version: 1.0.0
 status: Active

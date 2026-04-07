@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES
 version: 1.0.0
 status: Active

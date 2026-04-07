@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STANDARDS_RESPONSIBILITY_TEMPLATE_LIBRARY
 version: 1.0.0
 status: Active

@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统增强
-  - 功能扩展
-  - 系统整体性能优化
-  - 架构改进
-
+- 系统增强
+- 功能扩展
+- 系统整体性能优化
+- 架构改进
 module_id: SYSTEM_ENHANCEMENT_001
 version: 1.0.0
 status: Active

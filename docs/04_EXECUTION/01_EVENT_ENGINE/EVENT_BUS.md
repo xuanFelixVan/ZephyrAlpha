@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: EVENT_BUS
 version: 1.0.0
 status: Active

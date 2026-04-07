@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PHASE3_CROSS_REFERENCE_EXECUTION_PLAN_20260407
 version: 1.0.0
 status: Active

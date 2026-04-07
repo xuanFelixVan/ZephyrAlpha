@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

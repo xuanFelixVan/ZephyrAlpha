@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 交易信号验证
-  - 信号验证
-  - 信号过滤
-  - 信号质量
-
+- 交易信号验证
+- 信号验证
+- 信号过滤
+- 信号质量
 layer: Layer 5.4 (交易执行)
 ---
 

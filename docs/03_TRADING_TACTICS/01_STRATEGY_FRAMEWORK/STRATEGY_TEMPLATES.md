@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STRATEGY_TEMPLATES
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_INDEX_11
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: BACKTEST_BEST_PRACTICES
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_CLEANING_ENGINE_001
 version: 1.0.0
 status: Active
@@ -8,13 +8,11 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据清洗引擎
-  - 数据质量检测
-  - 异常值处理
-  - 数据标准化
-
+- 数据清洗引擎
+- 数据质量检测
+- 异常值处理
+- 数据标准化
 layer: Layer 5.1 (数据处理)
-
 洗引擎蓝图
 ---
 

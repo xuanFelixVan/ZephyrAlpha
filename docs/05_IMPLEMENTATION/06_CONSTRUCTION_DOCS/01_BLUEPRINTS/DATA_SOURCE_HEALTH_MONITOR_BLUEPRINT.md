@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 数据源健康监控
-  
-  - 故障检测
-  - 告警通知
+- 数据源健康监控
+- 故障检测
+- 告警通知
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.1 (数据处理)

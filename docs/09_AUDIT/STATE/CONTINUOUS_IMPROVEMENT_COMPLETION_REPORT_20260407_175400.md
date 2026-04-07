@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STATE_CONTINUOUS_IMPROVEMENT_COMPLETION_REPORT_20260407_175400
 version: 1.0.0
 status: Active

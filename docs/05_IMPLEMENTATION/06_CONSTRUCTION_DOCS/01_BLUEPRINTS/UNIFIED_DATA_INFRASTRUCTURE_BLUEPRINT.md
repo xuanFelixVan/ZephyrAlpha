@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT
 version: 1.0.0
 status: Active

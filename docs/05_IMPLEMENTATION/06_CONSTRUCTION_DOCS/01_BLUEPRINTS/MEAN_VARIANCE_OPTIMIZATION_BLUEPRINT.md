@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_MULTI_AGENT_COLLABORATION_BLUEPRINT
 version: 1.0.0
 status: Active

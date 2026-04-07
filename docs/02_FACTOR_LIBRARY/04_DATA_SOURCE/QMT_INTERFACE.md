@@ -1,21 +1,19 @@
 ---
-
-
 module_id: DATA_SOURCE_QMT_INTERFACE
-
-
-**文档状?*: ?已完成迁? 
-**最后更?*: 2026-04-02  
+**文档状?*: ?已完成迁?
+**最后更?*: 2026-04-02
 **维护人员**: 数据架构?
-
 responsibility:
-  - QMT INTERFACE相关文档
+- QMT INTERFACE相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Qmt Interface
+
 
 ## 变更记录
 

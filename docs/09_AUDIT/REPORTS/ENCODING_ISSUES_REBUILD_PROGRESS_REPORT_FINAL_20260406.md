@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ENCODING_ISSUES_REBUILD_PROGRESS_REPORT_FINAL_20260406
 version: 1.0.0
 status: Active

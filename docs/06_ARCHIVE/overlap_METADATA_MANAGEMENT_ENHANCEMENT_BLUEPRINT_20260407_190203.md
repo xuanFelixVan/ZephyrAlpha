@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: METADATA_MANAGEMENT_ENHANCEMENT_001
 version: 1.0.0
 status: Active

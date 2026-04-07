@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: WINDOWS_TASK_SCHEDULER_CONFIG
 version: 1.0.0
 status: Active

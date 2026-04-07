@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VERSION_MANAGEMENT_GUIDE
 version: 1.0.0
 status: Active

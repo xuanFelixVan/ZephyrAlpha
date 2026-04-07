@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MEAN_VARIANCE_OPTIMIZATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: YAML_COMPLETENESS_CHECK_REPORT
 version: 1.0.0
 status: Active

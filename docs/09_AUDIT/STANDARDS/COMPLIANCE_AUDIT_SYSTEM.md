@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: COMPLIANCE_AUDIT_SYSTEM
 version: 1.0.0
 status: Active

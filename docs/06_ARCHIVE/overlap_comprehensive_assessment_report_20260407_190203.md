@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: COMPREHENSIVE_ASSESSMENT_REPORT
 version: 1.0.0
 status: Active

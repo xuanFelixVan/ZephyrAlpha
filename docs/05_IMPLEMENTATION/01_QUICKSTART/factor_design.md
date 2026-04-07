@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_DESIGN
 version: 1.0.0
 status: Active

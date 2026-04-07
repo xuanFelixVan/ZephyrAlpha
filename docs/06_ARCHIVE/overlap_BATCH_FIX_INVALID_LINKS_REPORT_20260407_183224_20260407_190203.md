@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: BATCH_FIX_INVALID_LINKS_REPORT_20260407_183224
 version: 1.0.0
 status: Active

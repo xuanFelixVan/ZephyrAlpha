@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKET_CYCLES
 version: 1.0.0
 status: Active

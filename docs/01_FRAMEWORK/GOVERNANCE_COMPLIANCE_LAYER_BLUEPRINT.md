@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active

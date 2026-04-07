@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: OPENSOURCE_INTEGRATION_GUIDE_20260407
 version: 1.0.0
 status: Active

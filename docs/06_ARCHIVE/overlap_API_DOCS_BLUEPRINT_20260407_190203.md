@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: API_DOCS_001
 version: 1.0.0
 status: Active
@@ -13,15 +13,11 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 已实现
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-## 1. 概述
-
+- 系统架构蓝图设计与实施指导与实施方案
 API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文档和交互式测试功能。
-
-### 1.1 核心功能
-
 | 功能 | 说明 | 状态 |
-|------|------|------|
+|
+------|------|------|
 | Swagger UI | 交互式API文档 | ✅ |
 | ReDoc | 美观的API文档 | ✅ |
 | OpenAPI规范 | 完整的API规范 | ✅ |

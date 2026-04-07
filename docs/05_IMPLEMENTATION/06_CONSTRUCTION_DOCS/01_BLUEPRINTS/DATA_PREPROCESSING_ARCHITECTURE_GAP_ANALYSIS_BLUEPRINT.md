@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active

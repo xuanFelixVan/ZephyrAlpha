@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MIGRATION_GUIDE_V1
 version: 1.0.0
 status: Active

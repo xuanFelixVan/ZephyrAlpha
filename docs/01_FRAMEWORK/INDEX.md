@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX_FRAMEWORK_001
 version: 1.0.1
 status: Active

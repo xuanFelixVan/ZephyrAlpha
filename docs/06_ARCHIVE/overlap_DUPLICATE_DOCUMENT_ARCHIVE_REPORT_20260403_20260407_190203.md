@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DUPLICATE_DOCUMENT_ARCHIVE_REPORT_20260403
 version: 1.0.0
 status: Active

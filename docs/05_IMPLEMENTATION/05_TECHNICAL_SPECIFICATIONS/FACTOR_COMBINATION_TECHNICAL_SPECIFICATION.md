@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_COMBINATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -606,7 +606,7 @@ factor_combination:
 ### C. 参考文?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [因子合成方法](../../02_FACTOR_LIBRARY/01_STANDARDS/factor_synthesis.md)
+- `因子合成方法`
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_README
 version: 1.0.0
 status: Active

@@ -1,4 +1,15 @@
-﻿# 09_AUDIT
+---
+module_id: 02_FACTOR_LIBRARY_09_AUDIT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 提供文档支持
+---
+
+# 09_AUDIT
 
 此目录正在整合中，文档数量较少。
 

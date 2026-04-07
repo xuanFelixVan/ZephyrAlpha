@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RISK_CONTROL_AI_BLUEPRINT
 version: 1.0.0
 status: Active

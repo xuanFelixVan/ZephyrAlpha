@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 11_STRATEGIC_DECISION_04_STRATEGIC_ADJUSTMENT_INDEX
 version: 1.0.0
 status: Active

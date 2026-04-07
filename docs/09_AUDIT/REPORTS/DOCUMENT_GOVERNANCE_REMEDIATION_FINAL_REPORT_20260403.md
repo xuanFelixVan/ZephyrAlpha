@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_REPORTS_DOCUMENT_GOVERNANCE_REMEDIATION_FINAL_REPORT_20260403
 version: 1.0.0
 status: Active

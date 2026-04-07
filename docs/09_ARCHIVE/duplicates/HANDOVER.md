@@ -1,13 +1,8 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
-
-
 > **注意**: 归档目录(`06_ARCHIVE/`)、`旧文?` 目录保持不变，是历史版本记录?
-
 responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

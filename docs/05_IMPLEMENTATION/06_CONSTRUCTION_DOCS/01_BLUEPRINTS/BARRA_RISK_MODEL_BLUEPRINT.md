@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - Barra风险模型
-  - 因子风险建模
-  - Barra因子风险归因
-  - 风险预测
-
+- Barra风险模型
+- 因子风险建模
+- Barra因子风险归因
+- 风险预测
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0
 status: Active

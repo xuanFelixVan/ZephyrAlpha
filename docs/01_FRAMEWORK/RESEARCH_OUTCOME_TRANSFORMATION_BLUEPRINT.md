@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESEARCH_OUTCOME_TRANSFORMATION_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 01_FRAMEWORK_AI_VIRTUAL_RESEARCH_TEAM_INDEX
 version: 1.0.0
 status: Active

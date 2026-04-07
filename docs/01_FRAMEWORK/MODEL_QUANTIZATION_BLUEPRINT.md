@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODEL_QUANTIZATION_BLUEPRINT
 version: 1.0.0
 status: Active

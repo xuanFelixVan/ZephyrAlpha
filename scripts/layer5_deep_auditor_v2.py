@@ -166,6 +166,11 @@ class Layer5DeepAuditor:
         
         print('  📂 检查文档分类...')
         
+        valid_layer_patterns = [
+            r'Layer\s*5\.?\d*',  # Layer 5, Layer 5.1, Layer 5.2 等
+            r'Layer\s*5\s*\(',    # Layer 5 (策略执行层) 等
+        ]
+        
         for doc_name, doc_info in self.documents.items():
             content = doc_info['content']
             
@@ -175,7 +180,9 @@ class Layer5DeepAuditor:
             if layer_match:
                 layer_value = layer_match.group(1).strip()
                 
-                if 'Layer 5 -' not in layer_value:
+                is_valid = any(re.search(pattern, layer_value, re.IGNORECASE) for pattern in valid_layer_patterns)
+                
+                if not is_valid:
                     self.l3_issues.append({
                         'type': '分类不明确',
                         'file': doc_name,

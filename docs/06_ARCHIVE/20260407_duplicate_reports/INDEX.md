@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_20260407_DUPLICATE_REPORTS_INDEX
 version: 1.0.0
 status: Active

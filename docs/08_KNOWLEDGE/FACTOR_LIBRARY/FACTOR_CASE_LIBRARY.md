@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_CASE_LIBRARY
 version: 1.0.0
 status: Active

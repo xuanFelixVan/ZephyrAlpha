@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FEATURE_ENGINEERING_TECHNICAL_REVIEW_REPORT
 version: 1.0.0
 status: Active

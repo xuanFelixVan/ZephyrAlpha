@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER9_FINAL_FIX_SUMMARY_20260407
 version: 1.0.0
 status: Active

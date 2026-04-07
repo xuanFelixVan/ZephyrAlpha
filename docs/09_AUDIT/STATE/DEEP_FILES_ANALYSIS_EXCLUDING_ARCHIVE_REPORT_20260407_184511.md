@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DEEP_FILES_ANALYSIS_EXCLUDING_ARCHIVE_REPORT_20260407_184511
 version: 1.0.0
 status: Active

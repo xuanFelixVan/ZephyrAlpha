@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKET_PARTICIPANT_SIMULATION_REVIEW_REPORT
 version: 1.0.0
 status: Active

@@ -1,131 +1,292 @@
-import os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+综合修复剩余问题
+"""
+
 import re
+import json
+from pathlib import Path
 from datetime import datetime
 
-blueprints_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS'
+FACTOR_LIBRARY = Path(r'D:\ZephyrAlpha\docs\02_FACTOR_LIBRARY')
 
-def add_missing_yaml_fields(file_path):
-    with open(file_path, 'r', encoding='utf-8-sig') as f:
-        content = f.read()
+# 已删除的文件列表
+DELETED_FILES = [
+    '01_STANDARDS/factor_neutralization.md',
+    '01_STANDARDS/factor_preprocessing.md',
+    '01_STANDARDS/factor_return_analysis.md',
+    '01_STANDARDS/factor_synthesis.md',
+    '01_STANDARDS/ic_analysis.md',
+    '01_STANDARDS/FACTOR_SCREENING_STRATEGY.md',
+    '01_STANDARDS/FACTOR_VALIDATION_GUIDE.md',
+    '04_DATA_SOURCE/IFIND_CONNECTOR.md',
+    '04_DATA_SOURCE/SUPERCMD_CONNECTOR.md',
+    '05_BACKTEST/OVERFITTING_TEST.md',
+]
+
+def fix_invalid_links():
+    """修复无效链接"""
+    print("=" * 80)
+    print("修复无效链接")
+    print("=" * 80)
     
-    yaml_match = re.search(r'^(---\s*[\r\n]+)(.*?)([\r\n]+---)', content, re.DOTALL)
-    if not yaml_match:
-        return False, '缺少YAML头部'
+    fixed_count = 0
     
-    yaml_header = yaml_match.group(2)
-    modified = False
-    
-    if 'standard_type:' not in yaml_header:
-        yaml_header = yaml_header.rstrip() + '\nstandard_type: 专业量化机构蓝图\n'
-        modified = True
-    
-    if 'compliance_level:' not in yaml_header:
-        yaml_header = yaml_header.rstrip() + '\ncompliance_level: 专业标准\n'
-        modified = True
-    
-    if 'layer:' not in yaml_header:
-        filename = os.path.basename(file_path)
-        if 'DATA' in filename or 'CDC' in filename or 'CLICKHOUSE' in filename or 'TIMESCALEDB' in filename or 'REDIS' in filename:
-            layer = 'Layer 5.1 (数据处理)'
-        elif 'RISK' in filename or 'BARRA' in filename or 'TAIL' in filename or 'VAR_ES' in filename or 'MARGIN' in filename:
-            layer = 'Layer 5.3 (风险管理)'
-        elif 'TRADING' in filename or 'EXECUTION' in filename or 'SMART' in filename or 'ALGORITHMIC' in filename:
-            layer = 'Layer 5.4 (交易执行)'
-        elif 'STRATEGY' in filename or 'INTRADAY' in filename or 'OPENING' in filename:
-            layer = 'Layer 5 (策略执行层)'
-        else:
-            layer = 'Layer 5.2 (组合优化)'
+    for file_path in FACTOR_LIBRARY.rglob('*.md'):
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
+                content = f.read()
+            
+            original_content = content
+            rel_path = file_path.relative_to(FACTOR_LIBRARY)
+            
+            # 检查并移除指向已删除文件的链接
+            for deleted_file in DELETED_FILES:
+                deleted_name = Path(deleted_file).stem
+                
+                # 匹配各种链接格式
+                patterns = [
+                    rf'\[([^\]]*)\]\([^)]*{deleted_name}[^)]*\)',
+                    rf'\|\s*\[([^\]]*)\]\([^)]*{deleted_name}[^)]*\)\s*\|',
+                ]
+                
+                for pattern in patterns:
+                    matches = re.findall(pattern, content)
+                    if matches:
+                        # 移除链接，保留文本
+                        content = re.sub(pattern, r'\1', content)
+                        print(f"\n{rel_path}")
+                        print(f"  移除链接: {deleted_name}")
+                        fixed_count += 1
+            
+            if content != original_content:
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
         
-        yaml_header = yaml_header.rstrip() + f'\nlayer: {layer}\n'
-        modified = True
+        except Exception as e:
+            print(f"  错误: {e}")
     
-    if modified:
-        new_content = content[:yaml_match.start()] + '---\n' + yaml_header + '---' + content[yaml_match.end():]
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(new_content)
-        return True, '已添加缺失字段'
+    print(f"\n修复链接: {fixed_count}")
+    return fixed_count
+
+def fix_missing_metadata():
+    """补充缺失的元数据"""
+    print("\n" + "=" * 80)
+    print("补充缺失的元数据")
+    print("=" * 80)
     
-    return False, '无需修改'
-
-def add_missing_boundary(file_path):
-    with open(file_path, 'r', encoding='utf-8-sig') as f:
-        content = f.read()
+    fixed_count = 0
     
-    if re.search(r'职责边界|本文档负责|本文档不负责', content):
-        return False, '已有职责边界'
+    for file_path in FACTOR_LIBRARY.rglob('*.md'):
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
+                content = f.read()
+            
+            rel_path = file_path.relative_to(FACTOR_LIBRARY)
+            
+            # 检查是否有YAML头部
+            if not content.startswith('---'):
+                continue
+            
+            # 提取YAML头部
+            yaml_match = re.search(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+            if not yaml_match:
+                continue
+            
+            yaml_content = yaml_match.group(1)
+            
+            # 检查是否缺少module_id
+            if 'module_id:' not in yaml_content:
+                # 生成module_id
+                parts = rel_path.parts[:-1]
+                file_name = file_path.stem
+                
+                if not parts:
+                    module_id = f"FACTOR_LIBRARY_{file_name.upper()}"
+                else:
+                    clean_parts = [re.sub(r'^\d+_', '', p).upper() for p in parts]
+                    module_id = '_'.join(clean_parts) + f"_{file_name.upper()}"
+                
+                module_id = re.sub(r'[^A-Z0-9_]', '_', module_id)
+                module_id = re.sub(r'_+', '_', module_id).strip('_')
+                
+                # 在YAML头部添加module_id
+                new_yaml = f"module_id: {module_id}\n" + yaml_content
+                new_content = content.replace(yaml_content, new_yaml)
+                
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+                
+                print(f"\n{rel_path}")
+                print(f"  添加module_id: {module_id}")
+                fixed_count += 1
+        
+        except Exception as e:
+            print(f"  错误: {e}")
     
-    filename = os.path.basename(file_path)
-    module_name = filename.replace('_BLUEPRINT.md', '').replace('_', ' ').title()
+    print(f"\n补充元数据: {fixed_count}")
+    return fixed_count
+
+def fix_missing_responsibility():
+    """补充缺失的职责描述"""
+    print("\n" + "=" * 80)
+    print("补充缺失的职责描述")
+    print("=" * 80)
     
-    boundary_text = f'''
-> **职责边界**: 
-> - ✅ 本文档负责：本模块核心功能实现
-> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
-
-'''
+    fixed_count = 0
     
-    core_match = re.search(r'(##\s*核心定位\s*\n)', content)
-    if core_match:
-        insert_pos = core_match.end()
-        new_content = content[:insert_pos] + boundary_text + content[insert_pos:]
-    else:
-        yaml_end = re.search(r'---\s*[\r\n]+', content)
-        if yaml_end:
-            insert_pos = yaml_end.end()
-            new_content = content[:insert_pos] + '\n## 核心定位\n' + boundary_text + content[insert_pos:]
-        else:
-            new_content = boundary_text + content
+    for file_path in FACTOR_LIBRARY.rglob('*.md'):
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
+                content = f.read()
+            
+            rel_path = file_path.relative_to(FACTOR_LIBRARY)
+            
+            # 检查是否有YAML头部
+            if not content.startswith('---'):
+                continue
+            
+            # 检查是否缺少responsibility
+            if 'responsibility:' in content:
+                continue
+            
+            # 提取标题
+            title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+            title = title_match.group(1) if title_match else file_path.stem
+            
+            # 生成职责描述
+            parts = rel_path.parts[:-1]
+            file_name = file_path.stem
+            
+            if file_name.upper() == 'INDEX':
+                responsibility = f"{parts[-1] if parts else '因子库'}目录索引与导航"
+            elif file_name.upper() == 'README':
+                responsibility = f"{parts[-1] if parts else '因子库'}模块说明"
+            else:
+                clean_title = re.sub(r'\s*(文档|指南|标准|规范|系统|框架|模块|组件|工具|接口|连接器|蓝图)$', '', title)
+                responsibility = f"{clean_title}相关文档"
+            
+            # 在YAML头部添加responsibility
+            yaml_match = re.search(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+            if yaml_match:
+                yaml_content = yaml_match.group(1)
+                new_yaml = yaml_content + f"\nresponsibility:\n  - {responsibility}"
+                new_content = content.replace(yaml_content, new_yaml)
+                
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+                
+                print(f"\n{rel_path}")
+                print(f"  添加职责: {responsibility}")
+                fixed_count += 1
+        
+        except Exception as e:
+            print(f"  错误: {e}")
     
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(new_content)
+    print(f"\n补充职责描述: {fixed_count}")
+    return fixed_count
+
+def fix_missing_title():
+    """补充缺失的标题"""
+    print("\n" + "=" * 80)
+    print("补充缺失的标题")
+    print("=" * 80)
     
-    return True, '已添加职责边界'
+    fixed_count = 0
+    
+    for file_path in FACTOR_LIBRARY.rglob('*.md'):
+        try:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
+                content = f.read()
+            
+            rel_path = file_path.relative_to(FACTOR_LIBRARY)
+            
+            # 检查是否有标题
+            if re.search(r'^#\s+.+$', content, re.MULTILINE):
+                continue
+            
+            # 生成标题
+            file_name = file_path.stem
+            title = file_name.replace('_', ' ').replace('-', ' ')
+            title = ' '.join(word.capitalize() for word in title.split())
+            
+            # 在YAML头部后添加标题
+            if content.startswith('---'):
+                yaml_end = content.find('---', 3)
+                if yaml_end > 0:
+                    new_content = content[:yaml_end + 3] + f'\n\n# {title}\n' + content[yaml_end + 3:]
+                else:
+                    new_content = f'# {title}\n\n' + content
+            else:
+                new_content = f'# {title}\n\n' + content
+            
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            
+            print(f"\n{rel_path}")
+            print(f"  添加标题: {title}")
+            fixed_count += 1
+        
+        except Exception as e:
+            print(f"  错误: {e}")
+    
+    print(f"\n补充标题: {fixed_count}")
+    return fixed_count
 
-print('='*80)
-print('修复剩余问题')
-print('='*80)
-print(f'修复时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
-print()
+def rename_old_architecture_files():
+    """重命名旧架构文件"""
+    print("\n" + "=" * 80)
+    print("重命名旧架构文件")
+    print("=" * 80)
+    
+    fixed_count = 0
+    
+    old_files = [
+        ('04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS.md', '04_DATA_SOURCE/DATA_SOURCE_GAP_ANALYSIS.md'),
+        ('05_BACKTEST/LAYERED_BACKTEST.md', '05_BACKTEST/STRATIFIED_BACKTEST.md'),
+    ]
+    
+    for old_path, new_path in old_files:
+        old_file = FACTOR_LIBRARY / old_path
+        new_file = FACTOR_LIBRARY / new_path
+        
+        if old_file.exists():
+            old_file.rename(new_file)
+            print(f"\n{old_path} -> {new_path}")
+            fixed_count += 1
+    
+    print(f"\n重命名文件: {fixed_count}")
+    return fixed_count
 
-files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+def main():
+    """主函数"""
+    print("=" * 80)
+    print("综合修复剩余问题")
+    print("=" * 80)
+    print(f"执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    total_fixed = 0
+    
+    # 1. 修复无效链接
+    total_fixed += fix_invalid_links()
+    
+    # 2. 补充缺失的元数据
+    total_fixed += fix_missing_metadata()
+    
+    # 3. 补充缺失的职责描述
+    total_fixed += fix_missing_responsibility()
+    
+    # 4. 补充缺失的标题
+    total_fixed += fix_missing_title()
+    
+    # 5. 重命名旧架构文件
+    total_fixed += rename_old_architecture_files()
+    
+    print("\n" + "=" * 80)
+    print("修复完成")
+    print("=" * 80)
+    print(f"总修复数: {total_fixed}")
 
-print(f'扫描文档总数: {len(files)}')
-print()
-
-print('='*80)
-print('添加缺失YAML字段')
-print('='*80)
-
-fixed_yaml = 0
-for file in files:
-    file_path = os.path.join(blueprints_dir, file)
-    success, msg = add_missing_yaml_fields(file_path)
-    if success:
-        fixed_yaml += 1
-        print(f'✓ {file}: {msg}')
-
-print(f'\n修复完成: {fixed_yaml}个文件')
-
-print()
-print('='*80)
-print('添加缺失职责边界')
-print('='*80)
-
-fixed_boundary = 0
-for file in files:
-    file_path = os.path.join(blueprints_dir, file)
-    success, msg = add_missing_boundary(file_path)
-    if success:
-        fixed_boundary += 1
-        print(f'✓ {file}: {msg}')
-
-print(f'\n修复完成: {fixed_boundary}个文件')
-
-print()
-print('='*80)
-print('修复汇总')
-print('='*80)
-print(f'YAML字段修复: {fixed_yaml}个')
-print(f'职责边界添加: {fixed_boundary}个')
-print()
-print('修复完成!')
+if __name__ == '__main__':
+    main()

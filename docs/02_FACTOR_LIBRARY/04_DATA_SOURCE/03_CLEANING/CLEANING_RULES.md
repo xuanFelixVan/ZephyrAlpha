@@ -1,19 +1,17 @@
 ---
-
-
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001
-
-
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-04 | **维护者**: 首席文档架构师
-
 responsibility:
-  - CLEANING RULES相关文档
+- CLEANING RULES相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Cleaning Rules
+
 
 ## 变更记录
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FIRST_BACKTEST
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STANDARDS_INDEX_001
 version: 1.0.0
 status: Active
@@ -11,6 +11,9 @@ standard_type: 索引文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 ---
+
+# Index
+
 
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护者**: 首席文档架构师
 

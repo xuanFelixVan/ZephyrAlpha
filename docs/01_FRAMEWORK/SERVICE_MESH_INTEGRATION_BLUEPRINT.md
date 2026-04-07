@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SERVICE_MESH_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active

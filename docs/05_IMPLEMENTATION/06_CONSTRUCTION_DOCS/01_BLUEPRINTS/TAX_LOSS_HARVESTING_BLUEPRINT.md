@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 税收损失收割
-  - 税务优化
-  - 损失实现
-  - 税务效率
-
+- 税收损失收割
+- 税务优化
+- 损失实现
+- 税务效率
 module_id: TAX_LOSS_HARVESTING_001
 version: 1.0.0
 status: Active

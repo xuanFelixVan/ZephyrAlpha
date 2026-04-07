@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SAGA_IMPLEMENTATION_FLOWCHART
 version: 1.0.0
 status: Active

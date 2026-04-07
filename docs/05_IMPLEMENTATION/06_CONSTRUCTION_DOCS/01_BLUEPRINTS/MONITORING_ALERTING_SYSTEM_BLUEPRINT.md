@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MONITORING_ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 监控告警系统
-  - 指标采集
-  - 告警规则
-  - 通知管理
-
+- 监控告警系统
+- 指标采集
+- 告警规则
+- 通知管理
 layer: Layer 5 (策略执行层)
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_ALERT_REPORT_20260407_184715
 version: 1.0.0
 status: Active

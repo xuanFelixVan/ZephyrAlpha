@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 version: 1.0.0
 status: Active
@@ -466,3 +466,5 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json |
 
 **ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
+
+```

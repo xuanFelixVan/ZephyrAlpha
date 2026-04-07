@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STORAGE_TIER
 version: 1.0.0
 status: Active

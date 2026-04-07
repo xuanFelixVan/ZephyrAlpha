@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_P0_RESOLUTION_REPORT_V3_20260403
 version: 1.0.0
 status: Active

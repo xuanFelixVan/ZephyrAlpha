@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONFIGURATION_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 配置管理
-  - 配置中心
-  - 版本控制
-  - 热更新
-
+- 配置管理
+- 配置中心
+- 版本控制
+- 热更新
 layer: Layer 5 (策略执行层)
 ---
 

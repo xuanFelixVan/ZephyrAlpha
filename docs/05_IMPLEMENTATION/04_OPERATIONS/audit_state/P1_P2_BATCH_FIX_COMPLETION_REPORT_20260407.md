@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_P1_P2_BATCH_FIX_COMPLETION_REPORT_20260407
 version: 1.0.0
 status: Active

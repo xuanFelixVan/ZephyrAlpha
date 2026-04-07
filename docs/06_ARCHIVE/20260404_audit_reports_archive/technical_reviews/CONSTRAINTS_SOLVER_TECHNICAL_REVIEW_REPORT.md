@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONSTRAINTS_SOLVER_TECHNICAL_REVIEW_REPORT
 version: 1.0.0
 status: Active

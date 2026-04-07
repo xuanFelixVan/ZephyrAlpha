@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PATTERN_RECOGNITION
 version: 1.0.0
 status: Active

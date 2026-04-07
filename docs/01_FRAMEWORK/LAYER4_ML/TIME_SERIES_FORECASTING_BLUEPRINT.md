@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TIME_SERIES_FORECASTING_BLUEPRINT
 version: 1.0.0
 status: Active

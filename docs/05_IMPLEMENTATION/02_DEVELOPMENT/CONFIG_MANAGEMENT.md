@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONFIG_MANAGEMENT
 version: 1.0.0
 status: Active

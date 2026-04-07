@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESPONSIBILITY_BOUNDARY_MATRIX
 version: 1.0.0
 status: Active

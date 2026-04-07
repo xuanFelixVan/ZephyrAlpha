@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 07_SYSTEM_MANIFEST
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: WEEKLY_AUDIT_REPORT_20260407_022518
 version: 1.0.0
 status: Active

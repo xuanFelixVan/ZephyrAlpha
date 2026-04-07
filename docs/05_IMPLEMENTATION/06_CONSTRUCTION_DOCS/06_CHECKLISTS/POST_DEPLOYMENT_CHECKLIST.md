@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: POST_DEPLOYMENT_CHECKLIST
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: OBJECT_STORAGE_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 对象存储集成
-  - S3兼容
-  - 大文件存储
-  - 生命周期管理
-
+- 对象存储集成
+- S3兼容
+- 大文件存储
+- 生命周期管理
 layer: Layer 5.1 (数据处理)
 ---
 

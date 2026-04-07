@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QINGFENG_V4_DRAFT
 version: 1.0.0
 status: Active

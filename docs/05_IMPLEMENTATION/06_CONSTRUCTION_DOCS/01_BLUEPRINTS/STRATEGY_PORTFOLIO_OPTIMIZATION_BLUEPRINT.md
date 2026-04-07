@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 策略组合优化
-  - 策略权重分配
-  - 策略权重协调
-  - 组合构建
-
+- 策略组合优化
+- 策略权重分配
+- 策略权重协调
+- 组合构建
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
 status: Active

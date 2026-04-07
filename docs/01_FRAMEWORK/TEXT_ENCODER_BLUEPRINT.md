@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TEXT_ENCODER_BLUEPRINT
 version: 1.0.0
 status: Active

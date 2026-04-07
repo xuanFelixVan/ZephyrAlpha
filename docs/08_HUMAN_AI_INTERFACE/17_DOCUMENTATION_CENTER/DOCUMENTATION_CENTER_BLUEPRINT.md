@@ -1,26 +1,16 @@
-﻿---
-
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_17_DOCUMENTATION_CENTER_001
-
-## 二、架构设计
-
-### 2.1 Layer定位
-
 ```
 人机交互层: 人机交互层
-    └── 文档中心模块 (DOCUMENTATION_CENTER_001)
-        ├── 文档生成引擎
-        ├── 文档部署服务
-        ├── 文档版本管理
-        └── 文档搜索功能
+└── 文档中心模块 (DOCUMENTATION_CENTER_001)
+├── 文档生成引擎
+├── 文档部署服务
+├── 文档版本管理
+└── 文档搜索功能
 ```
-
-### 2.2 模块职责
-
 | 职责 | 说明 |
 |responsibility:
-  - 提供文档支持
+- 提供文档支持
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

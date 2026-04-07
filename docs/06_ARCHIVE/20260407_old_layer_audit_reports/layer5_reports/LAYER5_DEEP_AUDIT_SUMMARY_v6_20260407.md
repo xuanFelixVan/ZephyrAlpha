@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER5_DEEP_AUDIT_SUMMARY_V6_20260407
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SETTINGS_MANAGEMENT_INTERFACE_BLUEPRINT
 version: 1.0.0
 status: Active

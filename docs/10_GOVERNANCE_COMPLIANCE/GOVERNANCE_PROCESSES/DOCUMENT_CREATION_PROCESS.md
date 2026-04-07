@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_CREATION_PROCESS
 version: 1.0.0
 status: Active

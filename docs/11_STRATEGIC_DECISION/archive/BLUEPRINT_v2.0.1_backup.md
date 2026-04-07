@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: BLUEPRINT_V2_0_1_BACKUP
 version: 1.0.0
 status: Active

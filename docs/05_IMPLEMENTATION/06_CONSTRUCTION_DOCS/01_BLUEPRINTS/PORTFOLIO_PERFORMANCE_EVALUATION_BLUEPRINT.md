@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 组合绩效评估
-  - 绩效指标计算
-  - 基准比较
-  - 绩效报告
-
+- 组合绩效评估
+- 绩效指标计算
+- 基准比较
+- 绩效报告
 module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001
 version: 1.0.0
 status: Active

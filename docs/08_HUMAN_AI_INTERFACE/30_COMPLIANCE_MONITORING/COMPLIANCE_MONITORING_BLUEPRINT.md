@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_001
-
-
-## 11. 相关文档
-
 - [自研官方文档](https://github.com/自研)
-
 responsibility:
-  - 合规监控界面设计与实施方案与优化维护
+- 合规监控界面设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

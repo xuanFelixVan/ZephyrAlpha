@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: BLUEPRINT_ARCHITECTURE_MAPPING
 version: 1.0.0
 status: Active

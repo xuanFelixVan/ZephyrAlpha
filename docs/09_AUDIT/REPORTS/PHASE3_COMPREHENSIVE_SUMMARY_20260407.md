@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PHASE3_COMPREHENSIVE_SUMMARY_20260407
 version: 1.0.0
 status: Active

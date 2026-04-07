@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V1_20260404
 version: 1.0.0
 status: Active

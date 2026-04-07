@@ -1,19 +1,17 @@
 ---
-
-
 module_id: DATA_SOURCE_NEWS_SENTIMENT_DATA_SOURCE
-
-
 **版本**: 2.0 | **更新**: 2026-03-29
-
 responsibility:
-  - NEWS SENTIMENT DATA SOURCE相关文档
+- NEWS SENTIMENT DATA SOURCE相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# News Sentiment Data Source
+
 
 ## 变更记录
 

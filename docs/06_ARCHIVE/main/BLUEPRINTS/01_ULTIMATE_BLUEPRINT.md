@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 01_ULTIMATE_BLUEPRINT
 version: 1.0.0
 status: Active

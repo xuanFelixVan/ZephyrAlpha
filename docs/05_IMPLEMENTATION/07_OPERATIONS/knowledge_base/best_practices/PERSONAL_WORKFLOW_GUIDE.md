@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PERSONAL_WORKFLOW_GUIDE
 version: 1.0.0
 status: Active

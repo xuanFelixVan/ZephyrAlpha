@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_11_USER_PREFERENCES_USER_PREFERENCES_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: REALTIME_DATA_LAKE_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 实时数据湖
-  - 流式入湖
-  - 实时查询
-  - 数据湖架构
-
+- 实时数据湖
+- 流式入湖
+- 实时查询
+- 数据湖架构
 layer: Layer 5.1 (数据处理)
 ---
 

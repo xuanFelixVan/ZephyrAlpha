@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STATE_SPARSE_DIRECTORY_ANALYSIS_20260407_030548
 version: 1.0.0
 status: Active

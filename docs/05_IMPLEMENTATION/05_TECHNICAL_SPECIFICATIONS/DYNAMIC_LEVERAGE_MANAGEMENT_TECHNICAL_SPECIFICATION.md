@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HUMAN_AI_INTERFACE_LAYER_REAUDIT_REPORT_20260405
 version: 1.0.0
 status: Active

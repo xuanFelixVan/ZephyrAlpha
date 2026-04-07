@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TACTICS_YOUZI_OTHER_L_001
 version: 3.0.1
 status: Active

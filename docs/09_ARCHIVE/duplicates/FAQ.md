@@ -1,10 +1,7 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
-
 responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

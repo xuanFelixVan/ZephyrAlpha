@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AUDIT_LOG_VIEWER_BLUEPRINT
 version: 1.0.0
 status: Active

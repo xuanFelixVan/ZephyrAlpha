@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TRAINING_SYSTEM_GUIDE
 version: 1.0.0
 status: Active

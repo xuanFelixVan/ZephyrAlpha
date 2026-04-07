@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PROFESSIONAL_GAP_ANALYSIS_20260407
 version: 1.0.0
 status: Active

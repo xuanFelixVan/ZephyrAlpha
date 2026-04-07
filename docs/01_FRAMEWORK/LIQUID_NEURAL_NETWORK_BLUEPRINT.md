@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LIQUID_NEURAL_NETWORK_BLUEPRINT
 version: 1.0.0
 status: Active

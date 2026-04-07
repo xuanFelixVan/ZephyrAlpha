@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED
 version: 1.0.0
 status: Active

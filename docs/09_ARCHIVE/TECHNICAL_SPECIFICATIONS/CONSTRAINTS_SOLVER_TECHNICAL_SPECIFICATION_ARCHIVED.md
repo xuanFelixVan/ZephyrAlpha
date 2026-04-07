@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONSTRAINTS_SOLVER_TECHNICAL_SPECIFICATION_ARCHIVED
 version: 1.0.0
 status: Active

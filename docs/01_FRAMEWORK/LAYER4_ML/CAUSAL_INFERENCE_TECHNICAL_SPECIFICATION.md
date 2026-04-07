@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CAUSAL_INFERENCE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

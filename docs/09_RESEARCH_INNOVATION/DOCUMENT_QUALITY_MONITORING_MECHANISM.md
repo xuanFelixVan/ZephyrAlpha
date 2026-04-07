@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_QUALITY_MONITORING_MECHANISM
 version: 1.0.0
 status: Active

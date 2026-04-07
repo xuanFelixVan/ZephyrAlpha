@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AUTOMATED_WORKFLOW_REPORT_20260407_113557
 version: 1.0.0
 status: Active

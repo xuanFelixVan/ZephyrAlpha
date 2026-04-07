@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_38_OFFLINE_SUPPORT_001
-
-
-## 11. 相关文档
-
 - [Workbox官方文档](https://github.com/workbox)
-
 responsibility:
-  - 离线支持设计与实施方案与优化维护
+- 离线支持设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

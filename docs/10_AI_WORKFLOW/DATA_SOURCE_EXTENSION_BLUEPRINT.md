@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_DATA_SOURCE_EXTENSION_BLUEPRINT
 version: 1.0.0
 status: Active

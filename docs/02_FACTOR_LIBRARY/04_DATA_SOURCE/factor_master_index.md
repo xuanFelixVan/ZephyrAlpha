@@ -1,21 +1,19 @@
 ---
-
-
 module_id: DATA_SOURCE_FACTOR_MASTER_INDEX
-
-
 > **维护部门**: 清风量化研究部
 > **最后更新**: 2026-04-06
 > **索引版本**: v1.0
-
 responsibility:
-  - 提供目录索引
+- 提供目录索引
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Factor Master Index
+
 
 ## 变更记录
 

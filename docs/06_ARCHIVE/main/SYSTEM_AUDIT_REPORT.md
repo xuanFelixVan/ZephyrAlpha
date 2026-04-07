@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SYSTEM_AUDIT_REPORT
 version: 1.0.0
 status: Active

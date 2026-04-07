@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FINAL_COMPLETENESS_ANALYSIS
 version: 1.0.0
 status: Active

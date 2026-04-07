@@ -1,20 +1,18 @@
 ---
-
-
 module_id: DATA_SOURCE_DATA_SOURCE_ADAPTERS
-
-
 **维护者**: 首席文档架构师
 **索引**: `DATA_ADAPTERS_001`
-
 responsibility:
-  - DATA SOURCE ADAPTERS相关文档
+- DATA SOURCE ADAPTERS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Data Source Adapters
+
 
 ## 变更记录
 

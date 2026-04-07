@@ -1,24 +1,20 @@
 ---
-
-
 module_id: STANDARDS_FACTOR_CALCULATION_FRAMEWORK
-
-
-## 索引
-
 - 父目? 01_STANDARDS/README.md
 - 相关: [FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)
 - 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
-- 相关: [IC_ANALYSIS.md](./ic_analysis.md)
-
+- 相关: `IC_ANALYSIS.md`
 responsibility:
-  - FACTOR CALCULATION FRAMEWORK相关文档
+- FACTOR CALCULATION FRAMEWORK相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Factor Calculation Framework
+
 
 ## 变更记录
 

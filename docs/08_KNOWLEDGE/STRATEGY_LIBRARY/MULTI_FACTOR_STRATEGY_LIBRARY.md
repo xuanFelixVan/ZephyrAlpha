@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_FACTOR_STRATEGY_LIBRARY
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: L9_FEATURE_OPTIMIZER
 version: 1.0.0
 status: Active

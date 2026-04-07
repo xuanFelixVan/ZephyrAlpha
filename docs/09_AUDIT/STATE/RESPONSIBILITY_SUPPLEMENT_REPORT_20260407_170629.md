@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESPONSIBILITY_SUPPLEMENT_REPORT_20260407_170629
 version: 1.0.0
 status: Active

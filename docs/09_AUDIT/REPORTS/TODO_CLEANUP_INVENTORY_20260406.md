@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TODO_CLEANUP_INVENTORY_20260406
 version: 1.0.0
 status: Active

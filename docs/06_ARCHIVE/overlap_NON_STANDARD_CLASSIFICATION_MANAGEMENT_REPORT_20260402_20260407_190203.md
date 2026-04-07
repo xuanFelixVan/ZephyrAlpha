@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: NON_STANDARD_CLASSIFICATION_MANAGEMENT_REPORT_20260402
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: P0_02_DATA_DICTIONARY
 version: 1.0.0
 status: Active

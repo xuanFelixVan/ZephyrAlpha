@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TECHNICAL_REVIEW_MEETING_AGENDA
 version: 1.0.0
 status: Active

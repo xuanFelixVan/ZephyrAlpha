@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_PORTFOLIO_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active

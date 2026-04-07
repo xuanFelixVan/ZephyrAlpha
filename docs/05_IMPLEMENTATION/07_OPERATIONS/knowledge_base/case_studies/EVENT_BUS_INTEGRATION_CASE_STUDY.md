@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: EVENT_BUS_INTEGRATION_CASE_STUDY
 version: 1.0.0
 status: Active

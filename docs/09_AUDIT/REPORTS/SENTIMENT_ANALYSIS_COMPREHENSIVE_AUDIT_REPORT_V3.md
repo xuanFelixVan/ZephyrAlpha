@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SENTIMENT_ANALYSIS_COMPREHENSIVE_AUDIT_REPORT_V3
 version: 1.0.0
 status: Active

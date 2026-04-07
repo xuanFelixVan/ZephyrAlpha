@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STATE_SHORT_TERM_IMPROVEMENT_FINAL_REPORT_20260407_173400
 version: 1.0.0
 status: Active

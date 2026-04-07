@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AUTO_REPAIR_ENGINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR
 version: 1.0.0
 status: Active

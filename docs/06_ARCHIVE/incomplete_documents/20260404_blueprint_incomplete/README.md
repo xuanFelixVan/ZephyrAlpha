@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_INCOMPLETE_DOCUMENTS_README
 version: 1.0.0
 status: Active

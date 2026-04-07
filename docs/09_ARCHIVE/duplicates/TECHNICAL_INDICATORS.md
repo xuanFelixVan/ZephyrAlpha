@@ -1,13 +1,8 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
-
-
 **版本**: 1.0 | **更新**: 2026-03-28
-
 responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

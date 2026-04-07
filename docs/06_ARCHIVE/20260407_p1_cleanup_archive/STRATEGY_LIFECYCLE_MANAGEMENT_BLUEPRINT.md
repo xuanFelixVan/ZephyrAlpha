@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

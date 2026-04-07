@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT
 version: 1.0.0
 status: Active

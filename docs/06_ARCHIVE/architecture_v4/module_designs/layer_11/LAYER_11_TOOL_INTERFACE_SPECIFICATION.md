@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_11_TOOL_INTERFACE_SPECIFICATION
 version: 1.0.0
 status: Active

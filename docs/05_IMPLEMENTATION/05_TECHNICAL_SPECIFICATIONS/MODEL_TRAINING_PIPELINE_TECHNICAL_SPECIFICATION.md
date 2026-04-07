@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

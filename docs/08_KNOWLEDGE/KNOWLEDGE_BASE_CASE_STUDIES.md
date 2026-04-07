@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KNOWLEDGE_BASE_CASE_STUDIES
 version: 1.0.0
 status: Active

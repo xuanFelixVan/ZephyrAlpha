@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKDOWN_LINK_VALIDATOR
 version: 1.0.0
 status: Active

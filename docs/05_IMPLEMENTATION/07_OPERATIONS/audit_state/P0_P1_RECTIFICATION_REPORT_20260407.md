@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_P0_P1_RECTIFICATION_REPORT_20260407
 version: 1.0.0
 status: Active

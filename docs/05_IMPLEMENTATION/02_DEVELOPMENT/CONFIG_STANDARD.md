@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONFIG_STANDARD
 version: 1.0.0
 status: Active

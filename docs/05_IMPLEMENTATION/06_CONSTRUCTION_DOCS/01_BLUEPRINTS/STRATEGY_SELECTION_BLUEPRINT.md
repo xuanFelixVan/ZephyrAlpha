@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 策略选择
-  - 策略评估
-  - 策略排名
-  - 策略组合
-
+- 策略选择
+- 策略评估
+- 策略排名
+- 策略组合
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0
 status: Active

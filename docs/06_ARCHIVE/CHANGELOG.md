@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CHANGELOG
 version: 1.0.0
 status: Active

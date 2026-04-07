@@ -1,15 +1,10 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
-
-
-**文档状?*: ?已完成迁? 
-**最后更?*: 2026-04-02  
+**文档状?*: ?已完成迁?
+**最后更?*: 2026-04-02
 **维护人员**: 数据架构?
-
 responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

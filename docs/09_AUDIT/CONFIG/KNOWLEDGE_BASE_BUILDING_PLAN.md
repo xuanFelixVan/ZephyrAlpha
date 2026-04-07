@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KNOWLEDGE_BASE_BUILDING_PLAN
 version: 1.0.0
 status: Active

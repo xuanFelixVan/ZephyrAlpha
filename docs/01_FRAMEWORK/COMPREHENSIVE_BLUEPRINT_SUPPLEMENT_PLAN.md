@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN
 version: 1.0.0
 status: Active

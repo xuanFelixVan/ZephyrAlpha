@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PROFESSIONAL_COMPARISON_ANALYSIS_20260402
 version: 1.0.0
 status: Active

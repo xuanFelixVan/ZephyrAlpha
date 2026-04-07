@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION
 version: 1.0.0
 status: Active

@@ -1,14 +1,8 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
-
-
-## 5. 更新记录
-
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - 记录审计报告
+- 记录审计报告
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

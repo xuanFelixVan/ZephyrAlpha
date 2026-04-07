@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_7_AUDIT_COMPLETION_REPORT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: T_06_UI001_WEB_MANAGEMENT_INTERFACE_ARCHITECTURE_DESIGN
 version: 1.0.0
 status: Active

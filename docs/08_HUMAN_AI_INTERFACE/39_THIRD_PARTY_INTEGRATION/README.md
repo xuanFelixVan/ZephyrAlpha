@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_39_THIRD_PARTY_INTEGRATION_README
 version: 1.0.0
 status: Active

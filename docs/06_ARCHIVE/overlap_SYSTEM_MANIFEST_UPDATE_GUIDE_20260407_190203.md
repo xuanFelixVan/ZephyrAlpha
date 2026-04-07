@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SYSTEM_MANIFEST_UPDATE_GUIDE
 version: 1.0.0
 status: Active

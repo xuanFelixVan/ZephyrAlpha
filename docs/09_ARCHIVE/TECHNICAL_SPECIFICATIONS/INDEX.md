@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_ARCHIVE_TECHNICAL_SPECIFICATIONS_INDEX
 version: 1.0.0
 status: Active

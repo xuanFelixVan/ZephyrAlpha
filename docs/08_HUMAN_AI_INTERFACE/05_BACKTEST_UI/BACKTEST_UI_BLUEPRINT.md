@@ -1,4 +1,15 @@
-﻿
+---
+module_id: 08_HUMAN_AI_INTERFACE_05_BACKTEST_UI_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 提供文档支持
+---
+
+
 responsibility:
   - 回测界面设计与实施方案与优化维护-
 responsibility:

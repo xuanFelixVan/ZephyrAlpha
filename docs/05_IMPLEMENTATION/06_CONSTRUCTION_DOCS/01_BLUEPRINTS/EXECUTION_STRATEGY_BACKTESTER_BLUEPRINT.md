@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: EXECUTION_STRATEGY_BACKTESTER_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 执行策略回测
-  - 策略模拟
-  - 成本分析
-  - 性能评估
-
+- 执行策略回测
+- 策略模拟
+- 成本分析
+- 性能评估
 layer: Layer 5.4 (交易执行)
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QMT_FINAL_SETUP_GUIDE
 version: 1.0.0
 status: Active

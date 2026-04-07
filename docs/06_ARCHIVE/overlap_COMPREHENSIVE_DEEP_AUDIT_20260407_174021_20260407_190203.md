@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_COMPREHENSIVE_DEEP_AUDIT_20260407_174021
 version: 1.0.0
 status: Active

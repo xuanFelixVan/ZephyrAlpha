@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STATE_MISSING_METADATA_SCAN_REPORT_20260407_173053
 version: 1.0.0
 status: Active

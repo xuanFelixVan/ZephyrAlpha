@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PERFORMANCE_TUNING_GUIDE_001
 version: 1.0.0
 status: Active

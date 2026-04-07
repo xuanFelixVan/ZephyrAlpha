@@ -1,99 +1,50 @@
 ---
-
-
 module_id: DATA_SOURCE_DATA_COMPRESSION_ARCHIVE_README
-
-
-# 数据压缩归档
-
 > **核心职责**: 数据压缩策略与长期存储优化，涉及数据压缩归档
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本模块负责：数据压缩策略与长期存储优化相关功能
 > - ❌ 本模块不负责：其他数据处理功能
-
-## 📋 模块概述
-
 数据压缩策略与长期存储优化
-
-### 核心功能
-
 - 数据压缩
 - 归档策略
 - 存储优化
 - 数据解压
-
-## 📁 文档索引
-
 - BLUEPRINT
 - [INDEX](INDEX.md)
-
-## 🚀 快速开始
-
-### 1. 模块定位
-
 本模块位于 **Layer 1 (数据预处理层)**，负责数据压缩策略与长期存储优化。
-
-### 2. 主要用途
-
 - 用于数据压缩
 - 用于归档策略
 - 用于存储优化
 - 用于数据解压
-
-### 3. 相关模块
-
 - 数据采集模块
 - 数据清洗模块
 - 数据存储模块
-
-## 📊 技术架构
-
-### 架构位置
-
 ```
 Layer 0: 基础设施层
 Layer 1: 数据预处理层 ← 当前模块
-  ├── 数据采集
-  ├── 数据清洗
-  ├── 数据存储
-  └── 数据压缩归档
+├── 数据采集
+├── 数据清洗
+├── 数据存储
+└── 数据压缩归档
 Layer 2: 因子计算层
 Layer 3: 策略引擎层
 ```
-
-### 关键接口
-
 - 数据输入接口
 - 数据输出接口
 - 配置接口
-
-## 🔧 使用指南
-
-### 配置说明
-
 ```yaml
 data_compression_archive:
-  enabled: true
-  config_path: config/data_compression_archive.yaml
+enabled: true
+config_path: config/data_compression_archive.yaml
 ```
-
-### API调用示例
-
 ```python
 from zephyr.layer1.data_compression_archive import DataCompressionArchiveManager
-
-# 初始化
 manager = DataCompressionArchiveManager()
-
-# 使用示例
 result = manager.process()
 ```
-
-## 📈 性能指标
-
 | 指标 | 目标值 | 说明 |
 |responsibility:
-  - DATA_COMPRESSION_ARCHIVE模块说明文档
+- DATA_COMPRESSION_ARCHIVE模块说明文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

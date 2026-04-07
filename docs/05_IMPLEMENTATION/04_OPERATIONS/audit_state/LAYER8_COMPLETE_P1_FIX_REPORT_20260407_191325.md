@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER8_COMPLETE_P1_FIX_REPORT_20260407_191325
 version: 1.0.0
 status: Active

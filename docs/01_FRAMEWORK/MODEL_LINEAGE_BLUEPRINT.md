@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODEL_LINEAGE_BLUEPRINT
 version: 1.0.0
 status: Active

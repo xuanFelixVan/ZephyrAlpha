@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: UPGRADE_REPORT
 version: 1.0.0
 status: Active

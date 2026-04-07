@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STANDARDS_CONTINUOUS_QUALITY_IMPROVEMENT_PROCESS
 version: 1.0.0
 status: Active

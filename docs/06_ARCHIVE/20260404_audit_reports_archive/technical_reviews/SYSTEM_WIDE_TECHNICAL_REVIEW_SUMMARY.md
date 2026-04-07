@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SYSTEM_WIDE_TECHNICAL_REVIEW_SUMMARY
 version: 1.0.0
 status: Active

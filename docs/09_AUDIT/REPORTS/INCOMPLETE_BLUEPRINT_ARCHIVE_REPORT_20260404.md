@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_REPORTS_INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: GAP_FEASIBILITY_ANALYSIS_PERSONAL_AI_SCENARIO
 version: 1.0.0
 status: Active

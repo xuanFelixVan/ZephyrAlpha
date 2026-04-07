@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_P0_RESOLUTION_REPORT_V6_20260404
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_27_RISK_CONTROL_PANEL_README
 version: 1.0.0
 status: Active

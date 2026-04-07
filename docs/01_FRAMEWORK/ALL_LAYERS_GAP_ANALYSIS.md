@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALL_LAYERS_GAP_ANALYSIS
 version: 1.0.0
 status: Active

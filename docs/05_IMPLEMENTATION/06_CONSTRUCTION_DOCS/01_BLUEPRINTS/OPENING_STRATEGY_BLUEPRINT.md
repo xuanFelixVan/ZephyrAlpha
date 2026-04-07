@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: OPENING_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 开盘策略
-  - 开盘竞价
-  - 开盘信号
-  - 开盘执行
-
+- 开盘策略
+- 开盘竞价
+- 开盘信号
+- 开盘执行
 layer: Layer 5 (策略执行层)
 ---
 

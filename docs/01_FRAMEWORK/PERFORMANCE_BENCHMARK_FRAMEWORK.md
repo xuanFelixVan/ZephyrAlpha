@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PERFORMANCE_BENCHMARK_FRAMEWORK
 version: 1.0.0
 status: Active

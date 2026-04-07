@@ -1,21 +1,19 @@
 ---
-
-
 module_id: 02_FACTOR_LIBRARY_06_REGISTRY_001
-
-
-**维护部门**: 清风量化因子治理委员? 
-**最后更?*: 2026-03-28  
+**维护部门**: 清风量化因子治理委员?
+**最后更?*: 2026-03-28
 **下次审查日期**: 2026-06-28
-
 responsibility:
-  - FACTOR CATALOG相关文档
+- FACTOR CATALOG相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Factor Catalog
+
 
 ## 变更记录
 

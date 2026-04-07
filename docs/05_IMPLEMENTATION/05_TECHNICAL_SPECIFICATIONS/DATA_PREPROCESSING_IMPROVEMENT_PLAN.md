@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_PREPROCESSING_IMPROVEMENT_PLAN
 version: 1.0.0
 status: Active

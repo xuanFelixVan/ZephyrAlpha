@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AUTOMATED_CHECK_FIX_REPORT_20260407_153821
 version: 1.0.0
 status: Active

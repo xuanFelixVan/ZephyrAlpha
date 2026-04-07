@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MISSING_METADATA_SCAN_REPORT_20260407_170852
 version: 1.0.0
 status: Active

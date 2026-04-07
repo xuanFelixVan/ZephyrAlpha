@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MIXTURE_OF_EXPERTS_BLUEPRINT
 version: 1.0.0
 status: Active

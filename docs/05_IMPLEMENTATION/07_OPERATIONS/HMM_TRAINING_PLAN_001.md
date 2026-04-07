@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HMM_TRAINING_PLAN_001
 version: 1.0.0
 status: Active

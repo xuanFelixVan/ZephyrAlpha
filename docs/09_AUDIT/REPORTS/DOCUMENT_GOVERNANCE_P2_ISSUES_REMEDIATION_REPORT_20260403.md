@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_GOVERNANCE_P2_ISSUES_REMEDIATION_REPORT_20260403
 version: 1.0.0
 status: Active

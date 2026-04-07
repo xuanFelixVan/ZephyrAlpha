@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STATE_IMMEDIATE_ACTION_COMPLETION_REPORT_20260407_183300
 version: 1.0.0
 status: Active

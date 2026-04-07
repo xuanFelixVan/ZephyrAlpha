@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LINK_FIX_REPORT_20260402
 version: 1.0.0
 status: Active

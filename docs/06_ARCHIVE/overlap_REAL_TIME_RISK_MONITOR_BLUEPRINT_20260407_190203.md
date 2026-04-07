@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_REAL_TIME_RISK_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active

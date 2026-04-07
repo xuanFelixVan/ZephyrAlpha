@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_PREPROCESSING_OPENSOURCE_INTEGRATION_GUIDE_20260407
 version: 1.0.0
 status: Active

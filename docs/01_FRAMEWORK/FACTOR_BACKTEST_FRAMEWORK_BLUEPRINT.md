@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT
 version: 1.0.0
 status: Active

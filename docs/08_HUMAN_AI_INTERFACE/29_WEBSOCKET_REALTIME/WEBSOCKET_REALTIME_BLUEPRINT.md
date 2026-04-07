@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_29_WEBSOCKET_REALTIME_001
-
-
-## 11. 相关文档
-
 - [Socket.io官方文档](https://github.com/socket.io)
-
 responsibility:
-  - WebSocket实时通信设计与实施方案与优化维护
+- WebSocket实时通信设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

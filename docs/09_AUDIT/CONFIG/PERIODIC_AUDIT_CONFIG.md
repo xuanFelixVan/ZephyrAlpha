@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PERIODIC_AUDIT_CONFIG
 version: 1.0.0
 status: Active

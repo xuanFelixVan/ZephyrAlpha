@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_SUPERVISION_INTEGRATION_PLAN
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: METADATA_COMPLETENESS_CHECK_REPORT_20260407_180130
 version: 1.0.0
 status: Active

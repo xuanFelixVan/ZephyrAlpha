@@ -1,18 +1,11 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
-
-
-## 索引
-
 - 父目? 01_STANDARDS/README.md
 - 相关: [FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)
 - 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
 - 相关: [IC_ANALYSIS.md](./ic_analysis.md)
-
 responsibility:
-  - 管理因子库
+- 管理因子库
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

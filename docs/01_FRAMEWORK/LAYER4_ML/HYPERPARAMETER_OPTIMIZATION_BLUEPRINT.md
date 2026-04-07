@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 01_FRAMEWORK_LAYER4_ML_HYPERPARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active

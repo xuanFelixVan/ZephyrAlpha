@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QMT_CONNECTION_TROUBLESHOOTING
 version: 1.0.0
 status: Active

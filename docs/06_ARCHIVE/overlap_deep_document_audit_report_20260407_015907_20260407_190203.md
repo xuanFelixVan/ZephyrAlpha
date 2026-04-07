@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DEEP_DOCUMENT_AUDIT_REPORT_20260407_015907
 version: 1.0.0
 status: Active

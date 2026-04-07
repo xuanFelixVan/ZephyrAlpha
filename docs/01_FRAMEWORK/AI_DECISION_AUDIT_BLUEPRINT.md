@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_DECISION_AUDIT_BLUEPRINT
 version: 1.0.0
 status: Active

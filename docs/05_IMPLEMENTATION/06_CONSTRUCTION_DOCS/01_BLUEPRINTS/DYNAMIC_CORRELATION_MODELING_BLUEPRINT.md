@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 动态相关性建模
-  - 相关性估计
-  - 时变相关
-  - 协方差矩阵
-
+- 动态相关性建模
+- 相关性估计
+- 时变相关
+- 协方差矩阵
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0
 status: Active

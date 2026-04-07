@@ -1,10 +1,9 @@
 ---
 responsibility:
-  - 组合整体风险控制
-  - 风险限额
-  - 止损机制
-  - 风险预警
-
+- 组合整体风险控制
+- 风险限额
+- 止损机制
+- 风险预警
 module_id: RISK_CONTROL_001
 version: 1.0.0
 status: Active

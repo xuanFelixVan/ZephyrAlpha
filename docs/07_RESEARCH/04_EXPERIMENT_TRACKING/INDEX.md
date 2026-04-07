@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 07_RESEARCH_04_EXPERIMENT_TRACKING_INDEX
 version: 1.0.0
 status: Active

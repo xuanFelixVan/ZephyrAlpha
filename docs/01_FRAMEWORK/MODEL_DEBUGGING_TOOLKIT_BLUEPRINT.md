@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODEL_DEBUGGING_TOOLKIT_BLUEPRINT
 version: 1.0.0
 status: Active

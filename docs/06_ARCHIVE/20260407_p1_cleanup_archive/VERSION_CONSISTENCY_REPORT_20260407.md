@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: VERSION_CONSISTENCY_REPORT_20260407
 version: 1.0.0
 status: Active

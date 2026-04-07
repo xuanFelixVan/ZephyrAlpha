@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_09_TRADING_JOURNAL_TRADING_JOURNAL_BLUEPRINT
 version: 1.0.0
 status: Active

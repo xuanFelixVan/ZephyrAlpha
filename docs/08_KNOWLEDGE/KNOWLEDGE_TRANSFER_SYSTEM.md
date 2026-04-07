@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: KNOWLEDGE_TRANSFER_SYSTEM
 version: 1.0.0
 status: Active

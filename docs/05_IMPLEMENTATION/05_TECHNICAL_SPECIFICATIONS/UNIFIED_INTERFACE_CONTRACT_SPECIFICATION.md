@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: UNIFIED_INTERFACE_CONTRACT_SPECIFICATION
 version: 1.0.0
 status: Active

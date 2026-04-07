@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMPL_PORTFOLIO_OPT_BP_001
 version: 1.0.2
 status: Active

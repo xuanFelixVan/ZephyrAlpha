@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_08_MOBILE_PUSH_MOBILE_PUSH_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_VALIDATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据验证引擎
-  - 验证规则
-  - 数据校验
-  - 错误报告
-
+- 数据验证引擎
+- 验证规则
+- 数据校验
+- 错误报告
 layer: Layer 5.1 (数据处理)
 ---
 

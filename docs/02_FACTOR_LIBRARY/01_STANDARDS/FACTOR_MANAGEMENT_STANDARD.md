@@ -1,20 +1,17 @@
 ---
-
-
 module_id: STANDARDS_FACTOR_MANAGEMENT_STANDARD
-
-
-## 更新记录
-
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - FACTOR MANAGEMENT STANDARD相关文档
+- FACTOR MANAGEMENT STANDARD相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
-------|------|----------|
+---
+
+# Factor Management Standard
+---|------|----------|
 | v1.0 | 2026-03-30 | 初始版本 |
 
 ---

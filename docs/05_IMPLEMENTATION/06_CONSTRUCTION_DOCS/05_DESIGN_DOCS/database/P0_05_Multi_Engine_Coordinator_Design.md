@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: P0_05_MULTI_ENGINE_COORDINATOR_DESIGN
 version: 1.0.0
 status: Active

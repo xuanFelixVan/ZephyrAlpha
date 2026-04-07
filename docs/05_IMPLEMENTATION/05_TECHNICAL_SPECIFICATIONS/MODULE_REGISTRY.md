@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODULE_REGISTRY
 version: 1.0.0
 status: Active

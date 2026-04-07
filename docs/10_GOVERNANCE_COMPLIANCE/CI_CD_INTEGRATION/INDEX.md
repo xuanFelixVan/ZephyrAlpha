@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_GOVERNANCE_COMPLIANCE_CI_CD_INTEGRATION_INDEX
 version: 1.0.0
 status: Active

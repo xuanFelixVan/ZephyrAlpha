@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_APPROVAL_NOTICE
 version: 1.0.0
 status: Active

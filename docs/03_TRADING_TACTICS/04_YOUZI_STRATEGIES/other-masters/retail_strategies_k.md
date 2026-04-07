@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 03_TRADING_TACTICS_04_YOUZI_STRATEGIES_RETAIL_STRATEGIES_K
 version: 1.0.0
 status: Active

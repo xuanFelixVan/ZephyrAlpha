@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 流动性管理系统
-  - 流动性监控
-  - 现金管理
-  - 流动性预测
-
+- 流动性管理系统
+- 流动性监控
+- 现金管理
+- 流动性预测
 layer: Layer 5.3 (风险管理)
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

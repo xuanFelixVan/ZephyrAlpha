@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_QUALITY_GATE_STANDARD
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: THIRD_PARTY_RISK_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

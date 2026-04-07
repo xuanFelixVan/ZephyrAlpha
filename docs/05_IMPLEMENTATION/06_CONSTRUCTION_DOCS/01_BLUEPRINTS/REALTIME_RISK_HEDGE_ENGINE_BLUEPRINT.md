@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 实时风险对冲引擎
-  - 动态对冲
-  - 风险监控
-  - 对冲执行
-
+- 实时风险对冲引擎
+- 动态对冲
+- 风险监控
+- 对冲执行
 layer: Layer 5.3 (风险管理)
 ---
 

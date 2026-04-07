@@ -1,99 +1,50 @@
 ---
-
-
 module_id: DATA_SOURCE_DATA_API_GATEWAY_README
-
-
-# 数据API网关
-
 > **核心职责**: 统一数据访问接口与API管理，涉及数据 网关
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本模块负责：统一数据访问接口与API管理相关功能
 > - ❌ 本模块不负责：其他数据处理功能
-
-## 📋 模块概述
-
 统一数据访问接口与API管理
-
-### 核心功能
-
 - 统一API接口
 - 请求路由
 - 访问控制
 - API文档管理
-
-## 📁 文档索引
-
 - BLUEPRINT
 - [INDEX](INDEX.md)
-
-## 🚀 快速开始
-
-### 1. 模块定位
-
 本模块位于 **Layer 1 (数据预处理层)**，负责统一数据访问接口与API管理。
-
-### 2. 主要用途
-
 - 用于统一API接口
 - 用于请求路由
 - 用于访问控制
 - 用于API文档管理
-
-### 3. 相关模块
-
 - 数据采集模块
 - 数据清洗模块
 - 数据存储模块
-
-## 📊 技术架构
-
-### 架构位置
-
 ```
 Layer 0: 基础设施层
 Layer 1: 数据预处理层 ← 当前模块
-  ├── 数据采集
-  ├── 数据清洗
-  ├── 数据存储
-  └── 数据API网关
+├── 数据采集
+├── 数据清洗
+├── 数据存储
+└── 数据API网关
 Layer 2: 因子计算层
 Layer 3: 策略引擎层
 ```
-
-### 关键接口
-
 - 数据输入接口
 - 数据输出接口
 - 配置接口
-
-## 🔧 使用指南
-
-### 配置说明
-
 ```yaml
 data_api_gateway:
-  enabled: true
-  config_path: config/data_api_gateway.yaml
+enabled: true
+config_path: config/data_api_gateway.yaml
 ```
-
-### API调用示例
-
 ```python
 from zephyr.layer1.data_api_gateway import DataApiGatewayManager
-
-# 初始化
 manager = DataApiGatewayManager()
-
-# 使用示例
 result = manager.process()
 ```
-
-## 📈 性能指标
-
 | 指标 | 目标值 | 说明 |
 |responsibility:
-  - 定义API接口
+- 定义API接口
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

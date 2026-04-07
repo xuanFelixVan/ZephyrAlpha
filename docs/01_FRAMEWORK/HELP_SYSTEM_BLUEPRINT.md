@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HELP_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active

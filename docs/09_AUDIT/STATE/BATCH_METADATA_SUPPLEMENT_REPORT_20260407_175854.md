@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: BATCH_METADATA_SUPPLEMENT_REPORT_20260407_175854
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DISTRIBUTED_TRAINING_BLUEPRINT
 version: 1.0.0
 status: Active

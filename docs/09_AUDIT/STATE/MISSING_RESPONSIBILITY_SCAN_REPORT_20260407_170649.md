@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MISSING_RESPONSIBILITY_SCAN_REPORT_20260407_170649
 version: 1.0.0
 status: Active

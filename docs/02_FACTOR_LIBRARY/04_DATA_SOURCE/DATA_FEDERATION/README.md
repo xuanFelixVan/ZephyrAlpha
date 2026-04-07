@@ -1,99 +1,50 @@
 ---
-
-
 module_id: DATA_SOURCE_DATA_FEDERATION_README
-
-
-# 数据联邦系统
-
 > **核心职责**: 跨源数据访问与联邦查询，涉及数据联邦
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本模块负责：跨源数据访问与联邦查询相关功能
 > - ❌ 本模块不负责：其他数据处理功能
-
-## 📋 模块概述
-
 跨源数据访问与联邦查询
-
-### 核心功能
-
 - 跨源查询
 - 数据虚拟化
 - 联邦优化
 - 统一视图
-
-## 📁 文档索引
-
 - BLUEPRINT
 - [INDEX](INDEX.md)
-
-## 🚀 快速开始
-
-### 1. 模块定位
-
 本模块位于 **Layer 1 (数据预处理层)**，负责跨源数据访问与联邦查询。
-
-### 2. 主要用途
-
 - 用于跨源查询
 - 用于数据虚拟化
 - 用于联邦优化
 - 用于统一视图
-
-### 3. 相关模块
-
 - 数据采集模块
 - 数据清洗模块
 - 数据存储模块
-
-## 📊 技术架构
-
-### 架构位置
-
 ```
 Layer 0: 基础设施层
 Layer 1: 数据预处理层 ← 当前模块
-  ├── 数据采集
-  ├── 数据清洗
-  ├── 数据存储
-  └── 数据联邦
+├── 数据采集
+├── 数据清洗
+├── 数据存储
+└── 数据联邦
 Layer 2: 因子计算层
 Layer 3: 策略引擎层
 ```
-
-### 关键接口
-
 - 数据输入接口
 - 数据输出接口
 - 配置接口
-
-## 🔧 使用指南
-
-### 配置说明
-
 ```yaml
 data_federation:
-  enabled: true
-  config_path: config/data_federation.yaml
+enabled: true
+config_path: config/data_federation.yaml
 ```
-
-### API调用示例
-
 ```python
 from zephyr.layer1.data_federation import DataFederationManager
-
-# 初始化
 manager = DataFederationManager()
-
-# 使用示例
 result = manager.process()
 ```
-
-## 📈 性能指标
-
 | 指标 | 目标值 | 说明 |
 |responsibility:
-  - DATA_FEDERATION模块说明文档
+- DATA_FEDERATION模块说明文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

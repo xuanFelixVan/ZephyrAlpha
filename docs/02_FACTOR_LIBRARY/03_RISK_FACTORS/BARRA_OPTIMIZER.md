@@ -1,20 +1,17 @@
 ---
-
-
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
-
-
-## 更新记录
-
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - BARRA OPTIMIZER相关文档
+- BARRA OPTIMIZER相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
-------|------|----------|
+---
+
+# Barra Optimizer
+---|------|----------|
 | v1.0 | 2026-03-26 | 整合附录AM内容 |
 | v1.1 | 2026-03-28 | 完善BarraOptimizer类，添加BL模型 |
 

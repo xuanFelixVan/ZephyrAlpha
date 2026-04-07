@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_OPTIMIZATION_REPORT_V14_20260406
 version: 1.0.0
 status: Active

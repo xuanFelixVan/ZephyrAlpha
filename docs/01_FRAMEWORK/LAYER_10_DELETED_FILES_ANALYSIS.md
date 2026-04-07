@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LAYER_10_DELETED_FILES_ANALYSIS
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_CAPABILITY_GAP_BLUEPRINT
 version: 1.0.0
 status: Active

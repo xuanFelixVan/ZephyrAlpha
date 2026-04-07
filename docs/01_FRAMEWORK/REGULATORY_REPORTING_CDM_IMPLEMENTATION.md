@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: REGULATORY_REPORTING_CDM_IMPLEMENTATION
 version: 1.0.0
 status: Active

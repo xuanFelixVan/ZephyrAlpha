@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STRATEGY_SELECTION_FRAMEWORK
 version: 1.0.0
 status: Active

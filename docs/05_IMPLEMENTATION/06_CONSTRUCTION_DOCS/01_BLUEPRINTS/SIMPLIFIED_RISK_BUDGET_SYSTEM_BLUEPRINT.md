@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 简化风险预算系统
-  - 简化风险预算分配
-  - 预算分配
-  - 风险约束
-
+- 简化风险预算系统
+- 简化风险预算分配
+- 预算分配
+- 风险约束
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
 status: Active

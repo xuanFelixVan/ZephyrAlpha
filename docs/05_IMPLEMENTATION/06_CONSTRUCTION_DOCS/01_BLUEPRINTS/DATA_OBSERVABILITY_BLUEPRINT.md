@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_OBSERVABILITY_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据可观测性
-  - 数据监控
-  - 数据血缘
-  - 数据质量告警
-
+- 数据可观测性
+- 数据监控
+- 数据血缘
+- 数据质量告警
 layer: Layer 5.1 (数据处理)
 ---
 

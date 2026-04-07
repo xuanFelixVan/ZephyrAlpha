@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODEL_SERVING_FRAMEWORK_BLUEPRINT
 version: 1.0.0
 status: Active

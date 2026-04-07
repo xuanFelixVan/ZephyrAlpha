@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_27_RISK_CONTROL_PANEL_001
-
-
-## 11. 相关文档
-
 - [Ant Design Pro官方文档](https://github.com/ant-design-pro)
-
 responsibility:
-  - 风控面板设计与实施方案与优化维护
+- 风控面板设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

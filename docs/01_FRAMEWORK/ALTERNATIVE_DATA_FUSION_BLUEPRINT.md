@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALTERNATIVE_DATA_FUSION_BLUEPRINT
 version: 1.0.0
 status: Active

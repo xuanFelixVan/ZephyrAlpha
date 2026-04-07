@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMPLEMENTATION_PROGRESS
 version: 1.0.0
 status: Active

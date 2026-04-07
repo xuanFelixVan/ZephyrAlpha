@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS
 version: 1.0.0
 status: Active

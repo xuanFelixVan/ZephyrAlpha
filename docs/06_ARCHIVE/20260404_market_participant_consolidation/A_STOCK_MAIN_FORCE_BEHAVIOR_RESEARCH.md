@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH
 version: 1.0.0
 status: Active

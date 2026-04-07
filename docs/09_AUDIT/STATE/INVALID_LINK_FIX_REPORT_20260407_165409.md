@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INVALID_LINK_FIX_REPORT_20260407_165409
 version: 1.0.0
 status: Active

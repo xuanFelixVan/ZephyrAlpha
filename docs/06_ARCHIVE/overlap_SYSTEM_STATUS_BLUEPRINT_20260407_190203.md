@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_12_SYSTEM_STATUS_SYSTEM_STATUS_BLUEPRINT
 version: 1.0.0
 status: Active

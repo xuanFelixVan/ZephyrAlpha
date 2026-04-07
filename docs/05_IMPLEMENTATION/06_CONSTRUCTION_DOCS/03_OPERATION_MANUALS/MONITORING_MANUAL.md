@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MONITORING_MANUAL
 version: 1.0.0
 status: Active

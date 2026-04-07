@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_OPTIMIZATION_BLUEPRINT_COMPLETENESS_REPORT_V2
 version: 1.0.0
 status: Active

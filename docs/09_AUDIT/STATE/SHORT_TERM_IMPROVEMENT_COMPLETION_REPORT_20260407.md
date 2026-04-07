@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SHORT_TERM_IMPROVEMENT_COMPLETION_REPORT_20260407
 version: 1.0.0
 status: Active

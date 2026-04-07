@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: COMPLIANCE_REPORT_INTERFACE_BLUEPRINT
 version: 1.0.0
 status: Active

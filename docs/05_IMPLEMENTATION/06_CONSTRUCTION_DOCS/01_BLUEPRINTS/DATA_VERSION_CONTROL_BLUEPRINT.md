@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据版本控制
-  - 版本管理
-  - 变更追踪
-  - 回滚机制
-
+- 数据版本控制
+- 版本管理
+- 变更追踪
+- 回滚机制
 layer: Layer 5.1 (数据处理)
 ---
 

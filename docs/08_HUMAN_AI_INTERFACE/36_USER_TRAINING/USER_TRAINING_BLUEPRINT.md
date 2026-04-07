@@ -1,14 +1,8 @@
-﻿---
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_36_USER_TRAINING_001
-
-
-## 11. 相关文档
-
 - [Moodle官方文档](https://github.com/moodle)
-
 responsibility:
-  - 用户培训系统设计与实施方案与优化维护
+- 用户培训系统设计与实施方案与优化维护
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

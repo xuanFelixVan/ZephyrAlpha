@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0
 status: Active
@@ -9,14 +9,11 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 5.3 风险管理
 compliance_level: 专业标准
 responsibility:
-  - 层级风险预算
-  - 风险分配
-  - 预算约束
-  - 风险层级
-
+- 层级风险预算
+- 风险分配
+- 预算约束
+- 风险层级
 layer: Layer 5.3 (风险管理)
-# 层级风险预算蓝图
-
 ?
 > **职责边界**:
 ---

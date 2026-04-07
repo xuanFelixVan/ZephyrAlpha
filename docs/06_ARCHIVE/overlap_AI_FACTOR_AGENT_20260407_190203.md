@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_FACTOR_AGENT
 version: 1.0.0
 status: Active

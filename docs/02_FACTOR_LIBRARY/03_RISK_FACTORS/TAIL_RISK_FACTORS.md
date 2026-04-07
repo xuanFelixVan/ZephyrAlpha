@@ -1,19 +1,18 @@
 ---
-
-
 module_id: RISK_FACTORS_TAIL_RISK_FACTORS
-
-
 > **维护部门**: 清风量化研究?
 > **更新时间**: 2026-03-28
 responsibility:
-  - TAIL RISK FACTORS相关文档
+- TAIL RISK FACTORS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Tail Risk Factors
+
 
 ## 变更记录
 

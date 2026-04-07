@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HIGH_FREQUENCY_TRADING_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active

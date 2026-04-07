@@ -1,99 +1,50 @@
 ---
-
-
 module_id: DATA_SOURCE_DATA_TESTING_FRAMEWORK_README
-
-
-# 数据测试框架
-
 > **核心职责**: 数据测试框架与测试用例管理，涉及数据测试框架
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本模块负责：数据测试框架与测试用例管理相关功能
 > - ❌ 本模块不负责：其他数据处理功能
-
-## 📋 模块概述
-
 数据测试框架与测试用例管理
-
-### 核心功能
-
 - 测试用例管理
 - 数据验证
 - 测试报告
 - 持续集成
-
-## 📁 文档索引
-
 - BLUEPRINT
 - [INDEX](INDEX.md)
-
-## 🚀 快速开始
-
-### 1. 模块定位
-
 本模块位于 **Layer 1 (数据预处理层)**，负责数据测试框架与测试用例管理。
-
-### 2. 主要用途
-
 - 用于测试用例管理
 - 用于数据验证
 - 用于测试报告
 - 用于持续集成
-
-### 3. 相关模块
-
 - 数据采集模块
 - 数据清洗模块
 - 数据存储模块
-
-## 📊 技术架构
-
-### 架构位置
-
 ```
 Layer 0: 基础设施层
 Layer 1: 数据预处理层 ← 当前模块
-  ├── 数据采集
-  ├── 数据清洗
-  ├── 数据存储
-  └── 数据测试框架
+├── 数据采集
+├── 数据清洗
+├── 数据存储
+└── 数据测试框架
 Layer 2: 因子计算层
 Layer 3: 策略引擎层
 ```
-
-### 关键接口
-
 - 数据输入接口
 - 数据输出接口
 - 配置接口
-
-## 🔧 使用指南
-
-### 配置说明
-
 ```yaml
 data_testing_framework:
-  enabled: true
-  config_path: config/data_testing_framework.yaml
+enabled: true
+config_path: config/data_testing_framework.yaml
 ```
-
-### API调用示例
-
 ```python
 from zephyr.layer1.data_testing_framework import DataTestingFrameworkManager
-
-# 初始化
 manager = DataTestingFrameworkManager()
-
-# 使用示例
 result = manager.process()
 ```
-
-## 📈 性能指标
-
 | 指标 | 目标值 | 说明 |
 |responsibility:
-  - 定义测试规范
+- 定义测试规范
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

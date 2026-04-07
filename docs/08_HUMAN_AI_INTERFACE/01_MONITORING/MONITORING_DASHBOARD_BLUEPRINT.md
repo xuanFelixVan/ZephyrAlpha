@@ -1,19 +1,9 @@
-﻿---
-
-
+---
 module_id: 08_HUMAN_AI_INTERFACE_01_MONITORING_001
-
-## 1. 概述
-
-### 1.1 功能定位
-
 监控仪表板是人机交互层的核心组件，提供系统运行状态的实时可视化监控。
-
-### 1.2 核心功能
-
 | 功能 | 说明 | 优先级 |
 |responsibility:
-  - 提供文档支持
+- 提供文档支持
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

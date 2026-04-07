@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: API_DESIGN
 version: 1.0.0
 status: Active

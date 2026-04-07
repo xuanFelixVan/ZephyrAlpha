@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ASHARE_HISTORICAL_DATA_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

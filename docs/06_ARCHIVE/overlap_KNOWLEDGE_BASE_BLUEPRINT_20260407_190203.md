@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 08_HUMAN_AI_INTERFACE_18_KNOWLEDGE_BASE_KNOWLEDGE_BASE_BLUEPRINT
 version: 1.0.0
 status: Active

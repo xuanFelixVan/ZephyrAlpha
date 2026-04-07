@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN
 version: 1.0.0
 status: Active

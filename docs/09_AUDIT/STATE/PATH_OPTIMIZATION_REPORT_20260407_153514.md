@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PATH_OPTIMIZATION_REPORT_20260407_153514
 version: 1.0.0
 status: Active

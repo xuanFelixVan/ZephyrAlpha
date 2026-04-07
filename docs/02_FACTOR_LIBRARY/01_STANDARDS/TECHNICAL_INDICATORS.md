@@ -1,19 +1,17 @@
 ---
-
-
 module_id: STANDARDS_TECHNICAL_INDICATORS
-
-
 **版本**: 1.0 | **更新**: 2026-03-28
-
 responsibility:
-  - TECHNICAL INDICATORS相关文档
+- TECHNICAL INDICATORS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Technical Indicators
+
 
 ## 变更记录
 

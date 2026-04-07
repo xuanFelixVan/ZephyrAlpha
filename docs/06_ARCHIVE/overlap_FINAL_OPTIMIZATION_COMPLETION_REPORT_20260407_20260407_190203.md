@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_AUDIT_STATE_FINAL_OPTIMIZATION_COMPLETION_REPORT_20260407
 version: 1.0.0
 status: Active

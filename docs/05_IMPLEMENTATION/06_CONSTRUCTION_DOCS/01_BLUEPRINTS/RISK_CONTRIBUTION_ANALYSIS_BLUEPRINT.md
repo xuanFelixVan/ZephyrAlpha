@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RISK_CONTRIBUTION_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -9,11 +9,10 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 风险贡献分析
-  - 边际风险
-  - 风险贡献度预算分析
-  - 贡献度计算
-
+- 风险贡献分析
+- 边际风险
+- 风险贡献度预算分析
+- 贡献度计算
 layer: Layer 5.3 (风险管理)
 ---
 

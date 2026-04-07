@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_MIGRATION_LOG_L0_QMT_20260402
 version: 1.0.0
 status: Active

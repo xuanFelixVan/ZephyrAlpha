@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QMT_ENVIRONMENT_SETUP_SUMMARY
 version: 1.0.0
 status: Active

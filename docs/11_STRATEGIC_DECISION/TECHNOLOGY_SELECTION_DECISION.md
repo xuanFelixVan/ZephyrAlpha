@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TECHNOLOGY_SELECTION_DECISION
 version: 1.0.0
 status: Active

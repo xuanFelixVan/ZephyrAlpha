@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CHANGE_REQUEST_TEMPLATE_001
 version: 1.0.0
 status: Active

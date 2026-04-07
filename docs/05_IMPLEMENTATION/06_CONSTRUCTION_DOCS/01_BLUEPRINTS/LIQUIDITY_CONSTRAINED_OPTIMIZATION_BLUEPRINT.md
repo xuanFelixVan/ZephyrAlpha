@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001
 version: 1.0.0
 status: Active

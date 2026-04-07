@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -8,11 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 质量评分系统
-  - 评分模型
-  - 质量指标
-  - 评分报告
-
+- 质量评分系统
+- 评分模型
+- 质量指标
+- 评分报告
 layer: Layer 5 (策略执行层)
 ---
 

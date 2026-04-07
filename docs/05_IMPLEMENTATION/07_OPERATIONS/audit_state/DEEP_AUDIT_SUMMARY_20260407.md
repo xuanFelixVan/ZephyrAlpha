@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_DEEP_AUDIT_SUMMARY_20260407
 version: 1.0.0
 status: Active

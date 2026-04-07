@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOC_GOVERNANCE_OPTIMIZATION_PROPOSAL
 version: 1.0.0
 status: Active

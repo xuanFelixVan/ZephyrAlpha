@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: WEEKLY_LAYER_CHECK_REPORT
 version: 1.0.0
 status: Active

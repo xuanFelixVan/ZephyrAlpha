@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ONLINE_LEARNING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_MONITORING
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

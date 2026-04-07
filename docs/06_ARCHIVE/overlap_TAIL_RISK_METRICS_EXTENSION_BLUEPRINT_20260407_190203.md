@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
 status: Active

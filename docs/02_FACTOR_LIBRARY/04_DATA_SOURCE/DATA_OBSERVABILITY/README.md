@@ -1,99 +1,50 @@
 ---
-
-
 module_id: DATA_SOURCE_DATA_OBSERVABILITY_README
-
-
-# 数据可观测性
-
 > **核心职责**: 数据可观测性架构与监控指标，涉及数据可观测性
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本模块负责：数据可观测性架构与监控指标相关功能
 > - ❌ 本模块不负责：其他数据处理功能
-
-## 📋 模块概述
-
 数据可观测性架构与监控指标
-
-### 核心功能
-
 - 可观测性指标
 - 分布式追踪
 - 日志聚合
 - 健康检查
-
-## 📁 文档索引
-
 - BLUEPRINT
 - [INDEX](INDEX.md)
-
-## 🚀 快速开始
-
-### 1. 模块定位
-
 本模块位于 **Layer 1 (数据预处理层)**，负责数据可观测性架构与监控指标。
-
-### 2. 主要用途
-
 - 用于可观测性指标
 - 用于分布式追踪
 - 用于日志聚合
 - 用于健康检查
-
-### 3. 相关模块
-
 - 数据采集模块
 - 数据清洗模块
 - 数据存储模块
-
-## 📊 技术架构
-
-### 架构位置
-
 ```
 Layer 0: 基础设施层
 Layer 1: 数据预处理层 ← 当前模块
-  ├── 数据采集
-  ├── 数据清洗
-  ├── 数据存储
-  └── 数据可观测性
+├── 数据采集
+├── 数据清洗
+├── 数据存储
+└── 数据可观测性
 Layer 2: 因子计算层
 Layer 3: 策略引擎层
 ```
-
-### 关键接口
-
 - 数据输入接口
 - 数据输出接口
 - 配置接口
-
-## 🔧 使用指南
-
-### 配置说明
-
 ```yaml
 data_observability:
-  enabled: true
-  config_path: config/data_observability.yaml
+enabled: true
+config_path: config/data_observability.yaml
 ```
-
-### API调用示例
-
 ```python
 from zephyr.layer1.data_observability import DataObservabilityManager
-
-# 初始化
 manager = DataObservabilityManager()
-
-# 使用示例
 result = manager.process()
 ```
-
-## 📈 性能指标
-
 | 指标 | 目标值 | 说明 |
 |responsibility:
-  - DATA_OBSERVABILITY模块说明文档
+- DATA_OBSERVABILITY模块说明文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOCUMENT_NUMBERING_STANDARD
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_SHORT_TERM_IMPROVEMENT_REPORT_20260404
 version: 1.0.0
 status: Active

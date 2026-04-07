@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 市场冲击模型
-  - 冲击成本
-  - 执行成本
-  - 市场微观结构
-
+- 市场冲击模型
+- 冲击成本
+- 执行成本
+- 市场微观结构
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.0
 status: Active

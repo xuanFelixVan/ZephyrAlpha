@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT
 version: 1.0.0
 status: Active

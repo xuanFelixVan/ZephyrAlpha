@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_MODEL_ORCHESTRATOR_BLUEPRINT
 version: 1.0.0
 status: Active

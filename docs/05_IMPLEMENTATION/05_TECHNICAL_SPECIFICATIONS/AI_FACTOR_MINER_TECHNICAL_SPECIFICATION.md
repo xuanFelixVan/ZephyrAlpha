@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_FACTOR_MINER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

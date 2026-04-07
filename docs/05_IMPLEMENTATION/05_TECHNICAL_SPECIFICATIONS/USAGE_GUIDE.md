@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: USAGE_GUIDE
 version: 1.0.0
 status: Active

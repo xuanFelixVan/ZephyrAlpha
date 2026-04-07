@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 自动修复引擎
-  - 异常检测
-  - 自动修复
-  - 系统健康检查与自动修复
-
+- 自动修复引擎
+- 异常检测
+- 自动修复
+- 系统健康检查与自动修复
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
 status: Active

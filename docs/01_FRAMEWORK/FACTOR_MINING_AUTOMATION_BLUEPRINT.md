@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_MINING_AUTOMATION_BLUEPRINT
 version: 1.0.0
 status: Active

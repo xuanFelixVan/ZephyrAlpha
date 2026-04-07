@@ -1,19 +1,17 @@
 ---
-
-
 module_id: MANUAL_HANDOVER
-
-
 > **注意**: 归档目录(`06_ARCHIVE/`)、`旧文?` 目录保持不变，是历史版本记录?
-
 responsibility:
-  - HANDOVER相关文档
+- HANDOVER相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Handover
+
 
 ## 变更记录
 

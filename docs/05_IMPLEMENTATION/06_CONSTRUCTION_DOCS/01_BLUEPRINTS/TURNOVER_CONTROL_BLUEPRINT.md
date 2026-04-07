@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 换手率控制
-  - 换手约束
-  - 交易频率
-  - 换手率成本控制
-
+- 换手率控制
+- 换手约束
+- 交易频率
+- 换手率成本控制
 module_id: TURNOVER_CONTROL_001
 version: 1.0.0
 status: Active

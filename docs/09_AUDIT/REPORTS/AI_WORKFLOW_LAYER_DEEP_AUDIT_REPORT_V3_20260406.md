@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V3_20260406
 version: 1.0.0
 status: Active

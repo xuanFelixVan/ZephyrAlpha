@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 10_AI_WORKFLOW_STRATEGY_VERSION_CONTROL_BLUEPRINT
 version: 1.0.0
 status: Active

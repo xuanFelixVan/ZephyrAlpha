@@ -1,8 +1,5 @@
-﻿---
-
+---
 module_id: 02_FACTOR_LIBRARY_001
-
-
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -31,7 +28,7 @@ compliance_level: 专业标准
 > ϵͳ v5.3 ĵ?
 >
 > **ְ**:
-> - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) = ڣ5ӵ?
+> - `INDEX.md` = ڣ5ӵ?
 > - **?* = ͼȲο
 
 ## ?? ĵλ (v5.3)
@@ -66,7 +63,7 @@ docs/
 ### 
 
 **?* (30):
-1. Ķ [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ?(5)
+1. Ķ `INDEX.md` - ?(5)
 2. Ķ 00_OVERVIEW/README.md - ϵͳ (10)
 3. Ķ 05_IMPLEMENTATION/01_QUICKSTART/README.md - ٿ?(15)
 
@@ -74,16 +71,16 @@ docs/
 
 **ܹѧϰ** (2Сʱ):
 1. Ķ BLUEPRINT.md - ϵͳͼ (30)
-2. Ķ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ͳһܹ (30)
+2. Ķ `01_FRAMEWORK/ARCHITECTURE.md` - Layer 0-11ͳһܹ (30)
 3. Ķ 01_FRAMEWORK/README.md - ĵ (20)
-4. Ķ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ嵥 (20)
+4. Ķ `AI_Permissions.md` - AIȨ嵥 (20)
 
 ### Ҫ?
 
 **Կ?* (4Сʱ):
 1. Ķ BLUEPRINT.md - ϵͳͼ (30)
-2. Ķ [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ģ (30)
-3. Ķ [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) -  (20)
+2. Ķ `Strategy_Spec_S001.md` - ģ (30)
+3. Ķ `03_TRADING_TACTICS/INDEX.md` -  (20)
 4. Ķ 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - ?(30)
 5. Ķ  - ?(1Сʱ)
 6. ʵдԴ (1.5Сʱ)
@@ -92,31 +89,31 @@ docs/
 
 **** (3Сʱ):
 1. Ķ BLUEPRINT.md - ϵͳͼ (30)
-2. Ķ [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 𷽰 (30)
+2. Ķ `05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md` - 𷽰 (30)
 3. ִвű (2Сʱ)
 
 ### ⰲ?
 
 **ȫѧϰ** (1.5Сʱ):
-1. Ķ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ嵥 (20)
-2. Ķ [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - ȫ淶 (25)
-3. Ķ [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - ֤Ȩ (20)
+1. Ķ `AI_Permissions.md` - AIȨ嵥 (20)
+2. Ķ `05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md` - ȫ淶 (25)
+3. Ķ `05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md` - ֤Ȩ (20)
 
 ### ?
 
 **Ų** (30):
 1. 鿴 FAQ.md -  (10)
 2. 鿴 05_IMPLEMENTATION/07_OPERATIONS/README.md - άֲ (10)
-3. 鿴 [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - 汾 (5)
+3. 鿴 `CHANGELOG.md` - 汾 (5)
 4. 鿴ϵͳ־ (5)
 
 ### Ҫϵͳ
 
 **ƹ** (1-2Сʱ):
-1.  [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - Żҳ (5)
+1.  `09_AUDIT/INDEX_AUDIT.md` - Żҳ (5)
 2. ѡģʽ: ģʽ(5)AIģʽ(30)
-3. Ʊ׼ִ? [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - Ʊ׼ (15)
-4. ѭ: [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) -  (10)
+3. Ʊ׼ִ? `09_AUDIT/STANDARDS/AUDIT_STANDARDS.md` - Ʊ׼ (15)
+4. ѭ: `09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md` -  (10)
 5. Ʊ (30-60)
 
 ## ?? Ŀ?(v5.3)
@@ -224,19 +221,19 @@ docs/
 ### ܹ
 
 - BLUEPRINT.md - ϵͳͼ
-- [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ܹ
-- [01_FRAMEWORK/MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) - г״̬ʶ?
+- `01_FRAMEWORK/ARCHITECTURE.md` - Layer 0-11ܹ
+- `01_FRAMEWORK/MARKET_REGIME.md` - г״̬ʶ?
 
 ### ģ
 
-- [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md) - ӿԼ
+- `API_Contract.md` - ӿԼ
 - BLUEPRINT.md - ģͼ
-- [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ
+- `AI_Permissions.md` - AIȨ
 
 ### 
 
-- [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ģ
-- [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - 
+- `Strategy_Spec_S001.md` - ģ
+- `03_TRADING_TACTICS/INDEX.md` - 
 - 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - ?
 
 ### 
@@ -250,17 +247,17 @@ docs/
 ### 
 
 - BLUEPRINT.md - ϵͳͼ
-- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 𷽰
+- `05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md` - 𷽰
 
 ### ?
 
 -  - ?
-- [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - ־
+- `CHANGELOG.md` - ־
 
 ### AIо
 
 - BLUEPRINT.md - AIоܣ?
-- [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) - ʵ׷
+- `EXPERIMENT_TRACKING.md` - ʵ׷
 - KNOWLEDGE_MANAGEMENT.md - ֪ʶ
 
 ### ά
@@ -270,10 +267,10 @@ docs/
 
 ### 
 
-- [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - Żҳ
-- [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - Ʊ׼
-- [09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md) - AIָ
-- [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - 
+- `09_AUDIT/INDEX_AUDIT.md` - Żҳ
+- `09_AUDIT/STANDARDS/AUDIT_STANDARDS.md` - Ʊ׼
+- `09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md` - AIָ
+- `09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md` - 
 
 ## ?? ĵͳ (v5.3)
 

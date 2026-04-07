@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 09_RESEARCH_INNOVATION_BLUEPRINT
 version: 1.0.0
 status: Active

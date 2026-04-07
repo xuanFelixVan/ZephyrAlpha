@@ -1,24 +1,20 @@
 ---
-
-
 module_id: STANDARDS_FUTURE_FACTOR_TOOLS
-
-
-## 索引
-
 - 父目? 01_STANDARDS/README.md
 - 相关: [FACTOR_CALCULATION_FRAMEWORK.md](./FACTOR_CALCULATION_FRAMEWORK.md)
-- 相关: [IC_ANALYSIS.md](./ic_analysis.md)
-- 相关: [FACTOR_SYNTHESIS.md](./factor_synthesis.md)
-
+- 相关: `IC_ANALYSIS.md`
+- 相关: `FACTOR_SYNTHESIS.md`
 responsibility:
-  - FUTURE FACTOR TOOLS相关文档
+- FUTURE FACTOR TOOLS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Future Factor Tools
+
 
 ## 变更记录
 

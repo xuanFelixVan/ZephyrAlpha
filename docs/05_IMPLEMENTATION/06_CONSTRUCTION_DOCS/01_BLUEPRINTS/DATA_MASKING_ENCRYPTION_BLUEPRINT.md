@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_MASKING_ENCRYPTION_BLUEPRINT
 version: 1.0.0
 status: Active

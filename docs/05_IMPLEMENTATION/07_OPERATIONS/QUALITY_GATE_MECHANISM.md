@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_GATE_MECHANISM
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SENTIMENT_LAYER_COMPREHENSIVE_AUDIT_REPORT_20260407_191707_001
 version: 23.0.0
 status: Active

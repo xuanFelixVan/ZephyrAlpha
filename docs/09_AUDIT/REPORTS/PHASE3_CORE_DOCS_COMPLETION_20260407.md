@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PHASE3_CORE_DOCS_COMPLETION_20260407
 version: 1.0.0
 status: Active

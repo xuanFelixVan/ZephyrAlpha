@@ -1,10 +1,9 @@
-﻿---
+---
 responsibility:
-  - 风险归因系统
-  - 风险分解
-  - 因子归因
-  - 风险报告
-
+- 风险归因系统
+- 风险分解
+- 因子归因
+- 风险报告
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0
 status: Active

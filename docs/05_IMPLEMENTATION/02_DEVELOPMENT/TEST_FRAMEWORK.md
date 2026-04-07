@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TEST_FRAMEWORK
 version: 1.0.0
 status: Active

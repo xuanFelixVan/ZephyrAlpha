@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: README_1
 version: 1.0.0
 status: Active

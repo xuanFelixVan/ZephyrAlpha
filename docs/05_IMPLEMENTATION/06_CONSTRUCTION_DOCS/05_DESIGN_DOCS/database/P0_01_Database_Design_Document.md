@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: P0_01_DATABASE_DESIGN_DOCUMENT
 version: 1.0.0
 status: Active

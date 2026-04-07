@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: AI_CONSTRUCTION_QUICK_REFERENCE
 version: 1.0.0
 status: Active

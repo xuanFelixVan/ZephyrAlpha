@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MOMENTUM_FACTOR_LIBRARY
 version: 1.0.0
 status: Active

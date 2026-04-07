@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RISK_MANAGEMENT_FRAMEWORK
 version: 1.0.0
 status: Active

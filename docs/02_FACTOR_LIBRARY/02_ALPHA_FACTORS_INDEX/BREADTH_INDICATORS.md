@@ -1,19 +1,17 @@
-﻿---
-
-
+---
 module_id: 02_FACTOR_LIBRARY_02_ALPHA_FACTORS_INDEX_001
-
-
 **版本**: 1.0 | **更新**: 2026-03-28
-
 responsibility:
-  - 提供目录索引
+- 提供目录索引
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ---
+
+# Breadth Indicators
+
 
 ## 变更记录
 

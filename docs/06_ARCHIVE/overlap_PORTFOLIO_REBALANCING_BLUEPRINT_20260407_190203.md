@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_PORTFOLIO_REBALANCING_BLUEPRINT
 version: 1.0.0
 status: Active

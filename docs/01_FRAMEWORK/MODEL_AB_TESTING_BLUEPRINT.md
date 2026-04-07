@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MODEL_AB_TESTING_BLUEPRINT
 version: 1.0.0
 status: Active
