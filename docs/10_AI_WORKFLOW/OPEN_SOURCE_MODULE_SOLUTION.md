@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+layer: Layer 7 (AI报告层)
 responsibility:
   - AI工作流、智能辅助、自动化流程
 standard_type: 开源方案选型推荐

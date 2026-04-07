@@ -278,7 +278,7 @@ docs/
 
 ### 新用户入门（5步快速上手）
 
-1. **阅读系统概览**：[系统概览](00_OVERVIEW/README.md)
+1. **阅读系统概览**：[系统概览](00_OVERVIEW/INDEX.md)
 2. **了解架构设计**：[统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md)
 3. **查看实施蓝图**：[实施蓝图](./05_IMPLEMENTATION/BLUEPRINT.md)
 4. **配置开发环�?*：[开发环境配置](./05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md)

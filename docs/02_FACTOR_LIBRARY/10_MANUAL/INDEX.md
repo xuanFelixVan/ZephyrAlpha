@@ -68,7 +68,7 @@ compliance_level: 专业标准---
 
 ### 查看手册
 
-1. 阅读 [FACTOR_LIBRARY_MANUAL.md](./FACTOR_LIBRARY_MANUAL.md) - 了解因子库手册
+1. 阅读 [因子库手册](../factor_library_manual.md) - 了解因子库手册
 2. 了解因子研究方法论和分类体系
 
 ### 配套文档
