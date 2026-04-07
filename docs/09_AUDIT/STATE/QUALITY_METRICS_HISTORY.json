@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": "2026-04-07 16:33:12",
+    "document_metrics": {
+      "total_files": 2053,
+      "files_with_metadata": 2023,
+      "files_with_responsibility": 1852,
+      "metadata_compliance_rate": 98.53872381880176,
+      "responsibility_compliance_rate": 90.20944958597174
+    },
+    "reference_metrics": {
+      "total_links": 8537,
+      "valid_links": 8515,
+      "invalid_links": 22,
+      "link_validity_rate": 99.74229823122876
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.1928884559181685,
+      "depth_distribution": {
+        "0": 4,
+        "1": 474,
+        "2": 789,
+        "3": 694,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 87.5261965322035,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
+  }
+]
