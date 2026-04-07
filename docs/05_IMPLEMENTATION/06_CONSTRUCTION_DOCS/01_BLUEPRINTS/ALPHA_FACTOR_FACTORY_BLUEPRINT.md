@@ -12,6 +12,11 @@ responsibility:
 layer: Layer 5 (策略执行层)
 ---
 
+
+## 核心定位
+
+负责Alpha因子工厂的设计与实现，基于多源数据挖掘和因子工程，生成高质量Alpha因子，支持策略研发和组合优化。
+
 # ALPHA FACTOR FACTORY BLUEPRINT
 
 > **æ ¸å¿èè´£**: Alpha Factor Factoryèå¾è®¾è®¡

@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5.1 (数据处理)
 ---
 
+
+## 核心定位
+
+负责数据源管理的设计与实现，提供数据源注册、连接、监控和管理功能，支持数据接入和集成。
+
 # DATA SOURCE MANAGEMENT BLUEPRINT
 
 > **æ ¸å¿èè´£**: Data Source Managementèå¾è®¾è®¡

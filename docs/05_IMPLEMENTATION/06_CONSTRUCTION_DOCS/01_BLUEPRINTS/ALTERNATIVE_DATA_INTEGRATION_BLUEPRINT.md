@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5 (策略执行层)
 ---
 
+
+## 核心定位
+
+负责另类数据集成的设计与实现，整合多源另类数据，提供数据清洗、标准化和特征提取功能，支持因子挖掘和策略增强。
+
 # ALTERNATIVE DATA INTEGRATION BLUEPRINT
 
 > **æ ¸å¿èè´£**: Alternative Data Integrationèå¾è®¾è®¡

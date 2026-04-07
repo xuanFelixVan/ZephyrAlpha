@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5 (策略执行层)
 ---
 
+
+## 核心定位
+
+负责协整分析的设计与实现，基于统计套利理论，识别资产间的长期均衡关系，提供配对交易和套利策略支持。
+
 # COINTEGRATION ANALYSIS BLUEPRINT
   - å å­è®¡ç®
   - ç»åä¼å

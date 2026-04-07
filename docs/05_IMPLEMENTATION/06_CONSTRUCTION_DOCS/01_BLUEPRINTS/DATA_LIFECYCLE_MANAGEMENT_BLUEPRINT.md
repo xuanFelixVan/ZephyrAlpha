@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5.1 (数据处理)
 ---
 
+
+## 核心定位
+
+负责数据生命周期管理的设计与实现，提供数据创建、存储、归档和删除的全生命周期管理，支持数据治理。
+
 # DATA LIFECYCLE MANAGEMENT BLUEPRINT
 
 > **æ ¸å¿èè´£**: Data Lifecycle Managementèå¾è®¾è®¡

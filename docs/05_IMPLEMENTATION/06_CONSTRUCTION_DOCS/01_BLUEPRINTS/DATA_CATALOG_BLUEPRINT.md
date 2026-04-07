@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5.1 (数据处理)
 ---
 
+
+## 核心定位
+
+负责数据目录的设计与实现，提供数据资产注册、分类、检索和血缘追踪功能，支持数据治理和资产管理。
+
 # DATA CATALOG BLUEPRINT
 
 > **æ ¸å¿èè´£**: Data Catalogèå¾è®¾è®¡

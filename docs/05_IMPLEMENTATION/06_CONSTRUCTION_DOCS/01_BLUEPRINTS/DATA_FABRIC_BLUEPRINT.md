@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5.1 (数据处理)
 ---
 
+
+## 核心定位
+
+负责数据编织的设计与实现，构建统一的数据访问层，提供数据虚拟化和联邦查询功能，支持跨平台数据整合。
+
 # DATA FABRIC BLUEPRINT
 
 > **æ ¸å¿èè´£**: Data Fabricèå¾è®¾è®¡

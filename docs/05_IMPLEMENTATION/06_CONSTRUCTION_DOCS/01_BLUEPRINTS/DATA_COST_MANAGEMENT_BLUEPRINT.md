@@ -16,6 +16,11 @@ responsibility:
 layer: Layer 5.1 (数据处理)
 ---
 
+
+## 核心定位
+
+负责数据成本管理的设计与实现，监控数据存储、计算和传输成本，提供成本优化建议，支持成本控制。
+
 # DATA COST MANAGEMENT BLUEPRINT
 
 > **æ ¸å¿èè´£**: Data Cost Managementèå¾è®¾è®¡
