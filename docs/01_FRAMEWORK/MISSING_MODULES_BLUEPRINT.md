@@ -8,9 +8,6 @@ owner: 首席蓝图架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 人机交互层缺失模块
 compliance_level: 专业机构标准
-responsibility:
-  - Layer 8缺失模块蓝图设计
-
 ---
 # Layer 8人机交互层缺失模块蓝图
 

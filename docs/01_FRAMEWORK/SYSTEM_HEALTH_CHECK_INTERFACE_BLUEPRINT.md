@@ -16,6 +16,11 @@ related_documents:
   - DISASTER_RECOVERY_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责系统健康检查界面设计，包括：
+  - 系统组件状态检查
+  - 服务健康监控
+  - 资源使用监控
+  - 告警状态展示
+  - 快速诊断功能
   
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md

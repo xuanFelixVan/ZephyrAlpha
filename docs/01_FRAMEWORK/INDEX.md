@@ -9,11 +9,6 @@ applicable_scope: 01_FRAMEWORK目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
-responsibility:
-  - 系统框架、架构设计
-
----
----
 ---
 
 # 框架设计目录索引

@@ -14,7 +14,6 @@ compliance_level: 专业标准
 parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
 implementation_status: 蓝图设计
 ---
----
 
 
 # Layer 8 人机交互层 - 系统蓝图索引

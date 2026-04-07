@@ -6,7 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
+  - MLflow集成实施
+  - 模型风险管理系统部署
+  - SR 11-7标准实现
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 模型风险管理系统MLflow集成

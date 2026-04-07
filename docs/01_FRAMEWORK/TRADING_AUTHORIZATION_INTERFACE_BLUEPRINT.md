@@ -16,6 +16,11 @@ related_documents:
   - REALTIME_RISK_MONITORING_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责交易授权界面设计，包括：
+  - AI交易建议审批界面
+  - 多级授权规则配置
+  - 紧急止损授权功能
+  - 授权历史查询和分析
+  - 授权权限管理
   
   风险监控请参考：REALTIME_RISK_MONITORING_BLUEPRINT.md
   决策仪表板请参考：DECISION_DASHBOARD_BLUEPRINT.md

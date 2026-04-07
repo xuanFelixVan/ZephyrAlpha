@@ -231,7 +231,339 @@ class ScenarioAnalyzer:
 
 ---
 
-## 4. 接口设计
+## 4. 压力测试场景设计
+
+### 4.1 历史情景库
+
+| 情景名称 | 时间范围 | 触发事件 | 主要冲击 | 适用场景 |
+|----------|----------|----------|----------|----------|
+| **2008金融危机** | 2008-09至2009-03 | 雷曼兄弟破产 | 股票-50%、信用利差+500bp | 极端信用风险 |
+| **2020疫情冲击** | 2020-02至2020-03 | COVID-19爆发 | 股票-35%、波动率+300% | 突发事件风险 |
+| **2015股灾** | 2015-06至2015-08 | 杠杆去化 | A股-45%、流动性枯竭 | 流动性风险 |
+| **2018贸易战** | 2018-03至2018-12 | 中美贸易摩擦 | 科技股-25%、汇率波动 | 地缘政治风险 |
+| **2022加息周期** | 2022-01至2022-12 | 美联储加息 | 成长股-40%、利率+400bp | 利率风险 |
+| **1997亚洲金融危机** | 1997-07至1998-01 | 泰铢贬值 | 亚洲股市-60%、汇率崩溃 | 新兴市场风险 |
+
+### 4.2 情景参数配置
+
+```yaml
+# stress_test_scenarios.yaml
+historical_scenarios:
+  - name: "2008_financial_crisis"
+    type: "historical"
+    start_date: "2008-09-01"
+    end_date: "2009-03-31"
+    shocks:
+      equity: -0.50
+      credit_spread: 0.05
+      volatility: 0.80
+      liquidity: -0.60
+    factors:
+      - name: "market_beta"
+        shock: -0.45
+      - name: "size_factor"
+        shock: -0.30
+      - name: "value_factor"
+        shock: -0.20
+        
+  - name: "2020_covid_crash"
+    type: "historical"
+    start_date: "2020-02-20"
+    end_date: "2020-03-23"
+    shocks:
+      equity: -0.35
+      volatility: 3.00
+      liquidity: -0.40
+    factors:
+      - name: "market_beta"
+        shock: -0.35
+      - name: "momentum"
+        shock: -0.25
+
+monte_carlo_scenarios:
+  - name: "tail_risk_simulation"
+    type: "monte_carlo"
+    n_simulations: 10000
+    confidence_levels: [0.95, 0.99, 0.999]
+    distribution: "student_t"
+    degrees_of_freedom: 5
+    
+  - name: "correlation_breakdown"
+    type: "monte_carlo"
+    n_simulations: 5000
+    correlation_shock: 0.30
+    volatility_multiplier: 2.0
+
+custom_scenarios:
+  - name: "china_real_estate_crisis"
+    type: "custom"
+    shocks:
+      real_estate: -0.40
+      banking: -0.25
+      construction: -0.35
+      consumer_discretionary: -0.20
+      
+  - name: "tech_bubble_burst"
+    type: "custom"
+    shocks:
+      technology: -0.45
+      communication_services: -0.30
+      growth_stocks: -0.50
+```
+
+### 4.3 蒙特卡洛情景生成器
+
+```python
+class MonteCarloScenarioGenerator:
+    """蒙特卡洛情景生成器"""
+    
+    def __init__(
+        self,
+        n_simulations: int = 10000,
+        distribution: str = "student_t",
+        degrees_of_freedom: int = 5
+    ):
+        self.n_simulations = n_simulations
+        self.distribution = distribution
+        self.degrees_of_freedom = degrees_of_freedom
+    
+    def generate_scenarios(
+        self,
+        returns: pd.DataFrame,
+        confidence_levels: List[float] = [0.95, 0.99]
+    ) -> Dict[str, Scenario]:
+        """生成蒙特卡洛情景"""
+        scenarios = {}
+        
+        mean_returns = returns.mean()
+        cov_matrix = returns.cov()
+        
+        if self.distribution == "student_t":
+            simulated_returns = self._simulate_t_distribution(
+                mean_returns, cov_matrix
+            )
+        else:
+            simulated_returns = self._simulate_normal(
+                mean_returns, cov_matrix
+            )
+        
+        for conf_level in confidence_levels:
+            var_threshold = np.percentile(
+                simulated_returns.sum(axis=1),
+                (1 - conf_level) * 100
+            )
+            
+            tail_scenarios = simulated_returns[
+                simulated_returns.sum(axis=1) <= var_threshold
+            ]
+            
+            worst_case = tail_scenarios.iloc[0]
+            
+            scenarios[f"monte_carlo_{int(conf_level*100)}"] = Scenario(
+                name=f"Monte Carlo {int(conf_level*100)}% VaR",
+                type="monte_carlo",
+                shocks=worst_case.to_dict(),
+                probability=1 - conf_level
+            )
+        
+        return scenarios
+    
+    def _simulate_t_distribution(
+        self,
+        mean: pd.Series,
+        cov: pd.DataFrame
+    ) -> pd.DataFrame:
+        """使用t分布模拟"""
+        n_assets = len(mean)
+        
+        L = np.linalg.cholesky(cov)
+        
+        z = np.random.standard_t(
+            self.degrees_of_freedom,
+            size=(self.n_simulations, n_assets)
+        )
+        
+        simulated = z @ L.T + mean.values
+        
+        return pd.DataFrame(simulated, columns=mean.index)
+    
+    def _simulate_normal(
+        self,
+        mean: pd.Series,
+        cov: pd.DataFrame
+    ) -> pd.DataFrame:
+        """使用正态分布模拟"""
+        simulated = np.random.multivariate_normal(
+            mean.values,
+            cov.values,
+            size=self.n_simulations
+        )
+        return pd.DataFrame(simulated, columns=mean.index)
+```
+
+---
+
+## 5. 测试指标体系
+
+### 5.1 压力测试指标分类
+
+| 指标类别 | 指标名称 | 计算方法 | 风险阈值 | 说明 |
+|----------|----------|----------|----------|------|
+| **损失指标** | 最大损失 | Max(情景损失) | -20% | 极端情景下的最大损失 |
+| **损失指标** | 平均损失 | Mean(情景损失) | -10% | 所有情景的平均损失 |
+| **损失指标** | 损失标准差 | Std(情景损失) | 5% | 损失的波动程度 |
+| **风险暴露** | 因子暴露 | β×因子冲击 | 0.5 | 因子风险暴露 |
+| **风险暴露** | 行业暴露 | 权重×行业冲击 | 30% | 行业风险暴露 |
+| **风险暴露** | 风格暴露 | 风格因子×冲击 | 0.3 | 风格风险暴露 |
+| **流动性指标** | 平仓天数 | 持仓/日均成交量 | 5天 | 极端情况下平仓所需天数 |
+| **流动性指标** | 价格冲击 | 成交量×冲击系数 | 2% | 大额交易的价格冲击 |
+| **尾部风险** | VaR(99%) | 第1百分位损失 | -15% | 99%置信度下的损失 |
+| **尾部风险** | ES(99%) | 尾部平均损失 | -20% | 超过VaR的平均损失 |
+
+### 5.2 指标计算器
+
+```python
+class StressTestMetricsCalculator:
+    """压力测试指标计算器"""
+    
+    def calculate_loss_metrics(
+        self,
+        scenario_results: List[ScenarioResult]
+    ) -> Dict[str, float]:
+        """计算损失指标"""
+        losses = [r.portfolio_loss for r in scenario_results]
+        
+        return {
+            "max_loss": min(losses),
+            "avg_loss": np.mean(losses),
+            "loss_std": np.std(losses),
+            "loss_skewness": pd.Series(losses).skew(),
+            "loss_kurtosis": pd.Series(losses).kurtosis()
+        }
+    
+    def calculate_exposure_metrics(
+        self,
+        portfolio: Portfolio,
+        scenario: Scenario
+    ) -> Dict[str, float]:
+        """计算风险暴露指标"""
+        exposures = {}
+        
+        for factor, shock in scenario.factor_shocks.items():
+            factor_exposure = portfolio.get_factor_exposure(factor)
+            exposures[f"{factor}_exposure"] = factor_exposure * shock
+        
+        for sector, shock in scenario.sector_shocks.items():
+            sector_weight = portfolio.get_sector_weight(sector)
+            exposures[f"{sector}_exposure"] = sector_weight * shock
+        
+        return exposures
+    
+    def calculate_liquidity_metrics(
+        self,
+        portfolio: Portfolio,
+        market_data: pd.DataFrame,
+        stress_multiplier: float = 2.0
+    ) -> Dict[str, float]:
+        """计算流动性指标"""
+        metrics = {}
+        
+        total_value = portfolio.total_value
+        
+        liquidation_days = 0
+        price_impact = 0
+        
+        for position in portfolio.positions:
+            avg_volume = market_data[position.symbol]["volume"].mean()
+            position_value = position.market_value
+            
+            daily_liquidation = avg_volume * market_data[position.symbol]["close"].iloc[-1]
+            days_needed = position_value / daily_liquidation
+            liquidation_days = max(liquidation_days, days_needed)
+            
+            participation_rate = position_value / (avg_volume * 20)
+            impact = participation_rate * 0.1 * stress_multiplier
+            price_impact += impact * position.weight
+        
+        metrics["liquidation_days"] = liquidation_days
+        metrics["price_impact"] = price_impact
+        
+        return metrics
+    
+    def calculate_tail_risk_metrics(
+        self,
+        scenario_results: List[ScenarioResult],
+        confidence_levels: List[float] = [0.95, 0.99, 0.999]
+    ) -> Dict[str, float]:
+        """计算尾部风险指标"""
+        losses = sorted([r.portfolio_loss for r in scenario_results])
+        n = len(losses)
+        
+        metrics = {}
+        
+        for conf in confidence_levels:
+            var_index = int(n * (1 - conf))
+            var = losses[var_index]
+            
+            tail_losses = losses[:var_index]
+            es = np.mean(tail_losses) if tail_losses else var
+            
+            metrics[f"var_{int(conf*100)}"] = var
+            metrics[f"es_{int(conf*100)}"] = es
+        
+        return metrics
+```
+
+### 5.3 压力测试报告模板
+
+```markdown
+# 压力测试报告
+
+## 1. 测试概况
+- **测试日期**: {test_date}
+- **测试范围**: {test_scope}
+- **情景数量**: {n_scenarios}
+- **测试结论**: {conclusion}
+
+## 2. 情景分析结果
+
+### 2.1 历史情景
+| 情景名称 | 组合损失 | 风险等级 | 主要风险因子 |
+|----------|----------|----------|--------------|
+| {scenario_1} | {loss_1:.2%} | {risk_level_1} | {factors_1} |
+| {scenario_2} | {loss_2:.2%} | {risk_level_2} | {factors_2} |
+
+### 2.2 蒙特卡洛情景
+| 置信度 | VaR | ES | 概率 |
+|--------|-----|-----|------|
+| 95% | {var_95:.2%} | {es_95:.2%} | 5% |
+| 99% | {var_99:.2%} | {es_99:.2%} | 1% |
+| 99.9% | {var_999:.2%} | {es_999:.2%} | 0.1% |
+
+## 3. 风险暴露分析
+
+### 3.1 因子暴露
+| 因子 | 当前暴露 | 冲击后暴露 | 敞口变化 |
+|------|----------|------------|----------|
+| {factor_1} | {exposure_1:.3f} | {shocked_1:.3f} | {change_1:.3f} |
+
+### 3.2 行业暴露
+| 行业 | 当前权重 | 冲击后权重 | 风险贡献 |
+|------|----------|------------|----------|
+| {sector_1} | {weight_1:.2%} | {shocked_1:.2%} | {contribution_1:.2%} |
+
+## 4. 流动性风险
+- **平仓天数**: {liquidation_days:.1f}天
+- **价格冲击**: {price_impact:.2%}
+- **流动性风险等级**: {liquidity_risk_level}
+
+## 5. 风险缓释建议
+{recommendations}
+```
+
+---
+
+## 6. 接口设计
 
 ### 4.1 主要API接口
 

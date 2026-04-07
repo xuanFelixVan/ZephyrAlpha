@@ -21,7 +21,9 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 10 治理与合规层）：
 responsibility:
-  - 系统框架、架构设计
+  - 治理决策支持
+  - 决策树分析
+  - AI推荐引擎
 
 ---
 ---

@@ -6,7 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
+  - FINOS CDM集成实施
+  - 监管报告自动化部署
+  - CDM标准实现
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 监管报告自动化系统FINOS CDM集成
