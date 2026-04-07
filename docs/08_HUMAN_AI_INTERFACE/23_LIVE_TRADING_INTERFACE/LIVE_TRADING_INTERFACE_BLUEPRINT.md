@@ -30,7 +30,7 @@ github_url: https://github.com/streamlit/streamlit
 license: Apache-2.0
 responsibility:
   - 实盘交易界面，负责实盘交易操作、订单管理和交易监控，不负责策略回测和参数优化
-## ## 1. 概述
+## 1. 概述
 
 ### 1.1 定位与目标
 

@@ -30,7 +30,7 @@ github_url: https://github.com/features/actions
 license: Free for public repositories
 responsibility:
   - CI/CD集成，负责持续集成、持续部署和自动化流水线，不负责系统监控和告警
-## ## 1. 概述
+## 1. 概述
 
 ### 1.1 定位与目标
 

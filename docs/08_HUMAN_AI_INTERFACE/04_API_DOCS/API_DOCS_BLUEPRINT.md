@@ -27,7 +27,7 @@ parent_document: ../INDEX.md
 implementation_status: 已实现
 responsibility:
   - API文档系统，负责API接口文档的自动生成、展示和维护，不负责API限流和权限管理
-## ## 1. 概述
+## 1. 概述
 
 API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文档和交互式测试功能。
 

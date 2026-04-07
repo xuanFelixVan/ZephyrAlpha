@@ -30,7 +30,7 @@ github_url: https://github.com/restic/restic
 license: BSD-2-Clause
 responsibility:
   - 数据备份系统，负责数据备份、恢复和备份策略管理，不负责数据导入导出
-## ## 1. 概述
+## 1. 概述
 
 ### 1.1 定位与目标
 

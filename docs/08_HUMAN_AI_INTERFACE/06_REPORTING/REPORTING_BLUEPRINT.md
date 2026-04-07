@@ -28,7 +28,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 报告生成系统，负责投资报告、风险报告和绩效报告的自动生成，不负责实时监控和告警
-## ## 1. 概述
+## 1. 概述
 
 报告生成系统负责生成策略表现报告、风险报告和定期报告。
 

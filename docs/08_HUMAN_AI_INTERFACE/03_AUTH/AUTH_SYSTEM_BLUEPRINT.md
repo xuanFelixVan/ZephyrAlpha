@@ -27,7 +27,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 认证授权系统，负责用户身份认证、登录管理和基础权限验证，不负责细粒度权限控制
-## ## 1. 概述
+## 1. 概述
 
 ### 1.1 功能定位
 
@@ -43,7 +43,7 @@ responsibility:
 | 密码重置 | 邮箱验证重置 | P1 |
 | 会话管理 | Token刷新 | P1 |
 
-## ## 2. 架构设计
+## 2. 架构设计
 
 ### 3.1 系统架构
 

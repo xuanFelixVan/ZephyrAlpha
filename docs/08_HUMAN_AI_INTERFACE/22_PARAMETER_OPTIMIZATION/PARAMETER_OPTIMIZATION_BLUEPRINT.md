@@ -30,7 +30,7 @@ github_url: https://github.com/optuna/optuna
 license: MIT
 responsibility:
   - 参数优化界面，负责策略参数优化、参数搜索和优化结果展示，不负责策略回测和实盘交易
-## ## 1. 概述
+## 1. 概述
 
 ### 1.1 定位与目标
 
