@@ -86,3 +86,5 @@ implementation_status: 已完�?
 ---
 
 *最后更�? 2026-04-03*
+
+- [技术验证计�?](./TECHNICAL_VALIDATION_PLAN.md) - 系统文档

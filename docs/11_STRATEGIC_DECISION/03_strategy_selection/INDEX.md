@@ -41,6 +41,10 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [策略选择框架蓝图](./STRATEGY_SELECTION_FRAMEWORK.md) - 系统文档
+
+- [策略组合优化蓝图](./STRATEGY_PORTFOLIO_OPTIMIZATION.md) - 系统文档
+
 
 ### 核心文档
 

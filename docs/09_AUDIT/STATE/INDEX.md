@@ -41,6 +41,12 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [稀疏目录整合指南](./sparse_directory_integration_guide_20260407_025756.md) - 实施指南文档
+
+- [稀疏目录分析报告](./sparse_directory_analysis_20260407_030548.md) - 系统文档
+
+- [稀疏目录分析报告](./sparse_directory_analysis_20260407_021046.md) - 系统文档
+
 
 ### 核心文档
 

@@ -236,3 +236,11 @@ implementation_status: ш┐ЫшбМф╕?---
 **цЬАхРОцЫ┤цЦ?*: 2026-03-31
 **ч╗┤цКдшА?*: ц╕ЕщгОщЗПхМЦч│╗ч╗Я
 **чЙИцЬм**: v5.3 ф╕кф║║х╝АхПСч▓╛чоАчЙ?
+
+- [AI监督集成方案 - 专业机构级设�?](./AI_SUPERVISION_INTEGRATION_PLAN.md) - 系统文档
+
+- [36ﻝﺁﻟﮒﺏﻝ­ﮔ۰ﮔﭘﺅﺙﮒﺛﮔ۰۲ﺅﺙ](./ARCHIVED.md) - 系统文档
+
+- [ﻝ۴ﻝﭨﻝﺛﻝﭨﻠﮔﮔﺗﮔ۰ (NEURAL_NETWORK_INTEGRATION_PLAN)](./NEURAL_NETWORK_INTEGRATION_PLAN.md) - 系统文档
+
+- [参数管理](./parameter_management.md) - 系统文档

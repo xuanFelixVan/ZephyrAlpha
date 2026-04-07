@@ -41,6 +41,8 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./T.08.AR001.a_stock_rule_engine_design.md) - 设计文档
+
 
 ### 核心文档
 

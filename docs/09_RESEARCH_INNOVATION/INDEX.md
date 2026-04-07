@@ -128,3 +128,17 @@ implementation_status: 设计阶段
 - **最后更新**: 2026-04-06
 - **维护者**: 系统架构师
 - **更新频率**: 按需更新
+
+- [Layer 9 文档质量监控机制](./DOCUMENT_QUALITY_MONITORING_MECHANISM.md) - 系统文档
+
+- [Layer 9文档治理持续维护计划](./LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN.md) - 系统文档
+
+- [Layer 9文档治理维护总结](./LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY.md) - 系统文档
+
+- [Layer 9研究与创新层缺失模块深度分析报告](./LAYER9_MISSING_MODULES_ANALYSIS.md) - 系统文档
+
+- [Layer 9: 研究与创新层完整实施方案 v5.0](./IMPLEMENTATION_GUIDE.md) - 实施指南文档
+
+- [Layer 9研究与创新层实施优先级排序](./LAYER9_IMPLEMENTATION_PRIORITY.md) - 实施指南文档
+
+- [Layer 9研究与创新层开源工具集成指南](./LAYER9_OPENSOURCE_INTEGRATION_GUIDE.md) - 实施指南文档

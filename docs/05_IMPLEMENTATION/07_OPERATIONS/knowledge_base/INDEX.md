@@ -41,6 +41,8 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ](./PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md) - 系统文档
+
 
 ### 核心文档
 

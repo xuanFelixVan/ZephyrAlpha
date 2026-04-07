@@ -100,3 +100,31 @@ df -h
 
 **维护者**: 运维负责人
 **创建日期**: 2026-04-04
+
+- [СИфС║║+AIтю║ТЎ»СИІуџёти«УиЮтЈ»УАїТђДтѕєТъљСИјт«ъТќйуГќуЋЦ](./GAP_FEASIBILITY_ANALYSIS_PERSONAL_AI_SCENARIO.md) - 系统文档
+
+- [Minicondaﮒ؟ﻟ۲ﮒﺏﻠ؟ﮔ­۴ﻠ۹۳ﮔ۲ﮔ۴ﮔﺕﮒ?](./MINICONDA_INSTALLATION_CHECKLIST.md) - 系统文档
+
+- [QMTш┐ЮцОещЧощвШца╣цЬмхОЯхЫахИЖцЮРф╕ОшзгхЖ│цЦ╣цб?](./QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md) - 系统文档
+
+- [QMTф║дцШУцОехПгш┐ЮцОещЧощвШцОТцЯецМЗхНЧ](./QMT_CONNECTION_TROUBLESHOOTING.md) - 系统文档
+
+- [ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﮒ۷ﮔ۷۰ﮒﮔﺓﺎﮒﭦ۵ﮒ؟۰ﮔﺗﮔﺗ?](./SYSTEM_WIDE_APPROVAL_PLAN.md) - 系统文档
+
+- [чЙИцЬмчобчРЖхЖ│чнЦшо░х╜Х](./VERSION_MANAGEMENT_DECISIONS.md) - 系统文档
+
+- [版本管理优化方案](./VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md) - 系统文档
+
+- [Minicondaﮒ؟ﻟ۲ﮔﮒﺅﺙ?ﮒﻠﺅﺙ?](./MINICONDA_INSTALLATION_GUIDE.md) - 实施指南文档
+
+- [QMT Final Setup Guide](./QMT_FINAL_SETUP_GUIDE.md) - 实施指南文档
+
+- [QMT MiniQMTﮔ۷۰ﮒﺙﻝﭨﮒﺛﮔﮒ](./QMT_MINIQMT_LOGIN_GUIDE.md) - 实施指南文档
+
+- [版本管理自动化集成指�?](./VERSION_MANAGEMENT_AUTOMATION_GUIDE.md) - 实施指南文档
+
+- [P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./P1_RISK_MITIGATION_DESIGN.md) - 设计文档
+
+- [ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ?v1.0](./SPEC_APPROVER_TOOL_GUIDE.md) - 技术规格说明
+
+- [HMMцибхЮЛцКАцЬпхЯ╣шоншобхИ?](./HMM_TRAINING_PLAN_001.md) - 培训材料

@@ -41,6 +41,12 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [文档索引更新机制](./INDEX_UPDATE_MECHANISM.md) - 系统文档
+
+- [文档索引体系优化方案](./DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md) - 系统文档
+
+- [文档治理最佳实践库](./DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md) - 系统文档
+
 
 ### 核心文档
 

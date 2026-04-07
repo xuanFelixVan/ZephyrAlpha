@@ -192,3 +192,5 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 **创建日期**: 2026-04-07
 **维护者**: 首席文档架构师
 **状态**: ✅ 活跃
+
+- [文档治理知识库](./DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE.md) - 系统文档

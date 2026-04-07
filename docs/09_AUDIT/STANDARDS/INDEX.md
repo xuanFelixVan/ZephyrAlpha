@@ -41,6 +41,12 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [职责描述规范标准 v2.0](./RESPONSIBILITY_DESCRIPTION_STANDARD_V2.md) - 系统文档
+
+- [职责描述规范模板](./RESPONSIBILITY_DESCRIPTION_STANDARD.md) - 系统文档
+
+- [文件命名规范标准](./FILE_NAMING_STANDARD.md) - 系统文档
+
 
 ### 核心文档
 

@@ -41,6 +41,8 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
+- [风险预算框架蓝图](./RISK_BUDGETING_FRAMEWORK.md) - 系统文档
+
 
 ### 核心文档
 

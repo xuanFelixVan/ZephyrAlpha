@@ -170,3 +170,7 @@ responsibility:
 ---
 
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护人**: 首席文档架构师
+
+- [AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?](./AI_CONSTRUCTION_QUICK_REFERENCE.md) - 系统文档
+
+- [ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﮔﭨﻟ۶](./IMPLEMENTATION_PROGRESS.md) - 实施指南文档
