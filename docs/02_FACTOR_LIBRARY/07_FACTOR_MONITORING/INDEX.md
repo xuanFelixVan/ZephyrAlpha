@@ -26,7 +26,7 @@ compliance_level: 专业标准---
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子监控系统](./FACTOR_MONITORING.md) | 实时因子监控和预�?| ⭐⭐⭐⭐�?|
+| [因子监控系统](./factor_monitoring.md) | 实时因子监控和预�?| ⭐⭐⭐⭐�?|
 | [AI因子代理](./AI_FACTOR_AGENT.md) | AI驱动的因子监控代�?| ⭐⭐⭐⭐ |
 
 ---
@@ -67,9 +67,9 @@ AI因子代理提供以下功能�?
 
 ## 📚 相关文档
 
-- [因子筛选策略](../01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](../01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
-- [回测系统](../05_BACKTEST/INDEX.md)
+- [因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
+- [因子验证指南](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
+- [回测系统](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 
 ---
 

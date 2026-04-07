@@ -346,7 +346,7 @@ class RiskEventTracker:
 ---
 
 **参考文档**:
-- [Layer 10差距分析报告](d:\ZephyrAlpha\docs\01_FRAMEWORK\LAYER_10_GAP_ANALYSIS_REPORT.md)
+- [Layer 10差距分析报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/GAP_ANALYSIS_REPORT.md)
 - [OpenProject官方文档](https://www.openproject.org/)
 ---
 

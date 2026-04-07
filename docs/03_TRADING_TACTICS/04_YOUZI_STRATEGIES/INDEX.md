@@ -48,7 +48,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](README.md) - `TACTICS_YOUZI_README_001`
+- [Readme](API_README.md) - `TACTICS_YOUZI_README_001`
 
 ---
 

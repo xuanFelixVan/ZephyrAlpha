@@ -447,7 +447,7 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 #### Layer 8: 人机交互层
 ##### 0.001. Online Research Environment
 - **模块ID**: ONLINE_RESEARCH_ENVIRONMENT_001
-- **蓝图文档**: [ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md](../21_ONLINE_RESEARCH_ENVIRONMENT/ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md)
+- **蓝图文档**: [ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md](./ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha在线研究环境
 - **状态**: Active

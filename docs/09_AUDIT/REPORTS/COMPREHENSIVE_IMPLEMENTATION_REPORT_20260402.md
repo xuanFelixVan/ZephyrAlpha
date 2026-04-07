@@ -66,8 +66,8 @@ last_updated: 2026-04-02---
 - жЁЇуй«С║єтЉет║дсђЂТюѕт║дсђЂтГБт║дт«АУ«АС╗╗ті?- т╗║уФІС║єУЄфтіетїќт«АУ«АТю║тѕХ
 - тѕЏт╗║С║єжЃеуй▓ТїЄтЇ?
 **ТќЄТАБ**:
-- [т«џТюЪт«АУ«АС╗╗тіАжЁЇуй«](file:///d:/ZephyrAlpha/docs/09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [т«џТюЪС╗╗тіАжЃеуй▓ТїЄтЇЌ](file:///d:/ZephyrAlpha/docs/09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
+- [т«џТюЪт«АУ«АС╗╗тіАжЁЇуй«](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- [т«џТюЪС╗╗тіАжЃеуй▓ТїЄтЇЌ](09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
 
 ---
 
@@ -79,8 +79,8 @@ last_updated: 2026-04-02---
 - Тћ╣тќёт╣Ёт║д№╝?3.6%
 - т╝ђтЈЉС║єУЄфтіетїќС┐«тцЇтиЦтЁ?
 **ТќЄТАБ**:
-- [жЊЙТјЦС┐«тцЇТіЦтЉі](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/LINK_FIX_REPORT_20260402.md)
-- [ТЎ║УЃйжЊЙТјЦС┐«тцЇТіЦтЉі](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/INTELLIGENT_LINK_FIX_REPORT_20260402.md)
+- [жЊЙТјЦС┐«тцЇТіЦтЉі](09_AUDIT/REPORTS/INTELLIGENT_LINK_FIX_REPORT_20260402.md)
+- [ТЎ║УЃйжЊЙТјЦС┐«тцЇТіЦтЉі](09_AUDIT/REPORTS/INTELLIGENT_LINK_FIX_REPORT_20260402.md)
 
 ---
 
@@ -91,10 +91,10 @@ last_updated: 2026-04-02---
 **ТѕљТъю**:
 - тѕЏт╗║С║?СИфтЁ│жћ«ТќЄТА?- ТЊЇСйюТЅІтєї№╝?СИ?- жЁЇуй«ТеАТЮ┐№╝?СИ?- ТБђТЪЦТИЁтЇЋ№╝џ1СИ?- ТіђТю»УДёУїЃ№╝џ3СИ?
 **ТќЄТАБ**:
-- [жЃеуй▓ТЅІтєї](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md)
-- [уЏЉТјДТЅІтєї](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md)
-- [жБјжЎЕуЏЉТјДТЅІтєї](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md)
-- [у╗┤ТіцТЅІтєї](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md)
+- [жЃеуй▓ТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md)
+- [уЏЉТјДТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md)
+- [жБјжЎЕуЏЉТјДТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md)
+- [у╗┤ТіцТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md)
 
 ---
 
@@ -106,9 +106,9 @@ last_updated: 2026-04-02---
 - т╗║уФІС║єТђДУЃйТаЄтЄє
 
 **ТќЄТАБ**:
-- [ТќЄТАБт«АУ«АтиЦтЁиУДёУїЃ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
-- [тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиУДёУїЃ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
-- [ТќЄТАБтѕєу▒╗тиЦтЁиУДёУїЃ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_CLASSIFIER_SPECIFICATION.md)
+- [ТќЄТАБт«АУ«АтиЦтЁиУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
+- [тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
+- [ТќЄТАБтѕєу▒╗тиЦтЁиУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_CLASSIFIER_SPECIFICATION.md)
 
 ---
 
@@ -136,7 +136,7 @@ last_updated: 2026-04-02---
 - жЌ«жбўтЈЉуј░ујЄ№╝џ25.8%
 
 **ТќЄТАБ**:
-- [ТїЂу╗ГТћ╣У┐ЏТю║тѕХУ»ЋУ┐љУАїТіЦтЉі](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- [ТїЂу╗ГТћ╣У┐ЏТю║тѕХУ»ЋУ┐љУАїТіЦтЉі](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
 
 ---
 
@@ -148,9 +148,9 @@ last_updated: 2026-04-02---
 - СИфС║║т╝ђтЈЉТюђСй│т«ъУи?- СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇ?- СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ
 
 **ТќЄТАБ**:
-- [СИфС║║т╝ђтЈЉТюђСй│т«ъУих](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
-- [СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
-- [СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/lessons_learned/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
+- [СИфС║║т╝ђтЈЉТюђСй│т«ъУих](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
+- [СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
+- [СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
 
 ---
 
@@ -175,7 +175,7 @@ last_updated: 2026-04-02---
 - тѕЏт╗║С║єжЊЙТјЦС┐«тцЇТАѕСЙІуаћуЕ?- Тђ╗у╗ЊС║єТѕљтіЪу╗ЈжфїтњїТћ╣У┐Џт╗║У««
 - т╗║уФІС║єТюђСй│т«ъУи?
 **ТќЄТАБ**:
-- [жЊЙТјЦС┐«тцЇТАѕСЙІуаћуЕХ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/LINK_FIX_CASE_STUDY.md)
+- [жЊЙТјЦС┐«тцЇТАѕСЙІуаћуЕХ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/LINK_FIX_CASE_STUDY.md)
 
 ---
 
@@ -187,8 +187,8 @@ last_updated: 2026-04-02---
 - ТЈљСЙЏС║єУ»ду╗єуџёСй┐ућеУ»┤Тўј
 
 **ТќЄТАБ**:
-- [ТќЄТАБт«АУ«АтиЦтЁиСй┐ућеТїЄтЇЌ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/DOCUMENT_AUDITOR_GUIDE.md)
-- [тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиСй┐ућеТїЄтЇЌ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/METADATA_ENHANCER_GUIDE.md)
+- [ТќЄТАБт«АУ«АтиЦтЁиСй┐ућеТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/DOCUMENT_AUDITOR_GUIDE.md)
+- [тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиСй┐ућеТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/METADATA_ENHANCER_GUIDE.md)
 
 ---
 
@@ -374,8 +374,8 @@ knowledge_base/
 ## 11. тЈѓУђЃТќЄТА?
 ### 11.1 ТаИт┐ЃТќЄТАБ
 
-- [ТќЄТАБТ▓╗уљєТхЂуеІТаЄтЄє](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [т«џТюЪт«АУ«АС╗╗тіАжЁЇуй«](../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- [ТќЄТАБТ▓╗уљєТхЂуеІТаЄтЄє](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [т«џТюЪт«АУ«АС╗╗тіАжЁЇуй«](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
 - [ТќЄТАБТ▓╗уљєТюђСй│т«ъУих](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
 
 ### 11.2 т«ъТќйТіЦтЉі

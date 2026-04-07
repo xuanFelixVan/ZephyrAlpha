@@ -362,7 +362,7 @@ python scripts/fix_invalid_links.py
 
 ## 🔗 七、相关文档
 
-- [文档编码规范](DOCUMENT_ENCODING_STANDARD.md)
+- [文档编码规范](10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)
 - [文档治理Git Hook](.git/hooks/pre-commit)
 - [链接验证脚本](scripts/validate_index_links.py)
 - [链接分析脚本](scripts/analyze_invalid_links.py)

@@ -169,7 +169,7 @@ def send_email(to, subject, content):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.8
-- **蓝图文档**: [MOBILE_PUSH_BLUEPRINT.md](../08_MOBILE_PUSH/MOBILE_PUSH_BLUEPRINT.md)
+- **蓝图文档**: [MOBILE_PUSH_BLUEPRINT.md](./MOBILE_PUSH_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha移动推送
 - **状态**: Active

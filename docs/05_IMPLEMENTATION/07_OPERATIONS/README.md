@@ -113,7 +113,7 @@ python scripts/start_server.py
 
 ##  相关文档
 
-- [部署指南](../03_DEPLOYMENT/README.md)
+- [部署指南](API_README.md)
 - 
 
 ---

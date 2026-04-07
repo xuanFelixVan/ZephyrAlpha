@@ -231,7 +231,7 @@ def update_python_file_header(file_path):
 
 1. [深度审计报告](./DEEP_SYSTEM_AUDIT_REPORT_20260402.md)
 2. [立即行动完成报告](./IMMEDIATE_ACTION_COMPLETION_REPORT_20260402.md)
-3. [架构迁移计划](06_ARCHIVE\20260404_audit_reports_archive\01_FRAMEWORK\ARCHITECTURE_MIGRATION_PLAN.md)
+3. [架构迁移计划](01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
 
 ---
 

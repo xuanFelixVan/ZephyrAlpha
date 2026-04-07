@@ -33,10 +33,10 @@ responsibility: 数据安全策略与隐私保护机制
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
-| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](../DATA_BACKUP_RECOVERY/) | 协同模块 | 数据备份方案 |
+| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_BACKUP_RECOVERY_BLUEPRINT.md) | 协同模块 | 数据备份方案 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据安全与隐私保护系统架构设计

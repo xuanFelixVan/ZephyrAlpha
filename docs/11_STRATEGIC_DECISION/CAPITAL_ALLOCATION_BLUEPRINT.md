@@ -1076,7 +1076,7 @@ class SkfolioIntegration:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
 | [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md) | 多策略协调系统 |
 | [IPS_MANAGEMENT_BLUEPRINT.md](./IPS_MANAGEMENT_BLUEPRINT.md) | 投资政策声明管理 |
 

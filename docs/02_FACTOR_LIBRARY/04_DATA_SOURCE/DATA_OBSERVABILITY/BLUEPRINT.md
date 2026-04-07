@@ -35,10 +35,10 @@ responsibility: 数据可观测性架构与监控指标
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据监控增强 | [../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/) | 协同模块 | 数据质量监控 |
-| 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](../DATA_LINEAGE_TRACKING/) | 协同模块 | 数据血缘关系 |
+| 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 协同模块 | 数据血缘关系 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据可观测性平台架构设计

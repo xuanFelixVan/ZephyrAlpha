@@ -370,7 +370,7 @@ def generate_signal(data, params):
 ### 7.4 入池文档清单
 
 -  [策略文档](../INDEX.md)
--  [回测报告](03_TRADING_TACTICS\05_STRATEGY_POOL\index.md)
+-  [回测报告](08_HUMAN_AI_INTERFACE/index.md)
 -  [模拟盘记录](../99_ARCHIVE/)
 -  [实盘记录](../99_ARCHIVE/)
 -  [评审报告](../99_ARCHIVE/)

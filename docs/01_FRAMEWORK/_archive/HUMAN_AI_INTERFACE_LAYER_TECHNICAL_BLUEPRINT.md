@@ -38,7 +38,7 @@ responsibility_boundary: |
 
 # Layer 8: 人机交互层蓝图
 
-> ⚠️ **归档说明**: 本文档已归档 (status: Archived)，内容仅供参考。如需最新信息，请参考 [HUMAN_AI_INTERACTION_BLUEPRINT.md](HUMAN_AI_INTERACTION_BLUEPRINT.md)
+> ⚠️ **归档说明**: 本文档已归档 (status: Archived)，内容仅供参考。如需最新信息，请参考 [HUMAN_AI_INTERACTION_BLUEPRINT.md](01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
 
 > **核心职责**: Human Ai Interface Layer Technical蓝图设计
 > **职责边界**: 
@@ -485,7 +485,7 @@ Layer 8人机交互层通过构建专业级交互体系，实现了：
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Interface Layer Technical Blueprint
 - **模块ID**: HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT_001
-- **蓝图文档**: [HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md)
+- **蓝图文档**: [HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md](01_FRAMEWORK/_archive/HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - 人机交互层技术实现
 - **状态**: Archived

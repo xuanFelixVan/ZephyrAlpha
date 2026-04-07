@@ -490,7 +490,7 @@ restic backup /data
 #### Layer 8: 人机交互层
 ##### 0.001. Data Backup
 - **模块ID**: DATA_BACKUP_001
-- **蓝图文档**: [DATA_BACKUP_BLUEPRINT.md](../20_DATA_BACKUP/DATA_BACKUP_BLUEPRINT.md)
+- **蓝图文档**: [DATA_BACKUP_BLUEPRINT.md](./DATA_BACKUP_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha数据备份系统
 - **状态**: Active

@@ -226,7 +226,7 @@ class TechnicalFactorEngine:
         
         for factor_name in factor_names:
             if factor_name in self.factors:
-                result = self.factors[factor_name](result)
+                result = self.factors[factor_name](01_FRAMEWORK/BACKTEST_RESULT_VIEWER_BLUEPRINT.md)
         
         return result
     

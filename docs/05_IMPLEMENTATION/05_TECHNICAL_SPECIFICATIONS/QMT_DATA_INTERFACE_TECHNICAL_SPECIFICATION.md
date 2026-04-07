@@ -1136,8 +1136,8 @@ class TestPerformance:
 
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [系统清单](02_FACTOR_LIBRARY\System_Manifest.md)
-- [质量门禁机制](../07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- [系统清单](System_Manifest.md)
+- [质量门禁机制](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 
 ### C. 变更历史
 

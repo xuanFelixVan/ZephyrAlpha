@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Backtest Ui Blueprint](BACKTEST_UI_BLUEPRINT.md) - `BACKTESTUIBLUEPRINT_001`
+- [Backtest Ui Blueprint](08_HUMAN_AI_INTERFACE/05_BACKTEST_UI/BACKTEST_UI_BLUEPRINT.md) - `BACKTESTUIBLUEPRINT_001`
 
 ---
 

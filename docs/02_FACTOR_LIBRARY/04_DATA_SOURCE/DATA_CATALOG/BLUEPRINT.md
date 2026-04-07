@@ -37,7 +37,7 @@ responsibility: 数据目录管理与元数据组织
 |------|------|------|------|
 | 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](../DATA_LINEAGE_TRACKING/) | 协同模块 | 数据血缘关系 |
+| 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 协同模块 | 数据血缘关系 |
 | 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
 
 **职责边界**:

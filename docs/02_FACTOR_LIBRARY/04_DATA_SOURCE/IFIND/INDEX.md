@@ -49,7 +49,7 @@ responsibility: iFind数据源模块导航
 | 文件/目录 | 职责 | 状态 |
 |-----------|------|------|
 
-| [financial_statements/](financial_statements/) | 财务数据 | Active |
+| [financial_statements/](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/FINANCIAL_STATEMENTS_API.md) | 财务数据 | Active |
 | factor_list.csv | 因子列表数据 | Active |
 | factor_master_index.csv | 因子主索引数据 | Active |
 
@@ -81,12 +81,12 @@ responsibility: iFind数据源模块导航
 
 ### 数据源连接器
 
-- [IFIND_CONNECTOR.md](../IFIND_CONNECTOR.md) - iFind数据源接口文档
+- [IFIND_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) - iFind数据源接口文档
 
 ### 财务数据
 
-- [financial_statements/INDEX.md](financial_statements/INDEX.md) - 财务数据索引
-- [financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md](financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) - 完整指标清单
+- [financial_statements/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md) - 财务数据索引
+- [financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) - 完整指标清单
 
 ### 因子数据
 

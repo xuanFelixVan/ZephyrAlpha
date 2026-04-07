@@ -37,9 +37,9 @@ applicable_scope: System_Manifest.md Layer 9索引补充
 
 ```markdown
 | **Layer 9: 研究与创新层** | | | | | |
-| [研究与创新层蓝图](../BLUEPRINT.md) | `docs/09_RESEARCH_INNOVATION/BLUEPRINT.md` | RESEARCH_INNOVATION_001 | 1.0 | Active | AI虚拟研究实验室、创新孵化器、学术跟踪、知识管理 |
-| [缺失模块补充设计](MISSING_MODULES_SUPPLEMENT.md) | `docs/09_RESEARCH_INNOVATION/MISSING_MODULES_SUPPLEMENT.md` | LAYER9_SUPPLEMENT_001 | 1.0 | Active | 特征存储、模型注册表、研究仪表板 |
-| [完整缺失模块补充方案v2.0](COMPLETE_SUPPLEMENT_v2.md) | `docs/09_RESEARCH_INNOVATION/COMPLETE_SUPPLEMENT_v2.md` | LAYER9_COMPLETE_002 | 2.0 | Active | 数据版本控制、超参数优化、模型解释性、A/B测试、审计日志、成本管理 |
+| [研究与创新层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | `docs/09_RESEARCH_INNOVATION/BLUEPRINT.md` | RESEARCH_INNOVATION_001 | 1.0 | Active | AI虚拟研究实验室、创新孵化器、学术跟踪、知识管理 |
+| [缺失模块补充设计](09_RESEARCH_INNOVATION/_archive/MISSING_MODULES_SUPPLEMENT.md) | `docs/09_RESEARCH_INNOVATION/MISSING_MODULES_SUPPLEMENT.md` | LAYER9_SUPPLEMENT_001 | 1.0 | Active | 特征存储、模型注册表、研究仪表板 |
+| [完整缺失模块补充方案v2.0](09_RESEARCH_INNOVATION/_archive/COMPLETE_SUPPLEMENT_v2.md) | `docs/09_RESEARCH_INNOVATION/COMPLETE_SUPPLEMENT_v2.md` | LAYER9_COMPLETE_002 | 2.0 | Active | 数据版本控制、超参数优化、模型解释性、A/B测试、审计日志、成本管理 |
 ```
 
 ### 1.2 需要更新版本信息

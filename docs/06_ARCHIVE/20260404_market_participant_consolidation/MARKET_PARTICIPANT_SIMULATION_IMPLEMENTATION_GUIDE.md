@@ -362,7 +362,7 @@ implementation_status: шзДхИТщШ╢цо╡
 3. ф╜┐чФиPython 3.9+шпнц│Х
 4. хМЕхРлхоМцХ┤чЪДч▒╗хЮЛц│ишзгхТМцЦЗцбгхнЧчмжф╕?5. чмжхРИPEP8ф╗гчаБшзДшМГ
 
-хПВшАГцЮ╢цЮДцЦЗцб? [MARKET_PARTICIPANT_SIMULATION_SPEC.md](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md)
+хПВшАГцЮ╢цЮДцЦЗцб? [MARKET_PARTICIPANT_SIMULATION_SPEC.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md)
 
 шп╖чФЯцИРхоМцХ┤чЪДф╗гчаБхоЮчО░уА?```
 

@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Auth System Blueprint](AUTH_SYSTEM_BLUEPRINT.md) - `AUTHSYSTEMBLUEPRINT_001`
+- [Auth System Blueprint](08_HUMAN_AI_INTERFACE/03_AUTH/AUTH_SYSTEM_BLUEPRINT.md) - `AUTHSYSTEMBLUEPRINT_001`
 
 ---
 

@@ -96,13 +96,13 @@ implementation_status: хобшобхоМцИР
 
 #### 3.1.1 шБМш┤гц╕ЕцЩ░цЦЗцбгя╝ИтЬЕ чмжхРИцаЗхЗЖя╝?
 **чд║ф╛Л1я╝ЪчнЦчХех╝ХцУОцЦЗцб?*
-- [STRATEGY_ENGINE_BLUEPRINT.md](file:///D:/ZephyrAlpha/docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md)
+- [STRATEGY_ENGINE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md)
   - **шБМш┤г**я╝Ъф╕кф║║AIш╛ЕхКйщЗПхМЦч│╗ч╗Ях╝АхПСшУЭхЫ?  - **хоЪф╜Н**я╝Ъц╕ЕцЩ░я╝МшБЪчДжчнЦчХех╝ХцУОцХ┤ф╜Ушо╛шоб
   
-- [STRATEGY_ENGINE_CORE_BLUEPRINT.md](file:///D:/ZephyrAlpha/docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
   - **шБМш┤г**я╝ЪчнЦчХех╝ХцУОца╕х┐ГцибхЭЧцКАцЬпшУЭхЫ?  - **хоЪф╜Н**я╝Ъц╕ЕцЩ░я╝Мф╜Ьф╕║STRATEGY_ENGINE_BLUEPRINTчЪДцКАцЬпшбехЕ?  - **хЕ│ч│╗**я╝ЪцШОчбошп┤цШОцШпшбехЕЕцЦЗцбгя╝МшБМш┤гш╛╣чХМц╕ЕцЩ?
 **чд║ф╛Л2я╝Ъф║║цЬ║ф║дф║ТцЦЗцб?*
-- [HUMAN_AI_INTERACTION_BLUEPRINT.md](file:///D:/ZephyrAlpha/docs/01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- [HUMAN_AI_INTERACTION_BLUEPRINT.md](01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
   - **шБМш┤гш╛╣чХМхг░цШО**я╝ЪцШОчбошп┤цШОш┤Яш┤гф║║цЬ║ф║дф║Тх▒ВцИШчХешзДхИТ
   - **хЕ│шБФцЦЗцбг**я╝ЪцШОчбоцМЗхЗ║чХМщЭвшо╛шобч╗ЖшКВхПВшАГHUMAN_AI_INTEGRATION_BLUEPRINT.md
   - **шБМш┤гш╛╣чХМхнЧцо╡**я╝ЪYAMLхд┤щГихМЕхРлresponsibility_boundaryхнЧцо╡

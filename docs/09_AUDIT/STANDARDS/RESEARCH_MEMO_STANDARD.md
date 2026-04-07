@@ -273,8 +273,8 @@ docs/
 ---
 
 ## 11. хПВшАГцЦЗцб?
-- [чаФчй╢хдЗх┐Шх╜ХцибцЭ┐](../TEMPLATES/RESEARCH_MEMO_TEMPLATE.md)
-- [чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](09_AUDIT\RESEARCH_MEMOS\README.md)
+- [чаФчй╢хдЗх┐Шх╜ХцибцЭ┐](09_AUDIT/TEMPLATES/RESEARCH_MEMO_TEMPLATE.md)
+- [чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](API_README.md)
 - [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

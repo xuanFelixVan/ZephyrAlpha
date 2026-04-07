@@ -164,8 +164,8 @@ implementation_status: Active
 
 ### **хЖЕщГицЦЗцбг**
 
-- [цбИф╛ЛчаФчй╢х║У](05_IMPLEMENTATION\07_OPERATIONS\case_studies)
-- [ч╗ПщкМцХЩшонх║У](05_IMPLEMENTATION\07_OPERATIONS\lessons_learned)
+- [цбИф╛ЛчаФчй╢х║У](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
+- [ч╗ПщкМцХЩшонх║У](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
 - [х╖ехЕ╖ф╜┐чФицМЗхНЧ](05_IMPLEMENTATION\07_OPERATIONS\tools_guides)
 
 ### **хдЦщГиш╡Дц║Р**

@@ -410,8 +410,8 @@ responsibility:
 
 ## 🔗 相关文档
 
-- [统一架构 (Layer 0-11)](06_ARCHIVE\20260407_old_layer_audit_reports\01_FRAMEWORK\ARCHITECTURE.md)
-- [模块职责边界](06_ARCHIVE\20260407_old_layer_audit_reports\01_FRAMEWORK\MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- [统一架构 (Layer 0-11)](01_FRAMEWORK/ARCHITECTURE.md)
+- [模块职责边界](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [文档治理标准](06_ARCHIVE\20260407_old_layer_audit_reports\01_FRAMEWORK\DOCUMENT_GOVERNANCE_STANDARDS.md)
 
 ---

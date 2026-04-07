@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Api Rate Limiting Blueprint](API_RATE_LIMITING_BLUEPRINT.md) - `API_003`
+- [Api Rate Limiting Blueprint](08_HUMAN_AI_INTERFACE/16_API_RATE_LIMITING/API_RATE_LIMITING_BLUEPRINT.md) - `API_003`
 
 ---
 

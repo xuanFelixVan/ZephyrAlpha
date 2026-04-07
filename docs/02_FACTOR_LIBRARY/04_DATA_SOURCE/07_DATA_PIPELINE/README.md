@@ -32,7 +32,7 @@ implementation_status: 进行中
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据流水线蓝图 | [BLUEPRINT.md](./BLUEPRINT.md) | 详细设计 | 数据流水线详细设计 |
+| 数据流水线蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 详细设计 | 数据流水线详细设计 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:

@@ -704,7 +704,7 @@ data_validator:
 ### C. 参考文?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [DataValidator设计文档](module_designs\layer_1\L1_VALIDATOR.md)
+- [DataValidator设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md)
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 数据预处理层负责?

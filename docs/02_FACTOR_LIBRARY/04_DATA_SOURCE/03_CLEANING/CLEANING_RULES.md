@@ -32,7 +32,7 @@ responsibility: 数据清洗规则库与异常数据处理
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 清洗蓝图 | [BLUEPRINT.md](./BLUEPRINT.md) | 架构层 | 数据清洗引擎设计 |
+| 清洗蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 架构层 | 数据清洗引擎设计 |
 | 清洗索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据清洗模块索引 |
 
 **职责边界**:
@@ -461,9 +461,9 @@ print(f"正常数据: {(~cleaned_data['anomaly']).sum()} 行")
 
 ## 8. 相关文档
 
-- [数据清洗引擎蓝图](BLUEPRINT.md) - 清洗引擎架构设计
-- [数据质量管理系统](../QUALITY_MANAGEMENT/) - 数据质量管理
-- [数据采集系统](../DATA_ACQUISITION.md) - 数据采集方案
+- [数据清洗引擎蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - 清洗引擎架构设计
+- [数据质量管理系统](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) - 数据质量管理
+- [数据采集系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) - 数据采集方案
 
 ---
 

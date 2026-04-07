@@ -44,7 +44,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据API网关系统蓝图](./BLUEPRINT.md) | 数据API网关系统详细设计 | ⭐⭐⭐⭐⭐ |
+| [数据API网关系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据API网关系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ---
 

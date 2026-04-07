@@ -442,7 +442,7 @@ ZephyrAlphaч│╗ч╗Ях╖▓х╗║члЛф║Жш╛Гф╕║хоМцХ
 ---
 
 ## 9. хПВшАГцЦЗцб?
-- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [цибхЭЧшБМш┤гш╛╣чХМхоЪф╣Й](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [цЦЗцбгц▓╗чРЖхЕищЭвхоЮцЦ╜хоМцИРцКехСК](./COMPREHENSIVE_IMPLEMENTATION_REPORT_20260402.md)
 

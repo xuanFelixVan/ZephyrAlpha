@@ -206,7 +206,7 @@ layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
 | **SCENARIO_ANALYSIS_STRESS_TEST_001** | 情景分析与压力测试系统 | 1.0 | Active | [SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md](./SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md) | 历史情景分析、假设情景模拟、压力测试引擎、情景报告生成、情景库管理 |
 | **AI_DECISION_EXPLANATION_001** | AI决策解释系统 | 1.0 | Active | [AI_DECISION_EXPLANATION_BLUEPRINT.md](./AI_DECISION_EXPLANATION_BLUEPRINT.md) | SHAP解释引擎、LIME解释引擎、特征重要性分析、决策路径可视化、解释报告生成 |
 | **INTELLIGENT_QA_SYSTEM_001** | 智能问答系统 | 1.0 | Active | [INTELLIGENT_QA_SYSTEM_BLUEPRINT.md](./INTELLIGENT_QA_SYSTEM_BLUEPRINT.md) | 自然语言理解、知识检索引擎、RAG生成引擎、上下文管理、智能推荐引擎 |
-| **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
+| **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
 
 ### 3.2 P0核心缺失模块 (🆕 新增)
 
@@ -223,7 +223,7 @@ layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
 | 模块ID | 模块名称 | 版本 | 状态 | 蓝图文档 | 核心职责 |
 |--------|---------|------|------|----------|----------|
 | **CONFIGURATION_MANAGEMENT_CENTER_001** | 配置管理中心 | 1.0 | Active | [CONFIGURATION_MANAGEMENT_CENTER_BLUEPRINT.md](./CONFIGURATION_MANAGEMENT_CENTER_BLUEPRINT.md) | 配置集中管理、环境隔离、配置验证、配置版本控制 |
-| **DATA_QUALITY_MONITORING_001** | 数据质量监控 | 1.0 | Active | [DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 数据质量检查、数据验证、质量报告、异常告警 |
+| **DATA_QUALITY_MONITORING_001** | 数据质量监控 | 1.0 | Active | [DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 数据质量检查、数据验证、质量报告、异常告警 |
 | **BACKTEST_RESULTS_MANAGEMENT_001** | 回测结果管理 | 1.0 | Active | [BACKTEST_RESULTS_MANAGEMENT_BLUEPRINT.md](./BACKTEST_RESULTS_MANAGEMENT_BLUEPRINT.md) | 回测结果存储、结果对比、性能分析、报告生成 |
 | **STRATEGY_VERSION_CONTROL_001** | 策略版本控制 | 1.0 | Active | [STRATEGY_VERSION_CONTROL_BLUEPRINT.md](./STRATEGY_VERSION_CONTROL_BLUEPRINT.md) | 策略版本管理、变更追踪、版本回滚、协作管理 |
 | **MARKET_REGIME_DETECTION_001** | 市场状态识别 | 1.0 | Active | [MARKET_REGIME_DETECTION_BLUEPRINT.md](./MARKET_REGIME_DETECTION_BLUEPRINT.md) | 市场状态识别、牛熊判断、震荡识别、状态转换预警 |

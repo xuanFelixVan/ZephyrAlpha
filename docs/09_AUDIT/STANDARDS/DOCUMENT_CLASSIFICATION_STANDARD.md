@@ -281,8 +281,8 @@ ZephyrAlphaﻝﺏﭨﻝﭨﻠﻝ۷9ﻛﺕ۹ﻛﺕﻝﭦ۶ﮒﻝﺎ
 ---
 
 ## 9. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [ﮔﮔ۰۲ﮔ۷۰ﮔﺟ](../TEMPLATES/DOCUMENT_TEMPLATE.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [ﮔﮔ۰۲ﮔ۷۰ﮔﺟ](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 - [ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 ---

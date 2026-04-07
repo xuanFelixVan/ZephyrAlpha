@@ -362,8 +362,8 @@
 
 ### 7.1 审计报告
 
-- [Layer 9全面审计报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER9_COMPREHENSIVE_AUDIT_REPORT_20260407.md)
-- [Layer 9最终修复总结报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER9_FINAL_FIX_SUMMARY_20260407.md)
+- [Layer 9全面审计报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer9_reports/LAYER9_COMPREHENSIVE_AUDIT_REPORT_20260407.md)
+- [Layer 9最终修复总结报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer9_reports/LAYER9_FINAL_FIX_SUMMARY_20260407.md)
 
 ### 7.2 审计工具
 
@@ -374,8 +374,8 @@
 
 ### 7.3 参考标准
 
-- [专业文档治理审计指南](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
 
 ---

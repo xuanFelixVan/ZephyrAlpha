@@ -35,10 +35,10 @@ responsibility: 数据生命周期管理与归档策略
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据压缩归档 | [../DATA_COMPRESSION_ARCHIVE/](../DATA_COMPRESSION_ARCHIVE/) | 协同模块 | 数据压缩存储 |
-| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](../DATA_BACKUP_RECOVERY/) | 协同模块 | 数据备份方案 |
+| 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_BACKUP_RECOVERY_BLUEPRINT.md) | 协同模块 | 数据备份方案 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据生命周期管理系统架构设计

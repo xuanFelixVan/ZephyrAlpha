@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Data Management Blueprint](DATA_MANAGEMENT_BLUEPRINT.md) - `DATAMANAGEMENTBLUEPRINT_001`
+- [Data Management Blueprint](08_HUMAN_AI_INTERFACE/13_DATA_MANAGEMENT/DATA_MANAGEMENT_BLUEPRINT.md) - `DATAMANAGEMENTBLUEPRINT_001`
 
 ---
 

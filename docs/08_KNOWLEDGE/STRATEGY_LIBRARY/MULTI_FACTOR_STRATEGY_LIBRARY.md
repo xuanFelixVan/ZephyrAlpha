@@ -447,7 +447,7 @@ def neutralize(
 ---
 
 ## 6. ﮒﻟﮔﮔ۰?
-- [ﮒ۷ﻠﮒ ﮒ­ﮒﭦ](MOMENTUM_FACTOR_LIBRARY.md)
+- [ﮒ۷ﻠﮒ ﮒ­ﮒﭦ](08_KNOWLEDGE/FACTOR_LIBRARY/MOMENTUM_FACTOR_LIBRARY.md)
 - [ﮒ ﮒ­ﮒﺙﮔﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰](../../01_FRAMEWORK/FACTOR_ENGINE_DETAILED_DESIGN.md)
 - [ﮔﻟﭖﮒﺎﮒ­۵](../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md)
 

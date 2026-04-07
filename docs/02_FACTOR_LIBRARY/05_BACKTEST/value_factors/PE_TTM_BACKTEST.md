@@ -23,7 +23,7 @@ compliance_level: 专业标准---
 
 
 > **状�?*：✅ 已通过
-> **配合IC记录**：[PE_TTM_IC.md](PE_TTM_IC.md)
+> **配合IC记录**：[PE_TTM_IC.md](02_FACTOR_LIBRARY/05_BACKTEST/value_factors/PE_TTM_IC.md)
 
 ## 因子信息
 
@@ -130,7 +130,7 @@ compliance_level: 专业标准---
 
 ---
 
-**关联IC验证**：[IC验证记录/PE_TTM_IC.md](PE_TTM_IC.md)
+**关联IC验证**：[IC验证记录/PE_TTM_IC.md](02_FACTOR_LIBRARY/05_BACKTEST/value_factors/PE_TTM_IC.md)
 **关联版本追踪**：待创建
 
 ---

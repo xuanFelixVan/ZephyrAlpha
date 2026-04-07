@@ -109,7 +109,7 @@ responsibility:
 
 - [战略决策层索引](../INDEX.md)
 - [系统主索引](../../INDEX.md)
-- [战略决策层蓝图](../BLUEPRINT.md)
+- [战略决策层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ---
 

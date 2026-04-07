@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Config Management Blueprint](CONFIG_MANAGEMENT_BLUEPRINT.md) - `CONFIGMANAGEMENTBLUEPRINT_001`
+- [Config Management Blueprint](08_HUMAN_AI_INTERFACE/10_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md) - `CONFIGMANAGEMENTBLUEPRINT_001`
 
 ---
 

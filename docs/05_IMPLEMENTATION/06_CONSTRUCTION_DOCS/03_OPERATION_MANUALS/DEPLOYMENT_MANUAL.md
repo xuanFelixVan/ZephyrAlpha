@@ -620,7 +620,7 @@ def cache_result(expire=300):
 - [ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/system_config_template.yaml)
 - [ﻝﮔ۶ﮔﮒ](./MONITORING_MANUAL.md)
 - [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
-- [ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
+- [ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
 
 ---
 

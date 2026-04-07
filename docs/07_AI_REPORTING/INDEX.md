@@ -41,7 +41,7 @@ implementation_status: 设计阶段---
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [AI报告层蓝图](./BLUEPRINT.md) | Layer 7总体架构设计 | ⭐⭐⭐⭐⭐ |
+| [AI报告层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 7总体架构设计 | ⭐⭐⭐⭐⭐ |
 
 ### 子模块（规划中）
 

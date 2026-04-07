@@ -401,10 +401,10 @@ PATHS = {
 ## 9. ﻠﮒﺛ
 
 ### 9.1 ﻝﺕﮒﺏﮔﮔ۰۲ﻠﺝﮔ۴
-- [ﮔﭦﻟﺛﻛﺛﻠﺑﻟﺍﻝ۷ﮒﻟ؟؟](../02_DEVELOPMENT/AI_AGENT_CALL_PROTOCOL.md)
-- [ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ](QUALITY_GATE_MECHANISM.md)
-- [ﻝ۴ﻟﺁﮒﭦﮔ۰ﮔﭘ](../../../README.md)
-- [ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔ۷۰ﮔﺟ](../05_TECHNICAL_SPECIFICATIONS/TECHNICAL_SPECIFICATION_TEMPLATE.md)
+- [ﮔﭦﻟﺛﻛﺛﻠﺑﻟﺍﻝ۷ﮒﻟ؟؟](05_IMPLEMENTATION/02_DEVELOPMENT/AI_AGENT_CALL_PROTOCOL.md)
+- [ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- [ﻝ۴ﻟﺁﮒﭦﮔ۰ﮔﭘ](API_README.md)
+- [ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔ۷۰ﮔﺟ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/TECHNICAL_SPECIFICATION_TEMPLATE.md)
 
 ### 9.2 ﮒﺓ۴ﮒﺓﮔﭦﻝ ﻛﺛﻝﺛ؟
 - `scripts/technical_feasibility_assessor.py`

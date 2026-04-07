@@ -500,7 +500,7 @@ tests/
 #### Layer 8: 人机交互层
 ##### 0.001. Ci Cd Integration
 - **模块ID**: CI_CD_INTEGRATION_001
-- **蓝图文档**: [CI_CD_INTEGRATION_BLUEPRINT.md](../19_CI_CD_INTEGRATION/CI_CD_INTEGRATION_BLUEPRINT.md)
+- **蓝图文档**: [CI_CD_INTEGRATION_BLUEPRINT.md](./CI_CD_INTEGRATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha CI/CD集成
 - **状态**: Active

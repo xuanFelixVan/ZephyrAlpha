@@ -496,7 +496,7 @@ async def wechat_webhook(request: Request):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.2
-- **蓝图文档**: [ALERTING_SYSTEM_BLUEPRINT.md](../02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: [ALERTING_SYSTEM_BLUEPRINT.md](./ALERTING_SYSTEM_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha告警通知
 - **状态**: Active

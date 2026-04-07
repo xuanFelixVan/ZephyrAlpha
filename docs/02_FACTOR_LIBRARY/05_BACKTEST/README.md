@@ -60,7 +60,7 @@ compliance_level: 专业标准---
 
 ## 回测报告模板
 
-详见：[01_STANDARDS/BACKTEST_STANDARDS.md](../01_STANDARDS/BACKTEST_STANDARDS.md)
+详见：[01_STANDARDS/BACKTEST_STANDARDS.md](02_FACTOR_LIBRARY/01_STANDARDS/backtest_standards.md)
 
 ---
 

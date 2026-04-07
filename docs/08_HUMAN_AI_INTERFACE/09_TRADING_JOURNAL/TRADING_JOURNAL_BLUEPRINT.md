@@ -214,7 +214,7 @@ conn.close()
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.9
-- **蓝图文档**: [TRADING_JOURNAL_BLUEPRINT.md](../09_TRADING_JOURNAL/TRADING_JOURNAL_BLUEPRINT.md)
+- **蓝图文档**: [TRADING_JOURNAL_BLUEPRINT.md](./TRADING_JOURNAL_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha交易日志
 - **状态**: Active

@@ -47,7 +47,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ### ﮒﻟﻟﮒ?
 
-- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
 ---
 
@@ -554,7 +554,7 @@ class EventBus:
 
 ### ﮒﻠ۷ﮔﮔ۰۲
 
-- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
 ### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
 

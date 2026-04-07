@@ -409,7 +409,7 @@ elif pref_type == "通知偏好":
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.11
-- **蓝图文档**: [USER_PREFERENCES_BLUEPRINT.md](../11_USER_PREFERENCES/USER_PREFERENCES_BLUEPRINT.md)
+- **蓝图文档**: [USER_PREFERENCES_BLUEPRINT.md](./USER_PREFERENCES_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha用户偏好
 - **状态**: Active

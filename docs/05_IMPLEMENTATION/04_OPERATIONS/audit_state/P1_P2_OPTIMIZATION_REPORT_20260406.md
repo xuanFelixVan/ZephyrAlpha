@@ -56,7 +56,7 @@ responsibility:
 **修复**:
 ```markdown
 修复前: | [数据质量](04_DATA_SOURCE/DATA_QUALITY.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |
-修复后: | [数据质量](04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |
+修复后: | [数据质量](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 | ⭐⭐⭐⭐ |
 ```
 
 **结果**: ✅ 已修复
@@ -65,33 +65,33 @@ responsibility:
 
 #### 2. MODULE_DESIGN_PLAN.md中的归档链接修复
 
-**文件**: [MODULE_DESIGN_PLAN.md](05_IMPLEMENTATION\MODULE_DESIGN_PLAN.md)
+**文件**: [MODULE_DESIGN_PLAN.md](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md)
 
 **问题**: 指向不存在的layer_0归档目录和layer_1归档文件
 
 **修复**:
 ```markdown
 修复前（layer_0链接）:
-1. **L0_QMT** - QMT数据接口 ([新架构文档](04_DATA_SOURCE/QMT_INTERFACE.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md))
-2. **L0_IFIND** - iFind连接器 ([新架构文档](04_DATA_SOURCE/IFIND_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_IFIND.md))
-3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md))
-4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_BAOSTOCK.md))
+1. **L0_QMT** - QMT数据接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_QMT.md))
+2. **L0_IFIND** - iFind连接器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_IFIND.md))
+3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md))
+4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md) | [归档文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_BAOSTOCK.md))
 
 修复后（删除归档链接）:
-1. **L0_QMT** - QMT数据接口 ([新架构文档](04_DATA_SOURCE/QMT_INTERFACE.md))
-2. **L0_IFIND** - iFind连接器 ([新架构文档](04_DATA_SOURCE/IFIND_CONNECTOR.md))
-3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](04_DATA_SOURCE/SUPERCMD_CONNECTOR.md))
-4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md))
+1. **L0_QMT** - QMT数据接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md))
+2. **L0_IFIND** - iFind连接器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md))
+3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md))
+4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md))
 
 修复前（layer_1链接）:
-5. **L1_CLEANER** - 数据清洗器 ([设计文档](05_IMPLEMENTATION\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_CLEANER.md))
-6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](05_IMPLEMENTATION\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_NORMALIZER.md))
-7. **L1_VALIDATOR** - 数据校验器 ([设计文档](05_IMPLEMENTATION\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_VALIDATOR.md))
+5. **L1_CLEANER** - 数据清洗器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md))
+6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_NORMALIZER.md))
+7. **L1_VALIDATOR** - 数据校验器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md))
 
 修复后（修正相对路径）:
-5. **L1_CLEANER** - 数据清洗器 ([设计文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_CLEANER.md))
-6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_NORMALIZER.md))
-7. **L1_VALIDATOR** - 数据校验器 ([设计文档](05_IMPLEMENTATION\04_OPERATIONS\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_VALIDATOR.md))
+5. **L1_CLEANER** - 数据清洗器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md))
+6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_NORMALIZER.md))
+7. **L1_VALIDATOR** - 数据校验器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md))
 ```
 
 **结果**: ✅ 已修复
@@ -100,14 +100,14 @@ responsibility:
 
 #### 3. 03_RISK_FACTORS/INDEX.md中的死链接修复
 
-**文件**: [03_RISK_FACTORS/INDEX.md](05_IMPLEMENTATION\03_RISK_FACTORS\INDEX.md)
+**文件**: [03_RISK_FACTORS/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 
 **问题**: 链接指向不存在的RISK_RULE_ENGINE.md文件，且相对路径错误
 
 **修复**:
 ```markdown
 修复前: - [风险管理规则](05_IMPLEMENTATION\04_OPERATIONS\03_TRADING_TACTICS\09_RISK_RULES\RISK_RULE_ENGINE.md)
-修复后: - [风险管理规则](05_IMPLEMENTATION\03_TRADING_TACTICS\09_RISK_RULES\BLUEPRINT.md)
+修复后: - [风险管理规则](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 ```
 
 **结果**: ✅ 已修复
@@ -117,10 +117,10 @@ responsibility:
 #### 4. 04_DATA_SOURCE中的归档链接修复
 
 **文件**: 
-- [SUPERCMD_CONNECTOR.md](05_IMPLEMENTATION\04_DATA_SOURCE\SUPERCMD_CONNECTOR.md)
-- [IFIND_CONNECTOR.md](05_IMPLEMENTATION\04_DATA_SOURCE\IFIND_CONNECTOR.md)
-- [BAOSTOCK_CONNECTOR.md](05_IMPLEMENTATION\04_DATA_SOURCE\BAOSTOCK_CONNECTOR.md)
-- [QMT_INTERFACE.md](05_IMPLEMENTATION\04_DATA_SOURCE\QMT_INTERFACE.md)
+- [SUPERCMD_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md)
+- [IFIND_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md)
+- [BAOSTOCK_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)
+- [QMT_INTERFACE.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 
 **问题**: 迁移来源链接指向不存在的layer_0归档目录
 
@@ -136,14 +136,14 @@ responsibility:
 
 #### 5. 10_MANUAL/FACTOR_LIBRARY_MANUAL.md中的死链接修复
 
-**文件**: [10_MANUAL/FACTOR_LIBRARY_MANUAL.md](05_IMPLEMENTATION\10_MANUAL\FACTOR_LIBRARY_MANUAL.md)
+**文件**: [10_MANUAL/FACTOR_LIBRARY_MANUAL.md](02_FACTOR_LIBRARY/10_MANUAL/FACTOR_LIBRARY_MANUAL.md)
 
 **问题**: 链接指向不存在的00_INDEX目录下的README.md和FACTOR_TAXONOMY.md
 
 **修复**:
 ```markdown
-修复前: > - 因子库索引：[00_INDEX/README.md](05_IMPLEMENTATION\04_OPERATIONS\00_INDEX\README.md) | [00_INDEX/FACTOR_TAXONOMY.md](05_IMPLEMENTATION\04_OPERATIONS\00_INDEX\FACTOR_TAXONOMY.md)
-修复后: > - 因子库索引：[00_INDEX/INDEX.md](05_IMPLEMENTATION\04_OPERATIONS\00_INDEX\INDEX.md) | [因子分类学](05_IMPLEMENTATION\04_OPERATIONS\01_STANDARDS\FACTOR_TAXONOMY.md)
+修复前: > - 因子库索引：[00_INDEX/README.md](API_README.md) | [00_INDEX/FACTOR_TAXONOMY.md](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md)
+修复后: > - 因子库索引：[00_INDEX/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md) | [因子分类学](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md)
 ```
 
 **结果**: ✅ 已修复
@@ -152,14 +152,14 @@ responsibility:
 
 #### 6. QMT_INTERFACE.md中的其他死链接修复
 
-**文件**: [QMT_INTERFACE.md](05_IMPLEMENTATION\04_DATA_SOURCE\QMT_INTERFACE.md)
+**文件**: [QMT_INTERFACE.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 
 **问题**: 链接指向错误的多时间框架架构文件路径
 
 **修复**:
 ```markdown
 修复前: 4. [专业多时间框架架构](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-修复后: 4. [专业多时间框架架构](05_IMPLEMENTATION\01_FRAMEWORK\PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+修复后: 4. [专业多时间框架架构](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 ```
 
 **结果**: ✅ 已修复

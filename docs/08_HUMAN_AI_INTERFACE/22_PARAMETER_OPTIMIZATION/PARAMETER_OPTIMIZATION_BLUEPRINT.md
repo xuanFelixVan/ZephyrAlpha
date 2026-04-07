@@ -480,7 +480,7 @@ fig.show()
 #### Layer 8: 人机交互层
 ##### 0.001. Parameter Optimization
 - **模块ID**: PARAMETER_OPTIMIZATION_001
-- **蓝图文档**: [PARAMETER_OPTIMIZATION_BLUEPRINT.md](../22_PARAMETER_OPTIMIZATION/PARAMETER_OPTIMIZATION_BLUEPRINT.md)
+- **蓝图文档**: [PARAMETER_OPTIMIZATION_BLUEPRINT.md](10_AI_WORKFLOW/INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha参数优化界面
 - **状态**: Active

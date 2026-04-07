@@ -37,7 +37,7 @@ dependencies:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据API网关 | [../DATA_API_GATEWAY/](../DATA_API_GATEWAY/) | 接口层 | API网关设计 |
+| 数据API网关 | [../DATA_API_GATEWAY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md) | 接口层 | API网关设计 |
 
 **职责边界**:
 - 本文档负责: 数据契约定义和验证架构设计

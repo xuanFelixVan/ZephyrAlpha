@@ -259,8 +259,8 @@ Copy-Item -Path "docs\06_ARCHIVE\duplicate_documents\20260403_blueprint_spec_aud
 
 ### B. ίΠΓϋΑΔόιΘίΘΗόΨΘόκ?
 1. [ίχκϋχκϋ┤ρώΘΠόιΘίΘΗv5.1](06_ARCHIVE\09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md)
-2. [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](06_ARCHIVE\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-3. [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](06_ARCHIVE\09_AUDIT\TEMPLATES\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+2. [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+3. [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 
 ---
 

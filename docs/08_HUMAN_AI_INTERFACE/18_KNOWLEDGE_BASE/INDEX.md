@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Knowledge Base Blueprint](KNOWLEDGE_BASE_BLUEPRINT.md) - `KNOWLEDGEBASEBLUEPRINT_001`
+- [Knowledge Base Blueprint](08_HUMAN_AI_INTERFACE/18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md) - `KNOWLEDGEBASEBLUEPRINT_001`
 
 ---
 

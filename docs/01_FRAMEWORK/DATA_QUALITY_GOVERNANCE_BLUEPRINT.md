@@ -262,7 +262,7 @@ class DataQualityValidator:
         results = {}
         for vtype in validation_types:
             if vtype in self.validators:
-                results[vtype] = self.validators[vtype](data)
+                results[vtype] = self.validators[vtype](00_OVERVIEW/DATA_FLOW.md)
         
         return results
     
@@ -461,7 +461,7 @@ class DataQualityAssessor:
         assessments = []
         for dimension in dimensions:
             if dimension in self.assessors:
-                assessment = self.assessors[dimension](data)
+                assessment = self.assessors[dimension](00_OVERVIEW/DATA_FLOW.md)
                 assessments.append(assessment)
         
         return assessments
@@ -710,7 +710,7 @@ class AutoAlertEngine:
         channels = self._get_alert_channels(severity)
         
         for channel in channels:
-            self.alert_handlers[channel](alert)
+            self.alert_handlers[channel](01_FRAMEWORK/ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md)
     
     def _get_alert_channels(self, severity: str) -> List[str]:
         """获取告警渠道"""

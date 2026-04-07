@@ -28,7 +28,7 @@ responsibility:
 > **配套文档**�?
 > - 主文档：
 > - 因子库：
-> - 战术手册：[../trading-tactics/tactics_manual.md](tactics_manual.md)
+> - 战术手册：[../trading-tactics/tactics_manual.md](06_ARCHIVE/tactics_manual.md)
 >
 > **版本说明**�?
 > - v1.0：初始版本，整合游资量化策略和策略池管理框架

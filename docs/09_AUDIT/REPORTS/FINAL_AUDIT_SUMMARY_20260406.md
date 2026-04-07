@@ -187,7 +187,7 @@ Files: 2 files changed, 354 insertions(+)
 ## 📄 生成的审计报告
 
 ### 1. 深度系统审计报告
-**文件**: [DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
+**文件**: [DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md](09_AUDIT/REPORTS/DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
 
 **内容**:
 - 完整的三层审计结果（L1/L2/L3）
@@ -196,7 +196,7 @@ Files: 2 files changed, 354 insertions(+)
 - 详细的改进建议与行动计划
 
 ### 2. TODO清理清单
-**文件**: [TODO_CLEANUP_INVENTORY_20260406.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/TODO_CLEANUP_INVENTORY_20260406.md)
+**文件**: [TODO_CLEANUP_INVENTORY_20260406.md](09_AUDIT/REPORTS/TODO_CLEANUP_INVENTORY_20260406.md)
 
 **内容**:
 - 30个文件的详细清单
@@ -204,7 +204,7 @@ Files: 2 files changed, 354 insertions(+)
 - 处理策略和预期成果
 
 ### 3. TODO清理分析报告
-**文件**: [TODO_CLEANUP_ANALYSIS_20260406.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/TODO_CLEANUP_ANALYSIS_20260406.md)
+**文件**: [TODO_CLEANUP_ANALYSIS_20260406.md](09_AUDIT/REPORTS/TODO_CLEANUP_ANALYSIS_20260406.md)
 
 **内容**:
 - 26个TODO的详细分析
@@ -212,7 +212,7 @@ Files: 2 files changed, 354 insertions(+)
 - GitHub Issue创建建议
 
 ### 4. P0/P1/P2问题修复总结
-**文件**: [P0_P1_P2_RESOLUTION_SUMMARY_20260406.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/P0_P1_P2_RESOLUTION_SUMMARY_20260406.md)
+**文件**: [P0_P1_P2_RESOLUTION_SUMMARY_20260406.md](09_AUDIT/REPORTS/P0_P1_P2_RESOLUTION_SUMMARY_20260406.md)
 
 **内容**:
 - P0问题修复详情
@@ -221,7 +221,7 @@ Files: 2 files changed, 354 insertions(+)
 - 修复效果评估
 
 ### 5. GitHub Issue创建清单
-**文件**: [GITHUB_ISSUE_CREATION_LIST_20260406.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/GITHUB_ISSUE_CREATION_LIST_20260406.md)
+**文件**: [GITHUB_ISSUE_CREATION_LIST_20260406.md](09_AUDIT/REPORTS/GITHUB_ISSUE_CREATION_LIST_20260406.md)
 
 **内容**:
 - 18个Issue的详细描述
@@ -237,7 +237,7 @@ Files: 2 files changed, 354 insertions(+)
 - 生成Issue模板
 
 ### 7. 最终审计总结报告
-**文件**: [FINAL_AUDIT_SUMMARY_20260406.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/FINAL_AUDIT_SUMMARY_20260406.md)
+**文件**: [FINAL_AUDIT_SUMMARY_20260406.md](09_AUDIT/REPORTS/FINAL_AUDIT_SUMMARY_20260406.md)
 
 **内容**:
 - 完整的审计成果总结
@@ -391,8 +391,8 @@ bash scripts/create_github_issues.sh
 
 ### B. 审计标准参考
 
-- [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [审计质量标准v5.1](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md)
 
 ### C. 相关文档链接

@@ -44,14 +44,14 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [P0-01 Database Design Document](P0-01_Database_Design_Document.md) - `IMPL_DB_DESIGN_DOC_001`
-- [P0-01 Database Design Review Report](P0-01_Database_Design_Review_Report.md) - `DB_REVIEW_001`
-- [P0-02 Data Dictionary](P0-02_Data_Dictionary.md) - `DATA_DICT_001`
-- [P0-03 Internal Service Interface Design](P0-03_Internal_Service_Interface_Design.md) - `INTERNAL_API_001`
-- [P0-04 Third Party Interface Integration Design](P0-04_Third_Party_Interface_Integration_Design.md) - `THIRD_PARTY_API_001`
-- [P0-05 Multi Engine Coordinator Design](P0-05_Multi_Engine_Coordinator_Design.md) - `MULTI_ENGINE_COORDINATOR_001`
-- [P0-06 Account Management Detailed Design](P0-06_Account_Management_Detailed_Design.md) - `ACCOUNT_MANAGEMENT_001`
-- [P0-07 Order Management Detailed Design](P0-07_Order_Management_Detailed_Design.md) - `ORDER_MANAGEMENT_001`
+- [P0-01 Database Design Document](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md) - `IMPL_DB_DESIGN_DOC_001`
+- [P0-01 Database Design Review Report](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Review_Report.md) - `DB_REVIEW_001`
+- [P0-02 Data Dictionary](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-02_Data_Dictionary.md) - `DATA_DICT_001`
+- [P0-03 Internal Service Interface Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-03_Internal_Service_Interface_Design.md) - `INTERNAL_API_001`
+- [P0-04 Third Party Interface Integration Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-04_Third_Party_Interface_Integration_Design.md) - `THIRD_PARTY_API_001`
+- [P0-05 Multi Engine Coordinator Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-05_Multi_Engine_Coordinator_Design.md) - `MULTI_ENGINE_COORDINATOR_001`
+- [P0-06 Account Management Detailed Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-06_Account_Management_Detailed_Design.md) - `ACCOUNT_MANAGEMENT_001`
+- [P0-07 Order Management Detailed Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-07_Order_Management_Detailed_Design.md) - `ORDER_MANAGEMENT_001`
 
 ---
 

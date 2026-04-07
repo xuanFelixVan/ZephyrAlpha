@@ -70,7 +70,7 @@ related_documents:
 **上游文档**: [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 框架层架构定�?
 
 **下游文档**:
-- [风控规则引擎](04_EXECUTION\05_RISK_ENGINE\README.md) - 执行层实�?
+- [风控规则引擎](API_README.md) - 执行层实�?
 - [风险报告生成器](./RISK_REPORT.md) - 报告生成
 
 ---

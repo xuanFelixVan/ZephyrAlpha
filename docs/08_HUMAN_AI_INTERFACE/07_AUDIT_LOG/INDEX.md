@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Audit Log Blueprint](AUDIT_LOG_BLUEPRINT.md) - `AUDITLOGBLUEPRINT_001`
+- [Audit Log Blueprint](08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md) - `AUDITLOGBLUEPRINT_001`
 
 ---
 

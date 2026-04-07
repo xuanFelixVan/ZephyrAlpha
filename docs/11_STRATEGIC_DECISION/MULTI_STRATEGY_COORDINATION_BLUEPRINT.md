@@ -1065,7 +1065,7 @@ class MultiStrategyCoordinator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
 | [CAPITAL_ALLOCATION_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 资本配置系统 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
 

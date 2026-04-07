@@ -22,9 +22,9 @@ implementation_status: å·²å®æ?---
 
 | æä»¶ | èè´£ | ç¶æ?|
 |------|------|------|
-| [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AIèæç ç©¶å¢éèå¾è®¾è®¡ | Active |
-| [AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md](AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md) | AIèæç ç©¶å¢éå®æ½è®¡å | Active |
-| [AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md](AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md) | AIèæç ç©¶å¢éé¡¹ç®å¯å¨ | Active |
+| [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AIèæç ç©¶å¢éèå¾è®¾è®¡ | Active |
+| [AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md) | AIèæç ç©¶å¢éå®æ½è®¡å | Active |
+| [AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md) | AIèæç ç©¶å¢éé¡¹ç®å¯å¨ | Active |
 
 ## ð ææ¡£è¯´æ
 
@@ -63,9 +63,9 @@ implementation_status: å·²å®æ?---
 - [AIå å­ææå¨å®æ½æ»ç»](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md)
 
 ### AIæ²»ç
-- [AIæ²»çæ¡æ¶èå¾](../AI_GOVERNANCE_BLUEPRINT.md)
-- [AIæéæ¸å](../AI_PERMISSIONS.md)
-- [äººæºäº¤äºèå¾](../HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- [AIæ²»çæ¡æ¶èå¾](01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md)
+- [AIæéæ¸å](01_FRAMEWORK/AI_PERMISSIONS.md)
+- [äººæºäº¤äºèå¾](01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
 
 ### AIå·¥ä½æµ?- [AIå·¥ä½æµç´¢å¼](../../10_AI_WORKFLOW/INDEX.md)
 

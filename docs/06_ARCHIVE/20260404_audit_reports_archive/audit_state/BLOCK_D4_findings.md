@@ -79,7 +79,7 @@ implementation_status: 进行?
 
 ### D4-P1-001: 08_USER_EXPERIENCE/README.md 版本不一?
 
-**位置**: [08_USER_EXPERIENCE/README.md](../../../../README.md)
+**位置**: [08_USER_EXPERIENCE/README.md](API_README.md)
 
 **问题**:
 - 文档标题显示 v5.0
@@ -95,7 +95,7 @@ implementation_status: 进行?
 
 ### D4-P2-001: 07_RESEARCH/README.md 版本特殊性确?
 
-**位置**: [07_RESEARCH/README.md](../../../../README.md)
+**位置**: [07_RESEARCH/README.md](API_README.md)
 
 **问题**:
 - 文档版本显示 v1.0

@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](README.md) - `RESOURCES_PLATFORM_DOCS_README_001`
+- [Readme](API_README.md) - `RESOURCES_PLATFORM_DOCS_README_001`
 
 ---
 

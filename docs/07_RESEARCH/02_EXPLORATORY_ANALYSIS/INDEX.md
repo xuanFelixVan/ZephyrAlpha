@@ -44,10 +44,10 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](README.md) - `RESEARCH_EXPLORATORY_README_001`
-- [Correlation Analysis](correlation_analysis.md) - `RESEARCH_CORRELATION_ANALYSIS_001`
-- [Research Report Generator](research_report_generator.md) - `RESEARCH_REPORT_GENERATOR_001`
-- [Statistical Tools](statistical_tools.md) - `RESEARCH_STATISTICAL_TOOLS_001`
+- [Readme](API_README.md) - `RESEARCH_EXPLORATORY_README_001`
+- [Correlation Analysis](07_RESEARCH/02_EXPLORATORY_ANALYSIS/correlation_analysis.md) - `RESEARCH_CORRELATION_ANALYSIS_001`
+- [Research Report Generator](07_RESEARCH/02_EXPLORATORY_ANALYSIS/research_report_generator.md) - `RESEARCH_REPORT_GENERATOR_001`
+- [Statistical Tools](07_RESEARCH/02_EXPLORATORY_ANALYSIS/statistical_tools.md) - `RESEARCH_STATISTICAL_TOOLS_001`
 
 ---
 

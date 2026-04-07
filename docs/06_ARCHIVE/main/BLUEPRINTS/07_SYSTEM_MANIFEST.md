@@ -306,11 +306,11 @@ AI启动前必读顺序：
 | 文档 | 说明 | 优先�?|
 |------|------|--------|
 | [INDEX.md](../../../03_TRADING_TACTICS/INDEX.md) | 快速导航入�?| �?必读 |
-| [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md) | 系统清单 | �?必读 |
+| [System_Manifest.md](System_Manifest.md) | 系统清单 | �?必读 |
 | [API_Contract.md](../../../03_TRADING_TACTICS/API_Contract.md) | 接口契约 | �?必读 |
 |  | AI研究框架 | �?必读 |
 | [Strategy_Spec_S001.md](../../../03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略模板 | 建议 |
-| [AI_Permissions.md](08_AI_GOVERNANCE\AI_Permissions.md) | AI权限 | 必读 |
+| [AI_Permissions.md](01_FRAMEWORK/AI_PERMISSIONS.md) | AI权限 | 必读 |
 
 
 **版本**: v5.0.0 | **更新**: 2026-03-29 | **状�?*: �?活跃

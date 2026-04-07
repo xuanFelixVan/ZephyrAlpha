@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [User Preferences Blueprint](USER_PREFERENCES_BLUEPRINT.md) - `USERPREFERENCESBLUEPRINT_001`
+- [User Preferences Blueprint](08_HUMAN_AI_INTERFACE/11_USER_PREFERENCES/USER_PREFERENCES_BLUEPRINT.md) - `USERPREFERENCESBLUEPRINT_001`
 
 ---
 

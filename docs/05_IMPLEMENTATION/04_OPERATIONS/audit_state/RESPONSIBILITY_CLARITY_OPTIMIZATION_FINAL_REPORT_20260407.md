@@ -239,7 +239,7 @@ compliance_level: 专业标准
 
 ## 📄 相关文档
 
-1. **优化报告**: [RESPONSIBILITY_CLARITY_OPTIMIZATION_REPORT_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/RESPONSIBILITY_CLARITY_OPTIMIZATION_REPORT_20260407.md)
+1. **优化报告**: [RESPONSIBILITY_CLARITY_OPTIMIZATION_REPORT_20260407.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/RESPONSIBILITY_CLARITY_OPTIMIZATION_REPORT_20260407.md)
 2. **审计报告V3**: [LAYER6_DEEP_AUDIT_V3_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V3_20260407.md)
 3. **优化脚本**: [responsibility_clarity_optimizer.py](file:///d:/ZephyrAlpha/scripts/responsibility_clarity_optimizer.py)
 4. **审计脚本V3**: [layer6_deep_audit_v3.py](file:///d:/ZephyrAlpha/scripts/layer6_deep_audit_v3.py)

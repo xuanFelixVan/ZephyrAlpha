@@ -42,7 +42,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [治理与合规层蓝图](./BLUEPRINT.md) | Layer 10总体架构设计 | ⭐⭐⭐⭐�?|
+| [治理与合规层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 10总体架构设计 | ⭐⭐⭐⭐�?|
 
 ### 子模块（规划中）
 

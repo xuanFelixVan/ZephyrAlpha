@@ -95,7 +95,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ## ﻭ ﻝﺕﮒﺏﻠﺝﮔ۴
 
 ### ﻝﺏﭨﻝﭨﮔﮔ۰۲
-- [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md) - ﻝﺏﭨﻝﭨﮔﺕﮒ
+- [System_Manifest.md](System_Manifest.md) - ﻝﺏﭨﻝﭨﮔﺕﮒ
 - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ﻛﺕﭨﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md) - ﮒ؟ﮔﺑﮔﮔ۰۲ﮒﺍﮒﺝ
 
 ### ﻟﺟﻝﭨﺑﮒ؟۰ﻟ؟۰

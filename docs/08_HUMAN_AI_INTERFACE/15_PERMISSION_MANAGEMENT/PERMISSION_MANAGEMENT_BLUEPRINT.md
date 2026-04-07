@@ -596,7 +596,7 @@ elif function == "权限审计":
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.15
-- **蓝图文档**: [PERMISSION_MANAGEMENT_BLUEPRINT.md](../15_PERMISSION_MANAGEMENT/PERMISSION_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [PERMISSION_MANAGEMENT_BLUEPRINT.md](./PERMISSION_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha权限管理
 - **状态**: Active

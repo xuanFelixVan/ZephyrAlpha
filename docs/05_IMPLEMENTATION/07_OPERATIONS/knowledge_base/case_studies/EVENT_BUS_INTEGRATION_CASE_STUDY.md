@@ -325,8 +325,8 @@ asyncio.run(performance_test())
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ](../../../06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md)
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../../../06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md)
+- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

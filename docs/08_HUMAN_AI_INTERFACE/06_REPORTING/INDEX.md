@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Reporting Blueprint](REPORTING_BLUEPRINT.md) - `REPORTINGBLUEPRINT_001`
+- [Reporting Blueprint](08_HUMAN_AI_INTERFACE/06_REPORTING/REPORTING_BLUEPRINT.md) - `REPORTINGBLUEPRINT_001`
 
 ---
 

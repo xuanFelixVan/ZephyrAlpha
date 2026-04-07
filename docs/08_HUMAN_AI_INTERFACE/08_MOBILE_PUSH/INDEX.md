@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Mobile Push Blueprint](MOBILE_PUSH_BLUEPRINT.md) - `MOBILEPUSHBLUEPRINT_001`
+- [Mobile Push Blueprint](08_HUMAN_AI_INTERFACE/08_MOBILE_PUSH/MOBILE_PUSH_BLUEPRINT.md) - `MOBILEPUSHBLUEPRINT_001`
 
 ---
 

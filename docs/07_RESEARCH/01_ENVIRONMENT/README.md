@@ -127,5 +127,5 @@ class ResearchWorkflow:
 
 ## 索引
 
-- 父目�? [07_RESEARCH/README.md](../README.md)
-- 相关文档: [EXPERIMENT_TRACKING.md](../EXPERIMENT_TRACKING.md)
+- 父目�? [07_RESEARCH/README.md](API_README.md)
+- 相关文档: [EXPERIMENT_TRACKING.md](07_RESEARCH/EXPERIMENT_TRACKING.md)

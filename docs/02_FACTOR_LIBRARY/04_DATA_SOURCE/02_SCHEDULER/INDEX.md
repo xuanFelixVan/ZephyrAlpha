@@ -31,7 +31,7 @@ parent_document: ../INDEX.md
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 调度蓝图 | [BLUEPRINT.md](./BLUEPRINT.md) | 详细设计 | 调度器详细设计 |
+| 调度蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 详细设计 | 调度器详细设计 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:
@@ -47,8 +47,8 @@ parent_document: ../INDEX.md
 
 | 文件 | 职责 | 状态 |
 |------|------|------|
-| [BLUEPRINT.md](BLUEPRINT.md) | 智能下载调度器蓝图 | Active |
-| [SCHEDULER_API.md](SCHEDULER_API.md) | 调度器API参考文档 | Active |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 智能下载调度器蓝图 | Active |
+| [SCHEDULER_API.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/SCHEDULER_API.md) | 调度器API参考文档 | Active |
 
 ---
 
@@ -80,11 +80,11 @@ parent_document: ../INDEX.md
 
 ### 上层文档
 - [数据源层索引](../INDEX.md) - 数据源层总览
-- [数据采集系统](../DATA_ACQUISITION.md) - 数据采集方案
+- [数据采集系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) - 数据采集方案
 
 ### 相关模块
 - [数据清洗引擎](../03_CLEANING/) - 数据清洗处理
-- [数据源适配器](../DATA_SOURCE_ADAPTERS.md) - 数据源接入管理
+- [数据源适配器](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) - 数据源接入管理
 
 ---
 

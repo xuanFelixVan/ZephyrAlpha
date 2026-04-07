@@ -798,6 +798,6 @@ class OREIntegration:
 ---
 
 **参考文档**:
-- [Layer 10差距分析报告](d:\ZephyrAlpha\docs\01_FRAMEWORK\LAYER_10_GAP_ANALYSIS_REPORT.md)
+- [Layer 10差距分析报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/GAP_ANALYSIS_REPORT.md)
 - [ORE官方文档](https://www.opensourcerisk.org/)
 - [Basel III压力测试标准](https://www.bis.org/bcbs/)

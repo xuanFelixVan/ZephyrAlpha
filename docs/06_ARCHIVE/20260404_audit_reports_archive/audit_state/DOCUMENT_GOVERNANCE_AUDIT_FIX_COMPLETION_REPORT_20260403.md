@@ -272,9 +272,9 @@ git checkout backup-before-audit-cleanup-20260403
 ### B. чЫ╕хЕ│цЦЗцбг
 
 1. [хоМцХ┤хобшобцКехСК](./COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md)
-2. [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](06_ARCHIVE\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-3. [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](06_ARCHIVE\09_AUDIT\TEMPLATES\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-4. [хобшобш┤ищЗПцаЗхЗЖv5.3](06_ARCHIVE\09_AUDIT\STANDARDS\AUDIT_STANDARDS.md)
+2. [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+3. [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+4. [хобшобш┤ищЗПцаЗхЗЖv5.3](09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 
 ### C. ф┐охдНхС╜ф╗дхПВшА?
 **щЗНхС╜хРНф╕нцЦЗцЦЗф╗?*:

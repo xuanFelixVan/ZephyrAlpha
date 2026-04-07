@@ -605,7 +605,7 @@ def check_trading_limits(
 #### Layer 8: 人机交互层
 ##### 0.001. Live Trading Interface
 - **模块ID**: LIVE_TRADING_INTERFACE_001
-- **蓝图文档**: [LIVE_TRADING_INTERFACE_BLUEPRINT.md](../23_LIVE_TRADING_INTERFACE/LIVE_TRADING_INTERFACE_BLUEPRINT.md)
+- **蓝图文档**: [LIVE_TRADING_INTERFACE_BLUEPRINT.md](./LIVE_TRADING_INTERFACE_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha实盘交易界面
 - **状态**: Active

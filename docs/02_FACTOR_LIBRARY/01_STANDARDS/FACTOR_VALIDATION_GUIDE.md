@@ -689,7 +689,7 @@ class FactorValidator:
 | [因子管理标准](./FACTOR_MANAGEMENT_STANDARD.md) | 因子生命周期管理 |
 | [因子挖掘指南](./FACTOR_MINING_GUIDE.md) | 因子挖掘方法 |
 | [因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算引擎 |
-| [IC分析方法](./IC_ANALYSIS.md) | IC计算与分�?|
+| [IC分析方法](./ic_analysis.md) | IC计算与分�?|
 
 ---
 

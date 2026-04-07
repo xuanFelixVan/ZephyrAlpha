@@ -470,7 +470,7 @@ elif function == "数据可视化":
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.13
-- **蓝图文档**: [DATA_MANAGEMENT_BLUEPRINT.md](../13_DATA_MANAGEMENT/DATA_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [DATA_MANAGEMENT_BLUEPRINT.md](./DATA_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha数据管理
 - **状态**: Active

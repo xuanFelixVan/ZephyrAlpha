@@ -43,18 +43,18 @@ responsibility: 数据权限管理模块导航
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据权限管理系统蓝图](./BLUEPRINT.md) | 数据权限管理系统详细设计 | ⭐⭐⭐⭐⭐ |
+| [数据权限管理系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据权限管理系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ## 相关模块
 
-- 数据质量管理: [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/)
+- 数据质量管理: [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md)
 - 数据监控增强: [../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/)
 - 数据源索引: [../INDEX.md](../INDEX.md)
 
 ## 快速导航
 
 - [返回数据源层](../INDEX.md)
-- [查看蓝图文档](./BLUEPRINT.md)
+- [查看蓝图文档](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ---
 

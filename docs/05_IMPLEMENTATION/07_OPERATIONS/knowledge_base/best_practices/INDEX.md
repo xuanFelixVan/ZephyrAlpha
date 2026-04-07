@@ -44,9 +44,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Personal Development Best Practices](PERSONAL_DEVELOPMENT_BEST_PRACTICES.md) - `PERSONAL_DEV_BEST_PRACTICES`
-- [Personal Workflow Guide](PERSONAL_WORKFLOW_GUIDE.md) - `PERSONAL_WORKFLOW_GUIDE`
-- [Python Coding Best Practices](PYTHON_CODING_BEST_PRACTICES.md) - `PYTHON_CODING_BEST_PRACTICES_001`
+- [Personal Development Best Practices](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md) - `PERSONAL_DEV_BEST_PRACTICES`
+- [Personal Workflow Guide](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md) - `PERSONAL_WORKFLOW_GUIDE`
+- [Python Coding Best Practices](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PYTHON_CODING_BEST_PRACTICES.md) - `PYTHON_CODING_BEST_PRACTICES_001`
 
 ---
 

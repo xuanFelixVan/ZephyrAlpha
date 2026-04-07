@@ -32,7 +32,7 @@ responsibility: 数据管道模块导航
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 管道蓝图 | [BLUEPRINT.md](./BLUEPRINT.md) | 详细设计 | 数据管道详细设计 |
+| 管道蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 详细设计 | 数据管道详细设计 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:
@@ -49,8 +49,8 @@ responsibility: 数据管道模块导航
 
 | 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [数据管道蓝图](./BLUEPRINT.md) | 数据管道的完整设计蓝图 | ⭐⭐⭐⭐⭐ |
-| [数据管道概览](./README.md) | 数据管道系统概述 | ⭐⭐⭐⭐ |
+| [数据管道蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据管道的完整设计蓝图 | ⭐⭐⭐⭐⭐ |
+| [数据管道概览](API_README.md) | 数据管道系统概述 | ⭐⭐⭐⭐ |
 
 ---
 
@@ -85,9 +85,9 @@ responsibility: 数据管道模块导航
 
 ## 📚 相关文档
 
-- [数据源适配器](../DATA_SOURCE_ADAPTERS.md)
-- [数据质量管理](../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md)
-- [数据清洗蓝图](../03_CLEANING/BLUEPRINT.md)
+- [数据源适配器](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md)
+- [数据质量管理](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md)
+- [数据清洗蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ---
 

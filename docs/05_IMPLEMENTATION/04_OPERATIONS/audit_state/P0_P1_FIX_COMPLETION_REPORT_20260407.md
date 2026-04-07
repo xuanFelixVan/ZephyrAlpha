@@ -65,11 +65,11 @@ responsibility:
 **修复方案**: 创建这两个目录及其索引文件
 
 **修复内容**:
-- 创建了 [DECISION_RECORDS/INDEX.md](file:///d:/ZephyrAlpha/docs/09_AUDIT/DECISION_RECORDS/INDEX.md)
+- 创建了 [DECISION_RECORDS/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md)
   - 决策记录存储和管理功能
   - 决策记录分类（ADR、TDR、BDR、PDR）
   - 决策记录规范和使用指南
-- 创建了 [RESEARCH_MEMOS/INDEX.md](file:///d:/ZephyrAlpha/docs/09_AUDIT/RESEARCH_MEMOS/INDEX.md)
+- 创建了 [RESEARCH_MEMOS/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md)
   - 研究备忘录存储和管理功能
   - 研究备忘录分类（TRM、BRM、MRM、RRM）
   - 研究备忘录规范和使用指南

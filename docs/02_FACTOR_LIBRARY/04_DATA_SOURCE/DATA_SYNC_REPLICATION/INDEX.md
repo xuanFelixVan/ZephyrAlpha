@@ -44,18 +44,18 @@ parent_document: ../INDEX.md
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据同步复制系统蓝图](./BLUEPRINT.md) | 数据同步复制系统详细设计 | ⭐⭐⭐⭐⭐ |
+| [数据同步复制系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据同步复制系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ## 相关模块
 
-- 数据版本控制: [../DATA_VERSION_CONTROL/](../DATA_VERSION_CONTROL/)
+- 数据版本控制: [../DATA_VERSION_CONTROL/](06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VERSION_CONTROL_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md)
 - 数据压缩归档: [../DATA_COMPRESSION_ARCHIVE/](../DATA_COMPRESSION_ARCHIVE/)
 - 数据源索引: [../INDEX.md](../INDEX.md)
 
 ## 快速导航
 
 - [返回数据源层](../INDEX.md)
-- [查看蓝图文档](./BLUEPRINT.md)
+- [查看蓝图文档](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ---
 

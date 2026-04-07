@@ -43,18 +43,18 @@ responsibility: 数据目录模块导航
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据目录系统蓝图](./BLUEPRINT.md) | 数据目录系统详细设计 | ⭐⭐⭐⭐⭐ |
+| [数据目录系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据目录系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ## 相关模块
 
-- 数据血缘追踪: [../DATA_LINEAGE_TRACKING/](../DATA_LINEAGE_TRACKING/)
-- 数据质量管理: [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/)
+- 数据血缘追踪: [../DATA_LINEAGE_TRACKING/](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md)
+- 数据质量管理: [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md)
 - 数据源索引: [../INDEX.md](../INDEX.md)
 
 ## 快速导航
 
 - [返回数据源层](../INDEX.md)
-- [查看蓝图文档](./BLUEPRINT.md)
+- [查看蓝图文档](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ---
 

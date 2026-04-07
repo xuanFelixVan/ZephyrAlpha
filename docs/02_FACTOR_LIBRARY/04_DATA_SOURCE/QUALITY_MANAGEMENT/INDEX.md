@@ -46,8 +46,8 @@ responsibility: 数据质量管理模块导航
 
 | 文件 | 职责 | 状态 |
 |------|------|------|
-| [DATA_QUALITY_CONTROL_SYSTEM.md](DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制系统 | Active |
-| [QUALITY_METRICS.md](QUALITY_METRICS.md) | 数据质量指标定义 | Active |
+| [DATA_QUALITY_CONTROL_SYSTEM.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制系统 | Active |
+| [QUALITY_METRICS.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/QUALITY_METRICS.md) | 数据质量指标定义 | Active |
 
 ---
 
@@ -85,12 +85,12 @@ responsibility: 数据质量管理模块导航
 
 ### 上层文档
 - [数据源层索引](../INDEX.md) - 数据源层总览
-- [数据质量控制系统](DATA_QUALITY_CONTROL_SYSTEM.md) - 数据质量标准
+- [数据质量控制系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) - 数据质量标准
 
 ### 相关模块
 - [数据清洗引擎](../03_CLEANING/) - 数据清洗处理
-- [数据采集系统](../DATA_ACQUISITION.md) - 数据采集方案
-- [数据源适配器](../DATA_SOURCE_ADAPTERS.md) - 数据源接入管理
+- [数据采集系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) - 数据采集方案
+- [数据源适配器](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) - 数据源接入管理
 
 ---
 

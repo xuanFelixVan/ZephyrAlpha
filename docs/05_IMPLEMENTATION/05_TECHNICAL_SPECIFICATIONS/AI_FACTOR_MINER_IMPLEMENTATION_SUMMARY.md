@@ -30,7 +30,7 @@ compliance_level: СИЊСИџТаЄтЄє
 ## ­ЪЊі т«ъТќйТдѓУДѕ
 
 ### ти▓т«їТѕљтиЦ№┐?
-#### 1. ТіђТю»УДёТа╝С╣д №┐?- **ТќЄС╗Х**: [AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md)
+#### 1. ТіђТю»УДёТа╝С╣д №┐?- **ТќЄС╗Х**: [AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md)
 - **тєЁт«╣**: т«їТЋ┤уџёТіђТю»УДёТа╝ТќЄТАБ№╝ѕ8000+тГЌ№╝Ѕ
 - **тїЁтљФуФаУіѓ**: 
   - ТдѓУ┐░СИјУЃї№┐?  - У»ду╗єТъХТъёУ«ЙУ«А

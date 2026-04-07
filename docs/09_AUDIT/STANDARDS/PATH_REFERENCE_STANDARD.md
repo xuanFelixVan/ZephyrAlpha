@@ -74,13 +74,13 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](SUBDIR/document.md)        # ﮒﻝﭦ۶ﮒ­ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](09_AUDIT\document.md)              # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ
-[ﮔﮔ۰۲](document.md)           # ﻛﺕﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](SIBLING\doc.md)        # ﻛﺕﻛﺕﻝﭦ۶ﮒﮒﺙﻝ؟ﮒﺛ?```
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)        # ﮒﻝﭦ۶ﮒ­ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)              # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)           # ﻛﺕﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](SIBLING\doc.md)        # ﻛﺕﻛﺕﻝﭦ۶ﮒﮒﺙﻝ؟ﮒﺛ?```
 
 ﻗ?**ﻛﺕﮔ۷ﻟ?*:
 ```markdown
-[ﮔﮔ۰۲](../../../document.md)        # 3ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻛﺕﮔ۷ﻟﺅﺙ
-[ﮔﮔ۰۲](../../../../document.md)     # 4ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ­۱ﺅﺙ?[ﮔﮔ۰۲](../../../../../document.md)  # 5ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ­۱ﺅﺙ?```
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)        # 3ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻛﺕﮔ۷ﻟﺅﺙ
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)     # 4ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ­۱ﺅﺙ?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)  # 5ﮒﺎﻛﭨ۴ﻛﺕﺅﺙﻝ۵ﮔ­۱ﺅﺙ?```
 
 **ﻝﺗﮔ؟ﮔﮒﭖﮒ۳ﻝ**:
 - ﮒ۵ﮔﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷4ﮒﺎﻛﭨ۴ﻛﺕﻟﺓﺁﮒﺝﺅﺙﮒﭦﻟﻟﺅﺙ?  1. ﻠﮔﺍﻝﭨﻝﭨﻝ؟ﮒﺛﻝﭨﮔ
@@ -94,13 +94,13 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](SUBDIR/document.md)
-[ﮔﮔ۰۲](09_AUDIT\SIBLING\document.md)
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
 ```
 
 ﻗ?**ﻝ۵ﮔ­۱**:
 ```markdown
-[ﮔﮔ۰۲](.\SUBDIR\document.md)        # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?[ﮔﮔ۰۲](..\\SIBLING\\document.md)    # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?```
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)        # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)    # Windowsﻟﺓﺁﮒﺝﮒﻠﻝ؛?```
 
 ### 3.3 ﻟﺓﺁﮒﺝﮒ۳۶ﮒﺍﮒﻟ۶ﻟ?
 **ﻟ۶ﮒ**: ﻟﺓﺁﮒﺝﮒ۳۶ﮒﺍﮒﮒﭦﻛﺕﮒ؟ﻠﮔﻛﭨﭘﮒﻛﺕﻟ?
@@ -124,21 +124,21 @@ compliance_level: 专业标准---
 **ﮔ۷ﻟﮔ ﺙﮒﺙ**:
 ```markdown
 # ﮒﻝﭦ۶ﮔﮔ۰۲
-[ﮔﮔ۰۲](document.md)
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
 
-# ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔ۰۲](SUBDIR/document.md)
+# ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
 
 # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛﮔﮔ۰۲
-[ﮔﮔ۰۲](09_AUDIT\document.md)
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮒ?docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT.md ﻛﺕ?
 # ﮒﺙﻝ۷ﮒﻝﭦ۶ﮔﮔ۰۲
-[ﻠ۲ﻠ۸ﻝﮔ۶ﻟﮒﺝ](RISK_MONITORING_BLUEPRINT.md)
+[ﻠ۲ﻠ۸ﻝﮔ۶ﻟﮒﺝ](01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md)
 
-# ﮒﺙﻝ۷ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](09_AUDIT\05_TECHNICAL_SPECIFICATIONS\STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md)
+# ﮒﺙﻝ۷ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md)
 
 # ﮒﺙﻝ۷ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛﮔﮔ۰۲
 [ﮒ؟ﮔﺛﮒﺎﻝﺑ۱ﮒﺙ](../INDEX.md)
@@ -150,10 +150,10 @@ compliance_level: 专业标准---
 **ﮔ۷ﻟﮔ ﺙﮒﺙ**:
 ```markdown
 # ﻛﺛﺟﻝ۷ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﺅﺙﻗ۳3ﮒﺎﺅﺙ
-[ﮔﮔ۰۲](OTHER_MODULE\document.md)
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
 
 # ﮒ۵ﮔﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶>3ﺅﺙﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﻝﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝ
-[ﮔﮔ۰۲](docs/OTHER_MODULE/document.md)
+[ﮔﮔ۰۲](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0-01_Database_Design_Document.md)
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
@@ -164,7 +164,7 @@ compliance_level: 专业标准---
 # ﮒﺙﻝ۷ﮒ ﮒ­ﮒﭦﮔﮔ۰۲ﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶=3ﺅﺙ?[ﮒ ﮒ­ﮒﭦﮔﮔ۰۲](../../../02_FACTOR_LIBRARY/README.md)
 
 # ﮒﺙﻝ۷ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ?4ﺅﺙﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﺅﺙ
-[ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](docs/INDEX.md)
+[ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 ```
 
 ### 4.3 ﮔ۰ﮔﭘﮒﺎﻛﺕﮒ؟ﮔﺛﮒﺎﮒﺙﻝ?
@@ -173,19 +173,19 @@ compliance_level: 专业标准---
 
 **ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲ﮒﺙﻝ۷ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲**:
 ```markdown
-**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮔ۰۲ﻠﺝﮔ۴](09_AUDIT\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MODULE_BLUEPRINT.md)
+**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮔ۰۲ﻠﺝﮔ۴](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md)
 ```
 
 **ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺙﻝ۷ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲**:
 ```markdown
-**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮔ۰ﮔﭘﮔﮔ۰۲ﻠﺝﮔ۴](01_FRAMEWORK\MODULE_BLUEPRINT.md)
+**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮔ۰ﮔﭘﮔﮔ۰۲ﻠﺝﮔ۴](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md)
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮔ۰ﮔﭘﮒﺎﮔﮔ۰? docs/01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md
 
-**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﮒﺁﺗﮒﺎﮒﺙﮔﻟﮒﺝ](09_AUDIT\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
+**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﮒﺁﺗﮒﺎﮒﺙﮔﻟﮒﺝ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
 - ﮒﺓﻛﺛﮒ؟ﻝﺍﮔﺗﮔ۰ﮒﮔﮔﺁﻝﭨﻟ?- ﮔ ﺕﮒﺟﮒ­ﻝﺏﭨﻝﭨﻟ؟ﺝﻟ؟۰ﮒﻛﭨ۲ﻝ ﻝ۳ﭦﻛﺝ
 - ﻠ۷ﻝﺛﺎﮔﺗﮔ۰ﮒﮒ؟ﮔﺛﻟﺓﺁﮒﺝ?
 ---
@@ -318,9 +318,9 @@ python scripts/path_optimizer.py --optimize
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 1. **ﮔﺗﮔ۰1**: ﻛﺛﺟﻝ۷`docs/`ﮒﺙﮒ۳ﺑﻝﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝ
    ```markdown
-   # ﮒﻟﺓﺁﮒﺝ?   [ﮔﮔ۰۲](../../../../README.md)
+   # ﮒﻟﺓﺁﮒﺝ?   [ﮔﮔ۰۲](API_README.md)
    
-   # ﻛﺙﮒﮒ?   [ﮔﮔ۰۲](docs/INDEX.md)
+   # ﻛﺙﮒﮒ?   [ﮔﮔ۰۲](01_FRAMEWORK/DATA_LAYER_INDEX.md)
    ```
 
 2. **ﮔﺗﮔ۰2**: ﻠﮔﺍﻝﭨﻝﭨﻝ؟ﮒﺛﻝﭨﮔ
@@ -329,7 +329,7 @@ python scripts/path_optimizer.py --optimize
 
 3. **ﮔﺗﮔ۰3**: ﮒ۷ﮔﮔ۰۲ﻛﺕ­ﮔﺓﭨﮒ ﮒﺁﺙﻟ۹ﻟﺁﺑﮔ
    ```markdown
-   > **ﮒﺁﺙﻟ۹**: [ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](docs/INDEX.md) > [ﮔ۷۰ﮒﻝﺑ۱ﮒﺙ](docs/MODULE/INDEX.md)
+   > **ﮒﺁﺙﻟ۹**: [ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md) > [ﮔ۷۰ﮒﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
    ```
 
 ### ﻠ؟ﻠ۱2: ﻟﺓﺁﮒﺝﮒ۳۶ﮒﺍﮒﻛﺕﻛﺕﻟ?

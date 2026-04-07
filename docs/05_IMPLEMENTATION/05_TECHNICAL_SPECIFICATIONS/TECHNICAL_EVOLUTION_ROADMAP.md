@@ -77,7 +77,7 @@ Month 1-2 (Phase 1): P1ч║зщгОщЩйф┐охд?- хЯ║чбАшо╛цЦ
 - [ ] Black-LittermanцибхЮЛхоЮчО░
 - [ ] хдЪш╡Дф║зщЕНч╜оцОехПгх╝АхП?- [ ] хЫЮц╡ЛщкМшпБф╕Оф╝ШхМ?
 **ф║дф╗ШчЙ?*:
-- тЬ?[ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md](ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md)
+- тЬ?[ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md)
 - тЬ?щгОщЩйх╣│ф╗╖ф╝ШхМЦхЩиф╗гча?- тЬ?Black-LittermanцибхЮЛф╗гчаБ
 - тЬ?ч╗ДхРИф╝ШхМЦAPIцЬНхКб
 
@@ -92,7 +92,7 @@ Month 1-2 (Phase 1): P1ч║зщгОщЩйф┐охд?- хЯ║чбАшо╛цЦ
 - [ ] цибхЮЛц│ихЖМф╕нх┐Гх╗║шо╛
 
 **ф║дф╗ШчЙ?*:
-- тЬ?[MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md](MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md)
+- тЬ?[MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md)
 - тЬ?шонч╗Гц╡Бц░┤ч║┐ф╗гча?- тЬ?хоЮщкМш╖Яш╕кч│╗ч╗Я
 - тЬ?цибхЮЛц│ихЖМф╕нх┐Г
 
@@ -105,7 +105,7 @@ Month 1-2 (Phase 1): P1ч║зщгОщЩйф┐охд?- хЯ║чбАшо╛цЦ
 - [ ] цибхЮЛхКаш╜╜хТМщвДц╡ЛцОехП?- [ ] чЙИцЬмчобчРЖхТМчГнцЫ┤цЦ░
 - [ ] цАзшГ╜чЫСцОзхТМхСКшн?
 **ф║дф╗ШчЙ?*:
-- тЬ?[MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md](MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md)
+- тЬ?[MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md)
 - тЬ?цибхЮЛцЬНхКбAPI
 - тЬ?чЙИцЬмчобчРЖч│╗ч╗Я
 - тЬ?чЫСцОзхСКшнжч│╗ч╗Я

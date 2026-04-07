@@ -205,9 +205,9 @@ DOCS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
 
 ## 📚 相关文档
 
-- [文档治理五大原则](docs\01_FRAMEWORK\ARCHITECTURE.md)
+- [文档治理五大原则](01_FRAMEWORK/ARCHITECTURE.md)
 - [蓝图质量验证工具](scripts\blueprint_validator.py)
-- [系统总索引](docs\System_Manifest.md)
+- [系统总索引](System_Manifest.md)
 
 ---
 

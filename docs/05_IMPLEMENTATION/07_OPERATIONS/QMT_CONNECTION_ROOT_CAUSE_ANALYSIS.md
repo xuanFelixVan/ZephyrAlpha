@@ -159,14 +159,14 @@ python scripts/test_qmt_connection_v2.py
 ## ЁЯУЪ чЫ╕хЕ│цЦЗцбгч┤вх╝Х
 
 ### ч│╗ч╗ЯцЦЗцбг
-1. [QMTцХ░цНоцОехПгцЦЗцбг](file:///d:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+1. [QMTцХ░цНоцОехПгцЦЗцбг](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
    - хМЕхРлMiniQMTшжБц▒ВуАБTokenшО╖хПЦуАБш┐РшбМчОпхвГчнЙхЕ│щФоф┐бцБп
 
-2. [QMT APIчд╛хМ║ш╡Дц║Рш░ГчаФцКехСК](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_002_QMT_API_COMMUNITY_RESEARCH.md)
+2. [QMT APIчд╛хМ║ш╡Дц║Рш░ГчаФцКехСК](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_002_QMT_API_COMMUNITY_RESEARCH.md)
    - хМЕхРлш┤жхП╖ч▒╗хЮЛуАБцЭГщЩРшжБц▒ВуАБцЬАф╜│хоЮш╖?
-3. [QMTховцИ╖члпчи│хоЪцАзцЦ╣цбИ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md)
+3. [QMTховцИ╖члпчи│хоЪцАзцЦ╣цбИ](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md)
    - хМЕхРлш┐ЮцОещЧощвШхдДчРЖуАБшЗкхКищЗНш┐ЮуАБщЩНч║зчнЦчХ?
-4. [QMT APIхнжф╣ашобхИТ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_001_QMT_API_LEARNING_PLAN.md)
+4. [QMT APIхнжф╣ашобхИТ](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_001_QMT_API_LEARNING_PLAN.md)
    - хМЕхРлх╕╕шзБщЧощвШф╕ОшзгхЖ│цЦ╣цб?
 ### хоШцЦ╣цЦЗцбг
 1. ш┐ЕцКХчЯешпЖх║Уя╝Ъhttps://dict.thinktrader.net/

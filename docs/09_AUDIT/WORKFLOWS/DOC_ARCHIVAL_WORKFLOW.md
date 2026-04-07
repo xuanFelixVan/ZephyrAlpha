@@ -201,7 +201,7 @@ python scripts/move_to_archive.py --doc docs/PATH/TO/DOC.md --archive-dir docs/0
 
 **ﮔﺑﮔﺍﮒ?*:
 ```markdown
-ﮒﻟ۶ [ﻝ­ﻝ۴ﮒﺙﮔﻟﮒﺝ](09_AUDIT\BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT.md)
+ﮒﻟ۶ [ﻝ­ﻝ۴ﮒﺙﮔﻟﮒﺝ](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md)
 ```
 
 **ﮔﺑﮔﺍﮒﺅﺙﮔﮔﺟﻛﭨ۲ﺅﺙ**:

@@ -47,7 +47,7 @@ implementation_status: 设计阶段
 | 原因 | 说明 |
 |------|------|
 | **个人系统** | 数据为公开行情，不需要企业级安全 |
-| **已有认证** | [AUTH.md](../02_DEVELOPMENT/AUTH.md) 已实现JWT+API Key认证 |
+| **已有认证** | [AUTH.md](05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) 已实现JWT+API Key认证 |
 | **工程量过�?* | 完整安全方案需要额�?0h |
 | **优先级低** | 1�?AI模式核心是策略和风控，不是安�?|
 
@@ -81,8 +81,8 @@ implementation_status: 设计阶段
 
 | 文档 | 说明 |
 |------|------|
-| [AUTH.md](../02_DEVELOPMENT/AUTH.md) | 简化认证模�?已有) |
-| [DEVELOPER_RULES.md](../02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规�?|
+| [AUTH.md](05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) | 简化认证模�?已有) |
+| [DEVELOPER_RULES.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规�?|
 
 ---
 

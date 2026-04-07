@@ -241,7 +241,7 @@ implementation_status: 已完�?---
 1. **首次全面审计**: 采用框架完整四层架构，预�?-6小时
 2. **定期增量审计**: 采用框架简化版，聚焦变更文件，30-60分钟
 3. **专项深度审计**: 针对特定问题，加强第3层专项分�?
-**详细文档**: [大规模文件系统深度审计框架](../MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md)
+**详细文档**: [大规模文件系统深度审计框架](09_AUDIT/MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md)
 
 ## 📝 更新记录
 

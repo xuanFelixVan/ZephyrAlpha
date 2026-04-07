@@ -32,9 +32,9 @@ responsibility: 数据质量控制体系设计与实施
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 上游处理 | 数据清洗规则 |
-| 数据流水线 | [../07_DATA_PIPELINE/BLUEPRINT.md](../07_DATA_PIPELINE/BLUEPRINT.md) | 整体架构 | 数据流水线设计 |
-| 数据监控增强 | [../DATA_MONITORING_ENHANCED/BLUEPRINT.md](../DATA_MONITORING_ENHANCED/BLUEPRINT.md) | 执行层 | 数据质量监控执行 |
+| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 上游处理 | 数据清洗规则 |
+| 数据流水线 | [../07_DATA_PIPELINE/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 整体架构 | 数据流水线设计 |
+| 数据监控增强 | [../DATA_MONITORING_ENHANCED/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 执行层 | 数据质量监控执行 |
 | 质量管理索引 | [INDEX.md](./INDEX.md) | 上级索引 | 质量管理模块索引 |
 
 **职责边界**:

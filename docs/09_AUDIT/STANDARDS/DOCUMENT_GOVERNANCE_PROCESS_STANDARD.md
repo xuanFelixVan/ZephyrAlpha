@@ -280,10 +280,10 @@ exit 0
 ---
 
 ## 10. хПВшАГцЦЗцб?
-- [цЦЗцбгцибцЭ┐](../TEMPLATES/DOCUMENT_TEMPLATE.md)
+- [цЦЗцбгцибцЭ┐](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 - [цЦЗцбгхИЖч▒╗шзДшМГцаЗхЗЖ](DOCUMENT_CLASSIFICATION_STANDARD.md)
-- [цЦЗцбгхИЖч▒╗ф╛ЛхдЦц╕ЕхНХ](DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)
-- [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [цЦЗцбгхИЖч▒╗ф╛ЛхдЦц╕ЕхНХ](09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)
+- [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---
 

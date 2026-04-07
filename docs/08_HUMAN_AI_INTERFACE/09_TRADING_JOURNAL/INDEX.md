@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Trading Journal Blueprint](TRADING_JOURNAL_BLUEPRINT.md) - `TRADINGJOURNALBLUEPRINT_001`
+- [Trading Journal Blueprint](08_HUMAN_AI_INTERFACE/09_TRADING_JOURNAL/TRADING_JOURNAL_BLUEPRINT.md) - `TRADINGJOURNALBLUEPRINT_001`
 
 ---
 

@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [System Status Blueprint](SYSTEM_STATUS_BLUEPRINT.md) - `SYSTEMSTATUSBLUEPRINT_001`
+- [System Status Blueprint](08_HUMAN_AI_INTERFACE/12_SYSTEM_STATUS/SYSTEM_STATUS_BLUEPRINT.md) - `SYSTEMSTATUSBLUEPRINT_001`
 
 ---
 

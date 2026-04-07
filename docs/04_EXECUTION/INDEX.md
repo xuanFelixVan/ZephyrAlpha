@@ -78,7 +78,7 @@ implementation_status: 活跃维护---
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [README](./README.md) | 执行层概�?| ⭐⭐⭐⭐�?|
+| [README](API_README.md) | 执行层概�?| ⭐⭐⭐⭐�?|
 | [信号生成](./signal_generation.md) | 信号生成机制 | ⭐⭐⭐⭐ |
 
 ### 事件引擎
@@ -86,7 +86,7 @@ implementation_status: 活跃维护---
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
 | [事件总线](./01_EVENT_ENGINE/EVENT_BUS.md) | 事件总线设计 | ⭐⭐⭐⭐�?|
-| [事件引擎概述](./01_EVENT_ENGINE/README.md) | 事件引擎概述 | ⭐⭐⭐⭐ |
+| [事件引擎概述](API_README.md) | 事件引擎概述 | ⭐⭐⭐⭐ |
 
 ### 订单执行
 
@@ -105,7 +105,7 @@ implementation_status: 活跃维护---
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [监控蓝图](./03_MONITORING/BLUEPRINT.md) | 监控系统蓝图 | ⭐⭐⭐⭐�?|
+| [监控蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 监控系统蓝图 | ⭐⭐⭐⭐�?|
 | [健康监控](./03_MONITORING/HEALTH_MONITORING.md) | 健康监控 | ⭐⭐⭐⭐ |
 | [实时监控](./03_MONITORING/REAL_TIME_MONITORING.md) | 实时监控 | ⭐⭐⭐⭐ |
 | [绩效归因](./03_MONITORING/PERFORMANCE_ATTRIBUTION.md) | 绩效归因 | ⭐⭐⭐⭐ |
@@ -125,7 +125,7 @@ implementation_status: 活跃维护---
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [模拟蓝图](./06_SIMULATION/BLUEPRINT.md) | 模拟系统蓝图 | ⭐⭐⭐⭐�?|
+| [模拟蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 模拟系统蓝图 | ⭐⭐⭐⭐�?|
 | [多引擎蓝图](./06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md) | 多引擎蓝�?| ⭐⭐⭐⭐ |
 
 ### 实盘系统
@@ -154,12 +154,12 @@ implementation_status: 活跃维护---
 ## 📖 快速导�?
 ### 新手入门
 
-1. 阅读 [README.md](./README.md) - 执行层概�?2. 阅读 [01_EVENT_ENGINE/EVENT_BUS.md](./01_EVENT_ENGINE/EVENT_BUS.md) - 事件总线
-3. 阅读 [03_MONITORING/BLUEPRINT.md](./03_MONITORING/BLUEPRINT.md) - 监控系统
+1. 阅读 [README.md](API_README.md) - 执行层概�?2. 阅读 [01_EVENT_ENGINE/EVENT_BUS.md](./01_EVENT_ENGINE/EVENT_BUS.md) - 事件总线
+3. 阅读 [03_MONITORING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - 监控系统
 
 ### 开发者
 1. 阅读 [01_ORDER_EXECUTION/ORDER_EXECUTION_BLUEPRINT.md](./01_ORDER_EXECUTION/ORDER_EXECUTION_BLUEPRINT.md) - 订单执行
-2. 阅读 [06_SIMULATION/BLUEPRINT.md](./06_SIMULATION/BLUEPRINT.md) - 模拟系统
+2. 阅读 [06_SIMULATION/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - 模拟系统
 
 ---
 

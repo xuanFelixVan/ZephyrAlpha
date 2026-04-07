@@ -304,8 +304,8 @@ tags: ["ف║¤µحلتµة?, "لثلآرق«ةق", "ف║¤µحفô
 ---
 
 ## 9. فéكâµûçµة?
-- [لثلآرق«ةقµةµئ╢](../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
-- [لثلآرغ║ïغ╗╢ك«░ف╜ـµذةµإ┐](../TEMPLATES/RISK_EVENT_TEMPLATE.md)
+- [لثلآرق«ةقµةµئ╢](09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
+- [لثلآرغ║ïغ╗╢ك«░ف╜ـµذةµإ┐](./RISK_EVENT_TEMPLATE.md)
 
 ---
 

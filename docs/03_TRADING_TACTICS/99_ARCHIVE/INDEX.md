@@ -44,12 +44,12 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [36 Decision Framework Archived](36_DECISION_FRAMEWORK_ARCHIVED.md) - `TACTICS_ARCH_DECISION_FRAMEWORK_001`
-- [Ai-Integration](ai-integration.md) - `TACTICS_ARCH_AI_INTEGRATION_001`
-- [Interface-Standard](interface-standard.md) - `TACTICS_ARCH_INTERFACE_STD_001`
-- [Manager](manager.md) - `TACTICS_ARCH_MANAGER_001`
-- [Pattern-Recognition](pattern-recognition.md) - `TACTICS_ARCH_PATTERN_RECOG_001`
-- [Technical-Indicators](technical-indicators.md) - `TACTICS_ARCH_TECH_INDICATORS_001`
+- [36 Decision Framework Archived](03_TRADING_TACTICS/99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md) - `TACTICS_ARCH_DECISION_FRAMEWORK_001`
+- [Ai-Integration](03_TRADING_TACTICS/99_ARCHIVE/ai-integration.md) - `TACTICS_ARCH_AI_INTEGRATION_001`
+- [Interface-Standard](03_TRADING_TACTICS/99_ARCHIVE/interface-standard.md) - `TACTICS_ARCH_INTERFACE_STD_001`
+- [Manager](03_TRADING_TACTICS/99_ARCHIVE/manager.md) - `TACTICS_ARCH_MANAGER_001`
+- [Pattern-Recognition](03_TRADING_TACTICS/99_ARCHIVE/pattern-recognition.md) - `TACTICS_ARCH_PATTERN_RECOG_001`
+- [Technical-Indicators](03_TRADING_TACTICS/99_ARCHIVE/technical-indicators.md) - `TACTICS_ARCH_TECH_INDICATORS_001`
 
 ---
 

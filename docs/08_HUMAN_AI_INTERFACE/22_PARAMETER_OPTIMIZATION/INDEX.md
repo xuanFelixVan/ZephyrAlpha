@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Parameter Optimization Blueprint](PARAMETER_OPTIMIZATION_BLUEPRINT.md) - `PARAMETEROPTIMIZATIONBLUEPRI_002`
+- [Parameter Optimization Blueprint](10_AI_WORKFLOW/INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT.md) - `PARAMETEROPTIMIZATIONBLUEPRI_002`
 
 ---
 

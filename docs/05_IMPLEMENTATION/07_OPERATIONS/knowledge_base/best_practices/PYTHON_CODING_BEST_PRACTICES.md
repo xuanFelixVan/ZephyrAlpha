@@ -377,8 +377,8 @@ def process_data(data):
 
 ## ﻭ **ﻝﺕﮒﺏﮔ۰ﻛﺝ**
 
-- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](../case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
-- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](../case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
+- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
+- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
 
 ---
 
@@ -386,8 +386,8 @@ def process_data(data):
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../../../06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ](../../../02_DEVELOPMENT/CODE_QUALITY.md)
+- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+- [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

@@ -32,7 +32,7 @@ responsibility: 数据编排增强模块导航
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据编排增强蓝图 | [BLUEPRINT.md](./BLUEPRINT.md) | 详细设计 | 数据编排增强系统详细设计 |
+| 数据编排增强蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 详细设计 | 数据编排增强系统详细设计 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据编排增强系统模块导航和索引
@@ -125,7 +125,7 @@ responsibility: 数据编排增强模块导航
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [BLUEPRINT.md](BLUEPRINT.md) | 数据编排增强系统详细设计 | Blueprint |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据编排增强系统详细设计 | Blueprint |
 
 ---
 
@@ -136,7 +136,7 @@ responsibility: 数据编排增强模块导航
 | 模块 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据调度 | [../02_SCHEDULER/](../02_SCHEDULER/) | 协同 | 定时调度 |
-| 数据采集 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 数据来源 | 数据采集方案 |
+| 数据采集 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据来源 | 数据采集方案 |
 
 ### 协同模块
 
@@ -150,7 +150,7 @@ responsibility: 数据编排增强模块导航
 | 模块 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据清洗 | [../03_CLEANING/](../03_CLEANING/) | 处理 | 数据清洗引擎 |
-| 数据质量 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 检查 | 数据质量控制 |
+| 数据质量 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 检查 | 数据质量控制 |
 
 ---
 

@@ -84,14 +84,14 @@ responsibility:
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
 | [系统清单](../System_Manifest.md) | 系统清单（全局�?| ⭐⭐⭐⭐�?|
-| [README](./README.md) | 因子库概�?| ⭐⭐⭐⭐�?|
+| [README](API_README.md) | 因子库概�?| ⭐⭐⭐⭐�?|
 | [SITEMAP](./SITEMAP.md) | 因子库文档地�?| ⭐⭐⭐⭐�?|
-| [FAQ](10_MANUAL/FAQ.md) | 常见问题解答 | ⭐⭐⭐⭐ |
-| [交接文档](10_MANUAL/HANDOVER.md) | 项目交接文档 | ⭐⭐⭐⭐ |
-| [知识管理](10_MANUAL/KNOWLEDGE_MANAGEMENT.md) | 知识管理体系 | ⭐⭐⭐⭐ |
-| [模块设计计划](01_STANDARDS/MODULE_DESIGN_PLAN.md) | 模块设计规划 | ⭐⭐⭐⭐ |
+| [FAQ](02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | 常见问题解答 | ⭐⭐⭐⭐ |
+| [交接文档](02_FACTOR_LIBRARY/10_MANUAL/HANDOVER.md) | 项目交接文档 | ⭐⭐⭐⭐ |
+| [知识管理](02_FACTOR_LIBRARY/10_MANUAL/KNOWLEDGE_MANAGEMENT.md) | 知识管理体系 | ⭐⭐⭐⭐ |
+| [模块设计计划](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md) | 模块设计规划 | ⭐⭐⭐⭐ |
 | [优化总结](./OPTIMIZATION_SUMMARY.md) | 优化工作总结 | ⭐⭐⭐⭐ |
-| [审计报告](09_AUDIT/AUDIT_REPORT.md) | 审计报告汇�?| ⭐⭐⭐⭐ |
+| [审计报告](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md) | 审计报告汇�?| ⭐⭐⭐⭐ |
 
 ---
 
@@ -113,24 +113,24 @@ responsibility:
 | [因子筛选策略](./01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) | 5900因子筛选流程（4阶段�?| ⭐⭐⭐⭐�?|
 | [因子挖掘指南](./01_STANDARDS/FACTOR_MINING_GUIDE.md) | 因子挖掘方法�?| ⭐⭐⭐⭐ |
 | [因子验证指南](./01_STANDARDS/FACTOR_VALIDATION_GUIDE.md) | 因子验证流程 | ⭐⭐⭐⭐ |
-| [研究管理](./01_STANDARDS/RESEARCH_MANAGEMENT.md) | 研究管理规范 | ⭐⭐⭐⭐ |
+| [研究管理](./01_STANDARDS/research_management.md) | 研究管理规范 | ⭐⭐⭐⭐ |
 | [未来因子工具](./01_STANDARDS/FUTURE_FACTOR_TOOLS.md) | 未来因子工具规划 | ⭐⭐�?|
 
 ### 因子处理
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子预处理](./01_STANDARDS/FACTOR_PREPROCESSING.md) | 因子预处理方�?| ⭐⭐⭐⭐ |
-| [因子中性化](./01_STANDARDS/FACTOR_NEUTRALIZATION.md) | 因子中性化处理 | ⭐⭐⭐⭐ |
-| [因子收益分析](./01_STANDARDS/FACTOR_RETURN_ANALYSIS.md) | 因子收益分析 | ⭐⭐⭐⭐ |
-| [因子合成](./01_STANDARDS/FACTOR_SYNTHESIS.md) | 因子合成方法 | ⭐⭐⭐⭐ |
-| [IC分析](./01_STANDARDS/IC_ANALYSIS.md) | IC分析方法 | ⭐⭐⭐⭐�?|
+| [因子预处理](./01_STANDARDS/factor_preprocessing.md) | 因子预处理方�?| ⭐⭐⭐⭐ |
+| [因子中性化](./01_STANDARDS/factor_neutralization.md) | 因子中性化处理 | ⭐⭐⭐⭐ |
+| [因子收益分析](./01_STANDARDS/factor_return_analysis.md) | 因子收益分析 | ⭐⭐⭐⭐ |
+| [因子合成](./01_STANDARDS/factor_synthesis.md) | 因子合成方法 | ⭐⭐⭐⭐ |
+| [IC分析](./01_STANDARDS/ic_analysis.md) | IC分析方法 | ⭐⭐⭐⭐�?|
 
 ### 回测标准
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [回测标准](./01_STANDARDS/BACKTEST_STANDARDS.md) | 回测标准规范 | ⭐⭐⭐⭐�?|
+| [回测标准](./01_STANDARDS/backtest_standards.md) | 回测标准规范 | ⭐⭐⭐⭐�?|
 | [技术指标](./01_STANDARDS/TECHNICAL_INDICATORS.md) | 技术指标因�?| ⭐⭐⭐⭐ |
 
 ---
@@ -139,7 +139,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [Alpha因子索引](01_STANDARDS/ALPHA_FACTORS_INDEX_STANDARD.md) | Alpha因子索引 | ⭐⭐⭐⭐�?|
+| [Alpha因子索引](02_FACTOR_LIBRARY/01_STANDARDS/ALPHA_FACTORS_INDEX_STANDARD.md) | Alpha因子索引 | ⭐⭐⭐⭐�?|
 
 ---
 
@@ -161,7 +161,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [数据源概述](./04_DATA_SOURCE/INDEX.md) | 数据源概述 | ⭐⭐⭐⭐�?|
+| [数据源概述](01_FRAMEWORK/DATA_LAYER_INDEX.md) | 数据源概述 | ⭐⭐⭐⭐�?|
 | [数据需求](./04_DATA_SOURCE/DATA_REQUIREMENTS.md) | 数据需求分�?| ⭐⭐⭐⭐�?|
 | [数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md) | 数据采集流程 |  |`n| [文档命名标准](./04_DATA_SOURCE/DOCUMENT_NAMING_STANDARD.md) | 文档命名规范 |  |`n| [数据质量](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 数据质量控制体系 |  |
 | [数据源适配器](./04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) | 数据源适配�?| ⭐⭐⭐⭐�?|
@@ -223,19 +223,19 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [回测概述](./05_BACKTEST/README.md) | 回测概述 | ⭐⭐⭐⭐�?|
+| [回测概述](API_README.md) | 回测概述 | ⭐⭐⭐⭐�?|
 | [因子验证蓝图](./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md) | 因子验证蓝图 | ⭐⭐⭐⭐�?|
-| [因子衰减](./05_BACKTEST/06_FACTOR_DECAY.md) | 因子衰减分析 | ⭐⭐⭐⭐�?|
-| [分层回测](./05_BACKTEST/07_LAYERED_BACKTEST.md) | 分层回测方法 | ⭐⭐⭐⭐�?|
-| [过拟合测试](./05_BACKTEST/09_OVERFITTING_TEST.md) | 过拟合测�?| ⭐⭐⭐⭐�?|
-| [相关性矩阵](./05_BACKTEST/CORRELATION_MATRIX.md) | 相关性矩�?| ⭐⭐⭐⭐�?|
+| [因子衰减](./05_BACKTEST/FACTOR_DECAY.md) | 因子衰减分析 | ⭐⭐⭐⭐�?|
+| [分层回测](./05_BACKTEST/LAYERED_BACKTEST.md) | 分层回测方法 | ⭐⭐⭐⭐�?|
+| [过拟合测试](./05_BACKTEST/OVERFITTING_TEST.md) | 过拟合测�?| ⭐⭐⭐⭐�?|
+| [相关性矩阵](./05_BACKTEST/correlation_matrix.md) | 相关性矩�?| ⭐⭐⭐⭐�?|
 
 ### 回测重组
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [回测重组](05_BACKTEST/BACKTEST_REORGANIZATION.md) | 回测重组方案 | ⭐⭐⭐⭐ |
-| [宽度指标](02_ALPHA_FACTORS_INDEX/BREADTH_INDICATORS.md) | 宽度指标 | ⭐⭐⭐⭐ |
+| [回测重组](02_FACTOR_LIBRARY/05_BACKTEST/BACKTEST_REORGANIZATION.md) | 回测重组方案 | ⭐⭐⭐⭐ |
+| [宽度指标](02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX/BREADTH_INDICATORS.md) | 宽度指标 | ⭐⭐⭐⭐ |
 
 ### 价值因子回�?
 | 文档名称 | 说明 | 重要�?|
@@ -257,7 +257,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子监控](./07_FACTOR_MONITORING/FACTOR_MONITORING.md) | 因子监控体系 | ⭐⭐⭐⭐�?|
+| [因子监控](./07_FACTOR_MONITORING/factor_monitoring.md) | 因子监控体系 | ⭐⭐⭐⭐�?|
 | [AI因子管家](./07_FACTOR_MONITORING/AI_FACTOR_AGENT.md) | AI因子管家 | ⭐⭐⭐⭐�?|
 
 ---
@@ -286,12 +286,12 @@ responsibility:
 ## 📖 快速导�?
 ### 新手入门
 
-1. 阅读 [README.md](./README.md) - 因子库概�?2. 阅读 [系统清单](../System_Manifest.md) - 系统清单（全局�?3. 阅读 [因子分类学](./01_STANDARDS/FACTOR_TAXONOMY.md) - 因子分类体系
+1. 阅读 [README.md](API_README.md) - 因子库概�?2. 阅读 [系统清单](../System_Manifest.md) - 系统清单（全局�?3. 阅读 [因子分类学](./01_STANDARDS/FACTOR_TAXONOMY.md) - 因子分类体系
 
 ### 因子开�?
 1. 阅读 [01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) - 因子计算框架
 2. 阅读 [05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md](./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md) - 因子验证
-3. 阅读 [01_STANDARDS/IC_ANALYSIS.md](./01_STANDARDS/IC_ANALYSIS.md) - IC分析
+3. 阅读 [01_STANDARDS/IC_ANALYSIS.md](./01_STANDARDS/ic_analysis.md) - IC分析
 
 ---
 
@@ -309,6 +309,6 @@ responsibility:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |
 
-- [因子注册表(Factor Registry)](06_REGISTRY/FACTOR_CATALOG.md) - 系统文档
+- [因子注册表(Factor Registry)](02_FACTOR_LIBRARY/06_REGISTRY/FACTOR_CATALOG.md) - 系统文档
 
-- [因子库手�?v3.2](10_MANUAL/FACTOR_LIBRARY_MANUAL.md) - 系统文档
+- [因子库手�?v3.2](02_FACTOR_LIBRARY/10_MANUAL/FACTOR_LIBRARY_MANUAL.md) - 系统文档

@@ -511,7 +511,7 @@ elif action == "创建策略":
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.14
-- **蓝图文档**: [STRATEGY_MANAGEMENT_BLUEPRINT.md](../14_STRATEGY_MANAGEMENT/STRATEGY_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [STRATEGY_MANAGEMENT_BLUEPRINT.md](./STRATEGY_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha策略管理
 - **状态**: Active

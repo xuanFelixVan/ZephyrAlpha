@@ -64,7 +64,7 @@ responsibility:
 
 **命名规范**: `ADR-XXX-[决策标题].md`
 
-**模板**: [ADR模板](../TEMPLATES/ADR_TEMPLATE.md)
+**模板**: [ADR模板](09_AUDIT/TEMPLATES/ADR_TEMPLATE.md)
 
 ### 技术决策记录
 
@@ -72,7 +72,7 @@ responsibility:
 
 **命名规范**: `TDR-XXX-[决策标题].md`
 
-**模板**: [决策记录模板](../TEMPLATES/DECISION_RECORD_TEMPLATE.md)
+**模板**: [决策记录模板](09_AUDIT/TEMPLATES/DECISION_RECORD_TEMPLATE.md)
 
 ### 业务决策记录
 
@@ -80,7 +80,7 @@ responsibility:
 
 **命名规范**: `BDR-XXX-[决策标题].md`
 
-**模板**: [决策记录模板](../TEMPLATES/DECISION_RECORD_TEMPLATE.md)
+**模板**: [决策记录模板](09_AUDIT/TEMPLATES/DECISION_RECORD_TEMPLATE.md)
 
 ### 流程决策记录
 
@@ -88,7 +88,7 @@ responsibility:
 
 **命名规范**: `PDR-XXX-[决策标题].md`
 
-**模板**: [决策记录模板](../TEMPLATES/DECISION_RECORD_TEMPLATE.md)
+**模板**: [决策记录模板](09_AUDIT/TEMPLATES/DECISION_RECORD_TEMPLATE.md)
 
 ---
 

@@ -59,8 +59,8 @@ implementation_progress: 0%
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集系统 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 上游采集 | 数据采集实现方案 |
-| 数据质量管理 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 下游检查 | 数据质量控制体系 |
+| 数据采集系统 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 上游采集 | 数据采集实现方案 |
+| 数据质量管理 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 下游检查 | 数据质量控制体系 |
 | 清洗规则索引 | [INDEX.md](./INDEX.md) | 上级索引 | 清洗模块索引 |
 
 **职责边界**:

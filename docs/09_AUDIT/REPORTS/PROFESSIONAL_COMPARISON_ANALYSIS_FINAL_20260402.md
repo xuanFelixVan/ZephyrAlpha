@@ -375,11 +375,11 @@ tags: ["ίψ╣όψΦίΙΗόηΡ", "ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕ", "
 
 ## 8. ίΠΓϋΑΔόΨΘόκ?
 ### 8.1 ί╖▓ίΙδί╗║όΨΘόκ?
-- [ύιΦύσ╢ίνΘί┐αί╜ΧίΙ╢ί║οόιΘίΘΗ](../STANDARDS/RESEARCH_MEMO_STANDARD.md)
-- [ίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ](../STANDARDS/DECISION_RECORD_STANDARD.md)
-- [όη╢όηΕίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ](../STANDARDS/ADR_STANDARD.md)
-- [όρκίζΩόΟξίΠμίχγϊ╣ΚϋπΕϋΝΔ](../STANDARDS/MODULE_INTERFACE_SPECIFICATION.md)
-- [ώμΟώβσύχκύΡΗόκΗόη╢](../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
+- [ύιΦύσ╢ίνΘί┐αί╜ΧίΙ╢ί║οόιΘίΘΗ](09_AUDIT/STANDARDS/RESEARCH_MEMO_STANDARD.md)
+- [ίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ](09_AUDIT/STANDARDS/DECISION_RECORD_STANDARD.md)
+- [όη╢όηΕίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ](09_AUDIT/STANDARDS/ADR_STANDARD.md)
+- [όρκίζΩόΟξίΠμίχγϊ╣ΚϋπΕϋΝΔ](09_AUDIT/STANDARDS/MODULE_INTERFACE_SPECIFICATION.md)
+- [ώμΟώβσύχκύΡΗόκΗόη╢](09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
 
 ### 8.2 όΦ╣ϋ┐δόΛξίΣΛ
 

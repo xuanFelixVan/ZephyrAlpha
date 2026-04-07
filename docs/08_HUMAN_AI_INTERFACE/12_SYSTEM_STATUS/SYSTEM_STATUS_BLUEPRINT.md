@@ -409,7 +409,7 @@ if st.button("立即刷新"):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.12
-- **蓝图文档**: [SYSTEM_STATUS_BLUEPRINT.md](../12_SYSTEM_STATUS/SYSTEM_STATUS_BLUEPRINT.md)
+- **蓝图文档**: [SYSTEM_STATUS_BLUEPRINT.md](./SYSTEM_STATUS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha系统状态
 - **状态**: Active

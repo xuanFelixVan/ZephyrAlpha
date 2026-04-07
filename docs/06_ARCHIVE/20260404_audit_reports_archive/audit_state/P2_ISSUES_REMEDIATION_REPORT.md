@@ -259,12 +259,12 @@ applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗?com
 ### 7.2 уЏИтЁ│ТќЄТАБ
 
 **ТЋ┤Тћ╣уЏИтЁ│ТќЄТАБ**:
-1. [Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дт«АУ«АТіЦтЉі](LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md)
+1. [Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дт«АУ«АТіЦтЉі](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md)
 2. [P0у║ДжЌ«жбўТЋ┤Тћ╣т«їТѕљТіЦтЉі](./P0_ISSUES_REMEDIATION_REPORT.md)
 3. [P1у║ДжЌ«жбўТЋ┤Тћ╣т«їТѕљТіЦтЉі](./P1_ISSUES_REMEDIATION_REPORT.md)
-4. [ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ](06_ARCHIVE\09_AUDIT\STANDARDS\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-5. [ТіђТю»УДёТа╝С╣ду┤бт╝Ћ](06_ARCHIVE\20260404_audit_reports_archive\05_TECHNICAL_SPECIFICATIONS\INDEX.md)
-6. [у│╗у╗ЪТъХТъёТќЄТАБ](06_ARCHIVE\01_FRAMEWORK\ARCHITECTURE.md)
+4. [ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+5. [ТіђТю»УДёТа╝С╣ду┤бт╝Ћ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+6. [у│╗у╗ЪТъХТъёТќЄТАБ](01_FRAMEWORK/ARCHITECTURE.md)
 
 ---
 

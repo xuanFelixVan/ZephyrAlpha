@@ -275,7 +275,7 @@ pattern = r'^---\s*\n.*?\n---\s*\n\s*\ufeff?---\s*\n(.*?)\n---\s*\n'
 ## 📄 相关文档
 
 1. **深度审计报告**: [LAYER6_DEEP_AUDIT_V7_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V7_20260407.md)
-2. **质量监控报告**: [quality_monitoring_report_20260407_014237.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_014237.md)
+2. **质量监控报告**: [quality_monitoring_report_20260407_014237.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_014237.md)
 
 ---
 

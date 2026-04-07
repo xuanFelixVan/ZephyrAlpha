@@ -2148,7 +2148,7 @@ ffn>=0.3.0
 
 **维护�?*: 清风量化系统  
 **索引**: `SIM_002`  
-**关联文档**: [BLUEPRINT.md](BLUEPRINT.md), [README.md](README.md)  
+**关联文档**: [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md), [README.md](API_README.md)  
 **状�?*: �?设计完成，待评审
 ---
 

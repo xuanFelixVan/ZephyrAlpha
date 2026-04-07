@@ -493,7 +493,7 @@ class SystemConfig(BaseModel):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.10
-- **蓝图文档**: [CONFIG_MANAGEMENT_BLUEPRINT.md](../10_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [CONFIG_MANAGEMENT_BLUEPRINT.md](./CONFIG_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha配置管理
 - **状态**: Active

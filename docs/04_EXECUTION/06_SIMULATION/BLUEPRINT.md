@@ -546,7 +546,7 @@ engine = TradingEngine(
 ### 9.4 完整多引擎设�?
 
 详细的多引擎架构设计、接口定义、配置管理、实施路线图详见�?
-**[MULTI_ENGINE_BLUEPRINT.md](MULTI_ENGINE_BLUEPRINT.md)**
+**[MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md)**
 
 该文档包含：
 - 三引擎详细设计（vn.py、RQAlpha、Backtrader�?
@@ -559,7 +559,7 @@ engine = TradingEngine(
 
 **维护�?*: 清风量化系统
 **索引**: `SIM_001` �?`SIM_002` (多引擎扩�?
-**关联文档**: [MULTI_ENGINE_BLUEPRINT.md](MULTI_ENGINE_BLUEPRINT.md)
+**关联文档**: [MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md)
 ---
 
 ## 10. 文档治理

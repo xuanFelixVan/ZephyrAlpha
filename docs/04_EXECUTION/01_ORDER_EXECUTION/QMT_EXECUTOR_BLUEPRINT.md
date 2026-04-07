@@ -456,8 +456,8 @@ class QMTConfig:
 
 - [QMTæ°æ®æ¥å£ææ¯è§è](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 - [QMTæ§è¡å¨ææ¯è§æ ¼ä¹¦](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
-- [è®¢åæ§è¡èå¾](ORDER_EXECUTION_BLUEPRINT.md)
-- [æ¨¡æäº¤æèå¾](../06_SIMULATION/BLUEPRINT.md)
+- [è®¢åæ§è¡èå¾](04_EXECUTION/01_ORDER_EXECUTION/ORDER_EXECUTION_BLUEPRINT.md)
+- [æ¨¡æäº¤æèå¾](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ### 8.2 å¤é¨ææ¡£
 

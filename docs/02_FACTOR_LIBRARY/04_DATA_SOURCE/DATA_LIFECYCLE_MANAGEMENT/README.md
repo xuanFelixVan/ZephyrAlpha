@@ -30,7 +30,7 @@ layer: "Layer 1 (数据预处理层)"
 
 ## 📁 文档索引
 
-- [BLUEPRINT](BLUEPRINT.md)
+- [BLUEPRINT](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 - [INDEX](INDEX.md)
 
 ## 🚀 快速开始

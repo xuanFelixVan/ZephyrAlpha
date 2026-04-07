@@ -213,7 +213,7 @@ responsibility:
   - 识别关键功能和输入输?
 
 ?? 模板填写 (0.5-1?
-  - 使用[MODULE_DESIGN_TEMPLATE.md](02_FACTOR_LIBRARY\05_IMPLEMENTATION\MODULE_DESIGN_TEMPLATE.md)
+  - 使用[MODULE_DESIGN_TEMPLATE.md](05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md)
   - 填写必填部分(基本信息、功能、接口、测?
   - 根据复杂度填写选填部分
 
@@ -323,7 +323,7 @@ docs/module_designs/
    - 设置进度跟踪机制
 
 ### 设计工具准备
-1. **模板准备**: [MODULE_DESIGN_TEMPLATE.md](02_FACTOR_LIBRARY\05_IMPLEMENTATION\MODULE_DESIGN_TEMPLATE.md) 已就?
+1. **模板准备**: [MODULE_DESIGN_TEMPLATE.md](05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) 已就?
 2. **参考文?*: 架构文档、现有蓝图文?
 3. **AI工具**: Trae AI辅助设计
 4. **版本控制**: Git管理设计文档版本
@@ -351,11 +351,11 @@ docs/module_designs/
 ## 🔗 相关资源
 
 ### 设计参考资?
-1. [架构设计文档](02_FACTOR_LIBRARY\01_FRAMEWORK\ARCHITECTURE.md) - 模块定义和层级关?
-2. [模块设计模板](02_FACTOR_LIBRARY\05_IMPLEMENTATION\MODULE_DESIGN_TEMPLATE.md) - 设计填写模板
+1. [架构设计文档](01_FRAMEWORK/ARCHITECTURE.md) - 模块定义和层级关?
+2. [模块设计模板](05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) - 设计填写模板
 3. [因子库蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md) - 已有设计参考已有设计�?
-4. [策略引擎蓝图](02_FACTOR_LIBRARY\03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_BLUEPRINT.md) - 已有设计�?
-5. [模拟交易蓝图](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - 已有设计�?
+4. [策略引擎蓝图](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md) - 已有设计�?
+5. [模拟交易蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - 已有设计�?
 
 ### 技术参考资?
 1. [QMT API文档] - 交易接口文档 (需要获?
@@ -372,15 +372,15 @@ docs/module_designs/
 
 #### ?已完成设?(7个模?
 **Layer 0 - 数据源层 (100%完成)**
-1. **L0_QMT** - QMT数据接口 ([新架构文档](04_DATA_SOURCE/QMT_INTERFACE.md))
-2. **L0_IFIND** - iFind连接器 ([新架构文档](04_DATA_SOURCE/IFIND_CONNECTOR.md))
-3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](04_DATA_SOURCE/SUPERCMD_CONNECTOR.md))
-4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md))
+1. **L0_QMT** - QMT数据接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md))
+2. **L0_IFIND** - iFind连接器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md))
+3. **L0_SUPERCMD** - SuperCommand接口 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md))
+4. **L0_BAOSTOCK** - Baostock适配器 ([新架构文档](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md))
 
 **Layer 1 - 数据预处理层 (100%完成)**
-5. **L1_CLEANER** - 数据清洗器 ([设计文档](02_FACTOR_LIBRARY\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_CLEANER.md))
-6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](02_FACTOR_LIBRARY\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_NORMALIZER.md))
-7. **L1_VALIDATOR** - 数据校验器 ([设计文档](02_FACTOR_LIBRARY\06_ARCHIVE\architecture_v4\module_designs\layer_1\L1_VALIDATOR.md))
+5. **L1_CLEANER** - 数据清洗器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md))
+6. **L1_NORMALIZER** - 数据标准化器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_NORMALIZER.md))
+7. **L1_VALIDATOR** - 数据校验器 ([设计文档](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md))
 
 ### 设计质量评估
 | 评估维度 | �?| 说明 |

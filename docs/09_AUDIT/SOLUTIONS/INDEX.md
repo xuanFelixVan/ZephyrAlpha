@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Document Governance Solutions](DOCUMENT_GOVERNANCE_SOLUTIONS.md) - `DOC_GOVERNANCE_SOLUTIONS`
+- [Document Governance Solutions](09_AUDIT/SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md) - `DOC_GOVERNANCE_SOLUTIONS`
 
 ---
 

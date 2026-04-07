@@ -38,7 +38,7 @@ implementation_status: 进行�?
 |  | 日志记录规范 |  必须 |
 |  | 路径处理规范 |  建议 |
 |  | 测试规范 |  建议 |
-| [security.md](./security.md) | 安全规范 |  必须 |
+| [security.md](./SECURITY.md) | 安全规范 |  必须 |
 
 ---
 
@@ -153,7 +153,7 @@ isort src/
 
 ##  相关文档
 
-- [快速开始](../01_QUICKSTART/README.md)
+- [快速开始](API_README.md)
 - [文档索引](../../03_TRADING_TACTICS/INDEX.md)
 
 ---

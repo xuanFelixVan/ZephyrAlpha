@@ -280,10 +280,10 @@ applicable_scope: Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗я�
 ### 8.2 чЫ╕хЕ│цЦЗцбг
 
 **цХ┤цФ╣чЫ╕хЕ│цЦЗцбг**:
-1. [Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК](LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md)
+1. [Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md)
 2. [P0ч║зщЧощвШцХ┤цФ╣хоМцИРцКехСК](./P0_ISSUES_REMEDIATION_REPORT.md)
-3. [цЦЗцбгшБМш┤гш╛╣чХМшзДшМГ](06_ARCHIVE\09_AUDIT\STANDARDS\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-4. [цКАцЬпшзДца╝ф╣жч┤вх╝Х](06_ARCHIVE\20260404_audit_reports_archive\05_TECHNICAL_SPECIFICATIONS\INDEX.md)
+3. [цЦЗцбгшБМш┤гш╛╣чХМшзДшМГ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+4. [цКАцЬпшзДца╝ф╣жч┤вх╝Х](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 
 ---
 

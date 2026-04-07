@@ -296,5 +296,5 @@ AI报告系统 �?自动报告生成
 
 ## 索引
 
-- 父目�? [04_EXECUTION/README.md](../README.md)
+- 父目�? [04_EXECUTION/README.md](API_README.md)
 - 相关: [PERFORMANCE_ATTRIBUTION.md](./PERFORMANCE_ATTRIBUTION.md)

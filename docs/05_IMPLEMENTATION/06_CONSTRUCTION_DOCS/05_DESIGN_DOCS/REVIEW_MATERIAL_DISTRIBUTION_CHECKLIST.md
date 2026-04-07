@@ -55,7 +55,7 @@ implementation_status: ш┐ЫшбМф╕?
 | 3 | [хдЪх╝ХцУОцХ░цНоф╕АшЗ┤цАзшо╛шобцЦ╣цб?md](data_consistency/хдЪх╝ХцУОцХ░цНоф╕АшЗ┤цАзшо╛шобцЦ╣цб?md) | `docs/design/data_consistency/хдЪх╝ХцУОцХ░цНоф╕АшЗ┤цАзшо╛шобцЦ╣цб?md` | 25хИЖщТЯ | цЮ╢цЮДх╕ИуАБхРОчлпх╝АхП?|
 | 4 | [Sagaцибх╝ПхоЮчО░ц╡БчиЛхЫ?md](data_consistency/Sagaцибх╝ПхоЮчО░ц╡БчиЛхЫ?md) | `docs/design/data_consistency/Sagaцибх╝ПхоЮчО░ц╡БчиЛхЫ?md` | 15хИЖщТЯ | цЮ╢цЮДх╕ИуАБх╝АхПСхЫвщШ?|
 | 5 | [шбехБ┐ф║ЛхКбшо╛шобцЦЗцбг.md](data_consistency/шбехБ┐ф║ЛхКбшо╛шобцЦЗцбг.md) | `docs/design/data_consistency/шбехБ┐ф║ЛхКбшо╛шобцЦЗцбг.md` | 20хИЖщТЯ | цЮ╢цЮДх╕ИуАБхРОчлпх╝АхП?|
-| 6 | [WebчобчРЖчХМщЭвцЮ╢цЮДшо╛шобцЦЗцбг.md](web_interface/T.06.UI001.web_management_interface_architecture_design.md) | `docs/design/web_interface/T.06.UI001.web_management_interface_architecture_design.md` | 20хИЖщТЯ | цЮ╢цЮДх╕ИуАБхЙНхРОчлпх╝АхП?|
+| 6 | [WebчобчРЖчХМщЭвцЮ╢цЮДшо╛шобцЦЗцбг.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md) | `docs/design/web_interface/T.06.UI001.web_management_interface_architecture_design.md` | 20хИЖщТЯ | цЮ╢цЮДх╕ИуАБхЙНхРОчлпх╝АхП?|
 
 #### 2.2.2 хЙНчлпхЫвщШЯ
 
@@ -68,8 +68,8 @@ implementation_status: ш┐ЫшбМф╕?
 
 | х║ПхП╖ | цЭРцЦЩхРНчз░ | цЦЗф╗╢ш╖пх╛Д | щШЕшп╗цЧ╢щЧ┤ | щЗНчВ╣хЖЕхо╣ |
 |------|----------|----------|----------|----------|
-| 9 | [AшВбшзДхИЩх╝ХцУОшо╛шобцЦЗцб?md](a_stock_rules/T.08.AR001.a_stock_rule_engine_design.md) | `docs/design/a_stock_rules/T.08.AR001.a_stock_rule_engine_design.md` | 20хИЖщТЯ | шзДхИЩхИЖч▒╗ф╜Уч│╗уАБщЕНч╜ощй▒хКицЮ╢цЮ?|
-| 10 | [ф║дцШУцИРцЬмцибхЮЛчоЧц│ХцЦЗцбг.md](trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md) | `docs/design/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md` | 25хИЖщТЯ | цИРцЬмшобчоЧчоЧц│ХуАБч▓╛чбоцАзхИЖцЮ?|
+| 9 | [AшВбшзДхИЩх╝ХцУОшо╛шобцЦЗцб?md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/T.08.AR001.a_stock_rule_engine_design.md) | `docs/design/a_stock_rules/T.08.AR001.a_stock_rule_engine_design.md` | 20хИЖщТЯ | шзДхИЩхИЖч▒╗ф╜Уч│╗уАБщЕНч╜ощй▒хКицЮ╢цЮ?|
+| 10 | [ф║дцШУцИРцЬмцибхЮЛчоЧц│ХцЦЗцбг.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md) | `docs/design/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md` | 25хИЖщТЯ | цИРцЬмшобчоЧчоЧц│ХуАБч▓╛чбоцАзхИЖцЮ?|
 | 11 | [ф║дцШУцИРцЬмц╡ЛшпХчФиф╛Лшо╛шоб.md](trading_costs/ф║дцШУцИРцЬмц╡ЛшпХчФиф╛Лшо╛шоб.md) | `docs/design/trading_costs/ф║дцШУцИРцЬмц╡ЛшпХчФиф╛Лшо╛шоб.md` | 15хИЖщТЯ | ш╛╣чХМцЭбф╗╢ц╡ЛшпХуАБч▓╛х║жщкМшп?|
 
 ### 2.3 щЕНч╜оцибцЭ┐ (хоЮцЦ╜хПВшА?

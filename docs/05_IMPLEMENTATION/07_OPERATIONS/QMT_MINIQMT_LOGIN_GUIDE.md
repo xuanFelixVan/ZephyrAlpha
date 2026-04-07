@@ -173,8 +173,8 @@ python scripts/test_qmt_connection_v3.py
 
 ## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲
 
-- [QMTﻟﺟﮔ۴ﻠ؟ﻠ۱ﮔ ﺗﮔ؛ﮒﮒ ﮒﮔ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
-- [QMTﮔﺍﮔ؟ﮔ۴ﮒ۲ﮔﮔ۰۲](file:///d:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- [QMTﻟﺟﮔ۴ﻠ؟ﻠ۱ﮔ ﺗﮔ؛ﮒﮒ ﮒﮔ](05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
+- [QMTﮔﺍﮔ؟ﮔ۴ﮒ۲ﮔﮔ۰۲](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 
 ---
 

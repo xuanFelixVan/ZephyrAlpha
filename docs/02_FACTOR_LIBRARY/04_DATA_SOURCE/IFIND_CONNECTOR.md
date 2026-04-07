@@ -310,7 +310,7 @@ def _initialize_ifind_client(self) -> None:
 
 ## 🔗 相关文档
 
-- [数据源索引](README.md)
+- [数据源索引](API_README.md)
 - [QMT数据接口](./QMT_INTERFACE.md)
 - [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 

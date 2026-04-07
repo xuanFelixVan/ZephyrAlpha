@@ -44,9 +44,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Module Archive](MODULE_ARCHIVE.md) - `IMPL_ARCHIVE_MODULE_001`
-- [Security Blueprint](SECURITY_BLUEPRINT.md) - `SECURITY_BLUEPRINT_MD_001`
-- [Migration Guide V1](migration_guide_v1.md) - `IMPL_ARCHIVE_MIGRATION_001`
+- [Module Archive](05_IMPLEMENTATION/99_ARCHIVE/MODULE_ARCHIVE.md) - `IMPL_ARCHIVE_MODULE_001`
+- [Security Blueprint](05_IMPLEMENTATION/99_ARCHIVE/SECURITY_BLUEPRINT.md) - `SECURITY_BLUEPRINT_MD_001`
+- [Migration Guide V1](05_IMPLEMENTATION/99_ARCHIVE/migration_guide_v1.md) - `IMPL_ARCHIVE_MIGRATION_001`
 
 ---
 

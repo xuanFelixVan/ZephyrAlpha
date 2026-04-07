@@ -176,8 +176,8 @@ responsibility:
 
 ## 📄 相关文档
 
-1. **质量监控报告**: [quality_monitoring_report_20260407_012859.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_012859.md)
-2. **修复总结报告**: [DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407.md)
+1. **质量监控报告**: [quality_monitoring_report_20260407_012859.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_012859.md)
+2. **修复总结报告**: [DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407.md)
 
 ---
 

@@ -44,7 +44,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据版本控制系统蓝图](./BLUEPRINT.md) | 数据版本控制系统详细设计 | ⭐⭐⭐⭐⭐ |
+| [数据版本控制系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据版本控制系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ## 相关模块
 
@@ -55,7 +55,7 @@ parent_document: ../INDEX.md
 ## 快速导航
 
 - [返回数据源层](../INDEX.md)
-- [查看蓝图文档](./BLUEPRINT.md)
+- [查看蓝图文档](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 
 ---
 

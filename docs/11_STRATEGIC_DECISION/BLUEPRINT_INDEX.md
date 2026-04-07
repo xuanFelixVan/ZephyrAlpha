@@ -61,7 +61,7 @@ responsibility:
 ### 对接文档
 
 **相关文档**：
-- [BLUEPRINT.md](./BLUEPRINT.md) - 整体架构设计
+- [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - 整体架构设计
 - [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md) - 完整模块清单和状态
 
 ---
@@ -236,7 +236,7 @@ responsibility:
 
 ## 四、相关文档
 
-> **整体架构设计**: [BLUEPRINT.md](./BLUEPRINT.md)
+> **整体架构设计**: [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 > **完整模块清单**: [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md)
 > **统一进度报告**: [BLUEPRINT_PROGRESS_REPORT_20260407.md](./BLUEPRINT_PROGRESS_REPORT_20260407.md)
 
@@ -257,7 +257,7 @@ responsibility:
 - ✅ 说明蓝图依赖关系
 - ✅ 提供实施优先级参考
 
-**详细实施路径**: 请参考 [BLUEPRINT.md](./BLUEPRINT.md)
+**详细实施路径**: 请参考 [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
 **完整模块清单**: 请参考 [COMPLETE_BLUEPRINT_OVERVIEW.md](./COMPLETE_BLUEPRINT_OVERVIEW.md)
 
 ---

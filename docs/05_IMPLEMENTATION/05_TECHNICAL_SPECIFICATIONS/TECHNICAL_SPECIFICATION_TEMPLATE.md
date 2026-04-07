@@ -396,7 +396,7 @@ performance_benchmarks:
 ### B. ﮒﻟﮔ?
 1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ﮔﭘﮔﮒ؟ﻛﺗ
 2. [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) - ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ
-3. [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md) - ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱?
+3. [System_Manifest.md](System_Manifest.md) - ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱?
 
 ### C. ﮒﮔﺑﻟ؟ﺍﮒﺛ
 | ﮔ۴ﮔ | ﻝﮔ؛ | ﮒﮔﺑﮒﮒ؟ﺗ | ﮒﮔﺑ?| ﮒ؟۰ﮔ ﺕ?|

@@ -244,8 +244,8 @@ last_updated: 2026-04-02---
 ## 8. хПВшАГцЦЗцб?
 
 - [цЦЗцбгхИЖч▒╗шзДшМГцаЗхЗЖ](../STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
-- [цЦЗцбгхИЖч▒╗ф╛ЛхдЦц╕ЕхНХ](../STANDARDS/DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)
-- [цЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [цЦЗцбгхИЖч▒╗ф╛ЛхдЦц╕ЕхНХ](09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)
+- [цЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---
 

@@ -374,7 +374,7 @@ def earnings_revision_momentum(
 ## 7. ﮒﻟﮔﮔ۰?
 - [ﮒ ﮒ­ﮒﺙﮔﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰](../../01_FRAMEWORK/FACTOR_ENGINE_DETAILED_DESIGN.md)
 - [ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
-- [ﻝ۴ﻟﺁﻛﺙ ﮔﺟﻛﺛﻝﺏﭨ](KNOWLEDGE_TRANSFER_SYSTEM.md)
+- [ﻝ۴ﻟﺁﻛﺙ ﮔﺟﻛﺛﻝﺏﭨ](08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md)
 
 ---
 

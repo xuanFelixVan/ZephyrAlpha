@@ -37,8 +37,8 @@
 - [optimized_responsibility_generator.py](file:///d:/ZephyrAlpha/scripts/optimized_responsibility_generator.py) - 优化后的职责描述生成工具
 
 **生成报告**:
-- [职责描述相似度分析报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
-- [优化后的职责描述生成结果](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/OPTIMIZED_RESPONSIBILITIES_20260407.md)
+- [职责描述相似度分析报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
+- [优化后的职责描述生成结果](05_IMPLEMENTATION/07_OPERATIONS/audit_state/OPTIMIZED_RESPONSIBILITIES_20260407.md)
 
 ### 2.2 分析发现
 
@@ -264,8 +264,8 @@
 
 ### 7.1 实施报告
 
-- [职责描述相似度分析报告](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
-- [优化后的职责描述生成结果](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/OPTIMIZED_RESPONSIBILITIES_20260407.md)
+- [职责描述相似度分析报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
+- [优化后的职责描述生成结果](05_IMPLEMENTATION/07_OPERATIONS/audit_state/OPTIMIZED_RESPONSIBILITIES_20260407.md)
 
 ### 7.2 实施工具
 
@@ -275,8 +275,8 @@
 
 ### 7.3 参考标准
 
-- [专业文档治理审计指南](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
 
 ---

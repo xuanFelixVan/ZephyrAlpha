@@ -355,7 +355,7 @@ def protected_route(user: User = Depends(current_active_user)):
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.3
-- **蓝图文档**: [AUTH_SYSTEM_BLUEPRINT.md](../03_AUTH/AUTH_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: [AUTH_SYSTEM_BLUEPRINT.md](./AUTH_SYSTEM_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha认证授权
 - **状态**: Active

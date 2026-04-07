@@ -214,8 +214,8 @@
 
 ### 9.1 审计报告
 
-- [Layer 9深度审计报告v2.0](LAYER9_DEEP_AUDIT_REPORT_v2_20260407.md)
-- [Layer 9文档治理修复实施报告v2.0](LAYER9_GOVERNANCE_FIX_IMPLEMENTATION_REPORT_v2_20260407.md)
+- [Layer 9深度审计报告v2.0](06_ARCHIVE/20260407_old_layer_audit_reports/layer9_reports/LAYER9_DEEP_AUDIT_REPORT_v2_20260407.md)
+- [Layer 9文档治理修复实施报告v2.0](05_IMPLEMENTATION/07_OPERATIONS/audit_state/GOVERNANCE_FIX_IMPLEMENTATION_REPORT_v2_20260407.md)
 
 ### 9.2 修复文档
 

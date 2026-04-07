@@ -373,7 +373,7 @@ Week 7-8: P2模块实施（ESG合规监控）+ 系统集成测试
 
 所有文档必须在以下索引中注册：
 - [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](d:\ZephyrAlpha\docs\01_FRAMEWORK\layer10_GOVERNANCE_COMPLIANCE_INDEX.md)
-- [System_Manifest.md](d:\ZephyrAlpha\docs\System_Manifest.md)
+- [System_Manifest.md](System_Manifest.md)
 
 ### 7.3 版本管理策略
 
@@ -542,6 +542,6 @@ Week 7-8: P2模块实施（ESG合规监控）+ 系统集成测试
 
 **参考文档**:
 - [Layer 10治理与合规层索引](d:\ZephyrAlpha\docs\01_FRAMEWORK\layer10_GOVERNANCE_COMPLIANCE_INDEX.md)
-- [P0模块实施计划](d:\ZephyrAlpha\docs\01_FRAMEWORK\P0_MODULES_IMPLEMENTATION_PLAN.md)
-- [系统架构文档](d:\ZephyrAlpha\docs\01_FRAMEWORK\ARCHITECTURE.md)
-- [系统总索引](d:\ZephyrAlpha\docs\System_Manifest.md)
+- [P0模块实施计划](01_FRAMEWORK/P0_MODULES_IMPLEMENTATION_PLAN.md)
+- [系统架构文档](01_FRAMEWORK/ARCHITECTURE.md)
+- [系统总索引](System_Manifest.md)

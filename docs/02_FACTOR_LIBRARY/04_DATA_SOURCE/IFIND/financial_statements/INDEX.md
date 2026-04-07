@@ -47,8 +47,8 @@ responsibility: 财务报表数据模块导航
 
 | 文件 | 职责 | 状态 |
 |------|------|------|
-| [THS_BD_COMPLETE_INDICATOR_LIST.md](THS_BD_COMPLETE_INDICATOR_LIST.md) | iFind THS_BD完整指标清单 | Active |
-| [FINANCIAL_STATEMENTS_API.md](FINANCIAL_STATEMENTS_API.md) | 财务数据API参考文档 | Active |
+| [THS_BD_COMPLETE_INDICATOR_LIST.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) | iFind THS_BD完整指标清单 | Active |
+| [FINANCIAL_STATEMENTS_API.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/FINANCIAL_STATEMENTS_API.md) | 财务数据API参考文档 | Active |
 
 ---
 
@@ -90,9 +90,9 @@ responsibility: 财务报表数据模块导航
 - [数据源层索引](../../INDEX.md) - 数据源层总览
 
 ### 相关模块
-- [iFind连接器](../../IFIND_CONNECTOR.md) - iFind数据源接入
-- [宏观数据](../../MACRO_DATA.md) - 宏观经济数据
-- [数据源适配器](../../DATA_SOURCE_ADAPTERS.md) - 数据源管理
+- [iFind连接器](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) - iFind数据源接入
+- [宏观数据](02_FACTOR_LIBRARY/04_DATA_SOURCE/MACRO_DATA.md) - 宏观经济数据
+- [数据源适配器](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) - 数据源管理
 
 ---
 

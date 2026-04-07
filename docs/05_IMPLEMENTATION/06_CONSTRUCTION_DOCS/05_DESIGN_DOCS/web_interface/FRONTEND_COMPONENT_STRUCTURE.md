@@ -25,7 +25,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 > ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ
 > **ﻝﺑ۱ﮒﺙ**: `DESIGN_004`
-> **ﮒﺏﻟﮔﮔ۰۲**: [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](T.06.UI001.web_management_interface_architecture_design.md)
+> **ﮒﺏﻟﮔﮔ۰۲**: [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md)
 
 ## 1. ﮔﺑﻛﺛﻝﭨﻛﭨﭘﮔﭘﮔ
 

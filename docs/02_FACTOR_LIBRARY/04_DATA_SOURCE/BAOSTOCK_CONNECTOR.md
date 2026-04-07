@@ -266,7 +266,7 @@ def _initialize_baostock_client(self) -> None:
 
 ## 🔗 相关文档
 
-- [数据源索引](README.md)
+- [数据源索引](API_README.md)
 - [QMT数据接口](./QMT_INTERFACE.md)
 - [iFind连接器](./IFIND_CONNECTOR.md)
 - [SuperCommand连接器](./SUPERCMD_CONNECTOR.md)

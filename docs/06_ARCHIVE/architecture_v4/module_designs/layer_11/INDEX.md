@@ -44,11 +44,11 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [L11 Quant Agent](L11_QUANT_AGENT.md) - `L11_QUANT_AGENT_001`
-- [L11 Text Driver](L11_TEXT_DRIVER.md) - `L11_TEXT_DRIVER_001`
-- [Layer 11 Architecture](LAYER_11_ARCHITECTURE.md) - `ARCHIVE_L11_ARCHITECTURE_001`
-- [Layer 11 Tool Encapsulation Blueprint](LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) - `LAYER_030`
-- [Layer 11 Tool Interface Specification](LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) - `LAYER_11_TOOL_INTERFACE_SPEC_001`
+- [L11 Quant Agent](06_ARCHIVE/architecture_v4/module_designs/layer_11/L11_QUANT_AGENT.md) - `L11_QUANT_AGENT_001`
+- [L11 Text Driver](06_ARCHIVE/architecture_v4/module_designs/layer_11/L11_TEXT_DRIVER.md) - `L11_TEXT_DRIVER_001`
+- [Layer 11 Architecture](06_ARCHIVE/architecture_v4/module_designs/layer_11/LAYER_11_ARCHITECTURE.md) - `ARCHIVE_L11_ARCHITECTURE_001`
+- [Layer 11 Tool Encapsulation Blueprint](06_ARCHIVE/architecture_v4/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) - `LAYER_030`
+- [Layer 11 Tool Interface Specification](06_ARCHIVE/architecture_v4/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) - `LAYER_11_TOOL_INTERFACE_SPEC_001`
 
 ---
 

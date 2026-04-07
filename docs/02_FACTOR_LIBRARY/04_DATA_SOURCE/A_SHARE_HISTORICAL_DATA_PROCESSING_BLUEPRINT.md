@@ -35,7 +35,7 @@ implementation_status: 设计阶段
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据采集系统 | [DATA_ACQUISITION.md](./DATA_ACQUISITION.md) | 上游采集 | 数据采集实现方案 |
-| 数据清洗引擎 | [03_CLEANING/BLUEPRINT.md](./03_CLEANING/BLUEPRINT.md) | 下游处理 | 数据清洗规则 |
+| 数据清洗引擎 | [03_CLEANING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 下游处理 | 数据清洗规则 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:

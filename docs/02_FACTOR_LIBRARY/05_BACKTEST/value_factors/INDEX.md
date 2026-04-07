@@ -90,8 +90,8 @@ compliance_level: 专业标准---
 ## 🔗 相关链接
 
 - [回测报告总目录](../INDEX.md)
-- [因子库总览](../../README.md)
-- [因子分类体系](../../01_STANDARDS/FACTOR_TAXONOMY.md)
+- [因子库总览](API_README.md)
+- [因子分类体系](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md)
 
 ---
 

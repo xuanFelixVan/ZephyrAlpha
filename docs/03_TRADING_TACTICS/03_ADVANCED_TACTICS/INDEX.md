@@ -44,9 +44,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Limit-Up-Analysis](limit-up-analysis.md) - `TACTICS_LIMIT_UP_ANALYSIS_001`
-- [Market-Cycles](market-cycles.md) - `TACTICS_MARKET_CYCLES_001`
-- [Wave-Trading](wave-trading.md) - `TACTICS_WAVE_TRADING_001`
+- [Limit-Up-Analysis](03_TRADING_TACTICS/03_ADVANCED_TACTICS/limit-up-analysis.md) - `TACTICS_LIMIT_UP_ANALYSIS_001`
+- [Market-Cycles](03_TRADING_TACTICS/03_ADVANCED_TACTICS/market-cycles.md) - `TACTICS_MARKET_CYCLES_001`
+- [Wave-Trading](03_TRADING_TACTICS/03_ADVANCED_TACTICS/wave-trading.md) - `TACTICS_WAVE_TRADING_001`
 
 ---
 

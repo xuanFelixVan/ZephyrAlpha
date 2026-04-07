@@ -32,7 +32,7 @@ parent_document: ../INDEX.md---
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](./README.md) | 部署指南概述 | Active |
+| [README.md](API_README.md) | 部署指南概述 | Active |
 | [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md) | 部署计划 | Active |
 
 ---
@@ -41,7 +41,7 @@ parent_document: ../INDEX.md---
 
 ### 部署流程
 
-1. **阅读概述**: [README.md](./README.md)
+1. **阅读概述**: [README.md](API_README.md)
 2. **制定计划**: [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md)
 
 ### 部署命令

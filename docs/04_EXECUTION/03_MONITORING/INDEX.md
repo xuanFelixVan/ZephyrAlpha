@@ -26,18 +26,18 @@ implementation_status: ти▓т«їТѕ?---
 
 | ТќЄС╗Х | УЂїУ┤Б | уіХТђ?|
 |------|------|------|
-| [README.md](README.md) | уЏЉТјДТдѓУ┐░ | Active |
-| [BLUEPRINT.md](BLUEPRINT.md) | уЏЉТјДу│╗у╗ЪУЊЮтЏЙ | Active |
-| [HEALTH_MONITORING.md](HEALTH_MONITORING.md) | тЂЦт║иуЏЉТјД | Active |
-| [MODULE_MONITOR.md](MODULE_MONITOR.md) | ТеАтЮЌуЏЉТјД | Active |
-| [PERFORMANCE_ATTRIBUTION.md](PERFORMANCE_ATTRIBUTION.md) | у╗ЕТЋѕтйњтЏа | Active |
-| [REAL_TIME_MONITORING.md](REAL_TIME_MONITORING.md) | т«ъТЌХуЏЉТјД | Active |
+| [README.md](API_README.md) | уЏЉТјДТдѓУ┐░ | Active |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | уЏЉТјДу│╗у╗ЪУЊЮтЏЙ | Active |
+| [HEALTH_MONITORING.md](04_EXECUTION/03_MONITORING/HEALTH_MONITORING.md) | тЂЦт║иуЏЉТјД | Active |
+| [MODULE_MONITOR.md](04_EXECUTION/03_MONITORING/MODULE_MONITOR.md) | ТеАтЮЌуЏЉТјД | Active |
+| [PERFORMANCE_ATTRIBUTION.md](04_EXECUTION/03_MONITORING/PERFORMANCE_ATTRIBUTION.md) | у╗ЕТЋѕтйњтЏа | Active |
+| [REAL_TIME_MONITORING.md](04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md) | т«ъТЌХуЏЉТјД | Active |
 
 ## ­ЪЊќ ТаИт┐ЃТќЄТАБ
 
-- [BLUEPRINT.md](BLUEPRINT.md) - уЏЉТјДу│╗у╗ЪУЊЮтЏЙ
-- [REAL_TIME_MONITORING.md](REAL_TIME_MONITORING.md) - т«ъТЌХуЏЉТјД
-- [HEALTH_MONITORING.md](HEALTH_MONITORING.md) - тЂЦт║иуЏЉТјД
+- [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - уЏЉТјДу│╗у╗ЪУЊЮтЏЙ
+- [REAL_TIME_MONITORING.md](04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md) - т«ъТЌХуЏЉТјД
+- [HEALTH_MONITORING.md](04_EXECUTION/03_MONITORING/HEALTH_MONITORING.md) - тЂЦт║иуЏЉТјД
 ---
 
 

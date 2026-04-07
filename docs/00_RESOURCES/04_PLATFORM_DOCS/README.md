@@ -135,8 +135,8 @@ find docs/00_RESOURCES/04_PLATFORM_DOCS -name "*.pdf" | grep -i "qmt"
 
 ## 🔗 系统索引
 
-- **上级目录**: [00_RESOURCES/README.md](00_RESOURCES\README.md)
-- **系统主索�?*: [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md)
+- **上级目录**: [00_RESOURCES/README.md](API_README.md)
+- **系统主索�?*: [System_Manifest.md](System_Manifest.md)
 - **快速导�?*: [INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 
 ---

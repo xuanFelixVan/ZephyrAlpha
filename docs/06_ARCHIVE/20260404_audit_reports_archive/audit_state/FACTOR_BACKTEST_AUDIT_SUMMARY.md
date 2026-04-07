@@ -64,7 +64,7 @@ implementation_status: 进行�?
 
 ## 详细报告位置
 
-完整审计报告已生�? [FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md](FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md)
+完整审计报告已生�? [FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md](06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md)
 
 ### 报告主要内容:
 1. **执行摘要**: 审计目标、范围、方法、核心发�?

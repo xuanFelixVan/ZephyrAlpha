@@ -480,8 +480,8 @@ exit 0
 
 ## 8. هڈ‚è€ƒو–‡و،?
 
-- [و–‡و،£و²»çگ†وµپç¨‹و ‡ه‡†](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [و–‡و،£و¨،و‌؟](../TEMPLATES/DOCUMENT_TEMPLATE.md)
+- [و–‡و،£و²»çگ†وµپç¨‹و ‡ه‡†](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [و–‡و،£و¨،و‌؟](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 - [و–‡و،£هˆ†ç±»è§„èŒƒو ‡ه‡†](../STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---

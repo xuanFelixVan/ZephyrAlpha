@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Documentation Center Blueprint](DOCUMENTATION_CENTER_BLUEPRINT.md) - `DOCUMENTATION_CENTER_001`
+- [Documentation Center Blueprint](08_HUMAN_AI_INTERFACE/17_DOCUMENTATION_CENTER/DOCUMENTATION_CENTER_BLUEPRINT.md) - `DOCUMENTATION_CENTER_001`
 
 ---
 

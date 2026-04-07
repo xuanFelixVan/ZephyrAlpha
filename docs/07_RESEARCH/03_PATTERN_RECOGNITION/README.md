@@ -231,5 +231,5 @@ class InteractivePatternLearning:
 
 ## 索引
 
-- 父目�? [07_RESEARCH/README.md](../README.md)
-- 相关文档: [statistical_tools.md](../02_EXPLORATORY_ANALYSIS/statistical_tools.md)
+- 父目�? [07_RESEARCH/README.md](API_README.md)
+- 相关文档: [statistical_tools.md](07_RESEARCH/02_EXPLORATORY_ANALYSIS/statistical_tools.md)

@@ -44,7 +44,7 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [Document Governance Training Manual](DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md) - `DOC_GOVERNANCE_TRAINING`
+- [Document Governance Training Manual](09_AUDIT/TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md) - `DOC_GOVERNANCE_TRAINING`
 
 ---
 

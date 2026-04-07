@@ -631,8 +631,8 @@ implementation_status: 进行?---
 
 ### **内部文档**
 
-- [施工文档总索引](./README.md)
-- [专业量化系统实施蓝图](01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- [施工文档总索引](API_README.md)
+- [专业量化系统实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 - [文档质量门禁](./06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md)
 
 ### **外部资源**

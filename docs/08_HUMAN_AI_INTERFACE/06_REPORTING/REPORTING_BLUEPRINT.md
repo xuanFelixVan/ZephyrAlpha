@@ -176,7 +176,7 @@ HTML('report.html').write_pdf('report.pdf')
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.6
-- **蓝图文档**: [REPORTING_BLUEPRINT.md](../06_REPORTING/REPORTING_BLUEPRINT.md)
+- **蓝图文档**: [REPORTING_BLUEPRINT.md](./REPORTING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha报告生成
 - **状态**: Active

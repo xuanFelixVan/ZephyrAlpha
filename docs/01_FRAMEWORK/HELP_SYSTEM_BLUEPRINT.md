@@ -443,7 +443,7 @@ class HelpSystemInterface:
 |---------|------|------|
 | [人机交互层战略规划](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | 战略规划 | 人机交互层战略定义 |
 | [自然语言界面蓝图](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) | 自然语言 | 自然语言界面设计 |
-| [AI虚拟研究团队](./AI_VIRTUAL_RESEARCH_TEAM/INDEX.md) | 研究团队 | AI研究团队设计 |
+| [AI虚拟研究团队](./DATA_LAYER_INDEX.md) | 研究团队 | AI研究团队设计 |
 
 ---
 

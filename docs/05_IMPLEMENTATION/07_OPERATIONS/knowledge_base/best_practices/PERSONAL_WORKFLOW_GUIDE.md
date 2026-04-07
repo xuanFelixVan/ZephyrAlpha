@@ -416,8 +416,8 @@ alias run='python src/main.py'
 
 ## 9. ﮒﻟﮔﮔ۰?
 - [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](./PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](05_IMPLEMENTATION\09_AUDIT\STANDARDS\DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ﮔﻝﭨ­ﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](05_IMPLEMENTATION\09_AUDIT\REPORTS\CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﻝﭨ­ﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
 
 ---
 

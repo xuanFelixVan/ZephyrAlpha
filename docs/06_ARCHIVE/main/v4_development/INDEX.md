@@ -44,8 +44,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Qingfeng V4 Development Plan](qingfeng_v4_development_plan.md) - `ARCHIVE_V4_DEV_PLAN_001`
-- [Qingfeng V4 Draft](qingfeng_v4_draft.md) - `ARCHIVE_V4_DRAFT_001`
+- [Qingfeng V4 Development Plan](06_ARCHIVE/main/v4_development/qingfeng_v4_development_plan.md) - `ARCHIVE_V4_DEV_PLAN_001`
+- [Qingfeng V4 Draft](06_ARCHIVE/main/v4_development/qingfeng_v4_draft.md) - `ARCHIVE_V4_DRAFT_001`
 
 ---
 

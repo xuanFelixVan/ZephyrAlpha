@@ -74,7 +74,7 @@ python verify_environment.py
 ---
 ### 0.2 深度学习情感分析模块环境准备
 **åèææ¡?*: [æ·±åº¦å­¦ä¹ æ
-感分析模块蓝图](DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md#511-环境准备)
+感分析模块蓝图](10_AI_WORKFLOW/DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md)
 **环境要求**:
 - Python 3.9+
 - PyTorch 2.1.0+ (支持CUDA 11.8+)
@@ -93,7 +93,7 @@ python verify_finbert.py
 ```
 ---
 ### 0.3 实时预警系统模块环境准备
-**åèææ¡?*: [å®æ¶é¢è­¦ç³»ç»æ¨¡åèå¾](REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-ç¯å¢åå¤)
+**åèææ¡?*: [å®æ¶é¢è­¦ç³»ç»æ¨¡åèå¾](10_AI_WORKFLOW/REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md)
 **环境要求**:
 - Python 3.9+
 - FastAPI 0.104.1+

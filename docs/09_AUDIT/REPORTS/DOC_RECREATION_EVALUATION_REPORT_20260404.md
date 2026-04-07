@@ -244,16 +244,16 @@ compliance_level: 专业标准
 ## 7. 相关文档
 
 ### 完整版本文档
-- [专业实施蓝图](file:///d:/ZephyrAlpha/docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
-- [策略引擎核心蓝图](file:///d:/ZephyrAlpha/docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- [专业实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- [策略引擎核心蓝图](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
 
 ### 归档文档
-- [归档目录README](file:///d:/ZephyrAlpha/docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/README.md)
-- [内容不完整蓝图文档归档报告](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404.md)
+- [归档目录README](API_README.md)
+- [内容不完整蓝图文档归档报告](09_AUDIT/REPORTS/INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404.md)
 
 ### 索引文件
-- [蓝图文档总索引](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)
-- [系统主索引](file:///d:/ZephyrAlpha/docs/INDEX.md)
+- [蓝图文档总索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+- [系统主索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 
 ---
 

@@ -322,9 +322,9 @@ applicable_scope: Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗ق
 ### 10.2 قؤ╕فà│µûçµةث
 
 **ف«ةك«ةقؤ╕فà│µûçµةث**:
-1. [µûçµةثكîك┤ثك╛╣قـîكدكîâ](06_ARCHIVE\09_AUDIT\STANDARDS\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-2. [µèµ£»كدµب╝غ╣خق┤تف╝ـ](06_ARCHIVE\20260404_audit_reports_archive\05_TECHNICAL_SPECIFICATIONS\INDEX.md)
-3. [ق│╗ق╗اµئ╢µئµûçµةث](06_ARCHIVE\01_FRAMEWORK\ARCHITECTURE.md)
+1. [µûçµةثكîك┤ثك╛╣قـîكدكîâ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+2. [µèµ£»كدµب╝غ╣خق┤تف╝ـ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+3. [ق│╗ق╗اµئ╢µئµûçµةث](01_FRAMEWORK/ARCHITECTURE.md)
 
 ### 10.3 Gitفجçغ╗╜غ┐ةµ»
 

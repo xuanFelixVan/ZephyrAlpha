@@ -32,7 +32,7 @@ implementation_status: 已完成
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 调度蓝图 | [BLUEPRINT.md](./BLUEPRINT.md) | 架构层 | 调度器详细设计 |
+| 调度蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 架构层 | 调度器详细设计 |
 | 调度索引 | [INDEX.md](./INDEX.md) | 上级索引 | 调度器模块索引 |
 
 **职责边界**:
@@ -746,8 +746,8 @@ except Exception as e:
 ## 11. 相关文档
 
 - [INDEX.md](INDEX.md): 调度器目录索引
-- [BLUEPRINT.md](BLUEPRINT.md): 调度器蓝图设计
-- [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md): 数据采集系统
+- [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md): 调度器蓝图设计
+- [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md): 数据采集系统
 
 ---
 

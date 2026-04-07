@@ -380,9 +380,9 @@ python scripts/document_classifier.py --move --output "docs/05_IMPLEMENTATION/07
 
 ### B. хПВшАГцаЗхЗЖцЦЗ?
 
-- [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](06_ARCHIVE\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](06_ARCHIVE\09_AUDIT\TEMPLATES\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [хобшобцаЗхЗЖv5.3](06_ARCHIVE\09_AUDIT\STANDARDS\AUDIT_STANDARDS.md)
+- [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [хобшобцаЗхЗЖv5.3](09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 
 ### C. цЬпшпн?
 

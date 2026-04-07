@@ -360,9 +360,9 @@ last_updated: 2026-04-02
 ---
 
 ## 10. хПВшАГцЦЗцб?
-- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [цЦЗцбгц▓╗чРЖхЯ╣шонцЙЛхЖМ](../TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md)
+- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- [цЦЗцбгц▓╗чРЖхЯ╣шонцЙЛхЖМ](09_AUDIT/TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md)
 
 ---
 

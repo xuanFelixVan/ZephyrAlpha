@@ -44,8 +44,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Blueprint](BLUEPRINT.md) - `BLUEPRINT_002`
-- [Risk Report](RISK_REPORT.md) - `TACTICS_RISK_REPORT_001`
+- [Blueprint](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - `BLUEPRINT_002`
+- [Risk Report](03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) - `TACTICS_RISK_REPORT_001`
 
 ---
 

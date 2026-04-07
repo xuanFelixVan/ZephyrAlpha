@@ -196,7 +196,7 @@ streamlit run backtest_ui.py
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.5
-- **蓝图文档**: [BACKTEST_UI_BLUEPRINT.md](../05_BACKTEST_UI/BACKTEST_UI_BLUEPRINT.md)
+- **蓝图文档**: [BACKTEST_UI_BLUEPRINT.md](./BACKTEST_UI_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha回测界面
 - **状态**: Active

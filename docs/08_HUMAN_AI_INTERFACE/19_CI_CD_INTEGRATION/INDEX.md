@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Ci Cd Integration Blueprint](CI_CD_INTEGRATION_BLUEPRINT.md) - `CI_CD_001`
+- [Ci Cd Integration Blueprint](08_HUMAN_AI_INTERFACE/19_CI_CD_INTEGRATION/CI_CD_INTEGRATION_BLUEPRINT.md) - `CI_CD_001`
 
 ---
 

@@ -149,7 +149,7 @@ implementation_status: 进行?---
 - **�?*: 可能用于系统清单、文档索引或审计�?
 
 #### 3.2 与System_Manifest.md对比
-检?[System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md) 发现?
+检?[System_Manifest.md](System_Manifest.md) 发现?
 - System_Manifest.md 使用相对路径和描述性结?
 - 用户列表更详细，但包含不准确信息
 - 两者需要同步更?
@@ -249,13 +249,13 @@ docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\
 ### 3. 文档同步更新
 
 #### 3.1 更新System_Manifest.md
-确保 [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md) 反映更新后的路径结构?
+确保 [System_Manifest.md](System_Manifest.md) 反映更新后的路径结构?
 
 #### 3.2 更新INDEX.md和SITEMAP.md
 检查并更新主索引文档中的路径引�?
 
 #### 3.3 更新因子库索?
-更新 [factor_master_index.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\iFind\factor_master_index.md) 中的文件引用?
+更新 [factor_master_index.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/factor_master_index.md) 中的文件引用?
 
 ### 4. 自动化维护建?
 
@@ -346,7 +346,7 @@ grep "中文模式"  # 检查中文引?
 4. .gitignore当前状态记?
 
 ### 3. 参考标?
-1. [开发标准](06_ARCHIVE\02_DEVELOPMENT\DEVELOPMENT_STANDARDS.md) §4.2.1-4.2.4
+1. [开发标准](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) §4.2.1-4.2.4
 2. [专业文档治理审计指南](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 3. [审计质量标准 v5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 

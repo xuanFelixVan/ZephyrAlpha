@@ -100,7 +100,7 @@ implementation_status: 进行�?---
 
 ---
 
-**关联回测报告**：[回测报告/PE_TTM_BACKTEST.md](PE_TTM_BACKTEST.md)
+**关联回测报告**：[回测报告/PE_TTM_BACKTEST.md](02_FACTOR_LIBRARY/05_BACKTEST/value_factors/PE_TTM_BACKTEST.md)
 
 **下次验证日期**�?026-06-28（季度更新）
 

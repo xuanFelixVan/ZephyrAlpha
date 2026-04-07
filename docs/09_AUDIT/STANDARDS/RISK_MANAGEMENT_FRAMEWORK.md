@@ -326,9 +326,9 @@ RISK_LIMITS = {
 ---
 
 ## 10. فéكâµûçµة?
-- [ف║¤µحلتµةêµëïفî](../TEMPLATES/EMERGENCY_RESPONSE_PLAN.md)
-- [فïفèؤµ╡ïك»ـµëïفî](../TEMPLATES/STRESS_TEST_TEMPLATE.md)
-- [لثلآرغ║ïغ╗╢ك«░ف╜ـµذةµإ┐](../TEMPLATES/RISK_EVENT_TEMPLATE.md)
+- [ف║¤µحلتµةêµëïفî](09_AUDIT/TEMPLATES/EMERGENCY_RESPONSE_PLAN.md)
+- [فïفèؤµ╡ïك»ـµëïفî](09_AUDIT/TEMPLATES/STRESS_TEST_TEMPLATE.md)
+- [لثلآرغ║ïغ╗╢ك«░ف╜ـµذةµإ┐](09_AUDIT/TEMPLATES/RISK_EVENT_TEMPLATE.md)
 
 ---
 

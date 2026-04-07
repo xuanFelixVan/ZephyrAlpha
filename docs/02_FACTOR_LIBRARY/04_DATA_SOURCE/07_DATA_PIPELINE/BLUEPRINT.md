@@ -33,9 +33,9 @@ responsibility: 数据管道架构设计与编排流程
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集实现 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
-| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
-| 数据质量管理 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 下游检查 | 数据质量控制体系 |
+| 数据采集实现 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
+| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
+| 数据质量管理 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 下游检查 | 数据质量控制体系 |
 
 **职责边界**:
 - ✅ 本文档负责: 定义数据流水线的整体架构和设计原则
@@ -48,9 +48,9 @@ responsibility: 数据管道架构设计与编排流程
 **相关文档**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集实现 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
-| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](../03_CLEANING/BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
-| 数据质量管理 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 下游检查 | 数据质量控制体系 |
+| 数据采集实现 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
+| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
+| 数据质量管理 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 下游检查 | 数据质量控制体系 |
 
 **职责边界**:
 - ✅ 本文档负责: 定义数据流水线的整体架构和设计原则

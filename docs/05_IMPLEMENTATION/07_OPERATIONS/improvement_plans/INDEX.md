@@ -44,8 +44,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Improvement Plan Execution Report](IMPROVEMENT_PLAN_EXECUTION_REPORT.md) - `IMPROVEMENT_PLAN_EXECUTION_001`
-- [Smart Execution Market Impact Improvement Plan](SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md) - `IMPROVEMENT_PLAN_001`
+- [Improvement Plan Execution Report](05_IMPLEMENTATION/07_OPERATIONS/improvement_plans/IMPROVEMENT_PLAN_EXECUTION_REPORT.md) - `IMPROVEMENT_PLAN_EXECUTION_001`
+- [Smart Execution Market Impact Improvement Plan](05_IMPLEMENTATION/07_OPERATIONS/improvement_plans/SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md) - `IMPROVEMENT_PLAN_001`
 
 ---
 

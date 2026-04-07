@@ -281,8 +281,8 @@ deep_audit:
 ---
 
 ## 10. хПВшАГцЦЗцб?
-- [хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [цЦЗцбгц▓╗чРЖцЬАф╜│хоЮш╖╡](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
 
 ---

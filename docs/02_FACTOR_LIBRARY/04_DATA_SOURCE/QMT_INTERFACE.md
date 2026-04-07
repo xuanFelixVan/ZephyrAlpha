@@ -717,7 +717,7 @@ def _initialize_qmt_client(self) -> None:
 
 1. [数据源适配器](./DATA_SOURCE_ADAPTERS.md)
 2. [数据获取规范](./DATA_ACQUISITION.md)
-3. [数据质量管理系统](./QUALITY_MANAGEMENT/)
+3. [数据质量管理系统](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md)
 4. [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 
 ---

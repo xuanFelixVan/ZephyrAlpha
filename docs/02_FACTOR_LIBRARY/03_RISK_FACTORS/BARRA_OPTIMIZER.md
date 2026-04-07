@@ -30,9 +30,9 @@ compliance_level: 专业标准
 > **优先�?*：P1
 >
 > **配套文档**�?
-> - [T.03.RF001.barra_style_factors.md](T.03.RF001.barra_style_factors.md) - 十大风格因子定义
-> - [T.03.RF002.industry_factors.md](T.03.RF002.industry_factors.md) - 申万行业分类
-> - [T.03.RF003.tail_risk_factors.md](T.03.RF003.tail_risk_factors.md) - CVaR/ES尾部风险
+> - [T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_STYLE_FACTORS.md) - 十大风格因子定义
+> - [T.03.RF002.industry_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/INDUSTRY_FACTORS.md) - 申万行业分类
+> - [T.03.RF003.tail_risk_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/TAIL_RISK_FACTORS.md) - CVaR/ES尾部风险
 
 ---
 

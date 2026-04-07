@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Api Docs Blueprint](API_DOCS_BLUEPRINT.md) - `API_002`
+- [Api Docs Blueprint](08_HUMAN_AI_INTERFACE/04_API_DOCS/API_DOCS_BLUEPRINT.md) - `API_002`
 
 ---
 

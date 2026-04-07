@@ -44,8 +44,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Market Participant Simulation Spec Supplement](MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md) - `TECH_SPEC_MARKET_PARTICIPANT_SIM_SUPPLEMENT_001`
-- [Market Participant Simulation Spec Update](MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md) - `MARKETPARTICIPANTSIMULATION_002`
+- [Market Participant Simulation Spec Supplement](06_ARCHIVE/integrated_documents/20260403_market_simulation/MARKET_PARTICIPANT_SIMULATION_SPEC_SUPPLEMENT.md) - `TECH_SPEC_MARKET_PARTICIPANT_SIM_SUPPLEMENT_001`
+- [Market Participant Simulation Spec Update](06_ARCHIVE/integrated_documents/20260403_market_simulation/MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md) - `MARKETPARTICIPANTSIMULATION_002`
 
 ---
 

@@ -610,9 +610,9 @@ python scripts/document_classifier.py --report
 
 ### 10.1 хПВшАГцЦЗцб?
 
-- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ф╗гчаБхПШцЫ┤цЦЗцбгцЫ┤цЦ░цМЗхНЧ](../GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
-- [цЦЗцбгцибцЭ┐](../TEMPLATES/DOCUMENT_TEMPLATE.md)
+- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ф╗гчаБхПШцЫ┤цЦЗцбгцЫ┤цЦ░цМЗхНЧ](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
+- [цЦЗцбгцибцЭ┐](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 - [цЦЗцбгхИЖч▒╗шзДшМГцаЗхЗЖ](../STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ### 10.2 х╖ехЕ╖цЦЗцбг

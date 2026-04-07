@@ -44,9 +44,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Event Bus Integration Case Study](EVENT_BUS_INTEGRATION_CASE_STUDY.md) - `CASE_STUDY_EVENT_BUS_001`
-- [Link Fix Case Study](LINK_FIX_CASE_STUDY.md) - `LINK_FIX_CASE_STUDY`
-- [Strategy Factory Implementation Case Study](STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md) - `CASE_STUDY_STRATEGY_FACTORY_001`
+- [Event Bus Integration Case Study](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md) - `CASE_STUDY_EVENT_BUS_001`
+- [Link Fix Case Study](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/LINK_FIX_CASE_STUDY.md) - `LINK_FIX_CASE_STUDY`
+- [Strategy Factory Implementation Case Study](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md) - `CASE_STUDY_STRATEGY_FACTORY_001`
 
 ---
 

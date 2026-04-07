@@ -33,10 +33,10 @@ responsibility: 数据备份恢复策略与灾难恢复
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据版本控制 | [../DATA_VERSION_CONTROL/](../DATA_VERSION_CONTROL/) | 协同模块 | 数据版本管理 |
-| 数据生命周期 | [../DATA_LIFECYCLE_MANAGEMENT/](../DATA_LIFECYCLE_MANAGEMENT/) | 协同模块 | 数据生命周期管理 |
+| 数据版本控制 | [../DATA_VERSION_CONTROL/](06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VERSION_CONTROL_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md) | 协同模块 | 数据版本管理 |
+| 数据生命周期 | [../DATA_LIFECYCLE_MANAGEMENT/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | 协同模块 | 数据生命周期管理 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据备份恢复系统架构设计

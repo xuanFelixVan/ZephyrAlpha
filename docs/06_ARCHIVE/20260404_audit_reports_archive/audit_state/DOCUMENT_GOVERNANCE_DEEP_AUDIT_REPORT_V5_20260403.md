@@ -260,8 +260,8 @@ implementation_status: х╖▓хоМцИ?
 - шУЭхЫ╛цЦЗцбг: 50ф╕?
 ### B. хПВшАГцаЗхЗЖцЦЗцб?
 1. [хобшобш┤ищЗПцаЗхЗЖv5.1](06_ARCHIVE\09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md)
-2. [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](06_ARCHIVE\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-3. [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](06_ARCHIVE\09_AUDIT\TEMPLATES\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+2. [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+3. [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 
 ---
 

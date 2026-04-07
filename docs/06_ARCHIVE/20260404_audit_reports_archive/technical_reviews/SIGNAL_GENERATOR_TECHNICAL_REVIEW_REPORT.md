@@ -286,7 +286,7 @@ last_updated: 2026-04-02---
 - [όη╢όηΕίχγϊ╣Κ](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [όρκίζΩϋΒΝϋ┤μϋ╛╣ύΧΝ](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [ϊ┐κίΠ╖ύΦθόΙΡύ│╗ύ╗θ](../../../04_EXECUTION/signal_generation.md)
-- [όΛΑόεψϋψΕίχκόιΘίΘΗv5.3](06_ARCHIVE\20260404_audit_reports_archive\QUALITY_GATE_MECHANISM.md)
+- [όΛΑόεψϋψΕίχκόιΘίΘΗv5.3](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 
 ### 8.2 ϋψΕίχκϋ┐ΘύρΜϋχ░ί╜Χ
 - 2026-04-02 12:00 - ί╝ΑίπΜόΛΑόεψίΠψϋκΝόΑπϋψΕ?

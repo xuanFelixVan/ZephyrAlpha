@@ -44,9 +44,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Professional Implementation Blueprint Archived](PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED.md) - `ARCHIVED_PROFESSIONAL_IMPLEMENTATION_BL_001`
-- [Readme](README.md)
-- [Strategy Engine Core Blueprint Archived](STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md) - `ARCHIVED_STRATEGY_ENGINE_CORE_BLUEPRINT_001`
+- [Professional Implementation Blueprint Archived](06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED.md) - `ARCHIVED_PROFESSIONAL_IMPLEMENTATION_BL_001`
+- [Readme](API_README.md)
+- [Strategy Engine Core Blueprint Archived](06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md) - `ARCHIVED_STRATEGY_ENGINE_CORE_BLUEPRINT_001`
 
 ---
 

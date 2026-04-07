@@ -44,7 +44,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [配置管理系统蓝图](./BLUEPRINT.md) | 配置管理系统详细设计 | ⭐⭐⭐⭐⭐ |
+| [配置管理系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 配置管理系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ---
 

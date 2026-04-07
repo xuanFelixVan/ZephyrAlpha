@@ -52,17 +52,17 @@ last_updated: 2026-04-02
 
 **хИЫх╗║чЪДцЦЗцб?*:
 
-1. тЬ?[цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+1. тЬ?[цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
    - хоЪф╣Йф║ЖхоМцХ┤чЪДцЦЗцбгчФЯхС╜хСицЬЯчобчРЖц╡БчиЛ
    - х╗║члЛф║Жф╗гчаБхПШцЫ┤цЦЗцбгцЫ┤цЦ░ц╡Бчи?
    - хИ╢хоЪф║ЖхоЪцЬЯхобшобцЬ║хИ╢хТМш┤ищЗПщЧичжБ
 
-2. тЬ?[ф╗гчаБхПШцЫ┤цЦЗцбгцЫ┤цЦ░цМЗхНЧ](../GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
+2. тЬ?[ф╗гчаБхПШцЫ┤цЦЗцбгцЫ┤цЦ░цМЗхНЧ](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
    - цПРф╛Ыф║Жшпжч╗ЖчЪДцЦЗцбгцЫ┤цЦ░цУНф╜ЬцМЗхНЧ
    - хМЕхРлх╕╕шзБхЬ║цЩпчд║ф╛ЛхТМцЬАф╜│хоЮш╖?
    - цПРф╛Ыф║ЖшЗкхКихМЦцгАцЯех╖ехЕ╖хТМGit HookщЕНч╜о
 
-3. тЬ?[цЦЗцбгц▓╗чРЖхЯ╣шонцЙЛхЖМ](../TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md)
+3. тЬ?[цЦЗцбгц▓╗чРЖхЯ╣шонцЙЛхЖМ](09_AUDIT/TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md)
    - ч│╗ч╗ЯхМЦчЪДхЯ╣шоншп╛чиЛшо╛шоб
    - хМЕхРлчРЖшо║шо▓шзгуАБцбИф╛ЛхИЖцЮРхТМхоЮш╖╡ч╗Гф╣а
    - х╗║члЛф║ЖшАГца╕шпДф╝░цЬ║хИ╢
@@ -71,7 +71,7 @@ last_updated: 2026-04-02
 
 **хИЫх╗║чЪДщЕНч╜охТМшДЪцЬм**:
 
-1. тЬ?[хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+1. тЬ?[хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
    - хоЪф╣Йф║?чзНхобшобч▒╗хЮЛя╝Их┐лщАЯуАБцаЗхЗЖуАБц╖▒х║жуАБф╕Ущб╣я╝Й
    - цПРф╛Ыф║ЖLinuxхТМWindowsчЪДф╗╗хКбщЕНч╜оцЦ╣ц│?
    - х╗║члЛф║ЖхобшобцКехСКх╜ТцбгхТМц╕ЕчРЖчнЦчХе
@@ -82,7 +82,7 @@ last_updated: 2026-04-02
    - цФпцМБхоЙшгЕуАБхН╕ш╜╜уАБц╡ЛшпХхКЯшГ?
    - цПРф╛Ыф║Жшпжч╗ЖчЪДф╗╗хКбчобчРЖхС╜ф╗д
 
-3. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [хоЪцЬЯхобшобф╗╗хКбщГич╜▓цМЗхНЧ](file:///d:/ZephyrAlpha/docs/09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md) -->
+3. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [хоЪцЬЯхобшобф╗╗хКбщГич╜▓цМЗхНЧ](09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md) -->
    - шпжч╗ЖчЪДщГич╜▓цнещкдшп┤цШ?
    - ф╗╗хКбчобчРЖхТМцХЕщЪЬцОТцЯецМЗхН?
    - хобшобцКехСКцЯечЬЛцЦ╣ц│Х
@@ -104,7 +104,7 @@ last_updated: 2026-04-02
 
 **хИЫх╗║чЪДц╡БчиЛцЦЗцб?*:
 
-1. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [цМБч╗нцФ╣ш┐Ыц╡БчиЛ](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/CONTINUOUS_IMPROVEMENT_PROCESS.md) -->
+1. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [цМБч╗нцФ╣ш┐Ыц╡БчиЛ](09_AUDIT/STANDARDS/CONTINUOUS_IMPROVEMENT_PROCESS.md) -->
    - х╗║члЛф║ЖцЬИх║жуАБхнгх║жуАБх╣┤х║жхобцЯецЬ║хИ?
    - хоЪф╣Йф║ЖцФ╣ш┐Ых╗║шооцФ╢щЫЖхТМхдДчРЖц╡БчиЛ
    - хИ╢хоЪф║ЖцаЗхЗЖцЫ┤цЦ░хТМх╖ехЕ╖ф╝ШхМЦц╡БчиЛ
@@ -114,18 +114,18 @@ last_updated: 2026-04-02
 
 **хИЫх╗║чЪДчЯешпЖх║У**:
 
-1. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [цЦЗцбгц▓╗чРЖцЬАф╜│хоЮш╖╡х║У](file:///d:/ZephyrAlpha/docs/09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md) -->
+1. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [цЦЗцбгц▓╗чРЖцЬАф╜│хоЮш╖╡х║У](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md) -->
    - ц▒ЗщЫЖф║ЖцЦЗцбгхИЫх╗║уАБцЫ┤цЦ░уАБш┤ищЗПф┐ЭшпБчЪДцЬАф╜│хоЮш╖?
    - хМЕхРлцЦЗцбгч╗Дч╗ЗуАБхЫвщШЯхНПф╜ЬчЪДцЬАф╜│хоЮш╖?
    - цПРф╛Ыф║ЖшЗкхКихМЦх╖ехЕ╖ф╜┐чФицМЗхНЧ
    - хМЕхРлхЯ╣шонхТМцЦЗхМЦх╗║шо╛цЬАф╜│хоЮш╖?
 
-2. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [хЕ╕хЮЛщЧощвШшзгхЖ│цЦ╣цбИх║У](file:///d:/ZephyrAlpha/docs/09_AUDIT/SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md) -->
+2. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [хЕ╕хЮЛщЧощвШшзгхЖ│цЦ╣цбИх║У](09_AUDIT/SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md) -->
    - цФ╢щЫЖф║ЖцЦЗцбгхИЫх╗║уАБцЫ┤цЦ░уАБш┤ищЗПуАБч╗Дч╗ЗчнЙхЕ╕хЮЛщЧощвШ
    - цПРф╛Ыф║Жшпжч╗ЖчЪДшзгхЖ│цЦ╣цбИхТМщвДщШ▓цОкцЦ?
    - хМЕхРлх╖ехЕ╖ф╜┐чФихТМхЫвщШЯхНПф╜ЬщЧощвШшзгхЖ│цЦ╣цб?
 
-3. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [цФ╣ш┐ЫцбИф╛Лх║У](file:///d:/ZephyrAlpha/docs/09_AUDIT/CASE_STUDIES/DOCUMENT_GOVERNANCE_IMPROVEMENT_CASES.md) -->
+3. тЬ?<!-- file:///щУ╛цОех╖▓ц│ищЗ? [цФ╣ш┐ЫцбИф╛Лх║У](09_AUDIT/CASE_STUDIES/DOCUMENT_GOVERNANCE_IMPROVEMENT_CASES.md) -->
    - шо░х╜Хф║?ф╕кхЕ╕хЮЛцФ╣ш┐ЫцбИф╛?
    - хМЕхРлцФ╣ш┐ЫшГМцЩпуАБхоЮцЦ╜цЦ╣цбИуАБцХИцЮЬшпДф╝?
    - цПРф╛Ыф║Жч╗ПщкМцА╗ч╗УхТМхПпхдНхИ╢цАзшпДф╝?
@@ -379,9 +379,9 @@ last_updated: 2026-04-02
 
 ## 9. хПВшАГцЦЗцб?
 
-- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- <!-- file:///щУ╛цОех╖▓ц│ищЗ? [цЦЗцбгц▓╗чРЖцЬАф╜│хоЮш╖╡х║У](file:///d:/ZephyrAlpha/docs/09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md) -->
+- [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [хоЪцЬЯхобшобф╗╗хКбщЕНч╜о](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- <!-- file:///щУ╛цОех╖▓ц│ищЗ? [цЦЗцбгц▓╗чРЖцЬАф╜│хоЮш╖╡х║У](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md) -->
 
 ---
 

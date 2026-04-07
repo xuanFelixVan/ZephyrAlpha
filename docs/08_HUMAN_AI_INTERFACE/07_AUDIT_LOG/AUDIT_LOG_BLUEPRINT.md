@@ -199,7 +199,7 @@ class AuditLogger:
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.7
-- **蓝图文档**: [AUDIT_LOG_BLUEPRINT.md](../07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md)
+- **蓝图文档**: [AUDIT_LOG_BLUEPRINT.md](./AUDIT_LOG_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha审计日志
 - **状态**: Active

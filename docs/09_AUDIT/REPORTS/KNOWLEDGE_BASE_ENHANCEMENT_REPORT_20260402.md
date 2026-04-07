@@ -38,7 +38,7 @@ last_updated: 2026-04-02---
 ## 2. ﮒﮒﭨﭦﻝﻝ۴ﻟﺁﮒﭦﮔﮔ۰۲
 
 ### 2.1 ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﮔﮔ۰?
-**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
+**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
 
 **ﻛﺕﭨﻟ۵ﮒﮒ؟ﺗ**:
 1. **ﮔﮔ۰۲ﻝ؟۰ﻝﮔﻛﺛﺏﮒ؟ﻟﺓ?*
@@ -72,7 +72,7 @@ last_updated: 2026-04-02---
 
 ### 2.2 ﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮔ۰۲
 
-**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮒ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
+**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮒ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
 
 **ﻛﺕﭨﻟ۵ﮒﮒ؟ﺗ**:
 1. **ﮔﺁﮔ۴ﮒﺓ۴ﻛﺛﮔﭖﻝ۷**
@@ -100,7 +100,7 @@ last_updated: 2026-04-02---
    - ﻛﭨ۲ﻝ ﮔﻛﭦ۳ﮒ?   - ﮒﻟﺛﮒﮒﺕﮒ?   - ﮔﺁﮔ۴ﻝﭨﮔﮒ?
 ### 2.3 ﻝﭨﻠ۹ﮔﭨﻝﭨﮔﮔ۰۲
 
-**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻝﭨﻠ۹ﮔﭨﻝﭨ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/lessons_learned/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
+**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻝﭨﻠ۹ﮔﭨﻝﭨ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
 
 **ﻛﺕﭨﻟ۵ﮒﮒ؟ﺗ**:
 1. **ﮔﮔ۰۲ﻝ؟۰ﻝﻝﭨﻠ۹**
@@ -282,9 +282,9 @@ knowledge_base/
 ---
 
 ## 8. ﮒﻟﮔﮔ۰?
-- [ﮔﻝﭨ­ﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT\CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- [ﮔﻝﭨ­ﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](BEST_PRACTICES\DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](STANDARDS\DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---
 

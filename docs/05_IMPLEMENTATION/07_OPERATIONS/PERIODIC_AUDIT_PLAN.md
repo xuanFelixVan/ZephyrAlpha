@@ -239,8 +239,8 @@ python scripts/document_auditor.py --mode deep
 
 | хобшобцЧецЬЯ | хобшобч▒╗хЮЛ | хобшоб?| хобшобцЦЗцбг?| хПСчО░щЧощвШ?| хобшобч╗Ушо║ | цКехСКщУ╛цОе |
 |---------|---------|--------|-----------|-----------|---------|---------|
-| 2026-04-03 | ц╖▒х║жхобшоб | щжЦх╕нцЮ╢цЮД?| 41?| 35?| тЪая╕П щЬАшжБф╝Ш?| [цЯечЬЛ](05_IMPLEMENTATION\09_AUDIT\REPORTS\DATA_LAYER_DEEP_AUDIT_REPORT_V2_20260403.md) |
-| 2026-04-03 | цаЗхЗЖхобшоб | щжЦх╕нцЮ╢цЮД?| 45?| 27?| тЪая╕П щЬАшжБф╝Ш?| [цЯечЬЛ](05_IMPLEMENTATION\09_AUDIT\REPORTS\DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md) |
+| 2026-04-03 | ц╖▒х║жхобшоб | щжЦх╕нцЮ╢цЮД?| 41?| 35?| тЪая╕П щЬАшжБф╝Ш?| [цЯечЬЛ](09_AUDIT/REPORTS/DATA_LAYER_DEEP_AUDIT_REPORT_V2_20260403.md) |
+| 2026-04-03 | цаЗхЗЖхобшоб | щжЦх╕нцЮ╢цЮД?| 45?| 27?| тЪая╕П щЬАшжБф╝Ш?| [цЯечЬЛ](09_AUDIT/REPORTS/DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md) |
 
 ### 5.2 ф╕ЛцмбхобшобшобхИТ
 
@@ -294,13 +294,13 @@ python scripts/document_auditor.py --mode deep
 ### 8.1 чЫ╕хЕ│цЦЗцбг
 
 - [цЦЗцбгц▓╗чРЖцЬ║хИ╢](DOCUMENT_GOVERNANCE_MECHANISM.md)
-- [цЦЗцбгхС╜хРНшзДшМГ](DOCUMENT_NUMBERING_STANDARD.md)
-- [цЦЗцбгш┤ищЗПщЧичжБцаЗхЗЖ](DOCUMENT_QUALITY_GATE_STANDARD.md)
+- [цЦЗцбгхС╜хРНшзДшМГ](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
+- [цЦЗцбгш┤ищЗПщЧичжБцаЗхЗЖ](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_QUALITY_GATE_STANDARD.md)
 
 ### 8.2 хобшобцКехСК
 
-- [цХ░цНоц║Рх▒ВцЦЗцбгц╖▒х║жхобшобцКехСКV2](05_IMPLEMENTATION\09_AUDIT\REPORTS\DATA_LAYER_DEEP_AUDIT_REPORT_V2_20260403.md)
-- [цХ░цНоц║Рх▒ВцЦЗцбгхобшобцКехСК](05_IMPLEMENTATION\09_AUDIT\REPORTS\DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md)
+- [цХ░цНоц║Рх▒ВцЦЗцбгц╖▒х║жхобшобцКехСКV2](09_AUDIT/REPORTS/DATA_LAYER_DEEP_AUDIT_REPORT_V2_20260403.md)
+- [цХ░цНоц║Рх▒ВцЦЗцбгхобшобцКехСК](09_AUDIT/REPORTS/DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md)
 
 ---
 

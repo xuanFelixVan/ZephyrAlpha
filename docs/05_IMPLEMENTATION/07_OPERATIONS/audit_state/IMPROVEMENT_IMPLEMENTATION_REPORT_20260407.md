@@ -280,7 +280,7 @@ standard_type: 专业量化机构文档
 
 ### 7.2 监控机制
 
-- [Layer 9 文档质量监控机制](file:///d:/ZephyrAlpha/docs/09_RESEARCH_INNOVATION/DOCUMENT_QUALITY_MONITORING_MECHANISM.md)
+- [Layer 9 文档质量监控机制](09_RESEARCH_INNOVATION/DOCUMENT_QUALITY_MONITORING_MECHANISM.md)
 
 ### 7.3 监控工具
 

@@ -627,10 +627,10 @@ TA-Lib触发条件:
 
 ## 索引
 
-- 父目�? [01_STANDARDS/README.md](./README.md)
+- 父目�? [01_STANDARDS/README.md](API_README.md)
 - 相关: [FACTOR_CALCULATION_FRAMEWORK.md](./FACTOR_CALCULATION_FRAMEWORK.md)
-- 相关: [IC_ANALYSIS.md](./IC_ANALYSIS.md)
-- 相关: [FACTOR_SYNTHESIS.md](./FACTOR_SYNTHESIS.md)
+- 相关: [IC_ANALYSIS.md](./ic_analysis.md)
+- 相关: [FACTOR_SYNTHESIS.md](./factor_synthesis.md)
 
 ---
 

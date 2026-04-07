@@ -27,8 +27,8 @@ compliance_level: 专业标准
 > **来源**：量化策略专业分层方案_v3.0 附录AJ
 >
 > **配套文档**�?
-> - Barra风格因子：[T.03.RF001.barra_style_factors.md](T.03.RF001.barra_style_factors.md)
-> - Barra优化器：[T.03.RM003.barra_optimizer.md](T.03.RM003.barra_optimizer.md)
+> - Barra风格因子：[T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_STYLE_FACTORS.md)
+> - Barra优化器：[T.03.RM003.barra_optimizer.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_OPTIMIZER.md)
 
 ---
 

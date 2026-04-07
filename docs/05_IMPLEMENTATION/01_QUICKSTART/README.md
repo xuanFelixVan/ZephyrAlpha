@@ -134,9 +134,9 @@ which python  # Linux/Mac
 
 完成快速开始后，建议：
 
-1. 学习 [开发规范](../02_DEVELOPMENT/README.md)
+1. 学习 [开发规范](API_README.md)
 2. 阅读 [策略开发指南](../../03_TRADING_TACTICS/README.md)
-3. 了解 [系统架构](../../../README.md)
+3. 了解 [系统架构](API_README.md)
 
 ---
 

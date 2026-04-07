@@ -32,7 +32,7 @@ implementation_status: εΖ≤ε°¨φà?---
 
 | φ•΅δΜΕ | η·¥φ‰é |
 |------|------|
-| [README.md](04_PLATFORM_DOCS/README.md) | εΙ≥εèΑφ•΅φΓΘη·¥φ‰é |
+| [README.md](API_README.md) | εΙ≥εèΑφ•΅φΓΘη·¥φ‰é |
 | [xuntou_qmt_trading_system_documentation.pdf](04_PLATFORM_DOCS/xuntou_qmt_trading_system_documentation.pdf) | ηΩÖφäïQMTδΚΛφ‰™γ≥ΜγΜüφ•΅φΓΘ |
 
 ## πüî½ γ¦ΗεÖ≥ι™ΨφéΞ

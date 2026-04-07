@@ -527,9 +527,9 @@ nlu:
       
   - intent: buy_stock
     examples: |
-      - 买入[AAPL](stock)股票
-      - 购买[100](number)股[茅台](stock)
-      - 我想买[苹果](stock)
+      - 买入[AAPL](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)股票
+      - 购买[100](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)股[茅台](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)
+      - 我想买[苹果](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)
       
   - intent: query_performance
     examples: |

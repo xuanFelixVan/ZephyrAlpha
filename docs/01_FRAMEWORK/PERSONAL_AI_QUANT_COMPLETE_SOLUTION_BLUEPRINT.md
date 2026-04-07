@@ -380,7 +380,7 @@ responsibility:
 ```markdown
 | 文档名称 | 模块ID | 版本 | 状态 | 路径 | 职责摘要 |
 |---------|--------|------|------|------|---------|
-| [蓝图名称](path/to/blueprint.md) | MODULE_001 | 1.0 | Active | docs/path/ | 核心职责描述 |
+| [蓝图名称](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | MODULE_001 | 1.0 | Active | docs/path/ | 核心职责描述 |
 ```
 
 #### 原则3: 版本隔离 (Version Isolation)

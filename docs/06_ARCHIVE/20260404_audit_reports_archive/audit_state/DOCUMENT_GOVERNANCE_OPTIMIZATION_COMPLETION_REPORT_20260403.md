@@ -45,7 +45,7 @@ parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md
 #### 1. ТЏ┤Тќ░INDEX.mdу┤бт╝Ћ Рю?
 **т«їТѕљТЌХжЌ┤**: 2026-04-03
 **ТЅДУАїтєЁт«╣**:
-- ТЏ┤Тќ░С║?[docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/INDEX.md](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/INDEX.md)
+- ТЏ┤Тќ░С║?[docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 - ТаЄУ«░С║?СИфтйњТАБТќЄТАБ№╝ѕт╝║тїќтГдС╣асђЂуЅ╣тЙЂтГўтѓесђЂMLOpsт╣│тЈ░ТіђТю»УДёТа╝С╣д№╝?- ТЏ┤Тќ░С║єу┤бт╝Ћу╗ЪУ«АС┐АТЂ»№╝ѕтйњТАБТќЄТАБС╗?СИфтбътіатѕ░4СИф№╝Ѕ
 
 **ТѕљТъю**:
@@ -54,7 +54,7 @@ parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md
 **т«їТѕљТЌХжЌ┤**: 2026-04-03
 **ТЅДУАїтєЁт«╣**:
 - тѕєТъљС║?СИфТи▒т▒ѓуЏ«тйЋ№╝ѕ6т▒ѓТи▒т║д№╝Ѕ
-- тѕХт«џС║єУ»ду╗єуџёТЅЂт╣│тїќТќ╣ТА?- тѕЏт╗║С║?[DIRECTORY_FLATTENING_PLAN_20260403.md](file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/DIRECTORY_FLATTENING_PLAN_20260403.md)
+- тѕХт«џС║єУ»ду╗єуџёТЅЂт╣│тїќТќ╣ТА?- тѕЏт╗║С║?[DIRECTORY_FLATTENING_PLAN_20260403.md](06_ARCHIVE/20260404_audit_reports_archive/audit_state/DIRECTORY_FLATTENING_PLAN_20260403.md)
 
 **ТѕљТъю**:
 - У»єтѕФС║?9СИфжюђУдЂуД╗тіеуџёТќЄС╗Х

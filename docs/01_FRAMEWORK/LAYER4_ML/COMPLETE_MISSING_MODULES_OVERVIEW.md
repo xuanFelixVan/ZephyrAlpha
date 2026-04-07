@@ -83,7 +83,7 @@ priority: P0核心
 
 #### 2.1.2 数据质量监控
 
-**蓝图文档**: [DATA_QUALITY_MONITORING_BLUEPRINT.md](DATA_QUALITY_MONITORING_BLUEPRINT.md)
+**蓝图文档**: [DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -137,7 +137,7 @@ priority: P0核心
 
 #### 2.2.2 分布式训练
 
-**蓝图文档**: [DISTRIBUTED_TRAINING_BLUEPRINT.md](DISTRIBUTED_TRAINING_BLUEPRINT.md)
+**蓝图文档**: [DISTRIBUTED_TRAINING_BLUEPRINT.md](01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -217,7 +217,7 @@ priority: P0核心
 
 #### 2.3.1 时序预测模型
 
-**蓝图文档**: [TIME_SERIES_FORECASTING_BLUEPRINT.md](TIME_SERIES_FORECASTING_BLUEPRINT.md)
+**蓝图文档**: [TIME_SERIES_FORECASTING_BLUEPRINT.md](01_FRAMEWORK/LAYER4_ML/TIME_SERIES_FORECASTING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -243,7 +243,7 @@ priority: P0核心
 
 #### 2.3.2 异常检测模型
 
-**蓝图文档**: [ANOMALY_DETECTION_BLUEPRINT.md](ANOMALY_DETECTION_BLUEPRINT.md)
+**蓝图文档**: [ANOMALY_DETECTION_BLUEPRINT.md](01_FRAMEWORK/LAYER4_ML/ANOMALY_DETECTION_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -297,7 +297,7 @@ priority: P0核心
 
 #### 2.4.1 模型服务框架
 
-**蓝图文档**: [MODEL_SERVING_BLUEPRINT.md](MODEL_SERVING_BLUEPRINT.md)
+**蓝图文档**: [MODEL_SERVING_BLUEPRINT.md](01_FRAMEWORK/LAYER4_ML/MODEL_SERVING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -405,7 +405,7 @@ priority: P0核心
 
 #### 3.1.2 混合精度训练
 
-**蓝图文档**: [MIXED_PRECISION_TRAINING_BLUEPRINT.md](MIXED_PRECISION_TRAINING_BLUEPRINT.md)
+**蓝图文档**: [MIXED_PRECISION_TRAINING_BLUEPRINT.md](01_FRAMEWORK/MIXED_PRECISION_TRAINING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -459,7 +459,7 @@ priority: P0核心
 
 #### 3.2.2 模型血缘追踪
 
-**蓝图文档**: [MODEL_LINEAGE_BLUEPRINT.md](MODEL_LINEAGE_BLUEPRINT.md)
+**蓝图文档**: [MODEL_LINEAGE_BLUEPRINT.md](01_FRAMEWORK/MODEL_LINEAGE_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -487,7 +487,7 @@ priority: P0核心
 
 #### 3.3.1 A/B测试框架
 
-**蓝图文档**: [AB_TESTING_BLUEPRINT.md](AB_TESTING_BLUEPRINT.md)
+**蓝图文档**: [AB_TESTING_BLUEPRINT.md](01_FRAMEWORK/MODEL_AB_TESTING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -513,7 +513,7 @@ priority: P0核心
 
 #### 3.3.2 模型预热系统
 
-**蓝图文档**: [MODEL_WARMUP_BLUEPRINT.md](MODEL_WARMUP_BLUEPRINT.md)
+**蓝图文档**: [MODEL_WARMUP_BLUEPRINT.md](01_FRAMEWORK/MODEL_WARMUP_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -539,7 +539,7 @@ priority: P0核心
 
 #### 3.3.3 性能基准测试
 
-**蓝图文档**: [PERFORMANCE_BENCHMARK_BLUEPRINT.md](PERFORMANCE_BENCHMARK_BLUEPRINT.md)
+**蓝图文档**: [PERFORMANCE_BENCHMARK_BLUEPRINT.md](01_FRAMEWORK/ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -567,7 +567,7 @@ priority: P0核心
 
 #### 3.4.1 自监督学习
 
-**蓝图文档**: [SELF_SUPERVISED_LEARNING_BLUEPRINT.md](SELF_SUPERVISED_LEARNING_BLUEPRINT.md)
+**蓝图文档**: [SELF_SUPERVISED_LEARNING_BLUEPRINT.md](01_FRAMEWORK/SELF_SUPERVISED_LEARNING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -593,7 +593,7 @@ priority: P0核心
 
 #### 3.4.2 迁移学习
 
-**蓝图文档**: [TRANSFER_LEARNING_BLUEPRINT.md](TRANSFER_LEARNING_BLUEPRINT.md)
+**蓝图文档**: [TRANSFER_LEARNING_BLUEPRINT.md](01_FRAMEWORK/TRANSFER_LEARNING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -621,7 +621,7 @@ priority: P0核心
 
 #### 3.5.1 模型卡片系统
 
-**蓝图文档**: [MODEL_CARD_BLUEPRINT.md](MODEL_CARD_BLUEPRINT.md)
+**蓝图文档**: [MODEL_CARD_BLUEPRINT.md](01_FRAMEWORK/MODEL_CARD_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -647,7 +647,7 @@ priority: P0核心
 
 #### 3.5.2 模型审计日志
 
-**蓝图文档**: [MODEL_AUDIT_LOG_BLUEPRINT.md](MODEL_AUDIT_LOG_BLUEPRINT.md)
+**蓝图文档**: [MODEL_AUDIT_LOG_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -731,7 +731,7 @@ priority: P0核心
 
 #### 4.1.1 神经架构搜索(NAS)
 
-**蓝图文档**: [NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md](NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md)
+**蓝图文档**: [NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md](01_FRAMEWORK/NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -756,7 +756,7 @@ priority: P0核心
 
 #### 4.1.2 图神经网络
 
-**蓝图文档**: [GRAPH_NEURAL_NETWORK_BLUEPRINT.md](GRAPH_NEURAL_NETWORK_BLUEPRINT.md)
+**蓝图文档**: [GRAPH_NEURAL_NETWORK_BLUEPRINT.md](01_FRAMEWORK/GRAPH_NEURAL_NETWORK_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -784,7 +784,7 @@ priority: P0核心
 
 #### 4.2.1 知识蒸馏
 
-**蓝图文档**: [KNOWLEDGE_DISTILLATION_BLUEPRINT.md](KNOWLEDGE_DISTILLATION_BLUEPRINT.md)
+**蓝图文档**: [KNOWLEDGE_DISTILLATION_BLUEPRINT.md](01_FRAMEWORK/KNOWLEDGE_DISTILLATION_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -810,7 +810,7 @@ priority: P0核心
 
 #### 4.2.2 模型剪枝
 
-**蓝图文档**: [MODEL_PRUNING_BLUEPRINT.md](MODEL_PRUNING_BLUEPRINT.md)
+**蓝图文档**: [MODEL_PRUNING_BLUEPRINT.md](01_FRAMEWORK/MODEL_PRUNING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -838,7 +838,7 @@ priority: P0核心
 
 #### 4.3.1 联邦学习
 
-**蓝图文档**: [FEDERATED_LEARNING_BLUEPRINT.md](FEDERATED_LEARNING_BLUEPRINT.md)
+**蓝图文档**: [FEDERATED_LEARNING_BLUEPRINT.md](01_FRAMEWORK/FEDERATED_LEARNING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|
@@ -864,7 +864,7 @@ priority: P0核心
 
 #### 4.3.2 主动学习
 
-**蓝图文档**: [ACTIVE_LEARNING_BLUEPRINT.md](ACTIVE_LEARNING_BLUEPRINT.md)
+**蓝图文档**: [ACTIVE_LEARNING_BLUEPRINT.md](01_FRAMEWORK/ACTIVE_LEARNING_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|

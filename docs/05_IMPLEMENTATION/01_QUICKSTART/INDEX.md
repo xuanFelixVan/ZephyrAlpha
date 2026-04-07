@@ -38,22 +38,22 @@ implementation_status: ти▓т«ї№┐?---
 
 | ТќЄС╗Х | УЂїУ┤Б | уіХ№┐й?|
 |------|------|------|
-| [README.md](README.md) | т┐ФжђЪтЁЦжЌеТдѓ№┐?| Active |
-| [dev-setup.md](dev-setup.md) | т╝ђтЈЉуј»тбЃжЁЇуй«ТїЄ№┐?| Active |
-| [LEARNING_PATH.md](LEARNING_PATH.md) | тГдС╣аУи»тЙёУДётѕњ | Active |
-| [ROADMAP.md](ROADMAP.md) | т╝ђтЈЉУи»у║┐тЏЙ | Active |
-| [PHASE1_DESIGN.md](PHASE1_DESIGN.md) | уггСИђжўХТ«хУ«ЙУ«А | Active |
-| [factor_design.md](factor_design.md) | тЏатГљУ«ЙУ«АтЁЦжЌе | Active |
-| [first-backtest.md](first-backtest.md) | уггСИђТгАтЏъТхІТїЄ№┐?| Active |
+| [README.md](API_README.md) | т┐ФжђЪтЁЦжЌеТдѓ№┐?| Active |
+| [dev-setup.md](05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md) | т╝ђтЈЉуј»тбЃжЁЇуй«ТїЄ№┐?| Active |
+| [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) | тГдС╣аУи»тЙёУДётѕњ | Active |
+| [ROADMAP.md](05_IMPLEMENTATION/01_QUICKSTART/ROADMAP.md) | т╝ђтЈЉУи»у║┐тЏЙ | Active |
+| [PHASE1_DESIGN.md](05_IMPLEMENTATION/01_QUICKSTART/PHASE1_DESIGN.md) | уггСИђжўХТ«хУ«ЙУ«А | Active |
+| [factor_design.md](05_IMPLEMENTATION/01_QUICKSTART/factor_design.md) | тЏатГљУ«ЙУ«АтЁЦжЌе | Active |
+| [first-backtest.md](05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) | уггСИђТгАтЏъТхІТїЄ№┐?| Active |
 
 ## ­ЪЊќ ТаИт┐ЃТќЄТАБ
 
 ### тЁЦжЌет┐ЁУ»╗
-1. [README.md](README.md) - т┐ФжђЪтЁЦжЌеТдѓ№┐?2. [dev-setup.md](dev-setup.md) - т╝ђтЈЉуј»тбЃжЁЇ№┐?3. [LEARNING_PATH.md](LEARNING_PATH.md) - тГдС╣аУи»тЙё
+1. [README.md](API_README.md) - т┐ФжђЪтЁЦжЌеТдѓ№┐?2. [dev-setup.md](05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md) - т╝ђтЈЉуј»тбЃжЁЇ№┐?3. [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) - тГдС╣аУи»тЙё
 
 ### т«ъУихТїЄтЇЌ
-- [factor_design.md](factor_design.md) - тЏатГљУ«ЙУ«АтЁЦжЌе
-- [first-backtest.md](first-backtest.md) - уггСИђТгАтЏъ№┐?---
+- [factor_design.md](05_IMPLEMENTATION/01_QUICKSTART/factor_design.md) - тЏатГљУ«ЙУ«АтЁЦжЌе
+- [first-backtest.md](05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) - уггСИђТгАтЏъ№┐?---
 
 
 **у┤бт╝ЋуЅѕТюг**: v1.0.0 | **тѕЏт╗║ТЌЦТюЪ**: 2026-04-03 | **у╗┤Тіц№┐?*: ждќтИГТќЄТАБТъХТъё№┐?

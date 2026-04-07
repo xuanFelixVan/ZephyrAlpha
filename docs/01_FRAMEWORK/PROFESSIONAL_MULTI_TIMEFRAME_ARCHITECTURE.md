@@ -1019,9 +1019,9 @@ class FullCyclePerformanceAttribution:
 
 | èå¾ææ¡£ | è¯´æ | å®æ½å¨æ |
 |---------|------|---------|
-| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md)** | æ°æ®è´¨éçæ§ - æ¡¥æ°´åºéæ°æ®è´¨éä½ç³» | 2?|
+| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md)** | æ°æ®è´¨éçæ§ - æ¡¥æ°´åºéæ°æ®è´¨éä½ç³» | 2?|
 | **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | å®æ¶é£é©çæ§ - Two Sigmaé£é©çæ§ä½ç³» | 2?|
-| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | ååæµè¯ç³»ç» - æ¡¥æ°´åºéååæµè¯ä½ç³» | 2?|
+| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | ååæµè¯ç³»ç» - æ¡¥æ°´åºéååæµè¯ä½ç³» | 2?|
 | **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | åè§çæ§ç³»ç» - Citadelåè§ä½ç³» | 2?|
 
 ### 6.2 éå¥å®æ½ææ¡£

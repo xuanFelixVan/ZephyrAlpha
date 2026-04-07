@@ -35,8 +35,8 @@ implementation_progress: 0%
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集系统 | [../DATA_ACQUISITION.md](../DATA_ACQUISITION.md) | 上游架构 | 数据采集整体架构 |
-| 数据源适配器 | [../DATA_SOURCE_ADAPTERS.md](../DATA_SOURCE_ADAPTERS.md) | 数据源 | 数据源接口定义 |
+| 数据采集系统 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 上游架构 | 数据采集整体架构 |
+| 数据源适配器 | [../DATA_SOURCE_ADAPTERS.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) | 数据源 | 数据源接口定义 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:

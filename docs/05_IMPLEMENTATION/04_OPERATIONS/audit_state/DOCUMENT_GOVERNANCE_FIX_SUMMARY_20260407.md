@@ -271,7 +271,7 @@ layer_keywords = {
 
 1. **审计报告**: [LAYER6_DEEP_AUDIT_V6_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_V6_20260407.md)
 2. **审计总结**: [LAYER6_DEEP_AUDIT_SUMMARY_V6_20260407.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER6_DEEP_AUDIT_SUMMARY_V6_20260407.md)
-3. **质量监控报告**: [quality_monitoring_report_20260407_011229.md](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_011229.md)
+3. **质量监控报告**: [quality_monitoring_report_20260407_011229.md](05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality_monitoring_report_20260407_011229.md)
 
 ---
 

@@ -45,7 +45,7 @@ implementation_status: 设计阶段
 >
 > **相关文档**:
 > - 上级索引: [../../INDEX.md](../../INDEX.md)
-> - 因子主索引: [FACTOR_MASTER_INDEX.md](IFIND/FACTOR_MASTER_INDEX.md)
+> - 因子主索引: [FACTOR_MASTER_INDEX.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/factor_master_index.md)
 > - 数据源索引: [数据源索引](./INDEX.md)
 
 ***

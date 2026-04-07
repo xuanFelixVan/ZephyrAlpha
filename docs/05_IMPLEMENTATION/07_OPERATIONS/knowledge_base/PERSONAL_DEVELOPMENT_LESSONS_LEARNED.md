@@ -400,8 +400,8 @@ tags: ["СИфС║║т╝ђтЈ?, "у╗ЈжфїТЋЎУ«Г", "ТюђСй│�
 ---
 
 ## 8. тЈѓУђЃТќЄТА?
-- [СИфС║║т╝ђтЈЉТюђСй│т«ъУих](PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
-- [СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ](PERSONAL_WORKFLOW_GUIDE.md)
+- [СИфС║║т╝ђтЈЉТюђСй│т«ъУих](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
+- [СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
 - [ТќЄТАБТ▓╗уљєТюђСй│т«ъУих](../../../09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
 
 ---

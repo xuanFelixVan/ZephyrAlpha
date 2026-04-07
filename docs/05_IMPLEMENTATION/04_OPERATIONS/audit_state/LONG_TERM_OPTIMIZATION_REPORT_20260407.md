@@ -46,7 +46,7 @@ parent_document: ../INDEX.md
 > - 📋 相关文档：[相关文档链接] - [简要说明]
 ```
 
-**规范文档**: [RESPONSIBILITY_DESCRIPTION_STANDARD.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)
+**规范文档**: [RESPONSIBILITY_DESCRIPTION_STANDARD.md](09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)
 
 #### 1.2 职责描述审查机制
 
@@ -98,7 +98,7 @@ parent_document: ../INDEX.md
 | **缺少module_id** | 3个 | 🔴 高风险 |
 | **稀疏目录** | 97个 | 🟡 中风险 |
 
-**审计报告**: [weekly_audit_report_20260407_022518.md](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/weekly_audit_report_20260407_022518.md)
+**审计报告**: [weekly_audit_report_20260407_022518.md](09_AUDIT/STATE/weekly_audit_report_20260407_022518.md)
 
 ---
 

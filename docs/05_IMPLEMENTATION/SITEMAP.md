@@ -79,14 +79,14 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﮔﮔﺁﮔﺍﮔ
 
 **ﮒﺟ،ﻠﻛﺕﮔﻟﺓﺁ?* (1ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [01_QUICKSTART/README.md](./01_QUICKSTART/README.md) - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
+1. ﻠﻟﺁﭨ [01_QUICKSTART/README.md](API_README.md) - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
 2. ﻠﻟﺁﭨ [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ (10ﮒﻠ)
 3. ﻠﻟﺁﭨ [01_QUICKSTART/dev-setup.md](./01_QUICKSTART/dev-setup.md) - ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ?(20ﮒﻠ)
 4. ﻠﻟﺁﭨ [01_QUICKSTART/first-backtest.md](./01_QUICKSTART/first-backtest.md) - ﻝ؛؛ﻛﺕﮔ؛۰ﮒ?(20ﮒﻠ)
 
 ### ﮔﮔﺁﮒﺙﮒ?
 **ﮒﺙﮒﻟ۶ﻟﮒ­۵ﻛﺗ ﻟﺓﺁ?* (2ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [02_DEVELOPMENT/README.md](./02_DEVELOPMENT/README.md) - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
+1. ﻠﻟﺁﭨ [02_DEVELOPMENT/README.md](API_README.md) - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
 2. ﻠﻟﺁﭨ [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - ﮒﺙﮒﮔ ?(30ﮒﻠ)
 3. ﻠﻟﺁﭨ [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - ﻟ؟ﺝﻟ؟۰ﮒﮒ (20ﮒﻠ)
 4. ﻠﻟﺁﭨ [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ (20ﮒﻠ)
@@ -96,7 +96,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﮔﮔﺁﻟﺟﻝﭨﺑﻛﭦﭦﮒ
 
 **ﻟﺟﻝﭨﺑﮒﺓ۴ﻛﺛﻟﺓﺁﻝﭦﺟ** (2ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [07_OPERATIONS/README.md](./07_OPERATIONS/README.md) - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
+1. ﻠﻟﺁﭨ [07_OPERATIONS/README.md](API_README.md) - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
 2. ﻠﻟﺁﭨ [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?(20ﮒﻠ)
 3. ﻠﻟﺁﭨ [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - ﻟﺑ۷ﻠﻠ۷ﮔﭦ?(20ﮒﻠ)
 4. ﻠﻟﺁﭨ [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ (20ﮒﻠ)
@@ -112,7 +112,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﮒﺟ،ﻠﮒﺙ?
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﮒﺟ،ﻠﮒﺙﮒ۶](./01_QUICKSTART/README.md) | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗ­ﻗ­ﻗ­ﻗ­?|
+| [ﮒﺟ،ﻠﮒﺙﮒ۶](API_README.md) | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗ­ﻗ­ﻗ­ﻗ­?|
 | [ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ](./01_QUICKSTART/LEARNING_PATH.md) | ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ | ﻗ­ﻗ­ﻗ­ﻗ­ |
 | [ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ](./01_QUICKSTART/ROADMAP.md) | ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
 | [ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝﻝﺛ؟](./01_QUICKSTART/dev-setup.md) | ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
@@ -139,7 +139,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](./07_OPERATIONS/README.md) | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗ­ﻗ­ﻗ­ﻗ­?|
+| [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md) | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗ­ﻗ­ﻗ­ﻗ­?|
 | [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
 | [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | ﻟﺑ۷ﻠﻠ۷ﮔﭦ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
 | [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | ﮔ۶ﻟﺛﻝﮔ۶ | ﻗ­ﻗ­ﻗ­ﻗ­ |
@@ -162,7 +162,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 - **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md)
 
 ### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
-- **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](./07_OPERATIONS/README.md)
+- **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md)
 - **ﮒ؟۰ﻟ؟۰**: [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
 - **ﻟﺑ۷ﻠ?*: [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 - **ﻝﮔ۶**: [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md)

@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Markdown Link Validator](MARKDOWN_LINK_VALIDATOR.md)
+- [Markdown Link Validator](09_AUDIT/TOOLS/MARKDOWN_LINK_VALIDATOR.md)
 
 ---
 

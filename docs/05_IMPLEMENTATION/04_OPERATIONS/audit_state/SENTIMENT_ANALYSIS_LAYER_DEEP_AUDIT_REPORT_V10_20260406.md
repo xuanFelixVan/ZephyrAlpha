@@ -94,7 +94,7 @@ compliance_level: 专业标准
    - 职责：开源项目集成方案蓝图
    - 内容：实施方案和技术细节、架构设计和集成策略、核心开源项目集成代码示例
 
-2. [OPEN_SOURCE_MODULE_SOLUTION.md](file:///d:/ZephyrAlpha/docs/10_AI_WORKFLOW/OPEN_SOURCE_MODULE_SOLUTION.md)
+2. [OPEN_SOURCE_MODULE_SOLUTION.md](10_AI_WORKFLOW/OPEN_SOURCE_MODULE_SOLUTION.md)
    - 职责：开源模块完整方案
    - 内容：开源方案选型和推荐、开源模块全景图和架构映射、选型对比和推荐理由
 
@@ -165,7 +165,7 @@ compliance_level: 专业标准
 
 **问题**: 短期技术规格书编码错误
 
-**影响文件**: [SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md](file:///d:/ZephyrAlpha/docs/10_AI_WORKFLOW/SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md)
+**影响文件**: [SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md](10_AI_WORKFLOW/SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md)
 
 **问题描述**:
 - YAML头部已修复，中文正常显示
@@ -333,8 +333,8 @@ compliance_level: 专业标准
 
 ### 审计标准文档
 
-- [专业文档治理审计指南](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](file:///d:/ZephyrAlpha/docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [审计质量标准v5.1](file:///d:/ZephyrAlpha/docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
 
 ### Git备份
@@ -345,7 +345,7 @@ compliance_level: 专业标准
 
 ### 编码修复交接文档
 
-- [编码修复交接文档](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ENCODING_FIX_HANDOVER_20260406.md)
+- [编码修复交接文档](05_IMPLEMENTATION/04_OPERATIONS/audit_state/ENCODING_FIX_HANDOVER_20260406.md)
 
 ---
 

@@ -55,7 +55,7 @@ last_updated: 2026-04-02
 
 3. **ﻝﺗﮔ؟ﮔﮒﭖﮒ۳ﻝ**:
    - ﮒ۵ﮔﻛﺕﻝ۰؟ﮒ؟ﺅﺙﮒ۷ﻟﺁ۱ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
-   - ﮒ۵ﮔﮔﺁﻝﺗﮔ؟ﮔﮔ۰۲ﺅﺙﮒﺁﻛﭨ۴ﻝﺏﻟﺁﺓﻛﺝﮒ۳ﺅﺙﮒﻟ[ﮔﮔ۰۲ﮒﻝﺎﭨﻛﺝﮒ۳ﮔﺕﮒ](../STANDARDS/DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)ﺅﺙ?
+   - ﮒ۵ﮔﮔﺁﻝﺗﮔ؟ﮔﮔ۰۲ﺅﺙﮒﺁﻛﭨ۴ﻝﺏﻟﺁﺓﻛﺝﮒ۳ﺅﺙﮒﻟ[ﮔﮔ۰۲ﮒﻝﺎﭨﻛﺝﮒ۳ﮔﺕﮒ](09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)ﺅﺙ?
 
 **ﻠ۱ﻠﺎﮔ۹ﮔﺛ**:
 - ﮔﺍﮒﮒﺓ۴ﮒﺗﻟ؟­ﮔﭘﻠﻝﺗﻟ؟ﺎﻟ۶۲ﮔﮔ۰۲ﮒﻝﺎﭨ
@@ -603,8 +603,8 @@ last_updated: 2026-04-02
 ## 8. ﮒﻟﮔﮔ۰?
 
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ﻛﭨ۲ﻝ ﮒﮔﺑﮔﮔ۰۲ﮔﺑﮔﺍﮔﮒ](../GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﻛﭨ۲ﻝ ﮒﮔﺑﮔﮔ۰۲ﮔﺑﮔﺍﮔﮒ](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
 
 ---
 

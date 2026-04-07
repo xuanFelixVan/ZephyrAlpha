@@ -238,7 +238,7 @@ INDEX.md现在包含完整的文档索引表格，包括：
 
 ### 7.2 更新的文档
 
-- [Layer 9 INDEX.md](file:///d:/ZephyrAlpha/docs/09_RESEARCH_INNOVATION/INDEX.md) - 已添加完整文档索引
+- [Layer 9 INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md) - 已添加完整文档索引
 - [LAYER9_DOCUMENT_GOVERNANCE_COMPLETE_FIX_REPORT.md](file:///d:/ZephyrAlpha/docs/09_RESEARCH_INNOVATION/LAYER9_DOCUMENT_GOVERNANCE_COMPLETE_FIX_REPORT.md) - 已优化职责描述
 - [LAYER9_DOCUMENT_GOVERNANCE_FIX_REPORT.md](file:///d:/ZephyrAlpha/docs/09_RESEARCH_INNOVATION/LAYER9_DOCUMENT_GOVERNANCE_FIX_REPORT.md) - 已优化职责描述
 

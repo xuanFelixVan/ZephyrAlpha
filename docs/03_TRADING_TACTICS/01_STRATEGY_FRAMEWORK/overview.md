@@ -279,7 +279,7 @@ graph LR
 | **查看策略分类** | [classification.md](./classification.md) |
 | **开发新策略** | [lifecycle.md](./lifecycle.md) |
 | **策略引擎开�?* | [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) |
-| **选择策略** | [../05_STRATEGY_POOL/index.md](03_TRADING_TACTICS\05_STRATEGY_POOL\index.md) |
+| **选择策略** | [../05_STRATEGY_POOL/index.md](08_HUMAN_AI_INTERFACE/index.md) |
 | **查看具体策略** | [../INDEX.md](../INDEX.md) |
 
 ---

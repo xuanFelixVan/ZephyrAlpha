@@ -96,9 +96,9 @@ python scripts/test_qmt_connection_v2.py
 
 ## ΏθΥγ ϋψού╗ΗόΨΘόκμ
 
-- [όι╣όευίΟθίδιίΙΗόηΡ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
-- [ϋ┐ηόΟξώΩχώλαόΟΤόθξόΝΘίΞΩ](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md)
-- [QMTόΧ░όΞχόΟξίΠμόΨΘόκμ](file:///d:/ZephyrAlpha/docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- [όι╣όευίΟθίδιίΙΗόηΡ](05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
+- [ϋ┐ηόΟξώΩχώλαόΟΤόθξόΝΘίΞΩ](05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md)
+- [QMTόΧ░όΞχόΟξίΠμόΨΘόκμ](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 
 ---
 

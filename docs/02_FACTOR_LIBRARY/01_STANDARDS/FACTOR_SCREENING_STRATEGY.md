@@ -22,7 +22,7 @@ implementation_status: 已实施
 > **职责边界**: 
 > - ✅ 本文档负责：筛选流程设计、筛选工具开发、筛选结果评估、筛选参数优化
 > - ❌ 本文档不负责：因子管理标准制定、生命周期管理、分层标准制定
-> - 📋 相关文档：[因子管理标准](FACTOR_MANAGEMENT_STANDARD.md) - 管理标准和规范
+> - 📋 相关文档：[因子管理标准](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) - 管理标准和规范
 >
 > **版本**: v1.0
 > **创建日期**: 2026-03-30
@@ -461,9 +461,9 @@ factor_screening:
 
 | 文档 | 说明 |
 |------|------|
-| [因子库总览](../README.md) | 因子库整体介�?|
+| [因子库总览](API_README.md) | 因子库整体介�?|
 | [因子管理标准](./FACTOR_MANAGEMENT_STANDARD.md) | 专业机构做法（分�?IC阈�?生命周期�?|
-| [因子监控](../07_FACTOR_MONITORING/factor_monitoring.md) | IC监控/衰减预警 |
+| [因子监控](02_FACTOR_LIBRARY/07_FACTOR_MONITORING/factor_monitoring.md) | IC监控/衰减预警 |
 
 ---
 

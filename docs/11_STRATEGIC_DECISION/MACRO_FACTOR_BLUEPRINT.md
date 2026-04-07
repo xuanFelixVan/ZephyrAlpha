@@ -1062,7 +1062,7 @@ class StatsmodelsIntegration:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
 | [MARKET_REGIME_BLUEPRINT.md](./MARKET_REGIME_BLUEPRINT.md) | 市场状态识别系统 |
 

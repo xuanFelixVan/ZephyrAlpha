@@ -41,7 +41,7 @@ implementation_status: 进行�?---
 >
 > **配套文档**�?
 > - 主文档：
-> - 技术指标：[technical-indicators.md](../99_ARCHIVE/technical-indicators.md)
+> - 技术指标：[technical-indicators.md](03_TRADING_TACTICS/99_ARCHIVE/technical-indicators.md)
 
 ***
 

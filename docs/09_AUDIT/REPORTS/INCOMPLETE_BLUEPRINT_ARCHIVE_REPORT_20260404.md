@@ -218,10 +218,10 @@ docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/
 ## 7. 相关文档
 
 ### 归档文档
-- [归档目录README](file:///d:/ZephyrAlpha/docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/README.md)
+- [归档目录README](API_README.md)
 
 ### 索引文件
-- [蓝图文档总索引](file:///d:/ZephyrAlpha/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)
+- [蓝图文档总索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
 
 ### 审计报告
 - [数据预处理层深度审计报告 V4](file:///d:/ZephyrAlpha/docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_REPORT_20260404_V4.md)

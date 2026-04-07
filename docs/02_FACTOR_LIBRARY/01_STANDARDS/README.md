@@ -56,31 +56,31 @@ compliance_level: 专业标准---
 
 ## 2. 因子定义标准
 
-详见：[T.02.FE001.factor_definition.md](T.02.FE001.factor_definition.md)
+详见：[T.02.FE001.factor_definition.md](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_DEFINITION.md)
 
 ---
 
 ## 3. IC分析体系
 
-详见：[IC_ANALYSIS.md](./IC_ANALYSIS.md)
+详见：[IC_ANALYSIS.md](./ic_analysis.md)
 
 ---
 
 ## 4. 因子预处理方�?
 
-详见：[FACTOR_PREPROCESSING.md](./FACTOR_PREPROCESSING.md)
+详见：[FACTOR_PREPROCESSING.md](./factor_preprocessing.md)
 
 ---
 
 ## 5. 因子合成方法
 
-详见：[FACTOR_SYNTHESIS.md](./FACTOR_SYNTHESIS.md)
+详见：[FACTOR_SYNTHESIS.md](./factor_synthesis.md)
 
 ---
 
 ## 6. 回测标准
 
-详见：[BACKTEST_STANDARDS.md](./BACKTEST_STANDARDS.md)
+详见：[BACKTEST_STANDARDS.md](./backtest_standards.md)
 
 ---
 

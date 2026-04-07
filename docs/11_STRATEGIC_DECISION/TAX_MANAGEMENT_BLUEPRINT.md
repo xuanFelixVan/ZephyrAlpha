@@ -594,7 +594,7 @@ class TaxReportGenerator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
 | [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | 交易成本分析系统 |
 
 ---

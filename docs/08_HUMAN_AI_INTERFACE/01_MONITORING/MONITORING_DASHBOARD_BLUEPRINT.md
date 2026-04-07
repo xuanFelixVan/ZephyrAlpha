@@ -490,7 +490,7 @@ datasources:
 #### Layer 8: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.1
-- **蓝图文档**: [MONITORING_DASHBOARD_BLUEPRINT.md](../01_MONITORING/MONITORING_DASHBOARD_BLUEPRINT.md)
+- **蓝图文档**: [MONITORING_DASHBOARD_BLUEPRINT.md](./MONITORING_DASHBOARD_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha系统监控
 - **状态**: Active

@@ -90,7 +90,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要性 | 状态 |
 |---------|------|--------|------|
-| [战略决策层蓝图](./BLUEPRINT.md) | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
+| [战略决策层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 | [职责边界矩阵](./RESPONSIBILITY_BOUNDARY_MATRIX.md) | 模块职责边界定义 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 
 ---
@@ -132,7 +132,7 @@ responsibility:
 |---------|------|--------|------|
 | [投资组合保险蓝图](./PORTFOLIO_INSURANCE_BLUEPRINT.md) | CPPI/TIPP策略、下行保护 | P2 | ✅ 已创建 |
 | [融资融券管理蓝图](./LEVERAGE_MANAGEMENT_BLUEPRINT.md) | 杠杆比例控制、保证金管理 | P2 | ✅ 已创建 |
-| [业绩归因系统蓝图](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因、风险归因 | P0 | ✅ 已创建 |
+| [业绩归因系统蓝图](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因、风险归因 | P0 | ✅ 已创建 |
 | [流动性管理蓝图](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md) | 流动性风险评估、压力测试 | P1 | ✅ 已创建 |
 | [交易成本分析蓝图](./TCA_BLUEPRINT.md) | 交易成本测量、成本优化 | P0 | ✅ 已创建 |
 
@@ -156,28 +156,28 @@ responsibility:
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
 | [投资委员会决策支持蓝图](./INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT.md) | 决策提案管理、投票系统、决策存档 | P0 | ✅ 已创建 |
-| [战术资产配置蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块1-战术资产配置系统taa) | 短期配置调整、市场时机判断 | P0 | ✅ 已创建 |
-| [风险平价模型蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块2-风险平价模型系统) | 风险平价权重、风险贡献度分析 | P0 | ✅ 已创建 |
-| [策略生命周期管理蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块3-策略生命周期管理系统) | 策略创建、测试、上线、归档 | P0 | ✅ 已创建 |
+| [战术资产配置蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 短期配置调整、市场时机判断 | P0 | ✅ 已创建 |
+| [风险平价模型蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 风险平价权重、风险贡献度分析 | P0 | ✅ 已创建 |
+| [策略生命周期管理蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 策略创建、测试、上线、归档 | P0 | ✅ 已创建 |
 
 ### 9. 新增重要模块（P1级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [决策知识库蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块4-决策知识库系统) | 决策经验积累、知识检索 | P1 | ✅ 已创建 |
-| [市场情报系统蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块5-市场情报系统) | 新闻采集、情绪分析、报告生成 | P1 | ✅ 已创建 |
-| [投资观点管理蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 观点记录、验证跟踪 | P1 | ✅ 已创建 |
-| [宏观经济预测蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 经济指标预测、周期判断 | P1 | ✅ 已创建 |
-| [行业轮动模型蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 行业景气度、轮动信号 | P1 | ✅ 已创建 |
-| [风格轮动模型蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 风格因子、轮动信号 | P1 | ✅ 已创建 |
+| [决策知识库蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 决策经验积累、知识检索 | P1 | ✅ 已创建 |
+| [市场情报系统蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 新闻采集、情绪分析、报告生成 | P1 | ✅ 已创建 |
+| [投资观点管理蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 观点记录、验证跟踪 | P1 | ✅ 已创建 |
+| [宏观经济预测蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 经济指标预测、周期判断 | P1 | ✅ 已创建 |
+| [行业轮动模型蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 行业景气度、轮动信号 | P1 | ✅ 已创建 |
+| [风格轮动模型蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 风格因子、轮动信号 | P1 | ✅ 已创建 |
 
 ### 10. 新增支持模块（P2级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [蒙特卡洛模拟蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 收益模拟、风险模拟 | P2 | ✅ 已创建 |
-| [决策树分析蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 决策树构建、路径分析 | P2 | ✅ 已创建 |
-| [敏感性分析蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 参数敏感性、情景敏感性 | P2 | ✅ 已创建 |
+| [蒙特卡洛模拟蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 收益模拟、风险模拟 | P2 | ✅ 已创建 |
+| [决策树分析蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 决策树构建、路径分析 | P2 | ✅ 已创建 |
+| [敏感性分析蓝图](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 参数敏感性、情景敏感性 | P2 | ✅ 已创建 |
 
 ### 11. 架构补充文档
 
@@ -193,24 +193,24 @@ responsibility:
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [交易对手风险管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块1-交易对手风险管理系统) | 信用评级、敞口管理、违约概率 | P0 | ✅ 已创建 |
-| [决策质量评估蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块2-决策质量评估系统) | 准确率统计、偏差分析、改进建议 | P0 | ✅ 已创建 |
+| [交易对手风险管理蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 信用评级、敞口管理、违约概率 | P0 | ✅ 已创建 |
+| [决策质量评估蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 准确率统计、偏差分析、改进建议 | P0 | ✅ 已创建 |
 
 ### 13. 补充重要模块（P1级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [动态风险管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 实时风险计算、动态限额 | P1 | ✅ 已创建 |
-| [尾部风险对冲蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 尾部风险识别、对冲策略 | P1 | ✅ 已创建 |
-| [波动率管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 波动率预测、波动率交易 | P1 | ✅ 已创建 |
+| [动态风险管理蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 实时风险计算、动态限额 | P1 | ✅ 已创建 |
+| [尾部风险对冲蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 尾部风险识别、对冲策略 | P1 | ✅ 已创建 |
+| [波动率管理蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 波动率预测、波动率交易 | P1 | ✅ 已创建 |
 
 ### 14. 补充支持模块（P2级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [相关性管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 动态相关性、相关性突变检测 | P2 | ✅ 已创建 |
-| [因子暴露管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 因子暴露计算、因子风险预算 | P2 | ✅ 已创建 |
-| [市场冲击模型蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 市场冲击成本、最优执行 | P2 | ✅ 已创建 |
+| [相关性管理蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 动态相关性、相关性突变检测 | P2 | ✅ 已创建 |
+| [因子暴露管理蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 因子暴露计算、因子风险预算 | P2 | ✅ 已创建 |
+| [市场冲击模型蓝图](11_STRATEGIC_DECISION/SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md) | 市场冲击成本、最优执行 | P2 | ✅ 已创建 |
 
 ---
 
@@ -284,7 +284,7 @@ responsibility:
 - [市场状态识别蓝图](./MARKET_REGIME_BLUEPRINT.md)
 - [再平衡决策系统蓝图](./REBALANCING_BLUEPRINT.md)
 - [多策略协调系统蓝图](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md)
-- [业绩归因系统蓝图](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
+- [业绩归因系统蓝图](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
 - [交易成本分析蓝图](./TCA_BLUEPRINT.md)
 - [开源项目集成蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md)
 - [技术选型决策文档](./TECHNOLOGY_SELECTION_DECISION.md)
@@ -321,7 +321,7 @@ responsibility:
 - [流动性管理蓝图](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md)
 
 #### 绩效分析相关
-- [业绩归因系统蓝图](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
+- [业绩归因系统蓝图](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
 - [交易成本分析蓝图](./TCA_BLUEPRINT.md)
 - [基准管理系统蓝图](./BENCHMARK_MANAGEMENT_BLUEPRINT.md)
 

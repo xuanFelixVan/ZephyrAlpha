@@ -146,7 +146,7 @@ def risk_parity_portfolio(returns, target_volatility=0.15):
 
 ### 4. 策略生命周期管理系统
 
-**蓝图文档**: [STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md](STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
+**蓝图文档**: [STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md](10_AI_WORKFLOW/STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 
 **核心功能**:
 - 策略创建与测试（回测验证）
@@ -197,7 +197,7 @@ class StrategyLifecycleManager:
 
 ### 5. 决策知识库系统
 
-**蓝图文档**: [DECISION_KNOWLEDGE_BASE_BLUEPRINT.md](DECISION_KNOWLEDGE_BASE_BLUEPRINT.md)
+**蓝图文档**: [DECISION_KNOWLEDGE_BASE_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md)
 
 **核心功能**:
 - 决策经验积累（自动提取）

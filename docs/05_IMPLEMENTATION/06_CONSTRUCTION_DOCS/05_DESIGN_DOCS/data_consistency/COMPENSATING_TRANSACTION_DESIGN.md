@@ -1624,7 +1624,7 @@ class CompensationDisasterRecovery:
 1. [ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md](ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md) - ﻛﺕﭨﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 2. [Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md](Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md) - ﮔﭖﻝ۷ﮒﺝﮔﮔ۰?
 3.  - ﮒﺙﮔﻠﻠﮒ۷ﻟ؟ﺝﻟ؟?
-4. [STORAGE_TIER.md](05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\05_IMPLEMENTATION\04_INFRASTRUCTURE\STORAGE_TIER.md) - ﮒ­ﮒ۷ﮒﺎﻟ؟ﺝﻟ؟?
+4. [STORAGE_TIER.md](05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md) - ﮒ­ﮒ۷ﮒﺎﻟ؟ﺝﻟ؟?
 
 ---
 

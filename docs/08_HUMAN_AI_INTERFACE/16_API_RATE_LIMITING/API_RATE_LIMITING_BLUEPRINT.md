@@ -424,7 +424,7 @@ rate_limit_latency = Histogram(
 #### Layer 8: 人机交互层
 ##### 0.001. Api Rate Limiting
 - **模块ID**: API_RATE_LIMITING_001
-- **蓝图文档**: [API_RATE_LIMITING_BLUEPRINT.md](../16_API_RATE_LIMITING/API_RATE_LIMITING_BLUEPRINT.md)
+- **蓝图文档**: [API_RATE_LIMITING_BLUEPRINT.md](./API_RATE_LIMITING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha API限流保护
 - **状态**: Active

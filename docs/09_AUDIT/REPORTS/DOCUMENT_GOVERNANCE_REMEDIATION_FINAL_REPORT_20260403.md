@@ -254,11 +254,11 @@ INDEX.md标题和说明与实际内容不符，误导文档使用者�?
 ## 📚 相关文档
 
 ### 审计报告
-- [深度审计报告](LAYER1_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_20260403.md)
-- [整改报告v1](LAYER1_DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403.md)
+- [深度审计报告](09_AUDIT/REPORTS/DEEP_AUDIT_REPORT_20260403.md)
+- [整改报告v1](09_AUDIT/REPORTS/DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403.md)
 
 ### 归档文档
-- [归档说明](06_ARCHIVE\duplicate_documents\20260403_layer1_infrastructure_audit\README.md)
+- [归档说明](API_README.md)
 
 ---
 

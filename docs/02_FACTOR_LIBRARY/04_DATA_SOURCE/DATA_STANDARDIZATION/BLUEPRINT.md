@@ -33,9 +33,9 @@ responsibility: 数据标准化规则与格式统一
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据质量控制 | [../QUALITY_MANAGEMENT/](../QUALITY_MANAGEMENT/) | 协同模块 | 数据质量规则 |
+| 数据质量控制 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 协同模块 | 数据质量规则 |
 | 数据清洗 | [../03_CLEANING/](../03_CLEANING/) | 协同模块 | 数据清洗引擎 |
 
 **职责边界**:

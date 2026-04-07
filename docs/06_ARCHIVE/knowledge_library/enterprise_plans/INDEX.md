@@ -44,9 +44,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Intelligent Qa System Plan](INTELLIGENT_QA_SYSTEM_PLAN.md) - `INTELLIGENT_QA_PLAN_001`
-- [Knowledge Graph Plan](KNOWLEDGE_GRAPH_PLAN.md) - `KNOWLEDGE_GRAPH_PLAN_001`
-- [Readme](README.md) - `ARCHIVE_README_ENTERPRISE_PLANS_001`
+- [Intelligent Qa System Plan](06_ARCHIVE/knowledge_library/enterprise_plans/INTELLIGENT_QA_SYSTEM_PLAN.md) - `INTELLIGENT_QA_PLAN_001`
+- [Knowledge Graph Plan](06_ARCHIVE/knowledge_library/enterprise_plans/KNOWLEDGE_GRAPH_PLAN.md) - `KNOWLEDGE_GRAPH_PLAN_001`
+- [Readme](API_README.md) - `ARCHIVE_README_ENTERPRISE_PLANS_001`
 
 ---
 

@@ -28,7 +28,7 @@ compliance_level: 专业标准
 > **配套文档**�?
 > - 主文档：
 > - 战术手册：[../../trading-tactics/tactics_manual.md](../../06_ARCHIVE/tactics_manual.md)
-> - THS_BD指标：[04_DATA_SOURCE/iFind/financial_statements/ths_bd_complete_indicator_list.md](04_DATA_SOURCE\iFind\financial_statements\ths_bd_complete_indicator_list.md)
+> - THS_BD指标：[04_DATA_SOURCE/iFind/financial_statements/ths_bd_complete_indicator_list.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md)
 >
 > **版本说明**�?
 > - v1.0-v1.9：初始版本及Excel/PNG来源因子整合
@@ -2068,7 +2068,7 @@ class DataSourceAdapter:
 ## 24. THS_BD完整指标清单
 
 > 本节数据来源：因�?.txt - 同花顺iFind THS_BD函数支持的完整财务报表指�?
-> 完整指标列表保存在：[ths_bd_complete_indicator_list.md](04_DATA_SOURCE\iFind\financial_statements\ths_bd_complete_indicator_list.md)
+> 完整指标列表保存在：[ths_bd_complete_indicator_list.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md)
 > **重要**：本清单�?.18节iFind指标互补�?.18节为行情/技�?资金流指标，本节为财务报表指�?
 > **更新**：v3.2版本包含943个指标（季频183+年频760�?
 

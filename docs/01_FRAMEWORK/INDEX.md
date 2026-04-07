@@ -92,7 +92,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [AI虚拟研究团队](./AI_VIRTUAL_RESEARCH_TEAM/INDEX.md) | AI虚拟研究团队设计（子目录�?| ⭐⭐⭐⭐�?|
+| [AI虚拟研究团队](./DATA_LAYER_INDEX.md) | AI虚拟研究团队设计（子目录�?| ⭐⭐⭐⭐�?|
 | [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | Layer 8人机交互层总体蓝图 | ⭐⭐⭐⭐�?|
 | [人机协同界面蓝图](./HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 三级时间框架人机协同界面设计 | ⭐⭐⭐⭐ |
 | [人机协作场景蓝图](./HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md) | 多维度动态协作模�?| ⭐⭐⭐⭐ |
@@ -157,7 +157,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要�?| 实施周期 |
 |---------|------|--------|---------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 实时数据质量监控、自动告警、质量报�?| ⭐⭐⭐⭐�?| 2�?|
+| [数据质量监控蓝图](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 实时数据质量监控、自动告警、质量报�?| ⭐⭐⭐⭐�?| 2�?|
 | [实时风险监控蓝图](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控仪表板、风险预警系�?| ⭐⭐⭐⭐�?| 2�?|
 | | 历史情景压力测试、敏感性分�?| ⭐⭐⭐⭐�?| 2�?|
 | [合规监控系统蓝图](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 监管合规监控、内部合规流�?| ⭐⭐⭐⭐�?| 2�?|
@@ -176,7 +176,7 @@ implementation_status: 活跃维护
 ## 🗂�?子目�?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
-| [AI_VIRTUAL_RESEARCH_TEAM/](./AI_VIRTUAL_RESEARCH_TEAM/) | AI虚拟研究团队蓝图 | 3 |
+| [AI_VIRTUAL_RESEARCH_TEAM/](./AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AI虚拟研究团队蓝图 | 3 |
 
 
 ---
@@ -184,7 +184,7 @@ implementation_status: 活跃维护
 ## 📖 快速导�?
 ### 新手入门
 
-1. 阅读 [README.md](./README.md) - 框架概述
+1. 阅读 [README.md](API_README.md) - 框架概述
 2. 阅读 [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) - 架构设计
 3. 阅读 [ARCHITECTURE_MIGRATION_PLAN.md](./ARCHITECTURE_MIGRATION_PLAN.md) - 架构迁移
 

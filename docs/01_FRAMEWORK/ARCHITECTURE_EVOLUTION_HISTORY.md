@@ -330,7 +330,7 @@ ZephyrAlphaç³»ç»ç»åäºä»æ¦å¿µå°æçç�
 
 ### 5.2 ADRææ¡£ä½ç½®
 
-- [æ¶æå³ç­è®°å½ç´¢å¼](01_FRAMEWORK\ARCHITECTURE_DECISIONS\README.md)
+- [æ¶æå³ç­è®°å½ç´¢å¼](API_README.md)
 - [ADRæ¨¡æ¿](../09_AUDIT/TEMPLATES/ADR_TEMPLATE.md)
 - [ADRæ å](../09_AUDIT/STANDARDS/ADR_STANDARD.md)
 

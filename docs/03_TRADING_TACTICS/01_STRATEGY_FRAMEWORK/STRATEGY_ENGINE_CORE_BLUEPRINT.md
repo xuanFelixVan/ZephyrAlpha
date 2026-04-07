@@ -494,7 +494,7 @@ class StrategyEngine:
 - â?**å·¥å·åå°è£?*ï¼ç­ç¥å¼æå°è£ä¸ºå·¥å·ï¼éè¿LangChainè°ç¨
 
 **å·¥å·æ¥å£è§è**ï¼?
-è¯¦ç»æ¥å£å®ä¹åè§ï¼[Layer 11å·¥å·æ¥å£è§è](module_designs\layer_11\LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
+è¯¦ç»æ¥å£å®ä¹åè§ï¼[Layer 11å·¥å·æ¥å£è§è](06_ARCHIVE/architecture_v4/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
 
 **æ¯æçæä½?*ï¼?
 | æä½ | è¯´æ | åæ° | è¿åå?|
@@ -1136,7 +1136,7 @@ prometheus_metrics:
 | ææ¡£ | è¯´æ | ç¸å³æ?|
 |------|------|--------|
 | [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | ä¸ªäººå¼åèå?| â­â­â­â­â­?|
-| [API_Contract.md](../API_Contract.md) | ç³»ç»æ¥å£å¥çº¦ | â­â­â­â­â­?|
+| [API_Contract.md](03_TRADING_TACTICS/API_Contract.md) | ç³»ç»æ¥å£å¥çº¦ | â­â­â­â­â­?|
 | [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | ç³»ç»æ¶æè®¾è®¡ | â­â­â­â­ |
 | [BACKTEST_BLUEPRINT.md](./BACKTEST_BLUEPRINT.md) | åæµç³»ç»è®¾è®¡ | â­â­â­â­ |
 | [STRATEGY_TEMPLATES.md](./STRATEGY_TEMPLATES.md) | ç­ç¥æ¨¡æ¿åº?| â­â­â­?|

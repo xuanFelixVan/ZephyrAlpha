@@ -528,7 +528,7 @@ class KnowledgeGraph:
 #### Layer 8: 人机交互层
 ##### 0.001. Knowledge Base
 - **模块ID**: KNOWLEDGE_BASE_001
-- **蓝图文档**: [KNOWLEDGE_BASE_BLUEPRINT.md](../18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md)
+- **蓝图文档**: [KNOWLEDGE_BASE_BLUEPRINT.md](./KNOWLEDGE_BASE_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha知识库系统
 - **状态**: Active

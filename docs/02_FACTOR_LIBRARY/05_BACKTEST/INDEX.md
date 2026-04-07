@@ -26,7 +26,7 @@ compliance_level: 专业标准---
 
 | 目录 | 说明 | 文件数 |
 |------|------|--------|
-| [value_factors/](./value_factors/INDEX.md) | 价值因子回测报告 | 2个 |
+| [value_factors/](01_FRAMEWORK/DATA_LAYER_INDEX.md) | 价值因子回测报告 | 2个 |
 
 
 
@@ -35,11 +35,11 @@ compliance_level: 专业标准---
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
 | [因子验证蓝图](./FACTOR_VALIDATION_BLUEPRINT.md) | 因子验证的完整蓝图 | ⭐⭐⭐⭐⭐ |
-| [因子衰减测试](./06_FACTOR_DECAY.md) | 因子IC衰减分析 | ⭐⭐⭐⭐⭐ |
-| [分层回测](./07_LAYERED_BACKTEST.md) | 因子分层回测方法 | ⭐⭐⭐⭐⭐ |
-| [过拟合测试](./09_OVERFITTING_TEST.md) | 过拟合检测和防范 | ⭐⭐⭐⭐ |
-| [相关性矩阵](./CORRELATION_MATRIX.md) | 因子相关性分析 | ⭐⭐⭐⭐ |
-| [回测概览](./README.md) | 回测系统概述 | ⭐⭐⭐ | ⭐⭐�?|
+| [因子衰减测试](./FACTOR_DECAY.md) | 因子IC衰减分析 | ⭐⭐⭐⭐⭐ |
+| [分层回测](./LAYERED_BACKTEST.md) | 因子分层回测方法 | ⭐⭐⭐⭐⭐ |
+| [过拟合测试](./OVERFITTING_TEST.md) | 过拟合检测和防范 | ⭐⭐⭐⭐ |
+| [相关性矩阵](./correlation_matrix.md) | 因子相关性分析 | ⭐⭐⭐⭐ |
+| [回测概览](API_README.md) | 回测系统概述 | ⭐⭐⭐ | ⭐⭐�?|
 
 ---
 
@@ -72,9 +72,9 @@ compliance_level: 专业标准---
 
 ## 📚 相关文档
 
-- [因子筛选策略](../01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](../01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
-- [因子监控](../07_FACTOR_MONITORING/FACTOR_MONITORING.md)
+- [因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
+- [因子验证指南](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
+- [因子监控](02_FACTOR_LIBRARY/07_FACTOR_MONITORING/factor_monitoring.md)
 
 ---
 
