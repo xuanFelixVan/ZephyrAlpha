@@ -38,14 +38,17 @@ def sanitize_text(text: str) -> tuple[str, int]:
     removed_or_replaced = 0
     for line in text.splitlines(keepends=False):
         hc = high_count(line)
-        if hc >= 6 and cjk_count(line) == 0:
+        if hc >= 1 and cjk_count(line) == 0:
             m = YAML_KEY_RE.match(line.strip())
             if m:
                 key = m.group(1)
                 out.append(f"{key}: （待补充）")
             else:
-                # drop noisy line
-                pass
+                # 非 YAML 行：移除高字节字符；若移除后为空则丢弃该行
+                cleaned = HIGH_RE.sub("", line)
+                cleaned = cleaned.strip()
+                if cleaned:
+                    out.append(cleaned)
             removed_or_replaced += 1
             continue
         out.append(line)
