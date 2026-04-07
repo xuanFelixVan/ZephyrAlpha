@@ -72,7 +72,7 @@ responsibility:
 |---------|------|--------|
 | [专业多时间框架架构](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构设计 | ⭐⭐⭐⭐?|
 | [架构文档](./ARCHITECTURE.md) | 系统架构详细说明 | ⭐⭐⭐⭐?|
-| [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md) | Layer 0-11迁移到三级时间框?| ⭐⭐⭐⭐ |
+| `架构迁移计划` | Layer 0-11迁移到三级时间框?| ⭐⭐⭐⭐ |
 | [技术栈](./TECH_STACK.md) | 技术栈选择 | ⭐⭐⭐⭐ |
 
 ### 实施蓝图
@@ -123,7 +123,7 @@ responsibility:
 | [设置管理界面蓝图](./SETTINGS_MANAGEMENT_INTERFACE_BLUEPRINT.md) | 系统配置、用户偏好、通知配置、安全设置 | ⭐⭐⭐⭐ |
 | [帮助系统蓝图](./HELP_SYSTEM_BLUEPRINT.md) | 文档浏览、FAQ、视频教程、学习路径 | ⭐⭐⭐⭐ |
 | [API管理界面蓝图](./API_MANAGEMENT_INTERFACE_BLUEPRINT.md) | API文档、测试工具、密钥管理、调用统计 | ⭐⭐⭐⭐ |
-| [人机交互层技术蓝图](./_archive/HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md) | 人机交互层技术实现（已归档） | ⭐⭐⭐⭐ |
+| `人机交互层技术蓝图` | 人机交互层技术实现（已归档） | ⭐⭐⭐⭐ |
 | [移动端推送通知蓝图](./MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md) | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
 | [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |
 | [FastAPI认证权限蓝图](./FASTAPI_USERS_AUTH_BLUEPRINT.md) | FastAPI-Users认证权限系统 | ⭐⭐⭐⭐ |
@@ -152,8 +152,8 @@ responsibility:
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
 | [研究与创新层蓝图](../09_RESEARCH_INNOVATION/BLUEPRINT.md) | **Layer 9** AI虚拟研究实验?创新孵化?| ⭐⭐⭐⭐?|
-| [治理与合规层蓝图](../10_GOVERNANCE_COMPLIANCE/BLUEPRINT.md) | **Layer 10** 内部控制体系+合规监控 | ⭐⭐⭐⭐?|
-| [战略决策层蓝图](../11_STRATEGIC_DECISION/BLUEPRINT.md) | **Layer 11** 战略资产配置+风险预算分配 | ⭐⭐⭐⭐?|
+| `治理与合规层蓝图` | **Layer 10** 内部控制体系+合规监控 | ⭐⭐⭐⭐?|
+| `战略决策层蓝图` | **Layer 11** 战略资产配置+风险预算分配 | ⭐⭐⭐⭐?|
 
 ### 核心监控体系 (P0?
 
@@ -188,7 +188,7 @@ responsibility:
 
 1. 阅读 README.md - 框架概述
 2. 阅读 [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) - 架构设计
-3. 阅读 [ARCHITECTURE_MIGRATION_PLAN.md](./ARCHITECTURE_MIGRATION_PLAN.md) - 架构迁移
+3. 阅读 `ARCHITECTURE_MIGRATION_PLAN.md` - 架构迁移
 
 ### 开发?
 1. 阅读 [MODULE_RESPONSIBILITY_BOUNDARIES.md](./MODULE_RESPONSIBILITY_BOUNDARIES.md) - 模块边界
@@ -204,7 +204,7 @@ responsibility:
 | 蓝图名称 | module_id | 说明 | 优先?|
 |---------|-----------|------|--------|
 | [实验追踪系统蓝图](./EXPERIMENT_TRACKING_BLUEPRINT.md) | EXP-001 | 实验记录、版本对比、可复现性、团队协?| P0 |
-| [超参数优化系统蓝图](./HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) | HPO-001 | 自动调参、贝叶斯优化、多保真优化 | P0 |
+| `超参数优化系统蓝图` | HPO-001 | 自动调参、贝叶斯优化、多保真优化 | P0 |
 | [分布式训练框架蓝图](./DISTRIBUTED_TRAINING_BLUEPRINT.md) | DIST-001 | 数据并行、模型并行、ZeRO优化 | P0 |
 | [模型调试工具蓝图](./MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md) | DEBUG-001 | 梯度分析、激活分析、性能分析 | P0 |
 | [推理加速引擎蓝图](./INFERENCE_ACCELERATION_BLUEPRINT.md) | INF-001 | 模型量化、算子融合、TensorRT编译 | P0 |
@@ -296,9 +296,9 @@ responsibility:
 
 - [文档创建审核流程](./DOCUMENT_CREATION_REVIEW_PROCESS.md) - 系统文档
 
-- [文档维护流程](./DOCUMENT_MAINTENANCE_PROCESS.md) - 系统文档
+- `文档维护流程` - 系统文档
 
-- [清风量化系统文档命名规范标准](./DOCUMENT_NAMING_STANDARD.md) - 系统文档
+- `清风量化系统文档命名规范标准` - 系统文档
 
 - [](./DOCUMENT_RESPONSIBILITY_BOUNDARIES.md) - 系统文档
 
@@ -330,7 +330,7 @@ responsibility:
 
 - [Layer 10优先实施模块实施方案](./LAYER_10_PRIORITY_MODULES_IMPLEMENTATION_PLAN.md) - 实施指南文档
 
-- [模型风险管理系统MLflow集成实施方案](./MODEL_RISK_MLFLOW_IMPLEMENTATION.md) - 实施指南文档
+- `模型风险管理系统MLflow集成实施方案` - 实施指南文档
 
 - [P0模块完整实施方案](./P0_MODULES_IMPLEMENTATION_PLAN.md) - 实施指南文档
 

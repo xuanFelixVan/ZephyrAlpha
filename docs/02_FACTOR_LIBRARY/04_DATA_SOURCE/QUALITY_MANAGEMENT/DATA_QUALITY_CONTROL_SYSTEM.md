@@ -1,9 +1,14 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_QUALITY_MANAGEMENT_001
+
+
 **版本**: 1.0
 **更新**: 2026-03-28
 **状?*: 草稿
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

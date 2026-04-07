@@ -291,7 +291,7 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 ### 审计报告
 
-- [深度系统审计报告](./DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
+- `深度系统审计报告`
 - TODO清理清单
 
 ### 标准文档

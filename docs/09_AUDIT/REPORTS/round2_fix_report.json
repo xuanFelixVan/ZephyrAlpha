@@ -1,0 +1,14 @@
+{
+  "fix_date": "2026-04-07T19:11:25.398524",
+  "fix_stats": {
+    "p0_dead_links": 280,
+    "p0_module_id": 128,
+    "p0_responsibility": 124,
+    "p1_overlaps": 0,
+    "p1_index": 12,
+    "p1_duplicates": 6,
+    "p2_sparse_dirs": 53,
+    "p2_naming": 1
+  },
+  "total_fixes": 604
+}

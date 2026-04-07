@@ -1,7 +1,12 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
+
+
 > **最后更?*: 2026-04-04  
 > **维护?*: 首席文档架构?
+responsibility:
+  - 提供目录索引
 ---
 
 ## 变更记录

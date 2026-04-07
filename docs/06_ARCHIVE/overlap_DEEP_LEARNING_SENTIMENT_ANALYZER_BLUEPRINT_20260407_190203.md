@@ -996,7 +996,7 @@ if __name__ == "__main__":
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Dlsa
 - **模块ID**: AIWF_DLSA_001
-- **蓝图文档**: [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md)
+- **蓝图文档**: `DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md`
 - **技术规格书**: 待创建
 - **职责**: 深度学习情感分析模块
 - **状态**: Active

@@ -1,9 +1,14 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_001
+
+
 **升级完成!** 
 
 感谢使用清风量化交易系统因子?v4.0 专业机构?
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

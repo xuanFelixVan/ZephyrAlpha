@@ -35,13 +35,13 @@ module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_FINAL_COMPLETION_REPORT_2
 - **修复数量**: 19个无效链接
 - **处理文件**: SITEMAP.md, System_Manifest.md
 - **完成时间**: 2026-04-07
-- **报告**: [KEY_DOCS_LINK_FIX_REPORT_20260407.md](./KEY_DOCS_LINK_FIX_REPORT_20260407.md)
+- **报告**: `KEY_DOCS_LINK_FIX_REPORT_20260407.md`
 
 #### ✅ 任务2: 统一审计报告版本号
 - **处理数量**: 83个审计报告文件
 - **扫描文件**: 391个
 - **完成时间**: 2026-04-07
-- **报告**: [AUDIT_REPORT_VERSION_UNIFICATION_20260407.md](./AUDIT_REPORT_VERSION_UNIFICATION_20260407.md)
+- **报告**: `AUDIT_REPORT_VERSION_UNIFICATION_20260407.md`
 
 ---
 
@@ -52,13 +52,13 @@ module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_FINAL_COMPLETION_REPORT_2
 - **修复成功率**: 83.14%
 - **扫描文件**: 1,996个
 - **完成时间**: 2026-04-07
-- **报告**: [SMART_LINK_FIX_REPORT_20260407.md](./SMART_LINK_FIX_REPORT_20260407.md)
+- **报告**: `SMART_LINK_FIX_REPORT_20260407.md`
 
 #### ✅ 任务2: 为缺少YAML版本号的文件添加版本号
 - **处理数量**: 118个文件
 - **扫描文件**: 1,998个
 - **完成时间**: 2026-04-07
-- **报告**: [YAML_VERSION_ADDITION_REPORT_20260407.md](./YAML_VERSION_ADDITION_REPORT_20260407.md)
+- **报告**: `YAML_VERSION_ADDITION_REPORT_20260407.md`
 
 ---
 
@@ -244,9 +244,9 @@ module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_FINAL_COMPLETION_REPORT_2
 ## 📚 相关文档索引
 
 ### 标准文档
-- [文档版本号命名规范](../../../09_AUDIT/STANDARDS/DOCUMENT_VERSION_NAMING_STANDARD.md)
-- [文档治理流程标准](../../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [职责边界定义标准](../../../09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)
+- `文档版本号命名规范`
+- `文档治理流程标准`
+- `职责边界定义标准`
 
 ### 工具使用指南
 - Git提交前检查: `python scripts/pre_commit_link_checker.py`

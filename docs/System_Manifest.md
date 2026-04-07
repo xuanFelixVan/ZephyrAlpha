@@ -237,9 +237,9 @@ responsibility:
 
 | 序号 | 模块名称 | 文档路径 | Layer | 开源方案 | 开发周期 | 状态 |
 |------|---------|---------|-------|---------|---------|------|
-| 1 | 多智能体协作系统 | [MULTI_AGENT_COLLABORATION_BLUEPRINT.md](10_AI_WORKFLOW/MULTI_AGENT_COLLABORATION_BLUEPRINT.md) | Layer 7 | TradingAgents-CN | 2-3周 | ✅ 已创建 |
-| 2 | 自动化报告生成引擎 | [AUTO_REPORT_GENERATION_BLUEPRINT.md](10_AI_WORKFLOW/AUTO_REPORT_GENERATION_BLUEPRINT.md) | Layer 7 | daily_stock_analysis | 1-2周 | ✅ 已创建 |
-| 3 | 实时风险监控系统 | [REAL_TIME_RISK_MONITOR_BLUEPRINT.md](10_AI_WORKFLOW/REAL_TIME_RISK_MONITOR_BLUEPRINT.md) | Layer 7 | QuantConnect LEAN | 2-3周 | ✅ 已创建 |
+| 1 | 多智能体协作系统 | `MULTI_AGENT_COLLABORATION_BLUEPRINT.md` | Layer 7 | TradingAgents-CN | 2-3周 | ✅ 已创建 |
+| 2 | 自动化报告生成引擎 | `AUTO_REPORT_GENERATION_BLUEPRINT.md` | Layer 7 | daily_stock_analysis | 1-2周 | ✅ 已创建 |
+| 3 | 实时风险监控系统 | `REAL_TIME_RISK_MONITOR_BLUEPRINT.md` | Layer 7 | QuantConnect LEAN | 2-3周 | ✅ 已创建 |
 | 4 | 知识管理与传承系统 | [KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](10_AI_WORKFLOW/KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | Layer 7 | Obsidian + LangChain | 2-3周 | ✅ 已创建 |
 | 5 | 情景分析与压力测试系统 | [SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md](10_AI_WORKFLOW/SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT.md) | Layer 7 | QuantConnect LEAN | 2-3周 | ✅ 已创建 |
 
@@ -247,9 +247,9 @@ responsibility:
 
 | 序号 | 模块名称 | 文档路径 | Layer | 优先级 | 开源方案 | 开发周期 | 状态 |
 |------|---------|---------|-------|--------|---------|---------|------|
-| 6 | AI决策解释系统 | [AI_DECISION_EXPLANATION_BLUEPRINT.md](10_AI_WORKFLOW/AI_DECISION_EXPLANATION_BLUEPRINT.md) | Layer 7 | P0 | SHAP + LIME | 2-3周 | ✅ 已创建 |
-| 7 | 智能问答系统 | [INTELLIGENT_QA_SYSTEM_BLUEPRINT.md](10_AI_WORKFLOW/INTELLIGENT_QA_SYSTEM_BLUEPRINT.md) | Layer 8 | P0 | LangChain + RAG | 2-3周 | ✅ 已创建 |
-| 8 | 绩效归因分析系统 | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](10_AI_WORKFLOW/PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Layer 7 | P0 | PyPortfolioOpt | 2-3周 | ✅ 已创建 |
+| 6 | AI决策解释系统 | `AI_DECISION_EXPLANATION_BLUEPRINT.md` | Layer 7 | P0 | SHAP + LIME | 2-3周 | ✅ 已创建 |
+| 7 | 智能问答系统 | `INTELLIGENT_QA_SYSTEM_BLUEPRINT.md` | Layer 8 | P0 | LangChain + RAG | 2-3周 | ✅ 已创建 |
+| 8 | 绩效归因分析系统 | `PERFORMANCE_ATTRIBUTION_BLUEPRINT.md` | Layer 7 | P0 | PyPortfolioOpt | 2-3周 | ✅ 已创建 |
 | 9 | 模型漂移检测系统 | [MODEL_DRIFT_DETECTION_BLUEPRINT.md](01_FRAMEWORK\LAYER4_ML\MODEL_DRIFT_DETECTION_BLUEPRINT.md) | Layer 7 | P1 | Evidently AI | 2-3周 | ✅ 已创建 |
 | 10 | 智能调度系统 | [INTELLIGENT_SCHEDULER_BLUEPRINT.md](10_AI_WORKFLOW/INTELLIGENT_SCHEDULER_BLUEPRINT.md) | Layer 7 | P1 | Apache Airflow | 2-3周 | ✅ 已创建 |
 
@@ -323,7 +323,7 @@ responsibility:
 | [时序预测模型蓝图](01_FRAMEWORK/LAYER4_ML/TIME_SERIES_FORECASTING_BLUEPRINT.md) | 价格预测、波动率预测、因子预测 | GluonTS (4k+ Stars) | 100% | 30h |
 | [异常检测模型蓝图](01_FRAMEWORK/LAYER4_ML/ANOMALY_DETECTION_BLUEPRINT.md) | 价格异常、交易异常、市场崩盘预警 | PyOD (8k+ Stars) | 100% | 20h |
 | [模型服务框架蓝图](01_FRAMEWORK/LAYER4_ML/MODEL_SERVING_BLUEPRINT.md) | 模型打包、部署、推理服务 | BentoML (7k+ Stars) | 100% | 25h |
-| [缺失模块综合蓝图](01_FRAMEWORK/LAYER4_ML/MISSING_MODULES_BLUEPRINT.md) | 分布式训练、自动重训练、性能退化检测 | Ray/MLflow/Evidently | 90% | 140h |
+| `缺失模块综合蓝图` | 分布式训练、自动重训练、性能退化检测 | Ray/MLflow/Evidently | 90% | 140h |
 | [架构完整性分析](01_FRAMEWORK/LAYER4_ML/GAP_ANALYSIS_BLUEPRINT.md) | 34个缺失模块识别与分析 | - | - | - |
 | [完整缺失模块总览](01_FRAMEWORK/LAYER4_ML/COMPLETE_MISSING_MODULES_OVERVIEW.md) | 所有34个缺失模块的完整概览 | - | - | - |
 | [实施路线图](01_FRAMEWORK/LAYER4_ML/IMPLEMENTATION_ROADMAP.md) | 6周实施计划与资源规划 | - | - | - |
@@ -332,7 +332,7 @@ responsibility:
 
 | 蓝图文档 | 核心内容 | 开源方案 | 开源复用率 | 工作量 |
 |---------|---------|---------|-----------|--------|
-| [P1/P2模块蓝图集合](01_FRAMEWORK/LAYER4_ML/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | P1中优先级14个 + P2低优先级8个模块 | Featuretools/MLflow/PyTorch | 80% | 230h |
+| `P1/P2模块蓝图集合` | P1中优先级14个 + P2低优先级8个模块 | Featuretools/MLflow/PyTorch | 80% | 230h |
 
 **总计**: 34个缺失模块，430h工作量，85%开源复用率
 
@@ -632,22 +632,22 @@ responsibility:
 | **策略引擎蓝图** |  | Layer 3 | ✅ 活跃 |
 | **模拟交易蓝图** |  | Layer 5 | ✅ 活跃 |
 | **质量监控蓝图** |  | Layer 10 | ✅ 活跃 |
-| **战略决策层蓝图** | [11_STRATEGIC_DECISION/BLUEPRINT.md](11_STRATEGIC_DECISION/BLUEPRINT.md) | Layer 11 | ✅ 活跃 |
+| **战略决策层蓝图** | `11_STRATEGIC_DECISION/BLUEPRINT.md` | Layer 11 | ✅ 活跃 |
 
 ### 4.1 Layer 8 人机交互层核心蓝图 ⭐新增
 
 | 文档名称 | 路径 | 模块类型 | 状态 |
 |---------|------|---------|------|
-| **在线研究环境蓝图** | [08_HUMAN_AI_INTERFACE/21_ONLINE_RESEARCH_ENVIRONMENT/ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/21_ONLINE_RESEARCH_ENVIRONMENT/ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
-| **参数优化界面蓝图** | [08_HUMAN_AI_INTERFACE/22_PARAMETER_OPTIMIZATION/PARAMETER_OPTIMIZATION_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/22_PARAMETER_OPTIMIZATION/PARAMETER_OPTIMIZATION_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
-| **实盘交易界面蓝图** | [08_HUMAN_AI_INTERFACE/23_LIVE_TRADING_INTERFACE/LIVE_TRADING_INTERFACE_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/23_LIVE_TRADING_INTERFACE/LIVE_TRADING_INTERFACE_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
+| **在线研究环境蓝图** | `08_HUMAN_AI_INTERFACE/21_ONLINE_RESEARCH_ENVIRONMENT/ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md` | P0核心 | ✅ 活跃 |
+| **参数优化界面蓝图** | `08_HUMAN_AI_INTERFACE/22_PARAMETER_OPTIMIZATION/PARAMETER_OPTIMIZATION_BLUEPRINT.md` | P0核心 | ✅ 活跃 |
+| **实盘交易界面蓝图** | `08_HUMAN_AI_INTERFACE/23_LIVE_TRADING_INTERFACE/LIVE_TRADING_INTERFACE_BLUEPRINT.md` | P0核心 | ✅ 活跃 |
 | **监控仪表板蓝图** | [08_HUMAN_AI_INTERFACE/01_MONITORING/MONITORING_DASHBOARD_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/01_MONITORING/MONITORING_DASHBOARD_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
-| **告警通知系统蓝图** | [08_HUMAN_AI_INTERFACE/02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
-| **认证授权系统蓝图** | [08_HUMAN_AI_INTERFACE/03_AUTH/AUTH_SYSTEM_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/03_AUTH/AUTH_SYSTEM_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
-| **API文档系统蓝图** | [08_HUMAN_AI_INTERFACE/04_API_DOCS/API_DOCS_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/04_API_DOCS/API_DOCS_BLUEPRINT.md) | P0核心 | ✅ 活跃 |
+| **告警通知系统蓝图** | `08_HUMAN_AI_INTERFACE/02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md` | P0核心 | ✅ 活跃 |
+| **认证授权系统蓝图** | `08_HUMAN_AI_INTERFACE/03_AUTH/AUTH_SYSTEM_BLUEPRINT.md` | P0核心 | ✅ 活跃 |
+| **API文档系统蓝图** | `08_HUMAN_AI_INTERFACE/04_API_DOCS/API_DOCS_BLUEPRINT.md` | P0核心 | ✅ 活跃 |
 | **交互式回测界面蓝图** | [08_HUMAN_AI_INTERFACE/05_BACKTEST_UI/BACKTEST_UI_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/05_BACKTEST_UI/BACKTEST_UI_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **报告生成系统蓝图** | [08_HUMAN_AI_INTERFACE/06_REPORTING/REPORTING_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/06_REPORTING/REPORTING_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
-| **审计日志系统蓝图** | [08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
+| **审计日志系统蓝图** | `08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md` | P1重要 | ✅ 活跃 |
 | **自然语言交互界面蓝图** | [01_FRAMEWORK/NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](01_FRAMEWORK/NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **移动端推送通知蓝图** |  | P2可选 | ✅ 活跃 |
 | **帮助系统蓝图** |  | P2可选 | ✅ 活跃 |
@@ -696,7 +696,7 @@ responsibility:
 
 | 文档名称 | 路径 | 模块类型 | 状态 |
 |---------|------|---------|------|
-| **战略资产配置蓝图** | [11_STRATEGIC_DECISION/BLUEPRINT.md](11_STRATEGIC_DECISION/BLUEPRINT.md) | P0核心 | ✅ 活跃 |
+| **战略资产配置蓝图** | `11_STRATEGIC_DECISION/BLUEPRINT.md` | P0核心 | ✅ 活跃 |
 | **投资组合保险蓝图** | [11_STRATEGIC_DECISION/PORTFOLIO_INSURANCE_BLUEPRINT.md](11_STRATEGIC_DECISION/PORTFOLIO_INSURANCE_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **融资融券管理蓝图** | [11_STRATEGIC_DECISION/LEVERAGE_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION/LEVERAGE_MANAGEMENT_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **业绩归因系统蓝图** | [11_STRATEGIC_DECISION/PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](11_STRATEGIC_DECISION/PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
@@ -705,7 +705,7 @@ responsibility:
 | **再平衡决策蓝图** | [11_STRATEGIC_DECISION/REBALANCING_BLUEPRINT.md](11_STRATEGIC_DECISION/REBALANCING_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **基准管理蓝图** | [11_STRATEGIC_DECISION/BENCHMARK_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION/BENCHMARK_MANAGEMENT_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **情景分析蓝图** | [11_STRATEGIC_DECISION/SCENARIO_ANALYSIS_BLUEPRINT.md](11_STRATEGIC_DECISION/SCENARIO_ANALYSIS_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
-| **市场状态识别蓝图** | [11_STRATEGIC_DECISION/MARKET_REGIME_BLUEPRINT.md](11_STRATEGIC_DECISION/MARKET_REGIME_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
+| **市场状态识别蓝图** | `11_STRATEGIC_DECISION/MARKET_REGIME_BLUEPRINT.md` | P1重要 | ✅ 活跃 |
 | **投资限制管理蓝图** | [11_STRATEGIC_DECISION/INVESTMENT_CONSTRAINT_BLUEPRINT.md](11_STRATEGIC_DECISION/INVESTMENT_CONSTRAINT_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **宏观因子系统蓝图** | [11_STRATEGIC_DECISION/MACRO_FACTOR_BLUEPRINT.md](11_STRATEGIC_DECISION/MACRO_FACTOR_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **ESG投资系统蓝图** | [11_STRATEGIC_DECISION/ESG_INVESTING_BLUEPRINT.md](11_STRATEGIC_DECISION/ESG_INVESTING_BLUEPRINT.md) | P2扩展 | ✅ 活跃 |

@@ -82,7 +82,7 @@ responsibility:
 ## 🔗 相关文档
 
 - [架构演进历史](../ARCHITECTURE_EVOLUTION_HISTORY.md)
-- [架构迁移计划](../ARCHITECTURE_MIGRATION_PLAN.md)
+- `架构迁移计划`
 
 ---
 

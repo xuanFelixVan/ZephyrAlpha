@@ -54,7 +54,7 @@ compliance_level: 专业标准---
 
 - [稀疏目录分析报告](./sparse_directory_analysis_20260407_030548.md) - 系统文档
 
-- [稀疏目录分析报告](./sparse_directory_analysis_20260407_021046.md) - 系统文档
+- `稀疏目录分析报告` - 系统文档
 
 
 ### 核心文档

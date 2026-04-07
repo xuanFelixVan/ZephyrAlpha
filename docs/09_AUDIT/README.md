@@ -109,7 +109,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ### ﻟﺟﻝﭨﺑﮒ؟۰ﻟ؟۰
 - [05_IMPLEMENTATION/07_OPERATIONS/](../05_IMPLEMENTATION/07_OPERATIONS/) - ﻟﺟﻝﭨﺑﮒ؟۰ﻟ؟۰ﮔﮔ۰۲
-- [DOCUMENT_AUDIT_WORKFLOW.md](../05_IMPLEMENTATION/07_OPERATIONS/DOCUMENT_AUDIT_WORKFLOW.md) - ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
+- `DOCUMENT_AUDIT_WORKFLOW.md` - ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
 
 
 ## ﻭ ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ

@@ -1,8 +1,13 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_VALUE_FACTORS_001
+
+
 > **最后更新**: 2026-04-04  
 > **维护者**: 首席文档架构师
 
+responsibility:
+  - 提供目录索引
 ---
 
 ## 变更记录

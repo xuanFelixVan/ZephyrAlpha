@@ -193,7 +193,7 @@ value_factors/
 ## 📚 相关文档
 
 - 第六轮深度审计报告
-- [P0问题修复报告](./P0_RESOLUTION_REPORT_V6_20260404.md)
+- `P0问题修复报告`
 - value_factors/INDEX.md
 
 ---

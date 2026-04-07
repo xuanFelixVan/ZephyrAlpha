@@ -173,7 +173,7 @@ responsibility:
 ```markdown
 | [因子注册表](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md) |
 因子注册? [06_REGISTRY/factor_catalog.md](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md)
-监控报告: [07_MONITORING/factor_monitoring.md](../../../02_FACTOR_LIBRARY/07_FACTOR_MONITORING/factor_monitoring.md)
+监控报告: `07_MONITORING/factor_monitoring.md`
 - [因子注册表](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md)
 - 监控报告
 

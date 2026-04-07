@@ -60,7 +60,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [ALERTING_SYSTEM_BLUEPRINT](02_ALERTING\ALERTING_SYSTEM_BLUEPRINT.md)
+- **描述**: 链接不存在: `ALERTING_SYSTEM_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -68,7 +68,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [AUTH_SYSTEM_BLUEPRINT](03_AUTH\AUTH_SYSTEM_BLUEPRINT.md)
+- **描述**: 链接不存在: `AUTH_SYSTEM_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -76,7 +76,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [API_DOCS_BLUEPRINT](04_API_DOCS\API_DOCS_BLUEPRINT.md)
+- **描述**: 链接不存在: `API_DOCS_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -84,7 +84,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [AUDIT_LOG_BLUEPRINT](07_AUDIT_LOG\AUDIT_LOG_BLUEPRINT.md)
+- **描述**: 链接不存在: `AUDIT_LOG_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -92,7 +92,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [MOBILE_PUSH_BLUEPRINT](08_MOBILE_PUSH\MOBILE_PUSH_BLUEPRINT.md)
+- **描述**: 链接不存在: `MOBILE_PUSH_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -100,7 +100,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [TRADING_JOURNAL_BLUEPRINT](09_TRADING_JOURNAL\TRADING_JOURNAL_BLUEPRINT.md)
+- **描述**: 链接不存在: `TRADING_JOURNAL_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -108,7 +108,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [CONFIG_MANAGEMENT_BLUEPRINT](10_CONFIG_MANAGEMENT\CONFIG_MANAGEMENT_BLUEPRINT.md)
+- **描述**: 链接不存在: `CONFIG_MANAGEMENT_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -116,7 +116,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [USER_PREFERENCES_BLUEPRINT](11_USER_PREFERENCES\USER_PREFERENCES_BLUEPRINT.md)
+- **描述**: 链接不存在: `USER_PREFERENCES_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -124,7 +124,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [SYSTEM_STATUS_BLUEPRINT](12_SYSTEM_STATUS\SYSTEM_STATUS_BLUEPRINT.md)
+- **描述**: 链接不存在: `SYSTEM_STATUS_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -132,7 +132,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [DATA_MANAGEMENT_BLUEPRINT](13_DATA_MANAGEMENT\DATA_MANAGEMENT_BLUEPRINT.md)
+- **描述**: 链接不存在: `DATA_MANAGEMENT_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -140,7 +140,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [STRATEGY_MANAGEMENT_BLUEPRINT](14_STRATEGY_MANAGEMENT\STRATEGY_MANAGEMENT_BLUEPRINT.md)
+- **描述**: 链接不存在: `STRATEGY_MANAGEMENT_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -148,7 +148,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [PERMISSION_MANAGEMENT_BLUEPRINT](15_PERMISSION_MANAGEMENT\PERMISSION_MANAGEMENT_BLUEPRINT.md)
+- **描述**: 链接不存在: `PERMISSION_MANAGEMENT_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -156,7 +156,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [API_RATE_LIMITING_BLUEPRINT](16_API_RATE_LIMITING\API_RATE_LIMITING_BLUEPRINT.md)
+- **描述**: 链接不存在: `API_RATE_LIMITING_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -164,7 +164,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [KNOWLEDGE_BASE_BLUEPRINT](18_KNOWLEDGE_BASE\KNOWLEDGE_BASE_BLUEPRINT.md)
+- **描述**: 链接不存在: `KNOWLEDGE_BASE_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -172,7 +172,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [CI_CD_INTEGRATION_BLUEPRINT](19_CI_CD_INTEGRATION\CI_CD_INTEGRATION_BLUEPRINT.md)
+- **描述**: 链接不存在: `CI_CD_INTEGRATION_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -180,7 +180,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [DATA_BACKUP_BLUEPRINT](20_DATA_BACKUP\DATA_BACKUP_BLUEPRINT.md)
+- **描述**: 链接不存在: `DATA_BACKUP_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -188,7 +188,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT](21_ONLINE_RESEARCH_ENVIRONMENT\ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md)
+- **描述**: 链接不存在: `ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -196,7 +196,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [PARAMETER_OPTIMIZATION_BLUEPRINT](22_PARAMETER_OPTIMIZATION\PARAMETER_OPTIMIZATION_BLUEPRINT.md)
+- **描述**: 链接不存在: `PARAMETER_OPTIMIZATION_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -204,7 +204,7 @@ compliance_level: 专业标准
 
 - **层级**: L1_file_system / path_references
 - **文件**: index.md
-- **描述**: 链接不存在: [LIVE_TRADING_INTERFACE_BLUEPRINT](23_LIVE_TRADING_INTERFACE\LIVE_TRADING_INTERFACE_BLUEPRINT.md)
+- **描述**: 链接不存在: `LIVE_TRADING_INTERFACE_BLUEPRINT`
 - **建议**: 修复或删除死链接
 
 
@@ -256,16 +256,16 @@ compliance_level: 专业标准
 
 #### 1.3 路径引用问题
 
-- **死链接**: index.md - 链接不存在: [ALERTING_SYSTEM_BLUEPRINT](02_ALERTING\ALERTING_SYSTEM_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [AUTH_SYSTEM_BLUEPRINT](03_AUTH\AUTH_SYSTEM_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [API_DOCS_BLUEPRINT](04_API_DOCS\API_DOCS_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [AUDIT_LOG_BLUEPRINT](07_AUDIT_LOG\AUDIT_LOG_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [MOBILE_PUSH_BLUEPRINT](08_MOBILE_PUSH\MOBILE_PUSH_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [TRADING_JOURNAL_BLUEPRINT](09_TRADING_JOURNAL\TRADING_JOURNAL_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [CONFIG_MANAGEMENT_BLUEPRINT](10_CONFIG_MANAGEMENT\CONFIG_MANAGEMENT_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [USER_PREFERENCES_BLUEPRINT](11_USER_PREFERENCES\USER_PREFERENCES_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [SYSTEM_STATUS_BLUEPRINT](12_SYSTEM_STATUS\SYSTEM_STATUS_BLUEPRINT.md)
-- **死链接**: index.md - 链接不存在: [DATA_MANAGEMENT_BLUEPRINT](13_DATA_MANAGEMENT\DATA_MANAGEMENT_BLUEPRINT.md)
+- **死链接**: index.md - 链接不存在: `ALERTING_SYSTEM_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `AUTH_SYSTEM_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `API_DOCS_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `AUDIT_LOG_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `MOBILE_PUSH_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `TRADING_JOURNAL_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `CONFIG_MANAGEMENT_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `USER_PREFERENCES_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `SYSTEM_STATUS_BLUEPRINT`
+- **死链接**: index.md - 链接不存在: `DATA_MANAGEMENT_BLUEPRINT`
 
 ### L2 文档内容层审计
 

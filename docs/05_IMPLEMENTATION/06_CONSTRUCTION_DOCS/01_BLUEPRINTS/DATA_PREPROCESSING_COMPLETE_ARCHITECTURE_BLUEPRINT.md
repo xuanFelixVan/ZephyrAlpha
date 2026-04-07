@@ -227,7 +227,7 @@ responsibility:
 
 | 序号 | 模块名称 | 蓝图文件 | 开源方案 | 状态 |
 |------|---------|---------|---------|------|
-| 7 | 元数据管理增强 | [METADATA_MANAGEMENT_ENHANCEMENT_BLUEPRINT.md](./METADATA_MANAGEMENT_ENHANCEMENT_BLUEPRINT.md) | DataHub | ✅ 已完成 |
+| 7 | 元数据管理增强 | `METADATA_MANAGEMENT_ENHANCEMENT_BLUEPRINT.md` | DataHub | ✅ 已完成 |
 | 8 | 数据标准化引擎 | [DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md](./DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md) | dbt + GE | ✅ 已完成 |
 | 9 | 数据源健康监控 | [DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md](./DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md) | Prometheus | ✅ 已完成 |
 | 10 | CDC变更数据捕获 | [CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md](./CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md) | Debezium | ✅ 已完成 |

@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_001
+
+
 ## 2. 多数据源适配器系统
 
 ### 2.1 统一接口定义
@@ -44,6 +47,8 @@ class DataResponse:
     quality: DataQuality
 ```
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

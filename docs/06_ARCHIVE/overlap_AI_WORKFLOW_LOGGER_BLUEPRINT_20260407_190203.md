@@ -777,7 +777,7 @@ class AIWorkflowLogger:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [AI工作记录与优化模块蓝图](../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md` | AI_WORKFLOW_LOGGER_001 | 1.0 | Active | AI会话记录、决策记录、效果评估、优化迭代、知识库构建 |
+| `AI工作记录与优化模块蓝图` | `docs/10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md` | AI_WORKFLOW_LOGGER_001 | 1.0 | Active | AI会话记录、决策记录、效果评估、优化迭代、知识库构建 |
 ```
 
 ### 6.2 模块职责边界
@@ -826,8 +826,8 @@ class AIWorkflowLogger:
 
 | 文档 | 说明 |
 |------|------|
-| [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
-| [AI工作汇报与交付模块蓝图](./AI_WORK_REPORTER_BLUEPRINT.md) | AI工作汇报机制 |
+| `全流程数据保存机制蓝图` | 数据持久化基础设施 |
+| `AI工作汇报与交付模块蓝图` | AI工作汇报机制 |
 | [MLflow官方文档](https://mlflow.org/docs/latest/index.html) | MLflow使用指南 |
 
 ---

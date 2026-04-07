@@ -41,7 +41,7 @@ implementation_status: 进行?---
 
 | 文档 | 说明 | 重要?|
 |------|------|--------|
-| [DOCUMENT_AUDIT_WORKFLOW.md](./DOCUMENT_AUDIT_WORKFLOW.md) | 文档审查工作流程（个人版?|  必须 |
+| `DOCUMENT_AUDIT_WORKFLOW.md` | 文档审查工作流程（个人版?|  必须 |
 | [AUDIT_CHECKLIST_TEMPLATE.md](./AUDIT_CHECKLIST_TEMPLATE.md) | 审查检查清单模板（个人版） |  必须 |
 |  | 常见问题 |  建议 |
 

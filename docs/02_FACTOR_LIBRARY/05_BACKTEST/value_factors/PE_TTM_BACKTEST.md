@@ -1,8 +1,13 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_VALUE_FACTORS_001
+
+
 **关联IC验证**：IC验证记录/PE_TTM_IC.md
 **关联版本追踪**：待创建
 
+responsibility:
+  - 定义测试规范
 ---
 
 ## 变更记录

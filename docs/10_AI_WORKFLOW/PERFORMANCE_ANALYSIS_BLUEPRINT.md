@@ -739,7 +739,7 @@ class PerformanceAnalyzer:
 
 | 文档 | 说明 |
 |------|------|
-| [实盘监控模块蓝图](./LIVE_TRADING_MONITOR_BLUEPRINT.md) | 实时监控机制 |
+| `实盘监控模块蓝图` | 实时监控机制 |
 | [质量监控蓝图](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 质量监控体系 |
 | [性能监控文档](../05_IMPLEMENTATION/07_OPERATIONS/PERFORMANCE_MONITORING.md) | 性能监控规格 |
 

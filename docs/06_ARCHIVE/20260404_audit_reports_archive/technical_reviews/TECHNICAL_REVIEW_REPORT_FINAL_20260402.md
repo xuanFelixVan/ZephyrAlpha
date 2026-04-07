@@ -354,7 +354,7 @@ compliance_level: 专业标准
 ### 蓝图文档
 
 - [合规监控模块蓝图](../../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md)
-- [实盘监控模块蓝图](../../../10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md)
+- `实盘监控模块蓝图`
 - [性能分析模块蓝图](../../../10_AI_WORKFLOW/PERFORMANCE_ANALYSIS_BLUEPRINT.md)
 
 ### 标准文档

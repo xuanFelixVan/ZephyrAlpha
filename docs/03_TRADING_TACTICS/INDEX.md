@@ -46,14 +46,14 @@ implementation_status: ш┐ЫшбМф╕?---
 > - **INDEX.md**: х┐лщАЯхЕехПгя╝И5хИЖщТЯхп╝шИкя╝Йя╝МшБЪчДжца╕х┐ГцЦЗцбгхТМх╕╕чФиш╖пх╛?> - **SITEMAP.md**: хоМцХ┤хЬ░хЫ╛я╝Иц╖▒х║жхПВшАГя╝Йя╝МцПРф╛ЫхЕищЭвчЫох╜Хч╗УцЮДхТМцМЙчФищАФш╖пч║?>
 > тн?хоМцХ┤цЦЗцбгхЬ░хЫ╛шп╖цЯечЬ?[SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
 >
-> **х┐лщАЯхЕехП?*: тн?цОишНРщШЕшп╗ [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) ф║ЖшзгхоМцХ┤ч│╗ч╗ЯшУЭхЫ╛
+> **х┐лщАЯхЕехП?*: тн?цОишНРщШЕшп╗ `BLUEPRINT.md` ф║ЖшзгхоМцХ┤ч│╗ч╗ЯшУЭхЫ╛
 
 
 ## ЁЯОп х┐лщАЯхЕехП?
 ### цИСцШпцЦ░цЙЛ
 тЖ?00_OVERVIEW/README.md - ч│╗ч╗ЯцА╗шзИя╝?хИЖщТЯя╝?
 ### цИСшжБчРЖшзгцЮ╢цЮД
-тЖ?[BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИцОишНРя╝Й
+тЖ?`BLUEPRINT.md` - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИцОишНРя╝Й
 тЖ?[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ч╗Яф╕АцЮ╢цЮД
 
 ### цИСшжБх╝АхПСчнЦчХ?тЖ?Strategy_Spec_S001.md - чнЦчХецибцЭ┐я╝?0хИЖщТЯя╝?
@@ -68,7 +68,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 | цЦЗцбг | чФищА?| щШЕшп╗цЧ╢щЧ┤ |
 |------|------|----------|
-| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | тн?ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| 30хИЖщТЯ |
+| `BLUEPRINT.md` | тн?ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| 30хИЖщТЯ |
 | [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД | 30хИЖщТЯ |
 | | AIцЭГщЩРц╕ЕхНХ | 10хИЖщТЯ |
 | API_Contract.md | цибхЭЧцОехПгхеСч║ж | 15хИЖщТЯ |
@@ -85,7 +85,7 @@ implementation_status: ш┐ЫшбМф╕?---
 ### х╝АхПСшзДхИ?
 | цЦЗцбг | чФищА?| ч┤вх╝Х |
 |------|------|------|
-| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛ | - |
+| `BLUEPRINT.md` | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛ | - |
 | [06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md](../06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md) | щШ╢цо╡цАзх╝АхПСш╖пч║┐хЫ╛ (Phase 0-6) | DEV.001 |
 | [06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md](../06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md) | AIчаФчй╢Agentца╕х┐ГцЮ╢цЮД | AI.AGENT.001 |
 
@@ -190,7 +190,7 @@ implementation_status: ш┐ЫшбМф╕?---
 ### чнЦчХех╝АхПСшА?1. Strategy_Spec_S001.md - чнЦчХецибцЭ┐
 2. 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
 ### ч│╗ч╗ЯцЮДх╗║
-1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛
+1. `BLUEPRINT.md` - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛
 2. [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - ч╗Яф╕АцЮ╢цЮД
 3.  - х┐лщАЯх╝Ахз?
 ### ш┐Рч╗┤
@@ -199,7 +199,7 @@ implementation_status: ш┐ЫшбМф╕?---
 3. FAQ.md - х╕╕шзБщЧощвШ
 
 ### AIчаФчй╢
-1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AIчаФчй╢цбЖцЮ╢я╝ИшзБчммхЕнчлая╝Й
+1. `BLUEPRINT.md` - AIчаФчй╢цбЖцЮ╢я╝ИшзБчммхЕнчлая╝Й
 2.  - хоЮщкМш┐╜ш╕к
 3. KNOWLEDGE_MANAGEMENT.md - чЯешпЖчобчРЖ
 
@@ -217,7 +217,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 | цЦЗцбг | шп┤цШО | чФищА?|
 |------|------|------|
-| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| хоМцХ┤шУЭхЫ╛хПВшА?|
+| `BLUEPRINT.md` | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| хоМцХ┤шУЭхЫ╛хПВшА?|
 | [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | чЙИцЬмхПШцЫ┤цЧех┐Ч | чЙИцЬмцОзхИ╢хПВшА?|
 | [VERSIONING.md](../05_IMPLEMENTATION/VERSIONING.md) | чЙИцЬмчобчРЖшзДшМГ | чЙИцЬмцОзхИ╢хПВшА?|
 | [CODE_EXAMPLES.md](../05_IMPLEMENTATION/CODE_EXAMPLES.md) | ф╗гчаБчд║ф╛Л | х╝АхПСхПВшА?|

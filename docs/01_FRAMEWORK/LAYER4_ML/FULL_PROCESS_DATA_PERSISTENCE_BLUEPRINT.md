@@ -672,7 +672,7 @@ class ExperimentTracker:
 |------|------|
 | [AI工作记录与优化模块蓝图](#) | AI工作记录数据|
 | [复盘模块蓝图](#) | 复盘分析机制 |
-| [开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | 开源项目集成方|
+| `开源项目集成方案蓝图` | 开源项目集成方|
 | [MLflow官方文档](https://mlflow.org/docs/latest/index.html) | MLflow使用指南 |
 
 ---

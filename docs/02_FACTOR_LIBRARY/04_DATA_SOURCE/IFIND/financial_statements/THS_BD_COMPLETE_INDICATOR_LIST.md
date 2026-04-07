@@ -1,9 +1,14 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_IFIND_FINANCIAL_STATEMENTS_001
+
+
 > **数据来源**: 同花顺iFind THS_BD函数
 > **更新时间**: 2026-03-28
 > **总指标数**: 943个（季频183 + 年频760?
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

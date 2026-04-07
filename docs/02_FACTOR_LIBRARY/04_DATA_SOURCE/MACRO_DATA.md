@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+
 ## 3. 全球宏观数据
 
 ### 3.1 核心指标
@@ -68,6 +71,8 @@ MACRO_INDICATORS_GLOBAL = {
 }
 ```
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

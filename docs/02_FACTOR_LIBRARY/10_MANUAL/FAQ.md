@@ -1,4 +1,9 @@
 ---
+
+module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
+
+responsibility:
+  - 管理因子库
 ---
 
 # FAQ.md - 常见问题

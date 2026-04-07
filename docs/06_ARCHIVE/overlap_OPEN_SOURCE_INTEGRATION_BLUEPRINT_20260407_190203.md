@@ -454,7 +454,7 @@ class MomentumStrategy(StrategyBase):
 
 | 文档 | 说明 |
 |------|------|
-| [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | MLflow集成基础 |
+| `全流程数据保存机制蓝图` | MLflow集成基础 |
 | [AI工作记录与优化模块蓝图](#) | AI工作记录集成 |
 | [技术栈文档](#) | 技术栈选择 |
 

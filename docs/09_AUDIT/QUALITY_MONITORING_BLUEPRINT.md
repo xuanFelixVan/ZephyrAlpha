@@ -1273,7 +1273,7 @@ class AICommandProcessor {
 1. [审计标准 v5.3](./STANDARDS/AUDIT_STANDARDS.md)
 2. [AI审计指南](./PROCEDURES/AI_AUDIT_GUIDELINES.md)
 3. [个人审计工作流](./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md)
-4. [系统蓝图总览](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
+4. `系统蓝图总览`
 5. 系统清单
 
 

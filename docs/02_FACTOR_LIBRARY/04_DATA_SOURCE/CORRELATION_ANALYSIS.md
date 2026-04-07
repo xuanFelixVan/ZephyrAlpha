@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+
 ## 4. 相关性检验
 
 ### 4.1 相关系数显著性检验
@@ -119,6 +122,8 @@ class CorrelationDifferenceTest:
         }
 ```
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

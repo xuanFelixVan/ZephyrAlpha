@@ -1,7 +1,12 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001
+
+
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-04 | **维护者**: 首席文档架构师
 
+responsibility:
+  - 提供目录索引
 ---
 
 ## 变更记录

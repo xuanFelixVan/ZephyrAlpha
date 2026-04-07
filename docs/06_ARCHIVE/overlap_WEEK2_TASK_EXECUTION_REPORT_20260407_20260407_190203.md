@@ -160,7 +160,7 @@ responsibility:
 
 ## 🔗 相关文档
 
-- [长期优化计划完整执行报告](LONG_TERM_OPTIMIZATION_COMPLETE_PLAN_20260407.md)
+- `长期优化计划完整执行报告`
 - 系统部署指南
 - 数据迁移指南
 - 环境配置指南

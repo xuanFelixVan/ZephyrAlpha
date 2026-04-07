@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
+
+
 ## 索引
 
 - 父目? 01_STANDARDS/README.md
@@ -7,6 +10,8 @@
 - 相关: [IC_ANALYSIS.md](./ic_analysis.md)
 - 相关: [FACTOR_SYNTHESIS.md](./factor_synthesis.md)
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

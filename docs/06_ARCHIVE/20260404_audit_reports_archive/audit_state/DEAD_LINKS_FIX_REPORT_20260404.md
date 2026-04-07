@@ -106,7 +106,7 @@ AI_Permissions.md
 ```
 
 #### 修复?```markdown
-[数据源索引](./INDEX.md)
+`数据源索引`
 ```
 
 **修复原因**: README.md不存在，使用INDEX.md替代

@@ -1,4 +1,6 @@
 ---
+module_id: 08_HUMAN_AI_INTERFACE_001
+
 
 ## 📊 统计信息
 

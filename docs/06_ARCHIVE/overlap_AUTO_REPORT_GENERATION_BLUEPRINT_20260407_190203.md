@@ -472,7 +472,7 @@ class AutoReportGeneration:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状态 | 职责概要 |
 |----------|------|--------|------|------|----------|
-| [自动化报告生成引擎蓝图](../10_AI_WORKFLOW/AUTO_REPORT_GENERATION_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/AUTO_REPORT_GENERATION_BLUEPRINT.md` | AUTO_REPORT_GENERATION_001 | 1.0.0 | Active | 自动化报告生成、多维度数据融合、AI决策仪表盘、多渠道推送、定时调度 |
+| `自动化报告生成引擎蓝图` | `docs/10_AI_WORKFLOW/AUTO_REPORT_GENERATION_BLUEPRINT.md` | AUTO_REPORT_GENERATION_001 | 1.0.0 | Active | 自动化报告生成、多维度数据融合、AI决策仪表盘、多渠道推送、定时调度 |
 ```
 
 ### 6.2 模块职责边界

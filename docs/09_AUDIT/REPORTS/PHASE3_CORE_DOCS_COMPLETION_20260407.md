@@ -84,7 +84,7 @@ responsibility:
 
 **P1重要文档（5个）**:
 
-3. ✅ **[战略配置引擎蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md)**
+3. ✅ **`战略配置引擎蓝图`**
    - module_id: STRATEGIC_ALLOCATION_ENGINE_001
    - 上游依赖：组合优化引擎、多目标优化、数据质量监控、组合约束管理
    - 下游依赖：策略组合优化、场景分析、风险平价策略

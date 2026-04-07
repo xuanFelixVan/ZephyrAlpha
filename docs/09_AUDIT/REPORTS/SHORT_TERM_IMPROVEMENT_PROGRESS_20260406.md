@@ -346,7 +346,7 @@ responsibility:
 
 1. [短期改进计划](./SHORT_TERM_IMPROVEMENT_PLAN_20260406.md)
 2. [文档交叉引用关系分析报告](./DOCUMENT_CROSS_REFERENCE_ANALYSIS_20260406.md)
-3. [蓝图文档总索引](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)
+3. `蓝图文档总索引`
 
 ---
 

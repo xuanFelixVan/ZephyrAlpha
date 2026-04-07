@@ -90,7 +90,7 @@ responsibility:
 ## 🔗 相关文档
 
 - [实施层索引](../INDEX.md)
-- [蓝图文档索引](01_BLUEPRINTS/INDEX.md)
+- `蓝图文档索引`
 - 模板文档索引
 - 指南文档索引
 

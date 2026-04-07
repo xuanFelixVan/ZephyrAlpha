@@ -188,7 +188,7 @@ grep -n "Twitter\|Reddit\|FRED\|SEC EDGAR" DATA_SOURCE_EXTENSION_BLUEPRINT.md
 
 #### 2.3 现有文档对比分析
 
-**对比对象**: [OPEN_SOURCE_MODULE_SOLUTION.md](./OPEN_SOURCE_MODULE_SOLUTION.md)
+**对比对象**: `OPEN_SOURCE_MODULE_SOLUTION.md`
 
 | 对比维度 | OPEN_SOURCE_INTEGRATION_BLUEPRINT.md | OPEN_SOURCE_MODULE_SOLUTION.md | 对比结果 |
 |---------|-------------------------------------|-------------------------------|---------|
@@ -324,7 +324,7 @@ grep -n "MLflow\|Qlib\|QuantHedgeFund\|QuantTradingOS" OPEN_SOURCE_MODULE_SOLUTI
 
 1. [DELETED_CONTENT_REVIEW_REPORT.md](./DELETED_CONTENT_REVIEW_REPORT.md) - 删除内容审查报告
 2. [DATA_SOURCE_EXTENSION_BLUEPRINT.md](./DATA_SOURCE_EXTENSION_BLUEPRINT.md) - 数据源扩展模块蓝图
-3. [OPEN_SOURCE_MODULE_SOLUTION.md](./OPEN_SOURCE_MODULE_SOLUTION.md) - 开源模块完整方案
+3. `OPEN_SOURCE_MODULE_SOLUTION.md` - 开源模块完整方案
 4. [INDEX.md](./INDEX.md) - Layer 7 AI报告层索引
 
 ---

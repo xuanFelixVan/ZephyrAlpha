@@ -1,11 +1,16 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_001
+
+
 ## 🔗 相关链接
 
 - [系统主索引](../INDEX.md)
 - [框架设计索引](../01_FRAMEWORK/INDEX.md)
 - [实施层索引](../05_IMPLEMENTATION/README.md)
 
+responsibility:
+  - 提供目录索引
 ---
 
 ## 变更记录

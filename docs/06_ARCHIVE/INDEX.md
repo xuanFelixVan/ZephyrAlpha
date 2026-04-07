@@ -96,7 +96,7 @@ implementation_status: 已完?
 ## 🔗 当前架构
 
 - **新架构文?*: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
-- **架构迁移计划**: [../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md](../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
+- **架构迁移计划**: `../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md`
 ---
 
 *最后更? 2026-04-03*

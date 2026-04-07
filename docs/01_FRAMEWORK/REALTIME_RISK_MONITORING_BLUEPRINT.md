@@ -69,7 +69,7 @@ responsibility_boundary: |
 - 规划系统架构层次和核心组件接?- 制定风险监控的关键原则和标准
 
 **下游文档**:
-- [风控规则体系蓝图](../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) - 战术层规则定?- 风控规则引擎 - 执行层实?- [实时风险对冲引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) - 实施层细?
+- `风控规则体系蓝图` - 战术层规则定?- 风控规则引擎 - 执行层实?- [实时风险对冲引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) - 实施层细?
 ---
 
 ## 一、专业机构实践分?

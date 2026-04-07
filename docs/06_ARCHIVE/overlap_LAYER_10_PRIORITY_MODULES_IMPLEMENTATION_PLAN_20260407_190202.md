@@ -329,7 +329,7 @@ async def query_audit_trail(
 ### 3.1 蓝图文档
 
 **主文档**: MODEL_RISK_MANAGEMENT_BLUEPRINT.md
-**实施方案**: [MODEL_RISK_MLFLOW_IMPLEMENTATION.md](./MODEL_RISK_MLFLOW_IMPLEMENTATION.md)
+**实施方案**: `MODEL_RISK_MLFLOW_IMPLEMENTATION.md`
 
 ### 3.2 开源项目推荐
 

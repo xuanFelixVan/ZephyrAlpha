@@ -1,7 +1,12 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
+
+
 > **维护部门**: 清风量化研究?
 > **更新时间**: 2026-03-28
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

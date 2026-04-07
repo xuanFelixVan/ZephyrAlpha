@@ -41,7 +41,7 @@ implementation_status: 进行?
 > **预计工时**: 25小时  
 > **设计状?*: 🟡 设计? 
 > **设计日期**: 2026-04-01  
-> **关联蓝图**: [BLUEPRINT.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
+> **关联蓝图**: `BLUEPRINT.md`
 
 ---
 
@@ -2051,5 +2051,5 @@ class FeatureEngineeringCache:
 > **设计完成时间**: 2026-04-02  
 > **设计状?*: ?已完? 
 > **下一阶段**: 进入编码实施阶段  
-> **关联文档**: MODULE_DESIGN_PLAN.md, [BLUEPRINT.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
+> **关联文档**: MODULE_DESIGN_PLAN.md, `BLUEPRINT.md`
             'feature_transformation_time': execution_info.get('transformation_time',

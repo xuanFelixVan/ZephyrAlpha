@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+
 ## 10. 文档治理
 
 ### 10.1 System_Manifest.md索引
@@ -17,7 +20,9 @@
 ### 10.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
-|------|------|------|
+|responsibility:
+  - 管理因子库
+------|------|------|
 | **Data A Share Processing** | A股历史数据处理 | **核心模块** |
 
 ### 10.3 版本管理

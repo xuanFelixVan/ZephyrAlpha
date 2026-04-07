@@ -262,7 +262,7 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | 实施方案文档 | 模块ID | 版本 | 状态 | 实施周期 | 开源项目 | 说明 |
 |------------|--------|------|------|---------|---------|------|
 | [审计追踪系统TigerBeetle集成实施方案](./AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md) | AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION_001 | 1.0 | Active | 3天 | TigerBeetle | 完整的实施步骤、代码示例、配置文件、测试代码 |
-| [模型风险管理系统MLflow集成实施方案](./MODEL_RISK_MLFLOW_IMPLEMENTATION.md) | MODEL_RISK_MLFLOW_IMPLEMENTATION_001 | 1.0 | Active | 5天 | MLflow | 完整的实施步骤、代码示例、配置文件、测试代码 |
+| `模型风险管理系统MLflow集成实施方案` | MODEL_RISK_MLFLOW_IMPLEMENTATION_001 | 1.0 | Active | 5天 | MLflow | 完整的实施步骤、代码示例、配置文件、测试代码 |
 | [监管报告自动化系统FINOS CDM集成实施方案](./REGULATORY_REPORTING_CDM_IMPLEMENTATION.md) | REGULATORY_REPORTING_CDM_IMPLEMENTATION_001 | 1.0 | Active | 1周 | FINOS CDM | 完整的实施步骤、代码示例、配置文件、测试代码 |
 
 ### 2.2 配置与流程文档

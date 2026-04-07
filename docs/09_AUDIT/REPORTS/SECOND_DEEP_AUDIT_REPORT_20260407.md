@@ -310,7 +310,7 @@
 
 - [第一轮深度审计报告](COMPREHENSIVE_DEEP_AUDIT_REPORT_20260407.md)
 - [优先级问题修复总结](PRIORITY_ISSUE_FIX_SUMMARY_20260407.md)
-- [审计标准v5.1](../STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- `审计标准v5.1`
 
 ---
 

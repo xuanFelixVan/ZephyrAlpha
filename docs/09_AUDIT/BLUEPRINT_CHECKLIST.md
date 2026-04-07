@@ -34,7 +34,7 @@ responsibility:
 > **版本**: v1.0
 > **创建日期**: 2026-04-01
 > **更新日期**: 2026-04-01
-> **状?*: 🔄 进行?> **关联文档**: [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md), [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md), [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md)
+> **状?*: 🔄 进行?> **关联文档**: `BLUEPRINT.md`, [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md), [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md)
 
 ---
 

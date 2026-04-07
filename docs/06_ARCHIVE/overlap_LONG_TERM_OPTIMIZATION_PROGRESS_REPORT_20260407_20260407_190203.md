@@ -222,8 +222,8 @@ responsibility:
 
 ## 🔗 相关文档
 
-- [第二周任务执行报告](WEEK2_TASK_EXECUTION_REPORT_20260407.md)
-- [长期优化计划完整规划](LONG_TERM_OPTIMIZATION_COMPLETE_PLAN_20260407.md)
+- `第二周任务执行报告`
+- `长期优化计划完整规划`
 
 ---
 

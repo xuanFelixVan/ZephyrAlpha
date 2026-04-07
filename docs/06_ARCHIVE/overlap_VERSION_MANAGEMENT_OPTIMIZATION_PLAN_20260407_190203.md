@@ -260,7 +260,7 @@ Planning ?Draft ?Review ?Active ?Deprecated ?Archived
 ```python
 # 更新所有引用链?
 旧链? 
-新链? [手册](../../02_FACTOR_LIBRARY/10_MANUAL/factor_library_manual.md)
+新链? `手册`
 
 # 使用工具自动更新所有引?
 ```

@@ -1,9 +1,14 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_VALUE_FACTORS_001
+
+
 **关联回测报告**：回测报告/PE_TTM_BACKTEST.md
 
 **下次验证日期**?026-06-28（季度更新）
 
+responsibility:
+  - 定义测试规范
 ---
 
 ## 变更记录

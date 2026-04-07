@@ -408,10 +408,10 @@ bash scripts/create_github_issues.sh
 
 ### C. 相关文档链接
 
-- [深度系统审计报告](./DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
+- `深度系统审计报告`
 - TODO清理清单
 - TODO清理分析报告
-- [P0/P1/P2问题修复总结](./P0_P1_P2_RESOLUTION_SUMMARY_20260406.md)
+- `P0/P1/P2问题修复总结`
 - GitHub Issue创建清单
 
 ---

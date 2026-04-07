@@ -1,7 +1,12 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
+
+
 **版本**: 1.0 | **更新**: 2026-03-28
 
+responsibility:
+  - 定义测试规范
 ---
 
 ## 变更记录

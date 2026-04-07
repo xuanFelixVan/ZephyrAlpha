@@ -291,7 +291,7 @@ implementation_status: шпДхобхоМцИР
 - цКАцЬпхПпшбМцАзшпД? [technical_feasibility_assessment.json](./technical_feasibility_assessment.json)
 - щгОщЩйхИЖцЮР: [risk_analysis.json](./risk_analysis.json)
 - хоЮцЦ╜хдНцЭВх║жшоб? [implementation_complexity.json](./implementation_complexity.json)
-- ч╗╝хРИшпДф╝░цКехСК: [comprehensive_assessment_report.md](./comprehensive_assessment_report.md)
+- ч╗╝хРИшпДф╝░цКехСК: `comprehensive_assessment_report.md`
 
 ### 8.2 чЫ╕хЕ│цЦЗцбг
 - цХ░цНоц║Рх▒Вф╕Уф╕ЪхоЮцЦ╜шУЭхЫ╛: DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md

@@ -432,8 +432,8 @@ foreach ($file in $files) {
 
 ### B. 参考文档
 
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- `专业文档治理审计指南`
+- `文档治理审计检查清单`
 - 审计质量标准v5.1
 
 ---

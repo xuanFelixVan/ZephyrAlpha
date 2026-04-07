@@ -474,7 +474,7 @@ responsibility:
 | 技术可行性评?| [technical_feasibility_assessment.json](./IFIND_CONNECTOR/technical_feasibility_assessment.json) |
 | 风险分析 | [risk_analysis.json](./IFIND_CONNECTOR/risk_analysis.json) |
 | 实施复杂度计?| [implementation_complexity.json](./IFIND_CONNECTOR/implementation_complexity.json) |
-| 综合评估报告 | [comprehensive_assessment_report.md](./IFIND_CONNECTOR/comprehensive_assessment_report.md) |
+| 综合评估报告 | `comprehensive_assessment_report.md` |
 
 ### B. 相关文档
 

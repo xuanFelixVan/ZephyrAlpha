@@ -54,7 +54,7 @@ compliance_level: 专业标准
 ## 📚 文档列表
 - [Layer 1 开源项目集成指南](./OPENSOURCE_INTEGRATION_GUIDE_20260407.md) - 实施指南文档
 
-- [Layer 1 数据预处理层专业机构标准差距分析报告](./PROFESSIONAL_GAP_ANALYSIS_20260407.md) - 系统文档
+- `Layer 1 数据预处理层专业机构标准差距分析报告` - 系统文档
 
 - [第三阶段P2文档第二批完成报告](./PHASE3_P2_BATCH2_COMPLETION_20260407.md) - 系统文档
 
@@ -64,7 +64,7 @@ compliance_level: 专业标准
 
 - [Layer 1 深度审计修复总结报告](./FIX_SUMMARY_20260407.md) - 系统文档
 
-- [Layer 1 数据预处理层全面架构完整性分析报告](./COMPREHENSIVE_GAP_ANALYSIS_20260407.md) - 系统文档
+- `Layer 1 数据预处理层全面架构完整性分析报告` - 系统文档
 
 - [数据预处理层架构完整性评估与开源方案推荐报告](./ARCHITECTURE_GAP_ANALYSIS_AND_OPENSOURCE_RECOMMENDATION_20260405.md) - 系统文档
 

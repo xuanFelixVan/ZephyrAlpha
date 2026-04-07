@@ -274,8 +274,8 @@ L3: 专业标准层审计
 
 ### 修复相关
 
-- [修复前审计报告](./COMPREHENSIVE_DEEP_AUDIT_20260407_172232.md)
-- [修复后审计报告](./COMPREHENSIVE_DEEP_AUDIT_20260407_174021.md)
+- `修复前审计报告`
+- `修复后审计报告`
 - [审计脚本改进报告](./AUDIT_SCRIPT_IMPROVEMENT_REPORT_20260407.md)
 
 ### 工具脚本

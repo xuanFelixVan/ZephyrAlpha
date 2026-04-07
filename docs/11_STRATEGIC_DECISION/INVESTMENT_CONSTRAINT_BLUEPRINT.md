@@ -1176,7 +1176,7 @@ class SkfolioIntegration:
 | 文档 | 说明 |
 |------|------|
 | BLUEPRINT.md | Layer 11主蓝图 |
-| [MARKET_REGIME_BLUEPRINT.md](./MARKET_REGIME_BLUEPRINT.md) | 市场状态识别系统 |
+| `MARKET_REGIME_BLUEPRINT.md` | 市场状态识别系统 |
 | [MACRO_FACTOR_BLUEPRINT.md](./MACRO_FACTOR_BLUEPRINT.md) | 宏观因子系统 |
 
 ---

@@ -101,7 +101,7 @@ implementation_status: 活跃维护
 2.
 读 [ARCHITECTURE.md](./ARCHITECTURE.md) - 系统架构详细说明 (30分钟)
 3.
-读 [ARCHITECTURE_MIGRATION_PLAN.md](./ARCHITECTURE_MIGRATION_PLAN.md) - 架构迁移计划 (20分钟)
+读 `ARCHITECTURE_MIGRATION_PLAN.md` - 架构迁移计划 (20分钟)
 4.
 读 [DATAFLOW_ARCHITECTURE_BLUEPRINT.md](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md) - 数据流架?(20分钟)
 5.
@@ -141,7 +141,7 @@ implementation_status: 活跃维护
 |---------|------|--------|
 | [专业多时间框架架构](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构 | ⭐⭐⭐⭐?|
 | [架构文档](./ARCHITECTURE.md) | 系统架构详细说明 | ⭐⭐⭐⭐?|
-| [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md) | Layer 0-11迁移到三级时间框?| ⭐⭐⭐⭐ |
+| `架构迁移计划` | Layer 0-11迁移到三级时间框?| ⭐⭐⭐⭐ |
 | [数据流架构蓝图](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md) | 数据流架构设?| ⭐⭐⭐⭐ |
 
 ### 模块设计
@@ -177,7 +177,7 @@ implementation_status: 活跃维护
 ###
 ?
 - **三级时间框架**: [专业多时间框架架构](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-- **Layer 0-11**: [架构迁移计划](./ARCHITECTURE_MIGRATION_PLAN.md)
+- **Layer 0-11**: `架构迁移计划`
 - **模块边界**: [模块职责边界](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - **接口契约**: [接口契约蓝图](./INTERFACE_CONTRACT_BLUEPRINT.md)
 - **数据?*: [数据流架构蓝图](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md)

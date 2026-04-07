@@ -741,7 +741,7 @@ class FactorBacktestEngine:
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Sfl
 - **模块ID**: AIWF_SFL_001
-- **蓝图文档**: [SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md](./SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md)
+- **蓝图文档**: `SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md`
 - **技术规格书**: 待创建
 - **职责**: 舆情因子库模块
 - **状态**: Active

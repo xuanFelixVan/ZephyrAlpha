@@ -61,7 +61,7 @@ responsibility:
 ## 🔗 相关文档
 
 - [建设文档索引](../INDEX.md)
-- [蓝图文档索引](../01_BLUEPRINTS/INDEX.md)
+- `蓝图文档索引`
 - 部署指南
 
 ---

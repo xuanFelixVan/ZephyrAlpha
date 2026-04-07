@@ -516,7 +516,7 @@ class MultiAgentCollaboration:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状态 | 职责概要 |
 |----------|------|--------|------|------|----------|
-| [多智能体协作系统蓝图](../10_AI_WORKFLOW/MULTI_AGENT_COLLABORATION_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/MULTI_AGENT_COLLABORATION_BLUEPRINT.md` | MULTI_AGENT_COLLABORATION_001 | 1.0.0 | Active | 多智能体角色定义、协作机制、任务分配、知识共享、决策融合 |
+| `多智能体协作系统蓝图` | `docs/10_AI_WORKFLOW/MULTI_AGENT_COLLABORATION_BLUEPRINT.md` | MULTI_AGENT_COLLABORATION_001 | 1.0.0 | Active | 多智能体角色定义、协作机制、任务分配、知识共享、决策融合 |
 ```
 
 ### 6.2 模块职责边界
@@ -566,9 +566,9 @@ class MultiAgentCollaboration:
 
 | 文档 | 说明 |
 |------|------|
-| [AI工作汇报与交付模块蓝图](./AI_WORK_REPORTER_BLUEPRINT.md) | AI工作汇报集成 |
-| [复盘模块蓝图](./POST_TRADE_REVIEW_BLUEPRINT.md) | 复盘分析集成 |
-| [开源模块完整方案](./OPEN_SOURCE_MODULE_SOLUTION.md) | 开源项目选型 |
+| `AI工作汇报与交付模块蓝图` | AI工作汇报集成 |
+| `复盘模块蓝图` | 复盘分析集成 |
+| `开源模块完整方案` | 开源项目选型 |
 
 ---
 

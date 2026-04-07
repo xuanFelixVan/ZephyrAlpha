@@ -233,6 +233,6 @@ grep -r "T.01.DS001.free_data_sources.md" docs/
 > **验证?*: ?全部通过
 > **报告版本**: v5.3
 
-**审计依据**: [FULL_SYSTEM_AUDIT_REPORT.md](./FULL_SYSTEM_AUDIT_REPORT.md)
+**审计依据**: `FULL_SYSTEM_AUDIT_REPORT.md`
 **修复标准**: 专业量化机构文档治理五大原则
 **质量目标**: 100%符合专业量化机构标准

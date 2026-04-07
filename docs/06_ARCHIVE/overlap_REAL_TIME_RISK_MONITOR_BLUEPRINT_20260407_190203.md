@@ -511,7 +511,7 @@ class RealTimeRiskMonitor:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状态 | 职责概要 |
 |----------|------|--------|------|------|----------|
-| [实时风险监控系统蓝图](../10_AI_WORKFLOW/REAL_TIME_RISK_MONITOR_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/REAL_TIME_RISK_MONITOR_BLUEPRINT.md` | REAL_TIME_RISK_MONITOR_001 | 1.0.0 | Active | 实时风险监控、多维度风险评估、动态预警机制、风险报告生成、风险限额管理 |
+| `实时风险监控系统蓝图` | `docs/10_AI_WORKFLOW/REAL_TIME_RISK_MONITOR_BLUEPRINT.md` | REAL_TIME_RISK_MONITOR_001 | 1.0.0 | Active | 实时风险监控、多维度风险评估、动态预警机制、风险报告生成、风险限额管理 |
 ```
 
 ### 6.2 模块职责边界

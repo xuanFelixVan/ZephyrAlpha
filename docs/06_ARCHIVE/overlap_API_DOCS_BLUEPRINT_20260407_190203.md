@@ -52,7 +52,7 @@ API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文�
 #### 人机交互层: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.4
-- **蓝图文档**: [API_DOCS_BLUEPRINT.md](./API_DOCS_BLUEPRINT.md)
+- **蓝图文档**: `API_DOCS_BLUEPRINT.md`
 - **技术规格书**: 待创建
 - **职责**: ZephyrAlpha API文档
 - **状态**: Active

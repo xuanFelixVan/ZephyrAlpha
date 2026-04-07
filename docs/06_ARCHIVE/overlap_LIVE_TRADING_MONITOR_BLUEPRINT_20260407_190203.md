@@ -672,7 +672,7 @@ class LiveTradingMonitor:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [实盘监控模块蓝图](../10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md` | LIVE_TRADING_MONITOR_001 | 1.0 | Active | 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警 |
+| `实盘监控模块蓝图` | `docs/10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md` | LIVE_TRADING_MONITOR_001 | 1.0 | Active | 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警 |
 ```
 
 ### 6.2 模块职责边界
@@ -721,8 +721,8 @@ class LiveTradingMonitor:
 
 | 文档 | 说明 |
 |------|------|
-| [合规监控模块蓝图](./COMPLIANCE_MONITORING_BLUEPRINT.md) | 合规检查机|
-| [性能分析模块蓝图](./PERFORMANCE_ANALYSIS_BLUEPRINT.md) | 性能分析体系 |
+| `合规监控模块蓝图` | 合规检查机|
+| `性能分析模块蓝图` | 性能分析体系 |
 | [实时监控文档](../04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md) | 实时监控规格 |
 
 ---

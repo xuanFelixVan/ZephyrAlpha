@@ -113,7 +113,7 @@ responsibility:
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
 | [资本配置系统蓝图](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 战略资产配置、资本分配决策 | P1 | ✅ 已创建 |
-| [市场状态识别蓝图](./MARKET_REGIME_BLUEPRINT.md) | 市场状态判断、范式转换预警 | P0 | ✅ 已创建 |
+| `市场状态识别蓝图` | 市场状态判断、范式转换预警 | P0 | ✅ 已创建 |
 | [宏观因子系统蓝图](./MACRO_FACTOR_BLUEPRINT.md) | 宏观因子分析、因子暴露控制 | P1 | ✅ 已创建 |
 | [再平衡决策系统蓝图](./REBALANCING_BLUEPRINT.md) | 再平衡策略、成本优化 | P0 | ✅ 已创建 |
 
@@ -292,7 +292,7 @@ responsibility:
 ### 按优先级导航
 
 #### P0级模块（立即实施）
-- [市场状态识别蓝图](./MARKET_REGIME_BLUEPRINT.md)
+- `市场状态识别蓝图`
 - [再平衡决策系统蓝图](./REBALANCING_BLUEPRINT.md)
 - [多策略协调系统蓝图](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md)
 - 业绩归因系统蓝图
@@ -320,7 +320,7 @@ responsibility:
 
 #### 资产配置相关
 - [资本配置系统蓝图](./CAPITAL_ALLOCATION_BLUEPRINT.md)
-- [市场状态识别蓝图](./MARKET_REGIME_BLUEPRINT.md)
+- `市场状态识别蓝图`
 - [宏观因子系统蓝图](./MACRO_FACTOR_BLUEPRINT.md)
 - [再平衡决策系统蓝图](./REBALANCING_BLUEPRINT.md)
 

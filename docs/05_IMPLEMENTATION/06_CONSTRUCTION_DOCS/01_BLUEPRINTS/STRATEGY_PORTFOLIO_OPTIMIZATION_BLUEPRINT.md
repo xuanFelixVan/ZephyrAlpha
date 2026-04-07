@@ -133,7 +133,7 @@ layer: Layer 5.2 (组合优化)
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依?| 提供优化器基础接口 |
-| [战略配置引擎蓝图](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | 强依?| 提供战略配置支持 |
+| `战略配置引擎蓝图` | STRATEGIC_ALLOCATION_ENGINE_001 | 强依?| 提供战略配置支持 |
 | [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依?| 提供数据质量指标 |
 
 ### 下游依赖

@@ -788,7 +788,7 @@ class PostTradeReviewer:
 
 | 文档 | 说明 |
 |------|------|
-| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录数据|
+| `AI工作记录与优化模块蓝图` | AI工作记录数据|
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
 | [质量监控蓝图](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 质量监控体系 |
 

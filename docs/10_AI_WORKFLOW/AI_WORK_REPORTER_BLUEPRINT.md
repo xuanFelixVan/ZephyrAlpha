@@ -770,7 +770,7 @@ class AIWorkReporter:
 
 | 文档 | 说明 |
 |------|------|
-| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录数据|
+| `AI工作记录与优化模块蓝图` | AI工作记录数据|
 | [复盘模块蓝图](./POST_TRADE_REVIEW_BLUEPRINT.md) | 复盘分析机制 |
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
 | [Streamlit官方文档](https://docs.streamlit.io/) | Streamlit使用指南 |

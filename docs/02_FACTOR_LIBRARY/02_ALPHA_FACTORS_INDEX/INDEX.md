@@ -1,10 +1,15 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_02_ALPHA_FACTORS_INDEX_001
+
+
 ## 🔍 快速导航
 
 - [返回因子库主页](../INDEX.md)
 - [查看站点地图](../SITEMAP.md)
 
+responsibility:
+  - 提供目录索引
 ---
 
 ## 📝 变更记录

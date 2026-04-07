@@ -1178,7 +1178,7 @@ class TestDailyReporterIntegration:
 - [ ] 算法说明清晰（复杂度分析?- [ ] 测试策略完备（覆盖率?5%?- [ ] 风险识别全面（P0-P3分级?- [ ] 验收标准明确（可量化、可验证?
 ### B. 参考资?
 1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - 系统架构定义
-2. [RISK_REPORT.md](../../03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) - 风险报告生成器蓝?3. [AI_FACTOR_AGENT.md](../../02_FACTOR_LIBRARY/07_FACTOR_MONITORING/AI_FACTOR_AGENT.md) - AI因子管家
+2. [RISK_REPORT.md](../../03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) - 风险报告生成器蓝?3. `AI_FACTOR_AGENT.md` - AI因子管家
 4. [PERFORMANCE_ANALYZER_TECHNICAL_SPECIFICATION.md](./PERFORMANCE_ANALYZER_TECHNICAL_SPECIFICATION.md) - 绩效分析器技术规?
 ### C. 变更历史
 

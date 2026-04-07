@@ -239,7 +239,7 @@ implementation_status: ف╖▓ف?
 
 ### A. فةكةف╖حغ╜ف║ـقذ┐
 
-- [فةكةبفv5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+- `فةكةبفv5.3`
 
 ### C. كص?
 ---

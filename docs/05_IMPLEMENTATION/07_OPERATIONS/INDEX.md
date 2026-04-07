@@ -42,7 +42,7 @@ parent_document: ../INDEX.md---
 | 文档 | 职责 | 状态 |
 |------|------|------|
 | README.md | 运维手册概述 | Active |
-| [DOCUMENT_AUDIT_WORKFLOW.md](./DOCUMENT_AUDIT_WORKFLOW.md) | 文档审查工作流程 | Active |
+| `DOCUMENT_AUDIT_WORKFLOW.md` | 文档审查工作流程 | Active |
 | [AUDIT_CHECKLIST_TEMPLATE.md](./AUDIT_CHECKLIST_TEMPLATE.md) | 审查检查清单模板 | Active |
 | [QUALITY_GATE_MECHANISM.md](./QUALITY_GATE_MECHANISM.md) | 质量门机制 | Active |
 | [PERFORMANCE_MONITORING.md](./PERFORMANCE_MONITORING.md) | 性能监控 | Active |
@@ -120,9 +120,9 @@ df -h
 
 - [ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﮒ۷ﮔ۷۰ﮒﮔﺓﺎﮒﭦ۵ﮒ؟۰ﮔﺗﮔﺗ?](./SYSTEM_WIDE_APPROVAL_PLAN.md) - 系统文档
 
-- [чЙИцЬмчобчРЖхЖ│чнЦшо░х╜Х](./VERSION_MANAGEMENT_DECISIONS.md) - 系统文档
+- `чЙИцЬмчобчРЖхЖ│чнЦшо░х╜Х` - 系统文档
 
-- [版本管理优化方案](./VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md) - 系统文档
+- `版本管理优化方案` - 系统文档
 
 - [Minicondaﮒ؟ﻟ۲ﮔﮒﺅﺙ?ﮒﻠﺅﺙ?](./MINICONDA_INSTALLATION_GUIDE.md) - 实施指南文档
 
@@ -130,7 +130,7 @@ df -h
 
 - [QMT MiniQMTﮔ۷۰ﮒﺙﻝﭨﮒﺛﮔﮒ](./QMT_MINIQMT_LOGIN_GUIDE.md) - 实施指南文档
 
-- [版本管理自动化集成指?](./VERSION_MANAGEMENT_AUTOMATION_GUIDE.md) - 实施指南文档
+- `版本管理自动化集成指?` - 实施指南文档
 
 - [P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./P1_RISK_MITIGATION_DESIGN.md) - 设计文档
 

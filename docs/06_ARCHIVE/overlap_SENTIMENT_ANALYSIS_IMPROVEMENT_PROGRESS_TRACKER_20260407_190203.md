@@ -35,13 +35,13 @@ responsibility:
 
 | 文档名称 | 模块ID | 路径 | 说明 | 状|
 |---------|--------|------|------|------|
-| **深度学习情感分析模块蓝图** | AIWF_DLSA_001 | [DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md](./DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md) | FinBERT模型集成、多维度情感分析 | 完成 |
-| **实时预警系统模块蓝图** | AIWF_RTAS_001 | [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md) | 实时监控、预警规则引擎、多渠道推| 完成 |
+| **深度学习情感分析模块蓝图** | AIWF_DLSA_001 | `DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md` | FinBERT模型集成、多维度情感分析 | 完成 |
+| **实时预警系统模块蓝图** | AIWF_RTAS_001 | `REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md` | 实时监控、预警规则引擎、多渠道推| 完成 |
 
 #### 1.2 技术规格文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **短期改进模块详细技术规格书** | 技术规| [SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md](./SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md) | 详细API接口、数据字典、算法流程图、性能指标、错误处| 完成 |
+| **短期改进模块详细技术规格书** | 技术规| `SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md` | 详细API接口、数据字典、算法流程图、性能指标、错误处| 完成 |
 
 ---
 
@@ -50,7 +50,7 @@ responsibility:
 
 | 文档名称 | 模块ID | 路径 | 说明 | 状|
 |---------|--------|------|------|------|
-| **中期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md) | 知识图谱、流式处理、多语言支持 | 完成 |
+| **中期改进综合蓝图** | - | `SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md` | 知识图谱、流式处理、多语言支持 | 完成 |
 
 **包含模块**:
 - **知识图谱模块** (AIWF_FKG_001): 金融实体关系图谱、事件关联分- **流式处理架构** (AIWF_SPA_001): Apache Kafka + Spark Streaming
@@ -59,7 +59,7 @@ responsibility:
 #### 2.2 技术规格文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **中期改进模块详细技术规格书** | 技术规| [SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md](./SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md) | 知识图谱、流式处理、多语言支持详细API接口 | 完成 |
+| **中期改进模块详细技术规格书** | 技术规| `SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md` | 知识图谱、流式处理、多语言支持详细API接口 | 完成 |
 
 ---
 
@@ -68,7 +68,7 @@ responsibility:
 
 | 文档名称 | 模块ID | 路径 | 说明 | 状态 |
 |---------|--------|------|------|------|
-| **长期改进综合蓝图** | - | [SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md) | 多模态分析、AI虚拟研究团队 | ✓ 完成 |
+| **长期改进综合蓝图** | - | `SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md` | 多模态分析、AI虚拟研究团队 | ✓ 完成 |
 
 **包含模块**:
 - **多模态分析模块** (AIWF_MMSA_001): 文本+图像+音频情感分析
@@ -76,35 +76,35 @@ responsibility:
 #### 3.2 技术规格文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **长期改进模块详细技术规格书** | 技术规| [SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md](./SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md) | 多模态分析、AI虚拟研究团队详细API接口 | 完成 |
+| **长期改进模块详细技术规格书** | 技术规| `SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md` | 多模态分析、AI虚拟研究团队详细API接口 | 完成 |
 
 ---
 
 ### 四、实施细节文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **实施细节文档** | 实施指南 | [SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md](./SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md) | 环境搭建、代码示例、配置文件、部署架构、数据库设计 | 完成 |
+| **实施细节文档** | 实施指南 | `SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md` | 环境搭建、代码示例、配置文件、部署架构、数据库设计 | 完成 |
 
 ---
 
 ### 五、测试计划文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **测试计划文档** | 测试文档 | [SENTIMENT_ANALYSIS_TEST_PLAN.md](./SENTIMENT_ANALYSIS_TEST_PLAN.md) | 测试策略、单元测试、集成测试、性能测试、验收测| 完成 |
+| **测试计划文档** | 测试文档 | `SENTIMENT_ANALYSIS_TEST_PLAN.md` | 测试策略、单元测试、集成测试、性能测试、验收测| 完成 |
 
 ---
 
 ### 六、风险管理文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **风险管理文档** | 风险管理 | [SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md](./SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md) | 风险识别、风险评估、缓解措施、应急预案、监控指| 完成 |
+| **风险管理文档** | 风险管理 | `SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md` | 风险识别、风险评估、缓解措施、应急预案、监控指| 完成 |
 
 ---
 
 ### 七、项目管理文
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **项目管理文档** | 项目管理 | [SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md](./SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md) | WBS工作分解、甘特图、里程碑计划、资源分配、进度跟| 完成 |
+| **项目管理文档** | 项目管理 | `SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md` | WBS工作分解、甘特图、里程碑计划、资源分配、进度跟| 完成 |
 
 ---
 
@@ -113,18 +113,18 @@ responsibility:
 
 | 文档名称 | 模块ID | 路径 | 说明 | 状|
 |---------|--------|------|------|------|
-| **数据质量与血缘管理模块蓝* | AIWF_DQLM_001 | [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md) | 数据质量评分、异常检测、数据血缘追| 完成 |
-| **模型性能与版本管理模块蓝* | AIWF_MPVM_001 | [MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md](./MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md) | 模型性能监控、漂移检测、模型版本管| 完成 |
+| **数据质量与血缘管理模块蓝* | AIWF_DQLM_001 | `DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md` | 数据质量评分、异常检测、数据血缘追| 完成 |
+| **模型性能与版本管理模块蓝* | AIWF_MPVM_001 | `MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md` | 模型性能监控、漂移检测、模型版本管| 完成 |
 
 #### 8.2 P1级模块（高优先级
 | 文档名称 | 模块ID | 路径 | 说明 | 状|
 |---------|--------|------|------|------|
-| **验证与测试框架蓝* | AIWF_VTF_001 | [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md) | A/B测试框架、回测验证、因子有效性验| 完成 |
+| **验证与测试框架蓝* | AIWF_VTF_001 | `VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md` | A/B测试框架、回测验证、因子有效性验| 完成 |
 
 #### 8.3 P2级模块（中优先级
 | 文档名称 | 模块ID | 路径 | 说明 | 状|
 |---------|--------|------|------|------|
-| **运维与知识管理模块蓝* | AIWF_OKM_001 | [OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md) | 性能优化、数据安全、知识管| 完成 |
+| **运维与知识管理模块蓝* | AIWF_OKM_001 | `OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md` | 性能优化、数据安全、知识管| 完成 |
 
 ---
 

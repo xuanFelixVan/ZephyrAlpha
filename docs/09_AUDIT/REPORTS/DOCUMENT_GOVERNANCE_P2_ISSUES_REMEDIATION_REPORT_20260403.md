@@ -215,7 +215,7 @@ applicable_scope: 全系统文档治理优?compliance_level: 专业标准
 ## 📚 相关文档
 
 ### 标准文档
-- [文档命名规范标准](../../01_FRAMEWORK/DOCUMENT_NAMING_STANDARD.md)
+- `文档命名规范标准`
 - 文档编号标准
 
 ### 审计报告

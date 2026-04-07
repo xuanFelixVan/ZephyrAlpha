@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
+
+
 **版本**: 1.0
 **更新**: 2026-03-28
 **Layer**: Layer 2 (Alpha因子计算)
@@ -7,6 +10,8 @@
 **上游接口**: FactorCalculator (M02), DataHub (M01)
 **下游接口**: FactorLibrary (M02.5), StrategyEngine (M03)
 
+responsibility:
+  - 定义测试规范
 ---
 
 ## 变更记录

@@ -1,6 +1,11 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_001
+
+
 > **注意**: 本文档是因子库的高层概述。如需详细的目录结构和文档列表，请查看 [INDEX.md](./INDEX.md)?
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

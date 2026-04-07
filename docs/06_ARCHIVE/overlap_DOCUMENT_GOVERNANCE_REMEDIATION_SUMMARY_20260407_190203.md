@@ -68,7 +68,7 @@ responsibility:
 
 
 
-**كخق╗حفّ**: [P0_ISSUES_REMEDIATION_REPORT.md](./P0_ISSUES_REMEDIATION_REPORT.md)
+**كخق╗حفّ**: `P0_ISSUES_REMEDIATION_REPORT.md`
 
 ---
 
@@ -86,7 +86,7 @@ responsibility:
 - ي┐?فّق░2غ╕زف╛قةكجللتء
 
 - ي┐?فّ╜فكدككخقؤقي┐?
-**كخق╗حفّ**: [P1_ISSUES_REMEDIATION_REPORT.md](./P1_ISSUES_REMEDIATION_REPORT.md)
+**كخق╗حفّ**: `P1_ISSUES_REMEDIATION_REPORT.md`
 
 ---
 
@@ -102,7 +102,7 @@ responsibility:
 - ي┐?Layerك┐░غ┐صثي┐?Layer 4 (║فآذفصخغ╣بي┐?"
 
 
-**كخق╗حفّ**: [P2_ISSUES_REMEDIATION_REPORT.md](./P2_ISSUES_REMEDIATION_REPORT.md)
+**كخق╗حفّ**: `P2_ISSUES_REMEDIATION_REPORT.md`
 
 ---
 

@@ -1,8 +1,13 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+
 **维护者**: 首席文档架构师
 **索引**: `DATA_ADAPTERS_001`
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

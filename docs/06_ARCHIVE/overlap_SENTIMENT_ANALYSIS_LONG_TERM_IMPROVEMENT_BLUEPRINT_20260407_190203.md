@@ -536,7 +536,7 @@ responsibility:
 
 | 文档 | 说明 |
 |------|------|
-| [中期改进蓝图](./SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md) | 中期改进模块 |
+| `中期改进蓝图` | 中期改进模块 |
 
 ---
 
@@ -551,7 +551,7 @@ responsibility:
 #### Layer 0: 系统架构
 ##### 0.001. Sentiment Analysis Long Term Blueprint
 - **模块ID**: SENTIMENT_ANALYSIS_LONG_TERM_BLUEPRINT_001
-- **蓝图文档**: [SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md)
+- **蓝图文档**: `SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md`
 - **技术规格书**: 待创建
 - **职责**: 舆情分析层长期改进模
 - **状态**: Active

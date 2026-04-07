@@ -1,5 +1,8 @@
 ---
 
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+
 ## 3. 分布分析
 
 ### 3.1 分位数分析
@@ -105,6 +108,8 @@ class DistributionFitter:
         }
 ```
 
+responsibility:
+  - 管理因子库
 ---
 
 ## 变更记录

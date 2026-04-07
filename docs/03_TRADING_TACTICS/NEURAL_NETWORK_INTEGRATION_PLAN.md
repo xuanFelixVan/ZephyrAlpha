@@ -37,7 +37,7 @@ responsibility:
 > **ﻝﮔ؛**: v1.0.0 (ﻛﺕﻛﺕﮔﭦﮔﻝ?
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 > **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02
-> **ﮒﺏﻟﻟﮒﺝ**: [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
+> **ﮒﺏﻟﻟﮒﺝ**: `BLUEPRINT.md`
 > **ﮒﺏﻟAIﮒ۱ﮒﺙﭦﻟﮒﺝ**: AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
 
 ---
