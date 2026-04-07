@@ -1165,11 +1165,11 @@ github-actions-runner>=2.0.0
 
 |---------|------|------|
 
-| [AI能力补充蓝图](./AI_CAPABILITY_GAP_BLUEPRINT.md) | `docs/01_FRAMEWORK/AI_CAPABILITY_GAP_BLUEPRINT.md` | AI能力总体规划 |
+| AI能力补充蓝图 | `docs/01_FRAMEWORK/AI_CAPABILITY_GAP_BLUEPRINT.md` | AI能力总体规划 |
 
-| [模型训练流水线](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md) | 模型训练流水?| 训练流程设计 |
+| 模型训练流水线 | 模型训练流水?| 训练流程设计 |
 
-| [模型服务架构](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md) | 模型服务架构 | 服务架构设计 |
+| 模型服务架构 | 模型服务架构 | 服务架构设计 |
 
 | [MLOps平台技术规格书](#) | MLOps平台技术规格书 | 详细技术设?|
 

@@ -217,7 +217,7 @@ responsibility:
 
 - [定期审计配置](PERIODIC_AUDIT_CONFIG.md)
 - [Windows任务计划配置](WINDOWS_TASK_SCHEDULER_CONFIG.md)
-- [文档治理最佳实践](../10_GOVERNANCE_COMPLIANCE/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
+- 文档治理最佳实践
 
 ---
 

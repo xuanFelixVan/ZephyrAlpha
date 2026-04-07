@@ -1,46 +1,4 @@
----
-module_id: REAL_TIME_ALERT_SYSTEM_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - REAL_TIME_ALERT_SYSTEM蓝图设计
----
-
 ﻿---
-module_id: AIWF_RTAS_001
-version: 1.0.1
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-04
-owner: 首席架构师
-layer: Layer 3 (舆情分析层)
-standard_type: 专业机构级蓝图
-applicable_scope: 舆情分析层专用预警模块
-compliance_level: 专业标准
-parent_document: INDEX.md
-implementation_status: 设计阶段
-related_documents:
-  upstream:
-    - 05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ENHANCED_ALERT_SYSTEM_BLUEPRINT.md (统一告警平台)
-  peer:
-    - SENTIMENT_ANALYZER_TECHNICAL_SPECIFICATION.md
-    - NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md
-responsibility_boundary: |
-  本文档职责: 舆情专用预警模块
-  
-  统一告警平台: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
-  - 接收所有子系统的告警（包括本模块）
-  - 提供告警聚合、抑制、路由、多渠道分发
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: 实时预警系统模块蓝图

@@ -207,12 +207,12 @@ applicable_scope: еЕз≥їзїЯжЦЗжж≤їзРЖдЉШеМ?compliance_le
 
 ### ж†ЗеЗЖжЦЗж
 - [жЦЗжеСљеРНиІДиМГж†ЗеЗЖ](../../01_FRAMEWORK/DOCUMENT_NAMING_STANDARD.md)
-- [жЦЗжзЉЦеПЈж†ЗеЗЖ](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
+- жЦЗжзЉЦеПЈж†ЗеЗЖ
 
 ### еЃиЃжК•еСК
-- [жЈеЇеЃиЃжК•еСК](09_AUDIT/REPORTS/DEEP_AUDIT_REPORT_20260403.md)
-- [P0жХіжФєжК•еСК](09_AUDIT/REPORTS/DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403.md)
-- [P0-P1жЬАзїИжК•еСК](09_AUDIT/REPORTS/DOCUMENT_GOVERNANCE_REMEDIATION_FINAL_REPORT_20260403.md)
+- жЈеЇеЃиЃжК•еСК
+- P0жХіжФєжК•еСК
+- P0-P1жЬАзїИжК•еСК
 - [P2йЧЃйҐШжХіжФєжК•еСК](./DOCUMENT_GOVERNANCE_P2_ISSUES_REMEDIATION_REPORT_20260403.md)
 
 ---

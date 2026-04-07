@@ -276,11 +276,11 @@ Phase 1 (Month 1-2): P1ч║зщгОщЩйф┐о?    ?Phase 2 (Month 3-4): P2ч
 | ф║дф╗Ш?| цЦЗф╗╢ш╖пх╛Д | чК?|
 |--------|---------|------|
 | **ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУОцКАцЬпшзДца╝ф╣ж** | ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md | ?х╖▓хоМ?|
-| **хЕихдйхАЩщЕНч╜оф╝ШхМЦхЩицКАцЬпшзДца╝ф╣ж** | [ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|
-| **цибхЮЛшонч╗Гц╡Бц░┤ч║┐цКАцЬпшзДца╝ф╣ж** | [MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|
-| **цибхЮЛцЬНхКбхМЦцЮ╢цЮДцКАцЬпшзДца╝ф╣ж** | [MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md) | ?х╖▓хоМ?|
-| **6ф╕кцЬИцКАцЬпц╝Фш┐Ыш╖пч║┐хЫ╛** | [TECHNICAL_EVOLUTION_ROADMAP.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/TECHNICAL_EVOLUTION_ROADMAP.md) | ?х╖▓хоМ?|
-| **ч╗╝хРИцКАцЬпшпДхобцКе?* | [COMPREHENSIVE_TECHNICAL_REVIEW_REPORT.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/COMPREHENSIVE_TECHNICAL_REVIEW_REPORT.md) | ?х╖▓хоМ?|
+| **хЕихдйхАЩщЕНч╜оф╝ШхМЦхЩицКАцЬпшзДца╝ф╣ж** | ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md | ?х╖▓хоМ?|
+| **цибхЮЛшонч╗Гц╡Бц░┤ч║┐цКАцЬпшзДца╝ф╣ж** | MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md | ?х╖▓хоМ?|
+| **цибхЮЛцЬНхКбхМЦцЮ╢цЮДцКАцЬпшзДца╝ф╣ж** | MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md | ?х╖▓хоМ?|
+| **6ф╕кцЬИцКАцЬпц╝Фш┐Ыш╖пч║┐хЫ╛** | TECHNICAL_EVOLUTION_ROADMAP.md | ?х╖▓хоМ?|
+| **ч╗╝хРИцКАцЬпшпДхобцКе?* | COMPREHENSIVE_TECHNICAL_REVIEW_REPORT.md | ?х╖▓хоМ?|
 
 ### 9.2 х╛ЕхоМцИРф║дф╗ШчЙй тЪая╕П
 

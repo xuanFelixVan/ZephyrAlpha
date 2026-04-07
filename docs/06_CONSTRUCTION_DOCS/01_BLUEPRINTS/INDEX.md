@@ -53,7 +53,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [A Stock Data Processing Blueprint](06_CONSTRUCTION_DOCS/01_BLUEPRINTS/A_STOCK_DATA_PROCESSING_BLUEPRINT.md) - `A_001`
+- A Stock Data Processing Blueprint - `A_001`
 
 ---
 

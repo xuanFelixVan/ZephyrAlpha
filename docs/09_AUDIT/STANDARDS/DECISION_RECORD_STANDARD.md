@@ -326,8 +326,8 @@ docs/
 ---
 
 ## 11. ﮒﻟﮔﮔ۰?
-- [ﮒﺏﻝﻟ؟ﺍﮒﺛﮔ۷۰ﮔﺟ](09_AUDIT/TEMPLATES/DECISION_RECORD_TEMPLATE.md)
-- [ﮒﺏﻝﻟ؟ﺍﮒﺛﻝﺑ۱ﮒﺙ](API_README.md)
+- ﮒﺏﻝﻟ؟ﺍﮒﺛﮔ۷۰ﮔﺟ
+- ﮒﺏﻝﻟ؟ﺍﮒﺛﻝﺑ۱ﮒﺙ
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

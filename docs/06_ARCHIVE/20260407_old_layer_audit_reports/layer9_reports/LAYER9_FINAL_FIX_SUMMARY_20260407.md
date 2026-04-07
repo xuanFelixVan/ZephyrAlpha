@@ -219,8 +219,8 @@ version: 1.0.0
 
 ### 7.1 审计报告
 
-- [Layer 9全面审计报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer9_reports/LAYER9_COMPREHENSIVE_AUDIT_REPORT_20260407.md)
-- [Layer 9问题修复报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer9_reports/LAYER9_ISSUE_FIX_REPORT_20260407.md)
+- Layer 9全面审计报告
+- Layer 9问题修复报告
 
 ### 7.2 修复工具
 

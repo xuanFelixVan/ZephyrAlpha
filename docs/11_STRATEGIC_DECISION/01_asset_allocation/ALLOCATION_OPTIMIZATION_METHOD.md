@@ -665,7 +665,7 @@ w = port.rp_optimization(model='Classic', rm='MV', rf=0.02)
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11总览蓝图 |
+| BLUEPRINT.md | Layer 11总览蓝图 |
 | [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](../OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | 开源集成蓝图 |
 | [PyPortfolioOpt文档](https://pyportfolioopt.readthedocs.io/) | PyPortfolioOpt官方文档 |
 | [Riskfolio-Lib文档](https://riskfolio-lib.readthedocs.io/) | Riskfolio-Lib官方文档 |

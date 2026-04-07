@@ -53,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](API_README.md) - `RESEARCH_ENV_README_001`
-- [Docker Setup](07_RESEARCH/01_ENVIRONMENT/docker_setup.md) - `RESEARCH_DOCKER_SETUP_001`
+- Readme - `RESEARCH_ENV_README_001`
+- Docker Setup - `RESEARCH_DOCKER_SETUP_001`
 
 ---
 

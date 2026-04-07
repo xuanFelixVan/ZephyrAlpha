@@ -89,7 +89,7 @@ Move-Item "docs\06_ARCHIVE\duplicate_documents\20260403_layer7_audit\STRESS_TEST
 ---
 
 ## ίχκϋχκόΛξίΣΛίΠΓΎ┐╜?
-ϋψού╗ΗίχκϋχκόΛξίΣΛ: [LAYER7_DEEP_AUDIT_REPORT_20260403.md](09_AUDIT/REPORTS/DEEP_AUDIT_REPORT_20260403.md)
+ϋψού╗ΗίχκϋχκόΛξίΣΛ: LAYER7_DEEP_AUDIT_REPORT_20260403.md
 
 ---
 

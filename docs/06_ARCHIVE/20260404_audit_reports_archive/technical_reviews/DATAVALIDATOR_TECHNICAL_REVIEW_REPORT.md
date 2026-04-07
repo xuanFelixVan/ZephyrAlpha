@@ -47,7 +47,7 @@ responsibility:
 - **模块ID**: PREP_VAL_001
 - **所属Layer**: Layer 1 - 数据预处理层
 - **模块类别**: 核心数据质量保障模块
-- **技术规格书**: [DATAVALIDATOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATAVALIDATOR_TECHNICAL_SPECIFICATION.md)
+- **技术规格书**: DATAVALIDATOR_TECHNICAL_SPECIFICATION.md
 
 ### 1.2 评审信息
 - **评审日期**: 2026-04-02

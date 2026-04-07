@@ -342,7 +342,7 @@ result = interface.method()
 
 ## 9. ﮒﻟﮔﮔ۰?
 - [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗﻟ۶ﻟ](09_AUDIT/STANDARDS/MODULE_INTERFACE_SPECIFICATION.md)
+- ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗﻟ۶ﻟ
 
 ---
 

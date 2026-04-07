@@ -33,7 +33,7 @@ implementation_status: ти▓тї?---
 
 > **С╝ўтїќТЌЦТюЪ**: 2026-04-03
 > **С╝ўтїќУїЃтЏ┤**: docs/02_FACTOR_LIBRARY/
-> **С╝ўтїќСЙЮТЇ**: [LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md)
+> **С╝ўтїќСЙЮТЇ**: LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V2.md
 > **С╝ўтїќуЏТаЄ**: ТХѕжЎцжЄЇтцЇтєЁт╣сђЂТўјуАУЂїУ┤БУЙ╣уЋїсђЂС╝ўтїќТќЄТАБу╗Њ?---
 
 
@@ -67,7 +67,7 @@ implementation_status: ти▓тї?---
 - 6СИфу┤бт╝ЋТќЄТАБтєЁт╣жФўт║джЄЇ?- README.mdсђЂINDEX.mdсђЂSITEMAP.md?0_INDEX/README.mdУЂїУ┤БСИЇТИЁ
 - ућеТѕит╝УѕфтЏ░жџЙ№╝їСИЇуЪЦжЂЊС╗јтЊфжЄїт╝ђ?
 **С╝ўтїќТјфТќй**:
-1. ?уђ?[README.md](API_README.md) СИ║жФўт▒ѓТдѓ?   - УЂџуёдТаИт┐ЃС╗итђ╝сђЂт┐ФжђЪт╝ђтДІсђЂТеАтЮЌТдѓ?   - уД╗жЎцтєЌСйЎуџёуЏтйЋу╗ЊТъёу╗є?2. ?тѕажЎцтєЌСйЎу┤бт╝ЋТќЄТАБ
+1. ?уђ?README.md СИ║жФўт▒ѓТдѓ?   - УЂџуёдТаИт┐ЃС╗итђ╝сђЂт┐ФжђЪт╝ђтДІсђЂТеАтЮЌТдѓ?   - уД╗жЎцтєЌСйЎуџёуЏтйЋу╗ЊТъёу╗є?2. ?тѕажЎцтєЌСйЎу┤бт╝ЋТќЄТАБ
 - тѕажЎц `00_INDEX/README.md`№╝ѕСИјINDEX.mdжЄЇтцЇ?   - С┐ЮуЋЎ `INDEX.md` СйюСИ║Уду╗єуЏтйЋу┤бт╝Ћ
    - С┐ЮуЋЎ `SITEMAP.md` СйюСИ║ТќЄТАБтю░тЏЙ
 
@@ -279,8 +279,8 @@ implementation_status: ти▓тї?---
 | 18:35 | уД╗тіеу│╗у╗ЪТИЁтЇЋ | System_Manifest.md | ?ти▓уД╗?|
 
 ### B. тЈѓУђЃТаЄтЄєТќЄ?
-- [СИЊСИџТќЄТАБТ▓╗уљєтАУАТїЄтЇЌ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [ТќЄТАБТ▓╗уљєтАУАТБђТЪЦТИЁтЇЋ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- СИЊСИџТќЄТАБТ▓╗уљєтАУАТїЄтЇЌ
+- ТќЄТАБТ▓╗уљєтАУАТБђТЪЦТИЁтЇЋ
 - тАУАУ┤ежЄЈТаЄтЄєv5.3
 
 ### C. ТюУГ?

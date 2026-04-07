@@ -2989,8 +2989,8 @@ graph TD
 | **校验报告** | 数据校验结果的详细报?|
 
 ### B. 参考资?
-1. [清风量化系统架构文档](01_FRAMEWORK/ARCHITECTURE.md)
-2. [模块职责边界定义](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+1. 清风量化系统架构文档
+2. 模块职责边界定义
 3. [数据质量管理系统设计最佳实践]
 4. [Pandas官方文档](https://pandas.pydata.org/docs/)
 5. [Scikit-learn官方文档](https://scikit-learn.org/stable/)

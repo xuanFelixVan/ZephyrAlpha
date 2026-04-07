@@ -314,9 +314,9 @@ annual_return = ep.annual_return(returns)
 
 ### 6.1 核心索引文档
 
-> **整体架构设计**: [../BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
-> **蓝图索引导航**: [../BLUEPRINT_INDEX.md](11_STRATEGIC_DECISION/BLUEPRINT_INDEX.md)
-> **完整模块清单**: [../COMPLETE_BLUEPRINT_OVERVIEW.md](11_STRATEGIC_DECISION/COMPLETE_BLUEPRINT_OVERVIEW.md)
+> **整体架构设计**: ../BLUEPRINT.md
+> **蓝图索引导航**: ../BLUEPRINT_INDEX.md
+> **完整模块清单**: ../COMPLETE_BLUEPRINT_OVERVIEW.md
 
 ### 6.2 相关模块文档
 

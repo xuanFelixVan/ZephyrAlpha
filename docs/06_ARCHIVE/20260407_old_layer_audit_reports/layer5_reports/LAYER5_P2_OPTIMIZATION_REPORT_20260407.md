@@ -52,8 +52,8 @@ version: 1.0.0
 - optimized_responsibility_generator.py - 优化后的职责描述生成工具
 
 **生成报告**:
-- [职责描述相似度分析报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
-- [优化后的职责描述生成结果](05_IMPLEMENTATION/07_OPERATIONS/audit_state/OPTIMIZED_RESPONSIBILITIES_20260407.md)
+- 职责描述相似度分析报告
+- 优化后的职责描述生成结果
 
 ### 2.2 分析发现
 
@@ -279,8 +279,8 @@ version: 1.0.0
 
 ### 7.1 实施报告
 
-- [职责描述相似度分析报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/RESPONSIBILITY_SIMILARITY_ANALYSIS_20260407.md)
-- [优化后的职责描述生成结果](05_IMPLEMENTATION/07_OPERATIONS/audit_state/OPTIMIZED_RESPONSIBILITIES_20260407.md)
+- 职责描述相似度分析报告
+- 优化后的职责描述生成结果
 
 ### 7.2 实施工具
 
@@ -290,8 +290,8 @@ version: 1.0.0
 
 ### 7.3 参考标准
 
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 - 审计质量标准v5.1
 
 ---

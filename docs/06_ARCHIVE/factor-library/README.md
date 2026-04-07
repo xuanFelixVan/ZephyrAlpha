@@ -69,5 +69,5 @@ implementation_status: 进行?---
 
 | 文档 | 路径 | 说明 |
 |------|------|------|
-| 主归档索?| [../README.md](API_README.md) | 统一归档索引 |
-| 因子库索?| [../../factor-library/00_INDEX/README.md](API_README.md) | 当前有效文档 |
+| 主归档索?| ../README.md | 统一归档索引 |
+| 因子库索?| ../../factor-library/00_INDEX/README.md | 当前有效文档 |

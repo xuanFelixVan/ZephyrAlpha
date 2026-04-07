@@ -291,8 +291,8 @@ ZephyrAlphaﻝﺏﭨﻝﭨﻠﻝ۷9ﻛﺕ۹ﻛﺕﻝﭦ۶ﮒﻝﺎﭨﻝ؟ﮒﺛ
 ---
 
 ## 9. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [ﮔﮔ۰۲ﮔ۷۰ﮔﺟ](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ
+- ﮔﮔ۰۲ﮔ۷۰ﮔﺟ
 - [ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 ---

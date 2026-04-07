@@ -53,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Factor Case Library](08_KNOWLEDGE/FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md) - `FACTOR_CASE_LIBRARY_001`
-- [Momentum Factor Library](08_KNOWLEDGE/FACTOR_LIBRARY/MOMENTUM_FACTOR_LIBRARY.md) - `MOMENTUM_FACTOR_LIBRARY`
+- Factor Case Library - `FACTOR_CASE_LIBRARY_001`
+- Momentum Factor Library - `MOMENTUM_FACTOR_LIBRARY`
 
 ---
 

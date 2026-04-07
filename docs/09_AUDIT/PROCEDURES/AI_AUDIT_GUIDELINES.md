@@ -82,9 +82,9 @@ implementation_status: 进行?---
 ### 2.1 必读核心文档
 
 **第一阶段（系统理解）**:
-1. **[System_Manifest.md](System_Manifest.md)** - 系统清单?5分钟?   - 重点: 物理架构、模块映射、接口版?2. **[BLUEPRINT.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)** - 系统蓝图?0分钟?   - 重点: 设计理念、架构层次、发展路?
+1. **System_Manifest.md** - 系统清单?5分钟?   - 重点: 物理架构、模块映射、接口版?2. **[BLUEPRINT.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)** - 系统蓝图?0分钟?   - 重点: 设计理念、架构层次、发展路?
 **第二阶段（审计体系）**:
-1. **[AUDIT_STANDARDS.md](09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)** - 审计标准?0分钟?   - 重点: 质量标准矩阵、验收标?2. **[INDEX_AUDIT.md](09_AUDIT/INDEX_AUDIT.md)** - 审计门户?分钟?   - 重点: 审计类型选择、资源导?
+1. **AUDIT_STANDARDS.md** - 审计标准?0分钟?   - 重点: 质量标准矩阵、验收标?2. **INDEX_AUDIT.md** - 审计门户?分钟?   - 重点: 审计类型选择、资源导?
 ### 2.2 系统架构关键理解?
 **Layer 0-11架构理解**:
 - **Layer 0-2**: 数据层（数据获取、清洗、存储）
@@ -273,7 +273,7 @@ for file in sample_files:
 3. **工具链高?*: 自动化工具支持，减少人工操作
 4. **报告可操?*: 提供具体修复建议和优先级排序
 
-**详细框架文档**: [大规模文件系统深度审计框架](09_AUDIT/MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md)
+**详细框架文档**: 大规模文件系统深度审计框架
 
 
 ## 📊 报告生成阶段?0分钟?

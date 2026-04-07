@@ -214,7 +214,7 @@ last_updated: 2026-04-02
 **╣ك┐ؤز╜**:
 ---
 
-- [لثلآرقةقةئ╢](09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
+- لثلآرقةقةئ╢
 - [لثلآرغ║غ╗╢ك░ف╜ـذةإ┐](./RISK_EVENT_TEMPLATE.md)
 
 ---

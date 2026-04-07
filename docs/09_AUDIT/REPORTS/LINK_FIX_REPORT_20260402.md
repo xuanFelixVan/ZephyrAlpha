@@ -202,16 +202,16 @@ last_updated: 2026-04-02
 
 ύν║ϊ╛Μ:
 ```markdown
-ϊ┐χίνΞίΚ? [όΨΘόκμ](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
-ϊ┐χίνΞίΡ? [όΨΘόκμ](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+ϊ┐χίνΞίΚ? όΨΘόκμ
+ϊ┐χίνΞίΡ? όΨΘόκμ
 ```
 
 **ύ▒╗ίηΜ3: file:///όι╝ί╝Π**
 
 ύν║ϊ╛Μ:
 ```markdown
-ϊ┐χίνΞίΚ? [όΨΘόκμ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-ϊ┐χίνΞίΡ? [όΨΘόκμ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+ϊ┐χίνΞίΚ? όΨΘόκμ
+ϊ┐χίνΞίΡ? όΨΘόκμ
 ```
 
 **ύ▒╗ίηΜ4: ίΞιϊ╜ΞύυοώΥ╛όΟ?*

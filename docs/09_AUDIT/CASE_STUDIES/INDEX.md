@@ -53,7 +53,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Document Governance Improvement Cases](09_AUDIT/CASE_STUDIES/DOCUMENT_GOVERNANCE_IMPROVEMENT_CASES.md) - `DOC_GOVERNANCE_IMPROVEMENT_CASES`
+- Document Governance Improvement Cases - `DOC_GOVERNANCE_IMPROVEMENT_CASES`
 
 ---
 

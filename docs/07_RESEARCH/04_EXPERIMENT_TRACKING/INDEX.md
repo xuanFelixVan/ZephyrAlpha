@@ -55,8 +55,8 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [Blueprint](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - `BLUEPRINT_005`
-- [Experiment Tracking](07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md) - `RESEARCH_EXP_TRACKING_SUB_001`
+- Blueprint - `BLUEPRINT_005`
+- Experiment Tracking - `RESEARCH_EXP_TRACKING_SUB_001`
 
 ---
 

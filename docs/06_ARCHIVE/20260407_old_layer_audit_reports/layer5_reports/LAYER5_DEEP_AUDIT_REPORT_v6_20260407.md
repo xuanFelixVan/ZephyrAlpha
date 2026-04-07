@@ -283,10 +283,10 @@ version: 6.0.0
 
 ### 8.1 审计报告
 
-- [Layer 5深度审计报告v4.0](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_DEEP_AUDIT_REPORT_v4_20260407.md)
-- [Layer 5职责描述修复报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_RESPONSIBILITY_FIX_REPORT_20260407.md)
-- [Layer 5 P1级改进总结报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_P1_IMPROVEMENT_REPORT_20260407.md)
-- [Layer 5 P2级长期优化实施报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_P2_OPTIMIZATION_REPORT_20260407.md)
+- Layer 5深度审计报告v4.0
+- Layer 5职责描述修复报告
+- Layer 5 P1级改进总结报告
+- Layer 5 P2级长期优化实施报告
 
 ### 8.2 审计工具
 
@@ -298,8 +298,8 @@ version: 6.0.0
 
 ### 8.3 参考标准
 
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 - 审计质量标准v5.1
 
 ---

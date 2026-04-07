@@ -55,12 +55,12 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [L9 Anomaly Detector](06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_ANOMALY_DETECTOR.md) - `ARCHIVE_L9_ANOMALY_DETECTOR_001`
-- [L9 Factor Miner](06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_FACTOR_MINER.md) - `ARCHIVE_L9_FACTOR_MINER_001`
-- [L9 Feature Optimizer](06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_FEATURE_OPTIMIZER.md) - `ARCHIVE_L9_FEATURE_OPT_001`
-- [L9 Hyperparam Opt](06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_HYPERPARAM_OPT.md) - `ARCHIVE_L9_HYPERPARAM_OPT_001`
-- [L9 Market Detector](06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_MARKET_DETECTOR.md) - `ARCHIVE_L9_MARKET_DETECTOR_001`
-- [L9 Model Ensembler](06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_MODEL_ENSEMBLER.md) - `ARCHIVE_L9_MODEL_ENSEMBLER_001`
+- L9 Anomaly Detector - `ARCHIVE_L9_ANOMALY_DETECTOR_001`
+- L9 Factor Miner - `ARCHIVE_L9_FACTOR_MINER_001`
+- L9 Feature Optimizer - `ARCHIVE_L9_FEATURE_OPT_001`
+- L9 Hyperparam Opt - `ARCHIVE_L9_HYPERPARAM_OPT_001`
+- L9 Market Detector - `ARCHIVE_L9_MARKET_DETECTOR_001`
+- L9 Model Ensembler - `ARCHIVE_L9_MODEL_ENSEMBLER_001`
 
 ---
 

@@ -421,8 +421,8 @@ responsibility:
 
 ## 🔗 相关文档
 
-- [统一架构 (Layer 0-11)](01_FRAMEWORK/ARCHITECTURE.md)
-- [模块职责边界](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- 统一架构 (Layer 0-11)
+- 模块职责边界
 - 文档治理标准
 
 ---

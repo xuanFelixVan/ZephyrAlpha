@@ -265,7 +265,7 @@ python scripts/continuous_monitor.py --once
 ### 8.1 相关文档
 
 - Layer 4深度审计报告v3
-- [持续监控配置指南](09_AUDIT/AUTOMATION/CONTINUOUS_MONITORING_CONFIG.md)
+- 持续监控配置指南
 - P0和P1修复日志
 
 ### 8.2 脚本列表

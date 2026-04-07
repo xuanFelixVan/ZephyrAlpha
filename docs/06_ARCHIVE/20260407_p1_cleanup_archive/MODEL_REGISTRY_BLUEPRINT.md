@@ -502,9 +502,9 @@ class ModelDeployment:
 
 | 文档 | 说明 |
 |------|------|
-| [MACHINE_LEARNING_LAYER_BLUEPRINT.md](./MACHINE_LEARNING_LAYER_BLUEPRINT.md) | 机器学习层蓝图 |
-| [MODEL_VERSIONING_BLUEPRINT.md](./MODEL_VERSIONING_BLUEPRINT.md) | 模型版本管理蓝图 |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
+| MACHINE_LEARNING_LAYER_BLUEPRINT.md | 机器学习层蓝图 |
+| MODEL_VERSIONING_BLUEPRINT.md | 模型版本管理蓝图 |
+| ARCHITECTURE.md | 系统架构文档 |
 
 ---
 

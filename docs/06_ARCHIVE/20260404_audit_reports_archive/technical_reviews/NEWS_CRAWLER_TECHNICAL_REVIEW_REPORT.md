@@ -47,7 +47,7 @@ responsibility:
 - **模块ID**: NEWS_CRAWLER_001
 - **所属Layer**: Layer 3 - 舆情分析?
 - **模块类别**: 核心数据采集模块
-- **技术规格书**: [NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md)
+- **技术规格书**: NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md
 
 ### 1.2 评审信息
 - **评审日期**: 2026-04-02

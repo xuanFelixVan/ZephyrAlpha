@@ -395,10 +395,10 @@ implementation_status: ш┐ЫшбМ?
 ### 8.1 цЦЗцбгч┤вх╝Х
 
 **цЬмцЦЗцбгхЬич│╗ч╗Яф╕нчЪДф╜Нч╜о**:
-- **чИ╢цЦЗ?*: [DATA_PREPROCESSING_IMPROVEMENT_PLAN.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATA_PREPROCESSING_IMPROVEMENT_PLAN.md)
+- **чИ╢цЦЗ?*: DATA_PREPROCESSING_IMPROVEMENT_PLAN.md
 - **хЕ│шБФцЦЗцбг**:
-  - [LAYER1_GAP_ANALYSIS_REPORT.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/GAP_ANALYSIS_REPORT.md)
-  - [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md)
+  - LAYER1_GAP_ANALYSIS_REPORT.md
+  - ARCHITECTURE.md
 
 ### 8.2 чЙИцЬмчобчРЖ
 

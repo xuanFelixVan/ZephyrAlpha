@@ -298,8 +298,8 @@ responsibility:
 ### 9.2 相关文档
 
 - 审计标准v5.1
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- 文档治理审计检查清单
+- 专业文档治理审计指南
 
 ### 9.3 修复脚本
 

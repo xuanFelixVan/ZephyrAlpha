@@ -130,8 +130,8 @@ python scripts/metadata_enhancer.py --validate
 ---
 
 ## 6. тЈѓУђЃТќЄТА?
-- [тЁЃТЋ░ТЇтбът╝║тиЦтЁиТіђТюУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
-- [ТќЄТАБТеАТЮ┐](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
+- тЁЃТЋ░ТЇтбът╝║тиЦтЁиТіђТюУДёУїЃ
+- ТќЄТАБТеАТЮ┐
 
 ---
 

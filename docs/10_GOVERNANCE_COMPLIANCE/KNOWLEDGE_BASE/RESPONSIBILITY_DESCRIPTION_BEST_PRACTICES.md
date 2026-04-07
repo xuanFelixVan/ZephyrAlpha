@@ -511,9 +511,9 @@ python scripts/responsibility_format_validator.py
 ### 6.2 参考资源
 
 **内部资源**:
-- [职责审查机制](10_GOVERNANCE_COMPLIANCE/RESPONSIBILITY_REVIEW_MECHANISM.md)
-- [文档结构标准](10_GOVERNANCE_COMPLIANCE/DOCUMENT_STRUCTURE_STANDARD.md)
-- [相似度阈值优化](10_GOVERNANCE_COMPLIANCE/SIMILARITY_THRESHOLD_OPTIMIZATION.md)
+- 职责审查机制
+- 文档结构标准
+- 相似度阈值优化
 
 **外部资源**:
 - 专业量化机构文档标准

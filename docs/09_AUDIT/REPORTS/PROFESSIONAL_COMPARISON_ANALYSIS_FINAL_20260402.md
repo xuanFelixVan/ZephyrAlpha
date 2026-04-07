@@ -385,11 +385,11 @@ tags: ["ίψ╣όψΦίΙΗόηΡ", "ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕ", "
 
 ## 8. ίΠΓϋΑΔόΨΘόκ?
 ### 8.1 ί╖▓ίΙδί╗║όΨΘόκ?
-- [ύιΦύσ╢ίνΘί┐αί╜ΧίΙ╢ί║οόιΘίΘΗ](09_AUDIT/STANDARDS/RESEARCH_MEMO_STANDARD.md)
-- [ίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ](09_AUDIT/STANDARDS/DECISION_RECORD_STANDARD.md)
-- [όη╢όηΕίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ](09_AUDIT/STANDARDS/ADR_STANDARD.md)
-- [όρκίζΩόΟξίΠμίχγϊ╣ΚϋπΕϋΝΔ](09_AUDIT/STANDARDS/MODULE_INTERFACE_SPECIFICATION.md)
-- [ώμΟώβσύχκύΡΗόκΗόη╢](09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
+- ύιΦύσ╢ίνΘί┐αί╜ΧίΙ╢ί║οόιΘίΘΗ
+- ίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ
+- όη╢όηΕίΗ│ύφΨϋχ░ί╜ΧίΙ╢ί║οόιΘίΘΗ
+- όρκίζΩόΟξίΠμίχγϊ╣ΚϋπΕϋΝΔ
+- ώμΟώβσύχκύΡΗόκΗόη╢
 
 ### 8.2 όΦ╣ϋ┐δόΛξίΣΛ
 

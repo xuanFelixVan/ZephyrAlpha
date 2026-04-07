@@ -25,9 +25,9 @@ applicable_scope: 技术知识库
 
 | 知识ID | 知识名称 | 描述 | 状态 |
 |--------|---------|------|------|
-| **TK_ARCH_001** | [系统架构设计原则](ARCHITECTURE/SYSTEM_ARCHITECTURE_PRINCIPLES.md) | 系统架构设计的基本原则和最佳实践 | ✅ 已创建 |
-| **TK_ARCH_002** | [微服务架构设计](ARCHITECTURE/MICROSERVICE_ARCHITECTURE.md) | 微服务架构的设计模式和实施方法 | ✅ 已创建 |
-| **TK_ARCH_003** | [数据架构设计](ARCHITECTURE/DATA_ARCHITECTURE.md) | 数据架构的设计原则和实施策略 | ✅ 已创建 |
+| **TK_ARCH_001** | 系统架构设计原则 | 系统架构设计的基本原则和最佳实践 | ✅ 已创建 |
+| **TK_ARCH_002** | 微服务架构设计 | 微服务架构的设计模式和实施方法 | ✅ 已创建 |
+| **TK_ARCH_003** | 数据架构设计 | 数据架构的设计原则和实施策略 | ✅ 已创建 |
 
 ---
 
@@ -35,9 +35,9 @@ applicable_scope: 技术知识库
 
 | 知识ID | 知识名称 | 描述 | 状态 |
 |--------|---------|------|------|
-| **TK_ALGO_001** | [因子计算算法](ALGORITHMS/FACTOR_CALCULATION_ALGORITHMS.md) | 因子计算的核心算法和优化方法 | ✅ 已创建 |
-| **TK_ALGO_002** | [组合优化算法](ALGORITHMS/PORTFOLIO_OPTIMIZATION_ALGORITHMS.md) | 投资组合优化的算法和实现 | ✅ 已创建 |
-| **TK_ALGO_003** | [风险模型算法](ALGORITHMS/RISK_MODEL_ALGORITHMS.md) | 风险模型的构建和计算方法 | ✅ 已创建 |
+| **TK_ALGO_001** | 因子计算算法 | 因子计算的核心算法和优化方法 | ✅ 已创建 |
+| **TK_ALGO_002** | 组合优化算法 | 投资组合优化的算法和实现 | ✅ 已创建 |
+| **TK_ALGO_003** | 风险模型算法 | 风险模型的构建和计算方法 | ✅ 已创建 |
 
 ---
 
@@ -45,9 +45,9 @@ applicable_scope: 技术知识库
 
 | 知识ID | 知识名称 | 描述 | 状态 |
 |--------|---------|------|------|
-| **TK_BEST_001** | [代码规范最佳实践](BEST_PRACTICES/CODING_STANDARDS.md) | 代码编写的规范和最佳实践 | ✅ 已创建 |
-| **TK_BEST_002** | [测试最佳实践](BEST_PRACTICES/TESTING_BEST_PRACTICES.md) | 软件测试的最佳实践和方法 | ✅ 已创建 |
-| **TK_BEST_003** | [性能优化最佳实践](BEST_PRACTICES/PERFORMANCE_OPTIMIZATION.md) | 系统性能优化的最佳实践 | ✅ 已创建 |
+| **TK_BEST_001** | 代码规范最佳实践 | 代码编写的规范和最佳实践 | ✅ 已创建 |
+| **TK_BEST_002** | 测试最佳实践 | 软件测试的最佳实践和方法 | ✅ 已创建 |
+| **TK_BEST_003** | 性能优化最佳实践 | 系统性能优化的最佳实践 | ✅ 已创建 |
 
 ---
 
@@ -55,7 +55,7 @@ applicable_scope: 技术知识库
 
 | 知识ID | 知识名称 | 描述 | 状态 |
 |--------|---------|------|------|
-| **TK_SPEC_001** | [API设计规范](TECHNICAL_SPECS/API_DESIGN_SPECIFICATIONS.md) | API接口设计的规范和标准 | ✅ 已创建 |
+| **TK_SPEC_001** | API设计规范 | API接口设计的规范和标准 | ✅ 已创建 |
 
 ---
 
@@ -95,9 +95,9 @@ applicable_scope: 技术知识库
 ## 🔗 相关文档
 
 - [知识库总索引](../INDEX.md)
-- [业务知识库索引](../02_BUSINESS_KNOWLEDGE/INDEX.md)
-- [运维知识库索引](../03_OPERATIONS_KNOWLEDGE/INDEX.md)
-- [管理知识库索引](../04_MANAGEMENT_KNOWLEDGE/INDEX.md)
+- 业务知识库索引
+- 运维知识库索引
+- 管理知识库索引
 
 ---
 

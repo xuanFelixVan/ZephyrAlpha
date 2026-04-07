@@ -55,9 +55,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [L1 Cleaner](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md) - `ARCHIVE_L1_CLEANER_001`
-- [L1 Normalizer](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_NORMALIZER.md) - `ARCHIVE_L1_NORMALIZER_001`
-- [L1 Validator](06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md) - `ARCHIVE_L1_VALIDATOR_001`
+- L1 Cleaner - `ARCHIVE_L1_CLEANER_001`
+- L1 Normalizer - `ARCHIVE_L1_NORMALIZER_001`
+- L1 Validator - `ARCHIVE_L1_VALIDATOR_001`
 
 ---
 

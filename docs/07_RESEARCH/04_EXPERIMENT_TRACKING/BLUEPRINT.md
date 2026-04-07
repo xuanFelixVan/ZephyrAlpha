@@ -298,7 +298,7 @@ with mlflow.start_run():
 #### Layer 0: 系统架构
 ##### 0.001. Research Blueprint
 - **模块ID**: RESEARCH_BLUEPRINT_001
-- **蓝图文档**: [BLUEPRINT.md](07_RESEARCH\04_EXPERIMENT_TRACKING\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 - **状态**: Active

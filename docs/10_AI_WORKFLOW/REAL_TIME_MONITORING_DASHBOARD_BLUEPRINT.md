@@ -1,35 +1,4 @@
----
-module_id: REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - REAL_TIME_MONITORING_DASHBOARD蓝图设计
----
-
 ﻿---
-module_id: AIWF_RMD_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-05
-last_updated: 2026-04-05
-owner: 首席架构师
-standard_type: 专业机构级蓝图
-applicable_scope: 实时监控仪表盘模块
-compliance_level: 专业标准
-parent_document: INDEX.md
-layer: Layer 3 (舆情分析层)
-priority: P0
-estimated_effort: 30h
-responsibility:
-  - 系统监控架构设计与实施方案与实施指导
-
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: 实时监控仪表盘模块蓝图

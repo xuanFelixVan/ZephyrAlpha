@@ -226,8 +226,8 @@ git commit -m "fix: 删除重复的归档标记文?
 
 ### B. 参考标准文?
 - 审计质量标准v5.1
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 
 ### C. 术语?
 | 术语 | 定义 |

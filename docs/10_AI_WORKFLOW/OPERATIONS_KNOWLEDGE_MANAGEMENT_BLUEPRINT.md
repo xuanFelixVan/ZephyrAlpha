@@ -1,40 +1,4 @@
----
-module_id: OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - OPERATIONS_KNOWLEDGE_MANAGEMENT蓝图设计
----
-
 ﻿---
-module_id: AIWF_OKM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-04
-owner: 首席架构师
-standard_type: 专业机构级蓝图
-applicable_scope: 运维与知识管理模块
-compliance_level: 专业标准
-parent_document: INDEX.md
-layer: Layer 7 (AI报告层)
-priority: P2
-estimated_effort: 70h
-integrated_modules:
-  - AIWF_CAM_001
-  - AIWF_DSM_001
-  - AIWF_POM_001
-  - AIWF_KMM_001
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: 运维知识管理模块蓝图

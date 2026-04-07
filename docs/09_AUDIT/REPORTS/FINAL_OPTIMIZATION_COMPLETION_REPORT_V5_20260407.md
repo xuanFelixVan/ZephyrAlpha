@@ -240,7 +240,7 @@ standard_type: 专业量化机构文档
 
 | 报告名称 | 用途 | 路径 |
 |----------|------|------|
-| [FINAL_OPTIMIZATION_COMPLETION_REPORT_V4_20260407.md](09_AUDIT/REPORTS/FINAL_OPTIMIZATION_COMPLETION_REPORT_V4_20260407.md) | L3+L1最终修复报告 | docs/09_AUDIT/REPORTS/ |
+| FINAL_OPTIMIZATION_COMPLETION_REPORT_V4_20260407.md | L3+L1最终修复报告 | docs/09_AUDIT/REPORTS/ |
 | comprehensive_deep_audit_20260407_132711.json | 最终审计数据 | docs/09_AUDIT/STATE/ |
 
 ---

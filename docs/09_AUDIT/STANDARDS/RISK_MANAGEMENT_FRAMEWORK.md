@@ -253,7 +253,7 @@ RISK_LIMITS = {
 
 ---
 
-- [لثلآرغ║غ╗╢ك░ف╜ـذةإ┐](09_AUDIT/TEMPLATES/RISK_EVENT_TEMPLATE.md)
+- لثلآرغ║غ╗╢ك░ف╜ـذةإ┐
 
 ---
 

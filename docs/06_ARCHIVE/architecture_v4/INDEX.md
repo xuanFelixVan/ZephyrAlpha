@@ -40,7 +40,7 @@ standard_type: 专业量化机构文档
 
 ## 📚 文档列表
 
-- [L4_FEATURE_ENG](06_ARCHIVE/architecture_v4/L4_FEATURE_ENG.md)
+- L4_FEATURE_ENG
 
 
 ---

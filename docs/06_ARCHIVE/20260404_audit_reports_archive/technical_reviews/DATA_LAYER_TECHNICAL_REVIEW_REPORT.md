@@ -294,10 +294,10 @@ implementation_status: шпДхобхоМцИР
 - ч╗╝хРИшпДф╝░цКехСК: [comprehensive_assessment_report.md](./comprehensive_assessment_report.md)
 
 ### 8.2 чЫ╕хЕ│цЦЗцбг
-- цХ░цНоц║Рх▒Вф╕Уф╕ЪхоЮцЦ╜шУЭхЫ╛: [DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md)
-- Layer 0-11цЮ╢цЮДхоЪф╣Й: [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md)
-- цибхЭЧшБМш┤гш╛╣чХМхоЪф╣Й: [MODULE_RESPONSIBILITY_BOUNDARIES.md](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- ш┤ищЗПщЧичжБцЬ║хИ╢: [QUALITY_GATE_MECHANISM.md](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- цХ░цНоц║Рх▒Вф╕Уф╕ЪхоЮцЦ╜шУЭхЫ╛: DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
+- Layer 0-11цЮ╢цЮДхоЪф╣Й: ARCHITECTURE.md
+- цибхЭЧшБМш┤гш╛╣чХМхоЪф╣Й: MODULE_RESPONSIBILITY_BOUNDARIES.md
+- ш┤ищЗПщЧичжБцЬ║хИ╢: QUALITY_GATE_MECHANISM.md
 
 ### 8.3 шпДхобшо░х╜Х
 - шпДхобх╝АхзЛцЧ╢? 2026-04-02 21:42:40

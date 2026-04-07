@@ -918,7 +918,7 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 **ώΦβϋψψί╝ΧύΦρ**Ύ╝?
 ```markdown
-| [System_Manifest.md](System_Manifest.md) | ύ│╗ύ╗θό╕ΖίΞΧ |
+| System_Manifest.md | ύ│╗ύ╗θό╕ΖίΞΧ |
 ```
 
 **ώΩχώλαίΙΗόηΡ**Ύ╝?

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FULL_SYSTEM_AUDIT_V12_001
 version: 12.0.0
 status: Active
@@ -432,7 +432,7 @@ compliance_level: 专业标准
 - [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [AI文档治理审计提示词](../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)
-- [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 审计质量标准v5.1
 
 ### C. 术语表
 

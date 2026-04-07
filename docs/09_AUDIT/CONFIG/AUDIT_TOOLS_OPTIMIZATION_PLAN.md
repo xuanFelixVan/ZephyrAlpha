@@ -219,7 +219,7 @@ responsibility:
 
 - [定期审计配置](PERIODIC_AUDIT_CONFIG.md)
 - [文档体系完善计划](DOCUMENT_SYSTEM_PERFECTION_PLAN.md)
-- [审计工具使用指南](../05_IMPLEMENTATION/03_GUIDES/AUDIT_TOOLS_GUIDE.md)
+- 审计工具使用指南
 
 ---
 

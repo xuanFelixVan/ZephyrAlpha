@@ -541,9 +541,9 @@ ai_factor_agent:
 
 | 文档 | 说明 |
 |------|------|
-| [因子库总览](API_README.md) | 因子库整体介?|
-| [因子管理标准](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) | 专业机构做法（分?IC阈?生命周期?|
-| [因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) | 5900因子筛选策?|
+| 因子库总览 | 因子库整体介?|
+| 因子管理标准 | 专业机构做法（分?IC阈?生命周期?|
+| 因子筛选策略 | 5900因子筛选策?|
 | [因子监控](./factor_monitoring.md) | IC监控/衰减预警 |
 
 ---

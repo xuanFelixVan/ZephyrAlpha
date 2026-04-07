@@ -297,8 +297,8 @@ layer4_audit_timeout = 1800  # 30分钟
 ### 10.1 相关文档
 
 - 审计标准v5.1
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- 文档治理审计检查清单
+- 专业文档治理审计指南
 
 ### 10.2 脚本列表
 

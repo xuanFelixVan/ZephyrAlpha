@@ -53,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Doc Archival Workflow](09_AUDIT/WORKFLOWS/DOC_ARCHIVAL_WORKFLOW.md) - `DOCARCHIVALWORKFLOW_001`
-- [Doc Creation Workflow](09_AUDIT/WORKFLOWS/DOC_CREATION_WORKFLOW.md) - `DOCCREATIONWORKFLOW_001`
-- [Periodic Audit Workflow](09_AUDIT/WORKFLOWS/PERIODIC_AUDIT_WORKFLOW.md) - `PERIODICAUDITWORKFLOW_001`
+- Doc Archival Workflow - `DOCARCHIVALWORKFLOW_001`
+- Doc Creation Workflow - `DOCCREATIONWORKFLOW_001`
+- Periodic Audit Workflow - `PERIODICAUDITWORKFLOW_001`
 
 ---
 

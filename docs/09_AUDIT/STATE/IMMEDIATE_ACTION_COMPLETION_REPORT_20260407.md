@@ -164,7 +164,7 @@ parent_document: ../INDEX.md
 
 **完成状态**: 已完成
 
-**详细标准**: [QUALITY_STANDARD_V3.md](../STANDARDS/QUALITY_STANDARD_V3.md)
+**详细标准**: QUALITY_STANDARD_V3.md
 
 **质量维度**:
 1. 结构质量: YAML完整率>=95%, 标题规范率100%

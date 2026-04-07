@@ -227,5 +227,5 @@ class FactorExhaustor:
 
 ## 索引
 
-- 父目? [07_RESEARCH/README.md](API_README.md)
-- 相关文档: [candle_patterns.md](07_RESEARCH/03_PATTERN_RECOGNITION/candle_patterns.md)
+- 父目? 07_RESEARCH/README.md
+- 相关文档: candle_patterns.md

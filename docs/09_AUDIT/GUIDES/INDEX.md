@@ -53,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Code Change Documentation Guide](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md) - `CODE_CHANGE_DOC_GUIDE`
-- [Scheduled Tasks Deployment Guide](09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md) - `SCHEDULED_TASKS_DEPLOYMENT_GUIDE`
+- Code Change Documentation Guide - `CODE_CHANGE_DOC_GUIDE`
+- Scheduled Tasks Deployment Guide - `SCHEDULED_TASKS_DEPLOYMENT_GUIDE`
 
 ---
 

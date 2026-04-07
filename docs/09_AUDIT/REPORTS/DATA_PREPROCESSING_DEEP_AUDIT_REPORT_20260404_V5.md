@@ -481,19 +481,19 @@ responsibility:
 ### 9.1 审计标准文档
 
 - 审计质量标准v5.1
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 
 ### 9.2 审计报告文档
 
 - 数据预处理层深度审计报告 V4
-- [告警功能职责重叠修复报告](09_AUDIT/REPORTS/ALERT_RESPONSIBILITY_OVERLAP_FIX_REPORT_20260404.md)
-- [内容不完整蓝图文档归档报告](09_AUDIT/REPORTS/INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404.md)
+- 告警功能职责重叠修复报告
+- 内容不完整蓝图文档归档报告
 
 ### 9.3 索引文档
 
-- [技术规格书总索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
-- [蓝图文档总索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+- 技术规格书总索引
+- 蓝图文档总索引
 
 ---
 

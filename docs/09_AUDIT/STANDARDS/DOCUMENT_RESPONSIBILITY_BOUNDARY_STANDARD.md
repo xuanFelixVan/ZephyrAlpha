@@ -265,7 +265,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 ```markdown
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | module_id | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﮔﮔ۰۲ﻟﺓﺁﮒﺝ |
 |----------|-----------|------|------|----------|----------|
-| ﮔﭦﻟﺛﮔ۶ﻟ۰ﻝ؟ﮔﺏﮒﺙﮔﻟﮒﺝ | SMART_EXECUTION_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [ﻠﺝﮔ۴](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SMART_EXECUTION_ENGINE_BLUEPRINT.md) |
+| ﮔﭦﻟﺛﮔ۶ﻟ۰ﻝ؟ﮔﺏﮒﺙﮔﻟﮒﺝ | SMART_EXECUTION_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | ﻠﺝﮔ۴ |
 ```
 
 ---

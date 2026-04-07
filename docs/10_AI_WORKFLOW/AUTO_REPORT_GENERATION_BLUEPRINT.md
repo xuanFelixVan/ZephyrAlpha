@@ -1,49 +1,4 @@
----
-module_id: AUTO_REPORT_GENERATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - AUTO_REPORT_GENERATION蓝图设计
----
-
 ﻿---
-module_id: AUTO_REPORT_GENERATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
-layer: Layer 7 (AI报告层)
-standard_type: 专业机构级蓝图
-applicable_scope: 自动化报告生成引擎
-compliance_level: 专业标准
-parent_document: INDEX.md
-implementation_status: 蓝图设计阶段
-reference_models:
-  - daily_stock_analysis
-  - portfolio-daily-tracker
-  - richfolio
-related_documents:
-  - AI_WORK_REPORTER_BLUEPRINT.md
-  - POST_TRADE_REVIEW_BLUEPRINT.md
-  - OPEN_SOURCE_MODULE_SOLUTION.md
-open_source_solution:
-  primary: daily_stock_analysis
-  primary_github: https://github.com/ZhuLinsen/daily_stock_analysis
-  primary_stars: 5500+
-  secondary: portfolio-daily-tracker
-  secondary_github: https://github.com/Stepuuu/portfolio-daily-tracker
-  license: MIT
-  cost: 完全免费
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
----
----
-
 ## 文档职责说明
 
 **本文档职责**: 自动化报告生成引擎蓝图

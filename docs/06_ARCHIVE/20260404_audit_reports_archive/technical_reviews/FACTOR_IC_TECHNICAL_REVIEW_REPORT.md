@@ -47,7 +47,7 @@ implementation_status: 进行?---
 - **模块ID**: FACTOR_IC_001
 - **所属Layer**: Layer 2 - Alpha因子?
 - **模块类别**: 核心因子分析模块
-- **技术规格书**: [FACTOR_IC_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/FACTOR_IC_TECHNICAL_SPECIFICATION.md)
+- **技术规格书**: FACTOR_IC_TECHNICAL_SPECIFICATION.md
 
 ### 1.2 评审信息
 - **评审日期**: 2026-04-02

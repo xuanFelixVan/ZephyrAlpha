@@ -369,9 +369,9 @@ print(f"ﮒﻟﺛﺛﻝﻝ۴ﮔ۷۰ﮒ {module_name} ﮒ۳ﺎﻟﺑ۴: {e}")
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
-- [ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md)
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+- ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ
+- ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ
+- ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

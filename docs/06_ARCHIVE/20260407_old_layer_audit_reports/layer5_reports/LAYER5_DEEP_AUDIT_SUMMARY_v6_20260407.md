@@ -118,10 +118,10 @@ version: 6.0.0
 
 ### 审计报告
 
-- [Layer 5深度审计报告v6.0](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_DEEP_AUDIT_REPORT_v6_20260407.md)
-- [Layer 5职责描述修复报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_RESPONSIBILITY_FIX_REPORT_20260407.md)
-- [Layer 5 P1级改进总结报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_P1_IMPROVEMENT_REPORT_20260407.md)
-- [Layer 5 P2级长期优化实施报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_P2_OPTIMIZATION_REPORT_20260407.md)
+- Layer 5深度审计报告v6.0
+- Layer 5职责描述修复报告
+- Layer 5 P1级改进总结报告
+- Layer 5 P2级长期优化实施报告
 
 ### 审计工具
 

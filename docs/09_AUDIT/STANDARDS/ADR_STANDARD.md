@@ -298,8 +298,8 @@ ZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻠﻟ۵ﻛﺕﻛﺕ۹ﮔﺕﮔﺍﻝ
 ---
 
 ## 11. ﮒﻟﮔﮔ۰?
-- [ADRﮔ۷۰ﮔﺟ](09_AUDIT/TEMPLATES/ADR_TEMPLATE.md)
-- [ADRﻝﺑ۱ﮒﺙ](API_README.md)
+- ADRﮔ۷۰ﮔﺟ
+- ADRﻝﺑ۱ﮒﺙ
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

@@ -305,7 +305,7 @@ jupyter lab --ip=0.0.0.0
 |------|------|
 |  | 依赖管理详细规范 |
 |  | 工作流编?|
-| [../02_EXPLORATORY_ANALYSIS/statistical_tools.md](07_RESEARCH/02_EXPLORATORY_ANALYSIS/statistical_tools.md) | 统计分析工具 |
+| ../02_EXPLORATORY_ANALYSIS/statistical_tools.md | 统计分析工具 |
 
 ---
 

@@ -59,9 +59,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Continuous Audit Workflow](09_AUDIT/STATE/CONTINUOUS_AUDIT_WORKFLOW.md) - `CONTINUOUS_AUDIT_WORKFLOW_001`
-- [Module Id Registry](09_AUDIT/STATE/MODULE_ID_REGISTRY.md) - `MODULE_ID_REGISTRY_001`
-- [Responsibility Boundary Map](09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md) - `RESPONSIBILITY_BOUNDARY_MAP_001`
+- Continuous Audit Workflow - `CONTINUOUS_AUDIT_WORKFLOW_001`
+- Module Id Registry - `MODULE_ID_REGISTRY_001`
+- Responsibility Boundary Map - `RESPONSIBILITY_BOUNDARY_MAP_001`
 
 ---
 

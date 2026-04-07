@@ -137,7 +137,7 @@ tags: ["С╝ўтїќТіЦтЉі", "уЪГТюЪС╝ўтїќ", "СИГТюЪС
 
 #### ТѕљТъю: тѕЏт╗║тљѕУДётАУАТЅДУАїуеІт║Ј
 
-**ТќЄТАБ**: [AUDIT_EXECUTION_PROCEDURES.md](09_AUDIT/PROCEDURES/AUDIT_EXECUTION_PROCEDURES.md)
+**ТќЄТАБ**: AUDIT_EXECUTION_PROCEDURES.md
 
 **ТаИт┐ЃтєЁт╣**:
 - тАУАТЅДУАїТђ╗УДѕ
@@ -335,8 +335,8 @@ python tools/knowledge_graph_system.py --visualize
 
 ### 9.3 тљѕУДётАУАТќЄТАБ
 
-- [тљѕУДётАУАТЅДУАїуеІт║Ј](09_AUDIT/PROCEDURES/AUDIT_EXECUTION_PROCEDURES.md)
-- [тљѕУДётАУАСйЊу│╗](09_AUDIT/STANDARDS/COMPLIANCE_AUDIT_SYSTEM.md)
+- тљѕУДётАУАТЅДУАїуеІт║Ј
+- тљѕУДётАУАСйЊу│╗
 
 ### 9.4 УЄфтіетїќтиЦтЁ?
 - [УЄфтіетїќтАУАтиЦтЁи](../../../tools/automated_audit_tool.py)

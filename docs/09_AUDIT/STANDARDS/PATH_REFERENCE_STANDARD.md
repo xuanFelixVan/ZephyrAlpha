@@ -145,9 +145,9 @@ compliance_level: 专业标准---
 ```markdown
 # ﮒ?docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT.md ﻛﺕ?
 # ﮒﺙﻝ۷ﮒﻝﭦ۶ﮔﮔ۰۲
-[ﻠ۲ﻠ۸ﻝﮔ۶ﻟﮒﺝ](01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md)
+ﻠ۲ﻠ۸ﻝﮔ۶ﻟﮒﺝ
 
-# ﮒﺙﻝ۷ﮒﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md)
+# ﮒﺙﻝ۷ﮒﻝ؟ﮒﺛﮔﮔ۰?ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 
 # ﮒﺙﻝ۷ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛﮔﮔ۰۲
 [ﮒ؟ﮔﺛﮒﺎﻝﺑ۱ﮒﺙ](../INDEX.md)
@@ -173,7 +173,7 @@ compliance_level: 专业标准---
 # ﮒﺙﻝ۷ﮒﮒﮒﭦﮔﮔ۰۲ﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶=3ﺅﺙ?[ﮒﮒﮒﭦﮔﮔ۰۲](../../01_FRAMEWORK/README.md)
 
 # ﮒﺙﻝ۷ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ?4ﺅﺙﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﺅﺙ
-[ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ
 ```
 
 ### 4.3 ﮔ۰ﮔﭘﮒﺎﻛﺕﮒ؟ﮔﺛﮒﺎﮒﺙﻝ?
@@ -182,19 +182,19 @@ compliance_level: 专业标准---
 
 **ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲ﮒﺙﻝ۷ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲**:
 ```markdown
-**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮔ۰۲ﻠﺝﮔ۴](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md)
+**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: ﮒ؟ﮔﺛﮔﮔ۰۲ﻠﺝﮔ۴
 ```
 
 **ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺙﻝ۷ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲**:
 ```markdown
-**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮔ۰ﮔﭘﮔﮔ۰۲ﻠﺝﮔ۴](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md)
+**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: ﮔ۰ﮔﭘﮔﮔ۰۲ﻠﺝﮔ۴
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮔ۰ﮔﭘﮒﺎﮔﮔ۰? docs/01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md
 
-**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﮒﺁﺗﮒﺎﮒﺙﮔﻟﮒﺝ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
+**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: ﮒ؟ﮔﭘﻠ۲ﻠ۸ﮒﺁﺗﮒﺎﮒﺙﮔﻟﮒﺝ
 - ﮒﺓﻛﺛﮒ؟ﻝﺍﮔﺗﮔ۰ﮒﮔﮔﺁﻝﭨﻟ?- ﮔﺕﮒﺟﮒﻝﺏﭨﻝﭨﻟ؟ﺝﻟ؟۰ﮒﻛﭨ۲ﻝﻝ۳ﭦﻛﺝ
 - ﻠ۷ﻝﺛﺎﮔﺗﮔ۰ﮒﮒ؟ﮔﺛﻟﺓﺁﮒﺝ?
 ---
@@ -327,9 +327,9 @@ python scripts/path_optimizer.py --optimize
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 1. **ﮔﺗﮔ۰1**: ﻛﺛﺟﻝ۷`docs/`ﮒﺙﮒ۳ﺑﻝﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝ
    ```markdown
-   # ﮒﻟﺓﺁﮒﺝ?   [ﮔﮔ۰۲](API_README.md)
+   # ﮒﻟﺓﺁﮒﺝ?   ﮔﮔ۰۲
    
-   # ﻛﺙﮒﮒ?   [ﮔﮔ۰۲](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+   # ﻛﺙﮒﮒ?   ﮔﮔ۰۲
    ```
 
 2. **ﮔﺗﮔ۰2**: ﻠﮔﺍﻝﭨﻝﭨﻝ؟ﮒﺛﻝﭨﮔ
@@ -338,7 +338,7 @@ python scripts/path_optimizer.py --optimize
 
 3. **ﮔﺗﮔ۰3**: ﮒ۷ﮔﮔ۰۲ﻛﺕﮔﺓﭨﮒﮒﺁﺙﻟ۹ﻟﺁﺑﮔ
    ```markdown
-   > **ﮒﺁﺙﻟ۹**: [ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md) > [ﮔ۷۰ﮒﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+   > **ﮒﺁﺙﻟ۹**: ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ > ﮔ۷۰ﮒﻝﺑ۱ﮒﺙ
    ```
 
 ### ﻠ؟ﻠ۱2: ﻟﺓﺁﮒﺝﮒ۳۶ﮒﺍﮒﻛﺕﻛﺕﻟ?

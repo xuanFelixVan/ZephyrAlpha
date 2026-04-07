@@ -888,7 +888,7 @@ class CheckpointManager:
 #### Layer 0: 系统架构
 ##### 0.BLUEPRI. Doc Temp A Stock
 - **模块ID**: DOC_TEMP_A_STOCK_BLUEPRI
-- **蓝图文档**: [A_STOCK_DATA_PROCESSING_BLUEPRINT.md](06_CONSTRUCTION_DOCS\01_BLUEPRINTS\A_STOCK_DATA_PROCESSING_BLUEPRINT.md)
+- **蓝图文档**: A_STOCK_DATA_PROCESSING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 - **状态**: Active

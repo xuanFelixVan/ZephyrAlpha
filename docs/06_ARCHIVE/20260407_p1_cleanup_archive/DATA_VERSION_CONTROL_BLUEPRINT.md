@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_VERSION_CONTROL_001
 version: 1.0.0
 status: Active
@@ -436,8 +436,8 @@ volumes:
 
 ## å
 
-- [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
-- [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
+- 实时数据湖蓝图
+- 数据生命周期管理蓝图
 
 ---
 

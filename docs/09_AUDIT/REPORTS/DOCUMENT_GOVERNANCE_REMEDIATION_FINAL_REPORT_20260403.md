@@ -265,11 +265,11 @@ INDEX.md标题和说明与实际内容不符，误导文档使用者?
 ## 📚 相关文档
 
 ### 审计报告
-- [深度审计报告](09_AUDIT/REPORTS/DEEP_AUDIT_REPORT_20260403.md)
-- [整改报告v1](09_AUDIT/REPORTS/DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403.md)
+- 深度审计报告
+- 整改报告v1
 
 ### 归档文档
-- [归档说明](API_README.md)
+- 归档说明
 
 ---
 

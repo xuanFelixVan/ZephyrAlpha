@@ -285,8 +285,8 @@ docs/
 ---
 
 ## 11. хПВшАГцЦЗцб?
-- [чаФчй╢хдЗх┐Шх╜ХцибцЭ┐](09_AUDIT/TEMPLATES/RESEARCH_MEMO_TEMPLATE.md)
-- [чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](API_README.md)
+- чаФчй╢хдЗх┐Шх╜ХцибцЭ┐
+- чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х
 - [цЦЗцбгц▓╗чРЖц╡БчиЛцаЗхЗЖ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

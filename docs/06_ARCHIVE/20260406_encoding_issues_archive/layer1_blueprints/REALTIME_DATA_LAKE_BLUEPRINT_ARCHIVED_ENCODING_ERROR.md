@@ -983,7 +983,7 @@ class DataGovernance:
 **本文档在系统中的位置**:
 - 架构文档: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - Layer 1文档: Layer_1_Data_Preprocessing.md
-- 数据源清? [DATA_SOURCE_INVENTORY.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATA_SOURCE_INVENTORY.md)
+- 数据源清? DATA_SOURCE_INVENTORY.md
 
 ### 9.2 版本管理
 

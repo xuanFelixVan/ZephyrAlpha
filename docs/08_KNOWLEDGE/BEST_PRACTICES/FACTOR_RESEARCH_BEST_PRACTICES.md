@@ -450,8 +450,8 @@ risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 
 ## 5. ﮒﻟﮔﮔ۰?
 - [ﻝﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
-- [ﮒ۷ﻠﮒﮒﮒﭦ](08_KNOWLEDGE/FACTOR_LIBRARY/MOMENTUM_FACTOR_LIBRARY.md)
-- [ﮒ۳ﮒﮒﻝﻝ۴ﮒﭦ](08_KNOWLEDGE/STRATEGY_LIBRARY/MULTI_FACTOR_STRATEGY_LIBRARY.md)
+- ﮒ۷ﻠﮒﮒﮒﭦ
+- ﮒ۳ﮒﮒﻝﻝ۴ﮒﭦ
 
 ---
 

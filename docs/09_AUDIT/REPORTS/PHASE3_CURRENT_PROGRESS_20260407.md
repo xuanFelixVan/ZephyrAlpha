@@ -265,7 +265,7 @@ compliance_level: 专业标准---
 1. ✅ [第三阶段执行计划](./PHASE3_CROSS_REFERENCE_EXECUTION_PLAN_20260407.md)
 2. ✅ [P0/P1核心文档完成报告](./PHASE3_CORE_DOCS_COMPLETION_20260407.md)
 3. ✅ [引用链接验证报告](./LINK_VALIDATION_REPORT_20260407.md)
-4. ✅ [Markdown链接验证工具](09_AUDIT/TOOLS/MARKDOWN_LINK_VALIDATOR.md)
+4. ✅ Markdown链接验证工具
 
 ---
 

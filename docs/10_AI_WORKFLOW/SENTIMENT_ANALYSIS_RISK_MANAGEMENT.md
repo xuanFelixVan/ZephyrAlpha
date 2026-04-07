@@ -1,32 +1,4 @@
----
-module_id: SENTIMENT_ANALYSIS_RISK_MANAGEMENT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 舆情分析层改进模块风险管理文文档
----
-
 ﻿---
-module_id: SENTIMENT_ANALYSIS_RISK_MGMT_001
-version: 1.1.0
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-04
-owner: 首席架构师
-layer: Layer 3 (舆情分析层)
-standard_type: 风险管理文档
-applicable_scope: 舆情分析层改进模块风险管理
-compliance_level: 专业标准
-parent_document: INDEX.md
-responsibility:
-  - AI工作流设计与智能辅助管理与优化维护
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: 风险管理文档

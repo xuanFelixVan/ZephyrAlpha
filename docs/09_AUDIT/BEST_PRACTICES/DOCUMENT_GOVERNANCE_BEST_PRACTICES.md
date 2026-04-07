@@ -492,10 +492,10 @@ docs/
 
 ## 11. ίΠΓϋΑΔόΨΘόκ?
 
-- [όΨΘόκμό▓╗ύΡΗό╡ΒύρΜόιΘίΘΗ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ϊ╗μύιΒίΠαόδ┤όΨΘόκμόδ┤όΨ░όΝΘίΞΩ](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
-- [όΨΘόκμό▓╗ύΡΗίθ╣ϋχφόΚΜίΗΝ](09_AUDIT/TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md)
-- [όΝΒύ╗φόΦ╣ϋ┐δό╡ΒύρΜ](09_AUDIT/STANDARDS/CONTINUOUS_IMPROVEMENT_PROCESS.md)
+- όΨΘόκμό▓╗ύΡΗό╡ΒύρΜόιΘίΘΗ
+- ϊ╗μύιΒίΠαόδ┤όΨΘόκμόδ┤όΨ░όΝΘίΞΩ
+- όΨΘόκμό▓╗ύΡΗίθ╣ϋχφόΚΜίΗΝ
+- όΝΒύ╗φόΦ╣ϋ┐δό╡ΒύρΜ
 
 ---
 

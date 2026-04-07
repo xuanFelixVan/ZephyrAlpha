@@ -328,7 +328,7 @@ exit 0
 
 ## 8. هڈ‚€ƒو–‡و،?
 
-- [و–‡و،و،و‌؟](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
+- و–‡و،و،و‌؟
 
 ---
 

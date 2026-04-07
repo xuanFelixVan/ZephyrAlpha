@@ -49,7 +49,7 @@ responsibility:
 | **模块名称** | iFind连接?|
 | **模块ID** | DATA_IFIND_001 |
 | **所属Layer** | Layer 0: 数据源层 |
-| **技术规格书** | [IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md) |
+| **技术规格书** | IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md |
 | **评审日期** | 2026-04-02 |
 | **评审时长** | 30分钟 |
 
@@ -478,10 +478,10 @@ responsibility:
 
 ### B. 相关文档
 
-- [iFind连接器技术规格书](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md)
+- iFind连接器技术规格书
 - [架构定义](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [质量门禁机制](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- 质量门禁机制
 
 ### C. 术语?
 

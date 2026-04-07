@@ -53,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](API_README.md) - `RESEARCH_PATTERN_README_001`
-- [Candle Patterns](07_RESEARCH/03_PATTERN_RECOGNITION/candle_patterns.md) - `RESEARCH_CANDLE_PATTERNS_001`
+- Readme - `RESEARCH_PATTERN_README_001`
+- Candle Patterns - `RESEARCH_CANDLE_PATTERNS_001`
 
 ---
 

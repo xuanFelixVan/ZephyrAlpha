@@ -105,9 +105,9 @@ version: 5.0.0
 
 ## 📁 相关文档
 
-- [完整审计报告v5.0](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_DEEP_AUDIT_REPORT_v5_20260407.md)
-- [职责描述修复报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_RESPONSIBILITY_FIX_REPORT_20260407.md)
-- [P1级改进总结报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_P1_IMPROVEMENT_REPORT_20260407.md)
+- 完整审计报告v5.0
+- 职责描述修复报告
+- P1级改进总结报告
 
 ---
 

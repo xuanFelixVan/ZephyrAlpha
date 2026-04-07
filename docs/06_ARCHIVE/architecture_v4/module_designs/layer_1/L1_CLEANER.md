@@ -1169,9 +1169,9 @@ alerts:
 ## 🔗 相关文档
 
 ### 10.1 参考文?
-- [架构设计文档](01_FRAMEWORK/ARCHITECTURE.md) - Layer 1定义
+- 架构设计文档 - Layer 1定义
 -  - 数据质量评估标准
-- [API接口契约](03_TRADING_TACTICS/API_Contract.md) - 系统接口规范
+- API接口契约 - 系统接口规范
 
 ### 10.2 依赖文档
 - [pandas数据处理文档] - pandas库使用指?
@@ -1199,4 +1199,4 @@ alerts:
 > **设计完成时间**: 2026-04-02  
 > **设计状?*: 🔵 设计进行? 
 > **下一阶段**: 设计评审和技术验? 
-> **关联文档**: [MODULE_DESIGN_PLAN.md](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md), [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+> **关联文档**: MODULE_DESIGN_PLAN.md, BLUEPRINT.md

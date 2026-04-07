@@ -66,7 +66,7 @@ last_updated: 2026-04-02
 
 3. **ﻝﺗﮔ؟ﮔﮒﭖﮒ۳ﻝ**:
 - ﮒ۵ﮔﻛﺕﻝ۰؟ﮒ؟ﺅﺙﮒ۷ﻟﺁ۱ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
-   - ﮒ۵ﮔﮔﺁﻝﺗﮔ؟ﮔﮔ۰۲ﺅﺙﮒﺁﻛﭨ۴ﻝﺏﻟﺁﺓﻛﺝﮒ۳ﺅﺙﮒﻟ[ﮔﮔ۰۲ﮒﻝﺎﭨﻛﺝﮒ۳ﮔﺕﮒ](09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)ﺅﺙ?
+   - ﮒ۵ﮔﮔﺁﻝﺗﮔ؟ﮔﮔ۰۲ﺅﺙﮒﺁﻛﭨ۴ﻝﺏﻟﺁﺓﻛﺝﮒ۳ﺅﺙﮒﻟﮔﮔ۰۲ﮒﻝﺎﭨﻛﺝﮒ۳ﮔﺕﮒﺅﺙ?
 
 **ﻠ۱ﻠﺎﮔ۹ﮔﺛ**:
 - ﮔﺍﮒﮒﺓ۴ﮒﺗﻟ؟ﮔﭘﻠﻝﺗﻟ؟ﺎﻟ۶۲ﮔﮔ۰۲ﮒﻝﺎﭨ
@@ -614,8 +614,8 @@ last_updated: 2026-04-02
 ## 8. ﮒﻟﮔﮔ۰?
 
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ﻛﭨ۲ﻝﮒﮔﺑﮔﮔ۰۲ﮔﺑﮔﺍﮔﮒ](09_AUDIT/GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
+- ﻛﭨ۲ﻝﮒﮔﺑﮔﮔ۰۲ﮔﺑﮔﺍﮔﮒ
 
 ---
 

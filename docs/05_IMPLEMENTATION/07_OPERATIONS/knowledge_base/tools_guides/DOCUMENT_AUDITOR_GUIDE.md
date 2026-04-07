@@ -372,9 +372,9 @@ jobs:
 ---
 
 ## 9. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
-- [ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ
+- ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
 
 ---
 

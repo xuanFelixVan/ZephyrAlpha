@@ -327,7 +327,7 @@ def process_case_knowledge(case_data):
    risk_adjusted_momentum = returns / volatility
    ```
 
-**ﮒﻟﮔﮔ۰?*: [ﮒﮒﮔ۰ﻛﺝﮒﭦ?- ﮒ۷ﻠﮒﮒ](08_KNOWLEDGE/FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md)
+**ﮒﻟﮔﮔ۰?*: ﮒﮒﮔ۰ﻛﺝﮒﭦ?- ﮒ۷ﻠﮒﮒ
 
 **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**:
 - ﻠﻟ۵ﮔ۶ﮒﭘﮔﺏ۱ﮒ۷ﻝﺅﺙﻠﺟﮒﻠ،ﮔﺏ۱ﮒ۷ﻟ۰ﻝ۴۷
@@ -376,11 +376,11 @@ def execute_order(self, order):
 **ﮔﭘﮔﮒﺎﮔ؛۰**:
 1. **ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎ?*: ﻟﭖﻛﭦ۶ﻠﻝﺛ؟ﻙﻠ۲ﻠ۸ﻠ۱ﻝ؟ﻙﮒﺕﮒﭦﻝﭘﮔﮒ۳ﮔ?2. **ﻛﺕﻟ۶ﻝﻝ۴ﮒﺎ?*: ﮒﮒﮔﮔﻙﻛﺟ۰ﮒﺓﻝﮔﻙﻝﭨﮒﻛﺙﮒ?3. **ﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎ?*: ﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻠ۲ﻠ۸ﮔ۶ﮒﭘﻙﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒ?
 **ﮔﺕﮒﺟﮔ۷۰ﮒ**:
-**ﮒﻟﮔﮔ۰?*: [ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲](01_FRAMEWORK/ARCHITECTURE.md)
+**ﮒﻟﮔﮔ۰?*: ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲
 
 **ﮒ۵ﻛﺗﻟﺓﺁﮒﺝﮒﭨﭦﻟ؟؟**:
 1. ﮒﮒ۵ﻛﺗﮒﺟ،ﻠﮒﺙﮒ۶
-2. ﮒﮒ۵ﻛﺗ[ﮒﮒﮒﭦ](10_AI_WORKFLOW/SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md)
+2. ﮒﮒ۵ﻛﺗﮒﮒﮒﭦ
 3. ﮔﮒﮒ۵ﻛﺗﻝﻝ۴ﮒﺙﮒ
 ```
 

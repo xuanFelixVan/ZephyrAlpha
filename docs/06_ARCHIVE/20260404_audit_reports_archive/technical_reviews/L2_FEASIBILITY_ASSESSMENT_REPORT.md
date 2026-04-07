@@ -557,10 +557,10 @@ implementation_status: х╖▓хоМ?---
 ### 10.1 цЦЗцбгч┤вх╝Х
 
 **цЬмцЦЗцбгхЬич│╗ч╗Яф╕нчЪДф╜Нч╜о**:
-- **чИ╢цЦЗ?*: [QUALITY_GATE_MECHANISM.md](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- **чИ╢цЦЗ?*: QUALITY_GATE_MECHANISM.md
 - **хЕ│шБФцЦЗцбг**:
-  - [LAYER1_L1_GATE_REVIEW_REPORT.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/L1_GATE_REVIEW_REPORT.md)
-  - [LAYER1_BLUEPRINT_COMPLETENESS_FINAL_REPORT.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/BLUEPRINT_COMPLETENESS_FINAL_REPORT.md)
+  - LAYER1_L1_GATE_REVIEW_REPORT.md
+  - LAYER1_BLUEPRINT_COMPLETENESS_FINAL_REPORT.md
 
 ### 10.2 чЙИцЬмчобчРЖ
 

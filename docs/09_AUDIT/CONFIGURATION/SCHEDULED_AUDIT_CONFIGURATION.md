@@ -607,7 +607,7 @@ free -m  # ﮔ۲ﮔ۴ﮒﮒ?
 
 ## 8. ﮒﻟﮔﮔ۰?
 
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
 - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
 
 ---

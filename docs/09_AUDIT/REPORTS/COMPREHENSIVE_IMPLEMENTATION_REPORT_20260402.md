@@ -75,8 +75,8 @@ last_updated: 2026-04-02---
 - жЁЇуйС║єтЉет║дсђЂТюѕт║дсђЂтГБт║дтАУАС╗╗ті?- т╗║уФІС║єУЄфтіетїќтАУАТю║тѕХ
 - тѕЏт╗║С║єжЃеуй▓ТїЄтЇ?
 **ТќЄТАБ**:
-- [тџТюЪтАУАС╗╗тіАжЁЇуй](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [тџТюЪС╗╗тіАжЃеуй▓ТїЄтЇЌ](09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
+- тџТюЪтАУАС╗╗тіАжЁЇуй
+- тџТюЪС╗╗тіАжЃеуй▓ТїЄтЇЌ
 
 ---
 
@@ -88,8 +88,8 @@ last_updated: 2026-04-02---
 - Тћ╣тќёт╣Ёт║д№╝?3.6%
 - т╝ђтЈЉС║єУЄфтіетїќС┐тцЇтиЦтЁ?
 **ТќЄТАБ**:
-- [жЊЙТјЦС┐тцЇТіЦтЉі](09_AUDIT/REPORTS/INTELLIGENT_LINK_FIX_REPORT_20260402.md)
-- [ТЎ║УЃйжЊЙТјЦС┐тцЇТіЦтЉі](09_AUDIT/REPORTS/INTELLIGENT_LINK_FIX_REPORT_20260402.md)
+- жЊЙТјЦС┐тцЇТіЦтЉі
+- ТЎ║УЃйжЊЙТјЦС┐тцЇТіЦтЉі
 
 ---
 
@@ -100,10 +100,10 @@ last_updated: 2026-04-02---
 **ТѕљТъю**:
 - тѕЏт╗║С║?СИфтЁ│жћТќЄТА?- ТЊЇСйюТЅІтєї№╝?СИ?- жЁЇуйТеАТЮ┐№╝?СИ?- ТБђТЪЦТИЁтЇЋ№╝џ1СИ?- ТіђТюУДёУїЃ№╝џ3СИ?
 **ТќЄТАБ**:
-- [жЃеуй▓ТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md)
-- [уЏЉТјДТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md)
-- [жБјжЎЕуЏЉТјДТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md)
-- [у╗┤ТіцТЅІтєї](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md)
+- жЃеуй▓ТЅІтєї
+- уЏЉТјДТЅІтєї
+- жБјжЎЕуЏЉТјДТЅІтєї
+- у╗┤ТіцТЅІтєї
 
 ---
 
@@ -115,9 +115,9 @@ last_updated: 2026-04-02---
 - т╗║уФІС║єТђДУЃйТаЄтЄє
 
 **ТќЄТАБ**:
-- [ТќЄТАБтАУАтиЦтЁиУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
-- [тЁЃТЋ░ТЇтбът╝║тиЦтЁиУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
-- [ТќЄТАБтѕєу▒╗тиЦтЁиУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_CLASSIFIER_SPECIFICATION.md)
+- ТќЄТАБтАУАтиЦтЁиУДёУїЃ
+- тЁЃТЋ░ТЇтбът╝║тиЦтЁиУДёУїЃ
+- ТќЄТАБтѕєу▒╗тиЦтЁиУДёУїЃ
 
 ---
 
@@ -145,7 +145,7 @@ last_updated: 2026-04-02---
 - жЌжбўтЈЉуј░ујЄ№╝џ25.8%
 
 **ТќЄТАБ**:
-- [ТїЂу╗ГТћ╣У┐ЏТю║тѕХУЋУ┐љУАїТіЦтЉі](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- ТїЂу╗ГТћ╣У┐ЏТю║тѕХУЋУ┐љУАїТіЦтЉі
 
 ---
 
@@ -157,9 +157,9 @@ last_updated: 2026-04-02---
 - СИфС║║т╝ђтЈЉТюђСй│тъУи?- СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇ?- СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ
 
 **ТќЄТАБ**:
-- [СИфС║║т╝ђтЈЉТюђСй│тъУих](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
-- [СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
-- [СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
+- СИфС║║т╝ђтЈЉТюђСй│тъУих
+- СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ
+- СИфС║║т╝ђтЈЉу╗ЈжфїТђ╗у╗Њ
 
 ---
 
@@ -184,7 +184,7 @@ last_updated: 2026-04-02---
 - тѕЏт╗║С║єжЊЙТјЦС┐тцЇТАѕСЙІуаћуЕ?- Тђ╗у╗ЊС║єТѕљтіЪу╗ЈжфїтњїТћ╣У┐Џт╗║У
 - т╗║уФІС║єТюђСй│тъУи?
 **ТќЄТАБ**:
-- [жЊЙТјЦС┐тцЇТАѕСЙІуаћуЕХ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/LINK_FIX_CASE_STUDY.md)
+- жЊЙТјЦС┐тцЇТАѕСЙІуаћуЕХ
 
 ---
 
@@ -196,8 +196,8 @@ last_updated: 2026-04-02---
 - ТЈљСЙЏС║єУду╗єуџёСй┐ућеУ┤Тўј
 
 **ТќЄТАБ**:
-- [ТќЄТАБтАУАтиЦтЁиСй┐ућеТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/DOCUMENT_AUDITOR_GUIDE.md)
-- [тЁЃТЋ░ТЇтбът╝║тиЦтЁиСй┐ућеТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/METADATA_ENHANCER_GUIDE.md)
+- ТќЄТАБтАУАтиЦтЁиСй┐ућеТїЄтЇЌ
+- тЁЃТЋ░ТЇтбът╝║тиЦтЁиСй┐ућеТїЄтЇЌ
 
 ---
 
@@ -383,8 +383,8 @@ knowledge_base/
 ## 11. тЈѓУђЃТќЄТА?
 ### 11.1 ТаИт┐ЃТќЄТАБ
 
-- [ТќЄТАБТ▓╗уљєТхЂуеІТаЄтЄє](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [тџТюЪтАУАС╗╗тіАжЁЇуй](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- ТќЄТАБТ▓╗уљєТхЂуеІТаЄтЄє
+- тџТюЪтАУАС╗╗тіАжЁЇуй
 - [ТќЄТАБТ▓╗уљєТюђСй│тъУих](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
 
 ### 11.2 тъТќйТіЦтЉі

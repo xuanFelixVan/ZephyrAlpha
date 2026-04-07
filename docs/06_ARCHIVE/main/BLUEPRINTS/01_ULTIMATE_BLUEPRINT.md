@@ -755,7 +755,7 @@ ZephyrAlpha/
 #### Layer 0: 系统架构
 ##### 0.001. Archive Bp Ultimate
 - **模块ID**: ARCHIVE_BP_ULTIMATE_001
-- **蓝图文档**: [01_ULTIMATE_BLUEPRINT.md](06_ARCHIVE\main\BLUEPRINTS\01_ULTIMATE_BLUEPRINT.md)
+- **蓝图文档**: 01_ULTIMATE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

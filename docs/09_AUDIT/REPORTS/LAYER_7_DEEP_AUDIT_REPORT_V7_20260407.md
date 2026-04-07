@@ -550,9 +550,9 @@ for filename in files_to_fix:
 
 ### 9.2 参考标准文档
 
-1. [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-2. [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [AI文档治理审计提示词](09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)
+1. 专业文档治理审计指南
+2. 文档治理审计检查清单
+3. AI文档治理审计提示词
 4. 审计质量标准v5.1
 
 ### 9.3 术语表

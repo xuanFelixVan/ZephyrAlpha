@@ -801,7 +801,7 @@ class ExperimentManager:
 - **备选**: Weights & Biases (美观、团队协作强)
 - **数据版本**: DVC (与MLflow配合使用)
 
-> 📖 **详细技术选型**: 参见 [实施方案](./IMPLEMENTATION_GUIDE.md) 获取完整的开源工具对比、配置指南和集成方案。
+> 📖 **详细技术选型**: 参见 实施方案 获取完整的开源工具对比、配置指南和集成方案。
 
 **与其他模块集成**：
 - 与AI虚拟研究实验室集成：自动记录研究实验
@@ -8611,7 +8611,7 @@ class RetryManager:
 #### Layer 0: 系统架构
 ##### 0.001. Research Innovation Bp
 - **模块ID**: RESEARCH_INNOVATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

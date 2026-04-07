@@ -1,33 +1,4 @@
----
-module_id: OPEN_SOURCE_MODULE_SOLUTION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 个人量化系统开源模块完整方文档
----
-
 ﻿---
-module_id: OPEN_SOURCE_MODULE_SOLUTION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-04
-owner: 首席架构师
-layer: Layer 7 (AI报告层)
-responsibility:
-  - AI工作流设计与智能辅助管理与优化维护
-standard_type: 开源方案选型推荐
-applicable_scope: 开源模块选型与推荐
-compliance_level: 专业标准
-parent_document: INDEX.md
----
----
-
-
-
 ## 文档职责说明
 
 **本文档职责**: 开源模块完整方案

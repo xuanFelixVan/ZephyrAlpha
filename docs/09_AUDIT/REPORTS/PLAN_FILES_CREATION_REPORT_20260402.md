@@ -128,7 +128,7 @@ last_updated: 2026-04-02
 
 ### 4.1 жЃеуй▓ТЅІтєї
 
-**ТќЄС╗Х**: [DEPLOYMENT_MANUAL.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md)
+**ТќЄС╗Х**: DEPLOYMENT_MANUAL.md
 
 **уФаУіѓ**:
 1. жЃеуй▓ТдѓУ┐░
@@ -147,7 +147,7 @@ last_updated: 2026-04-02
 
 ### 4.2 уЏЉТјДТЅІтєї
 
-**ТќЄС╗Х**: [MONITORING_MANUAL.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md)
+**ТќЄС╗Х**: MONITORING_MANUAL.md
 
 **уФаУіѓ**:
 1. уЏЉТјДТдѓУ┐░
@@ -167,7 +167,7 @@ last_updated: 2026-04-02
 
 ### 4.3 жБјжЎЕуЏЉТјДТЅІтєї
 
-**ТќЄС╗Х**: [RISK_MONITORING_MANUAL.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md)
+**ТќЄС╗Х**: RISK_MONITORING_MANUAL.md
 
 **уФаУіѓ**:
 1. жБјжЎЕуЏЉТјДТдѓУ┐░
@@ -183,7 +183,7 @@ last_updated: 2026-04-02
 - тЉіУГджўѕтђ╝тљѕуљ?
 ### 4.4 у╗┤ТіцТЅІтєї
 
-**ТќЄС╗Х**: [MAINTENANCE_MANUAL.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md)
+**ТќЄС╗Х**: MAINTENANCE_MANUAL.md
 
 **уФаУіѓ**:
 1. у╗┤ТіцТдѓУ┐░
@@ -208,7 +208,7 @@ last_updated: 2026-04-02
 - тїТЋ┤уџётЉіУГдУДётѕ?- ТўЊС║јтџтѕХ
 
 ### 4.6 жЃеуй▓тљјТБђТЪЦТИЁтЇ?
-**ТќЄС╗Х**: [POST_DEPLOYMENT_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/POST_DEPLOYMENT_CHECKLIST.md)
+**ТќЄС╗Х**: POST_DEPLOYMENT_CHECKLIST.md
 
 **уФаУіѓ**:
 1. у│╗у╗ЪТБђТЪ?2. тіЪУЃйжфїУЂ

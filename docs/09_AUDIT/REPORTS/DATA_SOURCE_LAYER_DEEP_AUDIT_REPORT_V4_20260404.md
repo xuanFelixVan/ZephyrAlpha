@@ -347,7 +347,7 @@ git commit -m "fix: 删除重复的数据质量文档，解决职责重叠问题
 1. [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 2. [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 3. 审计质量标准v5.1
-4. [文档编码规范](10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)
+4. 文档编码规范
 
 ### C. 术语表
 

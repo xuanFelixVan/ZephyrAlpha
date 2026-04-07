@@ -242,7 +242,7 @@ responsibility:
 ### 7.1 相关文档
 
 - Layer 4深度审计报告v4
-- [持续监控配置指南](09_AUDIT/AUTOMATION/CONTINUOUS_MONITORING_CONFIG.md)
+- 持续监控配置指南
 - [修复日志](../STATE/layer4_fix_log_v4_20260407_123607.json)
 
 ### 7.2 脚本列表

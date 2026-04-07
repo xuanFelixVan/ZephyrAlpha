@@ -47,7 +47,7 @@ implementation_status: 进行?
 - **模块ID**: EVENT_DETECTOR_001
 - **所属Layer**: Layer 3 - 舆情分析?
 - **模块类别**: 核心分析模块
-- **技术规格书**: [EVENT_DETECTOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/EVENT_DETECTOR_TECHNICAL_SPECIFICATION.md)
+- **技术规格书**: EVENT_DETECTOR_TECHNICAL_SPECIFICATION.md
 
 ### 1.2 评审信息
 - **评审日期**: 2026-04-02

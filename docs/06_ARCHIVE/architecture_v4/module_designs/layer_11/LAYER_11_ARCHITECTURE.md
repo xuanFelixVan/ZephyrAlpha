@@ -1214,4 +1214,4 @@ v2.0 (2026-09-01):
 > **设计完成时间**: 2026-04-02  
 > **设计状?*: ?已完? 
 > **下一阶段**: 进入编码实施阶段  
-> **关联文档**: [MODULE_DESIGN_PLAN.md](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md)
+> **关联文档**: MODULE_DESIGN_PLAN.md

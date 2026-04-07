@@ -53,7 +53,7 @@ duplicate_note: ﮔ؛ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺓﺎﮒ۳ﮒﭘﮒﺍﮒﺛﮔ۰�
 > **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒﺛﮔ۰?
 > **ﮒﮒ**: 36ﻛﺕ۹ﻝﺁﻟﻟﺟﻛﭦﮒ۳ﮔﺅﺙﮒﻛﭦﭦﮔﮔﺏﻝﭨﺑﮔ۳
 > **ﻝﺑ۱ﮒﺙ**: `ARC_001`
-> **ﮒﺛﮔ۰۲ﮒﺁﮔ؛**: [99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md](03_TRADING_TACTICS/99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md)
+> **ﮒﺛﮔ۰۲ﮒﺁﮔ؛**: 99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md
 
 
 ## ﮒﻟ؟ﺝﻟ؟۰ﮔ۵ﻟﺟ?

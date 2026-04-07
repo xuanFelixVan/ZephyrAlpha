@@ -358,10 +358,10 @@ Week 26:    όΧ░όΞχόΙΡόευύχκύΡΗΎ╝ΙP2? όΨ░ίλη
 ### 10.1 όΨΘόκμύ┤λί╝Χ
 
 **όευόΨΘόκμίερύ│╗ύ╗θϊ╕φύγΕϊ╜Ξύ╜χ**:
-- **ύΙ╢όΨΘ?*: [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md)
+- **ύΙ╢όΨΘ?*: ARCHITECTURE.md
 - **ίΖ│ϋΒΦόΨΘόκμ**:
-  - [LAYER1_BLUEPRINT_GAP_ANALYSIS.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/BLUEPRINT_GAP_ANALYSIS.md) - ίΙζίπΜί╖χϋ╖ζίΙΗόηΡ
-  - [DATA_SOURCE_MANAGEMENT_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) - όΧ░όΞχό║Ρύχκ?  - [DATA_SECURITY_COMPLIANCE_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) - όΧ░όΞχίχΚίΖρίΡΙϋπΕ
+  - LAYER1_BLUEPRINT_GAP_ANALYSIS.md - ίΙζίπΜί╖χϋ╖ζίΙΗόηΡ
+  - DATA_SOURCE_MANAGEMENT_BLUEPRINT.md - όΧ░όΞχό║Ρύχκ?  - DATA_SECURITY_COMPLIANCE_BLUEPRINT.md - όΧ░όΞχίχΚίΖρίΡΙϋπΕ
 
 ### 10.2 ύΚΙόευύχκύΡΗ
 

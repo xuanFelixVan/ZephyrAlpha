@@ -635,7 +635,7 @@ class SourcePriorityManager:
 | **Qlib** | Python?| 无需认证 | 🆓 免费 | 微软量化数据 | P2（补充） |
 | **自建数据?* | 自定?| 自定?| - | 自定?| P3（自定义?|
 
-> **📋 详细数据接口清单**: 请参?[DATA_SOURCE_INVENTORY.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATA_SOURCE_INVENTORY.md) 获取完整的数据接口清单，包括?> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib?> - 数据源优先级策略和切换规?> - 成本分析和优化建?> - 数据源监控指标和告警规则
+> **📋 详细数据接口清单**: 请参?DATA_SOURCE_INVENTORY.md 获取完整的数据接口清单，包括?> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib?> - 数据源优先级策略和切换规?> - 成本分析和优化建?> - 数据源监控指标和告警规则
 
 ### 4.2 数据源配置规?
 ```yaml
@@ -792,8 +792,8 @@ src/
 **本文档在系统中的位置**:
 - **父文?*: LAYER1_IMPROVEMENT_PLAN.md
 - **关联文档**:
-  - [LAYER1_BLUEPRINT_GAP_ANALYSIS.md](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/BLUEPRINT_GAP_ANALYSIS.md)
-  - [DATACLEANER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md)
+  - LAYER1_BLUEPRINT_GAP_ANALYSIS.md
+  - DATACLEANER_TECHNICAL_SPECIFICATION.md
 
 ### 8.2 版本管理
 

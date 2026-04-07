@@ -1,35 +1,4 @@
----
-module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL技术规范
----
-
-﻿﻿---
-module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001
-version: 1.1.0
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-04
-owner: 首席架构师
-layer: Layer 3 (舆情分析层)
-standard_type: 技术规格书
-applicable_scope: 舆情分析层短期改进模块
-compliance_level: 专业标准
-parent_document: INDEX.md
-applicable_modules:
-  - 数据源扩展
-  - 深度学习情感分析
-  - 实时预警系统
-responsibility:
-  - 技术规格定义与实施标准制定与实施标准
----
----
-
+﻿---
 ## 文档职责说明
 
 **本文档职责**: 短期改进技术规格书

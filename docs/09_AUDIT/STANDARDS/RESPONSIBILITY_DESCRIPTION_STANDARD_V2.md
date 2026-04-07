@@ -98,7 +98,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：标准定义、实施要求、质量标准、验收标准
 > - ❌ 本文档不负责：具体实施流程、工具使用、案例分析
-> - 📋 相关文档：[实施指南](09_RESEARCH_INNOVATION/IMPLEMENTATION_GUIDE.md) - 具体实施流程
+> - 📋 相关文档：实施指南 - 具体实施流程
 ```
 
 ### 2. 蓝图设计类文档
@@ -108,7 +108,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：架构设计、模块规划、接口定义、技术选型
 > - ❌ 本文档不负责：具体实现代码、测试用例、部署流程
-> - 📋 相关文档：[实现文档](01_FRAMEWORK/AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md) - 具体实现细节
+> - 📋 相关文档：实现文档 - 具体实现细节
 ```
 
 ### 3. 操作指南类文档
@@ -118,7 +118,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：操作步骤、注意事项、常见问题、最佳实践
 > - ❌ 本文档不负责：原理说明、架构设计、标准定义
-> - 📋 相关文档：[标准文档](02_FACTOR_LIBRARY/01_STANDARDS/backtest_standards.md) - 操作标准定义
+> - 📋 相关文档：标准文档 - 操作标准定义
 ```
 
 ### 4. 分析报告类文档
@@ -128,7 +128,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：数据分析、问题发现、改进建议、评估结论
 > - ❌ 本文档不负责：问题修复、标准制定、流程设计
-> - 📋 相关文档：[改进计划](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATA_PREPROCESSING_IMPROVEMENT_PLAN.md) - 改进实施计划
+> - 📋 相关文档：改进计划 - 改进实施计划
 ```
 
 ### 5. 索引导航类文档
@@ -138,7 +138,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：目录结构、文档索引、导航指引、快速入门
 > - ❌ 本文档不负责：具体内容说明、技术细节、实施流程
-> - 📋 相关文档：[README](API_README.md) - 模块整体说明
+> - 📋 相关文档：README - 模块整体说明
 ```
 
 ---
@@ -260,7 +260,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：系统架构设计、模块规划、接口定义、技术选型
 > - ❌ 本文档不负责：具体实现代码、测试用例、部署流程
-> - 📋 相关文档：[实现文档](01_FRAMEWORK/AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md) - 具体实现细节
+> - 📋 相关文档：实现文档 - 具体实现细节
 ```
 
 ### 案例3: 分析报告文档
@@ -272,7 +272,7 @@ parent_document: ../INDEX.md
 > **职责边界**: 
 > - ✅ 本文档负责：数据分析、问题发现、改进建议、评估结论
 > - ❌ 本文档不负责：问题修复、标准制定、流程设计
-> - 📋 相关文档：[改进计划](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATA_PREPROCESSING_IMPROVEMENT_PLAN.md) - 改进实施计划
+> - 📋 相关文档：改进计划 - 改进实施计划
 ```
 
 ---

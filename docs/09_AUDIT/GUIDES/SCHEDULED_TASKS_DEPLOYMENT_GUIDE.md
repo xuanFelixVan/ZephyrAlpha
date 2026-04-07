@@ -429,8 +429,8 @@ python scripts\cleanup_audit_reports.py
 
 ## 7. ﮒﻟﮔﮔ۰?
 
-- [ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
 <!-- ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md) -->
 
 

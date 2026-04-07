@@ -357,7 +357,7 @@ python scripts/fix_duplicate_module_id.py
 > **职责边界**: 
 > - ✅ 本文档负责：系统架构设计、模块规划、接口定义、技术选型
 > - ❌ 本文档不负责：具体实现代码、测试用例、部署流程
-> - 📋 相关文档：[实现文档](01_FRAMEWORK/AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md) - 具体实现细节
+> - 📋 相关文档：实现文档 - 具体实现细节
 ```
 
 **优点**:

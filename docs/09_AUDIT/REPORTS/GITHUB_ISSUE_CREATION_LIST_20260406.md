@@ -67,7 +67,7 @@ responsibility:
 当前使用默认的风险平价模型，需要支持用户自定义风险预算配置。
 
 ## 相关文档
-- [STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md)
+- STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md
 
 ## 技术方案
 1. 扩展HRPOpt类，支持自定义风险预算参数
@@ -105,7 +105,7 @@ responsibility:
 QMT执行器需要根据上次交易日期判断是否满足交易频率限制。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 查询交易记录表
@@ -143,7 +143,7 @@ QMT执行器需要根据上次交易日期判断是否满足交易频率限制�
 QMT执行器需要在异常情况下及时通知用户，确保风险可控。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 集成告警系统（邮件/钉钉/企业微信）
@@ -181,7 +181,7 @@ QMT执行器需要在异常情况下及时通知用户，确保风险可控。
 QMT执行器需要在风险超标时自动采取风控措施，保护投资组合。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 定义风控触发条件
@@ -219,7 +219,7 @@ QMT执行器需要在风险超标时自动采取风控措施，保护投资组�
 QMT执行器需要一个统一的告警系统，方便扩展和维护。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 设计告警系统架构
@@ -256,7 +256,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现回测阶段的核心功能，包括回测引擎、数据加载、结果分析等。
 
 ## 相关文档
-- [CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- CODE_QUALITY.md
 
 ## 预计时间
 2天
@@ -276,7 +276,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 为回测阶段添加缓存机制，提升回测性能。
 
 ## 相关文档
-- [CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- CODE_QUALITY.md
 
 ## 预计时间
 1天
@@ -296,7 +296,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现回测阶段的另一个功能点。
 
 ## 相关文档
-- [CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- CODE_QUALITY.md
 
 ## 预计时间
 1天
@@ -316,7 +316,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现通用的缓存机制，支持多种缓存后端。
 
 ## 相关文档
-- [CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- CODE_QUALITY.md
 
 ## 预计时间
 1天

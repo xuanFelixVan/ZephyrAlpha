@@ -55,8 +55,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](API_README.md) - `ARCHIVE_FACTOR_LIB_README_001`
-- [Ifind Factors List](06_ARCHIVE/factor-library/ifind_factors_list.md) - `ARCHIVE_IFIND_FACTORS_001`
+- Readme - `ARCHIVE_FACTOR_LIB_README_001`
+- Ifind Factors List - `ARCHIVE_IFIND_FACTORS_001`
 
 ---
 

@@ -566,7 +566,7 @@ def detect_suspicious_trading(user_id, trade):
 #### Layer 0: 系统架构
 ##### 0.001. Archive Bp Security
 - **模块ID**: ARCHIVE_BP_SECURITY_001
-- **蓝图文档**: [03_SECURITY_BLUEPRINT.md](06_ARCHIVE\main\BLUEPRINTS\03_SECURITY_BLUEPRINT.md)
+- **蓝图文档**: 03_SECURITY_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

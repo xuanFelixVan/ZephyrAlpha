@@ -1,42 +1,4 @@
----
-module_id: LIVE_TRADING_MONITOR_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - LIVE_TRADING_MONITOR蓝图设计
----
-
 ﻿---
-module_id: LIVE_TRADING_MONITOR_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席架构师
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-layer: Layer 7 (AI报告层)
-standard_type: 专业机构级蓝图
-applicable_scope: 实盘交易监控
-compliance_level: 专业标准
-parent_document: INDEX.md
-implementation_status: 设计阶段
-reference_models:
-  - Real-time Trading Monitor
-  - Alert Management System
-  - Performance Dashboard
-related_documents:
-  - COMPLIANCE_MONITORING_BLUEPRINT.md
-  - PERFORMANCE_ANALYSIS_BLUEPRINT.md
-  - REAL_TIME_MONITORING.md
----
----
-
-
-
 ## 文档职责说明
 
 **本文档职责**: 实盘监控模块蓝图

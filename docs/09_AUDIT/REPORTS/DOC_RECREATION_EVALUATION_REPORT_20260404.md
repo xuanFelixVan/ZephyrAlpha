@@ -255,16 +255,16 @@ compliance_level: 专业标准
 ## 7. 相关文档
 
 ### 完整版本文档
-- [专业实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
-- [策略引擎核心蓝图](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- 专业实施蓝图
+- 策略引擎核心蓝图
 
 ### 归档文档
-- [归档目录README](API_README.md)
-- [内容不完整蓝图文档归档报告](09_AUDIT/REPORTS/INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404.md)
+- 归档目录README
+- 内容不完整蓝图文档归档报告
 
 ### 索引文件
-- [蓝图文档总索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
-- [系统主索引](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+- 蓝图文档总索引
+- 系统主索引
 
 ---
 

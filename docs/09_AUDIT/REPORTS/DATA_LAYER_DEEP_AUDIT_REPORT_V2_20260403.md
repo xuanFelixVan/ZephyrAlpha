@@ -119,7 +119,7 @@ docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/financial_statements/ (5ف▒?
 
 **ثاح╣│?*:
 ```bash
-grep -r "\[.*\](.*)" docs/ | grep -v "http"
+grep -r "\.*\" docs/ | grep -v "http"
 ```
 
 

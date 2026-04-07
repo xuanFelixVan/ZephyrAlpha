@@ -182,12 +182,12 @@ version: 1.0.0
 
 ### 6.1 审计报告
 
-- [Layer 5深度审计报告v4.0](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_DEEP_AUDIT_REPORT_v4_20260407.md)
-- [Layer 5深度审计总结报告](05_IMPLEMENTATION/07_OPERATIONS/audit_state/DEEP_AUDIT_SUMMARY_20260407.md)
+- Layer 5深度审计报告v4.0
+- Layer 5深度审计总结报告
 
 ### 6.2 修复报告
 
-- [Layer 5职责描述修复报告](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_RESPONSIBILITY_FIX_REPORT_20260407.md)
+- Layer 5职责描述修复报告
 
 ### 6.3 修复工具
 

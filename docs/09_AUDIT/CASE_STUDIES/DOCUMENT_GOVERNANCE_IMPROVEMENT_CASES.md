@@ -492,8 +492,8 @@ last_updated: 2026-04-02---
 ## 7. ίΠΓϋΑΔόΨΘόκ?
 
 - [όΨΘόκμό▓╗ύΡΗόεΑϊ╜│ίχηϋ╖╡](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
-- [όΨΘόκμό▓╗ύΡΗίΖ╕ίηΜώΩχώλαϋπμίΗ│όΨ╣όκΙ](09_AUDIT/SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md)
-- [όΝΒύ╗φόΦ╣ϋ┐δό╡ΒύρΜ](09_AUDIT/STANDARDS/CONTINUOUS_IMPROVEMENT_PROCESS.md)
+- όΨΘόκμό▓╗ύΡΗίΖ╕ίηΜώΩχώλαϋπμίΗ│όΨ╣όκΙ
+- όΝΒύ╗φόΦ╣ϋ┐δό╡ΒύρΜ
 
 ---
 

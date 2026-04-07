@@ -128,10 +128,10 @@ responsibility:
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [移动端推送通知蓝图](01_FRAMEWORK/MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md) | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
-| [Grafana监控可视化蓝图](01_FRAMEWORK/GRAFANA_MONITORING_BLUEPRINT.md) | 监控可视化系统 | ⭐⭐⭐⭐ |
-| [FastAPI认证权限蓝图](01_FRAMEWORK/FASTAPI_USERS_AUTH_BLUEPRINT.md) | 认证权限系统 | ⭐⭐⭐⭐ |
-| [Streamlit回测界面蓝图](01_FRAMEWORK/STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md) | 交互式回测界面 | ⭐⭐⭐⭐ |
+| 移动端推送通知蓝图 | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
+| Grafana监控可视化蓝图 | 监控可视化系统 | ⭐⭐⭐⭐ |
+| FastAPI认证权限蓝图 | 认证权限系统 | ⭐⭐⭐⭐ |
+| Streamlit回测界面蓝图 | 交互式回测界面 | ⭐⭐⭐⭐ |
 ```
 
 ---

@@ -62,8 +62,8 @@ responsibility:
 ## 🔗 相关文档
 
 - [研究与创新层索引](../INDEX.md)
-- [系统维护指南](../../05_IMPLEMENTATION/03_GUIDES/MAINTENANCE_GUIDE.md)
-- [故障排除指南](../../05_IMPLEMENTATION/03_GUIDES/TROUBLESHOOTING_GUIDE.md)
+- 系统维护指南
+- 故障排除指南
 
 ---
 

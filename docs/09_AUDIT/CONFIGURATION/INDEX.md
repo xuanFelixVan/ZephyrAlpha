@@ -53,7 +53,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Scheduled Audit Configuration](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md) - `SCHEDULED_AUDIT_CONFIG`
+- Scheduled Audit Configuration - `SCHEDULED_AUDIT_CONFIG`
 
 ---
 

@@ -270,7 +270,7 @@ last_updated: 2026-04-02---
 - [цЮ╢цЮДхоЪф╣Й](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [цибхЭЧшБМш┤гш╛╣чХМ](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - цХ░цНох║Ушо╛шоб
-- [цКАцЬпшпДхобцаЗхЗЖv5.3](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- цКАцЬпшпДхобцаЗхЗЖv5.3
 
 ### 8.2 шпДхобш┐ЗчиЛшо░х╜Х
 - 2026-04-02 15:00 - х╝АхзЛцКАцЬпхПпшбМцАзшпД?

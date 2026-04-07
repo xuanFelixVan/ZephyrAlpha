@@ -531,7 +531,7 @@ class MultiAgentVotingSystem:
 | **ﮒﺕﮒﭦﮔﺍﮔ؟** | ﺅﺟ?ﮒ؟ﮒ۷ﮔﺁﮔ | ﻟ۰ﮔﻙﻛﭦ۳ﮔﮔﺍﮔ؟ﻙﮒﮒﻟﭖﺅﺟ?| ﮔ۴ﻠ۱/ﮒ؟ﮔﭘ | ﮔﮔﮔﭦﻟﺛﻛﺛ |
 | **ﮒ۷ﻝﮒ؟ﻟ۶** | ﻗﺅﺕ ﻠ۷ﮒﮔﺁﮔ | ﻛﭦﭦﮔﺍﮒﺕﮔﺎﻝﻙﮒﮒﻟﭖﻠﺅﺙﮒ۷ﻝﮒ؟ﻟ۶ﮔﺍﮔ؟ﻠﻟ۰۴ﮒﺅﺟ?| ﮔ۴ﻠ۱ | ﮒ۳ﻟﭖﮔﭦﻟﺛﺅﺟ?|
 
-**iFindﻟﺟﮔ۴ﺅﺟ?*: ﻟﺁ۵ﻟ۶ [IFIND_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md)
+**iFindﻟﺟﮔ۴ﺅﺟ?*: ﻟﺁ۵ﻟ۶ IFIND_CONNECTOR.md
 
 ### 5.2 ﮔﭦﻟﺛﻛﺛﮔﺍﮔ؟ﻠﮔﺎﻛﺕiFindﮔﮒﺍ
 

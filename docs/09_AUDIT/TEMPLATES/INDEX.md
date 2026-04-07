@@ -53,18 +53,18 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Adr Template](09_AUDIT/TEMPLATES/ADR_TEMPLATE.md) - `ADR_TEMPLATE`
-- [Ai Document Governance Audit Prompt](09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md) - `AUDIT_TPL_AI_PROMPT_001`
-- [Blueprint Standard Template](09_AUDIT/TEMPLATES/BLUEPRINT_STANDARD_TEMPLATE.md) - `AUDIT_蓝图文件标准模板_001`
-- [Decision Record Template](09_AUDIT/TEMPLATES/DECISION_RECORD_TEMPLATE.md) - `DECISION_RECORD_TEMPLATE`
-- [Document Governance Audit Checklist](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md) - `AUDIT_TPL_CHECKLIST_001`
-- [Document Template](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md) - `DOC_TEMPLATE`
-- [Emergency Response Plan](09_AUDIT/TEMPLATES/EMERGENCY_RESPONSE_PLAN.md) - `EMERGENCY_RESPONSE_PLAN`
-- [Module Interface Template](09_AUDIT/TEMPLATES/MODULE_INTERFACE_TEMPLATE.md) - `MODULE_INTERFACE_TEMPLATE`
-- [Professional Document Governance Audit Guide](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) - `AUDIT_TPL_GOVERNANCE_GUIDE_001`
-- [Research Memo Template](09_AUDIT/TEMPLATES/RESEARCH_MEMO_TEMPLATE.md) - `RESEARCH_MEMO_TEMPLATE`
-- [Risk Event Template](09_AUDIT/TEMPLATES/RISK_EVENT_TEMPLATE.md) - `RISK_EVENT_TEMPLATE`
-- [Stress Test Template](09_AUDIT/TEMPLATES/STRESS_TEST_TEMPLATE.md) - `STRESS_TEST_TEMPLATE`
+- Adr Template - `ADR_TEMPLATE`
+- Ai Document Governance Audit Prompt - `AUDIT_TPL_AI_PROMPT_001`
+- Blueprint Standard Template - `AUDIT_蓝图文件标准模板_001`
+- Decision Record Template - `DECISION_RECORD_TEMPLATE`
+- Document Governance Audit Checklist - `AUDIT_TPL_CHECKLIST_001`
+- Document Template - `DOC_TEMPLATE`
+- Emergency Response Plan - `EMERGENCY_RESPONSE_PLAN`
+- Module Interface Template - `MODULE_INTERFACE_TEMPLATE`
+- Professional Document Governance Audit Guide - `AUDIT_TPL_GOVERNANCE_GUIDE_001`
+- Research Memo Template - `RESEARCH_MEMO_TEMPLATE`
+- Risk Event Template - `RISK_EVENT_TEMPLATE`
+- Stress Test Template - `STRESS_TEST_TEMPLATE`
 
 ---
 

@@ -456,7 +456,7 @@ factor_values: ﮒﮒﮒ?        risk_factors: ﻠ۲ﻠ۸ﮒﮒﻝ۸ﻠﭖ
 ---
 
 ## 6. ﮒﻟﮔﮔ۰?
-- [ﮒ۷ﻠﮒﮒﮒﭦ](08_KNOWLEDGE/FACTOR_LIBRARY/MOMENTUM_FACTOR_LIBRARY.md)
+- ﮒ۷ﻠﮒﮒﮒﭦ
 - [ﮒﮒﮒﺙﮔﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰](../../01_FRAMEWORK/FACTOR_ENGINE_DETAILED_DESIGN.md)
 - [ﮔﻟﭖﮒﺎﮒ۵](../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md)
 

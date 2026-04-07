@@ -306,9 +306,9 @@ responsibility:
 
 | 文档 | 说明 |
 |------|------|
-| [System_Manifest.md](System_Manifest.md) | 系统总清单 |
-| [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | 系统架构定义 |
-| [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](01_FRAMEWORK/GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | Layer 10总体蓝图 |
+| System_Manifest.md | 系统总清单 |
+| ARCHITECTURE.md | 系统架构定义 |
+| GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md | Layer 10总体蓝图 |
 
 ---
 

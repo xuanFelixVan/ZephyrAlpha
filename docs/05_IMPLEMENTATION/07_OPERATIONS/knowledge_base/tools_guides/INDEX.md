@@ -53,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Document Auditor Guide](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/DOCUMENT_AUDITOR_GUIDE.md) - `DOCUMENT_AUDITOR_GUIDE`
-- [Metadata Enhancer Guide](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/METADATA_ENHANCER_GUIDE.md) - `METADATA_ENHANCER_GUIDE`
+- Document Auditor Guide - `DOCUMENT_AUDITOR_GUIDE`
+- Metadata Enhancer Guide - `METADATA_ENHANCER_GUIDE`
 
 ---
 

@@ -75,7 +75,7 @@ compliance_level: 专业标准---
 
 **غ┐فجف?*:
 ```markdown
-| [HUMAN_AI_INTEGRATION_BLUEPRINT.md](01_FRAMEWORK/HUMAN_AI_INTEGRATION_BLUEPRINT.md) | غ║║║فغ╜╡قذ |
+| HUMAN_AI_INTEGRATION_BLUEPRINT.md | غ║║║فغ╜╡قذ |
 ```
 
 

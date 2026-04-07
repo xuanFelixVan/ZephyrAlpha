@@ -212,7 +212,7 @@ python scripts/move_to_archive.py --doc docs/PATH/TO/DOC.md --archive-dir docs/0
 
 **ﮔﺑﮔﺍﮒ?*:
 ```markdown
-ﮒﻟ۶ [ﻝﻝ۴ﮒﺙﮔﻟﮒﺝ](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md)
+ﮒﻟ۶ ﻝﻝ۴ﮒﺙﮔﻟﮒﺝ
 ```
 
 **ﮔﺑﮔﺍﮒﺅﺙﮔﮔﺟﻛﭨ۲ﺅﺙ**:

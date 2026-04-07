@@ -1149,7 +1149,7 @@ class SecondLevelRiskControl:
 
 - [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 - [已有蓝图清单](./INDEX.md)
-- [模块注册表](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODULE_REGISTRY.md)
+- 模块注册表
 
 ---
 

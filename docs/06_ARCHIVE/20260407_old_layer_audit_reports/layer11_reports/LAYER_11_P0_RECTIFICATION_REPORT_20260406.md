@@ -211,7 +211,7 @@ class AssetAllocationEngine:
 
 #### 整改内容
 
-创建了 [RESPONSIBILITY_BOUNDARY_MATRIX.md](11_STRATEGIC_DECISION/RESPONSIBILITY_BOUNDARY_MATRIX.md)，包含：
+创建了 RESPONSIBILITY_BOUNDARY_MATRIX.md，包含：
 
 **1. 核心模块职责矩阵**：
 | 模块名称 | 核心职责 | 负责内容 | 不负责内容 |

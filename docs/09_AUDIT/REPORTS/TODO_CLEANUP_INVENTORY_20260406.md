@@ -283,8 +283,8 @@ audit_type: P1问题修复
 ## 🔗 相关文档
 
 - [深度系统审计报告](./DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 
 ---
 

@@ -1,33 +1,4 @@
----
-module_id: INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 10_AI_WORKFLOW目录索引
----
-
 ﻿---
-module_id: INDEX_AI_WORKFLOW_001
-title: AI工作流与舆情分析综合层索引
-version: 1.4.0
-status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-07
-owner: 首席文档架构师
-standard_type: 专业量化机构索引
-applicable_scope: AI工作流与舆情分析综合管理
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: AI工作流与舆情分析综合层索引

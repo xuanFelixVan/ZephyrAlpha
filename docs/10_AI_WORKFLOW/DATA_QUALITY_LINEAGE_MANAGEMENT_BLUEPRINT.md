@@ -1,38 +1,4 @@
----
-module_id: DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_QUALITY_LINEAGE_MANAGEMENT蓝图设计
----
-
 ﻿---
-module_id: AIWF_DQLM_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-04
-owner: 首席架构师
-standard_type: 专业机构级蓝图
-applicable_scope: 数据质量与血缘管理模块
-compliance_level: 专业标准
-parent_document: INDEX.md
-layer: Layer 1 (数据预处理层)
-priority: P0
-estimated_effort: 40h
-integrated_modules:
-  - AIWF_DQM_001
-  - AIWF_DLT_001
-responsibility:
-  - 数据管理架构设计与实施规范与优化维护
-
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: 数据质量与血缘管理模块蓝图

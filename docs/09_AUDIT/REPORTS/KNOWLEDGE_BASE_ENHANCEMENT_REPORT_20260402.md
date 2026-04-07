@@ -48,7 +48,7 @@ last_updated: 2026-04-02---
 ## 2. ﮒﮒﭨﭦﻝﻝ۴ﻟﺁﮒﭦﮔﮔ۰۲
 
 ### 2.1 ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﮔﮔ۰?
-**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
+**ﮔﻛﭨﭘ**: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓﭖ
 
 **ﻛﺕﭨﻟ۵ﮒﮒ؟ﺗ**:
 1. **ﮔﮔ۰۲ﻝ؟۰ﻝﮔﻛﺛﺏﮒ؟ﻟﺓ?*
@@ -82,7 +82,7 @@ last_updated: 2026-04-02---
 
 ### 2.2 ﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮔ۰۲
 
-**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮒ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
+**ﮔﻛﭨﭘ**: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖﻝ۷ﮔﮒ
 
 **ﻛﺕﭨﻟ۵ﮒﮒ؟ﺗ**:
 1. **ﮔﺁﮔ۴ﮒﺓ۴ﻛﺛﮔﭖﻝ۷**
@@ -110,7 +110,7 @@ last_updated: 2026-04-02---
 - ﻛﭨ۲ﻝﮔﻛﭦ۳ﮒ?   - ﮒﻟﺛﮒﮒﺕﮒ?   - ﮔﺁﮔ۴ﻝﭨﮔﮒ?
 ### 2.3 ﻝﭨﻠ۹ﮔﭨﻝﭨﮔﮔ۰۲
 
-**ﮔﻛﭨﭘ**: [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻝﭨﻠ۹ﮔﭨﻝﭨ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
+**ﮔﻛﭨﭘ**: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻝﭨﻠ۹ﮔﭨﻝﭨ
 
 **ﻛﺕﭨﻟ۵ﮒﮒ؟ﺗ**:
 1. **ﮔﮔ۰۲ﻝ؟۰ﻝﻝﭨﻠ۹**
@@ -292,9 +292,9 @@ knowledge_base/
 ---
 
 ## 8. ﮒﻟﮔﮔ۰?
-- [ﮔﻝﭨﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- ﮔﻝﭨﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ
 - ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
 
 ---
 

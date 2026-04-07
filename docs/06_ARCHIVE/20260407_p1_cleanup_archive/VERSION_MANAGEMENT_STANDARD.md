@@ -265,8 +265,8 @@ def check_module_compatibility(module_version: str, system_version: str) -> str:
 - [ ] ﮒﺙﮒ؟ﺗﮔ۶ﮒﺛﺎﮒﻟﺁ?
 
 ### ﻠﮒﺛB: ﻝﺕﮒﺏﮔﮒﮔﮔ۰۲
-1. [DOCUMENT_NUMBERING_STANDARD.md](./DOCUMENT_NUMBERING_STANDARD.md) - ﮔﮔ۰۲ﻝﺙﮒﺓﮔﮒ
-2. [DEVELOPMENT_STANDARDS.md](./DEVELOPMENT_STANDARDS.md) - ﮒﺙﮒﮔ?
+1. DOCUMENT_NUMBERING_STANDARD.md - ﮔﮔ۰۲ﻝﺙﮒﺓﮔﮒ
+2. DEVELOPMENT_STANDARDS.md - ﮒﺙﮒﮔ?
 3.  - ﻝﺏﭨﻝﭨﮔﺎﭨﻝﮔﮒ
 
 ### ﻠﮒﺛC: ﻝﮔ؛ﮔﻟﺁﻝ۳ﭦﻛﺝ
