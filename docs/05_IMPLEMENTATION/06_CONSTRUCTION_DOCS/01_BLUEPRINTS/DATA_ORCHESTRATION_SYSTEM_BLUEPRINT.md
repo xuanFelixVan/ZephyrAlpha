@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_ORCHESTRATION_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -494,12 +494,12 @@ Prefect Core
 - [ ] 开发数据采集Flow
 - [ ] 开发数据处理Flow
 - [ ] 开发数据验证Flow
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 
 
-- [ ] é
-- [ ] é
+- [ ] 集成验收项（待补充）
+- [ ] 集成验收项（待补充）
 - [ ] 开发监控Dashboard
 - [ ] 设置失败重试
 

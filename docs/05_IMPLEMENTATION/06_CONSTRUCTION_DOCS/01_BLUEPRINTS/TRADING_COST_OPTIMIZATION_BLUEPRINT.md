@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 交易成本优化
   - 成本模型
@@ -498,7 +498,7 @@ class ImplementationShortfallAlgorithm:
         return ExecutionSchedule(schedule=schedule)
 ```
 
-### 3.4 é
+### 3.4 性能与成本
 ```python
 @dataclass
 class TradingCostConfig:

@@ -1,24 +1,3 @@
-
-
-﻿---
-module_id: 31_CAPITAL_MANAGEMENT_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档治理系统
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-standard_type: 索引文档
-applicable_scope: 资金管理界面模块
----
-
-# 资金管理界面模块索引
-
-> **模块编号**: 31  
-> **模块名称**: 资金管理界面  
-> **核心职责**: 资金账户管理, 资金调拨记录, 资金风险预警
-
 ---
 
 ## 📄 文档列表

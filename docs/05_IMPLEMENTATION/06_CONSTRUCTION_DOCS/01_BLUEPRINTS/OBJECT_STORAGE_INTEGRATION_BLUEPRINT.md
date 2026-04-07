@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OBJECT_STORAGE_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -577,7 +577,7 @@ lifecycle_policies:
 **目标**: 实现生命周期管理
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - 自动归档功能
 

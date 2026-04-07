@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_BACKUP_RECOVERY_001
 version: 1.0.0
 status: Active
@@ -953,14 +953,14 @@ class DisasterRecoveryManager:
 **目标**: 实现基础备份能力
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - Restic集成
 
 
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - 数据库备份管理器
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STATISTICAL_ARBITRAGE_001
 version: 1.0.0
 status: Active
@@ -408,7 +408,7 @@ class StatisticalArbitrageModule:
         pass
 ```
 
-### 5.2 é
+### 5.2 配置说明
 ```yaml
 statistical_arbitrage:
   # é
@@ -441,7 +441,7 @@ statistical_arbitrage:
 
 ## 7. 实施计划
 
-### 7.1 Phase 1: é
+### 7.1 Phase 1: 基础能力
 - Day 4-5: 协整检验算法实?- Day 6-7: 价差交易策略实现
 
 ### 7.2 Phase 2: 市场中性组合构建（Week 3-4?- Day 1-3: 多空优化算法实现

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DISTRIBUTED_QUERY_ENGINE_001
 version: 1.0.0
 status: Active
@@ -609,7 +609,7 @@ print(result)
 **目标**: 实现基础查询能力
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - Trino部署
 - 查询引擎

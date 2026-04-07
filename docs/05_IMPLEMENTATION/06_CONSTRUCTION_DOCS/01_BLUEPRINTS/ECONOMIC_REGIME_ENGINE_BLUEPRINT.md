@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ECONOMIC_REGIME_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -222,7 +222,7 @@ class EconomicRegimeEngine:
         pass
 ```
 
-### 5.2 é
+### 5.2 配置说明
 ```yaml
 economic_regime_engine:
   # HMM模型参数

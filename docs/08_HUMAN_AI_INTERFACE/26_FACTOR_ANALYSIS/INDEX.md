@@ -1,24 +1,3 @@
-
-
-﻿---
-module_id: 26_FACTOR_ANALYSIS_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档治理系统
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-standard_type: 索引文档
-applicable_scope: 因子分析工具模块
----
-
-# 因子分析工具模块索引
-
-> **模块编号**: 26  
-> **模块名称**: 因子分析工具  
-> **核心职责**: 因子库管理, 因子有效性测试, 因子组合优化
-
 ---
 
 ## 📄 文档列表

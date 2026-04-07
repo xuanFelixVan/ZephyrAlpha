@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 风险归因系统
   - 风险分解
@@ -641,7 +641,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         return report_path
 ```
 
-### 3.6 é
+### 3.6 扩展阅读
 ```python
 @dataclass
 class AttributionConfig:

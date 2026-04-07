@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - Black-Litterman模型
   - 观点融合
@@ -472,7 +472,7 @@ def black_litterman_formula(
 
 |---------|--------|------|
 | **
-存占用** | <100MB | 单次优化 |
+内存占用** | <100MB | 单次优化 |
 
 
 

@@ -1,24 +1,3 @@
-
-
-﻿---
-module_id: 25_STRATEGY_IDE_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档治理系统
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-standard_type: 索引文档
-applicable_scope: 策略开发IDE模块
----
-
-# 策略开发IDE模块索引
-
-> **模块编号**: 25  
-> **模块名称**: 策略开发IDE  
-> **核心职责**: 策略开发环境, 代码编辑, 回测集成
-
 ---
 
 ## 📄 文档列表

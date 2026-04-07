@@ -85,6 +85,20 @@ def rewrite_module_responsibility(text: str) -> str:
     return text
 
 
+def normalize_newlines(text: str) -> str:
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def fill_empty_applicable_scope(text: str) -> str:
+    if not re.search(r"^applicable_scope:\s*$", text, flags=re.M):
+        return text
+    m = re.search(r"^layer:\s*(.+)$", text, flags=re.M)
+    if not m:
+        return text
+    val = m.group(1).strip()
+    return re.sub(r"^applicable_scope:\s*$", f"applicable_scope: {val}", text, count=1, flags=re.M)
+
+
 def fix_applicable_scope(text: str) -> str:
     if "applicable_scope: å" not in text:
         return text
@@ -173,14 +187,21 @@ def fix_scenario_file(text: str) -> str:
     return text
 
 
+def fix_broken_memory_rows(text: str) -> str:
+    text = re.sub(r"\|\s*\n存占用", "| 内存占用", text)
+    text = text.replace("存占用** |", "内存占用** |")
+    return text
+
+
 def process_file(fp: pathlib.Path) -> bool:
     raw = fp.read_bytes()
-    text = raw.decode("utf-8-sig", errors="strict")
+    text = normalize_newlines(raw.decode("utf-8-sig", errors="strict"))
     orig = text
 
     if fp.name == "MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md":
         text = rewrite_module_responsibility(text)
 
+    text = fill_empty_applicable_scope(text)
     text = fix_applicable_scope(text)
     text = apply_subs(text)
     text = fix_table_ending_å(text)
@@ -188,6 +209,8 @@ def process_file(fp: pathlib.Path) -> bool:
 
     if fp.name == "PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md":
         text = fix_scenario_file(text)
+
+    text = fix_broken_memory_rows(text)
 
     if text != orig:
         fp.write_bytes(text.encode("utf-8-sig"))

@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 策略选择
   - 策略评估
@@ -885,7 +885,7 @@ class AIStrategyRecommender:
 
 ## 五、用户接口设?
 
-### 5.1 é
+### 5.1 集成要点
 
 ```yaml
 # config/strategy_selection.yaml

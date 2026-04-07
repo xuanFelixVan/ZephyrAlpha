@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -700,7 +700,7 @@ api_keys:
            with open(config_file, "w") as f:
                f.write(template)
    ```
-¥é
+  # 示例配置
 
 ¨é
 
@@ -947,7 +947,7 @@ def initialize_config():
         }
     }
     
-¥é
+  # 示例配置
     with open(config_file, "w", encoding="utf-8") as f:
         yaml.dump(default_config, f, allow_unicode=True, default_flow_style=False)
     

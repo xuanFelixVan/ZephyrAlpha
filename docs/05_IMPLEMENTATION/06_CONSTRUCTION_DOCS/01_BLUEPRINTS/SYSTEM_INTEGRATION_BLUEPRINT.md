@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 系统集成
   - 模块集成
@@ -441,7 +441,7 @@ def test_complete_report_workflow():
 
 ## 
 ### 6.1 容器化部?
-**Docker Composeé
+**Docker Compose 配置**
 ```yaml
 version: '3.8'
 
@@ -508,7 +508,7 @@ services:
 
 ### 6.2 Kubernetes部署
 
-**Deploymenté
+**Deployment 流程**
 ```yaml
 apiVersion: apps/v1
 kind: Deployment

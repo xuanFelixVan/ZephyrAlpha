@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_ACCESS_AUDIT_001
 version: 1.0.0
 status: Active
@@ -902,13 +902,13 @@ class ComplianceReportGenerator:
 **目标**: 实现基础审计能力
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 
 
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - 异常检测器
 

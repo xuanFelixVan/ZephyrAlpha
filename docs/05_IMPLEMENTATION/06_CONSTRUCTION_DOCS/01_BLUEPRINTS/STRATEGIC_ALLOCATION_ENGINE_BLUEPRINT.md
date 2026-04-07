@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -160,7 +160,7 @@ class StrategicAllocationEngine:
         views: Dict[str, float],
         omega: np.ndarray
     ) -> Dict[str, float]:
-        """Black-Littermané
+        """Black-Litterman 视图融合
         
         参数:
             prices: 价格数据

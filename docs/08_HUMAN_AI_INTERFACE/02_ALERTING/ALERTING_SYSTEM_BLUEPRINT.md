@@ -1,15 +1,4 @@
 ---
-module_id: ALERTING_SYSTEM_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ALERTING_SYSTEM蓝图设计
----
-
-﻿---
 module_id: ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -228,5 +217,4 @@ async def wechat_webhook(request: Request):
 **下次更新**: 2026-04-13
 **维护周期**: 每周审查
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
 

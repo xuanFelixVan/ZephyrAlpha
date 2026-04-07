@@ -1,18 +1,4 @@
 ---
-module_id: 11_USER_PREFERENCES_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档治理系统
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-standard_type: 索引文档
-applicable_scope: Layer 8 - 人机交互层
-compliance_level: 专业标准
----
-
-﻿---
 module_id: INDEX_11_USER_PREFERENCES_001
 version: 1.0.0
 status: Active
@@ -24,7 +10,6 @@ responsibility:
 standard_type: 索引文档
 applicable_scope: 用户偏好模块
 compliance_level: 专业标准---
-
 
 # 11 User Preferences索引
 

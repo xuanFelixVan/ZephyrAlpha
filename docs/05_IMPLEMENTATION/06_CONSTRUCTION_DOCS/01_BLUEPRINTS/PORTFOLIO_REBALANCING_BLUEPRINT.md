@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -550,7 +550,7 @@ class RebalancingEvaluator:
         return improvement / cost
 ```
 
-### 3.6 é
+### 3.6 扩展阅读
 ```python
 @dataclass
 class RebalancingConfig:

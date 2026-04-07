@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 约束建模
   - 求解算法
@@ -602,7 +602,7 @@ class BoxConstraint(Constraint):
         return np.all(solution >= self.lower_bounds) and np.all(solution <= self.upper_bounds)
 ```
 
-### 3.6 é
+### 3.6 扩展阅读
 ```python
 @dataclass
 class SolverConfig:

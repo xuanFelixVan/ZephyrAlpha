@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -110,7 +110,7 @@ class MultiAssetAllocator:
             asset_classes: 资产类别列表
             
         Returns:
-            AllocationResult: é
+            AllocationResult: 配置结果
         """
         # 1. 获取多资产数?        asset_data = self.data_manager.get_asset_data(asset_classes)
         
@@ -147,7 +147,7 @@ class MultiAssetAllocator:
             economic_regime: 经济范式?expansion', 'stagflation', 'recession', 'recovery'?            regime_probability: 范式概率
             
         Returns:
-            AllocationResult: é
+            AllocationResult: 配置结果
         """
         
         # 2. 根据经济范式调整风险预算
@@ -490,7 +490,7 @@ class CrossAssetRiskMonitor:
         return alerts
 ```
 
-### 3.6 é
+### 3.6 扩展阅读
 ```python
 @dataclass
 class MultiAssetConfig:

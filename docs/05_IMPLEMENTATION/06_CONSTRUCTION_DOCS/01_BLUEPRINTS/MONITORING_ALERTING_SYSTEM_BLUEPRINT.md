@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONITORING_ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -861,7 +861,7 @@ _ZephyrAlpha Monitoring_
 **目标**: 实现基础监控能力
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - Prometheus部署
 - AlertManager部署
@@ -871,7 +871,7 @@ _ZephyrAlpha Monitoring_
 **目标**: 实现数据质量监控
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - 数据质量告警规则
 - 数据处理流程集成
@@ -880,7 +880,7 @@ _ZephyrAlpha Monitoring_
 **目标**: 完善可视化和通知
 
 **任务**:
-- [ ] é
+- [ ] 集成验收项（待补充）
 
 - Grafana部署
 
