@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_001
 version: 1.0.0
 status: Active

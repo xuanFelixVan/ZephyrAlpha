@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: VOLATILITY_PREDICTION_BLUEPRINT_001
 
 version: 1.0.0

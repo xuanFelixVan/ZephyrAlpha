@@ -1,9 +1,9 @@
-﻿---
+﻿﻿---
 module_id: ARCHIVE_AUDIT_REPORTS_20260404_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-04
-owner: 审计系统架构�?standard_type: 归档索引
+owner: 审计系统架构?standard_type: 归档索引
 responsibility:
   - 归档文档、历史版本
 applicable_scope: 审计报告归档
@@ -27,25 +27,25 @@ source_locations:
 
 ## 归档统计
 
-| 目录 | 文件�?| 大小 | 说明 |
+| 目录 | 文件?| 大小 | 说明 |
 |------|--------|------|------|
-| audit_state/ | 128 | 3.23 MB | 审计状态报告、深度审计报�?|
-| technical_reviews/ | 98 | 1.23 MB | 技术审查报告、可行性评�?|
+| audit_state/ | 128 | 3.23 MB | 审计状态报告、深度审计报?|
+| technical_reviews/ | 98 | 1.23 MB | 技术审查报告、可行性评?|
 
 ## 目录结构
 
 ```
 20260404_audit_reports_archive/
-├── audit_state/                    # 审计状态报�?�?  ├── archived_json_reports_20260402/
-�?  ├── archived_reports_20260402/
-�?  ├── sample_validation_2026-04-02/
-�?  └── *.md/*.json                 # 各类审计报告
-└── technical_reviews/              # 技术审查报�?    ├── IFIND_CONNECTOR/
+├── audit_state/                    # 审计状态报??  ├── archived_json_reports_20260402/
+?  ├── archived_reports_20260402/
+?  ├── sample_validation_2026-04-02/
+?  └── *.md/*.json                 # 各类审计报告
+└── technical_reviews/              # 技术审查报?    ├── IFIND_CONNECTOR/
     ├── QMT_DATA_INTERFACE/
-    └── *.md/*.json                 # 各类技术审查报�?```
+    └── *.md/*.json                 # 各类技术审查报?```
 
-## 保留的正式审计报�?
-以下正式审计报告保留在`09_AUDIT/REPORTS/`目录�?
+## 保留的正式审计报?
+以下正式审计报告保留在`09_AUDIT/REPORTS/`目录?
 | 报告类型 | 数量 | 位置 |
 |----------|------|------|
 | Layer深度审计报告 | 15+ | 09_AUDIT/REPORTS/ |
@@ -65,7 +65,7 @@ source_locations:
 
 ### technical_reviews/ 主要文件
 
-- `COMPREHENSIVE_TECHNICAL_REVIEW_REPORT.md` - 综合技术审�?- `LAYER1/LAYER2_TECHNICAL_REVIEW_SUMMARY_REPORT.md` - Layer技术审�?- `*_TECHNICAL_REVIEW_REPORT.md` - 各模块技术审查报�?- `BLUEPRINT_COMPLETENESS_ANALYSIS_REPORT.md` - 蓝图完整性分�?- 以及更多...
+- `COMPREHENSIVE_TECHNICAL_REVIEW_REPORT.md` - 综合技术审?- `LAYER1/LAYER2_TECHNICAL_REVIEW_SUMMARY_REPORT.md` - Layer技术审?- `*_TECHNICAL_REVIEW_REPORT.md` - 各模块技术审查报?- `BLUEPRINT_COMPLETENESS_ANALYSIS_REPORT.md` - 蓝图完整性分?- 以及更多...
 
 ## 访问指南
 
@@ -76,11 +76,11 @@ source_locations:
 
 ## 归档原因
 
-根据专业量化机构文档治理原则�?- **版本隔离原则**: 保留最新版本，归档历史版本
-- **索引完备性原�?*: 所有归档文档必须有索引
-- **职责驱动原则**: 正式报告与工作报告分�?
+根据专业量化机构文档治理原则?- **版本隔离原则**: 保留最新版本，归档历史版本
+- **索引完备性原?*: 所有归档文档必须有索引
+- **职责驱动原则**: 正式报告与工作报告分?
 ---
 
-**归档执行�?*: Audit Sentinel
+**归档执行?*: Audit Sentinel
 **归档时间**: 2026-04-04 23:07
 **Git提交**: b390b7e (备份) + 后续归档提交

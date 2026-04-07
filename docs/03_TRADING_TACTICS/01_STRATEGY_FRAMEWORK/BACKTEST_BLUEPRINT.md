@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BACKTRADER_001
 version: 1.0.0
 status: Active
@@ -21,9 +21,9 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
+applicable_scope: 全系统架构设?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -39,8 +39,8 @@ implementation_status: 设计阶段
 
 > 清风量化系统 v5.0 - Backtrader回测系统
 > **索引**: `STRAT.001`
-> **开发时�?*: 35h
-> **核心定位**: 实现"策略 �?Backtrader回测 �?绩效分析 �?Optuna优化"的完整回测闭�?
+> **开发时?*: 35h
+> **核心定位**: 实现"策略 ?Backtrader回测 ?绩效分析 ?Optuna优化"的完整回测闭?
 
 
 ## 1. 设计原则
@@ -48,8 +48,8 @@ implementation_status: 设计阶段
 | 原则 | 说明 |
 |------|------|
 | **Backtrader主力** | 使用Backtrader作为回测引擎 |
-| **事件驱动** | 完整的事件驱动回�?|
-| **成本真实** | 手续费、滑点、冲击成本全部模�?|
+| **事件驱动** | 完整的事件驱动回?|
+| **成本真实** | 手续费、滑点、冲击成本全部模?|
 | **Optuna优化** | 使用Optuna进行参数优化 |
 
 
@@ -58,51 +58,51 @@ implementation_status: 设计阶段
 ### 2.1 系统架构
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   回测系统架构                                �?
-├─────────────────────────────────────────────────────────────�?
-�?                                                            �?
-�? ┌─────────────�?                                          �?
-�? �?  策略      �?◀── �?AI设计                             �?
-�? └──────┬──────�?                                          �?
-�?        �?                                                  �?
-�?        �?                                                  �?
-�? ┌─────────────────────────────────────────────────────────┐│
-�? �?             Backtrader Engine                         ││
-�? �? - Cerebro  - Data Feeds  - Observers  - Analyzers    ││
-�? └─────────────────────────────────────────────────────────┘│
-�?        �?                                                  �?
-�?        �?                                                  �?
-�? ┌─────────────�?                                          �?
-�? �? 绩效分析   �?◀── empyrical/PyFolio                    �?
-�? └─────────────�?                                          �?
-�?        �?                                                  �?
-�?        �?                                                  �?
-�? ┌─────────────�?                                          �?
-�? �? Optuna优化 �?◀── 参数自动搜索                          �?
-�? └─────────────�?                                          �?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────?
+?                   回测系统架构                                ?
+├─────────────────────────────────────────────────────────────?
+?                                                            ?
+? ┌─────────────?                                          ?
+? ?  策略      ?◀── ?AI设计                             ?
+? └──────┬──────?                                          ?
+?        ?                                                  ?
+?        ?                                                  ?
+? ┌─────────────────────────────────────────────────────────┐│
+? ?             Backtrader Engine                         ││
+? ? - Cerebro  - Data Feeds  - Observers  - Analyzers    ││
+? └─────────────────────────────────────────────────────────┘│
+?        ?                                                  ?
+?        ?                                                  ?
+? ┌─────────────?                                          ?
+? ? 绩效分析   ?◀── empyrical/PyFolio                    ?
+? └─────────────?                                          ?
+?        ?                                                  ?
+?        ?                                                  ?
+? ┌─────────────?                                          ?
+? ? Optuna优化 ?◀── 参数自动搜索                          ?
+? └─────────────?                                          ?
+└─────────────────────────────────────────────────────────────?
 ```
 
 ### 2.2 回测流程
 
 ```
-1. 策略设计 �?2. 数据准备 �?3. Backtrader配置 �?4. 回测执行
-                                                        �?
-8. 报告生成 �?7. 参数优化 �?6. 结果分析 �?5. 结果输出
+1. 策略设计 ?2. 数据准备 ?3. Backtrader配置 ?4. 回测执行
+                                                        ?
+8. 报告生成 ?7. 参数优化 ?6. 结果分析 ?5. 结果输出
 ```
 
 
 ## 3. 核心实现
 
-### 3.1 数据馈�?
+### 3.1 数据馈?
 
 ```python
 import backtrader as bt
 import pandas as pd
 
 class PandasDataFeed(bt.feeds.PandasData):
-    """Pandas数据馈�?
+    """Pandas数据馈?
 
     索引: STRAT.001-M01
     """
@@ -118,7 +118,7 @@ class PandasDataFeed(bt.feeds.PandasData):
     )
 
 class DataFeedFactory:
-    """数据馈送工�?
+    """数据馈送工?
 
     索引: STRAT.001-M02
     上游: DataHub
@@ -132,16 +132,16 @@ class DataFeedFactory:
         end_date: str,
         freq: str = 'daily'
     ) -> PandasDataFeed:
-        """创建OHLCV数据馈�?
+        """创建OHLCV数据馈?
 
         参数:
             symbol: 股票代码
-            start_date: 开始日�?
+            start_date: 开始日?
             end_date: 结束日期
             freq: 频率 (daily/weekly/monthly)
 
         返回:
-            Backtrader数据馈�?
+            Backtrader数据馈?
         """
         # 从DataHub获取数据
         data = DataHub.get_ohlcv(symbol, start_date, end_date)
@@ -153,7 +153,7 @@ class DataFeedFactory:
         # Backtrader需要按时间排序
         data = data.sort_index()
 
-        # 创建数据馈�?
+        # 创建数据馈?
         feed = PandasDataFeed(dataname=data)
 
         return feed
@@ -239,19 +239,19 @@ class MomentumStrategy(BaseStrategy):
             return
 
         if not self.position:
-            # 无持仓，检查买入信�?
+            # 无持仓，检查买入信?
             if self.datas[0].close > self.sma * (1 + self.params.threshold):
                 self.log(f'BUY CREATE, Price: {self.datas[0].close[0]:.2f}')
                 self.order = self.buy()
         else:
-            # 有持仓，检查卖出信�?
+            # 有持仓，检查卖出信?
             if self.datas[0].close < self.sma:
                 self.log(f'SELL CREATE, Price: {self.datas[0].close[0]:.2f}')
                 self.order = self.sell()
 
 
 class MeanReversionStrategy(BaseStrategy):
-    """均值回归策略模�?
+    """均值回归策略模?
 
     索引: STRAT.001-M05
     """
@@ -291,7 +291,7 @@ class MeanReversionStrategy(BaseStrategy):
 
 ## 4. 回测引擎
 
-### 4.1 回测执行�?
+### 4.1 回测执行?
 
 ```python
 class BacktestEngine:
@@ -316,9 +316,9 @@ class BacktestEngine:
         """运行回测
 
         参数:
-            strategy_class: 策略�?
+            strategy_class: 策略?
             symbols: 股票列表
-            start_date: 开始日�?
+            start_date: 开始日?
             end_date: 结束日期
             params: 策略参数
             commission: 手续费率
@@ -341,7 +341,7 @@ class BacktestEngine:
             )
             cerebro.adddata(datafeed, name=symbol)
 
-        # 4. 添加分析�?
+        # 4. 添加分析?
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')
         cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
         cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
@@ -379,7 +379,7 @@ class BacktestEngine:
 
 ```python
 class OptunaOptimizer:
-    """Optuna参数优化�?
+    """Optuna参数优化?
 
     索引: STRAT.001-M07
     """
@@ -400,7 +400,7 @@ class OptunaOptimizer:
         """优化参数
 
         参数:
-            strategy_class: 策略�?
+            strategy_class: 策略?
             symbols: 股票列表
             param_space: 参数空间
             objective: 优化目标
@@ -444,11 +444,11 @@ class OptunaOptimizer:
 
 ## 5. 绩效分析
 
-### 5.1 绩效分析�?
+### 5.1 绩效分析?
 
 ```python
 class PerformanceAnalyzer:
-    """绩效分析�?
+    """绩效分析?
 
     索引: STRAT.001-M08
     上游: BacktestEngine
@@ -486,24 +486,24 @@ class PerformanceAnalyzer:
 
 ## 基本信息
 - 初始资金: {result.initial_value:,.2f}
-- 最终资�? {result.final_value:,.2f}
+- 最终资? {result.final_value:,.2f}
 - 总收益率: {report.total_return:.2%}
 
 ## 风险指标
-| 指标 | �?|
+| 指标 | ?|
 |------|-----|
 | 夏普比率 | {report.sharpe_ratio:.2f} |
-| 最大回�?| {report.max_drawdown:.2%} |
+| 最大回?| {report.max_drawdown:.2%} |
 | 卡玛比率 | {report.calmar_ratio:.2f} |
 
 ## 交易统计
-| 指标 | �?|
+| 指标 | ?|
 |------|-----|
 | 交易次数 | {len(result.trades)} |
 | 胜率 | {report.win_rate:.2%} |
 | 平均盈利 | {report.avg_win:,.2f} |
 | 平均亏损 | {report.avg_loss:,.2f} |
-| 盈亏�?| {report.profit_loss_ratio:.2f} |
+| 盈亏?| {report.profit_loss_ratio:.2f} |
 """
 ```
 
@@ -545,14 +545,14 @@ class BacktestAPI:
 ```
 
 
-## 7. 开发任务分�?
+## 7. 开发任务分?
 
 ### 7.1 任务分解 (35h)
 
 | 任务 | 时间 | 说明 |
 |------|------|------|
 | Backtrader环境 | 3h | 安装+配置 |
-| 数据馈送封�?| 4h | PandasDataFeed |
+| 数据馈送封?| 4h | PandasDataFeed |
 | 策略基类 | 6h | BaseStrategy |
 | 策略模板 | 8h | Momentum/MeanReversion |
 | 回测引擎 | 6h | BacktestEngine |
@@ -566,13 +566,13 @@ class BacktestAPI:
 |------|------|
 | [overview.md](./overview.md) | 策略体系概述 |
 | [lifecycle.md](./lifecycle.md) | 策略生命周期管理 |
-| [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝�?|
+| [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝?|
 | [API_Contract.md](03_TRADING_TACTICS/API_Contract.md) | 系统API契约 |
 
 
 **文档版本**: v1.0  
-**最后更�?*: 2026-04-01  
-**维护�?*: 策略研发中心
+**最后更?*: 2026-04-01  
+**维护?*: 策略研发中心
 ---
 
 ## 9. 文档治理
@@ -585,7 +585,7 @@ class BacktestAPI:
 - **模块ID**: TACTICS_BACKTEST_BP_001
 - **蓝图文档**: [BACKTEST_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\BACKTEST_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: 全系统架构设�?
+- **职责**: 全系统架构设?
 - **状态**: Active
 ```
 
@@ -593,7 +593,7 @@ class BacktestAPI:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Tactics Backtest Bp** | 全系统架构设�? | **核心模块** |
+| **Tactics Backtest Bp** | 全系统架构设? | **核心模块** |
 
 ### 9.3 版本管理
 

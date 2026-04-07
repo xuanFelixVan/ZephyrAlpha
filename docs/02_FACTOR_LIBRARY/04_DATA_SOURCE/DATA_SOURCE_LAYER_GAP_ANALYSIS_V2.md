@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_SOURCE_GAP_ANALYSIS_001
 version: 2.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER11_BLUEPRINT_IMPLEMENTATION_STATUS_001
 version: 1.0.0
 status: Active

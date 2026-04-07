@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: TIMESCALEDB_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
   - TimescaleDB集成
@@ -16,16 +15,11 @@ responsibility:
 layer: Layer 5.1 (数据处理)
 ---
 
-# TimescaleDBæ¶åºæ°æ®åºéæèå?
 
-> **æ ¸å¿èè´£**: æ¶åºæ°æ®çå­å¨ãæ¥è¯¢åç®¡çï¼ä¸æ³¨äºé«é¢éèæ°æ®çæ¶é´åºåç¹æ?
 > **职责边界**: 
-> - â?æ¬æ¨¡åè´è´£ï¼æ¶åºæ°æ®å­å¨ãæ¶é´çªå£æ¥è¯¢ãè¿ç»­èåãæ°æ®åç¼?
-> - â?æ¬æ¨¡åä¸è´è´£ï¼åå¼åæå­å¨ï¼ClickHouseï¼ãç¼å­ï¼Redisï¼?
 
 ## 核心定位
 
-**åä¸èè´£**: æ¶åºæ°æ®çå­å¨ãæ¥è¯¢åç®¡çï¼ä¸æ³¨äºé«é¢éèæ°æ®çæ¶é´åºåç¹æ?
 
 ## 设计目标
 
@@ -81,15 +75,8 @@ layer: Layer 5.1 (数据处理)
 
 ### 职责边界
 
-| è´è´£ | ä¸è´è´?|
 |------|--------|
-| â?é«é¢è¡æ
-æ°æ®å­å¨ | â?å¤§è§æ¨¡åå²æ°æ®åæ?|
-| â?æ¶é´çªå£èåæ¥è¯¢ | â?åå¼èååæ |
-| â?è¿ç»­èåé¢è®¡ç®?| â?å®æ¶æ°æ®ç¼å­ |
-| â?æ°æ®åç¼©ä¸ä¿çç­ç?| â?æ°æ®è®¢é
 分发 |
-| â?æ¶åºæ°æ®ééæ ?| â?æ°æ®æ¸
 洗处理 |
 
 ---
@@ -98,27 +85,15 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择TimescaleDB
 
-| ç¹æ?| TimescaleDB | InfluxDB | QuestDB |
+| ç¹æ?| TimescaleDB | InfluxDB | QuestDB |
 |------|-------------|----------|---------|
 | SQLå
-¼å®¹ | â?å®å
 ¨å
-¼å®¹ | â?Fluxè¯­è¨ | â?é¨åå
 ¼å®¹ |
-| å­¦ä¹ æ²çº¿ | â­â­â­â­â­?| â­â­â­?| â­â­â­?|
-| Pythonæ¯æ | â?psycopg2 | â?influxdb | â?questdb |
-| åæºé¨ç½² | â?ç®å?| â?ç®å?| â?ç®å?|
-| åç¼©è½å | â?ä¼ç§ | â?ä¼ç§ | â?ä¼ç§ |
-| è¿ç»­èå | â?æ¯æ | â?æ¯æ | â?æ¯æ |
-| ç¤¾åºæ´»è·åº?| â­â­â­â­â­?| â­â­â­â­ | â­â­â­?|
-| **æ¨èææ°** | **â­â­â­â­â­?* | â­â­â­â­ | â­â­â­?|
 
 ### 1.2 核心优势
 
 1. **PostgreSQLå
-¼å®¹**: æ éå­¦ä¹ æ°è¯­è¨ï¼SQLç´æ¥ä½¿ç¨
-2. **æ¶åºä¼å**: èªå¨ååºãåç¼©ãè¿ç»­èå?
-3. **çæå®å?*: psycopg2ãSQLAlchemyãpandaså®ç¾æ¯æ
 4. **单机友好**: 个人开发场景最佳选择
 
 ---
@@ -128,40 +103,16 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                   TimescaleDBéææ¶æ                           â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                                                                â?
-â? ââââââââââââââââ?   ââââââââââââââââ?   ââââââââââââââââ?    â?
-â? â?æ°æ®åå
-¥å±?  â?   â?æ°æ®å­å¨å±?  â?   â?æ°æ®æ¥è¯¢å±?  â?    â?
-â? â?             â?   â?             â?   â?             â?    â?
-â? â?â?æ¹éåå
-¥   â?   â?â?è¶
-çº§è¡?    â?   â?â?æ¶é´çªå£   â?    â?
-â? â?â?æµå¼åå
-¥   â?   â?â?èªå¨ååº   â?   â?â?è¿ç»­èå   â?    â?
-â? â?â?å¼æ­¥åå
-¥   â?   â?â?åç¼©ç­ç¥   â?   â?â?ééæ ·æ¥è¯?â?    â?
-â? ââââââââââââââââ?   ââââââââââââââââ?   ââââââââââââââââ?    â?
-â?        â?                  â?                   â?             â?
-â?        âââââââââââââââââââââ´âââââââââââââââââââââ?             â?
-â?                           â?                                   â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?                   æ°æ®ä¿çç­ç¥                          â?  â?
-â? â? â?ç­æ°æ? 7å¤?(æªåç¼?                                  â?  â?
-â? â? â?æ¸©æ°æ? 30å¤?(åç¼©)                                   â?  â?
-â? â? â?å·æ°æ? å½æ¡£å°ClickHouse                              â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                                                                â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                                                                â?
+â?        â?                  â?                   â?             â?
+â?                           â?                                   â?
+â?                                                                â?
 ```
 
 ### 2.2 数据模型设计
 
 ```sql
--- è¡æ
-æ°æ®è¶
+-- è¡æ
 çº§è¡?
 CREATE TABLE stock_ticks (
     time        TIMESTAMPTZ NOT NULL,
@@ -174,14 +125,12 @@ CREATE TABLE stock_ticks (
     ask_volume  BIGINT
 );
 
--- è½¬æ¢ä¸ºè¶
 级表
 SELECT create_hypertable('stock_ticks', 'time',
     partitioning_column => 'symbol',
     number_partitions => 4
 );
 
--- Kçº¿æ°æ®è¶
 级表
 CREATE TABLE stock_klines (
     time        TIMESTAMPTZ NOT NULL,
@@ -200,7 +149,6 @@ SELECT create_hypertable('stock_klines', 'time',
     number_partitions => 4
 );
 
--- å å­æ°æ®è¶
 çº§è¡?
 CREATE TABLE factor_values (
     time        TIMESTAMPTZ NOT NULL,
@@ -220,10 +168,8 @@ SELECT create_hypertable('factor_values', 'time',
 
 ## 3. 核心功能实现
 
-### 3.1 è¿ç»­èåï¼Continuous Aggregatesï¼?
 
 ```sql
--- 1åéKçº¿èå?
 CREATE MATERIALIZED VIEW kline_1m
 WITH (timescaledb.continuous) AS
 SELECT 
@@ -244,7 +190,6 @@ SELECT add_continuous_aggregate_policy('kline_1m',
     schedule_interval => INTERVAL '1 minute'
 );
 
--- 5åéKçº¿èå?
 CREATE MATERIALIZED VIEW kline_5m
 WITH (timescaledb.continuous) AS
 SELECT 
@@ -258,7 +203,6 @@ SELECT
 FROM stock_ticks
 GROUP BY bucket, symbol;
 
--- æ¥Kçº¿èå?
 CREATE MATERIALIZED VIEW kline_1d
 WITH (timescaledb.continuous) AS
 SELECT 
@@ -283,10 +227,8 @@ ALTER TABLE stock_ticks SET (
     timescaledb.compress_orderby = 'time DESC'
 );
 
--- æ·»å åç¼©ç­ç¥ï¼?å¤©ååç¼©ï¼?
 SELECT add_compression_policy('stock_ticks', INTERVAL '7 days');
 
--- Kçº¿æ°æ®åç¼?
 ALTER TABLE stock_klines SET (
     timescaledb.compress,
     timescaledb.compress_segmentby = 'symbol,interval',
@@ -299,13 +241,10 @@ SELECT add_compression_policy('stock_klines', INTERVAL '7 days');
 ### 3.3 数据保留策略
 
 ```sql
--- Tickæ°æ®ä¿ç30å¤?
 SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
 
--- Kçº¿æ°æ®ä¿ç?å¹?
 SELECT add_retention_policy('stock_klines', INTERVAL '1 year');
 
--- å å­æ°æ®ä¿ç1å¹?
 SELECT add_retention_policy('factor_values', INTERVAL '1 year');
 ```
 
@@ -313,8 +252,7 @@ SELECT add_retention_policy('factor_values', INTERVAL '1 year');
 
 ## 4. Python接口设计
 
-### 4.1 æ°æ®åå
-¥æ¥å£
+¥æ¥å£
 
 ```python
 from typing import List, Dict, Optional
@@ -324,16 +262,15 @@ from psycopg2.extras import execute_values
 import pandas as pd
 
 class TimescaleDBWriter:
-    """TimescaleDBæ°æ®åå
-¥å?""
+¥å?""
     
     def __init__(self, connection_string: str):
         self.conn = psycopg2.connect(connection_string)
         self.cursor = self.conn.cursor()
     
     def write_ticks(self, ticks: List[Dict]) -> int:
-        """æ¹éåå
-¥Tickæ°æ®"""
+        """æ¹éåå
+¥Tickæ°æ®"""
         sql = """
         INSERT INTO stock_ticks 
         (time, symbol, price, volume, bid_price, ask_price, bid_volume, ask_volume)
@@ -351,8 +288,7 @@ class TimescaleDBWriter:
         return len(values)
     
     def write_klines(self, klines: pd.DataFrame) -> int:
-        """æ¹éåå
-¥Kçº¿æ°æ?""
+        """æ¹éåå
         sql = """
         INSERT INTO stock_klines 
         (time, symbol, interval, open, high, low, close, volume, amount)
@@ -370,8 +306,7 @@ class TimescaleDBWriter:
         return len(values)
     
     def write_factors(self, factors: pd.DataFrame) -> int:
-        """æ¹éåå
-¥å å­æ°æ®"""
+        """æ¹éåå
         sql = """
         INSERT INTO factor_values 
         (time, symbol, factor_id, value, quality)
@@ -392,7 +327,6 @@ class TimescaleDBWriter:
 
 ```python
 class TimescaleDBReader:
-    """TimescaleDBæ°æ®æ¥è¯¢å?""
     
     def __init__(self, connection_string: str):
         self.conn = psycopg2.connect(connection_string)
@@ -404,7 +338,6 @@ class TimescaleDBReader:
         start_time: datetime,
         end_time: datetime
     ) -> pd.DataFrame:
-        """è·åKçº¿æ°æ?""
         sql = """
         SELECT time, symbol, open, high, low, close, volume, amount
         FROM stock_klines
@@ -458,7 +391,6 @@ class TimescaleDBReader:
         ])
     
     def get_latest_prices(self, symbols: List[str]) -> Dict[str, float]:
-        """è·åææ°ä»·æ ?""
         sql = """
         SELECT DISTINCT ON (symbol) symbol, price, time
         FROM stock_ticks
@@ -509,7 +441,6 @@ class TimeWindowQueries:
         start_time: datetime,
         end_time: datetime
     ) -> pd.DataFrame:
-        """æ¶é´æ¡¶èåæ¥è¯?""
         sql = f"""
         SELECT 
             time_bucket('{bucket_size}', time) AS bucket,
@@ -551,7 +482,6 @@ CREATE INDEX idx_klines_time ON stock_klines (time DESC);
 ### 5.2 查询优化
 
 ```sql
--- ä½¿ç¨æ¶é´æ¡¶å½æ°ä¼å?
 EXPLAIN ANALYZE
 SELECT time_bucket('5 minutes', time) AS bucket,
        symbol,
@@ -567,16 +497,15 @@ WHERE symbol = '000001.SZ'
 AND bucket > NOW() - INTERVAL '7 days';
 ```
 
-### 5.3 æ¹éåå
-¥ä¼å
+### 5.3 æ¹éåå
+¥ä¼å
 
 ```python
 import asyncio
 from asyncpg import create_pool
 
 class AsyncTimescaleDBWriter:
-    """å¼æ­¥æ¹éåå
-¥å?""
+¥å?""
     
     def __init__(self, connection_string: str, pool_size: int = 5):
         self.connection_string = connection_string
@@ -592,7 +521,6 @@ class AsyncTimescaleDBWriter:
         )
     
     async def write_ticks_batch(self, ticks: List[Dict]) -> int:
-        """å¼æ­¥æ¹éåå
 ¥"""
         async with self.pool.acquire() as conn:
             values = [
@@ -613,22 +541,17 @@ class AsyncTimescaleDBWriter:
 
 ---
 
-## 6. çæ§ä¸è¿ç»?
 
 ### 6.1 性能监控
 
 ```sql
--- æ¥çè¶
-çº§è¡¨ä¿¡æ?
+-- æ¥çè¶
 SELECT * FROM timescaledb_information.hypertables;
 
--- æ¥çåç¼©ç¶æ?
 SELECT * FROM timescaledb_information.compression_settings;
 
--- æ¥çè¿ç»­èåç¶æ?
 SELECT * FROM timescaledb_information.continuous_aggregates;
 
--- æ¥çä½ä¸ç¶æ?
 SELECT * FROM timescaledb_information.jobs;
 
 -- 查看数据大小
@@ -640,17 +563,14 @@ SELECT
 FROM timescaledb_information.compressed_hypertable_stats;
 ```
 
-### 6.2 å¥åº·æ£æ?
 
 ```python
 class TimescaleDBHealthCheck:
-    """å¥åº·æ£æ?""
     
     def __init__(self, conn):
         self.conn = conn
     
     def check_connection(self) -> bool:
-        """æ£æ¥è¿æ?""
         try:
             with self.conn.cursor() as cur:
                 cur.execute("SELECT 1")
@@ -660,8 +580,6 @@ class TimescaleDBHealthCheck:
             return False
     
     def check_hypertables(self) -> List[Dict]:
-        """æ£æ¥è¶
-çº§è¡¨ç¶æ?""
         sql = """
         SELECT 
             hypertable_name,
@@ -675,7 +593,6 @@ class TimescaleDBHealthCheck:
             return cur.fetchall()
     
     def check_jobs(self) -> List[Dict]:
-        """æ£æ¥ä½ä¸ç¶æ?""
         sql = """
         SELECT 
             job_id,
@@ -692,8 +609,7 @@ class TimescaleDBHealthCheck:
 
 ---
 
-## 7. é¨ç½²é
-ç½®
+置
 
 ### 7.1 Docker部署
 
@@ -725,14 +641,12 @@ volumes:
   timescaledb_data:
 ```
 
-### 7.2 åå§åèæ?
 
 ```sql
 -- init.sql
 -- 启用TimescaleDB扩展
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
--- åå»ºè¶
 çº§è¡?
 CREATE TABLE stock_ticks (
     time        TIMESTAMPTZ NOT NULL,
@@ -758,8 +672,7 @@ SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
 
 ---
 
-## 8. ä¸å
-¶ä»æ¨¡åéæ?
+## 8. ä¸å
 
 ### 8.1 与ClickHouse集成
 
@@ -778,33 +691,26 @@ class TimescaleDBToClickHouse:
         """
         
         # 2. å¯¼å
-¥å°ClickHouse
-        # 3. å é¤TimescaleDBä¸­çæ§æ°æ?
+¥å°ClickHouse
 ```
 
 ### 8.2 与Redis集成
 
 ```python
 class TimescaleDBRedisCache:
-    """Redisç¼å­å±?""
     
     def get_latest_price_with_cache(self, symbol: str) -> float:
-        """å¸¦ç¼å­çææ°ä»·æ ¼æ¥è¯?""
         # 1. å
-æ¥Redisç¼å­
         # 2. 缓存未命中则查TimescaleDB
-        # 3. åå
-¥Redisç¼å­
+        # 3. åå
+¥Redisç¼å­
 ```
 
 ---
 
 ## 📋 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 

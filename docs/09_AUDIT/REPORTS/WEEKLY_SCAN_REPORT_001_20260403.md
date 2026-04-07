@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: WEEKLYSCANREPORT0012026040_001
 version: 1.0.0
 status: Active

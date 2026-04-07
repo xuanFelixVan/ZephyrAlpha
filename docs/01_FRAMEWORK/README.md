@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FRAMEWORK_README_001
 version: 5.3.0
 status: Active
@@ -36,15 +36,9 @@ implementation_status: 进行?---
 | **MARKET_REGIME.md** | 市场状态识?| 大盘择时、状态分类、策略映?|
 | **HUMAN_AI_FLOW.md** | 人机协作流程 | 授权机制、AI角色定义、决策流?|
 | **TECH_STACK.md** | 技术栈选择 | 数据?回测/可视?AI/存储选型 |
-| **PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md** | ä¸ä¸å¤æ¶é´æ¡æ¶æ¶?| ä¸çº§æ¶é´æ¡æ¶èåæ¶æï¼æ¡¥?æèºå¤å
-´æ¨¡å¼?|
-| **PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md** | ä¸ä¸å®æ½èå¾ | 10ä¸ªæå®æ½è·¯çº¿å¾ãAIè¯å®¡å¢æºå?ä¸ªå
-³é®å®¡æ ¸è?|
 | **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | 数据源层专业实施蓝图 | P0/P1/P2三级模块设计?个月实施计划、专业机构对?|
 | **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方?| 6个适合个人开发的模块?周实施计划、低成本轻量级方?|
 | **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** | å
-³é®æ¨¡åå®æ½èå¾ | P0å®æ¶é£æ§+P1å
-¨çå¸åº+P2æ©å±æ¨¡å?-6å¨å®æ½ãè¦çåº¦æå?5% |
 | **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝?| 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
 | **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架?| 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
 
@@ -56,11 +50,9 @@ implementation_status: 进行?---
 
 ```
 Layer 0: 数据源层 (QMT/iFind/SuperCommand)
-Layer 1: æ°æ®é¢å¤çå± (æ¸
 洗/标准?验证)
 Layer 2: Alpha因子?(5700+因子)
-Layer 3: èæ
-åæ?(æ°é»/æ
+Layer 3: èæ
 感/事件) 🆕
 Layer 4: 机器学习?(Qlib Alpha158/LSTM) 🆕
 Layer 5: 策略执行?(信号生成/QMT交易)
@@ -76,8 +68,6 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 
 | 原则 | 说明 |
 |------|------|
-| **å¤§çæ©æ¶ä¼å
-** | ææç­ç¥çç¬¬ä¸æ­¥ï¼å¤æ­å¸åºç?|
 | **人授权AI执行** | 人做决策，AI执行 |
 | **可回测优?* | 稳定策略才实?|
 | **AIè¾
@@ -114,8 +104,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 
 ---
 
-## åãä¸å
-¶ä»æ¨¡åçå
+## åãä¸å
 ³?
 
 ```
@@ -125,7 +114,6 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 ├── HUMAN_AI_FLOW.md   ←→ 04_EXECUTION (执行)
 └── TECH_STACK.md      ←→ 05_IMPLEMENTATION (部署)
 
-å±çº§å
 ³ç³»:
 ├── Layer 0-2: 数据和因??02_FACTOR_LIBRARY
 ├── Layer 3-4: AI能力 ?07_RESEARCH
@@ -137,12 +125,10 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 
 ## 五、更新记?
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ |
+容 |
 |------|------|----------|
 | v2.0 | 2026-03-30 | 方案C重组，新?个独立文?|
 | v1.0 | 2026-03-29 | 初始版本 |
 
 ---
 
-**ç?*: ?æ´»è·

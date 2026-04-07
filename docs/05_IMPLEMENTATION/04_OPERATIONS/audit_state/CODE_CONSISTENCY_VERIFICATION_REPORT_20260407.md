@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER11_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407_001
 version: 1.0.0
 status: Active

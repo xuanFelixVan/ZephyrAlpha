@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: RETAIL_STRATEGIES_B_001
 version: 1.0.0
 status: Active
@@ -18,28 +18,28 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 因子计算
   - 交易执行
   - 系统架构
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行?---
 
 
-# 游资量化策略�?- 第二部分
+# 游资量化策略?- 第二部分
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 顶级游资交易思想量化提炼（二�?
+> 顶级游资交易思想量化提炼（二?
 >
-> **配套文档**�?
+> **配套文档**?
 > - 主文档：
 > - 策略池索引：[index.md](08_HUMAN_AI_INTERFACE/index.md)
 > - 游资策略第一部分：[retail-strategies-a.md](03_TRADING_TACTICS/04_YOUZI_STRATEGIES/retail-strategies-a.md)
@@ -48,29 +48,29 @@ implementation_status: 进行�?---
 
 ## 1. 赵老哥核心策略
 
-### S014: 二板定龙头策�?
+### S014: 二板定龙头策?
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | S014 |
-| 策略名称 | 二板定龙�?|
+| 策略名称 | 二板定龙?|
 | 来源 | 赵老哥 |
 | 适用市场 | 妖股周期 |
 | 风险等级 | 极高 |
 
-**量化规则**�?
-- 从昨日首板中选取二板候�?
-- 一板后次日高开幅度�?%-7%
+**量化规则**?
+- 从昨日首板中选取二板候?
+- 一板后次日高开幅度?%-7%
 - 回调不破一板最高价80%
 - 10点前封板
-- 同题材有一板跟�?
+- 同题材有一板跟?
 
 ```python
 class SecondBoardDragonStrategy(BaseStrategy):
-    """二板定龙头策�?""
+    """二板定龙头策?""
 
     def __init__(self):
-        super().__init__("二板定龙�?, "S014")
+        super().__init__("二板定龙?, "S014")
         self.market_states = [MarketState.YAO]
         self.parameters = {
             'open_ratio_min': 0.03,
@@ -113,27 +113,27 @@ class SecondBoardDragonStrategy(BaseStrategy):
 
 ***
 
-### S016: 新题材判断策�?
+### S016: 新题材判断策?
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | S016 |
-| 策略名称 | 新题材判�?|
+| 策略名称 | 新题材判?|
 | 来源 | 赵老哥 |
 | 适用市场 | 妖股周期 |
-| 风险等级 | �?|
+| 风险等级 | ?|
 
-**量化规则**�?
+**量化规则**?
 - 有故事：重大政策、业绩拐点、并购重组等
-- 大量资金活跃：成交额 > 10�?
+- 大量资金活跃：成交额 > 10?
 - 市场认同度高：板块内多个涨停
 
 ```python
 class NewThemeStrategy(BaseStrategy):
-    """新题材策�?""
+    """新题材策?""
 
     def __init__(self):
-        super().__init__("新题材判�?, "S016")
+        super().__init__("新题材判?, "S016")
         self.market_states = [MarketState.YAO]
         self.parameters = {
             'min_turnover': 1e9,
@@ -168,31 +168,31 @@ class NewThemeStrategy(BaseStrategy):
 
 ***
 
-## 2. 独股一箭核心策�?
+## 2. 独股一箭核心策?
 
-### S015: 独股一箭策�?
+### S015: 独股一箭策?
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | S015 |
 | 策略名称 | 独股一箭（超短线） |
-| 来源 | 独股一�?|
+| 来源 | 独股一?|
 | 适用市场 | 妖股周期（强势环境） |
 | 风险等级 | 极高 |
 
-**量化规则**�?
-- 只攻不守，满仓一只股�?
-- 第二天不管盈亏都�?
-- 5日线附近买，不追�?
-- 冲高无量坚决�?
-- 热点和强势股可忽略大�?
+**量化规则**?
+- 只攻不守，满仓一只股?
+- 第二天不管盈亏都?
+- 5日线附近买，不追?
+- 冲高无量坚决?
+- 热点和强势股可忽略大?
 
 ```python
 class DuguYijianStrategy(BaseStrategy):
     """独股一箭超短线策略"""
 
     def __init__(self):
-        super().__init__("独股一�?, "S015")
+        super().__init__("独股一?, "S015")
         self.market_states = [MarketState.YAO]
         self.parameters = {
             'ma5_distance': 0.02,
@@ -203,7 +203,7 @@ class DuguYijianStrategy(BaseStrategy):
     def generate_signal(self, market_data, stock_data, market_state):
         params = self.parameters
 
-        profit_ratio = market_data['上涨家数'] / market_data['总交易家�?]
+        profit_ratio = market_data['上涨家数'] / market_data['总交易家?]
         if profit_ratio < 0.5 and not stock_data.get('is_hot_stock', False):
             return None
 
@@ -230,7 +230,7 @@ class DuguYijianStrategy(BaseStrategy):
         )
 
     def exit_signal(self, position_data):
-        """超短线卖出信�?""
+        """超短线卖出信?""
         current = position_data['current_price']
         entry = position_data['entry_price']
         volume_ratio = position_data['volume_ratio']
@@ -240,40 +240,40 @@ class DuguYijianStrategy(BaseStrategy):
 
         limit_up = entry * 1.10
         if current < limit_up and current >= entry * 1.09:
-            return {'action': '卖出', 'reason': '涨停差一�?}
+            return {'action': '卖出', 'reason': '涨停差一?}
 
         return None
 ```
 
 ***
 
-## 3. 反弹三定律策�?
+## 3. 反弹三定律策?
 
-### M009: 反弹三定律策�?
+### M009: 反弹三定律策?
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | M009 |
-| 策略名称 | 反弹三定�?|
+| 策略名称 | 反弹三定?|
 | 来源 | 明王心法 |
 | 适用市场 | 熊市反弹、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | ?|
 
-**量化规则**�?
+**量化规则**?
 - 第一定律：成交量逆转
-- 第二定律�?日线收复
-- 第三定律：强势板块出�?
-- 共振越多，信号越�?
+- 第二定律?日线收复
+- 第三定律：强势板块出?
+- 共振越多，信号越?
 
 ```python
 class ReboundThreeLawsStrategy(BaseStrategy):
-    """反弹三定律策�?""
+    """反弹三定律策?""
 
     def __init__(self):
-        super().__init__("反弹三定�?, "M009")
+        super().__init__("反弹三定?, "M009")
         self.market_states = [MarketState.BEAR, MarketState.VOLATILE]
         self.parameters = {
-            '共振阈�?: 2,
+            '共振阈?: 2,
         }
 
     def generate_signal(self, market_data, stock_data, market_state):
@@ -288,7 +288,7 @@ class ReboundThreeLawsStrategy(BaseStrategy):
         if stock_data.get('is_strong_sector', False):
             共振 += 1
 
-        if 共振 < self.parameters['共振阈�?]:
+        if 共振 < self.parameters['共振阈?]:
             return None
 
         confidence = 共振 / 3
@@ -309,29 +309,29 @@ class ReboundThreeLawsStrategy(BaseStrategy):
 
 ***
 
-## 4. 退神稳定复利风控策�?
+## 4. 退神稳定复利风控策?
 
-### R001: 动态仓位管理策�?
+### R001: 动态仓位管理策?
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | R001 |
-| 策略名称 | 动态仓位管�?|
-| 来源 | 龙飞�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | 低（风控策略�?|
+| 策略名称 | 动态仓位管?|
+| 来源 | 龙飞?|
+| 适用市场 | 所有市?|
+| 风险等级 | 低（风控策略?|
 
-**量化规则**�?
-- 赢面仓位量化�?0%以下观望�?0%-70%小仓�?0%-80%中仓�?0%-90%大仓�?0%以上全仓
+**量化规则**?
+- 赢面仓位量化?0%以下观望?0%-70%小仓?0%-80%中仓?0%-90%大仓?0%以上全仓
 - 动态回撤线：距最高点回撤10%分仓防守
-- 半仓操作原则：盈利后才动用另一�?
+- 半仓操作原则：盈利后才动用另一?
 
 ```python
 class DynamicPositionStrategy(BaseStrategy):
-    """动态仓位管理策�?""
+    """动态仓位管理策?""
 
     def __init__(self):
-        super().__init__("动态仓位管�?, "R001")
+        super().__init__("动态仓位管?, "R001")
         self.market_states = [
             MarketState.BULL,
             MarketState.BEAR,
@@ -373,7 +373,7 @@ class DynamicPositionStrategy(BaseStrategy):
             return {
                 'action': '减仓',
                 'ratio': 0.5,
-                'reason': f'回撤{drawdown*100:.1f}%，触发保�?
+                'reason': f'回撤{drawdown*100:.1f}%，触发保?
             }
 
         return None
@@ -383,17 +383,17 @@ class DynamicPositionStrategy(BaseStrategy):
 
 ### R002: 稳定复利风控策略
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | R002 |
 | 策略名称 | 稳定复利风控 |
-| 来源 | 退�?|
-| 适用市场 | 所有市�?|
-| 风险等级 | 低（风控策略�?|
+| 来源 | 退?|
+| 适用市场 | 所有市?|
+| 风险等级 | 低（风控策略?|
 
-**量化规则**�?
-- 稳定复利，慢就是�?
-- 设置动态回撤线：距最高点回撤10%，触发分仓防�?
+**量化规则**?
+- 稳定复利，慢就是?
+- 设置动态回撤线：距最高点回撤10%，触发分仓防?
 - 单只仓位不超50%
 - 永不大赔
 
@@ -418,7 +418,7 @@ class StableCompoundStrategy(BaseStrategy):
                 'triggered': True,
                 'action': '分仓防守',
                 'reduce_ratio': 0.5,
-                'reason': f'回撤{drawdown*100:.1f}%，触�?0%回撤�?
+                'reason': f'回撤{drawdown*100:.1f}%，触?0%回撤?
             }
 
         return {'triggered': False}
@@ -442,36 +442,36 @@ class StableCompoundStrategy(BaseStrategy):
             return {
                 'valid': False,
                 'action': '止损出局',
-                'reason': '亏损�?0%，触发不大赔红线'
+                'reason': '亏损?0%，触发不大赔红线'
             }
         return {'valid': True}
 ```
 
 ***
 
-## 5. 下跌三阶段策�?
+## 5. 下跌三阶段策?
 
-### M010: 下跌三阶段策�?
+### M010: 下跌三阶段策?
 
-| 属�?| 内容 |
+| 属?| 内容 |
 |------|------|
 | 策略编号 | M010 |
-| 策略名称 | 下跌三阶�?|
+| 策略名称 | 下跌三阶?|
 | 来源 | 炒股养家 |
 | 适用市场 | 熊市、震荡市 |
-| 风险等级 | �?|
+| 风险等级 | ?|
 
-**量化规则**�?
-- 初期：做强势股回调反�?
-- 中期：做超跌�?
+**量化规则**?
+- 初期：做强势股回调反?
+- 中期：做超跌?
 - 末期：做新强势股（场外资金入场）
 
 ```python
 class DeclineThreePhasesStrategy(BaseStrategy):
-    """下跌三阶段策�?""
+    """下跌三阶段策?""
 
     def __init__(self):
-        super().__init__("下跌三阶�?, "M010")
+        super().__init__("下跌三阶?, "M010")
         self.market_states = [MarketState.BEAR, MarketState.VOLATILE]
         self.parameters = {
             'early_phase_days': 5,

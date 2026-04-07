@@ -1,58 +1,58 @@
-﻿---
+﻿﻿---
 module_id: INDEX_00_OVERVIEW
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝﺑ۱ﮒﺙ
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝﺑ۱ﮒﺙ
 responsibility:
   - 系统概览、架构总览
   - 系统架构
   - 文档治理
-applicable_scope: ﻝﺏﭨﻝﭨﮔﭨﻟ۶
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+applicable_scope: ﻝﺏﭨﻝﭨﮔﭨﻟ۶
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 
-# ﻝﺏﭨﻝﭨﮔﭨﻟ۶ﻝ؟ﮒﺛﻝﺑ۱ﮒﺙ
+# ﻝﺏﭨﻝﭨﮔﭨﻟ۶ﻝ؟ﮒﺛﻝﺑ۱ﮒﺙ
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
 > - ✅ 本文档负责：目录导航和文档索引相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﻝ؟ﮒﺛﻟﻟﺑ۲**: ﮔﻛﺝﻝﺏﭨﻝﭨﮒ۷ﮒﺎﻟ۶ﮒﺝﻙﮔﺍﮔ؟ﮔﭖﮒﻙﮒﺟ،ﻠﮒ۴ﻠ۷ﮔﮒﺙ?
-## ﻭ ﻝ؟ﮒﺛﻝﭨﮔ
+> **ﻝ؟ﮒﺛﻟﻟﺑ۲**: ﮔﻛﺝﻝﺏﭨﻝﭨﮒ۷ﮒﺎﻟ۶ﮒﺝﻙﮔﺍﮔ؟ﮔﭖﮒﻙﮒﺟ،ﻠﮒ۴ﻠ۷ﮔﮒﺙ?
+## ﻭ ﻝ؟ﮒﺛﻝﭨﮔ
 
-| ﮔﻛﭨﭘ/ﻝ؟ﮒﺛ | ﻟﻟﺑ۲ | ﻝﭘﮔ?|
+| ﮔﻛﭨﭘ/ﻝ؟ﮒﺛ | ﻟﻟﺑ۲ | ﻝﭘﮔ?|
 |----------|------|------|
 
-| [DATA_FLOW.md](00_OVERVIEW/DATA_FLOW.md) | ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﭖﮒﮒ?| Active |
+| [DATA_FLOW.md](00_OVERVIEW/DATA_FLOW.md) | ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﭖﮒﮒ?| Active |
 
-## ﻭ ﮒﺟ،ﻠﮒﺁﺙﻟ?
-### ﮔ ﺕﮒﺟﮔﮔ۰۲
-- **ﻝﺏﭨﻝﭨﮔﭘﮔ**: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
-- **ﮒ ﮒ­ﮒﭦ?*: [../02_FACTOR_LIBRARY/INDEX.md](../02_FACTOR_LIBRARY/INDEX.md)
-- **ﻛﭦ۳ﮔﻝ­ﻝ۴**: [../03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)
-- **ﮔ۶ﻟ۰ﮒﺎ?*: [../04_EXECUTION/INDEX.md](../04_EXECUTION/INDEX.md)
-- **ﮒ؟ﮔﺛﮔﮒ**: [../05_IMPLEMENTATION/INDEX.md](../05_IMPLEMENTATION/INDEX.md)
+## ﻭ ﮒﺟ،ﻠﮒﺁﺙﻟ?
+### ﮔ ﺕﮒﺟﮔﮔ۰۲
+- **ﻝﺏﭨﻝﭨﮔﭘﮔ**: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
+- **ﮒ ﮒ­ﮒﭦ?*: [../02_FACTOR_LIBRARY/INDEX.md](../02_FACTOR_LIBRARY/INDEX.md)
+- **ﻛﭦ۳ﮔﻝ­ﻝ۴**: [../03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)
+- **ﮔ۶ﻟ۰ﮒﺎ?*: [../04_EXECUTION/INDEX.md](../04_EXECUTION/INDEX.md)
+- **ﮒ؟ﮔﺛﮔﮒ**: [../05_IMPLEMENTATION/INDEX.md](../05_IMPLEMENTATION/INDEX.md)
 
-### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
-- **ﮒﺗﺏﮒﺍﮔﮔ۰۲**: [../00_RESOURCES/04_PLATFORM_DOCS/](../00_RESOURCES/04_PLATFORM_DOCS/)
+### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
+- **ﮒﺗﺏﮒﺍﮔﮔ۰۲**: [../00_RESOURCES/04_PLATFORM_DOCS/](../00_RESOURCES/04_PLATFORM_DOCS/)
 
-## ﻭ ﻝ؟ﮒﺛﮒ؟ﻛﺛ
+## ﻭ ﻝ؟ﮒﺛﮒ؟ﻛﺛ
 
 ```
 docs/
-ﻗﻗﻗ 00_OVERVIEW/          ﻗ?ﮒﺛﮒﻝ؟ﮒﺛﺅﺙﻝﺏﭨﻝﭨﮔﭨﻟ۶ﺅﺙ?ﻗ?  ﻗﻗﻗ README.md         # ﻝﺏﭨﻝﭨﮒ۴ﮒ۲
-ﻗ?  ﻗﻗﻗ DATA_FLOW.md      # ﮔﺍﮔ؟ﮔﭖﮒ
-ﻗﻗﻗ 01_FRAMEWORK/         # ﮔ ﺕﮒﺟﮔ۰ﮔﭘ
-ﻗﻗﻗ 02_FACTOR_LIBRARY/    # ﮒ ﮒ­ﮒﭦ?ﻗﻗﻗ 03_TRADING_TACTICS/   # ﻛﭦ۳ﮔﻝ­ﻝ۴
-ﻗﻗﻗ 04_EXECUTION/         # ﮔ۶ﻟ۰ﮒﺎ?ﻗﻗﻗ 05_IMPLEMENTATION/    # ﮒ؟ﮔﺛﮔﮒ
-ﻗﻗﻗ 06_ARCHIVE/           # ﮒﺛﮔ۰۲
-ﻗﻗﻗ 07_RESEARCH/          # ﻝ ﻝ۸ﭘﮔﺁﮔ
-ﻗﻗﻗ 09_AUDIT/             # ﮒ؟۰ﻟ؟۰
-ﻗﻗﻗ 10_AI_WORKFLOW/       # AIﮒﺓ۴ﻛﺛﮔﭖ?```
+ﻗﻗﻗ 00_OVERVIEW/          ﻗ?ﮒﺛﮒﻝ؟ﮒﺛﺅﺙﻝﺏﭨﻝﭨﮔﭨﻟ۶ﺅﺙ?ﻗ?  ﻗﻗﻗ README.md         # ﻝﺏﭨﻝﭨﮒ۴ﮒ۲
+ﻗ?  ﻗﻗﻗ DATA_FLOW.md      # ﮔﺍﮔ؟ﮔﭖﮒ
+ﻗﻗﻗ 01_FRAMEWORK/         # ﮔ ﺕﮒﺟﮔ۰ﮔﭘ
+ﻗﻗﻗ 02_FACTOR_LIBRARY/    # ﮒ ﮒ­ﮒﭦ?ﻗﻗﻗ 03_TRADING_TACTICS/   # ﻛﭦ۳ﮔﻝ­ﻝ۴
+ﻗﻗﻗ 04_EXECUTION/         # ﮔ۶ﻟ۰ﮒﺎ?ﻗﻗﻗ 05_IMPLEMENTATION/    # ﮒ؟ﮔﺛﮔﮒ
+ﻗﻗﻗ 06_ARCHIVE/           # ﮒﺛﮔ۰۲
+ﻗﻗﻗ 07_RESEARCH/          # ﻝ ﻝ۸ﭘﮔﺁﮔ
+ﻗﻗﻗ 09_AUDIT/             # ﮒ؟۰ﻟ؟۰
+ﻗﻗﻗ 10_AI_WORKFLOW/       # AIﮒﺓ۴ﻛﺛﮔﭖ?```
 ---
 
-*ﮔﮒﮔﺑﮔ? 2026-04-03*
+*ﮔﮒﮔﺑﮔ? 2026-04-03*

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_IFIND_INDICATORS_001
 version: 1.0.0
 status: Active
@@ -49,25 +49,25 @@ implementation_status: 进行中
 | 类别 | 数量 | 说明 |
 |------|------|------|
 | **季频指标** | 183 | ths_sq_开头，季度财务报表 |
-| **年频指标** | 760 | 非ths_sq_开�?|
-| 利润表相�?| 59 | 营收/成本/利润/所得税 |
-| 资产负债表相关 | 126 | 资产/负�?所有者权�?|
-| 现金流量表相�?| 50 | 经营/投资/筹资现金�?|
+| **年频指标** | 760 | 非ths_sq_开?|
+| 利润表相?| 59 | 营收/成本/利润/所得税 |
+| 资产负债表相关 | 126 | 资产/负?所有者权?|
+| 现金流量表相?| 50 | 经营/投资/筹资现金?|
 | 股东权益相关 | 31 | 股东/股权 |
-| 高管信息相关 | 55 | 董监高薪�?持股 |
-| 股份变动相关 | 78 | 限售�?质押/浮动 |
-| 行业分类相关 | 26 | 申万/证监�?同花顺行�?|
+| 高管信息相关 | 55 | 董监高薪?持股 |
+| 股份变动相关 | 78 | 限售?质押/浮动 |
+| 行业分类相关 | 26 | 申万/证监?同花顺行?|
 | 上市发行相关 | 21 | IPO/配股/增发 |
 | 员工信息相关 | 66 | 员工数量/教育程度 |
 | 处罚诉讼相关 | 9 | 违规/诉讼 |
-| 其他指标 | 239 | 未分�?|
+| 其他指标 | 239 | 未分?|
 | **合计** | **943** | |
 
 ---
 
-## 一、季频指�?(183�?
+## 一、季频指?(183?
 
-> 季度财务报表数据，ths_sq_开�?
+> 季度财务报表数据，ths_sq_开?
 
 | ths_sq_amort_cost_fnncl_ast_income_derec_stock | amort cost fnncl ast income derec | 季频 |
 | ths_sq_asset_chg_due_to_remeasure_stock | asset chg due to remeasure | 季频 |
@@ -255,9 +255,9 @@ implementation_status: 进行中
 
 ---
 
-## 二、年频指�?(760�?
+## 二、年频指?(760?
 
-### 2.1 利润表相�?(59�?
+### 2.1 利润表相?(59?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -321,7 +321,7 @@ implementation_status: 进行中
 | ths_total_profit_stock | total profit |
 | ths_undstrbtd_profit_stock | undstrbtd profit |
 
-### 2.2 资产负债表相关 (126�?
+### 2.2 资产负债表相关 (126?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -452,7 +452,7 @@ implementation_status: 进行中
 | ths_tradable_fnncl_assets_stock | tradable fnncl assets |
 | ths_tradable_fnncl_liab_stock | tradable fnncl liab |
 
-### 2.3 现金流量表相�?(50�?
+### 2.3 现金流量表相?(50?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -507,7 +507,7 @@ implementation_status: 进行中
 | ths_other_cash_paid_related_to_oa_stock | other cash paid related to oa |
 | ths_othrcash_paid_relating_to_fa_stock | othrcash paid relating to fa |
 
-### 2.4 股东权益相关 (31�?
+### 2.4 股东权益相关 (31?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -543,7 +543,7 @@ implementation_status: 进行中
 | ths_shareholders_qoq_change_byr_stock | shareholders qoq change byr |
 | ths_shareholders_yoy_change_byr_stock | shareholders yoy change byr |
 
-### 2.5 高管信息相关 (55�?
+### 2.5 高管信息相关 (55?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -603,7 +603,7 @@ implementation_status: 进行中
 | ths_vice_general_manager_current_stock | vice general manager current |
 | ths_vice_general_manager_his_stock | vice general manager his |
 
-### 2.6 股份变动相关 (78�?
+### 2.6 股份变动相关 (78?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -686,7 +686,7 @@ implementation_status: 进行中
 | ths_unlimited_pledge_num_stock | unlimited pledge num |
 | ths_unlimited_pledge_ratio_stock | unlimited pledge ratio |
 
-### 2.7 行业分类相关 (26�?
+### 2.7 行业分类相关 (26?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -717,7 +717,7 @@ implementation_status: 进行中
 | ths_yangtze_industry_code_stock | yangtze industry code |
 | ths_yangtze_industry_stock | yangtze industry |
 
-### 2.8 上市发行相关 (21�?
+### 2.8 上市发行相关 (21?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -743,7 +743,7 @@ implementation_status: 进行中
 | ths_reg_company_ipo_standard_stock | reg company ipo standard |
 | ths_unlisted_foreign_stock_stock | unlisted foreign |
 
-### 2.9 员工信息相关 (66�?
+### 2.9 员工信息相关 (66?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -814,7 +814,7 @@ implementation_status: 进行中
 | ths_undergraduate_num_ratio_new_stock | undergraduate num ratio new |
 | ths_wm_product_held_num_stock | wm product held num |
 
-### 2.10 处罚诉讼相关 (9�?
+### 2.10 处罚诉讼相关 (9?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -828,7 +828,7 @@ implementation_status: 进行中
 | ths_punish_amt_stock | punish amt |
 | ths_punishmenttype_stock | punishmenttype |
 
-### 2.11 其他指标 (239�?
+### 2.11 其他指标 (239?
 
 | THS代码 | 指标名称 |
 |----------|----------|
@@ -1076,7 +1076,7 @@ implementation_status: 进行中
 
 > **数据来源**: 同花顺iFind THS_BD函数
 > **更新时间**: 2026-03-28
-> **总指标数**: 943个（季频183 + 年频760�?
+> **总指标数**: 943个（季频183 + 年频760?
 
 ---
 

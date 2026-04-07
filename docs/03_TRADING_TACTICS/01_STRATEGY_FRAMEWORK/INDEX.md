@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_STRATEGY_FRAMEWORK
 version: 1.0.0
 status: Active

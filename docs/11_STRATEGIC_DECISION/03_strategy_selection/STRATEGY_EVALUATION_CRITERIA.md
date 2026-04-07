@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: STRATEGY_EVALUATION_CRITERIA_001
 version: 1.0.0
 status: Active

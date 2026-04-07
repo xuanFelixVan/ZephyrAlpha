@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT_001
 version: 1.0.0
 status: Active

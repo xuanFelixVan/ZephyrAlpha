@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INTELLIGENT_SCHEDULING_SYSTEM_001
 version: 1.0.0
 status: Active

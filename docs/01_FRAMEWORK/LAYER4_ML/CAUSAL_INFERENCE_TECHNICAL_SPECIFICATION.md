@@ -1,97 +1,96 @@
-﻿---
+﻿﻿---
 module_id: CAUSAL_INFERENCE_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-layer: Layer 4 (ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ? | ﻛﺕﮒ۰ﮔﭘﮔ: AIﮔ۷۰ﮒﮔﮒ۰
+layer: Layer 4 (ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ? | ﻛﺕﮒ۰ﮔﭘﮔ: AIﮔ۷۰ﮒﮔﮒ۰
 index: CI-001
 estimated_hours: 80
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-owner: ﻠﮒﻝ ﻝ۸ﭘﮒ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠﮒﻝ ﻝ۸ﭘﮒ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 responsibility:
   - 定义causal inference technical specification的技术规格、接口标准和实现细节
-applicable_scope: ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨ
-compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔ ﮒ
+applicable_scope: ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨ
+compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
+implementation_status: ﮔﮔﺁﻟ۶ﮔ ﺙﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
 ---
 ---
 
-# ﮒ ﮔﮔ۷ﮔ­ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
+# ﮒ ﮔﮔ۷ﮔ­ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 > **核心职责**: 定义causal inference technical specification的技术规格、接口标准和实现细节
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﮒ ﮔﮔ۷ﮔ­ﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝﻟ؟?> **ﻝﺑ۱ﮒﺙ**: `CI-001`
-> **ﮒﺙﮒﮔﭘﻠ?*: 80h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒﭦﮒﮒ ﮔﻛﺕﻝﺕﮒﺏﻙﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮒﮔ
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﮒ ﮔﮔ۷ﮔ­ﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝﻟ؟?> **ﻝﺑ۱ﮒﺙ**: `CI-001`
+> **ﮒﺙﮒﮔﭘﻠ?*: 80h
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒﭦﮒﮒ ﮔﻛﺕﻝﺕﮒﺏﻙﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮒﮔ
 ---
-## 1. ﮔ۵ﻟﺟﺍ
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟ﻝ?
-**ﻛﺕﮒ۰ﻠﮔﺎ?*:
-- ﮒﭦﮒﮒ ﮔﮔ۶ﻛﺕﻝﺕﮒﺏﮔ۶ﮔﺁﻠﮒﮔ ﺕﮒﺟﻟﺛﮒ
-- ﻠﺟﮒﻟﮒﻛﺟ۰ﮒﺓﮒﻟﺟﮔﮒ
-- ﮔﮒﻝ­ﻝ۴ﻝ۷ﺏﮒ۴ﮔ۶ﮒﮒﺁﻟ۶۲ﻠﮔ?- ﮔﺁﮔﻝ­ﻝ۴ﮒﺛﮒ ﮒﮔ
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟ﻝ?
+**ﻛﺕﮒ۰ﻠﮔﺎ?*:
+- ﮒﭦﮒﮒ ﮔﮔ۶ﻛﺕﻝﺕﮒﺏﮔ۶ﮔﺁﻠﮒﮔ ﺕﮒﺟﻟﺛﮒ
+- ﻠﺟﮒﻟﮒﻛﺟ۰ﮒﺓﮒﻟﺟﮔﮒ
+- ﮔﮒﻝ­ﻝ۴ﻝ۷ﺏﮒ۴ﮔ۶ﮒﮒﺁﻟ۶۲ﻠﮔ?- ﮔﺁﮔﻝ­ﻝ۴ﮒﺛﮒ ﮒﮔ
 
-**ﮔﮔﺁﻝﻝ?*:
-- ﻛﺙ ﻝﭨMLﮒ۹ﮒ­۵ﻛﺗ ﻝﺕﮒﺏﮔ۶ﺅﺙﮔ ﮔﺏﻟﺁﮒ،ﮒ ﮔ
-- ﮒ ﮔﮒﺝﮔﮒﭨﭦﻛﺝﻟﭖﻛﺕﮒ؟ﭘﻝ۴ﻟﺁ?- ﮔﺓﺓﮔﮒ ﻝﺑ ﮒ۳ﻝﮒﺍﻠﺝ
-- ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﻟ؟۰ﻝ؟ﮒ۳ﮔ?
-**ﻠ۱ﮔﻛﭨﺓﮒ?*:
-- ﻝ­ﻝ۴ﻝ۷ﺏﮒ۴ﮔ۶ﮔﮒ?0%
-- ﻟﮒﻛﺟ۰ﮒﺓﻟﺁﮒ،ﻝﮔﮒ?0%
-- ﻝ­ﻝ۴ﮒﺛﮒ ﮒﻝ۰؟ﮔ۶ﮔﮒ?0%
-- ﻟﺟﮔﮒﻠ۲ﻠ۸ﻠﻛﺛ?0%
+**ﮔﮔﺁﻝﻝ?*:
+- ﻛﺙ ﻝﭨMLﮒ۹ﮒ­۵ﻛﺗ ﻝﺕﮒﺏﮔ۶ﺅﺙﮔ ﮔﺏﻟﺁﮒ،ﮒ ﮔ
+- ﮒ ﮔﮒﺝﮔﮒﭨﭦﻛﺝﻟﭖﻛﺕﮒ؟ﭘﻝ۴ﻟﺁ?- ﮔﺓﺓﮔﮒ ﻝﺑ ﮒ۳ﻝﮒﺍﻠﺝ
+- ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﻟ؟۰ﻝ؟ﮒ۳ﮔ?
+**ﻠ۱ﮔﻛﭨﺓﮒ?*:
+- ﻝ­ﻝ۴ﻝ۷ﺏﮒ۴ﮔ۶ﮔﮒ?0%
+- ﻟﮒﻛﺟ۰ﮒﺓﻟﺁﮒ،ﻝﮔﮒ?0%
+- ﻝ­ﻝ۴ﮒﺛﮒ ﮒﻝ۰؟ﮔ۶ﮔﮒ?0%
+- ﻟﺟﮔﮒﻠ۲ﻠ۸ﻠﻛﺛ?0%
 
-### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛﮒﺎ?
-- **Layerﮒ؟ﻛﺛ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﺅﺙAIﮔ۷۰ﮒﮔﮒ۰ﺅﺙ?- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔ ﺕﮒﺟﮔﺁﮔﮔ۷۰ﮒ
-- **ﮔﭘﮔﻟ۶ﻟﺎ**: ﮔﻛﺝﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮒﮔ
+### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛﮒﺎ?
+- **Layerﮒ؟ﻛﺛ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﺅﺙAIﮔ۷۰ﮒﮔﮒ۰ﺅﺙ?- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔ ﺕﮒﺟﮔﺁﮔﮔ۷۰ﮒ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: ﮔﻛﺝﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮒﮔ
 
-### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁﻛﺕﮒﮔﺑﻟ؟ﺍﮒﺛ?
-| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛﻟ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝﭘﮔ?|
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁﻛﺕﮒﮔﺑﻟ؟ﺍﮒﺛ?
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛﻟ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝﭘﮔ?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | ﻠﮒﻝ ﻝ۸ﭘﮒ?| ﮒﮒ۶ﻝﮔ؛ | Active |
+| v1.0 | 2026-04-03 | ﻠﮒﻝ ﻝ۸ﭘﮒ?| ﮒﮒ۶ﻝﮔ؛ | Active |
 
 ---
 
-## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
+## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔﮒ?
+### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔﮒ?
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                    ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨﮔﭘﮔ                              ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                                                                ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒ ﮔﮒﻝﺍﮒﺎ?(Causal Discovery Layer)           ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ PCAlgorithm (PCﻝ؟ﮔﺏ)                                 ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ GESAlgorithm (GESﻝ؟ﮔﺏ)                               ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ NOTEARSAlgorithm (NOTEARSﻝ؟ﮔﺏ)                       ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ CausalGraphValidator (ﮒ ﮔﮒﺝﻠ۹ﻟﺁ?                    ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                            ﻗ?                                  ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﮒﺎ?(Effect Estimation Layer)      ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ PropensityScoreMatching (ﮒﺝﮒﮒﺝﮒﮒﺗﻠ)               ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ InverseProbabilityWeighting (ﻠﮔ۵ﻝﮒ ﮔ?             ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ DoublyRobustEstimator (ﮒﻠﻝ۷ﺏﮒ۴ﻛﺙﺍﻟ؟۰)                 ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ InstrumentalVariable (ﮒﺓ۴ﮒﺓﮒﻠﮔﺏ?                    ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ DifferenceInDifferences (ﮒﻠﮒﺓ؟ﮒ)                   ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                            ﻗ?                                  ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﮒﺎ (Counterfactual Layer)           ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ IndividualTreatmentEffect (ﻛﺕ۹ﻛﺛﮒ۳ﻝﮔﮒﭦ)             ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ AverageTreatmentEffect (ﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ)                ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ ConditionalAverageTreatmentEffect (ﮔ۰ﻛﭨﭘﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ) ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ CounterfactualPredictor (ﮒﻛﭦﮒ؟ﻠ۱ﮔﭖﮒ۷)               ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                            ﻗ?                                  ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?ﻗ?            ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                    ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ FactorCausalAnalysis (ﮒ ﮒ­ﮒ ﮔﮒﮔ)                  ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ StrategyAttribution (ﻝ­ﻝ۴ﮒﺛﮒ )                       ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ MarketRegimeCausal (ﮒﺕﮒﭦﻝﭘﮔﮒ ﮔ?                    ﻗ? ﻗ?ﻗ?ﻗ?ﻗﻗﻗ InterventionSimulator (ﮒﺗﺎﻠ۱ﮔ۷۰ﮔﮒ?                   ﻗ? ﻗ?ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?ﻗ?                                                                ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
+### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
 
-- **Layerﮒﺛﮒﺎ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ?- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﻙﮒﺗﺎﻠ۱ﮔ۷۰ﮔ?- **ﻛﺕﻛﺕﮒﺎﮔ۴ﮒ?*: 
-  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 5 (ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎ? - ﻝ­ﻝ۴ﮒﺛﮒ ﻟﺁﺓﮔﺎ
-  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 4 (MLﮔ۷۰ﮒ) - ﻝﺗﮒﺝﮔﺍﮔ؟
+- **Layerﮒﺛﮒﺎ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ?- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﮒ ﮔﮒﻝﺍﻙﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﻙﮒﺗﺎﻠ۱ﮔ۷۰ﮔ?- **ﻛﺕﻛﺕﮒﺎﮔ۴ﮒ?*: 
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 5 (ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎ? - ﻝ­ﻝ۴ﮒﺛﮒ ﻟﺁﺓﮔﺎ
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 4 (MLﮔ۷۰ﮒ) - ﻝﺗﮒﺝﮔﺍﮔ؟
 
-### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟ﻛﺗ?
-- **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﮒ ﮔﮔ۷ﮔ­ﮒﮔ
-- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
-  - ﻗ?ﮔ؛ﮔ۷۰ﮒﻟﺑﻟﺑ? ﮒ ﮔﮒﻝﺍﻙﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮔ۷ﮔ­
-  - ﻗ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮔ۷۰ﮒﻟ؟­ﻝﭨﻙﻝﺗﮒﺝﮒﺓ۴ﻝ۷ﻙﻝ­ﻝ۴ﮔ۶ﻟ۰?- **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﮔ ﮒﮒﻝﮒ ﮔﮔ۷ﮔ­API
+### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟ﻛﺗ?
+- **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﮒ ﮔﮔ۷ﮔ­ﮒﮔ
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+  - ﻗ?ﮔ؛ﮔ۷۰ﮒﻟﺑﻟﺑ? ﮒ ﮔﮒﻝﺍﻙﮔﮒﭦﻛﺙﺍﻟ؟۰ﻙﮒﻛﭦﮒ؟ﮔ۷ﮔ­
+  - ﻗ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮔ۷۰ﮒﻟ؟­ﻝﭨﻙﻝﺗﮒﺝﮒﺓ۴ﻝ۷ﻙﻝ­ﻝ۴ﮔ۶ﻟ۰?- **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﮔ ﮒﮒﻝﮒ ﮔﮔ۷ﮔ­API
 
-### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨﻛﺕﻠﮔﻝﺗ
+### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨﻛﺕﻠﮔﻝﺗ
 
-| ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
+| ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
 |----------|----------|----------|----------|------|
-| DoWhy | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.8.0 | ﮒ ﮔﮔ۷ﮔ­ﮔ۰ﮔﭘ |
-| CausalNex | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.12.0 | ﻟﺑﮒﭘﮔﺁﻝﺛﻝﭨ?|
-| EconML | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.14.0 | ﮒﺙﻟﺑ۷ﮔﮒﭦﻛﺙﺍﻟ؟۰ |
-| CDT | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.6.0 | ﮒ ﮔﮒﻝﺍﮒﺓ۴ﮒﺓ |
+| DoWhy | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.8.0 | ﮒ ﮔﮔ۷ﮔ­ﮔ۰ﮔﭘ |
+| CausalNex | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.12.0 | ﻟﺑﮒﭘﮔﺁﻝﺛﻝﭨ?|
+| EconML | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.14.0 | ﮒﺙﻟﺑ۷ﮔﮒﭦﻛﺙﺍﻟ؟۰ |
+| CDT | ﮒﺙﭦﻛﺝﻟﭖ?| Pythonﮒﭦ?| >=0.6.0 | ﮒ ﮔﮒﻝﺍﮒﺓ۴ﮒﺓ |
 
 ---
 
-## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
+### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
 
 ```python
 from typing import Dict, Any, List, Optional, Union, Tuple, Set
@@ -105,7 +104,7 @@ import networkx as nx
 
 
 class CausalRelationType(Enum):
-    """ﮒ ﮔﮒﺏﻝﺏﭨﻝﺎﭨﮒ"""
+    """ﮒ ﮔﮒﺏﻝﺏﭨﻝﺎﭨﮒ"""
     DIRECT = "direct"
     INDIRECT = "indirect"
     CONFOUNDED = "confounded"
@@ -113,7 +112,7 @@ class CausalRelationType(Enum):
 
 
 class TreatmentType(Enum):
-    """ﮒ۳ﻝﻝﺎﭨﮒ"""
+    """ﮒ۳ﻝﻝﺎﭨﮒ"""
     BINARY = "binary"
     CONTINUOUS = "continuous"
     MULTIVALUE = "multivalue"
@@ -121,7 +120,7 @@ class TreatmentType(Enum):
 
 @dataclass
 class CausalEdge:
-    """ﮒ ﮔﻟﺝ?""
+    """ﮒ ﮔﻟﺝ?""
     source: str
     target: str
     edge_type: CausalRelationType
@@ -131,36 +130,36 @@ class CausalEdge:
 
 @dataclass
 class CausalGraph:
-    """ﮒ ﮔﮒ?""
+    """ﮒ ﮔﮒ?""
     nodes: Set[str]
     edges: List[CausalEdge]
     adjacency_matrix: np.ndarray
     graph: nx.DiGraph
     
     def get_parents(self, node: str) -> List[str]:
-        """ﻟﺓﮒﻝﭘﻟﻝ?""
+        """ﻟﺓﮒﻝﭘﻟﻝ?""
         return list(self.graph.predecessors(node))
     
     def get_children(self, node: str) -> List[str]:
-        """ﻟﺓﮒﮒ­ﻟﻝ?""
+        """ﻟﺓﮒﮒ­ﻟﻝ?""
         return list(self.graph.successors(node))
     
     def get_ancestors(self, node: str) -> Set[str]:
-        """ﻟﺓﮒﻝ۴ﮒﻟﻝﺗ"""
+        """ﻟﺓﮒﻝ۴ﮒﻟﻝﺗ"""
         return nx.ancestors(self.graph, node)
     
     def get_descendants(self, node: str) -> Set[str]:
-        """ﻟﺓﮒﮒﻛﭨ۲ﻟﻝﺗ"""
+        """ﻟﺓﮒﮒﻛﭨ۲ﻟﻝﺗ"""
         return nx.descendants(self.graph, node)
     
     def find_confounders(self, treatment: str, outcome: str) -> Set[str]:
-        """ﮒﺁﭨﮔﺝﮔﺓﺓﮔﮒ ﻝﺑ """
+        """ﮒﺁﭨﮔﺝﮔﺓﺓﮔﮒ ﻝﺑ """
         treatment_ancestors = self.get_ancestors(treatment)
         outcome_ancestors = self.get_ancestors(outcome)
         return treatment_ancestors & outcome_ancestors
     
     def find_backdoor_paths(self, treatment: str, outcome: str) -> List[List[str]]:
-        """ﮒﺁﭨﮔﺝﮒﻠ۷ﻟﺓﺁﮒﺝ"""
+        """ﮒﺁﭨﮔﺝﮒﻠ۷ﻟﺓﺁﮒﺝ"""
         all_paths = list(nx.all_simple_paths(self.graph, treatment, outcome))
         backdoor_paths = []
         
@@ -178,7 +177,7 @@ class CausalGraph:
 
 @dataclass
 class CausalEffect:
-    """ﮒ ﮔﮔﮒﭦ"""
+    """ﮒ ﮔﮔﮒﭦ"""
     treatment: str
     outcome: str
     effect_type: str
@@ -192,7 +191,7 @@ class CausalEffect:
 
 @dataclass
 class CounterfactualResult:
-    """ﮒﻛﭦﮒ؟ﻝﭨﮔ?""
+    """ﮒﻛﭦﮒ؟ﻝﭨﮔ?""
     sample_id: str
     factual_outcome: float
     counterfactual_outcome: float
@@ -202,9 +201,9 @@ class CounterfactualResult:
 
 
 class CausalDiscovery:
-    """ﮒ ﮔﮒﻝﺍ
+    """ﮒ ﮔﮒﻝﺍ
     
-    ﻛﭨﻟ۶ﮔﭖﮔﺍﮔ؟ﻛﺕ­ﮒﻝﺍﮒ ﮔﻝﭨﮔ
+    ﻛﭨﻟ۶ﮔﭖﮔﺍﮔ؟ﻛﺕ­ﮒﻝﺍﮒ ﮔﻝﭨﮔ
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -216,13 +215,13 @@ class CausalDiscovery:
         alpha: float = 0.05,
         indep_test: str = "fisherz"
     ) -> CausalGraph:
-        """PCﻝ؟ﮔﺏﮒ ﮔﮒﻝﺍ
+        """PCﻝ؟ﮔﺏﮒ ﮔﮒﻝﺍ
         
         Args:
-            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
-            alpha: ﮔﺝﻟﮔ۶ﮔﺍﺑﮒﺗ?            indep_test: ﻝ؛ﻝ،ﮔ۶ﮔ۲ﻠ۹ﮔﺗﮔﺏ?            
+            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            alpha: ﮔﺝﻟﮔ۶ﮔﺍﺑﮒﺗ?            indep_test: ﻝ؛ﻝ،ﮔ۶ﮔ۲ﻠ۹ﮔﺗﮔﺏ?            
         Returns:
-            CausalGraph: ﮒ ﮔﮒ?        """
+            CausalGraph: ﮒ ﮔﮒ?        """
         from causallearn.search.ConstraintBased.PC import pc
         
         cg = pc(data.values, alpha, indep_test)
@@ -266,15 +265,15 @@ class CausalDiscovery:
         lambda1: float = 0.1,
         loss_type: str = "l2"
     ) -> CausalGraph:
-        """NOTEARSﻝ؟ﮔﺏﮒ ﮔﮒﻝﺍ
+        """NOTEARSﻝ؟ﮔﺏﮒ ﮔﮒﻝﺍ
         
-        ﮒﭦﻛﭦﻟﺟﻝﭨ­ﻛﺙﮒﻝﮒ ﮔﮒﻝﺍﮔﺗﮔﺏ?        
+        ﮒﭦﻛﭦﻟﺟﻝﭨ­ﻛﺙﮒﻝﮒ ﮔﮒﻝﺍﮔﺗﮔﺏ?        
         Args:
-            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
-            lambda1: L1ﮔ­۲ﮒﮒﮒﮔ?            loss_type: ﮔﮒ۳ﺎﮒﺛﮔﺍﻝﺎﭨﮒ
+            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            lambda1: L1ﮔ­۲ﮒﮒﮒﮔ?            loss_type: ﮔﮒ۳ﺎﮒﺛﮔﺍﻝﺎﭨﮒ
             
         Returns:
-            CausalGraph: ﮒ ﮔﮒ?        """
+            CausalGraph: ﮒ ﮔﮒ?        """
         from castle.algorithms import Notears
         
         notears = Notears(lambda1=lambda1, loss_type=loss_type)
@@ -315,13 +314,13 @@ class CausalDiscovery:
         data: pd.DataFrame,
         domain_knowledge: Optional[Dict[str, List[str]]] = None
     ) -> Dict[str, Any]:
-        """ﻠ۹ﻟﺁﮒ ﮔﮒ?        
+        """ﻠ۹ﻟﺁﮒ ﮔﮒ?        
         Args:
-            graph: ﮒ ﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
-            domain_knowledge: ﻠ۱ﮒﻝ۴ﻟﺁﻝﭦ۵ﮔ
+            graph: ﮒ ﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            domain_knowledge: ﻠ۱ﮒﻝ۴ﻟﺁﻝﭦ۵ﮔ
             
         Returns:
-            Dict: ﻠ۹ﻟﺁﻝﭨﮔ
+            Dict: ﻠ۹ﻟﺁﻝﭨﮔ
         """
         validation_result = {
             "is_valid": True,
@@ -332,7 +331,7 @@ class CausalDiscovery:
         
         if not nx.is_directed_acyclic_graph(graph.graph):
             validation_result["is_valid"] = False
-            validation_result["violations"].append("ﮒ­ﮒ۷ﻝ?)
+            validation_result["violations"].append("ﮒ­ﮒ۷ﻝ?)
         
         if domain_knowledge:
             for constraint_type, constraints in domain_knowledge.items():
@@ -340,7 +339,7 @@ class CausalDiscovery:
                     for source, target in constraints:
                         if graph.graph.has_edge(source, target):
                             validation_result["violations"].append(
-                                f"ﻝ۵ﮔ­۱ﻟﺝﺗﮒ­ﮒ? {source} -> {target}"
+                                f"ﻝ۵ﮔ­۱ﻟﺝﺗﮒ­ﮒ? {source} -> {target}"
                             )
         
         validation_result["score"] = self._calculate_graph_score(graph, data)
@@ -348,7 +347,7 @@ class CausalDiscovery:
         return validation_result
     
     def _calculate_graph_score(self, graph: CausalGraph, data: pd.DataFrame) -> float:
-        """ﻟ؟۰ﻝ؟ﮒﺝﻟﺁﮒ?""
+        """ﻟ؟۰ﻝ؟ﮒﺝﻟﺁﮒ?""
         from scipy.stats import pearsonr
         
         total_score = 0.0
@@ -364,8 +363,8 @@ class CausalDiscovery:
 
 
 class CausalEffectEstimator:
-    """ﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﮒ?    
-    ﻛﺙﺍﻟ؟۰ﮒ۳ﻝﮒﺁﺗﻝﭨﮔﻝﮒ ﮔﮔﮒﭦ
+    """ﮒ ﮔﮔﮒﭦﻛﺙﺍﻟ؟۰ﮒ?    
+    ﻛﺙﺍﻟ؟۰ﮒ۳ﻝﮒﺁﺗﻝﭨﮔﻝﮒ ﮔﮔﮒﭦ
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -379,17 +378,17 @@ class CausalEffectEstimator:
         confounders: List[str],
         caliper: float = 0.2
     ) -> CausalEffect:
-        """ﮒﺝﮒﮒﺝﮒﮒﺗﻠﻛﺙﺍﻟ؟۰
+        """ﮒﺝﮒﮒﺝﮒﮒﺗﻠﻛﺙﺍﻟ؟۰
         
         Args:
-            data: ﮔﺍﮔ؟
-            treatment: ﮒ۳ﻝﮒﻠ
-            outcome: ﻝﭨﮔﮒﻠ
-            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
-            caliper: ﮒﺗﻠﮒ؟ﺗﮒﺓ؟
+            data: ﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
+            caliper: ﮒﺗﻠﮒ؟ﺗﮒﺓ؟
             
         Returns:
-            CausalEffect: ﮒ ﮔﮔﮒﭦ
+            CausalEffect: ﮒ ﮔﮔﮒﭦ
         """
         from sklearn.linear_model import LogisticRegression
         from scipy.stats import ttest_ind
@@ -448,15 +447,15 @@ class CausalEffectEstimator:
         outcome: str,
         confounders: List[str]
     ) -> CausalEffect:
-        """ﻠﮔ۵ﻝﮒ ﮔﻛﺙﺍﻟ؟?        
+        """ﻠﮔ۵ﻝﮒ ﮔﻛﺙﺍﻟ؟?        
         Args:
-            data: ﮔﺍﮔ؟
-            treatment: ﮒ۳ﻝﮒﻠ
-            outcome: ﻝﭨﮔﮒﻠ
-            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
+            data: ﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
             
         Returns:
-            CausalEffect: ﮒ ﮔﮔﮒﭦ
+            CausalEffect: ﮒ ﮔﮔﮒﭦ
         """
         from sklearn.linear_model import LogisticRegression
         
@@ -501,16 +500,16 @@ class CausalEffectEstimator:
         outcome: str,
         confounders: List[str]
     ) -> CausalEffect:
-        """ﮒﻠﻝ۷ﺏﮒ۴ﻛﺙﺍﻟ؟۰
+        """ﮒﻠﻝ۷ﺏﮒ۴ﻛﺙﺍﻟ؟۰
         
         Args:
-            data: ﮔﺍﮔ؟
-            treatment: ﮒ۳ﻝﮒﻠ
-            outcome: ﻝﭨﮔﮒﻠ
-            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
+            data: ﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            confounders: ﮔﺓﺓﮔﮒ ﻝﺑ 
             
         Returns:
-            CausalEffect: ﮒ ﮔﮔﮒﭦ
+            CausalEffect: ﮒ ﮔﮔﮒﭦ
         """
         from sklearn.linear_model import LogisticRegression, LinearRegression
         
@@ -560,9 +559,9 @@ class CausalEffectEstimator:
 
 
 class CounterfactualAnalyzer:
-    """ﮒﻛﭦﮒ؟ﮒﮔﮒ۷
+    """ﮒﻛﭦﮒ؟ﮒﮔﮒ۷
     
-    ﻟﺟﻟ۰ﮒﻛﭦﮒ؟ﮔ۷ﮔ?    """
+    ﻟﺟﻟ۰ﮒﻛﭦﮒ؟ﮔ۷ﮔ?    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -575,17 +574,17 @@ class CounterfactualAnalyzer:
         outcome: str,
         sample_indices: Optional[List[int]] = None
     ) -> List[CounterfactualResult]:
-        """ﻛﺙﺍﻟ؟۰ﻛﺕ۹ﻛﺛﮒ۳ﻝﮔﮒﭦ (ITE)
+        """ﻛﺙﺍﻟ؟۰ﻛﺕ۹ﻛﺛﮒ۳ﻝﮔﮒﭦ (ITE)
         
         Args:
-            model: ﮒ ﮔﮔ۷۰ﮒ
-            X: ﻝﺗﮒﺝﮔﺍﮔ؟
-            treatment: ﮒ۳ﻝﮒﻠ
-            outcome: ﻝﭨﮔﮒﻠ
-            sample_indices: ﮔ ﺓﮔ؛ﻝﺑ۱ﮒﺙ
+            model: ﮒ ﮔﮔ۷۰ﮒ
+            X: ﻝﺗﮒﺝﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            sample_indices: ﮔ ﺓﮔ؛ﻝﺑ۱ﮒﺙ
             
         Returns:
-            List[CounterfactualResult]: ﮒﻛﭦﮒ؟ﻝﭨﮔﮒﻟ۰?        """
+            List[CounterfactualResult]: ﮒﻛﭦﮒ؟ﻝﭨﮔﮒﻟ۰?        """
         if sample_indices is None:
             sample_indices = list(range(min(100, len(X))))
         
@@ -622,16 +621,16 @@ class CounterfactualAnalyzer:
         outcome: str,
         subgroups: Dict[str, pd.Series]
     ) -> Dict[str, float]:
-        """ﻛﺙﺍﻟ؟۰ﮔ۰ﻛﭨﭘﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ (CATE)
+        """ﻛﺙﺍﻟ؟۰ﮔ۰ﻛﭨﭘﮒﺗﺏﮒﮒ۳ﻝﮔﮒﭦ (CATE)
         
         Args:
-            model: ﮒ ﮔﮔ۷۰ﮒ
-            X: ﻝﺗﮒﺝﮔﺍﮔ؟
-            treatment: ﮒ۳ﻝﮒﻠ
-            outcome: ﻝﭨﮔﮒﻠ
-            subgroups: ﮒ­ﻝﺝ۳ﻛﺛﮒ؟ﻛﺗ?            
+            model: ﮒ ﮔﮔ۷۰ﮒ
+            X: ﻝﺗﮒﺝﮔﺍﮔ؟
+            treatment: ﮒ۳ﻝﮒﻠ
+            outcome: ﻝﭨﮔﮒﻠ
+            subgroups: ﮒ­ﻝﺝ۳ﻛﺛﮒ؟ﻛﺗ?            
         Returns:
-            Dict[str, float]: ﮒﮒ­ﻝﺝ۳ﻛﺛﻝCATE
+            Dict[str, float]: ﮒﮒ­ﻝﺝ۳ﻛﺛﻝCATE
         """
         cate_results = {}
         
@@ -655,15 +654,15 @@ class CounterfactualAnalyzer:
         intervention: Dict[str, Any],
         outcome: str
     ) -> Dict[str, Any]:
-        """ﮔ۷۰ﮔﮒﺗﺎﻠ۱ﮔﮔ
+        """ﮔ۷۰ﮔﮒﺗﺎﻠ۱ﮔﮔ
         
         Args:
-            causal_graph: ﮒ ﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
-            intervention: ﮒﺗﺎﻠ۱ﮒ؟ﻛﺗ {ﮒﻠ: ﮒﺙ}
-            outcome: ﻝ؟ﮔ ﻝﭨﮔﮒﻠ
+            causal_graph: ﮒ ﮔﮒ?            data: ﻟ۶ﮔﭖﮔﺍﮔ؟
+            intervention: ﮒﺗﺎﻠ۱ﮒ؟ﻛﺗ {ﮒﻠ: ﮒﺙ}
+            outcome: ﻝ؟ﮔ ﻝﭨﮔﮒﻠ
             
         Returns:
-            Dict: ﮒﺗﺎﻠ۱ﮔ۷۰ﮔﻝﭨﮔ
+            Dict: ﮒﺗﺎﻠ۱ﮔ۷۰ﮔﻝﭨﮔ
         """
         from causalnex.structure.notears import from_pandas
         from causalnex.network import BayesianNetwork
@@ -692,8 +691,8 @@ class CounterfactualAnalyzer:
 
 
 class FactorCausalAnalyzer:
-    """ﮒ ﮒ­ﮒ ﮔﮒﮔﮒ?    
-    ﻛﺕﻠ۷ﻝ۷ﻛﭦﻠﮒﮒ ﮒ­ﮒ ﮔﮒﮔ
+    """ﮒ ﮒ­ﮒ ﮔﮒﮔﮒ?    
+    ﻛﺕﻠ۷ﻝ۷ﻛﭦﻠﮒﮒ ﮒ­ﮒ ﮔﮒﮔ
     """
     
     def __init__(self, config: Dict[str, Any]):
@@ -708,13 +707,13 @@ class FactorCausalAnalyzer:
         returns: pd.Series,
         factor_names: List[str]
     ) -> Dict[str, Any]:
-        """ﮒﮔﮒ ﮒ­ﮒ ﮔﮔ?        
+        """ﮒﮔﮒ ﮒ­ﮒ ﮔﮔ?        
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟
-            returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒ ﮒ­ﮒﻝ۶ﺍﮒﻟ۰۷
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟
+            returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒ ﮒ­ﮒﻝ۶ﺍﮒﻟ۰۷
             
         Returns:
-            Dict: ﮒ ﮔﮒﮔﻝﭨﮔ
+            Dict: ﮒ ﮔﮒﮔﻝﭨﮔ
         """
         data = factor_data.copy()
         data['returns'] = returns
@@ -753,14 +752,14 @@ class FactorCausalAnalyzer:
         factor_names: List[str],
         threshold: float = 0.05
     ) -> List[str]:
-        """ﻟﺁﮒ،ﻟﮒﻛﺟ۰ﮒﺓ
+        """ﻟﺁﮒ،ﻟﮒﻛﺟ۰ﮒﺓ
         
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟
-            returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒ ﮒ­ﮒﻝ۶ﺍﮒﻟ۰۷
-            threshold: ﮔﮒﭦﻠﮒ?            
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟
+            returns: ﮔﭘﻝﻝﮒﭦﮒ?            factor_names: ﮒ ﮒ­ﮒﻝ۶ﺍﮒﻟ۰۷
+            threshold: ﮔﮒﭦﻠﮒ?            
         Returns:
-            List[str]: ﻟﮒﻛﺟ۰ﮒﺓﮒ ﮒ­ﮒﻟ۰۷
+            List[str]: ﻟﮒﻛﺟ۰ﮒﺓﮒ ﮒ­ﮒﻟ۰۷
         """
         analysis = self.analyze_factor_causality(factor_data, returns, factor_names)
         
@@ -774,9 +773,9 @@ class FactorCausalAnalyzer:
 
 ---
 
-## 4. ﮔﭖﻟﺁﻝ­ﻝ۴
+## 4. ﮔﭖﻟﺁﻝ­ﻝ۴
 
-### 4.1 ﮒﮒﮔﭖﻟﺁ
+### 4.1 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 import pytest
@@ -799,7 +798,7 @@ class TestCausalDiscovery:
         return pd.DataFrame({'X': X, 'Y': Y, 'Z': Z})
     
     def test_pc_algorithm(self, sample_data):
-        """ﮔﭖﻟﺁPCﻝ؟ﮔﺏ"""
+        """ﮔﭖﻟﺁPCﻝ؟ﮔﺏ"""
         discovery = CausalDiscovery({})
         graph = discovery.discover_with_pc(sample_data)
         
@@ -808,7 +807,7 @@ class TestCausalDiscovery:
         assert 'Z' in graph.nodes
     
     def test_notears_algorithm(self, sample_data):
-        """ﮔﭖﻟﺁNOTEARSﻝ؟ﮔﺏ"""
+        """ﮔﭖﻟﺁNOTEARSﻝ؟ﮔﺏ"""
         discovery = CausalDiscovery({})
         graph = discovery.discover_with_notears(sample_data)
         
@@ -818,7 +817,7 @@ class TestCausalDiscovery:
 class TestCausalEffectEstimator:
     
     def test_psm_estimation(self):
-        """ﮔﭖﻟﺁﮒﺝﮒﮒﺝﮒﮒﺗﻠ"""
+        """ﮔﭖﻟﺁﮒﺝﮒﮒﺝﮒﮒﺗﻠ"""
         np.random.seed(42)
         n = 500
         
@@ -836,45 +835,45 @@ class TestCausalEffectEstimator:
 
 ---
 
-## 5. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵ﮔ?
-### 5.1 ﮔﮔﺁﻠ۲ﻠ?
-| ﻠ۲ﻠ۸ﻠ۰?| ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
+## 5. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵ﮔ?
+### 5.1 ﮔﮔﺁﻠ۲ﻠ?
+| ﻠ۲ﻠ۸ﻠ۰?| ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |--------|----------|----------|
-| ﮒ ﮔﮒﺝﻠﻟﺁ?| P1 | ﻠ۱ﮒﻝ۴ﻟﺁﻠ۹ﻟﺁﻙﮒ۳ﻝ؟ﮔﺏﻛﭦ۳ﮒﻠ۹ﻟﺁ |
-| ﮔ۹ﻟ۶ﮔﭖﮔﺓﺓﮔ?| P1 | ﮔﮔﮔ۶ﮒﮔﻙﮒﺓ۴ﮒﺓﮒﻠ?|
-| ﻟ؟۰ﻝ؟ﮒ۳ﮔﮒﭦ۵ﻠ، | P2 | ﻠﮔ ﺓﻙﮒﺗﭘﻟ۰ﻟ؟۰ﻝ؟?|
+| ﮒ ﮔﮒﺝﻠﻟﺁ?| P1 | ﻠ۱ﮒﻝ۴ﻟﺁﻠ۹ﻟﺁﻙﮒ۳ﻝ؟ﮔﺏﻛﭦ۳ﮒﻠ۹ﻟﺁ |
+| ﮔ۹ﻟ۶ﮔﭖﮔﺓﺓﮔ?| P1 | ﮔﮔﮔ۶ﮒﮔﻙﮒﺓ۴ﮒﺓﮒﻠ?|
+| ﻟ؟۰ﻝ؟ﮒ۳ﮔﮒﭦ۵ﻠ، | P2 | ﻠﮔ ﺓﻙﮒﺗﭘﻟ۰ﻟ؟۰ﻝ؟?|
 
 ---
 
-## 6. ﻠ۹ﮔﭘﮔ ﮒ
+## 6. ﻠ۹ﮔﭘﮔ ﮒ
 
-### 6.1 ﮒﻟﺛﻠ۹ﮔﭘ
+### 6.1 ﮒﻟﺛﻠ۹ﮔﭘ
 
-| ﻠ۹ﮔﭘﻠ۰?| ﻠ۹ﮔﭘﮔ ﮒ |
+| ﻠ۹ﮔﭘﻠ۰?| ﻠ۹ﮔﭘﮔ ﮒ |
 |--------|----------|
-| ﮒ ﮔﮒﻝﺍ | ﮔﺁﮔPCﻙNOTEARSﻝ؟ﮔﺏ |
-| ﮔﮒﭦﻛﺙﺍﻟ؟۰ | ﮔﺁﮔPSMﻙIPWﻙﮒﻠﻝ۷ﺏﮒ?|
-| ﮒﻛﭦﮒ؟ﮔ۷ﮔ?| ﮔﺁﮔITEﻙCATEﻛﺙﺍﻟ؟۰ |
-| ﮒ ﮒ­ﮒﮔ | ﮔﺁﮔﻟﮒﻛﺟ۰ﮒﺓﻟﺁﮒ، |
+| ﮒ ﮔﮒﻝﺍ | ﮔﺁﮔPCﻙNOTEARSﻝ؟ﮔﺏ |
+| ﮔﮒﭦﻛﺙﺍﻟ؟۰ | ﮔﺁﮔPSMﻙIPWﻙﮒﻠﻝ۷ﺏﮒ?|
+| ﮒﻛﭦﮒ؟ﮔ۷ﮔ?| ﮔﺁﮔITEﻙCATEﻛﺙﺍﻟ؟۰ |
+| ﮒ ﮒ­ﮒﮔ | ﮔﺁﮔﻟﮒﻛﺟ۰ﮒﺓﻟﺁﮒ، |
 
-### 6.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
+### 6.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?|
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?|
 |------|--------|
-| ﮒ ﮔﮒﻝﺍﺅﺙ?000ﮔ ﺓﮔ؛ﺅﺙ?| < 60ﻝ۶?|
-| ﮔﮒﭦﻛﺙﺍﻟ؟۰ | < 5ﻝ۶?|
-| ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﺅﺙ100ﮔ ﺓﮔ؛ﺅﺙ?| < 10ﻝ۶?|
+| ﮒ ﮔﮒﻝﺍﺅﺙ?000ﮔ ﺓﮔ؛ﺅﺙ?| < 60ﻝ۶?|
+| ﮔﮒﭦﻛﺙﺍﻟ؟۰ | < 5ﻝ۶?|
+| ﮒﻛﭦﮒ؟ﮔ۷ﮔ­ﺅﺙ100ﮔ ﺓﮔ؛ﺅﺙ?| < 10ﻝ۶?|
 
 ---
 
-## 7. ﻝﮔ؛ﮒﮒﺎ
+## 7. ﻝﮔ؛ﮒﮒﺎ
 
-| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛﻟ?| ﮒﮔﺑﻟﺁﺑﮔ |
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛﻟ?| ﮒﮔﺑﻟﺁﺑﮔ |
 |------|------|------|----------|
-| v1.0 | 2026-04-03 | ﻠﮒﻝ ﻝ۸ﭘﮒ?| ﮒﮒ۶ﻝﮔ؛ |
+| v1.0 | 2026-04-03 | ﻠﮒﻝ ﻝ۸ﭘﮒ?| ﮒﮒ۶ﻝﮔ؛ |
 
 ---
 
-**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
-**ﮔﮒﮔﺑﮔ?*: 2026-04-03
-**ﻝﭨﺑﮔ۳ﻟ?*: ﻠﮒﻝ ﻝ۸ﭘﮒ?
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-03
+**ﻝﭨﺑﮔ۳ﻟ?*: ﻠﮒﻝ ﻝ۸ﭘﮒ?

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FACTOR_LIBRARY_DEEP_AUDIT_002
 version: 2.0.0
 status: Active

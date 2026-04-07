@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ECONOMIC_REGIME_ENGINE_REVIEW_001
 version: 1.0.0
 status: Active

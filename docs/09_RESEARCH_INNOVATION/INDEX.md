@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_RESEARCH_INNOVATION_001
 version: 2.1.0
 status: Active

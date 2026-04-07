@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -15,7 +15,6 @@ responsibility:
   - 风险收益权衡
 layer: Layer 5.2 (组合优化)
 ---
-## 3. ææ¯è§æ ?
 
 ### 3.1 接口设计
 
@@ -24,7 +23,6 @@ class MeanVarianceOptimizer:
     """
     均值方差优化器
     
-    ä¸»è¦æ¥å£ç±»ï¼å°è£
 PyPortfolioOpt功能
     """
     
@@ -38,8 +36,6 @@ PyPortfolioOpt功能
         初始化优化器
         
         参数:
-            returns_data: æ¶ççæ°æ?(date Ã ticker)
-            risk_free_rate: æ é£é©å©ç?
             frequency: 年化频率
         """
         self.returns = returns_data
@@ -65,11 +61,9 @@ PyPortfolioOpt功能
         参数:
             objective: 优化目标 ('max_sharpe', 'min_volatility', 'max_return')
             method_mu: 收益估计方法
-            method_cov: åæ¹å·®ä¼°è®¡æ¹æ³?
             constraints: 约束条件
             
         返回:
-            ä¼åç»æå­å
 ¸
         """
         pass
@@ -90,8 +84,7 @@ PyPortfolioOpt功能
         total_value: float
     ) -> Tuple[Dict[str, int], float]:
         """
-        è·åç¦»æ£åé
-æ¹æ¡
+æ¹æ¡
         """
         pass
 ```
@@ -165,7 +158,6 @@ class OptimizationResult:
 
 @dataclass
 class EfficientFrontierPoint:
-    """ææåæ²¿ç¹æ°æ®ç»æ?""
     return_: float
     volatility: float
     sharpe_ratio: float
@@ -173,68 +165,57 @@ class EfficientFrontierPoint:
 ```
 
 ### 3.3 é
-ç½®åæ°
 
 ```yaml
 mean_variance_optimization:
-  # æ¶çä¼°è®¡é
-ç½®
+置
   expected_returns:
     method: 'mean'  # mean, ema, capm
     ema_span: 500
     capm_benchmark: 'SPY'
     
-  # åæ¹å·®ä¼°è®¡é
-ç½?
+ç½?
   covariance:
     method: 'ledoit_wolf'  # sample, exp, ledoit_wolf, semicov
     exp_span: 180
     shrinkage_target: 'single_factor'
     
-  # ä¼åé
-ç½®
+  # ä¼åé
+置
   optimization:
     objective: 'max_sharpe'
     risk_free_rate: 0.02
     frequency: 252
     
-  # çº¦æé
-ç½®
+  # çº¦æé
+置
   constraints:
-    min_weight: 0.0  # ä¸å
-è®¸åç©?
-    max_weight: 0.10  # åèµäº§æå¤?0%
-    max_leverage: 1.0  # ä¸ä½¿ç¨æ æ?
+    min_weight: 0.0  # ä¸å
     
-  # ç¦»æ£åé
-é
-ç½®
+é
+置
   discrete_allocation:
     method: 'greedy'
-    min_remaining: 100  # æå°å©ä½èµé?
 ```
 
 
 ## 📋 概述
 
-æ¬ææ¡£å®ä¹äºMEAN VARIANCE OPTIMIZATIONçæ ¸å¿åè½åææ¯å®ç°ã?
 
 from pypfopt import EfficientFrontier, expected_returns, risk_models
 from pypfopt.discrete_allocation import DiscreteAllocation
 
 class PyPortfolioOptAdapter(MeanVarianceOptimizer):
     """
-    PyPortfolioOptéé
-å?
+    PyPortfolioOptéé
+å?
     
-    ç´æ¥ä½¿ç¨PyPortfolioOptçæ ¸å¿åè?
     """
     
     def optimize(self, objective: str, **kwargs) -> Dict:
         # 计算预期收益
         mu = expected_returns.mean_historical_return(self.returns)
         
-        # è®¡ç®åæ¹å·®ç©é?
         S = risk_models.risk_models.sample_cov(self.returns)
         
         # 创建有效前沿对象
@@ -263,34 +244,22 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
 ### 4.2 开发里程碑
 
-| é¶æ®µ | ä»»å¡ | å·¥ä½é?| ä¾èµ |
 |------|------|--------|------|
-| ç¬?å¤?| PyPortfolioOptéææµè¯ | 8h | - |
-| ç¬?å¤?| é¢ææ¶çä¼°è®¡å¨å®ç?| 8h | ç¬?å¤?|
-| ç¬?å¤?| åæ¹å·®ä¼°è®¡å¨å®ç° | 8h | ç¬?å¤?|
-| ç¬?å¤?| çº¦æå¤çå¨å®ç?| 8h | ç¬?-3å¤?|
-| ç¬?å¤?| ç¦»æ£åé
-è½¬æ¢å®ç° | 8h | ç¬?å¤?|
-| ç¬?å¤?| æ¥å£å°è£
-åæµè¯?| 8h | ç¬?å¤?|
-| ç¬?å¤?| ææ¡£åéææµè¯?| 8h | ç¬?å¤?|
 
 ---
 
 ## 5. 测试规格
 
-### 5.1 åå
-æµè¯
+### 5.1 åå
+æµè¯
 
 ```python
 class TestMeanVarianceOptimizer:
     
     def test_max_sharpe_portfolio(self):
-        """æµè¯æå¤§å¤æ®æ¯çç»å?""
         pass
     
     def test_min_volatility_portfolio(self):
-        """æµè¯æå°æ¹å·®ç»å?""
         pass
     
     def test_efficient_frontier(self):
@@ -298,8 +267,7 @@ class TestMeanVarianceOptimizer:
         pass
     
     def test_discrete_allocation(self):
-        """æµè¯ç¦»æ£åé
-"""
+"""
         pass
     
     def test_constraints(self):
@@ -317,7 +285,6 @@ class TestIntegration:
         pass
     
     def test_with_risk_parity(self):
-        """æµè¯ä¸é£é©å¹³ä»·ç­ç¥éæ?""
         pass
     
     def test_with_rebalancing(self):
@@ -331,41 +298,27 @@ class TestIntegration:
 
 ### 6.1 计算性能
 
-| ææ  | ç®æ å?| æµéæ¹æ³ |
 |------|--------|----------|
-| ä¼åæ¶é´ï¼?00èµäº§ï¼?| <100ms | æ¶é´æµè¯ |
-| ææåæ²¿è®¡ç®ï¼?00ç¹ï¼ | <1s | æ¶é´æµè¯ |
-| å
-å­å ç¨ | <100MB | å
+| å
 存监控 |
 
-### 6.2 æ°å¼ç¨³å®æ?
 
-| ææ  | ç®æ å?| æµéæ¹æ³ |
 |------|--------|----------|
-| æéå?| 1.0Â±1e-6 | æ°å¼éªè¯?|
-| çº¦ææ»¡è¶³ç?| 100% | çº¦ææ£æ?|
-| æ¶æç?| >99% | ä¼åæ¥å¿ |
 
 ---
 
 ## 7. 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
 ## 8. 文档治理
 
 ### 8.1 文档索引
 
 **本文档在系统中的位置**:
-- **æå±å±çº?*: Layer 6 (ç»åä¼åå±?
 - **模块索引**: 001
 - **模块名称**: MEAN_VARIANCE_OPTIMIZATION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -379,9 +332,6 @@ class TestIntegration:
 
 **文档维护**:
 - **责任模块**: MEAN_VARIANCE_OPTIMIZATION
-- **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
-- **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

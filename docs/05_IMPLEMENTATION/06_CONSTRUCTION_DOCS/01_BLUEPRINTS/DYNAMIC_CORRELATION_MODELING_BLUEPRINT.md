@@ -1,13 +1,9 @@
-﻿---
+﻿﻿---
 responsibility:
-  - å¨æç¸å
-³æ§å»ºæ¨?
-  - ç¸å
-³æ§é¢æµ?
-  - ç¸å
-³æ§ç©é?
-  - ç¸å
-³æ§åæ?
+  - ç¸å
+  - ç¸å
+  - ç¸å
+³æ§åæ?
 
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0
@@ -16,7 +12,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
@@ -26,8 +21,6 @@ layer: Layer 5.3 (风险管理)
 
 负责动态相关性建模的设计与实现，基于时变相关性模型，捕捉资产间相关性的动态变化，支持风险管理和组合优化。
 
-# å¨æç¸å
-³æ§å»ºæ¨¡èå?
 ## 设计目标
 
 ### 主要目标
@@ -82,59 +75,37 @@ layer: Layer 5.3 (风险管理)
 
 ## 核心定位
 
-æå»ºå¨æç¸å
-³æ§å»ºæ¨¡çè®¾è®¡ä¸å®ç°ï¼åºäºæ¶åç¸å
-³ç³»æ°æ¨¡åææ¯ï¼ææèµäº§é´ç¸å
-³æ§çå¨æååï¼æ¯æé£é©ç®¡çåèµäº§é
-ç½®å³ç­ã?
 
 ---
 
 
-> **æ ¸å¿èè´£**: ä½¿ç¨DCC-GARCHæ¨¡åå®æ¶æ´æ°èµäº§é´ç¸å
-³æ?
+³æ?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼å¨æç¸å
-³æ§ãç¸å
-³æ§çªåè¯å?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾èµäº§å
-æ°æ?|
-| æ°æ®è¡ç¼è¿½è¸ªèå?| DATA_LINEAGE_TRACKING_001 | ä¸­ä¾èµ?| æä¾æ°æ®è¡ç¼?|
+æ°æ?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [é£é©å¹³ä»·ç­ç¥èå¾](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | å¼ºä¾èµ?| é£é©å¹³ä»·ç­ç¥ |
-| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| ç»åä¼å |
-| [VaR/ESçæ§èå¾](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | ä¸­ä¾èµ?| VaR/ESçæ§ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **arch** | 5.0+ | GARCH模型 | [官方文档](https://arch.readthedocs.io/) |
-| **mgarch** | 0.1+ | å¤å
-GARCH | [å®æ¹ææ¡£](https://github.com/abbass2/mgarch) |
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **mgarch** | 0.1+ | å¤å
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
-    A[æ°æ®è´¨éçæ§] --> B[å¨æç¸å
-³æ§å»ºæ¨¡]
     C[数据目录] --> B
     D[数据血缘追踪] --> B
     
@@ -153,41 +124,22 @@ graph LR
 
 ### 2.1 系统架构?
 ```
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                 è·¨èµäº§ç¸å
-³æ§å¨æå»ºæ¨¡ç³»ç»æ¶?                     ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ°æ®è¾å
-¥?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?è¡ç¥¨æ¶ç ? ?åºå¸æ¶ç ? ?ååæ¶ç ? ?æ±çæ¶ç ?? ?? ? ?æ°æ®     ? ?æ°æ®     ? ?æ°æ®     ? ?æ°æ®     ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             GARCHæ¨¡åå±ï¼åèµäº§æ³¢å¨çå»ºæ¨¡?               ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? GARCH(1,1) Model for Each Asset                   ? ? ?? ? ? ÏÂ²?= Ï + Î±Â·ÎµÂ²ââ?+ Î²Â·ÏÂ²ââ?                     ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             DCCæ¨¡åå±ï¼å¨æç¸å
-³æ§å»ºæ¨¡ï¼                    ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? Dynamic Conditional Correlation (DCC)             ? ? ?? ? ? Q?= (1-Î±-Î²)Â·QÌ + Î±Â·uâââÂ·u'ââ?+ Î²Â·Qââ?        ? ? ?? ? ? R?= diag(Q??Â² Â· Q?Â· diag(Q??Â²           ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             ç¸å
-³æ§çªåæ£æµå±                              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?ç»æçªå ? ?æç«¯å¸åº ? ?ç¸å
-³?  ?              ? ?? ? ?æ£?    ? ?è¯å«     ? ?é¢è­¦     ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾åº?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?å¨æç¸?? ?çªåé¢è­¦ ? ?é£é©è°æ´ ?              ? ?? ? ?æ§ç©?  ? ?ä¿¡å·     ? ?å»ºè®®     ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
 ### 2.2 核心数据?
 ```
 市场收益率数?    ?数据预处理（缺失值处理、异常值检测）
-    ?åèµäº§GARCHæ¨¡åæåï¼ä¼°è®¡æ¡ä»¶æ³¢å¨ç?    ?æ ååæ®å·®è®¡?    ?DCCæ¨¡åæåï¼ä¼°è®¡å¨æç¸å
-³æ§ï¼
-    ?å¨æç¸å
-³æ§ç©éµè¾?    ?ç¸å
-³æ§çªåæ£?    ?é¢è­¦ä¿¡å·çæ
+³æ§ï¼
 ```
 
 ---
 
 ## 3. 核心模块设计
 
-### 3.1 å¨æç¸å
-³æ§å»ºæ¨¡å¨ï¼DynamicCorrelationModeler?
 ```python
 class DynamicCorrelationModeler:
     """
-    å¨æç¸å
-³æ§å»ºæ¨¡å¨
     
     索引: DYNAMIC_CORR_001-M01
-    èè´£: ä½¿ç¨DCC-GARCHæ¨¡åä¼°è®¡å¨æç¸å
-³æ§ç©?    è¾å
-¥: å¤èµäº§æ¶ççæ°æ®
-    è¾åº: å¨æç¸å
-³æ§ç©éµãçªåæ£æµç»æãé¢è­¦ä¿¡?    """
     
     def __init__(self, config: DCCConfig):
         self.config = config
@@ -226,19 +178,15 @@ class DynamicCorrelationModeler:
         market_state: str = 'normal'
     ) -> DynamicCorrelationResult:
         """
-        ä¼°è®¡å¨æç¸å
-³æ§ç©?        
+³æ§ç©?        
         Args:
             returns_data: 多资产收益率数据
             market_state: 市场状态（normal/extreme?            
         Returns:
-            DynamicCorrelationResult: å¨æç¸å
-³æ§ç»?        """
-        # 1. è·åå¨æç¸å
-³æ§ç©?        dcc_correlation = self.dcc_model.conditional_correlation()
+³æ§ç»?        """
+³æ§ç©?        dcc_correlation = self.dcc_model.conditional_correlation()
         
-        # 2. æ£æµç¸å
-³æ§çª?        regime_change = self.regime_detector.detect(dcc_correlation)
+³æ§çª?        regime_change = self.regime_detector.detect(dcc_correlation)
         
         # 3. 极端市场调整
         if market_state == 'extreme':
@@ -265,15 +213,10 @@ class DynamicCorrelationModeler:
         window: int = 20
     ) -> CorrelationBreakdownResult:
         """
-        æ£æµç¸å
-³æ§çª?        
+³æ§çª?        
         Args:
-            correlation_history: åå²ç¸å
-³æ§ç©éµå?            window: æ£æµçªå£å¤§?            
         Returns:
             CorrelationBreakdownResult: 突变检测结?        """
-        # 1. è®¡ç®ç¸å
-³æ§ååç
         correlation_changes = self._calculate_correlation_changes(
             correlation_history, window
         )
@@ -297,17 +240,14 @@ class DynamicCorrelationModeler:
         horizon: int = 5
     ) -> CorrelationForecast:
         """
-        é¢æµæªæ¥ç¸å
 ³?        
         Args:
             horizon: 预测期数（天数）
             
         Returns:
-            CorrelationForecast: ç¸å
-³æ§é¢æµç»?        """
+            CorrelationForecast: ç¸å
         # 1. 预测条件波动?        volatility_forecast = self._forecast_volatility(horizon)
         
-        # 2. é¢æµç¸å
 ³?        correlation_forecast = self.dcc_model.forecast(horizon)
         
         # 3. 计算预测区间
@@ -357,15 +297,10 @@ class DynamicCorrelationModeler:
         correlation: pd.DataFrame,
         regime_change: RegimeChange
     ) -> pd.DataFrame:
-        """æç«¯å¸åºç¸å
-³æ§è°?""
-        # å¨æç«¯å¸åºä¸ï¼ç¸å
-³æ§è¶åäº1
+³æ§è°?""
         adjustment_factor = self.config.extreme_market_adjustment_factor
         
         if regime_change.is_extreme:
-            # å¢å ç¸å
-³æ§ï¼è¶å??            adjusted_corr = correlation + adjustment_factor * (1 - correlation)
             # 确保对角线为1
             np.fill_diagonal(adjusted_corr.values, 1.0)
             return adjusted_corr
@@ -373,17 +308,13 @@ class DynamicCorrelationModeler:
         return correlation
 ```
 
-### 3.2 ç¸å
-³æ§çªåæ£æµå¨ï¼CorrelationRegimeDetector?
+### 3.2 ç¸å
 ```python
 class CorrelationRegimeDetector:
     """
-    ç¸å
-³æ§çªåæ£æµå¨
+    ç¸å
     
     索引: DYNAMIC_CORR_001-M02
-    èè´£: æ£æµç¸å
-³æ§ç»ææ§çª?    """
     
     def __init__(self, config: RegimeDetectionConfig):
         self.config = config
@@ -394,15 +325,11 @@ class CorrelationRegimeDetector:
         correlation_matrix: pd.DataFrame
     ) -> RegimeChange:
         """
-        æ£æµç¸å
-³æ§çª?        
+³æ§çª?        
         Args:
-            correlation_matrix: å½åç¸å
-³æ§ç©?            
+³æ§ç©?            
         Returns:
             RegimeChange: 突变检测结?        """
-        # 1. è®¡ç®ç¸å
-³æ§åå¼å?        mean_correlation = correlation_matrix.values[
             np.triu_indices_from(correlation_matrix.values, k=1)
         ].mean()
         
@@ -429,8 +356,6 @@ class CorrelationRegimeDetector:
         correlation_matrix: pd.DataFrame
     ) -> bool:
         """判断是否为极端市?""
-        # æç«¯å¸åºç¹å¾ï¼ç¸å
-³æ§æ®éåé«ï¼è¶å??        off_diagonal = correlation_matrix.values[
             np.triu_indices_from(correlation_matrix.values, k=1)
         ]
         mean_corr = off_diagonal.mean()
@@ -439,12 +364,11 @@ class CorrelationRegimeDetector:
 ```
 
 ### 3.3 é
-ç½®ç±»å®?
 ```python
 @dataclass
 class DCCConfig:
-    """DCCæ¨¡åé
-ç½®"""
+    """DCCæ¨¡åé
+置"""
     garch_p: int = 1  # GARCH模型p?    garch_q: int = 1  # GARCH模型q?    dcc_alpha: float = 0.05  # DCC模型alpha参数
     dcc_beta: float = 0.9   # DCC模型beta参数
     extreme_market_adjustment_factor: float = 0.3  # 极端市场调整因子
@@ -452,17 +376,13 @@ class DCCConfig:
     
 @dataclass
 class RegimeDetectionConfig:
-    """çªåæ£æµé
-?""
-    breakdown_threshold: float = 0.15  # çªå?    extreme_correlation_threshold: float = 0.7  # æç«¯å¸åºç¸å
-³æ§é?    lookback_window: int = 252  # åççªå£ï¼äº¤ææ¥?```
+?""
 
 ---
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
-¥æ°æ®æ¨¡å
+### 4.1 è¾å
 
 ```python
 @dataclass
@@ -484,8 +404,7 @@ class MarketData:
 ```python
 @dataclass
 class DynamicCorrelationResult:
-    """å¨æç¸å
-³æ§ç»?""
+³æ§ç»?""
     correlation_matrix: pd.DataFrame
     covariance_matrix: pd.DataFrame
     regime: RegimeChange
@@ -494,8 +413,7 @@ class DynamicCorrelationResult:
     
 @dataclass
 class CorrelationBreakdownResult:
-    """ç¸å
-³æ§çªåç»?""
+    """ç¸å
     breakdown_points: List[datetime]
     severity: str  # low/medium/high
     affected_assets: List[str]
@@ -520,25 +438,20 @@ class RegimeChange:
 **GARCH(1,1)模型**（单资产波动率）?```
 σ²?= ω + α·ε²ₜ₋?+ β·σ²ₜ₋?```
 
-**DCCæ¨¡å**ï¼å¨æç¸å
-³æ§ï¼?```
-Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?· diag(Q??²
+³æ§ï¼?```
 ```
 
 å
-¶ä¸­?- Q? æç¸å
-³æ§ç©?- R? å¨æç¸å
-³æ§ç©?- u? æ ååæ®?- Î±, Î²: DCCåæ°
 
 ### 5.2 开源库选择
 
 **推荐?*?1. **arch**: 用于GARCH模型拟合
-   - å®è£
+   - å®è£
 ：`pip install arch`
    - 文档：https://arch.readthedocs.io/
 
 2. **mgarch**: 用于DCC模型拟合
-   - å®è£
+   - å®è£
 ：`pip install mgarch`
    - GitHub: https://github.com/ritchan/mgarch
 
@@ -549,12 +462,10 @@ Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?
 **计算优化**?- 使用Numba加速矩阵运?- 并行计算多资产GARCH模型
 - 缓存中间结果
 
-**å
-å­ä¼å**?- ä»
+**å
 保留最近N天的数据
-- å®ææ¸
-çåå²ç¸å
-³æ§ç©?
+- å®ææ¸
+³æ§ç©?
 ---
 
 ## 6. 集成方案
@@ -563,16 +474,14 @@ Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?
 
 ```python
 class RiskParityOptimizer:
-    """é£é©å¹³ä»·ä¼åå¨ï¼éæå¨æç¸å
-³æ§ï¼"""
+³æ§ï¼"""
     
     def __init__(self, correlation_modeler: DynamicCorrelationModeler):
         self.correlation_modeler = correlation_modeler
         
     def optimize(self, returns: pd.DataFrame) -> pd.Series:
         """执行风险平价优化"""
-        # 1. è·åå¨æç¸å
-³æ§ç©?        corr_result = self.correlation_modeler.estimate_dynamic_correlation(
+³æ§ç©?        corr_result = self.correlation_modeler.estimate_dynamic_correlation(
             returns
         )
         
@@ -587,15 +496,13 @@ class RiskParityOptimizer:
 ### 6.2 与预警系统集?
 ```python
 class CorrelationAlertSystem:
-    """ç¸å
-³æ§é¢è­¦ç³»?""
+    """ç¸å
     
     def __init__(self, correlation_modeler: DynamicCorrelationModeler):
         self.correlation_modeler = correlation_modeler
         
     def monitor(self, returns: pd.DataFrame) -> Alert:
-        """çæ§ç¸å
-³æ§å?""
+³æ§å?""
         # 1. 检测突?        breakdown = self.correlation_modeler.detect_correlation_breakdown(
             returns
         )
@@ -604,8 +511,7 @@ class CorrelationAlertSystem:
         if breakdown.severity == 'high':
             return Alert(
                 level='CRITICAL',
-                message=f'ç¸å
-³æ§çªåæ£æµï¼{breakdown.recommendation}',
+                message=f'ç¸å
                 affected_assets=breakdown.affected_assets
             )
 ```
@@ -614,8 +520,8 @@ class CorrelationAlertSystem:
 
 ## 7. 测试策略
 
-### 7.1 åå
-æµè¯
+### 7.1 åå
+æµè¯
 
 ```python
 def test_garch_fitting():
@@ -628,8 +534,6 @@ def test_garch_fitting():
     assert modeler.dcc_model is not None
 
 def test_dynamic_correlation_estimation():
-    """æµè¯å¨æç¸å
-³æ§ä¼°?""
     returns = generate_test_returns()
     modeler = DynamicCorrelationModeler(DCCConfig())
     modeler.fit(returns)
@@ -641,7 +545,7 @@ def test_dynamic_correlation_estimation():
 
 def test_breakdown_detection():
     """测试突变检?""
-    # çæå
+    # çæå
 含突变的数?    returns = generate_returns_with_breakdown()
     modeler = DynamicCorrelationModeler(DCCConfig())
     modeler.fit(returns)
@@ -658,8 +562,6 @@ def test_integration_with_risk_parity():
     """测试与风险平价优化器集成"""
     returns = load_historical_returns()
     
-    # åå§åå¨æç¸å
-³æ§å»ºæ¨¡å¨
     correlation_modeler = DynamicCorrelationModeler(DCCConfig())
     correlation_modeler.fit(returns)
     
@@ -684,18 +586,13 @@ def test_integration_with_risk_parity():
 - Day 5: DCC模型拟合模块
 
 **Week 2: 功能完善与测?*
-- Day 1-2: ç¸å
-³æ§çªåæ£æµæ¨¡?- Day 3: é¢è­¦ç³»ç»éæ
-- Day 4: åå
-æµè¯ä¸éææµ?- Day 5: ææ¡£ç¼åä¸ä»£ç å®¡?
+- Day 1-2: ç¸å
+- Day 4: åå
 ### 8.2 里程?
 | 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
 | **M1: 数据层完?* | Day 2 | 数据预处理模?| 数据质量?5% |
 | **M2: GARCH模型完成** | Day 4 | 单资产波动率建模 | 模型收敛 |
-| **M3: DCCæ¨¡åå®æ** | Day 5 | å¨æç¸å
-³æ§å»º?| ç¸å
-³æ§ç©éµæ?|
 | **M4: 突变检测完?* | Day 7 | 突变检测模?| 检测准确率?0% |
 | **M5: 集成测试通过** | Day 9 | 完整系统 | 所有测试通过 |
 | **M6: 生产就绪** | Day 10 | 生产系统 | 系统稳定运行 |
@@ -705,10 +602,6 @@ def test_integration_with_risk_parity():
 ## 9. AI维护指南
 
 ### 9.1 自动化监控指?
-**æ¨¡åå¥åº·åº¦æ?*?- GARCHæ¨¡åæ¶æ?- DCCåæ°ç¨³å®?- ç¸å
-³æ§ç©éµæ­£?
-**ä¸å¡ææ **?- ç¸å
-³æ§é¢æµåç¡®ç
 - 突变检测召回率
 - 预警及时?
 ### 9.2 自动化维护任?
@@ -717,13 +610,9 @@ def test_integration_with_risk_parity():
 - 调整模型参数（如需要）
 
 **每月任务**?- 重新训练模型
-- æ´æ°åå²ç¸å
-³æ§åº?- çææåº¦æ¥å
 
 ### 9.3 异常处理
 
-**æ¨¡åå¼å¸¸**?- GARCHæ¨¡åä¸æ¶??è°æ´åå§å¼æä½¿ç¨å¤éæ¨¡?- DCCåæ°è¶ç ?éæ°è®­ç»æä½¿ç¨åå²å?- ç¸å
-³æ§ç©éµéæ­£å® ?åºç¨æ­£å?
 **数据异常**?- 缺失数据 ?使用插值或前值填?- 异常??使用Winsorize处理
 
 ---
@@ -732,20 +621,14 @@ def test_integration_with_risk_parity():
 
 ### 10.1 定量收益
 
-| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹
-åº¦ |
+度 |
 |------|---------|---------|---------|
 | **风险平价优化精度** | 80% | 95% | +15% |
 | **极端市场风险识别** | ?| 提前1-2?| 新增能力 |
-| **ç¸å
-³æ§é¢æµåç¡®ç** | N/A | ?5% | æ°å¢è½å |
+| **ç¸å
 | **组合回撤控制** | -25% | ?18% | +28% |
 
 ### 10.2 定性收?
-- ?å®ç°æ¡¥æ°´æ ¸å¿è½åï¼å¨æç¸å
-³æ§å»º?- ?æåæç«¯å¸åºé£é©æ§å¶è½å
-- ?ä¸ºé£é©å¹³ä»·ä¼åæä¾ç²¾ç¡®è¾?- ?å»ºç«ç¸å
-³æ§çªåé¢è­¦æº?
 ---
 
 ## 11. 风险与约?
@@ -759,8 +642,6 @@ def test_integration_with_risk_parity():
 ### 11.2 实施约束
 
 1. **数据约束**: 需要至?年的历史数据
-2. **è®¡ç®çº¦æ**: DCCæ¨¡åè®¡ç®è¾æ
-¢ï¼éè¦ä¼?3. **æ¶é´çº¦æ**: å¼åå¨?å¨ï¼éåçå®æ
 
 ---
 
@@ -771,8 +652,7 @@ def test_integration_with_risk_parity():
    - Engle, R. (2002). "Dynamic Conditional Correlation"
    - Tse, Y.K. and Tsui, A.K.C. (2002). "A Multivariate GARCH Model"
 
-2. **ç¸å
-³æ§çªåæ£?*:
+2. **ç¸å
    - Ang, A. and Bekaert, G. (2002). "International Asset Allocation with Regime Shifts"
 
 ### B. 开源资?
@@ -784,14 +664,11 @@ def test_integration_with_risk_parity():
 
 ## 12. 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Final | **ä¸ä¸æ­?*: ææ¯è§æ ¼ä¹¦ç¼å
 ---
 
 ## 13. 文档治理
@@ -799,15 +676,12 @@ def test_integration_with_risk_parity():
 ### 13.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Dynamic Correlation Modeling
 - **模块ID**: DYNAMIC_CORRELATION_MODELING_001
 - **蓝图文档**: DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: å
-¨ç³»ç»?
-- **ç¶æ?*: Active
+åå»?
+- **èè´£**: å
+- **ç¶æ?*: Active
 ```
 
 ### 13.2 模块职责边界
@@ -815,15 +689,10 @@ def test_integration_with_risk_parity():
 | 模块 | 职责 | 边界 |
 |------|------|------|
 | **Dynamic Correlation Modeling** | å
-¨ç³»ç»?| **æ ¸å¿æ¨¡å** |
 
 ### 13.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - 组合归因分析
   - 收益归因
@@ -12,7 +12,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
@@ -24,9 +23,7 @@ layer: Layer 5.2 (组合优化)
 
 # 组合归因分析模块蓝图
 
-> **æ ¸å¿èè´£**: åè§£æèµç»åæ¶çæ¥æºï¼è¯ä¼°ç­ç¥è´¡ç?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Brinsonå½å ãå å­...
 
 
 ## 设计目标
@@ -83,73 +80,55 @@ layer: Layer 5.2 (组合优化)
 
 ## 核心定位
 
-æå»ºPORTFOLIO ATTRIBUTIONçè®¾è®¡ä¸å®ç°ï¼åºäºBlack-Littermanææ¯ï¼è°æ´æ ¸å¿åè½ï¼ä¼åæèµç»åã?
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼å½å åææ¨¡åï¼?
 
-**æ ¸å¿ä»·å?*:
-- Brinsonå½å æ¨¡åï¼é
-ç½®æåºãéæ©æåºãäº¤äºæåºï¼
 - 因子归因分析
 - 风险归因分析
 - 多期归因链接
 
-**ä¸å¡ä»·å?*:
 - 理解收益来源
 - 评估投资决策
 - 支持投资优化
 
 ### 1.2 版本信息
 
-| é¡¹ç® | å
-å®¹ |
+容 |
 |------|------|
 | **模块ID** | PORTFOLIO_ATTRIBUTION_001 |
 | **版本** | v1.0.0 |
-| **å¼æºä¾èµ?* | brinson_attribution, QuantFAA |
-| **é¢è®¡å·¥æ¶** | 3-5å¤?|
 
 ---
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åæ
-æ¯åæèå¾](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | å¼ºä¾èµ?| æä¾æ
+| [ç»åæ
 景分析结果 |
-| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | å¼ºä¾èµ?| ç»åç»©æè¯ä¼° |
-| [VAR_ES_MONITORING_BLUEPRINT.md](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | ä¸­ä¾èµ?| é£é©çæ§ |
-| [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | ä¸­ä¾èµ?| é£é©è´¡ç®åæ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **brinson_attribution** | 0.1+ | Brinson归因 | [GitHub](https://github.com/ranaroussi/brinson-attribution) |
 | **QuantFAA** | 1.0+ | 因子归因 | [GitHub](https://github.com/quantfaa) |
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
-    A[ç»åæ
+    A[ç»åæ
 景分析] --> B[组合归因分析]
     C[组合优化引擎] --> B
     D[数据质量监控] --> B
@@ -165,7 +144,6 @@ graph LR
 
 ---
 
-## 2. ææ¯å®ç?
 
 ### 2.1 核心API
 
@@ -175,7 +153,6 @@ import pandas as pd
 import numpy as np
 
 class PortfolioAttributionAnalyzer:
-    """ç»åå½å åæå?""
     
     def __init__(self):
         pass
@@ -191,19 +168,15 @@ class PortfolioAttributionAnalyzer:
         Brinson归因分析
         
         Args:
-            portfolio_weights: ç»åæéï¼æè¡ä¸/èµäº§ç±»å«ï¼?
-            portfolio_returns: ç»åæ¶çç?
             benchmark_weights: 基准权重
-            benchmark_returns: åºåæ¶çç?
             
         Returns:
             {
                 'allocation_effect': é
-ç½®æåº,
                 'selection_effect': 选择效应,
                 'interaction_effect': 交互效应,
-                'total_excess_return': æ»è¶
-é¢æ¶ç?
+                'total_excess_return': æ»è¶
+é¢æ¶ç?
             }
         """
         model = BrinsonModel(
@@ -230,8 +203,6 @@ class PortfolioAttributionAnalyzer:
         因子归因分析
         
         Args:
-            portfolio_returns: ç»åæ¶ççåºå?
-            factor_returns: å å­æ¶çç?
             factor_exposures: 因子暴露
             
         Returns:
@@ -250,8 +221,6 @@ class PortfolioAttributionAnalyzer:
         
         Args:
             portfolio_weights: 组合权重
-            cov_matrix: åæ¹å·®ç©é?
-            factor_cov: å å­åæ¹å·®ç©é?
             
         Returns:
             风险归因结果
@@ -259,12 +228,10 @@ class PortfolioAttributionAnalyzer:
         pass
 ```
 
-### 2.2 Brinsonæ¨¡åæ ¸å¿å
-¬å¼
+¬å¼
 
 ```
 é
-ç½®æåº = Î£ (w_p - w_b) Ã r_b
 选择效应 = Σ w_b × (r_p - r_b)
 交互效应 = Σ (w_p - w_b) × (r_p - r_b)
 
@@ -272,8 +239,6 @@ class PortfolioAttributionAnalyzer:
 ¶ä¸­:
 - w_p: 组合权重
 - w_b: 基准权重
-- r_p: ç»åæ¶çç?
-- r_b: åºåæ¶çç?
 ```
 
 ---
@@ -319,26 +284,18 @@ class AttributionAPI:
 | 阶段 | 任务 | 工时 |
 |------|------|------|
 | Phase 1 | brinson_attribution集成 | 12h |
-| Phase 2 | å å­å½å ãé£é©å½å å®ç?| 16h |
-| Phase 3 | APIãæµè¯ãææ¡?| 12h |
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 | v1.0.1 | 2026-04-06 | è¡¥å
 
-YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
 ## 5. 文档治理
@@ -346,29 +303,21 @@ YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç�
 ### 5.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Portfolio Attribution
 - **模块ID**: PORTFOLIO_ATTRIBUTION_001
 - **蓝图文档**: PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: Layer 6 ç»åä¼åå±?
-- **ç¶æ?*: Active
+åå»?
+- **ç¶æ?*: Active
 ```
 
 ### 5.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Portfolio Attribution** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
 ### 5.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,58 +6,58 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (����Ż���)
+layer: Layer 6 (Ż)
 index: SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001
 estimated_hours: 60h
 review_status: Pending
-reviewer: ��ϯ���������
+reviewer: ϯ
 review_date: 2026-04-03
-owner: ����Ż��㸺����
+owner: Ż㸺
 responsibility:
   - 实施指南、部署文档
-standard_type: רҵ�����������������
+standard_type: רҵ
 applicable_scope: ȫϵͳ
-compliance_level: רҵ��׼---
+compliance_level: רҵ׼---
 
 
-# �򻯷���Ԥ��ϵͳ��������� v1.0
+# 򻯷Ԥϵͳ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> �������ϵͳ v5.3 - ����Ԥ��ϵͳ��ϸ�������
-> **����**: `RISK_BUDGET_SPEC_001`
-> **����ʱ��**: 60h
-> **���Ķ�λ**: �������Ԥ�㡢VaR/CVaR��̬����
+> ϵͳ v5.3 - Ԥϵͳϸ
+> ****: `RISK_BUDGET_SPEC_001`
+> **ʱ**: 60h
+> **Ķλ**: Ԥ㡢VaR/CVaR̬
 
 ---
 
-## 1. ����
+## 1. 
 
-����Ԥ��ϵͳ�������/����/�ʲ��������Ԥ����䡣
+Ԥϵͳ//ʲԤ䡣
 
-## 2. �ӿڶ���
+## 2. ӿڶ
 
 ```python
 class RiskBudgetSystem:
-    """����Ԥ��ϵͳ"""
+    """Ԥϵͳ"""
     
     def allocate_risk_budget(self,
                             total_risk: float,
                             strategy_ids: List[str],
                             risk_contributions: Dict[str, float]) -> Dict[str, float]:
-        """�������Ԥ��"""
+        """Ԥ"""
         pass
     
     def calculate_var_budget(self,
                             positions: pd.Series,
                             confidence: float = 0.95) -> float:
-        """����VaRԤ��"""
+        """VaRԤ"""
         pass
 ```
 
 ---
 
-**���������汾**: v1.0 | **��������**: 2026-04-03 | **״̬**: Final
+**汾**: v1.0 | ****: 2026-04-03 | **״̬**: Final

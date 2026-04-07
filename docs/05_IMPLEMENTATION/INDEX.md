@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_IMPLEMENTATION_001
 version: 1.0.1
 status: Active
@@ -146,7 +146,7 @@ implementation_status: 活跃维护---
 1. 阅读 [01_QUICKSTART/README.md](API_README.md) - 快速开?2. 阅读 [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - 学习路径
 3. 阅读 [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - 设计原则
 
-### 开�?
+### 开?
 1. 阅读 [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - 开发标?2. 阅读 [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - 代码质量
 3. 阅读 [02_DEVELOPMENT/TESTING_STANDARD.md](./02_DEVELOPMENT/TESTING_STANDARD.md) - 测试标准
 
@@ -163,10 +163,10 @@ implementation_status: 活跃维护---
 - [框架设计索引](../01_FRAMEWORK/INDEX.md)
 - [因子库索引](../02_FACTOR_LIBRARY/INDEX.md)
 
-- [编码实施路线�?](./CODING_ROADMAP.md) - 系统文档
+- [编码实施路线?](./CODING_ROADMAP.md) - 系统文档
 
 - [уггС║їжўХТ«хтиЦСйют«їТѕљТђ╗у╗Њ](./PHASE2_COMPLETION_SUMMARY.md) - 系统文档
 
-- [快速参�?](./QUICK_REFERENCE.md) - 系统文档
+- [快速参?](./QUICK_REFERENCE.md) - 系统文档
 
-- [ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)](./SITEMAP.md) - 系统文档
+- [ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)](./SITEMAP.md) - 系统文档

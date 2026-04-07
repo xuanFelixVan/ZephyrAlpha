@@ -1,65 +1,65 @@
-﻿---
+﻿﻿---
 module_id: IMPL_CONFIG_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
-applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
+applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
+compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 ---
 
 
-# ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ
+# ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ? ﻠﻛﺕ­ﮒﺙﻠﻝﺛ؟ﻙﮒ۷ﮔﮔﺑﮔﺍﻙﻝﮔ؛ﮔ۶ﮒ?
+> ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ? ﻠﻛﺕ­ﮒﺙﻠﻝﺛ؟ﻙﮒ۷ﮔﮔﺑﮔﺍﻙﻝﮔ؛ﮔ۶ﮒ?
 
 ---
 
-## 1. ﻟ؟ﺝﻟ؟۰ﮔ۵ﻟﺟﺍ
+## 1. ﻟ؟ﺝﻟ؟۰ﮔ۵ﻟﺟﺍ
 
-ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨﮔﻛﺝﻠﻛﺕ­ﮒﺙﻠﻝﺛ؟ﮒ­ﮒ۷ﻙﮒ۷ﮔﮔﺑﮔﺍﮒﻝﮔ؛ﮔ۶ﮒﭘﮒﻟﺛﻙ?
+ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨﮔﻛﺝﻠﻛﺕ­ﮒﺙﻠﻝﺛ؟ﮒ­ﮒ۷ﻙﮒ۷ﮔﮔﺑﮔﺍﮒﻝﮔ؛ﮔ۶ﮒﭘﮒﻟﺛﻙ?
 
 ```
-ﻠﻝﺛ؟ﻝ؟۰ﻝﮔﭘﮔ
-ﻗﻗﻗ ﻠﻝﺛ؟ﮒ­ﮒ۷ﮒﺎ?(Config Storage)
-ﻗ?  ﻗﻗﻗ ﮔ؛ﮒﺍﮔﻛﭨﭘﮒ­ﮒ۷
-ﻗ?  ﻗﻗﻗ ﻟﺟﻝ۷ﻠﻝﺛ؟ﻛﺕ­ﮒﺟ (etcd/consul)
-ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠ
-ﻗﻗﻗ ﻠﻝﺛ؟ﮒ ﻟﺛﺛﮒﺎ?(Config Loader)
-ﻗ?  ﻗﻗﻗ YAMLﮒ ﻟﺛﺛﮒ?
-ﻗ?  ﻗﻗﻗ JSONﮒ ﻟﺛﺛﮒ?
-ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠﮒ ﻟﺛﺛﮒ?
-ﻗﻗﻗ ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺎ?(Config Validator)
-ﻗ?  ﻗﻗﻗ ﻝﺎﭨﮒﻠ۹ﻟﺁ
-ﻗ?  ﻗﻗﻗ ﻟﮒﺑﻠ۹ﻟﺁ
-ﻗ?  ﻗﻗﻗ ﻛﺝﻟﭖﻠ۹ﻟﺁ
-ﻗﻗﻗ ﮒ۷ﮔﮔﺑﮔﺍﮒﺎ (Config Updater)
-ﻗ?  ﻗﻗﻗ ﻝ­ﮔﺑﮔﺍﮔﭦﮒ?
-ﻗ?  ﻗﻗﻗ ﮒﮔﺑﻠﻝ۴
-ﻗ?  ﻗﻗﻗ ﮒﮔﭨﮔﭦﮒﭘ
-ﻗﻗﻗ ﻝﮔ؛ﮔ۶ﮒﭘﮒﺎ?(Config Versioning)
-    ﻗﻗﻗ ﻠﻝﺛ؟ﮒﮔﺑﮒﮒﺎ
-    ﻗﻗﻗ ﻠﻝﺛ؟ﮒﺟ،ﻝ۶
-    ﻗﻗﻗ ﻠﻝﺛ؟ﮒﮔﭨ
+ﻠﻝﺛ؟ﻝ؟۰ﻝﮔﭘﮔ
+ﻗﻗﻗ ﻠﻝﺛ؟ﮒ­ﮒ۷ﮒﺎ?(Config Storage)
+ﻗ?  ﻗﻗﻗ ﮔ؛ﮒﺍﮔﻛﭨﭘﮒ­ﮒ۷
+ﻗ?  ﻗﻗﻗ ﻟﺟﻝ۷ﻠﻝﺛ؟ﻛﺕ­ﮒﺟ (etcd/consul)
+ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠ
+ﻗﻗﻗ ﻠﻝﺛ؟ﮒ ﻟﺛﺛﮒﺎ?(Config Loader)
+ﻗ?  ﻗﻗﻗ YAMLﮒ ﻟﺛﺛﮒ?
+ﻗ?  ﻗﻗﻗ JSONﮒ ﻟﺛﺛﮒ?
+ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠﮒ ﻟﺛﺛﮒ?
+ﻗﻗﻗ ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺎ?(Config Validator)
+ﻗ?  ﻗﻗﻗ ﻝﺎﭨﮒﻠ۹ﻟﺁ
+ﻗ?  ﻗﻗﻗ ﻟﮒﺑﻠ۹ﻟﺁ
+ﻗ?  ﻗﻗﻗ ﻛﺝﻟﭖﻠ۹ﻟﺁ
+ﻗﻗﻗ ﮒ۷ﮔﮔﺑﮔﺍﮒﺎ (Config Updater)
+ﻗ?  ﻗﻗﻗ ﻝ­ﮔﺑﮔﺍﮔﭦﮒ?
+ﻗ?  ﻗﻗﻗ ﮒﮔﺑﻠﻝ۴
+ﻗ?  ﻗﻗﻗ ﮒﮔﭨﮔﭦﮒﭘ
+ﻗﻗﻗ ﻝﮔ؛ﮔ۶ﮒﭘﮒﺎ?(Config Versioning)
+    ﻗﻗﻗ ﻠﻝﺛ؟ﮒﮔﺑﮒﮒﺎ
+    ﻗﻗﻗ ﻠﻝﺛ؟ﮒﺟ،ﻝ۶
+    ﻗﻗﻗ ﻠﻝﺛ؟ﮒﮔﭨ
 ```
 
 ---
 
-## 2. ﮔ ﺕﮒﺟﮒ؟ﻝﺍ
+## 2. ﮔ ﺕﮒﺟﮒ؟ﻝﺍ
 
-### 2.1 ﻠﻝﺛ؟ﮔﺍﮔ؟ﻝﭨﮔ
+### 2.1 ﻠﻝﺛ؟ﮔﺍﮔ؟ﻝﭨﮔ
 
 ```python
 from dataclasses import dataclass, field
@@ -72,7 +72,7 @@ import os
 
 
 class ConfigScope(Enum):
-    """ﻠﻝﺛ؟ﻛﺛﻝ۷ﮒ?""
+    """ﻠﻝﺛ؟ﻛﺛﻝ۷ﮒ?""
     SYSTEM = "system"
     MODULE = "module"
     STRATEGY = "strategy"
@@ -81,7 +81,7 @@ class ConfigScope(Enum):
 
 @dataclass
 class ConfigItem:
-    """ﻠﻝﺛ؟ﻠ۰?""
+    """ﻠﻝﺛ؟ﻠ۰?""
     key: str
     value: Any
     scope: ConfigScope
@@ -97,7 +97,7 @@ class ConfigItem:
 
 @dataclass
 class ConfigChange:
-    """ﻠﻝﺛ؟ﮒﮔﺑﻟ؟ﺍﮒﺛ"""
+    """ﻠﻝﺛ؟ﮒﮔﺑﻟ؟ﺍﮒﺛ"""
     change_id: str
     key: str
     old_value: Any
@@ -108,7 +108,7 @@ class ConfigChange:
 
 
 class ConfigManager:
-    """ﻠﻝﺛ؟ﻝ؟۰ﻝﮒ?""
+    """ﻠﻝﺛ؟ﻝ؟۰ﻝﮒ?""
 
     def __init__(self, config_dir: str = "./config"):
         self.config_dir = config_dir
@@ -119,7 +119,7 @@ class ConfigManager:
         self._load_all_configs()
 
     def _load_all_configs(self):
-        """ﮒ ﻟﺛﺛﮔﮔﻠﻝﺛ؟ﮔﻛﭨ?""
+        """ﮒ ﻟﺛﺛﮔﮔﻠﻝﺛ؟ﮔﻛﭨ?""
         system_config_path = os.path.join(self.config_dir, "system.yaml")
 
         if os.path.exists(system_config_path):
@@ -134,7 +134,7 @@ class ConfigManager:
                 self._load_from_dict(data, ConfigScope.SYSTEM)
 
     def _load_from_dict(self, data: Dict, scope: ConfigScope):
-        """ﻛﭨﮒ­ﮒﺕﮒ ﻟﺛﺛﻠﻝﺛ?""
+        """ﻛﭨﮒ­ﮒﺕﮒ ﻟﺛﺛﻠﻝﺛ?""
         for key, value in data.items():
             if isinstance(value, dict):
                 self._load_from_dict(value, scope)
@@ -146,7 +146,7 @@ class ConfigManager:
                 )
 
     def get(self, key: str, default: Any = None) -> Any:
-        """ﻟﺓﮒﻠﻝﺛ؟ﮒ?""
+        """ﻟﺓﮒﻠﻝﺛ؟ﮒ?""
         item = self.configs.get(key)
 
         if item:
@@ -162,7 +162,7 @@ class ConfigManager:
         reason: str = "",
         notify: bool = True
     ) -> bool:
-        """ﻟ؟ﺝﻝﺛ؟ﻠﻝﺛ؟ﮒ?""
+        """ﻟ؟ﺝﻝﺛ؟ﻠﻝﺛ؟ﮒ?""
         old_item = self.configs.get(key)
         old_value = old_item.value if old_item else None
 
@@ -193,14 +193,14 @@ class ConfigManager:
         return True
 
     def subscribe(self, key: str, callback: Callable):
-        """ﻟ؟۱ﻠﻠﻝﺛ؟ﮒﮔﺑ"""
+        """ﻟ؟۱ﻠﻠﻝﺛ؟ﮒﮔﺑ"""
         if key not in self.subscribers:
             self.subscribers[key] = []
 
         self.subscribers[key].append(callback)
 
     def _notify_change(self, key: str, old_value: Any, new_value: Any):
-        """ﻠﻝ۴ﻠﻝﺛ؟ﮒﮔﺑ"""
+        """ﻠﻝ۴ﻠﻝﺛ؟ﮒﮔﺑ"""
         callbacks = self.subscribers.get(key, [])
 
         for callback in callbacks:
@@ -210,7 +210,7 @@ class ConfigManager:
                 print(f"Callback error: {e}")
 
     def validate(self, key: str, value: Any) -> tuple:
-        """ﻠ۹ﻟﺁﻠﻝﺛ؟ﮒ?""
+        """ﻠ۹ﻟﺁﻠﻝﺛ؟ﮒ?""
         item = self.configs.get(key)
 
         if not item:
@@ -230,7 +230,7 @@ class ConfigManager:
         return True, ""
 
     def get_all(self, scope: ConfigScope = None) -> Dict[str, Any]:
-        """ﻟﺓﮒﮔﮔﻠﻝﺛ?""
+        """ﻟﺓﮒﮔﮔﻠﻝﺛ?""
         if scope:
             return {
                 k: v.value
@@ -241,7 +241,7 @@ class ConfigManager:
         return {k: v.value for k, v in self.configs.items()}
 
     def export(self, path: str):
-        """ﮒﺁﺙﮒﭦﻠﻝﺛ؟ﮒﺍﮔﻛﭨ?""
+        """ﮒﺁﺙﮒﭦﻠﻝﺛ؟ﮒﺍﮔﻛﭨ?""
         data = self.get_all()
 
         with open(path, "w", encoding="utf-8") as f:
@@ -252,7 +252,7 @@ class ConfigManager:
         key: str = None,
         limit: int = 100
     ) -> List[ConfigChange]:
-        """ﻟﺓﮒﮒﮔﺑﮒﮒﺎ"""
+        """ﻟﺓﮒﮒﮔﺑﮒﮒﺎ"""
         history = self.change_history
 
         if key:
@@ -261,7 +261,7 @@ class ConfigManager:
         return history[-limit:]
 
     def rollback(self, key: str, version: int = None) -> bool:
-        """ﮒﮔﭨﻠﻝﺛ؟"""
+        """ﮒﮔﭨﻠﻝﺛ؟"""
         if key not in self.configs:
             return False
 
@@ -285,18 +285,18 @@ class ConfigManager:
 
 ---
 
-## 3. ﻠ۱ﮒ؟ﻛﺗﻠﻝﺛ؟ﮔ۷۰ﮔ?
+## 3. ﻠ۱ﮒ؟ﻛﺗﻠﻝﺛ؟ﮔ۷۰ﮔ?
 
 ```python
 class ConfigTemplates:
-    """ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
+    """ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
 
     @staticmethod
     def get_system_config() -> Dict:
-        """ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
+        """ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
         return {
             "system": {
-                "name": "ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ",
+                "name": "ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ",
                 "version": "4.0.0",
                 "mode": "backtest",
                 "log_level": "INFO"
@@ -316,7 +316,7 @@ class ConfigTemplates:
 
     @staticmethod
     def get_factor_config() -> Dict:
-        """ﮒ ﮒ­ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
+        """ﮒ ﮒ­ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
         return {
             "factors": {
                 "lookback_periods": [5, 10, 20, 60],
@@ -332,7 +332,7 @@ class ConfigTemplates:
 
     @staticmethod
     def get_data_source_config() -> Dict:
-        """ﮔﺍﮔ؟ﮔﭦﻠﻝﺛ؟ﮔ۷۰ﮔ?""
+        """ﮔﺍﮔ؟ﮔﭦﻠﻝﺛ؟ﮔ۷۰ﮔ?""
         return {
             "akshare": {
                 "enabled": True,
@@ -352,11 +352,11 @@ class ConfigTemplates:
 
 ---
 
-## 4. ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ
+## 4. ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ
 
 ```python
 def example_config_manager():
-    """ﻠﻝﺛ؟ﻝ؟۰ﻝﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ"""
+    """ﻠﻝﺛ؟ﻝ؟۰ﻝﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ"""
 
     config = ConfigManager("./config")
 
@@ -379,9 +379,9 @@ def example_config_manager():
 
 ---
 
-**ﻝﮔ؛**: 1.0
-**ﮔﺑﮔﺍ**: 2026-03-28
-**Layer**: ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(ﮔ۷۹ﮒﮒﺏﮔﺏ۷ﻝ?
-**ﻝﺑ۱ﮒﺙ**: BLUEPRINTS.md ﻗ?ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﻟﮒﺝ
-**ﻛﺕﮔﺕﺕﮔ۴ﮒ۲**: ﻝﺏﭨﻝﭨﮒﺁﮒ۷
-**ﻛﺕﮔﺕﺕﮔ۴ﮒ۲**: ﮔﮔﮔ۷۰ﮒ?(M01-M15)
+**ﻝﮔ؛**: 1.0
+**ﮔﺑﮔﺍ**: 2026-03-28
+**Layer**: ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(ﮔ۷۹ﮒﮒﺏﮔﺏ۷ﻝ?
+**ﻝﺑ۱ﮒﺙ**: BLUEPRINTS.md ﻗ?ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﻟﮒﺝ
+**ﻛﺕﮔﺕﺕﮔ۴ﮒ۲**: ﻝﺏﭨﻝﭨﮒﺁﮒ۷
+**ﻛﺕﮔﺕﺕﮔ۴ﮒ۲**: ﮔﮔﮔ۷۰ﮒ?(M01-M15)

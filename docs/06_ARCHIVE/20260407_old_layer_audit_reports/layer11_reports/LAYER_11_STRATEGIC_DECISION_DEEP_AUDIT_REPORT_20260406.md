@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AUDIT_LAYER11_STRATEGIC_DECISION_001
 version: 1.0.0
 status: Active

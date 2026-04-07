@@ -1,10 +1,10 @@
-﻿---
-standard_type: ﮔﻛﺛﮔﮒ
+﻿﻿---
+standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
 module_id: DEPLOYMENT_MANUAL
 created_date: 2026-04-02
@@ -12,147 +12,147 @@ last_updated: 2026-04-02
 ---
 ---
 
-# ﻝﺏﭨﻝﭨﻠ۷ﻝﺛﺎﮔﮒ
+# ﻝﺏﭨﻝﭨﻠ۷ﻝﺛﺎﮔﮒ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02
-**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻟﺟﻝﭨﺑﮒ۱ﻠ
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 
 ---
 
-## 1. ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
+## 1. ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ 
+### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ 
 
-ﮔ؛ﮔﮔ۰۲ﮔﻛﺝZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮒ؟ﮔﺑﻠ۷ﻝﺛﺎﮔﮒﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒ۷ﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﺕ­ﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﻙ?
-### 1.2 ﻠ۷ﻝﺛﺎﻟﮒﺑ
+ﮔ؛ﮔﮔ۰۲ﮔﻛﺝZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮒ؟ﮔﺑﻠ۷ﻝﺛﺎﮔﮒﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒ۷ﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﺕ­ﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﻙ?
+### 1.2 ﻠ۷ﻝﺛﺎﻟﮒﺑ
 
-- ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
-- ﮔﭖﻟﺁﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
-- ﮒﺙﮒﻝﺁﮒ۱ﻠ۷ﻝﺛ?- ﻝﺝﮒ۳ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
+- ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
+- ﮔﭖﻟﺁﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
+- ﮒﺙﮒﻝﺁﮒ۱ﻠ۷ﻝﺛ?- ﻝﺝﮒ۳ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
 
-### 1.3 ﻠ۷ﻝﺛﺎﮒﻝﺛ؟ﮔ۰ﻛﭨﭘ
+### 1.3 ﻠ۷ﻝﺛﺎﮒﻝﺛ؟ﮔ۰ﻛﭨﭘ
 
 - Python 3.8+
 - PostgreSQL 12+
 - Redis 6+
-- Docker 20+ﺅﺙﮒﺁﻠﺅﺙ
-- 8GB+ ﮒﮒ­
-- 100GB+ ﻝ۲ﻝﻝ۸ﭦﻠﺑ
+- Docker 20+ﺅﺙﮒﺁﻠﺅﺙ
+- 8GB+ ﮒﮒ­
+- 100GB+ ﻝ۲ﻝﻝ۸ﭦﻠﺑ
 
 ---
 
-## 2. ﻝﺁﮒ۱ﮒﮒ۳
+## 2. ﻝﺁﮒ۱ﮒﮒ۳
 
-### 2.1 ﻝﺏﭨﻝﭨﻟ۵ﮔﺎ
+### 2.1 ﻝﺏﭨﻝﭨﻟ۵ﮔﺎ
 
-**ﮔﻛﺛﻝﺏﭨﻝﭨ**:
+**ﮔﻛﺛﻝﺏﭨﻝﭨ**:
 - Windows Server 2019+
 - Ubuntu 20.04+
 - CentOS 8+
 
-**ﻝ۰؛ﻛﭨﭘﻟ۵ﮔﺎ**:
-- CPU: 4ﮔ ﺕﮒﺟ+
-- ﮒﮒ­: 8GB+
-- ﻝ۲ﻝ: 100GB+ SSD
-- ﻝﺛﻝﭨ: 100Mbps+
+**ﻝ۰؛ﻛﭨﭘﻟ۵ﮔﺎ**:
+- CPU: 4ﮔ ﺕﮒﺟ+
+- ﮒﮒ­: 8GB+
+- ﻝ۲ﻝ: 100GB+ SSD
+- ﻝﺛﻝﭨ: 100Mbps+
 
-### 2.2 ﻟﺛﺁﻛﭨﭘﻛﺝﻟﭖ
+### 2.2 ﻟﺛﺁﻛﭨﭘﻛﺝﻟﭖ
 
-**ﮒﺟﻠﻟﺛﺁﻛﭨﭘ**:
+**ﮒﺟﻠﻟﺛﺁﻛﭨﭘ**:
 ```bash
-# Pythonﻝﺁﮒ۱
+# Pythonﻝﺁﮒ۱
 Python 3.8+
 pip 21+
 
-# ﮔﺍﮔ؟ﮒﭦ?PostgreSQL 12+
+# ﮔﺍﮔ؟ﮒﭦ?PostgreSQL 12+
 Redis 6+
 
-# ﮒﺁﻠﮒ؟ﺗﮒ۷ﮒ
+# ﮒﺁﻠﮒ؟ﺗﮒ۷ﮒ
 Docker 20+
 Docker Compose 2+
 ```
 
-**Pythonﻛﺝﻟﭖ**:
+**Pythonﻛﺝﻟﭖ**:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2.3 ﻝﺁﮒ۱ﮒﻠﻠﻝﺛ؟
+### 2.3 ﻝﺁﮒ۱ﮒﻠﻠﻝﺛ؟
 
-ﮒﮒﭨﭦ `.env` ﮔﻛﭨﭘﺅﺙ?```bash
-# ﮔﺍﮔ؟ﮒﭦﻠﻝﺛ?DATABASE_URL=postgresql://user:password@localhost:5432/zephyr
+ﮒﮒﭨﭦ `.env` ﮔﻛﭨﭘﺅﺙ?```bash
+# ﮔﺍﮔ؟ﮒﭦﻠﻝﺛ?DATABASE_URL=postgresql://user:password@localhost:5432/zephyr
 REDIS_URL=redis://localhost:6379/0
 
-# APIﻠﻝﺛ؟
+# APIﻠﻝﺛ؟
 API_HOST=0.0.0.0
 API_PORT=8000
 API_WORKERS=4
 
-# ﮔ۴ﮒﺟﻠﻝﺛ؟
+# ﮔ۴ﮒﺟﻠﻝﺛ؟
 LOG_LEVEL=INFO
 LOG_FILE=logs/zephyr.log
 
-# ﮒ؟ﮒ۷ﻠﻝﺛ؟
+# ﮒ؟ﮒ۷ﻠﻝﺛ؟
 SECRET_KEY=your-secret-key
 JWT_SECRET=your-jwt-secret
 ```
 
 ---
 
-## 3. ﮔﺍﮔ؟ﮒﭦﻠ۷ﻝﺛ?
-### 3.1 PostgreSQLﻠ۷ﻝﺛﺎ
+## 3. ﮔﺍﮔ؟ﮒﭦﻠ۷ﻝﺛ?
+### 3.1 PostgreSQLﻠ۷ﻝﺛﺎ
 
-**ﮒ؟ﻟ۲PostgreSQL**:
+**ﮒ؟ﻟ۲PostgreSQL**:
 ```bash
 # Ubuntu
 sudo apt-get install postgresql-12
 
 # Windows
-# ﻛﺕﻟﺛﺛﮒ؟ﻟ۲ﮒ? https://www.postgresql.org/download/windows/
+# ﻛﺕﻟﺛﺛﮒ؟ﻟ۲ﮒ? https://www.postgresql.org/download/windows/
 ```
 
-**ﮒﮒﭨﭦﮔﺍﮔ؟ﮒﭦ?*:
+**ﮒﮒﭨﭦﮔﺍﮔ؟ﮒﭦ?*:
 ```sql
 CREATE DATABASE zephyr;
 CREATE USER zephyr_user WITH PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE zephyr TO zephyr_user;
 ```
 
-**ﮒﮒ۶ﮒﻟ۰۷ﻝﭨﮔ**:
+**ﮒﮒ۶ﮒﻟ۰۷ﻝﭨﮔ**:
 ```bash
 python scripts/init_database.py
 ```
 
-### 3.2 Redisﻠ۷ﻝﺛﺎ
+### 3.2 Redisﻠ۷ﻝﺛﺎ
 
-**ﮒ؟ﻟ۲Redis**:
+**ﮒ؟ﻟ۲Redis**:
 ```bash
 # Ubuntu
 sudo apt-get install redis-server
 
 # Windows
-# ﻛﺕﻟﺛﺛ: https://github.com/microsoftarchive/redis/releases
+# ﻛﺕﻟﺛﺛ: https://github.com/microsoftarchive/redis/releases
 ```
 
-**ﻠﻝﺛ؟Redis**:
+**ﻠﻝﺛ؟Redis**:
 ```bash
-# ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
+# ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
 sudo vi /etc/redis/redis.conf
 
-# ﻟ؟ﺝﻝﺛ؟ﮒﺁﻝ 
+# ﻟ؟ﺝﻝﺛ؟ﮒﺁﻝ 
 requirepass your_redis_password
 
-# ﻟ؟ﺝﻝﺛ؟ﮔﮒ۳۶ﮒﮒ­?maxmemory 2gb
+# ﻟ؟ﺝﻝﺛ؟ﮔﮒ۳۶ﮒﮒ­?maxmemory 2gb
 maxmemory-policy allkeys-lru
 ```
 
-**ﮒﺁﮒ۷Redis**:
+**ﮒﺁﮒ۷Redis**:
 ```bash
 sudo systemctl start redis
 sudo systemctl enable redis
@@ -160,57 +160,57 @@ sudo systemctl enable redis
 
 ---
 
-## 4. ﮒﭦﻝ۷ﻠ۷ﻝﺛﺎ
+## 4. ﮒﭦﻝ۷ﻠ۷ﻝﺛﺎ
 
-### 4.1 ﻛﭨ۲ﻝ ﻠ۷ﻝﺛﺎ
+### 4.1 ﻛﭨ۲ﻝ ﻠ۷ﻝﺛﺎ
 
-**ﮒﻠﻛﭨ۲ﻝ **:
+**ﮒﻠﻛﭨ۲ﻝ **:
 ```bash
 git clone https://github.com/your-org/zephyr-alpha.git
 cd zephyr-alpha
 ```
 
-**ﮒ؟ﻟ۲ﻛﺝﻟﭖ**:
+**ﮒ؟ﻟ۲ﻛﺝﻟﭖ**:
 ```bash
 python -m venv venv
 source venv/bin/activate  # Linux
-# ﮔ?venv\Scripts\activate  # Windows
+# ﮔ?venv\Scripts\activate  # Windows
 
 pip install -r requirements.txt
 ```
 
-**ﻠﻝﺛ؟ﮔﻛﭨﭘ**:
+**ﻠﻝﺛ؟ﮔﻛﭨﭘ**:
 ```bash
-# ﮒ۳ﮒﭘﻠﻝﺛ؟ﮔ۷۰ﮔﺟ
+# ﮒ۳ﮒﭘﻠﻝﺛ؟ﮔ۷۰ﮔﺟ
 cp config/system_config_template.yaml config/system_config.yaml
 
-# ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
+# ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
 vi config/system_config.yaml
 ```
 
-### 4.2 ﮔﺍﮔ؟ﮒﮒ۶ﮒ?
-**ﮒﮒ۶ﮒﮔﺍﮔ؟ﮒﭦ**:
+### 4.2 ﮔﺍﮔ؟ﮒﮒ۶ﮒ?
+**ﮒﮒ۶ﮒﮔﺍﮔ؟ﮒﭦ**:
 ```bash
 python scripts/init_database.py
 ```
 
-**ﮒﺁﺙﮒ۴ﮒﮒ۶ﮔﺍﮔ؟**:
+**ﮒﺁﺙﮒ۴ﮒﮒ۶ﮔﺍﮔ؟**:
 ```bash
 python scripts/import_initial_data.py
 ```
 
-**ﻠ۹ﻟﺁﮔﺍﮔ؟**:
+**ﻠ۹ﻟﺁﮔﺍﮔ؟**:
 ```bash
 python scripts/verify_data.py
 ```
 
-### 4.3 ﮔﮒ۰ﮒﺁﮒ۷
+### 4.3 ﮔﮒ۰ﮒﺁﮒ۷
 
-**ﮒﺁﮒ۷APIﮔﮒ۰**:
+**ﮒﺁﮒ۷APIﮔﮒ۰**:
 ```bash
-# ﮒﺙﮒﮔ۷۰ﮒﺙ?python -m uvicorn src.api.main:app --reload
+# ﮒﺙﮒﮔ۷۰ﮒﺙ?python -m uvicorn src.api.main:app --reload
 
-# ﻝﻛﭦ۶ﮔ۷۰ﮒﺙ
+# ﻝﻛﭦ۶ﮔ۷۰ﮒﺙ
 gunicorn src.api.main:app \
     --workers 4 \
     --worker-class uvicorn.workers.UvicornWorker \
@@ -219,23 +219,23 @@ gunicorn src.api.main:app \
     --error-logfile logs/error.log
 ```
 
-**ﮒﺁﮒ۷ﻝ­ﻝ۴ﮒﺙﮔ**:
+**ﮒﺁﮒ۷ﻝ­ﻝ۴ﮒﺙﮔ**:
 ```bash
 python src/strategy_engine/main.py
 ```
 
-**ﮒﺁﮒ۷ﻝﮔ۶ﮔﮒ۰**:
+**ﮒﺁﮒ۷ﻝﮔ۶ﮔﮒ۰**:
 ```bash
 python src/monitoring/main.py
 ```
 
 ---
 
-## 5. Dockerﻠ۷ﻝﺛﺎ
+## 5. Dockerﻠ۷ﻝﺛﺎ
 
-### 5.1 ﮔﮒﭨﭦﻠﮒ
+### 5.1 ﮔﮒﭨﭦﻠﮒ
 
-**ﮒﮒﭨﭦDockerfile**:
+**ﮒﮒﭨﭦDockerfile**:
 ```dockerfile
 FROM python:3.8-slim
 
@@ -251,14 +251,14 @@ EXPOSE 8000
 CMD ["gunicorn", "src.api.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
 ```
 
-**ﮔﮒﭨﭦﻠﮒ**:
+**ﮔﮒﭨﭦﻠﮒ**:
 ```bash
 docker build -t zephyr-alpha:latest .
 ```
 
-### 5.2 Docker Composeﻠ۷ﻝﺛﺎ
+### 5.2 Docker Composeﻠ۷ﻝﺛﺎ
 
-**ﮒﮒﭨﭦdocker-compose.yml**:
+**ﮒﮒﭨﭦdocker-compose.yml**:
 ```yaml
 version: '3.8'
 
@@ -298,23 +298,23 @@ volumes:
   redis_data:
 ```
 
-**ﮒﺁﮒ۷ﮔﮒ۰**:
+**ﮒﺁﮒ۷ﮔﮒ۰**:
 ```bash
 docker-compose up -d
 ```
 
 ---
 
-## 6. ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠﻝﺛ؟
+## 6. ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠﻝﺛ؟
 
-### 6.1 Nginxﻠﻝﺛ؟
+### 6.1 Nginxﻠﻝﺛ؟
 
-**ﮒ؟ﻟ۲Nginx**:
+**ﮒ؟ﻟ۲Nginx**:
 ```bash
 sudo apt-get install nginx
 ```
 
-**ﻠﻝﺛ؟ﮒﮒﻛﭨ۲ﻝ**:
+**ﻠﻝﺛ؟ﮒﮒﻛﭨ۲ﻝ**:
 ```nginx
 upstream zephyr_api {
     server 127.0.0.1:8000;
@@ -333,40 +333,40 @@ server {
 }
 ```
 
-### 6.2 SSLﻠﻝﺛ؟
+### 6.2 SSLﻠﻝﺛ؟
 
-**ﮒ؟ﻟ۲Certbot**:
+**ﮒ؟ﻟ۲Certbot**:
 ```bash
 sudo apt-get install certbot python3-certbot-nginx
 ```
 
-**ﻟﺓﮒSSLﻟﺁﻛﺗ۵**:
+**ﻟﺓﮒSSLﻟﺁﻛﺗ۵**:
 ```bash
 sudo certbot --nginx -d api.zephyr-alpha.com
 ```
 
-### 6.3 ﻠﺎﻝ،ﮒ۱ﻠﻝﺛ?
-**ﻠﻝﺛ؟ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒ?*:
+### 6.3 ﻠﺎﻝ،ﮒ۱ﻠﻝﺛ?
+**ﻠﻝﺛ؟ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒ?*:
 ```bash
-# ﮒﻟ؟ﺕHTTPﮒHTTPS
+# ﮒﻟ؟ﺕHTTPﮒHTTPS
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 
-# ﮒﻟ؟ﺕSSH
+# ﮒﻟ؟ﺕSSH
 sudo ufw allow 22/tcp
 
-# ﮒﺁﻝ۷ﻠﺎﻝ،ﮒ۱?sudo ufw enable
+# ﮒﺁﻝ۷ﻠﺎﻝ،ﮒ۱?sudo ufw enable
 ```
 
 ---
 
-## 7. ﻝﮔ۶ﻠ۷ﻝﺛﺎ
+## 7. ﻝﮔ۶ﻠ۷ﻝﺛﺎ
 
-### 7.1 ﮔ۴ﮒﺟﻝ؟۰ﻝ
+### 7.1 ﮔ۴ﮒﺟﻝ؟۰ﻝ
 
-**ﻠﻝﺛ؟ﮔ۴ﮒﺟﻟﺛ؟ﻟﺛ؛**:
+**ﻠﻝﺛ؟ﮔ۴ﮒﺟﻟﺛ؟ﻟﺛ؛**:
 ```bash
-# ﮒﮒﭨﭦﮔ۴ﮒﺟﻟﺛ؟ﻟﺛ؛ﻠﻝﺛ؟
+# ﮒﮒﭨﭦﮔ۴ﮒﺟﻟﺛ؟ﻟﺛ؛ﻠﻝﺛ؟
 sudo vi /etc/logrotate.d/zephyr
 
 /var/log/zephyr/*.log {
@@ -380,14 +380,14 @@ sudo vi /etc/logrotate.d/zephyr
 }
 ```
 
-### 7.2 ﮔ۶ﻟﺛﻝﮔ۶
+### 7.2 ﮔ۶ﻟﺛﻝﮔ۶
 
-**ﮒ؟ﻟ۲ﻝﮔ۶ﮒﺓ۴ﮒﺓ**:
+**ﮒ؟ﻟ۲ﻝﮔ۶ﮒﺓ۴ﮒﺓ**:
 ```bash
 pip install prometheus-client grafana-api
 ```
 
-**ﻠﻝﺛ؟Prometheus**:
+**ﻠﻝﺛ؟Prometheus**:
 ```yaml
 # prometheus.yml
 global:
@@ -399,9 +399,9 @@ scrape_configs:
       - targets: ['localhost:8000']
 ```
 
-### 7.3 ﮒﻟ­۵ﻠﻝﺛ؟
+### 7.3 ﮒﻟ­۵ﻠﻝﺛ؟
 
-**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 # alert_rules.yml
 groups:
@@ -416,10 +416,10 @@ groups:
 
 ---
 
-## 8. ﮒ۳ﻛﭨﺛﻝ­ﻝ۴
+## 8. ﮒ۳ﻛﭨﺛﻝ­ﻝ۴
 
-### 8.1 ﮔﺍﮔ؟ﮒﭦﮒ۳ﻛﭨ?
-**ﮒﮒﭨﭦﮒ۳ﻛﭨﺛﻟﮔ؛**:
+### 8.1 ﮔﺍﮔ؟ﮒﭦﮒ۳ﻛﭨ?
+**ﮒﮒﭨﭦﮒ۳ﻛﭨﺛﻟﮔ؛**:
 ```bash
 #!/bin/bash
 # backup_database.sh
@@ -430,20 +430,20 @@ BACKUP_FILE="$BACKUP_DIR/zephyr_$DATE.sql"
 
 pg_dump -U zephyr_user zephyr > $BACKUP_FILE
 
-# ﮒﻝﺙ۸ﮒ۳ﻛﭨﺛ
+# ﮒﻝﺙ۸ﮒ۳ﻛﭨﺛ
 gzip $BACKUP_FILE
 
-# ﮒ ﻠ۳30ﮒ۳۸ﮒﻝﮒ۳ﻛﭨ?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
+# ﮒ ﻠ۳30ﮒ۳۸ﮒﻝﮒ۳ﻛﭨ?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 ```
 
-**ﻠﻝﺛ؟ﮒ؟ﮔﭘﻛﭨﭨﮒ۰**:
+**ﻠﻝﺛ؟ﮒ؟ﮔﭘﻛﭨﭨﮒ۰**:
 ```bash
-# ﮔﺁﮒ۳۸ﮒﮔ۷2ﻝﺗﮒ۳ﻛﭨ?0 2 * * * /path/to/backup_database.sh
+# ﮔﺁﮒ۳۸ﮒﮔ۷2ﻝﺗﮒ۳ﻛﭨ?0 2 * * * /path/to/backup_database.sh
 ```
 
-### 8.2 ﻠﻝﺛ؟ﮒ۳ﻛﭨﺛ
+### 8.2 ﻠﻝﺛ؟ﮒ۳ﻛﭨﺛ
 
-**ﮒ۳ﻛﭨﺛﻠﻝﺛ؟ﮔﻛﭨﭘ**:
+**ﮒ۳ﻛﭨﺛﻠﻝﺛ؟ﮔﻛﭨﭘ**:
 ```bash
 #!/bin/bash
 # backup_config.sh
@@ -455,45 +455,45 @@ tar -czf $BACKUP_DIR/config_$DATE.tar.gz config/
 
 ---
 
-## 9. ﮔﻠﮔﮔ۴
+## 9. ﮔﻠﮔﮔ۴
 
-### 9.1 ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
+### 9.1 ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
 
-**ﻠ؟ﻠ۱1: ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?*
+**ﻠ؟ﻠ۱1: ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?*
 ```bash
-# ﮔ۲ﮔ۴ﮔﺍﮔ؟ﮒﭦﻝﭘﮔ?sudo systemctl status postgresql
+# ﮔ۲ﮔ۴ﮔﺍﮔ؟ﮒﭦﻝﭘﮔ?sudo systemctl status postgresql
 
-# ﮔ۲ﮔ۴ﻟﺟﮔ?psql -U zephyr_user -d zephyr -h localhost
+# ﮔ۲ﮔ۴ﻟﺟﮔ?psql -U zephyr_user -d zephyr -h localhost
 ```
 
-**ﻠ؟ﻠ۱2: Redisﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴**
+**ﻠ؟ﻠ۱2: Redisﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴**
 ```bash
-# ﮔ۲ﮔ۴Redisﻝﭘﮔ?sudo systemctl status redis
+# ﮔ۲ﮔ۴Redisﻝﭘﮔ?sudo systemctl status redis
 
-# ﮔﭖﻟﺁﻟﺟﮔ۴
+# ﮔﭖﻟﺁﻟﺟﮔ۴
 redis-cli -a your_redis_password ping
 ```
 
-**ﻠ؟ﻠ۱3: APIﮔﮒ۰ﮔ ﮒﮒﭦ?*
+**ﻠ؟ﻠ۱3: APIﮔﮒ۰ﮔ ﮒﮒﭦ?*
 ```bash
-# ﮔ۲ﮔ۴ﻟﺟﻝ۷?ps aux | grep gunicorn
+# ﮔ۲ﮔ۴ﻟﺟﻝ۷?ps aux | grep gunicorn
 
-# ﮔ۲ﮔ۴ﻝ،ﺁﮒ?netstat -tlnp | grep 8000
+# ﮔ۲ﮔ۴ﻝ،ﺁﮒ?netstat -tlnp | grep 8000
 
-# ﮔ۴ﻝﮔ۴ﮒﺟ
+# ﮔ۴ﻝﮔ۴ﮒﺟ
 tail -f logs/error.log
 ```
 
-### 9.2 ﮔ۴ﮒﺟﮔ۴ﻝ
+### 9.2 ﮔ۴ﮒﺟﮔ۴ﻝ
 
-**ﮔ۴ﻝﮒﭦﻝ۷ﮔ۴ﮒﺟ**:
+**ﮔ۴ﻝﮒﭦﻝ۷ﮔ۴ﮒﺟ**:
 ```bash
 tail -f logs/zephyr.log
 tail -f logs/access.log
 tail -f logs/error.log
 ```
 
-**ﮔ۴ﻝﻝﺏﭨﻝﭨﮔ۴ﮒﺟ**:
+**ﮔ۴ﻝﻝﺏﭨﻝﭨﮔ۴ﮒﺟ**:
 ```bash
 tail -f /var/log/syslog
 tail -f /var/log/nginx/access.log
@@ -501,27 +501,27 @@ tail -f /var/log/nginx/access.log
 
 ---
 
-## 10. ﮒ؟ﮒ۷ﮒ ﮒﭦ
+## 10. ﮒ؟ﮒ۷ﮒ ﮒﭦ
 
-### 10.1 ﻝﺏﭨﻝﭨﮒ؟ﮒ۷
+### 10.1 ﻝﺏﭨﻝﭨﮒ؟ﮒ۷
 
-**ﮔﺑﮔﺍﻝﺏﭨﻝﭨ**:
+**ﮔﺑﮔﺍﻝﺏﭨﻝﭨ**:
 ```bash
 sudo apt-get update
 sudo apt-get upgrade
 ```
 
-**ﻝ۵ﻝ۷ﻛﺕﮒﺟﻟ۵ﻝﮔﮒ۰**:
+**ﻝ۵ﻝ۷ﻛﺕﮒﺟﻟ۵ﻝﮔﮒ۰**:
 ```bash
 sudo systemctl disable bluetooth
 sudo systemctl disable cups
 ```
 
-### 10.2 ﮒﭦﻝ۷ﮒ؟ﮒ۷
+### 10.2 ﮒﭦﻝ۷ﮒ؟ﮒ۷
 
-**ﻠﻝﺛ؟ﮒ؟ﮒ۷ﮒ۳?*:
+**ﻠﻝﺛ؟ﮒ؟ﮒ۷ﮒ۳?*:
 ```python
-# ﮒ۷APIﻛﺕ­ﮔﺓﭨﮒ ﮒ؟ﮒ۷ﮒ۳ﺑ
+# ﮒ۷APIﻛﺕ­ﮔﺓﭨﮒ ﮒ؟ﮒ۷ﮒ۳ﺑ
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -533,7 +533,7 @@ app.add_middleware(
 )
 ```
 
-**ﻠﻝﺛ؟ﻠﻝﻠﮒﭘ**:
+**ﻠﻝﺛ؟ﻠﻝﻠﮒﭘ**:
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -548,10 +548,10 @@ async def endpoint():
 
 ---
 
-## 11. ﮔ۶ﻟﺛﻛﺙﮒ
+## 11. ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 11.1 ﮔﺍﮔ؟ﮒﭦﻛﺙﮒ?
-**ﻠﻝﺛ؟ﻟﺟﮔ۴ﮔﺎ?*:
+### 11.1 ﮔﺍﮔ؟ﮒﭦﻛﺙﮒ?
+**ﻠﻝﺛ؟ﻟﺟﮔ۴ﮔﺎ?*:
 ```python
 # config/database.py
 from sqlalchemy import create_engine
@@ -566,15 +566,15 @@ engine = create_engine(
 )
 ```
 
-**ﮒﮒﭨﭦﻝﺑ۱ﮒﺙ**:
+**ﮒﮒﭨﭦﻝﺑ۱ﮒﺙ**:
 ```sql
--- ﻛﺕﭦﮒﺕﺕﻝ۷ﮔ۴ﻟﺁ۱ﮒﮒﭨﭦﻝﺑ۱ﮒﺙ?CREATE INDEX idx_strategy_name ON strategies(name);
+-- ﻛﺕﭦﮒﺕﺕﻝ۷ﮔ۴ﻟﺁ۱ﮒﮒﭨﭦﻝﺑ۱ﮒﺙ?CREATE INDEX idx_strategy_name ON strategies(name);
 CREATE INDEX idx_order_time ON orders(created_at);
 ```
 
-### 11.2 ﻝﺙﮒ­ﻛﺙﮒ
+### 11.2 ﻝﺙﮒ­ﻛﺙﮒ
 
-**ﻠﻝﺛ؟Redisﻝﺙﮒ­**:
+**ﻠﻝﺛ؟Redisﻝﺙﮒ­**:
 ```python
 import redis
 from functools import wraps
@@ -603,26 +603,26 @@ def cache_result(expire=300):
 
 ---
 
-## 12. ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ?
-### 12.1 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
-- [ ] ﻝﺁﮒ۱ﮒﻠﮒﺓﺎﻠﻝﺛ?- [ ] ﮔﺍﮔ؟ﮒﭦﮒﺓﺎﮒﮒﭨﭦ
-- [ ] Redisﮒﺓﺎﮒﺁﮒ?- [ ] ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺓﺎﮔﺑﮔ?- [ ] ﻛﺝﻟﭖﮒﺓﺎﮒ؟ﻟ۲?- [ ] SSLﻟﺁﻛﺗ۵ﮒﺓﺎﻠﻝﺛ?- [ ] ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒﮒﺓﺎﻟ؟ﺝﻝﺛ؟
+## 12. ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ?
+### 12.1 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
+- [ ] ﻝﺁﮒ۱ﮒﻠﮒﺓﺎﻠﻝﺛ?- [ ] ﮔﺍﮔ؟ﮒﭦﮒﺓﺎﮒﮒﭨﭦ
+- [ ] Redisﮒﺓﺎﮒﺁﮒ?- [ ] ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺓﺎﮔﺑﮔ?- [ ] ﻛﺝﻟﭖﮒﺓﺎﮒ؟ﻟ۲?- [ ] SSLﻟﺁﻛﺗ۵ﮒﺓﺎﻠﻝﺛ?- [ ] ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒﮒﺓﺎﻟ؟ﺝﻝﺛ؟
 
-### 12.2 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
-- [ ] APIﮔﮒ۰ﮔ­۲ﮒﺕﺕﮒﮒﭦ
-- [ ] ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔ­۲ﮒﺕ?- [ ] Redisﻟﺟﮔ۴ﮔ­۲ﮒﺕﺕ
-- [ ] ﮔ۴ﮒﺟﮔ­۲ﮒﺕﺕﻟﺝﮒﭦ
-- [ ] ﻝﮔ۶ﮔ­۲ﮒﺕﺕﮒﺓ۴ﻛﺛ
-- [ ] ﮒ۳ﻛﭨﺛﻛﭨﭨﮒ۰ﮒﺓﺎﻠﻝﺛ?- [ ] ﮒﻟ­۵ﻟ۶ﮒﮒﺓﺎﻠﻝﺛ?
+### 12.2 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
+- [ ] APIﮔﮒ۰ﮔ­۲ﮒﺕﺕﮒﮒﭦ
+- [ ] ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔ­۲ﮒﺕ?- [ ] Redisﻟﺟﮔ۴ﮔ­۲ﮒﺕﺕ
+- [ ] ﮔ۴ﮒﺟﮔ­۲ﮒﺕﺕﻟﺝﮒﭦ
+- [ ] ﻝﮔ۶ﮔ­۲ﮒﺕﺕﮒﺓ۴ﻛﺛ
+- [ ] ﮒ۳ﻛﭨﺛﻛﭨﭨﮒ۰ﮒﺓﺎﻠﻝﺛ?- [ ] ﮒﻟ­۵ﻟ۶ﮒﮒﺓﺎﻠﻝﺛ?
 ---
 
-## 13. ﮒﻟﮔﮔ۰?
-- [ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/system_config_template.yaml)
-- [ﻝﮔ۶ﮔﮒ](./MONITORING_MANUAL.md)
-- [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
-- [ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
+## 13. ﮒﻟﮔﮔ۰?
+- [ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/system_config_template.yaml)
+- [ﻝﮔ۶ﮔﮒ](./MONITORING_MANUAL.md)
+- [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
+- [ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
-**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

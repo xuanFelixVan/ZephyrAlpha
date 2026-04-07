@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_21_ONLINE_RESEARCH_ENVIRONMENT_001
 version: 1.0.0
 status: Active

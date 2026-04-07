@@ -1,91 +1,91 @@
-﻿---
-document_type: P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
+﻿﻿---
+document_type: P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
 version: 1.0.0
 created_date: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 实施指南、部署文档
   - 数据源
   - 文档治理
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻠ۲ﻠ۸ﻝ؟۰ﻝ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
-status: ﮒﺝﮒ؟ﮔ?
-applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻠ۲ﻠ۸ﻝ؟۰ﻝ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+status: ﮒﺝﮒ؟ﮔ?
+applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
 parent_document: ../INDEX.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 module_id: IMP_P1_RISK_MITIGATION_D
 last_updated: 2026-04-02---
 
 
-# P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
+# P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
-> **ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶**: P1 (ﻠ،?
-> **ﻠ۲ﻠ۸ﮔﺍﻠ**: 18ﻛﺕ?
-> **ﮒ۳ﻝﮒﮒ**: ﮒﺙﮒﮒﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰ﺅﺙﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔ?
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶**: P1 (ﻠ،?
+> **ﻠ۲ﻠ۸ﮔﺍﻠ**: 18ﻛﺕ?
+> **ﮒ۳ﻝﮒﮒ**: ﮒﺙﮒﮒﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰ﺅﺙﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔ?
 
 ---
 
-## 1. P1ﻝﭦ۶ﻠ۲ﻠ۸ﮔﺕﮒ?
+## 1. P1ﻝﭦ۶ﻠ۲ﻠ۸ﮔﺕﮒ?
 
-### 1.1 ﮒ۳ﻠ۷APIﻛﺝﻟﭖﻠ۲ﻠ۸ﺅﺙ?2ﻛﺕ۹ﺅﺙ
+### 1.1 ﮒ۳ﻠ۷APIﻛﺝﻟﭖﻠ۲ﻠ۸ﺅﺙ?2ﻛﺕ۹ﺅﺙ
 
-| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﮔﭘﮒﮔ۷۰ﮒ | ﮒﺛﺎﮒﻟﮒﺑ |
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﮔﭘﮒﮔ۷۰ﮒ | ﮒﺛﺎﮒﻟﮒﺑ |
 |--------|----------|----------|----------|
-| **R-LLM-001** | GLM-4-Flash APIﻟﺍﻝ۷ﮒ۳ﺎﻟﺑ۴ | DailyReporter, MonthlyReporter, MarketAnalyzer | AIﮔ۴ﮒﻝﮔﮒ۳ﺎﻟﺑ۴ |
-| **R-LLM-002** | GLM-4-Flash APIﻟﭘﮔﭘ | DailyReporter, MonthlyReporter, MarketAnalyzer | ﮔ۴ﮒﻝﮔﮒﭨﭘﻟﺟ |
-| **R-LLM-003** | GLM-4-Flash APIﮔﮔ؛ﻟﭘﮔﺁ | ﮔﮔLLMﻠﮔﮔ۷۰ﮒ | ﮔﮔ؛ﮔ۶ﮒﭘﮒ۳ﺎﮔ |
-| **R-QMT-001** | QMTﮒ؟۱ﮔﺓﻝ،ﺁﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?| QMTDataInterface, QMTExecutor | ﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎﻟﺑ۴ﻙﻛﭦ۳ﮔﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ?|
-| **R-QMT-002** | QMT APIﮒﮒﭦﻟﭘﮔﭘ | QMTDataInterface, QMTExecutor | ﮔﺍﮔ؟ﮒﭨﭘﻟﺟﻙﻛﭦ۳ﮔﮒﭨﭘﻟﺟ?|
-| **R-IFIND-001** | iFindﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ | iFindConnector | ﮒ ﮒ­ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
-| **R-IFIND-002** | iFind APIﻠﮔﭖ | iFindConnector | ﮔﺍﮔ؟ﻟﺓﮒﮒﻠ |
-| **R-NEWS-001** | ﮔﺍﻠﭨﻝ؛ﻟ،ﻟ۱،ﮒﺍﻝ۵?| NewsCrawler | ﻟﮔﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
-| **R-NEWS-002** | ﮔﺍﻠﭨAPIﻛﺕﮒﺁﻝ?| NewsCrawler | ﻟﮔﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
-| **R-DINGTALK-001** | ﻠﻠAPIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
-| **R-WECHAT-001** | ﻛﺙﻛﺕﮒﺝ؟ﻛﺟ۰APIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
-| **R-SMS-001** | ﻝ­ﻛﺟ۰APIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
+| **R-LLM-001** | GLM-4-Flash APIﻟﺍﻝ۷ﮒ۳ﺎﻟﺑ۴ | DailyReporter, MonthlyReporter, MarketAnalyzer | AIﮔ۴ﮒﻝﮔﮒ۳ﺎﻟﺑ۴ |
+| **R-LLM-002** | GLM-4-Flash APIﻟﭘﮔﭘ | DailyReporter, MonthlyReporter, MarketAnalyzer | ﮔ۴ﮒﻝﮔﮒﭨﭘﻟﺟ |
+| **R-LLM-003** | GLM-4-Flash APIﮔﮔ؛ﻟﭘﮔﺁ | ﮔﮔLLMﻠﮔﮔ۷۰ﮒ | ﮔﮔ؛ﮔ۶ﮒﭘﮒ۳ﺎﮔ |
+| **R-QMT-001** | QMTﮒ؟۱ﮔﺓﻝ،ﺁﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?| QMTDataInterface, QMTExecutor | ﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎﻟﺑ۴ﻙﻛﭦ۳ﮔﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ?|
+| **R-QMT-002** | QMT APIﮒﮒﭦﻟﭘﮔﭘ | QMTDataInterface, QMTExecutor | ﮔﺍﮔ؟ﮒﭨﭘﻟﺟﻙﻛﭦ۳ﮔﮒﭨﭘﻟﺟ?|
+| **R-IFIND-001** | iFindﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ | iFindConnector | ﮒ ﮒ­ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
+| **R-IFIND-002** | iFind APIﻠﮔﭖ | iFindConnector | ﮔﺍﮔ؟ﻟﺓﮒﮒﻠ |
+| **R-NEWS-001** | ﮔﺍﻠﭨﻝ؛ﻟ،ﻟ۱،ﮒﺍﻝ۵?| NewsCrawler | ﻟﮔﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
+| **R-NEWS-002** | ﮔﺍﻠﭨAPIﻛﺕﮒﺁﻝ?| NewsCrawler | ﻟﮔﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ |
+| **R-DINGTALK-001** | ﻠﻠAPIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
+| **R-WECHAT-001** | ﻛﺙﻛﺕﮒﺝ؟ﻛﺟ۰APIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
+| **R-SMS-001** | ﻝ­ﻛﺟ۰APIﻛﺕﮒﺁﻝ?| NotificationSystem | ﻠﻝ۴ﮒﻠﮒ۳ﺎﻟﺑ?|
 
-### 1.2 ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻠ۲ﻠ۸ﺅﺙ?ﻛﺕ۹ﺅﺙ
+### 1.2 ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻠ۲ﻠ۸ﺅﺙ?ﻛﺕ۹ﺅﺙ
 
-| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﮔﭘﮒﮔ۷۰ﮒ | ﮒﺛﺎﮒﻟﮒﺑ |
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﮔﭘﮒﮔ۷۰ﮒ | ﮒﺛﺎﮒﻟﮒﺑ |
 |--------|----------|----------|----------|
-| **R-DATA-001** | ﻛﺕﮔﺕﺕﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ | ﮔﮔLayer 0ﮔ۷۰ﮒ | ﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎﻟﺑ۴ |
-| **R-DATA-002** | ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?| DataStorage, PositionManager | ﮔﺍﮔ؟ﮔﻛﺗﮒﮒ۳ﺎﻟﺑ?|
-| **R-DATA-003** | ﻝﺙﮒ­ﮔﮒ۰ﻛﺕﮒﺁﻝ?| ﮔﮔﻝﺙﮒ­ﮔ۷۰ﮒ?| ﮔ۶ﻟﺛﻛﺕﻠ |
-| **R-DATA-004** | ﮔﺍﮔ؟ﻟﺑ۷ﻠﮒﺙﮒﺕﺕ | DataValidator, DataCleaner | ﮔﺍﮔ؟ﻠﻟﺁﺁ |
-| **R-DATA-005** | ﮔﺍﮔ؟ﮒﭨﭘﻟﺟﻟﺟﻠ، | ﮔﮔﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷۰ﮒ?| ﮒ؟ﮔﭘﮔ۶ﻛﺕﻠ?|
-| **R-DATA-006** | ﮔﺍﮔ؟ﮒ­ﮒ۷ﻝ۸ﭦﻠﺑﻛﺕﻟﭘﺏ | DataStorage, TradeAuditor | ﮔﺍﮔ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ |
+| **R-DATA-001** | ﻛﺕﮔﺕﺕﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ | ﮔﮔLayer 0ﮔ۷۰ﮒ | ﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎﻟﺑ۴ |
+| **R-DATA-002** | ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ?| DataStorage, PositionManager | ﮔﺍﮔ؟ﮔﻛﺗﮒﮒ۳ﺎﻟﺑ?|
+| **R-DATA-003** | ﻝﺙﮒ­ﮔﮒ۰ﻛﺕﮒﺁﻝ?| ﮔﮔﻝﺙﮒ­ﮔ۷۰ﮒ?| ﮔ۶ﻟﺛﻛﺕﻠ |
+| **R-DATA-004** | ﮔﺍﮔ؟ﻟﺑ۷ﻠﮒﺙﮒﺕﺕ | DataValidator, DataCleaner | ﮔﺍﮔ؟ﻠﻟﺁﺁ |
+| **R-DATA-005** | ﮔﺍﮔ؟ﮒﭨﭘﻟﺟﻟﺟﻠ، | ﮔﮔﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷۰ﮒ?| ﮒ؟ﮔﭘﮔ۶ﻛﺕﻠ?|
+| **R-DATA-006** | ﮔﺍﮔ؟ﮒ­ﮒ۷ﻝ۸ﭦﻠﺑﻛﺕﻟﭘﺏ | DataStorage, TradeAuditor | ﮔﺍﮔ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ |
 
 ---
 
-## 2. ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰
+## 2. ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰
 
-### 2.1 LLM APIﻛﺝﻟﭖﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
+### 2.1 LLM APIﻛﺝﻟﭖﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
 
-#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
+#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
 
-**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﻠﻝﭦ۶ﮔﺗﮔ۰ + ﻠﻟﺁﮔﭦﮒﭘ + ﮔﮔ؛ﮔ۶ﮒﭘ + ﮒ۳ﮔ۷۰ﮒﮒ۳ﻛﭨ?
+**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﻠﻝﭦ۶ﮔﺗﮔ۰ + ﻠﻟﺁﮔﭦﮒﭘ + ﮔﮔ؛ﮔ۶ﮒﭘ + ﮒ۳ﮔ۷۰ﮒﮒ۳ﻛﭨ?
 
-#### 2.1.1 ﻠﻝﭦ۶ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰
+#### 2.1.1 ﻠﻝﭦ۶ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰
 
 ```python
 class LLMFallbackStrategy:
-    """LLMﻠﻝﭦ۶ﻝ­ﻝ۴
+    """LLMﻠﻝﭦ۶ﻝ­ﻝ۴
     
-    ﻝﺑ۱ﮒﺙ: RISK.LLM.FALLBACK.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.FALLBACK.001
     """
     
     def __init__(self):
         self.strategies = [
             self._primary_llm,      # ﻛﺕﭨLLM (GLM-4-Flash)
-            self._backup_llm,       # ﮒ۳ﻝ۷LLM (GPT-3.5-Turbo)
-            self._template_fallback, # ﮔ۷۰ﮔﺟﻠﻝﭦ۶
-            self._cache_fallback    # ﻝﺙﮒ­ﻠﻝﭦ۶
+            self._backup_llm,       # ﮒ۳ﻝ۷LLM (GPT-3.5-Turbo)
+            self._template_fallback, # ﮔ۷۰ﮔﺟﻠﻝﭦ۶
+            self._cache_fallback    # ﻝﺙﮒ­ﻠﻝﭦ۶
         ]
         self.current_strategy = 0
         
@@ -94,13 +94,13 @@ class LLMFallbackStrategy:
         prompt: str,
         context: Dict[str, Any]
     ) -> str:
-        """ﮒﺕ۵ﻠﻝﭦ۶ﻝﻝﮔ
+        """ﮒﺕ۵ﻠﻝﭦ۶ﻝﻝﮔ
         
-        ﻠﻝﭦ۶ﻠ۰ﭦﮒﭦ:
+        ﻠﻝﭦ۶ﻠ۰ﭦﮒﭦ:
         1. ﻛﺕﭨLLM (GLM-4-Flash)
-        2. ﮒ۳ﻝ۷LLM (GPT-3.5-Turbo)
-        3. ﮔ۷۰ﮔﺟﻠﻝﭦ۶ (ﻠ۱ﮒ؟ﻛﺗﮔ۷۰ﮔ?
-        4. ﻝﺙﮒ­ﻠﻝﭦ۶ (ﮒﮒﺎﻝﺙﮒ­)
+        2. ﮒ۳ﻝ۷LLM (GPT-3.5-Turbo)
+        3. ﮔ۷۰ﮔﺟﻠﻝﭦ۶ (ﻠ۱ﮒ؟ﻛﺗﮔ۷۰ﮔ?
+        4. ﻝﺙﮒ­ﻠﻝﭦ۶ (ﮒﮒﺎﻝﺙﮒ­)
         """
         for strategy in self.strategies:
             try:
@@ -108,37 +108,37 @@ class LLMFallbackStrategy:
                 if result:
                     return result
             except Exception as e:
-                logger.warning(f"ﻝ­ﻝ۴ﮒ۳ﺎﻟﺑ۴: {strategy.__name__}, ﻠﻟﺁﺁ: {e}")
+                logger.warning(f"ﻝ­ﻝ۴ﮒ۳ﺎﻟﺑ۴: {strategy.__name__}, ﻠﻟﺁﺁ: {e}")
                 continue
         
-        raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝ­ﻝ۴ﮒ۳ﺎﻟﺑ?)
+        raise LLMFallbackError("ﮔﮔﻠﻝﭦ۶ﻝ­ﻝ۴ﮒ۳ﺎﻟﺑ?)
     
     async def _primary_llm(self, prompt: str, context: Dict) -> str:
         """ﻛﺕﭨLLM: GLM-4-Flash"""
         return await self._call_glm4_flash(prompt, context)
     
     async def _backup_llm(self, prompt: str, context: Dict) -> str:
-        """ﮒ۳ﻝ۷LLM: GPT-3.5-Turbo"""
+        """ﮒ۳ﻝ۷LLM: GPT-3.5-Turbo"""
         return await self._call_gpt35_turbo(prompt, context)
     
     async def _template_fallback(self, prompt: str, context: Dict) -> str:
-        """ﮔ۷۰ﮔﺟﻠﻝﭦ۶: ﻛﺛﺟﻝ۷ﻠ۱ﮒ؟ﻛﺗﮔ۷۰ﮔ?""
+        """ﮔ۷۰ﮔﺟﻠﻝﭦ۶: ﻛﺛﺟﻝ۷ﻠ۱ﮒ؟ﻛﺗﮔ۷۰ﮔ?""
         template = self._get_template(context['report_type'])
         return template.render(context)
     
     async def _cache_fallback(self, prompt: str, context: Dict) -> str:
-        """ﻝﺙﮒ­ﻠﻝﭦ۶: ﻛﺛﺟﻝ۷ﮒﮒﺎﻝﺙﮒ­"""
+        """ﻝﺙﮒ­ﻠﻝﭦ۶: ﻛﺛﺟﻝ۷ﮒﮒﺎﻝﺙﮒ­"""
         cache_key = self._generate_cache_key(prompt, context)
         return await self._get_from_cache(cache_key)
 ```
 
-#### 2.1.2 ﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
+#### 2.1.2 ﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
 
 ```python
 class RetryStrategy:
-    """ﻠﻟﺁﻝ­ﻝ۴
+    """ﻠﻟﺁﻝ­ﻝ۴
     
-    ﻝﺑ۱ﮒﺙ: RISK.LLM.RETRY.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.RETRY.001
     """
     
     def __init__(
@@ -159,12 +159,12 @@ class RetryStrategy:
         *args,
         **kwargs
     ) -> Any:
-        """ﮒﺕ۵ﻠﻟﺁﻝﮔ۶ﻟ۰
+        """ﮒﺕ۵ﻠﻟﺁﻝﮔ۶ﻟ۰
         
-        ﻠﻟﺁﻝ­ﻝ۴:
-        - ﮔﮒ۳ﻠﻟﺁ?ﮔ؛?
-        - ﮔﮔﺍﻠﻠ? 1s, 2s, 4s
-        - ﮔﮒ۳۶ﮒﭨﭘﻟﺟ?0ﻝ۶?
+        ﻠﻟﺁﻝ­ﻝ۴:
+        - ﮔﮒ۳ﻠﻟﺁ?ﮔ؛?
+        - ﮔﮔﺍﻠﻠ? 1s, 2s, 4s
+        - ﮔﮒ۳۶ﮒﭨﭘﻟﺟ?0ﻝ۶?
         """
         last_exception = None
         
@@ -179,27 +179,27 @@ class RetryStrategy:
                         self.max_delay
                     )
                     logger.warning(
-                        f"ﻝ؛؛{attempt + 1}ﮔ؛۰ﻠﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙ{delay}ﻝ۶ﮒﻠﻟﺁ: {e}"
+                        f"ﻝ؛؛{attempt + 1}ﮔ؛۰ﻠﻟﺁﮒ۳ﺎﻟﺑ۴ﺅﺙ{delay}ﻝ۶ﮒﻠﻟﺁ: {e}"
                     )
                     await asyncio.sleep(delay)
         
         raise last_exception
 ```
 
-#### 2.1.3 ﮔﮔ؛ﮔ۶ﮒﭘﻟ؟ﺝﻟ؟۰
+#### 2.1.3 ﮔﮔ؛ﮔ۶ﮒﭘﻟ؟ﺝﻟ؟۰
 
 ```python
 class CostController:
-    """ﮔﮔ؛ﮔ۶ﮒﭘﮒ?
+    """ﮔﮔ؛ﮔ۶ﮒﭘﮒ?
     
-    ﻝﺑ۱ﮒﺙ: RISK.LLM.COST.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.COST.001
     """
     
     def __init__(
         self,
-        daily_budget: float = 100.0,  # ﮔ۴ﻠ۱ﻝ؟?00ﮒ?
-        monthly_budget: float = 2000.0,  # ﮔﻠ۱ﻝ؟?000ﮒ?
-        alert_threshold: float = 0.8  # 80%ﮒﻟ­۵
+        daily_budget: float = 100.0,  # ﮔ۴ﻠ۱ﻝ؟?00ﮒ?
+        monthly_budget: float = 2000.0,  # ﮔﻠ۱ﻝ؟?000ﮒ?
+        alert_threshold: float = 0.8  # 80%ﮒﻟ­۵
     ):
         self.daily_budget = daily_budget
         self.monthly_budget = monthly_budget
@@ -208,68 +208,68 @@ class CostController:
         self.monthly_cost = 0.0
         
     async def check_budget(self, estimated_cost: float) -> bool:
-        """ﮔ۲ﮔ۴ﻠ۱ﻝ؟?
+        """ﮔ۲ﮔ۴ﻠ۱ﻝ؟?
         
-        ﻟﺟﮒ:
-            bool: ﮔﺁﮒ۵ﮒ۷ﻠ۱ﻝ؟ﻟﮒﺑﮒ
+        ﻟﺟﮒ:
+            bool: ﮔﺁﮒ۵ﮒ۷ﻠ۱ﻝ؟ﻟﮒﺑﮒ
         """
         if self.daily_cost + estimated_cost > self.daily_budget:
-            logger.error(f"ﮔ۴ﻠ۱ﻝ؟ﻟﭘﮔ? ﮒﺛﮒ{self.daily_cost}, ﻠ۱ﻝ؟{self.daily_budget}")
+            logger.error(f"ﮔ۴ﻠ۱ﻝ؟ﻟﭘﮔ? ﮒﺛﮒ{self.daily_cost}, ﻠ۱ﻝ؟{self.daily_budget}")
             return False
             
         if self.monthly_cost + estimated_cost > self.monthly_budget:
-            logger.error(f"ﮔﻠ۱ﻝ؟ﻟﭘﮔ? ﮒﺛﮒ{self.monthly_cost}, ﻠ۱ﻝ؟{self.monthly_budget}")
+            logger.error(f"ﮔﻠ۱ﻝ؟ﻟﭘﮔ? ﮒﺛﮒ{self.monthly_cost}, ﻠ۱ﻝ؟{self.monthly_budget}")
             return False
             
         return True
     
     async def record_cost(self, actual_cost: float):
-        """ﻟ؟ﺍﮒﺛﮔﮔ؛"""
+        """ﻟ؟ﺍﮒﺛﮔﮔ؛"""
         self.daily_cost += actual_cost
         self.monthly_cost += actual_cost
         
-        # ﮔ۲ﮔ۴ﮒﻟ­۵ﻠﮒ?
+        # ﮔ۲ﮔ۴ﮒﻟ­۵ﻠﮒ?
         if self.daily_cost > self.daily_budget * self.alert_threshold:
-            await self._send_alert("ﮔ۴ﻠ۱ﻝ؟ﮒﺏﮒﺍﻟﭘﮔ?)
+            await self._send_alert("ﮔ۴ﻠ۱ﻝ؟ﮒﺏﮒﺍﻟﭘﮔ?)
         if self.monthly_cost > self.monthly_budget * self.alert_threshold:
-            await self._send_alert("ﮔﻠ۱ﻝ؟ﮒﺏﮒﺍﻟﭘﮔ?)
+            await self._send_alert("ﮔﻠ۱ﻝ؟ﮒﺏﮒﺍﻟﭘﮔ?)
 ```
 
-#### 2.1.4 Tokenﻛﺙﮒﻟ؟ﺝﻟ؟۰
+#### 2.1.4 Tokenﻛﺙﮒﻟ؟ﺝﻟ؟۰
 
 ```python
 class TokenOptimizer:
-    """Tokenﻛﺙﮒﮒ?
+    """Tokenﻛﺙﮒﮒ?
     
-    ﻝﺑ۱ﮒﺙ: RISK.LLM.TOKEN.001
+    ﻝﺑ۱ﮒﺙ: RISK.LLM.TOKEN.001
     """
     
     def __init__(self, max_tokens: int = 2000):
         self.max_tokens = max_tokens
         
     def optimize_prompt(self, prompt: str, context: Dict) -> str:
-        """ﻛﺙﮒPrompt
+        """ﻛﺙﮒPrompt
         
-        ﻛﺙﮒﻝ­ﻝ۴:
-        1. ﻝ۶ﭨﻠ۳ﮒﻛﺛﻛﺟ۰ﮔﺁ
-        2. ﮒﻝﺙ۸ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
-        3. ﻛﺛﺟﻝ۷ﻝﺙ۸ﮒ
+        ﻛﺙﮒﻝ­ﻝ۴:
+        1. ﻝ۶ﭨﻠ۳ﮒﻛﺛﻛﺟ۰ﮔﺁ
+        2. ﮒﻝﺙ۸ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+        3. ﻛﺛﺟﻝ۷ﻝﺙ۸ﮒ
         """
-        # ﻝ۶ﭨﻠ۳ﮒﻛﺛﻝ۸ﭦﻝﺛ
+        # ﻝ۶ﭨﻠ۳ﮒﻛﺛﻝ۸ﭦﻝﺛ
         prompt = ' '.join(prompt.split())
         
-        # ﮒﻝﺙ۸ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+        # ﮒﻝﺙ۸ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
         if 'data' in context:
             context['data'] = self._compress_data(context['data'])
         
-        # ﻠﮒﭘﮔﺍﮔ؟ﻠ?
+        # ﻠﮒﭘﮔﺍﮔ؟ﻠ?
         if len(str(context)) > self.max_tokens:
             context = self._truncate_context(context, self.max_tokens)
         
         return prompt.format(**context)
     
     def _compress_data(self, data: Any) -> str:
-        """ﮒﻝﺙ۸ﮔﺍﮔ؟"""
+        """ﮒﻝﺙ۸ﮔﺍﮔ؟"""
         if isinstance(data, pd.DataFrame):
             return data.to_json(orient='records', double_precision=2)
         return str(data)
@@ -277,19 +277,19 @@ class TokenOptimizer:
 
 ---
 
-### 2.2 QMT APIﻛﺝﻟﭖﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
+### 2.2 QMT APIﻛﺝﻟﭖﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
 
-#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
+#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
 
-**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﻟﺟﮔ۴ﮔﺎ?+ ﮒﺟﻟﺓﺏﮔ۲ﮔﭖ?+ ﻟ۹ﮒ۷ﻠﻟﺟ + ﻠﻝﭦ۶ﮔﺗﮔ۰
+**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﻟﺟﮔ۴ﮔﺎ?+ ﮒﺟﻟﺓﺏﮔ۲ﮔﭖ?+ ﻟ۹ﮒ۷ﻠﻟﺟ + ﻠﻝﭦ۶ﮔﺗﮔ۰
 
-#### 2.2.1 ﻟﺟﮔ۴ﮔﺎ ﻝ؟۰ﻝ?
+#### 2.2.1 ﻟﺟﮔ۴ﮔﺎ ﻝ؟۰ﻝ?
 
 ```python
 class QMTConnectionPool:
-    """QMTﻟﺟﮔ۴ﮔﺎ?
+    """QMTﻟﺟﮔ۴ﮔﺎ?
     
-    ﻝﺑ۱ﮒﺙ: RISK.QMT.POOL.001
+    ﻝﺑ۱ﮒﺙ: RISK.QMT.POOL.001
     """
     
     def __init__(
@@ -305,19 +305,19 @@ class QMTConnectionPool:
         self.active_connections = {}
         
     async def get_connection(self) -> QMTConnection:
-        """ﻟﺓﮒﻟﺟﮔ۴"""
-        # ﮔ۲ﮔ۴ﻟﺟﮔ۴ﮔﺎ 
+        """ﻟﺓﮒﻟﺟﮔ۴"""
+        # ﮔ۲ﮔ۴ﻟﺟﮔ۴ﮔﺎ 
         if self.pool:
             conn = self.pool.pop()
             if await self._check_connection(conn):
                 return conn
         
-        # ﮒﮒﭨﭦﮔﺍﻟﺟﮔ?
+        # ﮒﮒﭨﭦﮔﺍﻟﺟﮔ?
         conn = await self._create_connection()
         return conn
     
     async def _check_connection(self, conn: QMTConnection) -> bool:
-        """ﮔ۲ﮔ۴ﻟﺟﮔ۴ﮔﮔﮔ?""
+        """ﮔ۲ﮔ۴ﻟﺟﮔ۴ﮔﮔﮔ?""
         try:
             await conn.ping()
             return True
@@ -325,20 +325,20 @@ class QMTConnectionPool:
             return False
     
     async def _create_connection(self) -> QMTConnection:
-        """ﮒﮒﭨﭦﮔﺍﻟﺟﮔ?""
+        """ﮒﮒﭨﭦﮔﺍﻟﺟﮔ?""
         conn = QMTConnection()
         await conn.connect()
         self._start_heartbeat(conn)
         return conn
 ```
 
-#### 2.2.2 ﻟ۹ﮒ۷ﻠﻟﺟﮔﭦﮒﭘ
+#### 2.2.2 ﻟ۹ﮒ۷ﻠﻟﺟﮔﭦﮒﭘ
 
 ```python
 class QMTReconnectStrategy:
-    """QMTﻟ۹ﮒ۷ﻠﻟﺟﻝ­ﻝ۴
+    """QMTﻟ۹ﮒ۷ﻠﻟﺟﻝ­ﻝ۴
     
-    ﻝﺑ۱ﮒﺙ: RISK.QMT.RECONNECT.001
+    ﻝﺑ۱ﮒﺙ: RISK.QMT.RECONNECT.001
     """
     
     def __init__(
@@ -357,27 +357,27 @@ class QMTReconnectStrategy:
         *args,
         **kwargs
     ) -> Any:
-        """ﮒﺕ۵ﻠﻟﺟﻝﮔ۶ﻟ۰"""
+        """ﮒﺕ۵ﻠﻟﺟﻝﮔ۶ﻟ۰"""
         for attempt in range(self.max_retries):
             try:
                 return await func(*args, **kwargs)
             except QMTConnectionError as e:
                 if attempt < self.max_retries - 1:
                     delay = self.retry_delay * (self.backoff_factor ** attempt)
-                    logger.warning(f"QMTﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴ﺅﺙ{delay}ﻝ۶ﮒﻠﻟﺟ: {e}")
+                    logger.warning(f"QMTﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴ﺅﺙ{delay}ﻝ۶ﮒﻠﻟﺟ: {e}")
                     await asyncio.sleep(delay)
                     await self._reconnect()
                 else:
                     raise
 ```
 
-#### 2.2.3 ﻠﻝﭦ۶ﮔﺗﮔ۰
+#### 2.2.3 ﻠﻝﭦ۶ﮔﺗﮔ۰
 
 ```python
 class QMTFallbackStrategy:
-    """QMTﻠﻝﭦ۶ﻝ­ﻝ۴
+    """QMTﻠﻝﭦ۶ﻝ­ﻝ۴
     
-    ﻝﺑ۱ﮒﺙ: RISK.QMT.FALLBACK.001
+    ﻝﺑ۱ﮒﺙ: RISK.QMT.FALLBACK.001
     """
     
     async def get_data_with_fallback(
@@ -385,53 +385,53 @@ class QMTFallbackStrategy:
         data_type: str,
         params: Dict
     ) -> pd.DataFrame:
-        """ﮒﺕ۵ﻠﻝﭦ۶ﻝﮔﺍﮔ؟ﻟﺓﮒ
+        """ﮒﺕ۵ﻠﻝﭦ۶ﻝﮔﺍﮔ؟ﻟﺓﮒ
         
-        ﻠﻝﭦ۶ﻠ۰ﭦﮒﭦ:
-        1. QMTﮒ؟ﮔﭘﮔﺍﮔ؟
-        2. ﮔ؛ﮒﺍﻝﺙﮒ­ﮔﺍﮔ؟
-        3. Baostockﮒﮒﺎﮔﺍﮔ؟
+        ﻠﻝﭦ۶ﻠ۰ﭦﮒﭦ:
+        1. QMTﮒ؟ﮔﭘﮔﺍﮔ؟
+        2. ﮔ؛ﮒﺍﻝﺙﮒ­ﮔﺍﮔ؟
+        3. Baostockﮒﮒﺎﮔﺍﮔ؟
         """
         try:
-            # ﮒﺍﻟﺁQMTﮒ؟ﮔﭘﮔﺍﮔ؟
+            # ﮒﺍﻟﺁQMTﮒ؟ﮔﭘﮔﺍﮔ؟
             return await self._get_from_qmt(data_type, params)
         except:
             pass
         
         try:
-            # ﮒﺍﻟﺁﮔ؛ﮒﺍﻝﺙﮒ­
+            # ﮒﺍﻟﺁﮔ؛ﮒﺍﻝﺙﮒ­
             return await self._get_from_cache(data_type, params)
         except:
             pass
         
         try:
-            # ﮒﺍﻟﺁBaostockﮒﮒﺎﮔﺍﮔ؟
+            # ﮒﺍﻟﺁBaostockﮒﮒﺎﮔﺍﮔ؟
             return await self._get_from_baostock(data_type, params)
         except:
-            raise DataFallbackError("ﮔﮔﮔﺍﮔ؟ﮔﭦﻠﻝﭦ۶ﮒ۳ﺎﻟﺑ۴")
+            raise DataFallbackError("ﮔﮔﮔﺍﮔ؟ﮔﭦﻠﻝﭦ۶ﮒ۳ﺎﻟﺑ۴")
 ```
 
 ---
 
-### 2.3 ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
+### 2.3 ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰
 
-#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
+#### ﮔﺗﮔ۰ﮔ۵ﻟﺟﺍ
 
-**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﮔﺍﮔ؟ﻝﺙﮒ­ + ﮒ۳ﮔﭦﮒ۳ﻛﭨﺛ + ﮒ۴ﮒﭦﺓﮔ۲ﮔ?+ ﻠﻝﭦ۶ﮔﺗﮔ۰
+**ﮔ ﺕﮒﺟﻝ­ﻝ۴**: ﮔﺍﮔ؟ﻝﺙﮒ­ + ﮒ۳ﮔﭦﮒ۳ﻛﭨﺛ + ﮒ۴ﮒﭦﺓﮔ۲ﮔ?+ ﻠﻝﭦ۶ﮔﺗﮔ۰
 
-#### 2.3.1 ﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘ
+#### 2.3.1 ﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘ
 
 ```python
 class DataCacheManager:
-    """ﮔﺍﮔ؟ﻝﺙﮒ­ﻝ؟۰ﻝﮒ?
+    """ﮔﺍﮔ؟ﻝﺙﮒ­ﻝ؟۰ﻝﮒ?
     
-    ﻝﺑ۱ﮒﺙ: RISK.DATA.CACHE.001
+    ﻝﺑ۱ﮒﺙ: RISK.DATA.CACHE.001
     """
     
     def __init__(
         self,
-        cache_ttl: int = 600,  # ﻝﺙﮒ­ﮔﮔﮔ?0ﮒﻠ
-        max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒ­ﮔﺍﻠ?
+        cache_ttl: int = 600,  # ﻝﺙﮒ­ﮔﮔﮔ?0ﮒﻠ
+        max_cache_size: int = 1000  # ﮔﮒ۳۶ﻝﺙﮒ­ﮔﺍﻠ?
     ):
         self.cache_ttl = cache_ttl
         self.max_cache_size = max_cache_size
@@ -445,33 +445,33 @@ class DataCacheManager:
         *args,
         **kwargs
     ) -> Any:
-        """ﻟﺓﮒﮔﮔﮒﮔﺍﮔ?""
-        # ﮔ۲ﮔ۴ﻝﺙﮒ­?
+        """ﻟﺓﮒﮔﮔﮒﮔﺍﮔ?""
+        # ﮔ۲ﮔ۴ﻝﺙﮒ­?
         if key in self.cache:
             timestamp = self.timestamps[key]
             if time.time() - timestamp < self.cache_ttl:
                 return self.cache[key]
         
-        # ﮔﮒﮔﺍﮔﺍﮔ?
+        # ﮔﮒﮔﺍﮔﺍﮔ?
         data = await fetch_func(*args, **kwargs)
         
-        # ﮔﺑﮔﺍﻝﺙﮒ­
+        # ﮔﺑﮔﺍﻝﺙﮒ­
         self.cache[key] = data
         self.timestamps[key] = time.time()
         
-        # ﮔﺕﻝﻟﺟﮔﻝﺙﮒ­
+        # ﮔﺕﻝﻟﺟﮔﻝﺙﮒ­
         await self._cleanup_cache()
         
         return data
 ```
 
-#### 2.3.2 ﮒ۳ﮔﭦﮒ۳ﻛﭨﺛﮔﭦﮒﭘ
+#### 2.3.2 ﮒ۳ﮔﭦﮒ۳ﻛﭨﺛﮔﭦﮒﭘ
 
 ```python
 class MultiSourceDataManager:
-    """ﮒ۳ﮔﭦﮔﺍﮔ؟ﻝ؟۰ﻝﮒ?
+    """ﮒ۳ﮔﭦﮔﺍﮔ؟ﻝ؟۰ﻝﮒ?
     
-    ﻝﺑ۱ﮒﺙ: RISK.DATA.MULTI.001
+    ﻝﺑ۱ﮒﺙ: RISK.DATA.MULTI.001
     """
     
     def __init__(self):
@@ -486,7 +486,7 @@ class MultiSourceDataManager:
         data_type: str,
         params: Dict
     ) -> pd.DataFrame:
-        """ﻟﺓﮒﮔﺍﮔ؟ﺅﺙﮒ۳ﮔﭦﮒ۳ﻛﭨﺛﺅﺙ"""
+        """ﻟﺓﮒﮔﺍﮔ؟ﺅﺙﮒ۳ﮔﭦﮒ۳ﻛﭨﺛﺅﺙ"""
         for priority, sources in self.sources.items():
             for source in sources:
                 try:
@@ -496,32 +496,32 @@ class MultiSourceDataManager:
                     if data is not None and not data.empty:
                         return data
                 except Exception as e:
-                    logger.warning(f"ﮔﺍﮔ؟ﮔﭦ{source}ﮒ۳ﺎﻟﺑ۴: {e}")
+                    logger.warning(f"ﮔﺍﮔ؟ﮔﭦ{source}ﮒ۳ﺎﻟﺑ۴: {e}")
                     continue
         
-        raise DataSourceError("ﮔﮔﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ?)
+        raise DataSourceError("ﮔﮔﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ?)
 ```
 
-#### 2.3.3 ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﭦﮒ?
+#### 2.3.3 ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﭦﮒ?
 
 ```python
 class HealthChecker:
-    """ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۷
+    """ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۷
     
-    ﻝﺑ۱ﮒﺙ: RISK.DATA.HEALTH.001
+    ﻝﺑ۱ﮒﺙ: RISK.DATA.HEALTH.001
     """
     
     def __init__(
         self,
-        check_interval: int = 60,  # ﮔ۲ﮔ۴ﻠﺑﻠ?0ﻝ۶?
-        timeout: int = 10  # ﻟﭘﮔﭘﮔﭘﻠﺑ10ﻝ۶?
+        check_interval: int = 60,  # ﮔ۲ﮔ۴ﻠﺑﻠ?0ﻝ۶?
+        timeout: int = 10  # ﻟﭘﮔﭘﮔﭘﻠﺑ10ﻝ۶?
     ):
         self.check_interval = check_interval
         self.timeout = timeout
         self.health_status = {}
         
     async def check_all_sources(self) -> Dict[str, bool]:
-        """ﮔ۲ﮔ۴ﮔﮔﮔﺍﮔ؟ﮔﭦﮒ۴ﮒﭦﺓﻝﭘﮔ?""
+        """ﮔ۲ﮔ۴ﮔﮔﮔﺍﮔ؟ﮔﭦﮒ۴ﮒﭦﺓﻝﭘﮔ?""
         tasks = []
         for source in self._get_all_sources():
             tasks.append(self._check_source(source))
@@ -534,7 +534,7 @@ class HealthChecker:
         return self.health_status
     
     async def _check_source(self, source: str) -> bool:
-        """ﮔ۲ﮔ۴ﮒﻛﺕ۹ﮔﺍﮔ؟ﮔﭦ"""
+        """ﮔ۲ﮔ۴ﮒﻛﺕ۹ﮔﺍﮔ؟ﮔﭦ"""
         try:
             async with asyncio.timeout(self.timeout):
                 return await self._ping_source(source)
@@ -544,92 +544,92 @@ class HealthChecker:
 
 ---
 
-## 3. ﮒ؟ﮔﺛﻟ؟۰ﮒ
+## 3. ﮒ؟ﮔﺛﻟ؟۰ﮒ
 
-### 3.1 ﮒﺙﮒﮒﮒﮒ۳ﺅﺙﮒﺟﻠ۰ﭨﮒ؟ﮔﺅﺙ
+### 3.1 ﮒﺙﮒﮒﮒﮒ۳ﺅﺙﮒﺟﻠ۰ﭨﮒ؟ﮔﺅﺙ
 
-| ﻛﭨﭨﮒ۰ | ﮒﺓ۴ﮔﭘ | ﻟﺑﻟﺑ۲ﻛﭦ?| ﮒ؟ﮔﮔ ﮒ |
+| ﻛﭨﭨﮒ۰ | ﮒﺓ۴ﮔﭘ | ﻟﺑﻟﺑ۲ﻛﭦ?| ﮒ؟ﮔﮔ ﮒ |
 |------|------|--------|----------|
-| **LLMﻠﻝﭦ۶ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰** | 4ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
-| **QMTﻟﺟﮔ۴ﮔﺎ ﻟ؟ﺝﻟ؟?* | 3ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
-| **ﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰** | 3ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
-| **ﻝﮔ۶ﮒﻟ­۵ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰** | 2ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **LLMﻠﻝﭦ۶ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰** | 4ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **QMTﻟﺟﮔ۴ﮔﺎ ﻟ؟ﺝﻟ؟?* | 3ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **ﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰** | 3ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
+| **ﻝﮔ۶ﮒﻟ­۵ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰** | 2ﮒﺍﮔﭘ | ﮔﭘﮔﮒﺕ?| ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﮔ |
 
-**ﮔﭨﻟ؟۰**: 12ﮒﺍﮔﭘﺅﺙ?.5ﮒ۳۸ﺅﺙ
+**ﮔﭨﻟ؟۰**: 12ﮒﺍﮔﭘﺅﺙ?.5ﮒ۳۸ﺅﺙ
 
-### 3.2 ﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔ?
+### 3.2 ﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔ?
 
-| ﻠﭘﮔ؟ﭖ | ﻛﭨﭨﮒ۰ | ﮒﺓ۴ﮔﭘ | ﻛﺙﮒﻝﭦ?|
+| ﻠﭘﮔ؟ﭖ | ﻛﭨﭨﮒ۰ | ﮒﺓ۴ﮔﭘ | ﻛﺙﮒﻝﭦ?|
 |------|------|------|--------|
-| **Phase 1** | ﮒ؟ﻝﺍLLMﻠﻝﭦ۶ﮔﺗﮔ۰ | 8ﮒﺍﮔﭘ | P1 |
-| **Phase 1** | ﮒ؟ﻝﺍQMTﻟﺟﮔ۴ﮔﺎ?| 6ﮒﺍﮔﭘ | P1 |
-| **Phase 1** | ﮒ؟ﻝﺍﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘ | 6ﮒﺍﮔﭘ | P1 |
-| **Phase 2** | ﮒ؟ﻝﺍﻝﮔ۶ﮒﻟ­۵ | 4ﮒﺍﮔﭘ | P1 |
-| **Phase 2** | ﮒ؟ﻝﺍﮒ۴ﮒﭦﺓﮔ۲ﮔ?| 4ﮒﺍﮔﭘ | P1 |
+| **Phase 1** | ﮒ؟ﻝﺍLLMﻠﻝﭦ۶ﮔﺗﮔ۰ | 8ﮒﺍﮔﭘ | P1 |
+| **Phase 1** | ﮒ؟ﻝﺍQMTﻟﺟﮔ۴ﮔﺎ?| 6ﮒﺍﮔﭘ | P1 |
+| **Phase 1** | ﮒ؟ﻝﺍﮔﺍﮔ؟ﻝﺙﮒ­ﮔﭦﮒﭘ | 6ﮒﺍﮔﭘ | P1 |
+| **Phase 2** | ﮒ؟ﻝﺍﻝﮔ۶ﮒﻟ­۵ | 4ﮒﺍﮔﭘ | P1 |
+| **Phase 2** | ﮒ؟ﻝﺍﮒ۴ﮒﭦﺓﮔ۲ﮔ?| 4ﮒﺍﮔﭘ | P1 |
 
-**ﮔﭨﻟ؟۰**: 28ﮒﺍﮔﭘﺅﺙ?.5ﮒ۳۸ﺅﺙ
+**ﮔﭨﻟ؟۰**: 28ﮒﺍﮔﭘﺅﺙ?.5ﮒ۳۸ﺅﺙ
 
-### 3.3 ﮔﭖﻟﺁﻠ۹ﻟﺁ
+### 3.3 ﮔﭖﻟﺁﻠ۹ﻟﺁ
 
-| ﮔﭖﻟﺁﻠ۰?| ﮒﺓ۴ﮔﭘ | ﻠ۹ﮔﭘﮔ ﮒ |
+| ﮔﭖﻟﺁﻠ۰?| ﮒﺓ۴ﮔﭘ | ﻠ۹ﮔﭘﮔ ﮒ |
 |--------|------|----------|
-| **ﻠﻝﭦ۶ﮔﺗﮔ۰ﮔﭖﻟﺁ** | 4ﮒﺍﮔﭘ | ﮔﮔﻠﻝﭦ۶ﻟﺓﺁﮒﺝﮒﺁﻝ?|
-| **ﻠﻟﺟﮔﭦﮒﭘﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﻟ۹ﮒ۷ﻠﻟﺟﮔﮒﻝﻗ۴95% |
-| **ﻝﺙﮒ­ﮔﭦﮒﭘﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝﻗ۴80% |
-| **ﻝﮔ۶ﮒﻟ­۵ﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﮒﻟ­۵ﻟ۶۵ﮒﮒﻝ۰؟ﻝ?00% |
+| **ﻠﻝﭦ۶ﮔﺗﮔ۰ﮔﭖﻟﺁ** | 4ﮒﺍﮔﭘ | ﮔﮔﻠﻝﭦ۶ﻟﺓﺁﮒﺝﮒﺁﻝ?|
+| **ﻠﻟﺟﮔﭦﮒﭘﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﻟ۹ﮒ۷ﻠﻟﺟﮔﮒﻝﻗ۴95% |
+| **ﻝﺙﮒ­ﮔﭦﮒﭘﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝﻗ۴80% |
+| **ﻝﮔ۶ﮒﻟ­۵ﮔﭖﻟﺁ** | 2ﮒﺍﮔﭘ | ﮒﻟ­۵ﻟ۶۵ﮒﮒﻝ۰؟ﻝ?00% |
 
-**ﮔﭨﻟ؟۰**: 10ﮒﺍﮔﭘﺅﺙ?.25ﮒ۳۸ﺅﺙ
-
----
-
-## 4. ﻠ۹ﮔﭘﮔ ﮒ
-
-### 4.1 LLM APIﻠ۲ﻠ۸ﻝﺙﻟ۶۲
-
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
-|------|--------|----------|
-| **ﻠﻝﭦ۶ﮔﮒﻝ?* | ﻗ?5% | ﮔ۷۰ﮔAPIﮒ۳ﺎﻟﺑ۴ﮔﭖﻟﺁ |
-| **ﻠﻟﺁﮔﮒﻝ?* | ﻗ?0% | ﮔ۷۰ﮔﻝﺛﻝﭨﮔﻠﮔﭖﻟﺁ |
-| **ﮔﮔ؛ﮔ۶ﮒﭘﮒﻝ۰؟ﻝ?* | 100% | ﮔﮔ؛ﻝﮔ۶ﮔﭖﻟﺁ |
-| **Tokenﻛﺙﮒﻝ?* | ﻗ?0% | Tokenﮔﭘﻟﮒﺁﺗﮔﺁﮔﭖﻟﺁ?|
-
-### 4.2 QMT APIﻠ۲ﻠ۸ﻝﺙﻟ۶۲
-
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
-|------|--------|----------|
-| **ﻟﺟﮔ۴ﮔﮒﻝ?* | ﻗ?8% | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
-| **ﻟ۹ﮒ۷ﻠﻟﺟﮔﮒﻝ?* | ﻗ?5% | ﮔ­ﻝﭦﺟﻠﻟﺟﮔﭖﻟﺁ |
-| **ﻠﻝﭦ۶ﮔﮒﻝ?* | ﻗ?0% | ﮔ۷۰ﮔﮔﻠﮔﭖﻟﺁ |
-
-### 4.3 ﮔﺍﮔ؟ﮔﭦﻠ۲ﻠ۸ﻝﺙﻟ۶?
-
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
-|------|--------|----------|
-| **ﮔﺍﮔ؟ﻟﺓﮒﮔﮒﻝ?* | ﻗ?8% | ﮔﺍﮔ؟ﻟﺓﮒﮔﭖﻟﺁ |
-| **ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝ?* | ﻗ?0% | ﻝﺙﮒ­ﮔﭖﻟﺁ |
-| **ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒﻝ۰؟ﻝ** | 100% | ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﭖﻟﺁ?|
+**ﮔﭨﻟ؟۰**: 10ﮒﺍﮔﭘﺅﺙ?.25ﮒ۳۸ﺅﺙ
 
 ---
 
-## 5. ﻝﮔ۶ﮔﮔ 
+## 4. ﻠ۹ﮔﭘﮔ ﮒ
 
-### 5.1 ﮒ؟ﮔﭘﻝﮔ۶
+### 4.1 LLM APIﻠ۲ﻠ۸ﻝﺙﻟ۶۲
 
-| ﻝﮔ۶ﻠ۰?| ﮒﻟ­۵ﻠﮒ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+|------|--------|----------|
+| **ﻠﻝﭦ۶ﮔﮒﻝ?* | ﻗ?5% | ﮔ۷۰ﮔAPIﮒ۳ﺎﻟﺑ۴ﮔﭖﻟﺁ |
+| **ﻠﻟﺁﮔﮒﻝ?* | ﻗ?0% | ﮔ۷۰ﮔﻝﺛﻝﭨﮔﻠﮔﭖﻟﺁ |
+| **ﮔﮔ؛ﮔ۶ﮒﭘﮒﻝ۰؟ﻝ?* | 100% | ﮔﮔ؛ﻝﮔ۶ﮔﭖﻟﺁ |
+| **Tokenﻛﺙﮒﻝ?* | ﻗ?0% | Tokenﮔﭘﻟﮒﺁﺗﮔﺁﮔﭖﻟﺁ?|
+
+### 4.2 QMT APIﻠ۲ﻠ۸ﻝﺙﻟ۶۲
+
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+|------|--------|----------|
+| **ﻟﺟﮔ۴ﮔﮒﻝ?* | ﻗ?8% | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
+| **ﻟ۹ﮒ۷ﻠﻟﺟﮔﮒﻝ?* | ﻗ?5% | ﮔ­ﻝﭦﺟﻠﻟﺟﮔﭖﻟﺁ |
+| **ﻠﻝﭦ۶ﮔﮒﻝ?* | ﻗ?0% | ﮔ۷۰ﮔﮔﻠﮔﭖﻟﺁ |
+
+### 4.3 ﮔﺍﮔ؟ﮔﭦﻠ۲ﻠ۸ﻝﺙﻟ۶?
+
+| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+|------|--------|----------|
+| **ﮔﺍﮔ؟ﻟﺓﮒﮔﮒﻝ?* | ﻗ?8% | ﮔﺍﮔ؟ﻟﺓﮒﮔﭖﻟﺁ |
+| **ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝ?* | ﻗ?0% | ﻝﺙﮒ­ﮔﭖﻟﺁ |
+| **ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒﻝ۰؟ﻝ** | 100% | ﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮔﭖﻟﺁ?|
+
+---
+
+## 5. ﻝﮔ۶ﮔﮔ 
+
+### 5.1 ﮒ؟ﮔﭘﻝﮔ۶
+
+| ﻝﮔ۶ﻠ۰?| ﮒﻟ­۵ﻠﮒ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
 |--------|----------|----------|
-| **LLM APIﮔﮒﻝ?* | <90% | P1 |
-| **LLMﮔﮔ؛ﻟﭘﮔﺁ** | >ﻠ۱ﻝ؟80% | P2 |
-| **QMTﻟﺟﮔ۴ﮔﮒﻝ?* | <95% | P1 |
-| **ﮔﺍﮔ؟ﻟﺓﮒﮔﮒﻝ?* | <95% | P1 |
-| **ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝ?* | <70% | P2 |
+| **LLM APIﮔﮒﻝ?* | <90% | P1 |
+| **LLMﮔﮔ؛ﻟﭘﮔﺁ** | >ﻠ۱ﻝ؟80% | P2 |
+| **QMTﻟﺟﮔ۴ﮔﮒﻝ?* | <95% | P1 |
+| **ﮔﺍﮔ؟ﻟﺓﮒﮔﮒﻝ?* | <95% | P1 |
+| **ﻝﺙﮒ­ﮒﺛﻛﺕ­ﻝ?* | <70% | P2 |
 
-### 5.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
+### 5.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
 
 ```python
 class RiskMonitorLogger:
-    """ﻠ۲ﻠ۸ﻝﮔ۶ﮔ۴ﮒﺟ
+    """ﻠ۲ﻠ۸ﻝﮔ۶ﮔ۴ﮒﺟ
     
-    ﻝﺑ۱ﮒﺙ: RISK.MONITOR.LOG.001
+    ﻝﺑ۱ﮒﺙ: RISK.MONITOR.LOG.001
     """
     
     @staticmethod
@@ -639,7 +639,7 @@ class RiskMonitorLogger:
         severity: str,
         details: Dict[str, Any]
     ):
-        """ﻟ؟ﺍﮒﺛﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ"""
+        """ﻟ؟ﺍﮒﺛﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ"""
         log_entry = {
             'timestamp': datetime.now().isoformat(),
             'risk_id': risk_id,
@@ -648,32 +648,32 @@ class RiskMonitorLogger:
             'details': details
         }
         
-        logger.warning(f"ﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ: {json.dumps(log_entry, ensure_ascii=False)}")
+        logger.warning(f"ﻠ۲ﻠ۸ﻛﭦﻛﭨﭘ: {json.dumps(log_entry, ensure_ascii=False)}")
         
-        # ﮒﻠﮒﻟ­?
+        # ﮒﻠﮒﻟ­?
         if severity in ['P0', 'P1']:
             AlertManager.send_alert(log_entry)
 ```
 
 ---
 
-## 6. ﮔﭨﻝﭨ
+## 6. ﮔﭨﻝﭨ
 
-### 6.1 ﮒﺏﻠ؟ﻟ۵ﻝﺗ
+### 6.1 ﮒﺏﻠ؟ﻟ۵ﻝﺗ
 
-1. ﻗ?**P1ﻝﭦ۶ﻠ۲ﻠ۸ﻛﺕﻠﻟ۵ﮒﺙﮒﮒﮒ۷ﻠ۷ﻛﺟ؟ﮒ۳**
-2. ﻗ?**ﮒﺙﮒﮒﻠﻟ۵ﮒ؟ﮔﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?*
-3. ﻗ?**ﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔﺛﻝﺙﻟ۶۲ﮔﺗﮔ۰?*
-4. ﻗ?**ﮒﭨﭦﻝ،ﻝﮔ۶ﮒﻟ­۵ﮔﭦﮒﭘ**
+1. ﻗ?**P1ﻝﭦ۶ﻠ۲ﻠ۸ﻛﺕﻠﻟ۵ﮒﺙﮒﮒﮒ۷ﻠ۷ﻛﺟ؟ﮒ۳**
+2. ﻗ?**ﮒﺙﮒﮒﻠﻟ۵ﮒ؟ﮔﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?*
+3. ﻗ?**ﮒﺙﮒﻠﭘﮔ؟ﭖﮒ؟ﮔﺛﻝﺙﻟ۶۲ﮔﺗﮔ۰?*
+4. ﻗ?**ﮒﭨﭦﻝ،ﻝﮔ۶ﮒﻟ­۵ﮔﭦﮒﭘ**
 
-### 6.2 ﮒ؟ﮔﺛﮒﭨﭦﻟ؟؟
+### 6.2 ﮒ؟ﮔﺛﮒﭨﭦﻟ؟؟
 
-1. **ﻝ،ﮒﺏﻟ۰ﮒ۷**: ﮒ؟ﮔﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﺅﺙ?.5ﮒ۳۸ﺅﺙ
-2. **ﮒﺙﮒﻠﭘﮔ؟?*: ﮒ؟ﮔﺛﻝﺙﻟ۶۲ﮔﺗﮔ۰ﺅﺙ?.5ﮒ۳۸ﺅﺙ
-3. **ﮔﭖﻟﺁﻠﭘﮔ؟ﭖ**: ﻠ۹ﻟﺁﻝﺙﻟ۶۲ﮔﮔﺅﺙ?.25ﮒ۳۸ﺅﺙ
-4. **ﻛﺕﻝﭦﺟﮒ?*: ﮔﻝﭨ­ﻝﮔ۶ﻛﺙﮒ
+1. **ﻝ،ﮒﺏﻟ۰ﮒ۷**: ﮒ؟ﮔﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﺅﺙ?.5ﮒ۳۸ﺅﺙ
+2. **ﮒﺙﮒﻠﭘﮔ؟?*: ﮒ؟ﮔﺛﻝﺙﻟ۶۲ﮔﺗﮔ۰ﺅﺙ?.5ﮒ۳۸ﺅﺙ
+3. **ﮔﭖﻟﺁﻠﭘﮔ؟ﭖ**: ﻠ۹ﻟﺁﻝﺙﻟ۶۲ﮔﮔﺅﺙ?.25ﮒ۳۸ﺅﺙ
+4. **ﻛﺕﻝﭦﺟﮒ?*: ﮔﻝﭨ­ﻝﮔ۶ﻛﺙﮒ
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
-**ﻛﺕﻛﺕﮔ­?*: ﮒﺙﮒ۶ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
+**ﻛﺕﻛﺕﮔ­?*: ﮒﺙﮒ۶ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?

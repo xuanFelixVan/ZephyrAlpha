@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_AUGMENTATION_BLUEPRINT_001
 
 version: 1.0.0
@@ -51,7 +51,7 @@ responsibility_boundary: |
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -63,7 +63,7 @@ responsibility_boundary: |
 
 
 
-数据增强系统扩展训练数据�?
+数据增强系统扩展训练数据?
 
 - **时序增强**: 时间序列增强
 
@@ -71,7 +71,7 @@ responsibility_boundary: |
 
 - **噪声注入**: 添加噪声
 
-- **合成样本**: 生成新样�?
+- **合成样本**: 生成新样?
 
 ---
 
@@ -121,7 +121,7 @@ class DataAugmentation:
 
     ):
 
-        """初始化数据增�?        
+        """初始化数据增?        
 
         Args:
 
@@ -153,7 +153,7 @@ class DataAugmentation:
 
         Returns:
 
-            torch.Tensor: 增强后数�?        """
+            torch.Tensor: 增强后数?        """
 
         pass
 

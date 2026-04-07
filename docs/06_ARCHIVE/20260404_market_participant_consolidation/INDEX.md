@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_20260404_MARKET_PARTICIPANT_CONSOLIDATION_001
 version: 1.0.0
 status: Active

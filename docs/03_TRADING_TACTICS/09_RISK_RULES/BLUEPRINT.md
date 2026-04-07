@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BLUEPRINT_002
 version: 1.0.0
 status: Active
@@ -20,19 +20,19 @@ version: 1.0.2
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-04
-owner: 首席文档架构�?
+owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
+applicable_scope: 全系统架构设?
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 implementation_progress: 0%
 related_documents:
   upstream:
-    - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (框架层架构定�?
+    - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (框架层架构定?
   downstream:
-    - 04_EXECUTION/05_RISK_ENGINE/README.md (执行层实�?
-    - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成�?
+    - 04_EXECUTION/05_RISK_ENGINE/README.md (执行层实?
+    - 03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md (风险报告生成?
 ---
 
 # 风控规则体系蓝图
@@ -42,7 +42,7 @@ related_documents:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.0 的风险控制规则体�?
+> 清风量化系统 v5.0 的风险控制规则体?
 > **索引**: `RSK_001`
 > **版本**: v1.0.1
 > **更新**: 2026-04-04
@@ -52,25 +52,25 @@ related_documents:
 ## 文档层级关系
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�? 框架�? 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md  �?
-�? 定义实时风险监控的整体架构和设计原则                          �?
-└─────────────────────────────────────────────────────────────�?
-                              �?
-┌─────────────────────────────────────────────────────────────�?
-�? 本文�? 战术�?- 定义风控规则体系和三层防御架�?              �?
-└─────────────────────────────────────────────────────────────�?
-                              �?
-┌─────────────────────────────────────────────────────────────�?
-�? 执行�? 04_EXECUTION/05_RISK_ENGINE/README.md               �?
-�? 实现风控规则引擎核心功能                                     �?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────?
+? 框架? 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md  ?
+? 定义实时风险监控的整体架构和设计原则                          ?
+└─────────────────────────────────────────────────────────────?
+                              ?
+┌─────────────────────────────────────────────────────────────?
+? 本文? 战术?- 定义风控规则体系和三层防御架?              ?
+└─────────────────────────────────────────────────────────────?
+                              ?
+┌─────────────────────────────────────────────────────────────?
+? 执行? 04_EXECUTION/05_RISK_ENGINE/README.md               ?
+? 实现风控规则引擎核心功能                                     ?
+└─────────────────────────────────────────────────────────────?
 ```
 
-**上游文档**: [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 框架层架构定�?
+**上游文档**: [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 框架层架构定?
 
 **下游文档**:
-- [风控规则引擎](API_README.md) - 执行层实�?
+- [风控规则引擎](API_README.md) - 执行层实?
 - [风险报告生成器](./RISK_REPORT.md) - 报告生成
 
 ---
@@ -80,10 +80,10 @@ related_documents:
 
 | 原则 | 说明 |
 |------|------|
-| 三层防御 | 事前预防 �?事中监控 �?事后分析 |
-| 零信�?| 所有订单必须过风控，不信任任何信号�?|
-| 快速失�?| 风控触发时立即行动，不等待人工确�?|
-| 可追�?| 所有风控事件完整记录，便于审计 |
+| 三层防御 | 事前预防 ?事中监控 ?事后分析 |
+| 零信?| 所有订单必须过风控，不信任任何信号?|
+| 快速失?| 风控触发时立即行动，不等待人工确?|
+| 可追?| 所有风控事件完整记录，便于审计 |
 
 
 ## 2. 风控规则分层
@@ -91,42 +91,42 @@ related_documents:
 ### 2.1 规则层级架构
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   Layer 3: 风险因子计算                      �?
-�? ┌─────────────────────────────────────────────────────�?   �?
-�? �?             事前风控规则 (Pre-Trade)                 �?   �?
-�? �? -仓位限制  -对手方限�? -价格限制  -合约限制         �?   �?
-�? └─────────────────────────────────────────────────────�?   �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   Layer 6: 风险监控                          �?
-�? ┌─────────────────────────────────────────────────────�?   �?
-�? �?             事中风控规则 (In-Trade)                 �?   �?
-�? �? -实时盯盘  -动态止�? -流动性监�? -波动率监�?      �?   �?
-�? └─────────────────────────────────────────────────────�?   �?
-└─────────────────────────────────────────────────────────────�?
-                            �?
-┌─────────────────────────────────────────────────────────────�?
-�?                   Layer 7: 绩效归因                          �?
-�? ┌─────────────────────────────────────────────────────�?   �?
-�? �?             事后风控规则 (Post-Trade)               �?   �?
-�? �? -日终检�? -归因分析  -报告生成  -规则复盘          �?   �?
-�? └─────────────────────────────────────────────────────�?   �?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────?
+?                   Layer 3: 风险因子计算                      ?
+? ┌─────────────────────────────────────────────────────?   ?
+? ?             事前风控规则 (Pre-Trade)                 ?   ?
+? ? -仓位限制  -对手方限? -价格限制  -合约限制         ?   ?
+? └─────────────────────────────────────────────────────?   ?
+└─────────────────────────────────────────────────────────────?
+                            ?
+┌─────────────────────────────────────────────────────────────?
+?                   Layer 6: 风险监控                          ?
+? ┌─────────────────────────────────────────────────────?   ?
+? ?             事中风控规则 (In-Trade)                 ?   ?
+? ? -实时盯盘  -动态止? -流动性监? -波动率监?      ?   ?
+? └─────────────────────────────────────────────────────?   ?
+└─────────────────────────────────────────────────────────────?
+                            ?
+┌─────────────────────────────────────────────────────────────?
+?                   Layer 7: 绩效归因                          ?
+? ┌─────────────────────────────────────────────────────?   ?
+? ?             事后风控规则 (Post-Trade)               ?   ?
+? ? -日终检? -归因分析  -报告生成  -规则复盘          ?   ?
+? └─────────────────────────────────────────────────────?   ?
+└─────────────────────────────────────────────────────────────?
 ```
 
 ### 2.2 规则分类矩阵
 
 | 类别 | 层级 | 触发时机 | 执行方式 | 示例 |
 |------|------|----------|----------|------|
-| 仓位规则 | 事前 | 下单�?| 拒绝/修改 | 单股仓位<10% |
-| 价格规则 | 事前 | 下单�?| 拒绝/修改 | 涨跌停不买入 |
-| 合约规则 | 事前 | 下单�?| 拒绝 | ST股票不买 |
-| 止损规则 | 事中 | 持仓�?| 自动平仓 | 回撤>5% |
-| 流动性规�?| 事中 | 持仓�?| 预警/减仓 | 成交�?100�?|
-| 波动率规�?| 事中 | 持仓�?| 预警/对冲 | IV>30% |
-| 日终规则 | 事后 | 收盘�?| 报告 | 风险敞口报告 |
+| 仓位规则 | 事前 | 下单?| 拒绝/修改 | 单股仓位<10% |
+| 价格规则 | 事前 | 下单?| 拒绝/修改 | 涨跌停不买入 |
+| 合约规则 | 事前 | 下单?| 拒绝 | ST股票不买 |
+| 止损规则 | 事中 | 持仓?| 自动平仓 | 回撤>5% |
+| 流动性规?| 事中 | 持仓?| 预警/减仓 | 成交?100?|
+| 波动率规?| 事中 | 持仓?| 预警/对冲 | IV>30% |
+| 日终规则 | 事后 | 收盘?| 报告 | 风险敞口报告 |
 | 归因规则 | 事后 | 日终 | 分析 | P&L归因 |
 
 
@@ -140,27 +140,27 @@ related_documents:
 pre_trade_rules:
   # 仓位限制
   position_limit:
-    single_stock_max_ratio: 0.10      # 单股最大仓�?0%
-    single_stock_max_value: 1000000   # 单股最大市�?00�?
-    sector_max_ratio: 0.30           # 单行业最大仓�?0%
-    total_position_max: 0.80         # 总仓位最�?0%
+    single_stock_max_ratio: 0.10      # 单股最大仓?0%
+    single_stock_max_value: 1000000   # 单股最大市?00?
+    sector_max_ratio: 0.30           # 单行业最大仓?0%
+    total_position_max: 0.80         # 总仓位最?0%
 
   # 价格限制
   price_limit:
-    no_buy_on_limit_up: true          # 涨停不买�?
-    no_sell_on_limit_down: true       # 跌停不卖�?
+    no_buy_on_limit_up: true          # 涨停不买?
+    no_sell_on_limit_down: true       # 跌停不卖?
     price_deviation_threshold: 0.02   # 偏离昨收2%需确认
 
   # 合约限制
   contract_limit:
-    no_st_stock: true                # 不买ST�?
-    no_new_stock_days: 60             # 次新股限制天�?
-    no_suspended_stock: true          # 不买停牌�?
+    no_st_stock: true                # 不买ST?
+    no_new_stock_days: 60             # 次新股限制天?
+    no_suspended_stock: true          # 不买停牌?
 
   # 资金限制
   fund_limit:
-    min_cash_reserve: 0.05           # 最�?%现金储备
-    max_single_order_ratio: 0.02     # 单笔订单最大占总资�?%
+    min_cash_reserve: 0.05           # 最?%现金储备
+    max_single_order_ratio: 0.02     # 单笔订单最大占总资?%
     daily_order_count_max: 100       # 单日最大订单数
 ```
 
@@ -172,27 +172,27 @@ pre_trade_rules:
 in_trade_rules:
   # 止损规则
   stop_loss:
-    portfolio_max_loss: 0.05         # 组合总回�?%止损
+    portfolio_max_loss: 0.05         # 组合总回?%止损
     single_stock_max_loss: 0.08      # 单股回撤8%止损
     trailing_stop_enabled: true     # 启用移动止损
     trailing_stop_ratio: 0.03       # 移动止损3%
 
-  # 流动性监�?
+  # 流动性监?
   liquidity:
-    min_daily_volume: 1000000        # 最小日成交�?00�?
-    min_market_depth: 50000         # 最小买卖盘50�?
-    liquidity_warning_ratio: 0.20   # 流动性预警比�?
+    min_daily_volume: 1000000        # 最小日成交?00?
+    min_market_depth: 50000         # 最小买卖盘50?
+    liquidity_warning_ratio: 0.20   # 流动性预警比?
 
-  # 波动率监�?
+  # 波动率监?
   volatility:
-    portfolio_vol_max: 0.25          # 组合波动率上�?5%
-    single_stock_vol_max: 0.40      # 单股波动率上�?0%
-    volatility_warning: 0.15        # 波动率预警阈�?
+    portfolio_vol_max: 0.25          # 组合波动率上?5%
+    single_stock_vol_max: 0.40      # 单股波动率上?0%
+    volatility_warning: 0.15        # 波动率预警阈?
 
   # 盈亏监控
   pnl:
-    daily_profit_target: 0.02       # 日盈利目�?%
-    daily_loss_limit: 0.03          # 日亏损限�?%
+    daily_profit_target: 0.02       # 日盈利目?%
+    daily_loss_limit: 0.03          # 日亏损限?%
     profit_take_ratio: 0.05         # 止盈比例5%
 ```
 
@@ -202,10 +202,10 @@ in_trade_rules:
 # config/risk_rules/post_trade.yaml
 
 post_trade_rules:
-  # 日终检�?
+  # 日终检?
   daily_check:
-    generate_risk_report: true       # 生成日风险报�?
-    check_overnight_positions: true # 检查隔夜持�?
+    generate_risk_report: true       # 生成日风险报?
+    check_overnight_positions: true # 检查隔夜持?
     verify_settlement: true         # 核对结算
 
   # 归因分析
@@ -218,7 +218,7 @@ post_trade_rules:
   review:
     rule_trigger_review: true       # 规则触发复盘
     missed_opportunity_review: true # 错过机会复盘
-    false_signal_review: true       # 假信号复�?
+    false_signal_review: true       # 假信号复?
 ```
 
 
@@ -252,7 +252,7 @@ class RiskRuleEngine:
             self.rules[rule_name] = rule
 
     def check_pre_trade(self, order: Order) -> CheckResult:
-        """事前风控检�?
+        """事前风控检?
 
         参数:
             order: 订单对象
@@ -330,7 +330,7 @@ class RiskRuleEngine:
         )
 
     def check_post_trade(self, trading_date: date) -> ReportResult:
-        """事后风控检�?
+        """事后风控检?
 
         参数:
             trading_date: 交易日期
@@ -363,11 +363,11 @@ class RiskRuleEngine:
         return rule_class(**rule_params)
 ```
 
-### 4.2 规则执行�?
+### 4.2 规则执行?
 
 ```python
 class RuleExecutor:
-    """规则执行�?
+    """规则执行?
 
     索引: RSK_001-R02
     上游: RiskRuleEngine
@@ -379,10 +379,10 @@ class RuleExecutor:
 
         参数:
             order: 原始订单
-            check_result: 风控检查结�?
+            check_result: 风控检查结?
 
         返回:
-            处理后的订单(可能被拒�?修改)
+            处理后的订单(可能被拒?修改)
         """
         if check_result.rejected:
             self._reject_order(order, check_result.violations)
@@ -447,7 +447,7 @@ class RuleExecutor:
         return self.trade_executor.execute(order)
 
     def _send_alert(self, alert: Alert) -> ExecutionResult:
-        """发送告�?""
+        """发送告?""
         self.alert_manager.send(alert)
         return ExecutionResult(success=True)
 ```
@@ -475,7 +475,7 @@ rules:
     severity: critical
     params:
       trailing_ratio: 0.03
-      check_interval: 60  # �?
+      check_interval: 60  # ?
     enabled: true
 ```
 
@@ -525,7 +525,7 @@ class RiskRuleAPI:
 ```
 
 
-## 6. 风控事件�?
+## 6. 风控事件?
 
 ### 6.1 事件总线设计
 
@@ -533,9 +533,9 @@ class RiskRuleAPI:
 # 风控事件定义
 RISK_EVENTS = {
     # 事前事件
-    'risk.pre_trade.check': '下单前风控检�?,
+    'risk.pre_trade.check': '下单前风控检?,
     'risk.pre_trade.passed': '风控检查通过',
-    'risk.pre_trade.rejected': '风控检查拒�?,
+    'risk.pre_trade.rejected': '风控检查拒?,
     'risk.pre_trade.modified': '风控修改订单',
 
     # 事中事件
@@ -565,51 +565,51 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 | 级别 | 颜色 | 含义 | 动作 |
 |------|------|------|------|
 | INFO | 蓝色 | 正常监控信息 | 记录 |
-| WARNING | 黄色 | 需要关�?| 人工确认 |
+| WARNING | 黄色 | 需要关?| 人工确认 |
 | DANGER | 橙色 | 危险信号 | 自动减仓 |
 | CRITICAL | 红色 | 极端风险 | 自动清仓 |
 
 
-## 7. 规则执行优先�?
+## 7. 规则执行优先?
 
-| 优先�?| 规则类型 | 执行方式 | 超时限制 |
+| 优先?| 规则类型 | 执行方式 | 超时限制 |
 |--------|----------|----------|----------|
 | 1 | 资金风控 | 同步, 必须执行 | <10ms |
 | 2 | 仓位风控 | 同步, 必须执行 | <10ms |
 | 3 | 价格风控 | 同步, 必须执行 | <10ms |
 | 4 | 止损风控 | 异步, 自动执行 | <100ms |
-| 5 | 流动性风�?| 异步, 预警+执行 | <1s |
-| 6 | 波动率风�?| 异步, 预警+对冲 | <1s |
+| 5 | 流动性风?| 异步, 预警+执行 | <1s |
+| 6 | 波动率风?| 异步, 预警+对冲 | <1s |
 
 
 ## 8. 监控指标
 
 ### 8.1 核心指标
 
-| 指标 | 说明 | 阈�?|
+| 指标 | 说明 | 阈?|
 |------|------|------|
 | risk_pre_trade_check_time | 事前风控检查耗时 | <10ms |
-| risk_rule_trigger_count | 规则触发次数/�?| <100 |
-| risk_false_positive_rate | 误报�?| <5% |
-| risk_blocked_order_ratio | 被拒绝订单比�?| <1% |
+| risk_rule_trigger_count | 规则触发次数/?| <100 |
+| risk_false_positive_rate | 误报?| <5% |
+| risk_blocked_order_ratio | 被拒绝订单比?| <1% |
 | risk_alert_response_time | 告警响应时间 | <1s |
 
 ### 8.2 监控面板
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?                   风控监控面板                              �?
-├─────────────────────────────────────────────────────────────�?
-�? 规则状�?        当前持仓风险:      今日告警:              �?
-�? 12/15 启用       VaR: 2.3%          WARNING: 3            �?
-�?                  CVaR: 4.1%         DANGER: 1              �?
-�?                  波动�? 18%         CRITICAL: 0           �?
-├─────────────────────────────────────────────────────────────�?
-�? 最近告�?                                                �?
-�? 14:32 ST股票买入被拒�?- RSK_001_R03                       �?
-�? 14:28 单股仓位超限 - RSK_001_R01                          �?
-�? 14:15 移动止损触发 - RSK_001_R05                          �?
-└─────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────?
+?                   风控监控面板                              ?
+├─────────────────────────────────────────────────────────────?
+? 规则状?        当前持仓风险:      今日告警:              ?
+? 12/15 启用       VaR: 2.3%          WARNING: 3            ?
+?                  CVaR: 4.1%         DANGER: 1              ?
+?                  波动? 18%         CRITICAL: 0           ?
+├─────────────────────────────────────────────────────────────?
+? 最近告?                                                ?
+? 14:32 ST股票买入被拒?- RSK_001_R03                       ?
+? 14:28 单股仓位超限 - RSK_001_R01                          ?
+? 14:15 移动止损触发 - RSK_001_R05                          ?
+└─────────────────────────────────────────────────────────────?
 ```
 
 
@@ -629,7 +629,7 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 | 模块 | 接口 | 说明 |
 |------|------|------|
 | TradeExecutor | execute_action() | 执行风控动作 |
-| AlertManager | send_alert() | 发送告�?|
+| AlertManager | send_alert() | 发送告?|
 | PerformanceAnalyzer | report() | 生成报告 |
 | LogManager | log_event() | 记录日志 |
 
@@ -641,7 +641,7 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 | v1.0 | 2026-03-28 | 初始版本 |
 
 
-**维护�?*: 清风量化系统
+**维护?*: 清风量化系统
 **索引**: `RSK_001`
 ---
 
@@ -655,7 +655,7 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 - **模块ID**: TACTICS_RISK_RULES_BP_001
 - **蓝图文档**: [BLUEPRINT.md](03_TRADING_TACTICS\09_RISK_RULES\BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: 全系统架构设�?
+- **职责**: 全系统架构设?
 - **状态**: Active
 ```
 
@@ -663,7 +663,7 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Tactics Risk Rules Bp** | 全系统架构设�? | **核心模块** |
+| **Tactics Risk Rules Bp** | 全系统架构设? | **核心模块** |
 
 ### 11.3 版本管理
 

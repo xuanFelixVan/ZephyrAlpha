@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 remediation_id: P2_ISSUES_REMEDIATION_REPORT_V2_001
 version: 2.0.0
 status: Completed
@@ -7,222 +7,222 @@ last_updated: 2026-04-03
 owner: Audit Sentinel
 responsibility:
   - 归档文档、历史版本、审计状态追踪
-standard_type: P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?applicable_scope: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﮔﮔ۰۲ﮔﺎﭨﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?applicable_scope: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﮔﮔ۰۲ﮔﺎﭨﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V3_20260403.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 ---
 ---
 
-# P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?V2
+# P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?V2
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﮔﺑﮔﺗﻝﺙﮒﺓ**: `P2_REMEDIATION_V2_001`
-> **ﮔﺑﮔﺗﮔ۴ﮔ**: 2026-04-03
-> **ﮔﺑﮔﺗﻟﮒﺑ**: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎP2ﻝﭦ۶ﻠ؟ﻠ۱?> **ﮔﺑﮔﺗﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?---
+> **ﮔﺑﮔﺗﻝﺙﮒﺓ**: `P2_REMEDIATION_V2_001`
+> **ﮔﺑﮔﺗﮔ۴ﮔ**: 2026-04-03
+> **ﮔﺑﮔﺗﻟﮒﺑ**: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎP2ﻝﭦ۶ﻠ؟ﻠ۱?> **ﮔﺑﮔﺗﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?---
 
 
-## ﻭ ﻛﺕﻙﮔﺑﮔﺗﮔ۵ﻟ۵?
-### 1.1 ﮔﺑﮔﺗﻝ؟ﮔ 
+## ﻭ ﻛﺕﻙﮔﺑﮔﺗﮔ۵ﻟ۵?
+### 1.1 ﮔﺑﮔﺗﻝ؟ﮔ 
 
-ﻟ۶۲ﮒﺏLayer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒﻝﺍﻝ3ﻛﺕ۹P2ﻝﭦ۶ﻠ؟ﻠ۱ﺅﺙ
-1. 5ﻛﺕ۹ﮔﮔ۰۲ﻝﺙﭦﮒﺍmodule_id
-2. ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟﺟﮒ۳
-3. JSONﮔﻛﭨﭘﮒﻛﺛ
+ﻟ۶۲ﮒﺏLayer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒﻝﺍﻝ3ﻛﺕ۹P2ﻝﭦ۶ﻠ؟ﻠ۱ﺅﺙ
+1. 5ﻛﺕ۹ﮔﮔ۰۲ﻝﺙﭦﮒﺍmodule_id
+2. ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟﺟﮒ۳
+3. JSONﮔﻛﭨﭘﮒﻛﺛ
 
-### 1.2 ﮔﺑﮔﺗﻝﭨﮔ
+### 1.2 ﮔﺑﮔﺗﻝﭨﮔ
 
-| ﻠ؟ﻠ۱ﻝﺙﮒﺓ | ﻠ؟ﻠ۱ﮔﻟﺟﺍ | ﮔﺑﮔﺗﻝﭘﮔ?| ﮔﺑﮔﺗﻝﭨﮔ |
+| ﻠ؟ﻠ۱ﻝﺙﮒﺓ | ﻠ؟ﻠ۱ﮔﻟﺟﺍ | ﮔﺑﮔﺗﻝﭘﮔ?| ﮔﺑﮔﺗﻝﭨﮔ |
 |----------|----------|----------|----------|
-| P2-1 | 5ﻛﺕ۹ﮔﮔ۰۲ﻝﺙﭦﮒﺍmodule_id | ﻗ?ﮒﺓﺎﮒ؟ﮔ?| 9ﻛﺕ۹ﮔﮔ۰۲ﮒﺓﺎﮔﺓﭨﮒ module_id |
-| P2-2 | ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟﺟﮒ۳ | ﻗ?ﮒﺓﺎﮒ؟ﮔ?| 32ﻛﺕ۹ﮒﮒﺎﮔ۴ﮒﮒﺓﺎﮒﺛﮔ۰۲ |
-| P2-3 | JSONﮔﻛﭨﭘﮒﻛﺛ | ﻗ?ﮒﺓﺎﮒ؟ﮔ?| 27ﻛﺕ۹ﮒﻛﺛJSONﮒﺓﺎﮒ ﻠ?|
+| P2-1 | 5ﻛﺕ۹ﮔﮔ۰۲ﻝﺙﭦﮒﺍmodule_id | ﻗ?ﮒﺓﺎﮒ؟ﮔ?| 9ﻛﺕ۹ﮔﮔ۰۲ﮒﺓﺎﮔﺓﭨﮒ module_id |
+| P2-2 | ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟﺟﮒ۳ | ﻗ?ﮒﺓﺎﮒ؟ﮔ?| 32ﻛﺕ۹ﮒﮒﺎﮔ۴ﮒﮒﺓﺎﮒﺛﮔ۰۲ |
+| P2-3 | JSONﮔﻛﭨﭘﮒﻛﺛ | ﻗ?ﮒﺓﺎﮒ؟ﮔ?| 27ﻛﺕ۹ﮒﻛﺛJSONﮒﺓﺎﮒ ﻠ?|
 
 ---
 
-## ﻭ۶ ﻛﭦﻙﻟﺁ۵ﻝﭨﮔﺑﮔﺗﻟ؟ﺍﮒﺛ?
-### 2.1 P2-1: ﻛﺕﭦﻝﺙﭦﮒﺍmodule_idﻝﮔﮔ۰۲ﮔﺓﭨﮒ ﮔ ﻟﺁ?
-#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
-ﻛﭨ۴ﻛﺕﮔﮔ۰۲ﻝﺙﭦﮒﺍﮔ ﮒYAMLﮒ۳ﺑﻠ۷ﮒmodule_idﺅﺙ?
-| ﮔﻛﭨﭘﮒ?| ﻠ؟ﻠ۱ |
+## ﻭ۶ ﻛﭦﻙﻟﺁ۵ﻝﭨﮔﺑﮔﺗﻟ؟ﺍﮒﺛ?
+### 2.1 P2-1: ﻛﺕﭦﻝﺙﭦﮒﺍmodule_idﻝﮔﮔ۰۲ﮔﺓﭨﮒ ﮔ ﻟﺁ?
+#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
+ﻛﭨ۴ﻛﺕﮔﮔ۰۲ﻝﺙﭦﮒﺍﮔ ﮒYAMLﮒ۳ﺑﻠ۷ﮒmodule_idﺅﺙ?
+| ﮔﻛﭨﭘﮒ?| ﻠ؟ﻠ۱ |
 |--------|------|
-| UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| MODULE_RELATIONSHIP_DIAGRAM.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| INTERFACE_VERSION_CONTROL.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| DOCUMENT_GOVERNANCE_PROCESS.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
-| PORTFOLIO_OPTIMIZATION_USAGE_GUIDE.md | YAMLﮔ ﺙﮒﺙﻛﺕﻟ۶ﻟ?|
-| PORTFOLIO_OPTIMIZATION_API_REFERENCE.md | YAMLﮔ ﺙﮒﺙﻛﺕﻟ۶ﻟ?|
+| UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| MODULE_RELATIONSHIP_DIAGRAM.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| INTERFACE_VERSION_CONTROL.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| DOCUMENT_GOVERNANCE_PROCESS.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md | ﮔ YAMLﮒ۳ﺑﻠ۷ |
+| PORTFOLIO_OPTIMIZATION_USAGE_GUIDE.md | YAMLﮔ ﺙﮒﺙﻛﺕﻟ۶ﻟ?|
+| PORTFOLIO_OPTIMIZATION_API_REFERENCE.md | YAMLﮔ ﺙﮒﺙﻛﺕﻟ۶ﻟ?|
 
-#### ﮔﺑﮔﺗﮔ۹ﮔﺛ
+#### ﮔﺑﮔﺗﮔ۹ﮔﺛ
 
-ﻛﺕﭦﮔﺁﻛﺕ۹ﮔﮔ۰۲ﮔﺓﭨﮒ ﮔ ﮒYAMLﮒ۳ﺑﻠ۷ﺅﺙ?
+ﻛﺕﭦﮔﺁﻛﺕ۹ﮔﮔ۰۲ﮔﺓﭨﮒ ﮔ ﮒYAMLﮒ۳ﺑﻠ۷ﺅﺙ?
 ```yaml
 ---
-module_id: [ﮒﺁﻛﺕﮔ ﻟﺁﻝ؛۵]
+module_id: [ﮒﺁﻛﺕﮔ ﻟﺁﻝ؛۵]
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-standard_type: [ﮔﮔ۰۲ﻝﺎﭨﮒ]
-applicable_scope: [ﻠﻝ۷ﻟﮒﺑ]
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+standard_type: [ﮔﮔ۰۲ﻝﺎﭨﮒ]
+applicable_scope: [ﻠﻝ۷ﻟﮒﺑ]
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 ---
 ```
 
-#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
-| ﮔﻛﭨﭘﮒ?| module_id | ﻝﭘﮔ?|
+#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
+| ﮔﻛﭨﭘﮒ?| module_id | ﻝﭘﮔ?|
 |--------|-----------|------|
-| UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md | UNIFIED_INTERFACE_CONTRACT_SPEC_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| MODULE_RELATIONSHIP_DIAGRAM.md | MODULE_RELATIONSHIP_DIAGRAM_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| INTERFACE_VERSION_CONTROL.md | INTERFACE_VERSION_CONTROL_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| DOCUMENT_GOVERNANCE_PROCESS.md | DOCUMENT_GOVERNANCE_PROCESS_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH.md | A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md | ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md | AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| PORTFOLIO_OPTIMIZATION_USAGE_GUIDE.md | PORTFOLIO_OPTIMIZATION_USAGE_GUIDE_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
-| PORTFOLIO_OPTIMIZATION_API_REFERENCE.md | PORTFOLIO_OPTIMIZATION_API_REFERENCE_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md | UNIFIED_INTERFACE_CONTRACT_SPEC_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| MODULE_RELATIONSHIP_DIAGRAM.md | MODULE_RELATIONSHIP_DIAGRAM_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| INTERFACE_VERSION_CONTROL.md | INTERFACE_VERSION_CONTROL_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| DOCUMENT_GOVERNANCE_PROCESS.md | DOCUMENT_GOVERNANCE_PROCESS_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH.md | A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md | ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md | AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| PORTFOLIO_OPTIMIZATION_USAGE_GUIDE.md | PORTFOLIO_OPTIMIZATION_USAGE_GUIDE_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
+| PORTFOLIO_OPTIMIZATION_API_REFERENCE.md | PORTFOLIO_OPTIMIZATION_API_REFERENCE_001 | ﻗ?ﮒﺓﺎﮔﺓﭨﮒ?|
 
 ---
 
-### 2.2 P2-2: ﮔﺑﻝaudit_stateﻝ؟ﮒﺛﻝﭨﮔ
+### 2.2 P2-2: ﮔﺑﻝaudit_stateﻝ؟ﮒﺛﻝﭨﮔ
 
-#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
-audit_stateﻝ؟ﮒﺛﮒﮒ،100+ﻛﺕ۹ﮔﻛﭨﭘﺅﺙﮔﺓﺓﮔﮒ۷ﻛﺕﻟﭖﺓﺅﺙ
-- ﮒﮒﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
-- ﮒﺛﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
-- JSONﮔﺍﮔ؟ﮔﻛﭨﭘ
-- ﻛﺕﺑﮔﭘﮔﻛﭨﭘ
+#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
+audit_stateﻝ؟ﮒﺛﮒﮒ،100+ﻛﺕ۹ﮔﻛﭨﭘﺅﺙﮔﺓﺓﮔﮒ۷ﻛﺕﻟﭖﺓﺅﺙ
+- ﮒﮒﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+- ﮒﺛﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+- JSONﮔﺍﮔ؟ﮔﻛﭨﭘ
+- ﻛﺕﺑﮔﭘﮔﻛﭨﭘ
 
-#### ﮔﺑﮔﺗﮔ۹ﮔﺛ
+#### ﮔﺑﮔﺗﮔ۹ﮔﺛ
 
-1. ﮒﮒﭨﭦﮒﺛﮔ۰۲ﻝ؟ﮒﺛ `archived_reports_20260402/`
-2. ﻝ۶ﭨﮒ۷ﮒﮒﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮒﺍﮒﺛﮔ۰۲ﻝ؟ﮒﺛ?3. ﮔﮔ۴ﮔﮒﻝﺎﭨﻝ؟۰ﻝ?
-#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
+1. ﮒﮒﭨﭦﮒﺛﮔ۰۲ﻝ؟ﮒﺛ `archived_reports_20260402/`
+2. ﻝ۶ﭨﮒ۷ﮒﮒﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮒﺍﮒﺛﮔ۰۲ﻝ؟ﮒﺛ?3. ﮔﮔ۴ﮔﮒﻝﺎﭨﻝ؟۰ﻝ?
+#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
 ```
 audit_state/
-ﻗﻗﻗ archived_json_reports_20260402/     # ﮒﺛﮔ۰۲JSONﮔ۴ﮒ
-ﻗ?  ﻗﻗﻗ final_quality_report_round*.json (13ﻛﺕ?
-ﻗﻗﻗ archived_reports_20260402/          # ﮒﺛﮔ۰۲MDﮔ۴ﮒ
-ﻗ?  ﻗﻗﻗ ARCHITECTURE_*.md (3ﻛﺕ?
-ﻗ?  ﻗﻗﻗ DOCUMENT_*.md (5ﻛﺕ?
-ﻗ?  ﻗﻗﻗ FINAL_OPTIMIZATION_*.md (9ﻛﺕ?
-ﻗ?  ﻗﻗﻗ MIGRATION_*.md (5ﻛﺕ?
-ﻗ?  ﻗﻗﻗ ﮒﭘﻛﭨﮒﮒﺎﮔ۴ﮒ (10ﻛﺕ?
-ﻗﻗﻗ sample_validation_2026-04-02/       # ﮔ ﺓﮔ؛ﻠ۹ﻟﺁ
-ﻗ?  ﻗﻗﻗ sample_audit_report.md
-ﻗﻗﻗ [ﮒﺛﮒﮔﺑﭨﻟﺓﮔ۴ﮒ]                       # ﻛﺟﻝﮒ۷ﮔ ﺗﻝ؟ﮒﺛ
-ﻗ?  ﻗﻗﻗ LAYER5_*.md
-ﻗ?  ﻗﻗﻗ P0/P1/P2_ISSUES_*.md
-ﻗ?  ﻗﻗﻗ ﮒﭘﻛﭨﮒﺛﮒﮔ۴ﮒ
-ﻗﻗﻗ [ﮒﺟﻟ۵JSONﮔﻛﭨﭘ]                       # ﻛﺟﻝﮒﺟﻟ۵ﮔﻛﭨﭘ
-    ﻗﻗﻗ audit_list.json
-    ﻗﻗﻗ weekly_20260402.json
-    ﻗﻗﻗ monthly_20260402.json
+ﻗﻗﻗ archived_json_reports_20260402/     # ﮒﺛﮔ۰۲JSONﮔ۴ﮒ
+ﻗ?  ﻗﻗﻗ final_quality_report_round*.json (13ﻛﺕ?
+ﻗﻗﻗ archived_reports_20260402/          # ﮒﺛﮔ۰۲MDﮔ۴ﮒ
+ﻗ?  ﻗﻗﻗ ARCHITECTURE_*.md (3ﻛﺕ?
+ﻗ?  ﻗﻗﻗ DOCUMENT_*.md (5ﻛﺕ?
+ﻗ?  ﻗﻗﻗ FINAL_OPTIMIZATION_*.md (9ﻛﺕ?
+ﻗ?  ﻗﻗﻗ MIGRATION_*.md (5ﻛﺕ?
+ﻗ?  ﻗﻗﻗ ﮒﭘﻛﭨﮒﮒﺎﮔ۴ﮒ (10ﻛﺕ?
+ﻗﻗﻗ sample_validation_2026-04-02/       # ﮔ ﺓﮔ؛ﻠ۹ﻟﺁ
+ﻗ?  ﻗﻗﻗ sample_audit_report.md
+ﻗﻗﻗ [ﮒﺛﮒﮔﺑﭨﻟﺓﮔ۴ﮒ]                       # ﻛﺟﻝﮒ۷ﮔ ﺗﻝ؟ﮒﺛ
+ﻗ?  ﻗﻗﻗ LAYER5_*.md
+ﻗ?  ﻗﻗﻗ P0/P1/P2_ISSUES_*.md
+ﻗ?  ﻗﻗﻗ ﮒﭘﻛﭨﮒﺛﮒﮔ۴ﮒ
+ﻗﻗﻗ [ﮒﺟﻟ۵JSONﮔﻛﭨﭘ]                       # ﻛﺟﻝﮒﺟﻟ۵ﮔﻛﭨﭘ
+    ﻗﻗﻗ audit_list.json
+    ﻗﻗﻗ weekly_20260402.json
+    ﻗﻗﻗ monthly_20260402.json
 ```
 
-#### ﮒﺛﮔ۰۲ﮔﻛﭨﭘﻝﭨﻟ؟۰
+#### ﮒﺛﮔ۰۲ﮔﻛﭨﭘﻝﭨﻟ؟۰
 
-| ﻝﺎﭨﮒ | ﮔﺍﻠ | ﻝ؟ﮔ ﻝ؟ﮒﺛ |
+| ﻝﺎﭨﮒ | ﮔﺍﻠ | ﻝ؟ﮔ ﻝ؟ﮒﺛ |
 |------|------|----------|
-| ﮒﮒﺎMDﮔ۴ﮒ | 32ﻛﺕ?| archived_reports_20260402/ |
-| ﮒﮒﺎJSONﮔ۴ﮒ | 13ﻛﺕ?| archived_json_reports_20260402/ |
+| ﮒﮒﺎMDﮔ۴ﮒ | 32ﻛﺕ?| archived_reports_20260402/ |
+| ﮒﮒﺎJSONﮔ۴ﮒ | 13ﻛﺕ?| archived_json_reports_20260402/ |
 
 ---
 
-### 2.3 P2-3: ﮔﺕﻝﮒﻛﺛJSONﮔ۴ﮒﮔﻛﭨﭘ
+### 2.3 P2-3: ﮔﺕﻝﮒﻛﺛJSONﮔ۴ﮒﮔﻛﭨﭘ
 
-#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
-ﮔ ﺗﻝ؟ﮒﺛﮒ­ﮒ۷ﮒ۳۶ﻠﮒﻛﺛJSONﮔﻛﭨﭘﺅﺙ?- final_quality_report*.json (21ﻛﺕ۹ﮒﻛﺛ?
+#### ﮔﺑﮔﺗﮒﻝﭘﮔ?
+ﮔ ﺗﻝ؟ﮒﺛﮒ­ﮒ۷ﮒ۳۶ﻠﮒﻛﺛJSONﮔﻛﭨﭘﺅﺙ?- final_quality_report*.json (21ﻛﺕ۹ﮒﻛﺛ?
 - link_fix_report*.json (3ﻛﺕ?
 - quality_check_*.json (2ﻛﺕ?
 
-#### ﮔﺑﮔﺗﮔ۹ﮔﺛ
+#### ﮔﺑﮔﺗﮔ۹ﮔﺛ
 
-1. ﮒ ﻠ۳ﮔ ﺗﻝ؟ﮒﺛﻛﺕﻝﮒﻛﺛJSONﮔﻛﭨﭘ
-2. ﻛﺟﻝarchived_json_reports_20260402/ﻝ؟ﮒﺛﻛﺕ­ﻝﮒﺛﮔ۰۲ﻝﮔ؛
-3. ﻛﺟﻝﮒﺟﻟ۵ﻝﻠﻝﺛ؟JSONﮔﻛﭨﭘ
+1. ﮒ ﻠ۳ﮔ ﺗﻝ؟ﮒﺛﻛﺕﻝﮒﻛﺛJSONﮔﻛﭨﭘ
+2. ﻛﺟﻝarchived_json_reports_20260402/ﻝ؟ﮒﺛﻛﺕ­ﻝﮒﺛﮔ۰۲ﻝﮔ؛
+3. ﻛﺟﻝﮒﺟﻟ۵ﻝﻠﻝﺛ؟JSONﮔﻛﭨﭘ
 
-#### ﮒ ﻠ۳ﮔﻛﭨﭘﮔﺕﮒ
+#### ﮒ ﻠ۳ﮔﻛﭨﭘﮔﺕﮒ
 
-| ﮔﻛﭨﭘﮒ?| ﮒﮒ  |
+| ﮔﻛﭨﭘﮒ?| ﮒﮒ  |
 |--------|------|
-| final_quality_report.json | ﮒﻛﺛ |
-| final_quality_report_after_fix.json | ﮒﻛﺛ |
-| final_quality_report_complete.json | ﮒﻛﺛ |
-| final_quality_report_complete_fixed.json | ﮒﻛﺛ |
-| final_quality_report_final.json | ﮒﻛﺛ |
-| final_quality_report_final_optimized.json | ﮒﻛﺛ |
-| final_quality_report_optimized.json | ﮒﻛﺛ |
-| final_quality_report_success.json | ﮒﻛﺛ |
-| final_quality_report_round2-14.json | ﮒﺓﺎﮒﺛﮔ۰?|
-| link_fix_report.json | ﮒﻛﺛ |
-| link_fix_report_20260402.json | ﮒﻛﺛ |
-| remaining_link_fix_report_20260402.json | ﮒﻛﺛ |
-| intelligent_link_fix_result.json | ﮒﻛﺛ |
-| quality_check_full_report.json | ﮒﻛﺛ |
-| quality_gate_report.json | ﮒﻛﺛ |
+| final_quality_report.json | ﮒﻛﺛ |
+| final_quality_report_after_fix.json | ﮒﻛﺛ |
+| final_quality_report_complete.json | ﮒﻛﺛ |
+| final_quality_report_complete_fixed.json | ﮒﻛﺛ |
+| final_quality_report_final.json | ﮒﻛﺛ |
+| final_quality_report_final_optimized.json | ﮒﻛﺛ |
+| final_quality_report_optimized.json | ﮒﻛﺛ |
+| final_quality_report_success.json | ﮒﻛﺛ |
+| final_quality_report_round2-14.json | ﮒﺓﺎﮒﺛﮔ۰?|
+| link_fix_report.json | ﮒﻛﺛ |
+| link_fix_report_20260402.json | ﮒﻛﺛ |
+| remaining_link_fix_report_20260402.json | ﮒﻛﺛ |
+| intelligent_link_fix_result.json | ﮒﻛﺛ |
+| quality_check_full_report.json | ﮒﻛﺛ |
+| quality_gate_report.json | ﮒﻛﺛ |
 
-**ﮔﭨﻟ؟۰ﮒ ﻠ۳**: 27ﻛﺕ۹ﮒﻛﺛJSONﮔﻛﭨﭘ
+**ﮔﭨﻟ؟۰ﮒ ﻠ۳**: 27ﻛﺕ۹ﮒﻛﺛJSONﮔﻛﭨﭘ
 
 ---
 
-## ﻭ ﻛﺕﻙﮔﺑﮔﺗﮔﮔﻟﺁﻛﺙ?
-### 3.1 ﮔﺑﮔﺗﮒﮒﮒﺁﺗﮔﺁ
+## ﻭ ﻛﺕﻙﮔﺑﮔﺗﮔﮔﻟﺁﻛﺙ?
+### 3.1 ﮔﺑﮔﺗﮒﮒﮒﺁﺗﮔﺁ
 
-| ﮔﮔ  | ﮔﺑﮔﺗﮒ?| ﮔﺑﮔﺗﮒ?| ﮔﺗﮒ |
+| ﮔﮔ  | ﮔﺑﮔﺗﮒ?| ﮔﺑﮔﺗﮒ?| ﮔﺗﮒ |
 |------|--------|--------|------|
-| module_idﻟ۵ﻝﻝ?| 94% | 100% | +6% |
-| audit_stateﮔﻛﭨﭘﮔ?| 100+ | 70+ | -30% |
-| JSONﮒﻛﺛﮔﻛﭨﭘ | 27ﻛﺕ?| 0ﻛﺕ?| -100% |
-| ﻝ؟ﮒﺛﻝﭨﮔﮔﺕﮔﺍﮒﭦ?| ﮔﺓﺓﻛﺗﺎ | ﮔﮒﭦ | ﮔﺝﻟﮔﺗﮒ |
+| module_idﻟ۵ﻝﻝ?| 94% | 100% | +6% |
+| audit_stateﮔﻛﭨﭘﮔ?| 100+ | 70+ | -30% |
+| JSONﮒﻛﺛﮔﻛﭨﭘ | 27ﻛﺕ?| 0ﻛﺕ?| -100% |
+| ﻝ؟ﮒﺛﻝﭨﮔﮔﺕﮔﺍﮒﭦ?| ﮔﺓﺓﻛﺗﺎ | ﮔﮒﭦ | ﮔﺝﻟﮔﺗﮒ |
 
-### 3.2 ﮒﻟ۶ﻝﮔﮒ?
+### 3.2 ﮒﻟ۶ﻝﮔﮒ?
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                   ﮔﺑﮔﺗﮒﮒﻟ۶ﻝ                              ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?module_idﻟ۵ﻝﻝ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 100% ﻗ?ﻗ?ﻝ؟ﮒﺛﻝﭨﮔﻟ۶ﻟ    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 100% ﻗ?ﻗ?ﮔﻛﭨﭘﮒﻛﺛﻝ?     ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 0%   ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?ﮔﭨﻛﺛﮒﻟ۶ﻝ?     ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 100% ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?                   ﮔﺑﮔﺗﮒﮒﻟ۶ﻝ                              ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?module_idﻟ۵ﻝﻝ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 100% ﻗ?ﻗ?ﻝ؟ﮒﺛﻝﭨﮔﻟ۶ﻟ    ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 100% ﻗ?ﻗ?ﮔﻛﭨﭘﮒﻛﺛﻝ?     ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 0%   ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?ﮔﭨﻛﺛﮒﻟ۶ﻝ?     ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ 100% ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
 ---
 
-## ﻗ?ﮒﻙﮔﺑﮔﺗﻠ۹ﻟﺁ?
-### 4.1 ﻠ۹ﻟﺁﻠ۰ﺗﻝ؟
+## ﻗ?ﮒﻙﮔﺑﮔﺗﻠ۹ﻟﺁ?
+### 4.1 ﻠ۹ﻟﺁﻠ۰ﺗﻝ؟
 
-| ﻠ۹ﻟﺁﻠ۰?| ﻠ۹ﻟﺁﮔﺗﮔﺏ | ﻝﭨﮔ |
+| ﻠ۹ﻟﺁﻠ۰?| ﻠ۹ﻟﺁﮔﺗﮔﺏ | ﻝﭨﮔ |
 |--------|----------|------|
-| module_idﮒﺁﻛﺕﮔ?| Grepﮔﻝﺑ۱ﻠﮒ۳ | ﻗ?ﮔ ﻠﮒ۳?|
-| YAMLﮔ ﺙﮒﺙﮔ­۲ﻝ۰؟ﮔ?| ﻛﭦﭦﮒﺓ۴ﮔ۲ﮔ?| ﻗ?ﮔ ﺙﮒﺙﮔ­۲ﻝ۰؟ |
-| ﮒﺛﮔ۰۲ﻝ؟ﮒﺛﮒ؟ﮔﺑﮔ?| LSﮔ۲ﮔ?| ﻗ?ﮔﻛﭨﭘﮒ؟ﮔﺑ |
-| JSONﮔﺕﻝﮒ؟ﮔﺑﮔ?| LSﮔ۲ﮔ?| ﻗ?ﮒﻛﺛﮒﺓﺎﮔﺕﻝ?|
+| module_idﮒﺁﻛﺕﮔ?| Grepﮔﻝﺑ۱ﻠﮒ۳ | ﻗ?ﮔ ﻠﮒ۳?|
+| YAMLﮔ ﺙﮒﺙﮔ­۲ﻝ۰؟ﮔ?| ﻛﭦﭦﮒﺓ۴ﮔ۲ﮔ?| ﻗ?ﮔ ﺙﮒﺙﮔ­۲ﻝ۰؟ |
+| ﮒﺛﮔ۰۲ﻝ؟ﮒﺛﮒ؟ﮔﺑﮔ?| LSﮔ۲ﮔ?| ﻗ?ﮔﻛﭨﭘﮒ؟ﮔﺑ |
+| JSONﮔﺕﻝﮒ؟ﮔﺑﮔ?| LSﮔ۲ﮔ?| ﻗ?ﮒﻛﺛﮒﺓﺎﮔﺕﻝ?|
 
-### 4.2 ﻠ۹ﻟﺁﻝﭨﻟ؟ﭦ
+### 4.2 ﻠ۹ﻟﺁﻝﭨﻟ؟ﭦ
 
-ﮔﮔP2ﻝﭦ۶ﻠ؟ﻠ۱ﮒﺓﺎﮔﮒﮔﺑﮔﺗﺅﺙﻝﺏﭨﻝﭨﮔﮔ۰۲ﮔﺎﭨﻝﻝﭘﮔﻟﺝﺝﮒﺍﻛﺕﻛﺕﮔ ﮒﻙ?
+ﮔﮔP2ﻝﭦ۶ﻠ؟ﻠ۱ﮒﺓﺎﮔﮒﮔﺑﮔﺗﺅﺙﻝﺏﭨﻝﭨﮔﮔ۰۲ﮔﺎﭨﻝﻝﭘﮔﻟﺝﺝﮒﺍﻛﺕﻛﺕﮔ ﮒﻙ?
 ---
 
-## ﻭ ﻛﭦﻙﮒﻝﭨ­ﮒﭨﭦﻟ؟?
-### 5.1 ﻝﭨﺑﮔ۳ﮒﭨﭦﻟ؟؟
+## ﻭ ﻛﭦﻙﮒﻝﭨ­ﮒﭨﭦﻟ؟?
+### 5.1 ﻝﭨﺑﮔ۳ﮒﭨﭦﻟ؟؟
 
-1. **ﮒ؟ﮔﮒﺛﮔ۰۲**: ﮔﺁﮔﮒﺛﮔ۰۲ﮒﮒﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
-2. **ﮒﺛﮒﻟ۶ﻟ**: ﮔﺍﮔﮔ۰۲ﮒﺟﻠ۰ﭨﮒﮒ،module_id
-3. **ﻝ؟ﮒﺛﻝ؟۰ﻝ**: ﻛﺟﮔaudit_stateﻝ؟ﮒﺛﮔﺑﮔﺑ
+1. **ﮒ؟ﮔﮒﺛﮔ۰۲**: ﮔﺁﮔﮒﺛﮔ۰۲ﮒﮒﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+2. **ﮒﺛﮒﻟ۶ﻟ**: ﮔﺍﮔﮔ۰۲ﮒﺟﻠ۰ﭨﮒﮒ،module_id
+3. **ﻝ؟ﮒﺛﻝ؟۰ﻝ**: ﻛﺟﮔaudit_stateﻝ؟ﮒﺛﮔﺑﮔﺑ
 
-### 5.2 ﻠ۱ﻠﺎﮔ۹ﮔﺛ
+### 5.2 ﻠ۱ﻠﺎﮔ۹ﮔﺛ
 
-1. ﮒﭨﭦﻝ،ﮔﮔ۰۲ﮒﮒﭨﭦﮔ۲ﮔ۴ﮔﺕﮒ?2. ﻟ؟ﺝﻝﺛ؟module_idﻟ۹ﮒ۷ﻝﮔﮔﭦﮒﭘ
-3. ﮒ؟ﮔﮔ۶ﻟ۰ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰
+1. ﮒﭨﭦﻝ،ﮔﮔ۰۲ﮒﮒﭨﭦﮔ۲ﮔ۴ﮔﺕﮒ?2. ﻟ؟ﺝﻝﺛ؟module_idﻟ۹ﮒ۷ﻝﮔﮔﭦﮒﭘ
+3. ﮒ؟ﮔﮔ۶ﻟ۰ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰
 
 ---
 
-## ﻭ ﻠﮒﺛ
+## ﻭ ﻠﮒﺛ
 
-### A. ﮔﺑﮔﺗﮔﻛﭨﭘﮔﺕﮒ
+### A. ﮔﺑﮔﺗﮔﻛﭨﭘﮔﺕﮒ
 
-#### A.1 ﮔﺓﭨﮒ module_idﻝﮔﻛﭨ?(9ﻛﺕ?
+#### A.1 ﮔﺓﭨﮒ module_idﻝﮔﻛﭨ?(9ﻛﺕ?
 
 1. UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md
 2. MODULE_RELATIONSHIP_DIAGRAM.md
@@ -234,19 +234,19 @@ audit_state/
 8. PORTFOLIO_OPTIMIZATION_USAGE_GUIDE.md
 9. PORTFOLIO_OPTIMIZATION_API_REFERENCE.md
 
-#### A.2 ﮒﺛﮔ۰۲ﻝMDﮔ۴ﮒ (32ﻛﺕ?
+#### A.2 ﮒﺛﮔ۰۲ﻝMDﮔ۴ﮒ (32ﻛﺕ?
 
-ﮒﻟ۶ archived_reports_20260402/ ﻝ؟ﮒﺛ
+ﮒﻟ۶ archived_reports_20260402/ ﻝ؟ﮒﺛ
 
-#### A.3 ﮒ ﻠ۳ﻝJSONﮔﻛﭨﭘ (27ﻛﺕ?
+#### A.3 ﮒ ﻠ۳ﻝJSONﮔﻛﭨﭘ (27ﻛﺕ?
 
-ﮒﻟ۶ﻛﺕﮔ"ﮒ ﻠ۳ﮔﻛﭨﭘﮔﺕﮒ"
+ﮒﻟ۶ﻛﺕﮔ"ﮒ ﻠ۳ﮔﻛﭨﭘﮔﺕﮒ"
 
 ---
 
-**ﮔﺑﮔﺗﮔ۴ﮒﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?**ﮔﺑﮔﺗﮒ?*: Audit Sentinel
-**ﮔﺑﮔﺗﮔ۴ﮔ**: 2026-04-03
-**ﻠ۹ﻟﺁﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﻠ۹ﻟﺁ?
+**ﮔﺑﮔﺗﮔ۴ﮒﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?**ﮔﺑﮔﺗﮒ?*: Audit Sentinel
+**ﮔﺑﮔﺗﮔ۴ﮔ**: 2026-04-03
+**ﻠ۹ﻟﺁﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﻠ۹ﻟﺁ?
 ---
 
-**ﮔﮔ۰۲ﻝﭨﮔ**
+**ﮔﮔ۰۲ﻝﭨﮔ**

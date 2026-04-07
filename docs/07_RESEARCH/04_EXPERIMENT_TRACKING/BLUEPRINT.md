@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BLUEPRINT_005
 version: 1.0.0
 status: Active
@@ -20,10 +20,8 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: é¦å¸­ææ¡£æ¶æå¸?
 standard_type: 专业量化机构蓝图
 applicable_scope: å
-¨ç³»ç»æ¶æè®¾è®?
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -31,7 +29,6 @@ implementation_progress: 0%
 ---
 
 
-# ç ç©¶å®éªè¿½è¸ªèå¾ï¼ç®åçï¼?
 > **核心职责**: Blueprint.Md蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Blueprint.Md蓝图设计相关内容
@@ -39,11 +36,8 @@ implementation_progress: 0%
 
 
 > æ¸
-é£éåç³»ç» v5.0 çç ç©¶å®éªè¿½è¸ªæ¹æ¡?
 > **索引**: `EXP_001`
-> **æ³¨æ**: æ¬èå¾éç?è´­ä¹°èéèªç "ç­ç¥ï¼ä½¿ç¨Weights & Biases (wandb.ai)
-> **çç±**: wandbå
-è´¹çè¶³å¤ä¸ªäººä½¿ç¨ï¼æ¯æPythonä¸è¡ä»£ç éæ?
+> **çç±**: wandbå
 
 
 ## 1. 设计原则
@@ -51,37 +45,26 @@ implementation_progress: 0%
 | 原则 | 说明 |
 |------|------|
 | 购买而非自研 | 使用wandb.ai，不自研实验追踪 |
-| é¶å­¦ä¹ ææ?| wandbä¸è¡ä»£ç å³å¯å¼å§è¿½è¸?|
 | æ°¸ä¹
 å
-è´¹ | ä¸ªäººä½¿ç¨å
-è´¹ï¼è¶³å¤ä¸­å°è§æ¨¡å®éª?|
-| äºç«¯åæ­¥ | å®éªæ°æ®äºç«¯å­å¨ï¼ä¸ä¸¢æ°æ?|
 
 
 ## 2. 方案对比
 
 | 方案 | 自研系统 | wandb.ai(推荐) |
 |------|----------|----------------|
-| å¼åæ¶é?| 1-2ä¸ªæ | 5åééæ |
-| åè½å®æ´åº?| 50% | 95% |
 | å
-è´¹é¢åº¦ | - | 100GBå­å¨ |
-| å¯è§å?| ç®é?| ä¸ä¸å¾è¡¨ |
-| åä½æ¯æ | æ?| å¢éåä½ |
 
 
 ## 3. wandb集成方案
 
-### 3.1 å¿«ééæ?
 
 ```bash
-# å®è£
+# å®è£
 
 pip install wandb
 
-# ç»å½(å
-è´¹æ³¨å)
+# ç»å½(å
 wandb login
 ```
 
@@ -92,7 +75,7 @@ import wandb
 import pandas as pd
 import numpy as np
 
-# åå§å?
+# åå§å?
 wandb.init(
     project="quant-research",
     entity="your_username",
@@ -133,7 +116,7 @@ class FactorExperiment:
             wandb.log({
                 'ic_timeseries': wandb.plot.line(
                     metrics['ic_series'],
-                    title="ICæ¶åºå?
+                    title="ICæ¶åºå?
                 ),
                 'factor_distribution': wandb.Histogram(
                     factor_values.stack()
@@ -189,7 +172,6 @@ class StrategyExperiment:
 ```
 
 ### 3.4 è¶
-åæ°ä¼åè¿½è¸?
 
 ```python
 import wandb
@@ -197,7 +179,6 @@ from wandb.sklearn import plot_clusterer, plot_regressor
 
 def objective(params):
     """Optuna + wandb è¶
-åæ°ä¼å?""
 
     with wandb.init(
         project="quant-research",
@@ -214,7 +195,6 @@ def objective(params):
             'drawdown': results['drawdown']
         })
 
-        # è¿åç®æ å?
         return results['sharpe']
 
 # 使用wandb追踪Optuna
@@ -233,33 +213,21 @@ study.optimize(
 ```
 
 
-## 4. wandbä»ªè¡¨æ?
 
-### 4.1 å å­ç ç©¶ä»ªè¡¨æ?
 
-wandbèªå¨çæï¼?
-- IC_IRæ£ç¹å?
+- IC_IRæ£ç¹å?
 - è¶
-åæ°ç¸å
-³æ§ç­åå¾
 - 最佳实验对比表
-- å®éªåå²æ¶é´çº?
 
-### 4.2 ç­ç¥ç ç©¶ä»ªè¡¨æ?
 
-wandbèªå¨çæï¼?
 - Sharpe比率分布
 - 回测权益曲线对比
-- æ¶ç-åæ¤æ£ç¹å?
 - 交易频率分析
 
 
-## 5. å¢éåä½(å¯é?
 
 ```yaml
 # wandb 团队协作(未来扩展)
-# ä¸ªäººå
-è´¹ï¼å¢éä»è´?
 team:
   name: "qingfeng-quant"
   members:
@@ -276,7 +244,6 @@ projects:
 
 ## 6. 本地替代方案
 
-å¦æä¸éè¦äºç«¯åæ­¥ï¼å¯ä»¥ä½¿ç¨MLflow(å¼æºæ¬å°æ¹æ¡?ï¼?
 
 ```yaml
 # docker-compose.yml
@@ -304,13 +271,11 @@ with mlflow.start_run():
 
 ## 7. 更新记录
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ |
+容 |
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
 
-**ç»´æ¤è?*: æ¸
 风量化系统
 **索引**: `EXP_001`
 ---
@@ -326,7 +291,6 @@ with mlflow.start_run():
 - **蓝图文档**: [BLUEPRINT.md](07_RESEARCH\04_EXPERIMENT_TRACKING\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: å
-¨ç³»ç»æ¶æè®¾è®?
 - **状态**: Active
 ```
 
@@ -335,7 +299,7 @@ with mlflow.start_run():
 | 模块 | 职责 | 边界 |
 |------|------|------|
 | **Research Blueprint** | å
-¨ç³»ç»æ¶æè®¾è®? | **核心模块** |
+¨ç³»ç»æ¶æè®¾è®? | **核心模块** |
 
 ### 8.3 版本管理
 

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER6_COMPREHENSIVE_FIX_REPORT_20260407_001
 version: 1.0.0
 status: Active

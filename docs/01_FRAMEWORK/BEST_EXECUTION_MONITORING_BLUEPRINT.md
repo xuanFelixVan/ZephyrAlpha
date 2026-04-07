@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BEST_EXECUTION_MONITORING_BLUEPRINT_001
 version: 1.0.0
 status: Active

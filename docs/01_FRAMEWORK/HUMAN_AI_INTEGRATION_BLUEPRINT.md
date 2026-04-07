@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: HUMAN_AI_INTEGRATION_BLUEPRINT_001
 version: 1.1.0
 status: Active
@@ -14,7 +14,7 @@ related_documents:
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md
 responsibility_boundary: |
-  本文档负责三级时间框架人机协同界面设计，包括�?  - 宏观配置层人机协同界�?  - 中观策略层人机协同界�?  - 微观执行层人机协同界�?  
+  本文档负责三级时间框架人机协同界面设计，包括?  - 宏观配置层人机协同界?  - 中观策略层人机协同界?  - 微观执行层人机协同界?  
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   协作场景细化请参考：HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md
 future_extensions:
@@ -23,10 +23,10 @@ future_extensions:
     items:
       - RESTful API服务
       - WebSocket实时通信
-      - 移动端支�?  - phase: medium_term
+      - 移动端支?  - phase: medium_term
     timeline: 3-6个月
     items:
-      - 多终端协同决�?      - 推送通知集成
+      - 多终端协同决?      - 推送通知集成
       - 生物识别认证
 ---
 
@@ -39,18 +39,18 @@ future_extensions:
 
 > **版本**: v1.1
 > **创建日期**: 2026-04-02
-> **最后更�?*: 2026-04-03
+> **最后更?*: 2026-04-03
 > **目的**: 为三级时间框架架构提供专属的人机协同界面设计
-> **核心价�?*: 为每个时间框架层级提供专属的人机协同界面
+> **核心价?*: 为每个时间框架层级提供专属的人机协同界面
 
 ---
 
 ## 📋 文档职责说明
 
-**本文档职�?*�?- �?三级时间框架人机协同界面设计
-- �?宏观配置层人机协同界�?- �?中观策略层人机协同界�?- �?微观执行层人机协同界�?
-**相关文档职责**�?- 📄 [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md)：人机交互层战略规划
-- 📄 [HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md](./HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md)：人机协作场景细�?
+**本文档职?*?- ?三级时间框架人机协同界面设计
+- ?宏观配置层人机协同界?- ?中观策略层人机协同界?- ?微观执行层人机协同界?
+**相关文档职责**?- 📄 [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md)：人机交互层战略规划
+- 📄 [HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md](./HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md)：人机协作场景细?
 ---
 
 ## 📊 一、三级时间框架与人机协同对应关系
@@ -99,7 +99,7 @@ class StrategicDecisionInterface:
         
         决策流程:
         1. AI生成配置建议
-        2. 人类审核配置合理?        3. 人类调整配置权重(�?
+        2. 人类审核配置合理?        3. 人类调整配置权重(?
         4. 人类最终审?        5. AI执行配置
         """
         # 展示配置建议
@@ -132,7 +132,7 @@ class StrategicDecisionInterface:
 ### 2.2 季度调仓决策流程
 
 ```
-┌─────────────────────────────────────────────────────────────────??             宏观配置层季度调仓决策流?                          ?├─────────────────────────────────────────────────────────────────??                                                                ?? 1. AI自动分析 (每月?                                         ??    ├── 经济范式判断                                            ??    ├── 资产配置优化                                            ??    └── 风险预算计算                                            ??          ?                                                    ?? 2. AI生成调仓建议 (季度?                                     ??    ├── 目标资产权重                                            ??    ├── 调仓原因分析                                            ??    └── 预期收益风险                                            ??          ?                                                    ?? 3. 人类审核决策 (季度初，2天内)                                ??    ├── 审核调仓建议                                            ??    ├── 调整配置权重(�?                                      ??    └── 最终审批决?                                           ??          ?                                                    ?? 4. AI执行调仓 (审批?周内)                                    ??    ├── 制定执行计划                                            ??    ├── 分批执行调仓                                            ??    └── 监控执行质量                                            ??          ?                                                    ?? 5. 人类监督执行 (执行期间)                                     ??    ├── 监控执行进度                                            ??    ├── 评估执行质量                                            ??    └── 必要时干预调?                                         ??                                                                ?└─────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────??             宏观配置层季度调仓决策流?                          ?├─────────────────────────────────────────────────────────────────??                                                                ?? 1. AI自动分析 (每月?                                         ??    ├── 经济范式判断                                            ??    ├── 资产配置优化                                            ??    └── 风险预算计算                                            ??          ?                                                    ?? 2. AI生成调仓建议 (季度?                                     ??    ├── 目标资产权重                                            ??    ├── 调仓原因分析                                            ??    └── 预期收益风险                                            ??          ?                                                    ?? 3. 人类审核决策 (季度初，2天内)                                ??    ├── 审核调仓建议                                            ??    ├── 调整配置权重(?                                      ??    └── 最终审批决?                                           ??          ?                                                    ?? 4. AI执行调仓 (审批?周内)                                    ??    ├── 制定执行计划                                            ??    ├── 分批执行调仓                                            ??    └── 监控执行质量                                            ??          ?                                                    ?? 5. 人类监督执行 (执行期间)                                     ??    ├── 监控执行进度                                            ??    ├── 评估执行质量                                            ??    └── 必要时干预调?                                         ??                                                                ?└─────────────────────────────────────────────────────────────────?```
 
 ---
 
@@ -154,7 +154,7 @@ class StrategyManagementInterface:
         决策流程:
         1. AI基于市场状态筛选策?        2. AI生成策略权重建议
         3. 人类审核策略组合
-        4. 人类调整权重(�?
+        4. 人类调整权重(?
         5. 人类确认最终组?        """
         # AI筛选策?        candidates = self.strategy_selector.filter_by_market_state(market_state)
         
@@ -275,7 +275,7 @@ class SystemGovernanceInterface:
         self.human_ai_collaboration = HumanAICollaboration()    # 人机协作界面
         
     def monitor_ai_governance(self, governance_report: GovernanceReport):
-        """监控AI治理�?        
+        """监控AI治理?        
         界面元素:
         - AI行为准则遵守?        - AI决策透明度评?        - AI错误统计与分?        - AI持续学习进度
         """
@@ -584,7 +584,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
 ## 🎯 七、总结
 
-### 7.1 核心�?
+### 7.1 核心?
 通过将Layer 8人机协同决策界面整合到三级时间框架架构中,我们实现?
 
 1. **时间框架专属界面**: 每个层级都有专属的人机协同界?2. **决策频率匹配**: 界面更新频率与决策频率匹?3. **人类参与度适配**: 人类参与度与决策重要性匹?4. **统一界面框架**: 统一的界面框架整合所有层?
@@ -595,7 +595,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
 ---
 
-**版本**: v1.1 | **创建日期**: 2026-04-02 | **最后更?*: 2026-04-03 | **�?*: ?正式发布
+**版本**: v1.1 | **创建日期**: 2026-04-02 | **最后更?*: 2026-04-03 | **?*: ?正式发布
 ---
 
 ## 1. 文档治理

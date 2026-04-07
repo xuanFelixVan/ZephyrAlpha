@@ -1,55 +1,55 @@
-﻿---
+﻿﻿---
 module_id: TECH_SPEC_MARKET_PARTICIPANT_SIM_SUPPLEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 归档文档、历史版本
-standard_type: ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻟ۰۴ﮒﮔﮔ۰۲
-applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻟ۰۴ﮒﮔﮔ۰۲
+applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
 ---
 
 
-# ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?- ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻟ۰۴ﮒﻟ؟ﺝﻟ؟?
+# ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?- ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻟ۰۴ﮒﻟ؟ﺝﻟ؟?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> **ﻝﮔ؛**: v1.0
-> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
-> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: Spec-Approver (ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛ?
-> **ﻝ؟ﻝ**: ﻟ۰۴ﮒﻛﺕﻛﺕ۹ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰,ﻝ۰؟ﻛﺟﻟﮒﺝﮒ؟ﮔﺑﮔ?> **ﻛﺙﮒﻝﭦ?*: P0 (24ﮒﺍﮔﭘﮒﮒ؟ﮔ?
+> **ﻝﮔ؛**: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: Spec-Approver (ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛ?
+> **ﻝ؟ﻝ**: ﻟ۰۴ﮒﻛﺕﻛﺕ۹ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰,ﻝ۰؟ﻛﺟﻟﮒﺝﮒ؟ﮔﺑﮔ?> **ﻛﺙﮒﻝﭦ?*: P0 (24ﮒﺍﮔﭘﮒﮒ؟ﮔ?
 
 ---
 
-## ﻭ ﻛﺕﻙﮔﺗﻟﺟﻠ۰ﺗﮔ۵ﻟﺟﺍ
+## ﻭ ﻛﺕﻙﮔﺗﻟﺟﻠ۰ﺗﮔ۵ﻟﺟﺍ
 
-ﮔ ﺗﮔ؟ﮔﮔﺁﻟﺁﮒ؟۰ﮔ۴ﮒ?ﻠﻟ۵ﻟ۰۴ﮒﻛﭨ۴ﻛﺕﻛﺕﻛﺕ۹ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗ:
+ﮔ ﺗﮔ؟ﮔﮔﺁﻟﺁﮒ؟۰ﮔ۴ﮒ?ﻠﻟ۵ﻟ۰۴ﮒﻛﭨ۴ﻛﺕﻛﺕﻛﺕ۹ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗ:
 
-| ﮔﺗﻟﺟﻠ۰ﺗID | ﮔﺗﻟﺟﮒﮒ؟ﺗ | ﻛﺙﮒﻝﭦ?| ﮒ؟ﮔﮔ ﮒ |
+| ﮔﺗﻟﺟﻠ۰ﺗID | ﮔﺗﻟﺟﮒﮒ؟ﺗ | ﻛﺙﮒﻝﭦ?| ﮒ؟ﮔﮔ ﮒ |
 |---------|---------|--------|---------|
-| **IMP-001** | ﻟ۰۴ﮒﮒﺙﮒﺕﺕﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒ?| P0 | ﮔﮔﮔ۴ﮒ۲ﻠﺛﮔﮒﺙﮒﺕﺕﮒ۳ﻝ?ﻠﻟﺁﮔﭦﮒﭘﮒ؟ﮒ |
-| **IMP-002** | ﮒ؟ﮒRLﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ  | P1 | ﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒ?ﮔ۶ﻟﺛﮔﮔ ﮒ؟ﮔﭘﻝﮔ۶ |
-| **IMP-003** | ﻟ۰۴ﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔ۰ | P1 | ﮔ ۰ﮒﮔﭖﻝ۷ﮔﺕﮔﺍ,ﻠ۹ﻟﺁﮔ ﮒﮔﻝ۰؟ |
+| **IMP-001** | ﻟ۰۴ﮒﮒﺙﮒﺕﺕﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒ?| P0 | ﮔﮔﮔ۴ﮒ۲ﻠﺛﮔﮒﺙﮒﺕﺕﮒ۳ﻝ?ﻠﻟﺁﮔﭦﮒﭘﮒ؟ﮒ |
+| **IMP-002** | ﮒ؟ﮒRLﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ  | P1 | ﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒ?ﮔ۶ﻟﺛﮔﮔ ﮒ؟ﮔﭘﻝﮔ۶ |
+| **IMP-003** | ﻟ۰۴ﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔ۰ | P1 | ﮔ ۰ﮒﮔﭖﻝ۷ﮔﺕﮔﺍ,ﻠ۹ﻟﺁﮔ ﮒﮔﻝ۰؟ |
 
 ---
 
-## ﻭ۶ ﻛﭦﻙIMP-001: ﮒﺙﮒﺕﺕﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟?
-### 2.1 ﮒﺙﮒﺕﺕﮒ۳ﻝﮔﭘﮔ
+## ﻭ۶ ﻛﭦﻙIMP-001: ﮒﺙﮒﺕﺕﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟?
+### 2.1 ﮒﺙﮒﺕﺕﮒ۳ﻝﮔﭘﮔ
 
-#### 2.1.1 ﮒﺙﮒﺕﺕﮒﺎﮔ؛۰ﻝﭨﮔ
+#### 2.1.1 ﮒﺙﮒﺕﺕﮒﺎﮔ؛۰ﻝﭨﮔ
 
 ```python
 class MarketSimulationException(Exception):
-    """ﮒﺕﮒﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮒﭦﻝ۰ﮒﺙﮒﺕﺕ
+    """ﮒﺕﮒﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮒﭦﻝ۰ﮒﺙﮒﺕﺕ
     
-    ﻝﺑ۱ﮒﺙ: EXCEPTION.BASE.001
+    ﻝﺑ۱ﮒﺙ: EXCEPTION.BASE.001
     """
     def __init__(self, message: str, error_code: str = None, context: Dict = None):
         self.message = message
@@ -60,10 +60,10 @@ class MarketSimulationException(Exception):
 
 
 class DataAcquisitionException(MarketSimulationException):
-    """ﮔﺍﮔ؟ﻠﻠﮒﺙﮒﺕﺕ
+    """ﮔﺍﮔ؟ﻠﻠﮒﺙﮒﺕﺕ
     
-    ﻝﺑ۱ﮒﺙ: EXCEPTION.DATA.001
-    ﮒﭦﮔﺁ: ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻙﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁﻙﮔﺍﮔ؟ﻝﺙﭦﮒ۳?    """
+    ﻝﺑ۱ﮒﺙ: EXCEPTION.DATA.001
+    ﮒﭦﮔﺁ: ﮔﺍﮔ؟ﮔﭦﻛﺕﮒﺁﻝ۷ﻙﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁﻙﮔﺍﮔ؟ﻝﺙﭦﮒ۳?    """
     def __init__(self, source: str, message: str, **kwargs):
         self.source = source
         error_code = f"DATA_ACQUISITION_{source.upper()}"
@@ -71,9 +71,9 @@ class DataAcquisitionException(MarketSimulationException):
 
 
 class AgentDecisionException(MarketSimulationException):
-    """ﮔﭦﻟﺛﻛﺛﮒﺏﻝ­ﮒﺙﮒﺕ?    
-    ﻝﺑ۱ﮒﺙ: EXCEPTION.AGENT.001
-    ﮒﭦﮔﺁ: ﮔﭦﻟﺛﻛﺛﮒﺏﻝ­ﮒ۳ﺎﻟﺑ۴ﻙﻝﭘﮔﮒﺙﮒﺕﺕﻙﮒﮔﺍﻠﻟﺁ?    """
+    """ﮔﭦﻟﺛﻛﺛﮒﺏﻝ­ﮒﺙﮒﺕ?    
+    ﻝﺑ۱ﮒﺙ: EXCEPTION.AGENT.001
+    ﮒﭦﮔﺁ: ﮔﭦﻟﺛﻛﺛﮒﺏﻝ­ﮒ۳ﺎﻟﺑ۴ﻙﻝﭘﮔﮒﺙﮒﺕﺕﻙﮒﮔﺍﻠﻟﺁ?    """
     def __init__(self, agent_type: str, message: str, **kwargs):
         self.agent_type = agent_type
         error_code = f"AGENT_DECISION_{agent_type.upper()}"
@@ -81,10 +81,10 @@ class AgentDecisionException(MarketSimulationException):
 
 
 class RLTrainingException(MarketSimulationException):
-    """RLﻟ؟­ﻝﭨﮒﺙﮒﺕﺕ
+    """RLﻟ؟­ﻝﭨﮒﺙﮒﺕﺕ
     
-    ﻝﺑ۱ﮒﺙ: EXCEPTION.RL.001
-    ﮒﭦﮔﺁ: ﮔ۷۰ﮒﻟ؟­ﻝﭨﮒ۳ﺎﻟﺑ۴ﻙﮔ۱ﺁﮒﭦ۵ﻝﻝﺕﻙﮔﭘﮔﮒ۳ﺎﻟﺑ?    """
+    ﻝﺑ۱ﮒﺙ: EXCEPTION.RL.001
+    ﮒﭦﮔﺁ: ﮔ۷۰ﮒﻟ؟­ﻝﭨﮒ۳ﺎﻟﺑ۴ﻙﮔ۱ﺁﮒﭦ۵ﻝﻝﺕﻙﮔﭘﮔﮒ۳ﺎﻟﺑ?    """
     def __init__(self, model_name: str, message: str, **kwargs):
         self.model_name = model_name
         error_code = f"RL_TRAINING_{model_name.upper()}"
@@ -92,21 +92,21 @@ class RLTrainingException(MarketSimulationException):
 
 
 class MarketImpactException(MarketSimulationException):
-    """ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﺙﮒﺕﺕ
+    """ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﺙﮒﺕﺕ
     
-    ﻝﺑ۱ﮒﺙ: EXCEPTION.MARKET_IMPACT.001
-    ﮒﭦﮔﺁ: ﮒﺕﮒﭦﮒﺎﮒﭨﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ﻙﮒﮔﺍﮔ ۰ﮒﻠﻟﺁ?    """
+    ﻝﺑ۱ﮒﺙ: EXCEPTION.MARKET_IMPACT.001
+    ﮒﭦﮔﺁ: ﮒﺕﮒﭦﮒﺎﮒﭨﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ﻙﮒﮔﺍﮔ ۰ﮒﻠﻟﺁ?    """
     def __init__(self, message: str, **kwargs):
         error_code = "MARKET_IMPACT_ERROR"
         super().__init__(message, error_code, **kwargs)
 ```
 
-#### 2.1.2 ﮒﺙﮒﺕﺕﮒ۳ﻝﮒ۷ﻟ؟ﺝﻟ؟?
+#### 2.1.2 ﮒﺙﮒﺕﺕﮒ۳ﻝﮒ۷ﻟ؟ﺝﻟ؟?
 ```python
 class ExceptionHandler:
-    """ﻝﭨﻛﺕﮒﺙﮒﺕﺕﮒ۳ﻝﮒ?    
-    ﻝﺑ۱ﮒﺙ: HANDLER.EXCEPTION.001
-    ﻟﻟﺑ۲: ﻝﭨﻛﺕﮒ۳ﻝﻝﺏﭨﻝﭨﮒﺙﮒﺕﺕ,ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟ,ﮒﻠﮒﻟ­?    """
+    """ﻝﭨﻛﺕﮒﺙﮒﺕﺕﮒ۳ﻝﮒ?    
+    ﻝﺑ۱ﮒﺙ: HANDLER.EXCEPTION.001
+    ﻟﻟﺑ۲: ﻝﭨﻛﺕﮒ۳ﻝﻝﺏﭨﻝﭨﮒﺙﮒﺕﺕ,ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟ,ﮒﻠﮒﻟ­?    """
     
     def __init__(self, config: ExceptionHandlerConfig):
         self.config = config
@@ -117,28 +117,28 @@ class ExceptionHandler:
     def handle_exception(self, 
                         exception: MarketSimulationException,
                         context: Dict = None) -> ExceptionHandlingResult:
-        """ﮒ۳ﻝﮒﺙﮒﺕﺕ
+        """ﮒ۳ﻝﮒﺙﮒﺕﺕ
         
-        ﮒ۳ﻝﮔﭖﻝ۷:
-        1. ﻟ؟ﺍﮒﺛﮒﺙﮒﺕﺕﮔ۴ﮒﺟ
-        2. ﮒ۳ﮔ­ﮒﺙﮒﺕﺕﻝﭦ۶ﮒ،
-        3. ﮒﻠﮒﻟ­?ﮒ۵ﻠﻟ۵?
-        4. ﻟ؟ﺍﮒﺛﮒﺍﻠﻟﺁﺁﮔﺍﮔ؟ﮒﭦ
-        5. ﻟﺟﮒﮒ۳ﻝﻝﭨﮔ
+        ﮒ۳ﻝﮔﭖﻝ۷:
+        1. ﻟ؟ﺍﮒﺛﮒﺙﮒﺕﺕﮔ۴ﮒﺟ
+        2. ﮒ۳ﮔ­ﮒﺙﮒﺕﺕﻝﭦ۶ﮒ،
+        3. ﮒﻠﮒﻟ­?ﮒ۵ﻠﻟ۵?
+        4. ﻟ؟ﺍﮒﺛﮒﺍﻠﻟﺁﺁﮔﺍﮔ؟ﮒﭦ
+        5. ﻟﺟﮒﮒ۳ﻝﻝﭨﮔ
         """
-        # 1. ﻟ؟ﺍﮒﺛﮒﺙﮒﺕﺕﮔ۴ﮒﺟ
+        # 1. ﻟ؟ﺍﮒﺛﮒﺙﮒﺕﺕﮔ۴ﮒﺟ
         self._log_exception(exception, context)
         
-        # 2. ﮒ۳ﮔ­ﮒﺙﮒﺕﺕﻝﭦ۶ﮒ،
+        # 2. ﮒ۳ﮔ­ﮒﺙﮒﺕﺕﻝﭦ۶ﮒ،
         severity = self._determine_severity(exception)
         
-        # 3. ﮒﻠﮒﻟ­?        if severity in ['HIGH', 'CRITICAL']:
+        # 3. ﮒﻠﮒﻟ­?        if severity in ['HIGH', 'CRITICAL']:
             self._send_alert(exception, severity)
         
-        # 4. ﻟ؟ﺍﮒﺛﮒﺍﻠﻟﺁﺁﮔﺍﮔ؟ﮒﭦ
+        # 4. ﻟ؟ﺍﮒﺛﮒﺍﻠﻟﺁﺁﮔﺍﮔ؟ﮒﭦ
         self._record_error(exception, severity)
         
-        # 5. ﻟﺟﮒﮒ۳ﻝﻝﭨﮔ
+        # 5. ﻟﺟﮒﮒ۳ﻝﻝﭨﮔ
         return ExceptionHandlingResult(
             exception_id=self._generate_exception_id(),
             severity=severity,
@@ -147,7 +147,7 @@ class ExceptionHandler:
         )
     
     def _log_exception(self, exception: MarketSimulationException, context: Dict):
-        """ﻟ؟ﺍﮒﺛﮒﺙﮒﺕﺕﮔ۴ﮒﺟ"""
+        """ﻟ؟ﺍﮒﺛﮒﺙﮒﺕﺕﮔ۴ﮒﺟ"""
         log_data = {
             'error_code': exception.error_code,
             'message': exception.message,
@@ -162,12 +162,12 @@ class ExceptionHandler:
         )
     
     def _determine_severity(self, exception: MarketSimulationException) -> str:
-        """ﮒ۳ﮔ­ﮒﺙﮒﺕﺕﻛﺕ۴ﻠﻝﭦ۶ﮒ،
+        """ﮒ۳ﮔ­ﮒﺙﮒﺕﺕﻛﺕ۴ﻠﻝﭦ۶ﮒ،
         
-        ﻝﭦ۶ﮒ،ﮒ؟ﻛﺗ:
-        - CRITICAL: ﻝﺏﭨﻝﭨﮒﺑ۸ﮔﭦﻙﮔﺍﮔ؟ﻛﺕ۱ﮒ۳?        - HIGH: ﮔ ﺕﮒﺟﮒﻟﺛﮒ۳ﺎﮔ
-        - MEDIUM: ﻠ۷ﮒﮒﻟﺛﻠﻝﭦ۶
-        - LOW: ﮒﺁﮒﺟﺛﻝ۴ﻝﮒﺙﮒﺕﺕ
+        ﻝﭦ۶ﮒ،ﮒ؟ﻛﺗ:
+        - CRITICAL: ﻝﺏﭨﻝﭨﮒﺑ۸ﮔﭦﻙﮔﺍﮔ؟ﻛﺕ۱ﮒ۳?        - HIGH: ﮔ ﺕﮒﺟﮒﻟﺛﮒ۳ﺎﮔ
+        - MEDIUM: ﻠ۷ﮒﮒﻟﺛﻠﻝﭦ۶
+        - LOW: ﮒﺁﮒﺟﺛﻝ۴ﻝﮒﺙﮒﺕﺕ
         """
         severity_mapping = {
             'DATA_ACQUISITION': 'HIGH',
@@ -181,10 +181,10 @@ class ExceptionHandler:
         return severity_mapping.get(error_prefix, 'LOW')
     
     def _send_alert(self, exception: MarketSimulationException, severity: str):
-        """ﮒﻠﮒﻟ­?""
+        """ﮒﻠﮒﻟ­?""
         alert = Alert(
             level=severity,
-            title=f"ﮒﺕﮒﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮒﺙﮒﺕﺕ: {exception.error_code}",
+            title=f"ﮒﺕﮒﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮒﺙﮒﺕﺕ: {exception.error_code}",
             message=exception.message,
             context=exception.context,
             timestamp=datetime.now()
@@ -193,7 +193,7 @@ class ExceptionHandler:
         self.alert_manager.send_alert(alert)
     
     def _record_error(self, exception: MarketSimulationException, severity: str):
-        """ﻟ؟ﺍﮒﺛﻠﻟﺁﺁﮒﺍﮔﺍﮔ؟ﮒﭦ"""
+        """ﻟ؟ﺍﮒﺛﻠﻟﺁﺁﮒﺍﮔﺍﮔ؟ﮒﭦ"""
         error_record = ErrorRecord(
             error_id=self._generate_exception_id(),
             error_code=exception.error_code,
@@ -206,14 +206,14 @@ class ExceptionHandler:
         self.error_recorder.record(error_record)
     
     def _generate_exception_id(self) -> str:
-        """ﻝﮔﮒﺙﮒﺕﺕID"""
+        """ﻝﮔﮒﺙﮒﺕﺕID"""
         import uuid
         return f"EXC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{uuid.uuid4().hex[:8]}"
 ```
 
-### 2.2 ﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
+### 2.2 ﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
 
-#### 2.2.1 ﻠﻟﺁﻝ­ﻝ۴
+#### 2.2.1 ﻠﻟﺁﻝ­ﻝ۴
 
 ```python
 from enum import Enum
@@ -222,14 +222,14 @@ import time
 from functools import wraps
 
 class RetryStrategy(Enum):
-    """ﻠﻟﺁﻝ­ﻝ۴ﮔﻛﺕﺝ"""
-    FIXED_INTERVAL = "fixed_interval"  # ﮒﭦﮒ؟ﻠﺑﻠ
-    EXPONENTIAL_BACKOFF = "exponential_backoff"  # ﮔﮔﺍﻠﻠ?    LINEAR_BACKOFF = "linear_backoff"  # ﻝﭦﺟﮔ۶ﻠﻠ?
+    """ﻠﻟﺁﻝ­ﻝ۴ﮔﻛﺕﺝ"""
+    FIXED_INTERVAL = "fixed_interval"  # ﮒﭦﮒ؟ﻠﺑﻠ
+    EXPONENTIAL_BACKOFF = "exponential_backoff"  # ﮔﮔﺍﻠﻠ?    LINEAR_BACKOFF = "linear_backoff"  # ﻝﭦﺟﮔ۶ﻠﻠ?
 
 class RetryConfig:
-    """ﻠﻟﺁﻠﻝﺛ؟
+    """ﻠﻟﺁﻠﻝﺛ؟
     
-    ﻝﺑ۱ﮒﺙ: CONFIG.RETRY.001
+    ﻝﺑ۱ﮒﺙ: CONFIG.RETRY.001
     """
     def __init__(self,
                  max_retries: int = 3,
@@ -247,9 +247,9 @@ class RetryConfig:
 
 
 class RetryExecutor:
-    """ﻠﻟﺁﮔ۶ﻟ۰ﮒ?    
-    ﻝﺑ۱ﮒﺙ: EXECUTOR.RETRY.001
-    ﻟﻟﺑ۲: ﮔ۶ﻟ۰ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﻛﺛ
+    """ﻠﻟﺁﮔ۶ﻟ۰ﮒ?    
+    ﻝﺑ۱ﮒﺙ: EXECUTOR.RETRY.001
+    ﻟﻟﺑ۲: ﮔ۶ﻟ۰ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﻛﺛ
     """
     
     def __init__(self, config: RetryConfig):
@@ -259,13 +259,13 @@ class RetryExecutor:
     def execute_with_retry(self, 
                           operation: Callable[[], Any],
                           operation_name: str = "operation") -> Any:
-        """ﮔ۶ﻟ۰ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﻛﺛ
+        """ﮔ۶ﻟ۰ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﻛﺛ
         
-        ﮔ۶ﻟ۰ﮔﭖﻝ۷:
-        1. ﮔ۶ﻟ۰ﮔﻛﺛ
-        2. ﮒ۵ﮔﮒ۳ﺎﻟﺑ۴,ﮔ ﺗﮔ؟ﻠﻟﺁﻝ­ﻝ۴ﻝ­ﮒﺝ
-        3. ﻠﻟﺁﮔﻛﺛ
-        4. ﻟﺝﺝﮒﺍﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔﺍﮒﮔﮒﭦﮒﺙﮒﺕﺕ
+        ﮔ۶ﻟ۰ﮔﭖﻝ۷:
+        1. ﮔ۶ﻟ۰ﮔﻛﺛ
+        2. ﮒ۵ﮔﮒ۳ﺎﻟﺑ۴,ﮔ ﺗﮔ؟ﻠﻟﺁﻝ­ﻝ۴ﻝ­ﮒﺝ
+        3. ﻠﻟﺁﮔﻛﺛ
+        4. ﻟﺝﺝﮒﺍﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔﺍﮒﮔﮒﭦﮒﺙﮒﺕﺕ
         """
         last_exception = None
         
@@ -281,19 +281,19 @@ class RetryExecutor:
             except Exception as e:
                 last_exception = e
                 
-                # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮒﺁﻠﻟﺁﮒﺙﮒﺕ?                if not self._is_retryable_exception(e):
+                # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮒﺁﻠﻟﺁﮒﺙﮒﺕ?                if not self._is_retryable_exception(e):
                     self.logger.error(
                         f"Operation '{operation_name}' failed with non-retryable exception: {e}"
                     )
                     raise
                 
-                # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻟﺝﺝﮒﺍﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔ?                if attempt >= self.config.max_retries:
+                # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻟﺝﺝﮒﺍﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔ?                if attempt >= self.config.max_retries:
                     self.logger.error(
                         f"Operation '{operation_name}' failed after {self.config.max_retries} retries"
                     )
                     raise
                 
-                # ﻟ؟۰ﻝ؟ﻝ­ﮒﺝﮔﭘﻠﺑ
+                # ﻟ؟۰ﻝ؟ﻝ­ﮒﺝﮔﭘﻠﺑ
                 delay = self._calculate_delay(attempt)
                 
                 self.logger.warning(
@@ -306,14 +306,14 @@ class RetryExecutor:
         raise last_exception
     
     def _is_retryable_exception(self, exception: Exception) -> bool:
-        """ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮒﺁﻠﻟﺁﮒﺙﮒﺕ?""
+        """ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮒﺁﻠﻟﺁﮒﺙﮒﺕ?""
         return any(
             isinstance(exception, retryable_exc) 
             for retryable_exc in self.config.retryable_exceptions
         )
     
     def _calculate_delay(self, attempt: int) -> float:
-        """ﻟ؟۰ﻝ؟ﻠﻟﺁﮒﭨﭘﻟﺟﮔﭘﻠﺑ"""
+        """ﻟ؟۰ﻝ؟ﻠﻟﺁﮒﭨﭘﻟﺟﮔﭘﻠﺑ"""
         if self.config.strategy == RetryStrategy.FIXED_INTERVAL:
             delay = self.config.base_delay
             
@@ -336,9 +336,9 @@ class RetryExecutor:
 
 
 def retry_on_failure(config: RetryConfig):
-    """ﻠﻟﺁﻟ۲ﻠ۴ﺍﮒ?    
-    ﻝﺑ۱ﮒﺙ: DECORATOR.RETRY.001
-    ﻝ۷ﮔﺏ: @retry_on_failure(RetryConfig(max_retries=3))
+    """ﻠﻟﺁﻟ۲ﻠ۴ﺍﮒ?    
+    ﻝﺑ۱ﮒﺙ: DECORATOR.RETRY.001
+    ﻝ۷ﮔﺏ: @retry_on_failure(RetryConfig(max_retries=3))
     """
     def decorator(func: Callable) -> Callable:
         @wraps(func)
@@ -350,12 +350,12 @@ def retry_on_failure(config: RetryConfig):
     return decorator
 ```
 
-#### 2.2.2 ﮒﺓﻛﺛﮒﭦﻝ۷ﮒﭦﮔﺁ
+#### 2.2.2 ﮒﺓﻛﺛﮒﭦﻝ۷ﮒﭦﮔﺁ
 
 ```python
 class DataCollectorWithRetry:
-    """ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﺍﮔ؟ﻠﻠﮒ?    
-    ﻝﺑ۱ﮒﺙ: COLLECTOR.DATA.RETRY.001
+    """ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﺍﮔ؟ﻠﻠﮒ?    
+    ﻝﺑ۱ﮒﺙ: COLLECTOR.DATA.RETRY.001
     """
     
     def __init__(self):
@@ -374,7 +374,7 @@ class DataCollectorWithRetry:
         
     @retry_on_failure(RetryConfig(max_retries=3, base_delay=2.0))
     def collect_longhubang_data(self, date: str) -> pd.DataFrame:
-        """ﻠﻠﻠﺝﻟﮔ۵ﮔﺍﮔ?ﮒﺕ۵ﻠﻟﺁ?"""
+        """ﻠﻠﻠﺝﻟﮔ۵ﮔﺍﮔ?ﮒﺕ۵ﻠﻟﺁ?"""
         try:
             import akshare as ak
             data = ak.stock_lhb_detail_em(start_date=date, end_date=date)
@@ -388,9 +388,9 @@ class DataCollectorWithRetry:
     
     @retry_on_failure(RetryConfig(max_retries=5, base_delay=5.0))
     def collect_level2_data(self, symbol: str, date: str) -> Dict:
-        """ﻠﻠLevel-2ﮔﺍﮔ؟(ﮒﺕ۵ﻠﻟﺁ?"""
+        """ﻠﻠLevel-2ﮔﺍﮔ؟(ﮒﺕ۵ﻠﻟﺁ?"""
         try:
-            # ﮔ۷۰ﮔLevel-2ﮔﺍﮔ؟ﻠﻠ
+            # ﮔ۷۰ﮔLevel-2ﮔﺍﮔ؟ﻠﻠ
             data = self._fetch_level2_from_source(symbol, date)
             return data
         except Exception as e:
@@ -402,8 +402,8 @@ class DataCollectorWithRetry:
 
 
 class AgentDecisionWithRetry:
-    """ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﭦﻟﺛﻛﺛﮒﺏﻝ­?    
-    ﻝﺑ۱ﮒﺙ: AGENT.DECISION.RETRY.001
+    """ﮒﺕ۵ﻠﻟﺁﮔﭦﮒﭘﻝﮔﭦﻟﺛﻛﺛﮒﺏﻝ­?    
+    ﻝﺑ۱ﮒﺙ: AGENT.DECISION.RETRY.001
     """
     
     def __init__(self, agent: BaseAgent):
@@ -417,7 +417,7 @@ class AgentDecisionWithRetry:
         self.executor = RetryExecutor(self.retry_config)
         
     def generate_decision_with_retry(self, market_state: MarketState) -> AgentDecision:
-        """ﻝﮔﮒﺏﻝ­(ﮒﺕ۵ﻠﻟﺁ?"""
+        """ﻝﮔﮒﺏﻝ­(ﮒﺕ۵ﻠﻟﺁ?"""
         operation = lambda: self.agent.generate_trading_decision(market_state)
         
         try:
@@ -426,7 +426,7 @@ class AgentDecisionWithRetry:
                 f"{self.agent.__class__.__name__}.generate_trading_decision"
             )
         except Exception as e:
-            # ﮒ۵ﮔﻠﻟﺁﮒ۳ﺎﻟﺑ۴,ﻟﺟﮒﻠﭨﻟ؟۳ﮒﺏﻝ­
+            # ﮒ۵ﮔﻠﻟﺁﮒ۳ﺎﻟﺑ۴,ﻟﺟﮒﻠﭨﻟ؟۳ﮒﺏﻝ­
             self.logger.error(
                 f"Agent decision failed after retries, returning default decision: {e}"
             )
@@ -443,46 +443,46 @@ class AgentDecisionWithRetry:
 
 ---
 
-## ﻭ ﻛﺕﻙIMP-002: RLﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ ﻟ؟ﺝﻟ؟۰
+## ﻭ ﻛﺕﻙIMP-002: RLﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ ﻟ؟ﺝﻟ؟۰
 
-### 3.1 ﻝﮔ۶ﮔﮔ ﻛﺛﻝﺏﭨ
+### 3.1 ﻝﮔ۶ﮔﮔ ﻛﺛﻝﺏﭨ
 
-#### 3.1.1 ﮔ ﺕﮒﺟﻝﮔ۶ﮔﮔ 
+#### 3.1.1 ﮔ ﺕﮒﺟﻝﮔ۶ﮔﮔ 
 
 ```python
 @dataclass
 class RLTrainingMetrics:
-    """RLﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ 
+    """RLﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ 
     
-    ﻝﺑ۱ﮒﺙ: METRICS.RL.001
+    ﻝﺑ۱ﮒﺙ: METRICS.RL.001
     """
-    # ﮒﭦﻝ۰ﮔﮔ 
-    episode: int  # ﮒﺛﮒﮒﮒ
-    step: int  # ﮒﺛﮒﮔ­۴ﮔﺍ
-    timestamp: datetime  # ﮔﭘﻠﺑﮔ?    
-    # ﮒ۴ﮒﺎﮔﮔ 
-    episode_reward: float  # ﮒﮒﮔﭨﮒ۴ﮒ?    average_reward: float  # ﮒﺗﺏﮒﮒ۴ﮒﺎ
-    reward_std: float  # ﮒ۴ﮒﺎﮔ ﮒﮒﺓ?    
-    # ﮔﮒ۳ﺎﮔﮔ 
-    actor_loss: float  # Actorﮔﮒ۳ﺎ
-    critic_loss: float  # Criticﮔﮒ۳ﺎ
-    entropy: float  # ﻝ?ﮔ۱ﻝﺑ۱ﻝ۷ﮒﭦ۵)
+    # ﮒﭦﻝ۰ﮔﮔ 
+    episode: int  # ﮒﺛﮒﮒﮒ
+    step: int  # ﮒﺛﮒﮔ­۴ﮔﺍ
+    timestamp: datetime  # ﮔﭘﻠﺑﮔ?    
+    # ﮒ۴ﮒﺎﮔﮔ 
+    episode_reward: float  # ﮒﮒﮔﭨﮒ۴ﮒ?    average_reward: float  # ﮒﺗﺏﮒﮒ۴ﮒﺎ
+    reward_std: float  # ﮒ۴ﮒﺎﮔ ﮒﮒﺓ?    
+    # ﮔﮒ۳ﺎﮔﮔ 
+    actor_loss: float  # Actorﮔﮒ۳ﺎ
+    critic_loss: float  # Criticﮔﮒ۳ﺎ
+    entropy: float  # ﻝ?ﮔ۱ﻝﺑ۱ﻝ۷ﮒﭦ۵)
     
-    # ﮔ۶ﻟﺛﮔﮔ 
-    sharpe_ratio: float  # ﮒ۳ﮔ؟ﮔﺁﻝ
-    max_drawdown: float  # ﮔﮒ۳۶ﮒﮔ?    win_rate: float  # ﻟﻝ
-    profit_factor: float  # ﻝﻛﭦﮔﺁ?    
-    # ﻟ؟­ﻝﭨﻝ۷ﺏﮒ؟ﮔ۶ﮔﮔ ?    gradient_norm: float  # ﮔ۱ﺁﮒﭦ۵ﻟﮔﺍ
-    learning_rate: float  # ﮒ­۵ﻛﺗ ﻝ?    exploration_rate: float  # ﮔ۱ﻝﺑ۱ﻝ?    
-    # ﻟﭖﮔﭦﮔﮔ 
-    gpu_memory_used: float  # GPUﮒﮒ­ﻛﺛﺟﻝ۷
-    training_time: float  # ﻟ؟­ﻝﭨﮔﭘﻠﺑ
+    # ﮔ۶ﻟﺛﮔﮔ 
+    sharpe_ratio: float  # ﮒ۳ﮔ؟ﮔﺁﻝ
+    max_drawdown: float  # ﮔﮒ۳۶ﮒﮔ?    win_rate: float  # ﻟﻝ
+    profit_factor: float  # ﻝﻛﭦﮔﺁ?    
+    # ﻟ؟­ﻝﭨﻝ۷ﺏﮒ؟ﮔ۶ﮔﮔ ?    gradient_norm: float  # ﮔ۱ﺁﮒﭦ۵ﻟﮔﺍ
+    learning_rate: float  # ﮒ­۵ﻛﺗ ﻝ?    exploration_rate: float  # ﮔ۱ﻝﺑ۱ﻝ?    
+    # ﻟﭖﮔﭦﮔﮔ 
+    gpu_memory_used: float  # GPUﮒﮒ­ﻛﺛﺟﻝ۷
+    training_time: float  # ﻟ؟­ﻝﭨﮔﭘﻠﺑ
 
 
 class RLTrainingMonitor:
-    """RLﻟ؟­ﻝﭨﻝﮔ۶ﮒ?    
-    ﻝﺑ۱ﮒﺙ: MONITOR.RL.001
-    ﻟﻟﺑ۲: ﮒ؟ﮔﭘﻝﮔ۶RLﻟ؟­ﻝﭨﻟﺟﻝ۷,ﻟ؟ﺍﮒﺛﮔﮔ ,ﻝﮔﮔ۴ﮒ
+    """RLﻟ؟­ﻝﭨﻝﮔ۶ﮒ?    
+    ﻝﺑ۱ﮒﺙ: MONITOR.RL.001
+    ﻟﻟﺑ۲: ﮒ؟ﮔﭘﻝﮔ۶RLﻟ؟­ﻝﭨﻟﺟﻝ۷,ﻟ؟ﺍﮒﺛﮔﮔ ,ﻝﮔﮔ۴ﮒ
     """
     
     def __init__(self, config: RLTrainingMonitorConfig):
@@ -493,25 +493,25 @@ class RLTrainingMonitor:
         self.alert_manager = AlertManager()
         
     def record_metrics(self, metrics: RLTrainingMetrics):
-        """ﻟ؟ﺍﮒﺛﻟ؟­ﻝﭨﮔﮔ 
+        """ﻟ؟ﺍﮒﺛﻟ؟­ﻝﭨﮔﮔ 
         
-        ﻟ؟ﺍﮒﺛﮔﭖﻝ۷:
-        1. ﮔﺓﭨﮒ ﮒﺍﮒﮒﺎﻟ؟ﺍﮒﺛ?        2. ﮒﮒ۴TensorBoard
-        3. ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﮔﮔ ?        4. ﮒﻠﮒﻟ­?ﮒ۵ﻠﻟ۵?
+        ﻟ؟ﺍﮒﺛﮔﭖﻝ۷:
+        1. ﮔﺓﭨﮒ ﮒﺍﮒﮒﺎﻟ؟ﺍﮒﺛ?        2. ﮒﮒ۴TensorBoard
+        3. ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﮔﮔ ?        4. ﮒﻠﮒﻟ­?ﮒ۵ﻠﻟ۵?
         """
-        # 1. ﮔﺓﭨﮒ ﮒﺍﮒﮒﺎﻟ؟ﺍﮒﺛ?        self.metrics_history.append(metrics)
+        # 1. ﮔﺓﭨﮒ ﮒﺍﮒﮒﺎﻟ؟ﺍﮒﺛ?        self.metrics_history.append(metrics)
         
-        # 2. ﮒﮒ۴TensorBoard
+        # 2. ﮒﮒ۴TensorBoard
         self._write_to_tensorboard(metrics)
         
-        # 3. ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﮔﮔ ?        anomalies = self._check_anomalies(metrics)
+        # 3. ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﮔﮔ ?        anomalies = self._check_anomalies(metrics)
         
-        # 4. ﮒﻠﮒﻟ­?        if anomalies:
+        # 4. ﮒﻠﮒﻟ­?        if anomalies:
             self._send_training_alert(metrics, anomalies)
     
     def _write_to_tensorboard(self, metrics: RLTrainingMetrics):
-        """ﮒﮒ۴TensorBoard"""
-        # ﮒ۴ﮒﺎﮔﮔ 
+        """ﮒﮒ۴TensorBoard"""
+        # ﮒ۴ﮒﺎﮔﮔ 
         self.tensorboard_writer.add_scalar(
             'Reward/Episode_Reward', metrics.episode_reward, metrics.episode
         )
@@ -519,7 +519,7 @@ class RLTrainingMonitor:
             'Reward/Average_Reward', metrics.average_reward, metrics.episode
         )
         
-        # ﮔﮒ۳ﺎﮔﮔ 
+        # ﮔﮒ۳ﺎﮔﮔ 
         self.tensorboard_writer.add_scalar(
             'Loss/Actor_Loss', metrics.actor_loss, metrics.episode
         )
@@ -527,7 +527,7 @@ class RLTrainingMonitor:
             'Loss/Critic_Loss', metrics.critic_loss, metrics.episode
         )
         
-        # ﮔ۶ﻟﺛﮔﮔ 
+        # ﮔ۶ﻟﺛﮔﮔ 
         self.tensorboard_writer.add_scalar(
             'Performance/Sharpe_Ratio', metrics.sharpe_ratio, metrics.episode
         )
@@ -535,7 +535,7 @@ class RLTrainingMonitor:
             'Performance/Max_Drawdown', metrics.max_drawdown, metrics.episode
         )
         
-        # ﻟ؟­ﻝﭨﻝ۷ﺏﮒ؟ﮔ۶ﮔﮔ ?        self.tensorboard_writer.add_scalar(
+        # ﻟ؟­ﻝﭨﻝ۷ﺏﮒ؟ﮔ۶ﮔﮔ ?        self.tensorboard_writer.add_scalar(
             'Training/Gradient_Norm', metrics.gradient_norm, metrics.episode
         )
         self.tensorboard_writer.add_scalar(
@@ -543,22 +543,22 @@ class RLTrainingMonitor:
         )
     
     def _check_anomalies(self, metrics: RLTrainingMetrics) -> List[str]:
-        """ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﮔﮔ ?""
+        """ﮔ۲ﮔ۴ﮒﺙﮒﺕﺕﮔﮔ ?""
         anomalies = []
         
-        # ﮔ۲ﮔ۴ﮒ۴ﮒﺎﮒﺙﮒﺕ?        if metrics.episode_reward < self.config.reward_lower_bound:
+        # ﮔ۲ﮔ۴ﮒ۴ﮒﺎﮒﺙﮒﺕ?        if metrics.episode_reward < self.config.reward_lower_bound:
             anomalies.append(f"Episode reward too low: {metrics.episode_reward}")
         
-        # ﮔ۲ﮔ۴ﮔﮒ۳ﺎﮒﺙﮒﺕ?        if abs(metrics.actor_loss) > self.config.loss_upper_bound:
+        # ﮔ۲ﮔ۴ﮔﮒ۳ﺎﮒﺙﮒﺕ?        if abs(metrics.actor_loss) > self.config.loss_upper_bound:
             anomalies.append(f"Actor loss too high: {metrics.actor_loss}")
         
         if abs(metrics.critic_loss) > self.config.loss_upper_bound:
             anomalies.append(f"Critic loss too high: {metrics.critic_loss}")
         
-        # ﮔ۲ﮔ۴ﮔ۱ﺁﮒﭦ۵ﻝﻝ?        if metrics.gradient_norm > self.config.gradient_norm_threshold:
+        # ﮔ۲ﮔ۴ﮔ۱ﺁﮒﭦ۵ﻝﻝ?        if metrics.gradient_norm > self.config.gradient_norm_threshold:
             anomalies.append(f"Gradient explosion detected: {metrics.gradient_norm}")
         
-        # ﮔ۲ﮔ۴ﮔ۶ﻟﺛﻛﺕﻠ
+        # ﮔ۲ﮔ۴ﮔ۶ﻟﺛﻛﺕﻠ
         if len(self.metrics_history) >= 10:
             recent_sharpe = [m.sharpe_ratio for m in self.metrics_history[-10:]]
             if metrics.sharpe_ratio < np.mean(recent_sharpe) * 0.5:
@@ -567,11 +567,11 @@ class RLTrainingMonitor:
         return anomalies
     
     def _send_training_alert(self, metrics: RLTrainingMetrics, anomalies: List[str]):
-        """ﮒﻠﻟ؟­ﻝﭨﮒﻟ­?""
+        """ﮒﻠﻟ؟­ﻝﭨﮒﻟ­?""
         alert = Alert(
             level='HIGH',
-            title=f"RLﻟ؟­ﻝﭨﮒﺙﮒﺕﺕ: Episode {metrics.episode}",
-            message=f"ﮔ۲ﮔﭖﮒﺍﻛﭨ۴ﻛﺕﮒﺙﮒﺕﺕ:\n" + "\n".join(anomalies),
+            title=f"RLﻟ؟­ﻝﭨﮒﺙﮒﺕﺕ: Episode {metrics.episode}",
+            message=f"ﮔ۲ﮔﭖﮒﺍﻛﭨ۴ﻛﺕﮒﺙﮒﺕﺕ:\n" + "\n".join(anomalies),
             context={
                 'episode': metrics.episode,
                 'metrics': asdict(metrics),
@@ -583,63 +583,63 @@ class RLTrainingMonitor:
         self.alert_manager.send_alert(alert)
     
     def generate_training_report(self) -> str:
-        """ﻝﮔﻟ؟­ﻝﭨﮔ۴ﮒ"""
+        """ﻝﮔﻟ؟­ﻝﭨﮔ۴ﮒ"""
         if not self.metrics_history:
             return "No training data available"
         
         latest_metrics = self.metrics_history[-1]
         
         report = f"""
-# RLﻟ؟­ﻝﭨﮔ۴ﮒ
+# RLﻟ؟­ﻝﭨﮔ۴ﮒ
 
-## ﻟ؟­ﻝﭨﮔ۵ﻟ۶
-- **ﮒﺛﮒﮒﮒ**: {latest_metrics.episode}
-- **ﻟ؟­ﻝﭨﮔﭘﻠﺑ**: {latest_metrics.training_time:.2f}ﻝ۶?- **GPUﮒﮒ­ﻛﺛﺟﻝ۷**: {latest_metrics.gpu_memory_used:.2f}GB
+## ﻟ؟­ﻝﭨﮔ۵ﻟ۶
+- **ﮒﺛﮒﮒﮒ**: {latest_metrics.episode}
+- **ﻟ؟­ﻝﭨﮔﭘﻠﺑ**: {latest_metrics.training_time:.2f}ﻝ۶?- **GPUﮒﮒ­ﻛﺛﺟﻝ۷**: {latest_metrics.gpu_memory_used:.2f}GB
 
-## ﮒ۴ﮒﺎﮔﮔ 
-- **ﮒﮒﮔﭨﮒ۴ﮒ?*: {latest_metrics.episode_reward:.4f}
-- **ﮒﺗﺏﮒﮒ۴ﮒﺎ**: {latest_metrics.average_reward:.4f}
-- **ﮒ۴ﮒﺎﮔ ﮒﮒﺓ?*: {latest_metrics.reward_std:.4f}
+## ﮒ۴ﮒﺎﮔﮔ 
+- **ﮒﮒﮔﭨﮒ۴ﮒ?*: {latest_metrics.episode_reward:.4f}
+- **ﮒﺗﺏﮒﮒ۴ﮒﺎ**: {latest_metrics.average_reward:.4f}
+- **ﮒ۴ﮒﺎﮔ ﮒﮒﺓ?*: {latest_metrics.reward_std:.4f}
 
-## ﮔ۶ﻟﺛﮔﮔ 
-- **ﮒ۳ﮔ؟ﮔﺁﻝ**: {latest_metrics.sharpe_ratio:.4f}
-- **ﮔﮒ۳۶ﮒﮔ?*: {latest_metrics.max_drawdown:.4f}
-- **ﻟﻝ**: {latest_metrics.win_rate:.2%}
-- **ﻝﻛﭦﮔﺁ?*: {latest_metrics.profit_factor:.4f}
+## ﮔ۶ﻟﺛﮔﮔ 
+- **ﮒ۳ﮔ؟ﮔﺁﻝ**: {latest_metrics.sharpe_ratio:.4f}
+- **ﮔﮒ۳۶ﮒﮔ?*: {latest_metrics.max_drawdown:.4f}
+- **ﻟﻝ**: {latest_metrics.win_rate:.2%}
+- **ﻝﻛﭦﮔﺁ?*: {latest_metrics.profit_factor:.4f}
 
-## ﻟ؟­ﻝﭨﻝ۷ﺏﮒ؟ﮔ?- **ﮔ۱ﺁﮒﭦ۵ﻟﮔﺍ**: {latest_metrics.gradient_norm:.4f}
-- **ﮒ­۵ﻛﺗ ﻝ?*: {latest_metrics.learning_rate:.6f}
-- **ﮔ۱ﻝﺑ۱ﻝ?*: {latest_metrics.exploration_rate:.4f}
+## ﻟ؟­ﻝﭨﻝ۷ﺏﮒ؟ﮔ?- **ﮔ۱ﺁﮒﭦ۵ﻟﮔﺍ**: {latest_metrics.gradient_norm:.4f}
+- **ﮒ­۵ﻛﺗ ﻝ?*: {latest_metrics.learning_rate:.6f}
+- **ﮔ۱ﻝﺑ۱ﻝ?*: {latest_metrics.exploration_rate:.4f}
 
-## ﮔﮒ۳ﺎﮔﮔ 
-- **Actorﮔﮒ۳ﺎ**: {latest_metrics.actor_loss:.4f}
-- **Criticﮔﮒ۳ﺎ**: {latest_metrics.critic_loss:.4f}
-- **ﻝ?*: {latest_metrics.entropy:.4f}
+## ﮔﮒ۳ﺎﮔﮔ 
+- **Actorﮔﮒ۳ﺎ**: {latest_metrics.actor_loss:.4f}
+- **Criticﮔﮒ۳ﺎ**: {latest_metrics.critic_loss:.4f}
+- **ﻝ?*: {latest_metrics.entropy:.4f}
 """
         
         return report
 ```
 
-#### 3.1.2 ﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒ?
+#### 3.1.2 ﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒ?
 ```python
 class RLTrainingVisualizer:
-    """RLﻟ؟­ﻝﭨﮒﺁﻟ۶ﮒﮒ۷
+    """RLﻟ؟­ﻝﭨﮒﺁﻟ۶ﮒﮒ۷
     
-    ﻝﺑ۱ﮒﺙ: VISUALIZER.RL.001
-    ﻟﻟﺑ۲: ﻝﮔﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒﮒﺝﻟ۰?    """
+    ﻝﺑ۱ﮒﺙ: VISUALIZER.RL.001
+    ﻟﻟﺑ۲: ﻝﮔﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒﮒﺝﻟ۰?    """
     
     def __init__(self, monitor: RLTrainingMonitor):
         self.monitor = monitor
         
     def plot_training_curves(self, save_path: str = None):
-        """ﻝﭨﮒﭘﻟ؟­ﻝﭨﮔﺎﻝﭦﺟ"""
+        """ﻝﭨﮒﭘﻟ؟­ﻝﭨﮔﺎﻝﭦﺟ"""
         import matplotlib.pyplot as plt
         
         metrics = self.monitor.metrics_history
         
         fig, axes = plt.subplots(2, 3, figsize=(15, 10))
         
-        # ﮒ۴ﮒﺎﮔﺎﻝﭦﺟ
+        # ﮒ۴ﮒﺎﮔﺎﻝﭦﺟ
         episodes = [m.episode for m in metrics]
         rewards = [m.episode_reward for m in metrics]
         axes[0, 0].plot(episodes, rewards)
@@ -647,7 +647,7 @@ class RLTrainingVisualizer:
         axes[0, 0].set_xlabel('Episode')
         axes[0, 0].set_ylabel('Reward')
         
-        # ﮔﮒ۳ﺎﮔﺎﻝﭦﺟ
+        # ﮔﮒ۳ﺎﮔﺎﻝﭦﺟ
         actor_losses = [m.actor_loss for m in metrics]
         critic_losses = [m.critic_loss for m in metrics]
         axes[0, 1].plot(episodes, actor_losses, label='Actor Loss')
@@ -657,27 +657,27 @@ class RLTrainingVisualizer:
         axes[0, 1].set_ylabel('Loss')
         axes[0, 1].legend()
         
-        # ﮒ۳ﮔ؟ﮔﺁﻝﮔﺎﻝﭦﺟ
+        # ﮒ۳ﮔ؟ﮔﺁﻝﮔﺎﻝﭦﺟ
         sharpe_ratios = [m.sharpe_ratio for m in metrics]
         axes[0, 2].plot(episodes, sharpe_ratios)
         axes[0, 2].set_title('Sharpe Ratio')
         axes[0, 2].set_xlabel('Episode')
         axes[0, 2].set_ylabel('Sharpe Ratio')
         
-        # ﮔﮒ۳۶ﮒﮔ۳ﮔﺎﻝﭦ?        max_drawdowns = [m.max_drawdown for m in metrics]
+        # ﮔﮒ۳۶ﮒﮔ۳ﮔﺎﻝﭦ?        max_drawdowns = [m.max_drawdown for m in metrics]
         axes[1, 0].plot(episodes, max_drawdowns)
         axes[1, 0].set_title('Max Drawdown')
         axes[1, 0].set_xlabel('Episode')
         axes[1, 0].set_ylabel('Drawdown')
         
-        # ﮔ۱ﺁﮒﭦ۵ﻟﮔﺍﮔﺎﻝﭦﺟ
+        # ﮔ۱ﺁﮒﭦ۵ﻟﮔﺍﮔﺎﻝﭦﺟ
         gradient_norms = [m.gradient_norm for m in metrics]
         axes[1, 1].plot(episodes, gradient_norms)
         axes[1, 1].set_title('Gradient Norm')
         axes[1, 1].set_xlabel('Episode')
         axes[1, 1].set_ylabel('Norm')
         
-        # ﮔ۱ﻝﺑ۱ﻝﮔﺎﻝﭦ?        exploration_rates = [m.exploration_rate for m in metrics]
+        # ﮔ۱ﻝﺑ۱ﻝﮔﺎﻝﭦ?        exploration_rates = [m.exploration_rate for m in metrics]
         axes[1, 2].plot(episodes, exploration_rates)
         axes[1, 2].set_title('Exploration Rate')
         axes[1, 2].set_xlabel('Episode')
@@ -691,55 +691,55 @@ class RLTrainingVisualizer:
         return fig
 ```
 
-### 3.2 ﻟ؟­ﻝﭨﻝﮔ۶ﻠﻝﺛ؟
+### 3.2 ﻟ؟­ﻝﭨﻝﮔ۶ﻠﻝﺛ؟
 
 ```yaml
 rl_training_monitor:
   log_dir: "logs/rl_training/"
   
-  monitoring_interval: 100  # ﮔﺁ?00ﮔ­۴ﻟ؟ﺍﮒﺛﻛﺕﮔ؛?  
+  monitoring_interval: 100  # ﮔﺁ?00ﮔ­۴ﻟ؟ﺍﮒﺛﻛﺕﮔ؛?  
   anomaly_detection:
     reward_lower_bound: -1000.0
     loss_upper_bound: 10000.0
     gradient_norm_threshold: 100.0
     
   alert_thresholds:
-    consecutive_low_reward: 10  # ﻟﺟﻝﭨ­10ﮒﮒﻛﺛﮒ۴ﮒ?    performance_degradation: 0.5  # ﮔ۶ﻟﺛﻛﺕﻠ50%
+    consecutive_low_reward: 10  # ﻟﺟﻝﭨ­10ﮒﮒﻛﺛﮒ۴ﮒ?    performance_degradation: 0.5  # ﮔ۶ﻟﺛﻛﺕﻠ50%
     
   visualization:
     enabled: true
-    update_interval: 1000  # ﮔﺁ?000ﮔ­۴ﮔﺑﮔﺍﮒﺝﻟ۰?    save_dir: "reports/rl_training/"
+    update_interval: 1000  # ﮔﺁ?000ﮔ­۴ﮔﺑﮔﺍﮒﺝﻟ۰?    save_dir: "reports/rl_training/"
     
   early_stopping:
     enabled: true
-    patience: 50  # 50ﮒﮒﮔ ﮔﺗﮒﮒﮒﮔ­۱
-    min_delta: 0.01  # ﮔﮒﺍﮔﺗﮒﻠﮒ?```
+    patience: 50  # 50ﮒﮒﮔ ﮔﺗﮒﮒﮒﮔ­۱
+    min_delta: 0.01  # ﮔﮒﺍﮔﺗﮒﻠﮒ?```
 
 ---
 
-## ﻭﺁ ﮒﻙIMP-003: ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔ۰
+## ﻭﺁ ﮒﻙIMP-003: ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔ۰
 
-### 4.1 ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+### 4.1 ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-#### 4.1.1 ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﭦﻝ۰
+#### 4.1.1 ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﭦﻝ۰
 
 ```python
 class MarketImpactModel:
-    """ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ
+    """ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ
     
-    ﻝﺑ۱ﮒﺙ: MODEL.MARKET_IMPACT.001
-    ﻝﻟ؟ﭦﮒﭦﻝ۰: Almgren-Chrissﮔ۷۰ﮒ + ﮒ؟ﻠﮒﺕﮒﭦﮔﺍﮔ؟ﮔ ۰ﮒ
+    ﻝﺑ۱ﮒﺙ: MODEL.MARKET_IMPACT.001
+    ﻝﻟ؟ﭦﮒﭦﻝ۰: Almgren-Chrissﮔ۷۰ﮒ + ﮒ؟ﻠﮒﺕﮒﭦﮔﺍﮔ؟ﮔ ۰ﮒ
     """
     
     def __init__(self, config: MarketImpactConfig):
         self.config = config
         self.logger = logging.getLogger(__name__)
         
-        # ﮔ۷۰ﮒﮒﮔﺍ
-        self.temporary_impact_coef = None  # ﻛﺕﺑﮔﭘﮒﺎﮒﭨﻝﺏﭨﮔﺍ
-        self.permanent_impact_coef = None  # ﮔﺍﺕﻛﺗﮒﺎﮒﭨﻝﺏﭨﮔﺍ
-        self.volatility_coef = None  # ﮔﺏ۱ﮒ۷ﻝﻝﺏﭨﮔ?        self.liquidity_coef = None  # ﮔﭖﮒ۷ﮔ۶ﻝﺏﭨﮔ?        
-        # ﮔ ۰ﮒﻝﭘﮔ?        self.is_calibrated = False
+        # ﮔ۷۰ﮒﮒﮔﺍ
+        self.temporary_impact_coef = None  # ﻛﺕﺑﮔﭘﮒﺎﮒﭨﻝﺏﭨﮔﺍ
+        self.permanent_impact_coef = None  # ﮔﺍﺕﻛﺗﮒﺎﮒﭨﻝﺏﭨﮔﺍ
+        self.volatility_coef = None  # ﮔﺏ۱ﮒ۷ﻝﻝﺏﭨﮔ?        self.liquidity_coef = None  # ﮔﭖﮒ۷ﮔ۶ﻝﺏﭨﮔ?        
+        # ﮔ ۰ﮒﻝﭘﮔ?        self.is_calibrated = False
         self.calibration_date = None
         self.calibration_metrics = {}
         
@@ -748,29 +748,29 @@ class MarketImpactModel:
                                average_volume: float,
                                volatility: float,
                                execution_time: float) -> MarketImpactResult:
-        """ﻟ؟۰ﻝ؟ﮒﺕﮒﭦﮒﺎﮒﭨ
+        """ﻟ؟۰ﻝ؟ﮒﺕﮒﭦﮒﺎﮒﭨ
         
-        ﮒﮔﺍ:
-            order_size: ﻟ؟۱ﮒﮒ۳۶ﮒﺍ(ﻟ۰ﮔﺍ)
-            average_volume: ﮒﺗﺏﮒﮔﻛﭦ۳ﻠ?            volatility: ﮔﺏ۱ﮒ۷ﻝ?            execution_time: ﮔ۶ﻟ۰ﮔﭘﻠﺑ(ﮒ۳?
+        ﮒﮔﺍ:
+            order_size: ﻟ؟۱ﮒﮒ۳۶ﮒﺍ(ﻟ۰ﮔﺍ)
+            average_volume: ﮒﺗﺏﮒﮔﻛﭦ۳ﻠ?            volatility: ﮔﺏ۱ﮒ۷ﻝ?            execution_time: ﮔ۶ﻟ۰ﮔﭘﻠﺑ(ﮒ۳?
             
-        ﻟﺟﮒ:
-            MarketImpactResult: ﮒﺕﮒﭦﮒﺎﮒﭨﻝﭨﮔ
+        ﻟﺟﮒ:
+            MarketImpactResult: ﮒﺕﮒﭦﮒﺎﮒﭨﻝﭨﮔ
         """
         if not self.is_calibrated:
             raise MarketImpactException("Model not calibrated. Please calibrate first.")
         
-        # ﻟ؟۰ﻝ؟ﮒﻛﺕﻝ?        participation_rate = order_size / (average_volume * execution_time)
+        # ﻟ؟۰ﻝ؟ﮒﻛﺕﻝ?        participation_rate = order_size / (average_volume * execution_time)
         
-        # ﻟ؟۰ﻝ؟ﻛﺕﺑﮔﭘﮒﺎﮒﭨ
+        # ﻟ؟۰ﻝ؟ﻛﺕﺑﮔﭘﮒﺎﮒﭨ
         temporary_impact = self.temporary_impact_coef * participation_rate * volatility
         
-        # ﻟ؟۰ﻝ؟ﮔﺍﺕﻛﺗﮒﺎﮒﭨ
+        # ﻟ؟۰ﻝ؟ﮔﺍﺕﻛﺗﮒﺎﮒﭨ
         permanent_impact = self.permanent_impact_coef * participation_rate * volatility
         
-        # ﻟ؟۰ﻝ؟ﮔﭨﮒﺎﮒ?        total_impact = temporary_impact + permanent_impact
+        # ﻟ؟۰ﻝ؟ﮔﭨﮒﺎﮒ?        total_impact = temporary_impact + permanent_impact
         
-        # ﻟ؟۰ﻝ؟ﮒﺎﮒﭨﮔﮔ؛
+        # ﻟ؟۰ﻝ؟ﮒﺎﮒﭨﮔﮔ؛
         impact_cost = total_impact * order_size
         
         return MarketImpactResult(
@@ -783,27 +783,27 @@ class MarketImpactModel:
         )
     
     def _calculate_confidence(self, participation_rate: float, volatility: float) -> float:
-        """ﻟ؟۰ﻝ؟ﻝﺛ؟ﻛﺟ۰ﮒﭦ?        
-        ﻝﺛ؟ﻛﺟ۰ﮒﭦ۵ﮒﭦﻛﭦ?
-        1. ﮒﻛﺕﻝﮔﺁﮒ۵ﮒ۷ﮒﻝﻟﮒﺑﮒ?        2. ﮔﺏ۱ﮒ۷ﻝﮔﺁﮒ۵ﮒ۷ﮒﮒﺎﻟﮒﺑﮒ?        """
+        """ﻟ؟۰ﻝ؟ﻝﺛ؟ﻛﺟ۰ﮒﭦ?        
+        ﻝﺛ؟ﻛﺟ۰ﮒﭦ۵ﮒﭦﻛﭦ?
+        1. ﮒﻛﺕﻝﮔﺁﮒ۵ﮒ۷ﮒﻝﻟﮒﺑﮒ?        2. ﮔﺏ۱ﮒ۷ﻝﮔﺁﮒ۵ﮒ۷ﮒﮒﺎﻟﮒﺑﮒ?        """
         confidence = 1.0
         
-        # ﮒﻛﺕﻝﻟﺟﻠ،?ﻝﺛ؟ﻛﺟ۰ﮒﭦ۵ﻠﻛﺛ?        if participation_rate > 0.1:
+        # ﮒﻛﺕﻝﻟﺟﻠ،?ﻝﺛ؟ﻛﺟ۰ﮒﭦ۵ﻠﻛﺛ?        if participation_rate > 0.1:
             confidence *= 0.7
         
-        # ﮔﺏ۱ﮒ۷ﻝﻟﺟﻠ،?ﻝﺛ؟ﻛﺟ۰ﮒﭦ۵ﻠﻛﺛ?        if volatility > 0.05:
+        # ﮔﺏ۱ﮒ۷ﻝﻟﺟﻠ،?ﻝﺛ؟ﻛﺟ۰ﮒﭦ۵ﻠﻛﺛ?        if volatility > 0.05:
             confidence *= 0.8
         
         return confidence
 ```
 
-#### 4.1.2 ﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔﺏ
+#### 4.1.2 ﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔﺏ
 
 ```python
 class MarketImpactCalibrator:
-    """ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮒ?    
-    ﻝﺑ۱ﮒﺙ: CALIBRATOR.MARKET_IMPACT.001
-    ﻟﻟﺑ۲: ﻛﺛﺟﻝ۷ﮒﮒﺎﮔﺍﮔ؟ﮔ ۰ﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﮔﺍ
+    """ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮒ?    
+    ﻝﺑ۱ﮒﺙ: CALIBRATOR.MARKET_IMPACT.001
+    ﻟﻟﺑ۲: ﻛﺛﺟﻝ۷ﮒﮒﺎﮔﺍﮔ؟ﮔ ۰ﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﮔﺍ
     """
     
     def __init__(self, model: MarketImpactModel):
@@ -813,31 +813,31 @@ class MarketImpactCalibrator:
     def calibrate(self, 
                  historical_data: pd.DataFrame,
                  calibration_config: CalibrationConfig) -> CalibrationResult:
-        """ﮔ ۰ﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ
+        """ﮔ ۰ﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ
         
-        ﮔ ۰ﮒﮔﭖﻝ۷:
-        1. ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?        2. ﻝﺗﮒﺝﮒﺓ۴ﻝ۷
-        3. ﮒﮔﺍﻛﺙﺍﻟ؟۰
-        4. ﮔ۷۰ﮒﻠ۹ﻟﺁ
-        5. ﻝﮔﮔ ۰ﮒﮔ۴ﮒ
+        ﮔ ۰ﮒﮔﭖﻝ۷:
+        1. ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?        2. ﻝﺗﮒﺝﮒﺓ۴ﻝ۷
+        3. ﮒﮔﺍﻛﺙﺍﻟ؟۰
+        4. ﮔ۷۰ﮒﻠ۹ﻟﺁ
+        5. ﻝﮔﮔ ۰ﮒﮔ۴ﮒ
         """
         self.logger.info("Starting market impact model calibration...")
         
-        # 1. ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?        cleaned_data = self._preprocess_data(historical_data)
+        # 1. ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?        cleaned_data = self._preprocess_data(historical_data)
         
-        # 2. ﻝﺗﮒﺝﮒﺓ۴ﻝ۷
+        # 2. ﻝﺗﮒﺝﮒﺓ۴ﻝ۷
         features = self._engineer_features(cleaned_data)
         
-        # 3. ﮒﮔﺍﻛﺙﺍﻟ؟۰
+        # 3. ﮒﮔﺍﻛﺙﺍﻟ؟۰
         estimated_params = self._estimate_parameters(features, calibration_config)
         
-        # 4. ﮔ۷۰ﮒﻠ۹ﻟﺁ
+        # 4. ﮔ۷۰ﮒﻠ۹ﻟﺁ
         validation_result = self._validate_model(estimated_params, cleaned_data)
         
-        # 5. ﮔﺑﮔﺍﮔ۷۰ﮒﮒﮔﺍ
+        # 5. ﮔﺑﮔﺍﮔ۷۰ﮒﮒﮔﺍ
         self._update_model_parameters(estimated_params)
         
-        # 6. ﻝﮔﮔ ۰ﮒﮔ۴ﮒ
+        # 6. ﻝﮔﮔ ۰ﮒﮔ۴ﮒ
         calibration_report = self._generate_calibration_report(
             estimated_params, validation_result
         )
@@ -853,12 +853,12 @@ class MarketImpactCalibrator:
         )
     
     def _preprocess_data(self, historical_data: pd.DataFrame) -> pd.DataFrame:
-        """ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?        
-        ﮒ۳ﻝﮔ­۴ﻠ۹۳:
-        1. ﮒﭨﻠ۳ﮒﺙﮒﺕﺕﮒ?        2. ﮒ۰،ﮒﻝﺙﭦﮒ۳ﺎﮒ?        3. ﮔ ﮒﮒ?        """
+        """ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?        
+        ﮒ۳ﻝﮔ­۴ﻠ۹۳:
+        1. ﮒﭨﻠ۳ﮒﺙﮒﺕﺕﮒ?        2. ﮒ۰،ﮒﻝﺙﭦﮒ۳ﺎﮒ?        3. ﮔ ﮒﮒ?        """
         cleaned_data = historical_data.copy()
         
-        # ﮒﭨﻠ۳ﮒﺙﮒﺕﺕﮒ?3ﺵﮒﮒ)
+        # ﮒﭨﻠ۳ﮒﺙﮒﺕﺕﮒ?3ﺵﮒﮒ)
         for col in ['price_impact', 'volume', 'volatility']:
             mean = cleaned_data[col].mean()
             std = cleaned_data[col].std()
@@ -867,15 +867,15 @@ class MarketImpactCalibrator:
                 (cleaned_data[col] <= mean + 3*std)
             ]
         
-        # ﮒ۰،ﮒﻝﺙﭦﮒ۳ﺎﮒ?        cleaned_data = cleaned_data.fillna(method='ffill')
+        # ﮒ۰،ﮒﻝﺙﭦﮒ۳ﺎﮒ?        cleaned_data = cleaned_data.fillna(method='ffill')
         
         return cleaned_data
     
     def _engineer_features(self, data: pd.DataFrame) -> pd.DataFrame:
-        """ﻝﺗﮒﺝﮒﺓ۴ﻝ۷
+        """ﻝﺗﮒﺝﮒﺓ۴ﻝ۷
         
-        ﻝﺗﮒﺝ:
-        1. ﮒﻛﺕﻝ?= ﻟ؟۱ﮒﻠ?/ ﮒﺗﺏﮒﮔﻛﭦ۳ﻠ?        2. ﻝﺕﮒﺁﺗﮔﺏ۱ﮒ۷ﻝ?= ﮔﺏ۱ﮒ۷ﻝ?/ ﮒﺗﺏﮒﮔﺏ۱ﮒ۷ﻝ?        3. ﮔﭖﮒ۷ﮔ۶ﮔﮔ ?= ﮔﻛﭦ۳ﻠ?/ ﮒﺕﮒ?        """
+        ﻝﺗﮒﺝ:
+        1. ﮒﻛﺕﻝ?= ﻟ؟۱ﮒﻠ?/ ﮒﺗﺏﮒﮔﻛﭦ۳ﻠ?        2. ﻝﺕﮒﺁﺗﮔﺏ۱ﮒ۷ﻝ?= ﮔﺏ۱ﮒ۷ﻝ?/ ﮒﺗﺏﮒﮔﺏ۱ﮒ۷ﻝ?        3. ﮔﭖﮒ۷ﮔ۶ﮔﮔ ?= ﮔﻛﭦ۳ﻠ?/ ﮒﺕﮒ?        """
         features = data.copy()
         
         features['participation_rate'] = features['order_size'] / features['average_volume']
@@ -887,39 +887,39 @@ class MarketImpactCalibrator:
     def _estimate_parameters(self, 
                            features: pd.DataFrame,
                            config: CalibrationConfig) -> Dict[str, float]:
-        """ﮒﮔﺍﻛﺙﺍﻟ؟۰
+        """ﮒﮔﺍﻛﺙﺍﻟ؟۰
         
-        ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ:
-        1. ﻝﭦﺟﮔ۶ﮒﮒﺛ?ﮒﭦﻝ۰ﮔﺗﮔﺏ)
-        2. ﻠﻝﭦﺟﮔ۶ﻛﺙﮒ?ﻠ،ﻝﭦ۶ﮔﺗﮔﺏ)
+        ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ:
+        1. ﻝﭦﺟﮔ۶ﮒﮒﺛ?ﮒﭦﻝ۰ﮔﺗﮔﺏ)
+        2. ﻠﻝﭦﺟﮔ۶ﻛﺙﮒ?ﻠ،ﻝﭦ۶ﮔﺗﮔﺏ)
         """
         from scipy.optimize import minimize
         
-        # ﮒﮒ۳ﮔﺍﮔ؟
+        # ﮒﮒ۳ﮔﺍﮔ؟
         X = features[['participation_rate', 'relative_volatility']].values
         y = features['price_impact'].values
         
-        # ﮒ؟ﻛﺗﮔﮒ۳ﺎﮒﺛﮔﺍ
+        # ﮒ؟ﻛﺗﮔﮒ۳ﺎﮒﺛﮔﺍ
         def loss_function(params):
             temp_coef, perm_coef = params
             
-            # ﻠ۱ﮔﭖﮒﺎﮒﭨ
+            # ﻠ۱ﮔﭖﮒﺎﮒﭨ
             predicted_impact = temp_coef * X[:, 0] * X[:, 1] + perm_coef * X[:, 0]
             
-            # ﻟ؟۰ﻝ؟MSE
+            # ﻟ؟۰ﻝ؟MSE
             mse = np.mean((predicted_impact - y) ** 2)
             
-            # ﮔﺓﭨﮒ ﮔ­۲ﮒﮒ?            regularization = config.regularization_coef * (temp_coef**2 + perm_coef**2)
+            # ﮔﺓﭨﮒ ﮔ­۲ﮒﮒ?            regularization = config.regularization_coef * (temp_coef**2 + perm_coef**2)
             
             return mse + regularization
         
-        # ﻛﺙﮒﮒﮔﺍ
-        initial_params = [0.1, 0.05]  # ﮒﮒ۶ﻝﮔﭖ
+        # ﻛﺙﮒﮒﮔﺍ
+        initial_params = [0.1, 0.05]  # ﮒﮒ۶ﻝﮔﭖ
         result = minimize(
             loss_function,
             initial_params,
             method='L-BFGS-B',
-            bounds=[(0, 1), (0, 1)]  # ﮒﮔﺍﻟﮒﺑ[0, 1]
+            bounds=[(0, 1), (0, 1)]  # ﮒﮔﺍﻟﮒﺑ[0, 1]
         )
         
         estimated_params = {
@@ -934,24 +934,24 @@ class MarketImpactCalibrator:
     def _validate_model(self, 
                        params: Dict[str, float],
                        data: pd.DataFrame) -> ValidationResult:
-        """ﻠ۹ﻟﺁﮔ۷۰ﮒ
+        """ﻠ۹ﻟﺁﮔ۷۰ﮒ
         
-        ﻠ۹ﻟﺁﮔﺗﮔﺏ:
-        1. ﮔ ﺓﮔ؛ﮒﻠ۹ﻟﺁ?Rﺡﺎ)
-        2. ﮔ ﺓﮔ؛ﮒ۳ﻠ۹ﻟﺁ?ﻛﭦ۳ﮒﻠ۹ﻟﺁ)
-        3. ﮔ؟ﮒﺓ؟ﮒﮔ
+        ﻠ۹ﻟﺁﮔﺗﮔﺏ:
+        1. ﮔ ﺓﮔ؛ﮒﻠ۹ﻟﺁ?Rﺡﺎ)
+        2. ﮔ ﺓﮔ؛ﮒ۳ﻠ۹ﻟﺁ?ﻛﭦ۳ﮒﻠ۹ﻟﺁ)
+        3. ﮔ؟ﮒﺓ؟ﮒﮔ
         """
         from sklearn.model_selection import train_test_split
         from sklearn.metrics import r2_score, mean_absolute_error
         
-        # ﮒﮒﺎﮔﺍﮔ؟
+        # ﮒﮒﺎﮔﺍﮔ؟
         train_data, test_data = train_test_split(data, test_size=0.2, random_state=42)
         
-        # ﻟ؟­ﻝﭨﻠﻠ۹ﻟﺁ?        train_pred = self._predict_impact(train_data, params)
+        # ﻟ؟­ﻝﭨﻠﻠ۹ﻟﺁ?        train_pred = self._predict_impact(train_data, params)
         train_r2 = r2_score(train_data['price_impact'], train_pred)
         train_mae = mean_absolute_error(train_data['price_impact'], train_pred)
         
-        # ﮔﭖﻟﺁﻠﻠ۹ﻟﺁ?        test_pred = self._predict_impact(test_data, params)
+        # ﮔﭖﻟﺁﻠﻠ۹ﻟﺁ?        test_pred = self._predict_impact(test_data, params)
         test_r2 = r2_score(test_data['price_impact'], test_pred)
         test_mae = mean_absolute_error(test_data['price_impact'], test_pred)
         
@@ -964,7 +964,7 @@ class MarketImpactCalibrator:
         )
     
     def _predict_impact(self, data: pd.DataFrame, params: Dict[str, float]) -> np.ndarray:
-        """ﻠ۱ﮔﭖﮒﺕﮒﭦﮒﺎﮒﭨ"""
+        """ﻠ۱ﮔﭖﮒﺕﮒﭦﮒﺎﮒﭨ"""
         participation_rate = data['order_size'] / data['average_volume']
         relative_volatility = data['volatility'] / data['volatility'].rolling(20).mean()
         
@@ -976,7 +976,7 @@ class MarketImpactCalibrator:
         return predicted_impact.values
     
     def _update_model_parameters(self, params: Dict[str, float]):
-        """ﮔﺑﮔﺍﮔ۷۰ﮒﮒﮔﺍ"""
+        """ﮔﺑﮔﺍﮔ۷۰ﮒﮒﮔﺍ"""
         self.model.temporary_impact_coef = params['temporary_impact_coef']
         self.model.permanent_impact_coef = params['permanent_impact_coef']
         self.model.is_calibrated = True
@@ -986,50 +986,50 @@ class MarketImpactCalibrator:
     def _generate_calibration_report(self,
                                     params: Dict[str, float],
                                     validation: ValidationResult) -> str:
-        """ﻝﮔﮔ ۰ﮒﮔ۴ﮒ"""
+        """ﻝﮔﮔ ۰ﮒﮔ۴ﮒ"""
         report = f"""
-# ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔ۴ﮒ
+# ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔ۴ﮒ
 
-## ﮔ ۰ﮒﮔ۵ﻟ۶
-- **ﮔ ۰ﮒﮔ۴ﮔ**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-- **ﻛﺙﮒﮔﮒ**: {params['optimization_success']}
-- **ﮔﻝﭨﮔﮒ۳?*: {params['final_loss']:.6f}
+## ﮔ ۰ﮒﮔ۵ﻟ۶
+- **ﮔ ۰ﮒﮔ۴ﮔ**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+- **ﻛﺙﮒﮔﮒ**: {params['optimization_success']}
+- **ﮔﻝﭨﮔﮒ۳?*: {params['final_loss']:.6f}
 
-## ﮔ ۰ﮒﮒﮔﺍ
-- **ﻛﺕﺑﮔﭘﮒﺎﮒﭨﻝﺏﭨﮔﺍ**: {params['temporary_impact_coef']:.6f}
-- **ﮔﺍﺕﻛﺗﮒﺎﮒﭨﻝﺏﭨﮔﺍ**: {params['permanent_impact_coef']:.6f}
+## ﮔ ۰ﮒﮒﮔﺍ
+- **ﻛﺕﺑﮔﭘﮒﺎﮒﭨﻝﺏﭨﮔﺍ**: {params['temporary_impact_coef']:.6f}
+- **ﮔﺍﺕﻛﺗﮒﺎﮒﭨﻝﺏﭨﮔﺍ**: {params['permanent_impact_coef']:.6f}
 
-## ﻠ۹ﻟﺁﻝﭨﮔ
-- **ﻟ؟­ﻝﭨﻠRﺡﺎ**: {validation.train_r2:.4f}
-- **ﮔﭖﻟﺁﻠRﺡﺎ**: {validation.test_r2:.4f}
-- **ﻟ؟­ﻝﭨﻠMAE**: {validation.train_mae:.6f}
-- **ﮔﭖﻟﺁﻠMAE**: {validation.test_mae:.6f}
-- **ﮔ۷۰ﮒﮔﮔ**: {'ﻗ?ﮔ? if validation.is_valid else 'ﻗ?ﮒ?}
+## ﻠ۹ﻟﺁﻝﭨﮔ
+- **ﻟ؟­ﻝﭨﻠRﺡﺎ**: {validation.train_r2:.4f}
+- **ﮔﭖﻟﺁﻠRﺡﺎ**: {validation.test_r2:.4f}
+- **ﻟ؟­ﻝﭨﻠMAE**: {validation.train_mae:.6f}
+- **ﮔﭖﻟﺁﻠMAE**: {validation.test_mae:.6f}
+- **ﮔ۷۰ﮒﮔﮔ**: {'ﻗ?ﮔ? if validation.is_valid else 'ﻗ?ﮒ?}
 
 ## ﮒﭨﭦﻟ؟؟
 """
         
         if validation.is_valid:
-            report += "- ﮔ۷۰ﮒﻠ۹ﻟﺁﻠﻟﺟ,ﮒﺁﻛﭨ۴ﻛﺛﺟﻝ۷\n"
-            report += "- ﮒﭨﭦﻟ؟؟ﮒ؟ﮔﻠﮔﺍﮔ ۰ﮒ(ﮔﺁﮔﻛﺕﮔ؛?\n"
+            report += "- ﮔ۷۰ﮒﻠ۹ﻟﺁﻠﻟﺟ,ﮒﺁﻛﭨ۴ﻛﺛﺟﻝ۷\n"
+            report += "- ﮒﭨﭦﻟ؟؟ﮒ؟ﮔﻠﮔﺍﮔ ۰ﮒ(ﮔﺁﮔﻛﺕﮔ؛?\n"
         else:
-            report += "- ﻗ ﺅﺕ ﮔ۷۰ﮒﻠ۹ﻟﺁﮔ۹ﻠﻟﺟ,ﻠﻟ۵ﻟﺍﮔﺑﮒﮔﺍﮔﮒ۱ﮒ ﮔﺍﮔ؟\n"
-            report += "- ﮒﭨﭦﻟ؟؟ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻟﺑ۷ﻠﮒﻝﺗﮒﺝﮒﺓ۴ﻝ۷\n"
+            report += "- ﻗ ﺅﺕ ﮔ۷۰ﮒﻠ۹ﻟﺁﮔ۹ﻠﻟﺟ,ﻠﻟ۵ﻟﺍﮔﺑﮒﮔﺍﮔﮒ۱ﮒ ﮔﺍﮔ؟\n"
+            report += "- ﮒﭨﭦﻟ؟؟ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻟﺑ۷ﻠﮒﻝﺗﮒﺝﮒﺓ۴ﻝ۷\n"
         
         return report
 ```
 
-### 4.2 ﮔ ۰ﮒﮔﺍﮔ؟ﻟ۵ﮔﺎ
+### 4.2 ﮔ ۰ﮒﮔﺍﮔ؟ﻟ۵ﮔﺎ
 
 ```yaml
 market_impact_calibration:
   data_requirements:
-    min_samples: 1000  # ﮔﮒﺍﮔ ﺓﮔ؛ﮔﺍ
-    date_range:  # ﮔﺍﮔ؟ﮔﭘﻠﺑﻟﮒﺑ
+    min_samples: 1000  # ﮔﮒﺍﮔ ﺓﮔ؛ﮔﺍ
+    date_range:  # ﮔﺍﮔ؟ﮔﭘﻠﺑﻟﮒﺑ
       start_date: "2023-01-01"
       end_date: "2024-12-31"
     
-    required_fields:  # ﮒﺟﻠﮒ­ﮔ؟ﭖ
+    required_fields:  # ﮒﺟﻠﮒ­ﮔ؟ﭖ
       - timestamp
       - symbol
       - order_size
@@ -1039,64 +1039,64 @@ market_impact_calibration:
       - market_cap
     
     data_sources:
-      - name: "ﮒﮒﺎﻛﭦ۳ﮔﮔﺍﮔ؟"
+      - name: "ﮒﮒﺎﻛﭦ۳ﮔﮔﺍﮔ؟"
         priority: 1
         fields: ["order_size", "average_volume", "volatility"]
-      - name: "Level-2ﻟ۰ﮔﮔﺍﮔ؟"
+      - name: "Level-2ﻟ۰ﮔﮔﺍﮔ؟"
         priority: 2
         fields: ["price_impact", "market_cap"]
   
   calibration_config:
-    method: "nonlinear_optimization"  # ﻝﭦﺟﮔ۶ﮒﮒﺛﮔﻠﻝﭦﺟﮔ۶ﻛﺙﮒ?    regularization_coef: 0.01  # ﮔ­۲ﮒﮒﻝﺏﭨﮔ?    validation_split: 0.2  # ﻠ۹ﻟﺁﻠﮔﺁﻛﺝ?    cross_validation: true  # ﮔﺁﮒ۵ﻛﭦ۳ﮒﻠ۹ﻟﺁ
+    method: "nonlinear_optimization"  # ﻝﭦﺟﮔ۶ﮒﮒﺛﮔﻠﻝﭦﺟﮔ۶ﻛﺙﮒ?    regularization_coef: 0.01  # ﮔ­۲ﮒﮒﻝﺏﭨﮔ?    validation_split: 0.2  # ﻠ۹ﻟﺁﻠﮔﺁﻛﺝ?    cross_validation: true  # ﮔﺁﮒ۵ﻛﭦ۳ﮒﻠ۹ﻟﺁ
     
   quality_thresholds:
-    min_r2: 0.5  # ﮔﮒﺍRﺡﺎ
-    max_mae: 0.02  # ﮔﮒ۳۶MAE
-    max_parameter_value: 1.0  # ﮒﮔﺍﮔﮒ۳۶ﮒ?    
+    min_r2: 0.5  # ﮔﮒﺍRﺡﺎ
+    max_mae: 0.02  # ﮔﮒ۳۶MAE
+    max_parameter_value: 1.0  # ﮒﮔﺍﮔﮒ۳۶ﮒ?    
   recalibration:
     enabled: true
-    frequency: "monthly"  # ﮔﺁﮔﻠﮔﺍﮔ ۰ﮒ
-    trigger_conditions:  # ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ
-      - performance_degradation: 0.2  # ﮔ۶ﻟﺛﻛﺕﻠ20%
-      - data_drift: true  # ﮔﺍﮔ؟ﮔﺙﻝ۶ﭨ
+    frequency: "monthly"  # ﮔﺁﮔﻠﮔﺍﮔ ۰ﮒ
+    trigger_conditions:  # ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ
+      - performance_degradation: 0.2  # ﮔ۶ﻟﺛﻛﺕﻠ20%
+      - data_drift: true  # ﮔﺍﮔ؟ﮔﺙﻝ۶ﭨ
 ```
 
-### 4.3 ﮔ ۰ﮒﻠ۹ﻟﺁﮔ ﮒ
+### 4.3 ﮔ ۰ﮒﻠ۹ﻟﺁﮔ ﮒ
 
-| ﻠ۹ﻟﺁﻝﭨﺑﮒﭦ۵ | ﻠ۹ﻟﺁﮔ ﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+| ﻠ۹ﻟﺁﻝﭨﺑﮒﭦ۵ | ﻠ۹ﻟﺁﮔ ﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |---------|---------|---------|
-| **ﮒﮔﺍﮒﻝﮔ?* | ﮒﮔﺍﮒ۷[0, 1]ﻟﮒﺑﮒ?| ﮒﮔﺍﻟﺝﺗﻝﮔ۲ﮔ?|
-| **ﮔﮒﻛﺙﮒﭦ۵** | Rﺡﺎ ﻗ?0.5 | ﮔ ﺓﮔ؛ﮒ۳ﻠ۹ﻟﺁ?|
-| **ﻠ۱ﮔﭖﮒﻝ۰؟ﮔ?* | MAE < 0.02 | ﮔ؟ﮒﺓ؟ﮒﮔ |
-| **ﻝ۷ﺏﮒ؟ﮔ?* | ﮒﮔﺍﮔﺏ۱ﮒ۷ < 10% | ﮔﭨﮒ۷ﻝ۹ﮒ۲ﻠ۹ﻟﺁ |
-| **ﻛﺕﮒ۰ﮒﻝﮔ?* | ﻛﺕﺑﮔﭘﮒﺎﮒﭨ > ﮔﺍﺕﻛﺗﮒﺎﮒﭨ | ﻝﻟ؟ﭦﻠ۹ﻟﺁ |
+| **ﮒﮔﺍﮒﻝﮔ?* | ﮒﮔﺍﮒ۷[0, 1]ﻟﮒﺑﮒ?| ﮒﮔﺍﻟﺝﺗﻝﮔ۲ﮔ?|
+| **ﮔﮒﻛﺙﮒﭦ۵** | Rﺡﺎ ﻗ?0.5 | ﮔ ﺓﮔ؛ﮒ۳ﻠ۹ﻟﺁ?|
+| **ﻠ۱ﮔﭖﮒﻝ۰؟ﮔ?* | MAE < 0.02 | ﮔ؟ﮒﺓ؟ﮒﮔ |
+| **ﻝ۷ﺏﮒ؟ﮔ?* | ﮒﮔﺍﮔﺏ۱ﮒ۷ < 10% | ﮔﭨﮒ۷ﻝ۹ﮒ۲ﻠ۹ﻟﺁ |
+| **ﻛﺕﮒ۰ﮒﻝﮔ?* | ﻛﺕﺑﮔﭘﮒﺎﮒﭨ > ﮔﺍﺕﻛﺗﮒﺎﮒﭨ | ﻝﻟ؟ﭦﻠ۹ﻟﺁ |
 
 ---
 
-## ﻭ ﻛﭦﻙﻠﮔﮒﺍﻛﺕﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+## ﻭ ﻛﭦﻙﻠﮔﮒﺍﻛﺕﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 
-### 5.1 ﮔﺑﮔﺍﻟﺁﺑﮔ
+### 5.1 ﮔﺑﮔﺍﻟﺁﺑﮔ
 
-ﮔ؛ﻟ۰۴ﮒﮔﮔ۰۲ﮒﺓﺎﻟ۰۴ﮒﻛﭦﻛﺕﻛﺕ۹ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟?
+ﮔ؛ﻟ۰۴ﮒﮔﮔ۰۲ﮒﺓﺎﻟ۰۴ﮒﻛﭦﻛﺕﻛﺕ۹ﮒﺟﻠ۰ﭨﮔﺗﻟﺟﻠ۰ﺗﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟?
 
-1. **IMP-001**: ﮒ؟ﮔﺑﻝﮒﺙﮒﺕﺕﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
-   - ﮒﺙﮒﺕﺕﮒﺎﮔ؛۰ﻝﭨﮔ
-   - ﻝﭨﻛﺕﮒﺙﮒﺕﺕﮒ۳ﻝﮒ?   - ﻠﻟﺁﻝ­ﻝ۴ﮒﮔ۶ﻟ۰ﮒ۷
-   - ﮒﺓﻛﺛﮒﭦﻝ۷ﮒﭦﮔﺁ
+1. **IMP-001**: ﮒ؟ﮔﺑﻝﮒﺙﮒﺕﺕﮒ۳ﻝﮒﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
+   - ﮒﺙﮒﺕﺕﮒﺎﮔ؛۰ﻝﭨﮔ
+   - ﻝﭨﻛﺕﮒﺙﮒﺕﺕﮒ۳ﻝﮒ?   - ﻠﻟﺁﻝ­ﻝ۴ﮒﮔ۶ﻟ۰ﮒ۷
+   - ﮒﺓﻛﺛﮒﭦﻝ۷ﮒﭦﮔﺁ
 
-2. **IMP-002**: ﮒ؟ﮒﻝRLﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ ﻟ؟ﺝﻟ؟۰
-   - ﮔ ﺕﮒﺟﻝﮔ۶ﮔﮔ ﻛﺛﻝﺏﭨ
-   - ﻟ؟­ﻝﭨﻝﮔ۶ﮒ?   - ﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒ?   - ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﮒﮒﻟ­۵
+2. **IMP-002**: ﮒ؟ﮒﻝRLﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ۶ﮔﮔ ﻟ؟ﺝﻟ؟۰
+   - ﮔ ﺕﮒﺟﻝﮔ۶ﮔﮔ ﻛﺛﻝﺏﭨ
+   - ﻟ؟­ﻝﭨﻝﮔ۶ﮒ?   - ﻟ؟­ﻝﭨﻟﺟﻝ۷ﮒﺁﻟ۶ﮒ?   - ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﮒﮒﻟ­۵
 
-3. **IMP-003**: ﻟﺁ۵ﻝﭨﻝﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔ۰?   - ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﭦﻝ۰
-   - ﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔﺏ
-   - ﮔ ۰ﮒﮔﺍﮔ؟ﻟ۵ﮔﺎ
-   - ﮔ ۰ﮒﻠ۹ﻟﺁﮔ ﮒ
+3. **IMP-003**: ﻟﺁ۵ﻝﭨﻝﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔ۰?   - ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮒﭦﻝ۰
+   - ﮔ۷۰ﮒﮔ ۰ﮒﮔﺗﮔﺏ
+   - ﮔ ۰ﮒﮔﺍﮔ؟ﻟ۵ﮔﺎ
+   - ﮔ ۰ﮒﻠ۹ﻟﺁﮔ ﮒ
 
-### 5.2 ﻛﺕﻛﺕﮔ­۴ﻟ۰ﮒ?
-1. **ﻝ،ﮒﺏﮔ۶ﻟ۰**: ﮒﺍﮔ؛ﻟ۰۴ﮒﮔﮔ۰۲ﻝﮒﮒ؟ﺗﻠﮔﮒﺍﻛﺕﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-2. **ﻛﭨ۲ﻝ ﮒ؟ﻝﺍ**: ﮔﻝ۶ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﻝﺍﻛﺕﻛﺕ۹ﮔﺗﻟﺟﻠ۰?3. **ﮒﮒﮔﭖﻟﺁ**: ﻛﺕﭦﻛﺕﻛﺕ۹ﮔﺗﻟﺟﻠ۰ﺗﻝﺙﮒﮒﮒﮔﭖﻟﺁ
-4. **ﻠﮔﮔﭖﻟﺁ**: ﻠ۹ﻟﺁﻛﺕﻛﺕ۹ﮔﺗﻟﺟﻠ۰ﺗﻛﺕﻝﺍﮔﻝﺏﭨﻝﭨﻝﻠﮔ?
+### 5.2 ﻛﺕﻛﺕﮔ­۴ﻟ۰ﮒ?
+1. **ﻝ،ﮒﺏﮔ۶ﻟ۰**: ﮒﺍﮔ؛ﻟ۰۴ﮒﮔﮔ۰۲ﻝﮒﮒ؟ﺗﻠﮔﮒﺍﻛﺕﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+2. **ﻛﭨ۲ﻝ ﮒ؟ﻝﺍ**: ﮔﻝ۶ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲ﮒ؟ﻝﺍﻛﺕﻛﺕ۹ﮔﺗﻟﺟﻠ۰?3. **ﮒﮒﮔﭖﻟﺁ**: ﻛﺕﭦﻛﺕﻛﺕ۹ﮔﺗﻟﺟﻠ۰ﺗﻝﺙﮒﮒﮒﮔﭖﻟﺁ
+4. **ﻠﮔﮔﭖﻟﺁ**: ﻠ۹ﻟﺁﻛﺕﻛﺕ۹ﮔﺗﻟﺟﻠ۰ﺗﻛﺕﻝﺍﮔﻝﺏﭨﻝﭨﻝﻠﮔ?
 ---
 
-**ﻝﮔ؛**: v1.0 | **ﮔﺑﮔﺍ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
+**ﻝﮔ؛**: v1.0 | **ﮔﺑﮔﺍ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?

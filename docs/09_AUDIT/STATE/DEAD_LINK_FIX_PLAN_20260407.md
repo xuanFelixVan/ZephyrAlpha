@@ -1,3 +1,18 @@
+﻿---
+module_id: DEAD_LINK_FIX_PLAN_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 死链接修复计划
+standard_type: 标准文档
+applicable_scope: 记录死链接修复的计划和进度
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+---
+
 ﻿# 死链接修复计划
 
 ## 📊 死链接分析总结

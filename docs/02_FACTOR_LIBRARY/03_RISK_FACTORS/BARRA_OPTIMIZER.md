@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FACTOR_T_03_RM003_BARRA_OPTIMIZER_001
 version: 1.0.0
 status: Active
@@ -25,11 +25,11 @@ compliance_level: 专业标准
 > Barra risk model and portfolio optimizer
 >
 > **策略编号**：T.03.RM003
-> **所属模�?*�?3_RISK_FACTORS
-> **文档类型**：风险模型优�?
-> **优先�?*：P1
+> **所属模?*?3_RISK_FACTORS
+> **文档类型**：风险模型优?
+> **优先?*：P1
 >
-> **配套文档**�?
+> **配套文档**?
 > - [T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_STYLE_FACTORS.md) - 十大风格因子定义
 > - [T.03.RF002.industry_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/INDUSTRY_FACTORS.md) - 申万行业分类
 > - [T.03.RF003.tail_risk_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/TAIL_RISK_FACTORS.md) - CVaR/ES尾部风险
@@ -48,21 +48,21 @@ from sklearn.preprocessing import StandardScaler
 
 class BarraRiskModel:
     """
-    Barra多因子风险模�?(A股适配�?
+    Barra多因子风险模?(A股适配?
 
     组合风险公式: σ²_p = w' * (X*F*X' + D) * w
     其中:
         X: 因子暴露矩阵 (N x K)
-        F: 因子协方差矩�?(K x K)
-        D: 特异性方差对角矩�?(N x N)
+        F: 因子协方差矩?(K x K)
+        D: 特异性方差对角矩?(N x N)
         w: 组合权重向量 (N x 1)
 
     Attributes:
         style_factors: 风格因子列表
         industry_factors: 行业因子列表
-        factor_returns: 因子收益率矩�?
-        idiosyncratic_var: 特异性方�?
-        factor_cov: 因子协方差矩�?
+        factor_returns: 因子收益率矩?
+        idiosyncratic_var: 特异性方?
+        factor_cov: 因子协方差矩?
     """
 
     STYLE_FACTORS = ['SIZE', 'VALUE', 'MOM', 'QUAL', 'VOL',
@@ -72,11 +72,11 @@ class BarraRiskModel:
         '801010': '农林牧渔', '801020': '采掘', '801030': '化工',
         '801040': '钢铁', '801050': '有色金属', '801060': '电子',
         '801080': '汽车', '801110': '家用电器', '801120': '食品饮料',
-        '801130': '纺织服装', '801140': '轻工制�?, '801150': '医药生物',
-        '801160': '公用事业', '801170': '交通运�?, '801180': '房地�?,
+        '801130': '纺织服装', '801140': '轻工制?, '801150': '医药生物',
+        '801160': '公用事业', '801170': '交通运?, '801180': '房地?,
         '801200': '商业贸易', '801210': '休闲服务', '801230': '建筑材料',
         '801710': '建筑装饰', '801720': '电气设备', '801730': '国防军工',
-        '801740': '计算�?, '801750': '传媒', '801760': '通信',
+        '801740': '计算?, '801750': '传媒', '801760': '通信',
         '801770': '银行', '801780': '非银金融', '801790': '综合',
         '801890': '机械设备'
     }
@@ -92,24 +92,24 @@ class BarraRiskModel:
 
     def calc_style_exposures(self, market_data: pd.DataFrame) -> pd.DataFrame:
         """
-        计算风格因子暴露�?
+        计算风格因子暴露?
 
         参数:
             market_data: 包含以下列的DataFrame
-                - close: 收盘�?
-                - float_volume: 流通股�?
-                - pb: 市净�?
-                - pe: 市盈�?
-                - dividend_yield: 股息�?
-                - turnover_rate: 换手�?
+                - close: 收盘?
+                - float_volume: 流通股?
+                - pb: 市净?
+                - pe: 市盈?
+                - dividend_yield: 股息?
+                - turnover_rate: 换手?
                 - volatility_20d: 20日波动率
-                - revenue_growth: 营收增长�?
-                - profit_growth: 利润增长�?
+                - revenue_growth: 营收增长?
+                - profit_growth: 利润增长?
                 - debt_to_equity: 资产负债率
-                - free_cash_flow: 自由现金�?
+                - free_cash_flow: 自由现金?
 
         返回:
-            style_exposures: 风格因子暴露�?(N x 10)
+            style_exposures: 风格因子暴露?(N x 10)
         """
         exposures = pd.DataFrame(index=market_data.index)
 
@@ -160,13 +160,13 @@ class BarraRiskModel:
 
     def calc_industry_exposures(self, industry_codes: pd.Series) -> pd.DataFrame:
         """
-        计算行业因子暴露�?(dummy variable encoding)
+        计算行业因子暴露?(dummy variable encoding)
 
         参数:
             industry_codes: 申万行业代码 Series
 
         返回:
-            industry_exposures: 行业因子暴露�?(N x 28)
+            industry_exposures: 行业因子暴露?(N x 28)
         """
         industry_names = industry_codes.map(self.SW_INDUSTRY_L1)
         industry_exposures = pd.get_dummies(industry_names, columns=self.industry_factors)
@@ -182,12 +182,12 @@ class BarraRiskModel:
         其中: f = (X'X)^(-1) * X'r
 
         参数:
-            returns: 个股收益�?(N x 1)
-            factor_exposures: 因子暴露�?(N x K)
+            returns: 个股收益?(N x 1)
+            factor_exposures: 因子暴露?(N x K)
             date: 交易日期
 
         返回:
-            factor_ret: 因子收益�?(K x 1)
+            factor_ret: 因子收益?(K x 1)
         """
         X = factor_exposures.values
         y = returns.values
@@ -215,9 +215,9 @@ class BarraRiskModel:
     def calc_factor_covariance(self, lookback: int = 60,
                               shrinkage_target: str = 'constant') -> np.ndarray:
         """
-        计算因子协方差矩�?
+        计算因子协方差矩?
 
-        使用Shrinkage估计器提高矩阵稳定�?
+        使用Shrinkage估计器提高矩阵稳定?
         Σ = δ * T + (1-δ) * S
 
         参数:
@@ -225,10 +225,10 @@ class BarraRiskModel:
             shrinkage_target: 收缩目标 ('constant', 'sparse', 'diagonal')
 
         返回:
-            factor_cov: 因子协方差矩�?(K x K)
+            factor_cov: 因子协方差矩?(K x K)
         """
         if self.factor_returns is None or len(self.factor_returns) < lookback:
-            raise ValueError("因子收益率数据不�?)
+            raise ValueError("因子收益率数据不?)
 
         factor_ret_window = self.factor_returns.iloc[-lookback:]
         sample_cov = factor_ret_window.T.cov().values
@@ -258,12 +258,12 @@ class BarraRiskModel:
 
         参数:
             weights: 组合权重 (N,)
-            factor_exposures: 因子暴露�?(N, K)
-            factor_cov: 因子协方差矩�?(K, K)，使用实例缓�?
-            idio_var: 特异性方�?(N,)，使用实例缓�?
+            factor_exposures: 因子暴露?(N, K)
+            factor_cov: 因子协方差矩?(K, K)，使用实例缓?
+            idio_var: 特异性方?(N,)，使用实例缓?
 
         返回:
-            total_risk: 组合风险（年化标准差�?
+            total_risk: 组合风险（年化标准差?
         """
         if factor_cov is None:
             factor_cov = self.factor_cov
@@ -281,11 +281,11 @@ class BarraRiskModel:
         """
         组合风险分解
 
-        返回各因子对组合风险的贡�?
+        返回各因子对组合风险的贡?
 
         参数:
             weights: 组合权重
-            factor_exposures: 因子暴露�?
+            factor_exposures: 因子暴露?
 
         返回:
             decomposition: 风险贡献字典
@@ -317,7 +317,7 @@ class BarraRiskModel:
 
 ---
 
-## 2. BarraOptimizer 组合优化�?
+## 2. BarraOptimizer 组合优化?
 
 ```python
 import numpy as np
@@ -330,10 +330,10 @@ class BarraOptimizer:
     """
     Barra optimizer - Portfolio weight optimization based on Barra risk model
 
-    支持的优化目�?
+    支持的优化目?
     - Mean-Variance: 最大化 (μ'w - λ * w'Σw)
-    - Risk Parity: 各因�?资产风险贡献相等
-    - Maximum Diversification: 最大化分散化比�?
+    - Risk Parity: 各因?资产风险贡献相等
+    - Maximum Diversification: 最大化分散化比?
     - Minimum Variance: 最小化组合方差
 
     参数:
@@ -362,13 +362,13 @@ class BarraOptimizer:
 
         参数:
             expected_returns: 预期收益向量 (N,)
-            factor_exposures: 因子暴露度矩�?(N, K)
+            factor_exposures: 因子暴露度矩?(N, K)
             constraints: 额外约束列表
             bounds: 权重边界 (min, max)
-            max_weight: 单只股票最大权�?
+            max_weight: 单只股票最大权?
 
         返回:
-            optimal_weights: 最优权�?(N,)
+            optimal_weights: 最优权?(N,)
         """
         n = len(expected_returns)
 
@@ -411,7 +411,7 @@ class BarraOptimizer:
             self.last_objective_value = result.fun
             return result.x
         else:
-            print(f"优化未收�? {result.message}")
+            print(f"优化未收? {result.message}")
             return x0
 
     def risk_parity_optimize(
@@ -424,12 +424,12 @@ class BarraOptimizer:
         """
         风险平价优化
 
-        目标: 各资产对组合风险的贡献相�?
+        目标: 各资产对组合风险的贡献相?
 
         参数:
-            factor_exposures: 因子暴露�?(N, K)
-            factor_cov: 因子协方差矩�?(K, K)
-            asset_volatility: 资产波动�?(N,)，用于计算协方差矩阵
+            factor_exposures: 因子暴露?(N, K)
+            factor_cov: 因子协方差矩?(K, K)
+            asset_volatility: 资产波动?(N,)，用于计算协方差矩阵
             constraints: 额外约束
 
         返回:
@@ -477,7 +477,7 @@ class BarraOptimizer:
             self.last_weights = result.x
             return result.x
         else:
-            print(f"风险平价优化未收�? {result.message}")
+            print(f"风险平价优化未收? {result.message}")
             return x0
 
     def maximum_diversification_optimize(
@@ -494,12 +494,12 @@ class BarraOptimizer:
 
         参数:
             expected_returns: 预期收益
-            factor_exposures: 因子暴露�?
-            asset_volatility: 资产波动�?
+            factor_exposures: 因子暴露?
+            asset_volatility: 资产波动?
             bounds: 权重边界
 
         返回:
-            optimal_weights: 最优权�?
+            optimal_weights: 最优权?
         """
         factor_cov = self.barra.factor_cov
         cov_matrix = factor_exposures @ factor_cov @ factor_exposures.T
@@ -533,7 +533,7 @@ class BarraOptimizer:
             self.last_weights = result.x
             return result.x
         else:
-            print(f"最大分散化优化未收�? {result.message}")
+            print(f"最大分散化优化未收? {result.message}")
             return x0
 
     def black_litterman_optimize(
@@ -551,13 +551,13 @@ class BarraOptimizer:
 
         参数:
             market_cap_weights: 市场平衡权重 (N,)
-            factor_exposures: 因子暴露�?(N, K)
+            factor_exposures: 因子暴露?(N, K)
             views: 观点向量 (K,) - 各因子的预期收益
-            view_confidence: 观点置信�?(K,) - 0�?之间
+            view_confidence: 观点置信?(K,) - 0?之间
             risk_aversion: 风险厌恶系数
 
         返回:
-            adjusted_weights: 调整后权�?
+            adjusted_weights: 调整后权?
         """
         factor_cov = self.barra.factor_cov
 
@@ -594,10 +594,10 @@ class BarraOptimizer:
         industry_labels: np.ndarray
     ) -> dict:
         """
-        添加行业中性约�?
+        添加行业中性约?
 
         参数:
-            factor_exposures: 因子暴露�?
+            factor_exposures: 因子暴露?
             industry_labels: 行业标签
 
         返回:
@@ -626,13 +626,13 @@ class BarraOptimizer:
         tolerance: float = 0.1
     ) -> dict:
         """
-        添加风格因子暴露度约�?
+        添加风格因子暴露度约?
 
         参数:
-            factor_exposures: 因子暴露�?
+            factor_exposures: 因子暴露?
             style_factor_names: 风格因子名称列表
-            target_exposure: 目标暴露�?
-            tolerance: 容忍�?
+            target_exposure: 目标暴露?
+            tolerance: 容忍?
 
         返回:
             constraint: scipy约束字典
@@ -650,7 +650,7 @@ class BarraOptimizer:
 
 ---
 
-## 3. 优化器使用示�?
+## 3. 优化器使用示?
 
 ```python
 import pandas as pd
@@ -710,8 +710,8 @@ def example_portfolio_optimization():
     )
 
     print(f"组合风险: {risk_decomposition['total_risk']:.4f}")
-    print(f"系统性风�? {risk_decomposition['systematic_risk']:.4f}")
-    print(f"特异性风�? {risk_decomposition['idiosyncratic_risk']:.4f}")
+    print(f"系统性风? {risk_decomposition['systematic_risk']:.4f}")
+    print(f"特异性风? {risk_decomposition['idiosyncratic_risk']:.4f}")
     print("\n因子风险贡献:")
     for factor, pct in risk_decomposition['factor_risk_pct'].items():
         if pct > 1.0:
@@ -726,26 +726,26 @@ if __name__ == '__main__':
 
 ## 4. 关键参数说明
 
-| 参数 | 默认�?| 说明 |
+| 参数 | 默认?| 说明 |
 |------|--------|------|
 | risk_aversion | 1.0 | 风险厌恶系数，越大越保守 |
-| shrinkage_intensity | 0.3 | 协方差矩阵收缩强�?|
-| max_weight | 0.05 | 单只股票最大权�?5%) |
+| shrinkage_intensity | 0.3 | 协方差矩阵收缩强?|
+| max_weight | 0.05 | 单只股票最大权?5%) |
 | lookback | 60 | 协方差估计回溯期 |
 | tau | 0.1 | Black-Litterman缩放因子 |
 
 ---
 
-## 5. 约束类型汇�?
+## 5. 约束类型汇?
 
 | 约束类型 | 实现方法 | 说明 |
 |----------|----------|------|
-| 权重�?| sum(weights) = 1 | 必须满足 |
+| 权重?| sum(weights) = 1 | 必须满足 |
 | 边界约束 | bounds | min/max权重限制 |
-| 行业中�?| industry_exposure @ w = 1/n | 各行业权重相�?|
-| 风格中�?| factor_exposure @ w = target | 风格因子暴露�?|
-| 换手�?| \|w - w_prev\| <= turnover | 交易成本控制 |
-| 现金�?| price @ w <= cash | 最大买入金�?|
+| 行业中?| industry_exposure @ w = 1/n | 各行业权重相?|
+| 风格中?| factor_exposure @ w = target | 风格因子暴露?|
+| 换手?| \|w - w_prev\| <= turnover | 交易成本控制 |
+| 现金?| price @ w <= cash | 最大买入金?|
 
 ---
 

@@ -1,4 +1,4 @@
-﻿﻿---
+﻿﻿﻿---
 module_id: DATA_COST_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
   - 数据成本管理
@@ -25,8 +24,7 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Cost Management蓝图设计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Cost Managementèå¾è®¾è®¡ç¸å
-³å...
+³å...
 
 
 ## 设计目标
@@ -83,37 +81,25 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-è®¾è®¡DATA COST MANAGEMENTçè®¾è®¡ä¸å®ç°ï¼åºäºApache Atlasææ¯ï¼ä¿éæ ¸å¿åè½ï¼ç¡®ä¿æ°æ®è´¨éåè§ã?
 
 ## 一、设计背景与目标
 
-### 1.1 ä¸å¡éæ±?
 
 **当前痛点**:
 - 数据成本不透明
-- ææ¬å½å±ä¸æ¸
-æ?
+æ?
 - 缺少成本优化建议
 - 成本预算难以控制
 
 **业务目标**:
 - 建立数据成本追踪体系
-- å®ç°ææ¬å½å±ååæ?
 - 提供成本优化建议
 - 支持成本预算管理
 
-### 1.2 ææ¯ç®æ ?
 
-| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **ææ¬è¿½è¸ªè¦çç?* | 100% | æææ°æ®èµäº§ææ¬è¿½è¸?|
-| **ææ¬å½å±åç¡®ç?* | â?5% | ææ¬å½å±åç¡®çâ¥95% |
-| **ææ¬éä½** | â?0% | æ°æ®ææ¬éä½30% |
-| **é¢ç®æ§å¶åç¡®ç?* | â?0% | é¢ç®æ§å¶åç¡®çâ¥90% |
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 ææ¬ééå?(CostCollector)
 
 ```python
 from dataclasses import dataclass, field
@@ -142,7 +128,6 @@ class CostRecord:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class CostCollector:
-    """ææ¬ééå?""
     
     def __init__(self):
         self.cost_records: List[CostRecord] = []
@@ -214,7 +199,6 @@ class CostCollector:
     def get_costs_by_type(self, cost_type: CostType,
                           start_time: datetime = None,
                           end_time: datetime = None) -> List[CostRecord]:
-        """æç±»åè·åææ?""
         filtered = [r for r in self.cost_records if r.cost_type == cost_type]
         
         if start_time:
@@ -226,7 +210,6 @@ class CostCollector:
         return filtered
 ```
 
-### 3.2 ææ¬å½å±ç®¡çå?(CostAttributionManager)
 
 ```python
 from typing import Dict, List, Any
@@ -234,8 +217,8 @@ from datetime import datetime
 
 @dataclass
 class CostAllocation:
-    """ææ¬åé
-"""
+    """ææ¬åé
+"""
     allocation_id: str
     resource_id: str
     team: str
@@ -245,7 +228,6 @@ class CostAllocation:
     timestamp: datetime
 
 class CostAttributionManager:
-    """ææ¬å½å±ç®¡çå?""
     
     def __init__(self):
         self.allocations: List[CostAllocation] = []
@@ -263,8 +245,8 @@ class CostAttributionManager:
         }
     
     def allocate_cost(self, cost_record: CostRecord) -> List[CostAllocation]:
-        """åé
-ææ¬"""
+        """åé
+ææ¬"""
         allocations = []
         
         for pattern, rule in self.attribution_rules.items():
@@ -304,7 +286,6 @@ class CostAttributionManager:
         return costs
 ```
 
-### 3.3 ææ¬ä¼åå»ºè®®å?(CostOptimizationAdvisor)
 
 ```python
 from typing import Dict, List, Any, Tuple
@@ -323,7 +304,6 @@ class OptimizationRecommendation:
     created_at: datetime = field(default_factory=datetime.now)
 
 class CostOptimizationAdvisor:
-    """ææ¬ä¼åå»ºè®®å?""
     
     def __init__(self, cost_collector: CostCollector):
         self.cost_collector = cost_collector
@@ -375,12 +355,10 @@ class CostOptimizationAdvisor:
         return recommendations
     
     def get_total_potential_savings(self) -> float:
-        """è·åæ»æ½å¨èç?""
         return sum(r.potential_savings for r in self.recommendations)
 ```
 
 ---
-## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
@@ -431,32 +409,23 @@ GET /api/v1/cost/recommendations
 
 
 ## å
-­ãçæ§ææ ?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
-| `cost_total_dollars` | Gauge | æ»ææ?|
-| `cost_by_type_dollars` | Gauge | æç±»åææ?|
-| `cost_by_team_dollars` | Gauge | æå¢éææ?|
+| `cost_total_dollars` | Gauge | æ»ææ?|
 | `cost_savings_potential_dollars` | Gauge | 潜在节省 |
 
 ---
 
-## ä¸ãå®æ½è®¡å?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **é¶æ®µ1** | æ­å»ºææ¬ééç³»ç» | 2å¤?|
-| **é¶æ®µ2** | å¼åææ¬å½å±ç®¡çå¨ | 3å¤?|
-| **é¶æ®µ3** | å¼åææ¬ä¼åå»ºè®®å¨ | 3å¤?|
-| **é¶æ®µ4** | å¼åææ¬ä»ªè¡¨æ¿ | 2å¤?|
-| **é¶æ®µ5** | æµè¯åä¼å?| 2å¤?|
 
 ---
 
 ## å
-«ãç¸å
-³ææ¡?
+«ãç¸å
+³ææ¡?
 
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -464,7 +433,6 @@ GET /api/v1/cost/recommendations
 
 ---
 
-**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
 ## 1. 文档治理
@@ -472,14 +440,12 @@ GET /api/v1/cost/recommendations
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Cost Management
 - **模块ID**: DATA_COST_MANAGEMENT_001
 - **蓝图文档**: DATA_COST_MANAGEMENT_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
+åå»?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -490,44 +456,34 @@ GET /api/v1/cost/recommendations
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | ä¸­ä¾èµ?| è·åæ°æ®æºä½¿ç¨æ
-å?|
-| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | ä¸­ä¾èµ?| è·åå­å¨ææ¬æ°æ® |
+å?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | ä¸­ä¾èµ?| æä¾ææ¬æ²»çç­ç¥ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **Prometheus** | 2.40+ | 成本监控 | [官方文档](https://prometheus.io/) |
-| **Grafana** | 9.0+ | å¯è§åå±ç¤?| [å®æ¹ææ¡£](https://grafana.com/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -543,12 +499,9 @@ graph LR
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

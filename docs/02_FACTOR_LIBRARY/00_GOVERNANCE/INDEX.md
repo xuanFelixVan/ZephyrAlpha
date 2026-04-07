@@ -1,6 +1,8 @@
----
+﻿---
 version: 1.0.0
 last_updated: 2026-04-07
+responsibility:
+  - 因子库治理索引
 ---
 
 # 因子库治理文档索引

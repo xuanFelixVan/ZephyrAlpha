@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BLUEPRINT_003
 version: 1.0.0
 status: Active
@@ -31,10 +31,8 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-owner: é¦å¸­ææ¡£æ¶æå¸?
 standard_type: 专业量化机构蓝图
 applicable_scope: å
-¨ç³»ç»æ¶æè®¾è®?
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -43,7 +41,6 @@ implementation_progress: 0%
 ---
 
 
-# çæ§åè­¦ç³»ç»èå¾ï¼ç®åçï¼?
 > **核心职责**: Blueprint.Md蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Blueprint.Md蓝图设计相关内容
@@ -51,20 +48,13 @@ implementation_progress: 0%
 
 
 > æ¸
-é£éåç³»ç» v5.0 ççæ§åè­¦æ¹æ¡?
 > **索引**: `MON_001`
-> **æ³¨æ**: æ¬èå¾éç?è´­ä¹°èéèªç "ç­ç¥ï¼ä½¿ç¨æççGrafana+Prometheusæ¹æ¡
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 |
 |------|------|
-| è´­ä¹°èéèªç  | ä½¿ç¨æçå¼æºæ¹æ¡ï¼ä¸èªç çæ§é¢æ?|
-| çæ§å³ä»£ç ?| çæ§é
-ç½®çº³å
-¥çæ¬æ§å¶ |
-| åè­¦å³è§¦å?| åè­¦è§åæç¡®ï¼è§¦åå¨ä½èªå¨å |
 
 
 ## 2. 监控方案选型
@@ -73,38 +63,17 @@ implementation_progress: 0%
 
 | 方案 | 自研监控 | Grafana+Prometheus(推荐) |
 |------|----------|-------------------------|
-| å¼åæ¶é?| 2-3ä¸ªæ | 1-2å¤?|
-| åè½å®æ´åº?| 60% | 95% |
-| ç»´æ¤ææ¬ | é«?| æä½ |
-| å¯æ©å±æ?| åé | å¼?|
-| ç¤¾åºæ¯æ | æ?| å¼ºå¤§ |
 
 ### 2.2 最终选择
 
 **采用 Grafana + Prometheus + AlertManager 方案**
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                     Grafana ä»ªè¡¨æ?                        â?
-â?  (ç­ç¥ç»©æ / é£æ§ææ  / ç³»ç»ç¶æ?/ åè­¦åå²)                â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-                            â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                   AlertManager åè­¦ç®¡ç                      â?
-â?  (åè­¦è·¯ç± / æå¶ / åç» / åçº§)                           â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-                            â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                     Prometheus çæ§                        â?
-â?  (ææ éé / å­å¨ / æ¥è¯¢)                                  â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-                            â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                  Exporters (è¢«çæ§ç®æ ?                    â?
-â?  - TradeExecutor / RiskMonitor / DataHub                  â?
-â?  - Node Exporter (ç³»ç»ææ )                                â?
-â?  - Custom Exporters (ä¸å¡ææ )                             â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+                            â?
+                            â?
+â?                     Prometheus çæ§                        â?
+                            â?
+â?  - TradeExecutor / RiskMonitor / DataHub                  â?
 ```
 
 
@@ -148,13 +117,12 @@ metrics:
 
   - name: risk_position_value
     type: gauge
-    description: æä»é£é©å?
     labels: [symbol]
 
   # 因子指标
   - name: factor_ic_value
     type: gauge
-    description: å å­ICå?
+    description: å å­ICå?
     labels: [factor_id]
 
   - name: factor_calculation_latency
@@ -171,16 +139,13 @@ metrics:
 metrics:
   - name: cpu_usage_percent
     type: gauge
-    description: CPUä½¿ç¨ç?
 
   - name: memory_usage_bytes
     type: gauge
-    description: å
-å­ä½¿ç¨é?
+    description: å
 
   - name: disk_usage_bytes
     type: gauge
-    description: ç£çä½¿ç¨é?
 
   - name: network_io_bytes
     type: counter
@@ -193,22 +158,12 @@ metrics:
 ```
 
 
-## 4. Grafanaä»ªè¡¨æ¿è®¾è®?
 
-### 4.1 ä»ªè¡¨æ¿åè¡?
 
-| ä»ªè¡¨æ?| ç¨é?| å·æ°é¢ç |
 |--------|------|----------|
-| ç³»ç»æ¦è§ | å
-¨å±ç¶æä¸ç®äºç?| 10s |
-| ç­ç¥ç»©æ | åç­ç¥è¡¨ç?| 1min |
 | 风控监控 | 风险指标实时 | 5s |
-| å å­ç¶æ?| å å­ICçæ§ | 1min |
-| äº¤ææç» | è®¢åæ§è¡æ
 况 | 10s |
-| ç³»ç»èµæº | æå¡å¨ç¶æ?| 30s |
 
-### 4.2 ç³»ç»æ¦è§ä»ªè¡¨æ?
 
 ```json
 {
@@ -221,7 +176,6 @@ metrics:
       "targets": [
         {
           "expr": "sum(rate(strategy_signal_count[5m]))",
-          "legendFormat": "ä¿¡å·/ç§?
         }
       ]
     },
@@ -231,7 +185,6 @@ metrics:
       "targets": [
         {
           "expr": "sum(rate(order_submit_count[5m]))",
-          "legendFormat": "è®¢å/ç§?
         }
       ]
     },
@@ -241,12 +194,10 @@ metrics:
       "targets": [
         {
           "expr": "sum(rate(risk_violation_count[5m]))",
-          "legendFormat": "è¿è§/ç§?
         }
       ]
     },
     {
-      "title": "ç­ç¥ç»©æç­åå?,
       "type": "heatmap",
       "targets": [
         {
@@ -285,8 +236,6 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "ç­ç¥æ ä¿¡å?
-          description: "{{ $labels.strategy_id }} å·?0åéæ ä¿¡å?
 
   - name: risk_alerts
     rules:
@@ -297,8 +246,7 @@ groups:
           severity: warning
         annotations:
           summary: "风控违规频繁"
-          description: "5åéå
-åç?{{ $value }} æ¬¡è¿è§?
+          description: "5åéå
 
       - alert: RiskExposureHigh
         expr: risk_position_value > 0.8
@@ -318,7 +266,6 @@ groups:
           severity: warning
         annotations:
           summary: "CPU使用率高"
-          description: "CPUä½¿ç¨ç?{{ $value }}%"
 
       - alert: HighMemory
         expr: memory_usage_bytes > 8e9
@@ -326,14 +273,13 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "å
+          summary: "å
 存使用率高"
-          description: "å
+          description: "å
 存使用 {{ $value | humanize1024 }}"
 ```
 
-### 5.2 åè­¦éç¥é
-ç½®
+置
 
 ```yaml
 # alertmanager/config.yaml
@@ -371,10 +317,9 @@ receivers:
 ```
 
 
-## 6. å¿«éé¨ç½?
 
 ### 6.1 Docker Composeé
-ç½®
+置
 
 ```yaml
 # docker-compose.monitoring.yml
@@ -430,7 +375,6 @@ docker-compose -f docker-compose.monitoring.yml up -d
 
 ## 7. 指标导出代码示例
 
-### 7.1 èªå®ä¹ææ å¯¼å?
 
 ```python
 from prometheus_client import Counter, Histogram, Gauge, start_http_server
@@ -442,7 +386,7 @@ signal_latency = Histogram('strategy_signal_latency', '信号生成延迟',
                           ['strategy_id'])
 risk_violation = Counter('risk_violation_count', '风控违规次数',
                        ['rule_id', 'severity'])
-factor_ic = Gauge('factor_ic_value', 'å å­ICå?, ['factor_id'])
+factor_ic = Gauge('factor_ic_value', 'å å­ICå?, ['factor_id'])
 
 # 在代码中使用
 class StrategyMonitor:
@@ -452,20 +396,17 @@ class StrategyMonitor:
     def on_risk_violation(self, rule_id: str, severity: str):
         risk_violation.labels(rule_id=rule_id, severity=severity).inc()
 
-# å¯å¨ææ æå¡å?
 start_http_server(8000)
 ```
 
 
 ## 8. 更新记录
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ |
+容 |
 |------|------|----------|
 | v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
 
-**ç»´æ¤è?*: æ¸
 风量化系统
 **索引**: `MON_001`
 ---
@@ -480,7 +421,7 @@ start_http_server(8000)
 - **模块ID**: EXE_BLUEPRINT
 - **蓝图文档**: [BLUEPRINT.md](04_EXECUTION\03_MONITORING\BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: äº¤ææ§è¡
+- **职责**: äº¤ææ§è¡
 - **状态**: Active
 ```
 
@@ -488,7 +429,7 @@ start_http_server(8000)
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Exe** | äº¤ææ§è¡ | **核心模块** |
+| **Exe** | äº¤ææ§è¡ | **核心模块** |
 
 ### 9.3 版本管理
 

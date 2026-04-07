@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: IMPL_ROOT_README_001
 version: 1.0.15.3.0
 status: Active
@@ -357,7 +357,7 @@ tail -f logs/error.log
 ### 个人开发者最佳实?
 
 1. **快速上?*: 先看 01_QUICKSTART，动手实?
-2. **开发参?*: 写代码时�?02_DEVELOPMENT
+2. **开发参?*: 写代码时?02_DEVELOPMENT
 3. **部署部署**: 部署前阅?03_DEPLOYMENT
 4. **遇到问题**: 先查 07_OPERATIONS/faq.md
 
@@ -381,4 +381,4 @@ tail -f logs/error.log
 
 **维护?*: 清风量化系统  
 **最后更?*: 2026-03-28  
-**文档�?*:  个人开发者友好版
+**文档?*:  个人开发者友好版

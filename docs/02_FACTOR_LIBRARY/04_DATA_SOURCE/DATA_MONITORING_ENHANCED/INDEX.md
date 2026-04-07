@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_MONITORING_INDEX_001
 version: 1.0.0
 status: Active

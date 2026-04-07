@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DOC_SYSTEM_MANIFEST_001
 version: 5.8.0
 status: Active
@@ -312,7 +312,7 @@ responsibility:
 | [时序预测模型蓝图](01_FRAMEWORK/LAYER4_ML/TIME_SERIES_FORECASTING_BLUEPRINT.md) | 价格预测、波动率预测、因子预测 | GluonTS (4k+ Stars) | 100% | 30h |
 | [异常检测模型蓝图](01_FRAMEWORK/LAYER4_ML/ANOMALY_DETECTION_BLUEPRINT.md) | 价格异常、交易异常、市场崩盘预警 | PyOD (8k+ Stars) | 100% | 20h |
 | [模型服务框架蓝图](01_FRAMEWORK/LAYER4_ML/MODEL_SERVING_BLUEPRINT.md) | 模型打包、部署、推理服务 | BentoML (7k+ Stars) | 100% | 25h |
-| [缺失模块综合蓝图](01_FRAMEWORK/LAYER4_ML/LAYER4_MISSING_MODULES_BLUEPRINT.md) | 分布式训练、自动重训练、性能退化检测 | Ray/MLflow/Evidently | 90% | 140h |
+| [缺失模块综合蓝图](01_FRAMEWORK/LAYER4_ML/MISSING_MODULES_BLUEPRINT.md) | 分布式训练、自动重训练、性能退化检测 | Ray/MLflow/Evidently | 90% | 140h |
 | [架构完整性分析](01_FRAMEWORK/LAYER4_ML/GAP_ANALYSIS_BLUEPRINT.md) | 34个缺失模块识别与分析 | - | - | - |
 | [完整缺失模块总览](01_FRAMEWORK/LAYER4_ML/COMPLETE_MISSING_MODULES_OVERVIEW.md) | 所有34个缺失模块的完整概览 | - | - | - |
 | [实施路线图](01_FRAMEWORK/LAYER4_ML/IMPLEMENTATION_ROADMAP.md) | 6周实施计划与资源规划 | - | - | - |
@@ -412,7 +412,7 @@ responsibility:
 | 3 | 研究影响力追踪系统 | IT-001 | 95% | 2周 | ✅ 已创建 |
 | 4 | 跨领域创新发现系统 | CDI-001 | 80% | 3周 | ✅ 已创建 |
 
-**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md#2.40)
+**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md)
 
 #### P1级专业模块 (7个)
 
@@ -426,7 +426,7 @@ responsibility:
 | 10 | 研究成果转化系统 | RT-001 | 70% | 2周 | ✅ 已创建 |
 | 11 | 研究绩效评估系统 | PE-001 | 100% | 1周 | ✅ 已创建 |
 
-**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md#2.44)
+**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md)
 
 **Layer 9新增模块总计**: 11个
 **平均开源替代率**: 87%
@@ -449,7 +449,7 @@ responsibility:
 | 13 | 研究知识产权管理系统 | IP-001 | 90% | 2周 | ✅ 已创建 |
 | 14 | 研究可重复性验证系统 | RV-001 | 95% | 2周 | ✅ 已创建 |
 
-**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md#2.51)
+**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md)
 
 ##### P1级专业模块 (7个)
 
@@ -463,7 +463,7 @@ responsibility:
 | 20 | 研究成本核算系统 | CA-001 | 100% | 1周 | ✅ 已创建 |
 | 21 | 研究合规报告系统 | CR-001 | 80% | 2周 | ✅ 已创建 |
 
-**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md#2.54)
+**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md)
 
 **深度补充模块总计**: 10个
 **平均开源替代率**: 94%
@@ -518,7 +518,7 @@ responsibility:
 | 34 | 研究可观测性系统 | OBS-001 | 95% | 2周 | ✅ 已创建 |
 | 35 | 研究合规自动化系统 | CA-002 | 100% | 2周 | ✅ 已创建 |
 
-**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md#2.61)
+**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md)
 
 ##### P1级专业模块 (6个)
 
@@ -531,7 +531,7 @@ responsibility:
 | 40 | 研究服务等级协议(SLA)管理系统 | SLA-001 | 100% | 2周 | ✅ 已创建 |
 | 41 | 研究成本优化系统 | CO-001 | 85% | 2周 | ✅ 已创建 |
 
-**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md#2.63)
+**详细蓝图**: [BLUEPRINT.md](09_RESEARCH_INNOVATION/BLUEPRINT.md)
 
 **第四轮深度补充总计**: 10个
 **平均开源替代率**: 95%
@@ -617,10 +617,10 @@ responsibility:
 | 文档名称 | 路径 | Layer | 状态 |
 |---------|------|-------|------|
 | **数据源层实施蓝图** | [01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) | Layer 0 | ✅ 活跃 |
-| **因子库蓝图** | [01_FRAMEWORK/FACTOR_BACKTEST_001.md](01_FRAMEWORK/FACTOR_BACKTEST_001.md) | Layer 2 | ✅ 活跃 |
-| **策略引擎蓝图** | [01_FRAMEWORK/STRAT_ENGINE_001.md](01_FRAMEWORK/STRAT_ENGINE_001.md) | Layer 3 | ✅ 活跃 |
-| **模拟交易蓝图** | [01_FRAMEWORK/SIMULATION_001.md](01_FRAMEWORK/SIMULATION_001.md) | Layer 5 | ✅ 活跃 |
-| **质量监控蓝图** | [01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md](01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md) | Layer 10 | ✅ 活跃 |
+| **因子库蓝图** |  | Layer 2 | ✅ 活跃 |
+| **策略引擎蓝图** |  | Layer 3 | ✅ 活跃 |
+| **模拟交易蓝图** |  | Layer 5 | ✅ 活跃 |
+| **质量监控蓝图** |  | Layer 10 | ✅ 活跃 |
 | **战略决策层蓝图** | [11_STRATEGIC_DECISION/BLUEPRINT.md](11_STRATEGIC_DECISION/BLUEPRINT.md) | Layer 11 | ✅ 活跃 |
 
 ### 4.1 Layer 8 人机交互层核心蓝图 ⭐新增
@@ -638,8 +638,8 @@ responsibility:
 | **报告生成系统蓝图** | [08_HUMAN_AI_INTERFACE/06_REPORTING/REPORTING_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/06_REPORTING/REPORTING_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **审计日志系统蓝图** | [08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md](08_HUMAN_AI_INTERFACE/07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
 | **自然语言交互界面蓝图** | [01_FRAMEWORK/NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](01_FRAMEWORK/NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) | P1重要 | ✅ 活跃 |
-| **移动端推送通知蓝图** | [01_FRAMEWORK/LAYER8_MISSING_MODULES_BLUEPRINT.md](01_FRAMEWORK/LAYER8_MISSING_MODULES_BLUEPRINT.md) | P2可选 | ✅ 活跃 |
-| **帮助系统蓝图** | [01_FRAMEWORK/LAYER8_MISSING_MODULES_BLUEPRINT.md](01_FRAMEWORK/LAYER8_MISSING_MODULES_BLUEPRINT.md) | P2可选 | ✅ 活跃 |
+| **移动端推送通知蓝图** |  | P2可选 | ✅ 活跃 |
+| **帮助系统蓝图** |  | P2可选 | ✅ 活跃 |
 | **Layer 8完整索引** | [08_HUMAN_AI_INTERFACE/index.md](08_HUMAN_AI_INTERFACE/index.md) | 索引文档 | ✅ 活跃 |
 
 ### 4.2 Layer 11 战略决策层核心蓝图 ⭐新增
@@ -819,7 +819,7 @@ responsibility:
 ### 架构师参考
 
 1. **模块职责**: [MODULE_RESPONSIBILITY_BOUNDARIES.md](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-2. **质量监控**: [QUALITY_MONITORING_BLUEPRINT_v5.1.md](01_FRAMEWORK/QUALITY_MONITORING_BLUEPRINT_v5.1.md)
+2. **质量监控**: 
 3. **文档治理**: [INDEX.md](01_FRAMEWORK/INDEX.md)
 
 ---

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER1_BLUEPRINT_COMPREHENSIVE_ASSESSMENT_001
 version: 1.0.0
 status: Active

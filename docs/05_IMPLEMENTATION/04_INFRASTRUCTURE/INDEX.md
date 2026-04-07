@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: IMPL_INDEX_INFRASTRUCTURE_001
 version: 1.0.0
 status: Active

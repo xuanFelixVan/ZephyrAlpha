@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: PORTFOLIO_ATTRIBUTION_TECH_SPEC_001
 version: 1.0.0
 spec_version: 1.0

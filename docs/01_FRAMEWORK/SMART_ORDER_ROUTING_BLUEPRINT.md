@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SMART_ORDER_ROUTING_001
 version: 1.0.0
 status: Active

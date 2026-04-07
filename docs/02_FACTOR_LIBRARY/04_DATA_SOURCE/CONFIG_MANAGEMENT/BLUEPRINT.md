@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: CONFIG_MANAGEMENT_BP_001
 version: 1.0.0
 status: Blueprint

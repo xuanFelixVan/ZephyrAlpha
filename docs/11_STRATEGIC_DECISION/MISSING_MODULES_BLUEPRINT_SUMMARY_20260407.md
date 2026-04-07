@@ -1,4 +1,19 @@
 ﻿---
+module_id: MISSING_MODULES_BLUEPRINT_SUMMARY_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 缺失模块蓝图摘要
+standard_type: 标准文档
+applicable_scope: 记录缺失模块蓝图的摘要信息
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+---
+
+﻿---
 version: 1.0.0
 ---
 

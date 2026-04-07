@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: GRADIENT_ACCUMULATION_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供gradient accumulation blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -37,7 +37,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -57,7 +57,7 @@ layer: Layer 4 (机器学习层)
 
 - **等效batch**: 累积梯度等效大batch
 
-- **灵活配置**: 可调节累积步�?- **兼容性好**: 无需修改模型
+- **灵活配置**: 可调节累积步?- **兼容性好**: 无需修改模型
 
 
 
@@ -73,7 +73,7 @@ layer: Layer 4 (机器学习层)
 
 class GradientAccumulator:
 
-    """梯度累积�?""
+    """梯度累积?""
 
     
 

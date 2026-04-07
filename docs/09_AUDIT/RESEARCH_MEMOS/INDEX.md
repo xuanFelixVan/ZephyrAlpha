@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_AUDIT_RESEARCH_MEMOS_001
 version: 1.0.0
 status: Active

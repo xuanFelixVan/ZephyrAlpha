@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SERVICE_MESH_INTEGRATION_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供service mesh integration blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -39,7 +39,7 @@ layer: Layer 2 (Alpha因子层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -59,7 +59,7 @@ layer: Layer 2 (Alpha因子层)
 
 - **安全通信**: mTLS加密
 
-- **可观测�?*: 分布式追�?- **弹性能�?*: 熔断限流
+- **可观测?*: 分布式追?- **弹性能?*: 熔断限流
 
 
 
@@ -71,7 +71,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-| 技�?| 说明 |
+| 技?| 说明 |
 
 |------|------|
 
@@ -81,7 +81,7 @@ layer: Layer 2 (Alpha因子层)
 
 | Prometheus | 指标收集 |
 
-| Jaeger | 分布式追�?|
+| Jaeger | 分布式追?|
 
 
 
@@ -109,7 +109,7 @@ class ServiceMeshIntegration:
 
     ):
 
-        """初始化服务网�?        
+        """初始化服务网?        
 
         Args:
 
@@ -137,7 +137,7 @@ class ServiceMeshIntegration:
 
         Args:
 
-            service: 服务�?            rules: 流量规则
+            service: 服务?            rules: 流量规则
 
         """
 

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AI_STRATEGY_AUTOMATION_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -55,7 +55,7 @@ responsibility_boundary: |
 |------|------|--------------|
 | **AI自动化率** | 90% | ?符合顶级机构标准 |
 | **人工决策?* | 5个关键节?| ?人类最终决策权 |
-| **工作?* | 6-10小时/?| ?适合个人开�?|
+| **工作?* | 6-10小时/?| ?适合个人开?|
 | **专业?* | 完整五阶段流?| ?符合专业机构流程 |
 | **风险控制** | 多维度严格风?| ?专业级风控体?|
 
@@ -80,7 +80,7 @@ Phase 1 (Month 1-2): AI策略研究与生?Phase 2 (Month 3-4): AI策略测试与
 - 数据: yfinance
 - 界面: Streamlit
 
-**集成�?*：⭐⭐⭐⭐⭐
+**集成?*：⭐⭐⭐⭐⭐
 - **直接可用**：开箱即用的完整解决方案
 - **架构匹配**：与Layer 0-11架构完美契合
 - **技术先?*?025?1月最新更新，使用最新LLM技?
@@ -130,13 +130,13 @@ class AgentQuantQMTAdapter:
 **GitHub**: https://github.com/microsoft/RD-Agent
 
 **核心能力**?- ?**LLM驱动**：自动化因子挖掘和模型优?- ?**多智能体协作**：数据科学家+量化研究员协?- ?**端到端自动化**：从数据到策略全流程
-- ?**生产?*：微软官方支持，企业级稳�?
+- ?**生产?*：微软官方支持，企业级稳?
 **技术栈**?- 基础: Microsoft Qlib
 - LLM: GPT-4/Claude
 - 优化: 自动化特征工?
-**集成�?*：⭐⭐⭐⭐⭐
+**集成?*：⭐⭐⭐⭐⭐
 - **权威背书**：微软官方项目，学术+工业双重验证
-- **论文支持**：已有学术论文证明有�?- **生态完?*：Qlib生态圈成熟
+- **论文支持**：已有学术论文证明有?- **生态完?*：Qlib生态圈成熟
 
 **集成难度**：⭐⭐⭐⭐（较高?- 需要深度集成Qlib框架
 - 学习曲线较陡
@@ -174,8 +174,8 @@ class RDAgentFactorMiner:
 - LLM: 多提供商支持
 - 架构: 多智能体协作
 
-**集成�?*：⭐⭐⭐⭐⭐
-- **完美匹配**：与AI监督集成方案高度一?- **可解�?*：每个决策都有清晰的智能体输?- **风险控制**：多层审批机?
+**集成?*：⭐⭐⭐⭐⭐
+- **完美匹配**：与AI监督集成方案高度一?- **可解?*：每个决策都有清晰的智能体输?- **风险控制**：多层审批机?
 **集成难度**：⭐⭐⭐（中等）
 
 **集成方案**?```python
@@ -221,7 +221,7 @@ class TradingAgentsSupervisor:
 - LLM: DeepSeek/OpenAI/Claude/Qwen/Gemini
 - 交易: Binance API
 
-**集成�?*：⭐⭐⭐?- **实战验证**：已在加密货币市场验?- **可视化完?*：Web界面友好
+**集成?*：⭐⭐⭐?- **实战验证**：已在加密货币市场验?- **可视化完?*：Web界面友好
 - **多LLM支持**：灵活切换模?
 **集成难度**：⭐⭐⭐（中等）
 
@@ -233,11 +233,11 @@ class TradingAgentsSupervisor:
 
 **核心能力**?- ?**权重中心架构**：统一的策?执行接口
 - ?**DRL优化?*：PPO/SAC连续权重生成
-- ?**模块化设?*：策?回测/执行完全�?- ?**生产就绪**：支持实盘交?
-**技术栈**?- 框架: FinRL�?- RL算法: PPO/SAC/A2C
+- ?**模块化设?*：策?回测/执行完全?- ?**生产就绪**：支持实盘交?
+**技术栈**?- 框架: FinRL?- RL算法: PPO/SAC/A2C
 - 回测: bt?- 执行: Alpaca API
 
-**集成�?*：⭐⭐⭐⭐⭐
+**集成?*：⭐⭐⭐⭐⭐
 - **学术权威**：AI4Finance Foundation维护
 - **架构先进**：权重中心设计理念先?- **完整流程**：从研究到生产全覆盖
 
@@ -274,7 +274,7 @@ class FinRLBacktestAdapter:
 - ?**环境配置**：可定制交易环境
 - ?**算法训练**：RL算法训练和调?- ?**性能评估**：详细性能报告
 
-**集成�?*：⭐⭐⭐?- **研究友好**：适合策略研发阶段
+**集成?*：⭐⭐⭐?- **研究友好**：适合策略研发阶段
 - **评估完善**：多维度性能分析
 
 ---
@@ -290,7 +290,7 @@ class FinRLBacktestAdapter:
 - 回测: BackTrader
 - 数据: yfinance
 
-**集成�?*：⭐⭐⭐⭐⭐
+**集成?*：⭐⭐⭐⭐⭐
 - **完全匹配**：直接实?自己开发策?需?- **代码生成**：LLM自动生成可执行策略代?- **多因子支?*：支持复杂多因子策略
 
 **集成难度**：⭐⭐⭐（中等）
@@ -303,7 +303,7 @@ class FinRobotStrategyGenerator:
         self.strategist = AssistantAgent(
             name="Strategy_Developer",
             system_message="""
-            你是一位专业的量化策略开发专�?            你的任务是根据用户想法生成可执行的BackTrader策略代码?            
+            你是一位专业的量化策略开发专?            你的任务是根据用户想法生成可执行的BackTrader策略代码?            
             策略必须符合以下标准?            1. 使用BackTrader框架
             2. 包含完整的参数定?            3. 实现完整的买卖逻辑
             4. 包含风险控制（止?止盈?            5. 代码符合Python规范
@@ -336,8 +336,8 @@ class FinRobotStrategyGenerator:
 
 **GitHub**: https://github.com/sam-minns/AxiomEdge-PRO
 
-**核心能力**?- ?**AI策略?*：LLM作为动态策略管�?- ?**Walk-Forward引擎**：滚动优化验?- ?**国际象棋预测**：多步前瞻决?- ?**自适应循环**：策略持续进?
-**集成�?*：⭐⭐⭐?- **创新理念**：AI策略师概念先?- **自适应?*：策略持续优化能?
+**核心能力**?- ?**AI策略?*：LLM作为动态策略管?- ?**Walk-Forward引擎**：滚动优化验?- ?**国际象棋预测**：多步前瞻决?- ?**自适应循环**：策略持续进?
+**集成?*：⭐⭐⭐?- **创新理念**：AI策略师概念先?- **自适应?*：策略持续优化能?
 ---
 
 #### 项目9: GenAI-MultiAgent-TradingSystem ⭐⭐⭐⭐
@@ -348,7 +348,7 @@ class FinRobotStrategyGenerator:
 - ?**策略工作?*：创?回测/自动加载策略
 - ?**多模态分?*：文?数据分析
 - ?**自动执行**：可选自动交?
-**集成�?*：⭐⭐⭐?- **本地?*：支持本地LLM，数据安?- **策略工作?*：完整的策略开发环?
+**集成?*：⭐⭐⭐?- **本地?*：支持本地LLM，数据安?- **策略工作?*：完整的策略开发环?
 ---
 
 ### 2.5 第五类：专业回测与优化框?
@@ -429,7 +429,7 @@ class FinRobotStrategyGenerator:
 | 模块 | 功能 | AI自动化率 | 人工参与 |
 |------|------|------------|----------|
 | **因子挖掘** | 自动发现新因?| 100% | ?|
-| **策略�?* | 基于因子生成策略想法 | 100% | ?|
+| **策略?* | 基于因子生成策略想法 | 100% | ?|
 | **代码生成** | 生成可执行策略代?| 100% | ?|
 | **理论验证** | 经济学逻辑验证 | 95% | ?|
 
@@ -452,7 +452,7 @@ class AIStrategyResearchPipeline:
             validation_method="statistical_significance"
         )
         
-        # 2. AgentQuant: 基于因子生成策略�?        strategy_ideas = self.idea_generator.generate_ideas(
+        # 2. AgentQuant: 基于因子生成策略?        strategy_ideas = self.idea_generator.generate_ideas(
             factors=new_factors,
             market_regime=market_state.regime,
             constraints={
@@ -604,7 +604,7 @@ class ProfessionalBacktestPipeline:
 - ?Sharpe Ratio > 1.5
 - ?Max Drawdown < 15%
 - ?样本外表??样本?0%
-- ?Walk-Forward一�?> 70%
+- ?Walk-Forward一?> 70%
 - ?极端市场MaxDD < 25%
 - ?参数稳定?> 60%
 
@@ -732,7 +732,7 @@ class PaperTradingAndSmallPositionTest:
 - ?执行效率 > 95%
 - ?小仓位实盘Sharpe > 1.0
 - ?小仓位实盘MaxDD < 20%
-- ?表现一�?> 85%
+- ?表现一?> 85%
 
 #### 预期成果
 - ?每月2-3个策略通过模拟盘测?- ?每月1-2个策略通过小仓位测?- ?真实市场验证完成
@@ -1106,7 +1106,7 @@ class StrategyPoolAutoApproval:
 - ⚠️ 涉及真金白银风险
 - ⚠️ 模拟盘期间市场环境可能特殊（如牛市）
 - ⚠️ AI可能低估极端风险
-- ⚠️ 需要人工确认资金分配合�?
+- ⚠️ 需要人工确认资金分配合?
 #### 优化方案：分级自动审?
 ```python
 class SimulationToLiveAutoReview:
@@ -1469,7 +1469,7 @@ simulation:
   # 自动审核
   auto_review:
     enabled: true
-    check_frequency: "daily"         # 每日检?    auto_pass_threshold: 0.75        # 自动通过�?```
+    check_frequency: "daily"         # 每日检?    auto_pass_threshold: 0.75        # 自动通过?```
 
 ---
 
@@ -1620,7 +1620,7 @@ production_pipeline:
 ---
 
 ## 六、自然语言策略交互系统（NL Strategy Interface?
-> **核心�?*: 让不会编程的用户通过自然语言对话完成所有策略操?> 
+> **核心?*: 让不会编程的用户通过自然语言对话完成所有策略操?> 
 > **适用场景**: 策略创建、策略修改、策略管理、策略查询、系统控?> 
 > **架构定位**: 本模块是 [Layer 11文字驱动层](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) 的策略层专用实现
 
@@ -2224,7 +2224,7 @@ def adjust_strategy_weight(self, user_input: str):
       
       是否立即回测?
 用户：是的，回测一?
-系统�?回测完成?      
+系统?回测完成?      
       回测期间?023-01-01 ?2026-03-31
       年化收益?5.3%
       最大回撤：-12.5%
@@ -2239,7 +2239,7 @@ def adjust_strategy_weight(self, user_input: str):
       
       账户ID：SIM_MA_Cross_5_20_SL5_20260402
       初始资金?00,000?      
-      我会持续监控策略表现，有重要情况会及时通知�?      
+      我会持续监控策略表现，有重要情况会及时通知?      
       还有什么需要帮助的吗？
 ```
 
@@ -2471,7 +2471,7 @@ class QMTConnectionTest:
             print(f"?成功查询账户资产:")
             print(f"   总资? {asset.total_asset:.2f}")
             print(f"   可用资金: {asset.cash:.2f}")
-            print(f"   �? {asset.market_value:.2f}")
+            print(f"   ? {asset.market_value:.2f}")
             
             positions = xttrader.query_stock_positions(session_id, self.account_id)
             print(f"?成功查询持仓，共{len(positions)}只股?)
@@ -2663,7 +2663,7 @@ class AgentQuantQMTAdapter:
 
 ---
 
-**版本**: v1.1 | **更新**: 2026-04-03 | **�?*: ?活跃
+**版本**: v1.1 | **更新**: 2026-04-03 | **?*: ?活跃
 ---
 
 ## 1. 文档治理

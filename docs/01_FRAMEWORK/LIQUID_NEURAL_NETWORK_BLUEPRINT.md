@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LIQUID_NEURAL_NETWORK_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供liquid neural network blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -36,7 +36,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -52,9 +52,9 @@ layer: Layer 4 (机器学习层)
 
 
 
-- **连续时间**: 连续时间动�?- **自适应**: 实时适应
+- **连续时间**: 连续时间动?- **自适应**: 实时适应
 
-- **可解�?*: 物理可解�?- **低延�?*: 高效推理
+- **可解?*: 物理可解?- **低延?*: 高效推理
 
 
 
@@ -86,7 +86,7 @@ class LiquidNeuralNetwork:
 
     ):
 
-        """初始化液体神经网�?        
+        """初始化液体神经网?        
 
         Args:
 
@@ -120,7 +120,7 @@ class LiquidNeuralNetwork:
 
             x: 输入
 
-            time_step: 时间�?            
+            time_step: 时间?            
 
         Returns:
 

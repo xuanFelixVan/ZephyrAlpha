@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - 目录导航、文档索引
 module_id: INDEX_CLASSIFICATION_20260407124048

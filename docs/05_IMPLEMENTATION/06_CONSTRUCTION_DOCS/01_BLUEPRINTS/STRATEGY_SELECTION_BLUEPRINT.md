@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - 策略选择
   - 策略排名
@@ -12,12 +12,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 3 ç­ç¥å±?
 compliance_level: 专业标准
 layer: Layer 5 (策略执行层)
 ---
 
-# ç­ç¥æåä¸éæ©ç³»ç»ææ¯èå?
 
 ## 核心定位
 
@@ -25,10 +23,8 @@ layer: Layer 5 (策略执行层)
 
 
 
-> **æ ¸å¿èè´£**: æ ¹æ®å¸åºç¯å¢å¨æéæ©æä¼ç­ç¥ç»å?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼ç­ç¥è¯åãæºè½æåãå¨æéæ©
-> - â?æ...
+> - â?æ...
 
 
 ## 设计目标
@@ -87,29 +83,18 @@ layer: Layer 5 (策略执行层)
 
 ### 1.1 核心设计目标
 
-| ç®æ  | ä¼å
-?| ææ¯å®?|
+?| ææ¯å®?|
 |------|--------|----------|
 | **多维度评分体?* | P0 | 收益、风险、稳定性、适应性等20+维度评分 |
 | **动态权重调?* | P0 | 基于市场状态、风险偏好动态调整评分权?|
-| **ç­ç¥ç¸å
-³æ§å?* | P1 | æ¶çç¸å
-³æ§ç©éµãé£é©åæ£åº¦è®¡ç® |
 | **AIè¾
-å©å³ç­** | P1 | AIæ¨èç­ç¥ç»åãé£é©è¯ä¼°ãå¸åºå¹é
-åº¦åæ |
+åº¦åæ |
 | **实时性能监控** | P2 | 策略运行状态监控、性能衰减检?|
 | **用户友好界面** | P2 | 可视化排名仪表盘、自然语言策略推荐 |
 
 ### 1.2 技术约束与原则
 
-1. **å®¢è§å
-¬æ­£åå**ï¼è¯åæ åéæå¯è§£éï¼é¿å
-é»ç®±å³ç­
 2. **动态适应性原?*：评分权重随市场状态、用户风险偏好动态调?
-3. **é£é©åæ£åå**ï¼é¿å
-éæ©é«åº¦ç¸å
-³çç­ç¥ç»?
 4. **持续优化原则**：基于实盘表现持续更新策略评?
 5. **用户友好原则**：不懂编程的用户也能理解评分逻辑和推荐理?
 
@@ -118,10 +103,7 @@ layer: Layer 5 (策略执行层)
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **BatchEvaluation系统** | 绩效数据?| 获取策略历史绩效数据 |
-| **ParameterOptimizationç³»ç»** | åæ°ä¼åç»æ | è·åæä¼åæ°é
-?|
-| **StrategyEngineæ ¸å¿** | ç­ç¥å
-æ°?| è·åç­ç¥ç±»åãåæ°ç©ºé´ç­ä¿¡æ¯ |
+?|
 | **MarketStateDetector** | 市场状态输?| 获取当前市场状态（牛市/熊市/震荡市） |
 
 ## 二、系统架构设?
@@ -191,8 +173,7 @@ layer: Layer 5 (策略执行层)
 
 **StabilityScorer (稳定性评分器)**
 - 评估策略绩效稳定?
-- æ¶çåºåèªç¸å
-³æ§å?
+³æ§å?
 - 参数敏感性测?
 
 **AdaptabilityScorer (适应性评分器)**
@@ -210,9 +191,7 @@ class TOPSISEvaluator:
     
     索引: STRAT.SELECTION.001-M01
     职责: 使用TOPSIS算法进行多维度策略排?
-    ç¹ç¹: å®¢è§æéåé
-ï¼é¿å
-ä¸»è§å?
+ï¼é¿å
     """
     
     def __init__(self, criteria_weights: Dict[str, float] = None):
@@ -266,8 +245,7 @@ class TOPSISEvaluator:
         )
         
     def _default_weights(self) -> Dict[str, float]:
-        """é»è®¤è¯åæéåé
-"""
+"""
         return {
             'sharpe_ratio': 0.25,      # 夏普比率：收益风险平?
             'max_drawdown': 0.20,       # 最大回撤：风险控制
@@ -326,8 +304,6 @@ class DynamicWeightOptimizer:
     
     索引: STRAT.SELECTION.001-M02
     职责: 基于市场状态和用户偏好动态调整评分权?
-    ç¹ç¹: èªéåºæéåé
-ï¼æé«ç­ç¥éæ©åç¡®?
     """
     
     def __init__(self, market_state_detector: MarketStateDetector,
@@ -430,8 +406,6 @@ class DynamicWeightOptimizer:
         
         for criterion, base_weight in template.items():
             if criterion in ['max_drawdown', 'stability_score']:
-                # é£é©ç¸å
-³ææ éå¸åºæ³¢å¨å¼ºåº¦å¢å èå¢?
                 adjusted = base_weight * (1 + strength_factor * 0.5)
             elif criterion == 'annual_return':
                 # 收益指标在强趋势市场增加权重
@@ -485,8 +459,7 @@ class DynamicWeightOptimizer:
                           historical_performance: pd.DataFrame) -> Dict[str, float]:
         """从历史表现中学习优化权重
         
-        åºäºåå²æ°æ®éªè¯ä¸åæéçæææ§ï¼ä¼åæéåé
-
+
         """
         
         if len(self.weight_history) < 10:
@@ -635,15 +608,9 @@ class TimeWeightedPerformanceScorer:
 
 ```python
 class StrategyCorrelationAnalyzer:
-    """ç­ç¥ç¸å
-³æ§åæå¨
     
     索引: STRAT.SELECTION.001-M04
-    èè´£: åæç­ç¥é´æ¶çç¸å
-³æ§ï¼æ¯æé£é©åæ£
-    ç¹ç¹: å¤ç»´åº¦ç¸å
-³æ§åæï¼å¨æç¸å
-³æ§æ£?
+³æ§æ£?
     """
     
     def __init__(self, correlation_threshold: float = 0.7):
@@ -651,26 +618,20 @@ class StrategyCorrelationAnalyzer:
         
     def analyze(self, strategies: List[Strategy], 
                returns_data: Dict[str, pd.Series]) -> CorrelationAnalysis:
-        """åæç­ç¥ç¸å
 ³?""
         
-        # 1. è®¡ç®æ¶çç¸å
-³æ§ç©?
+³æ§ç©?
         corr_matrix = self._calculate_correlation_matrix(returns_data)
         
-        # 2. è¯å«é«åº¦ç¸å
-³ç­ç¥?
+³ç­ç¥?
         high_corr_groups = self._find_high_correlation_groups(corr_matrix)
         
         # 3. 计算风险分散潜力
         diversification_potential = self._calculate_diversification_potential(corr_matrix)
         
-        # 4. å¨æç¸å
-³æ§åæï¼æ»å¨çªå£?
         dynamic_corr = self._analyze_dynamic_correlation(returns_data)
         
-        # 5. å¸åºç¶æç¸å
-³æ§å?
+³æ§å?
         market_state_corr = self._analyze_market_state_correlation(returns_data)
         
         return CorrelationAnalysis(
@@ -685,23 +646,18 @@ class StrategyCorrelationAnalyzer:
         )
         
     def _calculate_correlation_matrix(self, returns_data: Dict[str, pd.Series]) -> pd.DataFrame:
-        """è®¡ç®æ¶çç¸å
-³æ§ç©?""
+³æ§ç©?""
         # 对齐数据时间
         aligned_returns = self._align_returns_data(returns_data)
         
         if aligned_returns.empty:
             return pd.DataFrame()
             
-        # è®¡ç®Pearsonç¸å
-³ç³»æ°
         corr_matrix = aligned_returns.corr()
         
         return corr_matrix
         
     def _find_high_correlation_groups(self, corr_matrix: pd.DataFrame) -> List[List[str]]:
-        """è¯å«é«åº¦ç¸å
-³ç­ç¥ç»ï¼èç±»åæ?""
         
         groups = []
         strategies = corr_matrix.columns.tolist()
@@ -735,15 +691,11 @@ class StrategyCorrelationAnalyzer:
         diversification = pd.DataFrame(index=corr_matrix.index, columns=['diversification_score'])
         
         for strategy in corr_matrix.index:
-            # è®¡ç®è¯¥ç­ç¥ä¸å
-¶ä»ç­ç¥çå¹³åç¸?
             other_correlations = [corr_matrix.loc[strategy, other] 
                                 for other in corr_matrix.index if other != strategy]
             
             if other_correlations:
                 avg_correlation = np.mean(other_correlations)
-                # å¹³åç¸å
-³æ§è¶ä½ï¼åæ£æ½åè¶é«
                 diversification.loc[strategy, 'diversification_score'] = 1 - abs(avg_correlation)
             else:
                 diversification.loc[strategy, 'diversification_score'] = 1.0
@@ -757,38 +709,28 @@ class StrategyCorrelationAnalyzer:
         
         recommendations = []
         
-        # æ¨è1ï¼é¿å
-éæ©é«åº¦ç¸å
-³çç­?
+³çç­?
         for group in high_corr_groups:
             if len(group) > 1:
                 recommendations.append(
                     Recommendation(
                         type='warning',
-                        message=f"ç­ç¥ {', '.join(group)} é«åº¦ç¸å
-³ï¼å»ºè®®æå¤éæ©å
-¶ä¸­ä¸?,
                         priority='high',
                         action='avoid_high_correlation'
                     )
                 )
                 
-        # æ¨è2ï¼ä¼å
-éæ©åæ£æ½åé«çç­ç¥
         top_diversifiers = diversification.nlargest(3, 'diversification_score').index.tolist()
         if top_diversifiers:
             recommendations.append(
                 Recommendation(
                     type='suggestion',
-                    message=f"ç­ç¥ {', '.join(top_diversifiers)} å
-·æé«åæ£æ½?,
+                    message=f"ç­ç¥ {', '.join(top_diversifiers)} å
                     priority='medium',
                     action='prioritize_diversification'
                 )
             )
             
-        # æ¨è3ï¼å¹³è¡¡æ¶çç¸å
-³æ§åé£é©ç¸å
 ³?
         risk_corr_matrix = self._calculate_risk_correlation(corr_matrix)
         balanced_strategies = self._find_balanced_strategies(corr_matrix, risk_corr_matrix)
@@ -806,7 +748,7 @@ class StrategyCorrelationAnalyzer:
         return recommendations
 ```
 
-## åãAIè¾
+## åãAIè¾
 助决策系统
 
 ### 4.1 AI策略推荐引擎
@@ -879,8 +821,7 @@ class AIStrategyRecommender:
             n_strategies = min(4, len(strategies))
             diversification_weight = 0.5
             
-        # éæ©ç­ç¥å¹¶åé
-æ?
+æ?
         selected = []
         weights = []
         
@@ -891,8 +832,7 @@ class AIStrategyRecommender:
             # 检查相?
             if self._is_diversified(selected, strategy, diversification_weight):
                 selected.append(strategy)
-                # åºäºé¢æµå¾ååé
-æé
+æé
                 weight = score / sum(s for _, s in sorted_strategies[:n_strategies * 2])
                 weights.append(weight)
                 
@@ -954,8 +894,6 @@ class AIStrategyRecommender:
         # 策略选择理由
         top_strategy = portfolio.strategies[0]
         explanations.append(
-            f"é¦éç­?{top_strategy.name}ï¼å ä¸ºå
-¶å¨å½å{risk_assessment.current_market_state}å¸åºç¯å¢ä¸è¡¨ç°ç¨³?
         )
         
         return "?.join(explanations)
@@ -964,17 +902,13 @@ class AIStrategyRecommender:
 ## 五、用户接口设?
 
 ### 5.1 é
-ç½®æä»¶ç¤ºä¾
 
 ```yaml
 # config/strategy_selection.yaml
 > **核心职责**: Strategy Selection蓝图设计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Strategy Selectionèå¾è®¾è®¡ç¸å
-³å
-å®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å
-¶ä»æ¨¡åå
+³å
+容
 å®?
 
 
@@ -987,19 +921,16 @@ class AIStrategyRecommender:
 
 ## 📋 概述
 
-æ¬ææ¡£å®ä¹äºSTRATEGY SELECTIONçæ ¸å¿åè½åææ¯å®ç°ã?
 
 strategy_selection:
-  # ç¨æ·åå¥½é
-ç½®
+置
   user_preferences:
     risk_tolerance: 3  # 1-5?为中?
     investment_horizon: "medium_term"  # short_term, medium_term, long_term
     max_drawdown_tolerance: 0.15  # 最大可接受回撤
     target_annual_return: 0.20    # 目标年化收益
     
-  # æåç®æ³é
-ç½®
+置
   ranking:
     algorithm: "topsis"  # topsis, ahp, electre
     criteria_weights:
@@ -1016,25 +947,24 @@ strategy_selection:
       enabled: true
       decay_factor: 0.9  # 近期表现权重
     
-  # ç¸å
-³æ§åæé
-?
+  # ç¸å
+?
   correlation:
     threshold: 0.7
     analysis_period: "1y"  # 1m, 3m, 6m, 1y, 3y
     dynamic_analysis: true
     rolling_window: 60
     
-  # AIæ¨èé
-ç½®
+  # AIæ¨èé
+置
   ai_recommendation:
     enabled: true
     model_type: "ensemble"  # random_forest, gradient_boosting, neural_network, ensemble
     confidence_threshold: 0.7
     explainability: true
     
-  # è¾åºé
-ç½®
+  # è¾åºé
+置
   output:
     format: "html"  # json, html, pdf
     include_visualizations: true
@@ -1060,8 +990,8 @@ python strategy_selector.py recommend \
   --ai-model "ensemble" \
   --output "recommendations/"
 
-# ç¸å
-³æ§å?
+# ç¸å
+³æ§å?
 python strategy_selector.py analyze-correlation \
   --strategies "strategies/*.yaml" \
   --period "1y" \
@@ -1077,7 +1007,6 @@ python strategy_selector.py construct-portfolio \
 
 # 自然语言查询
 python strategy_selector.py query \
-  --question "è¯·ä¸ºææ¨èä¸ä¸ªéåçå¸çä½é£é©ç­ç¥ç»åï¼æå¤§åæ¤ä¸è¶
 过15%" \
   --ai-model "gpt-4" \
   --output "nlp_recommendation/"
@@ -1087,9 +1016,7 @@ python strategy_selector.py query \
 
 **核心功能模块**?
 1. **实时排名看板**：策略综合评分动态展?
-2. **ç¸å
-³æ§ç­åå¾**ï¼ç­ç¥é´æ¶çç¸å
-³æ§å¯è§å
+2. **ç¸å
 3. **AI推荐面板**：AI生成的策略组合推?
 4. **绩效对比图表**：多策略绩效对比分析
 5. **风险分析仪表**：组合风险指标监?
@@ -1102,7 +1029,6 @@ python strategy_selector.py query \
 - 可视化：Plotly、ECharts、Highcharts
 
 ## å
-­ãå¼åéç¨ç¢
 
 ### Phase 1: 基础排名系统?周）
 - [ ] MultiCriteriaEvaluator TOPSIS实现
@@ -1112,8 +1038,8 @@ python strategy_selector.py query \
 
 ### Phase 2: 高级分析功能?周）
 - [ ] WeightOptimizer 动态权重调?
-- [ ] StrategyCorrelationAnalyzer ç¸å
-³æ§å?
+- [ ] StrategyCorrelationAnalyzer ç¸å
+³æ§å?
 - [ ] 时间加权评分算法
 - [ ] 可视化排名报?
 
@@ -1129,38 +1055,27 @@ python strategy_selector.py query \
 - [ ] 性能优化和缓?
 - [ ] 完整文档和示?
 
-## ä¸ãç¸å
-³ææ¡?
+³ææ¡?
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾ç­ç¥å
-æ°æ?|
-| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | ä¸­ä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
+æ°æ?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æç¥æéåé
-èå¾](./STRATEGIC_WEIGHTING_BLUEPRINT.md) | STRATEGIC_WEIGHTING_001 | å¼ºä¾èµ?| æç¥æéåé
- |
-| [å­£åº¦è°ä»èå¾](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | ä¸­ä¾èµ?| å­£åº¦è°ä»å³ç­ |
-| [ç»ååå¹³è¡¡èå¾](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | ä¸­ä¾èµ?| ç»ååå¹³è¡?|
+ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -1168,8 +1083,7 @@ graph LR
     C[数据目录] --> B
     D[组合优化引擎] --> B
     
-    B --> E[æç¥æéåé
-]
+]
     B --> F[季度调仓]
     B --> G[组合再平衡]
     
@@ -1178,8 +1092,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### ç¸å
-³èå¾ææ¡£
+### ç¸å
 
 | 文档 | 说明 |
 |------|------|
@@ -1189,32 +1102,23 @@ graph LR
 | PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 **文档版本**: v1.0  
-**æåæ´æ?*: 2026-04-01  
-**ç»´æ¤è?*: ç­ç¥ç åä¸­å¿  
-**é¢è®¡å¼åæ¶é?*: 80å°æ¶ï¼?å¨å
-¨èå¼åï¼
+**æåæ´æ?*: 2026-04-01  
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | åå§çæ¬åå»º | é¦å¸­ææ¡£æ¶æå¸?|
 
 ## 1. 文档治理
 
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Strategy Selection
 - **模块ID**: STRATEGY_SELECTION_001
 - **蓝图文档**: STRATEGY_SELECTION_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: å
-¨ç³»ç»æ¶æè®¾è®?
-- **ç¶æ?*: Active
+åå»?
+- **èè´£**: å
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -1222,15 +1126,10 @@ graph LR
 | 模块 | 职责 | 边界 |
 |------|------|------|
 | **Strategy Selection** | å
-¨ç³»ç»æ¶æè®¾è®?| **æ ¸å¿æ¨¡å** |
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-01 | **ç¶æ?*: Active

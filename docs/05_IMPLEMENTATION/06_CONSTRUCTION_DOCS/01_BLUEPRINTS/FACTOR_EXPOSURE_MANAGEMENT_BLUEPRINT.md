@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FACTOR_EXPOSURE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: 专业标准
 layer: Layer 5 (策略执行层)
 responsibility:
@@ -25,7 +24,6 @@ responsibility:
 
 > **模块ID**: FACTOR_EXPOSURE_MANAGEMENT_001
 > **创建日期**: 2026-04-07
-> **æ ¸å¿å®ä½**: çæ§ãåæåè°æ´ç»åçå å­æ´é?
 
 ## 设计目标
 
@@ -83,7 +81,6 @@ responsibility:
 
 > 模块ID: FACTOR_EXPOSURE_MANAGEMENT_001
 > 创建日期: 2026-04-07
-> æ ¸å¿å®ä½: çæ§ãåæåè°æ´ç»åçå å­æ´é²ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
 ## 2. 功能设计
 
@@ -92,7 +89,6 @@ responsibility:
 ```python
 class FactorExposureManager:
     """
-    å å­æ´é²ç®¡çå?
     """
     
     def calculate_exposure(
@@ -138,7 +134,6 @@ class FactorExposureManager:
 ---
 ## 3. 实施路径
 
-### Phase 1: æ ¸å¿åè½ (1å?
 - [ ] 实现因子暴露计算
 - [ ] 实现暴露监控
 - [ ] 实现调整建议
@@ -149,11 +144,7 @@ class FactorExposureManager:
 
 ### 4.1 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬ | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

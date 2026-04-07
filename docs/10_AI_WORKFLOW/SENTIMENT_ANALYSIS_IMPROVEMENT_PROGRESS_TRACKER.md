@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SENTIMENT_ANALYSIS_PROGRESS_TRACKER_001
 version: 1.2.0
 status: Active

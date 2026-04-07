@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_TECHNICAL_SPECIFICATIONS_001
 version: 1.0.0
 status: Active

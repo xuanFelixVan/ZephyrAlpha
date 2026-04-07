@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ALPHA_003
 version: 1.0.0
 status: Active

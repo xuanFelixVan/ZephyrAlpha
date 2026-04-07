@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_QUALITY_MONITORING_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
   - 数据质量监控
@@ -77,109 +76,64 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-**åä¸èè´£**: æ°æ®è´¨éçæ§ä¸å¼å¸¸æ£æµï¼ä¿éå
-¨ç³»ç»æ°æ®è´¨é?
 
 ### 职责边界
 
-**â?æ ¸å¿èè´£**:
 
 - 质量规则管理
-- è´¨éæ£æµæ§è¡?
 - 异常检测与识别
 - 质量报告生成
 
-**â?éèè´£èå?*:
 - 数据采集
 - 数据存储
-- æ°æ®æ¸
 洗
 - 数据修复
 
-## ð¯ æ¨¡åå®ä½ä¸èè´?
 
 ### 层级定位
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?          æ¸
-é£éåç³»ç» - ä¸çº§æ¶é´æ¡æ¶æ¶æ                â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â? ç¬¬ä¸çº§ï¼å®è§é
-ç½®å±ï¼å­£åº¦/å¹´åº¦ï¼?                        â?
-â? ç¬¬äºçº§ï¼ä¸­è§ç­ç¥å±ï¼å¨åº¦/æ¥åº¦ï¼?                        â?
-â? ç¬¬ä¸çº§ï¼å¾®è§æ§è¡å±ï¼æ¥å
-/åé/ç§çº§ï¼?                   â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?          æ°æ®è´¨éçæ§ç³»ç»ï¼æ¬æ¨¡åï¼?                    â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â? è´¨éè§åå¼æ  â? å¼å¸¸æ£æµå¨  â? è´¨éæ¥åçæå? â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?          æ¸
 ```
 
 ### 核心职责
 
-| èè´£ç±»å« | å
-·ä½èè´£ | è¾åºäº§ç© |
 |---------|---------|---------|
-| **è´¨éè§åç®¡ç** | å®ä¹åç®¡çæ°æ®è´¨éè§å?| è´¨éè§ååº?|
-| **è´¨éæ£æµ?* | æ§è¡æ°æ®è´¨éæ£æ?| è´¨éæ£æµç»æ?|
-| **å¼å¸¸æ£æµ?* | è¯å«æ°æ®å¼å¸¸åå¼å¸¸æ¨¡å¼?| å¼å¸¸æ¥å |
-| **è´¨éæ¥å** | çæè´¨éæ¥ååè¶å¿åæ?| è´¨éæ¥å |
-| **åè­¦éç¥** | åéè´¨éåè­?| åè­¦æ¶æ¯ |
 
-### éèè´£è¾¹ç?
 
-- â?**æ°æ®éé**: ç±ç»ä¸æ°æ®åºç¡è®¾æ½è´è´£
-- â?**æ°æ®å­å¨**: ç±ç»ä¸æ°æ®åºç¡è®¾æ½è´è´£
-- â?**æ°æ®æ¸
 洗**: 由统一数据基础设施负责
-- â?**æ°æ®ä¿®å¤**: ç±æ°æ®æ²»çå¹³å°è´è´?
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æ°æ®æºç®¡çèå¾](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ¥åå
-æ°æ?|
-| [æ°æ®å®å
-¨åè§èå¾](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | ä¸­ä¾èµ?| æä¾æ°æ®å®å
-¨ç­ç¥ |
-| [é«æ§è½æ°æ®ç®¡éèå¾](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | å¼ºä¾èµ?| æä¾å®æ¶æ°æ®æµ?|
+æ°æ?|
+¨ç­ç¥ |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [èªå¨ä¿®å¤å¼æèå¾](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | å¼ºä¾èµ?| æ¥æ¶è´¨éå¼å¸¸è¿è¡ä¿®å¤ |
-| [è´¨éè¯åç³»ç»èå¾](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | å¼ºä¾èµ?| æ¥æ¶è´¨éæ£æµç»æè¯å?|
-| [è´¨éæ¥åèªå¨åèå¾](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | ä¸­ä¾èµ?| æ¥æ¶è´¨éæ°æ®çææ¥å |
-| [æ°æ®å¯è§æµæ§èå¾](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | ä¸­ä¾èµ?| æä¾è´¨éçæ§ææ  |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **Great Expectations** | 0.18+ | 数据质量验证 | [官方文档](https://docs.greatexpectations.io/) |
 | **Apache Griffin** | 0.5+ | 数据质量度量 | [官方文档](https://griffin.apache.org/) |
 | **Deequ** | 2.0+ | 数据质量测试 | [官方文档](https://github.com/awslabs/deequ) |
 | **Prometheus** | 2.40+ | 监控指标采集 | [官方文档](https://prometheus.io/) |
-| **Grafana** | 9.0+ | å¯è§åå±ç¤?| [å®æ¹ææ¡£](https://grafana.com/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
     A[数据源管理] --> B[数据质量监控]
-    C[æ°æ®å®å
-¨åè§] --> B
+¨åè§] --> B
     D[高性能数据管道] --> B
     
     B --> E[自动修复引擎]
@@ -195,20 +149,16 @@ graph LR
 
 ---
 
-## ðï¸?æ¶æè®¾è®¡
 
 ### 整体架构
 
 ```mermaid
 graph TB
-    subgraph "æ°æ®æº?
         A1[宏观经济数据]
-        A2[æ¥é¢è¡æ
 数据]
-        A3[æ¥å
-è¡æ
+        A3[æ¥å
+è¡æ
 数据]
-        A4[å®æ¶è¡æ
 数据]
     end
     
@@ -235,7 +185,6 @@ graph TB
             D4[异常模式识别]
         end
         
-        subgraph "è´¨éæ¥åçæå?
             E1[质量评分计算]
             E2[趋势分析]
             E3[报告生成]
@@ -291,36 +240,27 @@ graph TB
     E4 --> G4
 ```
 
-### æ°æ®æµè®¾è®?
 
-#### å®æ¶æ°æ®è´¨éçæ§æµ?
 
 ```
-å®æ¶è¡æ
-æ°æ® â?è´¨éæ£æµå¨ï¼æ¶ææ?åç¡®æ§ï¼ â?å¼å¸¸æ£æµå¨ â?åè­¦ç³»ç» â?åè­¦éç¥
 ```
 
 **特点**:
-- ç§çº§æ£æµ?
-- ä½å»¶è¿è¦æ±?
 - 自动告警
 
 #### 批量数据质量检查流
 
 ```
-åå²æ°æ® â?è´¨éæ£æµå¨ï¼å®æ´æ?ä¸è´æ?å¯ä¸æ§ï¼ â?å¼å¸¸æ£æµå¨ â?è´¨éæ¥åçæå?â?è´¨éæ¥å
 ```
 
 **特点**:
 - 定时执行
 - å
-¨é¢æ£æ?
 - 报告生成
 
 ---
 
-## ð§ å
-³é®ç»ä»¶è®¾è®¡
+## ð§ å
 
 ### 1. 质量规则引擎 (Quality Rule Engine)
 
@@ -350,15 +290,12 @@ class QualityRule(ABC):
 
 
 class CompletenessRule(QualityRule):
-    """å®æ´æ§è§å?""
     
     def __init__(self, rule_id: str, columns: List[str], threshold: float = 0.95):
-        super().__init__(rule_id, "å®æ´æ§æ£æ?, "critical")
         self.columns = columns
         self.threshold = threshold
         
     def validate(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥æ°æ®å®æ´æ?""
         results = {}
         
         for column in self.columns:
@@ -404,15 +341,12 @@ class CompletenessRule(QualityRule):
 
 
 class AccuracyRule(QualityRule):
-    """åç¡®æ§è§å?""
     
     def __init__(self, rule_id: str, column: str, value_range: tuple):
-        super().__init__(rule_id, "åç¡®æ§æ£æ?, "high")
         self.column = column
         self.value_range = value_range
         
     def validate(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥æ°æ®åç¡®æ?""
         if self.column not in data.columns:
             return {
                 'rule_id': self.rule_id,
@@ -454,15 +388,12 @@ class AccuracyRule(QualityRule):
 
 
 class ConsistencyRule(QualityRule):
-    """ä¸è´æ§è§å?""
     
     def __init__(self, rule_id: str, columns: List[str], consistency_type: str):
-        super().__init__(rule_id, "ä¸è´æ§æ£æ?, "high")
         self.columns = columns
         self.consistency_type = consistency_type  # cross_field, temporal, cross_source
         
     def validate(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥æ°æ®ä¸è´æ?""
         if self.consistency_type == 'cross_field':
             return self._check_cross_field_consistency(data)
         elif self.consistency_type == 'temporal':
@@ -475,7 +406,6 @@ class ConsistencyRule(QualityRule):
             }
     
     def _check_cross_field_consistency(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥è·¨å­æ®µä¸è´æ?""
         # 例如：high >= low, high >= open, high >= close
         if 'high' in data.columns and 'low' in data.columns:
             inconsistent_count = (data['high'] < data['low']).sum()
@@ -501,7 +431,6 @@ class ConsistencyRule(QualityRule):
         }
     
     def _check_temporal_consistency(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥æ¶é´ä¸è´æ?""
         # 例如：时间戳单调递增
         if 'timestamp' in data.columns:
             is_sorted = data['timestamp'].is_monotonic_increasing
@@ -533,15 +462,12 @@ class ConsistencyRule(QualityRule):
 
 
 class TimelinessRule(QualityRule):
-    """æ¶ææ§è§å?""
     
     def __init__(self, rule_id: str, timestamp_column: str, max_delay_seconds: int):
-        super().__init__(rule_id, "æ¶ææ§æ£æ?, "critical")
         self.timestamp_column = timestamp_column
         self.max_delay_seconds = max_delay_seconds
         
     def validate(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥æ°æ®æ¶ææ?""
         if self.timestamp_column not in data.columns:
             return {
                 'rule_id': self.rule_id,
@@ -580,14 +506,11 @@ class TimelinessRule(QualityRule):
 
 
 class UniquenessRule(QualityRule):
-    """å¯ä¸æ§è§å?""
     
     def __init__(self, rule_id: str, columns: List[str]):
-        super().__init__(rule_id, "å¯ä¸æ§æ£æ?, "medium")
         self.columns = columns
         
     def validate(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ£æ¥æ°æ®å¯ä¸æ?""
         missing_columns = [col for col in self.columns if col not in data.columns]
         if missing_columns:
             return {
@@ -652,7 +575,6 @@ class QualityRuleEngine:
         return self.rules[rule_id].validate(data)
     
     def execute_all_rules(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """æ§è¡ææè§å?""
         results = []
         
         for rule_id, rule in self.rules.items():
@@ -671,7 +593,6 @@ class QualityRuleEngine:
         }
     
     def get_rule_library(self) -> List[Dict[str, Any]]:
-        """è·åè§ååº?""
         return [rule.get_rule_definition() for rule in self.rules.values()]
 ```
 
@@ -696,7 +617,6 @@ class AnomalyDetector:
     def detect_anomalies(self, 
                         data: pd.DataFrame,
                         detection_methods: List[str] = ['statistical', 'ml', 'business']) -> Dict[str, Any]:
-        """æ£æµæ°æ®å¼å¸?""
         results = {}
         
         if 'statistical' in detection_methods:
@@ -735,7 +655,6 @@ class StatisticalAnomalyDetector:
     """统计异常检测器"""
     
     def detect(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """ä½¿ç¨ç»è®¡æ¹æ³æ£æµå¼å¸?""
         anomalies = []
         
         numeric_columns = data.select_dtypes(include=[np.number]).columns
@@ -790,7 +709,6 @@ class MLAnomalyDetector:
         self.scaler = StandardScaler()
         
     def detect(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """ä½¿ç¨æºå¨å­¦ä¹ æ¹æ³æ£æµå¼å¸?""
         anomalies = []
         
         numeric_columns = data.select_dtypes(include=[np.number]).columns
@@ -812,7 +730,7 @@ class MLAnomalyDetector:
                 'anomalies': []
             }
         
-        # æ åå?
+        # æ åå?
         X_scaled = self.scaler.fit_transform(X)
         
         # 训练模型
@@ -842,10 +760,8 @@ class BusinessRuleAnomalyDetector:
     """业务规则异常检测器"""
     
     def detect(self, data: pd.DataFrame) -> Dict[str, Any]:
-        """ä½¿ç¨ä¸å¡è§åæ£æµå¼å¸?""
         anomalies = []
         
-        # æ£æ¥ä»·æ ¼å¼å¸?
         if all(col in data.columns for col in ['open', 'high', 'low', 'close']):
             # 检查涨跌停
             price_change = (data['close'] - data['open']) / data['open']
@@ -910,7 +826,6 @@ class BusinessRuleAnomalyDetector:
         }
 ```
 
-### 3. è´¨éæ¥åçæå?(Quality Report Generator)
 
 ```python
 from typing import Dict, Any, List
@@ -920,7 +835,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 class QualityReportGenerator:
-    """è´¨éæ¥åçæå?""
     
     def __init__(self):
         self.quality_scorer = QualityScorer()
@@ -967,23 +881,19 @@ class QualityReportGenerator:
         
         # 基于质量结果生成建议
         if quality_results['failed_rules'] > 0:
-            recommendations.append("å»ºè®®æ£æ¥å¤±è´¥çè´¨éè§åï¼ä¿®å¤æ°æ®è´¨éé®é¢?)
         
         # 基于异常结果生成建议
         if anomaly_results['anomaly_count'] > 10:
-            recommendations.append("æ£æµå°å¤§éæ°æ®å¼å¸¸ï¼å»ºè®®è¿è¡æ°æ®æ¸
 æ´?)
         
         critical_anomalies = [a for a in anomaly_results.get('anomalies', []) 
                              if a.get('severity') == 'critical']
         if critical_anomalies:
-            recommendations.append("æ£æµå°ä¸¥éå¼å¸¸ï¼å»ºè®®ç«å³å¤ç?)
         
         return recommendations
 
 
 class QualityScorer:
-    """è´¨éè¯åå?""
     
     def calculate_score(self, quality_results: Dict[str, Any]) -> Dict[str, Any]:
         """计算质量评分"""
@@ -996,7 +906,6 @@ class QualityScorer:
         else:
             base_score = (passed_rules / total_rules) * 100
         
-        # æ ¹æ®è§åä¸¥éæ§è°æ´åæ?
         severity_penalty = 0
         for result in quality_results['results']:
             if result['overall_status'] == 'fail':
@@ -1010,7 +919,7 @@ class QualityScorer:
                 else:
                     severity_penalty += 1
         
-        # æç»åæ?
+        # æç»åæ?
         final_score = max(0, base_score - severity_penalty)
         
         # 评级
@@ -1034,7 +943,6 @@ class QualityScorer:
 
 
 class TrendAnalyzer:
-    """è¶å¿åæå?""
     
     def __init__(self, history_window: int = 30):
         self.history_window = history_window
@@ -1044,7 +952,6 @@ class TrendAnalyzer:
         """分析质量趋势"""
         current_score = quality_score['overall_score']
         
-        # æ·»å å°åå²è®°å½?
         self.score_history.append(current_score)
         
         # 保持窗口大小
@@ -1107,7 +1014,6 @@ class AlertSystem:
     def check_and_alert(self, 
                        quality_results: Dict[str, Any],
                        anomaly_results: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """æ£æ¥å¹¶åéåè­?""
         alerts = []
         
         for rule_id, rule in self.alert_rules.items():
@@ -1115,7 +1021,7 @@ class AlertSystem:
                 alert = rule.create_alert(quality_results, anomaly_results)
                 alerts.append(alert)
                 
-                # åéåè­?
+                # åéåè­?
                 for channel_name in rule.channels:
                     if channel_name in self.alert_channels:
                         self.alert_channels[channel_name].send(alert)
@@ -1144,7 +1050,6 @@ class AlertRule:
     def should_alert(self,
                      quality_results: Dict[str, Any],
                      anomaly_results: Dict[str, Any]) -> bool:
-        """å¤æ­æ¯å¦éè¦åè­?""
         return self.condition(quality_results, anomaly_results)
     
     def create_alert(self,
@@ -1173,7 +1078,6 @@ class AlertRule:
         """生成告警消息"""
         message = f"数据质量告警: {self.rule_name}\n"
         message += f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-        message += f"å¤±è´¥è§åæ? {quality_results['failed_rules']}\n"
         message += f"异常数量: {anomaly_results['anomaly_count']}\n"
         return message
 
@@ -1183,7 +1087,7 @@ class AlertChannel(ABC):
     
     @abstractmethod
     def send(self, alert: Dict[str, Any]) -> bool:
-        """åéåè­?""
+        """åéåè­?""
         pass
 
 
@@ -1203,7 +1107,6 @@ class EmailAlertChannel(AlertChannel):
         self.recipients = recipients
         
     def send(self, alert: Dict[str, Any]) -> bool:
-        """åéé®ä»¶åè­?""
         try:
             msg = MIMEMultipart()
             msg['From'] = self.sender_email
@@ -1285,21 +1188,17 @@ class WebhookAlertChannel(AlertChannel):
 
 ## 📊 数据模型设计
 
-### è´¨éè§åè¡?
 
 ```sql
 CREATE TABLE quality_rules (
     rule_id VARCHAR(50) PRIMARY KEY COMMENT '规则ID',
     rule_name VARCHAR(100) NOT NULL COMMENT '规则名称',
     rule_type VARCHAR(50) NOT NULL COMMENT '规则类型',
-    rule_definition TEXT NOT NULL COMMENT 'è§åå®ä¹ï¼JSONï¼?,
-    severity VARCHAR(20) NOT NULL COMMENT 'ä¸¥éæ§ï¼critical/high/medium/lowï¼?,
     enabled BOOLEAN DEFAULT TRUE COMMENT '是否启用',
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     INDEX idx_rule_type (rule_type),
     INDEX idx_severity (severity)
-) COMMENT 'è´¨éè§åè¡?;
 ```
 
 ### 质量检查结果表
@@ -1308,11 +1207,7 @@ CREATE TABLE quality_rules (
 CREATE TABLE quality_check_results (
     check_id VARCHAR(100) PRIMARY KEY COMMENT '检查ID',
     rule_id VARCHAR(50) NOT NULL COMMENT '规则ID',
-    data_source VARCHAR(100) NOT NULL COMMENT 'æ°æ®æº?,
-    check_time TIMESTAMP NOT NULL COMMENT 'æ£æ¥æ¶é?,
-    status VARCHAR(20) NOT NULL COMMENT 'ç¶æï¼pass/failï¼?,
-    result_details TEXT COMMENT 'ç»æè¯¦æ
-ï¼JSONï¼?,
+ï¼JSONï¼?,
     error_message TEXT COMMENT '错误信息',
     INDEX idx_rule_id (rule_id),
     INDEX idx_check_time (check_time),
@@ -1320,44 +1215,30 @@ CREATE TABLE quality_check_results (
 ) COMMENT '质量检查结果表';
 ```
 
-### å¼å¸¸è®°å½è¡?
 
 ```sql
 CREATE TABLE anomaly_records (
     anomaly_id VARCHAR(100) PRIMARY KEY COMMENT '异常ID',
-    data_source VARCHAR(100) NOT NULL COMMENT 'æ°æ®æº?,
     anomaly_type VARCHAR(50) NOT NULL COMMENT '异常类型',
-    detection_method VARCHAR(50) NOT NULL COMMENT 'æ£æµæ¹æ³?,
-    detection_time TIMESTAMP NOT NULL COMMENT 'æ£æµæ¶é?,
-    severity VARCHAR(20) NOT NULL COMMENT 'ä¸¥éæ?,
-    anomaly_details TEXT COMMENT 'å¼å¸¸è¯¦æ
-ï¼JSONï¼?,
-    status VARCHAR(20) DEFAULT 'open' COMMENT 'ç¶æï¼open/resolved/ignoredï¼?,
+    severity VARCHAR(20) NOT NULL COMMENT 'ä¸¥éæ?,
+ï¼JSONï¼?,
     resolved_time TIMESTAMP COMMENT '解决时间',
-    resolved_by VARCHAR(50) COMMENT 'è§£å³äº?,
     INDEX idx_data_source (data_source),
     INDEX idx_anomaly_type (anomaly_type),
     INDEX idx_detection_time (detection_time),
     INDEX idx_status (status)
-) COMMENT 'å¼å¸¸è®°å½è¡?;
 ```
 
-### è´¨éæ¥åè¡?
 
 ```sql
 CREATE TABLE quality_reports (
     report_id VARCHAR(100) PRIMARY KEY COMMENT '报告ID',
-    report_type VARCHAR(20) NOT NULL COMMENT 'æ¥åç±»åï¼daily/weekly/monthlyï¼?,
     report_time TIMESTAMP NOT NULL COMMENT '报告时间',
     overall_score DECIMAL(5, 2) COMMENT '总体评分',
     quality_grade VARCHAR(1) COMMENT '质量等级',
-    summary TEXT COMMENT 'æè¦ï¼JSONï¼?,
-    report_details TEXT COMMENT 'æ¥åè¯¦æ
-ï¼JSONï¼?,
-    recommendations TEXT COMMENT 'å»ºè®®ï¼JSONï¼?,
+ï¼JSONï¼?,
     INDEX idx_report_type (report_type),
     INDEX idx_report_time (report_time)
-) COMMENT 'è´¨éæ¥åè¡?;
 ```
 
 ---
@@ -1366,7 +1247,6 @@ CREATE TABLE quality_reports (
 
 ### RESTful API接口
 
-#### 1. æ§è¡è´¨éæ£æ?
 
 ```
 POST /api/v1/quality/check
@@ -1396,7 +1276,6 @@ Response:
 }
 ```
 
-#### 2. æ£æµå¼å¸?
 
 ```
 POST /api/v1/quality/anomaly/detect
@@ -1475,87 +1354,52 @@ Response:
 
 ## 🚀 实施要点
 
-### é¶æ®µ1ï¼è´¨éè§åå¼æå¼åï¼ç¬?å¨ï¼
 
 **任务**:
-1. â?å®ç°è´¨éè§ååºç±»ååç±»è§å?
-2. â?å®ç°è´¨éè§åå¼æ
-3. â?å®ç°è§åæ³¨ååç®¡ç?
-4. â?ç¼ååå
-æµè¯
+æµè¯
 
 **验收标准**:
-- ææè§åç±»åå¯ä»¥æ­£å¸¸æ§è¡?
-- è§åå¼æå¯ä»¥æ³¨ååç®¡çè§å?
-- åå
-æµè¯è¦ççâ¥80%
+- åå
 
 ---
 
-### é¶æ®µ2ï¼å¼å¸¸æ£æµå¨å¼åï¼ç¬?-2å¨ï¼
 
 **任务**:
-1. â?å®ç°ç»è®¡å¼å¸¸æ£æµå¨
-2. â?å®ç°æºå¨å­¦ä¹ å¼å¸¸æ£æµå¨
-3. â?å®ç°ä¸å¡è§åå¼å¸¸æ£æµå¨
-4. â?ç¼ååå
-æµè¯
+æµè¯
 
 **验收标准**:
-- æææ£æµæ¹æ³å¯ä»¥æ­£å¸¸å·¥ä½?
-- å¼å¸¸æ£æµç»æåç¡?
-- åå
-æµè¯è¦ççâ¥80%
+- åå
 
 ---
 
-### é¶æ®µ3ï¼è´¨éæ¥åçæå¨å¼åï¼ç¬?å¨ï¼
 
 **任务**:
-1. â?å®ç°è´¨éè¯åå?
-2. â?å®ç°è¶å¿åæå?
-3. â?å®ç°æ¥åçæå?
-4. â?ç¼ååå
-æµè¯
+æµè¯
 
 **验收标准**:
 - 质量评分计算正确
 - 趋势分析准确
 - 报告生成完整
-- åå
-æµè¯è¦ççâ¥80%
+- åå
 
 ---
 
-### é¶æ®µ4ï¼åè­¦ç³»ç»å¼åï¼ç¬?å¨ï¼
 
 **任务**:
-1. â?å®ç°åè­¦è§åå¼æ
-2. â?å®ç°å¤ç§åè­¦éé
-3. â?å®ç°åè­¦åå²è®°å½
-4. â?ç¼ååå
-æµè¯
+æµè¯
 
 **验收标准**:
 - 告警规则可以正常触发
-- åè­¦å¯ä»¥æ­£å¸¸åé?
 - 告警历史记录完整
-- åå
-æµè¯è¦ççâ¥80%
+- åå
 
 ---
 
 ### 阶段5：集成测试与部署（第2周）
 
 **任务**:
-1. â?ç¼åéææµè¯ç¨ä¾
-2. â?æ§è¡ç«¯å°ç«¯æµè¯?
-3. â?é¨ç½²å°çäº§ç¯å¢?
-4. â?ç¼åé¨ç½²ææ¡£
 
 **验收标准**:
-- éææµè¯å
-¨é¨éè¿
 - 系统可以正常运行
 - 部署文档完整
 
@@ -1563,8 +1407,8 @@ Response:
 
 ## 🧪 测试策略
 
-### åå
-æµè¯
+### åå
+æµè¯
 
 ```python
 import pytest
@@ -1572,7 +1416,6 @@ import pandas as pd
 import numpy as np
 
 def test_completeness_rule():
-    """æµè¯å®æ´æ§è§å?""
     rule = CompletenessRule(
         rule_id='test_completeness',
         columns=['open', 'close'],
@@ -1585,7 +1428,6 @@ def test_completeness_rule():
         'close': [1.1, 2.1, 3.1, 4.1, 5.1]
     })
     
-    # æ§è¡æ£æ?
     result = rule.validate(data)
     
     # 验证结果
@@ -1598,13 +1440,10 @@ def test_statistical_anomaly_detector():
     """测试统计异常检测器"""
     detector = StatisticalAnomalyDetector()
     
-    # åå»ºæµè¯æ°æ®ï¼å
 含异常值）
     data = pd.DataFrame({
-        'value': [1, 2, 3, 4, 5, 100]  # 100æ¯å¼å¸¸å?
     })
     
-    # æ£æµå¼å¸?
     result = detector.detect(data)
     
     # 验证结果
@@ -1613,7 +1452,6 @@ def test_statistical_anomaly_detector():
 
 
 def test_quality_scorer():
-    """æµè¯è´¨éè¯åå?""
     scorer = QualityScorer()
     
     # 创建测试结果
@@ -1642,54 +1480,34 @@ def test_quality_scorer():
 
 ### 检测性能要求
 
-| æ£æµç±»å?| æ°æ®é?| ååºæ¶é´è¦æ± |
 |---------|--------|------------|
-| **å®æ¶è´¨éæ£æµ?* | 1ä¸æ¡ | <1ç§?|
-| **æ¹éè´¨éæ£æ?* | 100ä¸æ¡ | <30ç§?|
-| **å¼å¸¸æ£æµ?* | 10ä¸æ¡ | <5ç§?|
-| **æ¥åçæ** | 1ä¸ªææ°æ® | <10ç§?|
 
-### åç¡®æ§è¦æ±?
 
-| ææ  | ç®æ å?|
 |------|--------|
-| **è§åæ§è¡åç¡®ç?* | 100% |
-| **å¼å¸¸æ£æµå¬åç** | â?0% |
-| **å¼å¸¸æ£æµç²¾ç¡®ç** | â?5% |
-| **è´¨éè¯ååç¡®æ?* | â?5% |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 - [统一数据基础设施蓝图](./UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
-- ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶æ?
 
 ---
 
 ## 📝 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**èå¾ç¶æ?*: â?è®¾è®¡å®æ
-**ä¸ä¸æ­?*: å¼å§å®æ½é¶æ®? - è´¨éè§åå¼æå¼å?
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
 | v1.0.1 | 2026-04-06 | è¡¥å
 
-YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 ---
 
 ## 1. 文档治理
@@ -1697,15 +1515,12 @@ YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç�
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Quality Monitoring
 - **模块ID**: DATA_QUALITY_MONITORING_001
 - **蓝图文档**: DATA_QUALITY_MONITORING_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: å
-¨ç³»ç»æ°æ®è´¨éä¿é?
-- **ç¶æ?*: Active
+åå»?
+- **èè´£**: å
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -1713,15 +1528,10 @@ YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç�
 | 模块 | 职责 | 边界 |
 |------|------|------|
 | **Data Quality Monitoring** | å
-¨ç³»ç»æ°æ®è´¨éä¿é?| **æ ¸å¿æ¨¡å** |
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

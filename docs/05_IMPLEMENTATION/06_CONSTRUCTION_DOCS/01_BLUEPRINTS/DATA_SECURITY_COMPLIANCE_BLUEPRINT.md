@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_SECURITY_COMPLIANCE_001
 version: 1.0.0
 status: Active
@@ -6,11 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
-  - æ°æ®å®å
-¨åè§
+¨åè§
   - 数据加密
   - 访问控制
   - 合规审计
@@ -80,45 +78,24 @@ layer: Layer 5.1 (数据处理)
 
 > 核心职责: Data Security Compliance蓝图设计
 > 职责边界: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Security Complianceèå¾è®¾è®¡ç¸å
-³å
-å®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å
-¶ä»æ¨¡åå
-å®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
+³å
+容
 
 
 ## 一、设计背景与目标
 
-### 1.1 ä¸å¡éæ±?
 
 **当前痛点**:
-- æ°æ®å®å
-¨é£é©é«?
 - 合规要求复杂
-- è®¿é®æ§å¶ä¸ä¸¥æ ?
-- å®¡è®¡è¿½è¸ªä¸å®å?
 
 **业务目标**:
-- å»ºç«å
-¨é¢çæ°æ®å®å
-¨ä½ç³?
+¨ä½ç³?
 - 确保符合监管要求
-- å®ç°ç²¾ç»åè®¿é®æ§å?
-- æä¾å®æ´çå®¡è®¡è¿½è¸?
 
-### 1.2 ææ¯ç®æ ?
 
-| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **æ°æ®å å¯è¦çç?* | 100% | æææææ°æ®å å¯?|
-| **è®¿é®æ§å¶åç¡®ç?* | 100% | è®¿é®æ§å¶åç¡®ç?00% |
-| **åè§æ£æ¥è¦çç** | 100% | ææåè§è¦æ±æ£æ?|
-| **å®¡è®¡è¿½è¸ªå®æ´æ?* | 100% | å®¡è®¡è¿½è¸ªå®æ´è®°å½ |
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 æ°æ®å å¯ç®¡çå?(DataEncryptionManager)
 
 ```python
 from dataclasses import dataclass, field
@@ -148,7 +125,6 @@ class EncryptionKey:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 class DataEncryptionManager:
-    """æ°æ®å å¯ç®¡çå?""
     
     def __init__(self):
         self.keys: Dict[str, EncryptionKey] = {}
@@ -160,7 +136,6 @@ class DataEncryptionManager:
             key_value = Fernet.generate_key()
         else:
             # å
-¶ä»ç®æ³å®ç°
             key_value = Fernet.generate_key()
         
         key = EncryptionKey(
@@ -206,7 +181,6 @@ class DataEncryptionManager:
         return new_key
 ```
 
-### 3.2 è®¿é®æ§å¶ç®¡çå?(AccessControlManager)
 
 ```python
 from typing import Dict, List, Any, Set
@@ -238,7 +212,6 @@ class Role:
     description: str
 
 class AccessControlManager:
-    """è®¿é®æ§å¶ç®¡çå?""
     
     def __init__(self):
         self.users: Dict[str, User] = {}
@@ -271,7 +244,6 @@ class AccessControlManager:
     def check_permission(self, user_id: str,
                          resource: str,
                          permission: Permission) -> bool:
-        """æ£æ¥æé?""
         user = self.users.get(user_id)
         if not user:
             return False
@@ -312,7 +284,6 @@ class AccessControlManager:
             role.permissions[resource].discard(permission)
 ```
 
-### 3.3 æ°æ®è±æå?(DataMasker)
 
 ```python
 from typing import Dict, List, Any, Callable
@@ -327,7 +298,6 @@ class MaskingStrategy(Enum):
     RANDOM = "random"
 
 class DataMasker:
-    """æ°æ®è±æå?""
     
     def __init__(self):
         self.masking_rules: Dict[str, Dict[str, Any]] = {}
@@ -381,7 +351,6 @@ class DataMasker:
         return value
     
     def mask_phone_number(self, phone: str) -> str:
-        """è±æææºå?""
         if len(phone) >= 11:
             return phone[:3] + "****" + phone[-4:]
         return "***"
@@ -406,7 +375,6 @@ class DataMasker:
 ```
 
 ---
-## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
@@ -419,13 +387,11 @@ POST /api/v1/security/encrypt
 **请求示例**:
 ```json
 {
-  "data": "æææ°æ®å
-å®¹",
+容",
   "key_id": "data_encryption_key_001"
 }
 ```
 
-#### 4.1.2 æ£æ¥æé?
 
 ```http
 POST /api/v1/security/check-permission
@@ -459,7 +425,6 @@ POST /api/v1/security/mask
 
 ---
 
-## äºãé¨ç½²æ¶æ?
 
 ```yaml
 version: '3.8'
@@ -498,7 +463,6 @@ services:
 ---
 
 ## å
-­ãçæ§ææ ?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -509,29 +473,21 @@ services:
 
 ---
 
-## ä¸ãå®æ½è®¡å?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **é¶æ®µ1** | æ­å»ºVaultåOPA | 3å¤?|
-| **é¶æ®µ2** | å¼åå å¯ç®¡çå¨ | 4å¤?|
-| **é¶æ®µ3** | å¼åè®¿é®æ§å¶ç®¡çå¨ | 4å¤?|
-| **é¶æ®µ4** | å¼åæ°æ®è±æå¨ | 3å¤?|
-| **é¶æ®µ5** | æµè¯åä¼å?| 3å¤?|
 
 ---
 
 ## å
-«ãç¸å
-³ææ¡?
+«ãç¸å
+³ææ¡?
 
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 - [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md)
-- æ°æ®è¡ç¼è¿½è¸ªèå?
 
 ---
 
-**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
 ## 1. 文档治理
@@ -539,14 +495,12 @@ services:
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Security Compliance
 - **模块ID**: DATA_SECURITY_COMPLIANCE_001
 - **蓝图文档**: DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
+åå»?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -557,45 +511,34 @@ services:
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | ä¸­ä¾èµ?| è·åæ°æ®æºä¿¡æ?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æææ°æ®æ è®° |
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | å¼ºä¾èµ?| æ§è¡åè§ç­ç¥ |
-| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | ä¸­ä¾èµ?| æä¾å®å
-¨æ£æ¥è§å?|
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **Apache Ranger** | 2.4+ | 权限管理 | [官方文档](https://ranger.apache.org/) |
 | **HashiCorp Vault** | 1.15+ | 密钥管理 | [官方文档](https://www.vaultproject.io/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -612,12 +555,9 @@ graph LR
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

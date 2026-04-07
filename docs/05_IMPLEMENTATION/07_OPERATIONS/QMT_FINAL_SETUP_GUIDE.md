@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: QMT_FINAL_SETUP_001
 version: 1.0.0
 status: Active
@@ -44,7 +44,6 @@ This means:
 
 The most common cause for return code -1 is:
 
-**QMT client not logged in with "Minimal Mode" (µ×üþ«Çµ¿íÕ╝Å)**
 
 When you login to QMT, you must check the "Minimal Mode" or "Independent Trading" checkbox.
 
@@ -57,14 +56,11 @@ When you login to QMT, you must check the "Minimal Mode" or "Independent Trading
 
 ### Step 2: Login with Minimal Mode
 
-1. **Start QMT client** (double-click "Õø¢ÚçæÞ»üÕê©QMTõ║ñµÿôþ½?)
 2. **On login screen:**
    - Account: `8886156677`
    - Password: `134752`
-   - Ô£?**CHECK "µ×üþ«Çµ¿íÕ╝Å" or "þï¼þ½ïõ║ñµÿô" checkbox** (MUST BE CHECKED!)
    - Click "Login"
 3. **Wait 30 seconds** for full initialization
-4. **Verify login:** Main window appears, status shows "ÕÀ▓Þ┐×µÄ?
 
 ### Step 3: Test Connection
 
@@ -85,11 +81,9 @@ C:\Users\fanzi\.conda\envs\qmt\python.exe scripts\test_qmt_connection_v6.py
 
 If successful:
 ```
-Ô£?õ║ñµÿôµÄÑÕÅúÞ┐×µÄÑµêÉÕèƒ´╝?Ô£?Þ┤ªµêÀÞ«óÚÿàµêÉÕèƒ´╝?Ô£?ÞÁäõ║ºµƒÑÞ»óµêÉÕèƒ´╝?```
 
 If still failing (returns -1):
 ```
-ÔØ?õ║ñµÿôµÄÑÕÅúÞ┐×µÄÑÕñ▒Þ┤Ñ´╝îÞ┐öÕø×þáü: -1
 ```
 
 ## If Still Failing
@@ -98,8 +92,6 @@ If still failing (returns -1):
 
 1. **QMT Version:** Should be 2.0.8.300 (yours is correct)
 2. **Installation Paths:**
-   - Simulation: `E:\Õø¢ÚçæQMTõ║ñµÿôþ½»µ¿íµïƒ\userdata_mini` (exists)
-   - Live: `D:\Õø¢ÚçæÞ»üÕê©QMTõ║ñµÿôþ½»\userdata_mini` (updated in config)
 3. **File Permissions:** Diagnosis shows write permission is OK
 4. **Session Conflict:** Try different session by waiting 5 minutes or restarting computer
 
@@ -118,8 +110,6 @@ C:\Users\fanzi\.conda\envs\qmt\python.exe scripts\diagnose_qmt_deep.py
 If still failing after confirming Minimal Mode login:
 
 1. **Contact Guojin Securities:** 95310
-   - Ask: "þí«Þ«ñÞ┤ªÕÅÀ 8886156677 µÿ»ÕÉªµ£ëQMTþ¡ûþòÑõ║ñµÿôµØâÚÖÉ"
-   - Ask: "þí«Þ«ñMiniQMTµ×üþ«Çµ¿íÕ╝Åµÿ»ÕÉªÕÀ▓Õ╝ÇÚÇ?
 2. **Check official documentation:**
    - https://dict.thinktrader.net/
    - https://www.xuntou.net/
@@ -130,11 +120,9 @@ If still failing after confirming Minimal Mode login:
 ```
 QMT_SIMULATION_ACCOUNT=8886156677
 QMT_SIMULATION_PASSWORD=134752
-QMT_SIMULATION_CLIENT_PATH=E:/Õø¢ÚçæQMTõ║ñµÿôþ½»µ¿íµï?userdata_mini
 
 QMT_LIVE_ACCOUNT=8887871993
 QMT_LIVE_PASSWORD=198910
-QMT_LIVE_CLIENT_PATH=D:/Õø¢ÚçæÞ»üÕê©QMTõ║ñµÿôþ½?userdata_mini
 ```
 
 ### Python Environment

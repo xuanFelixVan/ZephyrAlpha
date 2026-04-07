@@ -1,13 +1,26 @@
 ﻿---
+module_id: PORTFOLIO_OPTIMIZATION_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 投资组合优化蓝图
+standard_type: 标准文档
+applicable_scope: 记录投资组合优化模块的设计蓝图
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+---
+
+﻿---
 module_id: IMPL_PORTFOLIO_OPT_BP_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-01
 last_updated: '2026-04-06'
-owner: é¦å¸­ææ¡£æ¶æå¸?
 standard_type: 专业量化机构蓝图
 applicable_scope: å
-¨ç³»ç»æ¶æè®¾è®?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -25,10 +38,6 @@ layer: Layer 5.2 (组合优化)
 风量化交易系统 v5.3 - 策略组合优化系统详细技术设?
 > **索引**: `PORTFOLIO_OPTIMIZATION_001`
 > **开发周?*: 140小时（胶合代码开发）
-> **æ ¸å¿å®ä½**: ç­ç¥å·¥åæ ¸å¿ç»ä»¶ï¼æ¯æå¤ç­ç¥ç»åä¼åãèµéåé
-ãé£é©é¢ç®ç®¡çãå¨æè°ä»çæºè½ç»åç³»ç»
-> **åèå¼?*: PyPortfolioOpt + CVXPY + Riskfolio-Lib + æ¡¥æ°´å
-¨å¤©åç»åä¼åææ³
 > **è¡¥å
 
 文档**: 本蓝图是[STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md)的后续组件，专注于多策略组合构建与优?
@@ -36,7 +45,6 @@ layer: Layer 5.2 (组合优化)
 
 ## 核心定位
 
-å®ç°PORTFOLIO OPTIMIZATIONçè®¾è®¡ä¸å®ç°ï¼åºäºBlack-Littermanææ¯ï¼è¯ä¼°æ ¸å¿åè½ï¼å®ç°æèµç®æ ã?
 
 ## 设计目标
 
@@ -94,44 +102,24 @@ layer: Layer 5.2 (组合优化)
 
 ### 1.1 核心设计目标
 
-| ç®æ  | ä¼å
-?| ææ¯å®?|
+?| ææ¯å®?|
 |------|--------|----------|
-| **å¤ç­ç¥ç»åä¼?* | P0 | ï¿?æ¹å·®ä¼åãé£é©å¹³ä»·ãæå¤§å¤æ®æ¯çãæå°åæ¤ç­å¤ç§ä¼åç®æ  |
-| **æºè½èµéåé
-** | P0 | åºäºç­ç¥ç»©æãç¸å
-³æ§ãé£é©è´¡ç®åº¦çå¨æèµéåé
-ç®?|
+ç®?|
 | **风险预算管理** | P1 | 多层次风险预算体系，支持策略层、资产层、因子层风险控制 |
 | **动态调仓逻辑** | P1 | 基于市场状态、策略表现、风险指标的动态调仓决策系?|
 | **实时组合监控** | P2 | 组合风险敞口、绩效归因、风格漂移实时监控与预警 |
 | **AIè¾
-å©ä¼å** | P2 | å©ç¨å¼ºåå­¦ä¹ ä¼åèµéåé
-ï¼åºäºå¸åºç¯å¢èªéåºè°æ´ç»åæé |
 
 ### 1.2 技术约束与原则
 
-1. **å¯è§£éæ§å?*ï¼ç»åæéè°æ´å¿
 须有明确的数学逻辑和业务解?
-2. **é£é©å¯æ§åå**ï¼ç»åæ»é£é©ä¸è¶
 过预设阈值，单策略风险贡献度可控
-3. **äº¤æææ¬æè¯**ï¼è°ä»å³ç­èèäº¤æææ¬ï¼é¿å
-é¢ç¹æ æè°?
-4. **å®çåå¥½åå**ï¼ä¼åç»æå¿
 须考虑实盘执行可行性（流动性、冲击成本等?
-5. **å¼æºä¼å
-å?*ï¼ä¼å
-ä½¿ç¨æçå¼æºä¼ååºï¼PyPortfolioOptãCVXPYãRiskfolio-Lib?
 
 ### 1.3 与现有系统集?
 
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
-| **ç­ç¥æåä¸éæ©ç³»ç»** | è¾å
-¥?| æ¥æ¶å·²éæ©çç­ç¥åè¡¨åå
-¶ç»©ææ°?|
-| **æ¹éè¯ä¼°ç³»ç»** | æ°æ®?| è·åç­ç¥åå²è¡¨ç°ãç¸å
-³æ§ç©éµãé£é©æ?|
 | **风险管理系统** | 输出目标 | 输出组合风险预算、风险限额要?|
 | **订单执行系统** | 输出目标 | 输出调仓指令、目标仓?|
 
@@ -142,13 +130,10 @@ layer: Layer 5.2 (组合优化)
 
 ```mermaid
 graph TB
-    subgraph "è¾å
+    subgraph "è¾å
 ¥?
         A[策略排名结果] --> B(策略绩效数据)
-        C[é£é©é¢ç®é
-ç½®] --> D(é£é©çº¦æ)
-        E[å¸åºæ°æ®] --> F(ç¸å
-³æ§ç©?
+³æ§ç©?
     end
     
     subgraph "核心优化引擎"
@@ -184,8 +169,7 @@ graph TB
 
 **Layer 1 - 数据准备?*
 - 策略绩效数据提取?
-- ç¸å
-³æ§ç©éµè®¡ç®å¨
+- ç¸å
 - 风险预算解析?
 
 **Layer 2 - 核心优化?*
@@ -194,8 +178,7 @@ graph TB
 - 约束条件处理?
 
 **Layer 3 - AI增强?*
-- å¼ºåå­¦ä¹ èµéåé
-?
+?
 - 市场环境感知优化?
 - 自适应调仓决策?
 
@@ -232,13 +215,9 @@ class PortfolioOptimizationController:
         执行组合优化
         
         Args:
-            optimization_request: ä¼åè¯·æ±ï¼å
 含策略列表、绩效数据、约束条件等
             
         Returns:
-            OptimizationResult: ä¼åç»æï¼å
-å«æéåé
-ãé¢ææ¶çãé£é©ææ ç­
         """
         # 1. 数据准备与验?
         validated_data = await self._prepare_optimization_data(optimization_request)
@@ -289,8 +268,6 @@ class PortfolioOptimizationController:
             performance = await self._get_strategy_performance(strategy.strategy_id)
             returns_data.append(performance['returns_series'])
         
-        # è®¡ç®ç¸å
-³æ§ç©éµååæ¹å·®ç©?
         returns_df = pd.DataFrame(returns_data).T
         cov_matrix = returns_df.cov()
         correlation_matrix = returns_df.corr()
@@ -303,12 +280,10 @@ class PortfolioOptimizationController:
         }
 ```
 
-### 3.2 ï¿?æ¹å·®ä¼åå¨ï¼MeanVarianceOptimizer?
 
 ```python
 class MeanVarianceOptimizer:
     """
-    ï¿?æ¹å·®ä¼å?- åºäºé©¬ç§ç»´è¨ç°ä»£æèµç»åçè®º
     使用PyPortfolioOpt库实?
     """
     
@@ -318,7 +293,6 @@ class MeanVarianceOptimizer:
     def optimize(self, returns: pd.Series, cov_matrix: pd.DataFrame, 
                 constraints: List[Constraint]) -> pd.Series:
         """
-        æ§è¡ï¿?æ¹å·®ä¼å
         
         Args:
             returns: 各策略预期收益率
@@ -353,8 +327,6 @@ class MeanVarianceOptimizer:
             weights = ef.efficient_return(target_return=constraints.target_return)
         
         # æ¸
-çæéï¼åèäºå
-¥ï¼å¤çå¾®å°æé?
         cleaned_weights = ef.clean_weights()
         
         return pd.Series(cleaned_weights)
@@ -374,7 +346,6 @@ class MeanVarianceOptimizer:
             ret, vol, sharpe = ef.portfolio_performance(weights=self.optimal_weights)
             ax.scatter(vol, ret, marker='*', s=200, c='r', label='最优组?)
         
-        ax.set_title('ï¿?æ¹å·®ææåæ²¿')
         ax.legend()
         return fig
 ```
@@ -384,8 +355,6 @@ class MeanVarianceOptimizer:
 ```python
 class RiskParityOptimizer:
     """
-    é£é©å¹³ä»·ä¼å?- åºäºæ¡¥æ°´å
-¨å¤©åç»åææ³
     使用Riskfolio-Lib库实?
     """
     
@@ -413,8 +382,7 @@ class RiskParityOptimizer:
         port.assets_stats(method_mu='hist', method_cov='hist')
         
         # 设置优化问题
-        model = 'Classic'  # ç»å
-¸é£é©å¹³ä»·æ¨¡å
+        model = 'Classic'  # ç»å
         rm = self.risk_measure  # 风险度量方法
         obj = 'Risk'  # 目标函数：最小化风险
         hist = True  # 使用历史数据
@@ -456,8 +424,7 @@ class RiskParityOptimizer:
         
         # 权重分布?
         weights.plot(kind='bar', ax=ax1, color='skyblue')
-        ax1.set_title('ç»åæéåé
-')
+')
         ax1.set_ylabel('权重比例')
         ax1.tick_params(axis='x', rotation=45)
         
@@ -496,7 +463,6 @@ class ConstraintProcessor:
         
         Args:
             raw_weights: 理论优化权重
-            constraints: çº¦ææ¡ä»¶å­å
 ¸
             
         Returns:
@@ -504,8 +470,7 @@ class ConstraintProcessor:
         """
         adjusted_weights = raw_weights.copy()
         
-        # æä¼å
-çº§é¡ºåºåºç¨çº¦æ
+        # æä¼å
         constraint_priority = [
             'position_limit',      # 仓位限制（监管要求）
             'liquidity_constraint', # 流动性约?
@@ -556,11 +521,9 @@ class ConstraintProcessor:
                 strategy_cost = rebalance_amount[strategy_id] * cost_rate
                 total_cost += strategy_cost
         
-        # å¦æäº¤æææ¬è¿é«ï¼åå°è°ä»å¹
 ?
         cost_threshold = cost_config.get('cost_threshold', 0.005)  # 默认0.5%
         if total_cost > cost_threshold:
-            # ææ¯ä¾åå°è°ä»å¹
 ?
             reduction_factor = cost_threshold / total_cost
             weights = current_positions + (weights - current_positions) * reduction_factor
@@ -581,14 +544,11 @@ class ConstraintProcessor:
                 daily_volume = liquidity_data[strategy_id].get('daily_volume', 0)
                 position_value = weight * portfolio_value
                 
-                # æ£æ¥æµå¨æ§æ¯å¦å
 
-è¶³ï¼åè®¾åæ¥äº¤æä¸è¶
 过日成交量的5%?
                 max_daily_trade = daily_volume * 0.05
                 if position_value > max_daily_trade * 3:  # ?天建?
-                    # è°æ´æéè³æµå¨æ§å
-è®¸è?
+è®¸è?
                     adjusted_weights[strategy_id] = (max_daily_trade * 3) / portfolio_value
         
         return adjusted_weights
@@ -603,9 +563,7 @@ class RLRebalancer:
     """
     
     def __init__(self, state_dim: int = 20, action_dim: int = 10):
-        self.state_dim = state_dim  # ç¶æç»´åº¦ï¼å¸åºï¿?+ ç­ç¥è¡¨ç° + é£é©ææ 
-        self.action_dim = action_dim  # å¨ä½ç»´åº¦ï¼åç­ç¥æéè°æ´å¹
-åº¦
+度
         
         # 使用Stable-Baselines3?
         self.model = None
@@ -666,11 +624,7 @@ class RLRebalancer:
             np.ndarray: 权重调整动作
         """
         if self.model is None:
-            raise ValueError("æ¨¡åæªè®­ç»ï¼è¯·å
-è°ç¨trainæ¹æ³")
         
-        # å°ç¶æè½¬æ¢ä¸ºæ¨¡åè¾å
-¥æ ¼å¼
         observation = self._format_state_to_observation(current_state)
         
         # 预测动作
@@ -680,8 +634,6 @@ class RLRebalancer:
     
     def _format_state_to_observation(self, state: Dict) -> np.ndarray:
         """
-        å°ç¶æå­å
-¸è½¬æ¢ä¸ºè§å¯åé
         """
         # 市场状态特?
         market_features = [
@@ -735,12 +687,10 @@ class RLRebalancer:
 
 ```yaml
 # é
-ç½®ç¤ºä¾ï¼PyPortfolioOptä¼åå¨é
-?
+?
 pypfopt_config:
   optimization_methods:
     - name: "mean_variance"
-      description: "ï¿?æ¹å·®ä¼å"
       parameters:
         target_return: null
         target_volatility: null
@@ -771,12 +721,10 @@ pypfopt_config:
 
 ```yaml
 # é
-ç½®ç¤ºä¾ï¼Riskfolio-Libé£é©å¹³ä»·é
-ç½®
+置
 riskfolio_config:
   risk_measures:
     - name: "CVaR"
-      description: "æ¡ä»¶å¨é©ï¿?
       parameters:
         alpha: 0.05
         confidence_level: 0.95
@@ -793,8 +741,7 @@ riskfolio_config:
   
   optimization_models:
     - name: "Classic"
-      description: "ç»å
-¸é£é©å¹³ä»·æ¨¡å"
+      description: "ç»å
     
     - name: "BL"
       description: "Black-Litterman模型"
@@ -843,8 +790,8 @@ class MinDrawdownOptimizer:
         # 约束条件
         constraints = [
             cp.sum(w) == 1,  # 权重和为1
-            w >= 0,  # ä¸å
-è®¸å?
+            w >= 0,  # ä¸å
+è®¸å?
             w <= 0.3,  # 单资产最大权?0%
             cp.norm(w, 0) <= max_positions  # 最多持有max_positions个策?
         ]
@@ -857,8 +804,7 @@ class MinDrawdownOptimizer:
 ```
 
 
-## äºãé
-ç½®ä¸ä½¿ç¨ç¤ºä¾
+## äºãé
 
 ### 5.1 完整优化流程示例
 
@@ -882,16 +828,13 @@ async def run_complete_portfolio_optimization():
     )
     
     # 3. é
-ç½®ä¼ååæ°
     optimization_config = {
         'optimization_method': 'mean_variance',
         'optimization_target': 'max_sharpe',
         'risk_budget': {
-            'total_risk_limit': 0.15,  # ç»åå¹´åæ³¢å¨çä¸è¶
 过15%
-            'max_drawdown_limit': 0.20,  # æå¤§åæ¤ä¸è¶
 过20%
-            'var_limit': 0.05,  # 95% VaRä¸è¶
+            'var_limit': 0.05,  # 95% VaRä¸è¶
 ?%
             'strategy_risk_limits': {
                 strategy_id: {'max_risk_contribution': 0.25}
@@ -924,8 +867,8 @@ async def run_complete_portfolio_optimization():
     print("组合优化结果")
     print("=" * 60)
     
-    print(f"\næéåé
-:")
+    print(f"\næéåé
+:")
     for strategy_id, weight in result.weights.items():
         print(f"  {strategy_id}: {weight:.2%}")
     
@@ -955,7 +898,6 @@ async def run_complete_portfolio_optimization():
 # 查看可用的优化方?
 python portfolio_optimizer.py list-methods
 
-# æ§è¡ï¿?æ¹å·®ä¼å
 python portfolio_optimizer.py optimize \
   --method mean_variance \
   --target max_sharpe \
@@ -985,57 +927,48 @@ python portfolio_optimizer.py batch-optimize \
 ```
 
 ### 5.3 YAMLé
-ç½®æä»¶ç¤ºä¾
 
 ```yaml
 # configs/portfolio_optimization.yaml
 portfolio_optimization:
-  # è¾å
+  # è¾å
 ¥é
-ç½®
+置
   input:
     strategy_source: "strategy_selection_system"
     top_strategy_count: 15
     selection_criteria: ["sharpe_ratio", "max_drawdown", "win_rate", "profit_factor"]
     lookback_period: 252  # 交易?
   
-  # ä¼åæ¹æ³é
-ç½®
+置
   optimization:
     primary_method: "mean_variance"
     alternative_methods: ["risk_parity", "max_sharpe", "min_drawdown"]
     optimization_target: "max_sharpe"
     risk_free_rate: 0.02
   
-  # é£é©é¢ç®é
-ç½®
+置
   risk_budget:
-    total_risk_limit: 0.15  # å¹´åæ³¢å¨çä¸è¶
 过15%
-    max_drawdown_limit: 0.20  # æå¤§åæ¤ä¸è¶
 过20%
-    var_95_limit: 0.05  # 95% VaRä¸è¶
+    var_95_limit: 0.05  # 95% VaRä¸è¶
 ?%
-    cvar_95_limit: 0.07  # 95% CVaRä¸è¶
+    cvar_95_limit: 0.07  # 95% CVaRä¸è¶
 ?%
     
     strategy_limits:
-      max_single_strategy_risk: 0.25  # åç­ç¥é£é©è´¡ç®ä¸è¶
 过25%
       min_strategies: 5  # 最少持?个策?
       max_strategies: 12  # 最多持?2个策?
   
-  # äº¤æçº¦æé
-ç½®
+置
   trading_constraints:
     position_limits:
       max_single_position: 0.30  # 单策略最大仓?0%
       min_position: 0.01  # 最小仓?%
     
     turnover_limits:
-      max_annual_turnover: 6.0  # å¹´åæ¢æçä¸è¶
 过6?
-      max_single_rebalance: 0.10  # åæ¬¡è°ä»ä¸è¶
 ?0%
     
     transaction_costs:
@@ -1044,8 +977,8 @@ portfolio_optimization:
         high_frequency_strategy: 0.002
         options_strategy: 0.003
   
-  # è¾åºé
-ç½®
+  # è¾åºé
+置
   output:
     generate_report: true
     report_format: "html"
@@ -1054,25 +987,22 @@ portfolio_optimization:
     visualize_results: true
     create_performance_charts: true
     
-  # çæ§é
-ç½®
+  # çæ§é
+置
   monitoring:
     rebalance_frequency: "weekly"  # 每周调仓
     performance_check_frequency: "daily"  # 每日检查绩?
-    risk_monitoring_frequency: "intraday"  # æ¥å
+    risk_monitoring_frequency: "intraday"  # æ¥å
 风险监控
     alert_thresholds:
-      drawdown_alert: 0.08  # åæ¤è¶
+      drawdown_alert: 0.08  # åæ¤è¶
 过8%预警
-      volatility_alert: 0.18  # æ³¢å¨çè¶
 ?8%预警
-      concentration_alert: 0.35  # éä¸­åº¦è¶
 ?5%预警
 ```
 
 
 ## å
-­ãå¼åè·¯çº¿å¾ä¸éç¨ç¢
 
 ### 6.1 开发阶段划?
 
@@ -1097,18 +1027,13 @@ portfolio_optimization:
 **阶段四：实盘集成与优化（6周）**
 - 与订单执行系统集?
 - 实盘约束条件精细化处?
-- æ§è½ä¼åä¸å
 存管?
 - 容错机制与监控告?
 
 ### 6.2 å
-³é®éç¨?
 
 | 里程?| 预计完成时间 | 交付?| 成功标准 |
 |--------|--------------|--------|----------|
-| **M1ï¼åºç¡ä¼åæ¡æ¶** | ?å¨ç»?| 1. ç»åä¼åæ§å¶?br>2. ï¿?æ¹å·®ä¼å?br>3. åºæ¬çº¦æå¤ç?| æ¯æ5ç§ç­ç¥ç»åä¼åï¼ç»æå¯å¤?|
-| **M2ï¼é£é©å¹³ä»·å®?* | ?0å¨ç»?| 1. é£é©å¹³ä»·ä¼å?br>2. é£é©è´¡ç®åº¦å?br>3. å¤é£é©åº¦éæ¯?| å®ç°ç»å
-¸é£é©å¹³ä»·åé£é©é¢ç®æ¨¡?|
 | **M3：AI调仓系统** | ?8周结?| 1. 强化学习调仓?br>2. 市场环境分类?br>3. 自适应优化框架 | AI调仓策略表现优于静态优?0% |
 | **M4：实盘就?* | ?4周结?| 1. 完整实盘约束处理<br>2. 高性能优化引擎<br>3. 监控告警系统 | 通过3个月模拟盘测试，年化换手?8?|
 
@@ -1128,8 +1053,6 @@ portfolio_optimization:
 
 1. **PyPortfolioOpt** - Python投资组合优化?
    - GitHub: https://github.com/robertmartin8/PyPortfolioOpt
-   - ç¹ç¹ï¼å®ç°é©¬ç§ç»´è¨ç°ä»£æèµç»åçè®ºï¼æ¯æï¿?æ¹å·®ä¼åãé»å©ç¹æ¼æ¨¡åç­
-   - éææ¹å¼ï¼ç´æ¥pipå®è£
 ，作为核心优化引?
 
 2. **Riskfolio-Lib** - Python风险平价与组合优化库
@@ -1143,7 +1066,6 @@ portfolio_optimization:
    - 集成方式：用于实现特殊优化目标（如最小化回撤?
 
 ### 7.2 è¾
-å©å·¥å
 ·?
 
 4. **Stable-Baselines3** - 强化学习?
@@ -1163,11 +1085,9 @@ portfolio_optimization:
 
 ### 7.3 数据与可视化
 
-7. **yfinance** - é
+7. **yfinance** - é
 虎财经数据接口
    - GitHub: https://github.com/ranaroussi/yfinance
-   - ç¹ç¹ï¼å
-è´¹å¸åºæ°æ®è·?
    - 集成方式：用于获取实时市场数?
 
 8. **Plotly/Dash** - 交互式可视化
@@ -1179,38 +1099,27 @@ portfolio_optimization:
 
 9. **Qlib** - 微软量化投资平台
    - GitHub: https://github.com/microsoft/qlib
-   - ç¹ç¹ï¼å®æ´çéåç ç©¶æ¡æ¶ï¼å
 含组合优化模?
    - 参考价值：架构设计、模块组?
 
 10. **QuantConnect** - 开源量化平?
     - GitHub: https://github.com/QuantConnect/Lean
-    - ç¹ç¹ï¼å®æ´çéåäº¤æç³»ç»ï¼å
 含组合管?
     - 参考价值：实盘集成、风险管?
 
 
 ## å
-«ãæ»ç»
 
-æ¬èå¾è¯¦ç»è®¾è®¡äºç­ç¥ç»åä¼åç³»ç»çå®æ´ææ¯æ¹æ¡ï¼æ¶µçä»åºç¡ï¿?æ¹å·®ä¼åå°é«çº§é£é©å¹³ä»·æ¨¡åï¼åå°AIå¢å¼ºçå¨æè°ä»ç³»ç»ãç³»ç»è®¾è®¡éµå¾ªä»¥ä¸æ ¸å¿ååï¼
 
-1. **å¼æºä¼å
-å?*ï¼æå¤§éåº¦å©ç¨æçå¼æºåºï¼åå°èªç ä»£ç é
-2. **æ¨¡ååè®¾?*ï¼åä¼åç®æ³ç¬ç«å°è£
 ，支持灵活组合和扩展
-3. **å®çåå¥½**ï¼å
 
 分考虑交易成本、流动性、监管限制等实盘约束
 4. **风险可控**：多层次风险预算体系，确保组合风险在预设范围?
 5. **AI增强**：利用强化学习和机器学习优化动态调仓决?
 
-å¯¹äºä¸ªäººå¼åè
 （不懂编程）而言，本系统的主要开发工作将是：
 - **胶合代码编写**：将各开源模块集成到统一框架中（?0%工作量）
 - **é
-ç½®ç®¡ç**ï¼è®¾è®¡çµæ´»çé
-ç½®æä»¶ç³»ç»ï¼æ¯æä¸åä¼ååºæ¯ï¼?0%å·¥ä½éï¼
 - **测试验证**：验证优化结果的有效性和稳定性（?0%工作量）
 - **文档与界?*：创建用户友好的命令行和Web界面（约10%工作量）
 
@@ -1220,14 +1129,9 @@ portfolio_optimization:
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | åå§çæ¬åå»º | é¦å¸­ææ¡£æ¶æå¸?|
 | v1.0.1 | 2026-04-06 | è¡¥å
 
-YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-01 | **ç¶æ?*: Active

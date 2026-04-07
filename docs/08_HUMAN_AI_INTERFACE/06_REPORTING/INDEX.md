@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_06_REPORTING_001
 version: 1.0.0
 status: Active

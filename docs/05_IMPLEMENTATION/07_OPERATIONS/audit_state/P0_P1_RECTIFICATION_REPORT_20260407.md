@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: P0_P1_RECTIFICATION_REPORT_001
 version: 1.0.0
 status: Active
@@ -82,7 +82,7 @@ audit_date: 2026-04-07
 
 **执行步骤**:
 1. ✅ 检查INDEX.md文件是否可正常阅读
-   - 发现问题: 文件内容有乱码，如"技术规格书总索�?"应为"技术规格书总索引"
+   - 发现问题: 文件内容有乱码，如"技术规格书总索?"应为"技术规格书总索引"
 2. ✅ 对INDEX.md做git备份
    - 提交信息: "备份: P0-1完成 - 删除04_OPERATIONS目录残留"
 3. ⚠️ 修复INDEX.md编码问题

@@ -1,4 +1,4 @@
-﻿﻿---
+﻿﻿﻿---
 module_id: DATA_LIFECYCLE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -6,12 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
   - 数据生命周期管理
   - 数据归档
-  - æ°æ®æ¸
 理
   - 数据保留策略
 layer: Layer 5.1 (数据处理)
@@ -26,7 +24,6 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Lifecycle Management蓝图设计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Lifecycle Managementè...
 
 
 ## 设计目标
@@ -83,37 +80,24 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-ä¸»å¯¼DATA LIFECYCLE MANAGEMENTçè®¾è®¡ä¸å®ç°ï¼åºäºApache Icebergææ¯ï¼ä¼åæ ¸å¿åè½ï¼æåæ°æ®èµäº§å¯è§æ§ã?
 
 ## 一、设计背景与目标
 
-### 1.1 ä¸å¡éæ±?
 
 **当前痛点**:
-- æ°æ®ä¿çç­ç¥ä¸æ¸
-æ?
+æ?
 - 存储成本持续增长
 - 数据归档和删除不规范
-- æ°æ®ä»·å¼é¾ä»¥è¯ä¼?
 
 **业务目标**:
 - 建立数据生命周期管理策略
 - 自动化数据归档和删除
 - 优化存储成本
-- æ°æ®ä»·å¼åçº§ç®¡ç?
 
-### 1.2 ææ¯ç®æ ?
 
-| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **å­å¨ææ¬éä½** | â?0% | å­å¨ææ¬éä½50% |
-| **æ°æ®ä¿çç­ç¥è¦çç?* | 100% | æææ°æ®æä¿çç­ç¥ |
-| **èªå¨åå½æ¡£ç** | â?0% | 90%ä»¥ä¸æ°æ®èªå¨å½æ¡£ |
-| **æ°æ®å é¤åç¡®ç?* | 100% | æ°æ®å é¤åç¡®ç?00% |
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 çå½å¨æç­ç¥ç®¡çå?(LifecyclePolicyManager)
 
 ```python
 from dataclasses import dataclass, field
@@ -147,7 +131,6 @@ class LifecyclePolicy:
     created_at: datetime = field(default_factory=datetime.now)
 
 class LifecyclePolicyManager:
-    """çå½å¨æç­ç¥ç®¡çå?""
     
     def __init__(self):
         self.policies: Dict[str, LifecyclePolicy] = {}
@@ -170,14 +153,12 @@ class LifecyclePolicyManager:
         return self.policies.get(policy_id)
     
     def get_applicable_policy(self, data_classification: str) -> Optional[LifecyclePolicy]:
-        """è·åéç¨çç­ç?""
         for policy in self.policies.values():
             if policy.data_classification == data_classification and policy.enabled:
                 return policy
         return None
 ```
 
-### 3.2 æ°æ®åå±ç®¡çå?(DataTieringManager)
 
 ```python
 from typing import Dict, List, Any
@@ -196,7 +177,6 @@ class DataAsset:
     classification: str
 
 class DataTieringManager:
-    """æ°æ®åå±ç®¡çå?""
     
     def __init__(self):
         self.assets: Dict[str, DataAsset] = {}
@@ -356,7 +336,6 @@ class LifecycleExecutionEngine:
 ```
 
 ---
-## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
@@ -398,32 +377,24 @@ GET /api/v1/lifecycle/tiers/statistics
 
 
 ## å
-­ãçæ§ææ ?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `lifecycle_policies_total` | Gauge | 生命周期策略总数 |
 | `lifecycle_actions_executed_total` | Counter | 执行的动作总数 |
-| `lifecycle_storage_bytes_by_tier` | Gauge | ååå±å­å¨å¤§å°?|
 | `lifecycle_cost_savings_dollars` | Gauge | 成本节省金额 |
 
 ---
 
-## ä¸ãå®æ½è®¡å?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **é¶æ®µ1** | å®ä¹çå½å¨æç­ç¥ | 2å¤?|
-| **é¶æ®µ2** | å¼ååå±ç®¡çå¨ | 3å¤?|
-| **é¶æ®µ3** | å¼åæ§è¡å¼æ?| 3å¤?|
-| **é¶æ®µ4** | éæAirflowè°åº¦ | 2å¤?|
-| **é¶æ®µ5** | æµè¯åä¼å?| 2å¤?|
 
 ---
 
 ## å
-«ãç¸å
-³ææ¡?
+«ãç¸å
+³ææ¡?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -431,7 +402,6 @@ GET /api/v1/lifecycle/tiers/statistics
 
 ---
 
-**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
 ## 1. 文档治理
@@ -439,14 +409,12 @@ GET /api/v1/lifecycle/tiers/statistics
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Lifecycle Management
 - **模块ID**: DATA_LIFECYCLE_MANAGEMENT_001
 - **蓝图文档**: DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
+åå»?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -457,44 +425,33 @@ GET /api/v1/lifecycle/tiers/statistics
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æ°æ®èµäº§å
-æ°æ?|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | ä¸­ä¾èµ?| æä¾çå½å¨æç­ç¥ |
+æ°æ?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | ä¸­ä¾èµ?| æ§è¡æ°æ®å½æ¡£ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **Apache Iceberg** | 1.4+ | è¡¨æ ¼å¼?| [å®æ¹ææ¡£](https://iceberg.apache.org/) |
-| **Apache Hudi** | 0.14+ | æ°æ®æ¹?| [å®æ¹ææ¡£](https://hudi.apache.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -510,12 +467,9 @@ graph LR
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

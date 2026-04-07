@@ -1,72 +1,72 @@
-﻿---
+﻿﻿---
 version: 1.0.0
-standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
+standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
 responsibility:
   - 实施指南、部署文档
-compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_SPECIFICATION
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
 ---
 
-# ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
+# ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02
-**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 ---
 
-## 1. ﮔ۵ﻟﺟﺍ
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻝ؟ﮔ 
+### 1.1 ﻝ؟ﮔ 
 
-ﮒ؟ﻛﺗﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮔ۶ﻟ۰ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻙ?
-### 1.2 ﻠﻝ۷ﻟﮒﺑ
+ﮒ؟ﻛﺗﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮔ۶ﻟ۰ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻙ?
+### 1.2 ﻠﻝ۷ﻟﮒﺑ
 
-- ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻝﮔ؛ﮔ ﺙﮒﺙﮔ۲ﮔ?- ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
+- ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻝﮔ؛ﮔ ﺙﮒﺙﮔ۲ﮔ?- ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
 ---
 
-## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
+## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘ
+### 2.1 ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class DocumentAuditor:
-    """ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒ?""
+    """ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒ?""
     
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
         self.issues: List[AuditIssue] = []
         
     def scan_markdown_files(self) -> List[Path]:
-        """ﮔ،ﮔﮔﮔMarkdownﮔﻛﭨﭘ"""
+        """ﮔ،ﮔﮔﮔMarkdownﮔﻛﭨﭘ"""
         
     def check_links(self, files: List[Path]) -> List[AuditIssue]:
-        """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
+        """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
         
     def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-        """ﮔ۲ﮔ۴ﻝﮔ؛ﮔ ﺙﮒﺙ?""
+        """ﮔ۲ﮔ۴ﻝﮔ؛ﮔ ﺙﮒﺙ?""
         
     def check_classification(self, files: List[Path]) -> List[AuditIssue]:
-        """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
+        """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
         
     def run_full_audit(self) -> Dict:
-        """ﮔ۶ﻟ۰ﮒ؟ﮔﺑﮒ؟۰ﻟ؟۰"""
+        """ﮔ۶ﻟ۰ﮒ؟ﮔﺑﮒ؟۰ﻟ؟۰"""
 ```
 
-### 2.2 ﮔﺍﮔ؟ﻝﭨﮔ
+### 2.2 ﮔﺍﮔ؟ﻝﭨﮔ
 
 ```python
 @dataclass
 class AuditIssue:
-    """ﮒ؟۰ﻟ؟۰ﻠ؟ﻠ۱"""
+    """ﮒ؟۰ﻟ؟۰ﻠ؟ﻠ۱"""
     file_path: str
     issue_type: str
     severity: str  # 'error', 'warning', 'info'
@@ -77,15 +77,15 @@ class AuditIssue:
 
 ---
 
-## 3. ﮒﻟﺛﻟ۶ﻟ
+## 3. ﮒﻟﺛﻟ۶ﻟ
 
-### 3.1 ﻠﺝﮔ۴ﮔ۲ﮔ?
-**ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ­۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒ­ﮒ۷ﮔ?
-**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
+### 3.1 ﻠﺝﮔ۴ﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ­۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒ­ﮒ۷ﮔ?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_links(self, files: List[Path]) -> List[AuditIssue]:
-    """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
+    """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
     for file in files:
         content = file.read_text(encoding='utf-8')
         links = self._extract_links(content)
@@ -96,17 +96,17 @@ def check_links(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='broken_link',
                     severity='warning',
-                    message=f'ﻠﺝﮔ۴ﻝ؟ﮔ ﻛﺕﮒ­ﮒ? {link}'
+                    message=f'ﻠﺝﮔ۴ﻝ؟ﮔ ﻛﺕﮒ­ﮒ? {link}'
                 ))
 ```
 
-### 3.2 ﻝﮔ؛ﮔ۲ﮔ?
-**ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
-**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
+### 3.2 ﻝﮔ؛ﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-    """ﮔ۲ﮔ۴ﻝﮔ؛ﮔ ﺙﮒﺙ?""
+    """ﮔ۲ﮔ۴ﻝﮔ؛ﮔ ﺙﮒﺙ?""
     VERSION_PATTERN = re.compile(r'version:\s*["\']?(\d+\.\d+\.\d+)["\']?')
     
     for file in files:
@@ -120,17 +120,17 @@ def check_versions(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='invalid_version',
                     severity='warning',
-                    message=f'ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﻛﺕﮔ­۲ﻝ۰؟: {version}'
+                    message=f'ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﻛﺕﮔ­۲ﻝ۰؟: {version}'
                 ))
 ```
 
-### 3.3 ﮒﻝﺎﭨﮔ۲ﮔ?
-**ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﮔﮔ۰۲ﮒﻝﺎﭨﻟ۶ﻟﮔ?- ﻝ؟ﮒﺛﻝﭨﮔﻛﺕﻟﺑﮔ?
-**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
+### 3.3 ﮒﻝﺎﭨﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮔﮔ۰۲ﮒﻝﺎﭨﻟ۶ﻟﮔ?- ﻝ؟ﮒﺛﻝﭨﮔﻛﺕﻟﺑﮔ?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_classification(self, files: List[Path]) -> List[AuditIssue]:
-    """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
+    """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
     STANDARD_CATEGORIES = {
         '01_FRAMEWORK',
         '02_FACTOR_LIBRARY',
@@ -145,47 +145,47 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
                 file_path=str(file),
                 issue_type='non_standard_category',
                 severity='info',
-                message=f'ﻠﮔ ﮒﮒﻝﺎ? {category}'
+                message=f'ﻠﮔ ﮒﮒﻝﺎ? {category}'
             ))
 ```
 
 ---
 
-## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
+## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-### 4.1 ﮔ۶ﻟﺛﮔﮔ 
+### 4.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| ﮔﮔ  | ﻟ۵ﮔﺎ |
+| ﮔﮔ  | ﻟ۵ﮔﺎ |
 |------|------|
-| **ﮔ،ﮔﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﻗ?00MB |
-| **ﮔ۴ﮒﻝﮔ** | ﻗ?ﻝ۶?|
+| **ﮔ،ﮔﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
+| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﻗ?00MB |
+| **ﮔ۴ﮒﻝﮔ** | ﻗ?ﻝ۶?|
 
-### 4.2 ﻛﺙﮒﻝ­ﻝ۴
+### 4.2 ﻛﺙﮒﻝ­ﻝ۴
 
-- ﻛﺛﺟﻝ۷ﻝﮔﮒ۷ﮒ۳ﻝﮒ۳۶ﮔﻛﭨﭘ
-- ﮒﺗﭘﻟ۰ﮒ۳ﻝﮒ۳ﻛﺕ۹ﮔﻛﭨﭘ
-- ﻝﺙﮒ­ﮔﻛﭨﭘﻝﺑ۱ﮒﺙ
+- ﻛﺛﺟﻝ۷ﻝﮔﮒ۷ﮒ۳ﻝﮒ۳۶ﮔﻛﭨﭘ
+- ﮒﺗﭘﻟ۰ﮒ۳ﻝﮒ۳ﻛﺕ۹ﮔﻛﭨﭘ
+- ﻝﺙﮒ­ﮔﻛﭨﭘﻝﺑ۱ﮒﺙ
 
 ---
 
-## 5. ﮔ۴ﮒ۲ﻟ۶ﻟ
+## 5. ﮔ۴ﮒ۲ﻟ۶ﻟ
 
-### 5.1 ﮒﺛﻛﭨ۳ﻟ۰ﮔ۴ﮒ?
+### 5.1 ﮒﺛﻛﭨ۳ﻟ۰ﮔ۴ﮒ?
 ```bash
-# ﮔ۲ﮔ۴ﻠﺝﮔ?python scripts/document_auditor.py --check-links
+# ﮔ۲ﮔ۴ﻠﺝﮔ?python scripts/document_auditor.py --check-links
 
-# ﮔ۲ﮔ۴ﻝﮔ?python scripts/document_auditor.py --check-versions
+# ﮔ۲ﮔ۴ﻝﮔ?python scripts/document_auditor.py --check-versions
 
-# ﮔ۲ﮔ۴ﮒﻝﺎ?python scripts/document_auditor.py --check-classification
+# ﮔ۲ﮔ۴ﮒﻝﺎ?python scripts/document_auditor.py --check-classification
 
-# ﮒ؟ﮔﺑﮒ؟۰ﻟ؟۰
+# ﮒ؟ﮔﺑﮒ؟۰ﻟ؟۰
 python scripts/document_auditor.py --all
 ```
 
-### 5.2 ﻟﺝﮒﭦﮔ ﺙﮒﺙ
+### 5.2 ﻟﺝﮒﭦﮔ ﺙﮒﺙ
 
-**JSONﮔ ﺙﮒﺙ**:
+**JSONﮔ ﺙﮒﺙ**:
 ```json
 {
   "summary": {
@@ -206,25 +206,25 @@ python scripts/document_auditor.py --all
 
 ---
 
-## 6. ﮔ۸ﮒﺎﮔ?
-### 6.1 ﮔﻛﭨﭘﮔﭦﮒﭘ
+## 6. ﮔ۸ﮒﺎﮔ?
+### 6.1 ﮔﻛﭨﭘﮔﭦﮒﭘ
 
-ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮔ۲ﮔ۴ﻟ۶ﮒ?
+ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮔ۲ﮔ۴ﻟ۶ﮒ?
 ```python
 class CustomAuditRule:
-    """ﻟ۹ﮒ؟ﻛﺗﮒ؟۰ﻟ؟۰ﻟ۶ﮒ?""
+    """ﻟ۹ﮒ؟ﻛﺗﮒ؟۰ﻟ؟۰ﻟ۶ﮒ?""
     
     def check(self, file: Path) -> List[AuditIssue]:
-        """ﮔ۶ﻟ۰ﮔ۲ﮔ?""
+        """ﮔ۶ﻟ۰ﮔ۲ﮔ?""
         pass
 
-# ﮔﺏ۷ﮒﻟ۶ﮒ
+# ﮔﺏ۷ﮒﻟ۶ﮒ
 auditor.register_rule(CustomAuditRule())
 ```
 
-### 6.2 ﻠﻝﺛ؟ﮔﻛﭨﭘ
+### 6.2 ﻠﻝﺛ؟ﮔﻛﭨﭘ
 
-ﮔﺁﮔﻠﻝﺛ؟ﮔﻛﭨﭘﮒ؟ﮒﭘ:
+ﮔﺁﮔﻠﻝﺛ؟ﮔﻛﭨﭘﮒ؟ﮒﭘ:
 ```yaml
 # audit_config.yaml
 rules:
@@ -239,11 +239,11 @@ rules:
 
 ---
 
-## 7. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
+## 7. ﮒﻟﮔﮔ۰?
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
-**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

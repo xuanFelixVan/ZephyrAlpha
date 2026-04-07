@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_DESIGN_001
 version: 1.0.0
 status: Active
@@ -41,9 +41,9 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
-- [NozyIO可视化编辑系统（归档�?](03_TRADING_TACTICS/99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md)
+- [NozyIO可视化编辑系统（归档?](03_TRADING_TACTICS/99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md)
 
-- [Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./T.08.AR001.a_stock_rule_engine_design.md) - 设计文档
+- [Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./T.08.AR001.a_stock_rule_engine_design.md) - 设计文档
 
 
 ### 核心文档

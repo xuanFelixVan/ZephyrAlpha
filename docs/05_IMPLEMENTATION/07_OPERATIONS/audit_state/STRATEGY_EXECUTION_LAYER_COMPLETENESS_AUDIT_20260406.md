@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: STRATEGY_EXECUTION_LAYER_COMPLETENESS_AUDIT_001
 version: 1.0.0
 status: Active

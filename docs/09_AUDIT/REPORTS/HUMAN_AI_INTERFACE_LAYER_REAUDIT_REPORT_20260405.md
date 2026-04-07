@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 version: 1.0.0
 module_id: HUMAN_AI_INTERFACE_LAYER_REAUDIT_REPORT_20260405_001
 

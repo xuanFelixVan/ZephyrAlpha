@@ -1,180 +1,173 @@
----
+﻿---
 module_id: DOC_IMPLEMENTATION_SITEMAP_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: ﮒ؟ﮔﺛﮒﺎﮔﭘﮔﮒﺕ
+owner: ﮒ؟ﮔﺛﮒﺎﮔﭘﮔﮒﺕ
 responsibility:
   - 实施指南、部署文档
   - 回测系统
   - 数据源
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮒﺍﮒﺝ
-applicable_scope: 05_IMPLEMENTATIONﻝ؟ﮒﺛ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮒﺍﮒﺝ
+applicable_scope: 05_IMPLEMENTATIONﻝ؟ﮒﺛ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: INDEX.md
-implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
+implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 
 
-# ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)
+# ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 ﮒ؟ﮔﺛﮒﺎﻝ؟ﮒﺛﻝﮒ؟ﮔﺑﮔﮔ۰۲ﮒﺁﺙﻟ۹ﮒﺍﮒﺝ
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 ﮒ؟ﮔﺛﮒﺎﻝ؟ﮒﺛﻝﮒ؟ﮔﺑﮔﮔ۰۲ﮒﺁﺙﻟ۹ﮒﺍﮒﺝ
 >
-> **ﻟﻟﺑ۲ﮒﭦﮒ**:
-> - [INDEX.md](./INDEX.md) = ﮒﺟ،ﻠﮒ۴ﮒ۲ﺅﺙ5ﮒﻠﮒﺁﺙﻟ۹?> - **ﮔ؛ﮔ?* = ﮒ؟ﮔﺑﮒﺍﮒﺝﺅﺙﮔﺓﺎﮒﭦ۵ﮒﻟﺅﺙ
+> **ﻟﻟﺑ۲ﮒﭦﮒ**:
+> - [INDEX.md](./INDEX.md) = ﮒﺟ،ﻠﮒ۴ﮒ۲ﺅﺙ5ﮒﻠﮒﺁﺙﻟ۹?> - **ﮔ؛ﮔ?* = ﮒ؟ﮔﺑﮒﺍﮒﺝﺅﺙﮔﺓﺎﮒﭦ۵ﮒﻟﺅﺙ
 
 ---
 
-## ﻭ ﮔﮔ۰۲ﻛﺛﻝﺛ؟ﮒﺁﺙﻟ۹
+## ﻭ ﮔﮔ۰۲ﻛﺛﻝﺛ؟ﮒﺁﺙﻟ۹
 
-### ﻛﺕﻝﭦ۶ﮒﺁﺙ?
+### ﻛﺕﻝﭦ۶ﮒﺁﺙ?
 ```
 05_IMPLEMENTATION/
-ﻗﻗﻗ 01_QUICKSTART/                    # ﮒﺟ،ﻠﮒﺙ??  ﻗﻗﻗ README.md                     # ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ??  ﻗﻗﻗ LEARNING_PATH.md              # ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ
-?  ﻗﻗﻗ ROADMAP.md                    # ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ??  ﻗﻗﻗ dev-setup.md                  # ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ??  ﻗﻗﻗ first-backtest.md             # ﻝ؛؛ﻛﺕﮔ؛۰ﮒ??  ﻗﻗﻗ factor-design.md              # ﮒ ﮒ­ﻟ؟ﺝﻟ؟۰
-?  ﻗﻗﻗ PHASE1_DESIGN.md              # ﻝ؛؛ﻛﺕﻠﭘﮔ؟ﭖﻟ؟ﺝﻟ؟۰
-?ﻗﻗﻗ 02_DEVELOPMENT/                   # ﮒﺙﮒﮔ ??  ﻗﻗﻗ README.md                     # ﮒﺙﮒﮔ۵??  ﻗﻗﻗ DEVELOPMENT_STANDARDS.md      # ﮒﺙﮒﮔ ??  ﻗﻗﻗ DESIGN_PRINCIPLES.md          # ﻟ؟ﺝﻟ؟۰ﮒﮒ
-?  ﻗﻗﻗ CODE_QUALITY.md               # ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ
-?  ﻗﻗﻗ TESTING_STANDARD.md           # ﮔﭖﻟﺁﮔ ﮒ
-?  ﻗﻗﻗ SECURITY.md                   # ﮒ؟ﮒ۷ﮔ ﮒ
-?  ﻗﻗﻗ ERROR_HANDLING.md             # ﻠﻟﺁﺁﮒ۳ﻝ
-?  ﻗﻗﻗ LOGGING_STANDARD.md           # ﮔ۴ﮒﺟﮔ ﮒ
-?  ﻗﻗﻗ CONFIG_MANAGEMENT.md          # ﻠﻝﺛ؟ﻝ؟۰ﻝ
-?  ﻗﻗﻗ PATH_STANDARD.md              # ﻟﺓﺁﮒﺝﮔ ﮒ
-?  ﻗﻗﻗ DOCUMENT_NUMBERING_STANDARD.md # ﮔﮔ۰۲ﻝﺙﮒﺓﮔ ﮒ
-?  ﻗﻗﻗ VERSION_MANAGEMENT_STANDARD.md # ﻝﮔ؛ﻝ؟۰ﻝﮔ ﮒ
-?  ﻗﻗﻗ DOCUMENT_QUALITY_GATE_STANDARD.md # ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﮔ ??  ﻗﻗﻗ DEVELOPMENT_WORKFLOW.md       # ﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖ
-?  ﻗﻗﻗ RELEASE_CHECKLIST.md          # ﮒﮒﺕﮔ۲ﮔ۴ﮔﺕ??  ﻗﻗﻗ API_DESIGN.md                 # APIﻟ؟ﺝﻟ؟۰
-?  ﻗﻗﻗ AUTH.md                       # ﻟ؟۳ﻟﺁﮔﮔ
-?  ﻗﻗﻗ DEVELOPER_RULES.md            # ﮒﺙﮒﻟﻟ۶??  ﻗﻗﻗ AI_AGENT_CALL_PROTOCOL.md     # AIﮔﭦﻟﺛﻛﺛﻟﺍﻝ۷ﮒ??  ﻗﻗﻗ CONFIG_STANDARD.md            # ﻠﻝﺛ؟ﮔ ﮒ
-?ﻗﻗﻗ 03_DEPLOYMENT/                    # ﻠ۷ﻝﺛﺎ
-?  ﻗﻗﻗ README.md                     # ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
-?  ﻗﻗﻗ DEPLOYMENT_PLAN.md            # ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ
-?ﻗﻗﻗ 04_INFRASTRUCTURE/                # ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
-?  ﻗﻗﻗ README.md                     # ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮔ۵ﻟﺟﺍ
-?  ﻗﻗﻗ DAILY_PIPELINE.md             # ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ??  ﻗﻗﻗ DATA_CLEANING.md              # ﮔﺍﮔ؟ﮔﺕﮔﺑ
-?  ﻗﻗﻗ DATA_LINEAGE.md               # ﮔﺍﮔ؟ﻟ۰??  ﻗﻗﻗ STORAGE_TIER.md               # ﮒ­ﮒ۷ﮒﮒﺎ
-?ﻗﻗﻗ 07_OPERATIONS/                    # ﻟﺟﻝﭨﺑ
-?  ﻗﻗﻗ README.md                     # ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ
-?  ﻗﻗﻗ AUDIT_CHECKLIST_TEMPLATE.md   # ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰??  ﻗﻗﻗ QUALITY_GATE_MECHANISM.md     # ﻟﺑ۷ﻠﻠ۷ﮔﭦ??  ﻗﻗﻗ PERFORMANCE_MONITORING.md     # ﮔ۶ﻟﺛﻝﮔ۶
-?  ﻗﻗﻗ DOCUMENT_AUDIT_WORKFLOW.md    # ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﻛﺛ??  ﻗﻗﻗ VERSION_MANAGEMENT_AUTOMATION_GUIDE.md # ﻝﮔ؛ﻝ؟۰ﻝﻟ۹ﮒ۷ﮒﮔ??  ﻗﻗﻗ audit_state/                  # ﮒ؟۰ﻟ؟۰ﻝ??  ﻗﻗﻗ knowledge_base/               # ﻝ۴ﻟﺁ??  ﻗﻗﻗ review_reports/               # ﻟﺁﮒ؟۰ﮔ۴ﮒ
-?  ﻗﻗﻗ improvement_plans/            # ﮔﺗﻟﺟﻟ؟۰ﮒ
-?ﻗﻗﻗ 05_TECHNICAL_SPECIFICATIONS/      # ﮔﮔﺁﻟ۶??  ﻗﻗﻗ (80+ﮔﮔﺁﻟ۶ﮔ ﺙﮔ?
-?  ﻗﻗﻗ ...
-?ﻗﻗﻗ 06_CONSTRUCTION_DOCS/             # ﮒﭨﭦﻟ؟ﺝﮔﮔ۰۲
-?  ﻗﻗﻗ 01_BLUEPRINTS/                # ﻟﮒﺝﮔﮔ۰۲
-?  ﻗﻗﻗ ...
-?ﻗﻗﻗ ﻝﺑ۱ﮒﺙﮔﮔ۰۲
-    ﻗﻗﻗ INDEX.md                      # ﮒﺟ،ﻠﮒ۴?    ﻗﻗﻗ SITEMAP.md                    # ﮒ؟ﮔﺑﮒﺍﮒﺝ
-    ﻗﻗﻗ README.md                     # ﮒ؟ﮔﺛﮒﺎﮔ۵?```
+ﻗﻗﻗ 01_QUICKSTART/                    # ﮒﺟ،ﻠﮒﺙ??  ﻗﻗﻗ README.md                     # ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ??  ﻗﻗﻗ LEARNING_PATH.md              # ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ
+?  ﻗﻗﻗ ROADMAP.md                    # ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ??  ﻗﻗﻗ dev-setup.md                  # ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ??  ﻗﻗﻗ first-backtest.md             # ﻝ؛؛ﻛﺕﮔ؛۰ﮒ??  ﻗﻗﻗ factor-design.md              # ﮒ ﮒ­ﻟ؟ﺝﻟ؟۰
+?  ﻗﻗﻗ PHASE1_DESIGN.md              # ﻝ؛؛ﻛﺕﻠﭘﮔ؟ﭖﻟ؟ﺝﻟ؟۰
+?ﻗﻗﻗ 02_DEVELOPMENT/                   # ﮒﺙﮒﮔ ??  ﻗﻗﻗ README.md                     # ﮒﺙﮒﮔ۵??  ﻗﻗﻗ DEVELOPMENT_STANDARDS.md      # ﮒﺙﮒﮔ ??  ﻗﻗﻗ DESIGN_PRINCIPLES.md          # ﻟ؟ﺝﻟ؟۰ﮒﮒ
+?  ﻗﻗﻗ CODE_QUALITY.md               # ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ
+?  ﻗﻗﻗ TESTING_STANDARD.md           # ﮔﭖﻟﺁﮔ ﮒ
+?  ﻗﻗﻗ SECURITY.md                   # ﮒ؟ﮒ۷ﮔ ﮒ
+?  ﻗﻗﻗ ERROR_HANDLING.md             # ﻠﻟﺁﺁﮒ۳ﻝ
+?  ﻗﻗﻗ LOGGING_STANDARD.md           # ﮔ۴ﮒﺟﮔ ﮒ
+?  ﻗﻗﻗ CONFIG_MANAGEMENT.md          # ﻠﻝﺛ؟ﻝ؟۰ﻝ
+?  ﻗﻗﻗ PATH_STANDARD.md              # ﻟﺓﺁﮒﺝﮔ ﮒ
+?  ﻗﻗﻗ DOCUMENT_NUMBERING_STANDARD.md # ﮔﮔ۰۲ﻝﺙﮒﺓﮔ ﮒ
+?  ﻗﻗﻗ VERSION_MANAGEMENT_STANDARD.md # ﻝﮔ؛ﻝ؟۰ﻝﮔ ﮒ
+?  ﻗﻗﻗ DOCUMENT_QUALITY_GATE_STANDARD.md # ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﮔ ??  ﻗﻗﻗ DEVELOPMENT_WORKFLOW.md       # ﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖ
+?  ﻗﻗﻗ RELEASE_CHECKLIST.md          # ﮒﮒﺕﮔ۲ﮔ۴ﮔﺕ??  ﻗﻗﻗ API_DESIGN.md                 # APIﻟ؟ﺝﻟ؟۰
+?  ﻗﻗﻗ AUTH.md                       # ﻟ؟۳ﻟﺁﮔﮔ
+?  ﻗﻗﻗ DEVELOPER_RULES.md            # ﮒﺙﮒﻟﻟ۶??  ﻗﻗﻗ AI_AGENT_CALL_PROTOCOL.md     # AIﮔﭦﻟﺛﻛﺛﻟﺍﻝ۷ﮒ??  ﻗﻗﻗ CONFIG_STANDARD.md            # ﻠﻝﺛ؟ﮔ ﮒ
+?ﻗﻗﻗ 03_DEPLOYMENT/                    # ﻠ۷ﻝﺛﺎ
+?  ﻗﻗﻗ README.md                     # ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
+?  ﻗﻗﻗ DEPLOYMENT_PLAN.md            # ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ
+?ﻗﻗﻗ 04_INFRASTRUCTURE/                # ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
+?  ﻗﻗﻗ README.md                     # ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮔ۵ﻟﺟﺍ
+?  ﻗﻗﻗ DAILY_PIPELINE.md             # ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ??  ﻗﻗﻗ DATA_CLEANING.md              # ﮔﺍﮔ؟ﮔﺕﮔﺑ
+?  ﻗﻗﻗ DATA_LINEAGE.md               # ﮔﺍﮔ؟ﻟ۰??  ﻗﻗﻗ STORAGE_TIER.md               # ﮒ­ﮒ۷ﮒﮒﺎ
+?ﻗﻗﻗ 07_OPERATIONS/                    # ﻟﺟﻝﭨﺑ
+?  ﻗﻗﻗ README.md                     # ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ
+?  ﻗﻗﻗ AUDIT_CHECKLIST_TEMPLATE.md   # ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰??  ﻗﻗﻗ QUALITY_GATE_MECHANISM.md     # ﻟﺑ۷ﻠﻠ۷ﮔﭦ??  ﻗﻗﻗ PERFORMANCE_MONITORING.md     # ﮔ۶ﻟﺛﻝﮔ۶
+?  ﻗﻗﻗ DOCUMENT_AUDIT_WORKFLOW.md    # ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﻛﺛ??  ﻗﻗﻗ VERSION_MANAGEMENT_AUTOMATION_GUIDE.md # ﻝﮔ؛ﻝ؟۰ﻝﻟ۹ﮒ۷ﮒﮔ??  ﻗﻗﻗ audit_state/                  # ﮒ؟۰ﻟ؟۰ﻝ??  ﻗﻗﻗ knowledge_base/               # ﻝ۴ﻟﺁ??  ﻗﻗﻗ review_reports/               # ﻟﺁﮒ؟۰ﮔ۴ﮒ
+?  ﻗﻗﻗ improvement_plans/            # ﮔﺗﻟﺟﻟ؟۰ﮒ
+?ﻗﻗﻗ 05_TECHNICAL_SPECIFICATIONS/      # ﮔﮔﺁﻟ۶??  ﻗﻗﻗ (80+ﮔﮔﺁﻟ۶ﮔ ﺙﮔ?
+?  ﻗﻗﻗ ...
+?ﻗﻗﻗ 06_CONSTRUCTION_DOCS/             # ﮒﭨﭦﻟ؟ﺝﮔﮔ۰۲
+?  ﻗﻗﻗ 01_BLUEPRINTS/                # ﻟﮒﺝﮔﮔ۰۲
+?  ﻗﻗﻗ ...
+?ﻗﻗﻗ ﻝﺑ۱ﮒﺙﮔﮔ۰۲
+    ﻗﻗﻗ INDEX.md                      # ﮒﺟ،ﻠﮒ۴?    ﻗﻗﻗ SITEMAP.md                    # ﮒ؟ﮔﺑﮒﺍﮒﺝ
+    ﻗﻗﻗ README.md                     # ﮒ؟ﮔﺛﮒﺎﮔ۵?```
 
 ---
 
-## ﻭﭦ?ﮔﻝ۷ﻠﮔ۴?
-### ﮔﮔﺁﮔﺍﮔ
+## ﻭﭦ?ﮔﻝ۷ﻠﮔ۴?
+### ﮔﮔﺁﮔﺍﮔ
 
-**ﮒﺟ،ﻠﻛﺕﮔﻟﺓﺁ?* (1ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [01_QUICKSTART/README.md](API_README.md) - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
-2. ﻠﻟﺁﭨ [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ (10ﮒﻠ)
+**ﮒﺟ،ﻠﻛﺕﮔﻟﺓﺁ?* (1ﮒﺍﮔﭘ):
+1. ﻠﻟﺁﭨ [01_QUICKSTART/README.md](API_README.md) - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
+2. ﻠﻟﺁﭨ [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ (10ﮒﻠ)
 
-### ﮔﮔﺁﮒﺙﮒ?
-**ﮒﺙﮒﻟ۶ﻟﮒ­۵ﻛﺗ ﻟﺓﺁ?* (2ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [02_DEVELOPMENT/README.md](API_README.md) - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
-2. ﻠﻟﺁﭨ [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - ﮒﺙﮒﮔ ?(30ﮒﻠ)
-3. ﻠﻟﺁﭨ [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - ﻟ؟ﺝﻟ؟۰ﮒﮒ (20ﮒﻠ)
-4. ﻠﻟﺁﭨ [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ (20ﮒﻠ)
-5. ﻠﻟﺁﭨ [02_DEVELOPMENT/TESTING_STANDARD.md](./02_DEVELOPMENT/TESTING_STANDARD.md) - ﮔﭖﻟﺁﮔ ﮒ (20ﮒﻠ)
-6. ﻠﻟﺁﭨ [02_DEVELOPMENT/SECURITY.md](./02_DEVELOPMENT/SECURITY.md) - ﮒ؟ﮒ۷ﮔ ﮒ (20ﮒﻠ)
+### ﮔﮔﺁﮒﺙﮒ?
+**ﮒﺙﮒﻟ۶ﻟﮒ­۵ﻛﺗ ﻟﺓﺁ?* (2ﮒﺍﮔﭘ):
+1. ﻠﻟﺁﭨ [02_DEVELOPMENT/README.md](API_README.md) - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
+2. ﻠﻟﺁﭨ [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - ﮒﺙﮒﮔ ?(30ﮒﻠ)
+3. ﻠﻟﺁﭨ [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - ﻟ؟ﺝﻟ؟۰ﮒﮒ (20ﮒﻠ)
+4. ﻠﻟﺁﭨ [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ (20ﮒﻠ)
+5. ﻠﻟﺁﭨ [02_DEVELOPMENT/TESTING_STANDARD.md](./02_DEVELOPMENT/TESTING_STANDARD.md) - ﮔﭖﻟﺁﮔ ﮒ (20ﮒﻠ)
+6. ﻠﻟﺁﭨ [02_DEVELOPMENT/SECURITY.md](./02_DEVELOPMENT/SECURITY.md) - ﮒ؟ﮒ۷ﮔ ﮒ (20ﮒﻠ)
 
-### ﮔﮔﺁﻟﺟﻝﭨﺑﻛﭦﭦﮒ
+### ﮔﮔﺁﻟﺟﻝﭨﺑﻛﭦﭦﮒ
 
-**ﻟﺟﻝﭨﺑﮒﺓ۴ﻛﺛﻟﺓﺁﻝﭦﺟ** (2ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [07_OPERATIONS/README.md](API_README.md) - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
-2. ﻠﻟﺁﭨ [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?(20ﮒﻠ)
-3. ﻠﻟﺁﭨ [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - ﻟﺑ۷ﻠﻠ۷ﮔﭦ?(20ﮒﻠ)
-4. ﻠﻟﺁﭨ [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ (20ﮒﻠ)
-5. ﻠﻟﺁﭨ [04_INFRASTRUCTURE/DAILY_PIPELINE.md](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) - ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?(20ﮒﻠ)
+**ﻟﺟﻝﭨﺑﮒﺓ۴ﻛﺛﻟﺓﺁﻝﭦﺟ** (2ﮒﺍﮔﭘ):
+1. ﻠﻟﺁﭨ [07_OPERATIONS/README.md](API_README.md) - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
+2. ﻠﻟﺁﭨ [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?(20ﮒﻠ)
+3. ﻠﻟﺁﭨ [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - ﻟﺑ۷ﻠﻠ۷ﮔﭦ?(20ﮒﻠ)
+4. ﻠﻟﺁﭨ [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ (20ﮒﻠ)
+5. ﻠﻟﺁﭨ [04_INFRASTRUCTURE/DAILY_PIPELINE.md](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) - ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?(20ﮒﻠ)
 
-### ﮔﻟ۵ﮔ۴ﻝﮔﮔﺁﻟ۶?
-**ﮔﮔﺁﻟ۶ﮔ ﺙﮔ۴ﮔﺝﻟﺓﺁ?* (ﮔ ﺗﮔ؟ﻠ?:
-1. ﮔﭖﻟ۶ [05_TECHNICAL_SPECIFICATIONS/](./05_TECHNICAL_SPECIFICATIONS/) ﻝ؟ﮒﺛ
-2. ﮔ ﺗﮔ؟ﮔ۷۰ﮒﮒﻝ۶ﺍﮔ۴ﮔﺝﮒﺁﺗﮒﭦﻝﮔﮔﺁﻟ۶ﮔ ﺙﮔ?3. ﮒﻟﮔﮔ۰۲ﻛﺕ­ﻝﮒ؟ﮔﺛﻝﭘﮔﮒﻛﺙﮒ?
+### ﮔﻟ۵ﮔ۴ﻝﮔﮔﺁﻟ۶?
+**ﮔﮔﺁﻟ۶ﮔ ﺙﮔ۴ﮔﺝﻟﺓﺁ?* (ﮔ ﺗﮔ؟ﻠ?:
+1. ﮔﭖﻟ۶ [05_TECHNICAL_SPECIFICATIONS/](./05_TECHNICAL_SPECIFICATIONS/) ﻝ؟ﮒﺛ
+2. ﮔ ﺗﮔ؟ﮔ۷۰ﮒﮒﻝ۶ﺍﮔ۴ﮔﺝﮒﺁﺗﮒﭦﻝﮔﮔﺁﻟ۶ﮔ ﺙﮔ?3. ﮒﻟﮔﮔ۰۲ﻛﺕ­ﻝﮒ؟ﮔﺛﻝﭘﮔﮒﻛﺙﮒ?
 ---
 
-## ﻭ ﮔﻛﺕﭨﻠ۱ﮒ?
-### ﮒﺟ،ﻠﮒﺙ?
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
+## ﻭ ﮔﻛﺕﭨﻠ۱ﮒ?
+### ﮒﺟ،ﻠﮒﺙ?
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﮒﺟ،ﻠﮒﺙﮒ۶](API_README.md) | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗ­ﻗ­ﻗ­ﻗ­?|
-| [ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ](./01_QUICKSTART/LEARNING_PATH.md) | ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ | ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ](./01_QUICKSTART/ROADMAP.md) | ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝﻝﺛ؟](./01_QUICKSTART/dev-setup.md) | ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﮒﺟ،ﻠﮒﺙﮒ۶](API_README.md) | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗ­ﻗ­ﻗ­ﻗ­?|
+| [ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ](./01_QUICKSTART/ROADMAP.md) | ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
 
-### ﮒﺙﮒﮔ ?
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
+### ﮒﺙﮒﮔ ?
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﮒﺙﮒﮔ ﮒ](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | ﮒﺙﮒﮔ ?| ﻗ­ﻗ­ﻗ­ﻗ­?|
-| [ﻟ؟ﺝﻟ؟۰ﮒﮒ](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) | ﻟ؟ﺝﻟ؟۰ﮒﮒ | ﻗ­ﻗ­ﻗ­ﻗ­?|
-| [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ](./02_DEVELOPMENT/CODE_QUALITY.md) | ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ | ﻗ­ﻗ­ﻗ­ﻗ­?|
-| [ﮔﭖﻟﺁﮔ ﮒ](./02_DEVELOPMENT/TESTING_STANDARD.md) | ﮔﭖﻟﺁﮔ ﮒ | ﻗ­ﻗ­ﻗ­ﻗ­?|
-| [ﮒ؟ﮒ۷ﮔ ﮒ](./02_DEVELOPMENT/SECURITY.md) | ﮒ؟ﮒ۷ﮔ ﮒ | ﻗ­ﻗ­ﻗ­ﻗ­?|
+| [ﻟ؟ﺝﻟ؟۰ﮒﮒ](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) | ﻟ؟ﺝﻟ؟۰ﮒﮒ | ﻗ­ﻗ­ﻗ­ﻗ­?|
 
-### ﻠ۷ﻝﺛﺎﻛﺕﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
+### ﻠ۷ﻝﺛﺎﻛﺕﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ | ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md) | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮒ­ﮒ۷ﮒﮒﺎ](./04_INFRASTRUCTURE/STORAGE_TIER.md) | ﮒ­ﮒ۷ﮒﮒﺎ | ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ | ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md) | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗ­ﻗ­ﻗ­ﻗ­ |
 
-### ﻟﺟﻝﭨﺑ
+### ﻟﺟﻝﭨﺑ
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md) | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗ­ﻗ­ﻗ­ﻗ­?|
-| [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | ﻟﺑ۷ﻠﻠ۷ﮔﭦ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | ﮔ۶ﻟﺛﻝﮔ۶ | ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md) | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗ­ﻗ­ﻗ­ﻗ­?|
+| [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | ﻟﺑ۷ﻠﻠ۷ﮔﭦ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | ﮔ۶ﻟﺛﻝﮔ۶ | ﻗ­ﻗ­ﻗ­ﻗ­ |
 
 ---
 
-## ﻭ ﮔﮒﺏﻠ؟ﻟﺁﮔ۴ﮔﺝ
+## ﻭ ﮔﮒﺏﻠ؟ﻟﺁﮔ۴ﮔﺝ
 
-### ﮒﺙﮒﮒﺏﻠ؟ﻟﺁ
+### ﮒﺙﮒﮒﺏﻠ؟ﻟﺁ
 
-- **ﮒﺙﮒﮔ ?*: [ﮒﺙﮒﮔ ﮒ](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
-- **ﻟ؟ﺝﻟ؟۰ﮒﮒ**: [ﻟ؟ﺝﻟ؟۰ﮒﮒ](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md)
-- **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ**: [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ](./02_DEVELOPMENT/CODE_QUALITY.md)
-- **ﮔﭖﻟﺁ**: [ﮔﭖﻟﺁﮔ ﮒ](./02_DEVELOPMENT/TESTING_STANDARD.md)
-- **ﮒ؟ﮒ۷**: [ﮒ؟ﮒ۷ﮔ ﮒ](./02_DEVELOPMENT/SECURITY.md)
+- **ﮒﺙﮒﮔ ?*: [ﮒﺙﮒﮔ ﮒ](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+- **ﻟ؟ﺝﻟ؟۰ﮒﮒ**: [ﻟ؟ﺝﻟ؟۰ﮒﮒ](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md)
+- **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ**: [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ](./02_DEVELOPMENT/CODE_QUALITY.md)
+- **ﮔﭖﻟﺁ**: [ﮔﭖﻟﺁﮔ ﮒ](./02_DEVELOPMENT/TESTING_STANDARD.md)
+- **ﮒ؟ﮒ۷**: [ﮒ؟ﮒ۷ﮔ ﮒ](./02_DEVELOPMENT/SECURITY.md)
 
-### ﻠ۷ﻝﺛﺎﮒﺏﻠ؟?
-- **ﻠ۷ﻝﺛﺎ**: [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
-- **ﮔﭖﮔﺍﺑ?*: [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
-- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md)
+### ﻠ۷ﻝﺛﺎﮒﺏﻠ؟?
+- **ﻠ۷ﻝﺛﺎ**: [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
+- **ﮔﭖﮔﺍﺑ?*: [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
+- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md)
 
-### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
-- **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md)
-- **ﮒ؟۰ﻟ؟۰**: [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
-- **ﻟﺑ۷ﻠ?*: [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
-- **ﻝﮔ۶**: [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md)
+### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
+- **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md)
+- **ﮒ؟۰ﻟ؟۰**: [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
+- **ﻟﺑ۷ﻠ?*: [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- **ﻝﮔ۶**: [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md)
 
-### ﮔﮔ۰۲ﮔ ﮒﮒﺏﻠ؟?
-- **ﮔﮔ۰۲ﻝﺙﮒﺓ**: [ﮔﮔ۰۲ﻝﺙﮒﺓﮔ ﮒ](./02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
-- **ﻝﮔ؛ﻝ؟۰ﻝ**: [ﻝﮔ؛ﻝ؟۰ﻝﮔ ﮒ](./02_DEVELOPMENT/VERSION_MANAGEMENT_STANDARD.md)
-- **ﻟﺑ۷ﻠ?*: [ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﮔ ﮒ](./02_DEVELOPMENT/DOCUMENT_QUALITY_GATE_STANDARD.md)
+### ﮔﮔ۰۲ﮔ ﮒﮒﺏﻠ؟?
+- **ﮔﮔ۰۲ﻝﺙﮒﺓ**: [ﮔﮔ۰۲ﻝﺙﮒﺓﮔ ﮒ](./02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
+- **ﻝﮔ؛ﻝ؟۰ﻝ**: [ﻝﮔ؛ﻝ؟۰ﻝﮔ ﮒ](./02_DEVELOPMENT/VERSION_MANAGEMENT_STANDARD.md)
+- **ﻟﺑ۷ﻠ?*: [ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﮔ ﮒ](./02_DEVELOPMENT/DOCUMENT_QUALITY_GATE_STANDARD.md)
 
 ---
 
-## ﻭ ﻝﺕﮒﺏﻠﺝﮔ۴
+## ﻭ ﻝﺕﮒﺏﻠﺝﮔ۴
 
-- [ﻝﺏﭨﻝﭨﻛﺕﭨﻝﺑ۱ﮒﺙ](../INDEX.md)
-- [ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮒﺍﮒﺝ](../SITEMAP.md)
-- [ﮔ۰ﮔﭘﻟ؟ﺝﻟ؟۰ﻝﺑ۱ﮒﺙ](../01_FRAMEWORK/INDEX.md)
-- [ﮒ ﮒ­ﮒﭦﻝﺑ۱ﮒﺙ](../02_FACTOR_LIBRARY/INDEX.md)
+- [ﻝﺏﭨﻝﭨﻛﺕﭨﻝﺑ۱ﮒﺙ](../INDEX.md)
+- [ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮒﺍﮒﺝ](../SITEMAP.md)
+- [ﮔ۰ﮔﭘﻟ؟ﺝﻟ؟۰ﻝﺑ۱ﮒﺙ](../01_FRAMEWORK/INDEX.md)
+- [ﮒ ﮒ­ﮒﭦﻝﺑ۱ﮒﺙ](../02_FACTOR_LIBRARY/INDEX.md)

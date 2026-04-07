@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LONG_TERM_OPTIMIZATION_MECHANISM_REPORT_20260407
 version: 1.0.0
 status: Active

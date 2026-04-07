@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_API_GATEWAY_README_001
 version: 1.0.0
 status: Active

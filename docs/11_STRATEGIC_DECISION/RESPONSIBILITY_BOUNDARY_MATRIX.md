@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER11_RESPONSIBILITY_BOUNDARY_MATRIX_001
 version: 1.0.0
 status: Active

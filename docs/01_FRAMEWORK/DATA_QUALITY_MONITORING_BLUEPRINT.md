@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_QUALITY_MONITORING_FRAMEWORK_001
 
 version: 1.0.0
@@ -74,7 +74,7 @@ responsibility:
 
 > **实施周期**: 2?> **核心理念**: 桥水基金数据质量体系 - 数据是量化系统的生命?质量监控必须实时、全面、自动化
 
-> **目标**: 实现专业机构级的数据质量监控,确保数据完整性、准确性、时效性、一�?
+> **目标**: 实现专业机构级的数据质量监控,确保数据完整性、准确性、时效性、一?
 
 ---
 
@@ -148,7 +148,7 @@ Two Sigma数据治理架构:
 
 ?  ├── 准确性指??异常率、错误率
 
-?  ├── 时效性指??延迟时间、更新频??  └── 一致性指??多源一致性、历史一�?├── 2. 数据质量评分
+?  ├── 时效性指??延迟时间、更新频??  └── 一致性指??多源一致性、历史一?├── 2. 数据质量评分
 
 ?  ├── 数据源评??各数据源质量评分
 
@@ -204,7 +204,7 @@ class CompletenessChecker:
 
     def check_completeness(self, data: pd.DataFrame) -> CompletenessResult:
 
-        """检查数据完�?""
+        """检查数据完?""
 
         
 
@@ -230,7 +230,7 @@ class CompletenessChecker:
 
         
 
-        # 2. 检查时间序列完�?        expected_dates = self._get_expected_dates(data.index[0], data.index[-1])
+        # 2. 检查时间序列完?        expected_dates = self._get_expected_dates(data.index[0], data.index[-1])
 
         actual_dates = set(data.index)
 
@@ -268,7 +268,7 @@ class CompletenessChecker:
 
 class AccuracyChecker:
 
-    """准确性检查器 - 检查数据异�?""
+    """准确性检查器 - 检查数据异?""
 
     
 
@@ -288,7 +288,7 @@ class AccuracyChecker:
 
     def check_accuracy(self, data: pd.DataFrame) -> AccuracyResult:
 
-        """检查数据准�?""
+        """检查数据准?""
 
         
 
@@ -360,11 +360,11 @@ class TimelinessChecker:
 
     def __init__(self):
 
-        self.delay_threshold = 60  # 延迟�?0?        
+        self.delay_threshold = 60  # 延迟?0?        
 
     def check_timeliness(self, data: pd.DataFrame, source: str) -> TimelinessResult:
 
-        """检查数据时�?""
+        """检查数据时?""
 
         
 
@@ -432,7 +432,7 @@ class ConsistencyChecker:
 
     def check_consistency(self, symbol: str, date: str) -> ConsistencyResult:
 
-        """检查多源数据一�?""
+        """检查多源数据一?""
 
         
 
@@ -774,7 +774,7 @@ class AutoSwitcher:
 
             try:
 
-                # 测试备用源可�?                if self._test_source_availability(backup_source):
+                # 测试备用源可?                if self._test_source_availability(backup_source):
 
                     self.current_source = backup_source
 
@@ -850,7 +850,7 @@ class AutoSwitcher:
 
         - expr: "data_quality_consistency_score"
 
-          legendFormat: "一�?
+          legendFormat: "一?
 
           
 
@@ -958,7 +958,7 @@ class AutoSwitcher:
 
 | **数据时效?* | ?0?| 数据延迟<1分钟 |
 
-| **数据一�?* | ?9% | 多源差异<1% |
+| **数据一?* | ?9% | 多源差异<1% |
 
 | **告警响应时间** | ?分钟 | 从发现问题到告警 |
 
@@ -992,7 +992,7 @@ class AutoSwitcher:
 
 
 
-**版本**: v1.0 | **更新**: 2026-04-03 | **�?*: ?活跃
+**版本**: v1.0 | **更新**: 2026-04-03 | **?*: ?活跃
 
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SPARSE_DIRECTORY_INTEGRATION_GUIDE_20260407_025756_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: 05_IMPLEMENTATION_DOCUMENT_GOVERNANCE_WEEKLY_REPORT_20260407124139
 version: 1.0.0
 status: Active

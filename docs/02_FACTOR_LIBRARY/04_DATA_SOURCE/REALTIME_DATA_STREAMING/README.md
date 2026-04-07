@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: REALTIME_DATA_STREAMING_README_001
 version: 1.0.0
 status: Active

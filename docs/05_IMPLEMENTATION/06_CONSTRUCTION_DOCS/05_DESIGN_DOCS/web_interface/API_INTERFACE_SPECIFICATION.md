@@ -1,150 +1,150 @@
-﻿---
+﻿﻿---
 module_id: T.06.UI003
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ?
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ?
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔ ﮒ
-applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
-compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔ ﮒ
+applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
+compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰?
+implementation_status: ﻟﺟﻟ۰?
 ---
 ---
 
 
-# APIﮔ۴ﮒ۲ﻟ۶ﻟﮔﮔ۰۲
+# APIﮔ۴ﮒ۲ﻟ۶ﻟﮔﮔ۰۲
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
-> **ﻝﺑ۱ﮒﺙ**: `DESIGN_005`
-> **ﮒﺏﻟﮔﮔ۰۲**: 
-> - [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md)
-> - [ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ](ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md)
-> - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
+> ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
+> **ﻝﺑ۱ﮒﺙ**: `DESIGN_005`
+> **ﮒﺏﻟﮔﮔ۰۲**: 
+> - [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md)
+> - [ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ](ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md)
+> - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
 
-## 1. ﮔ۵ﻟﺟﺍ
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﮔﮔ۰۲ﻟﮒﺑ
-ﮔ؛ﻟ۶ﻟﮒ؟?*Webﻝ؟۰ﻝﻝﻠ۱**ﻛﺕﻝ۷ﻝAPIﮔ۴ﮒ۲ﺅﺙﮒﮔ؛ﺅﺙ
-- **RESTful API**: ﮒﻝ،ﺁﻛﺕﮒﻝ،ﺁﮔﺍﮔ؟ﻛﭦ۳ﻛﭦﮔ۴?
-- **WebSocket API**: ﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷ﻠﮔ۴?
-- **ﻟ؟۳ﻟﺁﮔﮔAPI**: ﻝ۷ﮔﺓﻟ؟۳ﻟﺁﮒﮔﻠﻝ؟۰ﻝﮔ۴?
-- **ﮔﻛﭨﭘﻛﺕﻛﺙ /ﻛﺕﻟﺛﺛAPI**: ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺁﺙﮒ۴ﮒﺁﺙﮒﭦﮔ۴ﮒ۲
+### 1.1 ﮔﮔ۰۲ﻟﮒﺑ
+ﮔ؛ﻟ۶ﻟﮒ؟?*Webﻝ؟۰ﻝﻝﻠ۱**ﻛﺕﻝ۷ﻝAPIﮔ۴ﮒ۲ﺅﺙﮒﮔ؛ﺅﺙ
+- **RESTful API**: ﮒﻝ،ﺁﻛﺕﮒﻝ،ﺁﮔﺍﮔ؟ﻛﭦ۳ﻛﭦﮔ۴?
+- **WebSocket API**: ﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷ﻠﮔ۴?
+- **ﻟ؟۳ﻟﺁﮔﮔAPI**: ﻝ۷ﮔﺓﻟ؟۳ﻟﺁﮒﮔﻠﻝ؟۰ﻝﮔ۴?
+- **ﮔﻛﭨﭘﻛﺕﻛﺙ /ﻛﺕﻟﺛﺛAPI**: ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺁﺙﮒ۴ﮒﺁﺙﮒﭦﮔ۴ﮒ۲
 
-### 1.2 ﻟ؟ﺝﻟ؟۰ﮒﮒ
-| ﮒﮒ | ﻟﺁﺑﮔ | ﮒ؟ﻝﺍﻟ۵ﮔﺎ |
+### 1.2 ﻟ؟ﺝﻟ؟۰ﮒﮒ
+| ﮒﮒ | ﻟﺁﺑﮔ | ﮒ؟ﻝﺍﻟ۵ﮔﺎ |
 |------|------|----------|
-| **RESTfulﻟ؟ﺝﻟ؟۰** | ﻠﭖﮒﺝ۹RESTfulﮔﭘﮔﻠ۲ﮔ ﺙ | ﻟﭖﮔﭦﮒﺁﺙﮒﻙHTTPﮔﺗﮔﺏﻟﺁ­ﻛﺗ?|
-| **ﻛﺕﻟ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﮒ۳?| ﮔﮔﮔ۴ﮒ۲ﻟﺟﮒﮔ ﮒAPIResponseﮔ ﺙﮒﺙ |
-| **ﮒ؟ﮒ۷?* | ﻟ؟۳ﻟﺁﮔﮔﻙﮔﺍﮔ؟ﮒ ?| JWTﻟ؟۳ﻟﺁﻙHTTPSﮒ ﮒﺁﻙﻟﺝﮒ۴ﻠ۹?|
-| **ﻝﮔ؛ﮔ۶ﮒﭘ** | APIﻝﮔ؛ﻝ؟۰ﻝ | URLﻟﺓﺁﮒﺝﻝﮔ؛ﮔ۶ﮒﭘ (v1, v2) |
-| **ﮔﮔ۰۲?* | ﮔ۴ﮒ۲ﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ | OpenAPI/Swaggerﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ |
+| **RESTfulﻟ؟ﺝﻟ؟۰** | ﻠﭖﮒﺝ۹RESTfulﮔﭘﮔﻠ۲ﮔ ﺙ | ﻟﭖﮔﭦﮒﺁﺙﮒﻙHTTPﮔﺗﮔﺏﻟﺁ­ﻛﺗ?|
+| **ﻛﺕﻟ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﮒ۳?| ﮔﮔﮔ۴ﮒ۲ﻟﺟﮒﮔ ﮒAPIResponseﮔ ﺙﮒﺙ |
+| **ﮒ؟ﮒ۷?* | ﻟ؟۳ﻟﺁﮔﮔﻙﮔﺍﮔ؟ﮒ ?| JWTﻟ؟۳ﻟﺁﻙHTTPSﮒ ﮒﺁﻙﻟﺝﮒ۴ﻠ۹?|
+| **ﻝﮔ؛ﮔ۶ﮒﭘ** | APIﻝﮔ؛ﻝ؟۰ﻝ | URLﻟﺓﺁﮒﺝﻝﮔ؛ﮔ۶ﮒﭘ (v1, v2) |
+| **ﮔﮔ۰۲?* | ﮔ۴ﮒ۲ﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ | OpenAPI/Swaggerﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ |
 
-### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
-| ﻝﮔ؛ | ﮒﮒﺕﮔﭘﻠﺑ | ﻛﺕﭨﻟ۵ﻝ?| ﮒﺙﮒ؟ﺗ?|
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+| ﻝﮔ؛ | ﮒﮒﺕﮔﭘﻠﺑ | ﻛﺕﭨﻟ۵ﻝ?| ﮒﺙﮒ؟ﺗ?|
 |------|----------|----------|--------|
-| v1.0 | 2026-04-02 | ﮒﭦﻝ۰CRUDﮔ۴ﮒ۲ﻙﮒ؟ﮔﭘﮔ۷?| ﮒﮒ۶ﻝﮔ؛ |
-| v1.1 | ﻟ؟۰ﮒ | ﮔﺗﻠﮔﻛﺛﻙﻠ،ﻝﭦ۶ﮔ۴?| ﮒﻛﺕﮒﺙﮒ؟ﺗv1.0 |
-| v2.0 | ﻟ؟۰ﮒ | GraphQLﮔﺁﮔﻙﮔﭖﮒﺙﮒ?| ﻛﺕﮒﺙﮒ؟ﺗv1.x |
+| v1.0 | 2026-04-02 | ﮒﭦﻝ۰CRUDﮔ۴ﮒ۲ﻙﮒ؟ﮔﭘﮔ۷?| ﮒﮒ۶ﻝﮔ؛ |
+| v1.1 | ﻟ؟۰ﮒ | ﮔﺗﻠﮔﻛﺛﻙﻠ،ﻝﭦ۶ﮔ۴?| ﮒﻛﺕﮒﺙﮒ؟ﺗv1.0 |
+| v2.0 | ﻟ؟۰ﮒ | GraphQLﮔﺁﮔﻙﮔﭖﮒﺙﮒ?| ﻛﺕﮒﺙﮒ؟ﺗv1.x |
 
-## 2. ﮒﭦﻝ۰ﻟ۶ﻟ
+## 2. ﮒﭦﻝ۰ﻟ۶ﻟ
 
-### 2.1 ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
+### 2.1 ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
 
-#### 2.1.1 ﮔﮒﮒﮒﭦ
+#### 2.1.1 ﮔﮒﮒﮒﭦ
 ```json
 {
   "code": 0,
   "message": "success",
   "data": {
-    // ﻛﺕﮒ۰ﮔﺍﮔ؟
+    // ﻛﺕﮒ۰ﮔﺍﮔ؟
   },
   "request_id": "req_abc123def456",
   "timestamp": "2026-04-02T12:00:00Z"
 }
 ```
 
-#### 2.1.2 ﻠﻟﺁﺁﮒﮒﭦ
+#### 2.1.2 ﻠﻟﺁﺁﮒﮒﭦ
 ```json
 {
   "code": 1001,
-  "message": "ﮔﺍﮔ؟ﻛﺕﮒ­?,
+  "message": "ﮔﺍﮔ؟ﻛﺕﮒ­?,
   "data": null,
   "request_id": "req_abc123def456",
   "timestamp": "2026-04-02T12:00:00Z",
   "details": {
     "field": "engine_id",
     "value": "engine_001",
-    "suggestion": "ﻟﺁﺓﮔ۲ﮔ۴ﮒﺙﮔIDﮔﺁﮒ۵ﮔ­۲ﻝ۰؟"
+    "suggestion": "ﻟﺁﺓﮔ۲ﮔ۴ﮒﺙﮔIDﮔﺁﮒ۵ﮔ­۲ﻝ۰؟"
   }
 }
 ```
 
-### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟?
+### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟?
 
-#### 2.2.1 ﻠﻝ۷ﻠﻟﺁﺁ?(0-999)
-| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
+#### 2.2.1 ﻠﻝ۷ﻠﻟﺁﺁ?(0-999)
+| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
 |--------|------|------------|
-| 0 | ﮔﮒ | 200 |
-| 1 | ﮒﮔﺍﻠﻟﺁﺁ | 400 |
-| 2 | ﻟ؟۳ﻟﺁﮒ۳ﺎﻟﺑ۴ | 401 |
-| 3 | ﮔﻠﻛﺕﻟﭘﺏ | 403 |
-| 4 | ﻟﭖﮔﭦﻛﺕﮒ­?| 404 |
-| 5 | ﻟﺁﺓﮔﺎﮔﺗﮔﺏﻛﺕﮒ?| 405 |
-| 6 | ﻟﺁﺓﮔﺎﻟﭘﮔﭘ | 408 |
-| 7 | ﻝﺏﭨﻝﭨﮒﻠ۷ﻠﻟﺁﺁ | 500 |
-| 8 | ﮔﮒ۰ﻛﺕﮒﺁ?| 503 |
+| 0 | ﮔﮒ | 200 |
+| 1 | ﮒﮔﺍﻠﻟﺁﺁ | 400 |
+| 2 | ﻟ؟۳ﻟﺁﮒ۳ﺎﻟﺑ۴ | 401 |
+| 3 | ﮔﻠﻛﺕﻟﭘﺏ | 403 |
+| 4 | ﻟﭖﮔﭦﻛﺕﮒ­?| 404 |
+| 5 | ﻟﺁﺓﮔﺎﮔﺗﮔﺏﻛﺕﮒ?| 405 |
+| 6 | ﻟﺁﺓﮔﺎﻟﭘﮔﭘ | 408 |
+| 7 | ﻝﺏﭨﻝﭨﮒﻠ۷ﻠﻟﺁﺁ | 500 |
+| 8 | ﮔﮒ۰ﻛﺕﮒﺁ?| 503 |
 
-#### 2.2.2 Webﻝﻠ۱ﻛﺕﻝ۷ﻠﻟﺁﺁ?(6000-6999)
-| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
+#### 2.2.2 Webﻝﻠ۱ﻛﺕﻝ۷ﻠﻟﺁﺁ?(6000-6999)
+| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
 |--------|------|------------|
-| 6001 | ﻛﭨ۹ﻟ۰۷ﮔﺟﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎ?| 500 |
-| 6002 | ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6003 | ﮔ۶ﻟﺛﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6004 | ﻠﻝﺛ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6005 | ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒ۳ﺎﻟﺑ۴ | 400 |
-| 6006 | ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۳ﺎ?| 500 |
-| 6007 | ﮔ۴ﮒﺟﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6008 | ﮔﻛﭨﭘﻛﺕﻛﺙ ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6009 | ﮔﻛﭨﭘﻛﺕﻟﺛﺛﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6010 | ﮒ؟ﮔﭘﮔ۷ﻠﻟﺟﮔ۴ﮒ۳ﺎ?| 500 |
+| 6001 | ﻛﭨ۹ﻟ۰۷ﮔﺟﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎ?| 500 |
+| 6002 | ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6003 | ﮔ۶ﻟﺛﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6004 | ﻠﻝﺛ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6005 | ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒ۳ﺎﻟﺑ۴ | 400 |
+| 6006 | ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۳ﺎ?| 500 |
+| 6007 | ﮔ۴ﮒﺟﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6008 | ﮔﻛﭨﭘﻛﺕﻛﺙ ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6009 | ﮔﻛﭨﭘﻛﺕﻟﺛﺛﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6010 | ﮒ؟ﮔﭘﮔ۷ﻠﻟﺟﮔ۴ﮒ۳ﺎ?| 500 |
 
-### 2.3 ﻟ؟۳ﻟﺁﻛﺕﮔ?
+### 2.3 ﻟ؟۳ﻟﺁﻛﺕﮔ?
 
-#### 2.3.1 JWTﻟ؟۳ﻟﺁ
+#### 2.3.1 JWTﻟ؟۳ﻟﺁ
 ```http
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-#### 2.3.2 ﮔﻠﻟ۶ﻟﺎ
-| ﻟ۶ﻟﺎ | ﮔﻠﻟﺁﺑﮔ | APIﻟ؟ﺟﻠ؟ﻟﮒﺑ |
+#### 2.3.2 ﮔﻠﻟ۶ﻟﺎ
+| ﻟ۶ﻟﺎ | ﮔﻠﻟﺁﺑﮔ | APIﻟ؟ﺟﻠ؟ﻟﮒﺑ |
 |------|----------|-------------|
-| **admin** | ﻝ؟۰ﻝ?| ﮔﮔAPI |
-| **operator** | ﮔﻛﺛ?| ﻟﺁﭨﮒﻛﭦ۳ﮔﮔﺍﮔ؟ﻙﮒ۹ﻟﺁﭨﻠ?|
-| **viewer** | ﻟ۶ﮒﺁ?| ﮒ۹ﻟﺁﭨﮔﮔﮔﺍ?|
-| **guest** | ﻟ؟ﺟﮒ؟۱ | ﮒ۹ﻟﺁﭨﮒ؛ﮒﺙﮔﺍﮔ؟ |
+| **admin** | ﻝ؟۰ﻝ?| ﮔﮔAPI |
+| **operator** | ﮔﻛﺛ?| ﻟﺁﭨﮒﻛﭦ۳ﮔﮔﺍﮔ؟ﻙﮒ۹ﻟﺁﭨﻠ?|
+| **viewer** | ﻟ۶ﮒﺁ?| ﮒ۹ﻟﺁﭨﮔﮔﮔﺍ?|
+| **guest** | ﻟ؟ﺟﮒ؟۱ | ﮒ۹ﻟﺁﭨﮒ؛ﮒﺙﮔﺍﮔ؟ |
 
-### 2.4 ﻟﺁﺓﮔﺎﻠﮒﭘ
-| ﻠﮒﭘﻝﺎﭨﮒ | ﻠﮒﭘ?| ﻟﺁﺑﮔ |
+### 2.4 ﻟﺁﺓﮔﺎﻠﮒﭘ
+| ﻠﮒﭘﻝﺎﭨﮒ | ﻠﮒﭘ?| ﻟﺁﺑﮔ |
 |----------|--------|------|
-| **ﻠ۱ﻝﻠﮒﭘ** | 100?ﮒﻠ | ﮔﺁﻛﺕ۹IPﮒﺍﮒ |
-| **ﮒﺗﭘﮒﻟﺟﮔ۴** | 10?| ﮔﺁﻛﺕ۹ﻝ۷ﮔﺓ |
-| **ﻟﺁﺓﮔﺎﻛﺛﮒ۳۶?* | 10MB | ﮔﻛﭨﭘﻛﺕﻛﺙ ﻠ۳ﮒ۳ |
-| **ﮒﮒﭦﮔﭘﻠﺑ** | 30ﻝ۶ﻟﭘ?| ﻠﺟﻟﺁﺓﮔﺎﻠﻛﺛﺟﻝ۷ﮒﺙﮔ­۴ |
+| **ﻠ۱ﻝﻠﮒﭘ** | 100?ﮒﻠ | ﮔﺁﻛﺕ۹IPﮒﺍﮒ |
+| **ﮒﺗﭘﮒﻟﺟﮔ۴** | 10?| ﮔﺁﻛﺕ۹ﻝ۷ﮔﺓ |
+| **ﻟﺁﺓﮔﺎﻛﺛﮒ۳۶?* | 10MB | ﮔﻛﭨﭘﻛﺕﻛﺙ ﻠ۳ﮒ۳ |
+| **ﮒﮒﭦﮔﭘﻠﺑ** | 30ﻝ۶ﻟﭘ?| ﻠﺟﻟﺁﺓﮔﺎﻠﻛﺛﺟﻝ۷ﮒﺙﮔ­۴ |
 
-## 3. RESTful API ﮔ۴ﮒ۲
+## 3. RESTful API ﮔ۴ﮒ۲
 
-### 3.1 ﻟ؟۳ﻟﺁﮔﮔﮔ۴ﮒ۲
+### 3.1 ﻟ؟۳ﻟﺁﮔﮔﮔ۴ﮒ۲
 
-#### 3.1.1 ﻝ۷ﮔﺓﻝﭨﮒﺛ
+#### 3.1.1 ﻝ۷ﮔﺓﻝﭨﮒﺛ
 ```http
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -155,11 +155,11 @@ Content-Type: application/json
 }
 ```
 
-**ﮒﮒﭦ**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
-  "message": "ﻝﭨﮒﺛﮔﮒ",
+  "message": "ﻝﭨﮒﺛﮔﮒ",
   "data": {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "user": {
@@ -173,27 +173,27 @@ Content-Type: application/json
 }
 ```
 
-#### 3.1.2 ﻝ۷ﮔﺓﻝﭨﮒﭦ
+#### 3.1.2 ﻝ۷ﮔﺓﻝﭨﮒﭦ
 ```http
 POST /api/v1/auth/logout
 Authorization: Bearer {token}
 ```
 
-#### 3.1.3 ﻟﺓﮒﮒﺛﮒﻝ۷ﮔﺓﻛﺟ۰ﮔﺁ
+#### 3.1.3 ﻟﺓﮒﮒﺛﮒﻝ۷ﮔﺓﻛﺟ۰ﮔﺁ
 ```http
 GET /api/v1/auth/me
 Authorization: Bearer {token}
 ```
 
-### 3.2 ﻛﭨ۹ﻟ۰۷ﮔﺟﮔ۴?
+### 3.2 ﻛﭨ۹ﻟ۰۷ﮔﺟﮔ۴?
 
-#### 3.2.1 ﻟﺓﮒﻛﭨ۹ﻟ۰۷ﮔﺟﮔ۵ﻟ۶ﮔﺍ?
+#### 3.2.1 ﻟﺓﮒﻛﭨ۹ﻟ۰۷ﮔﺟﮔ۵ﻟ۶ﮔﺍ?
 ```http
 GET /api/v1/dashboard/overview
 Authorization: Bearer {token}
 ```
 
-**ﮒﮒﭦ**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -216,13 +216,13 @@ Authorization: Bearer {token}
         "trade_count_today": 56,
         "last_heartbeat": "2026-04-02T11:59:30Z"
       },
-      // ﮒﭘﻛﭨﮒﺙﮔﻝ?
+      // ﮒﭘﻛﭨﮒﺙﮔﻝ?
     ],
     "recent_alerts": [
       {
         "id": "alert_001",
         "level": "warning",
-        "message": "ﮒﺙﮔ vn.py ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
+        "message": "ﮒﺙﮔ vn.py ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
         "timestamp": "2026-04-02T11:45:00Z",
         "acknowledged": false
       }
@@ -231,38 +231,38 @@ Authorization: Bearer {token}
 }
 ```
 
-#### 3.2.2 ﻟﺓﮒﮒﺙﮔﻟﺁ۵ﻝﭨﻝ?
+#### 3.2.2 ﻟﺓﮒﮒﺙﮔﻟﺁ۵ﻝﭨﻝ?
 ```http
 GET /api/v1/dashboard/engines/{engine_id}/status
 Authorization: Bearer {token}
 ```
 
-#### 3.2.3 ﮒﺁﮒ۷/ﮒﮔ­۱ﮒﺙﮔ
+#### 3.2.3 ﮒﺁﮒ۷/ﮒﮔ­۱ﮒﺙﮔ
 ```http
 POST /api/v1/dashboard/engines/{engine_id}/start
 POST /api/v1/dashboard/engines/{engine_id}/stop
 Authorization: Bearer {token}
 ```
 
-### 3.3 ﻛﭦ۳ﮔﻝﮔ۶ﮔ۴ﮒ۲
+### 3.3 ﻛﭦ۳ﮔﻝﮔ۶ﮔ۴ﮒ۲
 
-#### 3.3.1 ﮔ۴ﻟﺁ۱ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛ
+#### 3.3.1 ﮔ۴ﻟﺁ۱ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛ
 ```http
 GET /api/v1/trades
 Authorization: Bearer {token}
 Query Parameters:
-  - start_date: string (YYYY-MM-DD)   # ﮒﺙﮒ۶ﮔ۴?
-  - end_date: string (YYYY-MM-DD)     # ﻝﭨﮔﮔ۴ﮔ
-  - symbol: string                    # ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-  - engine_id: string                 # ﮒﺙﮔID
-  - side: string (buy/sell)           # ﻛﺗﺍﮒﮔﺗﮒ
-  - page: integer = 1                 # ﻠ۰ﭖﻝ 
-  - page_size: integer = 50           # ﮔﺁﻠ۰ﭖﮔﺍﻠ
-  - sort_by: string = "timestamp"     # ﮔﮒﭦﮒ­ﮔ؟ﭖ
-  - sort_order: string = "desc"       # ﮔﮒﭦﮔﺗﮒ
+  - start_date: string (YYYY-MM-DD)   # ﮒﺙﮒ۶ﮔ۴?
+  - end_date: string (YYYY-MM-DD)     # ﻝﭨﮔﮔ۴ﮔ
+  - symbol: string                    # ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+  - engine_id: string                 # ﮒﺙﮔID
+  - side: string (buy/sell)           # ﻛﺗﺍﮒﮔﺗﮒ
+  - page: integer = 1                 # ﻠ۰ﭖﻝ 
+  - page_size: integer = 50           # ﮔﺁﻠ۰ﭖﮔﺍﻠ
+  - sort_by: string = "timestamp"     # ﮔﮒﭦﮒ­ﮔ؟ﭖ
+  - sort_order: string = "desc"       # ﮔﮒﭦﮔﺗﮒ
 ```
 
-**ﮒﮒﭦ**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -300,34 +300,34 @@ Query Parameters:
 }
 ```
 
-#### 3.3.2 ﻟﺓﮒﮒﻝ؛ﻛﭦ۳ﮔﻟﺁ۵ﮔ
+#### 3.3.2 ﻟﺓﮒﮒﻝ؛ﻛﭦ۳ﮔﻟﺁ۵ﮔ
 ```http
 GET /api/v1/trades/{trade_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.3.3 ﮒﺁﺙﮒﭦﻛﭦ۳ﮔﮔﺍﮔ؟
+#### 3.3.3 ﮒﺁﺙﮒﭦﻛﭦ۳ﮔﮔﺍﮔ؟
 ```http
 GET /api/v1/trades/export
 Authorization: Bearer {token}
-Query Parameters: (ﮒﮔ۴ﻟﺁ۱ﮔ۴?
+Query Parameters: (ﮒﮔ۴ﻟﺁ۱ﮔ۴?
 Accept: text/csv, application/json
 ```
 
-### 3.4 ﮔ۶ﻟﺛﮒﮔﮔ۴ﮒ۲
+### 3.4 ﮔ۶ﻟﺛﮒﮔﮔ۴ﮒ۲
 
-#### 3.4.1 ﻟﺓﮒﮔ۶ﻟﺛﮔﮔ 
+#### 3.4.1 ﻟﺓﮒﮔ۶ﻟﺛﮔﮔ 
 ```http
 GET /api/v1/performance/metrics
 Authorization: Bearer {token}
 Query Parameters:
-  - time_range: string (1d, 7d, 30d, 90d, 1y)  # ﮔﭘﻠﺑﻟﮒﺑ
-  - engine_id: string                          # ﮒﺙﮔIDﺅﺙﮒﺁ?
-  - strategy_id: string                        # ﻝ­ﻝ۴IDﺅﺙﮒﺁ?
-  - metrics: string[]                          # ﮔﮔ ﮒﻟ۰۷ﺅﺙﮒﺁ?
+  - time_range: string (1d, 7d, 30d, 90d, 1y)  # ﮔﭘﻠﺑﻟﮒﺑ
+  - engine_id: string                          # ﮒﺙﮔIDﺅﺙﮒﺁ?
+  - strategy_id: string                        # ﻝ­ﻝ۴IDﺅﺙﮒﺁ?
+  - metrics: string[]                          # ﮔﮔ ﮒﻟ۰۷ﺅﺙﮒﺁ?
 ```
 
-**ﮒﮒﭦ**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -350,18 +350,18 @@ Query Parameters:
     "equity_curve": [
       {"date": "2026-03-01", "value": 1000000},
       {"date": "2026-03-02", "value": 1001250},
-      // ﮔﺑﮒ۳ﮔﺍﮔ؟?
+      // ﮔﺑﮒ۳ﮔﺍﮔ؟?
     ],
     "drawdown_curve": [
       {"date": "2026-03-01", "value": 0},
       {"date": "2026-03-02", "value": -0.012},
-      // ﮔﺑﮒ۳ﮔﺍﮔ؟?
+      // ﮔﺑﮒ۳ﮔﺍﮔ؟?
     ]
   }
 }
 ```
 
-#### 3.4.2 ﻟﺓﮒﻛﭦ۳ﮔﮒﮒﺕ
+#### 3.4.2 ﻟﺓﮒﻛﭦ۳ﮔﮒﮒﺕ
 ```http
 GET /api/v1/performance/trade-distribution
 Authorization: Bearer {token}
@@ -370,7 +370,7 @@ Query Parameters:
   - group_by: string (symbol, engine, strategy, hour_of_day)
 ```
 
-#### 3.4.3 ﻟﺓﮒﻝﭨ۸ﮔﮔ۴ﮒ
+#### 3.4.3 ﻟﺓﮒﻝﭨ۸ﮔﮔ۴ﮒ
 ```http
 GET /api/v1/performance/report
 Authorization: Bearer {token}
@@ -379,21 +379,21 @@ Query Parameters:
   - include_charts: boolean = true
 ```
 
-### 3.5 ﻠﻝﺛ؟ﻝ؟۰ﻝﮔ۴ﮒ۲
+### 3.5 ﻠﻝﺛ؟ﻝ؟۰ﻝﮔ۴ﮒ۲
 
-#### 3.5.1 ﻟﺓﮒﮒﺙﮔﻠﻝﺛ؟
+#### 3.5.1 ﻟﺓﮒﮒﺙﮔﻠﻝﺛ؟
 ```http
 GET /api/v1/config/engines
 Authorization: Bearer {token}
 ```
 
-#### 3.5.2 ﻟﺓﮒﮒﻛﺕ۹ﮒﺙﮔﻠﻝﺛ؟
+#### 3.5.2 ﻟﺓﮒﮒﻛﺕ۹ﮒﺙﮔﻠﻝﺛ؟
 ```http
 GET /api/v1/config/engines/{engine_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.5.3 ﮔﺑﮔﺍﮒﺙﮔﻠﻝﺛ؟
+#### 3.5.3 ﮔﺑﮔﺍﮒﺙﮔﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/engines/{engine_id}
 Authorization: Bearer {token}
@@ -412,39 +412,39 @@ Content-Type: application/json
 }
 ```
 
-#### 3.5.4 ﻟﺓﮒﻝ­ﻝ۴ﻠﻝﺛ؟
+#### 3.5.4 ﻟﺓﮒﻝ­ﻝ۴ﻠﻝﺛ؟
 ```http
 GET /api/v1/config/strategies
 Authorization: Bearer {token}
 ```
 
-#### 3.5.5 ﮔﺑﮔﺍﻝ­ﻝ۴ﻠﻝﺛ؟
+#### 3.5.5 ﮔﺑﮔﺍﻝ­ﻝ۴ﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/strategies/{strategy_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.5.6 ﻟﺓﮒﻠ۲ﻠ۸ﻠﻠ۱ﻠﻝﺛ؟
+#### 3.5.6 ﻟﺓﮒﻠ۲ﻠ۸ﻠﻠ۱ﻠﻝﺛ؟
 ```http
 GET /api/v1/config/risk-limits
 Authorization: Bearer {token}
 ```
 
-#### 3.5.7 ﮔﺑﮔﺍﻠ۲ﻠ۸ﻠﻠ۱ﻠﻝﺛ؟
+#### 3.5.7 ﮔﺑﮔﺍﻠ۲ﻠ۸ﻠﻠ۱ﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/risk-limits/{limit_id}
 Authorization: Bearer {token}
 ```
 
-### 3.6 ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۴ﮒ۲
+### 3.6 ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۴ﮒ۲
 
-#### 3.6.1 ﻟﺓﮒﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﻝ?
+#### 3.6.1 ﻟﺓﮒﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﻝ?
 ```http
 GET /api/v1/system/health
 Authorization: Bearer {token}
 ```
 
-**ﮒﮒﭦ**:
+**ﮒﮒﭦ**:
 ```json
 {
   "code": 0,
@@ -453,23 +453,23 @@ Authorization: Bearer {token}
     "overall_status": "healthy",
     "components": [
       {
-        "name": "ﮔﺍﮔ؟?,
+        "name": "ﮔﺍﮔ؟?,
         "status": "healthy",
         "response_time": 45,
         "last_check": "2026-04-02T12:00:00Z"
       },
       {
-        "name": "Redisﻝﺙﮒ­",
+        "name": "Redisﻝﺙﮒ­",
         "status": "healthy",
         "response_time": 12,
         "last_check": "2026-04-02T12:00:00Z"
       },
       {
-        "name": "vn.pyﮒﺙﮔ",
+        "name": "vn.pyﮒﺙﮔ",
         "status": "degraded",
         "response_time": 350,
         "last_check": "2026-04-02T12:00:00Z",
-        "details": "ﮒﮒ­ﻛﺛﺟﻝ۷?5%"
+        "details": "ﮒﮒ­ﻛﺛﺟﻝ۷?5%"
       }
     ],
     "metrics": {
@@ -483,7 +483,7 @@ Authorization: Bearer {token}
 }
 ```
 
-#### 3.6.2 ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﮔ۴ﮒﺟ
+#### 3.6.2 ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﮔ۴ﮒﺟ
 ```http
 GET /api/v1/system/logs
 Authorization: Bearer {token}
@@ -497,7 +497,7 @@ Query Parameters:
   - page_size: integer = 100
 ```
 
-#### 3.6.3 ﻟﺓﮒﮒﻟ­۵ﮒﮒﺎ
+#### 3.6.3 ﻟﺓﮒﮒﻟ­۵ﮒﮒﺎ
 ```http
 GET /api/v1/system/alerts
 Authorization: Bearer {token}
@@ -508,34 +508,34 @@ Query Parameters:
   - end_time: string
 ```
 
-#### 3.6.4 ﻝ۰؟ﻟ؟۳ﮒﻟ­۵
+#### 3.6.4 ﻝ۰؟ﻟ؟۳ﮒﻟ­۵
 ```http
 POST /api/v1/system/alerts/{alert_id}/acknowledge
 Authorization: Bearer {token}
 ```
 
-### 3.7 ﮔﻛﭨﭘﮔﻛﺛﮔ۴ﮒ۲
+### 3.7 ﮔﻛﭨﭘﮔﻛﺛﮔ۴ﮒ۲
 
-#### 3.7.1 ﻛﺕﻛﺙ ﻠﻝﺛ؟ﮔﻛﭨﭘ
+#### 3.7.1 ﻛﺕﻛﺙ ﻠﻝﺛ؟ﮔﻛﭨﭘ
 ```http
 POST /api/v1/files/upload
 Authorization: Bearer {token}
 Content-Type: multipart/form-data
 
 Form Data:
-  - file: File (ﻠﻝﺛ؟ﮔﻛﭨﭘ)
+  - file: File (ﻠﻝﺛ؟ﮔﻛﭨﭘ)
   - file_type: string (engine_config, strategy_config, risk_config)
-  - engine_id: string (ﮒ?
-  - strategy_id: string (ﮒ?
+  - engine_id: string (ﮒ?
+  - strategy_id: string (ﮒ?
 ```
 
-#### 3.7.2 ﻛﺕﻟﺛﺛﻠﻝﺛ؟ﮔﻛﭨﭘ
+#### 3.7.2 ﻛﺕﻟﺛﺛﻠﻝﺛ؟ﮔﻛﭨﭘ
 ```http
 GET /api/v1/files/download/{file_id}
 Authorization: Bearer {token}
 ```
 
-#### 3.7.3 ﻟﺓﮒﮔﻛﭨﭘﮒﻟ۰۷
+#### 3.7.3 ﻟﺓﮒﮔﻛﭨﭘﮒﻟ۰۷
 ```http
 GET /api/v1/files
 Authorization: Bearer {token}
@@ -546,36 +546,36 @@ Query Parameters:
   - end_time: string
 ```
 
-## 4. WebSocket API ﮔ۴ﮒ۲
+## 4. WebSocket API ﮔ۴ﮒ۲
 
-### 4.1 ﻟﺟﮔ۴ﮒﭨﭦﻝ،
+### 4.1 ﻟﺟﮔ۴ﮒﭨﭦﻝ،
 
-#### 4.1.1 ﻟﺟﮔ۴URL
+#### 4.1.1 ﻟﺟﮔ۴URL
 ```
 ws://localhost:8000/api/v1/ws?token={jwt_token}
 ```
 
-#### 4.1.2 ﻟﺟﮔ۴ﮒﻟ؟؟
+#### 4.1.2 ﻟﺟﮔ۴ﮒﻟ؟؟
 ```json
-// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﻟﺟﮔ۴ﻟﺁﺓ?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﻟﺟﮔ۴ﻟﺁﺓ?
 {
   "type": "connect",
   "client_id": "web_ui_001",
   "subscriptions": ["trades", "engine_status", "alerts"]
 }
 
-// ﮔﮒ۰ﻝ،ﺁﮒ?
+// ﮔﮒ۰ﻝ،ﺁﮒ?
 {
   "type": "connected",
   "server_time": "2026-04-02T12:00:00Z",
   "client_id": "web_ui_001",
-  "message": "ﻟﺟﮔ۴ﮔﮒ"
+  "message": "ﻟﺟﮔ۴ﮔﮒ"
 }
 ```
 
-### 4.2 ﮒ؟ﮔﭘﻛﭦﻛﭨﭘﮔ?
+### 4.2 ﮒ؟ﮔﭘﻛﭦﻛﭨﭘﮔ?
 
-#### 4.2.1 ﻛﭦ۳ﮔﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
+#### 4.2.1 ﻛﭦ۳ﮔﮔ۶ﻟ۰ﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "trade_executed",
@@ -595,7 +595,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.2 ﮒﺙﮔﻝﭘﮔﮔﺑﮔﺍﻛﭦ?
+#### 4.2.2 ﮒﺙﮔﻝﭘﮔﮔﺑﮔﺍﻛﭦ?
 ```json
 {
   "type": "engine_status_updated",
@@ -612,14 +612,14 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.3 ﮒﻟ­۵ﻛﭦﻛﭨﭘ
+#### 4.2.3 ﮒﻟ­۵ﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "alert_triggered",
   "data": {
     "alert_id": "alert_002",
     "level": "warning",
-    "message": "ﮒﺙﮔ vn.py CPUﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
+    "message": "ﮒﺙﮔ vn.py CPUﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
     "component": "engine_vnpy_001",
     "timestamp": "2026-04-02T12:01:00Z",
     "details": {
@@ -633,7 +633,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.4 ﮔ۶ﻟﺛﮔﮔ ﮔﺑﮔﺍﻛﭦﻛﭨﭘ
+#### 4.2.4 ﮔ۶ﻟﺛﮔﮔ ﮔﺑﮔﺍﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "performance_updated",
@@ -650,47 +650,47 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-### 4.3 ﮒ؟۱ﮔﺓﻝ،ﺁﻟ؟۱ﻠﻝ؟۰?
+### 4.3 ﮒ؟۱ﮔﺓﻝ،ﺁﻟ؟۱ﻠﻝ؟۰?
 
-#### 4.3.1 ﻟ؟۱ﻠﻛﭦﻛﭨﭘ
+#### 4.3.1 ﻟ؟۱ﻠﻛﭦﻛﭨﭘ
 ```json
-// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﻟ؟۱ﻠﻟﺁﺓ?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﻟ؟۱ﻠﻟﺁﺓ?
 {
   "type": "subscribe",
   "subscriptions": ["trades", "engine_status", "alerts"]
 }
 
-// ﮔﮒ۰ﻝ،ﺁﮒ?
+// ﮔﮒ۰ﻝ،ﺁﮒ?
 {
   "type": "subscription_updated",
   "data": {
     "current_subscriptions": ["trades", "engine_status", "alerts"],
-    "message": "ﻟ؟۱ﻠﮔﮒ"
+    "message": "ﻟ؟۱ﻠﮔﮒ"
   }
 }
 ```
 
-#### 4.3.2 ﮒﮔﭘﻟ؟۱ﻠ
+#### 4.3.2 ﮒﮔﭘﻟ؟۱ﻠ
 ```json
-// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﮒﮔﭘﻟ؟۱ﻠﻟﺁﺓ?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒﻠﮒﮔﭘﻟ؟۱ﻠﻟﺁﺓ?
 {
   "type": "unsubscribe",
   "subscriptions": ["alerts"]
 }
 ```
 
-### 4.4 ﮒﺟﻟﺓﺏﻛﺕﻟﺟﮔ۴ﻛﺟ?
+### 4.4 ﮒﺟﻟﺓﺏﻛﺕﻟﺟﮔ۴ﻛﺟ?
 
-#### 4.4.1 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺟ?
+#### 4.4.1 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺟ?
 ```json
-// ﮒ؟۱ﮔﺓﻝ،ﺁﮒ؟ﮔﮒﻠﮒﺟ?
+// ﮒ؟۱ﮔﺓﻝ،ﺁﮒ؟ﮔﮒﻠﮒﺟ?
 {
   "type": "ping",
   "client_id": "web_ui_001",
   "timestamp": "2026-04-02T12:00:00Z"
 }
 
-// ﮔﮒ۰ﻝ،ﺁﮒ?
+// ﮔﮒ۰ﻝ،ﺁﮒ?
 {
   "type": "pong",
   "server_time": "2026-04-02T12:00:00Z",
@@ -698,16 +698,16 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.4.2 ﻟﺟﮔ۴ﻟﭘﮔﭘ
-- ﮒﺟﻟﺓﺏﻠﺑﻠ: 30?
-- ﻟﺟﮔ۴ﻟﭘﮔﭘ: 90?
-- ﻟ۹ﮒ۷ﻠﻟﺟ: ﮔﺁﮔﺅﺙﮔﮒ۳۶ﻠﻟﺁﮔ؛۰??
+#### 4.4.2 ﻟﺟﮔ۴ﻟﭘﮔﭘ
+- ﮒﺟﻟﺓﺏﻠﺑﻠ: 30?
+- ﻟﺟﮔ۴ﻟﭘﮔﭘ: 90?
+- ﻟ۹ﮒ۷ﻠﻟﺟ: ﮔﺁﮔﺅﺙﮔﮒ۳۶ﻠﻟﺁﮔ؛۰??
 
-## 5. ﮔﺍﮔ؟ﮔ۷۰ﮒﮒ؟ﻛﺗ
+## 5. ﮔﺍﮔ؟ﮔ۷۰ﮒﮒ؟ﻛﺗ
 
-### 5.1 ﻠﻝ۷ﮔﺍﮔ؟ﮔ۷۰ﮒ
+### 5.1 ﻠﻝ۷ﮔﺍﮔ؟ﮔ۷۰ﮒ
 
-#### 5.1.1 ﮒﻠ۰ﭖﮒﮒﭦﮔ۷۰ﮒ
+#### 5.1.1 ﮒﻠ۰ﭖﮒﮒﭦﮔ۷۰ﮒ
 ```python
 from pydantic import BaseModel
 from typing import Generic, TypeVar, List, Optional
@@ -715,7 +715,7 @@ from typing import Generic, TypeVar, List, Optional
 T = TypeVar('T')
 
 class PaginatedResponse(BaseModel, Generic[T]):
-    """ﮒﻠ۰ﭖﮒﮒﭦﮔ۷۰ﮒ"""
+    """ﮒﻠ۰ﭖﮒﮒﭦﮔ۷۰ﮒ"""
     items: List[T]
     total: int
     page: int
@@ -725,39 +725,39 @@ class PaginatedResponse(BaseModel, Generic[T]):
     has_prev: bool
 ```
 
-#### 5.1.2 ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ
+#### 5.1.2 ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ
 ```python
 class TimeRange(BaseModel):
-    """ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ"""
-    start: str  # ISO 8601ﮔ ﺙﮒﺙ
-    end: str    # ISO 8601ﮔ ﺙﮒﺙ
+    """ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ"""
+    start: str  # ISO 8601ﮔ ﺙﮒﺙ
+    end: str    # ISO 8601ﮔ ﺙﮒﺙ
     timezone: str = "UTC"
 ```
 
-### 5.2 ﻛﺕﮒ۰ﮔﺍﮔ؟ﮔ۷۰ﮒ
+### 5.2 ﻛﺕﮒ۰ﮔﺍﮔ؟ﮔ۷۰ﮒ
 
-#### 5.2.1 ﮒﺙﮔﻝﭘﮔﮔ۷۰?
+#### 5.2.1 ﮒﺙﮔﻝﭘﮔﮔ۷۰?
 ```python
 class EngineStatus(BaseModel):
-    """ﮒﺙﮔﻝﭘﮔﮔ۷۰?""
+    """ﮒﺙﮔﻝﭘﮔﮔ۷۰?""
     engine_id: str
     engine_type: str
     status: str  # running, stopped, error, starting, stopping
-    cpu_usage: float  # ﻝﺝﮒ?
+    cpu_usage: float  # ﻝﺝﮒ?
     memory_usage: float  # MB
     trade_count_today: int
     error_count: int
-    last_heartbeat: str  # ISO 8601ﮔ ﺙﮒﺙ
+    last_heartbeat: str  # ISO 8601ﮔ ﺙﮒﺙ
     start_time: Optional[str] = None
     uptime_seconds: Optional[int] = None
 ```
 
-#### 5.2.2 ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ
+#### 5.2.2 ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ
 ```python
 class Trade(BaseModel):
-    """ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ"""
+    """ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ"""
     trade_id: str
-    timestamp: str  # ISO 8601ﮔ ﺙﮒﺙ
+    timestamp: str  # ISO 8601ﮔ ﺙﮒﺙ
     symbol: str
     side: str  # buy, sell
     price: float
@@ -788,10 +788,10 @@ class Trade(BaseModel):
         }
 ```
 
-#### 5.2.3 ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ
+#### 5.2.3 ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ
 ```python
 class PerformanceMetrics(BaseModel):
-    """ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ"""
+    """ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ"""
     sharpe_ratio: float
     max_drawdown: float
     win_rate: float
@@ -807,12 +807,12 @@ class PerformanceMetrics(BaseModel):
     beta: Optional[float] = None
 ```
 
-### 5.3 ﻠﻝﺛ؟ﮔﺍﮔ؟ﮔ۷۰ﮒ
+### 5.3 ﻠﻝﺛ؟ﮔﺍﮔ؟ﮔ۷۰ﮒ
 
-#### 5.3.1 ﮒﺙﮔﻠﻝﺛ؟ﮔ۷۰ﮒ
+#### 5.3.1 ﮒﺙﮔﻠﻝﺛ؟ﮔ۷۰ﮒ
 ```python
 class EngineConfig(BaseModel):
-    """ﮒﺙﮔﻠﻝﺛ؟ﮔ۷۰ﮒ"""
+    """ﮒﺙﮔﻠﻝﺛ؟ﮔ۷۰ﮒ"""
     engine_id: str
     engine_type: str
     broker: str
@@ -842,33 +842,33 @@ class EngineConfig(BaseModel):
         }
 ```
 
-## 6. APIﮔﭖﻟﺁﻟ۶ﻟ
+## 6. APIﮔﭖﻟﺁﻟ۶ﻟ
 
-### 6.1 ﮔﭖﻟﺁﻝﺁﮒ۱
-| ﻝﺁﮒ۱ | ﮒﺍﮒ | ﻝ?|
+### 6.1 ﮔﭖﻟﺁﻝﺁﮒ۱
+| ﻝﺁﮒ۱ | ﮒﺍﮒ | ﻝ?|
 |------|------|------|
-| **ﮒﺙﮒﻝﺁ?* | http://localhost:8000 | ﮒﺙﮒﮔﭖ?|
-| **ﮔﭖﻟﺁﻝﺁﮒ۱** | http://test.api.qingfeng.com | ﻠﮔﮔﭖﻟﺁ |
-| **ﻠ۱ﻝﻛﭦ۶ﻝﺁ?* | http://staging.api.qingfeng.com | ﻠ۱ﮒﮒﺕﮔﭖ?|
-| **ﻝﻛﭦ۶ﻝﺁﮒ۱** | https://api.qingfeng.com | ﻝﻛﭦ۶ﻝﺁﮒ۱ |
+| **ﮒﺙﮒﻝﺁ?* | http://localhost:8000 | ﮒﺙﮒﮔﭖ?|
+| **ﮔﭖﻟﺁﻝﺁﮒ۱** | http://test.api.qingfeng.com | ﻠﮔﮔﭖﻟﺁ |
+| **ﻠ۱ﻝﻛﭦ۶ﻝﺁ?* | http://staging.api.qingfeng.com | ﻠ۱ﮒﮒﺕﮔﭖ?|
+| **ﻝﻛﭦ۶ﻝﺁﮒ۱** | https://api.qingfeng.com | ﻝﻛﭦ۶ﻝﺁﮒ۱ |
 
-### 6.2 ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ
-| ﮒﺓ۴ﮒﺓ | ﻝ?| ﻠﻝﺛ؟ |
+### 6.2 ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ
+| ﮒﺓ۴ﮒﺓ | ﻝ?| ﻠﻝﺛ؟ |
 |------|------|------|
-| **pytest** | ﮒﮒﮔﭖﻟﺁﮒﻠﮔﮔﭖ?| `tests/api/` |
-| **Postman** | APIﮔﭖﻟﺁﮒﮔ?| Postman Collection |
-| **Swagger UI** | ﻛﭦ۳ﻛﭦﮒﺙAPIﮔﮔ۰۲ | http://localhost:8000/docs |
-| **Locust** | ﮔ۶ﻟﺛﮔﭖﻟﺁ | `locustfile.py` |
+| **pytest** | ﮒﮒﮔﭖﻟﺁﮒﻠﮔﮔﭖ?| `tests/api/` |
+| **Postman** | APIﮔﭖﻟﺁﮒﮔ?| Postman Collection |
+| **Swagger UI** | ﻛﭦ۳ﻛﭦﮒﺙAPIﮔﮔ۰۲ | http://localhost:8000/docs |
+| **Locust** | ﮔ۶ﻟﺛﮔﭖﻟﺁ | `locustfile.py` |
 
-### 6.3 ﮔﭖﻟﺁﻝ۷ﻛﺝﻝ۳ﭦﻛﺝ
+### 6.3 ﮔﭖﻟﺁﻝ۷ﻛﺝﻝ۳ﭦﻛﺝ
 
-#### 6.3.1 ﻟ؟۳ﻟﺁﮔﭖﻟﺁ
+#### 6.3.1 ﻟ؟۳ﻟﺁﮔﭖﻟﺁ
 ```python
 import pytest
 from fastapi.testclient import TestClient
 
 def test_login_success(client: TestClient):
-    """ﮔﭖﻟﺁﻝﭨﮒﺛﮔﮒ"""
+    """ﮔﭖﻟﺁﻝﭨﮒﺛﮔﮒ"""
     response = client.post("/api/v1/auth/login", json={
         "username": "admin",
         "password": "password123"
@@ -881,7 +881,7 @@ def test_login_success(client: TestClient):
     assert data["data"]["user"]["username"] == "admin"
 
 def test_login_failure(client: TestClient):
-    """ﮔﭖﻟﺁﻝﭨﮒﺛﮒ۳ﺎﻟﺑ۴"""
+    """ﮔﭖﻟﺁﻝﭨﮒﺛﮒ۳ﺎﻟﺑ۴"""
     response = client.post("/api/v1/auth/login", json={
         "username": "admin",
         "password": "wrong_password"
@@ -892,10 +892,10 @@ def test_login_failure(client: TestClient):
     assert data["code"] == 2
 ```
 
-#### 6.3.2 ﻛﭦ۳ﮔﮔ۴ﻟﺁ۱ﮔﭖﻟﺁ
+#### 6.3.2 ﻛﭦ۳ﮔﮔ۴ﻟﺁ۱ﮔﭖﻟﺁ
 ```python
 def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
-    """ﮔﭖﻟﺁﮒﺕ۵ﻟﺟﮔﭨ۳ﮔ۰ﻛﭨﭘﻝﻛﭦ۳ﮔﮔ۴ﻟﺁ۱"""
+    """ﮔﭖﻟﺁﮒﺕ۵ﻟﺟﮔﭨ۳ﮔ۰ﻛﭨﭘﻝﻛﭦ۳ﮔﮔ۴ﻟﺁ۱"""
     response = client.get("/api/v1/trades", params={
         "start_date": "2026-04-01",
         "end_date": "2026-04-02",
@@ -912,20 +912,20 @@ def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
     assert len(data["data"]["trades"]) <= 10
 ```
 
-### 6.4 ﮔ۶ﻟﺛﮔﭖﻟﺁﮔ ﮒ
-| ﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+### 6.4 ﮔ۶ﻟﺛﮔﭖﻟﺁﮔ ﮒ
+| ﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|----------|
-| **APIﮒﮒﭦﮔﭘﻠﺑ** | P95 < 200ms | ﻟﺑﻟﺛﺛﮔﭖﻟﺁ |
-| **ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ** | ?000 QPS | ﮒﮒﮔﭖﻟﺁ |
-| **WebSocketﻟﺟﮔ۴?* | ?00 ﮒﺗﭘﮒﻟﺟﮔ۴ | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | < 1GB | ﮒﮒ­ﮒﮔ |
-| **ﻠﻟﺁﺁ?* | < 0.1% | ﻝ۷ﺏﮒ؟ﮔ۶ﮔﭖ?|
+| **APIﮒﮒﭦﮔﭘﻠﺑ** | P95 < 200ms | ﻟﺑﻟﺛﺛﮔﭖﻟﺁ |
+| **ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ** | ?000 QPS | ﮒﮒﮔﭖﻟﺁ |
+| **WebSocketﻟﺟﮔ۴?* | ?00 ﮒﺗﭘﮒﻟﺟﮔ۴ | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
+| **ﮒﮒ­ﻛﺛﺟﻝ۷** | < 1GB | ﮒﮒ­ﮒﮔ |
+| **ﻠﻟﺁﺁ?* | < 0.1% | ﻝ۷ﺏﮒ؟ﮔ۶ﮔﭖ?|
 
-## 7. ﻠ۷ﻝﺛﺎﻛﺕﻟﺟ?
+## 7. ﻠ۷ﻝﺛﺎﻛﺕﻟﺟ?
 
-### 7.1 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
+### 7.1 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
-#### 7.1.1 Dockerﻠ۷ﻝﺛﺎ
+#### 7.1.1 Dockerﻠ۷ﻝﺛﺎ
 ```dockerfile
 # Dockerfile
 FROM python:3.11-slim
@@ -940,9 +940,9 @@ COPY . .
 CMD ["uvicorn", "web_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-#### 7.1.2 ﻝﺁﮒ۱ﮒﻠﻠﻝﺛ؟
+#### 7.1.2 ﻝﺁﮒ۱ﮒﻠﻠﻝﺛ؟
 ```bash
-# .env ﮔﻛﭨﭘ
+# .env ﮔﻛﭨﭘ
 API_HOST=0.0.0.0
 API_PORT=8000
 DATABASE_URL=postgresql://user:password@db:5432/qingfeng
@@ -951,21 +951,21 @@ JWT_SECRET_KEY=your-secret-key
 CORS_ORIGINS=["http://localhost:3000"]
 ```
 
-### 7.2 ﻝﮔ۶ﻛﺕﮒ?
+### 7.2 ﻝﮔ۶ﻛﺕﮒ?
 
-#### 7.2.1 ﻝﮔ۶ﮔﮔ 
-| ﮔﮔ  | ﻠﻠﮔﺗﮒﺙ | ﮒﻟ­۵ﻠ?|
+#### 7.2.1 ﻝﮔ۶ﮔﮔ 
+| ﮔﮔ  | ﻠﻠﮔﺗﮒﺙ | ﮒﻟ­۵ﻠ?|
 |------|----------|----------|
-| **APIﻟﺁﺓﮔﺎ?* | Prometheus | < 10 QPS ?> 1000 QPS |
-| **APIﻠﻟﺁﺁ?* | Prometheus | > 1% |
-| **APIﮒﮒﭦﮔﭘﻠﺑ** | Prometheus | P95 > 500ms |
-| **WebSocketﻟﺟﮔ۴?* | Prometheus | > 1000 |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷?* | cAdvisor | > 80% |
-| **CPUﻛﺛﺟﻝ۷?* | cAdvisor | > 70% |
+| **APIﻟﺁﺓﮔﺎ?* | Prometheus | < 10 QPS ?> 1000 QPS |
+| **APIﻠﻟﺁﺁ?* | Prometheus | > 1% |
+| **APIﮒﮒﭦﮔﭘﻠﺑ** | Prometheus | P95 > 500ms |
+| **WebSocketﻟﺟﮔ۴?* | Prometheus | > 1000 |
+| **ﮒﮒ­ﻛﺛﺟﻝ۷?* | cAdvisor | > 80% |
+| **CPUﻛﺛﺟﻝ۷?* | cAdvisor | > 70% |
 
-#### 7.2.2 ﮔ۴ﮒﺟﻠﻝﺛ؟
+#### 7.2.2 ﮔ۴ﮒﺟﻠﻝﺛ؟
 ```python
-# ﮔ۴ﮒﺟﻠﻝﺛ؟
+# ﮔ۴ﮒﺟﻠﻝﺛ؟
 import logging
 from loguru import logger
 
@@ -974,17 +974,17 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 
-# ﻝﭨﮔﮒﮔ۴?
+# ﻝﭨﮔﮒﮔ۴?
 logger.add("logs/api.log", 
            rotation="100 MB", 
            retention="30 days",
            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
-           serialize=True)  # ﻟﺝﮒﭦJSONﮔ ﺙﮒﺙ
+           serialize=True)  # ﻟﺝﮒﭦJSONﮔ ﺙﮒﺙ
 ```
 
-### 7.3 ﮒ؟ﮒ۷ﻠﻝﺛ؟
+### 7.3 ﮒ؟ﮒ۷ﻠﻝﺛ؟
 
-#### 7.3.1 CORSﻠﻝﺛ؟
+#### 7.3.1 CORSﻠﻝﺛ؟
 ```python
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -998,7 +998,7 @@ app.add_middleware(
 )
 ```
 
-#### 7.3.2 ﻠﻝﻠﮒﭘ
+#### 7.3.2 ﻠﻝﻠﮒﭘ
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -1007,8 +1007,8 @@ limiter = Limiter(key_func=get_remote_address)
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    """ﻠﻝﻠﮒﭘﻛﺕ­ﻠﺑ?""
-    # ﻛﺕﮒﮔ۴ﮒ۲ﻛﺕﮒﻠﮒﭘ
+    """ﻠﻝﻠﮒﭘﻛﺕ­ﻠﺑ?""
+    # ﻛﺕﮒﮔ۴ﮒ۲ﻛﺕﮒﻠﮒﭘ
     if request.url.path.startswith("/api/v1/auth"):
         await limiter.check(request, "10/minute")
     elif request.url.path.startswith("/api/v1/trades"):
@@ -1020,31 +1020,31 @@ async def rate_limit_middleware(request: Request, call_next):
     return response
 ```
 
-## 8. ﻝﮔ؛ﮒﻝﭦ۶ﻛﺕﮒﺙﮒ؟?
+## 8. ﻝﮔ؛ﮒﻝﭦ۶ﻛﺕﮒﺙﮒ؟?
 
-### 8.1 ﻝﮔ؛ﮒﻝﭦ۶ﻝ­ﻝ۴
-| ﮒﻝﭦ۶ﻝﺎﭨﮒ | ﮔﻟﺟﺍ | ﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?|
+### 8.1 ﻝﮔ؛ﮒﻝﭦ۶ﻝ­ﻝ۴
+| ﮒﻝﭦ۶ﻝﺎﭨﮒ | ﮔﻟﺟﺍ | ﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?|
 |----------|------|------------|
-| **ﻟ۰۴ﻛﺕﻝﮔ؛** (x.y.z ?x.y.z+1) | Bugﻛﺟ؟ﮒ۳ﻙﮒ؟ﮒ۷ﮔﺑ?| ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ |
-| **ﮔ؛۰ﻟ۵ﻝﮔ؛** (x.y.z ?x.y+1.0) | ﮔﺍﮒ۱ﮒﻟﺛﻙAPIﮔ۸ﮒﺎ | ﮒﮒﮒﺙﮒ؟ﺗ |
-| **ﻛﺕﭨﻟ۵ﻝﮔ؛** (x.y.z ?x+1.0.0) | ﻠﮒ۳۶ﮒﮔﺑﻙAPIﻛﺕﮒﺙ?| ﻠﻟ۵ﻟﺟ?|
+| **ﻟ۰۴ﻛﺕﻝﮔ؛** (x.y.z ?x.y.z+1) | Bugﻛﺟ؟ﮒ۳ﻙﮒ؟ﮒ۷ﮔﺑ?| ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ |
+| **ﮔ؛۰ﻟ۵ﻝﮔ؛** (x.y.z ?x.y+1.0) | ﮔﺍﮒ۱ﮒﻟﺛﻙAPIﮔ۸ﮒﺎ | ﮒﮒﮒﺙﮒ؟ﺗ |
+| **ﻛﺕﭨﻟ۵ﻝﮔ؛** (x.y.z ?x+1.0.0) | ﻠﮒ۳۶ﮒﮔﺑﻙAPIﻛﺕﮒﺙ?| ﻠﻟ۵ﻟﺟ?|
 
-### 8.2 APIﮒﭦﮒﺙﻝ­ﻝ۴
-1. **ﻠ۱ﮒ?*: ﮒ۷ﮔﮔ۰۲ﻛﺕ­ﮔ ﻟ؟ﺍ?ﮒﺓﺎﮒﭦ?ﺅﺙﮔ?ﻛﺕ۹ﮔ
-2. **ﻟ­۵ﮒ?*: ﻟﺟﮒﻟ­۵ﮒﮒ۳ﺑ`X-API-Deprecated: true`ﺅﺙﮔ?ﻛﺕ۹ﮔ
-3. **ﻝ۶ﭨﻠ۳?*: ﮒ؟ﮒ۷ﻝ۶ﭨﻠ۳ﮒﭦﮒﺙAPIﺅﺙﻟﺟ?10ﻝﭘﮔﻝ 
+### 8.2 APIﮒﭦﮒﺙﻝ­ﻝ۴
+1. **ﻠ۱ﮒ?*: ﮒ۷ﮔﮔ۰۲ﻛﺕ­ﮔ ﻟ؟ﺍ?ﮒﺓﺎﮒﭦ?ﺅﺙﮔ?ﻛﺕ۹ﮔ
+2. **ﻟ­۵ﮒ?*: ﻟﺟﮒﻟ­۵ﮒﮒ۳ﺑ`X-API-Deprecated: true`ﺅﺙﮔ?ﻛﺕ۹ﮔ
+3. **ﻝ۶ﭨﻠ۳?*: ﮒ؟ﮒ۷ﻝ۶ﭨﻠ۳ﮒﭦﮒﺙAPIﺅﺙﻟﺟ?10ﻝﭘﮔﻝ 
 
-### 8.3 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?
-| ﮒ؟۱ﮔﺓﻝ،ﺁﻝﺎﭨ?| ﮔﻛﺛAPIﻝﮔ؛ | ﮒﻝﭦ۶ﻟ۵ﮔﺎ |
+### 8.3 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?
+| ﮒ؟۱ﮔﺓﻝ،ﺁﻝﺎﭨ?| ﮔﻛﺛAPIﻝﮔ؛ | ﮒﻝﭦ۶ﻟ۵ﮔﺎ |
 |------------|-------------|----------|
-| **Webﻝﻠ۱** | v1.0 | ﻟ۹ﮒ۷ﮔ۲ﮔﭖAPIﻝﮔ؛ﺅﺙﮔﺁﮔﻠ?|
-| **ﻝ۶ﭨﮒ۷ﻝ،ﺁApp** | v1.0 | ﮒﭦﻝ۷ﮒﮒﭦﮒﺙﭦﮒﭘﮔﺑﮔﺍ |
-| **ﻝ؛؛ﻛﺕﮔﺗﻠ?* | v1.0 | ﮔﮔ۰۲ﻠﻝ۴ﺅﺙﮔﻛﺝﻟﺟﻝ۶ﭨﮔ?|
+| **Webﻝﻠ۱** | v1.0 | ﻟ۹ﮒ۷ﮔ۲ﮔﭖAPIﻝﮔ؛ﺅﺙﮔﺁﮔﻠ?|
+| **ﻝ۶ﭨﮒ۷ﻝ،ﺁApp** | v1.0 | ﮒﭦﻝ۷ﮒﮒﭦﮒﺙﭦﮒﭘﮔﺑﮔﺍ |
+| **ﻝ؛؛ﻛﺕﮔﺗﻠ?* | v1.0 | ﮔﮔ۰۲ﻠﻝ۴ﺅﺙﮔﻛﺝﻟﺟﻝ۶ﭨﮔ?|
 
 ---
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
-**ﮔﮒﮔﺑ?*: 2026-04-02  
-**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ? 
-**ﻝﺑ۱ﮒﺙ**: `DESIGN_005`  
-**ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
+**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ? 
+**ﻝﺑ۱ﮒﺙ**: `DESIGN_005`  
+**ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: POSITION_MANAGER_001
 review_id: TR-2026-04-02-POS-MGR
 version: 1.0.0

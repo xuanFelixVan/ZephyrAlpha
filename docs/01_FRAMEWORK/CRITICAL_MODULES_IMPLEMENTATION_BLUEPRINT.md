@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: CRITICALMODULESIMPLEMENTATIO_001
 version: 1.0.0
 status: Active
@@ -22,10 +22,6 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: é¦å¸­æ¶æ?standard_type: å
-³é®æ¨¡åå®æ½èå¾
-applicable_scope: Layer 0æ°æ®æºå±å
-³é®æ¬ ç¼ºæ¨¡å | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater", "Renaissance Technologies", "Two Sigma"]
 related_documents:
@@ -36,8 +32,6 @@ implementation_status: 立即启动
 layer: Layer 2 (Alpha因子层)
 ---
 
-# æ°æ®æºå±å
-³é®æ¨¡åå®æ½èå¾
 > **核心职责**: Critical Modules Implementation蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Critical Modules Implementation蓝图设计相关内容
@@ -45,63 +39,42 @@ layer: Layer 2 (Alpha因子层)
 
 
 > æ¸
-é£éåç³»ç» v5.3 - å
-³é®æ¬ ç¼ºæ¨¡åè¡¥å
 
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **ç®æ **: è¡¥å
 
-å®æ¶é£æ§æ°æ®åå
-¨çå¸åºæ°æ®ï¼è¾¾å°ä¸ä¸æºæ95%è½åæ°´å¹³
 > **实施周期**: 3-6周（P0+P1?> **预期提升**: 覆盖度从75%提升?5%
 >
 > ---
 >
-> **ð ææ¡£å
-³ç³»è¯´æ**?> - [`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`](./DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md) = **ä¸ä¸æºæçº§å®æ´è?*ï¼éç¨äºå¤§è§æ¨¡å¢é
-> - [`PERSONAL_DEVELOPMENT_BLUEPRINT.md`](./PERSONAL_DEVELOPMENT_BLUEPRINT.md) = **ä¸ªäººå¼åçç®åæ¹?*ï¼éç¨äºä¸ªäººå¼å?> - æ¬ææ¡£ï¼`CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`? **å
-³é®æ¬ ç¼ºæ¨¡åè¡¥å
 
 **，立即行动项
 >
 > **选择指南**?> - 如果你是大规模团??参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
-> - å¦æä½ æ¯ä¸ªäººå¼å??åèPERSONAL_DEVELOPMENT_BLUEPRINT.md
-> - å¦æä½ éè¦è¡¥å
 
 å
-³é®æ¨¡??åèæ¬ææ¡£ï¼ç«å³è¡å¨ï¼
 
 
 ## 📋 一、实施概?
-### 1.1 æ¨¡åä¼å
-?
-| ä¼å
-?| æ¨¡ååç§° | å®æ½æ¶é´ | å½±åç¨åº¦ | æåè¦ç?| ç?|
+?
+| ä¼å
 |--------|---------|---------|---------|-----------|------|
 | **P0** | 实时风控数据模块 | 1-2?| 🔴 ?| +10% | 🚀 立即启动 |
 | **P1** | å
-¨çå¸åºæ°æ®æ¨¡å | 2-4?| ð´ ?| +10% | ?å¾
 启?|
-| **P2** | PBçº§æ°æ®æ¹æ¶æ | æéå®æ½ | ð¡ ?| +3% | ?å¾
 启?|
-| **P2** | åå¸å¼è®¡ç®é?| æéå®æ½ | ð¡ ?| +2% | ?å¾
 启?|
-| **P2** | å¦ç±»æ°æ®æ©å± | æéå®æ½ | ð¡ ?| +5% | ?å¾
 启?|
 
 ### 1.2 实施路线?
 ```
 Week 1-2: P0?- 实时风控数据模块
 ├── Day 1-3: VaR计算引擎
-âââ Day 4-5: å¸è
-å­æ¯è®¡ç®å¼æ
 ├── Day 6-7: 压力测试引擎
 ├── Day 8-10: 风险预警系统
 └── Day 11-14: 集成测试和文?
 Week 3-6: P1?- å
-¨çå¸åºæ°æ®æ¨¡å
 ├── Week 3: 港股市场数据
 ├── Week 4: 美股市场数据
 ├── Week 5: 债券和商品市场数?└── Week 6: 外汇市场和集成测?
@@ -115,9 +88,8 @@ Week 3-6: P1?- å
 
 **模块名称**: `realtime_risk_data.py`
 
-**ä¼å
-?*: ð´ P0 - æé«ä¼å
-çº§
+**ä¼å
+级
 
 **实施时间**: 1-2周（Week 1-2?
 **目标**: 实现实时风险监控和预警，达到专业机构风险管理能力
@@ -128,24 +100,13 @@ Week 3-6: P1?- å
 
 | 功能 | 描述 | 专业机构对标 |
 |------|------|-------------|
-| **å®æ¶VaRè®¡ç®** | åå²æ¨¡æ?èç¹å¡æ´æ³è®¡ç®VaR | æ¡¥æ°´ãæèºå¤å
-´æ ?|
-| **å¸è
-å­æ¯è®¡ç®** | Delta/Gamma/Vega/Theta/Rhoè®¡ç® | æèºå¤å
-´ææé£æ§ |
-| **ååæµè¯** | å¤ç§ååæ
+´æ ?|
+| **å¸è
 景下的损失评估 | 桥水压力测试体系 |
 | **风险预警** | 多级预警机制（P0/P1/P2/P3?| Two Sigma风控系统 |
 
 #### 2.2.2 技术架?
 ```
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??             å®æ¶é£æ§æ°æ®å¼ææ¶æ                            ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                            ?? æ°æ®è¾å
-¥?                                                 ?? âââ æä»æ°æ®ï¼å®æ¶æ´æ°ï¼                                   ?? âââ å¸åºæ°æ®ï¼å®æ¶è¡æ
-ï¼                                   ?? âââ åå²æ°æ®ï¼åå²æ¶çç?                                ?? âââ æææ°æ®ï¼ææåçº¦ä¿¡æ¯ï¼                               ??                                                            ?? é£é©è®¡ç®?                                                 ?? âââ VaRè®¡ç®å¼æï¼åå²æ¨¡ææ³/èç¹å¡æ´æ³ï¼                   ?? âââ å¸è
-å­æ¯è®¡ç®å¼æï¼Black-Scholesæ¨¡å?                 ?? âââ ååæµè¯å¼æï¼å¤ç§ååæ
-æ¯ï¼                           ?? âââ ç¸å
-³æ§ç©éµè®¡ç®ï¼å¨æç¸å
-³æ§ï¼                           ??                                                            ?? é£é©çæ§?                                                 ?? âââ å®æ¶é£é©ææ çæ§                                       ?? âââ é£é©éé¢æ£?                                          ?? âââ é£é©é¢è­¦çæ                                           ?? âââ é£é©æ¥åçæ                                           ??                                                            ?? æ°æ®è¾åº?                                                 ?? âââ é£é©ææ APIï¼RESTfulæ¥å£?                            ?? âââ é£é©é¢è­¦æ¨éï¼WebSocket?                             ?? âââ é£é©æ¥åï¼PDF/HTML?                                  ?? âââ é£é©æ°æ®å­å¨ï¼Redis + ClickHouse?                    ??                                                            ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
 ### 2.3 详细设计
 
@@ -190,7 +151,6 @@ class VaRCalculator:
         """历史模拟法计算VaR
         
         Args:
-            returns: åå²æ¶ççåº?            portfolio_value: æèµç»åä»?            
         Returns:
             float: VaR值（绝对金额?        """
         # 计算历史收益率分位数
@@ -200,8 +160,6 @@ class VaRCalculator:
         # 计算VaR（绝对金额）
         var = abs(var_return * portfolio_value)
         
-        logger.info(f"åå²æ¨¡ææ³VaR: {var:.2f}å
-ï¼ç½®ä¿¡æ°´å¹³{self.confidence_level*100}%?)
         return var
     
     def monte_carlo_var(self, 
@@ -212,7 +170,6 @@ class VaRCalculator:
         """蒙特卡洛法计算VaR
         
         Args:
-            returns: åå²æ¶ççåº?            portfolio_value: æèµç»åä»?            num_simulations: æ¨¡ææ¬¡æ°
             time_horizon: 时间跨度（天?            
         Returns:
             float: VaR值（绝对金额?        """
@@ -228,8 +185,6 @@ class VaRCalculator:
         # 计算VaR（绝对金额）
         var = abs(var_return * portfolio_value * np.sqrt(time_horizon))
         
-        logger.info(f"èç¹å¡æ´VaR: {var:.2f}å
-ï¼ç½®ä¿¡æ°´å¹³{self.confidence_level*100}%ï¼æ¨¡æ{num_simulations}æ¬¡ï¼")
         return var
     
     def parametric_var(self, 
@@ -239,7 +194,6 @@ class VaRCalculator:
         """参数法计算VaR（假设正态分布）
         
         Args:
-            returns: åå²æ¶ççåº?            portfolio_value: æèµç»åä»?            time_horizon: æ¶é´è·¨åº¦ï¼å¤©?            
         Returns:
             float: VaR值（绝对金额?        """
         # 计算收益率均值和标准?        mu = np.mean(returns)
@@ -252,14 +206,11 @@ class VaRCalculator:
         var_return = mu + z_score * sigma
         var = abs(var_return * portfolio_value * np.sqrt(time_horizon))
         
-        logger.info(f"åæ°æ³VaR: {var:.2f}å
-ï¼ç½®ä¿¡æ°´å¹³{self.confidence_level*100}%?)
         return var
     
     def cvar(self, returns: np.ndarray, portfolio_value: float) -> float:
         """计算CVaR（条件风险价值，Expected Shortfall?        
         Args:
-            returns: åå²æ¶ççåº?            portfolio_value: æèµç»åä»?            
         Returns:
             float: CVaR值（绝对金额?        """
         # 计算VaR分位?        var_percentile = (1 - self.confidence_level) * 100
@@ -271,7 +222,6 @@ class VaRCalculator:
         cvar = abs(cvar_return * portfolio_value)
         
         logger.info(f"CVaR: {cvar:.2f}å
-ï¼ç½®ä¿¡æ°´å¹³{self.confidence_level*100}%?)
         return cvar
     
     def portfolio_var(self, 
@@ -281,8 +231,6 @@ class VaRCalculator:
         """计算投资组合VaR
         
         Args:
-            positions: æä»å­å
-¸ï¼{è¡ç¥¨ä»£ç : æä»éé¢}
             returns_data: 收益率数据DataFrame
             method: 计算方法?historical', 'monte_carlo', 'parametric'?            
         Returns:
@@ -317,8 +265,7 @@ if __name__ == "__main__":
     # 模拟历史收益率数?    np.random.seed(42)
     returns = np.random.normal(0.001, 0.02, 1000)  # 日均收益0.1%，标准差2%
     
-    # æèµç»åä»?    portfolio_value = 1000000  # 100ä¸å
-
+
     
     # 计算VaR
     historical_var = var_calculator.historical_var(returns, portfolio_value)
@@ -326,7 +273,6 @@ if __name__ == "__main__":
     parametric_var = var_calculator.parametric_var(returns, portfolio_value)
     cvar = var_calculator.cvar(returns, portfolio_value)
     
-    print(f"\næèµç»åä»? {portfolio_value:,.0f}?)
     print(f"历史模拟法VaR: {historical_var:,.2f}?)
     print(f"蒙特卡洛VaR: {monte_carlo_var:,.2f}?)
     print(f"参数法VaR: {parametric_var:,.2f}?)
@@ -340,8 +286,7 @@ if __name__ == "__main__":
 
 ---
 
-#### 2.3.2 å¸è
-å­æ¯è®¡ç®å¼æ
+#### 2.3.2 å¸è
 
 **Day 4-5实施计划**
 
@@ -360,8 +305,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class GreeksCalculator:
-    """å¸è
-å­æ¯è®¡ç®å¼æ
+    """å¸è
     
     功能?        - Delta计算
         - Gamma计算
@@ -371,8 +315,6 @@ class GreeksCalculator:
     """
     
     def __init__(self):
-        """åå§åå¸è
-å­æ¯è®¡ç®å¨"""
         pass
     
     def black_scholes_price(self, 
@@ -524,15 +466,14 @@ class GreeksCalculator:
                             r: float, 
                             sigma: float, 
                             option_type: str = 'call') -> Dict[str, float]:
-        """è®¡ç®ææå¸è
-å­?        
+å­?        
         Args:
             S: 标的资产价格
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
             
         Returns:
-            Dict: ææå¸è
-å­æ¯?        """
+            Dict: ææå¸è
+å­æ¯?        """
         greeks = {
             'delta': self.delta(S, K, T, r, sigma, option_type),
             'gamma': self.gamma(S, K, T, r, sigma),
@@ -546,16 +487,13 @@ class GreeksCalculator:
 
 # 使用示例
 if __name__ == "__main__":
-    # åå»ºå¸è
-å­æ¯è®¡ç®?    greeks_calculator = GreeksCalculator()
     
     # 期权参数
     S = 100  # 标的资产价格
     K = 100  # 行权?    T = 0.25  # 到期时间?个月?    r = 0.05  # 无风险利?%
     sigma = 0.2  # 波动?0%
     
-    # è®¡ç®ææå¸è
-å­?    greeks = greeks_calculator.calculate_all_greeks(S, K, T, r, sigma, 'call')
+å­?    greeks = greeks_calculator.calculate_all_greeks(S, K, T, r, sigma, 'call')
     
     print(f"\n期权参数:")
     print(f"标的资产价格: {S}")
@@ -563,18 +501,16 @@ if __name__ == "__main__":
     print(f"到期时间: {T}?)
     print(f"无风险利? {r*100}%")
     print(f"波动? {sigma*100}%")
-    print(f"\nå¸è
-å­æ¯:")
+    print(f"\nå¸è
+å­æ¯:")
     for greek, value in greeks.items():
         print(f"{greek.upper()}: {value:.4f}")
 ```
 
 **验收标准**:
-- ?å¸è
-å­æ¯è®¡ç®è¯¯å·® < 1%ï¼ä¸ä¸ä¸è½¯ä»¶å¯¹æ¯?- ?è®¡ç®éåº¦ < 100æ¯«ç§
+- ?å¸è
 - ?支持看涨/看跌期权
-- ?æ¯æææäºä¸ªå¸è
-å­?
+å­?
 ---
 
 #### 2.3.3 压力测试引擎
@@ -582,10 +518,7 @@ if __name__ == "__main__":
 **Day 6-7实施计划**
 
 **功能说明**:
-- **åå²æ
-æ¯ååæµè¯**: åºäºåå²æç«¯äºä»¶ï¼å¦2008éèå±æº?- **åè®¾æ
-æ¯ååæµè¯**: åºäºèªå®ä¹ååæ
-?- **æææ§å?*: åå ç´ æææ§å?- **æ
+- **åå²æ
 景分析报告**: 生成压力测试报告
 
 **代码实现**:
@@ -602,17 +535,14 @@ logger = logging.getLogger(__name__)
 class StressTestEngine:
     """压力测试引擎
     
-    åè½?        - åå²æ
 景压力测试
-        - åè®¾æ
+        - åè®¾æ
 景压力测试
-        - æææ§å?        - æ
 景分析报告
     """
     
     def __init__(self):
         """初始化压力测试引?""
-        # é¢å®ä¹åå²æ
 ?        self.historical_scenarios = {
             '2008_financial_crisis': {
                 'description': '2008年金融危?,
@@ -636,19 +566,19 @@ class StressTestEngine:
     def historical_stress_test(self, 
                               portfolio: Dict[str, float],
                               scenario_name: str) -> Dict[str, Any]:
-        """åå²æ
+        """åå²æ
 景压力测试
         
         Args:
             portfolio: 投资组合，{资产类型: 金额}
-            scenario_name: æ
+            scenario_name: æ
 景名称
             
         Returns:
             Dict: 压力测试结果
         """
         if scenario_name not in self.historical_scenarios:
-            raise ValueError(f"æªç¥æ
+            raise ValueError(f"æªç¥æ
 景: {scenario_name}")
         
         scenario = self.historical_scenarios[scenario_name]
@@ -682,12 +612,11 @@ class StressTestEngine:
     def hypothetical_stress_test(self, 
                                 portfolio: Dict[str, float],
                                 custom_scenario: Dict[str, float]) -> Dict[str, Any]:
-        """åè®¾æ
+        """åè®¾æ
 景压力测试
         
         Args:
             portfolio: 投资组合
-            custom_scenario: èªå®ä¹æ
 景，{资产类型: 收益率}
             
         Returns:
@@ -734,7 +663,6 @@ class StressTestEngine:
         
         for factor in risk_factors:
             for shock in shocks:
-                # è®¡ç®å²å»åçæèµç»åä»?                shocked_portfolio = {}
                 for asset_type, value in portfolio.items():
                     if factor.lower() in asset_type.lower():
                         shocked_portfolio[asset_type] = value * (1 + shock)
@@ -757,13 +685,12 @@ class StressTestEngine:
         return df
     
     def run_all_historical_scenarios(self, portfolio: Dict[str, float]) -> Dict[str, Dict]:
-        """è¿è¡ææåå²æ
 景压力测?        
         Args:
             portfolio: 投资组合
             
         Returns:
-            Dict: æææ
+            Dict: æææ
 景的测试结果
         """
         results = {}
@@ -771,8 +698,6 @@ class StressTestEngine:
         for scenario_name in self.historical_scenarios.keys():
             results[scenario_name] = self.historical_stress_test(portfolio, scenario_name)
         
-        logger.info(f"å®æææåå²æ
-æ¯ååæµ? {len(results)}ä¸ªæ
 ?)
         return results
     
@@ -792,9 +717,8 @@ class StressTestEngine:
         report.append("")
         
         for scenario_name, result in results.items():
-            report.append(f"æ
+            report.append(f"æ
 景: {result.get('description', scenario_name)}")
-            report.append(f"æèµç»åä»? {result['portfolio_value']:,.2f}?)
             report.append(f"总损? {result['total_loss']:,.2f}?)
             report.append(f"损失比例: {result['loss_percentage']*100:.2f}%")
             report.append("")
@@ -816,7 +740,6 @@ if __name__ == "__main__":
     portfolio = {
         'stock_a': 500000,   # 股票A: 50?        'stock_b': 300000,   # 股票B: 30?        'bond': 200000       # 债券: 20?    }
     
-    # è¿è¡ææåå²æ
 景压力测?    results = stress_engine.run_all_historical_scenarios(portfolio)
     
     # 生成报告
@@ -834,8 +757,6 @@ if __name__ == "__main__":
 ```
 
 **验收标准**:
-- ?æ¯æ3ç§ä»¥ä¸åå²æ
-?- ?æ¯æèªå®ä¹æ
 ?- ?支持敏感性分?- ?生成压力测试报告
 
 ---
@@ -845,11 +766,7 @@ if __name__ == "__main__":
 **Day 8-10实施计划**
 
 **功能说明**:
-- **å®æ¶é£é©çæ§**: çæ§VaRãå¸è
-å­æ¯ç­é£é©ææ 
-- **é£é©éé¢æ£?*: æ£æ¥æ¯å¦è¶
 过预设风险限?- **多级预警**: P0/P1/P2/P3四级预警机制
-- **é¢è­¦æ?*: WebSocketå®æ¶æ¨éé¢è­¦ä¿¡?
 **代码实现**:
 ```python
 # src/data/risk_alert_system.py
@@ -872,15 +789,12 @@ class RiskAlertSystem:
     
     功能?        - 实时风险监控
         - 风险限额检?        - 多级预警
-        - é¢è­¦æ?    """
     
     def __init__(self, risk_limits: Dict[str, float]):
         """初始化风险预警系?        
         Args:
-            risk_limits: é£é©éé¢å­å
-¸ï¼å¦?                {
-                    'var_limit': 50000,  # VaRéé¢5ä¸å
-
+¸ï¼å¦?                {
+
                     'delta_limit': 1000,  # Delta限额
                     'gamma_limit': 100,   # Gamma限额
                     'vega_limit': 500     # Vega限额
@@ -902,12 +816,9 @@ class RiskAlertSystem:
         if utilization >= 1.0:
             level = RiskLevel.P0
             message = f"VaRè¶
-éï¼å½åVaR: {current_var:,.2f}å
-ï¼éé¢: {var_limit:,.2f}?
+ï¼éé¢: {var_limit:,.2f}?
         elif utilization >= 0.9:
             level = RiskLevel.P1
-            message = f"VaRæ¥è¿éé¢ï¼å½åVaR: {current_var:,.2f}å
-ï¼å©ç¨? {utilization*100:.1f}%"
         elif utilization >= 0.7:
             level = RiskLevel.P2
             message = f"VaR利用率较? {utilization*100:.1f}%"
@@ -929,11 +840,9 @@ class RiskAlertSystem:
         return result
     
     def check_greeks_limit(self, greeks: Dict[str, float]) -> List[Dict[str, Any]]:
-        """æ£æ¥å¸è
-å­æ¯é?        
+å­æ¯é?        
         Args:
-            greeks: å¸è
-å­æ¯å­å
+            greeks: å¸è
 ¸
             
         Returns:
@@ -948,7 +857,6 @@ class RiskAlertSystem:
             if utilization >= 1.0:
                 level = RiskLevel.P0
                 message = f"{greek.upper()}è¶
-éï¼å½å? {value:.2f}ï¼é? {limit:.2f}"
             elif utilization >= 0.9:
                 level = RiskLevel.P1
                 message = f"{greek.upper()}接近限额！利用率: {utilization*100:.1f}%"
@@ -1025,12 +933,10 @@ class RiskAlertSystem:
             str: 预警消息
         """
         if level == RiskLevel.P0:
-            return f"ãé»æ­çº§é£é©ãé£é©ææ è¶
 限，请立即处理！"
         elif level == RiskLevel.P1:
             return f"【高风险】风险指标接近限额，请尽快处理！"
         elif level == RiskLevel.P2:
-            return f"ãä¸­é£é©ãé£é©ææ å©ç¨çè¾é«ï¼è¯·å
 ³æ³¨?
         else:
             return f"【低风险】风险指标正?
@@ -1049,7 +955,6 @@ class RiskAlertSystem:
         """æ¸
 除所有预?""
         self.alerts = []
-        logger.info("ææé¢è­¦å·²æ¸
 除")
 
 
@@ -1071,15 +976,13 @@ if __name__ == "__main__":
     print("VaR检查结?")
     print(json.dumps(var_result, indent=2, ensure_ascii=False))
     
-    # æ£æ¥å¸è
-å­æ¯é?    greeks = {
+å­æ¯é?    greeks = {
         'delta': 850,
         'gamma': 95,
         'vega': 450
     }
     greeks_results = alert_system.check_greeks_limit(greeks)
-    print("\nå¸è
-å­æ¯æ£æ¥ç»?")
+    print("\nå¸è
     for result in greeks_results:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     
@@ -1096,15 +999,13 @@ if __name__ == "__main__":
 
 **验收标准**:
 - ?支持P0/P1/P2/P3四级预警
-- ?æ¯æVaRåå¸è
-å­æ¯éé¢æ£?- ?é¢è­¦çæåæ¨?- ?é¢è­¦åå²è®°å½
 
 ---
 
 ### 2.4 集成测试和文档（Day 11-14?
 **Day 11-12: 集成测试**
-- ç¼ååå
-æµè¯
+- ç¼ååå
+æµè¯
 - 编写集成测试
 - 性能测试
 - 压力测试
@@ -1119,24 +1020,18 @@ if __name__ == "__main__":
 ```
 src/data/
 ├── realtime_risk_data.py      # 实时风控数据主模?├── var_calculator.py          # VaR计算引擎
-âââ greeks_calculator.py       # å¸è
-å­æ¯è®¡ç®å¼æ
 ├── stress_test_engine.py      # 压力测试引擎
 └── risk_alert_system.py       # 风险预警系统
 
 tests/data/
 ├── test_var_calculator.py     # VaR计算测试
-âââ test_greeks_calculator.py  # å¸è
-å­æ¯è®¡ç®æµè¯
 ├── test_stress_test.py        # 压力测试
 └── test_risk_alert.py         # 风险预警测试
 
 config/
 └── risk_data/
-    âââ config.yaml            # é
-ç½®æä»¶
-    âââ risk_limits.yaml       # é£é©éé¢é
-ç½®
+    âââ config.yaml            # é
+置
 
 docs/
 └── risk_data/
@@ -1148,28 +1043,19 @@ docs/
 ### 2.6 验收标准
 
 - ?VaR计算准确?> 95%
-- ?å¸è
-å­æ¯è®¡ç®è¯¯å·® < 1%
-- ?ååæµè¯è¦ç > 10ç§æ
-?- ?é£é©é¢è­¦å»¶è¿ < 1?- ?åå
-æµè¯è¦ç?> 80%
+- ?å¸è
 - ?文档完整?> 90%
 
 
-## ð´ ä¸ãP1çº§ï¼å
-¨çå¸åºæ°æ®æ¨¡å?-4å¨ï¼
 
 ### 3.1 模块概述
 
 **模块名称**: `global_market_data.py`
 
-**ä¼å
-?*: ð´ P1 - é«ä¼å
-çº§
+**ä¼å
+级
 
 **实施时间**: 2-4周（Week 3-6?
-**ç®æ **: å®ç°å
-¨çå¸åºæ°æ®è¦çï¼æ¯æå¤å¸åºç­ç¥
 
 ### 3.2 功能设计
 
@@ -1179,19 +1065,15 @@ docs/
 |------|------|--------|
 | **港股市场数据** | 港股实时+历史数据 | AKShare + Tushare |
 | **美股市场数据** | 美股实时+历史数据 | yfinance |
-| **åºå¸å¸åºæ°æ®** | å?ä¼ä¸åºæ°?| ä¸­åºç» + ä¸äº¤æ |
 | **商品市场数据** | 期货/现货数据 | 各大期货交易所 |
 | **外汇市场数据** | 主要货币对数?| 中国外汇交易中心 |
 
 #### 3.2.2 技术架?
 ```
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??             å
-¨çå¸åºæ°æ®å¼ææ¶æ                            ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                            ?? æ°æ®æºå±                                                    ?? âââ æ¸¯è¡æ°æ®æºï¼AKShare + Tushare?                       ?? âââ ç¾è¡æ°æ®æºï¼yfinance?                                ?? âââ åºå¸æ°æ®æºï¼ä¸­åºç» + ä¸äº¤æ?                         ?? âââ ååæ°æ®æºï¼æè´§äº¤ææ?                              ?? âââ å¤æ±æ°æ®æºï¼å¤æ±äº¤æä¸­å¿?                            ??                                                            ?? æ°æ®å¤ç?                                                 ?? âââ æ°æ®æ ¼å¼ç»ä¸ï¼OHLCVæ åæ ¼å¼?                         ?? âââ æ¶åºè½¬æ¢ï¼ç»ä¸ä¸ºåäº¬æ¶é´ï¼                             ?? âââ è´§å¸è½¬æ¢ï¼ç»ä¸ä¸ºäººæ°å¸?                              ?? âââ æ°æ®è´¨éæ£æ¥ï¼ç¼ºå¤±?å¼å¸¸å¼ï¼                          ??                                                            ?? æ°æ®å­å¨?                                                 ?? âââ Redisï¼å®æ¶æ°æ®ç¼å­ï¼                                  ?? âââ ClickHouseï¼åå²æ°æ®å­å¨ï¼                             ?? âââ æä»¶ç³»ç»ï¼åå§æ°æ®å¤ä»½ï¼                               ??                                                            ?? æ°æ®æå¡?                                                 ?? âââ ç»ä¸æ°æ®è®¿é®æ¥å£ï¼API?                               ?? âââ æ°æ®è®¢é
 服务（WebSocket?                             ?? └── 数据查询服务（SQL查询?                               ??                                                            ?└─────────────────────────────────────────────────────────────?```
 
 ### 3.3 详细设计
 
-ç±äºç¯å¹
 限制，这里只展示核心代码框架?
 ```python
 # src/data/global_market_data.py
@@ -1206,7 +1088,6 @@ logger = logging.getLogger(__name__)
 
 class GlobalMarketDataEngine:
     """å
-¨çå¸åºæ°æ®å¼æ
     
     功能?        - 港股市场数据
         - 美股市场数据
@@ -1216,16 +1097,13 @@ class GlobalMarketDataEngine:
     """
     
     def __init__(self):
-        """åå§åå
-¨çå¸åºæ°æ®å¼?""
+        """åå§åå
         pass
     
     def fetch_hk_stock_data(self, symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
         """获取港股数据
         
         Args:
-            symbol: æ¸¯è¡ä»£ç ï¼å¦ "00700"ï¼è
-¾è®¯ï¼
             start_date: 开始日?            end_date: 结束日期
             
         Returns:
@@ -1287,7 +1165,6 @@ class GlobalMarketDataEngine:
             return None
     
     # å
-¶ä»å¸åºæ°æ®è·åæ¹æ³ç±»ä¼¼...
 ```
 
 ### 3.4 实施计划
@@ -1304,8 +1181,6 @@ class GlobalMarketDataEngine:
 
 - ?港股数据覆盖 > 1000只股?- ?美股数据覆盖 > 5000只股?- ?债券数据覆盖 > 1000只债券
 - ?商品数据覆盖 > 50种商?- ?外汇数据覆盖 > 20种货币对
-- ?æ°æ®å»¶è¿ < 5?- ?åå
-æµè¯è¦ç?> 80%
 
 
 ## 🟡 四、P2级：按需实施模块
@@ -1328,14 +1203,12 @@ class GlobalMarketDataEngine:
 ## 📊 五、实施后预期效果
 
 ### 5.1 能力覆盖度提?
-| è½åç»´åº¦ | å½åèå¾ | æ¹è¿?| æåå¹
-åº¦ |
+度 |
 |---------|---------|--------|---------|
 | **核心数据能力** | 100% | 100% | 0% |
 | **数据处理能力** | 85% | 90% | +5% |
 | **数据治理能力** | 100% | 100% | 0% |
 | **å
-¨çå¸åºè¦ç** | 20% | 80% | +60% |
 | **实时风控能力** | 0% | 100% | +100% |
 | **总体覆盖?* | **75%** | **95%** | **+20%** |
 
@@ -1343,34 +1216,24 @@ class GlobalMarketDataEngine:
 | 对标机构 | 当前蓝图 | 改进?| 专业机构水平 |
 |---------|---------|--------|-------------|
 | **桥水基金** | 75% | 95% | 100% |
-| **æèºå¤å
-´ç§æ** | 75% | 95% | 100% |
+´ç§æ** | 75% | 95% | 100% |
 | **Two Sigma** | 75% | 95% | 100% |
 
 
 ## ?å
-­ãæ»ç»
 
 ### 6.1 立即行动
 
-1. ð´ **æ¬å¨å¯å¨**: P0çº§å®æ¶é£æ§æ°æ®æ¨¡åï¼Week 1-2?2. ð´ **ä¸å¨å¯å¨**: P1çº§å
-¨çå¸åºæ°æ®æ¨¡åï¼Week 3-6?3. ð¡ **æéå¯å¨**: P2çº§æ¨¡åï¼æ°æ®?è®¡ç®éæ±å¢é¿å?
 ### 6.2 预期成果
 
-- ?3-6å¨å
+- ?3-6å¨å
 完成P0+P1级模?- ?覆盖度从75%提升?5%
 - ?达到专业机构95%能力水平
-- ?æ¯æå®æ¶é£æ§åå
-¨çå¸åºç­?
 ---
 
 **蓝图创建完成**
 
-> æ¬èå¾å
 含P0/P1/P2三级模块的详细实施方案，确保数据源层达到专业机构95%能力水平?> 
-> **å®æ½ç?*: ð ç«å³å¯å¨
-> **ä¸ä¸æ­¥è¡?*: æç
-§Week 1è®¡åå¼å§å®æ½P0çº§å®æ¶é£æ§æ°æ®æ¨¡?
 ---
 
 ## 1. 文档治理
@@ -1383,8 +1246,7 @@ class GlobalMarketDataEngine:
 - **模块ID**: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT_001
 - **蓝图文档**: [CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: Layer 0æ°æ®æºå±å
-³é®æ¬ ç¼ºæ¨¡å | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **职责**: Layer 0æ°æ®æºå±å
 - **状态**: Active
 ```
 
@@ -1392,8 +1254,7 @@ class GlobalMarketDataEngine:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Critical Modules Implementation Blueprint** | Layer 0æ°æ®æºå±å
-³é®æ¬ ç¼ºæ¨¡å | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **核心模块** |
+³é®æ¬ ç¼ºæ¨¡å | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **核心模块** |
 
 ### 1.3 版本管理
 

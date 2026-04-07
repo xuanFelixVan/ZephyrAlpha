@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: MARKDOWN_LINK_VALIDATOR_001
 
 tool_id: MARKDOWN_LINK_VALIDATOR_001

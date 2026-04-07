@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AUDIT_REPORT_HUMAN_AI_INTERACTION_20260405_001
 version: 1.0.0
 status: Active

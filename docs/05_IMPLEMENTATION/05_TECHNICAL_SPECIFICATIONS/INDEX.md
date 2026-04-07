@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_002
 
 index_id: TECHNICAL_SPECIFICATIONS_INDEX_001
@@ -15,83 +15,83 @@ responsibility:
 ---
 ---
 
-# 技术规格书总索�?
+# 技术规格书总索?
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
 > - ✅ 本文档负责：目录导航和文档索引相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 > **索引编号**: `TECH_SPEC_INDEX_001`
-> **最后更�?*: 2026-04-03
-> **文档总数**: 97�?---
+> **最后更?*: 2026-04-03
+> **文档总数**: 97?---
 
 ## 1. 索引说明
 
-本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-11架构组织，包括文档名称、module_id、版本、状态和最后更新日期�?---
+本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-11架构组织，包括文档名称、module_id、版本、状态和最后更新日期?---
 
 ## 2. 核心模块技术规格书
 
 ### 2.1 智能执行算法引擎
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 智能执行算法引擎技术规格书 | SMART_EXECUTION_ENGINE_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md) |
 
 ### 2.2 市场冲击模型
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 市场冲击模型技术规格书 | MARKET_IMPACT_MODEL_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md) |
 
 ### 2.3 实时风险对冲引擎
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 实时风险对冲引擎技术规格书 | REALTIME_RISK_HEDGE_ENGINE_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./REALTIME_RISK_HEDGE_ENGINE_TECHNICAL_SPECIFICATION.md) |
 
-### 2.4 流动性管理系�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 2.4 流动性管理系?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 流动性管理系统技术规格书 | LIQUIDITY_MANAGEMENT_SYSTEM_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LIQUIDITY_MANAGEMENT_SYSTEM_TECHNICAL_SPECIFICATION.md) |
 
 ### 2.5 经济范式判断引擎
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
 
-| 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | | 已归�?|
+| 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | | 已归?|
 
 ### 2.6 策略引擎核心
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 策略引擎技术规格书 | STRATEGY_ENGINE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md) |
 
-### 2.7 信号生成�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 2.7 信号生成?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 信号生成器技术规格书 | SIGNAL_GENERATOR_001 | v1.0.0 | Active | 2026-04-02 | [链接](./SIGNAL_GENERATOR_TECHNICAL_SPECIFICATION.md) |
 
-### 2.8 持仓管理�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 2.8 持仓管理?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 持仓管理器技术规格书 | POSITION_MANAGER_001 | v1.0.0 | Active | 2026-04-02 | [链接](./POSITION_MANAGER_TECHNICAL_SPECIFICATION.md) |
 
-### 2.9 QMT执行�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 2.9 QMT执行?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | QMT执行器技术规格书 | QMT_EXECUTOR_001 | v1.0.0 | Active | 2026-04-02 | [链接](./QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md) |
 
-### 2.10 交易审计�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 2.10 交易审计?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 交易审计器技术规格书 | TRADE_AUDITOR_001 | v1.0.0 | Active | 2026-04-02 | [链接](./TRADE_AUDITOR_TECHNICAL_SPECIFICATION.md) |
 
 ### 2.11 统计套利模块
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
-| 统计套利模块技术规格书 | STATISTICAL_ARBITRAGE_MODULE_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./STATISTICAL_ARBITRAGE_MODULE_TECHNICAL_SPECIFICATION.md) | Layer 5 (中观策略�? |
+| 统计套利模块技术规格书 | STATISTICAL_ARBITRAGE_MODULE_SPEC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./STATISTICAL_ARBITRAGE_MODULE_TECHNICAL_SPECIFICATION.md) | Layer 5 (中观策略? |
 
 ---
 
@@ -99,15 +99,15 @@ responsibility:
 
 ### 3.1 数据源连接器
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | BAOSTOCK技术规格书 | DATA_BAO_001 | v1.0.0 | Active | 2026-04-02 | [链接](./BAOSTOCK_TECHNICAL_SPECIFICATION.md) |
 | IFIND连接器技术规格书 | DATA_IFIND_001 | v1.0.0 | Active | 2026-04-02 | [链接](./IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md) |
 | QMT数据接口技术规格书 | DATA_QMT_001 | v1.0.0 | Active | 2026-04-02 | [链接](./QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md) |
 | SuperCommand技术规格书 | DATA_SUPER_001 | v1.0.0 | Active | 2026-04-02 | [链接](./SUPERCOMMAND_TECHNICAL_SPECIFICATION.md) |
 
-### 3.2 数据预处�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 3.2 数据预处?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 数据清洗器技术规格书 | PREP_CLEAN_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATACLEANER_TECHNICAL_SPECIFICATION.md) |
 | 数据标准化器技术规格书 | PREP_NORM_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DATANORMALIZER_TECHNICAL_SPECIFICATION.md) |
@@ -120,7 +120,7 @@ responsibility:
 
 ### 4.1 因子计算
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 因子计算器技术规格书 | FACTOR_CALC_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md) |
 | 因子回测技术规格书 | FACTOR_BACKTEST_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FACTOR_BACKTEST_TECHNICAL_SPECIFICATION.md) |
@@ -134,7 +134,7 @@ responsibility:
 
 ### 5.1 模型架构
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | LSTM模型技术规格书 | LSTM_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LSTM_MODEL_TECHNICAL_SPECIFICATION.md) |
 | Transformer模型技术规格书 | TRANSFORMER_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md) |
@@ -142,46 +142,46 @@ responsibility:
 
 ### 5.2 特征工程
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 特征工程技术规格书 | FEATURE_ENGINEERING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md) |
 
 
-### 5.3 模型训练与服�?
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+### 5.3 模型训练与服?
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 模型训练流水线技术规格书 | MODEL_TRAINING_PIPELINE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_TRAINING_PIPELINE_TECHNICAL_SPECIFICATION.md) |
 | 模型服务化架构技术规格书 | MODEL_SERVING_ARCHITECTURE_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md) |
 
 ### 5.4 MLOps与监控
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 
 
 
 
 
-### 5.5 模型治理与合规(新增 P0�?
+### 5.5 模型治理与合规(新增 P0?
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
 
 
-### 5.6 模型可解释�?(新增 P0�?
+### 5.6 模型可解释?(新增 P0?
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
 
 
-### 5.7 因果推断 (新增 P0�?
+### 5.7 因果推断 (新增 P0?
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
 
 
-### 5.8 概率预测 (新增 P0�?
+### 5.8 概率预测 (新增 P0?
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
 
 
@@ -262,7 +262,7 @@ responsibility:
 
 ### 8.1 报告生成
 
-| 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
+| 文档名称 | module_id | 版本 | 状?| 最后更?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 日报告器技术规格书 | REPORT_DAILY_001 | v1.0.0 | Active | 2026-04-02 | [链接](./DAILY_REPORTER_TECHNICAL_SPECIFICATION.md) |
 | 月报告器技术规格书 | REPORT_MONTHLY_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MONTHLY_REPORTER_TECHNICAL_SPECIFICATION.md) |
@@ -285,7 +285,7 @@ responsibility:
 
 ### 10.1 已归档技术规格书
 
-| 文档名称 | module_id | 版本 | 状�?| 归档日期 | 归档路径 | 归档原因 |
+| 文档名称 | module_id | 版本 | 状?| 归档日期 | 归档路径 | 归档原因 |
 |----------|-----------|------|------|----------|----------|----------|
 | 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | | 被v2.0替代 |
 
@@ -308,9 +308,9 @@ responsibility:
 > **更新说明**: 2026-04-04 补充组合优化层缺失的7个技术规格书索引
 ---
 
-**索引编写�?*: 首席技术评审官
+**索引编写?*: 首席技术评审官
 **索引日期**: 2026-04-02
-**索引状�?*: �?已完成
+**索引状?*: ?已完成
 ---
 
 **文档结束**
@@ -321,39 +321,39 @@ responsibility:
 
 - [清风量化系统数据接口清单](./DATA_SOURCE_INVENTORY.md) - 系统文档
 
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ v1.0](./DOCUMENT_GOVERNANCE_PROCESS.md) - 系统文档
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ v1.0](./DOCUMENT_GOVERNANCE_PROCESS.md) - 系统文档
 
-- [ﮔ۴ﮒ۲ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ v1.0](./INTERFACE_VERSION_CONTROL.md) - 系统文档
+- [ﮔ۴ﮒ۲ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ v1.0](./INTERFACE_VERSION_CONTROL.md) - 系统文档
 
 - [模块注册中心 v1.0](./MODULE_REGISTRY.md) - 系统文档
 
-- [ﮔ۷۰ﮒﮒﺏﻝﺏﭨﮒﺝﻛﺕﻟﻟﺑ۲ﻟﺝﺗﻝﻟﺁﺑﮔ v1.0](./MODULE_RELATIONSHIP_DIAGRAM.md) - 系统文档
+- [ﮔ۷۰ﮒﮒﺏﻝﺏﭨﮒﺝﻛﺕﻟﻟﺑ۲ﻟﺝﺗﻝﻟﺁﺑﮔ v1.0](./MODULE_RELATIONSHIP_DIAGRAM.md) - 系统文档
 
 - [ц╕ЕщгОщЗПхМЦч│╗ч╗Я6ф╕кцЬИцКАцЬпц╝Фш┐Ыш╖пч║┐хЫ╛](./TECHNICAL_EVOLUTION_ROADMAP.md) - 系统文档
 
 - [Layer 7 AI报告层 - 使用示例与最佳实践](./USAGE_GUIDE.md) - 实施指南文档
 
-- [AIﻟ۰ﻛﺕﭦﻝﭦ۵ﮔﮒﺙﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [AIﻟ۰ﻛﺕﭦﻝﭦ۵ﮔﮒﺙﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [AIﮒﺁﻟ۶۲ﻠﮔ۶ﮒﺓ۴ﮒﺓﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./AI_EXPLAINABILITY_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [AIﮒﺁﻟ۶۲ﻠﮔ۶ﮒﺓ۴ﮒﺓﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./AI_EXPLAINABILITY_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [AIﮒ ﮒ­ﮔﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [AIﮒ ﮒ­ﮔﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [AI模式识别引擎技术规格书 v1.0](./AI_PATTERN_RECOGNITION_ENGINE_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [Alpha因子工厂技术规格书 v1.0](./ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./ALTERNATIVE_DATA_INTEGRATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./ALTERNATIVE_DATA_INTEGRATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﻝﻝ؟۰ﮒﻟ۶ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﻝﻝ؟۰ﮒﻟ۶ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﮔﮔ۰۲ﮒﻝﺎﭨﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?](./DOCUMENT_CLASSIFIER_SPECIFICATION.md) - 技术规格说明
+- [ﮔﮔ۰۲ﮒﻝﺎﭨﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?](./DOCUMENT_CLASSIFIER_SPECIFICATION.md) - 技术规格说明
 
 - [EventDetector事件检测模块技术规格书](./EVENT_DETECTOR_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﮔﻝ،ﺁﮒﺕﮒﭦﮒﭦﮒﺁﺗﮔﭦﮒﭘﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./EXTREME_MARKET_HANDLER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﮔﻝ،ﺁﮒﺕﮒﭦﮒﭦﮒﺁﺗﮔﭦﮒﭘﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./EXTREME_MARKET_HANDLER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [FeedbackCollector反馈收集技术规格书](./FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
@@ -363,7 +363,7 @@ responsibility:
 
 - [市场状态识别系统技术规格书 v1.0](./MARKET_REGIME_SYSTEM_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?](./METADATA_ENHANCER_SPECIFICATION.md) - 技术规格说明
+- [ﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?](./METADATA_ENHANCER_SPECIFICATION.md) - 技术规格说明
 
 - [NewsCrawler新闻爬虫模块技术规格书](./NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
@@ -373,7 +373,7 @@ responsibility:
 
 - [QlibAlpha158因子模型模块技术规格书](./QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [ScenarioAnalyzer情景分析器技术规格书 v1.0](./SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
@@ -381,11 +381,11 @@ responsibility:
 
 - [SystemMonitor系统监控技术规格书](./SYSTEM_MONITOR_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [[ﮔ۷۰ﮒﮒﻝ۶ﺍ]ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./TECHNICAL_SPECIFICATION_TEMPLATE.md) - 技术规格说明
+- [[ﮔ۷۰ﮒﮒﻝ۶ﺍ]ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./TECHNICAL_SPECIFICATION_TEMPLATE.md) - 技术规格说明
 
-- [ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./TRADING_COST_OPTIMIZATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./TRADING_COST_OPTIMIZATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ v1.0](./UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md) - 技术规格说明
+- [ﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ v1.0](./UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md) - 技术规格说明
 
 - [UserPreferences用户偏好技术规格书](./USER_PREFERENCES_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ARCHIVE_MARKET_PARTICIPANT_CONSOLIDATION_001
 version: 1.0.0
 status: Archived

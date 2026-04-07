@@ -1,22 +1,22 @@
-﻿---
+﻿﻿---
 module_id: ARCHIVE_L1_CLEANER_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席文档架构�?
+owner: 首席文档架构?
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
 responsibility:
   - 归档文档、历史版本
 
 ---
 ---
 
-# L1_CLEANER 数据清洗器模块设�?
+# L1_CLEANER 数据清洗器模块设?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -25,10 +25,10 @@ responsibility:
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **所属层�?*: Layer 1 (数据预处理层)
-> **设计状�?*: 🔵 设计进行�?
-> **优先�?*: P0 (核心)
-> **预计开发时�?*: 12小时
+> **所属层?*: Layer 1 (数据预处理层)
+> **设计状?*: 🔵 设计进行?
+> **优先?*: P0 (核心)
+> **预计开发时?*: 12小时
 
 ---
 
@@ -45,26 +45,26 @@ estimated_dev_hours: 12
 ```
 
 ### 1.2 模块概述
-**一句话描述**: 金融数据清洗引擎，处理缺失值、异常值、数据对齐、复权、频率转换等预处理任�?
+**一句话描述**: 金融数据清洗引擎，处理缺失值、异常值、数据对齐、复权、频率转换等预处理任?
 
 **业务场景**: 
-- 处理来自不同数据源的原始数据，统一格式和标�?
+- 处理来自不同数据源的原始数据，统一格式和标?
 - 清洗缺失值和异常值，保证数据质量
-- 对股票价格数据进行复权处�?
+- 对股票价格数据进行复权处?
 - 对齐不同频率的数据（日频、周频、月频）
 - 标准化数据格式和字段命名
-- 生成清洗报告和数据质量评�?
+- 生成清洗报告和数据质量评?
 
-**技术定�?*: Layer 1数据预处理层的核心模块，为上层分析提供干净、一致的数据输入
+**技术定?*: Layer 1数据预处理层的核心模块，为上层分析提供干净、一致的数据输入
 
 ### 1.3 设计原则
-| 原则 | 说明 | 检查标�?|
+| 原则 | 说明 | 检查标?|
 |------|------|----------|
-| **可配置�?* | 清洗规则可配置，支持不同清洗策略 | 支持配置文件定义清洗规则 |
-| **可逆�?* | 支持清洗过程的可逆和可追�?| 保留原始数据和清洗日�?|
-| **可扩展�?* | 支持自定义清洗插�?| 插件架构，易于扩�?|
-| **高效�?* | 支持大数据量清洗 | 支持批量处理和并行计�?|
-| **透明�?* | 清洗过程透明，生成详细报�?| 提供完整的清洗报�?|
+| **可配置?* | 清洗规则可配置，支持不同清洗策略 | 支持配置文件定义清洗规则 |
+| **可逆?* | 支持清洗过程的可逆和可追?| 保留原始数据和清洗日?|
+| **可扩展?* | 支持自定义清洗插?| 插件架构，易于扩?|
+| **高效?* | 支持大数据量清洗 | 支持批量处理和并行计?|
+| **透明?* | 清洗过程透明，生成详细报?| 提供完整的清洗报?|
 
 ---
 
@@ -73,20 +73,20 @@ estimated_dev_hours: 12
 ### 2.1 核心功能列表
 | 功能ID | 功能名称 | 功能描述 | 输入 | 输出 | 调用频率 |
 |--------|----------|----------|------|------|----------|
-| FUNC_001 | 缺失值处�?| 检测和填补缺失�?| 原始数据、缺失值策�?| 填补后数�?| 高频 |
-| FUNC_002 | 异常值检�?| 检测和处理异常�?| 原始数据、异常值策�?| 处理后数�?| 高频 |
-| FUNC_003 | 价格复权 | 股票价格复权（前复权、后复权�?| 原始价格数据、分红送配数据 | 复权后价�?| 中频 |
-| FUNC_004 | 数据对齐 | 时间序列数据对齐 | 多个时间序列数据 | 对齐后数�?| 高频 |
-| FUNC_005 | 频率转换 | 数据频率转换（日→周→月�?| 高频数据、目标频�?| 转换后数�?| 中频 |
-| FUNC_006 | 格式标准�?| 标准化数据格式和字段 | 原始数据、标准格�?| 标准化数�?| 高频 |
-| FUNC_007 | 数据拼接 | 拼接多个数据�?| 多个数据�?| 合并数据 | 高频 |
-| FUNC_008 | 清洗报告 | 生成清洗过程报告 | 清洗参数和结�?| 清洗报告 | 每次清洗 |
-| FUNC_009 | 质量评估 | 评估清洗后的数据质量 | 清洗后数�?| 质量评估报告 | 每次清洗 |
+| FUNC_001 | 缺失值处?| 检测和填补缺失?| 原始数据、缺失值策?| 填补后数?| 高频 |
+| FUNC_002 | 异常值检?| 检测和处理异常?| 原始数据、异常值策?| 处理后数?| 高频 |
+| FUNC_003 | 价格复权 | 股票价格复权（前复权、后复权?| 原始价格数据、分红送配数据 | 复权后价?| 中频 |
+| FUNC_004 | 数据对齐 | 时间序列数据对齐 | 多个时间序列数据 | 对齐后数?| 高频 |
+| FUNC_005 | 频率转换 | 数据频率转换（日→周→月?| 高频数据、目标频?| 转换后数?| 中频 |
+| FUNC_006 | 格式标准?| 标准化数据格式和字段 | 原始数据、标准格?| 标准化数?| 高频 |
+| FUNC_007 | 数据拼接 | 拼接多个数据?| 多个数据?| 合并数据 | 高频 |
+| FUNC_008 | 清洗报告 | 生成清洗过程报告 | 清洗参数和结?| 清洗报告 | 每次清洗 |
+| FUNC_009 | 质量评估 | 评估清洗后的数据质量 | 清洗后数?| 质量评估报告 | 每次清洗 |
 | FUNC_010 | 批量清洗 | 批量处理多个股票数据 | 批量数据 | 批量清洗结果 | 中频 |
 
 ### 2.2 功能详细说明
 ```python
-# FUNC_001: 缺失值处�?
+# FUNC_001: 缺失值处?
 def handle_missing_values(
     data: pd.DataFrame,
     strategy: Literal["forward_fill", "backward_fill", "linear_interp", "mean", "median"],
@@ -95,22 +95,22 @@ def handle_missing_values(
     fill_value: Optional[Any] = None
 ) -> Tuple[pd.DataFrame, MissingValueReport]:
     """
-    处理缺失�?
+    处理缺失?
     
     Args:
         data: 原始数据DataFrame
-        strategy: 缺失值处理策�?
+        strategy: 缺失值处理策?
             - forward_fill: 前向填充
             - backward_fill: 后向填充
-            - linear_interp: 线性插�?
-            - mean: 使用均值填�?
-            - median: 使用中位数填�?
+            - linear_interp: 线性插?
+            - mean: 使用均值填?
+            - median: 使用中位数填?
         columns: 需要处理的列，如None则处理所有列
-        max_consecutive: 最大连续缺失值数，超过此值则不填�?
-        fill_value: 自定义填充�?
+        max_consecutive: 最大连续缺失值数，超过此值则不填?
+        fill_value: 自定义填充?
         
     Returns:
-        Tuple[DataFrame, MissingValueReport]: 处理后的数据和缺失值处理报�?
+        Tuple[DataFrame, MissingValueReport]: 处理后的数据和缺失值处理报?
         
     Raises:
         InvalidStrategyError: 策略无效
@@ -119,7 +119,7 @@ def handle_missing_values(
 ```
 
 ```python
-# FUNC_002: 异常值检�?
+# FUNC_002: 异常值检?
 def detect_and_handle_outliers(
     data: pd.DataFrame,
     method: Literal["zscore", "iqr", "mad", "quantile"],
@@ -128,24 +128,24 @@ def detect_and_handle_outliers(
     handling: Literal["remove", "cap", "impute"] = "remove"
 ) -> Tuple[pd.DataFrame, OutlierReport]:
     """
-    检测和处理异常�?
+    检测和处理异常?
     
     Args:
         data: 原始数据DataFrame
-        method: 异常值检测方�?
+        method: 异常值检测方?
             - zscore: Z-score方法（默认）
             - iqr: IQR四分位距方法
-            - mad: 中位数绝对偏差方�?
-            - quantile: 分位数方�?
-        threshold: 阈值，如Z-score阈�?
+            - mad: 中位数绝对偏差方?
+            - quantile: 分位数方?
+        threshold: 阈值，如Z-score阈?
         columns: 需要检测的列，如None则检测所有数值列
-        handling: 异常值处理方�?
-            - remove: 删除异常�?
-            - cap: 将异常值截断到阈值边�?
-            - impute: 使用统计值替�?
+        handling: 异常值处理方?
+            - remove: 删除异常?
+            - cap: 将异常值截断到阈值边?
+            - impute: 使用统计值替?
         
     Returns:
-        Tuple[DataFrame, OutlierReport]: 处理后的数据和异常值报�?
+        Tuple[DataFrame, OutlierReport]: 处理后的数据和异常值报?
     """
 ```
 
@@ -163,11 +163,11 @@ def adjust_prices(
     
     Args:
         price_data: 原始价格数据（包含open, high, low, close, volume等）
-        dividend_data: 分红数据（包含除息日、分红金额等�?
-        split_data: 拆分数据（包含拆分日、拆分比例等�?
+        dividend_data: 分红数据（包含除息日、分红金额等?
+        split_data: 拆分数据（包含拆分日、拆分比例等?
         adjust_type: 复权类型
-            - forward: 前复权（以最新价格为基准�?
-            - backward: 后复权（以最老价格为基准�?
+            - forward: 前复权（以最新价格为基准?
+            - backward: 后复权（以最老价格为基准?
             - both: 同时计算前后复权
         adjust_date: 复权基准日期，如None则使用最新日期（前复权）或最老日期（后复权）
         
@@ -188,16 +188,16 @@ def adjust_prices(
 ### 3.1 Python API
 ```python
 class DataCleaner:
-    """数据清洗器主�?""
+    """数据清洗器主?""
     
     def __init__(self, config: CleanerConfig):
         """
         初始化数据清洗器
         
         Args:
-            config: 清洗器配�?
-                - missing_value_strategy: 缺失值策�?
-                - outlier_detection_method: 异常值检测方�?
+            config: 清洗器配?
+                - missing_value_strategy: 缺失值策?
+                - outlier_detection_method: 异常值检测方?
                 - auto_adjust_prices: 是否自动复权
                 - parallel_processing: 是否启用并行处理
                 - cache_enabled: 是否启用缓存
@@ -207,7 +207,7 @@ class DataCleaner:
     # 核心清洗接口
     def clean_data(self, data: pd.DataFrame, cleaning_plan: CleaningPlan) -> CleaningResult:
         """
-        执行完整的数据清洗流�?
+        执行完整的数据清洗流?
         
         Args:
             data: 原始数据
@@ -221,26 +221,26 @@ class DataCleaner:
     def batch_clean(self, data_dict: Dict[str, pd.DataFrame], 
                    cleaning_plan: CleaningPlan) -> Dict[str, CleaningResult]:
         """
-        批量清洗多个数据�?
+        批量清洗多个数据?
         
         Args:
             data_dict: 数据集字典，key为数据集标识
             cleaning_plan: 清洗计划
             
         Returns:
-            Dict[str, CleaningResult]: 各数据集的清洗结�?
+            Dict[str, CleaningResult]: 各数据集的清洗结?
         """
         pass
     
     # 特定清洗功能接口
     def handle_missing_values(self, data: pd.DataFrame, 
                              strategy: str, **kwargs) -> pd.DataFrame:
-        """处理缺失�?""
+        """处理缺失?""
         pass
     
     def detect_outliers(self, data: pd.DataFrame, 
                        method: str, **kwargs) -> OutlierReport:
-        """检测异常�?""
+        """检测异常?""
         pass
     
     def adjust_stock_prices(self, price_data: pd.DataFrame, 
@@ -255,7 +255,7 @@ class DataCleaner:
     
     def resample_data(self, data: pd.DataFrame, 
                      freq: str, method: str = "last") -> pd.DataFrame:
-        """数据重采样（频率转换�?""
+        """数据重采样（频率转换?""
         pass
     
     # 工具接口
@@ -281,7 +281,7 @@ CleaningPlan = TypedDict('CleaningPlan', {
     'plan_id': str,
     'steps': List[Dict[str, Any]],  # 清洗步骤列表
     'config_overrides': Optional[Dict[str, Any]],  # 配置覆盖
-    'quality_thresholds': Dict[str, float],  # 质量阈�?
+    'quality_thresholds': Dict[str, float],  # 质量阈?
     'output_format': str  # 输出格式
 })
 
@@ -309,17 +309,17 @@ PriceAdjustmentRequest = TypedDict('PriceAdjustmentRequest', {
 # 清洗结果
 CleaningResult = TypedDict('CleaningResult', {
     'original_data': pd.DataFrame,  # 原始数据（副本）
-    'cleaned_data': pd.DataFrame,  # 清洗后数�?
+    'cleaned_data': pd.DataFrame,  # 清洗后数?
     'cleaning_log': List[Dict[str, Any]],  # 清洗日志
     'quality_score': Dict[str, float],  # 质量评分
     'statistics': Dict[str, Any],  # 统计信息
     'warnings': List[str],  # 警告信息
     'errors': List[str],  # 错误信息
     'processing_time': float,  # 处理时间
-    'timestamp': datetime  # 时间�?
+    'timestamp': datetime  # 时间?
 })
 
-# 缺失值报�?
+# 缺失值报?
 MissingValueReport = TypedDict('MissingValueReport', {
     'total_missing': int,
     'missing_by_column': Dict[str, int],
@@ -330,7 +330,7 @@ MissingValueReport = TypedDict('MissingValueReport', {
     'remaining_missing': int
 })
 
-# 异常值报�?
+# 异常值报?
 OutlierReport = TypedDict('OutlierReport', {
     'detection_method': str,
     'threshold': float,
@@ -439,13 +439,13 @@ data_cleaner:
 
 ---
 
-## 🏗�?实现设计
+## 🏗?实现设计
 
-### 4.1 类结构设�?
+### 4.1 类结构设?
 ```python
 # src/layer_1/data_cleaner.py
 class DataCleaner:
-    """数据清洗器主�?""
+    """数据清洗器主?""
     
     def __init__(self, config: CleanerConfig):
         self.config = config
@@ -470,15 +470,15 @@ class DataCleaner:
             }
         
         def handle(self, data: pd.DataFrame, strategy: str, **kwargs) -> Tuple[pd.DataFrame, MissingValueReport]:
-            """处理缺失�?""
+            """处理缺失?""
             pass
         
         def analyze_missing_patterns(self, data: pd.DataFrame) -> MissingPatternAnalysis:
-            """分析缺失值模�?""
+            """分析缺失值模?""
             pass
         
         def validate_missing_handling(self, data: pd.DataFrame, report: MissingValueReport) -> bool:
-            """验证缺失值处理结�?""
+            """验证缺失值处理结?""
             pass
     
     class OutlierDetector:
@@ -493,20 +493,20 @@ class DataCleaner:
             }
         
         def detect(self, data: pd.DataFrame, method: str, **kwargs) -> OutlierReport:
-            """检测异常�?""
+            """检测异常?""
             pass
         
         def handle_outliers(self, data: pd.DataFrame, outliers: OutlierReport, 
                            method: str) -> pd.DataFrame:
-            """处理异常�?""
+            """处理异常?""
             pass
         
         def validate_outlier_detection(self, data: pd.DataFrame, report: OutlierReport) -> bool:
-            """验证异常值检测结�?""
+            """验证异常值检测结?""
             pass
     
     class PriceAdjuster:
-        """价格复权�?""
+        """价格复权?""
         def __init__(self, config):
             self.config = config
             self._dividend_loader = DividendDataLoader()
@@ -543,11 +543,11 @@ class DataCleaner:
             pass
         
         def resample(self, data: pd.DataFrame, freq: str, method: str = "last") -> pd.DataFrame:
-            """重采样数�?""
+            """重采样数?""
             pass
     
     class QualityScorer:
-        """质量评分�?""
+        """质量评分?""
         def __init__(self, config):
             self.config = config
         
@@ -560,7 +560,7 @@ class DataCleaner:
             pass
         
         def check_quality_thresholds(self, scores: Dict[str, float]) -> QualityCheckResult:
-            """检查质量阈�?""
+            """检查质量阈?""
             pass
     
     class CleaningCache:
@@ -577,11 +577,11 @@ class DataCleaner:
             pass
         
         def clear_old(self) -> None:
-            """清理旧缓�?""
+            """清理旧缓?""
             pass
     
     class CleaningLogger:
-        """清洗日志�?""
+        """清洗日志?""
         def __init__(self):
             self._logs = []
         
@@ -607,17 +607,17 @@ def _execute_cleaning_pipeline(self, data: pd.DataFrame,
     
     流程:
     1. 数据验证和预处理
-    2. 按顺序执行清洗步�?
-    3. 质量评估和验�?
-    4. 生成报告和日�?
+    2. 按顺序执行清洗步?
+    3. 质量评估和验?
+    4. 生成报告和日?
     
     支持步骤:
-    - 缺失值处�?
+    - 缺失值处?
     - 异常值检测和处理
     - 价格复权
     - 数据对齐
     - 频率转换
-    - 格式标准�?
+    - 格式标准?
     """
     start_time = time.time()
     cleaning_log = []
@@ -630,7 +630,7 @@ def _execute_cleaning_pipeline(self, data: pd.DataFrame,
     except Exception as e:
         raise DataValidationError(f"数据验证失败: {str(e)}")
     
-    # 2. 按顺序执行清洗步�?
+    # 2. 按顺序执行清洗步?
     current_data = data.copy()
     
     for step in cleaning_plan['steps']:
@@ -709,61 +709,61 @@ def _execute_cleaning_pipeline(self, data: pd.DataFrame,
 ```
 
 ### 4.3 错误处理策略
-| 错误类型 | 错误�?| 处理方式 | 恢复策略 |
+| 错误类型 | 错误?| 处理方式 | 恢复策略 |
 |----------|--------|----------|----------|
-| 数据验证失败 | ERR_CLEANER_001 | 终止清洗，返回原始数�?| 数据预处�?|
-| 缺失值处理失�?| ERR_CLEANER_002 | 记录警告，跳过该步骤 | 使用默认策略重试 |
-| 异常值检测失�?| ERR_CLEANER_003 | 记录警告，跳过该步骤 | 使用备用检测方�?|
-| 价格复权失败 | ERR_CLEANER_004 | 记录警告，使用原始价�?| 使用简化复权方�?|
-| 数据对齐失败 | ERR_CLEANER_005 | 记录警告，部分对�?| 使用宽松对齐策略 |
-| 质量评估失败 | ERR_CLEANER_006 | 记录警告，跳过评�?| 使用简单评估方�?|
-| 缓存操作失败 | ERR_CLEANER_007 | 忽略缓存，直接处�?| 降级到无缓存模式 |
+| 数据验证失败 | ERR_CLEANER_001 | 终止清洗，返回原始数?| 数据预处?|
+| 缺失值处理失?| ERR_CLEANER_002 | 记录警告，跳过该步骤 | 使用默认策略重试 |
+| 异常值检测失?| ERR_CLEANER_003 | 记录警告，跳过该步骤 | 使用备用检测方?|
+| 价格复权失败 | ERR_CLEANER_004 | 记录警告，使用原始价?| 使用简化复权方?|
+| 数据对齐失败 | ERR_CLEANER_005 | 记录警告，部分对?| 使用宽松对齐策略 |
+| 质量评估失败 | ERR_CLEANER_006 | 记录警告，跳过评?| 使用简单评估方?|
+| 缓存操作失败 | ERR_CLEANER_007 | 忽略缓存，直接处?| 降级到无缓存模式 |
 
 ### 4.4 性能优化
-| 优化�?| 优化方法 | 预期提升 | 复杂�?|
+| 优化?| 优化方法 | 预期提升 | 复杂?|
 |--------|----------|----------|--------|
-| 批量并行处理 | 使用concurrent.futures并行处理多个股票 | 300%吞吐�?| �?|
-| 缓存复用 | 缓存清洗结果，避免重复计�?| 80%响应时间 | �?|
-| 向量化操�?| 使用NumPy向量化操作替代循�?| 500%处理速度 | �?|
-| 懒加�?| 延迟加载数据，按需处理 | 70%内存使用 | �?|
-| 增量清洗 | 只清洗变化部分，减少重复工作 | 60%计算�?| �?|
+| 批量并行处理 | 使用concurrent.futures并行处理多个股票 | 300%吞吐?| ?|
+| 缓存复用 | 缓存清洗结果，避免重复计?| 80%响应时间 | ?|
+| 向量化操?| 使用NumPy向量化操作替代循?| 500%处理速度 | ?|
+| 懒加?| 延迟加载数据，按需处理 | 70%内存使用 | ?|
+| 增量清洗 | 只清洗变化部分，减少重复工作 | 60%计算?| ?|
 
 ---
 
-## 🔄 依赖与集�?
+## 🔄 依赖与集?
 
 ### 5.1 依赖模块
 | 依赖模块 | 依赖类型 | 版本要求 | 替代方案 |
 |----------|----------|----------|----------|
-| pandas | 强依�?| >=1.3.0 | 无（核心数据处理�?|
-| numpy | 强依�?| >=1.21.0 | 无（数值计算） |
-| scipy | 弱依�?| >=1.7.0 | 可选（统计方法�?|
-| scikit-learn | 弱依�?| >=1.0.0 | 可选（高级插值） |
+| pandas | 强依?| >=1.3.0 | 无（核心数据处理?|
+| numpy | 强依?| >=1.21.0 | 无（数值计算） |
+| scipy | 弱依?| >=1.7.0 | 可选（统计方法?|
+| scikit-learn | 弱依?| >=1.0.0 | 可选（高级插值） |
 
-### 5.2 集成�?
+### 5.2 集成?
 | 集成对象 | 集成方式 | 协议 | 频率 |
 |----------|----------|------|------|
 | Layer 0: DataSources | 原始数据输入 | 内存对象 | 高频 |
-| Layer 2: FeatureEngine | 清洗后数据输�?| 内存对象 | 高频 |
-| Layer 9: QualityMonitor | 清洗报告和质量数�?| REST API | 每次清洗 |
+| Layer 2: FeatureEngine | 清洗后数据输?| 内存对象 | 高频 |
+| Layer 9: QualityMonitor | 清洗报告和质量数?| REST API | 每次清洗 |
 | 日志系统 | 操作日志记录 | 日志文件 | 实时 |
 
 ### 5.3 环境依赖
 ```yaml
-# requirements.txt 节�?
+# requirements.txt 节?
 # 核心数据处理
 pandas>=1.3.0
 numpy>=1.21.0
 
-# 可选高级功�?
-scipy>=1.7.0  # 科学计算和统�?
+# 可选高级功?
+scipy>=1.7.0  # 科学计算和统?
 scikit-learn>=1.0.0  # 机器学习方法
 
 # 性能优化
 numba>=0.56.0  # JIT加速（可选）
 dask>=2022.1.0  # 并行处理（可选）
 
-# 测试和开�?
+# 测试和开?
 pytest>=7.0.0
 ```
 
@@ -772,13 +772,13 @@ pytest>=7.0.0
 ## 🧪 测试设计
 
 ### 6.1 测试策略
-| 测试类型 | 覆盖率目�?| 测试工具 | 执行频率 |
+| 测试类型 | 覆盖率目?| 测试工具 | 执行频率 |
 |----------|------------|----------|----------|
 | 单元测试 | >80% | pytest + unittest.mock | 每次提交 |
 | 集成测试 | >70% | pytest + 测试数据 | 每周 |
-| 性能测试 | 100% | pytest-benchmark | 每季�?|
-| 边界测试 | 100% | 自定义测试框�?| 每次发布 |
-| 兼容性测�?| >60% | 多版本环境测�?| 每月 |
+| 性能测试 | 100% | pytest-benchmark | 每季?|
+| 边界测试 | 100% | 自定义测试框?| 每次发布 |
+| 兼容性测?| >60% | 多版本环境测?| 每月 |
 
 ### 6.2 测试用例
 ```python
@@ -789,7 +789,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 class TestDataCleaner:
-    """数据清洗器测�?""
+    """数据清洗器测?""
     
     def setup_method(self):
         """测试准备"""
@@ -801,7 +801,7 @@ class TestDataCleaner:
         self.cleaner = DataCleaner(self.config)
     
     def test_missing_value_handling(self):
-        """测试缺失值处�?""
+        """测试缺失值处?""
         # 创建有缺失值的数据
         data = pd.DataFrame({
             'A': [1.0, 2.0, np.nan, 4.0, 5.0],
@@ -817,9 +817,9 @@ class TestDataCleaner:
         assert result['B'].tolist() == [np.nan, 2.0, 3.0, 3.0, 5.0]
     
     def test_outlier_detection(self):
-        """测试异常值检�?""
+        """测试异常值检?""
         data = pd.DataFrame({
-            'returns': [0.01, 0.02, 0.03, 0.04, 0.05, 10.0]  # 最后一个为异常�?
+            'returns': [0.01, 0.02, 0.03, 0.04, 0.05, 10.0]  # 最后一个为异常?
         })
         
         report = self.cleaner.detect_outliers(
@@ -869,7 +869,7 @@ class TestDataCleaner:
             [series1, series2], method='outer'
         )
         
-        assert aligned.shape == (3, 2)  # 3天，2个序�?
+        assert aligned.shape == (3, 2)  # 3天，2个序?
         assert not aligned.isnull().all().all()  # 不应该全为空
     
     def test_quality_scoring(self):
@@ -918,7 +918,7 @@ def create_test_data_with_missing() -> pd.DataFrame:
         'open': [10.0 + 0.1 * i if i != 2 else np.nan for i in range(len(dates))],
         'high': [10.5 + 0.1 * i if i != 3 else np.nan for i in range(len(dates))],
         'low': [9.8 + 0.1 * i if i not in [1, 5] else np.nan for i in range(len(dates))],
-        'close': [10.2 + 0.1 * i for i in range(len(dates))],  # 无缺�?
+        'close': [10.2 + 0.1 * i for i in range(len(dates))],  # 无缺?
         'volume': [1000000 + 100000 * i for i in range(len(dates))]
     })
 
@@ -927,9 +927,9 @@ def create_test_data_with_outliers() -> pd.DataFrame:
     dates = pd.date_range('2024-01-01', '2024-01-20', freq='D')
     returns = np.random.normal(0.001, 0.02, len(dates))
     
-    # 添加异常�?
-    returns[5] = 0.5   # 正异常�?
-    returns[10] = -0.4  # 负异常�?
+    # 添加异常?
+    returns[5] = 0.5   # 正异常?
+    returns[10] = -0.4  # 负异常?
     
     return pd.DataFrame({
         'date': dates,
@@ -950,7 +950,7 @@ def create_test_split_data() -> pd.DataFrame:
     """创建测试拆分数据"""
     return pd.DataFrame({
         'ex_date': pd.to_datetime(['2024-03-15']),
-        'split_ratio': [2.0],  # 1�?
+        'split_ratio': [2.0],  # 1?
         'split_type': ['stock']
     })
 
@@ -989,24 +989,24 @@ def create_test_cleaning_plan() -> Dict[str, Any]:
 
 ---
 
-## 📊 监控与运�?
+## 📊 监控与运?
 
 ### 7.1 监控指标
-| 指标名称 | 指标类型 | 告警阈�?| 监控工具 |
+| 指标名称 | 指标类型 | 告警阈?| 监控工具 |
 |----------|----------|----------|----------|
-| 清洗成功�?| 业务指标 | <95% | Prometheus |
-| 清洗处理时间 | 性能指标 | >60s（单股票�?| Grafana |
+| 清洗成功?| 业务指标 | <95% | Prometheus |
+| 清洗处理时间 | 性能指标 | >60s（单股票?| Grafana |
 | 数据质量评分 | 质量指标 | <0.7 | 质量监控系统 |
-| 缺失值比�?| 质量指标 | >10% | 自定义监�?|
-| 异常值比�?| 质量指标 | >5% | 质量监控系统 |
-| 缓存命中�?| 性能指标 | <70% | cAdvisor |
-| 内存使用�?| 系统指标 | >80% | 系统监控 |
+| 缺失值比?| 质量指标 | >10% | 自定义监?|
+| 异常值比?| 质量指标 | >5% | 质量监控系统 |
+| 缓存命中?| 性能指标 | <70% | cAdvisor |
+| 内存使用?| 系统指标 | >80% | 系统监控 |
 
 ### 7.2 日志规范
 ```python
-# 清洗开始日�?
+# 清洗开始日?
 logger.info(
-    "数据清洗开�?,
+    "数据清洗开?,
     extra={
         'module': 'L1_CLEANER',
         'function': 'clean_data',
@@ -1076,102 +1076,102 @@ alerts:
     condition: "data_cleaner_success_rate < 0.95"
     duration: "1h"
     severity: "warning"
-    message: "数据清洗成功率低�?5%"
+    message: "数据清洗成功率低?5%"
     
   - name: "data_cleaner_processing_time_high"
     condition: "data_cleaner_avg_processing_time > 60"
     duration: "30m"
     severity: "warning"
-    message: "数据清洗平均处理时间超过60�?
+    message: "数据清洗平均处理时间超过60?
     
   - name: "data_quality_score_low"
     condition: "data_cleaner_quality_score < 0.7"
     severity: "error"
-    message: "清洗后数据质量评分低�?.7"
+    message: "清洗后数据质量评分低?.7"
     
   - name: "missing_value_percentage_high"
     condition: "data_cleaner_missing_percentage > 0.1"
     severity: "warning"
-    message: "数据缺失值比例超�?0%"
+    message: "数据缺失值比例超?0%"
     
   - name: "outlier_percentage_high"
     condition: "data_cleaner_outlier_percentage > 0.05"
     severity: "warning"
-    message: "数据异常值比例超�?%"
+    message: "数据异常值比例超?%"
 ```
 
 ---
 
 ## 📈 演进规划
 
-### 8.1 版本路线�?
-| 版本 | 发布日期 | 核心功能 | 状�?|
+### 8.1 版本路线?
+| 版本 | 发布日期 | 核心功能 | 状?|
 |------|----------|----------|------|
-| v1.0.0 | 2026-04-15 | 基础缺失值、异常值处�?| 规划�?|
-| v1.1.0 | 2026-04-30 | 价格复权、数据对�?| 待规�?|
-| v1.2.0 | 2026-05-15 | 批量处理、并行计�?| 待规�?|
-| v1.3.0 | 2026-05-30 | 高级统计方法、机器学�?| 待规�?|
-| v2.0.0 | 2026-06-15 | 智能清洗、自适应策略 | 待规�?|
+| v1.0.0 | 2026-04-15 | 基础缺失值、异常值处?| 规划?|
+| v1.1.0 | 2026-04-30 | 价格复权、数据对?| 待规?|
+| v1.2.0 | 2026-05-15 | 批量处理、并行计?| 待规?|
+| v1.3.0 | 2026-05-30 | 高级统计方法、机器学?| 待规?|
+| v2.0.0 | 2026-06-15 | 智能清洗、自适应策略 | 待规?|
 
-### 8.2 技术债管�?
+### 8.2 技术债管?
 | 技术债项 | 严重程度 | 影响范围 | 解决计划 |
 |----------|----------|----------|----------|
-| 异常值检测算法简�?| �?| 清洗准确�?| v1.3.0优化 |
-| 复权计算未考虑复杂场景 | �?| 价格数据准确�?| v1.1.0补充 |
-| 批量处理性能不佳 | �?| 系统吞吐�?| v1.2.0优化 |
-| 测试覆盖率不�?| �?| 质量保证 | v1.0.0补充 |
-| 监控指标不完�?| �?| 运维可观测�?| v1.1.0补充 |
+| 异常值检测算法简?| ?| 清洗准确?| v1.3.0优化 |
+| 复权计算未考虑复杂场景 | ?| 价格数据准确?| v1.1.0补充 |
+| 批量处理性能不佳 | ?| 系统吞吐?| v1.2.0优化 |
+| 测试覆盖率不?| ?| 质量保证 | v1.0.0补充 |
+| 监控指标不完?| ?| 运维可观测?| v1.1.0补充 |
 
-### 8.3 向后兼容�?
-| 变更类型 | 兼容性策�?| 影响评估 | 迁移方案 |
+### 8.3 向后兼容?
+| 变更类型 | 兼容性策?| 影响评估 | 迁移方案 |
 |----------|------------|----------|----------|
-| API接口变更 | 版本化接�?| 低影�?| 提供适配�?|
-| 清洗策略变更 | 策略版本管理 | 中影�?| 配置迁移工具 |
-| 数据格式变更 | 数据转换�?| 低影�?| 自动数据转换 |
-| 配置文件变更 | 配置兼容模式 | 低影�?| 配置转换工具 |
+| API接口变更 | 版本化接?| 低影?| 提供适配?|
+| 清洗策略变更 | 策略版本管理 | 中影?| 配置迁移工具 |
+| 数据格式变更 | 数据转换?| 低影?| 自动数据转换 |
+| 配置文件变更 | 配置兼容模式 | 低影?| 配置转换工具 |
 
 ---
 
 ## 📝 设计评审
 
-### 9.1 设计检查清�?
-- [x] 模块职责是否单一明确�?(只负责数据清�?
+### 9.1 设计检查清?
+- [x] 模块职责是否单一明确?(只负责数据清?
 - [x] 接口设计是否简洁易用？ (Python API清晰)
-- [ ] 错误处理是否完备�?(需要补充更多错误类�?
-- [x] 性能要求是否明确�?(批量、并行、缓�?
-- [x] 测试方案是否可行�?(单元、集成、性能测试)
-- [x] 监控指标是否全面�?(成功率、质量、性能)
-- [x] 依赖关系是否清晰�?(依赖pandas、numpy�?
-- [x] 演进路径是否合理�?(版本路线�?
+- [ ] 错误处理是否完备?(需要补充更多错误类?
+- [x] 性能要求是否明确?(批量、并行、缓?
+- [x] 测试方案是否可行?(单元、集成、性能测试)
+- [x] 监控指标是否全面?(成功率、质量、性能)
+- [x] 依赖关系是否清晰?(依赖pandas、numpy?
+- [x] 演进路径是否合理?(版本路线?
 
 ### 9.2 设计决策记录
-| 决策ID | 决策内容 | 决策理由 | 备选方�?| 决策时间 |
+| 决策ID | 决策内容 | 决策理由 | 备选方?| 决策时间 |
 |--------|----------|----------|----------|----------|
-| DD_CLEANER_001 | 插件式架�?| 支持灵活扩展和定�?| 硬编码清洗逻辑 | 2026-04-02 |
+| DD_CLEANER_001 | 插件式架?| 支持灵活扩展和定?| 硬编码清洗逻辑 | 2026-04-02 |
 | DD_CLEANER_002 | 支持批量处理 | 提高处理效率 | 单条处理 | 2026-04-02 |
-| DD_CLEANER_003 | 可配置清洗策�?| 适应不同数据特点 | 固定清洗策略 | 2026-04-02 |
-| DD_CLEANER_004 | 质量评估集成 | 保证清洗效果 | 无质量评�?| 2026-04-02 |
-| DD_CLEANER_005 | 缓存机制 | 提高重复处理性能 | 无缓�?| 2026-04-02 |
+| DD_CLEANER_003 | 可配置清洗策?| 适应不同数据特点 | 固定清洗策略 | 2026-04-02 |
+| DD_CLEANER_004 | 质量评估集成 | 保证清洗效果 | 无质量评?| 2026-04-02 |
+| DD_CLEANER_005 | 缓存机制 | 提高重复处理性能 | 无缓?| 2026-04-02 |
 
 ---
 
 ## 🔗 相关文档
 
-### 10.1 参考文�?
+### 10.1 参考文?
 - [架构设计文档](01_FRAMEWORK/ARCHITECTURE.md) - Layer 1定义
 -  - 数据质量评估标准
 - [API接口契约](03_TRADING_TACTICS/API_Contract.md) - 系统接口规范
 
 ### 10.2 依赖文档
-- [pandas数据处理文档] - pandas库使用指�?
+- [pandas数据处理文档] - pandas库使用指?
 - [金融数据处理最佳实践] - 金融数据清洗标准
-- [异常值检测算法综述] - 异常值检测方法介�?
+- [异常值检测算法综述] - 异常值检测方法介?
 
 ---
 
-## 🏁 设计状�?
+## 🏁 设计状?
 
-### 当前状�?
+### 当前状?
 - **设计进度**: 80%完成
 - **待完成项**: 
   1. 详细错误处理设计
@@ -1179,13 +1179,13 @@ alerts:
   3. 性能优化详细设计
   4. 部署配置说明
 
-### 下一步行�?
-1. **设计评审**: 请架构师审核本设计文�?
-2. **技术验�?*: 验证核心清洗算法的有效�?
-3. **原型开�?*: 开发最小可行原型验证技术方�?
+### 下一步行?
+1. **设计评审**: 请架构师审核本设计文?
+2. **技术验?*: 验证核心清洗算法的有效?
+3. **原型开?*: 开发最小可行原型验证技术方?
 4. **性能测试**: 测试批量处理的性能表现
 
 > **设计完成时间**: 2026-04-02  
-> **设计状�?*: 🔵 设计进行�? 
-> **下一阶段**: 设计评审和技术验�? 
+> **设计状?*: 🔵 设计进行? 
+> **下一阶段**: 设计评审和技术验? 
 > **关联文档**: [MODULE_DESIGN_PLAN.md](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md), [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)

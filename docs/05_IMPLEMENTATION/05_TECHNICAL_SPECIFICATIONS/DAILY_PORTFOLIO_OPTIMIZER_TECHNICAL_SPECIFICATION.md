@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DAILY_PORTFOLIO_OPTIMIZER_001
 version: 1.0.0
 spec_version: 1.0
@@ -37,7 +37,7 @@ responsibility:
 
 **技术痛?*?- 无组合优化模?- 无风险模?- 无约束条件管?- 无换手率控制机制
 
-**预期�?*?- 实现组合风险调整后收益最大化（夏普比率≥2.0?- 实现组合风险控制（最大回撤≤15%?- 实现换手率控制（月换手率?00%?- 提升组合稳定?
+**预期?*?- 实现组合风险调整后收益最大化（夏普比率≥2.0?- 实现组合风险控制（最大回撤≤15%?- 实现换手率控制（月换手率?00%?- 提升组合稳定?
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 6 - 组合优化层
 **模块类别**: 核心模块
@@ -47,7 +47,7 @@ responsibility:
 - 作为组合优化层的风险控制，确保组合风险在可控范围内
 - 为执行层提供目标组合权?
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-03 | 首席技术评审官 | 初始版本 | Draft |
 
@@ -100,7 +100,7 @@ responsibility:
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
 | **Alpha因子工厂** | 强依?| API调用 | v1.0+ | 获取Alpha信号 |
-| **市场状态识别系?* | 弱依?| API调用 | v1.0+ | 获取市场�?|
+| **市场状态识别系?* | 弱依?| API调用 | v1.0+ | 获取市场?|
 | **数据源层** | 强依?| 数据库查?| v1.0+ | 获取历史数据 |
 | **执行层** | 下游依赖 | 事件发布 | v1.0+ | 提供目标权重 |
 | **绩效归因?* | 弱依?| 日志记录 | v1.0+ | 记录优化过程 |
@@ -125,7 +125,7 @@ class PortfolioInput:
     risk_model: Dict[str, any]           # 风险模型
     constraints: Dict[str, any]          # 约束条件
     current_portfolio: Dict[str, float]  # 当前组合
-    market_state: Optional[str]          # 市场�?    timestamp: datetime                  # 时间?
+    market_state: Optional[str]          # 市场?    timestamp: datetime                  # 时间?
 @dataclass
 class PortfolioOutput:
     """组合输出"""
@@ -159,7 +159,7 @@ class IDailyPortfolioOptimizer(ABC):
         """估计风险模型
         
         Args:
-            historical_returns: 历史收益?            factor_exposures: 因子暴露(�?
+            historical_returns: 历史收益?            factor_exposures: 因子暴露(?
             
         Returns:
             Dict[str, any]: 风险模型
@@ -278,7 +278,7 @@ CREATE TABLE portfolio_optimization_results (
     sharpe_ratio DECIMAL(10,6) COMMENT '夏普比率',
     risk_contributions JSON COMMENT '风险贡献',
     turnover DECIMAL(10,6) COMMENT '换手?,
-    optimization_status VARCHAR(20) COMMENT '优化�?,
+    optimization_status VARCHAR(20) COMMENT '优化?,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_trade_date (trade_date),
     INDEX idx_portfolio_id (portfolio_id)
@@ -432,7 +432,7 @@ def ledoit_wolf_shrinkage(self, historical_returns: pd.DataFrame) -> pd.DataFram
 
 ### 5.2 组合优化算法
 
-#### 5.2.1 �?方差优化
+#### 5.2.1 ?方差优化
 
 ```python
 class PortfolioOptimizer:
@@ -441,7 +441,7 @@ class PortfolioOptimizer:
     def mean_variance_optimization(self, alpha_signals: pd.Series,
                                    risk_model: Dict[str, any],
                                    constraints: Dict[str, any]) -> Dict[str, float]:
-        """�?方差优化
+        """?方差优化
         
         Args:
             alpha_signals: Alpha信号
@@ -507,7 +507,7 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
     
     Args:
         risk_model: 风险模型
-        risk_budget: 风险预算(�?
+        risk_budget: 风险预算(?
         
     Returns:
         Dict[str, float]: 最优权?    """
@@ -663,7 +663,7 @@ def calculate_risk_contribution(self, weights: Dict[str, float],
 
 ### 6.1 语言框架
 
-| 技术组?| 技术选型 | 版本要求 | �?|
+| 技术组?| 技术选型 | 版本要求 | ?|
 |---------|---------|---------|------|
 | **编程语言** | Python | 3.9+ | 主要开发语言 |
 | **优化求解** | scipy | 1.10+ | 优化求解?|
@@ -861,10 +861,10 @@ def test_portfolio_optimization():
 
 ### C. 变更记录
 
-| 版本 | 日期 | 变更内容 | �?|
+| 版本 | 日期 | 变更内容 | ?|
 |------|------|----------|------|
 | v1.0 | 2026-04-03 | 初始版本 | 首席技术评审官 |
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Draft | **下一?*: 技术评?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Draft | **下一?*: 技术评?

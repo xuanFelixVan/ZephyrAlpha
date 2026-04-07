@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BACKTEST_UI_BLUEPRINT_001
 version: 1.0.0
 status: Active

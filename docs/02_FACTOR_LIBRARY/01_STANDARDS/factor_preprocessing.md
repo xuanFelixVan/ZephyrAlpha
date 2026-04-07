@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FACTOR_PREPROCESSING_001
 version: 1.0.0
 status: Active
@@ -15,43 +15,43 @@ compliance_level: 专业标准---
 
 
 
-# 因子预处理方�?
+# 因子预处理方?
 > **核心职责**: 因子预处理方法和流程，涉及因子预处理方
 > **职责边界**: 
 > - ✅ 本文档负责：因子预处理方法和流程相关内容
 > - ❌ 本文档不负责：具体实现细节、其他模块内容
 
 
-> 因子标准化处理流�?
+> 因子标准化处理流?
 
 ---
 
-## 1. 预处理流�?
+## 1. 预处理流?
 
 ```
-原始因子 �?缺失值处�?�?异常值处�?�?标准�?�?因子�?
+原始因子 ?缺失值处??异常值处??标准??因子?
 ```
 
 ---
 
-## 2. 缺失值处�?
+## 2. 缺失值处?
 
 ### 2.1 处理方法
 
 | 方法 | 适用场景 | 实现 |
 |------|----------|------|
-| 删除�?| 缺失比例>30% | dropna |
-| 填充�?| 缺失比例<30% | fillna |
-| 中位数填�?| 非极端值因�?| median |
-| 前后均值填�?| 时序连续因子 | ffill/bfill |
-| 行业均值填�?| 存在行业差异 | groupby median |
+| 删除?| 缺失比例>30% | dropna |
+| 填充?| 缺失比例<30% | fillna |
+| 中位数填?| 非极端值因?| median |
+| 前后均值填?| 时序连续因子 | ffill/bfill |
+| 行业均值填?| 存在行业差异 | groupby median |
 
 ### 2.2 Python实现
 
 ```python
 def handle_missing_values(factor_data, method='median', threshold=0.3):
     """
-    处理缺失�?
+    处理缺失?
 
     Parameters:
     -----------
@@ -60,7 +60,7 @@ def handle_missing_values(factor_data, method='median', threshold=0.3):
     method : str
         处理方法: 'drop', 'median', 'mean', 'ffill', 'industry_median'
     threshold : float
-        缺失比例阈值，超过则删�?
+        缺失比例阈值，超过则删?
     """
     missing_ratio = factor_data.isna().mean()
 
@@ -84,22 +84,22 @@ def handle_missing_values(factor_data, method='median', threshold=0.3):
 
 ---
 
-## 3. 异常值处�?
+## 3. 异常值处?
 
-### 3.1 检测方�?
+### 3.1 检测方?
 
-| 方法 | 说明 | 阈�?|
+| 方法 | 说明 | 阈?|
 |------|------|------|
-| 3σ原则 | 正态分布假�?| mean±3*std |
+| 3σ原则 | 正态分布假?| mean±3*std |
 | MAD | 绝对中位数法 | median±3*MAD |
-| 分位�?| 非参数方�?| 1%�?9%分位 |
+| 分位?| 非参数方?| 1%?9%分位 |
 
 ### 3.2 Python实现
 
 ```python
 def handle_outliers(factor_data, method='mad', k=3):
     """
-    处理异常�?
+    处理异常?
 
     Parameters:
     -----------
@@ -131,15 +131,15 @@ def handle_outliers(factor_data, method='mad', k=3):
 
 ---
 
-## 4. 标准化处�?
+## 4. 标准化处?
 
 ### 4.1 常用方法
 
 | 方法 | 公式 | 特点 |
 |------|------|------|
-| Z-score | (x-mean)/std | 均�?，标准差1 |
+| Z-score | (x-mean)/std | 均?，标准差1 |
 | Min-Max | (x-min)/(max-min) | 归一化到[0,1] |
-| Rank | rank(x)/n | 分位数映�?|
+| Rank | rank(x)/n | 分位数映?|
 |的行业中性化 | x - groupby_mean | 消除行业偏向 |
 
 ### 4.2 Python实现
@@ -147,16 +147,16 @@ def handle_outliers(factor_data, method='mad', k=3):
 ```python
 def standardize_factor(factor_data, method='zscore', groupby=None):
     """
-    因子标准�?
+    因子标准?
 
     Parameters:
     -----------
     factor_data : pd.Series
         因子数据
     method : str
-        标准化方�? 'zscore', 'minmax', 'rank', 'industry_neutral'
+        标准化方? 'zscore', 'minmax', 'rank', 'industry_neutral'
     groupby : str
-        分组列名（如行业�?
+        分组列名（如行业?
     """
     if method == 'zscore':
         return (factor_data - factor_data.mean()) / factor_data.std()
@@ -177,7 +177,7 @@ def standardize_factor(factor_data, method='zscore', groupby=None):
 
 ---
 
-## 5. 预处理配�?
+## 5. 预处理配?
 
 ```python
 PREPROCESSING_CONFIG = {

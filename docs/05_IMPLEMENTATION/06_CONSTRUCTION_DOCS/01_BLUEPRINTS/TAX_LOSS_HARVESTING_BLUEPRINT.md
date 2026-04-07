@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - 税收优化
   - 税损收割
@@ -12,22 +12,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
 
 # 税收优化（税损收割）蓝图
 
-> **æ ¸å¿èè´£**: å®ç°ç¨ææ¶å²ç­ç¥ï¼ä¼åç¨åæ¶ç?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼ç¨æè¯å«ãæ¶å²ç­ç¥ãwash saleè§é¿
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
 
 ## 核心定位
 
-è´è´£Tax Loss Harvestingçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
 ## 设计目标
 
@@ -88,24 +83,15 @@ layer: Layer 5.2 (组合优化)
 **单一职责**: 识别和执行税损收割机会，最大化税后收益
 
 **职责边界**:
-- â?è´è´£: æªå®ç°æçè®¡ç®ãæ´å®è§åæ£æµãç¨ææ¶å²æºä¼è¯å«ãæ¿ä»£è¯å¸éæ©
-- â?ä¸è´è´? åºç¡ç»åä¼åï¼ç±MEAN_VARIANCE_OPTIMIZATIONè´è´£ï¼?
-- â?ä¸è´è´? åå¹³è¡¡å³ç­ï¼ç±PORTFOLIO_REBALANCINGè´è´£ï¼?
 
 ### 1.2 适用场景
 
-**ä¸ªäººæèµè
-ä¸å±åè?*:
 - 降低年度税负
-- å»¶è¿èµæ¬å©å¾ç¨?
 - 提高税后收益
 - 符合税务合规
 
-### 1.3 å¼æºä¾èµ?
 
-| åºå | ç¨é?| è¯´æ |
 |------|------|------|
-| rebalancer | åè?| ç¨ææ¶å²é»è¾åè?|
 | 自研核心 | 主要 | 针对中国/美国税法 |
 
 ---
@@ -114,7 +100,6 @@ layer: Layer 5.2 (组合优化)
 
 ### 2.1 核心功能
 
-#### 2.1.1 æªå®ç°æçè®¡ç®?
 
 ```python
 class UnrealizedGainLossCalculator:
@@ -129,7 +114,6 @@ class UnrealizedGainLossCalculator:
         current_prices: Dict[str, float]
     ) -> pd.DataFrame:
         """
-        è®¡ç®æªå®ç°æç?
         
         参数:
             positions: 持仓数量
@@ -137,7 +121,6 @@ class UnrealizedGainLossCalculator:
             current_prices: 当前价格
             
         返回:
-            æªå®ç°æçæç»?
         """
         pass
     
@@ -147,29 +130,21 @@ class UnrealizedGainLossCalculator:
         min_loss_threshold: float = 1000.0
     ) -> List[Dict]:
         """
-        è¯å«ç¨ææ¶å²åé?
         
         参数:
-            unrealized_pnl: æªå®ç°æç?
-            min_loss_threshold: æå°æå¤±éå?
             
         返回:
-            åéåè¡?
+            åéåè¡?
         """
         pass
 ```
 
-#### 2.1.2 æ´å®è§åæ£æµ?
 
 ```python
 class WashSaleDetector:
     """
     洗售规则检测器
     
-    ç¾å½: 30å¤©å
-ä¸è½ä¹°å
-¥ç¸åæå®è´¨ç¸åè¯å?
-    ä¸­å½: æ æ´å®è§åéå?
     """
     
     def check_wash_sale(
@@ -180,7 +155,6 @@ class WashSaleDetector:
         forward_days: int = 30
     ) -> bool:
         """
-        æ£æ¥æ¯å¦è¿åæ´å®è§å?
         
         返回:
             True: 违反洗售规则
@@ -194,7 +168,6 @@ class WashSaleDetector:
         trade_date: datetime
     ) -> Tuple[datetime, datetime]:
         """
-        æ¥æ¾æ´å®è§åç¦æ­¢æ?
         """
         pass
 ```
@@ -204,10 +177,7 @@ class WashSaleDetector:
 ```python
 class SubstituteSecuritySelector:
     """
-    æ¿ä»£è¯å¸éæ©å?
     
-    éæ©ä¸åè¯å¸é«åº¦ç¸å
-³ä½ä¸è¿åæ´å®è§åçæ¿ä»£å
     """
     
     def find_substitutes(
@@ -220,15 +190,12 @@ class SubstituteSecuritySelector:
         查找替代证券
         
         参数:
-            security: åè¯å?
-            correlation_threshold: ç¸å
-³æ§éå?
-            exclude_list: æé¤åè¡¨ï¼æ´å®è§åç¸å
-³ï¼
+            security: åè¯å?
+            correlation_threshold: ç¸å
+³æ§éå?
+³ï¼
             
         返回:
-            æ¿ä»£è¯å¸åè¡¨ï¼æç¸å
-³æ§æåºï¼
         """
         pass
 ```
@@ -238,7 +205,6 @@ class SubstituteSecuritySelector:
 ```python
 class AfterTaxReturnOptimizer:
     """
-    ç¨åæ¶çä¼åå?
     """
     
     def optimize_after_tax(
@@ -255,7 +221,6 @@ class AfterTaxReturnOptimizer:
             expected_returns: 税前预期收益
             short_term_tax_rate: 短期资本利得税率
             long_term_tax_rate: 长期资本利得税率
-            holding_periods: æä»å¨æï¼å¤©ï¼?
             
         返回:
             税后优化结果
@@ -275,16 +240,13 @@ class AfterTaxReturnOptimizer:
 
 ---
 
-## 3. ææ¯è§æ ?
 
 ### 3.1 接口设计
 
 ```python
 class TaxLossHarvester:
     """
-    ç¨ææ¶å²å?
     
-    ä¸»è¦æ¥å£ç±?
     """
     
     def __init__(
@@ -320,7 +282,6 @@ class TaxLossHarvester:
 ```
 
 ### 3.2 é
-ç½®åæ°
 
 ```yaml
 tax_loss_harvesting:
@@ -338,10 +299,7 @@ tax_loss_harvesting:
     lookback_days: 30
     forward_days: 30
     
-  # æ¶å²éå?
   harvest:
-    min_loss_amount: 1000  # æå°æå¤±éé¢?
-    min_tax_savings: 150   # æå°ç¨æ¶èç?
     
   # 替代证券
   substitute:
@@ -351,35 +309,26 @@ tax_loss_harvesting:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [äº¤æææ¬åæå¼æèå¾](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | ä¸­ä¾èµ?| æä¾ææ¬åæ |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»ååå¹³è¡¡èå¾](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | å¼ºä¾èµ?| ç»ååå¹³è¡?|
-| [å¨è½¬çæ§å¶èå¾](./TURNOVER_CONTROL_BLUEPRINT.md) | TURNOVER_CONTROL_001 | ä¸­ä¾èµ?| å¨è½¬çæ§å?|
-| [å­£åº¦è°ä»èå¾](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | ä¸­ä¾èµ?| å­£åº¦è°ä»å³ç­ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -400,21 +349,16 @@ graph LR
 
 ## 4. 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
 ## 5. 文档治理
 
 ### 5.1 文档索引
 
 **本文档在系统中的位置**:
-- **æå±å±çº?*: Layer 6 (ç»åä¼åå±?
 - **模块索引**: 001
 - **模块名称**: TAX_LOSS_HARVESTING
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -428,9 +372,6 @@ graph LR
 
 **文档维护**:
 - **责任模块**: TAX_LOSS_HARVESTING
-- **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
-- **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

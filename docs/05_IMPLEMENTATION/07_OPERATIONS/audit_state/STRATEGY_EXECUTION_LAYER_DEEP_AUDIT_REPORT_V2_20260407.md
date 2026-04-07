@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: STRATEGY_EXECUTION_LAYER_DEEP_AUDIT_V2_001
 version: 2.0.0
 status: Active
@@ -177,7 +177,7 @@ d:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state\
 
 **证据**：
 ```
-applicable_scope: 全系统技术规格书（Layer 0-11�?compliance_level: 专业标准
+applicable_scope: 全系统技术规格书（Layer 0-11?compliance_level: 专业标准
 ```
 
 **修复建议**：

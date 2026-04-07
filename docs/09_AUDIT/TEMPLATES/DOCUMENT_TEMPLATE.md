@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 version: 1.0.0
 standard_type: жҠҖжңҜж–ҮжЎ?applicable_scope: е…Ёзі»з»?compliance_level: еҲқе§Ӣж ҮеҮҶ
 parent_document: ../INDEX.md

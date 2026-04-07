@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ARCHIVE_BLOCK_D3_FINDINGS_001
 version: 4.0.1
 status: Active
@@ -149,7 +149,7 @@ implementation_status: 进行?---
 
 ### 2026-03-31 D3块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | ?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | D3-P1-001 | 05_IMPLEMENTATION/README.md版本v2.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | D3-P1-002 | PATH_STANDARD.md断裂SPEC.md引用修正 | ?已修?| 2026-03-31 |

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_08_MOBILE_PUSH_001
 version: 1.0.0
 status: Active

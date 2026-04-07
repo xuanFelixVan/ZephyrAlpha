@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - 提供ai enhancement integration blueprint的完整架构设计、技术选型和实施路径规划
   - 风险预算

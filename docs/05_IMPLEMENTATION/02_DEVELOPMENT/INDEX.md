@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_DEVELOPMENT
 version: 1.0.0
 status: Active

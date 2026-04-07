@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: API_DESIGN_001
 version: 1.0.0
 status: Active
@@ -18,67 +18,67 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 因子计算
   - 组合优化
   - 交易执行
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
-applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
+applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
+compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
 
-# APIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ
+# APIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - APIﻟ؟ﺝﻟ؟۰ﻟﮒﺝ
-> **ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
-> **ﮒﺙﮒﮔﭘﻠ?*: 5h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﻛﺕﮔ۷۰ﮒﻠﺑﻠﻛﺟ۰ﮔ۴ﮒ۲ﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒﮒﺎﮔ۷۰ﮒﻟﺛﮔﮔﻛﭦ۳ﻛﭦ
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - APIﻟ؟ﺝﻟ؟۰ﻟﮒﺝ
+> **ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
+> **ﮒﺙﮒﮔﭘﻠ?*: 5h
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﻛﺕﮔ۷۰ﮒﻠﺑﻠﻛﺟ۰ﮔ۴ﮒ۲ﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒﮒﺎﮔ۷۰ﮒﻟﺛﮔﮔﻛﭦ۳ﻛﭦ
 
 
-## 1. APIﻟ؟ﺝﻟ؟۰ﮒﮒ
+## 1. APIﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-### 1.1 ﮔ ﺕﮒﺟﮒﮒ
+### 1.1 ﮔ ﺕﮒﺟﮒﮒ
 
-| ﮒﮒ | ﻟﺁﺑﮔ | ﻛﺙﮒﻝﭦ?|
+| ﮒﮒ | ﻟﺁﺑﮔ | ﻛﺙﮒﻝﭦ?|
 |------|------|--------|
-| **ﻛﺕﻟﺑﮔ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﻝ ﻙﮒﺛﮒ?| ﮒﺟﻠ۰ﭨ |
-| **ﻝ؟ﮔﺑﮔ?* | ﮔ۴ﮒ۲ﻟﻟﺑ۲ﮒﻛﺕﺅﺙﻛﺕﻟﺟﮒﭦ۵ﮒﺍﻟ۲ | ﮒﺟﻠ۰ﭨ |
-| **ﮒﺁﮔﭖﻟﺁ?* | ﮔ۴ﮒ۲ﮒﺁﻝ؛ﻝ،ﻛﭦﻛﺕﮒ۰ﻠﭨﻟﺝﮔﭖﻟﺁ | ﮒﺟﻠ۰ﭨ |
-| **ﻝﮔ؛ﮒ?* | APIﻝﮔ؛ﮔ۶ﮒﭘﺅﺙﮔﺁﮔﮒﺗﺏﮔﭨﮒﻝﭦ?| ﮒﭦﻟﺁ۴ |
-| **ﮔﮔ۰۲ﮒ?* | ﻟ۹ﮒ۷ﻝﮔOpenAPI/Swaggerﮔﮔ۰۲ | ﮒﭦﻟﺁ۴ |
+| **ﻛﺕﻟﺑﮔ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﻝ ﻙﮒﺛﮒ?| ﮒﺟﻠ۰ﭨ |
+| **ﻝ؟ﮔﺑﮔ?* | ﮔ۴ﮒ۲ﻟﻟﺑ۲ﮒﻛﺕﺅﺙﻛﺕﻟﺟﮒﭦ۵ﮒﺍﻟ۲ | ﮒﺟﻠ۰ﭨ |
+| **ﮒﺁﮔﭖﻟﺁ?* | ﮔ۴ﮒ۲ﮒﺁﻝ؛ﻝ،ﻛﭦﻛﺕﮒ۰ﻠﭨﻟﺝﮔﭖﻟﺁ | ﮒﺟﻠ۰ﭨ |
+| **ﻝﮔ؛ﮒ?* | APIﻝﮔ؛ﮔ۶ﮒﭘﺅﺙﮔﺁﮔﮒﺗﺏﮔﭨﮒﻝﭦ?| ﮒﭦﻟﺁ۴ |
+| **ﮔﮔ۰۲ﮒ?* | ﻟ۹ﮒ۷ﻝﮔOpenAPI/Swaggerﮔﮔ۰۲ | ﮒﭦﻟﺁ۴ |
 
-### 1.2 ﮔ۴ﮒ۲ﮒﮒﺎ
+### 1.2 ﮔ۴ﮒ۲ﮒﮒﺎ
 
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?          External API (ﮒ۳ﻠ۷ﮔ۴ﮒ۲)            ﻗ?
-ﻗ?   FastAPI Routes ﻗ?ﻛﭦ?ﮒ۳ﻠ۷ﻝﺏﭨﻝﭨﻟﺍﻝ۷           ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-                    ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?          Internal API (ﮒﻠ۷ﮔ۴ﮒ۲)             ﻗ?
-ﻗ?   Module Methods ﻗ?ﮔ۷۰ﮒﻠﺑﻟﺍﻝ?                ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-                    ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?          Data Interface (ﮔﺍﮔ؟ﮔ۴ﮒ۲)           ﻗ?
-ﻗ?   Repository Pattern ﻗ?ﮔﺍﮔ؟ﻟ؟ﺟﻠ؟              ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?          External API (ﮒ۳ﻠ۷ﮔ۴ﮒ۲)            ﻗ?
+ﻗ?   FastAPI Routes ﻗ?ﻛﭦ?ﮒ۳ﻠ۷ﻝﺏﭨﻝﭨﻟﺍﻝ۷           ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                    ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?          Internal API (ﮒﻠ۷ﮔ۴ﮒ۲)             ﻗ?
+ﻗ?   Module Methods ﻗ?ﮔ۷۰ﮒﻠﺑﻟﺍﻝ?                ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                    ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?          Data Interface (ﮔﺍﮔ؟ﮔ۴ﮒ۲)           ﻗ?
+ﻗ?   Repository Pattern ﻗ?ﮔﺍﮔ؟ﻟ؟ﺟﻠ؟              ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 
-## 2. ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
+## 2. ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
 
-### 2.1 ﮒﮒﭦﻝﭨﮔ
+### 2.1 ﮒﮒﭦﻝﭨﮔ
 
 ```python
 from typing import Generic, TypeVar, Optional
@@ -87,12 +87,12 @@ from pydantic import BaseModel
 T = TypeVar('T')
 
 class APIResponse(BaseModel, Generic[T]):
-    """ﻝﭨﻛﺕAPIﮒﮒﭦﮔ ﺙﮒﺙ"""
+    """ﻝﭨﻛﺕAPIﮒﮒﭦﮔ ﺙﮒﺙ"""
 
-    code: int = 0                    # ﻝﭘﮔﻝ : 0=ﮔﮒ, >0=ﻠﻟﺁﺁ
-    message: str = "success"          # ﮔﭘﮔﺁﮔﻟﺟﺍ
-    data: Optional[T] = None         # ﮒﮒﭦﮔﺍﮔ؟
-    request_id: Optional[str] = None # ﻟﺁﺓﮔﺎﻟﺟﺛﻟﺕ۹ID
+    code: int = 0                    # ﻝﭘﮔﻝ : 0=ﮔﮒ, >0=ﻠﻟﺁﺁ
+    message: str = "success"          # ﮔﭘﮔﺁﮔﻟﺟﺍ
+    data: Optional[T] = None         # ﮒﮒﭦﮔﺍﮔ؟
+    request_id: Optional[str] = None # ﻟﺁﺓﮔﺎﻟﺟﺛﻟﺕ۹ID
 
     class Config:
         json_schema_extra = {
@@ -105,50 +105,50 @@ class APIResponse(BaseModel, Generic[T]):
         }
 ```
 
-### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟ﻛﺗ?
+### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟ﻛﺗ?
 
-| ﻠﻟﺁﺁﻝ ?| ﻟﮒﺑ | ﻟﺁﺑﮔ |
+| ﻠﻟﺁﺁﻝ ?| ﻟﮒﺑ | ﻟﺁﺑﮔ |
 |--------|------|------|
-| 0 | 0xx | ﮔﮒ |
-| 1000-1999 | 1xxx | ﮔﺍﮔ؟ﻝﺕﮒﺏﻠﻟﺁﺁ |
-| 2000-2999 | 2xxx | ﻝ­ﻝ۴ﻝﺕﮒﺏﻠﻟﺁﺁ |
-| 3000-3999 | 3xxx | ﻠ۲ﮔ۶ﻝﺕﮒﺏﻠﻟﺁﺁ |
-| 4000-4999 | 4xxx | ﮔ۶ﻟ۰ﻝﺕﮒﺏﻠﻟﺁﺁ |
-| 5000-5999 | 5xxx | ﻝﺏﭨﻝﭨﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 0 | 0xx | ﮔﮒ |
+| 1000-1999 | 1xxx | ﮔﺍﮔ؟ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 2000-2999 | 2xxx | ﻝ­ﻝ۴ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 3000-3999 | 3xxx | ﻠ۲ﮔ۶ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 4000-4999 | 4xxx | ﮔ۶ﻟ۰ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 5000-5999 | 5xxx | ﻝﺏﭨﻝﭨﻝﺕﮒﺏﻠﻟﺁﺁ |
 
 ```python
 class ErrorCode:
-    # ﮔﺍﮔ؟ﻠﻟﺁﺁ (1000-1999)
+    # ﮔﺍﮔ؟ﻠﻟﺁﺁ (1000-1999)
     DATA_NOT_FOUND = 1001
     DATA_INVALID = 1002
     DATA_TIMEOUT = 1003
     DATA_SOURCE_UNAVAILABLE = 1004
 
-    # ﻝ­ﻝ۴ﻠﻟﺁﺁ (2000-2999)
+    # ﻝ­ﻝ۴ﻠﻟﺁﺁ (2000-2999)
     STRATEGY_NOT_FOUND = 2001
     STRATEGY_INVALID = 2002
     STRATEGY_ALREADY_RUNNING = 2003
 
-    # ﻠ۲ﮔ۶ﻠﻟﺁﺁ (3000-3999)
+    # ﻠ۲ﮔ۶ﻠﻟﺁﺁ (3000-3999)
     RISK_LIMIT_EXCEEDED = 3001
     RISK_POSITION_LIMIT = 3002
     RISK_DRAWDOWN_LIMIT = 3003
 
-    # ﮔ۶ﻟ۰ﻠﻟﺁﺁ (4000-4999)
+    # ﮔ۶ﻟ۰ﻠﻟﺁﺁ (4000-4999)
     ORDER_REJECTED = 4001
     ORDER_TIMEOUT = 4002
     INSUFFICIENT_CAPITAL = 4003
 
-    # ﻝﺏﭨﻝﭨﻠﻟﺁﺁ (5000-5999)
+    # ﻝﺏﭨﻝﭨﻠﻟﺁﺁ (5000-5999)
     SYSTEM_ERROR = 5001
     CONFIG_ERROR = 5002
     AUTH_ERROR = 5003
 ```
 
 
-## 3. ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+## 3. ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 DataHubﮔ۴ﮒ۲
+### 3.1 DataHubﮔ۴ﮒ۲
 
 ```python
 from abc import ABC, abstractmethod
@@ -157,7 +157,7 @@ from datetime import datetime
 import pandas as pd
 
 class IDataHub(ABC):
-    """ﮔﺍﮔ؟ﻛﺕ­ﮒﺟﮔ۴ﮒ۲"""
+    """ﮔﺍﮔ؟ﻛﺕ­ﮒﺟﮔ۴ﮒ۲"""
 
     @abstractmethod
     def get_ohlcv(
@@ -167,20 +167,20 @@ class IDataHub(ABC):
         end_date: str,
         fields: Optional[List[str]] = None
     ) -> pd.DataFrame:
-        """ﻟﺓﮒOHLCVﮔﺍﮔ؟
+        """ﻟﺓﮒOHLCVﮔﺍﮔ؟
 
-        ﮒﮔﺍ:
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  (e.g. "000001.SZ")
-            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?(e.g. "2026-01-01")
-            end_date: ﻝﭨﮔﮔ۴ﮔ (e.g. "2026-03-28")
-            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
+        ﮒﮔﺍ:
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  (e.g. "000001.SZ")
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?(e.g. "2026-01-01")
+            end_date: ﻝﭨﮔﮔ۴ﮔ (e.g. "2026-03-28")
+            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
 
-        ﻟﺟﮒ:
+        ﻟﺟﮒ:
             DataFrame with columns: date, open, high, low, close, volume
 
-        ﮒﺙﮒﺕﺕ:
-            DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?
-            DataTimeoutError: ﮔﺍﮔ؟ﻟﺓﮒﻟﭘﮔﭘ
+        ﮒﺙﮒﺕﺕ:
+            DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?
+            DataTimeoutError: ﮔﺍﮔ؟ﻟﺓﮒﻟﭘﮔﭘ
         """
         pass
 
@@ -190,35 +190,35 @@ class IDataHub(ABC):
         symbol: str,
         fields: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """ﻟﺓﮒﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ?
+        """ﻟﺓﮒﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ?
 
-        ﮒﮔﺍ:
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
+        ﮒﮔﺍ:
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
 
-        ﻟﺟﮒ:
-            ﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ؟ﮒ­ﮒ?
+        ﻟﺟﮒ:
+            ﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ؟ﮒ­ﮒ?
         """
         pass
 
     @abstractmethod
     def list_symbols(self, market: str = "A") -> List[str]:
-        """ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
+        """ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
 
-        ﮒﮔﺍ:
-            market: ﮒﺕﮒﭦﻛﭨ۲ﻝ  (e.g. "A", "HK")
+        ﮒﮔﺍ:
+            market: ﮒﺕﮒﭦﻛﭨ۲ﻝ  (e.g. "A", "HK")
 
-        ﻟﺟﮒ:
-            ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+        ﻟﺟﮒ:
+            ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
         """
         pass
 ```
 
-### 3.2 FactorCalculatorﮔ۴ﮒ۲
+### 3.2 FactorCalculatorﮔ۴ﮒ۲
 
 ```python
 class IFactorCalculator(ABC):
-    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?""
+    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?""
 
     @abstractmethod
     def calculate(
@@ -228,16 +228,16 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒ ﮒ­ﮒ?
+        """ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒ ﮒ­ﮒ?
 
-        ﮒﮔﺍ:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-            date: ﮔ۴ﮔ
-            params: ﮒ ﮒ­ﮒﮔﺍ
+        ﮒﮔﺍ:
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            date: ﮔ۴ﮔ
+            params: ﮒ ﮒ­ﮒﮔﺍ
 
-        ﻟﺟﮒ:
-            ﮒ ﮒ­ﮒﺙﺅﺙNoneﻟ۰۷ﻝ۳ﭦﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
+        ﻟﺟﮒ:
+            ﮒ ﮒ­ﮒﺙﺅﺙNoneﻟ۰۷ﻝ۳ﭦﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
         """
         pass
 
@@ -250,16 +250,16 @@ class IFactorCalculator(ABC):
         end_date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> pd.DataFrame:
-        """ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­
+        """ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­
 
-        ﮒﮔﺍ:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            symbols: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
-            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?
-            end_date: ﻝﭨﮔﮔ۴ﮔ
-            params: ﮒ ﮒ­ﮒﮔﺍ
+        ﮒﮔﺍ:
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            symbols: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?
+            end_date: ﻝﭨﮔﮔ۴ﮔ
+            params: ﮒ ﮒ­ﮒﮔﺍ
 
-        ﻟﺟﮒ:
+        ﻟﺟﮒ:
             DataFrame with columns: date, symbol, value
         """
         pass
@@ -270,23 +270,23 @@ class IFactorCalculator(ABC):
         factor_name: str,
         ic_threshold: float = 0.03
     ) -> Dict[str, Any]:
-        """ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﮔ?
+        """ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﮔ?
 
-        ﮒﮔﺍ:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            ic_threshold: ICﻠﮒ?
+        ﮒﮔﺍ:
+            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+            ic_threshold: ICﻠﮒ?
 
-        ﻟﺟﮒ:
+        ﻟﺟﮒ:
             {'ic': float, 'ir': float, 'valid': bool}
         """
         pass
 ```
 
-### 3.3 StrategyEngineﮔ۴ﮒ۲
+### 3.3 StrategyEngineﮔ۴ﮒ۲
 
 ```python
 class IStrategyEngine(ABC):
-    """ﻝ­ﻝ۴ﮒﺙﮔﮔ۴ﮒ۲"""
+    """ﻝ­ﻝ۴ﮒﺙﮔﮔ۴ﮒ۲"""
 
     @abstractmethod
     def generate_signals(
@@ -295,15 +295,15 @@ class IStrategyEngine(ABC):
         symbols: List[str],
         date: str
     ) -> List[Signal]:
-        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
 
-        ﮒﮔﺍ:
-            strategy_id: ﻝ­ﻝ۴ID
-            symbols: ﻟ۰ﻝ۴۷ﮒﻟ۰۷
-            date: ﮔ۴ﮔ
+        ﮒﮔﺍ:
+            strategy_id: ﻝ­ﻝ۴ID
+            symbols: ﻟ۰ﻝ۴۷ﮒﻟ۰۷
+            date: ﮔ۴ﮔ
 
-        ﻟﺟﮒ:
-            ﻛﺟ۰ﮒﺓﮒﻟ۰۷
+        ﻟﺟﮒ:
+            ﻛﺟ۰ﮒﺓﮒﻟ۰۷
         """
         pass
 
@@ -313,14 +313,14 @@ class IStrategyEngine(ABC):
         strategy_id: str,
         symbol: str
     ) -> Position:
-        """ﻟﺓﮒﮔﻛﭨ
+        """ﻟﺓﮒﮔﻛﭨ
 
-        ﮒﮔﺍ:
-            strategy_id: ﻝ­ﻝ۴ID
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+        ﮒﮔﺍ:
+            strategy_id: ﻝ­ﻝ۴ID
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
 
-        ﻟﺟﮒ:
-            ﮔﻛﭨﻛﺟ۰ﮔﺁ
+        ﻟﺟﮒ:
+            ﮔﻛﭨﻛﺟ۰ﮔﺁ
         """
         pass
 
@@ -332,22 +332,22 @@ class IStrategyEngine(ABC):
         volume: int,
         price: float
     ) -> None:
-        """ﮔﺑﮔﺍﮔﻛﭨ
+        """ﮔﺑﮔﺍﮔﻛﭨ
 
-        ﮒﮔﺍ:
-            strategy_id: ﻝ­ﻝ۴ID
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-            volume: ﮔﻛﭨﻠﺅﺙﮔ­۲ﻛﺗﺍﮒ۴ﺅﺙﻟﺑﮒﮒﭦﺅﺙ
+        ﮒﮔﺍ:
+            strategy_id: ﻝ­ﻝ۴ID
+            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+            volume: ﮔﻛﭨﻠﺅﺙﮔ­۲ﻛﺗﺍﮒ۴ﺅﺙﻟﺑﮒﮒﭦﺅﺙ
             price: ﻛﭨﺓﮔ ﺙ
         """
         pass
 ```
 
-### 3.4 RiskManagerﮔ۴ﮒ۲
+### 3.4 RiskManagerﮔ۴ﮒ۲
 
 ```python
 class IRiskManager(ABC):
-    """ﻠ۲ﻠ۸ﻝ؟۰ﻝﮒ۷ﮔ۴ﮒ?""
+    """ﻠ۲ﻠ۸ﻝ؟۰ﻝﮒ۷ﮔ۴ﮒ?""
 
     @abstractmethod
     def check_order(
@@ -355,13 +355,13 @@ class IRiskManager(ABC):
         order: Order,
         current_positions: List[Position]
     ) -> OrderCheckResult:
-        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮔﺁﮒ۵ﻠﻟﺟﻠ۲ﮔ۶
+        """ﮔ۲ﮔ۴ﻟ؟۱ﮒﮔﺁﮒ۵ﻠﻟﺟﻠ۲ﮔ۶
 
-        ﮒﮔﺍ:
-            order: ﻟ؟۱ﮒ
-            current_positions: ﮒﺛﮒﮔﻛﭨ
+        ﮒﮔﺍ:
+            order: ﻟ؟۱ﮒ
+            current_positions: ﮒﺛﮒﮔﻛﭨ
 
-        ﻟﺟﮒ:
+        ﻟﺟﮒ:
             {'approved': bool, 'reason': str, 'modified': Order}
         """
         pass
@@ -372,14 +372,14 @@ class IRiskManager(ABC):
         positions: List[Position],
         portfolio_value: float
     ) -> RiskMetrics:
-        """ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ 
+        """ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ 
 
-        ﮒﮔﺍ:
-            positions: ﮔﻛﭨﮒﻟ۰۷
-            portfolio_value: ﻝﭨﮒﮒﺕﮒ?
+        ﮒﮔﺍ:
+            positions: ﮔﻛﭨﮒﻟ۰۷
+            portfolio_value: ﻝﭨﮒﮒﺕﮒ?
 
-        ﻟﺟﮒ:
-            ﻠ۲ﻠ۸ﮔﮔ 
+        ﻟﺟﮒ:
+            ﻠ۲ﻠ۸ﮔﮔ 
         """
         pass
 
@@ -389,53 +389,53 @@ class IRiskManager(ABC):
         current_value: float,
         peak_value: float
     ) -> bool:
-        """ﮔ۲ﮔ۴ﮒﮔ۳ﮔﺁﮒ۵ﻟﭘﻠ?
+        """ﮔ۲ﮔ۴ﮒﮔ۳ﮔﺁﮒ۵ﻟﭘﻠ?
 
-        ﮒﮔﺍ:
-            current_value: ﮒﺛﮒﮒ?
-            peak_value: ﮒﮒﺎﮒﺏﺍﮒ?
+        ﮒﮔﺍ:
+            current_value: ﮒﺛﮒﮒ?
+            peak_value: ﮒﮒﺎﮒﺏﺍﮒ?
 
-        ﻟﺟﮒ:
-            Trueﻟ۰۷ﻝ۳ﭦﻟﭘﻠﺅﺙﻠﻟ۵ﮒ۳ﻝ?
+        ﻟﺟﮒ:
+            Trueﻟ۰۷ﻝ۳ﭦﻟﭘﻠﺅﺙﻠﻟ۵ﮒ۳ﻝ?
         """
         pass
 ```
 
 
-## 4. FastAPIﻟﺓﺁﻝﺎﻟ؟ﺝﻟ؟۰
+## 4. FastAPIﻟﺓﺁﻝﺎﻟ؟ﺝﻟ؟۰
 
-### 4.1 ﻟﺓﺁﻝﺎﻝﭨﮔ
+### 4.1 ﻟﺓﺁﻝﺎﻝﭨﮔ
 
 ```
 /api/v1/
-ﻗﻗﻗ /data
-ﻗ?  ﻗﻗﻗ GET  /ohlcv/{symbol}     # ﻟﺓﮒKﻝﭦﺟﮔﺍﮔ?
-ﻗ?  ﻗﻗﻗ GET  /fundamental/{symbol} # ﻟﺓﮒﮒﭦﮔ؛ﻠ?
-ﻗ?  ﻗﻗﻗ GET  /symbols            # ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
-ﻗ?
-ﻗﻗﻗ /factors
-ﻗ?  ﻗﻗﻗ GET  /{factor_name}      # ﻟ؟۰ﻝ؟ﮒ ﮒ­
-ﻗ?  ﻗﻗﻗ POST /batch             # ﮔﺗﻠﻟ؟۰ﻝ؟
-ﻗ?  ﻗﻗﻗ GET  /validate/{name}   # ﻠ۹ﻟﺁﮒ ﮒ­
-ﻗ?
-ﻗﻗﻗ /strategies
-ﻗ?  ﻗﻗﻗ GET  /                   # ﻝ­ﻝ۴ﮒﻟ۰۷
-ﻗ?  ﻗﻗﻗ POST /signals           # ﻝﮔﻛﺟ۰ﮒﺓ
-ﻗ?  ﻗﻗﻗ GET  /{id}/positions    # ﻟﺓﮒﮔﻛﭨ
-ﻗ?  ﻗﻗﻗ POST /{id}/orders      # ﻛﺕﮒ
-ﻗ?
-ﻗﻗﻗ /risk
-ﻗ?  ﻗﻗﻗ POST /check_order       # ﻠ۲ﮔ۶ﮔ۲ﮔ?
-ﻗ?  ﻗﻗﻗ GET  /metrics           # ﻠ۲ﻠ۸ﮔﮔ 
-ﻗ?  ﻗﻗﻗ GET  /limits            # ﻠ۲ﻠ۸ﻠﻠ۱
-ﻗ?
-ﻗﻗﻗ /system
-    ﻗﻗﻗ GET  /health            # ﮒ۴ﮒﭦﺓﮔ۲ﮔ?
-    ﻗﻗﻗ GET  /version           # ﻝﮔ؛ﻛﺟ۰ﮔﺁ
-    ﻗﻗﻗ GET  /config            # ﻠﻝﺛ؟ﻛﺟ۰ﮔﺁ
+ﻗﻗﻗ /data
+ﻗ?  ﻗﻗﻗ GET  /ohlcv/{symbol}     # ﻟﺓﮒKﻝﭦﺟﮔﺍﮔ?
+ﻗ?  ﻗﻗﻗ GET  /fundamental/{symbol} # ﻟﺓﮒﮒﭦﮔ؛ﻠ?
+ﻗ?  ﻗﻗﻗ GET  /symbols            # ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
+ﻗ?
+ﻗﻗﻗ /factors
+ﻗ?  ﻗﻗﻗ GET  /{factor_name}      # ﻟ؟۰ﻝ؟ﮒ ﮒ­
+ﻗ?  ﻗﻗﻗ POST /batch             # ﮔﺗﻠﻟ؟۰ﻝ؟
+ﻗ?  ﻗﻗﻗ GET  /validate/{name}   # ﻠ۹ﻟﺁﮒ ﮒ­
+ﻗ?
+ﻗﻗﻗ /strategies
+ﻗ?  ﻗﻗﻗ GET  /                   # ﻝ­ﻝ۴ﮒﻟ۰۷
+ﻗ?  ﻗﻗﻗ POST /signals           # ﻝﮔﻛﺟ۰ﮒﺓ
+ﻗ?  ﻗﻗﻗ GET  /{id}/positions    # ﻟﺓﮒﮔﻛﭨ
+ﻗ?  ﻗﻗﻗ POST /{id}/orders      # ﻛﺕﮒ
+ﻗ?
+ﻗﻗﻗ /risk
+ﻗ?  ﻗﻗﻗ POST /check_order       # ﻠ۲ﮔ۶ﮔ۲ﮔ?
+ﻗ?  ﻗﻗﻗ GET  /metrics           # ﻠ۲ﻠ۸ﮔﮔ 
+ﻗ?  ﻗﻗﻗ GET  /limits            # ﻠ۲ﻠ۸ﻠﻠ۱
+ﻗ?
+ﻗﻗﻗ /system
+    ﻗﻗﻗ GET  /health            # ﮒ۴ﮒﭦﺓﮔ۲ﮔ?
+    ﻗﻗﻗ GET  /version           # ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+    ﻗﻗﻗ GET  /config            # ﻠﻝﺛ؟ﻛﺟ۰ﮔﺁ
 ```
 
-### 4.2 ﻝ۳ﭦﻛﺝﻟﺓﺁﻝﺎ
+### 4.2 ﻝ۳ﭦﻛﺝﻟﺓﺁﻝﺎ
 
 ```python
 from fastapi import APIRouter, HTTPException, Query
@@ -446,11 +446,11 @@ router = APIRouter(prefix="/api/v1", tags=["data"])
 @router.get("/data/ohlcv/{symbol}")
 async def get_ohlcv(
     symbol: str,
-    start_date: str = Query(..., description="ﮒﺙﮒ۶ﮔ۴ﮔ?),
-    end_date: str = Query(..., description="ﻝﭨﮔﮔ۴ﮔ"),
-    fields: Optional[str] = Query(None, description="ﮒ­ﮔ؟ﭖﮒﻟ۰۷ﺅﺙﻠﮒﺓﮒﻠ")
+    start_date: str = Query(..., description="ﮒﺙﮒ۶ﮔ۴ﮔ?),
+    end_date: str = Query(..., description="ﻝﭨﮔﮔ۴ﮔ"),
+    fields: Optional[str] = Query(None, description="ﮒ­ﮔ؟ﭖﮒﻟ۰۷ﺅﺙﻠﮒﺓﮒﻠ")
 ) -> APIResponse[pd.DataFrame]:
-    """ﻟﺓﮒOHLCVﮔﺍﮔ؟"""
+    """ﻟﺓﮒOHLCVﮔﺍﮔ؟"""
 
     try:
         field_list = fields.split(",") if fields else None
@@ -459,35 +459,35 @@ async def get_ohlcv(
     except DataNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.error(f"ﻟﺓﮒOHLCVﮒ۳ﺎﻟﺑ۴: {e}")
-        raise HTTPException(status_code=500, detail="ﮒﻠ۷ﻠﻟﺁﺁ")
+        logger.error(f"ﻟﺓﮒOHLCVﮒ۳ﺎﻟﺑ۴: {e}")
+        raise HTTPException(status_code=500, detail="ﮒﻠ۷ﻠﻟﺁﺁ")
 ```
 
 
-## 5. ﮔ۴ﮒ۲ﻝﮔ؛ﮔ۶ﮒﭘ
+## 5. ﮔ۴ﮒ۲ﻝﮔ؛ﮔ۶ﮒﭘ
 
-### 5.1 URLﻝﮔ؛ﮔ۶ﮒﭘ
+### 5.1 URLﻝﮔ؛ﮔ۶ﮒﭘ
 
 ```
-/api/v1/data/ohlcv     # v1ﻝﮔ؛
-/api/v2/data/ohlcv     # v2ﻝﮔ؛
+/api/v1/data/ohlcv     # v1ﻝﮔ؛
+/api/v2/data/ohlcv     # v2ﻝﮔ؛
 ```
 
-### 5.2 ﮒﺙﮒ؟ﺗﮔ۶ﻝ­ﻝ?
+### 5.2 ﮒﺙﮒ؟ﺗﮔ۶ﻝ­ﻝ?
 
 ```python
-# v1 ﻗ?v2 ﮒﺙﮒ؟ﺗﻝ­ﻝ۴
+# v1 ﻗ?v2 ﮒﺙﮒ؟ﺗﻝ­ﻝ۴
 class DataAPIV2:
-    """v2ﻝﮔ؛ﮔﺍﮔ؟API"""
+    """v2ﻝﮔ؛ﮔﺍﮔ؟API"""
 
     async def get_ohlcv(self, symbol: str, **kwargs):
-        # v2ﮔﺍﮒ۱ﮒﮔﺍﮔﻠﭨﻟ؟۳ﮒﺙﺅﺙﮒﺙﮒ؟ﺗv1ﻟﺍﻝ۷
+        # v2ﮔﺍﮒ۱ﮒﮔﺍﮔﻠﭨﻟ؟۳ﮒﺙﺅﺙﮒﺙﮒ؟ﺗv1ﻟﺍﻝ۷
         include_extended = kwargs.get('include_extended', False)
 
-        # ﻟﺍﻝ۷v1ﻠﭨﻟﺝ
+        # ﻟﺍﻝ۷v1ﻠﭨﻟﺝ
         result = await self.v1_get_ohlcv(symbol, **kwargs)
 
-        # v2ﮔ۸ﮒﺎ
+        # v2ﮔ۸ﮒﺎ
         if include_extended:
             result['extended'] = self._calculate_extended(result)
 
@@ -495,17 +495,17 @@ class DataAPIV2:
 ```
 
 
-## 6. ﮔ۴ﮒ۲ﮔﮔ۰۲
+## 6. ﮔ۴ﮒ۲ﮔﮔ۰۲
 
-### 6.1 OpenAPIﻠﮔ
+### 6.1 OpenAPIﻠﮔ
 
 ```python
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
 app = FastAPI(
-    title="ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨAPI",
-    description="ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝRESTful API",
+    title="ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨAPI",
+    description="ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝRESTful API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -516,13 +516,13 @@ def custom_openapi():
         return app.openapi_schema
 
     openapi_schema = get_openapi(
-        title="ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨAPI",
+        title="ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨAPI",
         version="1.0.0",
-        description="ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝRESTful API",
+        description="ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝRESTful API",
         routes=app.routes,
     )
 
-    # ﮔﺓﭨﮒ ﻟ؟۳ﻟﺁﻛﺟ۰ﮔﺁ
+    # ﮔﺓﭨﮒ ﻟ؟۳ﻟﺁﻛﺟ۰ﮔﺁ
     openapi_schema["components"]["securitySchemes"] = {
         "Bearer": {
             "type": "http",
@@ -538,27 +538,27 @@ app.openapi = custom_openapi
 ```
 
 
-## 7. ﻛﺕﻛﺕﮔ۴ﮒ۲ﮔ ﮒﺍ
+## 7. ﻛﺕﻛﺕﮔ۴ﮒ۲ﮔ ﮒﺍ
 
-| ﮔ۴ﮒ۲ | ﻛﺕﮔﺕﺕ(ﻟﺍﻝ۷ﻟ? | ﻛﺕﮔﺕﺕ(ﻟ۱،ﻟﺍﻝ? | ﻝﺑ۱ﮒﺙ |
+| ﮔ۴ﮒ۲ | ﻛﺕﮔﺕﺕ(ﻟﺍﻝ۷ﻟ? | ﻛﺕﮔﺕﺕ(ﻟ۱،ﻟﺍﻝ? | ﻝﺑ۱ﮒﺙ |
 |------|-------------|-------------|------|
-| DataHub.get_ohlcv | FactorCalculator, StrategyEngine | ﮔﺍﮔ؟ﮔﭦ?AKShare/Tushare) | DATA.001 |
+| DataHub.get_ohlcv | FactorCalculator, StrategyEngine | ﮔﺍﮔ؟ﮔﭦ?AKShare/Tushare) | DATA.001 |
 | FactorCalculator.calculate | StrategyEngine | DataHub | FACT.001 |
 | StrategyEngine.generate_signals | API Layer | FactorCalculator, RiskManager | STRAT.001 |
 | RiskManager.check_order | StrategyEngine, TradeExecutor | Config, Positions | RISK.001 |
 | TradeExecutor.execute | StrategyEngine | Broker API | EXEC.001 |
 
 
-## 8. ﮒﺙﮒﻛﭨﭨﮒ۰ﮒﻟ۶?5h)
+## 8. ﮒﺙﮒﻛﭨﭨﮒ۰ﮒﻟ۶?5h)
 
-| ﻛﭨﭨﮒ۰ | ﮔﭘﻠﺑ | ﻛﭦ۳ﻛﭨﻝ?|
+| ﻛﭨﭨﮒ۰ | ﮔﭘﻠﺑ | ﻛﭦ۳ﻛﭨﻝ?|
 |------|------|--------|
-| ﮒﮒﭦﮔ ﺙﮒﺙﮔ ﮒﮒ?| 1h | APIResponseﮒﭦﻝﺎﭨ, ErrorCodeﮒ؟ﻛﺗ |
-| ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ | 2h | IDataHub, IFactorCalculatorﻝ­ﮔ۴ﮒ?|
-| FastAPIﻟﺓﺁﻝﺎ | 1.5h | REST APIﮒ؟ﻝﺍ |
-| ﮔﮔ۰۲ﻠﮔ | 0.5h | OpenAPI/Swaggerﻠﻝﺛ؟ |
+| ﮒﮒﭦﮔ ﺙﮒﺙﮔ ﮒﮒ?| 1h | APIResponseﮒﭦﻝﺎﭨ, ErrorCodeﮒ؟ﻛﺗ |
+| ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ | 2h | IDataHub, IFactorCalculatorﻝ­ﮔ۴ﮒ?|
+| FastAPIﻟﺓﺁﻝﺎ | 1.5h | REST APIﮒ؟ﻝﺍ |
+| ﮔﮔ۰۲ﻠﮔ | 0.5h | OpenAPI/Swaggerﻠﻝﺛ؟ |
 
 
-**ﻝﭨﺑﮔ۳ﻟ?*: ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ
-**ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
-**ﮔﮒﮔﺑﮔ?*: 2026-03-29
+**ﻝﭨﺑﮔ۳ﻟ?*: ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ
+**ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
+**ﮔﮒﮔﺑﮔ?*: 2026-03-29

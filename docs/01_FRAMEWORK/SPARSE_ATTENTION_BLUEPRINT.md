@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SPARSE_ATTENTION_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供sparse attention blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -35,7 +35,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -51,7 +51,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-- **线性复杂度**: O(n)复杂�?- **长序列处�?*: 支持超长序列
+- **线性复杂度**: O(n)复杂?- **长序列处?*: 支持超长序列
 
 - **内存优化**: 大幅减少内存
 
@@ -63,17 +63,17 @@ layer: Layer 4 (机器学习层)
 
 
 
-## 2. 稀疏模�?
+## 2. 稀疏模?
 
-| 模式 | 说明 | 复杂�?|
+| 模式 | 说明 | 复杂?|
 
 |------|------|--------|
 
-| Local | 局部窗�?| O(n×w) |
+| Local | 局部窗?| O(n×w) |
 
 | Strided | 步长跳跃 | O(n×k) |
 
-| Global | 全局关键�?| O(n×g) |
+| Global | 全局关键?| O(n×g) |
 
 | Random | 随机采样 | O(n×r) |
 
@@ -115,9 +115,9 @@ class SparseAttention:
 
         Args:
 
-            attention_type: 注意力类�?            window_size: 窗口大小
+            attention_type: 注意力类?            window_size: 窗口大小
 
-            num_global_tokens: 全局token�?        """
+            num_global_tokens: 全局token?        """
 
         pass
 
@@ -143,11 +143,11 @@ class SparseAttention:
 
             query: 查询
 
-            key: �?            value: �?            
+            key: ?            value: ?            
 
         Returns:
 
-            torch.Tensor: 注意力输�?        """
+            torch.Tensor: 注意力输?        """
 
         pass
 

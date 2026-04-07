@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 çæ§å±?
+applicable_scope: Layer 9 çæ§å±?
 compliance_level: 专业标准
 responsibility:
   - 数据质量评分
@@ -20,29 +20,19 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: 数据质量评分，计算和评定数据质量等级
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼æ°æ®è´¨éè¯åãè´¨éææ è®¡ç®ãè´¨éç­çº§è¯å®ãè´¨éè¶å¿åæ?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®è´¨éçæ§ãæ°æ®è´¨éæ²»çãæ°æ®è´¨éæ¥å?
-ï»? æ°æ®è´¨éè¯åç³»ç»èå¾
 
-> **æ ¸å¿å®ä½**: æ°æ®è´¨éè¯åç³»ç»èå¾çæ ¸å¿åè½å®ç?
 
 
 > **模块ID**: `QUALITY_SCORING_001`
-> **å®æ½å¨æ**: Week 8-9ï¼?å¨ï¼
-> **ä¼å
-çº?*: P1ï¼éè¦ï¼
+> **ä¼å
 > **预期收益**: 提升数据质量透明度，降低数据问题风险50%
 
 ## 核心定位
 
 > 核心职责: Quality Scoring System蓝图设计
 > 职责边界: 
-> - â?æ¬ææ¡£è´è´£ï¼Quality Scoring Systemèå¾è®¾è®¡ç¸å
-³å
-å®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å
-¶ä»æ¨¡åå
-å®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡...
+³å
+容
 
 
 ## 设计目标
@@ -99,30 +89,18 @@ layer: Layer 5 (策略执行层)
 
 ## 一、设计背景与目标
 
-### 1.1 ä¸å¡éæ±?
 
 **当前痛点**:
-- ç¼ºå°ç»ä¸çæ°æ®è´¨éè¯åæ å?
 - 无法量化评估数据质量水平
-- æ°æ®è´¨éé®é¢é¾ä»¥è¿½è¸ªåæ¹è¿?
 - 缺少数据质量趋势分析
 
 **业务目标**:
-- å»ºç«å¤ç»´åº¦æ°æ®è´¨éè¯åä½ç³?
-- æä¾å®æ¶æ°æ®è´¨éè¯ååè¶å¿åæ?
 - 支持数据质量改进追踪
 - 生成数据质量报告和可视化
 
-### 1.2 ææ¯ç®æ ?
 
-| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **è¯åç»´åº¦** | â?ä¸?| è³å°è¦ç6ä¸ªè´¨éç»´åº?|
-| **è¯åå®æ¶æ?* | <30ç§?| è¯åè®¡ç®ååºæ¶é´<30ç§?|
-| **è¯ååç¡®æ?* | â?5% | è¯åç»æåç¡®çâ¥95% |
-| **åå²æ°æ®ä¿ç** | â?å¹?| ä¿çè³å°1å¹´çåå²è¯åæ°æ® |
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
 ### 3.1 评分维度定义 (QualityDimensions)
 
@@ -155,7 +133,6 @@ class DimensionScore:
     calculated_at: datetime = field(default_factory=datetime.now)
 
 class QualityScorer:
-    """è´¨éè¯åå?""
     
     def __init__(self):
         self.dimension_weights = {
@@ -168,7 +145,6 @@ class QualityScorer:
         }
     
     def calculate_completeness_score(self, df: pd.DataFrame) -> DimensionScore:
-        """è®¡ç®å®æ´æ§è¯å?""
         total_cells = df.size
         missing_cells = df.isnull().sum().sum()
         completeness = 1 - (missing_cells / total_cells)
@@ -189,7 +165,6 @@ class QualityScorer:
     
     def calculate_accuracy_score(self, df: pd.DataFrame, 
                                   rules: Dict[str, Any]) -> DimensionScore:
-        """è®¡ç®åç¡®æ§è¯å?""
         accuracy_scores = []
         
         for column, rule in rules.items():
@@ -221,7 +196,6 @@ class QualityScorer:
     def calculate_timeliness_score(self, df: pd.DataFrame,
                                     timestamp_column: str,
                                     expected_frequency: str) -> DimensionScore:
-        """è®¡ç®æ¶ææ§è¯å?""
         if timestamp_column not in df.columns:
             return DimensionScore(
                 dimension=QualityDimension.TIMELINESS,
@@ -262,7 +236,6 @@ class QualityScorer:
     
     def calculate_consistency_score(self, df: pd.DataFrame,
                                      consistency_rules: List[Dict]) -> DimensionScore:
-        """è®¡ç®ä¸è´æ§è¯å?""
         consistency_scores = []
         
         for rule in consistency_rules:
@@ -296,7 +269,6 @@ class QualityScorer:
     
     def calculate_uniqueness_score(self, df: pd.DataFrame,
                                     unique_columns: List[str]) -> DimensionScore:
-        """è®¡ç®å¯ä¸æ§è¯å?""
         uniqueness_scores = []
         
         for column in unique_columns:
@@ -323,7 +295,6 @@ class QualityScorer:
     
     def calculate_validity_score(self, df: pd.DataFrame,
                                   validity_rules: Dict[str, Any]) -> DimensionScore:
-        """è®¡ç®æææ§è¯å?""
         validity_scores = []
         
         for column, rule in validity_rules.items():
@@ -358,7 +329,6 @@ class QualityScorer:
         )
 ```
 
-### 3.2 ç»¼åè¯åè®¡ç®å?(OverallScoreCalculator)
 
 **职责**: 计算综合质量评分
 
@@ -378,7 +348,6 @@ class OverallQualityScore:
     metadata: Dict[str, Any]
 
 class OverallScoreCalculator:
-    """ç»¼åè¯åè®¡ç®å?""
     
     def __init__(self):
         self.grade_thresholds = {
@@ -417,7 +386,6 @@ class OverallScoreCalculator:
         return "F"
 ```
 
-### 3.3 è¯ååå²ç®¡çå?(ScoreHistoryManager)
 
 **职责**: 管理评分历史数据
 
@@ -427,7 +395,6 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 class ScoreHistoryManager:
-    """è¯ååå²ç®¡çå?""
     
     def __init__(self, db_connection):
         self.db = db_connection
@@ -501,18 +468,15 @@ class ScoreHistoryManager:
 ### 4.1 评分计算流程
 
 ```
-æ°æ®è¡?â?ç»´åº¦è¯åè®¡ç® â?æéå æ â?ç»¼åè¯å â?ç­çº§å¤å® â?å­å¨
 ```
 
 ### 4.2 趋势分析流程
 
 ```
-åå²è¯å â?è¶å¿è®¡ç® â?ååæ£æµ?â?è¶å¿æ¥å â?å¯è§å?
 ```
 
 ---
 
-## äºãæ¥å£è®¾è®?
 
 ### 5.1 RESTful API
 
@@ -564,9 +528,7 @@ GET /api/v1/quality/trend/{table_name}?days=30
 ---
 
 ## å
-­ãé¨ç½²æ¶æ?
 
-### 6.1 å®¹å¨åé¨ç½?
 
 ```yaml
 version: '3.8'
@@ -602,85 +564,56 @@ volumes:
 
 ---
 
-## ä¸ãçæ§ææ ?
 
 ### 7.1 核心指标
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `quality_score_overall` | Gauge | 综合质量评分 |
-| `quality_score_dimension` | Gauge | åç»´åº¦è´¨éè¯å?|
 | `quality_score_calculation_duration_seconds` | Histogram | 评分计算耗时 |
-| `quality_score_history_count` | Gauge | åå²è¯åè®°å½æ?|
 
 ---
 
 ## å
-«ãå®æ½è®¡å?
 
-### 8.1 å¼åé¶æ®?
 
-| é¶æ®µ | ä»»å¡ | é¢è®¡æ¶é´ | è´è´£äº?|
 |------|------|---------|--------|
-| **é¶æ®µ1** | å¼åè¯åç»´åº¦è®¡ç®å¨ | 2å¤?| åç«¯å·¥ç¨å¸?|
-| **é¶æ®µ2** | å¼åç»¼åè¯åè®¡ç®å¨ | 1å¤?| åç«¯å·¥ç¨å¸?|
-| **é¶æ®µ3** | å¼ååå²ç®¡çå¨ | 1å¤?| åç«¯å·¥ç¨å¸?|
-| **é¶æ®µ4** | å¼åAPIæ¥å£ | 1å¤?| åç«¯å·¥ç¨å¸?|
-| **é¶æ®µ5** | éææµè¯åé¨ç½?| 1å¤?| QAå·¥ç¨å¸?|
 
 ### 8.2 验收标准
 
-- [ ] æ¯æ6ä¸ªè´¨éç»´åº¦è¯å?
-- [ ] è¯åè®¡ç®ååºæ¶é´<30ç§?
 - [ ] 评分准确率≥95%
-- [ ] åå²æ°æ®ä¿çâ?å¹?
 - [ ] 趋势分析功能正常
 
 ---
 
-## ä¹ãé£é©ç®¡ç?
 
-### 9.1 ææ¯é£é?
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
-| è¯åè§åä¸åç?| é«?| ä¸å¡ä¸å®¶å®¡æ ¸ï¼æç»­ä¼å?|
-| è¯åè®¡ç®æ§è½ç¶é¢ | ä¸?| ç¼å­æºå¶ï¼å¼æ­¥è®¡ç®?|
-| åå²æ°æ®å­å¨è¨è | ä½?| æ°æ®åç¼©ï¼å®æå½æ¡?|
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [è´¨éæ¥åèªå¨åèå¾](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | å¼ºä¾èµ?| æä¾è´¨éæ¥åæ°æ® |
-| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| æä¾æ°æ®å
-æ°æ?|
+æ°æ?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [èªå¨åæ°æ®ä¿®å¤å¼æèå¾](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | å¼ºä¾èµ?| èªå¨åæ°æ®ä¿®å¤?|
-| [å¢å¼ºåè­¦ç³»ç»èå¾](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | ä¸­ä¾èµ?| å¢å¼ºåè­¦ç³»ç» |
-| [çæ§ä»ªè¡¨æ¿å¢å¼ºèå¾](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | ä¸­ä¾èµ?| çæ§ä»ªè¡¨æ¿å¢å¼?|
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
-| **PostgreSQL** | 15+ | æ°æ®åº?| [å®æ¹ææ¡£](https://www.postgresql.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -699,7 +632,6 @@ graph LR
 
 ---
 
-**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
 ## 1. 文档治理
@@ -707,14 +639,12 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Quality Scoring System
 - **模块ID**: QUALITY_SCORING_SYSTEM_001
 - **蓝图文档**: QUALITY_SCORING_SYSTEM_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
+åå»?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -725,23 +655,16 @@ graph LR
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: PERIODIC_CHECK_MECHANISM_REPORT_20260407_161212
 version: 1.0.0
 status: Active

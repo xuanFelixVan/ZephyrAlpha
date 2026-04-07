@@ -1,22 +1,22 @@
-﻿---
+﻿﻿---
 module_id: RESEARCH_STATISTICAL_TOOLS_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 扩展功能、辅助模块、支撑文档
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
 ---
 ---
 
 
-# 探索性分�?- 统计分析工具
+# 探索性分?- 统计分析工具
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -29,7 +29,7 @@ implementation_status: 进行�?
 
 ## 1. 统计分析工具
 
-### 1.1 描述性统�?
+### 1.1 描述性统?
 
 ```python
 import pandas as pd
@@ -37,7 +37,7 @@ import numpy as np
 from scipy import stats
 
 def descriptive_statistics(series: pd.Series) -> dict:
-    """计算描述性统�?""
+    """计算描述性统?""
     return {
         'count': len(series),
         'mean': series.mean(),
@@ -58,13 +58,13 @@ def descriptive_statistics(series: pd.Series) -> dict:
 ```python
 def distribution_analysis(series: pd.Series) -> dict:
     """分布分析"""
-    # 正态性检�?
+    # 正态性检?
     _, p_value_shapiro = stats.shapiro(series.dropna())
 
-    # Kolmogorov-Smirnov 检�?
+    # Kolmogorov-Smirnov 检?
     _, p_value_kstest = stats.kstest(series.dropna(), 'norm')
 
-    # QQ图数�?
+    # QQ图数?
     theoretical_quantiles = stats.norm.ppf(np.linspace(0.01, 0.99, 100))
     sample_quantiles = series.dropna().quantile(np.linspace(0.01, 0.99, 100))
 
@@ -79,19 +79,19 @@ def distribution_analysis(series: pd.Series) -> dict:
 
 ---
 
-## 2. 稳定性分�?
+## 2. 稳定性分?
 
-### 2.1 平稳性检�?
+### 2.1 平稳性检?
 
 ```python
 from statsmodels.tsa.stattools import adfuller, kpss
 
 def stationarity_tests(series: pd.Series) -> dict:
-    """平稳性检�?""
-    # ADF 检�?
+    """平稳性检?""
+    # ADF 检?
     adf_result = adfuller(series.dropna(), autolag='AIC')
 
-    # KPSS 检�?
+    # KPSS 检?
     kpss_result = kpss(series.dropna(), regression='c', nlags='auto')
 
     return {
@@ -119,17 +119,17 @@ def rolling_statistics(series: pd.Series, window: int = 20) -> pd.DataFrame:
 
 ---
 
-## 3. 相关性分�?
+## 3. 相关性分?
 
-### 3.1 截面相关�?
+### 3.1 截面相关?
 
 ```python
 def cross_section_correlation(returns_df: pd.DataFrame) -> pd.DataFrame:
-    """截面相关性矩�?""
+    """截面相关性矩?""
     return returns_df.corr()
 ```
 
-### 3.2 时间序列相关性（交叉相关�?
+### 3.2 时间序列相关性（交叉相关?
 
 ```python
 from scipy.signal import correlate

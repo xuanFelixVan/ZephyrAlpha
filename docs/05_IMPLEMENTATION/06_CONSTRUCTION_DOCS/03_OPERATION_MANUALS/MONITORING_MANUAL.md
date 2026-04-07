@@ -1,10 +1,10 @@
-﻿---
-standard_type: ﮔﻛﺛﮔﮒ
+﻿﻿---
+standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
 module_id: MONITORING_MANUAL
 created_date: 2026-04-02
@@ -12,56 +12,56 @@ last_updated: 2026-04-02
 ---
 ---
 
-# ﻝﺏﭨﻝﭨﻝﮔ۶ﮔﮒ
+# ﻝﺏﭨﻝﭨﻝﮔ۶ﮔﮒ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02
-**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻟﺟﻝﭨﺑﮒ۱ﻠ
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 
 ---
 
-## 1. ﻝﮔ۶ﮔ۵ﻟﺟﺍ
+## 1. ﻝﮔ۶ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻝﮔ۶ﻝ؟ﮔ 
+### 1.1 ﻝﮔ۶ﻝ؟ﮔ 
 
-ﮒﭨﭦﻝ،ﮒ۷ﻠ۱ﻝﻝﺏﭨﻝﭨﻝﮔ۶ﻛﺛﻝﺏﭨﺅﺙﻝ۰؟ﻛﺟZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﺅﺙﮒﮔﭘﮒﻝﺍﮒﮒ۳ﻝﮒﺙﮒﺕﺕﮔﮒﭖﻙ?
-### 1.2 ﻝﮔ۶ﻟﮒﺑ
+ﮒﭨﭦﻝ،ﮒ۷ﻠ۱ﻝﻝﺏﭨﻝﭨﻝﮔ۶ﻛﺛﻝﺏﭨﺅﺙﻝ۰؟ﻛﺟZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﺅﺙﮒﮔﭘﮒﻝﺍﮒﮒ۳ﻝﮒﺙﮒﺕﺕﮔﮒﭖﻙ?
+### 1.2 ﻝﮔ۶ﻟﮒﺑ
 
-- ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﮔ۶
-- ﮒﭦﻝ۷ﮔ۶ﻟﺛﻝﮔ۶
-- ﻛﺕﮒ۰ﮔﮔ ﻝﮔ۶
-- ﮒ؟ﮒ۷ﻛﭦﻛﭨﭘﻝﮔ۶
-- ﮔ۴ﮒﺟﻝﮔ۶
+- ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﮔ۶
+- ﮒﭦﻝ۷ﮔ۶ﻟﺛﻝﮔ۶
+- ﻛﺕﮒ۰ﮔﮔ ﻝﮔ۶
+- ﮒ؟ﮒ۷ﻛﭦﻛﭨﭘﻝﮔ۶
+- ﮔ۴ﮒﺟﻝﮔ۶
 
-### 1.3 ﻝﮔ۶ﮒﺓ۴ﮒﺓ
+### 1.3 ﻝﮔ۶ﮒﺓ۴ﮒﺓ
 
-- **Prometheus**: ﮔﮔ ﮔﭘﻠﮒﮒ­ﮒ?- **Grafana**: ﮒﺁﻟ۶ﮒﻝﮔ۶ﻠ۱ﮔ?- **AlertManager**: ﮒﻟ­۵ﻝ؟۰ﻝ
-- **ELK Stack**: ﮔ۴ﮒﺟﮔﭘﻠﮒﮒﮔ?
+- **Prometheus**: ﮔﮔ ﮔﭘﻠﮒﮒ­ﮒ?- **Grafana**: ﮒﺁﻟ۶ﮒﻝﮔ۶ﻠ۱ﮔ?- **AlertManager**: ﮒﻟ­۵ﻝ؟۰ﻝ
+- **ELK Stack**: ﮔ۴ﮒﺟﮔﭘﻠﮒﮒﮔ?
 ---
 
-## 2. ﻝﺏﭨﻝﭨﻝﮔ۶
+## 2. ﻝﺏﭨﻝﭨﻝﮔ۶
 
-### 2.1 CPUﻝﮔ۶
+### 2.1 CPUﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- CPUﻛﺛﺟﻝ۷ﻝ?- CPUﻟﺑﻟﺛﺛ
-- CPUﮔ ﺕﮒﺟﻛﺛﺟﻝ۷ﻝ?
-**Prometheusﮔ۴ﻟﺁ۱**:
+**ﻝﮔ۶ﮔﮔ **:
+- CPUﻛﺛﺟﻝ۷ﻝ?- CPUﻟﺑﻟﺛﺛ
+- CPUﮔ ﺕﮒﺟﻛﺛﺟﻝ۷ﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# CPUﻛﺛﺟﻝ۷ﻝ?100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+# CPUﻛﺛﺟﻝ۷ﻝ?100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
 
-# CPUﻟﺑﻟﺛﺛ
+# CPUﻟﺑﻟﺛﺛ
 node_load1
 node_load5
 node_load15
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighCPUUsage
   expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
@@ -69,22 +69,22 @@ node_load15
   labels:
     severity: warning
   annotations:
-    summary: "CPUﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
-    description: "CPUﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
+    summary: "CPUﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+    description: "CPUﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.2 ﮒﮒ­ﻝﮔ۶
+### 2.2 ﮒﮒ­ﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?- ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?- Swapﻛﺛﺟﻝ۷ﻝ?
-**Prometheusﮔ۴ﻟﺁ۱**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?- ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?- Swapﻛﺛﺟﻝ۷ﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+# ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
 
-# ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
+# ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighMemoryUsage
   expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
@@ -92,26 +92,26 @@ node_load15
   labels:
     severity: warning
   annotations:
-    summary: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
-    description: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
+    summary: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+    description: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.3 ﻝ۲ﻝﻝﮔ۶
+### 2.3 ﻝ۲ﻝﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?- ﻝ۲ﻝIO
-- ﻝ۲ﻝﻟﺁﭨﮒﻠﮒﭦ۵
+**ﻝﮔ۶ﮔﮔ **:
+- ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?- ﻝ۲ﻝIO
+- ﻝ۲ﻝﻟﺁﭨﮒﻠﮒﭦ۵
 
-**Prometheusﮔ۴ﻟﺁ۱**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?(1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
+# ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?(1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100
 
-# ﻝ۲ﻝIO
+# ﻝ۲ﻝIO
 irate(node_disk_read_bytes_total[5m])
 irate(node_disk_written_bytes_total[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighDiskUsage
   expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
@@ -119,46 +119,46 @@ irate(node_disk_written_bytes_total[5m])
   labels:
     severity: warning
   annotations:
-    summary: "ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
-    description: "ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
+    summary: "ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+    description: "ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.4 ﻝﺛﻝﭨﻝﮔ۶
+### 2.4 ﻝﺛﻝﭨﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻝﺛﻝﭨﮔﭖﻠ
-- ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?- ﻝﺛﻝﭨﻠﻟﺁﺁﻝ?
-**Prometheusﮔ۴ﻟﺁ۱**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻝﺛﻝﭨﮔﭖﻠ
+- ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?- ﻝﺛﻝﭨﻠﻟﺁﺁﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻝﺛﻝﭨﮔﭖﻠ
+# ﻝﺛﻝﭨﮔﭖﻠ
 irate(node_network_receive_bytes_total[5m])
 irate(node_network_transmit_bytes_total[5m])
 
-# ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?node_netstat_Tcp_CurrEstab
+# ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?node_netstat_Tcp_CurrEstab
 ```
 
 ---
 
-## 3. ﮒﭦﻝ۷ﻝﮔ۶
+## 3. ﮒﭦﻝ۷ﻝﮔ۶
 
-### 3.1 APIﻝﮔ۶
+### 3.1 APIﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻟﺁﺓﮔﺎﻠﻝ
-- ﮒﮒﭦﮔﭘﻠﺑ
-- ﻠﻟﺁﺁﻝ?- ﮒﺗﭘﮒﻟﺟﮔ۴ﮔ?
-**Prometheusﮔ۴ﻟﺁ۱**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻟﺁﺓﮔﺎﻠﻝ
+- ﮒﮒﭦﮔﭘﻠﺑ
+- ﻠﻟﺁﺁﻝ?- ﮒﺗﭘﮒﻟﺟﮔ۴ﮔ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻟﺁﺓﮔﺎﻠﻝ
+# ﻟﺁﺓﮔﺎﻠﻝ
 rate(http_requests_total[5m])
 
-# ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑ
+# ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑ
 rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
 
-# ﻠﻟﺁﺁﻝ?rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
+# ﻠﻟﺁﺁﻝ?rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighErrorRate
   expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
@@ -166,8 +166,8 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: critical
   annotations:
-    summary: "APIﻠﻟﺁﺁﻝﻟﺟﻠ،?
-    description: "APIﻠﻟﺁﺁﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
+    summary: "APIﻠﻟﺁﺁﻝﻟﺟﻠ،?
+    description: "APIﻠﻟﺁﺁﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 
 - alert: SlowResponse
   expr: rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m]) > 1
@@ -175,23 +175,23 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: warning
   annotations:
-    summary: "APIﮒﮒﭦﮔﭘﻠﺑﻟﺟﻠﺟ"
-    description: "APIﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑﻟﭘﻟﺟ1ﻝ۶ﺅﺙﮒﺛﮒﮒ? {{ $value }}ﻝ۶?
+    summary: "APIﮒﮒﭦﮔﭘﻠﺑﻟﺟﻠﺟ"
+    description: "APIﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑﻟﭘﻟﺟ1ﻝ۶ﺅﺙﮒﺛﮒﮒ? {{ $value }}ﻝ۶?
 ```
 
-### 3.2 ﮔﺍﮔ؟ﮒﭦﻝﮔ?
-**ﻝﮔ۶ﮔﮔ **:
-- ﻟﺟﮔ۴ﮔ?- ﮔ۴ﻟﺁ۱ﮔ۶ﻟﺛ
-- ﮔ۱ﮔ۴ﻟﺁ?- ﮔ­ﭨﻠ
+### 3.2 ﮔﺍﮔ؟ﮒﭦﻝﮔ?
+**ﻝﮔ۶ﮔﮔ **:
+- ﻟﺟﮔ۴ﮔ?- ﮔ۴ﻟﺁ۱ﮔ۶ﻟﺛ
+- ﮔ۱ﮔ۴ﻟﺁ?- ﮔ­ﭨﻠ
 
-**Prometheusﮔ۴ﻟﺁ۱**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻟﺟﮔ۴ﮔ?pg_stat_activity_count
+# ﻟﺟﮔ۴ﮔ?pg_stat_activity_count
 
-# ﮔ۱ﮔ۴ﻟﺁ?rate(pg_stat_statements_mean_exec_time_seconds[5m])
+# ﮔ۱ﮔ۴ﻟﺁ?rate(pg_stat_statements_mean_exec_time_seconds[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: TooManyDBConnections
   expr: pg_stat_activity_count > 100
@@ -199,8 +199,8 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: warning
   annotations:
-    summary: "ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔﺍﻟﺟﮒ۳"
-    description: "ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔﺍﻟﭘﻟﺟ100ﺅﺙﮒﺛﮒﮒ? {{ $value }}"
+    summary: "ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔﺍﻟﺟﮒ۳"
+    description: "ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔﺍﻟﭘﻟﺟ100ﺅﺙﮒﺛﮒﮒ? {{ $value }}"
 
 - alert: SlowDBQuery
   expr: rate(pg_stat_statements_mean_exec_time_seconds[5m]) > 1
@@ -208,54 +208,54 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
   labels:
     severity: warning
   annotations:
-    summary: "ﮔﺍﮔ؟ﮒﭦﮔ۴ﻟﺁ۱ﻟﺟﮔ?
-    description: "ﮔﺍﮔ؟ﮒﭦﮒﺗﺏﮒﮔ۴ﻟﺁ۱ﮔﭘﻠﺑﻟﭘﻟﺟ?ﻝ۶?
+    summary: "ﮔﺍﮔ؟ﮒﭦﮔ۴ﻟﺁ۱ﻟﺟﮔ?
+    description: "ﮔﺍﮔ؟ﮒﭦﮒﺗﺏﮒﮔ۴ﻟﺁ۱ﮔﭘﻠﺑﻟﭘﻟﺟ?ﻝ۶?
 ```
 
-### 3.3 Redisﻝﮔ۶
+### 3.3 Redisﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﮒﮒ­ﻛﺛﺟﻝ۷
-- ﻟﺟﮔ۴ﮔ?- ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
-- ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
+**ﻝﮔ۶ﮔﮔ **:
+- ﮒﮒ­ﻛﺛﺟﻝ۷
+- ﻟﺟﮔ۴ﮔ?- ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
+- ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
 
-**Prometheusﮔ۴ﻟﺁ۱**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﮒﮒ­ﻛﺛﺟﻝ۷
+# ﮒﮒ­ﻛﺛﺟﻝ۷
 redis_memory_used_bytes
 
-# ﻟﺟﮔ۴ﮔ?redis_connected_clients
+# ﻟﺟﮔ۴ﮔ?redis_connected_clients
 
-# ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
+# ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
 rate(redis_commands_processed_total[5m])
 
-# ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
+# ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
 rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))
 ```
 
 ---
 
-## 4. ﻛﺕﮒ۰ﻝﮔ۶
+## 4. ﻛﺕﮒ۰ﻝﮔ۶
 
-### 4.1 ﻛﭦ۳ﮔﻝﮔ۶
+### 4.1 ﻛﭦ۳ﮔﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻟ؟۱ﮒﮔﺍﻠ
-- ﮔﻛﭦ۳ﮔﺍﻠ
-- ﮔﻛﭦ۳ﻠﻠ۱
-- ﮔﮒﻝ?
-**Prometheusﮔ۴ﻟﺁ۱**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻟ؟۱ﮒﮔﺍﻠ
+- ﮔﻛﭦ۳ﮔﺍﻠ
+- ﮔﻛﭦ۳ﻠﻠ۱
+- ﮔﮒﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻟ؟۱ﮒﮔﺍﻠ
+# ﻟ؟۱ﮒﮔﺍﻠ
 rate(orders_total[5m])
 
-# ﮔﻛﭦ۳ﻠﻠ۱
+# ﮔﻛﭦ۳ﻠﻠ۱
 rate(trade_value_total[5m])
 
-# ﮔﮒﻝ?rate(orders_rejected_total[5m]) / rate(orders_total[5m])
+# ﮔﮒﻝ?rate(orders_rejected_total[5m]) / rate(orders_total[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighRejectionRate
   expr: rate(orders_rejected_total[5m]) / rate(orders_total[5m]) > 0.05
@@ -263,30 +263,30 @@ rate(trade_value_total[5m])
   labels:
     severity: warning
   annotations:
-    summary: "ﻟ؟۱ﮒﮔﮒﻝﻟﺟﻠ،?
-    description: "ﻟ؟۱ﮒﮔﮒﻝﻟﭘﻟﺟ?%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
+    summary: "ﻟ؟۱ﮒﮔﮒﻝﻟﺟﻠ،?
+    description: "ﻟ؟۱ﮒﮔﮒﻝﻟﭘﻟﺟ?%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 ```
 
-### 4.2 ﻝ­ﻝ۴ﻝﮔ۶
+### 4.2 ﻝ­ﻝ۴ﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘﮔ?- ﻝ­ﻝ۴ﮔﭘﻝ
-- ﻝ­ﻝ۴ﮒﮔ۳
-- ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
+**ﻝﮔ۶ﮔﮔ **:
+- ﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘﮔ?- ﻝ­ﻝ۴ﮔﭘﻝ
+- ﻝ­ﻝ۴ﮒﮔ۳
+- ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
 
-**Prometheusﮔ۴ﻟﺁ۱**:
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻝ­ﻝ۴ﮔﭘﻝ
+# ﻝ­ﻝ۴ﮔﭘﻝ
 strategy_returns_total
 
-# ﻝ­ﻝ۴ﮒﮔ۳
+# ﻝ­ﻝ۴ﮒﮔ۳
 strategy_drawdown
 
-# ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
+# ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
 strategy_sharpe_ratio
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: StrategyDrawdown
   expr: strategy_drawdown > 0.1
@@ -294,32 +294,32 @@ strategy_sharpe_ratio
   labels:
     severity: critical
   annotations:
-    summary: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﺟﮒ۳۶"
-    description: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﭘﻟﺟ10%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
+    summary: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﺟﮒ۳۶"
+    description: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﭘﻟﺟ10%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 ```
 
-### 4.3 ﻠ۲ﮔ۶ﻝﮔ۶
+### 4.3 ﻠ۲ﮔ۶ﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
-- ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
-- ﻠ۲ﮔ۶ﻟ۶ﮒﮒﺛﻛﺕ­ﻝ?
-**Prometheusﮔ۴ﻟﺁ۱**:
+**ﻝﮔ۶ﮔﮔ **:
+- ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
+- ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
+- ﻠ۲ﮔ۶ﻟ۶ﮒﮒﺛﻛﺕ­ﻝ?
+**Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
+# ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
 rate(risk_control_triggered_total[5m])
 
-# ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
+# ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
 rate(risk_control_blocked_total[5m])
 ```
 
 ---
 
-## 5. ﮔ۴ﮒﺟﻝﮔ۶
+## 5. ﮔ۴ﮒﺟﻝﮔ۶
 
-### 5.1 ﮔ۴ﮒﺟﮔﭘﻠ
+### 5.1 ﮔ۴ﮒﺟﮔﭘﻠ
 
-**ﻠﻝﺛ؟Filebeat**:
+**ﻠﻝﺛ؟Filebeat**:
 ```yaml
 # filebeat.yml
 filebeat.inputs:
@@ -336,21 +336,21 @@ output.elasticsearch:
   index: "zephyr-%{+yyyy.MM.dd}"
 ```
 
-### 5.2 ﮔ۴ﮒﺟﮒﮔ
+### 5.2 ﮔ۴ﮒﺟﮒﮔ
 
-**Kibanaﮔ۴ﻟﺁ۱ﻝ۳ﭦﻛﺝ**:
+**Kibanaﮔ۴ﻟﺁ۱ﻝ۳ﭦﻛﺝ**:
 ```
-# ﮔ۴ﮔﺝﻠﻟﺁﺁﮔ۴ﮒﺟ
+# ﮔ۴ﮔﺝﻠﻟﺁﺁﮔ۴ﮒﺟ
 level: ERROR
 
-# ﮔ۴ﮔﺝﻝﺗﮒ؟APIﻝﮔ۴ﮒﺟ?api: /api/orders AND level: ERROR
+# ﮔ۴ﮔﺝﻝﺗﮒ؟APIﻝﮔ۴ﮒﺟ?api: /api/orders AND level: ERROR
 
-# ﮔ۴ﮔﺝﮔ۱ﻟﺁﺓﮔﺎ?duration: >1000
+# ﮔ۴ﮔﺝﮔ۱ﻟﺁﺓﮔﺎ?duration: >1000
 ```
 
-### 5.3 ﮔ۴ﮒﺟﮒﻟ­۵
+### 5.3 ﮔ۴ﮒﺟﮒﻟ­۵
 
-**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighErrorLogRate
   expr: rate(log_entries_total{level="ERROR"}[5m]) > 10
@@ -358,23 +358,23 @@ level: ERROR
   labels:
     severity: warning
   annotations:
-    summary: "ﻠﻟﺁﺁﮔ۴ﮒﺟﻟﺟﮒ۳"
-    description: "ﻠﻟﺁﺁﮔ۴ﮒﺟﻠﻝﻟﭘﻟﺟ10ﮔ?ﮒﻠ"
+    summary: "ﻠﻟﺁﺁﮔ۴ﮒﺟﻟﺟﮒ۳"
+    description: "ﻠﻟﺁﺁﮔ۴ﮒﺟﻠﻝﻟﭘﻟﺟ10ﮔ?ﮒﻠ"
 ```
 
 ---
 
-## 6. Grafanaﻠ۱ﮔﺟ
+## 6. Grafanaﻠ۱ﮔﺟ
 
-### 6.1 ﻝﺏﭨﻝﭨﻝﮔ۶ﻠ۱ﮔﺟ
+### 6.1 ﻝﺏﭨﻝﭨﻝﮔ۶ﻠ۱ﮔﺟ
 
-**ﻠ۱ﮔﺟﻠﻝﺛ؟**:
+**ﻠ۱ﮔﺟﻠﻝﺛ؟**:
 ```json
 {
-  "title": "ﻝﺏﭨﻝﭨﻝﮔ۶",
+  "title": "ﻝﺏﭨﻝﭨﻝﮔ۶",
   "panels": [
     {
-      "title": "CPUﻛﺛﺟﻝ۷ﻝ?,
+      "title": "CPUﻛﺛﺟﻝ۷ﻝ?,
       "type": "graph",
       "targets": [
         {
@@ -383,7 +383,7 @@ level: ERROR
       ]
     },
     {
-      "title": "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?,
+      "title": "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?,
       "type": "graph",
       "targets": [
         {
@@ -395,15 +395,15 @@ level: ERROR
 }
 ```
 
-### 6.2 ﮒﭦﻝ۷ﻝﮔ۶ﻠ۱ﮔﺟ
+### 6.2 ﮒﭦﻝ۷ﻝﮔ۶ﻠ۱ﮔﺟ
 
-**ﻠ۱ﮔﺟﻠﻝﺛ؟**:
+**ﻠ۱ﮔﺟﻠﻝﺛ؟**:
 ```json
 {
-  "title": "ﮒﭦﻝ۷ﻝﮔ۶",
+  "title": "ﮒﭦﻝ۷ﻝﮔ۶",
   "panels": [
     {
-      "title": "ﻟﺁﺓﮔﺎﻠﻝ",
+      "title": "ﻟﺁﺓﮔﺎﻠﻝ",
       "type": "graph",
       "targets": [
         {
@@ -412,7 +412,7 @@ level: ERROR
       ]
     },
     {
-      "title": "ﮒﮒﭦﮔﭘﻠﺑ",
+      "title": "ﮒﮒﭦﮔﭘﻠﺑ",
       "type": "graph",
       "targets": [
         {
@@ -426,11 +426,11 @@ level: ERROR
 
 ---
 
-## 7. ﮒﻟ­۵ﻝ؟۰ﻝ
+## 7. ﮒﻟ­۵ﻝ؟۰ﻝ
 
-### 7.1 ﮒﻟ­۵ﮔﺕ ﻠ
+### 7.1 ﮒﻟ­۵ﮔﺕ ﻠ
 
-**ﻠﻝﺛ؟ﻠﻝ۴ﮔﺕ ﻠ**:
+**ﻠﻝﺛ؟ﻠﻝ۴ﮔﺕ ﻠ**:
 ```yaml
 # alertmanager.yml
 global:
@@ -458,94 +458,94 @@ receivers:
     channel: '#alerts'
 ```
 
-### 7.2 ﮒﻟ­۵ﮒﻝﭦ۶
+### 7.2 ﮒﻟ­۵ﮒﻝﭦ۶
 
-**ﮒﻟ­۵ﻝﭦ۶ﮒ،**:
-- **Critical**: ﻠﻟ۵ﻝ،ﮒﺏﮒ۳ﻝ?- **Warning**: ﻠﻟ۵ﮒﺏﮔﺏ?- **Info**: ﻛﺟ۰ﮔﺁﻠﻝ۴
+**ﮒﻟ­۵ﻝﭦ۶ﮒ،**:
+- **Critical**: ﻠﻟ۵ﻝ،ﮒﺏﮒ۳ﻝ?- **Warning**: ﻠﻟ۵ﮒﺏﮔﺏ?- **Info**: ﻛﺟ۰ﮔﺁﻠﻝ۴
 
-**ﮒﻟ­۵ﮒ۳ﻝﮔﭖﻝ۷**:
-1. ﮔ۴ﮔﭘﮒﻟ­۵ﻠﻝ۴
-2. ﻝ۰؟ﻟ؟۳ﮒﻟ­۵ﻝﭦ۶ﮒ،
-3. ﮔ۴ﻝﻝﮔ۶ﻠ۱ﮔﺟ
-4. ﮒﮔﮔ ﺗﮔ؛ﮒﮒ 
-5. ﮔ۶ﻟ۰ﻛﺟ؟ﮒ۳ﮔ۹ﮔﺛ
-6. ﻠ۹ﻟﺁﻛﺟ؟ﮒ۳ﮔﮔ
-7. ﻟ؟ﺍﮒﺛﮒ۳ﻝﻟﺟﻝ۷
-
----
-
-## 8. ﻝﮔ۶ﻝﭨﺑﮔ۳
-
-### 8.1 ﮔ۴ﮒﺕﺕﮔ۲ﮔ?
-**ﮔﺁﮔ۴ﮔ۲ﮔ۴ﻠ۰ﺗ**:
-- [ ] ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦﻛﺛﺟﻝ۷ﮔﮒ?- [ ] ﮔ۲ﮔ۴ﮒﭦﻝ۷ﻠﻟﺁﺁﮔ۴ﮒﺟ?- [ ] ﮔ۲ﮔ۴ﮒﻟ­۵ﮒﮒ?- [ ] ﮔ۲ﮔ۴ﮒ۳ﻛﭨﺛﻝﭘﮔ?
-### 8.2 ﮒ؟ﮔﻝﭨﺑﮔ۳
-
-**ﮔﺁﮒ۷ﻝﭨﺑﮔ۳**:
-- ﮔﺕﻝﻟﺟﮔﻝﮔ۶ﮔﺍﮔ؟
-- ﻛﺙﮒﮒﻟ­۵ﻟ۶ﮒ
-- ﮔﺑﮔﺍﻝﮔ۶ﻠ۱ﮔﺟ
-
-**ﮔﺁﮔﻝﭨﺑﮔ۳**:
-- ﻟﺁﻛﺙﺍﻝﮔ۶ﻟ۵ﻝﻝ?- ﻟﺍﮔﺑﮒﻟ­۵ﻠﮒ?- ﻛﺙﮒﻝﮔ۶ﮔ۶ﻟﺛ
+**ﮒﻟ­۵ﮒ۳ﻝﮔﭖﻝ۷**:
+1. ﮔ۴ﮔﭘﮒﻟ­۵ﻠﻝ۴
+2. ﻝ۰؟ﻟ؟۳ﮒﻟ­۵ﻝﭦ۶ﮒ،
+3. ﮔ۴ﻝﻝﮔ۶ﻠ۱ﮔﺟ
+4. ﮒﮔﮔ ﺗﮔ؛ﮒﮒ 
+5. ﮔ۶ﻟ۰ﻛﺟ؟ﮒ۳ﮔ۹ﮔﺛ
+6. ﻠ۹ﻟﺁﻛﺟ؟ﮒ۳ﮔﮔ
+7. ﻟ؟ﺍﮒﺛﮒ۳ﻝﻟﺟﻝ۷
 
 ---
 
-## 9. ﮔﻠﮔﮔ۴
+## 8. ﻝﮔ۶ﻝﭨﺑﮔ۳
 
-### 9.1 ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
+### 8.1 ﮔ۴ﮒﺕﺕﮔ۲ﮔ?
+**ﮔﺁﮔ۴ﮔ۲ﮔ۴ﻠ۰ﺗ**:
+- [ ] ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦﻛﺛﺟﻝ۷ﮔﮒ?- [ ] ﮔ۲ﮔ۴ﮒﭦﻝ۷ﻠﻟﺁﺁﮔ۴ﮒﺟ?- [ ] ﮔ۲ﮔ۴ﮒﻟ­۵ﮒﮒ?- [ ] ﮔ۲ﮔ۴ﮒ۳ﻛﭨﺛﻝﭘﮔ?
+### 8.2 ﮒ؟ﮔﻝﭨﺑﮔ۳
 
-**ﻠ؟ﻠ۱1: ﻝﮔ۶ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ**
+**ﮔﺁﮒ۷ﻝﭨﺑﮔ۳**:
+- ﮔﺕﻝﻟﺟﮔﻝﮔ۶ﮔﺍﮔ؟
+- ﻛﺙﮒﮒﻟ­۵ﻟ۶ﮒ
+- ﮔﺑﮔﺍﻝﮔ۶ﻠ۱ﮔﺟ
+
+**ﮔﺁﮔﻝﭨﺑﮔ۳**:
+- ﻟﺁﻛﺙﺍﻝﮔ۶ﻟ۵ﻝﻝ?- ﻟﺍﮔﺑﮒﻟ­۵ﻠﮒ?- ﻛﺙﮒﻝﮔ۶ﮔ۶ﻟﺛ
+
+---
+
+## 9. ﮔﻠﮔﮔ۴
+
+### 9.1 ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
+
+**ﻠ؟ﻠ۱1: ﻝﮔ۶ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ**
 ```bash
-# ﮔ۲ﮔ۴Prometheusﻝﭘﮔ?systemctl status prometheus
+# ﮔ۲ﮔ۴Prometheusﻝﭘﮔ?systemctl status prometheus
 
-# ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻠﻠ?curl http://localhost:9090/api/v1/targets
+# ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻠﻠ?curl http://localhost:9090/api/v1/targets
 
-# ﮔ۲ﮔ۴ﮒ­ﮒ۷ﻝ۸ﭦﻠ?df -h /var/lib/prometheus
+# ﮔ۲ﮔ۴ﮒ­ﮒ۷ﻝ۸ﭦﻠ?df -h /var/lib/prometheus
 ```
 
-**ﻠ؟ﻠ۱2: ﮒﻟ­۵ﮔ۹ﮒﻠ?*
+**ﻠ؟ﻠ۱2: ﮒﻟ­۵ﮔ۹ﮒﻠ?*
 ```bash
-# ﮔ۲ﮔ۴AlertManagerﻝﭘﮔ?systemctl status alertmanager
+# ﮔ۲ﮔ۴AlertManagerﻝﭘﮔ?systemctl status alertmanager
 
-# ﮔ۲ﮔ۴ﮒﻟ­۵ﻟ۶ﮒ?curl http://localhost:9090/api/v1/rules
+# ﮔ۲ﮔ۴ﮒﻟ­۵ﻟ۶ﮒ?curl http://localhost:9090/api/v1/rules
 
-# ﮔ۲ﮔ۴ﻠﻝ۴ﮔﺕ ﻠ
+# ﮔ۲ﮔ۴ﻠﻝ۴ﮔﺕ ﻠ
 curl http://localhost:9093/api/v1/receivers
 ```
 
-**ﻠ؟ﻠ۱3: Grafanaﻠ۱ﮔﺟﮔ ﮔﺏﻟ؟ﺟﻠ؟**
+**ﻠ؟ﻠ۱3: Grafanaﻠ۱ﮔﺟﮔ ﮔﺏﻟ؟ﺟﻠ؟**
 ```bash
-# ﮔ۲ﮔ۴Grafanaﻝﭘﮔ?systemctl status grafana-server
+# ﮔ۲ﮔ۴Grafanaﻝﭘﮔ?systemctl status grafana-server
 
-# ﮔ۲ﮔ۴ﮔ۴ﮒﺟ?tail -f /var/log/grafana/grafana.log
+# ﮔ۲ﮔ۴ﮔ۴ﮒﺟ?tail -f /var/log/grafana/grafana.log
 
-# ﻠﮒﺁﮔﮒ۰
+# ﻠﮒﺁﮔﮒ۰
 systemctl restart grafana-server
 ```
 
 ---
 
-## 10. ﮔﻛﺛﺏﮒ؟ﻟﺓ?
-### 10.1 ﻝﮔ۶ﻟ؟ﺝﻟ؟۰ﮒﮒ
+## 10. ﮔﻛﺛﺏﮒ؟ﻟﺓ?
+### 10.1 ﻝﮔ۶ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-1. **ﮒ۷ﻠ۱ﮔ?*: ﻟ۵ﻝﮔﮔﮒﺏﻠ؟ﮔﮔ ?2. **ﮒﮔﭘﮔ?*: ﮒﺟ،ﻠﮒﻝﺍﮒﮒﮒﭦﻠ؟ﻠ۱
-3. **ﮒﻝ۰؟ﮔ?*: ﻠﺟﮒﻟﺁﺁﮔ۴ﮒﮔﺙﮔ?4. **ﮒﺁﮔﻛﺛﮔ?*: ﮔﻛﺝﮒﺁﮔﻛﺛﻝﮒﻟ­۵ﻛﺟ۰ﮔﺁ
+1. **ﮒ۷ﻠ۱ﮔ?*: ﻟ۵ﻝﮔﮔﮒﺏﻠ؟ﮔﮔ ?2. **ﮒﮔﭘﮔ?*: ﮒﺟ،ﻠﮒﻝﺍﮒﮒﮒﭦﻠ؟ﻠ۱
+3. **ﮒﻝ۰؟ﮔ?*: ﻠﺟﮒﻟﺁﺁﮔ۴ﮒﮔﺙﮔ?4. **ﮒﺁﮔﻛﺛﮔ?*: ﮔﻛﺝﮒﺁﮔﻛﺛﻝﮒﻟ­۵ﻛﺟ۰ﮔﺁ
 
-### 10.2 ﮒﻟ­۵ﻟ؟ﺝﻟ؟۰ﮒﮒ
+### 10.2 ﮒﻟ­۵ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-1. **ﮒﻝﭦ۶ﻝ؟۰ﻝ**: ﮔ ﺗﮔ؟ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ﮒﻝﭦ۶
-2. **ﻠﺟﮒﮒ۹ﻠﺏ**: ﮒﮒﺍﮔ ﮔﮒﻟ­۵
-3. **ﮔﻛﺝﻛﺕﻛﺕﮔ?*: ﮒﮒ،ﻟﭘﺏﮒ۳ﻝﻟﺁﮔ­ﻛﺟ۰ﮔ?4. **ﮒﺟ،ﻠﮒﮒﭦ?*: ﮒﭨﭦﻝ،ﮒﺟ،ﻠﮒﮒﭦﮔﭦﮒ?
+1. **ﮒﻝﭦ۶ﻝ؟۰ﻝ**: ﮔ ﺗﮔ؟ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ﮒﻝﭦ۶
+2. **ﻠﺟﮒﮒ۹ﻠﺏ**: ﮒﮒﺍﮔ ﮔﮒﻟ­۵
+3. **ﮔﻛﺝﻛﺕﻛﺕﮔ?*: ﮒﮒ،ﻟﭘﺏﮒ۳ﻝﻟﺁﮔ­ﻛﺟ۰ﮔ?4. **ﮒﺟ،ﻠﮒﮒﭦ?*: ﮒﭨﭦﻝ،ﮒﺟ،ﻠﮒﮒﭦﮔﭦﮒ?
 ---
 
-## 11. ﮒﻟﮔﮔ۰?
-- [ﻠ۷ﻝﺛﺎﮔﮒ](./DEPLOYMENT_MANUAL.md)
-- [ﻠ۲ﻠ۸ﻝﮔ۶ﮔﮒ](./RISK_MONITORING_MANUAL.md)
-- [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
-- [ﻝﮔ۶ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/monitoring_config_template.yaml)
+## 11. ﮒﻟﮔﮔ۰?
+- [ﻠ۷ﻝﺛﺎﮔﮒ](./DEPLOYMENT_MANUAL.md)
+- [ﻠ۲ﻠ۸ﻝﮔ۶ﮔﮒ](./RISK_MONITORING_MANUAL.md)
+- [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
+- [ﻝﮔ۶ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/monitoring_config_template.yaml)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
-**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

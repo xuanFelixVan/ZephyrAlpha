@@ -1,19 +1,19 @@
-﻿---
+﻿﻿---
 module_id: EXEC_EVENT_ENGINE_README_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 说明文档、快速入门
   - 交易执行
   - 系统架构
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行?---
 
 
 # 事件驱动引擎
@@ -23,11 +23,11 @@ implementation_status: 进行�?---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 市场事件处理、定时任务、条件触�?
+> 市场事件处理、定时任务、条件触?
 
 **版本**: v1.0
 **更新**: 2026-03-29
-**Layer**: Layer 4 (执行�?
+**Layer**: Layer 4 (执行?
 **索引**: 04_EXECUTION/01_EVENT_ENGINE
 
 ---
@@ -50,12 +50,12 @@ class EventType(Enum):
     POSITION = "position"                 # 仓位事件
     TIMER = "timer"                       # 定时事件
     RISK = "risk"                         # 风险事件
-    CUSTOM = "custom"                     # 自定义事�?
+    CUSTOM = "custom"                     # 自定义事?
 
 
 @dataclass
 class Event:
-    """基础事件�?""
+    """基础事件?""
     event_type: EventType
     timestamp: datetime
     data: Dict[str, Any]
@@ -63,11 +63,11 @@ class Event:
 
 ---
 
-## 2. 事件处理�?
+## 2. 事件处理?
 
 ```python
 class EventHandler:
-    """事件处理器基�?""
+    """事件处理器基?""
 
     def handle(self, event: Event) -> None:
         """处理事件"""
@@ -75,7 +75,7 @@ class EventHandler:
 
 
 class MarketDataHandler(EventHandler):
-    """市场数据处理�?""
+    """市场数据处理?""
 
     def handle(self, event: Event) -> None:
         if event.event_type == EventType.MARKET_DATA:
@@ -83,7 +83,7 @@ class MarketDataHandler(EventHandler):
 
 
 class SignalHandler(EventHandler):
-    """信号处理�?""
+    """信号处理?""
 
     def handle(self, event: Event) -> None:
         if event.event_type == EventType.SIGNAL:
@@ -91,7 +91,7 @@ class SignalHandler(EventHandler):
 
 
 class OrderHandler(EventHandler):
-    """订单处理�?""
+    """订单处理?""
 
     def handle(self, event: Event) -> None:
         if event.event_type == EventType.ORDER:
@@ -132,7 +132,7 @@ class EventBus:
 
 ---
 
-## 4. 定时任务调度�?
+## 4. 定时任务调度?
 
 ```python
 import schedule
@@ -141,7 +141,7 @@ import time
 
 
 class TaskScheduler:
-    """定时任务调度�?""
+    """定时任务调度?""
 
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
@@ -163,13 +163,13 @@ class TaskScheduler:
         )
 
     def start(self) -> None:
-        """启动调度�?""
+        """启动调度?""
         self.running = True
         self.thread = threading.Thread(target=self._run_loop)
         self.thread.start()
 
     def stop(self) -> None:
-        """停止调度�?""
+        """停止调度?""
         self.running = False
         schedule.clear()
 
@@ -186,7 +186,7 @@ class TaskScheduler:
 
 ```python
 class ConditionTrigger:
-    """条件触发�?""
+    """条件触发?""
 
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
@@ -198,7 +198,7 @@ class ConditionTrigger:
         self.conditions.append(Condition(name, condition_func, action))
 
     def check_conditions(self, market_data: dict) -> None:
-        """检查所有条�?""
+        """检查所有条?""
         for condition in self.conditions:
             if condition.evaluate(market_data):
                 condition.execute()
@@ -251,7 +251,7 @@ class MessageQueue:
 
 
 class AsyncEventProcessor:
-    """异步事件处理�?""
+    """异步事件处理?""
 
     def __init__(self, event_bus: EventBus, num_workers: int = 4):
         self.event_bus = event_bus
@@ -277,16 +277,16 @@ class AsyncEventProcessor:
 ## 7. 层级关系
 
 ```
-Layer 4 (执行�?
-    �?上游
-Layer 3 (策略�? �?策略信号
-Layer 5 (监控�? �?事件监控
-    �?下游
+Layer 4 (执行?
+    ?上游
+Layer 3 (策略? ?策略信号
+Layer 5 (监控? ?事件监控
+    ?下游
 ```
 
 ---
 
 ## 索引
 
-- 父目�? [04_EXECUTION/README.md](API_README.md)
+- 父目? [04_EXECUTION/README.md](API_README.md)
 - 相关: [04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md](04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md)

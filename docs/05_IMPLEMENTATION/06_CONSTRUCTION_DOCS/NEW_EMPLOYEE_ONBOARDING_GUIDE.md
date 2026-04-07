@@ -1,239 +1,239 @@
-﻿---
+﻿﻿---
 module_id: NEW_EMPLOYEE_ONBOARDING_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: ﮔﮔﮔﺍﮒ ﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
+applicable_scope: ﮔﮔﮔﺍﮒ ﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../README.md
 implementation_status: Active
 ---
 ---
 
 
-# ﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
+# ﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﻝﮔ؛**: v1.0
-> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
-> **ﻟﻟﺑ۲**: ﮒﺕ؟ﮒ۸ﮔﺍﮔﮒﮒﺟ،ﻠﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﭘﮔﻙﮒﺙﮒﮔﭖﻝ۷ﮒﮔﮔ۰۲ﻟ۶ﻟ
-> **ﻠﻝ۷ﮒﺁﺗﻟﺎ۰**: ﮔﺍﮒ ﮒ۴ﻝﮒﺙﮒﻛﭦﭦﮒﻙAIﮔﭦﻟﺛﻛﺛﻙﮒ؟ﻛﺗ ﻝ
-> **ﮒ؟ﮔﮔﭘﻠﺑ**: ﮒﭨﭦﻟ؟؟2ﮒ۷ﮒﮒ؟ﮔﮔﮔﮒﺟﻟﺁﭨﮒ?
+> **ﻝﮔ؛**: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
+> **ﻟﻟﺑ۲**: ﮒﺕ؟ﮒ۸ﮔﺍﮔﮒﮒﺟ،ﻠﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﭘﮔﻙﮒﺙﮒﮔﭖﻝ۷ﮒﮔﮔ۰۲ﻟ۶ﻟ
+> **ﻠﻝ۷ﮒﺁﺗﻟﺎ۰**: ﮔﺍﮒ ﮒ۴ﻝﮒﺙﮒﻛﭦﭦﮒﻙAIﮔﭦﻟﺛﻛﺛﻙﮒ؟ﻛﺗ ﻝ
+> **ﮒ؟ﮔﮔﭘﻠﺑ**: ﮒﭨﭦﻟ؟؟2ﮒ۷ﮒﮒ؟ﮔﮔﮔﮒﺟﻟﺁﭨﮒ?
 ---
 
-## ﻭﺁ **ﮒ۴ﻟﻝ؟ﮔ **
+## ﻭﺁ **ﮒ۴ﻟﻝ؟ﮔ **
 
-### **?ﮒ۷ﻝ؟?*
+### **?ﮒ۷ﻝ؟?*
 
-- [ ] ﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﺑﻛﺛﮔﭘﮔﮒﻟ؟ﺝﻟ؟۰ﻝ?- [ ] ﻝﮔﮔﮔ۰۲ﮔﺎﭨﻝﻟ۶ﻟ
-- [ ] ﮔﮔ۰ﮒﺙﮒﻝﺁﮒ۱ﻠ?- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ؟ﮒﻛﭨﭨ?
-### **?ﮒ۷ﻝ؟?*
+- [ ] ﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﺑﻛﺛﮔﭘﮔﮒﻟ؟ﺝﻟ؟۰ﻝ?- [ ] ﻝﮔﮔﮔ۰۲ﮔﺎﭨﻝﻟ۶ﻟ
+- [ ] ﮔﮔ۰ﮒﺙﮒﻝﺁﮒ۱ﻠ?- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ؟ﮒﻛﭨﭨ?
+### **?ﮒ۷ﻝ؟?*
 
-- [ ] ﮔﺓﺎﮒ۴ﻝﻟ۶۲ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
-- [ ] ﻝﮔﮔﺛﮒﺓ۴ﻟ۶ﻟﮒﻟﺑ۷ﻠﻠ۷?- [ ] ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴
-- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ؟ﮔﺑﮒ?
+- [ ] ﮔﺓﺎﮒ۴ﻝﻟ۶۲ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+- [ ] ﻝﮔﮔﺛﮒﺓ۴ﻟ۶ﻟﮒﻟﺑ۷ﻠﻠ۷?- [ ] ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴
+- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ؟ﮔﺑﮒ?
 ---
 
-## ﻭ **ﮒﺟﻟﺁﭨﮔﮔ۰۲ﮔﺕﮒ**
+## ﻭ **ﮒﺟﻟﺁﭨﮔﮔ۰۲ﮔﺕﮒ**
 
-### **Day 1-2: ﻝﺏﭨﻝﭨﮔ۵ﻟ۶**
+### **Day 1-2: ﻝﺏﭨﻝﭨﮔ۵ﻟ۶**
 
-#### **1. ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲**
+#### **1. ﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝﺏﭨﻝﭨﮔﭘﮔﮔﭨﻟ۶** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮒ؟ﮔﺛﻟﮒﺝ** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﺏﭨﻝﭨﮔﭘﮔﮔﭨﻟ۶** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒ؟ﮔﺛﻟﮒﺝ** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕ­ﻟ۶ﻝ­ﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕ­ﻟ۶ﻝ­ﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
 ---
 
-#### **2. ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ**
+#### **2. ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﻝﻟﻟﺑ۲ﻟ?- ﻛﭦﻟ۶۲ﮔ۷۰ﮒﻠﺑﻝﻛﺝﻟﭖﮒﺏﻝﺏﭨ
-- ﮔﮔ۰ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﻝﮒ?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﻝﻟﻟﺑ۲ﻟ?- ﻛﭦﻟ۶۲ﮔ۷۰ﮒﻠﺑﻝﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+- ﮔﮔ۰ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﻝﮒ?
 ---
 
-### **Day 3-4: ﮒﺙﮒﻟ۶?*
+### **Day 3-4: ﮒﺙﮒﻟ۶?*
 
-#### **3. ﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲**
+#### **3. ﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
-- ﻛﭦﻟ۶۲ﮔﺛﮒﺓ۴ﮔﭖﻝ۷ﮒﻟﺑ۷ﻠﻠ۷?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
+- ﻛﭦﻟ۶۲ﮔﺛﮒﺓ۴ﮔﭖﻝ۷ﮒﻟﺑ۷ﻠﻠ۷?
 ---
 
-#### **4. ﮒﺙﮒﮔ ﮒﮔ?*
+#### **4. ﮒﺙﮒﮔ ﮒﮔ?*
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮒﺙﮒﻟ۶?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮔﭖﻟﺁﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮒﺙﮒﻟ۶?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮔﭖﻟﺁﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﮔﮔ۰ﻛﭨ۲ﻝ ﻝﺙﮒﻟ۶ﻟ
-- ﻛﭦﻟ۶۲ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
-- ﻝﮔﮔﭖﻟﺁﻟ۵ﮔﺎ
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﮔﮔ۰ﻛﭨ۲ﻝ ﻝﺙﮒﻟ۶ﻟ
+- ﻛﭦﻟ۶۲ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
+- ﻝﮔﮔﭖﻟﺁﻟ۵ﮔﺎ
 
 ---
 
-### **Day 5-7: ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰**
+### **Day 5-7: ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰**
 
-#### **5. ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟ**
+#### **5. ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟ**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
-- ﮔﮔ۰BaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
-- ﻛﭦﻟ۶۲ﻝ­ﻝ۴ﮔﺏ۷ﮒﮒﮒ ﻟﺛﺛﮔﭦ?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
+- ﮔﮔ۰BaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
+- ﻛﭦﻟ۶۲ﻝ­ﻝ۴ﮔﺏ۷ﮒﮒﮒ ﻟﺛﺛﮔﭦ?
 ---
 
-#### **6. ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨ**
+#### **6. ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨ**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
-- ﮔﮔ۰ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠﮔﭦﮒﭘ
-- ﻛﭦﻟ۶۲ﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﻟ؟ﺝﻟ؟۰
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
+- ﮔﮔ۰ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠﮔﭦﮒﭘ
+- ﻛﭦﻟ۶۲ﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﻟ؟ﺝﻟ؟۰
 
 ---
 
-#### **7. ﮒﮔﭖﮒﺙﮔﻠﮔ**
+#### **7. ﮒﮔﭖﮒﺙﮔﻠﮔ**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
-- ﮔﮔ۰ﻝ­ﻝ۴ﻠﻠﮒ۷ﻟ؟ﺝ?- ﻛﭦﻟ۶۲ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒﻝﭨﮔﮔ ﺙﮒﺙﮒ
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
+- ﮔﮔ۰ﻝ­ﻝ۴ﻠﻠﮒ۷ﻟ؟ﺝ?- ﻛﭦﻟ۶۲ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒﻝﭨﮔﮔ ﺙﮒﺙﮒ
 
 ---
 
-### **Day 8-10: ﻟﺑ۷ﻠﻛﺟﻟﺁ**
+### **Day 8-10: ﻟﺑ۷ﻠﻛﺟﻟﺁ**
 
-#### **8. ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ**
+#### **8. ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
-- ﮔﮔ۰ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
-- ﻛﭦﻟ۶۲ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﻟ۵?
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
+- ﮔﮔ۰ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
+- ﻛﭦﻟ۶۲ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﻟ۵?
 ---
 
-### **Day 11-14: ﮒ؟ﻟﺓﭖﻛﭨﭨﮒ۰**
+### **Day 11-14: ﮒ؟ﻟﺓﭖﻛﭨﭨﮒ۰**
 
-#### **9. ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ**
+#### **9. ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ**
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
-| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
-| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ
-- ﻝﻟ۶۲ﻠﻝﺛ؟ﮒﮔﺍﮒ،ﻛﺗ
-- ﮔﮔ۰ﻠﻝﺛ؟ﻛﺟ؟ﮔﺗﮔﺗﮔﺏ
+**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+- ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ
+- ﻝﻟ۶۲ﻠﻝﺛ؟ﮒﮔﺍﮒ،ﻛﺗ
+- ﮔﮔ۰ﻠﻝﺛ؟ﻛﺟ؟ﮔﺗﮔﺗﮔﺏ
 
 ---
 
-## ﻭ ?**ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ**
+## ﻭ ?**ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ**
 
-### **1. ﮒﺙﮒﻝﺁﮒ۱ﻟ۵?*
+### **1. ﮒﺙﮒﻝﺁﮒ۱ﻟ۵?*
 
 ```yaml
-ﮔﻛﺛﻝﺏﭨﻝﭨ:
+ﮔﻛﺛﻝﺏﭨﻝﭨ:
   - Windows 10/11
   - Linux (Ubuntu 20.04+)
   - macOS 11+
 
-Pythonﻝﮔ؛:
+Pythonﻝﮔ؛:
   - Python 3.9+
-  - ﮔ۷ﻟﻛﺛﺟﻝ۷Python 3.10
+  - ﮔ۷ﻟﻛﺛﺟﻝ۷Python 3.10
 
-ﮒﺟﻠﮒﺓ۴ﮒﺓ:
+ﮒﺟﻠﮒﺓ۴ﮒﺓ:
   - Git
-  - VS Code (ﮔ۷ﻟ)
-  - Docker (ﮒ?
+  - VS Code (ﮔ۷ﻟ)
+  - Docker (ﮒ?
 
-Pythonﮒﻝ؟۰?
+Pythonﮒﻝ؟۰?
   - pip
-  - conda (ﮔ۷ﻟ)
+  - conda (ﮔ۷ﻟ)
 ```
 
-### **2. ﮒﺙﮒﻝﺁﮒ۱ﻠﻝﺛ؟ﮔ­۴?*
+### **2. ﮒﺙﮒﻝﺁﮒ۱ﻠﻝﺛ؟ﮔ­۴?*
 
-#### **Step 1: ﮒﻠﻛﭨ۲ﻝ ﻛﭨﮒﭦ**
+#### **Step 1: ﮒﻠﻛﭨ۲ﻝ ﻛﭨﮒﭦ**
 
 ```bash
-# ﮒﻠﻛﭨﮒﭦ
+# ﮒﻠﻛﭨﮒﭦ
 git clone [repository_url]
 
-# ﻟﺟﮒ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ
+# ﻟﺟﮒ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ
 cd ZephyrAlpha
 ```
 
-#### **Step 2: ﮒﮒﭨﭦPythonﻟﮔﻝﺁﮒ۱**
+#### **Step 2: ﮒﮒﭨﭦPythonﻟﮔﻝﺁﮒ۱**
 
 ```bash
-# ﻛﺛﺟﻝ۷condaﮒﮒﭨﭦﻟﮔﻝﺁﮒ۱
+# ﻛﺛﺟﻝ۷condaﮒﮒﭨﭦﻟﮔﻝﺁﮒ۱
 conda create -n zephyr python=3.10
 
-# ﮔﺟﮔﺑﭨﻟﮔﻝﺁ?conda activate zephyr
+# ﮔﺟﮔﺑﭨﻟﮔﻝﺁ?conda activate zephyr
 ```
 
-#### **Step 3: ﮒ؟ﻟ۲ﻛﺝﻟﭖ?*
+#### **Step 3: ﮒ؟ﻟ۲ﻛﺝﻟﭖ?*
 
 ```bash
-# ﮒ؟ﻟ۲ﮒﺙﮒﻛﺝ?pip install -r requirements-dev.txt
+# ﮒ؟ﻟ۲ﮒﺙﮒﻛﺝ?pip install -r requirements-dev.txt
 
-# ﮒ؟ﻟ۲ﻠ۰ﺗﻝ؟ﻛﺝﻟﭖ
+# ﮒ؟ﻟ۲ﻠ۰ﺗﻝ؟ﻛﺝﻟﭖ
 pip install -r requirements.txt
 ```
 
-#### **Step 4: ﻠﻝﺛ؟IDE**
+#### **Step 4: ﻠﻝﺛ؟IDE**
 
-**VS Codeﮔ۷ﻟﮔ۸ﮒﺎ**:
+**VS Codeﮔ۷ﻟﮔ۸ﮒﺎ**:
 - Python
 - Pylance
 - Python Docstring Generator
 - GitLens
 - Markdown All in One
 
-**VS Codeﻠﻝﺛ؟**:
+**VS Codeﻠﻝﺛ؟**:
 ```json
 {
   "python.linting.enabled": true,
@@ -246,29 +246,29 @@ pip install -r requirements.txt
 
 ---
 
-## ﻭ **ﻝ؛؛ﻛﺕﻛﺕ۹ﻛﭨﭨﮒ۰ﮔ?*
+## ﻭ **ﻝ؛؛ﻛﺕﻛﺕ۹ﻛﭨﭨﮒ۰ﮔ?*
 
-### **ﻛﭨﭨﮒ۰1: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﻝ­ﻝ۴**
+### **ﻛﭨﭨﮒ۰1: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﻝ­ﻝ۴**
 
-**ﻝ؟ﮔ **: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﮒﻝﭦﺟﻝ­ﻝ۴ﺅﺙﻝﮔﻝ­ﻝ۴ﮒﺙﮒﮔﭖ?
+**ﻝ؟ﮔ **: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﮒﻝﭦﺟﻝ­ﻝ۴ﺅﺙﻝﮔﻝ­ﻝ۴ﮒﺙﮒﮔﭖ?
 **ﮔ­۴ﻠ۹۳**:
 
-1. **ﻠﻟﺁﭨﻝ­ﻝ۴ﮒﭦﻝﺎﭨﮔﮔ۰۲**
+1. **ﻠﻟﺁﭨﻝ­ﻝ۴ﮒﭦﻝﺎﭨﮔﮔ۰۲**
    ```bash
-   # ﻠﻟﺁﭨBaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
+   # ﻠﻟﺁﭨBaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
    docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md
    ```
 
-2. **ﮒﮒﭨﭦﻝ­ﻝ۴ﮔﻛﭨﭘ**
+2. **ﮒﮒﭨﭦﻝ­ﻝ۴ﮔﻛﭨﭘ**
    ```python
-   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: src/strategy/simple_ma_strategy.py
+   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: src/strategy/simple_ma_strategy.py
    
    from strategy.base import BaseStrategy
    from typing import Dict, Any, Optional
    
    class SimpleMAStrategy(BaseStrategy):
-       """ﻝ؟ﮒﮒﻝﭦﺟﻝ­?       
-       ﻛﺛﺟﻝ۷ﮒﺟ،ﻠﮒﻝﭦﺟﮒﮔ۱ﻠﮒﻝﭦﺟﻛﭦ۳ﮒﻛﺛﻛﺕﭦﻛﭦ۳ﮔﻛﺟ۰?       """
+       """ﻝ؟ﮒﮒﻝﭦﺟﻝ­?       
+       ﻛﺛﺟﻝ۷ﮒﺟ،ﻠﮒﻝﭦﺟﮒﮔ۱ﻠﮒﻝﭦﺟﻛﭦ۳ﮒﻛﺛﻛﺕﭦﻛﭦ۳ﮔﻛﺟ۰?       """
        
        def __init__(self, strategy_id: str, config: Optional[Dict[str, Any]] = None):
            super().__init__(strategy_id, config)
@@ -276,23 +276,23 @@ pip install -r requirements.txt
            self.slow_period = self.config.get('slow_period', 30)
        
        def initialize(self, context: Dict[str, Any]) -> None:
-           """ﮒﮒ۶ﮒﻝ­?""
-           self.logger.info(f"ﮒﮒ۶ﮒﻝ­? {self.strategy_id}")
-           self.logger.info(f"ﮒﺟ،ﻠﮒﻝﭦﺟﮒ۷? {self.fast_period}")
-           self.logger.info(f"ﮔ۱ﻠﮒﻝﭦﺟﮒ۷? {self.slow_period}")
+           """ﮒﮒ۶ﮒﻝ­?""
+           self.logger.info(f"ﮒﮒ۶ﮒﻝ­? {self.strategy_id}")
+           self.logger.info(f"ﮒﺟ،ﻠﮒﻝﭦﺟﮒ۷? {self.fast_period}")
+           self.logger.info(f"ﮔ۱ﻠﮒﻝﭦﺟﮒ۷? {self.slow_period}")
        
        def on_bar(self, bar: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-           """ﮒ۳ﻝKﻝﭦﺟﮔﺍ?""
-           # ﮒ؟ﻝﺍﻝ­ﻝ۴ﻠﭨﻟﺝ
+           """ﮒ۳ﻝKﻝﭦﺟﮔﺍ?""
+           # ﮒ؟ﻝﺍﻝ­ﻝ۴ﻠﭨﻟﺝ
            pass
    ```
 
-3. **ﮒﮒﭨﭦﻝ­ﻝ۴ﻠﻝﺛ؟**
+3. **ﮒﮒﭨﭦﻝ­ﻝ۴ﻠﻝﺛ؟**
    ```yaml
-   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: config/strategies/simple_ma_strategy.yaml
+   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: config/strategies/simple_ma_strategy.yaml
    
    strategy_id: simple_ma_strategy_v1
-   strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ­?   strategy_type: trend_following
+   strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ­?   strategy_type: trend_following
    
    parameters:
      fast_period: 10
@@ -303,15 +303,15 @@ pip install -r requirements.txt
      take_profit_pct: 0.10
    ```
 
-4. **ﻝﺙﮒﮒﮒﮔﭖﻟﺁ**
+4. **ﻝﺙﮒﮒﮒﮔﭖﻟﺁ**
    ```python
-   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: tests/unit/strategy/test_simple_ma_strategy.py
+   # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: tests/unit/strategy/test_simple_ma_strategy.py
    
    import pytest
    from strategy.simple_ma_strategy import SimpleMAStrategy
    
    def test_strategy_initialization():
-       """ﮔﭖﻟﺁﻝ­ﻝ۴ﮒﮒ۶?""
+       """ﮔﭖﻟﺁﻝ­ﻝ۴ﮒﮒ۶?""
        config = {
            'fast_period': 10,
            'slow_period': 30
@@ -321,120 +321,120 @@ pip install -r requirements.txt
        assert strategy.slow_period == 30
    ```
 
-5. **ﻟﺟﻟ۰ﮔﭖﻟﺁ**
+5. **ﻟﺟﻟ۰ﮔﭖﻟﺁ**
    ```bash
-   # ﻟﺟﻟ۰ﮒﮒﮔﭖﻟﺁ
+   # ﻟﺟﻟ۰ﮒﮒﮔﭖﻟﺁ
    pytest tests/unit/strategy/test_simple_ma_strategy.py -v
    ```
 
 ---
 
-## ﻭ **ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱FAQ**
+## ﻭ **ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱FAQ**
 
-### **Q1: ﮒ۵ﻛﺛﮔﺝﮒﺍﻝﺕﮒﺏﮔﮔ۰۲?*
+### **Q1: ﮒ۵ﻛﺛﮔﺝﮒﺍﻝﺕﮒﺏﮔﮔ۰۲?*
 
-**A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](API_README.md)
-- ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../INDEX.md)
+**A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](API_README.md)
+- ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../INDEX.md)
 
-### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
+### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
 
-**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
-3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
-5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
-### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴?*
+**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
+3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
+5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
+### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴?*
 
-**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
-2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝ ﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
-3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔ­ﻠ۰ﺗﻠﻟﺟ
+**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
+2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝ ﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
+3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔ­ﻠ۰ﺗﻠﻟﺟ
 
-### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
+### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
 
-**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
-2. ﮒﮒ۳ﻝ­ﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
-4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
-### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*
+**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
+2. ﮒﮒ۳ﻝ­ﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
+4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
+### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*
 
-**A**: ﻛﺛﺟﻝ۷ﻠ؟ﻠ۱ﻟﺓﻟﺕ۹ﻝﺏﭨﻝﭨ?1. ﮒ۷GitﻛﭨﮒﭦﮒﮒﭨﭦIssue
-2. ﮔﻟﺟﺍﻠ؟ﻠ۱ﻟﺁ۵ﻝﭨﻛﺟ۰ﮔﺁ
-3. ﮔﻛﺝﮒ۳ﻝﺍﮔ­۴ﻠ۹۳
-4. ﮔ ﻟ؟ﺍﻛﺙﮒﻝﭦ۶ﮒﻝﺎﭨﮒ
+**A**: ﻛﺛﺟﻝ۷ﻠ؟ﻠ۱ﻟﺓﻟﺕ۹ﻝﺏﭨﻝﭨ?1. ﮒ۷GitﻛﭨﮒﭦﮒﮒﭨﭦIssue
+2. ﮔﻟﺟﺍﻠ؟ﻠ۱ﻟﺁ۵ﻝﭨﻛﺟ۰ﮔﺁ
+3. ﮔﻛﺝﮒ۳ﻝﺍﮔ­۴ﻠ۹۳
+4. ﮔ ﻟ؟ﺍﻛﺙﮒﻝﭦ۶ﮒﻝﺎﭨﮒ
 
 ---
 
-## ﻭ **ﮒ­۵ﻛﺗ ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹**
+## ﻭ **ﮒ­۵ﻛﺗ ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹**
 
-### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
+### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
 
-| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
+| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
 |------|---------|---------|
-| ﻠﻟﺁﭨﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍLayer 0-11ﮔﭘﮔ |
-| ﻠﻟﺁﭨﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲ | ?| ﻟﺛﻟﺁﺑﮒﭦﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶ﻟ |
-| ﻠﻝﺛ؟ﮒﺙﮒﻝﺁ?| ?| ﻟﺛﻟﺟﻟ۰pytestﮔﭖﻟﺁ |
-| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ­?| ?| ﻛﭨ۲ﻝ ﻠﻟﺟﮒ؟۰ﮔ۴ |
+| ﻠﻟﺁﭨﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍLayer 0-11ﮔﭘﮔ |
+| ﻠﻟﺁﭨﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲ | ?| ﻟﺛﻟﺁﺑﮒﭦﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶ﻟ |
+| ﻠﻝﺛ؟ﮒﺙﮒﻝﺁ?| ?| ﻟﺛﻟﺟﻟ۰pytestﮔﭖﻟﺁ |
+| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ­?| ?| ﻛﭨ۲ﻝ ﻠﻟﺟﮒ؟۰ﮔ۴ |
 
-### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
+### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
 
-| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
+| ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
 |------|---------|---------|
-| ﻠﻟﺁﭨﮔ ﺕﮒﺟﮔ۷۰ﮒﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝ?|
-| ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ | ?| ﮒ؟ﮔ1ﮔ؛۰ﻛﭨ۲ﻝ ﮒ؟۰?|
-| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ?| ?| ﮒﻟﺛﻠﻟﺟﮔﭖﻟﺁ |
-| ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ | ?| ﮔﮔﮔ۲ﮔ۴ﻠ۰ﺗﻠﻟﺟ |
+| ﻠﻟﺁﭨﮔ ﺕﮒﺟﮔ۷۰ﮒﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝ?|
+| ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ | ?| ﮒ؟ﮔ1ﮔ؛۰ﻛﭨ۲ﻝ ﮒ؟۰?|
+| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ?| ?| ﮒﻟﺛﻠﻟﺟﮔﭖﻟﺁ |
+| ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ | ?| ﮔﮔﮔ۲ﮔ۴ﻠ۰ﺗﻠﻟﺟ |
 
 ---
 
-## ﻭﺁ **ﮒ­۵ﻛﺗ ﻟﭖﮔﭦ**
+## ﻭﺁ **ﮒ­۵ﻛﺗ ﻟﭖﮔﭦ**
 
-### **ﮒﻠ۷ﻟﭖﮔﭦ**
+### **ﮒﻠ۷ﻟﭖﮔﭦ**
 
-- **ﻝ۴ﻟﺁ?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](01_FRAMEWORK/COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md)
-- **ﮔ۰ﻛﺝﻝ ﻝ۸ﭘ**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
-- **ﮔﻛﺛﺏﮒ؟?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
+- **ﻝ۴ﻟﺁ?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](01_FRAMEWORK/COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md)
+- **ﮔ۰ﻛﺝﻝ ﻝ۸ﭘ**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
+- **ﮔﻛﺛﺏﮒ؟?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
 
-### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
+### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 
-- **Pythonﮒ؟ﮔﺗﮔﮔ۰۲**: https://docs.python.org/3/
-- **Backtesting.pyﮔﮔ۰۲**: https://kernc.github.io/backtesting.py/
-- **ﻠﮒﮔﻟﭖﮒ۴ﻠ۷**: https://www.quantstart.com/
-
----
-
-## ﻭ **ﮔﺁﮔﻛﺕﮒﺕ؟?*
-
-### **ﻠﮒﺍﻠ؟ﻠ۱ﮔﻛﺗﮒﺅﺙ**
-
-1. **ﮔ۴ﻠﮔﮔ۰۲**: ﮒﮔ۴ﻠﻝﺕﮒﺏﮔﮔ۰۲ﺅﺙﮒ۳۶ﻠ۷ﮒﻠ؟ﻠ۱ﻠﺛﮔﻝ­?2. **ﮔﻝﺑ۱Issue**: ﮒ۷Gitﻛﭨﮒﭦﮔﻝﺑ۱ﮔﺁﮒ۵ﮔﻝﺎﭨﻛﺙﺙﻠ؟?3. **ﮔﻠ؟**: ﮒﮒﭨﭦﮔﺍIssueﺅﺙﻟﺁ۵ﻝﭨﮔﻟﺟﺍﻠ؟?4. **ﮒﺁﭨﮔﺎﮒﺕ؟ﮒ۸**: ﻟﻝﺏﭨﮒﺁﺙﮒﺕﮔﮒ۱ﻠﮔ?
-### **ﻟﻝﺏﭨﮔﺗﮒﺙ**
-
-- **ﮔﮔﺁﻠ؟?*: ﮒﮒﭨﭦGit Issue
-- **ﮔﮔ۰۲ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﮔﮔ۰۲ﻝﭨﺑﮔ۳?- **ﮔﭖﻝ۷ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﻠ۰ﺗﻝ؟ﻝﭨﻝ
+- **Pythonﮒ؟ﮔﺗﮔﮔ۰۲**: https://docs.python.org/3/
+- **Backtesting.pyﮔﮔ۰۲**: https://kernc.github.io/backtesting.py/
+- **ﻠﮒﮔﻟﭖﮒ۴ﻠ۷**: https://www.quantstart.com/
 
 ---
 
-## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
+## ﻭ **ﮔﺁﮔﻛﺕﮒﺕ؟?*
 
-| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍ?|
+### **ﻠﮒﺍﻠ؟ﻠ۱ﮔﻛﺗﮒﺅﺙ**
+
+1. **ﮔ۴ﻠﮔﮔ۰۲**: ﮒﮔ۴ﻠﻝﺕﮒﺏﮔﮔ۰۲ﺅﺙﮒ۳۶ﻠ۷ﮒﻠ؟ﻠ۱ﻠﺛﮔﻝ­?2. **ﮔﻝﺑ۱Issue**: ﮒ۷Gitﻛﭨﮒﭦﮔﻝﺑ۱ﮔﺁﮒ۵ﮔﻝﺎﭨﻛﺙﺙﻠ؟?3. **ﮔﻠ؟**: ﮒﮒﭨﭦﮔﺍIssueﺅﺙﻟﺁ۵ﻝﭨﮔﻟﺟﺍﻠ؟?4. **ﮒﺁﭨﮔﺎﮒﺕ؟ﮒ۸**: ﻟﻝﺏﭨﮒﺁﺙﮒﺕﮔﮒ۱ﻠﮔ?
+### **ﻟﻝﺏﭨﮔﺗﮒﺙ**
+
+- **ﮔﮔﺁﻠ؟?*: ﮒﮒﭨﭦGit Issue
+- **ﮔﮔ۰۲ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﮔﮔ۰۲ﻝﭨﺑﮔ۳?- **ﮔﭖﻝ۷ﻠ؟ﻠ۱**: ﻟﻝﺏﭨﻠ۰ﺗﻝ؟ﻝﭨﻝ
+
+---
+
+## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
+
+| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔ?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔ?|
 
 ---
 
-## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
+## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﮔﭘﮔ? 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
-**ﮔﮒﮔﺑ?*: 2026-04-02  
-**ﻝﮔ؛**: v1.0
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﮔﭘﮔ? 
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮔﮒﮔﺑ?*: 2026-04-02  
+**ﻝﮔ؛**: v1.0
 
 ---
 
-## ﻭ **ﮔ؛۱ﻟﺟﮒ ﮒ۴?*
+## ﻭ **ﮔ؛۱ﻟﺟﮒ ﮒ۴?*
 
-ﮔ؛۱ﻟﺟﮒ ﮒ۴ﮔﺕﻠ۲ﻠﮒﮒ۱ﻠﺅﺙﮔﻛﭨ؛ﻝﺕﻛﺟ۰ﺅﺙﻠﻟﺟﻝﺏﭨﻝﭨﻝﮒ­۵ﻛﺗ ﮒﮒ؟ﻟﺓﭖﺅﺙﻛﺛ ﮒﺍﮒﺟ،ﻠﮔﻠﺟﻛﺕﭦﻛﺕﮒﻛﺙﻝ۶ﻝﻠﮒﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕ?
-**ﻟ؟ﺍﻛﺛ**: 
-- ﻭ ﮔﮔ۰۲ﮔﺁﮔﮒ۴ﺛﻝﻟﮒﺕ
-- ﻭ ?ﮒ؟ﻟﺓﭖﮔﺁﮔﮒ۴ﺛﻝﮒ­۵ﻛﺗ 
-- ﻭ۳ ﮒ۱ﻠﮔﺁﮔﮒ۴ﺛﻝﮔﺁﮔ
+ﮔ؛۱ﻟﺟﮒ ﮒ۴ﮔﺕﻠ۲ﻠﮒﮒ۱ﻠﺅﺙﮔﻛﭨ؛ﻝﺕﻛﺟ۰ﺅﺙﻠﻟﺟﻝﺏﭨﻝﭨﻝﮒ­۵ﻛﺗ ﮒﮒ؟ﻟﺓﭖﺅﺙﻛﺛ ﮒﺍﮒﺟ،ﻠﮔﻠﺟﻛﺕﭦﻛﺕﮒﻛﺙﻝ۶ﻝﻠﮒﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕ?
+**ﻟ؟ﺍﻛﺛ**: 
+- ﻭ ﮔﮔ۰۲ﮔﺁﮔﮒ۴ﺛﻝﻟﮒﺕ
+- ﻭ ?ﮒ؟ﻟﺓﭖﮔﺁﮔﮒ۴ﺛﻝﮒ­۵ﻛﺗ 
+- ﻭ۳ ﮒ۱ﻠﮔﺁﮔﮒ۴ﺛﻝﮔﺁﮔ
 
-**ﻝ۴ﻛﺛ ﮒ­۵ﻛﺗ ﻠ۰ﭦﮒ۸?* ﻭ
+**ﻝ۴ﻛﺛ ﮒ­۵ﻛﺗ ﻠ۰ﭦﮒ۸?* ﻭ

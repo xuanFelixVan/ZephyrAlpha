@@ -1,4 +1,4 @@
-# Layer 5 职责描述质量优化报告
+﻿# Layer 5 职责描述质量优化报告
 
 > **优化时间**: 2026-04-07 16:51:50
 > **优化范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS

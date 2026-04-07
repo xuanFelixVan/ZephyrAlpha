@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_STRATEGIC_DECISION_001
 version: 2.0.0
 status: Active

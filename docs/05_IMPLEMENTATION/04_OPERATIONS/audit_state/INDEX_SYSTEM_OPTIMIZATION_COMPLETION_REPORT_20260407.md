@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_SYSTEM_OPTIMIZATION_COMPLETION_REPORT_20260407_001
 version: 1.0.0
 status: Active

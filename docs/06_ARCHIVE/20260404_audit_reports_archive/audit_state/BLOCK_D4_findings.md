@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ARCHIVE_BLOCK_D4_FINDINGS_001
 version: 4.0.1
 status: Active
@@ -49,7 +49,7 @@ implementation_status: 进行?
 | v4_development/ | 2 | v4.0开发文?|
 | 根目?| 4 | 战术/技?策略手册v1.0 |
 
-**版本�?*: 06_ARCHIVE/README.md 已更新至v5.3 ?
+**版本?*: 06_ARCHIVE/README.md 已更新至v5.3 ?
 
 ### 07_RESEARCH (研究阶段)
 
@@ -61,7 +61,7 @@ implementation_status: 进行?
 | 04_EXPERIMENT_TRACKING/ | 2 | BLUEPRINT.md, experiment_tracking.md |
 | 根目?| 1 | README.md |
 
-**版本�?*: 全部v1.0 (研究阶段，Layer -1)
+**版本?*: 全部v1.0 (研究阶段，Layer -1)
 
 ### 08_USER_EXPERIENCE (用户体验)
 
@@ -71,7 +71,7 @@ implementation_status: 进行?
 | 04_NOZYIO/ | 2 | README.md, ARCHIVED.md |
 | 根目?| 1 | README.md |
 
-**版本�?*: v5.0 (需要更新至v5.3)
+**版本?*: v5.0 (需要更新至v5.3)
 
 ---
 
@@ -118,7 +118,7 @@ implementation_status: 进行?
 
 ### 2026-03-31 D4块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | ?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | D4-P1-001 | 08_USER_EXPERIENCE/README.md版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | D4-P2-001 | 07_RESEARCH/README.md版本确认（建议保持v1.0?| ?已确?| 2026-03-31 |

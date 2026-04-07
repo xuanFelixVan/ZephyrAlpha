@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: P_P_001
 version: 1.0.0
 status: Active
@@ -38,7 +38,7 @@ compliance_level: 专业标准
 
 ### 1.2 处理结果
 
-| 处理?| 状�?| 结果 |
+| 处理?| 状?| 结果 |
 |--------|------|------|
 | **P2-001: 文件整合** | ?完成 | 7个文件→4个文?|
 | **P2-002: 索引更新** | ?完成 | 机器学习层模? 5?1 |
@@ -49,7 +49,7 @@ compliance_level: 专业标准
 ## 2. P2-001: 文件整合处理
 
 ### 2.1 整合前状?
-| 文件?| 大小 | 状�?|
+| 文件?| 大小 | 状?|
 |--------|------|------|
 | MARKET_PARTICIPANT_SIMULATION_SPEC.md | 54KB | 主规格书 |
 | MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md | 31KB | 更新文档 |
@@ -59,7 +59,7 @@ compliance_level: 专业标准
 | MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md | 36KB | 集成架构 |
 
 ### 2.2 整合后状?
-| 文件?| 状�?| 说明 |
+| 文件?| 状?| 说明 |
 |--------|------|------|
 | MARKET_PARTICIPANT_SIMULATION_SPEC.md | ?保留 | 主规格书，已添加相关文档引用 |
 | MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md | ?保留 | 实施计划 |

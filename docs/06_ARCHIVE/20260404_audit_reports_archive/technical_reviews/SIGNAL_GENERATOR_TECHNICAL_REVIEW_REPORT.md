@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SIGNAL_GENERATOR_001
 review_id: TR-2026-04-02-SIGNAL
 version: 1.0.0

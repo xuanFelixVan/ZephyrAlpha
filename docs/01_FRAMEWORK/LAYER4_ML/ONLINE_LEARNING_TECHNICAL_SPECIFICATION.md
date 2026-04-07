@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ONLINE_LEARNING_TECHNICAL_SPECIFICATION_001
 version: 1.0.0
 spec_version: 1.0
@@ -38,7 +38,7 @@ responsibility:
 **技术痛?*?- 当前模型训练采用离线批处理模式，更新周期为日?- 缺乏实时数据流处理和增量学习基础设施
 - 模型版本管理和回滚机制不完善
 
-**预期�?*?- 模型更新周期从日级缩短到分钟?- 模型性能稳定性提?5%以上
+**预期?*?- 模型更新周期从日级缩短到分钟?- 模型性能稳定性提?5%以上
 - 异常市场状态下模型自适应能力提升30%
 
 ### 1.2 技术定位与架构层归?
@@ -47,7 +47,7 @@ responsibility:
 - **架构角色**: 提供实时模型更新和自适应学习能力
 
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-03 | AI工程?| 初始版本 | Active |
 
@@ -101,8 +101,8 @@ class OnlineLearningConfig(BaseModel):
     batch_size: int = Field(default=32, description="批大?)
     buffer_size: int = Field(default=1000, description="缓冲区大?)
     update_frequency: str = Field(default="real_time", description="更新频率")
-    performance_threshold: float = Field(default=0.7, description="性能�?)
-    rollback_threshold: float = Field(default=0.5, description="回滚�?)
+    performance_threshold: float = Field(default=0.7, description="性能?)
+    rollback_threshold: float = Field(default=0.5, description="回滚?)
 
 
 class PredictionRequest(BaseModel):
@@ -177,7 +177,7 @@ class OnlineLearnerAPI:
     
     def get_model_state(self, model_id: str) -> Dict[str, Any]:
         """
-        获取模型�?        
+        获取模型?        
         Args:
             model_id: 模型ID
             

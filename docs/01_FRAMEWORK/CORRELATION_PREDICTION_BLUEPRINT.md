@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: CORRELATION_PREDICTION_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供correlation prediction blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -28,7 +28,7 @@ layer: Layer 3 (策略层)
 
 
 
-# 相关性预测模型蓝�?
+# 相关性预测模型蓝?
 > **核心职责**: 提供correlation prediction blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Correlation Prediction蓝图设计相关内容
@@ -39,7 +39,7 @@ layer: Layer 3 (策略层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -55,9 +55,9 @@ layer: Layer 3 (策略层)
 
 
 
-- **动态相�?*: 预测相关性变�?- **风险分散**: 优化资产配置
+- **动态相?*: 预测相关性变?- **风险分散**: 优化资产配置
 
-- **对冲策略**: 动态对�?- **系统性风�?*: 监控系统性风�?
+- **对冲策略**: 动态对?- **系统性风?*: 监控系统性风?
 
 ---
 
@@ -71,13 +71,13 @@ layer: Layer 3 (策略层)
 
 |------|------|----------|
 
-| DCC-GARCH | 动态条件相�?| 传统金融 |
+| DCC-GARCH | 动态条件相?| 传统金融 |
 
 | Copula | 尾部依赖 | 极端风险 |
 
-| Graph Neural Net | 图神经网�?| 复杂关系 |
+| Graph Neural Net | 图神经网?| 复杂关系 |
 
-| Transformer | 注意力机�?| 长序�?|
+| Transformer | 注意力机?| 长序?|
 
 
 
@@ -93,7 +93,7 @@ layer: Layer 3 (策略层)
 
 class CorrelationPredictor:
 
-    """相关性预测模�?""
+    """相关性预测模?""
 
     
 
@@ -137,7 +137,7 @@ class CorrelationPredictor:
 
         Args:
 
-            returns: 收益率矩�?            
+            returns: 收益率矩?            
 
         Returns:
 
@@ -157,7 +157,7 @@ class CorrelationPredictor:
 
     ) -> bool:
 
-        """检测相关性状态变�?        
+        """检测相关性状态变?        
 
         Args:
 
@@ -167,7 +167,7 @@ class CorrelationPredictor:
 
         Returns:
 
-            bool: 是否发生状态变�?        """
+            bool: 是否发生状态变?        """
 
         pass
 

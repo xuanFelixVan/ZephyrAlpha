@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_TS_001
 version: 1.0.0
 status: Active

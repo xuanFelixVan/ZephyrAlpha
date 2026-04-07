@@ -1,17 +1,17 @@
----
+﻿---
 module_id: TACTICS_YOUZI_OTHER_K_001
 version: 1.9.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 交易策略、战术执行
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
 ---
 ---
 
@@ -28,10 +28,10 @@ implementation_status: 进行�?
 > 遗漏内容整合补充第四部分
 >
 > **版本**：v1.9
-> **日期**�?026-03-28
-> **策略�?*：清风量化交易系�?.0
+> **日期**?026-03-28
+> **策略?*：清风量化交易系?.0
 >
-> **配套文档**�?
+> **配套文档**?
 > -  - 量能周期
 
 ---
@@ -52,10 +52,10 @@ class HuanLeHaiAnSystem:
     """
 
     MONSTER_STOCK_CRITERIA = {
-        '连续涨停�?: '>=5�?,
-        '期间换手�?: '>=15%（排除一字板�?,
+        '连续涨停?: '>=5?,
+        '期间换手?: '>=15%（排除一字板?,
         '带动板块跟风': '>=3只关联股涨停',
-        '市场影响�?: '成为市场情绪标杆'
+        '市场影响?: '成为市场情绪标杆'
     }
 
     def check_monster_stock(self, stock_data):
@@ -63,7 +63,7 @@ class HuanLeHaiAnSystem:
         检查是否是妖股
         """
         continuous_limitup = stock_data.get('连续涨停天数', 0)
-        avg_turnover = stock_data.get('期间换手�?, 0)
+        avg_turnover = stock_data.get('期间换手?, 0)
         sector_follow = stock_data.get('跟风股数', 0)
 
         if continuous_limitup >= 5 and avg_turnover >= 15 and sector_follow >= 3:
@@ -73,7 +73,7 @@ class HuanLeHaiAnSystem:
                 'confidence': 0.9
             }
 
-        return {'is_monster': False, 'action': '普通股�?}
+        return {'is_monster': False, 'action': '普通股?}
 
     def select_buy_point(self, stock_data):
         """
@@ -82,27 +82,27 @@ class HuanLeHaiAnSystem:
         continuous_days = stock_data.get('连续涨停天数', 0)
 
         if continuous_days == 1:
-            return {'point': '首板', 'action': '换手充分时买�?}
+            return {'point': '首板', 'action': '换手充分时买?}
         elif continuous_days <= 5:
-            return {'point': '连板', 'action': '放量回封时买�?}
+            return {'point': '连板', 'action': '放量回封时买?}
         else:
-            return {'point': '龙回�?, 'action': '回落20%后再次放�?}
+            return {'point': '龙回?, 'action': '回落20%后再次放?}
 ```
 
-### 1.2 龙回头战�?
+### 1.2 龙回头战?
 
 ```python
 class DragonPullbackStrategy:
     """
-    龙回头战�?
+    龙回头战?
     """
 
     def select_pullback_opportunity(self, stock_data):
         """
-        选择龙回头机�?
+        选择龙回头机?
         """
         pullback_ratio = stock_data.get('回落幅度', 0)
-        volume = stock_data.get('成交�?, 0)
+        volume = stock_data.get('成交?, 0)
         avg_volume = stock_data.get('均量', 1)
 
         if 0.15 <= pullback_ratio <= 0.30 and volume > avg_volume * 1.5:
@@ -117,33 +117,33 @@ class DragonPullbackStrategy:
 
 ---
 
-## 2. 热点优先级量�?(S092)
+## 2. 热点优先级量?(S092)
 
 > 来源：附录CB
 >
-> 热点优先级量化体�?
+> 热点优先级量化体?
 
-### 2.1 优先级规�?
+### 2.1 优先级规?
 
 ```python
 class HotSectorPrioritySystem:
     """
-    热点优先级量�?
+    热点优先级量?
     """
 
     PRIORITY_RULES = {
-        '第一优先�?: {
-            '类型': '前期人气�?,
-            '特征': '妖股/龙头/反复炒作�?,
+        '第一优先?: {
+            '类型': '前期人气?,
+            '特征': '妖股/龙头/反复炒作?,
             '操作': '股性活跃，识别度高'
         },
-        '第二优先�?: {
-            '类型': '强势�?,
-            '特征': '直接受益概念�?,
+        '第二优先?: {
+            '类型': '强势?,
+            '特征': '直接受益概念?,
             '操作': '集合竞价抢筹，放量换手板'
         },
-        '第三优先�?: {
-            '类型': '跟风�?,
+        '第三优先?: {
+            '类型': '跟风?,
             '特征': '涨停时间排序',
             '操作': '溢价递减'
         }
@@ -189,16 +189,16 @@ class AuctionAnalysisSystem:
         """
         分析竞价模式
         """
-        last_minute_sell = auction_data.get('最�?分钟大单卖出', False)
+        last_minute_sell = auction_data.get('最?分钟大单卖出', False)
         two_buy_orders = auction_data.get('两笔大单买入', False)
-        auction_volume = auction_data.get('竞价成交�?, 0)
-        prev_auction_volume = auction_data.get('昨日竞价成交�?, 0)
+        auction_volume = auction_data.get('竞价成交?, 0)
+        prev_auction_volume = auction_data.get('昨日竞价成交?, 0)
 
         if last_minute_sell and two_buy_orders:
             return {'pattern': '异动', 'action': '警惕', 'confidence': 0.7}
 
         if auction_volume < prev_auction_volume * 0.8:
-            return {'pattern': '缩量健康', 'action': '可持�?, 'confidence': 0.8}
+            return {'pattern': '缩量健康', 'action': '可持?, 'confidence': 0.8}
 
         return {'pattern': '正常', 'action': '观望'}
 
@@ -217,7 +217,7 @@ class AuctionAnalysisSystem:
 >
 > 卡位与抢帽子量化
 
-### 4.1 卡位检�?
+### 4.1 卡位检?
 
 ```python
 class PositionTakingSystem:
@@ -227,7 +227,7 @@ class PositionTakingSystem:
 
     def detect_position_taking(self, sector_stocks, leader_stock):
         """
-        检测卡位机�?
+        检测卡位机?
         """
         candidates = []
 
@@ -248,14 +248,14 @@ class PositionTakingSystem:
         """
         检查抢帽子机会
         """
-        if stock_data['成交�?] < 100000000:
-            return {'action': '不适合', 'reason': '流动性不�?}
+        if stock_data['成交?] < 100000000:
+            return {'action': '不适合', 'reason': '流动性不?}
 
         day_range = stock_data['日内振幅']
         if day_range < 0.03:
             return {'action': '不适合', 'reason': '振幅太小'}
 
-        return {'action': '可参�?, 'reason': '满足条件'}
+        return {'action': '可参?, 'reason': '满足条件'}
 ```
 
 ---
@@ -276,7 +276,7 @@ class PioneerDragonIdentifier:
 
     def identify_pioneer(self, sector_stocks):
         """
-        识别先锋�?
+        识别先锋?
         """
         sorted_stocks = sorted(
             sector_stocks,
@@ -294,11 +294,11 @@ class PioneerDragonIdentifier:
 
     def check_leader_qualification(self, stock_data, sector_data):
         """
-        检查龙头资�?
+        检查龙头资?
         """
         is_unique = stock_data.get('板块唯一龙头', False)
-        has_support = len(sector_data.get('涨停股列�?, [])) >= 2
-        turnover = stock_data.get('换手�?, 0)
+        has_support = len(sector_data.get('涨停股列?, [])) >= 2
+        turnover = stock_data.get('换手?, 0)
 
         if is_unique and has_support and turnover >= 0.15:
             return {'is_leader': True, 'action': '龙头确认'}
@@ -308,19 +308,19 @@ class PioneerDragonIdentifier:
 
 ---
 
-## 6. 目标价计�?(S096)
+## 6. 目标价计?(S096)
 
 > 来源：附录CC
 >
-> 目标价计算量�?
+> 目标价计算量?
 
-### 6.1 比价�?
+### 6.1 比价?
 
 ```python
 class TargetPriceCalculationSystem:
     """
-    目标价计算量�?
-    方法：比价法 + 市场容量�?
+    目标价计算量?
+    方法：比价法 + 市场容量?
     """
 
     def calc_target_by_comparison(self, stock_data, sector_data):
@@ -332,9 +332,9 @@ class TargetPriceCalculationSystem:
         should_increase = suspend_period_increase * 1.2
 
         return {
-            'target_price': stock_data['停牌前价�?] * (1 + should_increase),
+            'target_price': stock_data['停牌前价?] * (1 + should_increase),
             'increase_ratio': should_increase,
-            'method': '比价�?
+            'method': '比价?
         }
 
     def calc_target_by_capacity(self, stock_data, market_data):
@@ -348,9 +348,9 @@ class TargetPriceCalculationSystem:
         final_target = base_height * sector_capacity * sentiment_factor
 
         return {
-            'target_price': stock_data['当前�?] * (1 + final_target),
+            'target_price': stock_data['当前?] * (1 + final_target),
             'increase_ratio': final_target,
-            'method': '市场容量�?
+            'method': '市场容量?
         }
 ```
 
@@ -372,9 +372,9 @@ class DailyReviewQuantifier:
 
     REVIEW_STEPS = {
         '步骤1': '昨日热点顺势延伸预判',
-        '步骤2': '新热点挖掘准�?,
+        '步骤2': '新热点挖掘准?,
         '步骤3': '个股阶段划分',
-        '步骤4': '先锋、龙头、助攻位�?
+        '步骤4': '先锋、龙头、助攻位?
     }
 
     STAGES = {
@@ -391,7 +391,7 @@ class DailyReviewQuantifier:
         """
         return {
             '热点预判': self.predict_hot_sectors(market_data),
-            '新热�?: self.find_new_hot_sectors(market_data),
+            '新热?: self.find_new_hot_sectors(market_data),
             '阶段分析': self.analyze_stages(sector_data),
             '自选股': self.generate_watchlist(sector_data)
         }
@@ -406,87 +406,87 @@ class DailyReviewQuantifier:
         if sentiment == 'bullish':
             return {'action': '延续昨日热点', 'sectors': yesterday_hot}
 
-        return {'action': '寻找新热�?, 'sectors': []}
+        return {'action': '寻找新热?, 'sectors': []}
 ```
 
 ---
 
-## 8. 凡倍无名量�?(S098)
+## 8. 凡倍无名量?(S098)
 
-> 来源：附录凡倍无�?
+> 来源：附录凡倍无?
 >
-> 凡倍无名量化体�?
+> 凡倍无名量化体?
 
 ### 8.1 核心量化策略
 
 ```python
 class FanbeiStrategy:
     """
-    凡倍无名量化策�?
+    凡倍无名量化策?
     """
 
     def analyze_stock_personality(self, stock_data):
         """
-        分析股�?
+        分析股?
         """
         score = 0
 
         if stock_data.get('历史连板次数', 0) >= 3:
             score += 0.3
 
-        if stock_data.get('炸板�?, 1) <= 0.3:
+        if stock_data.get('炸板?, 1) <= 0.3:
             score += 0.25
 
-        if stock_data.get('溢价�?, 0) >= 0.03:
+        if stock_data.get('溢价?, 0) >= 0.03:
             score += 0.25
 
-        if stock_data.get('次日高开�?, 0) >= 0.6:
+        if stock_data.get('次日高开?, 0) >= 0.6:
             score += 0.2
 
         if score >= 0.75:
-            return {'personality': '活跃', 'action': '可操�?}
+            return {'personality': '活跃', 'action': '可操?}
 
-        return {'personality': '一�?, 'action': '谨慎'}
+        return {'personality': '一?, 'action': '谨慎'}
 ```
 
 ---
 
-## 9. 顶级游资汇�?(S099-S105)
+## 9. 顶级游资汇?(S099-S105)
 
 > 来源：附录BS
 >
-> 28位游资悟道心法综�?
+> 28位游资悟道心法综?
 
-### 9.1 游资心法汇�?
+### 9.1 游资心法汇?
 
 ```python
 class TopTraderMindSummary:
     """
-    顶级游资心法汇�?
+    顶级游资心法汇?
     """
 
     TRADER_MIND = {
         '欢乐海岸': {
             '风格': '妖股高位接力',
             '仓位': '龙头满仓',
-            '止损': '不轻易止�?
+            '止损': '不轻易止?
         },
-        '成都�?: {
+        '成都?: {
             '风格': '首板挖掘',
             '仓位': '分散布局',
             '止损': '-5%止损'
         },
-        '佛山�?: {
+        '佛山?: {
             '风格': '翘跌停板',
-            '仓位': '跌停板重�?,
+            '仓位': '跌停板重?,
             '止损': '次日必卖'
         },
-        '浙江�?: {
+        '浙江?: {
             '风格': '波段操作',
             '仓位': '逐步建仓',
             '止损': '-8%止损'
         },
-        '温州�?: {
+        '温州?: {
             '风格': '快进快出',
             '仓位': '控盘度高',
             '止损': '严格止损'
@@ -518,4 +518,4 @@ class TopTraderMindSummary:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.9 | 2026-03-28 | 新增：欢乐海�?S091)、热点优先级(S092)、竞价分�?S093)、卡位抢�?S094)、先锋龙�?S095)、目标价计算(S096)、复盘量�?S097)、凡倍无�?S098)、顶级游资汇�?S099-S105) |
+| v1.9 | 2026-03-28 | 新增：欢乐海?S091)、热点优先级(S092)、竞价分?S093)、卡位抢?S094)、先锋龙?S095)、目标价计算(S096)、复盘量?S097)、凡倍无?S098)、顶级游资汇?S099-S105) |

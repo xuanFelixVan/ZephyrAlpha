@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: CONFIGURATION_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -6,20 +6,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 çæ§å±?
+applicable_scope: Layer 9 çæ§å±?
 compliance_level: 专业标准
 responsibility:
   - é
-ç½®ç®¡ç
   - é
-ç½®éä¸­ç®¡ç
   - 版本控制
-  - ç­æ´æ?
+  - ç­æ´æ?
 layer: Layer 5 (策略执行层)
 ---
 
 # é
-ç½®ç®¡çä¸­å¿èå¾
 
 ## 核心定位
 
@@ -80,67 +77,40 @@ layer: Layer 5 (策略执行层)
 
 ## 核心定位
 
-è´è´£ç³»ç»é
-ç½®çç®¡çåç»´æ¤ï¼æä¾é
-ç½®ççæ¬æ§å¶ãç¯å¢ç®¡çåå¨æé
-ç½®æ´æ°åè½ã?
 
 ## 📋 执行摘要
 
-æ¬èå¾è®¾è®¡åºäºConsulåEtcdçé
-ç½®ç®¡çä¸­å¿ï¼æä¾ä¸ä¸çº§é
-ç½®ç®¡çè½åï¼éåä¸ªäººå¼ååAIç»´æ¤ã?
 
-**æ ¸å¿ä»·å?*:
 - é
-ç½®éä¸­ç®¡ç
-- çæ¬æ§å¶ä¸åæ»?
-- ç­æ´æ°æ¯æ?
 - 环境隔离
 - é
-ç½®å®¡è®¡
+置审计
 
-**å¼æºæ¹æ¡?*: Consul + Etcd + èªå®ä¹é
-ç½®ç®¡çå¨
 
-**é¢ä¼°å·¥ä½é?*: 30å°æ¶
 
 ---
 
-## 1. æ¨¡åå®ä½ä¸ç®æ ?
 
 ### 1.1 模块定位
 
 **Layer定位**: Layer 1 - 数据预处理层（数据服务模块）
 
-**æ ¸å¿ä»·å?*:
-- ç»ä¸é
-ç½®ç®¡ç
-- å¨æé
-ç½®æ´æ?
+- ç»ä¸é
+- å¨æé
 - é
-ç½®çæ¬æ§å¶
 - 环境隔离
 
-**ä¸å¡ä»·å?*:
 - 提高运维效率
-- éä½é
-ç½®éè¯¯
-- æ¯æå¿«éè¿­ä»?
-- æåç³»ç»çµæ´»æ?
+- éä½é
 
 ### 1.2 设计目标
 
-| ç®æ  | ä¼å
-çº?| ææ¯å®ç?|
 |------|--------|----------|
 | **é
-ç½®éä¸­ç®¡ç** | P0 | Consul |
 | **版本控制** | P0 | Git + Consul |
-| **ç­æ´æ?* | P0 | Consul Watch |
+| **ç­æ´æ?* | P0 | Consul Watch |
 | **环境隔离** | P1 | Consul Namespaces |
 | **é
-ç½®å®¡è®¡** | P1 | èªå®ä¹å®¡è®¡å¨ |
 
 ---
 
@@ -151,35 +121,26 @@ layer: Layer 5 (策略执行层)
 ```mermaid
 graph TB
     subgraph "é
-ç½®æº?
+ç½®æº?
         A[é
-ç½®æä»¶] --> E[é
-ç½®ç®¡çå¨]
         B[环境变量] --> E
         C[命令行参数] --> E
         D[é
-ç½®ä¸­å¿] --> E
     end
     
     subgraph "é
-ç½®å¼æ"
         E --> F[é
-ç½®éªè¯å¨]
         F --> G[é
-ç½®å­å¨]
         G --> H[é
-ç½®ååå¨]
     end
     
-    subgraph "åºç¨å±?
         H --> I[应用A]
         H --> J[应用B]
         H --> K[应用C]
     end
     
-    subgraph "çæ§å±?
+    subgraph "çæ§å±?
         L[é
-ç½®åæ´çæ§] --> M[å®¡è®¡æ¥å¿]
         L --> N[告警通知]
     end
 ```
@@ -187,65 +148,43 @@ graph TB
 ### 2.2 核心组件
 
 #### 2.2.1 é
-ç½®ç®¡çå?
 
-**èè´£**: ç®¡çé
-ç½®çå½å¨æ
 
 **核心功能**:
 - é
-ç½®å è½½
 - é
-ç½®éªè¯
 - é
-ç½®åå¹¶
 - é
-ç½®å¯¼åº
 
 #### 2.2.2 é
-ç½®å­å¨
 
-**èè´£**: å­å¨é
-ç½®æ°æ®
 
 **核心功能**:
 - é
-ç½®æä¹
-å?
+å?
 - 版本控制
-- å¿«éæ¥è¯?
-- é«å¯ç?
+- é«å¯ç?
 
 #### 2.2.3 é
-ç½®ååå?
 
-**èè´£**: ååé
-ç½®å°åºç?
 
 **核心功能**:
 - é
-ç½®æ¨é?
-- ç­æ´æ?
+- ç­æ´æ?
 - é
-ç½®åæ­¥
 - 变更通知
 
 ---
 
-## 3. å¼æºæ¹æ¡éæ?
 
 ### 3.1 Consul集成
 
 **GitHub**: https://github.com/hashicorp/consul
 
-**Staræ?*: 28k+
+**Staræ?*: 28k+
 
-**æ ¸å¿ç¹æ?*:
 - 服务发现
 - é
-ç½®ç®¡ç
-- å¥åº·æ£æ?
-- å¤æ°æ®ä¸­å¿?
 
 **集成方式**:
 
@@ -257,7 +196,6 @@ from datetime import datetime
 
 class ConsulConfigManager:
     """Consulé
-ç½®ç®¡çå?""
     
     def __init__(self, host='localhost', port=8500):
         self.client = consul.Consul(host=host, port=port)
@@ -265,14 +203,13 @@ class ConsulConfigManager:
     
     def set_config(self, key: str, value: Any, environment: str = 'default'):
         """
-        è®¾ç½®é
-ç½®
+置
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             value: é
-ç½®å?
+ç½®å?
             environment: 环境名称
         
         Returns:
@@ -287,17 +224,17 @@ class ConsulConfigManager:
     
     def get_config(self, key: str, environment: str = 'default'):
         """
-        è·åé
-ç½®
+        è·åé
+置
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             environment: 环境名称
         
         Returns:
             Any: é
-ç½®å?
+ç½®å?
         """
         full_key = f"{self.prefix}/{environment}/{key}"
         
@@ -315,15 +252,14 @@ class ConsulConfigManager:
     
     def get_all_configs(self, environment: str = 'default'):
         """
-        è·åææé
-ç½?
+ç½?
         
         Args:
             environment: 环境名称
         
         Returns:
-            Dict: ææé
-ç½?
+            Dict: ææé
+ç½?
         """
         prefix = f"{self.prefix}/{environment}/"
         
@@ -355,12 +291,12 @@ class ConsulConfigManager:
     
     def delete_config(self, key: str, environment: str = 'default'):
         """
-        å é¤é
-ç½®
+        å é¤é
+置
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             environment: 环境名称
         
         Returns:
@@ -372,12 +308,12 @@ class ConsulConfigManager:
     
     def watch_config(self, key: str, callback, environment: str = 'default'):
         """
-        çå¬é
-ç½®åå
+        çå¬é
+ç½®åå
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             callback: 回调函数
             environment: 环境名称
         """
@@ -400,7 +336,6 @@ class ConsulConfigManager:
     
     def list_environments(self):
         """
-        ååºææç¯å¢?
         
         Returns:
             List: 环境列表
@@ -420,19 +355,17 @@ class ConsulConfigManager:
 
 class ConfigValidator:
     """é
-ç½®éªè¯å?""
     
     def __init__(self, schema):
         self.schema = schema
     
     def validate(self, config: Dict[str, Any]):
         """
-        éªè¯é
-ç½®
+        éªè¯é
+置
         
         Args:
             config: é
-ç½®å­å
 ¸
         
         Returns:
@@ -485,7 +418,6 @@ class ConfigValidator:
         }
     
     def _check_type(self, value, expected_type):
-        """æ£æ¥ç±»å?""
         type_map = {
             'string': str,
             'integer': int,
@@ -507,12 +439,9 @@ class ConfigValidator:
 
 **GitHub**: https://github.com/etcd-io/etcd
 
-**Staræ?*: 47k+
+**Staræ?*: 47k+
 
-**æ ¸å¿ç¹æ?*:
-- åå¸å¼é®å¼å­å?
-- å¼ºä¸è´æ?
-- é«å¯ç?
+- é«å¯ç?
 - 监听机制
 
 **集成方式**:
@@ -523,7 +452,6 @@ from typing import Dict, Any, List
 
 class EtcdConfigManager:
     """Etcdé
-ç½®ç®¡çå?""
     
     def __init__(self, host='localhost', port=2379):
         self.client = etcd3.client(host=host, port=port)
@@ -531,14 +459,13 @@ class EtcdConfigManager:
     
     def set_config(self, key: str, value: Any, environment: str = 'default'):
         """
-        è®¾ç½®é
-ç½®
+置
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             value: é
-ç½®å?
+ç½®å?
             environment: 环境名称
         
         Returns:
@@ -555,17 +482,17 @@ class EtcdConfigManager:
     
     def get_config(self, key: str, environment: str = 'default'):
         """
-        è·åé
-ç½®
+        è·åé
+置
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             environment: 环境名称
         
         Returns:
             Any: é
-ç½®å?
+ç½®å?
         """
         full_key = f"{self.prefix}/{environment}/{key}"
         
@@ -583,15 +510,14 @@ class EtcdConfigManager:
     
     def get_all_configs(self, environment: str = 'default'):
         """
-        è·åææé
-ç½?
+ç½?
         
         Args:
             environment: 环境名称
         
         Returns:
-            Dict: ææé
-ç½?
+            Dict: ææé
+ç½?
         """
         prefix = f"{self.prefix}/{environment}/"
         
@@ -620,12 +546,12 @@ class EtcdConfigManager:
     
     def watch_config(self, key: str, callback, environment: str = 'default'):
         """
-        çå¬é
-ç½®åå
+        çå¬é
+ç½®åå
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             callback: 回调函数
             environment: 环境名称
         """
@@ -646,13 +572,11 @@ class EtcdConfigManager:
 ```
 
 ### 3.3 é
-ç½®çæ¬æ§å¶
 
 **技术栈**: Git + 自定义版本管理器
 
 **核心功能**:
 - é
-ç½®çæ¬åå²
 - 版本回滚
 - 变更追踪
 
@@ -664,7 +588,6 @@ from datetime import datetime
 
 class ConfigVersionControl:
     """é
-ç½®çæ¬æ§å¶å?""
     
     def __init__(self, repo_path: str):
         self.repo_path = repo_path
@@ -672,13 +595,11 @@ class ConfigVersionControl:
     
     def commit_config(self, message: str, config_files: List[str]):
         """
-        æäº¤é
-ç½®åæ´
+        æäº¤é
         
         Args:
             message: 提交消息
             config_files: é
-ç½®æä»¶åè¡¨
         
         Returns:
             str: 提交ID
@@ -695,12 +616,10 @@ class ConfigVersionControl:
     
     def get_config_history(self, config_file: str, limit: int = 10):
         """
-        è·åé
-ç½®åå²
+        è·åé
         
         Args:
             config_file: é
-ç½®æä»¶è·¯å¾
             limit: 历史记录数量限制
         
         Returns:
@@ -723,13 +642,12 @@ class ConfigVersionControl:
     
     def rollback_config(self, commit_id: str, config_file: str):
         """
-        åæ»é
-ç½®
+        åæ»é
+置
         
         Args:
             commit_id: 提交ID
             config_file: é
-ç½®æä»¶è·¯å¾
         
         Returns:
             bool: 是否成功
@@ -751,18 +669,14 @@ class ConfigVersionControl:
     
     def diff_configs(self, commit_id1: str, commit_id2: str, config_file: str):
         """
-        å¯¹æ¯é
-ç½®å·®å¼
         
         Args:
             commit_id1: 第一个提交ID
             commit_id2: 第二个提交ID
             config_file: é
-ç½®æä»¶è·¯å¾
         
         Returns:
-            str: å·®å¼å
-å®¹
+容
         """
         if self.repo is None:
             raise ValueError("Git repository not initialized")
@@ -778,23 +692,20 @@ class ConfigVersionControl:
 ---
 
 ## 4. é
-ç½®ç®¡çç­ç¥
 
 ### 4.1 é
-ç½®å±æ¬¡ç»æ
 
 ```yaml
 config_hierarchy:
   - level: 1
     name: default
-    description: é»è®¤é
-ç½®
+置
     priority: 1
   
   - level: 2
     name: environment
-    description: ç¯å¢é
-ç½®
+    description: ç¯å¢é
+置
     priority: 2
     environments:
       - development
@@ -803,43 +714,37 @@ config_hierarchy:
   
   - level: 3
     name: service
-    description: æå¡é
-ç½®
+    description: æå¡é
+置
     priority: 3
   
   - level: 4
     name: instance
-    description: å®ä¾é
-ç½®
+    description: å®ä¾é
+置
     priority: 4
 ```
 
 ### 4.2 é
-ç½®åå¹¶ç­ç¥
 
 ```python
 from typing import Dict, Any
 
 class ConfigMerger:
     """é
-ç½®åå¹¶å?""
     
     def __init__(self):
         pass
     
     def merge_configs(self, configs: List[Dict[str, Any]]):
         """
-        åå¹¶å¤ä¸ªé
-ç½®
+置
         
         Args:
             configs: é
-ç½®åè¡¨ï¼æä¼å
-çº§ä»ä½å°é«ï¼
         
         Returns:
-            Dict: åå¹¶åçé
-ç½®
+置
         """
         merged = {}
         
@@ -890,9 +795,7 @@ environment_isolation:
 ---
 
 ## 5. é
-ç½®ç­æ´æ?
 
-### 5.1 ç­æ´æ°æºå?
 
 ```python
 from typing import Callable, Dict, Any
@@ -900,7 +803,6 @@ import threading
 
 class HotReloader:
     """é
-ç½®ç­æ´æ°å¨"""
     
     def __init__(self, config_manager):
         self.config_manager = config_manager
@@ -909,12 +811,11 @@ class HotReloader:
     
     def register_callback(self, key: str, callback: Callable):
         """
-        æ³¨åé
-ç½®åæ´åè°
+        æ³¨åé
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             callback: 回调函数
         """
         if key not in self.callbacks:
@@ -924,12 +825,11 @@ class HotReloader:
     
     def start_watching(self, key: str, environment: str = 'default'):
         """
-        å¼å§çå¬é
-ç½?
+ç½?
         
         Args:
             key: é
-ç½®é?
+ç½®é?
             environment: 环境名称
         """
         def watch_thread():
@@ -946,7 +846,6 @@ class HotReloader:
     
     def _on_config_change(self, key: str, value: Any):
         """é
-ç½®åæ´å¤ç"""
         if key in self.callbacks:
             for callback in self.callbacks[key]:
                 try:
@@ -960,7 +859,6 @@ class HotReloader:
 ```python
 class ConfigAwareApplication:
     """é
-ç½®æç¥åºç¨åºç±»"""
     
     def __init__(self, config_manager, hot_reloader):
         self.config_manager = config_manager
@@ -969,12 +867,10 @@ class ConfigAwareApplication:
     
     def load_config(self, keys: List[str], environment: str = 'default'):
         """
-        å è½½é
-ç½®
+置
         
         Args:
             keys: é
-ç½®é®åè¡?
             environment: 环境名称
         """
         for key in keys:
@@ -985,7 +881,6 @@ class ConfigAwareApplication:
     
     def _on_config_update(self, key: str, value: Any):
         """é
-ç½®æ´æ°åè°"""
         self.config[key] = value
         
         self.on_config_change(key, value)
@@ -993,12 +888,11 @@ class ConfigAwareApplication:
     def on_config_change(self, key: str, value: Any):
         """
         é
-ç½®åæ´å¤çï¼å­ç±»å®ç°ï¼
         
         Args:
             key: é
-ç½®é?
-            value: æ°å?
+ç½®é?
+            value: æ°å?
         """
         pass
 ```
@@ -1006,7 +900,7 @@ class ConfigAwareApplication:
 ---
 
 ## 6. é
-ç½®å®¡è®¡
+置审计
 
 ### 6.1 审计日志
 
@@ -1016,7 +910,6 @@ from typing import Dict, Any
 
 class ConfigAuditor:
     """é
-ç½®å®¡è®¡å?""
     
     def __init__(self, config):
         self.config = config
@@ -1024,8 +917,6 @@ class ConfigAuditor:
     
     def log_config_change(self, event: Dict[str, Any]):
         """
-        è®°å½é
-ç½®åæ´
         
         Args:
             event: 变更事件
@@ -1051,7 +942,6 @@ class ConfigAuditor:
         
         Args:
             key: é
-ç½®é®ï¼å¯éï¼
             limit: 记录数量限制
         
         Returns:
@@ -1073,191 +963,120 @@ class ConfigAuditor:
 
 ## 7. 实施计划
 
-### 7.1 é¶æ®µä¸ï¼æ ¸å¿é
-ç½®ç®¡çï¼12å°æ¶ï¼?
 
-**ç®æ **: å®ç°åºç¡é
-ç½®ç®¡ç
 
 **任务**:
-- [ ] éæConsulï¼?å°æ¶ï¼?
-- [ ] å®ç°é
-ç½®ç®¡çå¨ï¼4å°æ¶ï¼?
-- [ ] å®ç°é
-ç½®éªè¯å¨ï¼4å°æ¶ï¼?
+- [ ] å®ç°é
+- [ ] å®ç°é
 
-**äº¤ä»ç?*:
 - Consul集成
 - é
-ç½®ç®¡çå?
 - é
-ç½®éªè¯å?
 
-### 7.2 é¶æ®µäºï¼çæ¬æ§å¶ï¼?0å°æ¶ï¼?
 
-**ç®æ **: å®ç°é
-ç½®çæ¬æ§å¶
 
 **任务**:
-- [ ] å®ç°çæ¬æ§å¶å¨ï¼5å°æ¶ï¼?
-- [ ] å®ç°é
-ç½®åå¹¶å¨ï¼3å°æ¶ï¼?
+- [ ] å®ç°é
 - [ ] é
-ç½®ç¯å¢éç¦»ï¼?å°æ¶ï¼?
 
-**äº¤ä»ç?*:
-- çæ¬æ§å¶å?
 - é
-ç½®åå¹¶å?
-- ç¯å¢éç¦»é
-ç½®
+置
 
-### 7.3 é¶æ®µä¸ï¼ç­æ´æ°ä¸å®¡è®¡ï¼?å°æ¶ï¼?
 
 **目标**: 实现热更新和审计
 
 **任务**:
-- [ ] å®ç°ç­æ´æ°å¨ï¼?å°æ¶ï¼?
-- [ ] å®ç°é
-ç½®å®¡è®¡å¨ï¼4å°æ¶ï¼?
+- [ ] å®ç°é
 
-**äº¤ä»ç?*:
 - 热更新器
 - é
-ç½®å®¡è®¡å?
 
 ---
 
-## 8. çæ§ä¸è¿ç»?
 
 ### 8.1 å
-³é®ææ 
 
-| ææ  | ç®æ å?| çæ§æ¹å¼ |
 |------|--------|----------|
 | **é
-ç½®æ´æ°å»¶è¿** | â?ç§?| Consulçæ§ |
 | **é
-ç½®ä¸è´æ?* | 100% | ä¸è´æ§æ£æ?|
-| **ç­æ´æ°æåç** | â?9% | åºç¨çæ§ |
 | **é
-ç½®éè¯¯ç?* | â?.1% | éªè¯çæ§ |
 
 ### 8.2 运维任务
 
-| ä»»å¡ | é¢ç | è´è´£äº?|
 |------|------|--------|
-| **æ£æ¥é
-ç½®ä¸è´æ?* | æ¯å¤© | è¿ç»´äººå |
-| **å®¡æ¥é
-ç½®åæ´** | æ¯å¨ | è¿ç»´äººå |
+| **æ£æ¥é
 | **æ¸
-çè¿æé
-ç½®** | æ¯æ | è¿ç»´äººå |
-| **å¤ä»½é
-ç½®** | æ¯å¤© | èªå¨å?|
+çè¿æé
 
 ---
 
 ## 9. 成本效益分析
 
-### 9.1 å¼åææ?
+### 9.1 å¼åææ?
 
-| é¡¹ç® | å·¥ä½é?| ææ¬ |
 |------|--------|------|
-| **æ ¸å¿é
-ç½®ç®¡ç** | 12å°æ¶ | Â¥1,200 |
 | **版本控制** | 10小时 | ¥1,000 |
 | **热更新与审计** | 8小时 | ¥800 |
 | **总计** | **30小时** | **¥3,000** |
 
 ### 9.2 收益评估
 
-| æ¶çé¡?| å¹´åä»·å?|
 |--------|----------|
 | **提高运维效率** | ¥20,000 |
-| **éä½é
-ç½®éè¯¯** | Â¥15,000 |
-| **æ¯æå¿«éè¿­ä»?* | Â¥10,000 |
+| **éä½é
 | **总计** | **¥45,000** |
 
 **ROI**: (45,000 - 3,000) / 3,000 = 1400%
 
 ---
 
-## 10. é£é©ä¸ç¼è§?
 
-### 10.1 ææ¯é£é?
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
 | **é
-ç½®ä¸­å¿æ
-é** | é«?| é«å¯ç¨é¨ç½?+ æ¬å°ç¼å­ |
 | **é
-ç½®éè¯¯** | ä¸?| é
-ç½®éªè¯ + ç°åº¦åå¸ |
-| **çæ¬å²çª** | ä½?| éæºå?+ å²çªæ£æµ?|
 
 ### 10.2 业务风险
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
 | **é
-ç½®æ³é²** | é«?| å å¯å­å¨ + è®¿é®æ§å¶ |
-| **è¯¯æä½?* | ä¸?| æéæ§å¶ + å®¡æ¹æµç¨ |
-| **ç¯å¢æ··æ·** | ä¸?| ç¯å¢æ è¯ + è®¿é®éç¦» |
 
 ---
 
 ## 11. 后续优化方向
 
-### 11.1 ç­æä¼åï¼?-3ä¸ªæï¼?
 
-- [ ] å¢å¼ºé
-ç½®éªè¯
 - [ ] 优化热更新性能
 - [ ] 完善审计功能
 
-### 11.2 ä¸­æä¼åï¼?-6ä¸ªæï¼?
 
 - [ ] é
-ç½®æ¨¡æ¿å?
 - [ ] é
-ç½®ä¾èµç®¡ç
 - [ ] é
-ç½®å¯è§å?
 
-### 11.3 é¿æä¼åï¼?-12ä¸ªæï¼?
 
-- [ ] æºè½é
-ç½®æ¨è
+- [ ] æºè½é
 - [ ] é
-ç½®èªå¨åæµè¯?
 - [ ] é
-ç½®èªæ
 
 ---
 
-## 12. åèèµæ?
+## 12. åèèµæ?
 
-### 12.1 å¼æºé¡¹ç?
 
 - [Consul](https://github.com/hashicorp/consul)
 - [Etcd](https://github.com/etcd-io/etcd)
 - [Spring Cloud Config](https://github.com/spring-cloud/spring-cloud-config)
 
-### 12.2 ææ¯ææ¡?
 
 - [Consul官方文档](https://www.consul.io/docs)
 - [Etcd官方文档](https://etcd.io/docs/)
 - [é
-ç½®ç®¡çæä½³å®è·µ](https://12factor.net/config)
 
 ---
 
 **文档版本**: v1.0.0
-**æåæ´æ?*: 2026-04-07
-**ç»´æ¤è?*: ä¸ªäººå¼åè?
-**å®¡æ ¸ç¶æ?*: å¾
+**æåæ´æ?*: 2026-04-07
 å®¡æ ?

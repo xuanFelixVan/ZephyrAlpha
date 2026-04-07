@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AI_007
 version: 1.0.0
 status: Active
@@ -21,8 +21,6 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: é¦å¸­æ¶æå¸?
-standard_type: ä¸ä¸æºæçº§èå?
 applicable_scope: 组合优化管理
 compliance_level: 专业标准
 parent_document: ../STRATEGY_AI_MODULES_ANALYSIS.md
@@ -47,126 +45,51 @@ related_documents:
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **å®æ½å¨æ**: 3å?
-> **æ ¸å¿å®ä½**: å¤ç­ç¥ãå¤å å­ãå¤èµäº§çç»åä¼å?
 > **技术栈**: CVXPY + Riskfolio-Lib + PyPortfolioOpt
 
 ---
 
-## ä¸ãæ¦è¿?
 
 ### 1.1 蓝图定位
 
-æ¬ææ¡£æ¯æ¸
-é£éåç³»ç»ç?*ç»åä¼åAIèå¾**ï¼æ¨å¨å®ç°ï¼
 
-- â?**å¤ç­ç¥ç»åä¼å?*: ä¼åç­ç¥æéï¼éä½ç¸å
-³æ?
-- â?**å¤å å­ç»åä¼å?*: ä¼åå å­æéï¼æé«Alpha
-- â?**å¤èµäº§ç»åä¼å?*: ä¼åèµäº§é
-ç½®ï¼åæ£é£é?
-- â?**å¨æç»åè°æ?*: æ ¹æ®å¸åºç¶æå¨æè°æ?
-- â?**ç»åé£é©æ§å¶**: æ§å¶ç»åæ´ä½é£é©
+³æ?
 
-### 1.2 æ ¸å¿ä»·å?
 
-**å¯¹ä¸ªäººå¼åè
-çä»·å?*ï¼?
-1. **ç§å­¦é
-ç½®**: åºäºæ°å­¦æ¨¡åç§å­¦é
-ç½®èµäº§
 2. **风险分散**: 通过组合优化降低整体风险
-3. **æ¶çæå**: éè¿ç§å­¦é
-ç½®æåç»åæ¶ç
-4. **èªå¨å?*: AIèªå¨å®æç»åä¼å
 
-**å¯¹ç³»ç»çä»·å?*ï¼?
 1. **风险控制**: 通过组合分散降低风险
-2. **æ¶çä¼å**: æé«ç»åé£é©è°æ´åæ¶ç?
-3. **èµæºä¼å**: ä¼åèµéåé
-æç
-4. **ç¨³å®æ?*: æé«ç»åç¨³å®æ?
+æç
 
 ### 1.3 Layer定位
 
 ```
-Layer 6: ç»åä¼åå±?(Portfolio Optimization Layer)
     ├── 组合优化AI
-    â?  âââ å¤ç­ç¥ä¼åå­ç³»ç»
-    â?  âââ å¤å å­ä¼åå­ç³»ç»
-    â?  âââ å¤èµäº§ä¼åå­ç³»ç»
-    â?  âââ å¨æè°æ´å­ç³»ç»
-    â?  âââ é£é©æ§å¶å­ç³»ç»?
 ```
 
-**æ¶æä½ç½®**: ä½äºLayer 6(ç»åä¼åå±?ï¼æ¯ç»åç®¡ççæ ¸å¿æ¨¡åã?
 
 ---
 
-## äºãæ¶æè®¾è®?
 
 ### 2.1 整体架构
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                 ç»åä¼åAIæ¶æ                             â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                                                            â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?     å¤ç­ç¥ä¼åå­ç³»ç» (Multi-Strategy Optimizer)    â?  â?
-â? â? ââ ç­ç¥æéä¼å                                     â?  â?
-â? â? ââ ç­ç¥ç¸å
-³æ§åæ?                                  â?  â?
-â? â? ââ ç­ç¥é£é©é¢ç®                                     â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                         â?                                 â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?     å¤å å­ä¼åå­ç³»ç» (Multi-Factor Optimizer)      â?  â?
-â? â? ââ å å­æéä¼å                                     â?  â?
-â? â? ââ å å­æ­£äº¤å?                                      â?  â?
-â? â? ââ å å­é£é©æ¨¡å                                     â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                         â?                                 â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?     å¤èµäº§ä¼åå­ç³»ç» (Multi-Asset Optimizer)       â?  â?
-â? â? ââ èµäº§é
-ç½®ä¼å                                     â?  â?
-â? â? ââ è¡ä¸é
-ç½®ä¼å                                     â?  â?
-â? â? ââ é£æ ¼é
-ç½®ä¼å                                     â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                         â?                                 â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?     å¨æè°æ´å­ç³»ç» (Dynamic Adjustment)            â?  â?
-â? â? ââ å¸åºç¶æéåº                                     â?  â?
-â? â? ââ é£é©é¢ç®è°æ´                                     â?  â?
-â? â? ââ æµå¨æ§çº¦æ?                                      â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                         â?                                 â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?     é£é©æ§å¶å­ç³»ç»?(Risk Control)                  â?  â?
-â? â? ââ ç»åVaRæ§å¶                                      â?  â?
-â? â? ââ ç»ååæ¤æ§å¶                                     â?  â?
-â? â? ââ ç»åéä¸­åº¦æ§å?                                  â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                                                            â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                                                            â?
+â?                         â?                                 â?
+â?                         â?                                 â?
+â?                         â?                                 â?
+â?                         â?                                 â?
+â?                                                            â?
 ```
 
-### 2.2 æ°æ®æµè®¾è®?
 
 ```
-ç­ç¥æ±?â?ç­ç¥æéä¼å â?å å­æéä¼å â?èµäº§æéä¼å â?ç»åé£é©æ§å¶ â?æç»ç»å?
-    â?                                                                       â?
-    âââââââââââââââââââ å¨æè°æ?ââââââââââââââââââââââââââââââââââââââââââââââ?
+    â?                                                                       â?
 ```
 
 ---
 
-## ä¸ãæ ¸å¿åè½è®¾è®?
 
-### 3.1 å¤ç­ç¥ç»åä¼å?
 
 ```python
 from typing import Dict, List, Optional
@@ -209,7 +132,6 @@ class MultiStrategyOptimizer:
         volatilities = np.array([s.volatility for s in strategies])
         correlation_matrix = self._build_correlation_matrix(strategies)
         
-        # æå»ºåæ¹å·®ç©é?
         cov_matrix = np.outer(volatilities, volatilities) * correlation_matrix
         
         # 2. 定义优化变量
@@ -238,7 +160,6 @@ class MultiStrategyOptimizer:
             weights >= 0,          # 非负权重
         ]
         
-        # æ·»å èªå®ä¹çº¦æ?
         if constraints:
             if 'max_weight' in constraints:
                 constraints_list.append(weights <= constraints['max_weight'])
@@ -262,30 +183,23 @@ class MultiStrategyOptimizer:
         self,
         strategies: List[StrategyMetrics]
     ) -> Dict:
-        """åæç­ç¥ç¸å
-³æ?""
-        # 1. æå»ºç¸å
-³æ§ç©é?
+³æ?""
         correlation_matrix = self._build_correlation_matrix(strategies)
         
-        # 2. è®¡ç®å¹³åç¸å
-³æ?
+³æ?
         avg_correlation = np.mean(correlation_matrix[np.triu_indices(len(strategies), k=1)])
         
-        # 3. è¯å«é«ç¸å
-³ç­ç¥å¯¹
         high_correlation_pairs = []
         for i in range(len(strategies)):
             for j in range(i+1, len(strategies)):
-                if correlation_matrix[i, j] > 0.7:  # é«ç¸å
-³æ§éå?
+                if correlation_matrix[i, j] > 0.7:  # é«ç¸å
+³æ§éå?
                     high_correlation_pairs.append({
                         'strategy_1': strategies[i].strategy_id,
                         'strategy_2': strategies[j].strategy_id,
                         'correlation': correlation_matrix[i, j]
                     })
         
-        # 4. å¤æ ·æ§è¯å?
         diversity_score = 1 - avg_correlation
         
         return {
@@ -300,22 +214,16 @@ class MultiStrategyOptimizer:
         strategies: List[StrategyMetrics],
         total_risk_budget: float
     ) -> Dict[str, float]:
-        """åé
-é£é©é¢ç®"""
-        # 1. è®¡ç®æ¯ä¸ªç­ç¥çé£é©è´¡ç?
+        """åé
         strategy_risks = [s.volatility for s in strategies]
         total_risk = sum(strategy_risks)
         
-        # 2. åºäºå¤æ®æ¯çåé
-é£é©é¢ç®
         sharpe_ratios = [s.sharpe_ratio for s in strategies]
         total_sharpe = sum(sharpe_ratios)
         
-        # 3. è®¡ç®é£é©é¢ç®åé
-
+
         risk_budgets = {}
         for i, strategy in enumerate(strategies):
-            # åºäºå¤æ®æ¯ççé£é©é¢ç®åé
 ?
             risk_budget = (sharpe_ratios[i] / total_sharpe) * total_risk_budget
             risk_budgets[strategy.strategy_id] = risk_budget
@@ -325,7 +233,6 @@ class MultiStrategyOptimizer:
 
 ---
 
-### 3.2 å¤å å­ç»åä¼å?
 
 ```python
 class MultiFactorOptimizer:
@@ -341,7 +248,6 @@ class MultiFactorOptimizer:
         objective: str = 'max_ic'
     ) -> Dict[str, float]:
         """优化因子权重"""
-        # 1. å å­æ­£äº¤å?
         orthogonal_factors = self.orthogonalizer.orthogonalize(factors)
         
         # 2. 计算因子IC矩阵
@@ -388,14 +294,12 @@ class MultiFactorOptimizer:
         self,
         factors: List[FactorMetrics]
     ) -> List[FactorMetrics]:
-        """å å­æ­£äº¤å?""
         # 1. 构建因子矩阵
         factor_matrix = self._build_factor_matrix(factors)
         
         # 2. 施密特正交化
         orthogonal_matrix = self._gram_schmidt(factor_matrix)
         
-        # 3. è¿åæ­£äº¤ååçå å­?
         orthogonal_factors = []
         for i, factor in enumerate(factors):
             orthogonal_factor = FactorMetrics(
@@ -413,7 +317,6 @@ class MultiFactorOptimizer:
         factors: List[FactorMetrics]
     ) -> FactorRiskModel:
         """构建因子风险模型"""
-        # 1. è®¡ç®å å­åæ¹å·®ç©é?
         factor_cov_matrix = self._calculate_factor_covariance(factors)
         
         # 2. 计算因子收益矩阵
@@ -431,7 +334,6 @@ class MultiFactorOptimizer:
 
 ---
 
-### 3.3 å¤èµäº§ç»åä¼å?
 
 ```python
 class MultiAssetOptimizer:
@@ -447,18 +349,12 @@ class MultiAssetOptimizer:
         assets: List[AssetMetrics],
         objective: str = 'max_sharpe'
     ) -> Dict[str, float]:
-        """ä¼åèµäº§é
-ç½®"""
-        # 1. èµäº§é
-ç½®ä¼å
+置"""
         asset_weights = self.asset_allocator.optimize(assets, objective)
         
-        # 2. è¡ä¸é
-ç½®ä¼å
+        # 2. è¡ä¸é
         sector_weights = self.sector_allocator.optimize(assets, asset_weights)
         
-        # 3. é£æ ¼é
-ç½®ä¼å
         style_weights = self.style_allocator.optimize(assets, asset_weights)
         
         return {
@@ -472,8 +368,7 @@ class MultiAssetOptimizer:
         sectors: List[SectorMetrics],
         constraints: Dict = None
     ) -> Dict[str, float]:
-        """ä¼åè¡ä¸é
-ç½®"""
+置"""
         # 1. 构建优化问题
         n_sectors = len(sectors)
         weights = cp.Variable(n_sectors)
@@ -515,7 +410,6 @@ class MultiAssetOptimizer:
 
 ---
 
-### 3.4 å¨æç»åè°æ?
 
 ```python
 class DynamicAdjustment:
@@ -531,7 +425,6 @@ class DynamicAdjustment:
         current_portfolio: Portfolio,
         market_state: MarketState
     ) -> Portfolio:
-        """å¨æè°æ´ç»å?""
         # 1. 市场状态适应
         adapted_portfolio = self.market_adapter.adapt(
             current_portfolio,
@@ -544,7 +437,6 @@ class DynamicAdjustment:
             market_state
         )
         
-        # 3. æµå¨æ§çº¦æ?
         final_portfolio = self.liquidity_constraint.apply(
             risk_adjusted_portfolio,
             market_state
@@ -553,26 +445,19 @@ class DynamicAdjustment:
         return final_portfolio
 
 class MarketAdapter:
-    """å¸åºç¶æéåºå?""
     
     def adapt(
         self,
         portfolio: Portfolio,
         market_state: MarketState
     ) -> Portfolio:
-        """æ ¹æ®å¸åºç¶æè°æ´ç»å?""
-        # 1. è¯å«å¸åºç¶æ?
         regime = market_state.regime  # bull/bear/sideways/transition
         
-        # 2. æ ¹æ®ä¸åå¸åºç¶æè°æ´æé?
         if regime == 'bull':
-            # çå¸ï¼å¢å å¨éç­ç¥æé?
             adjusted_weights = self._adjust_for_bull_market(portfolio)
         elif regime == 'bear':
-            # çå¸ï¼å¢å é²å¾¡ç­ç¥æé?
             adjusted_weights = self._adjust_for_bear_market(portfolio)
         elif regime == 'sideways':
-            # éè¡å¸ï¼å¢å åå¼åå½ç­ç¥æé?
             adjusted_weights = self._adjust_for_sideways_market(portfolio)
         else:
             # 转折市：降低仓位
@@ -591,7 +476,6 @@ class MarketAdapter:
 
 ```python
 class PortfolioRiskController:
-    """ç»åé£é©æ§å¶å?""
     
     def __init__(self):
         self.var_calculator = VaRCalculator()
@@ -609,7 +493,6 @@ class PortfolioRiskController:
         # 2. 回撤控制
         drawdown_status = self.drawdown_controller.control_drawdown(portfolio)
         
-        # 3. éä¸­åº¦æ§å?
         concentration_status = self.concentration_controller.control_concentration(portfolio)
         
         # 4. 综合风险控制报告
@@ -632,10 +515,9 @@ class PortfolioRiskController:
         confidence_level: float = 0.95
     ) -> VaRStatus:
         """计算组合VaR"""
-        # 1. åå²æ¨¡ææ³?
         historical_var = self._historical_var(portfolio, confidence_level)
         
-        # 2. åæ°æ³?
+        # 2. åæ°æ³?
         parametric_var = self._parametric_var(portfolio, confidence_level)
         
         # 3. 蒙特卡洛模拟
@@ -660,8 +542,7 @@ class PortfolioRiskController:
         # 1. 计算当前回撤
         current_drawdown = self._calculate_current_drawdown(portfolio)
         
-        # 2. å¤æ­æ¯å¦è¶
-è¿éå?
+è¿éå?
         is_exceeded = current_drawdown > max_drawdown
         
         # 3. 生成控制措施
@@ -684,7 +565,6 @@ class PortfolioRiskController:
 
 ---
 
-## åãæ°æ®æ¨¡åè®¾è®?
 
 ### 4.1 组合优化数据模型
 
@@ -721,10 +601,8 @@ class OptimizationResult:
     timestamp: datetime
     objective: str
     
-    # ä¼ååç»å?
     before_portfolio: Portfolio
     
-    # ä¼ååç»å?
     after_portfolio: Portfolio
     
     # 优化效果
@@ -737,7 +615,6 @@ class OptimizationResult:
 ### 4.2 数据库表结构
 
 ```sql
--- ç»åä¼åè®°å½è¡?
 CREATE TABLE portfolio_optimizations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     optimization_id VARCHAR(50),
@@ -749,7 +626,6 @@ CREATE TABLE portfolio_optimizations (
     optimization_process JSON
 );
 
--- ç»åæéåå²è¡?
 CREATE TABLE portfolio_weights_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     portfolio_id VARCHAR(50),
@@ -761,8 +637,6 @@ CREATE TABLE portfolio_weights_history (
     var_95 FLOAT
 );
 
--- ç­ç¥ç¸å
-³æ§ç©éµè¡¨
 CREATE TABLE strategy_correlations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TIMESTAMP,
@@ -774,7 +648,6 @@ CREATE TABLE strategy_correlations (
 
 ---
 
-## äºãæ¥å£è®¾è®?
 
 ### 5.1 文字交互接口
 
@@ -790,49 +663,24 @@ class PortfolioOptimizationTextInterface:
         # 2. 执行优化
         result = self._execute_optimization(optimization_params)
         
-        # 3. æ ¼å¼åè¾å?
         return self._format_optimization_result(result)
     
     def get_portfolio_status(self):
-        """è·åç»åç¶æ?""
         status = self._get_current_portfolio_status()
         return self._format_portfolio_status(status)
 ```
 
-**æå­äº¤äºåºæ¯**ï¼?
 
 ```
-ç¨æ·ï¼?ä¼åä¸ä¸å½åç­ç¥ç»å?
-ç³»ç»ï¼?â?ç»åä¼åå®æ
 
-ä¼åç»æï¼?
-ââ ç­ç¥Cæéï¼?0% â?25%ï¼?5%ï¼?
-ââ ç­ç¥Dæéï¼?5% â?18%ï¼?3%ï¼?
-ââ ç­ç¥Eæéï¼?0% â?7%ï¼?3%ï¼?
-ââ ç­ç¥Fæéï¼?5% â?20%ï¼?5%ï¼?
 
-ä¼åææï¼?
-ââ é¢ææ¶çï¼?8.5%ï¼æå?.2%ï¼?
-ââ é¢æé£é©ï¼?12.3%ï¼éä½?.1%ï¼?
-ââ å¤æ®æ¯çï¼?.85 â?2.05ï¼æå?0.8%ï¼?
-ââ æå¤§åæ¤ï¼-10.5% â?-8.8%ï¼æ¹å?6.2%ï¼?
 
-ç¸å
-³æ§åæï¼
-ââ ç­ç¥C-Dç¸å
-³æ§ï¼0.35ï¼ä½ç¸å
+ç¸å
 ³ï¼?
-ââ ç­ç¥C-Fç¸å
-³æ§ï¼0.42ï¼ä¸­ä½ç¸å
-³ï¼
-ââ ç­ç¥D-Fç¸å
-³æ§ï¼0.28ï¼ä½ç¸å
+³ï¼
 ³ï¼?
 
-é£é©ææ ï¼?
-ââ VaRï¼?5%ï¼ï¼-2.3%
-ââ Betaï¼?.85
-ââ è·è¸ªè¯¯å·®ï¼?.5%
+ââ Betaï¼?.85
 
 是否应用新权重？"
 ```
@@ -840,13 +688,10 @@ class PortfolioOptimizationTextInterface:
 ---
 
 ## å
-­ãå®æ½è·¯å¾?
 
 ### 6.1 实施计划
 
-**Week 1ï¼æ ¸å¿ä¼åç®æ³?*
 
-| ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
 | 多策略优化器实现 | 12h | MultiStrategyOptimizer |
 | 多因子优化器实现 | 12h | MultiFactorOptimizer |
@@ -854,15 +699,12 @@ class PortfolioOptimizationTextInterface:
 
 **Week 2：动态调整与风险控制**
 
-| ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
 | 动态调整器实现 | 8h | DynamicAdjustment |
-| é£é©æ§å¶å¨å®ç?| 8h | PortfolioRiskController |
 | 文字交互接口实现 | 8h | PortfolioOptimizationTextInterface |
 
 **Week 3：集成与测试**
 
-| ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
 | 数据库设计与实现 | 4h | 数据库表结构 |
 | 集成测试 | 8h | 测试报告 |
@@ -871,53 +713,37 @@ class PortfolioOptimizationTextInterface:
 
 ---
 
-## ä¸ãè´¨éä¿è¯?
 
 ### 7.1 测试标准
 
-| æµè¯é¡?| æ å | éªè¯æ¹æ³ |
 |--------|------|---------|
-| ä¼åç®æ³æ¶æç?| â?5% | åå
-æµè¯ |
-| ä¼åæææå | â?% | åæµéªè¯ |
-| è®¡ç®æ§è½ | â?ç§?| æ§è½æµè¯ |
-| æå­äº¤äºååº | â?ç§?| ååæµè¯ |
+æµè¯ |
 
 ### 7.2 监控指标
 
-| ææ  | ç®æ å?| åè­¦éå?|
 |------|--------|---------|
-| ç»åå¤æ®æ¯ç | â?.5 | <1.0 |
-| ç»åç¸å
-³æ?| â?.5 | >0.7 |
-| ç»åVaR | â?% | >5% |
-| ç»ååæ¤ | â?5% | >20% |
+³æ?| â?.5 | >0.7 |
+| ç»åVaR | â?% | >5% |
 
 ---
 
 ## å
-«ãææ¡£æ²»ç?
 
 ### 8.1 文档索引
 
-**æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**ï¼?
-- **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
 - **å
-³èææ¡£**:
   - [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
   - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)
   - [AI_WORKFLOW_LOGGER_BLUEPRINT.md](../../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md)
 
 ### 8.2 版本管理
 
-**çæ¬åå²**ï¼?
-- v1.0 (2026-04-02): åå§çæ¬ï¼å®ä¹æ ¸å¿åè?
 
 ---
 
 **文档结束**
 
-> æ¬èå¾ç±é¦å¸­æ¶æå¸è®¾è®¡ï¼éµå¾ªä¸ä¸éåæºææ åï¼ä¸ºç»åä¼åç®¡çæä¾å®æ´è§£å³æ¹æ¡ã?
 ---
 
 ## 1. 文档治理
@@ -930,7 +756,7 @@ class PortfolioOptimizationTextInterface:
 - **模块ID**: PORTFOLIO_OPTIMIZATION_AI_001
 - **蓝图文档**: [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: ç»åä¼åç®¡ç
+- **职责**: ç»åä¼åç®¡ç
 - **状态**: Active
 ```
 
@@ -938,7 +764,7 @@ class PortfolioOptimizationTextInterface:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Portfolio Optimization Ai** | ç»åä¼åç®¡ç | **核心模块** |
+| **Portfolio Optimization Ai** | ç»åä¼åç®¡ç | **核心模块** |
 
 ### 1.3 版本管理
 

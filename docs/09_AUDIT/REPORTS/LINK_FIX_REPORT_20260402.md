@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 standard_type: ίχηόΨ╜όΛξίΣΛ
 applicable_scope: ίΖρύ│╗ύ╗?
 compliance_level: όφμί╝ΠόιΘίΘΗ

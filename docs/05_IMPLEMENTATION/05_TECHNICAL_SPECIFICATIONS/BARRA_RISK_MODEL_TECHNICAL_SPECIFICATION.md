@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BARRA_RISK_MODEL_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,67 +6,67 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
+layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
 index: BARRA_RISK_SPEC_001
 estimated_hours: 100h
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
-owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
 ---
 
 
-# Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
+# Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `BARRA_RISK_SPEC_001`
-> **ﮒﺙﮒﮔﭘ?*: 100h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﮒ ﮒ­ﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻛﺕﮒ ﮒ­ﮔﺑﻠﺎﮔ۶?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `BARRA_RISK_SPEC_001`
+> **ﮒﺙﮒﮔﭘ?*: 100h
+> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﮒ ﮒ­ﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻛﺕﮒ ﮒ­ﮔﺑﻠﺎﮔ۶?
 ---
 
-## 1. ﮔ۵ﻟﺟﺍ
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
+### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
 
-Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮔ ﺕﮒﺟﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
-- ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟
-- ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?- ﻠ۲ﻠ۸ﮒﻟ۶۲
-- ﻠ۲ﻠ۸ﮒﺛﮒ 
+Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮔ ﺕﮒﺟﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
+- ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟
+- ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?- ﻠ۲ﻠ۸ﮒﻟ۶۲
+- ﻠ۲ﻠ۸ﮒﺛﮒ 
 
-### 1.2 ﮔﮔﺁﻝ؟?
-- **ﮒﻝ۰؟?*: ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻟﺁﺁﮒﺓ؟ < 5%
-- **ﻝ۷ﺏﮒ؟?*: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ۷ﺏﮒ؟ﺅﺙﻠﺟﮒﻟﺟﮔ?- **ﮔ۶ﻟﺛ**: ﮒﮔ؛۰ﻠ۲ﻠ۸ﮒﻟ۶۲ﻟ؟۰ﻝ؟ﮔﭘﻠﺑ < 100ms
-- **ﮒﺁﮔ۸ﮒﺎ?*: ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮒ ﮒ­ﮔ۸?
+### 1.2 ﮔﮔﺁﻝ؟?
+- **ﮒﻝ۰؟?*: ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻟﺁﺁﮒﺓ؟ < 5%
+- **ﻝ۷ﺏﮒ؟?*: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ۷ﺏﮒ؟ﺅﺙﻠﺟﮒﻟﺟﮔ?- **ﮔ۶ﻟﺛ**: ﮒﮔ؛۰ﻠ۲ﻠ۸ﮒﻟ۶۲ﻟ؟۰ﻝ؟ﮔﭘﻠﺑ < 100ms
+- **ﮒﺁﮔ۸ﮒﺎ?*: ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮒ ﮒ­ﮔ۸?
 ---
 
-## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 2.1 ﮔ ﺕﮒﺟﻝﺎﭨﮔ۴?
+### 2.1 ﮔ ﺕﮒﺟﻝﺎﭨﮔ۴?
 #### 2.1.1 BarraRiskModel
 
 ```python
 class BarraRiskModel:
     """
-    Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ ﺕﮒﺟ?    
-    ﻟﻟﺑ۲: ﮒ۳ﮒ ﮒ­ﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻙﮒ ﮒ­ﮔﺑﻠﺎﮔ۶?    """
+    Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ ﺕﮒﺟ?    
+    ﻟﻟﺑ۲: ﮒ۳ﮒ ﮒ­ﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻙﮒ ﮒ­ﮔﺑﻠﺎﮔ۶?    """
     
     def __init__(self, config: BarraConfig):
         """
-        ﮒﮒ۶ﮒBarraﻠ۲ﻠ۸ﮔ۷۰ﮒ
+        ﮒﮒ۶ﮒBarraﻠ۲ﻠ۸ﮔ۷۰ﮒ
         
         Args:
-            config: Barraﻠﻝﺛ؟ﮒﺁﺗﻟﺎ۰
+            config: Barraﻠﻝﺛ؟ﮒﺁﺗﻟﺎ۰
         """
         pass
     
@@ -75,44 +75,44 @@ class BarraRiskModel:
             returns_data: pd.DataFrame,
             factor_loadings: Optional[pd.DataFrame] = None) -> 'BarraRiskModel':
         """
-        ﮔﮒﻠ۲ﻠ۸ﮔ۷۰ﮒ
+        ﮔﮒﻠ۲ﻠ۸ﮔ۷۰ﮒ
         
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
-            returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
-            factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)ﺅﺙﮒﺁ?            
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+            returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
+            factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)ﺅﺙﮒﺁ?            
         Returns:
-            self: ﮔﮒﮒﻝﮔ۷۰ﮒ
+            self: ﮔﮒﮒﻝﮔ۷۰ﮒ
             
         Raises:
-            ValueError: ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁ
-            FittingError: ﮔ۷۰ﮒﮔﮒﮒ۳ﺎﻟﺑ۴
+            ValueError: ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁ
+            FittingError: ﮔ۷۰ﮒﮔﮒﮒ۳ﺎﻟﺑ۴
         """
         pass
     
     def calculate_factor_exposure(self,
                                   portfolio_weights: pd.Series) -> pd.Series:
         """
-        ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ
+        ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ
         
         Args:
-            portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
+            portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
             
         Returns:
-            pd.Series: ﮒ ﮒ­ﮔﺑﻠﺎ (K,)
+            pd.Series: ﮒ ﮒ­ﮔﺑﻠﺎ (K,)
         """
         pass
     
     def decompose_risk(self,
                       portfolio_weights: pd.Series) -> RiskDecomposition:
         """
-        ﻠ۲ﻠ۸ﮒﻟ۶۲
+        ﻠ۲ﻠ۸ﮒﻟ۶۲
         
         Args:
-            portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
+            portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
             
         Returns:
-            RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
+            RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
         """
         pass
     
@@ -120,13 +120,13 @@ class BarraRiskModel:
                             total_risk: float,
                             factor_risk_budget: Dict[str, float]) -> Dict[str, float]:
         """
-        ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
+        ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
         
         Args:
-            total_risk: ﮔﭨﻠ۲ﻠ۸ﻠ۱?            factor_risk_budget: ﮒ ﮒ­ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮔﺁﻛﺝ
+            total_risk: ﮔﭨﻠ۲ﻠ۸ﻠ۱?            factor_risk_budget: ﮒ ﮒ­ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮔﺁﻛﺝ
             
         Returns:
-            Dict[str, float]: ﮒ ﮒ­ﻠ۲ﻠ۸ﻠ۱ﻝ؟?        """
+            Dict[str, float]: ﮒ ﮒ­ﻠ۲ﻠ۸ﻠ۱ﻝ؟?        """
         pass
 ```
 
@@ -135,15 +135,15 @@ class BarraRiskModel:
 ```python
 class FactorExposureCalculator:
     """
-    ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟?    
-    ﻟﻟﺑ۲: ﻟ؟۰ﻝ؟ﻟﭖﻛﭦ۶ﮒﺁﺗﮒ ﮒ­ﻝﮔﺑﻠﺎ?    """
+    ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟?    
+    ﻟﻟﺑ۲: ﻟ؟۰ﻝ؟ﻟﭖﻛﭦ۶ﮒﺁﺗﮒ ﮒ­ﻝﮔﺑﻠﺎ?    """
     
     def __init__(self, config: FactorConfig):
         """
-        ﮒﮒ۶ﮒﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷
+        ﮒﮒ۶ﮒﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷
         
         Args:
-            config: ﮒ ﮒ­ﻠﻝﺛ؟
+            config: ﮒ ﮒ­ﻠﻝﺛ؟
         """
         pass
     
@@ -151,14 +151,14 @@ class FactorExposureCalculator:
                  factor_data: pd.DataFrame,
                  returns_data: pd.DataFrame) -> pd.DataFrame:
         """
-        ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
+        ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
         
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
-            returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+            returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
             
         Returns:
-            pd.DataFrame: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
+            pd.DataFrame: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
         """
         pass
 ```
@@ -168,69 +168,69 @@ class FactorExposureCalculator:
 ```python
 class FactorCovarianceEstimator:
     """
-    ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷
+    ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷
     
-    ﻟﻟﺑ۲: ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?    """
+    ﻟﻟﺑ۲: ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?    """
     
     def __init__(self, config: CovarianceConfig):
         """
-        ﮒﮒ۶ﮒﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰?        
+        ﮒﮒ۶ﮒﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰?        
         Args:
-            config: ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?        """
+            config: ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?        """
         pass
     
     def estimate(self,
                 factor_data: pd.DataFrame,
                 method: str = 'shrinkage') -> pd.DataFrame:
         """
-        ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?        
+        ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?        
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
-            method: ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ ('shrinkage', 'ewma', 'garch')
+            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+            method: ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ ('shrinkage', 'ewma', 'garch')
             
         Returns:
-            pd.DataFrame: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
+            pd.DataFrame: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
         """
         pass
 ```
 
-### 2.2 ﮔﺍﮔ؟ﮔ۴ﮒ۲
+### 2.2 ﮔﺍﮔ؟ﮔ۴ﮒ۲
 
-#### 2.2.1 ﻟﺝﮒ۴ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+#### 2.2.1 ﻟﺝﮒ۴ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
 
 ```python
-# ﮒ ﮒ­ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+# ﮒ ﮒ­ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
 factor_data: pd.DataFrame
 """
-Index: DatetimeIndex (ﮔﭘﻠﺑ)
-Columns: ﮒ ﮒ­ﮒﻝ۶ﺍ
-Values: ﮒ ﮒ­?
-ﻝ۳ﭦﻛﺝ:
+Index: DatetimeIndex (ﮔﭘﻠﺑ)
+Columns: ﮒ ﮒ­ﮒﻝ۶ﺍ
+Values: ﮒ ﮒ­?
+ﻝ۳ﭦﻛﺝ:
             momentum  value  size  beta  ...
 2024-01-01    0.05   -0.02  0.01  1.2
 2024-01-02    0.06   -0.01  0.02  1.1
 ...
 """
 
-# ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍﮔ؟ﮔ ﺙ?returns_data: pd.DataFrame
+# ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍﮔ؟ﮔ ﺙ?returns_data: pd.DataFrame
 """
-Index: DatetimeIndex (ﮔﭘﻠﺑ)
-Columns: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ 
-Values: ﮔﭘﻝ?
-ﻝ۳ﭦﻛﺝ:
+Index: DatetimeIndex (ﮔﭘﻠﺑ)
+Columns: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ 
+Values: ﮔﭘﻝ?
+ﻝ۳ﭦﻛﺝ:
             AAPL    MSFT    GOOGL   ...
 2024-01-01  0.012   0.008   0.015
 2024-01-02  0.005   0.010   -0.002
 ...
 """
 
-# ﻝﭨﮒﮔﻠﮔ ﺙﮒﺙ
+# ﻝﭨﮒﮔﻠﮔ ﺙﮒﺙ
 portfolio_weights: pd.Series
 """
-Index: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ 
-Values: ﮔﻠ
+Index: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ 
+Values: ﮔﻠ
 
-ﻝ۳ﭦﻛﺝ:
+ﻝ۳ﭦﻛﺝ:
 AAPL     0.15
 MSFT     0.12
 GOOGL    0.10
@@ -238,47 +238,47 @@ GOOGL    0.10
 """
 ```
 
-#### 2.2.2 ﻟﺝﮒﭦﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+#### 2.2.2 ﻟﺝﮒﭦﮔﺍﮔ؟ﮔ ﺙﮒﺙ
 
 ```python
-# ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
+# ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
 @dataclass
 class RiskDecomposition:
-    """ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ"""
-    factor_exposure: pd.Series  # ﮒ ﮒ­ﮔﺑﻠﺎ (K,)
-    factor_risk_contribution: pd.Series  # ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ (K,)
-    idiosyncratic_risk_contribution: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
-    total_risk: float  # ﮔﭨﻠ۲?    factor_risk_ratio: float  # ﮒ ﮒ­ﻠ۲ﻠ۸ﮒ ﮔﺁ
-    idiosyncratic_risk_ratio: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﮒ ﮔﺁ
+    """ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ"""
+    factor_exposure: pd.Series  # ﮒ ﮒ­ﮔﺑﻠﺎ (K,)
+    factor_risk_contribution: pd.Series  # ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ (K,)
+    idiosyncratic_risk_contribution: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+    total_risk: float  # ﮔﭨﻠ۲?    factor_risk_ratio: float  # ﮒ ﮒ­ﻠ۲ﻠ۸ﮒ ﮔﺁ
+    idiosyncratic_risk_ratio: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﮒ ﮔﺁ
 ```
 
 ---
 
-## 3. ﮔﺍﮔ؟ﻝﭨﮔﻟ؟ﺝﻟ؟۰
+## 3. ﮔﺍﮔ؟ﻝﭨﮔﻟ؟ﺝﻟ؟۰
 
-### 3.1 ﮔ ﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
+### 3.1 ﮔ ﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
 #### 3.1.1 BarraConfig
 
 ```python
 @dataclass
 class BarraConfig:
-    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻠﻝﺛ؟"""
+    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻠﻝﺛ؟"""
     factor_config: FactorConfig
     cov_config: CovarianceConfig
     idio_config: IdiosyncraticConfig
     
-    # ﻠ۲ﮔ ﺙﮒ ﮒ­ﮒ؟ﻛﺗ
+    # ﻠ۲ﮔ ﺙﮒ ﮒ­ﮒ؟ﻛﺗ
     style_factors: List[str] = field(default_factory=lambda: [
-        'momentum',      # ﮒ۷ﻠﮒ ﮒ­
-        'value',         # ﻛﭨﺓﮒﺙﮒ ?        'size',          # ﻟ۶ﮔ۷۰ﮒ ﮒ­
-        'beta',          # Betaﮒ ﮒ­
-        'volatility',    # ﮔﺏ۱ﮒ۷ﻝﮒ ?        'liquidity',     # ﮔﭖﮒ۷ﮔ۶ﮒ ?        'leverage',      # ﮔ ﮔﮒ ﮒ­
-        'earnings_yield', # ﻝﮒ۸ﮔﭘﻝﻝﮒ ?        'growth',        # ﮔﻠﺟﮒ ﮒ­
-        'quality'        # ﻟﺑ۷ﻠﮒ ﮒ­
+        'momentum',      # ﮒ۷ﻠﮒ ﮒ­
+        'value',         # ﻛﭨﺓﮒﺙﮒ ?        'size',          # ﻟ۶ﮔ۷۰ﮒ ﮒ­
+        'beta',          # Betaﮒ ﮒ­
+        'volatility',    # ﮔﺏ۱ﮒ۷ﻝﮒ ?        'liquidity',     # ﮔﭖﮒ۷ﮔ۶ﮒ ?        'leverage',      # ﮔ ﮔﮒ ﮒ­
+        'earnings_yield', # ﻝﮒ۸ﮔﭘﻝﻝﮒ ?        'growth',        # ﮔﻠﺟﮒ ﮒ­
+        'quality'        # ﻟﺑ۷ﻠﮒ ﮒ­
     ])
     
-    # ﻟ۰ﻛﺕﮒ ﮒ­ﮒ؟ﻛﺗ
+    # ﻟ۰ﻛﺕﮒ ﮒ­ﮒ؟ﻛﺗ
     industry_factors: List[str] = field(default_factory=lambda: [
         'energy', 'materials', 'industrials', 'consumer_discretionary',
         'consumer_staples', 'health_care', 'financials', 'information_technology',
@@ -291,16 +291,16 @@ class BarraConfig:
 ```python
 @dataclass
 class FactorConfig:
-    """ﮒ ﮒ­ﻠﻝﺛ؟"""
-    # ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﺗﮔﺏ
+    """ﮒ ﮒ­ﻠﻝﺛ؟"""
+    # ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﺗﮔﺏ
     exposure_method: str = 'regression'  # 'regression', 'characteristics'
     
-    # ﮒﮒﺛﻝ۹ﮒ۲
-    regression_window: int = 252  # ﻛﭦ۳ﮔ?    
-    # ﮔﮒﺍRﺡﺎﻟ۵ﮔﺎ
+    # ﮒﮒﺛﻝ۹ﮒ۲
+    regression_window: int = 252  # ﻛﭦ۳ﮔ?    
+    # ﮔﮒﺍRﺡﺎﻟ۵ﮔﺎ
     min_r_squared: float = 0.3
     
-    # ﮒ ﮒ­ﮔ ﮒ?    standardize_factors: bool = True
+    # ﮒ ﮒ­ﮔ ﮒ?    standardize_factors: bool = True
 ```
 
 #### 3.1.3 CovarianceConfig
@@ -308,24 +308,24 @@ class FactorConfig:
 ```python
 @dataclass
 class CovarianceConfig:
-    """ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?""
-    # ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ
+    """ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?""
+    # ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ
     estimation_method: str = 'shrinkage'  # 'shrinkage', 'ewma', 'garch'
     
-    # Shrinkageﮒﮔﺍ
+    # Shrinkageﮒﮔﺍ
     shrinkage_target: str = 'identity'  # 'identity', 'diagonal', 'single_factor'
     shrinkage_intensity: float = 0.2
     
-    # EWMAﮒﮔﺍ
+    # EWMAﮒﮔﺍ
     ewma_lambda: float = 0.94
     
-    # GARCHﮒﮔﺍ
+    # GARCHﮒﮔﺍ
     garch_p: int = 1
     garch_q: int = 1
 ```
 
-### 3.2 ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝ?
-#### 3.2.1 ﮒ ﮒ­ﮔﺍﮔ؟?(factor_data)
+### 3.2 ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝ?
+#### 3.2.1 ﮒ ﮒ­ﮔﺍﮔ؟?(factor_data)
 
 ```sql
 CREATE TABLE factor_data (
@@ -340,7 +340,7 @@ CREATE TABLE factor_data (
 );
 ```
 
-#### 3.2.2 ﮒ ﮒ­ﻟﺛﺛﻟﺓ?(factor_loadings)
+#### 3.2.2 ﮒ ﮒ­ﻟﺛﺛﻟﺓ?(factor_loadings)
 
 ```sql
 CREATE TABLE factor_loadings (
@@ -357,7 +357,7 @@ CREATE TABLE factor_loadings (
 );
 ```
 
-#### 3.2.3 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻟ۰۷ (factor_covariance)
+#### 3.2.3 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻟ۰۷ (factor_covariance)
 
 ```sql
 CREATE TABLE factor_covariance (
@@ -375,11 +375,11 @@ CREATE TABLE factor_covariance (
 
 ---
 
-## 4. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
+## 4. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
 
-### 4.1 ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
+### 4.1 ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 
-#### 4.1.1 ﮒﮒﺛ?
+#### 4.1.1 ﮒﮒﺛ?
 ```python
 def calculate_factor_exposure_regression(
     factor_data: pd.DataFrame,
@@ -387,18 +387,18 @@ def calculate_factor_exposure_regression(
     window: int = 252
 ) -> pd.DataFrame:
     """
-    ﻛﺛﺟﻝ۷ﮒﮒﺛﮔﺏﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑ?    
-    ﻝ؟ﮔﺏ:
-    1. ﮒﺁﺗﮔﺁﻛﺕ۹ﻟﭖﻛﭦ۶ﺅﺙﻛﺛﺟﻝ۷ﮒﮒﺎﮔﺍﮔ؟ﮒﮒﺛ
+    ﻛﺛﺟﻝ۷ﮒﮒﺛﮔﺏﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑ?    
+    ﻝ؟ﮔﺏ:
+    1. ﮒﺁﺗﮔﺁﻛﺕ۹ﻟﭖﻛﭦ۶ﺅﺙﻛﺛﺟﻝ۷ﮒﮒﺎﮔﺍﮔ؟ﮒﮒﺛ
     2. r_i = ﺳﺎ + ﺳﺎ_i1*f1 + ﺳﺎ_i2*f2 + ... + ﺳﭖ_i
-    3. ﺳﺎ_ij ﮒﺏﻛﺕﭦﻟﭖﻛﭦ۶iﮒﺁﺗﮒ ﮒ­jﻝﮔﺑ?    
+    3. ﺳﺎ_ij ﮒﺏﻛﺕﭦﻟﭖﻛﭦ۶iﮒﺁﺗﮒ ﮒ­jﻝﮔﺑ?    
     Args:
-        factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
-        returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
-        window: ﮒﮒﺛﻝ۹ﮒ۲
+        factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+        returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
+        window: ﮒﮒﺛﻝ۹ﮒ۲
         
     Returns:
-        pd.DataFrame: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
+        pd.DataFrame: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
     """
     from sklearn.linear_model import LinearRegression
     
@@ -408,21 +408,21 @@ def calculate_factor_exposure_regression(
     )
     
     for asset in returns_data.columns:
-        # ﮒﮒ۳ﮔﺍﮔ؟
+        # ﮒﮒ۳ﮔﺍﮔ؟
         X = factor_data.tail(window).values
         y = returns_data[asset].tail(window).values
         
-        # ﮒﮒﺛ
+        # ﮒﮒﺛ
         model = LinearRegression()
         model.fit(X, y)
         
-        # ﻛﺟﮒ­ﮒ ﮒ­ﻟﺛﺛﻟﺓ
+        # ﻛﺟﮒ­ﮒ ﮒ­ﻟﺛﺛﻟﺓ
         factor_loadings.loc[asset] = model.coef_
     
     return factor_loadings
 ```
 
-### 4.2 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ؟?
+### 4.2 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ؟?
 #### 4.2.1 Shrinkageﻛﺙﺍﻟ؟۰
 
 ```python
@@ -431,22 +431,22 @@ def estimate_factor_covariance_shrinkage(
     shrinkage_intensity: float = 0.2
 ) -> pd.DataFrame:
     """
-    ﻛﺛﺟﻝ۷Shrinkageﮔﺗﮔﺏﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?    
-    ﻝ؟ﮔﺏ:
-    1. ﻟ؟۰ﻝ؟ﮔ ﺓﮔ؛ﮒﮔﺗﮒﺓ؟ﻝ۸?S
-    2. ﮔﮒﭨﭦﻝ؟ﮔ ﻝ۸ﻠﭖ F (ﮒ۵ﮒﻛﺛﻝ۸?
-    3. ﻟ؟۰ﻝ؟Shrinkageﻛﺙﺍﻟ؟۰: ﺳ۲ = (1-ﺳﭨ)*S + ﺳﭨ*F
+    ﻛﺛﺟﻝ۷Shrinkageﮔﺗﮔﺏﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?    
+    ﻝ؟ﮔﺏ:
+    1. ﻟ؟۰ﻝ؟ﮔ ﺓﮔ؛ﮒﮔﺗﮒﺓ؟ﻝ۸?S
+    2. ﮔﮒﭨﭦﻝ؟ﮔ ﻝ۸ﻠﭖ F (ﮒ۵ﮒﻛﺛﻝ۸?
+    3. ﻟ؟۰ﻝ؟Shrinkageﻛﺙﺍﻟ؟۰: ﺳ۲ = (1-ﺳﭨ)*S + ﺳﭨ*F
     
     Args:
-        factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+        factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
         shrinkage_intensity: Shrinkageﮒﺙﭦﮒﭦ۵
         
     Returns:
-        pd.DataFrame: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
+        pd.DataFrame: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
     """
-    # ﮔ ﺓﮔ؛ﮒﮔﺗ?    sample_cov = factor_data.cov()
+    # ﮔ ﺓﮔ؛ﮒﮔﺗ?    sample_cov = factor_data.cov()
     
-    # ﻝ؟ﮔ ﻝ۸ﻠﭖﺅﺙﮒﻛﺛﻝ۸ﻠﭖﺅﺙ
+    # ﻝ؟ﮔ ﻝ۸ﻠﭖﺅﺙﮒﻛﺛﻝ۸ﻠﭖﺅﺙ
     target = np.eye(len(sample_cov))
     
     # Shrinkageﻛﺙﺍﻟ؟۰
@@ -460,7 +460,7 @@ def estimate_factor_covariance_shrinkage(
     )
 ```
 
-### 4.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝ؟ﮔﺏ
+### 4.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝ؟ﮔﺏ
 
 ```python
 def decompose_portfolio_risk(
@@ -470,36 +470,36 @@ def decompose_portfolio_risk(
     idiosyncratic_risk: pd.Series
 ) -> RiskDecomposition:
     """
-    ﻠ۲ﻠ۸ﮒﻟ۶۲
+    ﻠ۲ﻠ۸ﮒﻟ۶۲
     
-    ﻝ؟ﮔﺏ:
-    1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ: f_p = X'w
-    2. ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_fﺡﺎ = f_p'ﺳ۲_f f_p
-    3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_ﺳﭖﺡﺎ = w'D_ﺳﭖ w
-    4. ﮔﭨﻠ۲? ﺵ_p = sqrt(ﺵ_fﺡﺎ + ﺵ_ﺳﭖﺡﺎ)
+    ﻝ؟ﮔﺏ:
+    1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ: f_p = X'w
+    2. ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_fﺡﺎ = f_p'ﺳ۲_f f_p
+    3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_ﺳﭖﺡﺎ = w'D_ﺳﭖ w
+    4. ﮔﭨﻠ۲? ﺵ_p = sqrt(ﺵ_fﺡﺎ + ﺵ_ﺳﭖﺡﺎ)
     
     Args:
-        portfolio_weights: ﻝﭨﮒﮔﻠ
-        factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
-        factor_covariance: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸
+        portfolio_weights: ﻝﭨﮒﮔﻠ
+        factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
+        factor_covariance: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸
         
     Returns:
-        RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
+        RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
     """
-    # 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ
+    # 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ
     factor_exposure = factor_loadings.T @ portfolio_weights
     
-    # 2. ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+    # 2. ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     factor_risk_squared = factor_exposure.T @ factor_covariance @ factor_exposure
     
-    # ﻟﺝﺗﻠﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+    # ﻟﺝﺗﻠﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     marginal_factor_risk = factor_covariance @ factor_exposure
     factor_risk_contribution = factor_exposure * marginal_factor_risk / np.sqrt(factor_risk_squared)
     
-    # 3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+    # 3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     idiosyncratic_risk_squared = (portfolio_weights ** 2 * idiosyncratic_risk ** 2).sum()
     
-    # 4. ﮔﭨﻠ۲?    total_risk = np.sqrt(factor_risk_squared + idiosyncratic_risk_squared)
+    # 4. ﮔﭨﻠ۲?    total_risk = np.sqrt(factor_risk_squared + idiosyncratic_risk_squared)
     
     return RiskDecomposition(
         factor_exposure=factor_exposure,
@@ -513,11 +513,11 @@ def decompose_portfolio_risk(
 
 ---
 
-## 5. ﮔﭖﻟﺁﮔﺗﮔ۰
+## 5. ﮔﭖﻟﺁﮔﺗﮔ۰
 
-### 5.1 ﮒﮒﮔﭖﻟﺁ
+### 5.1 ﮒﮒﮔﭖﻟﺁ
 
-#### 5.1.1 ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
+#### 5.1.1 ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
 
 ```python
 import pytest
@@ -525,11 +525,11 @@ import numpy as np
 import pandas as pd
 
 class TestFactorExposureCalculator:
-    """ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷ﮔﭖ?""
+    """ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷ﮔﭖ?""
     
     def test_calculate_factor_exposure(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟"""
-        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
+        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟"""
+        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 10),
@@ -540,17 +540,17 @@ class TestFactorExposureCalculator:
             columns=['asset_{}'.format(i) for i in range(50)]
         )
         
-        # ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
+        # ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
         calculator = FactorExposureCalculator(FactorConfig())
         factor_loadings = calculator.calculate(factor_data, returns_data)
         
-        # ﻠ۹ﻟﺁﻝﭨﮔ
+        # ﻠ۹ﻟﺁﻝﭨﮔ
         assert factor_loadings.shape == (50, 10)
         assert not factor_loadings.isnull().any().any()
     
     def test_factor_exposure_accuracy(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒﻝ۰؟?""
-        # ﻛﺛﺟﻝ۷ﮒﺓﺎﻝ۴ﮒ ﮒ­ﻝﮔﺍﮔ؟ﮔﭖ?        # ﮔ? r = 0.5*f1 + 0.3*f2 + noise
+        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒﻝ۰؟?""
+        # ﻛﺛﺟﻝ۷ﮒﺓﺎﻝ۴ﮒ ﮒ­ﻝﮔﺍﮔ؟ﮔﭖ?        # ﮔ? r = 0.5*f1 + 0.3*f2 + noise
         np.random.seed(42)
         f1 = np.random.randn(252)
         f2 = np.random.randn(252)
@@ -564,42 +564,42 @@ class TestFactorExposureCalculator:
         calculator = FactorExposureCalculator(FactorConfig())
         factor_loadings = calculator.calculate(factor_data, returns_data)
         
-        # ﻠ۹ﻟﺁﮒ ﮒ­ﻟﺛﺛﻟﺓﮔ۴ﻟﺟﻝﮒ؟?        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
+        # ﻠ۹ﻟﺁﮒ ﮒ­ﻟﺛﺛﻟﺓﮔ۴ﻟﺟﻝﮒ؟?        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
         assert abs(factor_loadings.loc['asset', 'f2'] - 0.3) < 0.1
 ```
 
-#### 5.1.2 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮔﭖ?
+#### 5.1.2 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮔﭖ?
 ```python
 class TestFactorCovarianceEstimator:
-    """ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷ﮔﭖﻟﺁ"""
+    """ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷ﮔﭖﻟﺁ"""
     
     def test_estimate_factor_covariance(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?""
-        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
+        """ﮔﭖﻟﺁﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?""
+        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 10),
             columns=['factor_{}'.format(i) for i in range(10)]
         )
         
-        # ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?        estimator = FactorCovarianceEstimator(CovarianceConfig())
+        # ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?        estimator = FactorCovarianceEstimator(CovarianceConfig())
         factor_cov = estimator.estimate(factor_data)
         
-        # ﻠ۹ﻟﺁﻝﭨﮔ
+        # ﻠ۹ﻟﺁﻝﭨﮔ
         assert factor_cov.shape == (10, 10)
         assert np.allclose(factor_cov.values, factor_cov.values.T)  # ﮒﺁﺗﻝ۶ﺍ
-        assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # ﮔ­۲ﮒ؟
+        assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # ﮔ­۲ﮒ؟
 ```
 
-#### 5.1.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ
+#### 5.1.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ
 
 ```python
 class TestRiskDecomposition:
-    """ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ"""
+    """ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ"""
     
     def test_decompose_risk(self):
-        """ﮔﭖﻟﺁﻠ۲ﻠ۸ﮒﻟ۶۲"""
-        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
+        """ﮔﭖﻟﺁﻠ۲ﻠ۸ﮒﻟ۶۲"""
+        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         n_assets = 50
         n_factors = 10
@@ -619,64 +619,64 @@ class TestRiskDecomposition:
             np.random.dirichlet(np.ones(n_assets))
         )
         
-        # ﮒﮒﭨﭦBarraﮔ۷۰ﮒ
+        # ﮒﮒﭨﭦBarraﮔ۷۰ﮒ
         barra_model = BarraRiskModel(BarraConfig())
         barra_model.factor_loadings = factor_loadings
         barra_model.factor_covariance = factor_covariance
         barra_model.idiosyncratic_risk = idiosyncratic_risk
         
-        # ﻠ۲ﻠ۸ﮒﻟ۶۲
+        # ﻠ۲ﻠ۸ﮒﻟ۶۲
         decomposition = barra_model.decompose_risk(portfolio_weights)
         
-        # ﻠ۹ﻟﺁﻝﭨﮔ
+        # ﻠ۹ﻟﺁﻝﭨﮔ
         assert decomposition.total_risk > 0
         assert abs(decomposition.factor_risk_ratio + 
                   decomposition.idiosyncratic_risk_ratio - 1.0) < 1e-6
 ```
 
-### 5.2 ﻠﮔﮔﭖﻟﺁ
+### 5.2 ﻠﮔﮔﭖﻟﺁ
 
 ```python
 class TestBarraRiskModelIntegration:
-    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻠﮔﮔﭖﻟﺁ"""
+    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻠﮔﮔﭖﻟﺁ"""
     
     def test_full_workflow(self):
-        """ﮔﭖﻟﺁﮒ؟ﮔﺑﮒﺓ۴ﻛﺛ?""
-        # ﮒﮒ۳ﮔﺍﮔ؟
+        """ﮔﭖﻟﺁﮒ؟ﮔﺑﮒﺓ۴ﻛﺛ?""
+        # ﮒﮒ۳ﮔﺍﮔ؟
         factor_data, returns_data = self._prepare_test_data()
         
-        # ﮒﮒﭨﭦﮔ۷۰ﮒ
+        # ﮒﮒﭨﭦﮔ۷۰ﮒ
         config = BarraConfig()
         model = BarraRiskModel(config)
         
-        # ﮔﮒﮔ۷۰ﮒ
+        # ﮔﮒﮔ۷۰ﮒ
         model.fit(factor_data, returns_data)
         
-        # ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
+        # ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
         portfolio_weights = pd.Series(
             np.random.dirichlet(np.ones(len(returns_data.columns))),
             index=returns_data.columns
         )
         factor_exposure = model.calculate_factor_exposure(portfolio_weights)
         
-        # ﻠ۲ﻠ۸ﮒﻟ۶۲
+        # ﻠ۲ﻠ۸ﮒﻟ۶۲
         decomposition = model.decompose_risk(portfolio_weights)
         
-        # ﻠ۹ﻟﺁ
+        # ﻠ۹ﻟﺁ
         assert len(factor_exposure) == len(config.style_factors) + len(config.industry_factors)
         assert decomposition.total_risk > 0
     
     def _prepare_test_data(self):
-        """ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟"""
+        """ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟"""
         np.random.seed(42)
         
-        # ﻝﮔﮒ ﮒ­ﮔﺍﮔ؟
+        # ﻝﮔﮒ ﮒ­ﮔﺍﮔ؟
         factor_data = pd.DataFrame(
             np.random.randn(252, 38),
             columns=['factor_{}'.format(i) for i in range(38)]
         )
         
-        # ﻝﮔﻟﭖﻛﭦ۶ﮔﭘﻝ?        returns_data = pd.DataFrame(
+        # ﻝﮔﻟﭖﻛﭦ۶ﮔﭘﻝ?        returns_data = pd.DataFrame(
             np.random.randn(252, 100),
             columns=['asset_{}'.format(i) for i in range(100)]
         )
@@ -684,15 +684,15 @@ class TestBarraRiskModelIntegration:
         return factor_data, returns_data
 ```
 
-### 5.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
+### 5.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 class TestBarraRiskModelPerformance:
-    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ۶ﻟﺛﮔﭖﻟﺁ"""
+    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ۶ﻟﺛﮔﭖﻟﺁ"""
     
     def test_factor_exposure_performance(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
-        # ﮒ۳۶ﻟ۶ﮔ۷۰ﮔﺍ?        np.random.seed(42)
+        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
+        # ﮒ۳۶ﻟ۶ﮔ۷۰ﮔﺍ?        np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 38),
             columns=['factor_{}'.format(i) for i in range(38)]
@@ -702,7 +702,7 @@ class TestBarraRiskModelPerformance:
             columns=['asset_{}'.format(i) for i in range(1000)]
         )
         
-        # ﻟ؟۰ﮔﭘ
+        # ﻟ؟۰ﮔﭘ
         import time
         start = time.time()
         
@@ -711,12 +711,12 @@ class TestBarraRiskModelPerformance:
         
         elapsed = time.time() - start
         
-        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
-        assert elapsed < 5.0  # 5ﻝ۶ﮒﮒ؟ﮔ
+        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
+        assert elapsed < 5.0  # 5ﻝ۶ﮒﮒ؟ﮔ
     
     def test_risk_decomposition_performance(self):
-        """ﮔﭖﻟﺁﻠ۲ﻠ۸ﮒﻟ۶۲ﮔ۶ﻟﺛ"""
-        # ﮒﮒ۳ﮔﺍﮔ؟
+        """ﮔﭖﻟﺁﻠ۲ﻠ۸ﮒﻟ۶۲ﮔ۶ﻟﺛ"""
+        # ﮒﮒ۳ﮔﺍﮔ؟
         np.random.seed(42)
         n_assets = 1000
         n_factors = 38
@@ -734,7 +734,7 @@ class TestBarraRiskModelPerformance:
             np.random.dirichlet(np.ones(n_assets))
         )
         
-        # ﻟ؟۰ﮔﭘ
+        # ﻟ؟۰ﮔﭘ
         import time
         start = time.time()
         
@@ -744,40 +744,40 @@ class TestBarraRiskModelPerformance:
         
         elapsed = time.time() - start
         
-        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
-        assert elapsed < 0.1  # 100msﮒﮒ؟?```
+        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
+        assert elapsed < 0.1  # 100msﮒﮒ؟?```
 
 ---
 
-## 6. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
+## 6. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-### 6.1 ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ
+### 6.1 ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ
 
-| ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ | ﮔﭖﻟﺁﻝﭨﮔ |
+| ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ | ﮔﭖﻟﺁﻝﭨﮔ |
 |------|---------|---------|---------|
-| **ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒ ﮒ­ | < 5?| ?ﻠﻟﺟ |
-| **ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?* | 38ﮒ ﮒ­ ﺣ 252?| < 1?| ?ﻠﻟﺟ |
-| **ﻠ۲ﻠ۸ﮒﻟ۶۲** | 1000ﻟﭖﻛﭦ۶ | < 100ms | ?ﻠﻟﺟ |
-| **ﻠ۲ﻠ۸ﮒﺛﮒ ** | 1000ﻟﭖﻛﭦ۶ | < 200ms | ?ﻠﻟﺟ |
+| **ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒ ﮒ­ | < 5?| ?ﻠﻟﺟ |
+| **ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?* | 38ﮒ ﮒ­ ﺣ 252?| < 1?| ?ﻠﻟﺟ |
+| **ﻠ۲ﻠ۸ﮒﻟ۶۲** | 1000ﻟﭖﻛﭦ۶ | < 100ms | ?ﻠﻟﺟ |
+| **ﻠ۲ﻠ۸ﮒﺛﮒ ** | 1000ﻟﭖﻛﭦ۶ | < 200ms | ?ﻠﻟﺟ |
 
-### 6.2 ﮒﮒ­ﻛﺛﺟﻝ۷
+### 6.2 ﮒﮒ­ﻛﺛﺟﻝ۷
 
-| ﮔﻛﺛ | ﮒﮒ­ﮒ ﻝ۷ | ﻠﮒﭘ |
+| ﮔﻛﺛ | ﮒﮒ­ﮒ ﻝ۷ | ﻠﮒﭘ |
 |------|---------|------|
-| **ﮒ ﮒ­ﮔﺍﮔ؟ﮒ­ﮒ۷** | 38ﮒ ﮒ­ ﺣ 252?| < 10MB |
-| **ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒ ﮒ­ | < 5MB |
-| **ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?* | 38 ﺣ 38 | < 1MB |
+| **ﮒ ﮒ­ﮔﺍﮔ؟ﮒ­ﮒ۷** | 38ﮒ ﮒ­ ﺣ 252?| < 10MB |
+| **ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒ ﮒ­ | < 5MB |
+| **ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?* | 38 ﺣ 38 | < 1MB |
 
 ---
 
-## 7. ﻠ۷ﻝﺛﺎﮔﺗﮔ۰
+## 7. ﻠ۷ﻝﺛﺎﮔﺗﮔ۰
 
-### 7.1 ﻠ۷ﻝﺛﺎﮔﭘﮔ
+### 7.1 ﻠ۷ﻝﺛﺎﮔﭘﮔ
 
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮒﭦﻝ۷?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?  BarraRiskModel API             ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﮒ۰?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒ ﮒ­ﮔﺑﻠﺎ ? ?ﻠ۲ﻠ۸ﮒﻟ۶۲ ?          ?? ?ﻟ؟۰ﻝ؟ﮔﮒ۰ ? ?ﮔﮒ۰     ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﺍﮔ؟?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒ ﮒ­ﮔﺍﮔ؟ ? ?ﮒﮔﺗ?  ?          ?? ??      ? ?ﮔﺍﮔ؟?  ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮒﭦﻝ۷?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?  BarraRiskModel API             ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﮒ۰?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒ ﮒ­ﮔﺑﻠﺎ ? ?ﻠ۲ﻠ۸ﮒﻟ۶۲ ?          ?? ?ﻟ؟۰ﻝ؟ﮔﮒ۰ ? ?ﮔﮒ۰     ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﺍﮔ؟?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒ ﮒ­ﮔﺍﮔ؟ ? ?ﮒﮔﺗ?  ?          ?? ??      ? ?ﮔﺍﮔ؟?  ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-### 7.2 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
+### 7.2 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
 ```yaml
 # barra_risk_model_config.yaml
@@ -832,17 +832,17 @@ database:
 
 ---
 
-## 8. ﻝﮔ۶ﻛﺕﻝﭨﺑ?
-### 8.1 ﻝﮔ۶ﮔﮔ 
+## 8. ﻝﮔ۶ﻛﺕﻝﭨﺑ?
+### 8.1 ﻝﮔ۶ﮔﮔ 
 
-| ﮔﮔ  | ﮔﻟﺟﺍ | ﻠ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
+| ﮔﮔ  | ﮔﻟﺟﺍ | ﻠ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
 |------|------|------|---------|
-| **ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﻟﮔﭘ | > 200ms | P1 |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﮒﮒ­ﮒ ﻝ۷?| > 80% | P2 |
-| **ﮒ ﮒ­ﮔﺑﻠﺎﮒﺙﮒﺕﺕ** | ﮒ ﮒ­ﮔﺑﻠﺎﻟﭘﻟﺟﻠ?| > 3ﺵ | P0 |
-| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮒﺙ?* | ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮔ۰ﻛﭨﭘﮔﺍ | > 1000 | P1 |
+| **ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﻟﮔﭘ | > 200ms | P1 |
+| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﮒﮒ­ﮒ ﻝ۷?| > 80% | P2 |
+| **ﮒ ﮒ­ﮔﺑﻠﺎﮒﺙﮒﺕﺕ** | ﮒ ﮒ­ﮔﺑﻠﺎﻟﭘﻟﺟﻠ?| > 3ﺵ | P0 |
+| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮒﺙ?* | ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮔ۰ﻛﭨﭘﮔﺍ | > 1000 | P1 |
 
-### 8.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
+### 8.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
 
 ```python
 import logging
@@ -854,7 +854,7 @@ def log_factor_exposure_calculation(
     factor_count: int,
     elapsed_time: float
 ):
-    """ﻟ؟ﺍﮒﺛﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۴ﮒﺟ"""
+    """ﻟ؟ﺍﮒﺛﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۴ﮒﺟ"""
     logger.info({
         'event': 'factor_exposure_calculation',
         'asset_count': asset_count,
@@ -868,7 +868,7 @@ def log_risk_decomposition(
     total_risk: float,
     factor_risk_ratio: float
 ):
-    """ﻟ؟ﺍﮒﺛﻠ۲ﻠ۸ﮒﻟ۶۲ﮔ۴ﮒﺟ"""
+    """ﻟ؟ﺍﮒﺛﻠ۲ﻠ۸ﮒﻟ۶۲ﮔ۴ﮒﺟ"""
     logger.info({
         'event': 'risk_decomposition',
         'portfolio_id': portfolio_id,
@@ -878,39 +878,39 @@ def log_risk_decomposition(
     })
 ```
 
-### 8.3 ﻝﭨﺑﮔ۳ﻟ؟۰ﮒ
+### 8.3 ﻝﭨﺑﮔ۳ﻟ؟۰ﮒ
 
-| ﻝﭨﺑﮔ۳ﻛﭨﭨﮒ۰ | ﻠ۱ﻝ | ﮔﻟﺟﺍ |
+| ﻝﭨﺑﮔ۳ﻛﭨﭨﮒ۰ | ﻠ۱ﻝ | ﮔﻟﺟﺍ |
 |---------|------|------|
-| **ﮒ ﮒ­ﮔﺍﮔ؟ﮔﺑﮔﺍ** | ﮔﺁﮔ۴ | ﮔﺑﮔﺍﮒ ﮒ­ﮔﺍﮔ؟ |
-| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﻠ?* | ﮔﺁﮒ۷ | ﻠﮔﺍﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?|
-| **ﮔ۷۰ﮒﮒﮔﭖ** | ﮔﺁﮔ | ﮒﮔﭖﮔ۷۰ﮒﮔ۶ﻟﺛ |
-| **ﮒﮔﺍﻟﺍﻛﺙ** | ﮔﺁﮒ­۲?| ﻟﺍﮔﺑﮔ۷۰ﮒﮒﮔﺍ |
+| **ﮒ ﮒ­ﮔﺍﮔ؟ﮔﺑﮔﺍ** | ﮔﺁﮔ۴ | ﮔﺑﮔﺍﮒ ﮒ­ﮔﺍﮔ؟ |
+| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﻠ?* | ﮔﺁﮒ۷ | ﻠﮔﺍﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?|
+| **ﮔ۷۰ﮒﮒﮔﭖ** | ﮔﺁﮔ | ﮒﮔﭖﮔ۷۰ﮒﮔ۶ﻟﺛ |
+| **ﮒﮔﺍﻟﺍﻛﺙ** | ﮔﺁﮒ­۲?| ﻟﺍﮔﺑﮔ۷۰ﮒﮒﮔﺍ |
 
 ---
 
-## ﻠﮒﺛ
+## ﻠﮒﺛ
 
-### A. APIﮔﮔ۰۲
+### A. APIﮔﮔ۰۲
 
 #### A.1 REST API
 
 ```yaml
-# ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
+# ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
 POST /api/v1/barra/factor_exposure
 Request:
   portfolio_weights: Dict[str, float]
 Response:
   factor_exposure: Dict[str, float]
 
-# ﻠ۲ﻠ۸ﮒﻟ۶۲
+# ﻠ۲ﻠ۸ﮒﻟ۶۲
 POST /api/v1/barra/risk_decomposition
 Request:
   portfolio_weights: Dict[str, float]
 Response:
   risk_decomposition: RiskDecomposition
 
-# ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
+# ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
 POST /api/v1/barra/risk_budget
 Request:
   total_risk: float
@@ -919,7 +919,7 @@ Response:
   allocated_risk_budget: Dict[str, float]
 ```
 
-### B. ﻛﺝﻟﭖ?
+### B. ﻛﺝﻟﭖ?
 ```txt
 pandas>=1.5.0
 numpy>=1.21.0
@@ -931,4 +931,4 @@ riskfolio-lib>=4.0.0
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?
+**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?

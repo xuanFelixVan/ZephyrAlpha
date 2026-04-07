@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DESIGN_SUMMARY_001
 version: 1.0.0
 status: Active

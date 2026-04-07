@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: RISK_EVENT_TRACKING_BLUEPRINT_001
 version: 1.0.1
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION_001
 version: 1.0.0
 status: Active

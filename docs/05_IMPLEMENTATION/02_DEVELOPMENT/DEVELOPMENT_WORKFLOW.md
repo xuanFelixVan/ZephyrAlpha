@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DEVELOPMENT_WORKFLOW_001
 version: 1.0.0
 status: Active
@@ -65,7 +65,7 @@ implementation_status: 进行?---
    git add .
    git commit -m "feat: 描述"
 
-5. �?
+5. ?
    git push origin feature/xxx
 
 6. 合并（审核后?

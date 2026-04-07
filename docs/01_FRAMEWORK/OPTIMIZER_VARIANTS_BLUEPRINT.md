@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: OPTIMIZER_VARIANTS_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供optimizer variants blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -26,7 +26,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-# 优化器变体蓝�?
+# 优化器变体蓝?
 > **核心职责**: 提供optimizer variants blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Optimizer Variants蓝图设计相关内容
@@ -37,7 +37,7 @@ layer: Layer 2 (Alpha因子层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -55,7 +55,7 @@ layer: Layer 2 (Alpha因子层)
 
 - **AdamW**: 权重衰减改进
 
-- **LAMB**: 大批量训�?- **Lion**: 新一代优化器
+- **LAMB**: 大批量训?- **Lion**: 新一代优化器
 
 - **AdaBelief**: 自适应步长
 
@@ -65,17 +65,17 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-## 2. 优化器对�?
+## 2. 优化器对?
 
-| 优化�?| 特点 | 适用场景 |
+| 优化?| 特点 | 适用场景 |
 
 |--------|------|----------|
 
-| AdamW | 解耦权重衰�?| Transformer |
+| AdamW | 解耦权重衰?| Transformer |
 
-| LAMB | 自适应大批�?| BERT预训�?|
+| LAMB | 自适应大批?| BERT预训?|
 
-| Lion | 内存高效 | 大模�?|
+| Lion | 内存高效 | 大模?|
 
 | AdaBelief | 稳定训练 | 通用 |
 
@@ -95,7 +95,7 @@ layer: Layer 2 (Alpha因子层)
 
 class OptimizerFactory:
 
-    """优化器工�?""
+    """优化器工?""
 
     
 
@@ -113,19 +113,19 @@ class OptimizerFactory:
 
     ) -> Optimizer:
 
-        """创建优化�?        
+        """创建优化?        
 
         Args:
 
             model: 模型
 
-            optimizer_type: 优化器类�?            lr: 学习�?            weight_decay: 权重衰减
+            optimizer_type: 优化器类?            lr: 学习?            weight_decay: 权重衰减
 
             
 
         Returns:
 
-            Optimizer: 优化�?        """
+            Optimizer: 优化?        """
 
         pass
 

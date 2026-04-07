@@ -1,58 +1,58 @@
-﻿---
+﻿﻿---
 module_id: MODEL_SERVING_ARCHITECTURE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﮒﺝﮒ؟?risk_level: P1
+implementation_status: ﮒﺝﮒ؟?risk_level: P1
 ---
 ---
 
 
-# ﮔ۷۰ﮒﮔﮒ۰ﮒﮔﭘﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+# ﮔ۷۰ﮒﮔﮒ۰ﮒﮔﭘﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﮔ۷۰ﮒﮔﮒ۰ﮒﮔﭘﮔﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﮔ۷۰ﮒID**: `MODEL_SERVING_ARCHITECTURE_001`
-> **ﻝﮔ؛**: v1.0.0
-> **ﻝ?*: ?ﮔ­۲ﮒﺙ
-> **ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶**: P1(ﻠ،ﻠ۲?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﮔ۷۰ﮒﮔﮒ۰ﮒﮔﭘﮔﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﮔ۷۰ﮒID**: `MODEL_SERVING_ARCHITECTURE_001`
+> **ﻝﮔ؛**: v1.0.0
+> **ﻝ?*: ?ﮔ­۲ﮒﺙ
+> **ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶**: P1(ﻠ،ﻠ۲?
 
 ---
 
-## 1. ﮔ۵ﻟﺟﺍ
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟?- **ﻛﺕﮒ۰ﻠ?*: ﮒﺍﻟ؟­ﻝﭨﮒ۴ﺛﻝﮔ۷۰ﮒﻠ۷ﻝﺛﺎﻛﺕﭦﮔﮒ۰,ﮔﻛﺝﮒ؟ﮔﭘﻠ۱ﮔﭖﻟﺛﮒ
-- **ﮔﮔﺁﻝ?*: 
-  - ﻝﺙﭦﻛﺗﮔ۷۰ﮒﮔﮒ۰? ﮔ۷۰ﮒﮔ ﮔﺏﮒ۷ﻝﭦﺟﮔﮒ۰,ﻛﭨﮔﺁﮔﻝ۵ﭨﻝﭦﺟﻠ۱?  - ﻝﺙﭦﻛﺗﻝﮔ؛ﻝ؟۰ﻝ: ﮔ۷۰ﮒﻝﮔ؛ﮔﺓﺓﻛﺗﺎ,ﮔ ﮔﺏﮒﮔﭨ
-  - ﻝﺙﭦﻛﺗﮔ۶ﻟﺛﻝﮔ۶: ﮔ۷۰ﮒﮔ۶ﻟﺛﮔ ﻝ?ﻠﮒﮔ ﮔﻝ۴
-  - ﻝﺙﭦﻛﺗﻝ­ﮔﺑﮔﺍﮔﭦ? ﮔ۷۰ﮒﮔﺑﮔﺍﻠﻟ۵ﮒ?- **ﻠ۱ﮔﻛﭨ?*: 
-  - ﮔﻛﺝﮒ؟ﮔﭘﮔ۷۰ﮒﻠ۱ﮔﭖﮔﮒ۰
-  - ﮔﺁﮔﮔ۷۰ﮒﻝﮔ؛ﻝ؟۰ﻝﮒﮒ?  - ﮔﻛﺝﮔ۷۰ﮒﮔ۶ﻟﺛﻝﮔ۶ﮒﮒ?  - ﮔﺁﮔﮔ۷۰ﮒﻝ­ﮔﺑ?
-### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛ?- **Layerﮒ؟ﻛﺛ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔ ﺕﮒﺟﮔﮒ۰ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
-- **ﮔﭘﮔﻟ۶ﻟﺎ**: ﻛﺕﭦﻝ­ﻝ۴ﮒﺙﮔﮔﻛﺝﮒ؟ﮔﭘﻠ۱ﮔﭖﮔ?
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟?- **ﻛﺕﮒ۰ﻠ?*: ﮒﺍﻟ؟­ﻝﭨﮒ۴ﺛﻝﮔ۷۰ﮒﻠ۷ﻝﺛﺎﻛﺕﭦﮔﮒ۰,ﮔﻛﺝﮒ؟ﮔﭘﻠ۱ﮔﭖﻟﺛﮒ
+- **ﮔﮔﺁﻝ?*: 
+  - ﻝﺙﭦﻛﺗﮔ۷۰ﮒﮔﮒ۰? ﮔ۷۰ﮒﮔ ﮔﺏﮒ۷ﻝﭦﺟﮔﮒ۰,ﻛﭨﮔﺁﮔﻝ۵ﭨﻝﭦﺟﻠ۱?  - ﻝﺙﭦﻛﺗﻝﮔ؛ﻝ؟۰ﻝ: ﮔ۷۰ﮒﻝﮔ؛ﮔﺓﺓﻛﺗﺎ,ﮔ ﮔﺏﮒﮔﭨ
+  - ﻝﺙﭦﻛﺗﮔ۶ﻟﺛﻝﮔ۶: ﮔ۷۰ﮒﮔ۶ﻟﺛﮔ ﻝ?ﻠﮒﮔ ﮔﻝ۴
+  - ﻝﺙﭦﻛﺗﻝ­ﮔﺑﮔﺍﮔﭦ? ﮔ۷۰ﮒﮔﺑﮔﺍﻠﻟ۵ﮒ?- **ﻠ۱ﮔﻛﭨ?*: 
+  - ﮔﻛﺝﮒ؟ﮔﭘﮔ۷۰ﮒﻠ۱ﮔﭖﮔﮒ۰
+  - ﮔﺁﮔﮔ۷۰ﮒﻝﮔ؛ﻝ؟۰ﻝﮒﮒ?  - ﮔﻛﺝﮔ۷۰ﮒﮔ۶ﻟﺛﻝﮔ۶ﮒﮒ?  - ﮔﺁﮔﮔ۷۰ﮒﻝ­ﮔﺑ?
+### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛ?- **Layerﮒ؟ﻛﺛ**: Layer 4 - ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔ ﺕﮒﺟﮔﮒ۰ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: ﻛﺕﭦﻝ­ﻝ۴ﮒﺙﮔﮔﻛﺝﮒ؟ﮔﭘﻠ۱ﮔﭖﮔ?
 ---
 
-## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
+## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔ?```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??                   Layer 4: ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?                      ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??                                                            ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?         ModelServingService (ﮔ۷۰ﮒﮔﮒ۰ﮒﮔ?          ? ?? ? - ﮔ۷۰ﮒﮒ ﻟﺛﺛ                                            ? ?? ? - ﮒ۷ﻝﭦﺟﻠ۱ﮔﭖ                                            ? ?? ? - ﻝﮔ؛ﻝ؟۰ﻝ                                            ? ?? ? - ﮔ۶ﻟﺛﻝﮔ۶                                            ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ??                          ?                                 ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?         ﮔﮒ۰ﻝﭨﻛﭨﭘ                                      ? ?? ? - FastAPI (REST APIﮔﮒ۰)                             ? ?? ? - Redis (ﮔ۷۰ﮒﻝﺙﮒ­)                                   ? ?? ? - Prometheus (ﮔ۶ﻟﺛﻝﮔ۶)                              ? ?? ? - Grafana (ﮒﺁﻟ۶ﮒﻝ?                               ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ??                                                            ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
+### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔ?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??                   Layer 4: ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?                      ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??                                                            ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?         ModelServingService (ﮔ۷۰ﮒﮔﮒ۰ﮒﮔ?          ? ?? ? - ﮔ۷۰ﮒﮒ ﻟﺛﺛ                                            ? ?? ? - ﮒ۷ﻝﭦﺟﻠ۱ﮔﭖ                                            ? ?? ? - ﻝﮔ؛ﻝ؟۰ﻝ                                            ? ?? ? - ﮔ۶ﻟﺛﻝﮔ۶                                            ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ??                          ?                                 ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?         ﮔﮒ۰ﻝﭨﻛﭨﭘ                                      ? ?? ? - FastAPI (REST APIﮔﮒ۰)                             ? ?? ? - Redis (ﮔ۷۰ﮒﻝﺙﮒ­)                                   ? ?? ? - Prometheus (ﮔ۶ﻟﺛﻝﮔ۶)                              ? ?? ? - Grafana (ﮒﺁﻟ۶ﮒﻝ?                               ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ??                                                            ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
 ---
 
-## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
+### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
 
 ```python
 from typing import Dict, Any, List, Optional
@@ -66,14 +66,14 @@ import prometheus_client
 
 
 class PredictionRequest(BaseModel):
-    """ﻠ۱ﮔﭖﻟﺁﺓﮔﺎ"""
+    """ﻠ۱ﮔﭖﻟﺁﺓﮔﺎ"""
     model_id: str
     model_version: Optional[str] = None
     features: Dict[str, float]
 
 
 class PredictionResponse(BaseModel):
-    """ﻠ۱ﮔﭖﮒﮒﭦ"""
+    """ﻠ۱ﮔﭖﮒﮒﭦ"""
     prediction: float
     confidence: Optional[float]
     model_version: str
@@ -81,7 +81,7 @@ class PredictionResponse(BaseModel):
 
 
 class ModelServingService:
-    """ﮔ۷۰ﮒﮔﮒ۰ﮒﮔ?""
+    """ﮔ۷۰ﮒﮔﮒ۰ﮒﮔ?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -92,31 +92,31 @@ class ModelServingService:
         self._setup_metrics()
         
     def _setup_routes(self):
-        """ﻟ؟ﺝﻝﺛ؟APIﻟﺓﺁﻝﺎ"""
+        """ﻟ؟ﺝﻝﺛ؟APIﻟﺓﺁﻝﺎ"""
         
         @self.app.post("/predict", response_model=PredictionResponse)
         async def predict(request: PredictionRequest):
-            """ﻠ۱ﮔﭖﮔ۴ﮒ۲"""
+            """ﻠ۱ﮔﭖﮔ۴ﮒ۲"""
             import time
             start_time = time.time()
             
-            # 1. ﮒ ﻟﺛﺛﮔ۷۰ﮒ
+            # 1. ﮒ ﻟﺛﺛﮔ۷۰ﮒ
             model = self._load_model(request.model_id, request.model_version)
             
-            # 2. ﮒﮒ۳ﻝﺗﮒﺝ
+            # 2. ﮒﮒ۳ﻝﺗﮒﺝ
             features = self._prepare_features(request.features)
             
-            # 3. ﻠ۱ﮔﭖ
+            # 3. ﻠ۱ﮔﭖ
             prediction = model.predict(features)[0]
             
-            # 4. ﻟ؟۰ﻝ؟ﻝﺛ؟ﻛﺟ۰?ﮒ۵ﮔﮔ۷۰ﮒﮔﺁﮔ)
+            # 4. ﻟ؟۰ﻝ؟ﻝﺛ؟ﻛﺟ۰?ﮒ۵ﮔﮔ۷۰ﮒﮔﺁﮔ)
             confidence = None
             if hasattr(model, 'predict_proba'):
                 confidence = model.predict_proba(features)[0].max()
             
             prediction_time = time.time() - start_time
             
-            # 5. ﻟ؟ﺍﮒﺛﮔﮔ 
+            # 5. ﻟ؟ﺍﮒﺛﮔﮔ 
             self.prediction_counter.inc()
             self.prediction_latency.observe(prediction_time)
             
@@ -129,7 +129,7 @@ class ModelServingService:
         
         @self.app.post("/models/{model_id}/versions/{version}/activate")
         async def activate_model_version(model_id: str, version: str):
-            """ﮔﺟﮔﺑﭨﮔ۷۰ﮒﻝ?""
+            """ﮔﺟﮔﺑﭨﮔ۷۰ﮒﻝ?""
             try:
                 self._activate_version(model_id, version)
                 return {"status": "success", "message": f"Model {model_id} version {version} activated"}
@@ -138,17 +138,17 @@ class ModelServingService:
         
         @self.app.get("/models/{model_id}/versions")
         async def list_model_versions(model_id: str):
-            """ﮒﮒﭦﮔ۷۰ﮒﮔﮔﻝ?""
+            """ﮒﮒﭦﮔ۷۰ﮒﮔﮔﻝ?""
             versions = self._list_versions(model_id)
             return {"model_id": model_id, "versions": versions}
         
         @self.app.get("/health")
         async def health_check():
-            """ﮒ۴ﮒﭦﺓﮔ۲?""
+            """ﮒ۴ﮒﭦﺓﮔ۲?""
             return {"status": "healthy", "timestamp": datetime.now().isoformat()}
     
     def _setup_metrics(self):
-        """ﻟ؟ﺝﻝﺛ؟Prometheusﮔﮔ """
+        """ﻟ؟ﺝﻝﺛ؟Prometheusﮔﮔ """
         self.prediction_counter = prometheus_client.Counter(
             'model_predictions_total',
             'Total number of predictions'
@@ -159,13 +159,13 @@ class ModelServingService:
         )
     
     def _load_model(self, model_id: str, model_version: Optional[str] = None):
-        """ﮒ ﻟﺛﺛﮔ۷۰ﮒ"""
+        """ﮒ ﻟﺛﺛﮔ۷۰ﮒ"""
         cache_key = f"{model_id}:{model_version or 'latest'}"
         
-        # 1. ﮔ۲ﮔ۴ﻝﺙ?        if cache_key in self.loaded_models:
+        # 1. ﮔ۲ﮔ۴ﻝﺙ?        if cache_key in self.loaded_models:
             return self.loaded_models[cache_key]
         
-        # 2. ﻛﭨMLflowﮒ ﻟﺛﺛﮔ۷۰ﮒ
+        # 2. ﻛﭨMLflowﮒ ﻟﺛﺛﮔ۷۰ﮒ
         if model_version:
             model_uri = f"models:/{model_id}/{model_version}"
         else:
@@ -173,50 +173,50 @@ class ModelServingService:
         
         model = mlflow.sklearn.load_model(model_uri)
         
-        # 3. ﻝﺙﮒ­ﮔ۷۰ﮒ
+        # 3. ﻝﺙﮒ­ﮔ۷۰ﮒ
         self.loaded_models[cache_key] = model
         
         return model
     
     def _prepare_features(self, features: Dict[str, float]):
-        """ﮒﮒ۳ﻝﺗﮒﺝ"""
+        """ﮒﮒ۳ﻝﺗﮒﺝ"""
         import pandas as pd
         return pd.DataFrame([features])
     
     def _get_model_version(self, model_id: str) -> str:
-        """ﻟﺓﮒﮔ۷۰ﮒﻝﮔ؛"""
-        # ﻛﭨRedisﻟﺓﮒﮒﺛﮒﮔﺟﮔﺑﭨﻝ?        version = self.redis_client.get(f"model:{model_id}:active_version")
+        """ﻟﺓﮒﮔ۷۰ﮒﻝﮔ؛"""
+        # ﻛﭨRedisﻟﺓﮒﮒﺛﮒﮔﺟﮔﺑﭨﻝ?        version = self.redis_client.get(f"model:{model_id}:active_version")
         return version.decode('utf-8') if version else "unknown"
     
     def _activate_version(self, model_id: str, version: str):
-        """ﮔﺟﮔﺑﭨﮔ۷۰ﮒﻝ?""
-        # 1. ﻠ۹ﻟﺁﻝﮔ؛ﮒ­ﮒ۷
+        """ﮔﺟﮔﺑﭨﮔ۷۰ﮒﻝ?""
+        # 1. ﻠ۹ﻟﺁﻝﮔ؛ﮒ­ﮒ۷
         model_uri = f"models:/{model_id}/{version}"
         try:
             mlflow.sklearn.load_model(model_uri)
         except Exception as e:
             raise Exception(f"Model version {version} not found: {e}")
         
-        # 2. ﮔﺑﮔﺍRedisﻛﺕ­ﻝﮔﺟﮔﺑﭨﻝ?        self.redis_client.set(f"model:{model_id}:active_version", version)
+        # 2. ﮔﺑﮔﺍRedisﻛﺕ­ﻝﮔﺟﮔﺑﭨﻝ?        self.redis_client.set(f"model:{model_id}:active_version", version)
         
-        # 3. ﮔﺕﻠ۳ﻝﺙﮒ­
+        # 3. ﮔﺕﻠ۳ﻝﺙﮒ­
         cache_key = f"{model_id}:latest"
         if cache_key in self.loaded_models:
             del self.loaded_models[cache_key]
     
     def _list_versions(self, model_id: str) -> List[str]:
-        """ﮒﮒﭦﮔ۷۰ﮒﮔﮔﻝ?""
+        """ﮒﮒﭦﮔ۷۰ﮒﮔﮔﻝ?""
         client = mlflow.tracking.MlflowClient()
         versions = client.search_model_versions(f"name='{model_id}'")
         return [v.version for v in versions]
     
     def run(self, host: str = "0.0.0.0", port: int = 8000):
-        """ﻟﺟﻟ۰ﮔﮒ۰"""
+        """ﻟﺟﻟ۰ﮔﮒ۰"""
         import uvicorn
         uvicorn.run(self.app, host=host, port=port)
 
 
-# ﮒﺁﮒ۷ﮔﮒ۰
+# ﮒﺁﮒ۷ﮔﮒ۰
 if __name__ == "__main__":
     service = ModelServingService(config={})
     service.run()
@@ -224,50 +224,50 @@ if __name__ == "__main__":
 
 ---
 
-## 4. ﮔ۶ﻟﺛﮔﮔ ﻛﺕSLAﻟ۵ﮔﺎ
+## 4. ﮔ۶ﻟﺛﮔﮔ ﻛﺕSLAﻟ۵ﮔﺎ
 
-| ﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻠﮔﺗﮔﺏ | ﮒ۳ﮔﺏ۷ |
+| ﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻠﮔﺗﮔﺏ | ﮒ۳ﮔﺏ۷ |
 |------|--------|----------|------|
-| **ﮒﮒﭦﮔﭘﻠﺑ** | ?00ms | P95ﮒﭨﭘﻟﺟ | ﮒﮔ؛۰ﻠ۱ﮔﭖ |
-| **ﮒﮒ?* | ?000 QPS | ﮔﺁﻝ۶ﻟﺁﺓﮔﺎ?| ﮒﺗﭘﮒﻠ۱ﮔﭖ |
-| **ﮒﺁﻝ۷?* | ?9.9% | ﮔﺁﮔﮒ؟ﮔﭦﮔﭘﻠﺑ | SLAﻟ۵ﮔﺎ |
-| **ﮔ۷۰ﮒﮒ ﻟﺛﺛﮔﭘﻠﺑ** | ??| ﮒﺓﮒﺁﮒ۷ﮔﭘ?| ﮔﺍﮔ۷۰ﮒﮒ ?|
+| **ﮒﮒﭦﮔﭘﻠﺑ** | ?00ms | P95ﮒﭨﭘﻟﺟ | ﮒﮔ؛۰ﻠ۱ﮔﭖ |
+| **ﮒﮒ?* | ?000 QPS | ﮔﺁﻝ۶ﻟﺁﺓﮔﺎ?| ﮒﺗﭘﮒﻠ۱ﮔﭖ |
+| **ﮒﺁﻝ۷?* | ?9.9% | ﮔﺁﮔﮒ؟ﮔﭦﮔﭘﻠﺑ | SLAﻟ۵ﮔﺎ |
+| **ﮔ۷۰ﮒﮒ ﻟﺛﺛﮔﭘﻠﺑ** | ??| ﮒﺓﮒﺁﮒ۷ﮔﭘ?| ﮔﺍﮔ۷۰ﮒﮒ ?|
 
 ---
 
-## 5. ﮒ؟ﮔﺛﮔﮔﺁﮔ 
+## 5. ﮒ؟ﮔﺛﮔﮔﺁﮔ 
 
-### 5.1 ﮔ ﺕﮒﺟﮔﮔﺁﻝﭨ?| ﮔﮔﺁﻝﭨ?| ﻝﮔ؛ | ﻠﮔ۸ﻝﻝﺎ | ﮔﺟﻛﭨ۲ﮔﺗﮔ۰ |
+### 5.1 ﮔ ﺕﮒﺟﮔﮔﺁﻝﭨ?| ﮔﮔﺁﻝﭨ?| ﻝﮔ؛ | ﻠﮔ۸ﻝﻝﺎ | ﮔﺟﻛﭨ۲ﮔﺗﮔ۰ |
 |----------|------|----------|----------|
-| FastAPI | 0.104+ | ﻠ،ﮔ۶ﻟﺛAPIﮔ۰ﮔﭘ | Flask |
-| Redis | 7.0+ | ﮔ۷۰ﮒﻝﺙﮒ­ | Memcached |
-| Prometheus | 2.40+ | ﮔ۶ﻟﺛﻝﮔ۶ | Grafana Loki |
-| Grafana | 10.0+ | ﮒﺁﻟ۶ﮒﻝ?| Kibana |
-| MLflow | 2.0+ | ﮔ۷۰ﮒﻝ؟۰ﻝ | - |
+| FastAPI | 0.104+ | ﻠ،ﮔ۶ﻟﺛAPIﮔ۰ﮔﭘ | Flask |
+| Redis | 7.0+ | ﮔ۷۰ﮒﻝﺙﮒ­ | Memcached |
+| Prometheus | 2.40+ | ﮔ۶ﻟﺛﻝﮔ۶ | Grafana Loki |
+| Grafana | 10.0+ | ﮒﺁﻟ۶ﮒﻝ?| Kibana |
+| MLflow | 2.0+ | ﮔ۷۰ﮒﻝ؟۰ﻝ | - |
 
 ---
 
-## 6. ﻠ۹ﮔﭘﮔ ﮒ
+## 6. ﻠ۹ﮔﭘﮔ ﮒ
 
-### 6.1 ﮒﻟﺛﻠ۹ﮔﭘﮔ ﮒ
-- ?ﮔﺁﮔﮔ۷۰ﮒﮒ۷ﻝﭦﺟﻠ۱ﮔﭖ
-- ?ﮔﺁﮔﮔ۷۰ﮒﻝﮔ؛ﻝ؟۰ﻝﮒﮒ?- ?ﮔﺁﮔﮔ۷۰ﮒﻝ­ﮔﺑ?- ?ﮔﺁﮔﮔ۶ﻟﺛﻝﮔ۶ﮒﮒ?
-### 6.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔ ﮒ
-- ?ﮒﮒﭦﮔﭘﻠﺑ?00ms(P95)
-- ?ﮒﮒﻠﻗ۴1000 QPS
-- ?ﮒﺁﻝ۷ﮔ۶ﻗ۴99.9%
+### 6.1 ﮒﻟﺛﻠ۹ﮔﭘﮔ ﮒ
+- ?ﮔﺁﮔﮔ۷۰ﮒﮒ۷ﻝﭦﺟﻠ۱ﮔﭖ
+- ?ﮔﺁﮔﮔ۷۰ﮒﻝﮔ؛ﻝ؟۰ﻝﮒﮒ?- ?ﮔﺁﮔﮔ۷۰ﮒﻝ­ﮔﺑ?- ?ﮔﺁﮔﮔ۶ﻟﺛﻝﮔ۶ﮒﮒ?
+### 6.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔ ﮒ
+- ?ﮒﮒﭦﮔﭘﻠﺑ?00ms(P95)
+- ?ﮒﮒﻠﻗ۴1000 QPS
+- ?ﮒﺁﻝ۷ﮔ۶ﻗ۴99.9%
 
 ---
 
-## 7. ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?
-### Phase 1: ﮒﭦﻝ۰ﮒﻟﺛﮒﺙ?(2?
-- Week 1: FastAPIﮔﮒ۰ﮔ­ﮒﭨﭦ
-- Week 2: ﮔ۷۰ﮒﮒ ﻟﺛﺛﮒﻠ۱ﮔﭖﮔ۴?
-### Phase 2: ﻠ،ﻝﭦ۶ﮒﻟﺛ (2?
-- Week 3: ﻝﮔ؛ﻝ؟۰ﻝﮒﻝ­ﮔﺑﮔﺍ
-- Week 4: ﮔ۶ﻟﺛﻝﮔ۶ﮒﮒ?
+## 7. ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?
+### Phase 1: ﮒﭦﻝ۰ﮒﻟﺛﮒﺙ?(2?
+- Week 1: FastAPIﮔﮒ۰ﮔ­ﮒﭨﭦ
+- Week 2: ﮔ۷۰ﮒﮒ ﻟﺛﺛﮒﻠ۱ﮔﭖﮔ۴?
+### Phase 2: ﻠ،ﻝﭦ۶ﮒﻟﺛ (2?
+- Week 3: ﻝﮔ؛ﻝ؟۰ﻝﮒﻝ­ﮔﺑﮔﺍ
+- Week 4: ﮔ۶ﻟﺛﻝﮔ۶ﮒﮒ?
 ---
 
-**ﻟﺁﮒ؟۰ﻝﭨﻟ؟ﭦ**: ?ﮔﺗﮒﮒ؟ﮔﺛ  
-**ﻟﺁﮒ؟۰ﮔ۴ﮔ**: 2026-04-02  
-**ﻟﺁﮒ؟۰?*: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+**ﻟﺁﮒ؟۰ﻝﭨﻟ؟ﭦ**: ?ﮔﺗﮒﮒ؟ﮔﺛ  
+**ﻟﺁﮒ؟۰ﮔ۴ﮔ**: 2026-04-02  
+**ﻟﺁﮒ؟۰?*: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟

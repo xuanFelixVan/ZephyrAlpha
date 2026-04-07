@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - 简化版风险预算系统
   - 风险预算分配
@@ -123,7 +123,7 @@ layer: Layer 5.3 (风险管理)
 3. 最后演进到 **HIERARCHICAL_RISK_BUDGET**（5-7 天）：支持多层级预算与更复杂约束
 
 ---
-## 2. ææ¯å®ç?
+## 2. 技术实现
 
 ### 2.1 核心API
 
@@ -136,10 +136,10 @@ import pandas as pd
 @dataclass
 class RiskBudgetConfig:
     """风险预算配置"""
-    total_risk_budget: float  # æ»é£é©é¢ç®ï¼VaRéé¢ï¼?
-    asset_budgets: Dict[str, float]  # åèµäº§é£é©é¢ç®?
-    rebalance_threshold: float  # åå¹³è¡¡éå?
-    lookback_period: int  # åæº¯æ?
+    total_risk_budget: float  # 总风险预算（VaR 限额）
+    asset_budgets: Dict[str, float]  # 各资产风险预算
+    rebalance_threshold: float  # 再平衡阈值
+    lookback_period: int  # 回溯窗口长度（天）
 
 class SimplifiedRiskBudgetSystem:
     """简化版动态风险预算系统"""
@@ -156,11 +156,11 @@ class SimplifiedRiskBudgetSystem:
         confidence_level: float = 0.95
     ) -> Dict[str, float]:
         """
-        è®¡ç®åºäºVaRçé£é©é¢ç®?
+        计算基于 VaR 的风险预算分配。
         
         Args:
             weights: 组合权重
-            returns: æ¶ççæ°æ?
+            returns: 收益率数据
             confidence_level: 置信水平
             
         Returns:
@@ -174,12 +174,11 @@ class SimplifiedRiskBudgetSystem:
         market_conditions: Dict[str, float]
     ) -> Dict[str, float]:
         """
-        å¨æè°æ´é£é©é¢ç®?
+        动态调整风险预算。
         
         Args:
             current_budget: 当前风险预算
-            market_conditions: å¸åºæ¡ä»¶ï¼æ³¢å¨çãç¸å
-³æ§ç­ï¼?
+            market_conditions: 市场条件（如波动率、相关性等）
             
         Returns:
             调整后的风险预算
@@ -192,20 +191,19 @@ class SimplifiedRiskBudgetSystem:
         cov_matrix: np.ndarray
     ) -> Dict[str, float]:
         """
-        çæ§é£é©é¢ç®ä½¿ç¨æ
-况
+        监控风险预算使用情况。
         
         Returns:
-            åèµäº§çé£é©é¢ç®ä½¿ç¨ç?
+            各资产风险预算使用率
         """
         pass
 ```
 
-### 2.2 VaRè®¡ç®å?
+### 2.2 VaR 计算模块
 
 ```python
 class VaRCalculator:
-    """VaRè®¡ç®å?""
+    """VaR 计算器"""
     
     def historical_var(
         self,
@@ -257,7 +255,7 @@ class SimplifiedRiskBudgetAPI:
         current_budget: Dict[str, float],
         market_conditions: Dict[str, float]
     ) -> AdjustResult:
-        """å¨æè°æ´é£é©é¢ç®?""
+        """动态调整风险预算"""
         
     @endpoint("/api/v1/risk_budget/monitor")
     async def monitor_usage(
@@ -274,60 +272,51 @@ class SimplifiedRiskBudgetAPI:
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
-| Phase 1 | VaRè®¡ç®å¨å®ç?| 16h |
-| Phase 2 | é£é©é¢ç®åé
-ç®æ³ | 20h |
-| Phase 3 | å¨æè°æ´æºå?| 12h |
-| Phase 4 | APIãæµè¯ãææ¡?| 12h |
+| Phase 1 | VaR 计算器实现与校验 | 16h |
+| Phase 2 | 风险预算分配策略实现 | 20h |
+| Phase 3 | 动态调整与监控实现 | 12h |
+| Phase 4 | API 接口与文档规范化 | 12h |
 
 ---
 
-## 5. ä¸å
-¶ä»æ¨¡åçå
-³ç³»
+## 5. 模块依赖关系
 
 ### 5.1 上游依赖
 
-| æ¨¡å | ä¾èµå
-³ç³» | è¯´æ |
+| 模块 | 依赖关系 | 说明 |
 |------|----------|------|
-| RISK_CONTRIBUTION_ANALYSIS | å¼ºä¾èµ?| æä¾é£é©è´¡ç®è®¡ç®è½å |
+| RISK_CONTRIBUTION_ANALYSIS | 强依赖 | 提供风险贡献计算能力（可作为预算分配输入） |
 
 ### 5.2 下游服务
 
-| æ¨¡å | æå¡å
-³ç³» | è¯´æ |
+| 模块 | 依赖关系 | 说明 |
 |------|----------|------|
-| HIERARCHICAL_RISK_BUDGET | æ©å±å
-³ç³» | æ¬æ¨¡åçé«çº§çæ¬ |
-| PORTFOLIO_REBALANCING | è¾å
-¥å
-³ç³» | æä¾é£é©é¢ç®çº¦æ |
+| HIERARCHICAL_RISK_BUDGET | 可选增强 | 本模块的高级扩展版本（层级预算/更复杂约束） |
+| PORTFOLIO_REBALANCING | 强协同 | 提供调仓触发与执行框架，风险预算作为约束输入 |
 
 ---
 
 ## 6. 质量指标
 
-| ææ  | ç®æ å?| æµéæ¹æ³ |
+| 指标 | 目标值 | 验证方式 |
 |------|--------|----------|
-| é£é©é¢ç®ä½¿ç¨ç?| 90% | åè½æµè¯ |
-| VaRè®¡ç®åç¡®åº?| 95% | åæµéªè¯ |
-| å¨æè°æ´ååºæ¶é?| <100ms | æ§è½æµè¯ |
+| 风险预算使用率 | ≥ 90% | 功能测试 / 回归测试 |
+| VaR 计算准确度 | ≥ 95% | 回测验证 / 对照实验 |
+| 动态调整响应时间 | < 100ms | 性能测试 |
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active | **åè§ç?*: 100%
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active | **合规率**: 100%
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
+| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Active
 ---
 
 ## 7. 文档治理
@@ -335,29 +324,27 @@ class SimplifiedRiskBudgetAPI:
 ### 7.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
+#### Layer 6: 组合优化层
 ##### 6.001. Simplified Risk Budget System
 - **模块ID**: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 - **蓝图文档**: SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: Layer 6 ç»åä¼åå±?
-- **ç¶æ?*: Active
+- **技术规格书**: （待补充，如需可新建对应 TS 文档）
+- **职责**: 风险预算分配、动态调整、监控与预警
+- **状态**: Active
 ```
 
 ### 7.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Simplified Risk Budget System** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
+| **Simplified Risk Budget System** | 风险预算分配、动态调整、预算监控与预警 | 不负责因子计算与信号生成（由因子/策略模块负责） |
 
 ### 7.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
+| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

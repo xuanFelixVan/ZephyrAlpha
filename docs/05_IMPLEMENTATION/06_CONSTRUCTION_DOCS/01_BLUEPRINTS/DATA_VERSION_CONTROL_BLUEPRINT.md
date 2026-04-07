@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_VERSION_CONTROL_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
   - 数据版本管理
@@ -25,7 +24,6 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: 数据版本控制，管理数据集版本，支持数据回溯和审计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼æ°æ®çæ¬ç®¡çãæ°æ®åæº¯ãæ°æ®å®¡è®¡ãçæ¬æ§å?
 > ...
 
 
@@ -85,13 +83,10 @@ layer: Layer 5.1 (数据处理)
 
 > 核心职责: 数据版本控制，管理数据集版本，支持数据回溯和审计
 > 职责边界: 
-> - â?æ¬ææ¡£è´è´£ï¼æ°æ®çæ¬ç®¡çãæ°æ®åæº¯ãæ°æ®å®¡è®¡ãçæ¬æ§å?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®å­å¨ãæ°æ®å¤çãæ°æ®è´¨éçæ§ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
 
 ## 一、设计背景与目标
 
-### 1.1 ä¸å¡éæ±?
 
 **当前痛点**:
 - 数据变更无法追溯
@@ -101,25 +96,13 @@ layer: Layer 5.1 (数据处理)
 
 **业务目标**:
 - 建立数据版本控制系统
-- æ¯ææ°æ®å¿«ç
-§ååæ»?
+§ååæ»?
 - 提供数据变更历史
-- æ¯ææ°æ®åä½ååæ¯ç®¡ç?
 
-### 1.2 ææ¯ç®æ ?
 
-| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **çæ¬å¿«ç
-§éåº¦** | <10ç§?| æ°æ®å¿«ç
-§åå»ºéåº¦<10ç§?|
-| **çæ¬åæ»éåº¦** | <30ç§?| æ°æ®åæ»éåº¦<30ç§?|
-| **çæ¬åå²ä¿ç** | â?å¹?| ä¿çè³å°1å¹´ççæ¬åå² |
-| **çæ¬å²çªç?* | <5% | çæ¬å²çªç?5% |
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 çæ¬ç®¡çå?(VersionManager)
 
 ```python
 from dataclasses import dataclass, field
@@ -128,7 +111,6 @@ from datetime import datetime
 from enum import Enum
 
 class VersionStatus(Enum):
-    """çæ¬ç¶æ?""
     ACTIVE = "active"
     DEPRECATED = "deprecated"
     ARCHIVED = "archived"
@@ -154,7 +136,6 @@ class VersionTag:
     created_at: datetime = field(default_factory=datetime.now)
 
 class VersionManager:
-    """çæ¬ç®¡çå?""
     
     def __init__(self):
         self.versions: Dict[str, DataVersion] = {}
@@ -218,7 +199,6 @@ class VersionManager:
         return list(self.versions.values())
 ```
 
-### 3.2 åæ´è¿½è¸ªå?(ChangeTracker)
 
 ```python
 from typing import Dict, List, Any, Tuple
@@ -237,14 +217,12 @@ class DataChange:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class ChangeTracker:
-    """åæ´è¿½è¸ªå?""
     
     def __init__(self):
         self.changes: List[DataChange] = []
     
     def detect_changes(self, old_df: pd.DataFrame,
                        new_df: pd.DataFrame) -> DataChange:
-        """æ£æµåæ?""
         row_count_change = len(new_df) - len(old_df)
         
         old_columns = set(old_df.columns)
@@ -327,7 +305,6 @@ class VersionRollbackEngine:
     
     def rollback_to_version(self, table_name: str,
                             version_id: str) -> bool:
-        """åæ»å°æå®çæ?""
         version = self.version_manager.get_version(version_id)
         
         if not version:
@@ -351,7 +328,6 @@ class VersionRollbackEngine:
     
     def rollback_to_tag(self, table_name: str,
                         tag_name: str) -> bool:
-        """åæ»å°æå®æ ç­?""
         version = self.version_manager.get_version_by_tag(tag_name)
         
         if not version:
@@ -372,7 +348,6 @@ class VersionRollbackEngine:
 ```
 
 ---
-## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
@@ -413,7 +388,6 @@ GET /api/v1/version/compare?version1=stock_prices_v122&version2=stock_prices_v12
 
 ---
 
-## äºãé¨ç½²æ¶æ?
 
 ```yaml
 version: '3.8'
@@ -445,7 +419,6 @@ volumes:
 ---
 
 ## å
-­ãçæ§ææ ?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -456,59 +429,46 @@ volumes:
 
 ---
 
-## ä¸ãå®æ½è®¡å?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **é¶æ®µ1** | æ­å»ºLakeFSå¹³å° | 2å¤?|
-| **é¶æ®µ2** | å¼åçæ¬ç®¡çå¨ | 3å¤?|
-| **é¶æ®µ3** | å¼ååæ´è¿½è¸ªå¨ | 3å¤?|
-| **é¶æ®µ4** | å¼ååæ»å¼æ?| 2å¤?|
-| **é¶æ®µ5** | æµè¯åä¼å?| 2å¤?|
 
 ---
 
 ## å
-«ãç¸å
-³ææ¡?
+«ãç¸å
+³ææ¡?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
-- æ°æ®è¡ç¼è¿½è¸ªèå?
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 
 ---
 
-**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| è·åæ°æ®èµäº§ä¿¡æ¯ |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | ä¸­ä¾èµ?| æä¾çæ¬ç®¡çæ¯æ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **DVC** | 3.0+ | 数据版本控制 | [官方文档](https://dvc.org/) |
 | **Git** | 2.40+ | 版本管理 | [官方文档](https://git-scm.com/) |
-| **LakeFS** | 1.0+ | æ°æ®æ¹çæ¬æ§å?| [å®æ¹ææ¡£](https://lakefs.io/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -526,14 +486,12 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Version Control
 - **模块ID**: DATA_VERSION_CONTROL_001
 - **蓝图文档**: DATA_VERSION_CONTROL_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
+åå»?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -544,11 +502,7 @@ graph LR
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

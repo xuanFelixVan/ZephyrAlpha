@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AI_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -18,16 +18,16 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 交易执行
   - 回测系统
   - 系统架构
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行?---
 
 
 # AI策略整合
@@ -39,7 +39,7 @@ implementation_status: 进行�?---
 
 > AI量化交易系统架构
 >
-> **配套文档**�?
+> **配套文档**?
 > - 主文档：[../../INDEX.md](../INDEX.md)
 > - AI优化：[../../07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md](../../07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md)
 
@@ -47,11 +47,11 @@ implementation_status: 进行�?---
 
 ## 1. AI策略三层架构
 
-| 层级 | 功能 | 技�?|
+| 层级 | 功能 | 技?|
 |------|------|------|
-| 感知�?| 市场数据感知 | NLP、图像识�?|
-| 决策�?| 策略选择和参数优�?| 强化学习、贝叶斯优化 |
-| 执行�?| 订单执行和风�?| 算法交易 |
+| 感知?| 市场数据感知 | NLP、图像识?|
+| 决策?| 策略选择和参数优?| 强化学习、贝叶斯优化 |
+| 执行?| 订单执行和风?| 算法交易 |
 
 ***
 

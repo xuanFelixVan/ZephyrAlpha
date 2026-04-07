@@ -1,4 +1,19 @@
 ﻿---
+module_id: DOCUMENT_VERSION_NAMING_STANDARD
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 文档版本号命名标准
+standard_type: 标准文档
+applicable_scope: 定义文档版本号的命名规范
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+---
+
+﻿---
 version: 1.0.0
 module_id: DOC_VERSION_NAMING_STANDARD
 responsibility_boundary: 文档版本号命名规范定义

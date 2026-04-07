@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_ADAPTERS_001
 version: 1.0.1
 status: Active

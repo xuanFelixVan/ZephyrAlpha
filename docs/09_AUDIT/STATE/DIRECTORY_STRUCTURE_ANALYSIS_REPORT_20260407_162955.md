@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260407_162955
 version: 1.0.0
 status: Active

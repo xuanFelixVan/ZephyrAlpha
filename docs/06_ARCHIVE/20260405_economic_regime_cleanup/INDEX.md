@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_20260405_ECONOMIC_REGIME_CLEANUP_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: COUNTERPARTY_RISK_ORE_IMPLEMENTATION_001
 version: 1.0.0
 status: Active

@@ -94,17 +94,17 @@ class YAMLMetadataChecker:
                         self.stats['missing_fields'][field] = []
                     self.stats['missing_fields'][field].append(str(md_file))
                 
-                print(f"⚠️  {md_file.relative_to('docs')}: 缺少字段 {missing_fields}")
+                print(f"[!] {md_file.relative_to('docs')}: 缺少字段 {missing_fields}")
             else:
                 self.stats['valid_files'] += 1
-                print(f"✅ {md_file.relative_to('docs')}")
+                print(f"[OK] {md_file.relative_to('docs')}")
             
         except Exception as e:
             self.stats['errors'].append({
                 'file': str(md_file),
                 'error': str(e)
             })
-            print(f"❌ {md_file.relative_to('docs')}: {e}")
+            print(f"[X] {md_file.relative_to('docs')}: {e}")
     
     def print_stats(self):
         """输出统计信息"""

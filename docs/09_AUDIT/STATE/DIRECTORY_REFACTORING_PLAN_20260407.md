@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DIRECTORY_REFACTORING_PLAN_20260407
 version: 1.0.0
 status: Active

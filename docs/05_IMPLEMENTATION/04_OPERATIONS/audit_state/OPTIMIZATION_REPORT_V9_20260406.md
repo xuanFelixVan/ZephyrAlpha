@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: OPTIMIZATION_REPORT_V9_20260406_001
 version: 9.0.0
 status: Active

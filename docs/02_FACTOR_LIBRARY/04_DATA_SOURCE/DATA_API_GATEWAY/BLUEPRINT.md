@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_API_GATEWAY_BP_001
 version: 1.0.0
 status: Blueprint

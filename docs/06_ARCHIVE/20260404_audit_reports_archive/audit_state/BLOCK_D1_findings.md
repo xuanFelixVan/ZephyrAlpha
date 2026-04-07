@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ARCHIVE_BLOCK_D1_FINDINGS_001
 version: 4.0.1
 status: Active
@@ -32,12 +32,12 @@ implementation_status: 进行?---
 
 ## 📊 审计摘要
 
-| 指标 | �?| 说明 |
+| 指标 | ?| 说明 |
 |------|------|------|
 | **审查目录?* | 2?| 00_OVERVIEW, 01_FRAMEWORK |
 | **审查文件?* | 7?| README(x2), DATA_FLOW, TECH_STACK, HUMAN_AI_FLOW, MARKET_REGIME, ARCHITECTURE |
 | **发现问题?* | 待分?| P0/P1/P2分类统计 |
-| **版本一�?* | 待验?| 部分文档版本v4.0与系统v5.3不一?|
+| **版本一?* | 待验?| 部分文档版本v4.0与系统v5.3不一?|
 
 ---
 
@@ -45,14 +45,14 @@ implementation_status: 进行?---
 
 ### docs/00_OVERVIEW/
 
-| 文件 | 版本 | �?|
+| 文件 | 版本 | ?|
 |------|------|------|
 | README.md | v4.0 | ⚠️ 版本不一?|
 | DATA_FLOW.md | v4.0 | ⚠️ 版本不一?|
 
 ### docs/01_FRAMEWORK/
 
-| 文件 | 版本 | �?|
+| 文件 | 版本 | ?|
 |------|------|------|
 | README.md | v2.0 | ?正常 |
 | TECH_STACK.md | v1.0 | ?正常 |
@@ -71,7 +71,7 @@ implementation_status: 进行?---
 **发现位置**: `docs/00_OVERVIEW/README.md`, `docs/00_OVERVIEW/DATA_FLOW.md`
 **问题描述**: 两个文档版本标识为v4.0，与系统v5.3不一?
 
-| 文件 | 当前版本 | 系统版本 | �?|
+| 文件 | 当前版本 | 系统版本 | ?|
 |------|----------|----------|------|
 | docs/00_OVERVIEW/README.md | v4.0 | v5.3 | ⚠️ 不一?|
 | docs/00_OVERVIEW/DATA_FLOW.md | v4.0 | v5.3 | ⚠️ 不一?|
@@ -218,7 +218,7 @@ implementation_status: 进行?---
 
 ### 2026-03-31 D1块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | ?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | D1-P1-001 | 00_OVERVIEW/README.md版本v4.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | D1-P1-001 | 00_OVERVIEW/DATA_FLOW.md版本v4.0 ?v5.3 | ?已修?| 2026-03-31 |

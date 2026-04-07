@@ -1,17 +1,17 @@
-﻿---
+﻿﻿---
 module_id: TACTICS_PARAMETER_MGMT_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 交易策略、战术执行
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
 ---
 ---
 
@@ -23,12 +23,12 @@ implementation_status: 进行�?
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 策略参数定义、约束、优化、版本控�?
+> 策略参数定义、约束、优化、版本控?
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先�?*: P1 - 核心模块
-> **Layer**: Layer 3 (策略�?
+> **优先?*: P1 - 核心模块
+> **Layer**: Layer 3 (策略?
 > **索引**: S.03.PRM.001
 
 ---
@@ -36,10 +36,10 @@ implementation_status: 进行�?
 ## 1. 概述
 
 参数管理是量化策略的核心，包括：
-- 参数定义与约�?
+- 参数定义与约?
 - 参数空间与敏感度分析
 - 参数优化方法
-- 版本控制与回�?
+- 版本控制与回?
 
 ---
 
@@ -49,10 +49,10 @@ implementation_status: 进行�?
 
 | 类别 | 说明 | 示例 |
 |------|------|------|
-| **策略参数** | 策略逻辑核心参数 | 均线周期、RSI阈�?|
-| **风控参数** | 风险控制参数 | 最大回撤、止损比�?|
-| **执行参数** | 交易执行参数 | 订单类型、滑点设�?|
-| **系统参数** | 系统运行参数 | 数据源、超时设�?|
+| **策略参数** | 策略逻辑核心参数 | 均线周期、RSI阈?|
+| **风控参数** | 风险控制参数 | 最大回撤、止损比?|
+| **执行参数** | 交易执行参数 | 订单类型、滑点设?|
+| **系统参数** | 系统运行参数 | 数据源、超时设?|
 
 ### 2.2 参数模板
 
@@ -63,18 +63,18 @@ from typing import Any, List, Optional
 @dataclass
 class Parameter:
     """参数定义"""
-    name: str                    # 参数�?
+    name: str                    # 参数?
     param_type: str              # int, float, str, bool, list
-    default: Any                 # 默认�?
+    default: Any                 # 默认?
     bounds: Optional[tuple]      # 边界 (min, max)
     options: Optional[List]      # 离散选项
     description: str              # 参数描述
     category: str                # 参数类别
-    tunable: bool = True         # 是否可调�?
+    tunable: bool = True         # 是否可调?
     step: Optional[float] = None # 步长
 
     def validate(self, value: Any) -> bool:
-        """验证参数�?""
+        """验证参数?""
         if not self.tunable and value != self.default:
             return False
 
@@ -98,7 +98,7 @@ class Parameter:
 
 
 class ParameterSet:
-    """参数�?""
+    """参数?""
 
     def __init__(self, strategy_name: str):
         self.strategy_name = strategy_name
@@ -109,11 +109,11 @@ class ParameterSet:
         self.parameters[param.name] = param
 
     def get(self, name: str) -> Any:
-        """获取参数�?""
+        """获取参数?""
         return self.parameters[name].default
 
     def set(self, name: str, value: Any) -> bool:
-        """设置参数�?""
+        """设置参数?""
         param = self.parameters[name]
         if param.validate(value):
             param.default = value
@@ -121,11 +121,11 @@ class ParameterSet:
         return False
 
     def to_dict(self) -> dict:
-        """导出为字�?""
+        """导出为字?""
         return {name: param.default for name, param in self.parameters.items()}
 
     def from_dict(self, config: dict) -> bool:
-        """从字典加�?""
+        """从字典加?""
         for name, value in config.items():
             if name in self.parameters:
                 self.set(name, value)
@@ -162,13 +162,13 @@ class ParameterConstraint:
         constraint_type : str
             'range' | 'relation' | 'custom'
         condition : str
-            约束条件表达�?
+            约束条件表达?
         """
         self.constraints.append({
             'name': name,
             'type': constraint_type,
             'condition': condition,
-            'message': message or f"约束{name}不满�?
+            'message': message or f"约束{name}不满?
         })
 
     def validate(self, param_dict: dict) -> tuple:
@@ -177,7 +177,7 @@ class ParameterConstraint:
 
         Returns:
         --------
-        (bool, list): 是否满足, 违反的约束列�?
+        (bool, list): 是否满足, 违反的约束列?
         """
         violations = []
 
@@ -188,13 +188,13 @@ class ParameterConstraint:
         return len(violations) == 0, violations
 
     def _check_constraint(self, constraint: dict, params: dict) -> bool:
-        """检查单个约�?""
+        """检查单个约?""
         if constraint['type'] == 'range':
             name = constraint['condition']
             return constraint.get('min', float('-inf')) <= params.get(name, 0) <= constraint.get('max', float('inf'))
 
         elif constraint['type'] == 'relation':
-            # 支持�?"ma_short < ma_long" 这样的表达式
+            # 支持?"ma_short < ma_long" 这样的表达式
             expr = constraint['condition']
             try:
                 return eval(expr, {}, params)
@@ -211,7 +211,7 @@ def get_default_constraints() -> ParameterConstraint:
     """获取默认参数约束"""
     constraints = ParameterConstraint()
 
-    # 均线周期约束：短周期必须小于长周�?
+    # 均线周期约束：短周期必须小于长周?
     constraints.add_constraint(
         name='ma_order',
         constraint_type='relation',
@@ -235,7 +235,7 @@ def get_default_constraints() -> ParameterConstraint:
         min=0.001, max=0.5
     )
 
-    # 仓位约束�?-100%
+    # 仓位约束?-100%
     constraints.add_constraint(
         name='position_size',
         constraint_type='range',
@@ -248,16 +248,16 @@ def get_default_constraints() -> ParameterConstraint:
 
 ---
 
-## 4. 参数敏感度分�?
+## 4. 参数敏感度分?
 
-### 4.1 敏感度计�?
+### 4.1 敏感度计?
 
 ```python
 import numpy as np
 from typing import Callable
 
 class SensitivityAnalyzer:
-    """参数敏感度分�?""
+    """参数敏感度分?""
 
     def __init__(self, objective_func: Callable):
         """
@@ -288,11 +288,11 @@ class SensitivityAnalyzer:
 
         Returns:
         --------
-        dict: 敏感度分析结�?
+        dict: 敏感度分析结?
         """
         base_value = base_params[param_name]
 
-        # 生成参数值范�?
+        # 生成参数值范?
         if isinstance(base_value, int):
             step = max(1, int(base_value * range_pct))
             values = [base_value + step * i for i in range(-n_points // 2, n_points // 2 + 1)]
@@ -300,7 +300,7 @@ class SensitivityAnalyzer:
             step = base_value * range_pct / n_points
             values = [base_value + step * i for i in range(-n_points // 2, n_points // 2 + 1)]
 
-        # 计算目标函数�?
+        # 计算目标函数?
         results = []
         for value in values:
             params = base_params.copy()
@@ -313,12 +313,12 @@ class SensitivityAnalyzer:
 
         results_df = pd.DataFrame(results)
 
-        # 计算敏感度指�?
+        # 计算敏感度指?
         valid_results = results_df.dropna()
         if len(valid_results) < 3:
             return {'sensitivity': 'unknown', 'details': results_df}
 
-        # 敏感�?= 目标函数变化 / 参数变化
+        # 敏感?= 目标函数变化 / 参数变化
         value_range = valid_results['value'].max() - valid_results['value'].min()
         obj_range = valid_results['objective'].max() - valid_results['objective'].min()
 
@@ -345,7 +345,7 @@ class SensitivityAnalyzer:
         Parameters:
         -----------
         param_names : list
-            待分析参数列表，None表示分析所有可调参�?
+            待分析参数列表，None表示分析所有可调参?
         """
         param_names = param_names or list(base_params.keys())
 
@@ -406,7 +406,7 @@ class GridSearchOptimizer:
         for combo in combinations:
             params = dict(zip(param_names, combo))
 
-            # 检查约�?
+            # 检查约?
             if self.constraints:
                 valid, _ = self.constraints.validate(params)
                 if not valid:
@@ -437,11 +437,11 @@ class GridSearchOptimizer:
         }
 ```
 
-### 5.2 贝叶斯优化（简化版�?
+### 5.2 贝叶斯优化（简化版?
 
 ```python
 class BayesianOptimizer:
-    """贝叶斯优化（简化版�?""
+    """贝叶斯优化（简化版?""
 
     def __init__(self, objective_func: Callable, param_bounds: dict):
         self.objective_func = objective_func
@@ -449,20 +449,20 @@ class BayesianOptimizer:
         self.history = []
 
     def suggest(self) -> dict:
-        """基于历史结果建议下一个参�?""
+        """基于历史结果建议下一个参?""
         if len(self.history) < 5:
             # 随机采样
             return {name: np.random.uniform(bounds[0], bounds[1])
                     for name, bounds in self.param_bounds.items()}
 
-        # 简化版：选择历史最佳参数附近的�?
+        # 简化版：选择历史最佳参数附近的?
         best_result = max(self.history, key=lambda x: x['score'])
         suggested = best_result['params'].copy()
 
         for name in suggested:
             if name in self.param_bounds:
                 bounds = self.param_bounds[name]
-                # 在最佳点附近加一点随机扰�?
+                # 在最佳点附近加一点随机扰?
                 suggested[name] = suggested[name] + np.random.normal(0, (bounds[1] - bounds[0]) * 0.1)
                 suggested[name] = np.clip(suggested[name], bounds[0], bounds[1])
 
@@ -491,14 +491,14 @@ class BayesianOptimizer:
 
 ## 6. 参数版本控制
 
-### 6.1 版本管理�?
+### 6.1 版本管理?
 
 ```python
 import json
 from datetime import datetime
 
 class ParameterVersionManager:
-    """参数版本管理�?""
+    """参数版本管理?""
 
     def __init__(self, storage_path: str):
         self.storage_path = storage_path
@@ -573,7 +573,7 @@ class ParameterVersionManager:
         }
 
     def _save_to_file(self, version_data: dict):
-        """保存到文�?""
+        """保存到文?""
         version_id = version_data['version_id']
         filepath = f"{self.storage_path}/{version_id}.json"
         with open(filepath, 'w', encoding='utf-8') as f:
@@ -626,7 +626,7 @@ parameter_management:
     method: "bayesian"  # grid_search | bayesian | random_search
     n_iterations: 50
     cv_folds: 3         # 交叉验证折数
-    test_ratio: 0.3     # 测试集比�?
+    test_ratio: 0.3     # 测试集比?
 
   # 版本控制
   versioning:
@@ -643,11 +643,11 @@ parameter_management:
 ```
 03_TRADING_TACTICS/
 ├── 01_STRATEGY_FRAMEWORK/
-�?  ├── STRATEGY_TEMPLATES.md
-�?  └── lifecycle.md
+?  ├── STRATEGY_TEMPLATES.md
+?  └── lifecycle.md
 ├── 06_POSITION_MANAGEMENT/
-�?  └── README.md
-└── parameter_management.md        # 本文�?�?
+?  └── README.md
+└── parameter_management.md        # 本文??
 ```
 
 ---
@@ -656,9 +656,9 @@ parameter_management:
 
 | 接口 | 说明 |
 |------|------|
-| **上游接口** | 策略引擎、配置系�?|
-| **下游接口** | 回测系统、执行系�?|
-| **输入格式** | 策略参数、参数空�?|
+| **上游接口** | 策略引擎、配置系?|
+| **下游接口** | 回测系统、执行系?|
+| **输入格式** | 策略参数、参数空?|
 | **输出格式** | 最优参数、敏感度分析 |
 
 ---

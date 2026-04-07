@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER5_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404_001
 
 report_id: LAYER5_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_002
@@ -25,7 +25,6 @@ compliance_level: СИЊСИџТаЄтЄє
 
 > **т«АУ«АТЌЦТюЪ**: 2026-04-04
 > **т«АУ«АУїЃтЏ┤**: GitтјєтЈ▓ + тйњТАБуЏ«тйЋ
-> **т«АУ«АуЏ«ТаЄ**: У»єтѕФУ»»тѕауџёжФўС╗итђ╝уГќуЋЦТЅДУАїт▒ѓТќЄТАБ
 
 ---
 

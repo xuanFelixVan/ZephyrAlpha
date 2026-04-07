@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT_001
 
 version: 1.0.0
@@ -49,7 +49,7 @@ responsibility_boundary: |
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -79,17 +79,17 @@ responsibility_boundary: |
 
 
 
-## 2. 技术类�?
+## 2. 技术类?
 
-| 技�?| 说明 | 适用场景 |
+| 技?| 说明 | 适用场景 |
 
 |------|------|----------|
 
-| Intel SGX | Intel安全�?| 通用服务�?|
+| Intel SGX | Intel安全?| 通用服务?|
 
-| AMD SEV | AMD加密虚拟�?| 云环�?|
+| AMD SEV | AMD加密虚拟?| 云环?|
 
-| ARM TrustZone | ARM可信�?| 移动设备 |
+| ARM TrustZone | ARM可信?| 移动设备 |
 
 
 
@@ -139,7 +139,7 @@ class TrustedExecutionEnvironment:
 
     ) -> str:
 
-        """创建安全�?        
+        """创建安全?        
 
         Args:
 

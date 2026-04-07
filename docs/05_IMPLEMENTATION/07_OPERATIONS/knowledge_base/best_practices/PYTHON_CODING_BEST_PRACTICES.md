@@ -1,76 +1,76 @@
-﻿---
+﻿﻿---
 module_id: PYTHON_CODING_BEST_PRACTICES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝ ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝ ﻝﺙﮒ
+owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝ ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝ ﻝﺙﮒ
 responsibility:
   - 实施指南、部署文档
-compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
+compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../BEST_PRACTICES_INDEX.md
 implementation_status: Active
 ---
 ---
 
 
-# Pythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?
+# Pythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> **ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﻝﺙﮒ?*: BP-001  
-> **ﻝﮔ؛**: v1.0  
-> **ﻠﻝ۷ﮒﭦﮔﺁ**: ﮔﮔPythonﻛﭨ۲ﻝ ﻝﺙﮒ  
-> **ﮒﺙﭦﮒﭘﻝﭦ۶ﮒ،**: ﻭﺑ **ﮒﺙﭦﮒﭘﮔ۶ﻟ۰**
+> **ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﻝﺙﮒ?*: BP-001  
+> **ﻝﮔ؛**: v1.0  
+> **ﻠﻝ۷ﮒﭦﮔﺁ**: ﮔﮔPythonﻛﭨ۲ﻝ ﻝﺙﮒ  
+> **ﮒﺙﭦﮒﭘﻝﭦ۶ﮒ،**: ﻭﺑ **ﮒﺙﭦﮒﭘﮔ۶ﻟ۰**
 
 ---
 
-## ﻭ **ﻠﻝ۷ﮒﭦﮔﺁ**
+## ﻭ **ﻠﻝ۷ﮒﭦﮔﺁ**
 
-### **ﻛﺛﮔﭘﻛﺛﺟﻝ۷**
+### **ﻛﺛﮔﭘﻛﺛﺟﻝ۷**
 
-- ﻗ?ﻝﺙﮒﮔﺍﻝPythonﮔ۷۰ﮒ
-- ﻗ?ﻠﮔﻝﺍﮔﻛﭨ۲ﻝ 
-- ﻗ?ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﮔ۲ﮔ?- ﻗ?ﮒ۱ﻠﮒﻛﺛﮒﺙﮒ?
-### **ﻠﻝ۷ﻟﮒﺑ**
+- ﻗ?ﻝﺙﮒﮔﺍﻝPythonﮔ۷۰ﮒ
+- ﻗ?ﻠﮔﻝﺍﮔﻛﭨ۲ﻝ 
+- ﻗ?ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﮔ۲ﮔ?- ﻗ?ﮒ۱ﻠﮒﻛﺛﮒﺙﮒ?
+### **ﻠﻝ۷ﻟﮒﺑ**
 
-- ﮔﮔﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﭨ۲ﻝ ?- ﮔﮔﮔﭖﻟﺁﻛﭨ۲ﻝ ?- ﮔﮔﻟﮔ؛ﻛﭨ۲ﻝ ?- ﮔﮔﻠﻝﺛ؟ﻛﭨ۲ﻝ ?
+- ﮔﮔﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﭨ۲ﻝ ?- ﮔﮔﮔﭖﻟﺁﻛﭨ۲ﻝ ?- ﮔﮔﻟﮔ؛ﻛﭨ۲ﻝ ?- ﮔﮔﻠﻝﺛ؟ﻛﭨ۲ﻝ ?
 ---
 
-## ﻭﺁ **ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳**
+## ﻭﺁ **ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳**
 
-### **1. ﮒﺛﮒﻟ۶ﻟ**
+### **1. ﮒﺛﮒﻟ۶ﻟ**
 
-#### **ﮒﻠﮒﺛﮒ**
+#### **ﮒﻠﮒﺛﮒ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?strategy_factory = StrategyFactory()
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?strategy_factory = StrategyFactory()
 event_bus = EventBus()
 max_position_size = 0.95
 
-# ﻗ?ﻠﻟﺁﺁ - ﮒ۳۶ﻠ۸ﺙﮒﺏﺍﮔﮒﺍﻠ۸ﺙﮒﺏ?strategyFactory = StrategyFactory()
+# ﻗ?ﻠﻟﺁﺁ - ﮒ۳۶ﻠ۸ﺙﮒﺏﺍﮔﮒﺍﻠ۸ﺙﮒﺏ?strategyFactory = StrategyFactory()
 eventBus = EventBus()
 MaxPositionSize = 0.95
 ```
 
-#### **ﮒﺕﺕﻠﮒﺛﮒ**
+#### **ﮒﺕﺕﻠﮒﺛﮒ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۷ﮒ۳۶ﮒ?ﻛﺕﮒﻝﭦ?MAX_POSITION_SIZE = 0.95
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۷ﮒ۳۶ﮒ?ﻛﺕﮒﻝﭦ?MAX_POSITION_SIZE = 0.95
 DEFAULT_TIMEOUT = 30
 API_BASE_URL = "https://api.example.com"
 
-# ﻗ?ﻠﻟﺁﺁ - ﮒﺍﮒﮔﻠ۸ﺙﮒﺏ?max_position_size = 0.95
+# ﻗ?ﻠﻟﺁﺁ - ﮒﺍﮒﮔﻠ۸ﺙﮒﺏ?max_position_size = 0.95
 defaultTimeout = 30
 apiBaseUrl = "https://api.example.com"
 ```
 
-#### **ﮒﺛﮔﺍﮒﺛﮒ**
+#### **ﮒﺛﮔﺍﮒﺛﮒ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦﺟﺅﺙﮒ۷ﻟﺁﮒﺙﮒ۳?def create_strategy(strategy_type: str) -> Strategy:
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦﺟﺅﺙﮒ۷ﻟﺁﮒﺙﮒ۳?def create_strategy(strategy_type: str) -> Strategy:
     pass
 
 def calculate_position_size(capital: float) -> float:
@@ -79,17 +79,17 @@ def calculate_position_size(capital: float) -> float:
 def get_event_bus() -> EventBus:
     pass
 
-# ﻗ?ﻠﻟﺁﺁ - ﮒ۳۶ﻠ۸ﺙﮒﺏﺍﮔﮒﻟﺁﮒﺙﮒ۳?def CreateStrategy(strategy_type: str) -> Strategy:
+# ﻗ?ﻠﻟﺁﺁ - ﮒ۳۶ﻠ۸ﺙﮒﺏﺍﮔﮒﻟﺁﮒﺙﮒ۳?def CreateStrategy(strategy_type: str) -> Strategy:
     pass
 
 def PositionSize(capital: float) -> float:
     pass
 ```
 
-#### **ﻝﺎﭨﮒﺛﮒ?*
+#### **ﻝﺎﭨﮒﺛﮒ?*
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۳۶ﻠ۸ﺙﮒﺏ?class StrategyFactory:
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۳۶ﻠ۸ﺙﮒﺏ?class StrategyFactory:
     pass
 
 class EventBus:
@@ -98,7 +98,7 @@ class EventBus:
 class BacktestAdapter:
     pass
 
-# ﻗ?ﻠﻟﺁﺁ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?class strategy_factory:
+# ﻗ?ﻠﻟﺁﺁ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?class strategy_factory:
     pass
 
 class event_bus:
@@ -107,12 +107,12 @@ class event_bus:
 
 ---
 
-### **2. ﻛﭨ۲ﻝ ﮔ ﺙﮒﺙ**
+### **2. ﻛﭨ۲ﻝ ﮔ ﺙﮒﺙ**
 
-#### **ﮒﺁﺙﮒ۴ﻠ۰ﭦﮒﭦ**
+#### **ﮒﺁﺙﮒ۴ﻠ۰ﭦﮒﭦ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔ ﮒﮒﭦ?ﻗ?ﻝ؛؛ﻛﺕﮔﺗﮒﭦ ﻗ?ﮔ؛ﮒﺍﮔ۷۰ﮒ
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔ ﮒﮒﭦ?ﻗ?ﻝ؛؛ﻛﺕﮔﺗﮒﭦ ﻗ?ﮔ؛ﮒﺍﮔ۷۰ﮒ
 import os
 import sys
 from typing import Dict, Any, Optional, List
@@ -124,7 +124,7 @@ import numpy as np
 from strategy.base import BaseStrategy
 from event_bus.event import Event
 
-# ﻗ?ﻠﻟﺁﺁ - ﻠ۰ﭦﮒﭦﮔﺓﺓﻛﺗﺎ
+# ﻗ?ﻠﻟﺁﺁ - ﻠ۰ﭦﮒﭦﮔﺓﺓﻛﺗﺎ
 from strategy.base import BaseStrategy
 import pandas as pd
 import os
@@ -132,10 +132,10 @@ from typing import Dict
 import numpy as np
 ```
 
-#### **ﻛﭨ۲ﻝ ﻝﺙ۸ﻟﺟ**
+#### **ﻛﭨ۲ﻝ ﻝﺙ۸ﻟﺟ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - 4ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﻝﺙ۸ﻟﺟ?def calculate_position_size(
+# ﻗ?ﮔ­۲ﻝ۰؟ - 4ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﻝﺙ۸ﻟﺟ?def calculate_position_size(
     capital: float,
     risk_pct: float,
     entry_price: float,
@@ -146,16 +146,16 @@ import numpy as np
     position_size = risk_amount / price_diff
     return position_size
 
-# ﻗ?ﻠﻟﺁﺁ - 2ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﮔTab
+# ﻗ?ﻠﻟﺁﺁ - 2ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﮔTab
 def calculate_position_size(capital, risk_pct):
   risk_amount = capital * risk_pct
   return risk_amount
 ```
 
-#### **ﻟ۰ﻠﺟﮒﭦ۵ﻠﮒ?*
+#### **ﻟ۰ﻠﺟﮒﭦ۵ﻠﮒ?*
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔﺁﻟ۰ﻛﺕﻟﭘﻟﺟ?00ﮒ­ﻝ؛۵
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔﺁﻟ۰ﻛﺕﻟﭘﻟﺟ?00ﮒ­ﻝ؛۵
 result = self.strategy_factory.create_strategy(
     strategy_type="moving_average",
     strategy_id="ma_001",
@@ -165,52 +165,52 @@ result = self.strategy_factory.create_strategy(
     }
 )
 
-# ﻗ?ﻠﻟﺁﺁ - ﻟ۰ﻟﺟﻠ?result = self.strategy_factory.create_strategy(strategy_type="moving_average", strategy_id="ma_001", config={"fast_period": 10, "slow_period": 30})
+# ﻗ?ﻠﻟﺁﺁ - ﻟ۰ﻟﺟﻠ?result = self.strategy_factory.create_strategy(strategy_type="moving_average", strategy_id="ma_001", config={"fast_period": 10, "slow_period": 30})
 ```
 
 ---
 
-### **3. ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
+### **3. ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
 
-#### **ﮒﺛﮔﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
+#### **ﮒﺛﮔﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ؟ﮔﺑﻝﻝﺎﭨﮒﮔﺏ۷ﻟ۶?def create_strategy(
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ؟ﮔﺑﻝﻝﺎﭨﮒﮔﺏ۷ﻟ۶?def create_strategy(
     strategy_type: str,
     strategy_id: str,
     config: Optional[Dict[str, Any]] = None
 ) -> BaseStrategy:
-    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
+    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
     
     Args:
-        strategy_type: ﻝ­ﻝ۴ﻝﺎﭨﮒ
-        strategy_id: ﻝ­ﻝ۴ID
-        config: ﻝ­ﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
+        strategy_type: ﻝ­ﻝ۴ﻝﺎﭨﮒ
+        strategy_id: ﻝ­ﻝ۴ID
+        config: ﻝ­ﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
     
     Returns:
-        ﻝ­ﻝ۴ﮒ؟ﻛﺝ
+        ﻝ­ﻝ۴ﮒ؟ﻛﺝ
     
     Raises:
-        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?    """
+        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?    """
     pass
 
-# ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
+# ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
 def create_strategy(strategy_type, strategy_id, config=None):
     pass
 ```
 
-#### **ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?*
+#### **ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?*
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?class StrategyFactory:
-    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ"""
+# ﻗ?ﮔ­۲ﻝ۰؟ - ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?class StrategyFactory:
+    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ"""
     
     def __init__(self):
         self.registry: StrategyRegistry = StrategyRegistry()
         self._instances: Dict[str, BaseStrategy] = {}
         self._lock: Lock = Lock()
 
-# ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
+# ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
 class StrategyFactory:
     def __init__(self):
         self.registry = StrategyRegistry()
@@ -220,36 +220,35 @@ class StrategyFactory:
 
 ---
 
-### **4. ﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
+### **4. ﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
 
-#### **ﮔ۷۰ﮒﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
+#### **ﮔ۷۰ﮒﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
 
 ```python
 """
-ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ - ﻝ؟۰ﻝﻝ­ﻝ۴ﻝﮒﮒﭨﭦﮒﻝﮒﺛﮒ۷ﮔ
+ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ - ﻝ؟۰ﻝﻝ­ﻝ۴ﻝﮒﮒﭨﭦﮒﻝﮒﺛﮒ۷ﮔ
 
-ﻝﮔ؛: v1.0
-ﮒﮒﭨﭦﮔ۴ﮔ: 2026-04-02
-ﻛﺛﻟ? ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
-ﻛﺕﭨﻟ۵ﻝﭨﻛﭨﭘ:
-- BaseStrategy: ﻝ­ﻝ۴ﮒﭦﻝﺎﭨ
-- StrategyFactory: ﻝ­ﻝ۴ﮒﺓ۴ﮒ
-- StrategyRegistry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?- StrategyLoader: ﻝ­ﻝ۴ﮒ ﻟﺛﺛﮒ?
-ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ:
+ﻝﮔ؛: v1.0
+ﮒﮒﭨﭦﮔ۴ﮔ: 2026-04-02
+ﻛﺛﻟ? ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+ﻛﺕﭨﻟ۵ﻝﭨﻛﭨﭘ:
+- BaseStrategy: ﻝ­ﻝ۴ﮒﭦﻝﺎﭨ
+- StrategyFactory: ﻝ­ﻝ۴ﮒﺓ۴ﮒ
+- StrategyRegistry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?- StrategyLoader: ﻝ­ﻝ۴ﮒ ﻟﺛﺛﮒ?
+ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ:
     >>> factory = StrategyFactory()
     >>> strategy = factory.create_strategy("moving_average", "ma_001")
 """
 ```
 
-#### **ﻝﺎﭨﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕﺎ**
+#### **ﻝﺎﭨﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕﺎ**
 
 ```python
 class StrategyFactory:
-    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ - ﮒﮒﭨﭦﮒﻝ؟۰ﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
-    ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟﺑﻟﺑ۲ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝﻙﻝ؟۰ﻝﻝ­ﻝ۴ﻝﮒﺛﮒ۷ﮔﻙﻝﺙﮒ­ﻝ­ﻝ۴ﮒ؟ﻛﺝﻙ?    ﻛﺛﺟﻝ۷ﮒﺓ۴ﮒﮔ۷۰ﮒﺙﻝ۰؟ﻛﺟﻝ­ﻝ۴ﮒﮒﭨﭦﻝﻛﺕﻟﺑﮔ۶ﮒﮒﺁﮔ۸ﮒﺎﮔ۶ﻙ?    
+    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ - ﮒﮒﭨﭦﮒﻝ؟۰ﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
     Attributes:
-        registry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?        _instances: ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ­
-        _lock: ﻝﭦﺟﻝ۷ﻠ?    
+        registry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?        _instances: ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ­
+        _lock: ﻝﭦﺟﻝ۷ﻠ?    
     Example:
         >>> factory = StrategyFactory()
         >>> strategy = factory.create_strategy("moving_average", "ma_001")
@@ -258,7 +257,7 @@ class StrategyFactory:
     """
 ```
 
-#### **ﮒﺛﮔﺍﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
+#### **ﮒﺛﮔﺍﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
 
 ```python
 def create_strategy(
@@ -267,16 +266,14 @@ def create_strategy(
     strategy_id: str,
     config: Optional[Dict[str, Any]] = None
 ) -> BaseStrategy:
-    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
+    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
     
-    ﮔ ﺗﮔ؟ﻝ­ﻝ۴ﻝﺎﭨﮒﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝﺅﺙﮒﺗﭘﮒﺍﮒﭘﻝﺙﮒ­ﮒﺍﮒ؟ﻛﺝﮒ­ﮒﺕﻛﺕ­ﻙ?    ﮒ۵ﮔﻝ­ﻝ۴IDﮒﺓﺎﮒ­ﮒ۷ﺅﺙﮒﺍﻟﺟﮒﻝﺙﮒ­ﻝﮒ؟ﻛﺝﻙ?    
     Args:
-        strategy_type: ﻝ­ﻝ۴ﻝﺎﭨﮒﮒﻝ۶ﺍﺅﺙﮒﺟﻠ۰ﭨﮒ۷ﮔﺏ۷ﮒﻟ۰۷ﻛﺕ­ﮔﺏ۷ﮒﺅﺙ?        strategy_id: ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﮒﺁﻛﺕﮔ ﻟﺁﻝ؛?        config: ﻝ­ﻝ۴ﻠﻝﺛ؟ﮒ­ﮒﺕﺅﺙﮒﺁﻠﺅﺙ
     
     Returns:
-        ﮒﮒﭨﭦﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
+        ﮒﮒﭨﭦﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
     Raises:
-        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?        KeyError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﻛﺕﮒ­ﮒ?    
+        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?        KeyError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﻛﺕﮒ­ﮒ?    
     Example:
         >>> factory = StrategyFactory()
         >>> config = {"fast_period": 10, "slow_period": 30}
@@ -289,12 +286,12 @@ def create_strategy(
 
 ---
 
-## ﻗ ﺅﺕ **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**
+## ﻗ ﺅﺕ **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**
 
-### **1. ﻠﺟﮒﻝﻝﺙﻝ ﻠ۲ﮔ ?*
+### **1. ﻠﺟﮒﻝﻝﺙﻝ ﻠ۲ﮔ ?*
 
 ```python
-# ﻗ?ﻠﺟﮒﻛﺛﺟﻝ۷ﮒ۷ﮒﺎﮒﻠ
+# ﻗ?ﻠﺟﮒﻛﺛﺟﻝ۷ﮒ۷ﮒﺎﮒﻠ
 strategy_factory = None
 
 def get_strategy_factory():
@@ -303,7 +300,7 @@ def get_strategy_factory():
         strategy_factory = StrategyFactory()
     return strategy_factory
 
-# ﻗ?ﻛﺛﺟﻝ۷ﮒﻛﺝﮔ۷۰ﮒﺙﮔﻛﺝﻟﭖﮔﺏ۷ﮒ?class StrategyFactory:
+# ﻗ?ﻛﺛﺟﻝ۷ﮒﻛﺝﮔ۷۰ﮒﺙﮔﻛﺝﻟﭖﮔﺏ۷ﮒ?class StrategyFactory:
     _instance = None
     
     def __new__(cls):
@@ -312,33 +309,33 @@ def get_strategy_factory():
         return cls._instance
 ```
 
-### **2. ﻠﺟﮒﻠ­ﮔﺏﮔﺍﮒ­**
+### **2. ﻠﺟﮒﻠ­ﮔﺏﮔﺍﮒ­**
 
 ```python
-# ﻗ?ﻠ­ﮔﺏﮔﺍﮒ­
+# ﻗ?ﻠ­ﮔﺏﮔﺍﮒ­
 if position_size > 0.95:
     pass
 
-# ﻗ?ﻛﺛﺟﻝ۷ﮒﺕﺕﻠ
+# ﻗ?ﻛﺛﺟﻝ۷ﮒﺕﺕﻠ
 MAX_POSITION_SIZE = 0.95
 
 if position_size > MAX_POSITION_SIZE:
     pass
 ```
 
-### **3. ﻠﺟﮒﮔﺓﺎﮒﺎﮒﭖﮒ۴**
+### **3. ﻠﺟﮒﮔﺓﺎﮒﺎﮒﭖﮒ۴**
 
 ```python
-# ﻗ?ﮔﺓﺎﮒﺎﮒﭖﮒ۴
+# ﻗ?ﮔﺓﺎﮒﺎﮒﭖﮒ۴
 def process_data(data):
     if data is not None:
         if 'items' in data:
             for item in data['items']:
                 if item['type'] == 'stock':
-                    # ﮒ۳ﻝﻠﭨﻟﺝ
+                    # ﮒ۳ﻝﻠﭨﻟﺝ
                     pass
 
-# ﻗ?ﮔﮒﻟﺟﮒ
+# ﻗ?ﮔﮒﻟﺟﮒ
 def process_data(data):
     if data is None:
         return
@@ -349,47 +346,47 @@ def process_data(data):
     for item in data['items']:
         if item['type'] != 'stock':
             continue
-        # ﮒ۳ﻝﻠﭨﻟﺝ
+        # ﮒ۳ﻝﻠﭨﻟﺝ
 ```
 
 ---
 
-## ﻭ **ﮔﮔﻟﺁﻛﺙﺍ**
+## ﻭ **ﮔﮔﻟﺁﻛﺙﺍ**
 
-### **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔﮔ **
+### **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔﮔ **
 
-| ﮔﮔ  | ﻝ؟ﮔ  | ﮒ؟ﻠ | ﻝﭘﮔ?|
+| ﮔﮔ  | ﻝ؟ﮔ  | ﮒ؟ﻠ | ﻝﭘﮔ?|
 |------|------|------|------|
-| ﻛﭨ۲ﻝ ﮒﺁﻟﺁﭨﮔ?| ﻗ?0ﮒ?| 95ﮒ?| ﻗ?|
-| ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?| ﻗ?0 | 8 | ﻗ?|
-| ﮔﮔ۰۲ﻟ۵ﻝﻝ?| ﻗ?0% | 90% | ﻗ?|
-| ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲ﻟ۵ﻝﻝ?| ﻗ?0% | 95% | ﻗ?|
+| ﻛﭨ۲ﻝ ﮒﺁﻟﺁﭨﮔ?| ﻗ?0ﮒ?| 95ﮒ?| ﻗ?|
+| ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?| ﻗ?0 | 8 | ﻗ?|
+| ﮔﮔ۰۲ﻟ۵ﻝﻝ?| ﻗ?0% | 90% | ﻗ?|
+| ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲ﻟ۵ﻝﻝ?| ﻗ?0% | 95% | ﻗ?|
 
-### **ﮒﺙﮒﮔﻝﮔﮔ ?*
+### **ﮒﺙﮒﮔﻝﮔﮔ ?*
 
-| ﮔﮔ  | ﮔﺗﻟﺟﮒ?| ﮔﺗﻟﺟﮒ?| ﮔﮒ |
+| ﮔﮔ  | ﮔﺗﻟﺟﮒ?| ﮔﺗﻟﺟﮒ?| ﮔﮒ |
 |------|--------|--------|------|
-| ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﻠﺑ | 2ﮒﺍﮔﭘ | 1ﮒﺍﮔﭘ | 50% |
-| Bugﻛﺟ؟ﮒ۳ﮔﭘﻠﺑ | 4ﮒﺍﮔﭘ | 2ﮒﺍﮔﭘ | 50% |
-| ﮔﺍﻛﭦﭦﻛﺕﮔﮔﭘﻠﺑ | 2ﮒ?| 1ﮒ?| 50% |
+| ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﻠﺑ | 2ﮒﺍﮔﭘ | 1ﮒﺍﮔﭘ | 50% |
+| Bugﻛﺟ؟ﮒ۳ﮔﭘﻠﺑ | 4ﮒﺍﮔﭘ | 2ﮒﺍﮔﭘ | 50% |
+| ﮔﺍﻛﭦﭦﻛﺕﮔﮔﭘﻠﺑ | 2ﮒ?| 1ﮒ?| 50% |
 
 ---
 
-## ﻭ **ﻝﺕﮒﺏﮔ۰ﻛﺝ**
+## ﻭ **ﻝﺕﮒﺏﮔ۰ﻛﺝ**
 
-- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
-- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
+- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
+- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
 
 ---
 
-## ﻭ **ﮒﻟﻟﭖﮔ?*
+## ﻭ **ﮒﻟﻟﭖﮔ?*
 
-### **ﮒﻠ۷ﮔﮔ۰۲**
+### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+- [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
 
-### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
+### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 
 - [PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 - [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
@@ -397,17 +394,17 @@ def process_data(data):
 
 ---
 
-## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
+## ﻭ **ﮔﺑﮔﺍﻟ؟ﺍﮒﺛ**
 
-| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
+| ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | ﮒﮒﭨﭦPythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?| ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦPythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?| ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
 
 ---
 
-## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
+## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
-**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
-**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
-**ﻝﮔ؛**: v1.0
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02  
+**ﻝﮔ؛**: v1.0

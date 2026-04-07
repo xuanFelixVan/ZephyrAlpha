@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: TRADE_ERROR_CORRECTION_BLUEPRINT_001
 version: 1.0.0
 status: Active

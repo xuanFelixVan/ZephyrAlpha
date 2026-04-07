@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FACTOR_T_03_RM004_FACTOR_TRANSPARENCY_001
 version: 1.0.0
 status: Active
@@ -26,21 +26,21 @@ compliance_level: 专业标准
 >
 > **来源**：量化策略专业分层方案_v3.0 附录AJ
 >
-> **配套文档**�?
+> **配套文档**?
 > - Barra风格因子：[T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_STYLE_FACTORS.md)
 > - Barra优化器：[T.03.RM003.barra_optimizer.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_OPTIMIZER.md)
 
 ---
 
-## 1. 因子暴露度报�?
+## 1. 因子暴露度报?
 
-### 1.1 报告生成�?
+### 1.1 报告生成?
 
 ```python
 class FactorExposureReport:
     """
-    因子暴露度报�?
-    生成组合的因子暴露透明度报告，用于合规和风�?
+    因子暴露度报?
+    生成组合的因子暴露透明度报告，用于合规和风?
     """
 
     def __init__(self, portfolio_name: str = "默认组合"):
@@ -52,7 +52,7 @@ class FactorExposureReport:
         生成因子暴露报告
 
         Parameters:
-            portfolio_weights: 持仓权重，index为股票代�?
+            portfolio_weights: 持仓权重，index为股票代?
             factor_exposures: 因子暴露度，columns为因子名
 
         Returns:
@@ -73,7 +73,7 @@ class FactorExposureReport:
     def calc_summary(self, factor_exposures: pd.DataFrame,
                    weights: pd.Series) -> dict:
         """
-        计算因子暴露汇�?
+        计算因子暴露汇?
         """
         summary = {}
         for factor in factor_exposures.columns:
@@ -137,7 +137,7 @@ class FactorExposureReport:
     def check_constraints(self, factor_exposures: pd.DataFrame,
                          weights: pd.Series) -> dict:
         """
-        检查约束合规�?
+        检查约束合规?
         """
         constraints = {
             'SIZE': {'max': 0.3, 'type': 'max'},
@@ -176,18 +176,18 @@ class FactorExposureReport:
         }
 ```
 
-### 1.2 报告输出格式�?
+### 1.2 报告输出格式?
 
 ```python
 def generate_transparency_report(portfolio_weights: pd.Series,
                                  factor_exposures: pd.DataFrame,
                                  portfolio_name: str = "默认组合") -> str:
     """
-    生成透明度报�?
+    生成透明度报?
 
     Parameters:
         portfolio_weights: 持仓权重
-        factor_exposures: 因子暴露�?
+        factor_exposures: 因子暴露?
         portfolio_name: 组合名称
 
     Returns:
@@ -199,21 +199,21 @@ def generate_transparency_report(portfolio_weights: pd.Series,
 
     output = f"""
 ========================================
-因子暴露透明度报�?
+因子暴露透明度报?
 ========================================
 报告日期: {report['report_date']}
 组合名称: {report['portfolio_name']}
 持仓数量: {report['total_positions']}
 
 ----------------------------------------
-因子暴露汇�?
+因子暴露汇?
 ----------------------------------------
-因子       | 净暴露    | 绝对暴露  | 状�?
+因子       | 净暴露    | 绝对暴露  | 状?
 ----------------------------------------
 """
 
     for factor, data in report['factor_exposure_summary'].items():
-        status = '⚠️显著' if data['active'] else '✅正�?
+        status = '⚠️显著' if data['active'] else '✅正?
         output += f"{factor:10} | {data['net_exposure']:+.2%}  | {data['abs_exposure']:.2%}   | {status}\n"
 
     output += """
@@ -227,11 +227,11 @@ def generate_transparency_report(portfolio_weights: pd.Series,
 
     compliance = report['compliance_check']
     if not compliance['is_compliant']:
-        output += "\n⚠️违规�?\n"
+        output += "\n⚠️违规?\n"
         for v in compliance['violations']:
             output += f"  - {v['factor']}: {v['exposure']:.2%} (限{v['limit']:.2%})\n"
     else:
-        output += "\n�?所有约束合规\n"
+        output += "\n?所有约束合规\n"
 
     return output
 ```
@@ -245,10 +245,10 @@ def generate_json_report(portfolio_weights: pd.Series,
                         factor_exposures: pd.DataFrame,
                         portfolio_name: str = "默认组合") -> dict:
     """
-    生成JSON格式的报�?
+    生成JSON格式的报?
 
     Returns:
-        dict: 结构化报�?
+        dict: 结构化报?
     """
     report_gen = FactorExposureReport(portfolio_name)
     report = report_gen.generate_report(portfolio_weights, factor_exposures)
@@ -304,20 +304,20 @@ print(json_report)
 
 ### 4.1 默认约束规则
 
-| 因子 | 约束类型 | 限制�?| 说明 |
+| 因子 | 约束类型 | 限制?| 说明 |
 |------|----------|--------|------|
-| SIZE | max | 0.30 | 规模因子暴露不超�?0% |
-| MOM | max | 0.50 | 动量因子暴露不超�?0% |
-| VALUE | min | 0.10 | 价值因子暴露至�?0% |
-| LIQUID | min | 0.05 | 流动性因子暴露至�?% |
-| LEVER | max | 0.20 | 杠杆因子暴露不超�?0% |
+| SIZE | max | 0.30 | 规模因子暴露不超?0% |
+| MOM | max | 0.50 | 动量因子暴露不超?0% |
+| VALUE | min | 0.10 | 价值因子暴露至?0% |
+| LIQUID | min | 0.05 | 流动性因子暴露至?% |
+| LEVER | max | 0.20 | 杠杆因子暴露不超?0% |
 
-### 4.2 自定义约�?
+### 4.2 自定义约?
 
 ```python
 class ConstraintManager:
     """
-    约束管理�?
+    约束管理?
     """
 
     DEFAULT_CONSTRAINTS = {
@@ -341,7 +341,7 @@ class ConstraintManager:
     def check(self, factor_exposures: pd.DataFrame,
               weights: pd.Series) -> list:
         """
-        检查所有约�?
+        检查所有约?
         """
         violations = []
         for factor, limit in self.constraints.items():
@@ -376,7 +376,7 @@ class ConstraintManager:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.0 | 2026-03-28 | 整合附录AJ因子暴露透明度报�?|
+| v1.0 | 2026-03-28 | 整合附录AJ因子暴露透明度报?|
 
 ---
 

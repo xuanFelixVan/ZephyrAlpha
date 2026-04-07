@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESPONSIBILITY_TEMPLATE_LIBRARY_001
 version: 1.0.0
 status: Active

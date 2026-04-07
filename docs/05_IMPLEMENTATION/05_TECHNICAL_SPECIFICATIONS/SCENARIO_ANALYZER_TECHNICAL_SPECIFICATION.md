@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SCENARIO_ANALYZER_001
 version: 1.0.0
 spec_version: 1.0
@@ -41,7 +41,7 @@ implementation_status: 进行?reference_models: ["Bridgewater Scenario Analysis"
 - 无法制定应急预案和风险对冲策略
 - 风险管理存在重大盲点
 
-**预期�?*?- 建立完整的情景分析体系，覆盖5种预设情?+ 自定义情?- 提供压力测试能力，评估极端市场条件下的组合表?- 为风险管理和投资决策提供科学依据
+**预期?*?- 建立完整的情景分析体系，覆盖5种预设情?+ 自定义情?- 提供压力测试能力，评估极端市场条件下的组合表?- 为风险管理和投资决策提供科学依据
 
 ### 1.2 技术定位与架构层归?
 - **Layer定位**: Layer 7 - AI报告?(符合ARCHITECTURE.md定义)
@@ -49,7 +49,7 @@ implementation_status: 进行?reference_models: ["Bridgewater Scenario Analysis"
 - **架构角色**: Layer 7情景分析核心，为风险管理提供情景模拟支持
 
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -369,12 +369,12 @@ def apply_market_shock(
     3. 添加随机扰动模拟真实市场情况
     
     Args:
-        asset_value: 资产原始�?        asset_type: 资产类型 (equity/bond/commodity/currency)
+        asset_value: 资产原始?        asset_type: 资产类型 (equity/bond/commodity/currency)
         shock_params: 市场冲击参数
         beta: 资产Beta系数
         
     Returns:
-        冲击后的资产�?    """
+        冲击后的资产?    """
     shock_map = {
         'equity': shock_params.equity_shock,
         'bond': shock_params.bond_shock,
@@ -538,4 +538,4 @@ def test_apply_market_shock():
 - Day 16-18: 单元测试和集成测?- Day 19-20: 性能优化和文档完?
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **�?*: ?活跃
+**版本**: v1.0 | **更新**: 2026-04-02 | **?*: ?活跃

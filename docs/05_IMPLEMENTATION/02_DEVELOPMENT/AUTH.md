@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AUTH_001
 version: 1.0.0
 status: Active
@@ -18,29 +18,29 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 因子计算
   - 数据源
   - 机器学习
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
+applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行?---
 
 
 
-# 简化认证模块蓝�?
+# 简化认证模块蓝?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.0 - 简化认证授权系�?
+> 清风量化系统 v5.0 - 简化认证授权系?
 > **索引**: `AUTH.001`
-> **开发时�?*: 5h
+> **开发时?*: 5h
 > **核心定位**: 提供简化的身份认证和权限控制，支持AI权限管理
 
 
@@ -48,7 +48,7 @@ implementation_status: 进行�?---
 
 | 原则 | 说明 |
 |------|------|
-| **简�?* | 不追求企业级复杂性，够用即可 |
+| **简?* | 不追求企业级复杂性，够用即可 |
 | **JWT** | 标准JWT令牌，支持过期和刷新 |
 | **分层权限** | 运营/研究/风控三层权限 |
 | **AI友好** | 支持API Key认证，便于AI调用 |
@@ -58,7 +58,7 @@ implementation_status: 进行�?---
 
 ### 2.1 认证方式
 
-| 类型 | 用�?| 场景 |
+| 类型 | 用?| 场景 |
 |------|------|------|
 | **JWT Token** | 用户登录认证 | Web界面、API调用 |
 | **API Key** | AI/系统认证 | AI Agent、系统间调用 |
@@ -67,7 +67,7 @@ implementation_status: 进行�?---
 
 ## 3. 核心实现
 
-### 3.1 用户和权限模�?
+### 3.1 用户和权限模?
 
 ```python
 from dataclasses import dataclass, field
@@ -88,7 +88,7 @@ class Role(Enum):
     OPERATOR = "operator"      # 运营人员
     RESEARCHER = "researcher"  # 研究人员
     RISK_MANAGER = "risk_manager"  # 风控人员
-    ADMIN = "admin"            # 管理�?
+    ADMIN = "admin"            # 管理?
     AI_SYSTEM = "ai_system"   # AI系统
 
 @dataclass
@@ -148,10 +148,10 @@ class AuthService:
         username: str,
         password: str
     ) -> Optional[AuthResult]:
-        """用户名密码认�?
+        """用户名密码认?
 
         参数:
-            username: 用户�?
+            username: 用户?
             password: 密码
 
         返回:
@@ -297,7 +297,7 @@ class AuthService:
         return hashlib.sha256(api_key.encode()).hexdigest()
 ```
 
-### 3.3 权限检�?
+### 3.3 权限检?
 
 ```python
 class PermissionService:
@@ -323,7 +323,7 @@ class PermissionService:
         required_permission: Permission,
         resource: str = None
     ) -> bool:
-        """检查用户权�?
+        """检查用户权?
 
         参数:
             user_id: 用户ID
@@ -331,7 +331,7 @@ class PermissionService:
             resource: 资源路径
 
         返回:
-            是否有权�?
+            是否有权?
         """
         user = self.auth_service.user_store.get_by_id(user_id)
 
@@ -407,7 +407,7 @@ class AuthAPI:
         """用户登录
 
         参数:
-            username: 用户�?
+            username: 用户?
             password: 密码
 
         返回:
@@ -546,11 +546,11 @@ roles:
 
 | 措施 | 说明 |
 |------|------|
-| 密码哈希 | SHA-256，单向哈�?|
+| 密码哈希 | SHA-256，单向哈?|
 | API Key安全 | 只在创建时返回一次，之后不可查看 |
-| Token过期 | 24小时过期，强制重新认�?|
+| Token过期 | 24小时过期，强制重新认?|
 | 失败锁定 | 连续5次失败，锁定15分钟 |
-| 审计日志 | 所有认证事件记�?|
+| 审计日志 | 所有认证事件记?|
 
 ### 6.2 审计日志
 
@@ -634,20 +634,20 @@ class AIAuthIntegration:
 ```
 
 
-## 8. 开发任务分�?5h)
+## 8. 开发任务分?5h)
 
-| 任务 | 时间 | 交付�?|
+| 任务 | 时间 | 交付?|
 |------|------|--------|
-| 用户和权限模�?| 0.5h | User, APIKey模型 |
+| 用户和权限模?| 0.5h | User, APIKey模型 |
 | JWT认证服务 | 1h | AuthService |
 | API Key认证 | 0.5h | API Key相关方法 |
-| 权限检查服�?| 0.5h | PermissionService |
+| 权限检查服?| 0.5h | PermissionService |
 | FastAPI路由 | 1h | AuthAPI, PermissionAPI |
 | 审计日志 | 0.5h | AuthAuditLogger |
 | 配置集成 | 0.5h | auth.yaml |
 | 单元测试 | 0.5h | test_auth.py |
 
 
-**维护�?*: 清风量化系统
+**维护?*: 清风量化系统
 **索引**: `AUTH.001`
-**最后更�?*: 2026-03-29
+**最后更?*: 2026-03-29

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: MEMORY_AUGMENTED_NN_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供memory augmented nn blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -36,7 +36,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -48,13 +48,13 @@ layer: Layer 4 (机器学习层)
 
 
 
-记忆增强神经网络通过外部记忆扩展模型能力�?
+记忆增强神经网络通过外部记忆扩展模型能力?
 
 - **外部记忆**: 可读写的外部存储
 
 - **长期依赖**: 解决长期依赖问题
 
-- **可解释�?*: 记忆内容可解�?- **灵活扩展**: 记忆容量可扩�?
+- **可解释?*: 记忆内容可解?- **灵活扩展**: 记忆容量可扩?
 
 ---
 
@@ -68,13 +68,13 @@ layer: Layer 4 (机器学习层)
 
 |------|------|----------|
 
-| NTM | 神经图灵�?| 算法学习 |
+| NTM | 神经图灵?| 算法学习 |
 
-| DNC | 可微神经计算�?| 复杂推理 |
+| DNC | 可微神经计算?| 复杂推理 |
 
 | MemNN | 记忆网络 | 问答系统 |
 
-| Transformer-XL | 片段级记�?| 长文�?|
+| Transformer-XL | 片段级记?| 长文?|
 
 
 
@@ -106,7 +106,7 @@ class MemoryAugmentedNN:
 
     ):
 
-        """初始化记忆网�?        
+        """初始化记忆网?        
 
         Args:
 
@@ -130,7 +130,7 @@ class MemoryAugmentedNN:
 
     ) -> torch.Tensor:
 
-        """从记忆读�?        
+        """从记忆读?        
 
         Args:
 
@@ -164,7 +164,7 @@ class MemoryAugmentedNN:
 
         Args:
 
-            key: 键向�?            value: 值向�?        """
+            key: 键向?            value: 值向?        """
 
         pass
 

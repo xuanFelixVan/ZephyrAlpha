@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: FACTOR_NEUTRALIZATION_001
 version: 1.0.0
 status: Active
@@ -26,20 +26,20 @@ compliance_level: 专业标准
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先�?*: P1 - 核心模块
-> **Layer**: Layer 2 (因子�?
+> **优先?*: P1 - 核心模块
+> **Layer**: Layer 2 (因子?
 > **索引**: F.04.NEU.001
 
 ---
 
 ## 1. 概述
 
-因子中性化是为了消除因子中混入的风格暴露，使因子反映真正独特的Alpha信息�?
+因子中性化是为了消除因子中混入的风格暴露，使因子反映真正独特的Alpha信息?
 
-**常见中性化类型**�?
-- 行业中性化：消除行业偏�?
-- 市值中性化：消除大�?小盘偏见
-- 风格中性化：消除其他风格因子影�?
+**常见中性化类型**?
+- 行业中性化：消除行业偏?
+- 市值中性化：消除大?小盘偏见
+- 风格中性化：消除其他风格因子影?
 
 ---
 
@@ -53,7 +53,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 
 class FactorNeutralizer:
-    """因子中性化处理�?""
+    """因子中性化处理?""
 
     def neutralize(
         self,
@@ -67,17 +67,17 @@ class FactorNeutralizer:
         Parameters:
         -----------
         factor : pd.Series
-            待中性化的因�?
+            待中性化的因?
         style_factors : pd.DataFrame
-            风格因子（如Barra风格因子�?
+            风格因子（如Barra风格因子?
         market_cap : pd.Series
-            市值因�?
+            市值因?
 
         Returns:
         --------
         pd.Series: 中性化后的因子
         """
-        # 合并所有控制变�?
+        # 合并所有控制变?
         controls = style_factors.copy()
 
         if market_cap is not None:
@@ -86,12 +86,12 @@ class FactorNeutralizer:
         # 对齐数据
         aligned_factor, aligned_controls = factor.align(controls, join='inner')
 
-        # 去除缺失�?
+        # 去除缺失?
         valid_idx = aligned_factor.notna() & aligned_controls.notna().all(axis=1)
         valid_factor = aligned_factor[valid_idx]
         valid_controls = aligned_controls[valid_idx]
 
-        # 回归取残�?
+        # 回归取残?
         residual = self._regression_residual(valid_factor, valid_controls)
 
         # 重建完整序列
@@ -109,10 +109,10 @@ class FactorNeutralizer:
         X_arr = np.column_stack([np.ones(len(X)), X.values])
         y_arr = y.values
 
-        # 最小二�?
+        # 最小二?
         coeffs = np.linalg.lstsq(X_arr, y_arr, rcond=None)[0]
 
-        # 预测�?
+        # 预测?
         y_pred = X_arr @ coeffs
 
         # 残差
@@ -127,9 +127,9 @@ class FactorNeutralizer:
 
 ```python
 class IndustryNeutralizer:
-    """行业中性化处理�?""
+    """行业中性化处理?""
 
-    # 申万行业一级分�?
+    # 申万行业一级分?
     INDUSTRY_CODES = {
         801010: '农林牧渔',
         801020: '采掘',
@@ -141,11 +141,11 @@ class IndustryNeutralizer:
         801080: '家用电器',
         801090: '食品饮料',
         801100: '纺织服装',
-        801110: '轻工制�?,
+        801110: '轻工制?,
         801120: '医药生物',
         801130: '公用事业',
-        801140: '交通运�?,
-        801150: '房地�?,
+        801140: '交通运?,
+        801150: '房地?,
         801160: '商业贸易',
         801170: '休闲服务',
         801180: '银行',
@@ -154,7 +154,7 @@ class IndustryNeutralizer:
         801210: '建筑装饰',
         801220: '电气设备',
         801230: '国防军工',
-        801010: '计算�?,
+        801010: '计算?,
         801250: '传媒',
         801260: '通信'
     }
@@ -165,7 +165,7 @@ class IndustryNeutralizer:
         industry: pd.Series
     ) -> pd.Series:
         """
-        行业中性化：每行业内取因子排名百分位减均�?
+        行业中性化：每行业内取因子排名百分位减均?
 
         Returns:
         --------
@@ -173,10 +173,10 @@ class IndustryNeutralizer:
         """
         aligned_factor, aligned_industry = factor.align(industry, join='inner')
 
-        # 计算每个行业的因子均�?
+        # 计算每个行业的因子均?
         industry_means = aligned_factor.groupby(aligned_industry).transform('mean')
 
-        # 残差 = 原始�?- 行业均�?
+        # 残差 = 原始?- 行业均?
         neutralized = aligned_factor - industry_means
 
         return neutralized
@@ -188,9 +188,9 @@ class IndustryNeutralizer:
         style_controls: pd.DataFrame = None
     ) -> pd.Series:
         """
-        行业内中性化：先行业内回归市值等风格因子，再在全市场回归行业哑变�?
+        行业内中性化：先行业内回归市值等风格因子，再在全市场回归行业哑变?
         """
-        # 步骤1：行业内回归风格因子取残�?
+        # 步骤1：行业内回归风格因子取残?
         if style_controls is not None:
             factor = self._within_industry_regression(factor, industry, style_controls)
 
@@ -203,7 +203,7 @@ class IndustryNeutralizer:
         industry: pd.Series,
         style_controls: pd.DataFrame
     ) -> pd.Series:
-        """行业内回归风格因�?""
+        """行业内回归风格因?""
         aligned_factor, aligned_industry = factor.align(industry, join='inner')
         aligned_controls, _ = style_controls.align(aligned_factor, join='inner')
 
@@ -237,7 +237,7 @@ class IndustryNeutralizer:
 
 ```python
 class MarketCapNeutralizer:
-    """市值中性化处理�?""
+    """市值中性化处理?""
 
     def neutralize(
         self,
@@ -253,7 +253,7 @@ class MarketCapNeutralizer:
         """
         aligned_factor, aligned_mktcap = factor.align(market_cap, join='inner')
 
-        # 对数市�?
+        # 对数市?
         log_mktcap = np.log(aligned_mktcap)
 
         # 回归
@@ -288,16 +288,16 @@ class BarraNeutralizer:
 
     # Barra CNE6 风格因子
     STYLE_FACTORS = [
-        'size',           # 市值因�?
+        'size',           # 市值因?
         'beta',           # Beta因子
         'momentum',       # 动量因子
         'earning_yield',  # 盈利因子
-        'volatility',     # 波动率因�?
+        'volatility',     # 波动率因?
         'growth',         # 成长因子
-        'value',          # 价值因�?
+        'value',          # 价值因?
         'leverage',       # 杠杆因子
-        'liquiditiy',     # 流动性因�?
-        'dividend_yield'  # 股息率因�?
+        'liquiditiy',     # 流动性因?
+        'dividend_yield'  # 股息率因?
     ]
 
     def neutralize(
@@ -312,11 +312,11 @@ class BarraNeutralizer:
         Parameters:
         -----------
         factor : pd.Series
-            待中性化的因�?
+            待中性化的因?
         barra_factors : pd.DataFrame
             Barra风格因子
         industry_dummies : pd.DataFrame
-            行业哑变�?
+            行业哑变?
 
         Returns:
         --------
@@ -336,24 +336,24 @@ class BarraNeutralizer:
         industry: pd.Series
     ) -> pd.DataFrame:
         """
-        创建行业哑变�?
+        创建行业哑变?
 
         Returns:
         --------
-        pd.DataFrame: 行业哑变量矩�?
+        pd.DataFrame: 行业哑变量矩?
         """
         return pd.get_dummies(industry, prefix='ind', drop_first=True)
 ```
 
 ---
 
-## 6. 标准化处�?
+## 6. 标准化处?
 
 ### 6.1 中性化后标准化
 
 ```python
 class NeutralizedFactorProcessor:
-    """中性化因子处理�?""
+    """中性化因子处理?""
 
     def process(
         self,
@@ -365,16 +365,16 @@ class NeutralizedFactorProcessor:
         """
         完整中性化处理流程
 
-        流程�?
-        1. 去极�?
-        2. 缺失值填�?
+        流程?
+        1. 去极?
+        2. 缺失值填?
         3. 行业中性化
         4. 市值中性化
-        5. 标准�?
+        5. 标准?
         """
         result = factor.copy()
 
-        # 1. 去极值（3倍标准差�?
+        # 1. 去极值（3倍标准差?
         result = self._winsorize(result, n_std=3)
 
         # 2. 缺失值填充（行业均值）
@@ -391,13 +391,13 @@ class NeutralizedFactorProcessor:
         if market_cap is not None:
             result = MarketCapNeutralizer().neutralize(result, market_cap)
 
-        # 5. 标准�?z-score)
+        # 5. 标准?z-score)
         result = (result - result.mean()) / result.std()
 
         return result
 
     def _winsorize(self, series: pd.Series, n_std: float = 3) -> pd.Series:
-        """去极值（3倍标准差截断�?""
+        """去极值（3倍标准差截断?""
         mean = series.mean()
         std = series.std()
 
@@ -450,8 +450,8 @@ factor_neutralization:
 
   # 行业分类
   industry:
-    source: "sw"  # 申万一�?
-    level: 1      # 1�?�?
+    source: "sw"  # 申万一?
+    level: 1      # 1??
 ```
 
 ---
@@ -462,9 +462,9 @@ factor_neutralization:
 02_FACTOR_LIBRARY/01_STANDARDS/
 ├── README.md
 ├── IC_ANALYSIS.md              # IC分析
-├── FACTOR_PREPROCESSING.md     # 因子预处�?
-├── FACTOR_RETURN_ANALYSIS.md   # 因子收益率分�?
-└── FACTOR_NEUTRALIZATION.md   # 本文�?�?
+├── FACTOR_PREPROCESSING.md     # 因子预处?
+├── FACTOR_RETURN_ANALYSIS.md   # 因子收益率分?
+└── FACTOR_NEUTRALIZATION.md   # 本文??
 ```
 
 ---

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LINK_MAINTENANCE_MECHANISM_001
 version: 1.0.0
 status: Active

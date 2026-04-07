@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ARCHITECTURECLEANUPPROGRESS_001
 version: 1.0.0
 status: Active

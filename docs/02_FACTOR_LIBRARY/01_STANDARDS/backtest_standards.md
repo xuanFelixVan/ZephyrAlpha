@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BACKTEST_STANDARDS_001
 version: 1.0.0
 status: Active
@@ -29,7 +29,7 @@ compliance_level: 专业标准
 ## 1. 回测流程
 
 ```
-因子预处�?�?选股 �?生成信号 �?执行交易 �?绩效计算
+因子预处??选股 ?生成信号 ?执行交易 ?绩效计算
 ```
 
 ---
@@ -44,7 +44,7 @@ BACKTEST_CONFIG = {
         'start_date': '2020-01-01',
         'end_date': '2025-12-31',
         'rebalance_freq': 'D',  # 日频调仓
-        'stock_pool': '全市�?,
+        'stock_pool': '全市?,
         'commission': 0.0003,
         'slippage': 0.0005
     },
@@ -68,26 +68,26 @@ BACKTEST_CONFIG = {
 
 | 指标 | 计算方法 | 说明 |
 |------|----------|------|
-| 年化收益�?| (1+总收�?^(252/交易�?-1 | 核心指标 |
-| 总收益率 | (期末净�?期初净�?/期初净�?| 累计收益 |
+| 年化收益?| (1+总收?^(252/交易?-1 | 核心指标 |
+| 总收益率 | (期末净?期初净?/期初净?| 累计收益 |
 | 超额收益 | 组合收益 - 基准收益 | 跑赢基准 |
 
 ### 3.2 风险指标
 
 | 指标 | 计算方法 | 说明 |
 |------|----------|------|
-| 年化波动�?| std(日收�?*sqrt(252) | 波动风险 |
-| 最大回�?| max(Peak - Current)/Peak | 下行风险 |
-| 夏普比率 | (年化收益-无风�?/年化波动�?| 风险调整收益 |
-| 卡尔玛比�?| 年化收益/最大回�?| 回撤调整收益 |
+| 年化波动?| std(日收?*sqrt(252) | 波动风险 |
+| 最大回?| max(Peak - Current)/Peak | 下行风险 |
+| 夏普比率 | (年化收益-无风?/年化波动?| 风险调整收益 |
+| 卡尔玛比?| 年化收益/最大回?| 回撤调整收益 |
 
 ### 3.3 交易指标
 
 | 指标 | 计算方法 | 说明 |
 |------|----------|------|
-| 胜率 | 盈利次数/总交易次�?| 交易准确�?|
-| 盈亏�?| 平均盈利/平均亏损 | 收益损失�?|
-| 交易频率 | 总交易次�?交易天数 | 换手频率 |
+| 胜率 | 盈利次数/总交易次?| 交易准确?|
+| 盈亏?| 平均盈利/平均亏损 | 收益损失?|
+| 交易频率 | 总交易次?交易天数 | 换手频率 |
 
 ---
 
@@ -99,32 +99,32 @@ BACKTEST_CONFIG = {
 ### 回测概况
 - 回测区间: {start} - {end}
 - 初始资金: {capital}
-- 股票�? {pool}
+- 股票? {pool}
 
 ### 收益表现
 
 | 指标 | 策略 | 基准 |
 |------|------|------|
-| 年化收益�?| {value} | {value} |
+| 年化收益?| {value} | {value} |
 | 总收益率 | {value} | {value} |
 | 夏普比率 | {value} | - |
-| 最大回�?| {value} | {value} |
+| 最大回?| {value} | {value} |
 
 ### 风险分析
 
-| 指标 | �?|
+| 指标 | ?|
 |------|-----|
-| 年化波动�?| {value} |
-| 最大回�?| {value} |
+| 年化波动?| {value} |
+| 最大回?| {value} |
 | 回撤持续时间 | {value} |
 
 ### 交易统计
 
-| 指标 | �?|
+| 指标 | ?|
 |------|-----|
-| 总交易次�?| {value} |
+| 总交易次?| {value} |
 | 胜率 | {value} |
-| 盈亏�?| {value} |
+| 盈亏?| {value} |
 | 平均持有天数 | {value} |
 
 ### 结论
@@ -140,15 +140,15 @@ BACKTEST_CONFIG = {
 | 陷阱 | 说明 | 防范 |
 |------|------|------|
 | 未来函数 | 使用未来数据 | 严格区分训练/测试 |
-| 过拟�?| 参数过度优化 | 样本外验�?|
-| 幸存者偏�?| 只用现存股票 | 使用完整历史数据 |
+| 过拟?| 参数过度优化 | 样本外验?|
+| 幸存者偏?| 只用现存股票 | 使用完整历史数据 |
 | 执行忽略 | 忽略滑点佣金 | 加入交易成本 |
 
 ### 5.2 验证标准
 
 - 样本外ICIR > 0.3
 - 样本内外IC衰减 < 30%
-- 最大回�?< 15%
+- 最大回?< 15%
 - 交易频率合理（避免过度交易）
 
 ---
@@ -157,14 +157,14 @@ BACKTEST_CONFIG = {
 
 - 样本外ICIR > 0.3
 - 样本内外IC衰减 < 30%
-- 最大回�?< 15%
+- 最大回?< 15%
 - 交易频率合理（避免过度交易）
 
 ---
 
-## 6. 过拟合检�?
+## 6. 过拟合检?
 
-### 6.1 样本外验�?(Out-of-Sample Testing)
+### 6.1 样本外验?(Out-of-Sample Testing)
 
 ```python
 class OutOfSampleValidator:
@@ -174,7 +174,7 @@ class OutOfSampleValidator:
         self.train_ratio = train_ratio
 
     def split_data(self, data: pd.DataFrame) -> tuple:
-        """分割训练集和测试�?
+        """分割训练集和测试?
 
         参数:
             data: 原始数据
@@ -191,7 +191,7 @@ class OutOfSampleValidator:
         返回:
             {
                 'decay_ratio': IC衰减比例,
-                'is_overfit': 是否过拟�?
+                'is_overfit': 是否过拟?
                 'recommendation': 建议
             }
         """
@@ -218,8 +218,8 @@ class WalkForwardValidator:
     def __init__(self, train_window: int = 252, test_window: int = 63):
         """
         参数:
-            train_window: 训练窗口（交易日�?
-            test_window: 测试窗口（交易日�?
+            train_window: 训练窗口（交易日?
+            test_window: 测试窗口（交易日?
         """
         self.train_window = train_window
         self.test_window = test_window
@@ -252,12 +252,12 @@ class WalkForwardValidator:
         return results
 
     def analyze_stability(self, results: list) -> dict:
-        """分析稳定�?
+        """分析稳定?
 
         返回:
             {
-                'ic_std': IC标准�?
-                'return_std': 收益标准�?
+                'ic_std': IC标准?
+                'return_std': 收益标准?
                 'win_rate': 样本外正收益比例,
                 'is_stable': 是否稳定
             }
@@ -277,11 +277,11 @@ class WalkForwardValidator:
         }
 ```
 
-### 6.3 参数敏感性分�?
+### 6.3 参数敏感性分?
 
 ```python
 class ParameterSensitivityAnalyzer:
-    """参数敏感性分�?""
+    """参数敏感性分?""
 
     def __init__(self, param_ranges: dict):
         """
@@ -320,9 +320,9 @@ class ParameterSensitivityAnalyzer:
 
         返回:
             {
-                'best_params': 最优参�?
+                'best_params': 最优参?
                 'robust_params': 稳健参数（表现稳定）,
-                'sensitivity_score': 敏感度得�?
+                'sensitivity_score': 敏感度得?
             }
         """
         best_idx = results[metric].idxmax()
@@ -342,14 +342,14 @@ class ParameterSensitivityAnalyzer:
         }
 ```
 
-### 6.4 过拟合判定标�?
+### 6.4 过拟合判定标?
 
-| 指标 | 合格 | 警告 | 过拟�?|
+| 指标 | 合格 | 警告 | 过拟?|
 |------|------|------|--------|
-| IC衰减�?| <15% | 15-30% | >30% |
-| 样本外胜�?| >60% | 50-60% | <50% |
-| 参数敏感�?| <0.05 | 0.05-0.1 | >0.1 |
-| 滚动IC标准�?| <0.05 | 0.05-0.1 | >0.1 |
+| IC衰减?| <15% | 15-30% | >30% |
+| 样本外胜?| >60% | 50-60% | <50% |
+| 参数敏感?| <0.05 | 0.05-0.1 | >0.1 |
+| 滚动IC标准?| <0.05 | 0.05-0.1 | >0.1 |
 
 ---
 
@@ -357,7 +357,7 @@ class ParameterSensitivityAnalyzer:
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
-| v1.1 | 2026-03-28 | 增加过拟合检验、滚动验证、敏感性分�?|
+| v1.1 | 2026-03-28 | 增加过拟合检验、滚动验证、敏感性分?|
 | v1.0 | 2026-03-28 | 初始版本 |
 
 ---

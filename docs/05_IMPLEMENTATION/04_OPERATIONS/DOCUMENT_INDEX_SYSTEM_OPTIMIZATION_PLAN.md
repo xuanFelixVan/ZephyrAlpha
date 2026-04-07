@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN_001
 version: 1.0.0
 status: Active

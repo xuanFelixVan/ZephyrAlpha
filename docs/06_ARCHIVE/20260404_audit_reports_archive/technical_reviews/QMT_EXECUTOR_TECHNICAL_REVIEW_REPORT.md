@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: QMT_EXECUTOR_001
 review_id: TR-2026-04-02-QMT-EXEC
 version: 1.0.0

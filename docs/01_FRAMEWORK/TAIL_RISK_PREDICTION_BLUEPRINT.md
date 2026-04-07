@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: TAIL_RISK_PREDICTION_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供tail risk prediction blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -35,7 +35,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -47,7 +47,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-极端风险预测是风险管理的核心�?
+极端风险预测是风险管理的核心?
 
 - **尾部风险**: 预测极端事件
 
@@ -71,11 +71,11 @@ layer: Layer 4 (机器学习层)
 
 |------|------|----------|
 
-| EVT | 极值理�?| 尾部建模 |
+| EVT | 极值理?| 尾部建模 |
 
-| GPD | 广义帕累�?| 超阈�?|
+| GPD | 广义帕累?| 超阈?|
 
-| Quantile Regression | 分位数回�?| 条件VaR |
+| Quantile Regression | 分位数回?| 条件VaR |
 
 | DeepTail | 深度学习 | 复杂模式 |
 
@@ -137,11 +137,11 @@ class TailRiskPredictor:
 
         Args:
 
-            returns: 收益率序�?            
+            returns: 收益率序?            
 
         Returns:
 
-            float: VaR�?        """
+            float: VaR?        """
 
         pass
 
@@ -161,11 +161,11 @@ class TailRiskPredictor:
 
         Args:
 
-            returns: 收益率序�?            
+            returns: 收益率序?            
 
         Returns:
 
-            float: ES�?        """
+            float: ES?        """
 
         pass
 
@@ -179,7 +179,7 @@ class TailRiskPredictor:
 
     ) -> bool:
 
-        """检测尾部事�?        
+        """检测尾部事?        
 
         Args:
 

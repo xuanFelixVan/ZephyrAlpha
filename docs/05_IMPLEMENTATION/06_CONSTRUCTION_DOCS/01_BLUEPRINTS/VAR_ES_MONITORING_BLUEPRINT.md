@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 responsibility:
   - VaR/ES计算
   - 风险监控
@@ -12,7 +12,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 7 é£é©ç®¡çå±?
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
@@ -26,8 +25,6 @@ layer: Layer 5.3 (风险管理)
 
 > **核心职责**: 实时监控组合的VaR和ES风险指标
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼VaR/ESè®¡ç®ãå®æ¶çæ§ãåæµéªè¯?
-> - â?æ¬ææ¡£ä¸è´...
 
 
 ## 设计目标
@@ -84,77 +81,55 @@ layer: Layer 5.3 (风险管理)
 
 ## 核心定位
 
-å»ºç«VAR ES MONITORINGçè®¾è®¡ä¸å®ç°ï¼åºäºELK Stackææ¯ï¼åè­¦æ ¸å¿åè½ï¼é¢é²ç³»ç»æ
-éã?
+éã?
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼é£é©ç®¡çæ¨¡åï¼?
 
-**æ ¸å¿ä»·å?*:
-- å®æ¶çæ§æèµç»åçVaRï¼é£é©ä»·å¼ï¼åESï¼é¢æ?shortfallï¼ææ ?
 - 支持历史模拟法、参数法、蒙特卡洛模拟等多种计算方法
-- æä¾å®æ´çåæµéªè¯åè?
-- ä¸ä¸æºæé£é©ç®¡ççæ ¸å¿ææ ?
 
-**ä¸å¡ä»·å?*:
-- éåæèµç»åçä¸è¡é£é?
-- è®¾ç½®é£é©é¢è­¦éå?
 - 满足合规监管要求
 - 支持风险预算管理
 
 ### 1.2 版本信息
 
-| é¡¹ç® | å
-å®¹ |
+容 |
 |------|------|
 | **模块ID** | VAR_ES_MONITORING_001 |
 | **版本** | v1.0.0 |
-| **ç¶æ?* | Active |
+| **ç¶æ?* | Active |
 | **创建日期** | 2026-04-06 |
-| **å¼æºä¾èµ?* | pyRisk, arch, pyfolio |
-| **é¢è®¡å·¥æ¶** | 5-7å¤?|
 
 ---
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ç»åæéæ°æ® |
-| [ç»åæ
-æ¯åæèå¾](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | å¼ºä¾èµ?| æä¾æ
+| [ç»åæ
 景分析结果 |
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | å¼ºä¾èµ?| é£é©è´¡ç®åæ |
-| [PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | å¼ºä¾èµ?| ç»åç»©æè¯ä¼° |
-| [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | ä¸­ä¾èµ?| ååæµè¯ç³»ç» |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **pyRisk** | 1.0+ | 风险指标计算 | [GitHub](https://github.com/quantopian/pyfolio) |
-| **arch** | 5.0+ | æ³¢å¨çæ¨¡å?| [å®æ¹ææ¡£](https://arch.readthedocs.io/) |
 | **pyfolio** | 0.9+ | 组合分析 | [GitHub](https://github.com/quantopian/pyfolio) |
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
     A[组合优化引擎] --> B[VaR/ES监控]
-    C[ç»åæ
+    C[ç»åæ
 景分析] --> B
     D[数据质量监控] --> B
     
@@ -175,7 +150,6 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "æ°æ®è¾å
 ¥"
         A[组合持仓] --> D[VaR/ES计算器]
         B[收益率序列] --> D
@@ -189,7 +163,7 @@ graph TB
         D --> H[极值理论法]
     end
     
-    subgraph "çæ§å±?
+    subgraph "çæ§å±?
         I[风险阈值检查]
         J[预警信号生成]
         K[回测验证]
@@ -213,7 +187,6 @@ graph TB
 
 ---
 
-## 3. ææ¯å®ç?
 
 ### 3.1 核心API
 
@@ -224,7 +197,6 @@ import numpy as np
 import pandas as pd
 
 class VaRESCalculator:
-    """VaR/ESè®¡ç®å?""
     
     def __init__(self, confidence_level: float = 0.95):
         self.confidence_level = confidence_level
@@ -242,7 +214,6 @@ class VaRESCalculator:
         returns: np.ndarray,
         confidence: float = 0.95
     ) -> float:
-        """åæ°æ³VaR (æ­£æåå¸?"""
         mu = np.mean(returns)
         sigma = np.std(returns)
         z = stats.norm.ppf(1 - confidence)
@@ -273,26 +244,21 @@ class VaRESCalculator:
 
 ### 3.2 性能要求
 
-| ææ  | ç®æ å?|
 |------|--------|
 | 计算时间 | <100ms |
-| å
+| å
 存占用 | <50MB |
 | 实时更新频率 | 1分钟 |
-| æ¯æèµäº§æ?| 1000+ |
 
 ---
 
 ## 4. VaR/ES计算方法详解
 
-### 4.1 åå²æ¨¡ææ³?(Historical Simulation)
 
 **原理**: 使用历史收益率分布直接估计VaR和ES
 
 **优点**:
-- æ éåè®¾æ¶ççåå¸?
 - 捕捉肥尾特征
-- å®ç°ç®åç´è§?
 
 **缺点**:
 - 依赖历史数据质量
@@ -301,7 +267,6 @@ class VaRESCalculator:
 
 ```python
 class HistoricalVaR:
-    """åå²æ¨¡ææ³VaRè®¡ç®å?""
     
     def __init__(self, confidence_level: float = 0.95):
         self.confidence_level = confidence_level
@@ -315,11 +280,8 @@ class HistoricalVaR:
         计算历史模拟VaR
         
         参数:
-            returns: åå²æ¶ççåºå?
-            portfolio_value: ç»åä»·å?
             
         返回:
-            (VaRéé¢, VaRç¾åæ¯?
         """
         var_percentile = np.percentile(
             returns, 
@@ -338,11 +300,8 @@ class HistoricalVaR:
         计算历史模拟ES (Expected Shortfall)
         
         参数:
-            returns: åå²æ¶ççåºå?
-            portfolio_value: ç»åä»·å?
             
         返回:
-            (ESéé¢, ESç¾åæ¯?
         """
         var_percentile = np.percentile(
             returns,
@@ -361,24 +320,18 @@ class HistoricalVaR:
         return es_value, -es_percentile
 ```
 
-### 4.2 åæ°æ³?(Parametric Method)
+### 4.2 åæ°æ³?(Parametric Method)
 
-**åç**: åè®¾æ¶ççæä»ç¹å®åå¸ï¼éå¸¸ä¸ºæ­£æåå¸ï¼ï¼ä½¿ç¨åæ°ä¼°è®?
 
 **优点**:
-- è®¡ç®æçé«?
-- æ°å­¦æ¨å¯¼æ¸
 晰
 - 易于扩展到多资产
 
 **缺点**:
-- åå¸åè®¾å¯è½ä¸æç«?
 - 无法捕捉肥尾特征
-- å¯¹æç«¯äºä»¶ä¼°è®¡ä¸è¶?
 
 ```python
 class ParametricVaR:
-    """åæ°æ³VaRè®¡ç®å?""
     
     def __init__(
         self,
@@ -397,11 +350,8 @@ class ParametricVaR:
         计算参数法VaR
         
         参数:
-            returns: æ¶ççåºå?
-            portfolio_value: ç»åä»·å?
             
         返回:
-            (VaRéé¢, VaRç¾åæ¯?
         """
         mu = np.mean(returns)
         sigma = np.std(returns, ddof=1)
@@ -426,11 +376,8 @@ class ParametricVaR:
         计算参数法ES
         
         参数:
-            returns: æ¶ççåºå?
-            portfolio_value: ç»åä»·å?
             
         返回:
-            (ESéé¢, ESç¾åæ¯?
         """
         mu = np.mean(returns)
         sigma = np.std(returns, ddof=1)
@@ -452,7 +399,6 @@ class ParametricVaR:
         self,
         returns: np.ndarray
     ) -> int:
-        """ä¼°è®¡tåå¸èªç±åº?""
         kurtosis = stats.kurtosis(returns)
         if kurtosis <= 0:
             return 30
@@ -460,26 +406,19 @@ class ParametricVaR:
         return max(3, min(df, 30))
 ```
 
-### 4.3 èç¹å¡æ´æ¨¡ææ³?(Monte Carlo Simulation)
 
-**åç**: éè¿éæºæ¨¡æçæå¤§éæ
 景，估计VaR和ES
 
 **优点**:
 - 灵活性高
-- å¯å¤çå¤æåå¸?
-- å¯çº³å
-¥éçº¿æ§å
 ³ç³?
 
 **缺点**:
 - 计算量大
 - 依赖模型假设
-- éè¦å¤§éæ¨¡ææ¬¡æ?
 
 ```python
 class MonteCarloVaR:
-    """èç¹å¡æ´æ¨¡æVaRè®¡ç®å?""
     
     def __init__(
         self,
@@ -503,10 +442,8 @@ class MonteCarloVaR:
         参数:
             returns: 资产收益率DataFrame
             weights: 组合权重
-            portfolio_value: ç»åä»·å?
             
         返回:
-            (VaRéé¢, VaRç¾åæ¯?
         """
         mean_returns = returns.mean().values
         cov_matrix = returns.cov().values
@@ -535,10 +472,8 @@ class MonteCarloVaR:
         参数:
             returns: 资产收益率DataFrame
             weights: 组合权重
-            portfolio_value: ç»åä»·å?
             
         返回:
-            (ESéé¢, ESç¾åæ¯?
         """
         mean_returns = returns.mean().values
         cov_matrix = returns.cov().values
@@ -564,7 +499,6 @@ class MonteCarloVaR:
         mean: np.ndarray,
         cov: np.ndarray
     ) -> np.ndarray:
-        """æ¨¡ææ¶çç?""
         n_assets = len(mean)
         
         L = np.linalg.cholesky(cov)
@@ -582,14 +516,8 @@ class MonteCarloVaR:
 
 ### 4.4 方法比较与选择
 
-| æ¹æ³ | è®¡ç®éåº¦ | åç¡®æ?| éç¨åºæ¯ | æ¨èç½®ä¿¡åº?|
 |------|----------|--------|----------|------------|
-| **åå²æ¨¡ææ³?* | å¿?| ä¸?| æ°æ®å
 
-è¶³ãåå¸æªç?| 95%-99% |
-| **åæ°æ³?* | æå¿?| ä½?| æ­£æåå¸åè®¾æç«?| 95%-99% |
-| **èç¹å¡æ´** | æ
-?| é«?| å¤æåå¸ãéçº¿æ?| 95%-99.9% |
 
 ---
 
@@ -597,25 +525,13 @@ class MonteCarloVaR:
 
 ### 5.1 核心监控指标
 
-| ææ ç±»å« | ææ åç§° | è®¡ç®æ¹æ³ | çæ§é¢ç | é¢è­¦éå?| è¯´æ |
 |----------|----------|----------|----------|----------|------|
-| **VaRææ ** | 1æ¥VaR(95%) | åå²æ¨¡ææ³?| å®æ¶ | -5% | 95%ç½®ä¿¡åº¦ä¸1æ¥æå¤§æå¤?|
-| **VaRææ ** | 1æ¥VaR(99%) | åå²æ¨¡ææ³?| å®æ¶ | -8% | 99%ç½®ä¿¡åº¦ä¸1æ¥æå¤§æå¤?|
-| **VaRææ ** | 10æ¥VaR(99%) | â?0Ã1æ¥VaR | æ¯æ¥ | -25% | 99%ç½®ä¿¡åº¦ä¸10æ¥æå¤§æå¤?|
-| **ESææ ** | 1æ¥ES(95%) | å°¾é¨å¹³åæå¤± | å®æ¶ | -7% | è¶
-è¿VaRçå¹³åæå¤?|
-| **ESææ ** | 1æ¥ES(99%) | å°¾é¨å¹³åæå¤± | å®æ¶ | -12% | è¶
-è¿VaRçå¹³åæå¤?|
-| **åæµææ ** | Kupiecæ£éª?| LRç»è®¡é?| æ¯å¨ | p<0.05 | VaRæ¨¡åæææ§æ£éª?|
-| **åæµææ ** | Christoffersenæ£éª?| ç¬ç«æ§æ£éª?| æ¯å¨ | p<0.05 | çªç ´åºåç¬ç«æ§æ£éª?|
-| **åæµææ ** | çªç ´æ¬¡æ° | å®é
 损失>VaR次数 | 每日 | >5% | VaR突破频率 |
 
-### 5.2 çæ§ææ è®¡ç®å?
 
 ```python
 class VaRESMonitor:
-    """VaR/ESçæ§å?""
+    """VaR/ESçæ§å?""
     
     def __init__(
         self,
@@ -633,7 +549,6 @@ class VaRESMonitor:
         returns: np.ndarray,
         portfolio_value: float
     ) -> Dict[str, float]:
-        """è®¡ç®ææçæ§ææ ?""
         metrics = {}
         
         for conf in self.confidence_levels:
@@ -678,7 +593,7 @@ class VaRESMonitor:
                         "threshold": threshold,
                         "severity": "HIGH" if value < threshold * 1.5 else "MEDIUM",
                         "message": f"{metric_name} è¶
-è¿éå? {value:.2%} > {threshold:.2%}"
+è¿éå? {value:.2%} > {threshold:.2%}"
                     })
         
         return alerts
@@ -688,7 +603,6 @@ class VaRESMonitor:
 
 ```python
 class VaRBacktester:
-    """VaRåæµéªè¯å?""
     
     def __init__(self, confidence_level: float = 0.95):
         self.confidence_level = confidence_level
@@ -699,15 +613,12 @@ class VaRBacktester:
         var_estimates: np.ndarray
     ) -> Dict[str, float]:
         """
-        Kupiecæ æ¡ä»¶è¦çæ£éª?
         
         参数:
-            actual_returns: å®é
-æ¶çç?
-            var_estimates: VaRä¼°è®¡å?
+            actual_returns: å®é
+æ¶çç?
             
         返回:
-            æ£éªç»æå­å
 ?
         """
         n = len(actual_returns)
@@ -742,15 +653,12 @@ class VaRBacktester:
         var_estimates: np.ndarray
     ) -> Dict[str, float]:
         """
-        Christoffersenç¬ç«æ§æ£éª?
         
         参数:
-            actual_returns: å®é
-æ¶çç?
-            var_estimates: VaRä¼°è®¡å?
+            actual_returns: å®é
+æ¶çç?
             
         返回:
-            æ£éªç»æå­å
 ?
         """
         breaches = (actual_returns < -var_estimates).astype(int)
@@ -904,32 +812,23 @@ class VaRESAPI:
 | 阶段 | 任务 | 工时 |
 |------|------|------|
 | Phase 1 | 核心计算模块实现 | 16h |
-| Phase 2 | å¤æ¹æ³æ¯æãåæµéªè¯?| 16h |
-| Phase 3 | APIå¼åãå®æ¶çæ§é¢æ?| 16h |
 
 ---
 
 ## 6. 文档治理
 
-**ç´¢å¼ä½ç½®**: Layer 6 - ç»åä¼åå±?- é£é©ç®¡çæ¨¡å
 
 **版本管理**:
 - v1.0.0: 初始版本 (2026-04-06)
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 | v1.0.1 | 2026-04-06 | è¡¥å
 
-YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_STANDARDIZATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -6,17 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
-  - æ°æ®æ ååå¼æ?
   - 数据格式统一
-  - æ°æ®æ åå?
   - 数据类型转换
 layer: Layer 5.1 (数据处理)
 ---
 
-# æ°æ®æ ååå¼æèå?
 
 ## 核心定位
 
@@ -81,15 +77,9 @@ layer: Layer 5.1 (数据处理)
 
 ### 职责边界
 
-| è´è´£ | ä¸è´è´?|
 |------|--------|
-| â?å­æ®µå½åæ åå?| â?æ°æ®å­å¨ |
-| â?æ°æ®æ ¼å¼ç»ä¸ | â?æ°æ®æ¸
 洗 |
-| â?æ°æ®ç±»åè½¬æ¢ | â?æ°æ®è´¨éçæ§ |
-| â?æ°æ®éªè¯ | â?æ°æ®è®¢é
  |
-| â?æ åè§åç®¡ç | â?æ°æ®è¡ç¼?|
 
 ---
 
@@ -97,14 +87,8 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择dbt + Great Expectations
 
-| ç¹æ?| dbt + GE | Pandera | Pydantic |
+| ç¹æ?| dbt + GE | Pandera | Pydantic |
 |------|----------|---------|----------|
-| æ°æ®è½¬æ¢ | â­â­â­â­â­?| â­â­â­?| â­â­â­?|
-| æ°æ®éªè¯ | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­ |
-| SQLæ¯æ | â?| â?| â?|
-| ææ¡£çæ | â?| â?| â?|
-| å­¦ä¹ æ²çº¿ | â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
-| **æ¨èææ°** | **â­â­â­â­â­?* | â­â­â­â­ | â­â­â­â­ |
 
 ---
 
@@ -113,33 +97,16 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                   æ°æ®æ ååå¼ææ¶æ?                           â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                                                                â?
-â? ââââââââââââââââ?   ââââââââââââââââ?   ââââââââââââââââ?    â?
-â? â?æ åè§åå±?  â?   â?æ°æ®è½¬æ¢å±?  â?   â?æ°æ®éªè¯å±?  â?    â?
-â? â?             â?   â?             â?   â?             â?    â?
-â? â?â?å½åè§å   â?   â?â?æ ¼å¼è½¬æ¢   â?   â?â?ç±»åéªè¯   â?    â?
-â? â?â?æ ¼å¼è§å   â?   â?â?ç±»åè½¬æ¢   â?   â?â?èå´éªè¯   â?    â?
-â? â?â?éªè¯è§å   â?   â?â?åä½è½¬æ¢   â?   â?â?å¯ä¸æ§éªè¯?â?    â?
-â? ââââââââââââââââ?   ââââââââââââââââ?   ââââââââââââââââ?    â?
-â?        â?                  â?                   â?             â?
-â?        âââââââââââââââââââââ´âââââââââââââââââââââ?             â?
-â?                           â?                                   â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â? â?                   æ ååæµç¨?                           â?  â?
-â? â? 1. å½åæ åå?â?2. æ ¼å¼ç»ä¸ â?3. ç±»åè½¬æ¢ â?4. éªè¯    â?  â?
-â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
-â?                                                                â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                                                                â?
+â?        â?                  â?                   â?             â?
+â?                           â?                                   â?
+â?                                                                â?
 ```
 
 ---
 
 ## 3. 核心功能实现
 
-### 3.1 å½åæ åå?
 
 ```python
 import re
@@ -155,9 +122,8 @@ class NamingStandardizer:
         "开盘价": "open",
         "最高价": "high",
         "最低价": "low",
-        "æ¶çä»?: "close",
-        "æäº¤é?: "volume",
-        "æäº¤é¢?: "amount",
+        "æ¶çä»?: "close",
+        "æäº¤é?: "volume",
     }
     
     @classmethod
@@ -195,12 +161,11 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_date(value: Union[str, datetime], format: str = "%Y-%m-%d") -> str:
-        """æ ååæ¥ææ ¼å¼?""
         if isinstance(value, datetime):
             return value.strftime(format)
         
         if isinstance(value, str):
-            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Yå¹?mæ?dæ?]:
+            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Yå¹?mæ?dæ?]:
                 try:
                     dt = datetime.strptime(value, fmt)
                     return dt.strftime(format)
@@ -211,7 +176,6 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_symbol(symbol: str) -> str:
-        """æ ååè¡ç¥¨ä»£ç ?""
         symbol = symbol.upper().strip()
         
         if symbol.isdigit():
@@ -224,7 +188,6 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_price(value: Union[str, float, Decimal]) -> Decimal:
-        """æ ååä»·æ ?""
         if isinstance(value, str):
             value = value.replace(',', '')
         
@@ -247,7 +210,6 @@ class ValidationRule:
     error_message: str
 
 class DataValidator:
-    """æ°æ®éªè¯å?""
     
     def __init__(self):
         self.rules: List[ValidationRule] = []
@@ -266,7 +228,6 @@ class DataValidator:
         
         for rule in self.rules:
             if rule.field not in df.columns:
-                results["warnings"].append(f"å­æ®µ {rule.field} ä¸å­å?)
                 continue
             
             errors = self._apply_rule(df, rule)
@@ -283,7 +244,6 @@ class DataValidator:
         if rule.rule_type == "not_null":
             null_count = df[rule.field].isnull().sum()
             if null_count > 0:
-                errors.append(f"{rule.field}: {null_count} æ¡ç©ºå?)
         
         elif rule.rule_type == "range":
             min_val = rule.params.get("min")
@@ -292,26 +252,21 @@ class DataValidator:
             if min_val is not None:
                 invalid = df[df[rule.field] < min_val]
                 if len(invalid) > 0:
-                    errors.append(f"{rule.field}: {len(invalid)} æ¡å°äºæå°å?{min_val}")
             
             if max_val is not None:
                 invalid = df[df[rule.field] > max_val]
                 if len(invalid) > 0:
-                    errors.append(f"{rule.field}: {len(invalid)} æ¡å¤§äºæå¤§å?{max_val}")
         
         elif rule.rule_type == "unique":
             duplicates = df[df.duplicated(subset=[rule.field])]
             if len(duplicates) > 0:
-                errors.append(f"{rule.field}: {len(duplicates)} æ¡éå¤å?)
         
         return errors
 ```
 
-### 3.4 æ ååç®¡é?
 
 ```python
 class StandardizationPipeline:
-    """æ ååç®¡é?""
     
     def __init__(self):
         self.naming_standardizer = NamingStandardizer()
@@ -319,7 +274,6 @@ class StandardizationPipeline:
         self.validator = DataValidator()
     
     def process(self, df: pd.DataFrame, config: dict) -> pd.DataFrame:
-        """æ§è¡æ ååæµç¨?""
         df = self.naming_standardizer.standardize_dataframe(df)
         
         for field, format_type in config.get("format_rules", {}).items():
@@ -342,10 +296,7 @@ class StandardizationPipeline:
 
 ## 📋 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: DATA_PREPROCESSING_PROFESSIONAL_GAP_ANALYSIS_20260407_001
 version: 1.0.0
 status: Active

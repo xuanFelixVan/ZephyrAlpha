@@ -1,181 +1,181 @@
-﻿---
+﻿﻿---
 module_id: L11_QUANT_AGENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 归档文档、历史版本
 layer: Layer 11
-module_type: ﮔ ﺕﮒﺟﮔ۷۰ﮒ
+module_type: ﮔ ﺕﮒﺟﮔ۷۰ﮒ
 priority: P0
 estimated_hours: 30
-standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮒﮒ۶ﮔ ﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 ---
 
 
-# L11_QUANT_AGENT: ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+# L11_QUANT_AGENT: ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﻝﮔ؛**: v1.0  
-> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
-> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒ­ﻠ۸ﺎﮒ۷ﮒﺎ? 
-> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
-> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔ ﺕﮒﺟﮔ۷۰ﮒ)
+> **ﻝﮔ؛**: v1.0  
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒ­ﻠ۸ﺎﮒ۷ﮒﺎ? 
+> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
+> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔ ﺕﮒﺟﮔ۷۰ﮒ)
 
 ---
 
-## ﻭ ﻝ؟ﮒﺛ
+## ﻭ ﻝ؟ﮒﺛ
 
-- [1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ](#1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ)
-- [2. Agentﮔﭘﮔ](#2-agentﮔﭘﮔ)
-- [3. ﮔ۷۰ﮒﻝ؟۰ﻝ](#3-ﮔ۷۰ﮒﻝ؟۰ﻝ)
-- [4. ﮒﺓ۴ﮒﺓﻠﮔ](#4-ﮒﺓ۴ﮒﺓﻠﮔ)
-- [5. ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ](#5-ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)
-- [6. ﮒ؟ﮒ۷ﮔﭦﮒﭘ](#6-ﮒ؟ﮒ۷ﮔﭦﮒﭘ)
-- [7. ﮔ۶ﻟﺛﻛﺙﮒ](#7-ﮔ۶ﻟﺛﻛﺙﮒ)
-- [8. ﮔﭖﻟﺁﮔﺗﮔ۰](#8-ﮔﭖﻟﺁﮔﺗﮔ۰)
+- [1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ](#1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ)
+- [2. Agentﮔﭘﮔ](#2-agentﮔﭘﮔ)
+- [3. ﮔ۷۰ﮒﻝ؟۰ﻝ](#3-ﮔ۷۰ﮒﻝ؟۰ﻝ)
+- [4. ﮒﺓ۴ﮒﺓﻠﮔ](#4-ﮒﺓ۴ﮒﺓﻠﮔ)
+- [5. ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ](#5-ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)
+- [6. ﮒ؟ﮒ۷ﮔﭦﮒﭘ](#6-ﮒ؟ﮒ۷ﮔﭦﮒﭘ)
+- [7. ﮔ۶ﻟﺛﻛﺙﮒ](#7-ﮔ۶ﻟﺛﻛﺙﮒ)
+- [8. ﮔﭖﻟﺁﮔﺗﮔ۰](#8-ﮔﭖﻟﺁﮔﺗﮔ۰)
 
 ---
 
-## 1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
+## 1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### 1.1 ﮒﻟﺛﮒ؟ﻛﺛ
+### 1.1 ﮒﻟﺛﮒ؟ﻛﺛ
 
-**L11_QUANT_AGENT**ﮔﺁLayer 11ﻝﮔﭦﻟﺛAgentﮔ۷۰ﮒﺅﺙﮒﭦﻛﭦLangChain 1.0ﮔﮒﭨﭦﺅﺙﻟﺑﻟﺑ۲ﮔﭦﻟﺛﮔ۷ﻝﮒﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻙ?
+**L11_QUANT_AGENT**ﮔﺁLayer 11ﻝﮔﭦﻟﺛAgentﮔ۷۰ﮒﺅﺙﮒﭦﻛﭦLangChain 1.0ﮔﮒﭨﭦﺅﺙﻟﺑﻟﺑ۲ﮔﭦﻟﺛﮔ۷ﻝﮒﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻙ?
 
-**ﮔ ﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
-- ﻭ۶  **ﮔﭦﻟﺛﮔ۷ﻝ**ﺅﺙﮒﭦﻛﭦLLMﻟﺟﻟ۰ﮒ۳ﮔﮔ۷ﻝ
-- ﻭ۶ **ﮒﺓ۴ﮒﺓﻟﺍﻝ۷**ﺅﺙﻟﺍﻝ۷ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓﻠ
-- ﻭ­ **ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ**ﺅﺙﻝ؟۰ﻝﮒﺁﺗﻟﺁﮒﮒﺎﮒﻠﺟﮔﻟ؟ﺍﮒﺟ
-- ﻭ۰ﺅﺕ?**ﮒ؟ﮒ۷ﮔ۶ﮒﭘ**ﺅﺙPIIﮔ۲ﮔﭖﮒﮔﻠﮔ۶ﮒﭘ
-- ﻭ **ﮔ۶ﻟﺛﻝﮔ۶**ﺅﺙﻝﮔ۶Agentﮔ۶ﻟﺛﮔﮔ 
+**ﮔ ﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
+- ﻭ۶  **ﮔﭦﻟﺛﮔ۷ﻝ**ﺅﺙﮒﭦﻛﭦLLMﻟﺟﻟ۰ﮒ۳ﮔﮔ۷ﻝ
+- ﻭ۶ **ﮒﺓ۴ﮒﺓﻟﺍﻝ۷**ﺅﺙﻟﺍﻝ۷ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓﻠ
+- ﻭ­ **ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ**ﺅﺙﻝ؟۰ﻝﮒﺁﺗﻟﺁﮒﮒﺎﮒﻠﺟﮔﻟ؟ﺍﮒﺟ
+- ﻭ۰ﺅﺕ?**ﮒ؟ﮒ۷ﮔ۶ﮒﭘ**ﺅﺙPIIﮔ۲ﮔﭖﮒﮔﻠﮔ۶ﮒﭘ
+- ﻭ **ﮔ۶ﻟﺛﻝﮔ۶**ﺅﺙﻝﮔ۶Agentﮔ۶ﻟﺛﮔﮔ 
 
-### 1.2 ﮔﮔﺁﮔ 
+### 1.2 ﮔﮔﺁﮔ 
 
 ```yaml
-ﮔ ﺕﮒﺟﮔ۰ﮔﭘ:
-  - LangChain 1.0: Agentﮔ۰ﮔﭘ
-  - LangGraph: ﻝﭘﮔﮒﺝﮔ۶ﻟ۰ﮒﺙﮔ
-  - LangSmith: ﻝﮔ۶ﮒﻟﺍﻟﺁﮒﺗﺏﮒ?
+ﮔ ﺕﮒﺟﮔ۰ﮔﭘ:
+  - LangChain 1.0: Agentﮔ۰ﮔﭘ
+  - LangGraph: ﻝﭘﮔﮒﺝﮔ۶ﻟ۰ﮒﺙﮔ
+  - LangSmith: ﻝﮔ۶ﮒﻟﺍﻟﺁﮒﺗﺏﮒ?
 
-ﮔ۷۰ﮒﮔﺁﮔ:
-  ﮔ؛ﮒﺍﮔ۷۰ﮒ:
-    - deepseek-r1:14b (ﮔ۷ﻝﮒﺙ?
-    - qwen2.5-coder:14b (ﻝﺙﻝ۷ﮒﺙ?
-    - qwen3-coder:30b (ﻝﭨﺙﮒﮔﮒﺙ?
+ﮔ۷۰ﮒﮔﺁﮔ:
+  ﮔ؛ﮒﺍﮔ۷۰ﮒ:
+    - deepseek-r1:14b (ﮔ۷ﻝﮒﺙ?
+    - qwen2.5-coder:14b (ﻝﺙﻝ۷ﮒﺙ?
+    - qwen3-coder:30b (ﻝﭨﺙﮒﮔﮒﺙ?
   
-  ﻛﭦﻝ،ﺁAPI:
+  ﻛﭦﻝ،ﺁAPI:
     - GPT-4 Turbo (OpenAI)
     - Claude 3.5 Sonnet (Anthropic)
-    - Qwen-Max (ﻠﺟﻠﻛﭦ?
+    - Qwen-Max (ﻠﺟﻠﻛﭦ?
 
-ﮒﺓ۴ﮒﺓﻠﮔ:
-  - QuantTradingTools (ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓ)
-  - SystemTools (ﻝﺏﭨﻝﭨﻝ؟۰ﻝﮒﺓ۴ﮒﺓ)
-  - DataTools (ﮔﺍﮔ؟ﮒﮔﮒﺓ۴ﮒﺓ)
+ﮒﺓ۴ﮒﺓﻠﮔ:
+  - QuantTradingTools (ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓ)
+  - SystemTools (ﻝﺏﭨﻝﭨﻝ؟۰ﻝﮒﺓ۴ﮒﺓ)
+  - DataTools (ﮔﺍﮔ؟ﮒﮔﮒﺓ۴ﮒﺓ)
 ```
 
-### 1.3 ﮔ۷۰ﮒﻟﺝﺗﻝ
+### 1.3 ﮔ۷۰ﮒﻟﺝﺗﻝ
 
 ```yaml
-ﻟﺝﮒ۴:
-  - ﻝ۷ﮔﺓﮔﮒﺝ
-  - ﮔﮒﻝﮒﮔ?
-  - ﮒﺁﺗﻟﺁﻛﺕﻛﺕﮔ?
+ﻟﺝﮒ۴:
+  - ﻝ۷ﮔﺓﮔﮒﺝ
+  - ﮔﮒﻝﮒﮔ?
+  - ﮒﺁﺗﻟﺁﻛﺕﻛﺕﮔ?
 
-ﻟﺝﮒﭦ:
-  - ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮒﺏﻝ­
-  - ﮔ۶ﻟ۰ﻝﭨﮔ
-  - ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟
+ﻟﺝﮒﭦ:
+  - ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮒﺏﻝ­
+  - ﮔ۶ﻟ۰ﻝﭨﮔ
+  - ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟
 
-ﻛﺕﮒﮒ?
-  - ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲ (ﻝﺎTEXT_DRIVERﻟﺑﻟﺑ۲)
-  - UIﮔﺕﺎﮔ (ﻝﺎWEB_UIﻟﺑﻟﺑ۲)
-  - ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ (ﻝﺎTOOLSﻟﺑﻟﺑ۲)
+ﻛﺕﮒﮒ?
+  - ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲ (ﻝﺎTEXT_DRIVERﻟﺑﻟﺑ۲)
+  - UIﮔﺕﺎﮔ (ﻝﺎWEB_UIﻟﺑﻟﺑ۲)
+  - ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ (ﻝﺎTOOLSﻟﺑﻟﺑ۲)
 ```
 
 ---
 
-## 2. Agentﮔﭘﮔ
+## 2. Agentﮔﭘﮔ
 
-### 2.1 ﮔﺑﻛﺛﮔﭘﮔ
+### 2.1 ﮔﺑﻛﺛﮔﭘﮔ
 
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ? QuantTradingAgent                                       ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ? ﻗ? ModelManager (ﮔ۷۰ﮒﻝ؟۰ﻝ)                         ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ LocalModelManager (ﮔ؛ﮒﺍﮔ۷۰ﮒ)                ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ CloudModelManager (ﻛﭦﻝ،ﺁﮔ۷۰ﮒ)                ﻗ?  ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ?                       ﻗ?                               ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ? ﻗ? AgentCore (Agentﮔ ﺕﮒﺟ)                          ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ ReActLoop (ﮔ۷ﻝﮒﺝ۹ﻝﺁ)                        ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ ToolSelector (ﮒﺓ۴ﮒﺓﻠﮔ۸)                     ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ DecisionMaker (ﮒﺏﻝ­ﮒ?                      ﻗ?  ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ?                       ﻗ?                               ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ? ﻗ? ToolIntegration (ﮒﺓ۴ﮒﺓﻠﮔ)                      ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ QuantTools (ﻠﮒﮒﺓ۴ﮒﺓ)                       ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ SystemTools (ﻝﺏﭨﻝﭨﮒﺓ۴ﮒﺓ)                      ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ DataTools (ﮔﺍﮔ؟ﮒﺓ۴ﮒﺓ)                        ﻗ?  ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ?                       ﻗ?                               ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ? ﻗ? MemoryManager (ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)                        ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ ConversationMemory (ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ)               ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ LongTermMemory (ﻠﺟﮔﻟ؟ﺍﮒﺟ)                   ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ WorkingMemory (ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟ)                    ﻗ?  ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ?                       ﻗ?                               ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ? ﻗ? SecurityLayer (ﮒ؟ﮒ۷ﮒﺎ?                          ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ PIIDetector (PIIﮔ۲ﮔﭖ?                       ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ PermissionChecker (ﮔﻠﮔ۲ﮔ?                ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ AuditLogger (ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ)                      ﻗ?  ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? QuantTradingAgent                                       ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? ModelManager (ﮔ۷۰ﮒﻝ؟۰ﻝ)                         ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ LocalModelManager (ﮔ؛ﮒﺍﮔ۷۰ﮒ)                ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ CloudModelManager (ﻛﭦﻝ،ﺁﮔ۷۰ﮒ)                ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? AgentCore (Agentﮔ ﺕﮒﺟ)                          ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ ReActLoop (ﮔ۷ﻝﮒﺝ۹ﻝﺁ)                        ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ ToolSelector (ﮒﺓ۴ﮒﺓﻠﮔ۸)                     ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ DecisionMaker (ﮒﺏﻝ­ﮒ?                      ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? ToolIntegration (ﮒﺓ۴ﮒﺓﻠﮔ)                      ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ QuantTools (ﻠﮒﮒﺓ۴ﮒﺓ)                       ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ SystemTools (ﻝﺏﭨﻝﭨﮒﺓ۴ﮒﺓ)                      ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ DataTools (ﮔﺍﮔ؟ﮒﺓ۴ﮒﺓ)                        ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? MemoryManager (ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)                        ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ ConversationMemory (ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ)               ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ LongTermMemory (ﻠﺟﮔﻟ؟ﺍﮒﺟ)                   ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ WorkingMemory (ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟ)                    ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? SecurityLayer (ﮒ؟ﮒ۷ﮒﺎ?                          ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ PIIDetector (PIIﮔ۲ﮔﭖ?                       ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ PermissionChecker (ﮔﻠﮔ۲ﮔ?                ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ AuditLogger (ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ)                      ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 2.2 ReActﮒﺝ۹ﻝﺁ
+### 2.2 ReActﮒﺝ۹ﻝﺁ
 
-**LangChain 1.0ﮔ ﮒﮒReActﮒﺝ۹ﻝﺁ**ﺅﺙ?
+**LangChain 1.0ﮔ ﮒﮒReActﮒﺝ۹ﻝﺁ**ﺅﺙ?
 
 ```python
-# ReActﮒﺝ۹ﻝﺁﺅﺙReason ﻗ?Act ﻗ?Observe ﻗ?Decide
+# ReActﮒﺝ۹ﻝﺁﺅﺙReason ﻗ?Act ﻗ?Observe ﻗ?Decide
 
 class ReActLoop:
-    """ReActﮔ۷ﻝﮒﺝ۹ﻝﺁ"""
+    """ReActﮔ۷ﻝﮒﺝ۹ﻝﺁ"""
     
     def execute(self, user_input: str) -> str:
-        """ﮔ۶ﻟ۰ReActﮒﺝ۹ﻝﺁ"""
+        """ﮔ۶ﻟ۰ReActﮒﺝ۹ﻝﺁ"""
         
-        # 1. Reason (ﮔ۷ﻝ)
+        # 1. Reason (ﮔ۷ﻝ)
         thought = self.reason(user_input)
         
-        # 2. Act (ﻟ۰ﮒ۷)
+        # 2. Act (ﻟ۰ﮒ۷)
         action = self.act(thought)
         
-        # 3. Observe (ﻟ۶ﮒﺁ)
+        # 3. Observe (ﻟ۶ﮒﺁ)
         observation = self.observe(action)
         
-        # 4. Decide (ﮒﺏﻝ­)
+        # 4. Decide (ﮒﺏﻝ­)
         decision = self.decide(observation)
         
-        # ﮒﺝ۹ﻝﺁﻝﺑﮒﺍﮒﺝﮒﺍﮔﻝﭨﻝ­ﮔ۰?
+        # ﮒﺝ۹ﻝﺁﻝﺑﮒﺍﮒﺝﮒﺍﮔﻝﭨﻝ­ﮔ۰?
         while not decision.is_final:
             thought = self.reason(observation)
             action = self.act(thought)
@@ -185,7 +185,7 @@ class ReActLoop:
         return decision.answer
 ```
 
-### 2.3 ﮔ ﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
+### 2.3 ﮔ ﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
 
 ```python
 from langchain.agents import create_agent
@@ -194,34 +194,34 @@ from langchain.memory import ConversationBufferMemory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 class QuantTradingAgent:
-    """ﻠﮒﻛﭦ۳ﮔAI Agent"""
+    """ﻠﮒﻛﭦ۳ﮔAI Agent"""
     
     def __init__(self, config: dict):
         """
-        ﮒﮒ۶ﮒAgent
+        ﮒﮒ۶ﮒAgent
         
         Args:
-            config: ﻠﻝﺛ؟ﮒ­ﮒﺕ
-                - model_name: ﮔ۷۰ﮒﮒﻝ۶ﺍ
-                - tools: ﮒﺓ۴ﮒﺓﮒﻟ۰۷
-                - system_prompt: ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
+            config: ﻠﻝﺛ؟ﮒ­ﮒﺕ
+                - model_name: ﮔ۷۰ﮒﮒﻝ۶ﺍ
+                - tools: ﮒﺓ۴ﮒﺓﮒﻟ۰۷
+                - system_prompt: ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
         """
-        # 1. ﮒﮒ۶ﮒﮔ۷۰ﮒ?
+        # 1. ﮒﮒ۶ﮒﮔ۷۰ﮒ?
         self.llm = self._init_model(config["model_name"])
         
-        # 2. ﮒﮒ۶ﮒﮒﺓ۴ﮒ?
+        # 2. ﮒﮒ۶ﮒﮒﺓ۴ﮒ?
         self.tools = config["tools"]
         
-        # 3. ﮒﮒ۶ﮒﻟ؟ﺍﮒﺟ?
+        # 3. ﮒﮒ۶ﮒﻟ؟ﺍﮒﺟ?
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
         
-        # 4. ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
+        # 4. ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
         self.system_prompt = config.get("system_prompt", self._default_prompt())
         
-        # 5. ﮒﮒﭨﭦAgent
+        # 5. ﮒﮒﭨﭦAgent
         self.agent = create_agent(
             model=self.llm,
             tools=self.tools,
@@ -230,16 +230,16 @@ class QuantTradingAgent:
         )
     
     def _init_model(self, model_name: str):
-        """ﮒﮒ۶ﮒﮔ۷۰ﮒ?""
+        """ﮒﮒ۶ﮒﮔ۷۰ﮒ?""
         
         if model_name in ["gpt-4-turbo", "gpt-4", "claude-3"]:
-            # ﻛﭦﻝ،ﺁAPI
+            # ﻛﭦﻝ،ﺁAPI
             return ChatOpenAI(
                 model=model_name,
                 temperature=0.1
             )
         else:
-            # ﮔ؛ﮒﺍOllama
+            # ﮔ؛ﮒﺍOllama
             return ChatOpenAI(
                 base_url="http://localhost:11434/v1",
                 api_key="ollama",
@@ -249,105 +249,105 @@ class QuantTradingAgent:
     
     def chat(self, user_input: str) -> str:
         """
-        ﻛﺕAgentﮒﺁﺗﻟﺁ
+        ﻛﺕAgentﮒﺁﺗﻟﺁ
         
         Args:
-            user_input: ﻝ۷ﮔﺓﻟﺝﮒ۴
+            user_input: ﻝ۷ﮔﺓﻟﺝﮒ۴
             
         Returns:
-            Agentﮒﮒ۳
+            Agentﮒﮒ۳
         """
         try:
             result = self.agent.invoke({"input": user_input})
             return result["output"]
         except Exception as e:
-            return f"ﮔﺎﮔ­ﺅﺙﮒ۳ﻝﮔ۷ﻝﻟﺁﺓﮔﺎﮔﭘﮒﭦﻝﺍﻠﻟﺁﺁﺅﺙ{str(e)}"
+            return f"ﮔﺎﮔ­ﺅﺙﮒ۳ﻝﮔ۷ﻝﻟﺁﺓﮔﺎﮔﭘﮒﭦﻝﺍﻠﻟﺁﺁﺅﺙ{str(e)}"
     
     def _default_prompt(self) -> str:
-        """ﻠﭨﻟ؟۳ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?""
-        return """ﻛﺛ ﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝAIﮒ۸ﮔﺅﺙﻛﺕﻠ۷ﮒﺕ؟ﮒ۸ﻝ۷ﮔﺓﻠﻟﺟﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮔﻛﺛﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻙ?
+        """ﻠﭨﻟ؟۳ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?""
+        return """ﻛﺛ ﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝAIﮒ۸ﮔﺅﺙﻛﺕﻠ۷ﮒﺕ؟ﮒ۸ﻝ۷ﮔﺓﻠﻟﺟﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮔﻛﺛﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻙ?
 
-## ﻛﺛ ﻝﻟﭦ،ﻛﭨﺛ
-- ﻛﺕﻛﺕﻠﮒﻛﭦ۳ﮔﻠ۰ﺝﻠ؟
-- ﻝﺏﭨﻝﭨﮔﻛﺛﮒ۸ﮔ
-- ﻠ۲ﻠ۸ﻝ؟۰ﻝﻛﺕﮒ؟ﭘ
+## ﻛﺛ ﻝﻟﭦ،ﻛﭨﺛ
+- ﻛﺕﻛﺕﻠﮒﻛﭦ۳ﮔﻠ۰ﺝﻠ؟
+- ﻝﺏﭨﻝﭨﮔﻛﺛﮒ۸ﮔ
+- ﻠ۲ﻠ۸ﻝ؟۰ﻝﻛﺕﮒ؟ﭘ
 
-## ﻛﺛ ﻝﻟﺛﮒ
-1. **ﻝ­ﻝ۴ﻠﻝﺛ؟**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻝ­ﻝ۴ﮔﻟﺟﺍﺅﺙﮔﮒﮒﮔﺍﮒﺗﭘﻠﻝﺛ؟
-2. **ﻠ۲ﮔ۶ﻟﺍﮔﺑ**ﺅﺙﻝﻟ۶۲ﻠ۲ﻠ۸ﮒﮒ۴ﺛﺅﺙﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ
-3. **ﻝﭘﮔﮔ۴ﻟﺁ?*ﺅﺙﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔﮒﺗﭘﻝ۷ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﻠ۵
-4. **ﮒﮔﭖﮒﮔ**ﺅﺙﻟﺟﻟ۰ﻝ­ﻝ۴ﮒﮔﭖﺅﺙﮒﮔﻝﭨﮔ
-5. **ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟**ﺅﺙﮔ ﺗﮔ؟ﮒﺕﮒﭦﮔﮒﭖﻝﭨﮒﭦﻛﺕﻛﺕﮒﭨﭦﻟ؟?
+## ﻛﺛ ﻝﻟﺛﮒ
+1. **ﻝ­ﻝ۴ﻠﻝﺛ؟**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻝ­ﻝ۴ﮔﻟﺟﺍﺅﺙﮔﮒﮒﮔﺍﮒﺗﭘﻠﻝﺛ؟
+2. **ﻠ۲ﮔ۶ﻟﺍﮔﺑ**ﺅﺙﻝﻟ۶۲ﻠ۲ﻠ۸ﮒﮒ۴ﺛﺅﺙﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ
+3. **ﻝﭘﮔﮔ۴ﻟﺁ?*ﺅﺙﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔﮒﺗﭘﻝ۷ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﻠ۵
+4. **ﮒﮔﭖﮒﮔ**ﺅﺙﻟﺟﻟ۰ﻝ­ﻝ۴ﮒﮔﭖﺅﺙﮒﮔﻝﭨﮔ
+5. **ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟**ﺅﺙﮔ ﺗﮔ؟ﮒﺕﮒﭦﮔﮒﭖﻝﭨﮒﭦﻛﺕﻛﺕﮒﭨﭦﻟ؟?
 
-## ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
-1. ﮒﮔﻝ۷ﮔﺓﮔﮒﺝﺅﺙﻠﻝﺛ?ﮔ۴ﻟﺁ۱/ﻟﺍﮔﺑ/ﮒﭨﭦﻟ؟؟ﺅﺙ?
-2. ﮔﮒﮒﺏﻠ؟ﮒﮔﺍ
-3. ﻟﺍﻝ۷ﮒﺁﺗﮒﭦﻝﻝﺏﭨﻝﭨﮒﺓ۴ﮒ?
-4. ﮒﺍﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﮒ۴ﺛﻝﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﻠ۵
+## ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
+1. ﮒﮔﻝ۷ﮔﺓﮔﮒﺝﺅﺙﻠﻝﺛ?ﮔ۴ﻟﺁ۱/ﻟﺍﮔﺑ/ﮒﭨﭦﻟ؟؟ﺅﺙ?
+2. ﮔﮒﮒﺏﻠ؟ﮒﮔﺍ
+3. ﻟﺍﻝ۷ﮒﺁﺗﮒﭦﻝﻝﺏﭨﻝﭨﮒﺓ۴ﮒ?
+4. ﮒﺍﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﮒ۴ﺛﻝﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﻠ۵
 
-## ﻛﺕﻛﺕﮔﺁﻟﺁ­ﮔ ﮒﺍ
-- "ﮒ۷ﻠﻝ­ﻝ۴" ﻗ?momentum
-- "ﻛﭨﺓﮒﺙﻝ­ﻝ? ﻗ?value
-- "ﻟﺑ۷ﻠﻝ­ﻝ۴" ﻗ?quality
-- "ﮔﻠﺟﻝ­ﻝ۴" ﻗ?growth
-- "ﮔﻛﭨ5ﮒ۳? ﻗ?holding_period=5
-- "ﮔ­۱ﮔ10%" ﻗ?stop_loss=0.10
-- "ﮔﮒ۳۶ﮒﮔ?5%" ﻗ?max_drawdown=0.15
-- "ﮒﮒ۹ﻛﭨﻛﺛ5%" ﻗ?position_limit=0.05
+## ﻛﺕﻛﺕﮔﺁﻟﺁ­ﮔ ﮒﺍ
+- "ﮒ۷ﻠﻝ­ﻝ۴" ﻗ?momentum
+- "ﻛﭨﺓﮒﺙﻝ­ﻝ? ﻗ?value
+- "ﻟﺑ۷ﻠﻝ­ﻝ۴" ﻗ?quality
+- "ﮔﻠﺟﻝ­ﻝ۴" ﻗ?growth
+- "ﮔﻛﭨ5ﮒ۳? ﻗ?holding_period=5
+- "ﮔ­۱ﮔ10%" ﻗ?stop_loss=0.10
+- "ﮔﮒ۳۶ﮒﮔ?5%" ﻗ?max_drawdown=0.15
+- "ﮒﮒ۹ﻛﭨﻛﺛ5%" ﻗ?position_limit=0.05
 
-## ﮒﮒ۳ﻠ۲ﮔ ﺙ
-- ﻛﺕﻛﺕﻛﺛﻛﺕﮔ۵ﮔﭘ۸
-- ﻝ؟ﮔﺑﻛﺛﻛﺕﮒ۳ﺎﻝﭨﻟ
-- ﮒﮒ۴ﺛﻛﺛﻛﺟﮔﻛﺕﻛﺕ?
-- ﮔﻛﺝﮔﺍﮔ؟ﮔﺁﮔﮒﭨﭦﻟ؟؟
+## ﮒﮒ۳ﻠ۲ﮔ ﺙ
+- ﻛﺕﻛﺕﻛﺛﻛﺕﮔ۵ﮔﭘ۸
+- ﻝ؟ﮔﺑﻛﺛﻛﺕﮒ۳ﺎﻝﭨﻟ
+- ﮒﮒ۴ﺛﻛﺛﻛﺟﮔﻛﺕﻛﺕ?
+- ﮔﻛﺝﮔﺍﮔ؟ﮔﺁﮔﮒﭨﭦﻟ؟؟
 
-## ﻠﻟ۵ﮔﻝ۳ﭦ
-- ﮔﮔﮒﮔﺍﮒﺟﻠ۰ﭨﻠﻟﺟﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﺅﺙﻛﺕﻟﺛﻝﺑﮔ۴ﮔ۶ﻟ۰?
-- ﮔﭘﮒﻟﭖﻠﻝﮔﻛﺛﻠﻟ۵ﻝ۷ﮔﺓﻝ۰؟ﻟ؟?
-- ﮔﻛﺝﮔﺍﮔ؟ﮔﺁﮔﻝﮒﭨﭦﻟ؟؟ﺅﺙﻛﺕﻝﭨﮒﭦﻝﭨﮒﺁﺗﮔﺟﻟﺁ?
+## ﻠﻟ۵ﮔﻝ۳ﭦ
+- ﮔﮔﮒﮔﺍﮒﺟﻠ۰ﭨﻠﻟﺟﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﺅﺙﻛﺕﻟﺛﻝﺑﮔ۴ﮔ۶ﻟ۰?
+- ﮔﭘﮒﻟﭖﻠﻝﮔﻛﺛﻠﻟ۵ﻝ۷ﮔﺓﻝ۰؟ﻟ؟?
+- ﮔﻛﺝﮔﺍﮔ؟ﮔﺁﮔﻝﮒﭨﭦﻟ؟؟ﺅﺙﻛﺕﻝﭨﮒﭦﻝﭨﮒﺁﺗﮔﺟﻟﺁ?
 """
 ```
 
 ---
 
-## 3. ﮔ۷۰ﮒﻝ؟۰ﻝ
+## 3. ﮔ۷۰ﮒﻝ؟۰ﻝ
 
-### 3.1 ﮔ؛ﮒﺍﮔ۷۰ﮒﻝ؟۰ﻝ
+### 3.1 ﮔ؛ﮒﺍﮔ۷۰ﮒﻝ؟۰ﻝ
 
 ```python
 class LocalModelManager:
-    """ﮔ؛ﮒﺍﮔ۷۰ﮒﻝ؟۰ﻝﮒ?""
+    """ﮔ؛ﮒﺍﮔ۷۰ﮒﻝ؟۰ﻝﮒ?""
     
     def __init__(self):
         self.models = {
             "deepseek-r1:8b": {
                 "size": "5.2GB",
                 "vram": "~6GB",
-                "strength": "ﮔ۷ﻝﮒﺟ?,
-                "use_case": "ﻝ؟ﮒﮔ۴ﻟﺁ?
+                "strength": "ﮔ۷ﻝﮒﺟ?,
+                "use_case": "ﻝ؟ﮒﮔ۴ﻟﺁ?
             },
             "deepseek-r1:14b": {
                 "size": "9.0GB",
                 "vram": "~10GB",
-                "strength": "ﮔ۷ﻝﮒﺙ?,
-                "use_case": "ﻝ­ﻝ۴ﻠﻝﺛ؟"
+                "strength": "ﮔ۷ﻝﮒﺙ?,
+                "use_case": "ﻝ­ﻝ۴ﻠﻝﺛ؟"
             },
             "qwen2.5-coder:14b": {
                 "size": "9.0GB",
                 "vram": "~10GB",
-                "strength": "ﻝﺙﻝ۷ﮒﺙ?,
-                "use_case": "ﻛﭨ۲ﻝ ﻝﮔ"
+                "strength": "ﻝﺙﻝ۷ﮒﺙ?,
+                "use_case": "ﻛﭨ۲ﻝ ﻝﮔ"
             },
             "qwen3-coder:30b": {
                 "size": "18GB",
                 "vram": "~20GB",
-                "strength": "ﻝﭨﺙﮒﮔﮒﺙ?,
-                "use_case": "ﮒ۳ﮔﮒﮔ"
+                "strength": "ﻝﭨﺙﮒﮔﮒﺙ?,
+                "use_case": "ﮒ۳ﮔﮒﮔ"
             }
         }
     
     def get_model(self, model_name: str) -> ChatOpenAI:
-        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
+        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
         return ChatOpenAI(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
@@ -356,7 +356,7 @@ class LocalModelManager:
         )
     
     def check_availability(self, model_name: str) -> bool:
-        """ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﺁﮒ۵ﮒﺁﻝ?""
+        """ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﺁﮒ۵ﮒﺁﻝ?""
         try:
             import requests
             response = requests.get("http://localhost:11434/api/tags")
@@ -366,11 +366,11 @@ class LocalModelManager:
             return False
 ```
 
-### 3.2 ﻛﭦﻝ،ﺁﮔ۷۰ﮒﻝ؟۰ﻝ
+### 3.2 ﻛﭦﻝ،ﺁﮔ۷۰ﮒﻝ؟۰ﻝ
 
 ```python
 class CloudModelManager:
-    """ﻛﭦﻝ،ﺁﮔ۷۰ﮒﻝ؟۰ﻝﮒ?""
+    """ﻛﭦﻝ،ﺁﮔ۷۰ﮒﻝ؟۰ﻝﮒ?""
     
     def __init__(self, api_keys: dict):
         self.api_keys = api_keys
@@ -378,22 +378,22 @@ class CloudModelManager:
             "gpt-4-turbo": {
                 "provider": "openai",
                 "cost": "ﺡ۴0.03/1k tokens",
-                "strength": "ﮔ۷ﻝﮔﮒﺙ?
+                "strength": "ﮔ۷ﻝﮔﮒﺙ?
             },
             "claude-3.5-sonnet": {
                 "provider": "anthropic",
                 "cost": "ﺡ۴0.02/1k tokens",
-                "strength": "ﻠﺟﮔﮔ؛ﮒﮔ?
+                "strength": "ﻠﺟﮔﮔ؛ﮒﮔ?
             },
             "qwen-max": {
                 "provider": "alibaba",
                 "cost": "ﺡ۴0.01/1k tokens",
-                "strength": "ﻛﺕ­ﮔﻝﻟ۶۲"
+                "strength": "ﻛﺕ­ﮔﻝﻟ۶۲"
             }
         }
     
     def get_model(self, model_name: str) -> ChatOpenAI:
-        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
+        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
         
         if model_name.startswith("gpt"):
             return ChatOpenAI(
@@ -408,75 +408,75 @@ class CloudModelManager:
                 api_key=self.api_keys["anthropic"],
                 temperature=0.1
             )
-        # ... ﮒﭘﻛﭨﮔ۷۰ﮒ
+        # ... ﮒﭘﻛﭨﮔ۷۰ﮒ
 ```
 
-### 3.3 ﮔﭦﻟﺛﻟﺓﺁﻝﺎ
+### 3.3 ﮔﭦﻟﺛﻟﺓﺁﻝﺎ
 
 ```python
 class ModelRouter:
-    """ﮔ۷۰ﮒﮔﭦﻟﺛﻟﺓﺁﻝﺎ"""
+    """ﮔ۷۰ﮒﮔﭦﻟﺛﻟﺓﺁﻝﺎ"""
     
     def __init__(self, local_manager, cloud_manager):
         self.local = local_manager
         self.cloud = cloud_manager
     
     def route(self, user_input: str, intent: str) -> str:
-        """ﮔﭦﻟﺛﻟﺓﺁﻝﺎﮒﺍﮒﻠﻝﮔ۷۰ﮒ"""
+        """ﮔﭦﻟﺛﻟﺓﺁﻝﺎﮒﺍﮒﻠﻝﮔ۷۰ﮒ"""
         
-        # 1. ﻝ؟ﮒﮔ۴ﻟﺁ?ﻗ?ﮔ؛ﮒﺍﮒﺍﮔ۷۰ﮒ?
+        # 1. ﻝ؟ﮒﮔ۴ﻟﺁ?ﻗ?ﮔ؛ﮒﺍﮒﺍﮔ۷۰ﮒ?
         if intent == "query_status":
             return "deepseek-r1:8b"
         
-        # 2. ﻝ­ﻝ۴ﻠﻝﺛ؟ ﻗ?ﮔ؛ﮒﺍﻛﺕ­ﮔ۷۰ﮒ?
+        # 2. ﻝ­ﻝ۴ﻠﻝﺛ؟ ﻗ?ﮔ؛ﮒﺍﻛﺕ­ﮔ۷۰ﮒ?
         elif intent == "configure_strategy":
             return "deepseek-r1:14b"
         
-        # 3. ﻛﭨ۲ﻝ ﻝﮔ ﻗ?ﮔ؛ﮒﺍﻝﺙﻝ۷ﮔ۷۰ﮒ
+        # 3. ﻛﭨ۲ﻝ ﻝﮔ ﻗ?ﮔ؛ﮒﺍﻝﺙﻝ۷ﮔ۷۰ﮒ
         elif intent == "generate_code":
             return "qwen2.5-coder:14b"
         
-        # 4. ﮒ۳ﮔﮒﮔ ﻗ?ﮔ؛ﮒﺍﮒ۳۶ﮔ۷۰ﮒ?
+        # 4. ﮒ۳ﮔﮒﮔ ﻗ?ﮔ؛ﮒﺍﮒ۳۶ﮔ۷۰ﮒ?
         elif intent == "complex_analysis":
             return "qwen3-coder:30b"
         
-        # 5. ﻝﺑ۶ﮔ۴ﻛﭨﭨﮒ?ﻗ?ﻛﭦﻝ،ﺁAPI
+        # 5. ﻝﺑ۶ﮔ۴ﻛﭨﭨﮒ?ﻗ?ﻛﭦﻝ،ﺁAPI
         elif intent == "urgent_task":
             return "gpt-4-turbo"
         
-        # 6. ﻠﭨﻟ؟۳ ﻗ?ﮔ؛ﮒﺍﻛﺕ­ﮔ۷۰ﮒ?
+        # 6. ﻠﭨﻟ؟۳ ﻗ?ﮔ؛ﮒﺍﻛﺕ­ﮔ۷۰ﮒ?
         else:
             return "deepseek-r1:14b"
     
     def get_model_instance(self, model_name: str):
-        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
+        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
         
-        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮔ؛ﮒﺍﮔ۷۰ﮒ
+        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮔ؛ﮒﺍﮔ۷۰ﮒ
         if model_name in self.local.models:
             if self.local.check_availability(model_name):
                 return self.local.get_model(model_name)
         
-        # ﮒﻠﮒﺍﻛﭦﻝ،ﺁﮔ۷۰ﮒ?
+        # ﮒﻠﮒﺍﻛﭦﻝ،ﺁﮔ۷۰ﮒ?
         return self.cloud.get_model(model_name)
 ```
 
 ---
 
-## 4. ﮒﺓ۴ﮒﺓﻠﮔ
+## 4. ﮒﺓ۴ﮒﺓﻠﮔ
 
-### 4.1 ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒ
+### 4.1 ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒ
 
 ```python
 from langchain.tools import Tool
 
 class ToolRegistry:
-    """ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕ­ﮒﺟ"""
+    """ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕ­ﮒﺟ"""
     
     def __init__(self):
         self.tools = {}
     
     def register(self, name: str, func: callable, description: str):
-        """ﮔﺏ۷ﮒﮒﺓ۴ﮒﺓ"""
+        """ﮔﺏ۷ﮒﮒﺓ۴ﮒﺓ"""
         self.tools[name] = Tool(
             name=name,
             func=func,
@@ -484,84 +484,84 @@ class ToolRegistry:
         )
     
     def get_tool(self, name: str) -> Tool:
-        """ﻟﺓﮒﮒﺓ۴ﮒﺓ"""
+        """ﻟﺓﮒﮒﺓ۴ﮒﺓ"""
         return self.tools.get(name)
     
     def get_all_tools(self) -> list:
-        """ﻟﺓﮒﮔﮔﮒﺓ۴ﮒ?""
+        """ﻟﺓﮒﮔﮔﮒﺓ۴ﮒ?""
         return list(self.tools.values())
 ```
 
-### 4.2 ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ
+### 4.2 ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ
 
 ```python
 class ToolCategories:
-    """ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ"""
+    """ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ"""
     
-    # ﻝ­ﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
+    # ﻝ­ﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     STRATEGY_TOOLS = [
-        "ﻠﻝﺛ؟ﻝ­ﻝ۴",
-        "ﻛﺟ؟ﮔﺗﻝ­ﻝ۴",
-        "ﮒ ﻠ۳ﻝ­ﻝ۴",
-        "ﮒﺁﮒ۷ﻝ­ﻝ۴",
-        "ﮒﮔ­۱ﻝ­ﻝ۴"
+        "ﻠﻝﺛ؟ﻝ­ﻝ۴",
+        "ﻛﺟ؟ﮔﺗﻝ­ﻝ۴",
+        "ﮒ ﻠ۳ﻝ­ﻝ۴",
+        "ﮒﺁﮒ۷ﻝ­ﻝ۴",
+        "ﮒﮔ­۱ﻝ­ﻝ۴"
     ]
     
-    # ﻠ۲ﮔ۶ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
+    # ﻠ۲ﮔ۶ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     RISK_TOOLS = [
-        "ﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ",
-        "ﻟ؟ﺝﻝﺛ؟ﮔ­۱ﮔﮔ­۱ﻝ",
-        "ﻟﺍﮔﺑﻛﭨﻛﺛﻠﮒﭘ"
+        "ﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ",
+        "ﻟ؟ﺝﻝﺛ؟ﮔ­۱ﮔﮔ­۱ﻝ",
+        "ﻟﺍﮔﺑﻛﭨﻛﺛﻠﮒﭘ"
     ]
     
-    # ﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒﺓ۴ﮒﺓ
+    # ﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒﺓ۴ﮒﺓ
     QUERY_TOOLS = [
-        "ﮔ۴ﻟﺁ۱ﮔﻛﭨ",
-        "ﮔ۴ﻟﺁ۱ﮒ۶ﮔ",
-        "ﮔ۴ﻟﺁ۱ﮔﻛﭦ۳",
-        "ﮔ۴ﻟﺁ۱ﻟﭖﻠ",
-        "ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?
+        "ﮔ۴ﻟﺁ۱ﮔﻛﭨ",
+        "ﮔ۴ﻟﺁ۱ﮒ۶ﮔ",
+        "ﮔ۴ﻟﺁ۱ﮔﻛﭦ۳",
+        "ﮔ۴ﻟﺁ۱ﻟﭖﻠ",
+        "ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?
     ]
     
-    # ﻝﺏﭨﻝﭨﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
+    # ﻝﺏﭨﻝﭨﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     SYSTEM_TOOLS = [
-        "ﮔ۴ﻝﮔ۴ﮒﺟ",
-        "ﮒﺁﺙﮒﭦﮔ۴ﮒ",
-        "ﻝﺏﭨﻝﭨﻠﻝﺛ؟"
+        "ﮔ۴ﻝﮔ۴ﮒﺟ",
+        "ﮒﺁﺙﮒﭦﮔ۴ﮒ",
+        "ﻝﺏﭨﻝﭨﻠﻝﺛ؟"
     ]
     
-    # ﮒﮔﭖﮒﮔﮒﺓ۴ﮒﺓ
+    # ﮒﮔﭖﮒﮔﮒﺓ۴ﮒﺓ
     BACKTEST_TOOLS = [
-        "ﻟﺟﻟ۰ﮒﮔﭖ",
-        "ﮔ۴ﻝﮒﮔﭖﻝﭨﮔ",
-        "ﻛﺙﮒﮒﮔﺍ"
+        "ﻟﺟﻟ۰ﮒﮔﭖ",
+        "ﮔ۴ﻝﮒﮔﭖﻝﭨﮔ",
+        "ﻛﺙﮒﮒﮔﺍ"
     ]
 ```
 
-### 4.3 ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮔﭖﻝ۷
+### 4.3 ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮔﭖﻝ۷
 
 ```python
 class ToolExecutor:
-    """ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰ﮒ?""
+    """ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰ﮒ?""
     
     def __init__(self, tool_registry: ToolRegistry):
         self.registry = tool_registry
     
     def execute(self, tool_name: str, params: dict) -> dict:
-        """ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓ"""
+        """ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓ"""
         
-        # 1. ﻟﺓﮒﮒﺓ۴ﮒﺓ
+        # 1. ﻟﺓﮒﮒﺓ۴ﮒﺓ
         tool = self.registry.get_tool(tool_name)
         if not tool:
             return {
                 "success": False,
-                "error": f"ﮒﺓ۴ﮒﺓ {tool_name} ﻛﺕﮒ­ﮒ?
+                "error": f"ﮒﺓ۴ﮒﺓ {tool_name} ﻛﺕﮒ­ﮒ?
             }
         
-        # 2. ﮒﮔﺍﻠ۹ﻟﺁ
+        # 2. ﮒﮔﺍﻠ۹ﻟﺁ
         validated_params = self._validate_params(tool, params)
         
-        # 3. ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓ
+        # 3. ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓ
         try:
             result = tool.func(validated_params)
             return {
@@ -575,22 +575,22 @@ class ToolExecutor:
             }
     
     def _validate_params(self, tool: Tool, params: dict) -> dict:
-        """ﻠ۹ﻟﺁﮒﮔﺍ"""
-        # ﮒﮔﺍﻠ۹ﻟﺁﻠﭨﻟﺝ
+        """ﻠ۹ﻟﺁﮒﮔﺍ"""
+        # ﮒﮔﺍﻠ۹ﻟﺁﻠﭨﻟﺝ
         return params
 ```
 
 ---
 
-## 5. ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ
+## 5. ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ
 
-### 5.1 ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ
+### 5.1 ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ
 
 ```python
 from langchain.memory import ConversationBufferMemory
 
 class ConversationMemory:
-    """ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ"""
+    """ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ"""
     
     def __init__(self, max_history: int = 100):
         self.memory = ConversationBufferMemory(
@@ -600,32 +600,32 @@ class ConversationMemory:
         self.max_history = max_history
     
     def add(self, role: str, content: str):
-        """ﮔﺓﭨﮒ ﮒﺁﺗﻟﺁ"""
+        """ﮔﺓﭨﮒ ﮒﺁﺗﻟﺁ"""
         if role == "user":
             self.memory.chat_memory.add_user_message(content)
         else:
             self.memory.chat_memory.add_ai_message(content)
     
     def get_history(self, last_n: int = None) -> list:
-        """ﻟﺓﮒﮒﮒﺎ"""
+        """ﻟﺓﮒﮒﮒﺎ"""
         history = self.memory.chat_memory.messages
         if last_n:
             return history[-last_n:]
         return history
     
     def clear(self):
-        """ﮔﺕﻝ۸ﭦﻟ؟ﺍﮒﺟ"""
+        """ﮔﺕﻝ۸ﭦﻟ؟ﺍﮒﺟ"""
         self.memory.clear()
 ```
 
-### 5.2 ﻠﺟﮔﻟ؟ﺍﮒﺟ
+### 5.2 ﻠﺟﮔﻟ؟ﺍﮒﺟ
 
 ```python
 from langchain.vectorstores import Milvus
 from langchain.embeddings import OpenAIEmbeddings
 
 class LongTermMemory:
-    """ﻠﺟﮔﻟ؟ﺍﮒﺟﺅﺙﮒﻠﮔﺍﮔ؟ﮒﭦﺅﺙ?""
+    """ﻠﺟﮔﻟ؟ﺍﮒﺟﺅﺙﮒﻠﮔﺍﮔ؟ﮒﭦﺅﺙ?""
     
     def __init__(self, collection_name: str = "quant_memory"):
         self.embeddings = OpenAIEmbeddings()
@@ -635,14 +635,14 @@ class LongTermMemory:
         )
     
     def store(self, text: str, metadata: dict = None):
-        """ﮒ­ﮒ۷ﻟ؟ﺍﮒﺟ"""
+        """ﮒ­ﮒ۷ﻟ؟ﺍﮒﺟ"""
         self.vectorstore.add_texts(
             texts=[text],
             metadatas=[metadata] if metadata else None
         )
     
     def retrieve(self, query: str, k: int = 5) -> list:
-        """ﮔ۲ﻝﺑ۱ﻟ؟ﺍﮒﺟ?""
+        """ﮔ۲ﻝﺑ۱ﻟ؟ﺍﮒﺟ?""
         results = self.vectorstore.similarity_search(
             query=query,
             k=k
@@ -650,11 +650,11 @@ class LongTermMemory:
         return results
 ```
 
-### 5.3 ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟ
+### 5.3 ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟ
 
 ```python
 class WorkingMemory:
-    """ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟﺅﺙﮒﺛﮒﻛﺙﻟﺁﻝﭘﮔﺅﺙ"""
+    """ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟﺅﺙﮒﺛﮒﻛﺙﻟﺁﻝﭘﮔﺅﺙ"""
     
     def __init__(self):
         self.state = {
@@ -665,15 +665,15 @@ class WorkingMemory:
         }
     
     def update(self, key: str, value: Any):
-        """ﮔﺑﮔﺍﻝﭘﮔ?""
+        """ﮔﺑﮔﺍﻝﭘﮔ?""
         self.state[key] = value
     
     def get(self, key: str) -> Any:
-        """ﻟﺓﮒﻝﭘﮔ?""
+        """ﻟﺓﮒﻝﭘﮔ?""
         return self.state.get(key)
     
     def clear(self):
-        """ﮔﺕﻝ۸ﭦﻝﭘﮔ?""
+        """ﮔﺕﻝ۸ﭦﻝﭘﮔ?""
         self.state = {
             "current_strategy": None,
             "current_task": None,
@@ -684,15 +684,15 @@ class WorkingMemory:
 
 ---
 
-## 6. ﮒ؟ﮒ۷ﮔﭦﮒﭘ
+## 6. ﮒ؟ﮒ۷ﮔﭦﮒﭘ
 
-### 6.1 PIIﮔ۲ﮔﭖ?
+### 6.1 PIIﮔ۲ﮔﭖ?
 
 ```python
 import re
 
 class PIIDetector:
-    """PIIﮔ۲ﮔﭖﮒ۷"""
+    """PIIﮔ۲ﮔﭖﮒ۷"""
     
     def __init__(self):
         self.patterns = {
@@ -703,7 +703,7 @@ class PIIDetector:
         }
     
     def detect(self, text: str) -> list:
-        """ﮔ۲ﮔﭖPII"""
+        """ﮔ۲ﮔﭖPII"""
         detected = []
         for pii_type, pattern in self.patterns.items():
             matches = re.findall(pattern, text)
@@ -715,17 +715,17 @@ class PIIDetector:
         return detected
     
     def mask(self, text: str) -> str:
-        """ﻟﺎﮔ"""
+        """ﻟﺎﮔ"""
         for pii_type, pattern in self.patterns.items():
             text = re.sub(pattern, f"[{pii_type.upper()}_MASKED]", text)
         return text
 ```
 
-### 6.2 ﮔﻠﮔ۶ﮒﭘ
+### 6.2 ﮔﻠﮔ۶ﮒﭘ
 
 ```python
 class PermissionChecker:
-    """ﮔﻠﮔ۲ﮔ۴ﮒ۷"""
+    """ﮔﻠﮔ۲ﮔ۴ﮒ۷"""
     
     def __init__(self):
         self.permissions = {
@@ -735,19 +735,19 @@ class PermissionChecker:
         }
     
     def check(self, user_role: str, action: str) -> bool:
-        """ﮔ۲ﮔ۴ﮔﻠ?""
+        """ﮔ۲ﮔ۴ﮔﻠ?""
         allowed_actions = self.permissions.get(user_role, [])
         return action in allowed_actions
 ```
 
-### 6.3 ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
+### 6.3 ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
 
 ```python
 import logging
 from datetime import datetime
 
 class AuditLogger:
-    """ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ"""
+    """ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ"""
     
     def __init__(self, log_file: str = "logs/audit.log"):
         self.logger = logging.getLogger("audit")
@@ -760,7 +760,7 @@ class AuditLogger:
         self.logger.addHandler(handler)
     
     def log(self, user: str, action: str, details: dict):
-        """ﻟ؟ﺍﮒﺛﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ"""
+        """ﻟ؟ﺍﮒﺛﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ"""
         self.logger.info({
             "timestamp": datetime.now().isoformat(),
             "user": user,
@@ -771,19 +771,19 @@ class AuditLogger:
 
 ---
 
-## 7. ﮔ۶ﻟﺛﻛﺙﮒ
+## 7. ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 7.1 ﮔ۷۰ﮒﻝﺙﮒ­
+### 7.1 ﮔ۷۰ﮒﻝﺙﮒ­
 
 ```python
 from functools import lru_cache
 
 class ModelCache:
-    """ﮔ۷۰ﮒﻝﺙﮒ­"""
+    """ﮔ۷۰ﮒﻝﺙﮒ­"""
     
     @lru_cache(maxsize=10)
     def get_model(self, model_name: str):
-        """ﻟﺓﮒﮔ۷۰ﮒﺅﺙﮒﺕ۵ﻝﺙﮒ­ﺅﺙ?""
+        """ﻟﺓﮒﮔ۷۰ﮒﺅﺙﮒﺕ۵ﻝﺙﮒ­ﺅﺙ?""
         return ChatOpenAI(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
@@ -792,30 +792,30 @@ class ModelCache:
         )
 ```
 
-### 7.2 ﮒﺗﭘﮒﮔ۶ﮒﭘ
+### 7.2 ﮒﺗﭘﮒﮔ۶ﮒﭘ
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
 
 class ConcurrentExecutor:
-    """ﮒﺗﭘﮒﮔ۶ﻟ۰ﮒ?""
+    """ﮒﺗﭘﮒﮔ۶ﻟ۰ﮒ?""
     
     def __init__(self, max_workers: int = 4):
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
     
     def execute(self, func: callable, *args, **kwargs):
-        """ﮒﺗﭘﮒﮔ۶ﻟ۰"""
+        """ﮒﺗﭘﮒﮔ۶ﻟ۰"""
         future = self.executor.submit(func, *args, **kwargs)
         return future.result()
 ```
 
-### 7.3 ﮔ۶ﻟﺛﻝﮔ۶
+### 7.3 ﮔ۶ﻟﺛﻝﮔ۶
 
 ```python
 import time
 
 class PerformanceMonitor:
-    """ﮔ۶ﻟﺛﻝﮔ۶"""
+    """ﮔ۶ﻟﺛﻝﮔ۶"""
     
     def __init__(self):
         self.metrics = {
@@ -825,11 +825,11 @@ class PerformanceMonitor:
         }
     
     def record(self, metric: str, value: float):
-        """ﻟ؟ﺍﮒﺛﮔﮔ """
+        """ﻟ؟ﺍﮒﺛﮔﮔ """
         self.metrics[metric].append(value)
     
     def get_stats(self, metric: str) -> dict:
-        """ﻟﺓﮒﻝﭨﻟ؟۰"""
+        """ﻟﺓﮒﻝﭨﻟ؟۰"""
         values = self.metrics[metric]
         return {
             "avg": sum(values) / len(values) if values else 0,
@@ -841,114 +841,114 @@ class PerformanceMonitor:
 
 ---
 
-## 8. ﮔﭖﻟﺁﮔﺗﮔ۰
+## 8. ﮔﭖﻟﺁﮔﺗﮔ۰
 
-### 8.1 ﮒﮒﮔﭖﻟﺁ
+### 8.1 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 def test_agent_creation():
-    """ﮔﭖﻟﺁAgentﮒﮒﭨﭦ"""
+    """ﮔﭖﻟﺁAgentﮒﮒﭨﭦ"""
     config = {
         "model_name": "deepseek-r1:14b",
         "tools": [],
-        "system_prompt": "ﮔﭖﻟﺁ"
+        "system_prompt": "ﮔﭖﻟﺁ"
     }
     
     agent = QuantTradingAgent(config)
     assert agent is not None
 
 def test_model_routing():
-    """ﮔﭖﻟﺁﮔ۷۰ﮒﻟﺓﺁﻝﺎ"""
+    """ﮔﭖﻟﺁﮔ۷۰ﮒﻟﺓﺁﻝﺎ"""
     router = ModelRouter(local_manager, cloud_manager)
     
-    # ﮔﭖﻟﺁﻝ؟ﮒﮔ۴ﻟﺁ۱ﻟﺓﺁﻝ?
-    model = router.route("ﮔ۴ﻟﺁ۱ﻝﭘﮔ?, "query_status")
+    # ﮔﭖﻟﺁﻝ؟ﮒﮔ۴ﻟﺁ۱ﻟﺓﺁﻝ?
+    model = router.route("ﮔ۴ﻟﺁ۱ﻝﭘﮔ?, "query_status")
     assert model == "deepseek-r1:8b"
     
-    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟ﻟﺓﺁﻝﺎ
-    model = router.route("ﻠﻝﺛ؟ﻝ­ﻝ۴", "configure_strategy")
+    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟ﻟﺓﺁﻝﺎ
+    model = router.route("ﻠﻝﺛ؟ﻝ­ﻝ۴", "configure_strategy")
     assert model == "deepseek-r1:14b"
 ```
 
-### 8.2 ﻠﮔﮔﭖﻟﺁ
+### 8.2 ﻠﮔﮔﭖﻟﺁ
 
 ```python
 def test_end_to_end_conversation():
-    """ﻝ،ﺁﮒﺍﻝ،ﺁﮒﺁﺗﻟﺁﮔﭖﻟﺁ?""
+    """ﻝ،ﺁﮒﺍﻝ،ﺁﮒﺁﺗﻟﺁﮔﭖﻟﺁ?""
     agent = QuantTradingAgent(config)
     
-    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟
-    response = agent.chat("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%")
-    assert "ﻝ­ﻝ۴" in response
+    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟
+    response = agent.chat("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%")
+    assert "ﻝ­ﻝ۴" in response
     
-    # ﮔﭖﻟﺁﮒ۳ﻟﺛ؟ﮒﺁﺗﻟﺁ
-    response = agent.chat("ﻟﺟﻟ۰ﮒﮔﭖ")
-    assert "ﮒﮔﭖ" in response
+    # ﮔﭖﻟﺁﮒ۳ﻟﺛ؟ﮒﺁﺗﻟﺁ
+    response = agent.chat("ﻟﺟﻟ۰ﮒﮔﭖ")
+    assert "ﮒﮔﭖ" in response
 ```
 
-### 8.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
+### 8.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 def test_response_time():
-    """ﮒﮒﭦﮔﭘﻠﺑﮔﭖﻟﺁ"""
+    """ﮒﮒﭦﮔﭘﻠﺑﮔﭖﻟﺁ"""
     agent = QuantTradingAgent(config)
     
     times = []
     for i in range(10):
         start = time.time()
-        agent.chat("ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?)
+        agent.chat("ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?)
         end = time.time()
         times.append(end - start)
     
     avg_time = sum(times) / len(times)
-    assert avg_time < 3.0  # ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑﮒﺍﻛﭦ3ﻝ۶?
+    assert avg_time < 3.0  # ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑﮒﺍﻛﭦ3ﻝ۶?
 ```
 
 ---
 
-## 9. ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
+## 9. ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
-### 9.1 ﻠﻝﺛ؟ﮔﻛﭨﭘ
+### 9.1 ﻠﻝﺛ؟ﮔﻛﭨﭘ
 
-**ﮔﻛﭨﭘﻟﺓﺁﮒﺝ**: `config/layer_11/agent_config.yaml`
+**ﮔﻛﭨﭘﻟﺓﺁﮒﺝ**: `config/layer_11/agent_config.yaml`
 
 ```yaml
-# Agentﻠﻝﺛ؟
+# Agentﻠﻝﺛ؟
 agent:
-  # ﻠﭨﻟ؟۳ﮔ۷۰ﮒ
+  # ﻠﭨﻟ؟۳ﮔ۷۰ﮒ
   default_model: "deepseek-r1:14b"
   
-  # ﮔ۷۰ﮒﻠﻝﺛ؟
+  # ﮔ۷۰ﮒﻠﻝﺛ؟
   models:
     local:
       - name: "deepseek-r1:8b"
-        use_case: "ﻝ؟ﮒﮔ۴ﻟﺁ?
+        use_case: "ﻝ؟ﮒﮔ۴ﻟﺁ?
       - name: "deepseek-r1:14b"
-        use_case: "ﻝ­ﻝ۴ﻠﻝﺛ؟"
+        use_case: "ﻝ­ﻝ۴ﻠﻝﺛ؟"
       - name: "qwen2.5-coder:14b"
-        use_case: "ﻛﭨ۲ﻝ ﻝﮔ"
+        use_case: "ﻛﭨ۲ﻝ ﻝﮔ"
       - name: "qwen3-coder:30b"
-        use_case: "ﮒ۳ﮔﮒﮔ"
+        use_case: "ﮒ۳ﮔﮒﮔ"
     
     cloud:
       - name: "gpt-4-turbo"
-        use_case: "ﻝﺑ۶ﮔ۴ﻛﭨﭨﮒ?
+        use_case: "ﻝﺑ۶ﮔ۴ﻛﭨﭨﮒ?
         api_key: "${OPENAI_API_KEY}"
   
-  # ﻟ؟ﺍﮒﺟﻠﻝﺛ؟
+  # ﻟ؟ﺍﮒﺟﻠﻝﺛ؟
   memory:
     max_history: 100
     long_term:
       enabled: true
       collection: "quant_memory"
   
-  # ﮒ؟ﮒ۷ﻠﻝﺛ؟
+  # ﮒ؟ﮒ۷ﻠﻝﺛ؟
   security:
     pii_detection: true
     permission_check: true
     audit_log: true
   
-  # ﮔ۶ﻟﺛﻠﻝﺛ؟
+  # ﮔ۶ﻟﺛﻠﻝﺛ؟
   performance:
     model_cache_size: 10
     max_concurrent: 4
@@ -957,19 +957,19 @@ agent:
 
 ---
 
-## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
+## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
 
-### ﮔ ﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
+### ﮔ ﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
 
-| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
-| [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
-| [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔﻙﮒﻛﺕAIﮒﺎﻟ؟ﺝﻟ؟?|
-| [Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?|
-| [ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ﻙﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒ?|
+| [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
+| [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔﻙﮒﻛﺕAIﮒﺎﻟ؟ﺝﻟ؟?|
+| [Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?|
+| [ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ﻙﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒ?|
 
 ---
 
-> **ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02  
-> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝ ﮒ؟ﮔﺛ
+> **ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02  
+> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝ ﮒ؟ﮔﺛ

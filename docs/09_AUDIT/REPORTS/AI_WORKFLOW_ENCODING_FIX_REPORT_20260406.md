@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: AUDIT_AI工作流层编码问题修复报告_001
 version: 1.0.0
 status: Active
@@ -27,7 +27,7 @@ compliance_level: 专业标准
 |------|------|
 | **修复日期** | 2026-04-06 |
 | **修复范围** | docs/10_AI_WORKFLOW/ (29个文档) |
-| **修复结果** | ✅ 已完成（编码已统一为 UTF-8；内容级别仍有少量 `�` 需人工补全） |
+| **修复结果** | ✅ 已完成（编码已统一为 UTF-8；内容级别仍有少量 `` 需人工补全） |
 | **风险等级** | 🟠 中高风险 - 局部内容需人工干预 |
 
 ---
@@ -43,10 +43,10 @@ compliance_level: 专业标准
 | 状态 | 数量 | 说明 |
 |------|------|------|
 | **UTF-8 可正常解码** | 29 | 已统一为 UTF-8（无“无法解码”文件） |
-| **无替换字符 `�`** | 4 | 内容完整、可直接阅读 |
-| **含替换字符 `�`** | 25 | 主要集中在 YAML 元数据/标题/目录锚点/符号位，需人工补全或替换 |
+| **无替换字符 ``** | 4 | 内容完整、可直接阅读 |
+| **含替换字符 ``** | 25 | 主要集中在 YAML 元数据/标题/目录锚点/符号位，需人工补全或替换 |
 
-**无替换字符 `�` 的文件（可直接阅读）**：
+**无替换字符 `` 的文件（可直接阅读）**：
 1. DATA_SOURCE_EXTENSION_BLUEPRINT.md
 2. REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md
 3. SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md
@@ -61,8 +61,8 @@ compliance_level: 专业标准
 | 内容级替换字符定位清单 | ✅ 成功 - 输出 25 个文件的定位与预览，便于人工补全 |
 
 **根本原因分析**：
-- **混合编码/非法字节写入**：部分文件包含无法被 UTF-8 解释的非法字节序列，导致不同工具/编辑器表现不同（乱码、无法解码、或被替换为 `�`）。
-- **不可逆内容丢失已发生**：部分位置已被替换字符 `�`（U+FFFD）占位，说明原始字节信息已丢失，自动化无法“无损恢复”，只能人工补全语义。
+- **混合编码/非法字节写入**：部分文件包含无法被 UTF-8 解释的非法字节序列，导致不同工具/编辑器表现不同（乱码、无法解码、或被替换为 ``）。
+- **不可逆内容丢失已发生**：部分位置已被替换字符 ``（U+FFFD）占位，说明原始字节信息已丢失，自动化无法“无损恢复”，只能人工补全语义。
 - **可自动修复的部分**：文件级编码统一与“明显 mojibake 信号”清理可自动完成。
 
 ### 2.4 INDEX.md修复
@@ -79,35 +79,35 @@ compliance_level: 专业标准
 
 | 序号 | 文件名 | 问题类型 | 建议操作 |
 |------|--------|----------|----------|
-| 1 | AI_WORKFLOW_LOGGER_BLUEPRINT.md | 含 `�`（多处元数据/标题/符号位） | 人工补全关键字段（owner/standard_type/标题/目录锚点） |
-| 2 | AI_WORK_REPORTER_BLUEPRINT.md | 含 `�`（多处元数据/标题/符号位） | 同上 |
-| 3 | INDEX.md | 含 `�`（索引标题/目录/列表符号） | 人工修复索引可读性与锚点 |
-| 4 | OPEN_SOURCE_MODULE_SOLUTION.md | 含 `�`（数量最高） | 人工批量替换/补全（优先 YAML 元数据与标题段落） |
+| 1 | AI_WORKFLOW_LOGGER_BLUEPRINT.md | 含 ``（多处元数据/标题/符号位） | 人工补全关键字段（owner/standard_type/标题/目录锚点） |
+| 2 | AI_WORK_REPORTER_BLUEPRINT.md | 含 ``（多处元数据/标题/符号位） | 同上 |
+| 3 | INDEX.md | 含 ``（索引标题/目录/列表符号） | 人工修复索引可读性与锚点 |
+| 4 | OPEN_SOURCE_MODULE_SOLUTION.md | 含 ``（数量最高） | 人工批量替换/补全（优先 YAML 元数据与标题段落） |
 
-### 3.2 中优先级文件 (P1)（含 `�`，但不阻断索引/核心阅读）
+### 3.2 中优先级文件 (P1)（含 ``，但不阻断索引/核心阅读）
 
 | 序号 | 文件名 | 问题类型 |
 |------|--------|----------|
-| 1 | FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md | 含 `�` |
-| 2 | LIVE_TRADING_MONITOR_BLUEPRINT.md | 含 `�` |
-| 3 | PERFORMANCE_ANALYSIS_BLUEPRINT.md | 含 `�` |
-| 4 | COMPLIANCE_MONITORING_BLUEPRINT.md | 含 `�` |
-| 5 | REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md | 含 `�` |
-| 6 | DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md | 含 `�` |
-| 7 | VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md | 含 `�` |
-| 8 | DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md | 含 `�` |
-| 9 | OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md | 含 `�` |
-| 10 | MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md | 含 `�` |
-| 11 | OPEN_SOURCE_INTEGRATION_BLUEPRINT.md | 含 `�` |
-| 12 | SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md | 含 `�` |
-| 13 | SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md | 含 `�` |
-| 14 | SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md | 含 `�` |
-| 15 | SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md | 含 `�` |
-| 16 | SENTIMENT_ANALYSIS_TEST_PLAN.md | 含 `�` |
-| 17 | SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md | 含 `�` |
-| 18 | SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md | 含 `�` |
-| 19 | SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md | 含 `�` |
-| 20 | SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md | 含 `�` |
+| 1 | FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md | 含 `` |
+| 2 | LIVE_TRADING_MONITOR_BLUEPRINT.md | 含 `` |
+| 3 | PERFORMANCE_ANALYSIS_BLUEPRINT.md | 含 `` |
+| 4 | COMPLIANCE_MONITORING_BLUEPRINT.md | 含 `` |
+| 5 | REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md | 含 `` |
+| 6 | DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md | 含 `` |
+| 7 | VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md | 含 `` |
+| 8 | DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md | 含 `` |
+| 9 | OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md | 含 `` |
+| 10 | MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md | 含 `` |
+| 11 | OPEN_SOURCE_INTEGRATION_BLUEPRINT.md | 含 `` |
+| 12 | SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md | 含 `` |
+| 13 | SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md | 含 `` |
+| 14 | SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md | 含 `` |
+| 15 | SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md | 含 `` |
+| 16 | SENTIMENT_ANALYSIS_TEST_PLAN.md | 含 `` |
+| 17 | SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md | 含 `` |
+| 18 | SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md | 含 `` |
+| 19 | SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md | 含 `` |
+| 20 | SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md | 含 `` |
 
 ---
 
@@ -140,8 +140,8 @@ compliance_level: 专业标准
 |------|------|
 | 总文件数 | 29 |
 | UTF-8 可解码 | 29 (100%) |
-| 无 `�`（无需人工） | 4 (14%) |
-| 含 `�`（需人工补全） | 25 (86%) |
+| 无 ``（无需人工） | 4 (14%) |
+| 含 ``（需人工补全） | 25 (86%) |
 | 已清除典型 mojibake 信号 | ✅（扫描结果为 0） |
 
 ---
@@ -165,13 +165,13 @@ compliance_level: 专业标准
 
 ---
 
-## 7. 附录：替换字符 `�` 定位（节选）
+## 7. 附录：替换字符 `` 定位（节选）
 
 > 说明：以下为每个文件最多列出 8 处预览（行号 + 行内容前 120 字符）。建议优先修复 YAML 头部字段（owner/standard_type/applicable_scope 等）、标题、目录锚点、列表符号位。完整清单可通过全仓扫描 `\ufffd` 生成。
 
 ### 7.1 替换字符数量 Top 10
 
-| 排名 | 文件 | `�` 数量 |
+| 排名 | 文件 | `` 数量 |
 |------|------|----------|
 | 1 | OPEN_SOURCE_MODULE_SOLUTION.md | 713 |
 | 2 | SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md | 551 |
@@ -187,29 +187,29 @@ compliance_level: 专业标准
 ### 7.2 P0 文件定位预览（每个最多 8 处）
 
 #### 7.2.1 OPEN_SOURCE_MODULE_SOLUTION.md（713）
-- L7: `owner: 首席架构�?�`
-- L9: `applicable_scope: 开源模块选型与推�?�`
-- L15: `# 个人量化系统开源模块完整方�?�`
-- L19: `> **适用对象**: 个人开发�?�+ AI辅助模式`
-- L20: `> **成本控制**: 全部免费或低成本开源方�?�`
+- L7: `owner: 首席架构?`
+- L9: `applicable_scope: 开源模块选型与推?`
+- L15: `# 个人量化系统开源模块完整方?`
+- L19: `> **适用对象**: 个人开发?+ AI辅助模式`
+- L20: `> **成本控制**: 全部免费或低成本开源方?`
 
 #### 7.2.2 INDEX.md（395）
-- L14: `# AI工作流模块总索�?�`
-- L22: `## 📚 快速导�?�`
-- L31: `## 一、模块概�?�`
-- L34: `AI工作流模块是清风量化系统�?�*核心基础设施**,旨在实现:`
+- L14: `# AI工作流模块总索?`
+- L22: `## 📚 快速导?`
+- L31: `## 一、模块概?`
+- L34: `AI工作流模块是清风量化系统?*核心基础设施**,旨在实现:`
 
 #### 7.2.3 AI_WORKFLOW_LOGGER_BLUEPRINT.md（301）
-- L7: `owner: 首席架构�?�`
-- L8: `standard_type: 专业机构级蓝�?�`
-- L9: `applicable_scope: AI工作记录与优�?�`
-- L23: `# AI工作记录与优化模块蓝�?�`
+- L7: `owner: 首席架构?`
+- L8: `standard_type: 专业机构级蓝?`
+- L9: `applicable_scope: AI工作记录与优?`
+- L23: `# AI工作记录与优化模块蓝?`
 
 #### 7.2.4 AI_WORK_REPORTER_BLUEPRINT.md（301）
-- L7: `owner: 首席架构�?�`
-- L8: `standard_type: 专业机构级蓝�?�`
-- L9: `applicable_scope: AI工作汇报与交�?�`
-- L23: `# AI工作汇报与交付模块蓝�?�`
+- L7: `owner: 首席架构?`
+- L8: `standard_type: 专业机构级蓝?`
+- L9: `applicable_scope: AI工作汇报与交?`
+- L23: `# AI工作汇报与交付模块蓝?`
 
 ---
 

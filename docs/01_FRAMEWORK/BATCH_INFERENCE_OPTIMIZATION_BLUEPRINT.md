@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供batch inference optimization blueprint的架构设计和实施蓝图
 
@@ -24,7 +24,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 ---
-# 批处理推理优化蓝�?
+# 批处理推理优化蓝?
 > **核心职责**: Batch Inference Optimization蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Batch Inference Optimization蓝图设计相关内容
@@ -35,7 +35,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -51,7 +51,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-- **吞吐优化**: 最大化吞吐�?- **资源利用**: 高效利用硬件
+- **吞吐优化**: 最大化吞吐?- **资源利用**: 高效利用硬件
 
 - **成本降低**: 降低计算成本
 
@@ -87,13 +87,13 @@ class BatchInferenceOptimizer:
 
     ):
 
-        """初始化批处理优化�?        
+        """初始化批处理优化?        
 
         Args:
 
             model: 模型
 
-            max_batch_size: 最大批�?            num_workers: 工作进程�?        """
+            max_batch_size: 最大批?            num_workers: 工作进程?        """
 
         pass
 
@@ -107,7 +107,7 @@ class BatchInferenceOptimizer:
 
     ) -> torch.Tensor:
 
-        """优化批处�?        
+        """优化批处?        
 
         Args:
 
@@ -117,7 +117,7 @@ class BatchInferenceOptimizer:
 
         Returns:
 
-            torch.Tensor: 批处理结�?        """
+            torch.Tensor: 批处理结?        """
 
         pass
 

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: REAL_TIME_RISK_MONITOR_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LEARNING_RATE_SCHEDULER_BLUEPRINT_001
 
 version: 1.0.0
@@ -9,7 +9,7 @@ created_date: 2026-04-04
 
 last_updated: 2026-04-04
 
-owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
+owner: 首席蓝图架构?layer: Layer 4 (机器学习?
 responsibility:
   - 提供learning rate scheduler blueprint的完整架构设计、技术选型和实施路径规划
 
@@ -40,7 +40,7 @@ layer: Layer 3 (策略层)
 
 > **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - 机器学习�?> **优先�?*: P2 (建议补充)
+> **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
 
 
 
@@ -56,7 +56,7 @@ layer: Layer 3 (策略层)
 
 
 
-- **自适应调整**: 自动调整学习�?- **收敛加�?*: 加速模型收�?- **性能提升**: 提升最终性能
+- **自适应调整**: 自动调整学习?- **收敛加?*: 加速模型收?- **性能提升**: 提升最终性能
 
 - **稳定训练**: 稳定训练过程
 
@@ -74,11 +74,11 @@ layer: Layer 3 (策略层)
 
 |------|------|----------|
 
-| StepLR | 阶梯式衰�?| 通用 |
+| StepLR | 阶梯式衰?| 通用 |
 
-| CosineAnnealing | 余弦退�?| 大模�?|
+| CosineAnnealing | 余弦退?| 大模?|
 
-| OneCycle | 单周�?| 快速训�?|
+| OneCycle | 单周?| 快速训?|
 
 | Warmup | 预热 | Transformer |
 
@@ -122,11 +122,11 @@ class LearningRateScheduler:
 
         Args:
 
-            optimizer: 优化�?            scheduler_type: 调度类型
+            optimizer: 优化?            scheduler_type: 调度类型
 
             warmup_epochs: 预热轮数
 
-            max_epochs: 最大轮�?        """
+            max_epochs: 最大轮?        """
 
         pass
 
@@ -140,7 +140,7 @@ class LearningRateScheduler:
 
     ) -> float:
 
-        """更新学习�?        
+        """更新学习?        
 
         Args:
 
@@ -150,7 +150,7 @@ class LearningRateScheduler:
 
         Returns:
 
-            float: 当前学习�?        """
+            float: 当前学习?        """
 
         pass
 
@@ -162,11 +162,11 @@ class LearningRateScheduler:
 
     ) -> float:
 
-        """获取当前学习�?        
+        """获取当前学习?        
 
         Returns:
 
-            float: 学习�?        """
+            float: 学习?        """
 
         pass
 

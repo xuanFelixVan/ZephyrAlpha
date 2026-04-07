@@ -1,73 +1,73 @@
-﻿---
+﻿﻿---
 module_id: ORDER_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 交易执行
   - 文档治理
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟۱ﮒﻝ؟۰ﻝﮔ ﮒ
-applicable_scope: ﻟ؟۱ﮒﮔﮒ۰ﮔ۷۰ﮒ
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟۱ﮒﻝ؟۰ﻝﮔ ﮒ
+applicable_scope: ﻟ؟۱ﮒﮔﮒ۰ﮔ۷۰ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
+# ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟ؟۱ﮒﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
-> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻝﭘﮔﮔﭦﮔ۷۰ﮒﺙ + Sagaﻛﭦﮒ۰
-> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟ؟۱ﮒﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
+> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻝﭘﮔﮔﭦﮔ۷۰ﮒﺙ + Sagaﻛﭦﮒ۰
+> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ?
 
-## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
+## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### ﻟ؟۱ﮒﻝ؟۰ﻝﮔﭘﮔ
+### ﻟ؟۱ﮒﻝ؟۰ﻝﮔﭘﮔ
 
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         OrderApplicationService                      ﻗ? ﻗ?
-ﻗ? ﻗ? - ﮒﮒﭨﭦﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
-ﻗ? ﻗ? - ﮔ۶ﻟ۰ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
-ﻗ? ﻗ? - ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-                            ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         OrderAggregate (ﻟ؟۱ﮒﻟﮒﮔ ?                  ﻗ? ﻗ?
-ﻗ? ﻗ? - Order (ﻟ؟۱ﮒﮒ؟ﻛﺛ)                                   ﻗ? ﻗ?
-ﻗ? ﻗ? - Trade (ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ)                               ﻗ? ﻗ?
-ﻗ? ﻗ? - OrderDomainService (ﻠ۱ﮒﮔﮒ۰)                      ﻗ? ﻗ?
-ﻗ? ﻗ? - OrderStateMachine (ﻝﭘﮔﮔﭦ)                         ﻗ? ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-                            ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(Infrastructure Layer)          ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         OrderRepository (ﻟ؟۱ﮒﻛﭨﮒ۷)                   ﻗ? ﻗ?
-ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
-ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         OrderApplicationService                      ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮒﮒﭨﭦﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮔ۶ﻟ۰ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         OrderAggregate (ﻟ؟۱ﮒﻟﮒﮔ ?                  ﻗ? ﻗ?
+ﻗ? ﻗ? - Order (ﻟ؟۱ﮒﮒ؟ﻛﺛ)                                   ﻗ? ﻗ?
+ﻗ? ﻗ? - Trade (ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ)                               ﻗ? ﻗ?
+ﻗ? ﻗ? - OrderDomainService (ﻠ۱ﮒﮔﮒ۰)                      ﻗ? ﻗ?
+ﻗ? ﻗ? - OrderStateMachine (ﻝﭘﮔﮔﭦ)                         ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(Infrastructure Layer)          ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         OrderRepository (ﻟ؟۱ﮒﻛﭨﮒ۷)                   ﻗ? ﻗ?
+ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
+ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 ---
 
-## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-### 1.1 ﻟ؟۱ﮒﻟﮒﮔ ?(OrderAggregate)
+### 1.1 ﻟ؟۱ﮒﻟﮒﮔ ?(OrderAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -77,28 +77,28 @@ from datetime import datetime
 from enum import Enum
 
 class OrderDirection(Enum):
-    """ﻟ؟۱ﮒﮔﺗﮒ"""
-    BUY = 'buy'    # ﻛﺗﺍﮒ۴
-    SELL = 'sell'  # ﮒﮒﭦ
+    """ﻟ؟۱ﮒﮔﺗﮒ"""
+    BUY = 'buy'    # ﻛﺗﺍﮒ۴
+    SELL = 'sell'  # ﮒﮒﭦ
 
 class OrderType(Enum):
-    """ﻟ؟۱ﮒﻝﺎﭨﮒ"""
-    MARKET = 'market'  # ﮒﺕﻛﭨﺓﮒ?
-    LIMIT = 'limit'    # ﻠﻛﭨﺓﮒ?
+    """ﻟ؟۱ﮒﻝﺎﭨﮒ"""
+    MARKET = 'market'  # ﮒﺕﻛﭨﺓﮒ?
+    LIMIT = 'limit'    # ﻠﻛﭨﺓﮒ?
 
 class OrderStatus(Enum):
-    """ﻟ؟۱ﮒﻝﭘﮔ?""
-    PENDING = 'pending'           # ﮒﺝﮔﻛﭦ?
-    SUBMITTED = 'submitted'       # ﮒﺓﺎﮔﻛﭦ?
-    PARTIAL_FILLED = 'partial_filled'  # ﻠ۷ﮒﮔﻛﭦ۳
-    FILLED = 'filled'             # ﮒ؟ﮒ۷ﮔﻛﭦ۳
-    CANCELLED = 'cancelled'       # ﮒﺓﺎﮒﮔﭘ?
-    REJECTED = 'rejected'         # ﮒﺓﺎﮔﻝﭨ?
-    EXPIRED = 'expired'           # ﮒﺓﺎﻟﺟﮔ?
+    """ﻟ؟۱ﮒﻝﭘﮔ?""
+    PENDING = 'pending'           # ﮒﺝﮔﻛﭦ?
+    SUBMITTED = 'submitted'       # ﮒﺓﺎﮔﻛﭦ?
+    PARTIAL_FILLED = 'partial_filled'  # ﻠ۷ﮒﮔﻛﭦ۳
+    FILLED = 'filled'             # ﮒ؟ﮒ۷ﮔﻛﭦ۳
+    CANCELLED = 'cancelled'       # ﮒﺓﺎﮒﮔﭘ?
+    REJECTED = 'rejected'         # ﮒﺓﺎﮔﻝﭨ?
+    EXPIRED = 'expired'           # ﮒﺓﺎﻟﺟﮔ?
 
 @dataclass
 class Order:
-    """ﻟ؟۱ﮒﮒ؟ﻛﺛ"""
+    """ﻟ؟۱ﮒﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     order_code: str = ""
     account_id: int = 0
@@ -129,20 +129,20 @@ class Order:
     cancelled_at: Optional[datetime] = None
     
     def __post_init__(self):
-        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
+        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
         if not self.order_code:
             self.order_code = self._generate_order_code()
     
     def _generate_order_code(self) -> str:
-        """ﻝﮔﻟ؟۱ﮒﻝﺙﻝ """
+        """ﻝﮔﻟ؟۱ﮒﻝﺙﻝ """
         return f"ORD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{self.id or 'NEW'}"
     
     def can_submit(self) -> bool:
-        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﮔﻛﭦ۳"""
+        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﮔﻛﭦ۳"""
         return self.status == OrderStatus.PENDING
     
     def can_cancel(self) -> bool:
-        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﮒﮔﭘ"""
+        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﮒﮔﭘ"""
         return self.status in [
             OrderStatus.PENDING,
             OrderStatus.SUBMITTED,
@@ -150,7 +150,7 @@ class Order:
         ]
     
     def submit(self, broker_order_id: str) -> bool:
-        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
         if not self.can_submit():
             return False
         
@@ -171,7 +171,7 @@ class Order:
         transfer_fee: Decimal,
         total_cost: Decimal
     ) -> bool:
-        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
         if self.status not in [OrderStatus.SUBMITTED, OrderStatus.PARTIAL_FILLED]:
             return False
         
@@ -194,7 +194,7 @@ class Order:
         return True
     
     def cancel(self, reason: Optional[str] = None) -> bool:
-        """ﮒﮔﭘﻟ؟۱ﮒ"""
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
         if not self.can_cancel():
             return False
         
@@ -208,7 +208,7 @@ class Order:
         return True
     
     def reject(self, reason: str) -> bool:
-        """ﮔﻝﭨﻟ؟۱ﮒ"""
+        """ﮔﻝﭨﻟ؟۱ﮒ"""
         if self.status != OrderStatus.PENDING:
             return False
         
@@ -219,7 +219,7 @@ class Order:
         return True
     
     def is_active(self) -> bool:
-        """ﮔﺁﮒ۵ﮔﺑﭨﻟﺓﻟ؟۱ﮒ"""
+        """ﮔﺁﮒ۵ﮔﺑﭨﻟﺓﻟ؟۱ﮒ"""
         return self.status in [
             OrderStatus.PENDING,
             OrderStatus.SUBMITTED,
@@ -227,7 +227,7 @@ class Order:
         ]
     
     def is_completed(self) -> bool:
-        """ﮔﺁﮒ۵ﮒﺓﺎﮒ؟ﮔ?""
+        """ﮔﺁﮒ۵ﮒﺓﺎﮒ؟ﮔ?""
         return self.status in [
             OrderStatus.FILLED,
             OrderStatus.CANCELLED,
@@ -237,7 +237,7 @@ class Order:
 
 @dataclass
 class Trade:
-    """ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ"""
+    """ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     trade_code: str = ""
     order_id: int = 0
@@ -258,28 +258,28 @@ class Trade:
     created_at: datetime = field(default_factory=datetime.now)
     
     def __post_init__(self):
-        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
+        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
         if not self.trade_code:
             self.trade_code = self._generate_trade_code()
     
     def _generate_trade_code(self) -> str:
-        """ﻝﮔﻛﭦ۳ﮔﻝﺙﻝ """
+        """ﻝﮔﻛﭦ۳ﮔﻝﺙﻝ """
         return f"TRD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{self.id or 'NEW'}"
 ```
 
 ---
 
-## 2. ﻟ؟۱ﮒﻝﭘﮔﮔﭦﻟ؟ﺝﻟ؟۰
+## 2. ﻟ؟۱ﮒﻝﭘﮔﮔﭦﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﻝﭘﮔﮔﭦﮒ؟ﻝﺍ
+### 2.1 ﻝﭘﮔﮔﭦﮒ؟ﻝﺍ
 
 ```python
 from typing import Dict, Set
 
 class OrderStateMachine:
-    """ﻟ؟۱ﮒﻝﭘﮔﮔﭦ"""
+    """ﻟ؟۱ﮒﻝﭘﮔﮔﭦ"""
     
-    # ﻝﭘﮔﻟﺛ؛ﮔ۱ﻟ۶ﮒ?
+    # ﻝﭘﮔﻟﺛ؛ﮔ۱ﻟ۶ﮒ?
     TRANSITIONS: Dict[OrderStatus, Set[OrderStatus]] = {
         OrderStatus.PENDING: {
             OrderStatus.SUBMITTED,
@@ -296,50 +296,50 @@ class OrderStateMachine:
             OrderStatus.FILLED,
             OrderStatus.CANCELLED
         },
-        OrderStatus.FILLED: set(),  # ﻝﭨﮔ?
-        OrderStatus.CANCELLED: set(),  # ﻝﭨﮔ?
-        OrderStatus.REJECTED: set(),  # ﻝﭨﮔ?
-        OrderStatus.EXPIRED: set()  # ﻝﭨﮔ?
+        OrderStatus.FILLED: set(),  # ﻝﭨﮔ?
+        OrderStatus.CANCELLED: set(),  # ﻝﭨﮔ?
+        OrderStatus.REJECTED: set(),  # ﻝﭨﮔ?
+        OrderStatus.EXPIRED: set()  # ﻝﭨﮔ?
     }
     
     @classmethod
     def can_transition(cls, from_status: OrderStatus, to_status: OrderStatus) -> bool:
-        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﻟﺛ؛ﮔ۱"""
+        """ﮔﺁﮒ۵ﮒﺁﻛﭨ۴ﻟﺛ؛ﮔ۱"""
         allowed_statuses = cls.TRANSITIONS.get(from_status, set())
         return to_status in allowed_statuses
     
     @classmethod
     def get_next_statuses(cls, current_status: OrderStatus) -> Set[OrderStatus]:
-        """ﻟﺓﮒﮒﺁﻟﺛﻝﻛﺕﻛﺕﻝﭘﮔ?""
+        """ﻟﺓﮒﮒﺁﻟﺛﻝﻛﺕﻛﺕﻝﭘﮔ?""
         return cls.TRANSITIONS.get(current_status, set())
     
     @classmethod
     def is_final_status(cls, status: OrderStatus) -> bool:
-        """ﮔﺁﮒ۵ﮔﺁﻝﭨﮔ?""
+        """ﮔﺁﮒ۵ﮔﺁﻝﭨﮔ?""
         return len(cls.TRANSITIONS.get(status, set())) == 0
 ```
 
 ---
 
-## 3. ﻠ۱ﮒﮔﮒ۰ﻟ؟ﺝﻟ؟۰
+## 3. ﻠ۱ﮒﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 3.1 ﻟ؟۱ﮒﻠ۱ﮒﮔﮒ۰ (OrderDomainService)
+### 3.1 ﻟ؟۱ﮒﻠ۱ﮒﮔﮒ۰ (OrderDomainService)
 
 ```python
 from typing import Optional
 from decimal import Decimal
 
 class OrderDomainService:
-    """ﻟ؟۱ﮒﻠ۱ﮒﮔﮒ۰"""
+    """ﻟ؟۱ﮒﻠ۱ﮒﮔﮒ۰"""
     
     async def calculate_commission(
         self,
         trade_amount: Decimal,
         commission_rate: Decimal = Decimal('0.0003')
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﻛﺛ۲ﻠ"""
+        """ﻟ؟۰ﻝ؟ﻛﺛ۲ﻠ"""
         commission = trade_amount * commission_rate
-        # ﮔﻛﺛﻛﺛ۲ﻠ?ﮒ?
+        # ﮔﻛﺛﻛﺛ۲ﻠ?ﮒ?
         return max(commission, Decimal('5.0000'))
     
     async def calculate_stamp_tax(
@@ -348,7 +348,7 @@ class OrderDomainService:
         direction: OrderDirection,
         stamp_tax_rate: Decimal = Decimal('0.001')
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮒﺍﻟﺎﻝ۷ﺅﺙﻛﭨﮒﮒﭦﮔﭘﮒﺅﺙ"""
+        """ﻟ؟۰ﻝ؟ﮒﺍﻟﺎﻝ۷ﺅﺙﻛﭨﮒﮒﭦﮔﭘﮒﺅﺙ"""
         if direction == OrderDirection.SELL:
             return trade_amount * stamp_tax_rate
         return Decimal('0.0000')
@@ -358,7 +358,7 @@ class OrderDomainService:
         trade_quantity: int,
         transfer_fee_rate: Decimal = Decimal('0.00001')
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﻟﺟﮔﺓﻟﺑ?""
+        """ﻟ؟۰ﻝ؟ﻟﺟﮔﺓﻟﺑ?""
         return Decimal(trade_quantity) * transfer_fee_rate
     
     async def calculate_total_cost(
@@ -369,12 +369,12 @@ class OrderDomainService:
         transfer_fee: Decimal,
         direction: OrderDirection
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮔﭨﮔﮔ?""
+        """ﻟ؟۰ﻝ؟ﮔﭨﮔﮔ?""
         if direction == OrderDirection.BUY:
-            # ﻛﺗﺍﮒ۴ﺅﺙﻛﭦ۳ﮔﻠﻠ۱?+ ﻛﺛ۲ﻠ + ﻟﺟﮔﺓﻟﺑ?
+            # ﻛﺗﺍﮒ۴ﺅﺙﻛﭦ۳ﮔﻠﻠ۱?+ ﻛﺛ۲ﻠ + ﻟﺟﮔﺓﻟﺑ?
             return trade_amount + commission + transfer_fee
         else:
-            # ﮒﮒﭦﺅﺙﻛﭦ۳ﮔﻠﻠ۱?- ﻛﺛ۲ﻠ - ﮒﺍﻟﺎﻝ۷?- ﻟﺟﮔﺓﻟﺑ?
+            # ﮒﮒﭦﺅﺙﻛﭦ۳ﮔﻠﻠ۱?- ﻛﺛ۲ﻠ - ﮒﺍﻟﺎﻝ۷?- ﻟﺟﮔﺓﻟﺑ?
             return trade_amount - commission - stamp_tax - transfer_fee
     
     async def calculate_net_amount(
@@ -385,12 +385,12 @@ class OrderDomainService:
         transfer_fee: Decimal,
         direction: OrderDirection
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮒﻠﻠ۱"""
+        """ﻟ؟۰ﻝ؟ﮒﻠﻠ۱"""
         if direction == OrderDirection.BUY:
-            # ﻛﺗﺍﮒ۴ﺅﺙﮒﮔﺁﮒﭦ
+            # ﻛﺗﺍﮒ۴ﺅﺙﮒﮔﺁﮒﭦ
             return trade_amount + commission + transfer_fee
         else:
-            # ﮒﮒﭦﺅﺙﮒﮔﭘﮒ۴
+            # ﮒﮒﭦﺅﺙﮒﮔﭘﮒ۴
             return trade_amount - commission - stamp_tax - transfer_fee
     
     async def validate_order(
@@ -399,34 +399,34 @@ class OrderDomainService:
         account_balance: Decimal,
         available_position: int
     ) -> tuple[bool, Optional[str]]:
-        """ﻠ۹ﻟﺁﻟ؟۱ﮒ"""
-        # ﻠ۹ﻟﺁﻟ؟۱ﮒﻛﭨﺓﮔ ﺙ
+        """ﻠ۹ﻟﺁﻟ؟۱ﮒ"""
+        # ﻠ۹ﻟﺁﻟ؟۱ﮒﻛﭨﺓﮔ ﺙ
         if order.order_type == OrderType.LIMIT and order.order_price <= 0:
-            return False, "ﻠﻛﭨﺓﮒﻛﭨﺓﮔ ﺙﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ?"
+            return False, "ﻠﻛﭨﺓﮒﻛﭨﺓﮔ ﺙﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ?"
         
-        # ﻠ۹ﻟﺁﻟ؟۱ﮒﮔﺍﻠ
+        # ﻠ۹ﻟﺁﻟ؟۱ﮒﮔﺍﻠ
         if order.order_quantity <= 0:
-            return False, "ﻟ؟۱ﮒﮔﺍﻠﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ0"
+            return False, "ﻟ؟۱ﮒﮔﺍﻠﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ0"
         
-        # ﻠ۹ﻟﺁﻟﭖﻠﺅﺙﻛﺗﺍﮒ۴ﺅﺙ
+        # ﻠ۹ﻟﺁﻟﭖﻠﺅﺙﻛﺗﺍﮒ۴ﺅﺙ
         if order.direction == OrderDirection.BUY:
             required_amount = order.order_price * order.order_quantity
             if required_amount > account_balance:
-                return False, f"ﮒﺁﻝ۷ﻟﭖﻠﻛﺕﻟﭘﺏﺅﺙﻠﻟ۵{required_amount}ﺅﺙﮒﺁﻝ۷{account_balance}"
+                return False, f"ﮒﺁﻝ۷ﻟﭖﻠﻛﺕﻟﭘﺏﺅﺙﻠﻟ۵{required_amount}ﺅﺙﮒﺁﻝ۷{account_balance}"
         
-        # ﻠ۹ﻟﺁﮔﻛﭨﺅﺙﮒﮒﭦﺅﺙ
+        # ﻠ۹ﻟﺁﮔﻛﭨﺅﺙﮒﮒﭦﺅﺙ
         if order.direction == OrderDirection.SELL:
             if order.order_quantity > available_position:
-                return False, f"ﮒﺁﻝ۷ﮔﻛﭨﻛﺕﻟﭘﺏﺅﺙﻠﻟ۵{order.order_quantity}ﺅﺙﮒﺁﻝ۷{available_position}"
+                return False, f"ﮒﺁﻝ۷ﮔﻛﭨﻛﺕﻟﭘﺏﺅﺙﻠﻟ۵{order.order_quantity}ﺅﺙﮒﺁﻝ۷{available_position}"
         
         return True, None
 ```
 
 ---
 
-## 4. ﮒﭦﻝ۷ﮔﮒ۰ﻟ؟ﺝﻟ؟۰
+## 4. ﮒﭦﻝ۷ﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 4.1 ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰ (OrderApplicationService)
+### 4.1 ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰ (OrderApplicationService)
 
 ```python
 from typing import List, Optional, Dict, Any
@@ -434,7 +434,7 @@ from decimal import Decimal
 from datetime import date
 
 class OrderApplicationService:
-    """ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰"""
+    """ﻟ؟۱ﮒﮒﭦﻝ۷ﮔﮒ۰"""
     
     def __init__(
         self,
@@ -467,8 +467,8 @@ class OrderApplicationService:
         strategy_id: Optional[str] = None,
         engine_id: str = "VNPY_001"
     ) -> Dict[str, Any]:
-        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
-        # ﮒﮒﭨﭦﻟ؟۱ﮒﮒ؟ﻛﺛ
+        """ﮒﮒﭨﭦﻟ؟۱ﮒ"""
+        # ﮒﮒﭨﭦﻟ؟۱ﮒﮒ؟ﻛﺛ
         order = Order(
             account_id=account_id,
             signal_id=signal_id,
@@ -482,10 +482,10 @@ class OrderApplicationService:
             engine_id=engine_id
         )
         
-        # ﻠ۹ﻟﺁﻟ؟۱ﮒ
+        # ﻠ۹ﻟﺁﻟ؟۱ﮒ
         account = await self.account_service.get_account(account_id)
         if not account:
-            raise ValueError(f"ﻟﺑ۵ﮔﺓﻛﺕﮒ­ﮒ? {account_id}")
+            raise ValueError(f"ﻟﺑ۵ﮔﺓﻛﺕﮒ­ﮒ? {account_id}")
         
         if direction == 'buy':
             available_balance = Decimal(str(account['available_cash']))
@@ -506,10 +506,10 @@ class OrderApplicationService:
             await self.order_repository.create(order)
             raise ValueError(error_msg)
         
-        # ﻛﺟﮒ­ﻟ؟۱ﮒ
+        # ﻛﺟﮒ­ﻟ؟۱ﮒ
         order = await self.order_repository.create(order)
         
-        # ﮒﮒﺕﻟ؟۱ﮒﮒﮒﭨﭦﻛﭦﻛﭨﭘ
+        # ﮒﮒﺕﻟ؟۱ﮒﮒﮒﭨﭦﻛﭦﻛﭨﭘ
         await self.event_publisher.publish({
             'event_type': 'OrderCreated',
             'order_id': order.id,
@@ -535,17 +535,17 @@ class OrderApplicationService:
         }
     
     async def submit_order(self, order_id: int) -> Dict[str, Any]:
-        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
-        # ﻟﺓﮒﻟ؟۱ﮒ
+        """ﮔﻛﭦ۳ﻟ؟۱ﮒ"""
+        # ﻟﺓﮒﻟ؟۱ﮒ
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
-            raise ValueError(f"ﻟ؟۱ﮒﻛﺕﮒ­ﮒ? {order_id}")
+            raise ValueError(f"ﻟ؟۱ﮒﻛﺕﮒ­ﮒ? {order_id}")
         
         if not order.can_submit():
-            raise ValueError(f"ﻟ؟۱ﮒﻝﭘﮔﻛﺕﮒﻟ؟ﺕﮔﻛﭦ۳: {order.status.value}")
+            raise ValueError(f"ﻟ؟۱ﮒﻝﭘﮔﻛﺕﮒﻟ؟ﺕﮔﻛﭦ۳: {order.status.value}")
         
-        # ﮒﮒﭨﭦﮒﺗﭘﮒﺁﮒ۷Saga
+        # ﮒﮒﭨﭦﮒﺗﭘﮒﺁﮒ۷Saga
         saga = await self._create_order_saga(order)
         saga_id = await self.saga_coordinator.start_saga(saga)
         
@@ -561,8 +561,8 @@ class OrderApplicationService:
         order_id: int,
         reason: Optional[str] = None
     ) -> bool:
-        """ﮒﮔﭘﻟ؟۱ﮒ"""
-        # ﻟﺓﮒﻟ؟۱ﮒ
+        """ﮒﮔﭘﻟ؟۱ﮒ"""
+        # ﻟﺓﮒﻟ؟۱ﮒ
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
@@ -571,7 +571,7 @@ class OrderApplicationService:
         if not order.can_cancel():
             return False
         
-        # ﮒ۵ﮔﮒﺓﺎﮔﻛﭦ۳ﮒﺍﮒﺙﮔﺅﺙﮒﻛﭨﮒﺙﮔﮒﮔﭘ?
+        # ﮒ۵ﮔﮒﺓﺎﮔﻛﭦ۳ﮒﺍﮒﺙﮔﺅﺙﮒﻛﭨﮒﺙﮔﮒﮔﭘ?
         if order.broker_order_id:
             engine = self.engine_manager.get_engine(order.engine_id)
             if engine:
@@ -579,11 +579,11 @@ class OrderApplicationService:
                 if not success:
                     return False
         
-        # ﮒﮔﭘﻟ؟۱ﮒ
+        # ﮒﮔﭘﻟ؟۱ﮒ
         order.cancel(reason)
         await self.order_repository.update(order)
         
-        # ﻠﮔﺝﮒﭨﻝﭨﻝﻟﭖﻠﮔﮔﻛﭨ
+        # ﻠﮔﺝﮒﭨﻝﭨﻝﻟﭖﻠﮔﮔﻛﭨ
         if order.direction == OrderDirection.BUY:
             frozen_amount = order.order_price * order.order_quantity
             await self.account_service.unfreeze_cash(order.account_id, frozen_amount)
@@ -594,7 +594,7 @@ class OrderApplicationService:
                 order.order_quantity
             )
         
-        # ﮒﮒﺕﻟ؟۱ﮒﮒﮔﭘﻛﭦﻛﭨﭘ
+        # ﮒﮒﺕﻟ؟۱ﮒﮒﮔﭘﻛﭦﻛﭨﭘ
         await self.event_publisher.publish({
             'event_type': 'OrderCancelled',
             'order_id': order.id,
@@ -606,7 +606,7 @@ class OrderApplicationService:
         return True
     
     async def get_order(self, order_id: int) -> Optional[Dict[str, Any]]:
-        """ﻟﺓﮒﻟ؟۱ﮒ"""
+        """ﻟﺓﮒﻟ؟۱ﮒ"""
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
@@ -654,7 +654,7 @@ class OrderApplicationService:
         page: int = 1,
         page_size: int = 20
     ) -> Dict[str, Any]:
-        """ﻟﺓﮒﻟ؟۱ﮒﮒﻟ۰۷"""
+        """ﻟﺓﮒﻟ؟۱ﮒﮒﻟ۰۷"""
         orders = await self.order_repository.find_all(
             account_id=account_id,
             stock_code=stock_code,
@@ -700,29 +700,29 @@ class OrderApplicationService:
         }
     
     async def _create_order_saga(self, order: Order) -> 'Saga':
-        """ﮒﮒﭨﭦﻟ؟۱ﮒSaga"""
-        # TODO: ﮒ؟ﻝﺍﻟ؟۱ﮒSagaﮒﮒﭨﭦﻠﭨﻟﺝ
+        """ﮒﮒﭨﭦﻟ؟۱ﮒSaga"""
+        # TODO: ﮒ؟ﻝﺍﻟ؟۱ﮒSagaﮒﮒﭨﭦﻠﭨﻟﺝ
         pass
 ```
 
 ---
 
-## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
+## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 5.1 ﮔ۶ﻟﺛﮔﮔ 
+### 5.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
+| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
-| **ﮒﮒﭨﭦﻟ؟۱ﮒ** | < 200ms | ﮒﮒ،ﻠ۹ﻟﺁﮒﮔﺍﮔ؟ﮒﭦﮒﮒ۴ |
-| **ﮔﻛﭦ۳ﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،Sagaﮒﺁﮒ۷ |
-| **ﮒﮔﭘﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﮒﺙﮔﮒﮔﭘ |
-| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 100ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
+| **ﮒﮒﭨﭦﻟ؟۱ﮒ** | < 200ms | ﮒﮒ،ﻠ۹ﻟﺁﮒﮔﺍﮔ؟ﮒﭦﮒﮒ۴ |
+| **ﮔﻛﭦ۳ﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،Sagaﮒﺁﮒ۷ |
+| **ﮒﮔﭘﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﮒﺙﮔﮒﮔﭘ |
+| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 100ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
 
-### 5.2 ﻝﮔ۶ﮔﮔ 
+### 5.2 ﻝﮔ۶ﮔﮔ 
 
 ```python
 class OrderMonitor:
-    """ﻟ؟۱ﮒﻝﮔ۶"""
+    """ﻟ؟۱ﮒﻝﮔ۶"""
     
     def __init__(self):
         self.metrics = {
@@ -737,36 +737,36 @@ class OrderMonitor:
         }
     
     async def record_order_creation(self, order: Order) -> None:
-        """ﻟ؟ﺍﮒﺛﻟ؟۱ﮒﮒﮒﭨﭦ"""
+        """ﻟ؟ﺍﮒﺛﻟ؟۱ﮒﮒﮒﭨﭦ"""
         self.metrics['total_orders'] += 1
         
         if order.status == OrderStatus.PENDING:
             self.metrics['pending_orders'] += 1
     
     async def record_order_fill(self, order: Order) -> None:
-        """ﻟ؟ﺍﮒﺛﻟ؟۱ﮒﮔﻛﭦ۳"""
+        """ﻟ؟ﺍﮒﺛﻟ؟۱ﮒﮔﻛﭦ۳"""
         self.metrics['filled_orders'] += 1
         
         if order.submitted_at and order.filled_at:
             fill_time = (order.filled_at - order.submitted_at).total_seconds()
-            # ﮔﺑﮔﺍﮒﺗﺏﮒﮔﻛﭦ۳ﮔﭘﻠﺑ
+            # ﮔﺑﮔﺍﮒﺗﺏﮒﮔﻛﭦ۳ﮔﭘﻠﺑ
             self.metrics['avg_fill_time'] = (
                 (self.metrics['avg_fill_time'] * (self.metrics['filled_orders'] - 1) + fill_time)
                 / self.metrics['filled_orders']
             )
         
-        # ﮔﺑﮔﺍﮔﻛﭦ۳ﻝ?
+        # ﮔﺑﮔﺍﮔﻛﭦ۳ﻝ?
         self.metrics['fill_rate'] = (
             self.metrics['filled_orders'] / self.metrics['total_orders']
             if self.metrics['total_orders'] > 0 else 0
         )
     
     async def get_metrics(self) -> Dict[str, Any]:
-        """ﻟﺓﮒﻝﮔ۶ﮔﮔ """
+        """ﻟﺓﮒﻝﮔ۶ﮔﮔ """
         return self.metrics
 ```
 
 ---
 
-**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-**ﮒ۷ﻠ۷ﻛﭨﭨﮒ۰ﮒ؟ﮔﺅﺙ?*
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﮒ۷ﻠ۷ﻛﭨﭨﮒ۰ﮒ؟ﮔﺅﺙ?*

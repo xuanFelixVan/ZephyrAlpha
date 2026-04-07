@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 version: 1.0.0
 module_id: HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_REPORT_20260403_001
 

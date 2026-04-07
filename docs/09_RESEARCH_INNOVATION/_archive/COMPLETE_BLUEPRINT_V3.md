@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: LAYER9_COMPLETE_BLUEPRINT_V3
 version: 3.0.0
 status: Archived

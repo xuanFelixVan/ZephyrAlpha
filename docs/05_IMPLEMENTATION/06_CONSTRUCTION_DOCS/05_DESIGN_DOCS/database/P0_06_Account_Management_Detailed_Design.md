@@ -1,72 +1,72 @@
-﻿---
+﻿﻿---
 module_id: ACCOUNT_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 交易执行
   - 数据源
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔ ﮒ
-applicable_scope: ﻟﺑ۵ﮔﺓﮔﮒ۰ﮔ۷۰ﮒ
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔ ﮒ
+applicable_scope: ﻟﺑ۵ﮔﺓﮔﮒ۰ﮔ۷۰ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: P0-01_Database_Design_Document.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
+# ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
-> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻟﮒﮔ ﺗﮔ۷۰ﮒﺙ?
-> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
+> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻟﮒﮔ ﺗﮔ۷۰ﮒﺙ?
+> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ?
 
-## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
+## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔﭘﮔ
+### ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔﭘﮔ
 
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         AccountApplicationService                    ﻗ? ﻗ?
-ﻗ? ﻗ? - ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
-ﻗ? ﻗ? - ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
-ﻗ? ﻗ? - ﻟﭖﻠﻝ؟۰ﻝﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-                            ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         AccountAggregate (ﻟﺑ۵ﮔﺓﻟﮒﮔ ?                ﻗ? ﻗ?
-ﻗ? ﻗ? - Account (ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ)                                 ﻗ? ﻗ?
-ﻗ? ﻗ? - AccountSnapshot (ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ)                     ﻗ? ﻗ?
-ﻗ? ﻗ? - AccountDomainService (ﻠ۱ﮒﮔﮒ۰)                    ﻗ? ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-                            ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(Infrastructure Layer)          ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         AccountRepository (ﻟﺑ۵ﮔﺓﻛﭨﮒ۷)                 ﻗ? ﻗ?
-ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
-ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
-ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۷ﮒﺎ?(Application Layer)                ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         AccountApplicationService                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗ? - ﻟﭖﻠﻝ؟۰ﻝﮒﭦﻝ۷ﮔﮒ۰                                    ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         AccountAggregate (ﻟﺑ۵ﮔﺓﻟﮒﮔ ?                ﻗ? ﻗ?
+ﻗ? ﻗ? - Account (ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ)                                 ﻗ? ﻗ?
+ﻗ? ﻗ? - AccountSnapshot (ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ)                     ﻗ? ﻗ?
+ﻗ? ﻗ? - AccountDomainService (ﻠ۱ﮒﮔﮒ۰)                    ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                            ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ?                   ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ?(Infrastructure Layer)          ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗ? ﻗ?         AccountRepository (ﻟﺑ۵ﮔﺓﻛﭨﮒ۷)                 ﻗ? ﻗ?
+ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
+ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
 ---
 
-## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-### 1.1 ﻟﺑ۵ﮔﺓﻟﮒﮔ ?(AccountAggregate)
+### 1.1 ﻟﺑ۵ﮔﺓﻟﮒﮔ ?(AccountAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -76,19 +76,19 @@ from datetime import datetime, date
 from enum import Enum
 
 class AccountType(Enum):
-    """ﻟﺑ۵ﮔﺓﻝﺎﭨﮒ"""
-    SIMULATION = 'simulation'  # ﮔ۷۰ﮔﻟﺑ۵ﮔﺓ
-    REAL = 'real'             # ﮒ؟ﻝﻟﺑ۵ﮔﺓ
+    """ﻟﺑ۵ﮔﺓﻝﺎﭨﮒ"""
+    SIMULATION = 'simulation'  # ﮔ۷۰ﮔﻟﺑ۵ﮔﺓ
+    REAL = 'real'             # ﮒ؟ﻝﻟﺑ۵ﮔﺓ
 
 class AccountStatus(Enum):
-    """ﻟﺑ۵ﮔﺓﻝﭘﮔ?""
-    ACTIVE = 'active'         # ﮔﺑﭨﻟﺓ
-    FROZEN = 'frozen'         # ﮒﭨﻝﭨ
-    CLOSED = 'closed'         # ﮒﺏﻠ­
+    """ﻟﺑ۵ﮔﺓﻝﭘﮔ?""
+    ACTIVE = 'active'         # ﮔﺑﭨﻟﺓ
+    FROZEN = 'frozen'         # ﮒﭨﻝﭨ
+    CLOSED = 'closed'         # ﮒﺏﻠ­
 
 @dataclass
 class Account:
-    """ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ"""
+    """ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     account_code: str = ""
     account_name: str = ""
@@ -107,16 +107,16 @@ class Account:
     metadata: dict = field(default_factory=dict)
     
     def __post_init__(self):
-        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
+        """ﮒﮒ۶ﮒﮒﮒ۳ﻝ"""
         if not self.account_code:
             self.account_code = self._generate_account_code()
     
     def _generate_account_code(self) -> str:
-        """ﻝﮔﻟﺑ۵ﮔﺓﻝﺙﻝ """
+        """ﻝﮔﻟﺑ۵ﮔﺓﻝﺙﻝ """
         return f"ACC_{datetime.now().strftime('%Y%m%d')}_{self.id or 'NEW'}"
     
     def freeze_cash(self, amount: Decimal) -> bool:
-        """ﮒﭨﻝﭨﻟﭖﻠ"""
+        """ﮒﭨﻝﭨﻟﭖﻠ"""
         if amount <= 0:
             return False
         
@@ -130,7 +130,7 @@ class Account:
         return True
     
     def unfreeze_cash(self, amount: Decimal) -> bool:
-        """ﻟ۶۲ﮒﭨﻟﭖﻠ"""
+        """ﻟ۶۲ﮒﭨﻟﭖﻠ"""
         if amount <= 0:
             return False
         
@@ -150,7 +150,7 @@ class Account:
         frozen_cash: Decimal,
         total_assets: Decimal
     ) -> None:
-        """ﮔﺑﮔﺍﻟﭖﻠ"""
+        """ﮔﺑﮔﺍﻟﭖﻠ"""
         self.current_capital = current_capital
         self.available_cash = available_cash
         self.frozen_cash = frozen_cash
@@ -159,13 +159,13 @@ class Account:
         self.updated_at = datetime.now()
     
     def update_max_drawdown(self, drawdown: Decimal) -> None:
-        """ﮔﺑﮔﺍﮔﮒ۳۶ﮒﮔ?""
+        """ﮔﺑﮔﺍﮔﮒ۳۶ﮒﮔ?""
         if drawdown > self.max_drawdown:
             self.max_drawdown = drawdown
             self.updated_at = datetime.now()
     
     def freeze_account(self, reason: Optional[str] = None) -> bool:
-        """ﮒﭨﻝﭨﻟﺑ۵ﮔﺓ"""
+        """ﮒﭨﻝﭨﻟﺑ۵ﮔﺓ"""
         if self.status == AccountStatus.CLOSED:
             return False
         
@@ -176,7 +176,7 @@ class Account:
         return True
     
     def unfreeze_account(self) -> bool:
-        """ﻟ۶۲ﮒﭨﻟﺑ۵ﮔﺓ"""
+        """ﻟ۶۲ﮒﭨﻟﺑ۵ﮔﺓ"""
         if self.status != AccountStatus.FROZEN:
             return False
         
@@ -187,7 +187,7 @@ class Account:
         return True
     
     def close_account(self) -> bool:
-        """ﮒﺏﻠ­ﻟﺑ۵ﮔﺓ"""
+        """ﮒﺏﻠ­ﻟﺑ۵ﮔﺓ"""
         if self.status == AccountStatus.CLOSED:
             return False
         
@@ -198,7 +198,7 @@ class Account:
 
 @dataclass
 class AccountSnapshot:
-    """ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ"""
+    """ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ"""
     id: Optional[int] = None
     account_id: int = 0
     snapshot_date: date = field(default_factory=date.today)
@@ -217,9 +217,9 @@ class AccountSnapshot:
 
 ---
 
-## 2. ﻠ۱ﮒﮔﮒ۰ﻟ؟ﺝﻟ؟۰
+## 2. ﻠ۱ﮒﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﻟﺑ۵ﮔﺓﻠ۱ﮒﮔﮒ۰ (AccountDomainService)
+### 2.1 ﻟﺑ۵ﮔﺓﻠ۱ﮒﮔﮒ۰ (AccountDomainService)
 
 ```python
 from typing import List, Optional
@@ -227,14 +227,14 @@ from decimal import Decimal
 from datetime import date
 
 class AccountDomainService:
-    """ﻟﺑ۵ﮔﺓﻠ۱ﮒﮔﮒ۰"""
+    """ﻟﺑ۵ﮔﺓﻠ۱ﮒﮔﮒ۰"""
     
     async def calculate_daily_pnl(
         self,
         account: Account,
         previous_snapshot: Optional[AccountSnapshot]
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮔ۴ﻝﻛﭦ?""
+        """ﻟ؟۰ﻝ؟ﮔ۴ﻝﻛﭦ?""
         if not previous_snapshot:
             return Decimal('0.0000')
         
@@ -245,7 +245,7 @@ class AccountDomainService:
         account: Account,
         previous_snapshot: Optional[AccountSnapshot]
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮔ۴ﻝﻛﭦﻝﺝﮒﮔﺁ"""
+        """ﻟ؟۰ﻝ؟ﮔ۴ﻝﻛﭦﻝﺝﮒﮔﺁ"""
         if not previous_snapshot or previous_snapshot.total_assets == 0:
             return Decimal('0.000000')
         
@@ -256,14 +256,14 @@ class AccountDomainService:
         self,
         account: Account
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﻝﺑﺁﻟ؟۰ﻝﻛﭦ"""
+        """ﻟ؟۰ﻝ؟ﻝﺑﺁﻟ؟۰ﻝﻛﭦ"""
         return account.total_assets - account.initial_capital
     
     async def calculate_cumulative_pnl_pct(
         self,
         account: Account
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﻝﺑﺁﻟ؟۰ﻝﻛﭦﻝﺝﮒﮔﺁ?""
+        """ﻟ؟۰ﻝ؟ﻝﺑﺁﻟ؟۰ﻝﻛﭦﻝﺝﮒﮔﺁ?""
         if account.initial_capital == 0:
             return Decimal('0.000000')
         
@@ -274,7 +274,7 @@ class AccountDomainService:
         self,
         snapshots: List[AccountSnapshot]
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮔﮒ۳۶ﮒﮔ?""
+        """ﻟ؟۰ﻝ؟ﮔﮒ۳۶ﮒﮔ?""
         if not snapshots:
             return Decimal('0.000000')
         
@@ -296,11 +296,11 @@ class AccountDomainService:
         snapshots: List[AccountSnapshot],
         risk_free_rate: Decimal = Decimal('0.03')
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﮒ۳ﮔ؟ﮔﺁﻝ"""
+        """ﻟ؟۰ﻝ؟ﮒ۳ﮔ؟ﮔﺁﻝ"""
         if len(snapshots) < 2:
             return Decimal('0.000000')
         
-        # ﻟ؟۰ﻝ؟ﮔ۴ﮔﭘﻝﻝ
+        # ﻟ؟۰ﻝ؟ﮔ۴ﮔﭘﻝﻝ
         daily_returns = []
         for i in range(1, len(snapshots)):
             daily_return = snapshots[i].daily_pnl_pct
@@ -309,17 +309,17 @@ class AccountDomainService:
         if not daily_returns:
             return Decimal('0.000000')
         
-        # ﻟ؟۰ﻝ؟ﮒﺗﺏﮒﮔﭘﻝﻝ?
+        # ﻟ؟۰ﻝ؟ﮒﺗﺏﮒﮔﭘﻝﻝ?
         avg_return = sum(daily_returns) / len(daily_returns)
         
-        # ﻟ؟۰ﻝ؟ﮔ ﮒﮒﺓ?
+        # ﻟ؟۰ﻝ؟ﮔ ﮒﮒﺓ?
         variance = sum((r - avg_return) ** 2 for r in daily_returns) / len(daily_returns)
         std_dev = variance ** Decimal('0.5')
         
         if std_dev == 0:
             return Decimal('0.000000')
         
-        # ﻟ؟۰ﻝ؟ﮒ۳ﮔ؟ﮔﺁﻝﺅﺙﮒﺗﺑﮒﺅﺙ
+        # ﻟ؟۰ﻝ؟ﮒ۳ﮔ؟ﮔﺁﻝﺅﺙﮒﺗﺑﮒﺅﺙ
         annualized_return = avg_return * 252
         annualized_std = std_dev * (252 ** Decimal('0.5'))
         
@@ -331,7 +331,7 @@ class AccountDomainService:
         self,
         snapshots: List[AccountSnapshot]
     ) -> Decimal:
-        """ﻟ؟۰ﻝ؟ﻟﻝ"""
+        """ﻟ؟۰ﻝ؟ﻟﻝ"""
         if not snapshots:
             return Decimal('0.000000')
         
@@ -343,9 +343,9 @@ class AccountDomainService:
 
 ---
 
-## 3. ﮒﭦﻝ۷ﮔﮒ۰ﻟ؟ﺝﻟ؟۰
+## 3. ﮒﭦﻝ۷ﮔﮒ۰ﻟ؟ﺝﻟ؟۰
 
-### 3.1 ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰ (AccountApplicationService)
+### 3.1 ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰ (AccountApplicationService)
 
 ```python
 from typing import List, Optional, Dict, Any
@@ -353,7 +353,7 @@ from decimal import Decimal
 from datetime import date
 
 class AccountApplicationService:
-    """ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰"""
+    """ﻟﺑ۵ﮔﺓﮒﭦﻝ۷ﮔﮒ۰"""
     
     def __init__(
         self,
@@ -372,8 +372,8 @@ class AccountApplicationService:
         initial_capital: Decimal,
         broker: Optional[str] = None
     ) -> Dict[str, Any]:
-        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ"""
-        # ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ"""
+        # ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ
         account = Account(
             account_name=account_name,
             account_type=AccountType(account_type),
@@ -383,10 +383,10 @@ class AccountApplicationService:
             broker=broker
         )
         
-        # ﻛﺟﮒ­ﻟﺑ۵ﮔﺓ
+        # ﻛﺟﮒ­ﻟﺑ۵ﮔﺓ
         account = await self.account_repository.create(account)
         
-        # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﮒﭨﭦﻛﭦﻛﭨﭘ
+        # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﮒﭨﭦﻛﭦﻛﭨﭘ
         await self.event_publisher.publish({
             'event_type': 'AccountCreated',
             'account_id': account.id,
@@ -408,7 +408,7 @@ class AccountApplicationService:
         }
     
     async def get_account(self, account_id: int) -> Optional[Dict[str, Any]]:
-        """ﻟﺓﮒﻟﺑ۵ﮔﺓ"""
+        """ﻟﺓﮒﻟﺑ۵ﮔﺓ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -439,7 +439,7 @@ class AccountApplicationService:
         page: int = 1,
         page_size: int = 20
     ) -> Dict[str, Any]:
-        """ﻟﺓﮒﻟﺑ۵ﮔﺓﮒﻟ۰۷"""
+        """ﻟﺓﮒﻟﺑ۵ﮔﺓﮒﻟ۰۷"""
         accounts = await self.account_repository.find_all(
             account_type=account_type,
             status=status,
@@ -475,7 +475,7 @@ class AccountApplicationService:
         account_id: int,
         amount: Decimal
     ) -> bool:
-        """ﮒﭨﻝﭨﻟﭖﻠ"""
+        """ﮒﭨﻝﭨﻟﭖﻠ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -486,7 +486,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # ﮒﮒﺕﻟﭖﻠﮒﭨﻝﭨﻛﭦﻛﭨﭘ
+            # ﮒﮒﺕﻟﭖﻠﮒﭨﻝﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'CashFrozen',
                 'account_id': account.id,
@@ -501,7 +501,7 @@ class AccountApplicationService:
         account_id: int,
         amount: Decimal
     ) -> bool:
-        """ﻟ۶۲ﮒﭨﻟﭖﻠ"""
+        """ﻟ۶۲ﮒﭨﻟﭖﻠ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -512,7 +512,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # ﮒﮒﺕﻟﭖﻠﻟ۶۲ﮒﭨﻛﭦﻛﭨﭘ
+            # ﮒﮒﺕﻟﭖﻠﻟ۶۲ﮒﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'CashUnfrozen',
                 'account_id': account.id,
@@ -530,7 +530,7 @@ class AccountApplicationService:
         frozen_cash: Decimal,
         total_assets: Decimal
     ) -> bool:
-        """ﮔﺑﮔﺍﻟﺑ۵ﮔﺓﻟﭖﻠ"""
+        """ﮔﺑﮔﺍﻟﺑ۵ﮔﺓﻟﭖﻠ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -552,19 +552,19 @@ class AccountApplicationService:
         account_id: int,
         snapshot_date: date
     ) -> Dict[str, Any]:
-        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶"""
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
             return {}
         
-        # ﻟﺓﮒﮒﻛﺕﮔ۴ﮒﺟ،ﻝ?
+        # ﻟﺓﮒﮒﻛﺕﮔ۴ﮒﺟ،ﻝ?
         previous_snapshot = await self.account_repository.find_snapshot_by_date(
             account_id,
             snapshot_date
         )
         
-        # ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ 
+        # ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ 
         daily_pnl = await self.domain_service.calculate_daily_pnl(
             account,
             previous_snapshot
@@ -578,7 +578,7 @@ class AccountApplicationService:
         cumulative_pnl = await self.domain_service.calculate_cumulative_pnl(account)
         cumulative_pnl_pct = await self.domain_service.calculate_cumulative_pnl_pct(account)
         
-        # ﮒﮒﭨﭦﮒﺟ،ﻝ۶
+        # ﮒﮒﭨﭦﮒﺟ،ﻝ۶
         snapshot = AccountSnapshot(
             account_id=account_id,
             snapshot_date=snapshot_date,
@@ -592,7 +592,7 @@ class AccountApplicationService:
             max_drawdown=account.max_drawdown
         )
         
-        # ﻛﺟﮒ­ﮒﺟ،ﻝ۶
+        # ﻛﺟﮒ­ﮒﺟ،ﻝ۶
         snapshot = await self.account_repository.create_snapshot(snapshot)
         
         return {
@@ -609,7 +609,7 @@ class AccountApplicationService:
         account_id: int,
         reason: Optional[str] = None
     ) -> bool:
-        """ﮒﭨﻝﭨﻟﺑ۵ﮔﺓ"""
+        """ﮒﭨﻝﭨﻟﺑ۵ﮔﺓ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -620,7 +620,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﭨﻝﭨﻛﭦﻛﭨﭘ
+            # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﭨﻝﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'AccountFrozen',
                 'account_id': account.id,
@@ -631,7 +631,7 @@ class AccountApplicationService:
         return success
     
     async def unfreeze_account(self, account_id: int) -> bool:
-        """ﻟ۶۲ﮒﭨﻟﺑ۵ﮔﺓ"""
+        """ﻟ۶۲ﮒﭨﻟﺑ۵ﮔﺓ"""
         account = await self.account_repository.find_by_id(account_id)
         
         if not account:
@@ -642,7 +642,7 @@ class AccountApplicationService:
         if success:
             await self.account_repository.update(account)
             
-            # ﮒﮒﺕﻟﺑ۵ﮔﺓﻟ۶۲ﮒﭨﻛﭦﻛﭨﭘ
+            # ﮒﮒﺕﻟﺑ۵ﮔﺓﻟ۶۲ﮒﭨﻛﭦﻛﭨﭘ
             await self.event_publisher.publish({
                 'event_type': 'AccountUnfrozen',
                 'account_id': account.id,
@@ -654,9 +654,9 @@ class AccountApplicationService:
 
 ---
 
-## 4. ﻛﭨﮒ۷ﮒ؟ﻝﺍﻟ؟ﺝﻟ؟۰
+## 4. ﻛﭨﮒ۷ﮒ؟ﻝﺍﻟ؟ﺝﻟ؟۰
 
-### 4.1 ﻟﺑ۵ﮔﺓﻛﭨﮒ۷ﮒ؟ﻝﺍ (AccountRepositoryImpl)
+### 4.1 ﻟﺑ۵ﮔﺓﻛﭨﮒ۷ﮒ؟ﻝﺍ (AccountRepositoryImpl)
 
 ```python
 from typing import List, Optional
@@ -665,14 +665,14 @@ from datetime import date
 import asyncpg
 
 class AccountRepositoryImpl:
-    """ﻟﺑ۵ﮔﺓﻛﭨﮒ۷ﮒ؟ﻝﺍ"""
+    """ﻟﺑ۵ﮔﺓﻛﭨﮒ۷ﮒ؟ﻝﺍ"""
     
     def __init__(self, db_pool: asyncpg.Pool, redis_client):
         self.db_pool = db_pool
         self.redis_client = redis_client
     
     async def create(self, account: Account) -> Account:
-        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ"""
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ"""
         async with self.db_pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -704,19 +704,19 @@ class AccountRepositoryImpl:
             account.id = row['id']
             account.account_code = row['account_code']
             
-            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
+            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
             await self._cache_account(account)
             
             return account
     
     async def find_by_id(self, account_id: int) -> Optional[Account]:
-        """ﮔ ﺗﮔ؟IDﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
-        # ﮒﮔ۴ﻝﺙﮒ­
+        """ﮔ ﺗﮔ؟IDﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
+        # ﮒﮔ۴ﻝﺙﮒ­
         cached = await self._get_cached_account(account_id)
         if cached:
             return cached
         
-        # ﮔ۴ﮔﺍﮔ؟ﮒﭦ
+        # ﮔ۴ﮔﺍﮔ؟ﮒﭦ
         async with self.db_pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -730,7 +730,7 @@ class AccountRepositoryImpl:
             
             account = self._row_to_account(row)
             
-            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
+            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
             await self._cache_account(account)
             
             return account
@@ -742,7 +742,7 @@ class AccountRepositoryImpl:
         page: int = 1,
         page_size: int = 20
     ) -> List[Account]:
-        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒﻟ۰۷"""
+        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮒﻟ۰۷"""
         async with self.db_pool.acquire() as conn:
             offset = (page - 1) * page_size
             
@@ -777,7 +777,7 @@ class AccountRepositoryImpl:
             return [self._row_to_account(row) for row in rows]
     
     async def update(self, account: Account) -> Account:
-        """ﮔﺑﮔﺍﻟﺑ۵ﮔﺓ"""
+        """ﮔﺑﮔﺍﻟﺑ۵ﮔﺓ"""
         async with self.db_pool.acquire() as conn:
             await conn.execute(
                 """
@@ -807,13 +807,13 @@ class AccountRepositoryImpl:
                 account.metadata
             )
             
-            # ﮔﺑﮔﺍﻝﺙﮒ­
+            # ﮔﺑﮔﺍﻝﺙﮒ­
             await self._cache_account(account)
             
             return account
     
     async def create_snapshot(self, snapshot: AccountSnapshot) -> AccountSnapshot:
-        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶"""
+        """ﮒﮒﭨﭦﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶"""
         async with self.db_pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -845,11 +845,11 @@ class AccountRepositoryImpl:
             return snapshot
     
     async def _cache_account(self, account: Account) -> None:
-        """ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ"""
+        """ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ"""
         key = f"account:{account.id}"
         await self.redis_client.setex(
             key,
-            300,  # 5ﮒﻠﻟﺟﮔ
+            300,  # 5ﮒﻠﻟﺟﮔ
             str({
                 'id': account.id,
                 'account_code': account.account_code,
@@ -862,18 +862,18 @@ class AccountRepositoryImpl:
         )
     
     async def _get_cached_account(self, account_id: int) -> Optional[Account]:
-        """ﻟﺓﮒﻝﺙﮒ­ﻝﻟﺑ۵ﮔﺓﻛﺟ۰ﮔ?""
+        """ﻟﺓﮒﻝﺙﮒ­ﻝﻟﺑ۵ﮔﺓﻛﺟ۰ﮔ?""
         key = f"account:{account_id}"
         cached = await self.redis_client.get(key)
         
         if cached:
-            # TODO: ﮒﮒﭦﮒﮒﻝﺙﮒ­ﮔﺍﮔ؟
+            # TODO: ﮒﮒﭦﮒﮒﻝﺙﮒ­ﮔﺍﮔ؟
             return None
         
         return None
     
     def _row_to_account(self, row) -> Account:
-        """ﮔﺍﮔ؟ﮒﭦﻟ۰ﻟﺛ؛ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ?""
+        """ﮔﺍﮔ؟ﮒﭦﻟ۰ﻟﺛ؛ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ?""
         return Account(
             id=row['id'],
             account_code=row['account_code'],
@@ -896,26 +896,26 @@ class AccountRepositoryImpl:
 
 ---
 
-## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
+## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 5.1 ﮔ۶ﻟﺛﮔﮔ 
+### 5.1 ﮔ۶ﻟﺛﮔﮔ 
 
-| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
+| ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
-| **ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ** | < 300ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮒﮒ?|
-| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 50ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
-| **ﮔﺑﮔﺍﻟﭖﻠ** | < 200ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮔﺑﮔ?|
-| **ﮒﮒﭨﭦﮒﺟ،ﻝ۶** | < 500ms | ﮒﮒ،ﮔﮔ ﻟ؟۰ﻝ؟ |
+| **ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ** | < 300ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮒﮒ?|
+| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 50ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
+| **ﮔﺑﮔﺍﻟﭖﻠ** | < 200ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮔﺑﮔ?|
+| **ﮒﮒﭨﭦﮒﺟ،ﻝ۶** | < 500ms | ﮒﮒ،ﮔﮔ ﻟ؟۰ﻝ؟ |
 
-### 5.2 ﻝﺙﮒ­ﻝ­ﻝ۴
+### 5.2 ﻝﺙﮒ­ﻝ­ﻝ۴
 
-| ﮔﺍﮔ؟ﻝﺎﭨﮒ | ﻝﺙﮒ­ﮔﭘﻠﺑ | ﻝﺙﮒ­ﻝ­ﻝ۴ |
+| ﮔﺍﮔ؟ﻝﺎﭨﮒ | ﻝﺙﮒ­ﮔﭘﻠﺑ | ﻝﺙﮒ­ﻝ­ﻝ۴ |
 |----------|----------|----------|
-| **ﻟﺑ۵ﮔﺓﮒﭦﮔ؛ﻛﺟ۰ﮔﺁ** | 5ﮒﻠ | Redisﻝﺙﮒ­ |
-| **ﻟﺑ۵ﮔﺓﻟﭖﻠﻛﺟ۰ﮔﺁ** | 1ﮒﻠ | Redisﻝﺙﮒ­ |
-| **ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶** | ﻛﺕﻝﺙﮒ­?| ﮒ؟ﮔﭘﮔ۴ﻟﺁ۱ |
+| **ﻟﺑ۵ﮔﺓﮒﭦﮔ؛ﻛﺟ۰ﮔﺁ** | 5ﮒﻠ | Redisﻝﺙﮒ­ |
+| **ﻟﺑ۵ﮔﺓﻟﭖﻠﻛﺟ۰ﮔﺁ** | 1ﮒﻠ | Redisﻝﺙﮒ­ |
+| **ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶** | ﻛﺕﻝﺙﮒ­?| ﮒ؟ﮔﭘﮔ۴ﻟﺁ۱ |
 
 ---
 
-**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-**ﻛﺕﻛﺕﮔ­?*: P0-7 ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
+**ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+**ﻛﺕﻛﺕﮔ­?*: P0-7 ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰

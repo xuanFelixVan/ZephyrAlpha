@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: IMMEDIATE_EXECUTION_REPORT_20260407_143159
 version: 1.0.0
 status: Active
@@ -72,7 +72,7 @@ parent_document: ../INDEX.md
 
 1. **02_FACTOR_LIBRARY\01_STANDARDS\02_ALPHA_FACTORS_INDEX.md**
    - 旧职责: 目录导航和文档索引
-   - 新职责: 02_ALPHA_FACTORS_INDEX.md - Alpha因子索引�?的定义和实现
+   - 新职责: 02_ALPHA_FACTORS_INDEX.md - Alpha因子索引?的定义和实现
 
 2. **02_FACTOR_LIBRARY\01_STANDARDS\backtest_standards.md**
    - 旧职责: 回测标准规范和流程
@@ -80,7 +80,7 @@ parent_document: ../INDEX.md
 
 3. **02_FACTOR_LIBRARY\01_STANDARDS\factor_return_analysis.md**
    - 旧职责: 因子收益分析方法论
-   - 新职责: 因子收益率分�?的定义和实现
+   - 新职责: 因子收益率分?的定义和实现
 
 4. **02_FACTOR_LIBRARY\01_STANDARDS\factor_synthesis.md**
    - 旧职责: 因子合成方法和策略

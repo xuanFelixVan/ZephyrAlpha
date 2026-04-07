@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: COMPREHENSIVE_IMPLEMENTATION_SOLUTION_001
 version: 1.0.0
 status: Active

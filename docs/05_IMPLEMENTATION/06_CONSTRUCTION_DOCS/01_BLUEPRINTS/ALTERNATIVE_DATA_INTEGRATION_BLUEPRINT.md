@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -10,9 +10,7 @@ applicable_scope: Layer 1 数据源层
 compliance_level: 专业标准
 responsibility:
   - 另类数据集成
-  - æ°æ®æºæ¥å
 ?
-  - æ°æ®æ åå?
   - 数据质量控制
 layer: Layer 5 (策略执行层)
 ---
@@ -26,7 +24,6 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Alternative Data Integration蓝图设计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Alternative Data...
 
 
 ## 设计目标
@@ -83,22 +80,14 @@ layer: Layer 5 (策略执行层)
 
 ## 核心定位
 
-**åä¸èè´£**: å¦ç±»æ°æ®æºéæä¸å å­æå»ºï¼å
 括新闻数据、社交媒体数据、分析师预期数据的采集、处理和因子生成
 
 ### 职责边界
 
-**â?æ ¸å¿èè´£**:
 
-- å¦ç±»æ°æ®æºæ¥å
-¥ï¼æ°é»ãç¤¾äº¤åªä½ãåæå¸é¢æï¼?
-- æ°æ®ééä¸æ¸
-æ´ï¼APIæ¥å£ãç¬è«ãå®æ¶æµï¼?
-- NLPå¤çä¸å å­æå»ºï¼æ
 感分析、事件提取、实体识别）
 - 因子管理与验证（存储、IC验证、监控）
 
-**â?éèè´£èå?*:
 - 传统市场数据采集
 - 数据质量监控
 - 数据存储基础设施
@@ -107,19 +96,6 @@ layer: Layer 5 (策略执行层)
 ### 1.1 整体架构
 
 ```
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   å¦ç±»æ°æ®æºéææ¶?                                ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                    ?? æ°æ®æºå± (Data Sources)                                            ?? âââ æ°é»æ°æ®? è´¢èç¤¾APIãæ°æµªè´¢ç»APIãä¸æ¹è´¢å¯API                ?? âââ ç¤¾äº¤åªä½æ°æ®? å¾®åAPIãéªçç½ç¬è«ãä¸æ¹è´¢å¯è¡?             ?? âââ åæå¸é¢ææ°æ®æº: ä¸æ¹è´¢å¯åæå¸é¢æãåè±é¡ºç æ¥               ??                                                                    ?? æ°æ®éé?(Data Collection)                                       ?? âââ APIæ¥å£éé
-? ç»ä¸APIè°ç¨æ¥å£                                 ?? âââ ç¬è«å¼æ: Scrapy + Selenium                                   ?? âââ å®æ¶æ°æ®? WebSocket + Kafka                                 ?? âââ æ°æ®è°åº¦? Apache Airflow                                    ??                                                                    ?? æ°æ®å¤ç?(Data Processing)                                       ?? âââ æ°æ®æ¸
-æ´: å»éãå»åªãæ ¼å¼æ åå                               ?? âââ NLPå¤ç: GLM-4-Flashï¼æ
-æåæãäºä»¶æåï¼                     ?? âââ å®ä½è¯å«: è¡ç¥¨ä»£ç ãå
-¬å¸åç§°ãäººç©è¯?                        ?? âââ å
-³ç³»æ½å: æ°é»-è¡ç¥¨å
-³èãäº?å½±ååæ                         ??                                                                    ?? å å­æå»º?(Factor Construction)                                   ?? âââ æ°é»å å­: æ
-æå å­ãäºä»¶é©±å¨å å­ãç­åº¦å ?                    ?? âââ æ
-ç»ªå å­: å¸åºæ
-ç»ªãæ¿åæ
-ç»ªãä¸ªè¡æ
-?                        ?? âââ é¢æå å­: åæå¸é¢æå·®å¼ãä¸è´é¢æå?                        ?? âââ å
-³æ³¨åº¦å ? ç¤¾äº¤åªä½ç­åº¦ãæç´¢ææ°ãè®¨è®ºé                     ??                                                                    ?? å å­ç®¡ç?(Factor Management)                                     ?? âââ å å­å­å¨: SQLite + åéæ°æ®?                                 ?? âââ ICéªè¯: å å­æææ§æ£?                                        ?? âââ å å­çæ§: å®æ¶å å­è·è¸ª                                         ?? âââ å å­æ³¨å: èªå¨åå å­æ³¨åæµ?                                  ??                                                                    ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
 ### 1.2 技术栈选择
 
@@ -140,11 +116,9 @@ layer: Layer 5 (策略执行层)
 ### 2.1 新闻数据?
 #### 2.1.1 财联社API
 
-**æ°æ®å
-å®¹**:
-- å®æ¶è´¢ç»æ°é»?Ã24å°æ¶?- å¿«è®¯ãå
-¬åãç ?- è¡ä¸æ°é»ãå
-¬å¸æ°?
+**æ°æ®å
+容**:
+¬å¸æ°?
 **技术方?*:
 ```python
 class CailianNewsDataSource:
@@ -170,11 +144,9 @@ class CailianNewsDataSource:
         return self._parse_news(response.json())
     
     def get_stock_news(self, stock_code, start_date, end_date):
-        """è·åä¸ªè¡ç¸å
-³æ°é»"""
-        # éè¿å
-³é®è¯æç´¢ç¸å
-³æ°?        pass
+³æ°é»"""
+        # éè¿å
+³æ°?        pass
 ```
 
 **数据字段**:
@@ -185,22 +157,18 @@ class CailianNewsDataSource:
 | content | text | 新闻正文 |
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
-| stock_codes | array | ç¸å
-³è¡ç¥¨ä»£ç  |
-| sentiment | float | æ
+| stock_codes | array | ç¸å
+| sentiment | float | æ
 感得分?1??|
 | event_type | string | 事件类型 |
 
-**ææ¬**: å
-è´¹ï¼æé¢çéå¶?
+**ææ¬**: å
 ---
 
 #### 2.1.2 新浪财经API
 
-**æ°æ®å
-å®¹**:
-- è´¢ç»æ°é»ãå
-¬?- è¡ä¸èµè®¯ãå¸åºå?
+**æ°æ®å
+容**:
 **技术方?*:
 ```python
 class SinaFinanceDataSource:
@@ -222,17 +190,15 @@ class SinaFinanceDataSource:
         return self._parse_response(response.json())
 ```
 
-**ææ¬**: å
-è´¹
+**ææ¬**: å
+费
 
 ---
 
 #### 2.1.3 东方财富API
 
-**æ°æ®å
-å®¹**:
-- è´¢ç»æ°é»ãå
-¬?- ç æ¥ãèµ?
+**æ°æ®å
+容**:
 **技术方?*:
 ```python
 class EastMoneyDataSource:
@@ -255,18 +221,17 @@ class EastMoneyDataSource:
         return self._parse_response(response.json())
 ```
 
-**ææ¬**: å
-è´¹
+**ææ¬**: å
+费
 
 ---
 
 ### 2.2 社交媒体数据?
 #### 2.2.1 微博API
 
-**æ°æ®å
-å®¹**:
+**æ°æ®å
+容**:
 - 财经大V观点
-- è¡ç¥¨è®¨è®ºãæ
 ?- 热门话题
 
 **技术方?*:
@@ -282,8 +247,7 @@ class WeiboDataSource:
         }
         
     def search_stock_posts(self, stock_name, page=1):
-        """æç´¢è¡ç¥¨ç¸å
-³å¾®å"""
+³å¾®å"""
         params = {
             'containerid': f'100103type=1&q={stock_name}',
             'page_type': 'searchall',
@@ -307,24 +271,22 @@ class WeiboDataSource:
 | post_id | string | 微博ID |
 | user_id | string | 用户ID |
 | user_name | string | 用户?|
-| content | text | å¾®åå
-å®¹ |
+| content | text | å¾®åå
+容 |
 | publish_time | datetime | 发布时间 |
 | likes | int | 点赞?|
 | comments | int | 评论?|
 | reposts | int | 转发?|
-| sentiment | float | æ
+| sentiment | float | æ
 感得分 |
 
-**ææ¬**: å
-è´¹ï¼éè¦ç»å½cookie?
+**ææ¬**: å
 ---
 
 #### 2.2.2 雪球网爬?
-**æ°æ®å
-å®¹**:
-- è¡ç¥¨è®¨è®ºãè§?- æèµè
-æ
+**æ°æ®å
+容**:
+æ
 ?- 热门股票
 
 **技术方?*:
@@ -340,8 +302,6 @@ class XueqiuDataSource:
         }
         
     def get_stock_posts(self, stock_code, page=1):
-        """è·åè¡ç¥¨ç¸å
-³è®¨è®º"""
         url = f"{self.base_url}/query/v1/symbol/search/status.json"
         params = {
             'symbol': stock_code,
@@ -358,16 +318,14 @@ class XueqiuDataSource:
         return self._parse_hot_stocks(response.json())
 ```
 
-**ææ¬**: å
-è´¹ï¼éè¦ç»å½cookie?
+**ææ¬**: å
 ---
 
 #### 2.2.3 东方财富股吧
 
-**æ°æ®å
-å®¹**:
-- è¡ç¥¨è®¨è®ºãè§?- æ£æ·æ
-ç»ª
+**æ°æ®å
+容**:
+绪
 
 **技术方?*:
 ```python
@@ -387,16 +345,16 @@ class GubaDataSource:
         return self._parse_posts(response.text)
 ```
 
-**ææ¬**: å
-è´¹
+**ææ¬**: å
+费
 
 ---
 
 ### 2.3 分析师预期数据源
 
 #### 2.3.1 东方财富分析师预?
-**æ°æ®å
-å®¹**:
+**æ°æ®å
+容**:
 - 分析师评?- 目标价预?- 盈利预测
 
 **技术方?*:
@@ -429,26 +387,25 @@ class AnalystExpectationDataSource:
 | stock_code | string | 股票代码 |
 | analyst_name | string | 分析师姓?|
 | institution | string | 机构名称 |
-| rating | string | è¯çº§ï¼ä¹°?å¢æ/ä¸?åæ/ååº?|
 | target_price | float | 目标?|
 | eps_forecast | float | EPS预测 |
 | report_date | date | 报告日期 |
 
-**ææ¬**: å
-è´¹
+**ææ¬**: å
+费
 
 ---
 
 ## 三、NLP处理流程
 
-### 3.1 æ
+### 3.1 æ
 感分析
 
 **技术方?*: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
-    """æ
+    """æ
 感分析?""
     
     def __init__(self):
@@ -456,27 +413,21 @@ class SentimentAnalyzer:
         self.api_key = config.get('zhipu_api_key')
         
     def analyze_sentiment(self, text):
-        """åæææ¬æ
 感"""
         prompt = f"""
-        è¯·åæä»¥ä¸è´¢ç»æ°é»çæ
-æå¾åï¼è¿?1?ä¹é´çæ
 感得分：
         -1表示极度负面?表示中性，1表示极度正面
         
-        æ°é»å
+        æ°é»å
 容：{text}
         
-        è¯·åªè¿åæ
-æå¾åæ°å¼ï¼ä¸è¦å
-¶ä»è§£é?        """
         
         response = self._call_api(prompt)
         sentiment_score = float(response.strip())
         return sentiment_score
     
     def batch_analyze(self, texts):
-        """æ¹éæ
+        """æ¹éæ
 感分析"""
         results = []
         for text in texts:
@@ -500,27 +451,21 @@ class EventExtractor:
     def __init__(self):
         self.model = "glm-4-flash"
         self.event_types = [
-            'ä¸ç»©å
-¬å', 'å¹¶è´­éç»', 'è¡æåå¨', 'é«ç®¡åå¨',
-            'äº§ååå¸', 'æ¿ç­å½±å', 'è¡ä¸å?, 'å¸åºäºä»¶'
         ]
         
     def extract_events(self, text):
         """提取新闻事件"""
         prompt = f"""
-        è¯·ä»ä»¥ä¸è´¢ç»æ°é»ä¸­æåå
-³é®äºä»¶ä¿¡æ¯ï¼
         
-        æ°é»å
+        æ°é»å
 容：{text}
         
         请返回JSON格式?        {{
             "event_type": "事件类型",
             "event_summary": "事件摘要",
-            "related_stocks": ["ç¸å
-³è¡ç¥¨ä»£ç "],
+            "related_stocks": ["ç¸å
             "impact_level": "影响等级（高/?低）",
-            "sentiment": "æ
+            "sentiment": "æ
 感倾向（正?负面/中性）"
         }}
         """
@@ -544,15 +489,10 @@ class EntityRecognizer:
         
     def extract_stocks(self, text):
         """提取股票代码"""
-        # 1. æ­£åå¹é
-è¡ç¥¨ä»£ç 
         stock_codes = re.findall(self.stock_pattern, text)
         
-        # 2. GLM-4è¯å«å
-¬å¸åç§°
+        # 2. GLM-4è¯å«å
         prompt = f"""
-        è¯·ä»ä»¥ä¸ææ¬ä¸­è¯å«æææå°çä¸å¸å
-¬å¸åç§°ï¼è¿åè¡ç¥¨ä»£ç åè¡¨ï¼
         
         文本：{text}
         
@@ -570,16 +510,13 @@ class EntityRecognizer:
 ## 四、因子构建方?
 ### 4.1 新闻因子
 
-#### å å­1: æ°é»æ
 感因子
 
-**å å­å®ä¹**: åºäºæ°é»æ
 感分析构建的因?
 **计算方法**:
 ```python
 def calculate_news_sentiment_factor(stock_code, date, window=7):
     """
-    è®¡ç®æ°é»æ
 感因子
     
     Args:
@@ -588,11 +525,9 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
         window: 时间窗口（天?    
     Returns:
         因子值（-1??    """
-    # 1. è·åè¿å»windowå¤©çç¸å
-³æ°é»
+³æ°é»
     news_list = get_stock_news(stock_code, date-window, date)
     
-    # 2. è®¡ç®æ¯æ¡æ°é»çæ
 感得?    sentiments = [analyze_sentiment(news['content']) for news in news_list]
     
     # 3. 加权平均（近期新闻权重更高）
@@ -605,7 +540,6 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- å å­ç±»å: æ
 绪因子
 - 更新频率: 日频
 - 数据窗口: 7?- IC预期: 0.03-0.05
@@ -636,7 +570,6 @@ def calculate_event_driven_factor(stock_code, date):
     for event in events:
         # 根据事件类型和影响等级计算得?        base_score = EVENT_IMPACT_MAP[event['event_type']]
         level_multiplier = {'?: 1.0, '?: 0.6, '?: 0.3}[event['impact_level']]
-        sentiment_multiplier = {'æ­£é¢': 1.0, 'è´é¢': -1.0, 'ä¸?: 0.0}[event['sentiment']]
         
         score = base_score * level_multiplier * sentiment_multiplier
         impact_scores.append(score)
@@ -656,8 +589,6 @@ def calculate_event_driven_factor(stock_code, date):
 
 #### 因子3: 新闻热度因子
 
-**å å­å®ä¹**: åºäºæ°é»æ°éåå
-³æ³¨åº¦æå»ºçå ?
 **计算方法**:
 ```python
 def calculate_news_heat_factor(stock_code, date, window=7):
@@ -673,8 +604,6 @@ def calculate_news_heat_factor(stock_code, date, window=7):
     # 1. 获取过去window天的新闻数量
     news_count = count_stock_news(stock_code, date-window, date)
     
-    # 2. è®¡ç®å
-¨å¸åºå¹³åæ°é»æ°?    market_avg = get_market_avg_news_count(date-window, date)
     
     # 3. 计算相对热度
     heat_score = (news_count - market_avg) / market_avg
@@ -686,38 +615,30 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- å å­ç±»å: å
-³æ³¨åº¦å ?- æ´æ°é¢ç: æ¥é¢
 - 数据窗口: 7?- IC预期: 0.02-0.04
 
 ---
 
-### 4.2 æ
+### 4.2 æ
 绪因子
 
-#### å å­4: å¸åºæ
 绪因子
 
-**å å­å®ä¹**: åºäºç¤¾äº¤åªä½æ
-ç»ªæå»ºçå¸åºæ´ä½æ
 绪因?
 **计算方法**:
 ```python
 def calculate_market_sentiment_factor(date):
     """
-    è®¡ç®å¸åºæ
 绪因子
     
     Args:
         date: 计算日期
     
     Returns:
-        å å­å¼ï¼å¸åºæ
 绪得分?    """
     # 1. 获取微博、雪球、股吧的热门讨论
     posts = get_hot_posts(date)
     
-    # 2. è®¡ç®æ
 绪得分
     sentiments = [analyze_sentiment(post['content']) for post in posts]
     
@@ -731,24 +652,18 @@ def calculate_market_sentiment_factor(date):
 ```
 
 **因子特征**:
-- å å­ç±»å: æ
 绪因子
 - 更新频率: 日频
-- éç¨èå´: å
-¨å¸?- ICé¢æ: 0.03-0.05
 
 ---
 
-#### å å­5: ä¸ªè¡æ
 绪因子
 
-**å å­å®ä¹**: åºäºç¤¾äº¤åªä½è®¨è®ºæå»ºçä¸ªè¡æ
 绪因?
 **计算方法**:
 ```python
 def calculate_stock_sentiment_factor(stock_code, date, window=7):
     """
-    è®¡ç®ä¸ªè¡æ
 绪因子
     
     Args:
@@ -756,19 +671,17 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
         date: 计算日期
         window: 时间窗口（天?    
     Returns:
-        å å­å¼ï¼ä¸ªè¡æ
 绪得分?    """
     # 1. 获取社交媒体讨论
     posts = get_stock_posts(stock_code, date-window, date)
     
-    # 2. è®¡ç®æ
 绪得分
     sentiments = [analyze_sentiment(post['content']) for post in posts]
     
     # 3. 计算讨论热度
     engagement = sum([post['likes'] + post['comments'] + post['reposts'] for post in posts])
     
-    # 4. ç»¼åæ
+    # 4. ç»¼åæ
 绪和热?    avg_sentiment = np.mean(sentiments)
     heat_score = np.log1p(engagement)
     
@@ -778,7 +691,6 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- å å­ç±»å: æ
 绪因子
 - 更新频率: 日频
 - 数据窗口: 7?- IC预期: 0.03-0.05
@@ -788,7 +700,6 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 ### 4.3 预期因子
 
 #### 因子6: 分析师预期差异因?
-**å å­å®ä¹**: åºäºåæå¸é¢æä¸å®é
 值差异构建的因子
 
 **计算方法**:
@@ -804,7 +715,6 @@ def calculate_expectation_gap_factor(stock_code, date):
         因子值（预期差异得分?    """
     # 1. 获取分析师一致预?    consensus = get_consensus_forecast(stock_code, date)
     
-    # 2. è·åå®é
 ?    actual = get_actual_eps(stock_code, date)
     
     # 3. 计算预期差异
@@ -844,7 +754,6 @@ def calculate_rating_change_factor(stock_code, date, window=30):
     # 2. 计算评级变化
     if len(ratings) >= 2:
         rating_map = {'ä¹°å
-¥': 2, 'å¢æ': 1, 'ä¸?: 0, 'åæ': -1, 'ååº': -2}
         latest_rating = rating_map.get(ratings[-1]['rating'], 0)
         previous_rating = rating_map.get(ratings[0]['rating'], 0)
         
@@ -863,11 +772,8 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 ---
 
 ### 4.4 å
-³æ³¨åº¦å ?
 #### 因子8: 社交媒体热度因子
 
-**å å­å®ä¹**: åºäºç¤¾äº¤åªä½è®¨è®ºéæå»ºçå
-³æ³¨åº¦å ?
 **计算方法**:
 ```python
 def calculate_social_heat_factor(stock_code, date, window=7):
@@ -899,8 +805,6 @@ def calculate_social_heat_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- å å­ç±»å: å
-³æ³¨åº¦å ?- æ´æ°é¢ç: æ¥é¢
 - 数据窗口: 7?- IC预期: 0.02-0.04
 
 ---
@@ -994,7 +898,6 @@ CREATE INDEX idx_factor_stock ON alternative_factors(stock_code);
 ---
 
 ### 5.2 向量数据库设?
-**ç?*: å­å¨æ°é»åç¤¾äº¤åªä½å
 容的向量表示，支持语义搜?
 ```python
 from chromadb import Client
@@ -1041,14 +944,10 @@ class VectorStore:
 ---
 
 ## å
-­ãé¡¹ç®å®æ½è®¡?
 ### 6.1 时间规划
 
 | 阶段 | 时间 | 任务 | 交付?|
 |------|------|------|--------|
-| **Phase 1: æ°æ®æºæ¥?* | Week 1-3 | æ¥å
-¥æ°é»ãç¤¾äº¤åªä½ãåæå¸é¢ææ°æ®?| æ°æ®ééæ¨¡åãæ°æ®åºè¡¨ç»?|
-| **Phase 2: NLPå¤ç** | Week 4-5 | å¼åæ
 感分析、事件提取、实体识别模?| NLP处理模块、API集成 |
 | **Phase 3: 因子构建** | Week 6-7 | 构建8个另类数据因?| 因子计算模块、因子数?|
 | **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测?| 测试报告、验收文?|
@@ -1058,12 +957,7 @@ class VectorStore:
 ### 6.2 里程?
 | 里程?| 时间 | 验收标准 |
 |--------|------|---------|
-| **M1: æ°æ®æºæ¥å
-¥å®?* | Week 3 | è³å°3ä¸ªæ°æ®æºæ¥å
-¥ï¼æ°æ®è´¨?95% |
-| **M2: NLPå¤çå®æ** | Week 5 | æ
 感分析准确?80%，事件提取完?|
-| **M3: å å­æå»ºå®æ** | Week 7 | è³å°8ä¸ªå å­ï¼ICå?0.03 |
 | **M4: 项目验收** | Week 8 | 所有测试通过，文档完?|
 
 ---
@@ -1074,9 +968,6 @@ class VectorStore:
 | 角色 | 职责 | 工作?|
 |------|------|--------|
 | **项目负责?* | 整体协调、进度管?| 20% |
-| **æ°æ®å·¥ç¨?* | æ°æ®æºæ¥å
-¥ãæ°æ®é?| 60% |
-| **NLPå·¥ç¨?* | æ
 感分析、事件提?| 40% |
 | **因子研究?* | 因子构建、IC验证 | 40% |
 | **测试工程?* | 系统测试、质量保?| 20% |
@@ -1091,19 +982,17 @@ class VectorStore:
 | **计算资源** | 本地开发机??6G?| 0?|
 | **存储资源** | 本地SSD 500GB | 0?|
 | **API调用** | GLM-4-Flash | ?00??|
-| **æ°æ®?* | å
-¬å¼API | 0?|
+| **æ°æ®?* | å
+¬å¼API | 0?|
 
 **总成?*: ?00??
 ---
 
 ## å
-«ãé£é©ç®¡?
 ### 8.1 技术风?
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
 | **API频率限制** | ?| ?| 实现请求队列、多账号轮换 |
-| **æ°æ®è´¨éä¸ç¨³?* | ?| ?| æ°æ®æ¸
 洗、异常检?|
 | **NLP准确率不?* | ?| ?| 模型优化、人工标注验?|
 | **系统性能瓶颈** | ?| ?| 异步处理、缓存优?|
@@ -1115,8 +1004,6 @@ class VectorStore:
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
 | **进度延期** | ?| ?| 预留缓冲时间、并行开?|
-| **èµæºä¸è¶³** | ?| ?| ä¼å
-çº§ç®¡çãèµæºå¤?|
 | **需求变?* | ?| ?| 需求冻结、变更控?|
 
 ---
@@ -1127,10 +1014,9 @@ class VectorStore:
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
 | **数据采集** | 数据完整?95% | 数据质量检?|
-| **NLPå¤ç** | æ
+| **NLPå¤ç** | æ
 感分析准确?80% | 人工标注验证 |
 | **因子计算** | 因子数量??| 功能测试 |
-| **ICéªè¯** | ICå?0.03 | ç»è®¡æ£?|
 
 ---
 
@@ -1146,59 +1032,45 @@ class VectorStore:
 
 ## 十、项目文?
 ### 10.1 已生成文?
-1. **é¡¹ç®èå¾**: æ¬æ?2. **ææ¯è§æ ¼ä¹¦**: å¾
-å¶?3. **å®æ½è®¡å**: å¾
-å¶?4. **æµè¯è®¡å**: å¾
 制?
 ---
 
 **蓝图版本**: v1.0  
 **创建日期**: 2026-04-02  
-**ç?*: ?å·²å®?
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active
 ---
 
 
 ---
 
-## ð ç¸å
-³ææ¡£
+## ð ç¸å
+³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ¥åé
-ç½® |
+置 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æ¥æ¶å¦ç±»æ°æ®è¿è¡è´¨éæ£æ?|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| æ³¨åå¦ç±»æ°æ®èµäº§ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **Scrapy** | 2.11+ | 数据采集 | [官方文档](https://scrapy.org/) |
-| **Selenium** | 4.15+ | å¨æé¡µé¢æå?| [å®æ¹ææ¡£](https://www.selenium.dev/) |
 | **GLM-4-Flash** | latest | NLP处理 | [官方文档](https://open.bigmodel.cn/) |
 | **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
 
-### å¼ç¨å
-³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -1217,29 +1089,21 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Alternative Data Integration
 - **模块ID**: ALTERNATIVE_DATA_INTEGRATION_001
 - **蓝图文档**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: Layer 2 Alphaå å­å±?- å¦ç±»æ°æ®æºéæ?
-- **ç¶æ?*: Active
+åå»?
+- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Alternative Data Integration** | Layer 2 Alphaå å­å±?- å¦ç±»æ°æ®æºéæ?| **æ ¸å¿æ¨¡å** |
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active

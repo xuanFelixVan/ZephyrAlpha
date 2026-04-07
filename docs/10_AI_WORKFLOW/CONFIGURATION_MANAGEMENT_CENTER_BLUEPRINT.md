@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: CONFIGURATION_MANAGEMENT_CENTER_001
 version: 1.0.0
 status: Active

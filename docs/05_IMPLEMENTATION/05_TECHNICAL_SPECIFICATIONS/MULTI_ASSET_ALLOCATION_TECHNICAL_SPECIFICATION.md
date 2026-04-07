@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: MULTI_ASSET_ALLOCATION_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -228,4 +228,4 @@ class TestMultiAssetAllocation:
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 实施开?

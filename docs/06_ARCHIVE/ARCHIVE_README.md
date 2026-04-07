@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: 06_ARCHIVE_ARCHIVE_README_20260407124139
 version: 1.0.0
 status: Active
@@ -73,8 +73,8 @@ owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
 
 # 损坏内容
-owner: ��ϯ���������
-standard_type: רҵ����������ͼ
+owner: ϯ
+standard_type: רҵͼ
 ```
 
 ### 2.2 问题原因

@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: INDEX_QUALITY_STANDARD_COMPLIANCE_REPORT_20260407
 version: 1.0.0
 status: Active

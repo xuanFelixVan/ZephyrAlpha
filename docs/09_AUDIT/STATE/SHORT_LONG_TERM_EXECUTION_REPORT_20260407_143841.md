@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: SHORT_LONG_TERM_EXECUTION_REPORT_20260407_143841
 version: 1.0.0
 status: Active
@@ -59,15 +59,15 @@ parent_document: ../INDEX.md
 
 1. **02_FACTOR_LIBRARY\SITEMAP.md**
    - 旧职责: 文档位置导航和结构地图 (11 字符)
-   - 新职责: �ĵ���ͼ (SITEMAP)的定义、实现和应用 (25 字符)
+   - 新职责: ĵͼ (SITEMAP)的定义、实现和应用 (25 字符)
 
 2. **02_FACTOR_LIBRARY\01_STANDARDS\backtest_standards.md**
    - 旧职责: 回测标准的定义和实现 (10 字符)
    - 新职责: 回测标准的定义、实现和应用 (13 字符)
 
 3. **02_FACTOR_LIBRARY\01_STANDARDS\factor_return_analysis.md**
-   - 旧职责: 因子收益率分�?的定义和实现 (14 字符)
-   - 新职责: 因子收益率分�?的定义、实现和应用 (17 字符)
+   - 旧职责: 因子收益率分?的定义和实现 (14 字符)
+   - 新职责: 因子收益率分?的定义、实现和应用 (17 字符)
 
 4. **02_FACTOR_LIBRARY\01_STANDARDS\factor_synthesis.md**
    - 旧职责: 因子合成方法的定义和实现 (12 字符)

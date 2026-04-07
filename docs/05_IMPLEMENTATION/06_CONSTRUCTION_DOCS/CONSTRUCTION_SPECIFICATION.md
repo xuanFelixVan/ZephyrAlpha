@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: CONSTRUCTION_SPECIFICATION_001
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ implementation_status: 强制执行
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **职责**: 规范AI和人工开发行为，确保文件夹结构、命名、文档和代码的一�?> **强制级别**: 🔴 **强制执行** - 所有开发和文档构建必须遵循本规?> **适用对象**: AI智能体、开发人员、文档编�?
+> **职责**: 规范AI和人工开发行为，确保文件夹结构、命名、文档和代码的一?> **强制级别**: 🔴 **强制执行** - 所有开发和文档构建必须遵循本规?> **适用对象**: AI智能体、开发人员、文档编?
 ---
 
 ## ⚠️ **重要提示**
@@ -263,7 +263,7 @@ implementation_status: [实施状态]
 |------|------|------|------|
 | `module_id` | ?| 大写+下划?数字 | 模块唯一标识 |
 | `version` | ?| x.y.z | 语义化版?|
-| `status` | ?| Active/Inactive | 文档�?|
+| `status` | ?| Active/Inactive | 文档?|
 | `created_date` | ?| YYYY-MM-DD | 创建日期 |
 | `last_updated` | ?| YYYY-MM-DD | 最后更新日?|
 | `owner` | ?| 字符?| 文档负责?|
@@ -271,7 +271,7 @@ implementation_status: [实施状态]
 | `applicable_scope` | ?| 字符?| 适用范围 |
 | `compliance_level` | ?| 字符?| 合规级别 |
 | `parent_document` | ?| 相对路径 | 父文档路?|
-| `implementation_status` | ?| 字符?| 实施�?|
+| `implementation_status` | ?| 字符?| 实施?|
 
 ---
 
@@ -285,7 +285,7 @@ implementation_status: [实施状态]
 
 版本: v1.0
 创建日期: YYYY-MM-DD
-�? [作者]
+? [作者]
 """
 
 from typing import Dict, Any, Optional, List
@@ -296,8 +296,8 @@ class [ClassName]:
     """[类名] - [类职责]
     
     Attributes:
-        attr1: �?说明
-        attr2: �?说明
+        attr1: ?说明
+        attr2: ?说明
     
     Example:
         >>> obj = ClassName()
@@ -456,7 +456,7 @@ LS d:\ZephyrAlpha\docs\
 #### **Step 5: 验证**
 
 ```
-1. 检查文件位?2. 检查命名规?3. 检查内容完�?4. 运行质量门禁检?```
+1. 检查文件位?2. 检查命名规?3. 检查内容完?4. 运行质量门禁检?```
 
 ### **3. 施工后验?*
 
@@ -489,7 +489,7 @@ LS d:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\
 
 | 检查项 | 标准 | 负责?|
 |--------|------|--------|
-| 架构一�?| 符合Layer 0-11架构 | 架构?|
+| 架构一?| 符合Layer 0-11架构 | 架构?|
 | 职责清晰 | 模块职责不重?| 架构?|
 | 代码质量 | 符合编码规范 | 代码审查?|
 | 文档质量 | 内容完整准确 | 文档审查?|

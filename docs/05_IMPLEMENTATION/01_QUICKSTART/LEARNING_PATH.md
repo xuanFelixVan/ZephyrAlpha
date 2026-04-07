@@ -1,22 +1,22 @@
-﻿---
+﻿﻿---
 module_id: IMPL_QUICKSTART_LEARNING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 实施指南、部署文档
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
+applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
 ---
 ---
 
 
-# 新手学习路线�?
+# 新手学习路线?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -29,7 +29,7 @@ implementation_status: 进行�?
 
 ## 学习前提
 
-- Python基础（能看懂if/for/函数即可�?
+- Python基础（能看懂if/for/函数即可?
 - 每天1-2小时学习时间
 - 能跑通第一个回测的决心
 
@@ -38,39 +38,39 @@ implementation_status: 进行�?
 ## 学习阶段总览
 
 ```
-┌─────────────────────────────────────────────────────────────────────�?
-�?                       新手学习四阶�?                               �?
-├─────────────────────────────────────────────────────────────────────�?
-�?                                                                    �?
-�? 阶段一：环境准�?       �?阶段二：跑通回�?     �?阶段三：因子选股  �?阶段四：模拟交易  �?
-�? �?-2天）               �?-5天）               �?-10天）          �?-5天）          �?
-�?                                                                    �?
-�? �?安装Anaconda          �?Backtrader入门        �?因子计算入门      �?模拟交易框架     �?
-�? �?安装依赖�?           �?编写第一个策�?        �?pandas计算因子     �?参数优化        �?
-�? �?了解目录结构          �?看懂回测报告           �?IC分析基础        �?开始实盘准�?    �?
-�?                                                                    �?
-└─────────────────────────────────────────────────────────────────────�?
+┌─────────────────────────────────────────────────────────────────────?
+?                       新手学习四阶?                               ?
+├─────────────────────────────────────────────────────────────────────?
+?                                                                    ?
+? 阶段一：环境准?       ?阶段二：跑通回?     ?阶段三：因子选股  ?阶段四：模拟交易  ?
+? ?-2天）               ?-5天）               ?-10天）          ?-5天）          ?
+?                                                                    ?
+? ?安装Anaconda          ?Backtrader入门        ?因子计算入门      ?模拟交易框架     ?
+? ?安装依赖?           ?编写第一个策?        ?pandas计算因子     ?参数优化        ?
+? ?了解目录结构          ?看懂回测报告           ?IC分析基础        ?开始实盘准?    ?
+?                                                                    ?
+└─────────────────────────────────────────────────────────────────────?
 ```
 
 ---
 
 ## 阶段一：环境准备（1-2天）
 
-### 目标：搭建可用的开发环�?
+### 目标：搭建可用的开发环?
 
 ### 1.1 安装Anaconda
 
-**什么是Anaconda�?*
+**什么是Anaconda?*
 - Python发行版，预装了大量科学计算库
-- 解决"库依赖地�?问题
+- 解决"库依赖地?问题
 
-**安装步骤�?*
+**安装步骤?*
 1. 访问 https://www.anaconda.com/download
 2. 下载Python 3.10版本（稳定）
-3. 安装时勾�?Add to PATH"
+3. 安装时勾?Add to PATH"
 4. 打开Anaconda Prompt验证安装
 
-**验证命令�?*
+**验证命令?*
 ```bash
 conda --version
 python --version
@@ -79,10 +79,10 @@ python --version
 ### 1.2 创建虚拟环境
 
 **为什么需要虚拟环境？**
-- 不同项目可能需要不同版本的�?
+- 不同项目可能需要不同版本的?
 - 避免版本冲突
 
-**创建量化环境�?*
+**创建量化环境?*
 ```bash
 conda create -n quant python=3.10
 conda activate quant
@@ -97,16 +97,16 @@ pip install backtrader
 # 数据处理
 pip install pandas numpy
 
-# 可视�?
+# 可视?
 pip install matplotlib
 
 # 金融数据
-pip install akshare   # 免费A股数�?
-# �?
+pip install akshare   # 免费A股数?
+# ?
 pip install tushare   # 需要注册token
 
 # 因素库（可选）
-pip install ta-lib    # 技术指标（安装复杂，可用pandas直接计算�?
+pip install ta-lib    # 技术指标（安装复杂，可用pandas直接计算?
 ```
 
 ### 1.4 验证安装
@@ -117,21 +117,21 @@ import pandas as pd
 import numpy as np
 import matplotlib
 
-print("�?所有库安装成功�?)
+print("?所有库安装成功?)
 ```
 
 ### 1.5 目录结构熟悉
 
 ```
-d:\ZephyrAlpha\               # �?主要工作目录
-�?  ├── config\               # 配置文件（YAML�?
-�?  ├── src\                  # 源代�?
-�?  �?  └── modules\          # 模块目录
-�?  ├── tests\                # 测试
-�?  ├── data\                 # 数据存放
-�?  �?  └── raw\              # 原始数据
-�?  �?  └── processed\        # 处理后数�?
-�?  └── logs\                 # 日志
+d:\ZephyrAlpha\               # ?主要工作目录
+?  ├── config\               # 配置文件（YAML?
+?  ├── src\                  # 源代?
+?  ?  └── modules\          # 模块目录
+?  ├── tests\                # 测试
+?  ├── data\                 # 数据存放
+?  ?  └── raw\              # 原始数据
+?  ?  └── processed\        # 处理后数?
+?  └── logs\                 # 日志
 ├── docs\                     # 文档（只读参考）
 └── notebooks\                # Jupyter笔记本（研究用）
 ```
@@ -140,27 +140,27 @@ d:\ZephyrAlpha\               # �?主要工作目录
 
 ## 阶段二：跑通回测（3-5天）
 
-### 目标：编写并运行第一个量化策略回�?
+### 目标：编写并运行第一个量化策略回?
 
 ### 2.1 Backtrader入门
 
 **Backtrader是什么？**
-- 最流行的Python开源回测框�?
-- 文档完善，示例丰�?
-- 支持股票、期货、外�?
+- 最流行的Python开源回测框?
+- 文档完善，示例丰?
+- 支持股票、期货、外?
 
-### 2.2 第一个策略：简单均线交�?
+### 2.2 第一个策略：简单均线交?
 
 ```python
 # src/modules/strategies/s001_ma_cross.py
 import backtrader as bt
 
 class MaCrossStrategy(bt.Strategy):
-    """简单均线交叉策�?""
+    """简单均线交叉策?""
 
     params = (
-        ('fast_period', 10),   # 快速均线周�?
-        ('slow_period', 30),   # 慢速均线周�?
+        ('fast_period', 10),   # 快速均线周?
+        ('slow_period', 30),   # 慢速均线周?
     )
 
     def __init__(self):
@@ -192,7 +192,7 @@ def run_backtest():
     # 添加策略
     cerebro.addstrategy(MaCrossStrategy)
 
-    # 获取数据（用akshare获取�?
+    # 获取数据（用akshare获取?
     data = bt.feeds.PandasData(
         dataname=your_dataframe,
         datetime=0,
@@ -215,18 +215,18 @@ def run_backtest():
 
     cerebro.run()
 
-    print(f'最终资�? {cerebro.broker.getvalue():.2f}')
+    print(f'最终资? {cerebro.broker.getvalue():.2f}')
 ```
 
 ### 2.4 回测报告解读
 
-| 指标 | 含义 | 目标�?|
+| 指标 | 含义 | 目标?|
 |------|------|--------|
-| 总收益率 | 策略总收�?| >0% |
+| 总收益率 | 策略总收?| >0% |
 | 夏普比率 | 风险调整收益 | >1.0 |
-| 最大回�?| 最大亏损幅�?| <20% |
+| 最大回?| 最大亏损幅?| <20% |
 | 胜率 | 盈利交易占比 | >40% |
-| 盈亏�?| 平均盈利/平均亏损 | >1.5 |
+| 盈亏?| 平均盈利/平均亏损 | >1.5 |
 
 ### 2.5 学习资源
 
@@ -235,19 +235,19 @@ def run_backtest():
 
 ---
 
-## 阶段三：因子选股�?-10天）
+## 阶段三：因子选股?-10天）
 
 ### 目标：计算因子、进行选股回测
 
-### 3.1 什么是因子�?
+### 3.1 什么是因子?
 
-**因子 = 股票的某种特�?*
-- 市值因子：股票的大�?
-- 估值因子：PE、PB�?
+**因子 = 股票的某种特?*
+- 市值因子：股票的大?
+- 估值因子：PE、PB?
 - 动量因子：过去涨跌幅
-- 质量因子：ROE、资产负债率�?
+- 质量因子：ROE、资产负债率?
 
-### 3.2 计算简单因�?
+### 3.2 计算简单因?
 
 ```python
 # src/modules/factors/simple_factors.py
@@ -264,7 +264,7 @@ def calculate_volume_ratio(df, period=5):
     return df['volume'] / avg_volume
 
 def calculate_turnover(df, period=20):
-    """计算换手率因�?""
+    """计算换手率因?""
     return df['volume'] / df['float_share']
 ```
 
@@ -276,19 +276,19 @@ def factor_backtest(factor_func, data, top_n=50):
     """
     单因子选股回测框架
 
-    步骤�?
-    1. 每天计算所有股票的因子�?
-    2. 选因子值最高的N只股�?
-    3. 等权重持�?
-    4. 下一天重�?
+    步骤?
+    1. 每天计算所有股票的因子?
+    2. 选因子值最高的N只股?
+    3. 等权重持?
+    4. 下一天重?
     """
     results = []
 
     for date in data.index:
-        # 获取当天因子�?
+        # 获取当天因子?
         factor_values = factor_func(data.loc[:date])
 
-        # 选因子值最高的前N�?
+        # 选因子值最高的前N?
         selected = factor_values.nlargest(top_n).index
 
         # 计算当天收益
@@ -308,13 +308,13 @@ def factor_backtest(factor_func, data, top_n=50):
 | 分析方法 | 目的 | 工具 |
 |----------|------|------|
 | IC分析 | 因子预测能力 | pandas + scipy |
-| 分组回测 | 因子单调�?| Backtrader |
-| 相关系数 | 因子相关�?| pandas.corr |
-| 因子衰减 | 因子有效�?| 滚动计算 |
+| 分组回测 | 因子单调?| Backtrader |
+| 相关系数 | 因子相关?| pandas.corr |
+| 因子衰减 | 因子有效?| 滚动计算 |
 
 ---
 
-## 阶段四：模拟交易�?-5天）
+## 阶段四：模拟交易?-5天）
 
 ### 目标：搭建完整的模拟交易流程
 
@@ -327,11 +327,11 @@ class SimulationTrading:
     """
     模拟交易框架
 
-    功能�?
+    功能?
     1. 每日生成选股名单
     2. 计算仓位
     3. 生成交易信号
-    4. 记录每日净�?
+    4. 记录每日净?
     """
 
     def __init__(self, initial_cash=100000):
@@ -348,10 +348,10 @@ class SimulationTrading:
 
         Args:
             date: 交易日期
-            selected_stocks: 选中的股票列�?
-            prices: 当天收盘�?
+            selected_stocks: 选中的股票列?
+            prices: 当天收盘?
         """
-        # 计算目标仓位（等权重�?
+        # 计算目标仓位（等权重?
         target_weight = 1.0 / len(selected_stocks)
 
         # 卖出不在名单中的股票
@@ -364,7 +364,7 @@ class SimulationTrading:
             if stock not in self.positions:
                 self._buy(stock, date, prices[stock], target_weight)
 
-        # 记录当日净�?
+        # 记录当日净?
         self._record_daily_value(date, prices)
 
     def _buy(self, stock, date, price, weight):
@@ -373,7 +373,7 @@ class SimulationTrading:
         shares = int(allocate_cash / price / 100) * 100  # 整手
 
         if shares > 0:
-            cost = shares * price * (1 + 0.0003)  # 手续�?
+            cost = shares * price * (1 + 0.0003)  # 手续?
             if cost <= self.current_cash:
                 self.current_cash -= cost
                 self.positions[stock] = shares
@@ -388,7 +388,7 @@ class SimulationTrading:
     def _sell(self, stock, date, price):
         """卖出"""
         shares = self.positions.pop(stock)
-        proceeds = shares * price * (1 - 0.0003 - 0.001)  # 手续�?印花�?
+        proceeds = shares * price * (1 - 0.0003 - 0.001)  # 手续?印花?
         self.current_cash += proceeds
         self.trade_log.append({
             'date': date,
@@ -399,7 +399,7 @@ class SimulationTrading:
         })
 
     def _record_daily_value(self, date, prices):
-        """记录每日净�?""
+        """记录每日净?""
         position_value = sum(
             shares * prices.get(stock, 0)
             for stock, shares in self.positions.items()
@@ -413,43 +413,43 @@ class SimulationTrading:
         })
 ```
 
-### 4.2 下一步方�?
+### 4.2 下一步方?
 
-学完这四个阶段后，您可以选择�?
+学完这四个阶段后，您可以选择?
 
 | 方向 | 所需时间 | 收益 |
 |------|----------|------|
-| **深入因子研究** | 2-4�?| 提高选股质量 |
-| **完善风控系统** | 1-2�?| 降低回撤 |
-| **参数优化** | 1�?| 提升策略表现 |
-| **实盘接入** | 1�?| 真实赚钱 |
+| **深入因子研究** | 2-4?| 提高选股质量 |
+| **完善风控系统** | 1-2?| 降低回撤 |
+| **参数优化** | 1?| 提升策略表现 |
+| **实盘接入** | 1?| 真实赚钱 |
 
 ---
 
-## 学习检查清�?
+## 学习检查清?
 
 ### 阶段一完成标志
 - [ ] Anaconda安装成功
 - [ ] 量化环境创建成功
-- [ ] 所有依赖库导入无报�?
+- [ ] 所有依赖库导入无报?
 - [ ] 了解目录结构
 
-### 阶段二完成标�?
+### 阶段二完成标?
 - [ ] 运行第一个Backtrader回测
 - [ ] 理解策略代码结构
-- [ ] 能看懂回测报告指�?
-- [ ] 修改参数并观察变�?
+- [ ] 能看懂回测报告指?
+- [ ] 修改参数并观察变?
 
-### 阶段三完成标�?
-- [ ] 计算过至�?个因�?
+### 阶段三完成标?
+- [ ] 计算过至?个因?
 - [ ] 完成单因子选股回测
-- [ ] 理解IC分析的意�?
+- [ ] 理解IC分析的意?
 - [ ] 能做简单的因子组合
 
-### 阶段四完成标�?
+### 阶段四完成标?
 - [ ] 搭建模拟交易框架
 - [ ] 运行完整模拟回测
-- [ ] 生成净值曲�?
+- [ ] 生成净值曲?
 - [ ] 理解仓位管理逻辑
 
 ---
@@ -459,9 +459,9 @@ class SimulationTrading:
 ```bash
 # 环境管理
 conda create -n quant python=3.10     # 创建环境
-conda activate quant                  # 激活环�?
-conda deactivate                       # 退出环�?
-pip install xxx                       # 安装�?
+conda activate quant                  # 激活环?
+conda deactivate                       # 退出环?
+pip install xxx                       # 安装?
 
 # 验证安装
 python -c "import backtrader; print('OK')"
@@ -478,24 +478,24 @@ jupyter notebook
 ## 常见问题
 
 ### Q1: pip安装失败怎么办？
-A: 使用 `pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple` 切换国内�?
+A: 使用 `pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple` 切换国内?
 
-### Q2: ta-lib安装失败�?
-A: 先安装Microsoft C++ Build Tools，或使用pandas直接计算技术指�?
+### Q2: ta-lib安装失败?
+A: 先安装Microsoft C++ Build Tools，或使用pandas直接计算技术指?
 
-### Q3: 数据获取失败�?
+### Q3: 数据获取失败?
 A: 检查网络，或使用tushare需先设置token
 
-### Q4: 回测结果和实盘差异大�?
+### Q4: 回测结果和实盘差异大?
 A: 正常现象，需考虑滑点、流动性等实盘因素
 
 ---
 
-**下一�?*: 查看 [05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md](05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) 开始第一个回�?
+**下一?*: 查看 [05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md](05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md) 开始第一个回?
 
 ---
 
-**最后更�?*: 2026-03-29
+**最后更?*: 2026-03-29
 **版本**: v5.0
-**维护�?*: 清风量化系统
+**维护?*: 清风量化系统
 **适用对象**: 零基础新手

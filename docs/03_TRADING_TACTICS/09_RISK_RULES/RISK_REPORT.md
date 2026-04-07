@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: RISK_REPORT_001
 version: 1.0.0
 status: Active
@@ -18,40 +18,40 @@ version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 responsibility:
   - 因子计算
   - 组合优化
   - 交易执行
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?---
+implementation_status: 进行?---
 
 
 
-# 风险报告生成器蓝�?
+# 风险报告生成器蓝?
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
 > - ✅ 本文档负责：分析报告和评估结果相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.0 - 风险报告生成�?
+> 清风量化系统 v5.0 - 风险报告生成?
 > **索引**: `RISK.RPT.001`
-> **开发时�?*: 6h
-> **核心定位**: 生成定期和按需的风险报告，支持�?监督)决策
+> **开发时?*: 6h
+> **核心定位**: 生成定期和按需的风险报告，支持?监督)决策
 
 
 ## 1. 设计原则
 
 | 原则 | 说明 |
 |------|------|
-| **自动�?* | 日报自动生成，周报月报按需 |
-| **可视�?* | 关键指标图表化，一目了�?|
-| **可追�?* | 历史报告存档，支持对�?|
-| **分层** | 摘要+详情，满足不同阅读需�?|
+| **自动?* | 日报自动生成，周报月报按需 |
+| **可视?* | 关键指标图表化，一目了?|
+| **可追?* | 历史报告存档，支持对?|
+| **分层** | 摘要+详情，满足不同阅读需?|
 
 
 ## 2. 报告类型
@@ -60,16 +60,16 @@ implementation_status: 进行�?---
 
 | 类型 | 频率 | 受众 | 生成时间 |
 |------|------|------|----------|
-| **日报** | 每日收盘�?| 全部 | 16:00自动 |
+| **日报** | 每日收盘?| 全部 | 16:00自动 |
 | **周报** | 每周五收盘后 | 全部 | 16:30自动 |
-| **月报** | 每月最后一个交易日 | 全部 | 收盘�?|
-| **实时告警** | 触发�?| 风控人员 | 实时 |
+| **月报** | 每月最后一个交易日 | 全部 | 收盘?|
+| **实时告警** | 触发?| 风控人员 | 实时 |
 | **专题报告** | 按需 | 指定人员 | 手动触发 |
 
 
 ## 3. 核心实现
 
-### 3.1 报告生成�?
+### 3.1 报告生成?
 
 ```python
 from dataclasses import dataclass, field
@@ -136,7 +136,7 @@ class RiskAlert:
     action_taken: str
 
 class RiskReportGenerator:
-    """风险报告生成�?
+    """风险报告生成?
 
     索引: RISK.RPT.001-M01
     上游: RiskManager, PositionManager
@@ -182,7 +182,7 @@ class RiskReportGenerator:
         """生成周报
 
         参数:
-            week_ending: 周结束日�?通常为周�?
+            week_ending: 周结束日?通常为周?
 
         返回:
             RiskReport: 风险报告
@@ -246,7 +246,7 @@ class RiskReportGenerator:
 
 ```python
 class VaRCalculator:
-    """VaR/CVaR计算�?
+    """VaR/CVaR计算?
 
     索引: RISK.RPT.001-M02
     """
@@ -260,12 +260,12 @@ class VaRCalculator:
         """历史法VaR计算
 
         参数:
-            returns: 收益率序�?
-            confidence: 置信�?
-            horizon: 持有�?
+            returns: 收益率序?
+            confidence: 置信?
+            horizon: 持有?
 
         返回:
-            VaR�?
+            VaR?
         """
         if horizon > 1:
             returns = returns * np.sqrt(horizon)
@@ -283,12 +283,12 @@ class VaRCalculator:
         """参数法VaR计算(方差-协方差法)
 
         参数:
-            returns: 收益率序�?
-            confidence: 置信�?
-            horizon: 持有�?
+            returns: 收益率序?
+            confidence: 置信?
+            horizon: 持有?
 
         返回:
-            VaR�?
+            VaR?
         """
         mean = returns.mean()
         std = returns.std()
@@ -310,13 +310,13 @@ class VaRCalculator:
         """蒙特卡洛VaR计算
 
         参数:
-            returns: 收益率序�?
-            confidence: 置信�?
+            returns: 收益率序?
+            confidence: 置信?
             simulations: 模拟次数
-            horizon: 持有�?
+            horizon: 持有?
 
         返回:
-            VaR�?
+            VaR?
         """
         mean = returns.mean()
         std = returns.std()
@@ -337,11 +337,11 @@ class VaRCalculator:
         """CVaR计算(条件VaR, Expected Shortfall)
 
         参数:
-            returns: 收益率序�?
-            confidence: 置信�?
+            returns: 收益率序?
+            confidence: 置信?
 
         返回:
-            CVaR�?
+            CVaR?
         """
         var = self.calculate_historical_var(returns, confidence)
         cvar = returns[returns <= -var].mean()
@@ -360,33 +360,33 @@ class VaRCalculator:
 **生成时间**: {{ generated_at }}
 
 
-## 一、概�?
+## 一、概?
 
 | 指标 | 今日 | 昨日 | 变化 |
 |------|------|------|------|
-| 组合净�?| {{ portfolio_value }} | {{ prev_value }} | {{ change }} |
+| 组合净?| {{ portfolio_value }} | {{ prev_value }} | {{ change }} |
 | 日收益率 | {{ daily_return }}% | {{ prev_return }}% | - |
-| 最大回�?| {{ max_drawdown }}% | - | - |
+| 最大回?| {{ max_drawdown }}% | - | - |
 | VaR(95%) | {{ var_95 }}% | - | - |
 | 夏普比率 | {{ sharpe_ratio }} | - | - |
 
-## 二、仓位风�?
+## 二、仓位风?
 
-| 股票 | 持仓�?| 市�?| 权重 | 日涨�?| 贡献 |
+| 股票 | 持仓?| 市?| 权重 | 日涨?| 贡献 |
 |------|--------|------|------|--------|------|
 {{ positions_table }}
 
-## 三、告警事�?
+## 三、告警事?
 
 {{ if alerts }}
 | 时间 | 级别 | 规则 | 描述 | 处理 |
 |------|------|------|------|------|
 {{ alerts_table }}
 {{ else }}
-今日无告警事件�?
+今日无告警事件?
 {{ endif }}
 
-## 四、风险提�?
+## 四、风险提?
 
 {{ risk_notes }}
 
@@ -402,12 +402,12 @@ class VaRCalculator:
 ```python
 # reports/risk/
 # ├── 2026/
-# �?  ├── 03/
-# �?  �?  ├── daily_2026-03-01.html
-# �?  �?  ├── daily_2026-03-02.html
-# �?  �?  ├── weekly_2026-03-07.html
-# �?  �?  └── monthly_2026-03.html
-# �?  └── 04/
+# ?  ├── 03/
+# ?  ?  ├── daily_2026-03-01.html
+# ?  ?  ├── daily_2026-03-02.html
+# ?  ?  ├── weekly_2026-03-07.html
+# ?  ?  └── monthly_2026-03.html
+# ?  └── 04/
 # └── index.json  # 报告索引
 ```
 
@@ -423,7 +423,7 @@ class ReportIndex:
     reports: List[ReportSummary] = field(default_factory=list)
 
     def add_report(self, report: RiskReport):
-        """添加报告到索�?""
+        """添加报告到索?""
         self.reports.append(ReportSummary(
             report_id=report.report_id,
             report_type=report.report_type.value,
@@ -468,32 +468,32 @@ class ReportIndex:
 
 | 模块 | 接口 | 说明 |
 |------|------|------|
-| NotificationSystem | send_report() | 发送报�?|
+| NotificationSystem | send_report() | 发送报?|
 | ReportStorage | save() | 存储报告 |
 | Dashboard | display() | 展示报告 |
 
 
 ## 7. 监控指标
 
-| 指标 | 说明 | 阈�?|
+| 指标 | 说明 | 阈?|
 |------|------|------|
 | report_generation_time | 报告生成耗时 | <60s |
 | report_delivery_time | 报告送达时间 | <5min |
-| report_accuracy | 报告数据准确�?| >99% |
+| report_accuracy | 报告数据准确?| >99% |
 
 
-## 8. 开发任务分�?6h)
+## 8. 开发任务分?6h)
 
-| 任务 | 时间 | 交付�?|
+| 任务 | 时间 | 交付?|
 |------|------|--------|
-| VaR/CVaR计算�?| 1.5h | VaRCalculator |
-| 报告生成�?| 1.5h | RiskReportGenerator |
+| VaR/CVaR计算?| 1.5h | VaRCalculator |
+| 报告生成?| 1.5h | RiskReportGenerator |
 | 报告模板 | 1h | markdown模板 |
 | 报告存储 | 1h | ReportStorage |
 | 邮件/通知集成 | 0.5h | NotificationSystem |
 | 单元测试 | 0.5h | test_risk_report.py |
 
 
-**维护�?*: 清风量化系统
+**维护?*: 清风量化系统
 **索引**: `RISK.RPT.001`
-**最后更�?*: 2026-03-29
+**最后更?*: 2026-03-29

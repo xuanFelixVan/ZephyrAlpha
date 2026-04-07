@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: T_05_TE001_TRADING_COST_MODEL_ALGORITHM_DOCUMENT_001
 version: 1.0.0
 status: Active

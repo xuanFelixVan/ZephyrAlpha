@@ -1,6 +1,8 @@
----
+﻿---
 version: 1.0.0
 last_updated: 2026-04-07
+responsibility:
+  - 架构决策索引
 ---
 
 # 架构决策记录 (Architecture Decision Records)

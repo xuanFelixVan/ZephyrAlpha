@@ -1,4 +1,4 @@
-﻿---
+﻿﻿---
 module_id: P0_MODULES_INTEGRATION_CONFIG_001
 version: 1.0.0
 status: Active
