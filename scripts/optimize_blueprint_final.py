@@ -44,7 +44,6 @@ class BlueprintFinalOptimizer:
             
             original_content = content
             
-            # 删除重复的YAML头部
             content = self.fix_duplicate_yaml(content)
             
             if content != original_content:
@@ -63,25 +62,14 @@ class BlueprintFinalOptimizer:
     
     def fix_duplicate_yaml(self, content):
         """删除重复的YAML头部"""
-        # 查找所有YAML块（包括可能重复的）
-        # YAML块格式：---\n...内容...\n---
         yaml_pattern = r'^---\s*\n(.*?)\n---\s*\n'
-        
-        # 查找所有匹配
         matches = list(re.finditer(yaml_pattern, content, re.DOTALL))
         
         if len(matches) > 1:
-            # 有多个YAML块，只保留第一个
             first_yaml = matches[0].group(0)
-            
-            # 删除所有YAML块
             content_without_yaml = re.sub(yaml_pattern, '', content, flags=re.DOTALL)
-            
-            # 重新组合
             content = first_yaml + content_without_yaml
-            
             self.stats['yaml_fixed'] += 1
-            print(f"    修复了重复的YAML头部")
         
         return content
     
