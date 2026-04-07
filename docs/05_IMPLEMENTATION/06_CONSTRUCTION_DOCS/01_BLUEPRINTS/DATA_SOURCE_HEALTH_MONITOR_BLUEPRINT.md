@@ -1019,7 +1019,7 @@ groups:
         labels:
           severity: warning
         annotations:
-过5分钟"
+          summary: 数据源降级状态已持续超过 5 分钟
       
       - alert: HighResponseTime
         expr: histogram_quantile(0.95, datasource_response_time_seconds) > 5

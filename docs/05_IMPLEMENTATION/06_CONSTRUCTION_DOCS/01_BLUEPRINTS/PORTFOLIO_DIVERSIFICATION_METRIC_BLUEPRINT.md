@@ -168,7 +168,7 @@ diversification_metrics:
     
   concentration:
     top_n: 5
-过40%
+    max_top_n_weight: 0.40
 ```
 
 

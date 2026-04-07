@@ -899,7 +899,7 @@ zephyralpha/                    # 项目根目录
     └── data_backups/
 ```
 
-### 8.4 é
+### 8.4 配置初始化示例
 
 ```python
 import os

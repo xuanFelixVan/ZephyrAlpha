@@ -391,8 +391,10 @@ class StatisticalArbitrageModule:
         constraints: Optional[PortfolioConstraints] = None
     ) -> PortfolioAllocation:
         """
-        构建市场中性组?        
+        构建市场中性组合。
+        
         Returns:
+            PortfolioAllocation: 组合配置结果
         """
         pass
     
@@ -402,28 +404,31 @@ class StatisticalArbitrageModule:
         stock_pool: Optional[List[str]] = None
     ) -> Tuple[List[CointegratedPair], List[PairTradingSignal], PortfolioAllocation]:
         """
-        运行完整流程
+        运行完整流程（协整检验 → 信号 → 组合构建）。
         
         Returns:
-?        """
+            协整对、信号与组合配置元组
+        """
         pass
 ```
 
 ### 5.2 配置说明
 ```yaml
 statistical_arbitrage:
-  # é
   pair_selection:
-  # 协整检验参?  cointegration:
-    adf_critical_value: 0.05      # ADF检验临?    min_half_life: 5              # 最小半衰期（天?    max_half_life: 60             # 最大半衰期（天?    
-  # 价差交易参数
+    cointegration:
+      adf_critical_value: 0.05
+      min_half_life: 5
+      max_half_life: 60
   spread_trading:
-    entry_zscore: 2.0             # 开仓Z-score?    exit_zscore: 0.5              # 平仓Z-score?    stop_loss: 0.05               # 止损比例
-    
-  # 市场中性参?  market_neutral:
-    industry_neutral: true        # 行业?    style_neutral: true           # 风格?    max_leverage: 2.0             # 最大杠?    
-  # 风险控制参数
-  risk_control:
+    entry_zscore: 2.0
+    exit_zscore: 0.5
+    stop_loss: 0.05
+  market_neutral:
+    industry_neutral: true
+    style_neutral: true
+    max_leverage: 2.0
+  risk_control: {}
 ```
 
 
@@ -433,9 +438,9 @@ statistical_arbitrage:
 ### 6.1 风险识别
 | 风险类型 | 风险等级 | 影响范围 | 缓解措施 |
 |----------|----------|----------|----------|
-| 市场冲击成本 | P2 | 交易执行 | 交易量限制、分批建?|
-| 模型过拟?| P2 | 信号质量 | 样本外测试、交叉验?|
-| 流动性风?| P1 | 交易执行 | 流动性筛选、仓位限?|
+| 市场冲击成本 | P2 | 交易执行 | 交易量限制、分批建仓 |
+| 模型过拟合 | P2 | 信号质量 | 样本外测试、交叉验证 |
+| 流动性风险 | P1 | 交易执行 | 流动性筛选、仓位限制 |
 
 ### 6.2 风险控制措施
 

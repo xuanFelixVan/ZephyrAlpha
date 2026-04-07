@@ -981,50 +981,50 @@ python strategy_selector.py construct-portfolio \
 
 # 自然语言查询
 python strategy_selector.py query \
-过15%" \
+  --question "展示当前夏普比率排名前 15 的策略" \
   --ai-model "gpt-4" \
   --output "nlp_recommendation/"
 ```
 
-### 5.3 Web仪表盘功?
+### 5.3 Web 仪表盘功能
 
-**核心功能模块**?
-1. **实时排名看板**：策略综合评分动态展?
-3. **AI推荐面板**：AI生成的策略组合推?
-4. **绩效对比图表**：多策略绩效对比分析
-5. **风险分析仪表**：组合风险指标监?
-6. **自然语言问答**：用户问题AI解答
+**核心功能模块**：
+1. **实时排名看板**：策略综合评分动态展示
+2. **AI 推荐面板**：AI 生成的策略组合推荐
+3. **绩效对比图表**：多策略绩效对比分析
+4. **风险分析仪表**：组合风险指标监控
+5. **自然语言问答**：用户问题与 AI 解答
 
-**技术栈建议**?
-- 前端：Streamlit（快速原型）?Vue.js + D3.js（生产环境）
+**技术栈建议**：
+- 前端：Streamlit（快速原型）或 Vue.js + D3.js（生产环境）
 - 后端：FastAPI + 异步任务队列
-- 数据库：SQLite（开发）?PostgreSQL（生产）
+- 数据库：SQLite（开发）或 PostgreSQL（生产）
 - 可视化：Plotly、ECharts、Highcharts
 
-## 
+## 六、分阶段交付计划
 
-### Phase 1: 基础排名系统?周）
-- [ ] MultiCriteriaEvaluator TOPSIS实现
+### Phase 1：基础排名系统（约 4 周）
+- [ ] MultiCriteriaEvaluator TOPSIS 实现
 - [ ] PerformanceScorer 基础评分计算
 - [ ] 策略数据接口和预处理
-- [ ] 基础命令行接?
+- [ ] 基础命令行接口
 
-### Phase 2: 高级分析功能?周）
-- [ ] WeightOptimizer 动态权重调?
+### Phase 2：高级分析功能（约 4 周）
+- [ ] WeightOptimizer 动态权重调整
 - [ ] 时间加权评分算法
-- [ ] 可视化排名报?
+- [ ] 可视化排名报告
 
-### Phase 3: AI决策支持?周）
-- [ ] AIStrategyRecommender AI推荐引擎
+### Phase 3：AI 决策支持（约 4 周）
+- [ ] AIStrategyRecommender AI 推荐引擎
 - [ ] 自然语言解释生成
 - [ ] 用户偏好学习
 - [ ] 预测模型集成
 
-### Phase 4: 生产就绪?周）
-- [ ] Web仪表盘开?
+### Phase 4：生产就绪（约 4 周）
+- [ ] Web 仪表盘开发
 - [ ] 实时数据集成
-- [ ] 性能优化和缓?
-- [ ] 完整文档和示?
+- [ ] 性能优化与缓存
+- [ ] 完整文档与示例
 
 
 ### 上游依赖
