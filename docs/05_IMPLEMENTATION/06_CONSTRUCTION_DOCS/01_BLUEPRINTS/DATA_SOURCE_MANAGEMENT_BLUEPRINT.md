@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -319,7 +319,7 @@ class FailureManager:
     
     def detect_failure(self, source_id: str,
                        health: SourceHealth) -> Optional[FailureEvent]:
-é?""
+?""
         if health.is_healthy:
             return None
         

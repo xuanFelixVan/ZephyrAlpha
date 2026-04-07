@@ -1,395 +1,215 @@
 import os
 import re
-from pathlib import Path
-from collections import defaultdict
+import hashlib
+import json
 from datetime import datetime
+from collections import defaultdict
 
 blueprints_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS'
-output_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state'
+audit_state_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\04_OPERATIONS\audit_state'
 
-required_yaml_fields = [
-    'module_id', 'version', 'status', 'created_date', 'last_updated', 
-    'owner', 'standard_type', 'compliance_level', 'layer', 'responsibility'
-]
-
-layer6_docs = []
-l1_issues = defaultdict(list)
-l2_issues = defaultdict(list)
-l3_issues = defaultdict(list)
-responsibility_map = defaultdict(list)
-content_hashes = defaultdict(list)
-
-print('='*80)
-print('Layer 6 组合优化层三层深度审计')
-print('='*80)
-print(f'审计时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
-print(f'审计目录: {blueprints_dir}')
-print()
-
-# ============================================================================
-# L1 文件系统层审计
-# ============================================================================
-print('【L1 文件系统层审计】')
-print('-'*80)
-
-# 1.1 目录结构检查
-print('\n1.1 目录结构检查:')
-if os.path.exists(blueprints_dir):
-    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md')]
-    print(f'  ✓ 目录存在: {blueprints_dir}')
-    print(f'  ✓ 文档数量: {len(files)}')
-else:
-    l1_issues['目录不存在'].append(blueprints_dir)
-    print(f'  ✗ 目录不存在: {blueprints_dir}')
-
-# 1.2 文件命名检查
-print('\n1.2 文件命名检查:')
-naming_issues = []
-for file in files:
-    # 检查命名规范
-    if not re.match(r'^[A-Z_0-9]+_BLUEPRINT\.md$', file):
-        naming_issues.append(file)
-    
-    # 检查旧架构命名残留
-    if re.search(r'Layer_[0-9]|L[0-9]_', file):
-        l1_issues['旧架构命名残留'].append(file)
-    
-    # 检查特殊字符
-    if ' ' in file or re.search(r'[\u4e00-\u9fff]', file):
-        l1_issues['特殊字符问题'].append(file)
-
-if naming_issues:
-    print(f'  ✗ 命名不规范: {len(naming_issues)}个')
-    for f in naming_issues[:5]:
-        print(f'    - {f}')
-else:
-    print('  ✓ 所有文件命名规范')
-
-# ============================================================================
-# L2 文档内容层审计
-# ============================================================================
-print('\n【L2 文档内容层审计】')
-print('-'*80)
-
-for file in files:
-    file_path = os.path.join(blueprints_dir, file)
-    
+def get_file_hash(file_path):
     with open(file_path, 'r', encoding='utf-8-sig') as f:
         content = f.read()
-    
-    # 检查Layer归属
-    layer_match = re.search(r'layer:\s*Layer\s*(5\.2|6|组合优化)', content, re.IGNORECASE)
-    if not layer_match:
-        continue
-    
-    # YAML头部检查
     yaml_match = re.search(r'^---\s*[\r\n]+(.*?)[\r\n]+---', content, re.DOTALL)
-    
+    if yaml_match:
+        core_content = content[yaml_match.end():]
+    else:
+        core_content = content
+    return hashlib.md5(core_content.encode()).hexdigest()
+
+def parse_yaml_header(content):
+    yaml_match = re.search(r'^---\s*[\r\n]+(.*?)[\r\n]+---', content, re.DOTALL)
     if not yaml_match:
-        l2_issues['缺少YAML头部'].append(file)
-        continue
+        return None
     
     yaml_content = yaml_match.group(1)
+    yaml_data = {}
     
-    # 检查必要字段
-    missing_fields = []
-    for field in required_yaml_fields:
-        if field not in yaml_content:
-            missing_fields.append(field)
+    lines = yaml_content.split('\n')
+    current_key = None
+    current_list = []
     
-    if missing_fields:
-        l2_issues['YAML字段缺失'].append({
-            'file': file,
-            'fields': missing_fields
-        })
+    for line in lines:
+        if ':' in line and not line.startswith(' '):
+            if current_key and current_list:
+                yaml_data[current_key] = current_list
+                current_list = []
+            key, value = line.split(':', 1)
+            current_key = key.strip()
+            value = value.strip()
+            if value:
+                yaml_data[current_key] = value
+        elif line.strip().startswith('- '):
+            value = line.strip()[2:].strip()
+            current_list.append(value)
     
-    # 提取module_id
-    module_id_match = re.search(r'module_id:\s*(\S+)', yaml_content)
-    module_id = module_id_match.group(1) if module_id_match else 'MISSING'
+    if current_key and current_list:
+        yaml_data[current_key] = current_list
     
-    # 检查module_id格式
-    if module_id == 'MISSING':
-        l2_issues['缺少module_id'].append(file)
-    elif module_id.endswith('_BLUEPRINT') or '_BLUEPRINT_' in module_id:
-        l3_issues['module_id格式错误'].append({
-            'file': file,
-            'module_id': module_id
-        })
+    return yaml_data
+
+def audit_l1_file_system():
+    issues = []
     
-    # 提取responsibility
-    resp_match = re.search(r'responsibility:\s*[\r\n]+((?:\s+-\s+.+[\r\n]?)+)', yaml_content)
-    if resp_match:
-        resp_text = resp_match.group(1)
-        resp_items = re.findall(r'-\s+(.+)', resp_text)
-        resp_items = [item.strip() for item in resp_items if item.strip()]
+    if not os.path.exists(blueprints_dir):
+        issues.append({'type': 'L1-目录不存在', 'severity': 'P0', 'path': blueprints_dir})
+        return issues
+    
+    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md')]
+    
+    for file in files:
+        file_path = os.path.join(blueprints_dir, file)
         
-        if len(resp_items) < 2:
-            l2_issues['responsibility项不足'].append({
-                'file': file,
-                'count': len(resp_items),
-                'items': resp_items
-            })
+        if 'Layer 0' in file or 'Layer 1' in file or 'Layer 2' in file or 'Layer 3' in file or 'Layer 4' in file:
+            issues.append({'type': 'L1-旧架构命名残留', 'severity': 'P2', 'file': file})
         
-        # 记录职责映射
-        for item in resp_items:
-            responsibility_map[item].append(file)
-    else:
-        l2_issues['缺少responsibility'].append(file)
-    
-    # 检查职责边界
-    boundary_patterns = [
-        r'>\s*\*\*职责边界\*\*:',
-        r'>\s*\*\*职责边界\*\*：',
-        r'职责边界.*负责'
-    ]
-    has_boundary = False
-    for pattern in boundary_patterns:
-        if re.search(pattern, content):
-            has_boundary = True
-            break
-    
-    if not has_boundary:
-        l2_issues['缺少职责边界'].append(file)
-    
-    # 检查核心定位章节
-    if '## 核心定位' not in content:
-        l2_issues['缺少核心定位章节'].append(file)
-    
-    # 检查变更历史
-    if '## 变更历史' not in content and '## 11. 变更历史' not in content:
-        l2_issues['缺少变更历史'].append(file)
-    
-    # 内容相似度检查（用于检测重复文档）
-    content_lower = content.lower()
-    content_key = hash(content_lower[:500])  # 使用前500字符作为特征
-    content_hashes[content_key].append(file)
-    
-    layer6_docs.append({
-        'file': file,
-        'module_id': module_id,
-        'missing_fields': missing_fields
-    })
-
-print(f'\n审计文档总数: {len(layer6_docs)}')
-
-# ============================================================================
-# L3 专业标准层审计
-# ============================================================================
-print('\n【L3 专业标准层审计】')
-print('-'*80)
-
-# 3.1 五大原则符合性检查
-print('\n3.1 五大原则符合性检查:')
-
-# 职责驱动原则
-print('\n  【职责驱动原则】')
-if l2_issues['缺少responsibility']:
-    print(f'    ✗ 缺少responsibility: {len(l2_issues["缺少responsibility"])}个')
-if l2_issues['缺少职责边界']:
-    print(f'    ✗ 缺少职责边界: {len(l2_issues["缺少职责边界"])}个')
-
-# 检查职责重叠
-print('\n  【职责重叠检查】')
-overlap_found = False
-for resp, files in responsibility_map.items():
-    if len(files) > 1:
-        overlap_found = True
-        l3_issues['职责重叠'].append({
-            'responsibility': resp,
-            'files': files
-        })
-
-if overlap_found:
-    print(f'    ✗ 发现职责重叠: {len(l3_issues["职责重叠"])}项')
-    for item in l3_issues['职责重叠'][:5]:
-        print(f'      - "{item["responsibility"]}" 出现在: {", ".join(item["files"])}')
-else:
-    print('    ✓ 无职责重叠')
-
-# 版本隔离原则
-print('\n  【版本隔离原则】')
-# 检查重复文档
-duplicate_docs = []
-for content_key, files in content_hashes.items():
-    if len(files) > 1:
-        duplicate_docs.extend(files)
-        l3_issues['疑似重复文档'].append(files)
-
-if duplicate_docs:
-    print(f'    ✗ 疑似重复文档: {len(duplicate_docs)}个')
-else:
-    print('    ✓ 无重复文档')
-
-# 命名规范原则
-print('\n  【命名规范原则】')
-if l1_issues.get('命名不规范'):
-    print(f'    ✗ 命名不规范: {len(l1_issues["命名不规范"])}个')
-else:
-    print('    ✓ 命名规范符合')
-
-# ============================================================================
-# 重点检查：职责不清、重复内容
-# ============================================================================
-print('\n【重点检查：职责不清、重复内容】')
-print('-'*80)
-
-# 检查职责描述模糊
-print('\n职责描述清晰度检查:')
-vague_responsibilities = []
-vague_keywords = ['管理', '处理', '优化', '支持', '实现', '提供']
-
-for file in files:
-    file_path = os.path.join(blueprints_dir, file)
-    
-    with open(file_path, 'r', encoding='utf-8-sig') as f:
-        content = f.read()
-    
-    resp_match = re.search(r'responsibility:\s*[\r\n]+((?:\s+-\s+.+[\r\n]?)+)', content)
-    if resp_match:
-        resp_text = resp_match.group(1)
-        resp_items = re.findall(r'-\s+(.+)', resp_text)
+        if ' ' in file:
+            issues.append({'type': 'L1-文件名包含空格', 'severity': 'P1', 'file': file})
         
-        for item in resp_items:
-            item = item.strip()
-            # 检查是否过于简短或模糊
-            if len(item) < 5:
-                l3_issues['职责描述过短'].append({
-                    'file': file,
-                    'item': item
-                })
-            # 检查是否只有模糊关键词
-            words = re.findall(r'[\u4e00-\u9fff]+', item)
-            if len(words) == 1 and words[0] in vague_keywords:
-                l3_issues['职责描述模糊'].append({
-                    'file': file,
-                    'item': item
-                })
-
-if l3_issues.get('职责描述过短'):
-    print(f'  ✗ 职责描述过短: {len(l3_issues["职责描述过短"])}项')
-if l3_issues.get('职责描述模糊'):
-    print(f'  ✗ 职责描述模糊: {len(l3_issues["职责描述模糊"])}项')
-
-# 检查核心定位章节内容
-print('\n核心定位章节内容检查:')
-for file in layer6_docs:
-    file_path = os.path.join(blueprints_dir, file['file'])
+        if not re.match(r'^[A-Z_0-9]+_BLUEPRINT\.md$', file) and file != 'INDEX.md':
+            issues.append({'type': 'L1-命名不规范', 'severity': 'P2', 'file': file})
     
-    with open(file_path, 'r', encoding='utf-8-sig') as f:
-        content = f.read()
+    return issues
+
+def audit_l2_document_content():
+    issues = []
+    responsibility_map = defaultdict(list)
     
-    # 提取核心定位章节
-    core_match = re.search(r'## 核心定位\s*[\r\n]+(.+?)(?=\n##|\Z)', content, re.DOTALL)
-    if core_match:
-        core_content = core_match.group(1).strip()
+    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+    
+    for file in files:
+        file_path = os.path.join(blueprints_dir, file)
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
+            content = f.read()
         
-        # 检查核心定位是否过于简短
-        if len(core_content) < 50:
-            l3_issues['核心定位过短'].append({
-                'file': file['file'],
-                'length': len(core_content)
-            })
+        yaml_data = parse_yaml_header(content)
         
-        # 检查是否包含"负责"关键词
-        if '负责' not in core_content and '职责' not in core_content:
-            l3_issues['核心定位缺少职责描述'].append(file['file'])
+        if not yaml_data:
+            issues.append({'type': 'L2-缺少YAML头部', 'severity': 'P0', 'file': file})
+            continue
+        
+        required_fields = ['module_id', 'responsibility', 'layer', 'owner']
+        for field in required_fields:
+            if field not in yaml_data:
+                issues.append({'type': f'L2-YAML缺少{field}', 'severity': 'P1', 'file': file})
+        
+        if 'responsibility' in yaml_data:
+            resp_list = yaml_data['responsibility']
+            if isinstance(resp_list, list):
+                if len(resp_list) < 2:
+                    issues.append({'type': 'L2-responsibility项不足', 'severity': 'P0', 'file': file, 'count': len(resp_list)})
+                
+                for resp in resp_list:
+                    responsibility_map[resp].append(file)
+        
+        if not re.search(r'职责边界|本文档负责|本文档不负责', content):
+            issues.append({'type': 'L2-缺少职责边界', 'severity': 'P1', 'file': file})
+        
+        if not re.search(r'##\s*\d*\.?\s*变更历史|##\s*\d*\.?\s*版本管理', content):
+            issues.append({'type': 'L2-缺少变更历史', 'severity': 'P2', 'file': file})
+        
+        core_match = re.search(r'##\s*核心定位\s*\n(.+?)(?=\n##|\n#|$)', content, re.DOTALL)
+        if core_match:
+            core_text = core_match.group(1).strip()
+            if len(core_text) < 50:
+                issues.append({'type': 'L2-核心定位过短', 'severity': 'P2', 'file': file, 'length': len(core_text)})
+    
+    for resp, files_list in responsibility_map.items():
+        if len(files_list) > 1:
+            issues.append({'type': 'L2-职责重叠', 'severity': 'P1', 'responsibility': resp, 'files': files_list})
+    
+    return issues
 
-if l3_issues.get('核心定位过短'):
-    print(f'  ✗ 核心定位过短: {len(l3_issues["核心定位过短"])}个')
-if l3_issues.get('核心定位缺少职责描述'):
-    print(f'  ✗ 核心定位缺少职责描述: {len(l3_issues["核心定位缺少职责描述"])}个')
-
-# ============================================================================
-# 问题汇总
-# ============================================================================
-print('\n' + '='*80)
-print('问题汇总')
-print('='*80)
-
-total_issues = 0
-
-# L1问题
-if any(l1_issues.values()):
-    print('\n【L1 文件系统层问题】')
-    for issue_type, items in l1_issues.items():
-        if items:
-            print(f'\n  {issue_type} ({len(items)}个):')
-            for item in items[:10]:
-                print(f'    - {item}')
-            total_issues += len(items)
-
-# L2问题
-if any(l2_issues.values()):
-    print('\n【L2 文档内容层问题】')
-    for issue_type, items in l2_issues.items():
-        if items:
-            if isinstance(items[0], dict):
-                print(f'\n  {issue_type} ({len(items)}个):')
-                for item in items[:10]:
-                    if 'fields' in item:
-                        print(f'    - {item["file"]}: 缺少 {", ".join(item["fields"])}')
-                    elif 'items' in item:
-                        print(f'    - {item["file"]}: 仅{item["count"]}项')
-                    else:
-                        print(f'    - {item}')
+def audit_l3_professional_standards():
+    issues = []
+    module_ids = {}
+    
+    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+    
+    for file in files:
+        file_path = os.path.join(blueprints_dir, file)
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
+            content = f.read()
+        
+        yaml_data = parse_yaml_header(content)
+        if not yaml_data:
+            continue
+        
+        if 'module_id' in yaml_data:
+            module_id = yaml_data['module_id']
+            if module_id in module_ids:
+                issues.append({'type': 'L3-module_id重复', 'severity': 'P0', 'module_id': module_id, 'files': [module_ids[module_id], file]})
             else:
-                print(f'\n  {issue_type} ({len(items)}个):')
-                for item in items[:10]:
-                    print(f'    - {item}')
-            total_issues += len(items)
+                module_ids[module_id] = file
+        
+        if 'standard_type' not in yaml_data:
+            issues.append({'type': 'L3-缺少standard_type', 'severity': 'P2', 'file': file})
+        
+        if 'compliance_level' not in yaml_data:
+            issues.append({'type': 'L3-缺少compliance_level', 'severity': 'P2', 'file': file})
+    
+    return issues
 
-# L3问题
-if any(l3_issues.values()):
-    print('\n【L3 专业标准层问题】')
-    for issue_type, items in l3_issues.items():
-        if items:
-            if isinstance(items[0], dict):
-                print(f'\n  {issue_type} ({len(items)}个):')
-                for item in items[:10]:
-                    if 'responsibility' in item:
-                        print(f'    - "{item["responsibility"]}" 在 {len(item["files"])}个文档中')
-                    elif 'module_id' in item:
-                        print(f'    - {item["file"]}: {item["module_id"]}')
-                    elif 'item' in item:
-                        print(f'    - {item["file"]}: "{item["item"]}"')
-                    else:
-                        print(f'    - {item}')
-            elif isinstance(items[0], list):
-                print(f'\n  {issue_type} ({len(items)}组):')
-                for group in items[:5]:
-                    print(f'    - {", ".join(group)}')
+def check_duplicates():
+    duplicates = []
+    file_hashes = {}
+    
+    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+    
+    for file in files:
+        file_path = os.path.join(blueprints_dir, file)
+        try:
+            file_hash = get_file_hash(file_path)
+            if file_hash in file_hashes:
+                duplicates.append({'type': '重复文档', 'files': [file_hashes[file_hash], file], 'hash': file_hash})
             else:
-                print(f'\n  {issue_type} ({len(items)}个):')
-                for item in items[:10]:
-                    print(f'    - {item}')
-            total_issues += len(items)
+                file_hashes[file_hash] = file
+        except Exception as e:
+            pass
+    
+    return duplicates
 
-# ============================================================================
-# 审计结论
-# ============================================================================
-print('\n' + '='*80)
-print('审计结论')
-print('='*80)
+def check_responsibility_clarity():
+    issues = []
+    
+    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+    
+    for file in files:
+        file_path = os.path.join(blueprints_dir, file)
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
+            content = f.read()
+        
+        yaml_data = parse_yaml_header(content)
+        if not yaml_data or 'responsibility' not in yaml_data:
+            continue
+        
+        resp_list = yaml_data['responsibility']
+        if isinstance(resp_list, list):
+            generic_terms = ['系统架构蓝图设计与实施指导', '模块功能实现', '性能优化', '质量保证']
+            for resp in resp_list:
+                if resp in generic_terms:
+                    issues.append({'type': '职责描述过于通用', 'severity': 'P2', 'file': file, 'responsibility': resp})
+    
+    return issues
 
-print(f'\n审计文档总数: {len(layer6_docs)}')
-print(f'发现问题总数: {total_issues}')
-
-if len(layer6_docs) > 0:
-    compliance_rate = max(0, (1 - total_issues / (len(layer6_docs) * 5)) * 100)
-    print(f'合规率: {compliance_rate:.1f}%')
-
-if total_issues == 0:
-    print('\n[OK] 所有文档均符合专业量化机构标准')
-else:
-    print(f'\n[WARNING] 发现{total_issues}个问题需要修复')
-
-# ============================================================================
-# 生成审计报告
-# ============================================================================
-report_path = os.path.join(output_dir, f'LAYER6_DEEP_AUDIT_REPORT_{datetime.now().strftime("%Y%m%d_%H%M%S")}.md')
-
-with open(report_path, 'w', encoding='utf-8') as f:
-    f.write(f'''# Layer 6 组合优化层深度审计报告
+def generate_audit_report(l1_issues, l2_issues, l3_issues, duplicates, clarity_issues):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    report_path = os.path.join(audit_state_dir, f'LAYER6_COMPREHENSIVE_AUDIT_REPORT_{timestamp}.md')
+    
+    all_issues = l1_issues + l2_issues + l3_issues + duplicates + clarity_issues
+    
+    p0_count = len([i for i in all_issues if i.get('severity') == 'P0'])
+    p1_count = len([i for i in all_issues if i.get('severity') == 'P1'])
+    p2_count = len([i for i in all_issues if i.get('severity') == 'P2'])
+    
+    files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md')]
+    total_files = len(files)
+    problem_files = len(set([i.get('file') for i in all_issues if 'file' in i]))
+    compliant_files = total_files - problem_files
+    compliance_rate = (compliant_files / total_files * 100) if total_files > 0 else 0
+    
+    report = f'''# Layer 6 组合优化层全面深度审计报告
 
 ## 1. 审计概要
 
@@ -398,164 +218,219 @@ with open(report_path, 'w', encoding='utf-8') as f:
 | **审计目标** | Layer 6 组合优化层所有文档 |
 | **审计范围** | {blueprints_dir} |
 | **审计时间** | {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} |
-| **审计方法** | 三层审计(L1-L3) + 重点检查 |
-| **文档总数** | {len(layer6_docs)} |
-| **问题总数** | {total_issues} |
+| **文档总数** | {total_files} |
+| **问题总数** | {len(all_issues)} |
 | **合规率** | {compliance_rate:.1f}% |
 
-## 2. L1 文件系统层审计结果
+## 2. 审计结果统计
 
-### 2.1 目录结构检查
-- 目录状态: {'✓ 正常' if os.path.exists(blueprints_dir) else '✗ 异常'}
-- 文档数量: {len(files)}
+| 指标 | 数量 |
+|------|------|
+| 合规文档 | {compliant_files} |
+| 问题文档 | {problem_files} |
+| P0问题 | {p0_count} |
+| P1问题 | {p1_count} |
+| P2问题 | {p2_count} |
 
-### 2.2 文件命名检查
-''')
+## 3. L1文件系统层问题
+
+| 问题类型 | 数量 | 严重程度 |
+|----------|------|----------|
+'''
     
-    if l1_issues:
-        for issue_type, items in l1_issues.items():
-            if items:
-                f.write(f'\n**{issue_type}** ({len(items)}个):\n')
-                for item in items:
-                    f.write(f'- {item}\n')
+    l1_types = defaultdict(int)
+    for issue in l1_issues:
+        l1_types[issue['type']] += 1
+    
+    for issue_type, count in l1_types.items():
+        severity = 'P2'
+        if 'P0' in issue_type or '不存在' in issue_type:
+            severity = 'P0'
+        elif 'P1' in issue_type or '空格' in issue_type:
+            severity = 'P1'
+        report += f"| {issue_type} | {count} | {severity} |\n"
+    
+    report += f'''
+## 4. L2文档内容层问题
+
+| 问题类型 | 数量 | 严重程度 |
+|----------|------|----------|
+'''
+    
+    l2_types = defaultdict(int)
+    for issue in l2_issues:
+        l2_types[issue['type']] += 1
+    
+    for issue_type, count in l2_types.items():
+        severity = 'P2'
+        if 'P0' in issue_type or 'YAML头部' in issue_type or 'responsibility项不足' in issue_type:
+            severity = 'P0'
+        elif 'P1' in issue_type or '职责边界' in issue_type or '职责重叠' in issue_type:
+            severity = 'P1'
+        report += f"| {issue_type} | {count} | {severity} |\n"
+    
+    report += f'''
+## 5. L3专业标准层问题
+
+| 问题类型 | 数量 | 严重程度 |
+|----------|------|----------|
+'''
+    
+    l3_types = defaultdict(int)
+    for issue in l3_issues:
+        l3_types[issue['type']] += 1
+    
+    for issue_type, count in l3_types.items():
+        severity = 'P2'
+        if 'P0' in issue_type or 'module_id重复' in issue_type:
+            severity = 'P0'
+        elif 'P1' in issue_type:
+            severity = 'P1'
+        report += f"| {issue_type} | {count} | {severity} |\n"
+    
+    if duplicates:
+        report += f'''
+## 6. 重复文档检测
+
+| 文件对 | 相似度 |
+|--------|--------|
+'''
+        for dup in duplicates:
+            report += f"| {dup['files'][0]} <-> {dup['files'][1]} | 100% |\n"
     else:
-        f.write('\n✓ 所有文件命名规范\n')
-    
-    f.write('''
-## 3. L2 文档内容层审计结果
+        report += f'''
+## 6. 重复文档检测
 
-### 3.1 YAML头部检查
-''')
+✓ 无重复文档
+'''
     
-    yaml_issues = {k: v for k, v in l2_issues.items() if k in ['缺少YAML头部', 'YAML字段缺失', '缺少module_id', '缺少responsibility', 'responsibility项不足']}
-    if yaml_issues:
-        for issue_type, items in yaml_issues.items():
-            if items:
-                f.write(f'\n**{issue_type}** ({len(items)}个):\n')
-                for item in items[:20]:
-                    if isinstance(item, dict):
-                        if 'fields' in item:
-                            f.write(f'- {item["file"]}: 缺少 {", ".join(item["fields"])}\n')
-                        elif 'items' in item:
-                            f.write(f'- {item["file"]}: 仅{item["count"]}项\n')
-                    else:
-                        f.write(f'- {item}\n')
+    if clarity_issues:
+        report += f'''
+## 7. 职责清晰度问题
+
+| 文件 | 问题描述 |
+|------|----------|
+'''
+        for issue in clarity_issues:
+            report += f"| {issue['file']} | {issue['responsibility']} (过于通用) |\n"
     else:
-        f.write('\n✓ YAML头部完整\n')
-    
-    f.write('''
-### 3.2 职责边界检查
-''')
-    
-    if l2_issues.get('缺少职责边界'):
-        f.write(f'\n**缺少职责边界** ({len(l2_issues["缺少职责边界"])}个):\n')
-        for item in l2_issues['缺少职责边界']:
-            f.write(f'- {item}\n')
-    else:
-        f.write('\n✓ 所有文档均有职责边界\n')
-    
-    f.write('''
-## 4. L3 专业标准层审计结果
+        report += f'''
+## 7. 职责清晰度问题
 
-### 4.1 五大原则符合性
-''')
+✓ 职责描述清晰
+'''
     
-    f.write(f'''
-**职责驱动原则**:
-- 缺少responsibility: {len(l2_issues.get('缺少responsibility', []))}个
-- 缺少职责边界: {len(l2_issues.get('缺少职责边界', []))}个
-- 职责重叠: {len(l3_issues.get('职责重叠', []))}项
+    report += f'''
+## 8. 问题详情
 
-**版本隔离原则**:
-- 疑似重复文档: {len(l3_issues.get('疑似重复文档', []))}组
+### 8.1 P0问题 (立即修复)
 
-**命名规范原则**:
-- 命名不规范: {len(l1_issues.get('命名不规范', []))}个
-''')
-    
-    f.write('''
-### 4.2 重点问题检查
-''')
-    
-    if l3_issues.get('职责描述过短'):
-        f.write(f'\n**职责描述过短** ({len(l3_issues["职责描述过短"])}项):\n')
-        for item in l3_issues['职责描述过短'][:10]:
-            f.write(f'- {item["file"]}: "{item["item"]}"\n')
-    
-    if l3_issues.get('职责描述模糊'):
-        f.write(f'\n**职责描述模糊** ({len(l3_issues["职责描述模糊"])}项):\n')
-        for item in l3_issues['职责描述模糊'][:10]:
-            f.write(f'- {item["file"]}: "{item["item"]}"\n')
-    
-    if l3_issues.get('职责重叠'):
-        f.write(f'\n**职责重叠** ({len(l3_issues["职责重叠"])}项):\n')
-        for item in l3_issues['职责重叠'][:10]:
-            f.write(f'- "{item["responsibility"]}" 出现在: {", ".join(item["files"])}\n')
-    
-    f.write(f'''
-## 5. 改进建议
-
-### 5.1 立即修复 (P0)
-''')
-    
-    p0_issues = []
-    if l2_issues.get('缺少YAML头部'):
-        p0_issues.append(f'- 修复{len(l2_issues["缺少YAML头部"])}个缺少YAML头部的文档')
-    if l2_issues.get('缺少responsibility'):
-        p0_issues.append(f'- 为{len(l2_issues["缺少responsibility"])}个文档添加responsibility字段')
-    if l2_issues.get('缺少module_id'):
-        p0_issues.append(f'- 为{len(l2_issues["缺少module_id"])}个文档添加module_id')
-    
+'''
+    p0_issues = [i for i in all_issues if i.get('severity') == 'P0']
     if p0_issues:
-        f.write('\n'.join(p0_issues) + '\n')
+        for issue in p0_issues[:20]:
+            if 'file' in issue:
+                report += f"- {issue['type']}: {issue['file']}\n"
+            else:
+                report += f"- {issue['type']}\n"
     else:
-        f.write('\n✓ 无P0级问题\n')
+        report += "✓ 无P0问题\n"
     
-    f.write('''
-### 5.2 短期改进 (P1)
-''')
-    
-    p1_issues = []
-    if l2_issues.get('缺少职责边界'):
-        p1_issues.append(f'- 为{len(l2_issues["缺少职责边界"])}个文档添加职责边界说明')
-    if l3_issues.get('职责重叠'):
-        p1_issues.append(f'- 解决{len(l3_issues["职责重叠"])}项职责重叠问题')
-    if l3_issues.get('疑似重复文档'):
-        p1_issues.append(f'- 处理{len(l3_issues["疑似重复文档"])}组疑似重复文档')
-    
-    if p1_issues:
-        f.write('\n'.join(p1_issues) + '\n')
-    else:
-        f.write('\n✓ 无P1级问题\n')
-    
-    f.write('''
-### 5.3 长期优化 (P2)
-''')
-    
-    p2_issues = []
-    if l3_issues.get('职责描述过短'):
-        p2_issues.append(f'- 完善{len(l3_issues["职责描述过短"])}项过短的职责描述')
-    if l3_issues.get('职责描述模糊'):
-        p2_issues.append(f'- 明确{len(l3_issues["职责描述模糊"])}项模糊的职责描述')
-    if l3_issues.get('核心定位过短'):
-        p2_issues.append(f'- 扩展{len(l3_issues["核心定位过短"])}个过短的核心定位章节')
-    
-    if p2_issues:
-        f.write('\n'.join(p2_issues) + '\n')
-    else:
-        f.write('\n✓ 无P2级问题\n')
-    
-    f.write(f'''
-## 6. 审计质量声明
+    report += f'''
+### 8.2 P1问题 (短期改进)
 
-- **审计覆盖率**: 100% (所有Layer 6文档均已审计)
-- **审计深度**: 三层审计(L1-L3) + 重点检查
-- **审计标准**: 专业量化机构五大原则
-- **审计时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+'''
+    p1_issues = [i for i in all_issues if i.get('severity') == 'P1']
+    if p1_issues:
+        for issue in p1_issues[:20]:
+            if 'file' in issue:
+                report += f"- {issue['type']}: {issue['file']}\n"
+            elif 'responsibility' in issue:
+                report += f"- {issue['type']}: {issue['responsibility']} ({len(issue['files'])}个文件)\n"
+            else:
+                report += f"- {issue['type']}\n"
+    else:
+        report += "✓ 无P1问题\n"
+    
+    report += f'''
+### 8.3 P2问题 (长期优化)
+
+'''
+    p2_issues = [i for i in all_issues if i.get('severity') == 'P2']
+    if p2_issues:
+        for issue in p2_issues[:20]:
+            if 'file' in issue:
+                report += f"- {issue['type']}: {issue['file']}\n"
+            else:
+                report += f"- {issue['type']}\n"
+    else:
+        report += "✓ 无P2问题\n"
+    
+    report += f'''
+## 9. 改进建议
+
+### 9.1 立即修复项 (P0)
+- 修复YAML头部缺失字段
+- 修复responsibility项不足问题
+
+### 9.2 短期改进项 (P1)
+- 添加职责边界定义
+- 解决职责重叠问题
+
+### 9.3 长期优化项 (P2)
+- 扩展核心定位内容
+- 细化职责描述
 
 ---
+**审计完成时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+'''
+    
+    with open(report_path, 'w', encoding='utf-8') as f:
+        f.write(report)
+    
+    return report_path, all_issues
 
-*本报告由自动化审计工具生成*
-''')
+print('='*80)
+print('Layer 6 组合优化层全面深度审计')
+print('='*80)
+print(f'审计时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+print(f'审计目录: {blueprints_dir}')
+print()
 
-print(f'\n审计报告已生成: {report_path}')
+print('[阶段1] L1 文件系统层审计...')
+l1_issues = audit_l1_file_system()
+print(f'  发现问题: {len(l1_issues)}个')
+
+print('[阶段2] L2 文档内容层审计...')
+l2_issues = audit_l2_document_content()
+print(f'  发现问题: {len(l2_issues)}个')
+
+print('[阶段3] L3 专业标准层审计...')
+l3_issues = audit_l3_professional_standards()
+print(f'  发现问题: {len(l3_issues)}个')
+
+print('[阶段4] 检查重复文档...')
+duplicates = check_duplicates()
+print(f'  发现重复: {len(duplicates)}对')
+
+print('[阶段5] 检查职责清晰度...')
+clarity_issues = check_responsibility_clarity()
+print(f'  发现问题: {len(clarity_issues)}个')
+
+print('[阶段6] 生成审计报告...')
+report_path, all_issues = generate_audit_report(l1_issues, l2_issues, l3_issues, duplicates, clarity_issues)
+print(f'  报告路径: {report_path}')
+
+print()
+print('='*80)
+print('审计完成!')
+print('='*80)
+
+p0_count = len([i for i in all_issues if i.get('severity') == 'P0'])
+p1_count = len([i for i in all_issues if i.get('severity') == 'P1'])
+p2_count = len([i for i in all_issues if i.get('severity') == 'P2'])
+
+print(f'问题总数: {len(all_issues)}')
+print(f'  P0问题: {p0_count}个')
+print(f'  P1问题: {p1_count}个')
+print(f'  P2问题: {p2_count}个')

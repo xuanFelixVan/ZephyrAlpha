@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0
 status: Active

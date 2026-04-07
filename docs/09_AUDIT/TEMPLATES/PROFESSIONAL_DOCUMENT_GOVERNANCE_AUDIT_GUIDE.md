@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE
 version: 1.0.0
 status: Active

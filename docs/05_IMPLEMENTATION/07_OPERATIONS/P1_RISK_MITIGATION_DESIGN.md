@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P1_RISK_MITIGATION_DESIGN
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
-# Layer 5 相似文档职责区分修复报告
+﻿# Layer 5 相似文档职责区分修复报告
 
 > **修复时间**: 2026-04-07 19:04:52
 > **修复范围**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS

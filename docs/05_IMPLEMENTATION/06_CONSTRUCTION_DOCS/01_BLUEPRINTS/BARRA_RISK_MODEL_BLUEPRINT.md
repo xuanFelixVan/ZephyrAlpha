@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - Barra风险模型
   - 因子风险建模
@@ -221,7 +221,7 @@ class BarraRiskModel:
 # 因子暴露计算接口
 > **核心职责**: Barra Risk Model蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责

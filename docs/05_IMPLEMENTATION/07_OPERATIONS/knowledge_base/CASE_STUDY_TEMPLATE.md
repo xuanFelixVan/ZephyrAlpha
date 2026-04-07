@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CASE_STUDY_TEMPLATE
 version: 1.0.0
 status: Active

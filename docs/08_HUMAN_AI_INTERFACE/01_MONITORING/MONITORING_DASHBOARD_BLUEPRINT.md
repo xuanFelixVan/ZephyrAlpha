@@ -1,27 +1,8 @@
----
-module_id: 08_HUMAN_AI_INTERFACE_01_MONITORING_MONITORING_DASHBOARD_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 监控仪表板实现示例文档
----
-
-
-
 ﻿---
-module_id: MONITORING_DASHBOARD_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 系统监控架构设计与实施方案与实施指导
----
+
+
+module_id: 08_HUMAN_AI_INTERFACE_01_MONITORING_001
+
 ## 1. 概述
 
 ### 1.1 功能定位
@@ -31,7 +12,14 @@ responsibility:
 ### 1.2 核心功能
 
 | 功能 | 说明 | 优先级 |
-|------|------|--------|
+|responsibility:
+  - 提供文档支持
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+------|------|--------|
 | 系统指标监控 | CPU、内存、磁盘、网络 | P0 |
 | 交易指标监控 | 订单、成交、持仓、盈亏 | P0 |
 | 风险指标监控 | VaR、回撤、敞口 | P0 |
@@ -250,6 +238,8 @@ datasources:
 **维护周期**: 每周审查
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
 
+responsibility:
+  - 系统监控仪表板设计与实施方案与优化维护
 ---
 
 ## 💻 实现代码示例

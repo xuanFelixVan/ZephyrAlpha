@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_STRUCTURE_STANDARD
 version: 1.0.0
 status: Active

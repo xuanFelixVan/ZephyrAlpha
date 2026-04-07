@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LEARNING_PATH
 version: 1.0.0
 status: Active

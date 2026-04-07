@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REDIS_CACHE_LAYER_001
 version: 1.0.0
 status: Active

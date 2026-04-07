@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 交易成本优化
   - 成本模型
@@ -233,7 +233,7 @@ class TradingCostOptimizer:
     ) -> pd.Series:
         """计算交易需?""
         trades = target - current
-        return trades[trades != 0]  # ä»
+return trades[trades != 0]  #
 返回需要交易的资产
     
     def _select_algorithm(
@@ -302,7 +302,7 @@ class AlmgrenChrissModel:
         self.config = config
         # 市场冲击参数（需要根据历史数据校准）
         self.temporary_impact_coeff = config.temporary_impact_coeff  # σ
-        self.permanent_impact_coeff = config.permanent_impact_coeff  # Î³
+self.permanent_impact_coeff = config.permanent_impact_coeff  #
         
     def estimate(
         self,
@@ -565,12 +565,12 @@ class TotalCost:
 
 **临时冲击**（Temporary Impact）：
 ```
-σ · (X/V)^(1/2) · (1/T)^(1/2)
+σ  (X/V)^(1/2)  (1/T)^(1/2)
 ```
 
 冲击**（Permanent Impact）：
 ```
-Î³ Â· (X/V)
+(X/V)
 ```
 
 
@@ -807,7 +807,7 @@ def test_integration_with_portfolio_optimizer():
 
 ### B. 开源资?
 - 交易成本模型示例: docs/examples/trading_cost_example.py
-·: tools/impact_model_calibration.py
+: tools/impact_model_calibration.py
 
 
 

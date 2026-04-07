@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_LAYER8_GAP_ANALYSIS_REPORT_20260407
 version: 1.0.0
 status: Active

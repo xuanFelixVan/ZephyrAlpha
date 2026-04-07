@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STATISTICAL_ARBITRAGE_001
 version: 1.0.0
 status: Active
@@ -88,10 +88,10 @@ layer: Layer 5 (策略执行层)
 ```
 
 ### 2.2 核心子系统设?
-#### 2.2.1 é
+#### 2.2.1
 ```python
 class PairSelectionEngine:
-    """é
+"""
     
     def __init__(self):
     def select_pairs(
@@ -212,7 +212,7 @@ class IndustryNeutralizer:
         行业中性化
         
         确保组合在各行业的暴露为?
-        Î£ w_long_i - w_short_i = 0 (for each industry)
+w_long_i - w_short_i = 0 (for each industry)
         """
         pass
 
@@ -229,7 +229,7 @@ class StyleNeutralizer:
         风格中性化
         
         确保组合在各风格因子的暴露为?
-        Î£ w_i * factor_i = 0 (for each factor)
+w_i * factor_i = 0 (for each factor)
         """
         pass
 ```
@@ -474,7 +474,7 @@ statistical_arbitrage:
 - ?能够构建市场中性组?- ?能够生成统计套利信号
 
 ### 8.2 性能验收
-- ?é
+- ?
 - ?信号胜率 ?55%
 - ?组合夏普比率 ?1.5
 - ?最大回??10%
@@ -538,7 +538,7 @@ graph LR
 ## 10. 
 
 |--------|------|--------|----------|
-| **M1: é
+| **M1:
 | **M4: 测试通过** | Week 8 | 测试报告 | 所有测试通过 |
 
 

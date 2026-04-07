@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -91,9 +91,9 @@ layer: Layer 5.1 (数据处理)
 
 
 |---------|---------|--------|---------|
-¥ | P0 | Apache Airbyte, Singer |
+| P0 | Apache Airbyte, Singer |
 | **实时数据采集** | 高频数据实时采集 | P0 | Apache Kafka, Debezium |
-¥ | P1 | Apache Nifi, Airbyte |
+| P1 | Apache Nifi, Airbyte |
 
 
 |---------|---------|--------|---------|
@@ -114,7 +114,7 @@ layer: Layer 5.1 (数据处理)
 
 |---------|---------|--------|---------|
 | **数据查询引擎** | 高性能查询 | P1 | Apache Presto, Trino |
-· | P2 | Apache Airflow |
+| P2 | Apache Airflow |
 
 
 |---------|---------|--------|---------|
@@ -126,7 +126,7 @@ layer: Layer 5.1 (数据处理)
 | **监控告警** | 系统监控 | P0 | Prometheus + Grafana |
 | **备份恢复** | 数据备份 | P1 | Velero, Restic |
 | **性能优化** | 查询优化 | P1 | Apache Spark, ClickHouse |
-| **é
+| **
 
 
 
@@ -146,7 +146,7 @@ layer: Layer 5.1 (数据处理)
 | **数据处理** | 6 | 4 | 2 | 66.7% |
 | **数据治理** | 5 | 4 | 1 | 80% |
 | **数据服务** | 4 | 2 | 2 | 50% |
-¨** | 3 | 2 | 1 | 66.7% |
+** | 3 | 2 | 1 | 66.7% |
 | **数据运维** | 4 | 0 | 4 | 0% |
 | **总计** | **33** | **22** | **11** | **66.7%** |
 
@@ -164,8 +164,8 @@ layer: Layer 5.1 (数据处理)
 - 重复数据去重
 - 数据类型转换
 
-´?
-´?
+?
+?
 
 **推荐方案**: Great Expectations + Apache Spark
 
@@ -206,7 +206,7 @@ layer: Layer 5.1 (数据处理)
 
 **推荐方案**: Prometheus + Grafana + AlertManager
 
-- é
+-
 
 
 
@@ -229,7 +229,7 @@ layer: Layer 5.1 (数据处理)
 **推荐方案**: Apache Ranger + ELK Stack
 
 **个人开发友好度**: ⭐⭐⭐⭐
-- é
+-
 
 
 
@@ -244,30 +244,29 @@ layer: Layer 5.1 (数据处理)
 - 备份验证
 - 灾难恢复
 
-·
 ?
 - **Borg Backup**: 去重备份
 - **Percona XtraBackup**: MySQL备份
 
 **推荐方案**: Restic + Velero
 
-- Resticé
+- Restic
 
 
 
 
-#### **6. é
+#### **6.
 
 **模块ID**: CONFIGURATION_MANAGEMENT__001
 
 **功能描述**:
-- é
-- é
-- é
-- é
+-
+-
+-
+-
 - 环境隔离
 
-- **Spring Cloud Config**: é
+- **Spring Cloud Config**:
 
 **推荐方案**: Consul + Etcd
 
@@ -368,7 +367,6 @@ Kong:
   个人开发友好度: ⭐⭐⭐⭐
   
 Apache APISIX:
-³
 ```
 
 ```yaml
@@ -415,7 +413,7 @@ P1级别数据治理模块
 P1级别运维模块
 
 |------|--------|---------|--------|
-| é
+|
 
 **总工作量**: 60小时
 
@@ -435,7 +433,7 @@ P2级别扩展模块
 ### 5.2 个人开发友好度评估
 
 |------|---------|---------|---------|---------|---------|
-| é
+|
 
 
 

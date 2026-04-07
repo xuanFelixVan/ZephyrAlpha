@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_BEST_PRACTICES
 version: 1.0.0
 status: Active

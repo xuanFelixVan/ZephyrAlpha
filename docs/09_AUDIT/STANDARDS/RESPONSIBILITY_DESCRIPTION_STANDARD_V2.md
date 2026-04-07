@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESPONSIBILITY_DESCRIPTION_STANDARD_V2
 version: 1.0.0
 status: Active

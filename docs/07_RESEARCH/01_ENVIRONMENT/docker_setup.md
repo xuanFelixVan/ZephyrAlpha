@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCKER_SETUP
 version: 1.0.0
 status: Active

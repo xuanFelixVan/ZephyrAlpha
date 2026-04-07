@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT
 version: 1.0.0
 status: Active

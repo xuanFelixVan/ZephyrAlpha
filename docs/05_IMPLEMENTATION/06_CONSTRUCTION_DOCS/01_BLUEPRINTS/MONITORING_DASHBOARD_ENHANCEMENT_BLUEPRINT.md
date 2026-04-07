@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONITORING_DASHBOARD_ENHANCEMENT_001
 version: 1.0.0
 status: Active
@@ -116,7 +116,7 @@ class MonitoringDashboard:
     
     def __init__(self):
         st.set_page_config(
-            page_title="¸
+page_title="
 风量化监控面板",
             page_icon="📊",
             layout="wide"
@@ -124,7 +124,7 @@ class MonitoringDashboard:
         
     def render(self):
         """渲染监控面板"""
-        st.title("¸
+st.title("
 风量化实时监控面板")
         
         tab1, tab2, tab3, tab4 = st.tabs([
@@ -173,7 +173,7 @@ class MonitoringDashboard:
         # 风险指标卡片
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("VaR (95%)", "¥12,345", "-¥1,234")
+st.metric("VaR (95%)", "12,345", "-1,234")
         with col2:
         with col3:
             st.metric("Beta", "0.85", "-0.05")
@@ -192,7 +192,7 @@ class MonitoringDashboard:
         ))
         fig.update_layout(
             xaxis_title="日期",
-            yaxis_title="VaR (Â¥)"
+yaxis_title="VaR ()"
         )
         st.plotly_chart(fig, use_container_width=True)
     
@@ -312,9 +312,9 @@ def monitor_var(self):
     # 显示VaR指标
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("VaR (95%)", f"Â¥{var_95:,.0f}")
+st.metric("VaR (95%)", f"{var_95:,.0f}")
     with col2:
-        st.metric("VaR (99%)", f"Â¥{var_99:,.0f}")
+st.metric("VaR (99%)", f"{var_99:,.0f}")
     
     var_history = self._get_var_history()
     fig = go.Figure()
@@ -457,7 +457,7 @@ class AlertMessage:
 
 ### 6.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
 
 ### 6.2 性能指标

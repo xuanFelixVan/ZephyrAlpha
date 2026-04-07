@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_UPDATE_MECHANISM
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_10
 version: 1.0.0
 status: Active

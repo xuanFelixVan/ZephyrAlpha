@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PATH_REFERENCE_HUMAN_REVIEW_20260407_151929
 version: 1.0.0
 status: Active

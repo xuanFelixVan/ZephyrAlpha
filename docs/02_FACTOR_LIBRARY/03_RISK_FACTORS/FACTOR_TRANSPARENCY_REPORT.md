@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
+
+module_id: RISK_FACTORS_FACTOR_TRANSPARENCY_REPORT
 
 
 ## 5. 更新记录
@@ -8,6 +9,11 @@ module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
 | 版本 | 日期 | 变更内容 |
 |responsibility:
   - 记录审计报告
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|----------|
 | v1.0 | 2026-03-28 | 整合附录AJ因子暴露透明度报?|
 

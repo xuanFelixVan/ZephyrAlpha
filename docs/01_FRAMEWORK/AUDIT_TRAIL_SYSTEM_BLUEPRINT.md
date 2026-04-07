@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_TRAIL_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active

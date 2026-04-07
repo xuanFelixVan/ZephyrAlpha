@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_QA_SYSTEM_PLAN
 version: 1.0.0
 status: Active

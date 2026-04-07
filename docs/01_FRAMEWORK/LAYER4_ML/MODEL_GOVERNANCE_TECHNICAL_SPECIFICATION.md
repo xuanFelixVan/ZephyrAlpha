@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_GOVERNANCE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

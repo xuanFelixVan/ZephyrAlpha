@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_ORCHESTRATION_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -216,7 +216,7 @@ def clean_data(df: pd.DataFrame):
         df: 原始数据
     
     Returns:
-        DataFrame: ¸
+DataFrame:
 洗后的数据
     """
     df = df.drop_duplicates()
@@ -229,7 +229,7 @@ def calculate_features(df: pd.DataFrame):
     计算特征
     
     Args:
-        df: ¸
+df:
 洗后的数据
     
     Returns:
@@ -483,8 +483,8 @@ docker-compose up -d
 
 存 | 存储 |
 |------|-----|------|------|
-| **Prefect Server** | 1 ?| 2GB | 10GB |
-| **Prefect Agent** | 1 ?| 1GB | 5GB |
+| **Prefect Server** | 1?| 2GB | 10GB |
+| **Prefect Agent** | 1?| 1GB | 5GB |
 
 
 
@@ -552,7 +552,7 @@ Prefect Core
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **é
+| **
 
 
 
@@ -590,7 +590,7 @@ Prefect Core
 
 | 模块 | 依赖类型 | 说明 |
 |------|---------|------|
-| **é
+| **
 
 ### 10.2 下游依赖
 

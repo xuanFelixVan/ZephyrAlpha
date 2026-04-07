@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 09_RESEARCH_INNOVATION__ARCHIVE_SYSTEM_MANIFEST_UPDATE_GUIDE
 version: 1.0.0
 status: Active

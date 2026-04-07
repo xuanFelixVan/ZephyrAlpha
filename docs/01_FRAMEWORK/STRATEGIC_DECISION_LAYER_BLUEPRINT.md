@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_DECISION_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active

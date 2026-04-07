@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MEMORY_AUGMENTED_NN_BLUEPRINT
 version: 1.0.0
 status: Active

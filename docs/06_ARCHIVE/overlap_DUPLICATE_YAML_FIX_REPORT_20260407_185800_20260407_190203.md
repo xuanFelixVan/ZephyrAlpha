@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DUPLICATE_YAML_FIX_REPORT_20260407_185800
 version: 1.0.0
 status: Active

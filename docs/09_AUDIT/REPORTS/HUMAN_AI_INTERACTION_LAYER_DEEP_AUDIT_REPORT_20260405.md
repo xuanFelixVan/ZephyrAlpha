@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_REPORT_20260405
 version: 1.0.0
 status: Active

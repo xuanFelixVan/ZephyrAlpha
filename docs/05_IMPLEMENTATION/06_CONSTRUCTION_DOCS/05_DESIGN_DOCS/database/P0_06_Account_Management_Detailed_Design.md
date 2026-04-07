@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_06_ACCOUNT_MANAGEMENT_DETAILED_DESIGN
 version: 1.0.0
 status: Active

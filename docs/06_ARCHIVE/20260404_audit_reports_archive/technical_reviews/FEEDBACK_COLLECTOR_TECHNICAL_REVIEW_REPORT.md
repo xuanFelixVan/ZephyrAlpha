@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEEDBACK_COLLECTOR_TECHNICAL_REVIEW_REPORT
 version: 1.0.0
 status: Active

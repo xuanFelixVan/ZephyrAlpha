@@ -1,4 +1,4 @@
----
+﻿---
 module_id: L9_ANOMALY_DETECTOR
 version: 1.0.0
 status: Active

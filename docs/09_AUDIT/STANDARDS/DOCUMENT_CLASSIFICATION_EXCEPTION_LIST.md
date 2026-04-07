@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CLASSIFICATION_EXCEPTION_LIST
 version: 1.0.0
 status: Active

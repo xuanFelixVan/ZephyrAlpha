@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_INNOVATION_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active

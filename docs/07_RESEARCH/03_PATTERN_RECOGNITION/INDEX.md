@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 07_RESEARCH_03_PATTERN_RECOGNITION_INDEX
 version: 1.0.0
 status: Active

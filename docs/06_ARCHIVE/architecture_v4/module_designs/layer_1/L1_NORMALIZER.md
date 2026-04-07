@@ -1,4 +1,4 @@
----
+﻿---
 module_id: L1_NORMALIZER
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ROBUST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -127,7 +127,7 @@ class WorstCaseOptimizer:
     """
 况优化器
     
-    min max f(w, Î¸)
+min max f(w, )
     w  θ∈U
     
     在最坏参数下优化
@@ -251,7 +251,7 @@ class RobustOptimizer:
         pass
 ```
 
-### 3.2 é
+### 3.2
 
 ```yaml
 robust_optimization:

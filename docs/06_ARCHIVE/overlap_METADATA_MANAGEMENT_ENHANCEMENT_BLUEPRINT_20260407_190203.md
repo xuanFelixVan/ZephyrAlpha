@@ -1,4 +1,4 @@
----
+﻿---
 module_id: METADATA_MANAGEMENT_ENHANCEMENT_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - 数据管理架构设计与实施规范与优化维护
-¸
   - 影响分析
 layer: Layer 5 (策略执行层)
 ---
@@ -245,11 +244,10 @@ class LineageTracker:
         }
 ```
 
-¸
 
 ```python
 class DataDictionary:
-¸"""
+"""
     
     def __init__(self, storage):
         self.storage = storage

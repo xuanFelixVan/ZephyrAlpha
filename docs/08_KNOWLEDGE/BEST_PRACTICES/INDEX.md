@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 08_KNOWLEDGE_BEST_PRACTICES_INDEX
 version: 1.0.0
 status: Active

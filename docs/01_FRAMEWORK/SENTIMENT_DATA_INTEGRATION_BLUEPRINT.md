@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_DATA_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active

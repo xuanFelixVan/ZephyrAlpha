@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_MAKING_MODEL_BLUEPRINT
 version: 1.0.0
 status: Active

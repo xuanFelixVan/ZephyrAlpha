@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEURAL_NETWORK_INTEGRATION_PLAN
 version: 1.0.0
 status: Active

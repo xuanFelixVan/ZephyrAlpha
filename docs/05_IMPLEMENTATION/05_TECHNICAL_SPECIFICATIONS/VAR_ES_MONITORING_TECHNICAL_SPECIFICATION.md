@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VAR_ES_MONITORING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

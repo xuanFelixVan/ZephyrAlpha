@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 11_STRATEGIC_DECISION_01_ASSET_ALLOCATION_INDEX
 version: 1.0.0
 status: Active

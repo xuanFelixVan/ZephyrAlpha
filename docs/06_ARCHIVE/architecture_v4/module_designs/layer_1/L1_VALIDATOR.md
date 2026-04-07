@@ -1,4 +1,4 @@
----
+﻿---
 module_id: L1_VALIDATOR
 version: 1.0.0
 status: Active

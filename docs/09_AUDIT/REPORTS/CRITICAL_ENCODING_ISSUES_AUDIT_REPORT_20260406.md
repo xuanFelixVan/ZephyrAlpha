@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 09_AUDIT_REPORTS_CRITICAL_ENCODING_ISSUES_AUDIT_REPORT_20260406
 version: 1.0.0
 status: Active

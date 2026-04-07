@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_COMPLETENESS_ANALYSIS_REPORT
 version: 1.0.0
 status: Active

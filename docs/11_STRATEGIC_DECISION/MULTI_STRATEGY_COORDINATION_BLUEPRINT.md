@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_STRATEGY_COORDINATION_BLUEPRINT
 version: 1.0.0
 status: Active

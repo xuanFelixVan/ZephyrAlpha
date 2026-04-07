@@ -1,4 +1,4 @@
----
+﻿---
 module_id: POST_QUANTUM_CRYPTOGRAPHY_BLUEPRINT
 version: 1.0.0
 status: Active

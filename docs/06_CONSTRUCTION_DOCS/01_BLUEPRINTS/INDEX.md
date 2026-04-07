@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_CONSTRUCTION_DOCS_01_BLUEPRINTS_INDEX
 version: 1.0.0
 status: Active

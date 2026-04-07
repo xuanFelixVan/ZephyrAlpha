@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_BACKUP_RECOVERY_001
 version: 1.0.0
 status: Active
@@ -100,7 +100,6 @@ layer: Layer 5.1 (数据处理)
 
 **Layer定位**: Layer 1 - 数据预处理层（数据运维模块）
 
-¨
 - 降低数据丢失风险
 - 满足合规要求
 
@@ -290,7 +289,7 @@ class ResticBackupManager:
         恢复备份
         
         Args:
-§ID
+ID
             target_path: 恢复目标路径
         
         Returns:
@@ -346,7 +345,6 @@ class ResticBackupManager:
     
     def prune_old_snapshots(self, keep_policy: Dict[str, int]):
         """
-        ¸
 ?
         
         Args:
@@ -356,7 +354,7 @@ class ResticBackupManager:
                 - keep_monthly: 保留最近N月的每月备份
         
         Returns:
-            Dict: ¸
+Dict:
 理结果
         """
         cmd = ['restic', 'forget', '--repo', self.repository]
@@ -392,7 +390,7 @@ class ResticBackupManager:
             }
     
     def _extract_snapshot_id(self, output):
-§ID"""
+ID"""
         for line in output.split('\n'):
             if 'snapshot' in line.lower():
                 parts = line.split()

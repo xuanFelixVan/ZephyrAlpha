@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

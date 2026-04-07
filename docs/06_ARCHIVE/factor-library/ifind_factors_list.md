@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IFIND_FACTORS_LIST
 version: 1.0.0
 status: Active

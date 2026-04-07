@@ -1,10 +1,16 @@
----
+﻿---
+
 
 module_id: 08_HUMAN_AI_INTERFACE_35_DATA_EXPORT_TOOLS_INDEX
 ## 📄 文档列表
 
 | 文档名称 | 类型 | 状态 | 说明 |
-|---------|------|------|------|
+|version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+---------|------|------|------|
 | DATA_EXPORT_TOOLS_BLUEPRINT.md | 蓝图 | 活跃 | 数据导出工具集，支持多格式导出、批量导出和任务管理 |
 
 responsibility:

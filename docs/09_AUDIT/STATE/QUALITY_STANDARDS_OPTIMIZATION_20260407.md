@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUALITY_STANDARDS_OPTIMIZATION_20260407
 version: 1.0.0
 status: Active

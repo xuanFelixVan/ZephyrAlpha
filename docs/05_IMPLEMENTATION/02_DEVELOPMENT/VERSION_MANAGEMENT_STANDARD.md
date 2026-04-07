@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VERSION_MANAGEMENT_STANDARD
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: L11_QUANT_AGENT
 version: 1.0.0
 status: Active

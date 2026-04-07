@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -137,7 +137,6 @@ class StrategicAllocationEngine:
             prices: 价格数据
             
         返回:
-¸
         """
         mu = expected_returns.mean_historical_return(prices)
         S = risk_models.sample_cov(prices)
@@ -156,7 +155,6 @@ class StrategicAllocationEngine:
             prices: 价格数据
             
         返回:
-¸
         """
         returns = prices.pct_change().dropna()
         hrp = HRPOpt(returns)
@@ -178,7 +176,6 @@ class StrategicAllocationEngine:
             views: 观点数据
             
         返回:
-¸
         """
         S = risk_models.sample_cov(prices)
         
@@ -254,7 +251,6 @@ def risk_budget_allocation(
     
     参数:
         prices: 价格数据
-¸
         
     返回:
         风险预算权重
@@ -397,20 +393,20 @@ class RebalancingSignal:
 
 ### 6.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
 
 ### 6.2 性能指标
 
 |------|--------|
-| **é
+| **
 | **优化计算时间** | <5s |
 
 
 
 
 |------|--------|
-| **é
+| **
 | **风险控制** | VaR <5% |
 
 

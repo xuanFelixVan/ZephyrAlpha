@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_RESPONSIBILITY_FIX_REPORT_V2_20260407
 version: 1.0.0
 status: Active

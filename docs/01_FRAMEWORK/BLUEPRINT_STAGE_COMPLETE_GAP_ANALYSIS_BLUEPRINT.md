@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_STAGE_COMPLETE_GAP_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active

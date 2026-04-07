@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TIMESCALEDB_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -87,7 +87,6 @@ TimescaleDB集成模块，实现与TimescaleDB时序数据库的集成，支持�
 
 |------|-------------|----------|---------|
 | SQL
-¨
 
 ### 1.2 核心优势
 

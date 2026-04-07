@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
@@ -85,7 +85,7 @@ layer: Layer 6 (组合优化层)
 ### 核心职责
 
 |---------|---------|---------|
-| **¹
+| **
 度 | 调仓计划 |
 | **成本评估** | 评估调仓成本 | 成本报告 |
 
@@ -136,7 +136,7 @@ class RebalanceTrigger:
         
         if drift > self.drift_threshold:
             triggered = True
-            trigger_reasons.append(f'é
+trigger_reasons.append(f'
 过阈值{self.drift_threshold:.2%}')
         
         if days_since_last > self.time_threshold:
@@ -288,7 +288,7 @@ class RebalancingTimingOptimizer:
 ### 调仓决策质量
 
 |------|--------|
-| **¹
+| **
 | **时机优化收益** | > 0.1% |
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 07_RESEARCH_01_ENVIRONMENT_INDEX
 version: 1.0.0
 status: Active

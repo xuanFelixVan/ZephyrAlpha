@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMMON_ISSUES_SOLUTIONS
 version: 1.0.0
 status: Active

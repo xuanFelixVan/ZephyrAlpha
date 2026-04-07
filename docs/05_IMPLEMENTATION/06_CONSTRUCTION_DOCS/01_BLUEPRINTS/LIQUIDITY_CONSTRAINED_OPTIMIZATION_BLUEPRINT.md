@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -113,8 +113,7 @@ class LiquidityConstrainedOptimizer:
     ) -> None:
         """
         
-¸
-ç®?
+?
         """
         pass
     
@@ -144,7 +143,7 @@ class LiquidityConstrainedOptimizer:
 ```
 
 
-## 3. é
+## 3.
 
 ```yaml
 liquidity_constrained_optimization:

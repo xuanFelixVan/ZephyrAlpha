@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_09_RISK_RULES_INDEX
 version: 1.0.0
 status: Active

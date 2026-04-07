@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QMT_CONNECTION_ROOT_CAUSE_ANALYSIS
 version: 1.0.0
 status: Active

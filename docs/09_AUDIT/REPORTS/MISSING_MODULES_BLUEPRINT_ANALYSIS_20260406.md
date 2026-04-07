@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MISSING_MODULES_BLUEPRINT_ANALYSIS_20260406
 version: 1.0.0
 status: Active

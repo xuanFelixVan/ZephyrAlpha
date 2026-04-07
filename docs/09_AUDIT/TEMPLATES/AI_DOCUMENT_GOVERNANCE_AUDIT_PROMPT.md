@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT
 version: 1.0.0
 status: Active

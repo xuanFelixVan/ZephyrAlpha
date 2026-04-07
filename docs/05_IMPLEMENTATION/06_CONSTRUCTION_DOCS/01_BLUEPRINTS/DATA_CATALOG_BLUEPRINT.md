@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_CATALOG_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 数据目录
-  - 元数据管理
-  - 数据发现
-  - 血缘追踪
+  - 数据目录管理
+  - 元数据索引
+  - 数据资产发现
+  - 数据血缘追踪
 
 
 ﻿
@@ -694,13 +694,13 @@ class CatalogQualityIntegration:
 
 
 |------|---------|--------|--------|
-| é
-§ |
-| é
+|
+|
+|
 
 
 |------|---------|--------|--------|
-| é
+|
 
 
 

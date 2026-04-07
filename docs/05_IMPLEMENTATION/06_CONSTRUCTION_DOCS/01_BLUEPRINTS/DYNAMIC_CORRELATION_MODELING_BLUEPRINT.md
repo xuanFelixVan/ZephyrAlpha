@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 动态相关性建模
   - 相关性估计
@@ -226,14 +226,14 @@ class DynamicCorrelationModeler:
         horizon: int = 5
     ) -> CorrelationForecast:
         """
-³?        
+?
         Args:
             horizon: 预测期数（天数）
             
         Returns:
         # 1. 预测条件波动?        volatility_forecast = self._forecast_volatility(horizon)
         
-³?        correlation_forecast = self.dcc_model.forecast(horizon)
+?        correlation_forecast = self.dcc_model.forecast(horizon)
         
         # 3. 计算预测区间
         confidence_interval = self._calculate_forecast_interval(
@@ -343,7 +343,7 @@ class CorrelationRegimeDetector:
         return mean_corr > self.config.extreme_correlation_threshold
 ```
 
-### 3.3 é
+### 3.3
 ```python
 @dataclass
 class DCCConfig:
@@ -411,9 +411,9 @@ class RegimeChange:
 ### 5.1 DCC-GARCH模型原理
 
 **GARCH(1,1)模型**（单资产波动率）?```
-σ²?= ω + α·ε²ₜ₋?+ β·σ²ₜ₋?```
+σ?= ω + αεₜ₋?+ βσₜ₋?```
 
-Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?· diag(Q??²
+Q?= (1-α-β)Q̄ + αuₜ₋₁u'ₜ₋?+ βQₜ₋?R?= diag(Q??  Q? diag(Q??
 ```
 
 

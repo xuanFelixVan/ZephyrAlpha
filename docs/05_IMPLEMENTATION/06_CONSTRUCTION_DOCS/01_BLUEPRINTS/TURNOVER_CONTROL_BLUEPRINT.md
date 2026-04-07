@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 换手率控制
   - 换手约束
@@ -121,7 +121,7 @@ class TurnoverController:
 
 
 
-## 3. é
+## 3.
 
 ```yaml
 turnover_control:

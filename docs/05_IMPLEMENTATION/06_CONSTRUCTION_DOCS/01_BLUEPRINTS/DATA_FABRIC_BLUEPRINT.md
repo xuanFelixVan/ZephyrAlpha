@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_FABRIC_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 数据编织
+  - 数据编织架构
   - 数据虚拟化
-  - 统一数据层
-  - 跨域数据
+  - 统一数据访问
+  - 跨域数据集成
 
 
 ﻿

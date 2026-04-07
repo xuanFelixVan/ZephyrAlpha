@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
 status: Active

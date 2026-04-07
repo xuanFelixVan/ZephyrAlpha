@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CODE_CHANGE_DOCUMENTATION_GUIDE
 version: 1.0.0
 status: Active

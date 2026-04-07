@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_MONITORING_001
 version: 1.0.0
 status: Active
@@ -880,7 +880,7 @@ class QualityReportGenerator:
         
         # 基于异常结果生成建议
         if anomaly_results['anomaly_count'] > 10:
-´?)
+?)
         
         critical_anomalies = [a for a in anomaly_results.get('anomalies', []) 
                              if a.get('severity') == 'critical']

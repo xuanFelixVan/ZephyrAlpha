@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DATA_VERSION_CONTROL_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -417,7 +417,7 @@ volumes:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -434,7 +434,7 @@ volumes:
 
 ---
 
-## å
+##
 
 - 实时数据湖蓝图
 - 数据生命周期管理蓝图

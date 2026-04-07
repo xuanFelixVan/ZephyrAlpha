@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REFERENCE_LINK_CHECK_REPORT_20260407_165423
 version: 1.0.0
 status: Active

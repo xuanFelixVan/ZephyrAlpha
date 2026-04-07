@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXPERIMENT_TRACKING_BLUEPRINT
 version: 1.0.0
 status: Active

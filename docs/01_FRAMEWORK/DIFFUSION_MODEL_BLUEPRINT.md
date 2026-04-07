@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DIFFUSION_MODEL_BLUEPRINT
 version: 1.0.0
 status: Active

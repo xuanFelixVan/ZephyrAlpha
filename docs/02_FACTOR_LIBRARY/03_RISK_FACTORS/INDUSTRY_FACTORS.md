@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
+
+module_id: RISK_FACTORS_INDUSTRY_FACTORS
 
 
 # T.03.RF002.申万行业因子
@@ -23,6 +24,11 @@ module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
 | 属?| 内容 |
 |responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|
 | 因子编号 | T.03.RF002 |
 | 因子名称 | 申万行业因子 |

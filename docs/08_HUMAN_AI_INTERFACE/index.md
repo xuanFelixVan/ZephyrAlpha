@@ -1,6 +1,18 @@
+﻿---
+module_id: 08_HUMAN_AI_INTERFACE_INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 人机交互层主索引文档
+standard_type: 索引文档
+applicable_scope: Layer 8 - 人机交互层
+compliance_level: 专业标准
 ---
-module_id: 08_HUMAN_AI_INTERFACE_001
 
+# Layer 8 人机交互层索引
 
 ## 📊 统计信息
 
@@ -14,10 +26,6 @@ module_id: 08_HUMAN_AI_INTERFACE_001
 | **低优先级** | 4个 |
 | **蓝图文档** | 39个 |
 | **索引文档** | 39个 |
-
-responsibility:
-  - 系统模块设计与实施方案与优化维护
----
 
 **索引状态**: ✅ 活跃  
 **维护频率**: 按需更新  

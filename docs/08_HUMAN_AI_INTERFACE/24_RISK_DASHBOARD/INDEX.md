@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 24_RISK_DASHBOARD_INDEX_001
 version: 1.0.0
 status: Active

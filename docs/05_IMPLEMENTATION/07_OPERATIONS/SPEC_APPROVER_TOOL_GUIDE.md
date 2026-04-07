@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SPEC_APPROVER_TOOL_GUIDE
 version: 1.0.0
 status: Active

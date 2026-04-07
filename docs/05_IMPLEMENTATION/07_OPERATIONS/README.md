@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_README
 version: 1.0.0
 status: Active

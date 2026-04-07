@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_KNOWLEDGE_LIBRARY_INDEX
 version: 1.0.0
 status: Active

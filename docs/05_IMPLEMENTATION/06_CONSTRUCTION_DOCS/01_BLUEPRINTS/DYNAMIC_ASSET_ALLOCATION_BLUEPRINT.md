@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -180,7 +180,6 @@ class RegimeBasedAllocator:
             confidence: 状态判断置信度
             
         返回:
-            é
         """
         pass
     
@@ -265,7 +264,6 @@ class DynamicAssetAllocator:
             constraints: 约束条件
             
         返回:
-            é
         """
         strategic = self.saa.calculate_strategic_weights(
             risk_profile['tolerance'],
@@ -287,7 +285,7 @@ class DynamicAssetAllocator:
         return self._combine_allocations(strategic, regime_adjusted, tactical)
 ```
 
-### 3.2 é
+### 3.2
 
 ```yaml
 dynamic_asset_allocation:

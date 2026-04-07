@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MANUAL_LINK_REMOVAL_REPORT_20260407_170216
 version: 1.0.0
 status: Active

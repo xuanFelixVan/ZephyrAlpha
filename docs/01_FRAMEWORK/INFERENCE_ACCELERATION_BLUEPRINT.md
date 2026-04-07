@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INFERENCE_ACCELERATION_BLUEPRINT
 version: 1.0.0
 status: Active

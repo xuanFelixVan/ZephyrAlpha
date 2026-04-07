@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_TERMINOLOGY_STANDARD
 version: 1.0.0
 status: Active

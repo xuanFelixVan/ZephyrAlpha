@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT
 version: 1.0.0
 status: Active

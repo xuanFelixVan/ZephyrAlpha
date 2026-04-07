@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CROSS_REFERENCE_ANALYSIS_20260406
 version: 1.0.0
 status: Active

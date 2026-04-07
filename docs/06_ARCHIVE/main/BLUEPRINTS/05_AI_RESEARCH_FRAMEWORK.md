@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_AI_RESEARCH_FRAMEWORK
 version: 1.0.0
 status: Active

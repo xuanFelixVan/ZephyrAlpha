@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_MESH_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 数据网格
-  - 域数据所有权
-  - 数据产品
-  - 联邦治理
+  - 数据网格架构
+  - 数据产品化
+  - 领域数据自治
+  - 联邦数据治理
 
 
 ﻿

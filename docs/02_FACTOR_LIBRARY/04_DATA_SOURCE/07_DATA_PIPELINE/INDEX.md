@@ -1,4 +1,5 @@
----
+﻿---
+
 
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_001
 
@@ -8,6 +9,11 @@ module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_001
 
 responsibility:
   - 提供目录索引
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

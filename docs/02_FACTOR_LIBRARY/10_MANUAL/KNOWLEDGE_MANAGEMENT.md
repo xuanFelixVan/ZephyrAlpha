@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
+
+module_id: MANUAL_KNOWLEDGE_MANAGEMENT
 
 
 # 知识管理蓝图
@@ -20,6 +21,11 @@ module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 | 原则 | 说明 |
 |responsibility:
   - 管理知识库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|
 | **Obsidian + AI** | Obsidian手工 + AI自动提取，混合模?|
 | **向量检?* | 使用向量数据库实现语义检?|

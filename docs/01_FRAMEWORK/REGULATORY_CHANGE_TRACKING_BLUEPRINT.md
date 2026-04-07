@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REGULATORY_CHANGE_TRACKING_BLUEPRINT
 version: 1.0.0
 status: Active

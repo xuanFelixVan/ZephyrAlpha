@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_04_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN
 version: 1.0.0
 status: Active

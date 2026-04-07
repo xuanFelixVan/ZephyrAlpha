@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_COLLABORATION_PLATFORM_BLUEPRINT
 version: 1.0.0
 status: Active

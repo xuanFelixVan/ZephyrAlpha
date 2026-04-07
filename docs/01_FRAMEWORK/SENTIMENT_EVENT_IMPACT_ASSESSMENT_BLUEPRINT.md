@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_EVENT_IMPACT_ASSESSMENT_BLUEPRINT
 version: 1.0.0
 status: Active

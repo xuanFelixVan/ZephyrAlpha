@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_SYNC_REPLICATION_001
+
+module_id: DATA_SOURCE_DATA_SYNC_REPLICATION_README
 
 
 # 数据同步复制
@@ -93,6 +94,11 @@ result = manager.process()
 | 指标 | 目标值 | 说明 |
 |responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|--------|------|
 | 处理延迟 | < 100ms | 单次处理延迟 |
 | 吞吐量 | > 1000/s | 每秒处理量 |

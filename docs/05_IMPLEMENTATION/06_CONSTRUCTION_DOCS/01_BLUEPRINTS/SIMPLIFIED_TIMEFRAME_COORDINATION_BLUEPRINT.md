@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TIMEFRAME_COORDINATION_001
 version: 1.0.0
 status: Active
@@ -203,7 +203,7 @@ class SignalFusion:
 # 信号协同接口
 > **核心职责**: Simplified Timeframe Coordination蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责

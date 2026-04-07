@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active

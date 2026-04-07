@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_ARCHITECTURE_DIAGRAM
 version: 1.0.0
 status: Active

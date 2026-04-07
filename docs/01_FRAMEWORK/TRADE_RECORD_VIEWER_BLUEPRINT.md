@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADE_RECORD_VIEWER_BLUEPRINT
 version: 1.0.0
 status: Active

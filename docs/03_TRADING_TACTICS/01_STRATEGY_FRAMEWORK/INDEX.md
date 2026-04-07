@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_01_STRATEGY_FRAMEWORK_INDEX
 version: 1.0.0
 status: Active

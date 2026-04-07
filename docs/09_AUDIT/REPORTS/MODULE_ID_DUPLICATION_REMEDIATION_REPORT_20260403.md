@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_ID_DUPLICATION_REMEDIATION_REPORT_20260403
 version: 1.0.0
 status: Active

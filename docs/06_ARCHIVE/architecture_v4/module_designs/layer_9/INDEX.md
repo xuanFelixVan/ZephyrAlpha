@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX_5
 version: 1.0.0
 status: Active

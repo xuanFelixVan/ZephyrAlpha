@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOBILE_PUSH_NOTIFICATION_BLUEPRINT
 version: 1.0.0
 status: Active

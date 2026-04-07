@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_20260406_ENCODING_ISSUES_ARCHIVE_INDEX
 version: 1.0.0
 status: Active

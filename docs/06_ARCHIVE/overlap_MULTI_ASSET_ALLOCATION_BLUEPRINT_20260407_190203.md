@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_MULTI_ASSET_ALLOCATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -224,7 +224,6 @@ class MultiAssetDataManager:
             asset_classes: 资产类别列表
             
         Returns:
-¸
         """
         asset_data = {}
         
@@ -269,7 +268,6 @@ class CrossAssetCorrelationModeler:
     def estimate_correlation(self, asset_data: Dict[str, AssetData]) -> pd.DataFrame:
         """
         Args:
-¸
             
         Returns:
         # 1. 提取收益?        returns = pd.DataFrame()
@@ -279,7 +277,7 @@ class CrossAssetCorrelationModeler:
         # 2. 使用DCC-GARCH估计动态相?        if self.config.use_dcc_garch:
             correlation_matrix = self.dcc_garch.estimate(returns)
         else:
-³?            correlation_matrix = returns.corr()
+?            correlation_matrix = returns.corr()
         
         return correlation_matrix
     
@@ -287,9 +285,8 @@ class CrossAssetCorrelationModeler:
                            asset_data: Dict[str, AssetData],
                            horizon: int = 1) -> pd.DataFrame:
         """
-³?        
+?
         Args:
-¸
             horizon: 预测期数
             
         Returns:
@@ -322,7 +319,6 @@ class RiskParityOptimizer:
         风险平价优化
         
         Args:
-¸
 
             
         Returns:
@@ -345,7 +341,7 @@ class RiskParityOptimizer:
                                  volatility: pd.Series,
                                  correlation_matrix: pd.DataFrame) -> pd.DataFrame:
         """构建协方差矩?""
-        # Î£ = D * C * D
+#  = D * C * D
         # D = diag(σ)
         D = np.diag(volatility.values)
         C = correlation_matrix.values
@@ -362,8 +358,8 @@ class RiskParityOptimizer:
         求解风险平价权重
         
         使用凸优化求解：
-        min Î£_i Î£_j (w_i * (Î£w)_i / b_i - w_j * (Î£w)_j / b_j)^2
-        s.t. Î£ w_i = 1, w_i >= 0
+min _i _j (w_i * (w)_i / b_i - w_j * (w)_j / b_j)^2
+s.t.  w_i = 1, w_i >= 0
         """
         import cvxpy as cp
         
@@ -546,7 +542,7 @@ class AssetData:
 ```python
 @dataclass
 class AllocationResult:
-    """é
+"""
     timestamp: datetime
     
 @dataclass

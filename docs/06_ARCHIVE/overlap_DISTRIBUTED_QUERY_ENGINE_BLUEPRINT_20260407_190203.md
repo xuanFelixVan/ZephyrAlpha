@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_DISTRIBUTED_QUERY_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -474,7 +474,7 @@ class QueryCache:
         return time.time() - cached_result['timestamp'] < self.ttl
     
     def _evict(self):
-        """¸
+"""
 理缓存"""
         import time
         
@@ -650,7 +650,7 @@ print(result)
 
 |------|------|--------|
 | **检查查询性能** | 每天 | 运维人员 |
-| **¸
+| **
 
 
 

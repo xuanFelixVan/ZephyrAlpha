@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_MEMO_STANDARD
 version: 1.0.0
 status: Active

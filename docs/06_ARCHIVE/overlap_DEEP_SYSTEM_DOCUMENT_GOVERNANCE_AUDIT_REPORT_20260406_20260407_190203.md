@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406
 version: 1.0.0
 status: Active

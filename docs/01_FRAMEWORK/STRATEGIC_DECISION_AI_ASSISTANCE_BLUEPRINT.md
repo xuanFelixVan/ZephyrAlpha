@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT
 version: 1.0.0
 status: Active

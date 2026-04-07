@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_PARITY_STRATEGY_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

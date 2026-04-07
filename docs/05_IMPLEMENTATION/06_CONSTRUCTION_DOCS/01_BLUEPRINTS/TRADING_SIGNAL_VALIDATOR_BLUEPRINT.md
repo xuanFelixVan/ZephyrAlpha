@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
 status: Active
@@ -249,7 +249,6 @@ class ValidationResult:
 
 | 优势维度 | 说明 | 评分 |
 |---------|------|------|
-¨
 
 
 |---------|--------|------|
@@ -259,7 +258,7 @@ class ValidationResult:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 
 

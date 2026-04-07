@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 version: 1.0.0
 status: Active

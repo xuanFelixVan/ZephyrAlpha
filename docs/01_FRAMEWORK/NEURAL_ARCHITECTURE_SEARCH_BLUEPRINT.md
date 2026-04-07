@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT
 version: 1.0.0
 status: Active

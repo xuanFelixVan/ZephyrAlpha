@@ -1,4 +1,4 @@
----
+﻿---
 module_id: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -445,7 +445,7 @@ class DataLakeStorage:
         self.spark.sql(f"OPTIMIZE delta.`{table_path}`")
     
     def vacuum_data(self, table_path: str, retention_hours: int = 168) -> None:
-        """¸
+"""
 理旧版本数据，释放存储空间"""
         self.spark.sql(f"VACUUM delta.`{table_path}` RETAIN {retention_hours} HOURS")
 ```
@@ -1001,8 +1001,8 @@ Unsubscribe:
 洗和标准化
 
 **验收标准**:
-¥Delta Lake
-¥InfluxDB
+Delta Lake
+InfluxDB
 洗和标准化正确
 
 

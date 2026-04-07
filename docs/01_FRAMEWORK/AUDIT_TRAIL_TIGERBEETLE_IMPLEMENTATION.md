@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION
 version: 1.0.0
 status: Active

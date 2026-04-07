@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 组合归因
   - 收益分解
@@ -163,7 +163,7 @@ class PortfolioAttributionAnalyzer:
             
         Returns:
             {
-                'allocation_effect': é
+'allocation_effect':
                 'selection_effect': 选择效应,
                 'interaction_effect': 交互效应,
             }
@@ -219,7 +219,6 @@ class PortfolioAttributionAnalyzer:
 
 
 ```
-é
 选择效应 = Σ w_b × (r_p - r_b)
 交互效应 = Σ (w_p - w_b) × (r_p - r_b)
 

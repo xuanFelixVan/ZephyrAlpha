@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SMART_ORDER_ROUTER_001
 version: 1.0.0
 status: Active
@@ -269,7 +269,7 @@ class SubOrder:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BATCH_RESPONSIBILITY_SUPPLEMENT_REPORT_20260407_182103
 version: 1.0.0
 status: Active

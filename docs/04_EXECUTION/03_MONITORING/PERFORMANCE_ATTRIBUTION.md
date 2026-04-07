@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERFORMANCE_ATTRIBUTION
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 00_RESOURCES_04_PLATFORM_DOCS_README
 version: 1.0.0
 status: Active

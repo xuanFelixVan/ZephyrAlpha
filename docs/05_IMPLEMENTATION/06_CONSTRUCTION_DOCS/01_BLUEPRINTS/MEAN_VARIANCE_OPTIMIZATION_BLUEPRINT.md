@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -73,7 +73,6 @@ PyPortfolioOpt功能
             constraints: 约束条件
             
         返回:
-¸
         """
         pass
     
@@ -172,7 +171,7 @@ class EfficientFrontierPoint:
     weights: np.ndarray
 ```
 
-### 3.3 é
+### 3.3
 
 ```yaml
 mean_variance_optimization:
@@ -193,7 +192,6 @@ mean_variance_optimization:
     
   constraints:
     
-é
   discrete_allocation:
     method: 'greedy'
 ```

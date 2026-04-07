@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_MASKING_ENCRYPTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -332,12 +332,12 @@ class EncryptionEngine:
         return self.fernet.decrypt(encrypted_data).decode()
     
     def encrypt_dict(self, data: dict) -> str:
-¸"""
+"""
         json_str = json.dumps(data, ensure_ascii=False)
         return self.encrypt(json_str)
     
     def decrypt_dict(self, encrypted_data: str) -> dict:
-¸"""
+"""
         json_str = self.decrypt(encrypted_data)
         return json.loads(json_str)
     
@@ -761,7 +761,7 @@ class KeyManagementService:
 
 
 
-### 4.1 Docker Composeé
+### 4.1 Docker Compose
 
 ```yaml
 version: '3.8'
@@ -790,7 +790,7 @@ networks:
     external: true
 ```
 
-### 4.2 é
+### 4.2
 
 ```yaml
 data_masking:
@@ -903,12 +903,12 @@ anomalies = audit.detect_anomalies(hours=24)
 | PII扫描 | 1MB文本 | 50ms | 20MB/s |
 | 数据加密 | 1MB数据 | 30ms | 33MB/s |
 | 数据解密 | 1MB数据 | 30ms | 33MB/s |
-¥ | 1000?| 50ms | 20K?s |
+| 1000?| 50ms | 20K?s |
 
 ### 6.2 资源占用
 
 |------|---------|---------|
-| CPU | 1 ?| 2 ?|
+| CPU | 1?| 2?|
 | 
 存 | 512MB | 1GB |
 | 存储 | 1GB | 5GB |
@@ -929,7 +929,7 @@ anomalies = audit.detect_anomalies(hours=24)
 | 法规 | 要求 | 实现方式 |
 |------|------|---------|
 | GDPR | 数据最小化 | PII识别+脱敏 |
-¨ | 
+|
 
 
 

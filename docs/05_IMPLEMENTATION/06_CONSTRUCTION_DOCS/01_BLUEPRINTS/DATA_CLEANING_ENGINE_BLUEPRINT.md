@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_CLEANING_ENGINE_001
 version: 1.0.0
 status: Active
@@ -90,7 +90,7 @@ layer: Layer 5.1 (数据处理)
 - 自动化异常值检测与处理
 ?
 - 重复数据去重
-- ¸
+-
 
 
 
@@ -111,7 +111,7 @@ layer: Layer 5.1 (数据处理)
 
 |------|--------|----------|
 ?|
-| **¸
+| **
 
 
 
@@ -123,29 +123,29 @@ layer: Layer 5.1 (数据处理)
 graph TB
     end
     
-    subgraph "¸
+subgraph "
 洗引擎"
         B --> C[异常值检测器]
         B --> D[缺失值处理器]
         B --> E[重复数据去重器]
         B --> F[格式标准化器]
         
-        C --> G[¸
+C --> G[
 洗规则引擎]
         D --> G
         E --> G
         F --> G
     end
     
-        G --> H[¸
+G --> H[
 洗后数据]
-        G --> I[¸
+G --> I[
 洗报告]
         G --> J[质量指标]
     end
     
-    subgraph "é
-        K[¸
+subgraph "
+K[
     end
 ```
 
@@ -659,13 +659,13 @@ class SparkDataCleaner:
 洗
         
         Args:
-¥DataFrame
-            cleaning_config: ¸
+DataFrame
+cleaning_config:
         
         Returns:
-            DataFrame: ¸
+DataFrame:
 洗后的DataFrame
-            Dict: ¸
+Dict:
 洗报告
         """
         report = {
@@ -715,9 +715,9 @@ class SparkDataCleaner:
 
 
 
-## 4. é
+## 4.
 
-### 4.1 ¸
+### 4.1
 
 ```yaml
 # data_cleaning_config.yaml
@@ -761,7 +761,7 @@ format_standardization:
     precision: 2
     rounding: half_up
 
-# ¸
+#
 cleaning_rules:
   - name: price_range_check
     type: range
@@ -781,14 +781,14 @@ cleaning_rules:
     action: remove
 ```
 
-### 4.2 é
+### 4.2
 
 ```python
 import yaml
 from typing import Dict, Any
 
 class CleaningConfigLoader:
-    """¸
+"""
     
     def __init__(self, config_path: str):
         self.config_path = config_path
@@ -864,7 +864,7 @@ services:
       - ./config:/config
 ```
 
-### 5.2 ¸
+### 5.2
 洗引擎Dockerfile
 
 ```dockerfile
@@ -934,7 +934,7 @@ cleaned_df, report = cleaner.clean_data(
 cleaned_df.write.parquet("data/cleaned/market_data.parquet", mode='overwrite')
 
 洗报告
-print("¸
+print("
 洗报告:")
 ? {report['missing_values_filled']}")
 ```
@@ -995,7 +995,7 @@ def clean_data_with_cache(df, cleaning_config):
 
 
 
-### 8.1 ¸
+### 8.1
 洗质量监控
 
 ```python

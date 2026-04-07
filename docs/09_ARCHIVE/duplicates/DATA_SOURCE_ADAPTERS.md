@@ -1,14 +1,19 @@
----
+﻿---
+
 
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
 
 
-**设计状?*: ?设计完成  
-**创建日期**: 2026-04-02  
-**最后更?*: 2026-04-02  
-**负责?*: 首席文档架构?
+**维护者**: 首席文档架构师
+**索引**: `DATA_ADAPTERS_001`
+
 responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

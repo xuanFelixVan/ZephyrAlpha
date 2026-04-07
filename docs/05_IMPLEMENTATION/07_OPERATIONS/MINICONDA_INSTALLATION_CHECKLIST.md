@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MINICONDA_INSTALLATION_CHECKLIST
 version: 1.0.0
 status: Active

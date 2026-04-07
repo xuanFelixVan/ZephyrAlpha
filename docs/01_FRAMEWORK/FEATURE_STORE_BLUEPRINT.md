@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEATURE_STORE_BLUEPRINT
 version: 1.0.0
 status: Active

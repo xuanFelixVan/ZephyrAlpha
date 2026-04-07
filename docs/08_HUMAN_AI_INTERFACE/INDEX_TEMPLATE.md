@@ -1,4 +1,5 @@
----
+﻿---
+
 
 module_id: 08_HUMAN_AI_INTERFACE_INDEX_TEMPLATE
 ## 📝 注意事项
@@ -10,6 +11,11 @@ module_id: 08_HUMAN_AI_INTERFACE_INDEX_TEMPLATE
 
 responsibility:
   - 系统模块设计与实施方案与优化维护
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 **模板状态**: ✅ 活跃

@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - Black-Litterman模型
   - 观点融合
@@ -680,7 +680,7 @@ class BlackLittermanAPI:
 
 ### 9.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
 | 回测验证 | 历史数据 | Backtrader |
 

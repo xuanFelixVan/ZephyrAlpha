@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KEY_LINKS_FIX_REPORT_20260404
 version: 1.0.0
 status: Active

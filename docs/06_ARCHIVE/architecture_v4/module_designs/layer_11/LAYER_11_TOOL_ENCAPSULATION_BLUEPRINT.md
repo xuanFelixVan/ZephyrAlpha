@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT
 version: 1.0.0
 status: Active

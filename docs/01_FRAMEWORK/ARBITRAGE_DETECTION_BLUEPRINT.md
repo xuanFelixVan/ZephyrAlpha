@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARBITRAGE_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active

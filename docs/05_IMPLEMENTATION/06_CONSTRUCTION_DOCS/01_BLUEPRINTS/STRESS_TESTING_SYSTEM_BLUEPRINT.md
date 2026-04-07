@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 压力测试系统
   - 情景定义
@@ -540,7 +540,7 @@ class StressTestMetricsCalculator:
 # 压力测试接口
 > **核心职责**: Stress Testing System蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责

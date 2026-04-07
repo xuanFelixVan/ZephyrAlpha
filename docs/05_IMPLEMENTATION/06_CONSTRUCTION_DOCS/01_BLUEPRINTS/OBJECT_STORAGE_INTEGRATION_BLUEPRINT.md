@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OBJECT_STORAGE_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -115,7 +115,7 @@ layer: Layer 5.1 (数据处理)
 
 ```mermaid
 graph TB
-³]
+]
         B[数据分析] --> E
         C[数据备份] --> E
         D[数据归档] --> E
@@ -135,7 +135,6 @@ graph TB
 
 ### 2.2 核心组件
 
-³
 
 
 **核心功能**:
@@ -600,7 +599,7 @@ lifecycle_policies:
 ### 6.2 运维任务
 
 |------|------|--------|
-| **¸
+| **
 | **存储性能优化** | 每月 | 运维人员 |
 
 

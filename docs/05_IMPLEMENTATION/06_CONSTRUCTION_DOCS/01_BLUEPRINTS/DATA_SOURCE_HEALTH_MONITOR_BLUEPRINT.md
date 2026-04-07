@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -963,7 +963,7 @@ class AlertManager:
 
 
 
-### 4.1 Prometheusé
+### 4.1 Prometheus
 
 ```yaml
 global:
@@ -1046,7 +1046,7 @@ groups:
         annotations:
 ```
 
-### 4.3 Docker Composeé
+### 4.3 Docker Compose
 
 ```yaml
 version: '3.8'
@@ -1231,7 +1231,7 @@ print(f"告警ID: {alert.alert_id}")
 
 | 资源 | Prometheus | Grafana | Alertmanager | 总计 |
 |------|-----------|---------|-------------|------|
-| CPU | 0.5 ?| 0.2 ?| 0.1 ?| 0.8 ?|
+| CPU | 0.5?| 0.2?| 0.1?| 0.8?|
 | 
 存 | 512MB | 256MB | 128MB | 896MB |
 | 存储 | 10GB | 1GB | 1GB | 12GB |

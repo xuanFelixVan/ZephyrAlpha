@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONTHLY_AUDIT_REPORT_TEMPLATE
 version: 1.0.0
 status: Active

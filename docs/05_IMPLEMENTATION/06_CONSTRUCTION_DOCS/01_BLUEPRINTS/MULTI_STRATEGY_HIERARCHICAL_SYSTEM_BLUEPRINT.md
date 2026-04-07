@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -408,7 +408,7 @@ class StrategyLayerWeightAllocator:
         # 简化计算：基于权重和波动率
         risk_contributions = {}
         for name, weight in weights.items():
-³?            avg_correlation = correlation_matrix[name].mean()
+?            avg_correlation = correlation_matrix[name].mean()
             risk_contributions[name] = weight * avg_correlation
         
         # 标准?        total_risk = sum(risk_contributions.values())

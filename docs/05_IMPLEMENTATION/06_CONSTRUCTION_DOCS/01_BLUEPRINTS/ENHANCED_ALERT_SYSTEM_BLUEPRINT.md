@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ENHANCED_ALERT_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -7,9 +7,9 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - 增强告警系统
-  - 智能告警
-  - 告警聚合
-  - 告警路由
+  - 智能告警聚合
+  - 告警降噪
+  - 告警优先级排序
 
 
 ﻿
@@ -156,7 +156,7 @@ class AlertAggregator:
         初始化告警聚合器
         
         Args:
-            config: é
+config:
                 - group_by: 聚合字段
 时间
                 - group_interval: 聚合间隔
@@ -278,7 +278,7 @@ class AlertInhibitor:
         初始化告警抑制器
         
         Args:
-            config: é
+config:
                 - inhibit_rules: 抑制规则
         """
         self.config = config
@@ -365,9 +365,9 @@ class MultiChannelNotifier:
         """
         初始化多渠道通知?        
         Args:
-            config: é
-                - slack: Slacké
-                - webhook: Webhooké
+config:
+- slack: Slack
+- webhook: Webhook
         """
         self.config = config
         

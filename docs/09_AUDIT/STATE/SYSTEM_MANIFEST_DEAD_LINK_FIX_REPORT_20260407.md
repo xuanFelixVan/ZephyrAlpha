@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_MANIFEST_DEAD_LINK_FIX_REPORT_20260407
 version: 1.0.0
 status: Active

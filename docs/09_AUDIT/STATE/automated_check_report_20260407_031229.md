@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTOMATED_CHECK_REPORT_20260407_031229
 version: 1.0.0
 status: Active

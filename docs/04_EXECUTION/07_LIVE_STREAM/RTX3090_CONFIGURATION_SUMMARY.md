@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RTX3090_CONFIGURATION_SUMMARY
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLETE_BLUEPRINT_OVERVIEW
 version: 1.0.0
 status: Active

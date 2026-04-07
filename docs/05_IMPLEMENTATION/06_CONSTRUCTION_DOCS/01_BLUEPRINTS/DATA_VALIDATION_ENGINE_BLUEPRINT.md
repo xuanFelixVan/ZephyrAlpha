@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_VALIDATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -120,7 +120,7 @@ layer: Layer 5.1 (数据处理)
 
 ```mermaid
 graph TB
-        A[¾
+A[
     end
     
     subgraph "验证引擎"
@@ -140,7 +140,7 @@ graph TB
         G --> J[质量评分]
     end
     
-    subgraph "é
+subgraph "
     end
 ```
 
@@ -160,7 +160,7 @@ graph TB
 **技术栈**: Pandera
 
 **核心功能**:
-- ¿
+-
 - 数据类型验证
 - 外键约束验证
 
@@ -399,7 +399,7 @@ class IntegrityValidator:
         
         Args:
             df: Spark DataFrame
-            required_columns: ¿
+required_columns:
         
         Returns:
             ValidationResult: 验证结果

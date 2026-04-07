@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V15_20260406
 version: 1.0.0
 status: Active

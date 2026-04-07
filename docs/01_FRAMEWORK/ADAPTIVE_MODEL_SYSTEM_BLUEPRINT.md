@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ADAPTIVE_MODEL_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active

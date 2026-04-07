@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SPARSE_DIRECTORY_ANALYSIS_20260407_021046
 version: 1.0.0
 status: Active

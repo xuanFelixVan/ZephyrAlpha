@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS
 version: 1.0.0
 status: Active

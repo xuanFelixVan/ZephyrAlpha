@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 策略选择
   - 策略评估
@@ -612,7 +612,7 @@ class StrategyCorrelationAnalyzer:
         
     def analyze(self, strategies: List[Strategy], 
                returns_data: Dict[str, pd.Series]) -> CorrelationAnalysis:
-³?""
+?""
         
         corr_matrix = self._calculate_correlation_matrix(returns_data)
         
@@ -719,7 +719,7 @@ class StrategyCorrelationAnalyzer:
                 )
             )
             
-³?
+?
         risk_corr_matrix = self._calculate_risk_correlation(corr_matrix)
         balanced_strategies = self._find_balanced_strategies(corr_matrix, risk_corr_matrix)
         
@@ -892,7 +892,7 @@ class AIStrategyRecommender:
 # config/strategy_selection.yaml
 > **核心职责**: Strategy Selection蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责

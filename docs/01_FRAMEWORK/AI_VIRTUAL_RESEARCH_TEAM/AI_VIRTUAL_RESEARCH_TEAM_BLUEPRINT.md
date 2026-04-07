@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT
 version: 1.0.0
 status: Active

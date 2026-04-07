@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRANSACTION_COST_ANALYSIS_ENGINE__001
 version: 1.0.0
 status: Active
@@ -258,7 +258,6 @@ class CostAnalysisResult:
 
 | 优势维度 | 说明 | 评分 |
 |---------|------|------|
-¨
 
 
 |---------|--------|------|
@@ -268,7 +267,7 @@ class CostAnalysisResult:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 
 

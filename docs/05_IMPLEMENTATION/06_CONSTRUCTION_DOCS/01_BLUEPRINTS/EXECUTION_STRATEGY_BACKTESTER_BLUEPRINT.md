@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXECUTION_STRATEGY_BACKTESTER_001
 version: 1.0.0
 status: Active
@@ -264,7 +264,6 @@ class BacktestResult:
 
 | 优势维度 | 说明 | 评分 |
 |---------|------|------|
-¨
 
 
 |---------|--------|------|
@@ -274,7 +273,7 @@ class BacktestResult:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 
 

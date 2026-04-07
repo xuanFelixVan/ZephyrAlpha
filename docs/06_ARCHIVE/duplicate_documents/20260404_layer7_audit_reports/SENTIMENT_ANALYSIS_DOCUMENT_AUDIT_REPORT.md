@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_DOCUMENT_AUDIT_REPORT
 version: 1.0.0
 status: Active

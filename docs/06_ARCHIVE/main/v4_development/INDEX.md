@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_MAIN_INDEX_3
 version: 1.0.0
 status: Active

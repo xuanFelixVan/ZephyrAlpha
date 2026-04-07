@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_99_ARCHIVE_TECHNICAL_INDICATORS
 version: 1.0.0
 status: Active

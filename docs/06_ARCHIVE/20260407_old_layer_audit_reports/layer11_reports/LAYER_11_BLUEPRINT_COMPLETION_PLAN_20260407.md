@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_11_BLUEPRINT_COMPLETION_PLAN_20260407
 version: 1.0.0
 status: Active

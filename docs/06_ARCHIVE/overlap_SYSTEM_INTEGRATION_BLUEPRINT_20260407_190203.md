@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_SYSTEM_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -89,7 +89,7 @@ layer: Layer 5 (策略执行层)
 
 ### 2.2 分层职责定义
 
-³?
+?
 - 认证授权
 - 请求路由
 - 限流熔断
@@ -97,7 +97,7 @@ layer: Layer 5 (策略执行层)
 
 **核心组件**?```python
 class APIGateway:
-³"""
+"""
     
     def __init__(self):
         self.auth_manager = AuthManager()

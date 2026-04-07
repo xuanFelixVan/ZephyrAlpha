@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IPS_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

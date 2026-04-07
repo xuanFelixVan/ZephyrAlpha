@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_QUALITY_STANDARDS
 version: 1.0.0
 status: Active

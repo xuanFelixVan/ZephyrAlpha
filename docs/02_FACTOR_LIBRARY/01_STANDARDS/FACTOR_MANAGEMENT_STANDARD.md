@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
+
+module_id: STANDARDS_FACTOR_MANAGEMENT_STANDARD
 
 
 ## 更新记录
@@ -8,6 +9,11 @@ module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
 | 版本 | 日期 | 变更内容 |
 |responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|----------|
 | v1.0 | 2026-03-30 | 初始版本 |
 

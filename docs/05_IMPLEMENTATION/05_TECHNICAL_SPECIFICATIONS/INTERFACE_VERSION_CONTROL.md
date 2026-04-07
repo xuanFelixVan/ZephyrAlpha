@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTERFACE_VERSION_CONTROL
 version: 1.0.0
 status: Active

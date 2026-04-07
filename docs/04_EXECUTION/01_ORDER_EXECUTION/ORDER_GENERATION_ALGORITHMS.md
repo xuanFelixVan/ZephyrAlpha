@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ORDER_GENERATION_ALGORITHMS
 version: 1.0.0
 status: Active

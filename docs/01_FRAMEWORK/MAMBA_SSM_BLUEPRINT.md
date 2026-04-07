@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MAMBA_SSM_BLUEPRINT
 version: 1.0.0
 status: Active

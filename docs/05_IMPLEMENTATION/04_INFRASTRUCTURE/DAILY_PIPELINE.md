@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DAILY_PIPELINE
 version: 1.0.0
 status: Active

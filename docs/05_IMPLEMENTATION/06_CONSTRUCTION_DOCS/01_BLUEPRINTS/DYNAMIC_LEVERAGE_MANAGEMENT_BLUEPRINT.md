@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -7,9 +7,9 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - 动态杠杆管理
-  - 动态杠杆管理与风险控制
-  - 杠杆风险监控
-  - 保证金管理
+  - 杠杆风险评估
+  - 杠杆调整策略
+  - 杠杆监控告警
 
 
 ﻿
@@ -92,7 +92,7 @@ layer: Layer 5.3 (风险管理)
 
 > **核心职责**: Dynamic Leverage Management蓝图设计
 > **职责边界**: 
-®?
+?
 
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT__001
 version: 1.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PHASE2_COMPLETION_SUMMARY
 version: 1.0.0
 status: Active

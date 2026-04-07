@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS
 version: 1.0.0
 status: Active

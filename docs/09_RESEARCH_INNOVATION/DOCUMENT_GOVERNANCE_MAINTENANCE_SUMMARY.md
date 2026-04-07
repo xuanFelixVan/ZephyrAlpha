@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY
 version: 1.0.0
 status: Active

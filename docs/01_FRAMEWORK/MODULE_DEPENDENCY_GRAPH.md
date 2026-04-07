@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_DEPENDENCY_GRAPH
 version: 1.0.0
 status: Active

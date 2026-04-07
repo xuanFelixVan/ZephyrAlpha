@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_ENHANCEMENT_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active

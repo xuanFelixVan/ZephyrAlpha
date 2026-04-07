@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

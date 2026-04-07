@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CURRICULUM_LEARNING_BLUEPRINT
 version: 1.0.0
 status: Active

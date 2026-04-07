@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_BLUEPRINT_4
 version: 1.0.0
 status: Active

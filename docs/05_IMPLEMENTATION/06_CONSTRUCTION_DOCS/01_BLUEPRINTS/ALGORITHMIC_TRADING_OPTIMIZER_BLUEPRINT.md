@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALGORITHMIC_TRADING_OPTIMIZER_001
 version: 1.0.0
 status: Active
@@ -250,7 +250,6 @@ class OptimizationResult:
 
 | 优势维度 | 说明 | 评分 |
 |---------|------|------|
-¨
 
 
 |---------|--------|------|
@@ -260,7 +259,7 @@ class OptimizationResult:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 
 

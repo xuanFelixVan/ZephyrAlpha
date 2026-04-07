@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CODE_EXAMPLES
 version: 1.0.0
 status: Active

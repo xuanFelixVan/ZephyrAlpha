@@ -1,14 +1,18 @@
----
-
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+﻿---
 
 
-**设计状?*: ?设计完成  
-**创建日期**: 2026-04-02  
-**最后更?*: 2026-04-02  
-**负责?*: 首席文档架构?
+module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
+
+
+> **维护部门**: 清风量化研究?
+> **更新时间**: 2026-03-28
 responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

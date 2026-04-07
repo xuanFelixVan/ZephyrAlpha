@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 version: 1.0.0
 status: Active
@@ -85,7 +85,7 @@ layer: Layer 5.2 (组合优化)
 ### 2.1 三层优化架构
 
 ```
-¥: 
+:
 ```
 
 
@@ -392,7 +392,7 @@ class OptimizationMethodSelector:
 # 三层优化示例
 > **核心职责**: Hierarchical Optimization Framework蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责
@@ -495,8 +495,8 @@ optimizer = HierarchicalOptimizer(
 ## 8. 文档治理
 
 ### 8.1 索引信息
-- **System_Manifest.md**: ¾
-- **INDEX.md**: ¾
+- **System_Manifest.md**:
+- **INDEX.md**:
 - **module_id**: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 
 ### 8.2 变更历史

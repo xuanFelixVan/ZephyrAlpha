@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_99_ARCHIVE_INDEX
 version: 1.0.0
 status: Active

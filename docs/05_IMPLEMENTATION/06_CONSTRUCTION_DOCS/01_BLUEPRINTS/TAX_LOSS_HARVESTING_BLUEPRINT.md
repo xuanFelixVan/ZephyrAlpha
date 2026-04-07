@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 税收损失收割
   - 税务优化
@@ -276,7 +276,7 @@ class TaxLossHarvester:
         pass
 ```
 
-### 3.2 é
+### 3.2
 
 ```yaml
 tax_loss_harvesting:

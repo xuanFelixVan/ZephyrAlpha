@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 01_BLUEPRINTS_INDEX_001
 version: 1.0.0
 status: Active
@@ -12,6 +12,10 @@ applicable_scope: 01_BLUEPRINTS
 ---
 
 # 01_BLUEPRINTS 索引
+
+## 核心定位
+
+负责Layer 5策略执行层蓝图文档索引，提供所有蓝图文档的导航和概览，支持快速定位和访问。
 
 ## 📋 目录概要
 

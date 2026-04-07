@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 10_AI_WORKFLOW_AI_WORKFLOW_LOGGER_BLUEPRINT
 version: 1.0.0
 status: Active

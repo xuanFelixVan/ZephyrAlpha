@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 市场范式检测
-  - 市场状态范式识别
-  - 状态转换
-  - 趋势判断
+  - 市场状态识别
+  - 市场环境分类
+  - 状态转换检测
+  - 市场特征分析
 
 
 ﻿
@@ -31,7 +31,7 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Market Regime Detection蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 > **版本**: v1.0

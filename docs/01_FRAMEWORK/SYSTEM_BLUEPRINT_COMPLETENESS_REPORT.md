@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_BLUEPRINT_COMPLETENESS_REPORT
 version: 1.0.0
 status: Active

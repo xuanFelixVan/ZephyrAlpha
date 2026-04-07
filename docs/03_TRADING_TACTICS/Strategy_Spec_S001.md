@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_SPEC_S001
 version: 1.0.0
 status: Active

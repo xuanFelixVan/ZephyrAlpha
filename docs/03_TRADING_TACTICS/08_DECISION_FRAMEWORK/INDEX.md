@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_08_DECISION_FRAMEWORK_INDEX
 version: 1.0.0
 status: Active

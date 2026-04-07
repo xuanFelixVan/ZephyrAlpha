@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEW_EMPLOYEE_ONBOARDING_GUIDE
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 08_HUMAN_AI_INTERFACE_14_STRATEGY_MANAGEMENT_STRATEGY_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: UNIFIED_DATA_API_GATEWAY_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - UNIFIED_DATA_API_GATEWAY蓝图设计
-³
   - 数据查询服务
   - API认证授权
   - 限流熔断
@@ -120,7 +119,7 @@ from datetime import datetime
 
 app = FastAPI(
     title="Zephyr Quant Data API",
-³",
+",
     version="1.0.0"
 )
 

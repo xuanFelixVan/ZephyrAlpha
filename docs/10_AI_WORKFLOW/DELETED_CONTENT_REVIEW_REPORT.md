@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 10_AI_WORKFLOW_DELETED_CONTENT_REVIEW_REPORT
 version: 1.0.0
 status: Active

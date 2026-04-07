@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR
 version: 1.0.0
 status: Active

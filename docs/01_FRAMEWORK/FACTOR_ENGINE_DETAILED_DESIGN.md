@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_ENGINE_DETAILED_DESIGN
 version: 1.0.0
 status: Active

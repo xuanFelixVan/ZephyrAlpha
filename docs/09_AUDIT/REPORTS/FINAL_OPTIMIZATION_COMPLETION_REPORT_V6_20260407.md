@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FINAL_OPTIMIZATION_COMPLETION_REPORT_V6_20260407
 version: 1.0.0
 status: Active

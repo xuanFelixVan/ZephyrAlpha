@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_STAGE_COMPLETE_SUMMARY
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 07_RESEARCH_02_EXPLORATORY_ANALYSIS_INDEX
 version: 1.0.0
 status: Active

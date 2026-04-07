@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_STANDARDIZATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -167,7 +167,7 @@ class FormatStandardizer:
             return value.strftime(format)
         
         if isinstance(value, str):
-            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y¹?m?d?]:
+for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y?m?d?]:
                 try:
                     dt = datetime.strptime(value, fmt)
                     return dt.strftime(format)

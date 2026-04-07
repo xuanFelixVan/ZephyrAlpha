@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_20260407_185533
 version: 1.0.0
 status: Active

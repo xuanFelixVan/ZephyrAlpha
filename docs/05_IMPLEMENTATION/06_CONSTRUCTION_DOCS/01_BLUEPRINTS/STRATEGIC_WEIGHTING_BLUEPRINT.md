@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
 status: Active
@@ -91,7 +91,7 @@ graph TB
     C[市场状态识别] --> B
     D[风险预算] --> B
     
-    B --> E{é
+B --> E{
     
     E -->|经济扩张| F[风险平价模型]
     

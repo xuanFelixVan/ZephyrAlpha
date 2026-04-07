@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARGIN_CALL_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -7,9 +7,9 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - 保证金监控
-  - 保证金计算
-  - 预警机制
-  - 保证金风险控制
+  - 追加保证金预警
+  - 保证金充足率计算
+  - 强平风险提示
 
 
 ﻿
@@ -148,7 +148,6 @@ class AlertLevel(Enum):
 
 class RiskType(Enum):
     """风险类型"""
-¥
 
 
 @dataclass

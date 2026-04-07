@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_20260405_ECONOMIC_REGIME_CLEANUP_INDEX
 version: 1.0.0
 status: Active

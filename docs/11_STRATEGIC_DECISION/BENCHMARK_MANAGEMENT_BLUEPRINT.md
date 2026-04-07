@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 11_STRATEGIC_DECISION_BENCHMARK_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

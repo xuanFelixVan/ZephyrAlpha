@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_INTEGRATED_DOCUMENTS_INDEX
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 风险归因系统
   - 风险分解
@@ -589,7 +589,7 @@ class AttributionReportGenerator:
 # Risk Attribution Report
 > **核心职责**: Risk Attribution System蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责

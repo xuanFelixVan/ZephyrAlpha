@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COINTEGRATION_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5 (策略执行层)
 responsibility:
-  - 协整分析
+  - 协整关系识别与分析
   - 统计套利
   - 配对交易
 ---

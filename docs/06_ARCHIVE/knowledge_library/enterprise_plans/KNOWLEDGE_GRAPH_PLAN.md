@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KNOWLEDGE_GRAPH_PLAN
 version: 1.0.0
 status: Active

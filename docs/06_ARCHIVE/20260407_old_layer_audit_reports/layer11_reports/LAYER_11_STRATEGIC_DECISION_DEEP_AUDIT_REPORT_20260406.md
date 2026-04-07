@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_11_STRATEGIC_DECISION_DEEP_AUDIT_REPORT_20260406
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CDC_CHANGE_DATA_CAPTURE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -20,14 +20,12 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
+负责变更数据捕获模块设计，实时监控数据变更，捕获增量数据，支持数据同步和实时处理。
 
 > **职责边界**: 
 > - ✅ 本文档负责：CDC变更数据捕获、数据变更检测、变更流处理
-> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
+> - ❌ 本文档不负责：数据存储（由数据存储模块负责）
 
-负责变更数据捕获模块设计，实时监控数据变更，捕获增量数据，支持数据同步和实时处理。
-
-负责变更数据捕获系统的设计与构建和运行和操作，基于CDC技术，实时捕获数据库变更，兼容和适配数据同步和实时分析。 生成和输出数据协调和监控、查询、更新功能，确保数据质量和一致性。
 ## 设计目标
 
 ### 主要目标
@@ -322,7 +320,7 @@ import logging
 
 @dataclass
 class APICDCConfig:
-    """API CDCé
+"""API CDC
     endpoint: str
     method: str = "GET"
     headers: Dict[str, str] = None
@@ -653,7 +651,7 @@ class CDCEventProcessor:
 
 
 
-### 4.1 Debeziumé
+### 4.1 Debezium
 
 ```json
 {
@@ -674,7 +672,7 @@ class CDCEventProcessor:
 }
 ```
 
-### 4.2 Docker Composeé
+### 4.2 Docker Compose
 
 ```yaml
 version: '3.8'
@@ -785,7 +783,7 @@ asyncio.run(poller.start())
 
 | 资源 | Debezium | Kafka | 总计 |
 |------|----------|-------|------|
-| CPU | 0.5 ?| 1 ?| 1.5 ?|
+| CPU | 0.5?| 1?| 1.5?|
 | 
 存 | 1GB | 2GB | 3GB |
 | 存储 | 1GB | 10GB | 11GB |

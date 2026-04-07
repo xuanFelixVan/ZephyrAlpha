@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_MANAGEMENT_INTERFACE_BLUEPRINT
 version: 1.0.0
 status: Active

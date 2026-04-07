@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOC_QUALITY_CULTURE_PLAN
 version: 1.0.0
 status: Active

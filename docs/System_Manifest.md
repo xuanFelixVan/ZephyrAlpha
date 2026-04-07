@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_MANIFEST
 version: 5.9.0
 status: Active

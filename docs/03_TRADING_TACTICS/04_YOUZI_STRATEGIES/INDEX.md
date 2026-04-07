@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 04_YOUZI_STRATEGIES_INDEX_001
 version: 1.0.0
 status: Active

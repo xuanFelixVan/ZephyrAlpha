@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
 status: Active
@@ -154,19 +154,19 @@ class TailRiskMetrics:
 
 
 
-## 3. é
+## 3.
 
 ```yaml
 tail_risk_metrics:
-  # CVaRé
+# CVaR
   cvar:
     alpha: 0.05  # 95%置信水平
     
-  # EVaRé
+# EVaR
   evar:
     alpha: 0.05
     
-  # CDaRé
+# CDaR
   cdar:
     alpha: 0.05
     

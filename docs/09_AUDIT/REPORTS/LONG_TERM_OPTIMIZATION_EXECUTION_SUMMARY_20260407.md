@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 09_AUDIT_REPORTS_LONG_TERM_OPTIMIZATION_EXECUTION_SUMMARY_20260407
 version: 1.0.0
 status: Active

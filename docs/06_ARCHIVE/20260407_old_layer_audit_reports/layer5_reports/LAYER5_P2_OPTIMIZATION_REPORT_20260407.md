@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER5_P2_OPTIMIZATION_REPORT_20260407
 version: 1.0.0
 status: Active

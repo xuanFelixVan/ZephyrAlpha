@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOVERNANCE_DECISION_SUPPORT_BLUEPRINT
 version: 1.0.0
 status: Active

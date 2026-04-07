@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

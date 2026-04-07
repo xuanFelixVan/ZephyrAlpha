@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_11_MISSING_MODULES_BLUEPRINT_20260407
 version: 1.0.0
 status: Active

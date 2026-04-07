@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT
 version: 1.0.0
 status: Active

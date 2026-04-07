@@ -1,27 +1,8 @@
----
-module_id: 08_HUMAN_AI_INTERFACE_17_DOCUMENTATION_CENTER_DOCUMENTATION_CENTER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 实现示例文档
----
-
-
-
 ﻿---
-module_id: DOCUMENTATION_CENTER_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
----
+
+
+module_id: 08_HUMAN_AI_INTERFACE_17_DOCUMENTATION_CENTER_001
+
 ## 二、架构设计
 
 ### 2.1 Layer定位
@@ -38,7 +19,14 @@ responsibility:
 ### 2.2 模块职责
 
 | 职责 | 说明 |
-|------|------|
+|responsibility:
+  - 提供文档支持
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+------|------|
 | **文档生成** | 将Markdown转换为静态网站 |
 | **文档部署** | 自动化部署到GitHub Pages |
 | **版本管理** | 多版本文档共存 |
@@ -163,6 +151,8 @@ plugins:
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 蓝图设计完成
 
+responsibility:
+  - 文档中心设计与实施方案与优化维护
 ---
 
 ## 💻 实现代码示例

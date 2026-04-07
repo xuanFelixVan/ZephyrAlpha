@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KNOWLEDGE_BASE_PLATFORM_GUIDE_001
 version: 1.0.0
 status: Active

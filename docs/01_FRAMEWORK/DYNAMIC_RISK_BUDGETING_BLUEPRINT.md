@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_RISK_BUDGETING_BLUEPRINT
 version: 1.0.0
 status: Active

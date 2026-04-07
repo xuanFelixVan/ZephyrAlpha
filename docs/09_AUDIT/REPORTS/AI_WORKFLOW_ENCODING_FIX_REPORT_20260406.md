@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_WORKFLOW_ENCODING_FIX_REPORT_20260406
 version: 1.0.0
 status: Active

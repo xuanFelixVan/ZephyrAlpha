@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 08_HUMAN_AI_INTERFACE_10_CONFIG_MANAGEMENT_CONFIG_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

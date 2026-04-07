@@ -1,17 +1,20 @@
----
+﻿---
+
 
 module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
 
 
-**版本**: 1.0
-**更新**: 2026-03-28
-**Layer**: Layer 2 (Alpha因子计算)
-**索引**: BLUEPRINTS.md ?因子验证框架蓝图
-**上游接口**: FactorCalculator (M02), DataHub (M01)
-**下游接口**: FactorLibrary (M02.5), StrategyEngine (M03)
+> **维护部门**: 清风量化研究?
+> **分析日期**: 2026-03-28
+> **下次更新**: 2026-06-28（季度更新）
 
 responsibility:
   - 定义测试规范
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

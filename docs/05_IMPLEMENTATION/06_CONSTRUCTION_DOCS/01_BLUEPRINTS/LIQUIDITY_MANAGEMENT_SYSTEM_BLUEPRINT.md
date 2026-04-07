@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -172,7 +172,6 @@ class LiquidityAnalyzer:
 ?        2. 资金周转? 资金使用效率
         3. 流动比率: 短期偿债能?        4. 现金流预? 未来现金流预?        
         输出:
-¥
           - outflow: 资金流出
           - net_flow: 净流量
           - turnover_ratio: 周转?          - liquidity_ratio: 流动比率

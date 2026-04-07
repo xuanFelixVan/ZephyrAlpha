@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONITORING_ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -895,7 +895,7 @@ _ZephyrAlpha Monitoring_
 ### 8.2 运维任务
 
 |------|------|--------|
-| **¸
+| **
 | **告警通知测试** | 每月 | 运维人员 |
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE
 version: 1.0.0
 status: Active

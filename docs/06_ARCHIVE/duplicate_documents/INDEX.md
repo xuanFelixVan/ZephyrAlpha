@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_DUPLICATE_DOCUMENTS_INDEX
 version: 1.0.0
 status: Active

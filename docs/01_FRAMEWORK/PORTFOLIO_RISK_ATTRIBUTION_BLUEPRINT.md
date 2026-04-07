@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active

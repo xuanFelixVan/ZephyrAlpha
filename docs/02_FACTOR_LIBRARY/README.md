@@ -1,11 +1,17 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_001
+
+module_id: FACTOR_LIBRARY_README
 
 
 > **注意**: 本文档是因子库的高层概述。如需详细的目录结构和文档列表，请查看 [INDEX.md](./INDEX.md)?
 responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

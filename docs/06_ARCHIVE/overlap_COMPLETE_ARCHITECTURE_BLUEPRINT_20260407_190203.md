@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLETE_ARCHITECTURE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -145,7 +145,7 @@ layer: Layer 5.2 (组合优化)
     - prometheus-client: ">=0.17"
     - grafana-api: ">=1.0"
   
-¨:
+:
     - presidio-analyzer: ">=2.2"
     - cryptography: ">=41.0"
   
@@ -198,7 +198,7 @@ layer: Layer 5.2 (组合优化)
 ### 6.1 硬件成本
 
 |---------|---------|---------|------------|
-| **CPU** | 4 ?| 8 ?| Â¥200-400 |
+| **CPU** | 4?| 8?| 200-400 |
 | **
 存** | 16GB | 32GB | ¥300-600 |
 | **存储** | 500GB SSD | 1TB SSD | ¥100-200 |
@@ -208,11 +208,11 @@ layer: Layer 5.2 (组合优化)
 
 ） |
 |------|------|------------|------------|
-| Phase 1 | 2?| Â¥0 | Â¥20,000 |
-| Phase 2 | 2?| Â¥0 | Â¥20,000 |
-| Phase 3 | 1?| Â¥0 | Â¥10,000 |
-| Phase 4 | 2?| Â¥0 | Â¥20,000 |
-| Phase 5 | 1?| Â¥0 | Â¥10,000 |
+| Phase 1 | 2?| 0 | 20,000 |
+| Phase 2 | 2?| 0 | 20,000 |
+| Phase 3 | 1?| 0 | 10,000 |
+| Phase 4 | 2?| 0 | 20,000 |
+| Phase 5 | 1?| 0 | 10,000 |
 
 ### 6.3 运维成本
 
@@ -264,7 +264,7 @@ layer: Layer 5.2 (组合优化)
 | Presidio | https://github.com/microsoft/presidio | 数据脱敏 |
 
 
-®?|
+?|
 |------|---------|
 | **Databricks** | Lakehouse架构、数据湖 |
 

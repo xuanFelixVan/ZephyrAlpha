@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_BUDGETING_METHOD
 version: 1.0.0
 status: Active

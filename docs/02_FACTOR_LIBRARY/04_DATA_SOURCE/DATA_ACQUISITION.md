@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+module_id: DATA_SOURCE_DATA_ACQUISITION
 
 
 # 数据采集蓝图
@@ -21,6 +22,11 @@ module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
 | 文档 | 路径 | 关系 | 说明 |
 |responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|------|------|
 | 数据需求清单 | [DATA_REQUIREMENTS.md](./DATA_REQUIREMENTS.md) | 上游规格 | 定义需要采集的数据规格 |
 | 数据清洗引擎 | [03_CLEANING/](./03_CLEANING/) | 下游处理 | 数据清洗和质量检查 |

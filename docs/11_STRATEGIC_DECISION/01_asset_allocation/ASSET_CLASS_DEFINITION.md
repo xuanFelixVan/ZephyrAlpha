@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ASSET_CLASS_DEFINITION
 version: 1.0.0
 status: Active

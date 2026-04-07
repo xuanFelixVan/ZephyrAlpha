@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_ENHANCEMENT_MANUAL
 version: 1.0.0
 status: Active

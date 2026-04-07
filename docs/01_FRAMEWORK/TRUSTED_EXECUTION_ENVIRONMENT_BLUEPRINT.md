@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT
 version: 1.0.0
 status: Active

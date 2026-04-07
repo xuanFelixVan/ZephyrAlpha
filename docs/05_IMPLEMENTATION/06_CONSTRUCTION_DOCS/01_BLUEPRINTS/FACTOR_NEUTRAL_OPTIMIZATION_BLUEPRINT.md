@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_NEUTRAL_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -244,7 +244,7 @@ class TrackingErrorController:
         """
         计算跟踪误差
         
-        TE = sqrt((w - w_b)' * Î£ * (w - w_b))
+TE = sqrt((w - w_b)' *  * (w - w_b))
         """
         pass
 ```
@@ -331,7 +331,7 @@ class FactorNeutralResult:
 额收益
 ```
 
-### 3.3 é
+### 3.3
 
 ```yaml
 factor_neutral_optimization:
@@ -382,7 +382,7 @@ factor_neutral_optimization:
 ```python
 > **核心职责**: Factor Neutral Optimization蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责

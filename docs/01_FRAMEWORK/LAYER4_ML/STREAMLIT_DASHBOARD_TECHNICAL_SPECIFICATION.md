@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STREAMLIT_DASHBOARD_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

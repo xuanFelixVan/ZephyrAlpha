@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOBILE_INTERFACE_COVERAGE_BLUEPRINT
 version: 1.0.0
 status: Active

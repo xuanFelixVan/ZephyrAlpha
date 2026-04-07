@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407
 version: 1.0.0
 status: Active

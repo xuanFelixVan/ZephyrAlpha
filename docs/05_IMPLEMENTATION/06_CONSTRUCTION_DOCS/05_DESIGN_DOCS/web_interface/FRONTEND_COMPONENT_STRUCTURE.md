@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FRONTEND_COMPONENT_STRUCTURE
 version: 1.0.0
 status: Active

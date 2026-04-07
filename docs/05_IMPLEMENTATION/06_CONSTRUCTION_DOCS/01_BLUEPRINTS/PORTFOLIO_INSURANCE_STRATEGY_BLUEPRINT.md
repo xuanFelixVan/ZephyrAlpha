@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -92,7 +92,6 @@ layer: Layer 5.2 (组合优化)
 - 保本底线管理
 - 动态风险控?
 ### 1.2 技术目?
-¨
 - **灵活?*: 参与市场上涨
 - **透明?*: 风险可控
 

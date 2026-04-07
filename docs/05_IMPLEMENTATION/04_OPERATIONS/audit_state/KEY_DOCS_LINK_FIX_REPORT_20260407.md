@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_KEY_DOCS_LINK_FIX_REPORT_20260407
 version: 1.0.0
 status: Active

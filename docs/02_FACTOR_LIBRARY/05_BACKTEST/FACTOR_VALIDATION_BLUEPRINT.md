@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
+
+module_id: BACKTEST_FACTOR_VALIDATION_BLUEPRINT
 
 
 ## 11. 文档治理
@@ -22,6 +23,11 @@ module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
 | 模块 | 职责 | 边界 |
 |responsibility:
   - 定义测试规范
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|------|
 | **Factor Blueprint** | 全系统架构设? | **核心模块** |
 

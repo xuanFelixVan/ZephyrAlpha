@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 08_HUMAN_AI_INTERFACE_19_CI_CD_INTEGRATION_CI_CD_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active

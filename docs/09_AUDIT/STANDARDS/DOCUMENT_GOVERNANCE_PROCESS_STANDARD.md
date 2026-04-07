@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_PROCESS_STANDARD
 version: 1.0.0
 status: Active

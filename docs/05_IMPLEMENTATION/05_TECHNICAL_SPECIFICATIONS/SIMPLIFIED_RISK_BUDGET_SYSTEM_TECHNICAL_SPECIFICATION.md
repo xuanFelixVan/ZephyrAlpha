@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

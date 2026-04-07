@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 市场冲击模型
   - 冲击成本
@@ -450,7 +450,7 @@ CREATE TABLE model_parameters (
 ### 5.1 线性冲击模型详细说?
 #### 5.1.1 模型原理
 
-³?
+?
 **数学模型**:
 ```
 Impact = α * (Q/ADV)^β * σ
@@ -517,10 +517,10 @@ def optimize_execution_time(
     """
     求解最优执行时?    
     目标函数:
-    Minimize: E[Cost] + Î» * Var[Cost]
+Minimize: E[Cost] +  * Var[Cost]
     
     
-    - E[Cost] = Î· * (Q/ADV) / T + Î³ * (Q/ADV)
+- E[Cost] =  * (Q/ADV) / T +  * (Q/ADV)
     - Var[Cost] = σ^2 * T * (Q/ADV)^2
     - λ: 风险厌恶系数
     

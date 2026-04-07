@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_CRITICAL_ISSUES_REPORT
 version: 1.0.0
 status: Active

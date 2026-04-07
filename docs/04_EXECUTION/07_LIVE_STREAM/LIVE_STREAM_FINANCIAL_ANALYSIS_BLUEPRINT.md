@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active

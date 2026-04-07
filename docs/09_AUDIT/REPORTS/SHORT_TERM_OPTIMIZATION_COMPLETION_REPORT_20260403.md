@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SHORT_TERM_OPTIMIZATION_COMPLETION_REPORT_20260403
 version: 1.0.0
 status: Active

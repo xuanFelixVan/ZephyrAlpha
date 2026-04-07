@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active

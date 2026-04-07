@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REAL_TIME_MONITORING
 version: 1.0.0
 status: Active

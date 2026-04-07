@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT
 version: 1.0.0
 status: Active

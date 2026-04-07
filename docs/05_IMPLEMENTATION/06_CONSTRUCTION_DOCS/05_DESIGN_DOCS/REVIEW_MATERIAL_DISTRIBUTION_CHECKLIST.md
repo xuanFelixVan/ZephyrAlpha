@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST
 version: 1.0.0
 status: Active

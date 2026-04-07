@@ -1,4 +1,4 @@
----
+﻿---
 module_id: A_STOCK_DATA_PROCESSING_BLUEPRINT
 version: 1.0.0
 status: Active

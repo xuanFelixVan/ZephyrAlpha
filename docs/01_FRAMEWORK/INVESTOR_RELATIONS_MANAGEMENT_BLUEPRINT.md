@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INVESTOR_RELATIONS_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

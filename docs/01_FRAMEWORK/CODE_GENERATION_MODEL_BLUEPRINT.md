@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CODE_GENERATION_MODEL_BLUEPRINT
 version: 1.0.0
 status: Active

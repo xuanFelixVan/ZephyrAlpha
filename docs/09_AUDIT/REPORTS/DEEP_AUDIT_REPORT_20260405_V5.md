@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_AUDIT_REPORT_20260405_V5
 version: 1.0.0
 status: Active

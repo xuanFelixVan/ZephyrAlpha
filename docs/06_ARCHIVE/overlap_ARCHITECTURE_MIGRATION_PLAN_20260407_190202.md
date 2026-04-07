@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE_MIGRATION_PLAN
 version: 1.0.0
 status: Active

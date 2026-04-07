@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT
 version: 1.0.0
 status: Active

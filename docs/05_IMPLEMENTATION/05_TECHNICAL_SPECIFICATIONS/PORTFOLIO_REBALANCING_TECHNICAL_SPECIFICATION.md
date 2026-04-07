@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_REBALANCING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

@@ -1,4 +1,5 @@
----
+﻿---
+
 
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_LINEAGE_TRACKING_001
 
@@ -33,6 +34,11 @@ module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_LINEAGE_TRACKING_001
 | 文档名称 | 说明 | 重要度 |
 |responsibility:
   - 提供目录索引
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---------|------|--------|
 | 数据血缘追踪系统蓝图 | 数据血缘追踪系统详细设计 | ⭐⭐⭐⭐⭐ |
 

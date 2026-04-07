@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -133,12 +133,11 @@ class InstitutionalActivityFactor(BaseFactor):
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算主力动向因子
         
-¥:
+:
             data: 
 含价格、成交量、订单簿等数?            
         输出:
             pd.Series: 主力动向因子?(范围[-1, 1])
-¥
             - 绝对值越?强度越大
         """
         # 1. 获取主力智能体的市场微观结构分析
@@ -747,13 +746,13 @@ class PortfolioOptimizerWithAgents:
         """求解优化问题
         
         优化目标:
-        max: w'Î¼ - Î» * w'Î£w - Î³ * ||w - w_prior||^2
+max: w' -  * w'w -  * ||w - w_prior||^2
         
         
         - w: 组合权重
         - μ: 预期收益
         - λ: 风险厌恶系数
-        - Î³: 
+- :
         """
         import cvxpy as cp
         
@@ -861,14 +860,14 @@ class PortfolioOptimizerWithAgents:
 ### 核心答案
 
 
-¥** (Layer 2):
+** (Layer 2):
 绪因?   - 与现?700+因子无缝集成
    - 供多因子模型使用
 
-¥** (Layer 5):
+** (Layer 5):
    - 生成买卖信号、仓位建议、风险预?   - 与现有策略框架协同工?   - 增强策略信号质量
 
-¥** (Layer 6):
+** (Layer 6):
    - 通过多智能体投票机制优化组合
    - 与现有组合优化器集成
    - 提升决策质量

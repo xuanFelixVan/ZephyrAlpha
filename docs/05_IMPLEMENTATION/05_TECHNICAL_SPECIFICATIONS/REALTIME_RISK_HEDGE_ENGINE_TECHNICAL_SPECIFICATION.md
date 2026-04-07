@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active

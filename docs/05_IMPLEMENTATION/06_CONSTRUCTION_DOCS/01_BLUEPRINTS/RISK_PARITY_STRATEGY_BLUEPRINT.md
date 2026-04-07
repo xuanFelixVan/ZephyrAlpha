@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 风险平价策略
   - 风险贡献均衡
@@ -248,7 +248,6 @@ class RiskParityOptimizer:
             risk_budget: 风险预算，默认等风险贡献
             
         Returns:
-¸
         """
         if risk_budget is None:
             risk_budget = np.ones(returns.shape[1]) / returns.shape[1]
@@ -410,8 +409,8 @@ def calculate_risk_contribution(
 
 
 ```
-min Î£ (RC_i - b_i)^2
-s.t. Î£ w_i = 1
+min  (RC_i - b_i)^2
+s.t.  w_i = 1
 ```
 
 
@@ -686,7 +685,7 @@ class RiskParityAPI:
 
 ### 9.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
 | 回测验证 | 历史数据 | Backtrader |
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SHORT_TERM_IMPROVEMENT_AND_LONG_TERM_OPTIMIZATION_REPORT_20260407
 version: 1.0.0
 status: Active

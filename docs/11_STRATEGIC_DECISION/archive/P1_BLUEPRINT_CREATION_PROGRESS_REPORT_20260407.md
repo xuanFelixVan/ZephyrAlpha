@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P1_BLUEPRINT_CREATION_PROGRESS_REPORT_20260407
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.0
 status: Active
@@ -201,7 +201,6 @@ class HedgeStrategyGenerator:
         
         输出:
         - HedgeStrategy: 对冲策略
-·
           - hedge_ratio: 对冲比例
           - hedge_orders: 对冲订单
           - expected_cost: 预期成本
@@ -341,7 +340,6 @@ class HedgeOrder:
     portfolio_id: str                # 组合ID
     symbol: str                      # 标的代码
     direction: str                   # 方向（BUY/SELL?    quantity: int                    # 数量
-·
     hedge_ratio: float               # 对冲比例
     hedge_reason: str                # 对冲原因
     expected_cost: float             # 预期成本
@@ -428,7 +426,7 @@ CREATE TABLE hedge_transactions (
 
 **数学模型**:
 ```
-Portfolio Beta = Î£(w_i * Î²_i)
+Portfolio Beta = (w_i * _i)
 ```
 
 
@@ -491,7 +489,6 @@ def calculate_sector_exposure(
     2. 计算组合在各行业的权?    3. 计算相对基准的偏离度
     
     返回:
-¸
     """
     sector_weights = {}
     
@@ -634,7 +631,7 @@ class TestRiskHedgeEngine:
 | 风险ID | 风险描述 | 影响程度 | 缓解措施 |
 |--------|----------|----------|----------|
 | TR-001 | Beta计算不准?| ?| 使用多种数据源，定期校准 |
-· |
+|
 | TR-003 | 对冲成本过高 | ?| 优化对冲比例，控制成?|
 
 ### 8.2 实施约束

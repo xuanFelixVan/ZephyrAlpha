@@ -1,4 +1,4 @@
----
+﻿---
 module_id: T_08_AR001_A_STOCK_RULE_ENGINE_DESIGN
 version: 1.0.0
 status: Active

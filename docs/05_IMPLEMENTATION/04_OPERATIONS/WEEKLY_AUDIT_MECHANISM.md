@@ -1,4 +1,4 @@
----
+﻿---
 module_id: WEEKLY_AUDIT_MECHANISM
 version: 1.0.0
 status: Active

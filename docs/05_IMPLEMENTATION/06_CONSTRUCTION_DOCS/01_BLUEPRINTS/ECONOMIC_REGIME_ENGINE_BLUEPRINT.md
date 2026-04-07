@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ECONOMIC_REGIME_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 经济范式判断引擎
-  - 经济周期范式识别
-  - 经济指标
-  - 市场状态
+  - 经济周期识别
+  - 宏观环境分析
+  - 经济指标监控
+  - 周期转换预测
 
 
 
@@ -38,7 +38,7 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Economic Regime Engine蓝图设计
 > **职责边界**: 
-®...
+...
 
 
 ## 设计目标
@@ -160,7 +160,7 @@ layer: Layer 5 (策略执行层)
 
 步骤:
 2. 基于范式概率分布进行加权平均
-   w_asset = Î£ P(regime_i) * w_asset(regime_i)
+w_asset =  P(regime_i) * w_asset(regime_i)
 3. 应用风险约束
    - 杠杆限制（最?倍）
 
@@ -170,7 +170,6 @@ layer: Layer 5 (策略执行层)
 
 
 ## 4. 数据流设?
-¥
 - **数据?*: iFinD、Wind、国家统计局
 
 ### 4.2 数据输出

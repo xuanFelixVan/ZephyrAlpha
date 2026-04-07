@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALPHA_FACTOR_TECHNICAL_APPROVAL
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMP_002_QMT_API_COMMUNITY_RESEARCH
 version: 1.0.0
 status: Active

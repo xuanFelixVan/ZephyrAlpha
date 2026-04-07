@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT
 version: 1.0.0
 status: Active

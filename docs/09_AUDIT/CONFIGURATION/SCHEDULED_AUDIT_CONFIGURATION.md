@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SCHEDULED_AUDIT_CONFIGURATION
 version: 1.0.0
 status: Active

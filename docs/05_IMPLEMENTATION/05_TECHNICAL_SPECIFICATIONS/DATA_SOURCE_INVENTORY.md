@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_INVENTORY
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2
 version: 1.0.0
 status: Active

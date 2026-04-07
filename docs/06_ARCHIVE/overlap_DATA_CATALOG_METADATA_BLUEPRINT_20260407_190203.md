@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_CATALOG_METADATA_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -136,7 +136,7 @@ class MetadataManager:
     def __init__(self, config: Dict[str, Any]):
         """
         Args:
-            config: é
+config:
         """
         self.config = config
         self.assets: Dict[str, DataAsset] = {}
@@ -184,7 +184,7 @@ class MetadataManager:
 
 ### 3.2 数据血缘追踪器 (DataLineageTracker)
 
-³?
+?
 ```python
 from typing import Dict, List, Any
 from dataclasses import dataclass, field
@@ -215,7 +215,7 @@ class DataLineageTracker:
         初始化血缘追踪器
         
         Args:
-            config: é
+config:
         """
         self.config = config
         self.nodes: Dict[str, LineageNode] = {}
@@ -228,7 +228,7 @@ class DataLineageTracker:
         transformation: str
     ) -> bool:
         """
-³?        
+?
         Args:
             source_asset_id: 源资产ID
             target_asset_id: 目标资产ID
@@ -270,7 +270,7 @@ class DataLineageTracker:
         direction: str = "upstream"
     ) -> List[LineageNode]:
         """
-³?        
+?
         Args:
             asset_id: 资产ID
             direction: 方向（upstream, downstream?            

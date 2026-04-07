@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_G
 version: 1.0.0
 status: Active

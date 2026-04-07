@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -114,7 +114,6 @@ layer: Layer 5 (策略执行层)
 微软QLib平台代表了AI导向的量化投资最新趋势[3]?
 - **端到端AI工作?*: 从数据到交易信号的完整AI流水?
 - **高性能基础设施**: 专门为金融时序数据优化的计算引擎
-·
 
 ### 2.4 因子生命周期管理最佳实?
 
@@ -148,7 +147,7 @@ layer: Layer 5 (策略执行层)
 # 定制化量化数据模?
 > **核心职责**: Factor Backtest Integration蓝图设计
 > **职责边界**: 
-®?
+?
 
 
 ## 核心职责
@@ -316,8 +315,7 @@ class iFinDDataSource:
         pass
 ```
 
-¨é
-1. **é
+1. **
 3. **错误处理**: 实现自动重试和降级机制（如iFinD不可用时切换至Baostock?
 过每周限制
 
@@ -400,7 +398,6 @@ class StrategyFactory:
 
 ```
 数据?#1: 因子计算与存?
-§
 
 数据?#2: AI因子挖掘
 Feast历史因子 ?QLib数据预处??AI模型训练 ?新因子发??回Feast存储
@@ -477,7 +474,7 @@ class PortfolioOptimizer(ABC):
    - **监控指标**: 数据校验通过率、版本冲突次?
 
 #### **中风险项 (P1)**
-¼?*
+?*
    - **风险**: 不同开源库版本冲突、API变更
    - **应对**: 建立依赖隔离层、版本锁定、定期更新测?
    - **监控指标**: 依赖冲突警告数、API变更影响评估
@@ -565,7 +562,7 @@ class PortfolioOptimizer(ABC):
 
 | 原则 | 解释 | 实施要点 |
 |------|------|----------|
-| **é
+| **
 | **
 
 ### 7.2 极简身份认证与访问控?
@@ -661,7 +658,7 @@ class PersonalAuditLogger:
         return text
 ```
 
-**¿
+**
 1. **API密钥使用**: 每次使用外部API时记录（脱敏后）
 2. **交易执行**: 模拟或实盘交易记?
 3. **数据导出**: 大规模数据导出操?
@@ -669,7 +666,7 @@ class PersonalAuditLogger:
 
 **
 障恢复机制**:
-1. **é
+1. **
    ```bash
    cp ~/.zephyralpha/config.yaml ~/zephyralpha_backups/config_$(date +%Y%m%d).yaml
    
@@ -703,7 +700,6 @@ api_keys:
    ```
   # 示例配置
 
-¨é
 
 ```yaml
 # ~/.zephyralpha/config.yaml 完整示例
@@ -721,7 +717,7 @@ api_keys:
     broker: "simulated"
     # broker: "qmt"
     # account: "您的账户"
-¨?
+?
   
   ai_services:
     deepseek: "您的DeepSeek API密钥"
@@ -743,9 +739,9 @@ logging:
   audit_file: "~/zephyralpha_logs/audit.log"
 ```
 
-**é
+**
 ```python
-# config_validator.py - é
+# config_validator.py -
 import yaml
 import os
 
@@ -764,17 +760,17 @@ def validate_config(config_path: str) -> bool:
         # 检查文件权?
         if os.stat(config_path).st_mode & 0o777 != 0o600:
         
-        print("é
+print("
         return True
         
     except Exception as e:
-        print(f"é
+print(f"
         return False
 ```
 
 ?
 
-?**¿
+?**
 2. 设置文件权限: `chmod 600 ~/.zephyralpha/config.yaml`
 4. 不在代码中硬编码任何API密钥
 5. 不在日志中输出敏感信?
@@ -789,12 +785,12 @@ def validate_config(config_path: str) -> bool:
 ### 7.7 针对“不懂开发”用户的特别设计
 
 **无密码体?*:
-- é
+-
 要信息
 需的部?
 
 **防锁死设?*:
-1. **é
+1. **
 ?
 2. **紧急重?*: 提供命令行参?`--reset-config` 重置为出厂设?
 晰的修复指导，而不是技术性错误堆?
@@ -807,10 +803,10 @@ def validate_config(config_path: str) -> bool:
 
 ## 8. 简易个人开发环境与部署
 
-¼?
+?
 > **部署模式**: 单机Python环境，无外部依赖，数据本地存?
 
-¼?
+?
 
 **最低系统要?*:
 | 组件 | 要求 | 说明 |
@@ -915,7 +911,7 @@ def initialize_config():
     config_file = config_dir / "config.yaml"
     
     if config_file.exists():
-        response = input("é
+response = input("
         if response.lower() != 'y':
             return config_file
     
@@ -955,7 +951,7 @@ def initialize_config():
     if os.name != 'nt':
         os.chmod(config_file, 0o600)
     
-    print(f"é
+print(f"
     print("请编辑此文件，填写您的API密钥")
     
     return config_file
@@ -996,7 +992,7 @@ def main():
     
     config_path = Path.home() / ".zephyralpha" / "config.yaml"
     if not config_path.exists():
-        print("é
+print("
         from src.core.config import initialize_config
         initialize_config()
         sys.exit(0)
@@ -1049,7 +1045,7 @@ if __name__ == "__main__":
    factor_data = pd.read_parquet("~/zephyralpha_data/factors/factor_momentum.parquet")
    ```
 
-3. **JSONé
+3. **JSON
 ?
 
 **存储路径管理**:
@@ -1090,7 +1086,7 @@ class StorageManager:
 | 问题 | 症状 | 解决方案 |
 |------|------|----------|
 缺?* | ModuleNotFoundError | 运行 `pip install -r requirements.txt` |
-| **é
+| **
 理旧数据，扩展磁盘空间 |
 
 障恢?*:
@@ -1120,7 +1116,7 @@ def fix_dependencies():
 def fix_configuration():
     from src.core.config import initialize_config
     initialize_config()
-    print("é
+print("
 
 def fix_data_directories():
     """修复数据目录"""
@@ -1139,7 +1135,7 @@ def fix_data_directories():
     print("数据目录修复完成")
 
 def main():
-·")
+")
     parser.add_argument("--fix-all", action="store_true", help="修复所有问?)
     parser.add_argument("--fix-deps", action="store_true", help="修复依赖")
     parser.add_argument("--fix-data", action="store_true", help="修复数据目录")
@@ -1243,21 +1239,21 @@ def first_run_wizard():
     }
     
     save_config(config)
-    print("\né
+print("\n
 ```
 
 
 ### 8.10 维护与升?
 
 **日常维护**:
-1. **¸
+1. **
 理旧数?*:
    ```bash
-   # ¸
+#
 理30天前的日志文?
    find ~/zephyralpha_logs -name "*.log" -mtime +30 -delete
    
-   # ¸
+#
 理90天前的备份文?
    find ~/zephyralpha_backups -name "backup_*" -mtime +90 -delete
    ```

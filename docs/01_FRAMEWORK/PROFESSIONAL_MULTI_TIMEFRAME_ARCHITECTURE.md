@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE
 version: 1.0.0
 status: Active

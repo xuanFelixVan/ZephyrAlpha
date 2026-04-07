@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LONG_TERM_OPTIMIZATION_COMPLETE_PLAN_20260407
 version: 1.0.0
 status: Active

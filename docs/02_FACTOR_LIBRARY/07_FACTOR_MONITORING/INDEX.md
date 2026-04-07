@@ -1,4 +1,5 @@
----
+﻿---
+
 
 module_id: 02_FACTOR_LIBRARY_07_FACTOR_MONITORING_001
 
@@ -7,6 +8,11 @@ module_id: 02_FACTOR_LIBRARY_07_FACTOR_MONITORING_001
 > **维护?*: 首席文档架构?
 responsibility:
   - 提供目录索引
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

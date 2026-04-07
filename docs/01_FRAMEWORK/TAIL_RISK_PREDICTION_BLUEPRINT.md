@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TAIL_RISK_PREDICTION_BLUEPRINT
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECHNICAL_REVIEW_REPORT_FINAL_20260402
 version: 1.0.0
 status: Active

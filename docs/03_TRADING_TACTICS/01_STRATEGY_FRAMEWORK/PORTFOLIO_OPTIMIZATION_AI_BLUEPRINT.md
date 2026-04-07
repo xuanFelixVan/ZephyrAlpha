@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT
 version: 1.0.0
 status: Active

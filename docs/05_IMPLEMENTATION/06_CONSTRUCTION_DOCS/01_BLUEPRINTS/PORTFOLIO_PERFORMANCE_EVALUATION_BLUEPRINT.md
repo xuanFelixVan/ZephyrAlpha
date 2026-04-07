@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - 组合绩效评估
   - 绩效指标计算
@@ -240,7 +240,6 @@ class PortfolioPerformanceEvaluator:
         Args:
             
         Returns:
-¸
         """
         perf_stats = pf.timeseries.perf_stats(
             returns,
@@ -267,7 +266,6 @@ class PortfolioPerformanceEvaluator:
         Args:
             
         Returns:
-¸
         """
         return {
             'volatility': pf.timeseries.annual_volatility(returns),
@@ -288,7 +286,6 @@ class PortfolioPerformanceEvaluator:
         Args:
             
         Returns:
-¸
         """
         alpha, beta = pf.timeseries.alpha_beta(
             returns,
@@ -352,7 +349,6 @@ class QuantStatsEvaluator:
         Args:
             
         Returns:
-¸
         """
         return {
             'sharpe': qs.stats.sharpe(returns),
@@ -596,7 +592,7 @@ class PerformanceAPI:
 
 ### 9.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
 
 ### 9.2 验收标准

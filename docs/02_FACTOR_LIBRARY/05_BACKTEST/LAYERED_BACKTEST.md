@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
+
+module_id: BACKTEST_LAYERED_BACKTEST
 
 
 **版本**: 1.0
@@ -12,6 +13,11 @@ module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
 
 responsibility:
   - 定义测试规范
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ---
 
 ## 变更记录

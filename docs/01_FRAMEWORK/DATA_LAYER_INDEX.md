@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_LAYER_INDEX
 version: 1.0.0
 status: Active

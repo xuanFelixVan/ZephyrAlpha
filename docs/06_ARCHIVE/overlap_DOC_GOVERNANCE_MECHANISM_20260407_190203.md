@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOC_GOVERNANCE_MECHANISM
 version: 1.0.0
 status: Active

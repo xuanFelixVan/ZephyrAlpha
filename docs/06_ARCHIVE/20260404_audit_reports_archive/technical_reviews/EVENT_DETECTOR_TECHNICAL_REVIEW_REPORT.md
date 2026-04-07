@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EVENT_DETECTOR_TECHNICAL_REVIEW_REPORT
 version: 1.0.0
 status: Active

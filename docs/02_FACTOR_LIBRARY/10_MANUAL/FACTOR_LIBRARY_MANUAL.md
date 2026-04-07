@@ -1,4 +1,5 @@
----
+﻿---
+
 
 module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 
@@ -49,6 +50,11 @@ module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 | 公式名称 | 数学表达?| 参数说明 |
 |responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ----------|------------|----------|
 | **Pearson IC** | $IC_t = \frac{Cov(F_t, R_{t+1})}{\sigma(F_t) \cdot \sigma(R_{t+1})}$ | 因子值与下期收益的相关系?|
 | **Spearman IC（秩IC?* | $RankIC_t = \rho(Rank(F_t), Rank(R_{t+1}))$ | 基于排名的相关性，更稳?|

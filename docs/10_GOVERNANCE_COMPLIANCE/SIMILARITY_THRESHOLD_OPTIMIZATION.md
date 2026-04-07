@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMILARITY_THRESHOLD_OPTIMIZATION
 version: 1.0.0
 status: Active

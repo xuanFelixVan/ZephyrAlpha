@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DATA_GOVERNANCE_PLATFORM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -84,7 +84,7 @@ layer: Layer 5.1 (数据处理)
 
 
 **当前痛点**:
-æ?
+?
 - 合规要求难以落实
 
 **业务目标**:
@@ -108,7 +108,7 @@ layer: Layer 5.1 (数据处理)
 
 |---------|------|------|------|
 | **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
-| **DataHub** | 0.10+ | å
+| **DataHub** | 0.10+ |
 | **OpenMetadata** | 1.2+ | 数据目录 | [官方文档](https://docs.open-metadata.org/) |
 
 
@@ -137,7 +137,7 @@ graph LR
 ### 2.2 技术选型
 
 |------|---------|---------|---------|
-| **å
+| **
 
 ---
 
@@ -481,7 +481,7 @@ services:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -498,7 +498,7 @@ services:
 
 ---
 
-## å
+##
 
 - 数据网格蓝图
 

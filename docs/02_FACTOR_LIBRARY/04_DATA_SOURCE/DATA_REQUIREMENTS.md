@@ -1,6 +1,7 @@
 ---
 
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+
+module_id: DATA_SOURCE_DATA_REQUIREMENTS
 
 
 # 数据需求清单
@@ -21,6 +22,11 @@ module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
 | 文档 | 路径 | 关系 | 说明 |
 |responsibility:
   - 管理因子库
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
 ------|------|------|------|
 | 数据采集蓝图 | [DATA_ACQUISITION.md](./DATA_ACQUISITION.md) | 下游实现 | 根据本需求规格实现数据采集 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
