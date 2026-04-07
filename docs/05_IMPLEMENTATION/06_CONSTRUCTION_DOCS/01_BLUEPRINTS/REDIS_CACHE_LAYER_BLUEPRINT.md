@@ -6,36 +6,36 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
-  - Redis缓存层
+  - Redis缓存�?
   - 数据缓存
   - 会话管理
   - 分布式锁
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
-# Redis缓存层集成蓝图
+# Redis缓存层集成蓝�?
 
-> **核心职责**: 数据缓存、会话管理、分布式锁、消息队列
+> **核心职责**: 数据缓存、会话管理、分布式锁、消息队�?
 > **职责边界**: 
-> - ✅ 本模块负责：热点数据缓存、会话管理、分布式锁、轻量消息队列
-> - ❌ 本模块不负责：持久化存储（TimescaleDB/ClickHouse）、大数据处理
+> - �?本模块负责：热点数据缓存、会话管理、分布式锁、轻量消息队�?
+> - �?本模块不负责：持久化存储（TimescaleDB/ClickHouse）、大数据处理
 
 ## 核心定位
 
-**单一职责**: 数据缓存、会话管理、分布式锁
+**单一职责**: 数据缓存、会话管理、分布式�?
 
 ### 职责边界
 
-| 负责 | 不负责 |
+| 负责 | 不负�?|
 |------|--------|
-| ✅ 实时行情缓存 | ❌ 持久化数据存储 |
-| ✅ 因子值缓存 | ❌ 大规模数据分析 |
-| ✅ 会话管理 | ❌ 数据清洗处理 |
-| ✅ 分布式锁 | ❌ 数据血缘追踪 |
-| ✅ 消息队列（轻量） | ❌ 重型消息系统 |
+| �?实时行情缓存 | �?持久化数据存�?|
+| �?因子值缓�?| �?大规模数据分�?|
+| �?会话管理 | �?数据清洗处理 |
+| �?分布式锁 | �?数据血缘追�?|
+| �?消息队列（轻量） | �?重型消息系统 |
 
 ---
 
@@ -43,15 +43,15 @@ layer: "Layer 1 (数据层)"
 
 ### 1.1 为什么选择Redis
 
-| 特性 | Redis | KeyDB | Dragonfly |
+| 特�?| Redis | KeyDB | Dragonfly |
 |------|-------|-------|-----------|
-| 性能 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| 生态 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| 学习曲线 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| Python支持 | ✅ redis-py | ✅ redis-py | ✅ redis-py |
-| 社区活跃度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| 文档完善度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| 性能 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| 生�?| ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐ |
+| 学习曲线 | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
+| Python支持 | �?redis-py | �?redis-py | �?redis-py |
+| 社区活跃�?| ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐ |
+| 文档完善�?| ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐ |
+| **推荐指数** | **⭐⭐⭐⭐�?* | ⭐⭐⭐⭐ | ⭐⭐�?|
 
 ---
 
@@ -60,27 +60,27 @@ layer: "Layer 1 (数据层)"
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Redis缓存层架构                               │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
-│  │ 数据缓存层   │    │ 会话管理层   │    │ 分布式锁层   │     │
-│  │              │    │              │    │              │     │
-│  │ • 行情缓存   │    │ • Token存储  │    │ • 任务锁     │     │
-│  │ • 因子缓存   │    │ • 用户会话   │    │ • 资源锁     │     │
-│  │ • 配置缓存   │    │ • 权限缓存   │    │ • 限流锁     │     │
-│  └──────────────┘    └──────────────┘    └──────────────┘     │
-│         │                   │                    │              │
-│         └───────────────────┴────────────────────┘              │
-│                            │                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    消息队列层                            │   │
-│  │  • Redis Streams (实时数据推送)                          │   │
-│  │  • Pub/Sub (事件通知)                                    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────�?
+�?                   Redis缓存层架�?                              �?
+├─────────────────────────────────────────────────────────────────�?
+�?                                                                �?
+�? ┌──────────────�?   ┌──────────────�?   ┌──────────────�?    �?
+�? �?数据缓存�?  �?   �?会话管理�?  �?   �?分布式锁�?  �?    �?
+�? �?             �?   �?             �?   �?             �?    �?
+�? �?�?行情缓存   �?   �?�?Token存储  �?   �?�?任务�?    �?    �?
+�? �?�?因子缓存   �?   �?�?用户会话   �?   �?�?资源�?    �?    �?
+�? �?�?配置缓存   �?   �?�?权限缓存   �?   �?�?限流�?    �?    �?
+�? └──────────────�?   └──────────────�?   └──────────────�?    �?
+�?        �?                  �?                   �?             �?
+�?        └───────────────────┴────────────────────�?             �?
+�?                           �?                                   �?
+�? ┌─────────────────────────────────────────────────────────�?  �?
+�? �?                   消息队列�?                           �?  �?
+�? �? �?Redis Streams (实时数据推�?                          �?  �?
+�? �? �?Pub/Sub (事件通知)                                    �?  �?
+�? └─────────────────────────────────────────────────────────�?  �?
+�?                                                                �?
+└─────────────────────────────────────────────────────────────────�?
 ```
 
 ---
@@ -96,13 +96,13 @@ from typing import Optional, Any, List
 from datetime import timedelta
 
 class DataCache:
-    """数据缓存管理器"""
+    """数据缓存管理�?""
     
     def __init__(self, host: str = 'localhost', port: int = 6379, db: int = 0):
         self.client = redis.Redis(host=host, port=port, db=db, decode_responses=True)
     
     def cache_realtime_price(self, symbol: str, price: float, ttl: int = 5):
-        """缓存实时价格（5秒过期）"""
+        """缓存实时价格�?秒过期）"""
         key = f"price:realtime:{symbol}"
         self.client.setex(key, ttl, str(price))
     
@@ -115,18 +115,18 @@ class DataCache:
         return {s: float(r) for s, r in zip(symbols, results) if r}
     
     def cache_factor_values(self, factor_id: str, values: dict, ttl: int = 3600):
-        """缓存因子值（1小时过期）"""
+        """缓存因子值（1小时过期�?""
         key = f"factor:{factor_id}"
         self.client.setex(key, ttl, json.dumps(values))
     
     def get_factor_values(self, factor_id: str) -> Optional[dict]:
-        """获取因子值"""
+        """获取因子�?""
         key = f"factor:{factor_id}"
         data = self.client.get(key)
         return json.loads(data) if data else None
     
     def cache_market_snapshot(self, snapshot: dict, ttl: int = 60):
-        """缓存市场快照（1分钟过期）"""
+        """缓存市场快照�?分钟过期�?""
         key = "market:snapshot"
         self.client.setex(key, ttl, json.dumps(snapshot))
 ```
@@ -144,7 +144,7 @@ class DistributedLock:
         self.client = client
     
     def acquire(self, lock_name: str, timeout: int = 10, retry_interval: float = 0.1) -> bool:
-        """获取锁"""
+        """获取�?""
         identifier = str(uuid.uuid4())
         lock_key = f"lock:{lock_name}"
         
@@ -157,7 +157,7 @@ class DistributedLock:
         return None
     
     def release(self, lock_name: str, identifier: str) -> bool:
-        """释放锁"""
+        """释放�?""
         lock_key = f"lock:{lock_name}"
         
         script = """
@@ -171,7 +171,7 @@ class DistributedLock:
         return bool(self.client.eval(script, 1, lock_key, identifier))
 
 class TaskLock:
-    """任务锁"""
+    """任务�?""
     
     def __init__(self, client: redis.Redis):
         self.lock = DistributedLock(client)
@@ -179,18 +179,18 @@ class TaskLock:
     def __enter__(self):
         self.identifier = self.lock.acquire(self.task_name)
         if not self.identifier:
-            raise Exception(f"无法获取任务锁: {self.task_name}")
+            raise Exception(f"无法获取任务�? {self.task_name}")
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.lock.release(self.task_name, self.identifier)
 ```
 
-### 3.3 消息队列（Redis Streams）
+### 3.3 消息队列（Redis Streams�?
 
 ```python
 class DataStream:
-    """数据流（Redis Streams）"""
+    """数据流（Redis Streams�?""
     
     def __init__(self, client: redis.Redis, stream_name: str):
         self.client = client
@@ -255,9 +255,9 @@ volumes:
 
 ## 📋 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

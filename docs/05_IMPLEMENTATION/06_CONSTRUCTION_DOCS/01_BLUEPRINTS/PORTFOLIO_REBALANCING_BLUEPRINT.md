@@ -1,9 +1,9 @@
 ---
 responsibility:
-  - 组合再平衡
+  - 组合再平�?
   - 权重调整
   - 成本优化
-  - 再平衡触发
+  - 再平衡触�?
 
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.0
@@ -12,17 +12,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
-# 组合再平衡蓝图
+# 组合再平衡蓝�?
 
-> **核心职责**: 智能再平衡决策，平衡跟踪误差与交易成本
+> **核心职责**: 智能再平衡决策，平衡跟踪误差与交易成�?
 > **职责边界**: 
-> - ✅ 本文档负责：再平衡触发、权重调整、成本优化
-> - ❌ 本文档不负责：RL增强调仓（由RL_REBALANCING_SYSTEM负责）
+> - �?本文档负责：再平衡触发、权重调整、成本优�?
+> - �?本文档不负责：RL增强调仓（由RL_REBALANCING_SYSTEM负责�?
 
 
 ## 1. 概述
@@ -37,18 +37,18 @@ layer: "Layer 6 (组合优化层)"
 - 交易成本优化：降?5-20%
 - 跟踪误差控制：提?0%
 - 系统化再平衡决策：新增能?
-### 1.2 技术定位与架构层归属
+### 1.2 技术定位与架构层归�?
 
 **Layer定位**: Layer 6 - 组合优化层（执行层）
 
 **模块类别**: 支持模块（P2级）
 
-**与TRANSACTION_COST_AWARE_REBALANCING的关系**:
-- 本文档是**基础再平衡框架**，提供触发机制和决策引擎
-- [TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md)是**高级成本感知再平衡模块**，在再平衡决策中显式考虑交易成本
+**与TRANSACTION_COST_AWARE_REBALANCING的关�?*:
+- 本文档是**基础再平衡框�?*，提供触发机制和决策引擎
+- [TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md)�?*高级成本感知再平衡模�?*，在再平衡决策中显式考虑交易成本
 - **职责边界**: 本文档负责基础再平衡决策，TRANSACTION_COST_AWARE负责成本优化决策
-- **依赖关系**: TRANSACTION_COST_AWARE_REBALANCING依赖本文档的触发机制和决策框架
-- **推荐实施路径**: 先实现本文档（40h），再实施成本感知增强（5-7天）
+- **依赖关系**: TRANSACTION_COST_AWARE_REBALANCING依赖本文档的触发机制和决策框�?
+- **推荐实施路径**: 先实现本文档�?0h），再实施成本感知增强（5-7天）
 
 **架构角色**: 
 - 作为组合优化的执行层，负责再平衡决策
@@ -728,27 +728,27 @@ pip install numpy>=1.21
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 强依赖 | 提供调仓决策 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 提供成本分析 |
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 强依�?| 提供调仓决策 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依�?| 提供成本分析 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [强化学习调仓系统蓝图](RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | 强依赖 | AI增强调仓 |
-| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依赖 | 成本感知再平衡 |
-| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
+| [强化学习调仓系统蓝图](RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | 强依�?| AI增强调仓 |
+| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依�?| 成本感知再平�?|
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依�?| 算法交易执行 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -772,13 +772,13 @@ graph LR
 ### 10.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
-##### 6.8 组合再平衡策略
+#### Layer 6: 组合优化�?
+##### 6.8 组合再平衡策�?
 - **模块ID**: REBALANCING_001
 - **蓝图文档**: PORTFOLIO_REBALANCING_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 再平衡决策、交易成本优化、效果评估
-- **状态**: 设计阶段
+- **技术规格书**: 待创�?
+- **职责**: 再平衡决策、交易成本优化、效果评�?
+- **状�?*: 设计阶段
 ```
 
 ### 10.2 模块职责边界
@@ -815,11 +815,11 @@ graph LR
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active

@@ -12,22 +12,22 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 税收优化（税损收割）蓝图
 
-> **核心职责**: 实现税损收割策略，优化税后收益
+> **核心职责**: 实现税损收割策略，优化税后收�?
 > **职责边界**: 
-> - ✅ 本文档负责：税损识别、收割策略、wash sale规避
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：税损识别、收割策略、wash sale规避
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 核心定位
 
-负责Tax Loss Harvesting的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Tax Loss Harvesting的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
 ## 1. 模块概述
 
@@ -36,23 +36,23 @@ layer: "Layer 6 (组合优化层)"
 **单一职责**: 识别和执行税损收割机会，最大化税后收益
 
 **职责边界**:
-- ✅ 负责: 未实现损益计算、洗售规则检测、税损收割机会识别、替代证券选择
-- ❌ 不负责: 基础组合优化（由MEAN_VARIANCE_OPTIMIZATION负责）
-- ❌ 不负责: 再平衡决策（由PORTFOLIO_REBALANCING负责）
+- �?负责: 未实现损益计算、洗售规则检测、税损收割机会识别、替代证券选择
+- �?不负�? 基础组合优化（由MEAN_VARIANCE_OPTIMIZATION负责�?
+- �?不负�? 再平衡决策（由PORTFOLIO_REBALANCING负责�?
 
 ### 1.2 适用场景
 
-**个人投资者专属功能**:
+**个人投资者专属功�?*:
 - 降低年度税负
-- 延迟资本利得税
+- 延迟资本利得�?
 - 提高税后收益
 - 符合税务合规
 
-### 1.3 开源依赖
+### 1.3 开源依�?
 
-| 库名 | 用途 | 说明 |
+| 库名 | 用�?| 说明 |
 |------|------|------|
-| rebalancer | 参考 | 税损收割逻辑参考 |
+| rebalancer | 参�?| 税损收割逻辑参�?|
 | 自研核心 | 主要 | 针对中国/美国税法 |
 
 ---
@@ -61,7 +61,7 @@ layer: "Layer 6 (组合优化层)"
 
 ### 2.1 核心功能
 
-#### 2.1.1 未实现损益计算
+#### 2.1.1 未实现损益计�?
 
 ```python
 class UnrealizedGainLossCalculator:
@@ -76,7 +76,7 @@ class UnrealizedGainLossCalculator:
         current_prices: Dict[str, float]
     ) -> pd.DataFrame:
         """
-        计算未实现损益
+        计算未实现损�?
         
         参数:
             positions: 持仓数量
@@ -84,7 +84,7 @@ class UnrealizedGainLossCalculator:
             current_prices: 当前价格
             
         返回:
-            未实现损益明细
+            未实现损益明�?
         """
         pass
     
@@ -94,27 +94,27 @@ class UnrealizedGainLossCalculator:
         min_loss_threshold: float = 1000.0
     ) -> List[Dict]:
         """
-        识别税损收割候选
+        识别税损收割候�?
         
         参数:
-            unrealized_pnl: 未实现损益
-            min_loss_threshold: 最小损失阈值
+            unrealized_pnl: 未实现损�?
+            min_loss_threshold: 最小损失阈�?
             
         返回:
-            候选列表
+            候选列�?
         """
         pass
 ```
 
-#### 2.1.2 洗售规则检测
+#### 2.1.2 洗售规则检�?
 
 ```python
 class WashSaleDetector:
     """
     洗售规则检测器
     
-    美国: 30天内不能买入相同或实质相同证券
-    中国: 无洗售规则限制
+    美国: 30天内不能买入相同或实质相同证�?
+    中国: 无洗售规则限�?
     """
     
     def check_wash_sale(
@@ -125,7 +125,7 @@ class WashSaleDetector:
         forward_days: int = 30
     ) -> bool:
         """
-        检查是否违反洗售规则
+        检查是否违反洗售规�?
         
         返回:
             True: 违反洗售规则
@@ -139,7 +139,7 @@ class WashSaleDetector:
         trade_date: datetime
     ) -> Tuple[datetime, datetime]:
         """
-        查找洗售规则禁止期
+        查找洗售规则禁止�?
         """
         pass
 ```
@@ -149,7 +149,7 @@ class WashSaleDetector:
 ```python
 class SubstituteSecuritySelector:
     """
-    替代证券选择器
+    替代证券选择�?
     
     选择与原证券高度相关但不违反洗售规则的替代品
     """
@@ -164,8 +164,8 @@ class SubstituteSecuritySelector:
         查找替代证券
         
         参数:
-            security: 原证券
-            correlation_threshold: 相关性阈值
+            security: 原证�?
+            correlation_threshold: 相关性阈�?
             exclude_list: 排除列表（洗售规则相关）
             
         返回:
@@ -179,7 +179,7 @@ class SubstituteSecuritySelector:
 ```python
 class AfterTaxReturnOptimizer:
     """
-    税后收益优化器
+    税后收益优化�?
     """
     
     def optimize_after_tax(
@@ -196,7 +196,7 @@ class AfterTaxReturnOptimizer:
             expected_returns: 税前预期收益
             short_term_tax_rate: 短期资本利得税率
             long_term_tax_rate: 长期资本利得税率
-            holding_periods: 持仓周期（天）
+            holding_periods: 持仓周期（天�?
             
         返回:
             税后优化结果
@@ -216,16 +216,16 @@ class AfterTaxReturnOptimizer:
 
 ---
 
-## 3. 技术规格
+## 3. 技术规�?
 
 ### 3.1 接口设计
 
 ```python
 class TaxLossHarvester:
     """
-    税损收割器
+    税损收割�?
     
-    主要接口类
+    主要接口�?
     """
     
     def __init__(
@@ -278,10 +278,10 @@ tax_loss_harvesting:
     lookback_days: 30
     forward_days: 30
     
-  # 收割阈值
+  # 收割阈�?
   harvest:
-    min_loss_amount: 1000  # 最小损失金额
-    min_tax_savings: 150   # 最小税收节省
+    min_loss_amount: 1000  # 最小损失金�?
+    min_tax_savings: 150   # 最小税收节�?
     
   # 替代证券
   substitute:
@@ -297,27 +297,27 @@ tax_loss_harvesting:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依赖 | 提供成本分析 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依�?| 提供成本分析 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依赖 | 组合再平衡 |
-| [周转率控制蓝图](./TURNOVER_CONTROL_BLUEPRINT.md) | TURNOVER_CONTROL_001 | 中依赖 | 周转率控制 |
-| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依赖 | 季度调仓决策 |
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依�?| 组合再平�?|
+| [周转率控制蓝图](./TURNOVER_CONTROL_BLUEPRINT.md) | TURNOVER_CONTROL_001 | 中依�?| 周转率控�?|
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依�?| 季度调仓决策 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -338,20 +338,20 @@ graph LR
 
 ## 4. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
 
 ## 5. 文档治理
 
 ### 5.1 文档索引
 
 **本文档在系统中的位置**:
-- **所属层级**: Layer 6 (组合优化层)
+- **所属层�?*: Layer 6 (组合优化�?
 - **模块索引**: 001
 - **模块名称**: TAX_LOSS_HARVESTING
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -365,9 +365,9 @@ graph LR
 
 **文档维护**:
 - **责任模块**: TAX_LOSS_HARVESTING
-- **维护周期**: 每季度审查
-- **变更流程**: 提交变更申请 → 技术评审 → 更新文档
+- **维护周期**: 每季度审�?
+- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

@@ -6,30 +6,30 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
 responsibility:
   - 融资优化
   - 融资成本优化
   - 杠杆效率提升
   - 融资策略
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 融资优化蓝图
 
 > **核心职责**: 融资优化，融资成本优化和杠杆效率提升
 > **职责边界**: 
-> - ✅ 本文档负责：融资优化、融资成本优化、杠杆效率提升、融资策略
-> - ❌ 本文档不负责：融资执行、风险控制、订单管理
-﻿# 概述
+> - �?本文档负责：融资优化、融资成本优化、杠杆效率提升、融资策�?
+> - �?本文档不负责：融资执行、风险控制、订单管�?
+�? 概述
 
 > **索引**: `FINANCING_OPTIMIZATION_001`
 > **开发时?*: 40h
 > **核心定位**: 融资成本优化、杠杆效率提?
 ## 核心定位
 
-实现FINANCING OPTIMIZATION的设计与实现，基于因子投资技术，评估核心功能，提升收益风险比。
+实现FINANCING OPTIMIZATION的设计与实现，基于因子投资技术，评估核心功能，提升收益风险比�?
 
 ## 📚 相关文档
 
@@ -37,27 +37,27 @@ layer: "Layer 6 (组合优化层)"
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [流动性管理系统蓝图](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) | LIQUIDITY_MANAGEMENT_SYSTEM_001 | 强依赖 | 提供流动性数据 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | 提供风险指标 |
+| [流动性管理系统蓝图](./LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md) | LIQUIDITY_MANAGEMENT_SYSTEM_001 | 强依�?| 提供流动性数�?|
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依�?| 提供风险指标 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [动态杠杆管理蓝图](./DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) | DYNAMIC_LEVERAGE_MANAGEMENT_001 | 强依赖 | 杠杆管理 |
-| [保证金监控蓝图](./MARGIN_CALL_MONITOR_BLUEPRINT.md) | MARGIN_CALL_MONITOR_001 | 中依赖 | 保证金监控 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 组合优化 |
+| [动态杠杆管理蓝图](./DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) | DYNAMIC_LEVERAGE_MANAGEMENT_001 | 强依�?| 杠杆管理 |
+| [保证金监控蓝图](./MARGIN_CALL_MONITOR_BLUEPRINT.md) | MARGIN_CALL_MONITOR_001 | 中依�?| 保证金监�?|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依�?| 组合优化 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -115,18 +115,18 @@ def optimize_financing(capital_needed: float,
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Draft | **下一?*: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Draft | **下一?*: 技术规格书编写
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active
 ---
 
 ## 4. 文档治理
@@ -134,27 +134,27 @@ def optimize_financing(capital_needed: float,
 ### 4.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Financing Optimization
 - **模块ID**: FINANCING_OPTIMIZATION_001
 - **蓝图文档**: FINANCING_OPTIMIZATION_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系�?
+- **状�?*: Active
 ```
 
 ### 4.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Financing Optimization** | 全系统 | **核心模块** |
+| **Financing Optimization** | 全系�?| **核心模块** |
 
 ### 4.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状�?*: Active

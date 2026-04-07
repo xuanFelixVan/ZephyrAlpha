@@ -6,22 +6,22 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
-  - 数据标准化引擎
+  - 数据标准化引�?
   - 数据格式统一
-  - 数据标准化
+  - 数据标准�?
   - 数据类型转换
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
-# 数据标准化引擎蓝图
+# 数据标准化引擎蓝�?
 
-> **核心职责**: 数据标准化、数据格式统一、数据验证
+> **核心职责**: 数据标准化、数据格式统一、数据验�?
 > **职责边界**: 
-> - ✅ 本模块负责：字段命名标准化、数据格式统一、数据类型转换、数据验证
-> - ❌ 本模块不负责：数据存储、数据清洗、数据质量监控
+> - �?本模块负责：字段命名标准化、数据格式统一、数据类型转换、数据验�?
+> - �?本模块不负责：数据存储、数据清洗、数据质量监�?
 
 ## 核心定位
 
@@ -29,13 +29,13 @@ layer: "Layer 1 (数据层)"
 
 ### 职责边界
 
-| 负责 | 不负责 |
+| 负责 | 不负�?|
 |------|--------|
-| ✅ 字段命名标准化 | ❌ 数据存储 |
-| ✅ 数据格式统一 | ❌ 数据清洗 |
-| ✅ 数据类型转换 | ❌ 数据质量监控 |
-| ✅ 数据验证 | ❌ 数据订阅 |
-| ✅ 标准规则管理 | ❌ 数据血缘 |
+| �?字段命名标准�?| �?数据存储 |
+| �?数据格式统一 | �?数据清洗 |
+| �?数据类型转换 | �?数据质量监控 |
+| �?数据验证 | �?数据订阅 |
+| �?标准规则管理 | �?数据血�?|
 
 ---
 
@@ -43,14 +43,14 @@ layer: "Layer 1 (数据层)"
 
 ### 1.1 为什么选择dbt + Great Expectations
 
-| 特性 | dbt + GE | Pandera | Pydantic |
+| 特�?| dbt + GE | Pandera | Pydantic |
 |------|----------|---------|----------|
-| 数据转换 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| 数据验证 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| SQL支持 | ✅ | ❌ | ❌ |
-| 文档生成 | ✅ | ❌ | ✅ |
-| 学习曲线 | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 数据转换 | ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐�?|
+| 数据验证 | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
+| SQL支持 | �?| �?| �?|
+| 文档生成 | �?| �?| �?|
+| 学习曲线 | ⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
+| **推荐指数** | **⭐⭐⭐⭐�?* | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
@@ -59,33 +59,33 @@ layer: "Layer 1 (数据层)"
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    数据标准化引擎架构                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
-│  │ 标准规则层   │    │ 数据转换层   │    │ 数据验证层   │     │
-│  │              │    │              │    │              │     │
-│  │ • 命名规则   │    │ • 格式转换   │    │ • 类型验证   │     │
-│  │ • 格式规则   │    │ • 类型转换   │    │ • 范围验证   │     │
-│  │ • 验证规则   │    │ • 单位转换   │    │ • 唯一性验证 │     │
-│  └──────────────┘    └──────────────┘    └──────────────┘     │
-│         │                   │                    │              │
-│         └───────────────────┴────────────────────┘              │
-│                            │                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    标准化流程                            │   │
-│  │  1. 命名标准化 → 2. 格式统一 → 3. 类型转换 → 4. 验证    │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────�?
+�?                   数据标准化引擎架�?                           �?
+├─────────────────────────────────────────────────────────────────�?
+�?                                                                �?
+�? ┌──────────────�?   ┌──────────────�?   ┌──────────────�?    �?
+�? �?标准规则�?  �?   �?数据转换�?  �?   �?数据验证�?  �?    �?
+�? �?             �?   �?             �?   �?             �?    �?
+�? �?�?命名规则   �?   �?�?格式转换   �?   �?�?类型验证   �?    �?
+�? �?�?格式规则   �?   �?�?类型转换   �?   �?�?范围验证   �?    �?
+�? �?�?验证规则   �?   �?�?单位转换   �?   �?�?唯一性验�?�?    �?
+�? └──────────────�?   └──────────────�?   └──────────────�?    �?
+�?        �?                  �?                   �?             �?
+�?        └───────────────────┴────────────────────�?             �?
+�?                           �?                                   �?
+�? ┌─────────────────────────────────────────────────────────�?  �?
+�? �?                   标准化流�?                           �?  �?
+�? �? 1. 命名标准�?�?2. 格式统一 �?3. 类型转换 �?4. 验证    �?  �?
+�? └─────────────────────────────────────────────────────────�?  �?
+�?                                                                �?
+└─────────────────────────────────────────────────────────────────�?
 ```
 
 ---
 
 ## 3. 核心功能实现
 
-### 3.1 命名标准化
+### 3.1 命名标准�?
 
 ```python
 import re
@@ -101,9 +101,9 @@ class NamingStandardizer:
         "开盘价": "open",
         "最高价": "high",
         "最低价": "low",
-        "收盘价": "close",
-        "成交量": "volume",
-        "成交额": "amount",
+        "收盘�?: "close",
+        "成交�?: "volume",
+        "成交�?: "amount",
     }
     
     @classmethod
@@ -141,12 +141,12 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_date(value: Union[str, datetime], format: str = "%Y-%m-%d") -> str:
-        """标准化日期格式"""
+        """标准化日期格�?""
         if isinstance(value, datetime):
             return value.strftime(format)
         
         if isinstance(value, str):
-            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y年%m月%d日"]:
+            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y�?m�?d�?]:
                 try:
                     dt = datetime.strptime(value, fmt)
                     return dt.strftime(format)
@@ -157,7 +157,7 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_symbol(symbol: str) -> str:
-        """标准化股票代码"""
+        """标准化股票代�?""
         symbol = symbol.upper().strip()
         
         if symbol.isdigit():
@@ -170,7 +170,7 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_price(value: Union[str, float, Decimal]) -> Decimal:
-        """标准化价格"""
+        """标准化价�?""
         if isinstance(value, str):
             value = value.replace(',', '')
         
@@ -193,7 +193,7 @@ class ValidationRule:
     error_message: str
 
 class DataValidator:
-    """数据验证器"""
+    """数据验证�?""
     
     def __init__(self):
         self.rules: List[ValidationRule] = []
@@ -212,7 +212,7 @@ class DataValidator:
         
         for rule in self.rules:
             if rule.field not in df.columns:
-                results["warnings"].append(f"字段 {rule.field} 不存在")
+                results["warnings"].append(f"字段 {rule.field} 不存�?)
                 continue
             
             errors = self._apply_rule(df, rule)
@@ -229,7 +229,7 @@ class DataValidator:
         if rule.rule_type == "not_null":
             null_count = df[rule.field].isnull().sum()
             if null_count > 0:
-                errors.append(f"{rule.field}: {null_count} 条空值")
+                errors.append(f"{rule.field}: {null_count} 条空�?)
         
         elif rule.rule_type == "range":
             min_val = rule.params.get("min")
@@ -238,26 +238,26 @@ class DataValidator:
             if min_val is not None:
                 invalid = df[df[rule.field] < min_val]
                 if len(invalid) > 0:
-                    errors.append(f"{rule.field}: {len(invalid)} 条小于最小值 {min_val}")
+                    errors.append(f"{rule.field}: {len(invalid)} 条小于最小�?{min_val}")
             
             if max_val is not None:
                 invalid = df[df[rule.field] > max_val]
                 if len(invalid) > 0:
-                    errors.append(f"{rule.field}: {len(invalid)} 条大于最大值 {max_val}")
+                    errors.append(f"{rule.field}: {len(invalid)} 条大于最大�?{max_val}")
         
         elif rule.rule_type == "unique":
             duplicates = df[df.duplicated(subset=[rule.field])]
             if len(duplicates) > 0:
-                errors.append(f"{rule.field}: {len(duplicates)} 条重复值")
+                errors.append(f"{rule.field}: {len(duplicates)} 条重复�?)
         
         return errors
 ```
 
-### 3.4 标准化管道
+### 3.4 标准化管�?
 
 ```python
 class StandardizationPipeline:
-    """标准化管道"""
+    """标准化管�?""
     
     def __init__(self):
         self.naming_standardizer = NamingStandardizer()
@@ -265,7 +265,7 @@ class StandardizationPipeline:
         self.validator = DataValidator()
     
     def process(self, df: pd.DataFrame, config: dict) -> pd.DataFrame:
-        """执行标准化流程"""
+        """执行标准化流�?""
         df = self.naming_standardizer.standardize_dataframe(df)
         
         for field, format_type in config.get("format_rules", {}).items():
@@ -288,9 +288,9 @@ class StandardizationPipeline:
 
 ## 📋 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

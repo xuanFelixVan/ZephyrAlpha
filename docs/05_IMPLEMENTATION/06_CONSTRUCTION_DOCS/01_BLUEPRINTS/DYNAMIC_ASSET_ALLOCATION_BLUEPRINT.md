@@ -6,62 +6,41 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
 responsibility:
-  - 动态资产配置
+  - 动态资产配�?
   - 资产权重调整
   - 市场环境适应
   - 配置策略优化
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
-# DYNAMIC ASSET ALLOCATION BLUEPRINT
+# 动态资产配置蓝�?
 
-> **核心职责**: Dynamic Asset Allocation蓝图设计
+> **核心职责**: 根据市场状态动态调整资产配置权�?
 > **职责边界**: 
-> - ✅ 本文档负责：Dynamic Asset Allocation蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: DYNAMIC_ASSET_ALLOCATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-
-layer: "Layer 3 (策略层)"
----
-﻿# 动态资产配置蓝图
-
-> **核心定位**: 动态资产配置蓝图的核心功能实现
-
-
-> **模块ID**: DYNAMIC_ASSET_ALLOCATION_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 根据市场状态动态调整资产配置权重，实现战略与战术资产配置的结合
-> **索引**: `DYNAMIC_ASSET_ALLOCATION_001`
-> **开发周期**: 1.5周
+> - �?本文档负责：动态资产配置、资产权重调整、市场环境适应
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 ## 核心定位
 
-负责动态资产配置策略的实现，根据市场变化动态调整资产配置，提供资产配置优化功能。
+根据市场状态动态调整资产配置权重，实现战略与战术资产配置的结合
+
+## 核心定位
+
+负责动态资产配置策略的实现，根据市场变化动态调整资产配置，提供资产配置优化功能�?
 
 ## 2. 功能设计
 
 ### 2.1 核心功能
 
-#### 2.1.1 战略资产配置（SAA）
+#### 2.1.1 战略资产配置（SAA�?
 
 ```python
 class StrategicAssetAllocator:
     """
-    战略资产配置器
+    战略资产配置�?
     
     长期目标配置，基于风险承受能力和投资目标
     """
@@ -77,7 +56,7 @@ class StrategicAssetAllocator:
         
         参数:
             risk_tolerance: 风险承受能力 (0-1)
-            investment_horizon: 投资期限（年）
+            investment_horizon: 投资期限（年�?
             asset_classes: 资产类别列表
             
         返回:
@@ -96,14 +75,14 @@ class StrategicAssetAllocator:
         pass
 ```
 
-#### 2.1.2 战术资产配置（TAA）
+#### 2.1.2 战术资产配置（TAA�?
 
 ```python
 class TacticalAssetAllocator:
     """
-    战术资产配置器
+    战术资产配置�?
     
-    短期偏离战略配置，捕捉市场机会
+    短期偏离战略配置，捕捉市场机�?
     """
     
     def calculate_tactical_adjustment(
@@ -117,7 +96,7 @@ class TacticalAssetAllocator:
         
         参数:
             strategic_weights: 战略配置权重
-            market_signals: 市场信号（估值、动量、情绪等）
+            market_signals: 市场信号（估值、动量、情绪等�?
             max_deviation: 最大偏离度
             
         返回:
@@ -137,18 +116,18 @@ class TacticalAssetAllocator:
         pass
 ```
 
-#### 2.1.3 市场状态驱动配置
+#### 2.1.3 市场状态驱动配�?
 
 ```python
 class RegimeBasedAllocator:
     """
     市场状态驱动配置器
     
-    根据不同市场状态调整配置
+    根据不同市场状态调整配�?
     """
     
     def __init__(self):
-        # 市场状态配置映射
+        # 市场状态配置映�?
         self.regime_configs = {
             'bull': {'equity': 0.7, 'bond': 0.2, 'commodity': 0.1},
             'bear': {'equity': 0.3, 'bond': 0.5, 'commodity': 0.2},
@@ -162,10 +141,10 @@ class RegimeBasedAllocator:
         confidence: float
     ) -> Dict[str, float]:
         """
-        获取市场状态对应权重
+        获取市场状态对应权�?
         
         参数:
-            current_regime: 当前市场状态
+            current_regime: 当前市场状�?
             confidence: 状态判断置信度
             
         返回:
@@ -180,12 +159,12 @@ class RegimeBasedAllocator:
         """
         混合多种状态的权重
         
-        根据各状态概率加权平均
+        根据各状态概率加权平�?
         """
         pass
 ```
 
-#### 2.1.4 风险预算动态调整
+#### 2.1.4 风险预算动态调�?
 
 ```python
 class RiskBudgetAdjuster:
@@ -200,11 +179,11 @@ class RiskBudgetAdjuster:
         drawdown_level: float
     ) -> float:
         """
-        动态调整风险预算
+        动态调整风险预�?
         
         参数:
             base_risk_budget: 基础风险预算
-            volatility_regime: 波动率状态 ('low', 'normal', 'high')
+            volatility_regime: 波动率状�?('low', 'normal', 'high')
             drawdown_level: 当前回撤水平
             
         返回:
@@ -226,7 +205,7 @@ class RiskBudgetAdjuster:
 
 ---
 
-## 3. 技术规格
+## 3. 技术规�?
 
 ### 3.1 接口设计
 
@@ -235,7 +214,7 @@ class DynamicAssetAllocator:
     """
     动态资产配置器
     
-    主要接口类
+    主要接口�?
     """
     
     def __init__(
@@ -255,10 +234,10 @@ class DynamicAssetAllocator:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        执行动态资产配置
+        执行动态资产配�?
         
         参数:
-            market_state: 市场状态信息
+            market_state: 市场状态信�?
             risk_profile: 风险偏好
             constraints: 约束条件
             
@@ -272,7 +251,7 @@ class DynamicAssetAllocator:
             risk_profile['assets']
         )
         
-        # 2. 应用市场状态调整
+        # 2. 应用市场状态调�?
         regime_adjusted = self.regime.blend_regime_weights(
             market_state['regime_probabilities']
         )
@@ -305,7 +284,7 @@ dynamic_asset_allocation:
       sentiment: 0.2
       quality: 0.2
       
-  # 市场状态映射
+  # 市场状态映�?
   regime_mapping:
     bull:
       equity_weight: 0.70
@@ -340,20 +319,20 @@ dynamic_asset_allocation:
 
 ## 4. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
 
 ## 5. 文档治理
 
 ### 5.1 文档索引
 
 **本文档在系统中的位置**:
-- **所属层级**: Layer 0 (系统架构)
+- **所属层�?*: Layer 0 (系统架构)
 - **模块索引**: 001
 - **模块名称**: DYNAMIC_ASSET_ALLOCATION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -367,9 +346,9 @@ dynamic_asset_allocation:
 
 **文档维护**:
 - **责任模块**: DYNAMIC_ASSET_ALLOCATION
-- **维护周期**: 每季度审查
-- **变更流程**: 提交变更申请 → 技术评审 → 更新文档
+- **维护周期**: 每季度审�?
+- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

@@ -12,38 +12,38 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 层级风险预算蓝图
 
-> **核心职责**: 多层级风险预算分配
+> **核心职责**: 多层级风险预算分�?
 > **职责边界**: 
-> - ✅ 本文档负责：层级风险预算、多维度风险控制
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：层级风险预算、多维度风险控制
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 核心定位
 
-负责Hierarchical Risk Budget的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Hierarchical Risk Budget的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layer定位**: Layer 6 - 组合优化层（风险预算模块）
+**Layer定位**: Layer 6 - 组合优化层（风险预算模块�?
 
-**核心价值**:
+**核心价�?*:
 - 支持多层级风险预算分配（资产类→策略→因子）
-- 实现层级间的风险传导和汇总
-- 提供灵活的风险预算配置
+- 实现层级间的风险传导和汇�?
+- 提供灵活的风险预算配�?
 
-**业务价值**:
-- 精细化风险管理
+**业务价�?*:
+- 精细化风险管�?
 - 支持复杂组合结构
-- 提升风险控制透明度
+- 提升风险控制透明�?
 
 ### 1.2 版本信息
 
@@ -51,23 +51,23 @@ layer: "Layer 6 (组合优化层)"
 |------|------|
 | **模块ID** | HIERARCHICAL_RISK_BUDGET_001 |
 | **版本** | v1.0.0 |
-| **开源依赖** | Riskfolio-Lib, skfolio |
-| **预计工时** | 5-7天 |
+| **开源依�?* | Riskfolio-Lib, skfolio |
+| **预计工时** | 5-7�?|
 
 ### 1.3 与其他风险预算模块的关系
 
-本模块是风险预算体系中的**高级多层级模块**，与其他模块形成层级关系：
+本模块是风险预算体系中的**高级多层级模�?*，与其他模块形成层级关系�?
 
 | 模块 | 核心定位 | 适用场景 | 关系说明 |
 |------|----------|----------|----------|
 | **RISK_CONTRIBUTION_ANALYSIS** | 风险贡献分析 | 基础分析能力 | 本模块依赖其计算风险贡献 |
-| **SIMPLIFIED_RISK_BUDGET_SYSTEM** | 简化风险预算 | 个人开发、快速实现 | 本模块是其高级扩展版本 |
-| **HIERARCHICAL_RISK_BUDGET** (本模块) | 层级风险预算 | 多层级复杂组合 | 支持资产类→策略→因子多层级 |
+| **SIMPLIFIED_RISK_BUDGET_SYSTEM** | 简化风险预�?| 个人开发、快速实�?| 本模块是其高级扩展版�?|
+| **HIERARCHICAL_RISK_BUDGET** (本模�? | 层级风险预算 | 多层级复杂组�?| 支持资产类→策略→因子多层级 |
 
 **推荐实施路径**:
-1. 先实现 RISK_CONTRIBUTION_ANALYSIS (2-3天) - 基础分析能力
-2. 再实现 SIMPLIFIED_RISK_BUDGET_SYSTEM (60h) - 简化版本
-3. 最后实现 HIERARCHICAL_RISK_BUDGET (5-7天) - 高级多层级
+1. 先实�?RISK_CONTRIBUTION_ANALYSIS (2-3�? - 基础分析能力
+2. 再实�?SIMPLIFIED_RISK_BUDGET_SYSTEM (60h) - 简化版�?
+3. 最后实�?HIERARCHICAL_RISK_BUDGET (5-7�? - 高级多层�?
 
 ---
 ## 📚 相关文档
@@ -76,28 +76,28 @@ layer: "Layer 6 (组合优化层)"
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 强依赖 | 提供风险贡献计算 |
-| [简化风险预算系统蓝图](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 强依赖 | 提供简化版本基础 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
+| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 强依�?| 提供风险贡献计算 |
+| [简化风险预算系统蓝图](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 强依�?| 提供简化版本基础 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [RISK_PARITY_STRATEGY_BLUEPRINT.md](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 强依赖 | 风险平价策略 |
-| [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | 中依赖 | 策略选择 |
-| [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
+| [RISK_PARITY_STRATEGY_BLUEPRINT.md](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 强依�?| 风险平价策略 |
+| [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | 中依�?| 策略选择 |
+| [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依�?| 组合再平�?|
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
 | **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -116,7 +116,7 @@ graph LR
 
 ---
 
-## 2. 技术实现
+## 2. 技术实�?
 
 ### 2.1 核心API
 
@@ -133,7 +133,7 @@ class RiskBudgetLevel:
     children: List['RiskBudgetLevel']
 
 class HierarchicalRiskBudgetManager:
-    """层级风险预算管理器"""
+    """层级风险预算管理�?""
     
     def __init__(self, hierarchy: RiskBudgetLevel):
         self.hierarchy = hierarchy
@@ -148,8 +148,8 @@ class HierarchicalRiskBudgetManager:
         分配层级风险预算
         
         Args:
-            total_risk_budget: 总风险预算
-            cov_matrix: 协方差矩阵
+            total_risk_budget: 总风险预�?
+            cov_matrix: 协方差矩�?
             level_mapping: 层级到资产的映射
             
         Returns:
@@ -195,7 +195,7 @@ class HierarchicalRiskBudgetAPI:
         cov_matrix: List[List[float]],
         level_mapping: Dict[str, List[int]]
     ) -> AggregationResult:
-        """汇总风险贡献"""
+        """汇总风险贡�?""
 ```
 
 ---
@@ -206,22 +206,22 @@ class HierarchicalRiskBudgetAPI:
 |------|------|------|
 | Phase 1 | 层级结构设计 | 12h |
 | Phase 2 | 预算分配算法实现 | 16h |
-| Phase 3 | API、测试、文档 | 12h |
+| Phase 3 | API、测试、文�?| 12h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
 ---
 
 ## 5. 文档治理
@@ -229,27 +229,27 @@ class HierarchicalRiskBudgetAPI:
 ### 5.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Hierarchical Risk Budget
 - **模块ID**: HIERARCHICAL_RISK_BUDGET_001
 - **蓝图文档**: HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: Layer 6 组合优化层
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: Layer 6 组合优化�?
+- **状�?*: Active
 ```
 
 ### 5.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Hierarchical Risk Budget** | Layer 6 组合优化层 | **核心模块** |
+| **Hierarchical Risk Budget** | Layer 6 组合优化�?| **核心模块** |
 
 ### 5.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

@@ -12,43 +12,43 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 组合绩效评估模块蓝图
 ## 核心定位
 
-构建投资组合绩效评估的设计与实现，基于多维度绩效归因技术，评估投资组合收益来源和风险暴露，支持投资决策优化。
+构建投资组合绩效评估的设计与实现，基于多维度绩效归因技术，评估投资组合收益来源和风险暴露，支持投资决策优化�?
 
 ---
 
 
 > **核心职责**: 计算和评估投资组合的风险调整收益
 > **职责边界**: 
-> - ✅ 本文档负责：绩效评估、风险调整收益、基准对比
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：绩效评估、风险调整收益、基准对�?
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述
 
-### 1.1 模块定位与目标
+### 1.1 模块定位与目�?
 
-**Layer定位**: Layer 6 - 组合优化层（绩效评估模块）
+**Layer定位**: Layer 6 - 组合优化层（绩效评估模块�?
 
-**核心价值**:
-- 提供专业级组合绩效评估指标
-- 支持多维度风险调整收益分析
-- 基准对比和绩效归因
+**核心价�?*:
+- 提供专业级组合绩效评估指�?
+- 支持多维度风险调整收益分�?
+- 基准对比和绩效归�?
 - 滚动绩效指标计算
-- 可视化绩效报告生成
+- 可视化绩效报告生�?
 
-**业务价值**:
+**业务价�?*:
 - 量化评估策略表现
 - 支持投资决策
 - 满足合规报告要求
-- 提升投资透明度
+- 提升投资透明�?
 
 ### 1.2 版本信息
 
@@ -56,19 +56,19 @@ layer: "Layer 6 (组合优化层)"
 |------|------|
 | **模块ID** | PORTFOLIO_PERFORMANCE_EVALUATION_001 |
 | **版本** | v1.0.0 |
-| **状态** | Active |
+| **状�?* | Active |
 | **创建日期** | 2026-04-06 |
-| **最后更新** | 2026-04-06 |
-| **开源依赖** | pyfolio, QuantStats |
-| **预计工时** | 2-3天 |
+| **最后更�?* | 2026-04-06 |
+| **开源依�?* | pyfolio, QuantStats |
+| **预计工时** | 2-3�?|
 
-### 1.3 与现有模块关系
+### 1.3 与现有模块关�?
 
 | 关系类型 | 模块名称 | module_id | 集成方式 |
 |---------|---------|-----------|---------|
-| **输入依赖** | 策略引擎 | STRAT_ENGINE_001 | 获取策略收益率 |
+| **输入依赖** | 策略引擎 | STRAT_ENGINE_001 | 获取策略收益�?|
 | **输入依赖** | 回测执行模块 | Backtrader集成 | 获取回测结果 |
-| **输出目标** | AI报告层 | Layer 7 | 提供绩效报告 |
+| **输出目标** | AI报告�?| Layer 7 | 提供绩效报告 |
 | **协同工作** | 组合归因分析 | PORTFOLIO_ATTRIBUTION_001 | 绩效归因分析 |
 
 ---
@@ -78,28 +78,28 @@ layer: "Layer 6 (组合优化层)"
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合归因分析蓝图](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) | PORTFOLIO_ATTRIBUTION_001 | 强依赖 | 提供归因分析结果 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依赖 | 提供风险指标数据 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供组合权重数据 |
+| [组合归因分析蓝图](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) | PORTFOLIO_ATTRIBUTION_001 | 强依�?| 提供归因分析结果 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依�?| 提供风险指标数据 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供组合权重数据 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [SYSTEM_INTEGRATION_BLUEPRINT.md](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | 强依赖 | 系统集成报告 |
-| [MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依赖 | 监控仪表板增强 |
-| [QUALITY_REPORT_AUTOMATION_BLUEPRINT.md](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依赖 | 质量报告自动化 |
+| [SYSTEM_INTEGRATION_BLUEPRINT.md](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | 强依�?| 系统集成报告 |
+| [MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依�?| 监控仪表板增�?|
+| [QUALITY_REPORT_AUTOMATION_BLUEPRINT.md](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依�?| 质量报告自动�?|
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **pyfolio** | 0.9+ | 组合分析 | [GitHub](https://github.com/quantopian/pyfolio) |
 | **QuantStats** | 0.0.62+ | 绩效分析 | [GitHub](https://github.com/ranaroussi/quantstats) |
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -120,29 +120,29 @@ graph LR
 
 ## 2. 架构设计
 
-### 2.1 Layer定位与职责边界
+### 2.1 Layer定位与职责边�?
 
-**Layer 6 - 组合优化层架构**:
+**Layer 6 - 组合优化层架�?*:
 
 ```
-Layer 6: 组合优化层
+Layer 6: 组合优化�?
 ├── 6.1 组合构建模块
-│   ├── 组合优化器 (PORTFOLIO_OPTIMIZATION_001)
-│   ├── Black-Litterman模型 (BLACK_LITTERMAN_MODEL_001)
-│   └── 风险平价策略 (RISK_PARITY_STRATEGY_001)
+�?  ├── 组合优化�?(PORTFOLIO_OPTIMIZATION_001)
+�?  ├── Black-Litterman模型 (BLACK_LITTERMAN_MODEL_001)
+�?  └── 风险平价策略 (RISK_PARITY_STRATEGY_001)
 ├── 6.2 约束求解模块
-│   └── 约束求解器 (CONSTRAINT_SOLVER_001)
+�?  └── 约束求解�?(CONSTRAINT_SOLVER_001)
 ├── 6.3 风险预算模块
-│   └── 风险预算系统 (SIMPLIFIED_RISK_BUDGET_SYSTEM_001)
-├── 6.4 绩效评估模块 ← 本模块
-│   └── 组合绩效评估 (PORTFOLIO_PERFORMANCE_EVALUATION_001)
+�?  └── 风险预算系统 (SIMPLIFIED_RISK_BUDGET_SYSTEM_001)
+├── 6.4 绩效评估模块 �?本模�?
+�?  └── 组合绩效评估 (PORTFOLIO_PERFORMANCE_EVALUATION_001)
 └── 6.5 归因分析模块
     └── 组合归因分析 (PORTFOLIO_ATTRIBUTION_001)
 ```
 
 **职责边界**:
-- ✅ **负责**: 绩效指标计算、基准对比、可视化报告
-- ❌ **不负责**: 归因分析（归因分析模块负责）、风险预算（风险预算模块负责）
+- �?**负责**: 绩效指标计算、基准对比、可视化报告
+- �?**不负�?*: 归因分析（归因分析模块负责）、风险预算（风险预算模块负责�?
 
 ### 2.2 核心组件架构
 
@@ -170,7 +170,7 @@ graph TB
         J --> N[滚动指标]
     end
     
-    subgraph "可视化报告"
+    subgraph "可视化报�?
         F --> O[绩效报告生成]
         G --> O
         H --> O
@@ -185,23 +185,23 @@ graph TB
     end
 ```
 
-### 2.3 数据流设计
+### 2.3 数据流设�?
 
-**核心数据流**:
+**核心数据�?*:
 
 ```
-策略收益率序列 → pyfolio/QuantStats → 绩效指标计算
-                                            ↓
+策略收益率序�?�?pyfolio/QuantStats �?绩效指标计算
+                                            �?
                                     基准对比分析
-                                            ↓
+                                            �?
                                     滚动指标计算
-                                            ↓
-                                    可视化报告生成
+                                            �?
+                                    可视化报告生�?
 ```
 
 ---
 
-## 3. 技术实现
+## 3. 技术实�?
 
 ### 3.1 pyfolio集成（核心）
 
@@ -214,10 +214,10 @@ import numpy as np
 
 class PortfolioPerformanceEvaluator:
     """
-    组合绩效评估器
+    组合绩效评估�?
     
     索引: PORTFOLIO_PERF_001-M01
-    职责: 基于pyfolio实现专业级绩效评估
+    职责: 基于pyfolio实现专业级绩效评�?
     输入: 策略收益率、基准收益率、无风险利率
     输出: 绩效指标、风险指标、可视化报告
     """
@@ -234,8 +234,8 @@ class PortfolioPerformanceEvaluator:
         计算绩效指标
         
         Args:
-            returns: 策略收益率序列
-            benchmark_returns: 基准收益率序列
+            returns: 策略收益率序�?
+            benchmark_returns: 基准收益率序�?
             
         Returns:
             绩效指标字典
@@ -263,7 +263,7 @@ class PortfolioPerformanceEvaluator:
         计算风险指标
         
         Args:
-            returns: 策略收益率序列
+            returns: 策略收益率序�?
             
         Returns:
             风险指标字典
@@ -285,8 +285,8 @@ class PortfolioPerformanceEvaluator:
         计算Alpha和Beta
         
         Args:
-            returns: 策略收益率序列
-            benchmark_returns: 基准收益率序列
+            returns: 策略收益率序�?
+            benchmark_returns: 基准收益率序�?
             
         Returns:
             Alpha和Beta字典
@@ -314,16 +314,16 @@ class PortfolioPerformanceEvaluator:
         transactions: pd.DataFrame = None
     ):
         """
-        生成完整绩效报告（Tearsheet）
+        生成完整绩效报告（Tearsheet�?
         
         Args:
-            returns: 策略收益率序列
-            benchmark_returns: 基准收益率序列
+            returns: 策略收益率序�?
+            benchmark_returns: 基准收益率序�?
             positions: 持仓数据
             transactions: 交易数据
             
         Returns:
-            完整的绩效分析报告
+            完整的绩效分析报�?
         """
         pf.create_full_tear_sheet(
             returns,
@@ -342,10 +342,10 @@ import quantstats as qs
 
 class QuantStatsEvaluator:
     """
-    QuantStats绩效评估器
+    QuantStats绩效评估�?
     
     索引: PORTFOLIO_PERF_001-M02
-    职责: 使用QuantStats提供扩展的绩效评估功能
+    职责: 使用QuantStats提供扩展的绩效评估功�?
     """
     
     def calculate_extended_metrics(
@@ -357,8 +357,8 @@ class QuantStatsEvaluator:
         计算扩展绩效指标
         
         Args:
-            returns: 策略收益率序列
-            benchmark_returns: 基准收益率序列
+            returns: 策略收益率序�?
+            benchmark_returns: 基准收益率序�?
             
         Returns:
             扩展绩效指标字典
@@ -385,8 +385,8 @@ class QuantStatsEvaluator:
         生成HTML绩效报告
         
         Args:
-            returns: 策略收益率序列
-            benchmark_returns: 基准收益率序列
+            returns: 策略收益率序�?
+            benchmark_returns: 基准收益率序�?
             output_path: 输出文件路径
         """
         qs.reports.html(
@@ -408,7 +408,7 @@ def calculate_rolling_metrics(
     计算滚动绩效指标
     
     Args:
-        returns: 策略收益率序列
+        returns: 策略收益率序�?
         window: 滚动窗口（天数）
         
     Returns:
@@ -433,12 +433,12 @@ def calculate_rolling_metrics(
 
 ### 3.4 性能要求
 
-| 性能指标 | 目标值 | 说明 |
+| 性能指标 | 目标�?| 说明 |
 |---------|--------|------|
 | **指标计算时间** | <500ms | 单次计算 |
 | **报告生成时间** | <5s | 完整Tearsheet |
 | **内存占用** | <100MB | 单次分析 |
-| **并发支持** | 10 QPS | 支持多策略并行分析 |
+| **并发支持** | 10 QPS | 支持多策略并行分�?|
 
 ---
 
@@ -532,7 +532,7 @@ class PerformanceAPI:
         
         Args:
             strategy_id: 策略ID
-            start_date: 开始日期
+            start_date: 开始日�?
             end_date: 结束日期
             
         Returns:
@@ -552,7 +552,7 @@ class PerformanceAPI:
         
         Args:
             strategy_ids: 策略ID列表
-            start_date: 开始日期
+            start_date: 开始日�?
             end_date: 结束日期
             
         Returns:
@@ -565,26 +565,26 @@ class PerformanceAPI:
 
 ## 6. 实施路径
 
-### 6.1 Phase 1: 核心功能实现（1周）
+### 6.1 Phase 1: 核心功能实现�?周）
 
-| 任务 | 工时 | 交付物 |
+| 任务 | 工时 | 交付�?|
 |------|------|--------|
-| pyfolio集成 | 4h | 集成代码、单元测试 |
+| pyfolio集成 | 4h | 集成代码、单元测�?|
 | QuantStats集成 | 4h | 扩展功能 |
 | 指标计算模块 | 4h | 计算模块 |
 | 数据库表创建 | 2h | SQL脚本 |
 
-### 6.2 Phase 2: 功能增强（0.5周）
+### 6.2 Phase 2: 功能增强�?.5周）
 
-| 任务 | 工时 | 交付物 |
+| 任务 | 工时 | 交付�?|
 |------|------|--------|
 | 滚动指标计算 | 4h | 滚动分析模块 |
-| API接口开发 | 4h | REST API |
-| 可视化报告 | 4h | HTML报告生成 |
+| API接口开�?| 4h | REST API |
+| 可视化报�?| 4h | HTML报告生成 |
 
 ### 6.3 Phase 3: 测试与文档（0.5周）
 
-| 任务 | 工时 | 交付物 |
+| 任务 | 工时 | 交付�?|
 |------|------|--------|
 | 单元测试 | 4h | 测试代码 |
 | 集成测试 | 4h | 测试报告 |
@@ -596,15 +596,15 @@ class PerformanceAPI:
 
 ### 7.1 System_Manifest.md索引
 
-**索引位置**: Layer 6 - 组合优化层 - 绩效评估模块
+**索引位置**: Layer 6 - 组合优化�?- 绩效评估模块
 
 ### 7.2 模块职责边界
 
-**与组合归因分析边界**:
+**与组合归因分析边�?*:
 - 绩效评估负责计算绩效指标
 - 归因分析负责分解收益来源
 
-**与AI报告层边界**:
+**与AI报告层边�?*:
 - 绩效评估负责生成绩效数据
 - AI报告层负责生成自然语言报告
 
@@ -612,20 +612,20 @@ class PerformanceAPI:
 
 ## 8. 风险评估
 
-### 8.1 技术风险
+### 8.1 技术风�?
 
-| 风险项 | 风险等级 | 影响范围 | 缓解措施 |
+| 风险�?| 风险等级 | 影响范围 | 缓解措施 |
 |--------|---------|---------|---------|
-| pyfolio依赖冲突 | P2 | 集成失败 | 虚拟环境、版本锁定 |
-| 数据格式不兼容 | P1 | 计算错误 | 数据验证、格式转换 |
-| 性能瓶颈 | P2 | 响应慢 | 异步处理、缓存 |
+| pyfolio依赖冲突 | P2 | 集成失败 | 虚拟环境、版本锁�?|
+| 数据格式不兼�?| P1 | 计算错误 | 数据验证、格式转�?|
+| 性能瓶颈 | P2 | 响应�?| 异步处理、缓�?|
 
 ### 8.2 实施风险
 
-| 风险项 | 风险等级 | 影响范围 | 缓解措施 |
+| 风险�?| 风险等级 | 影响范围 | 缓解措施 |
 |--------|---------|---------|---------|
-| 开源项目API变更 | P2 | 集成失败 | 锁定版本、定期更新 |
-| 数据质量问题 | P1 | 计算错误 | 数据清洗、异常检测 |
+| 开源项目API变更 | P2 | 集成失败 | 锁定版本、定期更�?|
+| 数据质量问题 | P1 | 计算错误 | 数据清洗、异常检�?|
 
 ---
 
@@ -633,30 +633,30 @@ class PerformanceAPI:
 
 ### 9.1 测试策略
 
-| 测试类型 | 覆盖率目标 | 测试工具 |
+| 测试类型 | 覆盖率目�?| 测试工具 |
 |---------|-----------|---------|
-| 单元测试 | ≥80% | pytest |
-| 集成测试 | ≥70% | pytest + mock |
+| 单元测试 | �?0% | pytest |
+| 集成测试 | �?0% | pytest + mock |
 | 性能测试 | 关键路径 | pytest-benchmark |
 
 ### 9.2 验收标准
 
-| 验收项 | 标准 | 验证方法 |
+| 验收�?| 标准 | 验证方法 |
 |--------|------|---------|
-| 功能完整性 | 所有API正常工作 | 单元测试 |
+| 功能完整�?| 所有API正常工作 | 单元测试 |
 | 性能达标 | 指标计算<500ms | 性能测试 |
 | 报告质量 | 报告清晰完整 | 人工审查 |
 
 ---
 
-## 10. 参考资料
+## 10. 参考资�?
 
 ### 10.1 学术论文
 
 1. Sharpe, W. F. (1966). "Mutual Fund Performance". Journal of Business.
 2. Sortino, F. A., & Price, L. N. (1994). "Performance Measurement in a Downside Risk Framework". Journal of Investing.
 
-### 10.2 开源项目文档
+### 10.2 开源项目文�?
 
 1. pyfolio Documentation: https://pyfolio.ml4trading.io/
 2. QuantStats Documentation: https://github.com/ranaroussi/quantstats
@@ -669,15 +669,15 @@ class PerformanceAPI:
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active

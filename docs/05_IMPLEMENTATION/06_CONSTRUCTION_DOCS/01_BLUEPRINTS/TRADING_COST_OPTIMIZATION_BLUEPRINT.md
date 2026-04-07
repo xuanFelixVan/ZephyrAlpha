@@ -12,45 +12,45 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 5 交易成本层
+applicable_scope: Layer 5 交易成本�?
 compliance_level: 专业标准
-layer: "Layer 5 (交易成本层)"
+layer: "Layer 5 (交易成本�?"
 ---
 
 # 交易成本优化蓝图
 
 > **核心职责**: 使用Almgren-Chriss市场冲击模型优化交易执行
 > **职责边界**: 
-> - ✅ 本文档负责：交易成本优化、市场冲击建模、最优执行
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：交易成本优化、市场冲击建模、最优执�?
+> - �?本文档不负责：因子计算（由因子模块负责）
 ## 📚 相关文档
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 强依赖 | 提供成本分析数据 |
-| [市场冲击模型蓝图](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | 强依赖 | 提供市场冲击预测 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
+| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 强依�?| 提供成本分析数据 |
+| [市场冲击模型蓝图](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | 强依�?| 提供市场冲击预测 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依赖 | 成本感知再平衡 |
-| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
-| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依赖 | 订单路由优化 |
+| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依�?| 成本感知再平�?|
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依�?| 算法交易执行 |
+| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依�?| 订单路由优化 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
-| **CVXPY** | 1.4+ | 凸优化 | [官方文档](https://www.cvxpy.org/) |
+| **CVXPY** | 1.4+ | 凸优�?| [官方文档](https://www.cvxpy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -781,13 +781,13 @@ def test_integration_with_portfolio_optimizer():
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active
 ---
 
 ## 12. 文档治理
@@ -795,27 +795,27 @@ def test_integration_with_portfolio_optimizer():
 ### 12.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 5: 执行层
+#### Layer 5: 执行�?
 ##### 6.001. Trading Cost Optimization
 - **模块ID**: TRADING_COST_OPTIMIZATION_001
 - **蓝图文档**: TRADING_COST_OPTIMIZATION_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系�?
+- **状�?*: Active
 ```
 
 ### 12.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Trading Cost Optimization** | 全系统 | **核心模块** |
+| **Trading Cost Optimization** | 全系�?| **核心模块** |
 
 ### 12.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状�?*: Active

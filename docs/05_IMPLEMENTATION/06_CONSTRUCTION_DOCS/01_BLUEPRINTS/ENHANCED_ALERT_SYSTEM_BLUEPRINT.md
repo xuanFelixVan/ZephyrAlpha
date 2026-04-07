@@ -6,39 +6,39 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 监控层
+applicable_scope: Layer 9 监控�?
 compliance_level: 专业标准
 responsibility:
   - 增强告警系统
   - 智能告警
   - 告警聚合
   - 告警分级
-layer: "Layer 9 (监控层)"
+layer: "Layer 9 (监控�?"
 ---
 
 # ENHANCED ALERT SYSTEM BLUEPRINT
 
 > **核心职责**: Enhanced Alert System蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Enhanced Alert System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Enhanced Alert System蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
-﻿---
-module_id: ENHANCED_ALERT_SYSTEM_BLUEPRINT_001
+�?--
+module_id: ENHANCED_ALERT_SYSTEM__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
+owner: 个人开发�?
 standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
-layer: "Layer 9 (监控层)"
+layer: "Layer 9 (监控�?"
 ---
-﻿# 实时告警系统增强蓝图
+�? 实时告警系统增强蓝图
 
-> **核心定位**: 实时告警系统增强蓝图的核心功能实现
+> **核心定位**: 实时告警系统增强蓝图的核心功能实�?
 
 
 > **模块ID**: `ENHANCED_ALERT_SYSTEM_001`
@@ -48,13 +48,13 @@ layer: "Layer 9 (监控层)"
 > **优先?*: P1（核心）
 > **预期收益**: 提高告警覆盖率，减少告警噪音
 
-> **职责说明**: 本蓝图是全系统统一告警平台，负责接收来自各个系统的告警（包括数据质量监控系统、风险控制系统、执行系统、舆情分析系统等），提供告警聚合、告警抑制、告警路由、多渠道分发等功能?
+> **职责说明**: 本蓝图是全系统统一告警平台，负责接收来自各个系统的告警（包括数据质量监控系统、风险控制系统、执行系统、舆情分析系统等），提供告警聚合、告警抑制、告警路由、多渠道分发等功�?
 ## 核心定位
 
 > 核心职责: Enhanced Alert System蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Enhanced Alert System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：Enhanced Alert System蓝图设计相关内容
+> - �?本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行�?
 
 ## 一、设计背景与目标
 
@@ -562,28 +562,28 @@ class MultiChannelNotifier:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [系统增强蓝图](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) | SYSTEM_ENHANCEMENT_001 | 强依赖 | 提供系统增强数据 |
-| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依赖 | 提供质量评分数据 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依赖 | 提供数据质量指标 |
+| [系统增强蓝图](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) | SYSTEM_ENHANCEMENT_001 | 强依�?| 提供系统增强数据 |
+| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依�?| 提供质量评分数据 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依�?| 提供数据质量指标 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 强依赖 | 自动化数据修复 |
-| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依赖 | 监控仪表板增强 |
-| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依赖 | 质量报告自动化 |
+| [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 强依�?| 自动化数据修�?|
+| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依�?| 监控仪表板增�?|
+| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依�?| 质量报告自动�?|
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **FastAPI** | 0.100+ | Web框架 | [官方文档](https://fastapi.tiangolo.com/) |
 | **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
-| **PostgreSQL** | 15+ | 数据库 | [官方文档](https://www.postgresql.org/) |
+| **PostgreSQL** | 15+ | 数据�?| [官方文档](https://www.postgresql.org/) |
 | **SMTP** | - | 邮件通知 | [RFC标准](https://tools.ietf.org/html/rfc5321) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -602,7 +602,7 @@ graph LR
 
 ---
 
-## 六、文档治理
+## 六、文档治�?
 **版本历史**:
 - v1.0.0 (2026-04-02): 初始版本，完成实时告警系统增强设?
 ---
@@ -615,13 +615,13 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Enhanced Alert System
 - **模块ID**: ENHANCED_ALERT_SYSTEM_001
 - **蓝图文档**: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: 全系统统一告警平台
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -632,13 +632,13 @@ graph LR
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active
 
 
 ---
@@ -647,7 +647,7 @@ graph LR
 
 ### 变更记录
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 

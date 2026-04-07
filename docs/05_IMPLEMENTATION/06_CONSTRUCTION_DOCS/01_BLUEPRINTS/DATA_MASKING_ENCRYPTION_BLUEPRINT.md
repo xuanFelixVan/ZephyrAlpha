@@ -1,109 +1,109 @@
 ---
-module_id: DATA_MASKING_ENCRYPTION_BLUEPRINT_001
+module_id: DATA_MASKING_ENCRYPTION__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据预处理层
 compliance_level: 专业标准
 priority: P0
 layer: "Layer 1 (数据预处理层)"
-responsibility: 数据脱敏与加密服务
+responsibility: 数据脱敏与加密服�?
 ---
 
-# 数据脱敏与加密服务蓝图
+# 数据脱敏与加密服务蓝�?
 
-> **核心职责**: 敏感数据识别、脱敏处理、加密存储、访问审计
+> **核心职责**: 敏感数据识别、脱敏处理、加密存储、访问审�?
 > **职责边界**: 
-> - ✅ 本文档负责：PII数据识别、数据脱敏、数据加密、访问审计
-> - ❌ 本文档不负责：数据传输加密、网络安全、身份认证
+> - �?本文档负责：PII数据识别、数据脱敏、数据加密、访问审�?
+> - �?本文档不负责：数据传输加密、网络安全、身份认�?
 
-**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状态**: Active
+**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状�?*: Active
 
 ---
 
 ## 核心定位
 
-负责数据脱敏和加密，提供敏感数据的脱敏处理和加密存储功能，保障数据安全合规。
+负责数据脱敏和加密，提供敏感数据的脱敏处理和加密存储功能，保障数据安全合规�?
 
-## 📋 一、模块概述
+## 📋 一、模块概�?
 
 ### 1.1 专业机构标准要求
 
 | 机构类型 | 安全要求 | 实施标准 |
 |---------|---------|---------|
-| **桥水基金** | 数据分类分级、访问控制 | ISO 27001 |
-| **文艺复兴科技** | 敏感数据加密、审计追踪 | SOC 2 Type II |
-| **Two Sigma** | PII数据保护、合规审计 | GDPR/CCPA |
-| **Citadel** | 数据脱敏、加密存储 | PCI DSS |
+| **桥水基金** | 数据分类分级、访问控�?| ISO 27001 |
+| **文艺复兴科技** | 敏感数据加密、审计追�?| SOC 2 Type II |
+| **Two Sigma** | PII数据保护、合规审�?| GDPR/CCPA |
+| **Citadel** | 数据脱敏、加密存�?| PCI DSS |
 
 ### 1.2 核心功能矩阵
 
-| 功能模块 | 开源方案 | 成熟度 | 个人适用性 | 推荐指数 |
+| 功能模块 | 开源方�?| 成熟�?| 个人适用�?| 推荐指数 |
 |---------|---------|--------|-----------|---------|
-| **PII识别** | Microsoft Presidio | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **数据脱敏** | Presidio Anonymizer | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **数据加密** | cryptography (Python) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **访问审计** | 自研 + SQLite | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **PII识别** | Microsoft Presidio | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| **数据脱敏** | Presidio Anonymizer | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| **数据加密** | cryptography (Python) | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| **访问审计** | 自研 + SQLite | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
 | **密钥管理** | HashiCorp Vault (轻量) | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
-## 🏗️ 二、系统架构设计
+## 🏗�?二、系统架构设�?
 
-### 2.1 整体架构图
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    数据脱敏与加密服务架构                                  │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                        数据接入层                                  │  │
-│  │  • 数据源接入  • 格式识别  • 元数据提取                           │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    PII识别引擎 (Presidio)                         │  │
-│  │  • 姓名/身份证/电话/邮箱  • 银行卡/地址/IP  • 自定义规则           │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                      脱敏处理引擎                                  │  │
-│  │  • 替换脱敏  • 掩码脱敏  • 哈希脱敏  • 加密脱敏                   │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                      加密存储引擎                                  │  │
-│  │  • AES-256加密  • 密钥管理  • 安全存储                            │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                      访问审计引擎                                  │  │
-│  │  • 访问日志  • 操作追踪  • 异常告警                               │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### 2.2 数据流架构
+### 2.1 整体架构�?
 
 ```
-原始数据 → PII扫描 → 分类标记 → 脱敏策略 → 加密存储 → 审计日志
-    │          │          │          │          │          │
-    └──────────┴──────────┴──────────┴──────────┴──────────┘
+┌─────────────────────────────────────────────────────────────────────────�?
+�?                   数据脱敏与加密服务架�?                                 �?
+├─────────────────────────────────────────────────────────────────────────�?
+�?                                                                        �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                       数据接入�?                                 �? �?
+�? �? �?数据源接�? �?格式识别  �?元数据提�?                          �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   PII识别引擎 (Presidio)                         �? �?
+�? �? �?姓名/身份�?电话/邮箱  �?银行�?地址/IP  �?自定义规�?          �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                     脱敏处理引擎                                  �? �?
+�? �? �?替换脱敏  �?掩码脱敏  �?哈希脱敏  �?加密脱敏                   �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                     加密存储引擎                                  �? �?
+�? �? �?AES-256加密  �?密钥管理  �?安全存储                            �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                     访问审计引擎                                  �? �?
+�? �? �?访问日志  �?操作追踪  �?异常告警                               �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                                                                        �?
+└─────────────────────────────────────────────────────────────────────────�?
+```
+
+### 2.2 数据流架�?
+
+```
+原始数据 �?PII扫描 �?分类标记 �?脱敏策略 �?加密存储 �?审计日志
+    �?         �?         �?         �?         �?         �?
+    └──────────┴──────────┴──────────┴──────────┴──────────�?
                           完整血缘追踪链
 ```
 
 ---
 
-## 💻 三、核心实现代码
+## 💻 三、核心实现代�?
 
 ### 3.1 PII识别引擎
 
@@ -119,7 +119,7 @@ import re
 
 
 class PIIIdentifier:
-    """PII数据识别器"""
+    """PII数据识别�?""
     
     SUPPORTED_PII_TYPES = [
         "PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS", "CREDIT_CARD",
@@ -193,34 +193,34 @@ class PIIIdentifier:
 
 
 class DataMasker:
-    """数据脱敏处理器"""
+    """数据脱敏处理�?""
     
     MASKING_STRATEGIES = {
-        "replace": "使用固定值替换",
-        "mask": "字符掩码（如：138****1234）",
+        "replace": "使用固定值替�?,
+        "mask": "字符掩码（如�?38****1234�?,
         "hash": "哈希脱敏（不可逆）",
         "encrypt": "加密脱敏（可逆）",
         "redact": "完全删除",
-        "fake": "使用假数据替换",
+        "fake": "使用假数据替�?,
     }
     
     def __init__(self):
         self.anonymizer = AnonymizerEngine()
     
     def mask_phone(self, phone: str) -> str:
-        """电话号码脱敏：138****1234"""
+        """电话号码脱敏�?38****1234"""
         if len(phone) == 11:
             return f"{phone[:3]}****{phone[7:]}"
         return phone[:3] + "****" + phone[-4:] if len(phone) > 7 else "****"
     
     def mask_id_card(self, id_card: str) -> str:
-        """身份证号脱敏：110***********1234"""
+        """身份证号脱敏�?10***********1234"""
         if len(id_card) == 18:
             return f"{id_card[:3]}***********{id_card[14:]}"
         return id_card[:3] + "****" + id_card[-4:]
     
     def mask_bank_card(self, card: str) -> str:
-        """银行卡号脱敏：6222 **** **** 1234"""
+        """银行卡号脱敏�?222 **** **** 1234"""
         if len(card) >= 16:
             return f"{card[:4]} **** **** {card[-4:]}"
         return "****"
@@ -234,7 +234,7 @@ class DataMasker:
         return "***"
     
     def mask_name(self, name: str) -> str:
-        """姓名脱敏：张*明"""
+        """姓名脱敏：张*�?""
         if len(name) <= 1:
             return "*"
         elif len(name) == 2:
@@ -275,7 +275,7 @@ class DataMasker:
         pii_list: List[Dict],
         default_strategy: str = "mask"
     ) -> str:
-        """对文本进行脱敏处理"""
+        """对文本进行脱敏处�?""
         sorted_pii = sorted(pii_list, key=lambda x: x["start"], reverse=True)
         
         result = text
@@ -317,7 +317,7 @@ class EncryptionEngine:
     
     @staticmethod
     def generate_key(password: str, salt: Optional[bytes] = None) -> bytes:
-        """从密码生成加密密钥"""
+        """从密码生成加密密�?""
         if salt is None:
             salt = os.urandom(16)
         
@@ -333,13 +333,13 @@ class EncryptionEngine:
         return key, salt
     
     def encrypt(self, data: str) -> str:
-        """加密字符串"""
+        """加密字符�?""
         if isinstance(data, str):
             data = data.encode()
         return self.fernet.encrypt(data).decode()
     
     def decrypt(self, encrypted_data: str) -> str:
-        """解密字符串"""
+        """解密字符�?""
         if isinstance(encrypted_data, str):
             encrypted_data = encrypted_data.encode()
         return self.fernet.decrypt(encrypted_data).decode()
@@ -376,7 +376,7 @@ class EncryptionEngine:
 
 
 class FieldLevelEncryption:
-    """字段级加密"""
+    """字段级加�?""
     
     SENSITIVE_FIELDS = [
         "id_card", "phone", "email", "bank_card",
@@ -614,7 +614,7 @@ class AccessAuditEngine:
             }
     
     def detect_anomalies(self, hours: int = 24) -> List[Dict[str, Any]]:
-        """检测异常访问行为"""
+        """检测异常访问行�?""
         start_time = datetime.now().replace(
             hour=datetime.now().hour - hours
         ).isoformat()
@@ -666,7 +666,7 @@ class AccessAuditEngine:
 
 ```python
 """
-密钥管理服务 - 轻量级实现
+密钥管理服务 - 轻量级实�?
 """
 import os
 import json
@@ -687,14 +687,14 @@ class KeyManagementService:
         self.metadata = self._load_metadata()
     
     def _load_metadata(self) -> Dict:
-        """加载密钥元数据"""
+        """加载密钥元数�?""
         if self.key_metadata_file.exists():
             with open(self.key_metadata_file, 'r') as f:
                 return json.load(f)
         return {"keys": {}}
     
     def _save_metadata(self):
-        """保存密钥元数据"""
+        """保存密钥元数�?""
         with open(self.key_metadata_file, 'w') as f:
             json.dump(self.metadata, f, indent=2)
     
@@ -704,7 +704,7 @@ class KeyManagementService:
         key_type: str = "data_encryption",
         expires_days: int = 365
     ) -> bytes:
-        """生成新密钥"""
+        """生成新密�?""
         key = Fernet.generate_key()
         
         key_file = self.key_store_path / f"{key_id}.key"
@@ -767,7 +767,7 @@ class KeyManagementService:
         return new_key
     
     def list_keys(self) -> Dict[str, Dict]:
-        """列出所有密钥"""
+        """列出所有密�?""
         return self.metadata["keys"]
     
     def revoke_key(self, key_id: str):
@@ -780,7 +780,7 @@ class KeyManagementService:
 
 ---
 
-## 🚀 四、部署配置
+## 🚀 四、部署配�?
 
 ### 4.1 Docker Compose配置
 
@@ -853,9 +853,9 @@ data_masking:
 
 ---
 
-## 📊 五、使用示例
+## 📊 五、使用示�?
 
-### 5.1 PII扫描与脱敏
+### 5.1 PII扫描与脱�?
 
 ```python
 from data_masking import PIIIdentifier, DataMasker
@@ -863,13 +863,13 @@ from data_masking import PIIIdentifier, DataMasker
 identifier = PIIIdentifier(language="en")
 masker = DataMasker()
 
-text = "张三的身份证号是110101199001011234，手机号是13812345678"
+text = "张三的身份证号是110101199001011234，手机号�?3812345678"
 
 pii_list = identifier.scan(text)
 print(f"发现PII: {pii_list}")
 
 masked_text = masker.anonymize_text(text, pii_list)
-print(f"脱敏后: {masked_text}")
+print(f"脱敏�? {masked_text}")
 ```
 
 ### 5.2 数据加密
@@ -880,10 +880,10 @@ from data_masking import EncryptionEngine, FieldLevelEncryption
 engine = EncryptionEngine()
 
 encrypted = engine.encrypt("敏感数据")
-print(f"加密后: {encrypted}")
+print(f"加密�? {encrypted}")
 
 decrypted = engine.decrypt(encrypted)
-print(f"解密后: {decrypted}")
+print(f"解密�? {decrypted}")
 
 field_enc = FieldLevelEncryption(engine)
 record = {
@@ -919,7 +919,7 @@ logs = audit.query_logs(user_id="user_001", limit=10)
 print(f"访问日志: {logs}")
 
 anomalies = audit.detect_anomalies(hours=24)
-print(f"异常检测: {anomalies}")
+print(f"异常检�? {anomalies}")
 ```
 
 ---
@@ -928,81 +928,81 @@ print(f"异常检测: {anomalies}")
 
 ### 6.1 性能基准
 
-| 操作 | 数据量 | 耗时 | 吞吐量 |
+| 操作 | 数据�?| 耗时 | 吞吐�?|
 |------|--------|------|--------|
 | PII扫描 | 1MB文本 | 50ms | 20MB/s |
-| 数据脱敏 | 1000条记录 | 100ms | 10K条/s |
+| 数据脱敏 | 1000条记�?| 100ms | 10K�?s |
 | 数据加密 | 1MB数据 | 30ms | 33MB/s |
 | 数据解密 | 1MB数据 | 30ms | 33MB/s |
-| 审计日志写入 | 1000条 | 50ms | 20K条/s |
+| 审计日志写入 | 1000�?| 50ms | 20K�?s |
 
 ### 6.2 资源占用
 
-| 资源 | 最小配置 | 推荐配置 |
+| 资源 | 最小配�?| 推荐配置 |
 |------|---------|---------|
-| CPU | 1核 | 2核 |
+| CPU | 1�?| 2�?|
 | 内存 | 512MB | 1GB |
 | 存储 | 1GB | 5GB |
 
 ---
 
-## 🔒 七、安全最佳实践
+## 🔒 七、安全最佳实�?
 
 ### 7.1 密钥管理
 
-1. **定期轮换**: 每90天轮换一次加密密钥
-2. **安全存储**: 密钥文件权限设置为600
+1. **定期轮换**: �?0天轮换一次加密密�?
+2. **安全存储**: 密钥文件权限设置�?00
 3. **备份策略**: 加密备份密钥文件
 4. **访问控制**: 限制密钥访问权限
 
 ### 7.2 审计日志
 
-1. **完整记录**: 记录所有敏感数据访问
-2. **防篡改**: 使用只追加存储
-3. **定期分析**: 每日检测异常行为
-4. **长期保存**: 至少保存1年
+1. **完整记录**: 记录所有敏感数据访�?
+2. **防篡�?*: 使用只追加存�?
+3. **定期分析**: 每日检测异常行�?
+4. **长期保存**: 至少保存1�?
 
 ### 7.3 合规要求
 
 | 法规 | 要求 | 实现方式 |
 |------|------|---------|
 | GDPR | 数据最小化 | PII识别+脱敏 |
-| CCPA | 消费者隐私 | 访问审计 |
-| PCI DSS | 卡数据保护 | 加密存储 |
-| 等保2.0 | 数据安全 | 全功能实现 |
+| CCPA | 消费者隐�?| 访问审计 |
+| PCI DSS | 卡数据保�?| 加密存储 |
+| 等保2.0 | 数据安全 | 全功能实�?|
 
 ---
 
-## 📋 八、实施路径
+## 📋 八、实施路�?
 
-### Phase 1: 基础功能（1周）
+### Phase 1: 基础功能�?周）
 
 - [x] PII识别引擎部署
 - [x] 数据脱敏功能实现
 - [x] 基础加密功能
 
-### Phase 2: 完善功能（1周）
+### Phase 2: 完善功能�?周）
 
 - [x] 访问审计系统
 - [x] 密钥管理服务
-- [x] 异常检测功能
+- [x] 异常检测功�?
 
-### Phase 3: 集成优化（1周）
+### Phase 3: 集成优化�?周）
 
-- [x] 与数据管道集成
+- [x] 与数据管道集�?
 - [x] 性能优化
 - [x] 监控告警
 
 ---
 
-## 📚 九、参考资源
+## 📚 九、参考资�?
 
-### 9.1 开源项目
+### 9.1 开源项�?
 
-| 项目 | 地址 | 用途 |
+| 项目 | 地址 | 用�?|
 |------|------|------|
-| Presidio | https://github.com/microsoft/presidio | PII识别与脱敏 |
-| cryptography | https://github.com/pyca/cryptography | 加密库 |
+| Presidio | https://github.com/microsoft/presidio | PII识别与脱�?|
+| cryptography | https://github.com/pyca/cryptography | 加密�?|
 | HashiCorp Vault | https://github.com/hashicorp/vault | 密钥管理 |
 
 ### 9.2 相关文档
@@ -1013,11 +1013,11 @@ print(f"异常检测: {anomalies}")
 
 ---
 
-## 📝 十、变更历史
+## 📝 十、变更历�?
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

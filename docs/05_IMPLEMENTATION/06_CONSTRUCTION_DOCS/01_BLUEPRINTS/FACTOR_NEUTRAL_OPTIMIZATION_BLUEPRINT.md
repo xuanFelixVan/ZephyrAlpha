@@ -6,17 +6,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 responsibility:
-  - 因子中性优化
+  - 因子中性优�?
   - 因子暴露约束
-  - 行业中性策略
+  - 行业中性策�?
   - 因子风险控制
 ---
 
-# 因子中性优化蓝图
+# 因子中性优化蓝�?
 
 > **核心定位**: 因子中性优化蓝图的核心功能实现
 
@@ -25,11 +25,11 @@ responsibility:
 > **创建日期**: 2026-04-07
 > **核心定位**: 实现因子暴露约束和中性化优化，支持行业中性、风格因子中性、市场中性等策略
 > **索引**: `FACTOR_NEUTRAL_OPTIMIZATION_001`
-> **开发周期**: 1.5周
+> **开发周�?*: 1.5�?
 
 ## 核心定位
 
-负责Factor Neutral Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Factor Neutral Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
 ## 2. 功能设计
 
@@ -42,7 +42,7 @@ class FactorExposureConstraint:
     """
     因子暴露约束
     
-    开源依赖: Riskfolio-Lib
+    开源依�? Riskfolio-Lib
     """
     
     def set_factor_bounds(
@@ -52,7 +52,7 @@ class FactorExposureConstraint:
         upper_bound: float
     ) -> None:
         """
-        设置因子暴露上下限
+        设置因子暴露上下�?
         
         参数:
             factor_name: 因子名称
@@ -67,7 +67,7 @@ class FactorExposureConstraint:
         tolerance: float = 0.01
     ) -> None:
         """
-        设置因子中性约束
+        设置因子中性约�?
         
         参数:
             factor_names: 需要中性的因子列表
@@ -76,14 +76,14 @@ class FactorExposureConstraint:
         pass
 ```
 
-#### 2.1.2 行业中性优化
+#### 2.1.2 行业中性优�?
 
 ```python
 class SectorNeutralOptimizer:
     """
     行业中性优化器
     
-    确保组合在各行业的暴露与基准一致
+    确保组合在各行业的暴露与基准一�?
     """
     
     def optimize_sector_neutral(
@@ -95,7 +95,7 @@ class SectorNeutralOptimizer:
         tolerance: float = 0.01
     ) -> Dict:
         """
-        行业中性优化
+        行业中性优�?
         
         参数:
             expected_returns: 预期收益
@@ -110,7 +110,7 @@ class SectorNeutralOptimizer:
         pass
 ```
 
-#### 2.1.3 风格因子中性
+#### 2.1.3 风格因子中�?
 
 ```python
 class StyleFactorNeutralOptimizer:
@@ -118,12 +118,12 @@ class StyleFactorNeutralOptimizer:
     风格因子中性优化器
     
     常见风格因子:
-    - Size (市值)
-    - Value (价值)
+    - Size (市�?
+    - Value (价�?
     - Momentum (动量)
     - Quality (质量)
-    - Volatility (波动率)
-    - Liquidity (流动性)
+    - Volatility (波动�?
+    - Liquidity (流动�?
     """
     
     def optimize_style_neutral(
@@ -134,7 +134,7 @@ class StyleFactorNeutralOptimizer:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        风格因子中性优化
+        风格因子中性优�?
         
         参数:
             expected_returns: 预期收益
@@ -148,7 +148,7 @@ class StyleFactorNeutralOptimizer:
         pass
 ```
 
-#### 2.1.4 市场中性
+#### 2.1.4 市场中�?
 
 ```python
 class MarketNeutralOptimizer:
@@ -167,13 +167,13 @@ class MarketNeutralOptimizer:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        市场中性优化
+        市场中性优�?
         
         参数:
             expected_returns: 预期收益
             beta_loadings: Beta系数
-            target_beta: 目标Beta（默认0）
-            beta_tolerance: Beta容忍度
+            target_beta: 目标Beta（默�?�?
+            beta_tolerance: Beta容忍�?
             constraints: 其他约束
             
         返回:
@@ -187,9 +187,9 @@ class MarketNeutralOptimizer:
 ```python
 class TrackingErrorController:
     """
-    跟踪误差控制器
+    跟踪误差控制�?
     
-    开源依赖: Riskfolio-Lib跟踪误差约束
+    开源依�? Riskfolio-Lib跟踪误差约束
     """
     
     def set_tracking_error_limit(
@@ -203,8 +203,8 @@ class TrackingErrorController:
         
         参数:
             benchmark_weights: 基准权重
-            covariance_matrix: 协方差矩阵
-            max_te: 最大跟踪误差（年化）
+            covariance_matrix: 协方差矩�?
+            max_te: 最大跟踪误差（年化�?
         """
         pass
     
@@ -223,7 +223,7 @@ class TrackingErrorController:
 ```
 
 ---
-## 3. 技术规格
+## 3. 技术规�?
 
 ### 3.1 接口设计
 
@@ -232,7 +232,7 @@ class FactorNeutralOptimizer:
     """
     因子中性优化器
     
-    主要接口类
+    主要接口�?
     """
     
     def __init__(
@@ -241,7 +241,7 @@ class FactorNeutralOptimizer:
         risk_model: Optional[str] = None
     ):
         """
-        初始化
+        初始�?
         
         参数:
             factor_model: 因子模型 ('barra', 'custom')
@@ -262,7 +262,7 @@ class FactorNeutralOptimizer:
         constraints: Dict = None
     ) -> Dict:
         """
-        执行因子中性优化
+        执行因子中性优�?
         
         参数:
             expected_returns: 预期收益
@@ -301,7 +301,7 @@ class FactorConstraint:
 
 @dataclass
 class FactorNeutralResult:
-    """因子中性优化结果"""
+    """因子中性优化结�?""
     weights: np.ndarray
     factor_exposures: pd.Series
     tracking_error: float
@@ -335,7 +335,7 @@ factor_neutral_optimization:
       - Utilities
       - RealEstate
       
-  # 中性约束
+  # 中性约�?
   neutrality:
     market_beta:
       target: 0.0
@@ -357,32 +357,32 @@ factor_neutral_optimization:
 
 ## 4. 实现路径
 
-### 4.1 开源集成方案
+### 4.1 开源集成方�?
 
 ```python
-# 基于Riskfolio-Lib的实现
+# 基于Riskfolio-Lib的实�?
 > **核心职责**: Factor Neutral Optimization蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Factor Neutral Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Factor Neutral Optimization蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
 
 ## 核心职责
 
-因子中性优化，负责因子风险对冲的组合优化
+因子中性优化，负责因子风险对冲的组合优�?
 
 
 ---
 
 ## 📋 概述
 
-本文档定义了FACTOR NEUTRAL OPTIMIZATION的核心功能和技术实现。
+本文档定义了FACTOR NEUTRAL OPTIMIZATION的核心功能和技术实现�?
 
 import riskfolio as rp
 
 class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
     """
-    Riskfolio-Lib适配器
+    Riskfolio-Lib适配�?
     """
     
     def optimize(self, expected_returns, factor_loadings, **kwargs):
@@ -408,14 +408,14 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
 ### 4.2 开发里程碑
 
-| 阶段 | 任务 | 工作量 | 依赖 |
+| 阶段 | 任务 | 工作�?| 依赖 |
 |------|------|--------|------|
-| 第1-2天 | 因子暴露约束实现 | 16h | - |
-| 第3-4天 | 行业中性优化实现 | 16h | 第1-2天 |
-| 第5-6天 | 风格因子中性实现 | 16h | 第1-2天 |
-| 第7天 | 市场中性实现 | 8h | 第3-6天 |
-| 第8天 | 跟踪误差控制实现 | 8h | 第7天 |
-| 第9-10天 | 集成测试和文档 | 16h | 第8天 |
+| �?-2�?| 因子暴露约束实现 | 16h | - |
+| �?-4�?| 行业中性优化实�?| 16h | �?-2�?|
+| �?-6�?| 风格因子中性实�?| 16h | �?-2�?|
+| �?�?| 市场中性实�?| 8h | �?-6�?|
+| �?�?| 跟踪误差控制实现 | 8h | �?�?|
+| �?-10�?| 集成测试和文�?| 16h | �?�?|
 
 ---
 
@@ -431,15 +431,15 @@ class TestFactorNeutralOptimizer:
         pass
     
     def test_sector_neutral(self):
-        """测试行业中性"""
+        """测试行业中�?""
         pass
     
     def test_style_neutral(self):
-        """测试风格因子中性"""
+        """测试风格因子中�?""
         pass
     
     def test_market_neutral(self):
-        """测试市场中性"""
+        """测试市场中�?""
         pass
     
     def test_tracking_error(self):
@@ -451,20 +451,20 @@ class TestFactorNeutralOptimizer:
 
 ## 6. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
 
 ## 7. 文档治理
 
 ### 7.1 文档索引
 
 **本文档在系统中的位置**:
-- **所属层级**: Layer 6 (组合优化层)
+- **所属层�?*: Layer 6 (组合优化�?
 - **模块索引**: 001
 - **模块名称**: FACTOR_NEUTRAL_OPTIMIZATION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -478,9 +478,9 @@ class TestFactorNeutralOptimizer:
 
 **文档维护**:
 - **责任模块**: FACTOR_NEUTRAL_OPTIMIZATION
-- **维护周期**: 每季度审查
-- **变更流程**: 提交变更申请 → 技术评审 → 更新文档
+- **维护周期**: 每季度审�?
+- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

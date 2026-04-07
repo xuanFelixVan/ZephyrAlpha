@@ -6,73 +6,73 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
   - 数据目录
-  - 元数据管理
+  - 元数据管�?
   - 数据发现
-  - 数据血缘
-layer: "Layer 1 (数据层)"
+  - 数据血�?
+layer: "Layer 1 (数据�?"
 ---
 
 # DATA CATALOG BLUEPRINT
 
 > **核心职责**: Data Catalog蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Data Catalog蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Data Catalog蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
-﻿---
+�?--
 module_id: DATA_CATALOG_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
+owner: 个人开发�?
 responsibility:
   - 数据质量
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
 layer: "Layer 1 (数据源层)"
-﻿# 数据目录/元数据管理平台蓝图
+�? 数据目录/元数据管理平台蓝�?
 
 > **核心定位**: 数据目录/元数据管理平台蓝图的核心功能实现
 
 
 > **模块ID**: `DATA_CATALOG_001`
-> **实施周期**: Week 5-6（2周）
-> **优先级**: P0（核心）
-> **预期收益**: 数据资产可发现性提升100%，元数据管理效率提升80%
+> **实施周期**: Week 5-6�?周）
+> **优先�?*: P0（核心）
+> **预期收益**: 数据资产可发现性提�?00%，元数据管理效率提升80%
 
 ## 核心定位
 
-主导DATA CATALOG的设计与实现，基于Delta Lake技术，实现核心功能，确保数据质量合规。
+主导DATA CATALOG的设计与实现，基于Delta Lake技术，实现核心功能，确保数据质量合规�?
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
+### 1.1 业务需�?
 
 **当前痛点**:
-- 数据资产分散，无法快速找到所需数据表
+- 数据资产分散，无法快速找到所需数据�?
 - 缺少统一的元数据管理，表描述、字段说明不完整
-- 数据血缘关系不清晰，难以理解数据来源
-- 敏感数据缺乏标记，存在合规风险
+- 数据血缘关系不清晰，难以理解数据来�?
+- 敏感数据缺乏标记，存在合规风�?
 
 **业务目标**:
 - 建立统一的数据资产目录，支持快速搜索和发现
-- 完善元数据管理，包括表描述、字段说明、所有者信息
-- 集成数据血缘可视化，展示列级血缘关系
+- 完善元数据管理，包括表描述、字段说明、所有者信�?
+- 集成数据血缘可视化，展示列级血缘关�?
 - 实现数据治理功能，包括敏感数据标记和生命周期管理
 
-### 1.2 技术目标
+### 1.2 技术目�?
 
-| 指标 | 目标值 | 说明 |
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **数据资产覆盖率** | 100% | 所有数据表都被编目 |
-| **元数据完整率** | ≥95% | 95%以上的表有完整元数据 |
-| **搜索响应时间** | <2秒 | 数据搜索响应时间 |
+| **数据资产覆盖�?* | 100% | 所有数据表都被编目 |
+| **元数据完整率** | �?5% | 95%以上的表有完整元数据 |
+| **搜索响应时间** | <2�?| 数据搜索响应时间 |
 | **血缘可视化** | 支持 | 列级血缘关系可视化 |
 
 ---
@@ -82,28 +82,28 @@ layer: "Layer 1 (数据源层)"
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接信息 |
-| [数据安全合规蓝图](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依赖 | 提供敏感数据分类标准 |
+| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依�?| 提供数据源连接信�?|
+| [数据安全合规蓝图](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依�?| 提供敏感数据分类标准 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据血缘追踪蓝图](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | 强依赖 | 提供血缘追踪元数据 |
-| [数据可观测性蓝图](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 强依赖 | 提供数据资产监控 |
-| [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 提供治理策略执行 |
-| [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | 中依赖 | 提供生命周期元数据 |
+| [数据血缘追踪蓝图](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | 强依�?| 提供血缘追踪元数据 |
+| [数据可观测性蓝图](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 强依�?| 提供数据资产监控 |
+| [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依�?| 提供治理策略执行 |
+| [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | 中依�?| 提供生命周期元数�?|
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **OpenMetadata** | 1.2+ | 元数据管理 | [官方文档](https://docs.open-metadata.org/) |
-| **Apache Atlas** | 2.3+ | 数据血缘 | [官方文档](https://atlas.apache.org/) |
+| **OpenMetadata** | 1.2+ | 元数据管�?| [官方文档](https://docs.open-metadata.org/) |
+| **Apache Atlas** | 2.3+ | 数据血�?| [官方文档](https://atlas.apache.org/) |
 | **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
 | **Neo4j** | 5.0+ | 图数据库 | [官方文档](https://neo4j.com/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -122,68 +122,68 @@ graph LR
 
 ---
 
-## 二、系统架构设计
+## 二、系统架构设�?
 
-### 2.1 整体架构图
+### 2.1 整体架构�?
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                数据目录/元数据管理平台架构                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           元数据采集层 (Metadata Collection)         │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │数据库采集   │ │文件系统采集 │ │API采集      │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           元数据存储层 (Metadata Storage)            │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │元数据存储   │ │血缘图谱存储 │ │搜索索引     │   │   │
-│  │  │(MySQL)      │ │(Neo4j)      │ │(Elasticsearch)│  │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           元数据服务层 (Metadata Service)            │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │搜索服务     │ │血缘服务     │ │治理服务     │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           用户界面层 (User Interface)                │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │数据发现     │ │血缘可视化   │ │治理仪表板   │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────�?
+�?               数据目录/元数据管理平台架�?                     �?
+├─────────────────────────────────────────────────────────────�?
+�?                                                            �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?          元数据采集层 (Metadata Collection)         �?  �?
+�? �? ┌─────────────�?┌─────────────�?┌─────────────�?  �?  �?
+�? �? │数据库采集   �?│文件系统采�?�?│API采集      �?  �?  �?
+�? �? └─────────────�?└─────────────�?└─────────────�?  �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?          元数据存储层 (Metadata Storage)            �?  �?
+�? �? ┌─────────────�?┌─────────────�?┌─────────────�?  �?  �?
+�? �? │元数据存储   �?│血缘图谱存�?�?│搜索索�?    �?  �?  �?
+�? �? �?MySQL)      �?�?Neo4j)      �?�?Elasticsearch)�? �?  �?
+�? �? └─────────────�?└─────────────�?└─────────────�?  �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?          元数据服务层 (Metadata Service)            �?  �?
+�? �? ┌─────────────�?┌─────────────�?┌─────────────�?  �?  �?
+�? �? │搜索服�?    �?│血缘服�?    �?│治理服�?    �?  �?  �?
+�? �? └─────────────�?└─────────────�?└─────────────�?  �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                         �?                                 �?
+�? ┌─────────────────────────────────────────────────────�?  �?
+�? �?          用户界面�?(User Interface)                �?  �?
+�? �? ┌─────────────�?┌─────────────�?┌─────────────�?  �?  �?
+�? �? │数据发�?    �?│血缘可视化   �?│治理仪表板   �?  �?  �?
+�? �? └─────────────�?└─────────────�?└─────────────�?  �?  �?
+�? └─────────────────────────────────────────────────────�?  �?
+�?                                                            �?
+└─────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 技术选型
 
-| 组件 | 技术方案 | 版本要求 | 选型理由 |
+| 组件 | 技术方�?| 版本要求 | 选型理由 |
 |------|---------|---------|---------|
-| **元数据平台** | OpenMetadata | 1.3.0+ | 一体化元数据平台，开箱即用 |
-| **元数据存储** | MySQL | 8.0+ | OpenMetadata默认存储 |
-| **血缘图谱** | Neo4j | 5.4.0+ | 图数据库，存储血缘关系 |
-| **搜索引擎** | Elasticsearch | 8.0+ | 全文搜索，快速发现数据 |
+| **元数据平�?* | OpenMetadata | 1.3.0+ | 一体化元数据平台，开箱即�?|
+| **元数据存�?* | MySQL | 8.0+ | OpenMetadata默认存储 |
+| **血缘图�?* | Neo4j | 5.4.0+ | 图数据库，存储血缘关�?|
+| **搜索引擎** | Elasticsearch | 8.0+ | 全文搜索，快速发现数�?|
 | **Web框架** | React | 18.0+ | OpenMetadata前端框架 |
 
 ### 2.3 Layer定位
 
 - **Layer归属**: Layer 1 - 数据预处理层
-- **职责范围**: 数据资产发现、元数据管理、数据血缘可视化、数据治理
-- **上下层接口**:
+- **职责范围**: 数据资产发现、元数据管理、数据血缘可视化、数据治�?
+- **上下层接�?*:
   - 上层依赖: Layer 2-8（提供数据发现服务）
-  - 下层依赖: Layer 0数据源层（采集元数据）
+  - 下层依赖: Layer 0数据源层（采集元数据�?
 
 ---
 
-## 三、核心模块设计
+## 三、核心模块设�?
 
 ### 3.1 元数据采集器 (MetadataCollector)
 
@@ -196,7 +196,7 @@ from datetime import datetime
 from enum import Enum
 
 class DataSourceType(Enum):
-    """数据源类型"""
+    """数据源类�?""
     MYSQL = "mysql"
     POSTGRESQL = "postgresql"
     DELTA_LAKE = "delta_lake"
@@ -263,7 +263,7 @@ class MetadataCollector:
 
 ### 3.2 数据发现服务 (DataDiscoveryService)
 
-**职责**: 提供数据搜索和发现功能
+**职责**: 提供数据搜索和发现功�?
 
 ```python
 from typing import List, Optional
@@ -298,26 +298,26 @@ class DataDiscoveryService:
         self.search_engine = search_engine
     
     def search(self, request: SearchRequest) -> List[SearchResult]:
-        """搜索数据表"""
+        """搜索数据�?""
         return self.search_engine.search(request)
     
     def search_by_tag(self, tag: str) -> List[SearchResult]:
-        """按标签搜索"""
+        """按标签搜�?""
         request = SearchRequest(query="*", filters={"tags": tag})
         return self.search(request)
     
     def search_by_owner(self, owner: str) -> List[SearchResult]:
-        """按所有者搜索"""
+        """按所有者搜�?""
         request = SearchRequest(query="*", filters={"owner": owner})
         return self.search(request)
     
     def search_by_column(self, column_name: str) -> List[SearchResult]:
-        """按列名搜索"""
+        """按列名搜�?""
         request = SearchRequest(query=column_name, filters={"search_fields": ["columns"]})
         return self.search(request)
     
     def get_popular_tables(self, limit: int = 10) -> List[SearchResult]:
-        """获取热门数据表"""
+        """获取热门数据�?""
         request = SearchRequest(
             query="*",
             sort_by="popularity",
@@ -327,7 +327,7 @@ class DataDiscoveryService:
         return self.search(request)
     
     def get_recently_updated(self, limit: int = 10) -> List[SearchResult]:
-        """获取最近更新的表"""
+        """获取最近更新的�?""
         request = SearchRequest(
             query="*",
             sort_by="updated_at",
@@ -337,9 +337,9 @@ class DataDiscoveryService:
         return self.search(request)
 ```
 
-### 3.3 数据血缘服务 (DataLineageService)
+### 3.3 数据血缘服�?(DataLineageService)
 
-**职责**: 提供数据血缘查询和可视化
+**职责**: 提供数据血缘查询和可视�?
 
 ```python
 from typing import List, Dict, Any, Optional
@@ -347,14 +347,14 @@ from dataclasses import dataclass
 from enum import Enum
 
 class LineageDirection(Enum):
-    """血缘方向"""
-    UPSTREAM = "upstream"      # 上游血缘
-    DOWNSTREAM = "downstream"  # 下游血缘
-    BOTH = "both"              # 双向血缘
+    """血缘方�?""
+    UPSTREAM = "upstream"      # 上游血�?
+    DOWNSTREAM = "downstream"  # 下游血�?
+    BOTH = "both"              # 双向血�?
 
 @dataclass
 class LineageNode:
-    """血缘节点"""
+    """血缘节�?""
     node_id: str
     node_name: str
     node_type: str
@@ -372,13 +372,13 @@ class LineageEdge:
 
 @dataclass
 class LineageGraph:
-    """血缘图谱"""
+    """血缘图�?""
     nodes: List[LineageNode]
     edges: List[LineageEdge]
     depth: int
 
 class DataLineageService:
-    """数据血缘服务"""
+    """数据血缘服�?""
     
     def __init__(self, lineage_store: 'LineageStore'):
         self.lineage_store = lineage_store
@@ -389,15 +389,15 @@ class DataLineageService:
         direction: LineageDirection = LineageDirection.BOTH,
         depth: int = 3
     ) -> LineageGraph:
-        """获取数据血缘"""
+        """获取数据血�?""
         return self.lineage_store.get_lineage(table_id, direction, depth)
     
     def get_upstream_lineage(self, table_id: str, depth: int = 3) -> LineageGraph:
-        """获取上游血缘"""
+        """获取上游血�?""
         return self.get_lineage(table_id, LineageDirection.UPSTREAM, depth)
     
     def get_downstream_lineage(self, table_id: str, depth: int = 3) -> LineageGraph:
-        """获取下游血缘"""
+        """获取下游血�?""
         return self.get_lineage(table_id, LineageDirection.DOWNSTREAM, depth)
     
     def get_column_lineage(
@@ -406,7 +406,7 @@ class DataLineageService:
         column_name: str,
         direction: LineageDirection = LineageDirection.UPSTREAM
     ) -> List[Dict[str, Any]]:
-        """获取列级血缘"""
+        """获取列级血�?""
         return self.lineage_store.get_column_lineage(table_id, column_name, direction)
     
     def get_impact_analysis(self, table_id: str) -> Dict[str, Any]:
@@ -420,11 +420,11 @@ class DataLineageService:
         }
     
     def _count_pipelines(self, graph: LineageGraph) -> int:
-        """统计受影响的管道数"""
+        """统计受影响的管道�?""
         return sum(1 for node in graph.nodes if node.node_type == "pipeline")
     
     def _count_reports(self, graph: LineageGraph) -> int:
-        """统计受影响的报表数"""
+        """统计受影响的报表�?""
         return sum(1 for node in graph.nodes if node.node_type == "report")
 ```
 
@@ -443,10 +443,10 @@ class DataClassification(Enum):
     PUBLIC = "public"           # 公开数据
     INTERNAL = "internal"       # 内部数据
     CONFIDENTIAL = "confidential"  # 机密数据
-    RESTRICTED = "restricted"   # 限制级数据
+    RESTRICTED = "restricted"   # 限制级数�?
 
 class DataSensitivity(Enum):
-    """数据敏感度"""
+    """数据敏感�?""
     NONE = "none"
     LOW = "low"
     MEDIUM = "medium"
@@ -485,13 +485,13 @@ class DataGovernanceService:
         classification: DataClassification,
         sensitivity: DataSensitivity
     ) -> bool:
-        """分类数据表"""
+        """分类数据�?""
         return self.metadata_store.update_table_classification(
             table_id, classification, sensitivity
         )
     
     def auto_classify_table(self, table_id: str) -> DataClassification:
-        """自动分类数据表"""
+        """自动分类数据�?""
         columns = self.metadata_store.get_table_columns(table_id)
         
         for col in columns:
@@ -506,7 +506,7 @@ class DataGovernanceService:
         return DataClassification.PUBLIC
     
     def tag_sensitive_data(self, table_id: str) -> List[str]:
-        """标记敏感数据列"""
+        """标记敏感数据�?""
         columns = self.metadata_store.get_table_columns(table_id)
         sensitive_columns = []
         
@@ -664,14 +664,14 @@ from metadata.generated.schema.entity.data.table import Table
 from metadata.generated.schema.type.entityReference import EntityReference
 
 class OpenMetadataClient:
-    """OpenMetadata客户端"""
+    """OpenMetadata客户�?""
     
     def __init__(self, server_url: str = "http://localhost:8585"):
         self.server_url = server_url
         self.client = OpenMetadata(server_url)
     
     def create_database_service(self, name: str, connection_config: dict) -> EntityReference:
-        """创建数据库服务"""
+        """创建数据库服�?""
         service = self.client.create_or_update(
             DatabaseService(
                 name=name,
@@ -682,33 +682,33 @@ class OpenMetadataClient:
         return service
     
     def ingest_metadata(self, config_path: str):
-        """执行元数据采集"""
+        """执行元数据采�?""
         workflow = Workflow.create(config_path)
         workflow.execute()
         workflow.raise_from_status()
     
     def search_tables(self, query: str) -> list:
-        """搜索数据表"""
+        """搜索数据�?""
         return self.client.list_entities(
             entity=Table,
             query=query
         )
     
     def get_table_lineage(self, table_id: str) -> dict:
-        """获取表血缘"""
+        """获取表血�?""
         return self.client.get_lineage_by_id(
             entity=Table,
             entity_id=table_id
         )
     
     def add_table_tags(self, table_id: str, tags: list):
-        """添加表标签"""
+        """添加表标�?""
         table = self.client.get_by_id(entity=Table, entity_id=table_id)
         table.tags = tags
         self.client.create_or_update(table)
     
     def set_table_owner(self, table_id: str, owner_id: str):
-        """设置表所有者"""
+        """设置表所有�?""
         table = self.client.get_by_id(entity=Table, entity_id=table_id)
         table.owner = EntityReference(id=owner_id, type="user")
         self.client.create_or_update(table)
@@ -718,13 +718,13 @@ class OpenMetadataClient:
 
 ## 五、与现有系统集成
 
-### 5.1 与数据血缘追踪系统集成
+### 5.1 与数据血缘追踪系统集�?
 
 ```python
 from integration.lineage_integration import LineageIntegrator
 
 class CatalogLineageIntegration:
-    """数据目录与血缘系统集成"""
+    """数据目录与血缘系统集�?""
     
     def __init__(self, catalog_client: OpenMetadataClient, lineage_service: DataLineageService):
         self.catalog_client = catalog_client
@@ -749,20 +749,20 @@ class CatalogLineageIntegration:
         )
 ```
 
-### 5.2 与数据质量监控系统集成
+### 5.2 与数据质量监控系统集�?
 
 ```python
 from integration.quality_integration import QualityIntegrator
 
 class CatalogQualityIntegration:
-    """数据目录与质量系统集成"""
+    """数据目录与质量系统集�?""
     
     def __init__(self, catalog_client: OpenMetadataClient, quality_service):
         self.catalog_client = catalog_client
         self.quality_service = quality_service
     
     def sync_quality_metrics_to_catalog(self):
-        """同步质量指标到数据目录"""
+        """同步质量指标到数据目�?""
         tables = self.catalog_client.list_all_tables()
         
         for table in tables:
@@ -776,7 +776,7 @@ class CatalogQualityIntegration:
             )
     
     def get_tables_with_quality_issues(self) -> list:
-        """获取有质量问题的表"""
+        """获取有质量问题的�?""
         return self.catalog_client.search_tables(
             query="quality_score:<0.8"
         )
@@ -784,47 +784,47 @@ class CatalogQualityIntegration:
 
 ---
 
-## 六、实施计划
+## 六、实施计�?
 
-### 6.1 Week 5: 基础部署与配置
+### 6.1 Week 5: 基础部署与配�?
 
-| 任务 | 预计时间 | 负责人 | 交付物 |
+| 任务 | 预计时间 | 负责�?| 交付�?|
 |------|---------|--------|--------|
-| 部署OpenMetadata服务 | 2天 | DevOps | 运行中的OpenMetadata实例 |
-| 配置数据源连接器 | 1天 | 数据工程师 | MySQL、Delta Lake连接器 |
-| 执行首次元数据采集 | 1天 | 数据工程师 | 完整的元数据快照 |
-| 配置用户权限 | 1天 | 管理员 | 用户角色和权限配置 |
+| 部署OpenMetadata服务 | 2�?| DevOps | 运行中的OpenMetadata实例 |
+| 配置数据源连接器 | 1�?| 数据工程�?| MySQL、Delta Lake连接�?|
+| 执行首次元数据采�?| 1�?| 数据工程�?| 完整的元数据快照 |
+| 配置用户权限 | 1�?| 管理�?| 用户角色和权限配�?|
 
-### 6.2 Week 6: 集成与优化
+### 6.2 Week 6: 集成与优�?
 
-| 任务 | 预计时间 | 负责人 | 交付物 |
+| 任务 | 预计时间 | 负责�?| 交付�?|
 |------|---------|--------|--------|
-| 集成血缘追踪系统 | 2天 | 数据工程师 | 血缘可视化集成 |
-| 集成质量监控系统 | 1天 | 数据工程师 | 质量指标展示 |
-| 配置数据治理策略 | 1天 | 数据管理员 | 分类策略和标签 |
-| 用户培训与文档 | 1天 | 数据工程师 | 使用手册和培训材料 |
+| 集成血缘追踪系�?| 2�?| 数据工程�?| 血缘可视化集成 |
+| 集成质量监控系统 | 1�?| 数据工程�?| 质量指标展示 |
+| 配置数据治理策略 | 1�?| 数据管理�?| 分类策略和标�?|
+| 用户培训与文�?| 1�?| 数据工程�?| 使用手册和培训材�?|
 
 ---
 
-## 七、验收标准
+## 七、验收标�?
 
 ### 7.1 功能验收
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| 数据发现 | 搜索响应时间<2秒 | 性能测试 |
-| 元数据管理 | 元数据完整率≥95% | 数据审计 |
-| 血缘可视化 | 列级血缘正确展示 | 功能测试 |
+| 数据发现 | 搜索响应时间<2�?| 性能测试 |
+| 元数据管�?| 元数据完整率�?5% | 数据审计 |
+| 血缘可视化 | 列级血缘正确展�?| 功能测试 |
 | 数据治理 | 敏感数据自动标记 | 功能测试 |
 
 ### 7.2 性能验收
 
-| 指标 | 目标值 | 测试方法 |
+| 指标 | 目标�?| 测试方法 |
 |------|--------|---------|
-| 搜索响应时间 | <2秒 | 压力测试 |
-| 元数据采集速度 | >100表/分钟 | 性能测试 |
-| 血缘查询时间 | <1秒 | 性能测试 |
-| 并发用户数 | >50 | 压力测试 |
+| 搜索响应时间 | <2�?| 压力测试 |
+| 元数据采集速度 | >100�?分钟 | 性能测试 |
+| 血缘查询时�?| <1�?| 性能测试 |
+| 并发用户�?| >50 | 压力测试 |
 
 ---
 
@@ -832,32 +832,32 @@ class CatalogQualityIntegration:
 
 | 风险 | 等级 | 影响 | 缓解措施 |
 |------|------|------|---------|
-| 元数据采集失败 | P1 | 数据目录不完整 | 配置重试机制和告警 |
-| 性能瓶颈 | P2 | 搜索响应慢 | 优化索引，增加缓存 |
-| 用户采用率低 | P2 | 投资回报低 | 加强培训和推广 |
+| 元数据采集失�?| P1 | 数据目录不完�?| 配置重试机制和告�?|
+| 性能瓶颈 | P2 | 搜索响应�?| 优化索引，增加缓�?|
+| 用户采用率低 | P2 | 投资回报�?| 加强培训和推�?|
 
 ---
 
-## 九、参考文档
+## 九、参考文�?
 
 1. OpenMetadata官方文档: https://docs.open-metadata.org/
 2. OpenMetadata GitHub: https://github.com/open-metadata/OpenMetadata
-3. 数据血缘追踪蓝图: DATA_LINEAGE_TRACKING_BLUEPRINT.md
+3. 数据血缘追踪蓝�? DATA_LINEAGE_TRACKING_BLUEPRINT.md
 4. 数据质量监控蓝图: REALTIME_QUALITY_MONITOR_BLUEPRINT.md
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **维护者**: 首席蓝图架构师
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **维护�?*: 首席蓝图架构�?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-05 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-05 | **状�?*: Active
 ---
 
 ## 1. 文档治理
@@ -865,13 +865,13 @@ class CatalogQualityIntegration:
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Data Catalog
 - **模块ID**: DATA_CATALOG_001
 - **蓝图文档**: DATA_CATALOG_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -882,10 +882,10 @@ class CatalogQualityIntegration:
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状�?*: Active

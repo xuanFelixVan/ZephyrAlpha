@@ -1,32 +1,32 @@
 ---
-module_id: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT_001
+module_id: UNIFIED_DATA_INFRASTRUCTURE__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
+owner: 个人开发�?
 standard_type: 专业量化机构文档
 responsibility:
   - 数据采集框架
   - 数据存储架构
   - 数据处理引擎
   - 基础设施管理
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
 # UNIFIED DATA INFRASTRUCTURE BLUEPRINT
 
 > **核心职责**: 统一数据基础设施，构建数据采集、存储和处理框架
 > **职责边界**: 
-> - ✅ 本文档负责：数据采集、数据存储、数据处理、基础设施管理
-> - ❌ 本文档不负责：业务数据处理、数据质量监控、数据治理
-﻿# 📋 执行摘要
+> - �?本文档负责：数据采集、数据存储、数据处理、基础设施管理
+> - �?本文档不负责：业务数据处理、数据质量监控、数据治�?
+�? 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **核心定位**: 支持多时间框架数据需求的统一数据基础设施
 > **索引**: `UNIFIED_DATA_INFRASTRUCTURE_001`
-> **开发周期**: 3周
+> **开发周�?*: 3�?
 
 
 ## 核心定位
@@ -35,57 +35,57 @@ layer: "Layer 1 (数据层)"
 
 ### 职责边界
 
-**✅ 核心职责**:
+**�?核心职责**:
 
 - 数据采集框架
 - 数据存储架构
 - 数据处理引擎
 - 基础设施管理
 
-**❌ 非职责范围**:
+**�?非职责范�?*:
 - 业务数据处理
 - 数据质量监控
 - 数据治理
 
-## 🎯 模块定位与职责
+## 🎯 模块定位与职�?
 
 ### 层级定位
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│           清风量化系统 - 三级时间框架架构                │
-├─────────────────────────────────────────────────────────┤
-│  第一级：宏观配置层（季度/年度）                         │
-│  第二级：中观策略层（周度/日度）                         │
-│  第三级：微观执行层（日内/分钟/秒级）                    │
-├─────────────────────────────────────────────────────────┤
-│           统一数据基础设施（本模块）                     │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │  数据源适配层  │  数据湖存储层  │  数据API层     │   │
-│  └─────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────�?
+�?          清风量化系统 - 三级时间框架架构                �?
+├─────────────────────────────────────────────────────────�?
+�? 第一级：宏观配置层（季度/年度�?                        �?
+�? 第二级：中观策略层（周度/日度�?                        �?
+�? 第三级：微观执行层（日内/分钟/秒级�?                   �?
+├─────────────────────────────────────────────────────────�?
+�?          统一数据基础设施（本模块�?                    �?
+�? ┌─────────────────────────────────────────────────�?  �?
+�? �? 数据源适配�? �? 数据湖存储层  �? 数据API�?    �?  �?
+�? └─────────────────────────────────────────────────�?  �?
+└─────────────────────────────────────────────────────────�?
 ```
 
 ### 核心职责
 
 | 职责类别 | 具体职责 | 输出产物 |
 |---------|---------|---------|
-| **数据采集** | 多源数据采集、实时数据订阅 | 原始数据流 |
-| **数据存储** | 时序数据存储、历史数据归档 | 数据湖、数据仓库 |
-| **数据访问** | 统一数据API、数据查询服务 | 数据访问接口 |
-| **数据管理** | 数据生命周期管理、数据治理 | 数据目录、血缘关系 |
-| **数据质量** | 数据质量监控、异常检测 | 质量报告、告警 |
+| **数据采集** | 多源数据采集、实时数据订�?| 原始数据�?|
+| **数据存储** | 时序数据存储、历史数据归�?| 数据湖、数据仓�?|
+| **数据访问** | 统一数据API、数据查询服�?| 数据访问接口 |
+| **数据管理** | 数据生命周期管理、数据治�?| 数据目录、血缘关�?|
+| **数据质量** | 数据质量监控、异常检�?| 质量报告、告�?|
 
-### 非职责边界
+### 非职责边�?
 
-- ❌ **因子计算**: 由因子计算器模块负责
-- ❌ **策略逻辑**: 由策略引擎模块负责
-- ❌ **交易执行**: 由交易执行引擎负责
-- ❌ **风险计算**: 由风险管理系统负责
+- �?**因子计算**: 由因子计算器模块负责
+- �?**策略逻辑**: 由策略引擎模块负�?
+- �?**交易执行**: 由交易执行引擎负�?
+- �?**风险计算**: 由风险管理系统负�?
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 整体架构
 
@@ -99,35 +99,35 @@ graph TB
         A5[另类数据源]
     end
     
-    subgraph "数据采集层"
+    subgraph "数据采集�?
         B1[批量采集器]
         B2[流式采集器]
         B3[实时订阅器]
         B4[数据适配器]
     end
     
-    subgraph "数据存储层"
-        C1[时序数据库<br/>InfluxDB/QuestDB]
-        C2[数据湖<br/>Delta Lake]
-        C3[缓存层<br/>Redis]
+    subgraph "数据存储�?
+        C1[时序数据�?br/>InfluxDB/QuestDB]
+        C2[数据�?br/>Delta Lake]
+        C3[缓存�?br/>Redis]
         C4[归档存储<br/>对象存储]
     end
     
-    subgraph "数据处理层"
+    subgraph "数据处理�?
         D1[数据清洗]
         D2[数据标准化]
         D3[数据聚合]
         D4[数据质量检查]
     end
     
-    subgraph "数据服务层"
+    subgraph "数据服务�?
         E1[统一数据API]
         E2[数据查询服务]
         E3[数据订阅服务]
         E4[数据目录服务]
     end
     
-    subgraph "应用层"
+    subgraph "应用�?
         F1[宏观配置层]
         F2[中观策略层]
         F3[微观执行层]
@@ -170,57 +170,57 @@ graph TB
     E4 --> F2
 ```
 
-### 数据流设计
+### 数据流设�?
 
-#### 宏观数据流（季度/年度）
+#### 宏观数据流（季度/年度�?
 
 ```
-宏观经济数据源 → 批量采集器 → 数据适配器 → 数据湖 → 数据清洗 → 数据标准化 → 统一API → 宏观配置层
+宏观经济数据�?�?批量采集�?�?数据适配�?�?数据�?�?数据清洗 �?数据标准�?�?统一API �?宏观配置�?
 ```
 
 **特点**:
-- 低频更新（月度/季度）
+- 低频更新（月�?季度�?
 - 数据量小但重要性高
-- 需要历史数据完整
+- 需要历史数据完�?
 
-#### 日频数据流（周度/日度）
+#### 日频数据流（周度/日度�?
 
 ```
-日频行情数据源 → 批量采集器 → 数据适配器 → 数据湖 → 数据清洗 → 数据标准化 → 统一API → 中观策略层
+日频行情数据�?�?批量采集�?�?数据适配�?�?数据�?�?数据清洗 �?数据标准�?�?统一API �?中观策略�?
 ```
 
 **特点**:
 - 每日更新
-- 数据量中等
-- 需要快速查询
+- 数据量中�?
+- 需要快速查�?
 
 #### 日内数据流（分钟级）
 
 ```
-日内行情数据源 → 流式采集器 → 数据适配器 → 时序数据库 → 数据清洗 → 数据聚合 → 统一API → 中观策略层
+日内行情数据�?�?流式采集�?�?数据适配�?�?时序数据�?�?数据清洗 �?数据聚合 �?统一API �?中观策略�?
 ```
 
 **特点**:
-- 分钟级更新
+- 分钟级更�?
 - 数据量大
-- 需要高效存储
+- 需要高效存�?
 
-#### 实时数据流（秒级）
+#### 实时数据流（秒级�?
 
 ```
-实时行情数据源 → 实时订阅器 → 数据适配器 → 缓存层 → 数据质量检查 → 数据订阅服务 → 微观执行层
+实时行情数据�?�?实时订阅�?�?数据适配�?�?缓存�?�?数据质量检�?�?数据订阅服务 �?微观执行�?
 ```
 
 **特点**:
 - 秒级更新
 - 超低延迟要求
-- 需要高可用性
+- 需要高可用�?
 
 ---
 
 ## 🔧 关键组件设计
 
-### 1. 数据源适配器 (Data Source Adapter)
+### 1. 数据源适配�?(Data Source Adapter)
 
 ```python
 from abc import ABC, abstractmethod
@@ -229,7 +229,7 @@ import pandas as pd
 from datetime import datetime
 
 class DataSourceAdapter(ABC):
-    """数据源适配器基类"""
+    """数据源适配器基�?""
     
     @abstractmethod
     def connect(self) -> bool:
@@ -253,14 +253,14 @@ class DataSourceAdapter(ABC):
 
 
 class MacroDataSourceAdapter(DataSourceAdapter):
-    """宏观经济数据源适配器"""
+    """宏观经济数据源适配�?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
         self.connection = None
         
     def connect(self) -> bool:
-        """连接宏观经济数据源"""
+        """连接宏观经济数据�?""
         # 实现连接逻辑
         # 支持的数据源：Wind、同花顺iFinD、东方财富Choice
         pass
@@ -277,7 +277,7 @@ class MacroDataSourceAdapter(DataSourceAdapter):
         pass
     
     def subscribe(self, callback: callable) -> None:
-        """宏观经济数据通常不需要实时订阅"""
+        """宏观经济数据通常不需要实时订�?""
         pass
     
     def disconnect(self) -> None:
@@ -286,15 +286,15 @@ class MacroDataSourceAdapter(DataSourceAdapter):
 
 
 class DailyMarketDataSourceAdapter(DataSourceAdapter):
-    """日频行情数据源适配器"""
+    """日频行情数据源适配�?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
         self.connection = None
         
     def connect(self) -> bool:
-        """连接日频行情数据源"""
-        # 支持的数据源：Tushare、AKShare、聚宽、米筐
+        """连接日频行情数据�?""
+        # 支持的数据源：Tushare、AKShare、聚宽、米�?
         pass
     
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
@@ -309,7 +309,7 @@ class DailyMarketDataSourceAdapter(DataSourceAdapter):
         pass
     
     def subscribe(self, callback: callable) -> None:
-        """日频数据通常不需要实时订阅"""
+        """日频数据通常不需要实时订�?""
         pass
     
     def disconnect(self) -> None:
@@ -318,15 +318,15 @@ class DailyMarketDataSourceAdapter(DataSourceAdapter):
 
 
 class IntradayMarketDataSourceAdapter(DataSourceAdapter):
-    """日内行情数据源适配器"""
+    """日内行情数据源适配�?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
         self.connection = None
         
     def connect(self) -> bool:
-        """连接日内行情数据源"""
-        # 支持的数据源：QMT、聚宽、米筐
+        """连接日内行情数据�?""
+        # 支持的数据源：QMT、聚宽、米�?
         pass
     
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
@@ -351,7 +351,7 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
 
 class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
-    """实时行情数据源适配器"""
+    """实时行情数据源适配�?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
@@ -359,8 +359,8 @@ class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
         self.websocket = None
         
     def connect(self) -> bool:
-        """连接实时行情数据源"""
-        # 支持的数据源：QMT、东方财富、通达信
+        """连接实时行情数据�?""
+        # 支持的数据源：QMT、东方财富、通达�?
         pass
     
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
@@ -398,7 +398,7 @@ class DataLakeStorage:
         # 转换为Spark DataFrame
         spark_df = self.spark.createDataFrame(data)
         
-        # 写入Delta表
+        # 写入Delta�?
         spark_df.write.format("delta") \
             .mode("overwrite") \
             .partitionBy("indicator_code") \
@@ -408,7 +408,7 @@ class DataLakeStorage:
         """存储日频行情数据"""
         spark_df = self.spark.createDataFrame(data)
         
-        # 写入Delta表，按日期分区
+        # 写入Delta表，按日期分�?
         spark_df.write.format("delta") \
             .mode("append") \
             .partitionBy("trade_date") \
@@ -473,7 +473,7 @@ class DataLakeStorage:
         self.spark.sql(f"VACUUM delta.`{table_path}` RETAIN {retention_hours} HOURS")
 ```
 
-### 3. 时序数据库存储 (Time Series Database)
+### 3. 时序数据库存�?(Time Series Database)
 
 ```python
 from influxdb_client import InfluxDBClient, Point, WritePrecision
@@ -483,7 +483,7 @@ import pandas as pd
 from datetime import datetime
 
 class TimeSeriesDBStorage:
-    """时序数据库存储 - InfluxDB实现"""
+    """时序数据库存�?- InfluxDB实现"""
     
     def __init__(self, url: str, token: str, org: str, bucket: str):
         self.client = InfluxDBClient(url=url, token=token, org=org)
@@ -548,7 +548,7 @@ class TimeSeriesDBStorage:
         return result
     
     def query_latest_data(self, measurement: str, symbol: str) -> pd.DataFrame:
-        """查询最新数据"""
+        """查询最新数�?""
         query = f'''
         from(bucket: "{self.bucket}")
         |> range(start: -5m)
@@ -611,7 +611,7 @@ class UnifiedDataAPI:
     @app.post("/api/v1/macro/data")
     async def get_macro_data(self, request: MacroDataRequest) -> Dict[str, Any]:
         """获取宏观经济数据"""
-        # 1. 检查缓存
+        # 1. 检查缓�?
         cache_key = f"macro:{':'.join(request.indicators)}:{request.start_date}:{request.end_date}"
         cached_data = self.cache.get(cache_key)
         
@@ -644,7 +644,7 @@ class UnifiedDataAPI:
     @app.post("/api/v1/daily/data")
     async def get_daily_data(self, request: DailyDataRequest) -> Dict[str, Any]:
         """获取日频行情数据"""
-        # 1. 检查缓存
+        # 1. 检查缓�?
         cache_key = f"daily:{':'.join(request.symbols)}:{request.start_date}:{request.end_date}"
         cached_data = self.cache.get(cache_key)
         
@@ -678,7 +678,7 @@ class UnifiedDataAPI:
     @app.post("/api/v1/intraday/data")
     async def get_intraday_data(self, request: IntradayDataRequest) -> Dict[str, Any]:
         """获取日内行情数据"""
-        # 1. 检查缓存
+        # 1. 检查缓�?
         cache_key = f"intraday:{request.symbol}:{request.date}:{request.frequency}"
         cached_data = self.cache.get(cache_key)
         
@@ -712,7 +712,7 @@ class UnifiedDataAPI:
     async def get_realtime_data(self, symbol: str) -> Dict[str, Any]:
         """获取实时行情数据"""
         try:
-            # 从时序数据库查询最新数据
+            # 从时序数据库查询最新数�?
             data = self.time_series_db.query_latest_data(
                 measurement='realtime_quotes',
                 symbol=symbol
@@ -799,7 +799,7 @@ class DataSubscriptionService:
         """处理实时数据"""
         symbol = data.get('symbol')
         
-        # 调用所有订阅了该symbol的回调函数
+        # 调用所有订阅了该symbol的回调函�?
         if symbol in self.subscriptions:
             for callback in self.subscriptions[symbol]:
                 try:
@@ -807,11 +807,11 @@ class DataSubscriptionService:
                 except Exception as e:
                     print(f"Callback error: {e}")
         
-        # 推送给WebSocket客户端
+        # 推送给WebSocket客户�?
         await self._broadcast_to_websocket(data)
     
     async def _broadcast_to_websocket(self, data: Dict[str, Any]) -> None:
-        """广播数据给WebSocket客户端"""
+        """广播数据给WebSocket客户�?""
         if self.websocket_clients:
             message = json.dumps(data)
             await asyncio.gather(
@@ -821,12 +821,12 @@ class DataSubscriptionService:
     async def handle_websocket_client(self, 
                                       websocket: websockets.WebSocketServerProtocol,
                                       path: str) -> None:
-        """处理WebSocket客户端连接"""
+        """处理WebSocket客户端连�?""
         self.websocket_clients.append(websocket)
         
         try:
             async for message in websocket:
-                # 处理客户端消息
+                # 处理客户端消�?
                 request = json.loads(message)
                 # 可以实现订阅/取消订阅逻辑
         finally:
@@ -849,13 +849,13 @@ CREATE TABLE macro_indicators (
     indicator_code VARCHAR(50) NOT NULL COMMENT '指标代码',
     indicator_name VARCHAR(100) NOT NULL COMMENT '指标名称',
     date DATE NOT NULL COMMENT '日期',
-    value DECIMAL(20, 6) COMMENT '指标值',
+    value DECIMAL(20, 6) COMMENT '指标�?,
     unit VARCHAR(20) COMMENT '单位',
-    frequency VARCHAR(20) COMMENT '频率（monthly/quarterly/yearly）',
-    source VARCHAR(50) COMMENT '数据源',
+    frequency VARCHAR(20) COMMENT '频率（monthly/quarterly/yearly�?,
+    source VARCHAR(50) COMMENT '数据�?,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (indicator_code, date)
-) COMMENT '宏观经济指标表';
+) COMMENT '宏观经济指标�?;
 ```
 
 ### 日频行情数据模型
@@ -867,15 +867,15 @@ CREATE TABLE daily_market_data (
     open DECIMAL(10, 3) COMMENT '开盘价',
     high DECIMAL(10, 3) COMMENT '最高价',
     low DECIMAL(10, 3) COMMENT '最低价',
-    close DECIMAL(10, 3) COMMENT '收盘价',
-    volume BIGINT COMMENT '成交量',
-    amount DECIMAL(20, 2) COMMENT '成交额',
-    turnover_rate DECIMAL(10, 4) COMMENT '换手率',
+    close DECIMAL(10, 3) COMMENT '收盘�?,
+    volume BIGINT COMMENT '成交�?,
+    amount DECIMAL(20, 2) COMMENT '成交�?,
+    turnover_rate DECIMAL(10, 4) COMMENT '换手�?,
     pe_ttm DECIMAL(10, 2) COMMENT '市盈率TTM',
-    pb DECIMAL(10, 2) COMMENT '市净率',
+    pb DECIMAL(10, 2) COMMENT '市净�?,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (symbol, trade_date)
-) COMMENT '日频行情数据表';
+) COMMENT '日频行情数据�?;
 ```
 
 ### 日内行情数据模型
@@ -884,17 +884,17 @@ CREATE TABLE daily_market_data (
 CREATE TABLE intraday_market_data (
     symbol VARCHAR(20) NOT NULL COMMENT '股票代码',
     trade_date DATE NOT NULL COMMENT '交易日期',
-    timestamp TIMESTAMP NOT NULL COMMENT '时间戳',
-    frequency VARCHAR(10) NOT NULL COMMENT '频率（1min/5min/15min/30min/60min）',
+    timestamp TIMESTAMP NOT NULL COMMENT '时间�?,
+    frequency VARCHAR(10) NOT NULL COMMENT '频率�?min/5min/15min/30min/60min�?,
     open DECIMAL(10, 3) COMMENT '开盘价',
     high DECIMAL(10, 3) COMMENT '最高价',
     low DECIMAL(10, 3) COMMENT '最低价',
-    close DECIMAL(10, 3) COMMENT '收盘价',
-    volume BIGINT COMMENT '成交量',
-    amount DECIMAL(20, 2) COMMENT '成交额',
+    close DECIMAL(10, 3) COMMENT '收盘�?,
+    volume BIGINT COMMENT '成交�?,
+    amount DECIMAL(20, 2) COMMENT '成交�?,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (symbol, trade_date, timestamp, frequency)
-) COMMENT '日内行情数据表';
+) COMMENT '日内行情数据�?;
 ```
 
 ---
@@ -1035,45 +1035,45 @@ Unsubscribe:
 ### 阶段1：基础设施搭建（第1周）
 
 **任务**:
-1. ✅ 部署Apache Spark集群
-2. ✅ 配置Delta Lake存储
-3. ✅ 部署InfluxDB时序数据库
-4. ✅ 配置Redis缓存
-5. ✅ 搭建FastAPI服务框架
+1. �?部署Apache Spark集群
+2. �?配置Delta Lake存储
+3. �?部署InfluxDB时序数据�?
+4. �?配置Redis缓存
+5. �?搭建FastAPI服务框架
 
 **验收标准**:
 - Spark集群正常运行
 - Delta Lake可以读写数据
 - InfluxDB可以存储时序数据
 - Redis缓存可用
-- FastAPI服务可访问
+- FastAPI服务可访�?
 
 ---
 
-### 阶段2：数据源适配器开发（第2周）
+### 阶段2：数据源适配器开发（�?周）
 
 **任务**:
-1. ✅ 实现宏观经济数据源适配器
-2. ✅ 实现日频行情数据源适配器
-3. ✅ 实现日内行情数据源适配器
-4. ✅ 实现实时行情数据源适配器
-5. ✅ 编写数据源适配器单元测试
+1. �?实现宏观经济数据源适配�?
+2. �?实现日频行情数据源适配�?
+3. �?实现日内行情数据源适配�?
+4. �?实现实时行情数据源适配�?
+5. �?编写数据源适配器单元测�?
 
 **验收标准**:
-- 所有数据源适配器可以正常连接
+- 所有数据源适配器可以正常连�?
 - 可以从数据源获取数据
 - 单元测试覆盖率≥80%
 
 ---
 
-### 阶段3：数据存储层开发（第2-3周）
+### 阶段3：数据存储层开发（�?-3周）
 
 **任务**:
-1. ✅ 实现数据湖存储层
-2. ✅ 实现时序数据库存储层
-3. ✅ 实现数据清洗和标准化
-4. ✅ 实现数据聚合功能
-5. ✅ 编写存储层单元测试
+1. �?实现数据湖存储层
+2. �?实现时序数据库存储层
+3. �?实现数据清洗和标准化
+4. �?实现数据聚合功能
+5. �?编写存储层单元测�?
 
 **验收标准**:
 - 数据可以正常写入Delta Lake
@@ -1083,14 +1083,14 @@ Unsubscribe:
 
 ---
 
-### 阶段4：数据服务层开发（第3周）
+### 阶段4：数据服务层开发（�?周）
 
 **任务**:
-1. ✅ 实现统一数据API
-2. ✅ 实现数据订阅服务
-3. ✅ 实现数据目录服务
-4. ✅ 实现缓存策略
-5. ✅ 编写服务层单元测试
+1. �?实现统一数据API
+2. �?实现数据订阅服务
+3. �?实现数据目录服务
+4. �?实现缓存策略
+5. �?编写服务层单元测�?
 
 **验收标准**:
 - RESTful API可以正常访问
@@ -1103,11 +1103,11 @@ Unsubscribe:
 ### 阶段5：集成测试与优化（第3周）
 
 **任务**:
-1. ✅ 编写集成测试用例
-2. ✅ 执行性能测试
-3. ✅ 优化查询性能
-4. ✅ 优化存储性能
-5. ✅ 编写部署文档
+1. �?编写集成测试用例
+2. �?执行性能测试
+3. �?优化查询性能
+4. �?优化存储性能
+5. �?编写部署文档
 
 **验收标准**:
 - 集成测试全部通过
@@ -1127,10 +1127,10 @@ import pandas as pd
 from datetime import datetime
 
 def test_macro_data_adapter_fetch():
-    """测试宏观经济数据源适配器"""
+    """测试宏观经济数据源适配�?""
     adapter = MacroDataSourceAdapter(config)
     
-    # 连接数据源
+    # 连接数据�?
     assert adapter.connect() == True
     
     # 获取数据
@@ -1218,7 +1218,7 @@ def test_end_to_end_data_flow():
         "fields": ["close"]
     })
     
-    # 4. 验证数据一致性
+    # 4. 验证数据一致�?
     assert response.status_code == 200
     api_data = response.json()['data']
     assert api_data == raw_data.to_dict()
@@ -1236,15 +1236,15 @@ def test_query_performance():
     # 测试日频数据查询性能
     start_time = time.time()
     response = client.post("/api/v1/daily/data", json={
-        "symbols": ["000001.SZ"] * 100,  # 100只股票
+        "symbols": ["000001.SZ"] * 100,  # 100只股�?
         "start_date": "2024-01-01",
-        "end_date": "2024-12-31",  # 1年数据
+        "end_date": "2024-12-31",  # 1年数�?
         "fields": ["open", "high", "low", "close", "volume"]
     })
     end_time = time.time()
     
     assert response.status_code == 200
-    assert (end_time - start_time) < 0.1  # 100ms内完成
+    assert (end_time - start_time) < 0.1  # 100ms内完�?
     
     # 测试实时数据查询性能
     start_time = time.time()
@@ -1252,7 +1252,7 @@ def test_query_performance():
     end_time = time.time()
     
     assert response.status_code == 200
-    assert (end_time - start_time) < 0.01  # 10ms内完成
+    assert (end_time - start_time) < 0.01  # 10ms内完�?
 ```
 
 ---
@@ -1266,57 +1266,57 @@ def test_query_performance():
 | **宏观经济数据** | 历史查询 | <1000ms | 1小时缓存 |
 | **日频行情数据** | 历史查询 | <100ms | 30分钟缓存 |
 | **日内行情数据** | 历史查询 | <50ms | 5分钟缓存 |
-| **实时行情数据** | 实时查询 | <10ms | 无缓存 |
+| **实时行情数据** | 实时查询 | <10ms | 无缓�?|
 
-### 吞吐量要求
+### 吞吐量要�?
 
-| 数据类型 | 写入吞吐量 | 查询吞吐量 |
+| 数据类型 | 写入吞吐�?| 查询吞吐�?|
 |---------|-----------|-----------|
-| **宏观经济数据** | 100条/秒 | 1000次/秒 |
-| **日频行情数据** | 10000条/秒 | 10000次/秒 |
-| **日内行情数据** | 100000条/秒 | 50000次/秒 |
-| **实时行情数据** | 1000000条/秒 | 100000次/秒 |
+| **宏观经济数据** | 100�?�?| 1000�?�?|
+| **日频行情数据** | 10000�?�?| 10000�?�?|
+| **日内行情数据** | 100000�?�?| 50000�?�?|
+| **实时行情数据** | 1000000�?�?| 100000�?�?|
 
 ### 存储容量规划
 
-| 数据类型 | 日增量 | 年增量 | 存储周期 |
+| 数据类型 | 日增�?| 年增�?| 存储周期 |
 |---------|--------|--------|---------|
 | **宏观经济数据** | 1MB | 365MB | 永久 |
-| **日频行情数据** | 100MB | 36GB | 10年 |
-| **日内行情数据** | 10GB | 3.6TB | 3年 |
+| **日频行情数据** | 100MB | 36GB | 10�?|
+| **日内行情数据** | 10GB | 3.6TB | 3�?|
 | **实时行情数据** | 100GB | 36TB | 1个月 |
 
 ---
 
 ## 🔗 相关文档
 
-- 专业多时间框架策略架构
+- 专业多时间框架策略架�?
 - [数据质量监控系统蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
-- 模块注册表
+- 模块注册�?
 
 ---
 
 ## 📝 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构�?|
 
 ---
 
-**蓝图状态**: ✅ 设计完成
-**下一步**: 开始实施阶段1 - 基础设施搭建
+**蓝图状�?*: �?设计完成
+**下一�?*: 开始实施阶�? - 基础设施搭建
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构�?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
 ---
 
 
@@ -1328,20 +1328,20 @@ def test_query_performance():
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供基础设施支持 |
-| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据处理引擎 |
-| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 强依赖 | 提供存储架构 |
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依�?| 提供基础设施支持 |
+| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依�?| 提供数据处理引擎 |
+| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 强依�?| 提供存储架构 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **Apache Spark** | 3.5+ | 数据处理 | [官方文档](https://spark.apache.org/) |
 | **Apache Kafka** | 3.5+ | 消息队列 | [官方文档](https://kafka.apache.org/) |
-| **PostgreSQL** | 15+ | 关系数据库 | [官方文档](https://www.postgresql.org/) |
+| **PostgreSQL** | 15+ | 关系数据�?| [官方文档](https://www.postgresql.org/) |
 | **Redis** | 7.0+ | 缓存 | [官方文档](https://redis.io/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -1359,13 +1359,13 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Unified Data Infrastructure
 - **模块ID**: UNIFIED_DATA_INFRASTRUCTURE_001
 - **蓝图文档**: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: 全系统数据基础设施
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -1376,10 +1376,10 @@ graph LR
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

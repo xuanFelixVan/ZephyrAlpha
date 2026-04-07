@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 7 风险管理层
+applicable_scope: Layer 7 风险管理�?
 compliance_level: 专业标准
-layer: "Layer 7 (风险管理层)"
+layer: "Layer 7 (风险管理�?"
 responsibility:
   - 尾部风险度量扩展
   - CVaR/EVaR/CDaR计算
@@ -18,26 +18,26 @@ responsibility:
 
 # 尾部风险度量扩展蓝图
 
-> **核心职责**: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指标
+> **核心职责**: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指�?
 > **职责边界**: 
-> - ✅ 本文档负责：尾部风险度量、CVaR/EVaR/CDaR计算、高级风险指标
-> - ❌ 本文档不负责：尾部风险对冲策略（由TAIL_RISK_HEDGING负责）
+> - �?本文档负责：尾部风险度量、CVaR/EVaR/CDaR计算、高级风险指�?
+> - �?本文档不负责：尾部风险对冲策略（由TAIL_RISK_HEDGING负责�?
 
-> **核心定位**: 尾部风险度量扩展蓝图的核心功能实现
+> **核心定位**: 尾部风险度量扩展蓝图的核心功能实�?
 
 
 > **模块ID**: TAIL_RISK_METRICS_EXTENSION_001
 > **创建日期**: 2026-04-07
-> **核心定位**: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指标
+> **核心定位**: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指�?
 > **索引**: `TAIL_RISK_METRICS_EXTENSION_001`
-> **开发周期**: 1周
+> **开发周�?*: 1�?
 
 ## 核心定位
 
-> 核心职责: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指标
+> 核心职责: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指�?
 > 职责边界: 
-> - ✅ 本文档负责：尾部风险度量、CVaR/EVaR/CDaR计算、高级风险指标
-> - ❌ 本文档不负责：尾部风险对冲策略（由TAIL_RISK_HEDGING负责），确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：尾部风险度量、CVaR/EVaR/CDaR计算、高级风险指�?
+> - �?本文档不负责：尾部风险对冲策略（由TAIL_RISK_HEDGING负责），确保系统功能的稳定运行和高效执行�?
 
 ## 2. 功能设计
 
@@ -46,9 +46,9 @@ responsibility:
 ```python
 class TailRiskMetrics:
     """
-    尾部风险度量器
+    尾部风险度量�?
     
-    开源依赖: Riskfolio-Lib
+    开源依�? Riskfolio-Lib
     """
     
     def cvar(
@@ -57,11 +57,11 @@ class TailRiskMetrics:
         alpha: float = 0.05
     ) -> float:
         """
-        条件风险价值（CVaR / Expected Shortfall）
+        条件风险价值（CVaR / Expected Shortfall�?
         
         CVaR = E[R | R <= VaR]
         
-        超过VaR的平均损失
+        超过VaR的平均损�?
         """
         pass
     
@@ -71,9 +71,9 @@ class TailRiskMetrics:
         alpha: float = 0.05
     ) -> float:
         """
-        熵风险价值（EVaR）
+        熵风险价值（EVaR�?
         
-        基于熵的风险度量，更保守的尾部风险估计
+        基于熵的风险度量，更保守的尾部风险估�?
         """
         pass
     
@@ -83,9 +83,9 @@ class TailRiskMetrics:
         alpha: float = 0.05
     ) -> float:
         """
-        条件回撤风险（CDaR）
+        条件回撤风险（CDaR�?
         
-        基于回撤的尾部风险度量
+        基于回撤的尾部风险度�?
         """
         pass
     
@@ -94,7 +94,7 @@ class TailRiskMetrics:
         returns: np.ndarray
     ) -> float:
         """
-        最大回撤
+        最大回�?
         """
         pass
     
@@ -105,7 +105,7 @@ class TailRiskMetrics:
         """
         Ulcer指数
         
-        考虑回撤持续时间的风险度量
+        考虑回撤持续时间的风险度�?
         """
         pass
     
@@ -118,7 +118,7 @@ class TailRiskMetrics:
         """
         最小CVaR优化
         
-        开源依赖: Riskfolio-Lib
+        开源依�? Riskfolio-Lib
         """
         pass
 ```
@@ -143,7 +143,7 @@ tail_risk_metrics:
     
   # 回撤配置
   drawdown:
-    max_threshold: 0.20  # 最大回撤阈值
+    max_threshold: 0.20  # 最大回撤阈�?
 ```
 
 ---
@@ -154,27 +154,27 @@ tail_risk_metrics:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依赖 | 提供VaR/ES指标 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [组合情景分析蓝图](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 中依赖 | 提供情景分析 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依�?| 提供VaR/ES指标 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [组合情景分析蓝图](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 中依�?| 提供情景分析 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [尾部风险对冲蓝图](./TAIL_RISK_HEDGING_BLUEPRINT.md) | TAIL_RISK_HEDGING_001 | 强依赖 | 尾部风险对冲 |
-| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依赖 | 压力测试 |
-| [风险归因系统蓝图](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) | RISK_ATTRIBUTION_SYSTEM_001 | 中依赖 | 风险归因 |
+| [尾部风险对冲蓝图](./TAIL_RISK_HEDGING_BLUEPRINT.md) | TAIL_RISK_HEDGING_001 | 强依�?| 尾部风险对冲 |
+| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依�?| 压力测试 |
+| [风险归因系统蓝图](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) | RISK_ATTRIBUTION_SYSTEM_001 | 中依�?| 风险归因 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -195,20 +195,20 @@ graph LR
 
 ## 4. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
 
 ## 5. 文档治理
 
 ### 5.1 文档索引
 
 **本文档在系统中的位置**:
-- **所属层级**: Layer 0 (系统架构)
+- **所属层�?*: Layer 0 (系统架构)
 - **模块索引**: 001
 - **模块名称**: TAIL_RISK_METRICS_EXTENSION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -222,9 +222,9 @@ graph LR
 
 **文档维护**:
 - **责任模块**: TAIL_RISK_METRICS_EXTENSION
-- **维护周期**: 每季度审查
-- **变更流程**: 提交变更申请 → 技术评审 → 更新文档
+- **维护周期**: 每季度审�?
+- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

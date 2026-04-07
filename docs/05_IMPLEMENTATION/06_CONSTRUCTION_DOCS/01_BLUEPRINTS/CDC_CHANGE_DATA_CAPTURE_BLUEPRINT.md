@@ -1,115 +1,115 @@
 ---
-module_id: CDC_CHANGE_DATA_CAPTURE_BLUEPRINT_001
+module_id: CDC_CHANGE_DATA_CAPTURE__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据预处理层
 compliance_level: 专业标准
 priority: P1
 layer: "Layer 1 (数据预处理层)"
-responsibility: CDC变更数据捕获与增量同步
+responsibility: CDC变更数据捕获与增量同�?
 ---
 
 # CDC变更数据捕获蓝图
 
-> **核心职责**: 实时数据变更捕获、增量同步、数据一致性保证
+> **核心职责**: 实时数据变更捕获、增量同步、数据一致性保�?
 > **职责边界**: 
-> - ✅ 本文档负责：变更数据捕获、增量同步、数据一致性校验
-> - ❌ 本文档不负责：数据采集、数据存储、数据查询
+> - �?本文档负责：变更数据捕获、增量同步、数据一致性校�?
+> - �?本文档不负责：数据采集、数据存储、数据查�?
 
-**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状态**: Active
+**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状�?*: Active
 
 ---
 
 ## 核心定位
 
-负责变更数据捕获（CDC）的实现，实时捕获和处理数据变更，支持数据同步和数据一致性保障。
+负责变更数据捕获（CDC）的实现，实时捕获和处理数据变更，支持数据同步和数据一致性保障�?
 
-## 📋 一、模块概述
+## 📋 一、模块概�?
 
 ### 1.1 专业机构标准要求
 
 | 机构类型 | CDC要求 | 延迟目标 |
 |---------|---------|---------|
-| **桥水基金** | 实时CDC、精确一次 | <100ms |
-| **文艺复兴科技** | 多源CDC、顺序保证 | <200ms |
-| **Two Sigma** | 增量同步、数据一致性 | <500ms |
-| **Citadel** | 高可用CDC、故障恢复 | <100ms |
+| **桥水基金** | 实时CDC、精确一�?| <100ms |
+| **文艺复兴科技** | 多源CDC、顺序保�?| <200ms |
+| **Two Sigma** | 增量同步、数据一致�?| <500ms |
+| **Citadel** | 高可用CDC、故障恢�?| <100ms |
 
 ### 1.2 核心功能矩阵
 
-| 功能模块 | 开源方案 | 成熟度 | 个人适用性 | 推荐指数 |
+| 功能模块 | 开源方�?| 成熟�?| 个人适用�?| 推荐指数 |
 |---------|---------|--------|-----------|---------|
-| **数据库CDC** | Debezium | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **文件CDC** | 自研 + Watchdog | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **API CDC** | 自研 + 轮询 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **消息队列** | Kafka | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **轻量替代** | Redis Streams | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **数据库CDC** | Debezium | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
+| **文件CDC** | 自研 + Watchdog | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
+| **API CDC** | 自研 + 轮询 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
+| **消息队列** | Kafka | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
+| **轻量替代** | Redis Streams | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
 
 ---
 
-## 🏗️ 二、系统架构设计
+## 🏗�?二、系统架构设�?
 
-### 2.1 整体架构图
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    CDC变更数据捕获架构                                     │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                        数据源层                                    │  │
-│  │  • PostgreSQL  • MySQL  • MongoDB  • 文件系统  • API              │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    CDC捕获层                                       │  │
-│  │  • Debezium  • Binlog解析  • 文件监控  • API轮询                  │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    变更事件处理层                                  │  │
-│  │  • 事件解析  • 格式转换  • 数据验证  • 冲突解决                    │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    消息队列层 (Kafka/Redis)                        │  │
-│  │  • 事件存储  • 顺序保证  • 持久化  • 回放支持                      │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    消费处理层                                      │  │
-│  │  • 增量同步  • 数据转换  • 一致性校验  • 错误处理                  │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### 2.2 数据流架构
+### 2.1 整体架构�?
 
 ```
-数据变更 → CDC捕获 → 变更事件 → 消息队列 → 消费处理 → 目标存储
-    │         │          │          │          │          │
-    └─────────┴──────────┴──────────┴──────────┴──────────┘
+┌─────────────────────────────────────────────────────────────────────────�?
+�?                   CDC变更数据捕获架构                                     �?
+├─────────────────────────────────────────────────────────────────────────�?
+�?                                                                        �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                       数据源层                                    �? �?
+�? �? �?PostgreSQL  �?MySQL  �?MongoDB  �?文件系统  �?API              �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   CDC捕获�?                                      �? �?
+�? �? �?Debezium  �?Binlog解析  �?文件监控  �?API轮询                  �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   变更事件处理�?                                 �? �?
+�? �? �?事件解析  �?格式转换  �?数据验证  �?冲突解决                    �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   消息队列�?(Kafka/Redis)                        �? �?
+�? �? �?事件存储  �?顺序保证  �?持久�? �?回放支持                      �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   消费处理�?                                     �? �?
+�? �? �?增量同步  �?数据转换  �?一致性校�? �?错误处理                  �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                                                                        �?
+└─────────────────────────────────────────────────────────────────────────�?
+```
+
+### 2.2 数据流架�?
+
+```
+数据变更 �?CDC捕获 �?变更事件 �?消息队列 �?消费处理 �?目标存储
+    �?        �?         �?         �?         �?         �?
+    └─────────┴──────────┴──────────┴──────────┴──────────�?
                     完整CDC链路
 ```
 
 ---
 
-## 💻 三、核心实现代码
+## 💻 三、核心实现代�?
 
-### 3.1 文件CDC监控器
+### 3.1 文件CDC监控�?
 
 ```python
 """
-文件CDC监控器 - 基于Watchdog
+文件CDC监控�?- 基于Watchdog
 """
 import os
 import hashlib
@@ -145,7 +145,7 @@ class FileChangeEvent:
 
 
 class FileCDCMonitor:
-    """文件CDC监控器"""
+    """文件CDC监控�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -169,7 +169,7 @@ class FileCDCMonitor:
             return None
     
     def _should_watch(self, file_path: str) -> bool:
-        """判断是否应该监控该文件"""
+        """判断是否应该监控该文�?""
         for ignore_pattern in self.ignore_patterns:
             if ignore_pattern in file_path:
                 return False
@@ -250,7 +250,7 @@ class FileCDCMonitor:
             self._notify_handlers(event)
     
     def add_change_handler(self, handler: Callable):
-        """添加变更处理器"""
+        """添加变更处理�?""
         self.change_handlers.append(handler)
     
     def _notify_handlers(self, event: FileChangeEvent):
@@ -286,7 +286,7 @@ class FileCDCMonitor:
 
 
 class CDCEventHandler(FileSystemEventHandler):
-    """CDC事件处理器"""
+    """CDC事件处理�?""
     
     def __init__(self, monitor: FileCDCMonitor):
         self.monitor = monitor
@@ -309,11 +309,11 @@ class CDCEventHandler(FileSystemEventHandler):
             self.monitor.on_file_created(event.dest_path)
 ```
 
-### 3.2 API CDC轮询器
+### 3.2 API CDC轮询�?
 
 ```python
 """
-API CDC轮询器
+API CDC轮询�?
 """
 import asyncio
 import aiohttp
@@ -340,7 +340,7 @@ class APICDCConfig:
 
 
 class APICDCPoller:
-    """API CDC轮询器"""
+    """API CDC轮询�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -409,7 +409,7 @@ class APICDCPoller:
         config: APICDCConfig,
         item: Dict[str, Any]
     ):
-        """处理单个数据项"""
+        """处理单个数据�?""
         item_id = item.get(config.id_field)
         if not item_id:
             return
@@ -450,7 +450,7 @@ class APICDCPoller:
                 self.logger.error(f"Handler error: {e}")
     
     def add_change_handler(self, handler: Callable):
-        """添加变更处理器"""
+        """添加变更处理�?""
         self.change_handlers.append(handler)
     
     async def start(self):
@@ -475,7 +475,7 @@ class APICDCPoller:
 
 
 class CDCStateStore:
-    """CDC状态存储"""
+    """CDC状态存�?""
     
     def __init__(self, state_path: str):
         from pathlib import Path
@@ -488,7 +488,7 @@ class CDCStateStore:
         self._load_state()
     
     def _load_state(self):
-        """加载状态"""
+        """加载状�?""
         cursor_file = self.state_path / "cursors.json"
         if cursor_file.exists():
             with open(cursor_file, 'r') as f:
@@ -500,7 +500,7 @@ class CDCStateStore:
                 self.item_hashes = json.load(f)
     
     def _save_state(self):
-        """保存状态"""
+        """保存状�?""
         cursor_file = self.state_path / "cursors.json"
         with open(cursor_file, 'w') as f:
             json.dump(self.cursors, f, indent=2)
@@ -519,11 +519,11 @@ class CDCStateStore:
         self._save_state()
     
     def get_item_hash(self, endpoint_name: str, item_id: str) -> Optional[str]:
-        """获取数据项哈希"""
+        """获取数据项哈�?""
         return self.item_hashes.get(endpoint_name, {}).get(item_id)
     
     def set_item_hash(self, endpoint_name: str, item_id: str, hash_value: str):
-        """设置数据项哈希"""
+        """设置数据项哈�?""
         if endpoint_name not in self.item_hashes:
             self.item_hashes[endpoint_name] = {}
         
@@ -531,11 +531,11 @@ class CDCStateStore:
         self._save_state()
 ```
 
-### 3.3 变更事件处理器
+### 3.3 变更事件处理�?
 
 ```python
 """
-变更事件处理器
+变更事件处理�?
 """
 import json
 from typing import Dict, List, Any, Callable
@@ -559,7 +559,7 @@ class ChangeEvent:
 
 
 class CDCEventProcessor:
-    """CDC事件处理器"""
+    """CDC事件处理�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -594,13 +594,13 @@ class CDCEventProcessor:
                 raise
     
     def register_handler(self, operation: str, handler: Callable):
-        """注册处理器"""
+        """注册处理�?""
         if operation not in self.handlers:
             self.handlers[operation] = []
         self.handlers[operation].append(handler)
     
     def emit_event(self, event: ChangeEvent):
-        """发送事件"""
+        """发送事�?""
         event_data = {
             "event_id": event.event_id,
             "source": event.source,
@@ -664,16 +664,16 @@ class CDCEventProcessor:
                 self.logger.error(f"Handler error: {e}")
     
     def start_processing(self):
-        """开始处理"""
+        """开始处�?""
         while True:
             self.process_events()
 ```
 
 ---
 
-## 🚀 四、部署配置
+## 🚀 四、部署配�?
 
-### 4.1 Debezium配置（PostgreSQL）
+### 4.1 Debezium配置（PostgreSQL�?
 
 ```json
 {
@@ -743,7 +743,7 @@ networks:
 
 ---
 
-## 📊 五、使用示例
+## 📊 五、使用示�?
 
 ### 5.1 文件CDC监控
 
@@ -798,38 +798,38 @@ asyncio.run(poller.start())
 
 ### 6.1 CDC性能
 
-| 指标 | 目标值 | 实测值 |
+| 指标 | 目标�?| 实测�?|
 |------|--------|--------|
 | **捕获延迟** | <100ms | 50-80ms |
-| **吞吐量** | >10K events/s | 15K events/s |
-| **数据一致性** | 100% | 100% |
+| **吞吐�?* | >10K events/s | 15K events/s |
+| **数据一致�?* | 100% | 100% |
 | **故障恢复时间** | <30s | 20s |
 
 ### 6.2 资源占用
 
 | 资源 | Debezium | Kafka | 总计 |
 |------|----------|-------|------|
-| CPU | 0.5核 | 1核 | 1.5核 |
+| CPU | 0.5�?| 1�?| 1.5�?|
 | 内存 | 1GB | 2GB | 3GB |
 | 存储 | 1GB | 10GB | 11GB |
 
 ---
 
-## 📋 七、实施路径
+## 📋 七、实施路�?
 
-### Phase 1: 基础CDC（1周）
+### Phase 1: 基础CDC�?周）
 
 - [x] 文件CDC实现
 - [x] API CDC实现
 - [x] Redis Streams集成
 
-### Phase 2: 数据库CDC（1周）
+### Phase 2: 数据库CDC�?周）
 
 - [x] Debezium部署
 - [x] Kafka集成
 - [x] 事件处理
 
-### Phase 3: 优化增强（1周）
+### Phase 3: 优化增强�?周）
 
 - [x] 性能优化
 - [x] 监控告警
@@ -837,11 +837,11 @@ asyncio.run(poller.start())
 
 ---
 
-## 📝 八、变更历史
+## 📝 八、变更历�?
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

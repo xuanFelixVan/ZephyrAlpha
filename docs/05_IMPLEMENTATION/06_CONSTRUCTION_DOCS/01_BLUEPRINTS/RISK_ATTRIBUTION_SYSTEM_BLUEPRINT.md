@@ -3,7 +3,7 @@ responsibility:
   - 风险归因
   - 风险分解
   - 风险来源分析
-  - 风险贡献度
+  - 风险贡献�?
 
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0
@@ -12,17 +12,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 7 风险管理层
+applicable_scope: Layer 7 风险管理�?
 compliance_level: 专业标准
-layer: "Layer 7 (风险管理层)"
+layer: "Layer 7 (风险管理�?"
 ---
 
 # 风险归因系统蓝图
 
 > **核心职责**: 多维度风险分解与归因分析
 > **职责边界**: 
-> - ✅ 本文档负责：风险分解、风险归因、风险因子识别
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：风险分解、风险归因、风险因子识�?
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述
@@ -539,23 +539,23 @@ class AttributionReportGenerator:
 # Risk Attribution Report
 > **核心职责**: Risk Attribution System蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Risk Attribution System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Risk Attribution System蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
 
 ## 核心职责
 
-风险归因系统，负责风险来源的分析和归因
+风险归因系统，负责风险来源的分析和归�?
 
 
 ---
 
 ## 📋 概述
 
-本文档定义了RISK ATTRIBUTION SYSTEM的核心功能和技术实现。
+本文档定义了RISK ATTRIBUTION SYSTEM的核心功能和技术实现�?
 
 
-> **核心定位**: Risk Attribution Report的核心功能实现
+> **核心定位**: Risk Attribution Report的核心功能实�?
 
 
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -837,27 +837,27 @@ pip install jinja2>=3.0
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [BARRA风险模型蓝图](./BARRA_RISK_MODEL_BLUEPRINT.md) | BARRA_RISK_MODEL_001 | 强依赖 | 提供因子风险模型 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依赖 | 提供VaR/ES指标 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依赖 | 提供数据质量指标 |
+| [BARRA风险模型蓝图](./BARRA_RISK_MODEL_BLUEPRINT.md) | BARRA_RISK_MODEL_001 | 强依�?| 提供因子风险模型 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依�?| 提供VaR/ES指标 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依�?| 提供数据质量指标 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合绩效评估蓝图](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | 强依赖 | 组合绩效评估 |
-| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 中依赖 | 风险贡献分析 |
-| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依赖 | 压力测试 |
+| [组合绩效评估蓝图](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | 强依�?| 组合绩效评估 |
+| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 中依�?| 风险贡献分析 |
+| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依�?| 压力测试 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -878,11 +878,11 @@ graph LR
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active

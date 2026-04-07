@@ -6,25 +6,25 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
   - 数据成本管理
   - 成本监控
   - 成本优化
   - 成本报告
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
 # DATA COST MANAGEMENT BLUEPRINT
 
 > **核心职责**: Data Cost Management蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Data Cost Management蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Data Cost Management蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
-﻿---
-module_id: DATACOSTMANAGEMENTBLUEPRINT_001
+�?--
+module_id: DATACOSTMANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -33,53 +33,53 @@ owner: 实施团队
 responsibility:
   - 因子计算
   - 组合优化
-  - 数据源
+  - 数据�?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: 全系�?
 compliance_level: 专业标准
 layer: "Layer 1 (数据源层)"
-﻿# 数据成本管理蓝图
+�? 数据成本管理蓝图
 
-> **核心定位**: 数据成本管理蓝图的核心功能实现
+> **核心定位**: 数据成本管理蓝图的核心功能实�?
 
 
 > **模块ID**: `DATA_COST_MGMT_001`
-> **实施周期**: Week 31-32（2周）
-> **优先级**: P2（优化）
-> **预期收益**: 降低数据成本30%，提升成本透明度100%
+> **实施周期**: Week 31-32�?周）
+> **优先�?*: P2（优化）
+> **预期收益**: 降低数据成本30%，提升成本透明�?00%
 
 ## 核心定位
 
-设计DATA COST MANAGEMENT的设计与实现，基于Apache Atlas技术，保障核心功能，确保数据质量合规。
+设计DATA COST MANAGEMENT的设计与实现，基于Apache Atlas技术，保障核心功能，确保数据质量合规�?
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
+### 1.1 业务需�?
 
 **当前痛点**:
 - 数据成本不透明
-- 成本归属不清晰
+- 成本归属不清�?
 - 缺少成本优化建议
 - 成本预算难以控制
 
 **业务目标**:
 - 建立数据成本追踪体系
-- 实现成本归属和分摊
+- 实现成本归属和分�?
 - 提供成本优化建议
 - 支持成本预算管理
 
-### 1.2 技术目标
+### 1.2 技术目�?
 
-| 指标 | 目标值 | 说明 |
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **成本追踪覆盖率** | 100% | 所有数据资产成本追踪 |
-| **成本归属准确率** | ≥95% | 成本归属准确率≥95% |
-| **成本降低** | ≥30% | 数据成本降低30% |
-| **预算控制准确率** | ≥90% | 预算控制准确率≥90% |
+| **成本追踪覆盖�?* | 100% | 所有数据资产成本追�?|
+| **成本归属准确�?* | �?5% | 成本归属准确率≥95% |
+| **成本降低** | �?0% | 数据成本降低30% |
+| **预算控制准确�?* | �?0% | 预算控制准确率≥90% |
 
-## 三、核心模块设计
+## 三、核心模块设�?
 
-### 3.1 成本采集器 (CostCollector)
+### 3.1 成本采集�?(CostCollector)
 
 ```python
 from dataclasses import dataclass, field
@@ -108,7 +108,7 @@ class CostRecord:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class CostCollector:
-    """成本采集器"""
+    """成本采集�?""
     
     def __init__(self):
         self.cost_records: List[CostRecord] = []
@@ -180,7 +180,7 @@ class CostCollector:
     def get_costs_by_type(self, cost_type: CostType,
                           start_time: datetime = None,
                           end_time: datetime = None) -> List[CostRecord]:
-        """按类型获取成本"""
+        """按类型获取成�?""
         filtered = [r for r in self.cost_records if r.cost_type == cost_type]
         
         if start_time:
@@ -192,7 +192,7 @@ class CostCollector:
         return filtered
 ```
 
-### 3.2 成本归属管理器 (CostAttributionManager)
+### 3.2 成本归属管理�?(CostAttributionManager)
 
 ```python
 from typing import Dict, List, Any
@@ -210,7 +210,7 @@ class CostAllocation:
     timestamp: datetime
 
 class CostAttributionManager:
-    """成本归属管理器"""
+    """成本归属管理�?""
     
     def __init__(self):
         self.allocations: List[CostAllocation] = []
@@ -268,7 +268,7 @@ class CostAttributionManager:
         return costs
 ```
 
-### 3.3 成本优化建议器 (CostOptimizationAdvisor)
+### 3.3 成本优化建议�?(CostOptimizationAdvisor)
 
 ```python
 from typing import Dict, List, Any, Tuple
@@ -287,7 +287,7 @@ class OptimizationRecommendation:
     created_at: datetime = field(default_factory=datetime.now)
 
 class CostOptimizationAdvisor:
-    """成本优化建议器"""
+    """成本优化建议�?""
     
     def __init__(self, cost_collector: CostCollector):
         self.cost_collector = cost_collector
@@ -339,12 +339,12 @@ class CostOptimizationAdvisor:
         return recommendations
     
     def get_total_potential_savings(self) -> float:
-        """获取总潜在节省"""
+        """获取总潜在节�?""
         return sum(r.potential_savings for r in self.recommendations)
 ```
 
 ---
-## 四、接口设计
+## 四、接口设�?
 
 ### 4.1 RESTful API
 
@@ -395,7 +395,7 @@ GET /api/v1/cost/recommendations
 
 ---
 
-## 五、部署架构
+## 五、部署架�?
 
 ```yaml
 version: '3.8'
@@ -431,30 +431,30 @@ services:
 
 ---
 
-## 六、监控指标
+## 六、监控指�?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
-| `cost_total_dollars` | Gauge | 总成本 |
-| `cost_by_type_dollars` | Gauge | 按类型成本 |
-| `cost_by_team_dollars` | Gauge | 按团队成本 |
+| `cost_total_dollars` | Gauge | 总成�?|
+| `cost_by_type_dollars` | Gauge | 按类型成�?|
+| `cost_by_team_dollars` | Gauge | 按团队成�?|
 | `cost_savings_potential_dollars` | Gauge | 潜在节省 |
 
 ---
 
-## 七、实施计划
+## 七、实施计�?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **阶段1** | 搭建成本采集系统 | 2天 |
-| **阶段2** | 开发成本归属管理器 | 3天 |
-| **阶段3** | 开发成本优化建议器 | 3天 |
-| **阶段4** | 开发成本仪表板 | 2天 |
-| **阶段5** | 测试和优化 | 2天 |
+| **阶段1** | 搭建成本采集系统 | 2�?|
+| **阶段2** | 开发成本归属管理器 | 3�?|
+| **阶段3** | 开发成本优化建议器 | 3�?|
+| **阶段4** | 开发成本仪表板 | 2�?|
+| **阶段5** | 测试和优�?| 2�?|
 
 ---
 
-## 八、相关文档
+## 八、相关文�?
 
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -462,7 +462,7 @@ services:
 
 ---
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护�?*: 首席蓝图架构�?
 ---
 
 ## 1. 文档治理
@@ -470,13 +470,13 @@ services:
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Data Cost Management
 - **模块ID**: DATA_COST_MANAGEMENT_001
 - **蓝图文档**: DATA_COST_MANAGEMENT_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -487,13 +487,13 @@ services:
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
 
 
 ---
@@ -504,23 +504,23 @@ services:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 中依赖 | 获取数据源使用情况 |
-| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 中依赖 | 获取存储成本数据 |
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 中依�?| 获取数据源使用情�?|
+| [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | 中依�?| 获取存储成本数据 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依赖 | 提供成本治理策略 |
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依�?| 提供成本治理策略 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **Prometheus** | 2.40+ | 成本监控 | [官方文档](https://prometheus.io/) |
-| **Grafana** | 9.0+ | 可视化展示 | [官方文档](https://grafana.com/) |
+| **Grafana** | 9.0+ | 可视化展�?| [官方文档](https://grafana.com/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -536,11 +536,11 @@ graph LR
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

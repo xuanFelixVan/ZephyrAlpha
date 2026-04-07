@@ -10,8 +10,8 @@ applicable_scope: Layer 1 数据源层
 compliance_level: 专业标准
 responsibility:
   - 另类数据集成
-  - 数据源接入
-  - 数据标准化
+  - 数据源接�?
+  - 数据标准�?
   - 数据质量控制
 layer: "Layer 1 (数据源层)"
 ---
@@ -20,12 +20,12 @@ layer: "Layer 1 (数据源层)"
 
 > **核心职责**: Alternative Data Integration蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Alternative Data Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Alternative Data Integration蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
-﻿# 另类数据源集成项目蓝?
+�? 另类数据源集成项目蓝?
 
-> **核心定位**: 另类数据源集成项目蓝?的核心功能实现
+> **核心定位**: 另类数据源集成项目蓝?的核心功能实�?
 
 > **项目编号**: ALT-DATA-2026-001
 > **项目名称**: 另类数据源集成与因子挖掘系统
@@ -39,14 +39,14 @@ layer: "Layer 1 (数据源层)"
 
 ### 职责边界
 
-**✅ 核心职责**:
+**�?核心职责**:
 
-- 另类数据源接入（新闻、社交媒体、分析师预期）
-- 数据采集与清洗（API接口、爬虫、实时流）
+- 另类数据源接入（新闻、社交媒体、分析师预期�?
+- 数据采集与清洗（API接口、爬虫、实时流�?
 - NLP处理与因子构建（情感分析、事件提取、实体识别）
 - 因子管理与验证（存储、IC验证、监控）
 
-**❌ 非职责范围**:
+**�?非职责范�?*:
 - 传统市场数据采集
 - 数据质量监控
 - 数据存储基础设施
@@ -335,7 +335,7 @@ class AnalystExpectationDataSource:
 | stock_code | string | 股票代码 |
 | analyst_name | string | 分析师姓?|
 | institution | string | 机构名称 |
-| rating | string | 评级（买?增持/中?减持/卖出?|
+| rating | string | 评级（买?增持/�?减持/卖出?|
 | target_price | float | 目标?|
 | eps_forecast | float | EPS预测 |
 | report_date | date | 报告日期 |
@@ -397,7 +397,7 @@ class EventExtractor:
         self.model = "glm-4-flash"
         self.event_types = [
             '业绩公告', '并购重组', '股权变动', '高管变动',
-            '产品发布', '政策影响', '行业动?, '市场事件'
+            '产品发布', '政策影响', '行业�?, '市场事件'
         ]
         
     def extract_events(self, text):
@@ -518,7 +518,7 @@ def calculate_event_driven_factor(stock_code, date):
     for event in events:
         # 根据事件类型和影响等级计算得?        base_score = EVENT_IMPACT_MAP[event['event_type']]
         level_multiplier = {'?: 1.0, '?: 0.6, '?: 0.3}[event['impact_level']]
-        sentiment_multiplier = {'正面': 1.0, '负面': -1.0, '中?: 0.0}[event['sentiment']]
+        sentiment_multiplier = {'正面': 1.0, '负面': -1.0, '�?: 0.0}[event['sentiment']]
         
         score = base_score * level_multiplier * sentiment_multiplier
         impact_scores.append(score)
@@ -704,7 +704,7 @@ def calculate_rating_change_factor(stock_code, date, window=30):
     
     # 2. 计算评级变化
     if len(ratings) >= 2:
-        rating_map = {'买入': 2, '增持': 1, '中?: 0, '减持': -1, '卖出': -2}
+        rating_map = {'买入': 2, '增持': 1, '�?: 0, '减持': -1, '卖出': -2}
         latest_rating = rating_map.get(ratings[-1]['rating'], 0)
         previous_rating = rating_map.get(ratings[0]['rating'], 0)
         
@@ -851,7 +851,7 @@ CREATE INDEX idx_factor_stock ON alternative_factors(stock_code);
 ---
 
 ### 5.2 向量数据库设?
-**用?*: 存储新闻和社交媒体内容的向量表示，支持语义搜?
+**�?*: 存储新闻和社交媒体内容的向量表示，支持语义搜?
 ```python
 from chromadb import Client
 from chromadb.config import Settings
@@ -913,7 +913,7 @@ class VectorStore:
 |--------|------|---------|
 | **M1: 数据源接入完?* | Week 3 | 至少3个数据源接入，数据质?95% |
 | **M2: NLP处理完成** | Week 5 | 情感分析准确?80%，事件提取完?|
-| **M3: 因子构建完成** | Week 7 | 至少8个因子，IC均?0.03 |
+| **M3: 因子构建完成** | Week 7 | 至少8个因子，IC�?0.03 |
 | **M4: 项目验收** | Week 8 | 所有测试通过，文档完?|
 
 ---
@@ -973,7 +973,7 @@ class VectorStore:
 | **数据采集** | 数据完整?95% | 数据质量检?|
 | **NLP处理** | 情感分析准确?80% | 人工标注验证 |
 | **因子计算** | 因子数量??| 功能测试 |
-| **IC验证** | IC均?0.03 | 统计检?|
+| **IC验证** | IC�?0.03 | 统计检?|
 
 ---
 
@@ -994,17 +994,17 @@ class VectorStore:
 
 **蓝图版本**: v1.0  
 **创建日期**: 2026-04-02  
-**状?*: ?已完?
+**�?*: ?已完?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席架构�?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状�?*: Active
 ---
 
 
@@ -1016,25 +1016,25 @@ class VectorStore:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接和配置 |
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依�?| 提供数据源连接和配置 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 接收另类数据进行质量检查 |
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 注册另类数据资产 |
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 接收另类数据进行质量检�?|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依�?| 注册另类数据资产 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **Scrapy** | 2.11+ | 数据采集 | [官方文档](https://scrapy.org/) |
-| **Selenium** | 4.15+ | 动态页面抓取 | [官方文档](https://www.selenium.dev/) |
+| **Selenium** | 4.15+ | 动态页面抓�?| [官方文档](https://www.selenium.dev/) |
 | **GLM-4-Flash** | latest | NLP处理 | [官方文档](https://open.bigmodel.cn/) |
 | **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -1053,27 +1053,27 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Alternative Data Integration
 - **模块ID**: ALTERNATIVE_DATA_INTEGRATION_001
 - **蓝图文档**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: Layer 2 Alpha因子层 - 另类数据源集成
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: Layer 2 Alpha因子�?- 另类数据源集�?
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Alternative Data Integration** | Layer 2 Alpha因子层 - 另类数据源集成 | **核心模块** |
+| **Alternative Data Integration** | Layer 2 Alpha因子�?- 另类数据源集�?| **核心模块** |
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active

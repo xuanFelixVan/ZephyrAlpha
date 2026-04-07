@@ -10,7 +10,7 @@ responsibility: iFind数据源模块说明与使用指南
 layer: "Layer 1 (数据预处理层)"
 ---
 
-# iFind数据源
+# iFind数据源使用指南
 
 > **核心职责**: iFind数据源接入与金融数据获取，涉及数据源
 > **职责边界**: 

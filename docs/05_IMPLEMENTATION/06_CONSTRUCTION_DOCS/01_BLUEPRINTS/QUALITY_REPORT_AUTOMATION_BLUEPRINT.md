@@ -6,68 +6,68 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 监控层
+applicable_scope: Layer 9 监控�?
 compliance_level: 专业标准
 responsibility:
-  - 质量报告自动化
+  - 质量报告自动�?
   - 报告生成
   - 报告模板管理
   - 报告分发
-layer: "Layer 9 (监控层)"
+layer: "Layer 9 (监控�?"
 ---
 
-# 质量报告自动化蓝图
+# 质量报告自动化蓝�?
 
-> **核心职责**: 质量报告自动化，自动生成和分发质量报告
+> **核心职责**: 质量报告自动化，自动生成和分发质量报�?
 > **职责边界**: 
-> - ✅ 本文档负责：质量报告自动化、报告生成、报告模板管理、报告分发
-> - ❌ 本文档不负责：数据质量监控、数据质量评分、数据质量治理
-﻿# 质量报告自动化蓝图
+> - �?本文档负责：质量报告自动化、报告生成、报告模板管理、报告分�?
+> - �?本文档不负责：数据质量监控、数据质量评分、数据质量治�?
+�? 质量报告自动化蓝�?
 
 > **核心定位**: 质量报告自动化蓝图的核心功能实现
 
 
 > **模块ID**: `QUALITY_REPORT_AUTO_001`
-> **实施周期**: Week 10-11（1周）
-> **优先级**: P1（重要）
-> **预期收益**: 减少90%报告生成时间，提高报告质量一致性
+> **实施周期**: Week 10-11�?周）
+> **优先�?*: P1（重要）
+> **预期收益**: 减少90%报告生成时间，提高报告质量一致�?
 
 ## 核心定位
 
 > 核心职责: Quality Report Automation蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Quality Report Automation蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：Quality Report Automation蓝图设计相关内容
+> - �?本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行�?
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
+### 1.1 业务需�?
 
 **当前痛点**:
-- 数据质量报告生成耗时，需要人工汇总
+- 数据质量报告生成耗时，需要人工汇�?
 - 报告格式不统一，缺少标准化模板
 - 报告内容不全面，缺少深度分析
 - 报告分发不及时，影响决策效率
 
 **业务目标**:
-- 自动生成标准化数据质量报告
-- 支持多种报告类型和格式
+- 自动生成标准化数据质量报�?
+- 支持多种报告类型和格�?
 - 提供深度分析和可视化
 - 自动化报告分发和归档
 
-### 1.2 技术目标
+### 1.2 技术目�?
 
-| 指标 | 目标值 | 说明 |
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
 | **报告生成时间** | <5分钟 | 自动生成报告时间<5分钟 |
-| **报告格式支持** | ≥3种 | 支持PDF、HTML、Excel等格式 |
-| **报告类型支持** | ≥5种 | 支持日报、周报、月报等类型 |
-| **报告自动化率** | ≥90% | 90%以上报告自动生成 |
+| **报告格式支持** | �?�?| 支持PDF、HTML、Excel等格�?|
+| **报告类型支持** | �?�?| 支持日报、周报、月报等类型 |
+| **报告自动化率** | �?0% | 90%以上报告自动生成 |
 
-## 三、核心模块设计
+## 三、核心模块设�?
 
-### 3.1 报告模板管理器 (ReportTemplateManager)
+### 3.1 报告模板管理�?(ReportTemplateManager)
 
 **职责**: 管理报告模板
 
@@ -106,7 +106,7 @@ class ReportTemplate:
     created_at: datetime = field(default_factory=datetime.now)
 
 class ReportTemplateManager:
-    """报告模板管理器"""
+    """报告模板管理�?""
     
     def __init__(self, template_dir: str):
         self.template_dir = template_dir
@@ -142,7 +142,7 @@ class ReportTemplateManager:
         return jinja_template.render(**context)
     
     def create_custom_template(self, template_config: Dict[str, Any]) -> ReportTemplate:
-        """创建自定义模板"""
+        """创建自定义模�?""
         template = ReportTemplate(
             template_id=template_config['template_id'],
             template_name=template_config['template_name'],
@@ -156,7 +156,7 @@ class ReportTemplateManager:
         return template
 ```
 
-### 3.2 数据聚合器 (DataAggregator)
+### 3.2 数据聚合�?(DataAggregator)
 
 **职责**: 聚合报告所需数据
 
@@ -166,7 +166,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 class DataAggregator:
-    """数据聚合器"""
+    """数据聚合�?""
     
     def __init__(self, db_connection):
         self.db = db_connection
@@ -263,7 +263,7 @@ class DataAggregator:
         return aggregated_data
 ```
 
-### 3.3 报告生成器 (ReportGenerator)
+### 3.3 报告生成�?(ReportGenerator)
 
 **职责**: 生成各类报告
 
@@ -275,7 +275,7 @@ from weasyprint import HTML
 import plotly.graph_objects as go
 
 class ReportGenerator:
-    """报告生成器"""
+    """报告生成�?""
     
     def __init__(self, template_manager: ReportTemplateManager,
                  data_aggregator: DataAggregator):
@@ -363,7 +363,7 @@ class ReportGenerator:
         }
     
     def _calculate_weekly_trends(self, quality_scores: Dict[str, Any]) -> Dict[str, Any]:
-        """计算周趋势"""
+        """计算周趋�?""
         trends = {}
         
         for table_name, scores in quality_scores.items():
@@ -456,18 +456,18 @@ class ReportFormatter:
 ### 4.1 报告生成流程
 
 ```
-定时触发 → 数据聚合 → 模板渲染 → 格式转换 → 分发归档
+定时触发 �?数据聚合 �?模板渲染 �?格式转换 �?分发归档
 ```
 
 ### 4.2 报告分发流程
 
 ```
-报告生成 → 格式检查 → 收件人匹配 → 邮件发送 → 归档存储
+报告生成 �?格式检�?�?收件人匹�?�?邮件发�?�?归档存储
 ```
 
 ---
 
-## 五、接口设计
+## 五、接口设�?
 
 ### 5.1 RESTful API
 
@@ -506,9 +506,9 @@ GET /api/v1/reports/history?report_type=daily&days=30
 
 ---
 
-## 六、部署架构
+## 六、部署架�?
 
-### 6.1 容器化部署
+### 6.1 容器化部�?
 
 ```yaml
 version: '3.8'
@@ -540,7 +540,7 @@ volumes:
 
 ---
 
-## 七、监控指标
+## 七、监控指�?
 
 ### 7.1 核心指标
 
@@ -549,41 +549,41 @@ volumes:
 | `reports_generated_total` | Counter | 生成的报告总数 |
 | `report_generation_duration_seconds` | Histogram | 报告生成耗时 |
 | `reports_sent_total` | Counter | 发送的报告总数 |
-| `report_generation_errors_total` | Counter | 报告生成错误数 |
+| `report_generation_errors_total` | Counter | 报告生成错误�?|
 
 ---
 
-## 八、实施计划
+## 八、实施计�?
 
-### 8.1 开发阶段
+### 8.1 开发阶�?
 
-| 阶段 | 任务 | 预计时间 | 负责人 |
+| 阶段 | 任务 | 预计时间 | 负责�?|
 |------|------|---------|--------|
-| **阶段1** | 开发模板管理器 | 1天 | 后端工程师 |
-| **阶段2** | 开发数据聚合器 | 1天 | 后端工程师 |
-| **阶段3** | 开发报告生成器 | 2天 | 后端工程师 |
-| **阶段4** | 开发格式化器 | 1天 | 后端工程师 |
-| **阶段5** | 集成测试和部署 | 1天 | QA工程师 |
+| **阶段1** | 开发模板管理器 | 1�?| 后端工程�?|
+| **阶段2** | 开发数据聚合器 | 1�?| 后端工程�?|
+| **阶段3** | 开发报告生成器 | 2�?| 后端工程�?|
+| **阶段4** | 开发格式化�?| 1�?| 后端工程�?|
+| **阶段5** | 集成测试和部�?| 1�?| QA工程�?|
 
 ### 8.2 验收标准
 
-- [ ] 支持至少5种报告类型
-- [ ] 支持至少3种报告格式
+- [ ] 支持至少5种报告类�?
+- [ ] 支持至少3种报告格�?
 - [ ] 报告生成时间<5分钟
-- [ ] 报告自动化率≥90%
+- [ ] 报告自动化率�?0%
 - [ ] 邮件分发功能正常
 
 ---
 
-## 九、风险管理
+## 九、风险管�?
 
-### 9.1 技术风险
+### 9.1 技术风�?
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
-| 报告生成性能瓶颈 | 中 | 异步生成，缓存机制 |
-| 模板渲染错误 | 低 | 模板验证，错误处理 |
-| 邮件发送失败 | 中 | 重试机制，备用通道 |
+| 报告生成性能瓶颈 | �?| 异步生成，缓存机�?|
+| 模板渲染错误 | �?| 模板验证，错误处�?|
+| 邮件发送失�?| �?| 重试机制，备用通道 |
 
 ---
 
@@ -593,28 +593,28 @@ volumes:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 强依赖 | 提供监控数据 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [系统集成蓝图](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | 中依赖 | 提供系统集成数据 |
+| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 强依�?| 提供监控数据 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [系统集成蓝图](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | 中依�?| 提供系统集成数据 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依赖 | 质量评分系统 |
-| [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | 中依赖 | 增强告警系统 |
-| [系统增强蓝图](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) | SYSTEM_ENHANCEMENT_001 | 中依赖 | 系统增强 |
+| [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | 强依�?| 质量评分系统 |
+| [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | 中依�?| 增强告警系统 |
+| [系统增强蓝图](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) | SYSTEM_ENHANCEMENT_001 | 中依�?| 系统增强 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **Jinja2** | 3.1+ | 模板引擎 | [官方文档](https://jinja.palletsprojects.com/) |
 | **WeasyPrint** | 60+ | PDF生成 | [官方文档](https://weasyprint.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -633,7 +633,7 @@ graph LR
 
 ---
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护�?*: 首席蓝图架构�?
 ---
 
 ## 1. 文档治理
@@ -641,13 +641,13 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Quality Report Automation
 - **模块ID**: QUALITY_REPORT_AUTOMATION_001
 - **蓝图文档**: QUALITY_REPORT_AUTOMATION_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -658,21 +658,21 @@ graph LR
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

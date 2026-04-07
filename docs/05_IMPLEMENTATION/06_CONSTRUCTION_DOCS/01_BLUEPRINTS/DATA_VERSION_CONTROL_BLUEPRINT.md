@@ -6,43 +6,43 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
   - 数据版本管理
   - 数据回溯
   - 数据审计
   - 版本控制
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
 # 数据版本控制蓝图
 
 > **核心职责**: 数据版本控制，管理数据集版本，支持数据回溯和审计
 > **职责边界**: 
-> - ✅ 本文档负责：数据版本管理、数据回溯、数据审计、版本控制
-> - ❌ 本文档不负责：数据存储、数据处理、数据质量监控
+> - �?本文档负责：数据版本管理、数据回溯、数据审计、版本控�?
+> - �?本文档不负责：数据存储、数据处理、数据质量监�?
 
-> **核心定位**: 数据版本控制蓝图的核心功能实现
+> **核心定位**: 数据版本控制蓝图的核心功能实�?
 
 
 > 清风量化系统 v5.3 - 数据版本控制系统详细设计
 > **模块ID**: `DATA_VERSION_CTRL_001`
-> **实施周期**: Week 29-30（2周）
-> **优先级**: P2（优化）
-> **预期收益**: 提升数据可追溯性95%，支持数据回滚和审计
+> **实施周期**: Week 29-30�?周）
+> **优先�?*: P2（优化）
+> **预期收益**: 提升数据可追溯�?5%，支持数据回滚和审计
 
 ## 核心定位
 
 > 核心职责: 数据版本控制，管理数据集版本，支持数据回溯和审计
 > 职责边界: 
-> - ✅ 本文档负责：数据版本管理、数据回溯、数据审计、版本控制
-> - ❌ 本文档不负责：数据存储、数据处理、数据质量监控，确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：数据版本管理、数据回溯、数据审计、版本控�?
+> - �?本文档不负责：数据存储、数据处理、数据质量监控，确保系统功能的稳定运行和高效执行�?
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
+### 1.1 业务需�?
 
 **当前痛点**:
 - 数据变更无法追溯
@@ -52,22 +52,22 @@ layer: "Layer 1 (数据层)"
 
 **业务目标**:
 - 建立数据版本控制系统
-- 支持数据快照和回滚
+- 支持数据快照和回�?
 - 提供数据变更历史
-- 支持数据协作和分支管理
+- 支持数据协作和分支管�?
 
-### 1.2 技术目标
+### 1.2 技术目�?
 
-| 指标 | 目标值 | 说明 |
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **版本快照速度** | <10秒 | 数据快照创建速度<10秒 |
-| **版本回滚速度** | <30秒 | 数据回滚速度<30秒 |
-| **版本历史保留** | ≥1年 | 保留至少1年的版本历史 |
-| **版本冲突率** | <5% | 版本冲突率<5% |
+| **版本快照速度** | <10�?| 数据快照创建速度<10�?|
+| **版本回滚速度** | <30�?| 数据回滚速度<30�?|
+| **版本历史保留** | �?�?| 保留至少1年的版本历史 |
+| **版本冲突�?* | <5% | 版本冲突�?5% |
 
-## 三、核心模块设计
+## 三、核心模块设�?
 
-### 3.1 版本管理器 (VersionManager)
+### 3.1 版本管理�?(VersionManager)
 
 ```python
 from dataclasses import dataclass, field
@@ -76,7 +76,7 @@ from datetime import datetime
 from enum import Enum
 
 class VersionStatus(Enum):
-    """版本状态"""
+    """版本状�?""
     ACTIVE = "active"
     DEPRECATED = "deprecated"
     ARCHIVED = "archived"
@@ -102,7 +102,7 @@ class VersionTag:
     created_at: datetime = field(default_factory=datetime.now)
 
 class VersionManager:
-    """版本管理器"""
+    """版本管理�?""
     
     def __init__(self):
         self.versions: Dict[str, DataVersion] = {}
@@ -166,7 +166,7 @@ class VersionManager:
         return list(self.versions.values())
 ```
 
-### 3.2 变更追踪器 (ChangeTracker)
+### 3.2 变更追踪�?(ChangeTracker)
 
 ```python
 from typing import Dict, List, Any, Tuple
@@ -185,14 +185,14 @@ class DataChange:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class ChangeTracker:
-    """变更追踪器"""
+    """变更追踪�?""
     
     def __init__(self):
         self.changes: List[DataChange] = []
     
     def detect_changes(self, old_df: pd.DataFrame,
                        new_df: pd.DataFrame) -> DataChange:
-        """检测变更"""
+        """检测变�?""
         row_count_change = len(new_df) - len(old_df)
         
         old_columns = set(old_df.columns)
@@ -275,7 +275,7 @@ class VersionRollbackEngine:
     
     def rollback_to_version(self, table_name: str,
                             version_id: str) -> bool:
-        """回滚到指定版本"""
+        """回滚到指定版�?""
         version = self.version_manager.get_version(version_id)
         
         if not version:
@@ -299,7 +299,7 @@ class VersionRollbackEngine:
     
     def rollback_to_tag(self, table_name: str,
                         tag_name: str) -> bool:
-        """回滚到指定标签"""
+        """回滚到指定标�?""
         version = self.version_manager.get_version_by_tag(tag_name)
         
         if not version:
@@ -320,7 +320,7 @@ class VersionRollbackEngine:
 ```
 
 ---
-## 四、接口设计
+## 四、接口设�?
 
 ### 4.1 RESTful API
 
@@ -361,7 +361,7 @@ GET /api/v1/version/compare?version1=stock_prices_v122&version2=stock_prices_v12
 
 ---
 
-## 五、部署架构
+## 五、部署架�?
 
 ```yaml
 version: '3.8'
@@ -392,7 +392,7 @@ volumes:
 
 ---
 
-## 六、监控指标
+## 六、监控指�?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -403,27 +403,27 @@ volumes:
 
 ---
 
-## 七、实施计划
+## 七、实施计�?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **阶段1** | 搭建LakeFS平台 | 2天 |
-| **阶段2** | 开发版本管理器 | 3天 |
-| **阶段3** | 开发变更追踪器 | 3天 |
-| **阶段4** | 开发回滚引擎 | 2天 |
-| **阶段5** | 测试和优化 | 2天 |
+| **阶段1** | 搭建LakeFS平台 | 2�?|
+| **阶段2** | 开发版本管理器 | 3�?|
+| **阶段3** | 开发变更追踪器 | 3�?|
+| **阶段4** | 开发回滚引�?| 2�?|
+| **阶段5** | 测试和优�?| 2�?|
 
 ---
 
-## 八、相关文档
+## 八、相关文�?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
-- 数据血缘追踪蓝图
+- 数据血缘追踪蓝�?
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 
 ---
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护�?*: 首席蓝图架构�?
 ---
 
 
@@ -435,23 +435,23 @@ volumes:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 获取数据资产信息 |
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依�?| 获取数据资产信息 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依赖 | 提供版本管理支持 |
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依�?| 提供版本管理支持 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **DVC** | 3.0+ | 数据版本控制 | [官方文档](https://dvc.org/) |
 | **Git** | 2.40+ | 版本管理 | [官方文档](https://git-scm.com/) |
-| **LakeFS** | 1.0+ | 数据湖版本控制 | [官方文档](https://lakefs.io/) |
+| **LakeFS** | 1.0+ | 数据湖版本控�?| [官方文档](https://lakefs.io/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -469,13 +469,13 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Data Version Control
 - **模块ID**: DATA_VERSION_CONTROL_001
 - **蓝图文档**: DATA_VERSION_CONTROL_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -486,10 +486,10 @@ graph LR
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

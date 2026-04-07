@@ -12,39 +12,39 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 组合约束管理模块蓝图
 
-> **核心职责**: 组合约束建模与管理
+> **核心职责**: 组合约束建模与管�?
 > **职责边界**: 
-> - ✅ 本文档负责：约束建模、约束验证、约束管理
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：约束建模、约束验证、约束管�?
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 核心定位
 
-负责Portfolio Constraint Management的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Portfolio Constraint Management的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layer定位**: Layer 6 - 组合优化层（约束管理模块）
+**Layer定位**: Layer 6 - 组合优化层（约束管理模块�?
 
-**核心价值**:
+**核心价�?*:
 - 约束库管理（行业约束、因子约束、风险约束）
-- 约束冲突检测
-- 约束优先级管理
-- 约束可视化
-- 约束模板库
+- 约束冲突检�?
+- 约束优先级管�?
+- 约束可视�?
+- 约束模板�?
 
-**业务价值**:
+**业务价�?*:
 - 确保组合符合投资限制
-- 自动化约束检查
+- 自动化约束检�?
 - 提升合规效率
 
 ### 1.2 版本信息
@@ -53,8 +53,8 @@ layer: "Layer 6 (组合优化层)"
 |------|------|
 | **模块ID** | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 |
 | **版本** | v1.0.0 |
-| **开源依赖** | PyPortfolioOpt, skfolio |
-| **预计工时** | 3-5天 |
+| **开源依�?* | PyPortfolioOpt, skfolio |
+| **预计工时** | 3-5�?|
 
 ---
 ## 📚 相关文档
@@ -63,28 +63,28 @@ layer: "Layer 6 (组合优化层)"
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 提供优化器基础接口 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供资产元数据 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依�?| 提供资产元数�?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [多目标优化蓝图](./MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md) | MULTI_OBJECTIVE_OPTIMIZATION_001 | 强依赖 | 多目标优化约束 |
-| [战略配置引擎蓝图](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | 强依赖 | 战略配置约束 |
-| [PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 中依赖 | 场景分析约束 |
+| [多目标优化蓝图](./MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md) | MULTI_OBJECTIVE_OPTIMIZATION_001 | 强依�?| 多目标优化约�?|
+| [战略配置引擎蓝图](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | 强依�?| 战略配置约束 |
+| [PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 中依�?| 场景分析约束 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
 | **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -103,7 +103,7 @@ graph LR
 
 ---
 
-## 2. 技术实现
+## 2. 技术实�?
 
 ### 2.1 核心API
 
@@ -114,7 +114,7 @@ import pandas as pd
 import numpy as np
 
 class ConstraintManager:
-    """组合约束管理器"""
+    """组合约束管理�?""
     
     def __init__(self):
         self.constraints = []
@@ -128,7 +128,7 @@ class ConstraintManager:
         添加行业约束
         
         Args:
-            sector_weights: 行业权重限制，格式 {'科技': (0.0, 0.3), '金融': (0.1, 0.4)}
+            sector_weights: 行业权重限制，格�?{'科技': (0.0, 0.3), '金融': (0.1, 0.4)}
             sector_mapping: 股票到行业的映射
         """
         pass
@@ -158,14 +158,14 @@ class ConstraintManager:
         
         Args:
             max_volatility: 最大波动率
-            max_drawdown: 最大回撤
+            max_drawdown: 最大回�?
             max_var: 最大VaR
         """
         pass
     
     def detect_conflicts(self) -> List[dict]:
         """
-        检测约束冲突
+        检测约束冲�?
         
         Returns:
             冲突列表
@@ -183,7 +183,7 @@ class ConstraintManager:
             ef: EfficientFrontier对象
             
         Returns:
-            添加约束后的优化器
+            添加约束后的优化�?
         """
         pass
 ```
@@ -192,11 +192,11 @@ class ConstraintManager:
 
 | 约束类型 | 说明 | 示例 |
 |---------|------|------|
-| **权重约束** | 单个资产权重限制 | w_i ∈ [0, 0.1] |
-| **行业约束** | 行业权重限制 | Σ w_i (科技) ≤ 0.3 |
-| **因子约束** | 因子暴露限制 | -0.5 ≤ β_size ≤ 0.5 |
-| **风险约束** | 风险指标限制 | σ_p ≤ 0.15 |
-| **交易约束** | 交易限制 | |w_t - w_{t-1}| ≤ 0.05 |
+| **权重约束** | 单个资产权重限制 | w_i �?[0, 0.1] |
+| **行业约束** | 行业权重限制 | Σ w_i (科技) �?0.3 |
+| **因子约束** | 因子暴露限制 | -0.5 �?β_size �?0.5 |
+| **风险约束** | 风险指标限制 | σ_p �?0.15 |
+| **交易约束** | 交易限制 | |w_t - w_{t-1}| �?0.05 |
 
 ---
 
@@ -219,7 +219,7 @@ class ConstraintAPI:
         self,
         constraints: List[dict]
     ) -> ConflictCheckResult:
-        """检查约束冲突"""
+        """检查约束冲�?""
         
     @endpoint("/api/v1/constraints/apply")
     async def apply_constraints(
@@ -236,24 +236,24 @@ class ConstraintAPI:
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
-| Phase 1 | 约束库管理实现 | 12h |
+| Phase 1 | 约束库管理实�?| 12h |
 | Phase 2 | 冲突检测、skfolio集成 | 16h |
-| Phase 3 | API、测试、文档 | 12h |
+| Phase 3 | API、测试、文�?| 12h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
 ---
 
 ## 5. 文档治理
@@ -261,27 +261,27 @@ class ConstraintAPI:
 ### 5.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Portfolio Constraint Management
 - **模块ID**: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
 - **蓝图文档**: PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: Layer 6 组合优化层
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: Layer 6 组合优化�?
+- **状�?*: Active
 ```
 
 ### 5.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Portfolio Constraint Management** | Layer 6 组合优化层 | **核心模块** |
+| **Portfolio Constraint Management** | Layer 6 组合优化�?| **核心模块** |
 
 ### 5.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

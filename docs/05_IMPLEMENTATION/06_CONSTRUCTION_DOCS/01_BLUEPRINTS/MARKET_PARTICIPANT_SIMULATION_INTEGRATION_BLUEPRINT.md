@@ -6,31 +6,31 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
 responsibility:
-  - 市场参与者模拟集成
-  - 参与者行为建模
-  - 多层次集成
+  - 市场参与者模拟集�?
+  - 参与者行为建�?
+  - 多层次集�?
   - 模拟结果应用
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
-# 市场参与者行为模拟集成蓝图
+# 市场参与者行为模拟集成蓝�?
 ## 核心定位
 
-构建市场参与者模拟集成的设计与实现，基于Agent-Based Modeling技术，模拟不同市场参与者行为，支持市场微观结构研究和策略测试。
+构建市场参与者模拟集成的设计与实现，基于Agent-Based Modeling技术，模拟不同市场参与者行为，支持市场微观结构研究和策略测试�?
 
 ---
 
 
-> **核心职责**: 市场参与者行为模拟集成，多层次集成架构
+> **核心职责**: 市场参与者行为模拟集成，多层次集成架�?
 > **职责边界**: 
-> - ✅ 本文档负责：市场参与者模拟集成、参与者行为建模、多层次集成、模拟结果应用
-> - ❌ 本文档不负责：因子计算、策略执行、风险控制
-﻿# 市场参与者行为模拟系?- 多层次集成架构方?
+> - �?本文档负责：市场参与者模拟集成、参与者行为建模、多层次集成、模拟结果应�?
+> - �?本文档不负责：因子计算、策略执行、风险控�?
+�? 市场参与者行为模拟系?- 多层次集成架构方?
 
-> **核心定位**: 市场参与者行为模拟系?- 多层次集成架构方?的核心功能实现
+> **核心定位**: 市场参与者行为模拟系?- 多层次集成架构方?的核心功能实�?
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
@@ -88,8 +88,8 @@ class InstitutionalActivityFactor(BaseFactor):
             data: 包含价格、成交量、订单簿等数?            
         输出:
             pd.Series: 主力动向因子?(范围[-1, 1])
-            - 正? 主力资金流入
-            - 负? 主力资金流出
+            - �? 主力资金流入
+            - �? 主力资金流出
             - 绝对值越?强度越大
         """
         # 1. 获取主力智能体的市场微观结构分析
@@ -152,8 +152,8 @@ class RetailSentimentFactor(BaseFactor):
         
         输出:
             pd.Series: 散户情绪因子?(范围[-1, 1])
-            - 正? 散户情绪乐观(可能见顶)
-            - 负? 散户情绪悲观(可能见底)
+            - �? 散户情绪乐观(可能见顶)
+            - �? 散户情绪悲观(可能见底)
             - 绝对值越?情绪越极?        """
         # 1. 获取散户智能体的情绪分析
         sentiment_score = self.agent.sentiment_analyzer.analyze(
@@ -212,7 +212,7 @@ class PolicySignalFactor(BaseFactor):
         
         输出:
             pd.Series: 政策信号因子?(范围[-1, 1])
-            - 正? 政策利好,国家队可能买?            - 负? 政策利空,国家队可能减?            - 绝对值越?信号越强
+            - �? 政策利好,国家队可能买?            - �? 政策利空,国家队可能减?            - 绝对值越?信号越强
         """
         # 1. 获取国家队智能体的政策信?        policy_signals = self.agent.policy_signal_detector.detect(
             news_data=data['news'],
@@ -298,7 +298,7 @@ class AgentBasedFactorLibrary:
         # 1. 直接拼接
         integrated_factors = pd.concat([existing_factors, agent_factors], axis=1)
         
-        # 2. 因子正交?(可?
+        # 2. 因子正交?(�?
         if self.config.orthogonalize:
             integrated_factors = self._orthogonalize_factors(integrated_factors)
         
@@ -335,7 +335,7 @@ class AgentBasedSignalGenerator:
             decision = agent.generate_trading_decision(market_state)
             agent_decisions[agent_name] = decision
         
-        # 2. 市场模拟引擎模拟博弈 (可?
+        # 2. 市场模拟引擎模拟博弈 (�?
         if self.config.enable_simulation:
             simulation_result = self._simulate_market(agent_decisions, market_state)
             market_impact = simulation_result.market_impact
@@ -817,7 +817,7 @@ class PortfolioOptimizerWithAgents:
 | **因子计算** | Pandas + NumPy | 成熟稳定,性能?|
 | **信号生成** | 事件驱动架构 | 灵活,易扩?|
 | **组合优化** | CVXPY + Barra模型 | 专业,可解?|
-| **智能体通信** | 消息队列 (Redis/RabbitMQ) | 异步,解?|
+| **智能体通信** | 消息队列 (Redis/RabbitMQ) | 异步,�?|
 
 ---
 
@@ -862,14 +862,14 @@ class PortfolioOptimizerWithAgents:
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-04-02 | **状?*: ?已完?
+**版本**: v1.0 | **更新**: 2026-04-02 | **�?*: ?已完?
 
 ## 1. 文档治理
 
 ### 1.1 文档索引
 
 **本文档在系统中的位置**:
-- **所属层级**: Layer 0 (系统架构)
+- **所属层�?*: Layer 0 (系统架构)
 - **模块索引**: 001
 - **模块名称**: MARKET_PARTICIPANT_SIMULATION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -883,12 +883,12 @@ class PortfolioOptimizerWithAgents:
 
 **文档维护**:
 - **责任模块**: MARKET_PARTICIPANT_SIMULATION
-- **维护周期**: 每季度审查
-- **变更流程**: 提交变更申请 → 技术评审 → 更新文档
+- **维护周期**: 每季度审�?
+- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active
 
 
 ---
@@ -897,7 +897,7 @@ class PortfolioOptimizerWithAgents:
 
 ### 变更记录
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 

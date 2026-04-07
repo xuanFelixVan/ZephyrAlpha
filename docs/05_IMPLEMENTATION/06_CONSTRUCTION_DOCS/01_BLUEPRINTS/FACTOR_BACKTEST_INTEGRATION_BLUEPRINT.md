@@ -6,18 +6,18 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alpha因子层
+applicable_scope: Layer 2 Alpha因子�?
 compliance_level: 专业标准
 responsibility:
   - 因子回测集成
-  - 因子库集成
+  - 因子库集�?
   - 回测框架
   - 因子评估
-layer: "Layer 2 (Alpha因子层)"
+layer: "Layer 2 (Alpha因子�?"
 ---
 # 因子库与回测集成架构蓝图
 
-> **核心定位**: 因子库与回测集成架构蓝图的核心功能实现
+> **核心定位**: 因子库与回测集成架构蓝图的核心功能实�?
 
 
 > **索引**: `FAC_BT_001`
@@ -26,7 +26,7 @@ layer: "Layer 2 (Alpha因子层)"
 
 ## 核心定位
 
-研究FACTOR BACKTEST INTEGRATION的设计与实现，基于回测框架技术，挖掘核心功能，发现投资机会。
+研究FACTOR BACKTEST INTEGRATION的设计与实现，基于回测框架技术，挖掘核心功能，发现投资机会�?
 
 ## 1. 设计原则
 
@@ -92,8 +92,8 @@ layer: "Layer 2 (Alpha因子层)"
 # 定制化量化数据模?
 > **核心职责**: Factor Backtest Integration蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Factor Backtest Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Factor Backtest Integration蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
 
 ## 核心职责
@@ -105,7 +105,7 @@ layer: "Layer 2 (Alpha因子层)"
 
 ## 📋 概述
 
-本文档定义了FACTOR BACKTEST INTEGRATION的核心功能和技术实现。
+本文档定义了FACTOR BACKTEST INTEGRATION的核心功能和技术实现�?
 
 from feast import FeatureStore, Entity, FeatureView, ValueType
 from datetime import timedelta
@@ -1373,36 +1373,36 @@ python scripts/migrate.py
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席文档架构师 |
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席文档架构�?|
 
 ## 11. 文档治理
 
 ### 11.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Factor Backtest Integration
 - **模块ID**: FACTOR_BACKTEST_INTEGRATION_001
 - **蓝图文档**: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统架构设计
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系统架构设�?
+- **状�?*: Active
 ```
 
 ### 11.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Factor Backtest Integration** | 全系统架构设计 | **核心模块** |
+| **Factor Backtest Integration** | 全系统架构设�?| **核心模块** |
 
 ### 11.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状�?*: Active

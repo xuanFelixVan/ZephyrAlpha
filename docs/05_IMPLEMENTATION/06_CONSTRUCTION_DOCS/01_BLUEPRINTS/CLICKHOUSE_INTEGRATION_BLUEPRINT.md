@@ -6,22 +6,22 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
   - ClickHouse集成
   - 列式数据存储
   - 列式数据查询
   - 数据聚合分析
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
 # ClickHouse列式存储集成蓝图
 
 > **核心职责**: 大规模历史数据的存储、查询和分析，专注于OLAP场景
 > **职责边界**: 
-> - ✅ 本模块负责：大规模历史数据存储、列式聚合查询、物化视图、数据压缩
-> - ❌ 本模块不负责：实时数据存储（TimescaleDB）、缓存（Redis）
+> - �?本模块负责：大规模历史数据存储、列式聚合查询、物化视图、数据压�?
+> - �?本模块不负责：实时数据存储（TimescaleDB）、缓存（Redis�?
 
 ## 核心定位
 
@@ -29,13 +29,13 @@ layer: "Layer 1 (数据层)"
 
 ### 职责边界
 
-| 负责 | 不负责 |
+| 负责 | 不负�?|
 |------|--------|
-| ✅ 历史行情数据存储（10年+） | ❌ 实时数据存储 |
-| ✅ 列式聚合分析 | ❌ 事务处理 |
-| ✅ 物化视图预计算 | ❌ 高频写入 |
-| ✅ 数据压缩存储 | ❌ 实时查询 |
-| ✅ 复杂分析查询 | ❌ 数据订阅 |
+| �?历史行情数据存储�?0�?�?| �?实时数据存储 |
+| �?列式聚合分析 | �?事务处理 |
+| �?物化视图预计�?| �?高频写入 |
+| �?数据压缩存储 | �?实时查询 |
+| �?复杂分析查询 | �?数据订阅 |
 
 ---
 
@@ -43,21 +43,21 @@ layer: "Layer 1 (数据层)"
 
 ### 1.1 为什么选择ClickHouse
 
-| 特性 | ClickHouse | Apache Doris | Apache Druid |
+| 特�?| ClickHouse | Apache Doris | Apache Druid |
 |------|------------|--------------|--------------|
-| 查询性能 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| 压缩能力 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| 部署复杂度 | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| 学习曲线 | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| Python支持 | ✅ clickhouse-driver | ✅ pydoris | ✅ pydruid |
-| 单机适用 | ✅ 支持 | ✅ 支持 | ❌ 需集群 |
-| 社区活跃度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| 查询性能 | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
+| 压缩能力 | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 部署复杂�?| ⭐⭐⭐⭐ | ⭐⭐�?| ⭐⭐ |
+| 学习曲线 | ⭐⭐⭐⭐ | ⭐⭐�?| ⭐⭐ |
+| Python支持 | �?clickhouse-driver | �?pydoris | �?pydruid |
+| 单机适用 | �?支持 | �?支持 | �?需集群 |
+| 社区活跃�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **推荐指数** | **⭐⭐⭐⭐�?* | ⭐⭐⭐⭐ | ⭐⭐�?|
 
 ### 1.2 核心优势
 
-1. **极致性能**: 单机每秒处理数亿行数据
-2. **高压缩比**: 列式存储压缩比可达10:1
+1. **极致性能**: 单机每秒处理数亿行数�?
+2. **高压缩比**: 列式存储压缩比可�?0:1
 3. **SQL兼容**: 支持标准SQL语法
 4. **单机友好**: 个人开发场景最佳选择
 
@@ -68,34 +68,34 @@ layer: "Layer 1 (数据层)"
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    ClickHouse集成架构                            │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
-│  │ 数据导入层   │    │ 数据存储层   │    │ 数据查询层   │     │
-│  │              │    │              │    │              │     │
-│  │ • 批量导入   │    │ • MergeTree  │    │ • 聚合查询   │     │
-│  │ • 增量导入   │    │ • 分区策略   │    │ • 物化视图   │     │
-│  │ • 数据归档   │    │ • TTL策略    │    │ • 分析函数   │     │
-│  └──────────────┘    └──────────────┘    └──────────────┘     │
-│         │                   │                    │              │
-│         └───────────────────┴────────────────────┘              │
-│                            │                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    数据分层策略                          │   │
-│  │  • 热数据: TimescaleDB (30天内)                          │   │
-│  │  • 温数据: ClickHouse (1年内)                            │   │
-│  │  • 冷数据: 对象存储 (归档)                               │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────�?
+�?                   ClickHouse集成架构                            �?
+├─────────────────────────────────────────────────────────────────�?
+�?                                                                �?
+�? ┌──────────────�?   ┌──────────────�?   ┌──────────────�?    �?
+�? �?数据导入�?  �?   �?数据存储�?  �?   �?数据查询�?  �?    �?
+�? �?             �?   �?             �?   �?             �?    �?
+�? �?�?批量导入   �?   �?�?MergeTree  �?   �?�?聚合查询   �?    �?
+�? �?�?增量导入   �?   �?�?分区策略   �?   �?�?物化视图   �?    �?
+�? �?�?数据归档   �?   �?�?TTL策略    �?   �?�?分析函数   �?    �?
+�? └──────────────�?   └──────────────�?   └──────────────�?    �?
+�?        �?                  �?                   �?             �?
+�?        └───────────────────┴────────────────────�?             �?
+�?                           �?                                   �?
+�? ┌─────────────────────────────────────────────────────────�?  �?
+�? �?                   数据分层策略                          �?  �?
+�? �? �?热数�? TimescaleDB (30天内)                          �?  �?
+�? �? �?温数�? ClickHouse (1年内)                            �?  �?
+�? �? �?冷数�? 对象存储 (归档)                               �?  �?
+�? └─────────────────────────────────────────────────────────�?  �?
+�?                                                                �?
+└─────────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 数据模型设计
 
 ```sql
--- 历史行情数据表
+-- 历史行情数据�?
 CREATE TABLE historical_klines (
     date Date,
     symbol LowCardinality(String),
@@ -114,7 +114,7 @@ PARTITION BY toYYYYMM(date)
 ORDER BY (symbol, interval, open_time)
 TTL date + INTERVAL 5 YEAR;
 
--- 因子历史数据表
+-- 因子历史数据�?
 CREATE TABLE factor_history (
     date Date,
     symbol LowCardinality(String),
@@ -127,7 +127,7 @@ PARTITION BY toYYYYMM(date)
 ORDER BY (factor_id, symbol, date)
 TTL date + INTERVAL 3 YEAR;
 
--- 财务数据表
+-- 财务数据�?
 CREATE TABLE financial_statements (
     report_date Date,
     symbol LowCardinality(String),
@@ -152,7 +152,7 @@ ORDER BY (symbol, report_date, report_type);
 ### 3.1 物化视图
 
 ```sql
--- 日收益统计物化视图
+-- 日收益统计物化视�?
 CREATE MATERIALIZED VIEW daily_stats_mv
 ENGINE = SummingMergeTree()
 PARTITION BY toYYYYMM(date)
@@ -250,13 +250,13 @@ from clickhouse_driver import Client
 import pandas as pd
 
 class ClickHouseWriter:
-    """ClickHouse数据写入器"""
+    """ClickHouse数据写入�?""
     
     def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
         self.client = Client(host=host, port=port, database=database)
     
     def write_klines(self, klines: pd.DataFrame) -> int:
-        """批量写入K线数据"""
+        """批量写入K线数�?""
         data = [
             (
                 row['date'], row['symbol'], row['interval'],
@@ -300,7 +300,7 @@ class ClickHouseWriter:
 
 ```python
 class ClickHouseReader:
-    """ClickHouse数据查询器"""
+    """ClickHouse数据查询�?""
     
     def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
         self.client = Client(host=host, port=port, database=database)
@@ -312,7 +312,7 @@ class ClickHouseReader:
         start_date: str,
         end_date: str
     ) -> pd.DataFrame:
-        """获取K线数据"""
+        """获取K线数�?""
         sql = """
         SELECT 
             open_time, symbol, open, high, low, close, volume, amount
@@ -424,9 +424,9 @@ volumes:
 
 ## 📋 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

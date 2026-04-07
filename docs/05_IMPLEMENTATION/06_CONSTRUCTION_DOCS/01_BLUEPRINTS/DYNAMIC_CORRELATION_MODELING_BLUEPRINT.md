@@ -1,9 +1,9 @@
 ---
 responsibility:
-  - 动态相关性建模
-  - 相关性预测
-  - 相关性矩阵
-  - 相关性分析
+  - 动态相关性建�?
+  - 相关性预�?
+  - 相关性矩�?
+  - 相关性分�?
 
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0
@@ -12,51 +12,51 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
-# 动态相关性建模蓝图
+# 动态相关性建模蓝�?
 ## 核心定位
 
-构建动态相关性建模的设计与实现，基于时变相关系数模型技术，捕捉资产间相关性的动态变化，支持风险管理和资产配置决策。
+构建动态相关性建模的设计与实现，基于时变相关系数模型技术，捕捉资产间相关性的动态变化，支持风险管理和资产配置决策�?
 
 ---
 
 
-> **核心职责**: 使用DCC-GARCH模型实时更新资产间相关性
+> **核心职责**: 使用DCC-GARCH模型实时更新资产间相关�?
 > **职责边界**: 
-> - ✅ 本文档负责：动态相关性、相关性突变识别
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：动态相关性、相关性突变识�?
+> - �?本文档不负责：因子计算（由因子模块负责）
 ## 📚 相关文档
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供资产元数据 |
-| 数据血缘追踪蓝图 | DATA_LINEAGE_TRACKING_001 | 中依赖 | 提供数据血缘 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依�?| 提供资产元数�?|
+| 数据血缘追踪蓝�?| DATA_LINEAGE_TRACKING_001 | 中依�?| 提供数据血�?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 强依赖 | 风险平价策略 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | VaR/ES监控 |
+| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 强依�?| 风险平价策略 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 组合优化 |
+| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依�?| VaR/ES监控 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **arch** | 5.0+ | GARCH模型 | [官方文档](https://arch.readthedocs.io/) |
 | **mgarch** | 0.1+ | 多元GARCH | [官方文档](https://github.com/abbass2/mgarch) |
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -637,13 +637,13 @@ def test_integration_with_risk_parity():
 
 ## 12. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状态**: Final | **下一步**: 技术规格书编写
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 技术规格书编写
 ---
 
 ## 13. 文档治理
@@ -651,27 +651,27 @@ def test_integration_with_risk_parity():
 ### 13.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Dynamic Correlation Modeling
 - **模块ID**: DYNAMIC_CORRELATION_MODELING_001
 - **蓝图文档**: DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系�?
+- **状�?*: Active
 ```
 
 ### 13.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Dynamic Correlation Modeling** | 全系统 | **核心模块** |
+| **Dynamic Correlation Modeling** | 全系�?| **核心模块** |
 
 ### 13.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状�?*: Active

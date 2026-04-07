@@ -6,66 +6,66 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 监控层
+applicable_scope: Layer 9 监控�?
 compliance_level: 专业标准
 responsibility:
   - 数据质量评分
   - 质量指标计算
   - 质量等级评定
   - 质量趋势分析
-layer: "Layer 9 (监控层)"
+layer: "Layer 9 (监控�?"
 ---
 
 # 数据质量评分系统蓝图
 
 > **核心职责**: 数据质量评分，计算和评定数据质量等级
 > **职责边界**: 
-> - ✅ 本文档负责：数据质量评分、质量指标计算、质量等级评定、质量趋势分析
-> - ❌ 本文档不负责：数据质量监控、数据质量治理、数据质量报告
-﻿# 数据质量评分系统蓝图
+> - �?本文档负责：数据质量评分、质量指标计算、质量等级评定、质量趋势分�?
+> - �?本文档不负责：数据质量监控、数据质量治理、数据质量报�?
+�? 数据质量评分系统蓝图
 
-> **核心定位**: 数据质量评分系统蓝图的核心功能实现
+> **核心定位**: 数据质量评分系统蓝图的核心功能实�?
 
 
 > **模块ID**: `QUALITY_SCORING_001`
-> **实施周期**: Week 8-9（1周）
-> **优先级**: P1（重要）
+> **实施周期**: Week 8-9�?周）
+> **优先�?*: P1（重要）
 > **预期收益**: 提升数据质量透明度，降低数据问题风险50%
 
 ## 核心定位
 
 > 核心职责: Quality Scoring System蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Quality Scoring System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：Quality Scoring System蓝图设计相关内容
+> - �?本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行�?
 
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
+### 1.1 业务需�?
 
 **当前痛点**:
-- 缺少统一的数据质量评分标准
+- 缺少统一的数据质量评分标�?
 - 无法量化评估数据质量水平
-- 数据质量问题难以追踪和改进
+- 数据质量问题难以追踪和改�?
 - 缺少数据质量趋势分析
 
 **业务目标**:
-- 建立多维度数据质量评分体系
-- 提供实时数据质量评分和趋势分析
+- 建立多维度数据质量评分体�?
+- 提供实时数据质量评分和趋势分�?
 - 支持数据质量改进追踪
 - 生成数据质量报告和可视化
 
-### 1.2 技术目标
+### 1.2 技术目�?
 
-| 指标 | 目标值 | 说明 |
+| 指标 | 目标�?| 说明 |
 |------|--------|------|
-| **评分维度** | ≥6个 | 至少覆盖6个质量维度 |
-| **评分实时性** | <30秒 | 评分计算响应时间<30秒 |
-| **评分准确性** | ≥95% | 评分结果准确率≥95% |
-| **历史数据保留** | ≥1年 | 保留至少1年的历史评分数据 |
+| **评分维度** | �?�?| 至少覆盖6个质量维�?|
+| **评分实时�?* | <30�?| 评分计算响应时间<30�?|
+| **评分准确�?* | �?5% | 评分结果准确率≥95% |
+| **历史数据保留** | �?�?| 保留至少1年的历史评分数据 |
 
-## 三、核心模块设计
+## 三、核心模块设�?
 
 ### 3.1 评分维度定义 (QualityDimensions)
 
@@ -98,7 +98,7 @@ class DimensionScore:
     calculated_at: datetime = field(default_factory=datetime.now)
 
 class QualityScorer:
-    """质量评分器"""
+    """质量评分�?""
     
     def __init__(self):
         self.dimension_weights = {
@@ -111,7 +111,7 @@ class QualityScorer:
         }
     
     def calculate_completeness_score(self, df: pd.DataFrame) -> DimensionScore:
-        """计算完整性评分"""
+        """计算完整性评�?""
         total_cells = df.size
         missing_cells = df.isnull().sum().sum()
         completeness = 1 - (missing_cells / total_cells)
@@ -132,7 +132,7 @@ class QualityScorer:
     
     def calculate_accuracy_score(self, df: pd.DataFrame, 
                                   rules: Dict[str, Any]) -> DimensionScore:
-        """计算准确性评分"""
+        """计算准确性评�?""
         accuracy_scores = []
         
         for column, rule in rules.items():
@@ -164,7 +164,7 @@ class QualityScorer:
     def calculate_timeliness_score(self, df: pd.DataFrame,
                                     timestamp_column: str,
                                     expected_frequency: str) -> DimensionScore:
-        """计算时效性评分"""
+        """计算时效性评�?""
         if timestamp_column not in df.columns:
             return DimensionScore(
                 dimension=QualityDimension.TIMELINESS,
@@ -205,7 +205,7 @@ class QualityScorer:
     
     def calculate_consistency_score(self, df: pd.DataFrame,
                                      consistency_rules: List[Dict]) -> DimensionScore:
-        """计算一致性评分"""
+        """计算一致性评�?""
         consistency_scores = []
         
         for rule in consistency_rules:
@@ -239,7 +239,7 @@ class QualityScorer:
     
     def calculate_uniqueness_score(self, df: pd.DataFrame,
                                     unique_columns: List[str]) -> DimensionScore:
-        """计算唯一性评分"""
+        """计算唯一性评�?""
         uniqueness_scores = []
         
         for column in unique_columns:
@@ -266,7 +266,7 @@ class QualityScorer:
     
     def calculate_validity_score(self, df: pd.DataFrame,
                                   validity_rules: Dict[str, Any]) -> DimensionScore:
-        """计算有效性评分"""
+        """计算有效性评�?""
         validity_scores = []
         
         for column, rule in validity_rules.items():
@@ -301,7 +301,7 @@ class QualityScorer:
         )
 ```
 
-### 3.2 综合评分计算器 (OverallScoreCalculator)
+### 3.2 综合评分计算�?(OverallScoreCalculator)
 
 **职责**: 计算综合质量评分
 
@@ -321,7 +321,7 @@ class OverallQualityScore:
     metadata: Dict[str, Any]
 
 class OverallScoreCalculator:
-    """综合评分计算器"""
+    """综合评分计算�?""
     
     def __init__(self):
         self.grade_thresholds = {
@@ -360,7 +360,7 @@ class OverallScoreCalculator:
         return "F"
 ```
 
-### 3.3 评分历史管理器 (ScoreHistoryManager)
+### 3.3 评分历史管理�?(ScoreHistoryManager)
 
 **职责**: 管理评分历史数据
 
@@ -370,7 +370,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 class ScoreHistoryManager:
-    """评分历史管理器"""
+    """评分历史管理�?""
     
     def __init__(self, db_connection):
         self.db = db_connection
@@ -444,18 +444,18 @@ class ScoreHistoryManager:
 ### 4.1 评分计算流程
 
 ```
-数据表 → 维度评分计算 → 权重加权 → 综合评分 → 等级判定 → 存储
+数据�?�?维度评分计算 �?权重加权 �?综合评分 �?等级判定 �?存储
 ```
 
 ### 4.2 趋势分析流程
 
 ```
-历史评分 → 趋势计算 → 变化检测 → 趋势报告 → 可视化
+历史评分 �?趋势计算 �?变化检�?�?趋势报告 �?可视�?
 ```
 
 ---
 
-## 五、接口设计
+## 五、接口设�?
 
 ### 5.1 RESTful API
 
@@ -506,9 +506,9 @@ GET /api/v1/quality/trend/{table_name}?days=30
 
 ---
 
-## 六、部署架构
+## 六、部署架�?
 
-### 6.1 容器化部署
+### 6.1 容器化部�?
 
 ```yaml
 version: '3.8'
@@ -544,50 +544,50 @@ volumes:
 
 ---
 
-## 七、监控指标
+## 七、监控指�?
 
 ### 7.1 核心指标
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `quality_score_overall` | Gauge | 综合质量评分 |
-| `quality_score_dimension` | Gauge | 各维度质量评分 |
+| `quality_score_dimension` | Gauge | 各维度质量评�?|
 | `quality_score_calculation_duration_seconds` | Histogram | 评分计算耗时 |
-| `quality_score_history_count` | Gauge | 历史评分记录数 |
+| `quality_score_history_count` | Gauge | 历史评分记录�?|
 
 ---
 
-## 八、实施计划
+## 八、实施计�?
 
-### 8.1 开发阶段
+### 8.1 开发阶�?
 
-| 阶段 | 任务 | 预计时间 | 负责人 |
+| 阶段 | 任务 | 预计时间 | 负责�?|
 |------|------|---------|--------|
-| **阶段1** | 开发评分维度计算器 | 2天 | 后端工程师 |
-| **阶段2** | 开发综合评分计算器 | 1天 | 后端工程师 |
-| **阶段3** | 开发历史管理器 | 1天 | 后端工程师 |
-| **阶段4** | 开发API接口 | 1天 | 后端工程师 |
-| **阶段5** | 集成测试和部署 | 1天 | QA工程师 |
+| **阶段1** | 开发评分维度计算器 | 2�?| 后端工程�?|
+| **阶段2** | 开发综合评分计算器 | 1�?| 后端工程�?|
+| **阶段3** | 开发历史管理器 | 1�?| 后端工程�?|
+| **阶段4** | 开发API接口 | 1�?| 后端工程�?|
+| **阶段5** | 集成测试和部�?| 1�?| QA工程�?|
 
 ### 8.2 验收标准
 
-- [ ] 支持6个质量维度评分
-- [ ] 评分计算响应时间<30秒
+- [ ] 支持6个质量维度评�?
+- [ ] 评分计算响应时间<30�?
 - [ ] 评分准确率≥95%
-- [ ] 历史数据保留≥1年
+- [ ] 历史数据保留�?�?
 - [ ] 趋势分析功能正常
 
 ---
 
-## 九、风险管理
+## 九、风险管�?
 
-### 9.1 技术风险
+### 9.1 技术风�?
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
-| 评分规则不合理 | 高 | 业务专家审核，持续优化 |
-| 评分计算性能瓶颈 | 中 | 缓存机制，异步计算 |
-| 历史数据存储膨胀 | 低 | 数据压缩，定期归档 |
+| 评分规则不合�?| �?| 业务专家审核，持续优�?|
+| 评分计算性能瓶颈 | �?| 缓存机制，异步计�?|
+| 历史数据存储膨胀 | �?| 数据压缩，定期归�?|
 
 ---
 
@@ -597,28 +597,28 @@ volumes:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 强依赖 | 提供质量报告数据 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供数据元数据 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 强依�?| 提供质量报告数据 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依�?| 提供数据元数�?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 强依赖 | 自动化数据修复 |
-| [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | 中依赖 | 增强告警系统 |
-| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依赖 | 监控仪表板增强 |
+| [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | 强依�?| 自动化数据修�?|
+| [增强告警系统蓝图](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md) | ENHANCED_ALERT_SYSTEM_001 | 中依�?| 增强告警系统 |
+| [监控仪表板增强蓝图](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依�?| 监控仪表板增�?|
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
-| **PostgreSQL** | 15+ | 数据库 | [官方文档](https://www.postgresql.org/) |
+| **PostgreSQL** | 15+ | 数据�?| [官方文档](https://www.postgresql.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -637,7 +637,7 @@ graph LR
 
 ---
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
+**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护�?*: 首席蓝图架构�?
 ---
 
 ## 1. 文档治理
@@ -645,13 +645,13 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Quality Scoring System
 - **模块ID**: QUALITY_SCORING_SYSTEM_001
 - **蓝图文档**: QUALITY_SCORING_SYSTEM_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -662,21 +662,21 @@ graph LR
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

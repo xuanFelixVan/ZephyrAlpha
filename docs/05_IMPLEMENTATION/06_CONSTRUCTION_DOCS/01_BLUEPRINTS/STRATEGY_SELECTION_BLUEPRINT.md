@@ -12,17 +12,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 3 策略层
+applicable_scope: Layer 3 策略�?
 compliance_level: 专业标准
-layer: "Layer 3 (策略层)"
+layer: "Layer 3 (策略�?"
 ---
 
-# 策略排名与选择系统技术蓝图
+# 策略排名与选择系统技术蓝�?
 
-> **核心职责**: 根据市场环境动态选择最优策略组合
+> **核心职责**: 根据市场环境动态选择最优策略组�?
 > **职责边界**: 
-> - ✅ 本文档负责：策略评分、智能排名、动态选择
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：策略评分、智能排名、动态选择
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 一、设计目标与约束
@@ -867,8 +867,8 @@ class AIStrategyRecommender:
 # config/strategy_selection.yaml
 > **核心职责**: Strategy Selection蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Strategy Selection蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Strategy Selection蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
 
 ## 核心职责
@@ -880,7 +880,7 @@ class AIStrategyRecommender:
 
 ## 📋 概述
 
-本文档定义了STRATEGY SELECTION的核心功能和技术实现。
+本文档定义了STRATEGY SELECTION的核心功能和技术实现�?
 
 strategy_selection:
   # 用户偏好配置
@@ -1010,33 +1010,33 @@ python strategy_selector.py query \
 - [ ] 性能优化和缓?
 - [ ] 完整文档和示?
 
-## 七、相关文档
+## 七、相关文�?
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供策略元数据 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 提供优化器基础接口 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依�?| 提供策略元数�?|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依�?| 提供优化器基础接口 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [战略权重分配蓝图](./STRATEGIC_WEIGHTING_BLUEPRINT.md) | STRATEGIC_WEIGHTING_001 | 强依赖 | 战略权重分配 |
-| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依赖 | 季度调仓决策 |
-| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
+| [战略权重分配蓝图](./STRATEGIC_WEIGHTING_BLUEPRINT.md) | STRATEGIC_WEIGHTING_001 | 强依�?| 战略权重分配 |
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依�?| 季度调仓决策 |
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依�?| 组合再平�?|
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -1063,42 +1063,42 @@ graph LR
 | PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 **文档版本**: v1.0  
-**最后更新**: 2026-04-01  
-**维护者**: 策略研发中心  
-**预计开发时间**: 80小时（2周全职开发）
+**最后更�?*: 2026-04-01  
+**维护�?*: 策略研发中心  
+**预计开发时�?*: 80小时�?周全职开发）
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席文档架构师 |
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席文档架构�?|
 
 ## 1. 文档治理
 
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Strategy Selection
 - **模块ID**: STRATEGY_SELECTION_001
 - **蓝图文档**: STRATEGY_SELECTION_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统架构设计
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系统架构设�?
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strategy Selection** | 全系统架构设计 | **核心模块** |
+| **Strategy Selection** | 全系统架构设�?| **核心模块** |
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状�?*: Active

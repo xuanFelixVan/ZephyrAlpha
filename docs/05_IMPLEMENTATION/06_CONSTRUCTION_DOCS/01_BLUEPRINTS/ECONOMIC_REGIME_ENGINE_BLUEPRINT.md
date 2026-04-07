@@ -6,37 +6,37 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
 responsibility:
   - 经济周期引擎
-  - 经济状态识别
+  - 经济状态识�?
   - 宏观环境分析
   - 周期预测
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # ECONOMIC REGIME ENGINE BLUEPRINT
 
 > **核心职责**: Economic Regime Engine蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Economic Regime Engine蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Economic Regime Engine蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
-﻿---
-module_id: ECONOMIC_REGIME_ENGINE_BLUEPRINT_001
+�?--
+module_id: ECONOMIC_REGIME_ENGINE__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
+owner: 个人开发�?
 standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
-﻿# 版本演进说明
+�? 版本演进说明
 
 > **?当前有效版本** | v1.0已归?>
 > **索引**: `ECONOMIC_REGIME_001`
@@ -47,8 +47,8 @@ layer: "Layer 6 (组合优化层)"
 
 > 核心职责: Economic Regime Engine蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Economic Regime Engine蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：Economic Regime Engine蓝图设计相关内容
+> - �?本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行�?
 
 ## 1. 模块概述
 
@@ -105,7 +105,7 @@ class MacroDataCollector:
         - CPI同比 (月度)
         - PMI (月度)
         - 利率 (日度)
-        - M2增?(月度)
+        - M2�?(月度)
         - 工业增加?(月度)
         """
         pass
@@ -150,7 +150,7 @@ class RegimeTransitionWarner:
     """范式转换预警?""
     
     def __init__(self):
-        self.transition_threshold = 0.3  # 转换概率阈?        self.lookahead_period = 60       # 预警前瞻期（天）
+        self.transition_threshold = 0.3  # 转换概率�?        self.lookahead_period = 60       # 预警前瞻期（天）
         
     def detect_transition_risk(
         self, 
@@ -274,7 +274,7 @@ class AssetAllocationAdvisor:
 
 ## 4. 数据流设?
 ### 4.1 数据输入
-- **宏观经济数据**: GDP、CPI、PMI、利率、M2、工业增加?- **数据频率**: 月度/季度数据
+- **宏观经济数据**: GDP、CPI、PMI、利率、M2、工业增�?- **数据频率**: 月度/季度数据
 - **数据?*: iFinD、Wind、国家统计局
 
 ### 4.2 数据输出
@@ -345,7 +345,7 @@ economic_regime_engine:
     
   # 预警参数
   warning:
-    transition_threshold: 0.3      # 转换概率阈?    lookahead_days: 60             # 前瞻天数
+    transition_threshold: 0.3      # 转换概率�?    lookahead_days: 60             # 前瞻天数
     
   # 资产配置参数
   allocation:
@@ -432,17 +432,17 @@ economic_regime_engine:
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状?*: Draft | **下一?*: 技术规格书编写
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **�?*: Draft | **下一?*: 技术规格书编写
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 个人开发者 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 个人开发�?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状�?*: Active
 ---
 
 ## 11. 文档治理
@@ -450,27 +450,27 @@ economic_regime_engine:
 ### 11.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 5: 宏观配置层
+#### Layer 5: 宏观配置�?
 ##### 6.001. Economic Regime Engine
 - **模块ID**: ECONOMIC_REGIME_ENGINE_001
 - **蓝图文档**: ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系�?
+- **状�?*: Active
 ```
 
 ### 11.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Economic Regime Engine** | 全系统 | **核心模块** |
+| **Economic Regime Engine** | 全系�?| **核心模块** |
 
 ### 11.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active

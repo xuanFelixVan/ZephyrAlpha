@@ -12,22 +12,22 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 5 交易成本层
+applicable_scope: Layer 5 交易成本�?
 compliance_level: 专业标准
-layer: "Layer 5 (交易成本层)"
+layer: "Layer 5 (交易成本�?"
 ---
 
 # 市场冲击模型蓝图
 
-> **核心职责**: 预测交易对市场价格的影响，优化执行策略
+> **核心职责**: 预测交易对市场价格的影响，优化执行策�?
 > **职责边界**: 
-> - ✅ 本文档负责：市场冲击预测、执行优化
-> - ❌ 本文档不负责：因子计算（由因子模块负责）
+> - �?本文档负责：市场冲击预测、执行优�?
+> - �?本文档不负责：因子计算（由因子模块负责）
 
 
 ## 核心定位
 
-负责Market Impact Model的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Market Impact Model的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
 ## 1. 模块概述
 
@@ -61,28 +61,28 @@ layer: "Layer 5 (交易成本层)"
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供市场数据元数据 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 提供优化器基础接口 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依�?| 提供市场数据元数�?|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依�?| 提供优化器基础接口 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [交易成本优化模型蓝图](./TRADING_COST_OPTIMIZATION_BLUEPRINT.md) | TRADING_COST_OPTIMIZATION_001 | 强依赖 | 交易成本优化 |
-| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 强依赖 | 算法交易执行 |
-| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依赖 | 订单路由优化 |
+| [交易成本优化模型蓝图](./TRADING_COST_OPTIMIZATION_BLUEPRINT.md) | TRADING_COST_OPTIMIZATION_001 | 强依�?| 交易成本优化 |
+| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 强依�?| 算法交易执行 |
+| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依�?| 订单路由优化 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 | **Statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -702,13 +702,13 @@ class TestMarketImpactModel:
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 个人开发者 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 个人开发�?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状�?*: Active
 ---
 
 ## 12. 文档治理
@@ -716,27 +716,27 @@ class TestMarketImpactModel:
 ### 12.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 5: 微观执行层
+#### Layer 5: 微观执行�?
 ##### 6.001. Market Impact Model
 - **模块ID**: MARKET_IMPACT_MODEL_001
 - **蓝图文档**: MARKET_IMPACT_MODEL_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 全系统
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 全系�?
+- **状�?*: Active
 ```
 
 ### 12.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Market Impact Model** | 全系统 | **核心模块** |
+| **Market Impact Model** | 全系�?| **核心模块** |
 
 ### 12.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active

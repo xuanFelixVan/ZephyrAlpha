@@ -6,39 +6,39 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
-  - 数据目录元数据
-  - 元数据管理
+  - 数据目录元数�?
+  - 元数据管�?
   - 数据资产目录
-  - 元数据标准
-layer: "Layer 1 (数据层)"
+  - 元数据标�?
+layer: "Layer 1 (数据�?"
 ---
 
 # DATA CATALOG METADATA BLUEPRINT
 
 > **核心职责**: Data Catalog Metadata蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Data Catalog Metadata蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Data Catalog Metadata蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
-﻿---
-module_id: DATA_CATALOG_METADATA_BLUEPRINT_001
+�?--
+module_id: DATA_CATALOG_METADATA__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
+owner: 个人开发�?
 standard_type: 专业量化机构文档
 responsibility:
   - 数据质量 (Layer 1)
 
 layer: "Layer 1 (数据源层)"
 ---
-﻿# 数据目录与元数据管理系统蓝图
+�? 数据目录与元数据管理系统蓝图
 
-> **核心定位**: 数据目录与元数据管理系统蓝图的核心功能实现
+> **核心定位**: 数据目录与元数据管理系统蓝图的核心功能实�?
 
 
 > **模块ID**: `DATA_CATALOG_METADATA_001`
@@ -48,7 +48,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-数据目录元数据管理模块，专门负责数据资产的元数据采集、存储、版本管理和血缘追踪，提供精细化的元数据治理能力
+数据目录元数据管理模块，专门负责数据资产的元数据采集、存储、版本管理和血缘追踪，提供精细化的元数据治理能�?
 
 
 ## 一、设计背景与目标
@@ -268,10 +268,10 @@ class DataLineageTracker:
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
+| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
 ---
 
 
@@ -283,25 +283,25 @@ class DataLineageTracker:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源元数据 |
-| [DATA SECURITY COMPLIANCE BLUEPRINT](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依赖 | 提供敏感数据分类 |
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依�?| 提供数据源元数据 |
+| [DATA SECURITY COMPLIANCE BLUEPRINT](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | 中依�?| 提供敏感数据分类 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依赖 | 提供元数据支持 |
-| [DATA OBSERVABILITY BLUEPRINT](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 中依赖 | 提供数据资产监控 |
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 强依�?| 提供元数据支�?|
+| [DATA OBSERVABILITY BLUEPRINT](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | 中依�?| 提供数据资产监控 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **OpenMetadata** | 1.2+ | 元数据管理 | [官方文档](https://docs.open-metadata.org/) |
-| **Apache Atlas** | 2.3+ | 数据血缘 | [官方文档](https://atlas.apache.org/) |
+| **OpenMetadata** | 1.2+ | 元数据管�?| [官方文档](https://docs.open-metadata.org/) |
+| **Apache Atlas** | 2.3+ | 数据血�?| [官方文档](https://atlas.apache.org/) |
 | **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -321,13 +321,13 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Data Catalog Metadata
 - **模块ID**: DATA_CATALOG_METADATA_001
 - **蓝图文档**: DATA_CATALOG_METADATA_BLUEPRINT.md
-- **技术规格书**: 待创建
+- **技术规格书**: 待创�?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **状态**: Active
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -338,10 +338,10 @@ graph LR
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active

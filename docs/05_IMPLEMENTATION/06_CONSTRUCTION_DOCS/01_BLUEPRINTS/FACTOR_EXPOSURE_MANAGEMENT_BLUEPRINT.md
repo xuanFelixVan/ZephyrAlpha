@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 responsibility:
   - 因子暴露管理
   - 因子暴露监控
@@ -20,13 +20,13 @@ responsibility:
 
 > **模块ID**: FACTOR_EXPOSURE_MANAGEMENT_001
 > **创建日期**: 2026-04-07
-> **核心定位**: 监控、分析和调整组合的因子暴露
+> **核心定位**: 监控、分析和调整组合的因子暴�?
 
 ## 核心定位
 
 > 模块ID: FACTOR_EXPOSURE_MANAGEMENT_001
 > 创建日期: 2026-04-07
-> 核心定位: 监控、分析和调整组合的因子暴露，确保系统功能的稳定运行和高效执行。
+> 核心定位: 监控、分析和调整组合的因子暴露，确保系统功能的稳定运行和高效执行�?
 
 ## 2. 功能设计
 
@@ -35,7 +35,7 @@ responsibility:
 ```python
 class FactorExposureManager:
     """
-    因子暴露管理器
+    因子暴露管理�?
     """
     
     def calculate_exposure(
@@ -81,7 +81,7 @@ class FactorExposureManager:
 ---
 ## 3. 实施路径
 
-### Phase 1: 核心功能 (1周)
+### Phase 1: 核心功能 (1�?
 - [ ] 实现因子暴露计算
 - [ ] 实现暴露监控
 - [ ] 实现调整建议
@@ -92,10 +92,10 @@ class FactorExposureManager:
 
 ### 4.1 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

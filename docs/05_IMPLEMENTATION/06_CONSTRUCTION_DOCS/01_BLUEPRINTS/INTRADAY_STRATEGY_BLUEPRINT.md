@@ -6,63 +6,63 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
 responsibility:
   - 日内策略
   - 盘中交易
   - 日内波动捕捉
   - 日内风险管理
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 日内策略蓝图
 
-> **核心职责**: 日内策略，盘中时段交易策略
+> **核心职责**: 日内策略，盘中时段交易策�?
 > **职责边界**: 
-> - ✅ 本文档负责：日内策略、盘中交易、日内波动捕捉、日内风险管理
-> - ❌ 本文档不负责：开盘策略、收盘策略、风险控制
-﻿# 📋 执行摘要
+> - �?本文档负责：日内策略、盘中交易、日内波动捕捉、日内风险管�?
+> - �?本文档不负责：开盘策略、收盘策略、风险控�?
+�? 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
-> **核心定位**: 微观执行层盘中时段交易策略
+> **核心定位**: 微观执行层盘中时段交易策�?
 > **索引**: `INTRADAY_STRATEGY_001`
-> **开发周期**: 2.5周
+> **开发周�?*: 2.5�?
 
 ## 核心定位
 
-管理INTRADAY STRATEGY的设计与实现，基于Black-Litterman技术，评估核心功能，实现投资目标。
+管理INTRADAY STRATEGY的设计与实现，基于Black-Litterman技术，评估核心功能，实现投资目标�?
 
-## 🎯 模块定位与职责
+## 🎯 模块定位与职�?
 
 ### 核心职责
 
 | 职责类别 | 具体职责 | 输出产物 |
 |---------|---------|---------|
-| **盘中信号生成** | 分析分钟级价格行为 | 盘中交易信号 |
-| **成交量分析** | 分析成交量模式 | 成交量分析报告 |
+| **盘中信号生成** | 分析分钟级价格行�?| 盘中交易信号 |
+| **成交量分�?* | 分析成交量模�?| 成交量分析报�?|
 | **趋势跟踪** | 跟踪盘中趋势 | 趋势跟踪信号 |
-| **均值回归** | 识别回归机会 | 均值回归信号 |
+| **均值回�?* | 识别回归机会 | 均值回归信�?|
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 盘中策略类型
 
 | 策略类型 | 策略名称 | 策略逻辑 | 适用场景 |
 |---------|---------|---------|---------|
 | **趋势跟踪** | Trend Following | 跟踪盘中趋势 | 趋势市场 |
-| **均值回归** | Mean Reversion | 价格回归均值 | 震荡市场 |
-| **成交量突破** | Volume Breakout | 成交量突破 | 突破市场 |
-| **动量策略** | Momentum | 追踪动量 | 强趋势市场 |
+| **均值回�?* | Mean Reversion | 价格回归均�?| 震荡市场 |
+| **成交量突�?* | Volume Breakout | 成交量突�?| 突破市场 |
+| **动量策略** | Momentum | 追踪动量 | 强趋势市�?|
 
 ---
 
 ## 🔧 关键组件设计
 
-### 1. 盘中信号生成器
+### 1. 盘中信号生成�?
 
 ```python
 from typing import Dict, Any
@@ -70,7 +70,7 @@ import pandas as pd
 import numpy as np
 
 class IntradaySignalGenerator:
-    """盘中信号生成器"""
+    """盘中信号生成�?""
     
     def __init__(self):
         self.strategies = {
@@ -90,7 +90,7 @@ class IntradaySignalGenerator:
             signal = strategy.generate_signal(intraday_data)
             signals[strategy_name] = signal
         
-        # 根据市场状态选择最佳策略
+        # 根据市场状态选择最佳策�?
         best_strategy = self._select_best_strategy(market_state)
         
         return {
@@ -100,7 +100,7 @@ class IntradaySignalGenerator:
         }
     
     def _select_best_strategy(self, market_state: str) -> str:
-        """选择最佳策略"""
+        """选择最佳策�?""
         strategy_mapping = {
             'BULL': 'momentum',
             'BEAR': 'mean_reversion',
@@ -116,7 +116,7 @@ class TrendFollowingStrategy:
     
     def generate_signal(self, intraday_data: pd.DataFrame) -> Dict[str, Any]:
         """生成趋势跟踪信号"""
-        # 计算移动平均线
+        # 计算移动平均�?
         ma_short = intraday_data['close'].rolling(5).mean()
         ma_long = intraday_data['close'].rolling(20).mean()
         
@@ -143,11 +143,11 @@ class TrendFollowingStrategy:
 
 
 class MeanReversionStrategy:
-    """均值回归策略"""
+    """均值回归策�?""
     
     def generate_signal(self, intraday_data: pd.DataFrame) -> Dict[str, Any]:
-        """生成均值回归信号"""
-        # 计算价格偏离度
+        """生成均值回归信�?""
+        # 计算价格偏离�?
         ma = intraday_data['close'].rolling(20).mean()
         std = intraday_data['close'].rolling(20).std()
         
@@ -185,16 +185,16 @@ class VolumeAnalyzer:
     """成交量分析器"""
     
     def analyze(self, intraday_data: pd.DataFrame) -> Dict[str, Any]:
-        """分析成交量模式"""
-        # 计算成交量移动平均
+        """分析成交量模�?""
+        # 计算成交量移动平�?
         volume_ma = intraday_data['volume'].rolling(20).mean()
         
-        # 计算成交量比率
+        # 计算成交量比�?
         current_volume = intraday_data['volume'].iloc[-1]
         current_volume_ma = volume_ma.iloc[-1]
         volume_ratio = current_volume / current_volume_ma
         
-        # 计算成交量趋势
+        # 计算成交量趋�?
         volume_trend = intraday_data['volume'].diff().mean()
         
         return {
@@ -204,7 +204,7 @@ class VolumeAnalyzer:
         }
     
     def _classify_volume(self, volume_ratio: float) -> str:
-        """分类成交量水平"""
+        """分类成交量水�?""
         if volume_ratio < 0.5:
             return 'VERY_LOW'
         elif volume_ratio < 1.0:
@@ -221,34 +221,34 @@ class VolumeAnalyzer:
 
 ## 🚀 实施要点
 
-### 阶段1：盘中信号生成器开发（第1周）
+### 阶段1：盘中信号生成器开发（�?周）
 
 **任务**:
-1. ✅ 实现趋势跟踪策略
-2. ✅ 实现均值回归策略
-3. ✅ 实现成交量突破策略
-4. ✅ 实现动量策略
-5. ✅ 编写单元测试
+1. �?实现趋势跟踪策略
+2. �?实现均值回归策�?
+3. �?实现成交量突破策�?
+4. �?实现动量策略
+5. �?编写单元测试
 
 ---
 
-### 阶段2：成交量分析器开发（第1-2周）
+### 阶段2：成交量分析器开发（�?-2周）
 
 **任务**:
-1. ✅ 实现成交量模式识别
-2. ✅ 实现成交量异常检测
-3. ✅ 实现成交量趋势分析
-4. ✅ 编写单元测试
+1. �?实现成交量模式识�?
+2. �?实现成交量异常检�?
+3. �?实现成交量趋势分�?
+4. �?编写单元测试
 
 ---
 
 ### 阶段3：集成测试与优化（第2-3周）
 
 **任务**:
-1. ✅ 编写集成测试用例
-2. ✅ 执行回测验证
-3. ✅ 优化策略参数
-4. ✅ 部署到生产环境
+1. �?编写集成测试用例
+2. �?执行回测验证
+3. �?优化策略参数
+4. �?部署到生产环�?
 
 ---
 
@@ -256,11 +256,11 @@ class VolumeAnalyzer:
 
 ### 策略性能要求
 
-| 指标 | 目标值 |
+| 指标 | 目标�?|
 |------|--------|
-| **信号准确率** | ≥55% |
-| **平均收益率** | > 0.05% |
-| **最大回撤** | < 1.5% |
+| **信号准确�?* | �?5% |
+| **平均收益�?* | > 0.05% |
+| **最大回�?* | < 1.5% |
 | **夏普比率** | > 1.2 |
 
 ---
@@ -269,20 +269,20 @@ class VolumeAnalyzer:
 
 - [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
 - [秒级风险控制系统蓝图](./RISK_CONTROL_BLUEPRINT.md)
-- 专业多时间框架策略架构
+- 专业多时间框架策略架�?
 
 ---
 
 ## 📝 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构�?|
 
 ---
 
-**蓝图状态**: ✅ 设计完成
-**下一步**: 开始实施阶段1 - 盘中信号生成器开发
+**蓝图状�?*: �?设计完成
+**下一�?*: 开始实施阶�? - 盘中信号生成器开�?
 ---
 
 ## 1. 文档治理
@@ -290,27 +290,27 @@ class VolumeAnalyzer:
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 1: 微观执行层
+#### Layer 1: 微观执行�?
 ##### 6.001. Intraday Strategy
 - **模块ID**: INTRADAY_STRATEGY_001
 - **蓝图文档**: INTRADAY_STRATEGY_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 微观执行层盘中策略
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 微观执行层盘中策�?
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Intraday Strategy** | 微观执行层盘中策略 | **核心模块** |
+| **Intraday Strategy** | 微观执行层盘中策�?| **核心模块** |
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

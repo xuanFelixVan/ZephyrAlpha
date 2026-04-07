@@ -1,10 +1,10 @@
 ---
-module_id: DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT_001
+module_id: DATA_SOURCE_HEALTH_MONITOR__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 首席架构师
+owner: 首席架构�?
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据预处理层
 compliance_level: 专业标准
@@ -13,97 +13,97 @@ layer: "Layer 1 (数据预处理层)"
 responsibility: 数据源健康监控与故障切换
 ---
 
-# 数据源健康监控蓝图
+# 数据源健康监控蓝�?
 
-> **核心职责**: 数据源可用性监控、响应时间监控、错误率监控、自动故障切换
+> **核心职责**: 数据源可用性监控、响应时间监控、错误率监控、自动故障切�?
 > **职责边界**: 
-> - ✅ 本文档负责：数据源健康检查、故障检测、告警通知、自动切换
-> - ❌ 本文档不负责：数据采集逻辑、数据质量检查、数据存储
+> - �?本文档负责：数据源健康检查、故障检测、告警通知、自动切�?
+> - �?本文档不负责：数据采集逻辑、数据质量检查、数据存�?
 
-**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状态**: Active
+**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状�?*: Active
 
 ---
 
 ## 核心定位
 
-负责数据源健康监控，实时监控数据源状态，提供健康检查、告警和自动恢复功能。
+负责数据源健康监控，实时监控数据源状态，提供健康检查、告警和自动恢复功能�?
 
-## 📋 一、模块概述
+## 📋 一、模块概�?
 
 ### 1.1 专业机构标准要求
 
-| 机构类型 | 监控要求 | 可用性目标 |
+| 机构类型 | 监控要求 | 可用性目�?|
 |---------|---------|-----------|
-| **桥水基金** | 实时监控、自动切换 | 99.99% |
-| **文艺复兴科技** | 多维度健康检查 | 99.95% |
-| **Two Sigma** | 预测性维护 | 99.9% |
-| **Citadel** | 秒级故障检测 | 99.99% |
+| **桥水基金** | 实时监控、自动切�?| 99.99% |
+| **文艺复兴科技** | 多维度健康检�?| 99.95% |
+| **Two Sigma** | 预测性维�?| 99.9% |
+| **Citadel** | 秒级故障检�?| 99.99% |
 
 ### 1.2 核心功能矩阵
 
-| 功能模块 | 开源方案 | 成熟度 | 个人适用性 | 推荐指数 |
+| 功能模块 | 开源方�?| 成熟�?| 个人适用�?| 推荐指数 |
 |---------|---------|--------|-----------|---------|
-| **健康检查** | Prometheus + Blackbox Exporter | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **指标采集** | Prometheus | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **可视化** | Grafana | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **告警** | Alertmanager | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **健康检�?* | Prometheus + Blackbox Exporter | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
+| **指标采集** | Prometheus | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| **可视�?* | Grafana | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| **告警** | Alertmanager | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
 | **故障切换** | 自研 + HAProxy | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
-## 🏗️ 二、系统架构设计
+## 🏗�?二、系统架构设�?
 
-### 2.1 整体架构图
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    数据源健康监控架构                                      │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                        数据源层                                    │  │
-│  │  • iFind API  • Tushare  • AKShare  • 东方财富  • 自定义API       │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    健康检查层                                      │  │
-│  │  • HTTP探测  • TCP探测  • API响应检查  • 数据完整性检查            │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    指标采集层 (Prometheus)                         │  │
-│  │  • 响应时间  • 错误率  • 可用性  • 数据延迟                        │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    告警与故障切换层                                 │  │
-│  │  • 阈值告警  • 智能告警  • 自动切换  • 降级策略                    │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                              │                                          │
-│                              ▼                                          │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │                    可视化层 (Grafana)                              │  │
-│  │  • 实时仪表盘  • 历史趋势  • 告警历史  • SLA报表                   │  │
-│  └──────────────────────────────────────────────────────────────────┘  │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### 2.2 数据流架构
+### 2.1 整体架构�?
 
 ```
-数据源 → 健康检查 → 指标采集 → 规则评估 → 告警/切换 → 通知
-   │         │          │          │          │         │
-   └─────────┴──────────┴──────────┴──────────┴─────────┘
+┌─────────────────────────────────────────────────────────────────────────�?
+�?                   数据源健康监控架�?                                     �?
+├─────────────────────────────────────────────────────────────────────────�?
+�?                                                                        �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                       数据源层                                    �? �?
+�? �? �?iFind API  �?Tushare  �?AKShare  �?东方财富  �?自定义API       �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   健康检查层                                      �? �?
+�? �? �?HTTP探测  �?TCP探测  �?API响应检�? �?数据完整性检�?           �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   指标采集�?(Prometheus)                         �? �?
+�? �? �?响应时间  �?错误�? �?可用�? �?数据延迟                        �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   告警与故障切换层                                 �? �?
+�? �? �?阈值告�? �?智能告警  �?自动切换  �?降级策略                    �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                             �?                                         �?
+�?                             �?                                         �?
+�? ┌──────────────────────────────────────────────────────────────────�? �?
+�? �?                   可视化层 (Grafana)                              �? �?
+�? �? �?实时仪表�? �?历史趋势  �?告警历史  �?SLA报表                   �? �?
+�? └──────────────────────────────────────────────────────────────────�? �?
+�?                                                                        �?
+└─────────────────────────────────────────────────────────────────────────�?
+```
+
+### 2.2 数据流架�?
+
+```
+数据�?�?健康检�?�?指标采集 �?规则评估 �?告警/切换 �?通知
+   �?        �?         �?         �?         �?        �?
+   └─────────┴──────────┴──────────┴──────────┴─────────�?
                     完整监控链路
 ```
 
 ---
 
-## 💻 三、核心实现代码
+## 💻 三、核心实现代�?
 
 ### 3.1 数据源健康检查器
 
@@ -122,7 +122,7 @@ import json
 
 
 class HealthStatus(Enum):
-    """健康状态枚举"""
+    """健康状态枚�?""
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -131,7 +131,7 @@ class HealthStatus(Enum):
 
 @dataclass
 class HealthCheckResult:
-    """健康检查结果"""
+    """健康检查结�?""
     source_name: str
     status: HealthStatus
     response_time_ms: float
@@ -160,7 +160,7 @@ class DataSourceHealthChecker:
         expected_status: int = 200,
         expected_content: str = None
     ) -> HealthCheckResult:
-        """检查HTTP端点健康状态"""
+        """检查HTTP端点健康状�?""
         start_time = time.time()
         
         try:
@@ -227,7 +227,7 @@ class DataSourceHealthChecker:
         source_name: str,
         api_config: Dict[str, Any]
     ) -> HealthCheckResult:
-        """检查API响应健康状态"""
+        """检查API响应健康状�?""
         endpoint = api_config.get("endpoint")
         api_key = api_config.get("api_key")
         params = api_config.get("params", {})
@@ -359,7 +359,7 @@ class DataSourceHealthChecker:
         return self.health_status
     
     def get_source_status(self, source_name: str) -> HealthStatus:
-        """获取数据源状态"""
+        """获取数据源状�?""
         if source_name in self.health_status:
             return self.health_status[source_name].status
         return HealthStatus.UNKNOWN
@@ -370,11 +370,11 @@ class DataSourceHealthChecker:
         return failures >= self.failure_threshold
 ```
 
-### 3.2 Prometheus指标导出器
+### 3.2 Prometheus指标导出�?
 
 ```python
 """
-Prometheus指标导出器
+Prometheus指标导出�?
 """
 from prometheus_client import Counter, Histogram, Gauge, Info
 from prometheus_client.core import CollectorRegistry
@@ -383,7 +383,7 @@ import time
 
 
 class DataSourceMetrics:
-    """数据源监控指标"""
+    """数据源监控指�?""
     
     def __init__(self):
         self.registry = CollectorRegistry()
@@ -450,7 +450,7 @@ class DataSourceMetrics:
         source_type: str,
         status: str
     ):
-        """更新健康状态指标"""
+        """更新健康状态指�?""
         status_value = {
             "healthy": 1.0,
             "degraded": 0.5,
@@ -507,7 +507,7 @@ class DataSourceMetrics:
         source_type: str,
         availability_pct: float
     ):
-        """更新可用性"""
+        """更新可用�?""
         self.availability.labels(
             source_name=source_name,
             source_type=source_type
@@ -531,22 +531,22 @@ class DataSourceMetrics:
         source_type: str,
         count: int
     ):
-        """更新活跃连接数"""
+        """更新活跃连接�?""
         self.active_connections.labels(
             source_name=source_name,
             source_type=source_type
         ).set(count)
     
     def set_source_info(self, info: Dict[str, str]):
-        """设置数据源信息"""
+        """设置数据源信�?""
         self.source_info.info(info)
 ```
 
-### 3.3 故障切换管理器
+### 3.3 故障切换管理�?
 
 ```python
 """
-故障切换管理器
+故障切换管理�?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -566,7 +566,7 @@ class FailoverStrategy(Enum):
 
 @dataclass
 class DataSourceEndpoint:
-    """数据源端点"""
+    """数据源端�?""
     name: str
     endpoint: str
     priority: int
@@ -577,7 +577,7 @@ class DataSourceEndpoint:
 
 
 class FailoverManager:
-    """故障切换管理器"""
+    """故障切换管理�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -597,7 +597,7 @@ class FailoverManager:
         self._init_endpoints()
     
     def _init_endpoints(self):
-        """初始化端点"""
+        """初始化端�?""
         for source_type, sources in self.config.get("sources", {}).items():
             self.endpoints[source_type] = []
             
@@ -630,7 +630,7 @@ class FailoverManager:
         return None
     
     def get_all_endpoints(self, source_type: str) -> List[str]:
-        """获取所有端点（用于Active-Active策略）"""
+        """获取所有端点（用于Active-Active策略�?""
         if source_type in self.endpoints:
             return [ep.name for ep in self.endpoints[source_type] if ep.is_active]
         return []
@@ -688,7 +688,7 @@ class FailoverManager:
         )
     
     async def health_check_loop(self):
-        """健康检查循环"""
+        """健康检查循�?""
         while True:
             for source_type, endpoints in self.endpoints.items():
                 for endpoint in endpoints:
@@ -707,7 +707,7 @@ class FailoverManager:
             await asyncio.sleep(self.check_interval)
     
     def get_status(self) -> Dict[str, Any]:
-        """获取状态"""
+        """获取状�?""
         status = {}
         
         for source_type, endpoints in self.endpoints.items():
@@ -728,11 +728,11 @@ class FailoverManager:
         return status
 ```
 
-### 3.4 告警管理器
+### 3.4 告警管理�?
 
 ```python
 """
-告警管理器
+告警管理�?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -767,7 +767,7 @@ class Alert:
 
 
 class AlertManager:
-    """告警管理器"""
+    """告警管理�?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -814,7 +814,7 @@ class AlertManager:
         return alert
     
     def _should_send_alert(self, source_name: str, severity: AlertSeverity) -> bool:
-        """判断是否应该发送告警"""
+        """判断是否应该发送告�?""
         if source_name not in self.last_alert_time:
             return True
         
@@ -855,7 +855,7 @@ class AlertManager:
 数据源告警通知
 
 告警ID: {alert.alert_id}
-数据源: {alert.source_name}
+数据�? {alert.source_name}
 严重级别: {alert.severity.value}
 消息: {alert.message}
 时间: {alert.timestamp.isoformat()}
@@ -894,7 +894,7 @@ class AlertManager:
         webhook_url = config['webhook_url']
         
         content = f"""
-**数据源告警**
+**数据源告�?*
 > 来源: {alert.source_name}
 > 级别: {alert.severity.value}
 > 消息: {alert.message}
@@ -915,7 +915,7 @@ class AlertManager:
         webhook_url = config['webhook_url']
         
         content = f"""
-数据源告警
+数据源告�?
 - 来源: {alert.source_name}
 - 级别: {alert.severity.value}
 - 消息: {alert.message}
@@ -983,7 +983,7 @@ class AlertManager:
 
 ---
 
-## 🚀 四、部署配置
+## 🚀 四、部署配�?
 
 ### 4.1 Prometheus配置
 
@@ -1037,8 +1037,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "数据源 {{ $labels.source_name }} 不可用"
-          description: "数据源 {{ $labels.source_name }} 已经不可用超过1分钟"
+          summary: "数据�?{{ $labels.source_name }} 不可�?
+          description: "数据�?{{ $labels.source_name }} 已经不可用超�?分钟"
       
       - alert: DataSourceDegraded
         expr: datasource_health_status == 0.5
@@ -1046,8 +1046,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "数据源 {{ $labels.source_name }} 性能降级"
-          description: "数据源 {{ $labels.source_name }} 性能降级超过5分钟"
+          summary: "数据�?{{ $labels.source_name }} 性能降级"
+          description: "数据�?{{ $labels.source_name }} 性能降级超过5分钟"
       
       - alert: HighResponseTime
         expr: histogram_quantile(0.95, datasource_response_time_seconds) > 5
@@ -1055,8 +1055,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "数据源 {{ $labels.source_name }} 响应时间过长"
-          description: "数据源 {{ $labels.source_name }} P95响应时间超过5秒"
+          summary: "数据�?{{ $labels.source_name }} 响应时间过长"
+          description: "数据�?{{ $labels.source_name }} P95响应时间超过5�?
       
       - alert: HighErrorRate
         expr: rate(datasource_error_total[5m]) > 0.1
@@ -1064,8 +1064,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "数据源 {{ $labels.source_name }} 错误率过高"
-          description: "数据源 {{ $labels.source_name }} 错误率超过10%"
+          summary: "数据�?{{ $labels.source_name }} 错误率过�?
+          description: "数据�?{{ $labels.source_name }} 错误率超�?0%"
       
       - alert: LowAvailability
         expr: datasource_availability < 99
@@ -1073,8 +1073,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "数据源 {{ $labels.source_name }} 可用性过低"
-          description: "数据源 {{ $labels.source_name }} 可用性低于99%"
+          summary: "数据�?{{ $labels.source_name }} 可用性过�?
+          description: "数据�?{{ $labels.source_name }} 可用性低�?9%"
 ```
 
 ### 4.3 Docker Compose配置
@@ -1148,9 +1148,9 @@ networks:
 
 ---
 
-## 📊 五、使用示例
+## 📊 五、使用示�?
 
-### 5.1 健康检查
+### 5.1 健康检�?
 
 ```python
 from datasource_health import DataSourceHealthChecker
@@ -1210,7 +1210,7 @@ failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 
 active = failover.get_active_endpoint("market_data")
-print(f"故障切换后活跃端点: {active}")
+print(f"故障切换后活跃端�? {active}")
 ```
 
 ### 5.3 告警通知
@@ -1253,39 +1253,39 @@ print(f"告警ID: {alert.alert_id}")
 
 ### 6.1 监控指标
 
-| 指标 | 目标值 | 告警阈值 |
+| 指标 | 目标�?| 告警阈�?|
 |------|--------|---------|
-| **可用性** | ≥99.9% | <99% |
+| **可用�?* | �?9.9% | <99% |
 | **响应时间(P95)** | <1s | >5s |
-| **错误率** | <1% | >10% |
+| **错误�?* | <1% | >10% |
 | **数据延迟** | <10s | >60s |
-| **故障检测时间** | <30s | >60s |
+| **故障检测时�?* | <30s | >60s |
 | **故障切换时间** | <10s | >30s |
 
 ### 6.2 资源占用
 
 | 资源 | Prometheus | Grafana | Alertmanager | 总计 |
 |------|-----------|---------|-------------|------|
-| CPU | 0.5核 | 0.2核 | 0.1核 | 0.8核 |
+| CPU | 0.5�?| 0.2�?| 0.1�?| 0.8�?|
 | 内存 | 512MB | 256MB | 128MB | 896MB |
 | 存储 | 10GB | 1GB | 1GB | 12GB |
 
 ---
 
-## 🔒 七、最佳实践
+## 🔒 七、最佳实�?
 
-### 7.1 健康检查
+### 7.1 健康检�?
 
-1. **多维度检查**: HTTP探测 + API响应 + 数据完整性
+1. **多维度检�?*: HTTP探测 + API响应 + 数据完整�?
 2. **合理间隔**: 30秒检查一次，避免过度请求
-3. **超时设置**: 根据数据源特性设置合理超时
-4. **失败阈值**: 连续3次失败才判定为不健康
+3. **超时设置**: 根据数据源特性设置合理超�?
+4. **失败阈�?*: 连续3次失败才判定为不健康
 
 ### 7.2 故障切换
 
-1. **优先级策略**: 主数据源优先，备用数据源按优先级排序
+1. **优先级策�?*: 主数据源优先，备用数据源按优先级排序
 2. **自动恢复**: 备用数据源恢复后自动切回主数据源
-3. **状态持久化**: 记录切换历史，便于审计
+3. **状态持久化**: 记录切换历史，便于审�?
 4. **通知机制**: 切换时发送通知
 
 ### 7.3 告警管理
@@ -1297,36 +1297,36 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## 📋 八、实施路径
+## 📋 八、实施路�?
 
-### Phase 1: 基础监控（1周）
+### Phase 1: 基础监控�?周）
 
 - [x] Prometheus部署
-- [x] 基础健康检查
+- [x] 基础健康检�?
 - [x] 指标采集
 
-### Phase 2: 完善功能（1周）
+### Phase 2: 完善功能�?周）
 
-- [x] Grafana仪表盘
+- [x] Grafana仪表�?
 - [x] 告警规则配置
 - [x] 故障切换功能
 
-### Phase 3: 优化增强（1周）
+### Phase 3: 优化增强�?周）
 
 - [x] 多渠道通知
-- [x] 自动化恢复
+- [x] 自动化恢�?
 - [x] SLA报表
 
 ---
 
-## 📚 九、参考资源
+## 📚 九、参考资�?
 
-### 9.1 开源项目
+### 9.1 开源项�?
 
-| 项目 | 地址 | 用途 |
+| 项目 | 地址 | 用�?|
 |------|------|------|
 | Prometheus | https://prometheus.io/ | 监控系统 |
-| Grafana | https://grafana.com/ | 可视化 |
+| Grafana | https://grafana.com/ | 可视�?|
 | Alertmanager | https://prometheus.io/docs/alerting/ | 告警管理 |
 | Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | 黑盒探测 |
 
@@ -1338,11 +1338,11 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## 📝 十、变更历史
+## 📝 十、变更历�?
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

@@ -6,36 +6,36 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
   - TimescaleDB集成
   - 时序数据存储
   - 高频数据管理
   - 时间窗口聚合
-layer: "Layer 1 (数据层)"
+layer: "Layer 1 (数据�?"
 ---
 
-# TimescaleDB时序数据库集成蓝图
+# TimescaleDB时序数据库集成蓝�?
 
-> **核心职责**: 时序数据的存储、查询和管理，专注于高频金融数据的时间序列特性
+> **核心职责**: 时序数据的存储、查询和管理，专注于高频金融数据的时间序列特�?
 > **职责边界**: 
-> - ✅ 本模块负责：时序数据存储、时间窗口查询、连续聚合、数据压缩
-> - ❌ 本模块不负责：列式分析存储（ClickHouse）、缓存（Redis）
+> - �?本模块负责：时序数据存储、时间窗口查询、连续聚合、数据压�?
+> - �?本模块不负责：列式分析存储（ClickHouse）、缓存（Redis�?
 
 ## 核心定位
 
-**单一职责**: 时序数据的存储、查询和管理，专注于高频金融数据的时间序列特性
+**单一职责**: 时序数据的存储、查询和管理，专注于高频金融数据的时间序列特�?
 
 ### 职责边界
 
-| 负责 | 不负责 |
+| 负责 | 不负�?|
 |------|--------|
-| ✅ 高频行情数据存储 | ❌ 大规模历史数据分析 |
-| ✅ 时间窗口聚合查询 | ❌ 列式聚合分析 |
-| ✅ 连续聚合预计算 | ❌ 实时数据缓存 |
-| ✅ 数据压缩与保留策略 | ❌ 数据订阅分发 |
-| ✅ 时序数据降采样 | ❌ 数据清洗处理 |
+| �?高频行情数据存储 | �?大规模历史数据分�?|
+| �?时间窗口聚合查询 | �?列式聚合分析 |
+| �?连续聚合预计�?| �?实时数据缓存 |
+| �?数据压缩与保留策�?| �?数据订阅分发 |
+| �?时序数据降采�?| �?数据清洗处理 |
 
 ---
 
@@ -43,22 +43,22 @@ layer: "Layer 1 (数据层)"
 
 ### 1.1 为什么选择TimescaleDB
 
-| 特性 | TimescaleDB | InfluxDB | QuestDB |
+| 特�?| TimescaleDB | InfluxDB | QuestDB |
 |------|-------------|----------|---------|
-| SQL兼容 | ✅ 完全兼容 | ❌ Flux语言 | ✅ 部分兼容 |
-| 学习曲线 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| Python支持 | ✅ psycopg2 | ✅ influxdb | ✅ questdb |
-| 单机部署 | ✅ 简单 | ✅ 简单 | ✅ 简单 |
-| 压缩能力 | ✅ 优秀 | ✅ 优秀 | ✅ 优秀 |
-| 连续聚合 | ✅ 支持 | ✅ 支持 | ✅ 支持 |
-| 社区活跃度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| SQL兼容 | �?完全兼容 | �?Flux语言 | �?部分兼容 |
+| 学习曲线 | ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐�?|
+| Python支持 | �?psycopg2 | �?influxdb | �?questdb |
+| 单机部署 | �?简�?| �?简�?| �?简�?|
+| 压缩能力 | �?优秀 | �?优秀 | �?优秀 |
+| 连续聚合 | �?支持 | �?支持 | �?支持 |
+| 社区活跃�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐�?|
+| **推荐指数** | **⭐⭐⭐⭐�?* | ⭐⭐⭐⭐ | ⭐⭐�?|
 
 ### 1.2 核心优势
 
 1. **PostgreSQL兼容**: 无需学习新语言，SQL直接使用
-2. **时序优化**: 自动分区、压缩、连续聚合
-3. **生态完善**: psycopg2、SQLAlchemy、pandas完美支持
+2. **时序优化**: 自动分区、压缩、连续聚�?
+3. **生态完�?*: psycopg2、SQLAlchemy、pandas完美支持
 4. **单机友好**: 个人开发场景最佳选择
 
 ---
@@ -68,34 +68,34 @@ layer: "Layer 1 (数据层)"
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    TimescaleDB集成架构                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
-│  │ 数据写入层   │    │ 数据存储层   │    │ 数据查询层   │     │
-│  │              │    │              │    │              │     │
-│  │ • 批量写入   │    │ • 超级表     │    │ • 时间窗口   │     │
-│  │ • 流式写入   │    │ • 自动分区   │    │ • 连续聚合   │     │
-│  │ • 异步写入   │    │ • 压缩策略   │    │ • 降采样查询 │     │
-│  └──────────────┘    └──────────────┘    └──────────────┘     │
-│         │                   │                    │              │
-│         └───────────────────┴────────────────────┘              │
-│                            │                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                    数据保留策略                          │   │
-│  │  • 热数据: 7天 (未压缩)                                  │   │
-│  │  • 温数据: 30天 (压缩)                                   │   │
-│  │  • 冷数据: 归档到ClickHouse                              │   │
-│  └─────────────────────────────────────────────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────�?
+�?                   TimescaleDB集成架构                           �?
+├─────────────────────────────────────────────────────────────────�?
+�?                                                                �?
+�? ┌──────────────�?   ┌──────────────�?   ┌──────────────�?    �?
+�? �?数据写入�?  �?   �?数据存储�?  �?   �?数据查询�?  �?    �?
+�? �?             �?   �?             �?   �?             �?    �?
+�? �?�?批量写入   �?   �?�?超级�?    �?   �?�?时间窗口   �?    �?
+�? �?�?流式写入   �?   �?�?自动分区   �?   �?�?连续聚合   �?    �?
+�? �?�?异步写入   �?   �?�?压缩策略   �?   �?�?降采样查�?�?    �?
+�? └──────────────�?   └──────────────�?   └──────────────�?    �?
+�?        �?                  �?                   �?             �?
+�?        └───────────────────┴────────────────────�?             �?
+�?                           �?                                   �?
+�? ┌─────────────────────────────────────────────────────────�?  �?
+�? �?                   数据保留策略                          �?  �?
+�? �? �?热数�? 7�?(未压�?                                  �?  �?
+�? �? �?温数�? 30�?(压缩)                                   �?  �?
+�? �? �?冷数�? 归档到ClickHouse                              �?  �?
+�? └─────────────────────────────────────────────────────────�?  �?
+�?                                                                �?
+└─────────────────────────────────────────────────────────────────�?
 ```
 
 ### 2.2 数据模型设计
 
 ```sql
--- 行情数据超级表
+-- 行情数据超级�?
 CREATE TABLE stock_ticks (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,
@@ -131,7 +131,7 @@ SELECT create_hypertable('stock_klines', 'time',
     number_partitions => 4
 );
 
--- 因子数据超级表
+-- 因子数据超级�?
 CREATE TABLE factor_values (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,
@@ -150,10 +150,10 @@ SELECT create_hypertable('factor_values', 'time',
 
 ## 3. 核心功能实现
 
-### 3.1 连续聚合（Continuous Aggregates）
+### 3.1 连续聚合（Continuous Aggregates�?
 
 ```sql
--- 1分钟K线聚合
+-- 1分钟K线聚�?
 CREATE MATERIALIZED VIEW kline_1m
 WITH (timescaledb.continuous) AS
 SELECT 
@@ -174,7 +174,7 @@ SELECT add_continuous_aggregate_policy('kline_1m',
     schedule_interval => INTERVAL '1 minute'
 );
 
--- 5分钟K线聚合
+-- 5分钟K线聚�?
 CREATE MATERIALIZED VIEW kline_5m
 WITH (timescaledb.continuous) AS
 SELECT 
@@ -188,7 +188,7 @@ SELECT
 FROM stock_ticks
 GROUP BY bucket, symbol;
 
--- 日K线聚合
+-- 日K线聚�?
 CREATE MATERIALIZED VIEW kline_1d
 WITH (timescaledb.continuous) AS
 SELECT 
@@ -213,10 +213,10 @@ ALTER TABLE stock_ticks SET (
     timescaledb.compress_orderby = 'time DESC'
 );
 
--- 添加压缩策略（7天后压缩）
+-- 添加压缩策略�?天后压缩�?
 SELECT add_compression_policy('stock_ticks', INTERVAL '7 days');
 
--- K线数据压缩
+-- K线数据压�?
 ALTER TABLE stock_klines SET (
     timescaledb.compress,
     timescaledb.compress_segmentby = 'symbol,interval',
@@ -229,13 +229,13 @@ SELECT add_compression_policy('stock_klines', INTERVAL '7 days');
 ### 3.3 数据保留策略
 
 ```sql
--- Tick数据保留30天
+-- Tick数据保留30�?
 SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
 
--- K线数据保留1年
+-- K线数据保�?�?
 SELECT add_retention_policy('stock_klines', INTERVAL '1 year');
 
--- 因子数据保留1年
+-- 因子数据保留1�?
 SELECT add_retention_policy('factor_values', INTERVAL '1 year');
 ```
 
@@ -253,7 +253,7 @@ from psycopg2.extras import execute_values
 import pandas as pd
 
 class TimescaleDBWriter:
-    """TimescaleDB数据写入器"""
+    """TimescaleDB数据写入�?""
     
     def __init__(self, connection_string: str):
         self.conn = psycopg2.connect(connection_string)
@@ -278,7 +278,7 @@ class TimescaleDBWriter:
         return len(values)
     
     def write_klines(self, klines: pd.DataFrame) -> int:
-        """批量写入K线数据"""
+        """批量写入K线数�?""
         sql = """
         INSERT INTO stock_klines 
         (time, symbol, interval, open, high, low, close, volume, amount)
@@ -317,7 +317,7 @@ class TimescaleDBWriter:
 
 ```python
 class TimescaleDBReader:
-    """TimescaleDB数据查询器"""
+    """TimescaleDB数据查询�?""
     
     def __init__(self, connection_string: str):
         self.conn = psycopg2.connect(connection_string)
@@ -329,7 +329,7 @@ class TimescaleDBReader:
         start_time: datetime,
         end_time: datetime
     ) -> pd.DataFrame:
-        """获取K线数据"""
+        """获取K线数�?""
         sql = """
         SELECT time, symbol, open, high, low, close, volume, amount
         FROM stock_klines
@@ -383,7 +383,7 @@ class TimescaleDBReader:
         ])
     
     def get_latest_prices(self, symbols: List[str]) -> Dict[str, float]:
-        """获取最新价格"""
+        """获取最新价�?""
         sql = """
         SELECT DISTINCT ON (symbol) symbol, price, time
         FROM stock_ticks
@@ -434,7 +434,7 @@ class TimeWindowQueries:
         start_time: datetime,
         end_time: datetime
     ) -> pd.DataFrame:
-        """时间桶聚合查询"""
+        """时间桶聚合查�?""
         sql = f"""
         SELECT 
             time_bucket('{bucket_size}', time) AS bucket,
@@ -476,7 +476,7 @@ CREATE INDEX idx_klines_time ON stock_klines (time DESC);
 ### 5.2 查询优化
 
 ```sql
--- 使用时间桶函数优化
+-- 使用时间桶函数优�?
 EXPLAIN ANALYZE
 SELECT time_bucket('5 minutes', time) AS bucket,
        symbol,
@@ -499,7 +499,7 @@ import asyncio
 from asyncpg import create_pool
 
 class AsyncTimescaleDBWriter:
-    """异步批量写入器"""
+    """异步批量写入�?""
     
     def __init__(self, connection_string: str, pool_size: int = 5):
         self.connection_string = connection_string
@@ -535,21 +535,21 @@ class AsyncTimescaleDBWriter:
 
 ---
 
-## 6. 监控与运维
+## 6. 监控与运�?
 
 ### 6.1 性能监控
 
 ```sql
--- 查看超级表信息
+-- 查看超级表信�?
 SELECT * FROM timescaledb_information.hypertables;
 
--- 查看压缩状态
+-- 查看压缩状�?
 SELECT * FROM timescaledb_information.compression_settings;
 
--- 查看连续聚合状态
+-- 查看连续聚合状�?
 SELECT * FROM timescaledb_information.continuous_aggregates;
 
--- 查看作业状态
+-- 查看作业状�?
 SELECT * FROM timescaledb_information.jobs;
 
 -- 查看数据大小
@@ -561,17 +561,17 @@ SELECT
 FROM timescaledb_information.compressed_hypertable_stats;
 ```
 
-### 6.2 健康检查
+### 6.2 健康检�?
 
 ```python
 class TimescaleDBHealthCheck:
-    """健康检查"""
+    """健康检�?""
     
     def __init__(self, conn):
         self.conn = conn
     
     def check_connection(self) -> bool:
-        """检查连接"""
+        """检查连�?""
         try:
             with self.conn.cursor() as cur:
                 cur.execute("SELECT 1")
@@ -581,7 +581,7 @@ class TimescaleDBHealthCheck:
             return False
     
     def check_hypertables(self) -> List[Dict]:
-        """检查超级表状态"""
+        """检查超级表状�?""
         sql = """
         SELECT 
             hypertable_name,
@@ -595,7 +595,7 @@ class TimescaleDBHealthCheck:
             return cur.fetchall()
     
     def check_jobs(self) -> List[Dict]:
-        """检查作业状态"""
+        """检查作业状�?""
         sql = """
         SELECT 
             job_id,
@@ -644,14 +644,14 @@ volumes:
   timescaledb_data:
 ```
 
-### 7.2 初始化脚本
+### 7.2 初始化脚�?
 
 ```sql
 -- init.sql
 -- 启用TimescaleDB扩展
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
--- 创建超级表
+-- 创建超级�?
 CREATE TABLE stock_ticks (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,
@@ -676,7 +676,7 @@ SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
 
 ---
 
-## 8. 与其他模块集成
+## 8. 与其他模块集�?
 
 ### 8.1 与ClickHouse集成
 
@@ -695,17 +695,17 @@ class TimescaleDBToClickHouse:
         """
         
         # 2. 导入到ClickHouse
-        # 3. 删除TimescaleDB中的旧数据
+        # 3. 删除TimescaleDB中的旧数�?
 ```
 
 ### 8.2 与Redis集成
 
 ```python
 class TimescaleDBRedisCache:
-    """Redis缓存层"""
+    """Redis缓存�?""
     
     def get_latest_price_with_cache(self, symbol: str) -> float:
-        """带缓存的最新价格查询"""
+        """带缓存的最新价格查�?""
         # 1. 先查Redis缓存
         # 2. 缓存未命中则查TimescaleDB
         # 3. 写入Redis缓存
@@ -715,9 +715,9 @@ class TimescaleDBRedisCache:
 
 ## 📋 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
 
 ---
 

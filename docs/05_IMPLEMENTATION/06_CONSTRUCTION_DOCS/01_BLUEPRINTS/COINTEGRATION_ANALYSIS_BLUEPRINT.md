@@ -6,37 +6,37 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alpha因子层
+applicable_scope: Layer 2 Alpha因子�?
 compliance_level: 专业标准
 responsibility:
   - 协整分析
-  - 协整关系检验
+  - 协整关系检�?
   - 配对交易识别
   - 统计套利
-layer: "Layer 2 (Alpha因子层)"
+layer: "Layer 2 (Alpha因子�?"
 ---
 
 # COINTEGRATION ANALYSIS BLUEPRINT
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构文档
-layer: "Layer 2 (Alpha因子层)"
-﻿# 协整分析蓝图
+layer: "Layer 2 (Alpha因子�?"
+�? 协整分析蓝图
 
-> **核心定位**: 协整分析蓝图的核心功能实现
+> **核心定位**: 协整分析蓝图的核心功能实�?
 
 
 > **索引**: `COINTEGRATION_ANALYSIS_001`
-> **开发周期**: 2-3天
+> **开发周�?*: 2-3�?
 > **核心定位**: 识别资产间的长期均衡关系，支持配对交易和统计套利策略
-> **参考开源**: statsmodels
+> **参考开�?*: statsmodels
 
 ## 核心定位
 
 > 核心职责: Cointegration Analysis蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Cointegration Analysis蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+> - �?本文档负责：Cointegration Analysis蓝图设计相关内容
+> - �?本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行�?
 
 
 ## 1. 概述
@@ -45,16 +45,16 @@ layer: "Layer 2 (Alpha因子层)"
 
 **Layer定位**: Layer 6 - 组合优化层（相关性建模模块）
 
-**核心价值**:
-- 检验资产间的协整关系（长期均衡）
-- 支持Engle-Granger两步法、Johansen检验
+**核心价�?*:
+- 检验资产间的协整关系（长期均衡�?
+- 支持Engle-Granger两步法、Johansen检�?
 - 为配对交易策略提供基础
-- 区别于相关性，协整关系更稳定
+- 区别于相关性，协整关系更稳�?
 
-**业务价值**:
+**业务价�?*:
 - 发现统计套利机会
-- 构建均值回归策略
-- 提升组合分散化效果
+- 构建均值回归策�?
+- 提升组合分散化效�?
 
 ### 1.2 版本信息
 
@@ -62,11 +62,11 @@ layer: "Layer 2 (Alpha因子层)"
 |------|------|
 | **模块ID** | COINTEGRATION_ANALYSIS_001 |
 | **版本** | v1.0.0 |
-| **开源依赖** | statsmodels |
-| **预计工时** | 2-3天 |
+| **开源依�?* | statsmodels |
+| **预计工时** | 2-3�?|
 
 ---
-## 2. 技术实现
+## 2. 技术实�?
 
 ### 2.1 核心API
 
@@ -77,7 +77,7 @@ import numpy as np
 import pandas as pd
 
 class CointegrationAnalyzer:
-    """协整分析器"""
+    """协整分析�?""
     
     def engle_granger_test(
         self,
@@ -85,7 +85,7 @@ class CointegrationAnalyzer:
         series2: np.ndarray
     ) -> dict:
         """
-        Engle-Granger两步法协整检验
+        Engle-Granger两步法协整检�?
         
         Returns:
             {'cointegrated': bool, 'pvalue': float, 'hedge_ratio': float}
@@ -110,18 +110,18 @@ class CointegrationAnalyzer:
         k_ar_diff: int = 1
     ) -> dict:
         """
-        Johansen协整检验
+        Johansen协整检�?
         
         Args:
-            data: 多变量时间序列
+            data: 多变量时间序�?
             det_order: 确定性趋势项
-                -1: 无确定性趋势
-                0: 常数项
-                1: 常数项和趋势项
+                -1: 无确定性趋�?
+                0: 常数�?
+                1: 常数项和趋势�?
             k_ar_diff: 滞后阶数
             
         Returns:
-            协整检验结果
+            协整检验结�?
         """
         result = coint_johansen(data, det_order, k_ar_diff)
         
@@ -154,7 +154,7 @@ class CointegrationAnalyzer:
         扫描所有资产对，找出协整对
         
         Returns:
-            协整对列表
+            协整对列�?
         """
         n_assets = price_data.shape[1]
         cointegrated_pairs = []
@@ -201,7 +201,7 @@ class CointegrationAPI:
         assets: List[str],
         pvalue_threshold: float = 0.05
     ) -> List[CointegratedPair]:
-        """扫描协整对"""
+        """扫描协整�?""
         
     @endpoint("/api/v1/cointegration/johansen")
     async def johansen_test(
@@ -209,7 +209,7 @@ class CointegrationAPI:
         assets: List[str],
         det_order: int = 0
     ) -> JohansenResult:
-        """Johansen多变量协整检验"""
+        """Johansen多变量协整检�?""
 ```
 
 ---
@@ -220,27 +220,27 @@ class CointegrationAPI:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依赖 | 提供资产元数据 |
-| [动态相关性建模蓝图](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | DYNAMIC_CORRELATION_MODELING_001 | 中依赖 | 提供相关性分析 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依�?| 提供资产元数�?|
+| [动态相关性建模蓝图](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | DYNAMIC_CORRELATION_MODELING_001 | 中依�?| 提供相关性分�?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [统计套利模块蓝图](./STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) | STATISTICAL_ARBITRAGE_MODULE_001 | 强依赖 | 统计套利策略 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 组合优化 |
-| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依赖 | 风险平价策略 |
+| [统计套利模块蓝图](./STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) | STATISTICAL_ARBITRAGE_MODULE_001 | 强依�?| 统计套利策略 |
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依�?| 组合优化 |
+| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依�?| 风险平价策略 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
 | **statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -263,23 +263,23 @@ graph LR
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
-| Phase 1 | Engle-Granger检验实现 | 8h |
-| Phase 2 | Johansen检验、配对扫描 | 8h |
-| Phase 3 | API、测试、文档 | 8h |
+| Phase 1 | Engle-Granger检验实�?| 8h |
+| Phase 2 | Johansen检验、配对扫�?| 8h |
+| Phase 3 | API、测试、文�?| 8h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
 ---
 
 ## 5. 文档治理
@@ -287,27 +287,27 @@ graph LR
 ### 5.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: 组合优化层
+#### Layer 6: 组合优化�?
 ##### 6.001. Cointegration Analysis
 - **模块ID**: COINTEGRATION_ANALYSIS_001
 - **蓝图文档**: COINTEGRATION_ANALYSIS_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: Layer 6 组合优化层
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: Layer 6 组合优化�?
+- **状�?*: Active
 ```
 
 ### 5.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Cointegration Analysis** | Layer 6 组合优化层 | **核心模块** |
+| **Cointegration Analysis** | Layer 6 组合优化�?| **核心模块** |
 
 ### 5.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

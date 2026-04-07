@@ -1,8 +1,8 @@
 ---
 responsibility:
-  - 均值方差优化
+  - 均值方差优�?
   - 有效前沿计算
-  - 最优组合求解
+  - 最优组合求�?
   - 风险收益权衡
 
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
@@ -12,40 +12,40 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # Mean Variance Optimization
 
-> **核心职责**: 均值方差优化
+> **核心职责**: 均值方差优�?
 > **职责边界**: 
-> - ✅ 本文档负责：均值方差优化、有效前沿计算、最优组合求解
-> - ❌ 本文档不负责：因子中性约束（由FACTOR_NEUTRAL_OPTIMIZATION负责）
+> - �?本文档负责：均值方差优化、有效前沿计算、最优组合求�?
+> - �?本文档不负责：因子中性约束（由FACTOR_NEUTRAL_OPTIMIZATION负责�?
 
 ## 核心定位
 
-负责Mean Variance Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Mean Variance Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
 
 ## 1. 模块概述
 
 ### 1.1 核心职责
 
-**单一职责**: 实现Markowitz均值方差优化理论，提供有效前沿计算和最优组合求解能力
+**单一职责**: 实现Markowitz均值方差优化理论，提供有效前沿计算和最优组合求解能�?
 
 **职责边界**:
-- ✅ 负责: 均值方差优化、有效前沿计算、最优组合求解
-- ❌ 不负责: 因子中性约束（由FACTOR_NEUTRAL_OPTIMIZATION负责）
-- ❌ 不负责: 鲁棒优化（由ROBUST_OPTIMIZATION负责）
-- ❌ 不负责: 交易成本建模（由TRANSACTION_COST_MODEL负责）
+- �?负责: 均值方差优化、有效前沿计算、最优组合求�?
+- �?不负�? 因子中性约束（由FACTOR_NEUTRAL_OPTIMIZATION负责�?
+- �?不负�? 鲁棒优化（由ROBUST_OPTIMIZATION负责�?
+- �?不负�? 交易成本建模（由TRANSACTION_COST_MODEL负责�?
 
-### 1.2 开源依赖
+### 1.2 开源依�?
 
-| 库名 | 版本 | 用途 | GitHub Stars |
+| 库名 | 版本 | 用�?| GitHub Stars |
 |
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ## 2. 功能设计
 
 ### 2.1 核心功能
@@ -55,9 +55,9 @@ layer: "Layer 6 (组合优化层)"
 ```python
 class EfficientFrontierCalculator:
     """
-    有效前沿计算器
+    有效前沿计算�?
     
-    开源依赖: PyPortfolioOpt.EfficientFrontier
+    开源依�? PyPortfolioOpt.EfficientFrontier
     """
     
     def calculate_efficient_frontier(
@@ -71,25 +71,25 @@ class EfficientFrontierCalculator:
         
         参数:
             expected_returns: 预期收益向量 (n_assets,)
-            covariance_matrix: 协方差矩阵 (n_assets, n_assets)
+            covariance_matrix: 协方差矩�?(n_assets, n_assets)
             n_points: 有效前沿点数
             
         返回:
-            returns: 收益率数组
-            volatilities: 波动率数组
+            returns: 收益率数�?
+            volatilities: 波动率数�?
             weights: 权重矩阵 (n_points, n_assets)
         """
         pass
 ```
 
-#### 2.1.2 最优组合求解
+#### 2.1.2 最优组合求�?
 
 ```python
 class OptimalPortfolioSolver:
     """
     最优组合求解器
     
-    开源依赖: PyPortfolioOpt
+    开源依�? PyPortfolioOpt
     """
     
     def max_sharpe_portfolio(
@@ -100,12 +100,12 @@ class OptimalPortfolioSolver:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        最大夏普比率组合
+        最大夏普比率组�?
         
         返回:
-            weights: 最优权重
+            weights: 最优权�?
             expected_return: 预期收益
-            volatility: 波动率
+            volatility: 波动�?
             sharpe_ratio: 夏普比率
         """
         pass
@@ -116,7 +116,7 @@ class OptimalPortfolioSolver:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        最小方差组合
+        最小方差组�?
         """
         pass
     
@@ -128,7 +128,7 @@ class OptimalPortfolioSolver:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        给定风险水平下的最大收益组合
+        给定风险水平下的最大收益组�?
         """
         pass
 ```
@@ -138,9 +138,9 @@ class OptimalPortfolioSolver:
 ```python
 class DiscreteAllocationConverter:
     """
-    离散分配转换器
+    离散分配转换�?
     
-    开源依赖: PyPortfolioOpt.discrete_allocation
+    开源依�? PyPortfolioOpt.discrete_allocation
     """
     
     def convert_to_discrete(
@@ -151,13 +151,13 @@ class DiscreteAllocationConverter:
         method: str = 'greedy'
     ) -> Tuple[Dict[str, int], float]:
         """
-        将连续权重转换为实际可购买数量
+        将连续权重转换为实际可购买数�?
         
         参数:
             weights: 资产权重字典
-            latest_prices: 最新价格字典
-            total_portfolio_value: 总投资金额
-            method: 分配方法 ('greedy' 或 'round')
+            latest_prices: 最新价格字�?
+            total_portfolio_value: 总投资金�?
+            method: 分配方法 ('greedy' �?'round')
             
         返回:
             allocation: 资产数量字典
@@ -173,9 +173,9 @@ class DiscreteAllocationConverter:
 ```python
 class ExpectedReturnsEstimator:
     """
-    预期收益估计器
+    预期收益估计�?
     
-    开源依赖: PyPortfolioOpt.expected_returns
+    开源依�? PyPortfolioOpt.expected_returns
     """
     
     def mean_historical_return(
@@ -184,7 +184,7 @@ class ExpectedReturnsEstimator:
         frequency: int = 252
     ) -> pd.Series:
         """
-        历史均值收益
+        历史均值收�?
         """
         pass
     
@@ -212,14 +212,14 @@ class ExpectedReturnsEstimator:
         pass
 ```
 
-#### 2.2.2 协方差估计
+#### 2.2.2 协方差估�?
 
 ```python
 class CovarianceEstimator:
     """
     协方差估计器
     
-    开源依赖: PyPortfolioOpt.risk_models
+    开源依�? PyPortfolioOpt.risk_models
     """
     
     def sample_cov(
@@ -228,7 +228,7 @@ class CovarianceEstimator:
         frequency: int = 252
     ) -> pd.DataFrame:
         """
-        样本协方差
+        样本协方�?
         """
         pass
     
@@ -250,7 +250,7 @@ class CovarianceEstimator:
         frequency: int = 252
     ) -> pd.DataFrame:
         """
-        指数加权协方差
+        指数加权协方�?
         """
         pass
     
@@ -270,9 +270,9 @@ class CovarianceEstimator:
 ```python
 class ConstraintHandler:
     """
-    约束处理器
+    约束处理�?
     
-    开源依赖: PyPortfolioOpt约束系统
+    开源依�? PyPortfolioOpt约束系统
     """
     
     def add_weight_constraint(
@@ -281,7 +281,7 @@ class ConstraintHandler:
         max_weight: float = 1.0
     ) -> None:
         """
-        权重约束（长仓/短仓限制）
+        权重约束（长�?短仓限制�?
         """
         pass
     
@@ -306,7 +306,7 @@ class ConstraintHandler:
 ```
 
 ---
-## 3. 技术规格
+## 3. 技术规�?
 
 ### 3.1 接口设计
 
@@ -328,8 +328,8 @@ class MeanVarianceOptimizer:
         初始化优化器
         
         参数:
-            returns_data: 收益率数据 (date × ticker)
-            risk_free_rate: 无风险利率
+            returns_data: 收益率数�?(date × ticker)
+            risk_free_rate: 无风险利�?
             frequency: 年化频率
         """
         self.returns = returns_data
@@ -355,7 +355,7 @@ class MeanVarianceOptimizer:
         参数:
             objective: 优化目标 ('max_sharpe', 'min_volatility', 'max_return')
             method_mu: 收益估计方法
-            method_cov: 协方差估计方法
+            method_cov: 协方差估计方�?
             constraints: 约束条件
             
         返回:
@@ -401,7 +401,7 @@ class OptimizationResult:
 
 @dataclass
 class EfficientFrontierPoint:
-    """有效前沿点数据结构"""
+    """有效前沿点数据结�?""
     return_: float
     volatility: float
     sharpe_ratio: float
@@ -418,7 +418,7 @@ mean_variance_optimization:
     ema_span: 500
     capm_benchmark: 'SPY'
     
-  # 协方差估计配置
+  # 协方差估计配�?
   covariance:
     method: 'ledoit_wolf'  # sample, exp, ledoit_wolf, semicov
     exp_span: 180
@@ -432,56 +432,56 @@ mean_variance_optimization:
     
   # 约束配置
   constraints:
-    min_weight: 0.0  # 不允许做空
-    max_weight: 0.10  # 单资产最大10%
-    max_leverage: 1.0  # 不使用杠杆
+    min_weight: 0.0  # 不允许做�?
+    max_weight: 0.10  # 单资产最�?0%
+    max_leverage: 1.0  # 不使用杠�?
     
   # 离散分配配置
   discrete_allocation:
     method: 'greedy'
-    min_remaining: 100  # 最小剩余资金
+    min_remaining: 100  # 最小剩余资�?
 ```
 
 ---
 
 ## 4. 实现路径
 
-### 4.1 开源集成方案
+### 4.1 开源集成方�?
 
 ```python
-# 基于PyPortfolioOpt的实现
+# 基于PyPortfolioOpt的实�?
 > **核心职责**: Mean Variance Optimization蓝图设计
 > **职责边界**: 
-> - ✅ 本文档负责：Mean Variance Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - �?本文档负责：Mean Variance Optimization蓝图设计相关内容
+> - �?本文档不负责：其他模块内�?
 
 
 ## 核心职责
 
-均值方差优化，负责基于风险收益的组合优化
+均值方差优化，负责基于风险收益的组合优�?
 
 
 ---
 
 ## 📋 概述
 
-本文档定义了MEAN VARIANCE OPTIMIZATION的核心功能和技术实现。
+本文档定义了MEAN VARIANCE OPTIMIZATION的核心功能和技术实现�?
 
 from pypfopt import EfficientFrontier, expected_returns, risk_models
 from pypfopt.discrete_allocation import DiscreteAllocation
 
 class PyPortfolioOptAdapter(MeanVarianceOptimizer):
     """
-    PyPortfolioOpt适配器
+    PyPortfolioOpt适配�?
     
-    直接使用PyPortfolioOpt的核心功能
+    直接使用PyPortfolioOpt的核心功�?
     """
     
     def optimize(self, objective: str, **kwargs) -> Dict:
         # 计算预期收益
         mu = expected_returns.mean_historical_return(self.returns)
         
-        # 计算协方差矩阵
+        # 计算协方差矩�?
         S = risk_models.risk_models.sample_cov(self.returns)
         
         # 创建有效前沿对象
@@ -510,15 +510,15 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
 ### 4.2 开发里程碑
 
-| 阶段 | 任务 | 工作量 | 依赖 |
+| 阶段 | 任务 | 工作�?| 依赖 |
 |------|------|--------|------|
-| 第1天 | PyPortfolioOpt集成测试 | 8h | - |
-| 第2天 | 预期收益估计器实现 | 8h | 第1天 |
-| 第3天 | 协方差估计器实现 | 8h | 第1天 |
-| 第4天 | 约束处理器实现 | 8h | 第2-3天 |
-| 第5天 | 离散分配转换实现 | 8h | 第4天 |
-| 第6天 | 接口封装和测试 | 8h | 第5天 |
-| 第7天 | 文档和集成测试 | 8h | 第6天 |
+| �?�?| PyPortfolioOpt集成测试 | 8h | - |
+| �?�?| 预期收益估计器实�?| 8h | �?�?|
+| �?�?| 协方差估计器实现 | 8h | �?�?|
+| �?�?| 约束处理器实�?| 8h | �?-3�?|
+| �?�?| 离散分配转换实现 | 8h | �?�?|
+| �?�?| 接口封装和测�?| 8h | �?�?|
+| �?�?| 文档和集成测�?| 8h | �?�?|
 
 ---
 
@@ -530,11 +530,11 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 class TestMeanVarianceOptimizer:
     
     def test_max_sharpe_portfolio(self):
-        """测试最大夏普比率组合"""
+        """测试最大夏普比率组�?""
         pass
     
     def test_min_volatility_portfolio(self):
-        """测试最小方差组合"""
+        """测试最小方差组�?""
         pass
     
     def test_efficient_frontier(self):
@@ -560,7 +560,7 @@ class TestIntegration:
         pass
     
     def test_with_risk_parity(self):
-        """测试与风险平价策略集成"""
+        """测试与风险平价策略集�?""
         pass
     
     def test_with_rebalancing(self):
@@ -574,38 +574,38 @@ class TestIntegration:
 
 ### 6.1 计算性能
 
-| 指标 | 目标值 | 测量方法 |
+| 指标 | 目标�?| 测量方法 |
 |------|--------|----------|
-| 优化时间（100资产） | <100ms | 时间测试 |
-| 有效前沿计算（100点） | <1s | 时间测试 |
+| 优化时间�?00资产�?| <100ms | 时间测试 |
+| 有效前沿计算�?00点） | <1s | 时间测试 |
 | 内存占用 | <100MB | 内存监控 |
 
-### 6.2 数值稳定性
+### 6.2 数值稳定�?
 
-| 指标 | 目标值 | 测量方法 |
+| 指标 | 目标�?| 测量方法 |
 |------|--------|----------|
-| 权重和 | 1.0±1e-6 | 数值验证 |
-| 约束满足率 | 100% | 约束检查 |
-| 收敛率 | >99% | 优化日志 |
+| 权重�?| 1.0±1e-6 | 数值验�?|
+| 约束满足�?| 100% | 约束检�?|
+| 收敛�?| >99% | 优化日志 |
 
 ---
 
 ## 7. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
 
 ## 8. 文档治理
 
 ### 8.1 文档索引
 
 **本文档在系统中的位置**:
-- **所属层级**: Layer 6 (组合优化层)
+- **所属层�?*: Layer 6 (组合优化�?
 - **模块索引**: 001
 - **模块名称**: MEAN_VARIANCE_OPTIMIZATION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -619,9 +619,9 @@ class TestIntegration:
 
 **文档维护**:
 - **责任模块**: MEAN_VARIANCE_OPTIMIZATION
-- **维护周期**: 每季度审查
-- **变更流程**: 提交变更申请 → 技术评审 → 更新文档
+- **维护周期**: 每季度审�?
+- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active

@@ -6,36 +6,36 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
+applicable_scope: Layer 6 组合优化�?
 compliance_level: 专业标准
 responsibility:
   - 战略权重分配
   - 战略资产配置
   - 长期权重优化
   - 战略配置决策
-layer: "Layer 6 (组合优化层)"
+layer: "Layer 6 (组合优化�?"
 ---
 
 # 战略权重分配蓝图
 
-> **核心职责**: 战略权重分配，战略资产配置
+> **核心职责**: 战略权重分配，战略资产配�?
 > **职责边界**: 
-> - ✅ 本文档负责：战略权重分配、战略资产配置、长期权重优化、战略配置决策
-> - ❌ 本文档不负责：战术权重调整、短期权重优化、风险控制
+> - �?本文档负责：战略权重分配、战略资产配置、长期权重优化、战略配置决�?
+> - �?本文档不负责：战术权重调整、短期权重优化、风险控�?
 
-﻿# 📋 执行摘要
+�? 📋 执行摘要
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
-> **核心定位**: 宏观配置层战略资产权重分配
+> **核心定位**: 宏观配置层战略资产权重分�?
 > **索引**: `STRATEGIC_WEIGHTING_001`
-> **开发周期**: 2.5周
+> **开发周�?*: 2.5�?
 
 ## 核心定位
 
-负责Strategic Weighting的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+负责Strategic Weighting的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
 
-## 🎯 模块定位与职责
+## 🎯 模块定位与职�?
 
 ### 核心职责
 
@@ -43,12 +43,12 @@ layer: "Layer 6 (组合优化层)"
 |---------|---------|---------|
 | **权重计算** | 计算战略资产权重 | 目标权重方案 |
 | **风险平价** | 实现风险平价配置 | 风险平价权重 |
-| **优化求解** | 多目标优化求解 | 最优权重 |
+| **优化求解** | 多目标优化求�?| 最优权�?|
 | **约束处理** | 处理配置约束 | 约束满足权重 |
 
 ---
 
-## 🏗️ 架构设计
+## 🏗�?架构设计
 
 ### 资产配置框架
 
@@ -122,8 +122,8 @@ class RiskParityModel:
         # 约束条件
         constraints = [
             cp.sum(weights) == 1,  # 权重和为1
-            weights >= 0,  # 不允许做空
-            weights <= 0.40  # 单资产最大权重40%
+            weights >= 0,  # 不允许做�?
+            weights <= 0.40  # 单资产最大权�?0%
         ]
         
         # 求解
@@ -140,7 +140,7 @@ class RiskParityModel:
 
 
 class AllWeatherModel:
-    """全天候配置模型"""
+    """全天候配置模�?""
     
     def __init__(self):
         # 四种经济环境
@@ -151,7 +151,7 @@ class AllWeatherModel:
             'RECESSION': '经济衰退'
         }
         
-        # 各环境下的资产权重
+        # 各环境下的资产权�?
         self.environment_weights = {
             'GROWTH': {
                 '股票': 0.30,
@@ -192,7 +192,7 @@ class AllWeatherModel:
         for asset, weight in base_weights.items():
             adjusted_weights[asset] = weight * regime_probability
         
-        # 归一化
+        # 归一�?
         total_weight = sum(adjusted_weights.values())
         if total_weight > 0:
             adjusted_weights = {
@@ -227,13 +227,13 @@ class MultiObjectiveOptimizer:
                 covariance_matrix: pd.DataFrame,
                 objective_weights: Dict[str, float],
                 constraints: Dict[str, Any]) -> Dict[str, float]:
-        """多目标优化"""
+        """多目标优�?""
         n_assets = len(expected_returns)
         
         # 定义优化变量
         weights = cp.Variable(n_assets)
         
-        # 计算各目标
+        # 计算各目�?
         portfolio_return = expected_returns.values @ weights
         portfolio_risk = cp.sqrt(cp.quad_form(weights, covariance_matrix.values))
         
@@ -294,21 +294,21 @@ class MultiObjectiveOptimizer:
         return (portfolio_return - risk_free_rate) / portfolio_risk
     
     def _maximize_diversification(self, weights, covariance_matrix):
-        """最大化分散度"""
+        """最大化分散�?""
         n = len(weights)
         return -cp.sum_squares(weights - 1/n)
     
     def _get_sector_mask(self, sector: str) -> np.ndarray:
         """获取行业掩码"""
-        # 简化实现，实际应根据行业分类映射
+        # 简化实现，实际应根据行业分类映�?
         return np.ones(100, dtype=bool)
 ```
 
-### 3. 约束处理器
+### 3. 约束处理�?
 
 ```python
 class ConstraintHandler:
-    """约束处理器"""
+    """约束处理�?""
     
     def __init__(self):
         self.constraints = {}
@@ -335,18 +335,18 @@ class ConstraintHandler:
                     max_weight
                 )
         
-        # 应用流动性约束
+        # 应用流动性约�?
         if 'liquidity' in self.constraints:
             min_liquidity = self.constraints['liquidity'].get('min', 0)
             
             for asset, weight in adjusted_weights.items():
                 asset_value = weight * portfolio_value
-                # 检查流动性是否足够
-                # 如果不足，降低权重
+                # 检查流动性是否足�?
+                # 如果不足，降低权�?
                 # adjusted_weights[asset] = ...
                 pass
         
-        # 归一化
+        # 归一�?
         total_weight = sum(adjusted_weights.values())
         if total_weight > 0:
             adjusted_weights = {
@@ -361,34 +361,34 @@ class ConstraintHandler:
 
 ## 🚀 实施要点
 
-### 阶段1：风险平价模型开发（第1周）
+### 阶段1：风险平价模型开发（�?周）
 
 **任务**:
-1. ✅ 实现风险平价优化
-2. ✅ 实现全天候配置
-3. ✅ 实现协方差矩阵估计
-4. ✅ 编写单元测试
+1. �?实现风险平价优化
+2. �?实现全天候配�?
+3. �?实现协方差矩阵估�?
+4. �?编写单元测试
 
 ---
 
-### 阶段2：多目标优化器开发（第1-2周）
+### 阶段2：多目标优化器开发（�?-2周）
 
 **任务**:
-1. ✅ 实现收益最大化
-2. ✅ 实现风险最小化
-3. ✅ 实现夏普比率最大化
-4. ✅ 实现分散度最大化
-5. ✅ 编写单元测试
+1. �?实现收益最大化
+2. �?实现风险最小化
+3. �?实现夏普比率最大化
+4. �?实现分散度最大化
+5. �?编写单元测试
 
 ---
 
-### 阶段3：约束处理器开发（第2-3周）
+### 阶段3：约束处理器开发（�?-3周）
 
 **任务**:
-1. ✅ 实现权重约束
-2. ✅ 实现流动性约束
-3. ✅ 实现行业约束
-4. ✅ 集成测试
+1. �?实现权重约束
+2. �?实现流动性约�?
+3. �?实现行业约束
+4. �?集成测试
 
 ---
 
@@ -396,12 +396,12 @@ class ConstraintHandler:
 
 ### 配置质量指标
 
-| 指标 | 目标值 |
+| 指标 | 目标�?|
 |------|--------|
-| **风险贡献均衡度** | < 10% |
+| **风险贡献均衡�?* | < 10% |
 | **夏普比率提升** | > 0.2 |
-| **分散度** | > 0.7 |
-| **约束满足率** | 100% |
+| **分散�?* | > 0.7 |
+| **约束满足�?* | 100% |
 
 ---
 
@@ -411,28 +411,28 @@ class ConstraintHandler:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [策略选择系统蓝图](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | 强依赖 | 提供策略选择结果 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依赖 | 提供风险平价模型 |
+| [策略选择系统蓝图](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | 强依�?| 提供策略选择结果 |
+| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依�?| 提供风险平价模型 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 强依赖 | 季度调仓决策 |
-| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依赖 | 组合再平衡 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依赖 | 组合优化 |
+| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 强依�?| 季度调仓决策 |
+| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依�?| 组合再平�?|
+| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依�?| 组合优化 |
 
-### 技术依赖
+### 技术依�?
 
-| 技术组件 | 版本 | 用途 | 文档 |
+| 技术组�?| 版本 | 用�?| 文档 |
 |---------|------|------|------|
-| **CVXPY** | 1.4+ | 凸优化 | [官方文档](https://www.cvxpy.org/) |
+| **CVXPY** | 1.4+ | 凸优�?| [官方文档](https://www.cvxpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
-| **NumPy** | 1.24+ | 数值计算 | [官方文档](https://numpy.org/) |
+| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### 引用关系图
+### 引用关系�?
 
 ```mermaid
 graph LR
@@ -453,20 +453,20 @@ graph LR
 
 - [季度调仓决策系统蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
-- 专业多时间框架策略架构
+- 专业多时间框架策略架�?
 
 ---
 
 ## 📝 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
+| 版本 | 日期 | 变更内容 | 作�?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构�?|
 
 ---
 
-**蓝图状态**: ✅ 设计完成
-**下一步**: 开始实施阶段1 - 风险平价模型开发
+**蓝图状�?*: �?设计完成
+**下一�?*: 开始实施阶�? - 风险平价模型开�?
 ---
 
 ## 1. 文档治理
@@ -474,27 +474,27 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 5: 宏观配置层
+#### Layer 5: 宏观配置�?
 ##### 6.001. Strategic Weighting
 - **模块ID**: STRATEGIC_WEIGHTING_001
 - **蓝图文档**: STRATEGIC_WEIGHTING_BLUEPRINT.md
-- **技术规格书**: 待创建
-- **职责**: 宏观配置层战略资产配置
-- **状态**: Active
+- **技术规格书**: 待创�?
+- **职责**: 宏观配置层战略资产配�?
+- **状�?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strategic Weighting** | 宏观配置层战略资产配置 | **核心模块** |
+| **Strategic Weighting** | 宏观配置层战略资产配�?| **核心模块** |
 
 ### 1.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更人 |
+| 版本 | 日期 | 变更内容 | 变更�?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active

@@ -6,71 +6,71 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据层
+applicable_scope: Layer 1 数据�?
 compliance_level: 专业标准
 responsibility:
   - 数据验证引擎
   - 数据验证
-  - 业务规则检查
-  - 数据完整性检查
-layer: "Layer 1 (数据层)"
+  - 业务规则检�?
+  - 数据完整性检�?
+layer: "Layer 1 (数据�?"
 ---
 
 # 数据验证引擎蓝图
 
-> **核心职责**: 业务规则验证、数据完整性检查、数据一致性验证
+> **核心职责**: 业务规则验证、数据完整性检查、数据一致性验�?
 > **职责边界**: 
-> - ✅ 本文档负责：数据验证、业务规则检查、完整性验证
-> - ❌ 本文档不负责：数据清洗（由清洗引擎负责）
+> - �?本文档负责：数据验证、业务规则检查、完整性验�?
+> - �?本文档不负责：数据清洗（由清洗引擎负责）
 
 ## 核心定位
 
-负责数据验证引擎的实现，提供数据完整性、一致性和准确性验证功能，确保数据质量。
+负责数据验证引擎的实现，提供数据完整性、一致性和准确性验证功能，确保数据质量�?
 
 ## 📋 执行摘要
 
-本蓝图设计基于Great Expectations和Pandera的数据验证引擎，提供专业级数据验证能力，适合个人开发和AI维护。
+本蓝图设计基于Great Expectations和Pandera的数据验证引擎，提供专业级数据验证能力，适合个人开发和AI维护�?
 
-**核心价值**:
+**核心价�?*:
 - 业务规则自动验证
-- 数据完整性检查
-- 跨源数据一致性验证
+- 数据完整性检�?
+- 跨源数据一致性验�?
 - 验证报告生成
 - 数据质量评分
 
-**开源方案**: Great Expectations + Pandera + Voluptuous
+**开源方�?*: Great Expectations + Pandera + Voluptuous
 
-**预估工作量**: 50小时
+**预估工作�?*: 50小时
 
 ---
 
-## 1. 模块定位与目标
+## 1. 模块定位与目�?
 
 ### 1.1 模块定位
 
 **Layer定位**: Layer 1 - 数据预处理层（数据治理模块）
 
-**核心价值**:
+**核心价�?*:
 - 确保数据符合业务规则
-- 防止脏数据进入系统
+- 防止脏数据进入系�?
 - 提供数据质量度量
-- 自动化验证流程
+- 自动化验证流�?
 
-**业务价值**:
+**业务价�?*:
 - 降低数据风险
-- 提高数据可信度
+- 提高数据可信�?
 - 减少人工审核
-- 提升系统稳定性
+- 提升系统稳定�?
 
 ### 1.2 设计目标
 
-| 目标 | 优先级 | 技术实现 |
+| 目标 | 优先�?| 技术实�?|
 |------|--------|----------|
 | **业务规则验证** | P0 | Great Expectations |
-| **数据完整性检查** | P0 | Pandera Schema |
-| **跨源一致性验证** | P0 | 自定义验证器 |
+| **数据完整性检�?* | P0 | Pandera Schema |
+| **跨源一致性验�?* | P0 | 自定义验证器 |
 | **验证报告生成** | P1 | Great Expectations Docs |
-| **数据质量评分** | P1 | 自定义评分引擎 |
+| **数据质量评分** | P1 | 自定义评分引�?|
 
 ---
 
@@ -80,7 +80,7 @@ layer: "Layer 1 (数据层)"
 
 ```mermaid
 graph TB
-    subgraph "输入层"
+    subgraph "输入�?
         A[待验证数据] --> B[验证接入接口]
     end
     
@@ -96,7 +96,7 @@ graph TB
         F --> G
     end
     
-    subgraph "输出层"
+    subgraph "输出�?
         G --> H[验证结果]
         G --> I[验证报告]
         G --> J[质量评分]
@@ -110,7 +110,7 @@ graph TB
 
 ### 2.2 核心组件
 
-#### 2.2.1 业务规则验证器
+#### 2.2.1 业务规则验证�?
 
 **职责**: 验证数据是否符合业务规则
 
@@ -118,61 +118,61 @@ graph TB
 
 **核心功能**:
 - 价格范围验证
-- 成交量合理性验证
-- 时间序列连续性验证
-- 市场状态验证
+- 成交量合理性验�?
+- 时间序列连续性验�?
+- 市场状态验�?
 
 #### 2.2.2 完整性验证器
 
-**职责**: 验证数据完整性
+**职责**: 验证数据完整�?
 
 **技术栈**: Pandera
 
 **核心功能**:
-- 必填字段检查
+- 必填字段检�?
 - 数据类型验证
-- 唯一性约束验证
+- 唯一性约束验�?
 - 外键约束验证
 
 #### 2.2.3 一致性验证器
 
-**职责**: 验证跨源数据一致性
+**职责**: 验证跨源数据一致�?
 
 **技术栈**: 自定义验证器
 
 **核心功能**:
 - 跨数据源对比
-- 时间戳对齐验证
-- 价格一致性验证
-- 成交量一致性验证
+- 时间戳对齐验�?
+- 价格一致性验�?
+- 成交量一致性验�?
 
-#### 2.2.4 统计验证器
+#### 2.2.4 统计验证�?
 
-**职责**: 验证数据统计特性
+**职责**: 验证数据统计特�?
 
 **技术栈**: Great Expectations
 
 **核心功能**:
 - 分布验证
 - 统计指标验证
-- 异常分布检测
+- 异常分布检�?
 - 趋势验证
 
 ---
 
-## 3. 开源方案集成
+## 3. 开源方案集�?
 
 ### 3.1 Great Expectations集成
 
 **GitHub**: https://github.com/great-expectations/great_expectations
 
-**Star数**: 9.8k+
+**Star�?*: 9.8k+
 
-**核心特性**:
-- 丰富的内置期望类型
-- 自动化数据文档生成
-- 验证结果可视化
-- 支持多种数据源
+**核心特�?*:
+- 丰富的内置期望类�?
+- 自动化数据文档生�?
+- 验证结果可视�?
+- 支持多种数据�?
 
 **集成方式**:
 
@@ -181,7 +181,7 @@ import great_expectations as gx
 from great_expectations.dataset import SparkDataset
 
 class BusinessRuleValidator:
-    """业务规则验证器"""
+    """业务规则验证�?""
     
     def __init__(self, spark, config):
         self.spark = spark
@@ -229,11 +229,11 @@ class BusinessRuleValidator:
     
     def validate_volume(self, df, volume_column='volume'):
         """
-        验证成交量合理性
+        验证成交量合理�?
         
         Args:
             df: Spark DataFrame
-            volume_column: 成交量列名
+            volume_column: 成交量列�?
         
         Returns:
             ValidationResult: 验证结果
@@ -263,7 +263,7 @@ class BusinessRuleValidator:
     
     def validate_time_continuity(self, df, time_column='timestamp', freq='1min'):
         """
-        验证时间序列连续性
+        验证时间序列连续�?
         
         Args:
             df: Spark DataFrame
@@ -299,10 +299,10 @@ class BusinessRuleValidator:
 
 **GitHub**: https://github.com/unionai-oss/pandera
 
-**Star数**: 3.2k+
+**Star�?*: 3.2k+
 
-**核心特性**:
-- Schema定义与验证
+**核心特�?*:
+- Schema定义与验�?
 - 数据类型强制转换
 - 统计验证
 - 支持Spark DataFrame
@@ -385,11 +385,11 @@ class IntegrityValidator:
     
     def validate_completeness(self, df, required_columns):
         """
-        验证数据完整性
+        验证数据完整�?
         
         Args:
             df: Spark DataFrame
-            required_columns: 必填列列表
+            required_columns: 必填列列�?
         
         Returns:
             ValidationResult: 验证结果
@@ -413,7 +413,7 @@ class IntegrityValidator:
     
     def validate_uniqueness(self, df, unique_columns):
         """
-        验证唯一性约束
+        验证唯一性约�?
         
         Args:
             df: Spark DataFrame
@@ -446,12 +446,12 @@ class IntegrityValidator:
 
 ### 3.3 一致性验证器
 
-**技术栈**: 自定义实现
+**技术栈**: 自定义实�?
 
 **核心功能**:
 - 跨数据源对比
-- 时间戳对齐
-- 价格一致性验证
+- 时间戳对�?
+- 价格一致性验�?
 
 ```python
 from pyspark.sql import SparkSession
@@ -511,12 +511,12 @@ class ConsistencyValidator:
     
     def validate_timestamp_alignment(self, df1, df2, timestamp_column='timestamp'):
         """
-        验证时间戳对齐
+        验证时间戳对�?
         
         Args:
             df1: 第一个数据源
             df2: 第二个数据源
-            timestamp_column: 时间戳列名
+            timestamp_column: 时间戳列�?
         
         Returns:
             ValidationResult: 验证结果
@@ -587,7 +587,7 @@ validation_rules:
     timezone: "America/New_York"
 ```
 
-### 4.2 完整性规则配置
+### 4.2 完整性规则配�?
 
 ```yaml
 completeness_rules:
@@ -629,7 +629,7 @@ completeness_rules:
       - ask_price
 ```
 
-### 4.3 一致性规则配置
+### 4.3 一致性规则配�?
 
 ```yaml
 consistency_rules:
@@ -666,7 +666,7 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 class ValidationReportGenerator:
-    """验证报告生成器"""
+    """验证报告生成�?""
     
     def __init__(self, config):
         self.config = config
@@ -748,11 +748,11 @@ class ValidationReportGenerator:
         recommendations_map = {
             'business_rules': {
                 'price_range': '检查数据源价格范围配置',
-                'volume_range': '验证成交量数据源可靠性',
-                'time_continuity': '检查数据采集频率配置'
+                'volume_range': '验证成交量数据源可靠�?,
+                'time_continuity': '检查数据采集频率配�?
             },
             'completeness': {
-                'null_values': '检查数据源完整性',
+                'null_values': '检查数据源完整�?,
                 'unique_constraint': '检查数据去重逻辑'
             },
             'consistency': {
@@ -775,16 +775,16 @@ class ValidationReportGenerator:
 
 | 维度 | 权重 | 评分标准 |
 |------|------|----------|
-| **业务规则符合度** | 40% | 业务规则验证通过率 |
-| **数据完整性** | 30% | 必填字段完整率 |
-| **数据一致性** | 20% | 跨源一致性比率 |
-| **统计特性** | 10% | 统计验证通过率 |
+| **业务规则符合�?* | 40% | 业务规则验证通过�?|
+| **数据完整�?* | 30% | 必填字段完整�?|
+| **数据一致�?* | 20% | 跨源一致性比�?|
+| **统计特�?* | 10% | 统计验证通过�?|
 
 ### 6.2 评分计算
 
 ```python
 class DataQualityScorer:
-    """数据质量评分器"""
+    """数据质量评分�?""
     
     def __init__(self, config):
         self.config = config
@@ -851,61 +851,61 @@ class DataQualityScorer:
 
 ## 7. 实施计划
 
-### 7.1 阶段一：核心验证功能（20小时）
+### 7.1 阶段一：核心验证功能（20小时�?
 
 **目标**: 实现基础验证能力
 
 **任务**:
-- [ ] 集成Great Expectations（4小时）
-- [ ] 实现业务规则验证器（6小时）
-- [ ] 实现完整性验证器（6小时）
-- [ ] 编写验证规则配置（4小时）
+- [ ] 集成Great Expectations�?小时�?
+- [ ] 实现业务规则验证器（6小时�?
+- [ ] 实现完整性验证器�?小时�?
+- [ ] 编写验证规则配置�?小时�?
 
-**交付物**:
-- 业务规则验证器
+**交付�?*:
+- 业务规则验证�?
 - 完整性验证器
 - 验证规则配置文件
 
-### 7.2 阶段二：高级验证功能（15小时）
+### 7.2 阶段二：高级验证功能�?5小时�?
 
 **目标**: 实现高级验证能力
 
 **任务**:
-- [ ] 实现一致性验证器（6小时）
-- [ ] 实现统计验证器（5小时）
-- [ ] 集成Pandera（4小时）
+- [ ] 实现一致性验证器�?小时�?
+- [ ] 实现统计验证器（5小时�?
+- [ ] 集成Pandera�?小时�?
 
-**交付物**:
+**交付�?*:
 - 一致性验证器
-- 统计验证器
+- 统计验证�?
 - Pandera集成
 
-### 7.3 阶段三：报告与评分（15小时）
+### 7.3 阶段三：报告与评分（15小时�?
 
 **目标**: 完善验证报告
 
 **任务**:
-- [ ] 实现验证报告生成器（6小时）
-- [ ] 实现数据质量评分器（5小时）
-- [ ] 生成验证文档（4小时）
+- [ ] 实现验证报告生成器（6小时�?
+- [ ] 实现数据质量评分器（5小时�?
+- [ ] 生成验证文档�?小时�?
 
-**交付物**:
-- 验证报告生成器
-- 数据质量评分器
+**交付�?*:
+- 验证报告生成�?
+- 数据质量评分�?
 - 验证文档
 
 ---
 
-## 8. 监控与运维
+## 8. 监控与运�?
 
 ### 8.1 关键指标
 
-| 指标 | 目标值 | 监控方式 |
+| 指标 | 目标�?| 监控方式 |
 |------|--------|----------|
-| **验证通过率** | ≥95% | Great Expectations |
-| **验证延迟** | ≤5秒 | Prometheus |
-| **数据质量评分** | ≥85分 | 自定义评分器 |
-| **验证覆盖率** | 100% | 配置检查 |
+| **验证通过�?* | �?5% | Great Expectations |
+| **验证延迟** | �?�?| Prometheus |
+| **数据质量评分** | �?5�?| 自定义评分器 |
+| **验证覆盖�?* | 100% | 配置检�?|
 
 ### 8.2 告警规则
 
@@ -914,96 +914,96 @@ alerts:
   - name: validation_failure_rate_high
     condition: validation_failure_rate > 0.05
     severity: critical
-    message: "验证失败率超过5%"
+    message: "验证失败率超�?%"
   
   - name: data_quality_score_low
     condition: data_quality_score < 70
     severity: warning
-    message: "数据质量评分低于70分"
+    message: "数据质量评分低于70�?
   
   - name: validation_latency_high
     condition: validation_latency > 10
     severity: warning
-    message: "验证延迟超过10秒"
+    message: "验证延迟超过10�?
 ```
 
 ---
 
 ## 9. 成本效益分析
 
-### 9.1 开发成本
+### 9.1 开发成�?
 
-| 项目 | 工作量 | 成本 |
+| 项目 | 工作�?| 成本 |
 |------|--------|------|
 | **核心验证功能** | 20小时 | ¥2,000 |
 | **高级验证功能** | 15小时 | ¥1,500 |
-| **报告与评分** | 15小时 | ¥1,500 |
+| **报告与评�?* | 15小时 | ¥1,500 |
 | **总计** | **50小时** | **¥5,000** |
 
 ### 9.2 收益评估
 
-| 收益项 | 年化价值 |
+| 收益�?| 年化价�?|
 |--------|----------|
 | **减少数据问题损失** | ¥50,000 |
 | **降低人工审核成本** | ¥20,000 |
-| **提高数据可信度** | ¥30,000 |
+| **提高数据可信�?* | ¥30,000 |
 | **总计** | **¥100,000** |
 
 **ROI**: (100,000 - 5,000) / 5,000 = 1900%
 
 ---
 
-## 10. 风险与缓解
+## 10. 风险与缓�?
 
-### 10.1 技术风险
+### 10.1 技术风�?
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
-| **验证规则配置错误** | 高 | 配置验证 + 测试环境 |
-| **验证性能瓶颈** | 中 | 并行验证 + 缓存 |
-| **开源版本兼容性** | 低 | 版本锁定 + 测试 |
+| **验证规则配置错误** | �?| 配置验证 + 测试环境 |
+| **验证性能瓶颈** | �?| 并行验证 + 缓存 |
+| **开源版本兼容�?* | �?| 版本锁定 + 测试 |
 
 ### 10.2 业务风险
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
-| **验证规则过严** | 中 | 规则可配置 + 灰度发布 |
-| **误报率高** | 中 | 阈值调优 + 白名单 |
-| **验证延迟影响业务** | 低 | 异步验证 + 优先级队列 |
+| **验证规则过严** | �?| 规则可配�?+ 灰度发布 |
+| **误报率高** | �?| 阈值调�?+ 白名�?|
+| **验证延迟影响业务** | �?| 异步验证 + 优先级队�?|
 
 ---
 
 ## 11. 后续优化方向
 
-### 11.1 短期优化（1-3个月）
+### 11.1 短期优化�?-3个月�?
 
 - [ ] 增加更多业务规则模板
 - [ ] 优化验证性能
 - [ ] 完善验证报告
 
-### 11.2 中期优化（3-6个月）
+### 11.2 中期优化�?-6个月�?
 
 - [ ] 机器学习辅助验证
 - [ ] 自动规则生成
 - [ ] 验证规则推荐
 
-### 11.3 长期优化（6-12个月）
+### 11.3 长期优化�?-12个月�?
 
 - [ ] 数据质量预测
-- [ ] 智能异常检测
+- [ ] 智能异常检�?
 - [ ] 自适应验证
 
 ---
 
-## 12. 参考资料
+## 12. 参考资�?
 
-### 12.1 开源项目
+### 12.1 开源项�?
 
 - [Great Expectations](https://github.com/great-expectations/great_expectations)
 - [Pandera](https://github.com/unionai-oss/pandera)
 - [Voluptuous](https://github.com/alecthomas/voluptuous)
 
-### 12.2 技术文档
+### 12.2 技术文�?
 
 - [Great Expectations官方文档](https://docs.greatexpectations.io/)
 - [Pandera官方文档](https://pandera.readthedocs.io/)
@@ -1012,6 +1012,6 @@ alerts:
 ---
 
 **文档版本**: v1.0.0
-**最后更新**: 2026-04-07
-**维护者**: 个人开发者
-**审核状态**: 待审核
+**最后更�?*: 2026-04-07
+**维护�?*: 个人开发�?
+**审核状�?*: 待审�?
