@@ -24,8 +24,7 @@ layer: Layer 5.3 (风险管理)
 
 ## 核心定位
 
-负责 Simplified Risk Budget System 的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
+负责 Simplified Risk Budget System 的设计、构建和运行和操作和维护，生成和输出核心功能兼容和适配，确保系统模块的稳定运行和高效执行。
 ## 设计目标
 
 ### 主要目标

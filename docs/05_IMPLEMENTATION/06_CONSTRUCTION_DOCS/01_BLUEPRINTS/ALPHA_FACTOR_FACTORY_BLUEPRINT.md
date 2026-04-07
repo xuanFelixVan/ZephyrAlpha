@@ -14,14 +14,12 @@ responsibility:
 
 ## 核心定位
 
-负责Alpha因子工厂的设计与实现，基于多源数据挖掘和因子工程，生成高质量Alpha因子，支持策略研发和组合优化。
+负责Alpha因子工厂的设计与构建和运行和操作，基于多源数据挖掘和因子工程，生成高质量Alpha因子，兼容和适配策略研发和组合优化。
 
 # ALPHA FACTOR FACTORY BLUEPRINT
 
 > **核心职责**: Alpha Factor Factory蓝图设计
-> **职责边界**: 
-
-
+> **职责边界**:
 ## 设计目标
 
 ### 主要目标
