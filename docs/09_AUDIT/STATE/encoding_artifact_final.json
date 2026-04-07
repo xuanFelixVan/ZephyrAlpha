@@ -1,43 +1,25 @@
 {
   "all_docs": {
-    "files": 2458,
+    "files": 2471,
     "strict_fail": 0,
     "has_ufffd": 0,
     "has_c1": 0,
     "has_highbyte": 23,
     "has_moji": 1,
     "has_cjkq": 602,
-    "odd_fences": 11
+    "odd_fences": 9
   },
   "governed_scope_excluding_archive_audit_state": {
-    "files": 1610,
+    "files": 1613,
     "strict_fail": 0,
     "has_ufffd": 0,
     "has_c1": 0,
     "has_highbyte": 19,
     "has_moji": 0,
     "has_cjkq": 386,
-    "odd_fences": 2
+    "odd_fences": 0
   },
   "top_issues_scoped": [
-    {
-      "file": "docs/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/A_STOCK_DATA_PROCESSING_BLUEPRINT.md",
-      "ufffd": 0,
-      "c1": 0,
-      "highbyte": 0,
-      "moji": 0,
-      "cjkq": 0,
-      "odd_fences": 1
-    },
-    {
-      "file": "docs/09_AUDIT/GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md",
-      "ufffd": 0,
-      "c1": 0,
-      "highbyte": 0,
-      "moji": 0,
-      "cjkq": 0,
-      "odd_fences": 1
-    },
     {
       "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md",
       "ufffd": 0,
@@ -215,7 +197,7 @@
       "c1": 0,
       "highbyte": 0,
       "moji": 0,
-      "cjkq": 931,
+      "cjkq": 929,
       "odd_fences": 0
     },
     {
@@ -760,15 +742,6 @@
     },
     {
       "file": "docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md",
-      "ufffd": 0,
-      "c1": 0,
-      "highbyte": 0,
-      "moji": 0,
-      "cjkq": 109,
-      "odd_fences": 0
-    },
-    {
-      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md",
       "ufffd": 0,
       "c1": 0,
       "highbyte": 0,
@@ -1344,6 +1317,15 @@
       "odd_fences": 0
     },
     {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md",
+      "ufffd": 0,
+      "c1": 0,
+      "highbyte": 0,
+      "moji": 0,
+      "cjkq": 82,
+      "odd_fences": 0
+    },
+    {
       "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_IMPACT_MODEL_BLUEPRINT.md",
       "ufffd": 0,
       "c1": 0,
@@ -1813,6 +1795,24 @@
     },
     {
       "file": "docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md",
+      "ufffd": 0,
+      "c1": 0,
+      "highbyte": 0,
+      "moji": 0,
+      "cjkq": 54,
+      "odd_fences": 0
+    },
+    {
+      "file": "docs/09_AUDIT/INDEX_AUDIT.md",
+      "ufffd": 0,
+      "c1": 0,
+      "highbyte": 0,
+      "moji": 0,
+      "cjkq": 54,
+      "odd_fences": 0
+    },
+    {
+      "file": "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail_strategies_j.md",
       "ufffd": 0,
       "c1": 0,
       "highbyte": 0,

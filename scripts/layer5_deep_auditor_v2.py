@@ -169,6 +169,7 @@ class Layer5DeepAuditor:
         valid_layer_patterns = [
             r'Layer\s*5\.?\d*',  # Layer 5, Layer 5.1, Layer 5.2 等
             r'Layer\s*5\s*\(',    # Layer 5 (策略执行层) 等
+            r'Layer\s*6',         # Layer 6 (跨层文档)
         ]
         
         for doc_name, doc_info in self.documents.items():
