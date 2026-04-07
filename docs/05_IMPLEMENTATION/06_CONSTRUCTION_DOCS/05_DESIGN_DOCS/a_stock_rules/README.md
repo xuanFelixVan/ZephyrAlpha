@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_A_STOCK_RULES_001
+module_id: A_STOCK_RULES_README_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

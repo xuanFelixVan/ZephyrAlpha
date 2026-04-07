@@ -344,8 +344,10 @@ class RealtimeRiskReport:
     style_exposure: Dict[str, float]   # 风格暴露
     var_95: float                    # 95% VaR
     var_99: float                    # 99% VaR
-    max_drawdown: float              # 最大回撤    risk_level: str                  # 风险级别
-    timestamp: datetime              # 时间?```
+    max_drawdown: float              # 最大回撤
+    risk_level: str                  # 风险级别
+    timestamp: datetime              # 时间戳
+```
 
 #### 3.2.2 对冲订单数据格式
 
@@ -355,11 +357,13 @@ class HedgeOrder:
     order_id: str                    # 订单ID
     portfolio_id: str                # 组合ID
     symbol: str                      # 标的代码
-    direction: str                   # 方向（BUY/SELL）    quantity: int                    # 数量
+    direction: str                   # 方向（BUY/SELL）
+    quantity: int                    # 数量
     hedge_ratio: float               # 对冲比例
     hedge_reason: str                # 对冲原因
     expected_cost: float             # 预期成本
-    timestamp: datetime              # 时间?```
+    timestamp: datetime              # 时间戳
+```
 
 
 
@@ -475,7 +479,8 @@ def calculate_portfolio_beta(
 ```
 
 #### 5.1.3 复杂度分析
-- **时间复杂度: O(N)，N为组合股票数?- **空间复杂度: O(N)
+- **时间复杂度**: O(N)，N为组合股票数
+- **空间复杂度**: O(N)
 - **计算复杂度: 低，适合实时计算
 
 ### 5.2 行业风险监控算法
@@ -587,9 +592,8 @@ def calculate_beta_hedge_ratio(
 |------|------|
 | **操作系统** | Windows 10+ / Linux |
 | **Python版本** | 3.9+ |
-| **
-存** | ?GB |
-| **存储** | ?GB |
+| **内存** | 16GB |
+| **存储** | 50GB |
 
 
 
@@ -647,13 +651,13 @@ class TestRiskHedgeEngine:
 |--------|----------|----------|----------|
 | TR-001 | Beta计算不准确 | 中 | 使用多种数据源，定期校准 |
 |
-| TR-003 | 对冲成本过高 | ?| 优化对冲比例，控制成本|
+| TR-003 | 对冲成本过高 | 中 | 优化对冲比例，控制成本 |
 
 ### 8.2 实施约束
 
 | 约束类型 | 约束描述 | 影响 |
 |----------|----------|------|
-和Beta数据 | 需要数据源支持 |
+| **数据约束** | 需要市场数据和 Beta 数据 | 需要数据源支持 |
 | **时间约束** | 开发时间 100 小时 | 需要合理规划|
 | **资源约束** | 个人开发，资源有限 | 采用简化方案|
 
@@ -682,7 +686,7 @@ class TestRiskHedgeEngine:
 | 标准 | 要求 | 验收方法 |
 |------|------|----------|
 | **代码覆盖率** | 90% | pytest-cov |
-| **文档完整性 | 100% | 文档审查 |
+| **文档完整性** | 100% | 文档审查 |
 | **代码规范** | 符合PEP8 | pylint |
 
 
@@ -692,11 +696,11 @@ class TestRiskHedgeEngine:
 
 **目标**: 实现实时风险监控
 
-单**:
-1. ?设计风险指标体系
-2. ?实现Beta风险监控
-3. ?实现行业风险监控
-4. ?实现风格风险监控
+**任务清单**:
+1. 设计风险指标体系
+2. 实现Beta风险监控
+3. 实现行业风险监控
+4. 实现风格风险监控
 
 **交付物**:
 - 风险监控实现代码
@@ -704,11 +708,11 @@ class TestRiskHedgeEngine:
 ### 10.2 Phase 2: 预警和对冲系统实现（1周）
 
 **目标**: 实现风险预警和对冲交易生成
-单**:
-1. 1. 实现风险评估和预警
+**任务清单**:
+1. 实现风险评估和预警
 2. 实现Beta对冲策略
-3. ?实现行业对冲策略
-5. ?性能优化
+3. 实现行业对冲策略
+5. 性能优化
 
 **交付物**:
 
@@ -716,8 +720,8 @@ class TestRiskHedgeEngine:
 
 **目标**: 实现动态调整和效果评估
 
-单**:
-1. 📝 1. 📝 实现动态对冲调整
+**任务清单**:
+1. 📝 实现动态对冲调整
 2. 📝 实现对冲效果评估
 **交付物**:
 - 高级功能实现代码

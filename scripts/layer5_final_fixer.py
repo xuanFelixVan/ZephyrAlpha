@@ -1,196 +1,251 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Layer 5 职责描述最终修复工具
-解决所有职责描述问题
+Layer 5 剩余问题最终修复工具
+修复职责描述长度问题和module_id重复
 """
 
+import os
 import re
 from pathlib import Path
 from datetime import datetime
 
 
 class Layer5FinalFixer:
-    """Layer 5职责描述最终修复器"""
+    """Layer 5剩余问题最终修复器"""
     
     def __init__(self):
-        self.blueprints_dir = Path('docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS')
+        self.base_dir = Path('docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS')
         self.audit_dir = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
+        self.fixes = []
         
-        self.documents_to_fix = {
-            'AUTO_REPAIR_ENGINE_BLUEPRINT.md': '负责自动修复引擎的设计与实现，基于异常检测技术，自动识别和修复系统故障。',
-            'DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md': '负责数据治理平台的设计与实现，建立数据标准和质量规则。',
-            'DATA_OBSERVABILITY_BLUEPRINT.md': '负责数据可观测性的设计与实现，监控数据流和数据质量。',
-            'DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md': '负责数据预处理架构差距分析，识别架构缺陷。',
-            'ECONOMIC_REGIME_ENGINE_BLUEPRINT.md': '负责经济周期引擎的设计与实现，识别经济周期阶段。',
-            'REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md': '负责实时风险对冲引擎的设计与实现，动态调整对冲头寸。',
-            'ENHANCED_ALERT_SYSTEM_BLUEPRINT.md': '负责增强告警系统的设计与实现，提供分级告警和智能通知。',
-            'LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md': '负责流动性管理系统的设计与实现，优化资金配置。',
-            'FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md': '负责因子中性优化的设计与实现，消除因子暴露。',
-            'MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md': '负责均值方差优化的设计与实现，优化资产权重。',
-            'MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md': '负责多目标优化的设计与实现，平衡多个投资目标。',
-            'HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md': '负责分层优化框架的设计与实现，实现多层级优化。',
-            'SMART_EXECUTION_ENGINE_BLUEPRINT.md': '负责智能执行引擎的设计与实现，优化交易执行路径。',
-            'DATA_SECURITY_COMPLIANCE_BLUEPRINT.md': '负责数据安全合规的设计与实现，实施数据访问控制。',
-            'QUARTERLY_REBALANCE_BLUEPRINT.md': '负责季度再平衡的设计与实现，执行定期投资组合再平衡。',
-            
-            'ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md': '负责算法交易优化器的设计与实现，提供交易执行优化功能。',
-            'CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md': '负责变更数据捕获系统的设计与实现，实时捕获数据库变更。',
-            'CLICKHOUSE_INTEGRATION_BLUEPRINT.md': '负责ClickHouse集成的设计与实现，提供高性能数据分析能力。',
-            'COMPLETE_ARCHITECTURE_BLUEPRINT.md': '负责完整架构的设计与实现，梳理系统整体架构。',
-            'CONFIGURATION_MANAGEMENT_BLUEPRINT.md': '负责配置管理系统的设计与实现，提供配置版本控制。',
-            'DATA_ACCESS_AUDIT_BLUEPRINT.md': '负责数据访问审计的设计与实现，记录数据访问日志。',
-            'DATA_BACKUP_RECOVERY_BLUEPRINT.md': '负责数据备份恢复的设计与实现，保障数据安全。',
-            'DATA_CLEANING_ENGINE_BLUEPRINT.md': '负责数据清洗引擎的设计与实现，处理数据质量问题。',
-            'DATA_MASKING_ENCRYPTION_BLUEPRINT.md': '负责数据脱敏加密的设计与实现，保护敏感数据。',
-            'DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md': '负责数据编排系统的设计与实现，协调数据处理流程。',
-            'DATA_QUALITY_MONITORING_BLUEPRINT.md': '负责数据质量监控的设计与实现，实时监控数据质量。',
-            'DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md': '负责数据源健康监控的设计与实现，监控数据源状态。',
-            'DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md': '负责数据标准化引擎的设计与实现，统一数据格式。',
-            'DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md': '负责数据订阅服务的设计与实现，提供数据变更推送。',
-            'DATA_VALIDATION_ENGINE_BLUEPRINT.md': '负责数据验证引擎的设计与实现，检查数据有效性。',
-            'DISTRIBUTED_QUERY_ENGINE_BLUEPRINT.md': '负责分布式查询引擎的设计与实现，提供跨数据源查询能力。',
-            'DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md': '负责动态资产配置的设计与实现，动态调整资产权重。',
-            'ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md': '负责架构差距分析，识别当前架构与目标架构之间的差距。',
+        self.short_responsibility_fixes = {
+            'INDEX.md': '提供建设文档的总入口导航，包含各子目录链接、快速开始指南、文档阅读路径等，支持快速定位所需文档，帮助读者快速了解文档体系结构。',
+            '04_CONFIG_TEMPLATES/API_DOCUMENTATION_TEMPLATE.md': '提供API文档的标准模板，包含接口定义、参数说明、返回格式、示例代码等，确保API文档格式统一，支持前后端协作开发。',
+            '04_CONFIG_TEMPLATES/CHANGE_REQUEST_TEMPLATE.md': '提供变更请求的标准模板，包含变更内容、影响分析、风险评估、审批流程等，确保变更管理规范化，支持变更追踪和审计。',
+            '04_CONFIG_TEMPLATES/DEPLOYMENT_CHECKLIST_TEMPLATE.md': '提供部署检查清单的标准模板，包含部署前检查、部署步骤、部署后验证等，确保部署过程完整，降低部署风险。',
+            '04_CONFIG_TEMPLATES/INCIDENT_REPORT_TEMPLATE.md': '提供事故报告的标准模板，包含事故描述、影响范围、根因分析、解决方案等，确保事故处理规范化，支持事故复盘和预防。',
+            '04_CONFIG_TEMPLATES/MODULE_DEVELOPMENT_TEMPLATE.md': '提供模块开发的标准模板，包含模块设计、接口定义、测试用例等，确保模块开发规范化，支持模块化开发和复用。',
+            '04_CONFIG_TEMPLATES/PERFORMANCE_REPORT_TEMPLATE.md': '提供性能报告的标准模板，包含性能指标、测试结果、优化建议等，确保性能报告格式统一，支持性能分析和优化。',
+            '04_CONFIG_TEMPLATES/TECHNICAL_REVIEW_TEMPLATE.md': '提供技术评审的标准模板，包含评审内容、评审标准、评审记录等，确保技术评审规范化，支持技术决策质量保证。',
+            '04_CONFIG_TEMPLATES/TEST_PLAN_TEMPLATE.md': '提供测试计划的标准模板，包含测试范围、测试用例、测试环境等，确保测试计划完整，支持测试过程管理和质量保证。',
         }
         
-        self.fixed_count = 0
-        self.fix_details = []
+        self.long_responsibility_fixes = {
+            'AI_CONSTRUCTION_QUICK_REFERENCE.md': '提供AI辅助建设的快速参考指南，包含常用命令、模板、最佳实践，支持快速上手。',
+            'BLUEPRINT_TEMPLATE.md': '提供蓝图文档的标准模板，包含YAML头部、核心定位、设计目标等章节，确保蓝图格式统一。',
+            'CONSTRUCTION_SPECIFICATION.md': '定义系统建设的整体规范，包括文档规范、代码规范、流程规范，确保建设标准化。',
+            'IMPLEMENTATION_PROGRESS.md': '跟踪记录系统实施进度，包含各模块完成情况、里程碑状态，支持项目管理。',
+            'NEW_EMPLOYEE_ONBOARDING_GUIDE.md': '提供新员工入职引导，包含环境配置、权限申请、文档阅读顺序，支持快速融入。',
+            'README.md': '提供建设文档的整体说明，包含目录结构、文档分类、使用方法，帮助了解文档体系。',
+            'VERSION_MANAGEMENT_GUIDE.md': '定义文档和代码的版本管理规范，包含版本号规则、分支策略，确保版本规范化。',
+            '02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md': '提供回测引擎的使用指南，包含配置方法、运行流程、结果分析，支持策略回测。',
+            '02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md': '提供事件总线的使用指南，包含事件发布订阅、消息格式，支持模块间通信。',
+            '02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md': '提供策略工厂的使用指南，包含策略创建、参数配置，支持策略管理和部署。',
+            '03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md': '提供风险监控的详细手册，包含风险指标、预警规则，支持风险实时监控。',
+        }
         
-    def get_timestamp(self) -> str:
-        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.module_id_fixes = {
+            '05_DESIGN_DOCS/a_stock_rules/README.md': 'A_STOCK_RULES_README_001',
+        }
+        
+        self.index_differentiation = {
+            '02_IMPLEMENTATION_GUIDES/INDEX.md': {
+                'title': '实施指南索引',
+                'responsibility': '提供实施指南文档的导航，包含回测引擎、事件总线、策略工厂等指南链接，支持开发人员快速定位实施相关文档。'
+            },
+            '05_DESIGN_DOCS/a_stock_rules/INDEX.md': {
+                'title': 'A股规则索引',
+                'responsibility': '提供A股规则文档的导航，包含规则定义、规则执行、规则管理等文档链接，支持A股交易规则相关文档快速定位。'
+            },
+            '05_DESIGN_DOCS/trading_costs/INDEX.md': {
+                'title': '交易成本索引',
+                'responsibility': '提供交易成本文档的导航，包含成本模型、测试用例等文档链接，支持交易成本分析相关文档快速定位。'
+            },
+            '05_DESIGN_DOCS/ui_design/INDEX.md': {
+                'title': 'UI设计索引',
+                'responsibility': '提供UI设计文档的导航，包含设计说明、布局标准等文档链接，支持前端UI开发相关文档快速定位。'
+            },
+        }
     
-    def has_core_positioning(self, content: str) -> bool:
-        core_match = re.search(r'##\s+核心定位\s*\n\n(.+?)(?=\n##|\Z)', content, re.DOTALL)
-        return core_match is not None
-    
-    def update_core_positioning(self, content: str, new_responsibility: str) -> str:
-        pattern = r'(##\s+核心定位\s*\n\n)(.+?)(?=\n##|\Z)'
-        replacement = r'\1' + new_responsibility + r'\n\n'
-        content = re.sub(pattern, replacement, content, flags=re.DOTALL)
-        return content
-    
-    def add_core_positioning(self, content: str, responsibility: str) -> str:
-        core_section = f'''
-
-## 核心定位
-
-{responsibility}
-
-'''
-        title_match = re.search(r'^#\s+.+$', content, re.MULTILINE)
+    def read_file(self, file_path: Path) -> str:
+        """读取文件内容"""
+        encodings = ['utf-8', 'gbk', 'latin-1']
         
-        if title_match:
-            insert_pos = title_match.end()
-            content = content[:insert_pos] + core_section + content[insert_pos:]
-        else:
-            content = core_section + content
-        
-        return content
-    
-    def fix_document(self, filename: str, responsibility: str) -> bool:
-        file_path = self.blueprints_dir / filename
-        
-        if not file_path.exists():
-            print(f'  ❌ 文件不存在: {filename}')
-            return False
-        
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-        except UnicodeDecodeError:
+        for encoding in encodings:
             try:
-                with open(file_path, 'r', encoding='gbk') as f:
-                    content = f.read()
+                with open(file_path, 'r', encoding=encoding) as f:
+                    return f.read()
             except UnicodeDecodeError:
-                try:
-                    with open(file_path, 'r', encoding='latin-1') as f:
-                        content = f.read()
-                except Exception as e:
-                    print(f'  ❌ 无法读取文件 {filename}: {e}')
-                    return False
+                continue
+            except Exception:
+                return ''
         
-        if self.has_core_positioning(content):
-            content = self.update_core_positioning(content, responsibility)
-        else:
-            content = self.add_core_positioning(content, responsibility)
+        return ''
+    
+    def write_file(self, file_path: Path, content: str):
+        """写入文件内容"""
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            return True
+        except Exception as e:
+            print(f'  ❌ 无法写入文件 {file_path.name}: {e}')
+            return False
+    
+    def fix_short_responsibility(self):
+        """修复过短的职责描述"""
+        print('\n🔧 修复过短的职责描述...')
         
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
+        for doc_path, new_resp in self.short_responsibility_fixes.items():
+            full_path = self.base_dir / doc_path
+            if not full_path.exists():
+                continue
+            
+            content = self.read_file(full_path)
+            if not content:
+                continue
+            
+            pattern = r'(##\s+核心定位\s*\n\n)(.+?)(?=\n\n|\n##|\n#|\Z)'
+            match = re.search(pattern, content, re.DOTALL)
+            
+            if match:
+                new_content = content[:match.start(2)] + new_resp + content[match.end(2):]
+                
+                if self.write_file(full_path, new_content):
+                    self.fixes.append({
+                        'file': doc_path,
+                        'action': f'扩展职责描述到{len(new_resp)}字'
+                    })
+                    print(f'  ✅ 已修复: {doc_path}')
+    
+    def fix_long_responsibility(self):
+        """修复过长的职责描述"""
+        print('\n🔧 修复过长的职责描述...')
         
-        print(f'  ✅ 已修复: {filename}')
-        self.fix_details.append({
-            'file': filename,
-            'responsibility': responsibility,
-            'status': 'success'
-        })
+        for doc_path, new_resp in self.long_responsibility_fixes.items():
+            full_path = self.base_dir / doc_path
+            if not full_path.exists():
+                continue
+            
+            content = self.read_file(full_path)
+            if not content:
+                continue
+            
+            pattern = r'(##\s+核心定位\s*\n\n)(.+?)(?=\n\n|\n##|\n#|\Z)'
+            match = re.search(pattern, content, re.DOTALL)
+            
+            if match:
+                new_content = content[:match.start(2)] + new_resp + content[match.end(2):]
+                
+                if self.write_file(full_path, new_content):
+                    self.fixes.append({
+                        'file': doc_path,
+                        'action': f'缩短职责描述到{len(new_resp)}字'
+                    })
+                    print(f'  ✅ 已修复: {doc_path}')
+    
+    def fix_module_id_duplicates(self):
+        """修复module_id重复"""
+        print('\n🔧 修复module_id重复...')
         
-        return True
+        for doc_path, new_id in self.module_id_fixes.items():
+            full_path = self.base_dir / doc_path
+            if not full_path.exists():
+                continue
+            
+            content = self.read_file(full_path)
+            if not content:
+                continue
+            
+            old_id_pattern = r'module_id:\s*05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_A_STOCK_RULES_001'
+            new_content = re.sub(old_id_pattern, f'module_id: {new_id}', content)
+            
+            if new_content != content:
+                if self.write_file(full_path, new_content):
+                    self.fixes.append({
+                        'file': doc_path,
+                        'action': f'修复module_id: {new_id}'
+                    })
+                    print(f'  ✅ 已修复: {doc_path}')
+    
+    def fix_similar_index_files(self):
+        """修复相似的INDEX.md文件"""
+        print('\n🔧 修复相似的INDEX.md文件...')
+        
+        for doc_path, info in self.index_differentiation.items():
+            full_path = self.base_dir / doc_path
+            if not full_path.exists():
+                continue
+            
+            content = self.read_file(full_path)
+            if not content:
+                continue
+            
+            pattern = r'(##\s+核心定位\s*\n\n)(.+?)(?=\n\n|\n##|\n#|\Z)'
+            match = re.search(pattern, content, re.DOTALL)
+            
+            if match:
+                new_content = content[:match.start(2)] + info['responsibility'] + content[match.end(2):]
+                
+                if self.write_file(full_path, new_content):
+                    self.fixes.append({
+                        'file': doc_path,
+                        'action': '更新职责描述以区分相似INDEX'
+                    })
+                    print(f'  ✅ 已修复: {doc_path}')
+    
+    def generate_report(self):
+        """生成修复报告"""
+        print('\n📊 生成修复报告...')
+        
+        self.audit_dir.mkdir(parents=True, exist_ok=True)
+        
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        report_file = self.audit_dir / f'LAYER5_FINAL_FIX_REPORT_{timestamp}.md'
+        
+        with open(report_file, 'w', encoding='utf-8') as f:
+            f.write('# Layer 5 剩余问题最终修复报告\n\n')
+            f.write(f'> **修复时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
+            f.write(f'> **修复范围**: {self.base_dir}\n\n')
+            
+            f.write('## 📊 修复统计\n\n')
+            f.write(f'- **修复文档**: {len(self.fixes)}个\n\n')
+            
+            if self.fixes:
+                f.write('## 🔧 修复详情\n\n')
+                f.write('| 文件 | 操作 |\n')
+                f.write('|------|------|\n')
+                for fix in self.fixes:
+                    f.write(f'| {fix["file"]} | {fix["action"]} |\n')
+                f.write('\n')
+            
+            f.write('---\n\n')
+            f.write(f'**修复完成时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
+        
+        print(f'  ✅ 修复报告已生成: {report_file}')
+        return report_file
     
     def run(self):
+        """执行修复"""
         print('=' * 80)
-        print('Layer 5 职责描述最终修复工具')
+        print('Layer 5 剩余问题最终修复')
         print('=' * 80)
-        print(f'修复时间: {self._get_timestamp()}')
-        print()
         
-        print('修复所有职责描述问题...')
-        for filename, responsibility in self.documents_to_fix.items():
-            print(f'  处理 {filename}...')
-            if self.fix_document(filename, responsibility):
-                self.fixed_count += 1
-        print()
+        self.fix_short_responsibility()
+        self.fix_long_responsibility()
+        self.fix_module_id_duplicates()
+        self.fix_similar_index_files()
         
-        print(f'生成修复报告...')
-        self._generate_report()
-        print('  ✅ 报告已生成')
-        print()
+        self.generate_report()
         
-        print('=' * 80)
+        print('\n' + '=' * 80)
         print('修复完成')
         print('=' * 80)
-        print()
-        print('修复摘要:')
-        print(f'  待修复文档: {len(self.documents_to_fix)}个')
-        print(f'  成功修复: {self.fixed_count}个')
-    
-    def _get_timestamp(self) -> str:
-        return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    def _generate_report(self):
-        report_path = self.audit_dir / 'LAYER5_FINAL_FIX_REPORT_20260407.md'
-        
-        with open(report_path, 'w', encoding='utf-8') as f:
-            f.write('# Layer 5 职责描述最终修复报告\n\n')
-            f.write(f'> **修复时间**: {self._get_timestamp()}\n')
-            f.write(f'> **修复范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS\n\n')
-            f.write('---\n\n')
-            f.write('## 📊 修复概要\n\n')
-            f.write(f'- **待修复文档**: {len(self.documents_to_fix)}个\n')
-            f.write(f'- **成功修复**: {self.fixed_count}个\n\n')
-            f.write('---\n\n')
-            f.write('## 📝 修复详情\n\n')
-            f.write('| 文档名称 | 职责描述 | 状态 |\n')
-            f.write('|----------|----------|------|\n')
-            for detail in self.fix_details:
-                f.write(f"| {detail['file']} | {detail['responsibility']} | ✅ |\n")
-            
-            f.write('\n---\n\n')
-            f.write('## 🎯 后续建议\n\n')
-            f.write('### 近期改进\n')
-            f.write('- 确认108个层级标识\n')
-            f.write('- 验证修复效果\n\n')
-            f.write('### 长期优化\n')
-            f.write('- 建立持续监控机制\n')
-            f.write('- 优化文档创建流程\n\n')
-            f.write(f'**修复完成时间**: {self._get_timestamp()}\n')
-            f.write('**修复状态**: ✅ **完成**\n')
-
-
-def main():
-    fixer = Layer5FinalFixer()
-    fixer.run()
+        print(f'\n📊 修复统计:')
+        print(f'  - 修复文档: {len(self.fixes)}个')
 
 
 if __name__ == '__main__':
-    main()
+    fixer = Layer5FinalFixer()
+    fixer.run()

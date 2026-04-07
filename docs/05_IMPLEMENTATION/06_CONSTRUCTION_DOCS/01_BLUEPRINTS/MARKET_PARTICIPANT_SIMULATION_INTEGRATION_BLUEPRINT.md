@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -136,9 +136,9 @@ class InstitutionalActivityFactor(BaseFactor):
         
 :
             data: 
-含价格、成交量、订单簿等数?            
+含价格、成交量、订单簿等数据            
         输出:
-            pd.Series: 主力动向因子?(范围[-1, 1])
+            pd.Series: 主力动向因子（范围[-1, 1]）
             - 绝对值越大，强度越大
         """
         # 1. 获取主力智能体的市场微观结构分析
@@ -177,11 +177,11 @@ class InstitutionalActivityFactor(BaseFactor):
         return factor_value
 ```
 
-情绪因子** (RetailSentimentFactor)
+情情情绪因子** (RetailSentimentFactor)
 
 ```python
 class RetailSentimentFactor(BaseFactor):
-情绪因子
+情情情绪因子
     
     索引: FACTOR.RETAIL.001
     Layer: Layer 2 (Alpha因子层
@@ -197,13 +197,13 @@ class RetailSentimentFactor(BaseFactor):
         self.agent = retail_agent
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-情绪因子
+情情情绪因子
         
         输出:
-情绪因子?(范围[-1, 1])
+情情绪因子（范围[-1, 1]）
 绪乐观(可能见顶)
 绪悲观(可能见底)
-绪越极?        """
+情绪越极端        """
 绪分析
         sentiment_score = self.agent.sentiment_analyzer.analyze(
             news=data['news'],
@@ -260,7 +260,7 @@ class PolicySignalFactor(BaseFactor):
         """计算政策信号因子
         
         输出:
-            pd.Series: 政策信号因子?(范围[-1, 1])
+            pd.Series: 政策信号因子（范围[-1, 1]）
         """
         # 1. 获取国家队智能体的政策信号        policy_signals = self.agent.policy_signal_detector.detect(
             news_data=data['news'],
@@ -295,7 +295,7 @@ class PolicySignalFactor(BaseFactor):
 #### 2.2.2 因子库集成
 ```python
 class AgentBasedFactorLibrary:
-    """基于智能体的因子?    
+    """基于智能体的因子库    
     索引: FACTOR.LIBRARY.AGENT.001
     Layer: Layer 2 (Alpha因子层
     职责: 管理和计算所有智能体生成的因子    """
@@ -398,7 +398,7 @@ class AgentBasedSignalGenerator:
 
 
 class SignalCombiner:
-    """信号合成?    
+    """信号合成器    
     索引: SIGNAL.COMBINER.001
     职责: 整合多个智能体的信号
     """
@@ -444,8 +444,8 @@ class SignalCombiner:
         """加权平均合成
         
         权重计算:
-        - 国家? 权重 = 置信号* 0.3 (长期稳定)
-        - 主力: 权重 = 置信号* 0.5 (市场主导)
+        - 国家权重 = 置信度 * 0.3（长期稳定）
+        - 主力权重 = 置信度 * 0.5（市场主导）
         - 散户: 权重 = 置信号* 0.2 (反向指标)
         """
         total_weight = 0
@@ -527,8 +527,8 @@ class StrategyWithAgentSignals(BaseStrategy):
         """融合传统信号和智能体信号
         
         融合策略:
-        1. 信号方向一??增强信号强度
-        2. 信号方向冲突 ?降低信号强度或放?        3. 智能体信号独??作为新信号添?        """
+        1. 信号方向一致：增强信号强度
+        2. 信号方向冲突：降低信号强度或放弃该信号        3. 智能体信号独立：作为新信号添加        """
         fused_signals = []
         
         for trad_signal in traditional_signals:
@@ -536,7 +536,7 @@ class StrategyWithAgentSignals(BaseStrategy):
             if trad_signal.symbol in agent_signals.position_size:
                 agent_position = agent_signals.position_size[trad_signal.symbol]
                 
-                # 信号方向一?                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
+                # 信号方向一致                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
                    (trad_signal.direction == 'SELL' and agent_position < 0):
                     # 增强信号强度
                     fused_signal = Signal(
@@ -583,7 +583,7 @@ class MultiAgentVotingSystem:
     
     索引: VOTING.AGENT.001
     Layer: Layer 6 (组合优化层
-    职责: 通过投票机制整合智能体决?    """
+    职责: 通过投票机制整合智能体决策    """
     
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
@@ -591,12 +591,12 @@ class MultiAgentVotingSystem:
     def vote_on_portfolio(self, 
                          market_state: MarketState,
                          current_portfolio: Portfolio) -> PortfolioDecision:
-        """对组合调整进行投?        
+        """对组合调整进行投票"""        
         投票机制:
         1. 各智能体独立投票
         2. 根据投票结果计算权重
         3. 考虑风险预算约束
-        4. 返回最终组合决?        """
+        4. 返回最终组合决策        """
         # 1. 各智能体独立投票
         votes = {}
         for agent_name, agent in self.agents.items():
@@ -612,7 +612,7 @@ class MultiAgentVotingSystem:
         # 3. 考虑风险预算约束
         target_weights = self._apply_risk_budget(target_weights, current_portfolio)
         
-        # 4. 返回最终组合决?        return PortfolioDecision(
+        # 4. 返回最终组合决策        return PortfolioDecision(
             target_weights=target_weights,
             rebalance_reasons=self._generate_rebalance_reasons(votes),
             confidence=self._calculate_confidence(votes),
@@ -623,9 +623,9 @@ class MultiAgentVotingSystem:
         """计算投票权重
         
         投票权重因素:
-        1. 智能体类型权?(国家?.3, 主力0.5, 散户0.2)
+        1. 智能体类型权重（国家 0.3，主力 0.5，散户 0.2）
         2. 决策置信号(0-1)
-        3. 历史准确?(基于历史表现)
+        3. 历史准确率（基于历史表现）
         """
         # 基础权重
         base_weights = {
@@ -636,9 +636,9 @@ class MultiAgentVotingSystem:
         
         base_weight = base_weights.get(agent_name, 0.1)
         
-        # 置信度调?        confidence_adjusted = base_weight * decision.confidence
+        # 置信度调整        confidence_adjusted = base_weight * decision.confidence
         
-        # 历史准确率调?(如果?
+        # 历史准确率调整（如果可用）
         historical_accuracy = self._get_historical_accuracy(agent_name)
         final_weight = confidence_adjusted * historical_accuracy
         
@@ -683,7 +683,7 @@ class MultiAgentVotingSystem:
         return stock_weights
 ```
 
-#### 2.4.2 与现有组合优化集?
+#### 2.4.2 与现有组合优化集成
 ```python
 class PortfolioOptimizerWithAgents:
     """集成智能体的组合优化层    
@@ -820,16 +820,16 @@ max: w' -  * w'w -  * ||w - w_prior||^2
    - 可以根据市场状态动态调整权?
 4. **可解释性好**:
    - 每个智能体的决策都有明确理由
-   - 投票过程透明可追?   - 因子贡献度可量化分析
+   - 投票过程透明可追溯   - 因子贡献度可量化分析
 
 
 
-## 🚀 四、实施建?
-### 4.1 分阶段实施路?
+## 🚀 四、实施建议
+### 4.1 分阶段实施路线
 **Phase 1: 因子集成** (Month 1-2)
 ?
 - 集成到现有因子库
-- 验证因子有效?
+- 验证因子有效性
 **Phase 2: 信号集成** (Month 3-4)
 - 实现信号生成器和信号合成?- 集成到现有策略框?- 回测验证信号质量
 
@@ -850,9 +850,9 @@ max: w' -  * w'w -  * ||w - w_prior||^2
 
 | 功能模块 | 推荐技?| 理由 |
 |---------|---------|------|
-| **因子计算** | Pandas + NumPy | 成熟稳定,性能?|
-| **信号生成** | 事件驱动架构 | 灵活,易扩?|
-| **组合优化** | CVXPY + Barra模型 | 专业,可解?|
+| **因子计算** | Pandas + NumPy | 成熟稳定、性能更好|
+| **信号生成** | 事件驱动架构 | 灵活、易扩展|
+| **组合优化** | CVXPY + Barra模型 | 专业、可解释|
 
 
 
@@ -862,7 +862,7 @@ max: w' -  * w'w -  * ||w - w_prior||^2
 
 
 ** (Layer 2):
-情绪因子   - 与现?700+因子无缝集成
+情情情绪因子   - 与现?700+因子无缝集成
    - 供多因子模型使用
 
 ** (Layer 5):
@@ -876,14 +876,14 @@ max: w' -  * w'w -  * ||w - w_prior||^2
 ### 
 
 之间的交互
-- ?**灵活可扩?*: 可单独或组合使用各层输出
-- ?**可解释性强**: 每个决策都有明确理由
+- **灵活可扩展性**: 可单独或组合使用各层输出
+- **可解释性强**: 每个决策都有明确理由
 
-### 下一步行?
-**立即开?*:
+### 下一步行动
+**立即开始**:
 1. 实现三个智能体因子(Week 1-2)
 2. 集成到现有因子库 (Week 3)
-3. 验证因子有效?(Week 4)
+3. 验证因子有效性（Week 4）
 
 **准备就绪**:
 - ?集成架构设计完成

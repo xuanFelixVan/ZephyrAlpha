@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -720,7 +720,7 @@ class TestLiquidityManagementSystem:
 |----------|----------|------|
 | **数据约束** | 需要账户和交易数据 | 需要数据源支持 |
 | **时间约束** | 开发时?0小时 | 需要合理规?|
-| **资源约束** | 个人开发，资源有限 | 采用简化方?|
+| **资源约束** | 个人开发，资源有限 | 采用简化方案|
 
 
 
