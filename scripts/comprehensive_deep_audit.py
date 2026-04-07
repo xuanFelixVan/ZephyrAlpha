@@ -535,6 +535,9 @@ class ComprehensiveDeepAuditor:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
+                # 移除BOM字符
+                content = content.lstrip('\ufeff')
+                
                 # 提取YAML头部
                 yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
                 
