@@ -195,7 +195,7 @@ python scripts/fix_invalid_links.py
 INDEX.md格式:
 | 文件 | 模块ID | 说明 |
 |------|--------|------|
-| [DOCUMENT.md](./DOCUMENT.md) | DOCUMENT_001 | 文档说明 |
+| [DOCUMENT.md](DOCUMENT.md) | DOCUMENT_001 | 文档说明 |
 
 System_Manifest.md格式:
 #### [层级]

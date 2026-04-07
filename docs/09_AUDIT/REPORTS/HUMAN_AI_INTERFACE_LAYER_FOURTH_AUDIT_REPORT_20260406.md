@@ -202,7 +202,7 @@ layer: Layer 11 (文字驱动层)
 
 在HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md的协作模式定义表中添加引用说明：
 ```markdown
-> 注：协作模式的具体实现请参考 [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md) 中的AI角色定位表
+> 注：协作模式的具体实现请参考 [HUMAN_AI_INTERACTION_BLUEPRINT.md](HUMAN_AI_INTERACTION_BLUEPRINT.md) 中的AI角色定位表
 ```
 
 ---

@@ -282,9 +282,9 @@ knowledge_base/
 ---
 
 ## 8. ﮒﻟﮔﮔ۰?
-- [ﮔﻝﭨ­ﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](../CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](../../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﻝﭨ­ﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT\CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](BEST_PRACTICES\DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](STANDARDS\DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---
 

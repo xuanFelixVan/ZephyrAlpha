@@ -425,7 +425,7 @@ Layer 11战略决策层是清风量化系统的**战略大脑**，负责：
 #### Layer 0: 系统架构
 ##### 0.001. Strategic Decision Bp
 - **模块ID**: STRATEGIC_DECISION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./11_STRATEGIC_DECISION\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](11_STRATEGIC_DECISION\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11 - 战略决策层
 - **状态**: Active

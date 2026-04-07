@@ -736,7 +736,7 @@ pip install numpy>=1.21
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [强化学习调仓系统蓝图](./RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | 强依赖 | AI增强调仓 |
+| [强化学习调仓系统蓝图](RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | 强依赖 | AI增强调仓 |
 | [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依赖 | 成本感知再平衡 |
 | [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
 

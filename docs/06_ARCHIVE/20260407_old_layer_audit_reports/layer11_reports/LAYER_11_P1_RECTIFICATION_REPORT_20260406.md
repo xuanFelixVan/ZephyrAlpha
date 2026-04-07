@@ -147,7 +147,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [战略决策层蓝图](./BLUEPRINT.md) | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ |
+| [战略决策层蓝图](BLUEPRINT.md) | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ |
 ```
 
 **整改后**：
@@ -158,10 +158,10 @@ responsibility:
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [资本配置系统蓝图](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 战略资产配置、资本分配决策 | P1 | ✅ 已创建 |
-| [市场状态识别蓝图](./MARKET_REGIME_BLUEPRINT.md) | 市场状态判断、范式转换预警 | P0 | ✅ 已创建 |
-| [宏观因子系统蓝图](./MACRO_FACTOR_BLUEPRINT.md) | 宏观因子分析、因子暴露控制 | P1 | ✅ 已创建 |
-| [再平衡决策系统蓝图](./REBALANCING_BLUEPRINT.md) | 再平衡策略、成本优化 | P0 | ✅ 已创建 |
+| [资本配置系统蓝图](CAPITAL_ALLOCATION_BLUEPRINT.md) | 战略资产配置、资本分配决策 | P1 | ✅ 已创建 |
+| [市场状态识别蓝图](MARKET_REGIME_BLUEPRINT.md) | 市场状态判断、范式转换预警 | P0 | ✅ 已创建 |
+| [宏观因子系统蓝图](MACRO_FACTOR_BLUEPRINT.md) | 宏观因子分析、因子暴露控制 | P1 | ✅ 已创建 |
+| [再平衡决策系统蓝图](REBALANCING_BLUEPRINT.md) | 再平衡策略、成本优化 | P0 | ✅ 已创建 |
 
 ... (共7个模块分类，20个文档链接)
 ```

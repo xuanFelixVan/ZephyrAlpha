@@ -414,7 +414,7 @@ Layer 7 AI报告层通过构建专业级报告体系，实现了：
 #### Layer 0: 系统架构
 ##### 0.001. Ai Reporting Layer Blueprint
 - **模块ID**: AI_REPORTING_LAYER_BLUEPRINT_001
-- **蓝图文档**: [BLUEPRINT.md](./07_AI_REPORTING\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](07_AI_REPORTING\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 7 - AI报告层
 - **状态**: Active

@@ -1031,7 +1031,7 @@ class QMTLeverageAPI:
 #### Layer 0: 系统架构
 ##### 0.001. Leverage Management Blueprint
 - **模块ID**: LEVERAGE_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [LEVERAGE_MANAGEMENT_BLUEPRINT.md](./11_STRATEGIC_DECISION\LEVERAGE_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [LEVERAGE_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\LEVERAGE_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.6 - 融资融券管理系统
 - **状态**: Active

@@ -1205,7 +1205,7 @@ class CallAuctionTCA:
 #### Layer 0: 系统架构
 ##### 0.001. Tca Blueprint
 - **模块ID**: TCA_BLUEPRINT_001
-- **蓝图文档**: [TCA_BLUEPRINT.md](./11_STRATEGIC_DECISION\TCA_BLUEPRINT.md)
+- **蓝图文档**: [TCA_BLUEPRINT.md](11_STRATEGIC_DECISION\TCA_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.9 - 交易成本分析系统
 - **状态**: Active

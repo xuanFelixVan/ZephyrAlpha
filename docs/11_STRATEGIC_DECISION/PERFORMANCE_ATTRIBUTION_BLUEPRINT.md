@@ -1023,7 +1023,7 @@ class StyleAttributionEngine:
 #### Layer 0: 系统架构
 ##### 0.001. Performance Attribution Blueprint
 - **模块ID**: PERFORMANCE_ATTRIBUTION_BLUEPRINT_001
-- **蓝图文档**: [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](./11_STRATEGIC_DECISION\PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
+- **蓝图文档**: [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](11_STRATEGIC_DECISION\PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.7 - 业绩归因系统
 - **状态**: Active

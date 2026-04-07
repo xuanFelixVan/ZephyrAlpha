@@ -255,7 +255,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_
 ```markdown
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | module_id | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﮔﮔ۰۲ﻟﺓﺁﮒﺝ |
 |----------|-----------|------|------|----------|----------|
-| ﮔﭦﻟﺛﮔ۶ﻟ۰ﻝ؟ﮔﺏﮒﺙﮔﻟﮒﺝ | SMART_EXECUTION_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [ﻠﺝﮔ۴](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) |
+| ﮔﭦﻟﺛﮔ۶ﻟ۰ﻝ؟ﮔﺏﮒﺙﮔﻟﮒﺝ | SMART_EXECUTION_ENGINE_BLUEPRINT_001 | v1.0.0 | Active | 2026-04-02 | [ﻠﺝﮔ۴](SMART_EXECUTION_ENGINE_BLUEPRINT.md) |
 ```
 
 ---

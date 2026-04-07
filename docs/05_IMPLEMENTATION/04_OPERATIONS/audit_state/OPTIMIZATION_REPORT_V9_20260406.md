@@ -75,10 +75,10 @@ implementation_status: 优化完成---
 **修复代码**:
 ```markdown
 修复前:
-| [数据源概述](./04_DATA_SOURCE/README.md) | 数据源概述 | ⭐⭐⭐⭐ |
+| [数据源概述](04_DATA_SOURCE/README.md) | 数据源概述 | ⭐⭐⭐⭐ |
 
 修复后:
-| [数据源概述](./04_DATA_SOURCE/INDEX.md) | 数据源概述 | ⭐⭐⭐⭐ |
+| [数据源概述](04_DATA_SOURCE/INDEX.md) | 数据源概述 | ⭐⭐⭐⭐ |
 ```
 
 **验证结果**:

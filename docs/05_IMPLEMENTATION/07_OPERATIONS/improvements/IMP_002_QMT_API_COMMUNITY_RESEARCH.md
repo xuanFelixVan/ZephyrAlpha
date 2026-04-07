@@ -634,7 +634,7 @@ def validate_quote_data(data: pd.DataFrame) -> bool:
 
 ### B. 参考文�?
 - [QMT数据接口技术规格书](../../05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
-- [QMT数据接口评审报告](../review_reports/QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
+- [QMT数据接口评审报告](05_IMPLEMENTATION\07_OPERATIONS\review_reports\QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
 - [QMT API学习计划](./IMP_001_QMT_API_LEARNING_PLAN.md)
 
 

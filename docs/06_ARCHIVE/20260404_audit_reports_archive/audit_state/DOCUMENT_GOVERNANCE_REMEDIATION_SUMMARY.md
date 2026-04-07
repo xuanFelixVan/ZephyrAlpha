@@ -269,12 +269,12 @@ applicable_scope: Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗ي�
 ### 10.2 قؤ╕فà│µûçµةث
 
 **µـ┤µ¤╣قؤ╕فà│µûçµةث**:
-1. [Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗قµ╖▒ف║خف«ةك«ةµèحفّè](./LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md)
+1. [Layer 5قصûقـحµëدكةîف▒éµûçµةثµ▓╗قµ╖▒ف║خف«ةك«ةµèحفّè](LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md)
 2. [P0ق║دلù«لتءµـ┤µ¤╣ف«îµêµèحفّè](./P0_ISSUES_REMEDIATION_REPORT.md)
 3. [P1ق║دلù«لتءµـ┤µ¤╣ف«îµêµèحفّè](./P1_ISSUES_REMEDIATION_REPORT.md)
 4. [P2ق║دلù«لتءµـ┤µ¤╣ف«îµêµèحفّè](./P2_ISSUES_REMEDIATION_REPORT.md)
-5. [µûçµةثكîك┤ثك╛╣قـîكدكîâ](../../09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-6. [µèµ£»كدµب╝غ╣خق┤تف╝ـ](../05_TECHNICAL_SPECIFICATIONS/INDEX.md)
+5. [µûçµةثكîك┤ثك╛╣قـîكدكîâ](06_ARCHIVE\09_AUDIT\STANDARDS\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+6. [µèµ£»كدµب╝غ╣خق┤تف╝ـ](06_ARCHIVE\20260404_audit_reports_archive\05_TECHNICAL_SPECIFICATIONS\INDEX.md)
 
 ---
 

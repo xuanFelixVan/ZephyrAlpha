@@ -68,9 +68,9 @@ responsibility:
 ```
 文件: 06_ARCHIVE\architecture_v4\module_designs\layer_1\INDEX.md
 无效链接:
-  - [Module ID注册表](../../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
-  - [职责边界地图](../../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
-  - [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+  - [Module ID注册表](05_IMPLEMENTATION\09_AUDIT\STATE\MODULE_ID_REGISTRY.md)
+  - [职责边界地图](05_IMPLEMENTATION\09_AUDIT\STATE\RESPONSIBILITY_BOUNDARY_MAP.md)
+  - [专业文档治理审计指南](05_IMPLEMENTATION\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 ```
 
 **根本原因**: 归档目录下的INDEX.md文件使用了相对路径引用活跃目录的文档，但归档目录的相对路径计算不正确
@@ -86,8 +86,8 @@ responsibility:
 ```
 文件: 09_AUDIT\INDEX.md
 无效链接:
-  - [DECISION_RECORDS/](./DECISION_RECORDS/)
-  - [RESEARCH_MEMOS/](./RESEARCH_MEMOS/)
+  - [DECISION_RECORDS/](DECISION_RECORDS/)
+  - [RESEARCH_MEMOS/](RESEARCH_MEMOS/)
 ```
 
 **根本原因**: 这两个目录尚未创建
@@ -122,7 +122,7 @@ responsibility:
 ```
 文件: 10_AI_WORKFLOW\INDEX.md
 无效链接:
-  - [FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md)
+  - [FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md](FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md)
 ```
 
 **根本原因**: 蓝图文件尚未创建
@@ -138,7 +138,7 @@ responsibility:
 ```
 文件: 11_STRATEGIC_DECISION\INDEX.md
 无效链接:
-  - [市场状态识别蓝图](./MARKET_REGIME_BLUEPRINT.md)
+  - [市场状态识别蓝图](MARKET_REGIME_BLUEPRINT.md)
 ```
 
 **根本原因**: 市场状态识别蓝图文件尚未创建

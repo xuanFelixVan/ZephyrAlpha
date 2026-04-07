@@ -240,7 +240,7 @@ Layer 5 �?风控预警R(t) �?Layer 6 �?归因分析 �?Layer 7 �?策略
 |------|------|------|
 | 框架版本 | �?v3.1 | 机构�?层量化策略框�?|
 | 战术�?| 🔄建设�?| [02_TACTICS/](../../../README.md) |
-| 因子�?| �?已就�?| [factor-library/](../../02_FACTOR_LIBRARY/00_INDEX/factor_classification_summary.md) |
+| 因子�?| �?已就�?| [factor-library/](02_FACTOR_LIBRARY\00_INDEX\factor_classification_summary.md) |
 | 版本历史 | [CHANGELOG.md](../CHANGELOG.md) | 详细变更记录 |
 
 ### 框架与战术库分工
@@ -250,7 +250,7 @@ Layer 5 �?风控预警R(t) �?Layer 6 �?归因分析 �?Layer 7 �?策略
 | 8层框架架�?| [01_FRAMEWORK/](.) | 本文�?|
 | Layer 0-7核心技�?| [01_FRAMEWORK/](.) | 本文�?|
 | 具体战术CD.1-CD.89 | [02_TACTICS/](../../../README.md) | 战术�?|
-| 因子�?723+指标 | [factor-library/](../../02_FACTOR_LIBRARY/00_INDEX/factor_classification_summary.md) | 因子�?|
+| 因子�?723+指标 | [factor-library/](02_FACTOR_LIBRARY\00_INDEX\factor_classification_summary.md) | 因子�?|
 
 ### 技术实施优先级
 

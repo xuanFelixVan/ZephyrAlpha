@@ -28,7 +28,7 @@ implementation_status: ﻟﺟﻟ۰?
 > **ﮒﺏﻟﮔﮔ۰۲**: 
 > - [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](T.06.UI001.web_management_interface_architecture_design.md)
 > - [ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ](ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md)
-> - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
+> - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\05_IMPLEMENTATION\02_DEVELOPMENT\API_DESIGN.md)
 
 ## 1. ﮔ۵ﻟﺟﺍ
 

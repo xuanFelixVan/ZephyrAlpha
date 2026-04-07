@@ -536,8 +536,8 @@ implementation_status: шпДф╝░хоМцИР
 **цЬмцЦЗцбгхЬич│╗ч╗Яф╕нчЪДф╜Нч╜о**:
 - **чИ╢цЦЗ?*: [INDEX.md](../INDEX.md)
 - **хЕ│шБФцЦЗцбг**:
-  - [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md)
-  - [DATA_SOURCE_INVENTORY.md](../05_TECHNICAL_SPECIFICATIONS/DATA_SOURCE_INVENTORY.md)
+  - [ARCHITECTURE.md](06_ARCHIVE\01_FRAMEWORK\ARCHITECTURE.md)
+  - [DATA_SOURCE_INVENTORY.md](06_ARCHIVE\20260404_audit_reports_archive\05_TECHNICAL_SPECIFICATIONS\DATA_SOURCE_INVENTORY.md)
   - [LAYER1_BLUEPRINT_GAP_ANALYSIS.md](LAYER1_BLUEPRINT_GAP_ANALYSIS.md)
 
 ### 9.2 чЙИцЬмчобчРЖ

@@ -482,10 +482,10 @@ docs/module_designs/
 
 ### ﻠﮒﺛBﺅﺙﮒﻟﮔ ﮒﮔ?
 
-1. [ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-2. [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒ](../../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [ﻛﺕﻛﺕﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘﮔ](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-4. [ﻛﺕﻛﺕﮒ؟ﮔﺛﻟﮒﺝ](../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+1. [ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](06_ARCHIVE\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+2. [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒ](06_ARCHIVE\09_AUDIT\TEMPLATES\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+3. [ﻛﺕﻛﺕﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘﮔ](06_ARCHIVE\01_FRAMEWORK\PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+4. [ﻛﺕﻛﺕﮒ؟ﮔﺛﻟﮒﺝ](06_ARCHIVE\20260404_audit_reports_archive\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
 ### ﻠﮒﺛCﺅﺙﮔﺁﻟﺁ­ﻟ۰۷
 

@@ -593,7 +593,7 @@ def verify_remediation(
 
 ## 8. ﮒﻟﮔﮔ۰?
 - [ﮒﻟ۶ﮒ؟۰ﻟ؟۰ﻛﺛﻝﺏﭨ](../STANDARDS/COMPLIANCE_AUDIT_SYSTEM.md)
-- [ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔ ﮒv5.3](../STANDARDS/AUDIT_STANDARDS_v5.3.md)
+- [ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔ ﮒv5.3](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.3.md)
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---

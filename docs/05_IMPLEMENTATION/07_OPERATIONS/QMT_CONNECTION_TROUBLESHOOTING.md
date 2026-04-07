@@ -210,8 +210,8 @@ python scripts\test_qmt_official_api.py
 ## чЫ╕хЕ│цЦЗцбг
 
 - [QMTхоШцЦ╣APIцЦЗцбг](https://dict.thinktrader.net/nativeApi/start_now.html)
-- [QMTцХ░цНоцОехПгцКАцЬпшзДшМГ](../docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
-- [QMTцЙзшбМхЩишУЭхЫ╛](../docs/04_EXECUTION/01_ORDER_EXECUTION/QMT_EXECUTOR_BLUEPRINT.md)
+- [QMTцХ░цНоцОехПгцКАцЬпшзДшМГ](05_IMPLEMENTATION\docs\02_FACTOR_LIBRARY\04_DATA_SOURCE\QMT_INTERFACE.md)
+- [QMTцЙзшбМхЩишУЭхЫ╛](05_IMPLEMENTATION\docs\04_EXECUTION\01_ORDER_EXECUTION\QMT_EXECUTOR_BLUEPRINT.md)
 
 ---
 

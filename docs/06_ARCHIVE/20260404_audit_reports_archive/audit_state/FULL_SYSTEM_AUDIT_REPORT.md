@@ -130,7 +130,7 @@ docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md
 **孤儿文档清单** (审计更新: 所有文档均已被正确索引):
 ```
 ?docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/financial_statements/ths_bd_complete_indicator_list.md
-   - 索引位置: [factor_master_index.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/factor_master_index.md)
+   - 索引位置: [factor_master_index.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\iFind\factor_master_index.md)
 
 ?docs/02_FACTOR_LIBRARY/05_BACKTEST/价值类/PE_TTM_BACKTEST.md
    - 索引位置: [00_INDEX/README.md](../../../../README.md)
@@ -138,7 +138,7 @@ docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md
 
 ?docs/02_FACTOR_LIBRARY/05_BACKTEST/价值类/PE_TTM_IC.md
    - 索引位置: [00_INDEX/README.md](../../../../README.md)
-   - 因子索引: [factor_master_index.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/factor_master_index.md)
+   - 因子索引: [factor_master_index.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\iFind\factor_master_index.md)
 
 ?docs/02_FACTOR_LIBRARY/05_BACKTEST/correlation_matrix.md
    - 索引位置: [00_INDEX/README.md](../../../../README.md)

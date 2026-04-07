@@ -1272,7 +1272,7 @@ class SuspendedStockLiquidityManager:
 #### Layer 0: 系统架构
 ##### 0.001. Liquidity Management Blueprint
 - **模块ID**: LIQUIDITY_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./11_STRATEGIC_DECISION\LIQUIDITY_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\LIQUIDITY_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.8 - 流动性管理系统
 - **状态**: Active

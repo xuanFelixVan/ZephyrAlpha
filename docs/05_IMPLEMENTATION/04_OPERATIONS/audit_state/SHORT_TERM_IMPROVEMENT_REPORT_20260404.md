@@ -81,9 +81,9 @@ compliance_level: 专业标准
 
 | 目录 | 说明 | 文件数 |
 |------|------|--------|
-| [value_factors/](./value_factors/INDEX.md) | 价值因子回测报告 | 2个 |
-| [ic_reports/](./ic_reports/README.md) | 因子IC验证报告 | 1个 |
-| [strategy_reports/](./strategy_reports/README.md) | 策略回测报告 | 1个 |
+| [value_factors/](value_factors/INDEX.md) | 价值因子回测报告 | 2个 |
+| [ic_reports/](ic_reports/README.md) | 因子IC验证报告 | 1个 |
+| [strategy_reports/](strategy_reports/README.md) | 策略回测报告 | 1个 |
 ```
 
 ---
@@ -181,9 +181,9 @@ value_factors/
 
 ## 📚 相关文档
 
-- [第六轮深度审计报告](./LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md)
+- [第六轮深度审计报告](LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md)
 - [P0问题修复报告](./P0_RESOLUTION_REPORT_V6_20260404.md)
-- [value_factors/INDEX.md](../../02_FACTOR_LIBRARY/05_BACKTEST/value_factors/INDEX.md)
+- [value_factors/INDEX.md](05_IMPLEMENTATION\02_FACTOR_LIBRARY\05_BACKTEST\value_factors\INDEX.md)
 
 ---
 

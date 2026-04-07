@@ -409,10 +409,10 @@ Move-Item "D:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\design\dat
 - 2026-04-03 15:00 - ύΦθόΙΡίχκϋχκόΛξίΣΛ
 
 ### B. ίΠΓϋΑΔόιΘίΘΗόΨΘόκ?
-1. [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-2. [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [ίχκϋχκϋ┤ρώΘΠόιΘίΘΗv5.3](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
-4. [όΨΘόκμό▓╗ύΡΗώΧ┐όΧΙόε║ίΙ╢](../../09_AUDIT/STANDARDS/DOC_GOVERNANCE_MECHANISM.md)
+1. [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](06_ARCHIVE\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+2. [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](06_ARCHIVE\09_AUDIT\TEMPLATES\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+3. [ίχκϋχκϋ┤ρώΘΠόιΘίΘΗv5.3](06_ARCHIVE\09_AUDIT\STANDARDS\AUDIT_STANDARDS.md)
+4. [όΨΘόκμό▓╗ύΡΗώΧ┐όΧΙόε║ίΙ╢](06_ARCHIVE\09_AUDIT\STANDARDS\DOC_GOVERNANCE_MECHANISM.md)
 
 ### C. όεψϋψφϋκ?
 | όεψϋψφ | ίχγϊ╣Κ |

@@ -98,7 +98,7 @@ compliance_level: 专业标准
 ## ããç¯å¢åå¤?
 > **éè¦æç¤º**: å¨å¼å§å®æ½åï¼è¯·åå®æç¯å¢åå¤å·¥ä½ãè¯¦ç»çç¯å¢åå¤æ­¥éª¤è¯·åèåæ¨¡åèå¾ææ¡£ï¼?
 ### 0.1 æ°æ®æºæ©å±æ¨¡åç¯å¢åå¤?
-**åèææ¡?*: [å¦ç±»æ°æ®éææ¨¡åèå¾](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-ç¯å¢åå¤)
+**åèææ¡?*: [å¦ç±»æ°æ®éææ¨¡åèå¾](ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-ç¯å¢åå¤)
 **环境要求**:
 - Python 3.9+
 - PostgreSQL 12+
@@ -113,7 +113,7 @@ compliance_level: 专业标准
 > **重要提示**: 在开始实施前，请先完成环境准备工作。详细的环境准备步骤请参考各模块蓝图文档。
 
 ### 0.1 数据源扩展模块环境准备
-**参考文档**: [另类数据集成模块蓝图](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备)
+**参考文档**: [另类数据集成模块蓝图](ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md#50-环境准备)
 **环境要求**:
 - Python 3.9+
 - PostgreSQL 12+

@@ -1221,7 +1221,7 @@ class SuspendedStockRebalance:
 #### Layer 0: 系统架构
 ##### 0.001. Rebalancing Blueprint
 - **模块ID**: REBALANCING_BLUEPRINT_001
-- **蓝图文档**: [REBALANCING_BLUEPRINT.md](./11_STRATEGIC_DECISION\REBALANCING_BLUEPRINT.md)
+- **蓝图文档**: [REBALANCING_BLUEPRINT.md](11_STRATEGIC_DECISION\REBALANCING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.10 - 再平衡决策系统
 - **状态**: Active

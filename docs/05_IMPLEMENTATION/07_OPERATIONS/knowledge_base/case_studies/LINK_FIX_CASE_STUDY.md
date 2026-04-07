@@ -235,9 +235,9 @@ class IntelligentLinkFixer:
 ---
 
 ## 8. ίΠΓϋΑΔόΨΘόκ?
-- [ώΥ╛όΟξϊ┐χίνΞόΛξίΣΛ](../REPORTS/LINK_FIX_REPORT_20260402.md)
-- [όβ║ϋΔ╜ώΥ╛όΟξϊ┐χίνΞόΛξίΣΛ](../REPORTS/INTELLIGENT_LINK_FIX_REPORT_20260402.md)
-- [όΨΘόκμό▓╗ύΡΗόεΑϊ╜│ίχηϋ╖╡](../BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
+- [ώΥ╛όΟξϊ┐χίνΞόΛξίΣΛ](05_IMPLEMENTATION\07_OPERATIONS\knowledge_base\REPORTS\LINK_FIX_REPORT_20260402.md)
+- [όβ║ϋΔ╜ώΥ╛όΟξϊ┐χίνΞόΛξίΣΛ](05_IMPLEMENTATION\07_OPERATIONS\knowledge_base\REPORTS\INTELLIGENT_LINK_FIX_REPORT_20260402.md)
+- [όΨΘόκμό▓╗ύΡΗόεΑϊ╜│ίχηϋ╖╡](05_IMPLEMENTATION\07_OPERATIONS\knowledge_base\BEST_PRACTICES\DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
 
 ---
 

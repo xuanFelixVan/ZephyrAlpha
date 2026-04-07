@@ -108,12 +108,13 @@ class L1LinkBatchFixerV2:
         
         broken_links = self.find_broken_links()
         
-        print(f"\n开始修复（处理前500个）...")
+        print(f"\n开始修复（处理所有链接）...")
         success_count = 0
         
-        for i, link_info in enumerate(broken_links[:500], 1):
+        total_links = len(broken_links)
+        for i, link_info in enumerate(broken_links, 1):
             if i % 100 == 0:
-                print(f"[{i}/500] 已处理 {i} 个链接...")
+                print(f"[{i}/{total_links}] 已处理 {i} 个链接...")
             
             if self.fix_link(link_info):
                 success_count += 1

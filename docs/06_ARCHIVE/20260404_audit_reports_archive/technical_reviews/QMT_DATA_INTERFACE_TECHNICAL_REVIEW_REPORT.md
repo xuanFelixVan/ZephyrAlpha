@@ -38,7 +38,7 @@ implementation_status: ш┐ЫшбМ?
 | **цибхЭЧхРНчз░** | QMTцХ░цНоцОехПг |
 | **цибхЭЧID** | DATA_QMT_001 |
 | **цЙАх▒ЮLayer** | Layer 0: цХ░цНоц║Рх▒В |
-| **цКАцЬпшзДца╝ф╣ж** | [QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md) |
+| **цКАцЬпшзДца╝ф╣ж** | [QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](06_ARCHIVE\05_TECHNICAL_SPECIFICATIONS\QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md) |
 | **шпДхобцЧецЬЯ** | 2026-04-02 |
 | **шпДхобцЧ╢щХ┐** | 30хИЖщТЯ |
 
@@ -464,10 +464,10 @@ implementation_status: ш┐ЫшбМ?
 
 ### B. чЫ╕хЕ│цЦЗцбг
 
-- [QMTцХ░цНоцОехПгцКАцЬпшзДца╝ф╣ж](../../05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
+- [QMTцХ░цНоцОехПгцКАцЬпшзДца╝ф╣ж](06_ARCHIVE\05_TECHNICAL_SPECIFICATIONS\QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
 - [цЮ╢цЮДхоЪф╣Й](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [цибхЭЧшБМш┤гш╛╣чХМ](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ш┤ищЗПщЧичжБцЬ║хИ╢](../QUALITY_GATE_MECHANISM.md)
+- [ш┤ищЗПщЧичжБцЬ║хИ╢](06_ARCHIVE\20260404_audit_reports_archive\QUALITY_GATE_MECHANISM.md)
 
 ### C. цЬпшпн?
 

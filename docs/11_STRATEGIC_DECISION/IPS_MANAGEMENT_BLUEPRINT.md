@@ -910,7 +910,7 @@ class IPSGenerator:
 #### Layer 0: 系统架构
 ##### 0.001. Ips Management
 - **模块ID**: IPS_MANAGEMENT_001
-- **蓝图文档**: [IPS_MANAGEMENT_BLUEPRINT.md](./11_STRATEGIC_DECISION\IPS_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [IPS_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\IPS_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.19 - 投资政策声明管理系统
 - **状态**: Active

@@ -196,14 +196,14 @@ compliance_level: 专业标准---
 ## 📚 相关文档
 
 ### 迁移相关文档
-1. [架构迁移计划](../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
+1. [架构迁移计划](06_ARCHIVE\20260404_audit_reports_archive\01_FRAMEWORK\ARCHITECTURE_MIGRATION_PLAN.md)
 2. [文档分析记录](./DOCUMENT_ANALYSIS_L0_SUPERCMD_20260402.md)
 3. [架构版本冲突审计报告](./ARCHITECTURE_VERSION_CONFLICT_AUDIT_REPORT_20260402.md)
 
-### 新架构文?1. [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-2. [专业实施蓝图](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+### 新架构文?1. [专业多时间框架架构](06_ARCHIVE\20260404_audit_reports_archive\01_FRAMEWORK\PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+2. [专业实施蓝图](06_ARCHIVE\20260404_audit_reports_archive\01_FRAMEWORK\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
 
-### 迁移后文?1. [SuperCommand连接器技术规范](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/SUPERCMD_CONNECTOR.md) - 新文?2. [L0_SUPERCMD.md归档文档](../../06_ARCHIVE/architecture_v4/module_designs/layer_0/L0_SUPERCMD.md) - 归档文档
+### 迁移后文?1. [SuperCommand连接器技术规范](06_ARCHIVE\20260404_audit_reports_archive\02_FACTOR_LIBRARY\04_DATA_SOURCE\SUPERCMD_CONNECTOR.md) - 新文?2. [L0_SUPERCMD.md归档文档](06_ARCHIVE\20260404_audit_reports_archive\06_ARCHIVE\architecture_v4\module_designs\layer_0\L0_SUPERCMD.md) - 归档文档
 
 ---
 

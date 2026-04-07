@@ -74,8 +74,8 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](./SUBDIR/document.md)        # ﮒﻝﭦ۶ﮒ­ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](../document.md)              # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ
-[ﮔﮔ۰۲](../../document.md)           # ﻛﺕﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](../../SIBLING/doc.md)        # ﻛﺕﻛﺕﻝﭦ۶ﮒﮒﺙﻝ؟ﮒﺛ?```
+[ﮔﮔ۰۲](SUBDIR/document.md)        # ﮒﻝﭦ۶ﮒ­ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](09_AUDIT\document.md)              # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ
+[ﮔﮔ۰۲](document.md)           # ﻛﺕﻛﺕﻝﭦ۶ﻝ؟ﮒﺛ?[ﮔﮔ۰۲](SIBLING\doc.md)        # ﻛﺕﻛﺕﻝﭦ۶ﮒﮒﺙﻝ؟ﮒﺛ?```
 
 ﻗ?**ﻛﺕﮔ۷ﻟ?*:
 ```markdown
@@ -94,8 +94,8 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](./SUBDIR/document.md)
-[ﮔﮔ۰۲](../SIBLING/document.md)
+[ﮔﮔ۰۲](SUBDIR/document.md)
+[ﮔﮔ۰۲](09_AUDIT\SIBLING\document.md)
 ```
 
 ﻗ?**ﻝ۵ﮔ­۱**:
@@ -108,11 +108,11 @@ compliance_level: 专业标准---
 
 ﻗ?**ﮔ۷ﻟ**:
 ```markdown
-[ﮔﮔ۰۲](./Blueprints/STRATEGY_ENGINE.md)  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻟ?```
+[ﮔﮔ۰۲](Blueprints/STRATEGY_ENGINE.md)  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻟ?```
 
 ﻗ?**ﻝ۵ﮔ­۱**:
 ```markdown
-[ﮔﮔ۰۲](./blueprints/strategy_engine.md)  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻛﺕﻟ?```
+[ﮔﮔ۰۲](blueprints/strategy_engine.md)  # ﻛﺕﮔﻛﭨﭘﮒﻛﺕﻛﺕﻟ?```
 
 ---
 
@@ -124,21 +124,21 @@ compliance_level: 专业标准---
 **ﮔ۷ﻟﮔ ﺙﮒﺙ**:
 ```markdown
 # ﮒﻝﭦ۶ﮔﮔ۰۲
-[ﮔﮔ۰۲](./document.md)
+[ﮔﮔ۰۲](document.md)
 
-# ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔ۰۲](./SUBDIR/document.md)
+# ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔ۰۲](SUBDIR/document.md)
 
 # ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛﮔﮔ۰۲
-[ﮔﮔ۰۲](../document.md)
+[ﮔﮔ۰۲](09_AUDIT\document.md)
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮒ?docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT.md ﻛﺕ?
 # ﮒﺙﻝ۷ﮒﻝﭦ۶ﮔﮔ۰۲
-[ﻠ۲ﻠ۸ﻝﮔ۶ﻟﮒﺝ](./RISK_MONITORING_BLUEPRINT.md)
+[ﻠ۲ﻠ۸ﻝﮔ۶ﻟﮒﺝ](RISK_MONITORING_BLUEPRINT.md)
 
-# ﮒﺙﻝ۷ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](../05_TECHNICAL_SPECIFICATIONS/STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md)
+# ﮒﺙﻝ۷ﮒ­ﻝ؟ﮒﺛﮔﮔ۰?[ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](09_AUDIT\05_TECHNICAL_SPECIFICATIONS\STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md)
 
 # ﮒﺙﻝ۷ﻛﺕﻝﭦ۶ﻝ؟ﮒﺛﮔﮔ۰۲
 [ﮒ؟ﮔﺛﮒﺎﻝﺑ۱ﮒﺙ](../INDEX.md)
@@ -150,7 +150,7 @@ compliance_level: 专业标准---
 **ﮔ۷ﻟﮔ ﺙﮒﺙ**:
 ```markdown
 # ﻛﺛﺟﻝ۷ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﺅﺙﻗ۳3ﮒﺎﺅﺙ
-[ﮔﮔ۰۲](../../OTHER_MODULE/document.md)
+[ﮔﮔ۰۲](OTHER_MODULE\document.md)
 
 # ﮒ۵ﮔﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶>3ﺅﺙﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﻝﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝ
 [ﮔﮔ۰۲](docs/OTHER_MODULE/document.md)
@@ -173,19 +173,19 @@ compliance_level: 专业标准---
 
 **ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲ﮒﺙﻝ۷ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲**:
 ```markdown
-**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮔ۰۲ﻠﺝﮔ۴](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MODULE_BLUEPRINT.md)
+**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮔ۰۲ﻠﺝﮔ۴](09_AUDIT\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MODULE_BLUEPRINT.md)
 ```
 
 **ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺙﻝ۷ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲**:
 ```markdown
-**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮔ۰ﮔﭘﮔﮔ۰۲ﻠﺝﮔ۴](../../01_FRAMEWORK/MODULE_BLUEPRINT.md)
+**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮔ۰ﮔﭘﮔﮔ۰۲ﻠﺝﮔ۴](01_FRAMEWORK\MODULE_BLUEPRINT.md)
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮔ۰ﮔﭘﮒﺎﮔﮔ۰? docs/01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md
 
-**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﮒﺁﺗﮒﺎﮒﺙﮔﻟﮒﺝ](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
+**ﮒ؟ﮔﺛﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﮒﺁﺗﮒﺎﮒﺙﮔﻟﮒﺝ](09_AUDIT\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md)
 - ﮒﺓﻛﺛﮒ؟ﻝﺍﮔﺗﮔ۰ﮒﮔﮔﺁﻝﭨﻟ?- ﮔ ﺕﮒﺟﮒ­ﻝﺏﭨﻝﭨﻟ؟ﺝﻟ؟۰ﮒﻛﭨ۲ﻝ ﻝ۳ﭦﻛﺝ
 - ﻠ۷ﻝﺛﺎﮔﺗﮔ۰ﮒﮒ؟ﮔﺛﻟﺓﺁﮒﺝ?
 ---
@@ -203,16 +203,16 @@ compliance_level: 专业标准---
 
 **ﮔ۷ﻟﮔ ﺙﮒﺙ**:
 ```markdown
-[ﮔﮔ۰۲ﮒﻝ۶ﺍﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ](../../06_ARCHIVE/CATEGORY/DATE_MODULE/document_ARCHIVED.md)
+[ﮔﮔ۰۲ﮒﻝ۶ﺍﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ](06_ARCHIVE\CATEGORY\DATE_MODULE\document_ARCHIVED.md)
 ```
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮒﺙﻝ۷ﮒﺛﮔ۰۲ﮔﮔ۰۲
-[Layer 7ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ](../../06_ARCHIVE/duplicate_documents/20260403_layer7_audit/LAYER7_DEEP_AUDIT_REPORT_20260403_ARCHIVED.md)
+[Layer 7ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﮒﺓﺎﮒﺛﮔ۰۲ﺅﺙ](06_ARCHIVE\duplicate_documents\20260403_layer7_audit\LAYER7_DEEP_AUDIT_REPORT_20260403_ARCHIVED.md)
 
 # ﮒﺙﻝ۷ﮒﺛﮔ۰۲ﻟﺁﺑﮔ
-[ﮒﺛﮔ۰۲ﻟﺁﺑﮔ](../../06_ARCHIVE/duplicate_documents/20260403_layer7_audit/ARCHIVE_README.md)
+[ﮒﺛﮔ۰۲ﻟﺁﺑﮔ](06_ARCHIVE\duplicate_documents\20260403_layer7_audit\ARCHIVE_README.md)
 ```
 
 ### 4.5 ﮒ۳ﻠ۷ﻠﺝﮔ۴ﮒﺙﻝ۷

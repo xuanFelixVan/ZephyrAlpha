@@ -73,7 +73,7 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
    - цЦЗф╗╢: [RESEARCH_MEMO_TEMPLATE.md](../TEMPLATES/RESEARCH_MEMO_TEMPLATE.md)
    - хЖЕхо╣: цаЗхЗЖхМЦчЪДчаФчй╢хдЗх┐Шх╜ХцибцЭ?   - чЙ╣чВ╣: ч╗УцЮДхМЦуАБцШУф╜┐чФиуАБхоМцХ┤цА?
 3. **чаФчй╢хдЗх┐Шх╜Хч┤вх╝?*
-   - цЦЗф╗╢: [README.md](../RESEARCH_MEMOS/README.md)
+   - цЦЗф╗╢: [README.md](09_AUDIT\RESEARCH_MEMOS\README.md)
    - хЖЕхо╣: чаФчй╢хдЗх┐Шх╜Хч┤вх╝ХхТМчобчРЖ
    - чЙ╣чВ╣: хПпцЯецЙ╛уАБхПпчобчРЖуАБхПпч╗┤цКд
 
@@ -105,7 +105,7 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
    - хЖЕхо╣: цаЗхЗЖхМЦчЪДхЖ│чнЦшо░х╜ХцибцЭ┐
    - чЙ╣чВ╣: ч╗УцЮДхМЦуАБшпжч╗ЖуАБхоМцХ?
 3. **хЖ│чнЦшо░х╜Хч┤вх╝Х**
-   - цЦЗф╗╢: [README.md](../DECISION_RECORDS/README.md)
+   - цЦЗф╗╢: [README.md](09_AUDIT\DECISION_RECORDS\README.md)
    - хЖЕхо╣: хЖ│чнЦшо░х╜Хч┤вх╝ХхТМчобчР?   - чЙ╣чВ╣: хПпцЯецЙ╛уАБхПпчобчРЖуАБхПпч╗┤цКд
 
 #### ЁЯУЛ хИ╢х║жчЙ╣чВ╣
@@ -136,7 +136,7 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
    - чЙ╣чВ╣: чоАц┤БуАБц╕ЕцЩ░уАБцШУф╜┐чФи
 
 3. **ADRч┤вх╝Х**
-   - цЦЗф╗╢: [README.md](../../01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md)
+   - цЦЗф╗╢: [README.md](01_FRAMEWORK\ARCHITECTURE_DECISIONS\README.md)
    - хЖЕхо╣: ADRч┤вх╝ХхТМчобчР?   - чЙ╣чВ╣: хПпцЯецЙ╛уАБхПпчобчРЖуАБхПпч╗┤цКд
 
 #### ЁЯУЛ хИ╢х║жчЙ╣чВ╣
@@ -224,7 +224,7 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
 1. чбохоЪчаФчй╢ч▒╗хЮЛя╝ИхЫахн?чнЦчХе/цибхЮЛ/цХ░цНо/щгОщЩйя╝?2. хИЖщЕНч╝ЦхП╖я╝ЪRM-{TYPE}-{DATE}-{SEQ}
 3. хдНхИ╢[чаФчй╢хдЗх┐Шх╜ХцибцЭ┐](../TEMPLATES/RESEARCH_MEMO_TEMPLATE.md)
 4. хблхЖЩхЖЕхо╣х╣╢ф┐ЭхнШхИ░ `docs/09_AUDIT/RESEARCH_MEMOS/`
-5. цЫ┤цЦ░[чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](../RESEARCH_MEMOS/README.md)
+5. цЫ┤цЦ░[чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](09_AUDIT\RESEARCH_MEMOS\README.md)
 
 ### 7.2 хжВф╜Хф╜┐чФихЖ│чнЦшо░х╜Х
 
@@ -232,7 +232,7 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
 1. чбохоЪхЖ│чнЦч▒╗хЮЛя╝Иф║дцШ?чнЦчХе/щгОщЩй/цЮ╢цЮД/цибхЮЛя╝?2. хИЖщЕНч╝ЦхП╖я╝ЪDR-{TYPE}-{DATE}-{SEQ}
 3. хдНхИ╢[хЖ│чнЦшо░х╜ХцибцЭ┐](../TEMPLATES/DECISION_RECORD_TEMPLATE.md)
 4. хблхЖЩхЖЕхо╣х╣╢ф┐ЭхнШхИ░ `docs/09_AUDIT/DECISION_RECORDS/`
-5. цЫ┤цЦ░[хЖ│чнЦшо░х╜Хч┤вх╝Х](../DECISION_RECORDS/README.md)
+5. цЫ┤цЦ░[хЖ│чнЦшо░х╜Хч┤вх╝Х](09_AUDIT\DECISION_RECORDS\README.md)
 
 ### 7.3 хжВф╜Хф╜┐чФиADR
 
@@ -240,7 +240,7 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
 1. чбохоЪхЖ│чнЦч▒╗хЮЛя╝ИSYS/TECH/MOD/API/DATA/DEPLOYя╝?2. хИЖщЕНч╝ЦхП╖я╝ЪADR-{TYPE}-{SEQ}
 3. хдНхИ╢[ADRцибцЭ┐](../TEMPLATES/ADR_TEMPLATE.md)
 4. хблхЖЩхЖЕхо╣х╣╢ф┐ЭхнШхИ░ `docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/`
-5. цЫ┤цЦ░[ADRч┤вх╝Х](../../01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md)
+5. цЫ┤цЦ░[ADRч┤вх╝Х](01_FRAMEWORK\ARCHITECTURE_DECISIONS\README.md)
 
 ---
 
@@ -259,9 +259,9 @@ tags: ["цФ╣ш┐ЫцКехСК", "ф╕Уф╕ЪцаЗхЗЖ", "цЦЗцбг
 
 ### 8.3 ч┤вх╝ХцЦЗцбг
 
-- [чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](../RESEARCH_MEMOS/README.md)
-- [хЖ│чнЦшо░х╜Хч┤вх╝Х](../DECISION_RECORDS/README.md)
-- [цЮ╢цЮДхЖ│чнЦшо░х╜Хч┤вх╝Х](../../01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md)
+- [чаФчй╢хдЗх┐Шх╜Хч┤вх╝Х](09_AUDIT\RESEARCH_MEMOS\README.md)
+- [хЖ│чнЦшо░х╜Хч┤вх╝Х](09_AUDIT\DECISION_RECORDS\README.md)
+- [цЮ╢цЮДхЖ│чнЦшо░х╜Хч┤вх╝Х](01_FRAMEWORK\ARCHITECTURE_DECISIONS\README.md)
 
 ---
 

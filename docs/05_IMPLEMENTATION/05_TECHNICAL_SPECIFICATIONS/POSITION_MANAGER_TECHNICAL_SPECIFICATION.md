@@ -1283,7 +1283,7 @@ position_manager:
 ### C. ﮒﻟﮔ?
 - [ﮔﭘﮔﮒ؟ﻛﺗ](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰](../../design/database/P0-01_Database_Design_Document.md)
+- [ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰](design\database\P0-01_Database_Design_Document.md)
 
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ

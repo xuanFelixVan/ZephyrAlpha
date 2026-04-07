@@ -49,7 +49,7 @@ responsibility:
 
 ## 二、Phase 1: 核心能力补强（Month 1?
 ### 2.1 Week 1-2: 数据血缘追踪系?
-**蓝图文档**: [DATA_LINEAGE_TRACKING_BLUEPRINT.md](./DATA_LINEAGE_TRACKING_BLUEPRINT.md)
+**蓝图文档**: [DATA_LINEAGE_TRACKING_BLUEPRINT.md](DATA_LINEAGE_TRACKING_BLUEPRINT.md)
 
 **核心功能**:
 - 血缘采集：自动采集数据源、处理过程、数据流血?- 血缘存储：Neo4j图数据库 + PostgreSQL元数据存?- 血缘分析：依赖关系分析、影响范围分析、血缘路径查?- 血缘服务：RESTful API + 可视化界?
@@ -69,7 +69,7 @@ responsibility:
 
 ### 2.2 Week 3-4: 实时数据质量监控系统
 
-**蓝图文档**: [REALTIME_QUALITY_MONITOR_BLUEPRINT.md](./REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
+**蓝图文档**: [REALTIME_QUALITY_MONITOR_BLUEPRINT.md](REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
 
 **核心功能**:
 - 质量指标采集：多维度质量指标采集（完整性、准确性、时效性、一致性）
@@ -148,7 +148,7 @@ responsibility:
 
 ### 3.3 Week 9-10: 自动化数据修复引擎
 
-**蓝图文档**: [AUTO_REPAIR_ENGINE_BLUEPRINT.md](./AUTO_REPAIR_ENGINE_BLUEPRINT.md)
+**蓝图文档**: [AUTO_REPAIR_ENGINE_BLUEPRINT.md](AUTO_REPAIR_ENGINE_BLUEPRINT.md)
 
 **核心功能**:
 - 问题检测：自动检测缺失值、异常值、格式错误
@@ -426,11 +426,11 @@ responsibility:
 ### 10.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../review_reports/LAYER1_GAP_ANALYSIS_REPORT.md)
+- **父文?*: [LAYER1_GAP_ANALYSIS_REPORT.md](05_IMPLEMENTATION\review_reports\LAYER1_GAP_ANALYSIS_REPORT.md)
 - **关联文档**:
-  - [DATA_LINEAGE_TRACKING_BLUEPRINT.md](./DATA_LINEAGE_TRACKING_BLUEPRINT.md)
-  - [REALTIME_QUALITY_MONITOR_BLUEPRINT.md](./REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
-  - [AUTO_REPAIR_ENGINE_BLUEPRINT.md](./AUTO_REPAIR_ENGINE_BLUEPRINT.md)
+  - [DATA_LINEAGE_TRACKING_BLUEPRINT.md](DATA_LINEAGE_TRACKING_BLUEPRINT.md)
+  - [REALTIME_QUALITY_MONITOR_BLUEPRINT.md](REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
+  - [AUTO_REPAIR_ENGINE_BLUEPRINT.md](AUTO_REPAIR_ENGINE_BLUEPRINT.md)
 
 ### 10.2 版本管理
 

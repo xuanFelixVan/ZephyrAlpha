@@ -290,7 +290,7 @@ ZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻠﻟ۵ﻛﺕ�
 
 ## 11. ﮒﻟﮔﮔ۰?
 - [ADRﮔ۷۰ﮔﺟ](../TEMPLATES/ADR_TEMPLATE.md)
-- [ADRﻝﺑ۱ﮒﺙ](../../01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md)
+- [ADRﻝﺑ۱ﮒﺙ](01_FRAMEWORK\ARCHITECTURE_DECISIONS\README.md)
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

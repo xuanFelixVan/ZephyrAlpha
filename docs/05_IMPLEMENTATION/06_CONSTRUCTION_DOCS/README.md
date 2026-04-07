@@ -76,8 +76,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﻟﺁﺑﮔ |
 |---------|------|------|---------|------|
-| [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](./01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | v1.2 | Active | 2026-04-02 | 6ﻛﺕ۹ﮔﮒ؟ﮔﺛﻟ؟۰ﮒﺅﺙﻝ،ﮒﺏﻗﻝ­ﮔﻗﻛﺕ­ﮔﻗﻠﺟﮔﺅﺙ?|
-| [ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ](./01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | ﻝ­ﻝ۴ﮒﺓ۴ﮒﻙﮔﺏ۷ﮒﻟ۰۷ﻙﮒ ﻟﺛﺛﮒ۷ﻟ؟ﺝﻟ؟۰ |
+| [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](01_BLUEPRINTS/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | v1.2 | Active | 2026-04-02 | 6ﻛﺕ۹ﮔﮒ؟ﮔﺛﻟ؟۰ﮒﺅﺙﻝ،ﮒﺏﻗﻝ­ﮔﻗﻛﺕ­ﮔﻗﻠﺟﮔﺅﺙ?|
+| [ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ](01_BLUEPRINTS/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | ﻝ­ﻝ۴ﮒﺓ۴ﮒﻙﮔﺏ۷ﮒﻟ۰۷ﻙﮒ ﻟﺛﺛﮒ۷ﻟ؟ﺝﻟ؟۰ |
 | [ﻝ­ﻝ۴ﻠﮔ۸ﻝﺏﭨﻝﭨﻟﮒﺝ](./01_BLUEPRINTS/STRATEGY_SELECTION_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | TOPSISﮒ۳ﮒﮒﻟﺁﻛﺙﺍﻝﺏﭨﻝﭨ?|
 | [ﻝﭨﮒﻛﺙﮒﻟﮒﺝ](./01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | ﻠ۲ﻠ۸ﮒﺗﺏﻛﭨﺓﻙBlack-Littermanﮔ۷۰ﮒ |
 
@@ -96,7 +96,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 | [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ](./02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | v1.0 | Active | 2026-04-02 | ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒﮒ؟ﮔﺛﮔﮒ |
 | [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ](./02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | v1.0 | Active | 2026-04-02 | ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﮒ؟ﮔﺛﮔﮒ |
 | [ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](./02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | v1.0 | Active | 2026-04-02 | Backtesting.pyﻠﮔﮔﮒ |
-<!-- ﻠﺝﮔ۴ﻝ؟ﮔ ﻛﺕﮒ­ﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: | <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﻝﭨﮔﭖﻟﮒﺙﮒﺙﮔﮒ؟ﮔﺛﮔﮒ](./02_IMPLEMENTATION_GUIDES/ECONOMIC_REGIME_GUIDE.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?| -->
+<!-- ﻠﺝﮔ۴ﻝ؟ﮔ ﻛﺕﮒ­ﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: | <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﻝﭨﮔﭖﻟﮒﺙﮒﺙﮔﮒ؟ﮔﺛﮔﮒ](02_IMPLEMENTATION_GUIDES/ECONOMIC_REGIME_GUIDE.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?| -->
 
 
 **ﮔﮔ۰۲ﮔﺍﻠ**: 3  
@@ -148,9 +148,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 **ﻟﻟﺑ۲**: ﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﺅﺙﻟ؟ﺍﮒﺛﮒ۷ﮔ۴ﮒﻠﻝ۷ﻝ۱?
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﻟﺁﺑﮔ |
 |---------|------|------|---------|------|
-| [ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﮔﭨﻟ۶](./05_PROGRESS_TRACKING/IMPLEMENTATION_PROGRESS.md) | v1.0 | Active | 2026-04-02 | ﮒ؟ﮔﭘﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ |
-| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﮒ۷ﮔ۴ﮒﺛﮔ۰۲](./05_PROGRESS_TRACKING/WEEKLY_REPORTS/) --> | - | Active | 2026-04-02 | ﮔﺁﮒ۷ﻟﺟﮒﭦ۵ﮔ۴ﮒ |
-| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﻠﻝ۷ﻝ۱ﻟ؟ﺍﮒﺛ](./05_PROGRESS_TRACKING/MILESTONES.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
+| [ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﮔﭨﻟ۶](05_PROGRESS_TRACKING/IMPLEMENTATION_PROGRESS.md) | v1.0 | Active | 2026-04-02 | ﮒ؟ﮔﭘﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ |
+| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﮒ۷ﮔ۴ﮒﺛﮔ۰۲](05_PROGRESS_TRACKING/WEEKLY_REPORTS/) --> | - | Active | 2026-04-02 | ﮔﺁﮒ۷ﻟﺟﮒﭦ۵ﮔ۴ﮒ |
+| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﻠﻝ۷ﻝ۱ﻟ؟ﺍﮒﺛ](05_PROGRESS_TRACKING/MILESTONES.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 
 **ﮔﮔ۰۲ﮔﺍﻠ**: 1  
 **ﮒ؟ﮔﮒﭦ?*: 100%  
@@ -166,7 +166,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 | [ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | v1.0 | Active | 2026-04-02 | ﻠ۷ﻝﺛﺎﮒﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?|
 | [ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/POST_DEPLOYMENT_CHECKLIST.md) | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 | [ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | v1.0 | Active | 2026-04-02 | ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮒ؟۰ﮔ۴ﮔ ﮒ |
-| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮔﺕﮒ](./06_CHECKLISTS/DOCUMENT_QUALITY_CHECKLIST.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
+| <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? [ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮔﺕﮒ](06_CHECKLISTS/DOCUMENT_QUALITY_CHECKLIST.md) --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 
 **ﮔﮔ۰۲ﮔﺍﻠ**: 2  
 **ﮒ؟ﮔﮒﭦ?*: 50%  
@@ -258,7 +258,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 - **ﻝﭘﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮒﮔﭨﻟ۶](../README.md)
 - **ﮔﭘﮔﻟ؟ﺝﻟ؟۰**: [ﻛﺕﻛﺕﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘﮔ](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-- **ﻝﺏﭨﻝﭨﮔﺕﮒ**: [System_Manifest.md](../../02_FACTOR_LIBRARY/System_Manifest.md)
+- **ﻝﺏﭨﻝﭨﮔﺕﮒ**: [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md)
 - **ﮔﮔ۰۲ﮔﺎﭨﻝﮔ ﮒ**: [ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---

@@ -415,9 +415,9 @@ python scripts/fix_invalid_links.py
 **方案1: 使用相对路径**
 ```markdown
 <!-- 正确 -->
-[文档](./DOCUMENT.md)
-[子目录文档](./subdir/DOCUMENT.md)
-[上级文档](../DOCUMENT.md)
+[文档](DOCUMENT.md)
+[子目录文档](subdir/DOCUMENT.md)
+[上级文档](10_GOVERNANCE_COMPLIANCE\DOCUMENT.md)
 
 <!-- 错误 -->
 [文档](D:/project/docs/DOCUMENT.md)
@@ -542,7 +542,7 @@ mv docs/OLD_DOCUMENT.md docs/archive/2026-Q1/
 
 | 文件 | 模块ID |
 |------|--------|
-| [DOCUMENT.md](./DOCUMENT.md) | DOCUMENT_001 |
+| [DOCUMENT.md](DOCUMENT.md) | DOCUMENT_001 |
 ```
 
 **方案2: 自动生成索引**
@@ -590,7 +590,7 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 | 文件 | 模块ID | 说明 |
 |------|--------|------|
-| [DOCUMENT.md](./DOCUMENT.md) | DOCUMENT_001 | 文档说明 |
+| [DOCUMENT.md](DOCUMENT.md) | DOCUMENT_001 | 文档说明 |
 
 ## 📊 统计信息
 

@@ -419,7 +419,7 @@ python scripts/fix_responsibility_descriptions.py
 
 - [P0整改报告](./LAYER_11_P0_RECTIFICATION_REPORT_20260406.md)
 - [P1整改报告](./LAYER_11_P1_RECTIFICATION_REPORT_20260406.md)
-- [文档维护流程](../../01_FRAMEWORK/DOCUMENT_MAINTENANCE_PROCESS.md)
+- [文档维护流程](06_ARCHIVE\01_FRAMEWORK\DOCUMENT_MAINTENANCE_PROCESS.md)
 
 ---
 

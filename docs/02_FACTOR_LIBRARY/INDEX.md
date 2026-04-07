@@ -86,12 +86,12 @@ responsibility:
 | [系统清单](../System_Manifest.md) | 系统清单（全局�?| ⭐⭐⭐⭐�?|
 | [README](./README.md) | 因子库概�?| ⭐⭐⭐⭐�?|
 | [SITEMAP](./SITEMAP.md) | 因子库文档地�?| ⭐⭐⭐⭐�?|
-| [FAQ](./FAQ.md) | 常见问题解答 | ⭐⭐⭐⭐ |
-| [交接文档](./HANDOVER.md) | 项目交接文档 | ⭐⭐⭐⭐ |
-| [知识管理](./KNOWLEDGE_MANAGEMENT.md) | 知识管理体系 | ⭐⭐⭐⭐ |
-| [模块设计计划](./MODULE_DESIGN_PLAN.md) | 模块设计规划 | ⭐⭐⭐⭐ |
+| [FAQ](FAQ.md) | 常见问题解答 | ⭐⭐⭐⭐ |
+| [交接文档](HANDOVER.md) | 项目交接文档 | ⭐⭐⭐⭐ |
+| [知识管理](KNOWLEDGE_MANAGEMENT.md) | 知识管理体系 | ⭐⭐⭐⭐ |
+| [模块设计计划](MODULE_DESIGN_PLAN.md) | 模块设计规划 | ⭐⭐⭐⭐ |
 | [优化总结](./OPTIMIZATION_SUMMARY.md) | 优化工作总结 | ⭐⭐⭐⭐ |
-| [审计报告](./99_AUDIT_REPORT.md) | 审计报告汇�?| ⭐⭐⭐⭐ |
+| [审计报告](99_AUDIT_REPORT.md) | 审计报告汇�?| ⭐⭐⭐⭐ |
 
 ---
 
@@ -139,7 +139,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [Alpha因子索引](./02_ALPHA_FACTORS_INDEX.md) | Alpha因子索引 | ⭐⭐⭐⭐�?|
+| [Alpha因子索引](02_ALPHA_FACTORS_INDEX.md) | Alpha因子索引 | ⭐⭐⭐⭐�?|
 
 ---
 
@@ -234,8 +234,8 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [回测重组](./05_BACKTEST_REORGANIZATION.md) | 回测重组方案 | ⭐⭐⭐⭐ |
-| [宽度指标](./05_BREADTH_INDICATORS.md) | 宽度指标 | ⭐⭐⭐⭐ |
+| [回测重组](05_BACKTEST_REORGANIZATION.md) | 回测重组方案 | ⭐⭐⭐⭐ |
+| [宽度指标](05_BREADTH_INDICATORS.md) | 宽度指标 | ⭐⭐⭐⭐ |
 
 ### 价值因子回�?
 | 文档名称 | 说明 | 重要�?|
@@ -309,6 +309,6 @@ responsibility:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |
 
-- [因子注册表(Factor Registry)](./factor_catalog.md) - 系统文档
+- [因子注册表(Factor Registry)](factor_catalog.md) - 系统文档
 
-- [因子库手�?v3.2](./factor_library_manual.md) - 系统文档
+- [因子库手�?v3.2](factor_library_manual.md) - 系统文档

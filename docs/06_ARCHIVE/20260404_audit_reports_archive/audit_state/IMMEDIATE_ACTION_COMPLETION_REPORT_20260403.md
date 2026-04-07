@@ -221,7 +221,7 @@ implementation_status: ί╖▓ίχΝ?
 - [ό╖▒ί║ού│╗ύ╗θίχκϋχκόΛξίΣΛΎ╝Ιύυυϊ║Νϋ╜χΎ╝Κ](./DEEP_SYSTEM_AUDIT_REPORT_ROUND2_20260403.md)
 - [όεΑύ╗Ιόη╢όηΕό╕ΖύΡΗόΛξίΣΛ](./FINAL_ARCHITECTURE_CLEANUP_REPORT_20260403.md)
 - [ύ│╗ύ╗θϊ╕╗ύ┤λί╝Χ](../../INDEX.md)
-- [ύ│╗ύ╗θόΨΘόκμίε░ίδ╛](../../SITEMAP.md)
+- [ύ│╗ύ╗θόΨΘόκμίε░ίδ╛](06_ARCHIVE\SITEMAP.md)
 
 ---
 

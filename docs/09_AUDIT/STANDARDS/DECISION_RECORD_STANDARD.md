@@ -316,7 +316,7 @@ docs/
 
 ## 11. ﮒﻟﮔﮔ۰?
 - [ﮒﺏﻝ­ﻟ؟ﺍﮒﺛﮔ۷۰ﮔﺟ](../TEMPLATES/DECISION_RECORD_TEMPLATE.md)
-- [ﮒﺏﻝ­ﻟ؟ﺍﮒﺛﻝﺑ۱ﮒﺙ](../DECISION_RECORDS/README.md)
+- [ﮒﺏﻝ­ﻟ؟ﺍﮒﺛﻝﺑ۱ﮒﺙ](09_AUDIT\DECISION_RECORDS\README.md)
 - [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---

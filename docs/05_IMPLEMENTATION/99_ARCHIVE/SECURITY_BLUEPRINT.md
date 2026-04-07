@@ -98,7 +98,7 @@ implementation_status: 设计阶段
 #### Layer 0: 系统架构
 ##### 0.001. Archive Security Blueprint
 - **模块ID**: ARCHIVE_SECURITY_BLUEPRINT_001
-- **蓝图文档**: [SECURITY_BLUEPRINT.md](./05_IMPLEMENTATION\99_ARCHIVE\SECURITY_BLUEPRINT.md)
+- **蓝图文档**: [SECURITY_BLUEPRINT.md](05_IMPLEMENTATION\99_ARCHIVE\SECURITY_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设�?
 - **状态**: Active

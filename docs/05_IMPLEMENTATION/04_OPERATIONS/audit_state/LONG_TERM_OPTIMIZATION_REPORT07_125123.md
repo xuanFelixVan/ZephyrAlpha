@@ -70,7 +70,7 @@ responsibility:
 | **开源依赖** | 📝 已规划 | ❌ 未安装 | ⚠️ 需安装 |
 | **实施阶段** | 📝 蓝图设计 | ❌ 未开始 | ⚠️ 需实施 |
 
-**输出文档**: [LAYER11_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407.md](./LAYER11_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407.md)
+**输出文档**: [LAYER11_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407.md](LAYER11_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407.md)
 
 ### 1.2 建立定期审计机制（每周一次）
 
@@ -93,7 +93,7 @@ responsibility:
 | **深度审计** | 每月一次 | 月初第一周 | 2小时 |
 | **专项审计** | 按需执行 | 变更后 | 1小时 |
 
-**输出文档**: [WEEKLY_AUDIT_MECHANISM.md](./WEEKLY_AUDIT_MECHANISM.md)
+**输出文档**: [WEEKLY_AUDIT_MECHANISM.md](WEEKLY_AUDIT_MECHANISM.md)
 
 ### 1.3 优化文档索引体系
 
@@ -116,7 +116,7 @@ responsibility:
 | **BLUEPRINT_INDEX.md** | 蓝图索引导航 | 蓝图清单、依赖关系 | 详细实施状态 |
 | **COMPLETE_BLUEPRINT_OVERVIEW.md** | 模块状态清单 | 完整模块清单、实施状态 | 蓝图导航、依赖关系 |
 
-**输出文档**: [DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md](./DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md)
+**输出文档**: [DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md](DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md)
 
 ### 1.4 建立最佳实践库
 
@@ -140,7 +140,7 @@ responsibility:
 | **解决方案** | 12个 | 问题解决方案 |
 | **推荐工具** | 4个 | 文档治理工具 |
 
-**输出文档**: [DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md](./DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
+**输出文档**: [DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md](DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
 
 ---
 

@@ -1022,7 +1022,7 @@ class SectorNeutralBenchmark:
 #### Layer 0: 系统架构
 ##### 0.001. Benchmark Management Blueprint
 - **模块ID**: BENCHMARK_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [BENCHMARK_MANAGEMENT_BLUEPRINT.md](./11_STRATEGIC_DECISION\BENCHMARK_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [BENCHMARK_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\BENCHMARK_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.11 - 基准管理系统
 - **状态**: Active

@@ -1181,7 +1181,7 @@ class SkfolioIntegration:
 #### Layer 0: 系统架构
 ##### 0.001. Investment Constraint
 - **模块ID**: INVESTMENT_CONSTRAINT_001
-- **蓝图文档**: [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./11_STRATEGIC_DECISION\INVESTMENT_CONSTRAINT_BLUEPRINT.md)
+- **蓝图文档**: [INVESTMENT_CONSTRAINT_BLUEPRINT.md](11_STRATEGIC_DECISION\INVESTMENT_CONSTRAINT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.14 - 投资限制管理系统
 - **状态**: Active

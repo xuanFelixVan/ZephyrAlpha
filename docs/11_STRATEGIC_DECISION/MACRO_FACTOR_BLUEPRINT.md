@@ -1079,7 +1079,7 @@ class StatsmodelsIntegration:
 #### Layer 0: 系统架构
 ##### 0.001. Macro Factor
 - **模块ID**: MACRO_FACTOR_001
-- **蓝图文档**: [MACRO_FACTOR_BLUEPRINT.md](./11_STRATEGIC_DECISION\MACRO_FACTOR_BLUEPRINT.md)
+- **蓝图文档**: [MACRO_FACTOR_BLUEPRINT.md](11_STRATEGIC_DECISION\MACRO_FACTOR_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.15 - 宏观因子系统
 - **状态**: Active

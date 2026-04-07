@@ -268,7 +268,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 **内部引用**:
 ```markdown
-详见 [模块名称](./MODULE_NAME_BLUEPRINT.md)
+详见 [模块名称](MODULE_NAME_BLUEPRINT.md)
 ```
 
 **外部引用**:

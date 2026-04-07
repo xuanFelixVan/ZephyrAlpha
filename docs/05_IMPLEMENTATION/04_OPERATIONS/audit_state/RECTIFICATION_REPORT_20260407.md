@@ -119,21 +119,21 @@ version: 3.0.0
 ```markdown
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 实施时间 |
 |------|---------|---------|---------|---------|
-| 1 | [ASSET_ALLOCATION_MODEL.md](./01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
-| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](./01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
-| 3 | [风险预算框架.md](./02_risk_budgeting/风险预算框架.md) | ... | ❌ 死链接
-| 4 | [策略选择框架.md](./03_strategy_selection/策略选择框架.md) | ... | ❌ 死链接
-| 5 | [策略组合优化.md](./03_strategy_selection/策略组合优化.md) | ... | ❌ 死链接
-| 6 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](./04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
+| 1 | [ASSET_ALLOCATION_MODEL.md](01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
+| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
+| 3 | [风险预算框架.md](02_risk_budgeting/风险预算框架.md) | ... | ❌ 死链接
+| 4 | [策略选择框架.md](03_strategy_selection/策略选择框架.md) | ... | ❌ 死链接
+| 5 | [策略组合优化.md](03_strategy_selection/策略组合优化.md) | ... | ❌ 死链接
+| 6 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
 ```
 
 **整改后**:
 ```markdown
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 实施时间 |
 |------|---------|---------|---------|---------|
-| 1 | [ASSET_ALLOCATION_MODEL.md](./01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
-| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](./01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
-| 3 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](./04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
+| 1 | [ASSET_ALLOCATION_MODEL.md](01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
+| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
+| 3 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
 
 **注意**: 以下P0级蓝图待补充：
 - 风险预算框架.md（待创建）

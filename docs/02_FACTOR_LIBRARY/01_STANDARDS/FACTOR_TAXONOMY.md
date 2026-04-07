@@ -592,13 +592,13 @@ class FactorMonitor:
 
 | 因子类别 | 因子数量 | 文档位置 |
 |----------|----------|----------|
-| Alpha趋势 | 14+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha均值回�?| 12+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha价�?| 11+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha成长 | 10+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha质量 | 17+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha动量 | 9+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Alpha情绪 | 14+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
+| Alpha趋势 | 14+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
+| Alpha均值回�?| 12+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
+| Alpha价�?| 11+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
+| Alpha成长 | 10+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
+| Alpha质量 | 17+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
+| Alpha动量 | 9+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
+| Alpha情绪 | 14+ | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
 | Barra风格 | 10 | [T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY\03_RISK_FACTORS\T.03.RF001.barra_style_factors.md) |
 | 行业因子 | 28+ | [T.03.RF002.industry_factors.md](02_FACTOR_LIBRARY\03_RISK_FACTORS\T.03.RF002.industry_factors.md) |
 | 尾部风险 | 8+ | [T.03.RF003.tail_risk_factors.md](02_FACTOR_LIBRARY\03_RISK_FACTORS\T.03.RF003.tail_risk_factors.md) |
@@ -611,7 +611,7 @@ class FactorMonitor:
 
 | 需�?| 路径 |
 |------|------|
-| Alpha因子列表 | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
+| Alpha因子列表 | [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) |
 | 风险因子列表 | [03_RISK_FACTORS/](../03_RISK_FACTORS/) |
 | THS_BD完整指标 | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
 | 因子注册�?| [FACTOR_CATALOG.md](02_FACTOR_LIBRARY\06_REGISTRY\FACTOR_CATALOG.md) |

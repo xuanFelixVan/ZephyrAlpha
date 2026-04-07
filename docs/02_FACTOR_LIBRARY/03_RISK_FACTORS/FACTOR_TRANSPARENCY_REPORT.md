@@ -16,7 +16,7 @@ compliance_level: 专业标准
 
 
 # T.03.RM004.factor_transparency_report
-> **核心职责**: 因子暴露度透明度报告生成
+> **核心职责**: T.03.RM004.factor_transparency_report的定义、实现和应用
 > **职责边界**: 
 > - ✅ 本文档负责：因子暴露度透明度报告生成相关内容
 > - ❌ 本文档不负责：其他模块内容

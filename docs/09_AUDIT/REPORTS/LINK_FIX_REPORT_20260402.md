@@ -191,7 +191,7 @@ last_updated: 2026-04-02
 
 ύν║ϊ╛Μ:
 ```markdown
-ϊ┐χίνΞίΚ? [όΨΘόκμ](../STRATEGY_AI_MODULES_ANALYSIS.md)
+ϊ┐χίνΞίΚ? [όΨΘόκμ](09_AUDIT\STRATEGY_AI_MODULES_ANALYSIS.md)
 ϊ┐χίνΞίΡ? [όΨΘόκμ](STRATEGY_AI_MODULES_ANALYSIS.md)
 ```
 

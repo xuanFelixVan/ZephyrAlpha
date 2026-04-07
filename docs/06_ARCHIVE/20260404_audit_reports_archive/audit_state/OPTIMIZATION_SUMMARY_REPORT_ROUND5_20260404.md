@@ -234,7 +234,7 @@ compliance_level: 专业标准
 
 ### 审计报告
 
-- [第四次深度审计报告](./LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V4_20260403.md)
+- [第四次深度审计报告](LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V4_20260403.md)
 - [被删除文件恢复报告](./DELETED_FILES_RECOVERY_REPORT_20260404.md)
 
 ### 优化报告

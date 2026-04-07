@@ -74,8 +74,8 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](../CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](../AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](05_IMPLEMENTATION\CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](05_IMPLEMENTATION\AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
@@ -104,7 +104,7 @@ implementation_status: Active
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
 | **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](../02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION\02_IMPLEMENTATION_GUIDES\STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﻟ۶۲ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
@@ -116,7 +116,7 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](../02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](05_IMPLEMENTATION\02_IMPLEMENTATION_GUIDES\EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
@@ -129,7 +129,7 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](05_IMPLEMENTATION\02_IMPLEMENTATION_GUIDES\BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
@@ -143,9 +143,9 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](../06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](../06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](05_IMPLEMENTATION\06_CHECKLISTS\DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](05_IMPLEMENTATION\06_CHECKLISTS\CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](05_IMPLEMENTATION\06_CHECKLISTS\PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
@@ -159,9 +159,9 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](../04_CONFIG_TEMPLATES/strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
-| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](../04_CONFIG_TEMPLATES/backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
-| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](../04_CONFIG_TEMPLATES/system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ
@@ -338,19 +338,19 @@ pip install -r requirements.txt
 
 ### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
 
-**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../CONSTRUCTION_SPECIFICATION.md)
+**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION\CONSTRUCTION_SPECIFICATION.md)
 2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
 3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
 5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
 ### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴?*
 
-**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](../06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
+**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION\06_CHECKLISTS\CODE_REVIEW_CHECKLIST.md)
 2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝ ﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
 3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔ­ﻠ۰ﺗﻠﻟﺟ
 
 ### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
 
-**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](../02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
+**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](05_IMPLEMENTATION\02_IMPLEMENTATION_GUIDES\BACKTEST_ENGINE_GUIDE.md)
 2. ﮒﮒ۳ﻝ­ﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
 4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
 ### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*

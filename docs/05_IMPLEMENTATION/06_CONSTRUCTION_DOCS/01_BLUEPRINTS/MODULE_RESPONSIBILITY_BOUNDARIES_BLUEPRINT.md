@@ -1,31 +1,31 @@
 ---
-module_id: MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT_001
+module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-
+  - 模块职责边界定义
+  - 职责划分
+  - 模块协作规范
+  - 职责冲突解决
 layer: "Layer 6 (组合优化层)"
 ---
-﻿# Layer 7 AI报告?- 模块职责边界定义
 
-> **核心定位**: Layer 7 AI报告?- 模块职责边界定义的核心功能实现
+# 模块职责边界定义蓝图
 
+> **核心职责**: 定义Layer 6组合优化层各模块的职责边界
+> **职责边界**: 
+> - ✅ 本文档负责：模块职责边界定义、职责划分、模块协作规范、职责冲突解决
+> - ❌ 本文档不负责：具体模块实现、算法设计、数据处理
 
-**文档ID**: MODULE_RESPONSIBILITY_BOUNDARIES_001
-**版本**: v1.0.2
-**创建日期**: 2026-04-03
-**状态**: Active
-**适用范围**: Layer 7 AI报告层所有模?
 ## 核心定位
 
-layer: "Layer 6 (组合优化层)"
----
-﻿# Layer 7 AI报告?- 模块职责边界定义，确保系统功能的稳定运行和高效执行。
+负责模块职责边界定义，确保系统功能的稳定运行和高效执行。
 
 ## 二、核心模块职责边?
 ### 2.1 情景分析?vs 压力测试报告?

@@ -330,7 +330,7 @@ python scripts/fix_duplicate_module_id.py
 > **职责边界**: 
 > - ✅ 本文档负责：因子计算引擎设计、调度系统架构、计算流程规范、性能优化标准
 > - ❌ 本文档不负责：具体因子实现、因子分类定义、因子回测流程
-> - 📋 相关文档：[因子分类标准](./FACTOR_CLASSIFICATION_STANDARD.md) - 因子分类定义
+> - 📋 相关文档：[因子分类标准](FACTOR_CLASSIFICATION_STANDARD.md) - 因子分类定义
 ```
 
 **优点**:
@@ -349,7 +349,7 @@ python scripts/fix_duplicate_module_id.py
 > **职责边界**: 
 > - ✅ 本文档负责：系统架构设计、模块规划、接口定义、技术选型
 > - ❌ 本文档不负责：具体实现代码、测试用例、部署流程
-> - 📋 相关文档：[实现文档](../IMPLEMENTATION.md) - 具体实现细节
+> - 📋 相关文档：[实现文档](10_GOVERNANCE_COMPLIANCE\IMPLEMENTATION.md) - 具体实现细节
 ```
 
 **优点**:

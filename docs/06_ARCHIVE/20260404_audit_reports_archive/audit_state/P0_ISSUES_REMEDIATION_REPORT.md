@@ -81,7 +81,7 @@ applicable_scope: Layer 5з≠ЦзХ•жЙІи°Ме±ВжЦЗж°£ж≤їпњ
 
 **еЃМжИРжЧґйЧі**: 2026-04-02
 
-**иІДиМГжЦЗж°£**: [DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md](../../09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+**иІДиМГжЦЗж°£**: [DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md](06_ARCHIVE\09_AUDIT\STANDARDS\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
 
 ### 2.3 и°МеК®3: дњЃж≠£module_idйЗНе§Н
 
@@ -245,9 +245,9 @@ applicable_scope: Layer 5з≠ЦзХ•жЙІи°Ме±ВжЦЗж°£ж≤їпњ
 ### 7.2 зЫЄеЕ≥жЦЗж°£
 
 **жХіжФєзЫЄеЕ≥жЦЗж°£**:
-1. [Layer 5з≠ЦзХ•жЙІи°Ме±ВжЦЗж°£ж≤їзРЖжЈ±еЇ¶еЃ°иЃ°жК•еСК](./LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md)
-2. [жЦЗж°£иБМиі£иЊєзХМиІДиМГ](../../09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-3. [жКАжЬѓиІДж†Љдє¶зіҐеЉХ](../05_TECHNICAL_SPECIFICATIONS/INDEX.md)
+1. [Layer 5з≠ЦзХ•жЙІи°Ме±ВжЦЗж°£ж≤їзРЖжЈ±еЇ¶еЃ°иЃ°жК•еСК](LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md)
+2. [жЦЗж°£иБМиі£иЊєзХМиІДиМГ](06_ARCHIVE\09_AUDIT\STANDARDS\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+3. [жКАжЬѓиІДж†Љдє¶зіҐеЉХ](06_ARCHIVE\20260404_audit_reports_archive\05_TECHNICAL_SPECIFICATIONS\INDEX.md)
 
 ---
 

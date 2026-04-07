@@ -560,7 +560,7 @@ implementation_status: 蓝图阶段
 | 文档 | 说明 |
 |------|------|
 | [完整系统蓝图总览](./COMPLETE_BLUEPRINT_OVERVIEW.md) | 所有模块的完整清单 |
-| [蓝图补充方案](../05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER_11_BLUEPRINT_COMPLETION_PLAN_20260407.md) | 蓝图补充详细方案 |
+| [蓝图补充方案](05_IMPLEMENTATION\04_OPERATIONS\audit_state\LAYER_11_BLUEPRINT_COMPLETION_PLAN_20260407.md) | 蓝图补充详细方案 |
 
 ---
 

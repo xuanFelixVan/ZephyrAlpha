@@ -431,9 +431,9 @@ tags: ["ﮒﻟ۶ﮒ؟۰ﻟ؟۰", "ﮒﻟ۶ﻝ؟۰ﻝ", "ﮒ؟۰�
 ---
 
 ## 7. ﮒﻟﮔﮔ۰?
-- [ﻠ۲ﻠ۸ﻝ؟۰ﻝﮔ۰ﮔﭘ](../09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔ ﮒv5.3](../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.3.md)
+- [ﻠ۲ﻠ۸ﻝ؟۰ﻝﮔ۰ﮔﭘ](09_AUDIT\09_AUDIT\STANDARDS\RISK_MANAGEMENT_FRAMEWORK.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](09_AUDIT\09_AUDIT\TEMPLATES\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [ﮒ؟۰ﻟ؟۰ﻟﺑ۷ﻠﮔ ﮒv5.3](09_AUDIT\09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.3.md)
 
 ---
 

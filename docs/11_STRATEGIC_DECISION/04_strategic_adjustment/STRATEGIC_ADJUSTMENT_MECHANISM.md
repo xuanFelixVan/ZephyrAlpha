@@ -379,7 +379,7 @@ decision = adjustment.make_decision()
 |------|------|
 | [MARKET_ENVIRONMENT_ASSESSMENT.md](./MARKET_ENVIRONMENT_ASSESSMENT.md) | 市场环境评估蓝图 |
 | [ADJUSTMENT_TRIGGER_CONDITIONS.md](./ADJUSTMENT_TRIGGER_CONDITIONS.md) | 调整触发条件蓝图 |
-| [策略选择框架.md](./策略选择框架.md) | 策略选择框架蓝图 |
+| [策略选择框架.md](策略选择框架.md) | 策略选择框架蓝图 |
 
 ---
 

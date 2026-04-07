@@ -894,7 +894,7 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 - [战略决策层蓝图](./BLUEPRINT.md)
 - [架构补充方案](./STRATEGIC_DECISION_ARCHITECTURE_COMPLETION_PLAN_20260407.md)
-- [决策知识库蓝图](./DECISION_KNOWLEDGE_BASE_BLUEPRINT.md)
+- [决策知识库蓝图](DECISION_KNOWLEDGE_BASE_BLUEPRINT.md)
 - [开源集成蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md)
 
 ---

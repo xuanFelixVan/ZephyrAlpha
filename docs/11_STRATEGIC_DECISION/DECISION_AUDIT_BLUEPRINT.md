@@ -1337,7 +1337,7 @@ class ComplianceReportGenerator:
 #### Layer 0: 系统架构
 ##### 0.001. Decision Audit
 - **模块ID**: DECISION_AUDIT_001
-- **蓝图文档**: [DECISION_AUDIT_BLUEPRINT.md](./11_STRATEGIC_DECISION\DECISION_AUDIT_BLUEPRINT.md)
+- **蓝图文档**: [DECISION_AUDIT_BLUEPRINT.md](11_STRATEGIC_DECISION\DECISION_AUDIT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.21 - 投资决策审计系统
 - **状态**: Active

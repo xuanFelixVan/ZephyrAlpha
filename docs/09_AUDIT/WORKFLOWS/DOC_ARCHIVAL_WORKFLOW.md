@@ -201,13 +201,13 @@ python scripts/move_to_archive.py --doc docs/PATH/TO/DOC.md --archive-dir docs/0
 
 **ﮔﺑﮔﺍﮒ?*:
 ```markdown
-ﮒﻟ۶ [ﻝ­ﻝ۴ﮒﺙﮔﻟﮒﺝ](../BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT.md)
+ﮒﻟ۶ [ﻝ­ﻝ۴ﮒﺙﮔﻟﮒﺝ](09_AUDIT\BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT.md)
 ```
 
 **ﮔﺑﮔﺍﮒﺅﺙﮔﮔﺟﻛﭨ۲ﺅﺙ**:
 ```markdown
-ﮒﻟ۶ [ﻝ­ﻝ۴ﮒﺙﮔﻟﮒﺝv2.0](../BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT_V2.md)
-> **ﮔﺏ۷ﮔ**: ﮔ۶ﻝﮔ؛[v1.0](../../06_ARCHIVE/replaced_documents/20260403_version_update/STRATEGY_ENGINE_BLUEPRINT_ARCHIVED.md)ﮒﺓﺎﮒﺛﮔ۰?```
+ﮒﻟ۶ [ﻝ­ﻝ۴ﮒﺙﮔﻟﮒﺝv2.0](09_AUDIT\BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT_V2.md)
+> **ﮔﺏ۷ﮔ**: ﮔ۶ﻝﮔ؛[v1.0](06_ARCHIVE\replaced_documents\20260403_version_update\STRATEGY_ENGINE_BLUEPRINT_ARCHIVED.md)ﮒﺓﺎﮒﺛﮔ۰?```
 
 **ﮔﺑﮔﺍﮒﺅﺙﮔ ﮔﺟﻛﭨ۲ﺅﺙ**:
 ```markdown

@@ -259,7 +259,7 @@ last_updated: 2026-04-02---
 - [цЮ╢цЮДхоЪф╣Й](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [цибхЭЧшБМш┤гш╛╣чХМ](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [AIчЫСчЭгщЫЖцИРцЦ╣цбИ](../../../03_TRADING_TACTICS/AI_SUPERVISION_INTEGRATION_PLAN.md)
-- [цКАцЬпшпДхобцаЗхЗЖv5.3](../QUALITY_GATE_MECHANISM.md)
+- [цКАцЬпшпДхобцаЗхЗЖv5.3](06_ARCHIVE\20260404_audit_reports_archive\QUALITY_GATE_MECHANISM.md)
 
 ### 8.2 шпДхобш┐ЗчиЛшо░х╜Х
 - 2026-04-02 14:00 - х╝АхзЛцКАцЬпхПпшбМцАзшпД?

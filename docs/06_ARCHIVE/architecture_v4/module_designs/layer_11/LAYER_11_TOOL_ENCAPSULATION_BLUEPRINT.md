@@ -737,7 +737,7 @@ class ToolCache:
 | [Layer 11æ¶æèå¾](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11æ´ä½æ¶æ |
 | [æå­é©±å¨æ ¸å¿æ¨¡å](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUè®¾è®¡ |
 | [éåäº¤æAgentæ¨¡å](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agentæ¡æ¶ |
-| [ç­ç¥å¼æèå¾](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md` | ç­ç¥å¼æè®¾è®¡ |
+| [ç­ç¥å¼æèå¾](06_ARCHIVE\architecture_v4\03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_CORE_BLUEPRINT.md) | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md` | ç­ç¥å¼æè®¾è®¡ |
 
 ### 10.2 ä»£ç å®ç°ä½ç½®
 
@@ -764,7 +764,7 @@ class ToolCache:
 #### Layer 0: 系统架构
 ##### 0.001. Layer 11 Tool Encapsulation
 - **模块ID**: LAYER_11_TOOL_ENCAPSULATION_001
-- **蓝图文档**: [LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md](./06_ARCHIVE\architecture_v4\module_designs\layer_11\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md)
+- **蓝图文档**: [LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md](06_ARCHIVE\architecture_v4\module_designs\layer_11\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11æå­é©±å¨å±?compliance_level: ä¸ä¸æºææ å
 - **状态**: Active

@@ -34,8 +34,8 @@ parent_document: ../INDEX.md
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据源索引 | [../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md) | 审计对象 | 数据源层索引 |
-| 审计标准 | [../STANDARDS/AUDIT_STANDARDS_v5.1.md](../STANDARDS/AUDIT_STANDARDS_v5.1.md) | 审计标准 | 审计质量标准 |
+| 数据源索引 | [../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md](05_IMPLEMENTATION\02_FACTOR_LIBRARY\04_DATA_SOURCE\INDEX.md) | 审计对象 | 数据源层索引 |
+| 审计标准 | [../STANDARDS/AUDIT_STANDARDS_v5.1.md](05_IMPLEMENTATION\04_OPERATIONS\STANDARDS\AUDIT_STANDARDS_v5.1.md) | 审计标准 | 审计质量标准 |
 
 **职责边界**:
 - ✅ 本文档负责: 评估删除文件的价值和合理性

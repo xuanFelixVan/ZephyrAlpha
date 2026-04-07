@@ -845,7 +845,7 @@ Layer 7 AI报告
 #### Layer 0: 系统架构
 ##### 0.001. Portfolio Insurance Blueprint
 - **模块ID**: PORTFOLIO_INSURANCE_BLUEPRINT_001
-- **蓝图文档**: [PORTFOLIO_INSURANCE_BLUEPRINT.md](./11_STRATEGIC_DECISION\PORTFOLIO_INSURANCE_BLUEPRINT.md)
+- **蓝图文档**: [PORTFOLIO_INSURANCE_BLUEPRINT.md](11_STRATEGIC_DECISION\PORTFOLIO_INSURANCE_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.5 - 投资组合保险系统
 - **状态**: Active

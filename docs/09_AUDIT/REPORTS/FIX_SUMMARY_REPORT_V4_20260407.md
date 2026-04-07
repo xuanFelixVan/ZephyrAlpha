@@ -82,7 +82,7 @@ responsibility:
 
 **修复示例**:
 ```markdown
-修复前: [Layer 8总体蓝图](./LAYER_8_MASTER_BLUEPRINT.md)
+修复前: [Layer 8总体蓝图](LAYER_8_MASTER_BLUEPRINT.md)
 修复后: [Layer 8总体蓝图](#)
 ```
 

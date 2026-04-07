@@ -375,8 +375,8 @@ git commit -m "feat: ﮔﺓﭨﮒ ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../CONSTRUCTION_SPECIFICATION.md)
-- [ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵](../06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md)
+- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION\CONSTRUCTION_SPECIFICATION.md)
+- [ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵](05_IMPLEMENTATION\06_CHECKLISTS\DOCUMENT_QUALITY_GATE.md)
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

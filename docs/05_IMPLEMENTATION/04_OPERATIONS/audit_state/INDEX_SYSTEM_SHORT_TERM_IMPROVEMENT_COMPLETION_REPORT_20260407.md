@@ -168,7 +168,7 @@ responsibility:
 
 **改进结果**: ✅ 完成
 
-**索引更新机制文档**: [INDEX_UPDATE_MECHANISM.md](./INDEX_UPDATE_MECHANISM.md)
+**索引更新机制文档**: [INDEX_UPDATE_MECHANISM.md](INDEX_UPDATE_MECHANISM.md)
 
 **机制核心内容**:
 - 索引更新触发机制（自动触发 + 定期触发）

@@ -360,9 +360,9 @@ class StrategyLoader:
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
-- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ](../../02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md)
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](../../CONSTRUCTION_SPECIFICATION.md)
+- [ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ](05_IMPLEMENTATION\03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ](05_IMPLEMENTATION\07_OPERATIONS\02_IMPLEMENTATION_GUIDES\STRATEGY_FACTORY_GUIDE.md)
+- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION\07_OPERATIONS\CONSTRUCTION_SPECIFICATION.md)
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

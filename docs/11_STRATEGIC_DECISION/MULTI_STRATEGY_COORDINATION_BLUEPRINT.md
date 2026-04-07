@@ -1082,7 +1082,7 @@ class MultiStrategyCoordinator:
 #### Layer 0: 系统架构
 ##### 0.001. Multi Strategy Coordination
 - **模块ID**: MULTI_STRATEGY_COORDINATION_001
-- **蓝图文档**: [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](./11_STRATEGIC_DECISION\MULTI_STRATEGY_COORDINATION_BLUEPRINT.md)
+- **蓝图文档**: [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](11_STRATEGIC_DECISION\MULTI_STRATEGY_COORDINATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.18 - 多策略协调系统
 - **状态**: Active

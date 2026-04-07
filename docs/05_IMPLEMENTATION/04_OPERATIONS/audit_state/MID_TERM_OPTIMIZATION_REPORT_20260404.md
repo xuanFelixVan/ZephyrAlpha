@@ -235,7 +235,7 @@ compliance_level: 专业标准---
 
 ## 📚 相关文档
 
-- [第六轮深度审计报告](./LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md)
+- [第六轮深度审计报告](LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md)
 - [P0问题修复报告](./P0_RESOLUTION_REPORT_V6_20260404.md)
 - [短期改进报告](./SHORT_TERM_IMPROVEMENT_REPORT_20260404.md)
 

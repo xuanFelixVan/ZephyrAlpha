@@ -286,7 +286,7 @@ responsibility:
 - [架构定义](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [神经网络集成计划](../../../03_TRADING_TACTICS/NEURAL_NETWORK_INTEGRATION_PLAN.md)
-- [技术评审标准v5.3](../QUALITY_GATE_MECHANISM.md)
+- [技术评审标准v5.3](06_ARCHIVE\20260404_audit_reports_archive\QUALITY_GATE_MECHANISM.md)
 
 ### 8.2 评审过程记录
 - 2026-04-02 10:00 - 开始技术可行性评?

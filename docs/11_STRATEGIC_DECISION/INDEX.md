@@ -156,28 +156,28 @@ responsibility:
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
 | [投资委员会决策支持蓝图](./INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT.md) | 决策提案管理、投票系统、决策存档 | P0 | ✅ 已创建 |
-| [战术资产配置蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块1-战术资产配置系统taa) | 短期配置调整、市场时机判断 | P0 | ✅ 已创建 |
-| [风险平价模型蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块2-风险平价模型系统) | 风险平价权重、风险贡献度分析 | P0 | ✅ 已创建 |
-| [策略生命周期管理蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块3-策略生命周期管理系统) | 策略创建、测试、上线、归档 | P0 | ✅ 已创建 |
+| [战术资产配置蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块1-战术资产配置系统taa) | 短期配置调整、市场时机判断 | P0 | ✅ 已创建 |
+| [风险平价模型蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块2-风险平价模型系统) | 风险平价权重、风险贡献度分析 | P0 | ✅ 已创建 |
+| [策略生命周期管理蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块3-策略生命周期管理系统) | 策略创建、测试、上线、归档 | P0 | ✅ 已创建 |
 
 ### 9. 新增重要模块（P1级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [决策知识库蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块4-决策知识库系统) | 决策经验积累、知识检索 | P1 | ✅ 已创建 |
-| [市场情报系统蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块5-市场情报系统) | 新闻采集、情绪分析、报告生成 | P1 | ✅ 已创建 |
-| [投资观点管理蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 观点记录、验证跟踪 | P1 | ✅ 已创建 |
-| [宏观经济预测蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 经济指标预测、周期判断 | P1 | ✅ 已创建 |
-| [行业轮动模型蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 行业景气度、轮动信号 | P1 | ✅ 已创建 |
-| [风格轮动模型蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 风格因子、轮动信号 | P1 | ✅ 已创建 |
+| [决策知识库蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块4-决策知识库系统) | 决策经验积累、知识检索 | P1 | ✅ 已创建 |
+| [市场情报系统蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块5-市场情报系统) | 新闻采集、情绪分析、报告生成 | P1 | ✅ 已创建 |
+| [投资观点管理蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 观点记录、验证跟踪 | P1 | ✅ 已创建 |
+| [宏观经济预测蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 经济指标预测、周期判断 | P1 | ✅ 已创建 |
+| [行业轮动模型蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 行业景气度、轮动信号 | P1 | ✅ 已创建 |
+| [风格轮动模型蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块6-9-其他p1级模块概要) | 风格因子、轮动信号 | P1 | ✅ 已创建 |
 
 ### 10. 新增支持模块（P2级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [蒙特卡洛模拟蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 收益模拟、风险模拟 | P2 | ✅ 已创建 |
-| [决策树分析蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 决策树构建、路径分析 | P2 | ✅ 已创建 |
-| [敏感性分析蓝图](./COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 参数敏感性、情景敏感性 | P2 | ✅ 已创建 |
+| [蒙特卡洛模拟蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 收益模拟、风险模拟 | P2 | ✅ 已创建 |
+| [决策树分析蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 决策树构建、路径分析 | P2 | ✅ 已创建 |
+| [敏感性分析蓝图](COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md#模块10-12-p2级模块概要) | 参数敏感性、情景敏感性 | P2 | ✅ 已创建 |
 
 ### 11. 架构补充文档
 
@@ -193,24 +193,24 @@ responsibility:
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [交易对手风险管理蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块1-交易对手风险管理系统) | 信用评级、敞口管理、违约概率 | P0 | ✅ 已创建 |
-| [决策质量评估蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块2-决策质量评估系统) | 准确率统计、偏差分析、改进建议 | P0 | ✅ 已创建 |
+| [交易对手风险管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块1-交易对手风险管理系统) | 信用评级、敞口管理、违约概率 | P0 | ✅ 已创建 |
+| [决策质量评估蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块2-决策质量评估系统) | 准确率统计、偏差分析、改进建议 | P0 | ✅ 已创建 |
 
 ### 13. 补充重要模块（P1级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [动态风险管理蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 实时风险计算、动态限额 | P1 | ✅ 已创建 |
-| [尾部风险对冲蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 尾部风险识别、对冲策略 | P1 | ✅ 已创建 |
-| [波动率管理蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 波动率预测、波动率交易 | P1 | ✅ 已创建 |
+| [动态风险管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 实时风险计算、动态限额 | P1 | ✅ 已创建 |
+| [尾部风险对冲蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 尾部风险识别、对冲策略 | P1 | ✅ 已创建 |
+| [波动率管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块3-5-p1级模块概要) | 波动率预测、波动率交易 | P1 | ✅ 已创建 |
 
 ### 14. 补充支持模块（P2级）
 
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
-| [相关性管理蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 动态相关性、相关性突变检测 | P2 | ✅ 已创建 |
-| [因子暴露管理蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 因子暴露计算、因子风险预算 | P2 | ✅ 已创建 |
-| [市场冲击模型蓝图](./SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 市场冲击成本、最优执行 | P2 | ✅ 已创建 |
+| [相关性管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 动态相关性、相关性突变检测 | P2 | ✅ 已创建 |
+| [因子暴露管理蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 因子暴露计算、因子风险预算 | P2 | ✅ 已创建 |
+| [市场冲击模型蓝图](SUPPLEMENTARY_MODULES_BLUEPRINTS_20260407.md#模块6-8-p2级模块概要) | 市场冲击成本、最优执行 | P2 | ✅ 已创建 |
 
 ---
 

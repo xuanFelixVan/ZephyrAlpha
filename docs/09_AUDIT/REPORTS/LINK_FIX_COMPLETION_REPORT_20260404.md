@@ -76,7 +76,7 @@ python scripts/link_fixer.py --dir docs/ --fix --report reports/full_link_fix_re
 **жЌ«жбўтјЪтЏа**№╝џТќЄС╗Хти▓тѕажЎцТѕќжЄЇтЉйтљЇ
 
 **С┐«тцЇТќ╣Т│Ћ**№╝?1. ТБђТЪЦТќЄС╗ХТў»тљдтГўтю?2. т░ЮУ»ЋТЪЦТЅЙТќ░ТќЄС╗ХтљЇ№╝ѕLAYER3_XXX -> SENTIMENT_ANALYSIS_XXX№╝?3. ТЏ┤Тќ░жЊЙТјЦТѕќтѕажЎцтц▒ТЋѕжЊЙТј?
-**уц║СЙІ**№╝?- тјЪжЊЙТјЦ№╝џ`[Тћ╣У┐ЏУ«Атѕњ](./LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md)`
+**уц║СЙІ**№╝?- тјЪжЊЙТјЦ№╝џ`[Тћ╣У┐ЏУ«Атѕњ](LAYER3_IMPROVEMENT_IMPLEMENTATION_PLAN.md)`
 - С┐«тцЇтљј№╝џ`Тћ╣У┐ЏУ«Атѕњ`№╝ѕтѕажЎцжЊЙТјЦ№╝їС┐ЮуЋЎТќЄТюг№╝?
 ---
 

@@ -444,8 +444,8 @@ def monitor_portfolio_risk(
 
 ## 5. ﮒﻟﮔﮔ۰?
 - [ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
-- [ﮒ۷ﻠﮒ ﮒ­ﮒﭦ](./MOMENTUM_FACTOR_LIBRARY.md)
-- [ﮒ۳ﮒ ﮒ­ﻝ­ﻝ۴ﮒﭦ](./MULTI_FACTOR_STRATEGY_LIBRARY.md)
+- [ﮒ۷ﻠﮒ ﮒ­ﮒﭦ](MOMENTUM_FACTOR_LIBRARY.md)
+- [ﮒ۳ﮒ ﮒ­ﻝ­ﻝ۴ﮒﭦ](MULTI_FACTOR_STRATEGY_LIBRARY.md)
 
 ---
 

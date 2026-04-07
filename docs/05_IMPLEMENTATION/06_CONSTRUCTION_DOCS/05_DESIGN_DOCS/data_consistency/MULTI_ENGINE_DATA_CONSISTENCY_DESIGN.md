@@ -783,8 +783,8 @@ async def schedule_compensation(
 
 ## ﻠﮒﺛBﺅﺙﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?
 
-1. [MULTI_ENGINE_BLUEPRINT.md](../../04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md) - ﮒ۳ﮒﺙﮔﮔﭘﮔﻟﮒ?
-2. [STORAGE_TIER.md](../../05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md) - ﮒ­ﮒ۷ﮒﺎﮔﭘﮔﻟ؟ﺝﻟ؟?
+1. [MULTI_ENGINE_BLUEPRINT.md](05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\04_EXECUTION\06_SIMULATION\MULTI_ENGINE_BLUEPRINT.md) - ﮒ۳ﮒﺙﮔﮔﭘﮔﻟﮒ?
+2. [STORAGE_TIER.md](05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\05_IMPLEMENTATION\04_INFRASTRUCTURE\STORAGE_TIER.md) - ﮒ­ﮒ۷ﮒﺎﮔﭘﮔﻟ؟ﺝﻟ؟?
 3.  - ﮒﺙﮔﻠﻠﮒ۷ﻟ؟ﺝﻟ؟?
 4.  - ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 

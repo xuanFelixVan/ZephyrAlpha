@@ -855,7 +855,7 @@ class ComplianceMonitor:
 
 | 文档 | 说明 |
 |------|------|
-| [风险规则引擎](../03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md) | 风险规则定义 |
+| [风险规则引擎](03_TRADING_TACTICS\09_RISK_RULES\RISK_RULE_ENGINE.md) | 风险规则定义 |
 | [质量监控蓝图](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 质量监控体系 |
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
 

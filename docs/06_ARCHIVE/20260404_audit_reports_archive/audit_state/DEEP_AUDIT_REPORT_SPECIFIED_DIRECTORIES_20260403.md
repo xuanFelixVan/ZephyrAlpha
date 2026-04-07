@@ -432,9 +432,9 @@ cat > data/assessments/INDEX.md << 'EOF'
 ﮔ؛ﻝ؟ﮒﺛﮒ­ﮒ۷ﮔﮔﺁﻟ۶ﻟﻝﻟﺁﻛﺙﺍﮔ۴ﮒﻙ?
 ## ﻟﺁﻛﺙﺍﮒﺁﺗﻟﺎ۰
 
-1. [ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ](./market_impact/market_impact_assessment_report.md)
-2. [ﻝﭨﮔﭖﮒ۷ﮔﮒﺙﮔ](./economic_regime/economic_regime_assessment_report.md)
-3. [ﮔﭦﻟﺛﮔ۶ﻟ۰ﮒﺙﮔ](./smart_execution/smart_execution_assessment_report.md)
+1. [ﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒ](market_impact/market_impact_assessment_report.md)
+2. [ﻝﭨﮔﭖﮒ۷ﮔﮒﺙﮔ](economic_regime/economic_regime_assessment_report.md)
+3. [ﮔﭦﻟﺛﮔ۶ﻟ۰ﮒﺙﮔ](smart_execution/smart_execution_assessment_report.md)
 EOF
 ```
 

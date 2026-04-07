@@ -46,10 +46,10 @@ implementation_status: ш┐ЫшбМф╕?---
 тЖ?[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ч╗Яф╕АцЮ╢цЮД
 
 ### цИСшжБх╝АхПСчнЦчХ?тЖ?[Strategy_Spec_S001.md](Strategy_Spec_S001.md) - чнЦчХецибцЭ┐я╝?0хИЖщТЯя╝?
-### цИСшжБцЯехЫахн?тЖ?[02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - хЫахнРч┤вх╝Хя╝?0хИЖщТЯя╝?
+### цИСшжБцЯехЫахн?тЖ?[02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) - хЫахнРч┤вх╝Хя╝?0хИЖщТЯя╝?
 ### цИСшжБщГич╜▓ч│╗ч╗Я
 тЖ? - щГич╜▓цМЗхНЧя╝?0хИЖщТЯя╝?
-### цИСщБЗхИ░щЧощв?тЖ?[FAQ.md](../02_FACTOR_LIBRARY/FAQ.md) - х╕╕шзБщЧощвШя╝?хИЖщТЯя╝?
+### цИСщБЗхИ░щЧощв?тЖ?[FAQ.md](02_FACTOR_LIBRARY\FAQ.md) - х╕╕шзБщЧощвШя╝?хИЖщТЯя╝?
 ### цИСшжБхобшобч│╗ч╗Я
 тЖ?[09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - хобшобщЧицИ╖я╝?хИЖщТЯя╝?
 
@@ -98,7 +98,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | [README.md](../../README.md) | цбЖцЮ╢цЦЗцбгч┤вх╝Х |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД |
 | [MODULE_DESIGN_TEMPLATE.md](../05_IMPLEMENTATION/MODULE_DESIGN_TEMPLATE.md) | цибхЭЧшо╛шобцибцЭ┐ |
-| [MODULE_DESIGN_PLAN.md](../02_FACTOR_LIBRARY/MODULE_DESIGN_PLAN.md) | цибхЭЧшо╛шобшобхИТ |
+| [MODULE_DESIGN_PLAN.md](02_FACTOR_LIBRARY\MODULE_DESIGN_PLAN.md) | цибхЭЧшо╛шобшобхИТ |
 | [MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) | х╕ВхЬ║чК╢цАБшпЖхИ?|
 | | ф║║цЬ║хНПф╜Ьц╡БчиЛ |
 | [TECH_STACK.md](../01_FRAMEWORK/TECH_STACK.md) | цКАцЬпцаИщАЙцЛй |
@@ -110,7 +110,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | [README.md](../../README.md) | хЫахнРх║УцА╗шзИ |
 |  | хЫахнРхИЖч▒╗хп╝шИк |
 |  | хЫахнРчаФчй╢цЦ╣ц│Хшо?|
-| [02_ALPHA_FACTORS_INDEX.md](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) | 87ф╕кAlphaхЫахнРч┤вх╝Х |
+| [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) | 87ф╕кAlphaхЫахнРч┤вх╝Х |
 |  | 46ф╕кщгОщЩйхЫахн?|
 |  | цХ░цНоц║Ршп┤цШ?|
 |  | хЫЮц╡ЛцКехСК |
@@ -177,7 +177,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 ## ЁЯФН цМЙчФищАФцЯецЙ?
 ### чнЦчХех╝АхПСшА?1. [Strategy_Spec_S001.md](Strategy_Spec_S001.md) - чнЦчХецибцЭ┐
-2. [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md) - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
+2. [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX.md) - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
 ### ч│╗ч╗ЯцЮДх╗║
 1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛
 2. [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - ч╗Яф╕АцЮ╢цЮД
@@ -185,12 +185,12 @@ implementation_status: ш┐ЫшбМф╕?---
 ### ш┐Рч╗┤
 1.  - щГич╜▓цМЗхНЧ
 2.  - ш┐Рч╗┤цЙЛхЖМ
-3. [FAQ.md](../02_FACTOR_LIBRARY/FAQ.md) - х╕╕шзБщЧощвШ
+3. [FAQ.md](02_FACTOR_LIBRARY\FAQ.md) - х╕╕шзБщЧощвШ
 
 ### AIчаФчй╢
 1. [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AIчаФчй╢цбЖцЮ╢я╝ИшзБчммхЕнчлая╝Й
 2.  - хоЮщкМш┐╜ш╕к
-3. [KNOWLEDGE_MANAGEMENT.md](../02_FACTOR_LIBRARY/KNOWLEDGE_MANAGEMENT.md) - чЯешпЖчобчРЖ
+3. [KNOWLEDGE_MANAGEMENT.md](02_FACTOR_LIBRARY\KNOWLEDGE_MANAGEMENT.md) - чЯешпЖчобчРЖ
 
 ### ч│╗ч╗ЯхобшобхС?1. [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - хобшобщЧицИ╖щжЦщб╡
 2. [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - хобшобцаЗхЗЖ
@@ -210,14 +210,14 @@ implementation_status: ш┐ЫшбМф╕?---
 | [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | чЙИцЬмхПШцЫ┤цЧех┐Ч | чЙИцЬмцОзхИ╢хПВшА?|
 | [VERSIONING.md](../05_IMPLEMENTATION/VERSIONING.md) | чЙИцЬмчобчРЖшзДшМГ | чЙИцЬмцОзхИ╢хПВшА?|
 | [CODE_EXAMPLES.md](../05_IMPLEMENTATION/CODE_EXAMPLES.md) | ф╗гчаБчд║ф╛Л | х╝АхПСхПВшА?|
-| [HANDOVER.md](../02_FACTOR_LIBRARY/HANDOVER.md) | ф║дцОецЦЗцбг | щб╣чЫоф║дцОехПВшА?|
+| [HANDOVER.md](02_FACTOR_LIBRARY\HANDOVER.md) | ф║дцОецЦЗцбг | щб╣чЫоф║дцОехПВшА?|
 | [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) | хоЮщкМш┐╜ш╕к | AIчаФчй╢хПВшА?|
 | | цЦЗцбгхобцЯецКехСК | цЦЗцбгц▓╗чРЖхПВшА?|
 
 ### хЫахнРх║УшбехЕЕцЦЗцб?
 | цЦЗцбг | шп┤цШО |
 |------|------|
-| [02_FACTOR_LIBRARY/99_AUDIT_REPORT.md](../02_FACTOR_LIBRARY/99_AUDIT_REPORT.md) | хЫахнРх║УхобшобцКехС?|
+| [02_FACTOR_LIBRARY/99_AUDIT_REPORT.md](02_FACTOR_LIBRARY\99_AUDIT_REPORT.md) | хЫахнРх║УхобшобцКехС?|
 | [02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md](../02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md) | хЫахнРф╝ШхМЦцА╗ч╗У |
 
 ### ф║дцШУчнЦчХешбехЕЕцЦЗцбг

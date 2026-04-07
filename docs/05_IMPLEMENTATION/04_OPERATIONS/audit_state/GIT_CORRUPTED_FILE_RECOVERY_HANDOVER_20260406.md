@@ -351,11 +351,11 @@ iconv -f GB18030 -t UTF-8 input.md > output.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 动态相关性建模蓝图 | DYNAMIC_CORRELATION_MODELING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) |
-| 简化风险预算系统蓝图 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | v1.0.0 | Active | 2026-04-06 | [链接](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) 🆕 |
-| 协整分析蓝图 | COINTEGRATION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./COINTEGRATION_ANALYSIS_BLUEPRINT.md) 🆕 |
-| 风险贡献分析蓝图 | RISK_CONTRIBUTION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) 🆕 |
-| 层级风险预算蓝图 | HIERARCHICAL_RISK_BUDGET_001 | v1.0.0 | Active | 2026-04-06 | [链接](./HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md) 🆕 |
+| 动态相关性建模蓝图 | DYNAMIC_CORRELATION_MODELING_001 | v1.0.0 | Active | 2026-04-03 | [链接](DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) |
+| 简化风险预算系统蓝图 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | v1.0.0 | Active | 2026-04-06 | [链接](SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) 🆕 |
+| 协整分析蓝图 | COINTEGRATION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](COINTEGRATION_ANALYSIS_BLUEPRINT.md) 🆕 |
+| 风险贡献分析蓝图 | RISK_CONTRIBUTION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) 🆕 |
+| 层级风险预算蓝图 | HIERARCHICAL_RISK_BUDGET_001 | v1.0.0 | Active | 2026-04-06 | [链接](HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md) 🆕 |
 ```
 
 ### 2. 更新统计信息

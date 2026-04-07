@@ -137,8 +137,8 @@ responsibility:
 
 **具体表现**：
 ```markdown
-| [人机协同界面蓝图](../01_FRAMEWORK/HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 三级时间框架人机协同界面设计 | ⭐⭐⭐⭐ |
-| [人机协作场景蓝图](../01_FRAMEWORK/HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md) | 多维度动态协作模式 | ⭐⭐⭐⭐ |
+| [人机协同界面蓝图](09_AUDIT\01_FRAMEWORK\HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 三级时间框架人机协同界面设计 | ⭐⭐⭐⭐ |
+| [人机协作场景蓝图](09_AUDIT\01_FRAMEWORK\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md) | 多维度动态协作模式 | ⭐⭐⭐⭐ |
 ```
 
 **违反原则**：

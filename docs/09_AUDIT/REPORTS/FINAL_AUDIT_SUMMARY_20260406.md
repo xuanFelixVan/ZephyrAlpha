@@ -393,7 +393,7 @@ bash scripts/create_github_issues.sh
 
 - [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](../STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- [审计质量标准v5.1](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md)
 
 ### C. 相关文档链接
 

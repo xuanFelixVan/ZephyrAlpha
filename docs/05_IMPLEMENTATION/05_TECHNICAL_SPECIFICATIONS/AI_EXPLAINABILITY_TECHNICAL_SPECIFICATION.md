@@ -820,7 +820,7 @@ performance_benchmarks:
 ### B. ﮒﻟﮔ?
 1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ﮔﭘﮔﮒ؟ﻛﺗ
 2. [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) - ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ
-3. [HUMAN_AI_FLOW.md](../../01_FRAMEWORK/HUMAN_AI_FLOW.md) - ﻛﭦﭦﮔﭦﮒﻛﺛﮔﭖﻝ۷
+3. [HUMAN_AI_FLOW.md](01_FRAMEWORK\HUMAN_AI_FLOW.md) - ﻛﭦﭦﮔﭦﮒﻛﺛﮔﭖﻝ۷
 4. [TECHNICAL_SPECIFICATION_TEMPLATE.md](./TECHNICAL_SPECIFICATION_TEMPLATE.md) - ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔ۷۰ﮔﺟ
 5. ﮔ۰۴ﮔﺍﺑﮒﭦﻠAYAﻝﺏﭨﻝﭨﮒﺁﻟ۶۲ﻠﮔ۶ﮒ؟?ﮒﻠ۷ﮒﻟﻟﭖ?
 

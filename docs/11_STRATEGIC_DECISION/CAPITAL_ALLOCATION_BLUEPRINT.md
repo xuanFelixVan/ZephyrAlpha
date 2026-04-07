@@ -1093,7 +1093,7 @@ class SkfolioIntegration:
 #### Layer 0: 系统架构
 ##### 0.001. Capital Allocation
 - **模块ID**: CAPITAL_ALLOCATION_001
-- **蓝图文档**: [CAPITAL_ALLOCATION_BLUEPRINT.md](./11_STRATEGIC_DECISION\CAPITAL_ALLOCATION_BLUEPRINT.md)
+- **蓝图文档**: [CAPITAL_ALLOCATION_BLUEPRINT.md](11_STRATEGIC_DECISION\CAPITAL_ALLOCATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.20 - 资本配置系统
 - **状态**: Active

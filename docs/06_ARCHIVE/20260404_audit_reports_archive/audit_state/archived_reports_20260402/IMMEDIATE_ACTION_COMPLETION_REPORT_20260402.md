@@ -146,7 +146,7 @@ compliance_level: 专业标准
 
 1. [深度审计报告](./DEEP_SYSTEM_AUDIT_REPORT_20260402.md)
 2. [快速审计摘要](./QUICK_AUDIT_SUMMARY_20260402.md)
-3. [架构迁移计划](../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
+3. [架构迁移计划](06_ARCHIVE\20260404_audit_reports_archive\01_FRAMEWORK\ARCHITECTURE_MIGRATION_PLAN.md)
 
 ---
 

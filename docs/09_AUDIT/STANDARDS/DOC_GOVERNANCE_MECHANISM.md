@@ -344,6 +344,6 @@ python scripts/blueprint_validator.py --verbose --report --output reports/monthl
 ---
 
 ## ίΞΒήΑΒίΠΓϋΑΔόΨΘόκ?
-- [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](./09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [ίχκϋχκόιΘίΘΗ](./09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+- [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [ίχκϋχκόιΘίΘΗ](09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)

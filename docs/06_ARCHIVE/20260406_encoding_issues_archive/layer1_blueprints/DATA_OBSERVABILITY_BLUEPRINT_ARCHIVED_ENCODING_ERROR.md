@@ -841,8 +841,8 @@ class ObservabilityCatalogIntegration:
 1. Elementary官方文档: https://docs.elementary-data.com/
 2. PyOD文档: https://pyod.readthedocs.io/
 3. Prophet文档: https://facebook.github.io/prophet/
-4. 数据目录蓝图: [DATA_CATALOG_BLUEPRINT.md](./DATA_CATALOG_BLUEPRINT.md)
-5. 告警系统蓝图: [ENHANCED_ALERT_SYSTEM_BLUEPRINT.md](./ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)
+4. 数据目录蓝图: [DATA_CATALOG_BLUEPRINT.md](DATA_CATALOG_BLUEPRINT.md)
+5. 告警系统蓝图: [ENHANCED_ALERT_SYSTEM_BLUEPRINT.md](ENHANCED_ALERT_SYSTEM_BLUEPRINT.md)
 
 ---
 

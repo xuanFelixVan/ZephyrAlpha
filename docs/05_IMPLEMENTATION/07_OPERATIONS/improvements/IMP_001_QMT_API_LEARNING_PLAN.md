@@ -357,7 +357,7 @@ last_updated: 2026-04-02---
 
 ### B. 参考文�?
 - [QMT数据接口技术规格书](../../05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
-- [QMT数据接口评审报告](../review_reports/QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
+- [QMT数据接口评审报告](05_IMPLEMENTATION\07_OPERATIONS\review_reports\QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
 
 
 **文档版本**: v1.0 | **创建日期**: 2026-04-02 | **维护�?*: 数据源层负责�?

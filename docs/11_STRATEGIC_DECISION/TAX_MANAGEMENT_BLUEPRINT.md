@@ -610,7 +610,7 @@ class TaxReportGenerator:
 #### Layer 0: 系统架构
 ##### 0.001. Tax Management
 - **模块ID**: TAX_MANAGEMENT_001
-- **蓝图文档**: [TAX_MANAGEMENT_BLUEPRINT.md](./11_STRATEGIC_DECISION\TAX_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [TAX_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\TAX_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.17 - 税务管理系统
 - **状态**: Active

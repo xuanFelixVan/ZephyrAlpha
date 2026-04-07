@@ -173,7 +173,7 @@ implementation_status: "进行�?
 
 ## 📚 相关文档
 
-- [架构迁移计划](../../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
+- [架构迁移计划](06_ARCHIVE\20260404_audit_reports_archive\01_FRAMEWORK\ARCHITECTURE_MIGRATION_PLAN.md)
 - [L0_QMT迁移日志](./MIGRATION_LOG_L0_QMT_20260402.md)
 - [L0_IFIND迁移日志](./MIGRATION_LOG_L0_IFIND_20260402.md)
 

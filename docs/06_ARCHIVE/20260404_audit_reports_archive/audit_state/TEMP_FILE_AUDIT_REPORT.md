@@ -135,7 +135,7 @@ implementation_status: 进行?---
 | **文档代码对应** | ?符合 | 不适用临时文件 | - |
 
 #### 3.2 开发标准符�?
-根据 [DEVELOPMENT_STANDARDS.md](../../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md):
+根据 [DEVELOPMENT_STANDARDS.md](06_ARCHIVE\02_DEVELOPMENT\DEVELOPMENT_STANDARDS.md):
 
 | 标准条款 | 符合�?| 发现的问?|
 |----------|----------|------------|
@@ -260,7 +260,7 @@ glob **/*2025*           # 0个结?
 ### 3. 参考标准文?
 1. [专业文档治理审计指南](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 2. [审计质量标准 v5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
-3. [开发标准](../../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+3. [开发标准](06_ARCHIVE\02_DEVELOPMENT\DEVELOPMENT_STANDARDS.md)
 
 
 ## 📊 附录：临时文件管理最佳实?

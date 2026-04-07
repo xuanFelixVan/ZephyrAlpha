@@ -1290,7 +1290,7 @@ class PolicyShockScenario:
 #### Layer 0: 系统架构
 ##### 0.001. Scenario Analysis Blueprint
 - **模块ID**: SCENARIO_ANALYSIS_BLUEPRINT_001
-- **蓝图文档**: [SCENARIO_ANALYSIS_BLUEPRINT.md](./11_STRATEGIC_DECISION\SCENARIO_ANALYSIS_BLUEPRINT.md)
+- **蓝图文档**: [SCENARIO_ANALYSIS_BLUEPRINT.md](11_STRATEGIC_DECISION\SCENARIO_ANALYSIS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.12 - 情景分析系统
 - **状态**: Active

@@ -31,7 +31,7 @@ compliance_level: 专业标准---
 
 
 # �ĵ���ͼ (SITEMAP)
-> **核心职责**: 文档位置导航和结构地图
+> **核心职责**: �ĵ���ͼ (SITEMAP)的定义、实现和应用
 > **职责边界**: 
 > - ✅ 本文档负责：文档位置导航和结构地图相关内容
 > - ❌ 本文档不负责：具体实现细节、其他模块内容
@@ -121,7 +121,7 @@ docs/
 ### ��������?
 
 **�����Ų�·��** (30����):
-1. �鿴 [FAQ.md](./FAQ.md) - �������� (10����)
+1. �鿴 [FAQ.md](FAQ.md) - �������� (10����)
 2. �鿴 [05_IMPLEMENTATION/07_OPERATIONS/README.md](../../README.md) - ��ά�ֲ� (10����)
 3. �鿴 [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - �汾��� (5����)
 4. �鿴ϵͳ��־ (5����)
@@ -286,12 +286,12 @@ docs/
 
 - [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AI�о���ܣ�����¼?
 - [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) - ʵ��׷��
-- [KNOWLEDGE_MANAGEMENT.md](./KNOWLEDGE_MANAGEMENT.md) - ֪ʶ����
+- [KNOWLEDGE_MANAGEMENT.md](KNOWLEDGE_MANAGEMENT.md) - ֪ʶ����
 
 ### ��ά���
 
 -  - ��ά�ֲ�
-- [FAQ.md](./FAQ.md) - ��������
+- [FAQ.md](FAQ.md) - ��������
 
 ### ������
 
