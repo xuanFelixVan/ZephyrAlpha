@@ -1,3 +1,12 @@
+---
+module_id: KNOWLEDGE_BASE_BUILDING_PLAN
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
 # 知识库建设计划
 
 ## 📋 建设目标

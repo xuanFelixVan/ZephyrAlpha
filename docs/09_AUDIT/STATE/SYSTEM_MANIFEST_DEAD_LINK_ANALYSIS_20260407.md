@@ -1,4 +1,13 @@
-﻿# System_Manifest.md死链接详细分析报告
+---
+module_id: SYSTEM_MANIFEST_DEAD_LINK_ANALYSIS_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+# System_Manifest.md死链接详细分析报告
 
 **分析时间**: 2026-04-07 17:05:56
 **分析文件**: System_Manifest.md

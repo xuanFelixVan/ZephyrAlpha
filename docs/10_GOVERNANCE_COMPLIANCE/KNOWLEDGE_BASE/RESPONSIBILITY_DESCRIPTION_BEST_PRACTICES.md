@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: RESPONSIBILITY_DESCRIPTION_BEST_PRACTICES
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 responsibility:
   - 扩展功能、辅助模块、支撑文档
 

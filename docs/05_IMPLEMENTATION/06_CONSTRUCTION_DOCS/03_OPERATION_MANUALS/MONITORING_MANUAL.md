@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: MONITORING_MANUAL
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
   - 实施指南、部署文档

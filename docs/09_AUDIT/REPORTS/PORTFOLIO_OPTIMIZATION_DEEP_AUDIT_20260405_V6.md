@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V6
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V6_001
 
 audit_id: LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V6

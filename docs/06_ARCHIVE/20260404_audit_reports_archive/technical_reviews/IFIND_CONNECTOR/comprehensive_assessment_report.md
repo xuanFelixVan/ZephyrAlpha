@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: COMPREHENSIVE_ASSESSMENT_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 standard_type: 审计报告
 applicable_scope: 系统实施
 compliance_level: 初始标准

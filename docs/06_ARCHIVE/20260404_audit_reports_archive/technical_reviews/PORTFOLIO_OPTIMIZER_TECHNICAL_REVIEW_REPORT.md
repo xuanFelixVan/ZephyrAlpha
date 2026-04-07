@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: PORTFOLIO_OPTIMIZER_TECHNICAL_REVIEW_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: ARCHIVE_PORTFOLIO_OPT_TECH_REVIEW_001
 review_id: TR-2026-04-02-PORT-OPT
 version: 1.0.1

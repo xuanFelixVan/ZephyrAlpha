@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: CRITICAL_MISSING
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: LAYER9_CRITICAL_MISSING_V4
 version: 4.0.0
 status: Archived

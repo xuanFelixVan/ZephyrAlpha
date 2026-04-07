@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V2_20260406
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: AUDIT_AI_001_L09_REPORT
 version: 2.0.0
 status: Active

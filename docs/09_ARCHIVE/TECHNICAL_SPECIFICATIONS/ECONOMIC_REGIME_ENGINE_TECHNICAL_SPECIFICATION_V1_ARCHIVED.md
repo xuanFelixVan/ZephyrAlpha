@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V1_ARCHIVED
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: ECONOMIC_REGIME_ENGINE_001_L09_DOC
 version: 1.0.0
 spec_version: 1.0

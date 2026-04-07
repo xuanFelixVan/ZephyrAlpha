@@ -1,4 +1,13 @@
-﻿# 合规率验证报告
+---
+module_id: COMPLIANCE_VERIFICATION_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+# 合规率验证报告
 
 **验证时间**: 2026-04-07 17:21:25
 **验证范围**: 所有markdown文件

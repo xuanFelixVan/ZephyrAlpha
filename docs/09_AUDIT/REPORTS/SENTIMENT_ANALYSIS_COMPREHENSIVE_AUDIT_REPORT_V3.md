@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: SENTIMENT_ANALYSIS_COMPREHENSIVE_AUDIT_REPORT_V3
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: V_042
 version: 3.0.0
 status: Active

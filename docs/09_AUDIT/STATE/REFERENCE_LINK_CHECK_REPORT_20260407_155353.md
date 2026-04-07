@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: REFERENCE_LINK_CHECK_REPORT_20260407_155353
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: REFERENCE_LINK_CHECK_REPORT_20260407_155353
 version: 1.0.0
 status: Active

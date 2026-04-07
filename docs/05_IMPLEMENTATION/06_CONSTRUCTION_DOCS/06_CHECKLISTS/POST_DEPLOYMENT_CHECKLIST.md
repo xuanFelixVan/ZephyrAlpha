@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: POST_DEPLOYMENT_CHECKLIST
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 standard_type: жЈҖжҹҘжё…еҚ?applicable_scope: е…Ёзіз?compliance_level: жӯЈејҸжҮеҮҶ
 responsibility:
   - 实施指南、部署文档

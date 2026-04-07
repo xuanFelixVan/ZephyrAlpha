@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: AI_WORKFLOW_ENCODING_FIX_REPORT_20260406
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: AUDIT_AI工作流层编码问题修复报告_001
 version: 1.0.0
 status: Active

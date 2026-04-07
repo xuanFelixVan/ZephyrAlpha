@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: INTELLIGENT_AUDIT_REPORT_20260407_113439
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 responsibility:
   - 审计报告、合规检查
   - 风险预算

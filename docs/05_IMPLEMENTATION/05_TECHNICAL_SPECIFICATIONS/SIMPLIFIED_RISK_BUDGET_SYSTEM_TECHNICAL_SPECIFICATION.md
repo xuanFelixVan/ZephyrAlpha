@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001
 version: 1.0.0
 spec_version: 1.0

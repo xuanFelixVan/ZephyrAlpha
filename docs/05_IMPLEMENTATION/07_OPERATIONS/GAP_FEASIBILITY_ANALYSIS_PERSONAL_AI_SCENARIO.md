@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: GAP_FEASIBILITY_ANALYSIS_PERSONAL_AI_SCENARIO
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: AI_011
 version: 1.0.0
 status: Active

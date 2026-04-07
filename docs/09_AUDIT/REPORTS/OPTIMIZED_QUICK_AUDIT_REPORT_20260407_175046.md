@@ -1,3 +1,12 @@
+---
+module_id: OPTIMIZED_QUICK_AUDIT_REPORT_20260407_175046
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
 # 优化版快速审计报告
 
 **审计时间**: 2026-04-07 17:50:46

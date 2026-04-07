@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: P0_07_ORDER_MANAGEMENT_DETAILED_DESIGN
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: ORDER_MANAGEMENT_001
 version: 1.0.0
 status: Active

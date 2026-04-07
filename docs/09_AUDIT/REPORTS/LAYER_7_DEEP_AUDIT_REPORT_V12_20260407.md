@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: LAYER_7_DEEP_AUDIT_REPORT_V12_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V12_001
 version: 12.0.0
 status: Active

@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: P1_RISK_MITIGATION_DESIGN
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 document_type: P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
 version: 1.0.0
 created_date: 2026-04-02

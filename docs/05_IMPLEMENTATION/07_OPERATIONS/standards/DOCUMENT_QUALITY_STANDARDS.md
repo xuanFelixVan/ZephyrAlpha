@@ -1,4 +1,13 @@
-﻿# 文档质量标准 v1.0
+---
+module_id: DOCUMENT_QUALITY_STANDARDS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+# 文档质量标准 v1.0
 
 > **版本**: 1.0.0
 > **创建日期**: 2026-04-07

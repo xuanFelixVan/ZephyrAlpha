@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: L9_ANOMALY_DETECTOR
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: ARCHIVE_L9_ANOMALY_DETECTOR_001
 version: 1.0.1
 status: Active

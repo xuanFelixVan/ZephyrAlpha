@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: USAGE_GUIDE
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: LAYER7_USAGE_GUIDE_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,13 @@
-﻿# 文档创建检查清单
+---
+module_id: DOCUMENT_CREATION_CHECKLIST
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+# 文档创建检查清单
 
 > **版本**: 1.0.0
 > **创建日期**: 2026-04-07

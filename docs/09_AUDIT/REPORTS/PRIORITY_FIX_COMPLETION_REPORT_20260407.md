@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: PRIORITY_FIX_COMPLETION_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 responsibility:
   - 文档治理、合规修复、审计报告
 module_id: PRIORITY_FIX_COMPLETION_REPORT_20260407_001

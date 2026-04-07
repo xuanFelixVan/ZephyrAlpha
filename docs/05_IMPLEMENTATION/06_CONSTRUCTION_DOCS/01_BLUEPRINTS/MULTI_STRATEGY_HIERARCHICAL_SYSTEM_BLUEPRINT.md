@@ -8,7 +8,9 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-
+  - 多策略分层
+  - 策略协调
+  - 层级优化
   - 信号融合
   - 策略协同优化
 layer: Layer 5.2 (组合优化)

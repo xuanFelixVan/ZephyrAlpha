@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 responsibility:
   - 索引文档、导航目录
   - 风险预算

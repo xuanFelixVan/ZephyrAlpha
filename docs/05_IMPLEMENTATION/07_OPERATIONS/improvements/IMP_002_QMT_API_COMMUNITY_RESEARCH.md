@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: IMP_002_QMT_API_COMMUNITY_RESEARCH
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 improvement_id: IMP-002
 module_id: IMPL_OPS_IMP_002_QMT_RESEARCH_001
 priority: P0

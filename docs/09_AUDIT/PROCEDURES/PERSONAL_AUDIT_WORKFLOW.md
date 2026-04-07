@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: PERSONAL_AUDIT_WORKFLOW
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: 09_AUDIT_PERSONAL_AUDIT_WORKFLOW_20260407124139
 version: 1.0.0
 status: Active

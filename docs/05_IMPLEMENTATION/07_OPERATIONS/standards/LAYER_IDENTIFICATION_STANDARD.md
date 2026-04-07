@@ -1,4 +1,13 @@
-﻿﻿# Layer 5 策略执行层层级标识标准
+---
+module_id: LAYER_IDENTIFICATION_STANDARD
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿# Layer 5 策略执行层层级标识标准
 
 > **版本**: 1.0.0
 > **创建日期**: 2026-04-07
