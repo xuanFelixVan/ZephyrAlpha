@@ -205,4 +205,35 @@ class ResearchWorkflowManager:
         )
         return result
         
-    def log_results(self, metrics,
+    def log_results(self, metrics, artifacts):
+        """记录研究结果"""
+        for key, value in metrics.items():
+            mlflow.log_metric(key, value)
+        for artifact in artifacts:
+            mlflow.log_artifact(artifact)
+```
+
+### 3.4 DVC数据流管理
+
+```yaml
+stages:
+  prepare_data:
+    cmd: python src/prepare_data.py
+    deps:
+      - data/raw/
+    params:
+      - prepare.split_ratio
+    outs:
+      - data/processed/
+      
+  train_model:
+    cmd: python src/train_model.py
+    deps:
+      - data/processed/
+    params:
+      - train.epochs
+      - train.learning_rate
+    outs:
+      - models/model.pkl
+      
+  evaluate:
