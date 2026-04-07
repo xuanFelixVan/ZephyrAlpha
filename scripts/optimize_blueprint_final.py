@@ -5,10 +5,8 @@ BLUEPRINT文档最终优化脚本
 彻底删除重复的YAML头部
 """
 
-import os
 import re
 from pathlib import Path
-from datetime import datetime
 
 class BlueprintFinalOptimizer:
     def __init__(self, layer_path):
@@ -47,7 +45,7 @@ class BlueprintFinalOptimizer:
             original_content = content
             
             # 删除重复的YAML头部
-            content = self.fix_duplicate_yaml_v2(content)
+            content = self.fix_duplicate_yaml(content)
             
             if content != original_content:
                 with open(blueprint_file, 'w', encoding='utf-8') as f:
@@ -63,49 +61,27 @@ class BlueprintFinalOptimizer:
             })
             print(f"❌ 错误: {blueprint_file.relative_to(self.layer_path)} - {e}")
     
-    def fix_duplicate_yaml_v2(self, content):
-        """删除重复的YAML头部（增强版）"""
-        # 查找所有以---开头的行
-        lines = content.split('\n')
+    def fix_duplicate_yaml(self, content):
+        """删除重复的YAML头部"""
+        # 查找所有YAML块（包括可能重复的）
+        # YAML块格式：---\n...内容...\n---
+        yaml_pattern = r'^---\s*\n(.*?)\n---\s*\n'
         
-        # 查找所有YAML块的起始和结束位置
-        yaml_blocks = []
-        in_yaml = False
-        yaml_start = -1
+        # 查找所有匹配
+        matches = list(re.finditer(yaml_pattern, content, re.DOTALL))
         
-        for i, line in enumerate(lines):
-            if line.strip() == '---':
-                if not in_yaml:
-                    # 开始一个新的YAML块
-                    in_yaml = True
-                    yaml_start = i
-                else:
-                    # 结束当前YAML块
-                    in_yaml = False
-                    yaml_blocks.append((yaml_start, i))
-        
-        # 如果有多个YAML块，只保留第一个
-        if len(yaml_blocks) > 1:
-            # 保留第一个YAML块
-            first_yaml_start, first_yaml_end = yaml_blocks[0]
+        if len(matches) > 1:
+            # 有多个YAML块，只保留第一个
+            first_yaml = matches[0].group(0)
             
-            # 构建新内容
-            new_lines = []
+            # 删除所有YAML块
+            content_without_yaml = re.sub(yaml_pattern, '', content, flags=re.DOTALL)
             
-            # 添加第一个YAML块
-            new_lines.extend(lines[first_yaml_start:first_yaml_end + 1])
+            # 重新组合
+            content = first_yaml + content_without_yaml
             
-            # 添加第一个YAML块之后的内容，跳过其他YAML块
-            skip_ranges = []
-            for start, end in yaml_blocks[1:]:
-                skip_ranges.extend(range(start, end + 1))
-            
-            for i, line in enumerate(lines):
-                if i > first_yaml_end and i not in skip_ranges:
-                    new_lines.append(line)
-            
-            content = '\n'.join(new_lines)
             self.stats['yaml_fixed'] += 1
+            print(f"    修复了重复的YAML头部")
         
         return content
     
