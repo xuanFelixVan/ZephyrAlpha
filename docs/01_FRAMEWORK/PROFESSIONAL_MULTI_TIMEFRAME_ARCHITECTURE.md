@@ -850,7 +850,7 @@ class OpeningStrategy:
                 confidence=auction_analysis.confidence
             ))
         
-        if gap_analysis.gap_size > 0.02:  # è·³ç©º > 2%
+        if gap_analysis.gap_size > 0.02:  # 跳空 > 2%
             signals.append(OpeningSignal(
                 type='gap_fade' if gap_analysis.is_likely_fade else 'gap_follow',
                 direction='short' if gap_analysis.is_likely_fade else 'long',

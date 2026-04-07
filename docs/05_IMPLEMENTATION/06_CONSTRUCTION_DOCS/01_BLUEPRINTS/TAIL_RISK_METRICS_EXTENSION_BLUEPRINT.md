@@ -182,7 +182,7 @@ tail_risk_metrics:
   # CVaRé
 ç½®
   cvar:
-    alpha: 0.05  # 95%ç½®ä¿¡æ°´å¹³
+    alpha: 0.05  # 95%置信水平
     
   # EVaRé
 ç½®

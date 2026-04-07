@@ -337,7 +337,7 @@ class FactorRiskAttributor:
         
         ä½¿ç¨è¾¹é
 风险贡献法：
-        MRC_i = f_i * (F * f)_i / Ï_p
+        MRC_i = f_i * (F * f)_i / σ_p
         """
         # 计算组合风险
         F_f = factor_covariance @ factor_exposure
@@ -482,7 +482,7 @@ class AssetRiskAttributor:
         
         ä½¿ç¨è¾¹é
 风险贡献法：
-        MRC_i = w_i * (Î£ * w)_i / Ï_p
+        MRC_i = w_i * (Σ * w)_i / σ_p
         """
         # 计算组合风险
         Sigma_w = asset_covariance @ weights

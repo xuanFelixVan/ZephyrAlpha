@@ -821,7 +821,7 @@ monitor.add_change_handler(handle_change)
 monitor.start()
 ```
 
-### 5.2 API CDCè½®è¯¢
+### 5.2 API CDC轮询
 
 ```python
 from cdc_capture import APICDCPoller

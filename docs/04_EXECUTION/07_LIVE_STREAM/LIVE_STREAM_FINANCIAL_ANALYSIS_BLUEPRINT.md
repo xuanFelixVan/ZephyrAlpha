@@ -1496,7 +1496,7 @@ class FinancialContentAnalyzer:
             "name": "股票名称",
             "action": "ä¹°å
 ¥/ååº/è§æ",
-            "price": "å»ºè®®ä»·æ ¼",
+            "price": "建议价格",
             "reason": "推荐理由"
         }}
     ],

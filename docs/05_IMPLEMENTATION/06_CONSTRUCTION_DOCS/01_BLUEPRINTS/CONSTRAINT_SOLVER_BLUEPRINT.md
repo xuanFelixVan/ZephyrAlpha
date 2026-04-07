@@ -495,7 +495,7 @@ class ConstraintRelaxer:
     def _soft_constraint(self,
                         c1: Constraint,
                         c2: Constraint) -> List[Constraint]:
-        """è½¯çº¦?""
+        """软约?""
         # 将硬约束转化为软约束
         # å
 è®¸ä¸å®ç¨åº¦çè¿å
@@ -691,7 +691,7 @@ class ValidationResult:
     """验证结果"""
     is_feasible: bool  # 是否可行
     is_consistent: bool  # 是否一?    conflicts: List[Conflict]  # 冲突列表
-    recommendations: List[str]  # å»ºè®®
+    recommendations: List[str]  # 建议
     
 @dataclass
 class Conflict:

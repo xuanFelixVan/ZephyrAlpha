@@ -88,16 +88,28 @@ def fix_text(text: str) -> tuple[str, int]:
             out.append(line)
             continue
 
+        # Path A: classic bytes-like mojibake (all chars <=255)
         cand = reverse_bytes_to_utf8(line)
-        if cand is None:
-            out.append(line)
-            continue
-
-        if accept(line, cand):
+        if cand is not None and accept(line, cand):
             out.append(cand)
             changed += 1
-        else:
-            out.append(line)
+            continue
+
+        # Path B: mojibake already stored as Unicode text (e.g. "è´è´£")
+        # This can often be reversed by latin1->utf8 on the UTF-8 bytes of the string.
+        try:
+            b = line.encode("utf-8")
+            cand2 = b.decode("latin-1")
+            cand3 = reverse_bytes_to_utf8(cand2)
+        except Exception:
+            cand3 = None
+
+        if cand3 is not None and accept(line, cand3):
+            out.append(cand3)
+            changed += 1
+            continue
+
+        out.append(line)
 
     fixed = "\n".join(out)
     if text.endswith("\n"):

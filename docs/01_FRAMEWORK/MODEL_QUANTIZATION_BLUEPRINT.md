@@ -160,7 +160,7 @@ class ModelQuantizer:
 
             quantization_type: 量化类型 ('dynamic', 'static', 'qat')
 
-            precision: ç²¾åº¦ ('fp16', 'int8', 'int4')
+            precision: 精度 ('fp16', 'int8', 'int4')
 
         """
 

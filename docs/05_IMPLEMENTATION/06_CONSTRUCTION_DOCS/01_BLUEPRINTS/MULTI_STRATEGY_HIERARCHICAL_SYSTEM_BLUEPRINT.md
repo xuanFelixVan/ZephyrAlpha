@@ -221,7 +221,7 @@ class StrategyPerformanceEvaluator:
     
     def _calculate_risk_metrics(self, returns: pd.Series) -> Dict[str, float]:
         """计算风险指标"""
-        # VaR (95%ç½®ä¿¡?
+        # VaR (95%置信?
         var_95 = np.percentile(returns, 5)
         
         # CVaR (条件风险?

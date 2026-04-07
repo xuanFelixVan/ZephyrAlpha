@@ -759,7 +759,7 @@ class RiskMetricsCalculator:
 ## 4. 处置记录
 {action_records}
 
-## 5. å»ºè®®
+## 5. 建议
 {recommendations}
 ```
 

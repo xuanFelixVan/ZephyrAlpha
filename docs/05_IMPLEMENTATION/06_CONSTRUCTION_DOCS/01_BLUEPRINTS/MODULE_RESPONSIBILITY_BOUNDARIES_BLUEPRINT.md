@@ -89,7 +89,7 @@ layer: Layer 5 (策略执行层)
 景分析?vs 压力测试报告?
 #### 职责边界定义
 
-| ç»´åº¦ | ScenarioAnalyzer | StressTestReporter |
+| 维度 | ScenarioAnalyzer | StressTestReporter |
 |------|------------------|-------------------|
 | **æ ¸å¿èè´£** | æ
 景定义和模?| 压力测试执行和报?|
@@ -165,7 +165,7 @@ StressTestReporter (压力测试执行)
 ### 2.2 实时风险监控报告?vs 风险管理?
 #### 职责边界定义
 
-| ç»´åº¦ | RealTimeRiskReporter | risk_manager.py |
+| 维度 | RealTimeRiskReporter | risk_manager.py |
 |------|---------------------|-----------------|
 | **核心职责** | 风险报告生成 | 风险管理控制 |
 | **è¾å
@@ -221,7 +221,7 @@ risk_manager.py (风险控制)
 ### 2.3 多时间框架融合器 vs 经济范式分析报告?
 #### 职责边界定义
 
-| ç»´åº¦ | MultiTimeframeReportFusion | EconomicRegimeReporter |
+| 维度 | MultiTimeframeReportFusion | EconomicRegimeReporter |
 |------|---------------------------|----------------------|
 | **核心职责** | 报告融合 | 经济范式分析 |
 | **è¾å

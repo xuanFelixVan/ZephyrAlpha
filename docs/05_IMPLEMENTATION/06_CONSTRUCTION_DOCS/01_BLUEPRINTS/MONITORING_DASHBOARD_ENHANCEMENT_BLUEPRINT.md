@@ -175,7 +175,7 @@ class MonitoringDashboard:
         st.set_page_config(
             page_title="æ¸
 风量化监控面板",
-            page_icon="ð",
+            page_icon="📊",
             layout="wide"
         )
         
@@ -240,7 +240,7 @@ class MonitoringDashboard:
         # 风险指标卡片
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("VaR (95%)", "Â¥12,345", "-Â¥1,234")
+            st.metric("VaR (95%)", "¥12,345", "-¥1,234")
         with col2:
             st.metric("æå¤§åæ?, "-3.2%", "+0.5%")
         with col3:

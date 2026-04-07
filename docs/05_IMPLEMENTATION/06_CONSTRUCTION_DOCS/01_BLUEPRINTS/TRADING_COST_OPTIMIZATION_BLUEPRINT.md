@@ -326,7 +326,7 @@ class AlmgrenChrissModel:
     def __init__(self, config: ImpactModelConfig):
         self.config = config
         # 市场冲击参数（需要根据历史数据校准）
-        self.temporary_impact_coeff = config.temporary_impact_coeff  # Ï
+        self.temporary_impact_coeff = config.temporary_impact_coeff  # σ
         self.permanent_impact_coeff = config.permanent_impact_coeff  # Î³
         
     def estimate(

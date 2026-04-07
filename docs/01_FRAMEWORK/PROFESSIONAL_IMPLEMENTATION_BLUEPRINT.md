@@ -1908,7 +1908,7 @@ ZephyrAlpha/
 
 **任务**：实?`StrategyFactory.create_strategy()` 方法
 
-**æ­¥éª¤**?
+**步骤**?
 1. é
 è¯» [STRATEGY_ENGINE_CORE_BLUEPRINT.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) ?.4?
 2. 理解策略工厂的设计目标和接口定义

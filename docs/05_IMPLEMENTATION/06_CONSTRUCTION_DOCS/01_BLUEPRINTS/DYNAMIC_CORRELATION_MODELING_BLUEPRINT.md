@@ -534,12 +534,12 @@ Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?
 
 **推荐?*?1. **arch**: 用于GARCH模型拟合
    - å®è£
-ï¼`pip install arch`
+：`pip install arch`
    - 文档：https://arch.readthedocs.io/
 
 2. **mgarch**: 用于DCC模型拟合
    - å®è£
-ï¼`pip install mgarch`
+：`pip install mgarch`
    - GitHub: https://github.com/ritchan/mgarch
 
 3. **备选方?*: 使用`statsmodels` + 自实现DCC

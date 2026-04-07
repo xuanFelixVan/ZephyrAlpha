@@ -398,7 +398,7 @@ class RiskParityOptimizer:
                                  correlation_matrix: pd.DataFrame) -> pd.DataFrame:
         """构建协方差矩?""
         # Î£ = D * C * D
-        # D = diag(Ï)
+        # D = diag(σ)
         D = np.diag(volatility.values)
         C = correlation_matrix.values
         covariance = D @ C @ D

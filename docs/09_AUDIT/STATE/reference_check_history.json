@@ -26,5 +26,19 @@
     "valid_links": 8647,
     "invalid_links": 15,
     "valid_rate": 99.83
+  },
+  {
+    "timestamp": "2026-04-07 16:56:25",
+    "total_links": 8655,
+    "valid_links": 8649,
+    "invalid_links": 6,
+    "valid_rate": 99.93
+  },
+  {
+    "timestamp": "2026-04-07 16:58:30",
+    "total_links": 8655,
+    "valid_links": 8652,
+    "invalid_links": 3,
+    "valid_rate": 99.97
   }
 ]

@@ -321,7 +321,7 @@ class DeepARModel(nn.Module):
 
             samples: 预测样本
 
-            confidence: ç½®ä¿¡æ°´å¹³
+            confidence: 置信水平
 
             
 

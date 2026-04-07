@@ -876,9 +876,9 @@ class WeChatNotifier:
             alert: 告警信息
         """
         severity_emoji = {
-            'critical': 'ð´',
-            'warning': 'ð¡',
-            'info': 'ð¢'
+            'critical': '🔴',
+            'warning': '🟡',
+            'info': '🟢'
         }
         
         emoji = severity_emoji.get(alert.get('severity', 'info'), 'â?)

@@ -254,7 +254,7 @@ class LinearImpactModel:
         
         æ¨¡åå
 ¬å¼:
-        Impact = Î± * (Q/ADV)^Î² * Ï
+        Impact = α * (Q/ADV)^β * σ
         
         参数:
         - Q: 订单大小
@@ -505,7 +505,7 @@ CREATE TABLE model_parameters (
 ³?
 **数学模型**:
 ```
-Impact = Î± * (Q/ADV)^Î² * Ï
+Impact = α * (Q/ADV)^β * σ
 ```
 
 å
@@ -522,7 +522,7 @@ def fit_linear_model(
     拟合线性冲击模型参?    
     方法: 最小二乘法
     
-    æ­¥éª¤:
+    步骤:
     1. 计算参与? PR = Q / ADV
     2. è®¡ç®å®é
 冲击: Impact = (执行价格 - 初始价格) / 初始价格
@@ -580,11 +580,11 @@ def optimize_execution_time(
     å
 ¶ä¸­:
     - E[Cost] = Î· * (Q/ADV) / T + Î³ * (Q/ADV)
-    - Var[Cost] = Ï^2 * T * (Q/ADV)^2
+    - Var[Cost] = σ^2 * T * (Q/ADV)^2
     - λ: 风险厌恶系数
     
     求解:
-    T* = sqrt(Î· * (Q/ADV) / (Î» * Ï^2 * (Q/ADV)^2))
+    T* = sqrt(η * (Q/ADV) / (λ * σ^2 * (Q/ADV)^2))
     
     返回:
     - optimal_time: 最优执行时间（天）

@@ -807,7 +807,7 @@ class FinalLeverageDecision:
     action: str                          # 动作
     strategy_contributions: Dict[str, LeverageDecision]  # 各策略贡?    market_adjustment: str               # 市场调整
     constraints_applied: Dict            # 应用的约?    reasons: List[str]                   # 决策理由
-    confidence: float                    # ç½®ä¿¡?
+    confidence: float                    # 置信?
 @dataclass
 class RiskAlert:
     """风险预警"""
@@ -825,7 +825,7 @@ class RiskMonitorResult:
     risk_score: float                    # 风险评分
     alerts: List[RiskAlert]              # 预警列表
     stop_loss_triggered: bool            # 止损触发
-    recommendations: List[str]           # å»ºè®®
+    recommendations: List[str]           # 建议
 
 @dataclass
 class MarketContext:

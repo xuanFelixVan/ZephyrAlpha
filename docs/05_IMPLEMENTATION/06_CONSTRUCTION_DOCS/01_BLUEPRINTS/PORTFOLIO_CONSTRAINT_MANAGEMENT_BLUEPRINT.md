@@ -245,7 +245,7 @@ class ConstraintManager:
         应用约束到优化器
         
         Args:
-            ef: EfficientFrontierå¯¹è±¡
+            ef: EfficientFrontier对象
             
         Returns:
             æ·»å çº¦æåçä¼åå?

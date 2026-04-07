@@ -461,8 +461,8 @@ class SkfolioRiskParityOptimizer:
 ç»åé£é©ï¼æ³¢å¨çï¼å¯ä»¥åè§£ä¸ºåèµäº§çé£é©è´¡ç®ï¼?
 
 ```
-Ï_p = sqrt(w' Î£ w)
-RC_i = w_i * (Î£ w)_i / Ï_p
+σ_p = sqrt(w' Σ w)
+RC_i = w_i * (Σ w)_i / σ_p
 ```
 
 å

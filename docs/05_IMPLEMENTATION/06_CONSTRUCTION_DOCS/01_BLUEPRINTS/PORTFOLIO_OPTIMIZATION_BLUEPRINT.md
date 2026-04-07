@@ -391,7 +391,7 @@ class RiskParityOptimizer:
     
     def __init__(self, risk_measure: str = 'CVaR', alpha: float = 0.05):
         self.risk_measure = risk_measure  # CVaR, VaR, CDaR, EDaR?
-        self.alpha = alpha  # CVaRç½®ä¿¡æ°´å¹³
+        self.alpha = alpha  # CVaR置信水平
         
     def optimize(self, returns: pd.DataFrame, constraints: List[Constraint]) -> pd.Series:
         """
@@ -586,7 +586,7 @@ class ConstraintProcessor:
 è¶³ï¼åè®¾åæ¥äº¤æä¸è¶
 过日成交量的5%?
                 max_daily_trade = daily_volume * 0.05
-                if position_value > max_daily_trade * 3:  # ?å¤©å»º?
+                if position_value > max_daily_trade * 3:  # ?天建?
                     # è°æ´æéè³æµå¨æ§å
 è®¸è?
                     adjusted_weights[strategy_id] = (max_daily_trade * 3) / portfolio_value

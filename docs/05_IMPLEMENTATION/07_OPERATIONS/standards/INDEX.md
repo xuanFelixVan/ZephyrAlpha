@@ -1,4 +1,4 @@
-﻿---
+---
 version: 1.0.0
 last_updated: 2026-04-07
 ---
@@ -68,7 +68,6 @@ last_updated: 2026-04-07
 
 - [运营文档索引](../INDEX.md)
 - [实施文档索引](../../INDEX.md)
-- [系统架构蓝图](../../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_BLUEPRINT.md)
 
 ---
 

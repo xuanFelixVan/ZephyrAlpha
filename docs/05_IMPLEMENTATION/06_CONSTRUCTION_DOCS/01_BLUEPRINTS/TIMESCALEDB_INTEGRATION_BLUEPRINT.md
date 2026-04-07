@@ -175,14 +175,14 @@ CREATE TABLE stock_ticks (
 );
 
 -- è½¬æ¢ä¸ºè¶
-çº§è¡¨
+级表
 SELECT create_hypertable('stock_ticks', 'time',
     partitioning_column => 'symbol',
     number_partitions => 4
 );
 
 -- Kçº¿æ°æ®è¶
-çº§è¡¨
+级表
 CREATE TABLE stock_klines (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,

@@ -223,7 +223,7 @@ class TOPSISEvaluator:
                 criteria_matrix: pd.DataFrame) -> RankingResult:
         """使用TOPSIS算法评估策略
         
-        TOPSISï¼Technique for Order Preference by Similarity to Ideal Solutionï¼ï¼
+        TOPSIS（Technique for Order Preference by Similarity to Ideal Solution）：
         1. 构建决策矩阵
         2. 标准化决策矩?
         3. 计算加权标准化矩?
@@ -499,7 +499,7 @@ class DynamicWeightOptimizer:
         best_pattern = self._find_best_weight_pattern(performance_by_weight)
         
         # 混合当前权重和历史最佳权?
-        learning_rate = 0.3  # å­¦ä¹ ?
+        learning_rate = 0.3  # 学习?
         learned_weights = {}
         
         for criterion in weights.keys():
@@ -875,7 +875,7 @@ class AIStrategyRecommender:
         elif user_prefs.risk_tolerance >= 4:  # 激进型
             n_strategies = min(3, len(strategies))
             diversification_weight = 0.3
-        else:  # å¹³è¡¡?
+        else:  # 平衡?
             n_strategies = min(4, len(strategies))
             diversification_weight = 0.5
             
@@ -993,7 +993,7 @@ strategy_selection:
   # ç¨æ·åå¥½é
 ç½®
   user_preferences:
-    risk_tolerance: 3  # 1-5?ä¸ºä¸­?
+    risk_tolerance: 3  # 1-5?为中?
     investment_horizon: "medium_term"  # short_term, medium_term, long_term
     max_drawdown_tolerance: 0.15  # 最大可接受回撤
     target_annual_return: 0.20    # 目标年化收益

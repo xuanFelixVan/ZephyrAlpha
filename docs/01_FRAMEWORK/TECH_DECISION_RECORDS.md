@@ -98,9 +98,9 @@ implementation_status: 蓝图设计完成
 
 ## 实施计划
 ### 实施步骤
-1. [æ­¥éª¤1]
-2. [æ­¥éª¤2]
-3. [æ­¥éª¤3]
+1. [步骤1]
+2. [步骤2]
+3. [步骤3]
 
 ### 时间计划
 - **开始时?*: [开始日期]
@@ -192,7 +192,7 @@ implementation_status: 蓝图设计完成
 ·æ¯æ
 
 **备选方案对?*?
-| ç»´åº¦ | Python | C++ | Java | R |
+| 维度 | Python | C++ | Java | R |
 |------|--------|-----|------|---|
 | **开发效?* | ⭐⭐⭐⭐?| ⭐⭐ | ⭐⭐?| ⭐⭐⭐⭐ |
 | **执行性能** | ⭐⭐?| ⭐⭐⭐⭐?| ⭐⭐⭐⭐ | ⭐⭐ |
@@ -224,7 +224,7 @@ implementation_status: 蓝图设计完成
 ³ç³»æ°æ®
 
 **备选方案对?*?
-| ç»´åº¦ | PostgreSQL + Redis | MySQL + Redis | MongoDB + Redis | TimescaleDB + Redis |
+| 维度 | PostgreSQL + Redis | MySQL + Redis | MongoDB + Redis | TimescaleDB + Redis |
 |------|-------------------|---------------|-----------------|---------------------|
 | **时间序列支持** | ⭐⭐⭐⭐ | ⭐⭐?| ⭐⭐?| ⭐⭐⭐⭐?|
 | **查询性能** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐?| ⭐⭐⭐⭐?|
@@ -253,7 +253,7 @@ implementation_status: 蓝图设计完成
 - 需要支持传统机器学习模型（随机森林、XGBoost等）
 - 需要灵活的模型定制和调试能?
 **备选方案对?*?
-| ç»´åº¦ | PyTorch + scikit-learn | TensorFlow + scikit-learn | JAX + scikit-learn |
+| 维度 | PyTorch + scikit-learn | TensorFlow + scikit-learn | JAX + scikit-learn |
 |------|----------------------|--------------------------|-------------------|
 | **易用?* | ⭐⭐⭐⭐?| ⭐⭐⭐⭐ | ⭐⭐?|
 | **灵活?* | ⭐⭐⭐⭐?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐?|

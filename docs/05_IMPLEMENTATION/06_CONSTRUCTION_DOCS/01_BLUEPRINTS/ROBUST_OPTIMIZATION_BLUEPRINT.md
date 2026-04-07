@@ -119,7 +119,7 @@ class UncertaintySetBuilder:
         参数:
             expected_returns: ç¹ä¼°è®¡æ¶ç?
             method: 方法 ('bootstrap', 'elliptical', 'box')
-            confidence: ç½®ä¿¡æ°´å¹³
+            confidence: 置信水平
             
         返回:
             lower_bound: 下界
@@ -199,7 +199,7 @@ class DistributionallyRobustOptimizer:
         
         参数:
             returns: 历史收益
-            alpha: CVaRç½®ä¿¡æ°´å¹³
+            alpha: CVaR置信水平
             wasserstein_radius: Wasserstein距离半径
             
         返回:

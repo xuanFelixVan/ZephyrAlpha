@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMPL_QUICKSTART_ROADMAP_001
 version: 5.0.1
 status: Active
@@ -76,7 +76,6 @@ implementation_status: 进行�?
 
 ### 文档
 - [LEARNING_PATH.md](./LEARNING_PATH.md) - 环境搭建章节
-- [dev-setup.md](./dev-setup.md) - 开发环境配�?
 
 ---
 
@@ -108,7 +107,6 @@ python src/main.py --code 000001.SZ --start 2024-01-01 --end 2024-12-31
 
 ### 文档
 - [PHASE1_DESIGN.md](./PHASE1_DESIGN.md) - **详细设计文档**
-- [first-backtest.md](./first-backtest.md) - 快速开�?
 
 ### 里程�?
 - 第一个策略跑�?�?

@@ -913,7 +913,7 @@ class RiskAlertSystem:
             message = f"VaR利用率较? {utilization*100:.1f}%"
         else:
             level = RiskLevel.P3
-            message = f"VaRæ­£å¸¸: {utilization*100:.1f}%"
+            message = f"VaR正常: {utilization*100:.1f}%"
         
         result = {
             'metric': 'VaR',
@@ -957,7 +957,7 @@ class RiskAlertSystem:
                 message = f"{greek.upper()}利用率较? {utilization*100:.1f}%"
             else:
                 level = RiskLevel.P3
-                message = f"{greek.upper()}æ­£å¸¸: {utilization*100:.1f}%"
+                message = f"{greek.upper()}正常: {utilization*100:.1f}%"
             
             result = {
                 'metric': greek.upper(),

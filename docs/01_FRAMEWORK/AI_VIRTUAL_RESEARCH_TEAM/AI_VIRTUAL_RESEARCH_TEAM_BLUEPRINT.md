@@ -421,7 +421,7 @@ class FactorResearcher:
         å å­ä¿¡æ¯ï¼?        - å å­åç§°ï¼{factor['factor_name']}
         - 因子表达式：{factor['expression']}
         - IC均值：{factor['validation']['ic_mean']}
-        - ICIRï¼{factor['validation']['icir']}
+        - ICIR：{factor['validation']['icir']}
         
         请返回JSON格式的优化建议：
         {{

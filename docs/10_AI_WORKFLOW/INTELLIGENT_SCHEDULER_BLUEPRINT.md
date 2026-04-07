@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INTELLIGENT_SCHEDULER_001
 version: 1.0.0
 status: Active
@@ -257,9 +257,6 @@ class ResourceAllocator:
 
 ## 📚 八、参考文档
 
-- [AI工作流蓝图](../BLUEPRINT.md)
-- [任务执行引擎蓝图](../TASK_EXECUTOR_BLUEPRINT.md)
-- [资源管理系统蓝图](../RESOURCE_MANAGER_BLUEPRINT.md)
 
 ---
 

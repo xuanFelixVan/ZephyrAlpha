@@ -1061,7 +1061,7 @@ def validate_config(config_path: str) -> bool:
 curl -O https://raw.githubusercontent.com/zephyralpha/install/main/install.sh
 
 # æ§è¡å®è£
-ï¼Linux/macOS?
+（Linux/macOS?
 chmod +x install.sh
 ./install.sh
 

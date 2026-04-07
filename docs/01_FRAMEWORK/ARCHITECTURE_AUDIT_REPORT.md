@@ -256,7 +256,7 @@ class AIPerformanceMonitor:
 performance_metrics:
   # 预测类模?  prediction_models:
     - accuracy: "预测准确?
-    - precision: "ç²¾ç¡®?
+    - precision: "精确?
     - recall: "召回?
     - f1_score: "F1分数"
     - mae: "平均绝对误差"

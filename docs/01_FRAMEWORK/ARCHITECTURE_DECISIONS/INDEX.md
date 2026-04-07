@@ -1,4 +1,4 @@
-﻿---
+---
 version: 1.0.0
 last_updated: 2026-04-07
 ---
@@ -69,7 +69,6 @@ last_updated: 2026-04-07
 
 ## 🔗 相关文档
 
-- [系统架构蓝图](../SYSTEM_ARCHITECTURE_BLUEPRINT.md)
 - [架构演进历史](../ARCHITECTURE_EVOLUTION_HISTORY.md)
 - [架构迁移计划](../ARCHITECTURE_MIGRATION_PLAN.md)
 
