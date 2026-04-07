@@ -20,7 +20,7 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
-layer: Layer 8 (人机交互层)
+layer: 人机交互层 (人机交互层)
 module_name: API文档系统
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha API文档
@@ -64,7 +64,7 @@ API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文�
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 8: 人机交互层
+#### 人机交互层: 人机交互层
 ##### 0.1. 未知模块
 - **模块ID**: 8.4
 - **蓝图文档**: [API_DOCS_BLUEPRINT.md](./API_DOCS_BLUEPRINT.md)

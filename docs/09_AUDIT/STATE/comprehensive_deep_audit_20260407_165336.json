@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-04-07T16:53:36.289787",
+  "summary": {
+    "total_files": 2067,
+    "total_dirs": 207,
+    "total_issues": 1,
+    "compliance_rate": 99.95
+  },
+  "issues": {
+    "L1_目录结构": [],
+    "L1_文件命名": [],
+    "L1_路径引用": [
+      {
+        "type": "死链接",
+        "count": 4047,
+        "severity": "medium",
+        "detail": "发现4047个死链接"
+      }
+    ],
+    "L2_职责驱动": [],
+    "L2_索引完备性": [],
+    "L2_版本隔离": [],
+    "L3_五大原则": [],
+    "L3_文档分类": [],
+    "L3_编号体系": [],
+    "L3_文档质量": []
+  },
+  "duplicate_files": [],
+  "overlapping_responsibility": []
+}

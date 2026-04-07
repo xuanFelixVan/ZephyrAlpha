@@ -17,7 +17,7 @@ responsibility:
 ### 2.1 Layer定位
 
 ```
-Layer 8: 人机交互层
+人机交互层: 人机交互层
     └── 文档中心模块 (DOCUMENTATION_CENTER_001)
         ├── 文档生成引擎
         ├── 文档部署服务

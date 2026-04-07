@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TACTICS_YOUZI_OTHER_K_001
 version: 1.9.1
 status: Active
@@ -32,7 +32,6 @@ implementation_status: 进行�?
 > **策略�?*：清风量化交易系�?.0
 >
 > **配套文档**�?
-> - [retail-strategies-j.md](./retail-strategies-j.md) - S077-S090
 > -  - 量能周期
 
 ---

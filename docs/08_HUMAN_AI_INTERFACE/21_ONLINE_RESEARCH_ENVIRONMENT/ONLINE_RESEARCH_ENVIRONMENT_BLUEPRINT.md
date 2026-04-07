@@ -20,7 +20,7 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
-layer: Layer 8 (人机交互层)
+layer: 人机交互层 (人机交互层)
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha在线研究环境
 compliance_level: 专业标准
@@ -35,7 +35,7 @@ responsibility:
 
 ### 1.1 定位与目标
 
-**模块定位**: Layer 8研究环境核心组件，提供交互式Python研究和数据探索环境
+**模块定位**: 人机交互层研究环境核心组件，提供交互式Python研究和数据探索环境
 
 **核心目标**:
 - 提供交互式Python编程环境
@@ -166,7 +166,7 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 8: 人机交互层
+#### 人机交互层: 人机交互层
 ##### 0.001. Online Research Environment
 - **模块ID**: ONLINE_RESEARCH_ENVIRONMENT_001
 - **蓝图文档**: [ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md](./ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md)

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX_IMPLEMENTATION_001
 version: 1.0.1
 status: Active
@@ -80,7 +80,6 @@ implementation_status: 活跃维护---
 | [快速开始](API_README.md) | 快速开始指?| ⭐⭐⭐⭐?|
 | [学习路径](./01_QUICKSTART/LEARNING_PATH.md) | 学习路径 | ⭐⭐⭐⭐ |
 | [路线图](./01_QUICKSTART/ROADMAP.md) | 实施路线?| ⭐⭐⭐⭐ |
-| [开发设置](./01_QUICKSTART/dev-setup.md) | 开发环境设?| ⭐⭐⭐⭐ |
 
 ### 开发标?
 | 文档名称 | 说明 | 重要?|

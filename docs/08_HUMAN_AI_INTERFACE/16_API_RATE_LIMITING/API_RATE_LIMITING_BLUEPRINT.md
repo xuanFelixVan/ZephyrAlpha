@@ -20,7 +20,7 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
-layer: Layer 8 (人机交互层)
+layer: 人机交互层 (人机交互层)
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha API限流保护
 compliance_level: 专业标准
@@ -35,7 +35,7 @@ responsibility:
 
 ### 1.1 定位与目标
 
-**模块定位**: Layer 8核心安全组件，提供API访问频率限制和滥用防护
+**模块定位**: 人机交互层核心安全组件，提供API访问频率限制和滥用防护
 
 **核心目标**:
 - 防止API滥用和恶意攻击
@@ -245,7 +245,7 @@ rate_limit_latency = Histogram(
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 8: 人机交互层
+#### 人机交互层: 人机交互层
 ##### 0.001. Api Rate Limiting
 - **模块ID**: API_RATE_LIMITING_001
 - **蓝图文档**: [API_RATE_LIMITING_BLUEPRINT.md](./API_RATE_LIMITING_BLUEPRINT.md)

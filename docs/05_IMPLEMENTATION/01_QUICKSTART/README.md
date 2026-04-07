@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMPL_QUICKSTART_README_001
 version: 1.0.1
 status: Active
@@ -31,8 +31,6 @@ implementation_status: 进行�?
 
 | 文档 | 说明 | 预计时间 |
 |------|------|----------|
-| [dev-setup.md](./dev-setup.md) | 开发环境搭�?| 5 分钟 |
-| [first-backtest.md](./first-backtest.md) | 第一次回�?| 10 分钟 |
 | [ROADMAP.md](./ROADMAP.md) | 务实开发路线图 | 5 分钟 |
 | [LEARNING_PATH.md](./LEARNING_PATH.md) | 学习路径规划 | 3 分钟 |
 | [PHASE1_DESIGN.md](./PHASE1_DESIGN.md) | Phase 1 技术设�?| 10 分钟 |

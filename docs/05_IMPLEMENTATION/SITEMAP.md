@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOC_IMPLEMENTATION_SITEMAP_001
 version: 1.0.0
 status: Active
@@ -81,8 +81,6 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 **ﮒﺟ،ﻠﻛﺕﮔﻟﺓﺁ?* (1ﮒﺍﮔﭘ):
 1. ﻠﻟﺁﭨ [01_QUICKSTART/README.md](API_README.md) - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
 2. ﻠﻟﺁﭨ [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - ﮒ­۵ﻛﺗ ﻟﺓﺁﮒﺝ (10ﮒﻠ)
-3. ﻠﻟﺁﭨ [01_QUICKSTART/dev-setup.md](./01_QUICKSTART/dev-setup.md) - ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ?(20ﮒﻠ)
-4. ﻠﻟﺁﭨ [01_QUICKSTART/first-backtest.md](./01_QUICKSTART/first-backtest.md) - ﻝ؛؛ﻛﺕﮔ؛۰ﮒ?(20ﮒﻠ)
 
 ### ﮔﮔﺁﮒﺙﮒ?
 **ﮒﺙﮒﻟ۶ﻟﮒ­۵ﻛﺗ ﻟﺓﺁ?* (2ﮒﺍﮔﭘ):

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TACTICS_YOUZI_OTHER_H_001
 version: 1.6.1
 status: Active
@@ -32,7 +32,6 @@ implementation_status: 进行�?---
 > **策略�?*：清风量化交易系�?.0
 >
 > **配套文档**�?
-> - [retail-strategies-g.md](./retail-strategies-g.md) - S050-S058
 > -  - 估值分�?
 
 ---
