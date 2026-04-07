@@ -1,10 +1,11 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 目录导航
+  - 文档索引
+  - 蓝图目录
+  - 文档检索
 
-module_id: IMPL_蓝图文档总索引_001
+module_id: IMPL_BLUEPRINT_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
