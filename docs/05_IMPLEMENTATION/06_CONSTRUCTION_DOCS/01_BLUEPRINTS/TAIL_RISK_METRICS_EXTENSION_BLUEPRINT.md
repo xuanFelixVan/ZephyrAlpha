@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 7 é£é©ç®¡çå±?
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 responsibility:
@@ -23,9 +22,7 @@ responsibility:
 
 # 尾部风险度量扩展蓝图
 
-> **æ ¸å¿èè´£**: æ©å±å°¾é¨é£é©åº¦éï¼æ¯æCVaRãEVaRãCDaRç­é«çº§é£é©ææ ?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼å...
 
 
 ## 设计目标
@@ -82,10 +79,7 @@ responsibility:
 
 ## 核心定位
 
-> æ ¸å¿èè´£: æ©å±å°¾é¨é£é©åº¦éï¼æ¯æCVaRãEVaRãCDaRç­é«çº§é£é©ææ ?
 > 职责边界: 
-> - â?æ¬ææ¡£è´è´£ï¼å°¾é¨é£é©åº¦éãCVaR/EVaR/CDaRè®¡ç®ãé«çº§é£é©ææ ?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å°¾é¨é£é©å¯¹å²ç­ç¥ï¼ç±TAIL_RISK_HEDGINGè´è´£ï¼ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
 ## 2. 功能设计
 
@@ -94,9 +88,7 @@ responsibility:
 ```python
 class TailRiskMetrics:
     """
-    å°¾é¨é£é©åº¦éå?
     
-    å¼æºä¾èµ? Riskfolio-Lib
     """
     
     def cvar(
@@ -105,12 +97,9 @@ class TailRiskMetrics:
         alpha: float = 0.05
     ) -> float:
         """
-        æ¡ä»¶é£é©ä»·å¼ï¼CVaR / Expected Shortfallï¼?
         
         CVaR = E[R | R <= VaR]
         
-        è¶
-è¿VaRçå¹³åæå¤?
         """
         pass
     
@@ -120,9 +109,7 @@ class TailRiskMetrics:
         alpha: float = 0.05
     ) -> float:
         """
-        çµé£é©ä»·å¼ï¼EVaRï¼?
         
-        åºäºçµçé£é©åº¦éï¼æ´ä¿å®çå°¾é¨é£é©ä¼°è®?
         """
         pass
     
@@ -132,9 +119,7 @@ class TailRiskMetrics:
         alpha: float = 0.05
     ) -> float:
         """
-        æ¡ä»¶åæ¤é£é©ï¼CDaRï¼?
         
-        åºäºåæ¤çå°¾é¨é£é©åº¦é?
         """
         pass
     
@@ -143,7 +128,6 @@ class TailRiskMetrics:
         returns: np.ndarray
     ) -> float:
         """
-        æå¤§åæ?
         """
         pass
     
@@ -154,7 +138,6 @@ class TailRiskMetrics:
         """
         Ulcer指数
         
-        èèåæ¤æç»­æ¶é´çé£é©åº¦é?
         """
         pass
     
@@ -167,7 +150,6 @@ class TailRiskMetrics:
         """
         最小CVaR优化
         
-        å¼æºä¾èµ? Riskfolio-Lib
         """
         pass
 ```
@@ -175,70 +157,48 @@ class TailRiskMetrics:
 ---
 
 ## 3. é
-ç½®åæ°
 
 ```yaml
 tail_risk_metrics:
   # CVaRé
-ç½®
   cvar:
     alpha: 0.05  # 95%置信水平
     
   # EVaRé
-ç½®
   evar:
     alpha: 0.05
     
   # CDaRé
-ç½®
   cdar:
     alpha: 0.05
     
-  # åæ¤é
-ç½®
   drawdown:
-    max_threshold: 0.20  # æå¤§åæ¤éå?
 ```
 
 ---
 
-## ð ç¸å
-³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [VaR/ESçæ§èå¾](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | å¼ºä¾èµ?| æä¾VaR/ESææ  |
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [ç»åæ
-æ¯åæèå¾](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | ä¸­ä¾èµ?| æä¾æ
 景分析 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [å°¾é¨é£é©å¯¹å²èå¾](./TAIL_RISK_HEDGING_BLUEPRINT.md) | TAIL_RISK_HEDGING_001 | å¼ºä¾èµ?| å°¾é¨é£é©å¯¹å² |
-| [ååæµè¯ç³»ç»èå¾](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | ä¸­ä¾èµ?| ååæµè¯ |
-| [é£é©å½å ç³»ç»èå¾](./RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md) | RISK_ATTRIBUTION_SYSTEM_001 | ä¸­ä¾èµ?| é£é©å½å  |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
 
 ```mermaid
 graph LR
     A[VaR/ES监控] --> B[尾部风险指标扩展]
     C[数据质量监控] --> B
-    D[ç»åæ
 景分析] --> B
     
     B --> E[尾部风险对冲]
@@ -254,21 +214,16 @@ graph LR
 
 ## 4. 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
 ## 5. 文档治理
 
 ### 5.1 文档索引
 
 **本文档在系统中的位置**:
-- **æå±å±çº?*: Layer 0 (ç³»ç»æ¶æ)
 - **模块索引**: 001
 - **模块名称**: TAIL_RISK_METRICS_EXTENSION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -282,9 +237,6 @@ graph LR
 
 **文档维护**:
 - **责任模块**: TAIL_RISK_METRICS_EXTENSION
-- **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
-- **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

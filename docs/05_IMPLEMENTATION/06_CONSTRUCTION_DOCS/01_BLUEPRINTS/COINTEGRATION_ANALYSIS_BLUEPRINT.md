@@ -6,14 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alphaå å­å±?
 compliance_level: 专业标准
 responsibility:
   - 协整分析
-  - åæ´å
-³ç³»æ£éª?
   - é
-å¯¹äº¤æè¯å«
   - 统计套利
 layer: Layer 5 (策略执行层)
 ---
@@ -28,9 +24,7 @@ layer: Layer 5 (策略执行层)
   - 组合优化
 standard_type: 专业量化机构文档
 layer: Layer 5 (策略执行层)
-ï»? åæ´åæèå¾
 
-> **æ ¸å¿å®ä½**: å...
 
 
 ## 设计目标
@@ -89,48 +83,23 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Cointegration Analysis蓝图设计
 > 职责边界: 
-> - â?æ¬ææ¡£è´è´£ï¼Cointegration Analysisèå¾è®¾è®¡ç¸å
-³å
-å®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å
-¶ä»æ¨¡åå
-å®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼ç¸å
-³æ§å»ºæ¨¡æ¨¡åï¼
 
-**æ ¸å¿ä»·å?*:
-- æ£éªèµäº§é´çåæ´å
-³ç³»ï¼é¿æåè¡¡ï¼?
-- æ¯æEngle-Grangerä¸¤æ­¥æ³ãJohansenæ£éª?
-- ä¸ºé
-å¯¹äº¤æç­ç¥æä¾åºç¡
-- åºå«äºç¸å
-³æ§ï¼åæ´å
-³ç³»æ´ç¨³å®?
 
-**ä¸å¡ä»·å?*:
 - 发现统计套利机会
-- æå»ºåå¼åå½ç­ç?
-- æåç»ååæ£åææ?
 
 ### 1.2 版本信息
 
-| é¡¹ç® | å
-å®¹ |
 |------|------|
 | **模块ID** | COINTEGRATION_ANALYSIS_001 |
 | **版本** | v1.0.0 |
-| **å¼æºä¾èµ?* | statsmodels |
-| **é¢è®¡å·¥æ¶** | 2-3å¤?|
 
 ---
-## 2. ææ¯å®ç?
 
 ### 2.1 核心API
 
@@ -141,7 +110,6 @@ import numpy as np
 import pandas as pd
 
 class CointegrationAnalyzer:
-    """åæ´åæå?""
     
     def engle_granger_test(
         self,
@@ -149,7 +117,6 @@ class CointegrationAnalyzer:
         series2: np.ndarray
     ) -> dict:
         """
-        Engle-Grangerä¸¤æ­¥æ³åæ´æ£éª?
         
         Returns:
             {'cointegrated': bool, 'pvalue': float, 'hedge_ratio': float}
@@ -174,18 +141,12 @@ class CointegrationAnalyzer:
         k_ar_diff: int = 1
     ) -> dict:
         """
-        Johansenåæ´æ£éª?
         
         Args:
-            data: å¤åéæ¶é´åºå?
             det_order: 确定性趋势项
-                -1: æ ç¡®å®æ§è¶å?
-                0: å¸¸æ°é¡?
-                1: å¸¸æ°é¡¹åè¶å¿é¡?
             k_ar_diff: 滞后阶数
             
         Returns:
-            åæ´æ£éªç»æ?
         """
         result = coint_johansen(data, det_order, k_ar_diff)
         
@@ -218,7 +179,6 @@ class CointegrationAnalyzer:
         扫描所有资产对，找出协整对
         
         Returns:
-            åæ´å¯¹åè¡?
         """
         n_assets = price_data.shape[1]
         cointegrated_pairs = []
@@ -242,45 +202,27 @@ class CointegrationAnalyzer:
 ```
 
 
-## ð ç¸å
-³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾èµäº§å
-æ°æ?|
-| [å¨æç¸å
-³æ§å»ºæ¨¡èå¾](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | DYNAMIC_CORRELATION_MODELING_001 | ä¸­ä¾èµ?| æä¾ç¸å
-³æ§åæ?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»è®¡å¥å©æ¨¡åèå¾](./STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) | STATISTICAL_ARBITRAGE_MODULE_001 | å¼ºä¾èµ?| ç»è®¡å¥å©ç­ç¥ |
-| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | ä¸­ä¾èµ?| ç»åä¼å |
-| [é£é©å¹³ä»·ç­ç¥èå¾](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | ä¸­ä¾èµ?| é£é©å¹³ä»·ç­ç¥ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
 
 ```mermaid
 graph LR
     A[数据质量监控] --> B[协整分析]
     C[数据目录] --> B
-    D[å¨æç¸å
-³æ§å»ºæ¨¡] --> B
     
     B --> E[统计套利模块]
     B --> F[组合优化引擎]
@@ -297,25 +239,16 @@ graph LR
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
-| Phase 1 | Engle-Grangeræ£éªå®ç?| 8h |
-| Phase 2 | Johansenæ£éªãé
-å¯¹æ«æ?| 8h |
-| Phase 3 | APIãæµè¯ãææ¡?| 8h |
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
 ## 5. 文档治理
@@ -323,29 +256,19 @@ graph LR
 ### 5.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Cointegration Analysis
 - **模块ID**: COINTEGRATION_ANALYSIS_001
 - **蓝图文档**: COINTEGRATION_ANALYSIS_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: Layer 6 ç»åä¼åå±?
-- **ç¶æ?*: Active
 ```
 
 ### 5.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Cointegration Analysis** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
 ### 5.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

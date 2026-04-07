@@ -6,7 +6,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 çæ§å±?
 compliance_level: 专业标准
 responsibility:
   - 增强告警系统
@@ -26,11 +25,6 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Enhanced Alert System蓝图设计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Enhanced Alert Systemèå¾è®¾è®¡ç¸å
-³å
-å®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å
-¶ä»æ¨¡åå
 å...
 
 
@@ -90,12 +84,6 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Enhanced Alert System蓝图设计
 > 职责边界: 
-> - â?æ¬ææ¡£è´è´£ï¼Enhanced Alert Systemèå¾è®¾è®¡ç¸å
-³å
-å®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å
-¶ä»æ¨¡åå
-å®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
 ## 一、设计背景与目标
 
@@ -159,9 +147,7 @@ class AlertAggregator:
         
         Args:
             config: é
-ç½®ä¿¡æ¯
                 - group_by: 聚合字段
-                - group_wait: èåç­å¾
 时间
                 - group_interval: 聚合间隔
         """
@@ -170,7 +156,6 @@ class AlertAggregator:
         # 聚合字段
         self.group_by = config.get('group_by', ['alertname', 'severity'])
         
-        # èåç­å¾
 时间（秒?        self.group_wait = config.get('group_wait', 30)
         
         # 聚合间隔（秒?        self.group_interval = config.get('group_interval', 300)
@@ -257,7 +242,6 @@ class AlertAggregator:
             
         Returns:
             bool: 是否应该?        """
-        # æ£æ¥èåç­å¾
 时?        time_since_first = (datetime.now() - aggregated.first_occurrence).total_seconds()
         
         if time_since_first >= self.group_wait:
@@ -285,7 +269,6 @@ class AlertInhibitor:
         
         Args:
             config: é
-ç½®ä¿¡æ¯
                 - inhibit_rules: 抑制规则
         """
         self.config = config
@@ -309,11 +292,8 @@ class AlertInhibitor:
             bool: 是否应该抑制
         """
         for rule in self.inhibit_rules:
-            # æ£æ¥æºå¹é
 
             if self._match_source(alert, rule['source_match']):
-                # æ£æ¥æ¯å¦å­å¨ç®æ å¹é
-çåè­¦
                 for active_alert in active_alerts:
                     if self._match_target(active_alert, rule['target_match']):
                         return True
@@ -326,14 +306,9 @@ class AlertInhibitor:
         source_match: Dict[str, str]
     ) -> bool:
         """
-        å¹é
-æºå?        
         Args:
             alert: 告警
-            source_match: æºå¹é
-è§?            
         Returns:
-            bool: æ¯å¦å¹é
 
         """
         for key, value in source_match.items():
@@ -357,16 +332,11 @@ class AlertInhibitor:
         target_match: Dict[str, str]
     ) -> bool:
         """
-        å¹é
-ç®æ åè­¦
         
         Args:
             alert: 告警
-            target_match: ç®æ å¹é
-è§å
             
         Returns:
-            bool: æ¯å¦å¹é
 
         """
         return self._match_source(alert, target_match)
@@ -386,15 +356,8 @@ class MultiChannelNotifier:
         初始化多渠道通知?        
         Args:
             config: é
-ç½®ä¿¡æ¯
-                - email: é®ä»¶é
-ç½®
-                - sms: ç­ä¿¡é
-ç½®
                 - slack: Slacké
-ç½®
                 - webhook: Webhooké
-ç½®
         """
         self.config = config
         
@@ -409,8 +372,6 @@ class MultiChannelNotifier:
         
         Args:
             to_addresses: 收件人列?            subject: 邮件主题
-            content: é®ä»¶å
-å®¹
             
         Returns:
             bool: 是否成功
@@ -426,8 +387,6 @@ class MultiChannelNotifier:
         发送短信通知
         
         Args:
-            phone_numbers: ææºå·å?            message: ç­ä¿¡å
-å®¹
             
         Returns:
             bool: 是否成功
@@ -464,8 +423,6 @@ class MultiChannelNotifier:
         
         Args:
             channel: Slack频道
-            message: æ¶æ¯å
-å®¹
             
         Returns:
             bool: 是否成功
@@ -574,8 +531,6 @@ class MultiChannelNotifier:
 
 #### Day 1-2: 告警聚合和抑?
 **任务**:
-1. å®ç°AlertAggregatoråè­¦èå?2. å®ç°AlertInhibitoråè­¦æå¶?3. ç¼ååå
-æµè¯
 
 #### Day 3-4: 多渠道通知
 
@@ -602,36 +557,23 @@ class MultiChannelNotifier:
 
 ---
 
-## ð ç¸å
-³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç³»ç»å¢å¼ºèå¾](./SYSTEM_ENHANCEMENT_BLUEPRINT.md) | SYSTEM_ENHANCEMENT_001 | å¼ºä¾èµ?| æä¾ç³»ç»å¢å¼ºæ°æ® |
-| [è´¨éè¯åç³»ç»èå¾](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | å¼ºä¾èµ?| æä¾è´¨éè¯åæ°æ® |
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | ä¸­ä¾èµ?| æä¾æ°æ®è´¨éææ  |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [èªå¨åæ°æ®ä¿®å¤å¼æèå¾](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) | AUTO_REPAIR_ENGINE_001 | å¼ºä¾èµ?| èªå¨åæ°æ®ä¿®å¤?|
-| [çæ§ä»ªè¡¨æ¿å¢å¼ºèå¾](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | ä¸­ä¾èµ?| çæ§ä»ªè¡¨æ¿å¢å¼?|
-| [è´¨éæ¥åèªå¨åèå¾](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | ä¸­ä¾èµ?| è´¨éæ¥åèªå¨å?|
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **FastAPI** | 0.100+ | Web框架 | [官方文档](https://fastapi.tiangolo.com/) |
 | **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
-| **PostgreSQL** | 15+ | æ°æ®åº?| [å®æ¹ææ¡£](https://www.postgresql.org/) |
 | **SMTP** | - | 邮件通知 | [RFC标准](https://tools.ietf.org/html/rfc5321) |
 
-### å¼ç¨å
-³ç³»å?
 
 ```mermaid
 graph LR
@@ -651,7 +593,6 @@ graph LR
 ---
 
 ## å
-­ãææ¡£æ²»ç?
 **版本历史**:
 - v1.0.0 (2026-04-02): 初始版本，完成实时告警系统增强设?
 ---
@@ -664,15 +605,9 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Enhanced Alert System
 - **模块ID**: ENHANCED_ALERT_SYSTEM_001
 - **蓝图文档**: ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: å
-¨ç³»ç»ç»ä¸åè­¦å¹³å°
-- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -680,18 +615,13 @@ graph LR
 | 模块 | 职责 | 边界 |
 |------|------|------|
 | **Enhanced Alert System** | å
-¨ç³»ç»ç»ä¸åè­¦å¹³å° | **æ ¸å¿æ¨¡å** |
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active
 
 
 ---
@@ -700,8 +630,6 @@ graph LR
 
 ### 变更记录
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 

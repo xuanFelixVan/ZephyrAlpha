@@ -4,17 +4,14 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: é¦å¸­æ¶æå¸?
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据预处理层
 compliance_level: 专业标准
 priority: P1
 layer: Layer 5.1 (数据处理)
-responsibility: æ°æ®æºå¥åº·çæ§ä¸æ
 障切换
 ---
 
-# æ°æ®æºå¥åº·çæ§èå?
 
 ## 核心定位
 
@@ -75,88 +72,32 @@ responsibility: æ°æ®æºå¥åº·çæ§ä¸æ
 
 ## 核心定位
 
-è´è´£æ°æ®æºå¥åº·çæ§ï¼å®æ¶çæ§æ°æ®æºç¶æï¼æä¾å¥åº·æ£æ¥ãåè­¦åèªå¨æ¢å¤åè½ã?
 
-## ð ä¸ãæ¨¡åæ¦è¿?
 
 ### 1.1 专业机构标准要求
 
-| æºæç±»å | çæ§è¦æ± | å¯ç¨æ§ç®æ ?|
 |---------|---------|-----------|
-| **æ¡¥æ°´åºé** | å®æ¶çæ§ãèªå¨åæ?| 99.99% |
-| **æèºå¤å
-´ç§æ** | å¤ç»´åº¦å¥åº·æ£æ?| 99.95% |
-| **Two Sigma** | é¢æµæ§ç»´æ?| 99.9% |
-| **Citadel** | ç§çº§æ
-éæ£æµ?| 99.99% |
 
 ### 1.2 核心功能矩阵
 
-| åè½æ¨¡å | å¼æºæ¹æ¡?| æçåº?| ä¸ªäººéç¨æ?| æ¨èææ° |
 |---------|---------|--------|-----------|---------|
-| **å¥åº·æ£æ?* | Prometheus + Blackbox Exporter | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
-| **ææ éé** | Prometheus | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­â­?|
-| **å¯è§å?* | Grafana | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­â­?|
-| **åè­¦** | Alertmanager | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
 | **æ
 障切换** | 自研 + HAProxy | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
-## ðï¸?äºãç³»ç»æ¶æè®¾è®?
 
-### 2.1 æ´ä½æ¶æå?
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                   æ°æ®æºå¥åº·çæ§æ¶æ?                                     â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?                                                                        â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â? â?                       æ°æ®æºå±                                    â? â?
-â? â? â?iFind API  â?Tushare  â?AKShare  â?ä¸æ¹è´¢å¯  â?èªå®ä¹API       â? â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â? â?                   å¥åº·æ£æ¥å±                                      â? â?
-â? â? â?HTTPæ¢æµ  â?TCPæ¢æµ  â?APIååºæ£æ? â?æ°æ®å®æ´æ§æ£æ?           â? â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â? â?                   ææ ééå±?(Prometheus)                         â? â?
-â? â? â?ååºæ¶é´  â?éè¯¯ç? â?å¯ç¨æ? â?æ°æ®å»¶è¿                        â? â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â? â?                   åè­¦ä¸æ
-éåæ¢å±                                 â? â?
-â? â? â?éå¼åè­? â?æºè½åè­¦  â?èªå¨åæ¢  â?éçº§ç­ç¥                    â? â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â? â?                   å¯è§åå± (Grafana)                              â? â?
-â? â? â?å®æ¶ä»ªè¡¨ç? â?åå²è¶å¿  â?åè­¦åå²  â?SLAæ¥è¡¨                   â? â?
-â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â?                                                                        â?
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
-### 2.2 æ°æ®æµæ¶æ?
 
 ```
-æ°æ®æº?â?å¥åº·æ£æ?â?ææ éé â?è§åè¯ä¼° â?åè­¦/åæ¢ â?éç¥
-   â?        â?         â?         â?         â?        â?
-   âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ´ââââââââââ?
                     完整监控链路
 ```
 
 ---
 
-## ð» ä¸ãæ ¸å¿å®ç°ä»£ç ?
 
 ### 3.1 数据源健康检查器
 
@@ -175,7 +116,6 @@ import json
 
 
 class HealthStatus(Enum):
-    """å¥åº·ç¶ææä¸?""
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -184,7 +124,6 @@ class HealthStatus(Enum):
 
 @dataclass
 class HealthCheckResult:
-    """å¥åº·æ£æ¥ç»æ?""
     source_name: str
     status: HealthStatus
     response_time_ms: float
@@ -213,7 +152,6 @@ class DataSourceHealthChecker:
         expected_status: int = 200,
         expected_content: str = None
     ) -> HealthCheckResult:
-        """æ£æ¥HTTPç«¯ç¹å¥åº·ç¶æ?""
         start_time = time.time()
         
         try:
@@ -280,7 +218,6 @@ class DataSourceHealthChecker:
         source_name: str,
         api_config: Dict[str, Any]
     ) -> HealthCheckResult:
-        """æ£æ¥APIååºå¥åº·ç¶æ?""
         endpoint = api_config.get("endpoint")
         api_key = api_config.get("api_key")
         params = api_config.get("params", {})
@@ -412,23 +349,19 @@ class DataSourceHealthChecker:
         return self.health_status
     
     def get_source_status(self, source_name: str) -> HealthStatus:
-        """è·åæ°æ®æºç¶æ?""
         if source_name in self.health_status:
             return self.health_status[source_name].status
         return HealthStatus.UNKNOWN
     
     def should_failover(self, source_name: str) -> bool:
-        """å¤æ­æ¯å¦åºè¯¥æ
 障切换"""
         failures = self.consecutive_failures.get(source_name, 0)
         return failures >= self.failure_threshold
 ```
 
-### 3.2 Prometheusææ å¯¼åºå?
 
 ```python
 """
-Prometheusææ å¯¼åºå?
 """
 from prometheus_client import Counter, Histogram, Gauge, Info
 from prometheus_client.core import CollectorRegistry
@@ -437,7 +370,6 @@ import time
 
 
 class DataSourceMetrics:
-    """æ°æ®æºçæ§ææ ?""
     
     def __init__(self):
         self.registry = CollectorRegistry()
@@ -504,7 +436,6 @@ class DataSourceMetrics:
         source_type: str,
         status: str
     ):
-        """æ´æ°å¥åº·ç¶æææ ?""
         status_value = {
             "healthy": 1.0,
             "degraded": 0.5,
@@ -561,7 +492,6 @@ class DataSourceMetrics:
         source_type: str,
         availability_pct: float
     ):
-        """æ´æ°å¯ç¨æ?""
         self.availability.labels(
             source_name=source_name,
             source_type=source_type
@@ -585,24 +515,20 @@ class DataSourceMetrics:
         source_type: str,
         count: int
     ):
-        """æ´æ°æ´»è·è¿æ¥æ?""
         self.active_connections.labels(
             source_name=source_name,
             source_type=source_type
         ).set(count)
     
     def set_source_info(self, info: Dict[str, str]):
-        """è®¾ç½®æ°æ®æºä¿¡æ?""
         self.source_info.info(info)
 ```
 
 ### 3.3 æ
-éåæ¢ç®¡çå?
 
 ```python
 """
 æ
-éåæ¢ç®¡çå?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -623,7 +549,6 @@ class FailoverStrategy(Enum):
 
 @dataclass
 class DataSourceEndpoint:
-    """æ°æ®æºç«¯ç?""
     name: str
     endpoint: str
     priority: int
@@ -635,7 +560,6 @@ class DataSourceEndpoint:
 
 class FailoverManager:
     """æ
-éåæ¢ç®¡çå?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -655,7 +579,6 @@ class FailoverManager:
         self._init_endpoints()
     
     def _init_endpoints(self):
-        """åå§åç«¯ç?""
         for source_type, sources in self.config.get("sources", {}).items():
             self.endpoints[source_type] = []
             
@@ -688,7 +611,6 @@ class FailoverManager:
         return None
     
     def get_all_endpoints(self, source_type: str) -> List[str]:
-        """è·åææç«¯ç¹ï¼ç¨äºActive-Activeç­ç¥ï¼?""
         if source_type in self.endpoints:
             return [ep.name for ep in self.endpoints[source_type] if ep.is_active]
         return []
@@ -725,7 +647,6 @@ class FailoverManager:
                 break
     
     def _trigger_failover(self, source_type: str):
-        """è§¦åæ
 障切换"""
         if source_type not in self.endpoints:
             return
@@ -747,7 +668,6 @@ class FailoverManager:
         )
     
     async def health_check_loop(self):
-        """å¥åº·æ£æ¥å¾ªç?""
         while True:
             for source_type, endpoints in self.endpoints.items():
                 for endpoint in endpoints:
@@ -766,7 +686,6 @@ class FailoverManager:
             await asyncio.sleep(self.check_interval)
     
     def get_status(self) -> Dict[str, Any]:
-        """è·åç¶æ?""
         status = {}
         
         for source_type, endpoints in self.endpoints.items():
@@ -787,11 +706,9 @@ class FailoverManager:
         return status
 ```
 
-### 3.4 åè­¦ç®¡çå?
 
 ```python
 """
-åè­¦ç®¡çå?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -826,7 +743,6 @@ class Alert:
 
 
 class AlertManager:
-    """åè­¦ç®¡çå?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -873,7 +789,6 @@ class AlertManager:
         return alert
     
     def _should_send_alert(self, source_name: str, severity: AlertSeverity) -> bool:
-        """å¤æ­æ¯å¦åºè¯¥åéåè­?""
         if source_name not in self.last_alert_time:
             return True
         
@@ -914,7 +829,6 @@ class AlertManager:
 数据源告警通知
 
 告警ID: {alert.alert_id}
-æ°æ®æº? {alert.source_name}
 严重级别: {alert.severity.value}
 消息: {alert.message}
 时间: {alert.timestamp.isoformat()}
@@ -953,7 +867,6 @@ class AlertManager:
         webhook_url = config['webhook_url']
         
         content = f"""
-**æ°æ®æºåè­?*
 > 来源: {alert.source_name}
 > 级别: {alert.severity.value}
 > 消息: {alert.message}
@@ -974,7 +887,6 @@ class AlertManager:
         webhook_url = config['webhook_url']
         
         content = f"""
-æ°æ®æºåè­?
 - 来源: {alert.source_name}
 - 级别: {alert.severity.value}
 - 消息: {alert.message}
@@ -1042,11 +954,8 @@ class AlertManager:
 
 ---
 
-## ð åãé¨ç½²é
-ç½?
 
 ### 4.1 Prometheusé
-ç½®
 
 ```yaml
 global:
@@ -1098,9 +1007,6 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "æ°æ®æº?{{ $labels.source_name }} ä¸å¯ç?
-          description: "æ°æ®æº?{{ $labels.source_name }} å·²ç»ä¸å¯ç¨è¶
-è¿?åé"
       
       - alert: DataSourceDegraded
         expr: datasource_health_status == 0.5
@@ -1108,8 +1014,6 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§"
-          description: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§è¶
 过5分钟"
       
       - alert: HighResponseTime
@@ -1118,9 +1022,6 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "æ°æ®æº?{{ $labels.source_name }} ååºæ¶é´è¿é¿"
-          description: "æ°æ®æº?{{ $labels.source_name }} P95ååºæ¶é´è¶
-è¿5ç§?
       
       - alert: HighErrorRate
         expr: rate(datasource_error_total[5m]) > 0.1
@@ -1128,9 +1029,6 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¿é«?
-          description: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¶
-è¿?0%"
       
       - alert: LowAvailability
         expr: datasource_availability < 99
@@ -1138,12 +1036,9 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "æ°æ®æº?{{ $labels.source_name }} å¯ç¨æ§è¿ä½?
-          description: "æ°æ®æº?{{ $labels.source_name }} å¯ç¨æ§ä½äº?9%"
 ```
 
 ### 4.3 Docker Composeé
-ç½®
 
 ```yaml
 version: '3.8'
@@ -1214,9 +1109,7 @@ networks:
 
 ---
 
-## ð äºãä½¿ç¨ç¤ºä¾?
 
-### 5.1 å¥åº·æ£æ?
 
 ```python
 from datasource_health import DataSourceHealthChecker
@@ -1278,7 +1171,6 @@ failover.report_failure("market_data", "ifind")
 
 active = failover.get_active_endpoint("market_data")
 print(f"æ
-éåæ¢åæ´»è·ç«¯ç? {active}")
 ```
 
 ### 5.3 告警通知
@@ -1317,19 +1209,13 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## ð å
-­ãæ§è½ææ 
 
 ### 6.1 监控指标
 
-| ææ  | ç®æ å?| åè­¦éå?|
 |------|--------|---------|
-| **å¯ç¨æ?* | â?9.9% | <99% |
 | **响应时间(P95)** | <1s | >5s |
-| **éè¯¯ç?* | <1% | >10% |
 | **数据延迟** | <10s | >60s |
 | **æ
-éæ£æµæ¶é?* | <30s | >60s |
 | **æ
 障切换时间** | <10s | >30s |
 
@@ -1344,78 +1230,46 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## ð ä¸ãæä½³å®è·?
 
-### 7.1 å¥åº·æ£æ?
 
-1. **å¤ç»´åº¦æ£æ?*: HTTPæ¢æµ + APIååº + æ°æ®å®æ´æ?
-2. **åçé´é**: 30ç§æ£æ¥ä¸æ¬¡ï¼é¿å
-è¿åº¦è¯·æ±
-3. **è¶
-æ¶è®¾ç½®**: æ ¹æ®æ°æ®æºç¹æ§è®¾ç½®åçè¶
 æ?
-4. **å¤±è´¥éå?*: è¿ç»­3æ¬¡å¤±è´¥æå¤å®ä¸ºä¸å¥åº·
 
 ### 7.2 æ
 障切换
 
-1. **ä¼å
-çº§ç­ç?*: ä¸»æ°æ®æºä¼å
-ï¼å¤ç¨æ°æ®æºæä¼å
-çº§æåº
 2. **自动恢复**: 备用数据源恢复后自动切回主数据源
-3. **ç¶ææä¹
-å**: è®°å½åæ¢åå²ï¼ä¾¿äºå®¡è®?
 4. **通知机制**: 切换时发送通知
 
 ### 7.3 告警管理
 
 1. **分级告警**: INFO/WARNING/CRITICAL/EMERGENCY
-2. **å·å´æºå¶**: é¿å
-åè­¦é£æ´
 3. **多渠道通知**: 邮件 + Webhook + 即时通讯
 4. **告警聚合**: 相同告警聚合显示
 
 ---
 
-## ð å
-«ãå®æ½è·¯å¾?
 
-### Phase 1: åºç¡çæ§ï¼?å¨ï¼
 
 - [x] Prometheus部署
-- [x] åºç¡å¥åº·æ£æ?
 - [x] 指标采集
 
-### Phase 2: å®ååè½ï¼?å¨ï¼
 
-- [x] Grafanaä»ªè¡¨ç?
-- [x] åè­¦è§åé
-ç½®
 - [x] æ
 障切换功能
 
-### Phase 3: ä¼åå¢å¼ºï¼?å¨ï¼
 
 - [x] 多渠道通知
-- [x] èªå¨åæ¢å¤?
 - [x] SLA报表
 
 ---
 
-## ð ä¹ãåèèµæº?
 
-### 9.1 å¼æºé¡¹ç?
 
-| é¡¹ç® | å°å | ç¨é?|
 |------|------|------|
 | Prometheus | https://prometheus.io/ | 监控系统 |
-| Grafana | https://grafana.com/ | å¯è§å?|
 | Alertmanager | https://prometheus.io/docs/alerting/ | 告警管理 |
 | Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | 黑盒探测 |
 
-### 9.2 ç¸å
-³ææ¡£
 
 - [Prometheus最佳实践](https://prometheus.io/docs/practices/)
 - [SRE运维手册](https://sre.google/sre-book/)
@@ -1423,12 +1277,8 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## ð åãåæ´åå?
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 

@@ -6,20 +6,12 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: 专业标准
 responsibility:
-  - å¸åºåä¸è
-æ¨¡æéæ?
-  - åä¸è
-è¡ä¸ºå»ºæ¨?
-  - å¤å±æ¬¡éæ?
   - 模拟结果应用
 layer: Layer 5 (策略执行层)
 ---
 
-# å¸åºåä¸è
-è¡ä¸ºæ¨¡æéæèå?
 
 ## 核心定位
 
@@ -80,54 +72,36 @@ layer: Layer 5 (策略执行层)
 
 ## 核心定位
 
-æå»ºå¸åºåä¸è
-æ¨¡æéæçè®¾è®¡ä¸å®ç°ï¼åºäºAgent-Based Modelingææ¯ï¼æ¨¡æä¸åå¸åºåä¸è
-è¡ä¸ºï¼æ¯æå¸åºå¾®è§ç»æç ç©¶åç­ç¥æµè¯ã?
 
 ---
 
 
-> **æ ¸å¿èè´£**: å¸åºåä¸è
-è¡ä¸ºæ¨¡æéæï¼å¤å±æ¬¡éææ¶æ?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼å¸åºåä¸è
-æ¨¡æéæãåä¸è
-è¡ä¸ºå»ºæ¨¡ãå¤å±æ¬¡éæãæ¨¡æç»æåºç?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ãç­ç¥æ§è¡ãé£é©æ§å?
-ï»? å¸åºåä¸è
 行为模拟系?- 多层次集成架构方?
 
-> **æ ¸å¿å®ä½**: å¸åºåä¸è
-è¡ä¸ºæ¨¡æç³»?- å¤å±æ¬¡éææ¶ææ¹?çæ ¸å¿åè½å®ç?
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **技术评审官**: Spec-Approver (审批智能?
-> **æ ¸å¿é®é¢**: å¸åºåä¸è
 模拟（国家队、主力、散户）如何集成到现有系统？
 > **答案**: 多层次集?- 同时作为因子、信号、决策三种形式介?
 ## 🏗?二、详细集成架构设?
-### 2.1 Layer 2.5 æ°å¢å±ï¼å¸åºåä¸è
 模拟层
 
-**æ¶æå®ä½**: å¨Layer 2 (Alphaå å­? ?Layer 3 (èæ
 分析? 之间新增
 
 ```
 Layer 0: 数据源层
     ?Layer 1: 数据预处理层
     ?Layer 2: Alpha因子?(现有5700+因子)
-    ?Layer 2.5: å¸åºåä¸è
 模拟层 🆕 (新增核心?
     ├─ 国家队智能体 (NationalTeamAgent)
     ├─ 主力智能?(InstitutionalAgent)
     ├─ 散户智能?(RetailAgent)
     └─ 市场模拟引擎 (MarketSimulationEngine)
-    ?Layer 3: èæ
 分析?    ?Layer 4: 机器学习?    ?Layer 5: 策略执行?    ?Layer 6: 组合优化?    ?Layer 7: AI报告?    ?Layer 8: 人机交互?```
 
 **为什么需要Layer 2.5?*
-1. **æ°æ®å±é¢**: éè¦æ´åé¾èæ¦ãèµéæµåãèæ
 等多源数据
 2. **计算层面**: 需要运行RL模型、行为金融学模型等复杂计?3. **交互层面**: 需要模拟智能体之间的博弈和交互
 4. **输出层面**: 需要同时输出因子、信号、决策三种形?
@@ -158,15 +132,12 @@ class InstitutionalActivityFactor(BaseFactor):
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算主力动向因子
         
-        è¾å
 ¥:
             data: å
 含价格、成交量、订单簿等数?            
         输出:
             pd.Series: 主力动向因子?(范围[-1, 1])
-            - æ­? ä¸»åèµéæµå
 ¥
-            - è´? ä¸»åèµéæµåº
             - 绝对值越?强度越大
         """
         # 1. 获取主力智能体的市场微观结构分析
@@ -205,19 +176,16 @@ class InstitutionalActivityFactor(BaseFactor):
         return factor_value
 ```
 
-**æ£æ·æ
 绪因子** (RetailSentimentFactor)
 
 ```python
 class RetailSentimentFactor(BaseFactor):
-    """æ£æ·æ
 绪因子
     
     索引: FACTOR.RETAIL.001
     Layer: Layer 2 (Alpha因子?
     数据? Layer 2.5 散户智能体输?    
     因子构成:
-    1. å¸åºæ
 绪指数 (MarketSentimentIndex)
     2. 羊群效应强度 (HerdingIntensity)
     3. 散户持仓变化 (RetailHoldingChange)
@@ -228,19 +196,13 @@ class RetailSentimentFactor(BaseFactor):
         self.agent = retail_agent
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """è®¡ç®æ£æ·æ
 绪因子
         
         输出:
-            pd.Series: æ£æ·æ
 绪因子?(范围[-1, 1])
-            - æ­? æ£æ·æ
 绪乐观(可能见顶)
-            - è´? æ£æ·æ
 绪悲观(可能见底)
-            - ç»å¯¹å¼è¶?æ
 绪越极?        """
-        # 1. è·åæ£æ·æºè½ä½çæ
 绪分析
         sentiment_score = self.agent.sentiment_analyzer.analyze(
             news=data['news'],
@@ -298,7 +260,6 @@ class PolicySignalFactor(BaseFactor):
         
         输出:
             pd.Series: 政策信号因子?(范围[-1, 1])
-            - æ­? æ¿ç­å©å¥½,å½å®¶éå¯è½ä¹°?            - è´? æ¿ç­å©ç©º,å½å®¶éå¯è½å?            - ç»å¯¹å¼è¶?ä¿¡å·è¶å¼º
         """
         # 1. 获取国家队智能体的政策信?        policy_signals = self.agent.policy_signal_detector.detect(
             news_data=data['news'],
@@ -379,14 +340,11 @@ class AgentBasedFactorLibrary:
         
         集成方式:
         1. 直接拼接 (新增3个因子列)
-        2. å å­æ­£äº¤?(å»é¤ä¸ç°æå å­çå
-±çº¿?
         3. 因子标准?(统一量纲)
         """
         # 1. 直接拼接
         integrated_factors = pd.concat([existing_factors, agent_factors], axis=1)
         
-        # 2. å å­æ­£äº¤?(å?
         if self.config.orthogonalize:
             integrated_factors = self._orthogonalize_factors(integrated_factors)
         
@@ -423,7 +381,6 @@ class AgentBasedSignalGenerator:
             decision = agent.generate_trading_decision(market_state)
             agent_decisions[agent_name] = decision
         
-        # 2. å¸åºæ¨¡æå¼ææ¨¡æåå¼ (å?
         if self.config.enable_simulation:
             simulation_result = self._simulate_market(agent_decisions, market_state)
             market_impact = simulation_result.market_impact
@@ -690,7 +647,6 @@ class MultiAgentVotingSystem:
         """根据投票结果计算目标权重
         
         计算方法:
-        1. å¯¹æ¯åªè¡?ç´¯å åæºè½ä½çæç¥¨æ?        2. å½ä¸åæ?        3. åºç¨æééå¶ (ååªè¡ç¥¨æéä¸è¶
 ?0%)
         """
         stock_weights = {}
@@ -734,8 +690,6 @@ class PortfolioOptimizerWithAgents:
     Layer: Layer 6 (组合优化?
     
     集成方式:
-    1. æºè½ä½æç¥¨ç»æä½ä¸ºç®æ æéçå
-éª
     2. 因子模型作为收益预测
     3. 风险模型作为风险约束
     4. 优化求解最终权?    """
@@ -754,12 +708,8 @@ class PortfolioOptimizerWithAgents:
         """优化组合
         
         优化流程:
-        1. æºè½ä½æç¥¨çæå
-éªæ?        2. å å­æ¨¡åé¢æµæ¶ç
         3. 风险模型计算风险
         4. 优化求解最终权?        """
-        # 1. æºè½ä½æç¥¨çæå
-éªæ?        voting_result = self.voting_system.vote_on_portfolio(
             market_state, current_portfolio
         )
         prior_weights = voting_result.target_weights
@@ -799,14 +749,10 @@ class PortfolioOptimizerWithAgents:
         max: w'Î¼ - Î» * w'Î£w - Î³ * ||w - w_prior||^2
         
         å
-¶ä¸­:
         - w: 组合权重
         - μ: 预期收益
-        - Î£: åæ¹å·®ç©?        - w_prior: å
-éªæé (æºè½ä½æç¥¨ç»?
         - λ: 风险厌恶系数
         - Î³: å
-éªæéåç¦»æ©ç½ç³»æ°
         """
         import cvxpy as cp
         
@@ -823,7 +769,6 @@ class PortfolioOptimizerWithAgents:
         # 目标函数
         lambda_risk = self.config.risk_aversion  # 风险厌恶系数
         gamma_prior = self.config.prior_deviation_penalty  # å
-éªåç¦»æ©ç½
         
         objective = cp.Maximize(
             mu @ w - 
@@ -834,8 +779,6 @@ class PortfolioOptimizerWithAgents:
         # 约束条件
         constraints_list = [
             cp.sum(w) == 1,  # 权重和为1
-            w >= 0,  # ä¸å
-è®¸å?            w <= self.config.max_weight  # ååªè¡ç¥¨æå¤§æ?        ]
         
         # 求解
         problem = cp.Problem(objective, constraints_list)
@@ -855,10 +798,6 @@ class PortfolioOptimizerWithAgents:
 ### 3.1 单一集成方式 vs 多层次集?
 | 维度 | 单一因子集成 | 单一策略集成 | 多层次集?(推荐) |
 |------|------------|------------|-----------------|
-| **ä¿¡æ¯å©ç¨** | â­â­ ä»
-å©ç¨å å­ä¿¡?| â­â­?ä»
-å©ç¨ä¿¡å·ä¿¡?| â­â­â­â­?å
-¨æ¹ä½å©?|
 | **博弈模拟** | ?无法模拟 | ?无法模拟 | ?完整模拟 |
 | **决策质量** | ⭐⭐?中等 | ⭐⭐⭐⭐ 较好 | ⭐⭐⭐⭐?优秀 |
 | **开发难?* | ??| ⭐⭐ ?| ⭐⭐⭐⭐ ?|
@@ -869,8 +808,6 @@ class PortfolioOptimizerWithAgents:
 
 1. **信息最大化利用**:
    - 因子? 提取智能体行为的量化特征
-   - ä¿¡å·? çæå
-·ä½çä¹°åä¿¡?   - å³ç­? éè¿æç¥¨æºå¶ä¼åç»å
 
 2. **博弈过程完整保留**:
    - 市场模拟引擎模拟智能体交?   - 价格发现机制反映供需博弈
@@ -889,7 +826,6 @@ class PortfolioOptimizerWithAgents:
 ## 🚀 四、实施建?
 ### 4.1 分阶段实施路?
 **Phase 1: 因子集成** (Month 1-2)
-- å®ç°ä¸ä¸ªæºè½ä½å ?(æ¿ç­ä¿¡å·ãä¸»åå¨åãæ£æ·æ
 ?
 - 集成到现有因子库
 - 验证因子有效?
@@ -901,20 +837,12 @@ class PortfolioOptimizerWithAgents:
 - 集成到组合优化器
 - 实盘验证决策效果
 
-### 4.2 ä¼å
-çº§å»º?
-**é«ä¼å
-çº§** (å¿
 须实现):
 1. ?因子输出层集?(最简?最直接)
 2. ?信号输出层集?(核心功能)
 
-**ä¸­ä¼å
-çº§** (æ¨èå®ç°):
 3. ?决策输出层集?(高级功能)
 
-**ä½ä¼å
-çº§** (å¯éå®?:
 4. ⏸️ 市场模拟引擎 (计算密集,可后期优?
 
 ### 4.3 技术选型建议
@@ -924,7 +852,6 @@ class PortfolioOptimizerWithAgents:
 | **因子计算** | Pandas + NumPy | 成熟稳定,性能?|
 | **信号生成** | 事件驱动架构 | 灵活,易扩?|
 | **组合优化** | CVXPY + Barra模型 | 专业,可解?|
-| **æºè½ä½éä¿¡** | æ¶æ¯éå (Redis/RabbitMQ) | å¼æ­¥,è§?|
 
 ---
 
@@ -932,32 +859,21 @@ class PortfolioOptimizerWithAgents:
 
 ### 核心答案
 
-**å¸åºåä¸è
-è¡ä¸ºæ¨¡æåºè¯¥éç¨å¤å±æ¬¡éææ¶æï¼åæ¶ä½ä¸ºå å­ãä¿¡å·ãå³ç­ä¸ç§å½¢å¼ä»å
-¥ç³»ç»ï¼**
 
-1. **ä½ä¸ºå å­ä»å
 ¥** (Layer 2):
-   - çææ¿ç­ä¿¡å·å å­ãä¸»åå¨åå å­ãæ£æ·æ
 绪因?   - 与现?700+因子无缝集成
    - 供多因子模型使用
 
-2. **ä½ä¸ºä¿¡å·ä»å
 ¥** (Layer 5):
    - 生成买卖信号、仓位建议、风险预?   - 与现有策略框架协同工?   - 增强策略信号质量
 
-3. **ä½ä¸ºå³ç­ä»å
 ¥** (Layer 6):
    - 通过多智能体投票机制优化组合
    - 与现有组合优化器集成
    - 提升决策质量
 
 ### å
-³é®ä¼å¿
 
-- ?**ä¿¡æ¯æå¤§åå©ç¨**: å
-¨æ¹ä½æåæºè½ä½è¡ä¸ºä¿¡æ¯
-- ?**åå¼å®æ´ä¿ç**: æ¨¡æå¸åºåä¸è
 之间的交互
 - ?**灵活可扩?*: 可单独或组合使用各层输出
 - ?**可解释性强**: 每个决策都有明确理由
@@ -971,7 +887,6 @@ class PortfolioOptimizerWithAgents:
 **准备就绪**:
 - ?集成架构设计完成
 - ?因子定义明确
-- ?ä¿¡å·çææ¹æ¡æ¸
 晰
 - ?决策集成路径明确
 
@@ -979,14 +894,12 @@ class PortfolioOptimizerWithAgents:
 
 ---
 
-**çæ¬**: v1.0 | **æ´æ°**: 2026-04-02 | **ç?*: ?å·²å®?
 
 ## 1. 文档治理
 
 ### 1.1 文档索引
 
 **本文档在系统中的位置**:
-- **æå±å±çº?*: Layer 0 (ç³»ç»æ¶æ)
 - **模块索引**: 001
 - **模块名称**: MARKET_PARTICIPANT_SIMULATION
 - **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
@@ -1000,12 +913,9 @@ class PortfolioOptimizerWithAgents:
 
 **文档维护**:
 - **责任模块**: MARKET_PARTICIPANT_SIMULATION
-- **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
-- **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active
 
 
 ---
@@ -1014,8 +924,6 @@ class PortfolioOptimizerWithAgents:
 
 ### 变更记录
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 

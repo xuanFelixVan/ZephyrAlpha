@@ -143,7 +143,7 @@ implementation_status: 进行?---
 ```
 |  | 主规格文档（完整索引?|
 |  | 代码状态规?|
-| [CHANGELOG.md](../../../06_ARCHIVE/CHANGELOG.md) | 变更日志 |
+| [CHANGELOG.md](../../CHANGELOG.md) | 变更日志 |
 |  | 审查报告 |
 ```
 

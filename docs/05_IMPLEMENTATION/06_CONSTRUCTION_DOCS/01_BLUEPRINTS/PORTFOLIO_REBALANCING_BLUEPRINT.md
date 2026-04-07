@@ -15,7 +15,6 @@ responsibility:
   - 再平衡决策引擎
 layer: Layer 6 (组合优化层)
 ---
-# ç»ååå¹³è¡¡èå?
 
 ## 核心定位
 
@@ -23,9 +22,7 @@ layer: Layer 6 (组合优化层)
 
 
 
-> **æ ¸å¿èè´£**: æºè½åå¹³è¡¡å³ç­ï¼å¹³è¡¡è·è¸ªè¯¯å·®ä¸äº¤æææ?
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼åå¹³è¡¡è§¦åãæéè°æ´ã...
 
 
 ## 设计目标
@@ -92,29 +89,17 @@ layer: Layer 6 (组合优化层)
 - 交易成本优化：降?5-20%
 - 跟踪误差控制：提?0%
 - 系统化再平衡决策：新增能?
-### 1.2 ææ¯å®ä½ä¸æ¶æå±å½å±?
 
 **Layer定位**: Layer 6 - 组合优化层（执行层）
 
 **模块类别**: 支持模块（P2级）
 
-**ä¸TRANSACTION_COST_AWARE_REBALANCINGçå
-³ç³?*:
-- æ¬ææ¡£æ¯**åºç¡åå¹³è¡¡æ¡æ?*ï¼æä¾è§¦åæºå¶åå³ç­å¼æ
-- [TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md)æ?*é«çº§ææ¬æç¥åå¹³è¡¡æ¨¡å?*ï¼å¨åå¹³è¡¡å³ç­ä¸­æ¾å¼èèäº¤æææ¬
 - **职责边界**: 本文档负责基础再平衡决策，TRANSACTION_COST_AWARE负责成本优化决策
-- **ä¾èµå
-³ç³»**: TRANSACTION_COST_AWARE_REBALANCINGä¾èµæ¬ææ¡£çè§¦åæºå¶åå³ç­æ¡æ?
-- **æ¨èå®æ½è·¯å¾**: å
-å®ç°æ¬ææ¡£ï¼?0hï¼ï¼åå®æ½ææ¬æç¥å¢å¼ºï¼5-7å¤©ï¼
 
 **架构角色**: 
 - 作为组合优化的执行层，负责再平衡决策
-- ä½ä¸ºäº¤æææ¬ä¼åçæ§è¡è
-ï¼å¹³è¡¡ææ¬ä¸è·è¸ªè¯¯?- ä½ä¸ºé£é©æ§å¶çæ§è¡è
 ，维持组合风险目标
 
-### 1.3 æ ¸å¿åè½æ¸
 单
 
 1. **再平衡触发机?*: 定期触发、阈值触发、风险触?2. **再平衡决?*: 是否执行再平衡的智能决策
@@ -144,8 +129,6 @@ class RebalancingStrategy:
     
     索引: REBALANCING_001-M01
     职责: 智能再平衡决策与执行
-    è¾å
-¥: ç»åç¶æãç®æ æ?    è¾åº: åå¹³è¡¡è®¢åãæ§è¡æ¥?    """
     
     def __init__(self, config: RebalancingConfig):
         self.config = config
@@ -306,17 +289,13 @@ class RebalancingTriggerDetector:
             current_weights, target_weights
         )
         if threshold_violations:
-            triggers.append(('threshold', f'æéåç¦»è¶
 阈? {threshold_violations}'))
         
         # 3. 风险触发
         risk_violations = self._check_risk_trigger(current_weights, target_weights)
         if risk_violations:
-            triggers.append(('risk', f'é£é©ææ è¶
 限: {risk_violations}'))
         
-        # è¿åæé«ä¼å
-çº§è§¦å
         if triggers:
             trigger_type, reason = triggers[0]
             return TriggerResult(
@@ -331,9 +310,6 @@ class RebalancingTriggerDetector:
     def _check_periodic_trigger(self) -> bool:
         """检查定期触?""
         # 简化实现：检查是否到达再平衡日期
-        # å®é
-åºä»é
-ç½®ä¸­è·ååå¹³è¡¡å¨æ
         last_rebalance_date = self.config.last_rebalance_date
         rebalance_frequency = self.config.rebalance_frequency  # days
         
@@ -360,7 +336,6 @@ class RebalancingTriggerDetector:
         """检查风险触?""
         violations = []
         
-        # ç®åå®ç°ï¼æ£æ¥é£é©æ?        # å®é
 应计算风险指标并与阈值比?        # 例如：组合波动率、VaR、跟踪误差等
         
         return violations
@@ -425,7 +400,6 @@ class RebalancingDecisionEngine:
         # 交易成本 = 交易?* 交易成本?        weight_changes = (target_weights - current_weights).abs()
         total_trade_value = (weight_changes * portfolio_value).sum()
         
-        # äº¤æææ¬çï¼å
 括佣金、冲击成本等?        cost_rate = self.config.transaction_cost_rate
         
         return total_trade_value * cost_rate
@@ -434,12 +408,10 @@ class RebalancingDecisionEngine:
                                       current_weights: pd.Series,
                                       target_weights: pd.Series) -> float:
         """估计再平衡收?""
-        # ç®åå®ç°ï¼ä¼°è®¡è·è¸ªè¯¯å·®éä½å¸¦æ¥çæ¶?        # å®é
 应使用更复杂的模?        
         # 跟踪误差 = 权重偏离 * 预期收益
         weight_deviation = (target_weights - current_weights).abs()
         
-        # åè®¾é¢ææ¶çï¼å®é
 应从模型获取）
         expected_returns = pd.Series(0.1, index=current_weights.index)
         
@@ -566,9 +538,6 @@ class RebalancingEvaluator:
                                    target_weights: pd.Series) -> float:
         """计算风险改善"""
         # 简化实现：风险指标改善
-        # å®é
-åºè®¡ç®å
-·ä½é£é©æ?        return 0.0
     
     def _calculate_cost_efficiency(self,
                                   improvement: float,
@@ -581,11 +550,9 @@ class RebalancingEvaluator:
 ```
 
 ### 3.6 é
-ç½®ç±»å®?
 ```python
 @dataclass
 class RebalancingConfig:
-    """åå¹³è¡¡é
 ?""
     trigger_config: TriggerConfig
     decision_config: DecisionConfig
@@ -594,20 +561,14 @@ class RebalancingConfig:
     min_trade_size: float = 0.001  # 最小交易规?    
 @dataclass
 class TriggerConfig:
-    """è§¦åé
-ç½®"""
     rebalance_frequency: int = 30  # 再平衡周期（天）
     weight_threshold: float = 0.05  # 权重偏离?    last_rebalance_date: datetime = None
     
 @dataclass
 class DecisionConfig:
-    """å³ç­é
-ç½®"""
     min_net_benefit: float = 0.001  # 最小净收益?    transaction_cost_rate: float = 0.001  # 交易成本?    
 @dataclass
 class CostOptimizationConfig:
-    """ææ¬ä¼åé
-ç½®"""
     min_trade_threshold: float = 0.01  # 最小交易阈?    enable_batch_trading: bool = True  # 启用分批交易
     large_trade_threshold: float = 1000000  # 大交易阈?    batch_ratio: float = 0.5  # 分批比例
 ```
@@ -616,8 +577,6 @@ class CostOptimizationConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
-¥æ°æ®æ¨¡å
 
 ```python
 @dataclass
@@ -751,8 +710,6 @@ class TradingCostOptimizationModule:
 
 ### 7.1 定量收益
 
-| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹
-åº¦ |
 |------|---------|---------|---------|
 | **再平衡策略完?* | 60% | 100% | +40% |
 | **交易成本优化** | 基准 | -15% | 降低15% |
@@ -768,17 +725,12 @@ class TradingCostOptimizationModule:
 ## 8. 技术栈选择
 
 ### 8.1 核心依赖?
-| åºå | çæ¬ | ?| å¿
 要?|
 |------|------|------|--------|
-| **pandas** | ?.5 | æ°æ®å¤ç | å¿
 需 |
-| **numpy** | ?.21 | æ°å¼è®¡?| å¿
 需 |
-| **datetime** | - | æ¶é´å¤ç | å¿
 需 |
 
-### 8.2 å®è£
 命令
 
 ```bash
@@ -801,44 +753,29 @@ pip install numpy>=1.21
 
 | 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **å¼åæ¶é´è¶
 ?* | ?| 分阶段实?|
-| **éæå°é¾** | ?| å
 
 分测试 |
 | **性能不达?* | ?| 性能优化 |
 
 ---
 
-## ð ç¸å
-³ææ¡£
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [å­£åº¦è°ä»èå¾](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | å¼ºä¾èµ?| æä¾è°ä»å³ç­ |
-| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [äº¤æææ¬åæå¼æèå¾](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | ä¸­ä¾èµ?| æä¾ææ¬åæ |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [å¼ºåå­¦ä¹ è°ä»ç³»ç»èå¾](RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | å¼ºä¾èµ?| AIå¢å¼ºè°ä» |
-| [äº¤æææ¬æç¥åå¹³è¡¡èå¾](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | å¼ºä¾èµ?| ææ¬æç¥åå¹³è¡?|
-| [ç®æ³äº¤æä¼åå¨èå¾](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | ä¸­ä¾èµ?| ç®æ³äº¤ææ§è¡ |
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
 
 ```mermaid
 graph LR
@@ -862,14 +799,8 @@ graph LR
 ### 10.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
-##### 6.8 ç»ååå¹³è¡¡ç­ç?
 - **模块ID**: REBALANCING_001
 - **蓝图文档**: PORTFOLIO_REBALANCING_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
-- **èè´£**: åå¹³è¡¡å³ç­ãäº¤æææ¬ä¼åãææè¯ä¼?
-- **ç¶æ?*: è®¾è®¡é¶æ®µ
 ```
 
 ### 10.2 模块职责边界
@@ -895,8 +826,6 @@ graph LR
 ### B. 术语?
 | 术语 | 定义 | 上下?|
 |------|------|--------|
-| **åå¹³?* | è°æ´ç»åæéä»¥ç»´æç®æ é
-?| ç»åç®¡ç |
 | **跟踪误差** | 组合与基准的偏离程度 | 风险度量 |
 | **交易成本** | 买卖资产产生的成?| 成本分析 |
 | **触发机制** | 启动再平衡的条件 | 决策逻辑 |
@@ -907,14 +836,9 @@ graph LR
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
 
-YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active

@@ -6,15 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 æ°æ®å±?
 compliance_level: 专业标准
 responsibility:
-  - æ°æ®æºç®¡ç?
-  - æ°æ®æºæ¥å
 ?
-  - æ°æ®æºçæ?
-  - æ°æ®æºé
-ç½?
 layer: Layer 5.1 (数据处理)
 ---
 
@@ -27,7 +21,6 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Source Management蓝图设计
 > **职责边界**: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Source Managementèå¾è®¾è®¡ç¸å
 ...
 
 
@@ -85,41 +78,24 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-æå»ºDATA SOURCE MANAGEMENTçè®¾è®¡ä¸å®ç°ï¼åºäºDelta Lakeææ¯ï¼ä¼åæ ¸å¿åè½ï¼ç¡®ä¿æ°æ®è´¨éåè§ã?
 
 ## 一、设计背景与目标
 
-### 1.1 ä¸å¡éæ±?
 
 **当前痛点**:
-- æ°æ®æºé
-ç½®åæ?
 - 数据源状态不透明
-- æ°æ®æºæ
 障影响大
-- æ°æ®æºæéç®¡çæ··ä¹?
 
 **业务目标**:
-- å»ºç«ç»ä¸æ°æ®æºç®¡çå¹³å?
-- å®æ¶çæ§æ°æ®æºç¶æ?
-- å¿«éååºæ°æ®æºæ
 障
-- è§èæ°æ®æºæéç®¡ç?
 
-### 1.2 ææ¯ç®æ ?
 
-| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **æ°æ®æºçæ§è¦çç** | 100% | æææ°æ®æºè¢«çæ?|
 | **æ
-éåç°æ¶é´** | <1åé | æ
 障发现时间<1分钟 |
 | **æ
-éæ¢å¤æ¶é´** | <10åé | æ
 障恢复时间<10分钟 |
-| **æéç®¡çåç¡®ç?* | 100% | æéç®¡çåç¡®ç?00% |
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
 ### 3.1 数据源注册器 (SourceRegistry)
 
@@ -130,7 +106,6 @@ from datetime import datetime
 from enum import Enum
 
 class SourceType(Enum):
-    """æ°æ®æºç±»å?""
     DATABASE = "database"
     API = "api"
     FILE = "file"
@@ -138,7 +113,6 @@ class SourceType(Enum):
     CLOUD_STORAGE = "cloud_storage"
 
 class SourceStatus(Enum):
-    """æ°æ®æºç¶æ?""
     ACTIVE = "active"
     INACTIVE = "inactive"
     ERROR = "error"
@@ -146,7 +120,6 @@ class SourceStatus(Enum):
 
 @dataclass
 class DataSource:
-    """æ°æ®æº?""
     source_id: str
     source_name: str
     source_type: SourceType
@@ -164,7 +137,6 @@ class SourceRegistry:
         self.sources: Dict[str, DataSource] = {}
     
     def register_source(self, source_config: Dict[str, Any]) -> DataSource:
-        """æ³¨åæ°æ®æº?""
         source = DataSource(
             source_id=source_config['source_id'],
             source_name=source_config['source_name'],
@@ -178,12 +150,10 @@ class SourceRegistry:
         return source
     
     def get_source(self, source_id: str) -> Optional[DataSource]:
-        """è·åæ°æ®æº?""
         return self.sources.get(source_id)
     
     def update_source(self, source_id: str,
                       updates: Dict[str, Any]) -> Optional[DataSource]:
-        """æ´æ°æ°æ®æº?""
         source = self.get_source(source_id)
         if not source:
             return None
@@ -196,7 +166,6 @@ class SourceRegistry:
         return source
     
     def list_sources(self, source_type: SourceType = None) -> List[DataSource]:
-        """ååºæ°æ®æº?""
         if source_type:
             return [s for s in self.sources.values() if s.source_type == source_type]
         return list(self.sources.values())
@@ -223,7 +192,6 @@ import time
 
 @dataclass
 class SourceHealth:
-    """æ°æ®æºå¥åº·ç¶æ?""
     source_id: str
     is_healthy: bool
     latency_ms: float
@@ -239,7 +207,6 @@ class SourceMonitor:
         self.health_records: Dict[str, SourceHealth] = {}
     
     def check_source_health(self, source_id: str) -> SourceHealth:
-        """æ£æ¥æ°æ®æºå¥åº·ç¶æ?""
         source = self.registry.get_source(source_id)
         if not source:
             return SourceHealth(
@@ -301,7 +268,6 @@ class SourceMonitor:
 ```
 
 ### 3.3 æ
-éç®¡çå?(FailureManager)
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -331,19 +297,16 @@ class FailureEvent:
 
 class FailureManager:
     """æ
-éç®¡çå?""
     
     def __init__(self):
         self.failures: List[FailureEvent] = []
         self.alert_handlers: List[callable] = []
     
     def register_alert_handler(self, handler: callable):
-        """æ³¨ååè­¦å¤çå?""
         self.alert_handlers.append(handler)
     
     def detect_failure(self, source_id: str,
                        health: SourceHealth) -> Optional[FailureEvent]:
-        """æ£æµæ
 é?""
         if health.is_healthy:
             return None
@@ -366,7 +329,6 @@ class FailureManager:
         return failure
     
     def _determine_severity(self, health: SourceHealth) -> FailureSeverity:
-        """ç¡®å®æ
 障严重程度"""
         if health.error_rate >= 0.9:
             return FailureSeverity.CRITICAL
@@ -378,7 +340,6 @@ class FailureManager:
             return FailureSeverity.LOW
     
     def _send_alerts(self, failure: FailureEvent):
-        """åéåè­?""
         for handler in self.alert_handlers:
             try:
                 handler(failure)
@@ -387,7 +348,6 @@ class FailureManager:
     
     def resolve_failure(self, event_id: str,
                         resolution: str) -> Optional[FailureEvent]:
-        """è§£å³æ
 障"""
         failure = next((f for f in self.failures if f.event_id == event_id), None)
         
@@ -400,17 +360,14 @@ class FailureManager:
         return failure
     
     def get_active_failures(self) -> List[FailureEvent]:
-        """è·åæ´»è·æ
 障"""
         return [f for f in self.failures if not f.resolved_at]
 ```
 
 ---
-## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
-#### 4.1.1 æ³¨åæ°æ®æº?
 
 ```http
 POST /api/v1/sources
@@ -430,7 +387,6 @@ POST /api/v1/sources
 }
 ```
 
-#### 4.1.2 è·åæ°æ®æºå¥åº·ç¶æ?
 
 ```http
 GET /api/v1/sources/{source_id}/health
@@ -449,42 +405,28 @@ GET /api/v1/sources/{source_id}/health
 
 
 ## å
-­ãçæ§ææ ?
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `source_total_sources` | Gauge | 数据源总数 |
-| `source_healthy_sources` | Gauge | å¥åº·æ°æ®æºæ°é?|
-| `source_latency_milliseconds` | Histogram | æ°æ®æºå»¶è¿?|
 | `source_failures_total` | Counter | æ
 障总数 |
 
 ---
 
-## ä¸ãå®æ½è®¡å?
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **é¶æ®µ1** | æ­å»ºAirflowåVault | 2å¤?|
-| **é¶æ®µ2** | å¼åæ°æ®æºæ³¨åå?| 3å¤?|
-| **é¶æ®µ3** | å¼åæ°æ®æºçæ§å?| 3å¤?|
-| **é¶æ®µ4** | å¼åæ
-éç®¡çå¨ | 2å¤?|
-| **é¶æ®µ5** | æµè¯åä¼å?| 2å¤?|
 
 ---
 
 ## å
-«ãç¸å
-³ææ¡?
 
-- æ°æ®è¡ç¼è¿½è¸ªèå?
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 - [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
 
 ---
 
-**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
 ## 1. 文档治理
@@ -492,14 +434,10 @@ GET /api/v1/sources/{source_id}/health
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Source Management
 - **模块ID**: DATA_SOURCE_MANAGEMENT_001
 - **蓝图文档**: DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾
-åå»?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -510,41 +448,24 @@ GET /api/v1/sources/{source_id}/health
 
 ### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
 
 ---
 
-## ð ç¸å
-³ææ¡£
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æ°æ®æºå
-æ°æ® |
-| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ?|
-| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ?|
-| [ALTERNATIVE DATA INTEGRATION BLUEPRINT](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) | ALTERNATIVE_DATA_INTEGRATION__001 | å¼ºä¾èµ?| æä¾æ°æ®æºé
-ç½?|
 
-### ææ¯ä¾èµ?
 
-| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
-| **Redis** | 7.0+ | è¿æ¥æ± ç®¡ç?| [å®æ¹ææ¡£](https://redis.io/) |
 
-### å¼ç¨å
-³ç³»å?
 
 ```mermaid
 graph LR
@@ -560,12 +481,9 @@ graph LR
 
 ## 变更历史
 
-| çæ¬ | æ¥æ | åæ´å
-å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---
 
-**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
