@@ -1,30 +1,27 @@
 ---
-module_id: SMART_ORDER_ROUTER_BLUEPRINT_001
+module_id: SMART_ORDER_ROUTER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 5 策略执行层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
+  - 订单路由优化
+  - 订单拆分
+  - 执行优化
+  - 成本最小化
+layer: "Layer 5 (策略执行层)"
 ---
----
 
-﻿---
-module_id: SMART_ORDER_ROUTER_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
+# 智能订单路由器蓝图
 
-layer: "Layer 8 (执行层)"
----
+> **核心职责**: 智能订单路由，优化订单拆分和执行
+> **职责边界**: 
+> - ✅ 本文档负责：订单路由优化、订单拆分、执行优化、成本最小化
+> - ❌ 本文档不负责：订单生成、策略决策、风险控制
 ﻿# 智能订单路由器蓝图
 
 > **核心定位**: 智能订单路由器蓝图的核心功能实现

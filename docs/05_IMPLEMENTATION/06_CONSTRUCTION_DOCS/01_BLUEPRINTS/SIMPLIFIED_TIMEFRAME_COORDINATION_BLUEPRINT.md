@@ -1,32 +1,27 @@
 ---
-module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 实施指南、部署文档
-
----
----
-
-﻿---
-module_id: SIMPLIFIEDTIMEFRAMECOORDINAT_001
+module_id: TIMEFRAME_COORDINATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 因子计算
-  - 组合优化
-  - 回测系统
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
+responsibility:
+  - 多时间框架协同
+  - 信号融合
+  - 冲突解决
+  - 时间框架优化
 layer: "Layer 6 (组合优化层)"
+---
+
+# 简化版多时间框架协同优化蓝图
+
+> **核心职责**: 多时间框架协同优化，实现信号融合和冲突解决
+> **职责边界**: 
+> - ✅ 本文档负责：多时间框架协同、信号融合、冲突解决、时间框架优化
+> - ❌ 本文档不负责：信号生成、策略决策、风险控制
 ﻿> **索引**: `TIMEFRAME_COORD_001`
 > **开发时长**: 80h（约2周）
 > **核心定位**: 双时间框架协同优化策略 + 中期波动度，实现信号融合和冲突解决

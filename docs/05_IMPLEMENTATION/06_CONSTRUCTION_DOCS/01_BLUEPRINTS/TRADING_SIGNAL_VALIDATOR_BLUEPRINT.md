@@ -1,30 +1,27 @@
 ---
-module_id: TRADING_SIGNAL_VALIDATOR_BLUEPRINT_001
+module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 5 策略执行层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
+  - 交易信号验证
+  - 信号质量评估
+  - 信号过滤
+  - 异常信号检测
+layer: "Layer 5 (策略执行层)"
 ---
----
 
-﻿---
-module_id: TRADING_SIGNAL_VALIDATOR_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
+# 交易信号验证器蓝图
 
-layer: "Layer 8 (执行层)"
----
+> **核心职责**: 交易信号验证，评估信号质量，过滤异常信号
+> **职责边界**: 
+> - ✅ 本文档负责：交易信号验证、信号质量评估、信号过滤、异常信号检测
+> - ❌ 本文档不负责：信号生成、策略执行、订单管理
 ﻿# 交易信号验证器蓝图
 
 > **核心定位**: 交易信号验证器蓝图的核心功能实现
