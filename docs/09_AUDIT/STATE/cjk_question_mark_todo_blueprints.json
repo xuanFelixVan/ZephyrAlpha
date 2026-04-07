@@ -1,7 +1,7 @@
 {
   "dir": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS",
-  "total_files": 13,
-  "total_hits": 451,
+  "total_files": 12,
+  "total_hits": 405,
   "items": [
     {
       "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
@@ -92,52 +92,6 @@
         {
           "line": 532,
           "text": "#### 5.1.3 复杂度分?"
-        }
-      ]
-    },
-    {
-      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md",
-      "count": 46,
-      "samples": [
-        {
-          "line": 103,
-          "text": "分析?    ?Layer 4: 机器学习层    ?Layer 5: 策略执行层    ?Layer 6: 组合优化层    ?Layer 7: AI报告层    ?Layer 8: 人机交互层```"
-        },
-        {
-          "line": 139,
-          "text": "含价格、成交量、订单簿等数?"
-        },
-        {
-          "line": 141,
-          "text": "pd.Series: 主力动向因子?(范围[-1, 1])"
-        },
-        {
-          "line": 203,
-          "text": "情情绪因子?(范围[-1, 1])"
-        },
-        {
-          "line": 206,
-          "text": "绪越极?        \"\"\""
-        },
-        {
-          "line": 263,
-          "text": "pd.Series: 政策信号因子?(范围[-1, 1])"
-        },
-        {
-          "line": 298,
-          "text": "\"\"\"基于智能体的因子?"
-        },
-        {
-          "line": 401,
-          "text": "\"\"\"信号合成?"
-        },
-        {
-          "line": 447,
-          "text": "- 国家? 权重 = 置信号* 0.3 (长期稳定)"
-        },
-        {
-          "line": 530,
-          "text": "1. 信号方向一??增强信号强度"
         }
       ]
     },

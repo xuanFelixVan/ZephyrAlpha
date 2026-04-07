@@ -118,6 +118,21 @@ compliance_level: 专业标准
 | [HISTORICAL_REPLAY_SYSTEM_BLUEPRINT.md](./HISTORICAL_REPLAY_SYSTEM_BLUEPRINT.md) | 历史回放系统蓝图 | ⭐⭐⭐ |
 | [LAYER_7_GAP_ANALYSIS_AND_SUPPLEMENT_BLUEPRINT.md](./LAYER_7_GAP_ANALYSIS_AND_SUPPLEMENT_BLUEPRINT.md) | Layer 7完整性分析与缺失模块补充方案 | ⭐⭐⭐ |
 
+### 舆情分析层缺失模块补充蓝图文档
+
+| 文档名称 | 说明 | 优先级 | 重要度 |
+|---------|------|--------|--------|
+| [SENTIMENT_LAYER_PROFESSIONAL_GAP_ANALYSIS_AND_OPENSOURCE_SOLUTION.md](./SENTIMENT_LAYER_PROFESSIONAL_GAP_ANALYSIS_AND_OPENSOURCE_SOLUTION.md) | 舆情分析层专业机构级缺失模块分析与开源解决方案 | P0 | ⭐⭐⭐⭐⭐ |
+| [SENTIMENT_DATA_ANNOTATION_PLATFORM_BLUEPRINT.md](./SENTIMENT_DATA_ANNOTATION_PLATFORM_BLUEPRINT.md) | 舆情数据标注平台蓝图（Label Studio集成） | P0 | ⭐⭐⭐⭐⭐ |
+| [MODEL_AB_TESTING_FRAMEWORK_BLUEPRINT.md](./MODEL_AB_TESTING_FRAMEWORK_BLUEPRINT.md) | 模型A/B测试框架蓝图（MLflow集成） | P0 | ⭐⭐⭐⭐⭐ |
+| [SENTIMENT_BACKTEST_SYSTEM_BLUEPRINT.md](./SENTIMENT_BACKTEST_SYSTEM_BLUEPRINT.md) | 舆情回测系统蓝图（Backtrader集成） | P0 | ⭐⭐⭐⭐⭐ |
+| [SENTIMENT_LAYER_SUPPLEMENTARY_MODULES_BLUEPRINT.md](./SENTIMENT_LAYER_SUPPLEMENTARY_MODULES_BLUEPRINT.md) | 舆情分析层补充模块综合蓝图（P1+P2级） | P1/P2 | ⭐⭐⭐⭐ |
+
+**补充模块清单**:
+- **P0级（阻断性，3个）**: 数据标注平台、A/B测试框架、回测系统
+- **P1级（重要，5个）**: 归因分析、事件时间线、数据血缘、数据质量、模型监控
+- **P2级（优化，4个）**: 特征工程、模型压缩、数据缓存、API网关
+
 ### 报告文档
 
 | 文档名称 | 说明 | 重要度 |
