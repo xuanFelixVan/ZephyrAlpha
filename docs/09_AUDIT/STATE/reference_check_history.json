@@ -5,5 +5,12 @@
     "valid_links": 8188,
     "invalid_links": 36,
     "valid_rate": 99.56
+  },
+  {
+    "timestamp": "2026-04-07 15:53:53",
+    "total_links": 8195,
+    "valid_links": 8161,
+    "invalid_links": 34,
+    "valid_rate": 99.59
   }
 ]
