@@ -1,3 +1,16 @@
+---
+module_id: FACTOR_LIBRARY_SITEMAP
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 因子库SITEMAP文档
+---
+
+# SITEMAP
+
 ---|
 responsibility:
   - 提供02 Factor Library相关文档支持

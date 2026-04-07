@@ -1,4 +1,17 @@
 ---
+module_id: FACTOR_LIBRARY_05_BACKTEST_BACKTEST_REORGANIZATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 05_BACKTEST目录BACKTEST_REORGANIZATION文档
+---
+
+# BACKTEST_REORGANIZATION
+
+---
 
 
 responsibility:

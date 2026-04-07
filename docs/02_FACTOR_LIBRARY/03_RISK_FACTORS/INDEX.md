@@ -1,3 +1,16 @@
+---
+module_id: FACTOR_LIBRARY_03_RISK_FACTORS_INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 03_RISK_FACTORS目录INDEX文档
+---
+
+# INDEX
+
 ----|
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
 --------|

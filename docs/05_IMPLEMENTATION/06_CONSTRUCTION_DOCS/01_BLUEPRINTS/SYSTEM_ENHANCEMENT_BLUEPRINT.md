@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
 - 系统增强
 - 功能扩展
@@ -78,27 +78,31 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 一、蓝图概?
+## 一、蓝图概述
 ### 1.1 设计背景
 
 
 |--------|--------|--------------|----------|------|
 | P0 | 
 日度报告| 风险响应滞后 |
-| P1 | 监管合规报告 | 满足证监会要?| ?| 合规风险 |
+| P1 | 监管合规报告 | 满足证监会要求 | ?| 合规风险 |
 | P1 | 执行成本分析 | 滑点/冲击成本 | ?| 成本失控 |
 
 ### 1.2 设计目标
 
-**核心目标**?1. ?补齐P0级三大核心差距，达到专业机构80%能力水平
+**核心目标**:
+1. ?补齐P0级三大核心差距，达到专业机构80%能力水平
 4. ?实现与现有Layer 7模块的无缝集成
-**量化指标**?- 报告生成效率：≤5分钟/报告
+**量化指标**:
+- 报告生成效率：≤5分钟/报告
 - 实时风险监控延迟：≤2秒（优化后目标）
 - 模块集成成功率：100%
 - API接口覆盖率：100%
 
-### 1.3 技术定?
-**Layer定位**: Layer 7 - AI报告?**模块类型**: 核心报告模块
+### 1.3 技术定位
+**Layer定位**: Layer 7 - AI报告
+
+**模块类型**: 核心报告模块
 数据、因子数据）
 - Layer 4: 策略层（组合数据、交易数据）
 - Layer 5: 执行层（成交数据、滑点数据）
@@ -107,31 +111,55 @@ layer: Layer 5 (策略执行层)
 
 
 ## 二、模块架构设计
-### 2.1 整体架构?
+### 2.1 整体架构
+
+```mermaid
+graph TB
+  subgraph P0[P0 核心模块]
+    SA[ScenarioAnalyzer\n情景分析] --> FUS[MultiTimeframeReportFusion\n多时间框架融合]
+    ST[StressTestReporter\n压力测试] --> FUS
+    RR[RealTimeRiskReporter\n实时风险] --> FUS
+  end
+
+  FUS --> HUB[ReportDistributionHub\n统一报告分发中心]
+
+  subgraph P1[P1 扩展模块]
+    LIF[StrategyLifecycleReporter\n策略生命周期]
+    REG[RegulatoryReporter\n监管合规]
+    EXP[AIExplainabilityReporter\n可解释性]
+    EXE[ExecutionCostReporter\n执行成本]
+  end
+
+  HUB --> LIF
+  HUB --> REG
+  HUB --> EXP
+  HUB --> EXE
 ```
-景分析?  ? ?压力测试     ? ?实时风险     ?         ?? ?Scenario     ? ?StressTest   ? ?RealTimeRisk ?         ?? ?Analyzer     ? ?Reporter     ? ?Reporter     ?         ?? └──────┬───────? └──────┬───────? └──────┬───────?         ??        ?                 ?                 ?                 ??        └──────────────────┼──────────────────?                 ??                           ?                                     ?? ┌─────────────────────────▼─────────────────────────?         ?? ?         P0-04: 多时间框架报告融合器               ?         ?? ?       MultiTimeframeReportFusion                 ?         ?? └─────────────────────┬─────────────────────────────?         ??                       ?                                         ?? ┌─────────────────────▼─────────────────────────────?         ?? ?             统一报告分发中心                      ?         ?? ?        ReportDistributionHub                     ?         ?? └──────┬──────────┬──────────┬──────────┬──────────?         ??        ?         ?         ?         ?                     ?? ┌──────▼────?┌───▼────?┌──▼───?┌───▼────?                 ?? ?P1-01     ??P1-02  ??P1-03??P1-04  ?                 ?? ?策略生命  ??监管   ??AI   ??执行   ?                 ?? ?周期报告  ??合规   ??可解 ??成本   ?                 ?? ?Lifecycle ??Regul  ??Expl ??Exec   ?                 ?? └───────────?└────────?└──────?└────────?                 ??                                                                  ?└─────────────────────────────────────────────────────────────────?         ?                   ?                   ?         ?                   ?                   ?    ┌─────────?        ┌─────────?        ┌─────────?    ?Layer 2 ?        ?Layer 4 ?        ?Layer 5 ?    ?数据? ?        ?策略? ?        ?执行? ?    └─────────?        └─────────?        └─────────?```
+
 
 ### 2.2 模块职责边界
 
-#### P0级模块（核心差距?
+#### P0级模块（核心差距）
 **P0-01: 
-景分析?(ScenarioAnalyzer)**
+情景分析（ScenarioAnalyzer）**
 景类型、自定义冲击参数
-景分析报告（收益影响、风险指标、敏感度分析?- 调用频率：按需调用 / 周度定期分析
+情景分析报告（收益影响、风险指标、敏感度分析）
+- 调用频率：按需调用 / 周度定期分析
 
-**P0-02: 压力测试报告生成?(StressTestReporter)**
-景定?- 输出：压力测试报告（极端损失、风险敞口、生存能力评估）
-- 调用频率：月度定期测?/ 市场异常时触?
-**P0-03: 实时风险监控报告?(RealTimeRiskReporter)**
+**P0-02: 压力测试报告生成（StressTestReporter）**
+情景定义
+- 输出：压力测试报告（极端损失、风险敞口、生存能力评估）
+- 调用频率：月度定期测试 / 市场异常时触发
+**P0-03: 实时风险监控报告（RealTimeRiskReporter）**
 - 职责：秒级实时风险监控和预警
 **P0-04: 多时间框架报告融合器 (MultiTimeframeReportFusion)**
-- 职责：融合宏?中观/微观三层报告
-- 调用频率：日度融?
-**P1-01: 策略生命周期报告?(StrategyLifecycleReporter)**
-- 调用频率：周度更?
-**P1-02: 监管合规报告?(RegulatoryReporter)**
+- 职责：融合宏观/中观/微观三层报告
+- 调用频率：日度融合
+**P1-01: 策略生命周期报告（StrategyLifecycleReporter）**
+- 调用频率：周度更新
+**P1-02: 监管合规报告（RegulatoryReporter）**
 - 职责：生成证监会合规报告
-- 调用频率：季度定?/ 监管要求?
+- 调用频率：季度定期 / 监管要求触发
 **P1-03: AI决策可解释性报告器 (AIExplainabilityReporter)**
 - 职责：提供AI决策的SHAP/LIME解释
 **SHAP采样计算方案**（性能优化）：
@@ -151,7 +179,7 @@ layer: Layer 5 (策略执行层)
 ## 📋 概述
 
 
-# 准确性：采样误差<5%，满足业务需?
+# 准确性：采样误差 < 5%，满足业务需求
 import shap
 import numpy as np
 
@@ -163,9 +191,9 @@ def optimized_shap_analysis(model, X_train, X_test, sample_size=1000):
     else:
         X_sample = X_train
     
-    # 使用TreeSHAP（适用于树模型?    explainer = shap.TreeExplainer(model, X_sample)
+    # 使用TreeSHAP（适用于树模型）    explainer = shap.TreeExplainer(model, X_sample)
     
-    # 并行计算SHAP?    shap_values = explainer.shap_values(X_test, check_additivity=False)
+    # 并行计算 SHAP    shap_values = explainer.shap_values(X_test, check_additivity=False)
     
     return shap_values
 
@@ -179,32 +207,33 @@ def approximate_shap_analysis(model, X_train, X_test, nsamples=100):
     return shap_values
 ```
 
-**性能对比**?| 方案 | 数据?| 计算时间 | 准确?| 适用场景 |
+**性能对比** | 方案 | 数据量 | 计算时间 | 准确率 | 适用场景 |
 |------|--------|---------|--------|---------|
 | 
-| 采样SHAP | 1000 | 8?| 95%+ | 大数据集（推荐） |
-| 近似SHAP | 100 | 2?| 90%+ | 快速预?|
+| 采样SHAP | 1000 | 8s | 95%+ | 大数据集（推荐） |
+| 近似SHAP | 100 | 2s | 90%+ | 快速预览|
 
-**P1-04: 执行成本分析报告?(ExecutionCostReporter)**
-- 调用频率：日度汇?/ 交易后分?
+**P1-04: 执行成本分析报告（ExecutionCostReporter）**
+- 调用频率：日度汇总 / 交易后分析
 
 
 实施）
 
-#### P1-05: 风险预算执行报告?(RiskBudgetReporter)
+#### P1-05: 风险预算执行报告（RiskBudgetReporter）
 
 **模块ID**: RISK_BUDGET_REPORTER_001
-况，分析预算偏?
+情况，分析预算偏差
 **核心功能**:
 风险预算计算
-3. 预算偏差分析与预?4. 再平衡建议生?
+3. 预算偏差分析与预警
+4. 再平衡建议生成
 组合风险数据（VaR、波动率等）
 - 资产权重数据
 
 **输出报告**:
 - 预算执行偏差报告
 限预警
-- 再平衡建?
+- 再平衡建议
 **接口设计**:
 ```python
 POST /api/v1/reports/risk-budget/analyze
@@ -233,18 +262,20 @@ class RiskBudgetReport:
 #### P1-06: 模型稳定性报告器 (ModelStabilityReporter)
 
 **模块ID**: MODEL_STABILITY_REPORTER_001
-**职责**: 监控模型稳定性，检测模型漂?
+**职责**: 监控模型稳定性，检测模型漂移
 **核心功能**:
 1. 模型漂移检测（PSI、KS检验）
 2. 特征分布变化监控
 3. 模型性能衰减预警
-4. 重训练建议生?
+4. 重训练建议生成
 - 模型预测结果
 - 特征数据分布
 - 模型性能指标
 
 **输出报告**:
-- 模型稳定性评?- 漂移检测报?- 重训练预?
+- 模型稳定性评价
+- 漂移检测报告
+- 重训练预警
 **接口设计**:
 ```python
 POST /api/v1/reports/model-stability/analyze
@@ -272,12 +303,14 @@ class ModelStabilityReport:
 
 **模块ID**: BACKTEST_OVERFIT_REPORTER_001
 **核心功能**:
-1. PBO（Probability of Backtest Overfitting）计?2. CSCV（Combinatorially Symmetric Cross-Validation）检?3. 样本外性能预测
-4. 策略稳健性评?
-- 样本外测试数?
+1. PBO（Probability of Backtest Overfitting）计算
+2. CSCV（Combinatorially Symmetric Cross-Validation）检查
+3. 样本外性能预测
+4. 策略稳健性评估
+- 样本外测试数据
 **输出报告**:
-- 过拟合概率评?- 样本外性能预测
-- 策略稳健性评?
+- 过拟合概率评估- 样本外性能预测
+- 策略稳健性评估
 **接口设计**:
 ```python
 POST /api/v1/reports/backtest-overfit/analyze
@@ -333,31 +366,34 @@ class CrossAssetCorrelationReport:
 
 #### P2-01: 投资委员会决策报告器 (InvestmentCommitteeReporter)
 
-**职责**: 记录投资决策过程，提供决策追?
+**职责**: 记录投资决策过程，提供决策追踪
 **核心功能**:
 1. 投资决策记录
 2. 决策依据追溯
 3. 决策效果评估
 4. 决策流程管理
 
-#### P2-02: 高频交易性能报告?(HFTPerformanceReporter)
+#### P2-02: 高频交易性能报告（HFTPerformanceReporter）
 
-**职责**: 分析高频交易性能，优化执行质?
+**职责**: 分析高频交易性能，优化执行质量
 **核心功能**:
-1. 毫秒级执行质量分?2. 延迟分析
-3. 订单流分?4. 执行算法优化建议
+1. 毫秒级执行质量分析
+2. 延迟分析
+3. 订单流分析
+4. 执行算法优化建议
 
-#### P2-03: 统计套利机会报告?(StatArbOpportunityReporter)
+#### P2-03: 统计套利机会报告（StatArbOpportunityReporter）
 
-**职责**: 识别统计套利机会，监控套利信?
+**职责**: 识别统计套利机会，监控套利信号
 **核心功能**:
 1.
-2. 均值回归信号监?3. 套利空间评估
+2. 均值回归信号监控
+3. 套利空间评估
 4. 风险收益分析
 
 
 
-## 三、接口定?
+## 三、接口定义
 ### 3.1 统一API接口规范
 
 **基础URL**: `http://localhost:8000/api/v1/reports/`
@@ -370,7 +406,7 @@ class CrossAssetCorrelationReport:
 
 ### 3.2 API接口概述
 
-**说明**: 详细的API接口定义请参?LAYER7_API_REFERENCE.md
+**说明**: 详细的 API 接口定义请参考 `LAYER7_API_REFERENCE.md`
 
 #### 3.2.1 核心模块API接口
 
@@ -380,25 +416,25 @@ class CrossAssetCorrelationReport:
 景分析 | SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md |
 | 压力测试 | POST /api/v1/reports/stress-test/run | 执行压力测试 | [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
 | 实时风险监控 | GET /api/v1/reports/realtime-risk/current | 获取实时风险指标 | REALTIME_RISK_MONITORING_BLUEPRINT.md |
-| 多时间框架融?| POST /api/v1/reports/multi-timeframe/fuse | 融合多层报告 | 本文?2.1?|
+| 多时间框架融合 | POST /api/v1/reports/multi-timeframe/fuse | 融合多层报告 | 本文 2.1|
 | 经济范式分析 | POST /api/v1/reports/economic-regime/analyze | 分析经济范式 | ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md |
 | 信号质量监控 | POST /api/v1/reports/signal-quality/analyze | 分析信号质量 | SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md |
-| 策略生命周期 | GET /api/v1/reports/strategy-lifecycle/{strategy_id} | 获取策略生命周期报告 | 本文?2.2?|
-| 监管合规 | POST /api/v1/reports/regulatory/generate | 生成监管合规报告 | 本文?2.2?|
-| 执行成本 | GET /api/v1/reports/execution-cost/summary | 获取执行成本分析 | 本文?2.2?|
+| 策略生命周期 | GET /api/v1/reports/strategy-lifecycle/{strategy_id} | 获取策略生命周期报告 | 本文 2.2|
+| 监管合规 | POST /api/v1/reports/regulatory/generate | 生成监管合规报告 | 本文 2.2|
+| 执行成本 | GET /api/v1/reports/execution-cost/summary | 获取执行成本分析 | 本文 2.2|
 
-实施?
+实施说明
 |------|---------|---------|------|
 | 风险预算执行 | POST /api/v1/reports/risk-budget/analyze | 风险预算偏差分析 | 蓝图设计完成 |
-| 模型稳定?| POST /api/v1/reports/model-stability/analyze | 模型漂移检?| 蓝图设计完成 |
-| 回测过拟?| POST /api/v1/reports/backtest-overfit/analyze | 过拟合检?| 蓝图设计完成 |
+| 模型稳定性 | POST /api/v1/reports/model-stability/analyze | 模型漂移检查 | 蓝图设计完成 |
+| 回测过拟合 | POST /api/v1/reports/backtest-overfit/analyze | 过拟合检查 | 蓝图设计完成 |
 
 ### 3.3 职责边界说明
 
 
 **核心原则**:
-- **单一职责原则**: 每个模块只负责一个核心功?- **接口隔离原则**: 模块间通过明确定义的接口通信
-- **依赖倒置原则**: 高层模块不依赖低层模块，都依赖抽?
+- **单一职责原则**: 每个模块只负责一个核心功能- **接口隔离原则**: 模块间通过明确定义的接口通信
+- **依赖倒置原则**: 高层模块不依赖低层模块，都依赖抽象接口
 
 
 ## 四、数据流设计
@@ -416,62 +452,69 @@ class CrossAssetCorrelationReport:
 | RiskMetrics | 风险指标数据 | REALTIME_RISK_MONITORING_BLUEPRINT.md |
 | BaseReport | 报告基础数据 | 各模块技术规格书 |
 
-### 4.2 数据流向?
+### 4.2 数据流向
 ```
 
 
-| 模块 | 依赖数据 | 数据?| 更新频率 |
+| 模块 | 依赖数据 | 数据层 | 更新频率 |
 |------|---------|--------|---------|
 | 
-景分析?| 组合数据、因子暴?| Layer 4 | 日度 |
-| 压力测试 | 组合数据、历史行?| Layer 2, 4 | 月度 |
-、组合快?| Layer 2, 4 | 秒级 |
+情景分析 | 组合数据、因子暴露 | Layer 4 | 日度 |
+| 压力测试 | 组合数据、历史行情 | Layer 2, 4 | 月度 |
+组合快照 | Layer 2, 4 | 秒级 |
 部 | 日度 |
-| 策略生命周期 | 策略性能、交易记?| Layer 4, 5 | 周度 |
-| 监管合规 | 组合数据、交易记?| Layer 4, 5 | 季度 |
-| 执行成本 | 成交记录、市场数?| Layer 5 | 日度 |
+| 策略生命周期 | 策略性能、交易记录 | Layer 4, 5 | 周度 |
+| 监管合规 | 组合数据、交易记录 | Layer 4, 5 | 季度 |
+| 执行成本 | 成交记录、市场数据 | Layer 5 | 日度 |
 
 
 
 ## 五、实施路线图
 
-**总工?*: 7周（含缓冲时间）
+**总工期**: 7 周（含缓冲时间）
 
 ### 5.1 Phase 1: P0级核心模块（3周）
 
 **Week 1: 
 景分析 + 压力测试**
 - Day 1-2: 
-- Day 3-4: 压力测试报告生成器开?- Day 5: 集成测试与文档编?
-**Week 2-3: 实时风险 + 多时间框架融?*
-- Day 1-3: 实时风险监控报告器开发（重点：性能优化?  - 增量计算实现
+- Day 3-4: 压力测试报告生成器开发
+- Day 5: 集成测试与文档编写
+**Week 2-3: 实时风险 + 多时间框架融合**
+- Day 1-3: 实时风险监控报告器开发（重点：性能优化）
+  - 增量计算实现
   - Redis缓存集成
-  - 性能测试与优化（目标?秒）
-- Day 4-5: 多时间框架报告融合器开?- Day 6-7: 集成测试与API联调
+  - 性能测试与优化（目标：2秒）
+- Day 4-5: 多时间框架报告融合器开发
+- Day 6-7: 集成测试与 API 联调
 - Day 8-10: 缓冲时间（处理技术难点）
 
 ### 5.2 Phase 2: P1级扩展模块（2周）
 
 **Week 4: 策略生命周期 + 监管合规**
-- Day 1-2: 策略生命周期报告器开?- Day 3-4: 监管合规报告器开?- Day 5: 集成测试
+- Day 1-2: 策略生命周期报告器开发
+- Day 3-4: 监管合规报告器开发
+- Day 5: 集成测试
 
 
 ### 5.3 Phase 3: 集成与优化（2周）
 
 **Week 6: 系统集成**
-**Week 7: 性能优化与文?*
-- Day 1-2: 性能测试与优?- Day 3-4: 文档完善与培?- Day 5: 最终验收与上线准备
+**Week 7: 性能优化与文档**
+- Day 1-2: 性能测试与优化
+- Day 3-4: 文档完善与培训
+- Day 5: 最终验收与上线准备
 
 ### 5.4 Phase 4: P1级扩展模块（2-3周，可选）
 
   - 预算偏差分析
-  - 再平衡建议生?- Day 4-7: 模型稳定性报告器开发  - 模型漂移检测（PSI、KS检验）
+  - 再平衡建议生成- Day 4-7: 模型稳定性报告器开发  - 模型漂移检测（PSI、KS检验）
   - 特征分布变化监控
-  - 重训练预?
+  - 重训练预警
 - Day 1-3: 回测过拟合检测报告器开发  - PBO/CSCV过拟合检查  - 样本外性能预测
 ### 5.5 Phase 5: P2级优化模块（可选）
 
-**预计工期**: 2-3?- 投资委员会决策报告器?天）
+****预计工期**: 2-3 周（投资委员会决策报告器：约 3 天）
 - 高频交易性能报告器（1周，可选）
 - 统计套利机会报告器（1周，可选）
 
@@ -485,10 +528,10 @@ class CrossAssetCorrelationReport:
 |------|---------|---------|
 | 
 | 压力测试 | 支持历史/假设/反向三种测试类型 | 回测验证 |
-| 实时风险 | 延迟?秒，准确率≥95% | 性能测试 |
-| 多时间框架融?| 一致性评分算法准确率?0% | 专家评审 |
+| 实时风险 | 延迟 2 秒，准确率≥95% | 性能测试 |
+| 多时间框架融合 | 一致性评分算法准确率 90% | 专家评审 |
 | 经济范式分析 | 范式判断准确率≥80%，因子暴露误差≤5% | 历史数据验证 |
-| 信号质量监控 | 衰减检测准确率?5%，拥挤度评分合理性≥85% | 专家评审 |
+| 信号质量监控 | 衰减检测准确率 95%，拥挤度评分合理性≥85% | 专家评审 |
 
 #### 6.1.2 P1级模块验收指标
 | 模块 | 验收标准 | 测试方法 |
@@ -497,15 +540,15 @@ class CrossAssetCorrelationReport:
 | 监管合规 | 合规检查覆盖率100% | 规则库验证|
 成交对比 |
 | 风险预算执行 | 预算偏差计算准确率≥95% | 专家评审 |
-| 模型稳定?| 漂移检测准确率?5% | 历史数据验证 |
-| 回测过拟?| PBO计算准确率≥90% | 合成数据验证 |
+| 模型稳定性 | 漂移检测准确率 95% | 历史数据验证 |
+| 回测过拟合 | PBO计算准确率≥90% | 合成数据验证 |
 
 #### 6.1.3 P2级模块验收标准（可选）
 
 | 模块 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| 投资委员会决?| 决策记录完整?00% | 流程验证 |
-| 高频交易性能 | 延迟分析精度?ms | 性能测试 |
+| 投资委员会决策 | 决策记录完整率 100% | 流程验证 |
+| 高频交易性能 | 延迟分析精度 1ms | 性能测试 |
 | 统计套利机会 | 套利信号准确率≥75% | 回测验证 |
 
 ### 6.2 性能验收标准
@@ -515,58 +558,58 @@ class CrossAssetCorrelationReport:
 | 报告生成时间 | ?分钟 | 性能测试 |
 | 实时监控延迟 | ??| 压力测试 |
 | API响应时间 | ?00ms | 性能测试 |
-| 并发支持 | ?00 QPS | 负载测试 |
-| 系统可用?| ?9.9% | 监控统计 |
+| 并发支持 | 100 QPS | 负载测试 |
+| 系统可用性 | 99.9% | 监控统计 |
 
 ### 6.3 质量验收标准
 
 | 指标 | 目指标| 验证方法 |
 |------|--------|---------|
-| 文档完整?| 100% | 文档审查 |
+| 文档完整性 | 100% | 文档审查 |
 | 架构合规范| 100% | 架构审查 |
 
 
 
 ## 七、风险与约束
 
-### 7.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+### 7.1 技术风险
+| 风险 | 风险等级 | 缓解措施 |
 |--------|---------|---------|
 | 实时风险计算性能瓶颈 | P1 | 使用缓存、增量计划|
-| 多时间框架数据不一?| P2 | 数据校验机制 |
+| 多时间框架数据不一致 | P2 | 数据校验机制 |
 | SHAP计算耗时过长 | P2 | 采样计算、并行化 |
 
 ### 7.2 实施约束
 
 容 | 应对策略 |
 |--------|---------|---------|
-完成 | 分阶段交?|
+| 交付拆分 | 分阶段交付 |
 | 技术栈 | Python + FastAPI | 使用成熟框架 |
 
 ### 7.3 依赖风险
 
-| 依赖?| 风险描述 | 应对措施 |
+| 依赖 | 风险描述 | 应对措施 |
 |--------|---------|---------|
-| Layer 2数据质量 | 数据缺失或错?| 数据校验 + 默认?|
-| Layer 4策略稳定?| 策略频繁变更 | 版本管理 |
+| Layer 2数据质量 | 数据缺失或错误 | 数据校验 + 默认值 |
+| Layer 4策略稳定性 | 策略频繁变更 | 版本管理 |
 | Layer 5执行延迟 | 实时数据延迟 | 异步处理 |
 
 
 
 ## 
-### 8.1 参考文?
+### 8.1 参考文献
 - ARCHITECTURE.md - 系统架构定义
 - MODULE_RESPONSIBILITY_BOUNDARIES.md - 模块职责边界
 - TECHNICAL_SPECIFICATION_TEMPLATE.md - 技术规格模块
-### 8.2 术语?
+### 8.2 术语表
 | 术语 | 定义 |
 |------|------|
-| VaR | Value at Risk，风险价?|
-| CVaR | Conditional VaR，条件风险价?|
+| VaR | Value at Risk，风险价值（VaR） |
+| CVaR | Conditional VaR，条件风险价值（CVaR） |
 | SHAP | SHapley Additive exPlanations |
 | LIME | Local Interpretable Model-agnostic Explanations |
 | IC | Information Coefficient，信息系统|
-| IR | Information Ratio，信息比?|
+| IR | Information Ratio，信息比率 |
 
 ### 8.3 版本历史
 
@@ -575,7 +618,7 @@ class CrossAssetCorrelationReport:
 
 
 
-审?**下一?*: 提交?@blueprint-architect 进行架构评审
+**下一步**: 提交给 `@blueprint-architect` 进行架构评审
 
 
 

@@ -1,16 +1,4 @@
 ---
-module_id: DATA_SOURCE_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-- 数据源管理
-- 数据源注册
-- 连接管理
-- 元数据采集
-﻿
 module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -20,17 +8,17 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-?
+- 数据源管理
+- 数据源注册
+- 连接管理
+- 元数据采集
 layer: Layer 5.1 (数据处理)
 ---
 
 
 ## 核心定位
 
-
-负责数据源管理模块设计，实现数据源注册、连接管理、元数据采集功能。
-
-负责数据源管理模块设计，实现数据源注册、连接管理、元数据采集功能。
+负责数据源管理模块设计，实现数据源注册认证、连接池管理、元数据自动采集、数据源健康检查功能，统一管理各类数据源接入。
 
 # DATA SOURCE MANAGEMENT BLUEPRINT
 

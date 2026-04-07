@@ -1,3 +1,14 @@
+---
+module_id: 09_AUDIT_STATE_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 提供文档支持
+---
+
 # Alpha因子层深度审计报告 - 第二轮
 
 ## 审计概要
