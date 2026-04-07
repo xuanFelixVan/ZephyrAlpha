@@ -10,7 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 协整分析
   - 统计套利
-layer: Layer 5 (策略执行层)
+layer: Layer 5 - FACTOR
 -----|
 
 ---

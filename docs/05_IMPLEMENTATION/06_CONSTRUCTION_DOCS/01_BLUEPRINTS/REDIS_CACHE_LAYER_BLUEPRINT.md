@@ -11,7 +11,7 @@ responsibility:
   - 数据缓存
   - 会话管理
   - 分布式锁
-layer: Layer 5.1 (数据处理)
+layer: Layer 5 - DATA
 ---
 
 **文档结束**

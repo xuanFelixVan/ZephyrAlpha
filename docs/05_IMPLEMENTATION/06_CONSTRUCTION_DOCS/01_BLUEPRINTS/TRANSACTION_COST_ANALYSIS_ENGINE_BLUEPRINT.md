@@ -11,7 +11,7 @@ responsibility:
   - 基准对比
   - 成本归因
   - 执行质量评分
-layer: Layer 5.2 (组合优化)
+layer: Layer 5 - ANALYSIS
 -----|
 
 ---

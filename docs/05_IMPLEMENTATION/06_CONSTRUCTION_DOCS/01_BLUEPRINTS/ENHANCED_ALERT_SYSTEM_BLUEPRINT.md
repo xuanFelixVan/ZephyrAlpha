@@ -13,5 +13,5 @@ responsibility:
   - 智能告警
   - 告警聚合
   - 告警分级
-layer: Layer 5 (策略执行层)
+layer: Layer 5 - MONITORING
 ---

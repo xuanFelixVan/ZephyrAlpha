@@ -11,7 +11,7 @@ responsibility:
   - 对象存储集成
   - 对象存储
   - 存储优化
-layer: Layer 5.1 (数据处理)
+layer: Layer 5 - DATA
 ---
 
 **文档版本**: v1.0.0

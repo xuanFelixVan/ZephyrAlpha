@@ -13,7 +13,7 @@ responsibility:
   - 定期权重调整
   - 季度绩效归因
   - 周期性再平衡
-layer: Layer 6 (组合优化层)
+layer: Layer 5 - PORTFOLIO
 -----|
 
 ---

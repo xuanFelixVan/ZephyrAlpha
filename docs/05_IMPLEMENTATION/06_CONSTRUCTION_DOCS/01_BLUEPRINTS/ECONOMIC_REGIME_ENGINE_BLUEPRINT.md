@@ -11,6 +11,6 @@ responsibility:
   - 经济周期引擎
   - 宏观环境分析
   - 周期预测
-layer: Layer 5 (策略执行层)
+layer: Layer 5 - ANALYSIS
 ---
 

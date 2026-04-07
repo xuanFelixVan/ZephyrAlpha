@@ -10,6 +10,6 @@ compliance_level: 专业标准
 responsibility:
   - 市场环境识别
   - 市场特征提取
-layer: Layer 5 (策略执行层)
+layer: Layer 5 - ANALYSIS
 ---
 

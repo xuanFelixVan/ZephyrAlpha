@@ -12,6 +12,6 @@ responsibility:
   - 报告生成
   - 报告模板管理
   - 报告分发
-layer: Layer 5 (策略执行层)
+layer: Layer 5 - MONITORING
 ---
 

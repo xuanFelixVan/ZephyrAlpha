@@ -11,7 +11,7 @@ standard_type: 专业量化机构蓝图文档
 applicable_scope: Layer 5 - 策略执行层
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-layer: Layer 5 (策略执行层)---
+layer: Layer 5 - ANALYSIS
 
 
 
