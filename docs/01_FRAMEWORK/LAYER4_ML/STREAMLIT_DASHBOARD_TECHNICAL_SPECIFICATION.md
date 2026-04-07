@@ -15,7 +15,7 @@ implementation_status: 待实?
 ---
 
 # StreamlitDashboard可视化仪表板技术规格书
-> **核心职责**: 文档内容说明
+> **核心职责**: 定义streamlit dashboard technical specification的技术规格、接口标准和实现细节
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容

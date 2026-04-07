@@ -27,7 +27,7 @@ layer: Layer 3 (策略层)
 
 
 # æç¤ºå·¥ç¨èå¾
-> **核心职责**: Prompt Engineering蓝图设计
+> **核心职责**: 提供prompt engineering blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Prompt Engineering蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

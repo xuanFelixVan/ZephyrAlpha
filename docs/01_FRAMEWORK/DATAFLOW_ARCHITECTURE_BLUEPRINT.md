@@ -30,7 +30,7 @@ responsibility:
 ---
 ---
 # 三级时间框架数据流架构蓝�?
-> **核心职责**: Dataflow Architecture蓝图设计
+> **核心职责**: 提供dataflow architecture blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Dataflow Architecture蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

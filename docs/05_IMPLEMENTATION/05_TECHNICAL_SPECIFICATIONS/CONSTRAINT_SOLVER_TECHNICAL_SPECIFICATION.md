@@ -1,725 +1,890 @@
 ---
-module_id: CONSTRAINT_SOLVER_SPEC_001
+module_id: CONSTRAINT_SOLVER_TECH_SPEC_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md
-last_updated: 2026-04-03
-created_date: 2026-04-03
-layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
-index: CONSTRAINT_SOLVER_SPEC_001
-estimated_hours: 60h
+last_updated: 2026-04-07
+created_date: 2026-04-07
+layer: Layer 6 (组合优化层)
+index: CONSTRAINT_SOLVER_TECH_SPEC_001
+estimated_hours: 20
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
-review_date: 2026-04-03
-owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+reviewer: 首席技术评审官
+review_date: 2026-04-07
+owner: 实施团队
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+  - 约束求解实现
+  - 约束验证
+standard_type: 专业量化机构技术规格书
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
----
+implementation_status: 待实施
 ---
 
+# Constraint Solver技术规格书 v1.0
 
-# ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
-> **核心职责**: 文档内容说明
+> **核心职责**: 约束求解详细技术实现规范
 > **职责边界**: 
-> - ✅ 本文档负责：文档内容说明相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - ✅ 本文档负责：约束定义、约束验证、约束求解
+> - ❌ 本文档不负责：优化目标函数、组合权重计算
 
+> 清风量化系统 v5.3 - Constraint Solver详细技术设计
+> **索引**: `CONSTRAINT_SOLVER_TECH_SPEC_001`
+> **开发工时**: 20h
+> **核心定位**: 组合优化约束系统的技术实现
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷ﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `CONSTRAINT_SOLVER_SPEC_001`
-> **ﮒﺙﮒﮔﭘ?*: 60h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﮒﻛﺙﮒﻝﭦ۵ﮔﮒ۳ﻝﺅﺙﮔﺁﮔﮒ۳ﮔﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﻝﮒﺕﻛﺙﮒﮔﺎ?
 ---
 
-## 1. ﮔ۵ﻟﺟﺍ
+## 1. 概述
 
-### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
+### 1.1 设计背景与业务目标
+- **业务需求**: 提供灵活、可扩展的约束系统，支持多种约束类型和复杂约束组合
+- **技术痛点**: 
+  - 约束类型多样：权重约束、行业约束、因子约束、风险约束等
+  - 约束冲突：多个约束之间可能存在冲突
+  - 约束验证复杂：需要高效验证约束是否满足
+- **预期收益**: 
+  - 提供统一的约束管理框架
+  - 支持灵活的约束组合和优先级
+  - 提供约束冲突检测和解决机制
 
-ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷ﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮔ ﺕﮒﺟﮔﺎﻟ۶۲ﮒ۷ﺅﺙﻟﺑﻟﺑ۲?- ﻝﭦ۵ﮔﮒ؟ﻛﺗﻛﺕﻠ۹?- ﮒﺕﻛﺙﮒﻠ؟ﻠ۱ﮔﺎ?- ﻝﭦ۵ﮔﮒﺎﻝ۹ﮔ۲ﮔﭖﻛﺕﻟ۶۲ﮒﺏ
-- ﻝﭦ۵ﮔﮔﺝﮒﺙﻛﺕﻛﺙﮒﻝﭦ۶ﻝ؟۰ﻝ
+### 1.2 技术定位与架构层归属
+- **Layer定位**: Layer 6 - 组合优化层 (符合ARCHITECTURE.md定义)
+- **模块类别**: 核心组合优化模块
+- **架构角色**: Layer 6组合优化支撑，提供约束求解能力
 
-### 1.2 ﮔﮔﺁﻝ؟?
-- **ﮔ­۲ﻝ۰؟?*: ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﻝﭨﮔ100%ﮔﭨ۰ﻟﭘﺏﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
-- **ﮔﻝ**: ﮒﮔ؛۰ﮔﺎﻟ۶۲ﮔﭘﻠﺑ < 500ms?000ﻟﭖﻛﭦ۶ﻟ۶ﮔ۷۰?- **ﻠﺎﮔ۲?*: ﮒ۳ﻝﻝﭦ۵ﮔﮒﺎﻝ۹ﺅﺙﻟ۹ﮒ۷ﮔﺝﮒﺙﮔﺎ?- **ﮒﺁﮔ۸ﮒﺎ?*: ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﻝﭦ۵ﮔﻝﺎﭨ?
+### 1.3 版本信息
+| 版本 | 日期 | 作者 | 变更说明 | 状态 |
+|------|------|------|----------|------|
+| v1.0.0 | 2026-04-07 | 实施团队 | 初始版本 | Active |
+
 ---
 
-## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+## 2. 详细架构设计
 
-### 2.1 ﮔ ﺕﮒﺟﻝﺎﭨﮔ۴?
-#### 2.1.1 ConstraintSolver
-
-```python
-class ConstraintSolver:
-    """
-    ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷ﮔ ﺕﮒﺟﻝﺎﭨ
-    
-    ﻟﻟﺑ۲: ﮒ۳ﻝﮒ۳ﮔﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﺅﺙﮔﺎﻟ۶۲ﻝﭦ۵ﮔﻛﺙﮒﻠ؟?    """
-    
-    def __init__(self, config: SolverConfig):
-        """
-        ﮒﮒ۶ﮒﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷
-        
-        Args:
-            config: ﮔﺎﻟ۶۲ﮒ۷ﻠﻝﺛ؟ﮒﺁﺗ?        """
-        pass
-    
-    def solve(self,
-             objective: Objective,
-             constraints: List[Constraint],
-             variables: Variables) -> SolverResult:
-        """
-        ﮔﺎﻟ۶۲ﻝﭦ۵ﮔﻛﺙﮒﻠ؟ﻠ۱
-        
-        Args:
-            objective: ﻛﺙﮒﻝ؟ﮔ 
-            constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-            variables: ﻛﺙﮒﮒﻠ
-            
-        Returns:
-            SolverResult: ﮔﺎﻟ۶۲ﻝﭨﮔ
-            
-        Raises:
-            InfeasibleError: ﻠ؟ﻠ۱ﻛﺕﮒﺁ?            SolverError: ﮔﺎﻟ۶۲ﮒ۳ﺎﻟﺑ۴
-        """
-        pass
-    
-    def solve_with_priorities(self,
-                             objective: Objective,
-                             constraints: List[Constraint],
-                             variables: Variables,
-                             priorities: Dict[str, int]) -> SolverResult:
-        """
-        ﮒﺕ۵ﻛﺙﮒﻝﭦ۶ﻝﻝﭦ۵ﮔﮔﺎ?        
-        Args:
-            objective: ﻛﺙﮒﻝ؟ﮔ 
-            constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-            variables: ﻛﺙﮒﮒﻠ
-            priorities: ﻝﭦ۵ﮔﻛﺙﮒﻝﭦ۶ﺅﺙﻝﭦ۵ﮔﮒﻝ۶ﺍ -> ﻛﺙﮒﻝﭦ۶ﺅﺙ
-            
-        Returns:
-            SolverResult: ﮔﺎﻟ۶۲ﻝﭨﮔ
-        """
-        pass
+### 2.1 系统架构图
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Layer 6: 组合优化层                        │
+├─────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │       ConstraintSolver (主模块)                      │  │
+│  │ - 约束定义                                            │  │
+│  │ - 约束验证                                            │  │
+│  │ - 约束求解                                            │  │
+│  │ - 冲突检测                                            │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                          │                                 │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │         核心组件                                      │  │
+│  │ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐     │  │
+│  │ │ConstraintDef│ │ConstraintVal│ │ConflictDete│     │  │
+│  │ │约束定义器   │ │约束验证器   │ │冲突检测器   │     │  │
+│  │ └─────────────┘ └─────────────┘ └─────────────┘     │  │
+│  │ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐     │  │
+│  │ │WeightConstr │ │SectorConstr │ │FactorConstr │     │  │
+│  │ │权重约束     │ │行业约束     │ │因子约束     │     │  │
+│  │ └─────────────┘ └─────────────┘ └─────────────┘     │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                          │                                 │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │         第三方库集成                                  │  │
+│  │ - CVXPY (约束优化)                                   │  │
+│  │ - PuLP (线性规划)                                    │  │
+│  │ - OR-Tools (约束规划)                                │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-#### 2.1.2 ConstraintValidator
+### 2.2 Layer定位详细说明
+- **Layer归属**: Layer 6 - 组合优化层
+- **职责范围**: 约束定义、约束验证、约束求解、冲突检测
+- **上下层接口**: 
+  - 上层依赖: Layer 5 交易成本层 (提供交易成本约束)
+  - 下层依赖: Layer 7 风险管理层 (接收约束后的组合)
 
+### 2.3 模块职责与边界定义
+- **核心职责**: 约束定义、约束验证、约束求解、冲突检测
+- **职责边界**: 
+  - ✓本模块负责: 约束定义、验证、求解、冲突检测
+  - ✗本模块不负责: 优化目标函数、组合权重计算
+- **接口契约**: 提供统一的Python API接口
+
+### 2.4 依赖关系
+| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+|----------|----------|----------|----------|------|
+| CVXPY | 强依赖 | Python包 | >=1.4.0 | 约束优化 |
+| PuLP | 弱依赖 | Python包 | >=2.7.0 | 线性规划 |
+| OR-Tools | 弱依赖 | Python包 | >=9.5.0 | 约束规划 |
+| NumPy | 强依赖 | Python包 | >=1.24.0 | 数值计算 |
+| Pandas | 强依赖 | Python包 | >=2.0.0 | 数据处理 |
+
+---
+
+## 3. 接口定义
+
+### 3.1 API接口规范
+
+#### 3.1.1 主接口类
 ```python
-class ConstraintValidator:
-    """
-    ﻝﭦ۵ﮔﻠ۹ﻟﺁ?    
-    ﻟﻟﺑ۲: ﻠ۹ﻟﺁﻝﭦ۵ﮔﻝﮒﺁﻟ۰ﮔ۶ﻙﻛﺕﻟﺑﮔ۶ﮒﮒﺎﻝ۹
-    """
-    
-    def validate(self,
-                constraints: List[Constraint],
-                variables: Variables) -> ValidationResult:
-        """
-        ﻠ۹ﻟﺁﻝﭦ۵ﮔ
-        
-        Args:
-            constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-            variables: ﻛﺙﮒﮒﻠ
-            
-        Returns:
-            ValidationResult: ﻠ۹ﻟﺁﻝﭨﮔ
-        """
-        pass
-    
-    def detect_conflicts(self, constraints: List[Constraint]) -> List[Conflict]:
-        """
-        ﮔ۲ﮔﭖﻝﭦ۵ﮔﮒﺎ?        
-        Args:
-            constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-            
-        Returns:
-            List[Conflict]: ﮒﺎﻝ۹ﮒﻟ۰۷
-        """
-        pass
-```
+from typing import Dict, List, Optional, Tuple, Any, Union
+from datetime import datetime
+from dataclasses import dataclass
+from enum import Enum
+from abc import ABC, abstractmethod
+import numpy as np
+import pandas as pd
+import logging
 
-#### 2.1.3 ConvexOptimizer
 
-```python
-class ConvexOptimizer:
-    """
-    ﮒﺕﻛﺙﮒﮔﺎﻟ۶۲ﮒ۷
-    
-    ﻟﻟﺑ۲: ﻛﺛﺟﻝ۷CVXPYﮔﺎﻟ۶۲ﮒﺕﻛﺙﮒﻠ؟?    """
-    
-    def __init__(self, config: ConvexConfig):
-        """
-        ﮒﮒ۶ﮒﮒﺕﻛﺙﮒﮔﺎﻟ۶۲?        
-        Args:
-            config: ﮒﺕﻛﺙﮒﻠ?        """
-        pass
-    
-    def solve(self, problem: cp.Problem) -> np.ndarray:
-        """
-        ﮔﺎﻟ۶۲ﮒﺕﻛﺙﮒﻠ؟?        
-        Args:
-            problem: CVXPYﻠ؟ﻠ۱ﮒﺁﺗﻟﺎ۰
-            
-        Returns:
-            np.ndarray: ﻛﺙﮒ?            
-        Raises:
-            SolverError: ﮔﺎﻟ۶۲ﮒ۳ﺎﻟﺑ۴
-        """
-        pass
-```
+class ConstraintType(Enum):
+    """约束类型枚举"""
+    EQUALITY = "equality"
+    INEQUALITY = "inequality"
+    BOUND = "bound"
+    LINEAR = "linear"
+    QUADRATIC = "quadratic"
 
-### 2.2 ﻝﭦ۵ﮔﻝﺎﭨﮔ۴?
-#### 2.2.1 Constraintﺅﺙﮒﭦﻝﺎﭨﺅﺙ
 
-```python
-class Constraint:
-    """
-    ﻝﭦ۵ﮔﮒﭦﻝﺎﭨ
-    
-    ﮔﮔﻝﭦ۵ﮔﻝﺎﭨﮒﻝﮒﭦﻝﺎﭨ
-    """
-    
-    def __init__(self, name: str, priority: int = 0):
-        """
-        ﮒﮒ۶ﮒﻝﭦ۵?        
-        Args:
-            name: ﻝﭦ۵ﮔﮒﻝ۶ﺍ
-            priority: ﻛﺙﮒﻝﭦ۶ﺅﺙ0-9?ﮔﻠ،ﺅﺙ
-        """
-        self.name = name
-        self.priority = priority
-        self.is_soft = False
-        
-    def to_cvxpy(self, x: cp.Variable) -> List[cp.Constraint]:
-        """
-        ﻟﺛ؛ﮔ۱ﻛﺕﭦCVXPYﻝﭦ۵ﮔ
-        
-        Args:
-            x: CVXPYﮒﻠ
-            
-        Returns:
-            List[cp.Constraint]: CVXPYﻝﭦ۵ﮔﮒﻟ۰۷
-        """
-        raise NotImplementedError
-        
-    def is_satisfied(self, solution: np.ndarray) -> bool:
-        """
-        ﮔ۲ﮔ۴ﻝﭦ۵ﮔﮔﺁﮒ۵ﮔﭨ۰?        
-        Args:
-            solution: ﻟ۶۲ﮒ?            
-        Returns:
-            bool: ﮔﺁﮒ۵ﮔﭨ۰ﻟﭘﺏ
-        """
-        raise NotImplementedError
-```
+class ConstraintPriority(Enum):
+    """约束优先级枚举"""
+    HARD = "hard"
+    SOFT = "soft"
 
-#### 2.2.2 LinearConstraint
 
-```python
-class LinearConstraint(Constraint):
-    """
-    ﻝﭦﺟﮔ۶ﻝﭦ۵?    
-    ﮒﺛ۱ﮒﺙ: lower <= a'x <= upper
-    """
-    
-    def __init__(self,
-                 name: str,
-                 coefficients: np.ndarray,
-                 lower_bound: float = None,
-                 upper_bound: float = None,
-                 priority: int = 0):
-        """
-        ﮒﮒ۶ﮒﻝﭦﺟﮔ۶ﻝﭦ۵?        
-        Args:
-            name: ﻝﭦ۵ﮔﮒﻝ۶ﺍ
-            coefficients: ﻝﺏﭨﮔﺍﮒﻠ
-            lower_bound: ﻛﺕﻝ
-            upper_bound: ﻛﺕﻝ
-            priority: ﻛﺙﮒ?        """
-        super().__init__(name, priority)
-        self.coefficients = coefficients
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
-```
-
-#### 2.2.3 BoxConstraint
-
-```python
-class BoxConstraint(Constraint):
-    """
-    ﻟﺝﺗﻝﻝﭦ۵ﮔ
-    
-    ﮒﺛ۱ﮒﺙ: lower <= x <= upper
-    """
-    
-    def __init__(self,
-                 name: str,
-                 lower_bounds: np.ndarray,
-                 upper_bounds: np.ndarray,
-                 priority: int = 0):
-        """
-        ﮒﮒ۶ﮒﻟﺝﺗﻝﻝﭦ۵?        
-        Args:
-            name: ﻝﭦ۵ﮔﮒﻝ۶ﺍ
-            lower_bounds: ﻛﺕﻝﮒﻠ
-            upper_bounds: ﻛﺕﻝﮒﻠ
-            priority: ﻛﺙﮒ?        """
-        super().__init__(name, priority)
-        self.lower_bounds = lower_bounds
-        self.upper_bounds = upper_bounds
-```
-
-### 2.3 ﮔﺍﮔ؟ﮔ۴ﮒ۲
-
-#### 2.3.1 ﻟﺝﮒ۴ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
-
-```python
-# ﻛﺙﮒﻝ؟ﮔ 
 @dataclass
-class Objective:
-    """ﻛﺙﮒﻝ؟ﮔ """
-    type: str  # 'maximize' or 'minimize'
-    expression: Callable[[cp.Variable], cp.Expression]
-
-# ﻛﺙﮒﮒﻠ
-@dataclass
-class Variables:
-    """ﻛﺙﮒﮒﻠ"""
+class ConstraintDefinition:
+    """约束定义"""
     name: str
-    size: int
-    lower_bound: float = None
-    upper_bound: float = None
-```
+    constraint_type: ConstraintType
+    priority: ConstraintPriority
+    description: str
+    tolerance: float = 1e-6
 
-#### 2.3.2 ﻟﺝﮒﭦﮔﺍﮔ؟ﮔ ﺙﮒﺙ
 
-```python
-# ﮔﺎﻟ۶۲ﻝﭨﮔ
 @dataclass
-class SolverResult:
-    """ﮔﺎﻟ۶۲ﻝﭨﮔ"""
-    solution: np.ndarray  # ﻛﺙﮒ?    constraint_status: Dict[str, bool]  # ﻝﭦ۵ﮔﮔﭨ۰ﻟﭘﺏﻝ?    report: SolverReport  # ﮔﺎﻟ۶۲ﮔ۴ﮒ
+class ConstraintViolation:
+    """约束违反信息"""
+    constraint_name: str
+    expected_value: float
+    actual_value: float
+    violation_amount: float
+    is_violated: bool
+
+
+@dataclass
+class ConstraintValidationResult:
+    """约束验证结果"""
+    is_valid: bool
+    violations: List[ConstraintViolation]
+    total_violation: float
     timestamp: datetime
 
-# ﻠ۹ﻟﺁﻝﭨﮔ
-@dataclass
-class ValidationResult:
-    """ﻠ۹ﻟﺁﻝﭨﮔ"""
-    is_feasible: bool  # ﮔﺁﮒ۵ﮒﺁﻟ۰
-    is_consistent: bool  # ﮔﺁﮒ۵ﻛﺕ?    conflicts: List[Conflict]  # ﮒﺎﻝ۹ﮒﻟ۰۷
-    recommendations: List[str]  # ﮒﭨﭦﻟ؟؟
 
-# ﮒﺎﻝ۹
-@dataclass
-class Conflict:
-    """ﻝﭦ۵ﮔﮒﺎﻝ۹"""
-    constraint1: Constraint
-    constraint2: Constraint
-    conflict_type: str  # 'range_conflict', 'logic_conflict'
-    severity: str  # 'high', 'medium', 'low'
-```
+class BaseConstraint(ABC):
+    """约束基类"""
+    
+    def __init__(
+        self,
+        name: str,
+        constraint_type: ConstraintType,
+        priority: ConstraintPriority = ConstraintPriority.HARD,
+        tolerance: float = 1e-6
+    ):
+        self.name = name
+        self.constraint_type = constraint_type
+        self.priority = priority
+        self.tolerance = tolerance
+        self.logger = logging.getLogger(__name__)
+    
+    @abstractmethod
+    def evaluate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> float:
+        """评估约束值"""
+        pass
+    
+    @abstractmethod
+    def is_satisfied(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> bool:
+        """检查约束是否满足"""
+        pass
+    
+    @abstractmethod
+    def to_cvxpy_constraint(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> Any:
+        """转换为CVXPY约束"""
+        pass
 
----
 
-## 3. ﮔﺍﮔ؟ﻝﭨﮔﻟ؟ﺝﻟ؟۰
-
-### 3.1 ﮔ ﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
-
-#### 3.1.1 SolverConfig
-
-```python
-@dataclass
-class SolverConfig:
-    """ﮔﺎﻟ۶۲ﮒ۷ﻠ?""
-    convex_config: ConvexConfig
-    relax_config: RelaxConfig
+class WeightConstraint(BaseConstraint):
+    """权重约束"""
     
-@dataclass
-class ConvexConfig:
-    """ﮒﺕﻛﺙﮒﻠ?""
-    solver_type: str = 'ecos'  # 'ecos', 'scs', 'osqp', 'cvxopt'
-    max_iter: int = 1000
-    tolerance: float = 1e-6
-    verbose: bool = False
+    def __init__(
+        self,
+        min_weight: float = 0.0,
+        max_weight: float = 1.0,
+        asset_indices: Optional[List[int]] = None,
+        **kwargs
+    ):
+        super().__init__(
+            name="weight_constraint",
+            constraint_type=ConstraintType.BOUND,
+            **kwargs
+        )
+        self.min_weight = min_weight
+        self.max_weight = max_weight
+        self.asset_indices = asset_indices
     
-@dataclass
-class RelaxConfig:
-    """ﻝﭦ۵ﮔﮔﺝﮒﺙﻠﻝﺛ؟"""
-    slack_amount: float = 0.01  # ﮔﺝﮒﺙ?    penalty_weight: float = 100.0  # ﮔ۸ﻝﺛﮔﻠ
-    max_relax_iterations: int = 10  # ﮔﮒ۳۶ﮔﺝﮒﺙﻟﺟ­ﻛﭨ۲ﮔ؛۰?```
-
----
-
-## 4. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
-
-### 4.1 ﻝﭦ۵ﮔﻠ۹ﻟﺁﻝ؟ﮔﺏ
-
-```python
-def validate_constraints(
-    constraints: List[Constraint],
-    variables: Variables
-) -> ValidationResult:
-    """
-    ﻠ۹ﻟﺁﻝﭦ۵ﮔ
-    
-    ﻝ؟ﮔﺏ:
-    1. ﮔ۲ﮔ۴ﻝﭦ۵ﮔﮒﺁﻟ۰ﮔ۶ﺅﺙﻛﺛﺟﻝ۷ﻝﭦﺟﮔ۶ﻟ۶ﮒﺅﺙ
-    2. ﮔ۲ﮔ۴ﻝﭦ۵ﮔﻛﺕﻟ?    3. ﮔ۲ﮔﭖﻝﭦ۵ﮔﮒﺎ?    
-    Args:
-        constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-        variables: ﻛﺙﮒﮒﻠ
-        
-    Returns:
-        ValidationResult: ﻠ۹ﻟﺁﻝﭨﮔ
-    """
-    # 1. ﮒﺁﻟ۰ﮔ۶ﮔ۲?    is_feasible = check_feasibility(constraints, variables)
-    
-    # 2. ﻛﺕﻟﺑﮔ۶ﮔ۲?    is_consistent = check_consistency(constraints)
-    
-    # 3. ﮒﺎﻝ۹ﮔ۲?    conflicts = detect_conflicts(constraints)
-    
-    return ValidationResult(
-        is_feasible=is_feasible and is_consistent,
-        is_consistent=is_consistent,
-        conflicts=conflicts,
-        recommendations=generate_recommendations(conflicts)
-    )
-
-def check_feasibility(
-    constraints: List[Constraint],
-    variables: Variables
-) -> bool:
-    """
-    ﮔ۲ﮔ۴ﻝﭦ۵ﮔﮒﺁﻟ۰?    
-    ﻛﺛﺟﻝ۷ﻝﭦﺟﮔ۶ﻟ۶ﮒﮔ۲?
-    min 0
-    s.t. constraints
-    """
-    x = cp.Variable(variables.size)
-    constraint_exprs = []
-    
-    for constraint in constraints:
-        constraint_exprs.extend(constraint.to_cvxpy(x))
-    
-    problem = cp.Problem(cp.Minimize(0), constraint_exprs)
-    
-    try:
-        problem.solve()
-        return problem.status == 'optimal'
-    except:
-        return False
-```
-
-### 4.2 ﮒﺕﻛﺙﮒﮔﺎﻟ۶۲ﻝ؟?
-```python
-def solve_convex_problem(
-    objective: Objective,
-    constraints: List[Constraint],
-    variables: Variables,
-    config: ConvexConfig
-) -> np.ndarray:
-    """
-    ﮔﺎﻟ۶۲ﮒﺕﻛﺙﮒﻠ؟?    
-    ﻝ؟ﮔﺏ:
-    1. ﮔﮒﭨﭦCVXPYﻠ؟ﻠ۱
-    2. ﻠﮔ۸ﮔﺎﻟ۶۲?    3. ﮔﺎﻟ۶۲ﮒﺗﭘﻠ۹?    
-    Args:
-        objective: ﻛﺙﮒﻝ؟ﮔ 
-        constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-        variables: ﻛﺙﮒﮒﻠ
-        config: ﮒﺕﻛﺙﮒﻠ?        
-    Returns:
-        np.ndarray: ﻛﺙﮒ?    """
-    # 1. ﮒ؟ﻛﺗﮒﻠ
-    x = cp.Variable(variables.size, name=variables.name)
-    
-    # 2. ﮒ؟ﻛﺗﻝ؟ﮔ ﮒﺛﮔﺍ
-    if objective.type == 'maximize':
-        objective_expr = cp.Maximize(objective.expression(x))
-    else:
-        objective_expr = cp.Minimize(objective.expression(x))
-    
-    # 3. ﮒ؟ﻛﺗﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
-    constraint_exprs = []
-    for constraint in constraints:
-        constraint_exprs.extend(constraint.to_cvxpy(x))
-    
-    # 4. ﮔﮒﭨﭦﻠ؟ﻠ۱
-    problem = cp.Problem(objective_expr, constraint_exprs)
-    
-    # 5. ﻠﮔ۸ﮔﺎﻟ۶۲?    solver = select_solver(config.solver_type)
-    
-    # 6. ﮔﺎﻟ۶۲
-    problem.solve(solver=solver, verbose=config.verbose)
-    
-    # 7. ﮔ۲ﮔ۴ﮔﺎﻟ۶۲ﻝﭘ?    if problem.status not in ['optimal', 'optimal_inaccurate']:
-        raise SolverError(f"ﮔﺎﻟ۶۲ﮒ۳ﺎﻟﺑ۴: {problem.status}")
-    
-    # 8. ﻟﺟﮒ?    return x.value
-```
-
-### 4.3 ﻝﭦ۵ﮔﮔﺝﮒﺙﻝ؟ﮔﺏ
-
-```python
-def relax_constraints(
-    constraints: List[Constraint],
-    conflicts: List[Conflict],
-    config: RelaxConfig
-) -> List[Constraint]:
-    """
-    ﮔﺝﮒﺙﻝﭦ۵ﮔ
-    
-    ﻝ؟ﮔﺏ:
-    1. ﻟﺁﮒ،ﮒﺎﻝ۹ﻝﭦ۵ﮔ
-    2. ﻠﮔ۸ﮔﺝﮒﺙﮔﺗﮔﺏ
-    3. ﮒﭦﻝ۷ﮔﺝﮒﺙ
-    
-    Args:
-        constraints: ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘﮒﻟ۰۷
-        conflicts: ﮒﺎﻝ۹ﮒﻟ۰۷
-        config: ﮔﺝﮒﺙﻠﻝﺛ؟
-        
-    Returns:
-        List[Constraint]: ﮔﺝﮒﺙﮒﻝﻝﭦ۵ﮔ
-    """
-    relaxed_constraints = constraints.copy()
-    
-    for conflict in conflicts:
-        # ﻠﮔ۸ﮔﺝﮒﺙﮔﺗﮔﺏ
-        method = select_relaxation_method(conflict)
-        
-        # ﮔﺝﮒﺙﮒﺎﻝ۹ﻝﭦ۵ﮔ
-        if method == 'slack':
-            relaxed = apply_slack_relaxation(
-                conflict.constraint1, conflict.constraint2, config.slack_amount
-            )
-        elif method == 'penalty':
-            relaxed = apply_penalty_relaxation(
-                conflict.constraint1, conflict.constraint2, config.penalty_weight
-            )
+    def evaluate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> float:
+        """评估约束违反程度"""
+        if self.asset_indices:
+            relevant_weights = weights[self.asset_indices]
         else:
-            relaxed = apply_soft_constraint(
-                conflict.constraint1, conflict.constraint2
+            relevant_weights = weights
+        
+        violations = np.maximum(0, self.min_weight - relevant_weights) + \
+                     np.maximum(0, relevant_weights - self.max_weight)
+        
+        return np.sum(violations)
+    
+    def is_satisfied(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> bool:
+        """检查约束是否满足"""
+        return self.evaluate(weights) < self.tolerance
+    
+    def to_cvxpy_constraint(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> List[Any]:
+        """转换为CVXPY约束"""
+        import cvxpy as cp
+        
+        constraints = []
+        
+        if self.asset_indices:
+            for idx in self.asset_indices:
+                constraints.append(weights_var[idx] >= self.min_weight)
+                constraints.append(weights_var[idx] <= self.max_weight)
+        else:
+            constraints.append(weights_var >= self.min_weight)
+            constraints.append(weights_var <= self.max_weight)
+        
+        return constraints
+
+
+class SectorConstraint(BaseConstraint):
+    """行业约束"""
+    
+    def __init__(
+        self,
+        sector_mapping: Dict[str, str],
+        sector_weights: Dict[str, Tuple[float, float]],
+        tickers: List[str],
+        **kwargs
+    ):
+        super().__init__(
+            name="sector_constraint",
+            constraint_type=ConstraintType.LINEAR,
+            **kwargs
+        )
+        self.sector_mapping = sector_mapping
+        self.sector_weights = sector_weights
+        self.tickers = tickers
+    
+    def evaluate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> float:
+        """评估约束违反程度"""
+        total_violation = 0.0
+        
+        for sector, (min_w, max_w) in self.sector_weights.items():
+            sector_indices = [
+                i for i, ticker in enumerate(self.tickers)
+                if self.sector_mapping.get(ticker) == sector
+            ]
+            
+            if sector_indices:
+                sector_weight = sum(weights[i] for i in sector_indices)
+                violation = max(0, min_w - sector_weight) + \
+                           max(0, sector_weight - max_w)
+                total_violation += violation
+        
+        return total_violation
+    
+    def is_satisfied(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> bool:
+        """检查约束是否满足"""
+        return self.evaluate(weights) < self.tolerance
+    
+    def to_cvxpy_constraint(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> List[Any]:
+        """转换为CVXPY约束"""
+        import cvxpy as cp
+        
+        constraints = []
+        
+        for sector, (min_w, max_w) in self.sector_weights.items():
+            sector_indices = [
+                i for i, ticker in enumerate(self.tickers)
+                if self.sector_mapping.get(ticker) == sector
+            ]
+            
+            if sector_indices:
+                sector_expr = sum(weights_var[i] for i in sector_indices)
+                constraints.append(sector_expr >= min_w)
+                constraints.append(sector_expr <= max_w)
+        
+        return constraints
+
+
+class FactorConstraint(BaseConstraint):
+    """因子约束"""
+    
+    def __init__(
+        self,
+        factor_exposures: np.ndarray,
+        factor_bounds: Dict[int, Tuple[float, float]],
+        **kwargs
+    ):
+        super().__init__(
+            name="factor_constraint",
+            constraint_type=ConstraintType.LINEAR,
+            **kwargs
+        )
+        self.factor_exposures = factor_exposures
+        self.factor_bounds = factor_bounds
+    
+    def evaluate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> float:
+        """评估约束违反程度"""
+        factor_exposure = self.factor_exposures @ weights
+        
+        total_violation = 0.0
+        for factor_idx, (min_exp, max_exp) in self.factor_bounds.items():
+            exposure = factor_exposure[factor_idx]
+            violation = max(0, min_exp - exposure) + \
+                       max(0, exposure - max_exp)
+            total_violation += violation
+        
+        return total_violation
+    
+    def is_satisfied(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> bool:
+        """检查约束是否满足"""
+        return self.evaluate(weights) < self.tolerance
+    
+    def to_cvxpy_constraint(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> List[Any]:
+        """转换为CVXPY约束"""
+        import cvxpy as cp
+        
+        constraints = []
+        
+        factor_exposure = self.factor_exposures @ weights_var
+        
+        for factor_idx, (min_exp, max_exp) in self.factor_bounds.items():
+            constraints.append(factor_exposure[factor_idx] >= min_exp)
+            constraints.append(factor_exposure[factor_idx] <= max_exp)
+        
+        return constraints
+
+
+class LeverageConstraint(BaseConstraint):
+    """杠杆约束"""
+    
+    def __init__(
+        self,
+        max_leverage: float = 1.0,
+        **kwargs
+    ):
+        super().__init__(
+            name="leverage_constraint",
+            constraint_type=ConstraintType.LINEAR,
+            **kwargs
+        )
+        self.max_leverage = max_leverage
+    
+    def evaluate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> float:
+        """评估约束违反程度"""
+        leverage = np.sum(np.abs(weights))
+        return max(0, leverage - self.max_leverage)
+    
+    def is_satisfied(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> bool:
+        """检查约束是否满足"""
+        return self.evaluate(weights) < self.tolerance
+    
+    def to_cvxpy_constraint(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> List[Any]:
+        """转换为CVXPY约束"""
+        import cvxpy as cp
+        
+        constraints = [
+            cp.norm(weights_var, 1) <= self.max_leverage
+        ]
+        
+        return constraints
+
+
+class TurnoverConstraint(BaseConstraint):
+    """换手率约束"""
+    
+    def __init__(
+        self,
+        current_weights: np.ndarray,
+        max_turnover: float = 0.2,
+        **kwargs
+    ):
+        super().__init__(
+            name="turnover_constraint",
+            constraint_type=ConstraintType.LINEAR,
+            **kwargs
+        )
+        self.current_weights = current_weights
+        self.max_turnover = max_turnover
+    
+    def evaluate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> float:
+        """评估约束违反程度"""
+        turnover = np.sum(np.abs(weights - self.current_weights)) / 2
+        return max(0, turnover - self.max_turnover)
+    
+    def is_satisfied(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> bool:
+        """检查约束是否满足"""
+        return self.evaluate(weights) < self.tolerance
+    
+    def to_cvxpy_constraint(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> List[Any]:
+        """转换为CVXPY约束"""
+        import cvxpy as cp
+        
+        constraints = [
+            cp.norm(weights_var - self.current_weights, 1) <= 2 * self.max_turnover
+        ]
+        
+        return constraints
+
+
+class ConstraintValidator:
+    """约束验证器"""
+    
+    def __init__(self):
+        self.constraints: List[BaseConstraint] = []
+        self.logger = logging.getLogger(__name__)
+    
+    def add_constraint(
+        self,
+        constraint: BaseConstraint
+    ) -> None:
+        """添加约束"""
+        self.constraints.append(constraint)
+        self.logger.info(f"添加约束: {constraint.name}")
+    
+    def validate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> ConstraintValidationResult:
+        """验证所有约束"""
+        violations = []
+        total_violation = 0.0
+        
+        for constraint in self.constraints:
+            violation_amount = constraint.evaluate(weights, **kwargs)
+            is_violated = violation_amount >= constraint.tolerance
+            
+            violation = ConstraintViolation(
+                constraint_name=constraint.name,
+                expected_value=0.0,
+                actual_value=violation_amount,
+                violation_amount=violation_amount,
+                is_violated=is_violated
             )
+            violations.append(violation)
+            total_violation += violation_amount
         
-        # ﮔﺟﮔ۱ﮒﻝﭦ۵?        relaxed_constraints = replace_constraints(
-            relaxed_constraints, 
-            [conflict.constraint1, conflict.constraint2], 
-            relaxed
-        )
-    
-    return relaxed_constraints
-
-def apply_slack_relaxation(
-    c1: Constraint,
-    c2: Constraint,
-    slack_amount: float
-) -> List[Constraint]:
-    """
-    ﮒﭦﻝ۷ﮔﺝﮒﺙﮒﻠ?    
-    ﮔﺝﮒ؟ﺛﻝﭦ۵ﮔﻟﺝﺗﻝ
-    """
-    # ﮒ۳ﮒﭘﻝﭦ۵ﮔ
-    relaxed_c1 = copy.deepcopy(c1)
-    relaxed_c2 = copy.deepcopy(c2)
-    
-    # ﮔﺝﮒ؟ﺛﻟﺝﺗﻝ
-    if hasattr(relaxed_c1, 'lower_bound') and relaxed_c1.lower_bound is not None:
-        relaxed_c1.lower_bound -= slack_amount
-    if hasattr(relaxed_c1, 'upper_bound') and relaxed_c1.upper_bound is not None:
-        relaxed_c1.upper_bound += slack_amount
-    
-    return [relaxed_c1, relaxed_c2]
-```
-
----
-
-## 5. ﮔﭖﻟﺁﮔﺗﮔ۰
-
-### 5.1 ﮒﮒﮔﭖﻟﺁ
-
-```python
-import pytest
-import numpy as np
-import cvxpy as cp
-
-class TestConstraintSolver:
-    """ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷ﮔﭖ?""
-    
-    def test_solve_simple_problem(self):
-        """ﮔﭖﻟﺁﻝ؟ﮒﻠ؟ﻠ۱ﮔﺎ?""
-        # ﮒ؟ﻛﺗﮒﻠ
-        variables = Variables(name='x', size=2)
+        is_valid = total_violation < 1e-6
         
-        # ﮒ؟ﻛﺗﻝ؟ﮔ 
-        def objective_expr(x):
-            return x[0] + x[1]
-        objective = Objective(type='maximize', expression=objective_expr)
-        
-        # ﮒ؟ﻛﺗﻝﭦ۵ﮔ
-        constraints = [
-            LinearConstraint('c1', np.array([1, 1]), None, 1.0),
-            BoxConstraint('c2', np.array([0, 0]), np.array([1, 1]))
-        ]
-        
-        # ﮔﺎﻟ۶۲
-        solver = ConstraintSolver(SolverConfig())
-        result = solver.solve(objective, constraints, variables)
-        
-        # ﻠ۹ﻟﺁ
-        assert result.solution is not None
-        assert np.allclose(result.solution, [0.5, 0.5], atol=1e-3)
-    
-    def test_solve_infeasible_problem(self):
-        """ﮔﭖﻟﺁﻛﺕﮒﺁﻟ۰ﻠ؟?""
-        variables = Variables(name='x', size=2)
-        
-        def objective_expr(x):
-            return x[0] + x[1]
-        objective = Objective(type='maximize', expression=objective_expr)
-        
-        # ﻝﻝﺝﻝﭦ۵ﮔ
-        constraints = [
-            LinearConstraint('c1', np.array([1, 0]), None, -1.0),  # x[0] <= -1
-            BoxConstraint('c2', np.array([0, 0]), np.array([1, 1]))  # x[0] >= 0
-        ]
-        
-        solver = ConstraintSolver(SolverConfig())
-        
-        # ﮒﭦﻟﺁ۴ﮔﮒﭦﮒﺙﮒﺕﺕﮔﻟﺟﮒﻛﺕﮒﺁﻟ۰
-        with pytest.raises(InfeasibleError):
-            solver.solve(objective, constraints, variables)
-    
-    def test_solve_with_priorities(self):
-        """ﮔﭖﻟﺁﮒﺕ۵ﻛﺙﮒﻝﭦ۶ﻝﮔﺎ?""
-        variables = Variables(name='x', size=2)
-        
-        def objective_expr(x):
-            return x[0] + x[1]
-        objective = Objective(type='maximize', expression=objective_expr)
-        
-        constraints = [
-            LinearConstraint('c1', np.array([1, 1]), None, 1.0, priority=9),
-            LinearConstraint('c2', np.array([1, 0]), None, 0.5, priority=5)
-        ]
-        
-        priorities = {'c1': 9, 'c2': 5}
-        
-        solver = ConstraintSolver(SolverConfig())
-        result = solver.solve_with_priorities(
-            objective, constraints, variables, priorities
+        result = ConstraintValidationResult(
+            is_valid=is_valid,
+            violations=violations,
+            total_violation=total_violation,
+            timestamp=datetime.now()
         )
         
-        # ﻠ۹ﻟﺁﻠ،ﻛﺙﮒﻝﭦ۶ﻝﭦ۵ﮔﻟ۱،ﮔﭨ۰?        assert result.constraint_status['c1'] == True
-```
-
-### 5.2 ﮔ۶ﻟﺛﮔﭖﻟﺁ
-
-```python
-class TestConstraintSolverPerformance:
-    """ﻝﭦ۵ﮔﮔﺎﻟ۶۲ﮒ۷ﮔ۶ﻟﺛﮔﭖﻟﺁ"""
+        self.logger.info(f"约束验证完成，有效={is_valid}，总违反量={total_violation:.6f}")
+        
+        return result
     
-    def test_solve_large_scale_problem(self):
-        """ﮔﭖﻟﺁﮒ۳۶ﻟ۶ﮔ۷۰ﻠ؟ﻠ۱ﮔﺎ?""
-        # 1000ﻟﭖﻛﭦ۶ﻟ۶ﮔ۷۰
-        n = 1000
+    def get_cvxpy_constraints(
+        self,
+        weights_var: Any,
+        **kwargs
+    ) -> List[Any]:
+        """获取所有CVXPY约束"""
+        cvxpy_constraints = []
         
-        variables = Variables(name='x', size=n)
+        for constraint in self.constraints:
+            if constraint.priority == ConstraintPriority.HARD:
+                cvxpy_constraints.extend(
+                    constraint.to_cvxpy_constraint(weights_var, **kwargs)
+                )
         
-        # ﻝ؟ﮔ ﺅﺙﮔﮒ۳۶ﮒﮔﭘﻝ
-        expected_returns = np.random.randn(n)
-        def objective_expr(x):
-            return expected_returns @ x
-        objective = Objective(type='maximize', expression=objective_expr)
+        return cvxpy_constraints
+
+
+class ConflictDetector:
+    """冲突检测器"""
+    
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+    
+    def detect_conflicts(
+        self,
+        constraints: List[BaseConstraint]
+    ) -> List[Dict[str, Any]]:
+        """检测约束冲突"""
+        conflicts = []
         
-        # ﻝﭦ۵ﮔ
+        for i, c1 in enumerate(constraints):
+            for j, c2 in enumerate(constraints):
+                if i < j:
+                    conflict = self._check_pairwise_conflict(c1, c2)
+                    if conflict:
+                        conflicts.append({
+                            "constraint1": c1.name,
+                            "constraint2": c2.name,
+                            "conflict_type": conflict
+                        })
+        
+        self.logger.info(f"检测到{len(conflicts)}个约束冲突")
+        
+        return conflicts
+    
+    def _check_pairwise_conflict(
+        self,
+        c1: BaseConstraint,
+        c2: BaseConstraint
+    ) -> Optional[str]:
+        """检查两个约束是否冲突"""
+        if isinstance(c1, WeightConstraint) and isinstance(c2, SectorConstraint):
+            return "weight_sector_conflict"
+        
+        return None
+
+
+class ConstraintSolver:
+    """约束求解器主类"""
+    
+    def __init__(self):
+        self.validator = ConstraintValidator()
+        self.conflict_detector = ConflictDetector()
+        self.logger = logging.getLogger(__name__)
+    
+    def add_constraint(
+        self,
+        constraint: BaseConstraint
+    ) -> None:
+        """添加约束"""
+        self.validator.add_constraint(constraint)
+    
+    def solve(
+        self,
+        n_assets: int,
+        objective_func: Optional[callable] = None,
+        **kwargs
+    ) -> Tuple[np.ndarray, ConstraintValidationResult]:
+        """
+        求解约束满足问题
+        
+        参数:
+            n_assets: 资产数量
+            objective_func: 目标函数（可选）
+            **kwargs: 其他参数
+            
+        返回:
+            (权重向量, 验证结果)
+        """
+        import cvxpy as cp
+        
+        weights = cp.Variable(n_assets)
+        
         constraints = [
-            BoxConstraint('box', np.zeros(n), np.ones(n)),  # 0 <= x <= 1
-            LinearConstraint('sum', np.ones(n), 0.99, 1.01)  # sum(x) = 1
+            cp.sum(weights) == 1,
+            weights >= 0
         ]
         
-        # ﻟ؟۰ﮔﭘ
-        import time
-        start = time.time()
+        constraints.extend(
+            self.validator.get_cvxpy_constraints(weights, **kwargs)
+        )
         
-        solver = ConstraintSolver(SolverConfig())
-        result = solver.solve(objective, constraints, variables)
+        if objective_func:
+            objective = cp.Minimize(objective_func(weights))
+        else:
+            objective = cp.Minimize(0)
         
-        elapsed = time.time() - start
+        problem = cp.Problem(objective, constraints)
         
-        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
-        assert elapsed < 0.5  # 500msﮒﮒ؟?        assert result.solution is not None
+        try:
+            problem.solve()
+            
+            if problem.status == "optimal":
+                result_weights = weights.value
+                
+                validation_result = self.validator.validate(result_weights, **kwargs)
+                
+                self.logger.info(f"约束求解成功，状态={problem.status}")
+                
+                return result_weights, validation_result
+            else:
+                self.logger.error(f"约束求解失败，状态={problem.status}")
+                raise ValueError(f"约束求解失败: {problem.status}")
+                
+        except Exception as e:
+            self.logger.error(f"约束求解异常: {e}")
+            raise
+    
+    def validate(
+        self,
+        weights: np.ndarray,
+        **kwargs
+    ) -> ConstraintValidationResult:
+        """验证约束"""
+        return self.validator.validate(weights, **kwargs)
+    
+    def detect_conflicts(
+        self
+    ) -> List[Dict[str, Any]]:
+        """检测约束冲突"""
+        return self.conflict_detector.detect_conflicts(
+            self.validator.constraints
+        )
+```
+
+### 3.2 性能指标与SLA要求
+| 指标 | 目标值 | 测量方法 | 备注 |
+|------|--------|----------|------|
+| **响应时间** | <100ms | P95延迟 | 约束验证 |
+| **吞吐量** | 50 QPS | 每秒请求数 | 峰值要求 |
+| **可用性** | 99.9% | 每月宕机时间 | SLA要求 |
+
+---
+
+## 4. 数据模型与存储
+
+### 4.1 数据库表结构设计
+
+#### 4.1.1 约束配置存储表
+```sql
+CREATE TABLE IF NOT EXISTS constraint_configs (
+    config_id VARCHAR(50) PRIMARY KEY,
+    portfolio_id VARCHAR(50) NOT NULL,
+    constraint_name VARCHAR(100) NOT NULL,
+    constraint_type VARCHAR(30) NOT NULL,
+    priority VARCHAR(10) NOT NULL,
+    
+    config_json TEXT NOT NULL,
+    
+    is_active BOOLEAN DEFAULT TRUE,
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    INDEX idx_portfolio (portfolio_id),
+    INDEX idx_constraint_name (constraint_name)
+);
+
+COMMENT ON TABLE constraint_configs IS '约束配置存储表';
 ```
 
 ---
 
-## 6. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
+## 5. 算法实现说明
 
-### 6.1 ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ
+### 5.1 核心算法原理与数学公式
 
-| ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ | ﮔﭖﻟﺁﻝﭨﮔ |
-|------|---------|---------|---------|
-| **ﻝﭦ۵ﮔﻠ۹ﻟﺁ** | 100ﻝﭦ۵ﮔ | < 100ms | ?ﻠﻟﺟ |
-| **ﮒﺕﻛﺙﮒﮔﺎ?* | 1000ﻟﭖﻛﭦ۶ | < 500ms | ?ﻠﻟﺟ |
-| **ﻝﭦ۵ﮔﮔﺝﮒﺙ** | 10ﮒﺎﻝ۹ | < 50ms | ?ﻠﻟﺟ |
-| **ﻛﺙﮒﻝﭦ۶ﮔﺎ?* | 100ﻝﭦ۵ﮔ | < 1?| ?ﻠﻟﺟ |
+#### 5.1.1 约束满足问题
+```
+算法名称: 约束满足问题
+数学公式: 
+find: w
+s.t.: gi(w) ≤ 0, i = 1, ..., m
+      hj(w) = 0, j = 1, ..., p
+      lb ≤ w ≤ ub
 
----
+其中:
+- gi(w): 不等式约束
+- hj(w): 等式约束
+- lb, ub: 变量边界
 
-## 7. ﻠ۷ﻝﺛﺎﮔﺗﮔ۰
-
-### 7.1 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
-
-```yaml
-# constraint_solver_config.yaml
-solver:
-  name: constraint_solver
-  version: 1.0.0
-  
-optimization:
-  solver_type: ecos
-  max_iter: 1000
-  tolerance: 1.0e-6
-  verbose: false
-  
-relaxation:
-  slack_amount: 0.01
-  penalty_weight: 100.0
-  max_relax_iterations: 10
-  
-performance:
-  max_variables: 10000
-  max_constraints: 1000
-  cache_size: 100
+时间复杂度: O(n³) (凸优化)
+空间复杂度: O(n²)
 ```
 
----
-
-## 8. ﻝﮔ۶ﻛﺕﻝﭨﺑ?
-### 8.1 ﻝﮔ۶ﮔﮔ 
-
-| ﮔﮔ  | ﮔﻟﺟﺍ | ﻠ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
-|------|------|------|---------|
-| **ﮔﺎﻟ۶۲ﮒﭨﭘﻟﺟ** | ﮒﮔ؛۰ﮔﺎﻟ۶۲ﻟﮔﭘ | > 1?| P1 |
-| **ﮔﺎﻟ۶۲ﮒ۳ﺎﻟﺑ۴?* | ﮔﺎﻟ۶۲ﮒ۳ﺎﻟﺑ۴ﮔﺁﻛﺝ | > 5% | P0 |
-| **ﻝﭦ۵ﮔﮒﺎﻝ۹?* | ﻝﭦ۵ﮔﮒﺎﻝ۹ﮔﺁﻛﺝ | > 10% | P2 |
-| **ﮔﺝﮒﺙﻛﺛﺟﻝ۷?* | ﻛﺛﺟﻝ۷ﮔﺝﮒﺙﻝﮔﺁ?| > 20% | P2 |
+### 5.2 时间复杂度与空间复杂度分析
+| 操作 | 时间复杂度 | 空间复杂度 | 说明 |
+|------|------------|------------|------|
+| 约束验证 | O(n×m) | O(n) | n为资产数，m为约束数 |
+| 约束求解 | O(n³) | O(n²) | 凸优化 |
+| 冲突检测 | O(m²) | O(1) | m为约束数 |
 
 ---
 
-## ﻠﮒﺛ
+## 6. 实施技术栈
 
-### A. ﻛﺝﻟﭖ?
-```txt
-cvxpy>=1.3.0
-numpy>=1.21.0
-scipy>=1.7.0
-```
+### 6.1 编程语言与框架版本
+| 技术组件 | 版本 | 选择理由 | 替代方案 |
+|----------|------|----------|----------|
+| Python | 3.11+ | 生态系统完善 | - |
+| CVXPY | 1.4+ | 约束优化 | PuLP |
+| NumPy | 1.24+ | 数值计算基础 | - |
+| Pandas | 2.0+ | 数据处理 | - |
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?
+## 7. 测试策略
+
+### 7.1 单元测试范围与覆盖率要求
+- **覆盖率目标**: ≥80% 代码覆盖率
+- **测试范围**: 所有公共接口和核心算法
+- **测试框架**: pytest + coverage
+
+---
+
+## 8. 风险与约束
+
+### 8.1 技术风险识别与缓解措施
+
+#### P0（高风险-阻断性）
+1. **风险**: 约束冲突导致无可行解
+   - **影响**: 优化失败
+   - **概率**: 中等
+   - **缓解措施**: 提供冲突检测和软约束机制
+   - **责任人**: 实施团队
+
+---
+
+## 9. 验收标准
+
+### 9.1 功能验收标准
+| 功能点 | 验收条件 | 测试方法 | 通过标准 |
+|--------|----------|----------|----------|
+| 约束验证 | 正确识别约束违反 | 单元测试 | 违反量计算正确 |
+| 约束求解 | 找到满足约束的解 | 集成测试 | 所有约束满足 |
+| 冲突检测 | 正确识别约束冲突 | 单元测试 | 冲突检测准确 |
+
+### 9.2 性能验收标准
+- **响应时间**: P95 <100ms（约束验证）
+- **吞吐量**: ≥50 QPS
+- **可用性**: ≥99.9%
+
+---
+
+## 10. 实施路线图
+
+### 10.1 Phase 1：核心功能（1周）
+**目标**: 实现约束求解核心功能
+
+| 任务 | 优先级 | 预计工时 | 交付物 | 完成标准 |
+|------|--------|----------|--------|----------|
+| 约束基类 | P0 | 3h | 基类模块 | 单元测试通过 |
+| 权重约束 | P0 | 2h | 约束模块 | 单元测试通过 |
+| 行业约束 | P0 | 2h | 约束模块 | 单元测试通过 |
+| 因子约束 | P0 | 2h | 约束模块 | 单元测试通过 |
+
+### 10.2 Phase 2：功能增强（0.5周）
+**目标**: 增强功能和系统集成
+
+| 任务 | 优先级 | 预计工时 | 交付物 | 完成标准 |
+|------|--------|----------|--------|----------|
+| 约束验证器 | P1 | 3h | 验证模块 | 单元测试通过 |
+| 冲突检测器 | P1 | 2h | 检测模块 | 单元测试通过 |
+
+### 10.3 Phase 3：测试与文档（0.5周）
+**目标**: 完成测试和文档
+
+| 任务 | 优先级 | 预计工时 | 交付物 | 完成标准 |
+|------|--------|----------|--------|----------|
+| 单元测试 | P0 | 3h | 测试代码 | 覆盖率≥80% |
+| 文档编写 | P1 | 2h | 用户手册 | 文档完整 |
+
+---
+
+## 附录
+
+### A. 术语表
+| 术语 | 定义 | 缩写 |
+|------|------|------|
+| 约束满足问题 | 找到满足所有约束的解 | CSP |
+| 硬约束 | 必须满足的约束 | - |
+| 软约束 | 可以违反但有惩罚的约束 | - |
+
+### B. 参考文献
+1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11架构定义
+2. Boyd, S. (2004). Convex Optimization.
+
+### C. 变更记录
+| 日期 | 版本 | 变更内容 | 变更人 | 审核人 |
+|------|------|----------|--------|--------|
+| 2026-04-07 | v1.0 | 初始版本 | 实施团队 | 首席技术评审官 |
+
+---
+
+**版本**: v1.0 | **创建**: 2026-04-07 | **状态**: Active | **维护者**: ZephyrAlpha技术团队

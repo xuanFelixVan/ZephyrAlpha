@@ -25,7 +25,7 @@ responsibility:
 ---
 
 # Layer 4机器学习层完整性综合分析报告
-> **核心职责**: 分析报告和评估结果
+> **核心职责**: 负责machine learning comprehensive analysis的设计、实现和维护工作
 > **职责边界**: 
 > - ✅ 本文档负责：分析报告和评估结果相关内容
 > - ❌ 本文档不负责：其他模块内容

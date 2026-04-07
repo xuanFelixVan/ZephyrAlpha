@@ -15,7 +15,7 @@ responsibility:
 
 # 强化学习再平衡系统蓝图
 
-> **核心职责**: 利用强化学习算法优化再平衡决策
+> **核心职责**: 提供rl rebalancing system blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：RL调仓决策、动态优化组合权重
 > - ❌ 本文档不负责：基础再平衡触发（由PORTFOLIO_REBALANCING负责）

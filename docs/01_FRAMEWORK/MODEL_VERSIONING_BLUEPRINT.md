@@ -24,7 +24,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 # æ¨¡åçæ¬æ§å¶èå¾
-> **核心职责**: Model Versioning蓝图设计
+> **核心职责**: 提供model versioning blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Model Versioning蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

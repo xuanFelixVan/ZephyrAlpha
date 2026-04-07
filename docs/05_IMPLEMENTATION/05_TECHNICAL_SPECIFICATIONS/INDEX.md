@@ -344,3 +344,7 @@ responsibility:
 - [UserPreferences用户偏好技术规格书](./USER_PREFERENCES_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [Black-Litterman组合优化模型技术规格书 v1.0](./BLACK_LITTERMAN_MODEL_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+
+- [Mean Variance Optimization技术规格书 v1.0](./MEAN_VARIANCE_OPTIMIZATION_TECHNICAL_SPECIFICATION.md)
+
+- [Multi-Objective Optimization技术规格书 v1.0](./MULTI_OBJECTIVE_OPTIMIZATION_TECHNICAL_SPECIFICATION.md)

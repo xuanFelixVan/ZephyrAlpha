@@ -34,7 +34,7 @@ responsibility:
 ---
 ---
 # 统一自适应模型系统蓝图
-> **核心职责**: Adaptive Model System蓝图设计
+> **核心职责**: 提供adaptive model system blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Adaptive Model System蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

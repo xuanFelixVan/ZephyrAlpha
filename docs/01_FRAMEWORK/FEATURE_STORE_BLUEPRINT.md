@@ -49,7 +49,7 @@ responsibility:
 
 
 # 特征存储蓝图：特征管理与服务平台
-> **核心职责**: Feature Store蓝图设计
+> **核心职责**: 提供feature store blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Feature Store蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

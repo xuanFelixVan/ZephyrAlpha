@@ -32,7 +32,7 @@ open_source_solution: XGBoost + LightGBM + CatBoost + Scikit-learn
 ---
 
 # 模型集成学习蓝图
-> **核心职责**: Ensemble Learning蓝图设计
+> **核心职责**: 提供ensemble learning blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Ensemble Learning蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

@@ -23,7 +23,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 # åææ°æ®çæèå¾
-> **核心职责**: Synthetic Data Generation蓝图设计
+> **核心职责**: 提供synthetic data generation blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Synthetic Data Generation蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

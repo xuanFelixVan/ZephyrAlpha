@@ -18,7 +18,7 @@ layer: "Layer 4 (机器学习层)"
 
 # AI增强项目集成蓝图
 
-> **核心职责**: AI技术集成到交易系统
+> **核心职责**: 提供ai enhancement integration blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：AI辅助、智能优化、增强功能、AI能力注入
 > - ❌ 本文档不负责：因子计算（由因子模块负责）
@@ -100,7 +100,7 @@ graph TD
 ### 2.3 接口设计规范
 ```python
 # AI增强模块统一接口规范
-> **核心职责**: Ai Enhancement Integration蓝图设计
+> **核心职责**: 提供ai enhancement integration blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Ai Enhancement Integration蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

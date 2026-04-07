@@ -25,7 +25,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 # 代码生成模型蓝图
-> **核心职责**: Code Generation Model蓝图设计
+> **核心职责**: 提供code generation model blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Code Generation Model蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容

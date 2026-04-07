@@ -23,7 +23,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 # Neural ODE èå¾
-> **核心职责**: Neural Ode蓝图设计
+> **核心职责**: 提供neural ode blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Neural Ode蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
