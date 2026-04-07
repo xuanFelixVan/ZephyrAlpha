@@ -26,6 +26,12 @@ compliance_level: 专业标准
 
 
 # 蓝图文档模板
+
+## 核心定位
+
+提供蓝图文档的标准模板，包含YAML头部、核心定位、设计目标、核心功能等章节结构，确保蓝图文档格式统一。
+
+
 > **核心职责**: Blueprint Template.Md蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Blueprint Template.Md蓝图设计相关内容
