@@ -1,462 +1,695 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-全面深度审计脚本
-用途：按照专业量化机构五大原则和三层审计标准，全面审计所有文档
-创建时间：2026-04-07
+人机交互层全面深度审计脚本
+基于专业量化机构五大原则和三层审计标准
+重点检查重复内容和职责清晰度
 """
 
-import os
 import re
-import json
+import yaml
 import hashlib
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Set, Tuple
 from collections import defaultdict
 
-PROJECT_ROOT = Path("D:/ZephyrAlpha")
-DOCS_DIR = PROJECT_ROOT / "docs"
-
-class ComprehensiveDeepAudit:
-    def __init__(self):
-        self.all_files = []
-        self.all_dirs = []
-        self.issues = {
-            "L1_目录结构": [],
-            "L1_文件命名": [],
-            "L1_路径引用": [],
-            "L2_职责驱动": [],
-            "L2_索引完备性": [],
-            "L2_版本隔离": [],
-            "L3_五大原则": [],
-            "L3_文档分类": [],
-            "L3_编号体系": [],
-            "L3_文档质量": []
+class ComprehensiveDeepAuditor:
+    def __init__(self, layer_path):
+        self.layer_path = Path(layer_path)
+        self.timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        self.audit_results = {
+            'L1_file_system': {
+                'directory_structure': [],
+                'file_naming': [],
+                'path_references': []
+            },
+            'L2_document_content': {
+                'responsibility_driven': [],
+                'index_completeness': [],
+                'version_isolation': [],
+                'doc_code_correspondence': []
+            },
+            'L3_professional_standard': {
+                'five_principles': [],
+                'document_classification': [],
+                'numbering_system': [],
+                'document_quality': []
+            },
+            'deep_content_check': {
+                'duplicate_content': [],
+                'unclear_responsibility': [],
+                'content_overlap': []
+            }
         }
-        self.file_hashes = {}
-        self.duplicate_files = []
+        
+        self.stats = {
+            'total_files': 0,
+            'total_directories': 0,
+            'total_issues': 0,
+            'critical_issues': 0,
+            'major_issues': 0,
+            'minor_issues': 0
+        }
+        
+        self.content_hashes = defaultdict(list)
         self.responsibility_map = defaultdict(list)
-        self.module_ids = {}
-        
-    def scan_all_files(self):
-        print("扫描所有文件...")
-        for root, dirs, files in os.walk(DOCS_DIR):
-            root_path = Path(root)
-            self.all_dirs.append(root_path)
-            
-            for file in files:
-                if file.endswith('.md'):
-                    file_path = root_path / file
-                    self.all_files.append(file_path)
-        
-        print(f"发现 {len(self.all_files)} 个文档文件")
-        print(f"发现 {len(self.all_dirs)} 个目录")
+        self.module_id_map = defaultdict(list)
     
-    def audit_l1_directory_structure(self):
-        print("\n" + "=" * 80)
-        print("L1 文件系统层审计 - 目录结构")
+    def run_full_audit(self):
+        """执行全面深度审计"""
         print("=" * 80)
+        print("人机交互层全面深度审计")
+        print("=" * 80)
+        print(f"审计范围: {self.layer_path}")
+        print(f"审计时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"审计标准: 专业量化机构五大原则 + 三层审计标准")
+        print()
         
-        sparse_dirs = []
-        deep_dirs = []
-        empty_dirs = []
+        # L1: 文件系统层审计
+        print("=" * 80)
+        print("L1: 文件系统层审计")
+        print("=" * 80)
+        self.audit_L1_file_system()
         
-        for dir_path in self.all_dirs:
-            try:
-                relative_path = dir_path.relative_to(DOCS_DIR)
-                depth = len(relative_path.parts)
-                
-                md_files = list(dir_path.glob("*.md"))
-                all_files = list(dir_path.glob("*"))
-                all_subdirs = [f for f in all_files if f.is_dir()]
-                
-                if depth > 4:
-                    deep_dirs.append({
-                        "path": str(relative_path),
-                        "depth": depth,
-                        "file_count": len(md_files)
-                    })
-                    self.issues["L1_目录结构"].append({
-                        "type": "目录层级过深",
-                        "path": str(relative_path),
-                        "severity": "medium",
-                        "detail": f"深度{depth}层，建议不超过4层"
-                    })
-                
-                if len(md_files) < 3 and len(all_subdirs) == 0:
-                    sparse_dirs.append({
-                        "path": str(relative_path),
-                        "file_count": len(md_files)
-                    })
-                
-                if len(all_files) == 0:
-                    empty_dirs.append(str(relative_path))
-                    self.issues["L1_目录结构"].append({
-                        "type": "空目录",
-                        "path": str(relative_path),
-                        "severity": "low",
-                        "detail": "目录为空，建议删除"
-                    })
-            
-            except Exception as e:
-                pass
+        # L2: 文档内容层审计
+        print()
+        print("=" * 80)
+        print("L2: 文档内容层审计")
+        print("=" * 80)
+        self.audit_L2_document_content()
         
-        print(f"\n目录层级过深: {len(deep_dirs)}个")
-        for d in deep_dirs[:10]:
-            print(f"  - {d['path']} (深度{d['depth']})")
+        # L3: 专业标准层审计
+        print()
+        print("=" * 80)
+        print("L3: 专业标准层审计")
+        print("=" * 80)
+        self.audit_L3_professional_standard()
         
-        print(f"\n稀疏目录: {len(sparse_dirs)}个")
-        for d in sparse_dirs[:10]:
-            print(f"  - {d['path']} ({d['file_count']}个文件)")
+        # 深度内容检查
+        print()
+        print("=" * 80)
+        print("深度内容检查")
+        print("=" * 80)
+        self.deep_content_analysis()
         
-        print(f"\n空目录: {len(empty_dirs)}个")
+        # 生成报告
+        self.generate_report()
     
-    def audit_l1_file_naming(self):
-        print("\n" + "=" * 80)
-        print("L1 文件系统层审计 - 文件命名")
-        print("=" * 80)
+    def audit_L1_file_system(self):
+        """L1: 文件系统层审计"""
+        # 1.1 目录结构问题
+        self.check_directory_structure()
         
-        old_architecture_files = []
-        special_char_files = []
-        inconsistent_naming = []
+        # 1.2 文件命名问题
+        self.check_file_naming()
         
-        for file_path in self.all_files:
-            file_name = file_path.name
-            relative_path = str(file_path.relative_to(DOCS_DIR))
-            
-            if "06_ARCHIVE" in relative_path:
+        # 1.3 路径引用问题
+        self.check_path_references()
+    
+    def check_directory_structure(self):
+        """检查目录结构"""
+        print("\n[1.1] 检查目录结构...")
+        
+        directories = list(self.layer_path.rglob('*'))
+        self.stats['total_directories'] = len([d for d in directories if d.is_dir()])
+        
+        for directory in directories:
+            if not directory.is_dir():
                 continue
             
-            if re.search(r'Layer\s*[0-8]', file_name, re.IGNORECASE):
-                old_architecture_files.append(str(file_path.relative_to(DOCS_DIR)))
-                self.issues["L1_文件命名"].append({
-                    "type": "旧架构命名残留",
-                    "path": str(file_path.relative_to(DOCS_DIR)),
-                    "severity": "high",
-                    "detail": f"文件名包含旧架构关键词: {file_name}"
+            # 检查目录稀疏
+            files_in_dir = list(directory.glob('*.md'))
+            if len(files_in_dir) < 2 and directory != self.layer_path:
+                self.add_issue('L1_file_system', 'directory_structure', {
+                    'type': '目录稀疏',
+                    'file': str(directory.relative_to(self.layer_path)),
+                    'severity': 'P2',
+                    'description': f'目录下文件过少({len(files_in_dir)}个)，建议整合',
+                    'suggestion': '考虑与相邻目录合并或补充文档'
                 })
             
-            if ' ' in file_name or re.search(r'[\u4e00-\u9fff]', file_name):
-                special_char_files.append(str(file_path.relative_to(DOCS_DIR)))
-        
-        print(f"\n旧架构命名残留: {len(old_architecture_files)}个")
-        for f in old_architecture_files[:10]:
-            print(f"  - {f}")
-        
-        print(f"\n特殊字符文件: {len(special_char_files)}个")
+            # 检查目录层级深度
+            depth = len(directory.relative_to(self.layer_path).parts)
+            if depth > 4:
+                self.add_issue('L1_file_system', 'directory_structure', {
+                    'type': '目录层级过深',
+                    'file': str(directory.relative_to(self.layer_path)),
+                    'severity': 'P2',
+                    'description': f'目录嵌套超过4层({depth}层)，难以导航',
+                    'suggestion': '考虑扁平化目录结构'
+                })
+            
+            # 检查空目录
+            if len(list(directory.iterdir())) == 0:
+                self.add_issue('L1_file_system', 'directory_structure', {
+                    'type': '空目录',
+                    'file': str(directory.relative_to(self.layer_path)),
+                    'severity': 'P1',
+                    'description': '目录存在但无内容',
+                    'suggestion': '删除空目录或补充内容'
+                })
     
-    def audit_l1_path_references(self):
-        print("\n" + "=" * 80)
-        print("L1 文件系统层审计 - 路径引用")
-        print("=" * 80)
+    def check_file_naming(self):
+        """检查文件命名"""
+        print("[1.2] 检查文件命名...")
         
-        broken_links = []
-        redundant_paths = []
+        md_files = list(self.layer_path.rglob('*.md'))
+        self.stats['total_files'] = len(md_files)
         
-        for file_path in self.all_files:
+        for md_file in md_files:
+            filename = md_file.name
+            
+            # 检查旧架构命名残留
+            if re.search(r'Layer\s*[0-9]', filename, re.IGNORECASE):
+                self.add_issue('L1_file_system', 'file_naming', {
+                    'type': '旧架构命名残留',
+                    'file': str(md_file.relative_to(self.layer_path)),
+                    'severity': 'P1',
+                    'description': '文件名包含Layer 0-8等旧架构关键词',
+                    'suggestion': '更新文件名以反映新架构'
+                })
+            
+            # 检查特殊字符
+            if re.search(r'[\s\u4e00-\u9fff]', filename):
+                self.add_issue('L1_file_system', 'file_naming', {
+                    'type': '特殊字符问题',
+                    'file': str(md_file.relative_to(self.layer_path)),
+                    'severity': 'P2',
+                    'description': '文件名包含空格或中文等特殊字符',
+                    'suggestion': '使用英文和下划线命名'
+                })
+    
+    def check_path_references(self):
+        """检查路径引用"""
+        print("[1.3] 检查路径引用...")
+        
+        md_files = list(self.layer_path.rglob('*.md'))
+        
+        for md_file in md_files:
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
-                relative_path = file_path.relative_to(DOCS_DIR)
-                
+                # 检查链接
                 links = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', content)
                 
                 for link_text, link_path in links:
+                    # 跳过外部链接和锚点
                     if link_path.startswith('http') or link_path.startswith('#'):
                         continue
                     
+                    # 检查路径冗余
                     if link_path.count('../') > 3:
-                        redundant_paths.append({
-                            "file": str(relative_path),
-                            "link": link_path
+                        self.add_issue('L1_file_system', 'path_references', {
+                            'type': '路径冗余',
+                            'file': str(md_file.relative_to(self.layer_path)),
+                            'severity': 'P2',
+                            'description': f'链接使用过多../相对路径: {link_path}',
+                            'suggestion': '简化路径引用'
                         })
                     
-                    if not link_path.startswith('/'):
-                        target_path = (file_path.parent / link_path).resolve()
+                    # 检查死链接
+                    if not link_path.startswith('http'):
+                        target_path = (md_file.parent / link_path).resolve()
                         if not target_path.exists():
-                            broken_links.append({
-                                "file": str(relative_path),
-                                "link": link_path,
-                                "text": link_text
+                            self.add_issue('L1_file_system', 'path_references', {
+                                'type': '死链接',
+                                'file': str(md_file.relative_to(self.layer_path)),
+                                'severity': 'P1',
+                                'description': f'链接指向不存在的文件: {link_path}',
+                                'suggestion': '修复或删除链接'
                             })
             
             except Exception as e:
                 pass
-        
-        print(f"\n死链接: {len(broken_links)}个")
-        for link in broken_links[:10]:
-            print(f"  - {link['file']} -> {link['link']}")
-        
-        print(f"\n路径冗余: {len(redundant_paths)}个")
-        
-        if broken_links:
-            self.issues["L1_路径引用"].append({
-                "type": "死链接",
-                "count": len(broken_links),
-                "severity": "medium",
-                "detail": f"发现{len(broken_links)}个死链接"
-            })
     
-    def audit_l2_responsibility(self):
-        print("\n" + "=" * 80)
-        print("L2 文档内容层审计 - 职责驱动")
-        print("=" * 80)
+    def audit_L2_document_content(self):
+        """L2: 文档内容层审计"""
+        # 2.1 职责驱动原则
+        self.check_responsibility_driven()
         
-        unclear_responsibility = []
-        overlapping_responsibility = []
+        # 2.2 索引完备性
+        self.check_index_completeness()
         
-        for file_path in self.all_files:
+        # 2.3 版本隔离
+        self.check_version_isolation()
+        
+        # 2.4 文档代码对应
+        self.check_doc_code_correspondence()
+    
+    def check_responsibility_driven(self):
+        """检查职责驱动原则"""
+        print("\n[2.1] 检查职责驱动原则...")
+        
+        md_files = list(self.layer_path.rglob('*.md'))
+        
+        for md_file in md_files:
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
+                # 提取YAML头部
                 yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
-                if yaml_match:
-                    yaml_content = yaml_match.group(1)
-                    
-                    resp_match = re.search(r'responsibility:\s*\n?\s*-\s*(.+?)(?:\n|$)', yaml_content, re.MULTILINE)
-                    if resp_match:
-                        responsibility = resp_match.group(1).strip()
-                        
-                        if len(responsibility) < 10 or responsibility in ['扩展功能、辅助模块', '核心功能、主模块']:
-                            unclear_responsibility.append({
-                                "path": str(file_path.relative_to(DOCS_DIR)),
-                                "responsibility": responsibility
-                            })
-                        
-                        self.responsibility_map[responsibility].append(str(file_path.relative_to(DOCS_DIR)))
-            
-            except Exception as e:
-                pass
-        
-        for resp, files in self.responsibility_map.items():
-            if len(files) > 3 and resp not in ['扩展功能、辅助模块', '核心功能、主模块']:
-                overlapping_responsibility.append({
-                    "responsibility": resp,
-                    "files": files
-                })
-        
-        print(f"\n职责不清: {len(unclear_responsibility)}个")
-        for item in unclear_responsibility[:10]:
-            print(f"  - {item['path']}: {item['responsibility']}")
-        
-        print(f"\n职责重叠: {len(overlapping_responsibility)}组")
-        for item in overlapping_responsibility[:5]:
-            print(f"  - 职责'{item['responsibility']}'出现在{len(item['files'])}个文件")
-        
-        if unclear_responsibility:
-            self.issues["L2_职责驱动"].append({
-                "type": "职责不清",
-                "count": len(unclear_responsibility),
-                "severity": "high",
-                "detail": f"发现{len(unclear_responsibility)}个职责描述不清的文档"
-            })
-        
-        if overlapping_responsibility:
-            self.issues["L2_职责驱动"].append({
-                "type": "职责重叠",
-                "count": len(overlapping_responsibility),
-                "severity": "high",
-                "detail": f"发现{len(overlapping_responsibility)}组职责重叠"
-            })
-    
-    def audit_l2_index_completeness(self):
-        print("\n" + "=" * 80)
-        print("L2 文档内容层审计 - 索引完备性")
-        print("=" * 80)
-        
-        missing_index = []
-        incomplete_index = []
-        
-        for dir_path in self.all_dirs:
-            try:
-                relative_path = dir_path.relative_to(DOCS_DIR)
                 
-                index_file = dir_path / "INDEX.md"
-                if not index_file.exists():
-                    index_file = dir_path / "index.md"
-                
-                md_files = [f for f in dir_path.glob("*.md") if f.name.lower() not in ['index.md', 'readme.md']]
-                
-                if len(md_files) > 0 and not index_file.exists():
-                    missing_index.append(str(relative_path))
-                    self.issues["L2_索引完备性"].append({
-                        "type": "缺少INDEX.md",
-                        "path": str(relative_path),
-                        "severity": "medium",
-                        "detail": f"目录有{len(md_files)}个文档但缺少INDEX.md"
+                if not yaml_match:
+                    self.add_issue('L2_document_content', 'responsibility_driven', {
+                        'type': 'YAML头部缺失',
+                        'file': str(md_file.relative_to(self.layer_path)),
+                        'severity': 'P1',
+                        'description': '文档缺少标准YAML元数据',
+                        'suggestion': '添加标准YAML头部'
                     })
-            
-            except Exception as e:
-                pass
-        
-        print(f"\n缺少INDEX.md的目录: {len(missing_index)}个")
-        for path in missing_index[:10]:
-            print(f"  - {path}")
-    
-    def audit_l2_version_isolation(self):
-        print("\n" + "=" * 80)
-        print("L2 文档内容层审计 - 版本隔离")
-        print("=" * 80)
-        
-        print("计算文件哈希值...")
-        for file_path in self.all_files:
-            try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
+                    continue
                 
-                content_hash = hashlib.md5(content.encode()).hexdigest()
+                # 解析YAML
+                try:
+                    yaml_content = yaml.safe_load(yaml_match.group(1))
+                except:
+                    continue
                 
-                if content_hash in self.file_hashes:
-                    self.duplicate_files.append({
-                        "file1": self.file_hashes[content_hash],
-                        "file2": str(file_path.relative_to(DOCS_DIR)),
-                        "hash": content_hash
+                # 检查职责描述
+                if 'responsibility' not in yaml_content:
+                    self.add_issue('L2_document_content', 'responsibility_driven', {
+                        'type': '职责缺失',
+                        'file': str(md_file.relative_to(self.layer_path)),
+                        'severity': 'P1',
+                        'description': '文档缺少职责描述',
+                        'suggestion': '添加明确的职责描述'
                     })
                 else:
-                    self.file_hashes[content_hash] = str(file_path.relative_to(DOCS_DIR))
+                    responsibility = yaml_content['responsibility']
+                    if isinstance(responsibility, list):
+                        resp_str = ' '.join(responsibility)
+                    else:
+                        resp_str = str(responsibility)
+                    
+                    # 记录职责描述用于后续重叠检查
+                    self.responsibility_map[resp_str].append(str(md_file.relative_to(self.layer_path)))
+                
+                # 检查module_id
+                if 'module_id' in yaml_content:
+                    module_id = yaml_content['module_id']
+                    self.module_id_map[module_id].append(str(md_file.relative_to(self.layer_path)))
             
             except Exception as e:
                 pass
-        
-        print(f"\n重复文档: {len(self.duplicate_files)}对")
-        for dup in self.duplicate_files[:5]:
-            print(f"  - {dup['file1']}")
-            print(f"    {dup['file2']}")
-        
-        if self.duplicate_files:
-            self.issues["L2_版本隔离"].append({
-                "type": "重复文档",
-                "count": len(self.duplicate_files),
-                "severity": "high",
-                "detail": f"发现{len(self.duplicate_files)}对重复文档"
-            })
     
-    def audit_l3_module_id(self):
-        print("\n" + "=" * 80)
-        print("L3 专业标准层审计 - 编号体系")
-        print("=" * 80)
+    def check_index_completeness(self):
+        """检查索引完备性"""
+        print("[2.2] 检查索引完备性...")
         
-        missing_module_id = []
-        duplicate_module_id = []
+        # 检查根目录INDEX.md
+        root_index = self.layer_path / 'index.md'
+        if not root_index.exists():
+            self.add_issue('L2_document_content', 'index_completeness', {
+                'type': '入口混乱',
+                'file': '根目录',
+                'severity': 'P0',
+                'description': '根目录缺少清晰的主入口INDEX.md',
+                'suggestion': '创建主入口INDEX.md'
+            })
         
-        for file_path in self.all_files:
+        # 检查子目录INDEX.md
+        directories = [d for d in self.layer_path.rglob('*') if d.is_dir()]
+        
+        for directory in directories:
+            index_file = directory / 'INDEX.md'
+            if not index_file.exists():
+                self.add_issue('L2_document_content', 'index_completeness', {
+                    'type': '子目录缺索引',
+                    'file': str(directory.relative_to(self.layer_path)),
+                    'severity': 'P2',
+                    'description': '子目录缺少INDEX.md导航文件',
+                    'suggestion': '创建INDEX.md索引文件'
+                })
+    
+    def check_version_isolation(self):
+        """检查版本隔离"""
+        print("[2.3] 检查版本隔离...")
+        
+        md_files = list(self.layer_path.rglob('*.md'))
+        
+        # 检查重复文档（基于内容哈希）
+        for md_file in md_files:
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
-                yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
-                if yaml_match:
-                    yaml_content = yaml_match.group(1)
-                    
-                    module_match = re.search(r'module_id:\s*(.+?)(?:\n|$)', yaml_content, re.MULTILINE)
-                    if module_match:
-                        module_id = module_match.group(1).strip()
-                        
-                        if module_id in self.module_ids:
-                            duplicate_module_id.append({
-                                "module_id": module_id,
-                                "file1": self.module_ids[module_id],
-                                "file2": str(file_path.relative_to(DOCS_DIR))
-                            })
-                        else:
-                            self.module_ids[module_id] = str(file_path.relative_to(DOCS_DIR))
-                    else:
-                        missing_module_id.append(str(file_path.relative_to(DOCS_DIR)))
+                # 计算内容哈希
+                content_hash = hashlib.md5(content.encode()).hexdigest()
+                self.content_hashes[content_hash].append(str(md_file.relative_to(self.layer_path)))
             
             except Exception as e:
                 pass
         
-        print(f"\n缺少Module ID: {len(missing_module_id)}个")
-        print(f"重复Module ID: {len(duplicate_module_id)}个")
+        # 检查重复内容
+        for hash_value, files in self.content_hashes.items():
+            if len(files) > 1:
+                self.add_issue('L2_document_content', 'version_isolation', {
+                    'type': '重复文档',
+                    'file': ', '.join(files),
+                    'severity': 'P0',
+                    'description': f'发现{len(files)}个内容完全相同的文档',
+                    'suggestion': '保留最新版本，归档或删除其他版本'
+                })
+    
+    def check_doc_code_correspondence(self):
+        """检查文档代码对应"""
+        print("[2.4] 检查文档代码对应...")
         
-        for dup in duplicate_module_id[:5]:
-            print(f"  - {dup['module_id']}:")
-            print(f"    {dup['file1']}")
-            print(f"    {dup['file2']}")
+        # 检查旧架构引用
+        md_files = list(self.layer_path.rglob('*.md'))
         
-        if duplicate_module_id:
-            self.issues["L3_编号体系"].append({
-                "type": "Module ID重复",
-                "count": len(duplicate_module_id),
-                "severity": "high",
-                "detail": f"发现{len(duplicate_module_id)}个重复的Module ID"
-            })
+        for md_file in md_files:
+            try:
+                with open(md_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                # 检查旧架构引用
+                if re.search(r'Layer\s*[0-9]', content, re.IGNORECASE):
+                    self.add_issue('L2_document_content', 'doc_code_correspondence', {
+                        'type': '文档滞后',
+                        'file': str(md_file.relative_to(self.layer_path)),
+                        'severity': 'P2',
+                        'description': '文档包含旧架构引用(Layer 0-8)',
+                        'suggestion': '更新文档以反映新架构'
+                    })
+            
+            except Exception as e:
+                pass
+    
+    def audit_L3_professional_standard(self):
+        """L3: 专业标准层审计"""
+        # 3.1 五大原则符合性
+        self.check_five_principles()
+        
+        # 3.2 文档分类
+        self.check_document_classification()
+        
+        # 3.3 编号体系
+        self.check_numbering_system()
+        
+        # 3.4 文档质量
+        self.check_document_quality()
+    
+    def check_five_principles(self):
+        """检查五大原则符合性"""
+        print("\n[3.1] 检查五大原则符合性...")
+        
+        # 职责驱动原则 - 检查职责重叠
+        for responsibility, files in self.responsibility_map.items():
+            if len(files) > 1:
+                self.add_issue('L3_professional_standard', 'five_principles', {
+                    'type': '职责驱动原则违反',
+                    'file': ', '.join(files),
+                    'severity': 'P1',
+                    'description': f'{len(files)}个文档具有相同的职责描述',
+                    'suggestion': '为每个文档定义独特的职责'
+                })
+    
+    def check_document_classification(self):
+        """检查文档分类"""
+        print("[3.2] 检查文档分类...")
+        
+        # 检查BLUEPRINT文件是否在正确的目录
+        blueprint_files = list(self.layer_path.rglob('*_BLUEPRINT.md'))
+        
+        for blueprint_file in blueprint_files:
+            parent_dir = blueprint_file.parent.name
+            
+            # 检查是否在编号目录下
+            if not re.match(r'^\d{2}_', parent_dir):
+                self.add_issue('L3_professional_standard', 'document_classification', {
+                    'type': '分类错误',
+                    'file': str(blueprint_file.relative_to(self.layer_path)),
+                    'severity': 'P2',
+                    'description': 'BLUEPRINT文件未放置在编号目录下',
+                    'suggestion': '移动到正确的分类目录'
+                })
+    
+    def check_numbering_system(self):
+        """检查编号体系"""
+        print("[3.3] 检查编号体系...")
+        
+        # 检查module_id重复
+        for module_id, files in self.module_id_map.items():
+            if len(files) > 1:
+                self.add_issue('L3_professional_standard', 'numbering_system', {
+                    'type': '编号重复',
+                    'file': ', '.join(files),
+                    'severity': 'P0',
+                    'description': f'{len(files)}个文档使用相同的module_id: {module_id}',
+                    'suggestion': '为每个文档分配唯一的module_id'
+                })
+    
+    def check_document_quality(self):
+        """检查文档质量"""
+        print("[3.4] 检查文档质量...")
+        
+        md_files = list(self.layer_path.rglob('*.md'))
+        
+        for md_file in md_files:
+            try:
+                with open(md_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                lines = content.split('\n')
+                
+                # 检查文档过短
+                if len(lines) < 15:
+                    self.add_issue('L3_professional_standard', 'document_quality', {
+                        'type': '内容过短',
+                        'file': str(md_file.relative_to(self.layer_path)),
+                        'severity': 'P2',
+                        'description': f'文档内容过短({len(lines)}行)',
+                        'suggestion': '补充详细内容'
+                    })
+            
+            except Exception as e:
+                pass
+    
+    def deep_content_analysis(self):
+        """深度内容分析"""
+        print("\n[深度] 检查重复内容和职责清晰度...")
+        
+        md_files = list(self.layer_path.rglob('*.md'))
+        
+        # 检查内容相似度
+        for i, file1 in enumerate(md_files):
+            for file2 in md_files[i+1:]:
+                try:
+                    with open(file1, 'r', encoding='utf-8') as f:
+                        content1 = f.read()
+                    with open(file2, 'r', encoding='utf-8') as f:
+                        content2 = f.read()
+                    
+                    # 计算相似度（简化版）
+                    similarity = self.calculate_similarity(content1, content2)
+                    
+                    if similarity > 0.8:  # 80%相似度
+                        self.add_issue('deep_content_check', 'duplicate_content', {
+                            'type': '内容高度相似',
+                            'file': f'{file1.relative_to(self.layer_path)}, {file2.relative_to(self.layer_path)}',
+                            'severity': 'P1',
+                            'description': f'两个文档内容相似度达到{similarity*100:.1f}%',
+                            'suggestion': '合并或区分文档内容'
+                        })
+                
+                except Exception as e:
+                    pass
+        
+        # 检查职责清晰度
+        for md_file in md_files:
+            try:
+                with open(md_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                # 提取YAML头部
+                yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
+                
+                if yaml_match:
+                    try:
+                        yaml_content = yaml.safe_load(yaml_match.group(1))
+                        
+                        if 'responsibility' in yaml_content:
+                            responsibility = yaml_content['responsibility']
+                            
+                            # 检查职责描述是否模糊
+                            if isinstance(responsibility, list):
+                                resp_str = ' '.join(responsibility)
+                            else:
+                                resp_str = str(responsibility)
+                            
+                            # 检查是否包含模糊词汇
+                            vague_words = ['管理', '处理', '负责', '相关']
+                            vague_count = sum(1 for word in vague_words if word in resp_str)
+                            
+                            if vague_count > 2:
+                                self.add_issue('deep_content_check', 'unclear_responsibility', {
+                                    'type': '职责描述模糊',
+                                    'file': str(md_file.relative_to(self.layer_path)),
+                                    'severity': 'P2',
+                                    'description': '职责描述包含过多模糊词汇',
+                                    'suggestion': '使用更具体的职责描述'
+                                })
+                    
+                    except:
+                        pass
+            
+            except Exception as e:
+                pass
+    
+    def calculate_similarity(self, content1, content2):
+        """计算内容相似度（简化版）"""
+        # 移除YAML头部
+        content1 = re.sub(r'^---\s*\n.*?\n---', '', content1, flags=re.DOTALL)
+        content2 = re.sub(r'^---\s*\n.*?\n---', '', content2, flags=re.DOTALL)
+        
+        # 简单的词汇重叠度计算
+        words1 = set(content1.split())
+        words2 = set(content2.split())
+        
+        if not words1 or not words2:
+            return 0.0
+        
+        intersection = words1 & words2
+        union = words1 | words2
+        
+        return len(intersection) / len(union) if union else 0.0
+    
+    def add_issue(self, layer, category, issue):
+        """添加问题"""
+        self.audit_results[layer][category].append(issue)
+        self.stats['total_issues'] += 1
+        
+        severity = issue.get('severity', 'P2')
+        if severity == 'P0':
+            self.stats['critical_issues'] += 1
+        elif severity == 'P1':
+            self.stats['major_issues'] += 1
+        else:
+            self.stats['minor_issues'] += 1
     
     def generate_report(self):
-        print("\n" + "=" * 80)
-        print("生成审计报告")
-        print("=" * 80)
-        
-        total_issues = sum(len(issues) for issues in self.issues.values())
-        
-        report = {
-            "timestamp": datetime.now().isoformat(),
-            "summary": {
-                "total_files": len(self.all_files),
-                "total_dirs": len(self.all_dirs),
-                "total_issues": total_issues,
-                "compliance_rate": round((len(self.all_files) - total_issues) / len(self.all_files) * 100, 2) if self.all_files else 0
-            },
-            "issues": self.issues,
-            "duplicate_files": self.duplicate_files[:20],
-            "overlapping_responsibility": [
-                {
-                    "responsibility": resp,
-                    "file_count": len(files),
-                    "files": files[:5]
-                }
-                for resp, files in self.responsibility_map.items()
-                if len(files) > 3 and resp not in ['扩展功能、辅助模块', '核心功能、主模块']
-            ][:10]
-        }
-        
-        report_path = PROJECT_ROOT / "docs/09_AUDIT/STATE" / f"comprehensive_deep_audit_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        """生成审计报告"""
+        report_path = Path(f"docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/COMPREHENSIVE_DEEP_AUDIT_{self.timestamp}.md")
+        report_path.parent.mkdir(parents=True, exist_ok=True)
         
         with open(report_path, 'w', encoding='utf-8') as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
+            f.write("# 人机交互层全面深度审计报告\n\n")
+            f.write(f"> **审计时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"> **审计范围**: {self.layer_path}\n")
+            f.write(f"> **审计标准**: 专业量化机构五大原则 + 三层审计标准\n")
+            f.write(f"> **审计类型**: 全面深度审计（重复内容、职责清晰度）\n\n")
+            
+            f.write("---\n\n")
+            
+            # 审计概要
+            f.write("## 1. 审计概要\n\n")
+            f.write("### 1.1 审计范围\n\n")
+            f.write(f"- **总文件数**: {self.stats['total_files']}\n")
+            f.write(f"- **总目录数**: {self.stats['total_directories']}\n")
+            f.write(f"- **发现问题数**: {self.stats['total_issues']}\n\n")
+            
+            f.write("### 1.2 问题分布\n\n")
+            f.write(f"- **P0级问题（严重）**: {self.stats['critical_issues']}\n")
+            f.write(f"- **P1级问题（重要）**: {self.stats['major_issues']}\n")
+            f.write(f"- **P2级问题（次要）**: {self.stats['minor_issues']}\n\n")
+            
+            # L1审计结果
+            f.write("## 2. L1文件系统层审计\n\n")
+            self.write_section(f, 'L1_file_system', '文件系统层')
+            
+            # L2审计结果
+            f.write("## 3. L2文档内容层审计\n\n")
+            self.write_section(f, 'L2_document_content', '文档内容层')
+            
+            # L3审计结果
+            f.write("## 4. L3专业标准层审计\n\n")
+            self.write_section(f, 'L3_professional_standard', '专业标准层')
+            
+            # 深度内容检查
+            f.write("## 5. 深度内容检查\n\n")
+            self.write_section(f, 'deep_content_check', '深度内容检查')
+            
+            # 改进建议
+            f.write("## 6. 改进建议\n\n")
+            self.write_recommendations(f)
+            
+            # 附录
+            f.write("## 7. 附录\n\n")
+            f.write("### 7.1 审计标准\n\n")
+            f.write("- 专业量化机构五大原则\n")
+            f.write("- 三层审计标准（L1-L3）\n")
+            f.write("- 文档治理审计问题清单\n\n")
+            
+            f.write("---\n\n")
+            f.write(f"**报告生成时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
         
-        print(f"\n审计报告已保存至: {report_path}")
-        
-        print("\n" + "=" * 80)
-        print("审计摘要")
+        print()
         print("=" * 80)
-        print(f"总文件数: {len(self.all_files)}")
-        print(f"总目录数: {len(self.all_dirs)}")
-        print(f"总问题数: {total_issues}")
-        print(f"合规率: {report['summary']['compliance_rate']}%")
-        
-        print("\n问题分布:")
-        for category, issues in self.issues.items():
-            if issues:
-                print(f"  {category}: {len(issues)}个问题")
-        
-        return report
+        print("审计报告已生成")
+        print("=" * 80)
+        print(f"报告位置: {report_path}")
     
-    def run(self):
-        print("=" * 80)
-        print("全面深度审计")
-        print("=" * 80)
-        print(f"开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print("=" * 80)
+    def write_section(self, f, layer, title):
+        """写入章节"""
+        categories = self.audit_results[layer]
         
-        self.scan_all_files()
-        self.audit_l1_directory_structure()
-        self.audit_l1_file_naming()
-        self.audit_l1_path_references()
-        self.audit_l2_responsibility()
-        self.audit_l2_index_completeness()
-        self.audit_l2_version_isolation()
-        self.audit_l3_module_id()
+        for category, issues in categories.items():
+            if issues:
+                category_name = category.replace('_', ' ').title()
+                f.write(f"### {category_name}\n\n")
+                
+                for issue in issues:
+                    severity = issue.get('severity', 'P2')
+                    severity_emoji = {'P0': '🔴', 'P1': '🟡', 'P2': '🟢'}.get(severity, '⚪')
+                    
+                    f.write(f"{severity_emoji} **{issue['type']}**\n")
+                    f.write(f"   - 文件: {issue['file']}\n")
+                    f.write(f"   - 严重性: {severity}\n")
+                    f.write(f"   - 描述: {issue['description']}\n")
+                    f.write(f"   - 建议: {issue['suggestion']}\n\n")
+    
+    def write_recommendations(self, f):
+        """写入改进建议"""
+        # P0级问题
+        if self.stats['critical_issues'] > 0:
+            f.write("### 6.1 立即修复（P0级）\n\n")
+            self.write_issues_by_severity(f, 'P0')
         
-        report = self.generate_report()
+        # P1级问题
+        if self.stats['major_issues'] > 0:
+            f.write("### 6.2 短期改进（P1级）\n\n")
+            self.write_issues_by_severity(f, 'P1')
         
-        print("\n" + "=" * 80)
-        print(f"完成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print("=" * 80)
-        
-        return report
+        # P2级问题
+        if self.stats['minor_issues'] > 0:
+            f.write("### 6.3 长期优化（P2级）\n\n")
+            self.write_issues_by_severity(f, 'P2')
+    
+    def write_issues_by_severity(self, f, severity):
+        """按严重性写入问题"""
+        for layer, categories in self.audit_results.items():
+            for category, issues in categories.items():
+                for issue in issues:
+                    if issue.get('severity') == severity:
+                        f.write(f"- **{issue['type']}**: {issue['file']}\n")
+                        f.write(f"  - {issue['suggestion']}\n\n")
 
-if __name__ == "__main__":
-    auditor = ComprehensiveDeepAudit()
-    auditor.run()
+
+def main():
+    layer_path = Path(r"D:\ZephyrAlpha\docs\08_HUMAN_AI_INTERFACE")
+    
+    auditor = ComprehensiveDeepAuditor(layer_path)
+    auditor.run_full_audit()
+    
+    print()
+    print("=" * 80)
+    print("全面深度审计完成！")
+    print("=" * 80)
+
+
+if __name__ == '__main__':
+    main()
