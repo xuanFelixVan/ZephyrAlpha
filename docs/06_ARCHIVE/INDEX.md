@@ -29,7 +29,7 @@ implementation_status: 已完?
 | 20260404_audit_reports_archive/ | 审计报告归档（audit_state + review_reports?| 2026-04-04 |
 | duplicate_documents/ | 重复文档归档 | 2026-04-03 |
 | integrated_documents/ | 整合文档归档 | 2026-04-03 |
-| architecture_v4/ | v4架构归档（Layer 0-8技术流水线?| 2026-04-03 |
+| architecture_v4/ | v4架构归档（Layer 0-11技术流水线?| 2026-04-03 |
 | factor-library/ | 因子库历史版?| 2026-04-02 |
 | [main/](01_FRAMEWORK/PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION.md) | 主系统历史文?| 2026-04-01 |
 
@@ -55,7 +55,7 @@ implementation_status: 已完?
 
 ### architecture_v4 - v4架构归档
 
-**归档原因**: 系统已迁移至"三级时间框架融合架构"，旧版Layer 0-8架构文档归档保留
+**归档原因**: 系统已迁移至"三级时间框架融合架构"，旧版Layer 0-11架构文档归档保留
 
 | 子目?| 内容 |
 |--------|------|

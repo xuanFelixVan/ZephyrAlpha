@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_INDEX
 version: 1.0.0
 status: Active
@@ -511,7 +511,7 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | 文档 | 说明 |
 |------|------|
 | [System_Manifest.md](../System_Manifest.md) | 系统总清单 |
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-8统一架构定义 |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11统一架构定义 |
 | [MODULE_RESPONSIBILITY_BOUNDARIES.md](./MODULE_RESPONSIBILITY_BOUNDARIES.md) | 模块职责边界定义 |
 
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS
 version: 1.0.0
 status: Active
@@ -74,7 +74,7 @@ responsibility:
 | **5** | 组合再平衡系统 | ✅ 架构设计+接口定义+技术选型 | ❌ 缺失 | 🟡 P1 |
 
 **蓝图阶段补充原则**：
-1. ✅ **架构设计**：模块在Layer 0-8架构中的定位
+1. ✅ **架构设计**：模块在Layer 0-11架构中的定位
 2. ✅ **职责定义**：模块的核心职责和边界
 3. ✅ **接口定义**：模块对外的接口规范
 4. ✅ **数据流设计**：模块的数据输入输出流程

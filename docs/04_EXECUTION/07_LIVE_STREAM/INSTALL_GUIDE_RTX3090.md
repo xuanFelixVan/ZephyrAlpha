@@ -187,8 +187,3 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 
 ---
-
-
-
----
-

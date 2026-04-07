@@ -99,7 +99,7 @@ implementation_status: 进行?
 | 文档 | 职责 | 评估 |
 |------|------|------|
 | `System_Manifest.md` | 系统清单、模块映射、目录结?| ?清晰 |
-| `UNIFIED_ARCHITECTURE.md` | Layer 0-8架构、AI增强 | ?清晰 |
+| `UNIFIED_ARCHITECTURE.md` | Layer 0-11架构、AI增强 | ?清晰 |
 | `ULTIMATE_BLUEPRINT.md` | 终极目标、人机协作模?| ?清晰 |
 | `DEVELOPMENT_ROADMAP.md` | 阶段性开发规?| ?清晰 |
 
@@ -211,7 +211,7 @@ docs/                      # ?正确：所有文?
 
 | 文档 | 引用内容 | 实际应该?|
 |------|----------|-----------|
-| 多个文档 | 7层架?| Layer 0-8新架?|
+| 多个文档 | 7层架?| Layer 0-11新架?|
 | 多个文档 | quant_system_v4/v5 | ZephyrAlpha |
 
 ---

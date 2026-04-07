@@ -7,7 +7,10 @@ last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 3 (舆情分析层)
 responsibility:
-  - AI工作流、智能辅助、自动化流程
+  - 知识图谱技术规格
+  - 流式处理架构技术规格
+  - 多语言支持技术规格
+  - 中期改进模块实施指导
 standard_type: 技术规格书
 applicable_scope: 舆情分析层中期改进模块
 compliance_level: 专业标准

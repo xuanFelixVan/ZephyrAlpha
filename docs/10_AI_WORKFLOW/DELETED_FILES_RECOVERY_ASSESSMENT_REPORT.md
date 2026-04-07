@@ -185,7 +185,7 @@ grep -n "Twitter\|Reddit\|FRED\|SEC EDGAR" DATA_SOURCE_EXTENSION_BLUEPRINT.md
 | 对比维度 | OPEN_SOURCE_INTEGRATION_BLUEPRINT.md | OPEN_SOURCE_MODULE_SOLUTION.md | 对比结果 |
 |---------|-------------------------------------|-------------------------------|---------|
 | **开源项目覆盖** | MLflow/Qlib/QuantHedgeFund/QuantTradingOS (4个) | MLflow/Qlib/FinRL/TradingAgents等 (20+个) | ✅ 现有文档更全面 |
-| **架构映射** | Layer 0-8基础映射 | Layer 0-8完整映射 | ✅ 现有文档更完整 |
+| **架构映射** | Layer 0-11基础映射 | Layer 0-11完整映射 | ✅ 现有文档更完整 |
 | **选型对比** | 基础对比 | 详细对比+推荐理由 | ✅ 现有文档更深入 |
 | **实施路径** | 3周基础路径 | 分阶段实施+优先级 | ✅ 现有文档更详细 |
 | **文档治理** | 基础治理建议 | 完整治理体系 | ✅ 现有文档更系统 |

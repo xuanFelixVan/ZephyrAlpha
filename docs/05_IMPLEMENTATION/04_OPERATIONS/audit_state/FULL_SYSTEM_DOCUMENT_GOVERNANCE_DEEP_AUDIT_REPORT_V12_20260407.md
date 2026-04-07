@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FULL_SYSTEM_AUDIT_V12_001
 version: 12.0.0
 status: Active
@@ -75,7 +75,7 @@ compliance_level: 专业标准
 **预计工作量**: 2小时  
 **修复建议**: 
 1. 批量更新所有蓝图文档中的Layer引用
-2. 将"Layer 0-8"更新为"Layer 0-11"架构
+2. 将"Layer 0-11"更新为"Layer 0-11"架构
 3. 检查并更新所有applicable_scope字段
 
 #### 1.3 路径引用检查

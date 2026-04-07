@@ -1,0 +1,162 @@
+{
+  "D:\\ZephyrAlpha\\docs\\API_README.md": {
+    "hash": "806649423db3b13ae6f56bc121c46bb0",
+    "result": {
+      "file": "API_README.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.609083"
+  },
+  "D:\\ZephyrAlpha\\docs\\INDEX.md": {
+    "hash": "d39e867ec2e2b784c3b41c106b7b765f",
+    "result": {
+      "file": "INDEX.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.609083"
+  },
+  "D:\\ZephyrAlpha\\docs\\SITEMAP.md": {
+    "hash": "0b63911825ee463e903daa086a7d5720",
+    "result": {
+      "file": "SITEMAP.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.609083"
+  },
+  "D:\\ZephyrAlpha\\docs\\System_Manifest.md": {
+    "hash": "61b8cf6f71c1087b83f4322d35f0b1cc",
+    "result": {
+      "file": "System_Manifest.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.610598"
+  },
+  "D:\\ZephyrAlpha\\docs\\00_OVERVIEW\\DATA_FLOW.md": {
+    "hash": "dec2cf6fe5dd0a60524c00d264c2c33a",
+    "result": {
+      "file": "00_OVERVIEW\\DATA_FLOW.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.610598"
+  },
+  "D:\\ZephyrAlpha\\docs\\00_OVERVIEW\\INDEX.md": {
+    "hash": "81223ad9d30ea5e86a6450d1f309bf17",
+    "result": {
+      "file": "00_OVERVIEW\\INDEX.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.610598"
+  },
+  "D:\\ZephyrAlpha\\docs\\00_RESOURCES\\INDEX.md": {
+    "hash": "574e6e5b66f9b7bb464a5d11c2dc11a1",
+    "result": {
+      "file": "00_RESOURCES\\INDEX.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.610598"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md": {
+    "hash": "337d4019ba97eed797a61989ed7d54db",
+    "result": {
+      "file": "01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.610598"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md": {
+    "hash": "b3bb9c8090e20f7b5463017545f45ff7",
+    "result": {
+      "file": "01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.610598"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md": {
+    "hash": "6111a910687739b1d80616208f044909",
+    "result": {
+      "file": "01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.612113"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md": {
+    "hash": "72b5bb56f24390ea9de1c7495e2e9687",
+    "result": {
+      "file": "01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.612113"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md": {
+    "hash": "fd41dd6cc9ad4cfcf27120f5f16167ec",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.612585"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md": {
+    "hash": "736c2cfd9face58454d754dcc099072b",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.612585"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md": {
+    "hash": "98bd28173897644d955f000688899091",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.613088"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md": {
+    "hash": "1b4abb0125a6b13de147e3ee29b3cf5f",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.613599"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_DECISION_AUDIT_BLUEPRINT.md": {
+    "hash": "742e06567321a6aad614b9e15269d3ea",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_DECISION_AUDIT_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.613599"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md": {
+    "hash": "cc3479a32c62c5d44d15faa208894414",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.613599"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_PERMISSIONS.md": {
+    "hash": "77df6140da6f986816bbd51df8d1202a",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_PERMISSIONS.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.614110"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md": {
+    "hash": "01af348f0f61ad74057225dfb89e4488",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.614110"
+  },
+  "D:\\ZephyrAlpha\\docs\\01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md": {
+    "hash": "8121a8b7d3885b1402fe13838ea86908",
+    "result": {
+      "file": "01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md",
+      "issues": []
+    },
+    "timestamp": "2026-04-07T17:50:46.614110"
+  }
+}
