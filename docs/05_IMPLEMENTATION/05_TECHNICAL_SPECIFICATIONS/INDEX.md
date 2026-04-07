@@ -342,3 +342,5 @@ responsibility:
 - [ﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ v1.0](./UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md) - 技术规格说明
 
 - [UserPreferences用户偏好技术规格书](./USER_PREFERENCES_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+
+- [Black-Litterman组合优化模型技术规格书 v1.0](./BLACK_LITTERMAN_MODEL_TECHNICAL_SPECIFICATION.md) - 技术规格说明
