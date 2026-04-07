@@ -55,6 +55,10 @@ else:
 # 1.2 文件命名检查
 print('\n1.2 文件命名检查:')
 for file in files:
+    # INDEX.md 是合法的索引文件，跳过检查
+    if file == 'INDEX.md':
+        continue
+    
     # 检查命名规范
     if not re.match(r'^[A-Z_0-9]+_BLUEPRINT\.md$', file):
         l1_issues['命名不规范'].append(file)

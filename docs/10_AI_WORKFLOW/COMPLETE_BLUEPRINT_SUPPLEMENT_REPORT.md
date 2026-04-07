@@ -1,15 +1,4 @@
 ﻿---
-module_id: COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - COMPLETE_SUPPLEMENT_REPORT蓝图设计
----
-
-﻿---
 module_id: LAYER_7_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT_001
 version: 1.0.0
 status: Active

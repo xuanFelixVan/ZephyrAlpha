@@ -1,15 +1,4 @@
 ﻿---
-module_id: KNOWLEDGE_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - KNOWLEDGE_MANAGEMENT蓝图设计
----
-
-﻿---
 module_id: KNOWLEDGE_MANAGEMENT_AI_001
 version: 1.0.0
 status: Active
@@ -39,7 +28,8 @@ open_source_solution:
   secondary: LangChain Memory
   secondary_github: https://github.com/langchain-ai/langchain
   license: MIT
-  cost: 完全免费---
+  cost: 完全免费
+---
 
 
 ## 文档职责说明

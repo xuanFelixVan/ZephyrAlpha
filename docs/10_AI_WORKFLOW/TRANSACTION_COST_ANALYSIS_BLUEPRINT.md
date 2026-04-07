@@ -1,15 +1,4 @@
 ﻿---
-module_id: TRANSACTION_COST_ANALYSIS_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - TRANSACTION_COST_ANALYSIS蓝图设计
----
-
-﻿---
 module_id: TRANSACTION_COST_ANALYSIS_001
 version: 1.0.0
 status: Active

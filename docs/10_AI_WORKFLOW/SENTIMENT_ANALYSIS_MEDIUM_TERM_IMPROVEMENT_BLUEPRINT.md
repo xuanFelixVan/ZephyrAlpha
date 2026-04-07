@@ -1,15 +1,4 @@
 ﻿---
-module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT蓝图设计
----
-
-﻿---
 module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_001
 version: 1.0.0
 status: Active
@@ -27,7 +16,8 @@ implementation_period: 3-6个月
 included_modules:
   - 金融知识图谱
   - 流式处理架构
-  - 多语言支持---
+  - 多语言支持
+---
 
 
 
