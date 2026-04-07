@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OPENING_STRATEGY_001
 version: 1.0.0
 status: Active

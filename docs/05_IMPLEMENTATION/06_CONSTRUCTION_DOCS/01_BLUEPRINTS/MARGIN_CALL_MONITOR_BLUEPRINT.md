@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARGIN_CALL_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active

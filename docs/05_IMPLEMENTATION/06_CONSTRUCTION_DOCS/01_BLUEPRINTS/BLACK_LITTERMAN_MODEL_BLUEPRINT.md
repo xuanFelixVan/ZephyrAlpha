@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - Black-Litterman模型
   - 观点融合

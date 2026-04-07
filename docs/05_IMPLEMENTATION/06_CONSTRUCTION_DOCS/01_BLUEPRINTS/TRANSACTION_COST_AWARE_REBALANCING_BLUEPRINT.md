@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active

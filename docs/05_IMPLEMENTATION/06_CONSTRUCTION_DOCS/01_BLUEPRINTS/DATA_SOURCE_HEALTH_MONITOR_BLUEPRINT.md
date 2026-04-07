@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active

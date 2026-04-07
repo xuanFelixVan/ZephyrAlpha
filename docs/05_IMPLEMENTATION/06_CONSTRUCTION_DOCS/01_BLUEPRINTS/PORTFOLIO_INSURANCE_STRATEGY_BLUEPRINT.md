@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.0
 status: Active

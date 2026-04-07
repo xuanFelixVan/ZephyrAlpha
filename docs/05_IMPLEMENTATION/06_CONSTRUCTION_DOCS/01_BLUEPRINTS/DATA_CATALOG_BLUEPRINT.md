@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_CATALOG_BLUEPRINT
 version: 1.0.0
 status: Active

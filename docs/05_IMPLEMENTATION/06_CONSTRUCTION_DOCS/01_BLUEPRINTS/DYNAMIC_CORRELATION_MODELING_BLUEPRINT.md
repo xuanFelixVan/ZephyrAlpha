@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - DYNAMIC_CORRELATION_MODELING蓝图设计
 module_id: DYNAMIC_CORRELATION_MODELING_001

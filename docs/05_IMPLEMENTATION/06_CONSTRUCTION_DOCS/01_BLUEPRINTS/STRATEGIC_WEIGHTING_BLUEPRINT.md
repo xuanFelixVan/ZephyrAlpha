@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
 status: Active
