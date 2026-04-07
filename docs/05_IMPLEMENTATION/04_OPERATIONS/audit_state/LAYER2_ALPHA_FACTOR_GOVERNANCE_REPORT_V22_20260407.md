@@ -13,13 +13,9 @@ standard_type: 治理报告
 applicable_scope: Alpha因子层蓝图文件治理
 compliance_level: 专业标准
 parent_document: ../INDEX.md---
+
+
 # Alpha因子层蓝图文件治理报告
-
-> **核心职责**: 分析报告和评估结果
-> **职责边界**: 
-> - ✅ 本文档负责：分析报告和评估结果相关内容
-> - ❌ 本文档不负责：其他模块内容
-
 
 ## 📋 治理概要
 

@@ -9,7 +9,8 @@ standard_type: 专业量化机构目录索引
 applicable_scope: 数据权限管理系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-responsibility: 数据权限管理模块导航
+responsibility:
+  - 数据质量 (Layer 1)
 ---
 
 # 数据权限管理系统

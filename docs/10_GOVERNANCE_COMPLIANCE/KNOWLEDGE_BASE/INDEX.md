@@ -1,9 +1,4 @@
 ---
-responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
-
 module_id: KNOWLEDGE_BASE_INDEX_001
 version: 1.0.0
 status: Active
@@ -15,13 +10,8 @@ standard_type: 专业量化机构知识库索引
 applicable_scope: 全系统知识库索引
 compliance_level: 专业标准
 ---
+
 # 文档治理知识库索引
-
-> **核心职责**: 目录导航和文档索引
-> **职责边界**: 
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-> - ❌ 本文档不负责：其他模块内容
-
 
 > **版本**: v1.0.0
 > **创建日期**: 2026-04-07
