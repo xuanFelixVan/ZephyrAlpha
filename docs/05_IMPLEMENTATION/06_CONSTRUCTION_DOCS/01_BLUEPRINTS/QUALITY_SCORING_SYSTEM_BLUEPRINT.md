@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -13,8 +13,7 @@ responsibility:
   - 质量指标计算
   - 质量等级评定
   - 质量趋势分析
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 # 数据质量评分系统蓝图
 

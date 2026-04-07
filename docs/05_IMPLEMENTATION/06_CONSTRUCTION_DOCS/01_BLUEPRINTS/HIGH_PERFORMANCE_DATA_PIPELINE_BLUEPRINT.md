@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
   - 高性能数据管道
   - 数据处理优化
   - 性能优化
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # 高性能数据管道蓝图
 

@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: STRATEGIC_ALLOCATION_ENGINE__001
 version: 1.0.0
 status: Active
@@ -9,8 +9,7 @@ responsibility:
 置
 
   - 投资组合优化
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

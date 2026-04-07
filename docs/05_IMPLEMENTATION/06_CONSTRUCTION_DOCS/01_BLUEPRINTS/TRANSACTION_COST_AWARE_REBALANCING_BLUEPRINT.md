@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -13,8 +13,7 @@ responsibility:
   - 成本优化算法
   - 频率决策引擎
   - 成本效益分析
-layer: Layer 6 (组合优化层)
----
+layer: Layer 6 (组合优化层)---
 
 > **核心职责**: 成本敏感再平衡（交易成本优化）
 > **职责边界**: 

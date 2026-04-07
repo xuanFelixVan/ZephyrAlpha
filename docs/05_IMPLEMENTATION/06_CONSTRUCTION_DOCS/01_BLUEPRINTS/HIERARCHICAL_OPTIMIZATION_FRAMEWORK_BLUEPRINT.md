@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: HIERARCHICAL-OPTIMIZATION-FRAMEWORK-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 version: 1.0.0
 status: Active
@@ -19,8 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 优化协调
   - 层级管理
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 ## 核心定位
 

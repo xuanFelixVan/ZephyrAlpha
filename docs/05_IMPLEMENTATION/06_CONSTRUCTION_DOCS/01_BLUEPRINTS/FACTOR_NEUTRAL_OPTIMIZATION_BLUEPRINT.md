@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: FACTOR-NEUTRAL-OPTIMIZATION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: FACTOR_NEUTRAL_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -19,8 +10,7 @@ compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 responsibility:
   - 因子暴露约束
-  - 因子风险控制
----
+  - 因子风险控制---
 
 
 ## 核心定位

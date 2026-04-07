@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DATA-BACKUP-RECOVERY-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: DATA_BACKUP_RECOVERY_001
 version: 1.0.0
 status: Active
@@ -21,8 +12,7 @@ responsibility:
   - 数据备份
   - 灾难恢复
   - 备份监控
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # 数据备份恢复蓝图
 

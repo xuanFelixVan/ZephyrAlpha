@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: ALGORITHMIC_TRADING_OPTIMIZER_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 交易算法选择
   - 执行优化
   - 算法评估
-layer: Layer 5.4 (交易执行)
----
+layer: Layer 5.4 (交易执行)---
 
 ## 核心定位
 

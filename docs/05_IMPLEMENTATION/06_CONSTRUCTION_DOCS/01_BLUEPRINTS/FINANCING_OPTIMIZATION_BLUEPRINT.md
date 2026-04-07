@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: FINANCING_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 融资成本优化
   - 杠杆效率提升
   - 融资策略
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

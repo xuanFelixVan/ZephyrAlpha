@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: DATA_SECURITY_COMPLIANCE_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
   - 数据加密
   - 访问控制
   - 合规审计
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # DATA SECURITY COMPLIANCE BLUEPRINT
 

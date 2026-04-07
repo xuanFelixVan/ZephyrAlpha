@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -10,10 +10,8 @@ applicable_scope: Layer 1 数据源层
 compliance_level: 专业标准
 responsibility:
   - 另类数据集成
-?
   - 数据质量控制
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

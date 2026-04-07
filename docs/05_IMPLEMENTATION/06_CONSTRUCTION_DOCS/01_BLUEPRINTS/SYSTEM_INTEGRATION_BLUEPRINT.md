@@ -1,4 +1,4 @@
-﻿﻿---
+---
 responsibility:
   - 系统集成
   - 模块集成
@@ -14,8 +14,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 7 AI?
 compliance_level: 专业标准
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 > **职责边界**: 

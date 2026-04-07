@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: REDIS-CACHE-LAYER-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: REDIS_CACHE_LAYER_001
 version: 1.0.0
 status: Active
@@ -20,8 +11,7 @@ responsibility:
   - 数据缓存
   - 会话管理
   - 分布式锁
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 
 > **职责边界**: 

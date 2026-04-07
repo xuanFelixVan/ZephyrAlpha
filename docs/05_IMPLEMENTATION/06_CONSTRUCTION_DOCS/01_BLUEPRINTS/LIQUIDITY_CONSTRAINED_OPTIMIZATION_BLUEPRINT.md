@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: LIQUIDITY-CONSTRAINED-OPTIMIZATION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -19,8 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 约束处理
   - 优化求解
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 
 > **职责边界**: 

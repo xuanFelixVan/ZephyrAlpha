@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
@@ -13,8 +13,7 @@ responsibility:
   - 定期权重调整
   - 季度绩效归因
   - 周期性再平衡
-layer: Layer 6 (组合优化层)
----
+layer: Layer 6 (组合优化层)---
 # 季度调仓蓝图
 
 ## 核心定位

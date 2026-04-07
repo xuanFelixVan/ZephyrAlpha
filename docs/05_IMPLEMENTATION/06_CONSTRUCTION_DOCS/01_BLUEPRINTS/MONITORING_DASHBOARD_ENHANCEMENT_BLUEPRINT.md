@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: MONITORING_DASHBOARD_ENHANCEMENT_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 监控面板增强
   - 实时监控
   - 监控告警
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

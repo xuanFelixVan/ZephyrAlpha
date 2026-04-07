@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: MEAN-VARIANCE-OPTIMIZATION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -22,8 +13,7 @@ responsibility:
   - 有效前沿计算
   - 最优组合求解
   - 风险收益权衡
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 ### 3.1 接口设计
 

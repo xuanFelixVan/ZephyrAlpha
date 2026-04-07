@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: REALTIME_DATA_LAKE_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 统一数据存储
   - 数据查询优化
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 
 ## 核心定位

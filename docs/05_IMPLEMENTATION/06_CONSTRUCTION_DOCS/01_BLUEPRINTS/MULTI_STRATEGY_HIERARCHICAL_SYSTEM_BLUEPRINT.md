@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
 
   - 信号融合
   - 策略协同优化
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 
 ## 核心定位

@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: ROBUST-OPTIMIZATION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: ROBUST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -18,10 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - 鲁棒优化
--
-?
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 # 鲁棒优化蓝图
 

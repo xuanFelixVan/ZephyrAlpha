@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: EXECUTION_STRATEGY_BACKTESTER_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 执行模拟
   - 策略评估
   - 回测报告
-layer: Layer 5.4 (交易执行)
----
+layer: Layer 5.4 (交易执行)---
 
 ## 核心定位
 

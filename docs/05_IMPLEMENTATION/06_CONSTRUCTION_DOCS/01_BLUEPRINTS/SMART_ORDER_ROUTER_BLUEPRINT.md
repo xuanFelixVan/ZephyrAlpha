@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: SMART_ORDER_ROUTER_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 订单拆分
   - 执行优化
   - 成本最小化
-layer: Layer 5.4 (交易执行)
----
+layer: Layer 5.4 (交易执行)---
 
 
 > **核心职责**: 智能订单路由，优化订单拆分和执行

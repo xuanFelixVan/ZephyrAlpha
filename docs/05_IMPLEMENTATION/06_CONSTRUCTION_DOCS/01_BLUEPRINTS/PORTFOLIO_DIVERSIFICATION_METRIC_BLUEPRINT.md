@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: PORTFOLIO-DIVERSIFICATION-METRIC-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001
 version: 1.0.0
 status: Active
@@ -18,8 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - 风险分散评估
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 
 > **职责边界**: 

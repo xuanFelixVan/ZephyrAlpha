@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: DATA_OBSERVABILITY_001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 数据监控
   - 数据追踪
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # DATA OBSERVABILITY BLUEPRINT
 

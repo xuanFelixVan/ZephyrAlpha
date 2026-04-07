@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: TIMEFRAME_COORDINATION_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
   - 信号融合
   - 冲突解决
   - 时间框架优化
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

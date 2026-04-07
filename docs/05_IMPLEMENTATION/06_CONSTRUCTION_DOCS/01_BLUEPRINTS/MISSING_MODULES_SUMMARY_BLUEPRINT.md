@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: MISSING-MODULES-SUMMARY-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: LAYER1_MISSING_MODULES_SUMMARY_001
 version: 1.0.0
 status: Active
@@ -17,9 +8,7 @@ standard_type: 专业量化机构文档
 responsibility:
   - 缺失模块总结
   - 实施计划
--
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

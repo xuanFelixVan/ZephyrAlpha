@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0
 status: Active
@@ -13,8 +13,7 @@ responsibility:
   - 层级风险分配
   - 跨资产风险协调
   - 层级预算优化
-layer: Layer 5.3 (风险管理)
----
+layer: Layer 5.3 (风险管理)---
 # 层级风险预算蓝图
 
 ?

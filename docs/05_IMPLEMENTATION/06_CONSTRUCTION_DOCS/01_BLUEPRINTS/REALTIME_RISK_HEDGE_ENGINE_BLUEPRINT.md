@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
   - 实时风险对冲
   - 对冲交易生成
   - 风险敞口管理
-layer: Layer 5.3 (风险管理)
----
+layer: Layer 5.3 (风险管理)---
 
 # 实时风险对冲引擎蓝图
 

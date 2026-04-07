@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: UNIFIED-DATA-API-GATEWAY-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: UNIFIED_DATA_API_GATEWAY_001
 version: 1.0.0
 status: Active
@@ -20,8 +11,7 @@ responsibility:
   - 数据查询服务
   - API认证授权
   - 限流熔断
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

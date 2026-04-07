@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: FACTOR-BACKTEST-INTEGRATION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -20,8 +11,7 @@ responsibility:
   - 因子回测集成
   - 回测框架
   - 因子评估
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 ## 核心定位
 

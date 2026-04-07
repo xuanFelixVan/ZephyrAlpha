@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: TAIL_RISK_HEDGING_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 尾部风险对冲
   - 期权对冲策略
   - VIX对冲
-  - 极端风险保护
----
+  - 极端风险保护---
 
 
 ## 核心定位

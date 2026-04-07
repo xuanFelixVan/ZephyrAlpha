@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: SMART_EXECUTION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - VWAP/TWAP/IS/POV
   - 交易成本最小化
   - 市场冲击控制
-layer: Layer 5.4 (交易执行)
----
+layer: Layer 5.4 (交易执行)---
 
 # 智能执行引擎蓝图
 

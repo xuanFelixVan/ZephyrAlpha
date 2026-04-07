@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: TAIL-RISK-METRICS-EXTENSION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
 status: Active
@@ -21,8 +12,7 @@ responsibility:
   - 尾部风险度量扩展
   - CVaR/EVaR/CDaR计算
   - 高级风险指标
-  - 风险度量分析
----
+  - 风险度量分析---
 
 
 ## 核心定位

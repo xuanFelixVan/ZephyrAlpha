@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: UNIFIED_DATA_INFRASTRUCTURE__001
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ responsibility:
   - 数据存储架构
   - 数据处理引擎
   - 基础设施管理
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

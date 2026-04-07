@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 职责划分
   - 模块协作规范
   - 职责冲突解决
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 ## 核心定位

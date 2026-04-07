@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: MONITORING-ALERTING-SYSTEM-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: MONITORING_ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -22,8 +13,7 @@ responsibility:
   - 系统监控
   - 异常告警
   - 性能监控
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 # 监控告警系统蓝图
 

@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: CLICKHOUSE-INTEGRATION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: CLICKHOUSE_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -21,8 +12,7 @@ responsibility:
   - 列式数据存储
   - 列式数据查询
   - 数据聚合分析
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # ClickHouse列式存储集成蓝图
 

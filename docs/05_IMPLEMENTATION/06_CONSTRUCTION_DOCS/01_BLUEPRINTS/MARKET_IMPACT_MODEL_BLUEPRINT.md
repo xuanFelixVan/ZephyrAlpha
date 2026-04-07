@@ -1,4 +1,4 @@
-﻿﻿---
+---
 responsibility:
   - 市场冲击建模
   - 冲击成本预测
@@ -13,8 +13,7 @@ last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
-layer: Layer 5.4 (交易执行)
----
+layer: Layer 5.4 (交易执行)---
 
 # 市场冲击模型蓝图
 

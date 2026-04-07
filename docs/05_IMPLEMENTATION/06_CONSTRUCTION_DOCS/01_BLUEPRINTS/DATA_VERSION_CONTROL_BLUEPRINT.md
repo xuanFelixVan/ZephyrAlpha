@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: DATA_VERSION_CONTROL_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 数据回溯
   - 数据审计
   - 版本控制
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 
 ## 核心定位

@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DATA-QUALITY-MONITORING-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: DATA_QUALITY_MONITORING_001
 version: 1.0.0
 status: Active
@@ -21,8 +12,7 @@ responsibility:
   - 质量规则验证
   - 质量报告
   - 质量预警
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # DATA QUALITY MONITORING BLUEPRINT
 

@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
   - 组合保险策略
   - CPPI/OBPI
   - 下行风险保护
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 
 ## 核心定位

@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: CONSTRAINT-SOLVER-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 responsibility:
   - 约束数学建模
   - 求解算法实现
@@ -22,8 +13,7 @@ last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
-layer: Layer 5.2 (组合优化)
----
+layer: Layer 5.2 (组合优化)---
 
 
 ## 核心定位

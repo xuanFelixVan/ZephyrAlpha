@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DATA-ORCHESTRATION-SYSTEM-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: DATA_ORCHESTRATION_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -20,8 +11,7 @@ responsibility:
   - 数据调度系统
   - 任务调度编排
   - 任务监控
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # 数据调度系统蓝图
 

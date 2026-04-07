@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 报告生成
   - 报告模板管理
   - 报告分发
-layer: Layer 5 (策略执行层)
----
+layer: Layer 5 (策略执行层)---
 
 
 > **职责边界**: 

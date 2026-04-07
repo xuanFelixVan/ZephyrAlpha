@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: FACTOR-EXPOSURE-MANAGEMENT-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: FACTOR_EXPOSURE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -21,8 +12,7 @@ responsibility:
   - 因子暴露管理
   - 因子暴露监控
   - 因子暴露调整
-  - 因子风险控制
----
+  - 因子风险控制---
 
 
 ## 核心定位

@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DATA-PREPROCESSING-ARCHITECTURE-GAP-ANALYSIS-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: LAYER1_ARCHITECTURE_GAP_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -17,8 +8,7 @@ standard_type: 专业量化机构文档
 responsibility:
   - 架构分析
   - 缺失模块识别
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 
 ## 核心定位

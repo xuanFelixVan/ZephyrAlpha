@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: DATA_GOVERNANCE_PLATFORM_001
 version: 1.0.0
 status: Active
@@ -12,8 +12,7 @@ responsibility:
   - 数据标准管理
   - 数据质量管理
   - 数据资产管理
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # DATA GOVERNANCE PLATFORM BLUEPRINT
 

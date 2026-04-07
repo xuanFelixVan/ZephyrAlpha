@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DATA-SOURCE-HEALTH-MONITOR-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: DATA_SOURCE_HEALTH_MONITOR__001
 version: 1.0.0
 status: Active
@@ -18,8 +9,7 @@ applicable_scope: Layer 1 数据预处理层
 compliance_level: 专业标准
 priority: P1
 layer: Layer 5.1 (数据处理)
-障切换
----
+障切换---
 
 
 ## 核心定位

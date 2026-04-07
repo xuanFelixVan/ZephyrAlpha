@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: TRADING_SIGNAL_VALIDATOR_001
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ responsibility:
   - 交易信号验证
   - 信号质量评估
   - 信号过滤
-layer: Layer 5.4 (交易执行)
----
+layer: Layer 5.4 (交易执行)---
 
 
 ## 核心定位

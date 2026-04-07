@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DATA-VALIDATION-ENGINE-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: DATA_VALIDATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -19,8 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 数据验证引擎
   - 数据验证
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 # 数据验证引擎蓝图
 

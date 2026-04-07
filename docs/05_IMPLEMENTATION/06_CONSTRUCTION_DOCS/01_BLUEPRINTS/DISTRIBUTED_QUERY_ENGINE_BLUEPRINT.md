@@ -1,13 +1,4 @@
 ---
-version: 1.0.0
-module_id: DISTRIBUTED-QUERY-ENGINE-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
-﻿﻿---
 module_id: DISTRIBUTED_QUERY_ENGINE_001
 version: 1.0.0
 status: Active
@@ -19,8 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 数据联邦
   - 跨源查询
-layer: Layer 5.1 (数据处理)
----
+layer: Layer 5.1 (数据处理)---
 
 
 ## 核心定位
