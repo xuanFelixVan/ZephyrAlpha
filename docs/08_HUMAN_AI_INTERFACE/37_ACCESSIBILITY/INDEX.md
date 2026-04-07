@@ -7,7 +7,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 37_ACCESSIBILITY模块目录导航与文档索引管理与优化维护
+  - ACCESSIBILITY模块目录导航与文档索引管理
 ---------|------|------|------|
 | ACCESSIBILITY_BLUEPRINT.md | 蓝图 | 活跃 | 可访问性支持系统，确保系统对所有用户友好 |
 

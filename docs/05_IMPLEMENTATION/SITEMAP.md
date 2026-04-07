@@ -168,4 +168,4 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 - [ﻝﺏﭨﻝﭨﻛﺕﭨﻝﺑ۱ﮒﺙ](../INDEX.md)
 - [ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮒﺍﮒﺝ](../SITEMAP.md)
 - [ﮔ۰ﮔﭘﻟ؟ﺝﻟ؟۰ﻝﺑ۱ﮒﺙ](../01_FRAMEWORK/INDEX.md)
-- [ﮒﮒﮒﭦﻝﺑ۱ﮒﺙ](../02_FACTOR_LIBRARY/INDEX.md)
+- `ﮒﮒﮒﭦﻝﺑ۱ﮒﺙ`

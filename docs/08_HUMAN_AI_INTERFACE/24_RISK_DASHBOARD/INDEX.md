@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 提供24_RISK_DASHBOARD目录索引
+  - RISK_DASHBOARD模块目录导航与文档索引管理
 standard_type: 专业量化机构索引
 applicable_scope: 24_RISK_DASHBOARD
 ---

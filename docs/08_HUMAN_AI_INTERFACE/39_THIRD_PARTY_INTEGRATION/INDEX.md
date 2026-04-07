@@ -7,7 +7,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 39_THIRD_PARTY_INTEGRATION模块目录导航与文档索引管理与优化维护
+  - THIRD_PARTY_INTEGRATION模块目录导航与文档索引管理
 ---------|------|------|------|
 | THIRD_PARTY_INTEGRATION_BLUEPRINT.md | 蓝图 | 活跃 | 第三方系统集成平台，支持各种外部服务的接入和数据同步 |
 

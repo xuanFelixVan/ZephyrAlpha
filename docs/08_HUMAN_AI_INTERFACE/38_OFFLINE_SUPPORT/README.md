@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 离线支持架构设计、离线数据缓存、离线操作同步、网络状态检测实现
+  - OFFLINE_SUPPORT模块概述与快速开始指南
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

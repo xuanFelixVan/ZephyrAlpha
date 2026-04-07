@@ -175,7 +175,7 @@ docs/
 |---------|------|--------|
 | | 因子库系统清?| ⭐⭐⭐⭐?|
 | | 因子注册?| ⭐⭐⭐⭐?|
-| [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | ⭐⭐⭐⭐ |
+| `因子计算框架` | 因子计算框架 | ⭐⭐⭐⭐ |
 | | 数据源接口文?| ⭐⭐⭐⭐ |
 
 ### 3. 交易战术 (03_TRADING_TACTICS)
@@ -215,7 +215,7 @@ docs/
 
 **核心文档**：
 1. [研究与创新层蓝图](./09_RESEARCH_INNOVATION/BLUEPRINT.md)
-2. 3. [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
+2. 3. `因子计算框架`
 
 ### 治理与合规负责人 🆕
 
@@ -229,7 +229,7 @@ docs/
 1. `战略决策层蓝图`
 2. [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 3. ### 因子研究?
-**核心文档**?1. 2. [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
+**核心文档**?1. 2. `因子计算框架`
 3. ### 策略开发人?
 **核心文档**?1. [交易战术索引](./03_TRADING_TACTICS/INDEX.md)
 2. [策略框架](./03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md)

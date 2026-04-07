@@ -198,7 +198,7 @@ implementation_status: 已完?tags: ["知识?, "索引", "导航"]
 - [实施文档索引](../05_IMPLEMENTATION/INDEX.md)
 
 ### 相关文档
-- [因子库文档](../02_FACTOR_LIBRARY/INDEX.md)
+- `因子库文档`
 - - ---
 
 **文档版本**: v1.0.0

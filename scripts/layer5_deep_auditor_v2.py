@@ -273,10 +273,10 @@ class Layer5DeepAuditor:
                     'description': '职责描述缺少中文标点符号'
                 })
             
-            vague_words = ['负责', '管理', '处理', '提供', '支持']
+            vague_words = ['管理', '处理', '提供', '支持', '实现']
             vague_count = sum(1 for word in vague_words if word in responsibility)
             
-            if vague_count >= 3:
+            if vague_count >= 4:
                 self.responsibility_issues.append({
                     'type': '职责描述模糊',
                     'file': doc_name,

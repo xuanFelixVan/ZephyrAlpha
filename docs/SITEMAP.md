@@ -109,7 +109,7 @@ docs/
 **关键文档**:
 - [系统清单](System_Manifest.md)
 - [因子注册表](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
-- [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
+- `因子计算框架`
 - [数据源概述](01_FRAMEWORK\README.md)
 
 **子目?*:
@@ -117,7 +117,7 @@ docs/
 - [01_STANDARDS/](02_FACTOR_LIBRARY\01_STANDARDS) - 方法?- [03_RISK_FACTORS/](02_FACTOR_LIBRARY\03_RISK_FACTORS) - 风险因子
 - [04_DATA_SOURCE/](02_FACTOR_LIBRARY\04_DATA_SOURCE) - 数据?- [05_BACKTEST/](02_FACTOR_LIBRARY\05_BACKTEST) - 回测
 
-**索引文件**: [INDEX.md](./02_FACTOR_LIBRARY/INDEX.md) | [SITEMAP.md](./02_FACTOR_LIBRARY/SITEMAP.md)
+**索引文件**: `INDEX.md` | [SITEMAP.md](./02_FACTOR_LIBRARY/SITEMAP.md)
 
 ### 03_TRADING_TACTICS - 交易战术
 
@@ -189,13 +189,13 @@ docs/
 ### 因子相关
 
 - **因子注册**: [因子注册表](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
-- **因子计算**: [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
-- **因子回测**: [回测概述](./02_FACTOR_LIBRARY/05_BACKTEST/README.md)
+- **因子计算**: `因子计算框架`
+- **因子回测**: `回测概述`
 
 ### 数据相关
 
 - **数据?*: [数据源概述](01_FRAMEWORK\README.md)
-- **QMT接口**: [QMT接口](./02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- **QMT接口**: `QMT接口`
 - **iFind连接?*: `iFind连接器`
 
 ### 审计相关
@@ -210,5 +210,5 @@ docs/
 
 - [系统主索引](./INDEX.md)
 - [框架设计索引](./01_FRAMEWORK/INDEX.md)
-- [因子库索引](./02_FACTOR_LIBRARY/INDEX.md)
+- `因子库索引`
 - [实施层索引](./05_IMPLEMENTATION/INDEX.md)

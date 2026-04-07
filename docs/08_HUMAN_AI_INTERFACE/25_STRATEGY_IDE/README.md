@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 策略开发IDE设计、代码编辑器集成、策略调试工具、策略回测与优化功能实现
+  - STRATEGY_IDE模块概述与快速开始指南
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

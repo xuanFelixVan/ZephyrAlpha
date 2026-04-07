@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 用户培训系统设计、培训内容管理、培训进度跟踪、培训效果评估实现
+  - USER_TRAINING模块概述与快速开始指南
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

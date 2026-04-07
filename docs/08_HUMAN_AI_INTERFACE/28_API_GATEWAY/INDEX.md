@@ -7,7 +7,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 28_API_GATEWAY模块目录导航与文档索引管理与优化维护
+  - API_GATEWAY模块目录导航与文档索引管理
 ---------|------|------|------|
 | API_GATEWAY_BLUEPRINT.md | 蓝图 | 活跃 | 统一API管理平台，支持API路由、版本控制、文档生成和性能监控 |
 

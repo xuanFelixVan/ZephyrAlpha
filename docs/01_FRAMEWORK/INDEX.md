@@ -281,7 +281,7 @@ responsibility:
 ## 🔗 相关链接
 
 - [系统主索引](../INDEX.md)
-- [因子库索引](../02_FACTOR_LIBRARY/README.md)
+- `因子库索引`
 - [实施层索引](../05_IMPLEMENTATION/README.md)
 
 - [全系统Layer 0-11完整性深度分析报告](./ALL_LAYERS_GAP_ANALYSIS.md) - 系统文档

@@ -229,7 +229,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | цЦЗцбг | шп┤цШО |
 |------|------|
 | 02_FACTOR_LIBRARY/99_AUDIT_REPORT.md | хЫахнРх║УхобшобцКехС?|
-| [02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md](../02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md) | хЫахнРф╝ШхМЦцА╗ч╗У |
+| `02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md` | хЫахнРф╝ШхМЦцА╗ч╗У |
 
 ### ф║дцШУчнЦчХешбехЕЕцЦЗцбг
 

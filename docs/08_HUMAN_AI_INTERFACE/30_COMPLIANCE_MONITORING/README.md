@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 合规监控界面设计、合规规则配置、合规检查引擎、合规报告生成实现
+  - COMPLIANCE_MONITORING模块概述与快速开始指南
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

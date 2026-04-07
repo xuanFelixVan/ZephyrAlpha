@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 回测界面交互设计、回测参数配置、回测结果可视化展示、性能指标分析图表实现
+  - BACKTEST_UI模块概述与快速开始指南
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

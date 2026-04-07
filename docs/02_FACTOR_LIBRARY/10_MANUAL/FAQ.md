@@ -1,6 +1,8 @@
 ---
 responsibility:
   - 提供10 Manual相关文档支持
+
+module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 ---|
 | 原始数据 | `data/raw/{type}/{year}/` | Parquet |
 | 处理后数?| `data/processed/` | Parquet + SQLite |

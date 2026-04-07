@@ -163,7 +163,7 @@ compliance_level: 专业标准
 - [统一架构 (Layer 0-11)](../01_FRAMEWORK/ARCHITECTURE.md)
 - [人机交互层 (Layer 8)](../08_HUMAN_AI_INTERFACE/INDEX.md)
 - [执行层 (Layer 5)](../04_EXECUTION/INDEX.md)
-- [因子库层 (Layer 2)](../02_FACTOR_LIBRARY/INDEX.md)
+- `因子库层 (Layer 2)`
 
 ---
 

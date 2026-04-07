@@ -108,7 +108,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 |-------|------|
 | Layer 0 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 1 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Layer 2 | [因子库文档](../02_FACTOR_LIBRARY/README.md) |
+| Layer 2 | `因子库文档` |
 | Layer 3 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 4 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 5 | [执行文档](../04_EXECUTION/README.md) |

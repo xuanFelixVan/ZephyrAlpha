@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 提供文档支持
+  - 回测界面交互设计、回测参数配置、回测结果可视化展示、性能指标分析图表实现
 ---
 
 

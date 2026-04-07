@@ -450,7 +450,7 @@ implementation_status: 进行?---
 ### C. 关键文件位置
 1. **因子计算?*: 
 2. **因子回测集成蓝图**: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
-3. **因子验证蓝图**: [FACTOR_VALIDATION_BLUEPRINT.md](../../../02_FACTOR_LIBRARY/05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md)
+3. **因子验证蓝图**: `FACTOR_VALIDATION_BLUEPRINT.md`
 4. **系统清单**: System_Manifest.md
 
 ### D. 术语?

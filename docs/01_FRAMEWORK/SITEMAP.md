@@ -203,5 +203,5 @@ implementation_status: 活跃维护
 
 - [系统主索引](../INDEX.md)
 - [系统文档地图](../SITEMAP.md)
-- [因子库索引](../02_FACTOR_LIBRARY/INDEX.md)
+- `因子库索引`
 - [实施层索引](../05_IMPLEMENTATION/INDEX.md)

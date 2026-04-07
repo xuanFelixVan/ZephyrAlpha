@@ -1,4 +1,9 @@
----|------|
+---|
+responsibility:
+  - 提供02 Factor Library相关文档支持
+
+module_id: 02_FACTOR_LIBRARY_001
+------|
 | ĵ | 6?| ض |
 | ļ | 2?|  |
 | һĿ?| 8?|  |

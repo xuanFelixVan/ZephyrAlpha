@@ -171,10 +171,10 @@ responsibility:
 **问题**: 多处引用路径错误
 
 ```markdown
-| [因子注册表](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md) |
-因子注册? [06_REGISTRY/factor_catalog.md](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md)
+| `因子注册表` |
+因子注册? `06_REGISTRY/factor_catalog.md`
 监控报告: `07_MONITORING/factor_monitoring.md`
-- [因子注册表](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md)
+- `因子注册表`
 - 监控报告
 
 **问题**:

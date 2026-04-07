@@ -396,7 +396,7 @@ class QMTConfig:
 ### 8.1
 部文档
 
-- [QMT数据接口技术规范](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- `QMT数据接口技术规范`
 - [QMT执行器技术规格书](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
 - 订单执行蓝图
 - 模拟交易蓝图

@@ -41,7 +41,7 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 ## ﻭ ﮒﺟ،ﻠﮒﺁﺙﻟ?
 ### ﮔﺕﮒﺟﮔﮔ۰۲
 - **ﻝﺏﭨﻝﭨﮔﭘﮔ**: [../01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)
-- **ﮒﮒﮒﭦ?*: [../02_FACTOR_LIBRARY/INDEX.md](../02_FACTOR_LIBRARY/INDEX.md)
+- **ﮒﮒﮒﭦ?*: `../02_FACTOR_LIBRARY/INDEX.md`
 - **ﻛﭦ۳ﮔﻝﻝ۴**: [../03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)
 - **ﮔ۶ﻟ۰ﮒﺎ?*: [../04_EXECUTION/INDEX.md](../04_EXECUTION/INDEX.md)
 - **ﮒ؟ﮔﺛﮔﮒ**: [../05_IMPLEMENTATION/INDEX.md](../05_IMPLEMENTATION/INDEX.md)

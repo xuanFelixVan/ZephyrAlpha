@@ -1,5 +1,10 @@
 ---
 
+
+responsibility:
+  - 提供05 Backtest相关文档支持
+
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
 ---|
 | **对象** | 单个因子 | 完整策略 |
 | **目的** | 验证因子预测能力 | 验证策略交易表现 |

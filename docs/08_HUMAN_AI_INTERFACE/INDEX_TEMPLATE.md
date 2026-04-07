@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 索引模板文档
+  - HUMAN_AI_INTERFACE文档
 ---
 
 **模板状态**: ✅ 活跃

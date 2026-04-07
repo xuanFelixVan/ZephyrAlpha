@@ -329,7 +329,7 @@ AI角色: 代码生成助手
 
 2. **第一个模块实?*
    - 模块: L0_QMT数据接口
-   - 参? [QMT_INTERFACE.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+   - 参? `QMT_INTERFACE.md`
    - 目标: 实现QMT连接和基础数据获取
 
 3. **设置开发流?*
