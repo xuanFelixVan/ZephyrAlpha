@@ -1,16 +1,19 @@
 ---
-module_id: UNIFIED_DATA_API_GATEWAY_BLUEPRINT_001
+module_id: UNIFIED_DATA_API_GATEWAY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - 统一数据API网关
   - 数据查询服务
   - API认证授权
-layer: "Layer 1 (数据预处理层)"
+  - 限流熔断
+layer: "Layer 1 (数据层)"
 ---
 
 # 统一数据API网关蓝图

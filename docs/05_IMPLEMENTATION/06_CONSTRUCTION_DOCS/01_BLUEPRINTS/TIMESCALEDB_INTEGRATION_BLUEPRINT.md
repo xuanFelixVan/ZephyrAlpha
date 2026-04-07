@@ -1,16 +1,19 @@
 ---
-module_id: TIMESCALEDB_INTEGRATION_BLUEPRINT_001
+module_id: TIMESCALEDB_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - TimescaleDB集成
+  - 时序数据存储
   - 高频数据管理
   - 时间窗口聚合
-layer: "Layer 1 (数据预处理层)"
+layer: "Layer 1 (数据层)"
 ---
 
 # TimescaleDB时序数据库集成蓝图

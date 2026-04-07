@@ -10,9 +10,10 @@ applicable_scope: Layer 7 风险管理层
 compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
 responsibility:
-  - 实施指南、部署文档
+  - 尾部风险度量扩展
   - CVaR/EVaR/CDaR计算
   - 高级风险指标
+  - 风险度量分析
 ---
 
 # 尾部风险度量扩展蓝图

@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - Barra风险模型
+  - 风险因子建模
+  - 风险暴露分析
+  - 风险预测
 
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0

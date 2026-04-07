@@ -1,16 +1,19 @@
 ---
-module_id: MONITORING_ALERTING_SYSTEM_BLUEPRINT_001
+module_id: MONITORING_ALERTING_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 9 监控层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - 监控告警系统
   - 系统监控
   - 异常告警
-layer: "Layer 1 (数据预处理层)"
+  - 性能监控
+layer: "Layer 9 (监控层)"
 ---
 
 # 监控告警系统蓝图

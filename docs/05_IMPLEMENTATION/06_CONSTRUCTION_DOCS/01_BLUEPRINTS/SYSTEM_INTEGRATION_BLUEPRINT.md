@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 系统集成
+  - 模块集成
+  - 接口协调
+  - 集成测试
 
 module_id: SYSTEM_INTEGRATION_001
 version: 1.0.0

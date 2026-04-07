@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 系统增强
+  - 功能扩展
+  - 性能优化
+  - 系统升级
 
 module_id: SYSTEM_ENHANCEMENT_001
 version: 1.0.0

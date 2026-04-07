@@ -1,16 +1,19 @@
 ---
-module_id: CONFIGURATION_MANAGEMENT_BLUEPRINT_001
+module_id: CONFIGURATION_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 9 监控层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
   - 配置管理
+  - 配置集中管理
   - 版本控制
-layer: "Layer 1 (数据预处理层)"
+  - 热更新
+layer: "Layer 9 (监控层)"
 ---
 
 # 配置管理中心蓝图
