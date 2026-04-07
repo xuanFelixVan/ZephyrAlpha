@@ -1,13 +1,4 @@
----
-module_id: DOCUMENTATION_CENTER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DOCUMENTATION_CENTER蓝图设计
----
+
 
 ﻿---
 module_id: DOCUMENTATION_CENTER_001
@@ -160,8 +151,6 @@ plugins:
 | 链接失效 | 中 | 自动链接检查 |
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 蓝图设计完成
-
-
 
 ---
 

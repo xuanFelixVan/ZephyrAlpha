@@ -1,13 +1,4 @@
----
-module_id: INDEX_TEMPLATE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - INDEX模板文档
----
+
 
 ﻿---
 module_id: INDEX_TEMPLATE_001
@@ -21,33 +12,12 @@ responsibility:
 standard_type: 模板文档
 applicable_scope: 人机交互层索引文档
 compliance_level: 专业标准
----
-
-# 索引文档模板规范
-
-> **核心职责**: 提供标准化的索引文档模板
-> **适用范围**: 人机交互层所有子目录的INDEX.md文件
-
----
 
 ## 📋 标准索引模板
 
 ### 最小化模板（推荐）
 
 ```markdown
----
-module_id: INDEX_{模块编号}_{模块名称}_001
-version: 1.0.0
-status: Active
-created_date: {创建日期}
-last_updated: {更新日期}
-owner: 文档治理系统
-responsibility:
-  - 文档模板设计与标准化管理与优化维护
-standard_type: 索引文档
-applicable_scope: {模块适用范围}
-compliance_level: 专业标准
----
 
 # {模块编号} {模块名称}索引
 
@@ -61,15 +31,6 @@ compliance_level: 专业标准
 |---------|------|------|------|
 | {BLUEPRINT文档名} | 蓝图 | 活跃 | {模块功能描述} |
 
----
-
-**索引状态**: ✅ 活跃 | **维护**: 按需更新
-```
-
-### 完整模板（可选）
-
-```markdown
----
 module_id: INDEX_{模块编号}_{模块名称}_001
 version: 1.0.0
 status: Active
@@ -81,60 +42,9 @@ responsibility:
 standard_type: 索引文档
 applicable_scope: {模块适用范围}
 compliance_level: 专业标准
----
-
-# {模块编号} {模块名称}索引
-
-> **核心职责**: 目录导航和文档索引
-> **版本**: v1.0.0
-> **索引**: `INDEX_{模块编号}_{模块名称}_001`
-
-## 📄 文档列表
-
-| 文档名称 | 类型 | 状态 | 说明 |
-|---------|------|------|------|
-| {BLUEPRINT文档名} | 蓝图 | 活跃 | {模块功能描述} |
-
-## 🔗 快速链接
-
-- [返回上级目录](../index.md)
-- 模块蓝图
-
----
 
 **索引状态**: ✅ 活跃 | **维护**: 按需更新
 ```
-
----
-
-## 🎯 优化原则
-
-### 1. 减少重复内容
-
-**移除的内容**:
-- ❌ 统计信息表格（文档总数、活跃模块、更新频率）
-- ❌ 维护指南（更新规则、质量标准）
-- ❌ 相关文档链接（Module ID注册表、职责边界地图等）
-
-**保留的内容**:
-- ✅ YAML头部（元数据）
-- ✅ 核心职责声明
-- ✅ 文档列表（核心内容）
-- ✅ 状态标识
-
-### 2. 简化结构
-
-**优化前**: 65行，包含统计信息、维护指南、质量标准等
-**优化后**: 20-30行，只包含核心索引信息
-
-### 3. 提高可维护性
-
-**原则**:
-- 索引文档只负责索引，不负责统计和维护指南
-- 统计和维护指南统一放在根目录的索引文档中
-- 减少模板化内容，提高个性化
-
----
 
 ## 📊 对比示例
 
@@ -170,24 +80,6 @@ compliance_level: 专业标准
 - [Module ID注册表](../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
 - [职责边界地图](../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
 - [专业文档治理审计指南](../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-
----
-
-**索引状态**: ✅ 活跃
-**维护频率**: 按需更新
-**下次更新**: 按需
-```
-
-### 优化后
-
-```markdown
-## 📄 文档列表
-
-| 文档名称 | 类型 | 状态 | 说明 |
-|---------|------|------|------|
-| 监控仪表板蓝图 | 蓝图 | 活跃 | 系统监控和指标展示 |
-
----
 
 **索引状态**: ✅ 活跃 | **维护**: 按需更新
 ```

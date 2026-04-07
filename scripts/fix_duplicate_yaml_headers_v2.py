@@ -33,12 +33,15 @@ class DuplicateYAMLFixer:
                     rel_path = file_path.relative_to(BASE_DIR)
                     
                     try:
-                        with open(file_path, 'r', encoding='utf-8') as f:
+                        with open(file_path, 'r', encoding='utf-8-sig') as f:
                             content = f.read()
+                        
+                        # 移除BOM字符
+                        content = content.lstrip('\ufeff')
                         
                         # 查找所有YAML块
                         yaml_pattern = r'^---\s*\n(.*?)\n---'
-                        yaml_blocks = list(re.finditer(yaml_pattern, content, re.DOTALL))
+                        yaml_blocks = list(re.finditer(yaml_pattern, content, re.DOTALL | re.MULTILINE))
                         
                         if len(yaml_blocks) > 1:
                             # 保留最后一个YAML块
