@@ -23,6 +23,21 @@ responsibility:
 **本文档职责**: 实时监控仪表盘模块蓝图
 - 舆情热力图、情感趋势图、预警时间线
 
+**📌 职责边界说明**:
+- **本文档**: 舆情专用仪表盘模块，负责舆情数据可视化展示
+- **REAL_TIME_RISK_MONITOR**: 系统级核心风险监控，负责全系统风险评估
+- **LIVE_TRADING_MONITOR**: 实盘交易专用监控，负责交易层面的监控
+- **REAL_TIME_ALERT_SYSTEM**: 舆情专用预警模块，负责舆情预警
+
+**职责关系**:
+```
+统一告警平台（上游）
+    ├── REAL_TIME_RISK_MONITOR（系统级风险监控）
+    ├── LIVE_TRADING_MONITOR（实盘交易监控）
+    ├── REAL_TIME_ALERT_SYSTEM（舆情预警）
+    └── REAL_TIME_MONITORING_DASHBOARD（本模块：舆情仪表盘）
+```
+
 # 实时监控仪表盘模块蓝图 (Real-time Monitoring Dashboard Blueprint)
 
 > **核心职责**: 蓝图设计和架构规划

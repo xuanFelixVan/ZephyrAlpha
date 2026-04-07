@@ -31,6 +31,21 @@ related_documents:
 **本文档职责**: 实盘监控模块蓝图
 - 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警
 
+**📌 职责边界说明**:
+- **本文档**: 实盘交易专用监控模块，负责交易层面的实时监控
+- **REAL_TIME_RISK_MONITOR**: 系统级核心风险监控，负责全系统风险评估
+- **REAL_TIME_ALERT_SYSTEM**: 舆情专用预警模块，负责舆情预警
+- **REAL_TIME_MONITORING_DASHBOARD**: 舆情专用仪表盘，负责舆情可视化
+
+**职责关系**:
+```
+统一告警平台（上游）
+    ├── REAL_TIME_RISK_MONITOR（系统级风险监控）
+    ├── LIVE_TRADING_MONITOR（本模块：实盘交易监控）
+    ├── REAL_TIME_ALERT_SYSTEM（舆情预警）
+    └── REAL_TIME_MONITORING_DASHBOARD（舆情仪表盘）
+```
+
 # 实盘监控模块蓝图
 
 > **版本**: v1.0

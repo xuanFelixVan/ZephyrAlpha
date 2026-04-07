@@ -1,49 +1,27 @@
 ---
-module_id: VAR_ES_MONITORING_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
-# VAR ES MONITORING BLUEPRINT
-
-> **核心职责**: Var Es Monitoring蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Var Es Monitoring蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: VAR_ES_MONITORING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
-﻿# VaR/ES实时监控蓝图
+---
 
-> **核心定位**: VaR/ES实时监控蓝图的核心功能实现
+# VaR/ES实时监控蓝图
 
-
-> **索引**: `VAR_ES_MONITORING_001`
-> **开发周期**: 5-7天
-> **核心定位**: 实时监控组合的VaR和ES风险指标，支持多种计算方法和回测验证
-> **参考开源**: pyRisk, arch, pyfolio
-
-## 核心定位
-
-VaR/ES监控系统，负责实时监控投资组合的风险价值和预期损失
+> **核心职责**: 实时监控组合的VaR和ES风险指标
+> **职责边界**: 
+> - ✅ 本文档负责：VaR/ES计算、实时监控、回测验证
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

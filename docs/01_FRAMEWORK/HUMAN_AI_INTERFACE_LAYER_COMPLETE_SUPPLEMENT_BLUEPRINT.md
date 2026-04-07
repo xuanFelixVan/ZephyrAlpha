@@ -1,33 +1,10 @@
 ---
-module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 人机交互层完整补充方案
-compliance_level: 顶级专业标准
-reference_models: ["Bridgewater AYA System", "Renaissance Technologies AI Governance", "Two Sigma Human-AI Collaboration", "Citadel Human Interface"]
-related_documents:
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-  - HUMAN_AI_INTEGRATION_BLUEPRINT.md
-  - HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md
-  - INDEX.md
-responsibility_boundary: |
-  本文档负责人机交互层完整补充方案，包括：
-  
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-  界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
-  初步分析请参考：HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md
-parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-implementation_status: 蓝图设计完成
+module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
+
 responsibility:
-  - 扩展功能、辅助模块
----
----
----
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
 # 人机交互层完整补充蓝图
 > **核心职责**: Human Ai Interface Layer Complete Supplement蓝图设计

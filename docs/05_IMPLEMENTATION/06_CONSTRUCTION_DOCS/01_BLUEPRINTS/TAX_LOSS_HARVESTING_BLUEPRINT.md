@@ -1,51 +1,27 @@
 ---
-module_id: TAX_LOSS_HARVESTING_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
-# TAX LOSS HARVESTING BLUEPRINT
-
-> **核心职责**: Tax Loss Harvesting蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Tax Loss Harvesting蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: TAX_LOSS_HARVESTING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 组合优化
-  - 交易执行
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 税收优化（税损收割）蓝图
-
-> **核心定位**: 税收优化（税损收割）蓝图的核心功能实现
-
-
-> **模块ID**: TAX_LOSS_HARVESTING_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 实现税损收割策略，优化税后收益，对个人投资者至关重要
-> **索引**: `TAX_LOSS_HARVESTING_001`
-> **开发周期**: 2周
-
 ---
-## 核心定位
 
-税务损失收割模块，负责识别和实施税务优化策略，降低税负
+# 税收优化（税损收割）蓝图
+
+> **核心职责**: 实现税损收割策略，优化税后收益
+> **职责边界**: 
+> - ✅ 本文档负责：税损识别、收割策略、wash sale规避
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 模块概述

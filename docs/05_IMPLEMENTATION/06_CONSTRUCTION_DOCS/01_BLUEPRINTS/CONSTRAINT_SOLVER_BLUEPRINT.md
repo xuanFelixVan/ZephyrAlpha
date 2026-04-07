@@ -1,39 +1,29 @@
 ---
-module_id: CONSTRAINT_SOLVER_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
-# CONSTRAINT SOLVER BLUEPRINT
-
-> **核心职责**: Constraint Solver蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Constraint Solver蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: CONSTRAINTSOLVERBLUEPRINT_001
+module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 约束求解器，包括约束建模、求解算法、优化引擎、约束验证
-  - 因子计算
-  - 组合优化
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 概述
+---
+
+# 约束求解器蓝图
+
+> **核心职责**: 组合优化约束处理
+> **职责边界**: 
+> - ✅ 本文档负责：约束建模、求解算法、优化引擎、约束验证
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
+
+## 概述
 
 > **开发时?*: 60h（约1.5周）
 > **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求?> **对标机构**: 专业量化机构标准配置

@@ -37,6 +37,21 @@ responsibility:
 **本文档职责**: 实时风险监控系统蓝图
 - 实时风险监控、多维度风险评估、动态预警机制、风险报告生成、风险限额管理
 
+**📌 职责边界说明**:
+- **本文档**: 系统级核心风险监控模块，负责全系统风险监控和评估
+- **LIVE_TRADING_MONITOR**: 实盘交易专用监控，负责交易层面的监控
+- **REAL_TIME_ALERT_SYSTEM**: 舆情专用预警模块，负责舆情预警
+- **REAL_TIME_MONITORING_DASHBOARD**: 舆情专用仪表盘，负责舆情可视化
+
+**职责关系**:
+```
+统一告警平台（上游）
+    ├── REAL_TIME_RISK_MONITOR（本模块：系统级风险监控）
+    ├── LIVE_TRADING_MONITOR（实盘交易监控）
+    ├── REAL_TIME_ALERT_SYSTEM（舆情预警）
+    └── REAL_TIME_MONITORING_DASHBOARD（舆情仪表盘）
+```
+
 # 实时风险监控系统蓝图
 
 > **版本**: v1.0.0

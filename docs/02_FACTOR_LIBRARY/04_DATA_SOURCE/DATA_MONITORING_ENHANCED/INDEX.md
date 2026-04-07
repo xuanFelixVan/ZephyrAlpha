@@ -9,8 +9,7 @@ standard_type: 专业量化机构目录索引
 applicable_scope: 数据监控增强系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-responsibility:
-  - 数据质量 (Layer 1)
+responsibility: 数据监控增强模块导航
 ---
 
 # 数据监控增强系统

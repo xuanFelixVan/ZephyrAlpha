@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 文档周维护
 
 module_id: LAYER9_WEEKLY_MAINTENANCE_REPORT_001
 version: 1.0.0

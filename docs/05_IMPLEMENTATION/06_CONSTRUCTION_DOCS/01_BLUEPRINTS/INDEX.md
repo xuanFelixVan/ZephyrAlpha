@@ -1,28 +1,9 @@
 ---
-module_id: INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
----
----
-﻿---
-module_id: INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
-﻿---
 module_id: IMPL_蓝图文档总索引_001
 version: 1.0.0
 status: Active
@@ -35,6 +16,7 @@ compliance_level: 专业标准
 ---
 
 # 蓝图文档总索引
+
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
 > - ✅ 本文档负责：目录导航和文档索引相关内容

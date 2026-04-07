@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 文档严重问题
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_CRITICAL_ISSUES_REPORT_001
 version: 1.0.0

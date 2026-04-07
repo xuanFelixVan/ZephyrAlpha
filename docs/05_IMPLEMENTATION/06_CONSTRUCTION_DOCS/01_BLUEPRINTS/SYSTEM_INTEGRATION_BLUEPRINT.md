@@ -1,47 +1,27 @@
 ---
-module_id: SYSTEM_INTEGRATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
   - 因子计算
----
+  - 风险预算
+  - 数据质量
 
-# SYSTEM INTEGRATION BLUEPRINT
-
-> **核心职责**: System Integration蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：System Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: LAYER_AI_002
+module_id: SYSTEM_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 数据质量
-  - 因子计算
-  - 组合优化
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准
-layer: "Layer 6 (组合优化层)"
-﻿# Layer 7 AI报告层 - 模块集成架构蓝图
+layer: "Layer 7 (AI报告层)"
+---
 
-> **核心定位**: Layer 7 AI报告层 - 模块集成架构蓝图的核心功能实现
+# Layer 7 AI报告层 - 模块集成架构蓝图
 
-
-**蓝图ID**: LAYER7_INTEGRATION_BLUEPRINT_001
-**版本**: v1.0.0
-**创建日期**: 2026-04-02
-**状?*: 设计阶段
-**优先?*: P0级（核心集成?
+> **核心职责**: AI报告层模块集成架构
+> **职责边界**: 
+> - ✅ 本文档负责：API网关、统一调度、模块服务集成
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 ## 二、集成架构设?
 ### 2.1 整体架构?
 ```

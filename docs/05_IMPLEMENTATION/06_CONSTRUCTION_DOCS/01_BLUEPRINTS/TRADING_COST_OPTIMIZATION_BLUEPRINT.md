@@ -1,45 +1,27 @@
 ---
-module_id: TRADING_COST_OPTIMIZATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
-# TRADING COST OPTIMIZATION BLUEPRINT
-
-> **核心职责**: Trading Cost Optimization蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Trading Cost Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: TRADINGCOSTOPTIMIZATIONBLUE_001
+module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 组合优化
-  - 交易执行
-  - 机器学习
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 5 交易成本层
 compliance_level: 专业标准
 layer: "Layer 5 (交易成本层)"
-﻿# 模块概述
+---
 
-> **索引**: `TRADING_COST_001`
-> **开发时?*: 60h（约1.5周）
-> **核心定位**: 使用Almgren-Chriss市场冲击模型优化交易执行，降低交易成?0-50%
-> **个人开发可?*: ⭐⭐⭐⭐?完全可行
-> **AI维护难度**: ?
+# 交易成本优化蓝图
+
+> **核心职责**: 使用Almgren-Chriss市场冲击模型优化交易执行
+> **职责边界**: 
+> - ✅ 本文档负责：交易成本优化、市场冲击建模、最优执行
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 ## 📚 相关文档
 
 ### 上游依赖

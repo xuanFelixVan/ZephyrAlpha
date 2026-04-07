@@ -1,51 +1,27 @@
 ---
-module_id: TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 因子计算
+  - 风险预算
+  - 组合优化
 
-# TRANSACTION COST AWARE REBALANCING BLUEPRINT
-
-> **核心职责**: Transaction Cost Aware Rebalancing蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Transaction Cost Aware Rebalancing蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: TRANSACTIONCOSTAWAREREBALAN_001
+module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 组合优化
-  - 交易执行
-  - 数据源
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 5 交易成本层
 compliance_level: 专业标准
 layer: "Layer 5 (交易成本层)"
-﻿# 交易成本感知再平衡蓝图
+---
 
-> **核心定位**: 交易成本感知再平衡蓝图的核心功能实现
+# 交易成本感知再平衡蓝图
 
-
-> **索引**: `TRANSACTION_COST_AWARE_REBALANCING_001`
-> **开发周期**: 5-7天
-> **核心定位**: 在再平衡决策中考虑交易成本，优化调整频率和幅度
-> **参考开源**: PyPortfolioOpt, Riskfolio-Lib
-
-## 核心定位
-
-交易成本感知再平衡模块，负责在再平衡决策中考虑交易成本
+> **核心职责**: 在再平衡决策中考虑交易成本
+> **职责边界**: 
+> - ✅ 本文档负责：交易成本感知、再平衡优化、调整频率决策
+> - ❌ 本文档不负责：基础再平衡触发（由PORTFOLIO_REBALANCING负责）
 
 
 ## 1. 概述

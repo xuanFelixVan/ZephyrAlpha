@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 文档维护
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN_001
 version: 1.0.0

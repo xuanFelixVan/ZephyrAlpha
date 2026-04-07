@@ -1,0 +1,48 @@
+{
+  "fix_time": "2026-04-07T11:36:06.934211",
+  "fix_count": 7,
+  "fix_log": [
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档审计",
+      "time": "2026-04-07T11:36:06.927057"
+    },
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_FIX_REPORT.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档修复",
+      "time": "2026-04-07T11:36:06.928078"
+    },
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档维护",
+      "time": "2026-04-07T11:36:06.928595"
+    },
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档维护总结",
+      "time": "2026-04-07T11:36:06.929113"
+    },
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档深度审计",
+      "time": "2026-04-07T11:36:06.929113"
+    },
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_CRITICAL_ISSUES_REPORT.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档严重问题",
+      "time": "2026-04-07T11:36:06.929113"
+    },
+    {
+      "file": "docs\\09_RESEARCH_INNOVATION\\LAYER9_WEEKLY_MAINTENANCE_REPORT_20260407.md",
+      "old": "扩展功能、辅助模块",
+      "new": "文档周维护",
+      "time": "2026-04-07T11:36:06.931155"
+    }
+  ]
+}

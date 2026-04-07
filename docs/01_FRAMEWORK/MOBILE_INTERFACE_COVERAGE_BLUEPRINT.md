@@ -26,8 +26,6 @@ responsibility_boundary: |
 responsibility:
   - 扩展功能、辅助模块
 ---
----
----
 # 移动端界面覆盖蓝图
 
 > **核心职责**: Mobile Interface Coverage蓝图设计

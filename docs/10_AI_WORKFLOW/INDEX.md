@@ -100,7 +100,7 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 | **AI_WORK_REPORTER_001** | AI工作汇报与交付模| 1.0 | Active | [AI_WORK_REPORTER_BLUEPRINT.md](./AI_WORK_REPORTER_BLUEPRINT.md) | 每日工作总结、进度通知、决策汇报、交互交付、可视化展示 |
 | **POST_TRADE_REVIEW_001** | 复盘模块 | 1.0 | Active | [POST_TRADE_REVIEW_BLUEPRINT.md](./POST_TRADE_REVIEW_BLUEPRINT.md) | 回测复盘、实盘复盘、因子复盘、策略复盘、风险复|
 | **FULL_PROCESS_DATA_PERSISTENCE_001** | 全流程数据保存机| 1.0 | Active | [FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 实验追踪、数据血缘、版本控制、数据治|
-| **OPEN_SOURCE_INTEGRATION_001** | 开源项目集成方| 1.0 | Active | [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | MLflow集成、Qlib集成、架构参考、工具集|
+
 | **COMPLIANCE_MONITORING_001** | 合规监控模块 | 1.0 | Active | [COMPLIANCE_MONITORING_BLUEPRINT.md](./COMPLIANCE_MONITORING_BLUEPRINT.md) | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预|
 | **LIVE_TRADING_MONITOR_001** | 实盘监控模块 | 1.0 | Active | [LIVE_TRADING_MONITOR_BLUEPRINT.md](./LIVE_TRADING_MONITOR_BLUEPRINT.md) | 实时交易监控、持仓风险监控、异常交易预警、性能指标监控、多渠道告警 |
 | **PERFORMANCE_ANALYSIS_001** | 性能分析模块 | 1.0 | Active | [PERFORMANCE_ANALYSIS_BLUEPRINT.md](./PERFORMANCE_ANALYSIS_BLUEPRINT.md) | 性能指标采集、性能瓶颈识别、性能报告生成、优化建议生成、性能趋势分析 |
@@ -112,8 +112,7 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 | **AI_DECISION_EXPLANATION_001** | AI决策解释系统 | 1.0 | Active | [AI_DECISION_EXPLANATION_BLUEPRINT.md](./AI_DECISION_EXPLANATION_BLUEPRINT.md) | SHAP解释引擎、LIME解释引擎、特征重要性分析、决策路径可视化、解释报告生成 |
 | **INTELLIGENT_QA_SYSTEM_001** | 智能问答系统 | 1.0 | Active | [INTELLIGENT_QA_SYSTEM_BLUEPRINT.md](./INTELLIGENT_QA_SYSTEM_BLUEPRINT.md) | 自然语言理解、知识检索引擎、RAG生成引擎、上下文管理、智能推荐引擎 |
 | **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
-| **MODEL_DRIFT_DETECTION_001** | 模型漂移检测系统 | 1.0 | Active | [MODEL_DRIFT_DETECTION_BLUEPRINT.md](./MODEL_DRIFT_DETECTION_BLUEPRINT.md) | 数据漂移检测、模型性能漂移检测、概念漂移检测、漂移告警引擎、漂移报告生成 |
-| **INTELLIGENT_SCHEDULER_001** | 智能调度系统 | 1.0 | Active | [INTELLIGENT_SCHEDULER_BLUEPRINT.md](./INTELLIGENT_SCHEDULER_BLUEPRINT.md) | 任务调度引擎、工作流管理引擎、依赖管理引擎、失败重试引擎、监控告警引擎 |
+
 
 ### 3.2 舆情分析模块
 
@@ -158,12 +157,8 @@ Layer 8.5: AI工作记录(AI Workflow Logging Layer)
 | 文档类型 | 文档名称 | 版本 | 状| 文档路径 | 核心职责 |
 |---------|---------|------|------|----------|----------|
 | **解决方案** | 开源模块解决方| 1.0 | Active | [OPEN_SOURCE_MODULE_SOLUTION.md](./OPEN_SOURCE_MODULE_SOLUTION.md) | 开源模块选型、集成方案、替代方|
-| **集成蓝图** | 开源项目集成方案蓝| 1.0 | Active | [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | MLflow集成、Qlib集成、架构参考、工具集|
-
 **📌 开源文档使用指南**:
-- **选型决策**: 先阅读[开源模块解决方案](./OPEN_SOURCE_MODULE_SOLUTION.md) - 了解全景图、对比分析、推荐理由
-- **技术实施**: 再阅读[开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) - 获取集成代码、部署方案、配置模板
-- **完整流程**: 按顺序阅读两个文档，先选型后实施
+- **选型决策**: 阅读[开源模块解决方案](./OPEN_SOURCE_MODULE_SOLUTION.md) - 了解全景图、对比分析、推荐理由
 
 ### 3.7 模块依赖关系
 

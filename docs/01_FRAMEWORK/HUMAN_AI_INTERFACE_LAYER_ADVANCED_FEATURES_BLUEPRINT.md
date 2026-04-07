@@ -22,8 +22,6 @@ responsibility_boundary: |
 responsibility:
   - 扩展功能、辅助模块
 ---
----
----
 # 人机交互层高级特性补充蓝图
 
 > **核心职责**: Human Ai Interface Layer Advanced Features蓝图设计

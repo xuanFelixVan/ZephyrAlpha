@@ -1,36 +1,27 @@
 ---
-module_id: AUTO_REPAIR_ENGINE_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
 responsibility:
   - 因子计算
----
+  - 风险预算
+  - 数据质量
 
-# AUTO REPAIR ENGINE BLUEPRINT
-
-> **核心职责**: Auto Repair Engine蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Auto Repair Engine蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 自动修复引擎，包括问题检测、修复策略、自动修复、修复验证
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 9 监控层
+compliance_level: 专业标准
 layer: "Layer 9 (监控层)"
-﻿# 自动化数据修复引擎蓝图
+---
+
+# 自动化数据修复引擎蓝图
+
+> **核心职责**: 系统故障自动诊断、定位和修复
+> **职责边界**: 
+> - ✅ 本文档负责：问题检测、修复策略、自动修复、修复验证
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 > **核心定位**: 自动化数据修复引擎蓝图的核心功能实现
 
