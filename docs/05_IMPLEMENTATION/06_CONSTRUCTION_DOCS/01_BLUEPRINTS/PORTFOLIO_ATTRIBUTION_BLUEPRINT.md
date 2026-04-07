@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 组合归因分析
+  - 收益归因
+  - 风险归因
+  - 归因报告
 
 module_id: PORTFOLIO_ATTRIBUTION_001
 version: 1.0.0

@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 多目标优化
+  - 帕累托最优解生成
+  - 目标权衡分析
+  - 优化算法选择
 
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0

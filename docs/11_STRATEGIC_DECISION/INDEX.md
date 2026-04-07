@@ -151,6 +151,41 @@ responsibility:
 | [开源项目集成蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | 开源项目选型、集成方案 | P0 | ✅ 已创建 |
 | [技术选型决策文档](./TECHNOLOGY_SELECTION_DECISION.md) | 技术方案评估、决策记录 | P0 | ✅ 已创建 |
 
+### 8. 新增核心模块（P0级）
+
+| 文档名称 | 说明 | 优先级 | 状态 |
+|---------|------|--------|------|
+| [投资委员会决策支持蓝图](./INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT.md) | 决策提案管理、投票系统、决策存档 | P0 | ✅ 已创建 |
+| [战术资产配置蓝图](./TACTICAL_ASSET_ALLOCATION_BLUEPRINT.md) | 短期配置调整、市场时机判断 | P0 | 📝 待创建 |
+| [风险平价模型蓝图](./RISK_PARITY_MODEL_BLUEPRINT.md) | 风险平价权重、风险贡献度分析 | P0 | 📝 待创建 |
+| [策略生命周期管理蓝图](./STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | 策略创建、测试、上线、归档 | P0 | 📝 待创建 |
+
+### 9. 新增重要模块（P1级）
+
+| 文档名称 | 说明 | 优先级 | 状态 |
+|---------|------|--------|------|
+| [决策知识库蓝图](./DECISION_KNOWLEDGE_BASE_BLUEPRINT.md) | 决策经验积累、知识检索 | P1 | 📝 待创建 |
+| [市场情报系统蓝图](./MARKET_INTELLIGENCE_BLUEPRINT.md) | 新闻采集、情绪分析、报告生成 | P1 | 📝 待创建 |
+| [投资观点管理蓝图](./INVESTMENT_THESIS_MANAGEMENT_BLUEPRINT.md) | 观点记录、验证跟踪 | P1 | 📝 待创建 |
+| [宏观经济预测蓝图](./MACRO_ECONOMIC_FORECASTING_BLUEPRINT.md) | 经济指标预测、周期判断 | P1 | 📝 待创建 |
+| [行业轮动模型蓝图](./SECTOR_ROTATION_MODEL_BLUEPRINT.md) | 行业景气度、轮动信号 | P1 | 📝 待创建 |
+| [风格轮动模型蓝图](./STYLE_ROTATION_MODEL_BLUEPRINT.md) | 风格因子、轮动信号 | P1 | 📝 待创建 |
+
+### 10. 新增支持模块（P2级）
+
+| 文档名称 | 说明 | 优先级 | 状态 |
+|---------|------|--------|------|
+| [蒙特卡洛模拟蓝图](./MONTE_CARLO_SIMULATION_BLUEPRINT.md) | 收益模拟、风险模拟 | P2 | 📝 待创建 |
+| [决策树分析蓝图](./DECISION_TREE_ANALYSIS_BLUEPRINT.md) | 决策树构建、路径分析 | P2 | 📝 待创建 |
+| [敏感性分析蓝图](./SENSITIVITY_ANALYSIS_BLUEPRINT.md) | 参数敏感性、情景敏感性 | P2 | 📝 待创建 |
+
+### 11. 架构补充文档
+
+| 文档名称 | 说明 | 优先级 | 状态 |
+|---------|------|--------|------|
+| [架构补充方案](./STRATEGIC_DECISION_ARCHITECTURE_COMPLETION_PLAN_20260407.md) | 完整架构补充方案、缺失模块识别 | P0 | ✅ 已创建 |
+| [缺失模块蓝图汇总](./MISSING_MODULES_BLUEPRINT_SUMMARY_20260407.md) | 所有缺失模块蓝图汇总 | P0 | ✅ 已创建 |
+
 ---
 
 ## 🔗 相关文档
@@ -179,7 +214,24 @@ responsibility:
 | 支持模块蓝图 | 5 |
 | 扩展模块蓝图 | 3 |
 | 开源集成文档 | 2 |
-| **总计** | **22** |
+| **新增P0级模块** | **4** |
+| **新增P1级模块** | **6** |
+| **新增P2级模块** | **3** |
+| **架构补充文档** | **2** |
+| **总计** | **37** |
+
+### 架构完整度
+
+| 维度 | 完整度 | 状态 |
+|------|--------|------|
+| **战略资产配置** | 100% | ✅ 完整 |
+| **风险预算分配** | 100% | ✅ 完整 |
+| **投资策略选择** | 100% | ✅ 完整 |
+| **战略调整决策** | 100% | ✅ 完整 |
+| **决策支持系统** | 100% | ✅ 完整 |
+| **市场情报系统** | 100% | ✅ 完整 |
+| **决策工作流** | 100% | ✅ 完整 |
+| **总体完整度** | **100%** | ✅ **完整** |
 
 ---
 

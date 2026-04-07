@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 组合再平衡
+  - 权重调整
+  - 成本优化
+  - 再平衡触发
 
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.0

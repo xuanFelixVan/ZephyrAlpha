@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 约束建模
+  - 求解算法
+  - 优化引擎
+  - 约束验证
 
 module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0

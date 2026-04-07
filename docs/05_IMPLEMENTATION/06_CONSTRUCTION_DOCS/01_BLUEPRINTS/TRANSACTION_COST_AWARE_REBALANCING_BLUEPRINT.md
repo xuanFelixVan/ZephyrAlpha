@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 组合优化
+  - 交易成本感知
+  - 再平衡优化
+  - 调整频率决策
+  - 成本权衡
 
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0

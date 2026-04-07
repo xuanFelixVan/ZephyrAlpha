@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 风险平价策略
+  - 风险贡献均衡
+  - 风险预算分配
+  - 权重优化
 
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0

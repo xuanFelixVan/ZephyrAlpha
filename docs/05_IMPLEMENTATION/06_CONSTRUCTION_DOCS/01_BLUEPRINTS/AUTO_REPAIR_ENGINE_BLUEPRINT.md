@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 自动修复
+  - 异常检测
+  - 系统恢复
+  - 数据修复
 
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0

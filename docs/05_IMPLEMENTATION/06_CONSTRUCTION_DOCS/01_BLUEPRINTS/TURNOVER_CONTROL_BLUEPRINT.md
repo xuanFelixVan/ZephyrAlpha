@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 周转率控制
+  - 交易成本优化
+  - 换手率管理
+  - 成本约束
 
 module_id: TURNOVER_CONTROL_001
 version: 1.0.0

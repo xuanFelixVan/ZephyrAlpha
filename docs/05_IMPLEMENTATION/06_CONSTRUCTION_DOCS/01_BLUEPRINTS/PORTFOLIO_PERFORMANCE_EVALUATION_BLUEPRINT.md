@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 组合绩效评估
+  - 绩效指标计算
+  - 绩效归因分析
+  - 绩效报告生成
 
 module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001
 version: 1.0.0

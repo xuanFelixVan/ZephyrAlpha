@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - Black-Litterman模型
+  - 观点融合
+  - 最优配置
+  - 市场均衡收益
 
 module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0

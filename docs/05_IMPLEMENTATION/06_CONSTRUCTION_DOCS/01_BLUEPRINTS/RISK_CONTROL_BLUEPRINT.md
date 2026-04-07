@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 风险控制
+  - 风险限额管理
+  - 风险监控
+  - 风险预警
 
 module_id: RISK_CONTROL_001
 version: 1.0.0

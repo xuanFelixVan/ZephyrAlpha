@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - VaR/ES计算
+  - 风险监控
+  - 风险预警
+  - 风险度量
 
 module_id: VAR_ES_MONITORING_001
 version: 1.0.0

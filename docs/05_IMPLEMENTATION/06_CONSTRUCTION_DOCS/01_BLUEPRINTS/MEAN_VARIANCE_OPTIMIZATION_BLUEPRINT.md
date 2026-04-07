@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 均值方差优化
+  - 有效前沿计算
+  - 最优组合求解
+  - 风险收益权衡
 
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
