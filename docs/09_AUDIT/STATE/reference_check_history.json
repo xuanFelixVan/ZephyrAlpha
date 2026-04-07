@@ -12,5 +12,12 @@
     "valid_links": 8161,
     "invalid_links": 34,
     "valid_rate": 99.59
+  },
+  {
+    "timestamp": "2026-04-07 16:14:01",
+    "total_links": 8537,
+    "valid_links": 8516,
+    "invalid_links": 21,
+    "valid_rate": 99.75
   }
 ]

@@ -29,7 +29,7 @@ github_url: https://github.com/laurentS/slowapi
 license: MIT
 responsibility:
   - API限流系统，负责API访问频率控制、流量管理和限流策略，不负责API文档和权限管理
-## 一、模块概述
+## ## 1. 概述
 
 ### 1.1 定位与目标
 

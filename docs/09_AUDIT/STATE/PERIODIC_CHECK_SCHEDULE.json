@@ -1,0 +1,31 @@
+{
+  "check_frequency": "每日",
+  "check_time": "09:00",
+  "check_items": [
+    {
+      "name": "引用链接检查",
+      "script": "reference_link_auto_check.py",
+      "frequency": "每日",
+      "priority": "高"
+    },
+    {
+      "name": "命名规范检查",
+      "script": "automated_document_check.py",
+      "frequency": "每周",
+      "priority": "中"
+    },
+    {
+      "name": "文档完整性检查",
+      "script": "automated_document_check.py",
+      "frequency": "每周",
+      "priority": "中"
+    }
+  ],
+  "notification": {
+    "email": false,
+    "report_file": true,
+    "console_output": true
+  },
+  "created_date": "2026-04-07",
+  "next_check": "2026-04-08"
+}

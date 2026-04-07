@@ -30,7 +30,7 @@ github_url: https://github.com/obsidianmd/obsidian-releases
 license: Proprietary (Free for personal use)
 responsibility:
   - 知识库系统，负责知识管理、知识检索和知识共享，不负责文档中心管理
-## 一、模块概述
+## ## 1. 概述
 
 ### 1.1 定位与目标
 

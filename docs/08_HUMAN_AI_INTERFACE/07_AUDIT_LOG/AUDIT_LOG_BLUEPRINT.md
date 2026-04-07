@@ -28,7 +28,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 审计日志系统，负责操作审计、日志记录和审计追踪，不负责系统监控和告警
-## 一、模块概述
+## ## 1. 概述
 
 审计日志系统负责记录所有系统操作，用于合规审计和问题追溯。
 

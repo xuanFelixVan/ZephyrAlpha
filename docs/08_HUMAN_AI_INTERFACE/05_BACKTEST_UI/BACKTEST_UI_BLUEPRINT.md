@@ -28,7 +28,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 交互式回测界面，负责策略回测的可视化展示、结果分析和报告生成，不负责实盘交易和参数优化
-## 一、模块概述
+## ## 1. 概述
 
 交互式回测界面提供策略回测、结果可视化和报告生成功能。
 

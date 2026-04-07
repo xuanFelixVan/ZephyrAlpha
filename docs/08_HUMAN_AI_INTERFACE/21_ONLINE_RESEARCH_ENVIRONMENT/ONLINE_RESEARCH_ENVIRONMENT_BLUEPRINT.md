@@ -29,7 +29,7 @@ github_url: https://github.com/jupyterlab/jupyterlab
 license: BSD-3-Clause
 responsibility:
   - 在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化
-## 一、模块概述
+## ## 1. 概述
 
 ### 1.1 定位与目标
 

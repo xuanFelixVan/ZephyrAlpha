@@ -28,7 +28,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 交易日志系统，负责交易记录的展示、分析和归档，不负责实盘交易操作和策略管理
-## 一、模块概述
+## ## 1. 概述
 
 交易日志系统用于记录交易决策过程，支持交易复盘和分析。
 

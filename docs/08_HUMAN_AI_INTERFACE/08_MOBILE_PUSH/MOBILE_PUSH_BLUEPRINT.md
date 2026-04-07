@@ -28,7 +28,7 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 移动推送通知，负责移动端消息推送、通知管理和推送策略，不负责告警规则配置
-## 一、模块概述
+## ## 1. 概述
 
 移动推送通知系统负责向移动设备发送告警和重要通知。
 
