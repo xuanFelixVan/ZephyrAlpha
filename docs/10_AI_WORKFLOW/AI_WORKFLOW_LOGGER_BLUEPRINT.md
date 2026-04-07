@@ -843,7 +843,6 @@ class AIWorkflowLogger:
 |------|------|
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
 | [AI工作汇报与交付模块蓝图](./AI_WORK_REPORTER_BLUEPRINT.md) | AI工作汇报机制 |
-| [开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | 开源项目集成方|
 | [MLflow官方文档](https://mlflow.org/docs/latest/index.html) | MLflow使用指南 |
 
 ---

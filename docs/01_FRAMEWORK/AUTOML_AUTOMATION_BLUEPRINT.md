@@ -15,7 +15,7 @@ related_documents:
   - HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md
   - NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md
 responsibility:
-  - 提供automl automation blueprint的架构设计和实施蓝图
+  - 提供automl automation blueprint的完整架构设计、技术选型和实施路径规划
 responsibility_boundary: |
   本文档负责AutoML自动化机器学习，包括：
   

@@ -23,7 +23,7 @@ compliance_level: 专业标准
 
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 responsibility:
-  - 提供dataflow architecture blueprint的架构设计和实施蓝图
+  - 提供dataflow architecture blueprint的完整架构设计、技术选型和实施路径规划
   responsibility_layer: Layer 11
 ---
 ---

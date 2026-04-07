@@ -11,7 +11,7 @@ last_updated: 2026-04-03
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 提供multi task learning blueprint的架构设计和实施蓝图
+  - 提供multi task learning blueprint的完整架构设计、技术选型和实施路径规划
 
 standard_type: é«å±æ¶æèå¾
 

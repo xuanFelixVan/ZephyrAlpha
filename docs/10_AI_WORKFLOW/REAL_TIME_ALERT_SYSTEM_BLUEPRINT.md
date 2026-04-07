@@ -1087,7 +1087,7 @@ print("=" * 60)
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Rtas
 - **模块ID**: AIWF_RTAS_001
-- **蓝图文档**: [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./10_AI_WORKFLOW\REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: [REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md](./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 舆情分析层专用预警模
 - **状态**: Active

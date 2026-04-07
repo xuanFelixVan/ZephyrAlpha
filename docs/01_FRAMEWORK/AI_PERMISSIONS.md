@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 系统框架、架构设计
+  - 负责ai permissions的设计、实现和维护工作
 layer: Layer 4
 ---
 ---
@@ -23,7 +23,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 responsibility:
-  - 扩展功能、辅助模块
+  - 负责ai permissions的设计、实现和维护工作
   - 交易执行
   - 回测系统
 standard_type: 专业量化机构文档

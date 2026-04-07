@@ -31,7 +31,7 @@ parent_document: ../ARCHITECTURE.md
 
 implementation_status: 蓝图设计完成
 responsibility:
-  - 提供multi model orchestrator blueprint的架构设计和实施蓝图
+  - 提供multi model orchestrator blueprint的完整架构设计、技术选型和实施路径规划
 ---
 ---
 

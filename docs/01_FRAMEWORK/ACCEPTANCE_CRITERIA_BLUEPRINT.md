@@ -11,7 +11,7 @@ last_updated: 2026-04-02
 
 owner: é¦å¸­èå¾æ¶æï¿?standard_type: ä¸ä¸éåæºæèå¾
 responsibility:
-  - 提供acceptance criteria blueprint的架构设计和实施蓝图
+  - 提供acceptance criteria blueprint的完整架构设计、技术选型和实施路径规划
 layer: Layer 4
 ---
 ---

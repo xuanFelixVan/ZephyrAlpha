@@ -40,7 +40,7 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的强化学习系统设计，包括策略优化、价值函数、环境建模等核心功能。
 responsibility:
-  - 提供reinforcement learning blueprint的架构设计和实施蓝图
+  - 提供reinforcement learning blueprint的完整架构设计、技术选型和实施路径规划
 ---
 ---
 

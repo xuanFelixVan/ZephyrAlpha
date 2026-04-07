@@ -8,7 +8,7 @@ owner: 首席蓝图架构师
 layer: Layer 4 (机器学习层)
 standard_type: 完整性审计报告
 responsibility:
-  - 系统框架、架构设计
+  - 执行文档治理审计，生成审计报告和改进建议
 
 ---
 ---

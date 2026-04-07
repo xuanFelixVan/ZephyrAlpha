@@ -544,7 +544,7 @@ class DataSourceManager:
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Dse
 - **模块ID**: AIWF_DSE_001
-- **蓝图文档**: [DATA_SOURCE_EXTENSION_BLUEPRINT.md](./10_AI_WORKFLOW\DATA_SOURCE_EXTENSION_BLUEPRINT.md)
+- **蓝图文档**: [DATA_SOURCE_EXTENSION_BLUEPRINT.md](./DATA_SOURCE_EXTENSION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据源扩展模块
 - **状态**: Active

@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 棣栧腑钃濆浘鏋舵瀯甯?layer: Layer 4 (鏈哄櫒瀛︿範灞?
 responsibility:
-  - 提供volatility prediction blueprint的架构设计和实施蓝图
+  - 提供volatility prediction blueprint的完整架构设计、技术选型和实施路径规划
 
 standard_type: 楂樺眰鏋舵瀯钃濆浘
 

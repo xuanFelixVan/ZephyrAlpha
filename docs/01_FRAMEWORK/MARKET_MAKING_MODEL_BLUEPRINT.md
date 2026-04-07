@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 提供market making model blueprint的架构设计和实施蓝图
+  - 提供market making model blueprint的完整架构设计、技术选型和实施路径规划
 
 standard_type: é«å±æ¶æèå¾
 

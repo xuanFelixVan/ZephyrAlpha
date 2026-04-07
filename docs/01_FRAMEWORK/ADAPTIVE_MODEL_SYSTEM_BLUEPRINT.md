@@ -27,7 +27,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 responsibility:
-  - 提供adaptive model system blueprint的架构设计和实施蓝图
+  - 提供adaptive model system blueprint的完整架构设计、技术选型和实施路径规划
   responsibility_layer: Layer 4
 ---
 ---

@@ -208,6 +208,22 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 
 ---
 
+### 1.6 审计与评估文档
+
+| 文档名称 | 模块ID | 版本 | 状态 | 职责 | 说明 |
+|---------|--------|------|------|------|------|
+| [Layer 10文档治理审计报告](./LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md) | LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT_001 | 1.0 | Active | 初始审计记录 | 详细问题分析、修复建议、职责重叠分析 |
+| [Layer 10深度审计报告（最终版）](./LAYER_10_DEEP_AUDIT_REPORT_FINAL.md) | LAYER_10_DEEP_AUDIT_REPORT_FINAL_001 | 2.0 | Active | 最终审计结果 | 当前合规状态、98%合规率、专业标准符合性 |
+| [Layer 10完整实施路线图](./LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP.md) | LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP_001 | 1.0 | Active | 实施路线图 | 总体路线图、所有模块规划、开源项目集成策略 |
+| [Layer 10优先实施模块实施方案](./LAYER_10_PRIORITY_MODULES_IMPLEMENTATION_PLAN.md) | LAYER_10_PRIORITY_MODULES_IMPLEMENTATION_PLAN_001 | 1.0 | Active | 详细实施方案 | 5个优先模块、详细实施步骤、个人开发适配方案 |
+
+**文档关系说明**：
+- **审计报告演进**: DOCUMENT_GOVERNANCE_AUDIT_REPORT（初始审计）→ DEEP_AUDIT_REPORT_FINAL（最终审计）
+- **实施方案关系**: COMPLETE_IMPLEMENTATION_ROADMAP（总体路线图）→ PRIORITY_MODULES_IMPLEMENTATION_PLAN（详细实施方案）
+- **职责边界清晰**: 每个文档有明确的单一职责，避免内容重复
+
+---
+
 ## 二、P0模块实施方案索引
 
 ### 2.1 实施方案文档

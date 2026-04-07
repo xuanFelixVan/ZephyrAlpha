@@ -592,7 +592,6 @@ class MultiAgentCollaboration:
 | [AI工作汇报与交付模块蓝图](./AI_WORK_REPORTER_BLUEPRINT.md) | AI工作汇报集成 |
 | [复盘模块蓝图](./POST_TRADE_REVIEW_BLUEPRINT.md) | 复盘分析集成 |
 | [开源模块完整方案](./OPEN_SOURCE_MODULE_SOLUTION.md) | 开源项目选型 |
-| [开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | 开源项目集成 |
 
 ---
 

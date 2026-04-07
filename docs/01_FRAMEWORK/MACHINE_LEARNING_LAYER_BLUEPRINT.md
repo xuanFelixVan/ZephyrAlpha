@@ -11,7 +11,7 @@ last_updated: 2026-04-05
 
 owner: 首席架构师
 responsibility:
-  - 提供machine learning layer blueprint的架构设计和实施蓝图
+  - 提供machine learning layer blueprint的完整架构设计、技术选型和实施路径规划
 
 layer: Layer 4 (机器学习层)
 

@@ -12,7 +12,7 @@ review_status: Pending
 reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 owner: ﻠﮒﻝ ﻝ۸ﭘﮒ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
 responsibility:
-  - 提供causal inference technical specification的技术规格和实现细节
+  - 定义causal inference technical specification的技术规格、接口标准和实现细节
 applicable_scope: ﮒ ﮔﮔ۷ﮔ­ﻝﺏﭨﻝﭨ
 compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md

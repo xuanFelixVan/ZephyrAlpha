@@ -10,7 +10,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 提供ai trust calibration blueprint的架构设计和实施蓝图
+  - 提供ai trust calibration blueprint的完整架构设计、技术选型和实施路径规划
 四维校准架构（历史表现、市场状态、置信度、风险贡献）
 五级信任等级体系
 信任等级动态调整机制

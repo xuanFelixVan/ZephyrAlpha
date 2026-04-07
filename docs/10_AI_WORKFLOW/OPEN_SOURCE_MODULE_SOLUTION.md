@@ -11,8 +11,6 @@ standard_type: 开源方案选型推荐
 applicable_scope: 开源模块选型与推荐
 compliance_level: 专业标准
 parent_document: INDEX.md
-related_documents:
-  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 ---
 ---
 
@@ -25,11 +23,11 @@ related_documents:
 
 **📌 文档关系说明**:
 - **本文档**: 侧重**方案选型**，提供全景图、对比分析、推荐理由
-- **配套文档**: [开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) - 侧重**技术实施**，提供集成代码、部署方案、配置模板
+- **配套文档**: 开源项目集成方案蓝图（待创建）- 侧重**技术实施**，提供集成代码、部署方案、配置模板
 
 **🎯 使用场景**:
 - 如果您需要**选型决策** → 阅读本文档
-- 如果您需要**技术实施** → 阅读[开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md)
+- 如果您需要**技术实施** → 阅读开源项目集成方案蓝图（待创建）
 - 如果您需要**完整流程** → 先阅读本文档，再阅读集成蓝图
 
 # 个人量化系统开源模块完整方

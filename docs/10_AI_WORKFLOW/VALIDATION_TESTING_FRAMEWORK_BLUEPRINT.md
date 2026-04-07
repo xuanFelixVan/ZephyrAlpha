@@ -997,7 +997,7 @@ CREATE TABLE backtest_records (
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Vtf
 - **模块ID**: AIWF_VTF_001
-- **蓝图文档**: [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./10_AI_WORKFLOW\VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md)
+- **蓝图文档**: [VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md](./VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 验证与测试框架模
 - **状态**: Active

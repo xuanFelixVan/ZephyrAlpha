@@ -18,7 +18,7 @@ related_documents:
 parent_document: ../ARCHITECTURE.md
 implementation_status: 分析阶段
 responsibility:
-  - 系统框架、架构设计
+  - 负责machine learning comprehensive analysis的设计、实现和维护工作
 
 ---
 ---

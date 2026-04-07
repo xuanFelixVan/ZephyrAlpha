@@ -344,7 +344,6 @@ layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
 | **蓝图文档** | AI工作汇报与交付模块蓝| `docs/10_AI_WORKFLOW/AI_WORK_REPORTER_BLUEPRINT.md` | Active |
 | **蓝图文档** | 复盘模块蓝图 | `docs/10_AI_WORKFLOW/POST_TRADE_REVIEW_BLUEPRINT.md` | Active |
 | **蓝图文档** | 全流程数据保存机制蓝| `docs/10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` | Active |
-| **蓝图文档** | 开源项目集成方案蓝| `docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md` | Active |
 
 ### 6.2 策略专用AI模块索引
 

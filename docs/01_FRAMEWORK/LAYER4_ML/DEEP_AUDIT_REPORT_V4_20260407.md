@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 系统框架、架构设计
+  - 执行文档治理审计，生成审计报告和改进建议
 
 ---
 ---
@@ -20,7 +20,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计团队
 responsibility:
-  - 审计报告和审计记录
+  - 执行文档治理审计，生成审计报告和改进建议
   - 文档治理
   - 审计系统
 standard_type: 专业量化机构报告

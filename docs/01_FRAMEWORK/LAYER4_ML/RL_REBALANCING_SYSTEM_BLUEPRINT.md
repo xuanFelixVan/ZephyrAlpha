@@ -10,7 +10,7 @@ applicable_scope: Layer 4 机器学习层
 compliance_level: 专业标准
 layer: "Layer 4 (机器学习层)"
 responsibility:
-  - 提供rl rebalancing system blueprint的架构设计和实施蓝图
+  - 提供rl rebalancing system blueprint的完整架构设计、技术选型和实施路径规划
 ---
 
 # 强化学习再平衡系统蓝图

@@ -38,7 +38,7 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的漂移检测系统设计，包括数据漂移、概念漂移、模型漂移等核心功能。
 responsibility:
-  - 提供drift detection blueprint的架构设计和实施蓝图
+  - 提供drift detection blueprint的完整架构设计、技术选型和实施路径规划
 ---
 ---
 ---

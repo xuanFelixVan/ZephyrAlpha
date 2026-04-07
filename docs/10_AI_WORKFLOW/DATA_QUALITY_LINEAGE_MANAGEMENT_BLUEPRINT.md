@@ -722,7 +722,7 @@ CREATE TABLE processing_logs (
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Dqlm
 - **模块ID**: AIWF_DQLM_001
-- **蓝图文档**: [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./10_AI_WORKFLOW\DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据质量与血缘管理模
 - **状态**: Active

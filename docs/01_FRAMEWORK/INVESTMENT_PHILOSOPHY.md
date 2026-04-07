@@ -1,7 +1,7 @@
 ---
 standard_type: æ ¸å¿ææ¡£
 responsibility:
-  - 系统框架、架构设计
+  - 负责investment philosophy的设计、实现和维护工作
 applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æèµå®?version: 1.0.0

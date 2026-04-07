@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 提供alternative data fusion blueprint的架构设计和实施蓝图
+  - 提供alternative data fusion blueprint的完整架构设计、技术选型和实施路径规划
 
 standard_type: 高层架构蓝图
 

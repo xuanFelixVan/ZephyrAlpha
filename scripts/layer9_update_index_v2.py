@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Layer 9 INDEX.md更新脚本 v2.0
+Layer 9 INDEX.md更新脚本 v2.1
 
 功能:
 - 扫描Layer 9目录下的所有文档
@@ -29,7 +29,7 @@ class Layer9IndexUpdaterV2:
     def update_index(self):
         """更新INDEX.md"""
         print('=' * 80)
-        print('Layer 9 INDEX.md更新工具 v2.0')
+        print('Layer 9 INDEX.md更新工具 v2.1')
         print('=' * 80)
         print(f'更新时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
         print()
@@ -92,6 +92,7 @@ class Layer9IndexUpdaterV2:
         """提取文档信息"""
         filename = os.path.basename(filepath)
         relative_path = os.path.relpath(filepath, self.layer9_dir)
+        relative_path = relative_path.replace('\\', '/')
         
         title = self._extract_title(content)
         responsibility = self._extract_responsibility(content)

@@ -789,7 +789,7 @@ class MobileAdaptation {
 #### Layer 0: 系统架构
 ##### 0.001. Aiwf Rmd
 - **模块ID**: AIWF_RMD_001
-- **蓝图文档**: [REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md](./10_AI_WORKFLOW\REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md)
+- **蓝图文档**: [REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md](./REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 实时监控仪表盘模块
 - **状态**: Active

@@ -53,7 +53,7 @@ responsibility_boundary: |
 
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 提供data quality monitoring blueprint的架构设计和实施蓝图
+  - 提供data quality monitoring blueprint的完整架构设计、技术选型和实施路径规划
 ---
 ---
 

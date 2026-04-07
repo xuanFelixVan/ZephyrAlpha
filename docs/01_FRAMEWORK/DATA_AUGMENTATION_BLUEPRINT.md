@@ -11,7 +11,7 @@ last_updated: 2026-04-07
 
 owner: 首席蓝图架构师
 responsibility:
-  - 提供data augmentation blueprint的架构设计和实施蓝图
+  - 提供data augmentation blueprint的完整架构设计、技术选型和实施路径规划
 
 layer: Layer 4 (机器学习层)
 

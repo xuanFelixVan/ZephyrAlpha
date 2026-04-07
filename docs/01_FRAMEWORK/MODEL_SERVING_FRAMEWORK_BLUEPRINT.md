@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 提供model serving framework blueprint的架构设计和实施蓝图
+  - 提供model serving framework blueprint的完整架构设计、技术选型和实施路径规划
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 模型服务框架模块

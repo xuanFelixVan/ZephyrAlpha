@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: йҰ–еёӯж–ҮжЎЈжһ¶жһ„её?standard_type: дё“дёҡйҮҸеҢ–жңәжһ„ж–ҮжЎЈ
 responsibility:
-  - 系统框架、架构设计
+  - 负责readme的设计、实现和维护工作
 applicable_scope: е…Ёзі»з»?compliance_level: дё“дёҡж ҮеҮҶ
 parent_document: ../INDEX.md
 implementation_status: иҝӣиЎҢдё?
