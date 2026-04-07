@@ -61,8 +61,7 @@ pip install -r requirements.txt
 python -c "import sys; print(f'Python {sys.version}')"
 ```
 
-详细步骤：[dev-setup.md](./dev-setup.md)
-
+详细步骤：
 ### Step 2: 配置系统 (3 分钟)
 
 ```bash
@@ -89,8 +88,7 @@ python scripts/backtest.py --strategy S001
 # 打开 output/backtest_result.html
 ```
 
-详细步骤：[first-backtest.md](./first-backtest.md)
-
+详细步骤：
 ---
 
 ##  验证清单

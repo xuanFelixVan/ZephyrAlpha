@@ -219,8 +219,7 @@ pip install -r requirements.txt
 python -m pytest tests/ -v
 ```
 
-详细步骤：[01_QUICKSTART/dev-setup.md](./01_QUICKSTART/dev-setup.md)
-
+详细步骤：
 ### 2. 第一次回测（10 分钟?
 
 ```bash
@@ -234,8 +233,7 @@ python scripts/backtest.py --strategy S001
 open output/backtest_result.html
 ```
 
-详细步骤：[01_QUICKSTART/first-backtest.md](./01_QUICKSTART/first-backtest.md)
-
+详细步骤：
 ### 3. 部署到服务器（一键）
 
 ```bash

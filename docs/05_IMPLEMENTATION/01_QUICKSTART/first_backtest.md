@@ -35,8 +35,7 @@ implementation_status: 进行�?
 
 ##  前置要求
 
--  已完�?[开发环境搭建](./dev-setup.md)
--  系统�?5GB 可用空间
+-  已完�?-  系统�?5GB 可用空间
 
 ---
 

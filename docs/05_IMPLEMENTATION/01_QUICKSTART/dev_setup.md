@@ -195,8 +195,7 @@ pip install -r requirements.txt
 
 环境搭建完成后：
 
-1. 前往 [第一次回测](./first-backtest.md)
-2. 学习 [开发规范](API_README.md)
+1. 前往 2. 学习 [开发规范](API_README.md)
 3. 阅读 
 
 ---

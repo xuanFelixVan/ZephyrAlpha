@@ -41,8 +41,7 @@ implementation_status: 进行�?---
 >
 > **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
-> - 形态识别：[pattern-recognition.md](./pattern-recognition.md)
-
+> - 形态识别：
 ***
 
 ## 1. 均线系统参数

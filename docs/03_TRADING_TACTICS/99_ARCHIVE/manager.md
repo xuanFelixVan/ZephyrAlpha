@@ -25,8 +25,7 @@ responsibility:
 >
 > **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
-> - 策略接口标准：[interface-standard.md](./interface-standard.md)
-
+> - 策略接口标准：
 ***
 
 ## 1. 策略池管理器�?

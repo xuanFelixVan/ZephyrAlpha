@@ -229,9 +229,9 @@
 ## 📚 相关文档索引
 
 ### 标准文档
-- [文档版本号命名规范](../../09_AUDIT/STANDARDS/DOCUMENT_VERSION_NAMING_STANDARD.md)
-- [文档治理流程标准](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [职责边界定义标准](../../09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)
+- [文档版本号命名规范](../../../09_AUDIT/STANDARDS/DOCUMENT_VERSION_NAMING_STANDARD.md)
+- [文档治理流程标准](../../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [职责边界定义标准](../../../09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)
 
 ### 工具使用指南
 - Git提交前检查: `python scripts/pre_commit_link_checker.py`

@@ -41,8 +41,7 @@ implementation_status: 进行�?---
 >
 > **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
-> - 技术指标：[technical-indicators.md](./technical-indicators.md)
-
+> - 技术指标：
 ***
 
 ## 1. 底部反转形�?
