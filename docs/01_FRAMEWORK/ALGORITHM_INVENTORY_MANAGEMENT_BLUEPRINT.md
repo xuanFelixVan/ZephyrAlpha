@@ -1,6 +1,8 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
 module_id: ALGORITHM_INVENTORY_MANAGEMENT_BLUEPRINT_001
 version: 1.0.0
@@ -38,14 +40,17 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 算法清单管理系统架构设计
+  - 算法注册与分类
+  - 算法生命周期管理
+  - 算法审批流程
+  - 算法状态追踪
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理（模型验证）
   - ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md: 算法交易合规监控
----
----
 ---
 # 算法清单管理系统蓝图
 

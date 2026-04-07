@@ -1,6 +1,8 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
 module_id: AML_MONITORING_SYSTEM_BLUEPRINT_001
 version: 1.0.0
@@ -38,14 +40,17 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 反洗钱监控系统架构设计
+  - 交易监控规则定义
+  - 可疑交易识别与告警
+  - 制裁名单筛查
+  - AML报告生成
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 交易合规监控
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）
----
----
 ---
 ---
 

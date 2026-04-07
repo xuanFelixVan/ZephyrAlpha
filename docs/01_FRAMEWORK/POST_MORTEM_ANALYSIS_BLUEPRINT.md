@@ -6,7 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 数据质量
+  - 风险预算
+  - 市场状态识别
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 事后分析系统架构设计
@@ -31,14 +33,16 @@ open_source_projects:
     features: 交互式可视化、图表生成
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 事后分析系统架构设计
+  - 事件收集（交易错误、风险事件、系统故障）
+  - 根本原因分析（5 Whys、鱼骨图、故障树）
+  - 改进措施制定（流程改进、系统改进、人员培训）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - TRADE_ERROR_CORRECTION_BLUEPRINT.md: 交易错误纠正（实时处理）
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
----
----
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）---
 
 
 # 事后分析系统蓝图

@@ -9,11 +9,9 @@ layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-responsibility:
-  - 数据质量核心功能、系统架构
+responsibility: 数据质量
+  - 数据质量 (Layer 1)
   responsibility_layer: Layer 1
----
----
 ---
 
 ﻿---

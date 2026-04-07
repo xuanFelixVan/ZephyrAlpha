@@ -7,9 +7,10 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 元数据管理
+  - 数据血缘追踪
+  - 数据发现
 layer: "Layer 1 (数据预处理层)"
----
 ---
 # 元数据管理增强蓝图
 

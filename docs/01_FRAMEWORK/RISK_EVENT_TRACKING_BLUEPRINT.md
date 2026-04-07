@@ -6,7 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 风险预算
+  - 因子计算
+  - 交易执行
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 风险事件追踪、事件管理、风险治理
@@ -19,14 +21,16 @@ parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 风险事件记录和分类（市场风险、信用风险、操作风险等）
+  - 事件处理流程管理（发现、评估、处理、跟踪、关闭）
+  - 事件统计和分析（事件频率、影响程度、处理效率）
+  - 风险预警和报告（事件预警、趋势分析、管理报告）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
----
----
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库---
 
 
 # 风险事件追踪系统蓝图

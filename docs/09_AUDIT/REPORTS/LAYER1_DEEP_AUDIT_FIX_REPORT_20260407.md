@@ -1,6 +1,8 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
 module_id: LAYER1_DEEP_AUDIT_FIX_REPORT_20260407_001
 version: 1.0.0
@@ -9,7 +11,6 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
----
 ---
 # Layer 1 数据预处理层深度审计修复报告
 > **核心职责**: 分析报告和评估结果

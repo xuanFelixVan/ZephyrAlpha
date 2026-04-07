@@ -28,6 +28,10 @@ open_source_projects:
     features: 因子分析、IC分析、收益归因
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 策略绩效归因（收益来源分析、风险来源分析）
+  - 因子绩效分析（因子IC、因子收益、因子风险）
+  - 策略对比评估（策略排名、策略相关性）
+  - 绩效报告生成（日报、周报、月报）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
@@ -35,8 +39,7 @@ responsibility_boundary: |
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析
   - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计
 responsibility:
-  - 扩展功能、辅助模块
----
+  - 风险预算 (Layer 5)
 ---
 
 # 策略绩效归因系统蓝图

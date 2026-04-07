@@ -17,18 +17,22 @@ parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - AI行为准则体系（核心行为准则、操作行为准则）
+  - AI决策透明度（决策解释、决策记录、决策审计）
+  - AI错误责任归属（错误分类、责任认定、改进机制）
+  - AI持续改进机制（性能监控、反馈学习、模型更新）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
   - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
-responsibility:
-  - 市场状态识别配置管理、参数优化
+responsibility: 市场状态识别
+  - 风险预算 (Layer 11)
+  - 市场状态识别 (Layer 4)
+  - 数据质量 (Layer 10)
   responsibility_layer: Layer 10
   responsibility_layer: Layer 4
----
----
 ---
 
 # AI治理框架蓝图：AI行为准则与治理机�?

@@ -6,7 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 数据质量
+  - 因子计算
+  - 组合优化
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 治理仪表板系统
@@ -30,14 +32,16 @@ open_source_projects:
     features: 企业级仪表板、实时更新
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 治理状态可视化（实时治理状态、关键指标）
+  - 治理指标监控（治理指标采集、指标分析）
+  - 治理预警机制（治理异常预警、预警响应）
+  - 治理报告展示（治理报告可视化、报告导出）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - GRAFANA_MONITORING_BLUEPRINT.md: Grafana监控系统
   - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
----
----
 ---
 ---
 

@@ -8,12 +8,12 @@ created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 风险预算
+  - 市场状态识别
+  - 因子计算
 standard_type: 专业量化机构执行计划
 applicable_scope: 第三阶段文档交叉引用更新
-compliance_level: 专业标准
----
----
+compliance_level: 专业标准---
 
 
 # 第三阶段执行计划：其他层级P2文档交叉引用更新

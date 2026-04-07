@@ -28,6 +28,10 @@ open_source_projects:
     features: 优化求解器、约束优化
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 组合风险归因（风险来源分析、风险贡献分解）
+  - 风险因子暴露（因子风险暴露、因子风险贡献）
+  - 风险预算管理（风险预算分配、风险预算监控）
+  - 风险报告生成（日报、周报、月报）
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
@@ -35,8 +39,7 @@ responsibility_boundary: |
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因
   - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
 responsibility:
-  - 扩展功能、辅助模块
----
+  - 风险预算 (Layer 11)
 ---
 
 # 组合风险归因系统蓝图

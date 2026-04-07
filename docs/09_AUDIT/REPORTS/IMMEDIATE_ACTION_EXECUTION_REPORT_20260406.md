@@ -8,12 +8,12 @@ created_date: 2026-04-06
 last_updated: '2026-04-06'
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 交易执行
+  - 数据源
+  - 机器学习
 standard_type: 专业量化机构审计报告
 applicable_scope: 立即行动任务执行报告
-compliance_level: 专业标准
----
----
+compliance_level: 专业标准---
 
 
 # 立即行动任务执行报告

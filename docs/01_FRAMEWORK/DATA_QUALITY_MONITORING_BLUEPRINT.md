@@ -53,9 +53,7 @@ responsibility_boundary: |
 
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 数据质量 (Layer 1)
 ---
 ---
 

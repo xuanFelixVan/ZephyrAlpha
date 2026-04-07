@@ -1,6 +1,8 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
 module_id: DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT_001
 version: 1.0.0
@@ -38,14 +40,17 @@ open_source_projects:
     personal_fit: ⭐⭐⭐⭐
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 数据主权合规系统架构设计
+  - 数据本地化管理
+  - 跨境数据传输控制
+  - 数据驻留合规
+  - 数据主权报告
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md: 数据隐私合规
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 数据质量治理
----
----
 ---
 ---
 

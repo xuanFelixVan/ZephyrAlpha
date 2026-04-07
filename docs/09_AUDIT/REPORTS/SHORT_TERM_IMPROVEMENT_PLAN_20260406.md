@@ -11,8 +11,7 @@ standard_type: 专业量化机构改进计划
 applicable_scope: 蓝图文档短期改进
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
----
+  - 数据质量 (Layer 1)
 ---
 
 # 短期改进计划（1周内）

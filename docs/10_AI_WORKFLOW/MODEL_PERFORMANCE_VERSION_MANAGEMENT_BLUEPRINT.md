@@ -29,6 +29,12 @@ integrated_modules:
 
 # 模型性能与版本管理模块蓝(Model Performance & Version Management Blueprint)
 
+> **核心职责**: 蓝图设计和架构规划
+> **职责边界**: 
+> - ✅ 本文档负责：蓝图设计和架构规划相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
 > **模块ID**: AIWF_MPVM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03

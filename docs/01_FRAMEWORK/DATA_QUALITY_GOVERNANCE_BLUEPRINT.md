@@ -18,6 +18,11 @@ parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10 顶层治理）**：
+  - 数据质量治理体系顶层架构设计
+  - 四层架构（Layer 0/1/4/10）统一协调机制
+  - 数据质量治理标准制定
+  - 数据质量治理政策制定
+  - 跨层数据质量治理协调
   
   **与本文档职责边界**：
   - Layer 0（数据源层）: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md - 负责数据源健康监控
@@ -25,9 +30,7 @@ responsibility_boundary: |
   - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 数据质量 (Layer 10)
 ---
 ---
 

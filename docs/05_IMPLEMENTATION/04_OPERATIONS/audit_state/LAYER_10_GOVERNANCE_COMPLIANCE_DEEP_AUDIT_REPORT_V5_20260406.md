@@ -13,8 +13,7 @@ audit_type: 第五次深度审计
 audit_date: 2026-04-06
 audit_scope: Layer 10治理与合规层所有文档
 responsibility:
-  - 扩展功能、辅助模块
----
+  - 数据质量 (Layer 10)
 ---
 
 # Layer 10治理与合规层第五次深度审计报告

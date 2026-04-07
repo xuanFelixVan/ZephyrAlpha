@@ -24,14 +24,16 @@ open_source_projects:
     features: 流动性约束优化、交易成本模型
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 流动性风险监控（市场流动性、持仓流动性）
+  - 流动性压力测试（极端场景流动性评估）
+  - 流动性预警机制（流动性不足预警）
+  - 流动性报告生成（日报、周报、月报）
   
   **与本文档职责边界**：
   - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控（包含流动性风险监控）
   - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库（包含流动性压力测试场景）
 responsibility:
-  - 扩展功能、辅助模块
----
----
+  - 风险预算 (Layer 11)
 ---
 
 # 流动性风险管理系统蓝图（蓝图阶段）

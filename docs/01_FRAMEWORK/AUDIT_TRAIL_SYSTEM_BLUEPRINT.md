@@ -6,7 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 风险预算
+  - 交易执行
+  - 机器学习
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 审计追踪系统
@@ -20,14 +22,17 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 不可篡改审计日志（所有操作永久记录）
+  - 事件溯源追踪（完整事件链重建）
+  - 合规审计查询（监管机构审计支持）
+  - 风险事件追溯（根因分析和责任归属）
+  - TigerBeetle集成实施
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
----
----
 ---
 ---
 

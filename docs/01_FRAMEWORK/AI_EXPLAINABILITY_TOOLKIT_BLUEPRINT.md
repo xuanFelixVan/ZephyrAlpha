@@ -9,11 +9,9 @@ layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
-responsibility:
-  - 市场状态识别模块设计、技术实现
+responsibility: 市场状态识别
+  - 市场状态识别 (Layer 4)
   responsibility_layer: Layer 4
----
----
 ---
 
 ﻿---

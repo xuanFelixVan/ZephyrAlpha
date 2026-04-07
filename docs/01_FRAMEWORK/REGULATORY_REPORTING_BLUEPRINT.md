@@ -6,7 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 交易执行
+  - 数据源
+  - 机器学习
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 监管报告自动化系统
@@ -20,14 +22,17 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 交易报告生成（交易数据标准化、报告格式转换）
+  - 持仓报告生成（持仓快照、风险敞口报告）
+  - 风险报告生成（VaR报告、压力测试报告）
+  - 合规报告生成（合规检查报告、违规事件报告）
+  - FINOS CDM集成实施
   
   **与本文档职责边界**：
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
----
----
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库---
 
 
 # 监管报告自动化系统蓝图

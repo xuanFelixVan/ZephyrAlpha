@@ -24,13 +24,16 @@ open_source_projects:
     features: 组合再平衡优化、风险预算优化
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
+  - 再平衡触发（阈值触发、时间触发、事件触发）
+  - 再平衡优化（成本优化、风险优化、税务优化）
+  - 再平衡执行（交易执行、持仓调整、记录追踪）
+  - 再平衡报告（执行报告、效果评估、改进建议）
   
   **与本文档职责边界**：
   - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md: 组合风险归因（包含再平衡风险分析）
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析（包含再平衡成本分析）
 responsibility:
-  - 扩展功能、辅助模块
----
+  - 风险预算 (Layer 11)
 ---
 
 # 组合再平衡系统蓝图（蓝图阶段）

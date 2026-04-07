@@ -1,6 +1,8 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算
+  - 风险预算
+  - 数据质量
 
 module_id: BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN_001
 version: 1.0.0
@@ -17,13 +19,15 @@ parent_document: ../System_Manifest.md
 implementation_status: 蓝图设计阶段
 responsibility_boundary: |
   **本文档职责（蓝图阶段完整补充）**：
+  - 识别Layer 0-11所有缺失模块
+  - 提供完整的蓝图设计方案
+  - 推荐开源替代方案
+  - 制定个人开发实施路径
   
   **与本文档职责边界**：
   - MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md: 已创建的50个缺失模块蓝图
   - COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md: 实施阶段补充方案
   - ALL_LAYERS_GAP_ANALYSIS.md: Layer 0-11完整性分析
----
----
 ---
 
 # 蓝图阶段完整补充方案

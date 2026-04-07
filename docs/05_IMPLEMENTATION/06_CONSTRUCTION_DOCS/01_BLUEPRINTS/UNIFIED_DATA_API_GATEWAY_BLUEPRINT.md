@@ -7,9 +7,10 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 统一数据API
+  - 数据查询服务
+  - 数据访问控制
 layer: "Layer 1 (数据预处理层)"
----
 ---
 # 统一数据API网关蓝图
 
