@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: CONFIG_MANAGER_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: IMPL_CONFIG_MGR_TECH_SPEC_001
 version: 1.0.1
 status: Active

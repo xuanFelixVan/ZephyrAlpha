@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: README_RTX3090
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 standard_type: ﮔﮔﺁﮔﮔ۰?
 applicable_scope: ﻛﭦ۳ﮔﮔ۶ﻟ۰
 compliance_level: ﮒﮒ۶ﮔﮒ

@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: INSTALL_GUIDE_RTX3090
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 parent_document: ../INDEX.md
 responsibility:
   - 实施指南、操作手册
