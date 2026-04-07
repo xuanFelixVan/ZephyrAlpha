@@ -6,10 +6,14 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 负责提供Layer 9研究与创新层的系统清单更新指南，详细说明更新流程、更新标准和更新要求，为系统清单维护提供指导，确保系统清单的准确性和时效性。
 standard_type: 系统清单索引更新
 applicable_scope: System_Manifest.md Layer 9索引补充
 ---
+## 核心定位
+
+负责提供Layer 9研究与创新层的系统清单更新指南，详细说明更新流程、更新标准和更新要求，为系统清单维护提供指导，确保系统清单的准确性和时效性。
+
 ---
 
 

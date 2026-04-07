@@ -16,8 +16,12 @@ reference_models:
 parent_document: ./COMPLETE_BLUEPRINT_V3.md
 implementation_status: 关键缺失补充阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 负责记录Layer 9研究与创新层的关键缺失问题（版本4），详细记录关键缺失的模块、功能和技术，为研究与创新体系完善提供依据，确保关键缺失得到及时补充。
 ---
+## 核心定位
+
+负责记录Layer 9研究与创新层的关键缺失问题（版本4），详细记录关键缺失的模块、功能和技术，为研究与创新体系完善提供依据，确保关键缺失得到及时补充。
+
 ---
 
 # Layer 9: 研究与创新层关键缺失模块补充 v4.0

@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 文档维护
+  - 负责制定Layer 9研究与创新层文档治理的维护计划，规划维护周期、维护内容、维护标准和管理机制，为文档治理维护提供指导，确保研究与创新层文档质量持续保持。
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN_001
 version: 1.0.0
@@ -12,6 +12,10 @@ standard_type: 文档治理持续维护计划
 applicable_scope: Layer 9 - 研究与创新层文档持续维护
 compliance_level: 专业机构标准
 ---
+## 核心定位
+
+负责制定Layer 9研究与创新层文档治理的维护计划，规划维护周期、维护内容、维护标准和管理机制，为文档治理维护提供指导，确保研究与创新层文档质量持续保持。
+
 ---
 
 # Layer 9文档治理持续维护计划

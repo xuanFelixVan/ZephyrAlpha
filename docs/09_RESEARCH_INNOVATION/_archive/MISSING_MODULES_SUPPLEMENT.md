@@ -12,8 +12,12 @@ reference_models: ["Two Sigma Research Infrastructure", "Citadel Quant Research 
 parent_document: ./BLUEPRINT.md
 implementation_status: 设计阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 负责记录Layer 9研究与创新层的缺失模块补充情况，详细记录缺失模块的类型、补充方案和补充进度，为研究与创新体系完善提供补充记录，确保缺失模块得到有效补充。
 ---
+## 核心定位
+
+负责记录Layer 9研究与创新层的缺失模块补充情况，详细记录缺失模块的类型、补充方案和补充进度，为研究与创新体系完善提供补充记录，确保缺失模块得到有效补充。
+
 ---
 
 # Layer 9 缺失模块补充设计

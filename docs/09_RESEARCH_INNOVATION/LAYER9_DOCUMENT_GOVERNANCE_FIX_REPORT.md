@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 文档修复
+  - 负责记录Layer 9研究与创新层文档治理的修复过程，详细记录修复的问题、修复方法和修复结果，为文档治理修复提供记录，确保修复工作的可追溯性。
 
 module_id: LAYER9_DOCUMENT_GOVERNANCE_FIX_REPORT_001
 version: 1.0.0
@@ -14,6 +14,10 @@ compliance_level: 专业机构标准
 fix_date: 2026-04-07
 fix_scope: Layer 9所有文档文件
 ---
+## 核心定位
+
+负责记录Layer 9研究与创新层文档治理的修复过程，详细记录修复的问题、修复方法和修复结果，为文档治理修复提供记录，确保修复工作的可追溯性。
+
 ---
 
 # Layer 9文档治理修复报告

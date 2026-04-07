@@ -6,13 +6,17 @@ created_date: 2026-04-04
 last_updated: 2026-04-06
 owner: 系统架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 负责提供Layer 9研究与创新层的文档导航和索引服务，整合研究文档、创新提案、实验报告等各类文档的入口，为研究团队和创新团队提供快速文档定位和检索支持，确保研究与创新文档体系的完整性和可访问性。
 standard_type: 专业量化机构目录索引
 applicable_scope: Layer 9 - 研究与创新层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
+## 核心定位
+
+负责提供Layer 9研究与创新层的文档导航和索引服务，整合研究文档、创新提案、实验报告等各类文档的入口，为研究团队和创新团队提供快速文档定位和检索支持，确保研究与创新文档体系的完整性和可访问性。
+
 ---
 
 
