@@ -1,4 +1,8 @@
-﻿﻿# 文档质量定期检查报告
+﻿---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_QUALITY_REPORT_20260407_20260407180137
+---
+
+﻿# 文档质量定期检查报告
 
 > **检查时间**: 2026-04-07T15:37:10.437437
 
