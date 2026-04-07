@@ -215,7 +215,7 @@ layer: "[Layer定位]"
 
 ### 相关文档
 - 索引文档: [INDEX.md](./INDEX.md)
-- 系统清单: [System_Manifest.md](../../../System_Manifest.md)
+- 系统清单: [System_Manifest.md](../../System_Manifest.md)
 
 ---
 ```

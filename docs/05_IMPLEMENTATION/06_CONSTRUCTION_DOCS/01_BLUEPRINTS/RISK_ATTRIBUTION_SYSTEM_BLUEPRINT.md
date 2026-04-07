@@ -1,86 +1,92 @@
 ---
 responsibility:
-  - 风险归因
-  - 风险分解
-  - 风险来源分析
-  - 风险贡献�?
+  - é£é©å½å 
+  - é£é©åè§£
+  - é£é©æ¥æºåæ
+  - é£é©è´¡ç®åº?
 
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 7 风险管理�?
-compliance_level: 专业标准
-layer: "Layer 7 (风险管理�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 7 é£é©ç®¡çå±?
+compliance_level: ä¸ä¸æ å
+layer: "Layer 7 (é£é©ç®¡çå±?"
 ---
 
-# 风险归因系统蓝图
+# é£é©å½å ç³»ç»èå¾
 
-> **核心职责**: 多维度风险分解与归因分析
-> **职责边界**: 
-> - �?本文档负责：风险分解、风险归因、风险因子识�?
-> - �?本文档不负责：因子计算（由因子模块负责）
+## 核心定位
+
+负责风险归因分析，分解投资组合风险来源，量化各因子和持仓对风险的贡献，支持风险管理决策。
 
 
-## 1. 概述
 
-### 1.1 设计背景与业务目?
-**业务需?*?- 当前系统仅有绩效归因（在Layer 7），缺乏风险归因
-- 无法分解组合风险来源（因子风险、行业风险、特质风险）
-- 无法识别风险驱动因素，导致风险管理缺乏针?- 无法评估风险预算执行情况
+> **æ ¸å¿èè´£**: å¤ç»´åº¦é£é©åè§£ä¸å½å åæ
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼é£é©åè§£ãé£é©å½å ãé£é©å å­è¯å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
-**技术痛?*?- 无多维度风险归因能力
-- 无风险分解与归因报告生成
-- 无风险预算执行监?- 无风险贡献度分析
 
-**预期?*?- 风险透明度：提升60%
-- 风险管理精细化：提升40%
-- 风险决策支持：新增能?- 为Two Sigma模式提供核心能力支撑
+## 1. æ¦è¿°
 
-### 1.2 技术定位与架构层归?
-**Layer定位**: Layer 6 - 组合优化层（风险管理子层?
-**模块类别**: 核心模块（P1级）
+### 1.1 è®¾è®¡èæ¯ä¸ä¸å¡ç®?
+**ä¸å¡é?*?- å½åç³»ç»ä»æç»©æå½å ï¼å¨Layer 7ï¼ï¼ç¼ºä¹é£é©å½å 
+- æ æ³åè§£ç»åé£é©æ¥æºï¼å å­é£é©ãè¡ä¸é£é©ãç¹è´¨é£é©ï¼
+- æ æ³è¯å«é£é©é©±å¨å ç´ ï¼å¯¼è´é£é©ç®¡çç¼ºä¹é?- æ æ³è¯ä¼°é£é©é¢ç®æ§è¡æåµ
 
-**架构角色**: 
-- 作为Two Sigma模式的核心组件，提供多维度风险归?- 作为风险管理的分析工具，识别风险驱动因素
-- 作为风险预算的监控工具，评估风险预算执行情况
+**ææ¯ç?*?- æ å¤ç»´åº¦é£é©å½å è½å
+- æ é£é©åè§£ä¸å½å æ¥åçæ
+- æ é£é©é¢ç®æ§è¡ç?- æ é£é©è´¡ç®åº¦åæ
 
-### 1.3 核心功能清单
+**é¢æ?*?- é£é©éæåº¦ï¼æå60%
+- é£é©ç®¡çç²¾ç»åï¼æå40%
+- é£é©å³ç­æ¯æï¼æ°å¢è½?- ä¸ºTwo Sigmaæ¨¡å¼æä¾æ ¸å¿è½åæ¯æ
 
-1. **因子风险归因**: 分解因子风险贡献
-2. **行业风险归因**: 分解行业风险贡献
-3. **资产风险归因**: 分解资产风险贡献
-4. **风险预算执行监控**: 监控风险预算执行情况
-5. **风险归因报告生成**: 生成可视化归因报?
+### 1.2 ææ¯å®ä½ä¸æ¶æå±å½?
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼é£é©ç®¡çå­å±?
+**æ¨¡åç±»å«**: æ ¸å¿æ¨¡åï¼P1çº§ï¼
+
+**æ¶æè§è²**: 
+- ä½ä¸ºTwo Sigmaæ¨¡å¼çæ ¸å¿ç»ä»¶ï¼æä¾å¤ç»´åº¦é£é©å½?- ä½ä¸ºé£é©ç®¡ççåæå·¥å·ï¼è¯å«é£é©é©±å¨å ç´ 
+- ä½ä¸ºé£é©é¢ç®ççæ§å·¥å·ï¼è¯ä¼°é£é©é¢ç®æ§è¡æåµ
+
+### 1.3 æ ¸å¿åè½æ¸å
+
+1. **å å­é£é©å½å **: åè§£å å­é£é©è´¡ç®
+2. **è¡ä¸é£é©å½å **: åè§£è¡ä¸é£é©è´¡ç®
+3. **èµäº§é£é©å½å **: åè§£èµäº§é£é©è´¡ç®
+4. **é£é©é¢ç®æ§è¡çæ§**: çæ§é£é©é¢ç®æ§è¡æåµ
+5. **é£é©å½å æ¥åçæ**: çæå¯è§åå½å æ¥?
 ---
 
-## 2. 架构设计
+## 2. æ¶æè®¾è®¡
 
-### 2.1 系统架构?
+### 2.1 ç³»ç»æ¶æ?
 ```
-┌─────────────────────────────────────────────────────────────────??                   风险归因系统架构                              ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             输入?                                       ? ?? ? ┌──────────────────────? ┌──────────────────────?    ? ?? ? ?组合数据              ? ?风险模型              ?    ? ?? ? ?- 组合权重            ? ?- 因子载荷            ?    ? ?? ? ?- 基准权重            ? ?- 因子协方?         ?    ? ?? ? ?- 历史收益            ? ?- 特质风险            ?    ? ?? ? └──────────────────────? └──────────────────────?    ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             风险分解?                                   ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Risk Decomposition Engine                         ? ? ?? ? ? - 因子风险分解                                     ? ? ?? ? ? - 行业风险分解                                     ? ? ?? ? ? - 资产风险分解                                     ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             归因分析?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?因子归因 ? ?行业归因 ? ?资产归因 ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             报告生成?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?归因报告 ? ?可视?  ? ?预警信号 ?              ? ?? ? ?         ? ?图表     ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   é£é©å½å ç³»ç»æ¶æ                              ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾å¥?                                       ? ?? ? âââââââââââââââââââââââ? âââââââââââââââââââââââ?    ? ?? ? ?ç»åæ°æ®              ? ?é£é©æ¨¡å              ?    ? ?? ? ?- ç»åæé            ? ?- å å­è½½è·            ?    ? ?? ? ?- åºåæé            ? ?- å å­åæ¹?         ?    ? ?? ? ?- åå²æ¶ç            ? ?- ç¹è´¨é£é©            ?    ? ?? ? âââââââââââââââââââââââ? âââââââââââââââââââââââ?    ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             é£é©åè§£?                                   ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? Risk Decomposition Engine                         ? ? ?? ? ? - å å­é£é©åè§£                                     ? ? ?? ? ? - è¡ä¸é£é©åè§£                                     ? ? ?? ? ? - èµäº§é£é©åè§£                                     ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             å½å åæ?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?å å­å½å  ? ?è¡ä¸å½å  ? ?èµäº§å½å  ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ¥åçæ?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?å½å æ¥å ? ?å¯è§?  ? ?é¢è­¦ä¿¡å· ?              ? ?? ? ?         ? ?å¾è¡¨     ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 核心数据?
+### 2.2 æ ¸å¿æ°æ®?
 ```
-组合数据 + 风险模型
-    ?风险分解（因?行业/资产?    ?归因分析（贡献度计算?    ?风险预算执行监控
-    ?输出：归因报告、可视化图表、预警信?```
+ç»åæ°æ® + é£é©æ¨¡å
+    ?é£é©åè§£ï¼å ?è¡ä¸/èµäº§?    ?å½å åæï¼è´¡ç®åº¦è®¡ç®?    ?é£é©é¢ç®æ§è¡çæ§
+    ?è¾åºï¼å½å æ¥åãå¯è§åå¾è¡¨ãé¢è­¦ä¿¡?```
 
 ---
 
-## 3. 核心模块设计
+## 3. æ ¸å¿æ¨¡åè®¾è®¡
 
-### 3.1 风险归因系统核心类（RiskAttributionSystem?
+### 3.1 é£é©å½å ç³»ç»æ ¸å¿ç±»ï¼RiskAttributionSystem?
 ```python
 class RiskAttributionSystem:
     """
-    风险归因系统核心?    
-    索引: RISK_ATTRIBUTION_001-M01
-    职责: 多维度风险分解与归因分析
-    输入: 组合数据、风险模?    输出: 归因报告、可视化图表
+    é£é©å½å ç³»ç»æ ¸å¿?    
+    ç´¢å¼: RISK_ATTRIBUTION_001-M01
+    èè´£: å¤ç»´åº¦é£é©åè§£ä¸å½å åæ
+    è¾å¥: ç»åæ°æ®ãé£é©æ¨¡?    è¾åº: å½å æ¥åãå¯è§åå¾è¡¨
     """
     
     def __init__(self, config: AttributionConfig):
@@ -95,32 +101,32 @@ class RiskAttributionSystem:
                       benchmark_weights: Optional[pd.Series],
                       barra_model: BarraRiskModel) -> AttributionResult:
         """
-        执行风险归因
+        æ§è¡é£é©å½å 
         
         Args:
-            portfolio_weights: 组合权重
-            benchmark_weights: 基准权重（可选）
-            barra_model: Barra风险模型
+            portfolio_weights: ç»åæé
+            benchmark_weights: åºåæéï¼å¯éï¼
+            barra_model: Barraé£é©æ¨¡å
             
         Returns:
-            AttributionResult: 归因结果
+            AttributionResult: å½å ç»æ
         """
-        # 1. 因子风险归因
+        # 1. å å­é£é©å½å 
         factor_attribution = self.factor_attributor.attribute(
             portfolio_weights, benchmark_weights, barra_model
         )
         
-        # 2. 行业风险归因
+        # 2. è¡ä¸é£é©å½å 
         industry_attribution = self.industry_attributor.attribute(
             portfolio_weights, benchmark_weights, barra_model
         )
         
-        # 3. 资产风险归因
+        # 3. èµäº§é£é©å½å 
         asset_attribution = self.asset_attributor.attribute(
             portfolio_weights, benchmark_weights, barra_model
         )
         
-        # 4. 汇总归因结?        total_attribution = self._aggregate_attribution(
+        # 4. æ±æ»å½å ç»?        total_attribution = self._aggregate_attribution(
             factor_attribution, industry_attribution, asset_attribution
         )
         
@@ -137,27 +143,27 @@ class RiskAttributionSystem:
                            risk_budget: RiskBudgetAllocation,
                            barra_model: BarraRiskModel) -> RiskBudgetMonitorResult:
         """
-        监控风险预算执行情况
+        çæ§é£é©é¢ç®æ§è¡æåµ
         
         Args:
-            portfolio_weights: 组合权重
-            risk_budget: 风险预算分配
-            barra_model: Barra风险模型
+            portfolio_weights: ç»åæé
+            risk_budget: é£é©é¢ç®åé
+            barra_model: Barraé£é©æ¨¡å
             
         Returns:
-            RiskBudgetMonitorResult: 风险预算监控结果
+            RiskBudgetMonitorResult: é£é©é¢ç®çæ§ç»æ
         """
-        # 1. 计算实际风险使用
+        # 1. è®¡ç®å®éé£é©ä½¿ç¨
         risk_decomposition = barra_model.decompose_risk(portfolio_weights)
         
-        # 2. 对比风险预算
+        # 2. å¯¹æ¯é£é©é¢ç®
         budget_utilization = self._calculate_budget_utilization(
             risk_decomposition, risk_budget
         )
         
-        # 3. 识别超预算风?        over_budget_risks = self._identify_over_budget(budget_utilization)
+        # 3. è¯å«è¶é¢ç®é£?        over_budget_risks = self._identify_over_budget(budget_utilization)
         
-        # 4. 生成预警信号
+        # 4. çæé¢è­¦ä¿¡å·
         alerts = self._generate_alerts(over_budget_risks)
         
         return RiskBudgetMonitorResult(
@@ -171,13 +177,13 @@ class RiskAttributionSystem:
                        attribution_result: AttributionResult,
                        output_format: str = 'html') -> str:
         """
-        生成归因报告
+        çæå½å æ¥å
         
         Args:
-            attribution_result: 归因结果
-            output_format: 输出格式?html', 'pdf', 'markdown'?            
+            attribution_result: å½å ç»æ
+            output_format: è¾åºæ ¼å¼?html', 'pdf', 'markdown'?            
         Returns:
-            str: 报告文件路径
+            str: æ¥åæä»¶è·¯å¾
         """
         return self.report_generator.generate(
             attribution_result, output_format
@@ -187,7 +193,7 @@ class RiskAttributionSystem:
                                factor_attr: pd.DataFrame,
                                industry_attr: pd.DataFrame,
                                asset_attr: pd.DataFrame) -> pd.DataFrame:
-        """汇总归因结?""
+        """æ±æ»å½å ç»?""
         total = pd.concat([
             factor_attr.sum().to_frame('Factor'),
             industry_attr.sum().to_frame('Industry'),
@@ -197,13 +203,13 @@ class RiskAttributionSystem:
         return total
 ```
 
-### 3.2 因子风险归因器（FactorRiskAttributor?
+### 3.2 å å­é£é©å½å å¨ï¼FactorRiskAttributor?
 ```python
 class FactorRiskAttributor:
     """
-    因子风险归因?    
-    索引: RISK_ATTRIBUTION_001-M02
-    职责: 分解因子风险贡献
+    å å­é£é©å½å ?    
+    ç´¢å¼: RISK_ATTRIBUTION_001-M02
+    èè´£: åè§£å å­é£é©è´¡ç®
     """
     
     def __init__(self, config: FactorAttributionConfig):
@@ -214,20 +220,20 @@ class FactorRiskAttributor:
                  benchmark_weights: Optional[pd.Series],
                  barra_model: BarraRiskModel) -> pd.DataFrame:
         """
-        因子风险归因
+        å å­é£é©å½å 
         
         Args:
-            portfolio_weights: 组合权重
-            benchmark_weights: 基准权重
-            barra_model: Barra风险模型
+            portfolio_weights: ç»åæé
+            benchmark_weights: åºåæé
+            barra_model: Barraé£é©æ¨¡å
             
         Returns:
-            pd.DataFrame: 因子风险归因结果
+            pd.DataFrame: å å­é£é©å½å ç»æ
         """
-        # 1. 计算组合因子暴露
+        # 1. è®¡ç®ç»åå å­æ´é²
         portfolio_exposure = barra_model.calculate_factor_exposure(portfolio_weights)
         
-        # 2. 计算基准因子暴露（如有）
+        # 2. è®¡ç®åºåå å­æ´é²ï¼å¦æï¼
         if benchmark_weights is not None:
             benchmark_exposure = barra_model.calculate_factor_exposure(benchmark_weights)
             active_exposure = portfolio_exposure - benchmark_exposure
@@ -235,12 +241,12 @@ class FactorRiskAttributor:
             benchmark_exposure = None
             active_exposure = portfolio_exposure
         
-        # 3. 计算因子风险贡献
+        # 3. è®¡ç®å å­é£é©è´¡ç®
         factor_risk_contribution = self._calculate_factor_risk_contribution(
             portfolio_exposure, barra_model.factor_covariance
         )
         
-        # 4. 计算主动风险归因（如有基准）
+        # 4. è®¡ç®ä¸»å¨é£é©å½å ï¼å¦æåºåï¼
         if benchmark_weights is not None:
             active_risk_contribution = self._calculate_active_risk_contribution(
                 active_exposure, barra_model.factor_covariance
@@ -248,7 +254,7 @@ class FactorRiskAttributor:
         else:
             active_risk_contribution = None
         
-        # 5. 构建归因?        attribution = pd.DataFrame({
+        # 5. æå»ºå½å ?        attribution = pd.DataFrame({
             'Portfolio_Exposure': portfolio_exposure,
             'Benchmark_Exposure': benchmark_exposure if benchmark_weights is not None else 0,
             'Active_Exposure': active_exposure if benchmark_weights is not None else portfolio_exposure,
@@ -262,36 +268,36 @@ class FactorRiskAttributor:
                                            factor_exposure: pd.Series,
                                            factor_covariance: pd.DataFrame) -> pd.Series:
         """
-        计算因子风险贡献
+        è®¡ç®å å­é£é©è´¡ç®
         
-        使用边际风险贡献法：
-        MRC_i = f_i * (F * f)_i / σ_p
+        ä½¿ç¨è¾¹éé£é©è´¡ç®æ³ï¼
+        MRC_i = f_i * (F * f)_i / Ï_p
         """
-        # 计算组合风险
+        # è®¡ç®ç»åé£é©
         F_f = factor_covariance @ factor_exposure
         portfolio_risk = np.sqrt(factor_exposure @ F_f)
         
-        # 计算边际风险贡献
+        # è®¡ç®è¾¹éé£é©è´¡ç®
         marginal_risk_contribution = factor_exposure * F_f / portfolio_risk
         
-        # 计算风险贡献百分?        risk_contribution = marginal_risk_contribution / portfolio_risk
+        # è®¡ç®é£é©è´¡ç®ç¾å?        risk_contribution = marginal_risk_contribution / portfolio_risk
         
         return risk_contribution
     
     def _calculate_active_risk_contribution(self,
                                            active_exposure: pd.Series,
                                            factor_covariance: pd.DataFrame) -> pd.Series:
-        """计算主动风险贡献"""
+        """è®¡ç®ä¸»å¨é£é©è´¡ç®"""
         return self._calculate_factor_risk_contribution(active_exposure, factor_covariance)
 ```
 
-### 3.3 行业风险归因器（IndustryRiskAttributor?
+### 3.3 è¡ä¸é£é©å½å å¨ï¼IndustryRiskAttributor?
 ```python
 class IndustryRiskAttributor:
     """
-    行业风险归因?    
-    索引: RISK_ATTRIBUTION_001-M03
-    职责: 分解行业风险贡献
+    è¡ä¸é£é©å½å ?    
+    ç´¢å¼: RISK_ATTRIBUTION_001-M03
+    èè´£: åè§£è¡ä¸é£é©è´¡ç®
     """
     
     def __init__(self, config: IndustryAttributionConfig):
@@ -302,23 +308,23 @@ class IndustryRiskAttributor:
                  benchmark_weights: Optional[pd.Series],
                  barra_model: BarraRiskModel) -> pd.DataFrame:
         """
-        行业风险归因
+        è¡ä¸é£é©å½å 
         
         Args:
-            portfolio_weights: 组合权重
-            benchmark_weights: 基准权重
-            barra_model: Barra风险模型
+            portfolio_weights: ç»åæé
+            benchmark_weights: åºåæé
+            barra_model: Barraé£é©æ¨¡å
             
         Returns:
-            pd.DataFrame: 行业风险归因结果
+            pd.DataFrame: è¡ä¸é£é©å½å ç»æ
         """
-        # 1. 获取行业因子暴露
+        # 1. è·åè¡ä¸å å­æ´é²
         industry_factors = [f for f in barra_model.factor_loadings.columns 
                           if f.startswith('industry_')]
         
         portfolio_industry_exposure = barra_model.factor_loadings[industry_factors].T @ portfolio_weights
         
-        # 2. 计算基准行业暴露（如有）
+        # 2. è®¡ç®åºåè¡ä¸æ´é²ï¼å¦æï¼
         if benchmark_weights is not None:
             benchmark_industry_exposure = barra_model.factor_loadings[industry_factors].T @ benchmark_weights
             active_industry_exposure = portfolio_industry_exposure - benchmark_industry_exposure
@@ -326,13 +332,13 @@ class IndustryRiskAttributor:
             benchmark_industry_exposure = None
             active_industry_exposure = portfolio_industry_exposure
         
-        # 3. 计算行业风险贡献
+        # 3. è®¡ç®è¡ä¸é£é©è´¡ç®
         industry_covariance = barra_model.factor_covariance.loc[industry_factors, industry_factors]
         industry_risk_contribution = self._calculate_industry_risk_contribution(
             portfolio_industry_exposure, industry_covariance
         )
         
-        # 4. 构建归因?        attribution = pd.DataFrame({
+        # 4. æå»ºå½å ?        attribution = pd.DataFrame({
             'Portfolio_Weight': portfolio_industry_exposure,
             'Benchmark_Weight': benchmark_industry_exposure if benchmark_weights is not None else 0,
             'Active_Weight': active_industry_exposure,
@@ -344,8 +350,8 @@ class IndustryRiskAttributor:
     def _calculate_industry_risk_contribution(self,
                                              industry_exposure: pd.Series,
                                              industry_covariance: pd.DataFrame) -> pd.Series:
-        """计算行业风险贡献"""
-        # 类似因子风险贡献计算
+        """è®¡ç®è¡ä¸é£é©è´¡ç®"""
+        # ç±»ä¼¼å å­é£é©è´¡ç®è®¡ç®
         I_i = industry_covariance @ industry_exposure
         industry_risk = np.sqrt(industry_exposure @ I_i)
         
@@ -354,13 +360,13 @@ class IndustryRiskAttributor:
         return risk_contribution
 ```
 
-### 3.4 资产风险归因器（AssetRiskAttributor?
+### 3.4 èµäº§é£é©å½å å¨ï¼AssetRiskAttributor?
 ```python
 class AssetRiskAttributor:
     """
-    资产风险归因?    
-    索引: RISK_ATTRIBUTION_001-M04
-    职责: 分解资产风险贡献
+    èµäº§é£é©å½å ?    
+    ç´¢å¼: RISK_ATTRIBUTION_001-M04
+    èè´£: åè§£èµäº§é£é©è´¡ç®
     """
     
     def __init__(self, config: AssetAttributionConfig):
@@ -371,28 +377,28 @@ class AssetRiskAttributor:
                  benchmark_weights: Optional[pd.Series],
                  barra_model: BarraRiskModel) -> pd.DataFrame:
         """
-        资产风险归因
+        èµäº§é£é©å½å 
         
         Args:
-            portfolio_weights: 组合权重
-            benchmark_weights: 基准权重
-            barra_model: Barra风险模型
+            portfolio_weights: ç»åæé
+            benchmark_weights: åºåæé
+            barra_model: Barraé£é©æ¨¡å
             
         Returns:
-            pd.DataFrame: 资产风险归因结果
+            pd.DataFrame: èµäº§é£é©å½å ç»æ
         """
-        # 1. 计算资产风险贡献
+        # 1. è®¡ç®èµäº§é£é©è´¡ç®
         asset_risk_contribution = self._calculate_asset_risk_contribution(
             portfolio_weights, barra_model.asset_covariance
         )
         
-        # 2. 计算主动权重（如有基准）
+        # 2. è®¡ç®ä¸»å¨æéï¼å¦æåºåï¼
         if benchmark_weights is not None:
             active_weights = portfolio_weights - benchmark_weights
         else:
             active_weights = portfolio_weights
         
-        # 3. 构建归因?        attribution = pd.DataFrame({
+        # 3. æå»ºå½å ?        attribution = pd.DataFrame({
             'Portfolio_Weight': portfolio_weights,
             'Benchmark_Weight': benchmark_weights if benchmark_weights is not None else 0,
             'Active_Weight': active_weights,
@@ -405,30 +411,30 @@ class AssetRiskAttributor:
                                           weights: pd.Series,
                                           asset_covariance: pd.DataFrame) -> pd.Series:
         """
-        计算资产风险贡献
+        è®¡ç®èµäº§é£é©è´¡ç®
         
-        使用边际风险贡献法：
-        MRC_i = w_i * (Σ * w)_i / σ_p
+        ä½¿ç¨è¾¹éé£é©è´¡ç®æ³ï¼
+        MRC_i = w_i * (Î£ * w)_i / Ï_p
         """
-        # 计算组合风险
+        # è®¡ç®ç»åé£é©
         Sigma_w = asset_covariance @ weights
         portfolio_risk = np.sqrt(weights @ Sigma_w)
         
-        # 计算边际风险贡献
+        # è®¡ç®è¾¹éé£é©è´¡ç®
         marginal_risk_contribution = weights * Sigma_w / portfolio_risk
         
-        # 计算风险贡献百分?        risk_contribution = marginal_risk_contribution / portfolio_risk
+        # è®¡ç®é£é©è´¡ç®ç¾å?        risk_contribution = marginal_risk_contribution / portfolio_risk
         
         return risk_contribution
 ```
 
-### 3.5 归因报告生成器（AttributionReportGenerator?
+### 3.5 å½å æ¥åçæå¨ï¼AttributionReportGenerator?
 ```python
 class AttributionReportGenerator:
     """
-    归因报告生成?    
-    索引: RISK_ATTRIBUTION_001-M05
-    职责: 生成可视化归因报?    """
+    å½å æ¥åçæ?    
+    ç´¢å¼: RISK_ATTRIBUTION_001-M05
+    èè´£: çæå¯è§åå½å æ¥?    """
     
     def __init__(self):
         self.template_dir = 'templates/attribution/'
@@ -437,45 +443,45 @@ class AttributionReportGenerator:
                 attribution_result: AttributionResult,
                 output_format: str = 'html') -> str:
         """
-        生成归因报告
+        çæå½å æ¥å
         
         Args:
-            attribution_result: 归因结果
-            output_format: 输出格式
+            attribution_result: å½å ç»æ
+            output_format: è¾åºæ ¼å¼
             
         Returns:
-            str: 报告文件路径
+            str: æ¥åæä»¶è·¯å¾
         """
-        # 1. 生成可视化图?        charts = self._generate_charts(attribution_result)
+        # 1. çæå¯è§åå¾?        charts = self._generate_charts(attribution_result)
         
-        # 2. 生成报告内容
+        # 2. çææ¥ååå®¹
         report_content = self._generate_content(attribution_result, charts)
         
-        # 3. 保存报告
+        # 3. ä¿å­æ¥å
         report_path = self._save_report(report_content, output_format)
         
         return report_path
     
     def _generate_charts(self, attribution_result: AttributionResult) -> Dict[str, str]:
-        """生成可视化图?""
+        """çæå¯è§åå¾?""
         charts = {}
         
-        # 1. 因子风险贡献?        charts['factor_risk'] = self._plot_factor_risk_contribution(
+        # 1. å å­é£é©è´¡ç®?        charts['factor_risk'] = self._plot_factor_risk_contribution(
             attribution_result.factor_attribution
         )
         
-        # 2. 行业风险贡献?        charts['industry_risk'] = self._plot_industry_risk_contribution(
+        # 2. è¡ä¸é£é©è´¡ç®?        charts['industry_risk'] = self._plot_industry_risk_contribution(
             attribution_result.industry_attribution
         )
         
-        # 3. 资产风险贡献图（Top 20?        charts['asset_risk'] = self._plot_asset_risk_contribution(
+        # 3. èµäº§é£é©è´¡ç®å¾ï¼Top 20?        charts['asset_risk'] = self._plot_asset_risk_contribution(
             attribution_result.asset_attribution
         )
         
         return charts
     
     def _plot_factor_risk_contribution(self, factor_attr: pd.DataFrame) -> str:
-        """绘制因子风险贡献?""
+        """ç»å¶å å­é£é©è´¡ç®?""
         import matplotlib.pyplot as plt
         
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -493,7 +499,7 @@ class AttributionReportGenerator:
         return chart_path
     
     def _plot_industry_risk_contribution(self, industry_attr: pd.DataFrame) -> str:
-        """绘制行业风险贡献?""
+        """ç»å¶è¡ä¸é£é©è´¡ç®?""
         import matplotlib.pyplot as plt
         
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -511,10 +517,10 @@ class AttributionReportGenerator:
         return chart_path
     
     def _plot_asset_risk_contribution(self, asset_attr: pd.DataFrame) -> str:
-        """绘制资产风险贡献图（Top 20?""
+        """ç»å¶èµäº§é£é©è´¡ç®å¾ï¼Top 20?""
         import matplotlib.pyplot as plt
         
-        # 取Top 20
+        # åTop 20
         top_assets = asset_attr.nlargest(20, 'Risk_Contribution')
         
         fig, ax = plt.subplots(figsize=(12, 6))
@@ -534,28 +540,28 @@ class AttributionReportGenerator:
     def _generate_content(self,
                          attribution_result: AttributionResult,
                          charts: Dict[str, str]) -> str:
-        """生成报告内容"""
+        """çææ¥ååå®¹"""
         content = f"""
 # Risk Attribution Report
-> **核心职责**: Risk Attribution System蓝图设计
-> **职责边界**: 
-> - �?本文档负责：Risk Attribution System蓝图设计相关内容
-> - �?本文档不负责：其他模块内�?
+> **æ ¸å¿èè´£**: Risk Attribution Systemèå¾è®¾è®¡
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼Risk Attribution Systemèå¾è®¾è®¡ç¸å³åå®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
 
 
-## 核心职责
+## æ ¸å¿èè´£
 
-风险归因系统，负责风险来源的分析和归�?
+é£é©å½å ç³»ç»ï¼è´è´£é£é©æ¥æºçåæåå½å?
 
 
 ---
 
-## 📋 概述
+## ð æ¦è¿°
 
-本文档定义了RISK ATTRIBUTION SYSTEM的核心功能和技术实现�?
+æ¬ææ¡£å®ä¹äºRISK ATTRIBUTION SYSTEMçæ ¸å¿åè½åææ¯å®ç°ã?
 
 
-> **核心定位**: Risk Attribution Report的核心功能实�?
+> **æ ¸å¿å®ä½**: Risk Attribution Reportçæ ¸å¿åè½å®ç?
 
 
 Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
@@ -587,7 +593,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         return content
     
     def _save_report(self, content: str, output_format: str) -> str:
-        """保存报告"""
+        """ä¿å­æ¥å"""
         report_path = f'output/risk_attribution_report.{output_format}'
         
         with open(report_path, 'w', encoding='utf-8') as f:
@@ -596,74 +602,74 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         return report_path
 ```
 
-### 3.6 配置类定?
+### 3.6 éç½®ç±»å®?
 ```python
 @dataclass
 class AttributionConfig:
-    """风险归因配置"""
+    """é£é©å½å éç½®"""
     factor_config: FactorAttributionConfig
     industry_config: IndustryAttributionConfig
     asset_config: AssetAttributionConfig
     
 @dataclass
 class FactorAttributionConfig:
-    """因子归因配置"""
+    """å å­å½å éç½®"""
     include_style_factors: bool = True
     include_industry_factors: bool = True
     
 @dataclass
 class IndustryAttributionConfig:
-    """行业归因配置"""
+    """è¡ä¸å½å éç½®"""
     industry_classification: str = 'gics'  # 'gics', 'sw', 'zz'
     
 @dataclass
 class AssetAttributionConfig:
-    """资产归因配置"""
-    top_n_assets: int = 20  # 显示Top N资产
+    """èµäº§å½å éç½®"""
+    top_n_assets: int = 20  # æ¾ç¤ºTop Nèµäº§
 ```
 
 ---
 
-## 4. 数据模型定义
+## 4. æ°æ®æ¨¡åå®ä¹
 
-### 4.1 输入数据模型
+### 4.1 è¾å¥æ°æ®æ¨¡å
 
 ```python
 @dataclass
 class PortfolioData:
-    """组合数据"""
-    weights: pd.Series  # 组合权重
-    benchmark_weights: Optional[pd.Series]  # 基准权重
-    returns: pd.DataFrame  # 历史收益?```
+    """ç»åæ°æ®"""
+    weights: pd.Series  # ç»åæé
+    benchmark_weights: Optional[pd.Series]  # åºåæé
+    returns: pd.DataFrame  # åå²æ¶ç?```
 
-### 4.2 输出数据模型
+### 4.2 è¾åºæ°æ®æ¨¡å
 
 ```python
 @dataclass
 class AttributionResult:
-    """归因结果"""
-    factor_attribution: pd.DataFrame  # 因子归因
-    industry_attribution: pd.DataFrame  # 行业归因
-    asset_attribution: pd.DataFrame  # 资产归因
-    total_attribution: pd.DataFrame  # 总归?    timestamp: datetime
+    """å½å ç»æ"""
+    factor_attribution: pd.DataFrame  # å å­å½å 
+    industry_attribution: pd.DataFrame  # è¡ä¸å½å 
+    asset_attribution: pd.DataFrame  # èµäº§å½å 
+    total_attribution: pd.DataFrame  # æ»å½?    timestamp: datetime
     
 @dataclass
 class RiskBudgetMonitorResult:
-    """风险预算监控结果"""
-    budget_utilization: pd.DataFrame  # 预算使用情况
-    over_budget_risks: List[Dict]  # 超预算风?    alerts: List[Dict]  # 预警信号
+    """é£é©é¢ç®çæ§ç»æ"""
+    budget_utilization: pd.DataFrame  # é¢ç®ä½¿ç¨æåµ
+    over_budget_risks: List[Dict]  # è¶é¢ç®é£?    alerts: List[Dict]  # é¢è­¦ä¿¡å·
     timestamp: datetime
 ```
 
 ---
 
-## 5. 集成方案
+## 5. éææ¹æ¡
 
-### 5.1 与Barra风险模型集成
+### 5.1 ä¸Barraé£é©æ¨¡åéæ
 
 ```python
 class BarraRiskModel:
-    """Barra风险模型（集成风险归因）"""
+    """Barraé£é©æ¨¡åï¼éæé£é©å½å ï¼"""
     
     def __init__(self):
         self.risk_attribution_system = RiskAttributionSystem(AttributionConfig())
@@ -671,17 +677,17 @@ class BarraRiskModel:
     def attribute_risk(self,
                       portfolio_weights: pd.Series,
                       benchmark_weights: Optional[pd.Series] = None) -> AttributionResult:
-        """风险归因"""
+        """é£é©å½å """
         return self.risk_attribution_system.attribute_risk(
             portfolio_weights, benchmark_weights, self
         )
 ```
 
-### 5.2 与组合优化器集成
+### 5.2 ä¸ç»åä¼åå¨éæ
 
 ```python
 class PortfolioOptimizer:
-    """组合优化器（集成风险归因?""
+    """ç»åä¼åå¨ï¼éæé£é©å½å ?""
     
     def __init__(self, 
                  barra_model: BarraRiskModel,
@@ -692,11 +698,11 @@ class PortfolioOptimizer:
     def optimize_and_attribute(self,
                               expected_returns: pd.Series,
                               constraints: List[Constraint]) -> Tuple[pd.Series, AttributionResult]:
-        """优化并归?""
-        # 1. 优化组合
+        """ä¼åå¹¶å½?""
+        # 1. ä¼åç»å
         optimal_weights = self.optimize(expected_returns, constraints)
         
-        # 2. 风险归因
+        # 2. é£é©å½å 
         attribution = self.attribution_system.attribute_risk(
             optimal_weights, None, self.barra_model
         )
@@ -706,54 +712,54 @@ class PortfolioOptimizer:
 
 ---
 
-## 6. 实施路线?
-### 6.1 开发阶段（2周）
+## 6. å®æ½è·¯çº¿?
+### 6.1 å¼åé¶æ®µï¼2å¨ï¼
 
-**Week 1: 核心模块开?*
-- Day 1-2: 因子风险归因?- Day 3-4: 行业风险归因?- Day 5: 资产风险归因?
-**Week 2: 集成与测?*
-- Day 1-2: 归因报告生成?- Day 3: 与Barra模型集成
-- Day 4: 测试与优?- Day 5: 文档编写
+**Week 1: æ ¸å¿æ¨¡åå¼?*
+- Day 1-2: å å­é£é©å½å ?- Day 3-4: è¡ä¸é£é©å½å ?- Day 5: èµäº§é£é©å½å ?
+**Week 2: éæä¸æµ?*
+- Day 1-2: å½å æ¥åçæ?- Day 3: ä¸Barraæ¨¡åéæ
+- Day 4: æµè¯ä¸ä¼?- Day 5: ææ¡£ç¼å
 
-### 6.2 里程?
-| 里程?| 时间 | 交付?| 验收标准 |
+### 6.2 éç¨?
+| éç¨?| æ¶é´ | äº¤ä»?| éªæ¶æ å |
 |--------|------|--------|----------|
-| **M1: 因子归因完成** | Day 2 | 因子风险归因?| 归因正确 |
-| **M2: 行业归因完成** | Day 4 | 行业风险归因?| 归因正确 |
-| **M3: 资产归因完成** | Day 5 | 资产风险归因?| 归因正确 |
-| **M4: 报告生成完成** | Day 7 | 归因报告生成?| 报告完整 |
-| **M5: 测试通过** | Day 10 | 测试报告 | 所有测试通过 |
+| **M1: å å­å½å å®æ** | Day 2 | å å­é£é©å½å ?| å½å æ­£ç¡® |
+| **M2: è¡ä¸å½å å®æ** | Day 4 | è¡ä¸é£é©å½å ?| å½å æ­£ç¡® |
+| **M3: èµäº§å½å å®æ** | Day 5 | èµäº§é£é©å½å ?| å½å æ­£ç¡® |
+| **M4: æ¥åçæå®æ** | Day 7 | å½å æ¥åçæ?| æ¥åå®æ´ |
+| **M5: æµè¯éè¿** | Day 10 | æµè¯æ¥å | æææµè¯éè¿ |
 
 ---
 
-## 7. 预期收益评估
+## 7. é¢ææ¶çè¯ä¼°
 
-### 7.1 定量收益
+### 7.1 å®éæ¶ç
 
-| 指标 | 当前水平 | 目标水平 | 提升幅度 |
+| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹åº¦ |
 |------|---------|---------|---------|
-| **风险透明?* | 40% | 90% | +50% |
-| **风险管理精细?* | 60% | 90% | +30% |
-| **风险决策支持** | ?| ?| 新增能力 |
-| **Two Sigma模式完整?* | 69% | 85% | +16% |
+| **é£é©éæ?* | 40% | 90% | +50% |
+| **é£é©ç®¡çç²¾ç»?* | 60% | 90% | +30% |
+| **é£é©å³ç­æ¯æ** | ?| ?| æ°å¢è½å |
+| **Two Sigmaæ¨¡å¼å®æ´?* | 69% | 85% | +16% |
 
-### 7.2 定性收?
-- ?实现Two Sigma核心能力：风险归?- ?多维度风险分解（因子/行业/资产?- ?风险预算执行监控
-- ?可视化归因报?- ?风险预警机制
+### 7.2 å®æ§æ¶?
+- ?å®ç°Two Sigmaæ ¸å¿è½åï¼é£é©å½?- ?å¤ç»´åº¦é£é©åè§£ï¼å å­/è¡ä¸/èµäº§?- ?é£é©é¢ç®æ§è¡çæ§
+- ?å¯è§åå½å æ¥?- ?é£é©é¢è­¦æºå¶
 
 ---
 
-## 8. 技术栈选择
+## 8. ææ¯æ éæ©
 
-### 8.1 核心依赖?
-| 库名 | 版本 | ?| 必要?|
+### 8.1 æ ¸å¿ä¾èµ?
+| åºå | çæ¬ | ?| å¿è¦?|
 |------|------|------|--------|
-| **pandas** | ?.5 | 数据处理 | 必需 |
-| **numpy** | ?.21 | 数值计?| 必需 |
-| **matplotlib** | ?.5 | 可视?| 必需 |
-| **jinja2** | ?.0 | 报告模板 | 必需 |
+| **pandas** | ?.5 | æ°æ®å¤ç | å¿é |
+| **numpy** | ?.21 | æ°å¼è®¡?| å¿é |
+| **matplotlib** | ?.5 | å¯è§?| å¿é |
+| **jinja2** | ?.0 | æ¥åæ¨¡æ¿ | å¿é |
 
-### 8.2 安装命令
+### 8.2 å®è£å½ä»¤
 
 ```bash
 pip install pandas>=1.5
@@ -764,110 +770,110 @@ pip install jinja2>=3.0
 
 ---
 
-## 9. 风险评估
+## 9. é£é©è¯ä¼°
 
-### 9.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+### 9.1 ææ¯é£?
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|---------|---------|
-| **归因计算精度** | ?| 使用标准归因方法 |
-| **报告生成性能** | ?| 使用模板缓存 |
-| **可视化质?* | ?| 使用成熟绘图?|
+| **å½å è®¡ç®ç²¾åº¦** | ?| ä½¿ç¨æ åå½å æ¹æ³ |
+| **æ¥åçææ§è½** | ?| ä½¿ç¨æ¨¡æ¿ç¼å­ |
+| **å¯è§åè´¨?* | ?| ä½¿ç¨æçç»å¾?|
 
-### 9.2 实施风险
+### 9.2 å®æ½é£é©
 
-| 风险?| 风险等级 | 缓解措施 |
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|---------|---------|
-| **开发时间超?* | ?| 分阶段实?|
-| **集成困难** | ?| 充分测试 |
-| **性能不达?* | ?| 性能优化 |
+| **å¼åæ¶é´è¶?* | ?| åé¶æ®µå®?|
+| **éæå°é¾** | ?| ååæµè¯ |
+| **æ§è½ä¸è¾¾?* | ?| æ§è½ä¼å |
 
 ---
 
-## 10. 文档治理
+## 10. ææ¡£æ²»ç
 
-### 10.1 System_Manifest.md索引
+### 10.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化?
-##### 6.6 风险归因系统
-- **模块ID**: RISK_ATTRIBUTION_001
-- **蓝图文档**: RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
-- **技术规格书**: 待创?- **职责**: 多维度风险归因、风险预算监控、归因报告生?- **?*: 设计阶段
+#### Layer 6: ç»åä¼å?
+##### 6.6 é£é©å½å ç³»ç»
+- **æ¨¡åID**: RISK_ATTRIBUTION_001
+- **èå¾ææ¡£**: RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾å?- **èè´£**: å¤ç»´åº¦é£é©å½å ãé£é©é¢ç®çæ§ãå½å æ¥åç?- **?*: è®¾è®¡é¶æ®µ
 ```
 
-### 10.2 模块职责边界
+### 10.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **风险归因系统** | 风险分解、归因分析、报告生?| **归因层面** |
-| **Barra风险模型** | 风险模型、风险分?| 提供风险模型数据 |
-| **组合优化?* | 组合权重优化 | 使用归因结果优化 |
+| **é£é©å½å ç³»ç»** | é£é©åè§£ãå½å åæãæ¥åç?| **å½å å±é¢** |
+| **Barraé£é©æ¨¡å** | é£é©æ¨¡åãé£é©å?| æä¾é£é©æ¨¡åæ°æ® |
+| **ç»åä¼å?* | ç»åæéä¼å | ä½¿ç¨å½å ç»æä¼å |
 
 ---
 
-## 附录
+## éå½
 
-### A. 参考文?
-1. **风险归因理论**:
+### A. åèæ?
+1. **é£é©å½å çè®º**:
    - Grinold, R.C. and Kahn, R.N. (2000). "Active Portfolio Management"
    - Menchero, J. (2010). "The Characteristics of Factor Attribution"
 
-2. **Brinson模型**:
+2. **Brinsonæ¨¡å**:
    - Brinson, G.P., Hood, L.R., and Beebower, G.L. (1986). "Determinants of Portfolio Performance"
 
-3. **开源项目参?*:
+3. **å¼æºé¡¹ç®å?*:
    - pyfolio: https://github.com/quantopian/pyfolio
    - empyrical: https://github.com/quantopian/empyrical
 
-### B. 术语?
-| 术语 | 定义 | 上下?|
+### B. æ¯è¯­?
+| æ¯è¯­ | å®ä¹ | ä¸ä¸?|
 |------|------|--------|
-| **风险归因** | 分析风险来源 | 风险分解 |
-| **边际风险贡献** | 单位权重增加带来的风险增?| 风险度量 |
-| **主动风险** | 组合相对基准的风?| 相对风险 |
-| **风险预算** | 分配给各因子的风险限?| 风险管理 |
+| **é£é©å½å ** | åæé£é©æ¥æº | é£é©åè§£ |
+| **è¾¹éé£é©è´¡ç®** | åä½æéå¢å å¸¦æ¥çé£é©å¢?| é£é©åº¦é |
+| **ä¸»å¨é£é©** | ç»åç¸å¯¹åºåçé£?| ç¸å¯¹é£é© |
+| **é£é©é¢ç®** | åéç»åå å­çé£é©é?| é£é©ç®¡ç |
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
+**èå¾çæ¬**: v1.0 | **åå»ºæ¥æ**: 2026-04-03 | **?*: Final | **ä¸ä¸?*: ææ¯è§æ ¼ä¹¦ç¼å
 
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [BARRA风险模型蓝图](./BARRA_RISK_MODEL_BLUEPRINT.md) | BARRA_RISK_MODEL_001 | 强依�?| 提供因子风险模型 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依�?| 提供VaR/ES指标 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依�?| 提供数据质量指标 |
+| [BARRAé£é©æ¨¡åèå¾](./BARRA_RISK_MODEL_BLUEPRINT.md) | BARRA_RISK_MODEL_001 | å¼ºä¾èµ?| æä¾å å­é£é©æ¨¡å |
+| [VaR/ESçæ§èå¾](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | å¼ºä¾èµ?| æä¾VaR/ESææ  |
+| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | ä¸­ä¾èµ?| æä¾æ°æ®è´¨éææ  |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [组合绩效评估蓝图](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | 强依�?| 组合绩效评估 |
-| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 中依�?| 风险贡献分析 |
-| [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | 中依�?| 压力测试 |
+| [ç»åç»©æè¯ä¼°èå¾](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | å¼ºä¾èµ?| ç»åç»©æè¯ä¼° |
+| [é£é©è´¡ç®åæèå¾](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | ä¸­ä¾èµ?| é£é©è´¡ç®åæ |
+| [ååæµè¯ç³»ç»èå¾](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | STRESS_TESTING_SYSTEM_001 | ä¸­ä¾èµ?| ååæµè¯ |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
-| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | ç§å­¦è®¡ç® | [å®æ¹ææ¡£](https://scipy.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[BARRA风险模型] --> B[风险归因系统]
-    C[VaR/ES监控] --> B
-    D[数据质量监控] --> B
+    A[BARRAé£é©æ¨¡å] --> B[é£é©å½å ç³»ç»]
+    C[VaR/ESçæ§] --> B
+    D[æ°æ®è´¨éçæ§] --> B
     
-    B --> E[组合绩效评估]
-    B --> F[风险贡献分析]
-    B --> G[压力测试系统]
+    B --> E[ç»åç»©æè¯ä¼°]
+    B --> F[é£é©è´¡ç®åæ]
+    B --> G[ååæµè¯ç³»ç»]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -876,13 +882,13 @@ graph LR
 
 ---
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active

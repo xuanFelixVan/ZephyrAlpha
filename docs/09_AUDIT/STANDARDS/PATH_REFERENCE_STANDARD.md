@@ -159,9 +159,9 @@ compliance_level: 专业标准---
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 # ﮒ?docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT.md ﻛﺕ?
-# ﮒﺙﻝ۷ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲ﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶=3ﺅﺙ?[ﮔﭘﮔﮔﮔ۰۲](../../../01_FRAMEWORK/ARCHITECTURE.md)
+# ﮒﺙﻝ۷ﮔ۰ﮔﭘﮒﺎﮔﮔ۰۲ﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶=3ﺅﺙ?[ﮔﭘﮔﮔﮔ۰۲](../../01_FRAMEWORK/ARCHITECTURE.md)
 
-# ﮒﺙﻝ۷ﮒ ﮒ­ﮒﭦﮔﮔ۰۲ﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶=3ﺅﺙ?[ﮒ ﮒ­ﮒﭦﮔﮔ۰۲](../../../02_FACTOR_LIBRARY/README.md)
+# ﮒﺙﻝ۷ﮒ ﮒ­ﮒﭦﮔﮔ۰۲ﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶=3ﺅﺙ?[ﮒ ﮒ­ﮒﭦﮔﮔ۰۲](../../01_FRAMEWORK/README.md)
 
 # ﮒﺙﻝ۷ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙﺅﺙﻟﺓﺁﮒﺝﮒﺎﻝﭦ?4ﺅﺙﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﺅﺙ
 [ﻝﺏﭨﻝﭨﻝﺑ۱ﮒﺙ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
@@ -192,7 +192,7 @@ compliance_level: 专业标准---
 
 # ﮒ؟ﮔﺛﮒﺎﮔﮔ۰? docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
 
-**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﻝﮔ۶ﻛﭨ۹ﻟ۰۷ﮔﺟﻟﮒﺝ](../../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md)
+**ﮔ۰ﮔﭘﮒﺎﮔﮔ۰?*: [ﮒ؟ﮔﭘﻠ۲ﻠ۸ﻝﮔ۶ﻛﭨ۹ﻟ۰۷ﮔﺟﻟﮒﺝ](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md)
 - ﮒ؟ﻛﺗﮔﺑﻛﺛﮔﭘﮔﮒﻟ؟ﺝﻟ؟۰ﮒﮒ?- ﮒﮔﻛﺕﻛﺕﮔﭦﮔﮒ؟ﻟﺓﭖ
 - ﻟ۶ﮒﻝﺏﭨﻝﭨﮔﭘﮔﮒﺎﮔ؛۰
 ```

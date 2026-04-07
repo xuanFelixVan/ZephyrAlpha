@@ -139,7 +139,7 @@ responsibility:
 ### 九、蓝图欠缺分析报
 | 文档名称 | 文档类型 | 路径 | 说明 | 状|
 |---------|---------|------|------|------|
-| **蓝图欠缺分析报告** | 分析报告 | [SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS.md](../../09_AUDIT/REPORTS/SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS.md) | 与专业量化机构的对比分析、缺失模块识| 完成 |
+| **蓝图欠缺分析报告** | 分析报告 | [SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS.md](../09_AUDIT/REPORTS/SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS.md) | 与专业量化机构的对比分析、缺失模块识| 完成 |
 
 ---
 

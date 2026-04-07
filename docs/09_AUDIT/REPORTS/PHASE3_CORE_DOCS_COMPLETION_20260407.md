@@ -57,14 +57,14 @@ responsibility:
 
 **P0核心文档（2个）**:
 
-1. ✅ **[组合优化引擎集成蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md)**
+1. ✅ **[组合优化引擎集成蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md)**
    - module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
    - 上游依赖：数据质量监控、数据目录、策略组合优化
    - 下游依赖：多目标优化、战略资产配置、组合约束管理
    - 技术依赖：PyPortfolioOpt、Riskfolio-Lib、skfolio、CVXPY
    - 引用关系图：✅ 已添加
 
-2. ✅ **[多目标优化蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md)**
+2. ✅ **[多目标优化蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md)**
    - module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
    - 上游依赖：组合优化引擎、数据质量监控、组合约束管理
    - 下游依赖：战略资产配置、场景分析、风险平价策略
@@ -73,35 +73,35 @@ responsibility:
 
 **P1重要文档（5个）**:
 
-3. ✅ **[战略配置引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md)**
+3. ✅ **[战略配置引擎蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md)**
    - module_id: STRATEGIC_ALLOCATION_ENGINE_001
    - 上游依赖：组合优化引擎、多目标优化、数据质量监控、组合约束管理
    - 下游依赖：策略组合优化、场景分析、风险平价策略
    - 技术依赖：PyPortfolioOpt、CVXPY、NumPy、Pandas
    - 引用关系图：✅ 已添加
 
-4. ✅ **[策略组合优化蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)**
+4. ✅ **[策略组合优化蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)**
    - module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
    - 上游依赖：组合优化引擎、战略配置引擎、数据质量监控
    - 下游依赖：多策略分层系统、场景分析、风险平价策略
    - 技术依赖：PyPortfolioOpt、Riskfolio-Lib、NumPy、Pandas
    - 引用关系图：✅ 已添加
 
-5. ✅ **[组合约束管理蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md)**
+5. ✅ **[组合约束管理蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md)**
    - module_id: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
    - 上游依赖：组合优化引擎、数据质量监控、数据目录
    - 下游依赖：多目标优化、战略配置引擎、场景分析
    - 技术依赖：PyPortfolioOpt、skfolio、NumPy、Pandas
    - 引用关系图：✅ 已添加
 
-6. ✅ **[组合情景分析蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md)**
+6. ✅ **[组合情景分析蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md)**
    - module_id: PORTFOLIO_SCENARIO_ANALYSIS_001
    - 上游依赖：组合优化引擎、多目标优化、组合约束管理
    - 下游依赖：组合归因分析、风险监控、压力测试系统
    - 技术依赖：NumPy、Pandas、SciPy、Matplotlib
    - 引用关系图：✅ 已添加
 
-7. ✅ **[组合归因分析蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_ATTRIBUTION_BLUEPRINT.md)**
+7. ✅ **[组合归因分析蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_ATTRIBUTION_BLUEPRINT.md)**
    - module_id: PORTFOLIO_ATTRIBUTION_001
    - 上游依赖：组合情景分析、组合优化引擎、数据质量监控
    - 下游依赖：组合绩效评估、风险监控、风险贡献分析

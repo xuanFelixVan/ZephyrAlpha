@@ -4,112 +4,118 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 首席架构�?
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据预处理层
-compliance_level: 专业标准
+owner: é¦å¸­æ¶æå¸?
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®é¢å¤çå±
+compliance_level: ä¸ä¸æ å
 priority: P1
-layer: "Layer 1 (数据预处理层)"
-responsibility: 数据源健康监控与故障切换
+layer: "Layer 1 (æ°æ®é¢å¤çå±)"
+responsibility: æ°æ®æºå¥åº·çæ§ä¸æéåæ¢
 ---
 
-# 数据源健康监控蓝�?
-
-> **核心职责**: 数据源可用性监控、响应时间监控、错误率监控、自动故障切�?
-> **职责边界**: 
-> - �?本文档负责：数据源健康检查、故障检测、告警通知、自动切�?
-> - �?本文档不负责：数据采集逻辑、数据质量检查、数据存�?
-
-**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状�?*: Active
-
----
+# æ°æ®æºå¥åº·çæ§èå?
 
 ## 核心定位
 
-负责数据源健康监控，实时监控数据源状态，提供健康检查、告警和自动恢复功能�?
+负责数据源健康监控的设计与实现，基于健康检查技术，监控数据源状态，确保数据可用性。
 
-## 📋 一、模块概�?
 
-### 1.1 专业机构标准要求
 
-| 机构类型 | 监控要求 | 可用性目�?|
+> **æ ¸å¿èè´£**: æ°æ®æºå¯ç¨æ§çæ§ãååºæ¶é´çæ§ãéè¯¯ççæ§ãèªå¨æéåæ?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼æ°æ®æºå¥åº·æ£æ¥ãæéæ£æµãåè­¦éç¥ãèªå¨åæ?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®ééé»è¾ãæ°æ®è´¨éæ£æ¥ãæ°æ®å­å?
+
+**çæ¬**: v1.0.0 | **æ´æ°æ¥æ**: 2026-04-07 | **ç¶æ?*: Active
+
+---
+
+## æ ¸å¿å®ä½
+
+è´è´£æ°æ®æºå¥åº·çæ§ï¼å®æ¶çæ§æ°æ®æºç¶æï¼æä¾å¥åº·æ£æ¥ãåè­¦åèªå¨æ¢å¤åè½ã?
+
+## ð ä¸ãæ¨¡åæ¦è¿?
+
+### 1.1 ä¸ä¸æºææ åè¦æ±
+
+| æºæç±»å | çæ§è¦æ± | å¯ç¨æ§ç®æ ?|
 |---------|---------|-----------|
-| **桥水基金** | 实时监控、自动切�?| 99.99% |
-| **文艺复兴科技** | 多维度健康检�?| 99.95% |
-| **Two Sigma** | 预测性维�?| 99.9% |
-| **Citadel** | 秒级故障检�?| 99.99% |
+| **æ¡¥æ°´åºé** | å®æ¶çæ§ãèªå¨åæ?| 99.99% |
+| **æèºå¤å´ç§æ** | å¤ç»´åº¦å¥åº·æ£æ?| 99.95% |
+| **Two Sigma** | é¢æµæ§ç»´æ?| 99.9% |
+| **Citadel** | ç§çº§æéæ£æµ?| 99.99% |
 
-### 1.2 核心功能矩阵
+### 1.2 æ ¸å¿åè½ç©éµ
 
-| 功能模块 | 开源方�?| 成熟�?| 个人适用�?| 推荐指数 |
+| åè½æ¨¡å | å¼æºæ¹æ¡?| æçåº?| ä¸ªäººéç¨æ?| æ¨èææ° |
 |---------|---------|--------|-----------|---------|
-| **健康检�?* | Prometheus + Blackbox Exporter | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
-| **指标采集** | Prometheus | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
-| **可视�?* | Grafana | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
-| **告警** | Alertmanager | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
-| **故障切换** | 自研 + HAProxy | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **å¥åº·æ£æ?* | Prometheus + Blackbox Exporter | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
+| **ææ éé** | Prometheus | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­â­?|
+| **å¯è§å?* | Grafana | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­â­?|
+| **åè­¦** | Alertmanager | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
+| **æéåæ¢** | èªç  + HAProxy | â­â­â­â­ | â­â­â­â­ | â­â­â­â­ |
 
 ---
 
-## 🏗�?二、系统架构设�?
+## ðï¸?äºãç³»ç»æ¶æè®¾è®?
 
-### 2.1 整体架构�?
-
-```
-┌─────────────────────────────────────────────────────────────────────────�?
-�?                   数据源健康监控架�?                                     �?
-├─────────────────────────────────────────────────────────────────────────�?
-�?                                                                        �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                       数据源层                                    �? �?
-�? �? �?iFind API  �?Tushare  �?AKShare  �?东方财富  �?自定义API       �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   健康检查层                                      �? �?
-�? �? �?HTTP探测  �?TCP探测  �?API响应检�? �?数据完整性检�?           �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   指标采集�?(Prometheus)                         �? �?
-�? �? �?响应时间  �?错误�? �?可用�? �?数据延迟                        �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   告警与故障切换层                                 �? �?
-�? �? �?阈值告�? �?智能告警  �?自动切换  �?降级策略                    �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   可视化层 (Grafana)                              �? �?
-�? �? �?实时仪表�? �?历史趋势  �?告警历史  �?SLA报表                   �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                                                                        �?
-└─────────────────────────────────────────────────────────────────────────�?
-```
-
-### 2.2 数据流架�?
+### 2.1 æ´ä½æ¶æå?
 
 ```
-数据�?�?健康检�?�?指标采集 �?规则评估 �?告警/切换 �?通知
-   �?        �?         �?         �?         �?        �?
-   └─────────┴──────────┴──────────┴──────────┴─────────�?
-                    完整监控链路
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                   æ°æ®æºå¥åº·çæ§æ¶æ?                                     â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                                                                        â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                       æ°æ®æºå±                                    â? â?
+â? â? â?iFind API  â?Tushare  â?AKShare  â?ä¸æ¹è´¢å¯  â?èªå®ä¹API       â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   å¥åº·æ£æ¥å±                                      â? â?
+â? â? â?HTTPæ¢æµ  â?TCPæ¢æµ  â?APIååºæ£æ? â?æ°æ®å®æ´æ§æ£æ?           â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   ææ ééå±?(Prometheus)                         â? â?
+â? â? â?ååºæ¶é´  â?éè¯¯ç? â?å¯ç¨æ? â?æ°æ®å»¶è¿                        â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   åè­¦ä¸æéåæ¢å±                                 â? â?
+â? â? â?éå¼åè­? â?æºè½åè­¦  â?èªå¨åæ¢  â?éçº§ç­ç¥                    â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   å¯è§åå± (Grafana)                              â? â?
+â? â? â?å®æ¶ä»ªè¡¨ç? â?åå²è¶å¿  â?åè­¦åå²  â?SLAæ¥è¡¨                   â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                                                                        â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+```
+
+### 2.2 æ°æ®æµæ¶æ?
+
+```
+æ°æ®æº?â?å¥åº·æ£æ?â?ææ éé â?è§åè¯ä¼° â?åè­¦/åæ¢ â?éç¥
+   â?        â?         â?         â?         â?        â?
+   âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ´ââââââââââ?
+                    å®æ´çæ§é¾è·¯
 ```
 
 ---
 
-## 💻 三、核心实现代�?
+## ð» ä¸ãæ ¸å¿å®ç°ä»£ç ?
 
-### 3.1 数据源健康检查器
+### 3.1 æ°æ®æºå¥åº·æ£æ¥å¨
 
 ```python
 """
-数据源健康检查器
+æ°æ®æºå¥åº·æ£æ¥å¨
 """
 import asyncio
 import aiohttp
@@ -122,7 +128,7 @@ import json
 
 
 class HealthStatus(Enum):
-    """健康状态枚�?""
+    """å¥åº·ç¶ææä¸?""
     HEALTHY = "healthy"
     DEGRADED = "degraded"
     UNHEALTHY = "unhealthy"
@@ -131,7 +137,7 @@ class HealthStatus(Enum):
 
 @dataclass
 class HealthCheckResult:
-    """健康检查结�?""
+    """å¥åº·æ£æ¥ç»æ?""
     source_name: str
     status: HealthStatus
     response_time_ms: float
@@ -141,7 +147,7 @@ class HealthCheckResult:
 
 
 class DataSourceHealthChecker:
-    """数据源健康检查器"""
+    """æ°æ®æºå¥åº·æ£æ¥å¨"""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -160,7 +166,7 @@ class DataSourceHealthChecker:
         expected_status: int = 200,
         expected_content: str = None
     ) -> HealthCheckResult:
-        """检查HTTP端点健康状�?""
+        """æ£æ¥HTTPç«¯ç¹å¥åº·ç¶æ?""
         start_time = time.time()
         
         try:
@@ -227,7 +233,7 @@ class DataSourceHealthChecker:
         source_name: str,
         api_config: Dict[str, Any]
     ) -> HealthCheckResult:
-        """检查API响应健康状�?""
+        """æ£æ¥APIååºå¥åº·ç¶æ?""
         endpoint = api_config.get("endpoint")
         api_key = api_config.get("api_key")
         params = api_config.get("params", {})
@@ -302,7 +308,7 @@ class DataSourceHealthChecker:
         data: Dict,
         rules: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """验证API响应"""
+        """éªè¯APIååº"""
         if rules.get("required_fields"):
             for field in rules["required_fields"]:
                 if field not in data:
@@ -328,7 +334,7 @@ class DataSourceHealthChecker:
         return {"valid": True}
     
     async def check_all_sources(self) -> Dict[str, HealthCheckResult]:
-        """检查所有数据源"""
+        """æ£æ¥æææ°æ®æº"""
         tasks = []
         
         for source_name, source_config in self.sources.items():
@@ -359,22 +365,22 @@ class DataSourceHealthChecker:
         return self.health_status
     
     def get_source_status(self, source_name: str) -> HealthStatus:
-        """获取数据源状�?""
+        """è·åæ°æ®æºç¶æ?""
         if source_name in self.health_status:
             return self.health_status[source_name].status
         return HealthStatus.UNKNOWN
     
     def should_failover(self, source_name: str) -> bool:
-        """判断是否应该故障切换"""
+        """å¤æ­æ¯å¦åºè¯¥æéåæ¢"""
         failures = self.consecutive_failures.get(source_name, 0)
         return failures >= self.failure_threshold
 ```
 
-### 3.2 Prometheus指标导出�?
+### 3.2 Prometheusææ å¯¼åºå?
 
 ```python
 """
-Prometheus指标导出�?
+Prometheusææ å¯¼åºå?
 """
 from prometheus_client import Counter, Histogram, Gauge, Info
 from prometheus_client.core import CollectorRegistry
@@ -383,7 +389,7 @@ import time
 
 
 class DataSourceMetrics:
-    """数据源监控指�?""
+    """æ°æ®æºçæ§ææ ?""
     
     def __init__(self):
         self.registry = CollectorRegistry()
@@ -450,7 +456,7 @@ class DataSourceMetrics:
         source_type: str,
         status: str
     ):
-        """更新健康状态指�?""
+        """æ´æ°å¥åº·ç¶æææ ?""
         status_value = {
             "healthy": 1.0,
             "degraded": 0.5,
@@ -469,7 +475,7 @@ class DataSourceMetrics:
         source_type: str,
         response_time_seconds: float
     ):
-        """记录响应时间"""
+        """è®°å½ååºæ¶é´"""
         self.response_time.labels(
             source_name=source_name,
             source_type=source_type
@@ -481,7 +487,7 @@ class DataSourceMetrics:
         source_type: str,
         status: str = "success"
     ):
-        """增加请求计数"""
+        """å¢å è¯·æ±è®¡æ°"""
         self.request_total.labels(
             source_name=source_name,
             source_type=source_type,
@@ -494,7 +500,7 @@ class DataSourceMetrics:
         source_type: str,
         error_type: str
     ):
-        """增加错误计数"""
+        """å¢å éè¯¯è®¡æ°"""
         self.error_total.labels(
             source_name=source_name,
             source_type=source_type,
@@ -507,7 +513,7 @@ class DataSourceMetrics:
         source_type: str,
         availability_pct: float
     ):
-        """更新可用�?""
+        """æ´æ°å¯ç¨æ?""
         self.availability.labels(
             source_name=source_name,
             source_type=source_type
@@ -519,7 +525,7 @@ class DataSourceMetrics:
         source_type: str,
         latency_seconds: float
     ):
-        """更新数据延迟"""
+        """æ´æ°æ°æ®å»¶è¿"""
         self.data_latency.labels(
             source_name=source_name,
             source_type=source_type
@@ -531,22 +537,22 @@ class DataSourceMetrics:
         source_type: str,
         count: int
     ):
-        """更新活跃连接�?""
+        """æ´æ°æ´»è·è¿æ¥æ?""
         self.active_connections.labels(
             source_name=source_name,
             source_type=source_type
         ).set(count)
     
     def set_source_info(self, info: Dict[str, str]):
-        """设置数据源信�?""
+        """è®¾ç½®æ°æ®æºä¿¡æ?""
         self.source_info.info(info)
 ```
 
-### 3.3 故障切换管理�?
+### 3.3 æéåæ¢ç®¡çå?
 
 ```python
 """
-故障切换管理�?
+æéåæ¢ç®¡çå?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -557,7 +563,7 @@ import logging
 
 
 class FailoverStrategy(Enum):
-    """故障切换策略"""
+    """æéåæ¢ç­ç¥"""
     ACTIVE_PASSIVE = "active_passive"
     ACTIVE_ACTIVE = "active_active"
     ROUND_ROBIN = "round_robin"
@@ -566,7 +572,7 @@ class FailoverStrategy(Enum):
 
 @dataclass
 class DataSourceEndpoint:
-    """数据源端�?""
+    """æ°æ®æºç«¯ç?""
     name: str
     endpoint: str
     priority: int
@@ -577,7 +583,7 @@ class DataSourceEndpoint:
 
 
 class FailoverManager:
-    """故障切换管理�?""
+    """æéåæ¢ç®¡çå?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -597,7 +603,7 @@ class FailoverManager:
         self._init_endpoints()
     
     def _init_endpoints(self):
-        """初始化端�?""
+        """åå§åç«¯ç?""
         for source_type, sources in self.config.get("sources", {}).items():
             self.endpoints[source_type] = []
             
@@ -620,7 +626,7 @@ class FailoverManager:
                     self.endpoints[source_type][0].name
     
     def get_active_endpoint(self, source_type: str) -> Optional[str]:
-        """获取活跃端点"""
+        """è·åæ´»è·ç«¯ç¹"""
         if source_type in self.current_active:
             return self.current_active[source_type]
         
@@ -630,13 +636,13 @@ class FailoverManager:
         return None
     
     def get_all_endpoints(self, source_type: str) -> List[str]:
-        """获取所有端点（用于Active-Active策略�?""
+        """è·åææç«¯ç¹ï¼ç¨äºActive-Activeç­ç¥ï¼?""
         if source_type in self.endpoints:
             return [ep.name for ep in self.endpoints[source_type] if ep.is_active]
         return []
     
     def report_failure(self, source_type: str, endpoint_name: str):
-        """报告失败"""
+        """æ¥åå¤±è´¥"""
         if source_type not in self.endpoints:
             return
         
@@ -655,7 +661,7 @@ class FailoverManager:
                 break
     
     def report_success(self, source_type: str, endpoint_name: str):
-        """报告成功"""
+        """æ¥åæå"""
         if source_type not in self.endpoints:
             return
         
@@ -667,7 +673,7 @@ class FailoverManager:
                 break
     
     def _trigger_failover(self, source_type: str):
-        """触发故障切换"""
+        """è§¦åæéåæ¢"""
         if source_type not in self.endpoints:
             return
         
@@ -688,7 +694,7 @@ class FailoverManager:
         )
     
     async def health_check_loop(self):
-        """健康检查循�?""
+        """å¥åº·æ£æ¥å¾ªç?""
         while True:
             for source_type, endpoints in self.endpoints.items():
                 for endpoint in endpoints:
@@ -707,7 +713,7 @@ class FailoverManager:
             await asyncio.sleep(self.check_interval)
     
     def get_status(self) -> Dict[str, Any]:
-        """获取状�?""
+        """è·åç¶æ?""
         status = {}
         
         for source_type, endpoints in self.endpoints.items():
@@ -728,11 +734,11 @@ class FailoverManager:
         return status
 ```
 
-### 3.4 告警管理�?
+### 3.4 åè­¦ç®¡çå?
 
 ```python
 """
-告警管理�?
+åè­¦ç®¡çå?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -746,7 +752,7 @@ import requests
 
 
 class AlertSeverity(Enum):
-    """告警严重级别"""
+    """åè­¦ä¸¥éçº§å«"""
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
@@ -755,7 +761,7 @@ class AlertSeverity(Enum):
 
 @dataclass
 class Alert:
-    """告警"""
+    """åè­¦"""
     alert_id: str
     source_name: str
     severity: AlertSeverity
@@ -767,7 +773,7 @@ class Alert:
 
 
 class AlertManager:
-    """告警管理�?""
+    """åè­¦ç®¡çå?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -789,7 +795,7 @@ class AlertManager:
         message: str,
         details: Dict[str, Any] = None
     ) -> Alert:
-        """创建告警"""
+        """åå»ºåè­¦"""
         alert_id = f"{source_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
         
         alert = Alert(
@@ -814,7 +820,7 @@ class AlertManager:
         return alert
     
     def _should_send_alert(self, source_name: str, severity: AlertSeverity) -> bool:
-        """判断是否应该发送告�?""
+        """å¤æ­æ¯å¦åºè¯¥åéåè­?""
         if source_name not in self.last_alert_time:
             return True
         
@@ -830,7 +836,7 @@ class AlertManager:
         return time_since_last.total_seconds() >= cooldown_map[severity]
     
     def _send_notification(self, alert: Alert):
-        """发送通知"""
+        """åééç¥"""
         for channel_type, channel_config in self.notification_channels.items():
             try:
                 if channel_type == "email":
@@ -845,22 +851,22 @@ class AlertManager:
                 print(f"Failed to send notification via {channel_type}: {e}")
     
     def _send_email(self, alert: Alert, config: Dict[str, Any]):
-        """发送邮件通知"""
+        """åéé®ä»¶éç¥"""
         msg = MIMEMultipart()
         msg['From'] = config['sender']
         msg['To'] = ', '.join(config['recipients'])
         msg['Subject'] = f"[{alert.severity.value.upper()}] {alert.source_name} - {alert.message}"
         
         body = f"""
-数据源告警通知
+æ°æ®æºåè­¦éç¥
 
-告警ID: {alert.alert_id}
-数据�? {alert.source_name}
-严重级别: {alert.severity.value}
-消息: {alert.message}
-时间: {alert.timestamp.isoformat()}
+åè­¦ID: {alert.alert_id}
+æ°æ®æº? {alert.source_name}
+ä¸¥éçº§å«: {alert.severity.value}
+æ¶æ¯: {alert.message}
+æ¶é´: {alert.timestamp.isoformat()}
 
-详细信息:
+è¯¦ç»ä¿¡æ¯:
 {json.dumps(alert.details, indent=2, ensure_ascii=False)}
         """
         
@@ -872,7 +878,7 @@ class AlertManager:
             server.send_message(msg)
     
     def _send_webhook(self, alert: Alert, config: Dict[str, Any]):
-        """发送Webhook通知"""
+        """åéWebhookéç¥"""
         payload = {
             "alert_id": alert.alert_id,
             "source_name": alert.source_name,
@@ -890,15 +896,15 @@ class AlertManager:
         )
     
     def _send_wechat(self, alert: Alert, config: Dict[str, Any]):
-        """发送微信通知"""
+        """åéå¾®ä¿¡éç¥"""
         webhook_url = config['webhook_url']
         
         content = f"""
-**数据源告�?*
-> 来源: {alert.source_name}
-> 级别: {alert.severity.value}
-> 消息: {alert.message}
-> 时间: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+**æ°æ®æºåè­?*
+> æ¥æº: {alert.source_name}
+> çº§å«: {alert.severity.value}
+> æ¶æ¯: {alert.message}
+> æ¶é´: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
         """
         
         payload = {
@@ -911,15 +917,15 @@ class AlertManager:
         requests.post(webhook_url, json=payload, timeout=10)
     
     def _send_dingtalk(self, alert: Alert, config: Dict[str, Any]):
-        """发送钉钉通知"""
+        """åééééç¥"""
         webhook_url = config['webhook_url']
         
         content = f"""
-数据源告�?
-- 来源: {alert.source_name}
-- 级别: {alert.severity.value}
-- 消息: {alert.message}
-- 时间: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+æ°æ®æºåè­?
+- æ¥æº: {alert.source_name}
+- çº§å«: {alert.severity.value}
+- æ¶æ¯: {alert.message}
+- æ¶é´: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
         """
         
         payload = {
@@ -938,7 +944,7 @@ class AlertManager:
         requests.post(webhook_url, json=payload, timeout=10)
     
     def acknowledge_alert(self, alert_id: str) -> bool:
-        """确认告警"""
+        """ç¡®è®¤åè­¦"""
         for alert in self.alerts:
             if alert.alert_id == alert_id:
                 alert.acknowledged = True
@@ -946,7 +952,7 @@ class AlertManager:
         return False
     
     def resolve_alert(self, alert_id: str) -> bool:
-        """解决告警"""
+        """è§£å³åè­¦"""
         for alert in self.alerts:
             if alert.alert_id == alert_id:
                 alert.resolved = True
@@ -955,7 +961,7 @@ class AlertManager:
         return False
     
     def get_active_alerts(self) -> List[Alert]:
-        """获取活跃告警"""
+        """è·åæ´»è·åè­¦"""
         return [a for a in self.alerts if not a.resolved]
     
     def get_alert_history(
@@ -964,7 +970,7 @@ class AlertManager:
         severity: AlertSeverity = None,
         hours: int = 24
     ) -> List[Alert]:
-        """获取告警历史"""
+        """è·ååè­¦åå²"""
         cutoff_time = datetime.now() - timedelta(hours=hours)
         
         filtered = [
@@ -983,9 +989,9 @@ class AlertManager:
 
 ---
 
-## 🚀 四、部署配�?
+## ð åãé¨ç½²éç½?
 
-### 4.1 Prometheus配置
+### 4.1 Prometheuséç½®
 
 ```yaml
 global:
@@ -1025,7 +1031,7 @@ scrape_configs:
         replacement: localhost:9115
 ```
 
-### 4.2 告警规则
+### 4.2 åè­¦è§å
 
 ```yaml
 groups:
@@ -1037,8 +1043,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "数据�?{{ $labels.source_name }} 不可�?
-          description: "数据�?{{ $labels.source_name }} 已经不可用超�?分钟"
+          summary: "æ°æ®æº?{{ $labels.source_name }} ä¸å¯ç?
+          description: "æ°æ®æº?{{ $labels.source_name }} å·²ç»ä¸å¯ç¨è¶è¿?åé"
       
       - alert: DataSourceDegraded
         expr: datasource_health_status == 0.5
@@ -1046,8 +1052,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "数据�?{{ $labels.source_name }} 性能降级"
-          description: "数据�?{{ $labels.source_name }} 性能降级超过5分钟"
+          summary: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§"
+          description: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§è¶è¿5åé"
       
       - alert: HighResponseTime
         expr: histogram_quantile(0.95, datasource_response_time_seconds) > 5
@@ -1055,8 +1061,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "数据�?{{ $labels.source_name }} 响应时间过长"
-          description: "数据�?{{ $labels.source_name }} P95响应时间超过5�?
+          summary: "æ°æ®æº?{{ $labels.source_name }} ååºæ¶é´è¿é¿"
+          description: "æ°æ®æº?{{ $labels.source_name }} P95ååºæ¶é´è¶è¿5ç§?
       
       - alert: HighErrorRate
         expr: rate(datasource_error_total[5m]) > 0.1
@@ -1064,8 +1070,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "数据�?{{ $labels.source_name }} 错误率过�?
-          description: "数据�?{{ $labels.source_name }} 错误率超�?0%"
+          summary: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¿é«?
+          description: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¶è¿?0%"
       
       - alert: LowAvailability
         expr: datasource_availability < 99
@@ -1073,11 +1079,11 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "数据�?{{ $labels.source_name }} 可用性过�?
-          description: "数据�?{{ $labels.source_name }} 可用性低�?9%"
+          summary: "æ°æ®æº?{{ $labels.source_name }} å¯ç¨æ§è¿ä½?
+          description: "æ°æ®æº?{{ $labels.source_name }} å¯ç¨æ§ä½äº?9%"
 ```
 
-### 4.3 Docker Compose配置
+### 4.3 Docker Composeéç½®
 
 ```yaml
 version: '3.8'
@@ -1148,9 +1154,9 @@ networks:
 
 ---
 
-## 📊 五、使用示�?
+## ð äºãä½¿ç¨ç¤ºä¾?
 
-### 5.1 健康检�?
+### 5.1 å¥åº·æ£æ?
 
 ```python
 from datasource_health import DataSourceHealthChecker
@@ -1183,7 +1189,7 @@ for source_name, result in results.items():
     print(f"{source_name}: {result.status.value} - {result.response_time_ms:.2f}ms")
 ```
 
-### 5.2 故障切换
+### 5.2 æéåæ¢
 
 ```python
 from datasource_health import FailoverManager
@@ -1203,17 +1209,17 @@ config = {
 failover = FailoverManager(config)
 
 active = failover.get_active_endpoint("market_data")
-print(f"当前活跃端点: {active}")
+print(f"å½åæ´»è·ç«¯ç¹: {active}")
 
 failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 
 active = failover.get_active_endpoint("market_data")
-print(f"故障切换后活跃端�? {active}")
+print(f"æéåæ¢åæ´»è·ç«¯ç? {active}")
 ```
 
-### 5.3 告警通知
+### 5.3 åè­¦éç¥
 
 ```python
 from datasource_health import AlertManager, AlertSeverity
@@ -1240,110 +1246,110 @@ alert_manager = AlertManager(config)
 alert = alert_manager.create_alert(
     source_name="ifind",
     severity=AlertSeverity.CRITICAL,
-    message="数据源不可用",
+    message="æ°æ®æºä¸å¯ç¨",
     details={"error": "Connection timeout"}
 )
 
-print(f"告警ID: {alert.alert_id}")
+print(f"åè­¦ID: {alert.alert_id}")
 ```
 
 ---
 
-## 📈 六、性能指标
+## ð å­ãæ§è½ææ 
 
-### 6.1 监控指标
+### 6.1 çæ§ææ 
 
-| 指标 | 目标�?| 告警阈�?|
+| ææ  | ç®æ å?| åè­¦éå?|
 |------|--------|---------|
-| **可用�?* | �?9.9% | <99% |
-| **响应时间(P95)** | <1s | >5s |
-| **错误�?* | <1% | >10% |
-| **数据延迟** | <10s | >60s |
-| **故障检测时�?* | <30s | >60s |
-| **故障切换时间** | <10s | >30s |
+| **å¯ç¨æ?* | â?9.9% | <99% |
+| **ååºæ¶é´(P95)** | <1s | >5s |
+| **éè¯¯ç?* | <1% | >10% |
+| **æ°æ®å»¶è¿** | <10s | >60s |
+| **æéæ£æµæ¶é?* | <30s | >60s |
+| **æéåæ¢æ¶é´** | <10s | >30s |
 
-### 6.2 资源占用
+### 6.2 èµæºå ç¨
 
-| 资源 | Prometheus | Grafana | Alertmanager | 总计 |
+| èµæº | Prometheus | Grafana | Alertmanager | æ»è®¡ |
 |------|-----------|---------|-------------|------|
-| CPU | 0.5�?| 0.2�?| 0.1�?| 0.8�?|
-| 内存 | 512MB | 256MB | 128MB | 896MB |
-| 存储 | 10GB | 1GB | 1GB | 12GB |
+| CPU | 0.5æ ?| 0.2æ ?| 0.1æ ?| 0.8æ ?|
+| åå­ | 512MB | 256MB | 128MB | 896MB |
+| å­å¨ | 10GB | 1GB | 1GB | 12GB |
 
 ---
 
-## 🔒 七、最佳实�?
+## ð ä¸ãæä½³å®è·?
 
-### 7.1 健康检�?
+### 7.1 å¥åº·æ£æ?
 
-1. **多维度检�?*: HTTP探测 + API响应 + 数据完整�?
-2. **合理间隔**: 30秒检查一次，避免过度请求
-3. **超时设置**: 根据数据源特性设置合理超�?
-4. **失败阈�?*: 连续3次失败才判定为不健康
+1. **å¤ç»´åº¦æ£æ?*: HTTPæ¢æµ + APIååº + æ°æ®å®æ´æ?
+2. **åçé´é**: 30ç§æ£æ¥ä¸æ¬¡ï¼é¿åè¿åº¦è¯·æ±
+3. **è¶æ¶è®¾ç½®**: æ ¹æ®æ°æ®æºç¹æ§è®¾ç½®åçè¶æ?
+4. **å¤±è´¥éå?*: è¿ç»­3æ¬¡å¤±è´¥æå¤å®ä¸ºä¸å¥åº·
 
-### 7.2 故障切换
+### 7.2 æéåæ¢
 
-1. **优先级策�?*: 主数据源优先，备用数据源按优先级排序
-2. **自动恢复**: 备用数据源恢复后自动切回主数据源
-3. **状态持久化**: 记录切换历史，便于审�?
-4. **通知机制**: 切换时发送通知
+1. **ä¼åçº§ç­ç?*: ä¸»æ°æ®æºä¼åï¼å¤ç¨æ°æ®æºæä¼åçº§æåº
+2. **èªå¨æ¢å¤**: å¤ç¨æ°æ®æºæ¢å¤åèªå¨ååä¸»æ°æ®æº
+3. **ç¶ææä¹å**: è®°å½åæ¢åå²ï¼ä¾¿äºå®¡è®?
+4. **éç¥æºå¶**: åæ¢æ¶åééç¥
 
-### 7.3 告警管理
+### 7.3 åè­¦ç®¡ç
 
-1. **分级告警**: INFO/WARNING/CRITICAL/EMERGENCY
-2. **冷却机制**: 避免告警风暴
-3. **多渠道通知**: 邮件 + Webhook + 即时通讯
-4. **告警聚合**: 相同告警聚合显示
-
----
-
-## 📋 八、实施路�?
-
-### Phase 1: 基础监控�?周）
-
-- [x] Prometheus部署
-- [x] 基础健康检�?
-- [x] 指标采集
-
-### Phase 2: 完善功能�?周）
-
-- [x] Grafana仪表�?
-- [x] 告警规则配置
-- [x] 故障切换功能
-
-### Phase 3: 优化增强�?周）
-
-- [x] 多渠道通知
-- [x] 自动化恢�?
-- [x] SLA报表
+1. **åçº§åè­¦**: INFO/WARNING/CRITICAL/EMERGENCY
+2. **å·å´æºå¶**: é¿ååè­¦é£æ´
+3. **å¤æ¸ ééç¥**: é®ä»¶ + Webhook + å³æ¶éè®¯
+4. **åè­¦èå**: ç¸ååè­¦èåæ¾ç¤º
 
 ---
 
-## 📚 九、参考资�?
+## ð å«ãå®æ½è·¯å¾?
 
-### 9.1 开源项�?
+### Phase 1: åºç¡çæ§ï¼?å¨ï¼
 
-| 项目 | 地址 | 用�?|
+- [x] Prometheusé¨ç½²
+- [x] åºç¡å¥åº·æ£æ?
+- [x] ææ éé
+
+### Phase 2: å®ååè½ï¼?å¨ï¼
+
+- [x] Grafanaä»ªè¡¨ç?
+- [x] åè­¦è§åéç½®
+- [x] æéåæ¢åè½
+
+### Phase 3: ä¼åå¢å¼ºï¼?å¨ï¼
+
+- [x] å¤æ¸ ééç¥
+- [x] èªå¨åæ¢å¤?
+- [x] SLAæ¥è¡¨
+
+---
+
+## ð ä¹ãåèèµæº?
+
+### 9.1 å¼æºé¡¹ç?
+
+| é¡¹ç® | å°å | ç¨é?|
 |------|------|------|
-| Prometheus | https://prometheus.io/ | 监控系统 |
-| Grafana | https://grafana.com/ | 可视�?|
-| Alertmanager | https://prometheus.io/docs/alerting/ | 告警管理 |
-| Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | 黑盒探测 |
+| Prometheus | https://prometheus.io/ | çæ§ç³»ç» |
+| Grafana | https://grafana.com/ | å¯è§å?|
+| Alertmanager | https://prometheus.io/docs/alerting/ | åè­¦ç®¡ç |
+| Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | é»çæ¢æµ |
 
-### 9.2 相关文档
+### 9.2 ç¸å³ææ¡£
 
-- [Prometheus最佳实践](https://prometheus.io/docs/practices/)
-- [SRE运维手册](https://sre.google/sre-book/)
-- [监控告警设计模式](https://www.oreilly.com/library/view/monitoring-distributed-systems/9781491913580/)
+- [Prometheusæä½³å®è·µ](https://prometheus.io/docs/practices/)
+- [SREè¿ç»´æå](https://sre.google/sre-book/)
+- [çæ§åè­¦è®¾è®¡æ¨¡å¼](https://www.oreilly.com/library/view/monitoring-distributed-systems/9781491913580/)
 
 ---
 
-## 📝 十、变更历�?
+## ð åãåæ´åå?
 
-| 版本 | 日期 | 变更内容 | 作�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**文档结束**
+**ææ¡£ç»æ**

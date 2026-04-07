@@ -4,184 +4,190 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®å±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 数据验证引擎
-  - 数据验证
-  - 业务规则检�?
-  - 数据完整性检�?
-layer: "Layer 1 (数据�?"
+  - æ°æ®éªè¯å¼æ
+  - æ°æ®éªè¯
+  - ä¸å¡è§åæ£æ?
+  - æ°æ®å®æ´æ§æ£æ?
+layer: "Layer 1 (æ°æ®å±?"
 ---
 
-# 数据验证引擎蓝图
-
-> **核心职责**: 业务规则验证、数据完整性检查、数据一致性验�?
-> **职责边界**: 
-> - �?本文档负责：数据验证、业务规则检查、完整性验�?
-> - �?本文档不负责：数据清洗（由清洗引擎负责）
+# æ°æ®éªè¯å¼æèå¾
 
 ## 核心定位
 
-负责数据验证引擎的实现，提供数据完整性、一致性和准确性验证功能，确保数据质量�?
+负责数据验证引擎的设计与实现，基于验证规则，检查数据有效性，确保数据质量。
 
-## 📋 执行摘要
 
-本蓝图设计基于Great Expectations和Pandera的数据验证引擎，提供专业级数据验证能力，适合个人开发和AI维护�?
 
-**核心价�?*:
-- 业务规则自动验证
-- 数据完整性检�?
-- 跨源数据一致性验�?
-- 验证报告生成
-- 数据质量评分
+> **æ ¸å¿èè´£**: ä¸å¡è§åéªè¯ãæ°æ®å®æ´æ§æ£æ¥ãæ°æ®ä¸è´æ§éªè¯?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼æ°æ®éªè¯ãä¸å¡è§åæ£æ¥ãå®æ´æ§éªè¯?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®æ¸æ´ï¼ç±æ¸æ´å¼æè´è´£ï¼
 
-**开源方�?*: Great Expectations + Pandera + Voluptuous
+## æ ¸å¿å®ä½
 
-**预估工作�?*: 50小时
+è´è´£æ°æ®éªè¯å¼æçå®ç°ï¼æä¾æ°æ®å®æ´æ§ãä¸è´æ§ååç¡®æ§éªè¯åè½ï¼ç¡®ä¿æ°æ®è´¨éã?
+
+## ð æ§è¡æè¦
+
+æ¬èå¾è®¾è®¡åºäºGreat ExpectationsåPanderaçæ°æ®éªè¯å¼æï¼æä¾ä¸ä¸çº§æ°æ®éªè¯è½åï¼éåä¸ªäººå¼ååAIç»´æ¤ã?
+
+**æ ¸å¿ä»·å?*:
+- ä¸å¡è§åèªå¨éªè¯
+- æ°æ®å®æ´æ§æ£æ?
+- è·¨æºæ°æ®ä¸è´æ§éªè¯?
+- éªè¯æ¥åçæ
+- æ°æ®è´¨éè¯å
+
+**å¼æºæ¹æ¡?*: Great Expectations + Pandera + Voluptuous
+
+**é¢ä¼°å·¥ä½é?*: 50å°æ¶
 
 ---
 
-## 1. 模块定位与目�?
+## 1. æ¨¡åå®ä½ä¸ç®æ ?
 
-### 1.1 模块定位
+### 1.1 æ¨¡åå®ä½
 
-**Layer定位**: Layer 1 - 数据预处理层（数据治理模块）
+**Layerå®ä½**: Layer 1 - æ°æ®é¢å¤çå±ï¼æ°æ®æ²»çæ¨¡åï¼
 
-**核心价�?*:
-- 确保数据符合业务规则
-- 防止脏数据进入系�?
-- 提供数据质量度量
-- 自动化验证流�?
+**æ ¸å¿ä»·å?*:
+- ç¡®ä¿æ°æ®ç¬¦åä¸å¡è§å
+- é²æ­¢èæ°æ®è¿å¥ç³»ç»?
+- æä¾æ°æ®è´¨éåº¦é
+- èªå¨åéªè¯æµç¨?
 
-**业务价�?*:
-- 降低数据风险
-- 提高数据可信�?
-- 减少人工审核
-- 提升系统稳定�?
+**ä¸å¡ä»·å?*:
+- éä½æ°æ®é£é©
+- æé«æ°æ®å¯ä¿¡åº?
+- åå°äººå·¥å®¡æ ¸
+- æåç³»ç»ç¨³å®æ?
 
-### 1.2 设计目标
+### 1.2 è®¾è®¡ç®æ 
 
-| 目标 | 优先�?| 技术实�?|
+| ç®æ  | ä¼åçº?| ææ¯å®ç?|
 |------|--------|----------|
-| **业务规则验证** | P0 | Great Expectations |
-| **数据完整性检�?* | P0 | Pandera Schema |
-| **跨源一致性验�?* | P0 | 自定义验证器 |
-| **验证报告生成** | P1 | Great Expectations Docs |
-| **数据质量评分** | P1 | 自定义评分引�?|
+| **ä¸å¡è§åéªè¯** | P0 | Great Expectations |
+| **æ°æ®å®æ´æ§æ£æ?* | P0 | Pandera Schema |
+| **è·¨æºä¸è´æ§éªè¯?* | P0 | èªå®ä¹éªè¯å¨ |
+| **éªè¯æ¥åçæ** | P1 | Great Expectations Docs |
+| **æ°æ®è´¨éè¯å** | P1 | èªå®ä¹è¯åå¼æ?|
 
 ---
 
-## 2. 系统架构设计
+## 2. ç³»ç»æ¶æè®¾è®¡
 
-### 2.1 架构概览
+### 2.1 æ¶ææ¦è§
 
 ```mermaid
 graph TB
-    subgraph "输入�?
-        A[待验证数据] --> B[验证接入接口]
+    subgraph "è¾å¥å±?
+        A[å¾éªè¯æ°æ®] --> B[éªè¯æ¥å¥æ¥å£]
     end
     
-    subgraph "验证引擎"
-        B --> C[业务规则验证器]
-        B --> D[完整性验证器]
-        B --> E[一致性验证器]
-        B --> F[统计验证器]
+    subgraph "éªè¯å¼æ"
+        B --> C[ä¸å¡è§åéªè¯å¨]
+        B --> D[å®æ´æ§éªè¯å¨]
+        B --> E[ä¸è´æ§éªè¯å¨]
+        B --> F[ç»è®¡éªè¯å¨]
         
-        C --> G[验证规则引擎]
+        C --> G[éªè¯è§åå¼æ]
         D --> G
         E --> G
         F --> G
     end
     
-    subgraph "输出�?
-        G --> H[验证结果]
-        G --> I[验证报告]
-        G --> J[质量评分]
+    subgraph "è¾åºå±?
+        G --> H[éªè¯ç»æ]
+        G --> I[éªè¯æ¥å]
+        G --> J[è´¨éè¯å]
     end
     
-    subgraph "配置管理"
-        K[验证规则配置] --> G
-        L[期望配置] --> G
+    subgraph "éç½®ç®¡ç"
+        K[éªè¯è§åéç½®] --> G
+        L[ææéç½®] --> G
     end
 ```
 
-### 2.2 核心组件
+### 2.2 æ ¸å¿ç»ä»¶
 
-#### 2.2.1 业务规则验证�?
+#### 2.2.1 ä¸å¡è§åéªè¯å?
 
-**职责**: 验证数据是否符合业务规则
+**èè´£**: éªè¯æ°æ®æ¯å¦ç¬¦åä¸å¡è§å
 
-**技术栈**: Great Expectations
+**ææ¯æ **: Great Expectations
 
-**核心功能**:
-- 价格范围验证
-- 成交量合理性验�?
-- 时间序列连续性验�?
-- 市场状态验�?
+**æ ¸å¿åè½**:
+- ä»·æ ¼èå´éªè¯
+- æäº¤éåçæ§éªè¯?
+- æ¶é´åºåè¿ç»­æ§éªè¯?
+- å¸åºç¶æéªè¯?
 
-#### 2.2.2 完整性验证器
+#### 2.2.2 å®æ´æ§éªè¯å¨
 
-**职责**: 验证数据完整�?
+**èè´£**: éªè¯æ°æ®å®æ´æ?
 
-**技术栈**: Pandera
+**ææ¯æ **: Pandera
 
-**核心功能**:
-- 必填字段检�?
-- 数据类型验证
-- 唯一性约束验�?
-- 外键约束验证
+**æ ¸å¿åè½**:
+- å¿å¡«å­æ®µæ£æ?
+- æ°æ®ç±»åéªè¯
+- å¯ä¸æ§çº¦æéªè¯?
+- å¤é®çº¦æéªè¯
 
-#### 2.2.3 一致性验证器
+#### 2.2.3 ä¸è´æ§éªè¯å¨
 
-**职责**: 验证跨源数据一致�?
+**èè´£**: éªè¯è·¨æºæ°æ®ä¸è´æ?
 
-**技术栈**: 自定义验证器
+**ææ¯æ **: èªå®ä¹éªè¯å¨
 
-**核心功能**:
-- 跨数据源对比
-- 时间戳对齐验�?
-- 价格一致性验�?
-- 成交量一致性验�?
+**æ ¸å¿åè½**:
+- è·¨æ°æ®æºå¯¹æ¯
+- æ¶é´æ³å¯¹é½éªè¯?
+- ä»·æ ¼ä¸è´æ§éªè¯?
+- æäº¤éä¸è´æ§éªè¯?
 
-#### 2.2.4 统计验证�?
+#### 2.2.4 ç»è®¡éªè¯å?
 
-**职责**: 验证数据统计特�?
+**èè´£**: éªè¯æ°æ®ç»è®¡ç¹æ?
 
-**技术栈**: Great Expectations
+**ææ¯æ **: Great Expectations
 
-**核心功能**:
-- 分布验证
-- 统计指标验证
-- 异常分布检�?
-- 趋势验证
+**æ ¸å¿åè½**:
+- åå¸éªè¯
+- ç»è®¡ææ éªè¯
+- å¼å¸¸åå¸æ£æµ?
+- è¶å¿éªè¯
 
 ---
 
-## 3. 开源方案集�?
+## 3. å¼æºæ¹æ¡éæ?
 
-### 3.1 Great Expectations集成
+### 3.1 Great Expectationséæ
 
 **GitHub**: https://github.com/great-expectations/great_expectations
 
-**Star�?*: 9.8k+
+**Staræ?*: 9.8k+
 
-**核心特�?*:
-- 丰富的内置期望类�?
-- 自动化数据文档生�?
-- 验证结果可视�?
-- 支持多种数据�?
+**æ ¸å¿ç¹æ?*:
+- ä¸°å¯çåç½®ææç±»å?
+- èªå¨åæ°æ®ææ¡£çæ?
+- éªè¯ç»æå¯è§å?
+- æ¯æå¤ç§æ°æ®æº?
 
-**集成方式**:
+**éææ¹å¼**:
 
 ```python
 import great_expectations as gx
 from great_expectations.dataset import SparkDataset
 
 class BusinessRuleValidator:
-    """业务规则验证�?""
+    """ä¸å¡è§åéªè¯å?""
     
     def __init__(self, spark, config):
         self.spark = spark
@@ -190,15 +196,15 @@ class BusinessRuleValidator:
     
     def validate_price_range(self, df, symbol, price_column='close'):
         """
-        验证价格范围
+        éªè¯ä»·æ ¼èå´
         
         Args:
             df: Spark DataFrame
-            symbol: 股票代码
-            price_column: 价格列名
+            symbol: è¡ç¥¨ä»£ç 
+            price_column: ä»·æ ¼åå
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         expectations = self.config.get('price_ranges', {}).get(symbol, {})
         
@@ -229,14 +235,14 @@ class BusinessRuleValidator:
     
     def validate_volume(self, df, volume_column='volume'):
         """
-        验证成交量合理�?
+        éªè¯æäº¤éåçæ?
         
         Args:
             df: Spark DataFrame
-            volume_column: 成交量列�?
+            volume_column: æäº¤éåå?
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         expectation_suite = self.context.add_expectation_suite("volume_validation")
         
@@ -263,15 +269,15 @@ class BusinessRuleValidator:
     
     def validate_time_continuity(self, df, time_column='timestamp', freq='1min'):
         """
-        验证时间序列连续�?
+        éªè¯æ¶é´åºåè¿ç»­æ?
         
         Args:
             df: Spark DataFrame
-            time_column: 时间列名
-            freq: 预期频率
+            time_column: æ¶é´åå
+            freq: é¢æé¢ç
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         expectation_suite = self.context.add_expectation_suite("time_continuity")
         
@@ -295,19 +301,19 @@ class BusinessRuleValidator:
         return validator.validate()
 ```
 
-### 3.2 Pandera集成
+### 3.2 Panderaéæ
 
 **GitHub**: https://github.com/unionai-oss/pandera
 
-**Star�?*: 3.2k+
+**Staræ?*: 3.2k+
 
-**核心特�?*:
-- Schema定义与验�?
-- 数据类型强制转换
-- 统计验证
-- 支持Spark DataFrame
+**æ ¸å¿ç¹æ?*:
+- Schemaå®ä¹ä¸éªè¯?
+- æ°æ®ç±»åå¼ºå¶è½¬æ¢
+- ç»è®¡éªè¯
+- æ¯æSpark DataFrame
 
-**集成方式**:
+**éææ¹å¼**:
 
 ```python
 import pandera as pa
@@ -315,7 +321,7 @@ from pandera import Column, DataFrameSchema, Check
 from pandera.typing import SparkDataFrame
 
 class IntegrityValidator:
-    """完整性验证器"""
+    """å®æ´æ§éªè¯å¨"""
     
     def __init__(self, spark, config):
         self.spark = spark
@@ -323,7 +329,7 @@ class IntegrityValidator:
         self.schemas = self._load_schemas()
     
     def _load_schemas(self):
-        """加载Schema定义"""
+        """å è½½Schemaå®ä¹"""
         return {
             'tick_data': DataFrameSchema({
                 'symbol': Column(str, Check.str_length(min_value=1)),
@@ -355,14 +361,14 @@ class IntegrityValidator:
     
     def validate_schema(self, df, schema_name):
         """
-        验证Schema
+        éªè¯Schema
         
         Args:
             df: Spark DataFrame
-            schema_name: Schema名称
+            schema_name: Schemaåç§°
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         schema = self.schemas.get(schema_name)
         
@@ -385,14 +391,14 @@ class IntegrityValidator:
     
     def validate_completeness(self, df, required_columns):
         """
-        验证数据完整�?
+        éªè¯æ°æ®å®æ´æ?
         
         Args:
             df: Spark DataFrame
-            required_columns: 必填列列�?
+            required_columns: å¿å¡«ååè¡?
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         errors = []
         
@@ -413,14 +419,14 @@ class IntegrityValidator:
     
     def validate_uniqueness(self, df, unique_columns):
         """
-        验证唯一性约�?
+        éªè¯å¯ä¸æ§çº¦æ?
         
         Args:
             df: Spark DataFrame
-            unique_columns: 唯一性约束列列表
+            unique_columns: å¯ä¸æ§çº¦æååè¡¨
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         errors = []
         
@@ -444,21 +450,21 @@ class IntegrityValidator:
         }
 ```
 
-### 3.3 一致性验证器
+### 3.3 ä¸è´æ§éªè¯å¨
 
-**技术栈**: 自定义实�?
+**ææ¯æ **: èªå®ä¹å®ç?
 
-**核心功能**:
-- 跨数据源对比
-- 时间戳对�?
-- 价格一致性验�?
+**æ ¸å¿åè½**:
+- è·¨æ°æ®æºå¯¹æ¯
+- æ¶é´æ³å¯¹é½?
+- ä»·æ ¼ä¸è´æ§éªè¯?
 
 ```python
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, abs as spark_abs
 
 class ConsistencyValidator:
-    """一致性验证器"""
+    """ä¸è´æ§éªè¯å¨"""
     
     def __init__(self, spark: SparkSession, config):
         self.spark = spark
@@ -467,16 +473,16 @@ class ConsistencyValidator:
     
     def validate_cross_source(self, df1, df2, key_columns, value_columns):
         """
-        跨数据源验证
+        è·¨æ°æ®æºéªè¯
         
         Args:
-            df1: 第一个数据源
-            df2: 第二个数据源
-            key_columns: 键列
-            value_columns: 值列
+            df1: ç¬¬ä¸ä¸ªæ°æ®æº
+            df2: ç¬¬äºä¸ªæ°æ®æº
+            key_columns: é®å
+            value_columns: å¼å
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         errors = []
         
@@ -511,15 +517,15 @@ class ConsistencyValidator:
     
     def validate_timestamp_alignment(self, df1, df2, timestamp_column='timestamp'):
         """
-        验证时间戳对�?
+        éªè¯æ¶é´æ³å¯¹é½?
         
         Args:
-            df1: 第一个数据源
-            df2: 第二个数据源
-            timestamp_column: 时间戳列�?
+            df1: ç¬¬ä¸ä¸ªæ°æ®æº
+            df2: ç¬¬äºä¸ªæ°æ®æº
+            timestamp_column: æ¶é´æ³åå?
         
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
         errors = []
         
@@ -555,9 +561,9 @@ class ConsistencyValidator:
 
 ---
 
-## 4. 验证规则配置
+## 4. éªè¯è§åéç½®
 
-### 4.1 业务规则配置
+### 4.1 ä¸å¡è§åéç½®
 
 ```yaml
 validation_rules:
@@ -587,7 +593,7 @@ validation_rules:
     timezone: "America/New_York"
 ```
 
-### 4.2 完整性规则配�?
+### 4.2 å®æ´æ§è§åéç½?
 
 ```yaml
 completeness_rules:
@@ -629,7 +635,7 @@ completeness_rules:
       - ask_price
 ```
 
-### 4.3 一致性规则配�?
+### 4.3 ä¸è´æ§è§åéç½?
 
 ```yaml
 consistency_rules:
@@ -657,29 +663,29 @@ consistency_rules:
 
 ---
 
-## 5. 验证报告生成
+## 5. éªè¯æ¥åçæ
 
-### 5.1 报告模板
+### 5.1 æ¥åæ¨¡æ¿
 
 ```python
 from datetime import datetime
 from typing import Dict, List, Any
 
 class ValidationReportGenerator:
-    """验证报告生成�?""
+    """éªè¯æ¥åçæå?""
     
     def __init__(self, config):
         self.config = config
     
     def generate_report(self, validation_results: Dict[str, Any]) -> Dict[str, Any]:
         """
-        生成验证报告
+        çæéªè¯æ¥å
         
         Args:
-            validation_results: 验证结果
+            validation_results: éªè¯ç»æ
         
         Returns:
-            Dict: 验证报告
+            Dict: éªè¯æ¥å
         """
         report = {
             'report_id': self._generate_report_id(),
@@ -693,7 +699,7 @@ class ValidationReportGenerator:
         return report
     
     def _generate_summary(self, validation_results):
-        """生成摘要"""
+        """çææè¦"""
         total_checks = len(validation_results)
         passed_checks = sum(1 for r in validation_results.values() if r.get('success', False))
         
@@ -705,7 +711,7 @@ class ValidationReportGenerator:
         }
     
     def _calculate_quality_score(self, validation_results):
-        """计算数据质量评分"""
+        """è®¡ç®æ°æ®è´¨éè¯å"""
         weights = {
             'business_rules': 0.4,
             'completeness': 0.3,
@@ -729,7 +735,7 @@ class ValidationReportGenerator:
         return round(quality_score, 2)
     
     def _generate_recommendations(self, validation_results):
-        """生成改进建议"""
+        """çææ¹è¿å»ºè®®"""
         recommendations = []
         
         for category, result in validation_results.items():
@@ -744,47 +750,47 @@ class ValidationReportGenerator:
         return recommendations
     
     def _get_recommendation(self, category, error):
-        """获取改进建议"""
+        """è·åæ¹è¿å»ºè®®"""
         recommendations_map = {
             'business_rules': {
-                'price_range': '检查数据源价格范围配置',
-                'volume_range': '验证成交量数据源可靠�?,
-                'time_continuity': '检查数据采集频率配�?
+                'price_range': 'æ£æ¥æ°æ®æºä»·æ ¼èå´éç½®',
+                'volume_range': 'éªè¯æäº¤éæ°æ®æºå¯é æ?,
+                'time_continuity': 'æ£æ¥æ°æ®ééé¢çéç½?
             },
             'completeness': {
-                'null_values': '检查数据源完整�?,
-                'unique_constraint': '检查数据去重逻辑'
+                'null_values': 'æ£æ¥æ°æ®æºå®æ´æ?,
+                'unique_constraint': 'æ£æ¥æ°æ®å»éé»è¾'
             },
             'consistency': {
-                'cross_source': '检查数据源同步机制',
-                'timestamp_alignment': '检查时间戳对齐逻辑'
+                'cross_source': 'æ£æ¥æ°æ®æºåæ­¥æºå¶',
+                'timestamp_alignment': 'æ£æ¥æ¶é´æ³å¯¹é½é»è¾'
             }
         }
         
         return recommendations_map.get(category, {}).get(
             error.get('type', ''),
-            '检查数据源和处理逻辑'
+            'æ£æ¥æ°æ®æºåå¤çé»è¾'
         )
 ```
 
 ---
 
-## 6. 数据质量评分
+## 6. æ°æ®è´¨éè¯å
 
-### 6.1 评分维度
+### 6.1 è¯åç»´åº¦
 
-| 维度 | 权重 | 评分标准 |
+| ç»´åº¦ | æé | è¯åæ å |
 |------|------|----------|
-| **业务规则符合�?* | 40% | 业务规则验证通过�?|
-| **数据完整�?* | 30% | 必填字段完整�?|
-| **数据一致�?* | 20% | 跨源一致性比�?|
-| **统计特�?* | 10% | 统计验证通过�?|
+| **ä¸å¡è§åç¬¦ååº?* | 40% | ä¸å¡è§åéªè¯éè¿ç?|
+| **æ°æ®å®æ´æ?* | 30% | å¿å¡«å­æ®µå®æ´ç?|
+| **æ°æ®ä¸è´æ?* | 20% | è·¨æºä¸è´æ§æ¯ç?|
+| **ç»è®¡ç¹æ?* | 10% | ç»è®¡éªè¯éè¿ç?|
 
-### 6.2 评分计算
+### 6.2 è¯åè®¡ç®
 
 ```python
 class DataQualityScorer:
-    """数据质量评分�?""
+    """æ°æ®è´¨éè¯åå?""
     
     def __init__(self, config):
         self.config = config
@@ -797,13 +803,13 @@ class DataQualityScorer:
     
     def calculate_score(self, validation_results):
         """
-        计算数据质量评分
+        è®¡ç®æ°æ®è´¨éè¯å
         
         Args:
-            validation_results: 验证结果
+            validation_results: éªè¯ç»æ
         
         Returns:
-            Dict: 评分结果
+            Dict: è¯åç»æ
         """
         dimension_scores = {}
         
@@ -823,7 +829,7 @@ class DataQualityScorer:
         }
     
     def _calculate_dimension_score(self, result):
-        """计算维度评分"""
+        """è®¡ç®ç»´åº¦è¯å"""
         if result.get('success', False):
             return 100.0
         
@@ -834,7 +840,7 @@ class DataQualityScorer:
         return max(0, score)
     
     def _get_grade(self, score):
-        """获取等级"""
+        """è·åç­çº§"""
         if score >= 90:
             return 'A'
         elif score >= 80:
@@ -849,169 +855,169 @@ class DataQualityScorer:
 
 ---
 
-## 7. 实施计划
+## 7. å®æ½è®¡å
 
-### 7.1 阶段一：核心验证功能（20小时�?
+### 7.1 é¶æ®µä¸ï¼æ ¸å¿éªè¯åè½ï¼20å°æ¶ï¼?
 
-**目标**: 实现基础验证能力
+**ç®æ **: å®ç°åºç¡éªè¯è½å
 
-**任务**:
-- [ ] 集成Great Expectations�?小时�?
-- [ ] 实现业务规则验证器（6小时�?
-- [ ] 实现完整性验证器�?小时�?
-- [ ] 编写验证规则配置�?小时�?
+**ä»»å¡**:
+- [ ] éæGreat Expectationsï¼?å°æ¶ï¼?
+- [ ] å®ç°ä¸å¡è§åéªè¯å¨ï¼6å°æ¶ï¼?
+- [ ] å®ç°å®æ´æ§éªè¯å¨ï¼?å°æ¶ï¼?
+- [ ] ç¼åéªè¯è§åéç½®ï¼?å°æ¶ï¼?
 
-**交付�?*:
-- 业务规则验证�?
-- 完整性验证器
-- 验证规则配置文件
+**äº¤ä»ç?*:
+- ä¸å¡è§åéªè¯å?
+- å®æ´æ§éªè¯å¨
+- éªè¯è§åéç½®æä»¶
 
-### 7.2 阶段二：高级验证功能�?5小时�?
+### 7.2 é¶æ®µäºï¼é«çº§éªè¯åè½ï¼?5å°æ¶ï¼?
 
-**目标**: 实现高级验证能力
+**ç®æ **: å®ç°é«çº§éªè¯è½å
 
-**任务**:
-- [ ] 实现一致性验证器�?小时�?
-- [ ] 实现统计验证器（5小时�?
-- [ ] 集成Pandera�?小时�?
+**ä»»å¡**:
+- [ ] å®ç°ä¸è´æ§éªè¯å¨ï¼?å°æ¶ï¼?
+- [ ] å®ç°ç»è®¡éªè¯å¨ï¼5å°æ¶ï¼?
+- [ ] éæPanderaï¼?å°æ¶ï¼?
 
-**交付�?*:
-- 一致性验证器
-- 统计验证�?
-- Pandera集成
+**äº¤ä»ç?*:
+- ä¸è´æ§éªè¯å¨
+- ç»è®¡éªè¯å?
+- Panderaéæ
 
-### 7.3 阶段三：报告与评分（15小时�?
+### 7.3 é¶æ®µä¸ï¼æ¥åä¸è¯åï¼15å°æ¶ï¼?
 
-**目标**: 完善验证报告
+**ç®æ **: å®åéªè¯æ¥å
 
-**任务**:
-- [ ] 实现验证报告生成器（6小时�?
-- [ ] 实现数据质量评分器（5小时�?
-- [ ] 生成验证文档�?小时�?
+**ä»»å¡**:
+- [ ] å®ç°éªè¯æ¥åçæå¨ï¼6å°æ¶ï¼?
+- [ ] å®ç°æ°æ®è´¨éè¯åå¨ï¼5å°æ¶ï¼?
+- [ ] çæéªè¯ææ¡£ï¼?å°æ¶ï¼?
 
-**交付�?*:
-- 验证报告生成�?
-- 数据质量评分�?
-- 验证文档
+**äº¤ä»ç?*:
+- éªè¯æ¥åçæå?
+- æ°æ®è´¨éè¯åå?
+- éªè¯ææ¡£
 
 ---
 
-## 8. 监控与运�?
+## 8. çæ§ä¸è¿ç»?
 
-### 8.1 关键指标
+### 8.1 å³é®ææ 
 
-| 指标 | 目标�?| 监控方式 |
+| ææ  | ç®æ å?| çæ§æ¹å¼ |
 |------|--------|----------|
-| **验证通过�?* | �?5% | Great Expectations |
-| **验证延迟** | �?�?| Prometheus |
-| **数据质量评分** | �?5�?| 自定义评分器 |
-| **验证覆盖�?* | 100% | 配置检�?|
+| **éªè¯éè¿ç?* | â?5% | Great Expectations |
+| **éªè¯å»¶è¿** | â?ç§?| Prometheus |
+| **æ°æ®è´¨éè¯å** | â?5å?| èªå®ä¹è¯åå¨ |
+| **éªè¯è¦çç?* | 100% | éç½®æ£æ?|
 
-### 8.2 告警规则
+### 8.2 åè­¦è§å
 
 ```yaml
 alerts:
   - name: validation_failure_rate_high
     condition: validation_failure_rate > 0.05
     severity: critical
-    message: "验证失败率超�?%"
+    message: "éªè¯å¤±è´¥çè¶è¿?%"
   
   - name: data_quality_score_low
     condition: data_quality_score < 70
     severity: warning
-    message: "数据质量评分低于70�?
+    message: "æ°æ®è´¨éè¯åä½äº70å?
   
   - name: validation_latency_high
     condition: validation_latency > 10
     severity: warning
-    message: "验证延迟超过10�?
+    message: "éªè¯å»¶è¿è¶è¿10ç§?
 ```
 
 ---
 
-## 9. 成本效益分析
+## 9. ææ¬æçåæ
 
-### 9.1 开发成�?
+### 9.1 å¼åææ?
 
-| 项目 | 工作�?| 成本 |
+| é¡¹ç® | å·¥ä½é?| ææ¬ |
 |------|--------|------|
-| **核心验证功能** | 20小时 | ¥2,000 |
-| **高级验证功能** | 15小时 | ¥1,500 |
-| **报告与评�?* | 15小时 | ¥1,500 |
-| **总计** | **50小时** | **¥5,000** |
+| **æ ¸å¿éªè¯åè½** | 20å°æ¶ | Â¥2,000 |
+| **é«çº§éªè¯åè½** | 15å°æ¶ | Â¥1,500 |
+| **æ¥åä¸è¯å?* | 15å°æ¶ | Â¥1,500 |
+| **æ»è®¡** | **50å°æ¶** | **Â¥5,000** |
 
-### 9.2 收益评估
+### 9.2 æ¶çè¯ä¼°
 
-| 收益�?| 年化价�?|
+| æ¶çé¡?| å¹´åä»·å?|
 |--------|----------|
-| **减少数据问题损失** | ¥50,000 |
-| **降低人工审核成本** | ¥20,000 |
-| **提高数据可信�?* | ¥30,000 |
-| **总计** | **¥100,000** |
+| **åå°æ°æ®é®é¢æå¤±** | Â¥50,000 |
+| **éä½äººå·¥å®¡æ ¸ææ¬** | Â¥20,000 |
+| **æé«æ°æ®å¯ä¿¡åº?* | Â¥30,000 |
+| **æ»è®¡** | **Â¥100,000** |
 
 **ROI**: (100,000 - 5,000) / 5,000 = 1900%
 
 ---
 
-## 10. 风险与缓�?
+## 10. é£é©ä¸ç¼è§?
 
-### 10.1 技术风�?
+### 10.1 ææ¯é£é?
 
-| 风险 | 影响 | 缓解措施 |
+| é£é© | å½±å | ç¼è§£æªæ½ |
 |------|------|----------|
-| **验证规则配置错误** | �?| 配置验证 + 测试环境 |
-| **验证性能瓶颈** | �?| 并行验证 + 缓存 |
-| **开源版本兼容�?* | �?| 版本锁定 + 测试 |
+| **éªè¯è§åéç½®éè¯¯** | é«?| éç½®éªè¯ + æµè¯ç¯å¢ |
+| **éªè¯æ§è½ç¶é¢** | ä¸?| å¹¶è¡éªè¯ + ç¼å­ |
+| **å¼æºçæ¬å¼å®¹æ?* | ä½?| çæ¬éå® + æµè¯ |
 
-### 10.2 业务风险
+### 10.2 ä¸å¡é£é©
 
-| 风险 | 影响 | 缓解措施 |
+| é£é© | å½±å | ç¼è§£æªæ½ |
 |------|------|----------|
-| **验证规则过严** | �?| 规则可配�?+ 灰度发布 |
-| **误报率高** | �?| 阈值调�?+ 白名�?|
-| **验证延迟影响业务** | �?| 异步验证 + 优先级队�?|
+| **éªè¯è§åè¿ä¸¥** | ä¸?| è§åå¯éç½?+ ç°åº¦åå¸ |
+| **è¯¯æ¥çé«** | ä¸?| éå¼è°ä¼?+ ç½åå?|
+| **éªè¯å»¶è¿å½±åä¸å¡** | ä½?| å¼æ­¥éªè¯ + ä¼åçº§éå?|
 
 ---
 
-## 11. 后续优化方向
+## 11. åç»­ä¼åæ¹å
 
-### 11.1 短期优化�?-3个月�?
+### 11.1 ç­æä¼åï¼?-3ä¸ªæï¼?
 
-- [ ] 增加更多业务规则模板
-- [ ] 优化验证性能
-- [ ] 完善验证报告
+- [ ] å¢å æ´å¤ä¸å¡è§åæ¨¡æ¿
+- [ ] ä¼åéªè¯æ§è½
+- [ ] å®åéªè¯æ¥å
 
-### 11.2 中期优化�?-6个月�?
+### 11.2 ä¸­æä¼åï¼?-6ä¸ªæï¼?
 
-- [ ] 机器学习辅助验证
-- [ ] 自动规则生成
-- [ ] 验证规则推荐
+- [ ] æºå¨å­¦ä¹ è¾å©éªè¯
+- [ ] èªå¨è§åçæ
+- [ ] éªè¯è§åæ¨è
 
-### 11.3 长期优化�?-12个月�?
+### 11.3 é¿æä¼åï¼?-12ä¸ªæï¼?
 
-- [ ] 数据质量预测
-- [ ] 智能异常检�?
-- [ ] 自适应验证
+- [ ] æ°æ®è´¨éé¢æµ
+- [ ] æºè½å¼å¸¸æ£æµ?
+- [ ] èªéåºéªè¯
 
 ---
 
-## 12. 参考资�?
+## 12. åèèµæ?
 
-### 12.1 开源项�?
+### 12.1 å¼æºé¡¹ç?
 
 - [Great Expectations](https://github.com/great-expectations/great_expectations)
 - [Pandera](https://github.com/unionai-oss/pandera)
 - [Voluptuous](https://github.com/alecthomas/voluptuous)
 
-### 12.2 技术文�?
+### 12.2 ææ¯ææ¡?
 
-- [Great Expectations官方文档](https://docs.greatexpectations.io/)
-- [Pandera官方文档](https://pandera.readthedocs.io/)
-- [Spark DataFrame验证最佳实践](https://spark.apache.org/docs/latest/)
+- [Great Expectationså®æ¹ææ¡£](https://docs.greatexpectations.io/)
+- [Panderaå®æ¹ææ¡£](https://pandera.readthedocs.io/)
+- [Spark DataFrameéªè¯æä½³å®è·µ](https://spark.apache.org/docs/latest/)
 
 ---
 
-**文档版本**: v1.0.0
-**最后更�?*: 2026-04-07
-**维护�?*: 个人开发�?
-**审核状�?*: 待审�?
+**ææ¡£çæ¬**: v1.0.0
+**æåæ´æ?*: 2026-04-07
+**ç»´æ¤è?*: ä¸ªäººå¼åè?
+**å®¡æ ¸ç¶æ?*: å¾å®¡æ ?

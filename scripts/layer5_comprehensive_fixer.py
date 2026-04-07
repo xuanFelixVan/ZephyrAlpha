@@ -19,7 +19,7 @@ class Layer5ComprehensiveFixer:
         self.audit_dir = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
         
         self.documents_missing = [
-            'LAYER1_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md',
+            'ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md',
             'PORTFOLIO_REBALANCING_BLUEPRINT.md',
             'RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md',
             'RISK_PARITY_STRATEGY_BLUEPRINT.md',
@@ -56,13 +56,13 @@ class Layer5ComprehensiveFixer:
         ]
         
         self.responsibility_templates = {
-            'LAYER1_ARCHITECTURE_GAP_ANALYSIS': '负责架构差距分析，识别当前架构与目标架构之间的差距，提供架构改进建议和实施路径规划。',
+            'ARCHITECTURE_GAP_ANALYSIS': '负责架构差距分析，识别当前架构与目标架构之间的差距，提供架构改进建议和实施路径规划。',
             'PORTFOLIO_REBALANCING': '负责投资组合再平衡，基于信号触发和风控约束，执行组合权重调整，确保组合符合投资策略要求。',
-            'RISK_ATTRIBUTION': '负责风险归因分析，分解投资组合风险来源，量化各因子和持仓对风险的贡献，支持风险管理决策。',
-            'RISK_PARITY': '负责风险平价策略，实现资产间风险贡献相等，优化投资组合风险分散效果，降低组合波动率。',
+            'RISK_ATTRIBUTION_SYSTEM': '负责风险归因分析，分解投资组合风险来源，量化各因子和持仓对风险的贡献，支持风险管理决策。',
+            'RISK_PARITY_STRATEGY': '负责风险平价策略，实现资产间风险贡献相等，优化投资组合风险分散效果，降低组合波动率。',
             'SIMPLIFIED_TIMEFRAME_COORDINATION': '负责简化时间框架协调，优化不同时间周期策略的配合，提升跨周期投资决策效率。',
             'STRATEGY_SELECTION': '负责策略选择，基于策略评估和预测，选择最优策略组合，提升投资决策质量。',
-            'STRESS_TESTING': '负责压力测试，构建极端市场情景，评估投资组合风险暴露，制定风险应对措施。',
+            'STRESS_TESTING_SYSTEM': '负责压力测试，构建极端市场情景，评估投资组合风险暴露，制定风险应对措施。',
             'SYSTEM_ENHANCEMENT': '负责系统增强，识别系统瓶颈，优化系统性能，提升系统稳定性和效率。',
             'TRADING_COST_OPTIMIZATION': '负责交易成本优化，分析交易成本构成，优化执行策略，降低交易成本。',
             
@@ -110,6 +110,7 @@ class Layer5ComprehensiveFixer:
     
     def add_core_positioning(self, content: str, responsibility: str) -> str:
         core_section = f'''
+
 ## 核心定位
 
 {responsibility}
@@ -132,8 +133,20 @@ class Layer5ComprehensiveFixer:
             print(f'  ❌ 文件不存在: {filename}')
             return False
         
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            try:
+                with open(file_path, 'r', encoding='gbk') as f:
+                    content = f.read()
+            except UnicodeDecodeError:
+                try:
+                    with open(file_path, 'r', encoding='latin-1') as f:
+                        content = f.read()
+                except Exception as e:
+                    print(f'  ❌ 无法读取文件 {filename}: {e}')
+                    return False
         
         module_name = self.extract_module_name(filename)
         

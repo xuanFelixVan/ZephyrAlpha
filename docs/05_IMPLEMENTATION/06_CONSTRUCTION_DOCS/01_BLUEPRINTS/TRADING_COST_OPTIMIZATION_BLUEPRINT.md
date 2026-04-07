@@ -1,66 +1,72 @@
 ---
 responsibility:
-  - 交易成本优化
-  - 成本分析
-  - 成本预测
-  - 成本控制
+  - äº¤æææ¬ä¼å
+  - ææ¬åæ
+  - ææ¬é¢æµ
+  - ææ¬æ§å¶
 
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 5 交易成本�?
-compliance_level: 专业标准
-layer: "Layer 5 (交易成本�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 5 äº¤æææ¬å±?
+compliance_level: ä¸ä¸æ å
+layer: "Layer 5 (äº¤æææ¬å±?"
 ---
 
-# 交易成本优化蓝图
+# äº¤æææ¬ä¼åèå¾
 
-> **核心职责**: 使用Almgren-Chriss市场冲击模型优化交易执行
-> **职责边界**: 
-> - �?本文档负责：交易成本优化、市场冲击建模、最优执�?
-> - �?本文档不负责：因子计算（由因子模块负责）
-## 📚 相关文档
+## 核心定位
 
-### 上游依赖
+负责交易成本优化，分析交易成本构成，优化执行策略，降低交易成本。
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+
+
+> **æ ¸å¿èè´£**: ä½¿ç¨Almgren-Chrisså¸åºå²å»æ¨¡åä¼åäº¤ææ§è¡
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼äº¤æææ¬ä¼åãå¸åºå²å»å»ºæ¨¡ãæä¼æ§è¡?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
+## ð ç¸å³ææ¡£
+
+### ä¸æ¸¸ä¾èµ
+
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 强依�?| 提供成本分析数据 |
-| [市场冲击模型蓝图](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | 强依�?| 提供市场冲击预测 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
+| [äº¤æææ¬åæå¼æèå¾](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | å¼ºä¾èµ?| æä¾ææ¬åææ°æ® |
+| [å¸åºå²å»æ¨¡åèå¾](./MARKET_IMPACT_MODEL_BLUEPRINT.md) | MARKET_IMPACT_MODEL_001 | å¼ºä¾èµ?| æä¾å¸åºå²å»é¢æµ |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [交易成本感知再平衡蓝图](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | 强依�?| 成本感知再平�?|
-| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依�?| 算法交易执行 |
-| [智能订单路由蓝图](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | 中依�?| 订单路由优化 |
+| [äº¤æææ¬æç¥åå¹³è¡¡èå¾](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | å¼ºä¾èµ?| ææ¬æç¥åå¹³è¡?|
+| [ç®æ³äº¤æä¼åå¨èå¾](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | ä¸­ä¾èµ?| ç®æ³äº¤ææ§è¡ |
+| [æºè½è®¢åè·¯ç±èå¾](./SMART_ORDER_ROUTER_BLUEPRINT.md) | SMART_ORDER_ROUTER_001 | ä¸­ä¾èµ?| è®¢åè·¯ç±ä¼å |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
-| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
-| **CVXPY** | 1.4+ | 凸优�?| [官方文档](https://www.cvxpy.org/) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | ç§å­¦è®¡ç® | [å®æ¹ææ¡£](https://scipy.org/) |
+| **CVXPY** | 1.4+ | å¸ä¼å?| [å®æ¹ææ¡£](https://www.cvxpy.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[交易成本分析引擎] --> B[交易成本优化模型]
-    C[市场冲击模型] --> B
-    D[组合优化引擎] --> B
+    A[äº¤æææ¬åæå¼æ] --> B[äº¤æææ¬ä¼åæ¨¡å]
+    C[å¸åºå²å»æ¨¡å] --> B
+    D[ç»åä¼åå¼æ] --> B
     
-    B --> E[交易成本感知再平衡]
-    B --> F[算法交易优化器]
-    B --> G[智能订单路由]
+    B --> E[äº¤æææ¬æç¥åå¹³è¡¡]
+    B --> F[ç®æ³äº¤æä¼åå¨]
+    B --> G[æºè½è®¢åè·¯ç±]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -68,29 +74,29 @@ graph LR
 ```
 
 ---
-## 2. 架构设计
+## 2. æ¶æè®¾è®¡
 
-### 2.1 系统架构?
+### 2.1 ç³»ç»æ¶æ?
 ```
-┌─────────────────────────────────────────────────────────────────??                   交易成本优化系统架构                           ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             输入?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?目标组合 ? ?当前组合 ? ?市场数据 ? ?交易约束 ?? ?? ? ?权重     ? ?权重     ? ?(流动? ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             市场冲击建模?                               ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Almgren-Chriss Market Impact Model                ? ? ?? ? ? Cost = 0.5·σ·(X/T)^(3/2)·?V)                     ? ? ?? ? ? 其中：X=交易量，T=交易时间，V=市场波动?          ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             最优执行算法层                                ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?VWAP     ? ?TWAP     ? ?IS       ?              ? ?? ? ?算法     ? ?算法     ? ?算法     ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             执行计划生成?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?交易拆分 ? ?时间安排 ? ?成本估算 ?              ? ?? ? ?策略     ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             输出?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?最优执?? ?成本报告 ? ?执行监控 ?              ? ?? ? ?计划     ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   äº¤æææ¬ä¼åç³»ç»æ¶æ                           ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾å¥?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?ç®æ ç»å ? ?å½åç»å ? ?å¸åºæ°æ® ? ?äº¤æçº¦æ ?? ?? ? ?æé     ? ?æé     ? ?(æµå¨? ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             å¸åºå²å»å»ºæ¨¡?                               ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? Almgren-Chriss Market Impact Model                ? ? ?? ? ? Cost = 0.5Â·ÏÂ·(X/T)^(3/2)Â·?V)                     ? ? ?? ? ? å¶ä¸­ï¼X=äº¤æéï¼T=äº¤ææ¶é´ï¼V=å¸åºæ³¢å¨?          ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æä¼æ§è¡ç®æ³å±                                ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?VWAP     ? ?TWAP     ? ?IS       ?              ? ?? ? ?ç®æ³     ? ?ç®æ³     ? ?ç®æ³     ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ§è¡è®¡åçæ?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?äº¤ææå ? ?æ¶é´å®æ ? ?ææ¬ä¼°ç® ?              ? ?? ? ?ç­ç¥     ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾åº?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?æä¼æ§?? ?ææ¬æ¥å ? ?æ§è¡çæ§ ?              ? ?? ? ?è®¡å     ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 核心数据?
+### 2.2 æ ¸å¿æ°æ®?
 ```
-目标组合权重 - 当前组合权重
-    ?计算交易需求（买入/卖出数量?    ?市场冲击成本估计（Almgren-Chriss模型?    ?选择最优执行算法（VWAP/TWAP/IS?    ?生成执行计划（时间表、分批交易）
-    ?输出执行计划与成本估?```
+ç®æ ç»åæé - å½åç»åæé
+    ?è®¡ç®äº¤æéæ±ï¼ä¹°å¥/ååºæ°é?    ?å¸åºå²å»ææ¬ä¼°è®¡ï¼Almgren-Chrissæ¨¡å?    ?éæ©æä¼æ§è¡ç®æ³ï¼VWAP/TWAP/IS?    ?çææ§è¡è®¡åï¼æ¶é´è¡¨ãåæ¹äº¤æï¼
+    ?è¾åºæ§è¡è®¡åä¸ææ¬ä¼°?```
 
 ---
 
-## 3. 核心模块设计
+## 3. æ ¸å¿æ¨¡åè®¾è®¡
 
-### 3.1 交易成本优化器（TradingCostOptimizer?
+### 3.1 äº¤æææ¬ä¼åå¨ï¼TradingCostOptimizer?
 ```python
 class TradingCostOptimizer:
     """
-    交易成本优化?    
-    索引: TRADING_COST_001-M01
-    职责: 优化交易执行成本，生成最优执行计?    输入: 目标组合、当前组合、市场数?    输出: 最优执行计划、成本估?    """
+    äº¤æææ¬ä¼å?    
+    ç´¢å¼: TRADING_COST_001-M01
+    èè´£: ä¼åäº¤ææ§è¡ææ¬ï¼çææä¼æ§è¡è®¡?    è¾å¥: ç®æ ç»åãå½åç»åãå¸åºæ°?    è¾åº: æä¼æ§è¡è®¡åãææ¬ä¼°?    """
     
     def __init__(self, config: TradingCostConfig):
         self.config = config
@@ -109,28 +115,28 @@ class TradingCostOptimizer:
         constraints: Optional[ExecutionConstraints] = None
     ) -> ExecutionPlan:
         """
-        优化交易执行
+        ä¼åäº¤ææ§è¡
         
         Args:
-            target_portfolio: 目标组合权重
-            current_portfolio: 当前组合权重
-            market_data: 市场数据（包含流动性、波动率?            constraints: 执行约束（可选）
+            target_portfolio: ç®æ ç»åæé
+            current_portfolio: å½åç»åæé
+            market_data: å¸åºæ°æ®ï¼åå«æµå¨æ§ãæ³¢å¨ç?            constraints: æ§è¡çº¦æï¼å¯éï¼
             
         Returns:
-            ExecutionPlan: 最优执行计?        """
-        # 1. 计算交易需?        trades = self._calculate_trades(target_portfolio, current_portfolio)
+            ExecutionPlan: æä¼æ§è¡è®¡?        """
+        # 1. è®¡ç®äº¤æé?        trades = self._calculate_trades(target_portfolio, current_portfolio)
         
-        # 2. 估计市场冲击成本
+        # 2. ä¼°è®¡å¸åºå²å»ææ¬
         impact_cost = self.impact_model.estimate(trades, market_data)
         
-        # 3. 选择最优执行算?        best_algorithm = self._select_algorithm(trades, impact_cost, constraints)
+        # 3. éæ©æä¼æ§è¡ç®?        best_algorithm = self._select_algorithm(trades, impact_cost, constraints)
         
-        # 4. 生成执行计划
+        # 4. çææ§è¡è®¡å
         execution_plan = self._generate_execution_plan(
             trades, best_algorithm, impact_cost
         )
         
-        # 5. 计算总成?        total_cost = self._calculate_total_cost(execution_plan, impact_cost)
+        # 5. è®¡ç®æ»æ?        total_cost = self._calculate_total_cost(execution_plan, impact_cost)
         
         return ExecutionPlan(
             trades=trades,
@@ -148,13 +154,13 @@ class TradingCostOptimizer:
         execution_time: int = 1
     ) -> MarketImpactResult:
         """
-        估计市场冲击成本
+        ä¼°è®¡å¸åºå²å»ææ¬
         
         Args:
-            trades: 交易需求（买入/卖出数量?            market_data: 市场数据
-            execution_time: 执行时间（天?            
+            trades: äº¤æéæ±ï¼ä¹°å¥/ååºæ°é?            market_data: å¸åºæ°æ®
+            execution_time: æ§è¡æ¶é´ï¼å¤©?            
         Returns:
-            MarketImpactResult: 市场冲击成本结果
+            MarketImpactResult: å¸åºå²å»ææ¬ç»æ
         """
         return self.impact_model.estimate(trades, market_data, execution_time)
     
@@ -164,12 +170,12 @@ class TradingCostOptimizer:
         market_data: pd.DataFrame
     ) -> AlgorithmComparison:
         """
-        比较不同执行算法的成?        
+        æ¯è¾ä¸åæ§è¡ç®æ³çæ?        
         Args:
-            trades: 交易需?            market_data: 市场数据
+            trades: äº¤æé?            market_data: å¸åºæ°æ®
             
         Returns:
-            AlgorithmComparison: 算法比较结果
+            AlgorithmComparison: ç®æ³æ¯è¾ç»æ
         """
         results = {}
         
@@ -188,9 +194,9 @@ class TradingCostOptimizer:
         target: pd.Series,
         current: pd.Series
     ) -> pd.Series:
-        """计算交易需?""
+        """è®¡ç®äº¤æé?""
         trades = target - current
-        return trades[trades != 0]  # 仅返回需要交易的资产
+        return trades[trades != 0]  # ä»è¿åéè¦äº¤æçèµäº§
     
     def _select_algorithm(
         self,
@@ -198,14 +204,14 @@ class TradingCostOptimizer:
         impact_cost: MarketImpactResult,
         constraints: Optional[ExecutionConstraints]
     ) -> str:
-        """选择最优执行算?""
-        # 根据交易规模和市场冲击选择算法
+        """éæ©æä¼æ§è¡ç®?""
+        # æ ¹æ®äº¤æè§æ¨¡åå¸åºå²å»éæ©ç®æ³
         total_trade_value = abs(trades).sum()
         
         if constraints and constraints.algorithm:
             return constraints.algorithm
         
-        # 简单规则：大额交易用VWAP，小额用IS
+        # ç®åè§åï¼å¤§é¢äº¤æç¨VWAPï¼å°é¢ç¨IS
         if total_trade_value > self.config.large_trade_threshold:
             return 'VWAP'
         else:
@@ -217,7 +223,7 @@ class TradingCostOptimizer:
         algorithm: str,
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
-        """生成执行计划"""
+        """çææ§è¡è®¡å"""
         algo = self.execution_algorithms[algorithm]
         return algo.generate_schedule(trades, impact_cost)
     
@@ -226,14 +232,14 @@ class TradingCostOptimizer:
         execution_plan: ExecutionSchedule,
         impact_cost: MarketImpactResult
     ) -> TotalCost:
-        """计算总成?""
-        # 市场冲击成本
+        """è®¡ç®æ»æ?""
+        # å¸åºå²å»ææ¬
         impact = impact_cost.total_impact
         
-        # 交易费用（佣金、印花税等）
+        # äº¤æè´¹ç¨ï¼ä½£éãå°è±ç¨ç­ï¼
         fees = self._calculate_fees(execution_plan)
         
-        # 滑点成本
+        # æ»ç¹ææ¬
         slippage = self._estimate_slippage(execution_plan)
         
         return TotalCost(
@@ -244,21 +250,21 @@ class TradingCostOptimizer:
         )
 ```
 
-### 3.2 Almgren-Chriss市场冲击模型
+### 3.2 Almgren-Chrisså¸åºå²å»æ¨¡å
 
 ```python
 class AlmgrenChrissModel:
     """
-    Almgren-Chriss市场冲击模型
+    Almgren-Chrisså¸åºå²å»æ¨¡å
     
-    索引: TRADING_COST_001-M02
-    职责: 估计交易的市场冲击成?    """
+    ç´¢å¼: TRADING_COST_001-M02
+    èè´£: ä¼°è®¡äº¤æçå¸åºå²å»æ?    """
     
     def __init__(self, config: ImpactModelConfig):
         self.config = config
-        # 市场冲击参数（需要根据历史数据校准）
-        self.temporary_impact_coeff = config.temporary_impact_coeff  # σ
-        self.permanent_impact_coeff = config.permanent_impact_coeff  # γ
+        # å¸åºå²å»åæ°ï¼éè¦æ ¹æ®åå²æ°æ®æ ¡åï¼
+        self.temporary_impact_coeff = config.temporary_impact_coeff  # Ï
+        self.permanent_impact_coeff = config.permanent_impact_coeff  # Î³
         
     def estimate(
         self,
@@ -267,38 +273,38 @@ class AlmgrenChrissModel:
         execution_time: int = 1
     ) -> MarketImpactResult:
         """
-        估计市场冲击成本
+        ä¼°è®¡å¸åºå²å»ææ¬
         
         Args:
-            trades: 交易需?            market_data: 市场数据（包含波动率、成交量?            execution_time: 执行时间（天?            
+            trades: äº¤æé?            market_data: å¸åºæ°æ®ï¼åå«æ³¢å¨çãæäº¤é?            execution_time: æ§è¡æ¶é´ï¼å¤©?            
         Returns:
-            MarketImpactResult: 市场冲击成本结果
+            MarketImpactResult: å¸åºå²å»ææ¬ç»æ
         """
         impacts = {}
         
         for asset, trade_size in trades.items():
-            # 获取资产数据
+            # è·åèµäº§æ°æ®
             volatility = market_data.loc[asset, 'volatility']
             avg_volume = market_data.loc[asset, 'avg_volume']
             price = market_data.loc[asset, 'price']
             
-            # 计算临时冲击成本
+            # è®¡ç®ä¸´æ¶å²å»ææ¬
             temp_impact = self._temporary_impact(
                 trade_size, volatility, avg_volume, execution_time
             )
             
-            # 计算永久冲击成本
+            # è®¡ç®æ°¸ä¹å²å»ææ¬
             perm_impact = self._permanent_impact(
                 trade_size, avg_volume
             )
             
-            # 总冲击成本（货币单位?            total_impact = (temp_impact + perm_impact) * abs(trade_size) * price
+            # æ»å²å»ææ¬ï¼è´§å¸åä½?            total_impact = (temp_impact + perm_impact) * abs(trade_size) * price
             
             impacts[asset] = {
                 'temporary_impact': temp_impact,
                 'permanent_impact': perm_impact,
                 'total_impact': total_impact,
-                'impact_bps': (temp_impact + perm_impact) * 10000  # 基点
+                'impact_bps': (temp_impact + perm_impact) * 10000  # åºç¹
             }
         
         return MarketImpactResult(
@@ -315,10 +321,10 @@ class AlmgrenChrissModel:
         execution_time: int
     ) -> float:
         """
-        计算临时冲击成本
+        è®¡ç®ä¸´æ¶å²å»ææ¬
         
-        公式: σ · (X/V)^(1/2) · (1/T)^(1/2)
-        其中: X=交易? V=平均成交? T=执行时间, σ=波动?        """
+        å¬å¼: Ï Â· (X/V)^(1/2) Â· (1/T)^(1/2)
+        å¶ä¸­: X=äº¤æ? V=å¹³åæäº¤? T=æ§è¡æ¶é´, Ï=æ³¢å¨?        """
         participation_rate = abs(trade_size) / avg_volume
         temp_impact = (
             self.temporary_impact_coeff * 
@@ -333,32 +339,32 @@ class AlmgrenChrissModel:
         avg_volume: float
     ) -> float:
         """
-        计算永久冲击成本
+        è®¡ç®æ°¸ä¹å²å»ææ¬
         
-        公式: γ · (X/V)
-        其中: X=交易? V=平均成交? γ=永久冲击系数
+        å¬å¼: Î³ Â· (X/V)
+        å¶ä¸­: X=äº¤æ? V=å¹³åæäº¤? Î³=æ°¸ä¹å²å»ç³»æ°
         """
         participation_rate = abs(trade_size) / avg_volume
         perm_impact = self.permanent_impact_coeff * participation_rate
         return perm_impact
 ```
 
-### 3.3 执行算法
+### 3.3 æ§è¡ç®æ³
 
 ```python
 class VWAPAlgorithm:
     """
-    VWAP（成交量加权平均价格）算?    
-    索引: TRADING_COST_001-M03
-    职责: 按照市场成交量分布执行交?    """
+    VWAPï¼æäº¤éå æå¹³åä»·æ ¼ï¼ç®?    
+    ç´¢å¼: TRADING_COST_001-M03
+    èè´£: æç§å¸åºæäº¤éåå¸æ§è¡äº¤?    """
     
     def estimate_cost(
         self,
         trades: pd.Series,
         market_data: pd.DataFrame
     ) -> float:
-        """估计VWAP执行成本"""
-        # VWAP通常比市场冲击低10-20%
+        """ä¼°è®¡VWAPæ§è¡ææ¬"""
+        # VWAPéå¸¸æ¯å¸åºå²å»ä½10-20%
         return self._calculate_base_cost(trades, market_data) * 0.85
     
     def generate_schedule(
@@ -366,13 +372,13 @@ class VWAPAlgorithm:
         trades: pd.Series,
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
-        """生成VWAP执行计划"""
-        # 按照市场成交量分布分配交?        # 简化实现：按时间均匀分配
+        """çæVWAPæ§è¡è®¡å"""
+        # æç§å¸åºæäº¤éåå¸åéäº¤?        # ç®åå®ç°ï¼ææ¶é´åååé
         schedule = {}
         
         for asset, trade_size in trades.items():
-            # 将交易拆分为多个小时
-            hourly_trades = trade_size / 6.5  # 假设6.5小时交易时间
+            # å°äº¤ææåä¸ºå¤ä¸ªå°æ¶
+            hourly_trades = trade_size / 6.5  # åè®¾6.5å°æ¶äº¤ææ¶é´
             schedule[asset] = {
                 'total': trade_size,
                 'hourly': hourly_trades,
@@ -385,10 +391,10 @@ class VWAPAlgorithm:
 ```python
 class TWAPAlgorithm:
     """
-    TWAP（时间加权平均价格）算法
+    TWAPï¼æ¶é´å æå¹³åä»·æ ¼ï¼ç®æ³
     
-    索引: TRADING_COST_001-M04
-    职责: 按照时间均匀执行交易
+    ç´¢å¼: TRADING_COST_001-M04
+    èè´£: æç§æ¶é´ååæ§è¡äº¤æ
     """
     
     def estimate_cost(
@@ -396,8 +402,8 @@ class TWAPAlgorithm:
         trades: pd.Series,
         market_data: pd.DataFrame
     ) -> float:
-        """估计TWAP执行成本"""
-        # TWAP成本通常比VWAP?-10%
+        """ä¼°è®¡TWAPæ§è¡ææ¬"""
+        # TWAPææ¬éå¸¸æ¯VWAP?-10%
         return self._calculate_base_cost(trades, market_data) * 0.90
     
     def generate_schedule(
@@ -405,8 +411,8 @@ class TWAPAlgorithm:
         trades: pd.Series,
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
-        """生成TWAP执行计划"""
-        # 按时间均匀分配
+        """çæTWAPæ§è¡è®¡å"""
+        # ææ¶é´åååé
         schedule = {}
         
         for asset, trade_size in trades.items():
@@ -422,9 +428,9 @@ class TWAPAlgorithm:
 ```python
 class ImplementationShortfallAlgorithm:
     """
-    IS（Implementation Shortfall）算?    
-    索引: TRADING_COST_001-M05
-    职责: 最小化执行 shortfall（实际成本与理论成本的差异）
+    ISï¼Implementation Shortfallï¼ç®?    
+    ç´¢å¼: TRADING_COST_001-M05
+    èè´£: æå°åæ§è¡ shortfallï¼å®éææ¬ä¸çè®ºææ¬çå·®å¼ï¼
     """
     
     def estimate_cost(
@@ -432,69 +438,69 @@ class ImplementationShortfallAlgorithm:
         trades: pd.Series,
         market_data: pd.DataFrame
     ) -> float:
-        """估计IS执行成本"""
-        # IS算法成本最低，但执行风险较?        return self._calculate_base_cost(trades, market_data) * 0.75
+        """ä¼°è®¡ISæ§è¡ææ¬"""
+        # ISç®æ³ææ¬æä½ï¼ä½æ§è¡é£é©è¾?        return self._calculate_base_cost(trades, market_data) * 0.75
     
     def generate_schedule(
         self,
         trades: pd.Series,
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
-        """生成IS执行计划"""
-        # IS算法：快速执行以减少价格变动风险
+        """çæISæ§è¡è®¡å"""
+        # ISç®æ³ï¼å¿«éæ§è¡ä»¥åå°ä»·æ ¼åå¨é£é©
         schedule = {}
         
         for asset, trade_size in trades.items():
-            # 前半小时执行50%，剩余均匀分配
+            # ååå°æ¶æ§è¡50%ï¼å©ä½åååé
             schedule[asset] = {
                 'total': trade_size,
-                'initial_burst': trade_size * 0.5,  # ?0分钟
-                'remaining': trade_size * 0.5 / 6.0,  # 剩余6小时
+                'initial_burst': trade_size * 0.5,  # ?0åé
+                'remaining': trade_size * 0.5 / 6.0,  # å©ä½6å°æ¶
                 'algorithm': 'IS'
             }
         
         return ExecutionSchedule(schedule=schedule)
 ```
 
-### 3.4 配置类定?
+### 3.4 éç½®ç±»å®?
 ```python
 @dataclass
 class TradingCostConfig:
-    """交易成本优化配置"""
+    """äº¤æææ¬ä¼åéç½®"""
     impact_config: ImpactModelConfig
-    large_trade_threshold: float = 1000000  # 大额交易阈值（元）
+    large_trade_threshold: float = 1000000  # å¤§é¢äº¤æéå¼ï¼åï¼
     default_algorithm: str = 'VWAP'
-    max_participation_rate: float = 0.1  # 最大参与率（不超过市场成交量的10%?    
+    max_participation_rate: float = 0.1  # æå¤§åä¸çï¼ä¸è¶è¿å¸åºæäº¤éç10%?    
 @dataclass
 class ImpactModelConfig:
-    """市场冲击模型配置"""
-    temporary_impact_coeff: float = 0.1  # 临时冲击系数
-    permanent_impact_coeff: float = 0.05  # 永久冲击系数
-    volatility_lookback: int = 20  # 波动率计算回看期
+    """å¸åºå²å»æ¨¡åéç½®"""
+    temporary_impact_coeff: float = 0.1  # ä¸´æ¶å²å»ç³»æ°
+    permanent_impact_coeff: float = 0.05  # æ°¸ä¹å²å»ç³»æ°
+    volatility_lookback: int = 20  # æ³¢å¨çè®¡ç®åçæ
 ```
 
 ---
 
-## 4. 数据模型定义
+## 4. æ°æ®æ¨¡åå®ä¹
 
-### 4.1 输入数据模型
+### 4.1 è¾å¥æ°æ®æ¨¡å
 
 ```python
 @dataclass
 class ExecutionConstraints:
-    """执行约束"""
-    algorithm: Optional[str] = None  # 指定执行算法
-    max_execution_time: int = 1  # 最大执行时间（天）
-    max_participation_rate: float = 0.1  # 最大参与率
-    avoid_auction: bool = True  # 避免集合竞价
+    """æ§è¡çº¦æ"""
+    algorithm: Optional[str] = None  # æå®æ§è¡ç®æ³
+    max_execution_time: int = 1  # æå¤§æ§è¡æ¶é´ï¼å¤©ï¼
+    max_participation_rate: float = 0.1  # æå¤§åä¸ç
+    avoid_auction: bool = True  # é¿åéåç«ä»·
 ```
 
-### 4.2 输出数据模型
+### 4.2 è¾åºæ°æ®æ¨¡å
 
 ```python
 @dataclass
 class ExecutionPlan:
-    """执行计划"""
+    """æ§è¡è®¡å"""
     trades: pd.Series
     execution_schedule: ExecutionSchedule
     estimated_cost: TotalCost
@@ -504,14 +510,14 @@ class ExecutionPlan:
     
 @dataclass
 class MarketImpactResult:
-    """市场冲击成本结果"""
+    """å¸åºå²å»ææ¬ç»æ"""
     asset_impacts: Dict[str, Dict[str, float]]
     total_impact: float
     execution_time: int
     
 @dataclass
 class TotalCost:
-    """总成?""
+    """æ»æ?""
     market_impact: float
     fees: float
     slippage: float
@@ -520,46 +526,46 @@ class TotalCost:
 
 ---
 
-## 5. 技术实现细?
-### 5.1 Almgren-Chriss模型原理
+## 5. ææ¯å®ç°ç»?
+### 5.1 Almgren-Chrissæ¨¡ååç
 
-**市场冲击成本** = 临时冲击 + 永久冲击
+**å¸åºå²å»ææ¬** = ä¸´æ¶å²å» + æ°¸ä¹å²å»
 
-**临时冲击**（Temporary Impact）：
+**ä¸´æ¶å²å»**ï¼Temporary Impactï¼ï¼
 ```
-σ · (X/V)^(1/2) · (1/T)^(1/2)
-```
-
-**永久冲击**（Permanent Impact）：
-```
-γ · (X/V)
+Ï Â· (X/V)^(1/2) Â· (1/T)^(1/2)
 ```
 
-其中?- X: 交易?- V: 平均成交?- T: 执行时间
-- σ: 波动?- γ: 永久冲击系数
+**æ°¸ä¹å²å»**ï¼Permanent Impactï¼ï¼
+```
+Î³ Â· (X/V)
+```
 
-### 5.2 参数校准
+å¶ä¸­?- X: äº¤æ?- V: å¹³åæäº¤?- T: æ§è¡æ¶é´
+- Ï: æ³¢å¨?- Î³: æ°¸ä¹å²å»ç³»æ°
 
-**临时冲击系数（σ）**?- 范围?.05 - 0.15
-- 影响：交易速度对价格的影响
-- 校准方法：使用历史交易数据回?
-**永久冲击系数（γ）**?- 范围?.01 - 0.10
-- 影响：交易对价格的长期影?- 校准方法：使用订单流数据估计
+### 5.2 åæ°æ ¡å
 
-### 5.3 性能优化
+**ä¸´æ¶å²å»ç³»æ°ï¼Ïï¼**?- èå´?.05 - 0.15
+- å½±åï¼äº¤æéåº¦å¯¹ä»·æ ¼çå½±å
+- æ ¡åæ¹æ³ï¼ä½¿ç¨åå²äº¤ææ°æ®å?
+**æ°¸ä¹å²å»ç³»æ°ï¼Î³ï¼**?- èå´?.01 - 0.10
+- å½±åï¼äº¤æå¯¹ä»·æ ¼çé¿æå½±?- æ ¡åæ¹æ³ï¼ä½¿ç¨è®¢åæµæ°æ®ä¼°è®¡
 
-**计算优化**?- 缓存市场数据（波动率、成交量?- 预计算冲击成本矩?- 使用向量化计?
-**实时优化**?- 实时更新市场数据
-- 动态调整执行计?
+### 5.3 æ§è½ä¼å
+
+**è®¡ç®ä¼å**?- ç¼å­å¸åºæ°æ®ï¼æ³¢å¨çãæäº¤é?- é¢è®¡ç®å²å»ææ¬ç©?- ä½¿ç¨åéåè®¡?
+**å®æ¶ä¼å**?- å®æ¶æ´æ°å¸åºæ°æ®
+- å¨æè°æ´æ§è¡è®¡?
 ---
 
-## 6. 集成方案
+## 6. éææ¹æ¡
 
-### 6.1 与组合优化器集成
+### 6.1 ä¸ç»åä¼åå¨éæ
 
 ```python
 class PortfolioOptimizer:
-    """组合优化器（集成交易成本?""
+    """ç»åä¼åå¨ï¼éæäº¤æææ¬?""
     
     def __init__(self, cost_optimizer: TradingCostOptimizer):
         self.cost_optimizer = cost_optimizer
@@ -570,15 +576,15 @@ class PortfolioOptimizer:
         current_weights: pd.Series,
         market_data: pd.DataFrame
     ) -> OptimizationResult:
-        """成本感知的组合优?""
-        # 1. 计算交易需?        trades = target_weights - current_weights
+        """ææ¬æç¥çç»åä¼?""
+        # 1. è®¡ç®äº¤æé?        trades = target_weights - current_weights
         
-        # 2. 估计交易成本
+        # 2. ä¼°è®¡äº¤æææ¬
         execution_plan = self.cost_optimizer.optimize_execution(
             target_weights, current_weights, market_data
         )
         
-        # 3. 调整目标权重（考虑交易成本?        adjusted_weights = self._adjust_for_cost(
+        # 3. è°æ´ç®æ æéï¼èèäº¤æææ¬?        adjusted_weights = self._adjust_for_cost(
             target_weights, execution_plan.estimated_cost
         )
         
@@ -589,10 +595,10 @@ class PortfolioOptimizer:
         )
 ```
 
-### 6.2 与调仓系统集?
+### 6.2 ä¸è°ä»ç³»ç»é?
 ```python
 class RebalancingSystem:
-    """调仓系统（集成交易成本优化）"""
+    """è°ä»ç³»ç»ï¼éæäº¤æææ¬ä¼åï¼"""
     
     def __init__(self, cost_optimizer: TradingCostOptimizer):
         self.cost_optimizer = cost_optimizer
@@ -603,23 +609,23 @@ class RebalancingSystem:
         current_portfolio: Portfolio,
         market_data: pd.DataFrame
     ) -> RebalancingResult:
-        """执行调仓"""
-        # 1. 优化执行计划
+        """æ§è¡è°ä»"""
+        # 1. ä¼åæ§è¡è®¡å
         execution_plan = self.cost_optimizer.optimize_execution(
             target_portfolio.weights,
             current_portfolio.weights,
             market_data
         )
         
-        # 2. 检查成本是否可接受
+        # 2. æ£æ¥ææ¬æ¯å¦å¯æ¥å
         if execution_plan.estimated_cost.total > self.config.max_cost_threshold:
             return RebalancingResult(
                 status='REJECTED',
-                reason='交易成本过高',
+                reason='äº¤æææ¬è¿é«',
                 cost=execution_plan.estimated_cost
             )
         
-        # 3. 执行交易
+        # 3. æ§è¡äº¤æ
         execution_result = self._execute_trades(execution_plan)
         
         return RebalancingResult(
@@ -631,13 +637,13 @@ class RebalancingSystem:
 
 ---
 
-## 7. 测试策略
+## 7. æµè¯ç­ç¥
 
-### 7.1 单元测试
+### 7.1 ååæµè¯
 
 ```python
 def test_market_impact_estimation():
-    """测试市场冲击成本估计"""
+    """æµè¯å¸åºå²å»ææ¬ä¼°è®¡"""
     trades = pd.Series({'AAPL': 1000, 'GOOGL': -500})
     market_data = pd.DataFrame({
         'volatility': [0.02, 0.025],
@@ -653,7 +659,7 @@ def test_market_impact_estimation():
     assert 'GOOGL' in result.asset_impacts
 
 def test_execution_plan_generation():
-    """测试执行计划生成"""
+    """æµè¯æ§è¡è®¡åçæ"""
     optimizer = TradingCostOptimizer(TradingCostConfig())
     
     target = pd.Series({'AAPL': 0.6, 'GOOGL': 0.4})
@@ -665,11 +671,11 @@ def test_execution_plan_generation():
     assert plan.estimated_cost.total > 0
 ```
 
-### 7.2 集成测试
+### 7.2 éææµè¯
 
 ```python
 def test_integration_with_portfolio_optimizer():
-    """测试与组合优化器集成"""
+    """æµè¯ä¸ç»åä¼åå¨éæ"""
     cost_optimizer = TradingCostOptimizer(TradingCostConfig())
     portfolio_optimizer = PortfolioOptimizer(cost_optimizer)
     
@@ -684,138 +690,138 @@ def test_integration_with_portfolio_optimizer():
 
 ---
 
-## 8. 实施路线?
-### 8.1 开发阶段（1.5周）
+## 8. å®æ½è·¯çº¿?
+### 8.1 å¼åé¶æ®µï¼1.5å¨ï¼
 
-**Week 1: 核心模型开?*
-- Day 1-2: Almgren-Chriss市场冲击模型
-- Day 3-4: 执行算法（VWAP/TWAP/IS?- Day 5: 执行计划生成?
-**Week 2: 集成与测?*
-- Day 1-2: 与组合优化器集成
-- Day 3: 单元测试与集成测?- Day 4: 参数校准与优?- Day 5: 文档编写与代码审?
-### 8.2 里程?
-| 里程?| 时间 | 交付?| 验收标准 |
+**Week 1: æ ¸å¿æ¨¡åå¼?*
+- Day 1-2: Almgren-Chrisså¸åºå²å»æ¨¡å
+- Day 3-4: æ§è¡ç®æ³ï¼VWAP/TWAP/IS?- Day 5: æ§è¡è®¡åçæ?
+**Week 2: éæä¸æµ?*
+- Day 1-2: ä¸ç»åä¼åå¨éæ
+- Day 3: ååæµè¯ä¸éææµ?- Day 4: åæ°æ ¡åä¸ä¼?- Day 5: ææ¡£ç¼åä¸ä»£ç å®¡?
+### 8.2 éç¨?
+| éç¨?| æ¶é´ | äº¤ä»?| éªæ¶æ å |
 |--------|------|--------|----------|
-| **M1: 冲击模型完成** | Day 2 | 市场冲击模型 | 成本估计准确 |
-| **M2: 执行算法完成** | Day 4 | VWAP/TWAP/IS算法 | 算法正常工作 |
-| **M3: 集成完成** | Day 7 | 完整系统 | 所有接口正?|
-| **M4: 测试通过** | Day 8 | 测试报告 | 所有测试通过 |
-| **M5: 生产就绪** | Day 10 | 生产系统 | 系统稳定运行 |
+| **M1: å²å»æ¨¡åå®æ** | Day 2 | å¸åºå²å»æ¨¡å | ææ¬ä¼°è®¡åç¡® |
+| **M2: æ§è¡ç®æ³å®æ** | Day 4 | VWAP/TWAP/ISç®æ³ | ç®æ³æ­£å¸¸å·¥ä½ |
+| **M3: éæå®æ** | Day 7 | å®æ´ç³»ç» | æææ¥å£æ­£?|
+| **M4: æµè¯éè¿** | Day 8 | æµè¯æ¥å | æææµè¯éè¿ |
+| **M5: çäº§å°±ç»ª** | Day 10 | çäº§ç³»ç» | ç³»ç»ç¨³å®è¿è¡ |
 
 ---
 
-## 9. AI维护指南
+## 9. AIç»´æ¤æå
 
-### 9.1 自动化监控指?
-**模型健康度指?*?- 冲击成本预测准确?- 执行算法效率
-- 成本节约?
-**业务指标**?- 平均交易成本降低?- 执行时间优化
-- 滑点控制
+### 9.1 èªå¨åçæ§æ?
+**æ¨¡åå¥åº·åº¦æ?*?- å²å»ææ¬é¢æµåç¡®?- æ§è¡ç®æ³æç
+- ææ¬èçº¦?
+**ä¸å¡ææ **?- å¹³åäº¤æææ¬éä½?- æ§è¡æ¶é´ä¼å
+- æ»ç¹æ§å¶
 
-### 9.2 自动化维护任?
-**每日任务**?- 更新市场数据（波动率、成交量?- 监控执行成本
-- 记录实际交易成本
+### 9.2 èªå¨åç»´æ¤ä»»?
+**æ¯æ¥ä»»å¡**?- æ´æ°å¸åºæ°æ®ï¼æ³¢å¨çãæäº¤é?- çæ§æ§è¡ææ¬
+- è®°å½å®éäº¤æææ¬
 
-**每周任务**?- 校准冲击模型参数
-- 评估算法性能
-- 优化执行策略
+**æ¯å¨ä»»å¡**?- æ ¡åå²å»æ¨¡ååæ°
+- è¯ä¼°ç®æ³æ§è½
+- ä¼åæ§è¡ç­ç¥
 
-**每月任务**?- 重新校准模型参数
-- 更新成本基准
-- 生成月度成本报告
+**æ¯æä»»å¡**?- éæ°æ ¡åæ¨¡ååæ°
+- æ´æ°ææ¬åºå
+- çææåº¦ææ¬æ¥å
 
-### 9.3 异常处理
+### 9.3 å¼å¸¸å¤ç
 
-**模型异常**?- 冲击成本估计异常 ?使用历史平均?- 执行算法失败 ?切换到简单算?- 参数越界 ?使用默认参数
+**æ¨¡åå¼å¸¸**?- å²å»ææ¬ä¼°è®¡å¼å¸¸ ?ä½¿ç¨åå²å¹³å?- æ§è¡ç®æ³å¤±è´¥ ?åæ¢å°ç®åç®?- åæ°è¶ç ?ä½¿ç¨é»è®¤åæ°
 
-**数据异常**?- 缺失市场数据 ?使用最近可用数?- 异常波动??使用历史平均?
+**æ°æ®å¼å¸¸**?- ç¼ºå¤±å¸åºæ°æ® ?ä½¿ç¨æè¿å¯ç¨æ°?- å¼å¸¸æ³¢å¨??ä½¿ç¨åå²å¹³å?
 ---
 
-## 10. 预期收益评估
+## 10. é¢ææ¶çè¯ä¼°
 
-### 10.1 定量收益
+### 10.1 å®éæ¶ç
 
-| 指标 | 当前水平 | 目标水平 | 提升幅度 |
+| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹åº¦ |
 |------|---------|---------|---------|
-| **交易成本占比** | 2.0% | ?.0% | -50% |
-| **市场冲击成本** | 未知 | 可预?| 新增能力 |
-| **执行效率** | ?| ?| 提升2?|
-| **调仓频率** | 低频 | 中高?| 提升2?|
+| **äº¤æææ¬å æ¯** | 2.0% | ?.0% | -50% |
+| **å¸åºå²å»ææ¬** | æªç¥ | å¯é¢?| æ°å¢è½å |
+| **æ§è¡æç** | ?| ?| æå2?|
+| **è°ä»é¢ç** | ä½é¢ | ä¸­é«?| æå2?|
 
-### 10.2 定性收?
-- ?实现文艺复兴核心能力：交易成本优?- ?降低交易成本，提升净收益
-- ?支持高频调仓策略
-- ?提供成本感知的组合优?
+### 10.2 å®æ§æ¶?
+- ?å®ç°æèºå¤å´æ ¸å¿è½åï¼äº¤æææ¬ä¼?- ?éä½äº¤æææ¬ï¼æååæ¶ç
+- ?æ¯æé«é¢è°ä»ç­ç¥
+- ?æä¾ææ¬æç¥çç»åä¼?
 ---
 
-## 11. 风险与约?
-### 11.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+## 11. é£é©ä¸çº¦?
+### 11.1 ææ¯é£?
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|----------|----------|
-| **模型参数不准** | P2 | 定期校准、使用保守估?|
-| **执行算法失效** | P3 | 多算法备选、人工干?|
-| **市场数据缺失** | P3 | 使用历史数据、多数据?|
+| **æ¨¡ååæ°ä¸å** | P2 | å®ææ ¡åãä½¿ç¨ä¿å®ä¼°?|
+| **æ§è¡ç®æ³å¤±æ** | P3 | å¤ç®æ³å¤éãäººå·¥å¹²?|
+| **å¸åºæ°æ®ç¼ºå¤±** | P3 | ä½¿ç¨åå²æ°æ®ãå¤æ°æ®?|
 
-### 11.2 实施约束
+### 11.2 å®æ½çº¦æ
 
-1. **数据约束**: 需要市场成交量数据
-2. **计算约束**: 实时计算需要优?3. **时间约束**: 开发周?.5?
+1. **æ°æ®çº¦æ**: éè¦å¸åºæäº¤éæ°æ®
+2. **è®¡ç®çº¦æ**: å®æ¶è®¡ç®éè¦ä¼?3. **æ¶é´çº¦æ**: å¼åå¨?.5?
 ---
 
-## 附录
+## éå½
 
-### A. 参考文?
-1. **Almgren-Chriss模型**:
+### A. åèæ?
+1. **Almgren-Chrissæ¨¡å**:
    - Almgren, R. and Chriss, N. (2001). "Optimal Execution of Portfolio Transactions"
 
-2. **执行算法**:
+2. **æ§è¡ç®æ³**:
    - Kissell, R. (2013). "The Science of Algorithmic Trading and Portfolio Management"
 
-### B. 开源资?
-- 交易成本模型示例: docs/examples/trading_cost_example.py
-- 参数校准工具: tools/impact_model_calibration.py
+### B. å¼æºèµ?
+- äº¤æææ¬æ¨¡åç¤ºä¾: docs/examples/trading_cost_example.py
+- åæ°æ ¡åå·¥å·: tools/impact_model_calibration.py
 
 ---
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
+**èå¾çæ¬**: v1.0 | **åå»ºæ¥æ**: 2026-04-03 | **?*: Final | **ä¸ä¸?*: ææ¯è§æ ¼ä¹¦ç¼å
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active
 ---
 
-## 12. 文档治理
+## 12. ææ¡£æ²»ç
 
-### 12.1 System_Manifest.md索引
+### 12.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 5: 执行�?
+#### Layer 5: æ§è¡å±?
 ##### 6.001. Trading Cost Optimization
-- **模块ID**: TRADING_COST_OPTIMIZATION_001
-- **蓝图文档**: TRADING_COST_OPTIMIZATION_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: 全系�?
-- **状�?*: Active
+- **æ¨¡åID**: TRADING_COST_OPTIMIZATION_001
+- **èå¾ææ¡£**: TRADING_COST_OPTIMIZATION_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: å¨ç³»ç»?
+- **ç¶æ?*: Active
 ```
 
-### 12.2 模块职责边界
+### 12.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Trading Cost Optimization** | 全系�?| **核心模块** |
+| **Trading Cost Optimization** | å¨ç³»ç»?| **æ ¸å¿æ¨¡å** |
 
-### 12.3 版本管理
+### 12.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active

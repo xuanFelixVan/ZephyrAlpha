@@ -4,113 +4,119 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®å±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 数据清洗引擎
-  - 数据清洗
-  - 异常值处�?
-  - 缺失值填�?
-layer: "Layer 1 (数据�?"
+  - æ°æ®æ¸æ´å¼æ
+  - æ°æ®æ¸æ´
+  - å¼å¸¸å¼å¤ç?
+  - ç¼ºå¤±å¼å¡«å?
+layer: "Layer 1 (æ°æ®å±?"
 ---
 
-# 数据清洗引擎蓝图
-
-> **核心职责**: 异常值检测与处理、缺失值智能填充、重复数据去�?
-> **职责边界**: 
-> - �?本文档负责：数据清洗、异常值处理、缺失值填�?
-> - �?本文档不负责：数据验证（由验证引擎负责）
+# æ°æ®æ¸æ´å¼æèå¾
 
 ## 核心定位
 
-负责数据清洗引擎的实现，提供数据质量检测、数据清洗规则和数据修复功能，确保数据质量�?
+负责数据清洗引擎的设计与实现，基于数据清洗技术，处理数据质量问题，提升数据可用性。
 
-## 📋 执行摘要
 
-本蓝图设计基于Great Expectations和Apache Spark的数据清洗引擎，提供专业级数据清洗能力，适合个人开发和AI维护�?
 
-**核心价�?*:
-- 自动化异常值检测与处理
-- 智能缺失值填�?
-- 重复数据去重
-- 数据格式标准�?
-- 清洗规则可配�?
+> **æ ¸å¿èè´£**: å¼å¸¸å¼æ£æµä¸å¤çãç¼ºå¤±å¼æºè½å¡«åãéå¤æ°æ®å»é?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼æ°æ®æ¸æ´ãå¼å¸¸å¼å¤çãç¼ºå¤±å¼å¡«å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®éªè¯ï¼ç±éªè¯å¼æè´è´£ï¼
 
-**开源方�?*: Great Expectations + Apache Spark
+## æ ¸å¿å®ä½
 
-**预估工作�?*: 60小时
+è´è´£æ°æ®æ¸æ´å¼æçå®ç°ï¼æä¾æ°æ®è´¨éæ£æµãæ°æ®æ¸æ´è§ååæ°æ®ä¿®å¤åè½ï¼ç¡®ä¿æ°æ®è´¨éã?
+
+## ð æ§è¡æè¦
+
+æ¬èå¾è®¾è®¡åºäºGreat ExpectationsåApache Sparkçæ°æ®æ¸æ´å¼æï¼æä¾ä¸ä¸çº§æ°æ®æ¸æ´è½åï¼éåä¸ªäººå¼ååAIç»´æ¤ã?
+
+**æ ¸å¿ä»·å?*:
+- èªå¨åå¼å¸¸å¼æ£æµä¸å¤ç
+- æºè½ç¼ºå¤±å¼å¡«å?
+- éå¤æ°æ®å»é
+- æ°æ®æ ¼å¼æ åå?
+- æ¸æ´è§åå¯éç½?
+
+**å¼æºæ¹æ¡?*: Great Expectations + Apache Spark
+
+**é¢ä¼°å·¥ä½é?*: 60å°æ¶
 
 ---
 
-## 1. 模块定位与目�?
+## 1. æ¨¡åå®ä½ä¸ç®æ ?
 
-### 1.1 模块定位
+### 1.1 æ¨¡åå®ä½
 
-**Layer定位**: Layer 1 - 数据预处理层（数据处理模块）
+**Layerå®ä½**: Layer 1 - æ°æ®é¢å¤çå±ï¼æ°æ®å¤çæ¨¡åï¼
 
-**核心价�?*:
-- 提升数据质量
-- 减少数据问题导致的交易损�?
-- 自动化数据清洗流�?
-- 可配置的清洗规则
+**æ ¸å¿ä»·å?*:
+- æåæ°æ®è´¨é
+- åå°æ°æ®é®é¢å¯¼è´çäº¤ææå¤?
+- èªå¨åæ°æ®æ¸æ´æµç¨?
+- å¯éç½®çæ¸æ´è§å
 
-**业务价�?*:
-- 减少人工干预
-- 提高数据可信�?
-- 降低数据风险
-- 提升系统稳定�?
+**ä¸å¡ä»·å?*:
+- åå°äººå·¥å¹²é¢
+- æé«æ°æ®å¯ä¿¡åº?
+- éä½æ°æ®é£é©
+- æåç³»ç»ç¨³å®æ?
 
-### 1.2 设计目标
+### 1.2 è®¾è®¡ç®æ 
 
-| 目标 | 优先�?| 技术实�?|
+| ç®æ  | ä¼åçº?| ææ¯å®ç?|
 |------|--------|----------|
-| **异常值检�?* | P0 | 统计方法 + 机器学习 |
-| **缺失值填�?* | P0 | 插�?+ 机器学习预测 |
-| **重复数据去重** | P0 | 哈希 + 相似度匹�?|
-| **数据格式标准�?* | P1 | 规则引擎 |
-| **清洗规则可配�?* | P1 | YAML配置 |
+| **å¼å¸¸å¼æ£æµ?* | P0 | ç»è®¡æ¹æ³ + æºå¨å­¦ä¹  |
+| **ç¼ºå¤±å¼å¡«å?* | P0 | æå?+ æºå¨å­¦ä¹ é¢æµ |
+| **éå¤æ°æ®å»é** | P0 | åå¸ + ç¸ä¼¼åº¦å¹é?|
+| **æ°æ®æ ¼å¼æ åå?* | P1 | è§åå¼æ |
+| **æ¸æ´è§åå¯éç½?* | P1 | YAMLéç½® |
 
 ---
 
-## 2. 系统架构设计
+## 2. ç³»ç»æ¶æè®¾è®¡
 
-### 2.1 架构概览
+### 2.1 æ¶ææ¦è§
 
 ```mermaid
 graph TB
-    subgraph "输入�?
-        A[原始数据] --> B[数据接入接口]
+    subgraph "è¾å¥å±?
+        A[åå§æ°æ®] --> B[æ°æ®æ¥å¥æ¥å£]
     end
     
-    subgraph "清洗引擎"
-        B --> C[异常值检测器]
-        B --> D[缺失值处理器]
-        B --> E[重复数据去重器]
-        B --> F[格式标准化器]
+    subgraph "æ¸æ´å¼æ"
+        B --> C[å¼å¸¸å¼æ£æµå¨]
+        B --> D[ç¼ºå¤±å¼å¤çå¨]
+        B --> E[éå¤æ°æ®å»éå¨]
+        B --> F[æ ¼å¼æ ååå¨]
         
-        C --> G[清洗规则引擎]
+        C --> G[æ¸æ´è§åå¼æ]
         D --> G
         E --> G
         F --> G
     end
     
-    subgraph "输出�?
-        G --> H[清洗后数据]
-        G --> I[清洗报告]
-        G --> J[质量指标]
+    subgraph "è¾åºå±?
+        G --> H[æ¸æ´åæ°æ®]
+        G --> I[æ¸æ´æ¥å]
+        G --> J[è´¨éææ ]
     end
     
-    subgraph "配置管理"
-        K[清洗规则配置] --> G
-        L[阈值配置] --> G
+    subgraph "éç½®ç®¡ç"
+        K[æ¸æ´è§åéç½®] --> G
+        L[éå¼éç½®] --> G
     end
 ```
 
-### 2.2 核心组件设计
+### 2.2 æ ¸å¿ç»ä»¶è®¾è®¡
 
-#### **2.2.1 异常值检测器**
+#### **2.2.1 å¼å¸¸å¼æ£æµå¨**
 
 ```python
 from great_expectations.dataset import SparkDFDataset
@@ -120,7 +126,7 @@ from typing import Dict, List, Any
 import numpy as np
 
 class AnomalyDetector:
-    """异常值检测器"""
+    """å¼å¸¸å¼æ£æµå¨"""
     
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
         self.spark = spark
@@ -134,24 +140,24 @@ class AnomalyDetector:
     
     def detect_anomalies(self, df, columns: List[str], method: str = 'zscore'):
         """
-        检测异常�?
+        æ£æµå¼å¸¸å?
         
         Args:
             df: Spark DataFrame
-            columns: 需要检测的�?
-            method: 检测方�?(zscore, iqr, isolation_forest, dbscan)
+            columns: éè¦æ£æµçå?
+            method: æ£æµæ¹æ³?(zscore, iqr, isolation_forest, dbscan)
         
         Returns:
-            DataFrame: 包含异常值标记的DataFrame
+            DataFrame: åå«å¼å¸¸å¼æ è®°çDataFrame
         """
         detector = self.methods.get(method)
         if not detector:
-            raise ValueError(f"不支持的检测方�? {method}")
+            raise ValueError(f"ä¸æ¯æçæ£æµæ¹æ³? {method}")
         
         return detector(df, columns)
     
     def _zscore_detection(self, df, columns: List[str], threshold: float = 3.0):
-        """Z-Score异常值检�?""
+        """Z-Scoreå¼å¸¸å¼æ£æµ?""
         for col_name in columns:
             stats = df.select(
                 F.mean(col(col_name)).alias('mean'),
@@ -173,7 +179,7 @@ class AnomalyDetector:
         return df
     
     def _iqr_detection(self, df, columns: List[str], multiplier: float = 1.5):
-        """IQR异常值检�?""
+        """IQRå¼å¸¸å¼æ£æµ?""
         for col_name in columns:
             quantiles = df.approxQuantile(col_name, [0.25, 0.75], 0.05)
             q1, q3 = quantiles[0], quantiles[1]
@@ -193,18 +199,18 @@ class AnomalyDetector:
         return df
     
     def _isolation_forest_detection(self, df, columns: List[str], contamination: float = 0.1):
-        """Isolation Forest异常值检�?""
+        """Isolation Forestå¼å¸¸å¼æ£æµ?""
         from pyspark.ml.feature import VectorAssembler
         from pyspark.ml.iforest import IsolationForest
         
-        # 准备特征向量
+        # åå¤ç¹å¾åé
         assembler = VectorAssembler(
             inputCols=columns,
             outputCol="features"
         )
         df_features = assembler.transform(df)
         
-        # 训练Isolation Forest模型
+        # è®­ç»Isolation Forestæ¨¡å
         iforest = IsolationForest(
             numTrees=100,
             maxSamples=256,
@@ -215,7 +221,7 @@ class AnomalyDetector:
         
         model = iforest.fit(df_features)
         
-        # 预测异常�?
+        # é¢æµå¼å¸¸å?
         predictions = model.transform(df_features)
         
         return predictions.withColumn(
@@ -224,18 +230,18 @@ class AnomalyDetector:
         )
     
     def _dbscan_detection(self, df, columns: List[str], eps: float = 0.5, min_samples: int = 5):
-        """DBSCAN聚类异常值检�?""
+        """DBSCANèç±»å¼å¸¸å¼æ£æµ?""
         from pyspark.ml.feature import VectorAssembler
         from pyspark.ml.clustering import DBSCAN
         
-        # 准备特征向量
+        # åå¤ç¹å¾åé
         assembler = VectorAssembler(
             inputCols=columns,
             outputCol="features"
         )
         df_features = assembler.transform(df)
         
-        # DBSCAN聚类
+        # DBSCANèç±»
         dbscan = DBSCAN(
             eps=eps,
             minSamples=min_samples,
@@ -246,14 +252,14 @@ class AnomalyDetector:
         model = dbscan.fit(df_features)
         predictions = model.transform(df_features)
         
-        # 标记噪声点为异常�?
+        # æ è®°åªå£°ç¹ä¸ºå¼å¸¸å?
         return predictions.withColumn(
             "is_anomaly",
             when(col("cluster") == -1, True).otherwise(False)
         )
 ```
 
-#### **2.2.2 缺失值处理器**
+#### **2.2.2 ç¼ºå¤±å¼å¤çå¨**
 
 ```python
 from pyspark.sql import SparkSession
@@ -262,7 +268,7 @@ from pyspark.sql.window import Window
 from typing import Dict, List, Any
 
 class MissingValueHandler:
-    """缺失值处理器"""
+    """ç¼ºå¤±å¼å¤çå¨"""
     
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
         self.spark = spark
@@ -280,45 +286,45 @@ class MissingValueHandler:
     
     def handle_missing_values(self, df, strategy_config: Dict[str, str]):
         """
-        处理缺失�?
+        å¤çç¼ºå¤±å?
         
         Args:
             df: Spark DataFrame
-            strategy_config: 列名 -> 填充策略的映�?
+            strategy_config: åå -> å¡«åç­ç¥çæ å°?
         
         Returns:
-            DataFrame: 处理后的DataFrame
+            DataFrame: å¤çåçDataFrame
         """
         for col_name, strategy in strategy_config.items():
             handler = self.strategies.get(strategy)
             if not handler:
-                raise ValueError(f"不支持的填充策略: {strategy}")
+                raise ValueError(f"ä¸æ¯æçå¡«åç­ç¥: {strategy}")
             
             df = handler(df, col_name)
         
         return df
     
     def _drop_missing(self, df, col_name: str):
-        """删除缺失�?""
+        """å é¤ç¼ºå¤±å?""
         return df.dropna(subset=[col_name])
     
     def _fill_with_mean(self, df, col_name: str):
-        """使用均值填�?""
+        """ä½¿ç¨åå¼å¡«å?""
         mean_val = df.select(mean(col(col_name))).collect()[0][0]
         return df.fillna({col_name: mean_val})
     
     def _fill_with_median(self, df, col_name: str):
-        """使用中位数填�?""
+        """ä½¿ç¨ä¸­ä½æ°å¡«å?""
         median_val = df.approxQuantile(col_name, [0.5], 0.05)[0]
         return df.fillna({col_name: median_val})
     
     def _fill_with_mode(self, df, col_name: str):
-        """使用众数填充"""
+        """ä½¿ç¨ä¼æ°å¡«å"""
         mode_val = df.groupBy(col_name).count().orderBy('count', ascending=False).first()[0]
         return df.fillna({col_name: mode_val})
     
     def _forward_fill(self, df, col_name: str, order_col: str = 'timestamp'):
-        """前向填充"""
+        """ååå¡«å"""
         window = Window.orderBy(order_col).rowsBetween(Window.unboundedPreceding, 0)
         
         return df.withColumn(
@@ -330,7 +336,7 @@ class MissingValueHandler:
         )
     
     def _backward_fill(self, df, col_name: str, order_col: str = 'timestamp'):
-        """后向填充"""
+        """ååå¡«å"""
         window = Window.orderBy(order_col).rowsBetween(0, Window.unboundedFollowing)
         
         return df.withColumn(
@@ -342,11 +348,11 @@ class MissingValueHandler:
         )
     
     def _interpolation(self, df, col_name: str, order_col: str = 'timestamp', method: str = 'linear'):
-        """插值填�?""
+        """æå¼å¡«å?""
         from pyspark.sql.window import Window
         import pyspark.sql.functions as F
         
-        # 获取前后非空�?
+        # è·åååéç©ºå?
         window_before = Window.orderBy(order_col).rowsBetween(Window.unboundedPreceding, -1)
         window_after = Window.orderBy(order_col).rowsBetween(1, Window.unboundedFollowing)
         
@@ -364,7 +370,7 @@ class MissingValueHandler:
             F.first(col(order_col), ignorenulls=True).over(window_after)
         )
         
-        # 线性插�?
+        # çº¿æ§æå?
         if method == 'linear':
             df = df.withColumn(
                 col_name,
@@ -380,15 +386,15 @@ class MissingValueHandler:
         return df.drop('prev_value', 'next_value', 'prev_time', 'next_time')
     
     def _ml_prediction(self, df, col_name: str, feature_cols: List[str]):
-        """使用机器学习预测填充"""
+        """ä½¿ç¨æºå¨å­¦ä¹ é¢æµå¡«å"""
         from pyspark.ml.feature import VectorAssembler
         from pyspark.ml.regression import RandomForestRegressor
         
-        # 分离有值和无值的数据
+        # åç¦»æå¼åæ å¼çæ°æ®
         df_with_value = df.filter(col(col_name).isNotNull())
         df_missing = df.filter(col(col_name).isNull())
         
-        # 训练模型
+        # è®­ç»æ¨¡å
         assembler = VectorAssembler(
             inputCols=feature_cols,
             outputCol="features"
@@ -406,15 +412,15 @@ class MissingValueHandler:
         
         model = rf.fit(train_data)
         
-        # 预测缺失�?
+        # é¢æµç¼ºå¤±å?
         test_data = assembler.transform(df_missing)
         predictions = model.transform(test_data)
         
-        # 合并结果
+        # åå¹¶ç»æ
         return df_with_value.union(predictions.drop("features"))
 ```
 
-#### **2.2.3 重复数据去重�?*
+#### **2.2.3 éå¤æ°æ®å»éå?*
 
 ```python
 from pyspark.sql import SparkSession
@@ -422,7 +428,7 @@ from pyspark.sql.functions import col, md5, concat_ws
 from typing import Dict, List, Any
 
 class DuplicateRemover:
-    """重复数据去重�?""
+    """éå¤æ°æ®å»éå?""
     
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
         self.spark = spark
@@ -436,44 +442,44 @@ class DuplicateRemover:
     
     def remove_duplicates(self, df, method: str = 'exact', **kwargs):
         """
-        去除重复数据
+        å»é¤éå¤æ°æ®
         
         Args:
             df: Spark DataFrame
-            method: 去重方法
-            **kwargs: 方法参数
+            method: å»éæ¹æ³
+            **kwargs: æ¹æ³åæ°
         
         Returns:
-            DataFrame: 去重后的DataFrame
+            DataFrame: å»éåçDataFrame
         """
         remover = self.methods.get(method)
         if not remover:
-            raise ValueError(f"不支持的去重方法: {method}")
+            raise ValueError(f"ä¸æ¯æçå»éæ¹æ³: {method}")
         
         return remover(df, **kwargs)
     
     def _exact_dedup(self, df, subset: List[str] = None):
-        """精确去重"""
+        """ç²¾ç¡®å»é"""
         return df.dropDuplicates(subset=subset)
     
     def _hash_dedup(self, df, columns: List[str]):
-        """哈希去重"""
-        # 生成哈希�?
+        """åå¸å»é"""
+        # çæåå¸é?
         df = df.withColumn(
             'hash_key',
             md5(concat_ws('|', *[col(c) for c in columns]))
         )
         
-        # 去重
+        # å»é
         return df.dropDuplicates(['hash_key']).drop('hash_key')
     
     def _fuzzy_dedup(self, df, columns: List[str], threshold: float = 0.9):
-        """模糊去重（基于相似度�?""
+        """æ¨¡ç³å»éï¼åºäºç¸ä¼¼åº¦ï¼?""
         from pyspark.ml.feature import MinHashLSH, HashingTF, Tokenizer
         from pyspark.sql.functions import udf
         from pyspark.sql.types import FloatType
         
-        # 对每个列进行分词和哈�?
+        # å¯¹æ¯ä¸ªåè¿è¡åè¯ååå¸?
         for col_name in columns:
             tokenizer = Tokenizer(inputCol=col_name, outputCol=f"{col_name}_tokens")
             df = tokenizer.transform(df)
@@ -485,7 +491,7 @@ class DuplicateRemover:
             )
             df = hashingTF.transform(df)
         
-        # 使用MinHash LSH进行相似度匹�?
+        # ä½¿ç¨MinHash LSHè¿è¡ç¸ä¼¼åº¦å¹é?
         mh = MinHashLSH(
             inputCol=f"{columns[0]}_features",
             outputCol="hashes",
@@ -494,19 +500,19 @@ class DuplicateRemover:
         
         model = mh.fit(df)
         
-        # 找出相似度超过阈值的记录�?
+        # æ¾åºç¸ä¼¼åº¦è¶è¿éå¼çè®°å½å¯?
         similar_pairs = model.approxSimilarityJoin(
             df, df, 1 - threshold, distCol="distance"
         ).filter(col("distance") < (1 - threshold))
         
-        # 标记重复记录
+        # æ è®°éå¤è®°å½
         duplicate_ids = similar_pairs.select("datasetB.id").distinct()
         
-        # 过滤掉重复记�?
+        # è¿æ»¤æéå¤è®°å½?
         return df.join(duplicate_ids, on="id", how="left_anti")
     
     def _time_window_dedup(self, df, time_col: str, window_size: str = '1 hour'):
-        """时间窗口去重"""
+        """æ¶é´çªå£å»é"""
         from pyspark.sql.window import Window
         import pyspark.sql.functions as F
         
@@ -522,9 +528,9 @@ class DuplicateRemover:
 
 ---
 
-## 3. 开源方案集�?
+## 3. å¼æºæ¹æ¡éæ?
 
-### 3.1 Great Expectations集成
+### 3.1 Great Expectationséæ
 
 ```python
 import great_expectations as gx
@@ -532,7 +538,7 @@ from great_expectations.dataset import SparkDFDataset
 from typing import Dict, List
 
 class GreatExpectationsCleaner:
-    """Great Expectations数据清洗�?""
+    """Great Expectationsæ°æ®æ¸æ´å?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -540,19 +546,19 @@ class GreatExpectationsCleaner:
         self.expectation_suite = self._load_expectation_suite()
     
     def _load_expectation_suite(self):
-        """加载期望套件"""
+        """å è½½ææå¥ä»¶"""
         suite_name = self.config.get('suite_name', 'data_cleaning_suite')
         
         try:
             return self.context.get_expectation_suite(suite_name)
         except:
-            # 创建新的期望套件
+            # åå»ºæ°çææå¥ä»¶
             suite = self.context.create_expectation_suite(suite_name)
             return self._build_default_expectations(suite)
     
     def _build_default_expectations(self, suite):
-        """构建默认期望"""
-        # 价格数据期望
+        """æå»ºé»è®¤ææ"""
+        # ä»·æ ¼æ°æ®ææ
         suite.add_expectation(
             gx.expectations.ExpectColumnValuesToBeBetween(
                 column="price",
@@ -561,7 +567,7 @@ class GreatExpectationsCleaner:
             )
         )
         
-        # 数量数据期望
+        # æ°éæ°æ®ææ
         suite.add_expectation(
             gx.expectations.ExpectColumnValuesToBeBetween(
                 column="volume",
@@ -570,7 +576,7 @@ class GreatExpectationsCleaner:
             )
         )
         
-        # 时间戳期�?
+        # æ¶é´æ³ææ?
         suite.add_expectation(
             gx.expectations.ExpectColumnValuesToNotBeNull(
                 column="timestamp"
@@ -580,24 +586,24 @@ class GreatExpectationsCleaner:
         return suite
     
     def validate_and_clean(self, df):
-        """验证并清洗数�?""
-        # 转换为Great Expectations Dataset
+        """éªè¯å¹¶æ¸æ´æ°æ?""
+        # è½¬æ¢ä¸ºGreat Expectations Dataset
         gx_df = SparkDFDataset(df)
         
-        # 运行验证
+        # è¿è¡éªè¯
         results = gx_df.validate(
             expectation_suite=self.expectation_suite,
             result_format="COMPLETE"
         )
         
-        # 根据验证结果清洗数据
+        # æ ¹æ®éªè¯ç»ææ¸æ´æ°æ®
         if not results.success:
             df = self._apply_cleaning_rules(df, results)
         
         return df, results
     
     def _apply_cleaning_rules(self, df, validation_results):
-        """应用清洗规则"""
+        """åºç¨æ¸æ´è§å"""
         for result in validation_results.results:
             if not result.success:
                 expectation_type = result.expectation_config.expectation_type
@@ -607,19 +613,19 @@ class GreatExpectationsCleaner:
                     min_val = result.expectation_config.kwargs.get('min_value')
                     max_val = result.expectation_config.kwargs.get('max_value')
                     
-                    # 过滤异常�?
+                    # è¿æ»¤å¼å¸¸å?
                     df = df.filter(
                         (col(column) >= min_val) & (col(column) <= max_val)
                     )
                 
                 elif expectation_type == 'expect_column_values_to_not_be_null':
-                    # 删除空�?
+                    # å é¤ç©ºå?
                     df = df.dropna(subset=[column])
         
         return df
 ```
 
-### 3.2 Apache Spark集成
+### 3.2 Apache Sparkéæ
 
 ```python
 from pyspark.sql import SparkSession
@@ -627,7 +633,7 @@ from pyspark.sql.functions import col, when, lit
 from typing import Dict, List, Any
 
 class SparkDataCleaner:
-    """Spark数据清洗�?""
+    """Sparkæ°æ®æ¸æ´å?""
     
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
         self.spark = spark
@@ -638,15 +644,15 @@ class SparkDataCleaner:
     
     def clean_data(self, df, cleaning_config: Dict[str, Any]):
         """
-        执行数据清洗
+        æ§è¡æ°æ®æ¸æ´
         
         Args:
-            df: 输入DataFrame
-            cleaning_config: 清洗配置
+            df: è¾å¥DataFrame
+            cleaning_config: æ¸æ´éç½®
         
         Returns:
-            DataFrame: 清洗后的DataFrame
-            Dict: 清洗报告
+            DataFrame: æ¸æ´åçDataFrame
+            Dict: æ¸æ´æ¥å
         """
         report = {
             'input_count': df.count(),
@@ -656,7 +662,7 @@ class SparkDataCleaner:
             'output_count': 0
         }
         
-        # 1. 异常值检测和处理
+        # 1. å¼å¸¸å¼æ£æµåå¤ç
         if cleaning_config.get('detect_anomalies', False):
             df = self.anomaly_detector.detect_anomalies(
                 df,
@@ -664,14 +670,14 @@ class SparkDataCleaner:
                 method=cleaning_config.get('anomaly_method', 'zscore')
             )
             
-            # 过滤异常�?
+            # è¿æ»¤å¼å¸¸å?
             anomaly_cols = [c for c in df.columns if c.endswith('_is_anomaly')]
             for anomaly_col in anomaly_cols:
                 before_count = df.count()
                 df = df.filter(col(anomaly_col) == False).drop(anomaly_col)
                 report['anomalies_removed'] += before_count - df.count()
         
-        # 2. 缺失值处�?
+        # 2. ç¼ºå¤±å¼å¤ç?
         if cleaning_config.get('handle_missing', False):
             before_count = df.count()
             df = self.missing_handler.handle_missing_values(
@@ -680,7 +686,7 @@ class SparkDataCleaner:
             )
             report['missing_values_filled'] = before_count - df.count()
         
-        # 3. 重复数据去重
+        # 3. éå¤æ°æ®å»é
         if cleaning_config.get('remove_duplicates', False):
             before_count = df.count()
             df = self.duplicate_remover.remove_duplicates(
@@ -697,14 +703,14 @@ class SparkDataCleaner:
 
 ---
 
-## 4. 配置管理
+## 4. éç½®ç®¡ç
 
-### 4.1 清洗规则配置
+### 4.1 æ¸æ´è§åéç½®
 
 ```yaml
 # data_cleaning_config.yaml
 
-# 异常值检测配�?
+# å¼å¸¸å¼æ£æµéç½?
 anomaly_detection:
   enabled: true
   method: zscore  # zscore, iqr, isolation_forest, dbscan
@@ -717,7 +723,7 @@ anomaly_detection:
     iqr_multiplier: 1.5
     contamination: 0.1
 
-# 缺失值处理配�?
+# ç¼ºå¤±å¼å¤çéç½?
 missing_value_handling:
   enabled: true
   strategies:
@@ -729,7 +735,7 @@ missing_value_handling:
     method: linear  # linear, spline, polynomial
     order: 3
 
-# 重复数据去重配置
+# éå¤æ°æ®å»ééç½®
 duplicate_removal:
   enabled: true
   method: exact  # exact, hash, fuzzy, time_window
@@ -739,7 +745,7 @@ duplicate_removal:
   fuzzy_threshold: 0.9
   time_window: 1 hour
 
-# 数据格式标准化配�?
+# æ°æ®æ ¼å¼æ ååéç½?
 format_standardization:
   enabled: true
   date_format: "%Y-%m-%d %H:%M:%S"
@@ -747,7 +753,7 @@ format_standardization:
     precision: 2
     rounding: half_up
 
-# 清洗规则配置
+# æ¸æ´è§åéç½®
 cleaning_rules:
   - name: price_range_check
     type: range
@@ -767,50 +773,50 @@ cleaning_rules:
     action: remove
 ```
 
-### 4.2 配置加载�?
+### 4.2 éç½®å è½½å?
 
 ```python
 import yaml
 from typing import Dict, Any
 
 class CleaningConfigLoader:
-    """清洗配置加载�?""
+    """æ¸æ´éç½®å è½½å?""
     
     def __init__(self, config_path: str):
         self.config_path = config_path
         self.config = self._load_config()
     
     def _load_config(self) -> Dict[str, Any]:
-        """加载配置文件"""
+        """å è½½éç½®æä»¶"""
         with open(self.config_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
     
     def get_anomaly_config(self) -> Dict[str, Any]:
-        """获取异常值检测配�?""
+        """è·åå¼å¸¸å¼æ£æµéç½?""
         return self.config.get('anomaly_detection', {})
     
     def get_missing_config(self) -> Dict[str, Any]:
-        """获取缺失值处理配�?""
+        """è·åç¼ºå¤±å¼å¤çéç½?""
         return self.config.get('missing_value_handling', {})
     
     def get_dedup_config(self) -> Dict[str, Any]:
-        """获取去重配置"""
+        """è·åå»ééç½®"""
         return self.config.get('duplicate_removal', {})
     
     def get_format_config(self) -> Dict[str, Any]:
-        """获取格式标准化配�?""
+        """è·åæ ¼å¼æ ååéç½?""
         return self.config.get('format_standardization', {})
     
     def get_cleaning_rules(self) -> List[Dict[str, Any]]:
-        """获取清洗规则"""
+        """è·åæ¸æ´è§å"""
         return self.config.get('cleaning_rules', [])
 ```
 
 ---
 
-## 5. 部署架构
+## 5. é¨ç½²æ¶æ
 
-### 5.1 单机部署
+### 5.1 åæºé¨ç½²
 
 ```yaml
 # docker-compose.yml
@@ -855,7 +861,7 @@ services:
       - ./config:/config
 ```
 
-### 5.2 清洗引擎Dockerfile
+### 5.2 æ¸æ´å¼æDockerfile
 
 ```dockerfile
 # Dockerfile
@@ -863,7 +869,7 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# 安装依赖
+# å®è£ä¾èµ
 RUN pip install --no-cache-dir \
     pyspark==3.4.0 \
     great-expectations==0.17.0 \
@@ -871,40 +877,40 @@ RUN pip install --no-cache-dir \
     pandas==2.0.0 \
     numpy==1.24.0
 
-# 复制代码
+# å¤å¶ä»£ç 
 COPY src/ /app/src/
 COPY config/ /app/config/
 
-# 启动命令
+# å¯å¨å½ä»¤
 CMD ["python", "src/data_cleaning_engine.py"]
 ```
 
 ---
 
-## 6. 使用示例
+## 6. ä½¿ç¨ç¤ºä¾
 
-### 6.1 基本使用
+### 6.1 åºæ¬ä½¿ç¨
 
 ```python
 from pyspark.sql import SparkSession
 from data_cleaning_engine import SparkDataCleaner
 from config_loader import CleaningConfigLoader
 
-# 初始化Spark
+# åå§åSpark
 spark = SparkSession.builder \
     .appName("DataCleaningEngine") \
     .getOrCreate()
 
-# 加载配置
+# å è½½éç½®
 config_loader = CleaningConfigLoader("config/data_cleaning_config.yaml")
 
-# 创建清洗�?
+# åå»ºæ¸æ´å?
 cleaner = SparkDataCleaner(spark, config_loader.config)
 
-# 读取数据
+# è¯»åæ°æ®
 df = spark.read.parquet("data/raw/market_data.parquet")
 
-# 执行清洗
+# æ§è¡æ¸æ´
 cleaned_df, report = cleaner.clean_data(
     df,
     cleaning_config={
@@ -922,44 +928,44 @@ cleaned_df, report = cleaner.clean_data(
     }
 )
 
-# 保存清洗后的数据
+# ä¿å­æ¸æ´åçæ°æ®
 cleaned_df.write.parquet("data/cleaned/market_data.parquet", mode='overwrite')
 
-# 打印清洗报告
-print("清洗报告:")
-print(f"输入记录�? {report['input_count']}")
-print(f"异常值移�? {report['anomalies_removed']}")
-print(f"缺失值填�? {report['missing_values_filled']}")
-print(f"重复值移�? {report['duplicates_removed']}")
-print(f"输出记录�? {report['output_count']}")
+# æå°æ¸æ´æ¥å
+print("æ¸æ´æ¥å:")
+print(f"è¾å¥è®°å½æ? {report['input_count']}")
+print(f"å¼å¸¸å¼ç§»é? {report['anomalies_removed']}")
+print(f"ç¼ºå¤±å¼å¡«å? {report['missing_values_filled']}")
+print(f"éå¤å¼ç§»é? {report['duplicates_removed']}")
+print(f"è¾åºè®°å½æ? {report['output_count']}")
 ```
 
-### 6.2 与Great Expectations集成
+### 6.2 ä¸Great Expectationséæ
 
 ```python
 from great_expectations_cleaner import GreatExpectationsCleaner
 
-# 创建Great Expectations清洗�?
+# åå»ºGreat Expectationsæ¸æ´å?
 gx_cleaner = GreatExpectationsCleaner({
     'suite_name': 'market_data_cleaning_suite'
 })
 
-# 验证并清洗数�?
+# éªè¯å¹¶æ¸æ´æ°æ?
 cleaned_df, validation_results = gx_cleaner.validate_and_clean(df)
 
-# 查看验证结果
-print(f"验证成功: {validation_results.success}")
-print(f"通过�? {validation_results.statistics.success_percent:.2f}%")
+# æ¥çéªè¯ç»æ
+print(f"éªè¯æå: {validation_results.success}")
+print(f"éè¿ç? {validation_results.statistics.success_percent:.2f}%")
 ```
 
 ---
 
-## 7. 性能优化
+## 7. æ§è½ä¼å
 
-### 7.1 Spark优化配置
+### 7.1 Sparkä¼åéç½®
 
 ```python
-# Spark性能优化配置
+# Sparkæ§è½ä¼åéç½®
 spark = SparkSession.builder \
     .appName("DataCleaningEngine") \
     .config("spark.sql.adaptive.enabled", "true") \
@@ -972,21 +978,21 @@ spark = SparkSession.builder \
     .getOrCreate()
 ```
 
-### 7.2 缓存策略
+### 7.2 ç¼å­ç­ç¥
 
 ```python
-# 数据缓存策略
+# æ°æ®ç¼å­ç­ç¥
 def clean_data_with_cache(df, cleaning_config):
-    # 缓存原始数据
+    # ç¼å­åå§æ°æ®
     df.cache()
     
-    # 执行清洗
+    # æ§è¡æ¸æ´
     cleaned_df = cleaner.clean_data(df, cleaning_config)
     
-    # 缓存清洗后的数据
+    # ç¼å­æ¸æ´åçæ°æ®
     cleaned_df.cache()
     
-    # 释放原始数据缓存
+    # éæ¾åå§æ°æ®ç¼å­
     df.unpersist()
     
     return cleaned_df
@@ -994,40 +1000,40 @@ def clean_data_with_cache(df, cleaning_config):
 
 ---
 
-## 8. 监控与告�?
+## 8. çæ§ä¸åè­?
 
-### 8.1 清洗质量监控
+### 8.1 æ¸æ´è´¨éçæ§
 
 ```python
 from prometheus_client import Counter, Histogram, Gauge
 
-# 定义监控指标
+# å®ä¹çæ§ææ 
 cleaning_counter = Counter(
     'data_cleaning_total',
-    '数据清洗总次�?
+    'æ°æ®æ¸æ´æ»æ¬¡æ?
 )
 
 anomaly_counter = Counter(
     'anomaly_detected_total',
-    '检测到的异常值数�?
+    'æ£æµå°çå¼å¸¸å¼æ°é?
 )
 
 missing_counter = Counter(
     'missing_values_filled_total',
-    '填充的缺失值数�?
+    'å¡«åçç¼ºå¤±å¼æ°é?
 )
 
 quality_score = Gauge(
     'data_quality_score',
-    '数据质量评分'
+    'æ°æ®è´¨éè¯å'
 )
 
 cleaning_duration = Histogram(
     'data_cleaning_duration_seconds',
-    '数据清洗耗时'
+    'æ°æ®æ¸æ´èæ¶'
 )
 
-# 监控装饰�?
+# çæ§è£é¥°å?
 def monitor_cleaning(func):
     def wrapper(*args, **kwargs):
         cleaning_counter.inc()
@@ -1035,7 +1041,7 @@ def monitor_cleaning(func):
         with cleaning_duration.time():
             result = func(*args, **kwargs)
         
-        # 更新监控指标
+        # æ´æ°çæ§ææ 
         if isinstance(result, tuple):
             df, report = result
             anomaly_counter.inc(report['anomalies_removed'])
@@ -1051,68 +1057,68 @@ def monitor_cleaning(func):
 
 ---
 
-## 9. 开发路线图
+## 9. å¼åè·¯çº¿å¾
 
-### 9.1 阶段一：基础功能 (2�?
+### 9.1 é¶æ®µä¸ï¼åºç¡åè½ (2å?
 
-- �?异常值检测器实现
-- �?缺失值处理器实现
-- �?重复数据去重器实�?
-- �?基本配置管理
+- â?å¼å¸¸å¼æ£æµå¨å®ç°
+- â?ç¼ºå¤±å¼å¤çå¨å®ç°
+- â?éå¤æ°æ®å»éå¨å®ç?
+- â?åºæ¬éç½®ç®¡ç
 
-### 9.2 阶段二：高级功能 (2�?
+### 9.2 é¶æ®µäºï¼é«çº§åè½ (2å?
 
-- �?Great Expectations集成
-- �?机器学习预测填充
-- �?模糊去重功能
-- �?高级插值方�?
+- â?Great Expectationséæ
+- â?æºå¨å­¦ä¹ é¢æµå¡«å
+- â?æ¨¡ç³å»éåè½
+- â?é«çº§æå¼æ¹æ³?
 
-### 9.3 阶段三：性能优化 (1�?
+### 9.3 é¶æ®µä¸ï¼æ§è½ä¼å (1å?
 
-- �?Spark性能优化
-- �?缓存策略优化
-- �?并行处理优化
-- �?内存管理优化
+- â?Sparkæ§è½ä¼å
+- â?ç¼å­ç­ç¥ä¼å
+- â?å¹¶è¡å¤çä¼å
+- â?åå­ç®¡çä¼å
 
-### 9.4 阶段四：监控运维 (1�?
+### 9.4 é¶æ®µåï¼çæ§è¿ç»´ (1å?
 
-- �?Prometheus监控集成
-- �?清洗报告生成
-- �?质量指标统计
-- �?告警机制
+- â?Prometheusçæ§éæ
+- â?æ¸æ´æ¥åçæ
+- â?è´¨éææ ç»è®¡
+- â?åè­¦æºå¶
 
 ---
 
-## 10. 成本效益分析
+## 10. ææ¬æçåæ
 
-### 10.1 开发成�?
+### 10.1 å¼åææ?
 
-| 项目 | 工作�?| 成本 |
+| é¡¹ç® | å·¥ä½é?| ææ¬ |
 |------|--------|------|
-| 核心功能开�?| 40h | ¥4,000 |
-| 测试与优�?| 15h | ¥1,500 |
-| 文档编写 | 5h | ¥500 |
-| **总计** | **60h** | **¥6,000** |
+| æ ¸å¿åè½å¼å?| 40h | Â¥4,000 |
+| æµè¯ä¸ä¼å?| 15h | Â¥1,500 |
+| ææ¡£ç¼å | 5h | Â¥500 |
+| **æ»è®¡** | **60h** | **Â¥6,000** |
 
-### 10.2 收益评估
+### 10.2 æ¶çè¯ä¼°
 
-| 收益�?| 估算价�?| 说明 |
+| æ¶çé¡?| ä¼°ç®ä»·å?| è¯´æ |
 |--------|---------|------|
-| 数据质量提升 | ¥20,000 | 减少数据问题导致的损�?|
-| 人工成本节约 | ¥10,000 | 自动化清洗减少人工干�?|
-| 系统稳定性提�?| ¥15,000 | 减少因数据问题导致的系统故障 |
-| **总收�?* | **¥45,000** | |
+| æ°æ®è´¨éæå | Â¥20,000 | åå°æ°æ®é®é¢å¯¼è´çæå¤?|
+| äººå·¥ææ¬èçº¦ | Â¥10,000 | èªå¨åæ¸æ´åå°äººå·¥å¹²é¢?|
+| ç³»ç»ç¨³å®æ§æå?| Â¥15,000 | åå°å æ°æ®é®é¢å¯¼è´çç³»ç»æé |
+| **æ»æ¶ç?* | **Â¥45,000** | |
 
 **ROI**: (45,000 - 6,000) / 6,000 = 650%
 
 ---
 
-## 📋 变更历史
+## ð åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 作�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**文档结束**
+**ææ¡£ç»æ**

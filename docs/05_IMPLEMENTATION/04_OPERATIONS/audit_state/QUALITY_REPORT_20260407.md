@@ -1,0 +1,85 @@
+# 文档质量定期检查报告
+
+> **检查时间**: 2026-04-07T15:37:10.437437
+
+## 📊 质量总评
+
+- **质量总分**: 95.39/100
+- **质量等级**: A+ (优秀)
+
+### 分项得分
+
+- **YAML元数据完整性**: 94.04% (权重30%)
+- **文档结构规范性**: 94.09% (权重20%)
+- **文档新鲜度**: 100.0% (权重20%)
+- **索引完整性**: 94.53% (权重30%)
+
+---
+
+## 📋 详细检查结果
+
+### 1. YAML元数据完整性
+
+- **扫描文件数**: 2012
+- **包含YAML文件数**: 1892
+- **缺少YAML文件数**: 7
+- **YAML完整率**: 94.04%
+
+**必需字段覆盖率**:
+
+- version: 94.04%
+- module_id: 91.30%
+- layer: 25.80%
+- responsibility_boundary: 9.94%
+
+### 2. 文档结构规范性
+
+- **标题覆盖率**: 94.09%
+- **目录覆盖率**: 2.19%
+- **平均章节数**: 7.70
+- **平均链接数**: 3.96
+
+### 3. 文档新鲜度
+
+- **最近30天修改**: 2012 (100.00%)
+- **超过90天未修改**: 0 (0.00%)
+- **超过180天未修改**: 0
+- **最旧文件**: 04_EXECUTION\README.md
+- **最新文件**: 05_IMPLEMENTATION\04_OPERATIONS\audit_state\P0_LAYER_CLASSIFICATION_FIX_REPORT_20260407.md
+
+### 4. 索引完整性
+
+- **总目录数**: 201
+- **包含索引目录数**: 190
+- **缺少索引目录数**: 11
+- **索引覆盖率**: 94.53%
+
+**缺少索引的目录** (前10个):
+
+- 06_CONSTRUCTION_DOCS
+- 09_ARCHIVE
+- 06_ARCHIVE\20260406_encoding_issues_archive
+- 06_ARCHIVE\encoding_backups
+- 06_ARCHIVE\incomplete_documents
+- 06_ARCHIVE\integrated_documents
+- 06_ARCHIVE\knowledge_library
+- 09_RESEARCH_INNOVATION\maintenance_records
+- 05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\04_CONFIG_TEMPLATES
+- 06_ARCHIVE\encoding_backups\20260406_ai_workflow
+
+---
+
+## 💡 改进建议
+
+### 高优先级
+
+- 为缺少索引的目录创建INDEX.md文件
+
+### 中优先级
+
+- 优化文档结构，增加目录章节
+- 定期运行质量检查工具
+- 建立文档更新提醒机制
+
+---
+*报告生成时间: 2026-04-07 15:37:11*

@@ -184,7 +184,7 @@ last_updated: 2026-04-02
 ύν║ϊ╛Μ:
 ```markdown
 ϊ┐χίνΞίΚ? [όΨΘόκμ](../../01_FRAMEWORK/ARCHITECTURE.md)
-ϊ┐χίνΞίΡ? [όΨΘόκμ](../../../01_FRAMEWORK/ARCHITECTURE.md)
+ϊ┐χίνΞίΡ? [όΨΘόκμ](../../01_FRAMEWORK/ARCHITECTURE.md)
 ```
 
 **ύ▒╗ίηΜ2: όΨΘϊ╗╢ϋ╖ψί╛Εί╝ΧύΦρώΦβϋψψ**

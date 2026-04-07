@@ -1,98 +1,98 @@
 ---
 responsibility:
-  - 多目标优�?
-  - 帕累托最优解生成
-  - 目标权衡分析
-  - 优化算法选择
+  - å¤ç®æ ä¼å?
+  - å¸ç´¯ææä¼è§£çæ
+  - ç®æ æè¡¡åæ
+  - ä¼åç®æ³éæ©
 
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: "Layer 6 (ç»åä¼åå±?"
 ---
 
-# 多目标优化蓝�?
+# å¤ç®æ ä¼åèå?
 
-> **核心职责**: 同时优化收益、风险、流动性等多个目标
-> **职责边界**: 
-> - �?本文档负责：多目标优化、帕累托最优解生成
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: åæ¶ä¼åæ¶çãé£é©ãæµå¨æ§ç­å¤ä¸ªç®æ 
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼å¤ç®æ ä¼åãå¸ç´¯ææä¼è§£çæ
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-负责Multi Objective Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
+è´è´£Multi Objective Optimizationçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
-## 1. 概述
+## 1. æ¦è¿°
 
-### 1.1 模块定位
+### 1.1 æ¨¡åå®ä½
 
-**Layer定位**: Layer 6 - 组合优化层（约束求解模块�?
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼çº¦ææ±è§£æ¨¡åï¼?
 
-**核心价�?*:
-- 支持同时优化多个冲突目标（如最大化收益、最小化风险、最小化成本�?
-- 生成Pareto前沿，提供多解选择
-- 支持加权求和法、�?约束法、NSGA-II等多种算�?
+**æ ¸å¿ä»·å?*:
+- æ¯æåæ¶ä¼åå¤ä¸ªå²çªç®æ ï¼å¦æå¤§åæ¶çãæå°åé£é©ãæå°åææ¬ï¼?
+- çæParetoåæ²¿ï¼æä¾å¤è§£éæ©
+- æ¯æå ææ±åæ³ãÎ?çº¦ææ³ãNSGA-IIç­å¤ç§ç®æ³?
 
-**业务价�?*:
-- 更真实的投资决策场景
-- 多维度权衡分�?
-- 灵活的风险收益平�?
+**ä¸å¡ä»·å?*:
+- æ´çå®çæèµå³ç­åºæ¯
+- å¤ç»´åº¦æè¡¡åæ?
+- çµæ´»çé£é©æ¶çå¹³è¡?
 
-### 1.2 版本信息
+### 1.2 çæ¬ä¿¡æ¯
 
-| 项目 | 内容 |
+| é¡¹ç® | åå®¹ |
 |------|------|
-| **模块ID** | MULTI_OBJECTIVE_OPTIMIZATION_001 |
-| **版本** | v1.0.0 |
-| **开源依�?* | cvxpy, pymoo |
-| **预计工时** | 5-7�?|
+| **æ¨¡åID** | MULTI_OBJECTIVE_OPTIMIZATION_001 |
+| **çæ¬** | v1.0.0 |
+| **å¼æºä¾èµ?* | cvxpy, pymoo |
+| **é¢è®¡å·¥æ¶** | 5-7å¤?|
 
 ---
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
-| [PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md](./PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md) | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 | 强依�?| 提供约束条件 |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
+| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
+| [PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md](./PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md) | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 | å¼ºä¾èµ?| æä¾çº¦ææ¡ä»¶ |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | 强依�?| 战略资产配置优化 |
-| [PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 中依�?| 场景分析优化 |
-| [RISK_PARITY_STRATEGY_BLUEPRINT.md](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依�?| 风险平价策略 |
+| [STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | å¼ºä¾èµ?| æç¥èµäº§éç½®ä¼å |
+| [PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | ä¸­ä¾èµ?| åºæ¯åæä¼å |
+| [RISK_PARITY_STRATEGY_BLUEPRINT.md](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | ä¸­ä¾èµ?| é£é©å¹³ä»·ç­ç¥ |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **CVXPY** | 1.5+ | 凸优化求�?| [官方文档](https://www.cvxpy.org/) |
-| **pymoo** | 0.6+ | 多目标优�?| [官方文档](https://pymoo.org/) |
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **SciPy** | 1.11+ | 科学计算 | [官方文档](https://scipy.org/) |
+| **CVXPY** | 1.5+ | å¸ä¼åæ±è§?| [å®æ¹ææ¡£](https://www.cvxpy.org/) |
+| **pymoo** | 0.6+ | å¤ç®æ ä¼å?| [å®æ¹ææ¡£](https://pymoo.org/) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **SciPy** | 1.11+ | ç§å­¦è®¡ç® | [å®æ¹ææ¡£](https://scipy.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[组合优化引擎] --> B[多目标优化]
-    C[数据质量监控] --> B
-    D[组合约束管理] --> B
+    A[ç»åä¼åå¼æ] --> B[å¤ç®æ ä¼å]
+    C[æ°æ®è´¨éçæ§] --> B
+    D[ç»åçº¦æç®¡ç] --> B
     
-    B --> E[战略资产配置]
-    B --> F[场景分析]
-    B --> G[风险平价策略]
+    B --> E[æç¥èµäº§éç½®]
+    B --> F[åºæ¯åæ]
+    B --> G[é£é©å¹³ä»·ç­ç¥]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -101,9 +101,9 @@ graph LR
 
 ---
 
-## 2. 技术实�?
+## 2. ææ¯å®ç?
 
-### 2.1 核心API
+### 2.1 æ ¸å¿API
 
 ```python
 from cvxpy import *
@@ -113,7 +113,7 @@ from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.polynomial import PolynomialMutation
 
 class MultiObjectiveOptimizer:
-    """多目标优化器"""
+    """å¤ç®æ ä¼åå¨"""
     
     def __init__(self, n_assets: int):
         self.n_assets = n_assets
@@ -125,15 +125,15 @@ class MultiObjectiveOptimizer:
         risk_weight: float = 0.5
     ) -> np.ndarray:
         """
-        加权求和�?
+        å ææ±åæ³?
         
         Args:
-            returns: 预期收益�?
-            cov_matrix: 协方差矩�?
-            risk_weight: 风险权重 (1-risk_weight为收益权�?
+            returns: é¢ææ¶çç?
+            cov_matrix: åæ¹å·®ç©é?
+            risk_weight: é£é©æé (1-risk_weightä¸ºæ¶çæé?
         
         Returns:
-            最优权�?
+            æä¼æé?
         """
         w = Variable(self.n_assets)
         portfolio_return = returns @ w
@@ -156,10 +156,10 @@ class MultiObjectiveOptimizer:
         n_solutions: int = 50
     ) -> np.ndarray:
         """
-        NSGA-II Pareto前沿优化
+        NSGA-II Paretoåæ²¿ä¼å
         
         Returns:
-            Pareto最优解�?
+            Paretoæä¼è§£é?
         """
         problem = PortfolioProblem(returns, cov_matrix)
         
@@ -180,11 +180,11 @@ class MultiObjectiveOptimizer:
 
 ---
 
-## 3. 接口定义
+## 3. æ¥å£å®ä¹
 
 ```python
 class MultiObjectiveAPI:
-    """多目标优化API"""
+    """å¤ç®æ ä¼åAPI"""
     
     @endpoint("/api/v1/multi_objective/weighted")
     async def optimize_weighted(
@@ -193,7 +193,7 @@ class MultiObjectiveAPI:
         cov_matrix: List[List[float]],
         risk_weight: float
     ) -> OptimizationResult:
-        """加权求和优化"""
+        """å ææ±åä¼å"""
         
     @endpoint("/api/v1/multi_objective/pareto")
     async def optimize_pareto(
@@ -202,7 +202,7 @@ class MultiObjectiveAPI:
         cov_matrix: List[List[float]],
         n_solutions: int = 50
     ) -> ParetoResult:
-        """Pareto前沿优化"""
+        """Paretoåæ²¿ä¼å"""
         
     @endpoint("/api/v1/multi_objective/epsilon")
     async def optimize_epsilon(
@@ -211,61 +211,61 @@ class MultiObjectiveAPI:
         cov_matrix: List[List[float]],
         epsilon_values: List[float]
     ) -> List[OptimizationResult]:
-        """ε-约束法优�?""
+        """Îµ-çº¦ææ³ä¼å?""
 ```
 
 ---
 
-## 4. 实施路径
+## 4. å®æ½è·¯å¾
 
-| 阶段 | 任务 | 工时 |
+| é¶æ®µ | ä»»å¡ | å·¥æ¶ |
 |------|------|------|
-| Phase 1 | cvxpy加权求和法实�?| 16h |
-| Phase 2 | pymoo Pareto前沿实现 | 20h |
-| Phase 3 | API、文档、测�?| 12h |
+| Phase 1 | cvxpyå ææ±åæ³å®ç?| 16h |
+| Phase 2 | pymoo Paretoåæ²¿å®ç° | 20h |
+| Phase 3 | APIãææ¡£ãæµè¯?| 12h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
-## 5. 文档治理
+## 5. ææ¡£æ²»ç
 
-### 5.1 System_Manifest.md索引
+### 5.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Multi Objective Optimization
-- **模块ID**: MULTI_OBJECTIVE_OPTIMIZATION_001
-- **蓝图文档**: MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 6 组合优化�?
-- **状�?*: Active
+- **æ¨¡åID**: MULTI_OBJECTIVE_OPTIMIZATION_001
+- **èå¾ææ¡£**: MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 6 ç»åä¼åå±?
+- **ç¶æ?*: Active
 ```
 
-### 5.2 模块职责边界
+### 5.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Multi Objective Optimization** | Layer 6 组合优化�?| **核心模块** |
+| **Multi Objective Optimization** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
-### 5.3 版本管理
+### 5.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

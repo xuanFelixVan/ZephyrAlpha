@@ -4,111 +4,117 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®å±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 数据标准化引�?
-  - 数据格式统一
-  - 数据标准�?
-  - 数据类型转换
-layer: "Layer 1 (数据�?"
+  - æ°æ®æ ååå¼æ?
+  - æ°æ®æ ¼å¼ç»ä¸
+  - æ°æ®æ åå?
+  - æ°æ®ç±»åè½¬æ¢
+layer: "Layer 1 (æ°æ®å±?"
 ---
 
-# 数据标准化引擎蓝�?
-
-> **核心职责**: 数据标准化、数据格式统一、数据验�?
-> **职责边界**: 
-> - �?本模块负责：字段命名标准化、数据格式统一、数据类型转换、数据验�?
-> - �?本模块不负责：数据存储、数据清洗、数据质量监�?
+# æ°æ®æ ååå¼æèå?
 
 ## 核心定位
 
-**单一职责**: 数据标准化与格式统一
+负责数据标准化引擎的设计与实现，基于标准化规则，统一数据格式和编码，提升数据一致性。
 
-### 职责边界
 
-| 负责 | 不负�?|
+
+> **æ ¸å¿èè´£**: æ°æ®æ ååãæ°æ®æ ¼å¼ç»ä¸ãæ°æ®éªè¯?
+> **èè´£è¾¹ç**: 
+> - â?æ¬æ¨¡åè´è´£ï¼å­æ®µå½åæ ååãæ°æ®æ ¼å¼ç»ä¸ãæ°æ®ç±»åè½¬æ¢ãæ°æ®éªè¯?
+> - â?æ¬æ¨¡åä¸è´è´£ï¼æ°æ®å­å¨ãæ°æ®æ¸æ´ãæ°æ®è´¨éçæ?
+
+## æ ¸å¿å®ä½
+
+**åä¸èè´£**: æ°æ®æ ååä¸æ ¼å¼ç»ä¸
+
+### èè´£è¾¹ç
+
+| è´è´£ | ä¸è´è´?|
 |------|--------|
-| �?字段命名标准�?| �?数据存储 |
-| �?数据格式统一 | �?数据清洗 |
-| �?数据类型转换 | �?数据质量监控 |
-| �?数据验证 | �?数据订阅 |
-| �?标准规则管理 | �?数据血�?|
+| â?å­æ®µå½åæ åå?| â?æ°æ®å­å¨ |
+| â?æ°æ®æ ¼å¼ç»ä¸ | â?æ°æ®æ¸æ´ |
+| â?æ°æ®ç±»åè½¬æ¢ | â?æ°æ®è´¨éçæ§ |
+| â?æ°æ®éªè¯ | â?æ°æ®è®¢é |
+| â?æ åè§åç®¡ç | â?æ°æ®è¡ç¼?|
 
 ---
 
-## 1. 技术选型
+## 1. ææ¯éå
 
-### 1.1 为什么选择dbt + Great Expectations
+### 1.1 ä¸ºä»ä¹éæ©dbt + Great Expectations
 
-| 特�?| dbt + GE | Pandera | Pydantic |
+| ç¹æ?| dbt + GE | Pandera | Pydantic |
 |------|----------|---------|----------|
-| 数据转换 | ⭐⭐⭐⭐�?| ⭐⭐�?| ⭐⭐�?|
-| 数据验证 | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
-| SQL支持 | �?| �?| �?|
-| 文档生成 | �?| �?| �?|
-| 学习曲线 | ⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
-| **推荐指数** | **⭐⭐⭐⭐�?* | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| æ°æ®è½¬æ¢ | â­â­â­â­â­?| â­â­â­?| â­â­â­?|
+| æ°æ®éªè¯ | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­ |
+| SQLæ¯æ | â?| â?| â?|
+| ææ¡£çæ | â?| â?| â?|
+| å­¦ä¹ æ²çº¿ | â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
+| **æ¨èææ°** | **â­â­â­â­â­?* | â­â­â­â­ | â­â­â­â­ |
 
 ---
 
-## 2. 架构设计
+## 2. æ¶æè®¾è®¡
 
-### 2.1 整体架构
+### 2.1 æ´ä½æ¶æ
 
 ```
-┌─────────────────────────────────────────────────────────────────�?
-�?                   数据标准化引擎架�?                           �?
-├─────────────────────────────────────────────────────────────────�?
-�?                                                                �?
-�? ┌──────────────�?   ┌──────────────�?   ┌──────────────�?    �?
-�? �?标准规则�?  �?   �?数据转换�?  �?   �?数据验证�?  �?    �?
-�? �?             �?   �?             �?   �?             �?    �?
-�? �?�?命名规则   �?   �?�?格式转换   �?   �?�?类型验证   �?    �?
-�? �?�?格式规则   �?   �?�?类型转换   �?   �?�?范围验证   �?    �?
-�? �?�?验证规则   �?   �?�?单位转换   �?   �?�?唯一性验�?�?    �?
-�? └──────────────�?   └──────────────�?   └──────────────�?    �?
-�?        �?                  �?                   �?             �?
-�?        └───────────────────┴────────────────────�?             �?
-�?                           �?                                   �?
-�? ┌─────────────────────────────────────────────────────────�?  �?
-�? �?                   标准化流�?                           �?  �?
-�? �? 1. 命名标准�?�?2. 格式统一 �?3. 类型转换 �?4. 验证    �?  �?
-�? └─────────────────────────────────────────────────────────�?  �?
-�?                                                                �?
-└─────────────────────────────────────────────────────────────────�?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                   æ°æ®æ ååå¼ææ¶æ?                           â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                                                                â?
+â? ââââââââââââââââ?   ââââââââââââââââ?   ââââââââââââââââ?    â?
+â? â?æ åè§åå±?  â?   â?æ°æ®è½¬æ¢å±?  â?   â?æ°æ®éªè¯å±?  â?    â?
+â? â?             â?   â?             â?   â?             â?    â?
+â? â?â?å½åè§å   â?   â?â?æ ¼å¼è½¬æ¢   â?   â?â?ç±»åéªè¯   â?    â?
+â? â?â?æ ¼å¼è§å   â?   â?â?ç±»åè½¬æ¢   â?   â?â?èå´éªè¯   â?    â?
+â? â?â?éªè¯è§å   â?   â?â?åä½è½¬æ¢   â?   â?â?å¯ä¸æ§éªè¯?â?    â?
+â? ââââââââââââââââ?   ââââââââââââââââ?   ââââââââââââââââ?    â?
+â?        â?                  â?                   â?             â?
+â?        âââââââââââââââââââââ´âââââââââââââââââââââ?             â?
+â?                           â?                                   â?
+â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
+â? â?                   æ ååæµç¨?                           â?  â?
+â? â? 1. å½åæ åå?â?2. æ ¼å¼ç»ä¸ â?3. ç±»åè½¬æ¢ â?4. éªè¯    â?  â?
+â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
+â?                                                                â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
 ---
 
-## 3. 核心功能实现
+## 3. æ ¸å¿åè½å®ç°
 
-### 3.1 命名标准�?
+### 3.1 å½åæ åå?
 
 ```python
 import re
 from typing import Dict, List
 
 class NamingStandardizer:
-    """命名标准化器"""
+    """å½åæ ååå¨"""
     
     FIELD_MAPPING = {
-        # 原始名称 -> 标准名称
-        "股票代码": "symbol",
-        "交易日期": "trade_date",
-        "开盘价": "open",
-        "最高价": "high",
-        "最低价": "low",
-        "收盘�?: "close",
-        "成交�?: "volume",
-        "成交�?: "amount",
+        # åå§åç§° -> æ ååç§°
+        "è¡ç¥¨ä»£ç ": "symbol",
+        "äº¤ææ¥æ": "trade_date",
+        "å¼çä»·": "open",
+        "æé«ä»·": "high",
+        "æä½ä»·": "low",
+        "æ¶çä»?: "close",
+        "æäº¤é?: "volume",
+        "æäº¤é¢?: "amount",
     }
     
     @classmethod
     def standardize_field_name(cls, name: str) -> str:
-        """标准化字段名"""
+        """æ ååå­æ®µå"""
         if name in cls.FIELD_MAPPING:
             return cls.FIELD_MAPPING[name]
         
@@ -121,7 +127,7 @@ class NamingStandardizer:
     
     @classmethod
     def standardize_dataframe(cls, df) -> 'DataFrame':
-        """标准化DataFrame列名"""
+        """æ ååDataFrameåå"""
         rename_map = {
             col: cls.standardize_field_name(col)
             for col in df.columns
@@ -129,7 +135,7 @@ class NamingStandardizer:
         return df.rename(columns=rename_map)
 ```
 
-### 3.2 数据格式统一
+### 3.2 æ°æ®æ ¼å¼ç»ä¸
 
 ```python
 from datetime import datetime
@@ -137,16 +143,16 @@ from decimal import Decimal
 from typing import Union
 
 class FormatStandardizer:
-    """格式标准化器"""
+    """æ ¼å¼æ ååå¨"""
     
     @staticmethod
     def standardize_date(value: Union[str, datetime], format: str = "%Y-%m-%d") -> str:
-        """标准化日期格�?""
+        """æ ååæ¥ææ ¼å¼?""
         if isinstance(value, datetime):
             return value.strftime(format)
         
         if isinstance(value, str):
-            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y�?m�?d�?]:
+            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Yå¹?mæ?dæ?]:
                 try:
                     dt = datetime.strptime(value, fmt)
                     return dt.strftime(format)
@@ -157,7 +163,7 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_symbol(symbol: str) -> str:
-        """标准化股票代�?""
+        """æ ååè¡ç¥¨ä»£ç ?""
         symbol = symbol.upper().strip()
         
         if symbol.isdigit():
@@ -170,14 +176,14 @@ class FormatStandardizer:
     
     @staticmethod
     def standardize_price(value: Union[str, float, Decimal]) -> Decimal:
-        """标准化价�?""
+        """æ ååä»·æ ?""
         if isinstance(value, str):
             value = value.replace(',', '')
         
         return Decimal(str(value)).quantize(Decimal('0.0001'))
 ```
 
-### 3.3 数据验证
+### 3.3 æ°æ®éªè¯
 
 ```python
 from dataclasses import dataclass
@@ -186,24 +192,24 @@ import pandas as pd
 
 @dataclass
 class ValidationRule:
-    """验证规则"""
+    """éªè¯è§å"""
     field: str
     rule_type: str
     params: dict
     error_message: str
 
 class DataValidator:
-    """数据验证�?""
+    """æ°æ®éªè¯å?""
     
     def __init__(self):
         self.rules: List[ValidationRule] = []
     
     def add_rule(self, rule: ValidationRule):
-        """添加验证规则"""
+        """æ·»å éªè¯è§å"""
         self.rules.append(rule)
     
     def validate(self, df: pd.DataFrame) -> dict:
-        """验证数据"""
+        """éªè¯æ°æ®"""
         results = {
             "valid": True,
             "errors": [],
@@ -212,7 +218,7 @@ class DataValidator:
         
         for rule in self.rules:
             if rule.field not in df.columns:
-                results["warnings"].append(f"字段 {rule.field} 不存�?)
+                results["warnings"].append(f"å­æ®µ {rule.field} ä¸å­å?)
                 continue
             
             errors = self._apply_rule(df, rule)
@@ -223,13 +229,13 @@ class DataValidator:
         return results
     
     def _apply_rule(self, df: pd.DataFrame, rule: ValidationRule) -> List[str]:
-        """应用验证规则"""
+        """åºç¨éªè¯è§å"""
         errors = []
         
         if rule.rule_type == "not_null":
             null_count = df[rule.field].isnull().sum()
             if null_count > 0:
-                errors.append(f"{rule.field}: {null_count} 条空�?)
+                errors.append(f"{rule.field}: {null_count} æ¡ç©ºå?)
         
         elif rule.rule_type == "range":
             min_val = rule.params.get("min")
@@ -238,26 +244,26 @@ class DataValidator:
             if min_val is not None:
                 invalid = df[df[rule.field] < min_val]
                 if len(invalid) > 0:
-                    errors.append(f"{rule.field}: {len(invalid)} 条小于最小�?{min_val}")
+                    errors.append(f"{rule.field}: {len(invalid)} æ¡å°äºæå°å?{min_val}")
             
             if max_val is not None:
                 invalid = df[df[rule.field] > max_val]
                 if len(invalid) > 0:
-                    errors.append(f"{rule.field}: {len(invalid)} 条大于最大�?{max_val}")
+                    errors.append(f"{rule.field}: {len(invalid)} æ¡å¤§äºæå¤§å?{max_val}")
         
         elif rule.rule_type == "unique":
             duplicates = df[df.duplicated(subset=[rule.field])]
             if len(duplicates) > 0:
-                errors.append(f"{rule.field}: {len(duplicates)} 条重复�?)
+                errors.append(f"{rule.field}: {len(duplicates)} æ¡éå¤å?)
         
         return errors
 ```
 
-### 3.4 标准化管�?
+### 3.4 æ ååç®¡é?
 
 ```python
 class StandardizationPipeline:
-    """标准化管�?""
+    """æ ååç®¡é?""
     
     def __init__(self):
         self.naming_standardizer = NamingStandardizer()
@@ -265,7 +271,7 @@ class StandardizationPipeline:
         self.validator = DataValidator()
     
     def process(self, df: pd.DataFrame, config: dict) -> pd.DataFrame:
-        """执行标准化流�?""
+        """æ§è¡æ ååæµç¨?""
         df = self.naming_standardizer.standardize_dataframe(df)
         
         for field, format_type in config.get("format_rules", {}).items():
@@ -279,19 +285,19 @@ class StandardizationPipeline:
         
         validation_result = self.validator.validate(df)
         if not validation_result["valid"]:
-            raise ValueError(f"数据验证失败: {validation_result['errors']}")
+            raise ValueError(f"æ°æ®éªè¯å¤±è´¥: {validation_result['errors']}")
         
         return df
 ```
 
 ---
 
-## 📋 变更历史
+## ð åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 作�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**文档结束**
+**ææ¡£ç»æ**

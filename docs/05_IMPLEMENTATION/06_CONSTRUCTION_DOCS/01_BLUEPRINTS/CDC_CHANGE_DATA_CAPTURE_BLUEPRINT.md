@@ -4,112 +4,118 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 首席架构�?
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据预处理层
-compliance_level: 专业标准
+owner: é¦å¸­æ¶æå¸?
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®é¢å¤çå±
+compliance_level: ä¸ä¸æ å
 priority: P1
-layer: "Layer 1 (数据预处理层)"
-responsibility: CDC变更数据捕获与增量同�?
+layer: "Layer 1 (æ°æ®é¢å¤çå±)"
+responsibility: CDCåæ´æ°æ®æè·ä¸å¢éåæ­?
 ---
 
-# CDC变更数据捕获蓝图
-
-> **核心职责**: 实时数据变更捕获、增量同步、数据一致性保�?
-> **职责边界**: 
-> - �?本文档负责：变更数据捕获、增量同步、数据一致性校�?
-> - �?本文档不负责：数据采集、数据存储、数据查�?
-
-**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状�?*: Active
-
----
+# CDCåæ´æ°æ®æè·èå¾
 
 ## 核心定位
 
-负责变更数据捕获（CDC）的实现，实时捕获和处理数据变更，支持数据同步和数据一致性保障�?
+负责变更数据捕获系统的设计与实现，基于CDC技术，实时捕获数据库变更，支持数据同步和实时分析。
 
-## 📋 一、模块概�?
 
-### 1.1 专业机构标准要求
 
-| 机构类型 | CDC要求 | 延迟目标 |
+> **æ ¸å¿èè´£**: å®æ¶æ°æ®åæ´æè·ãå¢éåæ­¥ãæ°æ®ä¸è´æ§ä¿è¯?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼åæ´æ°æ®æè·ãå¢éåæ­¥ãæ°æ®ä¸è´æ§æ ¡éª?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®ééãæ°æ®å­å¨ãæ°æ®æ¥è¯?
+
+**çæ¬**: v1.0.0 | **æ´æ°æ¥æ**: 2026-04-07 | **ç¶æ?*: Active
+
+---
+
+## æ ¸å¿å®ä½
+
+è´è´£åæ´æ°æ®æè·ï¼CDCï¼çå®ç°ï¼å®æ¶æè·åå¤çæ°æ®åæ´ï¼æ¯ææ°æ®åæ­¥åæ°æ®ä¸è´æ§ä¿éã?
+
+## ð ä¸ãæ¨¡åæ¦è¿?
+
+### 1.1 ä¸ä¸æºææ åè¦æ±
+
+| æºæç±»å | CDCè¦æ± | å»¶è¿ç®æ  |
 |---------|---------|---------|
-| **桥水基金** | 实时CDC、精确一�?| <100ms |
-| **文艺复兴科技** | 多源CDC、顺序保�?| <200ms |
-| **Two Sigma** | 增量同步、数据一致�?| <500ms |
-| **Citadel** | 高可用CDC、故障恢�?| <100ms |
+| **æ¡¥æ°´åºé** | å®æ¶CDCãç²¾ç¡®ä¸æ¬?| <100ms |
+| **æèºå¤å´ç§æ** | å¤æºCDCãé¡ºåºä¿è¯?| <200ms |
+| **Two Sigma** | å¢éåæ­¥ãæ°æ®ä¸è´æ?| <500ms |
+| **Citadel** | é«å¯ç¨CDCãæéæ¢å¤?| <100ms |
 
-### 1.2 核心功能矩阵
+### 1.2 æ ¸å¿åè½ç©éµ
 
-| 功能模块 | 开源方�?| 成熟�?| 个人适用�?| 推荐指数 |
+| åè½æ¨¡å | å¼æºæ¹æ¡?| æçåº?| ä¸ªäººéç¨æ?| æ¨èææ° |
 |---------|---------|--------|-----------|---------|
-| **数据库CDC** | Debezium | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
-| **文件CDC** | 自研 + Watchdog | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
-| **API CDC** | 自研 + 轮询 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ |
-| **消息队列** | Kafka | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?|
-| **轻量替代** | Redis Streams | ⭐⭐⭐⭐ | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?|
+| **æ°æ®åºCDC** | Debezium | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
+| **æä»¶CDC** | èªç  + Watchdog | â­â­â­â­ | â­â­â­â­â­?| â­â­â­â­ |
+| **API CDC** | èªç  + è½®è¯¢ | â­â­â­â­ | â­â­â­â­â­?| â­â­â­â­ |
+| **æ¶æ¯éå** | Kafka | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
+| **è½»éæ¿ä»£** | Redis Streams | â­â­â­â­ | â­â­â­â­â­?| â­â­â­â­â­?|
 
 ---
 
-## 🏗�?二、系统架构设�?
+## ðï¸?äºãç³»ç»æ¶æè®¾è®?
 
-### 2.1 整体架构�?
-
-```
-┌─────────────────────────────────────────────────────────────────────────�?
-�?                   CDC变更数据捕获架构                                     �?
-├─────────────────────────────────────────────────────────────────────────�?
-�?                                                                        �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                       数据源层                                    �? �?
-�? �? �?PostgreSQL  �?MySQL  �?MongoDB  �?文件系统  �?API              �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   CDC捕获�?                                      �? �?
-�? �? �?Debezium  �?Binlog解析  �?文件监控  �?API轮询                  �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   变更事件处理�?                                 �? �?
-�? �? �?事件解析  �?格式转换  �?数据验证  �?冲突解决                    �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   消息队列�?(Kafka/Redis)                        �? �?
-�? �? �?事件存储  �?顺序保证  �?持久�? �?回放支持                      �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                             �?                                         �?
-�?                             �?                                         �?
-�? ┌──────────────────────────────────────────────────────────────────�? �?
-�? �?                   消费处理�?                                     �? �?
-�? �? �?增量同步  �?数据转换  �?一致性校�? �?错误处理                  �? �?
-�? └──────────────────────────────────────────────────────────────────�? �?
-�?                                                                        �?
-└─────────────────────────────────────────────────────────────────────────�?
-```
-
-### 2.2 数据流架�?
+### 2.1 æ´ä½æ¶æå?
 
 ```
-数据变更 �?CDC捕获 �?变更事件 �?消息队列 �?消费处理 �?目标存储
-    �?        �?         �?         �?         �?         �?
-    └─────────┴──────────┴──────────┴──────────┴──────────�?
-                    完整CDC链路
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                   CDCåæ´æ°æ®æè·æ¶æ                                     â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+â?                                                                        â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                       æ°æ®æºå±                                    â? â?
+â? â? â?PostgreSQL  â?MySQL  â?MongoDB  â?æä»¶ç³»ç»  â?API              â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   CDCæè·å±?                                      â? â?
+â? â? â?Debezium  â?Binlogè§£æ  â?æä»¶çæ§  â?APIè½®è¯¢                  â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   åæ´äºä»¶å¤çå±?                                 â? â?
+â? â? â?äºä»¶è§£æ  â?æ ¼å¼è½¬æ¢  â?æ°æ®éªè¯  â?å²çªè§£å³                    â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   æ¶æ¯éåå±?(Kafka/Redis)                        â? â?
+â? â? â?äºä»¶å­å¨  â?é¡ºåºä¿è¯  â?æä¹å? â?åæ¾æ¯æ                      â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                             â?                                         â?
+â?                             â?                                         â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â? â?                   æ¶è´¹å¤çå±?                                     â? â?
+â? â? â?å¢éåæ­¥  â?æ°æ®è½¬æ¢  â?ä¸è´æ§æ ¡éª? â?éè¯¯å¤ç                  â? â?
+â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
+â?                                                                        â?
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
+```
+
+### 2.2 æ°æ®æµæ¶æ?
+
+```
+æ°æ®åæ´ â?CDCæè· â?åæ´äºä»¶ â?æ¶æ¯éå â?æ¶è´¹å¤ç â?ç®æ å­å¨
+    â?        â?         â?         â?         â?         â?
+    âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ?
+                    å®æ´CDCé¾è·¯
 ```
 
 ---
 
-## 💻 三、核心实现代�?
+## ð» ä¸ãæ ¸å¿å®ç°ä»£ç ?
 
-### 3.1 文件CDC监控�?
+### 3.1 æä»¶CDCçæ§å?
 
 ```python
 """
-文件CDC监控�?- 基于Watchdog
+æä»¶CDCçæ§å?- åºäºWatchdog
 """
 import os
 import hashlib
@@ -125,7 +131,7 @@ import queue
 
 
 class ChangeType(Enum):
-    """变更类型"""
+    """åæ´ç±»å"""
     CREATE = "create"
     MODIFY = "modify"
     DELETE = "delete"
@@ -134,7 +140,7 @@ class ChangeType(Enum):
 
 @dataclass
 class FileChangeEvent:
-    """文件变更事件"""
+    """æä»¶åæ´äºä»¶"""
     event_id: str
     file_path: str
     change_type: ChangeType
@@ -145,7 +151,7 @@ class FileChangeEvent:
 
 
 class FileCDCMonitor:
-    """文件CDC监控�?""
+    """æä»¶CDCçæ§å?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -161,7 +167,7 @@ class FileCDCMonitor:
         self.running = False
     
     def _compute_file_hash(self, file_path: str) -> Optional[str]:
-        """计算文件哈希"""
+        """è®¡ç®æä»¶åå¸"""
         try:
             with open(file_path, 'rb') as f:
                 return hashlib.md5(f.read()).hexdigest()
@@ -169,7 +175,7 @@ class FileCDCMonitor:
             return None
     
     def _should_watch(self, file_path: str) -> bool:
-        """判断是否应该监控该文�?""
+        """å¤æ­æ¯å¦åºè¯¥çæ§è¯¥æä»?""
         for ignore_pattern in self.ignore_patterns:
             if ignore_pattern in file_path:
                 return False
@@ -189,7 +195,7 @@ class FileCDCMonitor:
         old_hash: Optional[str] = None,
         new_hash: Optional[str] = None
     ) -> FileChangeEvent:
-        """创建变更事件"""
+        """åå»ºåæ´äºä»¶"""
         event_id = hashlib.sha256(
             f"{file_path}_{change_type.value}_{datetime.now().isoformat()}".encode()
         ).hexdigest()[:16]
@@ -209,7 +215,7 @@ class FileCDCMonitor:
         )
     
     def on_file_created(self, file_path: str):
-        """文件创建事件"""
+        """æä»¶åå»ºäºä»¶"""
         if not self._should_watch(file_path):
             return
         
@@ -221,7 +227,7 @@ class FileCDCMonitor:
         self._notify_handlers(event)
     
     def on_file_modified(self, file_path: str):
-        """文件修改事件"""
+        """æä»¶ä¿®æ¹äºä»¶"""
         if not self._should_watch(file_path):
             return
         
@@ -241,7 +247,7 @@ class FileCDCMonitor:
         self._notify_handlers(event)
     
     def on_file_deleted(self, file_path: str):
-        """文件删除事件"""
+        """æä»¶å é¤äºä»¶"""
         if file_path in self.file_hashes:
             old_hash = self.file_hashes.pop(file_path)
             
@@ -250,11 +256,11 @@ class FileCDCMonitor:
             self._notify_handlers(event)
     
     def add_change_handler(self, handler: Callable):
-        """添加变更处理�?""
+        """æ·»å åæ´å¤çå?""
         self.change_handlers.append(handler)
     
     def _notify_handlers(self, event: FileChangeEvent):
-        """通知所有处理器"""
+        """éç¥ææå¤çå¨"""
         for handler in self.change_handlers:
             try:
                 handler(event)
@@ -262,14 +268,14 @@ class FileCDCMonitor:
                 print(f"Handler error: {e}")
     
     def get_event(self, timeout: float = 1.0) -> Optional[FileChangeEvent]:
-        """获取事件"""
+        """è·åäºä»¶"""
         try:
             return self.event_queue.get(timeout=timeout)
         except queue.Empty:
             return None
     
     def start(self):
-        """启动监控"""
+        """å¯å¨çæ§"""
         for watch_path in self.watch_paths:
             if os.path.exists(watch_path):
                 handler = CDCEventHandler(self)
@@ -279,14 +285,14 @@ class FileCDCMonitor:
         self.running = True
     
     def stop(self):
-        """停止监控"""
+        """åæ­¢çæ§"""
         self.running = False
         self.observer.stop()
         self.observer.join()
 
 
 class CDCEventHandler(FileSystemEventHandler):
-    """CDC事件处理�?""
+    """CDCäºä»¶å¤çå?""
     
     def __init__(self, monitor: FileCDCMonitor):
         self.monitor = monitor
@@ -309,11 +315,11 @@ class CDCEventHandler(FileSystemEventHandler):
             self.monitor.on_file_created(event.dest_path)
 ```
 
-### 3.2 API CDC轮询�?
+### 3.2 API CDCè½®è¯¢å?
 
 ```python
 """
-API CDC轮询�?
+API CDCè½®è¯¢å?
 """
 import asyncio
 import aiohttp
@@ -327,7 +333,7 @@ import logging
 
 @dataclass
 class APICDCConfig:
-    """API CDC配置"""
+    """API CDCéç½®"""
     endpoint: str
     method: str = "GET"
     headers: Dict[str, str] = None
@@ -340,7 +346,7 @@ class APICDCConfig:
 
 
 class APICDCPoller:
-    """API CDC轮询�?""
+    """API CDCè½®è¯¢å?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -356,7 +362,7 @@ class APICDCPoller:
         self.logger = logging.getLogger(__name__)
     
     async def poll_endpoint(self, name: str, config: APICDCConfig):
-        """轮询单个端点"""
+        """è½®è¯¢åä¸ªç«¯ç¹"""
         last_cursor = self.state_store.get_cursor(name)
         if last_cursor:
             config.cursor_value = last_cursor
@@ -409,7 +415,7 @@ class APICDCPoller:
         config: APICDCConfig,
         item: Dict[str, Any]
     ):
-        """处理单个数据�?""
+        """å¤çåä¸ªæ°æ®é¡?""
         item_id = item.get(config.id_field)
         if not item_id:
             return
@@ -450,11 +456,11 @@ class APICDCPoller:
                 self.logger.error(f"Handler error: {e}")
     
     def add_change_handler(self, handler: Callable):
-        """添加变更处理�?""
+        """æ·»å åæ´å¤çå?""
         self.change_handlers.append(handler)
     
     async def start(self):
-        """启动轮询"""
+        """å¯å¨è½®è¯¢"""
         self.running = True
         
         while self.running:
@@ -470,12 +476,12 @@ class APICDCPoller:
             )
     
     def stop(self):
-        """停止轮询"""
+        """åæ­¢è½®è¯¢"""
         self.running = False
 
 
 class CDCStateStore:
-    """CDC状态存�?""
+    """CDCç¶æå­å?""
     
     def __init__(self, state_path: str):
         from pathlib import Path
@@ -488,7 +494,7 @@ class CDCStateStore:
         self._load_state()
     
     def _load_state(self):
-        """加载状�?""
+        """å è½½ç¶æ?""
         cursor_file = self.state_path / "cursors.json"
         if cursor_file.exists():
             with open(cursor_file, 'r') as f:
@@ -500,7 +506,7 @@ class CDCStateStore:
                 self.item_hashes = json.load(f)
     
     def _save_state(self):
-        """保存状�?""
+        """ä¿å­ç¶æ?""
         cursor_file = self.state_path / "cursors.json"
         with open(cursor_file, 'w') as f:
             json.dump(self.cursors, f, indent=2)
@@ -510,20 +516,20 @@ class CDCStateStore:
             json.dump(self.item_hashes, f, indent=2)
     
     def get_cursor(self, endpoint_name: str) -> Any:
-        """获取游标"""
+        """è·åæ¸¸æ """
         return self.cursors.get(endpoint_name)
     
     def set_cursor(self, endpoint_name: str, cursor: Any):
-        """设置游标"""
+        """è®¾ç½®æ¸¸æ """
         self.cursors[endpoint_name] = cursor
         self._save_state()
     
     def get_item_hash(self, endpoint_name: str, item_id: str) -> Optional[str]:
-        """获取数据项哈�?""
+        """è·åæ°æ®é¡¹åå¸?""
         return self.item_hashes.get(endpoint_name, {}).get(item_id)
     
     def set_item_hash(self, endpoint_name: str, item_id: str, hash_value: str):
-        """设置数据项哈�?""
+        """è®¾ç½®æ°æ®é¡¹åå¸?""
         if endpoint_name not in self.item_hashes:
             self.item_hashes[endpoint_name] = {}
         
@@ -531,11 +537,11 @@ class CDCStateStore:
         self._save_state()
 ```
 
-### 3.3 变更事件处理�?
+### 3.3 åæ´äºä»¶å¤çå?
 
 ```python
 """
-变更事件处理�?
+åæ´äºä»¶å¤çå?
 """
 import json
 from typing import Dict, List, Any, Callable
@@ -547,7 +553,7 @@ import logging
 
 @dataclass
 class ChangeEvent:
-    """变更事件"""
+    """åæ´äºä»¶"""
     event_id: str
     source: str
     table: str
@@ -559,7 +565,7 @@ class ChangeEvent:
 
 
 class CDCEventProcessor:
-    """CDC事件处理�?""
+    """CDCäºä»¶å¤çå?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -581,7 +587,7 @@ class CDCEventProcessor:
         self._ensure_consumer_group()
     
     def _ensure_consumer_group(self):
-        """确保消费者组存在"""
+        """ç¡®ä¿æ¶è´¹èç»å­å¨"""
         try:
             self.redis_client.xgroup_create(
                 self.stream_name,
@@ -594,13 +600,13 @@ class CDCEventProcessor:
                 raise
     
     def register_handler(self, operation: str, handler: Callable):
-        """注册处理�?""
+        """æ³¨åå¤çå?""
         if operation not in self.handlers:
             self.handlers[operation] = []
         self.handlers[operation].append(handler)
     
     def emit_event(self, event: ChangeEvent):
-        """发送事�?""
+        """åéäºä»?""
         event_data = {
             "event_id": event.event_id,
             "source": event.source,
@@ -615,7 +621,7 @@ class CDCEventProcessor:
         self.redis_client.xadd(self.stream_name, event_data)
     
     def process_events(self, count: int = 10, block: int = 1000):
-        """处理事件"""
+        """å¤çäºä»¶"""
         messages = self.redis_client.xreadgroup(
             groupname=self.consumer_group,
             consumername=self.consumer_name,
@@ -641,7 +647,7 @@ class CDCEventProcessor:
                     self.logger.error(f"Error processing event {msg_id}: {e}")
     
     def _parse_event(self, data: Dict[str, str]) -> ChangeEvent:
-        """解析事件"""
+        """è§£æäºä»¶"""
         return ChangeEvent(
             event_id=data["event_id"],
             source=data["source"],
@@ -654,7 +660,7 @@ class CDCEventProcessor:
         )
     
     def _dispatch_event(self, event: ChangeEvent):
-        """分发事件"""
+        """ååäºä»¶"""
         handlers = self.handlers.get(event.operation, [])
         
         for handler in handlers:
@@ -664,16 +670,16 @@ class CDCEventProcessor:
                 self.logger.error(f"Handler error: {e}")
     
     def start_processing(self):
-        """开始处�?""
+        """å¼å§å¤ç?""
         while True:
             self.process_events()
 ```
 
 ---
 
-## 🚀 四、部署配�?
+## ð åãé¨ç½²éç½?
 
-### 4.1 Debezium配置（PostgreSQL�?
+### 4.1 Debeziuméç½®ï¼PostgreSQLï¼?
 
 ```json
 {
@@ -694,7 +700,7 @@ class CDCEventProcessor:
 }
 ```
 
-### 4.2 Docker Compose配置
+### 4.2 Docker Composeéç½®
 
 ```yaml
 version: '3.8'
@@ -743,9 +749,9 @@ networks:
 
 ---
 
-## 📊 五、使用示�?
+## ð äºãä½¿ç¨ç¤ºä¾?
 
-### 5.1 文件CDC监控
+### 5.1 æä»¶CDCçæ§
 
 ```python
 from cdc_capture import FileCDCMonitor
@@ -759,13 +765,13 @@ config = {
 monitor = FileCDCMonitor(config)
 
 def handle_change(event):
-    print(f"文件变更: {event.file_path} - {event.change_type.value}")
+    print(f"æä»¶åæ´: {event.file_path} - {event.change_type.value}")
 
 monitor.add_change_handler(handle_change)
 monitor.start()
 ```
 
-### 5.2 API CDC轮询
+### 5.2 API CDCè½®è¯¢
 
 ```python
 from cdc_capture import APICDCPoller
@@ -786,7 +792,7 @@ config = {
 poller = APICDCPoller(config)
 
 async def handle_change(event):
-    print(f"数据变更: {event['endpoint_name']} - {event['item_id']}")
+    print(f"æ°æ®åæ´: {event['endpoint_name']} - {event['item_id']}")
 
 poller.add_change_handler(handle_change)
 asyncio.run(poller.start())
@@ -794,55 +800,55 @@ asyncio.run(poller.start())
 
 ---
 
-## 📈 六、性能指标
+## ð å­ãæ§è½ææ 
 
-### 6.1 CDC性能
+### 6.1 CDCæ§è½
 
-| 指标 | 目标�?| 实测�?|
+| ææ  | ç®æ å?| å®æµå?|
 |------|--------|--------|
-| **捕获延迟** | <100ms | 50-80ms |
-| **吞吐�?* | >10K events/s | 15K events/s |
-| **数据一致�?* | 100% | 100% |
-| **故障恢复时间** | <30s | 20s |
+| **æè·å»¶è¿** | <100ms | 50-80ms |
+| **ååé?* | >10K events/s | 15K events/s |
+| **æ°æ®ä¸è´æ?* | 100% | 100% |
+| **æéæ¢å¤æ¶é´** | <30s | 20s |
 
-### 6.2 资源占用
+### 6.2 èµæºå ç¨
 
-| 资源 | Debezium | Kafka | 总计 |
+| èµæº | Debezium | Kafka | æ»è®¡ |
 |------|----------|-------|------|
-| CPU | 0.5�?| 1�?| 1.5�?|
-| 内存 | 1GB | 2GB | 3GB |
-| 存储 | 1GB | 10GB | 11GB |
+| CPU | 0.5æ ?| 1æ ?| 1.5æ ?|
+| åå­ | 1GB | 2GB | 3GB |
+| å­å¨ | 1GB | 10GB | 11GB |
 
 ---
 
-## 📋 七、实施路�?
+## ð ä¸ãå®æ½è·¯å¾?
 
-### Phase 1: 基础CDC�?周）
+### Phase 1: åºç¡CDCï¼?å¨ï¼
 
-- [x] 文件CDC实现
-- [x] API CDC实现
-- [x] Redis Streams集成
+- [x] æä»¶CDCå®ç°
+- [x] API CDCå®ç°
+- [x] Redis Streamséæ
 
-### Phase 2: 数据库CDC�?周）
+### Phase 2: æ°æ®åºCDCï¼?å¨ï¼
 
-- [x] Debezium部署
-- [x] Kafka集成
-- [x] 事件处理
+- [x] Debeziumé¨ç½²
+- [x] Kafkaéæ
+- [x] äºä»¶å¤ç
 
-### Phase 3: 优化增强�?周）
+### Phase 3: ä¼åå¢å¼ºï¼?å¨ï¼
 
-- [x] 性能优化
-- [x] 监控告警
-- [x] 故障恢复
+- [x] æ§è½ä¼å
+- [x] çæ§åè­¦
+- [x] æéæ¢å¤
 
 ---
 
-## 📝 八、变更历�?
+## ð å«ãåæ´åå?
 
-| 版本 | 日期 | 变更内容 | 作�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构�?|
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**文档结束**
+**ææ¡£ç»æ**
