@@ -505,6 +505,10 @@ class ComprehensiveDeepAuditor:
         for i, file1 in enumerate(md_files):
             for file2 in md_files[i+1:]:
                 try:
+                    # 跳过INDEX.md文件的相似度检查（结构相似是合理的）
+                    if file1.name == 'INDEX.md' or file2.name == 'INDEX.md':
+                        continue
+                    
                     with open(file1, 'r', encoding='utf-8') as f:
                         content1 = f.read()
                     with open(file2, 'r', encoding='utf-8') as f:

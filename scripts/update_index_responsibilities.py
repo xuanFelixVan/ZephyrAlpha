@@ -210,10 +210,10 @@ def update_index_responsibility(index_file):
         file_path_str = str(index_file)
         parts = file_path_str.split(os.sep)
         
-        # 查找包含两位数字开头的目录名
+        # 查找最后一个包含两位数字开头的目录名（排除08_HUMAN_AI_INTERFACE）
         module_name = None
-        for part in parts:
-            if re.match(r'^\d{2}_', part):
+        for part in reversed(parts):
+            if re.match(r'^\d{2}_', part) and part != '08_HUMAN_AI_INTERFACE':
                 module_name = part
                 break
         

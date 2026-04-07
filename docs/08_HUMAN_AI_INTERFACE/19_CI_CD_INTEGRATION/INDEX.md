@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: INDEX_19_CI_CD_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -7,10 +7,12 @@ last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
   - 索引文档、导航目录
+  - CI/CD集成模块文档索引
+  - 持续集成和部署相关文档导航
 standard_type: 索引文档
-applicable_scope: 文档索引导航
-compliance_level: 专业标准
----
+applicable_scope: CI/CD集成模块
+compliance_level: 专业标准---
+
 
 # 19 Ci Cd Integration索引
 

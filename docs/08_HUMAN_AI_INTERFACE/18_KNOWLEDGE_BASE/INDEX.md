@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: INDEX_18_KNOWLEDGE_BASE_001
 version: 1.0.0
 status: Active
@@ -7,10 +7,12 @@ last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
   - 索引文档、导航目录
+  - 知识库模块文档索引
+  - 知识管理和经验沉淀相关文档导航
 standard_type: 索引文档
-applicable_scope: 文档索引导航
-compliance_level: 专业标准
----
+applicable_scope: 知识库模块
+compliance_level: 专业标准---
+
 
 # 18 Knowledge Base索引
 
