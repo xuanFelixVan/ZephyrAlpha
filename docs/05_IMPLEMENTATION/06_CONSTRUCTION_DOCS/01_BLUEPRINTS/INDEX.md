@@ -35,8 +35,8 @@ compliance_level: 专业标准
 
 ## 📊 文档统计
 
-- **总文档数**: 90
-- **Active文档**: 90
+- **总文档数**: 91
+- **Active文档**: 91
 - **更新日期**: 2026-04-07
 
 ---
@@ -100,7 +100,7 @@ compliance_level: 专业标准
 
 ## 6. Layer 6 (组合优化层)
 
-**文档数**: 47
+**文档数**: 48
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -129,6 +129,7 @@ compliance_level: 专业标准
 | 组合归因分析模块蓝图 | PORTFOLIOATTRIBUTIONBLUEPRIN_001 | 1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) |
 | 组合约束管理模块蓝图 | PORTFOLIOCONSTRAINTMANAGEMEN_001 | 1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md) |
 | 组合分散化度量蓝图 | PORTFOLIODIVERSIFICATIONMETR_001 | 1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md) |
+| 策略组合优化系统技术蓝图 | IMPL_PORTFOLIO_OPT_BP_001 | 1.0.2 | Active | 2026-04-06 | [链接](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) |
 | 组合优化诊断蓝图 | PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001 | 1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md) |
 | 组合优化引擎集成模块蓝图 | PORTFOLIOOPTIMIZERINTEGRATIO_001 | 1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) |
 | 组合绩效评估模块蓝图 | PORTFOLIOPERFORMANCEEVALUATI_001 | 1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) |
