@@ -1,12 +1,3 @@
----
-version: 1.0.0
-module_id: SMART-ORDER-ROUTER-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
 ﻿﻿---
 module_id: SMART_ORDER_ROUTER_001
 version: 1.0.0

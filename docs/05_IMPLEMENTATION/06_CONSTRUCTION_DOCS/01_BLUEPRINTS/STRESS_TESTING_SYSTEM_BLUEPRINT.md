@@ -1,12 +1,3 @@
----
-version: 1.0.0
-module_id: STRESS-TESTING-SYSTEM-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
 ﻿﻿---
 responsibility:
   - 压力测试

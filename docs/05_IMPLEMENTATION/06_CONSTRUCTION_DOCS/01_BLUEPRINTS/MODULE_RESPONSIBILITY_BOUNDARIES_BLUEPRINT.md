@@ -1,12 +1,3 @@
----
-version: 1.0.0
-module_id: MODULE-RESPONSIBILITY-BOUNDARIES-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
 ﻿﻿---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.0

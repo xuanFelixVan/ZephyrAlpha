@@ -1,12 +1,3 @@
----
-version: 1.0.0
-module_id: MARKET-REGIME-DETECTION-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
 ﻿﻿﻿---
 module_id: MARKET_REGIME_DETECTION_001
 version: 1.0.0

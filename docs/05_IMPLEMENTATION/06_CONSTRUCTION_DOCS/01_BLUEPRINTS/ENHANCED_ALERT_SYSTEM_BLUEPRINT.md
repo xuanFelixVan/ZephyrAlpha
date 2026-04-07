@@ -1,12 +1,3 @@
----
-version: 1.0.0
-module_id: ENHANCED-ALERT-SYSTEM-BLUEPRINT
-layer: Layer5
-created: 2026-04-07
-updated: 2026-04-07
-status: active
----
-
 ﻿﻿﻿---
 module_id: ENHANCED_ALERT_SYSTEM_001
 version: 1.0.0
