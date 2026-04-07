@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_MONITORING_BLUEPRINT_001
 version: 1.0.2
 status: Active

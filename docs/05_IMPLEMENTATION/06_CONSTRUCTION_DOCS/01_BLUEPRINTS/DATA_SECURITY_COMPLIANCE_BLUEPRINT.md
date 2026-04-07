@@ -1,18 +1,19 @@
----
+﻿---
 module_id: DATA_SECURITY_COMPLIANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 æ°æ®å±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
-  - æ°æ®å®å¨åè§
-  - æ°æ®å å¯
-  - è®¿é®æ§å¶
-  - åè§å®¡è®¡
+  - æ°æ®å®å
+¨åè§
+  - 数据加密
+  - 访问控制
+  - 合规审计
 layer: Layer 5.1 (数据处理)
 ---
 
@@ -20,7 +21,7 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-负责数据安全合规的设计与实现，基于安全合规标准，实施数据访问控制和加密，确保数据安全合规。
+负责数据安全合规的设计与实现，基于安全合规标准，实施数据访问控制和加密，确保数据安全合规。 提供数据管理、查询、更新功能，确保数据质量和一致性。
 
 
 ## 设计目标
@@ -75,27 +76,34 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-> æ ¸å¿èè´£: Data Security Complianceèå¾è®¾è®¡
-> èè´£è¾¹ç: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Security Complianceèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
+> 核心职责: Data Security Compliance蓝图设计
+> 职责边界: 
+> - â?æ¬ææ¡£è´è´£ï¼Data Security Complianceèå¾è®¾è®¡ç¸å
+³å
+å®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å
+¶ä»æ¨¡åå
+å®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
 
-## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
+## 一、设计背景与目标
 
 ### 1.1 ä¸å¡éæ±?
 
-**å½åçç¹**:
-- æ°æ®å®å¨é£é©é«?
-- åè§è¦æ±å¤æ
+**当前痛点**:
+- æ°æ®å®å
+¨é£é©é«?
+- 合规要求复杂
 - è®¿é®æ§å¶ä¸ä¸¥æ ?
 - å®¡è®¡è¿½è¸ªä¸å®å?
 
-**ä¸å¡ç®æ **:
-- å»ºç«å¨é¢çæ°æ®å®å¨ä½ç³?
-- ç¡®ä¿ç¬¦åçç®¡è¦æ±
+**业务目标**:
+- å»ºç«å
+¨é¢çæ°æ®å®å
+¨ä½ç³?
+- 确保符合监管要求
 - å®ç°ç²¾ç»åè®¿é®æ§å?
 - æä¾å®æ´çå®¡è®¡è¿½è¸?
 
@@ -124,14 +132,14 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 class EncryptionAlgorithm(Enum):
-    """å å¯ç®æ³"""
+    """加密算法"""
     AES_256 = "aes_256"
     RSA_2048 = "rsa_2048"
     FERNET = "fernet"
 
 @dataclass
 class EncryptionKey:
-    """å å¯å¯é¥"""
+    """加密密钥"""
     key_id: str
     algorithm: EncryptionAlgorithm
     key_value: bytes
@@ -147,11 +155,12 @@ class DataEncryptionManager:
     
     def generate_key(self, key_id: str,
                      algorithm: EncryptionAlgorithm = EncryptionAlgorithm.FERNET) -> EncryptionKey:
-        """çæå å¯å¯é¥"""
+        """生成加密密钥"""
         if algorithm == EncryptionAlgorithm.FERNET:
             key_value = Fernet.generate_key()
         else:
-            # å¶ä»ç®æ³å®ç°
+            # å
+¶ä»ç®æ³å®ç°
             key_value = Fernet.generate_key()
         
         key = EncryptionKey(
@@ -164,7 +173,7 @@ class DataEncryptionManager:
         return key
     
     def encrypt_data(self, data: str, key_id: str) -> str:
-        """å å¯æ°æ®"""
+        """加密数据"""
         key = self.keys.get(key_id)
         if not key:
             raise ValueError(f"Key {key_id} not found")
@@ -175,7 +184,7 @@ class DataEncryptionManager:
         return base64.b64encode(encrypted).decode()
     
     def decrypt_data(self, encrypted_data: str, key_id: str) -> str:
-        """è§£å¯æ°æ®"""
+        """解密数据"""
         key = self.keys.get(key_id)
         if not key:
             raise ValueError(f"Key {key_id} not found")
@@ -187,7 +196,7 @@ class DataEncryptionManager:
         return decrypted.decode()
     
     def rotate_key(self, key_id: str) -> EncryptionKey:
-        """è½®æ¢å¯é¥"""
+        """轮换密钥"""
         old_key = self.keys.get(key_id)
         if not old_key:
             raise ValueError(f"Key {key_id} not found")
@@ -205,7 +214,7 @@ from datetime import datetime
 from enum import Enum
 
 class Permission(Enum):
-    """æé"""
+    """权限"""
     READ = "read"
     WRITE = "write"
     DELETE = "delete"
@@ -213,7 +222,7 @@ class Permission(Enum):
 
 @dataclass
 class User:
-    """ç¨æ·"""
+    """用户"""
     user_id: str
     username: str
     email: str
@@ -222,7 +231,7 @@ class User:
 
 @dataclass
 class Role:
-    """è§è²"""
+    """角色"""
     role_id: str
     role_name: str
     permissions: Dict[str, Set[Permission]]
@@ -236,7 +245,7 @@ class AccessControlManager:
         self.roles: Dict[str, Role] = {}
     
     def create_role(self, role_config: Dict[str, Any]) -> Role:
-        """åå»ºè§è²"""
+        """创建角色"""
         role = Role(
             role_id=role_config['role_id'],
             role_name=role_config['role_name'],
@@ -248,7 +257,7 @@ class AccessControlManager:
         return role
     
     def create_user(self, user_config: Dict[str, Any]) -> User:
-        """åå»ºç¨æ·"""
+        """创建用户"""
         user = User(
             user_id=user_config['user_id'],
             username=user_config['username'],
@@ -281,7 +290,7 @@ class AccessControlManager:
     def grant_permission(self, role_id: str,
                         resource: str,
                         permission: Permission):
-        """æäºæé"""
+        """授予权限"""
         role = self.roles.get(role_id)
         if not role:
             return
@@ -294,7 +303,7 @@ class AccessControlManager:
     def revoke_permission(self, role_id: str,
                          resource: str,
                          permission: Permission):
-        """æ¤éæé"""
+        """撤销权限"""
         role = self.roles.get(role_id)
         if not role:
             return
@@ -311,7 +320,7 @@ import re
 import hashlib
 
 class MaskingStrategy(Enum):
-    """è±æç­ç¥"""
+    """脱敏策略"""
     FULL = "full"
     PARTIAL = "partial"
     HASH = "hash"
@@ -326,14 +335,14 @@ class DataMasker:
     def register_masking_rule(self, field_name: str,
                                strategy: MaskingStrategy,
                                config: Dict[str, Any] = None):
-        """æ³¨åè±æè§å"""
+        """注册脱敏规则"""
         self.masking_rules[field_name] = {
             "strategy": strategy,
             "config": config or {}
         }
     
     def mask_data(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """è±ææ°æ®"""
+        """脱敏数据"""
         masked_data = data.copy()
         
         for field_name, rule in self.masking_rules.items():
@@ -349,7 +358,7 @@ class DataMasker:
     def _apply_masking(self, value: Any,
                        strategy: MaskingStrategy,
                        config: Dict[str, Any]) -> Any:
-        """åºç¨è±æç­ç¥"""
+        """应用脱敏策略"""
         if strategy == MaskingStrategy.FULL:
             return "***"
         
@@ -378,7 +387,7 @@ class DataMasker:
         return "***"
     
     def mask_email(self, email: str) -> str:
-        """è±æé®ç®±"""
+        """脱敏邮箱"""
         if "@" in email:
             parts = email.split("@")
             username = parts[0]
@@ -390,7 +399,7 @@ class DataMasker:
         return "***"
     
     def mask_id_card(self, id_card: str) -> str:
-        """è±æèº«ä»½è¯å·"""
+        """脱敏身份证号"""
         if len(id_card) >= 18:
             return id_card[:6] + "********" + id_card[-4:]
         return "***"
@@ -401,16 +410,17 @@ class DataMasker:
 
 ### 4.1 RESTful API
 
-#### 4.1.1 å å¯æ°æ®
+#### 4.1.1 加密数据
 
 ```http
 POST /api/v1/security/encrypt
 ```
 
-**è¯·æ±ç¤ºä¾**:
+**请求示例**:
 ```json
 {
-  "data": "æææ°æ®åå®¹",
+  "data": "æææ°æ®å
+å®¹",
   "key_id": "data_encryption_key_001"
 }
 ```
@@ -421,7 +431,7 @@ POST /api/v1/security/encrypt
 POST /api/v1/security/check-permission
 ```
 
-**è¯·æ±ç¤ºä¾**:
+**请求示例**:
 ```json
 {
   "user_id": "user_001",
@@ -430,13 +440,13 @@ POST /api/v1/security/check-permission
 }
 ```
 
-#### 4.1.3 è±ææ°æ®
+#### 4.1.3 脱敏数据
 
 ```http
 POST /api/v1/security/mask
 ```
 
-**è¯·æ±ç¤ºä¾**:
+**请求示例**:
 ```json
 {
   "data": {
@@ -487,20 +497,21 @@ services:
 
 ---
 
-## å­ãçæ§ææ ?
+## å
+­ãçæ§ææ ?
 
-| ææ åç§° | ææ ç±»å | è¯´æ |
+| 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
-| `security_encryption_operations_total` | Counter | å å¯æä½æ»æ° |
-| `security_access_denials_total` | Counter | è®¿é®æç»æ»æ° |
-| `security_compliance_checks_total` | Counter | åè§æ£æ¥æ»æ° |
-| `security_audit_events_total` | Counter | å®¡è®¡äºä»¶æ»æ° |
+| `security_encryption_operations_total` | Counter | 加密操作总数 |
+| `security_access_denials_total` | Counter | 访问拒绝总数 |
+| `security_compliance_checks_total` | Counter | 合规检查总数 |
+| `security_audit_events_total` | Counter | 审计事件总数 |
 
 ---
 
 ## ä¸ãå®æ½è®¡å?
 
-| é¶æ®µ | ä»»å¡ | é¢è®¡æ¶é´ |
+| 阶段 | 任务 | 预计时间 |
 |------|------|---------|
 | **é¶æ®µ1** | æ­å»ºVaultåOPA | 3å¤?|
 | **é¶æ®µ2** | å¼åå å¯ç®¡çå¨ | 4å¤?|
@@ -510,10 +521,12 @@ services:
 
 ---
 
-## å«ãç¸å³ææ¡?
+## å
+«ãç¸å
+³ææ¡?
 
-- [æ°æ®æ²»çå¹³å°èå¾](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
-- [æ°æ®æºç®¡çèå¾](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md)
+- [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
+- [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md)
 - æ°æ®è¡ç¼è¿½è¸ªèå?
 
 ---
@@ -521,29 +534,31 @@ services:
 **ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Security Compliance
-- **æ¨¡åID**: DATA_SECURITY_COMPLIANCE_001
-- **èå¾ææ¡£**: DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
-- **èè´£**: Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **模块ID**: DATA_SECURITY_COMPLIANCE_001
+- **蓝图文档**: DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
+- **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **Data Security Compliance** | Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
+| **Data Security Compliance** | Layer 0数据源层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
@@ -554,30 +569,33 @@ services:
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | ä¸­ä¾èµ?| è·åæ°æ®æºä¿¡æ?|
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æææ°æ®æ è®° |
 | [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | å¼ºä¾èµ?| æ§è¡åè§ç­ç¥ |
-| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | ä¸­ä¾èµ?| æä¾å®å¨æ£æ¥è§å?|
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | ä¸­ä¾èµ?| æä¾å®å
+¨æ£æ¥è§å?|
 
 ### ææ¯ä¾èµ?
 
 | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **Apache Ranger** | 2.4+ | æéç®¡ç | [å®æ¹ææ¡£](https://ranger.apache.org/) |
-| **HashiCorp Vault** | 1.15+ | å¯é¥ç®¡ç | [å®æ¹ææ¡£](https://www.vaultproject.io/) |
+| **Apache Ranger** | 2.4+ | 权限管理 | [官方文档](https://ranger.apache.org/) |
+| **HashiCorp Vault** | 1.15+ | 密钥管理 | [官方文档](https://www.vaultproject.io/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -592,11 +610,12 @@ graph LR
     style D0 fill:#45b7d1
 ```
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | å®æ½å¢é |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---

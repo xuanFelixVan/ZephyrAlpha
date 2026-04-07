@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NATURAL_LANGUAGE_MODULE_ANALYSIS_BLUEPRINT_001
 version: 1.0.0
 status: Active

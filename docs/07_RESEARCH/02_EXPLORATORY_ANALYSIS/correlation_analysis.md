@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_CORRELATION_ANALYSIS_001
 version: 1.0.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REGISTRY_CATALOG_001
 version: 4.0.0
 status: Active

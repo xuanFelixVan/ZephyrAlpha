@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER26_DEEP_AUDIT_REPORT_20260407_145027
 version: 1.0.0
 status: Active

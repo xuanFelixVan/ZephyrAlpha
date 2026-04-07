@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECH_STACK_001
 version: 5.3.1
 status: Active

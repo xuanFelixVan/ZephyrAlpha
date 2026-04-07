@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_QMT_TECH_SPEC_001
 version: 1.0.1
 spec_version: 1.0

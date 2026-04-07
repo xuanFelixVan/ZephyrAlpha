@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME_001
 version: 5.3.1
 status: Active

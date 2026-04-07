@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SYNC_REPLICATION_BP_001
 version: 1.0.0
 status: Blueprint

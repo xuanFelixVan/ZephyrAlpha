@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_ECONOMIC_REGIME_SPEC_V2_002
 version: 2.0.1
 spec_version: 2.0

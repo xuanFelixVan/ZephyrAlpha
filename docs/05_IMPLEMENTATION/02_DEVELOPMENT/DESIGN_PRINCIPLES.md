@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_DEV_PRINCIPLES_001
 version: 1.0.15.3.0
 status: Active

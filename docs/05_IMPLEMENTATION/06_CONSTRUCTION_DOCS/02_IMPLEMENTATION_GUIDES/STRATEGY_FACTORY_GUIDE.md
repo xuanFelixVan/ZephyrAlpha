@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_STRATEGY_FACTORY_GUIDE_001
 version: 1.0.1
 status: Active

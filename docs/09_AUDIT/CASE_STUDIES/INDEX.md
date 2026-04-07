@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_CASE_STUDIES_AUDIT_001
 version: 1.0.0
 status: Active

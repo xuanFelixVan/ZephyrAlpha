@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_DATA_PIPELINE_001
 version: 1.0.1
 status: Active

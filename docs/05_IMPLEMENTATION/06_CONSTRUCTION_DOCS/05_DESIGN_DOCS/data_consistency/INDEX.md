@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_DATA_CONSISTENCY_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_SUPPLEMENT_COMPLETION_REPORT_20260407
 version: 1.0.0
 status: Active

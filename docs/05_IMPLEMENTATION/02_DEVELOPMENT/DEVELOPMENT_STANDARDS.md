@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEVELOPMENT_STANDARDS_001
 version: 1.0.0
 status: Active

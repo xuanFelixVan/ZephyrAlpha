@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GITHUB_ISSUE_CREATION_LIST_001
 version: 1.0.0
 status: Active

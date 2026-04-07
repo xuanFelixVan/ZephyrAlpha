@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADE_AUDITOR_001
 review_id: TR-2026-04-02-TRADE-AUDIT
 version: 1.0.0

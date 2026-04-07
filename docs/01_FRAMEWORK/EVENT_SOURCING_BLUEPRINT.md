@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EVENTSOURCINGBLUEPRINT_001
 version: 1.0.0
 status: Active

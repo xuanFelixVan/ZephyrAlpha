@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY_001
 version: 1.0.0
 status: Active

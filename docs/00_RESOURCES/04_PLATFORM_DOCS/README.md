@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESOURCES_PLATFORM_DOCS_README_001
 version: 5.3.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_NEWS_SENTIMENT_001
 version: 2.0.0
 status: Active

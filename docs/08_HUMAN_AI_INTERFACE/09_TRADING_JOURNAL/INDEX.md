@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_09_TRADING_JOURNAL_001
 version: 1.0.0
 status: Active

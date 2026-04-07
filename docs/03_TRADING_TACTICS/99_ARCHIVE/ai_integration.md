@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_INTEGRATION_001
 version: 1.0.0
 status: Active

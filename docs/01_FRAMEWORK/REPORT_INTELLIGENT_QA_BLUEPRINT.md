@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REPORT_INTELLIGENT_QA_001
 version: 1.0.0
 status: Active

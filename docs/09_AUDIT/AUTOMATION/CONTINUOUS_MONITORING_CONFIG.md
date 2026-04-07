@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONTINUOUS_MONITORING_CONFIG_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_008
 version: 1.0.0
 status: Active
@@ -23,10 +23,10 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æå¸?
 standard_type: ä¸ä¸æºæçº§èå?
-applicable_scope: ä¸»å¨é£é©æ§å¶
-compliance_level: ä¸ä¸æ å
+applicable_scope: 主动风险控制
+compliance_level: 专业标准
 parent_document: ../STRATEGY_AI_MODULES_ANALYSIS.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 reference_models:
   - Bridgewater All-Weather Risk Control
   - Renaissance Real-Time Hedging
@@ -38,52 +38,57 @@ related_documents:
   - LIVE_TRADING_MONITOR_BLUEPRINT.md
 ---
 
-# é£é©æ§å¶AIèå¾
+# 风险控制AI蓝图
 > **核心职责**: Risk Control Ai蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Risk Control Ai蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **çæ¬**: v1.0
-> **åå»ºæ¥æ**: 2026-04-02
+> **版本**: v1.0
+> **创建日期**: 2026-04-02
 > **å®æ½å¨æ**: 2å?
 > **æ ¸å¿å®ä½**: ä¸»å¨é£é©æ§å¶ãæºè½é¢è­¦ãæç«¯é£é©åºå¯?
-> **ææ¯æ **: Python + Risk Metrics + ML Models
+> **技术栈**: Python + Risk Metrics + ML Models
 
 ---
 
 ## ä¸ãæ¦è¿?
 
-### 1.1 èå¾å®ä½
+### 1.1 蓝图定位
 
-æ¬ææ¡£æ¯æ¸é£éåç³»ç»ç?*é£é©æ§å¶AIèå¾**ï¼æ¨å¨å®ç°ï¼
+æ¬ææ¡£æ¯æ¸
+é£éåç³»ç»ç?*é£é©æ§å¶AIèå¾**ï¼æ¨å¨å®ç°ï¼
 
 - â?**äºåé£é©æ§å¶**: ç­ç¥é£é©è¯ä¼°ãä»ä½é£é©é¢ç®ãå¸åºé£é©é¢è­?
 - â?**äºä¸­é£é©æ§å¶**: å®æ¶é£é©çæ§ãå¨ææ­¢ææºå¶ãé£é©å¯¹å²ç­ç?
 - â?**äºåé£é©æ§å¶**: é£é©äºä»¶å¤çãé£é©æ¨¡åæ´æ°ãé£é©ç¥è¯ç§¯ç´?
-- â?**æç«¯é£é©åºå¯¹**: é»å¤©é¹äºä»¶åºå¯¹ãæµå¨æ§å±æºåºå¯¹ãç³»ç»æ§é£é©åºå¯?
+- â?**æç«¯é£é©åºå¯¹**: é»å¤©é¹
+äºä»¶åºå¯¹ãæµå¨æ§å±æºåºå¯¹ãç³»ç»æ§é£é©åºå¯?
 - â?**é£é©æºè½é¢è­¦**: é£é©ææ å¼å¸¸æ£æµãé£é©äºä»¶é¢æµãé£é©ä¼ å¯¼åæ?
 
 ### 1.2 æ ¸å¿ä»·å?
 
-**å¯¹ä¸ªäººå¼åèçä»·å?*ï¼?
+**å¯¹ä¸ªäººå¼åè
+çä»·å?*ï¼?
 1. **ä¸»å¨é£æ§**: ä¸æ¯è¢«å¨çæ§ï¼èæ¯ä¸»å¨é¢è­¦åæ§å?
 2. **æºè½é¢è­¦**: AIé¢æµé£é©ï¼æåé¢è­?
-3. **æç«¯åºå¯¹**: é»å¤©é¹äºä»¶èªå¨åºå¯?
+3. **æç«¯åºå¯¹**: é»å¤©é¹
+äºä»¶èªå¨åºå¯?
 4. **åå°æå¤±**: åæ¶æ­¢æï¼åå°æå¤?
 
 **å¯¹ç³»ç»çä»·å?*ï¼?
-1. **é£é©æ§å¶**: ä¸»å¨æ§å¶é£é©ï¼é¿åéå¤§æå¤?
+1. **é£é©æ§å¶**: ä¸»å¨æ§å¶é£é©ï¼é¿å
+éå¤§æå¤?
 2. **ç¨³å®æ?*: æé«ç³»ç»ç¨³å®æ?
 3. **å¯æç»?*: ç¡®ä¿ç³»ç»é¿æå¯æç»­è¿è¡?
-4. **åè§**: ç¬¦åé£é©ç®¡çè¦æ±
+4. **合规**: 符合风险管理要求
 
-### 1.3 Layerå®ä½
+### 1.3 Layer定位
 
 ```
 Layer 5 + Layer 6: ç­ç¥æ§è¡å±?+ ç»åä¼åå±?
-    âââ é£é©æ§å¶AI
+    ├── 风险控制AI
     â?  âââ äºåé£æ§å­ç³»ç»?
     â?  âââ äºä¸­é£æ§å­ç³»ç»?
     â?  âââ äºåé£æ§å­ç³»ç»?
@@ -97,7 +102,7 @@ Layer 5 + Layer 6: ç­ç¥æ§è¡å±?+ ç»åä¼åå±?
 
 ## äºãæ¶æè®¾è®?
 
-### 2.1 æ´ä½æ¶æ
+### 2.1 整体架构
 
 ```
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -127,7 +132,8 @@ Layer 5 + Layer 6: ç­ç¥æ§è¡å±?+ ç»åä¼åå±?
 â?                         â?                                 â?
 â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
 â? â?       æç«¯é£é©åºå¯¹ (Extreme Risk Response)         â?  â?
-â? â? ââ é»å¤©é¹äºä»¶åºå¯?                                  â?  â?
+â? â? ââ é»å¤©é¹
+äºä»¶åºå¯?                                  â?  â?
 â? â? ââ æµå¨æ§å±æºåºå¯?                                  â?  â?
 â? â? ââ ç³»ç»æ§é£é©åºå¯?                                  â?  â?
 â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
@@ -142,7 +148,7 @@ Layer 5 + Layer 6: ç­ç¥æ§è¡å±?+ ç»åä¼åå±?
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
-### 2.2 é£é©æ§å¶æµç¨
+### 2.2 风险控制流程
 
 ```
 å¸åºæ°æ® â?é£é©ææ è®¡ç® â?å¼å¸¸æ£æµ?â?é£é©é¢è­¦ â?é£é©è¯ä¼° â?é£é©æ§å¶ â?ææåé¦
@@ -154,7 +160,7 @@ Layer 5 + Layer 6: ç­ç¥æ§è¡å±?+ ç»åä¼åå±?
 
 ## ä¸ãæ ¸å¿åè½è®¾è®?
 
-### 3.1 äºåé£é©æ§å¶
+### 3.1 事前风险控制
 
 ```python
 from typing import Dict, List, Optional
@@ -165,7 +171,7 @@ import pandas as pd
 
 @dataclass
 class RiskAssessment:
-    """é£é©è¯ä¼°ç»æ"""
+    """风险评估结果"""
     strategy_id: str
     risk_level: str  # low/medium/high/critical
     risk_score: float  # 0-100
@@ -181,11 +187,11 @@ class PreTradeRiskController:
         self.market_risk_warner = MarketRiskWarner()
         
     def assess_strategy_risk(self, strategy_id: str) -> RiskAssessment:
-        """è¯ä¼°ç­ç¥é£é©"""
-        # 1. è·åç­ç¥æ°æ®
+        """评估策略风险"""
+        # 1. 获取策略数据
         strategy_data = self._get_strategy_data(strategy_id)
         
-        # 2. è®¡ç®é£é©å å­
+        # 2. 计算风险因子
         risk_factors = {
             'market_risk': self._calculate_market_risk(strategy_data),
             'liquidity_risk': self._calculate_liquidity_risk(strategy_data),
@@ -194,13 +200,13 @@ class PreTradeRiskController:
             'volatility_risk': self._calculate_volatility_risk(strategy_data)
         }
         
-        # 3. ç»¼åé£é©è¯å
+        # 3. 综合风险评分
         risk_score = self._calculate_risk_score(risk_factors)
         
-        # 4. é£é©ç­çº§å¤å®
+        # 4. 风险等级判定
         risk_level = self._determine_risk_level(risk_score)
         
-        # 5. çæå»ºè®®
+        # 5. 生成建议
         recommendations = self._generate_recommendations(risk_factors, risk_level)
         
         return RiskAssessment(
@@ -216,16 +222,19 @@ class PreTradeRiskController:
         portfolio_value: float,
         max_risk: float = 0.02  # æå¤§é£é?%
     ) -> Dict[str, float]:
-        """åéä»ä½é£é©é¢ç®"""
+        """åé
+ä»ä½é£é©é¢ç®"""
         # 1. è®¡ç®æ»é£é©é¢ç®?
         total_risk_budget = portfolio_value * max_risk
         
-        # 2. åºäºç­ç¥å¤æ®æ¯çåé
+        # 2. åºäºç­ç¥å¤æ®æ¯çåé
+
         strategies = self._get_active_strategies()
         sharpe_ratios = [s.sharpe_ratio for s in strategies]
         total_sharpe = sum(sharpe_ratios)
         
-        # 3. åéé£é©é¢ç®
+        # 3. åé
+é£é©é¢ç®
         risk_budgets = {}
         for strategy in strategies:
             budget = (strategy.sharpe_ratio / total_sharpe) * total_risk_budget
@@ -234,8 +243,8 @@ class PreTradeRiskController:
         return risk_budgets
     
     def warn_market_risk(self) -> MarketRiskWarning:
-        """å¸åºé£é©é¢è­¦"""
-        # 1. è®¡ç®å¸åºé£é©ææ 
+        """市场风险预警"""
+        # 1. 计算市场风险指标
         market_indicators = {
             'vix': self._get_vix(),
             'market_trend': self._analyze_market_trend(),
@@ -244,10 +253,10 @@ class PreTradeRiskController:
             'sentiment_index': self._calculate_sentiment_index()
         }
         
-        # 2. é£é©é¢è­¦å¤å®
+        # 2. 风险预警判定
         warning_level = self._determine_warning_level(market_indicators)
         
-        # 3. çæé¢è­¦ä¿¡æ¯
+        # 3. 生成预警信息
         warning_message = self._generate_warning_message(warning_level, market_indicators)
         
         return MarketRiskWarning(
@@ -260,7 +269,7 @@ class PreTradeRiskController:
 
 ---
 
-### 3.2 äºä¸­é£é©æ§å¶
+### 3.2 事中风险控制
 
 ```python
 class InTradeRiskController:
@@ -272,14 +281,14 @@ class InTradeRiskController:
         self.hedge_engine = HedgeEngine()
         
     def monitor_realtime_risk(self, portfolio: Portfolio):
-        """å®æ¶é£é©çæ§"""
-        # 1. å®æ¶è®¡ç®é£é©ææ 
+        """实时风险监控"""
+        # 1. 实时计算风险指标
         risk_metrics = self._calculate_realtime_risk_metrics(portfolio)
         
         # 2. æ£æ¥é£é©éå?
         threshold_checks = self._check_risk_thresholds(risk_metrics)
         
-        # 3. è§¦åé£é©æ§å¶
+        # 3. 触发风险控制
         if threshold_checks['var_exceeded']:
             self._trigger_var_control(portfolio)
         
@@ -301,7 +310,7 @@ class InTradeRiskController:
         market_state: MarketState
     ):
         """æ§è¡å¨ææ­¢æ?""
-        # 1. è®¡ç®å¨ææ­¢æçº¿
+        # 1. 计算动态止损线
         stop_loss_price = self._calculate_dynamic_stop_loss(
             position,
             market_state
@@ -310,7 +319,7 @@ class InTradeRiskController:
         # 2. æ£æ¥æ¯å¦è§¦åæ­¢æ?
         current_price = position.current_price
         if current_price <= stop_loss_price:
-            # 3. æ§è¡æ­¢æ
+            # 3. 执行止损
             self._execute_stop_loss(position)
             
             return StopLossExecution(
@@ -327,14 +336,15 @@ class InTradeRiskController:
         portfolio: Portfolio,
         hedge_ratio: float = 0.3
     ):
-        """æ§è¡é£é©å¯¹å²"""
+        """执行风险对冲"""
         # 1. è®¡ç®å¯¹å²éæ±?
         hedge_requirement = self._calculate_hedge_requirement(portfolio)
         
-        # 2. éæ©å¯¹å²å·¥å·
+        # 2. éæ©å¯¹å²å·¥å
+·
         hedge_instruments = self._select_hedge_instruments(hedge_requirement)
         
-        # 3. æ§è¡å¯¹å²äº¤æ
+        # 3. 执行对冲交易
         hedge_orders = self._execute_hedge_trades(
             hedge_instruments,
             hedge_ratio
@@ -355,13 +365,13 @@ class DynamicStopLoss:
         position: Position,
         market_state: MarketState
     ) -> float:
-        """è®¡ç®å¨ææ­¢æçº¿"""
+        """计算动态止损线"""
         # 1. åºç¡æ­¢æçº?
         base_stop_loss = position.entry_price * (1 - position.stop_loss_ratio)
         
         # 2. æ³¢å¨çè°æ?
         volatility = market_state.volatility
-        volatility_adjustment = volatility * 2  # 2åæ³¢å¨ç
+        volatility_adjustment = volatility * 2  # 2倍波动率
         
         # 3. å¸åºç¶æè°æ?
         if market_state.regime == 'high_volatility':
@@ -383,7 +393,7 @@ class DynamicStopLoss:
 
 ---
 
-### 3.3 äºåé£é©æ§å¶
+### 3.3 事后风险控制
 
 ```python
 class PostTradeRiskController:
@@ -395,17 +405,17 @@ class PostTradeRiskController:
         self.knowledge_accumulator = RiskKnowledgeAccumulator()
         
     def review_risk_event(self, event: RiskEvent):
-        """å¤çé£é©äºä»¶"""
-        # 1. äºä»¶åæ
+        """复盘风险事件"""
+        # 1. 事件分析
         event_analysis = self._analyze_risk_event(event)
         
-        # 2. æ ¹æ¬åå åæ
+        # 2. 根本原因分析
         root_cause = self._identify_root_cause(event)
         
-        # 3. å½±åè¯ä¼°
+        # 3. 影响评估
         impact_assessment = self._assess_impact(event)
         
-        # 4. æ¹è¿å»ºè®®
+        # 4. 改进建议
         improvements = self._generate_improvements(event_analysis, root_cause)
         
         return RiskEventReview(
@@ -417,11 +427,11 @@ class PostTradeRiskController:
         )
     
     def update_risk_model(self, event: RiskEvent):
-        """æ´æ°é£é©æ¨¡å"""
+        """更新风险模型"""
         # 1. æåæ°é£é©å å­?
         new_risk_factors = self._extract_risk_factors(event)
         
-        # 2. æ´æ°é£é©æ¨¡ååæ°
+        # 2. 更新风险模型参数
         self._update_model_parameters(new_risk_factors)
         
         # 3. éªè¯æ¨¡åæææ?
@@ -433,14 +443,14 @@ class PostTradeRiskController:
         )
     
     def accumulate_risk_knowledge(self, event: RiskEvent):
-        """ç§¯ç´¯é£é©ç¥è¯"""
-        # 1. æåé£é©ç¥è¯
+        """积累风险知识"""
+        # 1. 提取风险知识
         knowledge = self._extract_risk_knowledge(event)
         
-        # 2. å­å¨å°ç¥è¯åº
+        # 2. 存储到知识库
         self._store_risk_knowledge(knowledge)
         
-        # 3. æ´æ°é£é©è§å
+        # 3. 更新风险规则
         self._update_risk_rules(knowledge)
         
         return RiskKnowledgeAccumulation(
@@ -451,7 +461,7 @@ class PostTradeRiskController:
 
 ---
 
-### 3.4 æç«¯é£é©åºå¯¹
+### 3.4 极端风险应对
 
 ```python
 class ExtremeRiskHandler:
@@ -463,17 +473,18 @@ class ExtremeRiskHandler:
         self.systemic_risk_handler = SystemicRiskHandler()
         
     def handle_black_swan(self, event: BlackSwanEvent):
-        """åºå¯¹é»å¤©é¹äºä»?""
-        # 1. äºä»¶è¯å«
+        """åºå¯¹é»å¤©é¹
+äºä»?""
+        # 1. 事件识别
         event_type = self._identify_black_swan_type(event)
         
         # 2. ç´§æ¥ååº?
         emergency_response = self._execute_emergency_response(event_type)
         
-        # 3. é£é©éç¦»
+        # 3. 风险隔离
         risk_isolation = self._isolate_risk(event)
         
-        # 4. æå¤±æ§å¶
+        # 4. 损失控制
         loss_control = self._control_losses(event)
         
         return BlackSwanResponse(
@@ -488,10 +499,11 @@ class ExtremeRiskHandler:
         # 1. æµå¨æ§è¯ä¼?
         liquidity_assessment = self._assess_liquidity_crisis(crisis)
         
-        # 2. æµå¨æ§è¡¥å?
+        # 2. æµå¨æ§è¡¥å
+?
         liquidity_injection = self._inject_liquidity(crisis)
         
-        # 3. ä»ä½è°æ´
+        # 3. 仓位调整
         position_adjustment = self._adjust_positions_for_liquidity(crisis)
         
         return LiquidityCrisisResponse(
@@ -507,13 +519,14 @@ class ExtremeRiskHandler:
         
         # 2. ç³»ç»æ§é£é©åºå¯?
         if systemic_risk_level == 'high':
-            # é«ç³»ç»æ§é£é©ï¼å¤§å¹éä½ä»ä½
+            # é«ç³»ç»æ§é£é©ï¼å¤§å¹
+降低仓位
             response = self._reduce_exposure_significantly()
         elif systemic_risk_level == 'medium':
-            # ä¸­ç³»ç»æ§é£é©ï¼éåº¦éä½ä»ä½
+            # 中系统性风险：适度降低仓位
             response = self._reduce_exposure_moderately()
         else:
-            # ä½ç³»ç»æ§é£é©ï¼ç»´æä»ä½
+            # 低系统性风险：维持仓位
             response = self._maintain_positions()
         
         return SystemicRiskResponse(
@@ -524,11 +537,11 @@ class ExtremeRiskHandler:
 
 ---
 
-### 3.5 é£é©æºè½é¢è­¦
+### 3.5 风险智能预警
 
 ```python
 class IntelligentRiskWarning:
-    """é£é©æºè½é¢è­¦ç³»ç»"""
+    """风险智能预警系统"""
     
     def __init__(self):
         self.anomaly_detector = RiskAnomalyDetector()
@@ -537,7 +550,7 @@ class IntelligentRiskWarning:
         
     def detect_risk_anomalies(self, risk_metrics: Dict):
         """æ£æµé£é©ææ å¼å¸?""
-        # 1. è®¡ç®æ­£å¸¸èå´
+        # 1. 计算正常范围
         normal_ranges = self._calculate_normal_ranges(risk_metrics)
         
         # 2. æ£æµå¼å¸?
@@ -562,14 +575,14 @@ class IntelligentRiskWarning:
         )
     
     def predict_risk_events(self, market_data: MarketData):
-        """é¢æµé£é©äºä»¶"""
-        # 1. ç¹å¾æå
+        """预测风险事件"""
+        # 1. 特征提取
         features = self._extract_risk_features(market_data)
         
-        # 2. æ¨¡åé¢æµ
+        # 2. 模型预测
         predictions = self._predict_with_models(features)
         
-        # 3. é£é©äºä»¶æåº
+        # 3. 风险事件排序
         ranked_events = self._rank_risk_events(predictions)
         
         return RiskEventPrediction(
@@ -579,14 +592,14 @@ class IntelligentRiskWarning:
         )
     
     def analyze_risk_contagion(self, risk_event: RiskEvent):
-        """åæé£é©ä¼ å¯¼"""
-        # 1. æå»ºé£é©ä¼ å¯¼ç½ç»
+        """分析风险传导"""
+        # 1. 构建风险传导网络
         contagion_network = self._build_contagion_network(risk_event)
         
-        # 2. è¯å«ä¼ å¯¼è·¯å¾
+        # 2. 识别传导路径
         contagion_paths = self._identify_contagion_paths(contagion_network)
         
-        # 3. è¯ä¼°ä¼ å¯¼å½±å
+        # 3. 评估传导影响
         contagion_impact = self._assess_contagion_impact(contagion_paths)
         
         return RiskContagionAnalysis(
@@ -600,7 +613,7 @@ class IntelligentRiskWarning:
 
 ## åãæ°æ®æ¨¡åè®¾è®?
 
-### 4.1 é£é©æ§å¶æ°æ®æ¨¡å
+### 4.1 风险控制数据模型
 
 ```python
 from dataclasses import dataclass
@@ -609,7 +622,7 @@ from typing import Dict, List, Optional
 from enum import Enum
 
 class RiskLevel(Enum):
-    """é£é©ç­çº§"""
+    """风险等级"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -617,43 +630,45 @@ class RiskLevel(Enum):
 
 @dataclass
 class RiskEvent:
-    """é£é©äºä»¶"""
+    """风险事件"""
     event_id: str
     event_type: str  # market_risk/liquidity_risk/concentration_risk
     event_level: RiskLevel
     timestamp: datetime
     
-    # äºä»¶è¯¦æ
+    # äºä»¶è¯¦æ
+
     description: str
     affected_strategies: List[str]
     affected_positions: List[str]
     
-    # é£é©ææ 
+    # 风险指标
     risk_metrics: Dict
     
-    # åºå¯¹æªæ½
+    # 应对措施
     response_actions: List[Dict]
     
-    # äºä»¶ç»æ
+    # 事件结果
     outcome: Optional[Dict]
 
 @dataclass
 class RiskControlAction:
-    """é£é©æ§å¶å¨ä½"""
+    """风险控制动作"""
     action_id: str
     action_type: str  # stop_loss/hedge/reduce_position
     timestamp: datetime
     
-    # å¨ä½è¯¦æ
+    # å¨ä½è¯¦æ
+
     target: str  # strategy_id/position_id
     action_details: Dict
     
-    # æ§è¡ç»æ
+    # 执行结果
     execution_status: str
     execution_result: Dict
 ```
 
-### 4.2 æ°æ®åºè¡¨ç»æ
+### 4.2 数据库表结构
 
 ```sql
 -- é£é©äºä»¶è¡?
@@ -700,11 +715,11 @@ CREATE TABLE risk_metrics_history (
 
 ## äºãæ¥å£è®¾è®?
 
-### 5.1 æå­äº¤äºæ¥å£
+### 5.1 文字交互接口
 
 ```python
 class RiskControlTextInterface:
-    """é£é©æ§å¶æå­äº¤äºæ¥å£"""
+    """风险控制文字交互接口"""
     
     def get_risk_status(self):
         """è·åé£é©ç¶æ?""
@@ -717,7 +732,7 @@ class RiskControlTextInterface:
         return self._format_risk_warnings(warnings)
     
     def execute_risk_control(self, action: str):
-        """æ§è¡é£é©æ§å¶"""
+        """执行风险控制"""
         result = self._execute_control_action(action)
         return self._format_control_result(result)
 ```
@@ -729,17 +744,18 @@ class RiskControlTextInterface:
 
 é£é©ç­çº§ï¼ð?é«é£é?
 
-é£é©è¯¦æï¼?
+é£é©è¯¦æ
+ï¼?
 ââ å¸åºé£é©ï¼VIXææ°é£å30%ï¼å¸åºæ³¢å¨å å¤?
-ââ ç­ç¥é£é©ï¼ç­ç¥Hå¨å½åå¸åºç¯å¢ä¸è¡¨ç°ä¸ä½³
+├─ 策略风险：策略H在当前市场环境下表现不佳
 ââ ç»åé£é©ï¼ç»åéä¸­åº¦è¿é«ï¼å3å¤§æä»å 60%ï¼?
 ââ æµå¨æ§é£é©ï¼é¨åæä»æäº¤éä¸é?0%
 
 AIå»ºè®®ï¼?
 1. éä½æ´ä½ä»ä½è?0%ï¼å½å?5%ï¼?
-2. ç­ç¥Hæåäº¤æ
-3. å¢å å¯¹å²ä»ä½10%
-4. è®¾ç½®å¨ææ­¢æä¸º5%
+2. 策略H暂停交易
+3. 增加对冲仓位10%
+4. 设置动态止损为5%
 
 æ¯å¦æ§è¡é£é©æ§å¶æªæ½ï¼?
 
@@ -747,10 +763,14 @@ AIå»ºè®®ï¼?
 ç³»ç»ï¼?â?é£é©æ§å¶æªæ½å·²æ§è¡?
 
 æ§è¡ç»æï¼?
-ââ æ´ä½ä»ä½ï¼?5% â?60%ï¼â å®æï¼?
-ââ ç­ç¥Hï¼å·²æåäº¤æï¼â å®æï¼?
-ââ å¯¹å²ä»ä½ï¼å·²å¢å 10%ï¼â å®æï¼?
-ââ å¨ææ­¢æï¼å·²è®¾ç½®ä¸º5%ï¼â å®æï¼?
+ââ æ´ä½ä»ä½ï¼?5% â?60%ï¼â
+ å®æï¼?
+ââ ç­ç¥Hï¼å·²æåäº¤æï¼â
+ å®æï¼?
+ââ å¯¹å²ä»ä½ï¼å·²å¢å 10%ï¼â
+ å®æï¼?
+ââ å¨ææ­¢æï¼å·²è®¾ç½®ä¸º5%ï¼â
+ å®æï¼?
 
 é£é©ææ æ¹åï¼?
 ââ VaRï¼?5%ï¼ï¼-3.5% â?-2.8%ï¼æ¹å?0%ï¼?
@@ -759,46 +779,50 @@ AIå»ºè®®ï¼?
 ââ ç»¼åé£é©è¯åï¼?5 â?58ï¼æ¹å?3%ï¼?
 
 é¢è®¡ææï¼?
-ââ é£é©éä½ï¼çº¦30%
-ââ æå¤§æå¤±æ§å¶ï¼å?5%ä»¥å
+├─ 风险降低：约30%
+ââ æå¤§æå¤±æ§å¶ï¼å?5%ä»¥å
+
 ââ æ¢å¤æ¶é´ï¼é¢è®?-5ä¸ªäº¤ææ¥
 
 åç»­å»ºè®®ï¼?
 1. æç»­çæ§å¸åºæ³¢å¨ç?
-2. å³æ³¨VIXææ°åå
-3. åå¤åºå¯¹æç«¯æåµ"
+2. å
+³æ³¨VIXææ°åå
+3. åå¤åºå¯¹æç«¯æ
+况"
 ```
 
 ---
 
-## å­ãå®æ½è·¯å¾?
+## å
+­ãå®æ½è·¯å¾?
 
-### 6.1 å®æ½è®¡å
+### 6.1 实施计划
 
 **Week 1ï¼æ ¸å¿é£æ§åè?*
 
 | ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
-| äºåé£æ§å®ç° | 8h | PreTradeRiskController |
-| äºä¸­é£æ§å®ç° | 8h | InTradeRiskController |
-| äºåé£æ§å®ç° | 8h | PostTradeRiskController |
-| æç«¯é£é©åºå¯¹å®ç° | 8h | ExtremeRiskHandler |
+| 事前风控实现 | 8h | PreTradeRiskController |
+| 事中风控实现 | 8h | InTradeRiskController |
+| 事后风控实现 | 8h | PostTradeRiskController |
+| 极端风险应对实现 | 8h | ExtremeRiskHandler |
 
-**Week 2ï¼æºè½é¢è­¦ä¸éæ**
+**Week 2：智能预警与集成**
 
 | ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
-| æºè½é¢è­¦å®ç° | 8h | IntelligentRiskWarning |
-| æå­äº¤äºæ¥å£å®ç° | 8h | RiskControlTextInterface |
-| æ°æ®åºè®¾è®¡ä¸å®ç° | 4h | æ°æ®åºè¡¨ç»æ |
-| éææµè¯ | 4h | æµè¯æ¥å |
-| ææ¡£å®å | 4h | ç¨æ·æå |
+| 智能预警实现 | 8h | IntelligentRiskWarning |
+| 文字交互接口实现 | 8h | RiskControlTextInterface |
+| 数据库设计与实现 | 4h | 数据库表结构 |
+| 集成测试 | 4h | 测试报告 |
+| 文档完善 | 4h | 用户手册 |
 
 ---
 
 ## ä¸ãè´¨éä¿è¯?
 
-### 7.1 æµè¯æ å
+### 7.1 测试标准
 
 | æµè¯é¡?| æ å | éªè¯æ¹æ³ |
 |--------|------|---------|
@@ -807,7 +831,7 @@ AIå»ºè®®ï¼?
 | æ­¢ææ§è¡å»¶è¿ | â?ç§?| æ§è½æµè¯ |
 | æå­äº¤äºååº | â?ç§?| ååæµè¯ |
 
-### 7.2 çæ§ææ 
+### 7.2 监控指标
 
 | ææ  | ç®æ å?| åè­¦éå?|
 |------|--------|---------|
@@ -818,25 +842,27 @@ AIå»ºè®®ï¼?
 
 ---
 
-## å«ãææ¡£æ²»ç?
+## å
+«ãææ¡£æ²»ç?
 
-### 8.1 ææ¡£ç´¢å¼
+### 8.1 文档索引
 
 **æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**ï¼?
 - **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
-- **å³èææ¡£**:
+- **å
+³èææ¡£**:
   - [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
   - [COMPLIANCE_MONITORING_BLUEPRINT.md](../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md)
   - [LIVE_TRADING_MONITOR_BLUEPRINT.md](../../10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md)
 
-### 8.2 çæ¬ç®¡ç
+### 8.2 版本管理
 
 **çæ¬åå²**ï¼?
 - v1.0 (2026-04-02): åå§çæ¬ï¼å®ä¹æ ¸å¿åè?
 
 ---
 
-**ææ¡£ç»æ**
+**文档结束**
 
 > æ¬èå¾ç±é¦å¸­æ¶æå¸è®¾è®¡ï¼éµå¾ªä¸ä¸éåæºææ åï¼ä¸ºé£é©æ§å¶ç®¡çæä¾å®æ´è§£å³æ¹æ¡ã?
 ---

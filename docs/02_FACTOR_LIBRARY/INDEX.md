@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_FACTOR_LIBRARY_MAIN_001
 version: 2.0.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TACTICS_STRATEGY_OVERVIEW_001
 version: 2.0.1
 status: Active

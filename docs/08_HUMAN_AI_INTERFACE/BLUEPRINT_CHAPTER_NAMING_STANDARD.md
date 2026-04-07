@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_CHAPTER_NAMING_STANDARD_001
 version: 1.0.0
 status: Active

@@ -1,19 +1,19 @@
----
+﻿---
 responsibility:
-  - ç»åçº¦æç®¡ç
-  - çº¦ææ¡ä»¶è®¾ç½®
-  - çº¦æéªè¯
-  - çº¦æä¼å
+  - 组合约束管理
+  - 约束条件设置
+  - 约束验证
+  - 约束优化
 
 module_id: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -22,12 +22,12 @@ layer: Layer 5.2 (组合优化)
 
 负责投资组合约束管理的设计与实现，定义和管理组合约束条件，提供约束检查和优化功能，支持组合构建。
 
-# ç»åçº¦æç®¡çæ¨¡åèå¾
+# 组合约束管理模块蓝图
 
 > **æ ¸å¿èè´£**: ç»åçº¦æå»ºæ¨¡ä¸ç®¡ç?
-> **èè´£è¾¹ç**: 
+> **职责边界**: 
 > - â?æ¬ææ¡£è´è´£ï¼çº¦æå»ºæ¨¡ãçº¦æéªè¯ãçº¦æç®¡ç?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
+> - ...
 
 
 ## 设计目标
@@ -82,76 +82,84 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 è´è´£Portfolio Constraint Managementçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
-## 1. æ¦è¿°
+## 1. 概述
 
-### 1.1 æ¨¡åå®ä½
+### 1.1 模块定位
 
 **Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼çº¦æç®¡çæ¨¡åï¼?
 
 **æ ¸å¿ä»·å?*:
-- çº¦æåºç®¡çï¼è¡ä¸çº¦æãå å­çº¦æãé£é©çº¦æï¼
+- 约束库管理（行业约束、因子约束、风险约束）
 - çº¦æå²çªæ£æµ?
-- çº¦æä¼åçº§ç®¡ç?
+- çº¦æä¼å
+çº§ç®¡ç?
 - çº¦æå¯è§å?
 - çº¦ææ¨¡æ¿åº?
 
 **ä¸å¡ä»·å?*:
-- ç¡®ä¿ç»åç¬¦åæèµéå¶
+- 确保组合符合投资限制
 - èªå¨åçº¦ææ£æ?
-- æååè§æç
+- 提升合规效率
 
-### 1.2 çæ¬ä¿¡æ¯
+### 1.2 版本信息
 
-| é¡¹ç® | åå®¹ |
+| é¡¹ç® | å
+å®¹ |
 |------|------|
-| **æ¨¡åID** | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 |
-| **çæ¬** | v1.0.0 |
+| **模块ID** | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 |
+| **版本** | v1.0.0 |
 | **å¼æºä¾èµ?* | PyPortfolioOpt, skfolio |
 | **é¢è®¡å·¥æ¶** | 3-5å¤?|
 
 ---
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
 | [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
-| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| æä¾èµäº§åæ°æ?|
+| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| æä¾èµäº§å
+æ°æ?|
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [å¤ç®æ ä¼åèå¾](./MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md) | MULTI_OBJECTIVE_OPTIMIZATION_001 | å¼ºä¾èµ?| å¤ç®æ ä¼åçº¦æ?|
-| [æç¥éç½®å¼æèå¾](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | å¼ºä¾èµ?| æç¥éç½®çº¦æ |
+| [æç¥é
+ç½®å¼æèå¾](./STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md) | STRATEGIC_ALLOCATION_ENGINE_001 | å¼ºä¾èµ?| æç¥é
+ç½®çº¦æ |
 | [PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | ä¸­ä¾èµ?| åºæ¯åæçº¦æ |
 
 ### ææ¯ä¾èµ?
 
 | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **PyPortfolioOpt** | 1.5+ | ç»åä¼å | [å®æ¹ææ¡£](https://pyportfolioopt.readthedocs.io/) |
-| **skfolio** | 1.0+ | ç»åå­¦ä¹  | [å®æ¹ææ¡£](https://skfolio.org/) |
+| **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
+| **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
 | **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
-| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
-    A[ç»åä¼åå¼æ] --> B[ç»åçº¦æç®¡ç]
-    C[æ°æ®è´¨éçæ§] --> B
-    D[æ°æ®ç®å½] --> B
+    A[组合优化引擎] --> B[组合约束管理]
+    C[数据质量监控] --> B
+    D[数据目录] --> B
     
-    B --> E[å¤ç®æ ä¼å]
-    B --> F[æç¥éç½®å¼æ]
-    B --> G[åºæ¯åæ]
+    B --> E[多目标优化]
+    B --> F[æç¥é
+ç½®å¼æ]
+    B --> G[场景分析]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -162,7 +170,7 @@ graph LR
 
 ## 2. ææ¯å®ç?
 
-### 2.1 æ ¸å¿API
+### 2.1 核心API
 
 ```python
 from pypfopt import EfficientFrontier
@@ -182,11 +190,11 @@ class ConstraintManager:
         sector_mapping: Dict[str, List[str]]
     ):
         """
-        æ·»å è¡ä¸çº¦æ
+        添加行业约束
         
         Args:
             sector_weights: è¡ä¸æééå¶ï¼æ ¼å¼?{'ç§æ': (0.0, 0.3), 'éè': (0.1, 0.4)}
-            sector_mapping: è¡ç¥¨å°è¡ä¸çæ å°
+            sector_mapping: 股票到行业的映射
         """
         pass
     
@@ -196,11 +204,11 @@ class ConstraintManager:
         factor_limits: Dict[str, tuple]
     ):
         """
-        æ·»å å å­çº¦æ
+        添加因子约束
         
         Args:
-            factor_exposures: å å­æ´é²ç©éµ
-            factor_limits: å å­æ´é²éå¶
+            factor_exposures: 因子暴露矩阵
+            factor_limits: 因子暴露限制
         """
         pass
     
@@ -211,12 +219,12 @@ class ConstraintManager:
         max_var: float = None
     ):
         """
-        æ·»å é£é©çº¦æ
+        添加风险约束
         
         Args:
-            max_volatility: æå¤§æ³¢å¨ç
+            max_volatility: 最大波动率
             max_drawdown: æå¤§åæ?
-            max_var: æå¤§VaR
+            max_var: 最大VaR
         """
         pass
     
@@ -225,7 +233,7 @@ class ConstraintManager:
         æ£æµçº¦æå²çª?
         
         Returns:
-            å²çªåè¡¨
+            冲突列表
         """
         pass
     
@@ -234,7 +242,7 @@ class ConstraintManager:
         ef: EfficientFrontier
     ) -> EfficientFrontier:
         """
-        åºç¨çº¦æå°ä¼åå¨
+        应用约束到优化器
         
         Args:
             ef: EfficientFrontierå¯¹è±¡
@@ -245,9 +253,9 @@ class ConstraintManager:
         pass
 ```
 
-### 2.2 çº¦æç±»å
+### 2.2 约束类型
 
-| çº¦æç±»å | è¯´æ | ç¤ºä¾ |
+| 约束类型 | 说明 | 示例 |
 |---------|------|------|
 | **æéçº¦æ** | åä¸ªèµäº§æééå¶ | w_i â?[0, 0.1] |
 | **è¡ä¸çº¦æ** | è¡ä¸æééå¶ | Î£ w_i (ç§æ) â?0.3 |
@@ -257,11 +265,11 @@ class ConstraintManager:
 
 ---
 
-## 3. æ¥å£å®ä¹
+## 3. 接口定义
 
 ```python
 class ConstraintAPI:
-    """çº¦æç®¡çAPI"""
+    """约束管理API"""
     
     @endpoint("/api/v1/constraints/add")
     async def add_constraint(
@@ -269,7 +277,7 @@ class ConstraintAPI:
         constraint_type: str,
         constraint_params: dict
     ) -> ConstraintResult:
-        """æ·»å çº¦æ"""
+        """添加约束"""
         
     @endpoint("/api/v1/constraints/check_conflicts")
     async def check_conflicts(
@@ -284,58 +292,63 @@ class ConstraintAPI:
         portfolio_id: str,
         optimizer_config: dict
     ) -> OptimizationResult:
-        """åºç¨çº¦æä¼å"""
+        """应用约束优化"""
 ```
 
 ---
 
-## 4. å®æ½è·¯å¾
+## 4. 实施路径
 
-| é¶æ®µ | ä»»å¡ | å·¥æ¶ |
+| 阶段 | 任务 | 工时 |
 |------|------|------|
 | Phase 1 | çº¦æåºç®¡çå®ç?| 12h |
-| Phase 2 | å²çªæ£æµãskfolioéæ | 16h |
+| Phase 2 | 冲突检测、skfolio集成 | 16h |
 | Phase 3 | APIãæµè¯ãææ¡?| 12h |
 
 ---
 
 **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
-| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
+| v1.0.1 | 2026-04-06 | è¡¥å
+
+YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
 **èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
-## 5. ææ¡£æ²»ç
+## 5. 文档治理
 
-### 5.1 System_Manifest.mdç´¢å¼
+### 5.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Portfolio Constraint Management
-- **æ¨¡åID**: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
-- **èå¾ææ¡£**: PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **模块ID**: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
+- **蓝图文档**: PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
 - **èè´£**: Layer 6 ç»åä¼åå±?
 - **ç¶æ?*: Active
 ```
 
-### 5.2 æ¨¡åèè´£è¾¹ç
+### 5.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
 | **Portfolio Constraint Management** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
-### 5.3 çæ¬ç®¡ç
+### 5.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

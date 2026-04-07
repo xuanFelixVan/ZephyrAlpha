@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT_001
 
 version: 1.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_P1_P2_RESOLUTION_SUMMARY_001
 version: 1.0.0
 status: Active

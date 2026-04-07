@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER2_ALPHA_FACTOR_OPTIMIZATION_REPORT_V21_20260407
 version: 21.0.0
 status: Active

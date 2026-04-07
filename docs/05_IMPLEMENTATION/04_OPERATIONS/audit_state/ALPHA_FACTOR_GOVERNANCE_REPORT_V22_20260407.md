@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER2_ALPHA_FACTOR_GOVERNANCE_REPORT_V22_20260407
 version: 22.0.0
 status: Active

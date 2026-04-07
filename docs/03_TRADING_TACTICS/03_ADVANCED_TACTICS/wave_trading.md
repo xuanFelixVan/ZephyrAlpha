@@ -1,4 +1,4 @@
----
+﻿---
 module_id: WAVE_TRADING_001
 version: 1.0.0
 status: Active

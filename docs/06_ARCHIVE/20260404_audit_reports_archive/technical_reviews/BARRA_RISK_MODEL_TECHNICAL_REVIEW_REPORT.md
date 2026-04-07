@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_BARRA_RISK_MODEL_TECH_REVIEW_001
 review_id: TR-2026-04-02-BARRA
 version: 1.0.1

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CASE_STUDY_STRATEGY_FACTORY_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_23_LIVE_TRADING_INTERFACE_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REGULATORY_REPORTING_BLUEPRINT_001
 version: 1.0.1
 status: Active

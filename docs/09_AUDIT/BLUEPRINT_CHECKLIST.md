@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_BLUEPRINT_CHECKLIST_001
 version: 1.0.1
 status: Active

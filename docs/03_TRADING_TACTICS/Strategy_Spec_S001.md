@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TACTICS_STRATEGY_SPEC_S001_001
 version: 1.0.1
 status: Active

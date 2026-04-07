@@ -1,4 +1,4 @@
----
+﻿---
 standard_type: ه®‍و–½وŒ‡هچ—
 applicable_scope: ه…¨ç³»ç»?
 compliance_level: و­£ه¼ڈو ‡ه‡†

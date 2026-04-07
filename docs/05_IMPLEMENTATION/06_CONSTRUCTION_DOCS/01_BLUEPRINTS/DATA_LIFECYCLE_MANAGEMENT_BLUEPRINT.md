@@ -1,18 +1,19 @@
-﻿---
+﻿﻿---
 module_id: DATA_LIFECYCLE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 æ°æ®å±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
-  - æ°æ®çå½å¨æç®¡ç
-  - æ°æ®å½æ¡£
-  - æ°æ®æ¸ç
-  - æ°æ®ä¿çç­ç¥
+  - 数据生命周期管理
+  - 数据归档
+  - æ°æ®æ¸
+理
+  - 数据保留策略
 layer: Layer 5.1 (数据处理)
 ---
 
@@ -23,35 +24,10 @@ layer: Layer 5.1 (数据处理)
 
 # DATA LIFECYCLE MANAGEMENT BLUEPRINT
 
-> **æ ¸å¿èè´£**: Data Lifecycle Managementèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Lifecycle Managementèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Data Lifecycle Management蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Data Lifecycle Managementè...
 
-ï»?--
-module_id: DATALIFECYCLEMANAGEMENTBLUE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: å®æ½å¢é
-responsibility:
-  - å å­è®¡ç®
-  - ç»åä¼å
-  - äº¤ææ§è¡
-standard_type: ä¸ä¸éåæºæèå¾
-applicable_scope: å¨ç³»ç»?
-compliance_level: ä¸ä¸æ å
-layer: Layer 5.1 (数据处理)
-ï»? æ°æ®çå½å¨æç®¡çèå¾
-
-> **æ ¸å¿å®ä½**: æ°æ®çå½å¨æç®¡çèå¾çæ ¸å¿åè½å®ç?
-
-
-> **æ¨¡åID**: `DATA_LIFECYCLE_001`
-> **å®æ½å¨æ**: Week 27-28ï¼?å¨ï¼
-> **ä¼åçº?*: P2ï¼ä¼åï¼
-> **é¢ææ¶ç**: éä½å­å¨ææ¬50%ï¼æåæ°æ®ç®¡çæç?0%
 
 ## 设计目标
 
@@ -105,24 +81,25 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 ä¸»å¯¼DATA LIFECYCLE MANAGEMENTçè®¾è®¡ä¸å®ç°ï¼åºäºApache Icebergææ¯ï¼ä¼åæ ¸å¿åè½ï¼æåæ°æ®èµäº§å¯è§æ§ã?
 
-## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
+## 一、设计背景与目标
 
 ### 1.1 ä¸å¡éæ±?
 
-**å½åçç¹**:
-- æ°æ®ä¿çç­ç¥ä¸æ¸æ?
-- å­å¨ææ¬æç»­å¢é¿
-- æ°æ®å½æ¡£åå é¤ä¸è§è
+**当前痛点**:
+- æ°æ®ä¿çç­ç¥ä¸æ¸
+æ?
+- 存储成本持续增长
+- 数据归档和删除不规范
 - æ°æ®ä»·å¼é¾ä»¥è¯ä¼?
 
-**ä¸å¡ç®æ **:
-- å»ºç«æ°æ®çå½å¨æç®¡çç­ç¥
-- èªå¨åæ°æ®å½æ¡£åå é¤
-- ä¼åå­å¨ææ¬
+**业务目标**:
+- 建立数据生命周期管理策略
+- 自动化数据归档和删除
+- 优化存储成本
 - æ°æ®ä»·å¼åçº§ç®¡ç?
 
 ### 1.2 ææ¯ç®æ ?
@@ -145,14 +122,14 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class DataTier(Enum):
-    """æ°æ®åå±"""
+    """数据分层"""
     HOT = "hot"
     WARM = "warm"
     COLD = "cold"
     ARCHIVE = "archive"
 
 class ActionType(Enum):
-    """å¨ä½ç±»å"""
+    """动作类型"""
     MOVE_TO_WARM = "move_to_warm"
     MOVE_TO_COLD = "move_to_cold"
     ARCHIVE = "archive"
@@ -160,7 +137,7 @@ class ActionType(Enum):
 
 @dataclass
 class LifecyclePolicy:
-    """çå½å¨æç­ç¥"""
+    """生命周期策略"""
     policy_id: str
     policy_name: str
     data_classification: str
@@ -176,7 +153,7 @@ class LifecyclePolicyManager:
         self.policies: Dict[str, LifecyclePolicy] = {}
     
     def create_policy(self, policy_config: Dict[str, Any]) -> LifecyclePolicy:
-        """åå»ºçå½å¨æç­ç¥"""
+        """创建生命周期策略"""
         policy = LifecyclePolicy(
             policy_id=policy_config['policy_id'],
             policy_name=policy_config['policy_name'],
@@ -189,7 +166,7 @@ class LifecyclePolicyManager:
         return policy
     
     def get_policy(self, policy_id: str) -> Optional[LifecyclePolicy]:
-        """è·åç­ç¥"""
+        """获取策略"""
         return self.policies.get(policy_id)
     
     def get_applicable_policy(self, data_classification: str) -> Optional[LifecyclePolicy]:
@@ -209,7 +186,7 @@ import pandas as pd
 
 @dataclass
 class DataAsset:
-    """æ°æ®èµäº§"""
+    """数据资产"""
     asset_id: str
     asset_name: str
     current_tier: DataTier
@@ -225,7 +202,7 @@ class DataTieringManager:
         self.assets: Dict[str, DataAsset] = {}
     
     def register_asset(self, asset_config: Dict[str, Any]) -> DataAsset:
-        """æ³¨åæ°æ®èµäº§"""
+        """注册数据资产"""
         asset = DataAsset(
             asset_id=asset_config['asset_id'],
             asset_name=asset_config['asset_name'],
@@ -240,7 +217,7 @@ class DataTieringManager:
         return asset
     
     def determine_tier(self, asset_id: str) -> DataTier:
-        """ç¡®å®æ°æ®åå±"""
+        """确定数据分层"""
         asset = self.assets.get(asset_id)
         if not asset:
             return DataTier.HOT
@@ -258,7 +235,7 @@ class DataTieringManager:
             return DataTier.ARCHIVE
     
     def get_tier_statistics(self) -> Dict[str, Any]:
-        """è·ååå±ç»è®¡"""
+        """获取分层统计"""
         stats = {
             "hot": {"count": 0, "size": 0},
             "warm": {"count": 0, "size": 0},
@@ -274,7 +251,7 @@ class DataTieringManager:
         return stats
 ```
 
-### 3.3 çå½å¨ææ§è¡å¼æ (LifecycleExecutionEngine)
+### 3.3 生命周期执行引擎 (LifecycleExecutionEngine)
 
 ```python
 from typing import Dict, List, Any
@@ -285,7 +262,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class LifecycleAction:
-    """çå½å¨æå¨ä½"""
+    """生命周期动作"""
     action_id: str
     asset_id: str
     action_type: ActionType
@@ -296,7 +273,7 @@ class LifecycleAction:
     details: Dict[str, Any]
 
 class LifecycleExecutionEngine:
-    """çå½å¨ææ§è¡å¼æ"""
+    """生命周期执行引擎"""
     
     def __init__(self, policy_manager: LifecyclePolicyManager,
                  tiering_manager: DataTieringManager):
@@ -305,7 +282,7 @@ class LifecycleExecutionEngine:
         self.actions: List[LifecycleAction] = []
     
     def execute_lifecycle_policies(self):
-        """æ§è¡çå½å¨æç­ç¥"""
+        """执行生命周期策略"""
         for asset_id, asset in self.tiering_manager.assets.items():
             policy = self.policy_manager.get_applicable_policy(asset.classification)
             
@@ -324,7 +301,7 @@ class LifecycleExecutionEngine:
                 self._execute_tier_migration(asset, DataTier.WARM)
     
     def _execute_tier_migration(self, asset: DataAsset, target_tier: DataTier):
-        """æ§è¡åå±è¿ç§»"""
+        """执行分层迁移"""
         logger.info(f"Migrating asset {asset.asset_id} from {asset.current_tier} to {target_tier}")
         
         action = LifecycleAction(
@@ -342,7 +319,7 @@ class LifecycleExecutionEngine:
         self.actions.append(action)
     
     def _execute_archive(self, asset: DataAsset):
-        """æ§è¡å½æ¡£"""
+        """执行归档"""
         logger.info(f"Archiving asset {asset.asset_id}")
         
         action = LifecycleAction(
@@ -360,7 +337,7 @@ class LifecycleExecutionEngine:
         self.actions.append(action)
     
     def _execute_deletion(self, asset: DataAsset):
-        """æ§è¡å é¤"""
+        """执行删除"""
         logger.info(f"Deleting asset {asset.asset_id}")
         
         action = LifecycleAction(
@@ -383,16 +360,16 @@ class LifecycleExecutionEngine:
 
 ### 4.1 RESTful API
 
-#### 4.1.1 åå»ºçå½å¨æç­ç¥
+#### 4.1.1 创建生命周期策略
 
 ```http
 POST /api/v1/lifecycle/policies
 ```
 
-**è¯·æ±ç¤ºä¾**:
+**请求示例**:
 ```json
 {
-  "policy_name": "äº¤ææ°æ®ä¿çç­ç¥",
+  "policy_name": "交易数据保留策略",
   "data_classification": "trading_data",
   "retention_days": 365,
   "actions": {
@@ -403,13 +380,13 @@ POST /api/v1/lifecycle/policies
 }
 ```
 
-#### 4.1.2 è·ååå±ç»è®¡
+#### 4.1.2 获取分层统计
 
 ```http
 GET /api/v1/lifecycle/tiers/statistics
 ```
 
-**ååºç¤ºä¾**:
+**响应示例**:
 ```json
 {
   "hot": {"count": 10, "size": 1073741824},
@@ -420,20 +397,21 @@ GET /api/v1/lifecycle/tiers/statistics
 ```
 
 
-## å­ãçæ§ææ ?
+## å
+­ãçæ§ææ ?
 
-| ææ åç§° | ææ ç±»å | è¯´æ |
+| 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
-| `lifecycle_policies_total` | Gauge | çå½å¨æç­ç¥æ»æ° |
-| `lifecycle_actions_executed_total` | Counter | æ§è¡çå¨ä½æ»æ° |
+| `lifecycle_policies_total` | Gauge | 生命周期策略总数 |
+| `lifecycle_actions_executed_total` | Counter | 执行的动作总数 |
 | `lifecycle_storage_bytes_by_tier` | Gauge | ååå±å­å¨å¤§å°?|
-| `lifecycle_cost_savings_dollars` | Gauge | ææ¬èçéé¢ |
+| `lifecycle_cost_savings_dollars` | Gauge | 成本节省金额 |
 
 ---
 
 ## ä¸ãå®æ½è®¡å?
 
-| é¶æ®µ | ä»»å¡ | é¢è®¡æ¶é´ |
+| 阶段 | 任务 | 预计时间 |
 |------|------|---------|
 | **é¶æ®µ1** | å®ä¹çå½å¨æç­ç¥ | 2å¤?|
 | **é¶æ®µ2** | å¼ååå±ç®¡çå¨ | 3å¤?|
@@ -443,40 +421,44 @@ GET /api/v1/lifecycle/tiers/statistics
 
 ---
 
-## å«ãç¸å³ææ¡?
+## å
+«ãç¸å
+³ææ¡?
 
-- [å®æ¶æ°æ®æ¹èå¾](./REALTIME_DATA_LAKE_BLUEPRINT.md)
-- [æ°æ®æ²»çå¹³å°èå¾](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
-- [æ°æ®ææ¬ç®¡çèå¾](./DATA_COST_MANAGEMENT_BLUEPRINT.md)
+- [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
+- [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
+- [数据成本管理蓝图](./DATA_COST_MANAGEMENT_BLUEPRINT.md)
 
 ---
 
 **ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Lifecycle Management
-- **æ¨¡åID**: DATA_LIFECYCLE_MANAGEMENT_001
-- **èå¾ææ¡£**: DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
-- **èè´£**: Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **模块ID**: DATA_LIFECYCLE_MANAGEMENT_001
+- **蓝图文档**: DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
+- **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **Data Lifecycle Management** | Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
+| **Data Lifecycle Management** | Layer 0数据源层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
@@ -487,18 +469,20 @@ GET /api/v1/lifecycle/tiers/statistics
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æ°æ®èµäº§åæ°æ?|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æ°æ®èµäº§å
+æ°æ?|
 | [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | ä¸­ä¾èµ?| æä¾çå½å¨æç­ç¥ |
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [REALTIME DATA LAKE BLUEPRINT](./REALTIME_DATA_LAKE_BLUEPRINT.md) | REALTIME_DATA_LAKE_001 | ä¸­ä¾èµ?| æ§è¡æ°æ®å½æ¡£ |
 
@@ -509,7 +493,8 @@ GET /api/v1/lifecycle/tiers/statistics
 | **Apache Iceberg** | 1.4+ | è¡¨æ ¼å¼?| [å®æ¹ææ¡£](https://iceberg.apache.org/) |
 | **Apache Hudi** | 0.14+ | æ°æ®æ¹?| [å®æ¹ææ¡£](https://hudi.apache.org/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -523,11 +508,12 @@ graph LR
     style D0 fill:#45b7d1
 ```
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | å®æ½å¢é |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---

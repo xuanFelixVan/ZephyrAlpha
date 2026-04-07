@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_EVENT_ENGINE
 version: 1.0.0
 status: Active

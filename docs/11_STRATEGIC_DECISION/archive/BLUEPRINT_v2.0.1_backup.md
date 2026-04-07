@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 11_STRATEGIC_DECISION_BLUEPRINT_V2_0_1_BACKUP_20260407124139
 version: 2.0.1
 status: Active

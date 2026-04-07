@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -24,9 +24,8 @@ layer: Layer 6 (组合优化层)
 
 
 > **æ ¸å¿èè´£**: æºè½åå¹³è¡¡å³ç­ï¼å¹³è¡¡è·è¸ªè¯¯å·®ä¸äº¤æææ?
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼åå¹³è¡¡è§¦åãæéè°æ´ãææ¬ä¼å?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼RLå¢å¼ºè°ä»ï¼ç±RL_REBALANCING_SYSTEMè´è´£ï¼?
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼åå¹³è¡¡è§¦åãæéè°æ´ã...
 
 
 ## 设计目标
@@ -81,65 +80,72 @@ layer: Layer 6 (组合优化层)
 4. 部署与监控
 
 
-## 1. æ¦è¿°
+## 1. 概述
 
-### 1.1 è®¾è®¡èæ¯ä¸ä¸å¡ç®?
-**ä¸å¡é?*?- å½åç³»ç»ç¼ºä¹ç³»ç»æ§çåå¹³è¡¡ç­ç¥æ¡?- æ æ³æºè½å³ç­ä½æ¶æ§è¡åå¹³?- æ æ³å¹³è¡¡è·è¸ªè¯¯å·®ä¸äº¤ææ?- ç¼ºä¹å¤ç§åå¹³è¡¡è§¦åæº?
-**ææ¯ç?*?- æ åå¹³è¡¡è§¦åæºå¶
-- æ äº¤æææ¬ä¼?- æ åå¹³è¡¡ææè¯ä¼°
-- æ åå¹³è¡¡åå²è®°å½
+### 1.1 设计背景与业务目?
+**业务需?*?- 当前系统缺乏系统性的再平衡策略框?- 无法智能决策何时执行再平?- 无法平衡跟踪误差与交易成?- 缺乏多种再平衡触发机?
+**技术痛?*?- 无再平衡触发机制
+- 无交易成本优?- 无再平衡效果评估
+- 无再平衡历史记录
 
-**é¢æ?*?- åå¹³è¡¡ç­ç¥å®æ´æ§ï¼æå40%
-- äº¤æææ¬ä¼åï¼é?5-20%
-- è·è¸ªè¯¯å·®æ§å¶ï¼æ?0%
-- ç³»ç»ååå¹³è¡¡å³ç­ï¼æ°å¢è½?
+**预期?*?- 再平衡策略完整性：提升40%
+- 交易成本优化：降?5-20%
+- 跟踪误差控制：提?0%
+- 系统化再平衡决策：新增能?
 ### 1.2 ææ¯å®ä½ä¸æ¶æå±å½å±?
 
-**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼æ§è¡å±ï¼
+**Layer定位**: Layer 6 - 组合优化层（执行层）
 
-**æ¨¡åç±»å«**: æ¯ææ¨¡åï¼P2çº§ï¼
+**模块类别**: 支持模块（P2级）
 
-**ä¸TRANSACTION_COST_AWARE_REBALANCINGçå³ç³?*:
+**ä¸TRANSACTION_COST_AWARE_REBALANCINGçå
+³ç³?*:
 - æ¬ææ¡£æ¯**åºç¡åå¹³è¡¡æ¡æ?*ï¼æä¾è§¦åæºå¶åå³ç­å¼æ
 - [TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md)æ?*é«çº§ææ¬æç¥åå¹³è¡¡æ¨¡å?*ï¼å¨åå¹³è¡¡å³ç­ä¸­æ¾å¼èèäº¤æææ¬
-- **èè´£è¾¹ç**: æ¬ææ¡£è´è´£åºç¡åå¹³è¡¡å³ç­ï¼TRANSACTION_COST_AWAREè´è´£ææ¬ä¼åå³ç­
-- **ä¾èµå³ç³»**: TRANSACTION_COST_AWARE_REBALANCINGä¾èµæ¬ææ¡£çè§¦åæºå¶åå³ç­æ¡æ?
-- **æ¨èå®æ½è·¯å¾**: åå®ç°æ¬ææ¡£ï¼?0hï¼ï¼åå®æ½ææ¬æç¥å¢å¼ºï¼5-7å¤©ï¼
+- **职责边界**: 本文档负责基础再平衡决策，TRANSACTION_COST_AWARE负责成本优化决策
+- **ä¾èµå
+³ç³»**: TRANSACTION_COST_AWARE_REBALANCINGä¾èµæ¬ææ¡£çè§¦åæºå¶åå³ç­æ¡æ?
+- **æ¨èå®æ½è·¯å¾**: å
+å®ç°æ¬ææ¡£ï¼?0hï¼ï¼åå®æ½ææ¬æç¥å¢å¼ºï¼5-7å¤©ï¼
 
-**æ¶æè§è²**: 
-- ä½ä¸ºç»åä¼åçæ§è¡å±ï¼è´è´£åå¹³è¡¡å³ç­
-- ä½ä¸ºäº¤æææ¬ä¼åçæ§è¡èï¼å¹³è¡¡ææ¬ä¸è·è¸ªè¯¯?- ä½ä¸ºé£é©æ§å¶çæ§è¡èï¼ç»´æç»åé£é©ç®æ 
+**架构角色**: 
+- 作为组合优化的执行层，负责再平衡决策
+- ä½ä¸ºäº¤æææ¬ä¼åçæ§è¡è
+ï¼å¹³è¡¡ææ¬ä¸è·è¸ªè¯¯?- ä½ä¸ºé£é©æ§å¶çæ§è¡è
+，维持组合风险目标
 
-### 1.3 æ ¸å¿åè½æ¸å
+### 1.3 æ ¸å¿åè½æ¸
+单
 
-1. **åå¹³è¡¡è§¦åæº?*: å®æè§¦åãéå¼è§¦åãé£é©è§¦?2. **åå¹³è¡¡å³?*: æ¯å¦æ§è¡åå¹³è¡¡çæºè½å³ç­
-3. **äº¤æææ¬ä¼å**: æä¼äº¤ææ§?4. **åå¹³è¡¡ææè¯?*: è¯ä¼°åå¹³è¡¡æ?5. **åå¹³è¡¡åå²è®°?*: è®°å½åå¹³è¡¡å?
+1. **再平衡触发机?*: 定期触发、阈值触发、风险触?2. **再平衡决?*: 是否执行再平衡的智能决策
+3. **交易成本优化**: 最优交易执?4. **再平衡效果评?*: 评估再平衡效?5. **再平衡历史记?*: 记录再平衡历?
 ---
 
-## 2. æ¶æè®¾è®¡
+## 2. 架构设计
 
-### 2.1 ç³»ç»æ¶æ?
+### 2.1 系统架构?
 ```
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   ç»ååå¹³è¡¡ç­ç¥ç³»ç»æ¶?                       ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è§¦åæºå¶?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?å®æè§¦å ? ?éå¼è§¦?? ?é£é©è§¦å ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             å³ç­?                                       ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? Rebalancing Decision Engine                       ? ? ?? ? ? - ææ¬æ¶çåæ                                     ? ? ?? ? ? - è·è¸ªè¯¯å·®è¯ä¼°                                     ? ? ?? ? ? - åå¹³è¡¡å³?                                      ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ§è¡?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?äº¤æææ¬ ? ?æä¼æ§?? ?è®¢åçæ ?              ? ?? ? ?ä¼å     ? ?ç®æ³     ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¯ä¼°?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?ææè¯ä¼° ? ?åå²è®°å½ ? ?æ¥åçæ ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
+┌─────────────────────────────────────────────────────────────────??                   组合再平衡策略系统架?                       ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             触发机制?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?定期触发 ? ?阈值触?? ?风险触发 ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             决策?                                       ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Rebalancing Decision Engine                       ? ? ?? ? ? - 成本收益分析                                     ? ? ?? ? ? - 跟踪误差评估                                     ? ? ?? ? ? - 再平衡决?                                      ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             执行?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?交易成本 ? ?最优执?? ?订单生成 ?              ? ?? ? ?优化     ? ?算法     ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             评估?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?效果评估 ? ?历史记录 ? ?报告生成 ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
 
-### 2.2 æ ¸å¿æ°æ®?
+### 2.2 核心数据?
 ```
-ç»åç¶æç?    ?è§¦åæºå¶æ£æµï¼å®æ/?é£é©?    ?åå¹³è¡¡å³ç­ï¼ææ¬æ¶çåæ?    ?äº¤æææ¬ä¼åï¼æä¼æ§è¡ï¼
-    ?è¾åºï¼åå¹³è¡¡è®¢åãææè¯ä¼°ãåå²è®°?```
+组合状态监?    ?触发机制检测（定期/?风险?    ?再平衡决策（成本收益分析?    ?交易成本优化（最优执行）
+    ?输出：再平衡订单、效果评估、历史记?```
 
 ---
 
-## 3. æ ¸å¿æ¨¡åè®¾è®¡
+## 3. 核心模块设计
 
-### 3.1 åå¹³è¡¡ç­ç¥æ ¸å¿ç±»ï¼RebalancingStrategy?
+### 3.1 再平衡策略核心类（RebalancingStrategy?
 ```python
 class RebalancingStrategy:
     """
-    åå¹³è¡¡ç­ç¥æ ¸å¿ç±»
+    再平衡策略核心类
     
-    ç´¢å¼: REBALANCING_001-M01
-    èè´£: æºè½åå¹³è¡¡å³ç­ä¸æ§è¡
-    è¾å¥: ç»åç¶æãç®æ æ?    è¾åº: åå¹³è¡¡è®¢åãæ§è¡æ¥?    """
+    索引: REBALANCING_001-M01
+    职责: 智能再平衡决策与执行
+    è¾å
+¥: ç»åç¶æãç®æ æ?    è¾åº: åå¹³è¡¡è®¢åãæ§è¡æ¥?    """
     
     def __init__(self, config: RebalancingConfig):
         self.config = config
@@ -153,19 +159,19 @@ class RebalancingStrategy:
                        target_weights: pd.Series,
                        portfolio_value: float) -> RebalancingSignal:
         """
-        æ£æ¥æ¯å¦éè¦åå¹³è¡¡
+        检查是否需要再平衡
         
         Args:
-            current_weights: å½åæé
-            target_weights: ç®æ æé
-            portfolio_value: ç»å?            
+            current_weights: 当前权重
+            target_weights: 目标权重
+            portfolio_value: 组合?            
         Returns:
-            RebalancingSignal: åå¹³è¡¡ä¿¡?        """
-        # 1. æ£æµè§¦åæ¡?        trigger_result = self.trigger_detector.detect(
+            RebalancingSignal: 再平衡信?        """
+        # 1. 检测触发条?        trigger_result = self.trigger_detector.detect(
             current_weights, target_weights, portfolio_value
         )
         
-        # 2. å¦æè§¦åï¼è¿è¡å³ç­å?        if trigger_result.triggered:
+        # 2. 如果触发，进行决策分?        if trigger_result.triggered:
             decision = self.decision_engine.decide(
                 current_weights, target_weights, portfolio_value, trigger_result
             )
@@ -191,25 +197,25 @@ class RebalancingStrategy:
                          target_weights: pd.Series,
                          portfolio_value: float) -> RebalancingResult:
         """
-        æ§è¡åå¹³?        
+        执行再平?        
         Args:
-            current_weights: å½åæé
-            target_weights: ç®æ æé
-            portfolio_value: ç»å?            
+            current_weights: 当前权重
+            target_weights: 目标权重
+            portfolio_value: 组合?            
         Returns:
-            RebalancingResult: åå¹³è¡¡ç»?        """
-        # 1. äº¤æææ¬ä¼å
+            RebalancingResult: 再平衡结?        """
+        # 1. 交易成本优化
         optimal_trades = self.cost_optimizer.optimize(
             current_weights, target_weights, portfolio_value
         )
         
-        # 2. çæè®¢å
+        # 2. 生成订单
         orders = self._generate_orders(optimal_trades, portfolio_value)
         
-        # 3. æ§è¡è®¢åï¼æ¨¡æï¼
+        # 3. 执行订单（模拟）
         execution_result = self._execute_orders(orders)
         
-        # 4. è¯ä¼°ææ
+        # 4. 评估效果
         evaluation = self.evaluator.evaluate(
             current_weights, target_weights, execution_result
         )
@@ -224,7 +230,7 @@ class RebalancingStrategy:
     def _generate_orders(self,
                         optimal_trades: pd.Series,
                         portfolio_value: float) -> List[Order]:
-        """çæäº¤æè®¢å"""
+        """生成交易订单"""
         orders = []
         
         for asset, weight_change in optimal_trades.items():
@@ -241,17 +247,17 @@ class RebalancingStrategy:
         return orders
     
     def _execute_orders(self, orders: List[Order]) -> ExecutionResult:
-        """æ§è¡è®¢åï¼æ¨¡æï¼"""
+        """执行订单（模拟）"""
         executed_orders = []
         total_cost = 0.0
         
         for order in orders:
-            # æ¨¡ææ§è¡
+            # 模拟执行
             executed_order = ExecutedOrder(
                 order=order,
-                executed_price=100.0,  # æ¨¡æä»·æ ¼
+                executed_price=100.0,  # 模拟价格
                 executed_quantity=order.quantity,
-                execution_cost=order.quantity * 0.001,  # 0.1%äº¤æææ¬
+                execution_cost=order.quantity * 0.001,  # 0.1%交易成本
                 timestamp=datetime.now()
             )
             executed_orders.append(executed_order)
@@ -264,14 +270,14 @@ class RebalancingStrategy:
         )
 ```
 
-### 3.2 åå¹³è¡¡è§¦åæ£æµå¨ï¼RebalancingTriggerDetector?
+### 3.2 再平衡触发检测器（RebalancingTriggerDetector?
 ```python
 class RebalancingTriggerDetector:
     """
-    åå¹³è¡¡è§¦åæ£æµå¨
+    再平衡触发检测器
     
-    ç´¢å¼: REBALANCING_001-M02
-    èè´£: æ£æµåå¹³è¡¡è§¦åæ¡ä»¶
+    索引: REBALANCING_001-M02
+    职责: 检测再平衡触发条件
     """
     
     def __init__(self, config: TriggerConfig):
@@ -282,32 +288,35 @@ class RebalancingTriggerDetector:
               target_weights: pd.Series,
               portfolio_value: float) -> TriggerResult:
         """
-        æ£æµè§¦åæ¡?        
+        检测触发条?        
         Args:
-            current_weights: å½åæé
-            target_weights: ç®æ æé
-            portfolio_value: ç»å?            
+            current_weights: 当前权重
+            target_weights: 目标权重
+            portfolio_value: 组合?            
         Returns:
-            TriggerResult: è§¦åç»æ
+            TriggerResult: 触发结果
         """
         triggers = []
         
-        # 1. å®æè§¦å
+        # 1. 定期触发
         if self._check_periodic_trigger():
-            triggers.append(('periodic', 'è¾¾å°åå¹³è¡¡å¨?))
+            triggers.append(('periodic', '达到再平衡周?))
         
-        # 2. éå¼è§¦?        threshold_violations = self._check_threshold_trigger(
+        # 2. 阈值触?        threshold_violations = self._check_threshold_trigger(
             current_weights, target_weights
         )
         if threshold_violations:
-            triggers.append(('threshold', f'æéåç¦»è¶é? {threshold_violations}'))
+            triggers.append(('threshold', f'æéåç¦»è¶
+阈? {threshold_violations}'))
         
-        # 3. é£é©è§¦å
+        # 3. 风险触发
         risk_violations = self._check_risk_trigger(current_weights, target_weights)
         if risk_violations:
-            triggers.append(('risk', f'é£é©ææ è¶é: {risk_violations}'))
+            triggers.append(('risk', f'é£é©ææ è¶
+限: {risk_violations}'))
         
-        # è¿åæé«ä¼åçº§è§¦å
+        # è¿åæé«ä¼å
+çº§è§¦å
         if triggers:
             trigger_type, reason = triggers[0]
             return TriggerResult(
@@ -320,9 +329,11 @@ class RebalancingTriggerDetector:
         return TriggerResult(triggered=False, trigger_type='none')
     
     def _check_periodic_trigger(self) -> bool:
-        """æ£æ¥å®æè§¦?""
-        # ç®åå®ç°ï¼æ£æ¥æ¯å¦å°è¾¾åå¹³è¡¡æ¥æ
-        # å®éåºä»éç½®ä¸­è·ååå¹³è¡¡å¨æ
+        """检查定期触?""
+        # 简化实现：检查是否到达再平衡日期
+        # å®é
+åºä»é
+ç½®ä¸­è·ååå¹³è¡¡å¨æ
         last_rebalance_date = self.config.last_rebalance_date
         rebalance_frequency = self.config.rebalance_frequency  # days
         
@@ -333,7 +344,7 @@ class RebalancingTriggerDetector:
     def _check_threshold_trigger(self,
                                  current_weights: pd.Series,
                                  target_weights: pd.Series) -> List[str]:
-        """æ£æ¥éå¼è§¦?""
+        """检查阈值触?""
         violations = []
         weight_deviation = (current_weights - target_weights).abs()
         
@@ -346,21 +357,22 @@ class RebalancingTriggerDetector:
     def _check_risk_trigger(self,
                            current_weights: pd.Series,
                            target_weights: pd.Series) -> List[str]:
-        """æ£æ¥é£é©è§¦?""
+        """检查风险触?""
         violations = []
         
-        # ç®åå®ç°ï¼æ£æ¥é£é©æ?        # å®éåºè®¡ç®é£é©ææ å¹¶ä¸éå¼æ¯?        # ä¾å¦ï¼ç»åæ³¢å¨çãVaRãè·è¸ªè¯¯å·®ç­
+        # ç®åå®ç°ï¼æ£æ¥é£é©æ?        # å®é
+应计算风险指标并与阈值比?        # 例如：组合波动率、VaR、跟踪误差等
         
         return violations
 ```
 
-### 3.3 åå¹³è¡¡å³ç­å¼æï¼RebalancingDecisionEngine?
+### 3.3 再平衡决策引擎（RebalancingDecisionEngine?
 ```python
 class RebalancingDecisionEngine:
     """
-    åå¹³è¡¡å³ç­å¼?    
-    ç´¢å¼: REBALANCING_001-M03
-    èè´£: åæåå¹³è¡¡ææ¬æ¶çï¼ååºå³ç­
+    再平衡决策引?    
+    索引: REBALANCING_001-M03
+    职责: 分析再平衡成本收益，做出决策
     """
     
     def __init__(self, config: DecisionConfig):
@@ -372,29 +384,29 @@ class RebalancingDecisionEngine:
               portfolio_value: float,
               trigger_result: TriggerResult) -> Decision:
         """
-        åå¹³è¡¡å³?        
+        再平衡决?        
         Args:
-            current_weights: å½åæé
-            target_weights: ç®æ æé
-            portfolio_value: ç»å?            trigger_result: è§¦åç»æ
+            current_weights: 当前权重
+            target_weights: 目标权重
+            portfolio_value: 组合?            trigger_result: 触发结果
             
         Returns:
-            Decision: å³ç­ç»æ
+            Decision: 决策结果
         """
-        # 1. ä¼°è®¡äº¤æææ¬
+        # 1. 估计交易成本
         expected_cost = self._estimate_transaction_cost(
             current_weights, target_weights, portfolio_value
         )
         
-        # 2. ä¼°è®¡æ¶ç
+        # 2. 估计收益
         expected_benefit = self._estimate_rebalancing_benefit(
             current_weights, target_weights
         )
         
-        # 3. è®¡ç®åæ¶ç
+        # 3. 计算净收益
         net_benefit = expected_benefit - expected_cost
         
-        # 4. å³ç­
+        # 4. 决策
         should_rebalance = net_benefit > self.config.min_net_benefit
         
         return Decision(
@@ -402,44 +414,47 @@ class RebalancingDecisionEngine:
             expected_cost=expected_cost,
             expected_benefit=expected_benefit,
             net_benefit=net_benefit,
-            reason=f'åæ¶ç={net_benefit:.4f}, ?{self.config.min_net_benefit}'
+            reason=f'净收益={net_benefit:.4f}, ?{self.config.min_net_benefit}'
         )
     
     def _estimate_transaction_cost(self,
                                    current_weights: pd.Series,
                                    target_weights: pd.Series,
                                    portfolio_value: float) -> float:
-        """ä¼°è®¡äº¤æææ¬"""
-        # äº¤æææ¬ = äº¤æ?* äº¤æææ¬?        weight_changes = (target_weights - current_weights).abs()
+        """估计交易成本"""
+        # 交易成本 = 交易?* 交易成本?        weight_changes = (target_weights - current_weights).abs()
         total_trade_value = (weight_changes * portfolio_value).sum()
         
-        # äº¤æææ¬çï¼åæ¬ä½£éãå²å»ææ¬ç­?        cost_rate = self.config.transaction_cost_rate
+        # äº¤æææ¬çï¼å
+括佣金、冲击成本等?        cost_rate = self.config.transaction_cost_rate
         
         return total_trade_value * cost_rate
     
     def _estimate_rebalancing_benefit(self,
                                       current_weights: pd.Series,
                                       target_weights: pd.Series) -> float:
-        """ä¼°è®¡åå¹³è¡¡æ¶?""
-        # ç®åå®ç°ï¼ä¼°è®¡è·è¸ªè¯¯å·®éä½å¸¦æ¥çæ¶?        # å®éåºä½¿ç¨æ´å¤æçæ¨¡?        
-        # è·è¸ªè¯¯å·® = æéåç¦» * é¢ææ¶ç
+        """估计再平衡收?""
+        # ç®åå®ç°ï¼ä¼°è®¡è·è¸ªè¯¯å·®éä½å¸¦æ¥çæ¶?        # å®é
+应使用更复杂的模?        
+        # 跟踪误差 = 权重偏离 * 预期收益
         weight_deviation = (target_weights - current_weights).abs()
         
-        # åè®¾é¢ææ¶çï¼å®éåºä»æ¨¡åè·åï¼
+        # åè®¾é¢ææ¶çï¼å®é
+应从模型获取）
         expected_returns = pd.Series(0.1, index=current_weights.index)
         
-        # è·è¸ªè¯¯å·®éä½å¸¦æ¥çæ¶?        benefit = (weight_deviation * expected_returns).sum()
+        # 跟踪误差降低带来的收?        benefit = (weight_deviation * expected_returns).sum()
         
         return benefit
 ```
 
-### 3.4 äº¤æææ¬ä¼åå¨ï¼TradingCostOptimizer?
+### 3.4 交易成本优化器（TradingCostOptimizer?
 ```python
 class TradingCostOptimizer:
     """
-    äº¤æææ¬ä¼å?    
-    ç´¢å¼: REBALANCING_001-M04
-    èè´£: ä¼åäº¤ææ§è¡ä»¥æå°åææ¬
+    交易成本优化?    
+    索引: REBALANCING_001-M04
+    职责: 优化交易执行以最小化成本
     """
     
     def __init__(self, config: CostOptimizationConfig):
@@ -450,24 +465,24 @@ class TradingCostOptimizer:
                 target_weights: pd.Series,
                 portfolio_value: float) -> pd.Series:
         """
-        ä¼åäº¤ææ§è¡
+        优化交易执行
         
         Args:
-            current_weights: å½åæé
-            target_weights: ç®æ æé
-            portfolio_value: ç»å?            
+            current_weights: 当前权重
+            target_weights: 目标权重
+            portfolio_value: 组合?            
         Returns:
-            pd.Series: æä¼äº¤æé
+            pd.Series: 最优交易量
         """
-        # 1. è®¡ç®çæ³äº¤æ?        ideal_trades = target_weights - current_weights
+        # 1. 计算理想交易?        ideal_trades = target_weights - current_weights
         
-        # 2. èèäº¤æææ¬ä¼å
-        # ç®åå®ç°ï¼ä½¿ç¨éå¼è¿æ»¤å°äº¤æ
+        # 2. 考虑交易成本优化
+        # 简化实现：使用阈值过滤小交易
         optimal_trades = ideal_trades.copy()
         optimal_trades[ideal_trades.abs() < self.config.min_trade_threshold] = 0
         
-        # 3. èèå¸åºå²å»
-        # ç®åå®ç°ï¼å¤§äº¤æåæ¹æ§?        if self.config.enable_batch_trading:
+        # 3. 考虑市场冲击
+        # 简化实现：大交易分批执?        if self.config.enable_batch_trading:
             optimal_trades = self._apply_batch_trading(optimal_trades, portfolio_value)
         
         return optimal_trades
@@ -475,26 +490,26 @@ class TradingCostOptimizer:
     def _apply_batch_trading(self,
                             trades: pd.Series,
                             portfolio_value: float) -> pd.Series:
-        """åºç¨åæ¹äº¤æ"""
-        # ç®åå®ç°ï¼å¤§äº¤æå?        batch_trades = trades.copy()
+        """应用分批交易"""
+        # 简化实现：大交易分?        batch_trades = trades.copy()
         
         for asset, trade in trades.items():
             trade_value = abs(trade * portfolio_value)
             if trade_value > self.config.large_trade_threshold:
-                # åæ¹æ§è¡
+                # 分批执行
                 batch_trades[asset] = trade * self.config.batch_ratio
         
         return batch_trades
 ```
 
-### 3.5 åå¹³è¡¡ææè¯ä¼°å¨ï¼RebalancingEvaluator?
+### 3.5 再平衡效果评估器（RebalancingEvaluator?
 ```python
 class RebalancingEvaluator:
     """
-    åå¹³è¡¡ææè¯ä¼°å¨
+    再平衡效果评估器
     
-    ç´¢å¼: REBALANCING_001-M05
-    èè´£: è¯ä¼°åå¹³è¡¡æ?    """
+    索引: REBALANCING_001-M05
+    职责: 评估再平衡效?    """
     
     def __init__(self, config: EvaluationConfig):
         self.config = config
@@ -504,26 +519,26 @@ class RebalancingEvaluator:
                 target_weights: pd.Series,
                 execution_result: ExecutionResult) -> Evaluation:
         """
-        è¯ä¼°åå¹³è¡¡æ?        
+        评估再平衡效?        
         Args:
-            current_weights: å½åæé
-            target_weights: ç®æ æé
-            execution_result: æ§è¡ç»æ
+            current_weights: 当前权重
+            target_weights: 目标权重
+            execution_result: 执行结果
             
         Returns:
-            Evaluation: è¯ä¼°ç»æ
+            Evaluation: 评估结果
         """
-        # 1. è®¡ç®è·è¸ªè¯¯å·®æ¹å
+        # 1. 计算跟踪误差改善
         tracking_error_improvement = self._calculate_tracking_error_improvement(
             current_weights, target_weights
         )
         
-        # 2. è®¡ç®é£é©æ¹å
+        # 2. 计算风险改善
         risk_improvement = self._calculate_risk_improvement(
             current_weights, target_weights
         )
         
-        # 3. è®¡ç®ææ¬æç
+        # 3. 计算成本效率
         cost_efficiency = self._calculate_cost_efficiency(
             tracking_error_improvement, execution_result.total_cost
         )
@@ -539,124 +554,132 @@ class RebalancingEvaluator:
     def _calculate_tracking_error_improvement(self,
                                              current_weights: pd.Series,
                                              target_weights: pd.Series) -> float:
-        """è®¡ç®è·è¸ªè¯¯å·®æ¹å"""
-        # ç®åå®ç°ï¼æéåç¦»éä½
+        """计算跟踪误差改善"""
+        # 简化实现：权重偏离降低
         before_deviation = (current_weights - target_weights).abs().sum()
-        after_deviation = 0.0  # åå¹³è¡¡ååç¦»?
+        after_deviation = 0.0  # 再平衡后偏离?
         
         return before_deviation - after_deviation
     
     def _calculate_risk_improvement(self,
                                    current_weights: pd.Series,
                                    target_weights: pd.Series) -> float:
-        """è®¡ç®é£é©æ¹å"""
-        # ç®åå®ç°ï¼é£é©ææ æ¹å
-        # å®éåºè®¡ç®å·ä½é£é©æ?        return 0.0
+        """计算风险改善"""
+        # 简化实现：风险指标改善
+        # å®é
+åºè®¡ç®å
+·ä½é£é©æ?        return 0.0
     
     def _calculate_cost_efficiency(self,
                                   improvement: float,
                                   cost: float) -> float:
-        """è®¡ç®ææ¬æç"""
+        """计算成本效率"""
         if cost == 0:
             return float('inf')
         
         return improvement / cost
 ```
 
-### 3.6 éç½®ç±»å®?
+### 3.6 é
+ç½®ç±»å®?
 ```python
 @dataclass
 class RebalancingConfig:
-    """åå¹³è¡¡é?""
+    """åå¹³è¡¡é
+?""
     trigger_config: TriggerConfig
     decision_config: DecisionConfig
     cost_config: CostOptimizationConfig
     eval_config: EvaluationConfig
-    min_trade_size: float = 0.001  # æå°äº¤æè§?    
+    min_trade_size: float = 0.001  # 最小交易规?    
 @dataclass
 class TriggerConfig:
-    """è§¦åéç½®"""
-    rebalance_frequency: int = 30  # åå¹³è¡¡å¨æï¼å¤©ï¼
-    weight_threshold: float = 0.05  # æéåç¦»?    last_rebalance_date: datetime = None
+    """è§¦åé
+ç½®"""
+    rebalance_frequency: int = 30  # 再平衡周期（天）
+    weight_threshold: float = 0.05  # 权重偏离?    last_rebalance_date: datetime = None
     
 @dataclass
 class DecisionConfig:
-    """å³ç­éç½®"""
-    min_net_benefit: float = 0.001  # æå°åæ¶ç?    transaction_cost_rate: float = 0.001  # äº¤æææ¬?    
+    """å³ç­é
+ç½®"""
+    min_net_benefit: float = 0.001  # 最小净收益?    transaction_cost_rate: float = 0.001  # 交易成本?    
 @dataclass
 class CostOptimizationConfig:
-    """ææ¬ä¼åéç½®"""
-    min_trade_threshold: float = 0.01  # æå°äº¤æé?    enable_batch_trading: bool = True  # å¯ç¨åæ¹äº¤æ
-    large_trade_threshold: float = 1000000  # å¤§äº¤æé?    batch_ratio: float = 0.5  # åæ¹æ¯ä¾
+    """ææ¬ä¼åé
+ç½®"""
+    min_trade_threshold: float = 0.01  # 最小交易阈?    enable_batch_trading: bool = True  # 启用分批交易
+    large_trade_threshold: float = 1000000  # 大交易阈?    batch_ratio: float = 0.5  # 分批比例
 ```
 
 ---
 
-## 4. æ°æ®æ¨¡åå®ä¹
+## 4. 数据模型定义
 
-### 4.1 è¾å¥æ°æ®æ¨¡å
+### 4.1 è¾å
+¥æ°æ®æ¨¡å
 
 ```python
 @dataclass
 class PortfolioState:
-    """ç»å?""
-    weights: pd.Series  # å½åæé
-    value: float  # ç»å?    timestamp: datetime
+    """组合?""
+    weights: pd.Series  # 当前权重
+    value: float  # 组合?    timestamp: datetime
 ```
 
-### 4.2 è¾åºæ°æ®æ¨¡å
+### 4.2 输出数据模型
 
 ```python
 @dataclass
 class RebalancingSignal:
-    """åå¹³è¡¡ä¿¡?""
-    should_rebalance: bool  # æ¯å¦éè¦åå¹³è¡¡
-    trigger_type: str  # è§¦åç±»å
-    trigger_reason: str  # è§¦ååå 
-    expected_cost: float = 0.0  # é¢æææ¬
-    expected_benefit: float = 0.0  # é¢ææ¶ç
-    net_benefit: float = 0.0  # åæ¶ç
+    """再平衡信?""
+    should_rebalance: bool  # 是否需要再平衡
+    trigger_type: str  # 触发类型
+    trigger_reason: str  # 触发原因
+    expected_cost: float = 0.0  # 预期成本
+    expected_benefit: float = 0.0  # 预期收益
+    net_benefit: float = 0.0  # 净收益
     timestamp: datetime = None
     
 @dataclass
 class RebalancingResult:
-    """åå¹³è¡¡ç»?""
-    orders: List[Order]  # äº¤æè®¢å
-    execution_result: ExecutionResult  # æ§è¡ç»æ
-    evaluation: Evaluation  # è¯ä¼°ç»æ
+    """再平衡结?""
+    orders: List[Order]  # 交易订单
+    execution_result: ExecutionResult  # 执行结果
+    evaluation: Evaluation  # 评估结果
     timestamp: datetime
     
 @dataclass
 class Order:
-    """äº¤æè®¢å"""
-    asset: str  # èµäº§
-    direction: str  # æ¹å?buy', 'sell'?    quantity: float  # æ°é
-    order_type: str  # è®¢åç±»å
+    """交易订单"""
+    asset: str  # 资产
+    direction: str  # 方向?buy', 'sell'?    quantity: float  # 数量
+    order_type: str  # 订单类型
     timestamp: datetime
     
 @dataclass
 class ExecutionResult:
-    """æ§è¡ç»æ"""
-    executed_orders: List[ExecutedOrder]  # å·²æ§è¡è®¢?    total_cost: float  # æ»æ?    timestamp: datetime
+    """执行结果"""
+    executed_orders: List[ExecutedOrder]  # 已执行订?    total_cost: float  # 总成?    timestamp: datetime
     
 @dataclass
 class Evaluation:
-    """è¯ä¼°ç»æ"""
-    tracking_error_improvement: float  # è·è¸ªè¯¯å·®æ¹å
-    risk_improvement: float  # é£é©æ¹å
-    cost_efficiency: float  # ææ¬æç
-    total_cost: float  # æ»æ?    timestamp: datetime
+    """评估结果"""
+    tracking_error_improvement: float  # 跟踪误差改善
+    risk_improvement: float  # 风险改善
+    cost_efficiency: float  # 成本效率
+    total_cost: float  # 总成?    timestamp: datetime
 ```
 
 ---
 
-## 5. éææ¹æ¡
+## 5. 集成方案
 
-### 5.1 ä¸ç»åä¼åå¨éæ
+### 5.1 与组合优化器集成
 
 ```python
 class PortfolioOptimizer:
-    """ç»åä¼åå¨ï¼éæåå¹³è¡¡ç­ç¥ï¼"""
+    """组合优化器（集成再平衡策略）"""
     
     def __init__(self, rebalancing_strategy: RebalancingStrategy):
         self.rebalancing_strategy = rebalancing_strategy
@@ -665,16 +688,16 @@ class PortfolioOptimizer:
                               current_weights: pd.Series,
                               expected_returns: pd.Series,
                               covariance_matrix: pd.DataFrame) -> RebalancingResult:
-        """ä¼åå¹¶åå¹³è¡¡"""
-        # 1. ä¼åç®æ æé
+        """优化并再平衡"""
+        # 1. 优化目标权重
         target_weights = self.optimize(expected_returns, covariance_matrix)
         
-        # 2. æ£æ¥æ¯å¦éè¦åå¹³è¡¡
+        # 2. 检查是否需要再平衡
         signal = self.rebalancing_strategy.check_rebalance(
             current_weights, target_weights, 1000000
         )
         
-        # 3. å¦æéè¦ï¼æ§è¡åå¹³?        if signal.should_rebalance:
+        # 3. 如果需要，执行再平?        if signal.should_rebalance:
             return self.rebalancing_strategy.execute_rebalance(
                 current_weights, target_weights, 1000000
             )
@@ -682,10 +705,10 @@ class PortfolioOptimizer:
         return None
 ```
 
-### 5.2 ä¸äº¤æææ¬ä¼åæ¨¡åé?
+### 5.2 与交易成本优化模块集?
 ```python
 class TradingCostOptimizationModule:
-    """äº¤æææ¬ä¼åæ¨¡åï¼éæåå¹³è¡¡ç­ç¥?""
+    """交易成本优化模块（集成再平衡策略?""
     
     def __init__(self, rebalancing_strategy: RebalancingStrategy):
         self.rebalancing_strategy = rebalancing_strategy
@@ -693,7 +716,7 @@ class TradingCostOptimizationModule:
     def optimize_execution(self,
                           current_weights: pd.Series,
                           target_weights: pd.Series) -> pd.Series:
-        """ä¼åæ§è¡"""
+        """优化执行"""
         return self.rebalancing_strategy.cost_optimizer.optimize(
             current_weights, target_weights, 1000000
         )
@@ -701,56 +724,62 @@ class TradingCostOptimizationModule:
 
 ---
 
-## 6. å®æ½è·¯çº¿?
-### 6.1 å¼åé¶æ®µï¼1å¨ï¼
+## 6. 实施路线?
+### 6.1 开发阶段（1周）
 
-**Day 1-2: æ ¸å¿æ¨¡åå¼?*
-- åå¹³è¡¡è§¦åæ£æµå¨
-- åå¹³è¡¡å³ç­å¼?
-**Day 3-4: æ§è¡ä¸è¯?*
-- äº¤æææ¬ä¼å?- åå¹³è¡¡ææè¯ä¼°å¨
+**Day 1-2: 核心模块开?*
+- 再平衡触发检测器
+- 再平衡决策引?
+**Day 3-4: 执行与评?*
+- 交易成本优化?- 再平衡效果评估器
 
-**Day 5: éæä¸æµ?*
-- ç³»ç»éæ
-- æµè¯ä¸æ?
-### 6.2 éç¨?
-| éç¨?| æ¶é´ | äº¤ä»?| éªæ¶æ å |
+**Day 5: 集成与测?*
+- 系统集成
+- 测试与文?
+### 6.2 里程?
+| 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
-| **M1: è§¦åå¨å®?* | Day 1 | åå¹³è¡¡è§¦åæ£æµå¨ | è§¦åæ£æµæ­£?|
-| **M2: å³ç­å¼æå®æ** | Day 2 | åå¹³è¡¡å³ç­å¼?| å³ç­åç |
-| **M3: ä¼åå¨å®?* | Day 3 | äº¤æææ¬ä¼å?| ä¼åææ |
-| **M4: è¯ä¼°å¨å®?* | Day 4 | åå¹³è¡¡ææè¯ä¼°å¨ | è¯ä¼°åç¡® |
-| **M5: æµè¯éè¿** | Day 5 | æµè¯æ¥å | æææµè¯éè¿ |
+| **M1: 触发器完?* | Day 1 | 再平衡触发检测器 | 触发检测正?|
+| **M2: 决策引擎完成** | Day 2 | 再平衡决策引?| 决策合理 |
+| **M3: 优化器完?* | Day 3 | 交易成本优化?| 优化有效 |
+| **M4: 评估器完?* | Day 4 | 再平衡效果评估器 | 评估准确 |
+| **M5: 测试通过** | Day 5 | 测试报告 | 所有测试通过 |
 
 ---
 
-## 7. é¢ææ¶çè¯ä¼°
+## 7. 预期收益评估
 
-### 7.1 å®éæ¶ç
+### 7.1 定量收益
 
-| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹åº¦ |
+| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹
+åº¦ |
 |------|---------|---------|---------|
-| **åå¹³è¡¡ç­ç¥å®?* | 60% | 100% | +40% |
-| **äº¤æææ¬ä¼å** | åºå | -15% | éä½15% |
-| **è·è¸ªè¯¯å·®æ§å¶** | åºå | +30% | æå30% |
-| **ç³»ç»åå³?* | ?| ?| æ°å¢è½å |
+| **再平衡策略完?* | 60% | 100% | +40% |
+| **交易成本优化** | 基准 | -15% | 降低15% |
+| **跟踪误差控制** | 基准 | +30% | 提升30% |
+| **系统化决?* | ?| ?| 新增能力 |
 
-### 7.2 å®æ§æ¶?
-- ?ç³»ç»ååå¹³è¡¡å³ç­æ¡æ¶
-- ?å¤ç§è§¦åæºå¶ï¼å®??é£é©?- ?äº¤æææ¬ä¼å
-- ?åå¹³è¡¡ææè¯?- ?åå²è®°å½ä¸å?
+### 7.2 定性收?
+- ?系统化再平衡决策框架
+- ?多种触发机制（定??风险?- ?交易成本优化
+- ?再平衡效果评?- ?历史记录与回?
 ---
 
-## 8. ææ¯æ éæ©
+## 8. 技术栈选择
 
-### 8.1 æ ¸å¿ä¾èµ?
-| åºå | çæ¬ | ?| å¿è¦?|
+### 8.1 核心依赖?
+| åºå | çæ¬ | ?| å¿
+要?|
 |------|------|------|--------|
-| **pandas** | ?.5 | æ°æ®å¤ç | å¿é |
-| **numpy** | ?.21 | æ°å¼è®¡?| å¿é |
-| **datetime** | - | æ¶é´å¤ç | å¿é |
+| **pandas** | ?.5 | æ°æ®å¤ç | å¿
+需 |
+| **numpy** | ?.21 | æ°å¼è®¡?| å¿
+需 |
+| **datetime** | - | æ¶é´å¤ç | å¿
+需 |
 
-### 8.2 å®è£å½ä»¤
+### 8.2 å®è£
+命令
 
 ```bash
 pip install pandas>=1.5
@@ -759,38 +788,42 @@ pip install numpy>=1.21
 
 ---
 
-## 9. é£é©è¯ä¼°
+## 9. 风险评估
 
-### 9.1 ææ¯é£?
-| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
+### 9.1 技术风?
+| 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **è§¦åæºå¶è¯¯å¤** | ?| å¤éè§¦åæ¡ä»¶éªè¯ |
-| **ææ¬ä¼°è®¡åå·®** | ?| ä½¿ç¨åå²æ°æ®æ ¡å |
-| **æ§è¡å»¶è¿** | ?| å®æ¶çæ§ |
+| **触发机制误判** | ?| 多重触发条件验证 |
+| **成本估计偏差** | ?| 使用历史数据校准 |
+| **执行延迟** | ?| 实时监控 |
 
-### 9.2 å®æ½é£é©
+### 9.2 实施风险
 
-| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
+| 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **å¼åæ¶é´è¶?* | ?| åé¶æ®µå®?|
-| **éæå°é¾** | ?| ååæµè¯ |
-| **æ§è½ä¸è¾¾?* | ?| æ§è½ä¼å |
+| **å¼åæ¶é´è¶
+?* | ?| 分阶段实?|
+| **éæå°é¾** | ?| å
+
+分测试 |
+| **性能不达?* | ?| 性能优化 |
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [å­£åº¦è°ä»èå¾](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | å¼ºä¾èµ?| æä¾è°ä»å³ç­ |
 | [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
 | [äº¤æææ¬åæå¼æèå¾](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | ä¸­ä¾èµ?| æä¾ææ¬åæ |
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [å¼ºåå­¦ä¹ è°ä»ç³»ç»èå¾](RL_REBALANCING_SYSTEM_BLUEPRINT.md) | RL_REBALANCING_SYSTEM_001 | å¼ºä¾èµ?| AIå¢å¼ºè°ä» |
 | [äº¤æææ¬æç¥åå¹³è¡¡èå¾](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md) | TRANSACTION_COST_AWARE_REBALANCING_001 | å¼ºä¾èµ?| ææ¬æç¥åå¹³è¡?|
@@ -801,20 +834,21 @@ pip install numpy>=1.21
 | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
 | **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
-| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
-| **SciPy** | 1.10+ | ç§å­¦è®¡ç® | [å®æ¹ææ¡£](https://scipy.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
-    A[å­£åº¦è°ä»] --> B[ç»ååå¹³è¡¡]
-    C[æ°æ®è´¨éçæ§] --> B
-    D[äº¤æææ¬åæå¼æ] --> B
+    A[季度调仓] --> B[组合再平衡]
+    C[数据质量监控] --> B
+    D[交易成本分析引擎] --> B
     
-    B --> E[å¼ºåå­¦ä¹ è°ä»ç³»ç»]
-    B --> F[äº¤æææ¬æç¥åå¹³è¡¡]
-    B --> G[ç®æ³äº¤æä¼åå¨]
+    B --> E[强化学习调仓系统]
+    B --> F[交易成本感知再平衡]
+    B --> G[算法交易优化器]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -823,58 +857,63 @@ graph LR
 
 ---
 
-## 10. ææ¡£æ²»ç
+## 10. 文档治理
 
-### 10.1 System_Manifest.mdç´¢å¼
+### 10.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.8 ç»ååå¹³è¡¡ç­ç?
-- **æ¨¡åID**: REBALANCING_001
-- **èå¾ææ¡£**: PORTFOLIO_REBALANCING_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **模块ID**: REBALANCING_001
+- **蓝图文档**: PORTFOLIO_REBALANCING_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
 - **èè´£**: åå¹³è¡¡å³ç­ãäº¤æææ¬ä¼åãææè¯ä¼?
 - **ç¶æ?*: è®¾è®¡é¶æ®µ
 ```
 
-### 10.2 æ¨¡åèè´£è¾¹ç
+### 10.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **åå¹³è¡¡ç­?* | åå¹³è¡¡å³ç­ä¸æ§è¡ | **æ§è¡å±é¢** |
-| **ç»åä¼å?* | ç»åæéä¼å | æä¾ç®æ æé |
-| **äº¤æææ¬ä¼å** | äº¤æææ¬å»ºæ¨¡ | æä¾ææ¬æ¨¡å |
+| **再平衡策?* | 再平衡决策与执行 | **执行层面** |
+| **组合优化?* | 组合权重优化 | 提供目标权重 |
+| **交易成本优化** | 交易成本建模 | 提供成本模型 |
 
 ---
 
-## éå½
+## 附录
 
-### A. åèæ?
-1. **åå¹³è¡¡ç?*:
+### A. 参考文?
+1. **再平衡理?*:
    - Perold, A.F. and Sharpe, W.F. (1988). "Dynamic Strategies for Asset Allocation"
    - Tsatsaronis, K. (2000). "The Cost of Rebalancing"
 
-2. **äº¤æææ¬ä¼å**:
+2. **交易成本优化**:
    - Almgren, R. and Chriss, N. (2001). "Optimal Execution of Portfolio Transactions"
 
-### B. æ¯è¯­?
-| æ¯è¯­ | å®ä¹ | ä¸ä¸?|
+### B. 术语?
+| 术语 | 定义 | 上下?|
 |------|------|--------|
-| **åå¹³?* | è°æ´ç»åæéä»¥ç»´æç®æ é?| ç»åç®¡ç |
-| **è·è¸ªè¯¯å·®** | ç»åä¸åºåçåç¦»ç¨åº¦ | é£é©åº¦é |
-| **äº¤æææ¬** | ä¹°åèµäº§äº§ççæ?| ææ¬åæ |
-| **è§¦åæºå¶** | å¯å¨åå¹³è¡¡çæ¡ä»¶ | å³ç­é»è¾ |
+| **åå¹³?* | è°æ´ç»åæéä»¥ç»´æç®æ é
+?| ç»åç®¡ç |
+| **跟踪误差** | 组合与基准的偏离程度 | 风险度量 |
+| **交易成本** | 买卖资产产生的成?| 成本分析 |
+| **触发机制** | 启动再平衡的条件 | 决策逻辑 |
 
 ---
 
-**èå¾çæ¬**: v1.0 | **åå»ºæ¥æ**: 2026-04-03 | **?*: Final | **ä¸ä¸?*: ææ¯è§æ ¼ä¹¦ç¼å
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
-| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.1 | 2026-04-06 | è¡¥å
+
+YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 

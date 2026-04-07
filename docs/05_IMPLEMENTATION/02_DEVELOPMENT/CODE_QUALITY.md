@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_DEV_CODE_QUALITY_001
 version: 4.0.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_RELATIONSHIP_DIAGRAM_001
 version: 1.0.0
 status: Active

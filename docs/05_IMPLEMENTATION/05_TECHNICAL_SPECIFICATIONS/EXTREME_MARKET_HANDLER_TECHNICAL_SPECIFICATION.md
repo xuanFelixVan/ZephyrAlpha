@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXTREME_MARKET_HANDLER_001
 version: 1.0.0
 status: Active

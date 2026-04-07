@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_PRIVACY_COMPLIANCE_BLUEPRINT_001
 version: 1.0.1
 status: Active

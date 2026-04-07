@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT_001
 version: 1.0.0
 status: Active

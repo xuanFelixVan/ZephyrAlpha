@@ -1,4 +1,4 @@
----
+﻿---
 module_id: A_001
 version: 1.0.0
 status: Active
@@ -16,11 +16,12 @@ compliance_level: 专业标准
 
 
 ﻿---
-standard_type: èå¾æ å
-applicable_scope: å¨ç³»ç»?
-compliance_level: åå§æ å
+standard_type: 蓝图标准
+applicable_scope: å
+¨ç³»ç»?
+compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 owner: ææ¡£ç»´æ¤è?
 version: 1.0.0
 module_id: DOC_TEMP_A_STOCK_BLUEPRI
@@ -34,87 +35,109 @@ last_updated: 2026-04-02
 > - ❌ 本文档不负责：其他模块内容
 
 
-## 1. æ°æ®ç°ç¶åæ
+## 1. 数据现状分析
 
-### 1.1 ç®å½ç»ææ¦è§
+### 1.1 目录结构概览
 ```
-D:\ZephyrAlpha\Aè¡æ°æ®\éåäº¤ææ°æ®\
-âââ Aè¡_åæ¶æ°æ®/           # åéçº§è¡ææ°æ?(5åéã?5åéã?0åéã?0åé)
+D:\ZephyrAlpha\A股数据\量化交易数据\
+âââ Aè¡_åæ¶æ°æ®/           # åéçº§è¡æ
+æ°æ?(5åéã?5åéã?0åéã?0åé)
 âââ Aè¡æ°æ?               # åå§æ°æ®ï¼å¯è½ä¸ºå¤ä»½ææªåç±»æ°æ®ï¼?
-âââ Aè¡æ°æ®_zip/           # åç¼©çè¡ææ°æ®æä»?
+âââ Aè¡æ°æ®_zip/           # åç¼©çè¡æ
+æ°æ®æä»?
 â?  âââ daily.zip         # æ¥çº¿æ°æ®ï¼æªå¤æï¼?
 â?  âââ daily_qfq.zip     # æ¥çº¿æ°æ®ï¼åå¤æï¼?
 â?  âââ daily_hfq.zip     # æ¥çº¿æ°æ®ï¼åå¤æï¼?
 â?  âââ weekly.zip        # å¨çº¿æ°æ®
 â?  âââ monthly.zip       # æçº¿æ°æ®
-â?  âââ ...å¶ä»é¢çæ°æ®
-âââ CSVè¡ææ°æ®/           # å·²è§£åçCSVæ ¼å¼è¡ææ°æ®
+â?  âââ ...å
+¶ä»é¢çæ°æ®
+âââ CSVè¡æ
+æ°æ®/           # å·²è§£åçCSVæ ¼å¼è¡æ
+数据
 â?  âââ 000002.csv        # ååªè¡ç¥¨æ¥çº¿æ°æ®
 â?  âââ 000858_5min.csv   # ååªè¡ç¥¨5åéæ°æ®
-â?  âââ ...å¶ä»è¡ç¥¨æä»¶
-âââ ä¸å¸å¬å¸è´¢å¡ä¿¡æ¯/       # è´¢å¡æ°æ®
+â?  âââ ...å
+¶ä»è¡ç¥¨æä»¶
+âââ ä¸å¸å
+¬å¸è´¢å¡ä¿¡æ¯/       # è´¢å¡æ°æ®
 â?  âââ åå²è¯¦ç»æ°æ®/
-â?  â?  âââ å¨é¨ä¸å¸å¬å¸è´¢å¡ä¿¡æ¯_20250930.xlsx
-â?  â?  âââ å¨é¨ä¸å¸å¬å¸è´¢å¡ä¿¡æ¯_20250630.xlsx
+â?  â?  âââ å
+¨é¨ä¸å¸å
+¬å¸è´¢å¡ä¿¡æ¯_20250930.xlsx
+â?  â?  âââ å
+¨é¨ä¸å¸å
+¬å¸è´¢å¡ä¿¡æ¯_20250630.xlsx
 â?  â?  âââ ...åå²å­£åº¦æ°æ®
 â?  âââ ææ°æ°æ?
-âââ å¤æå å­/              # å¤æè®¡ç®ç¸å³èæ¬åæ°æ?
+âââ å¤æå å­/              # å¤æè®¡ç®ç¸å
+³èæ¬åæ°æ?
 ```
 
 ### 1.2 æ°æ®æ ¼å¼ä¸ç¹å¾?
 
-#### 1.2.1 è¡ææ°æ®æ ¼å¼
-**æ¥çº¿æ°æ® (000002.csv)**:
+#### 1.2.1 è¡æ
+数据格式
+**日线数据 (000002.csv)**:
 ```csv
 date,code,open,high,low,close,pre_close,change,pct_chg,vol,amount,adj_factor,turnover_rate,pe_ttm,pb,ps,pcf,is_st
 2025-10-15,sz000002,12.34,12.56,12.12,12.45,12.30,0.15,1.22,1234567,15432100,1.0,0.85,8.76,1.23,2.34,5.67,0
 ```
 
-**5åéæ°æ® (000858_5min.csv)**:
+**5分钟数据 (000858_5min.csv)**:
 ```csv
 date,open,high,low,close,volume,code
 2025-10-14 10:15:00,120.49,120.65,120.41,120.65,455272,sz000858
 ```
 
-#### 1.2.2 è´¢å¡æ°æ®æ ¼å¼
-**Excelæ ¼å¼è´¢å¡æ°æ®**:
-- æä»¶: `å¨é¨ä¸å¸å¬å¸è´¢å¡ä¿¡æ¯_20250930.xlsx`
+#### 1.2.2 财务数据格式
+**Excel格式财务数据**:
+- æä»¶: `å
+¨é¨ä¸å¸å
+¬å¸è´¢å¡ä¿¡æ¯_20250930.xlsx`
 - æ°æ®é? 250+ è´¢å¡ææ å­æ®µ
-- åå«: èµäº§è´åºè¡¨ãå©æ¶¦è¡¨ãç°éæµéè¡¨ãè´¢å¡æ¯çãä¼°å¼ææ ç­
+- å
+含: 资产负债表、利润表、现金流量表、财务比率、估值指标等
 - æ¶é´è·¨åº¦: åå²å­£åº¦æ°æ®ï¼æå­£åº¦æä»¶å­å¨ï¼?
 
-#### 1.2.3 åç¼©æ°æ®æ ¼å¼
-**ZIPæä»¶ç»æ**:
+#### 1.2.3 压缩数据格式
+**ZIP文件结构**:
 - `daily.zip`: æ¥çº¿æªå¤ææ°æ?
 - `daily_qfq.zip`: æ¥çº¿åå¤ææ°æ? 
 - `daily_hfq.zip`: æ¥çº¿åå¤ææ°æ?
-- `weekly.zip`: å¨çº¿æ°æ®
-- `monthly.zip`: æçº¿æ°æ®
+- `weekly.zip`: 周线数据
+- `monthly.zip`: 月线数据
 
-## 2. æ»ä½å¤çæ¶æè®¾è®¡
+## 2. 总体处理架构设计
 
 ### 2.1 åå±å¤çæµæ°´çº?
 ```
-åå§æ°æ®å±?â?æåè§£åå±?â?æ¸æ´æ ååå± â?åç±»å­å¨å±?â?æ°æ®åºå±
+åå§æ°æ®å±?â?æåè§£åå±?â?æ¸
+æ´æ ååå± â?åç±»å­å¨å±?â?æ°æ®åºå±
     â?            â?             â?             â?           â?
-   CSV/ZIP    æ°æ®è§£å      æ°æ®æ¸æ´        æ°æ®åç±»      SQLite/Parquet
-   Excel      æ ¼å¼è½¬æ¢      å¼å¸¸å¤ç        ç»´åº¦åå      æ°æ®ä»åº
+   CSV/ZIP    æ°æ®è§£å      æ°æ®æ¸
+洗        数据分类      SQLite/Parquet
+   Excel      格式转换      异常处理        维度划分      数据仓库
 ```
 
-### 2.2 ææ¯æ éæ©
-| ç»ä»¶ | ææ¯éæ© | çç± |
+### 2.2 技术栈选择
+| 组件 | 技术选择 | 理由 |
 |------|----------|------|
-| **æ°æ®æå** | Python `zipfile`, `pandas` | åçæ¯æï¼åå­æçé« |
-| **æ°æ®æ¸æ´** | `pandas`, `numpy` | å¼ºå¤§çæ°æ®æä½è½å?|
-| **æ°æ®å­å¨** | **SQLite** (åæ°æ? + **Parquet** (è¡ææ°æ®) | æ¥è¯¢æç+å­å¨åç¼© |
+| **æ°æ®æå** | Python `zipfile`, `pandas` | åçæ¯æï¼å
+存效率高 |
+| **æ°æ®æ¸
+æ´** | `pandas`, `numpy` | å¼ºå¤§çæ°æ®æä½è½å?|
+| **æ°æ®å­å¨** | **SQLite** (å
+æ°æ? + **Parquet** (è¡æ
+数据) | 查询效率+存储压缩 |
 | **ä»»å¡è°åº¦** | Python `multiprocessing` | ç®åæç¨ï¼éåä¸ªäººå¼å?|
 | **çæ§æ¥å¿** | Python `logging` + è¿åº¦æ?| å®æ¶åé¦ï¼æäºè°è¯?|
 
 ## 3. æ°æ®æåä¸è§£åæ¹æ¡?
 
-### 3.1 æåç­ç¥
+### 3.1 提取策略
 
-#### 3.1.1 ZIPæä»¶æ¹éè§£å
+#### 3.1.1 ZIP文件批量解压
 ```python
 import zipfile
 import os
@@ -126,7 +149,7 @@ class ZipExtractor:
         self.output_dir = Path(output_dir)
         
     def extract_all(self, force=False):
-        """æ¹éè§£åææZIPæä»¶"""
+        """批量解压所有ZIP文件"""
         zip_files = list(self.zip_dir.glob("*.zip"))
         
         for zip_file in zip_files:
@@ -135,12 +158,12 @@ class ZipExtractor:
                 print(f"è·³è¿å·²è§£å? {zip_file.name}")
                 continue
                 
-            print(f"è§£å: {zip_file.name}")
+            print(f"解压: {zip_file.name}")
             with zipfile.ZipFile(zip_file, 'r') as zf:
                 zf.extractall(output_subdir)
                 
     def get_extracted_structure(self):
-        """è·åè§£ååçæä»¶ç»æ"""
+        """获取解压后的文件结构"""
         structure = {}
         for item in self.output_dir.rglob("*"):
             if item.is_file():
@@ -149,7 +172,7 @@ class ZipExtractor:
         return structure
 ```
 
-#### 3.1.2 CSVæä»¶æ¹éè¯»å
+#### 3.1.2 CSV文件批量读取
 ```python
 import pandas as pd
 from concurrent.futures import ProcessPoolExecutor
@@ -159,18 +182,18 @@ class CSVReader:
         self.csv_dir = Path(csv_dir)
         
     def read_single_file(self, csv_path):
-        """è¯»ååä¸ªCSVæä»¶"""
+        """读取单个CSV文件"""
         try:
             df = pd.read_csv(csv_path)
             # æ·»å æä»¶åä½ä¸ºæ°æ®æ¥æºæ è®?
             df['source_file'] = csv_path.name
             return df
         except Exception as e:
-            print(f"è¯»åå¤±è´¥ {csv_path}: {e}")
+            print(f"读取失败 {csv_path}: {e}")
             return None
             
     def read_all_files(self, pattern="*.csv", max_workers=4):
-        """å¹¶è¡è¯»åææCSVæä»¶"""
+        """并行读取所有CSV文件"""
         csv_files = list(self.csv_dir.rglob(pattern))
         data_frames = []
         
@@ -184,7 +207,7 @@ class CSVReader:
         return pd.concat(data_frames, ignore_index=True) if data_frames else pd.DataFrame()
 ```
 
-#### 3.1.3 Excelè´¢å¡æ°æ®è¯»å
+#### 3.1.3 Excel财务数据读取
 ```python
 class FinancialDataReader:
     def __init__(self, excel_dir):
@@ -192,16 +215,18 @@ class FinancialDataReader:
         
     def read_quarterly_data(self):
         """è¯»åææå­£åº¦è´¢å¡æ°æ?""
-        quarter_files = sorted(self.excel_dir.glob("å¨é¨ä¸å¸å¬å¸è´¢å¡ä¿¡æ¯_*.xlsx"))
+        quarter_files = sorted(self.excel_dir.glob("å
+¨é¨ä¸å¸å
+¬å¸è´¢å¡ä¿¡æ¯_*.xlsx"))
         all_data = []
         
         for file_path in quarter_files:
-            # ä»æä»¶åæåå­£åº¦ä¿¡æ¯
+            # 从文件名提取季度信息
             quarter_str = file_path.stem.split('_')[-1]  # å¦?20250930
             quarter_date = pd.to_datetime(quarter_str, format='%Y%m%d')
             
-            print(f"è¯»å: {file_path.name}")
-            df = pd.read_excel(file_path, dtype={'è¡ç¥¨ä»£ç ': str})
+            print(f"读取: {file_path.name}")
+            df = pd.read_excel(file_path, dtype={'股票代码': str})
             df['report_date'] = quarter_date
             df['data_type'] = 'financial'
             
@@ -210,46 +235,60 @@ class FinancialDataReader:
         return pd.concat(all_data, ignore_index=True)
 ```
 
-### 3.2 è§£åç®å½ç»æè§å
+### 3.2 解压目录结构规划
 ```
 processed_data/
-âââ extracted/                    # è§£ååçåå§æä»¶
+├── extracted/                    # 解压后的原始文件
 â?  âââ daily/                   # æ¥çº¿æ°æ®
 â?  âââ daily_qfq/              # åå¤ææ¥çº?
 â?  âââ daily_hfq/              # åå¤ææ¥çº?
 â?  âââ weekly/                 # å¨çº¿æ°æ®
 â?  âââ monthly/                # æçº¿æ°æ®
-âââ raw_csv/                     # åå§CSVæ°æ®ï¼ä¿æåæ ·ï¼
-âââ raw_financial/               # åå§è´¢å¡æ°æ®ï¼ä¿æåæ ·ï¼
-âââ metadata/                    # åæ°æ®æä»?
-    âââ file_index.json         # æä»¶ç´¢å¼
-    âââ data_schema.json        # æ°æ®æ¨¡å¼å®ä¹
-    âââ extraction_log.csv      # æåæ¥å¿
+├── raw_csv/                     # 原始CSV数据（保持原样）
+├── raw_financial/               # 原始财务数据（保持原样）
+âââ metadata/                    # å
+æ°æ®æä»?
+    ├── file_index.json         # 文件索引
+    ├── data_schema.json        # 数据模式定义
+    └── extraction_log.csv      # 提取日志
 ```
 
-## 4. æ°æ®æ¸æ´ä¸æ ååæµç¨
+## 4. æ°æ®æ¸
+洗与标准化流程
 
-### 4.1 æ¸æ´è§åå®ä¹
+### 4.1 æ¸
+洗规则定义
 
-#### 4.1.1 è¡ææ°æ®æ¸æ´è§å
-| å­æ®µ | æ¸æ´è§å | å¼å¸¸å¤ç |
+#### 4.1.1 è¡æ
+æ°æ®æ¸
+洗规则
+| å­æ®µ | æ¸
+洗规则 | 异常处理 |
 |------|----------|----------|
 | **date** | è½¬æ¢ä¸ºdatetimeæ ¼å¼ï¼éªè¯æ¥ææææ?| æ ææ¥ææ è®°ä¸ºNaTï¼å¯æå?|
-| **code** | æ ååä¸º`äº¤ææ.ä»£ç `æ ¼å¼ (å¦`SZ.000002`) | æ æä»£ç å é¤æ´è¡ |
+| **code** | 标准化为`交易所.代码`格式 (如`SZ.000002`) | 无效代码删除整行 |
 | **price** | ä»·æ ¼>0ï¼å¼çâ¤æé«â¥æä½â¤æ¶ç | ä»·æ ¼å¼å¸¸æ è®°å¹¶æå?|
 | **volume** | æäº¤éâ¥0 | è´å¼è®¾ä¸? |
 | **amount** | æäº¤é¢â¥0ï¼ä¸ä»·æ ¼*volumeä¸è?| ä¸ä¸è´æ¶éæ°è®¡ç® |
-| **pct_chg** | æ¶¨è·å¹å¨[-10%, 10%]åçèå´ | è¶åºèå´ä½¿ç¨åå¼å¡«å?|
+| **pct_chg** | æ¶¨è·å¹
+å¨[-10%, 10%]åçèå´ | è¶
+åºèå´ä½¿ç¨åå¼å¡«å
+?|
 
-#### 4.1.2 è´¢å¡æ°æ®æ¸æ´è§å
-| å­æ®µç±»å | æ¸æ´è§å | è¯´æ |
+#### 4.1.2 è´¢å¡æ°æ®æ¸
+洗规则
+| å­æ®µç±»å | æ¸
+洗规则 | 说明 |
 |----------|----------|------|
-| **ä»£ç å­æ®µ** | ç»ä¸ä¸?ä½æ°å­ä»£ç ï¼è¡¥åå¯? | ä¾¿äºå³èè¡ææ°æ® |
+| **ä»£ç å­æ®µ** | ç»ä¸ä¸?ä½æ°å­ä»£ç ï¼è¡¥åå¯? | ä¾¿äºå
+³èè¡æ
+数据 |
 | **æ°å¼å­æ®?* | æ¿æ¢"NaN"ã?-"ãç©ºå¼ä¸ºnp.nan | ä¿ææ°æ®ä¸è´æ?|
-| **ææ¬å­æ®µ** | å»é¤é¦å°¾ç©ºæ ¼ï¼ç»ä¸ç¼ç ä¸ºUTF-8 | é¿åç¼ç é®é¢ |
-| **æ¥æå­æ®µ** | è½¬æ¢ä¸ºdatetimeæ ¼å¼ | ç»ä¸æ¶é´å¤ç |
+| **ææ¬å­æ®µ** | å»é¤é¦å°¾ç©ºæ ¼ï¼ç»ä¸ç¼ç ä¸ºUTF-8 | é¿å
+ç¼ç é®é¢ |
+| **日期字段** | 转换为datetime格式 | 统一时间处理 |
 
-### 4.2 æ ååå¤çç±»
+### 4.2 标准化处理类
 
 ```python
 class DataCleaner:
@@ -257,21 +296,25 @@ class DataCleaner:
         self.rules = self._load_cleaning_rules()
         
     def clean_market_data(self, df):
-        """æ¸æ´è¡ææ°æ®"""
+        """æ¸
+æ´è¡æ
+数据"""
         # 1. ä»£ç æ åå?
         df['code'] = df['code'].apply(self._standardize_code)
         
         # 2. æ¥ææ åå?
         df['date'] = pd.to_datetime(df['date'], errors='coerce')
         
-        # 3. ä»·æ ¼æ°æ®éªè¯
+        # 3. 价格数据验证
         price_cols = ['open', 'high', 'low', 'close']
         for col in price_cols:
             df[col] = pd.to_numeric(df[col], errors='coerce')
-            # ä»·æ ¼å¿é¡»ä¸ºæ­£æ?
+            # ä»·æ ¼å¿
+é¡»ä¸ºæ­£æ?
             df.loc[df[col] <= 0, col] = np.nan
             
-        # 4. é»è¾å³ç³»éªè¯
+        # 4. é»è¾å
+³ç³»éªè¯
         df = self._validate_price_logic(df)
         
         # 5. ç¼ºå¤±å¼å¤ç?
@@ -280,22 +323,24 @@ class DataCleaner:
         return df
         
     def clean_financial_data(self, df):
-        """æ¸æ´è´¢å¡æ°æ®"""
+        """æ¸
+洗财务数据"""
         # 1. ä»£ç æ åå?
-        if 'è¡ç¥¨ä»£ç ' in df.columns:
-            df['stock_code'] = df['è¡ç¥¨ä»£ç '].astype(str).str.zfill(6)
+        if '股票代码' in df.columns:
+            df['stock_code'] = df['股票代码'].astype(str).str.zfill(6)
             
         # 2. æ°å¼å­æ®µå¤ç?
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         for col in numeric_cols:
             df[col] = pd.to_numeric(df[col], errors='coerce')
             
-        # 3. ææ¬å­æ®µå¤ç
+        # 3. 文本字段处理
         text_cols = df.select_dtypes(include=[object]).columns
         for col in text_cols:
             df[col] = df[col].astype(str).str.strip()
             
-        # 4. å»é¤å¨ä¸ºNaNçè¡
+        # 4. å»é¤å
+¨ä¸ºNaNçè¡
         df = df.dropna(how='all')
         
         return df
@@ -315,7 +360,7 @@ class DataCleaner:
         elif code_str.startswith(('sh', 'SH')):
             return f"SH.{code_str[2:]}"
         else:
-            # åè®¾6ä½æ°å­ä»£ç ï¼èªå¨æ·»å äº¤ææ
+            # 假设6位数字代码，自动添加交易所
             if len(code_str) == 6:
                 if code_str.startswith(('0', '3')):
                     return f"SZ.{code_str}"
@@ -324,7 +369,7 @@ class DataCleaner:
             return code_str
 ```
 
-### 4.3 å¼å¸¸æ£æµä¸å¤ç
+### 4.3 异常检测与处理
 
 ```python
 class AnomalyDetector:
@@ -332,16 +377,19 @@ class AnomalyDetector:
         """æ£æµä»·æ ¼å¼å¸?""
         anomalies = []
         
-        # 1. ä»·æ ¼è·³å¨æ£æµ?(æ¥åæ¶¨è·å¹è¿å¤?
+        # 1. ä»·æ ¼è·³å¨æ£æµ?(æ¥å
+æ¶¨è·å¹
+è¿å¤?
         df['pct_change'] = df['close'].pct_change()
-        large_jumps = df[abs(df['pct_change']) > 0.2]  # 20%ä»¥ä¸è·³å¨
+        large_jumps = df[abs(df['pct_change']) > 0.2]  # 20%以上跳动
         
         # 2. æäº¤éå¼å¸¸æ£æµ?
         volume_mean = df['volume'].rolling(20).mean()
         volume_std = df['volume'].rolling(20).std()
         volume_anomalies = df[df['volume'] > (volume_mean + 3 * volume_std)]
         
-        # 3. ä»·æ ¼å³ç³»å¼å¸¸ (å¼ç?æé«? æä½?æ¶çç­?
+        # 3. ä»·æ ¼å
+³ç³»å¼å¸¸ (å¼ç?æé«? æä½?æ¶çç­?
         logic_anomalies = df[
             (df['open'] > df['high']) | 
             (df['low'] > df['close']) |
@@ -356,14 +404,18 @@ class AnomalyDetector:
         
     def impute_missing_values(self, df):
         """ç¼ºå¤±å¼æå?""
-        # ååå¡«å (éç¨äºäº¤ææ¥æ°æ®)
+        # ååå¡«å
+
+ (适用于交易日数据)
         df_filled = df.fillna(method='ffill')
         
         # çº¿æ§æå?(éç¨äºè¿ç»­æ¶é´åºå?
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         df_filled[numeric_cols] = df_filled[numeric_cols].interpolate(method='linear')
         
-        # ååå¡«åå©ä½ç¼ºå¤±å?
+        # ååå¡«å
+
+å©ä½ç¼ºå¤±å?
         df_filled = df_filled.fillna(method='bfill')
         
         return df_filled
@@ -371,12 +423,13 @@ class AnomalyDetector:
 
 ## 5. æ°æ®åç±»ä¸ç»´åº¦åå?
 
-### 5.1 åç±»ä½ç³»è®¾è®¡
+### 5.1 分类体系设计
 
 #### 5.1.1 ææ°æ®ç±»ååç±?
 ```
-æ°æ®åç±»ä½ç³»:
-âââ è¡ææ°æ®
+数据分类体系:
+âââ è¡æ
+数据
 â?  âââ æ¥çº¿æ°æ® (daily)
 â?  â?  âââ æªå¤æ?(raw)
 â?  â?  âââ åå¤æ?(qfq)
@@ -388,28 +441,29 @@ class AnomalyDetector:
 â?      âââ 15åé (15min)
 â?      âââ 30åé (30min)
 â?      âââ 60åé (60min)
-âââ è´¢å¡æ°æ®
+├── 财务数据
 â?  âââ èµäº§è´åºè¡¨ (balance_sheet)
 â?  âââ å©æ¶¦è¡?(income_statement)
 â?  âââ ç°éæµéè¡?(cash_flow)
 â?  âââ è´¢å¡æ¯ç (financial_ratios)
-âââ åºç¡ä¿¡æ¯æ°æ®
+├── 基础信息数据
 â?  âââ è¡ç¥¨åè¡¨ (stock_list)
 â?  âââ è¡ä¸åç±» (industry)
 â?  âââ ææ°æå (index_constituents)
-âââ è¡çæ°æ®
+└── 衍生数据
     âââ ææ¯ææ ?(technical_indicators)
-    âââ å å­æ°æ® (factors)
-    âââ åæµç»æ (backtest_results)
+    ├── 因子数据 (factors)
+    └── 回测结果 (backtest_results)
 ```
 
 #### 5.1.2 ææ¶é´ç»´åº¦åç±?
-- **åå²å¨éæ°æ®**: ææåå²æ°æ®ï¼ç¨äºæ¨¡åè®­ç»
-- **æ»å¨çªå£æ°æ®**: æè¿Nå¹´æ°æ®ï¼ç¨äºå®æ¶åæ
-- **å­£åº¦åçæ°æ®**: æè´¢å¡å­£åº¦ååï¼ç¨äºå­£æ¥åæ
+- **åå²å
+¨éæ°æ®**: ææåå²æ°æ®ï¼ç¨äºæ¨¡åè®­ç»
+- **滚动窗口数据**: 最近N年数据，用于实时分析
+- **季度切片数据**: 按财务季度划分，用于季报分析
 - **å¹´åº¦æ±æ»æ°æ?*: æå¹´åº¦æ±æ»ï¼ç¨äºå¹´åº¦å¯¹æ¯
 
-### 5.2 åç±»å¤çå®ç°
+### 5.2 分类处理实现
 
 ```python
 class DataClassifier:
@@ -421,7 +475,7 @@ class DataClassifier:
         df = df.copy()
         df[date_col] = pd.to_datetime(df[date_col])
         
-        # è®¡ç®æ¶é´é´é
+        # 计算时间间隔
         time_diff = df[date_col].diff().dropna()
         if len(time_diff) > 0:
             mode_interval = time_diff.mode().iloc[0]
@@ -432,21 +486,25 @@ class DataClassifier:
                 return 'weekly'
             elif mode_interval.days == 1:
                 return 'daily'
-            elif mode_interval.total_seconds() <= 3600:  # 1å°æ¶ä»¥å
+            elif mode_interval.total_seconds() <= 3600:  # 1å°æ¶ä»¥å
+
                 return 'intraday'
                 
         return 'unknown'
         
     def classify_by_content(self, df):
-        """æåå®¹åç±»æ°æ?""
+        """æå
+å®¹åç±»æ°æ?""
         column_set = set(df.columns)
         
         # è´¢å¡æ°æ®ç¹å¾å?
-        financial_keywords = ['èµäº§', 'è´å?, 'å©æ¶¦', 'æ¶å¥', 'ç°éæµ?, 'æ¯ç']
+        financial_keywords = ['èµäº§', 'è´å?, 'å©æ¶¦', 'æ¶å
+¥', 'ç°éæµ?, 'æ¯ç']
         financial_cols = [col for col in column_set 
                          if any(keyword in str(col) for keyword in financial_keywords)]
         
-        # è¡ææ°æ®ç¹å¾å?
+        # è¡æ
+æ°æ®ç¹å¾å?
         market_keywords = ['open', 'high', 'low', 'close', 'volume', 'amount']
         market_cols = [col for col in column_set 
                       if any(keyword.lower() in str(col).lower() for keyword in market_keywords)]
@@ -469,35 +527,40 @@ class DataClassifier:
         elif period == 'month':
             df['period'] = df[date_col].dt.to_period('M')
             
-        # è¿åæå¨æåç»çæ°æ®å­å¸
+        # è¿åæå¨æåç»çæ°æ®å­å
+¸
         return {period: group.drop('period', axis=1) 
                 for period, group in df.groupby('period')}
 ```
 
 ## 6. æ°æ®åºå­å¨æ¹æ¡?
 
-### 6.1 å­å¨æ¶æè®¾è®¡
+### 6.1 存储架构设计
 
-#### 6.1.1 æ··åå­å¨ç­ç¥
+#### 6.1.1 混合存储策略
 ```
-å­å¨æ¶æ:
-âââ SQLiteæ°æ®åº?(è½»éçº§ï¼ç¨äºåæ°æ®åæ¥è¯¢)
-â?  âââ metadata.db    # åæ°æ®è¡¨
+存储架构:
+âââ SQLiteæ°æ®åº?(è½»éçº§ï¼ç¨äºå
+æ°æ®åæ¥è¯¢)
+â?  âââ metadata.db    # å
+æ°æ®è¡¨
 â?  âââ stock_info.db  # è¡ç¥¨åºæ¬ä¿¡æ¯
 â?  âââ index_info.db  # ææ°ä¿¡æ¯
-âââ Parquetæä»¶å­å¨ (é«æ§è½ï¼ç¨äºå¤§éè¡ææ°æ?
+âââ Parquetæä»¶å­å¨ (é«æ§è½ï¼ç¨äºå¤§éè¡æ
+æ°æ?
 â?  âââ daily/        # æ¥çº¿æ°æ®
 â?  âââ weekly/       # å¨çº¿æ°æ®
 â?  âââ monthly/      # æçº¿æ°æ®
 â?  âââ intraday/     # åéæ°æ®
-âââ HDF5æä»¶å­å¨ (å¯éï¼ç¨äºå¤æè´¢å¡æ°æ®)
-    âââ financial/    # è´¢å¡æ°æ®
-    âââ factors/      # å å­æ°æ®
+└── HDF5文件存储 (可选，用于复杂财务数据)
+    ├── financial/    # 财务数据
+    └── factors/      # 因子数据
 ```
 
 #### 6.1.2 è¡¨ç»æè®¾è®?
 
-**1. åæ°æ®è¡¨ (metadata)**
+**1. å
+æ°æ®è¡¨ (metadata)**
 ```sql
 CREATE TABLE metadata (
     id INTEGER PRIMARY KEY,
@@ -506,7 +569,7 @@ CREATE TABLE metadata (
     stock_code TEXT NOT NULL,
     start_date DATE,
     end_date DATE,
-    file_path TEXT,               -- Parquetæä»¶è·¯å¾
+    file_path TEXT,               -- Parquet文件路径
     record_count INTEGER,
     data_size_mb REAL,
     last_updated TIMESTAMP,
@@ -523,7 +586,7 @@ CREATE TABLE stock_info (
     industry TEXT,
     listing_date DATE,
     delisting_date DATE,
-    is_st INTEGER,               -- æ¯å¦ST
+    is_st INTEGER,               -- 是否ST
     market_cap REAL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
@@ -552,7 +615,8 @@ CREATE TABLE daily_market_data (
 );
 ```
 
-### 6.2 æ°æ®åå¥å®ç°
+### 6.2 æ°æ®åå
+¥å®ç°
 
 ```python
 class DatabaseManager:
@@ -562,14 +626,16 @@ class DatabaseManager:
         self.parquet_dir.mkdir(parents=True, exist_ok=True)
         
     def save_market_data(self, df, frequency='daily', adj_type='raw'):
-        """ä¿å­è¡ææ°æ®å°æ··åå­å?""
+        """ä¿å­è¡æ
+æ°æ®å°æ··åå­å?""
         if df.empty:
             return
             
-        # 1. ä¿å­å°Parquetæä»¶
+        # 1. 保存到Parquet文件
         parquet_path = self._save_to_parquet(df, frequency, adj_type)
         
-        # 2. æ´æ°åæ°æ®è¡¨
+        # 2. æ´æ°å
+æ°æ®è¡¨
         self._update_metadata(df, frequency, adj_type, parquet_path)
         
         # 3. å¯éï¼ä¿å­å°SQLiteï¼ç¨äºå°è§æ¨¡æ¥è¯¢ï¼?
@@ -577,15 +643,15 @@ class DatabaseManager:
             self._save_to_sqlite(df, 'daily_market_data')
             
     def _save_to_parquet(self, df, frequency, adj_type):
-        """ä¿å­å°Parquetæä»¶"""
+        """保存到Parquet文件"""
         # æè¡ç¥¨ä»£ç ååºå­å?
         partition_cols = ['stock_code'] if 'stock_code' in df.columns else ['code']
         
-        # æå»ºæä»¶è·¯å¾
+        # 构建文件路径
         file_path = self.parquet_dir / frequency / adj_type
         file_path.mkdir(parents=True, exist_ok=True)
         
-        # ä¿å­ä¸ºParquet
+        # 保存为Parquet
         df.to_parquet(
             file_path / f"{frequency}_{adj_type}.parquet",
             partition_cols=partition_cols,
@@ -595,7 +661,8 @@ class DatabaseManager:
         return str(file_path)
         
     def _update_metadata(self, df, frequency, adj_type, file_path):
-        """æ´æ°åæ°æ®è¡¨"""
+        """æ´æ°å
+æ°æ®è¡¨"""
         conn = sqlite3.connect(self.db_path)
         
         metadata = {
@@ -609,14 +676,17 @@ class DatabaseManager:
             'last_updated': datetime.now()
         }
         
-        # æå¥ææ´æ°åæ°æ®
-        # ... å·ä½å®ç°
+        # æå
+¥ææ´æ°å
+æ°æ®
+        # ... å
+·ä½å®ç°
         
         conn.close()
         
     def save_financial_data(self, df):
-        """ä¿å­è´¢å¡æ°æ®"""
-        # è´¢å¡æ°æ®æ´éåä¿å­ä¸ºParquet + åç¬çè¡¨
+        """保存财务数据"""
+        # 财务数据更适合保存为Parquet + 单独的表
         file_path = self.parquet_dir / 'financial' / 'quarterly'
         file_path.mkdir(parents=True, exist_ok=True)
         
@@ -628,7 +698,7 @@ class DatabaseManager:
         )
 ```
 
-### 6.3 æ°æ®æ¥è¯¢æ¥å£
+### 6.3 数据查询接口
 
 ```python
 class DataQuery:
@@ -636,15 +706,16 @@ class DataQuery:
         self.db = db_manager
         
     def get_stock_data(self, stock_codes, start_date, end_date, frequency='daily'):
-        """è·åè¡ç¥¨æ°æ®"""
-        # 1. ä»åæ°æ®è¡¨æ¥æ¾æä»¶ä½ç½?
+        """获取股票数据"""
+        # 1. ä»å
+æ°æ®è¡¨æ¥æ¾æä»¶ä½ç½?
         parquet_files = self._locate_parquet_files(stock_codes, frequency)
         
-        # 2. ä»Parquetæä»¶è¯»åæ°æ®
+        # 2. 从Parquet文件读取数据
         data_frames = []
         for file_path in parquet_files:
             df = pd.read_parquet(file_path)
-            # ç­éæ¶é´åè¡ç¥¨ä»£ç 
+            # 筛选时间和股票代码
             mask = (df['date'] >= start_date) & (df['date'] <= end_date)
             if stock_codes:
                 mask = mask & df['code'].isin(stock_codes)
@@ -654,12 +725,12 @@ class DataQuery:
         return pd.concat(data_frames, ignore_index=True) if data_frames else pd.DataFrame()
         
     def get_financial_data(self, stock_codes, report_date=None):
-        """è·åè´¢å¡æ°æ®"""
-        # ç±»ä¼¼é»è¾ï¼ä»Parquetæä»¶è¯»å
+        """获取财务数据"""
+        # 类似逻辑，从Parquet文件读取
         pass
         
     def get_stock_info(self, stock_codes=None):
-        """è·åè¡ç¥¨åºæ¬ä¿¡æ¯"""
+        """获取股票基本信息"""
         conn = sqlite3.connect(self.db.db_path)
         query = "SELECT * FROM stock_info"
         if stock_codes:
@@ -682,14 +753,16 @@ class AShareDataPipeline:
         self.source_dir = Path(source_dir)
         self.output_dir = Path(output_dir)
         
-        # åå§ååç»ä»¶
+        # 初始化各组件
         self.extractor = ZipExtractor(
-            self.source_dir / "Aè¡æ°æ®_zip",
+            self.source_dir / "A股数据_zip",
             self.output_dir / "extracted"
         )
-        self.csv_reader = CSVReader(self.source_dir / "CSVè¡ææ°æ®")
+        self.csv_reader = CSVReader(self.source_dir / "CSVè¡æ
+数据")
         self.financial_reader = FinancialDataReader(
-            self.source_dir / "ä¸å¸å¬å¸è´¢å¡ä¿¡æ¯" / "åå²è¯¦ç»æ°æ®"
+            self.source_dir / "ä¸å¸å
+¬å¸è´¢å¡ä¿¡æ¯" / "åå²è¯¦ç»æ°æ®"
         )
         self.cleaner = DataCleaner()
         self.classifier = DataClassifier()
@@ -701,34 +774,36 @@ class AShareDataPipeline:
     def run_full_pipeline(self):
         """è¿è¡å®æ´å¤çæµæ°´çº?""
         print("=" * 60)
-        print("Aè¡æ°æ®å¤çæµæ°´çº¿å¯å¨")
+        print("A股数据处理流水线启动")
         print("=" * 60)
         
-        # æ­¥éª¤1: æåè§£å
+        # 步骤1: 提取解压
         print("\n[1/5] æååè§£åæ°æ?..")
         self.extractor.extract_all(force=False)
         
-        # æ­¥éª¤2: è¯»ååå§æ°æ®
-        print("\n[2/5] è¯»ååå§æ°æ®...")
+        # 步骤2: 读取原始数据
+        print("\n[2/5] 读取原始数据...")
         market_data = self.csv_reader.read_all_files(pattern="*.csv")
         financial_data = self.financial_reader.read_quarterly_data()
         
-        # æ­¥éª¤3: æ°æ®æ¸æ´
-        print("\n[3/5] æ°æ®æ¸æ´åæ åå...")
+        # æ­¥éª¤3: æ°æ®æ¸
+洗
+        print("\n[3/5] æ°æ®æ¸
+洗和标准化...")
         cleaned_market = self.cleaner.clean_market_data(market_data)
         cleaned_financial = self.cleaner.clean_financial_data(financial_data)
         
-        # æ­¥éª¤4: æ°æ®åç±»
+        # 步骤4: 数据分类
         print("\n[4/5] æ°æ®åç±»åç»´åº¦åå?..")
         market_classified = self.classifier.classify_by_frequency(cleaned_market)
         financial_classified = self.classifier.classify_by_content(cleaned_financial)
         
-        # æ­¥éª¤5: å­å¨å°æ°æ®åº
-        print("\n[5/5] å­å¨å°æ°æ®åº...")
+        # 步骤5: 存储到数据库
+        print("\n[5/5] 存储到数据库...")
         self.db_manager.save_market_data(cleaned_market, frequency='daily')
         self.db_manager.save_financial_data(cleaned_financial)
         
-        # çæå¤çæ¥å
+        # 生成处理报告
         self._generate_report(cleaned_market, cleaned_financial)
         
         print("\n" + "=" * 60)
@@ -736,7 +811,7 @@ class AShareDataPipeline:
         print("=" * 60)
         
     def _generate_report(self, market_data, financial_data):
-        """çæå¤çæ¥å"""
+        """生成处理报告"""
         report = {
             'market_data': {
                 'records': len(market_data),
@@ -757,7 +832,7 @@ class AShareDataPipeline:
             }
         }
         
-        # ä¿å­æ¥åä¸ºJSON
+        # 保存报告为JSON
         report_path = self.output_dir / "processing_report.json"
         with open(report_path, 'w', encoding='utf-8') as f:
             json.dump(report, f, indent=2, default=str)
@@ -765,7 +840,7 @@ class AShareDataPipeline:
         print(f"å¤çæ¥åå·²ä¿å­? {report_path}")
 ```
 
-### 7.2 å¢éæ´æ°æºå¶
+### 7.2 增量更新机制
 
 ```python
 class IncrementalUpdater:
@@ -787,21 +862,22 @@ class IncrementalUpdater:
         return new_files
         
     def incremental_update(self):
-        """å¢éæ´æ°æ°æ®"""
+        """增量更新数据"""
         new_files = self.check_for_updates()
         
         if not new_files:
-            print("æ²¡æåç°æ°æ°æ®ï¼æ éæ´æ°")
+            print("没有发现新数据，无需更新")
             return
             
         print(f"åç° {len(new_files)} ä¸ªæ°æä»¶éè¦å¤ç?)
         
-        # åªå¤çæ°æä»¶
+        # 只处理新文件
         for zip_file in new_files:
             print(f"å¤çæ°æä»? {zip_file.name}")
             # è§£åæ°æä»?
             # è¯»åæ°æ°æ?
-            # æ¸æ´åæ åå
+            # æ¸
+洗和标准化
             # å¢éæ´æ°æ°æ®åº?
             
         # æ´æ°æåå¤çæ¶é?
@@ -827,19 +903,21 @@ class IncrementalUpdater:
 
 ## 8. é¨ç½²ä¸è¿è¡æå?
 
-### 8.1 ç¯å¢è¦æ±
+### 8.1 环境要求
 ```yaml
 python_version: ">=3.8"
 dependencies:
   - pandas>=1.3.0
   - numpy>=1.21.0
-  - sqlite3 (åç½®)
-  - pyarrow>=6.0.0  # Parquetæ¯æ
-  - openpyxl>=3.0.0  # Excelæ¯æ
+  - sqlite3 (å
+ç½®)
+  - pyarrow>=6.0.0  # Parquet支持
+  - openpyxl>=3.0.0  # Excel支持
   - tqdm>=4.62.0    # è¿åº¦æ?
 ```
 
-### 8.2 éç½®æä»¶ç¤ºä¾
+### 8.2 é
+ç½®æä»¶ç¤ºä¾
 ```yaml
 # config.yaml
 data_pipeline:
@@ -848,13 +926,15 @@ data_pipeline:
   
   processing:
     max_workers: 4           # å¹¶è¡å¤çæ?
-    chunk_size: 100000       # ååå¤§å°
-    memory_limit_gb: 8       # åå­éå¶
+    chunk_size: 100000       # 分块大小
+    memory_limit_gb: 8       # å
+存限制
     
   cleaning:
-    price_range: [0, 10000]  # ä»·æ ¼åçèå´
+    price_range: [0, 10000]  # 价格合理范围
     volume_threshold: 1e9    # æäº¤éå¼å¸¸éå?
-    pct_chg_limit: 0.2       # æ¶¨è·å¹éå?
+    pct_chg_limit: 0.2       # æ¶¨è·å¹
+éå?
     
   storage:
     db_path: "zephyr_alpha.db"
@@ -867,7 +947,7 @@ data_pipeline:
     max_size_mb: 100
 ```
 
-### 8.3 è¿è¡èæ¬
+### 8.3 运行脚本
 ```python
 # run_pipeline.py
 import yaml
@@ -875,12 +955,13 @@ from pathlib import Path
 from a_share_pipeline import AShareDataPipeline
 
 def main():
-    # å è½½éç½®
+    # å è½½é
+ç½®
     config_path = Path("config.yaml")
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     
-    # åå§åæµæ°´çº¿
+    # 初始化流水线
     pipeline = AShareDataPipeline(
         source_dir=config['data_pipeline']['source_dir'],
         output_dir=config['data_pipeline']['output_dir']
@@ -915,39 +996,49 @@ class PipelineMonitor:
         return quality_report
         
     def get_storage_usage(self):
-        """è·åå­å¨ä½¿ç¨æåµ"""
-        # æ£æ¥æ°æ®åºå¤§å°
-        # æ£æ¥Parquetæä»¶å¤§å°
+        """è·åå­å¨ä½¿ç¨æ
+况"""
+        # 检查数据库大小
+        # 检查Parquet文件大小
         # æ£æ¥ç£çç©ºé?
         pass
         
     def cleanup_old_data(self, days_to_keep=365):
-        """æ¸çæ§æ°æ?""
-        # å é¤è¶è¿æå®å¤©æ°çä¸´æ¶æä»?
-        # å½æ¡£åå²æ°æ®
+        """æ¸
+çæ§æ°æ?""
+        # å é¤è¶
+è¿æå®å¤©æ°çä¸´æ¶æä»?
+        # 归档历史数据
         pass
 ```
 
-## 9. æ§è½ä¼åå»ºè®®
+## 9. 性能优化建议
 
-### 9.1 åå­ä¼å
-1. **ååå¤ç**: å¤§æä»¶ååè¯»åï¼é¿ååå­æº¢åº
+### 9.1 å
+存优化
+1. **ååå¤ç**: å¤§æä»¶ååè¯»åï¼é¿å
+å
+存溢出
 2. **æ°æ®ç±»åä¼å**: ä½¿ç¨åéçæ°å¼ç±»åï¼float32 vs float64ï¼?
-3. **åæ¶éæ¾åå­**: å¤çå®æååæ¶å é¤ä¸éè¦çæ°æ®
+3. **åæ¶éæ¾å
+存**: 处理完成后及时删除不需要的数据
 
-### 9.2 å­å¨ä¼å
-1. **åå¼å­å¨**: Parquetæ ¼å¼å¤©ç¶éååå¼æ¥è¯¢
-2. **ååºå­å¨**: ææ¶é´ãè¡ç¥¨ä»£ç ååºï¼æé«æ¥è¯¢æç
-3. **åç¼©éæ©**: Snappyåç¼©éåº¦å¿«ï¼Gzipåç¼©çé«
+### 9.2 存储优化
+1. **列式存储**: Parquet格式天然适合列式查询
+2. **分区存储**: 按时间、股票代码分区，提高查询效率
+3. **压缩选择**: Snappy压缩速度快，Gzip压缩率高
 
-### 9.3 å¤çéåº¦ä¼å
+### 9.3 处理速度优化
 1. **å¹¶è¡å¤ç**: å¤è¿ç¨å¤çä¸åè¡ç¥¨ææ¶é´æ®?
-2. **åéåæä½?*: ä½¿ç¨pandasåéåå½æ°ï¼é¿åå¾ªç¯
-3. **ç¼å­æºå¶**: ç¼å­é¢ç¹è®¿é®çåæ°æ®ååºç¡ä¿¡æ¯
+2. **åéåæä½?*: ä½¿ç¨pandasåéåå½æ°ï¼é¿å
+å¾ªç¯
+3. **ç¼å­æºå¶**: ç¼å­é¢ç¹è®¿é®çå
+æ°æ®ååºç¡ä¿¡æ¯
 
-## 10. æéæ¢å¤ä¸å¤ä»?
+## 10. æ
+éæ¢å¤ä¸å¤ä»?
 
-### 10.1 æ£æ¥ç¹æºå¶
+### 10.1 检查点机制
 ```python
 class CheckpointManager:
     def __init__(self, checkpoint_dir):
@@ -955,46 +1046,54 @@ class CheckpointManager:
         self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
         
     def save_checkpoint(self, stage, data):
-        """ä¿å­æ£æ¥ç¹"""
+        """保存检查点"""
         checkpoint_file = self.checkpoint_dir / f"{stage}.checkpoint"
-        # ä¿å­å¤çç¶æåæ°æ®
+        # 保存处理状态和数据
         pass
         
     def load_checkpoint(self, stage):
-        """å è½½æ£æ¥ç¹"""
+        """加载检查点"""
         checkpoint_file = self.checkpoint_dir / f"{stage}.checkpoint"
         if checkpoint_file.exists():
-            # ä»æ£æ¥ç¹æ¢å¤
+            # 从检查点恢复
             pass
         return None
         
     def resume_from_checkpoint(self, pipeline):
-        """ä»æ£æ¥ç¹æ¢å¤å¤ç"""
+        """从检查点恢复处理"""
         last_stage = self._find_last_checkpoint()
         if last_stage:
-            print(f"ä»æ£æ¥ç¹æ¢å¤: {last_stage}")
-            # æ¢å¤å¤çæµç¨
+            print(f"从检查点恢复: {last_stage}")
+            # 恢复处理流程
             pass
 ```
 
-### 10.2 å¤ä»½ç­ç¥
-1. **æ¯æ¥å¢éå¤ä»½**: å¤ä»½å½æ¥æ°å¢æ°æ®
-2. **æ¯å¨å¨éå¤ä»½**: å¤ä»½æ´ä¸ªæ°æ®åº?
+### 10.2 备份策略
+1. **每日增量备份**: 备份当日新增数据
+2. **æ¯å¨å
+¨éå¤ä»½**: å¤ä»½æ´ä¸ªæ°æ®åº?
 3. **å¼å°å¤ä»½**: éè¦æ°æ®å¤ä»½å°ä¸åç£çæäºå­å?
 
 ---
 
-## æ»ç»
+## 总结
 
-è¿ä¸ªèå¾æä¾äºä¸ä¸ªå®æ´çAè¡åå²æ°æ®å¤çæ¹æ¡ï¼ä»åå§æ°æ®æåå°æ°æ®åºå­å¨çå®æ´æµç¨ãæ¹æ¡ç¹ç¹ï¼
+这个蓝图提供了一个完整的A股历史数据处理方案，从原始数据提取到数据库存储的完整流程。方案特点：
 
-1. **å¨é¢æ?*: è¦çè¡ææ°æ®ãè´¢å¡æ°æ®ãåéæ°æ®ç­å¤ç§æ°æ®ç±»å
-2. **å®ç¨æ?*: æä¾å³ç¨çä»£ç ç¤ºä¾åéç½®æ¨¡æ¿
+1. **å
+¨é¢æ?*: è¦çè¡æ
+数据、财务数据、分钟数据等多种数据类型
+2. **å®ç¨æ?*: æä¾å³ç¨çä»£ç ç¤ºä¾åé
+ç½®æ¨¡æ¿
 3. **å¯æ©å±æ?*: æ¨¡ååè®¾è®¡ï¼æäºæ©å±æ°çæ°æ®ç±»å
 4. **é«ææ?*: éç¨æ··åå­å¨ç­ç¥ï¼å¹³è¡¡æ¥è¯¢æçåå­å¨ææ¬
-5. **å¥å£®æ?*: åå«éè¯¯å¤çãæ£æ¥ç¹ãå¤ä»½æ¢å¤æºå?
+5. **å¥å£®æ?*: å
+å«éè¯¯å¤çãæ£æ¥ç¹ãå¤ä»½æ¢å¤æºå?
 
-æ¨å¯ä»¥æ ¹æ®è¿ä¸ªèå¾éæ­¥å®ç°æ°æ®å¤çç³»ç»ï¼ä¹å¯ä»¥æ ¹æ®å®ééæ±è°æ´åä¸ªæ¨¡åãå»ºè®®åä»æ ¸å¿çæ¥çº¿æ°æ®å¤çå¼å§ï¼éæ­¥æ©å±å°å¶ä»æ°æ®ç±»åã
+æ¨å¯ä»¥æ ¹æ®è¿ä¸ªèå¾éæ­¥å®ç°æ°æ®å¤çç³»ç»ï¼ä¹å¯ä»¥æ ¹æ®å®é
+éæ±è°æ´åä¸ªæ¨¡åãå»ºè®®å
+ä»æ ¸å¿çæ¥çº¿æ°æ®å¤çå¼å§ï¼éæ­¥æ©å±å°å
+¶ä»æ°æ®ç±»åã
 ---
 
 ## 11. 文档治理
@@ -1007,7 +1106,8 @@ class CheckpointManager:
 - **模块ID**: DOC_TEMP_A_STOCK_BLUEPRI
 - **蓝图文档**: [A_STOCK_DATA_PROCESSING_BLUEPRINT.md](06_CONSTRUCTION_DOCS\01_BLUEPRINTS\A_STOCK_DATA_PROCESSING_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å¨ç³»ç»?
+- **职责**: å
+¨ç³»ç»?
 - **状态**: Active
 ```
 
@@ -1015,7 +1115,8 @@ class CheckpointManager:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Doc Temp A Stock** | å¨ç³»ç»? | **核心模块** |
+| **Doc Temp A Stock** | å
+¨ç³»ç»? | **核心模块** |
 
 ### 11.3 版本管理
 

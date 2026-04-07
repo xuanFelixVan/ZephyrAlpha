@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TACTICS_PARAMETER_MGMT_001
 version: 1.0.1
 status: Active

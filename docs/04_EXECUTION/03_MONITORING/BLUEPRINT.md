@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_003
 version: 1.0.0
 status: Active
@@ -15,12 +15,12 @@ compliance_level: 专业标准
 
 
 ﻿---
-standard_type: èå¾æ å
-applicable_scope: äº¤ææ§è¡
-compliance_level: åå§æ å
+standard_type: 蓝图标准
+applicable_scope: 交易执行
+compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: è®¾è®¡é¶æ®µ
-owner: æ§è¡å±è´è´£äºº
+implementation_status: 设计阶段
+owner: 执行层负责人
 version: 1.0.0
 module_id: EXE_BLUEPRINT
 created_date: 2026-03-28
@@ -32,11 +32,12 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
 owner: é¦å¸­ææ¡£æ¶æå¸?
-standard_type: ä¸ä¸éåæºæèå¾
-applicable_scope: å¨ç³»ç»æ¶æè®¾è®?
-compliance_level: åå§æ å
+standard_type: 专业量化机构蓝图
+applicable_scope: å
+¨ç³»ç»æ¶æè®¾è®?
+compliance_level: 初始标准
 parent_document: ../README.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 implementation_progress: 0%
 ---
 ---
@@ -49,25 +50,28 @@ implementation_progress: 0%
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸é£éåç³»ç» v5.0 ççæ§åè­¦æ¹æ¡?
-> **ç´¢å¼**: `MON_001`
+> æ¸
+é£éåç³»ç» v5.0 ççæ§åè­¦æ¹æ¡?
+> **索引**: `MON_001`
 > **æ³¨æ**: æ¬èå¾éç?è´­ä¹°èéèªç "ç­ç¥ï¼ä½¿ç¨æççGrafana+Prometheusæ¹æ¡
 
 
-## 1. è®¾è®¡åå
+## 1. 设计原则
 
-| åå | è¯´æ |
+| 原则 | 说明 |
 |------|------|
 | è´­ä¹°èéèªç  | ä½¿ç¨æçå¼æºæ¹æ¡ï¼ä¸èªç çæ§é¢æ?|
-| çæ§å³ä»£ç ?| çæ§éç½®çº³å¥çæ¬æ§å¶ |
+| çæ§å³ä»£ç ?| çæ§é
+ç½®çº³å
+¥çæ¬æ§å¶ |
 | åè­¦å³è§¦å?| åè­¦è§åæç¡®ï¼è§¦åå¨ä½èªå¨å |
 
 
-## 2. çæ§æ¹æ¡éå
+## 2. 监控方案选型
 
-### 2.1 æ¹æ¡å¯¹æ¯
+### 2.1 方案对比
 
-| æ¹æ¡ | èªç çæ§ | Grafana+Prometheus(æ¨è) |
+| 方案 | 自研监控 | Grafana+Prometheus(推荐) |
 |------|----------|-------------------------|
 | å¼åæ¶é?| 2-3ä¸ªæ | 1-2å¤?|
 | åè½å®æ´åº?| 60% | 95% |
@@ -75,9 +79,9 @@ implementation_progress: 0%
 | å¯æ©å±æ?| åé | å¼?|
 | ç¤¾åºæ¯æ | æ?| å¼ºå¤§ |
 
-### 2.2 æç»éæ©
+### 2.2 最终选择
 
-**éç¨ Grafana + Prometheus + AlertManager æ¹æ¡**
+**采用 Grafana + Prometheus + AlertManager 方案**
 
 ```
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -104,42 +108,42 @@ implementation_progress: 0%
 ```
 
 
-## 3. çæ§ææ å®ä¹
+## 3. 监控指标定义
 
-### 3.1 ä¸å¡ææ 
+### 3.1 业务指标
 
 ```yaml
 # prometheus/metrics/business.yaml
 
 metrics:
-  # ç­ç¥ææ 
+  # 策略指标
   - name: strategy_signal_count
     type: counter
-    description: ç­ç¥ä¿¡å·æ°é
+    description: 策略信号数量
     labels: [strategy_id, signal_type]
 
   - name: strategy_signal_latency
     type: histogram
-    description: ä¿¡å·çæå»¶è¿
+    description: 信号生成延迟
     labels: [strategy_id]
     buckets: [0.01, 0.05, 0.1, 0.5, 1.0]
 
-  # äº¤æææ 
+  # 交易指标
   - name: order_submit_count
     type: counter
-    description: è®¢åæäº¤æ°é
+    description: 订单提交数量
     labels: [symbol, action, status]
 
   - name: order_execution_latency
     type: histogram
-    description: è®¢åæ§è¡å»¶è¿
+    description: 订单执行延迟
     labels: [order_type]
     buckets: [0.01, 0.05, 0.1, 0.5, 1.0]
 
-  # é£æ§ææ 
+  # 风控指标
   - name: risk_violation_count
     type: counter
-    description: é£æ§è¿è§æ¬¡æ°
+    description: 风控违规次数
     labels: [rule_id, severity]
 
   - name: risk_position_value
@@ -147,7 +151,7 @@ metrics:
     description: æä»é£é©å?
     labels: [symbol]
 
-  # å å­ææ 
+  # 因子指标
   - name: factor_ic_value
     type: gauge
     description: å å­ICå?
@@ -155,11 +159,11 @@ metrics:
 
   - name: factor_calculation_latency
     type: histogram
-    description: å å­è®¡ç®å»¶è¿
+    description: 因子计算延迟
     labels: [factor_id]
 ```
 
-### 3.2 ç³»ç»ææ 
+### 3.2 系统指标
 
 ```yaml
 # prometheus/metrics/system.yaml
@@ -171,7 +175,8 @@ metrics:
 
   - name: memory_usage_bytes
     type: gauge
-    description: åå­ä½¿ç¨é?
+    description: å
+å­ä½¿ç¨é?
 
   - name: disk_usage_bytes
     type: gauge
@@ -179,11 +184,11 @@ metrics:
 
   - name: network_io_bytes
     type: counter
-    description: ç½ç»IO
+    description: 网络IO
 
   - name: python_gc_count
     type: counter
-    description: Python GCæ¬¡æ°
+    description: Python GC次数
     labels: [generation]
 ```
 
@@ -194,21 +199,24 @@ metrics:
 
 | ä»ªè¡¨æ?| ç¨é?| å·æ°é¢ç |
 |--------|------|----------|
-| ç³»ç»æ¦è§ | å¨å±ç¶æä¸ç®äºç?| 10s |
+| ç³»ç»æ¦è§ | å
+¨å±ç¶æä¸ç®äºç?| 10s |
 | ç­ç¥ç»©æ | åç­ç¥è¡¨ç?| 1min |
-| é£æ§çæ§ | é£é©ææ å®æ¶ | 5s |
+| 风控监控 | 风险指标实时 | 5s |
 | å å­ç¶æ?| å å­ICçæ§ | 1min |
-| äº¤ææç» | è®¢åæ§è¡æåµ | 10s |
+| äº¤ææç» | è®¢åæ§è¡æ
+况 | 10s |
 | ç³»ç»èµæº | æå¡å¨ç¶æ?| 30s |
 
 ### 4.2 ç³»ç»æ¦è§ä»ªè¡¨æ?
 
 ```json
 {
-  "title": "æ¸é£éå - ç³»ç»æ¦è§",
+  "title": "æ¸
+风量化 - 系统概览",
   "panels": [
     {
-      "title": "ç­ç¥ä¿¡å·",
+      "title": "策略信号",
       "type": "stat",
       "targets": [
         {
@@ -218,7 +226,7 @@ metrics:
       ]
     },
     {
-      "title": "è®¢åæ§è¡",
+      "title": "订单执行",
       "type": "stat",
       "targets": [
         {
@@ -228,7 +236,7 @@ metrics:
       ]
     },
     {
-      "title": "é£æ§äºä»¶",
+      "title": "风控事件",
       "type": "stat",
       "targets": [
         {
@@ -252,9 +260,9 @@ metrics:
 ```
 
 
-## 5. åè­¦è§å
+## 5. 告警规则
 
-### 5.1 åè­¦è§åå®ä¹
+### 5.1 告警规则定义
 
 ```yaml
 # alertmanager/rules/quant_system.yaml
@@ -268,8 +276,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "ç­ç¥ä¿¡å·å»¶è¿è¿é«"
-          description: "{{ $labels.strategy_id }} å»¶è¿ {{ $value }}s"
+          summary: "策略信号延迟过高"
+          description: "{{ $labels.strategy_id }} 延迟 {{ $value }}s"
 
       - alert: StrategyNoSignal
         expr: rate(strategy_signal_count[10m]) == 0
@@ -288,8 +296,9 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "é£æ§è¿è§é¢ç¹"
-          description: "5åéååç?{{ $value }} æ¬¡è¿è§?
+          summary: "风控违规频繁"
+          description: "5åéå
+åç?{{ $value }} æ¬¡è¿è§?
 
       - alert: RiskExposureHigh
         expr: risk_position_value > 0.8
@@ -297,8 +306,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "é£é©æå£è¿é«"
-          description: "å½åæå£ {{ $value }}"
+          summary: "风险敞口过高"
+          description: "当前敞口 {{ $value }}"
 
   - name: system_alerts
     rules:
@@ -308,7 +317,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "CPUä½¿ç¨çé«"
+          summary: "CPU使用率高"
           description: "CPUä½¿ç¨ç?{{ $value }}%"
 
       - alert: HighMemory
@@ -317,11 +326,14 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "åå­ä½¿ç¨çé«"
-          description: "åå­ä½¿ç¨ {{ $value | humanize1024 }}"
+          summary: "å
+存使用率高"
+          description: "å
+存使用 {{ $value | humanize1024 }}"
 ```
 
-### 5.2 åè­¦éç¥éç½®
+### 5.2 åè­¦éç¥é
+ç½®
 
 ```yaml
 # alertmanager/config.yaml
@@ -361,7 +373,8 @@ receivers:
 
 ## 6. å¿«éé¨ç½?
 
-### 6.1 Docker Composeéç½®
+### 6.1 Docker Composeé
+ç½®
 
 ```yaml
 # docker-compose.monitoring.yml
@@ -402,36 +415,36 @@ services:
       - "9100:9100"
 ```
 
-### 6.2 å¯å¨å½ä»¤
+### 6.2 启动命令
 
 ```bash
-# å¯å¨çæ§æå¡
+# 启动监控服务
 docker-compose -f docker-compose.monitoring.yml up -d
 
-# è®¿é®
+# 访问
 # Grafana: http://localhost:3000 (admin/admin)
 # Prometheus: http://localhost:9090
 # AlertManager: http://localhost:9093
 ```
 
 
-## 7. ææ å¯¼åºä»£ç ç¤ºä¾
+## 7. 指标导出代码示例
 
 ### 7.1 èªå®ä¹ææ å¯¼å?
 
 ```python
 from prometheus_client import Counter, Histogram, Gauge, start_http_server
 
-# å®ä¹ææ 
-signal_count = Counter('strategy_signal_count', 'ç­ç¥ä¿¡å·æ°é',
+# 定义指标
+signal_count = Counter('strategy_signal_count', '策略信号数量',
                        ['strategy_id', 'signal_type'])
-signal_latency = Histogram('strategy_signal_latency', 'ä¿¡å·çæå»¶è¿',
+signal_latency = Histogram('strategy_signal_latency', '信号生成延迟',
                           ['strategy_id'])
-risk_violation = Counter('risk_violation_count', 'é£æ§è¿è§æ¬¡æ°',
+risk_violation = Counter('risk_violation_count', '风控违规次数',
                        ['rule_id', 'severity'])
 factor_ic = Gauge('factor_ic_value', 'å å­ICå?, ['factor_id'])
 
-# å¨ä»£ç ä¸­ä½¿ç¨
+# 在代码中使用
 class StrategyMonitor:
     def on_signal(self, strategy_id: str, signal_type: str):
         signal_count.labels(strategy_id=strategy_id, signal_type=signal_type).inc()
@@ -444,15 +457,17 @@ start_http_server(8000)
 ```
 
 
-## 8. æ´æ°è®°å½
+## 8. 更新记录
 
-| çæ¬ | æ¥æ | åæ´åå®¹ |
+| çæ¬ | æ¥æ | åæ´å
+å®¹ |
 |------|------|----------|
-| v1.0 | 2026-03-28 | åå§çæ¬ - ç®åçè®¾è®¡ |
+| v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
 
-**ç»´æ¤è?*: æ¸é£éåç³»ç»
-**ç´¢å¼**: `MON_001`
+**ç»´æ¤è?*: æ¸
+风量化系统
+**索引**: `MON_001`
 ---
 
 ## 9. 文档治理

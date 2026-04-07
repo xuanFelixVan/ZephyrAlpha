@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_CONTROL_001
 version: 1.0.0
 status: Active

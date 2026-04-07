@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REFERENCE_FIX_REPORT_20260407_153331
 version: 1.0.0
 status: Active

@@ -1,26 +1,29 @@
----
+﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
-  - å¸åºåä¸èæ¨¡æéæ?
-  - åä¸èè¡ä¸ºå»ºæ¨?
+  - å¸åºåä¸è
+æ¨¡æéæ?
+  - åä¸è
+è¡ä¸ºå»ºæ¨?
   - å¤å±æ¬¡éæ?
-  - æ¨¡æç»æåºç¨
+  - 模拟结果应用
 layer: Layer 5 (策略执行层)
 ---
 
-# å¸åºåä¸èè¡ä¸ºæ¨¡æéæèå?
+# å¸åºåä¸è
+è¡ä¸ºæ¨¡æéæèå?
 
 ## 核心定位
 
-负责市场参与者模拟集成。基于ABM技术，模拟市场参与者行为，支持策略测试。
+负责市场参与者模拟集成。基于ABM技术，模拟市场参与者行为，支持策略测试。 提供策略设计、回测、优化功能，实现投资策略。
 
 
 ## 设计目标
@@ -75,108 +78,124 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-æå»ºå¸åºåä¸èæ¨¡æéæçè®¾è®¡ä¸å®ç°ï¼åºäºAgent-Based Modelingææ¯ï¼æ¨¡æä¸åå¸åºåä¸èè¡ä¸ºï¼æ¯æå¸åºå¾®è§ç»æç ç©¶åç­ç¥æµè¯ã?
+æå»ºå¸åºåä¸è
+æ¨¡æéæçè®¾è®¡ä¸å®ç°ï¼åºäºAgent-Based Modelingææ¯ï¼æ¨¡æä¸åå¸åºåä¸è
+è¡ä¸ºï¼æ¯æå¸åºå¾®è§ç»æç ç©¶åç­ç¥æµè¯ã?
 
 ---
 
 
-> **æ ¸å¿èè´£**: å¸åºåä¸èè¡ä¸ºæ¨¡æéæï¼å¤å±æ¬¡éææ¶æ?
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼å¸åºåä¸èæ¨¡æéæãåä¸èè¡ä¸ºå»ºæ¨¡ãå¤å±æ¬¡éæãæ¨¡æç»æåºç?
+> **æ ¸å¿èè´£**: å¸åºåä¸è
+è¡ä¸ºæ¨¡æéæï¼å¤å±æ¬¡éææ¶æ?
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼å¸åºåä¸è
+æ¨¡æéæãåä¸è
+è¡ä¸ºå»ºæ¨¡ãå¤å±æ¬¡éæãæ¨¡æç»æåºç?
 > - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ãç­ç¥æ§è¡ãé£é©æ§å?
-ï»? å¸åºåä¸èè¡ä¸ºæ¨¡æç³»?- å¤å±æ¬¡éææ¶ææ¹?
+ï»? å¸åºåä¸è
+行为模拟系?- 多层次集成架构方?
 
-> **æ ¸å¿å®ä½**: å¸åºåä¸èè¡ä¸ºæ¨¡æç³»?- å¤å±æ¬¡éææ¶ææ¹?çæ ¸å¿åè½å®ç?
+> **æ ¸å¿å®ä½**: å¸åºåä¸è
+è¡ä¸ºæ¨¡æç³»?- å¤å±æ¬¡éææ¶ææ¹?çæ ¸å¿åè½å®ç?
 
-> **çæ¬**: v1.0
-> **åå»ºæ¥æ**: 2026-04-02
-> **ææ¯è¯å®¡å®**: Spec-Approver (å®¡æ¹æºè½?
-> **æ ¸å¿é®é¢**: å¸åºåä¸èæ¨¡æï¼å½å®¶éãä¸»åãæ£æ·ï¼å¦ä½éæå°ç°æç³»ç»ï¼
-> **ç­æ¡**: å¤å±æ¬¡é?- åæ¶ä½ä¸ºå å­ãä¿¡å·ãå³ç­ä¸ç§å½¢å¼ä»?
-## ð?äºãè¯¦ç»éææ¶æè®¾?
-### 2.1 Layer 2.5 æ°å¢å±ï¼å¸åºåä¸èæ¨¡æå±
+> **版本**: v1.0
+> **创建日期**: 2026-04-02
+> **技术评审官**: Spec-Approver (审批智能?
+> **æ ¸å¿é®é¢**: å¸åºåä¸è
+模拟（国家队、主力、散户）如何集成到现有系统？
+> **答案**: 多层次集?- 同时作为因子、信号、决策三种形式介?
+## 🏗?二、详细集成架构设?
+### 2.1 Layer 2.5 æ°å¢å±ï¼å¸åºåä¸è
+模拟层
 
-**æ¶æå®ä½**: å¨Layer 2 (Alphaå å­? ?Layer 3 (èæåæ? ä¹é´æ°å¢
+**æ¶æå®ä½**: å¨Layer 2 (Alphaå å­? ?Layer 3 (èæ
+分析? 之间新增
 
 ```
-Layer 0: æ°æ®æºå±
-    ?Layer 1: æ°æ®é¢å¤çå±
-    ?Layer 2: Alphaå å­?(ç°æ5700+å å­)
-    ?Layer 2.5: å¸åºåä¸èæ¨¡æå± ð (æ°å¢æ ¸å¿?
-    ââ å½å®¶éæºè½ä½ (NationalTeamAgent)
-    ââ ä¸»åæºè½?(InstitutionalAgent)
-    ââ æ£æ·æºè½?(RetailAgent)
-    ââ å¸åºæ¨¡æå¼æ (MarketSimulationEngine)
-    ?Layer 3: èæåæ?    ?Layer 4: æºå¨å­¦ä¹ ?    ?Layer 5: ç­ç¥æ§è¡?    ?Layer 6: ç»åä¼å?    ?Layer 7: AIæ¥å?    ?Layer 8: äººæºäº¤äº?```
+Layer 0: 数据源层
+    ?Layer 1: 数据预处理层
+    ?Layer 2: Alpha因子?(现有5700+因子)
+    ?Layer 2.5: å¸åºåä¸è
+模拟层 🆕 (新增核心?
+    ├─ 国家队智能体 (NationalTeamAgent)
+    ├─ 主力智能?(InstitutionalAgent)
+    ├─ 散户智能?(RetailAgent)
+    └─ 市场模拟引擎 (MarketSimulationEngine)
+    ?Layer 3: èæ
+分析?    ?Layer 4: 机器学习?    ?Layer 5: 策略执行?    ?Layer 6: 组合优化?    ?Layer 7: AI报告?    ?Layer 8: 人机交互?```
 
-**ä¸ºä»ä¹éè¦Layer 2.5?*
-1. **æ°æ®å±é¢**: éè¦æ´åé¾èæ¦ãèµéæµåãèæç­å¤æºæ°æ®
-2. **è®¡ç®å±é¢**: éè¦è¿è¡RLæ¨¡åãè¡ä¸ºéèå­¦æ¨¡åç­å¤æè®¡?3. **äº¤äºå±é¢**: éè¦æ¨¡ææºè½ä½ä¹é´çåå¼åäº¤äº
-4. **è¾åºå±é¢**: éè¦åæ¶è¾åºå å­ãä¿¡å·ãå³ç­ä¸ç§å½¢?
+**为什么需要Layer 2.5?*
+1. **æ°æ®å±é¢**: éè¦æ´åé¾èæ¦ãèµéæµåãèæ
+等多源数据
+2. **计算层面**: 需要运行RL模型、行为金融学模型等复杂计?3. **交互层面**: 需要模拟智能体之间的博弈和交互
+4. **输出层面**: 需要同时输出因子、信号、决策三种形?
 ---
 
-### 2.2 å å­è¾åºå±éææ¹?
-#### 2.2.1 å å­å®ä¹
+### 2.2 因子输出层集成方?
+#### 2.2.1 因子定义
 
-**ä¸»åå¨åå å­** (InstitutionalActivityFactor)
+**主力动向因子** (InstitutionalActivityFactor)
 
 ```python
 class InstitutionalActivityFactor(BaseFactor):
-    """ä¸»åå¨åå å­
+    """主力动向因子
     
-    ç´¢å¼: FACTOR.INSTITUTIONAL.001
-    Layer: Layer 2 (Alphaå å­?
-    æ°æ®? Layer 2.5 ä¸»åæºè½ä½è¾?    
-    å å­ææ:
-    1. èµéæµåå¼ºåº¦ (CapitalFlowIntensity)
-    2. è®¢åç°¿ä¸å¹³è¡¡?(OrderBookImbalance)
-    3. ä¸»åæä»åå (InstitutionalHoldingChange)
-    4. æçé¶æ®µè¯å« (ManipulationPhase)
+    索引: FACTOR.INSTITUTIONAL.001
+    Layer: Layer 2 (Alpha因子?
+    数据? Layer 2.5 主力智能体输?    
+    因子构成:
+    1. 资金流向强度 (CapitalFlowIntensity)
+    2. 订单簿不平衡?(OrderBookImbalance)
+    3. 主力持仓变化 (InstitutionalHoldingChange)
+    4. 操盘阶段识别 (ManipulationPhase)
     """
     
     def __init__(self, institutional_agent: InstitutionalAgent):
         self.agent = institutional_agent
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """è®¡ç®ä¸»åå¨åå å­
+        """计算主力动向因子
         
-        è¾å¥:
-            data: åå«ä»·æ ¼ãæäº¤éãè®¢åç°¿ç­æ°?            
-        è¾åº:
-            pd.Series: ä¸»åå¨åå å­?(èå´[-1, 1])
-            - æ­? ä¸»åèµéæµå¥
+        è¾å
+¥:
+            data: å
+含价格、成交量、订单簿等数?            
+        输出:
+            pd.Series: 主力动向因子?(范围[-1, 1])
+            - æ­? ä¸»åèµéæµå
+¥
             - è´? ä¸»åèµéæµåº
-            - ç»å¯¹å¼è¶?å¼ºåº¦è¶å¤§
+            - 绝对值越?强度越大
         """
-        # 1. è·åä¸»åæºè½ä½çå¸åºå¾®è§ç»æåæ
+        # 1. 获取主力智能体的市场微观结构分析
         microstructure = self.agent.market_microstructure_analyzer.analyze(
             order_book=data['order_book'],
             trade_flow=data['trade_flow'],
             liquidity=data['liquidity']
         )
         
-        # 2. è®¡ç®èµéæµåå¼ºåº¦
+        # 2. 计算资金流向强度
         capital_flow_intensity = self._calculate_capital_flow_intensity(
             microstructure.trade_flow
         )
         
-        # 3. è®¡ç®è®¢åç°¿ä¸å¹³è¡¡?        order_book_imbalance = self._calculate_order_book_imbalance(
+        # 3. 计算订单簿不平衡?        order_book_imbalance = self._calculate_order_book_imbalance(
             microstructure.order_book
         )
         
-        # 4. è®¡ç®ä¸»åæä»åå
+        # 4. 计算主力持仓变化
         holding_change = self._calculate_holding_change(
             data['institutional_holdings']
         )
         
-        # 5. è¯å«æçé¶æ®µ
+        # 5. 识别操盘阶段
         manipulation_phase = self.agent._identify_manipulation_phase(
             microstructure
         )
         
-        # 6. åææç»å ?        factor_value = (
+        # 6. 合成最终因?        factor_value = (
             0.3 * capital_flow_intensity +
             0.3 * order_book_imbalance +
             0.2 * holding_change +
@@ -186,56 +205,65 @@ class InstitutionalActivityFactor(BaseFactor):
         return factor_value
 ```
 
-**æ£æ·æç»ªå å­** (RetailSentimentFactor)
+**æ£æ·æ
+绪因子** (RetailSentimentFactor)
 
 ```python
 class RetailSentimentFactor(BaseFactor):
-    """æ£æ·æç»ªå å­
+    """æ£æ·æ
+绪因子
     
-    ç´¢å¼: FACTOR.RETAIL.001
-    Layer: Layer 2 (Alphaå å­?
-    æ°æ®? Layer 2.5 æ£æ·æºè½ä½è¾?    
-    å å­ææ:
-    1. å¸åºæç»ªææ° (MarketSentimentIndex)
-    2. ç¾ç¾¤æåºå¼ºåº¦ (HerdingIntensity)
-    3. æ£æ·æä»åå (RetailHoldingChange)
-    4. è¿½æ¶¨æè·ç¨?(ChaseTrendDegree)
+    索引: FACTOR.RETAIL.001
+    Layer: Layer 2 (Alpha因子?
+    数据? Layer 2.5 散户智能体输?    
+    因子构成:
+    1. å¸åºæ
+绪指数 (MarketSentimentIndex)
+    2. 羊群效应强度 (HerdingIntensity)
+    3. 散户持仓变化 (RetailHoldingChange)
+    4. 追涨杀跌程?(ChaseTrendDegree)
     """
     
     def __init__(self, retail_agent: RetailAgent):
         self.agent = retail_agent
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """è®¡ç®æ£æ·æç»ªå å­
+        """è®¡ç®æ£æ·æ
+绪因子
         
-        è¾åº:
-            pd.Series: æ£æ·æç»ªå å­?(èå´[-1, 1])
-            - æ­? æ£æ·æç»ªä¹è§(å¯è½è§é¡¶)
-            - è´? æ£æ·æç»ªæ²è§(å¯è½è§åº)
-            - ç»å¯¹å¼è¶?æç»ªè¶æ?        """
-        # 1. è·åæ£æ·æºè½ä½çæç»ªåæ
+        输出:
+            pd.Series: æ£æ·æ
+绪因子?(范围[-1, 1])
+            - æ­? æ£æ·æ
+绪乐观(可能见顶)
+            - è´? æ£æ·æ
+绪悲观(可能见底)
+            - ç»å¯¹å¼è¶?æ
+绪越极?        """
+        # 1. è·åæ£æ·æºè½ä½çæ
+绪分析
         sentiment_score = self.agent.sentiment_analyzer.analyze(
             news=data['news'],
             social_media=data['social_media'],
             market_data=data['prices']
         )
         
-        # 2. è®¡ç®ç¾ç¾¤æåºå¼ºåº¦
+        # 2. 计算羊群效应强度
         herding_intensity = self.agent.herding_model.evaluate(
             market_state=data,
             sentiment_score=sentiment_score
         )
         
-        # 3. è®¡ç®æ£æ·æä»åå
+        # 3. 计算散户持仓变化
         holding_change = self._calculate_holding_change(
             data['retail_holdings']
         )
         
-        # 4. è®¡ç®è¿½æ¶¨æè·ç¨?        chase_trend_degree = self._calculate_chase_trend_degree(
+        # 4. 计算追涨杀跌程?        chase_trend_degree = self._calculate_chase_trend_degree(
             data['prices'], data['retail_holdings']
         )
         
-        # 5. åææç»å ?        factor_value = (
+        # 5. 合成最终因?        factor_value = (
             0.4 * sentiment_score +
             0.3 * herding_intensity +
             0.2 * holding_change +
@@ -245,54 +273,54 @@ class RetailSentimentFactor(BaseFactor):
         return factor_value
 ```
 
-**æ¿ç­ä¿¡å·å å­** (PolicySignalFactor)
+**政策信号因子** (PolicySignalFactor)
 
 ```python
 class PolicySignalFactor(BaseFactor):
-    """æ¿ç­ä¿¡å·å å­
+    """政策信号因子
     
-    ç´¢å¼: FACTOR.POLICY.001
-    Layer: Layer 2 (Alphaå å­?
-    æ°æ®? Layer 2.5 å½å®¶éæºè½ä½è¾åº
+    索引: FACTOR.POLICY.001
+    Layer: Layer 2 (Alpha因子?
+    数据? Layer 2.5 国家队智能体输出
     
-    å å­ææ:
-    1. æ¿ç­æ¯æ?(PolicySupportLevel)
-    2. å¸åºç¨³å®?(MarketStability)
-    3. å½å®¶éæä»å?(NationalTeamHoldingChange)
-    4. å¹²é¢æ¦ç (InterventionProbability)
+    因子构成:
+    1. 政策支持?(PolicySupportLevel)
+    2. 市场稳定?(MarketStability)
+    3. 国家队持仓变?(NationalTeamHoldingChange)
+    4. 干预概率 (InterventionProbability)
     """
     
     def __init__(self, national_team_agent: NationalTeamAgent):
         self.agent = national_team_agent
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """è®¡ç®æ¿ç­ä¿¡å·å å­
+        """计算政策信号因子
         
-        è¾åº:
-            pd.Series: æ¿ç­ä¿¡å·å å­?(èå´[-1, 1])
+        输出:
+            pd.Series: 政策信号因子?(范围[-1, 1])
             - æ­? æ¿ç­å©å¥½,å½å®¶éå¯è½ä¹°?            - è´? æ¿ç­å©ç©º,å½å®¶éå¯è½å?            - ç»å¯¹å¼è¶?ä¿¡å·è¶å¼º
         """
-        # 1. è·åå½å®¶éæºè½ä½çæ¿ç­ä¿¡?        policy_signals = self.agent.policy_signal_detector.detect(
+        # 1. 获取国家队智能体的政策信?        policy_signals = self.agent.policy_signal_detector.detect(
             news_data=data['news'],
             macro_data=data['macro_indicators']
         )
         
-        # 2. è¯ä¼°å¸åºç¨³å®?        stability_score = self.agent.market_stability_monitor.evaluate(
+        # 2. 评估市场稳定?        stability_score = self.agent.market_stability_monitor.evaluate(
             price_data=data['prices'],
             volatility=data['volatility'],
             sentiment=data['sentiment']
         )
         
-        # 3. è®¡ç®å½å®¶éæä»å?        holding_change = self._calculate_holding_change(
+        # 3. 计算国家队持仓变?        holding_change = self._calculate_holding_change(
             data['national_team_holdings']
         )
         
-        # 4. è®¡ç®å¹²é¢æ¦ç
+        # 4. 计算干预概率
         intervention_probability = self.agent._calculate_intervention_probability(
             policy_signals, stability_score
         )
         
-        # 5. åææç»å ?        factor_value = (
+        # 5. 合成最终因?        factor_value = (
             0.4 * policy_signals.composite_score +
             0.3 * stability_score +
             0.2 * holding_change +
@@ -302,13 +330,13 @@ class PolicySignalFactor(BaseFactor):
         return factor_value
 ```
 
-#### 2.2.2 å å­åºé?
+#### 2.2.2 因子库集?
 ```python
 class AgentBasedFactorLibrary:
-    """åºäºæºè½ä½çå å­?    
-    ç´¢å¼: FACTOR.LIBRARY.AGENT.001
-    Layer: Layer 2 (Alphaå å­?
-    èè´£: ç®¡çåè®¡ç®æææºè½ä½çæçå ?    """
+    """基于智能体的因子?    
+    索引: FACTOR.LIBRARY.AGENT.001
+    Layer: Layer 2 (Alpha因子?
+    职责: 管理和计算所有智能体生成的因?    """
     
     def __init__(self, 
                  national_team_agent: NationalTeamAgent,
@@ -320,17 +348,18 @@ class AgentBasedFactorLibrary:
             'retail': retail_agent
         }
         
-        # åå§åå ?        self.factors = {
+        # 初始化因?        self.factors = {
             'policy_signal': PolicySignalFactor(national_team_agent),
             'institutional_activity': InstitutionalActivityFactor(institutional_agent),
             'retail_sentiment': RetailSentimentFactor(retail_agent)
         }
         
     def calculate_all_factors(self, data: pd.DataFrame) -> pd.DataFrame:
-        """è®¡ç®æææºè½ä½å å­
+        """计算所有智能体因子
         
-        è¾åº:
-            pd.DataFrame: åå«ææå å­å¼çDataFrame
+        输出:
+            pd.DataFrame: å
+含所有因子值的DataFrame
         """
         factor_values = {}
         
@@ -346,48 +375,49 @@ class AgentBasedFactorLibrary:
     def integrate_with_existing_factors(self, 
                                        agent_factors: pd.DataFrame,
                                        existing_factors: pd.DataFrame) -> pd.DataFrame:
-        """å°æºè½ä½å å­ä¸ç°æå å­åºéæ
+        """将智能体因子与现有因子库集成
         
-        éææ¹å¼:
-        1. ç´æ¥æ¼æ¥ (æ°å¢3ä¸ªå å­å)
-        2. å å­æ­£äº¤?(å»é¤ä¸ç°æå å­çå±çº¿?
-        3. å å­æ å?(ç»ä¸éçº²)
+        集成方式:
+        1. 直接拼接 (新增3个因子列)
+        2. å å­æ­£äº¤?(å»é¤ä¸ç°æå å­çå
+±çº¿?
+        3. 因子标准?(统一量纲)
         """
-        # 1. ç´æ¥æ¼æ¥
+        # 1. 直接拼接
         integrated_factors = pd.concat([existing_factors, agent_factors], axis=1)
         
         # 2. å å­æ­£äº¤?(å?
         if self.config.orthogonalize:
             integrated_factors = self._orthogonalize_factors(integrated_factors)
         
-        # 3. å å­æ å?        integrated_factors = self._standardize_factors(integrated_factors)
+        # 3. 因子标准?        integrated_factors = self._standardize_factors(integrated_factors)
         
         return integrated_factors
 ```
 
 ---
 
-### 2.3 ä¿¡å·è¾åºå±éææ¹?
-#### 2.3.1 ä¿¡å·çæ?
+### 2.3 信号输出层集成方?
+#### 2.3.1 信号生成?
 ```python
 class AgentBasedSignalGenerator:
-    """åºäºæºè½ä½çä¿¡å·çæ?    
-    ç´¢å¼: SIGNAL.GENERATOR.AGENT.001
-    Layer: Layer 5 (ç­ç¥æ§è¡?
-    èè´£: å°æºè½ä½å³ç­è½¬æ¢ä¸ºäº¤æä¿¡?    """
+    """基于智能体的信号生成?    
+    索引: SIGNAL.GENERATOR.AGENT.001
+    Layer: Layer 5 (策略执行?
+    职责: 将智能体决策转换为交易信?    """
     
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
         self.signal_combiner = SignalCombiner()
         
     def generate_signals(self, market_state: MarketState) -> TradingSignals:
-        """çæäº¤æä¿¡å·
+        """生成交易信号
         
-        æµç¨:
-        1. åæºè½ä½ç¬ç«çæå³ç­
-        2. å¸åºæ¨¡æå¼ææ¨¡æåå¼
-        3. ä¿¡å·åæå¨æ´åä¿¡?        4. è¿åæç»äº¤æä¿¡?        """
-        # 1. åæºè½ä½ç¬ç«çæå³ç­
+        流程:
+        1. 各智能体独立生成决策
+        2. 市场模拟引擎模拟博弈
+        3. 信号合成器整合信?        4. 返回最终交易信?        """
+        # 1. 各智能体独立生成决策
         agent_decisions = {}
         for agent_name, agent in self.agents.items():
             decision = agent.generate_trading_decision(market_state)
@@ -400,7 +430,7 @@ class AgentBasedSignalGenerator:
         else:
             market_impact = None
         
-        # 3. ä¿¡å·åæå¨æ´åä¿¡?        final_signals = self.signal_combiner.combine(
+        # 3. 信号合成器整合信?        final_signals = self.signal_combiner.combine(
             agent_decisions=agent_decisions,
             market_impact=market_impact,
             risk_budget=self.config.risk_budget
@@ -410,23 +440,23 @@ class AgentBasedSignalGenerator:
 
 
 class SignalCombiner:
-    """ä¿¡å·åæ?    
-    ç´¢å¼: SIGNAL.COMBINER.001
-    èè´£: æ´åå¤ä¸ªæºè½ä½çä¿¡å·
+    """信号合成?    
+    索引: SIGNAL.COMBINER.001
+    职责: 整合多个智能体的信号
     """
     
     def combine(self,
                agent_decisions: Dict[str, AgentDecision],
                market_impact: Optional[float] = None,
                risk_budget: Optional[Dict] = None) -> TradingSignals:
-        """åæä¿¡å·
+        """合成信号
         
-        åæç­ç¥:
-        1. å æå¹³å (æ ¹æ®æºè½ä½ç½®ä¿¡åº¦å æ)
-        2. å¸åºå²å»è°æ´ (èèå¸åºå²å»ææ¬)
-        3. é£é©é¢ç®çº¦æ (ç¡®ä¿é£é©å¯æ§)
+        合成策略:
+        1. 加权平均 (根据智能体置信度加权)
+        2. 市场冲击调整 (考虑市场冲击成本)
+        3. 风险预算约束 (确保风险可控)
         """
-        # 1. æååæºè½ä½çä¿¡?        signals = {}
+        # 1. 提取各智能体的信?        signals = {}
         for agent_name, decision in agent_decisions.items():
             signals[agent_name] = {
                 'action': decision.action,
@@ -435,16 +465,16 @@ class SignalCombiner:
                 'target_stocks': decision.target_stocks
             }
         
-        # 2. å æå¹³ååæ
+        # 2. 加权平均合成
         combined_signal = self._weighted_average_combine(signals)
         
-        # 3. å¸åºå²å»è°æ´
+        # 3. 市场冲击调整
         if market_impact is not None:
             combined_signal = self._adjust_for_market_impact(
                 combined_signal, market_impact
             )
         
-        # 4. é£é©é¢ç®çº¦æ
+        # 4. 风险预算约束
         if risk_budget is not None:
             combined_signal = self._apply_risk_budget(
                 combined_signal, risk_budget
@@ -453,38 +483,38 @@ class SignalCombiner:
         return combined_signal
     
     def _weighted_average_combine(self, signals: Dict) -> TradingSignals:
-        """å æå¹³ååæ
+        """加权平均合成
         
-        æéè®¡ç®:
-        - å½å®¶? æé = ç½®ä¿¡?* 0.3 (é¿æç¨³å®)
-        - ä¸»å: æé = ç½®ä¿¡?* 0.5 (å¸åºä¸»å¯¼)
-        - æ£æ·: æé = ç½®ä¿¡?* 0.2 (ååææ )
+        权重计算:
+        - 国家? 权重 = 置信?* 0.3 (长期稳定)
+        - 主力: 权重 = 置信?* 0.5 (市场主导)
+        - 散户: 权重 = 置信?* 0.2 (反向指标)
         """
         total_weight = 0
         weighted_position = {}
         
         for agent_name, signal in signals.items():
-            # æ ¹æ®æºè½ä½ç±»åè®¾ç½®åºç¡æé
+            # 根据智能体类型设置基础权重
             if agent_name == 'national_team':
                 base_weight = 0.3
             elif agent_name == 'institutional':
                 base_weight = 0.5
             elif agent_name == 'retail':
-                base_weight = 0.2  # æ£æ·ä½ä¸ºååææ 
-                signal['position_size'] = -signal['position_size']  # åè½¬
+                base_weight = 0.2  # 散户作为反向指标
+                signal['position_size'] = -signal['position_size']  # 反转
             else:
                 base_weight = 0.1
             
-            # è®¡ç®æç»æ?            weight = base_weight * signal['confidence']
+            # 计算最终权?            weight = base_weight * signal['confidence']
             total_weight += weight
             
-            # å æç´¯å 
+            # 加权累加
             for stock, size in signal['position_size'].items():
                 if stock not in weighted_position:
                     weighted_position[stock] = 0
                 weighted_position[stock] += weight * size
         
-        # å½ä¸?        if total_weight > 0:
+        # 归一?        if total_weight > 0:
             for stock in weighted_position:
                 weighted_position[stock] /= total_weight
         
@@ -496,17 +526,17 @@ class SignalCombiner:
         )
 ```
 
-#### 2.3.2 ä¸ç°æç­ç¥é?
+#### 2.3.2 与现有策略集?
 ```python
 class StrategyWithAgentSignals(BaseStrategy):
-    """éææºè½ä½ä¿¡å·çç­ç¥åºç±»
+    """集成智能体信号的策略基类
     
-    ç´¢å¼: STRATEGY.AGENT.001
-    Layer: Layer 5 (ç­ç¥æ§è¡?
+    索引: STRATEGY.AGENT.001
+    Layer: Layer 5 (策略执行?
     
-    ä½¿ç¨æ¹å¼:
-    1. ç»§æ¿æ­¤ç±»
-    2. å¨generate_signalsæ¹æ³ä¸­ä½¿ç¨agent_signals
+    使用方式:
+    1. 继承此类
+    2. 在generate_signals方法中使用agent_signals
     """
     
     def __init__(self, 
@@ -516,19 +546,19 @@ class StrategyWithAgentSignals(BaseStrategy):
         self.agent_signal_generator = agent_signal_generator
         
     def generate_signals(self, data: pd.DataFrame) -> List[Signal]:
-        """çæäº¤æä¿¡å·
+        """生成交易信号
         
-        æµç¨:
-        1. è·åä¼ ç»å å­ä¿¡å·
-        2. è·åæºè½ä½ä¿¡?        3. èåä¸¤ç±»ä¿¡å·
-        4. è¿åæç»ä¿¡?        """
-        # 1. è·åä¼ ç»å å­ä¿¡å·
+        流程:
+        1. 获取传统因子信号
+        2. 获取智能体信?        3. 融合两类信号
+        4. 返回最终信?        """
+        # 1. 获取传统因子信号
         traditional_signals = self._generate_traditional_signals(data)
         
-        # 2. è·åæºè½ä½ä¿¡?        market_state = self._build_market_state(data)
+        # 2. 获取智能体信?        market_state = self._build_market_state(data)
         agent_signals = self.agent_signal_generator.generate_signals(market_state)
         
-        # 3. èåä¿¡å·
+        # 3. 融合信号
         final_signals = self._fuse_signals(traditional_signals, agent_signals)
         
         return final_signals
@@ -536,30 +566,30 @@ class StrategyWithAgentSignals(BaseStrategy):
     def _fuse_signals(self, 
                      traditional_signals: List[Signal],
                      agent_signals: TradingSignals) -> List[Signal]:
-        """èåä¼ ç»ä¿¡å·åæºè½ä½ä¿¡å·
+        """融合传统信号和智能体信号
         
-        èåç­ç¥:
-        1. ä¿¡å·æ¹åä¸??å¢å¼ºä¿¡å·å¼ºåº¦
-        2. ä¿¡å·æ¹åå²çª ?éä½ä¿¡å·å¼ºåº¦ææ¾?        3. æºè½ä½ä¿¡å·ç¬??ä½ä¸ºæ°ä¿¡å·æ·»?        """
+        融合策略:
+        1. 信号方向一??增强信号强度
+        2. 信号方向冲突 ?降低信号强度或放?        3. 智能体信号独??作为新信号添?        """
         fused_signals = []
         
         for trad_signal in traditional_signals:
-            # æ£æ¥æºè½ä½æ¯å¦æç¸åè¡ç¥¨çä¿¡å·
+            # 检查智能体是否有相同股票的信号
             if trad_signal.symbol in agent_signals.position_size:
                 agent_position = agent_signals.position_size[trad_signal.symbol]
                 
-                # ä¿¡å·æ¹åä¸?                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
+                # 信号方向一?                if (trad_signal.direction == 'BUY' and agent_position > 0) or \
                    (trad_signal.direction == 'SELL' and agent_position < 0):
-                    # å¢å¼ºä¿¡å·å¼ºåº¦
+                    # 增强信号强度
                     fused_signal = Signal(
                         symbol=trad_signal.symbol,
                         direction=trad_signal.direction,
                         strength=trad_signal.strength * 1.5,
                         reason=f"Traditional + Agent signal aligned"
                     )
-                # ä¿¡å·æ¹åå²çª
+                # 信号方向冲突
                 else:
-                    # éä½ä¿¡å·å¼ºåº¦
+                    # 降低信号强度
                     fused_signal = Signal(
                         symbol=trad_signal.symbol,
                         direction=trad_signal.direction,
@@ -569,10 +599,10 @@ class StrategyWithAgentSignals(BaseStrategy):
                 
                 fused_signals.append(fused_signal)
             else:
-                # ä¼ ç»ä¿¡å·ç¬ç«
+                # 传统信号独立
                 fused_signals.append(trad_signal)
         
-        # æ·»å æºè½ä½ç¬ç«ä¿¡?        for symbol, position in agent_signals.position_size.items():
+        # 添加智能体独立信?        for symbol, position in agent_signals.position_size.items():
             if not any(s.symbol == symbol for s in fused_signals):
                 fused_signals.append(Signal(
                     symbol=symbol,
@@ -586,16 +616,16 @@ class StrategyWithAgentSignals(BaseStrategy):
 
 ---
 
-### 2.4 å³ç­è¾åºå±éææ¹?
-#### 2.4.1 å¤æºè½ä½æç¥¨æºå¶
+### 2.4 决策输出层集成方?
+#### 2.4.1 多智能体投票机制
 
 ```python
 class MultiAgentVotingSystem:
-    """å¤æºè½ä½æç¥¨ç³»ç»
+    """多智能体投票系统
     
-    ç´¢å¼: VOTING.AGENT.001
-    Layer: Layer 6 (ç»åä¼å?
-    èè´£: éè¿æç¥¨æºå¶æ´åæºè½ä½å³?    """
+    索引: VOTING.AGENT.001
+    Layer: Layer 6 (组合优化?
+    职责: 通过投票机制整合智能体决?    """
     
     def __init__(self, agents: Dict[str, BaseAgent]):
         self.agents = agents
@@ -603,13 +633,13 @@ class MultiAgentVotingSystem:
     def vote_on_portfolio(self, 
                          market_state: MarketState,
                          current_portfolio: Portfolio) -> PortfolioDecision:
-        """å¯¹ç»åè°æ´è¿è¡æ?        
-        æç¥¨æºå¶:
-        1. åæºè½ä½ç¬ç«æç¥¨
-        2. æ ¹æ®æç¥¨ç»æè®¡ç®æé
-        3. èèé£é©é¢ç®çº¦æ
-        4. è¿åæç»ç»åå³?        """
-        # 1. åæºè½ä½ç¬ç«æç¥¨
+        """对组合调整进行投?        
+        投票机制:
+        1. 各智能体独立投票
+        2. 根据投票结果计算权重
+        3. 考虑风险预算约束
+        4. 返回最终组合决?        """
+        # 1. 各智能体独立投票
         votes = {}
         for agent_name, agent in self.agents.items():
             decision = agent.generate_trading_decision(market_state)
@@ -618,13 +648,13 @@ class MultiAgentVotingSystem:
                 'voting_power': self._calculate_voting_power(agent_name, decision)
             }
         
-        # 2. æ ¹æ®æç¥¨ç»æè®¡ç®æé
+        # 2. 根据投票结果计算权重
         target_weights = self._calculate_target_weights(votes)
         
-        # 3. èèé£é©é¢ç®çº¦æ
+        # 3. 考虑风险预算约束
         target_weights = self._apply_risk_budget(target_weights, current_portfolio)
         
-        # 4. è¿åæç»ç»åå³?        return PortfolioDecision(
+        # 4. 返回最终组合决?        return PortfolioDecision(
             target_weights=target_weights,
             rebalance_reasons=self._generate_rebalance_reasons(votes),
             confidence=self._calculate_confidence(votes),
@@ -632,14 +662,14 @@ class MultiAgentVotingSystem:
         )
     
     def _calculate_voting_power(self, agent_name: str, decision: AgentDecision) -> float:
-        """è®¡ç®æç¥¨æé
+        """计算投票权重
         
-        æç¥¨æéå ç´ :
-        1. æºè½ä½ç±»åæ?(å½å®¶?.3, ä¸»å0.5, æ£æ·0.2)
-        2. å³ç­ç½®ä¿¡?(0-1)
-        3. åå²åç¡®?(åºäºåå²è¡¨ç°)
+        投票权重因素:
+        1. 智能体类型权?(国家?.3, 主力0.5, 散户0.2)
+        2. 决策置信?(0-1)
+        3. 历史准确?(基于历史表现)
         """
-        # åºç¡æé
+        # 基础权重
         base_weights = {
             'national_team': 0.3,
             'institutional': 0.5,
@@ -648,24 +678,25 @@ class MultiAgentVotingSystem:
         
         base_weight = base_weights.get(agent_name, 0.1)
         
-        # ç½®ä¿¡åº¦è°?        confidence_adjusted = base_weight * decision.confidence
+        # 置信度调?        confidence_adjusted = base_weight * decision.confidence
         
-        # åå²åç¡®çè°?(å¦æ?
+        # 历史准确率调?(如果?
         historical_accuracy = self._get_historical_accuracy(agent_name)
         final_weight = confidence_adjusted * historical_accuracy
         
         return final_weight
     
     def _calculate_target_weights(self, votes: Dict) -> Dict[str, float]:
-        """æ ¹æ®æç¥¨ç»æè®¡ç®ç®æ æé
+        """根据投票结果计算目标权重
         
-        è®¡ç®æ¹æ³:
-        1. å¯¹æ¯åªè¡?ç´¯å åæºè½ä½çæç¥¨æ?        2. å½ä¸åæ?        3. åºç¨æééå¶ (ååªè¡ç¥¨æéä¸è¶?0%)
+        计算方法:
+        1. å¯¹æ¯åªè¡?ç´¯å åæºè½ä½çæç¥¨æ?        2. å½ä¸åæ?        3. åºç¨æééå¶ (ååªè¡ç¥¨æéä¸è¶
+?0%)
         """
         stock_weights = {}
         total_voting_power = 0
         
-        # ç´¯å æç¥¨æé
+        # 累加投票权重
         for agent_name, vote in votes.items():
             decision = vote['decision']
             voting_power = vote['voting_power']
@@ -674,7 +705,7 @@ class MultiAgentVotingSystem:
                 if stock not in stock_weights:
                     stock_weights[stock] = 0
                 
-                # æ£æ·ä½ä¸ºååææ 
+                # 散户作为反向指标
                 if agent_name == 'retail':
                     stock_weights[stock] -= voting_power * position
                 else:
@@ -682,11 +713,11 @@ class MultiAgentVotingSystem:
             
             total_voting_power += voting_power
         
-        # å½ä¸?        if total_voting_power > 0:
+        # 归一?        if total_voting_power > 0:
             for stock in stock_weights:
                 stock_weights[stock] /= total_voting_power
         
-        # åºç¨æééå¶
+        # 应用权重限制
         max_weight = 0.2
         for stock in stock_weights:
             if abs(stock_weights[stock]) > max_weight:
@@ -695,18 +726,19 @@ class MultiAgentVotingSystem:
         return stock_weights
 ```
 
-#### 2.4.2 ä¸ç°æç»åä¼åé?
+#### 2.4.2 与现有组合优化集?
 ```python
 class PortfolioOptimizerWithAgents:
-    """éææºè½ä½çç»åä¼å?    
-    ç´¢å¼: OPTIMIZER.PORTFOLIO.AGENT.001
-    Layer: Layer 6 (ç»åä¼å?
+    """集成智能体的组合优化?    
+    索引: OPTIMIZER.PORTFOLIO.AGENT.001
+    Layer: Layer 6 (组合优化?
     
-    éææ¹å¼:
-    1. æºè½ä½æç¥¨ç»æä½ä¸ºç®æ æéçåéª
-    2. å å­æ¨¡åä½ä¸ºæ¶çé¢æµ
-    3. é£é©æ¨¡åä½ä¸ºé£é©çº¦æ
-    4. ä¼åæ±è§£æç»æ?    """
+    集成方式:
+    1. æºè½ä½æç¥¨ç»æä½ä¸ºç®æ æéçå
+éª
+    2. 因子模型作为收益预测
+    3. 风险模型作为风险约束
+    4. 优化求解最终权?    """
     
     def __init__(self,
                  voting_system: MultiAgentVotingSystem,
@@ -719,28 +751,30 @@ class PortfolioOptimizerWithAgents:
     def optimize(self,
                 market_state: MarketState,
                 current_portfolio: Portfolio) -> PortfolioDecision:
-        """ä¼åç»å
+        """优化组合
         
-        ä¼åæµç¨:
-        1. æºè½ä½æç¥¨çæåéªæ?        2. å å­æ¨¡åé¢æµæ¶ç
-        3. é£é©æ¨¡åè®¡ç®é£é©
-        4. ä¼åæ±è§£æç»æ?        """
-        # 1. æºè½ä½æç¥¨çæåéªæ?        voting_result = self.voting_system.vote_on_portfolio(
+        优化流程:
+        1. æºè½ä½æç¥¨çæå
+éªæ?        2. å å­æ¨¡åé¢æµæ¶ç
+        3. 风险模型计算风险
+        4. 优化求解最终权?        """
+        # 1. æºè½ä½æç¥¨çæå
+éªæ?        voting_result = self.voting_system.vote_on_portfolio(
             market_state, current_portfolio
         )
         prior_weights = voting_result.target_weights
         
-        # 2. å å­æ¨¡åé¢æµæ¶ç
+        # 2. 因子模型预测收益
         expected_returns = self.factor_model.predict_returns(
             market_state.factors
         )
         
-        # 3. é£é©æ¨¡åè®¡ç®é£é©
+        # 3. 风险模型计算风险
         risk_matrix = self.risk_model.calculate_risk_matrix(
             market_state.prices
         )
         
-        # 4. ä¼åæ±è§£æç»æ?        optimal_weights = self._solve_optimization(
+        # 4. 优化求解最终权?        optimal_weights = self._solve_optimization(
             prior_weights=prior_weights,
             expected_returns=expected_returns,
             risk_matrix=risk_matrix,
@@ -759,33 +793,37 @@ class PortfolioOptimizerWithAgents:
                            expected_returns: pd.Series,
                            risk_matrix: pd.DataFrame,
                            constraints: Dict) -> Dict[str, float]:
-        """æ±è§£ä¼åé®é¢
+        """求解优化问题
         
-        ä¼åç®æ :
+        优化目标:
         max: w'Î¼ - Î» * w'Î£w - Î³ * ||w - w_prior||^2
         
-        å¶ä¸­:
-        - w: ç»åæé
-        - Î¼: é¢ææ¶ç
-        - Î£: åæ¹å·®ç©?        - w_prior: åéªæé (æºè½ä½æç¥¨ç»?
-        - Î»: é£é©åæ¶ç³»æ°
-        - Î³: åéªæéåç¦»æ©ç½ç³»æ°
+        å
+¶ä¸­:
+        - w: 组合权重
+        - μ: 预期收益
+        - Î£: åæ¹å·®ç©?        - w_prior: å
+éªæé (æºè½ä½æç¥¨ç»?
+        - λ: 风险厌恶系数
+        - Î³: å
+éªæéåç¦»æ©ç½ç³»æ°
         """
         import cvxpy as cp
         
-        # æå»ºä¼ååé
+        # 构建优化变量
         stocks = list(expected_returns.index)
         n = len(stocks)
         w = cp.Variable(n)
         
-        # æå»ºç®æ å½æ°
+        # 构建目标函数
         mu = expected_returns.values
         Sigma = risk_matrix.values
         w_prior = np.array([prior_weights.get(stock, 0) for stock in stocks])
         
-        # ç®æ å½æ°
-        lambda_risk = self.config.risk_aversion  # é£é©åæ¶ç³»æ°
-        gamma_prior = self.config.prior_deviation_penalty  # åéªåç¦»æ©ç½
+        # 目标函数
+        lambda_risk = self.config.risk_aversion  # 风险厌恶系数
+        gamma_prior = self.config.prior_deviation_penalty  # å
+éªåç¦»æ©ç½
         
         objective = cp.Maximize(
             mu @ w - 
@@ -793,16 +831,17 @@ class PortfolioOptimizerWithAgents:
             gamma_prior * cp.norm(w - w_prior, 2)**2
         )
         
-        # çº¦ææ¡ä»¶
+        # 约束条件
         constraints_list = [
-            cp.sum(w) == 1,  # æéåä¸º1
-            w >= 0,  # ä¸åè®¸å?            w <= self.config.max_weight  # ååªè¡ç¥¨æå¤§æ?        ]
+            cp.sum(w) == 1,  # 权重和为1
+            w >= 0,  # ä¸å
+è®¸å?            w <= self.config.max_weight  # ååªè¡ç¥¨æå¤§æ?        ]
         
-        # æ±è§£
+        # 求解
         problem = cp.Problem(objective, constraints_list)
         problem.solve()
         
-        # è¿åç»æ
+        # 返回结果
         optimal_weights = {}
         for i, stock in enumerate(stocks):
             optimal_weights[stock] = w.value[i]
@@ -812,135 +851,155 @@ class PortfolioOptimizerWithAgents:
 
 ---
 
-## ð ä¸ãéæææå¯¹?
-### 3.1 åä¸éææ¹å¼ vs å¤å±æ¬¡é?
-| ç»´åº¦ | åä¸å å­éæ | åä¸ç­ç¥éæ | å¤å±æ¬¡é?(æ¨è) |
+## 📊 三、集成效果对?
+### 3.1 单一集成方式 vs 多层次集?
+| 维度 | 单一因子集成 | 单一策略集成 | 多层次集?(推荐) |
 |------|------------|------------|-----------------|
-| **ä¿¡æ¯å©ç¨** | â­â­ ä»å©ç¨å å­ä¿¡?| â­â­?ä»å©ç¨ä¿¡å·ä¿¡?| â­â­â­â­?å¨æ¹ä½å©?|
-| **åå¼æ¨¡æ** | ?æ æ³æ¨¡æ | ?æ æ³æ¨¡æ | ?å®æ´æ¨¡æ |
-| **å³ç­è´¨é** | â­â­?ä¸­ç­ | â­â­â­â­ è¾å¥½ | â­â­â­â­?ä¼ç§ |
-| **å¼åé¾?* | ??| â­â­ ?| â­â­â­â­ ?|
-| **ç»´æ¤ææ¬** | ??| â­â­ ?| â­â­?ä¸­é« |
-| **æ©å±?* | â­â­ ä¸?| â­â­?è¾å¥½ | â­â­â­â­?ä¼ç§ |
+| **ä¿¡æ¯å©ç¨** | â­â­ ä»
+å©ç¨å å­ä¿¡?| â­â­?ä»
+å©ç¨ä¿¡å·ä¿¡?| â­â­â­â­?å
+¨æ¹ä½å©?|
+| **博弈模拟** | ?无法模拟 | ?无法模拟 | ?完整模拟 |
+| **决策质量** | ⭐⭐?中等 | ⭐⭐⭐⭐ 较好 | ⭐⭐⭐⭐?优秀 |
+| **开发难?* | ??| ⭐⭐ ?| ⭐⭐⭐⭐ ?|
+| **维护成本** | ??| ⭐⭐ ?| ⭐⭐?中高 |
+| **扩展?* | ⭐⭐ 一?| ⭐⭐?较好 | ⭐⭐⭐⭐?优秀 |
 
-### 3.2 å¤å±æ¬¡éæçä¼å¿
+### 3.2 多层次集成的优势
 
-1. **ä¿¡æ¯æå¤§åå©ç¨**:
-   - å å­? æåæºè½ä½è¡ä¸ºçéåç¹å¾
-   - ä¿¡å·? çæå·ä½çä¹°åä¿¡?   - å³ç­? éè¿æç¥¨æºå¶ä¼åç»å
+1. **信息最大化利用**:
+   - 因子? 提取智能体行为的量化特征
+   - ä¿¡å·? çæå
+·ä½çä¹°åä¿¡?   - å³ç­? éè¿æç¥¨æºå¶ä¼åç»å
 
-2. **åå¼è¿ç¨å®æ´ä¿ç**:
-   - å¸åºæ¨¡æå¼ææ¨¡ææºè½ä½äº¤?   - ä»·æ ¼åç°æºå¶åæ ä¾éåå¼
-   - å¸åºå²å»æ¨¡åè¯ä¼°äº¤æå½±å
+2. **博弈过程完整保留**:
+   - 市场模拟引擎模拟智能体交?   - 价格发现机制反映供需博弈
+   - 市场冲击模型评估交易影响
 
-3. **çµæ´»æ§å¼º**:
-   - å¯ä»¥åç¬ä½¿ç¨æä¸å±çè¾åº
-   - å¯ä»¥ç»åä½¿ç¨å¤å±è¾åº
-   - å¯ä»¥æ ¹æ®å¸åºç¶æå¨æè°æ´æ?
-4. **å¯è§£éæ§å¥½**:
-   - æ¯ä¸ªæºè½ä½çå³ç­é½ææç¡®çç±
-   - æç¥¨è¿ç¨éæå¯è¿½?   - å å­è´¡ç®åº¦å¯éååæ
+3. **灵活性强**:
+   - 可以单独使用某一层的输出
+   - 可以组合使用多层输出
+   - 可以根据市场状态动态调整权?
+4. **可解释性好**:
+   - 每个智能体的决策都有明确理由
+   - 投票过程透明可追?   - 因子贡献度可量化分析
 
 ---
 
-## ð åãå®æ½å»º?
-### 4.1 åé¶æ®µå®æ½è·¯?
-**Phase 1: å å­éæ** (Month 1-2)
-- å®ç°ä¸ä¸ªæºè½ä½å ?(æ¿ç­ä¿¡å·ãä¸»åå¨åãæ£æ·æ?
-- éæå°ç°æå å­åº
-- éªè¯å å­ææ?
-**Phase 2: ä¿¡å·éæ** (Month 3-4)
-- å®ç°ä¿¡å·çæå¨åä¿¡å·åæ?- éæå°ç°æç­ç¥æ¡?- åæµéªè¯ä¿¡å·è´¨é
+## 🚀 四、实施建?
+### 4.1 分阶段实施路?
+**Phase 1: 因子集成** (Month 1-2)
+- å®ç°ä¸ä¸ªæºè½ä½å ?(æ¿ç­ä¿¡å·ãä¸»åå¨åãæ£æ·æ
+?
+- 集成到现有因子库
+- 验证因子有效?
+**Phase 2: 信号集成** (Month 3-4)
+- 实现信号生成器和信号合成?- 集成到现有策略框?- 回测验证信号质量
 
-**Phase 3: å³ç­éæ** (Month 5-6)
-- å®ç°å¤æºè½ä½æç¥¨ç³»ç»
-- éæå°ç»åä¼åå¨
-- å®çéªè¯å³ç­ææ
+**Phase 3: 决策集成** (Month 5-6)
+- 实现多智能体投票系统
+- 集成到组合优化器
+- 实盘验证决策效果
 
-### 4.2 ä¼åçº§å»º?
-**é«ä¼åçº§** (å¿é¡»å®ç°):
-1. ?å å­è¾åºå±é?(æç®?æç´æ¥)
-2. ?ä¿¡å·è¾åºå±é?(æ ¸å¿åè½)
+### 4.2 ä¼å
+çº§å»º?
+**é«ä¼å
+çº§** (å¿
+须实现):
+1. ?因子输出层集?(最简?最直接)
+2. ?信号输出层集?(核心功能)
 
-**ä¸­ä¼åçº§** (æ¨èå®ç°):
-3. ?å³ç­è¾åºå±é?(é«çº§åè½)
+**ä¸­ä¼å
+çº§** (æ¨èå®ç°):
+3. ?决策输出层集?(高级功能)
 
-**ä½ä¼åçº§** (å¯éå®?:
-4. â¸ï¸ å¸åºæ¨¡æå¼æ (è®¡ç®å¯é,å¯åæä¼?
+**ä½ä¼å
+çº§** (å¯éå®?:
+4. ⏸️ 市场模拟引擎 (计算密集,可后期优?
 
-### 4.3 ææ¯éåå»ºè®®
+### 4.3 技术选型建议
 
-| åè½æ¨¡å | æ¨èæ?| çç± |
+| 功能模块 | 推荐技?| 理由 |
 |---------|---------|------|
-| **å å­è®¡ç®** | Pandas + NumPy | æçç¨³å®,æ§è½?|
-| **ä¿¡å·çæ** | äºä»¶é©±å¨æ¶æ | çµæ´»,ææ©?|
-| **ç»åä¼å** | CVXPY + Barraæ¨¡å | ä¸ä¸,å¯è§£?|
+| **因子计算** | Pandas + NumPy | 成熟稳定,性能?|
+| **信号生成** | 事件驱动架构 | 灵活,易扩?|
+| **组合优化** | CVXPY + Barra模型 | 专业,可解?|
 | **æºè½ä½éä¿¡** | æ¶æ¯éå (Redis/RabbitMQ) | å¼æ­¥,è§?|
 
 ---
 
-## ð äºãæ»ç»
+## 📝 五、总结
 
-### æ ¸å¿ç­æ¡
+### 核心答案
 
-**å¸åºåä¸èè¡ä¸ºæ¨¡æåºè¯¥éç¨å¤å±æ¬¡éææ¶æï¼åæ¶ä½ä¸ºå å­ãä¿¡å·ãå³ç­ä¸ç§å½¢å¼ä»å¥ç³»ç»ï¼**
+**å¸åºåä¸è
+è¡ä¸ºæ¨¡æåºè¯¥éç¨å¤å±æ¬¡éææ¶æï¼åæ¶ä½ä¸ºå å­ãä¿¡å·ãå³ç­ä¸ç§å½¢å¼ä»å
+¥ç³»ç»ï¼**
 
-1. **ä½ä¸ºå å­ä»å¥** (Layer 2):
-   - çææ¿ç­ä¿¡å·å å­ãä¸»åå¨åå å­ãæ£æ·æç»ªå ?   - ä¸ç°?700+å å­æ ç¼éæ
-   - ä¾å¤å å­æ¨¡åä½¿ç¨
+1. **ä½ä¸ºå å­ä»å
+¥** (Layer 2):
+   - çææ¿ç­ä¿¡å·å å­ãä¸»åå¨åå å­ãæ£æ·æ
+绪因?   - 与现?700+因子无缝集成
+   - 供多因子模型使用
 
-2. **ä½ä¸ºä¿¡å·ä»å¥** (Layer 5):
-   - çæä¹°åä¿¡å·ãä»ä½å»ºè®®ãé£é©é¢?   - ä¸ç°æç­ç¥æ¡æ¶ååå·¥?   - å¢å¼ºç­ç¥ä¿¡å·è´¨é
+2. **ä½ä¸ºä¿¡å·ä»å
+¥** (Layer 5):
+   - 生成买卖信号、仓位建议、风险预?   - 与现有策略框架协同工?   - 增强策略信号质量
 
-3. **ä½ä¸ºå³ç­ä»å¥** (Layer 6):
-   - éè¿å¤æºè½ä½æç¥¨æºå¶ä¼åç»å
-   - ä¸ç°æç»åä¼åå¨éæ
-   - æåå³ç­è´¨é
+3. **ä½ä¸ºå³ç­ä»å
+¥** (Layer 6):
+   - 通过多智能体投票机制优化组合
+   - 与现有组合优化器集成
+   - 提升决策质量
 
-### å³é®ä¼å¿
+### å
+³é®ä¼å¿
 
-- ?**ä¿¡æ¯æå¤§åå©ç¨**: å¨æ¹ä½æåæºè½ä½è¡ä¸ºä¿¡æ¯
-- ?**åå¼å®æ´ä¿ç**: æ¨¡æå¸åºåä¸èä¹é´çäº¤äº
-- ?**çµæ´»å¯æ©?*: å¯åç¬æç»åä½¿ç¨åå±è¾åº
-- ?**å¯è§£éæ§å¼º**: æ¯ä¸ªå³ç­é½ææç¡®çç±
+- ?**ä¿¡æ¯æå¤§åå©ç¨**: å
+¨æ¹ä½æåæºè½ä½è¡ä¸ºä¿¡æ¯
+- ?**åå¼å®æ´ä¿ç**: æ¨¡æå¸åºåä¸è
+之间的交互
+- ?**灵活可扩?*: 可单独或组合使用各层输出
+- ?**可解释性强**: 每个决策都有明确理由
 
-### ä¸ä¸æ­¥è¡?
-**ç«å³å¼?*:
-1. å®ç°ä¸ä¸ªæºè½ä½å ?(Week 1-2)
-2. éæå°ç°æå å­åº (Week 3)
-3. éªè¯å å­ææ?(Week 4)
+### 下一步行?
+**立即开?*:
+1. 实现三个智能体因?(Week 1-2)
+2. 集成到现有因子库 (Week 3)
+3. 验证因子有效?(Week 4)
 
-**åå¤å°±ç»ª**:
-- ?éææ¶æè®¾è®¡å®æ
-- ?å å­å®ä¹æç¡®
-- ?ä¿¡å·çææ¹æ¡æ¸æ°
-- ?å³ç­éæè·¯å¾æç¡®
+**准备就绪**:
+- ?集成架构设计完成
+- ?因子定义明确
+- ?ä¿¡å·çææ¹æ¡æ¸
+晰
+- ?决策集成路径明确
 
-**ç°å¨å¯ä»¥å¼å§ç¼ç å®ç°äº!** ð
+**现在可以开始编码实现了!** 🚀
 
 ---
 
 **çæ¬**: v1.0 | **æ´æ°**: 2026-04-02 | **ç?*: ?å·²å®?
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 ææ¡£ç´¢å¼
+### 1.1 文档索引
 
-**æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**:
+**本文档在系统中的位置**:
 - **æå±å±çº?*: Layer 0 (ç³»ç»æ¶æ)
-- **æ¨¡åç´¢å¼**: 001
-- **æ¨¡ååç§°**: MARKET_PARTICIPANT_SIMULATION
-- **ææ¡£è·¯å¾**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
+- **模块索引**: 001
+- **模块名称**: MARKET_PARTICIPANT_SIMULATION
+- **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 
-### 1.2 çæ¬ç®¡ç
+### 1.2 版本管理
 
-**çæ¬åå²**:
-- v1.0.0 (2026-04-02): åå§çæ¬
+**版本历史**:
+- v1.0.0 (2026-04-02): 初始版本
 
-### 1.3 ç»´æ¤è´£ä»»
+### 1.3 维护责任
 
-**ææ¡£ç»´æ¤**:
-- **è´£ä»»æ¨¡å**: MARKET_PARTICIPANT_SIMULATION
+**文档维护**:
+- **责任模块**: MARKET_PARTICIPANT_SIMULATION
 - **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
 - **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
@@ -951,12 +1010,13 @@ class PortfolioOptimizerWithAgents:
 
 ---
 
-## ð ææ¡£æ²»ç
+## 📊 文档治理
 
-### åæ´è®°å½
+### 变更记录
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | å®æ½å¢é |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 ---

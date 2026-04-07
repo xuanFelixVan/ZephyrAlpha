@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMMEDIATE_EXECUTION_REPORT_20260407_143159
 version: 1.0.0
 status: Active

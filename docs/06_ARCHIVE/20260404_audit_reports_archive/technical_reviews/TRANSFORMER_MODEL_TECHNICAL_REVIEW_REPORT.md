@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_TRANSFORMER_TECH_REVIEW_001
 review_id: TR-2026-04-02-TRANSFORMER
 version: 1.0.1

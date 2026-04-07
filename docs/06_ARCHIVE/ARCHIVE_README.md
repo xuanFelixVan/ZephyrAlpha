@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 06_ARCHIVE_ARCHIVE_README_20260407124139
 version: 1.0.0
 status: Active

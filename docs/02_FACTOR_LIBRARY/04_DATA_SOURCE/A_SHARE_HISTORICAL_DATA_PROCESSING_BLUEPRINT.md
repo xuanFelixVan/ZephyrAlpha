@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_A_SHARE_PROCESSING_001
 version: 1.0.0
 status: Active

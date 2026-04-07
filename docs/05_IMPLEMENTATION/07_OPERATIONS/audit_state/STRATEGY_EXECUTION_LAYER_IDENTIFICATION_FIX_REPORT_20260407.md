@@ -1,4 +1,4 @@
-# Layer 5 层级标识修正报告
+﻿# Layer 5 层级标识修正报告
 
 > **修正时间**: 2026-04-07 16:02:03
 > **修正范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_RISK_MGMT_001
 version: 1.1.0
 status: Active

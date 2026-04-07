@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_CALCULATION_FRAMEWORK_001
 version: 1.0.0
 status: Active

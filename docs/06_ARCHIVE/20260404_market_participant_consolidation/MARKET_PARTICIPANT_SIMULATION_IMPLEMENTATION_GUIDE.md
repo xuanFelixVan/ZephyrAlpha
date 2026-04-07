@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_GUIDE_MARKET_PARTICIPANT_SIM_001
 version: 1.0.0
 status: Active

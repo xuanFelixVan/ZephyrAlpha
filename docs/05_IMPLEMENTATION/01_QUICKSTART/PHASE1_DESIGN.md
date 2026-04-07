@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_QUICKSTART_PHASE1_001
 version: 1.0.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 standard_type: ﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
 compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ

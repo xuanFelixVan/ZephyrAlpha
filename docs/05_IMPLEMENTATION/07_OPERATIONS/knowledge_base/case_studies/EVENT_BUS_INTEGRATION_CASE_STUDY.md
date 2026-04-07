@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CASE_STUDY_EVENT_BUS_001
 version: 1.0.0
 status: Active

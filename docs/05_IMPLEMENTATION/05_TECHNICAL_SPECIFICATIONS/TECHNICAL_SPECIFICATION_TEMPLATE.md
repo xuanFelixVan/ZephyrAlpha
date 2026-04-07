@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_TEMPLATE_002
 version: 1.0.0
 spec_version: 1.0

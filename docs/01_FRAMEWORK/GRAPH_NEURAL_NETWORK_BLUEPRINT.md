@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GRAPH_NEURAL_NETWORK_BLUEPRINT_001
 
 version: 1.0.0

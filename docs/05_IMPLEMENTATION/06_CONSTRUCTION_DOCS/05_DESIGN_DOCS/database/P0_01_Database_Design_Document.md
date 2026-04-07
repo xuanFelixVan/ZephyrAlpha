@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_DB_DESIGN_DOC_001
 version: 2.0.1
 status: Active

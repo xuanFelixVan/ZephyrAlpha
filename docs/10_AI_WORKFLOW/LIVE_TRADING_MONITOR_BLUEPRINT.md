@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIVE_TRADING_MONITOR_001
 version: 1.0.0
 status: Active

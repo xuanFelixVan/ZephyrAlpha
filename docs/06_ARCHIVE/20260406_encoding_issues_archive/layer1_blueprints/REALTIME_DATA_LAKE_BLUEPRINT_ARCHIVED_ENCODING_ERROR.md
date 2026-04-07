@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_REALTIME_DATA_LAKE_BP_001
 version: 1.0.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_SPEC_001
 version: 1.0.0
 spec_version: 1.0

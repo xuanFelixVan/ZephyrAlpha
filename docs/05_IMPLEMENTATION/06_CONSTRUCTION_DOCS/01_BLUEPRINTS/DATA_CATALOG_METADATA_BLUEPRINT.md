@@ -1,18 +1,21 @@
-﻿---
+﻿﻿---
 module_id: DATA_CATALOG_METADATA_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 æ°æ®å±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
-  - æ°æ®ç®å½åæ°æ?
-  - åæ°æ®ç®¡ç?
-  - æ°æ®èµäº§ç®å½
-  - åæ°æ®æ å?
+  - æ°æ®ç®å½å
+æ°æ?
+  - å
+æ°æ®ç®¡ç?
+  - 数据资产目录
+  - å
+æ°æ®æ å?
 layer: Layer 5.1 (数据处理)
 ---
 
@@ -23,33 +26,10 @@ layer: Layer 5.1 (数据处理)
 
 # DATA CATALOG METADATA BLUEPRINT
 
-> **æ ¸å¿èè´£**: Data Catalog Metadataèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Catalog Metadataèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Data Catalog Metadata蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Data Catalog Metadataèå¾è®¾è®¡ç¸å...
 
-ï»?--
-module_id: DATA_CATALOG_METADATA__001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: ä¸ªäººå¼åè?
-standard_type: ä¸ä¸éåæºæææ¡£
-responsibility:
-  - æ°æ®è´¨é (Layer 1)
-
-layer: Layer 5.1 (数据处理)
----
-ï»? æ°æ®ç®å½ä¸åæ°æ®ç®¡çç³»ç»èå¾
-
-> **æ ¸å¿å®ä½**: æ°æ®ç®å½ä¸åæ°æ®ç®¡çç³»ç»èå¾çæ ¸å¿åè½å®ç?
-
-
-> **æ¨¡åID**: `DATA_CATALOG_METADATA_001`
-> **å®æ½å¨æ**: Week 24-25?å¨ï¼
-> **ä¼å?*: P2ï¼ä¸è¬ï¼
-> **é¢ææ¶ç**: æé«æ°æ®åç°æç80%ï¼æåæ°æ®æ²»çæ°´?
 
 ## 设计目标
 
@@ -103,34 +83,46 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-æ°æ®ç®å½åæ°æ®ç®¡çæ¨¡åï¼ä¸é¨è´è´£æ°æ®èµäº§çåæ°æ®ééãå­å¨ãçæ¬ç®¡çåè¡ç¼è¿½è¸ªï¼æä¾ç²¾ç»åçåæ°æ®æ²»çè½å?
+æ°æ®ç®å½å
+æ°æ®ç®¡çæ¨¡åï¼ä¸é¨è´è´£æ°æ®èµäº§çå
+æ°æ®ééãå­å¨ãçæ¬ç®¡çåè¡ç¼è¿½è¸ªï¼æä¾ç²¾ç»åçå
+æ°æ®æ²»çè½å?
 
 
-## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
+## 一、设计背景与目标
 
-### 1.1 ä¸å¡é?
-**å½åçç¹**:
-- ?ç¼ºå°ç»ä¸çæ°æ®ç®?- ?åæ°æ®åæ£ï¼é¾ä»¥ç®¡ç
-- ?æ°æ®è¡ç¼å³ç³»ä¸æ¸æ°
-- ?æ°æ®èµäº§é¾ä»¥åç°
+### 1.1 业务需?
+**当前痛点**:
+- ?ç¼ºå°ç»ä¸çæ°æ®ç®?- ?å
+æ°æ®åæ£ï¼é¾ä»¥ç®¡ç
+- ?æ°æ®è¡ç¼å
+³ç³»ä¸æ¸
+晰
+- ?数据资产难以发现
 
-**ä¸å¡ç®æ **:
-- ?å»ºç«ç»ä¸çæ°æ®ç®?- ?å®ç°åæ°æ®éä¸­ç®¡?- ?å»ºç«æ°æ®è¡ç¼è¿½?- ?æé«æ°æ®åç°æç
+**业务目标**:
+- ?å»ºç«ç»ä¸çæ°æ®ç®?- ?å®ç°å
+æ°æ®éä¸­ç®¡?- ?å»ºç«æ°æ®è¡ç¼è¿½?- ?æé«æ°æ®åç°æç
 
-### 1.2 ææ¯ç®?
-| ææ  | ç®æ ?| è¯´æ |
+### 1.2 技术目?
+| 指标 | 目标?| 说明 |
 |------|--------|------|
-| **æ°æ®åç°æç** | æå80% | æ°æ®åç°æ¶é´ç¼©ç­80% |
-| **åæ°æ®è¦çç** | 100% | æææ°æ®èµäº§åæ°æ®è¦ç |
-| **è¡ç¼è¿½è¸ªå?* | ?5% | æ°æ®è¡ç¼å³ç³»åç¡®ç |
-| **ç®å½å¯ç¨?* | ?9.9% | æ°æ®ç®å½ç³»ç»å¯ç¨?|
+| **数据发现效率** | 提升80% | 数据发现时间缩短80% |
+| **å
+æ°æ®è¦çç** | 100% | æææ°æ®èµäº§å
+æ°æ®è¦ç |
+| **è¡ç¼è¿½è¸ªå?* | ?5% | æ°æ®è¡ç¼å
+³ç³»åç¡®ç |
+| **目录可用?* | ?9.9% | 数据目录系统可用?|
 
-## ä¸ãæ ¸å¿æ¨¡åè®¾?
-### 3.1 åæ°æ®ç®¡çå¨ (MetadataManager)
+## 三、核心模块设?
+### 3.1 å
+æ°æ®ç®¡çå¨ (MetadataManager)
 
-**èè´£**: ç®¡çæ°æ®èµäº§çåæ°æ®
+**èè´£**: ç®¡çæ°æ®èµäº§çå
+æ°æ®
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -139,7 +131,7 @@ from datetime import datetime
 
 @dataclass
 class DataAsset:
-    """æ°æ®èµäº§"""
+    """数据资产"""
     asset_id: str
     asset_name: str
     asset_type: str  # table, file, api, stream
@@ -152,13 +144,16 @@ class DataAsset:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 class MetadataManager:
-    """åæ°æ®ç®¡çå¨"""
+    """å
+æ°æ®ç®¡çå¨"""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        åå§ååæ°æ®ç®¡ç?        
+        åå§åå
+æ°æ®ç®¡ç?        
         Args:
-            config: éç½®ä¿¡æ¯
+            config: é
+ç½®ä¿¡æ¯
         """
         self.config = config
         self.assets: Dict[str, DataAsset] = {}
@@ -168,13 +163,13 @@ class MetadataManager:
         asset: DataAsset
     ) -> bool:
         """
-        æ³¨åæ°æ®èµäº§
+        注册数据资产
         
         Args:
-            asset: æ°æ®èµäº§
+            asset: 数据资产
             
         Returns:
-            bool: æ¯å¦æå
+            bool: 是否成功
         """
         self.assets[asset.asset_id] = asset
         return True
@@ -185,16 +180,16 @@ class MetadataManager:
         filters: Optional[Dict[str, Any]] = None
     ) -> List[DataAsset]:
         """
-        æç´¢æ°æ®èµäº§
+        搜索数据资产
         
         Args:
-            query: æç´¢æ¥è¯¢
-            filters: è¿æ»¤æ¡ä»¶
+            query: 搜索查询
+            filters: 过滤条件
             
         Returns:
-            List[DataAsset]: æ°æ®èµäº§åè¡¨
+            List[DataAsset]: 数据资产列表
         """
-        # å®ç°æç´¢é»è¾
+        # 实现搜索逻辑
         results = []
         
         for asset in self.assets.values():
@@ -204,9 +199,10 @@ class MetadataManager:
         return results
 ```
 
-### 3.2 æ°æ®è¡ç¼è¿½è¸ªå¨ (DataLineageTracker)
+### 3.2 数据血缘追踪器 (DataLineageTracker)
 
-**èè´£**: è¿½è¸ªæ°æ®è¡ç¼å³?
+**èè´£**: è¿½è¸ªæ°æ®è¡ç¼å
+³?
 ```python
 from typing import Dict, List, Any
 from dataclasses import dataclass, field
@@ -214,7 +210,7 @@ from datetime import datetime
 
 @dataclass
 class LineageNode:
-    """è¡ç¼è?""
+    """血缘节?""
     node_id: str
     node_type: str  # source, transformation, target
     asset_id: str
@@ -222,7 +218,7 @@ class LineageNode:
 
 @dataclass
 class LineageEdge:
-    """è¡ç¼è¾¹"""
+    """血缘边"""
     edge_id: str
     source_node_id: str
     target_node_id: str
@@ -230,14 +226,15 @@ class LineageEdge:
     created_at: datetime = field(default_factory=datetime.now)
 
 class DataLineageTracker:
-    """æ°æ®è¡ç¼è¿½è¸ªå¨"""
+    """数据血缘追踪器"""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        åå§åè¡ç¼è¿½è¸ªå¨
+        初始化血缘追踪器
         
         Args:
-            config: éç½®ä¿¡æ¯
+            config: é
+ç½®ä¿¡æ¯
         """
         self.config = config
         self.nodes: Dict[str, LineageNode] = {}
@@ -250,16 +247,17 @@ class DataLineageTracker:
         transformation: str
     ) -> bool:
         """
-        æ·»å è¡ç¼å³?        
+        æ·»å è¡ç¼å
+³?        
         Args:
-            source_asset_id: æºèµäº§ID
-            target_asset_id: ç®æ èµäº§ID
-            transformation: è½¬æ¢é»è¾
+            source_asset_id: 源资产ID
+            target_asset_id: 目标资产ID
+            transformation: 转换逻辑
             
         Returns:
-            bool: æ¯å¦æå
+            bool: 是否成功
         """
-        # åå»ºèç¹
+        # 创建节点
         source_node = LineageNode(
             node_id=f"node_{source_asset_id}",
             node_type="source",
@@ -272,14 +270,14 @@ class DataLineageTracker:
             asset_id=target_asset_id
         )
         
-        # åå»º?        edge = LineageEdge(
+        # 创建?        edge = LineageEdge(
             edge_id=f"edge_{source_asset_id}_{target_asset_id}",
             source_node_id=source_node.node_id,
             target_node_id=target_node.node_id,
             transformation=transformation
         )
         
-        # å­å¨
+        # 存储
         self.nodes[source_node.node_id] = source_node
         self.nodes[target_node.node_id] = target_node
         self.edges[edge.edge_id] = edge
@@ -292,64 +290,74 @@ class DataLineageTracker:
         direction: str = "upstream"
     ) -> List[LineageNode]:
         """
-        è·åè¡ç¼å³?        
+        è·åè¡ç¼å
+³?        
         Args:
-            asset_id: èµäº§ID
-            direction: æ¹åï¼upstream, downstream?            
+            asset_id: 资产ID
+            direction: 方向（upstream, downstream?            
         Returns:
-            List[LineageNode]: è¡ç¼èç¹å?        """
-        # å®ç°è¡ç¼æ¥è¯¢é»è¾
+            List[LineageNode]: 血缘节点列?        """
+        # 实现血缘查询逻辑
         return []
 ```
 
 
-## äºãéªæ¶æ ?
-| éªæ¶?| éªæ¶æ å | éªæ¶æ¹æ³ |
+## 五、验收标?
+| 验收?| 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **æ°æ®åç°æç** | æå80% | åè½æµè¯ |
-| **åæ°æ®è¦çç** | 100% | åè½æµè¯ |
-| **è¡ç¼è¿½è¸ªå?* | ?5% | åè½æµè¯ |
+| **数据发现效率** | 提升80% | 功能测试 |
+| **å
+æ°æ®è¦çç** | 100% | åè½æµè¯ |
+| **血缘追踪准?* | ?5% | 功能测试 |
 
 ---
 
-**èå¾çæ¬**: v1.0 | **åå»ºæ¥æ**: 2026-04-02 | **?*: ?æ­£å¼ | **ç»´æ¤?*: ZephyrAlphaææ¯å¢?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­ææ¯è¯å®¡å® |
-| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
+| v1.0.1 | 2026-04-06 | è¡¥å
+
+YAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 ---
 
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | å¼ºä¾èµ?| æä¾æ°æ®æºåæ°æ® |
+| [DATA SOURCE MANAGEMENT BLUEPRINT](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | å¼ºä¾èµ?| æä¾æ°æ®æºå
+æ°æ® |
 | [DATA SECURITY COMPLIANCE BLUEPRINT](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | ä¸­ä¾èµ?| æä¾æææ°æ®åç±» |
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | å¼ºä¾èµ?| æä¾åæ°æ®æ¯æ?|
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | å¼ºä¾èµ?| æä¾å
+æ°æ®æ¯æ?|
 | [DATA OBSERVABILITY BLUEPRINT](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | ä¸­ä¾èµ?| æä¾æ°æ®èµäº§çæ§ |
 
 ### ææ¯ä¾èµ?
 
 | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **OpenMetadata** | 1.2+ | åæ°æ®ç®¡ç?| [å®æ¹ææ¡£](https://docs.open-metadata.org/) |
+| **OpenMetadata** | 1.2+ | å
+æ°æ®ç®¡ç?| [å®æ¹ææ¡£](https://docs.open-metadata.org/) |
 | **Apache Atlas** | 2.3+ | æ°æ®è¡ç¼?| [å®æ¹ææ¡£](https://atlas.apache.org/) |
-| **Elasticsearch** | 8.0+ | æç´¢å¼æ | [å®æ¹ææ¡£](https://www.elastic.co/) |
+| **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
@@ -364,29 +372,31 @@ graph LR
     style D0 fill:#45b7d1
 ```
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Catalog Metadata
-- **æ¨¡åID**: DATA_CATALOG_METADATA_001
-- **èå¾ææ¡£**: DATA_CATALOG_METADATA_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
-- **èè´£**: Layer 1æ°æ®é¢å¤çå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **模块ID**: DATA_CATALOG_METADATA_001
+- **蓝图文档**: DATA_CATALOG_METADATA_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
+- **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **Data Catalog Metadata** | Layer 1æ°æ®é¢å¤çå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
+| **Data Catalog Metadata** | Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_INDEX_001
 version: 1.3.0
 status: Active

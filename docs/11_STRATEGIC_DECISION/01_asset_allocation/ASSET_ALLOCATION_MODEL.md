@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ASSET_ALLOCATION_MODEL_001
 version: 1.0.0
 status: Active

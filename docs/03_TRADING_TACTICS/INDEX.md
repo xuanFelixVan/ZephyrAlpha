@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_INDEX_20260407124139
 version: 1.0.0
 status: Active

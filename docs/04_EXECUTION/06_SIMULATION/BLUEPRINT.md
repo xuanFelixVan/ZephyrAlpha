@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_004
 version: 1.0.0
 status: Active

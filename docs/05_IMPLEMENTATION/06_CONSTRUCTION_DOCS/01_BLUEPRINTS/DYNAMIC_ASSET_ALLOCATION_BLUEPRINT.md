@@ -1,26 +1,29 @@
----
+﻿---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
-  - å¨æèµäº§éç½?
-  - èµäº§æéè°æ´
-  - å¸åºç¯å¢éåº
-  - éç½®ç­ç¥ä¼å
+  - å¨æèµäº§é
+ç½?
+  - 资产权重调整
+  - 市场环境适应
+  - é
+ç½®ç­ç¥ä¼å
 layer: Layer 5.2 (组合优化)
 ---
 
-# å¨æèµäº§éç½®èå?
+# å¨æèµäº§é
+ç½®èå?
 
 ## 核心定位
 
-负责动态资产配置的设计与实现，基于配置模型，动态调整资产权重，优化风险收益。
+负责动态资产配置的设计与实现，基于配置模型，动态调整资产权重，优化风险收益。 提供风险识别、评估、监控功能，支持风险管理和决策。
 
 
 ## 设计目标
@@ -75,26 +78,34 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-æ ¹æ®å¸åºç¶æå¨æè°æ´èµäº§éç½®æéï¼å®ç°æç¥ä¸ææ¯èµäº§éç½®çç»å
+æ ¹æ®å¸åºç¶æå¨æè°æ´èµäº§é
+ç½®æéï¼å®ç°æç¥ä¸ææ¯èµäº§é
+ç½®çç»å
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-è´è´£å¨æèµäº§éç½®ç­ç¥çå®ç°ï¼æ ¹æ®å¸åºååå¨æè°æ´èµäº§éç½®ï¼æä¾èµäº§éç½®ä¼ååè½ã?
+è´è´£å¨æèµäº§é
+ç½®ç­ç¥çå®ç°ï¼æ ¹æ®å¸åºååå¨æè°æ´èµäº§é
+ç½®ï¼æä¾èµäº§é
+ç½®ä¼ååè½ã?
 
-## 2. åè½è®¾è®¡
+## 2. 功能设计
 
-### 2.1 æ ¸å¿åè½
+### 2.1 核心功能
 
-#### 2.1.1 æç¥èµäº§éç½®ï¼SAAï¼?
+#### 2.1.1 æç¥èµäº§é
+ç½®ï¼SAAï¼?
 
 ```python
 class StrategicAssetAllocator:
     """
-    æç¥èµäº§éç½®å?
+    æç¥èµäº§é
+ç½®å?
     
-    é¿æç®æ éç½®ï¼åºäºé£é©æ¿åè½ååæèµç®æ 
+    é¿æç®æ é
+ç½®ï¼åºäºé£é©æ¿åè½ååæèµç®æ 
     """
     
     def calculate_strategic_weights(
@@ -104,15 +115,17 @@ class StrategicAssetAllocator:
         asset_classes: List[str]
     ) -> Dict[str, float]:
         """
-        è®¡ç®æç¥èµäº§éç½®æé
+        è®¡ç®æç¥èµäº§é
+ç½®æé
         
-        åæ°:
-            risk_tolerance: é£é©æ¿åè½å (0-1)
+        参数:
+            risk_tolerance: 风险承受能力 (0-1)
             investment_horizon: æèµæéï¼å¹´ï¼?
-            asset_classes: èµäº§ç±»å«åè¡¨
+            asset_classes: 资产类别列表
             
-        è¿å:
-            æç¥éç½®æé
+        返回:
+            æç¥é
+ç½®æé
         """
         pass
     
@@ -122,19 +135,23 @@ class StrategicAssetAllocator:
         current_market_state: str
     ) -> Dict[str, float]:
         """
-        è·åç®æ ç»åéç½®
+        è·åç®æ ç»åé
+ç½®
         """
         pass
 ```
 
-#### 2.1.2 ææ¯èµäº§éç½®ï¼TAAï¼?
+#### 2.1.2 ææ¯èµäº§é
+ç½®ï¼TAAï¼?
 
 ```python
 class TacticalAssetAllocator:
     """
-    ææ¯èµäº§éç½®å?
+    ææ¯èµäº§é
+ç½®å?
     
-    ç­æåç¦»æç¥éç½®ï¼ææå¸åºæºä¼?
+    ç­æåç¦»æç¥é
+ç½®ï¼ææå¸åºæºä¼?
     """
     
     def calculate_tactical_adjustment(
@@ -144,15 +161,17 @@ class TacticalAssetAllocator:
         max_deviation: float = 0.10
     ) -> Dict[str, float]:
         """
-        è®¡ç®ææ¯è°æ´
+        计算战术调整
         
-        åæ°:
-            strategic_weights: æç¥éç½®æé
-            market_signals: å¸åºä¿¡å·ï¼ä¼°å¼ãå¨éãæç»ªç­ï¼?
-            max_deviation: æå¤§åç¦»åº¦
+        参数:
+            strategic_weights: æç¥é
+ç½®æé
+            market_signals: å¸åºä¿¡å·ï¼ä¼°å¼ãå¨éãæ
+ç»ªç­ï¼?
+            max_deviation: 最大偏离度
             
-        è¿å:
-            ææ¯è°æ´åçæé
+        返回:
+            战术调整后的权重
         """
         pass
     
@@ -163,23 +182,27 @@ class TacticalAssetAllocator:
         risk_budget: float
     ) -> np.ndarray:
         """
-        åºç¨ææ¯å å 
+        应用战术叠加
         """
         pass
 ```
 
-#### 2.1.3 å¸åºç¶æé©±å¨éç½?
+#### 2.1.3 å¸åºç¶æé©±å¨é
+ç½?
 
 ```python
 class RegimeBasedAllocator:
     """
-    å¸åºç¶æé©±å¨éç½®å¨
+    å¸åºç¶æé©±å¨é
+ç½®å¨
     
-    æ ¹æ®ä¸åå¸åºç¶æè°æ´éç½?
+    æ ¹æ®ä¸åå¸åºç¶æè°æ´é
+ç½?
     """
     
     def __init__(self):
-        # å¸åºç¶æéç½®æ å°?
+        # å¸åºç¶æé
+ç½®æ å°?
         self.regime_configs = {
             'bull': {'equity': 0.7, 'bond': 0.2, 'commodity': 0.1},
             'bear': {'equity': 0.3, 'bond': 0.5, 'commodity': 0.2},
@@ -195,12 +218,13 @@ class RegimeBasedAllocator:
         """
         è·åå¸åºç¶æå¯¹åºæé?
         
-        åæ°:
+        参数:
             current_regime: å½åå¸åºç¶æ?
-            confidence: ç¶æå¤æ­ç½®ä¿¡åº¦
+            confidence: 状态判断置信度
             
-        è¿å:
-            éç½®æé
+        返回:
+            é
+ç½®æé
         """
         pass
     
@@ -209,7 +233,7 @@ class RegimeBasedAllocator:
         regime_probabilities: Dict[str, float]
     ) -> Dict[str, float]:
         """
-        æ··åå¤ç§ç¶æçæé
+        混合多种状态的权重
         
         æ ¹æ®åç¶ææ¦çå æå¹³å?
         """
@@ -221,7 +245,7 @@ class RegimeBasedAllocator:
 ```python
 class RiskBudgetAdjuster:
     """
-    é£é©é¢ç®å¨æè°æ´å¨
+    风险预算动态调整器
     """
     
     def adjust_risk_budget(
@@ -233,13 +257,13 @@ class RiskBudgetAdjuster:
         """
         å¨æè°æ´é£é©é¢ç®?
         
-        åæ°:
-            base_risk_budget: åºç¡é£é©é¢ç®
+        参数:
+            base_risk_budget: 基础风险预算
             volatility_regime: æ³¢å¨çç¶æ?('low', 'normal', 'high')
-            drawdown_level: å½ååæ¤æ°´å¹³
+            drawdown_level: 当前回撤水平
             
-        è¿å:
-            è°æ´åçé£é©é¢ç®
+        返回:
+            调整后的风险预算
         """
         pass
     
@@ -250,7 +274,7 @@ class RiskBudgetAdjuster:
         correlation: float
     ) -> float:
         """
-        è®¡ç®ä»ä½å¤§å°
+        计算仓位大小
         """
         pass
 ```
@@ -259,12 +283,13 @@ class RiskBudgetAdjuster:
 
 ## 3. ææ¯è§æ ?
 
-### 3.1 æ¥å£è®¾è®¡
+### 3.1 接口设计
 
 ```python
 class DynamicAssetAllocator:
     """
-    å¨æèµäº§éç½®å¨
+    å¨æèµäº§é
+ç½®å¨
     
     ä¸»è¦æ¥å£ç±?
     """
@@ -286,17 +311,20 @@ class DynamicAssetAllocator:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-        æ§è¡å¨æèµäº§éç½?
+        æ§è¡å¨æèµäº§é
+ç½?
         
-        åæ°:
+        参数:
             market_state: å¸åºç¶æä¿¡æ?
-            risk_profile: é£é©åå¥½
-            constraints: çº¦ææ¡ä»¶
+            risk_profile: 风险偏好
+            constraints: 约束条件
             
-        è¿å:
-            éç½®ç»æ
+        返回:
+            é
+ç½®ç»æ
         """
-        # 1. è·åæç¥éç½®
+        # 1. è·åæç¥é
+ç½®
         strategic = self.saa.calculate_strategic_weights(
             risk_profile['tolerance'],
             risk_profile['horizon'],
@@ -308,26 +336,29 @@ class DynamicAssetAllocator:
             market_state['regime_probabilities']
         )
         
-        # 3. åºç¨ææ¯å å 
+        # 3. 应用战术叠加
         tactical = self.taa.calculate_tactical_adjustment(
             strategic,
             market_state['signals']
         )
         
-        # 4. ç»¼åè¾åº
+        # 4. 综合输出
         return self._combine_allocations(strategic, regime_adjusted, tactical)
 ```
 
-### 3.2 éç½®åæ°
+### 3.2 é
+ç½®åæ°
 
 ```yaml
 dynamic_asset_allocation:
-  # æç¥éç½®
+  # æç¥é
+ç½®
   strategic:
     rebalance_frequency: 'quarterly'
     drift_tolerance: 0.05
     
-  # ææ¯éç½®
+  # ææ¯é
+ç½®
   tactical:
     max_deviation: 0.10
     signal_weights:
@@ -355,7 +386,7 @@ dynamic_asset_allocation:
       bond_weight: 0.60
       alternative_weight: 0.20
       
-  # é£é©é¢ç®
+  # 风险预算
   risk_budget:
     base_budget: 0.10
     volatility_adjustment:
@@ -369,9 +400,10 @@ dynamic_asset_allocation:
 
 ---
 
-## 4. åæ´åå²
+## 4. 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
@@ -379,25 +411,25 @@ dynamic_asset_allocation:
 
 **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
-## 5. ææ¡£æ²»ç
+## 5. 文档治理
 
-### 5.1 ææ¡£ç´¢å¼
+### 5.1 文档索引
 
-**æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**:
+**本文档在系统中的位置**:
 - **æå±å±çº?*: Layer 0 (ç³»ç»æ¶æ)
-- **æ¨¡åç´¢å¼**: 001
-- **æ¨¡ååç§°**: DYNAMIC_ASSET_ALLOCATION
-- **ææ¡£è·¯å¾**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
+- **模块索引**: 001
+- **模块名称**: DYNAMIC_ASSET_ALLOCATION
+- **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 
-### 5.2 çæ¬ç®¡ç
+### 5.2 版本管理
 
-**çæ¬åå²**:
-- v1.0.0 (2026-04-07): åå§çæ¬
+**版本历史**:
+- v1.0.0 (2026-04-07): 初始版本
 
-### 5.3 ç»´æ¤è´£ä»»
+### 5.3 维护责任
 
-**ææ¡£ç»´æ¤**:
-- **è´£ä»»æ¨¡å**: DYNAMIC_ASSET_ALLOCATION
+**文档维护**:
+- **责任模块**: DYNAMIC_ASSET_ALLOCATION
 - **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
 - **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 

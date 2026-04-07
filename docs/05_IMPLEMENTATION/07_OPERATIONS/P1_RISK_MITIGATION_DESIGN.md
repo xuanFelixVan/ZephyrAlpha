@@ -1,4 +1,4 @@
----
+﻿---
 document_type: P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟?
 version: 1.0.0
 created_date: 2026-04-02

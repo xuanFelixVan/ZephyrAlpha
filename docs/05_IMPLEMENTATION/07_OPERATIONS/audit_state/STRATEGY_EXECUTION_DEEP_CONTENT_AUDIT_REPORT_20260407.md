@@ -1,4 +1,4 @@
-# Layer 5 策略执行层深度内容审计报告
+﻿# Layer 5 策略执行层深度内容审计报告
 
 > **审计时间**: 2026-04-07 16:14:06
 > **审计范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS

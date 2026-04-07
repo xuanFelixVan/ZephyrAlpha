@@ -1,4 +1,4 @@
----
+﻿---
 version: 1.0.0
 module_id: DOC_VERSION_NAMING_STANDARD
 responsibility_boundary: 文档版本号命名规范定义

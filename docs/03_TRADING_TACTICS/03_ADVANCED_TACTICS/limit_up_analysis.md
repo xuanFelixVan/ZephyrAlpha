@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIMIT_UP_ANALYSIS_001
 version: 1.0.0
 status: Active

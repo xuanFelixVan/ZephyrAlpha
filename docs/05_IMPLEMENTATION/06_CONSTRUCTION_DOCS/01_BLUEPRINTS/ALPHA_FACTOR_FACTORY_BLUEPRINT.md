@@ -1,11 +1,11 @@
----
+﻿---
 module_id: ALPHA_FACTOR_FACTORY__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: ä¸ªäººå¼åè?
-standard_type: ä¸ä¸éåæºæææ¡£
+standard_type: 专业量化机构文档
 responsibility:
   - å¸åºç¶æè¯å?(Layer 4)
 
@@ -19,18 +19,10 @@ layer: Layer 5 (策略执行层)
 
 # ALPHA FACTOR FACTORY BLUEPRINT
 
-> **æ ¸å¿èè´£**: Alpha Factor Factoryèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Alpha Factor Factoryèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Alpha Factor Factory蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Alpha Factor Factoryèå¾è®¾...
 
-ï»? ð æ§è¡æè¦
-
-> **çæ¬**: v1.0
-> **åå»ºæ¥æ**: 2026-04-06
-> **æ ¸å¿å®ä½**: ä¸ºä¸­è§ç­ç¥å±æä¾ç³»ç»åçå å­çäº§åç®¡çè½å?
-> **ç´¢å¼**: `ALPHA_FACTOR_FACTORY_001`
-> **å¼åå¨æ?*: 3å?
 
 ## 设计目标
 
@@ -84,61 +76,66 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 è´è´£Alpha Factor Factoryçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
 ## ð¯ æ¨¡åå®ä½ä¸èè´?
 
-### æ ¸å¿èè´£
+### 核心职责
 
-| èè´£ç±»å« | å·ä½èè´£ | è¾åºäº§ç© |
+| èè´£ç±»å« | å
+·ä½èè´£ | è¾åºäº§ç© |
 |---------|---------|---------|
 | **å å­è®¡ç®** | è®¡ç®åç±»é¿å°æ³å å­?| å å­å¼åºå?|
 | **å å­è¯ä¼°** | è¯ä¼°å å­æææ?| å å­è¯ä¼°æ¥å |
 | **å å­å­å¨** | å­å¨å å­æ°æ® | å å­åº?|
-| **å å­æ´æ°** | å®ææ´æ°å å­ | æ´æ°æ¥å¿ |
+| **因子更新** | 定期更新因子 | 更新日志 |
 | **å å­ç­é?* | ç­éææå å­?| ç²¾éå å­æ±  |
 
 ---
 
 ## ðï¸?æ¶æè®¾è®¡
 
-### æ´ä½æ¶æ
+### 整体架构
 
 ```mermaid
 graph TB
-    subgraph "æ°æ®è¾å¥å±?
-        A1[æ¥é¢è¡ææ°æ®]
-        A2[è´¢å¡æ°æ®]
-        A3[åæå¸é¢æ]
-        A4[å¦ç±»æ°æ®]
+    subgraph "æ°æ®è¾å
+¥å±?
+        A1[æ¥é¢è¡æ
+数据]
+        A2[财务数据]
+        A3[分析师预期]
+        A4[另类数据]
     end
     
     subgraph "å å­è®¡ç®å±?
-        B1[å¨éå å­è®¡ç®å¨]
-        B2[ä»·å¼å å­è®¡ç®å¨]
-        B3[è´¨éå å­è®¡ç®å¨]
-        B4[æé¿å å­è®¡ç®å¨]
-        B5[æç»ªå å­è®¡ç®å¨]
-        B6[ææ¯å å­è®¡ç®å¨]
+        B1[动量因子计算器]
+        B2[价值因子计算器]
+        B3[质量因子计算器]
+        B4[成长因子计算器]
+        B5[æ
+绪因子计算器]
+        B6[技术因子计算器]
     end
     
     subgraph "å å­è¯ä¼°å±?
-        C1[ICåæ]
-        C2[æ¶ççåæ]
-        C3[æ¢æçåæ]
-        C4[å å­æ­£äº¤å]
+        C1[IC分析]
+        C2[收益率分析]
+        C3[换手率分析]
+        C4[因子正交化]
     end
     
     subgraph "å å­ç®¡çå±?
-        D1[å å­åº]
-        D2[å å­çæ¬ç®¡ç]
-        D3[å å­åæ°æ®]
+        D1[因子库]
+        D2[因子版本管理]
+        D3[å å­å
+æ°æ®]
     end
     
     subgraph "åºç¨å±?
-        E1[å¤å å­åæå¼æ]
+        E1[多因子合成引擎]
     end
     
     A1 --> B1
@@ -168,9 +165,10 @@ graph TB
 
 ---
 
-## ð§ å³é®ç»ä»¶è®¾è®¡
+## ð§ å
+³é®ç»ä»¶è®¾è®¡
 
-### 1. å å­åºç±» (Factor Base Class)
+### 1. 因子基类 (Factor Base Class)
 
 ```python
 from abc import ABC, abstractmethod
@@ -192,7 +190,7 @@ class AlphaFactor(ABC):
         pass
     
     def get_factor_info(self) -> Dict[str, Any]:
-        """è·åå å­ä¿¡æ¯"""
+        """获取因子信息"""
         return {
             'factor_name': self.factor_name,
             'factor_category': self.factor_category,
@@ -201,13 +199,13 @@ class AlphaFactor(ABC):
 
 
 class MomentumFactor(AlphaFactor):
-    """å¨éå å­"""
+    """动量因子"""
     
     def __init__(self):
         super().__init__('Momentum', 'Momentum')
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """è®¡ç®å¨éå å­"""
+        """计算动量因子"""
         returns = data['close'].pct_change(self.lookback_period)
         return returns
 
@@ -226,7 +224,7 @@ class ValueFactor(AlphaFactor):
 
 
 class QualityFactor(AlphaFactor):
-    """è´¨éå å­"""
+    """质量因子"""
     
     def __init__(self):
         super().__init__('Quality', 'Quality')
@@ -253,15 +251,15 @@ class FactorEvaluator:
                 factor_values: pd.Series,
                 forward_returns: pd.Series) -> Dict[str, Any]:
         """è¯ä¼°å å­æææ?""
-        # ICåæ
+        # IC分析
         ic = self._calculate_ic(factor_values, forward_returns)
         
-        # ICåå¼ãICæ åå·®ãICIR
+        # IC均值、IC标准差、ICIR
         ic_mean = ic.mean()
         ic_std = ic.std()
         icir = ic_mean / ic_std if ic_std != 0 else 0
         
-        # åç»æ¶çåæ
+        # 分组收益分析
         group_returns = self._calculate_group_returns(factor_values, forward_returns)
         
         # åè°æ§æ£éª?
@@ -279,8 +277,9 @@ class FactorEvaluator:
     def _calculate_ic(self,
                      factor_values: pd.Series,
                      forward_returns: pd.Series) -> pd.Series:
-        """è®¡ç®ICåºå"""
-        # Spearmanç§©ç¸å³ç³»æ?
+        """计算IC序列"""
+        # Spearmanç§©ç¸å
+³ç³»æ?
         ic = factor_values.rolling(1).corr(forward_returns, method='spearman')
         return ic
     
@@ -288,26 +287,26 @@ class FactorEvaluator:
                                 factor_values: pd.Series,
                                 forward_returns: pd.Series,
                                 n_groups: int = 5) -> pd.Series:
-        """è®¡ç®åç»æ¶ç"""
+        """计算分组收益"""
         # æå å­å¼åç»?
         factor_rank = factor_values.rank(pct=True)
         group_labels = pd.cut(factor_rank, bins=n_groups, labels=False)
         
-        # è®¡ç®åç»å¹³åæ¶ç
+        # 计算各组平均收益
         group_returns = forward_returns.groupby(group_labels).mean()
         
         return group_returns
     
     def _test_monotonicity(self, group_returns: pd.Series) -> float:
         """æ£éªåè°æ?""
-        # è®¡ç®è¶å¿
+        # 计算趋势
         x = np.arange(len(group_returns))
         slope, _, r_value, _, _ = stats.linregress(x, group_returns.values)
         
         return r_value ** 2
 ```
 
-### 3. å å­å·¥å (Factor Factory)
+### 3. 因子工厂 (Factor Factory)
 
 ```python
 from typing import Dict, Any, List
@@ -321,7 +320,7 @@ class AlphaFactorFactory:
         self.evaluator = FactorEvaluator()
         
     def register_factor(self, factor: AlphaFactor) -> None:
-        """æ³¨åå å­"""
+        """注册因子"""
         self.factors[factor.factor_name] = factor
         
     def calculate_all_factors(self, data: pd.DataFrame) -> pd.DataFrame:
@@ -351,7 +350,7 @@ class AlphaFactorFactory:
                            evaluation_results: Dict[str, Dict[str, Any]],
                            top_n: int = 10) -> List[str]:
         """éæ©æä½³å å­?""
-        # æICIRæåº
+        # 按ICIR排序
         sorted_factors = sorted(
             evaluation_results.items(),
             key=lambda x: abs(x[1]['icir']),
@@ -365,9 +364,10 @@ class AlphaFactorFactory:
 
 ## ð å å­åºè®¾è®?
 
-### å å­åç±»ä½ç³»
+### 因子分类体系
 
-| å å­ç±»å« | å å­åç§° | å å­æè¿° | è®¡ç®å¬å¼ |
+| å å­ç±»å« | å å­åç§° | å å­æè¿° | è®¡ç®å
+¬å¼ |
 |---------|---------|---------|---------|
 | **å¨éå å­** | MOM_1M | 1æå¨é?| (P_t - P_{t-20}) / P_{t-20} |
 | **å¨éå å­** | MOM_3M | 3æå¨é?| (P_t - P_{t-60}) / P_{t-60} |
@@ -376,42 +376,47 @@ class AlphaFactorFactory:
 | **ä»·å¼å å­?* | PB | å¸åçåæ° | 1 / PB |
 | **ä»·å¼å å­?* | PS | å¸éçåæ° | 1 / PS_TTM |
 | **è´¨éå å­** | ROE | åèµäº§æ¶çç?| Net Income / Equity |
-| **è´¨éå å­** | ROA | æ»èµäº§æ¶çç | Net Income / Assets |
+| **质量因子** | ROA | 总资产收益率 | Net Income / Assets |
 | **è´¨éå å­** | GrossMargin | æ¯å©ç?| (Revenue - COGS) / Revenue |
 | **æé¿å å­** | Revenue_Growth | è¥æ¶å¢é¿ç?| (Revenue_t - Revenue_{t-1}) / Revenue_{t-1} |
 | **æé¿å å­** | Earnings_Growth | çå©å¢é¿ç?| (EPS_t - EPS_{t-1}) / EPS_{t-1} |
 | **ææ¯å å­?* | RSI | ç¸å¯¹å¼ºå¼±ææ  | æ åRSIè®¡ç® |
 | **ææ¯å å­?* | MACD | ææ°å¹³æ»å¼åç§»å¨å¹³åçº?| æ åMACDè®¡ç® |
-| **æç»ªå å­** | Sentiment_Score | æç»ªè¯å | ç»¼åæç»ªææ  |
+| **æ
+ç»ªå å­** | Sentiment_Score | æ
+ç»ªè¯å | ç»¼åæ
+绪指标 |
 
 ---
 
-## ð å®æ½è¦ç¹
+## 🚀 实施要点
 
 ### é¶æ®µ1ï¼å å­åºç±»å¼åï¼ç¬?å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°å å­åºç±»
 2. â?å®ç°å¨éå å­
 3. â?å®ç°ä»·å¼å å­?
 4. â?å®ç°è´¨éå å­
-5. â?ç¼åååæµè¯
+5. â?ç¼ååå
+æµè¯
 
 ---
 
 ### é¶æ®µ2ï¼å å­è¯ä¼°å¨å¼åï¼ç¬?å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°ICåæ
 2. â?å®ç°åç»æ¶çåæ
 3. â?å®ç°å å­æ­£äº¤å?
-4. â?ç¼åååæµè¯
+4. â?ç¼ååå
+æµè¯
 
 ---
 
 ### é¶æ®µ3ï¼å å­å·¥åå¼åï¼ç¬?å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°å å­æ³¨ååç®¡ç?
 2. â?å®ç°å å­æ¹éè®¡ç®
 3. â?å®ç°å å­ç­é?
@@ -419,30 +424,32 @@ class AlphaFactorFactory:
 
 ---
 
-## ð æ§è½ææ 
+## 📈 性能指标
 
-### å å­è´¨éè¦æ±
+### 因子质量要求
 
 | ææ  | ç®æ å?|
 |------|--------|
 | **ICåå?* | |IC| > 0.03 |
 | **ICIR** | > 0.5 |
-| **åè°æ§RÂ²** | > 0.8 |
+| **单调性R²** | > 0.8 |
 | **å å­è¦çç?* | > 95% |
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-- [å¸åºç¶æè¯å«ç³»ç»èå¾](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
+- [市场状态识别系统蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
 - å¤å å­åæå¼æèå?
 - ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶æ?
 
 ---
 
-## ð åæ´åå²
+## 📝 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | ä½è?|
 |------|------|---------|------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
@@ -452,29 +459,31 @@ class AlphaFactorFactory:
 **ä¸ä¸æ­?*: å¼å§å®æ½é¶æ®? - å å­åºç±»å¼å?
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 3: ä¸­è§ç­ç¥å±?
 ##### 6.001. Alpha Factor Factory
-- **æ¨¡åID**: ALPHA_FACTOR_FACTORY_001
-- **èå¾ææ¡£**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **模块ID**: ALPHA_FACTOR_FACTORY_001
+- **蓝图文档**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
 - **èè´£**: ä¸­è§ç­ç¥å±å å­çäº?
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
 | **Alpha Factor Factory** | ä¸­è§ç­ç¥å±å å­çäº?| **æ ¸å¿æ¨¡å** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

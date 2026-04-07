@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_SERVING_ARCHITECTURE_001
 version: 1.0.0
 status: Active

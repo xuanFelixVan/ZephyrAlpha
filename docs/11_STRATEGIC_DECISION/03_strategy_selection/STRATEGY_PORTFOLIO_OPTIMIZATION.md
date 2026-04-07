@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 11_STRATEGIC_DECISION_STRATEGY_PORTFOLIO_OPTIMIZATION_20260407124139
 version: 1.0.0
 status: Active

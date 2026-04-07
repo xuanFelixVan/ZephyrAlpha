@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_EVOLUTION_LOOP_BLUEPRINT_001
 version: 1.0.0
 status: Active

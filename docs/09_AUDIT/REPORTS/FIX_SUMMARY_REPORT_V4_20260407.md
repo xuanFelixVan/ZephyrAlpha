@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER4_FIX_SUMMARY_REPORT_V4_20260407_001
 version: 4.0.0
 status: Active

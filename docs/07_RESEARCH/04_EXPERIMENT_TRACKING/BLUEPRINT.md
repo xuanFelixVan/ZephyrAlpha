@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_005
 version: 1.0.0
 status: Active
@@ -21,11 +21,12 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
 owner: é¦å¸­ææ¡£æ¶æå¸?
-standard_type: ä¸ä¸éåæºæèå¾
-applicable_scope: å¨ç³»ç»æ¶æè®¾è®?
-compliance_level: åå§æ å
+standard_type: 专业量化机构蓝图
+applicable_scope: å
+¨ç³»ç»æ¶æè®¾è®?
+compliance_level: 初始标准
 parent_document: ../README.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 implementation_progress: 0%
 ---
 
@@ -37,46 +38,54 @@ implementation_progress: 0%
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸é£éåç³»ç» v5.0 çç ç©¶å®éªè¿½è¸ªæ¹æ¡?
-> **ç´¢å¼**: `EXP_001`
+> æ¸
+é£éåç³»ç» v5.0 çç ç©¶å®éªè¿½è¸ªæ¹æ¡?
+> **索引**: `EXP_001`
 > **æ³¨æ**: æ¬èå¾éç?è´­ä¹°èéèªç "ç­ç¥ï¼ä½¿ç¨Weights & Biases (wandb.ai)
-> **çç±**: wandbåè´¹çè¶³å¤ä¸ªäººä½¿ç¨ï¼æ¯æPythonä¸è¡ä»£ç éæ?
+> **çç±**: wandbå
+è´¹çè¶³å¤ä¸ªäººä½¿ç¨ï¼æ¯æPythonä¸è¡ä»£ç éæ?
 
 
-## 1. è®¾è®¡åå
+## 1. 设计原则
 
-| åå | è¯´æ |
+| 原则 | 说明 |
 |------|------|
-| è´­ä¹°èéèªç  | ä½¿ç¨wandb.aiï¼ä¸èªç å®éªè¿½è¸ª |
+| 购买而非自研 | 使用wandb.ai，不自研实验追踪 |
 | é¶å­¦ä¹ ææ?| wandbä¸è¡ä»£ç å³å¯å¼å§è¿½è¸?|
-| æ°¸ä¹åè´¹ | ä¸ªäººä½¿ç¨åè´¹ï¼è¶³å¤ä¸­å°è§æ¨¡å®éª?|
+| æ°¸ä¹
+å
+è´¹ | ä¸ªäººä½¿ç¨å
+è´¹ï¼è¶³å¤ä¸­å°è§æ¨¡å®éª?|
 | äºç«¯åæ­¥ | å®éªæ°æ®äºç«¯å­å¨ï¼ä¸ä¸¢æ°æ?|
 
 
-## 2. æ¹æ¡å¯¹æ¯
+## 2. 方案对比
 
-| æ¹æ¡ | èªç ç³»ç» | wandb.ai(æ¨è) |
+| 方案 | 自研系统 | wandb.ai(推荐) |
 |------|----------|----------------|
 | å¼åæ¶é?| 1-2ä¸ªæ | 5åééæ |
 | åè½å®æ´åº?| 50% | 95% |
-| åè´¹é¢åº¦ | - | 100GBå­å¨ |
+| å
+è´¹é¢åº¦ | - | 100GBå­å¨ |
 | å¯è§å?| ç®é?| ä¸ä¸å¾è¡¨ |
 | åä½æ¯æ | æ?| å¢éåä½ |
 
 
-## 3. wandbéææ¹æ¡
+## 3. wandb集成方案
 
 ### 3.1 å¿«ééæ?
 
 ```bash
-# å®è£
+# å®è£
+
 pip install wandb
 
-# ç»å½(åè´¹æ³¨å)
+# ç»å½(å
+è´¹æ³¨å)
 wandb login
 ```
 
-### 3.2 ç ç©¶å®éªè¿½è¸ª
+### 3.2 研究实验追踪
 
 ```python
 import wandb
@@ -89,29 +98,29 @@ wandb.init(
     entity="your_username",
     name="alpha_001_momentum",
     tags=["momentum", "daily"],
-    notes="å¨éå å­å®éª"
+    notes="动量因子实验"
 )
 
-# å å­å®éª
+# 因子实验
 class FactorExperiment:
     def run(self, params: dict):
-        """è¿è¡å å­å®éª"""
+        """运行因子实验"""
 
         with wandb.init(
             project="quant-research",
             name=f"factor_{params['factor_id']}",
             config=params
         ):
-            # å è½½æ°æ®
+            # 加载数据
             data = self.load_data()
 
-            # è®¡ç®å å­
+            # 计算因子
             factor_values = self.calculate_factor(data, params)
 
-            # éªè¯å å­
+            # 验证因子
             metrics = self.validate_factor(factor_values, data['returns'])
 
-            # è®°å½ææ 
+            # 记录指标
             wandb.log({
                 'ic_mean': metrics['ic_mean'],
                 'ic_ir': metrics['ic_ir'],
@@ -120,7 +129,7 @@ class FactorExperiment:
                 'sharpe_ratio': metrics['sharpe']
             })
 
-            # è®°å½å¾è¡¨
+            # 记录图表
             wandb.log({
                 'ic_timeseries': wandb.plot.line(
                     metrics['ic_series'],
@@ -131,16 +140,16 @@ class FactorExperiment:
                 )
             })
 
-            # ä¿å­å å­æ°æ®
+            # 保存因子数据
             wandb.save(f"factors/{params['factor_id']}.parquet")
 ```
 
-### 3.3 ç­ç¥å®éªè¿½è¸ª
+### 3.3 策略实验追踪
 
 ```python
 class StrategyExperiment:
     def run(self, params: dict):
-        """è¿è¡ç­ç¥å®éª"""
+        """运行策略实验"""
 
         with wandb.init(
             project="quant-research",
@@ -148,10 +157,10 @@ class StrategyExperiment:
             config=params,
             tags=['strategy', params['strategy_type']]
         ):
-            # åæµ
+            # 回测
             results = self.backtest(params)
 
-            # è®°å½åæµææ 
+            # 记录回测指标
             wandb.log({
                 'total_return': results['total_return'],
                 'sharpe_ratio': results['sharpe'],
@@ -161,42 +170,44 @@ class StrategyExperiment:
                 'avg_holding_period': results['avg_holding']
             })
 
-            # è®°å½åæµæ²çº¿
+            # 记录回测曲线
             returns_df = pd.DataFrame({'returns': results['returns']})
             wandb.log({
                 'equity_curve': wandb.plot.line(
                     returns_df,
                     x=returns_df.index,
                     y='returns',
-                    title="æçæ²çº¿"
+                    title="权益曲线"
                 )
             })
 
-            # è®°å½äº¤æè®°å½
+            # 记录交易记录
             trades_df = pd.DataFrame(results['trades'])
             wandb.log({
                 'trade_log': wandb.Table(dataframe=trades_df)
             })
 ```
 
-### 3.4 è¶åæ°ä¼åè¿½è¸?
+### 3.4 è¶
+åæ°ä¼åè¿½è¸?
 
 ```python
 import wandb
 from wandb.sklearn import plot_clusterer, plot_regressor
 
 def objective(params):
-    """Optuna + wandb è¶åæ°ä¼å?""
+    """Optuna + wandb è¶
+åæ°ä¼å?""
 
     with wandb.init(
         project="quant-research",
         name=f"optuna_{wandb.run.id}",
         config=params
     ) as run:
-        # è¿è¡åæµ
+        # 运行回测
         results = backtest(params)
 
-        # è®°å½ç»æ
+        # 记录结果
         wandb.log({
             'sharpe': results['sharpe'],
             'return': results['return'],
@@ -206,13 +217,13 @@ def objective(params):
         # è¿åç®æ å?
         return results['sharpe']
 
-# ä½¿ç¨wandbè¿½è¸ªOptuna
+# 使用wandb追踪Optuna
 study = optuna.create_study(
     direction='maximize',
     study_name='strategy_optimization'
 )
 
-# éæwandb
+# 集成wandb
 wandb_kwargs = {'project': 'quant-research'}
 study.optimize(
     lambda trial: objective(trial.params),
@@ -228,24 +239,27 @@ study.optimize(
 
 wandbèªå¨çæï¼?
 - IC_IRæ£ç¹å?
-- è¶åæ°ç¸å³æ§ç­åå¾
-- æä½³å®éªå¯¹æ¯è¡¨
+- è¶
+åæ°ç¸å
+³æ§ç­åå¾
+- 最佳实验对比表
 - å®éªåå²æ¶é´çº?
 
 ### 4.2 ç­ç¥ç ç©¶ä»ªè¡¨æ?
 
 wandbèªå¨çæï¼?
-- Sharpeæ¯çåå¸
-- åæµæçæ²çº¿å¯¹æ¯
+- Sharpe比率分布
+- 回测权益曲线对比
 - æ¶ç-åæ¤æ£ç¹å?
-- äº¤æé¢çåæ
+- 交易频率分析
 
 
 ## 5. å¢éåä½(å¯é?
 
 ```yaml
-# wandb å¢éåä½(æªæ¥æ©å±)
-# ä¸ªäººåè´¹ï¼å¢éä»è´?
+# wandb 团队协作(未来扩展)
+# ä¸ªäººå
+è´¹ï¼å¢éä»è´?
 team:
   name: "qingfeng-quant"
   members:
@@ -260,7 +274,7 @@ projects:
 ```
 
 
-## 6. æ¬å°æ¿ä»£æ¹æ¡
+## 6. 本地替代方案
 
 å¦æä¸éè¦äºç«¯åæ­¥ï¼å¯ä»¥ä½¿ç¨MLflow(å¼æºæ¬å°æ¹æ¡?ï¼?
 
@@ -288,15 +302,17 @@ with mlflow.start_run():
 ```
 
 
-## 7. æ´æ°è®°å½
+## 7. 更新记录
 
-| çæ¬ | æ¥æ | åæ´åå®¹ |
+| çæ¬ | æ¥æ | åæ´å
+å®¹ |
 |------|------|----------|
-| v1.0 | 2026-03-28 | åå§çæ¬ - ç®åçè®¾è®¡ |
+| v1.0 | 2026-03-28 | 初始版本 - 简化版设计 |
 
 
-**ç»´æ¤è?*: æ¸é£éåç³»ç»
-**ç´¢å¼**: `EXP_001`
+**ç»´æ¤è?*: æ¸
+风量化系统
+**索引**: `EXP_001`
 ---
 
 ## 8. 文档治理
@@ -309,7 +325,8 @@ with mlflow.start_run():
 - **模块ID**: RESEARCH_BLUEPRINT_001
 - **蓝图文档**: [BLUEPRINT.md](07_RESEARCH\04_EXPERIMENT_TRACKING\BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å¨ç³»ç»æ¶æè®¾è®?
+- **职责**: å
+¨ç³»ç»æ¶æè®¾è®?
 - **状态**: Active
 ```
 
@@ -317,7 +334,8 @@ with mlflow.start_run():
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Research Blueprint** | å¨ç³»ç»æ¶æè®¾è®? | **核心模块** |
+| **Research Blueprint** | å
+¨ç³»ç»æ¶æè®¾è®? | **核心模块** |
 
 ### 8.3 版本管理
 

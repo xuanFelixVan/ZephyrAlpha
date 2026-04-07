@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_ASSET_ALLOCATION_SPEC_001
 version: 1.0.0
 spec_version: 1.0

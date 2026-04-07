@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_BP_AI_RESEARCH_001
 version: 1.0.1
 status: Active

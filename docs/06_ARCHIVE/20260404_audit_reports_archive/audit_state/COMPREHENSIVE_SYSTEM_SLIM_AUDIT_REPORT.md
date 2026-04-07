@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_SLIM_AUDIT_REPORT_001
 version: 2026.04.02
 status: Active

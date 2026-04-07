@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_MONITORING_TECHNICAL_SPECIFICATION_001
 version: 1.0.0
 spec_version: 1.0

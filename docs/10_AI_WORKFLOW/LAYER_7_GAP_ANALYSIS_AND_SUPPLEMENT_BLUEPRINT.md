@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_7_GAP_ANALYSIS_AND_SUPPLEMENT_001
 version: 1.0.0
 status: Active

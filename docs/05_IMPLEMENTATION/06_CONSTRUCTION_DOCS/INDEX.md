@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_CONSTRUCTION_DOCS
 version: 1.0.0
 status: Active

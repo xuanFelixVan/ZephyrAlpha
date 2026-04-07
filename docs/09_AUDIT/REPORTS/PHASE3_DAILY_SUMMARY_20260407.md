@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PHASE3_DAILY_SUMMARY_20260407_001
 
 summary_id: PHASE3_DAILY_SUMMARY_20260407

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_HIGH_PERF_PIPELINE_BP_001
 version: 1.0.1
 status: Active

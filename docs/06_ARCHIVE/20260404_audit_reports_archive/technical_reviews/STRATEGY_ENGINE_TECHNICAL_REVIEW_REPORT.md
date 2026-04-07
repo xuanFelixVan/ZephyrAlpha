@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_ENGINE_001
 review_id: TR-2026-04-02-ENGINE
 version: 1.0.0

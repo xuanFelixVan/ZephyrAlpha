@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESPONSIBILITY_BOUNDARY_MAP_001
 version: 1.0.0
 status: Active

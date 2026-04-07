@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MEDIUM_LONG_TERM_IMPROVEMENT_IMPLEMENTATION_REPORT_20260407
 version: 1.0.0
 status: Active

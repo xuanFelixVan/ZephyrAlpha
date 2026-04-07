@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_MODULE_DESIGN_TPL_001
 version: 1.0.1
 status: Active

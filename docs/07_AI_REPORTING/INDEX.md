@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_AI_REPORTING_001
 version: 1.0.1
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_QUANT_STRATEGY_001
 version: 3.1.1
 status: Active

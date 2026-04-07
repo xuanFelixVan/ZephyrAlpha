@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_DATA_NORMALIZER_TECH_REVIEW_001
 version: 1.0.1
 status: Active

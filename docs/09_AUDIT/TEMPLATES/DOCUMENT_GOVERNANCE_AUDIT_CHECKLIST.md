@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MIXED_PRECISION_TRAINING_BLUEPRINT_001
 
 version: 1.0.0

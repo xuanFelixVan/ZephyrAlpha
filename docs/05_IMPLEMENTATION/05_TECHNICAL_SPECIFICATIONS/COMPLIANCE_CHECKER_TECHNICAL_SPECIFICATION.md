@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_CHECKER_001
 version: 1.1.0
 status: Active

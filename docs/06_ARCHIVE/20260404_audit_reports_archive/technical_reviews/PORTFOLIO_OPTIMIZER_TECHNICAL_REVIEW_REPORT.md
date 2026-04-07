@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_PORTFOLIO_OPT_TECH_REVIEW_001
 review_id: TR-2026-04-02-PORT-OPT
 version: 1.0.1

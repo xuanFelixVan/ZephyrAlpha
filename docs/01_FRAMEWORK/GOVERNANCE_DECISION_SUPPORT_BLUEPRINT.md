@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOVERNANCE_DECISION_SUPPORT_001
 version: 1.0.0
 status: Active

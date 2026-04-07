@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT_001
 version: 1.0.0
 status: Active

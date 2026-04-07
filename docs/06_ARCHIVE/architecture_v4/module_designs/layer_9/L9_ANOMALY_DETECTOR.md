@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_L9_ANOMALY_DETECTOR_001
 version: 1.0.1
 status: Active

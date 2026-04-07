@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CODE_GENERATION_MODEL_BLUEPRINT_001
 
 version: 1.0.0

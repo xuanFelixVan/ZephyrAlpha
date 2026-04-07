@@ -1,23 +1,23 @@
----
+﻿---
 module_id: CDC_CHANGE_DATA_CAPTURE__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: é¦å¸­æ¶æå¸?
-standard_type: ä¸ä¸éåæºæèå¾
-applicable_scope: Layer 1 æ°æ®é¢å¤çå±
-compliance_level: ä¸ä¸æ å
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据预处理层
+compliance_level: 专业标准
 priority: P1
 layer: Layer 5.1 (数据处理)
 responsibility: CDCåæ´æ°æ®æè·ä¸å¢éåæ­?
 ---
 
-# CDCåæ´æ°æ®æè·èå¾
+# CDC变更数据捕获蓝图
 
 ## 核心定位
 
-负责变更数据捕获系统的设计与实现，基于CDC技术，实时捕获数据库变更，支持数据同步和实时分析。
+负责变更数据捕获系统的设计与实现，基于CDC技术，实时捕获数据库变更，支持数据同步和实时分析。 提供数据管理、查询、更新功能，确保数据质量和一致性。
 
 
 ## 设计目标
@@ -72,22 +72,24 @@ responsibility: CDCåæ´æ°æ®æè·ä¸å¢éå�
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 è´è´£åæ´æ°æ®æè·ï¼CDCï¼çå®ç°ï¼å®æ¶æè·åå¤çæ°æ®åæ´ï¼æ¯ææ°æ®åæ­¥åæ°æ®ä¸è´æ§ä¿éã?
 
 ## ð ä¸ãæ¨¡åæ¦è¿?
 
-### 1.1 ä¸ä¸æºææ åè¦æ±
+### 1.1 专业机构标准要求
 
-| æºæç±»å | CDCè¦æ± | å»¶è¿ç®æ  |
+| 机构类型 | CDC要求 | 延迟目标 |
 |---------|---------|---------|
 | **æ¡¥æ°´åºé** | å®æ¶CDCãç²¾ç¡®ä¸æ¬?| <100ms |
-| **æèºå¤å´ç§æ** | å¤æºCDCãé¡ºåºä¿è¯?| <200ms |
+| **æèºå¤å
+´ç§æ** | å¤æºCDCãé¡ºåºä¿è¯?| <200ms |
 | **Two Sigma** | å¢éåæ­¥ãæ°æ®ä¸è´æ?| <500ms |
-| **Citadel** | é«å¯ç¨CDCãæéæ¢å¤?| <100ms |
+| **Citadel** | é«å¯ç¨CDCãæ
+éæ¢å¤?| <100ms |
 
-### 1.2 æ ¸å¿åè½ç©éµ
+### 1.2 核心功能矩阵
 
 | åè½æ¨¡å | å¼æºæ¹æ¡?| æçåº?| ä¸ªäººéç¨æ?| æ¨èææ° |
 |---------|---------|--------|-----------|---------|
@@ -128,7 +130,8 @@ responsibility: CDCåæ´æ°æ®æè·ä¸å¢éå�
 â?                             â?                                         â?
 â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
 â? â?                   æ¶æ¯éåå±?(Kafka/Redis)                        â? â?
-â? â? â?äºä»¶å­å¨  â?é¡ºåºä¿è¯  â?æä¹å? â?åæ¾æ¯æ                      â? â?
+â? â? â?äºä»¶å­å¨  â?é¡ºåºä¿è¯  â?æä¹
+å? â?åæ¾æ¯æ                      â? â?
 â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
 â?                             â?                                         â?
 â?                             â?                                         â?
@@ -146,7 +149,7 @@ responsibility: CDCåæ´æ°æ®æè·ä¸å¢éå�
 æ°æ®åæ´ â?CDCæè· â?åæ´äºä»¶ â?æ¶æ¯éå â?æ¶è´¹å¤ç â?ç®æ å­å¨
     â?        â?         â?         â?         â?         â?
     âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ?
-                    å®æ´CDCé¾è·¯
+                    完整CDC链路
 ```
 
 ---
@@ -173,7 +176,7 @@ import queue
 
 
 class ChangeType(Enum):
-    """åæ´ç±»å"""
+    """变更类型"""
     CREATE = "create"
     MODIFY = "modify"
     DELETE = "delete"
@@ -182,7 +185,7 @@ class ChangeType(Enum):
 
 @dataclass
 class FileChangeEvent:
-    """æä»¶åæ´äºä»¶"""
+    """文件变更事件"""
     event_id: str
     file_path: str
     change_type: ChangeType
@@ -209,7 +212,7 @@ class FileCDCMonitor:
         self.running = False
     
     def _compute_file_hash(self, file_path: str) -> Optional[str]:
-        """è®¡ç®æä»¶åå¸"""
+        """计算文件哈希"""
         try:
             with open(file_path, 'rb') as f:
                 return hashlib.md5(f.read()).hexdigest()
@@ -237,7 +240,7 @@ class FileCDCMonitor:
         old_hash: Optional[str] = None,
         new_hash: Optional[str] = None
     ) -> FileChangeEvent:
-        """åå»ºåæ´äºä»¶"""
+        """创建变更事件"""
         event_id = hashlib.sha256(
             f"{file_path}_{change_type.value}_{datetime.now().isoformat()}".encode()
         ).hexdigest()[:16]
@@ -257,7 +260,7 @@ class FileCDCMonitor:
         )
     
     def on_file_created(self, file_path: str):
-        """æä»¶åå»ºäºä»¶"""
+        """文件创建事件"""
         if not self._should_watch(file_path):
             return
         
@@ -269,7 +272,7 @@ class FileCDCMonitor:
         self._notify_handlers(event)
     
     def on_file_modified(self, file_path: str):
-        """æä»¶ä¿®æ¹äºä»¶"""
+        """文件修改事件"""
         if not self._should_watch(file_path):
             return
         
@@ -289,7 +292,7 @@ class FileCDCMonitor:
         self._notify_handlers(event)
     
     def on_file_deleted(self, file_path: str):
-        """æä»¶å é¤äºä»¶"""
+        """文件删除事件"""
         if file_path in self.file_hashes:
             old_hash = self.file_hashes.pop(file_path)
             
@@ -302,7 +305,7 @@ class FileCDCMonitor:
         self.change_handlers.append(handler)
     
     def _notify_handlers(self, event: FileChangeEvent):
-        """éç¥ææå¤çå¨"""
+        """通知所有处理器"""
         for handler in self.change_handlers:
             try:
                 handler(event)
@@ -310,14 +313,14 @@ class FileCDCMonitor:
                 print(f"Handler error: {e}")
     
     def get_event(self, timeout: float = 1.0) -> Optional[FileChangeEvent]:
-        """è·åäºä»¶"""
+        """获取事件"""
         try:
             return self.event_queue.get(timeout=timeout)
         except queue.Empty:
             return None
     
     def start(self):
-        """å¯å¨çæ§"""
+        """启动监控"""
         for watch_path in self.watch_paths:
             if os.path.exists(watch_path):
                 handler = CDCEventHandler(self)
@@ -327,7 +330,7 @@ class FileCDCMonitor:
         self.running = True
     
     def stop(self):
-        """åæ­¢çæ§"""
+        """停止监控"""
         self.running = False
         self.observer.stop()
         self.observer.join()
@@ -375,7 +378,8 @@ import logging
 
 @dataclass
 class APICDCConfig:
-    """API CDCéç½®"""
+    """API CDCé
+ç½®"""
     endpoint: str
     method: str = "GET"
     headers: Dict[str, str] = None
@@ -404,7 +408,7 @@ class APICDCPoller:
         self.logger = logging.getLogger(__name__)
     
     async def poll_endpoint(self, name: str, config: APICDCConfig):
-        """è½®è¯¢åä¸ªç«¯ç¹"""
+        """轮询单个端点"""
         last_cursor = self.state_store.get_cursor(name)
         if last_cursor:
             config.cursor_value = last_cursor
@@ -502,7 +506,7 @@ class APICDCPoller:
         self.change_handlers.append(handler)
     
     async def start(self):
-        """å¯å¨è½®è¯¢"""
+        """启动轮询"""
         self.running = True
         
         while self.running:
@@ -518,7 +522,7 @@ class APICDCPoller:
             )
     
     def stop(self):
-        """åæ­¢è½®è¯¢"""
+        """停止轮询"""
         self.running = False
 
 
@@ -558,11 +562,11 @@ class CDCStateStore:
             json.dump(self.item_hashes, f, indent=2)
     
     def get_cursor(self, endpoint_name: str) -> Any:
-        """è·åæ¸¸æ """
+        """获取游标"""
         return self.cursors.get(endpoint_name)
     
     def set_cursor(self, endpoint_name: str, cursor: Any):
-        """è®¾ç½®æ¸¸æ """
+        """设置游标"""
         self.cursors[endpoint_name] = cursor
         self._save_state()
     
@@ -595,7 +599,7 @@ import logging
 
 @dataclass
 class ChangeEvent:
-    """åæ´äºä»¶"""
+    """变更事件"""
     event_id: str
     source: str
     table: str
@@ -629,7 +633,8 @@ class CDCEventProcessor:
         self._ensure_consumer_group()
     
     def _ensure_consumer_group(self):
-        """ç¡®ä¿æ¶è´¹èç»å­å¨"""
+        """ç¡®ä¿æ¶è´¹è
+组存在"""
         try:
             self.redis_client.xgroup_create(
                 self.stream_name,
@@ -663,7 +668,7 @@ class CDCEventProcessor:
         self.redis_client.xadd(self.stream_name, event_data)
     
     def process_events(self, count: int = 10, block: int = 1000):
-        """å¤çäºä»¶"""
+        """处理事件"""
         messages = self.redis_client.xreadgroup(
             groupname=self.consumer_group,
             consumername=self.consumer_name,
@@ -689,7 +694,7 @@ class CDCEventProcessor:
                     self.logger.error(f"Error processing event {msg_id}: {e}")
     
     def _parse_event(self, data: Dict[str, str]) -> ChangeEvent:
-        """è§£æäºä»¶"""
+        """解析事件"""
         return ChangeEvent(
             event_id=data["event_id"],
             source=data["source"],
@@ -702,7 +707,7 @@ class CDCEventProcessor:
         )
     
     def _dispatch_event(self, event: ChangeEvent):
-        """ååäºä»¶"""
+        """分发事件"""
         handlers = self.handlers.get(event.operation, [])
         
         for handler in handlers:
@@ -719,9 +724,11 @@ class CDCEventProcessor:
 
 ---
 
-## ð åãé¨ç½²éç½?
+## ð åãé¨ç½²é
+ç½?
 
-### 4.1 Debeziuméç½®ï¼PostgreSQLï¼?
+### 4.1 Debeziumé
+ç½®ï¼PostgreSQLï¼?
 
 ```json
 {
@@ -742,7 +749,8 @@ class CDCEventProcessor:
 }
 ```
 
-### 4.2 Docker Composeéç½®
+### 4.2 Docker Composeé
+ç½®
 
 ```yaml
 version: '3.8'
@@ -793,7 +801,7 @@ networks:
 
 ## ð äºãä½¿ç¨ç¤ºä¾?
 
-### 5.1 æä»¶CDCçæ§
+### 5.1 文件CDC监控
 
 ```python
 from cdc_capture import FileCDCMonitor
@@ -807,7 +815,7 @@ config = {
 monitor = FileCDCMonitor(config)
 
 def handle_change(event):
-    print(f"æä»¶åæ´: {event.file_path} - {event.change_type.value}")
+    print(f"文件变更: {event.file_path} - {event.change_type.value}")
 
 monitor.add_change_handler(handle_change)
 monitor.start()
@@ -834,7 +842,7 @@ config = {
 poller = APICDCPoller(config)
 
 async def handle_change(event):
-    print(f"æ°æ®åæ´: {event['endpoint_name']} - {event['item_id']}")
+    print(f"数据变更: {event['endpoint_name']} - {event['item_id']}")
 
 poller.add_change_handler(handle_change)
 asyncio.run(poller.start())
@@ -842,24 +850,27 @@ asyncio.run(poller.start())
 
 ---
 
-## ð å­ãæ§è½ææ 
+## ð å
+­ãæ§è½ææ 
 
-### 6.1 CDCæ§è½
+### 6.1 CDC性能
 
 | ææ  | ç®æ å?| å®æµå?|
 |------|--------|--------|
-| **æè·å»¶è¿** | <100ms | 50-80ms |
+| **捕获延迟** | <100ms | 50-80ms |
 | **ååé?* | >10K events/s | 15K events/s |
 | **æ°æ®ä¸è´æ?* | 100% | 100% |
-| **æéæ¢å¤æ¶é´** | <30s | 20s |
+| **æ
+障恢复时间** | <30s | 20s |
 
-### 6.2 èµæºå ç¨
+### 6.2 资源占用
 
-| èµæº | Debezium | Kafka | æ»è®¡ |
+| 资源 | Debezium | Kafka | 总计 |
 |------|----------|-------|------|
 | CPU | 0.5æ ?| 1æ ?| 1.5æ ?|
-| åå­ | 1GB | 2GB | 3GB |
-| å­å¨ | 1GB | 10GB | 11GB |
+| å
+存 | 1GB | 2GB | 3GB |
+| 存储 | 1GB | 10GB | 11GB |
 
 ---
 
@@ -867,30 +878,33 @@ asyncio.run(poller.start())
 
 ### Phase 1: åºç¡CDCï¼?å¨ï¼
 
-- [x] æä»¶CDCå®ç°
-- [x] API CDCå®ç°
-- [x] Redis Streamséæ
+- [x] 文件CDC实现
+- [x] API CDC实现
+- [x] Redis Streams集成
 
 ### Phase 2: æ°æ®åºCDCï¼?å¨ï¼
 
-- [x] Debeziumé¨ç½²
-- [x] Kafkaéæ
-- [x] äºä»¶å¤ç
+- [x] Debezium部署
+- [x] Kafka集成
+- [x] 事件处理
 
 ### Phase 3: ä¼åå¢å¼ºï¼?å¨ï¼
 
-- [x] æ§è½ä¼å
-- [x] çæ§åè­¦
-- [x] æéæ¢å¤
+- [x] 性能优化
+- [x] 监控告警
+- [x] æ
+障恢复
 
 ---
 
-## ð å«ãåæ´åå?
+## ð å
+«ãåæ´åå?
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | ä½è?|
 |------|------|---------|------|
 | v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**ææ¡£ç»æ**
+**文档结束**

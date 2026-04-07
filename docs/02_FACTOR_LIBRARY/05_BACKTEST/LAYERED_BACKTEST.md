@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYERED_BACKTEST_001
 version: 1.0.0
 status: Active

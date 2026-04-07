@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT_001
 version: 1.0.0
 status: Archived

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_模块注册中心_V1_0_001
 version: 1.0.0
 status: Active

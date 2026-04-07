@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_010
 version: 1.0.0
 status: Active
@@ -23,10 +23,10 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æå¸?
 standard_type: ä¸ä¸æºæçº§èå?
-applicable_scope: ç­ç¥çå½å¨æç®¡ç
-compliance_level: ä¸ä¸æ å
+applicable_scope: 策略生命周期管理
+compliance_level: 专业标准
 parent_document: ../STRATEGY_AI_MODULES_ANALYSIS.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 reference_models:
   - Bridgewater Strategy Lifecycle Management
   - Renaissance Strategy Retirement Mechanism
@@ -37,52 +37,58 @@ related_documents:
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
 ---
 
-# ç­ç¥çå½å¨æç®¡çAIèå¾
+# 策略生命周期管理AI蓝图
 > **核心职责**: Strategy Lifecycle Ai蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Strategy Lifecycle Ai蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **çæ¬**: v1.0
-> **åå»ºæ¥æ**: 2026-04-02
+> **版本**: v1.0
+> **创建日期**: 2026-04-02
 > **å®æ½å¨æ**: 2å?
-> **æ ¸å¿å®ä½**: ç­ç¥å¨çå½å¨æå¨æç®¡ç?
-> **ææ¯æ **: Python + SQLite + MLflow
+> **æ ¸å¿å®ä½**: ç­ç¥å
+¨çå½å¨æå¨æç®¡ç?
+> **技术栈**: Python + SQLite + MLflow
 
 ---
 
 ## ä¸ãæ¦è¿?
 
-### 1.1 èå¾å®ä½
+### 1.1 蓝图定位
 
-æ¬ææ¡£æ¯æ¸é£éåç³»ç»ç?*ç­ç¥çå½å¨æç®¡çAIèå¾**ï¼æ¨å¨å®ç°ï¼
+æ¬ææ¡£æ¯æ¸
+é£éåç³»ç»ç?*ç­ç¥çå½å¨æç®¡çAIèå¾**ï¼æ¨å¨å®ç°ï¼
 
 - â?**ç­ç¥èè½æç®¡ç?*: éªè¯ç­ç¥æ³æ³ï¼è¯ä¼°å¯è¡æ?
-- â?**ç­ç¥æé¿æç®¡ç?*: è·è¸ªç­ç¥è¡¨ç°ï¼åéèµé?
+- â?**ç­ç¥æé¿æç®¡ç?*: è·è¸ªç­ç¥è¡¨ç°ï¼åé
+èµé?
 - â?**ç­ç¥æçæç®¡ç?*: çæ§ç­ç¥æ§è½ï¼ä¼ååæ?
 - â?**ç­ç¥è¡°éæç®¡ç?*: æ£æµç­ç¥å¤±æï¼æ§è¡éå½?
 - â?**ç­ç¥æ± å¨æç®¡ç?*: æ§å¶ç­ç¥æ°éï¼ç®¡çå¤æ ·æ?
 
 ### 1.2 æ ¸å¿ä»·å?
 
-**å¯¹ä¸ªäººå¼åèçä»·å?*ï¼?
-1. **èªå¨åç®¡ç?*: AIèªå¨ç®¡çç­ç¥å¨çå½å¨æ?
-2. **å¤±ææ£æµ?*: èªå¨è¯å«å¤±æç­ç¥ï¼é¿åç»§ç»­äºæ?
+**å¯¹ä¸ªäººå¼åè
+çä»·å?*ï¼?
+1. **èªå¨åç®¡ç?*: AIèªå¨ç®¡çç­ç¥å
+¨çå½å¨æ?
+2. **å¤±ææ£æµ?*: èªå¨è¯å«å¤±æç­ç¥ï¼é¿å
+ç»§ç»­äºæ?
 3. **ç­ç¥æ± ä¼å?*: èªå¨è°æ´ç­ç¥æéï¼ä¼åç­ç¥æ± 
-4. **åå°äººå·¥**: åå°äººå·¥ç®¡çç­ç¥çå·¥ä½é
+4. **减少人工**: 减少人工管理策略的工作量
 
 **å¯¹ç³»ç»çä»·å?*ï¼?
-1. **é£é©æ§å¶**: åæ¶éå½¹å¤±æç­ç¥ï¼æ§å¶é£é©
+1. **风险控制**: 及时退役失效策略，控制风险
 2. **èµæºä¼å**: ä¼åç­ç¥æ± ï¼æé«èµæºå©ç¨ç?
-3. **æç»­æ¹è¿**: å»ºç«ç­ç¥æç»­æ¹è¿æºå¶
-4. **ç¥è¯ç§¯ç´¯**: ç§¯ç´¯ç­ç¥çå½å¨æç®¡çç»éª
+3. **持续改进**: 建立策略持续改进机制
+4. **知识积累**: 积累策略生命周期管理经验
 
-### 1.3 Layerå®ä½
+### 1.3 Layer定位
 
 ```
 Layer 5: ç­ç¥æ§è¡å±?(Strategy Execution Layer)
-    âââ ç­ç¥çå½å¨æç®¡çAI
+    ├── 策略生命周期管理AI
     â?  âââ èè½æç®¡çå­ç³»ç»
     â?  âââ æé¿æç®¡çå­ç³»ç»
     â?  âââ æçæç®¡çå­ç³»ç»
@@ -96,7 +102,7 @@ Layer 5: ç­ç¥æ§è¡å±?(Strategy Execution Layer)
 
 ## äºãæ¶æè®¾è®?
 
-### 2.1 æ´ä½æ¶æ
+### 2.1 整体架构
 
 ```
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -107,7 +113,8 @@ Layer 5: ç­ç¥æ§è¡å±?(Strategy Execution Layer)
 â? â?       ç­ç¥æ± ç®¡çå­ç³»ç» (Strategy Pool Manager)     â?  â?
 â? â? ââ ç­ç¥æ°éæ§å¶                                     â?  â?
 â? â? ââ ç­ç¥å¤æ ·æ§ç®¡ç?                                  â?  â?
-â? â? ââ ç­ç¥ç¸å³æ§æ§å?                                  â?  â?
+â? â? ââ ç­ç¥ç¸å
+³æ§æ§å?                                  â?  â?
 â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
 â?                         â?                                 â?
 â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?
@@ -148,9 +155,9 @@ Layer 5: ç­ç¥æ§è¡å±?(Strategy Execution Layer)
 
 ## ä¸ãæ ¸å¿åè½è®¾è®?
 
-### 3.1 ç­ç¥çå½å¨æé¶æ®µè¯å«
+### 3.1 策略生命周期阶段识别
 
-#### 3.1.1 é¶æ®µå®ä¹
+#### 3.1.1 阶段定义
 
 ```python
 from enum import Enum
@@ -159,7 +166,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 
 class StrategyStage(Enum):
-    """ç­ç¥çå½å¨æé¶æ®µ"""
+    """策略生命周期阶段"""
     EMERGING = "emerging"      # èè½æ?
     GROWING = "growing"        # æé¿æ?
     MATURE = "mature"          # æçæ?
@@ -168,13 +175,13 @@ class StrategyStage(Enum):
 
 @dataclass
 class StageCriteria:
-    """é¶æ®µå¤å®æ å"""
+    """阶段判定标准"""
     
     # èè½ææ å?
     emerging_criteria = {
         'age_days': (0, 30),           # ç­ç¥å¹´é¾0-30å¤?
         'trade_count': (0, 10),        # äº¤ææ¬¡æ°0-10æ¬?
-        'sharpe_range': (-1.0, 3.0),   # å¤æ®æ¯çèå´
+        'sharpe_range': (-1.0, 3.0),   # 夏普比率范围
         'confidence': 0.3              # ç½®ä¿¡åº?30%
     }
     
@@ -182,25 +189,25 @@ class StageCriteria:
     growing_criteria = {
         'age_days': (30, 180),         # ç­ç¥å¹´é¾30-180å¤?
         'trade_count': (10, 100),      # äº¤ææ¬¡æ°10-100æ¬?
-        'sharpe_range': (1.0, 3.0),    # å¤æ®æ¯çèå´
+        'sharpe_range': (1.0, 3.0),    # 夏普比率范围
         'confidence': (0.3, 0.7),      # ç½®ä¿¡åº?0%-70%
-        'performance_trend': 'improving'  # æ§è½è¶å¿åä¸
+        'performance_trend': 'improving'  # 性能趋势向上
     }
     
     # æçææ å?
     mature_criteria = {
         'age_days': (180, 720),        # ç­ç¥å¹´é¾180-720å¤?
         'trade_count': (100, 1000),    # äº¤ææ¬¡æ°100-1000æ¬?
-        'sharpe_range': (1.5, 2.5),    # å¤æ®æ¯çèå´
+        'sharpe_range': (1.5, 2.5),    # 夏普比率范围
         'confidence': (0.7, 0.9),      # ç½®ä¿¡åº?0%-90%
-        'performance_trend': 'stable'  # æ§è½è¶å¿ç¨³å®
+        'performance_trend': 'stable'  # 性能趋势稳定
     }
     
     # è¡°éææ å?
     declining_criteria = {
         'age_days': (720, float('inf')),  # ç­ç¥å¹´é¾>720å¤?
-        'sharpe_decline': 0.3,            # å¤æ®æ¯çä¸é30%
-        'performance_trend': 'declining', # æ§è½è¶å¿åä¸
+        'sharpe_decline': 0.3,            # 夏普比率下降30%
+        'performance_trend': 'declining', # 性能趋势向下
         'confidence': 0.9                 # ç½®ä¿¡åº?90%
     }
 
@@ -211,14 +218,15 @@ class StageIdentifier:
         self.criteria = StageCriteria()
         
     def identify_stage(self, strategy_id: str) -> StrategyStage:
-        """è¯å«ç­ç¥å½åé¶æ®µ"""
-        # 1. è·åç­ç¥æ°æ®
+        """识别策略当前阶段"""
+        # 1. 获取策略数据
         strategy_data = self._get_strategy_data(strategy_id)
         
-        # 2. è®¡ç®å³é®ææ 
+        # 2. è®¡ç®å
+³é®ææ 
         metrics = self._calculate_metrics(strategy_data)
         
-        # 3. å¤å®é¶æ®µ
+        # 3. 判定阶段
         if self._is_emerging(metrics):
             return StrategyStage.EMERGING
         elif self._is_growing(metrics):
@@ -231,7 +239,8 @@ class StageIdentifier:
             return StrategyStage.RETIRED
     
     def _calculate_metrics(self, strategy_data: Dict) -> Dict:
-        """è®¡ç®ç­ç¥å³é®ææ """
+        """è®¡ç®ç­ç¥å
+³é®ææ """
         return {
             'age_days': self._calculate_age(strategy_data['created_at']),
             'trade_count': strategy_data['trade_count'],
@@ -242,7 +251,7 @@ class StageIdentifier:
     
     def _calculate_confidence(self, strategy_data: Dict) -> float:
         """è®¡ç®ç­ç¥ç½®ä¿¡åº?""
-        # åºäºæ ·æ¬éãç¨³å®æ§ãä¸è´æ§è®¡ç®ç½®ä¿¡åº¦
+        # 基于样本量、稳定性、一致性计算置信度
         sample_size = strategy_data['trade_count']
         stability = self._calculate_stability(strategy_data)
         consistency = self._calculate_consistency(strategy_data)
@@ -263,7 +272,7 @@ class StageIdentifier:
 
 ```python
 class EmergingStageManager:
-    """èè½æç®¡çå¨"""
+    """萌芽期管理器"""
     
     def __init__(self):
         self.validator = StrategyValidator()
@@ -271,20 +280,22 @@ class EmergingStageManager:
         
     def manage_emerging_stage(self, strategy_id: str):
         """ç®¡çèè½æç­ç?""
-        # 1. ç­ç¥æ³æ³éªè¯
+        # 1. 策略想法验证
         validation_result = self.validator.validate_strategy_idea(strategy_id)
         
         # 2. å¯è¡æ§è¯ä¼?
         feasibility = self._assess_feasibility(strategy_id)
         
-        # 3. ä¼åçº§æåº?
+        # 3. ä¼å
+çº§æåº?
         priority = self.prioritizer.calculate_priority(
             strategy_id=strategy_id,
             validation_result=validation_result,
             feasibility=feasibility
         )
         
-        # 4. å³ç­ï¼æ¯å¦è¿å¥æé¿æ
+        # 4. å³ç­ï¼æ¯å¦è¿å
+¥æé¿æ
         if validation_result.passed and feasibility.score > 0.6:
             self._promote_to_growing(strategy_id, priority)
         else:
@@ -309,7 +320,7 @@ class EmergingStageManager:
         # 3. é£é©å¯è¡æ?
         risk_feasibility = self._check_risk_feasibility(strategy_id)
         
-        # 4. ç»¼åè¯å
+        # 4. 综合评分
         score = (
             data_feasibility.score * 0.3 +
             tech_feasibility.score * 0.4 +
@@ -330,7 +341,7 @@ class EmergingStageManager:
 
 ```python
 class GrowingStageManager:
-    """æé¿æç®¡çå¨"""
+    """成长期管理器"""
     
     def __init__(self):
         self.tracker = PerformanceTracker()
@@ -339,22 +350,24 @@ class GrowingStageManager:
         
     def manage_growing_stage(self, strategy_id: str):
         """ç®¡çæé¿æç­ç?""
-        # 1. è¡¨ç°è·è¸ª
+        # 1. 表现跟踪
         performance = self.tracker.track_performance(strategy_id)
         
-        # 2. èµéåé
+        # 2. èµéåé
+
         allocation = self.allocator.allocate_capital(
             strategy_id=strategy_id,
             performance=performance
         )
         
-        # 3. é£é©æ§å¶
+        # 3. 风险控制
         risk_control = self.risk_controller.control_risk(
             strategy_id=strategy_id,
             allocation=allocation
         )
         
-        # 4. å³ç­ï¼æ¯å¦è¿å¥æçæ
+        # 4. å³ç­ï¼æ¯å¦è¿å
+¥æçæ
         if performance.sharpe_ratio > 1.5 and performance.confidence > 0.7:
             self._promote_to_mature(strategy_id)
         elif performance.sharpe_ratio < 0.5:
@@ -369,17 +382,17 @@ class GrowingStageManager:
         )
     
     def track_performance(self, strategy_id: str) -> PerformanceMetrics:
-        """è·è¸ªç­ç¥è¡¨ç°"""
-        # 1. æ¶çææ 
+        """跟踪策略表现"""
+        # 1. 收益指标
         returns = self._calculate_returns(strategy_id)
         
-        # 2. é£é©ææ 
+        # 2. 风险指标
         risks = self._calculate_risks(strategy_id)
         
-        # 3. æçææ 
+        # 3. 效率指标
         efficiency = self._calculate_efficiency(strategy_id)
         
-        # 4. ç»¼åè¯å
+        # 4. 综合评分
         score = self._calculate_composite_score(returns, risks, efficiency)
         
         return PerformanceMetrics(
@@ -396,7 +409,7 @@ class GrowingStageManager:
 
 ```python
 class MatureStageManager:
-    """æçæç®¡çå¨"""
+    """成熟期管理器"""
     
     def __init__(self):
         self.monitor = PerformanceMonitor()
@@ -405,19 +418,20 @@ class MatureStageManager:
         
     def manage_mature_stage(self, strategy_id: str):
         """ç®¡çæçæç­ç?""
-        # 1. æ§è½çæ§
+        # 1. 性能监控
         performance = self.monitor.monitor_performance(strategy_id)
         
-        # 2. åæ°ä¼å
+        # 2. 参数优化
         optimization = self.optimizer.optimize_parameters(strategy_id)
         
-        # 3. æéè°æ´
+        # 3. 权重调整
         weight_adjustment = self.weight_adjuster.adjust_weight(
             strategy_id=strategy_id,
             performance=performance
         )
         
-        # 4. å³ç­ï¼æ¯å¦è¿å¥è¡°éæ?
+        # 4. å³ç­ï¼æ¯å¦è¿å
+¥è¡°éæ?
         if performance.sharpe_ratio < 1.0 or performance.decline_rate > 0.3:
             self._demote_to_declining(strategy_id)
         
@@ -436,7 +450,7 @@ class MatureStageManager:
 
 ```python
 class DecliningStageManager:
-    """è¡°éæç®¡çå¨"""
+    """衰退期管理器"""
     
     def __init__(self):
         self.detector = FailureDetector()
@@ -454,7 +468,7 @@ class DecliningStageManager:
             failure_analysis=failure_analysis
         )
         
-        # 3. éæå¤ç
+        # 3. 降权处理
         if retirement_assessment.should_reduce_weight:
             self._reduce_strategy_weight(strategy_id, retirement_assessment.reduction_ratio)
         
@@ -470,7 +484,7 @@ class DecliningStageManager:
         )
 
 class FailureDetector:
-    """ç­ç¥å¤±ææ£æµå¨"""
+    """策略失效检测器"""
     
     def detect_failure(self, strategy_id: str) -> FailureAnalysis:
         """æ£æµç­ç¥å¤±æ?""
@@ -483,7 +497,7 @@ class FailureDetector:
         # 3. é£é©å¤±ææ£æµ?
         risk_failure = self._detect_risk_failure(strategy_id)
         
-        # 4. ç»¼åå¤±æå¤å®
+        # 4. 综合失效判定
         is_failed = (
             performance_failure.is_failed or
             market_failure.is_failed or
@@ -499,16 +513,17 @@ class FailureDetector:
         )
     
     def _detect_performance_failure(self, strategy_id: str) -> PerformanceFailure:
-        """æ£æµæ§è½å¤±æ"""
-        # è·åç­ç¥åå²æ§è½
+        """检测性能失效"""
+        # 获取策略历史性能
         performance_history = self._get_performance_history(strategy_id)
         
-        # è®¡ç®æ§è½ä¸éå¹åº¦
+        # è®¡ç®æ§è½ä¸éå¹
+åº¦
         recent_sharpe = performance_history['recent_sharpe']
         historical_sharpe = performance_history['historical_sharpe']
         decline_rate = (historical_sharpe - recent_sharpe) / historical_sharpe
         
-        # å¤å®æ¯å¦å¤±æ
+        # 判定是否失效
         is_failed = decline_rate > 0.3 or recent_sharpe < 0.5
         
         return PerformanceFailure(
@@ -525,7 +540,7 @@ class FailureDetector:
 
 ```python
 class StrategyPoolManager:
-    """ç­ç¥æ± ç®¡çå¨"""
+    """策略池管理器"""
     
     def __init__(self):
         self.capacity_controller = CapacityController()
@@ -534,13 +549,14 @@ class StrategyPoolManager:
         
     def manage_pool(self):
         """ç®¡çç­ç¥æ±?""
-        # 1. æ°éæ§å¶
+        # 1. 数量控制
         capacity_status = self.capacity_controller.check_capacity()
         
         # 2. å¤æ ·æ§ç®¡ç?
         diversity_status = self.diversity_manager.manage_diversity()
         
-        # 3. ç¸å³æ§æ§å?
+        # 3. ç¸å
+³æ§æ§å?
         correlation_status = self.correlation_controller.control_correlation()
         
         # 4. ä¼åç­ç¥æ±?
@@ -555,17 +571,17 @@ class StrategyPoolManager:
         )
 
 class DiversityManager:
-    """ç­ç¥å¤æ ·æ§ç®¡çå¨"""
+    """策略多样性管理器"""
     
     def manage_diversity(self) -> DiversityStatus:
         """ç®¡çç­ç¥å¤æ ·æ?""
-        # 1. ç­ç¥ç±»ååå¸
+        # 1. 策略类型分布
         type_distribution = self._analyze_type_distribution()
         
-        # 2. ç­ç¥é£æ ¼åå¸
+        # 2. 策略风格分布
         style_distribution = self._analyze_style_distribution()
         
-        # 3. ç­ç¥æ¶é´æ¡æ¶åå¸
+        # 3. 策略时间框架分布
         timeframe_distribution = self._analyze_timeframe_distribution()
         
         # 4. å¤æ ·æ§è¯å?
@@ -591,7 +607,7 @@ class DiversityManager:
 
 ## åãæ°æ®æ¨¡åè®¾è®?
 
-### 4.1 ç­ç¥çå½å¨ææ°æ®æ¨¡å
+### 4.1 策略生命周期数据模型
 
 ```python
 from dataclasses import dataclass
@@ -601,20 +617,20 @@ from enum import Enum
 
 @dataclass
 class StrategyLifecycleRecord:
-    """ç­ç¥çå½å¨æè®°å½"""
+    """策略生命周期记录"""
     strategy_id: str
     strategy_name: str
     current_stage: StrategyStage
     created_at: datetime
     last_updated: datetime
     
-    # é¶æ®µåå²
+    # 阶段历史
     stage_history: List[Dict]
     
-    # æ§è½ææ 
+    # 性能指标
     performance_metrics: Dict
     
-    # ç®¡çå³ç­
+    # 管理决策
     management_decisions: List[Dict]
     
     # éå½¹ä¿¡æ?
@@ -622,7 +638,7 @@ class StrategyLifecycleRecord:
 
 @dataclass
 class StageTransition:
-    """é¶æ®µè½¬æ¢è®°å½"""
+    """阶段转换记录"""
     strategy_id: str
     from_stage: StrategyStage
     to_stage: StrategyStage
@@ -632,7 +648,7 @@ class StageTransition:
     decision_maker: str  # AIæäººå·?
 ```
 
-### 4.2 æ°æ®åºè¡¨ç»æ
+### 4.2 数据库表结构
 
 ```sql
 -- ç­ç¥çå½å¨æè¡?
@@ -661,7 +677,7 @@ CREATE TABLE stage_transitions (
     FOREIGN KEY (strategy_id) REFERENCES strategy_lifecycle(strategy_id)
 );
 
--- ç­ç¥æ± ç¶æè¡¨
+-- 策略池状态表
 CREATE TABLE strategy_pool_status (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp TIMESTAMP,
@@ -680,11 +696,11 @@ CREATE TABLE strategy_pool_status (
 
 ## äºãæ¥å£è®¾è®?
 
-### 5.1 æå­äº¤äºæ¥å£
+### 5.1 文字交互接口
 
 ```python
 class StrategyLifecycleTextInterface:
-    """ç­ç¥çå½å¨ææå­äº¤äºæ¥å£"""
+    """策略生命周期文字交互接口"""
     
     def get_lifecycle_status(self, strategy_id: str = None):
         """è·åç­ç¥çå½å¨æç¶æ?""
@@ -722,11 +738,13 @@ class StrategyLifecycleTextInterface:
 
 æé¿æç­ç¥ï¼3ä¸?
 ââ ç­ç¥Cï¼è¡¨ç°ä¼ç§ï¼å¤æ®æ¯ç?.1
-â?  ââ å»ºè®®ï¼å¢å èµéåé?0%
-ââ ç­ç¥Dï¼è¡¨ç°è¯å¥½ï¼å¤æ®æ¯ç1.5
+â?  ââ å»ºè®®ï¼å¢å èµéåé
+?0%
+├─ 策略D：表现良好，夏普比率1.5
 â?  ââ å»ºè®®ï¼ç»´æå½åèµé?
-ââ ç­ç¥Eï¼è¡¨ç°ä¸è¬ï¼å¤æ®æ¯ç0.8
-    ââ å»ºè®®ï¼åå°èµéåé?0%
+└─ 策略E：表现一般，夏普比率0.8
+    ââ å»ºè®®ï¼åå°èµéåé
+?0%
 
 æçæç­ç¥ï¼5ä¸?
 ââ ç­ç¥Fï¼æ§è½ç¨³å®ï¼å¤æ®æ¯ç?.8
@@ -737,46 +755,47 @@ class StrategyLifecycleTextInterface:
 
 è¡°éæç­ç¥ï¼1ä¸?
 ââ ç­ç¥Kï¼â ï¸?æ§è½éåï¼å¤æ®æ¯çä»?.0éè³1.2
-    ââ å»ºè®®ï¼éå½¹ç­ç¥ï¼åå°é£é©
+    └─ 建议：退役策略，减少风险
 
 AIå»ºè®®ï¼?
 1. ç­ç¥Kå»ºè®®éå½¹ï¼æ§è½ä¸é40%ï¼?
-2. ç­ç¥Cå»ºè®®å¢å èµé20%
-3. ç­ç¥Eå»ºè®®åå°èµé30%
+2. 策略C建议增加资金20%
+3. 策略E建议减少资金30%
 4. ç­ç¥Bå»ºè®®æ·æ±°ï¼éè¿çä½ï¼?
 ```
 
 ---
 
-## å­ãå®æ½è·¯å¾?
+## å
+­ãå®æ½è·¯å¾?
 
-### 6.1 å®æ½è®¡å
+### 6.1 实施计划
 
 **Week 1ï¼æ ¸å¿åè½å®ç?*
 
 | ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
 | é¶æ®µè¯å«å¨å®ç?| 8h | StageIdentifier |
-| èè½æç®¡çå¨å®ç° | 8h | EmergingStageManager |
-| æé¿æç®¡çå¨å®ç° | 8h | GrowingStageManager |
-| æçæç®¡çå¨å®ç° | 8h | MatureStageManager |
-| è¡°éæç®¡çå¨å®ç° | 8h | DecliningStageManager |
+| 萌芽期管理器实现 | 8h | EmergingStageManager |
+| 成长期管理器实现 | 8h | GrowingStageManager |
+| 成熟期管理器实现 | 8h | MatureStageManager |
+| 衰退期管理器实现 | 8h | DecliningStageManager |
 
-**Week 2ï¼éæä¸æµè¯**
+**Week 2：集成与测试**
 
 | ä»»å¡ | å·¥ä½é?| äº¤ä»ç?|
 |------|--------|--------|
-| ç­ç¥æ± ç®¡çå¨å®ç° | 8h | StrategyPoolManager |
-| æ°æ®åºè®¾è®¡ä¸å®ç° | 4h | æ°æ®åºè¡¨ç»æ |
-| æå­äº¤äºæ¥å£å®ç° | 8h | StrategyLifecycleTextInterface |
-| éææµè¯ | 4h | æµè¯æ¥å |
-| ææ¡£å®å | 4h | ç¨æ·æå |
+| 策略池管理器实现 | 8h | StrategyPoolManager |
+| 数据库设计与实现 | 4h | 数据库表结构 |
+| 文字交互接口实现 | 8h | StrategyLifecycleTextInterface |
+| 集成测试 | 4h | 测试报告 |
+| 文档完善 | 4h | 用户手册 |
 
 ---
 
 ## ä¸ãè´¨éä¿è¯?
 
-### 7.1 æµè¯æ å
+### 7.1 测试标准
 
 | æµè¯é¡?| æ å | éªè¯æ¹æ³ |
 |--------|------|---------|
@@ -785,7 +804,7 @@ AIå»ºè®®ï¼?
 | æ§è½çæ§å»¶è¿ | â?ç§?| æ§è½æµè¯ |
 | æå­äº¤äºååºæ¶é´ | â?ç§?| ååæµè¯ |
 
-### 7.2 çæ§ææ 
+### 7.2 监控指标
 
 | ææ  | ç®æ å?| åè­¦éå?|
 |------|--------|---------|
@@ -796,25 +815,27 @@ AIå»ºè®®ï¼?
 
 ---
 
-## å«ãææ¡£æ²»ç?
+## å
+«ãææ¡£æ²»ç?
 
-### 8.1 ææ¡£ç´¢å¼
+### 8.1 文档索引
 
 **æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**ï¼?
 - **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
-- **å³èææ¡£**:
+- **å
+³èææ¡£**:
   - [AI_STRATEGY_AUTOMATION_BLUEPRINT.md](../../01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md)
   - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)
   - [AI_WORKFLOW_LOGGER_BLUEPRINT.md](../../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md)
 
-### 8.2 çæ¬ç®¡ç
+### 8.2 版本管理
 
 **çæ¬åå²**ï¼?
 - v1.0 (2026-04-02): åå§çæ¬ï¼å®ä¹æ ¸å¿åè?
 
 ---
 
-**ææ¡£ç»æ**
+**文档结束**
 
 > æ¬èå¾ç±é¦å¸­æ¶æå¸è®¾è®¡ï¼éµå¾ªä¸ä¸éåæºææ åï¼ä¸ºç­ç¥çå½å¨æç®¡çæä¾å®æ´è§£å³æ¹æ¡ã?
 ---

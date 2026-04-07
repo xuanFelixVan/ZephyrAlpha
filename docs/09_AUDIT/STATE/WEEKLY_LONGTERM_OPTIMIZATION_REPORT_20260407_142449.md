@@ -1,4 +1,4 @@
----
+﻿---
 module_id: WEEKLY_LONGTERM_OPTIMIZATION_REPORT_20260407_142449
 version: 1.0.0
 status: Active

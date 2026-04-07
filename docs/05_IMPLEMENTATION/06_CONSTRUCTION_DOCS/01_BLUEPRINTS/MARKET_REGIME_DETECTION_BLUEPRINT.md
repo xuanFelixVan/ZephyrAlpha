@@ -1,37 +1,41 @@
-﻿---
+﻿﻿---
 module_id: MARKET_REGIME_DETECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
   - å¸åºç¶ææ£æµ?
-  - å¸åºç¯å¢è¯å«
+  - 市场环境识别
   - ç¶æè½¬æ¢åæ?
-  - å¸åºç¹å¾æå
+  - 市场特征提取
 layer: Layer 5 (策略执行层)
 ---
 
 # MARKET REGIME DETECTION BLUEPRINT
 
-> **æ ¸å¿èè´£**: Market Regime Detectionèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Market Regime Detectionèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Market Regime Detection蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Market Regime Detectionèå¾è®¾è®¡ç¸å
+³å
+å®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å
+¶ä»æ¨¡åå
+å®?
 
 ï»? ð æ§è¡æè¦
 
-> **çæ¬**: v1.0
-> **åå»ºæ¥æ**: 2026-04-06
+> **版本**: v1.0
+> **创建日期**: 2026-04-06
 > **æ ¸å¿å®ä½**: ä¸ºä¸­è§ç­ç¥å±æä¾å¸åºç¶æè¯å«è½å?
-> **ç´¢å¼**: `MARKET_REGIME_DETECTION_001`
+> **索引**: `MARKET_REGIME_DETECTION_001`
 > **å¼åå¨æ?*: 2.5å?
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 layer: Layer 5 (策略执行层)
 ---
@@ -91,28 +95,32 @@ layer: Layer 5 (策略执行层)
 
 ## ð¯ æ¨¡åå®ä½ä¸èè´?
 
-### å±çº§å®ä½
+### 层级定位
 
 ```
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â?          æ¸é£éåç³»ç» - ä¸çº§æ¶é´æ¡æ¶æ¶æ                â?
+â?          æ¸
+é£éåç³»ç» - ä¸çº§æ¶é´æ¡æ¶æ¶æ                â?
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
-â? ç¬¬ä¸çº§ï¼å®è§éç½®å±ï¼å­£åº¦/å¹´åº¦ï¼?                        â?
+â? ç¬¬ä¸çº§ï¼å®è§é
+ç½®å±ï¼å­£åº¦/å¹´åº¦ï¼?                        â?
 â? ç¬¬äºçº§ï¼ä¸­è§ç­ç¥å±ï¼å¨åº¦/æ¥åº¦ï¼?                        â?
 â?   ââ å¸åºç¶æè¯å«ç³»ç»ï¼æ¬æ¨¡åï¼                        â?
 â?   ââ é¿å°æ³å å­å·¥å?                                   â?
 â?   ââ å¤å å­åæå¼æ?                                   â?
 â?   ââ æ¥çº¿ç»åä¼åå?                                   â?
-â? ç¬¬ä¸çº§ï¼å¾®è§æ§è¡å±ï¼æ¥å/åé/ç§çº§ï¼?                   â?
+â? ç¬¬ä¸çº§ï¼å¾®è§æ§è¡å±ï¼æ¥å
+/åé/ç§çº§ï¼?                   â?
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
-### æ ¸å¿èè´£
+### 核心职责
 
-| èè´£ç±»å« | å·ä½èè´£ | è¾åºäº§ç© |
+| èè´£ç±»å« | å
+·ä½èè´£ | è¾åºäº§ç© |
 |---------|---------|---------|
 | **ç¶æè¯å?* | è¯å«å½åå¸åºç¶æ?| å¸åºç¶ææ ç­?|
-| **ç¹å¾æå** | æåå¸åºç¹å¾ææ  | ç¹å¾åé |
+| **特征提取** | 提取市场特征指标 | 特征向量 |
 | **æ¨¡åè®­ç»** | è®­ç»ç¶æè¯å«æ¨¡å?| è®­ç»å¥½çæ¨¡å |
 | **ç¶æé¢æµ?* | é¢æµæªæ¥å¸åºç¶æ?| ç¶æé¢æµç»æ?|
 | **è½¬æ¢é¢è­¦** | é¢è­¦ç¶æè½¬æ?| é¢è­¦ä¿¡å· |
@@ -122,10 +130,12 @@ layer: Layer 5 (策略执行层)
 - â?**å å­è®¡ç®**: ç±é¿å°æ³å å­å·¥åè´è´£
 - â?**ç»åä¼å**: ç±æ¥çº¿ç»åä¼åå¨è´è´£
 - â?**äº¤ææ§è¡**: ç±å¾®è§æ§è¡å±è´è´£
-- â?**ç»æµèå¼å¤æ­**: ç±å®è§éç½®å±è´è´£
+- â?**ç»æµèå¼å¤æ­**: ç±å®è§é
+ç½®å±è´è´£
 
 
-## ð§ å³é®ç»ä»¶è®¾è®¡
+## ð§ å
+³é®ç»ä»¶è®¾è®¡
 
 ### 1. ç¹å¾æåå?(Feature Extractor)
 
@@ -147,10 +157,10 @@ class MarketFeatureExtractor:
     def extract_features(self, 
                         market_data: pd.DataFrame,
                         window: int = 20) -> pd.DataFrame:
-        """æåå¸åºç¹å¾"""
+        """提取市场特征"""
         features = pd.DataFrame(index=market_data.index)
         
-        # æåè¶å¿ç¹å¾
+        # 提取趋势特征
         trend_features = self.trend_extractor.extract(market_data, window)
         features = pd.concat([features, trend_features], axis=1)
         
@@ -162,7 +172,8 @@ class MarketFeatureExtractor:
         liquidity_features = self.liquidity_extractor.extract(market_data, window)
         features = pd.concat([features, liquidity_features], axis=1)
         
-        # æåæç»ªç¹å¾
+        # æåæ
+绪特征
         sentiment_features = self.sentiment_extractor.extract(market_data, window)
         features = pd.concat([features, sentiment_features], axis=1)
         
@@ -173,13 +184,13 @@ class TrendFeatureExtractor:
     """è¶å¿ç¹å¾æåå?""
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
-        """æåè¶å¿ç¹å¾"""
+        """提取趋势特征"""
         features = pd.DataFrame(index=data.index)
         
         # 1. ç§»å¨å¹³åçº¿æç?
         features['ma_slope'] = self._calculate_ma_slope(data['close'], window)
         
-        # 2. ä»·æ ¼å¨é
+        # 2. 价格动量
         features['momentum'] = data['close'].pct_change(window)
         
         # 3. è¶å¿å¼ºåº¦ï¼ADXï¼?
@@ -202,7 +213,7 @@ class TrendFeatureExtractor:
         return slope
     
     def _calculate_adx(self, data: pd.DataFrame, window: int) -> pd.Series:
-        """è®¡ç®ADXææ """
+        """计算ADX指标"""
         high = data['high']
         low = data['low']
         close = data['close']
@@ -225,7 +236,8 @@ class TrendFeatureExtractor:
         return adx
     
     def _calculate_true_range(self, data: pd.DataFrame) -> pd.Series:
-        """è®¡ç®çå®æ³¢å¹"""
+        """è®¡ç®çå®æ³¢å¹
+"""
         high = data['high']
         low = data['low']
         close = data['close']
@@ -238,7 +250,7 @@ class TrendFeatureExtractor:
         return tr
     
     def _calculate_macd(self, prices: pd.Series) -> tuple:
-        """è®¡ç®MACDææ """
+        """计算MACD指标"""
         ema12 = prices.ewm(span=12, adjust=False).mean()
         ema26 = prices.ewm(span=26, adjust=False).mean()
         
@@ -250,7 +262,7 @@ class TrendFeatureExtractor:
 
 
 class VolatilityFeatureExtractor:
-    """æ³¢å¨çç¹å¾æåå¨"""
+    """波动率特征提取器"""
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
         """æåæ³¢å¨çç¹å¾?""
@@ -271,7 +283,7 @@ class VolatilityFeatureExtractor:
         # 5. æ³¢å¨çå³°åº?
         features['vol_kurtosis'] = data['close'].pct_change().rolling(window).kurt()
         
-        # 6. VIX-likeææ 
+        # 6. VIX-like指标
         features['vix_like'] = features['historical_vol'] * 100
         
         return features
@@ -306,16 +318,16 @@ class VolatilityFeatureExtractor:
 
 
 class LiquidityFeatureExtractor:
-    """æµå¨æ§ç¹å¾æåå¨"""
+    """流动性特征提取器"""
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
         """æåæµå¨æ§ç¹å¾?""
         features = pd.DataFrame(index=data.index)
         
-        # 1. æäº¤éååç
+        # 1. 成交量变化率
         features['volume_change'] = data['volume'].pct_change(window)
         
-        # 2. æäº¤é¢ååç
+        # 2. 成交额变化率
         features['amount_change'] = data['amount'].pct_change(window) if 'amount' in data.columns else 0
         
         # 3. æ¢æç?
@@ -349,22 +361,24 @@ class LiquidityFeatureExtractor:
 
 
 class SentimentFeatureExtractor:
-    """æç»ªç¹å¾æåå?""
+    """æ
+ç»ªç¹å¾æåå?""
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
-        """æåæç»ªç¹å¾"""
+        """æåæ
+绪特征"""
         features = pd.DataFrame(index=data.index)
         
         # 1. æ¶¨è·åæ¯ä¾?
         features['limit_ratio'] = self._calculate_limit_ratio(data, window)
         
-        # 2. ä¸æ¶¨ä¸è·æ¯ä¾
+        # 2. 上涨下跌比例
         features['advance_decline_ratio'] = self._calculate_advance_decline_ratio(data, window)
         
-        # 3. æ°é«æ°ä½æ¯ä¾
+        # 3. 新高新低比例
         features['new_high_low_ratio'] = self._calculate_new_high_low_ratio(data, window)
         
-        # 4. å¸åºå®½åº¦
+        # 4. 市场宽度
         features['market_breadth'] = self._calculate_market_breadth(data, window)
         
         return features
@@ -379,7 +393,7 @@ class SentimentFeatureExtractor:
         return limit_up / (limit_down + 1e-10)
     
     def _calculate_advance_decline_ratio(self, data: pd.DataFrame, window: int) -> pd.Series:
-        """è®¡ç®ä¸æ¶¨ä¸è·æ¯ä¾"""
+        """计算上涨下跌比例"""
         price_change = data['close'].pct_change()
         advance = (price_change > 0).rolling(window).mean()
         decline = (price_change < 0).rolling(window).mean()
@@ -387,14 +401,14 @@ class SentimentFeatureExtractor:
         return advance / (decline + 1e-10)
     
     def _calculate_new_high_low_ratio(self, data: pd.DataFrame, window: int) -> pd.Series:
-        """è®¡ç®æ°é«æ°ä½æ¯ä¾"""
+        """计算新高新低比例"""
         new_high = (data['close'] == data['high'].rolling(window).max()).rolling(window).mean()
         new_low = (data['close'] == data['low'].rolling(window).min()).rolling(window).mean()
         
         return new_high / (new_low + 1e-10)
     
     def _calculate_market_breadth(self, data: pd.DataFrame, window: int) -> pd.Series:
-        """è®¡ç®å¸åºå®½åº¦"""
+        """计算市场宽度"""
         # ä½¿ç¨ä»·æ ¼ç¸å¯¹äºç§»å¨å¹³åçº¿çä½ç½?
         ma = data['close'].rolling(window).mean()
         breadth = (data['close'] > ma).rolling(window).mean()
@@ -425,8 +439,8 @@ class MarketRegimeHMM:
         }
         
     def train(self, features: pd.DataFrame) -> None:
-        """è®­ç»HMMæ¨¡å"""
-        # åå¤è®­ç»æ°æ®
+        """训练HMM模型"""
+        # 准备训练数据
         X = features.values
         
         # æ åå?
@@ -434,7 +448,7 @@ class MarketRegimeHMM:
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
         
-        # è®­ç»HMMæ¨¡å
+        # 训练HMM模型
         self.model = hmm.GaussianHMM(
             n_components=self.n_states,
             covariance_type='full',
@@ -456,7 +470,7 @@ class MarketRegimeHMM:
         # è®¡ç®ç¶ææ¦ç?
         state_probs = self.model.predict_proba(X_scaled)
         
-        # è½¬æ¢ä¸ºDataFrame
+        # 转换为DataFrame
         state_series = pd.Series(
             [self.state_names[s] for s in hidden_states],
             index=features.index
@@ -518,7 +532,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 
 class MarketRegimeClassifier:
-    """åºäºæºå¨å­¦ä¹ çå¸åºç¶æåç±»å¨"""
+    """基于机器学习的市场状态分类器"""
     
     def __init__(self, model_type: str = 'random_forest'):
         self.model_type = model_type
@@ -542,10 +556,10 @@ class MarketRegimeClassifier:
     def create_labels(self, 
                      returns: pd.Series,
                      volatility: pd.Series) -> pd.Series:
-        """åå»ºè®­ç»æ ç­¾"""
+        """创建训练标签"""
         labels = pd.Series(index=returns.index, dtype=str)
         
-        # å®ä¹æ ç­¾è§å
+        # 定义标签规则
         for i in range(len(returns)):
             ret = returns.iloc[i]
             vol = volatility.iloc[i]
@@ -574,10 +588,10 @@ class MarketRegimeClassifier:
             features, labels, test_size=0.2, random_state=42
         )
         
-        # è®­ç»æ¨¡å
+        # 训练模型
         self.model.fit(X_train, y_train)
         
-        # è¯ä¼°æ¨¡å
+        # 评估模型
         y_pred = self.model.predict(X_test)
         
         report = classification_report(y_test, y_pred, output_dict=True)
@@ -613,14 +627,15 @@ import pandas as pd
 import numpy as np
 
 class MarketRegimeEnsemble:
-    """å¸åºç¶æè¯å«éæå­¦ä¹ å¨"""
+    """市场状态识别集成学习器"""
     
     def __init__(self):
         self.hmm_model = MarketRegimeHMM()
         self.ml_classifier = MarketRegimeClassifier()
         self.rule_engine = MarketRegimeRuleEngine()
         
-        # æééç½®
+        # æéé
+ç½®
         self.weights = {
             'hmm': 0.4,
             'ml': 0.4,
@@ -632,7 +647,7 @@ class MarketRegimeEnsemble:
              returns: pd.Series,
              volatility: pd.Series) -> None:
         """è®­ç»æææ¨¡å?""
-        # è®­ç»HMM
+        # 训练HMM
         self.hmm_model.train(features)
         
         # åå»ºæ ç­¾å¹¶è®­ç»MLåç±»å?
@@ -640,17 +655,17 @@ class MarketRegimeEnsemble:
         self.ml_classifier.train(features, labels)
         
     def predict(self, features: pd.DataFrame) -> Tuple[pd.Series, pd.DataFrame]:
-        """éæé¢æµ"""
-        # HMMé¢æµ
+        """集成预测"""
+        # HMM预测
         hmm_states, hmm_probs = self.hmm_model.predict(features)
         
-        # MLé¢æµ
+        # ML预测
         ml_states, ml_probs = self.ml_classifier.predict(features)
         
-        # è§åå¼æé¢æµ
+        # 规则引擎预测
         rule_states, rule_probs = self.rule_engine.predict(features)
         
-        # å ææç¥¨
+        # 加权投票
         final_states = self._weighted_voting(
             hmm_states, ml_states, rule_states,
             hmm_probs, ml_probs, rule_probs
@@ -670,7 +685,7 @@ class MarketRegimeEnsemble:
                         hmm_probs: pd.DataFrame,
                         ml_probs: pd.DataFrame,
                         rule_probs: pd.DataFrame) -> pd.Series:
-        """å ææç¥¨"""
+        """加权投票"""
         final_states = pd.Series(index=hmm_states.index, dtype=str)
         
         for idx in hmm_states.index:
@@ -685,7 +700,7 @@ class MarketRegimeEnsemble:
                 if rule_states.loc[idx] == state:
                     score += self.weights['rule']
                 
-                # å ä¸æ¦çæé
+                # 加上概率权重
                 if state in hmm_probs.columns:
                     score += self.weights['hmm'] * hmm_probs.loc[idx, state]
                 if state in ml_probs.columns:
@@ -703,7 +718,7 @@ class MarketRegimeEnsemble:
                              hmm_probs: pd.DataFrame,
                              ml_probs: pd.DataFrame,
                              rule_probs: pd.DataFrame) -> pd.DataFrame:
-        """å ææ¦ç"""
+        """加权概率"""
         all_states = list(set(
             hmm_probs.columns.tolist() +
             ml_probs.columns.tolist() +
@@ -756,10 +771,10 @@ class MarketRegimeRuleEngine:
         return states, probs
     
     def _apply_rules(self, features: pd.Series) -> Tuple[str, pd.Series]:
-        """åºç¨è§å"""
+        """应用规则"""
         probs = pd.Series(0.0, index=self.state_names)
         
-        # è§å1: è¶å¿å¤æ­
+        # 规则1: 趋势判断
         if features.get('ma_slope', 0) > 0.01 and features.get('adx', 0) > 25:
             probs['BULL'] += 0.3
         elif features.get('ma_slope', 0) < -0.01 and features.get('adx', 0) > 25:
@@ -773,7 +788,7 @@ class MarketRegimeRuleEngine:
         elif features.get('historical_vol', 0) > 0.45 and features.get('momentum', 0) < -0.05:
             probs['CRISIS'] += 0.4
         
-        # è§å3: å¨éå¤æ­
+        # 规则3: 动量判断
         if features.get('momentum', 0) > 0.05:
             probs['BULL'] += 0.2
         elif features.get('momentum', 0) < -0.05:
@@ -797,28 +812,28 @@ class MarketRegimeRuleEngine:
 
 ---
 
-## ð æ°æ®æ¨¡åè®¾è®¡
+## 📊 数据模型设计
 
-### å¸åºç¶æè¯å«ç»æè¡¨
+### 市场状态识别结果表
 
 ```sql
 CREATE TABLE market_regime_detection (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    trade_date DATE NOT NULL COMMENT 'äº¤ææ¥æ',
+    trade_date DATE NOT NULL COMMENT '交易日期',
     market_state VARCHAR(20) NOT NULL COMMENT 'å¸åºç¶æ?,
     state_probability DECIMAL(5, 4) COMMENT 'ç¶ææ¦ç?,
-    bull_prob DECIMAL(5, 4) COMMENT 'çå¸æ¦ç',
-    bear_prob DECIMAL(5, 4) COMMENT 'çå¸æ¦ç',
+    bull_prob DECIMAL(5, 4) COMMENT '牛市概率',
+    bear_prob DECIMAL(5, 4) COMMENT '熊市概率',
     sideways_prob DECIMAL(5, 4) COMMENT 'éè¡å¸æ¦ç?,
-    high_vol_prob DECIMAL(5, 4) COMMENT 'é«æ³¢å¨å¸æ¦ç',
+    high_vol_prob DECIMAL(5, 4) COMMENT '高波动市概率',
     crisis_prob DECIMAL(5, 4) COMMENT 'å±æºå¸æ¦ç?,
     detection_method VARCHAR(50) COMMENT 'æ£æµæ¹æ³?,
     confidence_score DECIMAL(5, 4) COMMENT 'ç½®ä¿¡åº¦åæ?,
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'åå»ºæ¶é´',
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     UNIQUE KEY uk_trade_date (trade_date),
     INDEX idx_market_state (market_state),
     INDEX idx_trade_date (trade_date)
-) COMMENT 'å¸åºç¶æè¯å«ç»æè¡¨';
+) COMMENT '市场状态识别结果表';
 ```
 
 ### å¸åºç¹å¾è¡?
@@ -826,39 +841,39 @@ CREATE TABLE market_regime_detection (
 ```sql
 CREATE TABLE market_features (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    trade_date DATE NOT NULL COMMENT 'äº¤ææ¥æ',
-    feature_name VARCHAR(50) NOT NULL COMMENT 'ç¹å¾åç§°',
+    trade_date DATE NOT NULL COMMENT '交易日期',
+    feature_name VARCHAR(50) NOT NULL COMMENT '特征名称',
     feature_value DECIMAL(20, 10) COMMENT 'ç¹å¾å?,
-    feature_category VARCHAR(50) COMMENT 'ç¹å¾ç±»å«',
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'åå»ºæ¶é´',
+    feature_category VARCHAR(50) COMMENT '特征类别',
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     UNIQUE KEY uk_date_feature (trade_date, feature_name),
     INDEX idx_trade_date (trade_date),
     INDEX idx_feature_category (feature_category)
 ) COMMENT 'å¸åºç¹å¾è¡?;
 ```
 
-### ç¶æè½¬æ¢è®°å½è¡¨
+### 状态转换记录表
 
 ```sql
 CREATE TABLE regime_transition_log (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    transition_date DATE NOT NULL COMMENT 'è½¬æ¢æ¥æ',
+    transition_date DATE NOT NULL COMMENT '转换日期',
     from_state VARCHAR(20) NOT NULL COMMENT 'åç¶æ?,
     to_state VARCHAR(20) NOT NULL COMMENT 'æ°ç¶æ?,
-    transition_probability DECIMAL(5, 4) COMMENT 'è½¬æ¢æ¦ç',
+    transition_probability DECIMAL(5, 4) COMMENT '转换概率',
     duration_days INT COMMENT 'ç¶ææç»­å¤©æ?,
-    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'åå»ºæ¶é´',
+    created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     INDEX idx_transition_date (transition_date),
     INDEX idx_from_state (from_state),
     INDEX idx_to_state (to_state)
-) COMMENT 'ç¶æè½¬æ¢è®°å½è¡¨';
+) COMMENT '状态转换记录表';
 ```
 
 ---
 
-## ð æ¥å£è§è
+## 🔌 接口规范
 
-### RESTful APIæ¥å£
+### RESTful API接口
 
 #### 1. è·åå½åå¸åºç¶æ?
 
@@ -925,59 +940,66 @@ Response:
 
 ---
 
-## ð å®æ½è¦ç¹
+## 🚀 实施要点
 
 ### é¶æ®µ1ï¼ç¹å¾æåå¨å¼åï¼ç¬?å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°è¶å¿ç¹å¾æåå?
 2. â?å®ç°æ³¢å¨çç¹å¾æåå¨
 3. â?å®ç°æµå¨æ§ç¹å¾æåå¨
-4. â?å®ç°æç»ªç¹å¾æåå?
-5. â?ç¼åååæµè¯
+4. â?å®ç°æ
+ç»ªç¹å¾æåå?
+5. â?ç¼ååå
+æµè¯
 
-**éªæ¶æ å**:
+**验收标准**:
 - ææç¹å¾å¯ä»¥æ­£ç¡®æå?
 - ç¹å¾å¼èå´åç?
-- ååæµè¯è¦ççâ¥80%
+- åå
+æµè¯è¦ççâ¥80%
 
 ---
 
 ### é¶æ®µ2ï¼æ¨¡åå¼åï¼ç¬?-2å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°HMMæ¨¡å
 2. â?å®ç°MLåç±»å?
 3. â?å®ç°è§åå¼æ
 4. â?å®ç°éæå­¦ä¹ å?
-5. â?ç¼åååæµè¯
+5. â?ç¼ååå
+æµè¯
 
-**éªæ¶æ å**:
-- æææ¨¡åå¯ä»¥æ­£å¸¸è®­ç»åé¢æµ
-- æ¨¡åæ§è½è¾¾æ 
-- ååæµè¯è¦ççâ¥80%
+**验收标准**:
+- 所有模型可以正常训练和预测
+- 模型性能达标
+- åå
+æµè¯è¦ççâ¥80%
 
 ---
 
-### é¶æ®µ3ï¼éææµè¯ä¸ä¼åï¼ç¬¬2-3å¨ï¼
+### 阶段3：集成测试与优化（第2-3周）
 
-**ä»»å¡**:
+**任务**:
 1. â?ç¼åéææµè¯ç¨ä¾
 2. â?æ§è¡æ¨¡åæ§è½è¯ä¼°
 3. â?ä¼åæ¨¡ååæ°
 4. â?é¨ç½²å°çäº§ç¯å¢?
 5. â?ç¼åé¨ç½²ææ¡£
 
-**éªæ¶æ å**:
-- éææµè¯å¨é¨éè¿
-- æ¨¡ååç¡®çâ¥80%
-- é¨ç½²ææ¡£å®æ´
+**验收标准**:
+- éææµè¯å
+¨é¨éè¿
+- 模型准确率≥80%
+- 部署文档完整
 
 ---
 
-## ð§ª æµè¯ç­ç¥
+## 🧪 测试策略
 
-### ååæµè¯
+### åå
+æµè¯
 
 ```python
 import pytest
@@ -988,7 +1010,7 @@ def test_trend_feature_extractor():
     """æµè¯è¶å¿ç¹å¾æåå?""
     extractor = TrendFeatureExtractor()
     
-    # åå»ºæµè¯æ°æ®
+    # 创建测试数据
     data = pd.DataFrame({
         'open': [100, 101, 102, 103, 104],
         'high': [105, 106, 107, 108, 109],
@@ -996,71 +1018,74 @@ def test_trend_feature_extractor():
         'close': [102, 103, 104, 105, 106]
     })
     
-    # æåç¹å¾
+    # 提取特征
     features = extractor.extract(data, window=3)
     
-    # éªè¯ç»æ
+    # 验证结果
     assert 'ma_slope' in features.columns
     assert 'momentum' in features.columns
     assert 'adx' in features.columns
 
 
 def test_hmm_model():
-    """æµè¯HMMæ¨¡å"""
+    """测试HMM模型"""
     model = MarketRegimeHMM(n_states=5)
     
-    # åå»ºæµè¯æ°æ®
+    # 创建测试数据
     features = pd.DataFrame(
         np.random.randn(100, 10),
         columns=[f'feature_{i}' for i in range(10)]
     )
     
-    # è®­ç»æ¨¡å
+    # 训练模型
     model.train(features)
     
-    # é¢æµ
+    # 预测
     states, probs = model.predict(features)
     
-    # éªè¯ç»æ
+    # 验证结果
     assert len(states) == len(features)
     assert probs.shape == (len(features), 5)
 ```
 
 ---
 
-## ð æ§è½ææ 
+## 📈 性能指标
 
-### æ¨¡åæ§è½è¦æ±
+### 模型性能要求
 
 | ææ  | ç®æ å?|
 |------|--------|
 | **ç¶æè¯å«åç¡®ç** | â?0% |
 | **ç¶æè½¬æ¢å¬åç** | â?0% |
 | **é¢æµå»¶è¿** | <1ç§?|
-| **æ¨¡åæ´æ°é¢ç** | æ¯æ¥ |
+| **模型更新频率** | 每日 |
 
-### ç¹å¾æåæ§è½
+### 特征提取性能
 
-| ç¹å¾ç±»å | è®¡ç®æ¶é´ |
+| 特征类型 | 计算时间 |
 |---------|---------|
-| **è¶å¿ç¹å¾** | <100ms |
+| **趋势特征** | <100ms |
 | **æ³¢å¨çç¹å¾?* | <150ms |
 | **æµå¨æ§ç¹å¾?* | <100ms |
-| **æç»ªç¹å¾** | <200ms |
+| **æ
+绪特征** | <200ms |
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-- [é¿å°æ³å å­å·¥åèå¾](./ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
+- [阿尔法因子工厂蓝图](./ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
 - å¤å å­åæå¼æèå?
 - ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶æ?
 
 ---
 
-## ð åæ´åå²
+## 📝 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | ä½è?|
 |------|------|---------|------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
@@ -1070,29 +1095,31 @@ def test_hmm_model():
 **ä¸ä¸æ­?*: å¼å§å®æ½é¶æ®? - ç¹å¾æåå¨å¼å?
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 3: ä¸­è§ç­ç¥å±?
 ##### 6.001. Meso Market Regime
-- **æ¨¡åID**: MARKET_REGIME_DETECTION_001
-- **èå¾ææ¡£**: MARKET_REGIME_DETECTION_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **模块ID**: MARKET_REGIME_DETECTION_001
+- **蓝图文档**: MARKET_REGIME_DETECTION_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
 - **èè´£**: ä¸­è§ç­ç¥å±å¸åºç¶æè¯å?
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
 | **Meso Market Regime** | ä¸­è§ç­ç¥å±å¸åºç¶æè¯å?| **æ ¸å¿æ¨¡å** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

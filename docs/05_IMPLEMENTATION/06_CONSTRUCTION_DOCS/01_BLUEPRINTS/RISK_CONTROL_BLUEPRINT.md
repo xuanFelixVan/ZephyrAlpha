@@ -1,19 +1,19 @@
----
+﻿---
 responsibility:
-  - é£é©æ§å¶
-  - é£é©éé¢ç®¡ç
-  - é£é©çæ§
-  - é£é©é¢è­¦
+  - 风险控制
+  - 风险限额管理
+  - 风险监控
+  - 风险预警
 
 module_id: RISK_CONTROL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
 
@@ -22,16 +22,14 @@ layer: Layer 5.3 (风险管理)
 
 负责风险控制的设计与实现，定义风险限额和控制规则，提供风险监控和预警功能，支持风险管理。
 
-# é£é©æ§å¶èå¾
+# 风险控制蓝图
 
 > **æ ¸å¿èè´£**: ç»åä¼åå±å®æ¶é£é©æ§å?
-> **èè´£è¾¹ç**: 
+> **职责边界**: 
 > - â?æ¬ææ¡£è´è´£ï¼å®æ¶çæ§ãé£é©é¢è­¦ãé£é©æ§å?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
-| **é£é©å¤ç½®** | æ§è¡é£é©å¤ç½®æªæ½ | å¤ç½®è®°å½ |
-| **é£é©æ¥å** | çæé£é©æ¥å | é£é©æ¥å |
+> - â...
 
----
+
 ## 设计目标
 
 ### 主要目标
@@ -84,18 +82,20 @@ layer: Layer 5.3 (风险管理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-å¼åRISK CONTROLçè®¾è®¡ä¸å®ç°ï¼åºäºRiskMetricsææ¯ï¼çæ§æ ¸å¿åè½ï¼ä¿éèµäº§å®å¨ã?
+å¼åRISK CONTROLçè®¾è®¡ä¸å®ç°ï¼åºäºRiskMetricsææ¯ï¼çæ§æ ¸å¿åè½ï¼ä¿éèµäº§å®å
+¨ã?
 
 ## ðï¸?æ¶æè®¾è®¡
 
-### é£é©æ§å¶ç»´åº¦
+### 风险控制维度
 
 | é£é©ç»´åº¦ | é£é©ææ  | éå?| å¤ç½®æªæ½ |
 |---------|---------|------|---------|
 | **ä»·æ ¼é£é©** | åè¡ç¥¨äºæ?| > 5% | åä»50% |
-| **ä»·æ ¼é£é©** | ç»åäºæ | > 3% | å¨é¨å¹³ä» |
+| **ä»·æ ¼é£é©** | ç»åäºæ | > 3% | å
+¨é¨å¹³ä» |
 | **ä»ä½é£é©** | åè¡ç¥¨ä»ä½?| > 10% | éå¶å¼ä»?|
 | **ä»ä½é£é©** | æ»ä»ä½?| > 95% | éå¶å¼ä»?|
 | **æµå¨æ§é£é?* | æäº¤éèç¼?| < 50% | æåäº¤æ |
@@ -103,7 +103,8 @@ layer: Layer 5.3 (风险管理)
 
 ---
 
-## ð§ å³é®ç»ä»¶è®¾è®¡
+## ð§ å
+³é®ç»ä»¶è®¾è®¡
 
 ### 1. å®æ¶é£é©çæ§å?
 
@@ -130,14 +131,14 @@ class RealtimeRiskMonitor:
     def monitor(self, 
                 positions: Dict[str, float],
                 market_data: pd.DataFrame) -> Dict[str, Any]:
-        """å®æ¶çæ§é£é©"""
+        """实时监控风险"""
         risk_status = {}
         
-        # çæ§ä»·æ ¼é£é©
+        # 监控价格风险
         price_risk = self._monitor_price_risk(positions, market_data)
         risk_status['price_risk'] = price_risk
         
-        # çæ§ä»ä½é£é©
+        # 监控仓位风险
         position_risk = self._monitor_position_risk(positions)
         risk_status['position_risk'] = position_risk
         
@@ -149,11 +150,11 @@ class RealtimeRiskMonitor:
         volatility_risk = self._monitor_volatility_risk(market_data)
         risk_status['volatility_risk'] = volatility_risk
         
-        # ç»¼åé£é©è¯ä¼°
+        # 综合风险评估
         overall_risk = self._calculate_overall_risk(risk_status)
         risk_status['overall_risk'] = overall_risk
         
-        # å­å¨å°Redis
+        # 存储到Redis
         self.redis.setex('risk_status', 60, str(risk_status))
         
         return risk_status
@@ -161,7 +162,7 @@ class RealtimeRiskMonitor:
     def _monitor_price_risk(self,
                            positions: Dict[str, float],
                            market_data: pd.DataFrame) -> Dict[str, Any]:
-        """çæ§ä»·æ ¼é£é©"""
+        """监控价格风险"""
         # è®¡ç®åè¡ç¥¨äºæ?
         single_stock_losses = {}
         for symbol, position in positions.items():
@@ -171,10 +172,10 @@ class RealtimeRiskMonitor:
                 loss = (current_price - cost_price) / cost_price
                 single_stock_losses[symbol] = loss
         
-        # è®¡ç®ç»åäºæ
+        # 计算组合亏损
         portfolio_loss = np.mean(list(single_stock_losses.values()))
         
-        # å¤æ­é£é©ç­çº§
+        # 判断风险等级
         risk_level = 'LOW'
         if portfolio_loss < -self.risk_thresholds['portfolio_loss']:
             risk_level = 'HIGH'
@@ -188,7 +189,7 @@ class RealtimeRiskMonitor:
         }
     
     def _monitor_position_risk(self, positions: Dict[str, float]) -> Dict[str, Any]:
-        """çæ§ä»ä½é£é©"""
+        """监控仓位风险"""
         # è®¡ç®åè¡ç¥¨ä»ä½?
         total_value = sum(p['market_value'] for p in positions.values())
         single_stock_positions = {
@@ -199,7 +200,7 @@ class RealtimeRiskMonitor:
         # è®¡ç®æ»ä»ä½?
         total_position = sum(single_stock_positions.values())
         
-        # å¤æ­é£é©ç­çº§
+        # 判断风险等级
         risk_level = 'LOW'
         if total_position > self.risk_thresholds['total_position']:
             risk_level = 'HIGH'
@@ -219,7 +220,7 @@ class RealtimeRiskMonitor:
         current_volume = market_data['volume'].iloc[-1]
         volume_ratio = current_volume / volume_ma.iloc[-1]
         
-        # å¤æ­é£é©ç­çº§
+        # 判断风险等级
         risk_level = 'LOW'
         if volume_ratio < self.risk_thresholds['volume_drop']:
             risk_level = 'HIGH'
@@ -237,13 +238,13 @@ class RealtimeRiskMonitor:
         returns = market_data['close'].pct_change()
         volatility = returns.rolling(20).std() * np.sqrt(252 * 240)
         
-        # è®¡ç®æ³¢å¨çZ-Score
+        # 计算波动率Z-Score
         current_vol = volatility.iloc[-1]
         vol_ma = volatility.mean()
         vol_std = volatility.std()
         vol_z_score = (current_vol - vol_ma) / vol_std
         
-        # å¤æ­é£é©ç­çº§
+        # 判断风险等级
         risk_level = 'LOW'
         if vol_z_score > self.risk_thresholds['volatility_spike']:
             risk_level = 'HIGH'
@@ -257,10 +258,10 @@ class RealtimeRiskMonitor:
         }
     
     def _calculate_overall_risk(self, risk_status: Dict[str, Any]) -> Dict[str, Any]:
-        """è®¡ç®ç»¼åé£é©"""
+        """计算综合风险"""
         risk_levels = [r['risk_level'] for r in risk_status.values()]
         
-        # ç»¼åé£é©ç­çº§
+        # 综合风险等级
         if 'HIGH' in risk_levels:
             overall_level = 'HIGH'
         elif 'MEDIUM' in risk_levels:
@@ -268,7 +269,7 @@ class RealtimeRiskMonitor:
         else:
             overall_level = 'LOW'
         
-        # é£é©è¯å
+        # 风险评分
         risk_score = risk_levels.count('HIGH') * 3 + \
                     risk_levels.count('MEDIUM') * 2 + \
                     risk_levels.count('LOW') * 1
@@ -298,7 +299,7 @@ class RiskAlerter:
             alerts.append({
                 'alert_type': 'PRICE_RISK',
                 'severity': 'HIGH',
-                'message': f"ç»åäºæè¾¾å°{risk_status['price_risk']['portfolio_loss']:.2%}",
+                'message': f"组合亏损达到{risk_status['price_risk']['portfolio_loss']:.2%}",
                 'timestamp': pd.Timestamp.now()
             })
         
@@ -307,7 +308,7 @@ class RiskAlerter:
             alerts.append({
                 'alert_type': 'POSITION_RISK',
                 'severity': 'HIGH',
-                'message': f"æ»ä»ä½è¾¾å°{risk_status['position_risk']['total_position']:.2%}",
+                'message': f"总仓位达到{risk_status['position_risk']['total_position']:.2%}",
                 'timestamp': pd.Timestamp.now()
             })
         
@@ -316,16 +317,16 @@ class RiskAlerter:
             alerts.append({
                 'alert_type': 'LIQUIDITY_RISK',
                 'severity': 'HIGH',
-                'message': f"æäº¤éèç¼©è³{risk_status['liquidity_risk']['volume_ratio']:.2%}",
+                'message': f"成交量萎缩至{risk_status['liquidity_risk']['volume_ratio']:.2%}",
                 'timestamp': pd.Timestamp.now()
             })
         
-        # æ£æ¥æ³¢å¨çé£é©
+        # 检查波动率风险
         if risk_status['volatility_risk']['risk_level'] == 'HIGH':
             alerts.append({
                 'alert_type': 'VOLATILITY_RISK',
                 'severity': 'HIGH',
-                'message': f"æ³¢å¨çé£åï¼Z-Score={risk_status['volatility_risk']['vol_z_score']:.2f}",
+                'message': f"波动率飙升，Z-Score={risk_status['volatility_risk']['vol_z_score']:.2f}",
                 'timestamp': pd.Timestamp.now()
             })
         
@@ -357,32 +358,32 @@ class RiskHandler:
         }
         
     def handle(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
-        """å¤ç½®é£é©"""
+        """处置风险"""
         alert_type = alert['alert_type']
         
         if alert_type in self.handlers:
             self.handlersalert_type
     
     def _handle_price_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
-        """å¤ç½®ä»·æ ¼é£é©"""
-        # åä»50%
+        """处置价格风险"""
+        # 减仓50%
         for symbol, position in positions.items():
             reduce_amount = position['quantity'] * 0.5
             self.order_executor.sell(symbol, reduce_amount)
     
     def _handle_position_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
-        """å¤ç½®ä»ä½é£é©"""
+        """处置仓位风险"""
         # éå¶å¼ä»?
         self.order_executor.set_max_position(0.90)
     
     def _handle_liquidity_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
         """å¤ç½®æµå¨æ§é£é?""
-        # æåäº¤æ
+        # 暂停交易
         self.order_executor.pause()
     
     def _handle_volatility_risk(self, alert: Dict[str, Any], positions: Dict[str, float]) -> None:
         """å¤ç½®æ³¢å¨çé£é?""
-        # éä½ä»ä½
+        # 降低仓位
         for symbol, position in positions.items():
             reduce_amount = position['quantity'] * 0.3
             self.order_executor.sell(symbol, reduce_amount)
@@ -390,9 +391,9 @@ class RiskHandler:
 
 ---
 
-## ð é£é©æ§å¶æºå¶è¯¦è§£
+## 📋 风险控制机制详解
 
-### 1. é£é©æ§å¶å±æ¬¡æ¶æ
+### 1. 风险控制层次架构
 
 ```
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -426,24 +427,37 @@ class RiskHandler:
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
-### 2. é£é©éå¼éç½®ä½ç³?
+### 2. é£é©éå¼é
+ç½®ä½ç³?
 
 #### 2.1 é£é©éå¼åç±?
 
 | éå¼ç±»å?| éå¼åç§?| é»è®¤å?| è§¦åæ¡ä»¶ | å¤ç½®æªæ½ |
 |----------|----------|--------|----------|----------|
-| **ä»·æ ¼é£é©** | åè¡ç¥¨æ­¢æ?| -5% | åè¡ç¥¨äºæè¶è¿éå?| åä»50% |
-| **ä»·æ ¼é£é©** | ç»åæ­¢æ | -3% | ç»åäºæè¶è¿éå?| å¨é¨å¹³ä» |
-| **ä»·æ ¼é£é©** | åæ¥æå¤§äºæ?| -2% | åæ¥äºæè¶è¿éå?| æåäº¤æ |
-| **ä»ä½é£é©** | åè¡ç¥¨ä¸é?| 10% | åè¡ç¥¨ä»ä½è¶è¿éå?| éå¶å¼ä»?|
-| **ä»ä½é£é©** | æ»ä»ä½ä¸é?| 95% | æ»ä»ä½è¶è¿éå?| éå¶å¼ä»?|
-| **ä»ä½é£é©** | è¡ä¸ä¸é | 30% | è¡ä¸ä»ä½è¶è¿éå?| éå¶å¼ä»?|
+| **ä»·æ ¼é£é©** | åè¡ç¥¨æ­¢æ?| -5% | åè¡ç¥¨äºæè¶
+è¿éå?| åä»50% |
+| **ä»·æ ¼é£é©** | ç»åæ­¢æ | -3% | ç»åäºæè¶
+è¿éå?| å
+¨é¨å¹³ä» |
+| **ä»·æ ¼é£é©** | åæ¥æå¤§äºæ?| -2% | åæ¥äºæè¶
+è¿éå?| æåäº¤æ |
+| **ä»ä½é£é©** | åè¡ç¥¨ä¸é?| 10% | åè¡ç¥¨ä»ä½è¶
+è¿éå?| éå¶å¼ä»?|
+| **ä»ä½é£é©** | æ»ä»ä½ä¸é?| 95% | æ»ä»ä½è¶
+è¿éå?| éå¶å¼ä»?|
+| **ä»ä½é£é©** | è¡ä¸ä¸é | 30% | è¡ä¸ä»ä½è¶
+è¿éå?| éå¶å¼ä»?|
 | **æµå¨æ§é£é?* | æäº¤éèç¼?| 50% | æäº¤éä½äºéå?| æåäº¤æ |
 | **æµå¨æ§é£é?* | æ¢æçå¼å¸?| 3Ï | æ¢æçå¼å¸?| é£é©é¢è­¦ |
-| **æ³¢å¨çé£é?* | æ³¢å¨çé£å?| 3Ï | æ³¢å¨çè¶è¿éå?| éä½ä»ä½ |
-| **æ³¢å¨çé£é?* | ç¸å³æ§çªå?| 0.8 | ç¸å³æ§è¶è¿éå?| é£é©é¢è­¦ |
+| **æ³¢å¨çé£é?* | æ³¢å¨çé£å?| 3Ï | æ³¢å¨çè¶
+è¿éå?| éä½ä»ä½ |
+| **æ³¢å¨çé£é?* | ç¸å
+³æ§çªå?| 0.8 | ç¸å
+³æ§è¶
+è¿éå?| é£é©é¢è­¦ |
 
-#### 2.2 é£é©éå¼éç½®æä»?
+#### 2.2 é£é©éå¼é
+ç½®æä»?
 
 ```yaml
 # risk_thresholds.yaml
@@ -503,22 +517,23 @@ risk_thresholds:
       action: "alert"
 ```
 
-### 3. é£é©å¤ç½®æµç¨
+### 3. 风险处置流程
 
 #### 3.1 é£é©å¤ç½®å³ç­æ ?
 
 ```
-é£é©äºä»¶è§¦å
+风险事件触发
     â?
-    âââ ä»·æ ¼é£é©
+    ├── 价格风险
     â?  âââ åè¡ç¥¨äºæ?> 5%
     â?  â?  âââ æ§è¡ï¼åä»?0%
     â?  âââ ç»åäºæ > 3%
-    â?  â?  âââ æ§è¡ï¼å¨é¨å¹³ä»?
+    â?  â?  âââ æ§è¡ï¼å
+¨é¨å¹³ä»?
     â?  âââ åæ¥äºæ > 2%
     â?      âââ æ§è¡ï¼æåäº¤æ?
     â?
-    âââ ä»ä½é£é©
+    ├── 仓位风险
     â?  âââ åè¡ç¥¨ä»ä½?> 10%
     â?  â?  âââ æ§è¡ï¼éå¶å¼ä»?
     â?  âââ æ»ä»ä½?> 95%
@@ -535,7 +550,8 @@ risk_thresholds:
     âââ æ³¢å¨çé£é?
         âââ æ³¢å¨çé£å?> 3Ï
         â?  âââ æ§è¡ï¼éä½ä»ä½?0%
-        âââ ç¸å³æ§çªå?> 0.8
+        âââ ç¸å
+³æ§çªå?> 0.8
             âââ æ§è¡ï¼é£é©é¢è­?
 ```
 
@@ -558,27 +574,28 @@ class RiskActionExecutor:
         }
     
     def execute(self, action: str, context: Dict[str, Any]) -> bool:
-        """æ§è¡é£é©å¤ç½®å¨ä½"""
+        """执行风险处置动作"""
         if action in self.action_handlers:
             return self.action_handlers[action](context)
         return False
     
     def _reduce_position_50(self, context: Dict[str, Any]) -> bool:
-        """åä»50%"""
+        """减仓50%"""
         symbol = context.get("symbol")
         position = self.position_manager.get_position(symbol)
         reduce_quantity = position.quantity * 0.5
         return self.order_manager.sell(symbol, reduce_quantity)
     
     def _reduce_position_30(self, context: Dict[str, Any]) -> bool:
-        """åä»30%"""
+        """减仓30%"""
         for symbol, position in self.position_manager.get_all_positions().items():
             reduce_quantity = position.quantity * 0.3
             self.order_manager.sell(symbol, reduce_quantity)
         return True
     
     def _close_all_positions(self, context: Dict[str, Any]) -> bool:
-        """å¨é¨å¹³ä»"""
+        """å
+¨é¨å¹³ä»"""
         for symbol, position in self.position_manager.get_all_positions().items():
             self.order_manager.sell(symbol, position.quantity)
         return True
@@ -589,7 +606,7 @@ class RiskActionExecutor:
         return True
     
     def _pause_trading(self, context: Dict[str, Any]) -> bool:
-        """æåäº¤æ"""
+        """暂停交易"""
         self.order_manager.pause()
         return True
     
@@ -599,9 +616,9 @@ class RiskActionExecutor:
         return alert_manager.send(context)
 ```
 
-### 4. é£é©çæ§ææ ä½ç³»
+### 4. 风险监控指标体系
 
-#### 4.1 å®æ¶çæ§ææ 
+#### 4.1 实时监控指标
 
 | ææ ç±»å« | ææ åç§° | è®¡ç®æ¹æ³ | çæ§é¢ç | é¢è­¦éå?|
 |----------|----------|----------|----------|----------|
@@ -614,7 +631,9 @@ class RiskActionExecutor:
 | **æµå¨æ§é£é?* | æäº¤éæ¯ç?| å½åæäº¤é?20æ¥åå?| å®æ¶ | 50% |
 | **æµå¨æ§é£é?* | æ¢æç?| æäº¤é?æµéè¡æ?| æ¯åé?| 3Ï |
 | **æ³¢å¨çé£é?* | æ³¢å¨ç?| æ¶ççæ åå·®Ãâ?52 | æ¯åé?| 3Ï |
-| **æ³¢å¨çé£é?* | ç¸å³æ?| è¡ç¥¨é´ç¸å³ç³»æ?| æ¯åé?| 0.8 |
+| **æ³¢å¨çé£é?* | ç¸å
+³æ?| è¡ç¥¨é´ç¸å
+³ç³»æ?| æ¯åé?| 0.8 |
 
 #### 4.2 çæ§ææ è®¡ç®å?
 
@@ -627,7 +646,7 @@ class RiskMetricsCalculator:
         positions: Dict[str, Position],
         market_data: pd.DataFrame
     ) -> Dict[str, float]:
-        """è®¡ç®ä»·æ ¼é£é©ææ """
+        """计算价格风险指标"""
         metrics = {}
         
         total_value = sum(p.market_value for p in positions.values())
@@ -652,7 +671,7 @@ class RiskMetricsCalculator:
         self,
         positions: Dict[str, Position]
     ) -> Dict[str, float]:
-        """è®¡ç®ä»ä½é£é©ææ """
+        """计算仓位风险指标"""
         metrics = {}
         
         total_value = sum(p.market_value for p in positions.values())
@@ -714,30 +733,30 @@ class RiskMetricsCalculator:
         return metrics
 ```
 
-### 5. é£é©æ¥åæ¨¡æ¿
+### 5. 风险报告模板
 
-#### 5.1 æ¥æ¥æ¨¡æ¿
+#### 5.1 日报模板
 
 ```markdown
-# é£é©æ§å¶æ¥æ¥
+# 风险控制日报
 
-## 1. é£é©æ¦åµ
-- **æ¥æ**: {date}
-- **æ´ä½é£é©ç­çº§**: {overall_risk_level}
-- **é£é©è¯å**: {risk_score}
+## 1. 风险概况
+- **日期**: {date}
+- **整体风险等级**: {overall_risk_level}
+- **风险评分**: {risk_score}
 
-## 2. é£é©ææ 
+## 2. 风险指标
 | ææ  | å½åå?| éå?| ç¶æ?|
 |------|--------|------|------|
-| ç»åäºæ | {portfolio_loss:.2%} | -3% | {status} |
+| 组合亏损 | {portfolio_loss:.2%} | -3% | {status} |
 | æå¤§åæ?| {max_drawdown:.2%} | -10% | {status} |
 | æ»ä»ä½?| {total_position:.2%} | 95% | {status} |
 | æ³¢å¨ç?| {volatility:.2%} | 3Ï | {status} |
 
-## 3. é£é©äºä»¶
+## 3. 风险事件
 {risk_events}
 
-## 4. å¤ç½®è®°å½
+## 4. 处置记录
 {action_records}
 
 ## 5. å»ºè®®
@@ -746,32 +765,34 @@ class RiskMetricsCalculator:
 
 ---
 
-## ð å®æ½è¦ç¹
+## 🚀 实施要点
 
 ### é¶æ®µ1ï¼å®æ¶é£é©çæ§å¨å¼åï¼ç¬?å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°ä»·æ ¼é£é©çæ§
 2. â?å®ç°ä»ä½é£é©çæ§
 3. â?å®ç°æµå¨æ§é£é©çæ?
 4. â?å®ç°æ³¢å¨çé£é©çæ?
-5. â?ç¼åååæµè¯
+5. â?ç¼ååå
+æµè¯
 
 ---
 
 ### é¶æ®µ2ï¼é£é©é¢è­¦å¨å¼åï¼ç¬?-2å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°é£é©é¢è­¦é»è¾
 2. â?å®ç°å¤ééé¢è­¦
 3. â?å®ç°é¢è­¦åå²è®°å½
-4. â?ç¼åååæµè¯
+4. â?ç¼ååå
+æµè¯
 
 ---
 
 ### é¶æ®µ3ï¼é£é©å¤ç½®å¨å¼åï¼ç¬?-3å¨ï¼
 
-**ä»»å¡**:
+**任务**:
 1. â?å®ç°ä»·æ ¼é£é©å¤ç½®
 2. â?å®ç°ä»ä½é£é©å¤ç½®
 3. â?å®ç°æµå¨æ§é£é©å¤ç½?
@@ -780,9 +801,9 @@ class RiskMetricsCalculator:
 
 ---
 
-## ð æ§è½ææ 
+## 📈 性能指标
 
-### é£æ§æ§è½è¦æ±
+### 风控性能要求
 
 | ææ  | ç®æ å?|
 |------|--------|
@@ -793,17 +814,19 @@ class RiskMetricsCalculator:
 
 ---
 
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-- [å¼çç­ç¥æ¨¡åèå¾](./OPENING_STRATEGY_BLUEPRINT.md)
-- [çä¸­ç­ç¥æ¨¡åèå¾](./INTRADAY_STRATEGY_BLUEPRINT.md)
+- [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
+- [盘中策略模块蓝图](./INTRADAY_STRATEGY_BLUEPRINT.md)
 - ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶æ?
 
 ---
 
-## ð åæ´åå²
+## 📝 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | ä½è?|
 |------|------|---------|------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
@@ -813,29 +836,31 @@ class RiskMetricsCalculator:
 **ä¸ä¸æ­?*: å¼å§å®æ½é¶æ®? - å®æ¶é£é©çæ§å¨å¼å?
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 1: å¾®è§æ§è¡å±?
 ##### 6.001. Risk Control
-- **æ¨¡åID**: RISK_CONTROL_001
-- **èå¾ææ¡£**: RISK_CONTROL_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **模块ID**: RISK_CONTROL_001
+- **蓝图文档**: RISK_CONTROL_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
 - **èè´£**: å¾®è§æ§è¡å±å®æ¶é£æ?
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
 | **Risk Control** | å¾®è§æ§è¡å±å®æ¶é£æ?| **æ ¸å¿æ¨¡å** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

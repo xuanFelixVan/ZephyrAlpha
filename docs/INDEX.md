@@ -1,4 +1,4 @@
----
+﻿---
 version: 1.0.0
 standard_type: 系统索引
 applicable_scope: 全系�?compliance_level: 顶级标准

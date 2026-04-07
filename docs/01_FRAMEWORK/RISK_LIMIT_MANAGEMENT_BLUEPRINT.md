@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_LIMIT_MANAGEMENT_BLUEPRINT_001
 version: 1.0.0
 status: Active

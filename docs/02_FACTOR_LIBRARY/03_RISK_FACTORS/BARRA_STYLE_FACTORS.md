@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BARRA_STYLE_FACTORS_001
 version: 1.0.0
 status: Active

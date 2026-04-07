@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_BP_MANIFEST_BAK_001
 version: 5.0.1
 status: Active

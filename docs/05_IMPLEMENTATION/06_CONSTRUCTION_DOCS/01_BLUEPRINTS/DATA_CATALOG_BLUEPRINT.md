@@ -1,17 +1,18 @@
-﻿---
+﻿﻿---
 module_id: DATA_CATALOG_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 æ°æ®å±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
-  - æ°æ®ç®å½
-  - åæ°æ®ç®¡ç?
-  - æ°æ®åç°
+  - 数据目录
+  - å
+æ°æ®ç®¡ç?
+  - 数据发现
   - æ°æ®è¡ç¼?
 layer: Layer 5.1 (数据处理)
 ---
@@ -23,33 +24,13 @@ layer: Layer 5.1 (数据处理)
 
 # DATA CATALOG BLUEPRINT
 
-> **æ ¸å¿èè´£**: Data Catalogèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Data Catalogèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Data Catalog蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Data Catalogèå¾è®¾è®¡ç¸å
+³å
+å®¹
+> - â?æ¬ææ¡£ä¸...
 
-ï»?--
-module_id: DATA_CATALOG_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: ä¸ªäººå¼åè?
-responsibility:
-  - æ°æ®è´¨é
-  - å å­è®¡ç®
-  - ç»åä¼å
-standard_type: ä¸ä¸éåæºæææ¡£
-layer: Layer 5.1 (数据处理)
-ï»? æ°æ®ç®å½/åæ°æ®ç®¡çå¹³å°èå?
-
-> **æ ¸å¿å®ä½**: æ°æ®ç®å½/åæ°æ®ç®¡çå¹³å°èå¾çæ ¸å¿åè½å®ç°
-
-
-> **æ¨¡åID**: `DATA_CATALOG_001`
-> **å®æ½å¨æ**: Week 5-6ï¼?å¨ï¼
-> **ä¼åçº?*: P0ï¼æ ¸å¿ï¼
-> **é¢ææ¶ç**: æ°æ®èµäº§å¯åç°æ§æå?00%ï¼åæ°æ®ç®¡çæçæå80%
 
 ## 设计目标
 
@@ -103,74 +84,92 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 ä¸»å¯¼DATA CATALOGçè®¾è®¡ä¸å®ç°ï¼åºäºDelta Lakeææ¯ï¼å®ç°æ ¸å¿åè½ï¼ç¡®ä¿æ°æ®è´¨éåè§ã?
 
-## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
+## 一、设计背景与目标
 
 ### 1.1 ä¸å¡éæ±?
 
-**å½åçç¹**:
+**当前痛点**:
 - æ°æ®èµäº§åæ£ï¼æ æ³å¿«éæ¾å°æéæ°æ®è¡?
-- ç¼ºå°ç»ä¸çåæ°æ®ç®¡çï¼è¡¨æè¿°ãå­æ®µè¯´æä¸å®æ´
-- æ°æ®è¡ç¼å³ç³»ä¸æ¸æ°ï¼é¾ä»¥çè§£æ°æ®æ¥æº?
+- ç¼ºå°ç»ä¸çå
+æ°æ®ç®¡çï¼è¡¨æè¿°ãå­æ®µè¯´æä¸å®æ´
+- æ°æ®è¡ç¼å
+³ç³»ä¸æ¸
+æ°ï¼é¾ä»¥çè§£æ°æ®æ¥æº?
 - æææ°æ®ç¼ºä¹æ è®°ï¼å­å¨åè§é£é?
 
-**ä¸å¡ç®æ **:
-- å»ºç«ç»ä¸çæ°æ®èµäº§ç®å½ï¼æ¯æå¿«éæç´¢ååç°
-- å®ååæ°æ®ç®¡çï¼åæ¬è¡¨æè¿°ãå­æ®µè¯´æãææèä¿¡æ?
-- éææ°æ®è¡ç¼å¯è§åï¼å±ç¤ºåçº§è¡ç¼å³ç³?
-- å®ç°æ°æ®æ²»çåè½ï¼åæ¬æææ°æ®æ è®°åçå½å¨æç®¡ç
+**业务目标**:
+- 建立统一的数据资产目录，支持快速搜索和发现
+- å®åå
+æ°æ®ç®¡çï¼å
+æ¬è¡¨æè¿°ãå­æ®µè¯´æãææè
+ä¿¡æ?
+- éææ°æ®è¡ç¼å¯è§åï¼å±ç¤ºåçº§è¡ç¼å
+³ç³?
+- å®ç°æ°æ®æ²»çåè½ï¼å
+括敏感数据标记和生命周期管理
 
 ### 1.2 ææ¯ç®æ ?
 
 | ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
 | **æ°æ®èµäº§è¦çç?* | 100% | æææ°æ®è¡¨é½è¢«ç¼ç® |
-| **åæ°æ®å®æ´ç** | â?5% | 95%ä»¥ä¸çè¡¨æå®æ´åæ°æ® |
+| **å
+æ°æ®å®æ´ç** | â?5% | 95%ä»¥ä¸çè¡¨æå®æ´å
+æ°æ® |
 | **æç´¢ååºæ¶é´** | <2ç§?| æ°æ®æç´¢ååºæ¶é´ |
-| **è¡ç¼å¯è§å** | æ¯æ | åçº§è¡ç¼å³ç³»å¯è§å |
+| **è¡ç¼å¯è§å** | æ¯æ | åçº§è¡ç¼å
+³ç³»å¯è§å |
 
 ---
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [æ°æ®æºç®¡çèå¾](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ¥ä¿¡æ?|
-| [æ°æ®å®å¨åè§èå¾](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | ä¸­ä¾èµ?| æä¾æææ°æ®åç±»æ å |
+| [æ°æ®å®å
+¨åè§èå¾](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) | DATA_SECURITY_COMPLIANCE_001 | ä¸­ä¾èµ?| æä¾æææ°æ®åç±»æ å |
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æ°æ®è¡ç¼è¿½è¸ªèå¾](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | å¼ºä¾èµ?| æä¾è¡ç¼è¿½è¸ªåæ°æ® |
+| [æ°æ®è¡ç¼è¿½è¸ªèå¾](./DATA_CATALOG_METADATA_BLUEPRINT.md) | DATA_CATALOG_METADATA_001 | å¼ºä¾èµ?| æä¾è¡ç¼è¿½è¸ªå
+æ°æ® |
 | [æ°æ®å¯è§æµæ§èå¾](./DATA_OBSERVABILITY_BLUEPRINT.md) | DATA_OBSERVABILITY_001 | å¼ºä¾èµ?| æä¾æ°æ®èµäº§çæ§ |
 | [æ°æ®æ²»çå¹³å°èå¾](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | å¼ºä¾èµ?| æä¾æ²»çç­ç¥æ§è¡ |
-| [æ°æ®çå½å¨æç®¡çèå¾](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | ä¸­ä¾èµ?| æä¾çå½å¨æåæ°æ?|
+| [æ°æ®çå½å¨æç®¡çèå¾](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | DATA_LIFECYCLE_MANAGEMENT_001 | ä¸­ä¾èµ?| æä¾çå½å¨æå
+æ°æ?|
 
 ### ææ¯ä¾èµ?
 
 | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **OpenMetadata** | 1.2+ | åæ°æ®ç®¡ç?| [å®æ¹ææ¡£](https://docs.open-metadata.org/) |
+| **OpenMetadata** | 1.2+ | å
+æ°æ®ç®¡ç?| [å®æ¹ææ¡£](https://docs.open-metadata.org/) |
 | **Apache Atlas** | 2.3+ | æ°æ®è¡ç¼?| [å®æ¹ææ¡£](https://atlas.apache.org/) |
-| **Elasticsearch** | 8.0+ | æç´¢å¼æ | [å®æ¹ææ¡£](https://www.elastic.co/) |
-| **Neo4j** | 5.0+ | å¾æ°æ®åº | [å®æ¹ææ¡£](https://neo4j.com/) |
+| **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
+| **Neo4j** | 5.0+ | 图数据库 | [官方文档](https://neo4j.com/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
-    A[æ°æ®æºç®¡ç] --> B[æ°æ®ç®å½]
-    C[æ°æ®å®å¨åè§] --> B
+    A[数据源管理] --> B[数据目录]
+    C[æ°æ®å®å
+¨åè§] --> B
     
-    B --> D[æ°æ®è¡ç¼è¿½è¸ª]
-    B --> E[æ°æ®å¯è§æµæ§]
-    B --> F[æ°æ®æ²»çå¹³å°]
-    B --> G[æ°æ®çå½å¨æç®¡ç]
+    B --> D[数据血缘追踪]
+    B --> E[数据可观测性]
+    B --> F[数据治理平台]
+    B --> G[数据生命周期管理]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -180,9 +179,11 @@ graph LR
 
 ## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 åæ°æ®ééå¨ (MetadataCollector)
+### 3.1 å
+æ°æ®ééå¨ (MetadataCollector)
 
-**èè´£**: èªå¨ééæ°æ®æºåæ°æ®
+**èè´£**: èªå¨ééæ°æ®æºå
+æ°æ®
 
 ```python
 from dataclasses import dataclass, field
@@ -201,7 +202,8 @@ class DataSourceType(Enum):
 
 @dataclass
 class TableMetadata:
-    """è¡¨åæ°æ®"""
+    """è¡¨å
+æ°æ®"""
     table_id: str
     table_name: str
     database_name: str
@@ -217,7 +219,8 @@ class TableMetadata:
 
 @dataclass
 class ColumnMetadata:
-    """ååæ°æ®"""
+    """åå
+æ°æ®"""
     column_name: str
     data_type: str
     description: str
@@ -228,35 +231,38 @@ class ColumnMetadata:
     tags: List[str] = field(default_factory=list)
 
 class MetadataCollector:
-    """åæ°æ®ééå¨"""
+    """å
+æ°æ®ééå¨"""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
         self.connectors: Dict[DataSourceType, 'BaseConnector'] = {}
     
     def register_connector(self, source_type: DataSourceType, connector: 'BaseConnector'):
-        """æ³¨åæ°æ®æºè¿æ¥å¨"""
+        """注册数据源连接器"""
         self.connectors[source_type] = connector
     
     def collect_table_metadata(self, source_type: DataSourceType, database: str, table: str) -> TableMetadata:
-        """ééè¡¨åæ°æ®"""
+        """ééè¡¨å
+æ°æ®"""
         connector = self.connectors.get(source_type)
         if not connector:
-            raise ValueError(f"æªæ¾å°æ°æ®æºç±»å {source_type} çè¿æ¥å¨")
+            raise ValueError(f"未找到数据源类型 {source_type} 的连接器")
         
         return connector.get_table_metadata(database, table)
     
     def collect_all_tables(self, source_type: DataSourceType, database: str) -> List[TableMetadata]:
-        """ééæ°æ®åºææè¡¨çåæ°æ®"""
+        """ééæ°æ®åºææè¡¨çå
+æ°æ®"""
         connector = self.connectors.get(source_type)
         if not connector:
-            raise ValueError(f"æªæ¾å°æ°æ®æºç±»å {source_type} çè¿æ¥å¨")
+            raise ValueError(f"未找到数据源类型 {source_type} 的连接器")
         
         tables = connector.list_tables(database)
         return [self.collect_table_metadata(source_type, database, t) for t in tables]
 ```
 
-### 3.2 æ°æ®åç°æå¡ (DataDiscoveryService)
+### 3.2 数据发现服务 (DataDiscoveryService)
 
 **èè´£**: æä¾æ°æ®æç´¢ååç°åè?
 
@@ -266,7 +272,7 @@ from dataclasses import dataclass
 
 @dataclass
 class SearchRequest:
-    """æç´¢è¯·æ±"""
+    """搜索请求"""
     query: str
     filters: Dict[str, Any] = None
     page: int = 1
@@ -276,7 +282,7 @@ class SearchRequest:
 
 @dataclass
 class SearchResult:
-    """æç´¢ç»æ"""
+    """搜索结果"""
     table_id: str
     table_name: str
     database_name: str
@@ -287,7 +293,7 @@ class SearchResult:
     highlight: Dict[str, str]
 
 class DataDiscoveryService:
-    """æ°æ®åç°æå¡"""
+    """数据发现服务"""
     
     def __init__(self, search_engine: 'SearchEngine'):
         self.search_engine = search_engine
@@ -302,7 +308,8 @@ class DataDiscoveryService:
         return self.search(request)
     
     def search_by_owner(self, owner: str) -> List[SearchResult]:
-        """æææèæç´?""
+        """æææè
+æç´?""
         request = SearchRequest(query="*", filters={"owner": owner})
         return self.search(request)
     
@@ -359,7 +366,7 @@ class LineageNode:
 
 @dataclass
 class LineageEdge:
-    """è¡ç¼è¾¹"""
+    """血缘边"""
     source_id: str
     target_id: str
     transformation: str
@@ -405,7 +412,7 @@ class DataLineageService:
         return self.lineage_store.get_column_lineage(table_id, column_name, direction)
     
     def get_impact_analysis(self, table_id: str) -> Dict[str, Any]:
-        """å½±ååæ"""
+        """影响分析"""
         downstream = self.get_downstream_lineage(table_id, depth=10)
         return {
             "affected_tables": len(downstream.nodes),
@@ -423,9 +430,9 @@ class DataLineageService:
         return sum(1 for node in graph.nodes if node.node_type == "report")
 ```
 
-### 3.4 æ°æ®æ²»çæå¡ (DataGovernanceService)
+### 3.4 数据治理服务 (DataGovernanceService)
 
-**èè´£**: æä¾æ°æ®æ²»çåè½
+**职责**: 提供数据治理功能
 
 ```python
 from typing import List, Dict, Any, Optional
@@ -434,10 +441,12 @@ from enum import Enum
 from datetime import datetime
 
 class DataClassification(Enum):
-    """æ°æ®åç±»"""
-    PUBLIC = "public"           # å¬å¼æ°æ®
-    INTERNAL = "internal"       # åé¨æ°æ®
-    CONFIDENTIAL = "confidential"  # æºå¯æ°æ®
+    """数据分类"""
+    PUBLIC = "public"           # å
+¬å¼æ°æ®
+    INTERNAL = "internal"       # å
+部数据
+    CONFIDENTIAL = "confidential"  # 机密数据
     RESTRICTED = "restricted"   # éå¶çº§æ°æ?
 
 class DataSensitivity(Enum):
@@ -450,7 +459,7 @@ class DataSensitivity(Enum):
 
 @dataclass
 class GovernancePolicy:
-    """æ²»çç­ç¥"""
+    """治理策略"""
     policy_id: str
     policy_name: str
     description: str
@@ -460,7 +469,7 @@ class GovernancePolicy:
 
 @dataclass
 class DataAccessLog:
-    """æ°æ®è®¿é®æ¥å¿"""
+    """数据访问日志"""
     log_id: str
     user_id: str
     table_id: str
@@ -469,7 +478,7 @@ class DataAccessLog:
     ip_address: str
 
 class DataGovernanceService:
-    """æ°æ®æ²»çæå¡"""
+    """数据治理服务"""
     
     def __init__(self, metadata_store: 'MetadataStore'):
         self.metadata_store = metadata_store
@@ -519,7 +528,7 @@ class DataGovernanceService:
         retention_days: int,
         archive_location: Optional[str] = None
     ) -> bool:
-        """è®¾ç½®ä¿çç­ç¥"""
+        """设置保留策略"""
         return self.metadata_store.update_retention_policy(
             table_id, retention_days, archive_location
         )
@@ -531,7 +540,7 @@ class DataGovernanceService:
         action: str,
         ip_address: str
     ) -> str:
-        """è®°å½æ°æ®è®¿é®"""
+        """记录数据访问"""
         log = DataAccessLog(
             log_id=f"log_{datetime.now().strftime('%Y%m%d%H%M%S')}_{user_id}",
             user_id=user_id,
@@ -549,7 +558,7 @@ class DataGovernanceService:
         user_id: Optional[str] = None,
         table_id: Optional[str] = None
     ) -> List[DataAccessLog]:
-        """è·åè®¿é®å®¡è®¡æ¥å"""
+        """获取访问审计报告"""
         return self.metadata_store.query_access_logs(
             start_date, end_date, user_id, table_id
         )
@@ -557,9 +566,9 @@ class DataGovernanceService:
 
 ---
 
-## åãOpenMetadataéææ¹æ¡
+## 四、OpenMetadata集成方案
 
-### 4.1 é¨ç½²æ¶æ
+### 4.1 部署架构
 
 ```yaml
 version: '3.8'
@@ -626,7 +635,8 @@ volumes:
   es-data:
 ```
 
-### 4.2 æ°æ®æºè¿æ¥å¨éç½®
+### 4.2 æ°æ®æºè¿æ¥å¨é
+ç½®
 
 ```yaml
 sourceConfig:
@@ -650,7 +660,7 @@ workflowConfig:
     authProvider: no-auth
 ```
 
-### 4.3 Python SDKéæ
+### 4.3 Python SDK集成
 
 ```python
 from metadata.ingestion.api.workflow import Workflow
@@ -677,7 +687,8 @@ class OpenMetadataClient:
         return service
     
     def ingest_metadata(self, config_path: str):
-        """æ§è¡åæ°æ®éé?""
+        """æ§è¡å
+æ°æ®éé?""
         workflow = Workflow.create(config_path)
         workflow.execute()
         workflow.raise_from_status()
@@ -711,7 +722,7 @@ class OpenMetadataClient:
 
 ---
 
-## äºãä¸ç°æç³»ç»éæ
+## 五、与现有系统集成
 
 ### 5.1 ä¸æ°æ®è¡ç¼è¿½è¸ªç³»ç»éæ?
 
@@ -726,7 +737,7 @@ class CatalogLineageIntegration:
         self.lineage_service = lineage_service
     
     def sync_lineage_to_catalog(self):
-        """åæ­¥è¡ç¼ä¿¡æ¯å°æ°æ®ç®å½"""
+        """同步血缘信息到数据目录"""
         tables = self.catalog_client.list_all_tables()
         
         for table in tables:
@@ -734,13 +745,14 @@ class CatalogLineageIntegration:
             self.catalog_client.update_table_lineage(table.id, lineage)
     
     def enrich_metadata_with_lineage(self, table_id: str):
-        """ç¨è¡ç¼ä¿¡æ¯ä¸°å¯åæ°æ®"""
+        """ç¨è¡ç¼ä¿¡æ¯ä¸°å¯å
+æ°æ®"""
         lineage = self.lineage_service.get_lineage(table_id)
         
         upstream_tables = [n for n in lineage.nodes if n in lineage.edges]
         self.catalog_client.add_table_description(
             table_id,
-            f"æ°æ®æ¥æº: {', '.join([t.table_name for t in upstream_tables])}"
+            f"数据来源: {', '.join([t.table_name for t in upstream_tables])}"
         )
 ```
 
@@ -779,16 +791,24 @@ class CatalogQualityIntegration:
 
 ---
 
-## å­ãå®æ½è®¡å?
+## å
+­ãå®æ½è®¡å?
 
-### 6.1 Week 5: åºç¡é¨ç½²ä¸éç½?
+### 6.1 Week 5: åºç¡é¨ç½²ä¸é
+ç½?
 
 | ä»»å¡ | é¢è®¡æ¶é´ | è´è´£äº?| äº¤ä»ç?|
 |------|---------|--------|--------|
 | é¨ç½²OpenMetadataæå¡ | 2å¤?| DevOps | è¿è¡ä¸­çOpenMetadataå®ä¾ |
-| éç½®æ°æ®æºè¿æ¥å¨ | 1å¤?| æ°æ®å·¥ç¨å¸?| MySQLãDelta Lakeè¿æ¥å?|
-| æ§è¡é¦æ¬¡åæ°æ®éé?| 1å¤?| æ°æ®å·¥ç¨å¸?| å®æ´çåæ°æ®å¿«ç§ |
-| éç½®ç¨æ·æé | 1å¤?| ç®¡çå?| ç¨æ·è§è²åæééç½?|
+| é
+ç½®æ°æ®æºè¿æ¥å¨ | 1å¤?| æ°æ®å·¥ç¨å¸?| MySQLãDelta Lakeè¿æ¥å?|
+| æ§è¡é¦æ¬¡å
+æ°æ®éé?| 1å¤?| æ°æ®å·¥ç¨å¸?| å®æ´çå
+æ°æ®å¿«ç
+§ |
+| é
+ç½®ç¨æ·æé | 1å¤?| ç®¡çå?| ç¨æ·è§è²åæéé
+ç½?|
 
 ### 6.2 Week 6: éæä¸ä¼å?
 
@@ -796,57 +816,66 @@ class CatalogQualityIntegration:
 |------|---------|--------|--------|
 | éæè¡ç¼è¿½è¸ªç³»ç»?| 2å¤?| æ°æ®å·¥ç¨å¸?| è¡ç¼å¯è§åéæ |
 | éæè´¨éçæ§ç³»ç» | 1å¤?| æ°æ®å·¥ç¨å¸?| è´¨éææ å±ç¤º |
-| éç½®æ°æ®æ²»çç­ç¥ | 1å¤?| æ°æ®ç®¡çå?| åç±»ç­ç¥åæ ç­?|
+| é
+ç½®æ°æ®æ²»çç­ç¥ | 1å¤?| æ°æ®ç®¡çå?| åç±»ç­ç¥åæ ç­?|
 | ç¨æ·å¹è®­ä¸ææ¡?| 1å¤?| æ°æ®å·¥ç¨å¸?| ä½¿ç¨æååå¹è®­ææ?|
 
 ---
 
 ## ä¸ãéªæ¶æ å?
 
-### 7.1 åè½éªæ¶
+### 7.1 功能验收
 
-| åè½ | éªæ¶æ å | æµè¯æ¹æ³ |
+| 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
 | æ°æ®åç° | æç´¢ååºæ¶é´<2ç§?| æ§è½æµè¯ |
-| åæ°æ®ç®¡ç?| åæ°æ®å®æ´çâ?5% | æ°æ®å®¡è®¡ |
+| å
+æ°æ®ç®¡ç?| å
+æ°æ®å®æ´çâ?5% | æ°æ®å®¡è®¡ |
 | è¡ç¼å¯è§å | åçº§è¡ç¼æ­£ç¡®å±ç¤?| åè½æµè¯ |
-| æ°æ®æ²»ç | æææ°æ®èªå¨æ è®° | åè½æµè¯ |
+| 数据治理 | 敏感数据自动标记 | 功能测试 |
 
-### 7.2 æ§è½éªæ¶
+### 7.2 性能验收
 
 | ææ  | ç®æ å?| æµè¯æ¹æ³ |
 |------|--------|---------|
 | æç´¢ååºæ¶é´ | <2ç§?| ååæµè¯ |
-| åæ°æ®éééåº¦ | >100è¡?åé | æ§è½æµè¯ |
+| å
+æ°æ®éééåº¦ | >100è¡?åé | æ§è½æµè¯ |
 | è¡ç¼æ¥è¯¢æ¶é?| <1ç§?| æ§è½æµè¯ |
 | å¹¶åç¨æ·æ?| >50 | ååæµè¯ |
 
 ---
 
-## å«ãé£é©ä¸ç¼è§£æªæ½
+## å
+«ãé£é©ä¸ç¼è§£æªæ½
 
-| é£é© | ç­çº§ | å½±å | ç¼è§£æªæ½ |
+| 风险 | 等级 | 影响 | 缓解措施 |
 |------|------|------|---------|
-| åæ°æ®ééå¤±è´?| P1 | æ°æ®ç®å½ä¸å®æ?| éç½®éè¯æºå¶ååè­?|
-| æ§è½ç¶é¢ | P2 | æç´¢ååºæ?| ä¼åç´¢å¼ï¼å¢å ç¼å­?|
+| å
+æ°æ®ééå¤±è´?| P1 | æ°æ®ç®å½ä¸å®æ?| é
+ç½®éè¯æºå¶ååè­?|
+| æ§è½ç¶é¢ | P2 | æç´¢ååºæ
+?| ä¼åç´¢å¼ï¼å¢å ç¼å­?|
 | ç¨æ·éç¨çä½ | P2 | æèµåæ¥ä½?| å å¼ºå¹è®­åæ¨å¹?|
 
 ---
 
 ## ä¹ãåèææ¡?
 
-1. OpenMetadataå®æ¹ææ¡£: https://docs.open-metadata.org/
+1. OpenMetadata官方文档: https://docs.open-metadata.org/
 2. OpenMetadata GitHub: https://github.com/open-metadata/OpenMetadata
 3. æ°æ®è¡ç¼è¿½è¸ªèå? DATA_LINEAGE_TRACKING_BLUEPRINT.md
-4. æ°æ®è´¨éçæ§èå¾: REALTIME_QUALITY_MONITOR_BLUEPRINT.md
+4. 数据质量监控蓝图: REALTIME_QUALITY_MONITOR_BLUEPRINT.md
 
 ---
 
 **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-05 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-05 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
@@ -855,29 +884,31 @@ class CatalogQualityIntegration:
 **èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-05 | **ç¶æ?*: Active
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Catalog
-- **æ¨¡åID**: DATA_CATALOG_001
-- **èå¾ææ¡£**: DATA_CATALOG_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
-- **èè´£**: Layer 1æ°æ®é¢å¤çå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **模块ID**: DATA_CATALOG_001
+- **蓝图文档**: DATA_CATALOG_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
+- **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **Data Catalog** | Layer 1æ°æ®é¢å¤çå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
+| **Data Catalog** | Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-05 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

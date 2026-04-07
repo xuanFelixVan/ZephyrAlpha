@@ -1,19 +1,19 @@
----
+﻿---
 module_id: FACTOR_NEUTRAL_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 responsibility:
   - å å­ä¸­æ§ä¼å?
-  - å å­æ´é²çº¦æ
+  - 因子暴露约束
   - è¡ä¸ä¸­æ§ç­ç?
-  - å å­é£é©æ§å¶
+  - 因子风险控制
 ---
 
 # å å­ä¸­æ§ä¼åèå?
@@ -24,14 +24,14 @@ responsibility:
 
 
 
-> **æ ¸å¿å®ä½**: å å­ä¸­æ§ä¼åèå¾çæ ¸å¿åè½å®ç°
+> **核心定位**: 因子中性优化蓝图的核心功能实现
 
 
-> **æ¨¡åID**: FACTOR_NEUTRAL_OPTIMIZATION_001
-> **åå»ºæ¥æ**: 2026-04-07
-> **æ ¸å¿å®ä½**: å®ç°å å­æ´é²çº¦æåä¸­æ§åä¼åï¼æ¯æè¡ä¸ä¸­æ§ãé£æ ¼å å­ä¸­æ§ãå¸åºä¸­æ§ç­ç­ç¥
-> **ç´¢å¼**: `FACTOR_NEUTRAL_OPTIMIZATION_001`
-> **å¼åå¨æ?*: 1.5å?
+> **模块ID**: FACTOR_NEUTRAL_OPTIMIZATION_001
+> **创建日期**: 2026-04-07
+> **核心定位**: 实现因子暴露约束和中性化优化，支持行业中性、风格因子中性、市场中性等策略
+> **索引**: `FACTOR_NEUTRAL...
+
 
 ## 设计目标
 
@@ -85,20 +85,20 @@ responsibility:
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 è´è´£Factor Neutral Optimizationçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
-## 2. åè½è®¾è®¡
+## 2. 功能设计
 
-### 2.1 æ ¸å¿åè½
+### 2.1 核心功能
 
-#### 2.1.1 å å­æ´é²çº¦æ
+#### 2.1.1 因子暴露约束
 
 ```python
 class FactorExposureConstraint:
     """
-    å å­æ´é²çº¦æ
+    因子暴露约束
     
     å¼æºä¾èµ? Riskfolio-Lib
     """
@@ -112,10 +112,10 @@ class FactorExposureConstraint:
         """
         è®¾ç½®å å­æ´é²ä¸ä¸é?
         
-        åæ°:
-            factor_name: å å­åç§°
-            lower_bound: ä¸éï¼è´å¼è¡¨ç¤ºåç©ºï¼
-            upper_bound: ä¸é
+        参数:
+            factor_name: 因子名称
+            lower_bound: 下限（负值表示做空）
+            upper_bound: 上限
         """
         pass
     
@@ -127,9 +127,9 @@ class FactorExposureConstraint:
         """
         è®¾ç½®å å­ä¸­æ§çº¦æ?
         
-        åæ°:
-            factor_names: éè¦ä¸­æ§çå å­åè¡¨
-            tolerance: ä¸­æ§å®¹å¿åº¦
+        参数:
+            factor_names: 需要中性的因子列表
+            tolerance: 中性容忍度
         """
         pass
 ```
@@ -139,7 +139,7 @@ class FactorExposureConstraint:
 ```python
 class SectorNeutralOptimizer:
     """
-    è¡ä¸ä¸­æ§ä¼åå¨
+    行业中性优化器
     
     ç¡®ä¿ç»åå¨åè¡ä¸çæ´é²ä¸åºåä¸è?
     """
@@ -155,15 +155,15 @@ class SectorNeutralOptimizer:
         """
         è¡ä¸ä¸­æ§ä¼å?
         
-        åæ°:
-            expected_returns: é¢ææ¶ç
-            factor_loadings: å å­è½½è·ç©éµ
-            benchmark_weights: åºåæé
-            sector_mapping: èµäº§-è¡ä¸æ å°
-            tolerance: ä¸­æ§å®¹å¿åº¦
+        参数:
+            expected_returns: 预期收益
+            factor_loadings: 因子载荷矩阵
+            benchmark_weights: 基准权重
+            sector_mapping: 资产-行业映射
+            tolerance: 中性容忍度
             
-        è¿å:
-            æä¼æéåå å­æ´é²
+        返回:
+            最优权重和因子暴露
         """
         pass
 ```
@@ -173,13 +173,13 @@ class SectorNeutralOptimizer:
 ```python
 class StyleFactorNeutralOptimizer:
     """
-    é£æ ¼å å­ä¸­æ§ä¼åå¨
+    风格因子中性优化器
     
-    å¸¸è§é£æ ¼å å­:
+    常见风格因子:
     - Size (å¸å?
     - Value (ä»·å?
-    - Momentum (å¨é)
-    - Quality (è´¨é)
+    - Momentum (动量)
+    - Quality (质量)
     - Volatility (æ³¢å¨ç?
     - Liquidity (æµå¨æ?
     """
@@ -194,14 +194,15 @@ class StyleFactorNeutralOptimizer:
         """
         é£æ ¼å å­ä¸­æ§ä¼å?
         
-        åæ°:
-            expected_returns: é¢ææ¶ç
-            style_loadings: é£æ ¼å å­è½½è·
-            target_exposures: ç®æ å å­æ´é²
-            constraints: å¶ä»çº¦æ
+        参数:
+            expected_returns: 预期收益
+            style_loadings: 风格因子载荷
+            target_exposures: 目标因子暴露
+            constraints: å
+¶ä»çº¦æ
             
-        è¿å:
-            æä¼æéåå å­æ´é²
+        返回:
+            最优权重和因子暴露
         """
         pass
 ```
@@ -211,9 +212,9 @@ class StyleFactorNeutralOptimizer:
 ```python
 class MarketNeutralOptimizer:
     """
-    å¸åºä¸­æ§ä¼åå¨
+    市场中性优化器
     
-    æå»ºBetaä¸­æ§ç»åï¼å¯¹å²å¸åºé£é©
+    构建Beta中性组合，对冲市场风险
     """
     
     def optimize_market_neutral(
@@ -227,20 +228,21 @@ class MarketNeutralOptimizer:
         """
         å¸åºä¸­æ§ä¼å?
         
-        åæ°:
-            expected_returns: é¢ææ¶ç
-            beta_loadings: Betaç³»æ°
+        参数:
+            expected_returns: 预期收益
+            beta_loadings: Beta系数
             target_beta: ç®æ Betaï¼é»è®?ï¼?
             beta_tolerance: Betaå®¹å¿åº?
-            constraints: å¶ä»çº¦æ
+            constraints: å
+¶ä»çº¦æ
             
-        è¿å:
-            æä¼æéåBetaæ´é²
+        返回:
+            最优权重和Beta暴露
         """
         pass
 ```
 
-### 2.2 è·è¸ªè¯¯å·®æ§å¶
+### 2.2 跟踪误差控制
 
 ```python
 class TrackingErrorController:
@@ -257,10 +259,10 @@ class TrackingErrorController:
         max_te: float = 0.03
     ) -> None:
         """
-        è®¾ç½®è·è¸ªè¯¯å·®ä¸é
+        设置跟踪误差上限
         
-        åæ°:
-            benchmark_weights: åºåæé
+        参数:
+            benchmark_weights: 基准权重
             covariance_matrix: åæ¹å·®ç©é?
             max_te: æå¤§è·è¸ªè¯¯å·®ï¼å¹´åï¼?
         """
@@ -273,7 +275,7 @@ class TrackingErrorController:
         covariance_matrix: np.ndarray
     ) -> float:
         """
-        è®¡ç®è·è¸ªè¯¯å·®
+        计算跟踪误差
         
         TE = sqrt((w - w_b)' * Î£ * (w - w_b))
         """
@@ -283,12 +285,12 @@ class TrackingErrorController:
 ---
 ## 3. ææ¯è§æ ?
 
-### 3.1 æ¥å£è®¾è®¡
+### 3.1 接口设计
 
 ```python
 class FactorNeutralOptimizer:
     """
-    å å­ä¸­æ§ä¼åå¨
+    因子中性优化器
     
     ä¸»è¦æ¥å£ç±?
     """
@@ -301,9 +303,9 @@ class FactorNeutralOptimizer:
         """
         åå§å?
         
-        åæ°:
-            factor_model: å å­æ¨¡å ('barra', 'custom')
-            risk_model: é£é©æ¨¡å
+        参数:
+            factor_model: 因子模型 ('barra', 'custom')
+            risk_model: 风险模型
         """
         self.factor_model = factor_model
         self.exposure_constraint = FactorExposureConstraint()
@@ -322,14 +324,14 @@ class FactorNeutralOptimizer:
         """
         æ§è¡å å­ä¸­æ§ä¼å?
         
-        åæ°:
-            expected_returns: é¢ææ¶ç
-            factor_loadings: å å­è½½è·ç©éµ
-            objective: ä¼åç®æ 
-            constraints: çº¦ææ¡ä»¶
+        参数:
+            expected_returns: 预期收益
+            factor_loadings: 因子载荷矩阵
+            objective: 优化目标
+            constraints: 约束条件
             
-        è¿å:
-            ä¼åç»æ
+        返回:
+            优化结果
         """
         pass
     
@@ -339,23 +341,23 @@ class FactorNeutralOptimizer:
         factor_loadings: pd.DataFrame
     ) -> pd.Series:
         """
-        è®¡ç®ç»åå å­æ´é²
+        计算组合因子暴露
         
-        æ´é² = w' * F
+        暴露 = w' * F
         """
         pass
 ```
 
-### 3.2 æ°æ®ç»æ
+### 3.2 数据结构
 
 ```python
 @dataclass
 class FactorConstraint:
-    """å å­çº¦ææ°æ®ç»æ"""
+    """因子约束数据结构"""
     factor_name: str
     lower_bound: float
     upper_bound: float
-    weight: float = 1.0  # çº¦ææé
+    weight: float = 1.0  # 约束权重
 
 @dataclass
 class FactorNeutralResult:
@@ -364,14 +366,16 @@ class FactorNeutralResult:
     factor_exposures: pd.Series
     tracking_error: float
     expected_return: float
-    alpha: float  # è¶é¢æ¶ç
+    alpha: float  # è¶
+额收益
 ```
 
-### 3.3 éç½®åæ°
+### 3.3 é
+ç½®åæ°
 
 ```yaml
 factor_neutral_optimization:
-  # å å­å®ä¹
+  # 因子定义
   factors:
     style_factors:
       - Size
@@ -405,34 +409,38 @@ factor_neutral_optimization:
       target: 0.0
       tolerance: 0.02
       
-  # è·è¸ªè¯¯å·®
+  # 跟踪误差
   tracking_error:
-    max_te: 0.03  # å¹´å3%
+    max_te: 0.03  # 年化3%
     benchmark: 'SPY'
 ```
 
 ---
 
-## 4. å®ç°è·¯å¾
+## 4. 实现路径
 
 ### 4.1 å¼æºéææ¹æ¡?
 
 ```python
 # åºäºRiskfolio-Libçå®ç?
-> **æ ¸å¿èè´£**: Factor Neutral Optimizationèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Factor Neutral Optimizationèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Factor Neutral Optimization蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Factor Neutral Optimizationèå¾è®¾è®¡ç¸å
+³å
+å®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å
+¶ä»æ¨¡åå
+å®?
 
 
-## æ ¸å¿èè´£
+## 核心职责
 
 å å­ä¸­æ§ä¼åï¼è´è´£å å­é£é©å¯¹å²çç»åä¼å?
 
 
 ---
 
-## ð æ¦è¿°
+## 📋 概述
 
 æ¬ææ¡£å®ä¹äºFACTOR NEUTRAL OPTIMIZATIONçæ ¸å¿åè½åææ¯å®ç°ã?
 
@@ -440,21 +448,22 @@ import riskfolio as rp
 
 class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
     """
-    Riskfolio-Libééå?
+    Riskfolio-Libéé
+å?
     """
     
     def optimize(self, expected_returns, factor_loadings, **kwargs):
-        # åå»ºä¼åå¯¹è±¡
+        # 创建优化对象
         port = rp.Portfolio(returns=expected_returns)
         
-        # è®¾ç½®å å­æ¨¡å
+        # 设置因子模型
         port.assets_stats(method_mu='hist', method_cov='hist')
         
-        # æ·»å å å­çº¦æ
+        # 添加因子约束
         if 'factor_constraints' in kwargs:
             self._add_factor_constraints(port, kwargs['factor_constraints'])
         
-        # æ§è¡ä¼å
+        # 执行优化
         weights = port.optimization(
             obj='Sharpe',
             rm='MV',
@@ -464,7 +473,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
         return weights
 ```
 
-### 4.2 å¼åéç¨ç¢
+### 4.2 开发里程碑
 
 | é¶æ®µ | ä»»å¡ | å·¥ä½é?| ä¾èµ |
 |------|------|--------|------|
@@ -477,15 +486,16 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
 ---
 
-## 5. æµè¯è§æ ¼
+## 5. 测试规格
 
-### 5.1 ååæµè¯
+### 5.1 åå
+æµè¯
 
 ```python
 class TestFactorNeutralOptimizer:
     
     def test_factor_exposure_constraint(self):
-        """æµè¯å å­æ´é²çº¦æ"""
+        """测试因子暴露约束"""
         pass
     
     def test_sector_neutral(self):
@@ -501,15 +511,16 @@ class TestFactorNeutralOptimizer:
         pass
     
     def test_tracking_error(self):
-        """æµè¯è·è¸ªè¯¯å·®æ§å¶"""
+        """测试跟踪误差控制"""
         pass
 ```
 
 ---
 
-## 6. åæ´åå²
+## 6. 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
@@ -517,25 +528,25 @@ class TestFactorNeutralOptimizer:
 
 **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
-## 7. ææ¡£æ²»ç
+## 7. 文档治理
 
-### 7.1 ææ¡£ç´¢å¼
+### 7.1 文档索引
 
-**æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**:
+**本文档在系统中的位置**:
 - **æå±å±çº?*: Layer 6 (ç»åä¼åå±?
-- **æ¨¡åç´¢å¼**: 001
-- **æ¨¡ååç§°**: FACTOR_NEUTRAL_OPTIMIZATION
-- **ææ¡£è·¯å¾**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
+- **模块索引**: 001
+- **模块名称**: FACTOR_NEUTRAL_OPTIMIZATION
+- **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 
-### 7.2 çæ¬ç®¡ç
+### 7.2 版本管理
 
-**çæ¬åå²**:
-- v1.0.0 (2026-04-07): åå§çæ¬
+**版本历史**:
+- v1.0.0 (2026-04-07): 初始版本
 
-### 7.3 ç»´æ¤è´£ä»»
+### 7.3 维护责任
 
-**ææ¡£ç»´æ¤**:
-- **è´£ä»»æ¨¡å**: FACTOR_NEUTRAL_OPTIMIZATION
+**文档维护**:
+- **责任模块**: FACTOR_NEUTRAL_OPTIMIZATION
 - **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
 - **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 

@@ -1,4 +1,4 @@
----
+﻿---
 standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
   - 实施指南、部署文档

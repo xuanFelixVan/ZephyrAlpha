@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME_DETECTION_AI_001
 version: 1.0.0
 status: Active

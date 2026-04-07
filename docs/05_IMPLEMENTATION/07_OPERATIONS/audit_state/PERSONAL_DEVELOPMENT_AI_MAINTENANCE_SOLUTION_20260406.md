@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_DEVELOPMENT_AI_MAINTENANCE_SOLUTION_001
 version: 1.0.0
 status: Active

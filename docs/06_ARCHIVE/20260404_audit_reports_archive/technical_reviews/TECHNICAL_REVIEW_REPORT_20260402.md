@@ -1,4 +1,4 @@
----
+﻿---
 version: 1.0.0
 module_id: TECHNICAL_REVIEW_REPORT_20260402_001
 

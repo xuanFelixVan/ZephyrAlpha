@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_MAKING_MODEL_BLUEPRINT_001
 
 version: 1.0.0
@@ -13,7 +13,7 @@ owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­
 responsibility:
   - 提供market making model blueprint的完整架构设计、技术选型和实施路径规划
 
-standard_type: é«å±æ¶æèå¾
+standard_type: 高层架构蓝图
 
 priority: P1
 
@@ -27,7 +27,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-# åå¸ç­ç¥æ¨¡åèå¾
+# 做市策略模型蓝图
 > **核心职责**: 提供market making model blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Market Making Model蓝图设计相关内容
@@ -36,15 +36,16 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-> **èå¾ç¼å·**: `MM-001`
+> **蓝图编号**: `MM-001`
 
-> **åå»ºæ¥æ**: 2026-04-04
+> **创建日期**: 2026-04-04
 
-> **Layer**: Layer 4 - æºå¨å­¦ä¹ å±?> **ä¼åçº?*: P1 (å¼ºçå»ºè®®)
+> **Layer**: Layer 4 - æºå¨å­¦ä¹ å±?> **ä¼å
+çº?*: P1 (å¼ºçå»ºè®®)
 
 > **åèæºæ?*: CitadelãJump TradingãJane Street
 
-> **é¢è®¡å·¥æ¶**: 120h
+> **预计工时**: 120h
 
 
 
@@ -52,11 +53,11 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-## 1. æ¦è¿°
+## 1. 概述
 
 
 
-### 1.1 è®¾è®¡èæ¯
+### 1.1 设计背景
 
 
 
@@ -64,23 +65,24 @@ layer: Layer 2 (Alpha因子层)
 
 - **æ¥ä»·ä¼å**: æä¼ä¹°åæ¥ä»?- **åºå­ç®¡ç**: å¨æåºå­æ§å?- **é£é©æ§å¶**: å®æ¶é£é©çæ§
 
-- **Alphaçæ**: ç¨³å®æ¶çæ¥æº
+- **Alpha生成**: 稳定收益来源
 
 
 
 ### 1.2 ä¸å¡ä»·å?
 
-| ä»·å¼ç»´åº?| å·ä½æ¶ç |
+| ä»·å¼ç»´åº?| å
+·ä½æ¶ç |
 
 |----------|----------|
 
-| **æ¶ç** | ç¨³å®ç¹å·®æ¶ç |
+| **收益** | 稳定点差收益 |
 
-| **é£é©** | åæ§åºå­é£é© |
+| **风险** | 受控库存风险 |
 
 | **æç** | æä¾å¸åºæµå¨æ?|
 
-| **ä¼å¿** | ä¿¡æ¯ä¼å¿åç° |
+| **优势** | 信息优势变现 |
 
 
 
@@ -88,7 +90,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-## 2. æ¶æè®¾è®¡
+## 2. 架构设计
 
 
 
@@ -102,7 +104,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-## 3. æ¥å£è®¾è®¡
+## 3. 接口设计
 
 
 
@@ -110,7 +112,7 @@ layer: Layer 2 (Alpha因子层)
 
 class MarketMakingModel:
 
-    """åå¸ç­ç¥æ¨¡å"""
+    """做市策略模型"""
 
     
 
@@ -130,9 +132,9 @@ class MarketMakingModel:
 
         Args:
 
-            inventory_limit: åºå­éå¶
+            inventory_limit: 库存限制
 
-            risk_aversion: é£é©åæ¶ç³»æ°
+            risk_aversion: 风险厌恶系数
 
             tick_size: æå°åå¨ä»·ä½?        """
 
@@ -158,7 +160,7 @@ class MarketMakingModel:
 
             order_book: è®¢åç°?            trades: æäº¤è®°å½
 
-            inventory: å½ååºå­
+            inventory: 当前库存
 
             
 
@@ -178,7 +180,7 @@ class MarketMakingModel:
 
     ) -> Tuple[float, float, int, int]:
 
-        """çææ¥ä»·
+        """生成报价
 
         
 
@@ -188,7 +190,7 @@ class MarketMakingModel:
 
         Returns:
 
-            Tuple: (ä¹°ä»·, åä»·, ä¹°é, åé)
+            Tuple: (买价, 卖价, 买量, 卖量)
 
         """
 
@@ -206,13 +208,14 @@ class MarketMakingModel:
 
     ) -> float:
 
-        """æ´æ°åºå­
+        """更新库存
 
         
 
         Args:
 
-            filled_bid: æäº¤ä¹°å¥é?            filled_ask: æäº¤ååºé?            
+            filled_bid: æäº¤ä¹°å
+¥é?            filled_ask: æäº¤ååºé?            
 
         Returns:
 
@@ -230,7 +233,7 @@ class MarketMakingModel:
 
     ) -> float:
 
-        """è®¡ç®çäº
+        """计算盈亏
 
         
 
@@ -240,7 +243,7 @@ class MarketMakingModel:
 
         Returns:
 
-            float: çäº
+            float: 盈亏
 
         """
 
@@ -254,7 +257,7 @@ class MarketMakingModel:
 
 
 
-## 4. å¼ºåå­¦ä¹ æ¡æ¶
+## 4. 强化学习框架
 
 
 
@@ -262,7 +265,7 @@ class MarketMakingModel:
 
 class MarketMakingRL:
 
-    """åå¸å¼ºåå­¦ä¹ """
+    """做市强化学习"""
 
     
 
@@ -278,7 +281,7 @@ class MarketMakingRL:
 
     ):
 
-        """åå§åRLæ¨¡å
+        """初始化RL模型
 
         
 
@@ -300,7 +303,7 @@ class MarketMakingRL:
 
     ) -> torch.Tensor:
 
-        """è·åå¨ä½
+        """获取动作
 
         
 
@@ -310,7 +313,7 @@ class MarketMakingRL:
 
         Returns:
 
-            torch.Tensor: å¨ä½
+            torch.Tensor: 动作
 
         """
 
@@ -330,23 +333,23 @@ class MarketMakingRL:
 
     ) -> float:
 
-        """è®¡ç®å¥å±
+        """计算奖励
 
         
 
         Args:
 
-            pnl: çäº
+            pnl: 盈亏
 
-            inventory: åºå­
+            inventory: 库存
 
-            risk_penalty: é£é©æ©ç½
+            risk_penalty: 风险惩罚
 
             
 
         Returns:
 
-            float: å¥å±
+            float: 奖励
 
         """
 
@@ -360,7 +363,7 @@ class MarketMakingRL:
 
 
 
-## 5. éªæ¶æ å
+## 5. 验收标准
 
 
 
@@ -374,7 +377,7 @@ class MarketMakingRL:
 
 | èç | â?5% |
 
-| åºå­é£é© | åæ§ |
+| 库存风险 | 受控 |
 
 
 
@@ -382,9 +385,9 @@ class MarketMakingRL:
 
 
 
-**èå¾çæ¬**: v1.0
+**蓝图版本**: v1.0
 
-**åå»ºæ¥æ**: 2026-04-04
+**创建日期**: 2026-04-04
 
 ---
 

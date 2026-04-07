@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_SPEC_001
 version: 1.0.0
 spec_version: 1.0

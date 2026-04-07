@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGYENGINECOREBLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -24,7 +24,7 @@ last_updated: 2026-04-03
 owner: é¦å¸­ææ¡£æ¶æå¸?standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: ç­ç¥å¼ææ ¸å¿æ¨¡åææ¯è®¾è®?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 ---
 
 
@@ -34,73 +34,105 @@ implementation_status: è®¾è®¡é¶æ®µ
 > - ✅ 本文档负责：Strategy Engine Core蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> æ¸é£éåäº¤æç³»ç» v5.3 - ç­ç¥å¼ææ ¸å¿æ¨¡åè¯¦ç»ææ¯è®¾è®?> **ç´¢å¼**: `STRAT.ENG.CORE.001`
+> æ¸
+é£éåäº¤æç³»ç» v5.3 - ç­ç¥å¼ææ ¸å¿æ¨¡åè¯¦ç»ææ¯è®¾è®?> **ç´¢å¼**: `STRAT.ENG.CORE.001`
 > **å¼åå¨æ?*: 400å°æ¶ï¼è¶åä»£ç å¼åï¼
-> **æ ¸å¿å®ä½**: ç­ç¥å¼ææ ¸å¿ç»ä»¶è¯¦ç»è®¾è®¡ï¼æ¯æ?20+ç­ç¥å¨æå è½½ãäºä»¶é©±å¨æ§è¡ãç­é¨ç½²çä¸ä¸æ¶æ?> **è¡¥åææ¡£**: æ¬èå¾æ¯[STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md)çææ¯è¡¥åï¼ä¸æ³¨äºæ ¸å¿æ¨¡åå®ç°ç»è?
+> **æ ¸å¿å®ä½**: ç­ç¥å¼ææ ¸å¿ç»ä»¶è¯¦ç»è®¾è®¡ï¼æ¯æ?20+ç­ç¥å¨æå è½½ãäºä»¶é©±å¨æ§è¡ãç­é¨ç½²çä¸ä¸æ¶æ?> **è¡¥å
 
-## ä¸ãè®¾è®¡ç®æ ä¸çº¦æ
+ææ¡£**: æ¬èå¾æ¯[STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md)çææ¯è¡¥å
 
-### 1.1 æ ¸å¿è®¾è®¡ç®æ 
+ï¼ä¸æ³¨äºæ ¸å¿æ¨¡åå®ç°ç»è?
 
-| ç®æ  | ä¼åçº?| ææ¯å®ç?|
+## 一、设计目标与约束
+
+### 1.1 核心设计目标
+
+| ç®æ  | ä¼å
+çº?| ææ¯å®ç?|
 |------|--------|----------|
-| **120+ç­ç¥å¨æå è½?* | P0 | æä»¶å¼æ¶æ?+ éç½®é©±å¨åç° |
-| **ç»ä¸ç­ç¥æ¥å£** | P0 | éµå¾ªAPI_Contract.mdçIStrategyEngineæ¥å£ |
+| **120+ç­ç¥å¨æå è½?* | P0 | æä»¶å¼æ¶æ?+ é
+ç½®é©±å¨åç° |
+| **统一策略接口** | P0 | 遵循API_Contract.md的IStrategyEngine接口 |
 | **ç­é¨ç½²æ¯æ?* | P0 | ç­ç¥éç¦» + å¨æç±»å è½½ |
 | **äºä»¶é©±å¨æ§è¡** | P1 | å¼æ­¥äºä»¶æ»çº¿ + ç­ç¥äºä»¶çå¬å?|
-| **éç½®é©±å¨ç®¡ç** | P1 | YAMLéç½®æä»¶ + åæ°çæ¬æ§å¶ |
+| **é
+ç½®é©±å¨ç®¡ç** | P1 | YAMLé
+ç½®æä»¶ + åæ°çæ¬æ§å¶ |
 | **ç¶æå¯è§æµ** | P1 | ç­ç¥ç¶æçæ?+ æ§è½ææ æ¶é |
-| **æ¨¡ååæ©å±?* | P2 | æä»¶ç³»ç» + ä¾èµæ³¨å¥å®¹å¨ |
+| **æ¨¡ååæ©å±?* | P2 | æä»¶ç³»ç» + ä¾èµæ³¨å
+¥å®¹å¨ |
 
-### 1.2 ææ¯çº¦æä¸åå
+### 1.2 技术约束与原则
 
 1. **æå°åèªç ä»£ç åå**ï¼?0%ä½¿ç¨æçå¼æºï¼20%èªç è¶åä»£ç 
-2. **æ¥å£åè¡åå**ï¼æææ¨¡åå¿é¡»åå®ä¹æ¥å£ï¼åå®ç°
-3. **éç½®é©±å¨åå**ï¼ç­ç¥åç°ãå è½½ãåæ°å¨é¨éè¿éç½®æä»¶ç®¡ç
+2. **æ¥å£å
+è¡åå**ï¼æææ¨¡åå¿
+é¡»å
+å®ä¹æ¥å£ï¼åå®ç°
+3. **é
+ç½®é©±å¨åå**ï¼ç­ç¥åç°ãå è½½ãåæ°å
+¨é¨éè¿é
+ç½®æä»¶ç®¡ç
 4. **äºä»¶é©±å¨åå**ï¼æ¨¡åé´éè¿äºä»¶éä¿¡ï¼éä½è¦ååº?5. **ç¶æå¯è§æµåå**ï¼ææç­ç¥è¿è¡ç¶æå®æ¶çæ§ï¼å¯è¿½æº?
 ### 1.3 ä¸ç°æç³»ç»éæ?
-| å·²ææ¨¡å | éææ¹å¼ | æ¥å£å®ä¹ |
+| 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **factor_calculator.py** | å å­è®¡ç®æå¡ | API_Contract.md 2.2è?|
 | **risk_manager.py** | é£æ§æ£æ¥æå?| API_Contract.md 2.3è?|
-| **alert_manager.py** | åè­¦éç¥æå¡ | äºä»¶æ»çº¿éæ |
-| **Backtraderå¼æ** | åæµééå?| STRATEGY_ENGINE_BLUEPRINT.md 3.2è?|
+| **alert_manager.py** | 告警通知服务 | 事件总线集成 |
+| **Backtraderå¼æ** | åæµéé
+å?| STRATEGY_ENGINE_BLUEPRINT.md 3.2è?|
 
 
 ## äºãæ ¸å¿æ¶æè®¾è®?
 ### 2.1 æ´ä½æ¶æå?
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?â?                  ç­ç¥å¼ææ ¸å¿æ¶æ                                â?âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?â?                                                                â?â? âââââââââââââââ?    åç°       âââââââââââââââ?                â?â? â? ç­ç¥ç®å½   â?âââââââââââââââ?âç­ç¥æ«æå¨   â?                â?â? â?(config/    â?               â?Strategy    â?                â?â? â? strategies/)â?               â?Scanner)    â?                â?â? âââââââââââââââ?               ââââââââ¬âââââââ?                â?â?                                        â?è§£æ                   â?â?                                        â?                       â?â? âââââââââââââââ?    æ³¨å       âââââââââââââââ?                â?â? âç­ç¥æ³¨åè¡¨   â?ââââââââââââââ âç­ç¥å è½½å¨   â?                â?â? â?Strategy    â?               â?Strategy    â?                â?â? â?Registry)   â?               â?Loader)     â?                â?â? ââââââââ¬âââââââ?               âââââââââââââââ?                â?â?        â?è·ååæ°æ?                                            â?â?        â?                                                       â?â? âââââââââââââââ?    åå»ºå®ä¾    âââââââââââââââ?                â?â? âç­ç¥å·¥å?    â?âââââââââââââââ?âç­ç¥å¼æ?    â?                â?â? â?Strategy    â?               â?Strategy     â?                â?â? â?Factory)    â?               â?Engine)      â?                â?â? ââââââââ¬âââââââ?               ââââââââ¬âââââââ?                â?â?        â?                              â?æ§è¡                   â?â?        â?                              â?                       â?â? ââââââââ¼âââââââ?               âââââââââââââââ?                â?â? âåæ°ç®¡çå¨   â?               âäºä»¶æ»çº¿     â?                â?â? â?Parameter   â?               â?Event Bus)  â?                â?â? â?Manager)    â?               ââââââââ¬âââââââ?                â?â? âââââââââââââââ?                      â?åå¸äºä»¶                â?â?                                        â?                       â?â?                                 âââââââââââââââ?                â?â?                                 âä¸æ¸¸æ¨¡å?    â?                â?â?                                 â?é£æ§/æ§è¡/  â?                â?â?                                 â?çæ§)       â?                â?â?                                 âââââââââââââââ?                â?âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
+âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?â?                  ç­ç¥å¼ææ ¸å¿æ¶æ                                â?âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?â?                                                                â?â? âââââââââââââââ?    åç°       âââââââââââââââ?                â?â? â? ç­ç¥ç®å½   â?âââââââââââââââ?âç­ç¥æ«æå¨   â?                â?â? â?(config/    â?               â?Strategy    â?                â?â? â? strategies/)â?               â?Scanner)    â?                â?â? âââââââââââââââ?               ââââââââ¬âââââââ?                â?â?                                        â?è§£æ                   â?â?                                        â?                       â?â? âââââââââââââââ?    æ³¨å       âââââââââââââââ?                â?â? âç­ç¥æ³¨åè¡¨   â?ââââââââââââââ âç­ç¥å è½½å¨   â?                â?â? â?Strategy    â?               â?Strategy    â?                â?â? â?Registry)   â?               â?Loader)     â?                â?â? ââââââââ¬âââââââ?               âââââââââââââââ?                â?â?        â?è·åå
+æ°æ?                                            â?â?        â?                                                       â?â? âââââââââââââââ?    åå»ºå®ä¾    âââââââââââââââ?                â?â? âç­ç¥å·¥å?    â?âââââââââââââââ?âç­ç¥å¼æ?    â?                â?â? â?Strategy    â?               â?Strategy     â?                â?â? â?Factory)    â?               â?Engine)      â?                â?â? ââââââââ¬âââââââ?               ââââââââ¬âââââââ?                â?â?        â?                              â?æ§è¡                   â?â?        â?                              â?                       â?â? ââââââââ¼âââââââ?               âââââââââââââââ?                â?â? âåæ°ç®¡çå¨   â?               âäºä»¶æ»çº¿     â?                â?â? â?Parameter   â?               â?Event Bus)  â?                â?â? â?Manager)    â?               ââââââââ¬âââââââ?                â?â? âââââââââââââââ?                      â?åå¸äºä»¶                â?â?                                        â?                       â?â?                                 âââââââââââââââ?                â?â?                                 âä¸æ¸¸æ¨¡å?    â?                â?â?                                 â?é£æ§/æ§è¡/  â?                â?â?                                 â?çæ§)       â?                â?â?                                 âââââââââââââââ?                â?âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 ç»ä»¶èè´£åå
+### 2.2 组件职责划分
 
 | ç»ä»¶ | èè´£ | æ ¸å¿åè½ | å®ç°å¤æåº?|
 |------|------|----------|------------|
-| **StrategyScanner** | ç­ç¥åç° | æ«æç­ç¥ç®å½ï¼è§£æéç½®æä»?| ä½?|
-| **StrategyLoader** | ç­ç¥å è½½ | å¨æå¯¼å¥ç­ç¥æ¨¡åï¼éªè¯æ¥å£ | ä¸?|
-| **StrategyRegistry** | ç­ç¥æ³¨å | ç®¡çç­ç¥åæ°æ®ï¼æä¾æ¥è¯¢æ¥å£ | ä¸?|
-| **StrategyFactory** | ç­ç¥åå»º | å®ä¾åç­ç¥å¯¹è±¡ï¼æ³¨å¥ä¾èµ | ä¸?|
+| **StrategyScanner** | ç­ç¥åç° | æ«æç­ç¥ç®å½ï¼è§£æé
+ç½®æä»?| ä½?|
+| **StrategyLoader** | ç­ç¥å è½½ | å¨æå¯¼å
+¥ç­ç¥æ¨¡åï¼éªè¯æ¥å£ | ä¸?|
+| **StrategyRegistry** | ç­ç¥æ³¨å | ç®¡çç­ç¥å
+æ°æ®ï¼æä¾æ¥è¯¢æ¥å£ | ä¸?|
+| **StrategyFactory** | ç­ç¥åå»º | å®ä¾åç­ç¥å¯¹è±¡ï¼æ³¨å
+¥ä¾èµ | ä¸?|
 | **StrategyEngine** | ç­ç¥æ§è¡ | è¿è¡ç­ç¥é»è¾ï¼ç®¡çç­ç¥çå½å¨æ?| é«?|
 | **ParameterManager** | åæ°ç®¡ç | ç®¡çç­ç¥åæ°ï¼æ¯æçæ¬æ§å?| ä¸?|
-| **EventBus** | äºä»¶åå | å¼æ­¥äºä»¶åå¸/è®¢éï¼æ¨¡åè§£è?| ä¸?|
+| **EventBus** | äºä»¶åå | å¼æ­¥äºä»¶åå¸/è®¢é
+ï¼æ¨¡åè§£è?| ä¸?|
 | **StateMonitor** | ç¶æçæ?| æ¶éç­ç¥è¿è¡ææ ï¼å¥åº·æ£æ?| ä½?|
 
 ### 2.3 æ°æ®æµè®¾è®?
 ```
-ç­ç¥å¼å?â?éç½®æä»¶ â?æ«æåç° â?å è½½éªè¯ â?æ³¨ååæ°æ?    â?åæ°éç½® â?å·¥ååå»º â?å¼ææ§è¡ â?äºä»¶åå¸ â?ä¸æ¸¸å¤ç
+ç­ç¥å¼å?â?é
+ç½®æä»¶ â?æ«æåç° â?å è½½éªè¯ â?æ³¨åå
+æ°æ?    â?åæ°é
+ç½® â?å·¥ååå»º â?å¼ææ§è¡ â?äºä»¶åå¸ â?ä¸æ¸¸å¤ç
     â?ç¶æçæ?â?ææ æ¶é â?è¿è¡æ¥å¿ â?å¼å¸¸å¤ç â?ç»æåé¦
 ```
 
 
 ## ä¸ãæ ¸å¿ç»ä»¶è¯¦ç»è®¾è®?
 ### 3.1 StrategyScannerï¼ç­ç¥æ«æå¨ï¼?
-**è®¾è®¡ç®æ **ï¼èªå¨åç°ç­ç¥éç½®æä»¶ï¼æ¯æå¢éæ«æåç¼å­æºå?
+**è®¾è®¡ç®æ **ï¼èªå¨åç°ç­ç¥é
+ç½®æä»¶ï¼æ¯æå¢éæ«æåç¼å­æºå?
 ```python
 class StrategyScanner:
     """ç­ç¥æ«æå?    
-    ç´¢å¼: STRAT.ENG.CORE.001-M01
-    èè´£: æ«æç­ç¥éç½®ç®å½ï¼åç°ç­ç¥éç½®æä»?    è¾å¥: ç­ç¥ç®å½è·¯å¾(config/strategies/)
-    è¾åº: ç­ç¥éç½®æä»¶åè¡¨(ç­ç¥ID â?éç½®æä»¶è·¯å¾)
+    索引: STRAT.ENG.CORE.001-M01
+    èè´£: æ«æç­ç¥é
+ç½®ç®å½ï¼åç°ç­ç¥é
+ç½®æä»?    è¾å
+¥: ç­ç¥ç®å½è·¯å¾(config/strategies/)
+    è¾åº: ç­ç¥é
+ç½®æä»¶åè¡¨(ç­ç¥ID â?é
+ç½®æä»¶è·¯å¾)
     """
     
     def __init__(self, config_dir: str = "config/strategies"):
@@ -108,12 +140,14 @@ class StrategyScanner:
         self.cache = {}  # ç­ç¥ID â?(mtime, config_path)
         
     def scan(self, force_refresh: bool = False) -> Dict[str, str]:
-        """æ«æç­ç¥ç®å½ï¼è¿åç­ç¥éç½®æä»¶æ å°?        
-        åæ°:
-            force_refresh: æ¯å¦å¼ºå¶å·æ°ç¼å­
+        """æ«æç­ç¥ç®å½ï¼è¿åç­ç¥é
+ç½®æä»¶æ å°?        
+        参数:
+            force_refresh: 是否强制刷新缓存
             
-        è¿å:
-            Dict[str, str]: ç­ç¥ID â?éç½®æä»¶è·¯å¾
+        返回:
+            Dict[str, str]: ç­ç¥ID â?é
+ç½®æä»¶è·¯å¾
         """
         if not force_refresh and self._is_cache_valid():
             return self._get_cached_configs()
@@ -134,21 +168,24 @@ class StrategyScanner:
         return configs
         
     def watch_changes(self) -> None:
-        """çæ§ç­ç¥ç®å½ååï¼æ¯æç­éè½½"""
-        # ä½¿ç¨watchdogçæ§æä»¶åå
+        """监控策略目录变化，支持热重载"""
+        # 使用watchdog监控文件变化
         from watchdog.observers import Observer
         from watchdog.events import FileSystemEventHandler
 ```
 
 ### 3.2 StrategyLoaderï¼ç­ç¥å è½½å¨ï¼?
-**è®¾è®¡ç®æ **ï¼å¨æå è½½ç­ç¥æ¨¡åï¼éªè¯æ¥å£å¼å®¹æ§ï¼éç¦»ç­ç¥æ§è¡ç¯å¢
+**è®¾è®¡ç®æ **ï¼å¨æå è½½ç­ç¥æ¨¡åï¼éªè¯æ¥å£å
+¼å®¹æ§ï¼éç¦»ç­ç¥æ§è¡ç¯å¢
 
 ```python
 class StrategyLoader:
     """ç­ç¥å è½½å?    
-    ç´¢å¼: STRAT.ENG.CORE.001-M02
-    èè´£: å¨æå è½½ç­ç¥æ¨¡åï¼éªè¯ç­ç¥æ¥å£
-    è¾å¥: ç­ç¥éç½®æä»¶è·¯å¾
+    索引: STRAT.ENG.CORE.001-M02
+    职责: 动态加载策略模块，验证策略接口
+    è¾å
+¥: ç­ç¥é
+ç½®æä»¶è·¯å¾
     è¾åº: ç­ç¥ç±»å¯¹è±?å·²éªè¯?
     """
     
@@ -157,24 +194,30 @@ class StrategyLoader:
         self._loaded_modules = {}  # æ¨¡åè·¯å¾ â?æ¨¡åå¯¹è±¡
         
     def load_strategy_class(self, config: Dict) -> Type[BaseStrategy]:
-        """æ ¹æ®éç½®å è½½ç­ç¥ç±?        
-        åæ°:
-            config: ç­ç¥éç½®å­å¸
+        """æ ¹æ®é
+ç½®å è½½ç­ç¥ç±?        
+        参数:
+            config: ç­ç¥é
+ç½®å­å
+¸
             
-        è¿å:
+        返回:
             Type[BaseStrategy]: ç­ç¥ç±?            
         æ­¥éª¤:
-            1. è§£ææ¨¡åè·¯å¾ (module_path)
-            2. å¨æå¯¼å¥æ¨¡å?            3. è·åç­ç¥ç±?(class_name)
-            4. éªè¯æ¥å£å¼å®¹æ?            5. è¿åç­ç¥ç±?        """
-        # 1. è§£ææ¨¡åä¿¡æ¯
+            1. 解析模块路径 (module_path)
+            2. å¨æå¯¼å
+¥æ¨¡å?            3. è·åç­ç¥ç±?(class_name)
+            4. éªè¯æ¥å£å
+¼å®¹æ?            5. è¿åç­ç¥ç±?        """
+        # 1. 解析模块信息
         module_path = config.get('module_path')
         class_name = config.get('class_name')
         
         if not module_path or not class_name:
             raise StrategyLoadError("Missing module_path or class_name in config")
             
-        # 2. å¨æå¯¼å¥æ¨¡å?        try:
+        # 2. å¨æå¯¼å
+¥æ¨¡å?        try:
             if module_path not in self._loaded_modules:
                 module = importlib.import_module(module_path)
                 self._loaded_modules[module_path] = module
@@ -183,7 +226,8 @@ class StrategyLoader:
                 
             # 3. è·åç­ç¥ç±?            strategy_class = getattr(module, class_name)
             
-            # 4. éªè¯æ¥å£å¼å®¹æ?            self._validate_strategy_interface(strategy_class)
+            # 4. éªè¯æ¥å£å
+¼å®¹æ?            self._validate_strategy_interface(strategy_class)
             
             return strategy_class
             
@@ -193,7 +237,8 @@ class StrategyLoader:
             raise StrategyLoadError(f"Class {class_name} not found in module {module_path}: {e}")
             
     def _validate_strategy_interface(self, strategy_class: Type) -> None:
-        """éªè¯ç­ç¥ç±»æ¥å£å¼å®¹æ?""
+        """éªè¯ç­ç¥ç±»æ¥å£å
+¼å®¹æ?""
         required_methods = [
             'initialize',
             'handle_data', 
@@ -211,23 +256,30 @@ class StrategyLoader:
 ```
 
 ### 3.3 StrategyRegistryï¼ç­ç¥æ³¨åè¡¨ï¼?
-**è®¾è®¡ç®æ **ï¼éä¸­ç®¡çç­ç¥åæ°æ®ï¼æä¾å¿«éæ¥è¯¢åç¶æç®¡ç?
+**è®¾è®¡ç®æ **ï¼éä¸­ç®¡çç­ç¥å
+æ°æ®ï¼æä¾å¿«éæ¥è¯¢åç¶æç®¡ç?
 ```python
 class StrategyRegistry:
     """ç­ç¥æ³¨åè¡?    
-    ç´¢å¼: STRAT.ENG.CORE.001-M03
-    èè´£: ç®¡çç­ç¥åæ°æ®ï¼æä¾æ¥è¯¢åç¶æç®¡ç?    è¾å¥: ç­ç¥éç½®ä¿¡æ¯
-    è¾åº: ç­ç¥åæ°æ®å¯¹è±?    """
+    索引: STRAT.ENG.CORE.001-M03
+    èè´£: ç®¡çç­ç¥å
+æ°æ®ï¼æä¾æ¥è¯¢åç¶æç®¡ç?    è¾å
+¥: ç­ç¥é
+ç½®ä¿¡æ¯
+    è¾åº: ç­ç¥å
+æ°æ®å¯¹è±?    """
     
     def __init__(self):
         self._strategies = {}  # ç­ç¥ID â?StrategyMetadata
         self._by_category = defaultdict(list)  # ç­ç¥ç±»å« â?ç­ç¥IDåè¡¨
         self._statuses = {}  # ç­ç¥ID â?ç­ç¥ç¶æ?        
     def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
-        """æ³¨åç­ç¥åæ°æ?        
-        åæ°:
-            strategy_id: ç­ç¥ID
-            metadata: ç­ç¥åæ°æ®å¯¹è±?        """
+        """æ³¨åç­ç¥å
+æ°æ?        
+        参数:
+            strategy_id: 策略ID
+            metadata: ç­ç¥å
+æ°æ®å¯¹è±?        """
         if strategy_id in self._strategies:
             raise StrategyAlreadyRegisteredError(f"Strategy {strategy_id} already registered")
             
@@ -238,7 +290,8 @@ class StrategyRegistry:
         logger.info(f"Registered strategy: {strategy_id} ({metadata.name})")
         
     def get_metadata(self, strategy_id: str) -> StrategyMetadata:
-        """è·åç­ç¥åæ°æ?""
+        """è·åç­ç¥å
+æ°æ?""
         if strategy_id not in self._strategies:
             raise StrategyNotFoundError(f"Strategy {strategy_id} not found")
         return self._strategies[strategy_id]
@@ -261,7 +314,8 @@ class StrategyRegistry:
 
 @dataclass
 class StrategyMetadata:
-    """ç­ç¥åæ°æ?""
+    """ç­ç¥å
+æ°æ?""
     strategy_id: str
     name: str
     description: str
@@ -281,28 +335,32 @@ class StrategyMetadata:
 
 @dataclass  
 class ParameterInfo:
-    """åæ°ä¿¡æ¯"""
+    """参数信息"""
     name: str
     type: str  # int, float, str, bool, list
     default: Any
     min_value: Optional[float] = None
     max_value: Optional[float] = None
     description: str = ""
-    options: Optional[List[Any]] = None  # æä¸¾éé¡¹
+    options: Optional[List[Any]] = None  # 枚举选项
 ```
 
-### 3.4 StrategyFactoryï¼ç­ç¥å·¥åï¼
+### 3.4 StrategyFactory（策略工厂）
 
-**è®¾è®¡ç®æ **ï¼æéåå»ºç­ç¥å®ä¾ï¼æ¯æä¾èµæ³¨å¥ååæ°æ³¨å¥
+**è®¾è®¡ç®æ **ï¼æéåå»ºç­ç¥å®ä¾ï¼æ¯æä¾èµæ³¨å
+¥ååæ°æ³¨å
+¥
 
 ```python
 class StrategyFactory:
-    """ç­ç¥å·¥å
+    """策略工厂
     
-    ç´¢å¼: STRAT.ENG.CORE.001-M04
-    èè´£: åå»ºç­ç¥å®ä¾ï¼æ³¨å¥ä¾èµååæ°
-    è¾å¥: ç­ç¥ID + åæ°è¦ç
-    è¾åº: ç­ç¥å®ä¾å¯¹è±¡
+    索引: STRAT.ENG.CORE.001-M04
+    èè´£: åå»ºç­ç¥å®ä¾ï¼æ³¨å
+¥ä¾èµååæ°
+    è¾å
+¥: ç­ç¥ID + åæ°è¦ç
+    输出: 策略实例对象
     """
     
     def __init__(self, registry: StrategyRegistry, loader: StrategyLoader):
@@ -313,23 +371,24 @@ class StrategyFactory:
     def create_strategy(self, strategy_id: str, 
                        parameter_overrides: Dict[str, Any] = None,
                        use_cache: bool = True) -> BaseStrategy:
-        """åå»ºç­ç¥å®ä¾
+        """创建策略实例
         
-        åæ°:
-            strategy_id: ç­ç¥ID
+        参数:
+            strategy_id: 策略ID
             parameter_overrides: åæ°è¦çå?            use_cache: æ¯å¦ä½¿ç¨å®ä¾ç¼å­
             
-        è¿å:
-            BaseStrategy: ç­ç¥å®ä¾
+        返回:
+            BaseStrategy: 策略实例
         """
         # 1. æ£æ¥ç¼å­?        if use_cache and strategy_id in self._instances:
             instance = self._instances[strategy_id]
-            # åºç¨åæ°è¦ç
+            # 应用参数覆盖
             if parameter_overrides:
                 instance.set_parameters(parameter_overrides)
             return instance
             
-        # 2. è·åç­ç¥åæ°æ?        metadata = self.registry.get_metadata(strategy_id)
+        # 2. è·åç­ç¥å
+æ°æ?        metadata = self.registry.get_metadata(strategy_id)
         
         # 3. å è½½ç­ç¥ç±?        config = {
             'module_path': metadata.module_path,
@@ -337,14 +396,14 @@ class StrategyFactory:
         }
         strategy_class = self.loader.load_strategy_class(config)
         
-        # 4. æå»ºç­ç¥åæ°
+        # 4. 构建策略参数
         parameters = self._build_parameters(metadata, parameter_overrides)
         
-        # 5. åå»ºç­ç¥å®ä¾
+        # 5. 创建策略实例
         try:
             instance = strategy_class(parameters)
             
-            # 6. ç¼å­å®ä¾
+            # 6. 缓存实例
             if use_cache:
                 self._instances[strategy_id] = instance
                 
@@ -359,11 +418,13 @@ class StrategyFactory:
             
     def _build_parameters(self, metadata: StrategyMetadata, 
                          overrides: Dict[str, Any] = None) -> Dict[str, Any]:
-        """æå»ºç­ç¥åæ°å­å¸"""
+        """æå»ºç­ç¥åæ°å­å
+¸"""
         parameters = {}
         
         for param_name, param_info in metadata.parameters.items():
-            # ä¼åä½¿ç¨è¦çå?            if overrides and param_name in overrides:
+            # ä¼å
+ä½¿ç¨è¦çå?            if overrides and param_name in overrides:
                 value = overrides[param_name]
             else:
                 value = param_info.default
@@ -377,17 +438,18 @@ class StrategyFactory:
         return parameters
 ```
 
-### 3.5 StrategyEngineï¼ç­ç¥å¼æï¼
+### 3.5 StrategyEngine（策略引擎）
 
 **è®¾è®¡ç®æ **ï¼ç­ç¥æ§è¡æ ¸å¿ï¼ç®¡çç­ç¥çå½å¨æï¼éæäºä»¶é©±å¨æ¶æ?
 ```python
 class StrategyEngine:
-    """ç­ç¥å¼æ
+    """策略引擎
     
-    ç´¢å¼: STRAT.ENG.CORE.001-M05
-    èè´£: ç­ç¥æ§è¡æ ¸å¿ï¼ç®¡çç­ç¥çå½å¨æ?    è¾å¥: å¸åºæ°æ® + ç­ç¥å®ä¾
-    è¾åº: äº¤æä¿¡å· + ç­ç¥äºä»¶
-    æ¥å£: éµå¾ªAPI_Contract.mdä¸­çIStrategyEngineæ¥å£
+    索引: STRAT.ENG.CORE.001-M05
+    èè´£: ç­ç¥æ§è¡æ ¸å¿ï¼ç®¡çç­ç¥çå½å¨æ?    è¾å
+¥: å¸åºæ°æ® + ç­ç¥å®ä¾
+    输出: 交易信号 + 策略事件
+    接口: 遵循API_Contract.md中的IStrategyEngine接口
     """
     
     def __init__(self, event_bus: EventBus, registry: StrategyRegistry):
@@ -399,42 +461,43 @@ class StrategyEngine:
     def generate_signals(self, strategy_id: str, 
                         symbols: List[str], 
                         date: str) -> List[Signal]:
-        """çæäº¤æä¿¡å· - å®ç°IStrategyEngineæ¥å£
+        """生成交易信号 - 实现IStrategyEngine接口
         
-        åæ°:
-            strategy_id: ç­ç¥ID
-            symbols: è¡ç¥¨ä»£ç åè¡¨
+        参数:
+            strategy_id: 策略ID
+            symbols: 股票代码列表
             date: äº¤ææ?            
-        è¿å:
-            List[Signal]: äº¤æä¿¡å·åè¡¨
+        返回:
+            List[Signal]: 交易信号列表
             
-        æµç¨:
-            1. è·åç­ç¥å®ä¾
-            2. è·åå¸åºæ°æ®
-            3. æ§è¡ç­ç¥é»è¾
-            4. çæäº¤æä¿¡å·
-            5. åå¸ç­ç¥äºä»¶
+        流程:
+            1. 获取策略实例
+            2. 获取市场数据
+            3. 执行策略逻辑
+            4. 生成交易信号
+            5. 发布策略事件
         """
-        # 1. è·åç­ç¥å®ä¾
+        # 1. 获取策略实例
         strategy = self.factory.create_strategy(strategy_id)
         
-        # 2. è·åå¸åºæ°æ®
+        # 2. 获取市场数据
         market_data = self._fetch_market_data(symbols, date)
         
-        # 3. æ§è¡ç­ç¥é»è¾
+        # 3. 执行策略逻辑
         try:
             self.registry.update_status(strategy_id, StrategyStatus.RUNNING)
             
-            # å¼æ­¥æ§è¡ç­ç¥
+            # 异步执行策略
             future = self._executor.submit(
                 self._execute_strategy_logic,
                 strategy, market_data
             )
             
-            # è®¾ç½®è¶æ¶
+            # è®¾ç½®è¶
+时
             signals = future.result(timeout=5.0)
             
-            # 4. åå¸ç­ç¥æ§è¡äºä»¶
+            # 4. 发布策略执行事件
             self.event_bus.publish(
                 StrategyExecutedEvent(
                     strategy_id=strategy_id,
@@ -465,7 +528,7 @@ class StrategyEngine:
             
     def start_strategy(self, strategy_id: str, 
                       schedule: Optional[str] = None) -> None:
-        """å¯å¨ç­ç¥ï¼å®æ¶æ§è¡ï¼"""
+        """启动策略（定时执行）"""
         # åå»ºè¿è¡ä¸ä¸æ?        ctx = StrategyContext(
             strategy_id=strategy_id,
             status=StrategyStatus.SCHEDULED,
@@ -478,42 +541,54 @@ class StrategyEngine:
         self.event_bus.publish(StrategyStartedEvent(strategy_id=strategy_id))
         
     def stop_strategy(self, strategy_id: str) -> None:
-        """åæ­¢ç­ç¥"""
+        """停止策略"""
         if strategy_id in self._running_strategies:
             del self._running_strategies[strategy_id]
             self.registry.update_status(strategy_id, StrategyStatus.STOPPED)
             self.event_bus.publish(StrategyStoppedEvent(strategy_id=strategy_id))
 ```
 
-### 3.6 Layer 11å·¥å·æ¥å£éæ
+### 3.6 Layer 11å·¥å
+·æ¥å£éæ
 
-**è®¾è®¡ç®æ **ï¼ç­ç¥å¼æä½ä¸ºçº¯æ§è¡å±ï¼éè¿Layer 11å·¥å·æ¥å£æ¥åè°ç¨ï¼ä¸åå«AIçè§£é»è¾
+**è®¾è®¡ç®æ **ï¼ç­ç¥å¼æä½ä¸ºçº¯æ§è¡å±ï¼éè¿Layer 11å·¥å
+·æ¥å£æ¥åè°ç¨ï¼ä¸å
+含AI理解逻辑
 
-**æ¶æåå**ï¼?- â?**çº¯æ§è¡å±**ï¼ç­ç¥å¼æåªæä¾APIæ¥å£ï¼ä¸åå«AIçè§£
+**æ¶æåå**ï¼?- â?**çº¯æ§è¡å±**ï¼ç­ç¥å¼æåªæä¾APIæ¥å£ï¼ä¸å
+含AI理解
 - â?**åä¸AIå±?*ï¼æææå¾è¯å«ååæ°æåç±Layer 11ç»ä¸å¤ç
-- â?**å·¥å·åå°è£?*ï¼ç­ç¥å¼æå°è£ä¸ºå·¥å·ï¼éè¿LangChainè°ç¨
+- â?**å·¥å
+·åå°è£?*ï¼ç­ç¥å¼æå°è£
+ä¸ºå·¥å
+·ï¼éè¿LangChainè°ç¨
 
-**å·¥å·æ¥å£è§è**ï¼?
-è¯¦ç»æ¥å£å®ä¹åè§ï¼[Layer 11å·¥å·æ¥å£è§è](06_ARCHIVE/architecture_v4/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
+**å·¥å
+·æ¥å£è§è**ï¼?
+è¯¦ç»æ¥å£å®ä¹åè§ï¼[Layer 11å·¥å
+·æ¥å£è§è](06_ARCHIVE/architecture_v4/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
 
 **æ¯æçæä½?*ï¼?
 | æä½ | è¯´æ | åæ° | è¿åå?|
 |------|------|------|--------|
-| **configure** | éç½®æ°ç­ç?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
+| **configure** | é
+ç½®æ°ç­ç?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
 | **start** | å¯å¨ç­ç¥ | strategy_id | å¯å¨ç¶æ?|
 | **stop** | åæ­¢ç­ç¥ | strategy_id | åæ­¢ç¶æ?|
 | **status** | æ¥è¯¢ç­ç¥ç¶æ?| strategy_id | ç­ç¥ç¶æè¯¦æ?|
 | **list** | ååºææç­ç?| æ?| ç­ç¥åè¡¨ |
-| **backtest** | åæµç­ç¥ | strategy_id, start_date, end_date | åæµç»æ |
-| **optimize** | ä¼åç­ç¥åæ° | strategy_id, param_ranges | ä¼åç»æ |
+| **backtest** | 回测策略 | strategy_id, start_date, end_date | 回测结果 |
+| **optimize** | 优化策略参数 | strategy_id, param_ranges | 优化结果 |
 
 **è°ç¨ç¤ºä¾**ï¼?
 ```python
 # Layer 11è°ç¨ç­ç¥å¼æï¼çº¯æ§è¡ï¼æ AIï¼?from src.layer_11.tools.strategy_tool import StrategyTool
 
-# åå§åç­ç¥å·¥å?strategy_tool = StrategyTool()
+# åå§åç­ç¥å·¥å
+?strategy_tool = StrategyTool()
 
-# éç½®ç­ç¥ï¼åæ°å·²ç±Layer 11 AIæåï¼?result = strategy_tool.execute({
+# é
+ç½®ç­ç¥ï¼åæ°å·²ç±Layer 11 AIæåï¼?result = strategy_tool.execute({
     "action": "configure",
     "params": {
         "strategy_type": "momentum",
@@ -523,10 +598,11 @@ class StrategyEngine:
     }
 })
 
-# è¿åç»æ
+# 返回结果
 # {
 #     "success": True,
-#     "message": "ç­ç¥éç½®æå",
+#     "message": "ç­ç¥é
+ç½®æå",
 #     "data": {
 #         "strategy_id": "STRAT_20260402_001",
 #         "strategy_name": "å¨éç­ç¥_5æ¥æä»?,
@@ -536,49 +612,58 @@ class StrategyEngine:
 ```
 
 **éè¦è¯´æ**ï¼?- â?**å·²ç§»é?*ï¼èªç¶è¯­è¨ç­ç¥æ¥å£(NLSI)ãç­ç¥æè¿°è¯­è¨(DSL)ãAIç­ç¥è½¬æ¢å·¥ä½æµ?- â?**åå **ï¼è¿äºåè½å±äºAIçè§£å±ï¼åºç±Layer 11ç»ä¸å¤ç
-- â?**ä¼å¿**ï¼é¿åéå¤AIè°ç¨ï¼æåæ§è½ï¼éä½ç»´æ¤ææ?
+- â?**ä¼å¿**ï¼é¿å
+éå¤AIè°ç¨ï¼æåæ§è½ï¼éä½ç»´æ¤ææ?
 ### 3.7 EventBusï¼äºä»¶æ»çº¿ï¼?
-**è®¾è®¡ç®æ **ï¼å¼æ­¥äºä»¶åå¸?è®¢éç³»ç»ï¼å®ç°æ¨¡åè§£è?
+**è®¾è®¡ç®æ **ï¼å¼æ­¥äºä»¶åå¸?è®¢é
+ç³»ç»ï¼å®ç°æ¨¡åè§£è?
 ```python
 class EventBus:
-    """äºä»¶æ»çº¿
+    """事件总线
     
-    ç´¢å¼: STRAT.ENG.CORE.001-M06
-    èè´£: å¼æ­¥äºä»¶åå¸/è®¢éï¼æ¨¡åè§£è?    è®¾è®¡æ¨¡å¼: åå¸-è®¢éæ¨¡å¼ + è§å¯èæ¨¡å¼?    """
+    索引: STRAT.ENG.CORE.001-M06
+    èè´£: å¼æ­¥äºä»¶åå¸/è®¢é
+ï¼æ¨¡åè§£è?    è®¾è®¡æ¨¡å¼: åå¸-è®¢é
+æ¨¡å¼ + è§å¯è
+æ¨¡å¼?    """
     
     def __init__(self):
-        self._subscribers = defaultdict(list)  # äºä»¶ç±»å â?è®¢éèåè¡?        self._queue = Queue()  # äºä»¶éå
+        self._subscribers = defaultdict(list)  # äºä»¶ç±»å â?è®¢é
+è
+åè¡?        self._queue = Queue()  # äºä»¶éå
         self._worker_thread = None
         self._running = False
         
     def subscribe(self, event_type: Type[Event], callback: Callable) -> None:
-        """è®¢éäºä»¶"""
+        """è®¢é
+事件"""
         self._subscribers[event_type].append(callback)
         
     def publish(self, event: Event) -> None:
-        """åå¸äºä»¶"""
+        """发布事件"""
         self._queue.put(event)
         
     def start(self) -> None:
-        """å¯å¨äºä»¶æ»çº¿"""
+        """启动事件总线"""
         self._running = True
         self._worker_thread = Thread(target=self._process_events, daemon=True)
         self._worker_thread.start()
         
     def stop(self) -> None:
-        """åæ­¢äºä»¶æ»çº¿"""
+        """停止事件总线"""
         self._running = False
         if self._worker_thread:
             self._worker_thread.join(timeout=5.0)
             
     def _process_events(self) -> None:
-        """å¤çäºä»¶éå"""
+        """处理事件队列"""
         while self._running:
             try:
                 event = self._queue.get(timeout=1.0)
                 event_type = type(event)
                 
-                # éç¥ææè®¢éè?                for callback in self._subscribers[event_type]:
+                # éç¥ææè®¢é
+è?                for callback in self._subscribers[event_type]:
                     try:
                         callback(event)
                     except Exception as e:
@@ -592,27 +677,27 @@ class EventBus:
                 logger.error(f"Event processing error: {e}")
 
 
-# ç­ç¥äºä»¶å®ä¹
+# 策略事件定义
 @dataclass
 class StrategyEvent(Event):
-    """ç­ç¥åºç¡äºä»¶"""
+    """策略基础事件"""
     strategy_id: str
     timestamp: datetime = field(default_factory=datetime.utcnow)
     
 
 @dataclass
 class StrategyStartedEvent(StrategyEvent):
-    """ç­ç¥å¯å¨äºä»¶"""
+    """策略启动事件"""
 
 
 @dataclass
 class StrategyStoppedEvent(StrategyEvent):
-    """ç­ç¥åæ­¢äºä»¶"""
+    """策略停止事件"""
 
 
 @dataclass
 class StrategyExecutedEvent(StrategyEvent):
-    """ç­ç¥æ§è¡å®æäºä»¶"""
+    """策略执行完成事件"""
     execution_time: datetime
     symbols: List[str]
     signals_count: int
@@ -621,42 +706,51 @@ class StrategyExecutedEvent(StrategyEvent):
 
 @dataclass
 class StrategyErrorEvent(StrategyEvent):
-    """ç­ç¥éè¯¯äºä»¶"""
+    """策略错误事件"""
     error: str
     
 
 @dataclass
 class StrategyTimeoutEvent(StrategyEvent):
-    """ç­ç¥è¶æ¶äºä»¶"""
+    """ç­ç¥è¶
+时事件"""
 ```
 
 
 ## åãå¨æå è½½æºå?
-### 4.1 ç­ç¥åç°æµç¨
+### 4.1 策略发现流程
 
 ```
-1. éç½®æä»¶æ«æ
+1. é
+ç½®æä»¶æ«æ
    â?2. YAMLè§£æéªè¯
-   â?3. åæ°æ®æå?   â?4. æ¥å£å¼å®¹æ§æ£æ?   â?5. æ³¨åè¡¨æ³¨å?```
+   â?3. å
+æ°æ®æå?   â?4. æ¥å£å
+¼å®¹æ§æ£æ?   â?5. æ³¨åè¡¨æ³¨å?```
 
-### 4.2 éç½®æä»¶æ ¼å¼è§è
+### 4.2 é
+ç½®æä»¶æ ¼å¼è§è
 
 ```yaml
 # config/strategies/trend/ma_cross.yaml
 strategy_id: "T001_ma_cross"
-name: "ç§»å¨åçº¿äº¤åç­ç¥"
-description: "åºäºå¿«éåçº¿åæ¢éåçº¿äº¤åçäº¤æç­ç¥"
+name: "移动均线交叉策略"
+description: "åºäºå¿«éåçº¿åæ
+¢éåçº¿äº¤åçäº¤æç­ç¥"
 category: "trend"
 version: "1.0.0"
-author: "ç³»ç»åç½®"
+author: "ç³»ç»å
+ç½®"
 created_date: "2026-03-01"
 last_modified: "2026-03-30"
 
-# æ¨¡åéç½®
+# æ¨¡åé
+ç½®
 module_path: "src.strategies.trend.ma_cross"
 class_name: "MovingAverageCrossStrategy"
 
-# åæ°éç½®
+# åæ°é
+ç½®
 parameters:
   fast_period:
     type: "int"
@@ -669,22 +763,24 @@ parameters:
     default: 50
     min_value: 10
     max_value: 200
-    description: "æ¢éåçº¿å¨æ?
+    description: "æ
+¢éåçº¿å¨æ?
   position_size:
     type: "float"
     default: 0.1
     min_value: 0.01
     max_value: 0.5
-    description: "ä»ä½å¤§å°æ¯ä¾"
+    description: "仓位大小比例"
 
-# ä¾èµéç½®
+# ä¾èµé
+ç½®
 dependencies:
   - "pandas>=1.5.0"
   - "numpy>=1.24.0"
 
-# æ ç­¾ç³»ç»
+# 标签系统
 tags:
-  - "è¶å¿è·è¸ª"
+  - "趋势跟踪"
   - "ææ¯ææ ?
   - "Aè¡ä¼å?
 ```
@@ -692,7 +788,7 @@ tags:
 ### 4.3 ç­é¨ç½²å®ç°æ¹æ¡?
 ```python
 class HotDeploymentManager:
-    """ç­é¨ç½²ç®¡çå¨"""
+    """热部署管理器"""
     
     def __init__(self, scanner: StrategyScanner, registry: StrategyRegistry):
         self.scanner = scanner
@@ -701,7 +797,7 @@ class HotDeploymentManager:
         
     def enable_hot_reload(self) -> None:
         """å¯ç¨ç­éè½?""
-        # çæ§ç­ç¥ç®å½åå
+        # 监控策略目录变化
         self.file_watcher = FileSystemWatcher(
             path="config/strategies/",
             callback=self._on_config_changed
@@ -709,7 +805,8 @@ class HotDeploymentManager:
         self.file_watcher.start()
         
     def _on_config_changed(self, event: FileSystemEvent) -> None:
-        """éç½®æä»¶åååè°"""
+        """é
+ç½®æä»¶åååè°"""
         if event.event_type in ('created', 'modified'):
             # éæ°æ«æå¹¶å è½½ç­ç?            configs = self.scanner.scan(force_refresh=True)
             
@@ -720,8 +817,9 @@ class HotDeploymentManager:
                     logger.error(f"Hot reload failed for {strategy_id}: {e}")
                     
     def _reload_strategy(self, strategy_id: str, config_path: str) -> None:
-        """éæ°å è½½ç­ç¥"""
-        # 1. è§£ææ°éç½?        with open(config_path, 'r') as f:
+        """重新加载策略"""
+        # 1. è§£ææ°é
+ç½?        with open(config_path, 'r') as f:
             new_config = yaml.safe_load(f)
             
         # 2. è·åç°æç­ç¥ç¶æ?        old_status = self.registry.get_status(strategy_id)
@@ -729,49 +827,55 @@ class HotDeploymentManager:
         # 3. éæ°å è½½ç­ç¥ç±?        loader = StrategyLoader()
         strategy_class = loader.load_strategy_class(new_config)
         
-        # 4. æ´æ°æ³¨åè¡¨åæ°æ®
+        # 4. æ´æ°æ³¨åè¡¨å
+æ°æ®
         metadata = self._create_metadata(new_config, config_path)
         self.registry.update_metadata(strategy_id, metadata)
         
         # 5. æ¢å¤ç­ç¥ç¶æ?        if old_status == StrategyStatus.RUNNING:
-            # éå¯ç­ç¥
+            # 重启策略
             self._restart_strategy(strategy_id)
 ```
 
 
 ## äºãéææ¹æ¡è®¾è®?
-### 5.1 ä¸Backtraderéæ
+### 5.1 与Backtrader集成
 
 ```python
 class BacktraderStrategyAdapter:
-    """Backtraderç­ç¥ééå?""
+    """Backtraderç­ç¥éé
+å?""
     
     def __init__(self, strategy_engine: StrategyEngine):
         self.strategy_engine = strategy_engine
         
     def create_backtrader_strategy(self, strategy_id: str) -> bt.Strategy:
-        """åå»ºBacktraderç­ç¥åè£å?""
+        """åå»ºBacktraderç­ç¥å
+è£
+å?""
         
         class BacktraderStrategyWrapper(bt.Strategy):
-            """Backtraderç­ç¥åè£å?""
+            """Backtraderç­ç¥å
+è£
+å?""
             
             params = (
                 ('strategy_id', strategy_id),
             )
             
             def __init__(self):
-                # éè¿StrategyEngineè·åç­ç¥å®ä¾
+                # 通过StrategyEngine获取策略实例
                 self.original_strategy = strategy_engine.factory.create_strategy(strategy_id)
                 self.signals = []
                 
             def next(self):
-                # å°Backtraderæ°æ®è½¬æ¢ä¸ºDataFrame
+                # 将Backtrader数据转换为DataFrame
                 data_df = self._convert_backtrader_data()
                 
-                # è°ç¨åå§ç­ç¥é»è¾
+                # 调用原始策略逻辑
                 signals = self.original_strategy.generate_signal(data_df)
                 
-                # è½¬æ¢ä¸ºBacktraderè®¢å
+                # 转换为Backtrader订单
                 for signal in signals:
                     self._execute_backtrader_order(signal)
                     
@@ -791,7 +895,7 @@ class SystemIntegrator:
         self.event_bus = EventBus()
         self.engine = StrategyEngine(self.event_bus, self.registry)
         
-        # éæç°ææ¨¡å
+        # 集成现有模块
         self.factor_calculator = FactorCalculator()
         self.risk_manager = RiskManager()
         self.alert_manager = AlertManager()
@@ -808,43 +912,51 @@ class SystemIntegrator:
         # ç­ç¥ä¿¡å· â?é£æ§æ£æ?        self.event_bus.subscribe(SignalGeneratedEvent, self._on_signal_generated)
         
     def _on_strategy_executed(self, event: StrategyExecutedEvent) -> None:
-        """ç­ç¥æ§è¡å®æäºä»¶å¤ç"""
-        # è§¦åå å­éæ°è®¡ç®
+        """策略执行完成事件处理"""
+        # 触发因子重新计算
         self.factor_calculator.recalculate_factors(event.symbols)
         
     def _on_strategy_error(self, event: StrategyErrorEvent) -> None:
-        """ç­ç¥éè¯¯äºä»¶å¤ç"""
-        # åéåè­¦éç¥
+        """策略错误事件处理"""
+        # 发送告警通知
         self.alert_manager.send_alert(
-            f"ç­ç¥ {event.strategy_id} æ§è¡éè¯¯: {event.error}",
+            f"策略 {event.strategy_id} 执行错误: {event.error}",
             level="ERROR"
         )
         
     def _on_signal_generated(self, event: SignalGeneratedEvent) -> None:
-        """ä¿¡å·çæäºä»¶å¤ç"""
+        """信号生成事件处理"""
         # é£æ§æ£æ?        risk_result = self.risk_manager.check_signal(event.signal)
         
         if risk_result.approved:
-            # åéå°äº¤ææ§è¡
+            # 发送到交易执行
             self._send_to_execution(event.signal)
         else:
             logger.warning(f"ä¿¡å·è¢«é£æ§æç»? {risk_result.reason}")
 ```
 
 
-## å­ãéç½®ç®¡çä¸åæ°ç³»ç»
+## å
+­ãé
+ç½®ç®¡çä¸åæ°ç³»ç»
 
-### 6.1 å¤å±éç½®ç³»ç»
+### 6.1 å¤å±é
+ç½®ç³»ç»
 
 ```
-éç½®å±çº§ï¼ä»é«å°ä½ä¼åçº§ï¼?
-1. è¿è¡æ¶åæ°è¦ç?(æé«ä¼åçº§)
-2. ç­ç¥å®ä¾åæ°
-3. ç­ç¥éç½®æä»¶åæ°  
-4. ç³»ç»é»è®¤åæ° (æä½ä¼åçº§)
+é
+ç½®å±çº§ï¼ä»é«å°ä½ä¼å
+çº§ï¼?
+1. è¿è¡æ¶åæ°è¦ç?(æé«ä¼å
+çº§)
+2. 策略实例参数
+3. ç­ç¥é
+ç½®æä»¶åæ°  
+4. ç³»ç»é»è®¤åæ° (æä½ä¼å
+çº§)
 ```
 
-### 6.2 åæ°çæ¬æ§å¶
+### 6.2 参数版本控制
 
 ```python
 class ParameterVersionManager:
@@ -857,7 +969,8 @@ class ParameterVersionManager:
     def save_parameter_snapshot(self, strategy_id: str, 
                                parameters: Dict[str, Any],
                                version_note: str = "") -> str:
-        """ä¿å­åæ°å¿«ç§"""
+        """ä¿å­åæ°å¿«ç
+§"""
         version_id = f"v{len(self._versions.get(strategy_id, [])) + 1}"
         
         snapshot = ParameterSnapshot(
@@ -870,7 +983,8 @@ class ParameterVersionManager:
         
         self.storage.save_snapshot(snapshot)
         
-        # æ´æ°åå­çæ¬åè¡¨
+        # æ´æ°å
+存版本列表
         if strategy_id not in self._versions:
             self._versions[strategy_id] = []
         self._versions[strategy_id].append(snapshot)
@@ -885,13 +999,14 @@ class ParameterVersionManager:
         if not snapshot:
             raise ParameterVersionError(f"Snapshot not found: {strategy_id}/{version_id}")
             
-        # åºç¨åæ»
+        # 应用回滚
         self._apply_parameters(strategy_id, snapshot.parameters)
         
         return snapshot.parameters
 ```
 
-### 6.3 éç½®éªè¯è§å
+### 6.3 é
+ç½®éªè¯è§å
 
 ```python
 CONFIG_VALIDATION_RULES = {
@@ -930,7 +1045,7 @@ CONFIG_VALIDATION_RULES = {
 
 
 ## ä¸ãæ§è½ä¼åä¸çæ?
-### 7.1 æ§è½ææ æ¶é
+### 7.1 性能指标收集
 
 ```python
 class PerformanceMonitor:
@@ -950,14 +1065,14 @@ class PerformanceMonitor:
         self.start_time = time.time()
         
     def record_metric(self, metric_name: str, value: float) -> None:
-        """è®°å½æ§è½ææ """
+        """记录性能指标"""
         self.metrics[metric_name].append({
             'timestamp': time.time(),
             'value': value
         })
         
     def get_strategy_performance(self, strategy_id: str) -> Dict[str, Any]:
-        """è·åç­ç¥æ§è½æ¥å"""
+        """获取策略性能报告"""
         return {
             'strategy_id': strategy_id,
             'avg_execution_time': self._calculate_avg(f'{strategy_id}_execution_time'),
@@ -967,28 +1082,30 @@ class PerformanceMonitor:
         }
 ```
 
-### 7.2 ç¼å­ä¼åç­ç¥
+### 7.2 缓存优化策略
 
 ```python
 CACHE_CONFIG = {
     'strategy_instances': {
         'max_size': 50,
-        'ttl_seconds': 3600,  # 1å°æ¶
+        'ttl_seconds': 3600,  # 1小时
         'eviction_policy': 'LRU'  # æè¿æå°ä½¿ç?    },
     'market_data': {
         'max_size': 1000,
-        'ttl_seconds': 300,  # 5åé
+        'ttl_seconds': 300,  # 5分钟
         'eviction_policy': 'LRU'
     },
     'parameter_snapshots': {
         'max_size': 100,
-        'ttl_seconds': 86400,  # 24å°æ¶
-        'eviction_policy': 'FIFO'  # åè¿ååº
+        'ttl_seconds': 86400,  # 24小时
+        'eviction_policy': 'FIFO'  # å
+è¿å
+åº
     }
 }
 ```
 
-### 7.3 èµæºéç¦»æºå¶
+### 7.3 资源隔离机制
 
 ```python
 class ResourceIsolator:
@@ -999,7 +1116,7 @@ class ResourceIsolator:
         
     def run_strategy_in_isolation(self, strategy_id: str, 
                                  func: Callable, *args, **kwargs) -> Any:
-        """å¨éç¦»ç¯å¢ä¸­è¿è¡ç­ç¥"""
+        """在隔离环境中运行策略"""
         # ä½¿ç¨è¿ç¨æ± éç¦»ç­ç¥æ§è¡?        with ProcessPoolExecutor(max_workers=1) as executor:
             future = executor.submit(func, *args, **kwargs)
             
@@ -1007,7 +1124,7 @@ class ResourceIsolator:
                 result = future.result(timeout=10.0)
                 return result
             except TimeoutError:
-                # ç»æ­¢è¿ç¨
+                # 终止进程
                 future.cancel()
                 raise StrategyTimeoutError(f"Strategy {strategy_id} timeout")
             except Exception as e:
@@ -1015,16 +1132,21 @@ class ResourceIsolator:
 ```
 
 
-## å«ãéè¯¯å¤çä¸å®¹éæºå¶
+## å
+«ãéè¯¯å¤çä¸å®¹éæºå¶
 
 ### 8.1 éè¯¯åç±»ä¸å¤çç­ç?
-| éè¯¯ç±»å | ä¸¥éç­çº§ | å¤çç­ç¥ | æ¢å¤å¨ä½ |
+| 错误类型 | 严重等级 | 处理策略 | 恢复动作 |
 |----------|----------|----------|----------|
-| **éç½®éè¯¯** | ERROR | ç«å³å¤±è´¥ | è·³è¿è¯¥ç­ç¥ï¼è®°å½æ¥å¿ |
-| **å è½½éè¯¯** | ERROR | ç«å³å¤±è´¥ | æ è®°ç­ç¥ä¸å¯ç¨ï¼éç¥ç¨æ· |
-| **æ§è¡è¶æ¶** | WARNING | è¶æ¶æ§å¶ | ç»æ­¢æ§è¡ï¼è¿åç©ºä¿¡å· |
-| **åå­æº¢åº** | CRITICAL | èµæºéç¦» | éå¯ç­ç¥è¿ç¨ |
-| **æ°æ®éè¯¯** | WARNING | æ°æ®éªè¯ | ä½¿ç¨é»è®¤å¼æè·³è¿ |
+| **é
+ç½®éè¯¯** | ERROR | ç«å³å¤±è´¥ | è·³è¿è¯¥ç­ç¥ï¼è®°å½æ¥å¿ |
+| **加载错误** | ERROR | 立即失败 | 标记策略不可用，通知用户 |
+| **æ§è¡è¶
+æ¶** | WARNING | è¶
+时控制 | 终止执行，返回空信号 |
+| **å
+存溢出** | CRITICAL | 资源隔离 | 重启策略进程 |
+| **数据错误** | WARNING | 数据验证 | 使用默认值或跳过 |
 
 ### 8.2 æ­è·¯å¨æ¨¡å¼å®ç?
 ```python
@@ -1075,13 +1197,14 @@ class CircuitBreaker:
 ```
 
 
-## ä¹ãé¨ç½²ä¸è¿ç»´æå
+## 九、部署与运维指南
 
-### 9.1 é¨ç½²æ¶æ
+### 9.1 部署架构
 
 ```
-çäº§ç¯å¢é¨ç½²:
-âââââââââââââââââââ?   âââââââââââââââââââ?â? ç­ç¥éç½®ä¸­å¿    â?   â? ç­ç¥æ§è¡éç¾¤    â?â? (Config DB)    âââââºâ  (Engine Nodes) â?âââââââââââââââââââ?   âââââââââââââââââââ?         â?                     â?         â?                     â?âââââââââââââââââââ?   âââââââââââââââââââ?â? çæ§åè­¦ç³»ç»    â?   â? æ¥å¿åæå¹³å°    â?â? (Prometheus)   â?   â? (ELK Stack)    â?âââââââââââââââââââ?   âââââââââââââââââââ?```
+生产环境部署:
+âââââââââââââââââââ?   âââââââââââââââââââ?â? ç­ç¥é
+ç½®ä¸­å¿    â?   â? ç­ç¥æ§è¡éç¾¤    â?â? (Config DB)    âââââºâ  (Engine Nodes) â?âââââââââââââââââââ?   âââââââââââââââââââ?         â?                     â?         â?                     â?âââââââââââââââââââ?   âââââââââââââââââââ?â? çæ§åè­¦ç³»ç»    â?   â? æ¥å¿åæå¹³å°    â?â? (Prometheus)   â?   â? (ELK Stack)    â?âââââââââââââââââââ?   âââââââââââââââââââ?```
 
 ### 9.2 å¥åº·æ£æ¥æ¥å?
 ```python
@@ -1105,7 +1228,7 @@ def health_check():
     }
 ```
 
-### 9.3 çæ§ææ 
+### 9.3 监控指标
 
 ```yaml
 prometheus_metrics:
@@ -1131,51 +1254,72 @@ prometheus_metrics:
 ```
 
 
-## åãç¸å³ææ¡£ç´¢å¼?
+## åãç¸å
+³ææ¡£ç´¢å¼?
 ### 10.1 æ ¸å¿åèææ¡?
-| ææ¡£ | è¯´æ | ç¸å³æ?|
+| ææ¡£ | è¯´æ | ç¸å
+³æ?|
 |------|------|--------|
 | [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | ä¸ªäººå¼åèå?| â­â­â­â­â­?|
 | [API_Contract.md](03_TRADING_TACTICS/API_Contract.md) | ç³»ç»æ¥å£å¥çº¦ | â­â­â­â­â­?|
-| [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | ç³»ç»æ¶æè®¾è®¡ | â­â­â­â­ |
-| [BACKTEST_BLUEPRINT.md](./BACKTEST_BLUEPRINT.md) | åæµç³»ç»è®¾è®¡ | â­â­â­â­ |
+| [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构设计 | ⭐⭐⭐⭐ |
+| [BACKTEST_BLUEPRINT.md](./BACKTEST_BLUEPRINT.md) | 回测系统设计 | ⭐⭐⭐⭐ |
 | [STRATEGY_TEMPLATES.md](./STRATEGY_TEMPLATES.md) | ç­ç¥æ¨¡æ¿åº?| â­â­â­?|
 
-### 10.2 ä»£ç å®ç°ä½ç½®
+### 10.2 代码实现位置
 
 | ç»ä»¶ | æä»¶è·¯å¾ | ç¶æ?|
 |------|----------|------|
-| StrategyScanner | `src/modules/strategy_scanner.py` | å¾å®ç?|
-| StrategyLoader | `src/modules/strategy_loader.py` | å¾å®ç?|
-| StrategyRegistry | `src/modules/strategy_registry.py` | å¾å®ç?|
-| StrategyFactory | `src/modules/strategy_factory.py` | å¾å®ç?|
-| StrategyEngine | `src/modules/strategy_engine.py` | å¾å®ç?|
-| EventBus | `src/core/event_bus.py` | å¾å®ç?|
+| StrategyScanner | `src/modules/strategy_scanner.py` | å¾
+å®ç?|
+| StrategyLoader | `src/modules/strategy_loader.py` | å¾
+å®ç?|
+| StrategyRegistry | `src/modules/strategy_registry.py` | å¾
+å®ç?|
+| StrategyFactory | `src/modules/strategy_factory.py` | å¾
+å®ç?|
+| StrategyEngine | `src/modules/strategy_engine.py` | å¾
+å®ç?|
+| EventBus | `src/core/event_bus.py` | å¾
+å®ç?|
 
-### 10.3 éç½®ç¤ºä¾ä½ç½®
+### 10.3 é
+ç½®ç¤ºä¾ä½ç½®
 
-| éç½®ç±»å | æä»¶è·¯å¾ | ç¨é?|
+| é
+ç½®ç±»å | æä»¶è·¯å¾ | ç¨é?|
 |----------|----------|------|
-| ç­ç¥éç½® | `config/strategies/trend/ma_cross.yaml` | ç§»å¨åçº¿äº¤åç­ç¥ |
-| ç³»ç»éç½® | `config/system.yaml` | ç­ç¥å¼æå¨å±éç½® |
-| ç¼å­éç½® | `config/cache.yaml` | ç¼å­ç­ç¥éç½® |
-| çæ§éç½® | `config/monitoring.yaml` | æ§è½çæ§éç½® |
+| ç­ç¥é
+ç½® | `config/strategies/trend/ma_cross.yaml` | ç§»å¨åçº¿äº¤åç­ç¥ |
+| ç³»ç»é
+ç½® | `config/system.yaml` | ç­ç¥å¼æå
+¨å±é
+ç½® |
+| ç¼å­é
+ç½® | `config/cache.yaml` | ç¼å­ç­ç¥é
+ç½® |
+| çæ§é
+ç½® | `config/monitoring.yaml` | æ§è½çæ§é
+ç½® |
 
 
-## åä¸ãå¼åéç¨ç¢
+## 十一、开发里程碑
 
 ### 11.1 ç¬¬ä¸é¶æ®µï¼æ ¸å¿éª¨æ¶ï¼Week 1-2ï¼?- [ ] å®ç°StrategyScanneråºç¡æ«æåè½
-- [ ] å®ç°StrategyLoaderå¨æå è½½æºå?- [ ] å®ç°StrategyRegistryåæ°æ®ç®¡ç?- [ ] å®æéç½®æä»¶è§£æéªè¯
+- [ ] å®ç°StrategyLoaderå¨æå è½½æºå?- [ ] å®ç°StrategyRegistryå
+æ°æ®ç®¡ç?- [ ] å®æé
+ç½®æä»¶è§£æéªè¯
 
-### 11.2 ç¬¬äºé¶æ®µï¼å¼ææ ¸å¿ï¼Week 3-4ï¼?- [ ] å®ç°StrategyFactoryä¾èµæ³¨å¥
-- [ ] å®ç°StrategyEngineçå½å¨æç®¡ç
-- [ ] å®ç°EventBusäºä»¶ç³»ç»
-- [ ] å®æåºç¡éææµè¯
+### 11.2 ç¬¬äºé¶æ®µï¼å¼ææ ¸å¿ï¼Week 3-4ï¼?- [ ] å®ç°StrategyFactoryä¾èµæ³¨å
+¥
+- [ ] 实现StrategyEngine生命周期管理
+- [ ] 实现EventBus事件系统
+- [ ] 完成基础集成测试
 
 ### 11.3 ç¬¬ä¸é¶æ®µï¼é«çº§åè½ï¼Week 5-6ï¼?- [ ] å®ç°ç­é¨ç½²æºå?- [ ] å®ç°åæ°çæ¬æ§å¶
-- [ ] å®ç°æ§è½çæ§ç³»ç»
+- [ ] 实现性能监控系统
 - [ ] å®ææ­è·¯å¨å®¹éæºå?
-### 11.4 ç¬¬åé¶æ®µï¼çäº§å°±
+### 11.4 第四阶段：生产就
 ---
 
 ## 1. 文档治理

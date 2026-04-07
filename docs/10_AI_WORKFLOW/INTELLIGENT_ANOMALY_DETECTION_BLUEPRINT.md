@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_ANOMALY_DETECTION_001
 version: 1.0.0
 status: Active

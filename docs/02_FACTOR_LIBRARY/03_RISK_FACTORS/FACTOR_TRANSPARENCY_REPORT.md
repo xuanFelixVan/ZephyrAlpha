@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_T_03_RM004_FACTOR_TRANSPARENCY_001
 version: 1.0.0
 status: Active

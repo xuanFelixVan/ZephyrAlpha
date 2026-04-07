@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2
 version: 1.0.0
 status: Active

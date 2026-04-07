@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SPARSE_ATTENTION_BLUEPRINT_001
 
 version: 1.0.0

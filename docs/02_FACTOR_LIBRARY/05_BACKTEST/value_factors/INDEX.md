@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VALUE_FACTORS_INDEX_001
 version: 1.0.0
 status: Active

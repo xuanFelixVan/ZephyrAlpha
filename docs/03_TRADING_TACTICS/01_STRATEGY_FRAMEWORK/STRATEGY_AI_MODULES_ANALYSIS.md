@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_AI_MODULES_ANALYSIS_001
 version: 1.0.0
 status: Active

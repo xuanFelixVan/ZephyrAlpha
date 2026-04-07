@@ -1,23 +1,24 @@
----
+﻿---
 module_id: DATA_SOURCE_HEALTH_MONITOR__001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: é¦å¸­æ¶æå¸?
-standard_type: ä¸ä¸éåæºæèå¾
-applicable_scope: Layer 1 æ°æ®é¢å¤çå±
-compliance_level: ä¸ä¸æ å
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据预处理层
+compliance_level: 专业标准
 priority: P1
 layer: Layer 5.1 (数据处理)
-responsibility: æ°æ®æºå¥åº·çæ§ä¸æéåæ¢
+responsibility: æ°æ®æºå¥åº·çæ§ä¸æ
+障切换
 ---
 
 # æ°æ®æºå¥åº·çæ§èå?
 
 ## 核心定位
 
-负责数据源健康监控的设计与实现，基于健康检查技术，监控数据源状态，确保数据可用性。
+负责数据源健康监控的设计与实现，基于健康检查技术，监控数据源状态，确保数据可用性。 提供数据管理、查询、更新功能，确保数据质量和一致性。
 
 
 ## 设计目标
@@ -72,22 +73,24 @@ responsibility: æ°æ®æºå¥åº·çæ§ä¸æéå
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 è´è´£æ°æ®æºå¥åº·çæ§ï¼å®æ¶çæ§æ°æ®æºç¶æï¼æä¾å¥åº·æ£æ¥ãåè­¦åèªå¨æ¢å¤åè½ã?
 
 ## ð ä¸ãæ¨¡åæ¦è¿?
 
-### 1.1 ä¸ä¸æºææ åè¦æ±
+### 1.1 专业机构标准要求
 
 | æºæç±»å | çæ§è¦æ± | å¯ç¨æ§ç®æ ?|
 |---------|---------|-----------|
 | **æ¡¥æ°´åºé** | å®æ¶çæ§ãèªå¨åæ?| 99.99% |
-| **æèºå¤å´ç§æ** | å¤ç»´åº¦å¥åº·æ£æ?| 99.95% |
+| **æèºå¤å
+´ç§æ** | å¤ç»´åº¦å¥åº·æ£æ?| 99.95% |
 | **Two Sigma** | é¢æµæ§ç»´æ?| 99.9% |
-| **Citadel** | ç§çº§æéæ£æµ?| 99.99% |
+| **Citadel** | ç§çº§æ
+éæ£æµ?| 99.99% |
 
-### 1.2 æ ¸å¿åè½ç©éµ
+### 1.2 核心功能矩阵
 
 | åè½æ¨¡å | å¼æºæ¹æ¡?| æçåº?| ä¸ªäººéç¨æ?| æ¨èææ° |
 |---------|---------|--------|-----------|---------|
@@ -95,7 +98,8 @@ responsibility: æ°æ®æºå¥åº·çæ§ä¸æéå
 | **ææ éé** | Prometheus | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­â­?|
 | **å¯è§å?* | Grafana | â­â­â­â­â­?| â­â­â­â­â­?| â­â­â­â­â­?|
 | **åè­¦** | Alertmanager | â­â­â­â­â­?| â­â­â­â­ | â­â­â­â­â­?|
-| **æéåæ¢** | èªç  + HAProxy | â­â­â­â­ | â­â­â­â­ | â­â­â­â­ |
+| **æ
+障切换** | 自研 + HAProxy | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
@@ -127,7 +131,8 @@ responsibility: æ°æ®æºå¥åº·çæ§ä¸æéå
 â?                             â?                                         â?
 â?                             â?                                         â?
 â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
-â? â?                   åè­¦ä¸æéåæ¢å±                                 â? â?
+â? â?                   åè­¦ä¸æ
+éåæ¢å±                                 â? â?
 â? â? â?éå¼åè­? â?æºè½åè­¦  â?èªå¨åæ¢  â?éçº§ç­ç¥                    â? â?
 â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?
 â?                             â?                                         â?
@@ -146,18 +151,18 @@ responsibility: æ°æ®æºå¥åº·çæ§ä¸æéå
 æ°æ®æº?â?å¥åº·æ£æ?â?ææ éé â?è§åè¯ä¼° â?åè­¦/åæ¢ â?éç¥
    â?        â?         â?         â?         â?        â?
    âââââââââââ´âââââââââââ´âââââââââââ´âââââââââââ´ââââââââââ?
-                    å®æ´çæ§é¾è·¯
+                    完整监控链路
 ```
 
 ---
 
 ## ð» ä¸ãæ ¸å¿å®ç°ä»£ç ?
 
-### 3.1 æ°æ®æºå¥åº·æ£æ¥å¨
+### 3.1 数据源健康检查器
 
 ```python
 """
-æ°æ®æºå¥åº·æ£æ¥å¨
+数据源健康检查器
 """
 import asyncio
 import aiohttp
@@ -189,7 +194,7 @@ class HealthCheckResult:
 
 
 class DataSourceHealthChecker:
-    """æ°æ®æºå¥åº·æ£æ¥å¨"""
+    """数据源健康检查器"""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -350,7 +355,7 @@ class DataSourceHealthChecker:
         data: Dict,
         rules: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """éªè¯APIååº"""
+        """验证API响应"""
         if rules.get("required_fields"):
             for field in rules["required_fields"]:
                 if field not in data:
@@ -376,7 +381,7 @@ class DataSourceHealthChecker:
         return {"valid": True}
     
     async def check_all_sources(self) -> Dict[str, HealthCheckResult]:
-        """æ£æ¥æææ°æ®æº"""
+        """检查所有数据源"""
         tasks = []
         
         for source_name, source_config in self.sources.items():
@@ -413,7 +418,8 @@ class DataSourceHealthChecker:
         return HealthStatus.UNKNOWN
     
     def should_failover(self, source_name: str) -> bool:
-        """å¤æ­æ¯å¦åºè¯¥æéåæ¢"""
+        """å¤æ­æ¯å¦åºè¯¥æ
+障切换"""
         failures = self.consecutive_failures.get(source_name, 0)
         return failures >= self.failure_threshold
 ```
@@ -517,7 +523,7 @@ class DataSourceMetrics:
         source_type: str,
         response_time_seconds: float
     ):
-        """è®°å½ååºæ¶é´"""
+        """记录响应时间"""
         self.response_time.labels(
             source_name=source_name,
             source_type=source_type
@@ -529,7 +535,7 @@ class DataSourceMetrics:
         source_type: str,
         status: str = "success"
     ):
-        """å¢å è¯·æ±è®¡æ°"""
+        """增加请求计数"""
         self.request_total.labels(
             source_name=source_name,
             source_type=source_type,
@@ -542,7 +548,7 @@ class DataSourceMetrics:
         source_type: str,
         error_type: str
     ):
-        """å¢å éè¯¯è®¡æ°"""
+        """增加错误计数"""
         self.error_total.labels(
             source_name=source_name,
             source_type=source_type,
@@ -567,7 +573,7 @@ class DataSourceMetrics:
         source_type: str,
         latency_seconds: float
     ):
-        """æ´æ°æ°æ®å»¶è¿"""
+        """更新数据延迟"""
         self.data_latency.labels(
             source_name=source_name,
             source_type=source_type
@@ -590,11 +596,13 @@ class DataSourceMetrics:
         self.source_info.info(info)
 ```
 
-### 3.3 æéåæ¢ç®¡çå?
+### 3.3 æ
+éåæ¢ç®¡çå?
 
 ```python
 """
-æéåæ¢ç®¡çå?
+æ
+éåæ¢ç®¡çå?
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -605,7 +613,8 @@ import logging
 
 
 class FailoverStrategy(Enum):
-    """æéåæ¢ç­ç¥"""
+    """æ
+障切换策略"""
     ACTIVE_PASSIVE = "active_passive"
     ACTIVE_ACTIVE = "active_active"
     ROUND_ROBIN = "round_robin"
@@ -625,7 +634,8 @@ class DataSourceEndpoint:
 
 
 class FailoverManager:
-    """æéåæ¢ç®¡çå?""
+    """æ
+éåæ¢ç®¡çå?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -668,7 +678,7 @@ class FailoverManager:
                     self.endpoints[source_type][0].name
     
     def get_active_endpoint(self, source_type: str) -> Optional[str]:
-        """è·åæ´»è·ç«¯ç¹"""
+        """获取活跃端点"""
         if source_type in self.current_active:
             return self.current_active[source_type]
         
@@ -684,7 +694,7 @@ class FailoverManager:
         return []
     
     def report_failure(self, source_type: str, endpoint_name: str):
-        """æ¥åå¤±è´¥"""
+        """报告失败"""
         if source_type not in self.endpoints:
             return
         
@@ -703,7 +713,7 @@ class FailoverManager:
                 break
     
     def report_success(self, source_type: str, endpoint_name: str):
-        """æ¥åæå"""
+        """报告成功"""
         if source_type not in self.endpoints:
             return
         
@@ -715,7 +725,8 @@ class FailoverManager:
                 break
     
     def _trigger_failover(self, source_type: str):
-        """è§¦åæéåæ¢"""
+        """è§¦åæ
+障切换"""
         if source_type not in self.endpoints:
             return
         
@@ -794,7 +805,7 @@ import requests
 
 
 class AlertSeverity(Enum):
-    """åè­¦ä¸¥éçº§å«"""
+    """告警严重级别"""
     INFO = "info"
     WARNING = "warning"
     CRITICAL = "critical"
@@ -803,7 +814,7 @@ class AlertSeverity(Enum):
 
 @dataclass
 class Alert:
-    """åè­¦"""
+    """告警"""
     alert_id: str
     source_name: str
     severity: AlertSeverity
@@ -837,7 +848,7 @@ class AlertManager:
         message: str,
         details: Dict[str, Any] = None
     ) -> Alert:
-        """åå»ºåè­¦"""
+        """创建告警"""
         alert_id = f"{source_name}_{datetime.now().strftime('%Y%m%d%H%M%S')}"
         
         alert = Alert(
@@ -878,7 +889,7 @@ class AlertManager:
         return time_since_last.total_seconds() >= cooldown_map[severity]
     
     def _send_notification(self, alert: Alert):
-        """åééç¥"""
+        """发送通知"""
         for channel_type, channel_config in self.notification_channels.items():
             try:
                 if channel_type == "email":
@@ -893,22 +904,22 @@ class AlertManager:
                 print(f"Failed to send notification via {channel_type}: {e}")
     
     def _send_email(self, alert: Alert, config: Dict[str, Any]):
-        """åéé®ä»¶éç¥"""
+        """发送邮件通知"""
         msg = MIMEMultipart()
         msg['From'] = config['sender']
         msg['To'] = ', '.join(config['recipients'])
         msg['Subject'] = f"[{alert.severity.value.upper()}] {alert.source_name} - {alert.message}"
         
         body = f"""
-æ°æ®æºåè­¦éç¥
+数据源告警通知
 
-åè­¦ID: {alert.alert_id}
+告警ID: {alert.alert_id}
 æ°æ®æº? {alert.source_name}
-ä¸¥éçº§å«: {alert.severity.value}
-æ¶æ¯: {alert.message}
-æ¶é´: {alert.timestamp.isoformat()}
+严重级别: {alert.severity.value}
+消息: {alert.message}
+时间: {alert.timestamp.isoformat()}
 
-è¯¦ç»ä¿¡æ¯:
+详细信息:
 {json.dumps(alert.details, indent=2, ensure_ascii=False)}
         """
         
@@ -920,7 +931,7 @@ class AlertManager:
             server.send_message(msg)
     
     def _send_webhook(self, alert: Alert, config: Dict[str, Any]):
-        """åéWebhookéç¥"""
+        """发送Webhook通知"""
         payload = {
             "alert_id": alert.alert_id,
             "source_name": alert.source_name,
@@ -938,15 +949,15 @@ class AlertManager:
         )
     
     def _send_wechat(self, alert: Alert, config: Dict[str, Any]):
-        """åéå¾®ä¿¡éç¥"""
+        """发送微信通知"""
         webhook_url = config['webhook_url']
         
         content = f"""
 **æ°æ®æºåè­?*
-> æ¥æº: {alert.source_name}
-> çº§å«: {alert.severity.value}
-> æ¶æ¯: {alert.message}
-> æ¶é´: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+> 来源: {alert.source_name}
+> 级别: {alert.severity.value}
+> 消息: {alert.message}
+> 时间: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
         """
         
         payload = {
@@ -959,15 +970,15 @@ class AlertManager:
         requests.post(webhook_url, json=payload, timeout=10)
     
     def _send_dingtalk(self, alert: Alert, config: Dict[str, Any]):
-        """åééééç¥"""
+        """发送钉钉通知"""
         webhook_url = config['webhook_url']
         
         content = f"""
 æ°æ®æºåè­?
-- æ¥æº: {alert.source_name}
-- çº§å«: {alert.severity.value}
-- æ¶æ¯: {alert.message}
-- æ¶é´: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+- 来源: {alert.source_name}
+- 级别: {alert.severity.value}
+- 消息: {alert.message}
+- 时间: {alert.timestamp.strftime('%Y-%m-%d %H:%M:%S')}
         """
         
         payload = {
@@ -986,7 +997,7 @@ class AlertManager:
         requests.post(webhook_url, json=payload, timeout=10)
     
     def acknowledge_alert(self, alert_id: str) -> bool:
-        """ç¡®è®¤åè­¦"""
+        """确认告警"""
         for alert in self.alerts:
             if alert.alert_id == alert_id:
                 alert.acknowledged = True
@@ -994,7 +1005,7 @@ class AlertManager:
         return False
     
     def resolve_alert(self, alert_id: str) -> bool:
-        """è§£å³åè­¦"""
+        """解决告警"""
         for alert in self.alerts:
             if alert.alert_id == alert_id:
                 alert.resolved = True
@@ -1003,7 +1014,7 @@ class AlertManager:
         return False
     
     def get_active_alerts(self) -> List[Alert]:
-        """è·åæ´»è·åè­¦"""
+        """获取活跃告警"""
         return [a for a in self.alerts if not a.resolved]
     
     def get_alert_history(
@@ -1012,7 +1023,7 @@ class AlertManager:
         severity: AlertSeverity = None,
         hours: int = 24
     ) -> List[Alert]:
-        """è·ååè­¦åå²"""
+        """获取告警历史"""
         cutoff_time = datetime.now() - timedelta(hours=hours)
         
         filtered = [
@@ -1031,9 +1042,11 @@ class AlertManager:
 
 ---
 
-## ð åãé¨ç½²éç½?
+## ð åãé¨ç½²é
+ç½?
 
-### 4.1 Prometheuséç½®
+### 4.1 Prometheusé
+ç½®
 
 ```yaml
 global:
@@ -1073,7 +1086,7 @@ scrape_configs:
         replacement: localhost:9115
 ```
 
-### 4.2 åè­¦è§å
+### 4.2 告警规则
 
 ```yaml
 groups:
@@ -1086,7 +1099,8 @@ groups:
           severity: critical
         annotations:
           summary: "æ°æ®æº?{{ $labels.source_name }} ä¸å¯ç?
-          description: "æ°æ®æº?{{ $labels.source_name }} å·²ç»ä¸å¯ç¨è¶è¿?åé"
+          description: "æ°æ®æº?{{ $labels.source_name }} å·²ç»ä¸å¯ç¨è¶
+è¿?åé"
       
       - alert: DataSourceDegraded
         expr: datasource_health_status == 0.5
@@ -1095,7 +1109,8 @@ groups:
           severity: warning
         annotations:
           summary: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§"
-          description: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§è¶è¿5åé"
+          description: "æ°æ®æº?{{ $labels.source_name }} æ§è½éçº§è¶
+过5分钟"
       
       - alert: HighResponseTime
         expr: histogram_quantile(0.95, datasource_response_time_seconds) > 5
@@ -1104,7 +1119,8 @@ groups:
           severity: warning
         annotations:
           summary: "æ°æ®æº?{{ $labels.source_name }} ååºæ¶é´è¿é¿"
-          description: "æ°æ®æº?{{ $labels.source_name }} P95ååºæ¶é´è¶è¿5ç§?
+          description: "æ°æ®æº?{{ $labels.source_name }} P95ååºæ¶é´è¶
+è¿5ç§?
       
       - alert: HighErrorRate
         expr: rate(datasource_error_total[5m]) > 0.1
@@ -1113,7 +1129,8 @@ groups:
           severity: warning
         annotations:
           summary: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¿é«?
-          description: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¶è¿?0%"
+          description: "æ°æ®æº?{{ $labels.source_name }} éè¯¯çè¶
+è¿?0%"
       
       - alert: LowAvailability
         expr: datasource_availability < 99
@@ -1125,7 +1142,8 @@ groups:
           description: "æ°æ®æº?{{ $labels.source_name }} å¯ç¨æ§ä½äº?9%"
 ```
 
-### 4.3 Docker Composeéç½®
+### 4.3 Docker Composeé
+ç½®
 
 ```yaml
 version: '3.8'
@@ -1231,7 +1249,8 @@ for source_name, result in results.items():
     print(f"{source_name}: {result.status.value} - {result.response_time_ms:.2f}ms")
 ```
 
-### 5.2 æéåæ¢
+### 5.2 æ
+障切换
 
 ```python
 from datasource_health import FailoverManager
@@ -1251,17 +1270,18 @@ config = {
 failover = FailoverManager(config)
 
 active = failover.get_active_endpoint("market_data")
-print(f"å½åæ´»è·ç«¯ç¹: {active}")
+print(f"当前活跃端点: {active}")
 
 failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 
 active = failover.get_active_endpoint("market_data")
-print(f"æéåæ¢åæ´»è·ç«¯ç? {active}")
+print(f"æ
+éåæ¢åæ´»è·ç«¯ç? {active}")
 ```
 
-### 5.3 åè­¦éç¥
+### 5.3 告警通知
 
 ```python
 from datasource_health import AlertManager, AlertSeverity
@@ -1288,35 +1308,39 @@ alert_manager = AlertManager(config)
 alert = alert_manager.create_alert(
     source_name="ifind",
     severity=AlertSeverity.CRITICAL,
-    message="æ°æ®æºä¸å¯ç¨",
+    message="数据源不可用",
     details={"error": "Connection timeout"}
 )
 
-print(f"åè­¦ID: {alert.alert_id}")
+print(f"告警ID: {alert.alert_id}")
 ```
 
 ---
 
-## ð å­ãæ§è½ææ 
+## ð å
+­ãæ§è½ææ 
 
-### 6.1 çæ§ææ 
+### 6.1 监控指标
 
 | ææ  | ç®æ å?| åè­¦éå?|
 |------|--------|---------|
 | **å¯ç¨æ?* | â?9.9% | <99% |
-| **ååºæ¶é´(P95)** | <1s | >5s |
+| **响应时间(P95)** | <1s | >5s |
 | **éè¯¯ç?* | <1% | >10% |
-| **æ°æ®å»¶è¿** | <10s | >60s |
-| **æéæ£æµæ¶é?* | <30s | >60s |
-| **æéåæ¢æ¶é´** | <10s | >30s |
+| **数据延迟** | <10s | >60s |
+| **æ
+éæ£æµæ¶é?* | <30s | >60s |
+| **æ
+障切换时间** | <10s | >30s |
 
-### 6.2 èµæºå ç¨
+### 6.2 资源占用
 
-| èµæº | Prometheus | Grafana | Alertmanager | æ»è®¡ |
+| 资源 | Prometheus | Grafana | Alertmanager | 总计 |
 |------|-----------|---------|-------------|------|
 | CPU | 0.5æ ?| 0.2æ ?| 0.1æ ?| 0.8æ ?|
-| åå­ | 512MB | 256MB | 128MB | 896MB |
-| å­å¨ | 10GB | 1GB | 1GB | 12GB |
+| å
+存 | 512MB | 256MB | 128MB | 896MB |
+| 存储 | 10GB | 1GB | 1GB | 12GB |
 
 ---
 
@@ -1325,45 +1349,57 @@ print(f"åè­¦ID: {alert.alert_id}")
 ### 7.1 å¥åº·æ£æ?
 
 1. **å¤ç»´åº¦æ£æ?*: HTTPæ¢æµ + APIååº + æ°æ®å®æ´æ?
-2. **åçé´é**: 30ç§æ£æ¥ä¸æ¬¡ï¼é¿åè¿åº¦è¯·æ±
-3. **è¶æ¶è®¾ç½®**: æ ¹æ®æ°æ®æºç¹æ§è®¾ç½®åçè¶æ?
+2. **åçé´é**: 30ç§æ£æ¥ä¸æ¬¡ï¼é¿å
+è¿åº¦è¯·æ±
+3. **è¶
+æ¶è®¾ç½®**: æ ¹æ®æ°æ®æºç¹æ§è®¾ç½®åçè¶
+æ?
 4. **å¤±è´¥éå?*: è¿ç»­3æ¬¡å¤±è´¥æå¤å®ä¸ºä¸å¥åº·
 
-### 7.2 æéåæ¢
+### 7.2 æ
+障切换
 
-1. **ä¼åçº§ç­ç?*: ä¸»æ°æ®æºä¼åï¼å¤ç¨æ°æ®æºæä¼åçº§æåº
-2. **èªå¨æ¢å¤**: å¤ç¨æ°æ®æºæ¢å¤åèªå¨ååä¸»æ°æ®æº
-3. **ç¶ææä¹å**: è®°å½åæ¢åå²ï¼ä¾¿äºå®¡è®?
-4. **éç¥æºå¶**: åæ¢æ¶åééç¥
+1. **ä¼å
+çº§ç­ç?*: ä¸»æ°æ®æºä¼å
+ï¼å¤ç¨æ°æ®æºæä¼å
+çº§æåº
+2. **自动恢复**: 备用数据源恢复后自动切回主数据源
+3. **ç¶ææä¹
+å**: è®°å½åæ¢åå²ï¼ä¾¿äºå®¡è®?
+4. **通知机制**: 切换时发送通知
 
-### 7.3 åè­¦ç®¡ç
+### 7.3 告警管理
 
-1. **åçº§åè­¦**: INFO/WARNING/CRITICAL/EMERGENCY
-2. **å·å´æºå¶**: é¿ååè­¦é£æ´
-3. **å¤æ¸ ééç¥**: é®ä»¶ + Webhook + å³æ¶éè®¯
-4. **åè­¦èå**: ç¸ååè­¦èåæ¾ç¤º
+1. **分级告警**: INFO/WARNING/CRITICAL/EMERGENCY
+2. **å·å´æºå¶**: é¿å
+åè­¦é£æ´
+3. **多渠道通知**: 邮件 + Webhook + 即时通讯
+4. **告警聚合**: 相同告警聚合显示
 
 ---
 
-## ð å«ãå®æ½è·¯å¾?
+## ð å
+«ãå®æ½è·¯å¾?
 
 ### Phase 1: åºç¡çæ§ï¼?å¨ï¼
 
-- [x] Prometheusé¨ç½²
+- [x] Prometheus部署
 - [x] åºç¡å¥åº·æ£æ?
-- [x] ææ éé
+- [x] 指标采集
 
 ### Phase 2: å®ååè½ï¼?å¨ï¼
 
 - [x] Grafanaä»ªè¡¨ç?
-- [x] åè­¦è§åéç½®
-- [x] æéåæ¢åè½
+- [x] åè­¦è§åé
+ç½®
+- [x] æ
+障切换功能
 
 ### Phase 3: ä¼åå¢å¼ºï¼?å¨ï¼
 
-- [x] å¤æ¸ ééç¥
+- [x] 多渠道通知
 - [x] èªå¨åæ¢å¤?
-- [x] SLAæ¥è¡¨
+- [x] SLA报表
 
 ---
 
@@ -1373,25 +1409,27 @@ print(f"åè­¦ID: {alert.alert_id}")
 
 | é¡¹ç® | å°å | ç¨é?|
 |------|------|------|
-| Prometheus | https://prometheus.io/ | çæ§ç³»ç» |
+| Prometheus | https://prometheus.io/ | 监控系统 |
 | Grafana | https://grafana.com/ | å¯è§å?|
-| Alertmanager | https://prometheus.io/docs/alerting/ | åè­¦ç®¡ç |
-| Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | é»çæ¢æµ |
+| Alertmanager | https://prometheus.io/docs/alerting/ | 告警管理 |
+| Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | 黑盒探测 |
 
-### 9.2 ç¸å³ææ¡£
+### 9.2 ç¸å
+³ææ¡£
 
-- [Prometheusæä½³å®è·µ](https://prometheus.io/docs/practices/)
-- [SREè¿ç»´æå](https://sre.google/sre-book/)
-- [çæ§åè­¦è®¾è®¡æ¨¡å¼](https://www.oreilly.com/library/view/monitoring-distributed-systems/9781491913580/)
+- [Prometheus最佳实践](https://prometheus.io/docs/practices/)
+- [SRE运维手册](https://sre.google/sre-book/)
+- [监控告警设计模式](https://www.oreilly.com/library/view/monitoring-distributed-systems/9781491913580/)
 
 ---
 
 ## ð åãåæ´åå?
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | ä½è?|
 |------|------|---------|------|
 | v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**ææ¡£ç»æ**
+**文档结束**

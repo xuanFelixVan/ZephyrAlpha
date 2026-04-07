@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEATURE_SELECTION_AUTOMATION_BLUEPRINT_001
 
 version: 1.0.0

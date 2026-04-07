@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_MCP_TOOLS_VALIDATION_001
 version: 2026.04.02
 status: Active

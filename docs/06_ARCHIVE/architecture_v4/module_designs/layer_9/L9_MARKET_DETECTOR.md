@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_L9_MARKET_DETECTOR_001
 version: 1.0.1
 status: Active

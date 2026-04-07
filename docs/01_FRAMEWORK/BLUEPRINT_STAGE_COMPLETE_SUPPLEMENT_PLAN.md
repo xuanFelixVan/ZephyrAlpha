@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN_001
 version: 1.0.0
 status: Active

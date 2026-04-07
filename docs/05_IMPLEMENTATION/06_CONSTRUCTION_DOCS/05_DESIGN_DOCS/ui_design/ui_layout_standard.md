@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_UI_LAYOUT_STANDARD_001
 version: 4.0.1
 status: Active

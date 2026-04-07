@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION_001
 version: 1.0.0
 status: Active

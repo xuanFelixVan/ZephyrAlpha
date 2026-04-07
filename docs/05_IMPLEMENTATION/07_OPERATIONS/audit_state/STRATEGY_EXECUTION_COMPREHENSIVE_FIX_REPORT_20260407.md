@@ -1,4 +1,4 @@
-# Layer 5 职责描述综合修复报告
+﻿# Layer 5 职责描述综合修复报告
 
 > **修复时间**: 2026-04-07 15:37:32
 > **修复范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS

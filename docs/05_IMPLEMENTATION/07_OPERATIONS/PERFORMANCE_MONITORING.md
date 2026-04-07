@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERFORMANCE_MONITORING_001
 version: 1.0.0
 status: Active

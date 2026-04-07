@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_20260404_BLUEPRINT_INCOMPLETE_001
 version: 1.0.0
 status: Active

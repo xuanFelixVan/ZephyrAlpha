@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUICKAUDITSUMMARY20260402_001
 version: 1.0.0
 status: Active

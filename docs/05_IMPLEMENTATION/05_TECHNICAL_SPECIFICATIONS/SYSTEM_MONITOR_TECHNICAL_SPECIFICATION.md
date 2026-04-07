@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_SYS_MONITOR_TECH_SPEC_001
 version: 1.0.1
 status: Active

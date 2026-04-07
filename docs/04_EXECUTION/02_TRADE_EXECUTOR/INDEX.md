@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_02_TRADE_EXECUTOR_001
 version: 1.0.0
 status: Active

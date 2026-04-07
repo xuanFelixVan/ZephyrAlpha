@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_QLIB_ALPHA158_TECH_REVIEW_001
 review_id: TR-2026-04-02-QLIB
 version: 1.0.1

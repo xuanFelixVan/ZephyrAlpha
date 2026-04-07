@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_SPARSE_DIRECTORY_GOVERNANCE_REPORT_20260407124139
 version: 1.0.0
 status: Active

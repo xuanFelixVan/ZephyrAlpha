@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KILL_SWITCH_SYSTEM_BLUEPRINT_001
 version: 1.0.0
 status: Active

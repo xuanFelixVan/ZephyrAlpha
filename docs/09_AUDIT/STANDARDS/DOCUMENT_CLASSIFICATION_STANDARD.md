@@ -1,4 +1,4 @@
----
+﻿---
 version: 1.0.0
 standard_type: ﻝ؟۰ﻝﮔ ﮒ
 responsibility:

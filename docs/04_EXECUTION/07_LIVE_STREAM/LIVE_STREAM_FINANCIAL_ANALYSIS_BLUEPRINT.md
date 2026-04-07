@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIVESTREAMFINANCIALANALYSIS_001
 version: 1.0.0
 status: Active
@@ -22,11 +22,12 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­èå¾æ¶æå¸?
-standard_type: ä¸ä¸éåæºæç´æ­éèåæç³»ç»æ å
-applicable_scope: å¤ä¸»æ­ç´æ­åå®¹åæä¸å å­çæ
-compliance_level: ä¸ä¸æºææ å
+standard_type: 专业量化机构直播金融分析系统标准
+applicable_scope: å¤ä¸»æ­ç´æ­å
+容分析与因子生成
+compliance_level: 专业机构标准
 parent_document: ../INDEX.md
-implementation_status: è®¾è®¡é¶æ®µ
+implementation_status: 设计阶段
 ---
 
 # å¤ä¸»æ­ç´æ­éèåæç³»ç»èå?
@@ -36,62 +37,74 @@ implementation_status: è®¾è®¡é¶æ®µ
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸é£éåç³»ç» v5.0 - å¤ä¸»æ­ç´æ­åå®¹åæä¸é¢æµå å­çæç³»ç»
-> **æ ¸å¿åè½**: çæ§å¤ä¸ªæé³ä¸»æ­ç´æ­ â?å½å¶MP3é³é¢ â?AIåå®¹åæ â?è§ç¹èå â?çæé¢æµå å­
-> **ææ¯æ **: DouyinLiveRecorder + Whisper(æ¬å°) + Qwen2.5/DeepSeek(æ¬å°) + FinBERT(æ¬å°)
-> **è®¾è®¡åå**: è½»éåãèªå¨åãæºè½åãå¯æ©å±ãæ¬å°åé¨ç½²
-> **æ¨èæ¹æ¡**: â?æ¬å°æ¨¡åé¨ç½²ï¼éåé¿æé¡¹ç®ï¼ææ¬æ´ä½ï¼éç§æ´å®å¨ï¼
+> æ¸
+é£éåç³»ç» v5.0 - å¤ä¸»æ­ç´æ­å
+容分析与预测因子生成系统
+> **æ ¸å¿åè½**: çæ§å¤ä¸ªæé³ä¸»æ­ç´æ­ â?å½å¶MP3é³é¢ â?AIå
+å®¹åæ â?è§ç¹èå â?çæé¢æµå å­
+> **技术栈**: DouyinLiveRecorder + Whisper(本地) + Qwen2.5/DeepSeek(本地) + FinBERT(本地)
+> **设计原则**: 轻量化、自动化、智能化、可扩展、本地化部署
+> **æ¨èæ¹æ¡**: â?æ¬å°æ¨¡åé¨ç½²ï¼éåé¿æé¡¹ç®ï¼ææ¬æ´ä½ï¼éç§æ´å®å
+¨ï¼
 
-## ð ç³»ç»æ¦è¿°
+## 📋 系统概述
 
 ### æ ¸å¿ä»·å?
 
-æ¬ç³»ç»éè¿çæ§å¤ä¸ªæé³éèä¸»æ­çç´æ­åå®¹ï¼å©ç¨AIææ¯æåå³é®è§ç¹ï¼è¿è¡å¤ç»´åº¦åæï¼æç»çæå¯ç¨äºéåäº¤æçé¢æµå å­ãç³»ç»è§£å³äºä¼ ç»éèåæä¸­ä¿¡æ¯è·åæ»åãåä¸è§ç¹åè§ãäººå·¥åææçä½ç­é®é¢ã?
+æ¬ç³»ç»éè¿çæ§å¤ä¸ªæé³éèä¸»æ­çç´æ­å
+å®¹ï¼å©ç¨AIææ¯æåå
+³é®è§ç¹ï¼è¿è¡å¤ç»´åº¦åæï¼æç»çæå¯ç¨äºéåäº¤æçé¢æµå å­ãç³»ç»è§£å³äºä¼ ç»éèåæä¸­ä¿¡æ¯è·åæ»åãåä¸è§ç¹åè§ãäººå·¥åææçä½ç­é®é¢ã?
 
-### ç³»ç»ç¹ç¹
+### 系统特点
 
 - â?**è½»éå?*: åªå½å¶MP3é³é¢ï¼èç?0%å­å¨ç©ºé´
 - â?**èªå¨å?*: 24å°æ¶èªå¨çæ§ãå½å¶ãåæ?
-- â?**æºè½å?*: AIèªå¨è½¬å½ãæåè§ç¹ãææåæ?
+- â?**æºè½å?*: AIèªå¨è½¬å½ãæåè§ç¹ãæ
+æåæ?
 - â?**å¤æºèå**: èåå¤ä¸ªä¸»æ­è§ç¹ï¼æé«é¢æµåç¡®æ?
 - â?**å å­çæ**: ç´æ¥çæå¯ç¨äºéåäº¤æçé¢æµå å­
 
-### éç¨åºæ¯
+### 适用场景
 
-1. **ä¸ªäººæèµè?*: è·åå¤ç»´åº¦å¸åºè§ç¹ï¼è¾å©æèµå³ç­
+1. **ä¸ªäººæèµè?*: è·åå¤ç»´åº¦å¸åºè§ç¹ï¼è¾
+助投资决策
 2. **éåäº¤æè?*: å°ä¸»æ­è§ç¹è½¬åä¸ºå¯éåçäº¤æå å­
-3. **éèåæå¸?*: è¿½è¸ªå¸åºæç»ªï¼éªè¯åæç»è®?
-4. **ç ç©¶æºæ**: ç ç©¶ç¤¾äº¤åªä½å¯¹éèå¸åºçå½±å
+3. **éèåæå¸?*: è¿½è¸ªå¸åºæ
+ç»ªï¼éªè¯åæç»è®?
+4. **研究机构**: 研究社交媒体对金融市场的影响
 
 ---
 
 ## ð¤ æ¨¡åéæ©ä¸é¨ç½²æ¹æ¡?
 
-### æ¹æ¡å¯¹æ¯
+### 方案对比
 
-| å¯¹æ¯ç»´åº¦ | äºç«¯APIæ¹æ¡ | æ¬å°æ¨¡åæ¹æ¡ | æ¨è |
+| 对比维度 | 云端API方案 | 本地模型方案 | 推荐 |
 |---------|------------|-------------|------|
-| **ææ¬** | ææ¬¡ä»è´¹ï¼é¿æææ¬é« | ä¸æ¬¡æ§ç¡¬ä»¶æå¥ï¼é¿æææ¬ä½?| â?æ¬å°æ¨¡å |
-| **éç§** | æ°æ®ä¸ä¼ äºç«¯ï¼éç§é£é?| æ°æ®æ¬å°å¤çï¼éç§å®å?| â?æ¬å°æ¨¡å |
+| **ææ¬** | ææ¬¡ä»è´¹ï¼é¿æææ¬é« | ä¸æ¬¡æ§ç¡¬ä»¶æå
+¥ï¼é¿æææ¬ä½?| â?æ¬å°æ¨¡å |
+| **éç§** | æ°æ®ä¸ä¼ äºç«¯ï¼éç§é£é?| æ°æ®æ¬å°å¤çï¼éç§å®å
+?| â?æ¬å°æ¨¡å |
 | **ç¨³å®æ?* | ä¾èµç½ç»åAPIæå¡ | æ¬å°è¿è¡ï¼ç¨³å®æ§é« | â?æ¬å°æ¨¡å |
 | **éåº¦** | åç½ç»å½±åï¼å»¶è¿é«?| æ¬å°æ¨çï¼éåº¦å¿?| â?æ¬å°æ¨¡å |
 | **å¯å®å?* | åéï¼æ æ³å¾®è°?| å¯èªç±å¾®è°åä¼å | â?æ¬å°æ¨¡å |
 | **é¨ç½²é¾åº¦** | ç®åï¼å³å¼å³ç¨ | éè¦ç¡¬ä»¶åææ?| â ï¸ äºç«¯API |
-| **åå§æå¥** | ä½ï¼æéä»è´¹ï¼?| é«ï¼ç¡¬ä»¶éè´­ï¼?| â ï¸ äºç«¯API |
+| **åå§æå
+¥** | ä½ï¼æéä»è´¹ï¼?| é«ï¼ç¡¬ä»¶éè´­ï¼?| â ï¸ äºç«¯API |
 
 **æ¨èæ¹æ¡**: â?**æ¬å°æ¨¡åæ¹æ¡**ï¼éåé¿æé¡¹ç®ï¼?
 
 ---
 
-### 1. è¯­é³è¯å«æ¨¡å (Whisper)
+### 1. 语音识别模型 (Whisper)
 
-#### æ¹æ¡A: OpenAI Whisper APIï¼äºç«¯ï¼
+#### 方案A: OpenAI Whisper API（云端）
 
 ```python
 import openai
 
 def transcribe_with_api(audio_path: str):
-    """ä½¿ç¨OpenAI Whisper APIè½¬å½"""
+    """使用OpenAI Whisper API转录"""
     client = openai.OpenAI(api_key="your-api-key")
     
     with open(audio_path, 'rb') as audio_file:
@@ -106,7 +119,7 @@ def transcribe_with_api(audio_path: str):
 
 **ææ¬**: $0.006/åéï¼?å°æ¶ç´æ­ = $0.36
 
-#### æ¹æ¡B: æ¬å°Whisperæ¨¡åï¼æ¨èï¼
+#### 方案B: 本地Whisper模型（推荐）
 
 ```python
 import whisper
@@ -117,11 +130,11 @@ class LocalWhisperTranscriber:
     
     def __init__(self, model_size: str = "medium", device: str = "cuda"):
         """
-        åå§åæ¬å°Whisperæ¨¡å
+        初始化本地Whisper模型
         
         Args:
-            model_size: æ¨¡åå¤§å° (tiny/base/small/medium/large-v3)
-            device: è¿è¡è®¾å¤ (cuda/cpu)
+            model_size: 模型大小 (tiny/base/small/medium/large-v3)
+            device: 运行设备 (cuda/cpu)
         """
         self.device = device if torch.cuda.is_available() else "cpu"
         self.model = whisper.load_model(model_size, device=self.device)
@@ -129,12 +142,12 @@ class LocalWhisperTranscriber:
         print(f"â?Whisperæ¨¡åå·²å è½? {model_size} on {self.device}")
     
     def transcribe(self, audio_path: str, language: str = "zh") -> dict:
-        """è½¬å½é³é¢"""
+        """转录音频"""
         result = self.model.transcribe(
             audio_path,
             language=language,
             task="transcribe",
-            fp16=False  # CPUæ¨çæ¶ä½¿ç¨FP32
+            fp16=False  # CPU推理时使用FP32
         )
         
         return {
@@ -143,41 +156,46 @@ class LocalWhisperTranscriber:
             "language": result.get("language", language)
         }
 
-# ä½¿ç¨ç¤ºä¾
+# 使用示例
 transcriber = LocalWhisperTranscriber(model_size="medium")
 result = transcriber.transcribe("recording.mp3")
 ```
 
-**æ¨¡åéæ©å»ºè®®**:
+**模型选择建议**:
 
-| æ¨¡å | åæ°é?| åå­éæ±?| éåº¦ | åç¡®ç?| æ¨èåºæ¯ |
+| æ¨¡å | åæ°é?| å
+å­éæ±?| éåº¦ | åç¡®ç?| æ¨èåºæ¯ |
 |------|--------|---------|------|--------|---------|
 | tiny | 39M | ~1GB | æå¿?| 75% | å¿«éé¢è§?|
-| base | 74M | ~1GB | å¾å¿« | 82% | æ¥å¸¸ä½¿ç¨ |
+| base | 74M | ~1GB | 很快 | 82% | 日常使用 |
 | small | 244M | ~2GB | å¿?| 87% | å¹³è¡¡éæ© |
 | medium | 769M | ~5GB | ä¸­ç­ | 91% | â?**æ¨è** |
-| large-v3 | 1550M | ~10GB | æ?| 94% | æé«ç²¾åº?|
+| large-v3 | 1550M | ~10GB | æ
+?| 94% | æé«ç²¾åº?|
 
-**æ¨è**: â?**mediumæ¨¡å**ï¼åç¡®ç91%ï¼åå­éæ±éä¸­ï¼?
+**æ¨è**: â?**mediumæ¨¡å**ï¼åç¡®ç91%ï¼å
+å­éæ±éä¸­ï¼?
 
 ---
 
-### 2. åå®¹åææ¨¡å (å¤§è¯­è¨æ¨¡å)
+### 2. å
+容分析模型 (大语言模型)
 
-#### æ¹æ¡A: OpenAI GPT-4 APIï¼äºç«¯ï¼
+#### 方案A: OpenAI GPT-4 API（云端）
 
 ```python
 from openai import OpenAI
 
 def analyze_with_gpt4(transcript: str):
-    """ä½¿ç¨GPT-4åæ"""
+    """使用GPT-4分析"""
     client = OpenAI(api_key="your-api-key")
     
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æã?},
-            {"role": "user", "content": f"åæä»¥ä¸ç´æ­åå®¹ï¼\n{transcript}"}
+            {"role": "user", "content": f"åæä»¥ä¸ç´æ­å
+容：\n{transcript}"}
         ]
     )
     
@@ -188,7 +206,7 @@ def analyze_with_gpt4(transcript: str):
 
 #### æ¹æ¡B: æ¬å°å¤§æ¨¡åï¼æ¨èï¼?
 
-**éé¡¹1: DeepSeek-V3ï¼æ¨èï¼**
+**选项1: DeepSeek-V3（推荐）**
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -199,7 +217,7 @@ class LocalDeepSeekAnalyzer:
     
     def __init__(self, model_path: str = "deepseek-ai/deepseek-llm-7b-chat"):
         """
-        åå§åDeepSeekæ¨¡å
+        初始化DeepSeek模型
         
         Args:
             model_path: æ¨¡åè·¯å¾ï¼æ¯ææ¬å°è·¯å¾æHuggingFace IDï¼?
@@ -214,27 +232,34 @@ class LocalDeepSeekAnalyzer:
         print(f"â?DeepSeekæ¨¡åå·²å è½? {model_path}")
     
     def analyze(self, transcript: str) -> dict:
-        """åæç´æ­åå®¹"""
-        prompt = f"""ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æãè¯·åæä»¥ä¸ç´æ­åå®¹ï¼æåå³é®éèè§ç¹ã?
+        """åæç´æ­å
+å®¹"""
+        prompt = f"""ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æãè¯·åæä»¥ä¸ç´æ­å
+å®¹ï¼æåå
+³é®éèè§ç¹ã?
 
-ç´æ­åå®¹ï¼?
+ç´æ­å
+å®¹ï¼?
 {transcript}
 
 è¯·æåä»¥ä¸ä¿¡æ¯ï¼ä»¥JSONæ ¼å¼è¿åï¼?
 {{
-    "market_view": "çå¤/çç©º/éè¡",
-    "confidence": 0-10çä¿¡å¿åº¦,
-    "sectors": ["æ¨èæ¿å1", "æ¨èæ¿å2"],
+    "market_view": "看多/看空/震荡",
+    "confidence": 0-10的信心度,
+    "sectors": ["推荐板块1", "推荐板块2"],
     "stocks": [
         {{
-            "code": "è¡ç¥¨ä»£ç ",
-            "name": "è¡ç¥¨åç§°",
-            "action": "ä¹°å¥/ååº/è§æ",
-            "reason": "æ¨èçç±"
+            "code": "股票代码",
+            "name": "股票名称",
+            "action": "ä¹°å
+¥/ååº/è§æ",
+            "reason": "推荐理由"
         }}
     ],
-    "risks": ["é£é©æç¤º1", "é£é©æç¤º2"],
-    "key_points": ["å³é®è§ç¹1", "å³é®è§ç¹2"]
+    "risks": ["风险提示1", "风险提示2"],
+    "key_points": ["å
+³é®è§ç¹1", "å
+³é®è§ç¹2"]
 }}"""
         
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
@@ -249,7 +274,7 @@ class LocalDeepSeekAnalyzer:
         
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         
-        # è§£æJSONååº
+        # 解析JSON响应
         import json
         json_start = response.find("{")
         json_end = response.rfind("}") + 1
@@ -257,7 +282,7 @@ class LocalDeepSeekAnalyzer:
         
         return json.loads(json_str)
 
-# ä½¿ç¨ç¤ºä¾
+# 使用示例
 analyzer = LocalDeepSeekAnalyzer()
 result = analyzer.analyze(transcript_text)
 ```
@@ -273,10 +298,10 @@ class LocalQwenAnalyzer:
     
     def __init__(self, model_path: str = "Qwen/Qwen2.5-7B-Instruct"):
         """
-        åå§åQwenæ¨¡å
+        初始化Qwen模型
         
         Args:
-            model_path: æ¨¡åè·¯å¾
+            model_path: 模型路径
         """
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModelForCausalLM.from_pretrained(
@@ -288,15 +313,21 @@ class LocalQwenAnalyzer:
         print(f"â?Qwenæ¨¡åå·²å è½? {model_path}")
     
     def analyze(self, transcript: str) -> dict:
-        """åæç´æ­åå®¹"""
+        """åæç´æ­å
+å®¹"""
         messages = [
             {
                 "role": "system",
-                "content": "ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æï¼æé¿ä»ç´æ­åå®¹ä¸­æåå³é®æèµè§ç¹ã?
+                "content": "ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æï¼æ
+é¿ä»ç´æ­å
+å®¹ä¸­æåå
+³é®æèµè§ç¹ã?
             },
             {
                 "role": "user",
-                "content": f"è¯·åæä»¥ä¸ç´æ­åå®¹ï¼æåå³é®éèè§ç¹ï¼\n\n{transcript}"
+                "content": f"è¯·åæä»¥ä¸ç´æ­å
+å®¹ï¼æåå
+³é®éèè§ç¹ï¼\n\n{transcript}"
             }
         ]
         
@@ -324,7 +355,7 @@ class LocalQwenAnalyzer:
         return self._parse_response(response)
     
     def _parse_response(self, response: str) -> dict:
-        """è§£æååº"""
+        """解析响应"""
         import json
         
         try:
@@ -334,7 +365,7 @@ class LocalQwenAnalyzer:
             return json.loads(json_str)
         except:
             return {
-                "market_view": "éè¡",
+                "market_view": "震荡",
                 "confidence": 5,
                 "sectors": [],
                 "stocks": [],
@@ -342,12 +373,12 @@ class LocalQwenAnalyzer:
                 "key_points": []
             }
 
-# ä½¿ç¨ç¤ºä¾
+# 使用示例
 analyzer = LocalQwenAnalyzer()
 result = analyzer.analyze(transcript_text)
 ```
 
-**éé¡¹3: Ollamaæ¬å°é¨ç½²ï¼æç®åï¼**
+**选项3: Ollama本地部署（最简单）**
 
 ```python
 import requests
@@ -362,7 +393,7 @@ class OllamaAnalyzer:
         
         Args:
             model_name: æ¨¡ååç§° (qwen2.5:7b, deepseek-v2:16b, llama3.1:8bç­?
-            base_url: Ollamaæå¡å°å
+            base_url: Ollama服务地址
         """
         self.model_name = model_name
         self.base_url = base_url
@@ -370,17 +401,21 @@ class OllamaAnalyzer:
         print(f"â?Ollamaåæå¨å·²åå§å? {model_name}")
     
     def analyze(self, transcript: str) -> dict:
-        """åæç´æ­åå®¹"""
-        prompt = f"""ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æãè¯·åæä»¥ä¸ç´æ­åå®¹ï¼æåå³é®éèè§ç¹ã?
+        """åæç´æ­å
+å®¹"""
+        prompt = f"""ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æãè¯·åæä»¥ä¸ç´æ­å
+å®¹ï¼æåå
+³é®éèè§ç¹ã?
 
-ç´æ­åå®¹ï¼?
+ç´æ­å
+å®¹ï¼?
 {transcript}
 
 è¯·æåä»¥ä¸ä¿¡æ¯ï¼ä»¥JSONæ ¼å¼è¿åï¼?
 {{
-    "market_view": "çå¤/çç©º/éè¡",
-    "confidence": 0-10çä¿¡å¿åº¦,
-    "sectors": ["æ¨èæ¿å1", "æ¨èæ¿å2"],
+    "market_view": "看多/看空/震荡",
+    "confidence": 0-10的信心度,
+    "sectors": ["推荐板块1", "推荐板块2"],
     "stocks": [],
     "risks": [],
     "key_points": []
@@ -402,7 +437,7 @@ class OllamaAnalyzer:
         result = response.json()
         response_text = result["response"]
         
-        # è§£æJSON
+        # 解析JSON
         try:
             json_start = response_text.find("{")
             json_end = response_text.rfind("}") + 1
@@ -410,7 +445,7 @@ class OllamaAnalyzer:
             return json.loads(json_str)
         except:
             return {
-                "market_view": "éè¡",
+                "market_view": "震荡",
                 "confidence": 5,
                 "sectors": [],
                 "stocks": [],
@@ -418,22 +453,26 @@ class OllamaAnalyzer:
                 "key_points": []
             }
 
-# ä½¿ç¨ç¤ºä¾
-# é¦åå®è£Ollama: https://ollama.ai/
-# ç¶åæåæ¨¡å: ollama pull qwen2.5:7b
-# å¯å¨æå¡: ollama serve
+# 使用示例
+# é¦å
+å®è£
+Ollama: https://ollama.ai/
+# 然后拉取模型: ollama pull qwen2.5:7b
+# 启动服务: ollama serve
 
 analyzer = OllamaAnalyzer(model_name="qwen2.5:7b")
 result = analyzer.analyze(transcript_text)
 ```
 
-**æ¨¡åéæ©å»ºè®®**:
+**模型选择建议**:
 
-| æ¨¡å | åæ°é?| åå­éæ±?| ä¸­æè½å | éèçè§£ | æ¨èåº?|
+| æ¨¡å | åæ°é?| å
+å­éæ±?| ä¸­æè½å | éèçè§£ | æ¨èåº?|
 |------|--------|---------|---------|---------|--------|
 | Qwen2.5-7B | 7B | ~14GB | â­â­â­â­â­?| â­â­â­â­ | â?**å¼ºçæ¨è** |
 | DeepSeek-7B | 7B | ~14GB | â­â­â­â­ | â­â­â­â­â­?| â?**å¼ºçæ¨è** |
-| Qwen2.5-14B | 14B | ~28GB | â­â­â­â­â­?| â­â­â­â­â­?| â?æ¨èï¼é«éç½®ï¼?|
+| Qwen2.5-14B | 14B | ~28GB | â­â­â­â­â­?| â­â­â­â­â­?| â?æ¨èï¼é«é
+ç½®ï¼?|
 | Llama3.1-8B | 8B | ~16GB | â­â­â­?| â­â­â­?| â ï¸ ä¸è?|
 | Qwen2.5-32B | 32B | ~64GB | â­â­â­â­â­?| â­â­â­â­â­?| â ï¸ éè¦é«ç«¯æ¾å?|
 
@@ -441,7 +480,8 @@ result = analyzer.analyze(transcript_text)
 
 ---
 
-### 3. ææåææ¨¡å (FinBERT)
+### 3. æ
+感分析模型 (FinBERT)
 
 #### æ¬å°é¨ç½²æ¹æ¡ï¼å·²æ¯æï¼?
 
@@ -450,14 +490,15 @@ from transformers import pipeline, AutoModelForSequenceClassification, AutoToken
 import torch
 
 class LocalFinBERTAnalyzer:
-    """æ¬å°FinBERTææåæå?""
+    """æ¬å°FinBERTæ
+æåæå?""
     
     def __init__(self, model_path: str = "yiyanghkust/finbert-tone"):
         """
-        åå§åFinBERTæ¨¡å
+        初始化FinBERT模型
         
         Args:
-            model_path: æ¨¡åè·¯å¾
+            model_path: 模型路径
         """
         self.device = 0 if torch.cuda.is_available() else -1
         
@@ -474,8 +515,10 @@ class LocalFinBERTAnalyzer:
         print(f"â?FinBERTæ¨¡åå·²å è½? {model_path}")
     
     def analyze_sentiment(self, text: str) -> dict:
-        """ææåæ"""
-        # åæ®µå¤çï¼é¿åææ¬è¿é¿ï¼
+        """æ
+感分析"""
+        # åæ®µå¤çï¼é¿å
+ææ¬è¿é¿ï¼
         max_length = 512
         segments = [text[i:i+max_length] for i in range(0, len(text), max_length)]
         
@@ -484,7 +527,8 @@ class LocalFinBERTAnalyzer:
             result = self.sentiment_pipeline(segment)
             sentiments.append(result[0])
         
-        # ç»è®¡ææåå¸
+        # ç»è®¡æ
+感分布
         positive_count = sum(1 for s in sentiments if s['label'] == 'Positive')
         negative_count = sum(1 for s in sentiments if s['label'] == 'Negative')
         neutral_count = sum(1 for s in sentiments if s['label'] == 'Neutral')
@@ -511,7 +555,7 @@ class LocalFinBERTAnalyzer:
             }
         }
 
-# ä½¿ç¨ç¤ºä¾
+# 使用示例
 analyzer = LocalFinBERTAnalyzer()
 result = analyzer.analyze_sentiment(transcript_text)
 ```
@@ -520,67 +564,81 @@ result = analyzer.analyze_sentiment(transcript_text)
 
 ---
 
-### 4. ç¡¬ä»¶éç½®å»ºè®®
+### 4. ç¡¬ä»¶é
+ç½®å»ºè®®
 
-#### æä½éç½®ï¼å¥é¨çº§ï¼
+#### æä½é
+ç½®ï¼å
+¥é¨çº§ï¼
 
 ```
 CPU: Intel i5-12400 / AMD Ryzen 5 5600
-åå­: 16GB DDR4
-æ¾å¡: NVIDIA RTX 3060 12GB
-å­å¨: 500GB NVMe SSD
-é¢ç®: çº?6000-8000å?
+å
+存: 16GB DDR4
+显卡: NVIDIA RTX 3060 12GB
+存储: 500GB NVMe SSD
+é¢ç®: çº?6000-8000å
+?
 
-æ¯ææ¨¡å:
+支持模型:
 - Whisper: small/medium
 - å¤§æ¨¡å? 7Båæ°æ¨¡åï¼éååï¼?
-- FinBERT: å®å¨æ¯æ
+- FinBERT: å®å
+¨æ¯æ
 ```
 
-#### æ¨èéç½®ï¼ä¸ä¸çº§ï¼?
+#### æ¨èé
+ç½®ï¼ä¸ä¸çº§ï¼?
 
 ```
 CPU: Intel i7-13700K / AMD Ryzen 7 7800X3D
-åå­: 32GB DDR5
-æ¾å¡: NVIDIA RTX 4070 Ti Super 16GB
-å­å¨: 1TB NVMe SSD
-é¢ç®: çº?12000-15000å?
+å
+存: 32GB DDR5
+显卡: NVIDIA RTX 4070 Ti Super 16GB
+存储: 1TB NVMe SSD
+é¢ç®: çº?12000-15000å
+?
 
-æ¯ææ¨¡å:
+支持模型:
 - Whisper: medium/large-v3
 - å¤§æ¨¡å? 7B-14Båæ°æ¨¡å
-- FinBERT: å®å¨æ¯æ
+- FinBERT: å®å
+¨æ¯æ
 ```
 
-#### é«æ§è½éç½®ï¼æºæçº§ï¼?
+#### é«æ§è½é
+ç½®ï¼æºæçº§ï¼?
 
 ```
 CPU: Intel i9-14900K / AMD Ryzen 9 7950X
-åå­: 64GB DDR5
-æ¾å¡: NVIDIA RTX 4090 24GB
-å­å¨: 2TB NVMe SSD
-é¢ç®: çº?25000-30000å?
+å
+存: 64GB DDR5
+显卡: NVIDIA RTX 4090 24GB
+存储: 2TB NVMe SSD
+é¢ç®: çº?25000-30000å
+?
 
-æ¯ææ¨¡å:
-- Whisper: large-v3ï¼å®æ¶è½¬å½ï¼
+支持模型:
+- Whisper: large-v3（实时转录）
 - å¤§æ¨¡å? 14B-32Båæ°æ¨¡å
-- FinBERT: å®å¨æ¯æ
+- FinBERT: å®å
+¨æ¯æ
 ```
 
 ---
 
-### 5. ææ¬å¯¹æ¯åæ
+### 5. 成本对比分析
 
 #### äºç«¯APIæ¹æ¡ï¼?å¹´ææ¬ï¼
 
 ```
 åè®¾ï¼æ¯å¤©å½å?0ä¸ªä¸»æ­ï¼æ¯ä¸ªä¸»æ­1å°æ¶
 
-Whisper APIææ¬:
+Whisper API成本:
 - 10å°æ¶/å¤?Ã $0.36/å°æ¶ = $3.6/å¤?
 - 365å¤?Ã $3.6 = $1,314/å¹?
 
-GPT-4 APIææ¬:
+GPT-4 API成本:
 - 10æ¬¡åæ?å¤?Ã $3/æ¬?= $30/å¤?
 - 365å¤?Ã $30 = $10,950/å¹?
 
@@ -590,12 +648,16 @@ GPT-4 APIææ¬:
 #### æ¬å°æ¨¡åæ¹æ¡ï¼?å¹´ææ¬ï¼
 
 ```
-ç¡¬ä»¶æå¥ï¼æ¨èéç½®ï¼:
+ç¡¬ä»¶æå
+¥ï¼æ¨èé
+ç½®ï¼:
 - RTX 4070 Ti Super: Â¥8,000
-- å¶ä»ç¡¬ä»¶: Â¥7,000
-- æ»è®¡: Â¥15,000ï¼ä¸æ¬¡æ§æå¥ï¼
+- å
+¶ä»ç¡¬ä»¶: Â¥7,000
+- æ»è®¡: Â¥15,000ï¼ä¸æ¬¡æ§æå
+¥ï¼
 
-çµè´¹ææ¬:
+电费成本:
 - åè? 300W Ã 10å°æ¶/å¤?= 3åº¦çµ/å¤?
 - çµè´¹: 3åº?Ã Â¥0.6 Ã 365å¤?= Â¥657/å¹?
 
@@ -605,49 +667,56 @@ GPT-4 APIææ¬:
 2å¹´æ»ææ? Â¥16,314
 3å¹´æ»ææ? Â¥16,971
 
-ç¸æ¯äºç«¯APIèç: Â¥88,000 - Â¥15,657 = Â¥72,343ï¼ç¬¬ä¸å¹´ï¼
+相比云端API节省: ¥88,000 - ¥15,657 = ¥72,343（第一年）
 ```
 
 **ç»è®º**: â?**æ¬å°æ¨¡åæ¹æ¡é¿æææ¬æ´ä½ï¼?å¹´å³å¯åæ?*
 
 ---
 
-### 6. é¨ç½²æµç¨
+### 6. 部署流程
 
-#### æ­¥éª¤1: ç¯å¢åå¤
+#### 步骤1: 环境准备
 
 ```bash
-# å®è£Python 3.10+
+# å®è£
+Python 3.10+
 conda create -n live-analysis python=3.10
 conda activate live-analysis
 
-# å®è£PyTorchï¼GPUçæ¬ï¼?
+# å®è£
+PyTorchï¼GPUçæ¬ï¼?
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# å®è£Transformers
+# å®è£
+Transformers
 pip install transformers accelerate
 
-# å®è£Whisper
+# å®è£
+Whisper
 pip install openai-whisper
 
-# å®è£å¶ä»ä¾èµ
+# å®è£
+å
+¶ä»ä¾èµ
 pip install ffmpeg-python DrissionPage
 ```
 
-#### æ­¥éª¤2: ä¸è½½æ¨¡å
+#### 步骤2: 下载模型
 
 ```bash
-# ä¸è½½Whisperæ¨¡å
+# 下载Whisper模型
 python -c "import whisper; whisper.load_model('medium')"
 
-# ä¸è½½Qwenæ¨¡å
+# 下载Qwen模型
 python -c "from transformers import AutoModelForCausalLM; AutoModelForCausalLM.from_pretrained('Qwen/Qwen2.5-7B-Instruct')"
 
-# ä¸è½½FinBERTæ¨¡å
+# 下载FinBERT模型
 python -c "from transformers import AutoModelForSequenceClassification; AutoModelForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone')"
 ```
 
-#### æ­¥éª¤3: éç½®ç³»ç»
+#### æ­¥éª¤3: é
+ç½®ç³»ç»
 
 ```yaml
 # config.yaml
@@ -668,7 +737,7 @@ models:
     device: "cuda"
 ```
 
-#### æ­¥éª¤4: è¿è¡ç³»ç»
+#### 步骤4: 运行系统
 
 ```bash
 python main.py
@@ -676,14 +745,15 @@ python main.py
 
 ---
 
-### 7. æ¨¡åä¼åå»ºè®®
+### 7. 模型优化建议
 
 #### éåå é?
 
 ```python
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig
 
-# 4-bitéåéç½®
+# 4-bitéåé
+ç½®
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_compute_dtype=torch.float16,
@@ -691,7 +761,7 @@ quantization_config = BitsAndBytesConfig(
     bnb_4bit_quant_type="nf4"
 )
 
-# å è½½éåæ¨¡å
+# 加载量化模型
 model = AutoModelForCausalLM.from_pretrained(
     "Qwen/Qwen2.5-7B-Instruct",
     quantization_config=quantization_config,
@@ -699,9 +769,10 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
-**ææ**: åå­å ç¨åå°75%ï¼éåº¦æå2-3å?
+**ææ**: å
+å­å ç¨åå°75%ï¼éåº¦æå2-3å?
 
-#### æ¨¡åå¾®è°
+#### 模型微调
 
 ```python
 # ä½¿ç¨èªå·±çéèæ°æ®å¾®è°æ¨¡å?
@@ -725,30 +796,46 @@ trainer.train()
 
 ---
 
-## ð¯ RTX 3090 24GB æä½³éç½®æ¹æ¡?
+## ð¯ RTX 3090 24GB æä½³é
+ç½®æ¹æ¡?
 
-> **ç¡¬ä»¶éç½®**: RTX 3090 24GB + 64GB RAM + i7-12700KF
-> **éç½®è¯çº§**: â­â­â­â­â­?æºæçº§éç½?
-> **åå»ºæ¥æ**: 2026-04-02
+> **ç¡¬ä»¶é
+ç½®**: RTX 3090 24GB + 64GB RAM + i7-12700KF
+> **é
+ç½®è¯çº§**: â­â­â­â­â­?æºæçº§é
+ç½?
+> **创建日期**: 2026-04-02
 
-### ç¡¬ä»¶éç½®åæ
+### ç¡¬ä»¶é
+ç½®åæ
 
 ```
 â?æ¾å¡: NVIDIA RTX 3090 24GB - é«ç«¯æ¾å¡ï¼å¯è¿è¡å¤§åæ¨¡å
-â?åå­: 64GB - éå¸¸åè¶³
-â?å¤çå? i7-12700KF - å¼ºåCPU
-â?å­å¨: 1.82TB - ç©ºé´åè¶³
+â?å
+å­: 64GB - éå¸¸å
 
-éç½®è¯çº§: â­â­â­â­â­?æºæçº§éç½?
+è¶³
+â?å¤çå? i7-12700KF - å¼ºåCPU
+â?å­å¨: 1.82TB - ç©ºé´å
+
+è¶³
+
+é
+ç½®è¯çº§: â­â­â­â­â­?æºæçº§é
+ç½?
 ```
 
-### å·²æOllamaæ¨¡ååæ
+### 已有Ollama模型分析
 
 | æ¨¡å | å¤§å° | éç¨æ?| æ¨èåº?|
 |------|------|--------|--------|
-| qwen3:8b | 5.2GB | â?éååå®¹åæ | â­â­â­â­ |
-| deepseek-r1:8b | 5.2GB | â?éååå®¹åæ | â­â­â­â­ |
-| **deepseek-r1:14b** | 9.0GB | ââ **éå¸¸éå** | â­â­â­â­â­?|
+| qwen3:8b | 5.2GB | â?éåå
+容分析 | ⭐⭐⭐⭐ |
+| deepseek-r1:8b | 5.2GB | â?éåå
+容分析 | ⭐⭐⭐⭐ |
+| **deepseek-r1:14b** | 9.0GB | â
+â
+ **éå¸¸éå** | â­â­â­â­â­?|
 | qwen2.5-coder:14b | 9.0GB | â ï¸ ä¸æ³¨ä»£ç  | â­â­â­?|
 | qwen3-coder:30b | 18GB | â ï¸ ä¸æ³¨ä»£ç  | â­â­â­?|
 
@@ -762,13 +849,15 @@ trainer.train()
 â? - åç¡®ç? 94%                               â?
 â? - éåº¦: ~150-200å­ç¬¦/ç§?                    â?
 âââââââââââââââââââââââââââââââââââââââââââââââ?
-â? åå®¹åæ: deepseek-r1:14b (å·²æ)            â?
+â? å
+å®¹åæ: deepseek-r1:14b (å·²æ)            â?
 â? - åæ°é? 14B                               â?
 â? - æ¾å­å ç¨: ~9GB                            â?
 â? - éèçè§£: â­â­â­â­â­?                       â?
 â? - æ¨çéåº¦: ~30-50 tokens/ç§?               â?
 âââââââââââââââââââââââââââââââââââââââââââââââ?
-â? ææåæ: FinBERT (æ¬å°)                    â?
+â? æ
+æåæ: FinBERT (æ¬å°)                    â?
 â? - åæ°é? 110M                              â?
 â? - æ¾å­å ç¨: ~1GB                            â?
 â? - éèä¸ç¨: â?                             â?
@@ -782,7 +871,7 @@ trainer.train()
 ### ð¥ æ¨èæ¹æ¡äºï¼æåæ´å¤§æ¨¡åï¼æä½³æ§è½ï¼?
 
 ```bash
-# æåå½ä»¤
+# 拉取命令
 ollama pull qwen2.5:32b
 ```
 
@@ -793,13 +882,15 @@ ollama pull qwen2.5:32b
 â? - æ¾å­å ç¨: ~10GB                           â?
 â? - åç¡®ç? 94%                               â?
 âââââââââââââââââââââââââââââââââââââââââââââââ?
-â? åå®¹åæ: qwen2.5:32b (æ¨èæå)            â?
+â? å
+å®¹åæ: qwen2.5:32b (æ¨èæå)            â?
 â? - åæ°é? 32B                               â?
 â? - æ¾å­å ç¨: ~11GB                           â?
 â? - éèçè§£: â­â­â­â­â­?(æå¼?                 â?
 â? - ä¸­æè½å: â­â­â­â­â­?                        â?
 âââââââââââââââââââââââââââââââââââââââââââââââ?
-â? ææåæ: FinBERT (æ¬å°)                    â?
+â? æ
+æåæ: FinBERT (æ¬å°)                    â?
 â? - åæ°é? 110M                              â?
 â? - æ¾å­å ç¨: ~1GB                            â?
 âââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -808,7 +899,7 @@ ollama pull qwen2.5:32b
 æ§è½è¯çº§: â­â­â­â­â­?(æé«?
 ```
 
-### æ§è½å¯¹æ¯
+### 性能对比
 
 | æ¨¡åç»å | åç¡®ç?| éåº¦ | æ¾å­ | æ¨èåº?|
 |---------|--------|------|------|--------|
@@ -816,17 +907,19 @@ ollama pull qwen2.5:32b
 | Whisper large-v3 + DeepSeek14B | 94% / 90% | ä¸?| 20GB | â­â­â­â­â­?|
 | Whisper large-v3 + Qwen32B | 94% / 95% | ä¸?| 22GB | â­â­â­â­â­?|
 
-### ææ¬å¯¹æ¯
+### 成本对比
 
-| æ¹æ¡ | åå§æå¥ | å¹´è¿è¥ææ?| 1å¹´æ»ææ?|
+| æ¹æ¡ | åå§æå
+¥ | å¹´è¿è¥ææ?| 1å¹´æ»ææ?|
 |------|---------|-----------|----------|
-| äºç«¯API | Â¥0 | Â¥88,000 | Â¥88,000 |
-| æ¬å°æ¨¡åï¼ç°æï¼ | Â¥0 | Â¥657 | Â¥657 |
-| æ¬å°æ¨¡åï¼åçº§ï¼ | Â¥0 | Â¥1,000 | Â¥1,000 |
+| 云端API | ¥0 | ¥88,000 | ¥88,000 |
+| 本地模型（现有） | ¥0 | ¥657 | ¥657 |
+| 本地模型（升级） | ¥0 | ¥1,000 | ¥1,000 |
 
 **èç**: Â¥87,000 - Â¥87,686 / å¹?
 
-### éç½®æä»¶
+### é
+ç½®æä»¶
 
 ```yaml
 # config_local_rtx3090.yaml
@@ -847,31 +940,34 @@ models:
     device: "cuda"
 ```
 
-### é¨ç½²æ­¥éª¤
+### 部署步骤
 
 ```bash
-# 1. æåWhisper large-v3
+# 1. 拉取Whisper large-v3
 python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
-# 2. æåFinBERT
+# 2. 拉取FinBERT
 python -c "from transformers import AutoModelForSequenceClassification; AutoModelForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone')"
 
-# 3. ï¼å¯éï¼æåæ´å¤§æ¨¡å
+# 3. （可选）拉取更大模型
 ollama pull qwen2.5:32b
 
-# 4. è¿è¡é¨ç½²èæ¬
+# 4. 运行部署脚本
 .\deploy_rtx3090.ps1
 
-# 5. å¯å¨ç³»ç»
+# 5. 启动系统
 python main.py
 ```
 
-### ç¸å³ææ¡£
+### ç¸å
+³ææ¡£
 
-- [RTX 3090æä½³æ¨¡åéç½®è¯¦ç»è¯´æ](./RTX3090_BEST_MODELS.md)
-- [éç½®æä»¶](./config_local_rtx3090.yaml)
-- [é¨ç½²èæ¬ï¼PowerShellï¼](./deploy_rtx3090.ps1)
-- [é¨ç½²èæ¬ï¼Bashï¼](./deploy_rtx3090.sh)
+- [RTX 3090æä½³æ¨¡åé
+ç½®è¯¦ç»è¯´æ](./RTX3090_BEST_MODELS.md)
+- [é
+ç½®æä»¶](./config_local_rtx3090.yaml)
+- [部署脚本（PowerShell）](./deploy_rtx3090.ps1)
+- [部署脚本（Bash）](./deploy_rtx3090.sh)
 
 ---
 
@@ -893,7 +989,8 @@ python main.py
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 â?                   ä¸å¡å±?(Business Layer)                   â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
-â? â?ç´æ­çæ§æå¡  â? â?åå®¹åææå¡  â? â?å å­çææå¡  â?     â?
+â? â?ç´æ­çæ§æå¡  â? â?å
+å®¹åææå¡  â? â?å å­çææå¡  â?     â?
 â? âMonitorServiceâ? âAnalyzerServiceâ? âFactorService â?     â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -905,7 +1002,8 @@ python main.py
 â? âAudioRecorder â? âTranscriber   â? âOpinionAggregatorâ?   â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
-â? â?ç´æ­çæ§å?   â? â?ææåæå?   â? â?å å­è®¡ç®å?   â?     â?
+â? â?ç´æ­çæ§å?   â? â?æ
+æåæå?   â? â?å å­è®¡ç®å?   â?     â?
 â? âLiveMonitor   â? âSentimentAnalyzerâ?âFactorCalculatorâ?  â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -914,11 +1012,13 @@ python main.py
 â?                   åºç¡è®¾æ½å±?(Infrastructure Layer)          â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 â? â?FFmpeg       â? â?Whisper      â? â?OpenAI API   â?     â?
-â? â?(é³é¢å½å¶)   â? â?(è¯­é³è¯å«)   â? â?(åå®¹åæ)   â?     â?
+â? â?(é³é¢å½å¶)   â? â?(è¯­é³è¯å«)   â? â?(å
+å®¹åæ)   â?     â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 â? â?PostgreSQL   â? â?Redis        â? â?ClickHouse   â?     â?
-â? â?(åæ°æ®å­å? â? â?(å®æ¶ç¼å­)   â? â?(æ¶åºæ°æ®)   â?     â?
+â? â?(å
+æ°æ®å­å? â? â?(å®æ¶ç¼å­)   â? â?(æ¶åºæ°æ®)   â?     â?
 â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?     â?
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
@@ -947,12 +1047,14 @@ python main.py
 âââââââââââââââ?
        â?
 âââââââââââââââ?
-â?åå®¹åæ     â?â?GPT-4æåè§ç¹
+â?å
+å®¹åæ     â?â?GPT-4æåè§ç¹
 â?(GPT-4)      â?
 âââââââââââââââ?
        â?
 âââââââââââââââ?
-â?ææåæ     â?â?FinBERT
+â?æ
+æåæ     â?â?FinBERT
 â?(FinBERT)    â?
 âââââââââââââââ?
        â?
@@ -974,22 +1076,22 @@ python main.py
 
 ---
 
-## ð¦ æ¨¡åè¯¦ç»è®¾è®¡
+## 📦 模块详细设计
 
 ### æ¨¡å1: ç´æ­çæ§ä¸å½å?(LiveMonitor & AudioRecorder)
 
-#### 1.1 åè½èè´£
+#### 1.1 功能职责
 
 - çæ§å¤ä¸ªæé³ä¸»æ­çç´æ­ç¶æ?
 - ä¸»æ­å¼æ­æ¶èªå¨å¼å§å½å?
-- åªå½å¶MP3é³é¢æ ¼å¼
-- è·åç´æ­é´å®æ¶æ°æ®ï¼å¨çº¿äººæ°ãç´æ­é´æ é¢ç­ï¼
+- 只录制MP3音频格式
+- 获取直播间实时数据（在线人数、直播间标题等）
 
 #### 1.2 ææ¯å®ç?
 
 **ç´æ­çæ§å?(LiveMonitor)**
 
-ä½¿ç¨DrissionPageçå¬ç´æ­é´ç¶æï¼
+使用DrissionPage监听直播间状态：
 
 ```python
 from DrissionPage import ChromiumPage
@@ -999,7 +1101,7 @@ from typing import Dict, List
 import logging
 
 class DouyinLiveMonitor:
-    """æé³ç´æ­é´çæ§å¨"""
+    """抖音直播间监控器"""
     
     def __init__(self, config: Dict):
         self.config = config
@@ -1015,7 +1117,7 @@ class DouyinLiveMonitor:
             )
     
     async def _monitor_single_streamer(self, streamer: Dict):
-        """çæ§åä¸ªä¸»æ­"""
+        """监控单个主播"""
         while True:
             try:
                 # æ£æ¥ç´æ­ç¶æ?
@@ -1025,14 +1127,15 @@ class DouyinLiveMonitor:
                     # è·åç´æ­é´æ°æ?
                     live_data = await self._get_live_room_data(streamer["url"])
                     
-                    # è§¦åå½å¶äºä»¶
+                    # 触发录制事件
                     await self._on_streamer_live(streamer, live_data)
                 
-                # ç­å¾ä¸æ¬¡æ£æ?
+                # ç­å¾
+ä¸æ¬¡æ£æ?
                 await asyncio.sleep(self.config["check_interval"])
                 
             except Exception as e:
-                self.logger.error(f"çæ§ä¸»æ­ {streamer['name']} å¤±è´¥: {e}")
+                self.logger.error(f"监控主播 {streamer['name']} 失败: {e}")
                 await asyncio.sleep(60)
     
     async def _check_live_status(self, live_url: str) -> bool:
@@ -1041,7 +1144,7 @@ class DouyinLiveMonitor:
             self.page.get(live_url)
             time.sleep(2)
             
-            # æ£æ¥æ¯å¦æç´æ­æ è¯
+            # 检查是否有直播标识
             live_indicator = self.page.ele('css:.live-badge', timeout=3)
             return live_indicator is not None
             
@@ -1055,7 +1158,7 @@ class DouyinLiveMonitor:
             self.page.get(live_url)
             time.sleep(3)
             
-            # æåå¨çº¿äººæ°
+            # 提取在线人数
             online_element = self.page.ele('css:.live-room-online-count', timeout=5)
             online_count = self._parse_count(online_element.text) if online_element else 0
             
@@ -1063,7 +1166,7 @@ class DouyinLiveMonitor:
             title_element = self.page.ele('css:.room-title', timeout=5)
             title = title_element.text if title_element else ""
             
-            # æåä¸»æ­åç§°
+            # 提取主播名称
             streamer_element = self.page.ele('css:.streamer-name', timeout=5)
             streamer_name = streamer_element.text if streamer_element else ""
             
@@ -1094,9 +1197,9 @@ class DouyinLiveMonitor:
     
     async def _on_streamer_live(self, streamer: Dict, live_data: Dict):
         """ä¸»æ­å¼æ­äºä»¶å¤ç?""
-        self.logger.info(f"ä¸»æ­ {streamer['name']} å·²å¼æ­ï¼å¨çº¿äººæ°: {live_data['online_count']}")
+        self.logger.info(f"主播 {streamer['name']} 已开播，在线人数: {live_data['online_count']}")
         
-        # è§¦åå½å¶ä»»å¡
+        # 触发录制任务
         # è¿éä¼è°ç¨AudioRecorderå¼å§å½å?
         pass
 ```
@@ -1131,56 +1234,58 @@ class AudioRecorder:
         bitrate: str = "128k"
     ) -> Optional[str]:
         """
-        å½å¶é³é¢
+        录制音频
         
         Args:
-            stream_url: ç´æ­æµå°å
-            streamer_name: ä¸»æ­åç§°
+            stream_url: 直播流地址
+            streamer_name: 主播名称
             duration: å½å¶æ¶é¿ï¼ç§ï¼?
             output_format: è¾åºæ ¼å¼ï¼mp3/m4aï¼?
             bitrate: é³é¢æ¯ç¹ç?
         
         Returns:
-            å½å¶æä»¶è·¯å¾
+            录制文件路径
         """
         try:
             # çæè¾åºæä»¶å?
             timestamp = time.strftime("%Y%m%d_%H%M%S")
             output_file = self.output_dir / f"{streamer_name}_{timestamp}.{output_format}"
             
-            # æå»ºFFmpegå½ä»¤
+            # 构建FFmpeg命令
             cmd = [
                 self.ffmpeg_path,
-                "-i", stream_url,              # è¾å¥æµ?
-                "-vn",                          # å¿½ç¥è§é¢
+                "-i", stream_url,              # è¾å
+¥æµ?
+                "-vn",                          # 忽略视频
                 "-c:a", "libmp3lame",          # MP3ç¼ç å?
                 "-b:a", bitrate,               # æ¯ç¹ç?
-                "-t", str(duration),           # å½å¶æ¶é¿
+                "-t", str(duration),           # 录制时长
                 "-y",                           # è¦çå·²å­å¨æä»?
                 str(output_file)
             ]
             
             self.logger.info(f"å¼å§å½å? {streamer_name}, æ¶é¿: {duration}ç§?)
             
-            # å¼æ­¥æ§è¡å½å¶
+            # 异步执行录制
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
             
-            # ç­å¾å½å¶å®æ
+            # ç­å¾
+录制完成
             stdout, stderr = await process.communicate()
             
             if process.returncode == 0:
-                self.logger.info(f"å½å¶å®æ: {output_file}")
+                self.logger.info(f"录制完成: {output_file}")
                 return str(output_file)
             else:
-                self.logger.error(f"å½å¶å¤±è´¥: {stderr.decode()}")
+                self.logger.error(f"录制失败: {stderr.decode()}")
                 return None
                 
         except Exception as e:
-            self.logger.error(f"å½å¶å¼å¸¸: {e}")
+            self.logger.error(f"录制异常: {e}")
             return None
     
     async def record_segmented(
@@ -1191,16 +1296,16 @@ class AudioRecorder:
         total_duration: int = 7200
     ) -> list:
         """
-        åæ®µå½å¶é³é¢
+        分段录制音频
         
         Args:
-            stream_url: ç´æ­æµå°å
-            streamer_name: ä¸»æ­åç§°
+            stream_url: 直播流地址
+            streamer_name: 主播名称
             segment_duration: æ¯æ®µæ¶é¿ï¼ç§ï¼?
-            total_duration: æ»æ¶é¿ï¼ç§ï¼
+            total_duration: 总时长（秒）
         
         Returns:
-            å½å¶æä»¶åè¡¨
+            录制文件列表
         """
         recorded_files = []
         segments = total_duration // segment_duration
@@ -1220,13 +1325,16 @@ class AudioRecorder:
 
 ---
 
-### æ¨¡å2: åå®¹è½¬å½ä¸åæ?(Transcriber & Analyzer)
+### æ¨¡å2: å
+å®¹è½¬å½ä¸åæ?(Transcriber & Analyzer)
 
-#### 2.1 åè½èè´£
+#### 2.1 功能职责
 
 - å°MP3é³é¢è½¬å½ä¸ºæå­?
-- æåå³é®éèè§ç¹
-- è¿è¡ææåæ
+- æåå
+³é®éèè§ç¹
+- è¿è¡æ
+感分析
 - è¯å«æ¨èæ¿ååä¸ªè?
 
 #### 2.2 ææ¯å®ç?
@@ -1246,9 +1354,9 @@ class AudioTranscriber:
         self.config = config
         self.logger = logging.getLogger(__name__)
         
-        # å è½½Whisperæ¨¡å
+        # 加载Whisper模型
         model_size = config.get("whisper_model", "base")
-        self.logger.info(f"å è½½Whisperæ¨¡å: {model_size}")
+        self.logger.info(f"加载Whisper模型: {model_size}")
         self.model = whisper.load_model(model_size)
     
     async def transcribe(
@@ -1257,21 +1365,21 @@ class AudioTranscriber:
         language: str = "zh"
     ) -> Dict:
         """
-        è½¬å½é³é¢
+        转录音频
         
         Args:
-            audio_path: é³é¢æä»¶è·¯å¾
+            audio_path: 音频文件路径
             language: è¯­è¨ï¼zh/enï¼?
         
         Returns:
-            è½¬å½ç»æ
+            转录结果
         """
         try:
             start_time = time.time()
             
             self.logger.info(f"å¼å§è½¬å½? {audio_path}")
             
-            # ä½¿ç¨Whisperè½¬å½
+            # 使用Whisper转录
             result = self.model.transcribe(
                 audio_path,
                 language=language,
@@ -1301,7 +1409,7 @@ class AudioTranscriber:
             }
             
         except Exception as e:
-            self.logger.error(f"è½¬å½å¤±è´¥: {e}")
+            self.logger.error(f"转录失败: {e}")
             return {
                 "text": "",
                 "segments": [],
@@ -1313,7 +1421,7 @@ class AudioTranscriber:
         audio_files: List[str],
         language: str = "zh"
     ) -> List[Dict]:
-        """æ¹éè½¬å½é³é¢"""
+        """批量转录音频"""
         results = []
         
         for audio_file in audio_files:
@@ -1323,7 +1431,8 @@ class AudioTranscriber:
         return results
 ```
 
-**åå®¹åæå?(ContentAnalyzer)**
+**å
+å®¹åæå?(ContentAnalyzer)**
 
 ```python
 from openai import OpenAI
@@ -1332,7 +1441,8 @@ import json
 import logging
 
 class FinancialContentAnalyzer:
-    """éèåå®¹åæå?""
+    """éèå
+å®¹åæå?""
     
     def __init__(self, config: Dict):
         self.config = config
@@ -1352,45 +1462,54 @@ class FinancialContentAnalyzer:
         streamer_name: str = ""
     ) -> Dict:
         """
-        æåå³é®éèè§ç¹
+        æåå
+³é®éèè§ç¹
         
         Args:
-            transcript: è½¬å½ææ¬
-            streamer_name: ä¸»æ­åç§°
+            transcript: 转录文本
+            streamer_name: 主播名称
         
         Returns:
-            å³é®è§ç¹
+            å
+³é®è§ç¹
         """
         try:
             prompt = f"""
-ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æãè¯·åæä»¥ä¸ç´æ­åå®¹ï¼æåå³é®éèè§ç¹ã?
+ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æãè¯·åæä»¥ä¸ç´æ­å
+å®¹ï¼æåå
+³é®éèè§ç¹ã?
 
-ä¸»æ­åç§°: {streamer_name}
-ç´æ­åå®¹:
+主播名称: {streamer_name}
+ç´æ­å
+å®¹:
 {transcript}
 
 è¯·æåä»¥ä¸ä¿¡æ¯ï¼ä»¥JSONæ ¼å¼è¿åï¼?
 
 {{
-    "market_view": "çå¤/çç©º/éè¡",
-    "confidence": 0-10çä¿¡å¿åº¦,
-    "sectors": ["æ¨èæ¿å1", "æ¨èæ¿å2"],
+    "market_view": "看多/看空/震荡",
+    "confidence": 0-10的信心度,
+    "sectors": ["推荐板块1", "推荐板块2"],
     "stocks": [
         {{
-            "code": "è¡ç¥¨ä»£ç ",
-            "name": "è¡ç¥¨åç§°",
-            "action": "ä¹°å¥/ååº/è§æ",
+            "code": "股票代码",
+            "name": "股票名称",
+            "action": "ä¹°å
+¥/ååº/è§æ",
             "price": "å»ºè®®ä»·æ ¼",
-            "reason": "æ¨èçç±"
+            "reason": "推荐理由"
         }}
     ],
-    "risks": ["é£é©æç¤º1", "é£é©æç¤º2"],
-    "key_points": ["å³é®è§ç¹1", "å³é®è§ç¹2"],
-    "timeframe": "ç­æ/ä¸­æ/é¿æ"
+    "risks": ["风险提示1", "风险提示2"],
+    "key_points": ["å
+³é®è§ç¹1", "å
+³é®è§ç¹2"],
+    "timeframe": "短期/中期/长期"
 }}
 
 æ³¨æï¼?
-1. market_viewå¿é¡»æ?çå¤"ã?çç©º"æ?éè¡"ä¹ä¸
+1. market_viewå¿
+é¡»æ?çå¤"ã?çç©º"æ?éè¡"ä¹ä¸
 2. confidenceæ?-10çæ°å­ï¼è¡¨ç¤ºä¸»æ­å¯¹è§ç¹çä¿¡å¿åº?
 3. å¦ææ²¡ææç¡®æå°æä¸ªå­æ®µï¼å¯ä»¥çç©?
 4. ä¿æå®¢è§ï¼ä¸è¦æ·»å ä¸ªäººè§ç?
@@ -1401,7 +1520,10 @@ class FinancialContentAnalyzer:
                 messages=[
                     {
                         "role": "system",
-                        "content": "ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æï¼æé¿ä»ç´æ­åå®¹ä¸­æåå³é®æèµè§ç¹ã?
+                        "content": "ä½ æ¯ä¸ä½ä¸ä¸çéèåæå¸å©æï¼æ
+é¿ä»ç´æ­å
+å®¹ä¸­æåå
+³é®æèµè§ç¹ã?
                     },
                     {
                         "role": "user",
@@ -1412,10 +1534,10 @@ class FinancialContentAnalyzer:
                 max_tokens=2000
             )
             
-            # è§£æJSONååº
+            # 解析JSON响应
             content = response.choices[0].message.content
             
-            # æåJSONé¨å
+            # 提取JSON部分
             if "```json" in content:
                 json_str = content.split("```json")[1].split("```")[0].strip()
             elif "```" in content:
@@ -1430,39 +1552,44 @@ class FinancialContentAnalyzer:
             return result
             
         except Exception as e:
-            self.logger.error(f"è§ç¹æåå¤±è´¥: {e}")
+            self.logger.error(f"观点提取失败: {e}")
             return {
-                "market_view": "éè¡",
+                "market_view": "震荡",
                 "confidence": 5,
                 "sectors": [],
                 "stocks": [],
                 "risks": [],
                 "key_points": [],
-                "timeframe": "ç­æ",
+                "timeframe": "短期",
                 "error": str(e)
             }
     
     async def analyze_sentiment(self, text: str) -> Dict:
         """
-        ææåæ
+        æ
+感分析
         
         Args:
-            text: å¾åæææ?
+            text: å¾
+åæææ?
         
         Returns:
-            ææåæç»æ
+            æ
+感分析结果
         """
         try:
             from transformers import pipeline
             
-            # ä½¿ç¨éèææåææ¨¡å
+            # ä½¿ç¨éèæ
+感分析模型
             sentiment_analyzer = pipeline(
                 "sentiment-analysis",
                 model="yiyanghkust/finbert-tone",
                 device=-1  # CPU
             )
             
-            # åæ®µåæï¼é¿åææ¬è¿é¿ï¼
+            # åæ®µåæï¼é¿å
+ææ¬è¿é¿ï¼
             max_length = 512
             segments = [text[i:i+max_length] for i in range(0, len(text), max_length)]
             
@@ -1471,7 +1598,8 @@ class FinancialContentAnalyzer:
                 result = sentiment_analyzer(segment)
                 sentiments.append(result[0])
             
-            # ç»¼åææ
+            # ç»¼åæ
+感
             positive_count = sum(1 for s in sentiments if s['label'] == 'Positive')
             negative_count = sum(1 for s in sentiments if s['label'] == 'Negative')
             neutral_count = sum(1 for s in sentiments if s['label'] == 'Neutral')
@@ -1499,7 +1627,8 @@ class FinancialContentAnalyzer:
             }
             
         except Exception as e:
-            self.logger.error(f"ææåæå¤±è´¥: {e}")
+            self.logger.error(f"æ
+感分析失败: {e}")
             return {
                 "sentiment": "Neutral",
                 "confidence": 0.5,
@@ -1511,11 +1640,11 @@ class FinancialContentAnalyzer:
 
 ### æ¨¡å3: è§ç¹èåä¸å å­çæ?(Aggregator & FactorGenerator)
 
-#### 3.1 åè½èè´£
+#### 3.1 功能职责
 
 - èåå¤ä¸ªä¸»æ­çè§ç?
 - ç»è®¡è§ç¹ä¸è´æ?
-- çæé¢æµå å­
+- 生成预测因子
 - è¾åºå°éåäº¤æç³»ç»?
 
 #### 3.2 ææ¯å®ç?
@@ -1544,13 +1673,13 @@ class OpinionAggregator:
         online_count: int = 0
     ):
         """
-        æ·»å ä¸»æ­è§ç¹
+        添加主播观点
         
         Args:
-            streamer_name: ä¸»æ­åç§°
-            opinion: è§ç¹æ°æ®
-            weight: æé
-            online_count: å¨çº¿äººæ°
+            streamer_name: 主播名称
+            opinion: 观点数据
+            weight: 权重
+            online_count: 在线人数
         """
         self.opinions.append({
             "streamer": streamer_name,
@@ -1567,33 +1696,33 @@ class OpinionAggregator:
         èåææè§ç?
         
         Returns:
-            èåç»æ
+            聚合结果
         """
         if not self.opinions:
             return {
-                "dominant_view": "éè¡",
+                "dominant_view": "震荡",
                 "consensus_ratio": 0,
                 "total_streamers": 0
             }
         
-        # ç»è®¡å¤§ççæ³
-        view_scores = {"çå¤": 0.0, "çç©º": 0.0, "éè¡": 0.0}
+        # 统计大盘看法
+        view_scores = {"看多": 0.0, "看空": 0.0, "震荡": 0.0}
         
         for item in self.opinions:
             view = item["opinion"]["market_view"]
             confidence = item["opinion"]["confidence"]
             weight = item["weight"]
             
-            # å ææç¥¨
+            # 加权投票
             score = weight * confidence / 10.0
             view_scores[view] += score
         
-        # ç¡®å®ä¸»æµè§ç¹
+        # 确定主流观点
         dominant_view = max(view_scores, key=view_scores.get)
         total_score = sum(view_scores.values())
         consensus_ratio = view_scores[dominant_view] / total_score if total_score > 0 else 0
         
-        # ç»è®¡æ¨èæ¿å
+        # 统计推荐板块
         all_sectors = []
         for item in self.opinions:
             all_sectors.extend(item["opinion"].get("sectors", []))
@@ -1601,7 +1730,7 @@ class OpinionAggregator:
         sector_counts = Counter(all_sectors)
         top_sectors = sector_counts.most_common(10)
         
-        # ç»è®¡æ¨èä¸ªè¡
+        # 统计推荐个股
         all_stocks = []
         for item in self.opinions:
             all_stocks.extend(item["opinion"].get("stocks", []))
@@ -1612,7 +1741,7 @@ class OpinionAggregator:
         # è®¡ç®å¹³åä¿¡å¿åº?
         avg_confidence = np.mean([item["opinion"]["confidence"] for item in self.opinions])
         
-        # è®¡ç®å¹³åå¨çº¿äººæ°
+        # 计算平均在线人数
         avg_online_count = np.mean([item["online_count"] for item in self.opinions])
         
         return {
@@ -1627,9 +1756,11 @@ class OpinionAggregator:
         }
     
     def clear(self):
-        """æ¸ç©ºè§ç¹"""
+        """æ¸
+空观点"""
         self.opinions = []
-        self.logger.info("è§ç¹å·²æ¸ç©?)
+        self.logger.info("è§ç¹å·²æ¸
+ç©?)
 ```
 
 **å å­çæå?(FactorGenerator)**
@@ -1652,17 +1783,18 @@ class FactorGenerator:
         market_data: Dict = None
     ) -> Dict:
         """
-        çæé¢æµå å­
+        生成预测因子
         
         Args:
-            aggregated_opinion: èåè§ç¹
-            market_data: å¸åºæ°æ®ï¼å¯éï¼
+            aggregated_opinion: 聚合观点
+            market_data: 市场数据（可选）
         
         Returns:
-            é¢æµå å­
+            预测因子
         """
         try:
-            # 1. æç»ªå å­ï¼?1å?ï¼?
+            # 1. æ
+ç»ªå å­ï¼?1å?ï¼?
             sentiment_factor = self._calculate_sentiment_factor(
                 aggregated_opinion["dominant_view"],
                 aggregated_opinion["consensus_ratio"]
@@ -1671,7 +1803,7 @@ class FactorGenerator:
             # 2. ä¸è´æ§å å­ï¼0å?ï¼?
             consensus_factor = aggregated_opinion["consensus_ratio"]
             
-            # 3. å½±ååå å­ï¼åºäºä¸»æ­æ°éåå¨çº¿äººæ°ï¼
+            # 3. 影响力因子（基于主播数量和在线人数）
             influence_factor = self._calculate_influence_factor(
                 aggregated_opinion["total_streamers"],
                 aggregated_opinion["avg_online_count"]
@@ -1680,13 +1812,13 @@ class FactorGenerator:
             # 4. ä¿¡å¿åº¦å å­ï¼0å?ï¼?
             confidence_factor = aggregated_opinion["avg_confidence"] / 10.0
             
-            # 5. æ¿åç­åº¦å å­
+            # 5. 板块热度因子
             sector_factors = self._calculate_sector_factors(
                 aggregated_opinion["top_sectors"],
                 aggregated_opinion["total_streamers"]
             )
             
-            # 6. ç»¼åå å­ï¼å æå¹³åï¼
+            # 6. 综合因子（加权平均）
             composite_factor = self._calculate_composite_factor(
                 sentiment_factor=sentiment_factor,
                 consensus_factor=consensus_factor,
@@ -1709,7 +1841,7 @@ class FactorGenerator:
             }
             
         except Exception as e:
-            self.logger.error(f"å å­çæå¤±è´¥: {e}")
+            self.logger.error(f"因子生成失败: {e}")
             return {}
     
     def _calculate_sentiment_factor(
@@ -1717,10 +1849,11 @@ class FactorGenerator:
         dominant_view: str,
         consensus_ratio: float
     ) -> float:
-        """è®¡ç®æç»ªå å­"""
-        if dominant_view == "çå¤":
+        """è®¡ç®æ
+绪因子"""
+        if dominant_view == "看多":
             return consensus_ratio
-        elif dominant_view == "çç©º":
+        elif dominant_view == "看空":
             return -consensus_ratio
         else:
             return 0.0
@@ -1747,11 +1880,11 @@ class FactorGenerator:
         top_sectors: list,
         total_streamers: int
     ) -> Dict[str, float]:
-        """è®¡ç®æ¿åç­åº¦å å­"""
+        """计算板块热度因子"""
         sector_factors = {}
         
         for sector, count in top_sectors:
-            # ç­åº¦ = æåæ¬¡æ° / ä¸»æ­æ°é
+            # 热度 = 提及次数 / 主播数量
             sector_factors[sector] = count / total_streamers
         
         return sector_factors
@@ -1763,8 +1896,9 @@ class FactorGenerator:
         influence_factor: float,
         confidence_factor: float
     ) -> float:
-        """è®¡ç®ç»¼åå å­"""
-        # æééç½®
+        """计算综合因子"""
+        # æéé
+ç½®
         weights = self.config.get("factor_weights", {
             "sentiment": 0.4,
             "consensus": 0.3,
@@ -1772,7 +1906,7 @@ class FactorGenerator:
             "confidence": 0.1
         })
         
-        # å æå¹³å
+        # 加权平均
         composite = (
             sentiment_factor * weights["sentiment"] +
             consensus_factor * weights["consensus"] +
@@ -1785,9 +1919,9 @@ class FactorGenerator:
 
 ---
 
-## ð å®æ´ç³»ç»éæ
+## 🔄 完整系统集成
 
-### ä¸»ç³»ç»ç±»
+### 主系统类
 
 ```python
 import asyncio
@@ -1803,7 +1937,7 @@ class LiveStreamFinancialSystem:
         self.config = config
         self.logger = logging.getLogger(__name__)
         
-        # åå§ååæ¨¡å
+        # 初始化各模块
         self.monitor = DouyinLiveMonitor(config["monitor"])
         self.recorder = AudioRecorder(config["recorder"])
         self.transcriber = AudioTranscriber(config["transcriber"])
@@ -1811,19 +1945,19 @@ class LiveStreamFinancialSystem:
         self.aggregator = OpinionAggregator(config["aggregator"])
         self.factor_generator = FactorGenerator(config["factor_generator"])
         
-        # ç»æå­å¨
+        # 结果存储
         self.results = []
     
     async def run(self, streamer_list: List[Dict]):
         """
-        è¿è¡ç³»ç»
+        运行系统
         
         Args:
-            streamer_list: ä¸»æ­åè¡¨
+            streamer_list: 主播列表
         """
         self.logger.info(f"ç³»ç»å¯å¨ï¼çæ?{len(streamer_list)} ä¸ªä¸»æ?)
         
-        # å¯å¨çæ§ä»»å¡
+        # 启动监控任务
         tasks = []
         for streamer in streamer_list:
             task = asyncio.create_task(
@@ -1831,7 +1965,8 @@ class LiveStreamFinancialSystem:
             )
             tasks.append(task)
         
-        # ç­å¾ææä»»å¡å®æ?
+        # ç­å¾
+ææä»»å¡å®æ?
         await asyncio.gather(*tasks)
         
         # çææç»å å­?
@@ -1840,7 +1975,7 @@ class LiveStreamFinancialSystem:
         return final_factors
     
     async def _process_streamer(self, streamer: Dict):
-        """å¤çåä¸ªä¸»æ­"""
+        """处理单个主播"""
         try:
             self.logger.info(f"å¼å§å¤çä¸»æ? {streamer['name']}")
             
@@ -1854,14 +1989,14 @@ class LiveStreamFinancialSystem:
             # 2. è·åç´æ­é´æ°æ?
             live_data = await self.monitor._get_live_room_data(streamer["url"])
             
-            # 3. è·åç´æ­æµå°å
+            # 3. 获取直播流地址
             stream_url = await self._get_stream_url(streamer["url"])
             
             if not stream_url:
-                self.logger.error(f"æ æ³è·åç´æ­æµå°å: {streamer['name']}")
+                self.logger.error(f"无法获取直播流地址: {streamer['name']}")
                 return
             
-            # 4. å½å¶é³é¢
+            # 4. 录制音频
             audio_path = await self.recorder.record_audio(
                 stream_url=stream_url,
                 streamer_name=streamer["name"],
@@ -1869,26 +2004,28 @@ class LiveStreamFinancialSystem:
             )
             
             if not audio_path:
-                self.logger.error(f"å½å¶å¤±è´¥: {streamer['name']}")
+                self.logger.error(f"录制失败: {streamer['name']}")
                 return
             
-            # 5. è½¬å½é³é¢
+            # 5. 转录音频
             transcript = await self.transcriber.transcribe(audio_path)
             
             if not transcript["text"]:
-                self.logger.error(f"è½¬å½å¤±è´¥: {streamer['name']}")
+                self.logger.error(f"转录失败: {streamer['name']}")
                 return
             
-            # 6. æåå³é®è§ç¹
+            # 6. æåå
+³é®è§ç¹
             key_points = await self.analyzer.extract_key_points(
                 transcript["text"],
                 streamer["name"]
             )
             
-            # 7. ææåæ
+            # 7. æ
+感分析
             sentiment = await self.analyzer.analyze_sentiment(transcript["text"])
             
-            # 8. æ·»å å°èåå¨
+            # 8. 添加到聚合器
             self.aggregator.add_opinion(
                 streamer_name=streamer["name"],
                 opinion={
@@ -1899,7 +2036,7 @@ class LiveStreamFinancialSystem:
                 online_count=live_data.get("online_count", 0)
             )
             
-            # 9. ä¿å­ç»æ
+            # 9. 保存结果
             result = {
                 "streamer": streamer["name"],
                 "live_data": live_data,
@@ -1911,33 +2048,34 @@ class LiveStreamFinancialSystem:
             
             self.results.append(result)
             
-            self.logger.info(f"ä¸»æ­ {streamer['name']} å¤çå®æ")
+            self.logger.info(f"主播 {streamer['name']} 处理完成")
             
         except Exception as e:
-            self.logger.error(f"å¤çä¸»æ­ {streamer['name']} å¤±è´¥: {e}")
+            self.logger.error(f"处理主播 {streamer['name']} 失败: {e}")
     
     async def _get_stream_url(self, live_url: str) -> str:
-        """è·åç´æ­æµå°å"""
-        # è¿ééè¦å®ç°è·åç´æ­æµå°åçé»è¾
-        # å¯ä»¥ä½¿ç¨DouyinLiveRecorderä¸­çstream.pyæ¨¡å
+        """获取直播流地址"""
+        # 这里需要实现获取直播流地址的逻辑
+        # 可以使用DouyinLiveRecorder中的stream.py模块
         pass
     
     async def _generate_final_factors(self) -> Dict:
         """çææç»å å­?""
-        # èåè§ç¹
+        # 聚合观点
         aggregated = self.aggregator.aggregate()
         
-        # çæå å­
+        # 生成因子
         factors = self.factor_generator.generate_factors(aggregated)
         
-        # æ·»å åæ°æ?
+        # æ·»å å
+æ°æ?
         factors["timestamp"] = datetime.now().isoformat()
         factors["streamer_count"] = len(self.results)
         
         return factors
     
     def save_results(self, output_path: str):
-        """ä¿å­ç»æ"""
+        """保存结果"""
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(self.results, f, ensure_ascii=False, indent=2)
         
@@ -1946,24 +2084,28 @@ class LiveStreamFinancialSystem:
 
 ---
 
-## ð éç½®æä»¶
+## ð é
+ç½®æä»¶
 
 ### config.yaml
 
 ```yaml
-# ç³»ç»éç½®
+# ç³»ç»é
+ç½®
 system:
   name: "å¤ä¸»æ­ç´æ­éèåæç³»ç»?
   version: "1.0.0"
   log_level: "INFO"
 
-# çæ§éç½®
+# çæ§é
+ç½®
 monitor:
-  check_interval: 60  # æ£æ¥é´éï¼ç§ï¼
+  check_interval: 60  # 检查间隔（秒）
   browser_type: "chrome"  # æµè§å¨ç±»å?
-  headless: true  # æ å¤´æ¨¡å¼
+  headless: true  # 无头模式
 
-# å½å¶éç½®
+# å½å¶é
+ç½®
 recorder:
   output_dir: "./recordings"
   audio_format: "mp3"
@@ -1971,24 +2113,28 @@ recorder:
   sample_rate: 44100
   segment_duration: 1800  # åæ®µæ¶é¿ï¼ç§ï¼?
 
-# è½¬å½éç½®
+# è½¬å½é
+ç½®
 transcriber:
   whisper_model: "base"  # tiny/base/small/medium/large
   language: "zh"
 
-# åæéç½®
+# åæé
+ç½®
 analyzer:
   openai_api_key: "${OPENAI_API_KEY}"
   openai_base_url: "https://api.openai.com/v1"
   openai_model: "gpt-4"
   sentiment_model: "yiyanghkust/finbert-tone"
 
-# èåéç½®
+# èåé
+ç½®
 aggregator:
   min_streamers: 3  # æå°ä¸»æ­æ°é?
   weight_by_online_count: true  # æå¨çº¿äººæ°å æ?
 
-# å å­éç½®
+# å å­é
+ç½®
 factor_generator:
   factor_weights:
     sentiment: 0.4
@@ -1996,7 +2142,8 @@ factor_generator:
     influence: 0.2
     confidence: 0.1
 
-# è¾åºéç½®
+# è¾åºé
+ç½®
 output:
   result_dir: "./results"
   factor_output: "./factors"
@@ -2010,7 +2157,7 @@ output:
 {
   "streamers": [
     {
-      "name": "è¡ç¥èç",
+      "name": "股神老王",
       "url": "https://live.douyin.com/745964462470",
       "schedule": {
         "start_time": "19:00",
@@ -2021,7 +2168,7 @@ output:
       "duration": 3600
     },
     {
-      "name": "è´¢ç»å°æ",
+      "name": "财经小李",
       "url": "https://live.douyin.com/yall1102",
       "schedule": {
         "start_time": "20:00",
@@ -2032,7 +2179,7 @@ output:
       "duration": 3600
     },
     {
-      "name": "æèµè¾¾äºº",
+      "name": "投资达人",
       "url": "https://live.douyin.com/123456789",
       "schedule": {
         "start_time": "18:00",
@@ -2048,27 +2195,31 @@ output:
 
 ---
 
-## ð é¨ç½²æ¹æ¡
+## 🚀 部署方案
 
-### æ¹æ¡ä¸: æ¬å°é¨ç½²
+### 方案一: 本地部署
 
 ```bash
-# 1. åéé¡¹ç®
+# 1. å
+éé¡¹ç®
 git clone https://github.com/your-repo/live-stream-financial-analysis.git
 cd live-stream-financial-analysis
 
-# 2. å®è£ä¾èµ
+# 2. å®è£
+依赖
 pip install -r requirements.txt
 
-# 3. å®è£FFmpeg
-# Windows: ä¸è½½ https://ffmpeg.org/download.html
+# 3. å®è£
+FFmpeg
+# Windows: 下载 https://ffmpeg.org/download.html
 # Mac: brew install ffmpeg
 # Linux: sudo apt install ffmpeg
 
-# 4. éç½®ç¯å¢åé
+# 4. é
+ç½®ç¯å¢åé
 export OPENAI_API_KEY="your-api-key"
 
-# 5. è¿è¡ç³»ç»
+# 5. 运行系统
 python main.py
 ```
 
@@ -2079,20 +2230,22 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# å®è£ç³»ç»ä¾èµ
+# å®è£
+系统依赖
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     chromium-browser \
     && rm -rf /var/lib/apt/lists/*
 
-# å®è£Pythonä¾èµ
+# å®è£
+Python依赖
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# å¤å¶ä»£ç 
+# 复制代码
 COPY . .
 
-# è¿è¡
+# 运行
 CMD ["python", "main.py"]
 ```
 
@@ -2114,9 +2267,9 @@ services:
 
 ---
 
-## ð ä½¿ç¨ç¤ºä¾
+## 📈 使用示例
 
-### å¯å¨ç³»ç»
+### 启动系统
 
 ```python
 import asyncio
@@ -2124,29 +2277,31 @@ import yaml
 from live_stream_financial_system import LiveStreamFinancialSystem
 
 async def main():
-    # å è½½éç½®
+    # å è½½é
+ç½®
     with open('config.yaml', 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     
-    # å è½½ä¸»æ­åè¡¨
+    # 加载主播列表
     with open('streamer_list.json', 'r', encoding='utf-8') as f:
         streamer_data = json.load(f)
     
     # åå§åç³»ç»?
     system = LiveStreamFinancialSystem(config)
     
-    # è¿è¡ç³»ç»
+    # 运行系统
     factors = await system.run(streamer_data["streamers"])
     
-    # è¾åºç»æ
-    print("=== é¢æµå å­ ===")
-    print(f"ç»¼åå å­: {factors['composite_factor']:.3f}")
-    print(f"æç»ªå å­: {factors['sentiment_factor']:.3f}")
+    # 输出结果
+    print("=== 预测因子 ===")
+    print(f"综合因子: {factors['composite_factor']:.3f}")
+    print(f"æ
+绪因子: {factors['sentiment_factor']:.3f}")
     print(f"ä¸è´æ? {factors['consensus_factor']:.2%}")
     print(f"å½±åå? {factors['influence_factor']:.3f}")
-    print(f"ç­é¨æ¿å: {list(factors['sector_factors'].keys())[:5]}")
+    print(f"热门板块: {list(factors['sector_factors'].keys())[:5]}")
     
-    # ä¿å­ç»æ
+    # 保存结果
     system.save_results(f"./results/result_{datetime.now().strftime('%Y%m%d')}.json")
 
 if __name__ == "__main__":
@@ -2155,9 +2310,9 @@ if __name__ == "__main__":
 
 ---
 
-## ð è¾åºç¤ºä¾
+## 📊 输出示例
 
-### å å­è¾åº
+### 因子输出
 
 ```json
 {
@@ -2166,15 +2321,15 @@ if __name__ == "__main__":
   "influence_factor": 0.85,
   "confidence_factor": 0.68,
   "sector_factors": {
-    "äººå·¥æºè½": 0.65,
+    "人工智能": 0.65,
     "æ°è½æº?: 0.58,
     "åå¯¼ä½?: 0.42,
-    "å»è¯": 0.35,
-    "æ¶è´¹": 0.28
+    "医药": 0.35,
+    "消费": 0.28
   },
   "composite_factor": 0.734,
   "metadata": {
-    "dominant_view": "çå¤",
+    "dominant_view": "看多",
     "total_streamers": 10,
     "avg_online_count": 125000
   },
@@ -2184,18 +2339,18 @@ if __name__ == "__main__":
 
 ---
 
-## ð§ æ©å±åè½
+## 🔧 扩展功能
 
-### 1. å®æ¶ä»»å¡
+### 1. 定时任务
 
 ```python
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 async def scheduled_analysis():
-    """å®æ¶åæä»»å¡"""
+    """定时分析任务"""
     scheduler = AsyncIOScheduler()
     
-    # æ¯å¤©19:00æ§è¡
+    # 每天19:00执行
     scheduler.add_job(
         run_analysis,
         'cron',
@@ -2206,7 +2361,7 @@ async def scheduled_analysis():
     scheduler.start()
 ```
 
-### 2. Webçé¢
+### 2. Web界面
 
 ```python
 from fastapi import FastAPI
@@ -2221,7 +2376,7 @@ async def get_factors():
 
 @app.get("/streamers")
 async def get_streamers():
-    """è·åä¸»æ­åè¡¨"""
+    """获取主播列表"""
     return JSONResponse(content=streamer_list)
 ```
 
@@ -2231,7 +2386,7 @@ async def get_streamers():
 import asyncpg
 
 async def save_to_database(factors: Dict):
-    """ä¿å­å å­å°æ°æ®åº"""
+    """保存因子到数据库"""
     conn = await asyncpg.connect(
         host='localhost',
         port=5432,
@@ -2258,45 +2413,48 @@ async def save_to_database(factors: Dict):
 
 ---
 
-## ð æ³¨æäºé¡¹
+## 📝 注意事项
 
-### 1. æ³å¾åè§
+### 1. 法律合规
 
-- â ï¸ è¯·éµå®æé³å¹³å°çä½¿ç¨æ¡æ¬¾
-- â ï¸ ä»ç¨äºä¸ªäººå­¦ä¹ åç ç©¶
+- ⚠️ 请遵守抖音平台的使用条款
+- â ï¸ ä»
+用于个人学习和研究
 - â ï¸ ä¸è¦ç¨äºåä¸ç¨é?
 - â ï¸ å°éä¸»æ­çç¥è¯äº§æ?
 
 ### 2. ææ¯éå?
 
-- â ï¸ éå®æ¹APIå¯è½éæ¶å¤±æ
-- â ï¸ éè¦ç¨³å®çç½ç»ç¯å¢
-- â ï¸ Whisperè½¬å½éè¦è¶³å¤çè®¡ç®èµæº
+- ⚠️ 非官方API可能随时失效
+- ⚠️ 需要稳定的网络环境
+- ⚠️ Whisper转录需要足够的计算资源
 - â ï¸ OpenAI APIæè°ç¨éå?
 
-### 3. æ°æ®è´¨é
+### 3. 数据质量
 
-- â ï¸ ä¸»æ­è§ç¹ä»ä¾åèï¼ä¸æææèµå»ºè®?
+- â ï¸ ä¸»æ­è§ç¹ä»
+ä¾åèï¼ä¸æææèµå»ºè®?
 - â ï¸ éè¦éªè¯å å­çæææ?
-- â ï¸ å»ºè®®ç»åå¶ä»æ°æ®æº?
+- â ï¸ å»ºè®®ç»åå
+¶ä»æ°æ®æº?
 
 ---
 
-## ð¯ æªæ¥ä¼åæ¹å
+## 🎯 未来优化方向
 
-1. **æ§è½ä¼å**
-   - ä½¿ç¨GPUå éWhisperè½¬å½
-   - ä¼åå¹¶åå¤çè½å
-   - å®ç°å¢éè½¬å½
+1. **性能优化**
+   - 使用GPU加速Whisper转录
+   - 优化并发处理能力
+   - 实现增量转录
 
-2. **åè½æ©å±**
-   - æ¯ææ´å¤ç´æ­å¹³å°
-   - æ·»å å®æ¶å å­æ´æ°
-   - å®ç°å å­åæµ
+2. **功能扩展**
+   - 支持更多直播平台
+   - 添加实时因子更新
+   - 实现因子回测
 
 3. **åç¡®æ§æå?*
-   - è®­ç»ä¸é¨çéèé¢åWhisperæ¨¡å
-   - ä¼åè§ç¹æåprompt
+   - 训练专门的金融领域Whisper模型
+   - 优化观点提取prompt
    - æ·»å å¤ç»´åº¦éªè¯?
 
 ---
@@ -2315,7 +2473,8 @@ async def save_to_database(factors: Dict):
 - **模块ID**: LIVE_STREAM_FINANCIAL_ANALYSIS_001
 - **蓝图文档**: [LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md](04_EXECUTION\07_LIVE_STREAM\LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å¤ä¸»æ­ç´æ­åå®¹åæä¸å å­çæ
+- **职责**: å¤ä¸»æ­ç´æ­å
+容分析与因子生成
 - **状态**: Active
 ```
 
@@ -2323,7 +2482,8 @@ async def save_to_database(factors: Dict):
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Live Stream Financial Analysis** | å¤ä¸»æ­ç´æ­åå®¹åæä¸å å­çæ | **核心模块** |
+| **Live Stream Financial Analysis** | å¤ä¸»æ­ç´æ­å
+å®¹åæä¸å å­çæ | **核心模块** |
 
 ### 1.3 版本管理
 

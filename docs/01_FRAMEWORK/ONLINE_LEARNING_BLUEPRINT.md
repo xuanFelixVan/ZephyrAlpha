@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ONLINE_LEARNING_BLUEPRINT_001
 
 version: 1.0.0

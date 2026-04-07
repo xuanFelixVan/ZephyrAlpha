@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 02_ALPHA_FACTORS_INDEX_INDEX_001
 version: 1.0.0
 status: Active

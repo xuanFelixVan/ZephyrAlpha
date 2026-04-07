@@ -1,4 +1,4 @@
----
+﻿---
 standard_type: хоЮцЦ╜цКехСК
 applicable_scope: хЕич│╗ч╗?
 compliance_level: цнгх╝ПцаЗхЗЖ

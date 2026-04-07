@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXTREME_MARKET_RESPONSE_BLUEPRINT_001
 version: 1.0.1
 status: Active

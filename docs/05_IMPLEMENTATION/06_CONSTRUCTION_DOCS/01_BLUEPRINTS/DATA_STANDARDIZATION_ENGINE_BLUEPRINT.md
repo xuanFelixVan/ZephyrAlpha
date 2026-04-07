@@ -1,18 +1,18 @@
----
+﻿---
 module_id: DATA_STANDARDIZATION_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 æ°æ®å±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
   - æ°æ®æ ååå¼æ?
-  - æ°æ®æ ¼å¼ç»ä¸
+  - 数据格式统一
   - æ°æ®æ åå?
-  - æ°æ®ç±»åè½¬æ¢
+  - 数据类型转换
 layer: Layer 5.1 (数据处理)
 ---
 
@@ -20,7 +20,7 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-负责数据标准化引擎的设计与实现，基于标准化规则，统一数据格式和编码，提升数据一致性。
+负责数据标准化引擎的设计与实现，基于标准化规则，统一数据格式和编码，提升数据一致性。 提供数据管理、查询、更新功能，确保数据质量和一致性。
 
 
 ## 设计目标
@@ -75,25 +75,27 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
-**åä¸èè´£**: æ°æ®æ ååä¸æ ¼å¼ç»ä¸
+**单一职责**: 数据标准化与格式统一
 
-### èè´£è¾¹ç
+### 职责边界
 
 | è´è´£ | ä¸è´è´?|
 |------|--------|
 | â?å­æ®µå½åæ åå?| â?æ°æ®å­å¨ |
-| â?æ°æ®æ ¼å¼ç»ä¸ | â?æ°æ®æ¸æ´ |
+| â?æ°æ®æ ¼å¼ç»ä¸ | â?æ°æ®æ¸
+洗 |
 | â?æ°æ®ç±»åè½¬æ¢ | â?æ°æ®è´¨éçæ§ |
-| â?æ°æ®éªè¯ | â?æ°æ®è®¢é |
+| â?æ°æ®éªè¯ | â?æ°æ®è®¢é
+ |
 | â?æ åè§åç®¡ç | â?æ°æ®è¡ç¼?|
 
 ---
 
-## 1. ææ¯éå
+## 1. 技术选型
 
-### 1.1 ä¸ºä»ä¹éæ©dbt + Great Expectations
+### 1.1 为什么选择dbt + Great Expectations
 
 | ç¹æ?| dbt + GE | Pandera | Pydantic |
 |------|----------|---------|----------|
@@ -106,9 +108,9 @@ layer: Layer 5.1 (数据处理)
 
 ---
 
-## 2. æ¶æè®¾è®¡
+## 2. 架构设计
 
-### 2.1 æ´ä½æ¶æ
+### 2.1 整体架构
 
 ```
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
@@ -135,7 +137,7 @@ layer: Layer 5.1 (数据处理)
 
 ---
 
-## 3. æ ¸å¿åè½å®ç°
+## 3. 核心功能实现
 
 ### 3.1 å½åæ åå?
 
@@ -144,15 +146,15 @@ import re
 from typing import Dict, List
 
 class NamingStandardizer:
-    """å½åæ ååå¨"""
+    """命名标准化器"""
     
     FIELD_MAPPING = {
-        # åå§åç§° -> æ ååç§°
-        "è¡ç¥¨ä»£ç ": "symbol",
-        "äº¤ææ¥æ": "trade_date",
-        "å¼çä»·": "open",
-        "æé«ä»·": "high",
-        "æä½ä»·": "low",
+        # 原始名称 -> 标准名称
+        "股票代码": "symbol",
+        "交易日期": "trade_date",
+        "开盘价": "open",
+        "最高价": "high",
+        "最低价": "low",
         "æ¶çä»?: "close",
         "æäº¤é?: "volume",
         "æäº¤é¢?: "amount",
@@ -160,7 +162,7 @@ class NamingStandardizer:
     
     @classmethod
     def standardize_field_name(cls, name: str) -> str:
-        """æ ååå­æ®µå"""
+        """标准化字段名"""
         if name in cls.FIELD_MAPPING:
             return cls.FIELD_MAPPING[name]
         
@@ -173,7 +175,7 @@ class NamingStandardizer:
     
     @classmethod
     def standardize_dataframe(cls, df) -> 'DataFrame':
-        """æ ååDataFrameåå"""
+        """标准化DataFrame列名"""
         rename_map = {
             col: cls.standardize_field_name(col)
             for col in df.columns
@@ -181,7 +183,7 @@ class NamingStandardizer:
         return df.rename(columns=rename_map)
 ```
 
-### 3.2 æ°æ®æ ¼å¼ç»ä¸
+### 3.2 数据格式统一
 
 ```python
 from datetime import datetime
@@ -189,7 +191,7 @@ from decimal import Decimal
 from typing import Union
 
 class FormatStandardizer:
-    """æ ¼å¼æ ååå¨"""
+    """格式标准化器"""
     
     @staticmethod
     def standardize_date(value: Union[str, datetime], format: str = "%Y-%m-%d") -> str:
@@ -229,7 +231,7 @@ class FormatStandardizer:
         return Decimal(str(value)).quantize(Decimal('0.0001'))
 ```
 
-### 3.3 æ°æ®éªè¯
+### 3.3 数据验证
 
 ```python
 from dataclasses import dataclass
@@ -238,7 +240,7 @@ import pandas as pd
 
 @dataclass
 class ValidationRule:
-    """éªè¯è§å"""
+    """验证规则"""
     field: str
     rule_type: str
     params: dict
@@ -251,11 +253,11 @@ class DataValidator:
         self.rules: List[ValidationRule] = []
     
     def add_rule(self, rule: ValidationRule):
-        """æ·»å éªè¯è§å"""
+        """添加验证规则"""
         self.rules.append(rule)
     
     def validate(self, df: pd.DataFrame) -> dict:
-        """éªè¯æ°æ®"""
+        """验证数据"""
         results = {
             "valid": True,
             "errors": [],
@@ -275,7 +277,7 @@ class DataValidator:
         return results
     
     def _apply_rule(self, df: pd.DataFrame, rule: ValidationRule) -> List[str]:
-        """åºç¨éªè¯è§å"""
+        """应用验证规则"""
         errors = []
         
         if rule.rule_type == "not_null":
@@ -331,19 +333,20 @@ class StandardizationPipeline:
         
         validation_result = self.validator.validate(df)
         if not validation_result["valid"]:
-            raise ValueError(f"æ°æ®éªè¯å¤±è´¥: {validation_result['errors']}")
+            raise ValueError(f"数据验证失败: {validation_result['errors']}")
         
         return df
 ```
 
 ---
 
-## ð åæ´åå²
+## 📋 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | ä½è?|
 |------|------|---------|------|
 | v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**ææ¡£ç»æ**
+**文档结束**

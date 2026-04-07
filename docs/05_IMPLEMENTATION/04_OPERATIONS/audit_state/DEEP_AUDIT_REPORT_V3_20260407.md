@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER8_DEEP_AUDIT_REPORT_V3_20260407_001
 version: 3.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PYTHON_CODING_BEST_PRACTICES_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALT_DATA_SPEC_001
 version: 1.0.0
 status: Active

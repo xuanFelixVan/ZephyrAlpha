@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DAILY_PORTFOLIO_OPTIMIZER_001
 version: 1.0.0
 spec_version: 1.0

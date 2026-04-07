@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BACKTEST_CORRELATION_001
 version: 2026.03.28
 status: Active

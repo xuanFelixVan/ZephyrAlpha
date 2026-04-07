@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_QUALITY_REPORTER_001
 version: 1.0.0
 spec_version: 1.0

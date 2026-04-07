@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_INDEX_DEPLOYMENT_001
 version: 1.0.0
 status: Active

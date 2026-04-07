@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLACK_LITTERMAN_MODEL_TECH_SPEC_001
 version: 1.0.0
 spec_version: 1.0

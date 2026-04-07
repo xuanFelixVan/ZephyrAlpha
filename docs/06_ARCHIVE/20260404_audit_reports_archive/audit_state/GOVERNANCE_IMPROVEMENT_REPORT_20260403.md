@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOVERNANCE_IMPROVEMENT_REPORT_20260403
 version: 1.0.0
 status: Active

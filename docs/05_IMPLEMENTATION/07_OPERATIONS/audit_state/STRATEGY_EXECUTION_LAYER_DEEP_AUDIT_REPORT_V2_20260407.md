@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_EXECUTION_LAYER_DEEP_AUDIT_V2_001
 version: 2.0.0
 status: Active

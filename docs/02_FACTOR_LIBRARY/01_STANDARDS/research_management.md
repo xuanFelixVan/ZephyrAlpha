@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STANDARDS_RESEARCH_MGMT_001
 version: 1.0.0
 status: Active

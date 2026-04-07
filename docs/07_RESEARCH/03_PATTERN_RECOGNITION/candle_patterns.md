@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_CANDLE_PATTERNS_001
 version: 1.0.1
 status: Active

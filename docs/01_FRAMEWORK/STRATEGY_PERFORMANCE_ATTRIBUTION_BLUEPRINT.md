@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT_001
 version: 1.0.0
 status: Active

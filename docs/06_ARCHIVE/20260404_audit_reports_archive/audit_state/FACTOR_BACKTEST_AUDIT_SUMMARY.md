@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_FACTOR_BT_SUMMARY_001
 version: 2026.04.02
 status: Active

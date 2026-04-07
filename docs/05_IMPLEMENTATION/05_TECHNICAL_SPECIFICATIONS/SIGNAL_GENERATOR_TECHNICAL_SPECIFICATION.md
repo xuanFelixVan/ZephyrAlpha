@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_GENERATOR_SPEC_001
 version: 1.0.0
 status: Active

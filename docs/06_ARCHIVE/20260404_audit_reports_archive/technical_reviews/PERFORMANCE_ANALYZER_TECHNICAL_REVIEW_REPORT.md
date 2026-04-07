@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_PERF_ANALYZER_TECH_REVIEW_001
 review_id: TR-2026-04-02-PERF
 version: 1.0.1

@@ -1,4 +1,4 @@
----
+﻿---
 version: 1.0.0
 standard_type: ﻝ۴ﻟﺁﮒﭦ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:

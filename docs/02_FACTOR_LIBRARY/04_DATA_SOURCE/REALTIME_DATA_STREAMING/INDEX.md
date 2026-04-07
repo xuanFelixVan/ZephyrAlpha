@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_REALTIME_STREAMING_INDEX_001
 version: 1.0.0
 status: Active

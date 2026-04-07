@@ -1,4 +1,4 @@
----
+﻿---
 module_id: L_BAOSTOCK_MD_002
 version: 1.0.0
 status: Active

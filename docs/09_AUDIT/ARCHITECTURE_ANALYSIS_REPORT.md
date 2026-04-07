@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE_ANALYSIS_REPORT_001
 version: 1.0.0
 status: Active

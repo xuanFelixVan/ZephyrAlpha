@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_RETURN_ANALYSIS_001
 version: 1.0.0
 status: Active

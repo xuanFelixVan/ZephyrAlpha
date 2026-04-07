@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OPTIMIZATION_REPORT_V14_20260406_001
 version: 14.0.0
 status: Active

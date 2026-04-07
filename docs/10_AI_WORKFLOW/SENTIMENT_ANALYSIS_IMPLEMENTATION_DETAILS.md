@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_IMPLEMENTATION_001
 version: 1.0.0
 status: Active

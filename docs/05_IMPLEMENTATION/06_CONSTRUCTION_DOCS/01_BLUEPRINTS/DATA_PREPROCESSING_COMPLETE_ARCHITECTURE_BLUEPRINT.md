@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -26,9 +26,8 @@ responsibility: Layer 1完整架构蓝图汇总与实施指南
 > - ✅ 本文档负责：完整架构设计、模块清单、实施路径、成本估算
 > - ❌ 本文档不负责：具体模块详细设计、代码实现
 
-**版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状态**: Active
+**版本**: v1.0.0 | **更新日期**: 2026-04-07 ...
 
----
 
 ## 设计目标
 

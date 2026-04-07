@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_市场参与者行为模拟系统技术规格书_001
 version: 1.0.0
 status: Active

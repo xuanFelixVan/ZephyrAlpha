@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_COST_TEST_CASE_DESIGN_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_FRAMEWORK_001
 version: 5.3.1
 status: Active

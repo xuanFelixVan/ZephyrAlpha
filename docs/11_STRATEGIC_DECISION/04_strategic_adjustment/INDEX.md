@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_04_STRATEGIC_ADJUSTMENT_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ACTIVE_LEARNING_BLUEPRINT_001
 
 version: 1.0.0

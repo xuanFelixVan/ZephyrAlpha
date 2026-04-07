@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECH_SPEC_MARKET_PARTICIPANT_SIM_UPDATE_002
 version: 2.0.0
 status: Active

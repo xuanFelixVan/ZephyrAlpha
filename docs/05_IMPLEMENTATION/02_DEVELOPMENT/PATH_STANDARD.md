@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPL_DEV_PATH_STD_001
 version: 1.0.1
 status: Stable

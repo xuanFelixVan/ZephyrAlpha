@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVE_ECONOMIC_REGIME_CLEANUP_001
 version: 1.0.0
 status: Archived

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_03_ADVANCED_TACTICS_001
 version: 1.0.0
 status: Active

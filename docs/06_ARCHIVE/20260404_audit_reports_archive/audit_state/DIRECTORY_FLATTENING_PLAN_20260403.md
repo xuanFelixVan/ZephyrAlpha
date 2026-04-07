@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DIRECTORY_FLATTENING_PLAN_001
 version: 1.0.0
 status: Active

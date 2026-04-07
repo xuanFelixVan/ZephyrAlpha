@@ -1,19 +1,19 @@
----
+﻿---
 responsibility:
-  - èªå¨ä¿®å¤
+  - 自动修复
   - å¼å¸¸æ£æµ?
-  - ç³»ç»æ¢å¤
-  - æ°æ®ä¿®å¤
+  - 系统恢复
+  - 数据修复
 
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 9 çæ§å±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 layer: Layer 5 (策略执行层)
 ---
 
@@ -21,7 +21,7 @@ layer: Layer 5 (策略执行层)
 
 ## 核心定位
 
-负责自动修复引擎的设计与实现，基于异常检测和自动修复技术，自动识别和修复系统故障，提升系统可用性。
+负责自动修复引擎的设计与实现，基于异常检测和自动修复技术，自动识别和修复系统故障，提升系统可用性。 确保系统稳定运行，满足业务需求。
 
 
 ## 设计目标
@@ -76,26 +76,26 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 è´è´£Auto Repair Engineçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
 
-## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
+## 一、设计背景与目标
 
 ### 1.1 ä¸å¡éæ±?
 
-**å½åçç¹**:
-- æ°æ®ä¿®å¤éè¦äººå·¥å¹²é¢ï¼æçä½ä¸
-- ä¿®å¤ç­ç¥åä¸ï¼ç¼ºå°æºè½åä¿®å¤
-- ç¼ºå°ä¿®å¤ææè¯ä¼°æºå¶
-- ä¿®å¤åå²æ æ³è¿½æº¯
+**当前痛点**:
+- 数据修复需要人工干预，效率低下
+- 修复策略单一，缺少智能化修复
+- 缺少修复效果评估机制
+- 修复历史无法追溯
 
-**ä¸å¡ç®æ **:
-- åºäºåå²æ°æ®çæºè½ä¿®å¤ï¼åå°äººå·¥å¹²é¢
-- æºå¨å­¦ä¹ é©±å¨çå¼å¸¸æ£æµåä¿®å¤
-- èªå¨è¯ä¼°ä¿®å¤ææ
-- å»ºç«ä¿®å¤æ¡ä¾åºï¼æç»­ä¼å
+**业务目标**:
+- 基于历史数据的智能修复，减少人工干预
+- 机器学习驱动的异常检测和修复
+- 自动评估修复效果
+- 建立修复案例库，持续优化
 
 ### 1.2 ææ¯ç®æ ?
 
@@ -107,19 +107,21 @@ layer: Layer 5 (策略执行层)
 | **ä¿®å¤è¦çç?* | â?0% | è¦ç80%ä»¥ä¸çæ°æ®é®é¢ç±»å?|
 
 ---
-## ð ç¸å³ææ¡£
+## ð ç¸å
+³ææ¡£
 
-### ä¸æ¸¸ä¾èµ
+### 上游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾è´¨éå¼å¸¸æ£æµç»æ?|
-| [æ°æ®æºç®¡çèå¾](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | ä¸­ä¾èµ?| æä¾æ°æ®æºåæ°æ® |
+| [æ°æ®æºç®¡çèå¾](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | ä¸­ä¾èµ?| æä¾æ°æ®æºå
+æ°æ® |
 | [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| æä¾æ°æ®è¡ç¼ä¿¡æ?|
 
-### ä¸æ¸¸ä¾èµ
+### 下游依赖
 
-| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
+| 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [è´¨éè¯åç³»ç»èå¾](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) | QUALITY_SCORING_SYSTEM_001 | å¼ºä¾èµ?| æä¾ä¿®å¤åè´¨éè¯å?|
 | [è´¨éæ¥åèªå¨åèå¾](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | ä¸­ä¾èµ?| æä¾ä¿®å¤åå²è®°å½ |
@@ -129,22 +131,23 @@ layer: Layer 5 (策略执行层)
 
 | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **scikit-learn** | 1.3.0+ | æºå¨å­¦ä¹ æ¨¡å | [å®æ¹ææ¡£](https://scikit-learn.org/) |
+| **scikit-learn** | 1.3.0+ | 机器学习模型 | [官方文档](https://scikit-learn.org/) |
 | **PyOD** | 1.1.0+ | å¼å¸¸æ£æµ?| [å®æ¹ææ¡£](https://pyod.readthedocs.io/) |
-| **Great Expectations** | 0.18+ | æ°æ®éªè¯ | [å®æ¹ææ¡£](https://docs.greatexpectations.io/) |
-| **Prophet** | 1.1.0+ | æ¶åºé¢æµ | [å®æ¹ææ¡£](https://facebook.github.io/prophet/) |
+| **Great Expectations** | 0.18+ | 数据验证 | [官方文档](https://docs.greatexpectations.io/) |
+| **Prophet** | 1.1.0+ | 时序预测 | [官方文档](https://facebook.github.io/prophet/) |
 
-### å¼ç¨å³ç³»å?
+### å¼ç¨å
+³ç³»å?
 
 ```mermaid
 graph LR
-    A[æ°æ®è´¨éçæ§] --> B[èªå¨ä¿®å¤å¼æ]
-    C[æ°æ®æºç®¡ç] --> B
-    D[æ°æ®ç®å½] --> B
+    A[数据质量监控] --> B[自动修复引擎]
+    C[数据源管理] --> B
+    D[数据目录] --> B
     
-    B --> E[è´¨éè¯åç³»ç»]
-    B --> F[è´¨éæ¥åèªå¨å]
-    B --> G[æ°æ®å¯è§æµæ§]
+    B --> E[质量评分系统]
+    B --> F[质量报告自动化]
+    B --> G[数据可观测性]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -194,19 +197,19 @@ graph LR
 âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?
 ```
 
-### 2.2 ææ¯éå
+### 2.2 技术选型
 
 | ç»ä»¶ | ææ¯æ¹æ¡?| çæ¬è¦æ± | éåçç± |
 |------|---------|---------|---------|
-| **æºå¨å­¦ä¹ æ¡æ¶** | scikit-learn | 1.3.0+ | æççMLæ¡æ¶ |
+| **机器学习框架** | scikit-learn | 1.3.0+ | 成熟的ML框架 |
 | **æ·±åº¦å­¦ä¹ æ¡æ¶** | PyTorch | 2.0.0+ | çµæ´»çæ·±åº¦å­¦ä¹ æ¡æ?|
-| **æ¶åºé¢æµ** | Prophet | 1.1.0+ | æ¶åºæ°æ®é¢æµ |
+| **时序预测** | Prophet | 1.1.0+ | 时序数据预测 |
 | **å¼å¸¸æ£æµ?* | PyOD | 1.1.0+ | å¼å¸¸æ£æµç®æ³åº |
-| **æ°æ®éªè¯** | Great Expectations | 0.18.0+ | æ°æ®è´¨ééªè¯ |
+| **数据验证** | Great Expectations | 0.18.0+ | 数据质量验证 |
 
-### 2.3 Layerå®ä½
+### 2.3 Layer定位
 
-- **Layerå½å±**: Layer 1 - æ°æ®é¢å¤çå±
+- **Layer归属**: Layer 1 - 数据预处理层
 - **èè´£èå´**: èªå¨åæ°æ®ä¿®å¤ãä¿®å¤ææè¯ä¼°ãä¿®å¤ç¥è¯ç®¡ç?
 - **ä¸ä¸å±æ¥å?*:
   - ä¸å±ä¾èµ: Layer 2-8ï¼æä¾ä¿®å¤åæ°æ®ï¼?
@@ -216,7 +219,7 @@ graph LR
 
 ## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 é®é¢æ£æµå¨ (ProblemDetector)
+### 3.1 问题检测器 (ProblemDetector)
 
 **èè´£**: èªå¨æ£æµæ°æ®é®é¢?
 
@@ -229,7 +232,7 @@ import pandas as pd
 import numpy as np
 
 class ProblemType(Enum):
-    """é®é¢ç±»å"""
+    """问题类型"""
     MISSING_VALUE = "missing_value"
     OUTLIER = "outlier"
     FORMAT_ERROR = "format_error"
@@ -238,7 +241,7 @@ class ProblemType(Enum):
     INCONSISTENCY = "inconsistency"
 
 class Severity(Enum):
-    """ä¸¥éç¨åº¦"""
+    """严重程度"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -246,7 +249,7 @@ class Severity(Enum):
 
 @dataclass
 class DataProblem:
-    """æ°æ®é®é¢"""
+    """数据问题"""
     problem_id: str
     problem_type: ProblemType
     field_name: str
@@ -258,7 +261,7 @@ class DataProblem:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 class ProblemDetector:
-    """é®é¢æ£æµå¨"""
+    """问题检测器"""
     
     def __init__(self):
         self.problems: List[DataProblem] = []
@@ -348,7 +351,7 @@ class ProblemDetector:
         return problems
 ```
 
-### 3.2 ä¿®å¤ç­ç¥å¼æ (RepairStrategyEngine)
+### 3.2 修复策略引擎 (RepairStrategyEngine)
 
 **èè´£**: éæ©åæ§è¡ä¿®å¤ç­ç?
 
@@ -362,7 +365,7 @@ from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.ensemble import IsolationForest
 
 class RepairStrategy(Enum):
-    """ä¿®å¤ç­ç¥"""
+    """修复策略"""
     MEAN_IMPUTATION = "mean_imputation"
     MEDIAN_IMPUTATION = "median_imputation"
     MODE_IMPUTATION = "mode_imputation"
@@ -374,7 +377,7 @@ class RepairStrategy(Enum):
 
 @dataclass
 class RepairAction:
-    """ä¿®å¤å¨ä½"""
+    """修复动作"""
     action_id: str
     problem: DataProblem
     strategy: RepairStrategy
@@ -384,7 +387,7 @@ class RepairAction:
     metadata: Dict[str, Any]
 
 class RepairStrategyEngine:
-    """ä¿®å¤ç­ç¥å¼æ"""
+    """修复策略引擎"""
     
     def __init__(self):
         self.strategies: Dict[ProblemType, List[RepairStrategy]] = {
@@ -407,7 +410,7 @@ class RepairStrategyEngine:
         }
     
     def select_strategy(self, problem: DataProblem, context: Dict[str, Any]) -> RepairStrategy:
-        """éæ©ä¿®å¤ç­ç¥"""
+        """选择修复策略"""
         available_strategies = self.strategies.get(problem.problem_type, [])
         
         if not available_strategies:
@@ -424,7 +427,7 @@ class RepairStrategyEngine:
     
     def execute_repair(self, df: pd.DataFrame, problem: DataProblem,
                        strategy: RepairStrategy) -> RepairAction:
-        """æ§è¡ä¿®å¤"""
+        """执行修复"""
         if strategy == RepairStrategy.MEAN_IMPUTATION:
             repaired_value = self._mean_imputation(df, problem)
         elif strategy == RepairStrategy.MEDIAN_IMPUTATION:
@@ -446,22 +449,28 @@ class RepairStrategyEngine:
         )
     
     def _mean_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
-        """åå¼å¡«å?""
+        """åå¼å¡«å
+?""
         column = problem.field_name
         return df[column].mean()
     
     def _median_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
-        """ä¸­ä½æ°å¡«å?""
+        """ä¸­ä½æ°å¡«å
+?""
         column = problem.field_name
         return df[column].median()
     
     def _mode_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
-        """ä¼æ°å¡«å"""
+        """ä¼æ°å¡«å
+
+"""
         column = problem.field_name
         return df[column].mode()[0]
     
     def _knn_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
-        """KNNå¡«å"""
+        """KNNå¡«å
+
+"""
         numeric_df = df.select_dtypes(include=[np.number])
         imputer = KNNImputer(n_neighbors=5)
         
@@ -473,7 +482,7 @@ class RepairStrategyEngine:
 
 ### 3.3 ä¿®å¤ææè¯ä¼°å?(RepairEvaluator)
 
-**èè´£**: è¯ä¼°ä¿®å¤ææ
+**职责**: 评估修复效果
 
 ```python
 from dataclasses import dataclass
@@ -483,7 +492,7 @@ import numpy as np
 
 @dataclass
 class RepairEvaluation:
-    """ä¿®å¤è¯ä¼°ç»æ"""
+    """修复评估结果"""
     evaluation_id: str
     repair_action: RepairAction
     accuracy_score: float
@@ -502,7 +511,7 @@ class RepairEvaluator:
     def evaluate_repair(self, original_df: pd.DataFrame, 
                         repaired_df: pd.DataFrame,
                         repair_action: RepairAction) -> RepairEvaluation:
-        """è¯ä¼°ä¿®å¤ææ"""
+        """评估修复效果"""
         accuracy_score = self._evaluate_accuracy(repaired_df, repair_action)
         consistency_score = self._evaluate_consistency(repaired_df, repair_action)
         business_rule_score = self._evaluate_business_rules(repaired_df, repair_action)
@@ -544,20 +553,21 @@ class RepairEvaluator:
     
     def _evaluate_consistency(self, df: pd.DataFrame, repair_action: RepairAction) -> float:
         """è¯ä¼°ä¸è´æ?""
-        # æ£æ¥ä¿®å¤åçæ°æ®æ¯å¦ä¸å¶ä»æ°æ®ä¸è?
+        # æ£æ¥ä¿®å¤åçæ°æ®æ¯å¦ä¸å
+¶ä»æ°æ®ä¸è?
         return 0.9
     
     def _evaluate_business_rules(self, df: pd.DataFrame, repair_action: RepairAction) -> float:
-        """è¯ä¼°ä¸å¡è§å"""
+        """评估业务规则"""
         # æ£æ¥æ¯å¦ç¬¦åä¸å¡è§å?
         return 0.9
 ```
 
 ---
 
-## åãæ°æ®æµè®¾è®¡
+## 四、数据流设计
 
-### 4.1 èªå¨ä¿®å¤æµç¨
+### 4.1 自动修复流程
 
 ```
 åå§æ°æ® â?é®é¢æ£æµ?â?ç­ç¥éæ© â?ä¿®å¤æ§è¡ â?ææè¯ä¼° â?ä¿®å¤åæ°æ?
@@ -565,7 +575,7 @@ class RepairEvaluator:
             ä¿®å¤æ¡ä¾åº?
 ```
 
-### 4.2 ç¥è¯ç§¯ç´¯æµç¨
+### 4.2 知识积累流程
 
 ```
 ä¿®å¤è®°å½ â?æ¡ä¾æå â?æ¨¡åè®­ç» â?ç­ç¥ä¼å â?ç¥è¯åºæ´æ?
@@ -583,7 +593,7 @@ class RepairEvaluator:
 POST /api/v1/repair/detect
 ```
 
-**è¯·æ±ç¤ºä¾**:
+**请求示例**:
 ```json
 {
   "table_name": "stock_prices",
@@ -591,7 +601,7 @@ POST /api/v1/repair/detect
 }
 ```
 
-**ååºç¤ºä¾**:
+**响应示例**:
 ```json
 {
   "problems": [
@@ -607,13 +617,13 @@ POST /api/v1/repair/detect
 }
 ```
 
-#### 5.1.2 æ§è¡èªå¨ä¿®å¤
+#### 5.1.2 执行自动修复
 
 ```http
 POST /api/v1/repair/execute
 ```
 
-**è¯·æ±ç¤ºä¾**:
+**请求示例**:
 ```json
 {
   "table_name": "stock_prices",
@@ -624,7 +634,8 @@ POST /api/v1/repair/execute
 
 ---
 
-## å­ãé¨ç½²æ¶æ?
+## å
+­ãé¨ç½²æ¶æ?
 
 ### 6.1 å®¹å¨åé¨ç½?
 
@@ -652,19 +663,20 @@ services:
 
 ## ä¸ãçæ§ææ ?
 
-### 7.1 æ ¸å¿ææ 
+### 7.1 核心指标
 
-| ææ åç§° | ææ ç±»å | è¯´æ |
+| 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
-| `repair_problems_detected_total` | Counter | æ£æµå°çé®é¢æ»æ° |
-| `repair_actions_executed_total` | Counter | æ§è¡çä¿®å¤å¨ä½æ»æ° |
+| `repair_problems_detected_total` | Counter | 检测到的问题总数 |
+| `repair_actions_executed_total` | Counter | 执行的修复动作总数 |
 | `repair_success_rate` | Gauge | ä¿®å¤æåç?|
-| `repair_duration_seconds` | Histogram | ä¿®å¤èæ¶ |
+| `repair_duration_seconds` | Histogram | 修复耗时 |
 | `repair_accuracy_score` | Gauge | ä¿®å¤åç¡®çè¯å?|
 
 ---
 
-## å«ãå®æ½è®¡å?
+## å
+«ãå®æ½è®¡å?
 
 ### 8.1 å¼åé¶æ®?
 
@@ -676,11 +688,11 @@ services:
 | **é¶æ®µ4** | å¼åç¥è¯ç®¡çç³»ç»?| 3å¤?| åç«¯å·¥ç¨å¸?|
 | **é¶æ®µ5** | éææµè¯åé¨ç½?| 3å¤?| QAå·¥ç¨å¸?|
 
-### 8.2 éªæ¶æ å
+### 8.2 验收标准
 
 - [ ] é®é¢æ£æµåç¡®çâ?5%
 - [ ] èªå¨ä¿®å¤æ¯ä¾â?0%
-- [ ] ä¿®å¤åç¡®çâ¥85%
+- [ ] 修复准确率≥85%
 - [ ] ä¿®å¤æ¶é´<5ç§?
 - [ ] ç¥è¯åºæç»­ä¼å?
 
@@ -690,18 +702,20 @@ services:
 
 ### 9.1 ææ¯é£é?
 
-| é£é© | å½±å | ç¼è§£æªæ½ |
+| 风险 | 影响 | 缓解措施 |
 |------|------|---------|
 | ä¿®å¤ç­ç¥ä¸åç¡?| é«?| å¤ç­ç¥ç»åï¼äººå·¥å®¡æ ¸ |
 | æ¨¡åè¿æå?| ä¸?| äº¤åéªè¯ï¼å®ææ´æ°æ¨¡å?|
-| ä¿®å¤å¼å¥æ°é®é¢?| é«?| ææè¯ä¼°ï¼åæ»æºå?|
+| ä¿®å¤å¼å
+¥æ°é®é¢?| é«?| ææè¯ä¼°ï¼åæ»æºå?|
 
 ---
 
-## åãç¸å³ææ¡?
+## åãç¸å
+³ææ¡?
 
-- å®æ¶æ°æ®è´¨éçæ§èå¾
-- [è´¨éè¯åç³»ç»èå¾](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md)
+- 实时数据质量监控蓝图
+- [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md)
 - æ°æ®è¡ç¼è¿½è¸ªèå?
 
 ---
@@ -709,29 +723,31 @@ services:
 **ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
-## 1. ææ¡£æ²»ç
+## 1. 文档治理
 
-### 1.1 System_Manifest.mdç´¢å¼
+### 1.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Auto Repair Engine
-- **æ¨¡åID**: AUTO_REPAIR_ENGINE_001
-- **èå¾ææ¡£**: AUTO_REPAIR_ENGINE_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
-- **èè´£**: Layer 1æ°æ®é¢å¤çå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **模块ID**: AUTO_REPAIR_ENGINE_001
+- **蓝图文档**: AUTO_REPAIR_ENGINE_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
+- **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
 - **ç¶æ?*: Active
 ```
 
-### 1.2 æ¨¡åèè´£è¾¹ç
+### 1.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **Auto Repair Engine** | Layer 1æ°æ®é¢å¤çå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
+| **Auto Repair Engine** | Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
 
-### 1.3 çæ¬ç®¡ç
+### 1.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
@@ -739,11 +755,12 @@ services:
 
 **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | å®æ½å¢é |
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
 ---

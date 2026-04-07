@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QMT_MINIQMT_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FRAMEWORK_DATA_LAYER_GAP_001
 version: 1.0.0
 status: Active

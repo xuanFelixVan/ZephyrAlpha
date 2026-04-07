@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_VERSION_CONTROL_BLUEPRINT_001
 version: 1.0.0
 status: Active

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_T_03_RM003_BARRA_OPTIMIZER_001
 version: 1.0.0
 status: Active

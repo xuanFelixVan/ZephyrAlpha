@@ -1,4 +1,4 @@
----
+﻿---
 module_id: THIRD_PARTY_API_001
 version: 1.0.0
 status: Active

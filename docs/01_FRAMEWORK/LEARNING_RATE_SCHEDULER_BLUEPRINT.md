@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LEARNING_RATE_SCHEDULER_BLUEPRINT_001
 
 version: 1.0.0

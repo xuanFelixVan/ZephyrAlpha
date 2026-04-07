@@ -1,4 +1,4 @@
----
+﻿---
 standard_type: µôغ╜£µîçفù
 responsibility:
   - 实施指南、部署文档

@@ -1,18 +1,18 @@
-﻿---
+﻿﻿---
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+compliance_level: 专业标准
 responsibility:
   - å¨ææ æç®¡ç?
-  - æ ææ°´å¹³è°æ´
-  - é£é©æ§å¶
-  - æ æä¼å
+  - 杠杆水平调整
+  - 风险控制
+  - 杠杆优化
 layer: Layer 5.3 (风险管理)
 ---
 
@@ -20,7 +20,7 @@ layer: Layer 5.3 (风险管理)
 
 ## 核心定位
 
-负责动态杠杆管理。基于风险平价和杠杆优化技术，动态调整杠杆水平，优化风险收益特征。
+负责动态杠杆管理。基于风险平价和杠杆优化技术，动态调整杠杆水平，优化风险收益特征。 提供风险识别、评估、监控功能，支持风险管理和决策。
 
 
 ## 设计目标
@@ -75,17 +75,21 @@ layer: Layer 5.3 (风险管理)
 4. 部署与监控
 
 
-## æ ¸å¿å®ä½
+## 核心定位
 
 æå»ºå¨ææ æç®¡ççè®¾è®¡ä¸å®ç°ï¼åºäºé£é©å¹³ä»·åæ æä¼åææ¯ï¼å¨æè°æ´æèµç»åæ ææ°´å¹³ï¼ä¼åé£é©æ¶çç¹å¾ï¼ç¡®ä¿èµéä½¿ç¨æçã?
 
 ---
 
 
-> **æ ¸å¿èè´£**: Dynamic Leverage Managementèå¾è®¾è®¡
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼Dynamic Leverage Managementèå¾è®¾è®¡ç¸å³åå®¹
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
+> **核心职责**: Dynamic Leverage Management蓝图设计
+> **职责边界**: 
+> - â?æ¬ææ¡£è´è´£ï¼Dynamic Leverage Managementèå¾è®¾è®¡ç¸å
+³å
+å®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å
+¶ä»æ¨¡åå
+å®?
 
 ï»?--
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT__001
@@ -94,90 +98,107 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: ä¸ªäººå¼åè?
-standard_type: ä¸ä¸éåæºæææ¡£
+standard_type: 专业量化机构文档
 responsibility:
-  - é£é©é¢ç® (Layer 11)
+  - 风险预算 (Layer 11)
 
 layer: Layer 5.3 (风险管理)
 
-## 2. æ¶æè®¾è®¡
+## 2. 架构设计
 
-### 2.1 ç³»ç»æ¶æ?
+### 2.1 系统架构?
 ```
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   å¨ææ æç®¡çç³»ç»æ¶?                          ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             å¸åºç¯å¢æç¥?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ³¢å¨?  ? ?ç¸å³?  ? ?æµå¨?  ? ?å¸åºæç»ª ?? ?? ? ?çæ§     ? ?çæ§     ? ?çæ§     ? ?çæ§     ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             é£é©é¢ç®è®¡ç®?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?é£é©é¢ç® ? ?VaRè®¡ç®  ? ?CVaRè®¡ç® ? ?ååæµè¯ ?? ?? ? ?åé     ? ?         ? ?         ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ æä¼åå¼æ?                               ? ?? ? âââââââââââââââââââ?     âââââââââââââââââââ?        ? ?? ? ? æ³¢å¨çç®æ æ ?  ?     ? é£é©é¢ç®æ æ    ?        ? ?? ? ? ä¼å?         ?     ? ä¼å?         ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âInverse Vol ? ?     ? âRisk Parity ? ?        ? ?? ? ? âStrategy    ? ?     ? âLeverage    ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âKelly       ? ?     ? âMax Sharpe  ? ?        ? ?? ? ? âCriterion   ? ?     ? âLeverage    ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? âââââââââââââââââââ?     âââââââââââââââââââ?        ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ æå³ç­ä¸æ§è¡å±                              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ æå³ç­ ? ?çº¦ææ£?? ?æ§è¡çæ§ ? ?å¼å¸¸å¤ç ?? ?? ? ?èå     ? ?         ? ?         ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             é£é©çæ§ä¸é¢è­¦å±                              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ æçæ§ ? ?é£é©é¢è­¦ ? ?æ­¢æè§¦å ? ?åºæ¥é??? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   å¨ææ æç®¡çç³»ç»æ¶?                          ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             å¸åºç¯å¢æç¥?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ³¢å¨?  ? ?ç¸å
+³?  ? ?æµå¨?  ? ?å¸åºæ
+ç»ª ?? ?? ? ?çæ§     ? ?çæ§     ? ?çæ§     ? ?çæ§     ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             é£é©é¢ç®è®¡ç®?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?é£é©é¢ç® ? ?VaRè®¡ç®  ? ?CVaRè®¡ç® ? ?ååæµè¯ ?? ?? ? ?åé
+     ? ?         ? ?         ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ æä¼åå¼æ?                               ? ?? ? âââââââââââââââââââ?     âââââââââââââââââââ?        ? ?? ? ? æ³¢å¨çç®æ æ ?  ?     ? é£é©é¢ç®æ æ    ?        ? ?? ? ? ä¼å?         ?     ? ä¼å?         ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âInverse Vol ? ?     ? âRisk Parity ? ?        ? ?? ? ? âStrategy    ? ?     ? âLeverage    ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âKelly       ? ?     ? âMax Sharpe  ? ?        ? ?? ? ? âCriterion   ? ?     ? âLeverage    ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? âââââââââââââââââââ?     âââââââââââââââââââ?        ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ æå³ç­ä¸æ§è¡å±                              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ æå³ç­ ? ?çº¦ææ£?? ?æ§è¡çæ§ ? ?å¼å¸¸å¤ç ?? ?? ? ?èå     ? ?         ? ?         ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             é£é©çæ§ä¸é¢è­¦å±                              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ æçæ§ ? ?é£é©é¢è­¦ ? ?æ­¢æè§¦å ? ?åºæ¥é??? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 æ¨¡ååå±æ¶æ
+### 2.2 模块分层架构
 
-**Layer 1 - å¸åºç¯å¢æç¥?*
-- æ³¢å¨ççæ§å¨ï¼å·²å®ç°æ³¢å¨çãéå«æ³¢å¨ç?- ç¸å³æ§çæ§å¨ï¼èµäº§é´ç¸å³æ§ç©éµï¼
-- æµå¨æ§çæ§å¨ï¼ä¹°åä»·å·®ãå¸åºæ·±åº¦ï¼
-- å¸åºæç»ªçæ§å¨ï¼VIXãææææ°ï¼
+**Layer 1 - 市场环境感知?*
+- æ³¢å¨ççæ§å¨ï¼å·²å®ç°æ³¢å¨çãéå«æ³¢å¨ç?- ç¸å
+³æ§çæ§å¨ï¼èµäº§é´ç¸å
+³æ§ç©éµï¼
+- 流动性监控器（买卖价差、市场深度）
+- å¸åºæ
+ç»ªçæ§å¨ï¼VIXãææ
+ææ°ï¼
 
-**Layer 2 - é£é©é¢ç®è®¡ç®?*
-- é£é©é¢ç®åéå¨ï¼ç­ç¥çº§ãèµäº§çº§é£é©é¢ç®?- VaRè®¡ç®å¨ï¼åå²æ¨¡ææ³ãåæ°æ³?- CVaRè®¡ç®å¨ï¼æ¡ä»¶é£é©ä»·å¼ï¼
-- ååæµè¯å¼æï¼åå²ææ¯ãåè®¾ææ¯ï¼
+**Layer 2 - 风险预算计算?*
+- é£é©é¢ç®åé
+å¨ï¼ç­ç¥çº§ãèµäº§çº§é£é©é¢ç®?- VaRè®¡ç®å¨ï¼åå²æ¨¡ææ³ãåæ°æ³?- CVaRè®¡ç®å¨ï¼æ¡ä»¶é£é©ä»·å¼ï¼
+- ååæµè¯å¼æï¼åå²æ
+æ¯ãåè®¾æ
+景）
 
-**Layer 3 - æ æä¼åå¼æ?*
-- æ³¢å¨çç®æ æ æä¼åå¨ï¼Inverse Volatility Strategy?- é£é©é¢ç®æ æä¼åå¨ï¼Risk Parity Leverage?- Kellyååæ æè®¡ç®?- æå¤§å¤æ®æ¯çæ æä¼åå¨
+**Layer 3 - 杠杆优化引擎?*
+- 波动率目标杠杆优化器（Inverse Volatility Strategy?- 风险预算杠杆优化器（Risk Parity Leverage?- Kelly准则杠杆计算?- 最大夏普比率杠杆优化器
 
-**Layer 4 - æ æå³ç­ä¸æ§è¡å±**
-- æ æå³ç­èåå¨ï¼å¤ç­ç¥èåï¼
-- çº¦ææ£æ¥å¨ï¼æ æä¸éãé£é©çº¦æï¼
-- æ§è¡çæ§å¨ï¼æ æè°æ´æ§è¡è·è¸ª?- å¼å¸¸å¤çå¨ï¼å¼å¸¸æåµåºå¯¹?
-**Layer 5 - é£é©çæ§ä¸é¢è­¦å±**
-- æ æçæ§å¨ï¼å®æ¶æ ææ°´å¹³çæ§?- é£é©é¢è­¦å¨ï¼é£é©éå¼é¢è­¦ï¼
-- æ­¢æè§¦åå¨ï¼èªå¨æ­¢ææºå¶?- åºæ¥éä»å¨ï¼æç«¯å¸åºåºæ¥å¤çï¼
+**Layer 4 - 杠杆决策与执行层**
+- 杠杆决策融合器（多策略融合）
+- 约束检查器（杠杆上限、风险约束）
+- æ§è¡çæ§å¨ï¼æ æè°æ´æ§è¡è·è¸ª?- å¼å¸¸å¤çå¨ï¼å¼å¸¸æ
+况应对?
+**Layer 5 - 风险监控与预警层**
+- 杠杆监控器（实时杠杆水平监控?- 风险预警器（风险阈值预警）
+- 止损触发器（自动止损机制?- 应急降仓器（极端市场应急处理）
 
-### 2.3 æ°æ®æµè®¾?
+### 2.3 数据流设?
 ```
-å¸åºæ°æ® ?ç¯å¢æç¥ ?é£é©é¢ç® ?æ æä¼å ?å³ç­èå
-    ?          ?          ?          ?          ?æ³¢å¨çè®¡? ç¸å³æ§æ´? VaRè®¡ç®    å¤ç­ç¥ä¼? çº¦ææ£?    ?          ?          ?          ?          ?æç»ªææ     æµå¨æ§è¯? ååæµè¯   æ æå»ºè®®    æ§è¡çæ§
+市场数据 ?环境感知 ?风险预算 ?杠杆优化 ?决策融合
+    ?          ?          ?          ?          ?æ³¢å¨çè®¡? ç¸å
+³æ§æ´? VaRè®¡ç®    å¤ç­ç¥ä¼? çº¦ææ£?    ?          ?          ?          ?          ?æ
+绪指标    流动性评? 压力测试   杠杆建议    执行监控
 ```
 
 ---
 
-## 3. æ ¸å¿ç»ä»¶è¯¦ç»è®¾è®¡
+## 3. 核心组件详细设计
 
-### 3.1 æ³¢å¨çæç¥æ æä¼åå¨
+### 3.1 波动率感知杠杆优化器
 
-**è®¾è®¡ç®æ **: åºäºå¸åºæ³¢å¨çå¨æè°æ´æ æï¼å®ç°æ³¢å¨çç®æ ç­?
+**设计目标**: 基于市场波动率动态调整杠杆，实现波动率目标策?
 ```python
 class VolatilityTargetLeverageOptimizer:
-    """æ³¢å¨çç®æ æ æä¼åå¨
+    """波动率目标杠杆优化器
     
-    ç´¢å¼: LEVERAGE_001-M01
-    èè´£: åºäºç®æ æ³¢å¨çå¨æè°æ´æ ææ°´?    è¾å¥: å½åæ³¢å¨çãç®æ æ³¢å¨çãå½åæ ?    è¾åº: æä¼æ ææ°´?    """
+    索引: LEVERAGE_001-M01
+    èè´£: åºäºç®æ æ³¢å¨çå¨æè°æ´æ ææ°´?    è¾å
+¥: å½åæ³¢å¨çãç®æ æ³¢å¨çãå½åæ ?    è¾åº: æä¼æ ææ°´?    """
     
     def __init__(self, config: VolatilityTargetConfig):
         self.config = config
-        self.target_volatility = config.target_volatility  # ç®æ æ³¢å¨çï¼?5%?        self.max_leverage = config.max_leverage            # æå¤§æ æï¼?.0?        self.min_leverage = config.min_leverage            # æå°æ æï¼?.5?        self.volatility_lookback = config.volatility_lookback  # æ³¢å¨çåçæï¼å¦60å¤©ï¼
+        self.target_volatility = config.target_volatility  # 目标波动率（?5%?        self.max_leverage = config.max_leverage            # 最大杠杆（?.0?        self.min_leverage = config.min_leverage            # 最小杠杆（?.5?        self.volatility_lookback = config.volatility_lookback  # 波动率回看期（如60天）
         
     def calculate_optimal_leverage(self, portfolio_returns: pd.Series,
                                    current_leverage: float) -> LeverageDecision:
-        """è®¡ç®æä¼æ ææ°´?        
+        """计算最优杠杆水?        
         Args:
-            portfolio_returns: ç»ååå²æ¶ç?            current_leverage: å½åæ ææ°´å¹³
+            portfolio_returns: 组合历史收益?            current_leverage: 当前杠杆水平
             
         Returns:
-            LeverageDecision: åå«æä¼æ æãè°æ´å¹åº¦ãè°æ´ç?        """
-        # 1. è®¡ç®å½åæ³¢å¨?        current_volatility = self._calculate_volatility(portfolio_returns)
+            LeverageDecision: å
+å«æä¼æ æãè°æ´å¹
+度、调整理?        """
+        # 1. 计算当前波动?        current_volatility = self._calculate_volatility(portfolio_returns)
         
-        # 2. è®¡ç®ç®æ æ æï¼Inverse Volatility Strategy?        target_leverage = self.target_volatility / current_volatility
+        # 2. 计算目标杠杆（Inverse Volatility Strategy?        target_leverage = self.target_volatility / current_volatility
         
-        # 3. åºç¨æ æçº¦æ
+        # 3. 应用杠杆约束
         target_leverage = np.clip(target_leverage, self.min_leverage, self.max_leverage)
         
-        # 4. è®¡ç®è°æ´å¹åº¦
+        # 4. è®¡ç®è°æ´å¹
+åº¦
         adjustment = target_leverage - current_leverage
         
-        # 5. å¤æ­æ¯å¦éè¦è°?        if abs(adjustment) < self.config.adjustment_threshold:
+        # 5. 判断是否需要调?        if abs(adjustment) < self.config.adjustment_threshold:
             action = 'hold'
         elif adjustment > 0:
             action = 'increase'
         else:
             action = 'decrease'
         
-        # 6. è®¡ç®è°æ´åçé¢ææ³¢å¨?        expected_volatility = current_volatility * target_leverage
+        # 6. 计算调整后的预期波动?        expected_volatility = current_volatility * target_leverage
         
         return LeverageDecision(
             optimal_leverage=target_leverage,
@@ -187,85 +208,88 @@ class VolatilityTargetLeverageOptimizer:
             current_volatility=current_volatility,
             target_volatility=self.target_volatility,
             expected_volatility=expected_volatility,
-            reason=f"æ³¢å¨çç®æ ç­? å½åæ³¢å¨ç{current_volatility:.2%}, ç®æ æ³¢å¨ç{self.target_volatility:.2%}"
+            reason=f"波动率目标策? 当前波动率{current_volatility:.2%}, 目标波动率{self.target_volatility:.2%}"
         )
     
     def _calculate_volatility(self, returns: pd.Series) -> float:
-        """è®¡ç®å¹´åæ³¢å¨?        
-        ä½¿ç¨ææ°å æç§»å¨å¹³åï¼EWMAï¼è®¡ç®æ³¢å¨ç
+        """计算年化波动?        
+        使用指数加权移动平均（EWMA）计算波动率
         """
-        # EWMAæ³¢å¨çï¼lambda=0.94?        ewma_vol = returns.ewm(span=self.volatility_lookback).std()
+        # EWMA波动率（lambda=0.94?        ewma_vol = returns.ewm(span=self.volatility_lookback).std()
         
-        # å¹´å
+        # 年化
         annualized_vol = ewma_vol.iloc[-1] * np.sqrt(252)
         
         return annualized_vol
     
     def adjust_for_market_regime(self, base_leverage: float,
                                  market_regime: str) -> float:
-        """æ ¹æ®å¸åºèå¼è°æ´æ æ
+        """根据市场范式调整杠杆
         
         Args:
-            base_leverage: åºç¡æ ææ°´å¹³
-            market_regime: å¸åºèå¼ï¼expansion/stagflation/recession/recovery?            
+            base_leverage: 基础杠杆水平
+            market_regime: 市场范式（expansion/stagflation/recession/recovery?            
         Returns:
-            float: è°æ´åçæ ææ°´å¹³
+            float: 调整后的杠杆水平
         """
-        # å¸åºèå¼æ æè°æ´ç³»æ°
+        # 市场范式杠杆调整系数
         regime_multipliers = {
-            'expansion': 1.2,      # æ©å¼ æï¼éåº¦æé«æ æ
-            'stagflation': 0.8,    # æ»èæï¼éä½æ æ
-            'recession': 0.6,      # è¡°éæï¼å¤§å¹éä½æ æ
-            'recovery': 1.0        # å¤èæï¼ç»´æåºç¡æ æ
+            'expansion': 1.2,      # 扩张期：适度提高杠杆
+            'stagflation': 0.8,    # 滞胀期：降低杠杆
+            'recession': 0.6,      # è¡°éæï¼å¤§å¹
+降低杠杆
+            'recovery': 1.0        # 复苏期：维持基础杠杆
         }
         
         multiplier = regime_multipliers.get(market_regime, 1.0)
         adjusted_leverage = base_leverage * multiplier
         
-        # åºç¨æ æçº¦æ
+        # 应用杠杆约束
         return np.clip(adjusted_leverage, self.min_leverage, self.max_leverage)
 ```
 
-### 3.2 é£é©é¢ç®æ æä¼å?
-**è®¾è®¡ç®æ **: å¨é£é©é¢ç®çº¦æä¸ä¼åæ ææ°´å¹³ï¼å®ç°é£é©å¹³?
+### 3.2 风险预算杠杆优化?
+**设计目标**: 在风险预算约束下优化杠杆水平，实现风险平?
 ```python
 class RiskBudgetLeverageOptimizer:
-    """é£é©é¢ç®æ æä¼å?    
-    ç´¢å¼: LEVERAGE_001-M02
-    èè´£: å¨é£é©é¢ç®çº¦æä¸ä¼åæ ææ°´å¹³
-    è¾å¥: é£é©é¢ç®ãå½åé£é©è´¡ç®ãæ ææ°´?    è¾åº: é£é©é¢ç®çº¦æä¸çæä¼æ ?    """
+    """风险预算杠杆优化?    
+    索引: LEVERAGE_001-M02
+    职责: 在风险预算约束下优化杠杆水平
+    è¾å
+¥: é£é©é¢ç®ãå½åé£é©è´¡ç®ãæ ææ°´?    è¾åº: é£é©é¢ç®çº¦æä¸çæä¼æ ?    """
     
     def __init__(self, config: RiskBudgetConfig):
         self.config = config
-        self.risk_budget = config.risk_budget              # æ»é£é©é¢ç®ï¼?0%?        self.max_leverage = config.max_leverage            # æå¤§æ ?        self.risk_measure = config.risk_measure            # é£é©åº¦éï¼VaR/CVaR?        
+        self.risk_budget = config.risk_budget              # 总风险预算（?0%?        self.max_leverage = config.max_leverage            # 最大杠?        self.risk_measure = config.risk_measure            # 风险度量（VaR/CVaR?        
     def optimize_leverage(self, portfolio_weights: np.ndarray,
                          covariance_matrix: np.ndarray,
                          current_leverage: float) -> LeverageDecision:
-        """ä¼åæ ææ°´å¹³
+        """优化杠杆水平
         
         Args:
-            portfolio_weights: ç»åæé
-            covariance_matrix: åæ¹å·®ç©?            current_leverage: å½åæ ææ°´å¹³
+            portfolio_weights: 组合权重
+            covariance_matrix: 协方差矩?            current_leverage: 当前杠杆水平
             
         Returns:
-            LeverageDecision: é£é©é¢ç®çº¦æä¸çæä¼æ æå³?        """
-        # 1. è®¡ç®å½åç»åé£é©
+            LeverageDecision: 风险预算约束下的最优杠杆决?        """
+        # 1. 计算当前组合风险
         current_risk = self._calculate_portfolio_risk(
             portfolio_weights, covariance_matrix, current_leverage
         )
         
-        # 2. è®¡ç®ç®æ æ æï¼ä½¿é£é©ç­äºé£é©é¢ç®?        if current_risk > 0:
+        # 2. 计算目标杠杆（使风险等于风险预算?        if current_risk > 0:
             target_leverage = self.risk_budget / current_risk * current_leverage
         else:
             target_leverage = self.max_leverage
         
-        # 3. åºç¨æ æçº¦æ
+        # 3. 应用杠杆约束
         target_leverage = np.clip(target_leverage, 0.5, self.max_leverage)
         
-        # 4. è®¡ç®è°æ´å¹åº¦
+        # 4. è®¡ç®è°æ´å¹
+åº¦
         adjustment = target_leverage - current_leverage
         
-        # 5. è®¡ç®é£é©è´¡ç®
+        # 5. 计算风险贡献
         risk_contributions = self._calculate_risk_contributions(
             portfolio_weights, covariance_matrix, target_leverage
         )
@@ -278,76 +302,80 @@ class RiskBudgetLeverageOptimizer:
             current_risk=current_risk,
             target_risk=self.risk_budget,
             risk_contributions=risk_contributions,
-            reason=f"é£é©é¢ç®çº¦æ: å½åé£é©{current_risk:.2%}, ç®æ é£é©{self.risk_budget:.2%}"
+            reason=f"风险预算约束: 当前风险{current_risk:.2%}, 目标风险{self.risk_budget:.2%}"
         )
     
     def _calculate_portfolio_risk(self, weights: np.ndarray,
                                   cov_matrix: np.ndarray,
                                   leverage: float) -> float:
-        """è®¡ç®ç»åé£é©ï¼å¹´åæ åå·®?""
-        # åºç¨æ æ
+        """计算组合风险（年化标准差?""
+        # 应用杠杆
         leveraged_weights = weights * leverage
         
-        # è®¡ç®ç»åæ¹å·®
+        # 计算组合方差
         portfolio_variance = np.dot(leveraged_weights.T, np.dot(cov_matrix, leveraged_weights))
         
-        # å¹´åæ å?        portfolio_risk = np.sqrt(portfolio_variance) * np.sqrt(252)
+        # 年化标准?        portfolio_risk = np.sqrt(portfolio_variance) * np.sqrt(252)
         
         return portfolio_risk
     
     def _calculate_risk_contributions(self, weights: np.ndarray,
                                      cov_matrix: np.ndarray,
                                      leverage: float) -> np.ndarray:
-        """è®¡ç®åèµäº§çé£é©è´¡ç®"""
+        """计算各资产的风险贡献"""
         leveraged_weights = weights * leverage
         
-        # ç»åæ³¢å¨?        portfolio_vol = np.sqrt(np.dot(leveraged_weights.T, np.dot(cov_matrix, leveraged_weights)))
+        # 组合波动?        portfolio_vol = np.sqrt(np.dot(leveraged_weights.T, np.dot(cov_matrix, leveraged_weights)))
         
-        # è¾¹éé£é©è´¡ç®
+        # è¾¹é
+风险贡献
         marginal_risk = np.dot(cov_matrix, leveraged_weights) / portfolio_vol
         
-        # é£é©è´¡ç®
+        # 风险贡献
         risk_contributions = leveraged_weights * marginal_risk
         
-        # æ ååä¸ºç¾å?        risk_contributions_pct = risk_contributions / portfolio_vol
+        # 标准化为百分?        risk_contributions_pct = risk_contributions / portfolio_vol
         
         return risk_contributions_pct
 ```
 
-### 3.3 Kellyååæ æè®¡ç®?
-**è®¾è®¡ç®æ **: åºäºKellyååè®¡ç®æä¼æ æï¼æå¤§åé¿æå¢é¿?
+### 3.3 Kelly准则杠杆计算?
+**设计目标**: 基于Kelly准则计算最优杠杆，最大化长期增长?
 ```python
 class KellyLeverageCalculator:
-    """Kellyååæ æè®¡ç®?    
-    ç´¢å¼: LEVERAGE_001-M03
-    èè´£: ä½¿ç¨Kellyååè®¡ç®æä¼æ ?    è¾å¥: åå²æ¶ççãèçãçäºæ¯
-    è¾åº: Kellyæä¼æ ?    """
+    """Kelly准则杠杆计算?    
+    索引: LEVERAGE_001-M03
+    èè´£: ä½¿ç¨Kellyååè®¡ç®æä¼æ ?    è¾å
+¥: åå²æ¶ççãèçãçäºæ¯
+    输出: Kelly最优杠?    """
     
     def __init__(self, config: KellyConfig):
         self.config = config
-        self.kelly_fraction = config.kelly_fraction      # Kellyåæ°ï¼å¦0.5ï¼å³åKelly?        self.max_leverage = config.max_leverage          # æå¤§æ ?        self.lookback_period = config.lookback_period    # åç?        
+        self.kelly_fraction = config.kelly_fraction      # Kelly分数（如0.5，即半Kelly?        self.max_leverage = config.max_leverage          # 最大杠?        self.lookback_period = config.lookback_period    # 回看?        
     def calculate_kelly_leverage(self, strategy_returns: pd.Series) -> KellyResult:
-        """è®¡ç®Kellyæä¼æ ?        
+        """计算Kelly最优杠?        
         Args:
-            strategy_returns: ç­ç¥åå²æ¶ç?            
+            strategy_returns: 策略历史收益?            
         Returns:
-            KellyResult: åå«Kellyæ æãåKellyæ æãè°æ´åæ æ
+            KellyResult: å
+含Kelly杠杆、半Kelly杠杆、调整后杠杆
         """
-        # 1. è®¡ç®æææ¶ççåæ³¢å¨?        mean_return = strategy_returns.mean() * 252      # å¹´åæææ¶ç?        volatility = strategy_returns.std() * np.sqrt(252)  # å¹´åæ³¢å¨?        
-        # 2. è®¡ç®Sharpeæ¯ç
+        # 1. 计算期望收益率和波动?        mean_return = strategy_returns.mean() * 252      # 年化期望收益?        volatility = strategy_returns.std() * np.sqrt(252)  # 年化波动?        
+        # 2. 计算Sharpe比率
         sharpe_ratio = mean_return / volatility if volatility > 0 else 0
         
-        # 3. è®¡ç®Kellyæ æ
-        # Kellyå¬å¼: f* = Î¼ / ÏÂ² = Sharpe / Ï
+        # 3. 计算Kelly杠杆
+        # Kellyå
+¬å¼: f* = Î¼ / ÏÂ² = Sharpe / Ï
         kelly_leverage = sharpe_ratio / volatility if volatility > 0 else 0
         
-        # 4. åºç¨Kellyåæ°ï¼åKellyãååä¹ä¸Kellyç­ï¼
+        # 4. 应用Kelly分数（半Kelly、四分之一Kelly等）
         adjusted_kelly = kelly_leverage * self.kelly_fraction
         
-        # 5. åºç¨æ æçº¦æ
+        # 5. 应用杠杆约束
         final_leverage = np.clip(adjusted_kelly, 0.5, self.max_leverage)
         
-        # 6. è®¡ç®èçåçäºæ¯
+        # 6. 计算胜率和盈亏比
         win_rate, win_loss_ratio = self._calculate_win_metrics(strategy_returns)
         
         return KellyResult(
@@ -359,18 +387,18 @@ class KellyLeverageCalculator:
             sharpe_ratio=sharpe_ratio,
             win_rate=win_rate,
             win_loss_ratio=win_loss_ratio,
-            reason=f"Kellyåå: Sharpe={sharpe_ratio:.2f}, Kellyæ æ={kelly_leverage:.2f}, è°æ´?{final_leverage:.2f}"
+            reason=f"Kelly准则: Sharpe={sharpe_ratio:.2f}, Kelly杠杆={kelly_leverage:.2f}, 调整?{final_leverage:.2f}"
         )
     
     def _calculate_win_metrics(self, returns: pd.Series) -> Tuple[float, float]:
-        """è®¡ç®èçåçäºæ¯"""
-        # èç
+        """计算胜率和盈亏比"""
+        # 胜率
         positive_returns = returns[returns > 0]
         negative_returns = returns[returns < 0]
         
         win_rate = len(positive_returns) / len(returns) if len(returns) > 0 else 0
         
-        # çäº?        avg_win = positive_returns.mean() if len(positive_returns) > 0 else 0
+        # 盈亏?        avg_win = positive_returns.mean() if len(positive_returns) > 0 else 0
         avg_loss = abs(negative_returns.mean()) if len(negative_returns) > 0 else 1
         
         win_loss_ratio = avg_win / avg_loss if avg_loss > 0 else 0
@@ -380,54 +408,56 @@ class KellyLeverageCalculator:
     def adjust_for_drawdown(self, base_leverage: float,
                            current_drawdown: float,
                            max_drawdown: float) -> float:
-        """æ ¹æ®åæ¤è°æ´æ æ
+        """根据回撤调整杠杆
         
         Args:
-            base_leverage: åºç¡æ ææ°´å¹³
-            current_drawdown: å½ååæ¤
-            max_drawdown: æå¤§åæ¤å®¹å¿åº¦
+            base_leverage: 基础杠杆水平
+            current_drawdown: 当前回撤
+            max_drawdown: 最大回撤容忍度
             
         Returns:
-            float: è°æ´åçæ ææ°´å¹³
+            float: 调整后的杠杆水平
         """
-        # åæ¤è°æ´ç³»æ°
+        # 回撤调整系数
         if current_drawdown < max_drawdown * 0.5:
-            # åæ¤è¾å°ï¼ç»´æåºç¡æ æ
+            # 回撤较小，维持基础杠杆
             multiplier = 1.0
         elif current_drawdown < max_drawdown * 0.8:
-            # åæ¤ä¸­ç­ï¼éåº¦éä½æ æ
+            # 回撤中等，适度降低杠杆
             multiplier = 0.8
         else:
-            # åæ¤è¾å¤§ï¼å¤§å¹éä½æ ?            multiplier = 0.5
+            # åæ¤è¾å¤§ï¼å¤§å¹
+降低杠?            multiplier = 0.5
         
         adjusted_leverage = base_leverage * multiplier
         
         return np.clip(adjusted_leverage, 0.5, self.max_leverage)
 ```
 
-### 3.4 æ æå³ç­èå?
-**è®¾è®¡ç®æ **: èåå¤ç§æ æä¼åç­ç¥çå³ç­ï¼è¾åºæç»æ ææ°´?
+### 3.4 杠杆决策融合?
+**设计目标**: 融合多种杠杆优化策略的决策，输出最终杠杆水?
 ```python
 class LeverageDecisionFusion:
-    """æ æå³ç­èå?    
-    ç´¢å¼: LEVERAGE_001-M04
-    èè´£: èåå¤ç§æ æä¼åç­ç¥çå³?    è¾å¥: å¤ä¸ªæ æä¼åå¨çå³ç­
-    è¾åº: æç»æ æå³?    """
+    """杠杆决策融合?    
+    索引: LEVERAGE_001-M04
+    èè´£: èåå¤ç§æ æä¼åç­ç¥çå³?    è¾å
+¥: å¤ä¸ªæ æä¼åå¨çå³ç­
+    输出: 最终杠杆决?    """
     
     def __init__(self, config: FusionConfig):
         self.config = config
-        self.strategy_weights = config.strategy_weights  # åç­ç¥æ?        self.constraints = config.constraints            # æ æçº¦æ
+        self.strategy_weights = config.strategy_weights  # 各策略权?        self.constraints = config.constraints            # 杠杆约束
         
     def fuse_decisions(self, decisions: Dict[str, LeverageDecision],
                       market_context: MarketContext) -> FinalLeverageDecision:
-        """èåå¤ä¸ªæ æå³ç­
+        """融合多个杠杆决策
         
         Args:
-            decisions: åç­ç¥çæ æå³ç­
-            market_context: å¸åºç¯å¢ä¸ä¸?            
+            decisions: 各策略的杠杆决策
+            market_context: 市场环境上下?            
         Returns:
-            FinalLeverageDecision: æç»æ æå³?        """
-        # 1. å æå¹³åæ ææ°´å¹³
+            FinalLeverageDecision: 最终杠杆决?        """
+        # 1. 加权平均杠杆水平
         weighted_leverage = 0.0
         total_weight = 0.0
         
@@ -438,19 +468,20 @@ class LeverageDecisionFusion:
         
         final_leverage = weighted_leverage / total_weight if total_weight > 0 else 1.0
         
-        # 2. åºç¨å¸åºç¯å¢è°æ´
+        # 2. 应用市场环境调整
         final_leverage = self._adjust_for_market_conditions(
             final_leverage, market_context
         )
         
-        # 3. åºç¨çº¦ææ¡ä»¶
+        # 3. 应用约束条件
         final_leverage = self._apply_constraints(final_leverage, market_context)
         
-        # 4. è®¡ç®è°æ´å¹åº¦
+        # 4. è®¡ç®è°æ´å¹
+åº¦
         current_leverage = market_context.current_leverage
         adjustment = final_leverage - current_leverage
         
-        # 5. çæå³ç­çç±
+        # 5. 生成决策理由
         reasons = [decision.reason for decision in decisions.values()]
         
         return FinalLeverageDecision(
@@ -467,16 +498,16 @@ class LeverageDecisionFusion:
     
     def _adjust_for_market_conditions(self, leverage: float,
                                       context: MarketContext) -> float:
-        """æ ¹æ®å¸åºç¯å¢è°æ´æ æ"""
-        # æ³¢å¨çè°?        if context.volatility_regime == 'high':
+        """根据市场环境调整杠杆"""
+        # 波动率调?        if context.volatility_regime == 'high':
             leverage *= 0.8
         elif context.volatility_regime == 'low':
             leverage *= 1.1
         
-        # æµå¨æ§è°?        if context.liquidity_regime == 'low':
+        # 流动性调?        if context.liquidity_regime == 'low':
             leverage *= 0.7
         
-        # å¸åºèå¼è°æ´
+        # 市场范式调整
         regime_multipliers = {
             'expansion': 1.2,
             'stagflation': 0.8,
@@ -491,12 +522,13 @@ class LeverageDecisionFusion:
     
     def _apply_constraints(self, leverage: float,
                           context: MarketContext) -> float:
-        """åºç¨æ æçº¦æ"""
-        # æå¤§æ æçº¦?        leverage = min(leverage, self.constraints.max_leverage)
+        """应用杠杆约束"""
+        # 最大杠杆约?        leverage = min(leverage, self.constraints.max_leverage)
         
-        # æå°æ æçº¦?        leverage = max(leverage, self.constraints.min_leverage)
+        # 最小杠杆约?        leverage = max(leverage, self.constraints.min_leverage)
         
-        # åæ¥è°æ´å¹åº¦çº¦æ
+        # åæ¥è°æ´å¹
+度约束
         max_adjustment = self.constraints.max_daily_adjustment
         current_leverage = context.current_leverage
         
@@ -509,70 +541,72 @@ class LeverageDecisionFusion:
         return leverage
     
     def _calculate_confidence(self, decisions: Dict[str, LeverageDecision]) -> float:
-        """è®¡ç®å³ç­ç½®ä¿¡?""
-        # åºäºç­ç¥ä¸è´æ§è®¡ç®ç½®ä¿¡åº¦
+        """计算决策置信?""
+        # 基于策略一致性计算置信度
         leverages = [d.optimal_leverage for d in decisions.values()]
         
         if len(leverages) == 0:
             return 0.0
         
-        # è®¡ç®æ ææ°´å¹³çæ åå·®
+        # 计算杠杆水平的标准差
         std_leverage = np.std(leverages)
         mean_leverage = np.mean(leverages)
         
-        # åå¼ç³»æ°ï¼è¶å°è¶ä¸è´ï¼
+        # 变异系数（越小越一致）
         cv = std_leverage / mean_leverage if mean_leverage > 0 else 1.0
         
-        # ç½®ä¿¡åº¦ï¼åå¼ç³»æ°è¶å°ï¼ç½®ä¿¡åº¦è¶é«?        confidence = max(0, 1 - cv)
+        # 置信度（变异系数越小，置信度越高?        confidence = max(0, 1 - cv)
         
         return confidence
 ```
 
-### 3.5 æ æé£é©çæ§?
-**è®¾è®¡ç®æ **: å®æ¶çæ§æ æé£é©ï¼è§¦åé¢è­¦åæ­¢ææºå¶
+### 3.5 杠杆风险监控?
+**设计目标**: 实时监控杠杆风险，触发预警和止损机制
 
 ```python
 class LeverageRiskMonitor:
-    """æ æé£é©çæ§?    
-    ç´¢å¼: LEVERAGE_001-M05
-    èè´£: å®æ¶çæ§æ æé£é©ï¼è§¦åé¢è­¦åæ­¢æ
-    è¾å¥: å½åæ æãç»åé£é©ãå¸åºæ°?    è¾åº: é£é©é¢è­¦ãæ­¢æä¿¡?    """
+    """杠杆风险监控?    
+    索引: LEVERAGE_001-M05
+    职责: 实时监控杠杆风险，触发预警和止损
+    è¾å
+¥: å½åæ æãç»åé£é©ãå¸åºæ°?    è¾åº: é£é©é¢è­¦ãæ­¢æä¿¡?    """
     
     def __init__(self, config: RiskMonitorConfig):
         self.config = config
-        self.alert_thresholds = config.alert_thresholds  # é¢è­¦?        self.stop_loss_thresholds = config.stop_loss_thresholds  # æ­¢æ?        
+        self.alert_thresholds = config.alert_thresholds  # 预警?        self.stop_loss_thresholds = config.stop_loss_thresholds  # 止损?        
     def monitor_leverage_risk(self, current_leverage: float,
                              portfolio_value: float,
                              market_data: pd.DataFrame) -> RiskMonitorResult:
-        """çæ§æ æé£é©
+        """监控杠杆风险
         
         Args:
-            current_leverage: å½åæ ææ°´å¹³
-            portfolio_value: ç»å?            market_data: å¸åºæ°æ®
+            current_leverage: 当前杠杆水平
+            portfolio_value: 组合?            market_data: 市场数据
             
         Returns:
-            RiskMonitorResult: é£é©çæ§ç»æ
+            RiskMonitorResult: 风险监控结果
         """
-        # 1. è®¡ç®æ æç¸å³é£é©ææ 
+        # 1. è®¡ç®æ æç¸å
+³é£é©ææ 
         leverage_ratio = current_leverage
         margin_usage = self._calculate_margin_usage(current_leverage, portfolio_value)
         leverage_var = self._calculate_leverage_var(current_leverage, market_data)
         leverage_cvar = self._calculate_leverage_cvar(current_leverage, market_data)
         
-        # 2. æ£æ¥é¢è­¦é?        alerts = self._check_alert_thresholds(
+        # 2. 检查预警阈?        alerts = self._check_alert_thresholds(
             leverage_ratio, margin_usage, leverage_var, leverage_cvar
         )
         
-        # 3. æ£æ¥æ­¢æé?        stop_loss_triggered = self._check_stop_loss(
+        # 3. 检查止损阈?        stop_loss_triggered = self._check_stop_loss(
             leverage_ratio, margin_usage, leverage_var
         )
         
-        # 4. è®¡ç®é£é©è¯å
+        # 4. 计算风险评分
         risk_score = self._calculate_risk_score(
             leverage_ratio, margin_usage, leverage_var, leverage_cvar
         )
         
-        # 5. çæå»ºè®®
+        # 5. 生成建议
         recommendations = self._generate_recommendations(
             risk_score, alerts, stop_loss_triggered
         )
@@ -590,8 +624,8 @@ class LeverageRiskMonitor:
     
     def _calculate_margin_usage(self, leverage: float,
                                 portfolio_value: float) -> float:
-        """è®¡ç®ä¿è¯éä½¿ç¨ç"""
-        # ç®åè®¡ç®ï¼åè®¾ä¿è¯éè¦æ±ä¸ºæ æçåæ°
+        """计算保证金使用率"""
+        # 简化计算：假设保证金要求为杠杆的倒数
         margin_requirement = portfolio_value / leverage
         margin_usage = margin_requirement / portfolio_value
         
@@ -600,64 +634,64 @@ class LeverageRiskMonitor:
     def _calculate_leverage_var(self, leverage: float,
                                market_data: pd.DataFrame,
                                confidence_level: float = 0.95) -> float:
-        """è®¡ç®æ æVaR"""
+        """计算杠杆VaR"""
         returns = market_data['close'].pct_change().dropna()
         
-        # åºç¨æ æ
+        # 应用杠杆
         leveraged_returns = returns * leverage
         
-        # è®¡ç®VaRï¼åå²æ¨¡ææ³?        var = np.percentile(leveraged_returns, (1 - confidence_level) * 100)
+        # 计算VaR（历史模拟法?        var = np.percentile(leveraged_returns, (1 - confidence_level) * 100)
         
         return abs(var)
     
     def _calculate_leverage_cvar(self, leverage: float,
                                 market_data: pd.DataFrame,
                                 confidence_level: float = 0.95) -> float:
-        """è®¡ç®æ æCVaRï¼æ¡ä»¶é£é©ä»·å¼ï¼"""
+        """计算杠杆CVaR（条件风险价值）"""
         returns = market_data['close'].pct_change().dropna()
         
-        # åºç¨æ æ
+        # 应用杠杆
         leveraged_returns = returns * leverage
         
-        # è®¡ç®VaR
+        # 计算VaR
         var = np.percentile(leveraged_returns, (1 - confidence_level) * 100)
         
-        # è®¡ç®CVaRï¼VaRä»¥ä¸çå¹³åæå¤±ï¼
+        # 计算CVaR（VaR以下的平均损失）
         cvar = leveraged_returns[leveraged_returns <= var].mean()
         
         return abs(cvar)
     
     def _check_alert_thresholds(self, leverage: float, margin_usage: float,
                                 var: float, cvar: float) -> List[RiskAlert]:
-        """æ£æ¥é¢è­¦é?""
+        """检查预警阈?""
         alerts = []
         
-        # æ æé¢è­¦
+        # 杠杆预警
         if leverage > self.alert_thresholds['leverage_high']:
             alerts.append(RiskAlert(
                 alert_type='leverage_high',
                 severity='warning',
-                message=f"æ ææ°´å¹³è¿é«: {leverage:.2f}",
+                message=f"杠杆水平过高: {leverage:.2f}",
                 current_value=leverage,
                 threshold=self.alert_thresholds['leverage_high']
             ))
         
-        # ä¿è¯éä½¿ç¨çé¢è­¦
+        # 保证金使用率预警
         if margin_usage > self.alert_thresholds['margin_usage_high']:
             alerts.append(RiskAlert(
                 alert_type='margin_usage_high',
                 severity='warning',
-                message=f"ä¿è¯éä½¿ç¨çè¿é«: {margin_usage:.2%}",
+                message=f"保证金使用率过高: {margin_usage:.2%}",
                 current_value=margin_usage,
                 threshold=self.alert_thresholds['margin_usage_high']
             ))
         
-        # VaRé¢è­¦
+        # VaR预警
         if var > self.alert_thresholds['var_high']:
             alerts.append(RiskAlert(
                 alert_type='var_high',
                 severity='warning',
-                message=f"VaRè¿é«: {var:.2%}",
+                message=f"VaR过高: {var:.2%}",
                 current_value=var,
                 threshold=self.alert_thresholds['var_high']
             ))
@@ -666,15 +700,15 @@ class LeverageRiskMonitor:
     
     def _check_stop_loss(self, leverage: float, margin_usage: float,
                         var: float) -> bool:
-        """æ£æ¥æ­¢æé?""
-        # æ ææ­¢æ
+        """检查止损阈?""
+        # 杠杆止损
         if leverage > self.stop_loss_thresholds['leverage_max']:
             return True
         
-        # ä¿è¯éæ­¢?        if margin_usage > self.stop_loss_thresholds['margin_usage_max']:
+        # 保证金止?        if margin_usage > self.stop_loss_thresholds['margin_usage_max']:
             return True
         
-        # VaRæ­¢æ
+        # VaR止损
         if var > self.stop_loss_thresholds['var_max']:
             return True
         
@@ -682,19 +716,19 @@ class LeverageRiskMonitor:
     
     def _calculate_risk_score(self, leverage: float, margin_usage: float,
                              var: float, cvar: float) -> float:
-        """è®¡ç®ç»¼åé£é©è¯å?-100?""
-        # æ æé£é©è¯å
+        """计算综合风险评分?-100?""
+        # 杠杆风险评分
         leverage_score = min(100, leverage / self.config.max_leverage * 100)
         
-        # ä¿è¯éé£é©è¯?        margin_score = min(100, margin_usage * 100)
+        # 保证金风险评?        margin_score = min(100, margin_usage * 100)
         
-        # VaRé£é©è¯å
+        # VaR风险评分
         var_score = min(100, var / self.config.max_var * 100)
         
-        # CVaRé£é©è¯å
+        # CVaR风险评分
         cvar_score = min(100, cvar / self.config.max_cvar * 100)
         
-        # ç»¼åé£é©è¯åï¼å æå¹³åï¼
+        # 综合风险评分（加权平均）
         risk_score = (
             0.3 * leverage_score +
             0.2 * margin_score +
@@ -707,31 +741,32 @@ class LeverageRiskMonitor:
     def _generate_recommendations(self, risk_score: float,
                                  alerts: List[RiskAlert],
                                  stop_loss: bool) -> List[str]:
-        """çæé£é©å»ºè®®"""
+        """生成风险建议"""
         recommendations = []
         
         if stop_loss:
-            recommendations.append("â ï¸ æ­¢æè§¦åï¼ç«å³éä½æ æè³å®å¨æ°´å¹³")
+            recommendations.append("â ï¸ æ­¢æè§¦åï¼ç«å³éä½æ æè³å®å
+¨æ°´å¹³")
         elif risk_score > 80:
-            recommendations.append("ð´ é«é£é©ï¼å»ºè®®ç«å³éä½æ æ")
+            recommendations.append("🔴 高风险：建议立即降低杠杆")
         elif risk_score > 60:
-            recommendations.append("ð  ä¸­é«é£é©ï¼å»ºè®®éåº¦éä½æ æ")
+            recommendations.append("🟠 中高风险：建议适度降低杠杆")
         elif risk_score > 40:
-            recommendations.append("ð¡ ä¸­é£é©ï¼ç»´æå½åæ ææ°´å¹³")
+            recommendations.append("🟡 中风险：维持当前杠杆水平")
         else:
-            recommendations.append("ð¢ ä½é£é©ï¼å¯éåº¦æé«æ æ")
+            recommendations.append("🟢 低风险：可适度提高杠杆")
         
         for alert in alerts:
-            recommendations.append(f"â ï¸ {alert.message}")
+            recommendations.append(f"⚠️ {alert.message}")
         
         return recommendations
 ```
 
 ---
 
-## 4. æ¥å£å®ä¹
+## 4. 接口定义
 
-### 4.1 æ ¸å¿æ¥å£
+### 4.1 核心接口
 
 ```python
 from abc import ABC, abstractmethod
@@ -742,10 +777,11 @@ import pandas as pd
 
 @dataclass
 class LeverageDecision:
-    """æ æå³ç­"""
-    optimal_leverage: float              # æä¼æ ?    current_leverage: float              # å½åæ æ
-    adjustment: float                    # è°æ´å¹åº¦
-    action: str                          # å¨ä½ï¼increase/decrease/hold?    reason: str                          # å³ç­çç±
+    """杠杆决策"""
+    optimal_leverage: float              # 最优杠?    current_leverage: float              # 当前杠杆
+    adjustment: float                    # è°æ´å¹
+åº¦
+    action: str                          # 动作（increase/decrease/hold?    reason: str                          # 决策理由
     current_volatility: Optional[float] = None
     target_volatility: Optional[float] = None
     expected_volatility: Optional[float] = None
@@ -755,76 +791,77 @@ class LeverageDecision:
 
 @dataclass
 class KellyResult:
-    """Kellyååç»æ"""
-    kelly_leverage: float                # Kellyæ æ
-    adjusted_leverage: float             # è°æ´åæ ?    kelly_fraction: float                # Kellyåæ°
-    expected_return: float               # æææ¶ç?    volatility: float                    # æ³¢å¨?    sharpe_ratio: float                  # Sharpeæ¯ç
-    win_rate: float                      # èç
-    win_loss_ratio: float                # çäº?    reason: str                          # å³ç­çç±
+    """Kelly准则结果"""
+    kelly_leverage: float                # Kelly杠杆
+    adjusted_leverage: float             # 调整后杠?    kelly_fraction: float                # Kelly分数
+    expected_return: float               # 期望收益?    volatility: float                    # 波动?    sharpe_ratio: float                  # Sharpe比率
+    win_rate: float                      # 胜率
+    win_loss_ratio: float                # 盈亏?    reason: str                          # 决策理由
 
 @dataclass
 class FinalLeverageDecision:
-    """æç»æ æå³?""
-    final_leverage: float                # æç»æ ?    current_leverage: float              # å½åæ æ
-    adjustment: float                    # è°æ´å¹åº¦
-    action: str                          # å¨ä½
-    strategy_contributions: Dict[str, LeverageDecision]  # åç­ç¥è´¡?    market_adjustment: str               # å¸åºè°æ´
-    constraints_applied: Dict            # åºç¨ççº¦?    reasons: List[str]                   # å³ç­çç±
+    """最终杠杆决?""
+    final_leverage: float                # 最终杠?    current_leverage: float              # 当前杠杆
+    adjustment: float                    # è°æ´å¹
+åº¦
+    action: str                          # 动作
+    strategy_contributions: Dict[str, LeverageDecision]  # 各策略贡?    market_adjustment: str               # 市场调整
+    constraints_applied: Dict            # 应用的约?    reasons: List[str]                   # 决策理由
     confidence: float                    # ç½®ä¿¡?
 @dataclass
 class RiskAlert:
-    """é£é©é¢è­¦"""
-    alert_type: str                      # é¢è­¦ç±»å
-    severity: str                        # ä¸¥éç¨åº¦
-    message: str                         # é¢è­¦æ¶æ¯
-    current_value: float                 # å½å?    threshold: float                     # ?
+    """风险预警"""
+    alert_type: str                      # 预警类型
+    severity: str                        # 严重程度
+    message: str                         # 预警消息
+    current_value: float                 # 当前?    threshold: float                     # ?
 @dataclass
 class RiskMonitorResult:
-    """é£é©çæ§ç»æ"""
-    leverage_ratio: float                # æ ææ¯ç
-    margin_usage: float                  # ä¿è¯éä½¿ç¨ç
-    leverage_var: float                  # æ æVaR
-    leverage_cvar: float                 # æ æCVaR
-    risk_score: float                    # é£é©è¯å
-    alerts: List[RiskAlert]              # é¢è­¦åè¡¨
-    stop_loss_triggered: bool            # æ­¢æè§¦å
+    """风险监控结果"""
+    leverage_ratio: float                # 杠杆比率
+    margin_usage: float                  # 保证金使用率
+    leverage_var: float                  # 杠杆VaR
+    leverage_cvar: float                 # 杠杆CVaR
+    risk_score: float                    # 风险评分
+    alerts: List[RiskAlert]              # 预警列表
+    stop_loss_triggered: bool            # 止损触发
     recommendations: List[str]           # å»ºè®®
 
 @dataclass
 class MarketContext:
-    """å¸åºç¯å¢ä¸ä¸?""
-    current_leverage: float              # å½åæ æ
-    regime: str                          # å¸åºèå¼
-    volatility_regime: str               # æ³¢å¨çè?    liquidity_regime: str                # æµå¨æ§è?    current_drawdown: float              # å½ååæ¤
+    """市场环境上下?""
+    current_leverage: float              # 当前杠杆
+    regime: str                          # 市场范式
+    volatility_regime: str               # 波动率范?    liquidity_regime: str                # 流动性范?    current_drawdown: float              # 当前回撤
 
 
 class ILeverageOptimizer(ABC):
-    """æ æä¼åå¨æ¥?""
+    """杠杆优化器接?""
     
     @abstractmethod
     def optimize(self, *args, **kwargs) -> LeverageDecision:
-        """ä¼åæ æ"""
+        """优化杠杆"""
         pass
 
 
 class ILeverageMonitor(ABC):
-    """æ æçæ§å¨æ¥?""
+    """杠杆监控器接?""
     
     @abstractmethod
     def monitor(self, current_leverage: float, 
                portfolio_value: float,
                market_data: pd.DataFrame) -> RiskMonitorResult:
-        """çæ§æ æé£é©"""
+        """监控杠杆风险"""
         pass
 ```
 
-### 4.2 ä¸»æ¥?
+### 4.2 主接?
 ```python
 class DynamicLeverageManagementSystem:
-    """å¨ææ æç®¡çç³»ç»ä¸»æ¥å£
+    """动态杠杆管理系统主接口
     
-    ç´¢å¼: LEVERAGE_001-MAIN
-    èè´£: åè°æ æä¼åãå³ç­èåãé£é©ç?    """
+    索引: LEVERAGE_001-MAIN
+    职责: 协调杠杆优化、决策融合、风险监?    """
     
     def __init__(self, config: LeverageSystemConfig):
         self.config = config
@@ -839,24 +876,24 @@ class DynamicLeverageManagementSystem:
                          covariance_matrix: np.ndarray,
                          market_data: pd.DataFrame,
                          market_context: MarketContext) -> FinalLeverageDecision:
-        """ä¼åæ ææ°´å¹³
+        """优化杠杆水平
         
         Args:
-            portfolio_returns: ç»ååå²æ¶ç?            portfolio_weights: ç»åæé
-            covariance_matrix: åæ¹å·®ç©?            market_data: å¸åºæ°æ®
-            market_context: å¸åºç¯å¢ä¸ä¸?            
+            portfolio_returns: 组合历史收益?            portfolio_weights: 组合权重
+            covariance_matrix: 协方差矩?            market_data: 市场数据
+            market_context: 市场环境上下?            
         Returns:
-            FinalLeverageDecision: æç»æ æå³?        """
-        # 1. æ³¢å¨çç®æ æ æä¼?        vol_decision = self.volatility_optimizer.calculate_optimal_leverage(
+            FinalLeverageDecision: 最终杠杆决?        """
+        # 1. 波动率目标杠杆优?        vol_decision = self.volatility_optimizer.calculate_optimal_leverage(
             portfolio_returns, market_context.current_leverage
         )
         
-        # 2. é£é©é¢ç®æ æä¼å
+        # 2. 风险预算杠杆优化
         risk_decision = self.risk_budget_optimizer.optimize_leverage(
             portfolio_weights, covariance_matrix, market_context.current_leverage
         )
         
-        # 3. Kellyæ æè®¡ç®
+        # 3. Kelly杠杆计算
         kelly_result = self.kelly_calculator.calculate_kelly_leverage(portfolio_returns)
         kelly_decision = LeverageDecision(
             optimal_leverage=kelly_result.adjusted_leverage,
@@ -866,7 +903,7 @@ class DynamicLeverageManagementSystem:
             reason=kelly_result.reason
         )
         
-        # 4. å³ç­èå
+        # 4. 决策融合
         decisions = {
             'volatility_target': vol_decision,
             'risk_budget': risk_decision,
@@ -880,14 +917,14 @@ class DynamicLeverageManagementSystem:
     def monitor_risk(self, current_leverage: float,
                     portfolio_value: float,
                     market_data: pd.DataFrame) -> RiskMonitorResult:
-        """çæ§æ æé£é©
+        """监控杠杆风险
         
         Args:
-            current_leverage: å½åæ æ
-            portfolio_value: ç»å?            market_data: å¸åºæ°æ®
+            current_leverage: 当前杠杆
+            portfolio_value: 组合?            market_data: 市场数据
             
         Returns:
-            RiskMonitorResult: é£é©çæ§ç»æ
+            RiskMonitorResult: 风险监控结果
         """
         return self.risk_monitor.monitor_leverage_risk(
             current_leverage, portfolio_value, market_data
@@ -896,99 +933,104 @@ class DynamicLeverageManagementSystem:
 
 ---
 
-## 5. å®æ½è®¡å
+## 5. 实施计划
 
-### 5.1 å¼åéç¨ç¢
+### 5.1 开发里程碑
 
-**Phase 1: æ ¸å¿ç»ä»¶å¼åï¼Week 1-2?*
-- ?å®ç°æ³¢å¨çç®æ æ æä¼åå¨
-- ?å®ç°é£é©é¢ç®æ æä¼å?- ?å®ç°Kellyååæ æè®¡ç®?- ?å®æååæµè¯
+**Phase 1: 核心组件开发（Week 1-2?*
+- ?实现波动率目标杠杆优化器
+- ?å®ç°é£é©é¢ç®æ æä¼å?- ?å®ç°Kellyååæ æè®¡ç®?- ?å®æåå
+æµè¯
 
-**Phase 2: å³ç­èåä¸çæ§ï¼Week 3-4?*
-- ?å®ç°æ æå³ç­èå?- ?å®ç°æ æé£é©çæ§?- ?å®ç°é¢è­¦åæ­¢ææº?- ?å®æéææµè¯
+**Phase 2: 决策融合与监控（Week 3-4?*
+- ?实现杠杆决策融合?- ?实现杠杆风险监控?- ?实现预警和止损机?- ?完成集成测试
 
-**Phase 3: ç³»ç»éæä¸ä¼åï¼Week 5-6?*
-- ?éæå°ç»åä¼åå±
-- ?å®ç°å®æ¶çæ§æ¥å£
-- ?å®ææ§è½ä¼å
-- ?å®æåæµéªè¯
+**Phase 3: 系统集成与优化（Week 5-6?*
+- ?集成到组合优化层
+- ?实现实时监控接口
+- ?完成性能优化
+- ?完成回测验证
 
-**Phase 4: çäº§é¨ç½²ï¼Week 7-8?*
-- ?çäº§ç¯å¢é¨ç½²
-- ?çæ§ç³»ç»éæ
-- ?åºæ¥é¢æ¡æµ?- ?ææ¡£å®å
+**Phase 4: 生产部署（Week 7-8?*
+- ?生产环境部署
+- ?监控系统集成
+- ?应急预案测?- ?文档完善
 
-### 5.2 ææ¯æ 
+### 5.2 技术栈
 
-| ç»ä»¶ | ææ¯éå | çæ¬è¦æ± |
+| 组件 | 技术选型 | 版本要求 |
 |------|----------|----------|
-| **ä¼åå¼æ** | CVXPY, scipy | ?.2, ?.7 |
-| **é£é©ç®¡ç** | numpy, pandas | ?.21, ?.3 |
-| **çæ§åè­¦** | Prometheus, Grafana | ?.0, ?.0 |
-| **æ°æ®å­å¨** | Redis, PostgreSQL | ?.0, ?3.0 |
-| **å¯è§?* | matplotlib, plotly | ?.5, ?.0 |
+| **优化引擎** | CVXPY, scipy | ?.2, ?.7 |
+| **风险管理** | numpy, pandas | ?.21, ?.3 |
+| **监控告警** | Prometheus, Grafana | ?.0, ?.0 |
+| **数据存储** | Redis, PostgreSQL | ?.0, ?3.0 |
+| **可视?* | matplotlib, plotly | ?.5, ?.0 |
 
-### 5.3 æ§è½ææ 
+### 5.3 性能指标
 
-| ææ  | ç®æ ?| éªè¯æ¹æ³ |
+| 指标 | 目标?| 验证方法 |
 |------|--------|----------|
-| **æ æè°æ´å»¶è¿** | ??| æ§è½æµè¯ |
-| **é£é©çæ§é¢ç** | å®æ¶ï¼æ¯ç§ï¼ | ç³»ç»çæ§ |
-| **é¢è­¦ååºæ¶é´** | ?00ms | ååæµè¯ |
-| **ç³»ç»å¯ç¨?* | ?9.9% | è¿ç»´çæ§ |
+| **杠杆调整延迟** | ??| 性能测试 |
+| **风险监控频率** | 实时（每秒） | 系统监控 |
+| **预警响应时间** | ?00ms | 压力测试 |
+| **系统可用?* | ?9.9% | 运维监控 |
 
 ---
 
-## 6. é£é©ä¸çº¦?
-### 6.1 ææ¯é£?
-| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
+## 6. 风险与约?
+### 6.1 技术风?
+| 风险?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| **æ æè°æ´æ»å** | P1 | å®æ¶çæ§ãå¿«éååºæº?|
-| **é£é©æ¨¡åå¤±æ** | P1 | å¤æ¨¡ååä½ãååæµ?|
-| **æç«¯å¸åºé£é©** | P0 | æ­¢ææºå¶ãåºæ¥é?|
-| **ç³»ç»æé** | P2 | é«å¯ç¨æ¶æãæéæ¢?|
+| **杠杆调整滞后** | P1 | 实时监控、快速响应机?|
+| **风险模型失效** | P1 | 多模型冗余、压力测?|
+| **极端市场风险** | P0 | 止损机制、应急降?|
+| **ç³»ç»æ
+é** | P2 | é«å¯ç¨æ¶æãæ
+障恢?|
 
-### 6.2 å®æ½çº¦æ
+### 6.2 实施约束
 
-1. **æ°æ®çº¦æ**: éè¦å®æ¶å¸åºæ°æ®æ¯?2. **è®¡ç®çº¦æ**: éè¦é«æ§è½è®¡ç®èµæº
-3. **é£æ§çº¦æ**: éè¦ä¸¥æ ¼çé£æ§å®¡æ¹æµç¨
-4. **åè§çº¦æ**: éè¦ç¬¦åçç®¡æ æé?
+1. **数据约束**: 需要实时市场数据支?2. **计算约束**: 需要高性能计算资源
+3. **风控约束**: 需要严格的风控审批流程
+4. **合规约束**: 需要符合监管杠杆限?
 ---
 
-## 7. éªæ¶æ å
+## 7. 验收标准
 
-### 7.1 åè½éªæ¶
+### 7.1 功能验收
 
-- ?æ¯æå¤ç§æ æä¼åç­ç¥ï¼æ³¢å¨çç®æ ãé£é©é¢ç®ãKelly?- ?æ¯ææ æå³ç­èå
-- ?æ¯æå®æ¶é£é©çæ§åé¢?- ?æ¯ææ­¢æååºæ¥éä»æº?
-### 7.2 æ§è½éªæ¶
+- ?支持多种杠杆优化策略（波动率目标、风险预算、Kelly?- ?支持杠杆决策融合
+- ?支持实时风险监控和预?- ?支持止损和应急降仓机?
+### 7.2 性能验收
 
-- ?æ æè°æ´å»¶è¿??- ?é£é©çæ§é¢ç?Hz
-- ?é¢è­¦ååºæ¶é´?00ms
-- ?ç³»ç»å¯ç¨æ§â¥99.9%
+- ?杠杆调整延迟??- ?风险监控频率?Hz
+- ?预警响应时间?00ms
+- ?系统可用性≥99.9%
 
-### 7.3 è´¨ééªæ¶
+### 7.3 质量验收
 
-- ?ä»£ç è¦ççâ¥85%
-- ?ææ¡£å®æ´åº¦â¥95%
-- ?ç¬¦åAPIå¥çº¦è§è
-- ?éè¿å®å¨å®¡è®¡
+- ?代码覆盖率≥85%
+- ?文档完整度≥95%
+- ?符合API契约规范
+- ?éè¿å®å
+¨å®¡è®¡
 
 ---
 
-## 8. åèèµ?
-### 8.1 å­¦æ¯è®ºæ
+## 8. 参考资?
+### 8.1 学术论文
 
 1. **Kelly Criterion**: Kelly, J. L. (1956). "A New Interpretation of Information Rate"
 2. **Risk Parity**: Qian, E. (2005). "Risk Parity Portfolios"
 3. **Volatility Targeting**: Hocquard, A., et al. (2013). "The Long-Term Benefits of Volatility Targeting"
 
-### 8.2 å¼æºé¡¹?
+### 8.2 开源项?
 1. **CVXPY**: https://www.cvxpy.org/
 2. **PyPortfolioOpt**: https://github.com/robertmartin8/PyPortfolioOpt
 3. **Riskfolio-Lib**: https://github.com/dcajasn/Riskfolio-Lib
 
-### 8.3 ç¸å³ææ¡£
+### 8.3 ç¸å
+³ææ¡£
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 - PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
@@ -996,44 +1038,50 @@ class DynamicLeverageManagementSystem:
 
 ---
 
-**ææ¡£çæ¬**: v1.0
-**æåæ´?*: 2026-04-02
-**å®¡æ ¸?*: å¾å®¡?**ä¸ä¸?*: æäº¤ææ¯è¯å®¡å®å®¡æ ¸
+**文档版本**: v1.0
+**最后更?*: 2026-04-02
+**å®¡æ ¸?*: å¾
+审?**下一?*: 提交技术评审官审核
 
-## åæ´åå²
+## 变更历史
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 组合优化层负责人 |
 
 ---
 
 **èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active
 ---
 
-## 9. ææ¡£æ²»ç
+## 9. 文档治理
 
-### 9.1 System_Manifest.mdç´¢å¼
+### 9.1 System_Manifest.md索引
 
 ```markdown
 #### Layer 6: ç»åä¼åå±?
 ##### 6.001. Dynamic Leverage Management
-- **æ¨¡åID**: DYNAMIC_LEVERAGE_MANAGEMENT_001
-- **èå¾ææ¡£**: DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
-- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
-- **èè´£**: å¨ç³»ç»?
+- **模块ID**: DYNAMIC_LEVERAGE_MANAGEMENT_001
+- **蓝图文档**: DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾
+åå»?
+- **èè´£**: å
+¨ç³»ç»?
 - **ç¶æ?*: Active
 ```
 
-### 9.2 æ¨¡åèè´£è¾¹ç
+### 9.2 模块职责边界
 
-| æ¨¡å | èè´£ | è¾¹ç |
+| 模块 | 职责 | 边界 |
 |------|------|------|
-| **Dynamic Leverage Management** | å¨ç³»ç»?| **æ ¸å¿æ¨¡å** |
+| **Dynamic Leverage Management** | å
+¨ç³»ç»?| **æ ¸å¿æ¨¡å** |
 
-### 9.3 çæ¬ç®¡ç
+### 9.3 版本管理
 
-| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
+| çæ¬ | æ¥æ | åæ´å
+å®¹ | åæ´äº?|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 

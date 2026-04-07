@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT_001
 version: 1.0.0
 status: Active

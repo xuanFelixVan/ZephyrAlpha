@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_LAYER_6架构完整性审查报告_001
 version: 1.0.0
 status: Active
