@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 蓝图设计、架构规划
-
+  - 用户偏好设置系统设计
+  - 个性化配置管理
+  - 主题和布局定制
+  - 通知偏好设置
 ---

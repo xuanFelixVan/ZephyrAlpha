@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 蓝图设计、架构规划
-
+  - 审计日志系统设计
+  - 操作日志记录
+  - 日志查询和分析
+  - 合规性审计支持
 ---

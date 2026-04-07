@@ -1,316 +1,19 @@
-﻿---
-responsibility:
-  - åå¼æ¹å·®ä¼å?
-  - ææåæ²¿è®¡ç®
-  - æä¼ç»åæ±è§?
-  - é£é©æ¶çæè¡¡
-
+---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: å®æ½å¢é
-standard_type: ä¸ä¸éåæºæèå¾
-applicable_scope: Layer 6 ç»åä¼åå±?
-compliance_level: ä¸ä¸æ å
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 5.2 组合优化
+compliance_level: 专业标准
+responsibility:
+  - 均值方差优化
+  - 有效前沿计算
+  - 最优组合求解
+  - 风险收益权衡
 layer: Layer 5.2 (组合优化)
----
-
-# Mean Variance Optimization
-
-## 核心定位
-
-负责均值方差优化的设计与实现，优化资产权重。
-
-
-
-> **æ ¸å¿èè´£**: åå¼æ¹å·®ä¼å?
-> **èè´£è¾¹ç**: 
-> - â?æ¬ææ¡£è´è´£ï¼åå¼æ¹å·®ä¼åãææåæ²¿è®¡ç®ãæä¼ç»åæ±è§?
-> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­ä¸­æ§çº¦æï¼ç±FACTOR_NEUTRAL_OPTIMIZATIONè´è´£ï¼?
-
-## æ ¸å¿å®ä½
-
-è´è´£Mean Variance Optimizationçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
-
-
-## 1. æ¨¡åæ¦è¿°
-
-### 1.1 æ ¸å¿èè´£
-
-**åä¸èè´£**: å®ç°Markowitzåå¼æ¹å·®ä¼åçè®ºï¼æä¾ææåæ²¿è®¡ç®åæä¼ç»åæ±è§£è½å?
-
-**èè´£è¾¹ç**:
-- â?è´è´£: åå¼æ¹å·®ä¼åãææåæ²¿è®¡ç®ãæä¼ç»åæ±è§?
-- â?ä¸è´è´? å å­ä¸­æ§çº¦æï¼ç±FACTOR_NEUTRAL_OPTIMIZATIONè´è´£ï¼?
-- â?ä¸è´è´? é²æ£ä¼åï¼ç±ROBUST_OPTIMIZATIONè´è´£ï¼?
-- â?ä¸è´è´? äº¤æææ¬å»ºæ¨¡ï¼ç±TRANSACTION_COST_MODELè´è´£ï¼?
-
-### 1.2 å¼æºä¾èµ?
-
-| åºå | çæ¬ | ç¨é?| GitHub Stars |
-|
-layer: Layer 5.2 (组合优化)
-## 2. åè½è®¾è®¡
-
-### 2.1 æ ¸å¿åè½
-
-#### 2.1.1 ææåæ²¿è®¡ç®
-
-```python
-class EfficientFrontierCalculator:
-    """
-    ææåæ²¿è®¡ç®å?
-    
-    å¼æºä¾èµ? PyPortfolioOpt.EfficientFrontier
-    """
-    
-    def calculate_efficient_frontier(
-        self,
-        expected_returns: np.ndarray,
-        covariance_matrix: np.ndarray,
-        n_points: int = 100
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """
-        è®¡ç®ææåæ²¿
-        
-        åæ°:
-            expected_returns: é¢ææ¶çåé (n_assets,)
-            covariance_matrix: åæ¹å·®ç©é?(n_assets, n_assets)
-            n_points: ææåæ²¿ç¹æ°
-            
-        è¿å:
-            returns: æ¶ççæ°ç»?
-            volatilities: æ³¢å¨çæ°ç»?
-            weights: æéç©éµ (n_points, n_assets)
-        """
-        pass
-```
-
-#### 2.1.2 æä¼ç»åæ±è§?
-
-```python
-class OptimalPortfolioSolver:
-    """
-    æä¼ç»åæ±è§£å¨
-    
-    å¼æºä¾èµ? PyPortfolioOpt
-    """
-    
-    def max_sharpe_portfolio(
-        self,
-        expected_returns: np.ndarray,
-        covariance_matrix: np.ndarray,
-        risk_free_rate: float = 0.02,
-        constraints: Optional[Dict] = None
-    ) -> Dict:
-        """
-        æå¤§å¤æ®æ¯çç»å?
-        
-        è¿å:
-            weights: æä¼æé?
-            expected_return: é¢ææ¶ç
-            volatility: æ³¢å¨ç?
-            sharpe_ratio: å¤æ®æ¯ç
-        """
-        pass
-    
-    def min_volatility_portfolio(
-        self,
-        covariance_matrix: np.ndarray,
-        constraints: Optional[Dict] = None
-    ) -> Dict:
-        """
-        æå°æ¹å·®ç»å?
-        """
-        pass
-    
-    def max_return_portfolio(
-        self,
-        expected_returns: np.ndarray,
-        target_volatility: float,
-        covariance_matrix: np.ndarray,
-        constraints: Optional[Dict] = None
-    ) -> Dict:
-        """
-        ç»å®é£é©æ°´å¹³ä¸çæå¤§æ¶çç»å?
-        """
-        pass
-```
-
-#### 2.1.3 ç¦»æ£åéè½¬æ¢
-
-```python
-class DiscreteAllocationConverter:
-    """
-    ç¦»æ£åéè½¬æ¢å?
-    
-    å¼æºä¾èµ? PyPortfolioOpt.discrete_allocation
-    """
-    
-    def convert_to_discrete(
-        self,
-        weights: Dict[str, float],
-        latest_prices: Dict[str, float],
-        total_portfolio_value: float,
-        method: str = 'greedy'
-    ) -> Tuple[Dict[str, int], float]:
-        """
-        å°è¿ç»­æéè½¬æ¢ä¸ºå®éå¯è´­ä¹°æ°é?
-        
-        åæ°:
-            weights: èµäº§æéå­å¸
-            latest_prices: ææ°ä»·æ ¼å­å?
-            total_portfolio_value: æ»æèµéé¢?
-            method: åéæ¹æ³ ('greedy' æ?'round')
-            
-        è¿å:
-            allocation: èµäº§æ°éå­å¸
-            leftover: å©ä½èµé
-        """
-        pass
-```
-
-### 2.2 åæ°ä¼°è®¡
-
-#### 2.2.1 é¢ææ¶çä¼°è®¡
-
-```python
-class ExpectedReturnsEstimator:
-    """
-    é¢ææ¶çä¼°è®¡å?
-    
-    å¼æºä¾èµ? PyPortfolioOpt.expected_returns
-    """
-    
-    def mean_historical_return(
-        self,
-        prices: pd.DataFrame,
-        frequency: int = 252
-    ) -> pd.Series:
-        """
-        åå²åå¼æ¶ç?
-        """
-        pass
-    
-    def ema_historical_return(
-        self,
-        prices: pd.DataFrame,
-        span: int = 500,
-        frequency: int = 252
-    ) -> pd.Series:
-        """
-        ææ°å æç§»å¨å¹³åæ¶ç
-        """
-        pass
-    
-    def capm_return(
-        self,
-        prices: pd.DataFrame,
-        market_prices: pd.DataFrame,
-        risk_free_rate: float = 0.02,
-        frequency: int = 252
-    ) -> pd.Series:
-        """
-        CAPMé¢ææ¶ç
-        """
-        pass
-```
-
-#### 2.2.2 åæ¹å·®ä¼°è®?
-
-```python
-class CovarianceEstimator:
-    """
-    åæ¹å·®ä¼°è®¡å¨
-    
-    å¼æºä¾èµ? PyPortfolioOpt.risk_models
-    """
-    
-    def sample_cov(
-        self,
-        returns: pd.DataFrame,
-        frequency: int = 252
-    ) -> pd.DataFrame:
-        """
-        æ ·æ¬åæ¹å·?
-        """
-        pass
-    
-    def semicovariance(
-        self,
-        returns: pd.DataFrame,
-        benchmark: float = 0.0,
-        frequency: int = 252
-    ) -> pd.DataFrame:
-        """
-        ååæ¹å·®ï¼ä¸è¡é£é©ï¼
-        """
-        pass
-    
-    def exp_cov(
-        self,
-        returns: pd.DataFrame,
-        span: int = 180,
-        frequency: int = 252
-    ) -> pd.DataFrame:
-        """
-        ææ°å æåæ¹å·?
-        """
-        pass
-    
-    def ledoit_wolf_shrinkage(
-        self,
-        returns: pd.DataFrame,
-        frequency: int = 252
-    ) -> pd.DataFrame:
-        """
-        Ledoit-Wolfæ¶ç¼©ä¼°è®¡
-        """
-        pass
-```
-
-### 2.3 çº¦æå¤ç
-
-```python
-class ConstraintHandler:
-    """
-    çº¦æå¤çå?
-    
-    å¼æºä¾èµ? PyPortfolioOptçº¦æç³»ç»
-    """
-    
-    def add_weight_constraint(
-        self,
-        min_weight: float = 0.0,
-        max_weight: float = 1.0
-    ) -> None:
-        """
-        æéçº¦æï¼é¿ä»?ç­ä»éå¶ï¼?
-        """
-        pass
-    
-    def add_sector_constraint(
-        self,
-        sector_mapping: Dict[str, str],
-        sector_weights: Dict[str, Tuple[float, float]]
-    ) -> None:
-        """
-        è¡ä¸æéçº¦æ
-        """
-        pass
-    
-    def add_leverage_constraint(
-        self,
-        max_leverage: float = 1.0
-    ) -> None:
-        """
-        æ æçº¦æ
-        """
-        pass
-```
-
 ---
 ## 3. ææ¯è§æ ?
 
@@ -389,6 +92,58 @@ class MeanVarianceOptimizer:
         """
         pass
 ```
+
+## 设计目标
+
+### 主要目标
+
+1. **功能完整性**: 确保MEAN VARIANCE OPTIMIZATION功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
+
+### 质量目标
+
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用MEAN VARIANCE OPTIMIZATION化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
 
 ### 3.2 æ°æ®ç»æ
 

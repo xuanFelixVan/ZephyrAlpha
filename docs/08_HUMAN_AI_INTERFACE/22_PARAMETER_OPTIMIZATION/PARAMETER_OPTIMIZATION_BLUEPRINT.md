@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 蓝图设计、架构规划
-
+  - 参数优化系统设计
+  - 参数搜索算法
+  - 优化结果分析
+  - 参数调优工具
 ---

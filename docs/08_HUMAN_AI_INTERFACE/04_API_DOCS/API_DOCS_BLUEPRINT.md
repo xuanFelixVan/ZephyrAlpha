@@ -7,8 +7,10 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 蓝图设计、架构规划
-
+  - API文档系统设计
+  - 自动生成API文档
+  - 交互式API测试界面
+  - 文档版本管理
 ---
 
 ﻿---
