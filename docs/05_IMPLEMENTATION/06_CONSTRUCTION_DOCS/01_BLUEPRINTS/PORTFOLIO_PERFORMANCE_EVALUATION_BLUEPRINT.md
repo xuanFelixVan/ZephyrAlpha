@@ -161,12 +161,12 @@ graph LR
 
 ```mermaid
 graph TB
-¥"
+    subgraph "输入"
         A[策略收益率] --> D[绩效评估引擎]
         B[基准收益率] --> D
         C[无风险利率] --> D
     end
-    
+
     subgraph "pyfolio核心"
         D --> E[风险指标计算]
         E --> F[夏普比率]
@@ -174,7 +174,7 @@ graph TB
         E --> H[波动率]
         E --> I[Alpha/Beta]
     end
-    
+
     subgraph "QuantStats扩展"
         D --> J[高级指标]
         J --> K[Sortino比率]
@@ -182,19 +182,22 @@ graph TB
         J --> M[信息比率]
         J --> N[滚动指标]
     end
-    
-        F --> O[绩效报告生成]
-        G --> O
-        H --> O
-        I --> O
-        K --> O
-        L --> O
-        M --> O
-        N --> O
-        O --> P[HTML报告]
-        O --> Q[PDF报告]
-        O --> R[交互式仪表板]
+
+    subgraph "报告输出"
+        O[绩效报告生成]
     end
+
+    F --> O
+    G --> O
+    H --> O
+    I --> O
+    K --> O
+    L --> O
+    M --> O
+    N --> O
+    O --> P[HTML报告]
+    O --> Q[PDF报告]
+    O --> R[交互式仪表板]
 ```
 
 
