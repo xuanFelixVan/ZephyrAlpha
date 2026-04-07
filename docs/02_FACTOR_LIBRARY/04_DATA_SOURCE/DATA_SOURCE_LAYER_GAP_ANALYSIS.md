@@ -9,7 +9,7 @@ module_id: DATA_SOURCE_DATA_SOURCE_LAYER_GAP_ANALYSIS
 **状态**: Active
 
 responsibility:
-  - 管理因子库
+  - DATA SOURCE LAYER GAP ANALYSIS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

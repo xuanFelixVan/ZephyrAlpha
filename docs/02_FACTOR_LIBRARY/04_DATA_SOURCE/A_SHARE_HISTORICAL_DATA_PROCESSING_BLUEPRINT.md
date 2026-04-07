@@ -1,4 +1,4 @@
-﻿---
+---
 
 
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
@@ -22,7 +22,7 @@ module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
 
 | 模块 | 职责 | 边界 |
 |responsibility:
-  - 管理因子库
+  - A SHARE HISTORICAL DATA PROCESSING BLUEPRINT相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

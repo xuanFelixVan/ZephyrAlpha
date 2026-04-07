@@ -1,4 +1,4 @@
-﻿---
+---
 
 
 module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
@@ -49,7 +49,7 @@ module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 
 | 公式名称 | 数学表达?| 参数说明 |
 |responsibility:
-  - 管理因子库
+  - 因子库手?v3.2相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

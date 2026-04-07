@@ -12,7 +12,7 @@ module_id: STANDARDS_FACTOR_REGISTRY
 - 因子分类标准
 
 responsibility:
-  - 管理因子库
+  - FACTOR REGISTRY相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

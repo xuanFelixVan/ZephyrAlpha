@@ -152,3 +152,4 @@ Set-Content -Path $file -Value $content -Encoding UTF8
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-03
 **ﻝﭨﺑﮔ۳ﻟ?*: ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮒ؟?
+```

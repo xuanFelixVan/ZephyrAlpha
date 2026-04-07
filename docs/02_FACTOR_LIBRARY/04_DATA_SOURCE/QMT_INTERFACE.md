@@ -9,7 +9,7 @@ module_id: DATA_SOURCE_QMT_INTERFACE
 **维护人员**: 数据架构?
 
 responsibility:
-  - 管理因子库
+  - QMT INTERFACE相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

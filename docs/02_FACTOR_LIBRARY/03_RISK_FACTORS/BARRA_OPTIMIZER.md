@@ -1,4 +1,4 @@
-﻿---
+---
 
 
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
@@ -8,7 +8,7 @@ module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
 
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - 管理因子库
+  - BARRA OPTIMIZER相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

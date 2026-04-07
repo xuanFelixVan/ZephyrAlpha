@@ -7,7 +7,7 @@ module_id: DATA_SOURCE_FREE_DATA_SOURCES
 **版本**: v3.0 | **更新**: 2026-04-05 | **状态**: ✅ 活跃
 
 responsibility:
-  - 管理因子库
+  - FREE DATA SOURCES相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

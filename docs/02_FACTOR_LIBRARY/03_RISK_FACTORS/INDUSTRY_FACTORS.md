@@ -23,7 +23,7 @@ module_id: RISK_FACTORS_INDUSTRY_FACTORS
 
 | 属?| 内容 |
 |responsibility:
-  - 管理因子库
+  - T.03.RF002.申万行业因子相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

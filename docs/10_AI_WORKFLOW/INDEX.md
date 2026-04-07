@@ -6,8 +6,8 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - AI工作流与舆情分析综合层索引管理与维护
-  - 目录导航与文档索引管理、优化更新与质量保障
+  - AI工作流与舆情分析综合层索引文件创建、更新与一致性维护
+  - 目录导航结构设计、文档索引编排与检索路径优化
 standard_type: 专业量化机构目录索引
 applicable_scope: Layer 7 AI报告层 + Layer 3 舆情分析层
 compliance_level: 专业标准

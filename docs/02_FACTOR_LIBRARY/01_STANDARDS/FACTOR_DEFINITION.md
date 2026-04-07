@@ -8,7 +8,7 @@ module_id: STANDARDS_FACTOR_DEFINITION
 
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - 管理因子库
+  - FACTOR DEFINITION相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

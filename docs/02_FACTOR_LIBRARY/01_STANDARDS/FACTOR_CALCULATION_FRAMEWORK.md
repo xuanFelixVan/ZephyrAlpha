@@ -12,7 +12,7 @@ module_id: STANDARDS_FACTOR_CALCULATION_FRAMEWORK
 - 相关: [IC_ANALYSIS.md](./ic_analysis.md)
 
 responsibility:
-  - 管理因子库
+  - FACTOR CALCULATION FRAMEWORK相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

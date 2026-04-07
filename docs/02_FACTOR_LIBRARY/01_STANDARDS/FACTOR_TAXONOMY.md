@@ -8,7 +8,7 @@ module_id: STANDARDS_FACTOR_TAXONOMY
 
 | 需?| 路径 |
 |responsibility:
-  - 管理因子库
+  - FACTOR TAXONOMY相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

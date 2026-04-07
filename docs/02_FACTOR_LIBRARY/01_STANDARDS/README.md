@@ -8,7 +8,7 @@ module_id: STANDARDS_README
 
 | 版本 | 日期 | 变更内容 |
 |responsibility:
-  - 管理因子库
+  - 01_STANDARDS模块说明文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -9,7 +9,7 @@ module_id: FACTOR_LIBRARY_OPTIMIZATION_SUMMARY
 感谢使用清风量化交易系统因子?v4.0 专业机构?
 
 responsibility:
-  - 管理因子库
+  - OPTIMIZATION SUMMARY相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

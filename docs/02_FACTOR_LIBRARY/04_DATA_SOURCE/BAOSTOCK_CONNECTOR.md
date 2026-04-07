@@ -9,7 +9,7 @@ module_id: DATA_SOURCE_BAOSTOCK_CONNECTOR
 **最后更?*: 2026-04-02  
 **负责?*: 首席文档架构?
 responsibility:
-  - 管理因子库
+  - BAOSTOCK CONNECTOR相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

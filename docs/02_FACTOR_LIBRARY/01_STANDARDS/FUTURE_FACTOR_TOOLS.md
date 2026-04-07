@@ -12,7 +12,7 @@ module_id: STANDARDS_FUTURE_FACTOR_TOOLS
 - 相关: [FACTOR_SYNTHESIS.md](./factor_synthesis.md)
 
 responsibility:
-  - 管理因子库
+  - FUTURE FACTOR TOOLS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

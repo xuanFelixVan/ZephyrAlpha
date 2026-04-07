@@ -1,4 +1,4 @@
-﻿---
+---
 
 
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_QUALITY_MANAGEMENT_001
@@ -9,7 +9,7 @@ module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_QUALITY_MANAGEMENT_001
 **状?*: 草稿
 
 responsibility:
-  - 管理因子库
+  - DATA QUALITY CONTROL SYSTEM相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

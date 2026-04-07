@@ -28,7 +28,7 @@ module_id: STANDARDS_MODULE_DESIGN_PLAN
 
 > **提示**: 作为个人开发者，建议每天完成1个模块设计，保持可持续的工作节奏。周末可用于复习和优
 responsibility:
-  - 管理因子库
+  - MODULE DESIGN PLAN相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

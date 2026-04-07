@@ -7,7 +7,7 @@ module_id: STANDARDS_TECHNICAL_INDICATORS
 **版本**: 1.0 | **更新**: 2026-03-28
 
 responsibility:
-  - 管理因子库
+  - TECHNICAL INDICATORS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

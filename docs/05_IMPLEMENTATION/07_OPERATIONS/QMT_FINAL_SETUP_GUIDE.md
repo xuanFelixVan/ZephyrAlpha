@@ -183,3 +183,4 @@ All technical preparations are complete:
 **Last Updated:** 2026-04-03  
 **Status:** Awaiting QMT client configuration  
 **Estimated Time to Fix:** 2-5 minutes (login with correct mode)
+```

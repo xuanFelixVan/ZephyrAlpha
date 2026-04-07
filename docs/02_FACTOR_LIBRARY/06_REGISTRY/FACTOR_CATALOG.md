@@ -1,4 +1,4 @@
-﻿---
+---
 
 
 module_id: 02_FACTOR_LIBRARY_06_REGISTRY_001
@@ -9,7 +9,7 @@ module_id: 02_FACTOR_LIBRARY_06_REGISTRY_001
 **下次审查日期**: 2026-06-28
 
 responsibility:
-  - 管理因子库
+  - FACTOR CATALOG相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

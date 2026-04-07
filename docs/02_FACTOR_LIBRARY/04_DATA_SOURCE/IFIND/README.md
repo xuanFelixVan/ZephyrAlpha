@@ -92,7 +92,7 @@ result = manager.process()
 
 | 指标 | 目标值 | 说明 |
 |responsibility:
-  - 管理因子库
+  - IFIND模块说明文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

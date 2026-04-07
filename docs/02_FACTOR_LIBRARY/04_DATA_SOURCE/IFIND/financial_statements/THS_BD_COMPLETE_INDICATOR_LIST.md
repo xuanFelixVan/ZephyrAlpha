@@ -9,7 +9,7 @@ module_id: DATA_SOURCE_IFIND_FINANCIAL_STATEMENTS_THS_BD_COMPLETE_INDICATOR_LIST
 > **总指标数**: 943个（季频183 + 年频760?
 
 responsibility:
-  - 管理因子库
+  - THS BD COMPLETE INDICATOR LIST相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -8,7 +8,7 @@ module_id: DATA_SOURCE_DATA_SOURCE_ADAPTERS
 **索引**: `DATA_ADAPTERS_001`
 
 responsibility:
-  - 管理因子库
+  - DATA SOURCE ADAPTERS相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

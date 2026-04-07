@@ -21,7 +21,7 @@ module_id: DATA_SOURCE_DATA_ACQUISITION
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |responsibility:
-  - 管理因子库
+  - 数据采集相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

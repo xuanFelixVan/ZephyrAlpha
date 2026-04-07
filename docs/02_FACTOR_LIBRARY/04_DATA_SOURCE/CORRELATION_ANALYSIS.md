@@ -124,7 +124,7 @@ class CorrelationDifferenceTest:
 ```
 
 responsibility:
-  - 管理因子库
+  - t = r * sqrt(n-2) / sqrt(1-r)相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

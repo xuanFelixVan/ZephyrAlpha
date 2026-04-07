@@ -73,7 +73,7 @@ MACRO_INDICATORS_GLOBAL = {
 ```
 
 responsibility:
-  - 管理因子库
+  - MACRO DATA相关文档
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
