@@ -13,7 +13,7 @@ responsibility:
   - 交易成本感知优化
   - 再平衡策略
   - 交易成本控制与优化
-layer: Layer 6 (组合优化层)
+layer: Layer 5.2 (组合优化)
 ---
 
 

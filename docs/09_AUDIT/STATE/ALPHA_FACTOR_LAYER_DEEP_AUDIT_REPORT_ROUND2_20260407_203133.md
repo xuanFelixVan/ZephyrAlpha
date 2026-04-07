@@ -1,31 +1,20 @@
----
-module_id: 09_AUDIT_STATE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 提供文档支持
----
-
 # Alpha因子层深度审计报告 - 第二轮
 
 ## 审计概要
 
-- **审计时间**: 2026-04-07 20:24:18
+- **审计时间**: 2026-04-07 20:31:33
 - **审计范围**: D:\ZephyrAlpha\docs\02_FACTOR_LIBRARY
 - **审计方法**: 三层审计（L1文件系统层、L2文档内容层、L3专业标准层）
-- **审计结论**: 发现85个问题
+- **审计结论**: 发现79个问题
 
 ## 审计统计
 
 | 统计项 | 数量 |
 |--------|------|
-| 总文档数 | 76 |
-| 总问题数 | 85 |
+| 总文档数 | 77 |
+| 总问题数 | 79 |
 | L1问题 | 0 |
-| L2问题 | 85 |
+| L2问题 | 79 |
 | L3问题 | 0 |
 | 重复文档组 | 0 |
 | 重复module_id | 0 |
@@ -37,7 +26,7 @@ responsibility:
 - 00_GOVERNANCE: 2个文件
 - 02_ALPHA_FACTORS_INDEX: 2个文件
 - 03_RISK_FACTORS: 2个文件
-- 04_DATA_SOURCE: 0个文件
+- 04_DATA_SOURCE: 1个文件
 - 06_REGISTRY: 2个文件
 - 07_FACTOR_MONITORING: 2个文件
 - 09_AUDIT: 2个文件
@@ -73,7 +62,6 @@ responsibility:
 
 ### 缺少INDEX的目录
 
-- 04_DATA_SOURCE
 
 ## L2 文档内容层问题
 
@@ -96,24 +84,24 @@ responsibility:
 
 - **INDEX.md**: 职责描述缺失 - 缺少responsibility字段
 - **README.md**: 职责描述缺失 - 缺少responsibility字段
-- **SITEMAP.md**: 元数据缺失 - 缺少module_id
 - **SITEMAP.md**: 职责描述缺失 - 缺少responsibility字段
-- **SITEMAP.md**: 标题缺失 - 文档缺少标题
 - **00_GOVERNANCE\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
 - **00_GOVERNANCE\README.md**: 职责描述缺失 - 缺少responsibility字段
 - **01_STANDARDS\FACTOR_REGISTRY.md**: 职责描述缺失 - 缺少responsibility字段
 - **01_STANDARDS\FACTOR_TAXONOMY.md**: 职责描述缺失 - 缺少responsibility字段
-- **01_STANDARDS\FACTOR_TAXONOMY.md**: 标题缺失 - 文档缺少标题
 - **01_STANDARDS\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
 - **02_ALPHA_FACTORS_INDEX\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
 - **02_ALPHA_FACTORS_INDEX\README.md**: 职责描述缺失 - 缺少responsibility字段
-- **03_RISK_FACTORS\INDEX.md**: 元数据缺失 - 缺少module_id
 - **03_RISK_FACTORS\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
-- **03_RISK_FACTORS\INDEX.md**: 标题缺失 - 文档缺少标题
 - **03_RISK_FACTORS\README.md**: 职责描述缺失 - 缺少responsibility字段
-- **05_BACKTEST\BACKTEST_REORGANIZATION.md**: 元数据缺失 - 缺少module_id
+- **04_DATA_SOURCE\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
+- **04_DATA_SOURCE\INDEX.md**: 无效链接 - 发现2个无效链接
 - **05_BACKTEST\BACKTEST_REORGANIZATION.md**: 职责描述缺失 - 缺少responsibility字段
-- **05_BACKTEST\BACKTEST_REORGANIZATION.md**: 标题缺失 - 文档缺少标题
+- **05_BACKTEST\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
+- **05_BACKTEST\README.md**: 职责描述缺失 - 缺少responsibility字段
+- **06_REGISTRY\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
+- **06_REGISTRY\README.md**: 职责描述缺失 - 缺少responsibility字段
+- **07_FACTOR_MONITORING\INDEX.md**: 职责描述缺失 - 缺少responsibility字段
 
 ## 改进建议
 
@@ -137,4 +125,4 @@ responsibility:
 
 ---
 
-**审计完成时间**: 2026-04-07 20:24:18
+**审计完成时间**: 2026-04-07 20:31:33

@@ -1,49 +1,40 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Layer 5 全面问题修复工具
-修复审计发现的所有问题
+Layer 5 全面深度审计问题修复工具
+修复审计报告中发现的所有问题
 """
 
 import os
 import re
 from pathlib import Path
-from typing import List, Dict
 from datetime import datetime
 
 
 class Layer5ComprehensiveFixer:
-    """Layer 5全面问题修复器"""
+    """Layer 5全面深度审计问题修复器"""
     
     def __init__(self):
-        self.blueprints_dir = Path('docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS')
+        self.base_dir = Path('docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS')
         self.audit_dir = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
         
-        self.documents = {}
         self.fixes = []
         
-        self.min_responsibility_length = 50
-        self.max_responsibility_length = 200
-        
-        self.responsibility_templates = {
-            'DATA': '提供数据管理、存储、查询功能，确保数据质量和一致性，支持系统数据需求。',
-            'RISK': '提供风险识别、评估、监控功能，支持风险管理和决策，确保系统风险可控。',
-            'TRADING': '提供交易执行、订单管理、成本优化功能，确保交易效率和执行质量。',
-            'PORTFOLIO': '提供组合构建、优化、再平衡功能，实现投资目标，确保组合质量。',
-            'FACTOR': '提供因子挖掘、测试、组合功能，支持策略研发，提升投资收益。',
-            'STRATEGY': '提供策略设计、回测、优化功能，实现投资策略，确保策略有效性。',
-            'MONITORING': '提供实时监控、告警、报告功能，确保系统稳定运行，及时发现异常。',
-            'OPTIMIZATION': '提供参数优化、性能调优、资源配置功能，提升系统效率和质量。',
-            'EXECUTION': '提供执行引擎、订单路由、成本控制功能，确保交易执行质量。',
-            'ALPHA': '提供Alpha因子挖掘、测试、组合功能，支持超额收益策略开发。',
-            'ALLOCATION': '提供资产配置、权重优化、再平衡功能，实现投资组合优化。',
-            'HEDGE': '提供风险对冲、套期保值、头寸管理功能，降低投资组合风险。',
-            'REBALANCE': '提供组合再平衡、权重调整、成本优化功能，保持投资组合目标配置。',
-            'INTEGRATION': '提供系统集成、数据同步、接口对接功能，确保系统互联互通。',
-            'MANAGEMENT': '提供资源管理、配置管理、状态管理功能，确保系统有序运行。',
-            'ANALYSIS': '提供数据分析、统计建模、可视化功能，支持投资决策和研究。',
-            'DEFAULT': '提供核心功能支持，确保系统稳定运行，满足业务需求。'
+        self.module_id_fixes = {
+            'ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md': 'ALTERNATIVE_DATA_INTEGRATION_001',
+            'STRATEGY_SELECTION_BLUEPRINT.md': 'STRATEGY_SELECTION_001',
         }
+        
+        self.layer_fixes = {
+            'QUARTERLY_REBALANCE_BLUEPRINT.md': 'Layer 5.2 (组合优化)',
+            'TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md': 'Layer 5.2 (组合优化)',
+        }
+        
+        self.yaml_missing_docs = [
+            'RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md',
+            'SMART_EXECUTION_ENGINE_BLUEPRINT.md',
+            'SYSTEM_ENHANCEMENT_BLUEPRINT.md',
+        ]
         
     def read_file(self, file_path: Path) -> str:
         """读取文件内容"""
@@ -55,8 +46,7 @@ class Layer5ComprehensiveFixer:
                     return f.read()
             except UnicodeDecodeError:
                 continue
-            except Exception as e:
-                print(f'  ❌ 无法读取文件 {file_path.name}: {e}')
+            except Exception:
                 return ''
         
         return ''
@@ -71,239 +61,268 @@ class Layer5ComprehensiveFixer:
             print(f'  ❌ 无法写入文件 {file_path.name}: {e}')
             return False
     
-    def scan_documents(self):
-        """扫描所有文档"""
-        print('\n📁 扫描文档...')
+    def fix_module_id_duplicates(self):
+        """修复module_id重复问题"""
+        print('\n🔧 修复module_id重复问题...')
         
-        if not self.blueprints_dir.exists():
-            print(f'  ❌ 目录不存在: {self.blueprints_dir}')
-            return
+        blueprints_dir = self.base_dir / '01_BLUEPRINTS'
         
-        md_files = list(self.blueprints_dir.glob('*.md'))
-        
-        for md_file in md_files:
-            content = self.read_file(md_file)
-            
-            if content:
-                self.documents[md_file.name] = {
-                    'path': md_file,
-                    'content': content
-                }
-        
-        print(f'  ✅ 扫描完成: {len(self.documents)}个文档')
-    
-    def get_responsibility(self, doc_name: str) -> str:
-        """根据文档名称生成职责描述"""
-        for keyword, template in self.responsibility_templates.items():
-            if keyword in doc_name.upper():
-                return template
-        
-        return self.responsibility_templates['DEFAULT']
-    
-    def fix_missing_responsibility(self):
-        """修复缺少职责描述的文档"""
-        print('\n🔧 修复缺少职责描述的文档...')
-        
-        fixed_count = 0
-        
-        p0_docs = ['INDEX.md', 'MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md']
-        
-        for doc_name in p0_docs:
-            if doc_name not in self.documents:
+        for doc_name, new_id in self.module_id_fixes.items():
+            doc_path = blueprints_dir / doc_name
+            if not doc_path.exists():
                 continue
             
-            doc_info = self.documents[doc_name]
-            content = doc_info['content']
-            
-            if '## 核心定位' in content:
+            content = self.read_file(doc_path)
+            if not content:
                 continue
             
-            responsibility = self.get_responsibility(doc_name)
+            old_id_pattern = r'module_id:\s*05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_001'
+            new_content = re.sub(old_id_pattern, f'module_id: {new_id}', content)
+            
+            if new_content != content:
+                if self.write_file(doc_path, new_content):
+                    self.fixes.append({
+                        'file': doc_name,
+                        'action': f'修复module_id: {new_id}'
+                    })
+                    print(f'  ✅ 已修复: {doc_name} -> {new_id}')
+        
+        print(f'  ✅ module_id修复完成')
+    
+    def fix_layer_classification(self):
+        """修复分类层级错误"""
+        print('\n🔧 修复分类层级错误...')
+        
+        blueprints_dir = self.base_dir / '01_BLUEPRINTS'
+        
+        for doc_name, new_layer in self.layer_fixes.items():
+            doc_path = blueprints_dir / doc_name
+            if not doc_path.exists():
+                continue
+            
+            content = self.read_file(doc_path)
+            if not content:
+                continue
+            
+            old_layer_pattern = r'layer:\s*Layer 6 \(组合优化层\)'
+            new_content = re.sub(old_layer_pattern, f'layer: {new_layer}', content)
+            
+            if new_content != content:
+                if self.write_file(doc_path, new_content):
+                    self.fixes.append({
+                        'file': doc_name,
+                        'action': f'修复层级分类: {new_layer}'
+                    })
+                    print(f'  ✅ 已修复: {doc_name} -> {new_layer}')
+        
+        print(f'  ✅ 层级分类修复完成')
+    
+    def fix_missing_yaml_headers(self):
+        """修复缺失的YAML头部"""
+        print('\n🔧 修复缺失的YAML头部...')
+        
+        blueprints_dir = self.base_dir / '01_BLUEPRINTS'
+        
+        yaml_templates = {
+            'RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md': {
+                'module_id': 'RISK_ATTRIBUTION_SYSTEM_001',
+                'responsibility': ['风险归因分析', '风险分解', '风险贡献计算']
+            },
+            'SMART_EXECUTION_ENGINE_BLUEPRINT.md': {
+                'module_id': 'SMART_EXECUTION_ENGINE_001',
+                'responsibility': ['智能执行引擎', '订单执行优化', '执行策略选择']
+            },
+            'SYSTEM_ENHANCEMENT_BLUEPRINT.md': {
+                'module_id': 'SYSTEM_ENHANCEMENT_001',
+                'responsibility': ['系统增强', '功能扩展', '性能优化']
+            },
+        }
+        
+        for doc_name, template in yaml_templates.items():
+            doc_path = blueprints_dir / doc_name
+            if not doc_path.exists():
+                continue
+            
+            content = self.read_file(doc_path)
+            if not content:
+                continue
             
             if content.startswith('---'):
-                yaml_end = content.find('\n---\n', 4)
-                if yaml_end != -1:
-                    insert_pos = yaml_end + 5
-                    new_section = f'\n## 核心定位\n\n{responsibility}\n\n'
-                    content = content[:insert_pos] + new_section + content[insert_pos:]
-            else:
-                new_section = f'## 核心定位\n\n{responsibility}\n\n'
-                content = new_section + content
+                continue
             
-            if self.write_file(doc_info['path'], content):
-                fixed_count += 1
+            yaml_header = f'''---
+module_id: {template['module_id']}
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+compliance_level: 专业标准
+responsibility:
+'''
+            for resp in template['responsibility']:
+                yaml_header += f'  - {resp}\n'
+            yaml_header += 'layer: Layer 5.2 (组合优化)\n---\n\n'
+            
+            new_content = yaml_header + content
+            
+            if self.write_file(doc_path, new_content):
                 self.fixes.append({
-                    'type': '添加职责描述',
                     'file': doc_name,
-                    'severity': 'P0'
+                    'action': '添加YAML头部'
                 })
                 print(f'  ✅ 已修复: {doc_name}')
         
-        print(f'  ✅ 修复完成: {fixed_count}个文档')
+        print(f'  ✅ YAML头部修复完成')
     
-    def fix_short_responsibility(self):
-        """修复职责描述过短的文档"""
-        print('\n🔧 修复职责描述过短的文档...')
+    def fix_similar_index_files(self):
+        """修复相似的INDEX.md文件"""
+        print('\n🔧 修复相似的INDEX.md文件...')
         
-        fixed_count = 0
+        index_files = [
+            ('02_IMPLEMENTATION_GUIDES/INDEX.md', '实施指南索引', '提供实施指南文档的导航和概览'),
+            ('03_OPERATION_MANUALS/INDEX.md', '操作手册索引', '提供操作手册文档的导航和概览'),
+            ('04_CONFIG_TEMPLATES/INDEX.md', '配置模板索引', '提供配置模板文档的导航和概览'),
+            ('05_DESIGN_DOCS/INDEX.md', '设计文档索引', '提供设计文档的导航和概览'),
+            ('06_CHECKLISTS/INDEX.md', '检查清单索引', '提供检查清单文档的导航和概览'),
+            ('05_DESIGN_DOCS/a_stock_rules/INDEX.md', 'A股规则索引', '提供A股规则文档的导航和概览'),
+            ('05_DESIGN_DOCS/data_consistency/INDEX.md', '数据一致性索引', '提供数据一致性文档的导航和概览'),
+            ('05_DESIGN_DOCS/trading_costs/INDEX.md', '交易成本索引', '提供交易成本文档的导航和概览'),
+            ('05_DESIGN_DOCS/ui_design/INDEX.md', 'UI设计索引', '提供UI设计文档的导航和概览'),
+            ('05_DESIGN_DOCS/web_interface/INDEX.md', 'Web接口索引', '提供Web接口文档的导航和概览'),
+            ('05_DESIGN_DOCS/database/INDEX.md', '数据库设计索引', '提供数据库设计文档的导航和概览'),
+        ]
         
-        for doc_name, doc_info in self.documents.items():
-            content = doc_info['content']
-            
-            pattern = r'^##\s+核心定位\s*\n\n(.+?)(?=\n##|\Z)'
-            match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
-            
-            if not match:
+        for index_path, title, description in index_files:
+            full_path = self.base_dir / index_path
+            if not full_path.exists():
                 continue
             
-            responsibility = match.group(1).strip()
-            length = len(responsibility)
-            
-            if length < self.min_responsibility_length:
-                new_responsibility = self.get_responsibility(doc_name)
-                
-                old_section = match.group(0)
-                new_section = f'## 核心定位\n\n{new_responsibility}\n\n'
-                
-                content = content.replace(old_section, new_section)
-                
-                if self.write_file(doc_info['path'], content):
-                    fixed_count += 1
-                    self.fixes.append({
-                        'type': '扩展职责描述',
-                        'file': doc_name,
-                        'severity': 'P1'
-                    })
-                    print(f'  ✅ 已修复: {doc_name} ({length}字 → {len(new_responsibility)}字)')
-        
-        print(f'  ✅ 修复完成: {fixed_count}个文档')
-    
-    def fix_missing_yaml(self):
-        """修复缺少YAML头部的文档"""
-        print('\n🔧 修复缺少YAML头部的文档...')
-        
-        fixed_count = 0
-        
-        for doc_name, doc_info in self.documents.items():
-            content = doc_info['content']
-            
-            if content.startswith('---'):
+            content = self.read_file(full_path)
+            if not content:
                 continue
             
-            module_id = doc_name.replace('.md', '').replace('_', '-')
-            
-            yaml_header = f'''---
-version: 1.0.0
-module_id: {module_id}
-layer: Layer5
-created: {datetime.now().strftime('%Y-%m-%d')}
-updated: {datetime.now().strftime('%Y-%m-%d')}
-status: active
----
+            new_content = f'''# {title}
+
+> **核心定位**: {description}，支持快速定位和访问相关文档。
+
+## 📋 文档列表
 
 '''
             
-            content = yaml_header + content
+            dir_path = full_path.parent
+            md_files = [f for f in dir_path.glob('*.md') if f.name != 'INDEX.md']
             
-            if self.write_file(doc_info['path'], content):
-                fixed_count += 1
+            for md_file in sorted(md_files):
+                new_content += f'- [{md_file.stem}]({md_file.name})\n'
+            
+            new_content += '''
+---
+
+**最后更新**: ''' + datetime.now().strftime('%Y-%m-%d') + '''
+'''
+            
+            if self.write_file(full_path, new_content):
                 self.fixes.append({
-                    'type': '添加YAML头部',
-                    'file': doc_name,
-                    'severity': 'P2'
+                    'file': index_path,
+                    'action': '重写INDEX.md内容'
                 })
+                print(f'  ✅ 已修复: {index_path}')
         
-        print(f'  ✅ 修复完成: {fixed_count}个文档')
+        print(f'  ✅ INDEX.md修复完成')
+    
+    def fix_similar_blueprint_files(self):
+        """修复相似的蓝图文件"""
+        print('\n🔧 修复相似的蓝图文件...')
+        
+        blueprints_dir = self.base_dir / '01_BLUEPRINTS'
+        
+        similar_pairs = [
+            ('BLACK_LITTERMAN_MODEL_BLUEPRINT.md', 'RISK_PARITY_STRATEGY_BLUEPRINT.md'),
+        ]
+        
+        responsibility_updates = {
+            'BLACK_LITTERMAN_MODEL_BLUEPRINT.md': '负责Black-Litterman模型设计，实现市场观点融合、后验收益估计、协方差调整，支持投资组合优化决策。',
+            'RISK_PARITY_STRATEGY_BLUEPRINT.md': '负责风险平价策略设计，实现风险预算分配、风险贡献均衡、杠杆调整，支持风险均衡投资组合构建。',
+        }
+        
+        for doc_name, new_resp in responsibility_updates.items():
+            doc_path = blueprints_dir / doc_name
+            if not doc_path.exists():
+                continue
+            
+            content = self.read_file(doc_path)
+            if not content:
+                continue
+            
+            pattern = r'(##\s+核心定位\s*\n\n)(.+?)(?=\n\n|\n##|\n#|\Z)'
+            match = re.search(pattern, content, re.DOTALL)
+            
+            if match:
+                new_content = content[:match.start(2)] + new_resp + content[match.end(2):]
+                
+                if self.write_file(doc_path, new_content):
+                    self.fixes.append({
+                        'file': doc_name,
+                        'action': '更新职责描述以区分相似文档'
+                    })
+                    print(f'  ✅ 已修复: {doc_name}')
+        
+        print(f'  ✅ 蓝图文件修复完成')
     
     def generate_report(self):
         """生成修复报告"""
         print('\n📊 生成修复报告...')
         
+        self.audit_dir.mkdir(parents=True, exist_ok=True)
+        
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         report_file = self.audit_dir / f'LAYER5_COMPREHENSIVE_FIX_REPORT_{timestamp}.md'
         
-        self.audit_dir.mkdir(parents=True, exist_ok=True)
-        
-        p0_count = sum(1 for fix in self.fixes if fix['severity'] == 'P0')
-        p1_count = sum(1 for fix in self.fixes if fix['severity'] == 'P1')
-        p2_count = sum(1 for fix in self.fixes if fix['severity'] == 'P2')
-        
         with open(report_file, 'w', encoding='utf-8') as f:
-            f.write('# Layer 5 全面问题修复报告\n\n')
+            f.write('# Layer 5 全面深度审计问题修复报告\n\n')
             f.write(f'> **修复时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
-            f.write(f'> **修复范围**: {self.blueprints_dir}\n')
-            f.write(f'> **修复状态**: ✅ 完成\n\n')
+            f.write(f'> **修复范围**: {self.base_dir}\n\n')
+            
+            f.write('## 📊 修复统计\n\n')
+            f.write(f'- **修复文档**: {len(self.fixes)}个\n\n')
+            
+            if self.fixes:
+                f.write('## 🔧 修复详情\n\n')
+                f.write('| 文件 | 操作 |\n')
+                f.write('|------|------|\n')
+                for fix in self.fixes:
+                    f.write(f'| {fix["file"]} | {fix["action"]} |\n')
+                f.write('\n')
+            
             f.write('---\n\n')
-            
-            f.write('## 📊 修复概要\n\n')
-            f.write(f'- **扫描文档数**: {len(self.documents)}个\n')
-            f.write(f'- **修复问题数**: {len(self.fixes)}个\n')
-            f.write(f'- **P0问题修复**: {p0_count}个\n')
-            f.write(f'- **P1问题修复**: {p1_count}个\n')
-            f.write(f'- **P2问题修复**: {p2_count}个\n\n')
-            
-            f.write('---\n\n')
-            
-            f.write('## 🔧 修复详情\n\n')
-            f.write('### P0问题修复\n\n')
-            p0_fixes = [fix for fix in self.fixes if fix['severity'] == 'P0']
-            if p0_fixes:
-                for i, fix in enumerate(p0_fixes, 1):
-                    f.write(f'{i}. **{fix["type"]}**: {fix["file"]}\n')
-            else:
-                f.write('✅ 无P0问题修复\n')
-            f.write('\n### P1问题修复\n\n')
-            p1_fixes = [fix for fix in self.fixes if fix['severity'] == 'P1']
-            if p1_fixes:
-                for i, fix in enumerate(p1_fixes[:20], 1):
-                    f.write(f'{i}. **{fix["type"]}**: {fix["file"]}\n')
-                if len(p1_fixes) > 20:
-                    f.write(f'\n*注：仅显示前20项，共{len(p1_fixes)}项*\n')
-            else:
-                f.write('✅ 无P1问题修复\n')
-            f.write('\n### P2问题修复\n\n')
-            p2_fixes = [fix for fix in self.fixes if fix['severity'] == 'P2']
-            if p2_fixes:
-                f.write(f'共{len(p2_fixes)}项P2问题修复\n')
-            else:
-                f.write('✅ 无P2问题修复\n')
-            f.write('\n---\n\n')
-            
             f.write(f'**修复完成时间**: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
         
         print(f'  ✅ 修复报告已生成: {report_file}')
-        
         return report_file
     
     def run(self):
-        """执行完整修复流程"""
+        """执行修复"""
         print('=' * 80)
-        print('Layer 5 全面问题修复')
+        print('Layer 5 全面深度审计问题修复')
         print('=' * 80)
         
-        self.scan_documents()
+        self.fix_module_id_duplicates()
+        self.fix_layer_classification()
+        self.fix_missing_yaml_headers()
+        self.fix_similar_index_files()
+        self.fix_similar_blueprint_files()
         
-        self.fix_missing_responsibility()
-        self.fix_short_responsibility()
-        self.fix_missing_yaml()
-        
-        report_file = self.generate_report()
+        self.generate_report()
         
         print('\n' + '=' * 80)
         print('修复完成')
         print('=' * 80)
         print(f'\n📊 修复统计:')
-        print(f'  - 扫描文档: {len(self.documents)}个')
-        print(f'  - 修复问题: {len(self.fixes)}个')
-        print(f'\n📄 修复报告: {report_file}')
-        
-        return report_file
-
-
-def main():
-    fixer = Layer5ComprehensiveFixer()
-    fixer.run()
+        print(f'  - 修复文档: {len(self.fixes)}个')
 
 
 if __name__ == '__main__':
-    main()
+    fixer = Layer5ComprehensiveFixer()
+    fixer.run()

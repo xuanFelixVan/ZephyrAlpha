@@ -1,79 +1,18 @@
----
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_INDEX_5
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 04_CONFIG_TEMPLATES目录索引
----
-
-
-
 # 配置模板索引
 
-## 📋 目录概要
+> **核心定位**: 提供配置模板文档的导航和概览，支持快速定位和访问相关文档。
 
-**目录路径**: `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/`
-**目录职责**: 配置模板管理，提供系统配置的标准模板和示例
-**文档数量**: 0个
-**创建日期**: 2026-04-07
+## 📋 文档列表
 
----
-
-## 📁 文档清单
-
-暂无配置模板文档。
-
----
-
-## 🔍 配置模板说明
-
-### 配置模板类型
-
-1. **系统配置模板**: 系统参数配置模板
-2. **环境配置模板**: 开发、测试、生产环境配置模板
-3. **部署配置模板**: 部署脚本和配置模板
-4. **监控配置模板**: 监控指标和告警配置模板
-
-### 配置模板内容
-
-每个配置模板应包含：
-- 配置参数说明
-- 默认值和可选值
-- 配置示例
-- 配置验证规则
+- [API_DOCUMENTATION_TEMPLATE](API_DOCUMENTATION_TEMPLATE.md)
+- [CHANGE_REQUEST_TEMPLATE](CHANGE_REQUEST_TEMPLATE.md)
+- [DEPLOYMENT_CHECKLIST_TEMPLATE](DEPLOYMENT_CHECKLIST_TEMPLATE.md)
+- [INCIDENT_REPORT_TEMPLATE](INCIDENT_REPORT_TEMPLATE.md)
+- [MODULE_DEVELOPMENT_TEMPLATE](MODULE_DEVELOPMENT_TEMPLATE.md)
+- [PERFORMANCE_REPORT_TEMPLATE](PERFORMANCE_REPORT_TEMPLATE.md)
+- [TECHNICAL_REVIEW_TEMPLATE](TECHNICAL_REVIEW_TEMPLATE.md)
+- [TEST_PLAN_TEMPLATE](TEST_PLAN_TEMPLATE.md)
 
 ---
 
-## 📊 统计信息
-
-| 指标 | 数值 |
-|------|------|
-| **总文档数** | 0个 |
-| **系统配置模板** | 0个 |
-| **环境配置模板** | 0个 |
-| **部署配置模板** | 0个 |
-
----
-
-## 🔗 相关文档
-
-- [建设文档索引](../INDEX.md)
-- `蓝图文档索引`
-- 部署指南
-
----
-
-## 📝 维护记录
-
-| 日期 | 操作 | 操作人 | 备注 |
-|------|------|--------|------|
-| 2026-04-07 | 创建目录 | Audit Sentinel | 初始创建目录 |
-
----
-
-**目录状态**: ✅ 已创建
-**索引完备性**: ✅ 100%
-**文档覆盖率**: N/A（暂无文档）
+**最后更新**: 2026-04-07

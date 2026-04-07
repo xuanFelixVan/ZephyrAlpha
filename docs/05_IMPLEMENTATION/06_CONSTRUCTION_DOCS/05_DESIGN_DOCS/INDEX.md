@@ -1,102 +1,17 @@
----
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_INDEX_6
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 05_DESIGN_DOCS目录索引
----
+# 设计文档索引
 
-﻿---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_INDEX_6_DESIGN_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档治理系统
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-standard_type: 索引文档
-applicable_scope: 文档索引导航
-compliance_level: 专业标准---
+> **核心定位**: 提供设计文档的导航和概览，支持快速定位和访问相关文档。
 
+## 📋 文档列表
 
-# Design索引
-> **核心职责**: 目录导航和文档索引
-> **职责边界**: 
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **版本**: v1.0.0
-> **创建日期**: 2026-04-07
-> **核心定位**: 文档索引导航
-> **索引**: `INDEX_DESIGN_001`
+- [PERSONAL_TECH_DECISION_CHECKLIST](PERSONAL_TECH_DECISION_CHECKLIST.md)
+- [PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS](PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS.md)
+- [README](README.md)
+- [REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST](REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST.md)
+- [T.08.AR001.a_stock_rule_engine_design](T.08.AR001.a_stock_rule_engine_design.md)
+- [TECHNICAL_REVIEW_MEETING_AGENDA](TECHNICAL_REVIEW_MEETING_AGENDA.md)
+- [TECHNICAL_SOLUTION_SUMMARY_REPORT](TECHNICAL_SOLUTION_SUMMARY_REPORT.md)
 
 ---
 
-## 📋 目录概览
-
-### 统计信息
-
-| 指标 | 数值 |
-|------|------|
-| **文档总数** | 5 |
-| **活跃模块** | 5 |
-| **更新频率** | 按需更新 |
-
----
-
-## 📚 文档列表
-- NozyIO可视化编辑系统（归档案
-
-- [Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./T.08.AR001.a_stock_rule_engine_design.md) - 设计文档
-
-
-### 核心文档
-
-- Personal Tech Decision Checklist - `PERSONAL_DECISION_001`
-- Professional Quant Development Process - `DEV_PROCESS_001`
-- Review Material Distribution Checklist - `DISTRIBUTION_001`
-- Technical Review Meeting Agenda - `REVIEW_AGENDA_001`
-- Technical Solution Summary Report - `DESIGN_SUMMARY_001`
-
----
-
-## 🔍 维护指南
-
-### 更新规则
-
-1. **新增文档**: 在此目录添加新文档后，更新本文档列表
-2. **删除文档**: 删除文档后，从列表中移除对应条目
-3. **重命名文档**: 更新文档名称后，同步更新索引
-
-### 质量标准
-
-- ✅ 所有文档必须有明确的module_id
-- ✅ 文档命名遵循专业量化机构标准
-- ✅ 保持索引与实际文件一致
-
----
-
-## 📝 变更历史
-
-| 版本 | 日期 | 变更内容 | 变更人 |
-|------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
-
----
-
-## 🔗 相关文档
-
-
-
-
-
----
-
-**索引状态**: ✅ 活跃
-**维护频率**: 按需更新
-**下次更新**: 按需
+**最后更新**: 2026-04-07

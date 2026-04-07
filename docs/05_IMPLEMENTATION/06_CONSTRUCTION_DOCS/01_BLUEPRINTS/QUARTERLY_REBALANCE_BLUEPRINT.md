@@ -13,7 +13,7 @@ responsibility:
   - 定期调整
   - 再平衡计划
   - 季度调仓执行优化
-layer: Layer 6 (组合优化层)
+layer: Layer 5.2 (组合优化)
 ---
 
 

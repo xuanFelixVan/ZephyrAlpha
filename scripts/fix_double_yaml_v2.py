@@ -1,82 +1,62 @@
-"""
-修复双重YAML头部脚本
-用途：删除重复的YAML头部，保留完整的那个
-创建时间：2026-04-07
-"""
-
+import os
 import re
-from pathlib import Path
 from datetime import datetime
 
-BLUEPRINTS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
+blueprints_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS'
 
-
-def read_document(filepath: Path) -> str:
-    """读取文档内容"""
-    encodings = ['utf-8-sig', 'utf-8', 'gbk', 'gb2312', 'latin-1']
-    for encoding in encodings:
-        try:
-            with open(filepath, 'r', encoding=encoding) as f:
-                return f.read()
-        except (UnicodeDecodeError, UnicodeError):
-            continue
-    return ""
-
-
-def fix_double_yaml(filepath: Path) -> bool:
-    """修复双重YAML头部"""
-    content = read_document(filepath)
-    if not content:
-        return False
+def fix_double_yaml(file_path, correct_layer='Layer 6 (组合优化层)'):
+    with open(file_path, 'r', encoding='utf-8-sig') as f:
+        content = f.read()
     
-    # 检查是否有双重YAML头部
-    # 模式：第一个YAML头部 + --- + 第二个YAML头部
-    pattern = r'^---\s*\n.*?\n---\s*\n\s*---\s*\n(.*?)\n---\s*\n'
+    yaml_blocks = re.findall(r'^---\s*[\r\n]+(.*?)^---\s*[\r\n]+', content, re.MULTILINE | re.DOTALL)
     
-    match = re.match(pattern, content, re.DOTALL)
-    if match:
-        # 保留第二个YAML头部
-        second_yaml = match.group(1)
-        
-        # 找到第二个YAML头部结束后的内容
-        rest_start = match.end()
-        rest_content = content[rest_start:]
-        
-        # 构建新文档
-        new_content = f"---\n{second_yaml}\n---\n" + rest_content
-        
-        # 保存文件
-        with open(filepath, 'w', encoding='utf-8-sig') as f:
-            f.write(new_content)
-        
-        return True
+    if len(yaml_blocks) >= 2:
+        first_yaml_end = re.search(r'^---\s*[\r\n]+.*?^---\s*[\r\n]+', content, re.MULTILINE | re.DOTALL)
+        if first_yaml_end:
+            content = content[first_yaml_end.end():]
+            
+            yaml_match = re.search(r'^---\s*[\r\n]+(.*?)^---\s*[\r\n]+', content, re.MULTILINE | re.DOTALL)
+            if yaml_match:
+                yaml_content = yaml_match.group(1)
+                
+                yaml_content = re.sub(r'layer:\s*.*?[\r\n]+', f'layer: {correct_layer}\n', yaml_content)
+                
+                if 'standard_type:' not in yaml_content:
+                    yaml_content += f'standard_type: 专业量化机构蓝图\n'
+                if 'compliance_level:' not in yaml_content:
+                    yaml_content += f'compliance_level: 专业标准\n'
+                
+                content = '---\n' + yaml_content + '---\n\n' + content[yaml_match.end():]
+                
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                
+                return True, '删除第一个YAML头部，修复layer字段'
     
-    return False
+    return False, '无需修复或修复失败'
 
+files_to_fix = [
+    'ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md',
+    'STRATEGY_SELECTION_BLUEPRINT.md'
+]
 
-def main():
-    """主函数"""
-    print("="*80)
-    print("修复双重YAML头部")
-    print("="*80)
-    print(f"执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("="*80)
-    
-    fixed_count = 0
-    
-    for filepath in BLUEPRINTS_DIR.glob("*.md"):
-        if filepath.name == "INDEX.md":
-            continue
-        
-        if fix_double_yaml(filepath):
+print('='*80)
+print('修复双YAML头部问题')
+print('='*80)
+print(f'修复时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+print()
+
+fixed_count = 0
+for filename in files_to_fix:
+    file_path = os.path.join(blueprints_dir, filename)
+    if os.path.exists(file_path):
+        success, msg = fix_double_yaml(file_path)
+        if success:
             fixed_count += 1
-            print(f"✅ {filepath.name}")
-    
-    print("\n" + "="*80)
-    print("完成")
-    print("="*80)
-    print(f"修复双重YAML头部: {fixed_count}个文档")
+            print(f'✓ {filename}: {msg}')
+        else:
+            print(f'- {filename}: {msg}')
 
-
-if __name__ == "__main__":
-    main()
+print()
+print('='*80)
+print(f'修复完成: {fixed_count}个文件')
