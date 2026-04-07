@@ -486,4 +486,35 @@ class ConsistencyValidator:
                 spark_abs(col(f"a.{value_col}") - col(f"b.{value_col}")) / col(f"a.{value_col}")
             )
             
-            inconsistent_count = joined_df
+            inconsistent_count = joined_df.filter(col(diff_col) > self.tolerance).count()
+            
+            if inconsistent_count > 0:
+                errors.append({
+                    'column': value_col,
+                    'error': f"Found {inconsistent_count} inconsistent records",
+                    'tolerance': self.tolerance,
+                    'severity': 'warning'
+                })
+        
+        return {
+            'success': len(errors) == 0,
+            'errors': errors,
+            'warnings': []
+        }
+    
+    def validate_timestamp_alignment(self, df1, df2, timestamp_column='timestamp'):
+        """
+        验证时间戳对齐
+        
+        Args:
+            df1: 第一个数据源
+            df2: 第二个数据源
+            timestamp_column: 时间戳列名
+        
+        Returns:
+            ValidationResult: 验证结果
+        """
+        errors = []
+        
+        timestamps1 = df1.select(timestamp_column).distinct().collect()
+        timestamps2 = df2.select(timestamp_column).distinct().collect()
