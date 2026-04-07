@@ -6,7 +6,8 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 舆情分析层中期改进蓝图设计
+  - 知识图谱、流式处理、多语言支持改进方案
 layer: Layer 3 (舆情分析层)
 standard_type: 专业机构级蓝图
 applicable_scope: 舆情分析层中期改进模块

@@ -6,7 +6,8 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 情景分析与压力测试模块蓝图设计
+  - 情景构建、压力测试、风险评估方案设计
 layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 情景分析与压力测试系统

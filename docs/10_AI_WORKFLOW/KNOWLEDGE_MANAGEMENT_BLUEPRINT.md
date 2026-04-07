@@ -6,7 +6,8 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 知识管理模块蓝图设计与实施指导
+  - 知识库构建、知识检索、知识更新机制设计
 layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 知识管理与传承系统
