@@ -1,38 +1,21 @@
 ---
-module_id: FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# FACTOR EXPOSURE MANAGEMENT BLUEPRINT
-
-> **核心职责**: Factor Exposure Management蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Factor Exposure Management蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: FACTOREXPOSUREMANAGEMENTBLU_001
+module_id: FACTOR_EXPOSURE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 因子计算
-  - 组合优化
-  - 系统架构
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
-layer: "Layer 2 (Alpha因子层)"
-﻿# 因子暴露管理蓝图
+layer: "Layer 6 (组合优化层)"
+responsibility:
+  - 因子暴露管理
+  - 因子暴露监控
+  - 因子暴露调整
+---
+
+# 因子暴露管理蓝图
 
 > **模块ID**: FACTOR_EXPOSURE_MANAGEMENT_001
 > **创建日期**: 2026-04-07

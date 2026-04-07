@@ -9,197 +9,281 @@ standard_type: 专业量化机构文档
 responsibility:
   - 数据标准化
   - 数据格式统一
-  - 数据字段映射
+  - 数据验证
 layer: "Layer 1 (数据预处理层)"
 ---
+
 # 数据标准化引擎蓝图
 
-> **核心职责**: Data Standardization Engine蓝图设计
+> **核心职责**: 数据标准化、数据格式统一、数据验证
 > **职责边界**: 
-> - ✅ 本文档负责：Data Standardization Engine蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **核心定位**: 数据标准化解决方案，为量化交易系统提供统一的数据格式和标准
+> - ✅ 本模块负责：字段命名标准化、数据格式统一、数据类型转换、数据验证
+> - ❌ 本模块不负责：数据存储、数据清洗、数据质量监控
 
 ## 核心定位
 
-**单一职责**: 数据标准化、数据格式统一、数据字段映射
+**单一职责**: 数据标准化与格式统一
 
 ### 职责边界
 
-**✅ 核心职责**:
-- 统一数据格式
-- 数据字段映射
-- 数据单位转换
-- 缺失值处理
-- 数据类型转换
-
-**❌ 非职责范围**:
-- 数据质量监控（由Great Expectations负责）
-- 数据存储（由TimescaleDB/ClickHouse负责）
-- 数据清洗（由数据管道负责）
+| 负责 | 不负责 |
+|------|--------|
+| ✅ 字段命名标准化 | ❌ 数据存储 |
+| ✅ 数据格式统一 | ❌ 数据清洗 |
+| ✅ 数据类型转换 | ❌ 数据质量监控 |
+| ✅ 数据验证 | ❌ 数据订阅 |
+| ✅ 标准规则管理 | ❌ 数据血缘 |
 
 ---
 
-## 一、模块概述
+## 1. 技术选型
 
-### 1.1 业务价值
+### 1.1 为什么选择dbt + Great Expectations
 
-**为什么需要数据标准化**:
-- ✅ 统一不同数据源的数据格式
-- ✅ 简化下游数据处理
-- ✅ 提高数据质量
-- ✅ 减少数据错误
-
-### 1.2 技术选型
-
-**实现方案**: Pandas + 自研规则引擎
+| 特性 | dbt + GE | Pandera | Pydantic |
+|------|----------|---------|----------|
+| 数据转换 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
+| 数据验证 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| SQL支持 | ✅ | ❌ | ❌ |
+| 文档生成 | ✅ | ❌ | ✅ |
+| 学习曲线 | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
-## 二、核心组件设计
+## 2. 架构设计
 
-```python
-import pandas as pd
-from typing import Dict, List, Any
-from datetime import datetime
+### 2.1 整体架构
 
-class DataStandardizer:
-    """数据标准化引擎"""
-    
-    def __init__(self):
-        self.field_mappings = self._load_field_mappings()
-        self.unit_conversions = self._load_unit_conversions()
-    
-    def standardize(
-        self,
-        data: pd.DataFrame,
-        source: str
-    ) -> pd.DataFrame:
-        """标准化数据"""
-        # 1. 字段映射
-        data = self._map_fields(data, source)
-        
-        # 2. 数据类型转换
-        data = self._convert_types(data)
-        
-        # 3. 单位标准化
-        data = self._standardize_units(data, source)
-        
-        # 4. 缺失值处理
-        data = self._handle_missing_values(data)
-        
-        return data
-    
-    def _map_fields(
-        self,
-        data: pd.DataFrame,
-        source: str
-    ) -> pd.DataFrame:
-        """字段映射"""
-        mapping = self.field_mappings.get(source, {})
-        return data.rename(columns=mapping)
-    
-    def _convert_types(self, data: pd.DataFrame) -> pd.DataFrame:
-        """数据类型转换"""
-        type_conversions = {
-            'time': 'datetime64[ns]',
-            'symbol': 'str',
-            'open': 'float64',
-            'high': 'float64',
-            'low': 'float64',
-            'close': 'float64',
-            'volume': 'int64'
-        }
-        
-        for col, dtype in type_conversions.items():
-            if col in data.columns:
-                data[col] = data[col].astype(dtype)
-        
-        return data
-    
-    def _standardize_units(
-        self,
-        data: pd.DataFrame,
-        source: str
-    ) -> pd.DataFrame:
-        """单位标准化"""
-        # 实现单位转换逻辑
-        pass
-    
-    def _handle_missing_values(self, data: pd.DataFrame) -> pd.DataFrame:
-        """缺失值处理"""
-        # 实现缺失值处理逻辑
-        pass
-    
-    def _load_field_mappings(self) -> Dict[str, Dict[str, str]]:
-        """加载字段映射配置"""
-        return {
-            'tushare': {
-                'ts_code': 'symbol',
-                'trade_date': 'time',
-                'vol': 'volume',
-                'amount': 'amount'
-            },
-            'akshare': {
-                '代码': 'symbol',
-                '日期': 'time',
-                '成交量': 'volume',
-                '成交额': 'amount'
-            }
-        }
-    
-    def _load_unit_conversions(self) -> Dict[str, Dict[str, float]]:
-        """加载单位转换配置"""
-        return {
-            'volume': {
-                '万手': 10000,
-                '手': 1
-            }
-        }
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    数据标准化引擎架构                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
+│  │ 标准规则层   │    │ 数据转换层   │    │ 数据验证层   │     │
+│  │              │    │              │    │              │     │
+│  │ • 命名规则   │    │ • 格式转换   │    │ • 类型验证   │     │
+│  │ • 格式规则   │    │ • 类型转换   │    │ • 范围验证   │     │
+│  │ • 验证规则   │    │ • 单位转换   │    │ • 唯一性验证 │     │
+│  └──────────────┘    └──────────────┘    └──────────────┘     │
+│         │                   │                    │              │
+│         └───────────────────┴────────────────────┘              │
+│                            │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    标准化流程                            │   │
+│  │  1. 命名标准化 → 2. 格式统一 → 3. 类型转换 → 4. 验证    │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 三、实施路径
+## 3. 核心功能实现
 
-### Phase 1: 基础开发（1周）
+### 3.1 命名标准化
 
-**任务清单**:
-- [x] 开发数据标准化引擎
-- [x] 配置字段映射规则
-- [x] 配置单位转换规则
-- [x] 集成到数据管道
+```python
+import re
+from typing import Dict, List
 
-**预期成果**:
-- ✅ 支持数据标准化
-- ✅ 支持字段映射
-- ✅ 支持单位转换
+class NamingStandardizer:
+    """命名标准化器"""
+    
+    FIELD_MAPPING = {
+        # 原始名称 -> 标准名称
+        "股票代码": "symbol",
+        "交易日期": "trade_date",
+        "开盘价": "open",
+        "最高价": "high",
+        "最低价": "low",
+        "收盘价": "close",
+        "成交量": "volume",
+        "成交额": "amount",
+    }
+    
+    @classmethod
+    def standardize_field_name(cls, name: str) -> str:
+        """标准化字段名"""
+        if name in cls.FIELD_MAPPING:
+            return cls.FIELD_MAPPING[name]
+        
+        name = name.lower()
+        name = re.sub(r'[^\w]', '_', name)
+        name = re.sub(r'_+', '_', name)
+        name = name.strip('_')
+        
+        return name
+    
+    @classmethod
+    def standardize_dataframe(cls, df) -> 'DataFrame':
+        """标准化DataFrame列名"""
+        rename_map = {
+            col: cls.standardize_field_name(col)
+            for col in df.columns
+        }
+        return df.rename(columns=rename_map)
+```
+
+### 3.2 数据格式统一
+
+```python
+from datetime import datetime
+from decimal import Decimal
+from typing import Union
+
+class FormatStandardizer:
+    """格式标准化器"""
+    
+    @staticmethod
+    def standardize_date(value: Union[str, datetime], format: str = "%Y-%m-%d") -> str:
+        """标准化日期格式"""
+        if isinstance(value, datetime):
+            return value.strftime(format)
+        
+        if isinstance(value, str):
+            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y年%m月%d日"]:
+                try:
+                    dt = datetime.strptime(value, fmt)
+                    return dt.strftime(format)
+                except ValueError:
+                    continue
+        
+        return value
+    
+    @staticmethod
+    def standardize_symbol(symbol: str) -> str:
+        """标准化股票代码"""
+        symbol = symbol.upper().strip()
+        
+        if symbol.isdigit():
+            if symbol.startswith('6'):
+                return f"{symbol}.SH"
+            else:
+                return f"{symbol}.SZ"
+        
+        return symbol
+    
+    @staticmethod
+    def standardize_price(value: Union[str, float, Decimal]) -> Decimal:
+        """标准化价格"""
+        if isinstance(value, str):
+            value = value.replace(',', '')
+        
+        return Decimal(str(value)).quantize(Decimal('0.0001'))
+```
+
+### 3.3 数据验证
+
+```python
+from dataclasses import dataclass
+from typing import List, Optional
+import pandas as pd
+
+@dataclass
+class ValidationRule:
+    """验证规则"""
+    field: str
+    rule_type: str
+    params: dict
+    error_message: str
+
+class DataValidator:
+    """数据验证器"""
+    
+    def __init__(self):
+        self.rules: List[ValidationRule] = []
+    
+    def add_rule(self, rule: ValidationRule):
+        """添加验证规则"""
+        self.rules.append(rule)
+    
+    def validate(self, df: pd.DataFrame) -> dict:
+        """验证数据"""
+        results = {
+            "valid": True,
+            "errors": [],
+            "warnings": []
+        }
+        
+        for rule in self.rules:
+            if rule.field not in df.columns:
+                results["warnings"].append(f"字段 {rule.field} 不存在")
+                continue
+            
+            errors = self._apply_rule(df, rule)
+            if errors:
+                results["valid"] = False
+                results["errors"].extend(errors)
+        
+        return results
+    
+    def _apply_rule(self, df: pd.DataFrame, rule: ValidationRule) -> List[str]:
+        """应用验证规则"""
+        errors = []
+        
+        if rule.rule_type == "not_null":
+            null_count = df[rule.field].isnull().sum()
+            if null_count > 0:
+                errors.append(f"{rule.field}: {null_count} 条空值")
+        
+        elif rule.rule_type == "range":
+            min_val = rule.params.get("min")
+            max_val = rule.params.get("max")
+            
+            if min_val is not None:
+                invalid = df[df[rule.field] < min_val]
+                if len(invalid) > 0:
+                    errors.append(f"{rule.field}: {len(invalid)} 条小于最小值 {min_val}")
+            
+            if max_val is not None:
+                invalid = df[df[rule.field] > max_val]
+                if len(invalid) > 0:
+                    errors.append(f"{rule.field}: {len(invalid)} 条大于最大值 {max_val}")
+        
+        elif rule.rule_type == "unique":
+            duplicates = df[df.duplicated(subset=[rule.field])]
+            if len(duplicates) > 0:
+                errors.append(f"{rule.field}: {len(duplicates)} 条重复值")
+        
+        return errors
+```
+
+### 3.4 标准化管道
+
+```python
+class StandardizationPipeline:
+    """标准化管道"""
+    
+    def __init__(self):
+        self.naming_standardizer = NamingStandardizer()
+        self.format_standardizer = FormatStandardizer()
+        self.validator = DataValidator()
+    
+    def process(self, df: pd.DataFrame, config: dict) -> pd.DataFrame:
+        """执行标准化流程"""
+        df = self.naming_standardizer.standardize_dataframe(df)
+        
+        for field, format_type in config.get("format_rules", {}).items():
+            if field in df.columns:
+                if format_type == "date":
+                    df[field] = df[field].apply(self.format_standardizer.standardize_date)
+                elif format_type == "symbol":
+                    df[field] = df[field].apply(self.format_standardizer.standardize_symbol)
+                elif format_type == "price":
+                    df[field] = df[field].apply(self.format_standardizer.standardize_price)
+        
+        validation_result = self.validator.validate(df)
+        if not validation_result["valid"]:
+            raise ValueError(f"数据验证失败: {validation_result['errors']}")
+        
+        return df
+```
 
 ---
 
-## 四、成本估算
-
-### 学习成本
-
-- Pandas基础: 1天
-- 规则引擎开发: 2天
-- **总计**: 3天
-
----
-
-## 五、相关文档
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/docs/) |
-
----
-
-## 📝 变更历史
+## 📋 变更历史
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|
