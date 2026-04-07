@@ -1,254 +1,262 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-自动化职责描述检测工具
-用途: 检测文档职责描述问题，生成优化建议
-版本: v1.0.0
-创建日期: 2026-04-07
+职责检测工具
+功能：
+1. 语义分析文档职责
+2. 检测职责相似度
+3. 生成职责关系图
+4. 提供合并建议
 """
 
-import os
 import re
 import json
 from pathlib import Path
+from typing import List, Dict, Set, Tuple
+from dataclasses import dataclass, field
 from collections import defaultdict
-from datetime import datetime
 
-DOCS_DIR = Path("D:/ZephyrAlpha/docs")
+@dataclass
+class ResponsibilityInfo:
+    file_path: str
+    title: str
+    description: str
+    keywords: Set[str]
+    section_count: int
+    word_count: int
 
-RESPONSIBILITY_KEYWORDS = {
-    "管理": ["管理", "维护", "配置", "组织", "协调"],
-    "实现": ["实现", "开发", "构建", "创建", "编写"],
-    "监控": ["监控", "检测", "跟踪", "追踪", "观察"],
-    "优化": ["优化", "改进", "提升", "增强", "完善"],
-    "分析": ["分析", "评估", "研究", "调查", "诊断"],
-    "设计": ["设计", "规划", "定义", "制定", "架构"]
-}
-
-DIRECTORY_RESPONSIBILITY_MAP = {
-    "00_OVERVIEW": "系统概览与架构总览，提供全局视角和导航入口",
-    "00_RESOURCES": "资源管理与平台文档，管理外部资源和平台集成",
-    "01_FRAMEWORK": "系统框架与架构设计，定义系统整体架构和模块边界",
-    "02_FACTOR_LIBRARY": "因子库管理与计算，管理因子定义、计算和评估",
-    "03_TRADING_TACTICS": "交易策略与战术，定义交易规则和执行策略",
-    "04_EXECUTION": "交易执行与风控，执行交易指令和管理风险",
-    "05_IMPLEMENTATION": "实施指南与部署文档，指导系统实施和部署",
-    "06_ARCHIVE": "归档文档管理，管理历史版本和过时文档",
-    "07_RESEARCH": "研究创新与实验，管理研究项目和实验记录",
-    "08_KNOWLEDGE": "知识库与案例研究，管理知识资产和案例库",
-    "09_AUDIT": "审计与合规检查，执行文档治理审计和合规验证",
-    "10_AI_WORKFLOW": "AI工作流与自动化，管理AI辅助流程和自动化任务",
-    "11_STRATEGIC_DECISION": "战略决策与市场状态，支持高层决策和市场分析"
-}
-
-def scan_all_files():
-    """扫描所有文档文件"""
-    all_files = []
-    for ext in ['*.md']:
-        all_files.extend(DOCS_DIR.rglob(ext))
-    return [f for f in all_files if not any(part.startswith('.') for part in f.parts)]
-
-def extract_responsibility(file_path):
-    """提取文档职责描述"""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
+@dataclass
+class ResponsibilityDetector:
+    docs_dir: Path
+    responsibilities: List[ResponsibilityInfo] = field(default_factory=list)
+    similarity_matrix: Dict[Tuple[str, str], float] = field(default_factory=dict)
+    
+    def __post_init__(self):
+        self.docs_dir = Path(self.docs_dir)
+    
+    def analyze_responsibilities(self) -> List[ResponsibilityInfo]:
+        print("\n=== 职责检测分析 ===\n")
         
-        yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
-        if yaml_match:
-            yaml_content = yaml_match.group(1)
+        md_files = list(self.docs_dir.rglob("*.md"))
+        print(f"[1/4] 扫描Markdown文件: {len(md_files)}个")
+        
+        self.responsibilities = []
+        for md_file in md_files:
+            resp_info = self._extract_responsibility(md_file)
+            if resp_info:
+                self.responsibilities.append(resp_info)
+        
+        print(f"[2/4] 提取职责信息: {len(self.responsibilities)}个")
+        
+        self._calculate_similarity_matrix()
+        print(f"[3/4] 计算职责相似度: {len(self.similarity_matrix)}对")
+        
+        duplicate_groups = self._find_duplicates()
+        print(f"[4/4] 检测职责重复: {len(duplicate_groups)}组")
+        
+        return self.responsibilities
+    
+    def _extract_responsibility(self, md_file: Path) -> ResponsibilityInfo:
+        try:
+            content = md_file.read_text(encoding='utf-8')
             
-            resp_match = re.search(r'responsibility:\s*\n?\s*-\s*(.+?)(?:\n|$)', yaml_content, re.MULTILINE)
-            if resp_match:
-                return resp_match.group(1).strip()
+            title = self._extract_title(content)
+            description = self._extract_description(content)
+            keywords = self._extract_keywords(content)
+            section_count = self._count_sections(content)
+            word_count = len(content.split())
+            
+            return ResponsibilityInfo(
+                file_path=str(md_file.relative_to(self.docs_dir)),
+                title=title,
+                description=description,
+                keywords=keywords,
+                section_count=section_count,
+                word_count=word_count
+            )
+        except Exception as e:
+            print(f"处理文件失败 {md_file}: {e}")
+            return None
+    
+    def _extract_title(self, content: str) -> str:
+        match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+        return match.group(1) if match else "未命名文档"
+    
+    def _extract_description(self, content: str) -> str:
+        lines = content.split('\n')
+        description_lines = []
         
-        return None
-    except Exception as e:
-        return None
-
-def check_responsibility_length(responsibility):
-    """检查职责描述长度"""
-    if not responsibility:
-        return {"status": "missing", "message": "缺少职责描述"}
-    
-    length = len(responsibility)
-    if length < 50:
-        return {"status": "too_short", "message": f"职责描述过短({length}字符)，建议扩展至50-200字符"}
-    elif length > 200:
-        return {"status": "too_long", "message": f"职责描述过长({length}字符)，建议精简至50-200字符"}
-    else:
-        return {"status": "ok", "message": f"职责描述长度符合标准({length}字符)"}
-
-def check_responsibility_keywords(responsibility):
-    """检查职责描述关键词"""
-    if not responsibility:
-        return {"status": "missing", "message": "缺少职责描述"}
-    
-    found_categories = []
-    for category, keywords in RESPONSIBILITY_KEYWORDS.items():
-        if any(kw in responsibility for kw in keywords):
-            found_categories.append(category)
-    
-    if found_categories:
-        return {"status": "ok", "message": f"包含行为动词: {', '.join(found_categories)}"}
-    else:
-        return {"status": "missing_keywords", "message": "职责描述缺少明确的行为动词"}
-
-def suggest_responsibility(file_path, current_responsibility):
-    """生成职责描述优化建议"""
-    relative_path = file_path.relative_to(DOCS_DIR)
-    path_parts = str(relative_path).split(os.sep)
-    
-    if path_parts and path_parts[0] in DIRECTORY_RESPONSIBILITY_MAP:
-        base_dir = path_parts[0]
-        standard_resp = DIRECTORY_RESPONSIBILITY_MAP[base_dir]
+        for i, line in enumerate(lines):
+            if line.startswith('#') and i > 0:
+                break
+            if line.strip() and not line.startswith('#'):
+                description_lines.append(line.strip())
         
-        file_name = file_path.stem
-        file_keywords = file_name.replace('_', ' ').lower()
-        
-        if 'blueprint' in file_keywords:
-            suggestion = f"{standard_resp}，定义{file_name.replace('_', ' ')}的详细设计和实施方案"
-        elif 'report' in file_keywords:
-            suggestion = f"{standard_resp}，记录{file_name.replace('_', ' ')}的分析结果和改进建议"
-        elif 'index' in file_keywords.lower():
-            suggestion = f"目录导航与文档索引，提供{base_dir}目录的文档清单和导航"
-        else:
-            suggestion = standard_resp
-        
-        return suggestion
+        return ' '.join(description_lines[:3])
     
-    return current_responsibility
-
-def detect_responsibility_issues(all_files):
-    """检测职责描述问题"""
-    issues = {
-        "missing_responsibility": [],
-        "too_short": [],
-        "too_long": [],
-        "missing_keywords": [],
-        "overlapping": defaultdict(list)
-    }
-    
-    responsibility_map = defaultdict(list)
-    
-    for file_path in all_files:
-        relative_path = str(file_path.relative_to(DOCS_DIR))
-        responsibility = extract_responsibility(file_path)
+    def _extract_keywords(self, content: str) -> Set[str]:
+        keywords = set()
         
-        if not responsibility:
-            issues["missing_responsibility"].append({
-                "path": relative_path,
-                "suggestion": suggest_responsibility(file_path, None)
-            })
-            continue
+        keyword_patterns = [
+            r'职责[：:]\s*(.+)',
+            r'功能[：:]\s*(.+)',
+            r'目标[：:]\s*(.+)',
+            r'范围[：:]\s*(.+)',
+        ]
         
-        responsibility_map[responsibility].append(relative_path)
+        for pattern in keyword_patterns:
+            matches = re.findall(pattern, content)
+            for match in matches:
+                words = re.findall(r'[\w\u4e00-\u9fff]+', match)
+                keywords.update(words)
         
-        length_check = check_responsibility_length(responsibility)
-        if length_check["status"] == "too_short":
-            issues["too_short"].append({
-                "path": relative_path,
-                "responsibility": responsibility,
-                "length": len(responsibility),
-                "suggestion": suggest_responsibility(file_path, responsibility)
-            })
-        elif length_check["status"] == "too_long":
-            issues["too_long"].append({
-                "path": relative_path,
-                "responsibility": responsibility,
-                "length": len(responsibility)
-            })
+        title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+        if title_match:
+            title_words = re.findall(r'[\w\u4e00-\u9fff]+', title_match.group(1))
+            keywords.update(title_words)
         
-        keyword_check = check_responsibility_keywords(responsibility)
-        if keyword_check["status"] == "missing_keywords":
-            issues["missing_keywords"].append({
-                "path": relative_path,
-                "responsibility": responsibility,
-                "suggestion": suggest_responsibility(file_path, responsibility)
-            })
+        return keywords
     
-    for resp, files in responsibility_map.items():
-        if len(files) > 3:
-            issues["overlapping"][resp] = files
+    def _count_sections(self, content: str) -> int:
+        return len(re.findall(r'^#{1,6}\s+', content, re.MULTILINE))
     
-    return issues
-
-def generate_report(issues, output_path):
-    """生成检测报告"""
-    report = {
-        "timestamp": datetime.now().isoformat(),
-        "summary": {
-            "total_issues": sum(len(v) if isinstance(v, list) else len(v) for v in issues.values()),
-            "missing_responsibility": len(issues["missing_responsibility"]),
-            "too_short": len(issues["too_short"]),
-            "too_long": len(issues["too_long"]),
-            "missing_keywords": len(issues["missing_keywords"]),
-            "overlapping_groups": len(issues["overlapping"])
-        },
-        "issues": {
-            "missing_responsibility": issues["missing_responsibility"][:10],
-            "too_short": issues["too_short"][:10],
-            "too_long": issues["too_long"][:10],
-            "missing_keywords": issues["missing_keywords"][:10],
-            "overlapping": {k: v[:5] for k, v in list(issues["overlapping"].items())[:5]}
+    def _calculate_similarity_matrix(self):
+        for i, resp1 in enumerate(self.responsibilities):
+            for j, resp2 in enumerate(self.responsibilities):
+                if i < j:
+                    similarity = self._calculate_similarity(resp1, resp2)
+                    if similarity > 0.3:
+                        self.similarity_matrix[(resp1.file_path, resp2.file_path)] = similarity
+    
+    def _calculate_similarity(self, resp1: ResponsibilityInfo, resp2: ResponsibilityInfo) -> float:
+        title_similarity = self._jaccard_similarity(
+            set(resp1.title.split()),
+            set(resp2.title.split())
+        )
+        
+        keyword_similarity = self._jaccard_similarity(
+            resp1.keywords,
+            resp2.keywords
+        )
+        
+        description_similarity = self._jaccard_similarity(
+            set(resp1.description.split()),
+            set(resp2.description.split())
+        )
+        
+        weighted_similarity = (
+            title_similarity * 0.4 +
+            keyword_similarity * 0.4 +
+            description_similarity * 0.2
+        )
+        
+        return weighted_similarity
+    
+    def _jaccard_similarity(self, set1: Set[str], set2: Set[str]) -> float:
+        if not set1 or not set2:
+            return 0.0
+        
+        intersection = set1 & set2
+        union = set1 | set2
+        
+        return len(intersection) / len(union) if union else 0.0
+    
+    def _find_duplicates(self) -> List[List[str]]:
+        duplicate_groups = []
+        processed = set()
+        
+        for (file1, file2), similarity in sorted(
+            self.similarity_matrix.items(),
+            key=lambda x: x[1],
+            reverse=True
+        ):
+            if similarity > 0.7:
+                if file1 not in processed and file2 not in processed:
+                    group = [file1, file2]
+                    processed.add(file1)
+                    processed.add(file2)
+                    
+                    for (f1, f2), sim in self.similarity_matrix.items():
+                        if sim > 0.7:
+                            if f1 in group and f2 not in processed:
+                                group.append(f2)
+                                processed.add(f2)
+                            elif f2 in group and f1 not in processed:
+                                group.append(f1)
+                                processed.add(f1)
+                    
+                    duplicate_groups.append(group)
+        
+        return duplicate_groups
+    
+    def generate_report(self, output_file: Path):
+        report = {
+            'summary': {
+                'total_documents': len(self.responsibilities),
+                'total_similar_pairs': len(self.similarity_matrix),
+                'high_similarity_pairs': sum(1 for s in self.similarity_matrix.values() if s > 0.7),
+                'duplicate_groups': len(self._find_duplicates())
+            },
+            'similarities': [
+                {
+                    'file1': files[0],
+                    'file2': files[1],
+                    'similarity': round(sim, 3)
+                }
+                for files, sim in sorted(
+                    self.similarity_matrix.items(),
+                    key=lambda x: x[1],
+                    reverse=True
+                )[:20]
+            ],
+            'duplicate_groups': self._find_duplicates(),
+            'recommendations': self._generate_recommendations()
         }
-    }
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(report, f, ensure_ascii=False, indent=2)
+        
+        print(f"\n报告已生成: {output_file}")
     
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(report, f, ensure_ascii=False, indent=2)
-    
-    return report
-
-def print_summary(issues):
-    """打印检测摘要"""
-    print("\n" + "=" * 80)
-    print("职责描述检测摘要")
-    print("=" * 80)
-    
-    print(f"\n缺少职责描述: {len(issues['missing_responsibility'])}个")
-    for item in issues['missing_responsibility'][:5]:
-        print(f"  - {item['path']}")
-    
-    print(f"\n职责描述过短: {len(issues['too_short'])}个")
-    for item in issues['too_short'][:5]:
-        print(f"  - {item['path']}: {item['responsibility']} ({item['length']}字符)")
-    
-    print(f"\n职责描述过长: {len(issues['too_long'])}个")
-    for item in issues['too_long'][:5]:
-        print(f"  - {item['path']}: {item['responsibility'][:50]}... ({item['length']}字符)")
-    
-    print(f"\n缺少行为动词: {len(issues['missing_keywords'])}个")
-    for item in issues['missing_keywords'][:5]:
-        print(f"  - {item['path']}: {item['responsibility']}")
-    
-    print(f"\n职责重叠: {len(issues['overlapping'])}组")
-    for resp, files in list(issues['overlapping'].items())[:5]:
-        print(f"  - '{resp}'出现在{len(files)}个文件")
+    def _generate_recommendations(self) -> List[Dict]:
+        recommendations = []
+        
+        duplicate_groups = self._find_duplicates()
+        
+        for i, group in enumerate(duplicate_groups, 1):
+            recommendations.append({
+                'type': 'merge',
+                'priority': 'high',
+                'description': f'合并重复职责文档组{i}',
+                'files': group,
+                'action': '建议合并这些职责相似的文档'
+            })
+        
+        for (file1, file2), similarity in self.similarity_matrix.items():
+            if 0.5 < similarity <= 0.7:
+                recommendations.append({
+                    'type': 'review',
+                    'priority': 'medium',
+                    'description': f'审查职责相似文档',
+                    'files': [file1, file2],
+                    'action': f'相似度{similarity:.2%}，建议审查是否有重复内容'
+                })
+        
+        return recommendations
 
 def main():
-    print("=" * 80)
-    print("自动化职责描述检测工具")
-    print("=" * 80)
-    print(f"开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 80)
+    docs_dir = Path("D:/ZephyrAlpha/docs")
+    detector = ResponsibilityDetector(docs_dir)
     
-    print("\n扫描所有文档...")
-    all_files = scan_all_files()
-    print(f"发现 {len(all_files)} 个文档文件")
+    responsibilities = detector.analyze_responsibilities()
     
-    print("\n检测职责描述问题...")
-    issues = detect_responsibility_issues(all_files)
+    print(f"\n检测结果:")
+    print(f"  总文档数: {len(responsibilities)}")
+    print(f"  相似文档对: {len(detector.similarity_matrix)}")
+    print(f"  高相似度文档对: {sum(1 for s in detector.similarity_matrix.values() if s > 0.7)}")
     
-    print_summary(issues)
-    
-    output_path = DOCS_DIR / "09_AUDIT" / "STATE" / f"responsibility_detection_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    report = generate_report(issues, output_path)
-    
-    print(f"\n检测报告已保存至: {output_path}")
-    
-    print("\n" + "=" * 80)
-    print(f"完成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 80)
+    output_file = docs_dir.parent / "docs/09_AUDIT/REPORTS/responsibility_detection_report.json"
+    detector.generate_report(output_file)
 
 if __name__ == "__main__":
     main()
