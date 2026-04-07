@@ -1,9 +1,5 @@
 ---
 standard_type: æ ¸å¿ææ¡£
-responsibility:
-  - 因子计算
-  - 数据源
-  - 系统架构
 applicable_scope: å¨ç³»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®?owner: é¦å¸­æ¶æ?version: 1.0.0

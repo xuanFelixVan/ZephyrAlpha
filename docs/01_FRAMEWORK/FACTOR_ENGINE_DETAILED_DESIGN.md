@@ -1,9 +1,5 @@
 ---
 standard_type: æ¶æææ¡£
-responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据源
 applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?version: 2.0.0

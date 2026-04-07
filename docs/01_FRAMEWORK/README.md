@@ -5,10 +5,6 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: é¦å¸­ææ¡£æ¶æ?
-responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 系统架构
 standard_type: ä¸ä¸éåæºæææ¡£
 applicable_scope: å¨ç³»?
 compliance_level: ä¸ä¸æ å

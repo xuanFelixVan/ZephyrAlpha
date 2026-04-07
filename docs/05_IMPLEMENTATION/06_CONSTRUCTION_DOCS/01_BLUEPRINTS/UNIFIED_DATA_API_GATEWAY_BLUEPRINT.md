@@ -9,176 +9,277 @@ standard_type: 专业量化机构文档
 responsibility:
   - 统一数据API
   - 数据查询服务
-  - 数据访问控制
+  - API认证授权
 layer: "Layer 1 (数据预处理层)"
 ---
+
 # 统一数据API网关蓝图
 
-> **核心职责**: Unified Data Api Gateway蓝图设计
+> **核心职责**: 统一数据访问入口、认证授权、限流熔断、缓存策略
 > **职责边界**: 
-> - ✅ 本文档负责：Unified Data Api Gateway蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **核心定位**: 统一数据访问接口，为量化交易系统提供标准化的数据服务
+> - ✅ 本模块负责：统一API入口、认证授权、限流熔断、缓存、GraphQL支持
+> - ❌ 本模块不负责：数据存储、数据处理、数据订阅
 
 ## 核心定位
 
-**单一职责**: 统一数据访问接口、数据查询服务、数据访问控制
+**单一职责**: 统一数据访问入口与API管理
 
 ### 职责边界
 
-**✅ 核心职责**:
-- 提供统一的数据访问API
-- 支持多种数据格式（JSON、CSV、Parquet）
-- 支持权限控制
-- 支持GraphQL查询
-- 自动生成API文档
-
-**❌ 非职责范围**:
-- 数据存储（由TimescaleDB/ClickHouse负责）
-- 数据缓存（由Redis负责）
-- 数据质量监控（由Great Expectations负责）
+| 负责 | 不负责 |
+|------|--------|
+| ✅ RESTful API | ❌ 数据存储 |
+| ✅ GraphQL API | ❌ 数据处理 |
+| ✅ 认证授权 | ❌ 数据订阅 |
+| ✅ 限流熔断 | ❌ 数据清洗 |
+| ✅ 缓存策略 | ❌ 数据质量 |
 
 ---
 
-## 一、模块概述
+## 1. 技术选型
 
-### 1.1 业务价值
+### 1.1 为什么选择FastAPI + Strawberry
 
-**为什么需要统一API网关**:
-- ✅ 统一数据访问接口
-- ✅ 简化客户端开发
-- ✅ 支持权限控制
-- ✅ 自动生成文档
-
-### 1.2 技术选型
-
-**为什么选择FastAPI**:
-- ✅ 性能优秀，异步支持
-- ✅ 自动生成API文档
-- ✅ 类型提示，开发体验好
-- ✅ 学习成本低
-- ✅ 社区活跃
+| 特性 | FastAPI | Flask | Django |
+|------|---------|-------|--------|
+| 性能 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 异步支持 | ✅ 原生 | ❌ 需扩展 | ✅ 支持 |
+| 类型提示 | ✅ Pydantic | ❌ 无 | ⭐⭐⭐ |
+| 自动文档 | ✅ OpenAPI | ❌ 需扩展 | ✅ 支持 |
+| 学习曲线 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| GraphQL | ✅ Strawberry | ✅ Ariadne | ✅ Graphene |
+| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
-## 二、核心组件设计
+## 2. 架构设计
 
-```python
-from fastapi import FastAPI, HTTPException, Query
-from typing import List, Optional
-from datetime import datetime
-import pandas as pd
+### 2.1 整体架构
 
-app = FastAPI(
-    title="ZephyrAlpha Data API",
-    description="统一数据访问API",
-    version="1.0.0"
-)
-
-@app.get("/api/v1/market_data/{symbol}")
-async def get_market_data(
-    symbol: str,
-    start_date: Optional[datetime] = Query(None),
-    end_date: Optional[datetime] = Query(None),
-    limit: int = Query(1000, le=10000)
-):
-    """获取市场数据"""
-    # 实现数据查询逻辑
-    pass
-
-@app.get("/api/v1/factor_data/{factor_name}")
-async def get_factor_data(
-    factor_name: str,
-    symbols: List[str] = Query(...),
-    start_date: Optional[datetime] = Query(None),
-    end_date: Optional[datetime] = Query(None)
-):
-    """获取因子数据"""
-    # 实现因子查询逻辑
-    pass
-
-@app.get("/health")
-async def health_check():
-    """健康检查"""
-    return {"status": "healthy"}
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    统一数据API网关架构                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
+│  │ API入口层    │    │ 认证授权层   │    │ 限流熔断层   │     │
+│  │              │    │              │    │              │     │
+│  │ • REST API   │    │ • JWT认证    │    │ • 限流控制   │     │
+│  │ • GraphQL    │    │ • API Key    │    │ • 熔断降级   │     │
+│  │ • WebSocket  │    │ • 权限控制   │    │ • 负载均衡   │     │
+│  └──────────────┘    └──────────────┘    └──────────────┘     │
+│         │                   │                    │              │
+│         └───────────────────┴────────────────────┘              │
+│                            │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    缓存层                                │   │
+│  │  • Redis缓存 (热点数据)                                  │   │
+│  │  • 响应缓存 (查询结果)                                   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                            │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    数据源层                              │   │
+│  │  • TimescaleDB (实时数据)                                │   │
+│  │  • ClickHouse (历史数据)                                 │   │
+│  │  • Redis (缓存数据)                                      │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 三、部署方案
+## 3. 核心功能实现
 
-### 3.1 Docker部署
+### 3.1 RESTful API
+
+```python
+from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+
+app = FastAPI(
+    title="Zephyr Quant Data API",
+    description="统一数据API网关",
+    version="1.0.0"
+)
+
+security = HTTPBearer()
+
+class KlineRequest(BaseModel):
+    symbol: str
+    interval: str
+    start_date: str
+    end_date: str
+
+class KlineResponse(BaseModel):
+    open_time: datetime
+    symbol: str
+    open: float
+    high: float
+    low: float
+    close: float
+    volume: int
+
+@app.get("/api/v1/klines/{symbol}", response_model=List[KlineResponse])
+@cache(expire=60)
+async def get_klines(
+    symbol: str,
+    interval: str = Query(default="1d"),
+    start_date: str = Query(...),
+    end_date: str = Query(...),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """获取K线数据"""
+    pass
+
+@app.get("/api/v1/factors/{factor_id}")
+@cache(expire=300)
+async def get_factor_values(
+    factor_id: str,
+    symbols: List[str] = Query(...),
+    date: str = Query(...)
+):
+    """获取因子值"""
+    pass
+
+@app.get("/api/v1/prices/realtime")
+async def get_realtime_prices(
+    symbols: List[str] = Query(...)
+):
+    """获取实时价格"""
+    pass
+```
+
+### 3.2 GraphQL API
+
+```python
+import strawberry
+from strawberry.fastapi import GraphQLRouter
+from typing import List, Optional
+
+@strawberry.type
+class Kline:
+    open_time: str
+    symbol: str
+    open: float
+    high: float
+    low: float
+    close: float
+    volume: int
+
+@strawberry.type
+class Query:
+    @strawberry.field
+    async def klines(
+        self,
+        symbol: str,
+        interval: str = "1d",
+        start_date: str = "",
+        end_date: str = ""
+    ) -> List[Kline]:
+        pass
+    
+    @strawberry.field
+    async def factor_values(
+        self,
+        factor_id: str,
+        symbols: List[str],
+        date: str
+    ) -> List[dict]:
+        pass
+
+schema = strawberry.Schema(query=Query)
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
+```
+
+### 3.3 认证授权
+
+```python
+from datetime import datetime, timedelta
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    payload = verify_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return payload
+```
+
+### 3.4 限流熔断
+
+```python
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.get("/api/v1/klines/{symbol}")
+@limiter.limit("100/minute")
+async def get_klines(request: Request, symbol: str):
+    pass
+```
+
+---
+
+## 4. 部署配置
+
+### 4.1 Docker部署
 
 ```yaml
 version: '3.8'
 
 services:
-  api:
+  api-gateway:
     build: .
-    container_name: zephyr_api
+    container_name: zephyr_api_gateway
     ports:
       - "8000:8000"
     environment:
-      - TIMESCALEDB_HOST=timescaledb
-      - CLICKHOUSE_HOST=clickhouse
-      - REDIS_HOST=redis
+      - REDIS_URL=redis://redis:6379
+      - TIMESCALEDB_URL=postgresql://zephyr:password@timescaledb:5432/zephyr
+      - CLICKHOUSE_URL=clickhouse://clickhouse:9000/zephyr
     depends_on:
+      - redis
       - timescaledb
       - clickhouse
-      - redis
     restart: unless-stopped
 ```
 
 ---
 
-## 四、实施路径
-
-### Phase 1: 基础开发（1周）
-
-**任务清单**:
-- [x] 开发FastAPI应用
-- [x] 实现基础数据查询API
-- [x] 集成TimescaleDB和ClickHouse
-- [x] 添加认证和授权
-
-**预期成果**:
-- ✅ API服务运行正常
-- ✅ 支持基础数据查询
-- ✅ 自动生成API文档
-
----
-
-## 五、成本估算
-
-### 硬件成本
-
-**个人开发场景**:
-- CPU: 2核
-- 内存: 4GB
-- 成本: 云服务器 ¥100/月
-
-### 学习成本
-
-- FastAPI基础: 2天
-- API开发: 2天
-- **总计**: 4天
-
----
-
-## 六、相关文档
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **FastAPI** | 0.110+ | Web框架 | [官方文档](https://fastapi.tiangolo.com/) |
-| **uvicorn** | 0.27+ | ASGI服务器 | [官方文档](https://www.uvicorn.org/) |
-
----
-
-## 📝 变更历史
+## 📋 变更历史
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|

@@ -9,181 +9,258 @@ standard_type: 专业量化机构文档
 responsibility:
   - 实时数据分发
   - 数据订阅管理
-  - 消息队列
+  - 消息推送
 layer: "Layer 1 (数据预处理层)"
 ---
+
 # 数据订阅服务蓝图
 
-> **核心职责**: Data Subscription Service蓝图设计
+> **核心职责**: 实时数据分发、数据订阅管理、消息推送
 > **职责边界**: 
-> - ✅ 本文档负责：Data Subscription Service蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **核心定位**: 实时数据分发解决方案，为量化交易系统提供可靠的数据订阅服务
+> - ✅ 本模块负责：实时数据推送、订阅管理、消息队列
+> - ❌ 本模块不负责：数据存储、数据处理、API服务
 
 ## 核心定位
 
-**单一职责**: 实时数据分发、数据订阅管理、消息队列
+**单一职责**: 实时数据分发与订阅管理
 
 ### 职责边界
 
-**✅ 核心职责**:
-- 实时数据分发
-- 数据订阅管理
-- 数据解耦
-- 数据回放
-- 消息持久化
-
-**❌ 非职责范围**:
-- 数据存储（由TimescaleDB/ClickHouse负责）
-- 数据缓存（由Redis负责）
-- 数据处理（由数据管道负责）
+| 负责 | 不负责 |
+|------|--------|
+| ✅ 实时数据推送 | ❌ 数据存储 |
+| ✅ 订阅管理 | ❌ 数据处理 |
+| ✅ 消息队列 | ❌ API服务 |
+| ✅ 消费者组 | ❌ 数据清洗 |
+| ✅ 消息持久化 | ❌ 数据质量 |
 
 ---
 
-## 一、模块概述
+## 1. 技术选型
 
-### 1.1 业务价值
+### 1.1 为什么选择Redis Streams
 
-**为什么需要数据订阅服务**:
-- ✅ 实时数据分发
-- ✅ 数据解耦
-- ✅ 数据回放
-- ✅ 高吞吐、低延迟
-
-### 1.2 技术选型
-
-**为什么选择Apache Kafka**:
-- ✅ 高吞吐，低延迟
-- ✅ 支持数据回放
-- ✅ 支持数据持久化
-- ✅ 生态成熟
-- ✅ 单机部署简单
+| 特性 | Redis Streams | Kafka | RabbitMQ |
+|------|---------------|-------|----------|
+| 吞吐量 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| 延迟 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 持久化 | ✅ 中 | ✅ 强 | ✅ 强 |
+| 部署复杂度 | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐ |
+| 学习曲线 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 个人适用性 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
 
-## 二、核心组件设计
+## 2. 架构设计
+
+### 2.1 整体架构
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    数据订阅服务架构                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
+│  │ 数据发布层   │    │ 消息队列层   │    │ 数据消费层   │     │
+│  │              │    │              │    │              │     │
+│  │ • 行情发布   │    │ • Streams    │    │ • 订阅管理   │     │
+│  │ • 因子发布   │    │ • 消费者组   │    │ • 消息分发   │     │
+│  │ • 事件发布   │    │ • 消息确认   │    │ • 错误处理   │     │
+│  └──────────────┘    └──────────────┘    └──────────────┘     │
+│         │                   │                    │              │
+│         └───────────────────┴────────────────────┘              │
+│                            │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    订阅类型                              │   │
+│  │  • 行情订阅 (实时价格)                                   │   │
+│  │  • 因子订阅 (因子更新)                                   │   │
+│  │  • 事件订阅 (系统事件)                                   │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. 核心功能实现
+
+### 3.1 数据发布服务
 
 ```python
-from kafka import KafkaProducer, KafkaConsumer
-from typing import List, Dict, Any
+import redis
 import json
+from typing import Dict, List
+from datetime import datetime
 
-class DataSubscriptionService:
-    """数据订阅服务"""
+class DataPublisher:
+    """数据发布器"""
     
-    def __init__(self, bootstrap_servers: List[str] = ['localhost:9092']):
-        self.bootstrap_servers = bootstrap_servers
-        self.producer = KafkaProducer(
-            bootstrap_servers=bootstrap_servers,
-            value_serializer=lambda v: json.dumps(v).encode('utf-8')
-        )
+    def __init__(self, redis_client: redis.Redis):
+        self.redis = redis_client
     
-    def publish(self, topic: str, data: Dict[str, Any]):
-        """发布数据"""
-        self.producer.send(topic, value=data)
-        self.producer.flush()
+    def publish_price(self, symbol: str, price_data: Dict):
+        """发布实时价格"""
+        stream_name = f"stream:price:{symbol}"
+        message = {
+            "symbol": symbol,
+            "price": price_data["price"],
+            "volume": price_data.get("volume", 0),
+            "timestamp": datetime.now().isoformat()
+        }
+        return self.redis.xadd(stream_name, message)
     
-    def subscribe(
-        self,
-        topics: List[str],
-        group_id: str,
-        callback: callable
-    ):
-        """订阅数据"""
-        consumer = KafkaConsumer(
-            *topics,
-            bootstrap_servers=self.bootstrap_servers,
-            group_id=group_id,
-            value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-            auto_offset_reset='latest'
-        )
+    def publish_factor(self, factor_id: str, factor_data: Dict):
+        """发布因子更新"""
+        stream_name = f"stream:factor:{factor_id}"
+        message = {
+            "factor_id": factor_id,
+            "values": json.dumps(factor_data["values"]),
+            "timestamp": datetime.now().isoformat()
+        }
+        return self.redis.xadd(stream_name, message)
+    
+    def publish_event(self, event_type: str, event_data: Dict):
+        """发布系统事件"""
+        stream_name = "stream:events"
+        message = {
+            "event_type": event_type,
+            "data": json.dumps(event_data),
+            "timestamp": datetime.now().isoformat()
+        }
+        return self.redis.xadd(stream_name, message)
+```
+
+### 3.2 订阅管理服务
+
+```python
+class SubscriptionManager:
+    """订阅管理器"""
+    
+    def __init__(self, redis_client: redis.Redis):
+        self.redis = redis_client
+        self.subscriptions = {}
+    
+    def subscribe(self, client_id: str, stream_type: str, stream_id: str):
+        """订阅数据流"""
+        key = f"subscription:{client_id}"
+        stream_name = f"stream:{stream_type}:{stream_id}"
         
-        for message in consumer:
-            callback(message.value)
+        self.redis.sadd(key, stream_name)
+        
+        if stream_name not in self.subscriptions:
+            self.subscriptions[stream_name] = set()
+        self.subscriptions[stream_name].add(client_id)
+        
+        return True
+    
+    def unsubscribe(self, client_id: str, stream_type: str, stream_id: str):
+        """取消订阅"""
+        key = f"subscription:{client_id}"
+        stream_name = f"stream:{stream_type}:{stream_id}"
+        
+        self.redis.srem(key, stream_name)
+        
+        if stream_name in self.subscriptions:
+            self.subscriptions[stream_name].discard(client_id)
+        
+        return True
+    
+    def get_subscriptions(self, client_id: str) -> List[str]:
+        """获取客户端订阅列表"""
+        key = f"subscription:{client_id}"
+        return list(self.redis.smembers(key))
+```
+
+### 3.3 消费者服务
+
+```python
+import asyncio
+from typing import Callable
+
+class DataConsumer:
+    """数据消费者"""
+    
+    def __init__(self, redis_client: redis.Redis, group_name: str, consumer_name: str):
+        self.redis = redis_client
+        self.group_name = group_name
+        self.consumer_name = consumer_name
+        self.running = False
+    
+    async def consume(
+        self,
+        stream_name: str,
+        callback: Callable,
+        count: int = 10,
+        block: int = 1000
+    ):
+        """消费数据流"""
+        try:
+            self.redis.xgroup_create(stream_name, self.group_name, id='0')
+        except redis.ResponseError:
+            pass
+        
+        self.running = True
+        
+        while self.running:
+            messages = self.redis.xreadgroup(
+                groupname=self.group_name,
+                consumername=self.consumer_name,
+                streams={stream_name: '>'},
+                count=count,
+                block=block
+            )
+            
+            if messages:
+                for stream, msgs in messages:
+                    for msg_id, data in msgs:
+                        try:
+                            await callback(data)
+                            self.redis.xack(stream_name, self.group_name, msg_id)
+                        except Exception as e:
+                            print(f"处理消息失败: {e}")
+    
+    def stop(self):
+        """停止消费"""
+        self.running = False
 ```
 
 ---
 
-## 三、部署方案
+## 4. WebSocket推送
 
-### 3.1 Docker部署
+```python
+from fastapi import WebSocket, WebSocketDisconnect
+import asyncio
 
-```yaml
-version: '3.8'
-
-services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zephyr_zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    ports:
-      - "2181:2181"
-  
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: zephyr_kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+class WebSocketManager:
+    """WebSocket连接管理器"""
+    
+    def __init__(self):
+        self.connections: Dict[str, List[WebSocket]] = {}
+    
+    async def connect(self, client_id: str, websocket: WebSocket):
+        """建立连接"""
+        await websocket.accept()
+        if client_id not in self.connections:
+            self.connections[client_id] = []
+        self.connections[client_id].append(websocket)
+    
+    def disconnect(self, client_id: str, websocket: WebSocket):
+        """断开连接"""
+        if client_id in self.connections:
+            self.connections[client_id].remove(websocket)
+    
+    async def broadcast(self, client_id: str, message: dict):
+        """广播消息"""
+        if client_id in self.connections:
+            for ws in self.connections[client_id]:
+                await ws.send_json(message)
 ```
 
 ---
 
-## 四、实施路径
-
-### Phase 1: 基础部署（1周）
-
-**任务清单**:
-- [x] Docker部署Kafka
-- [x] 开发数据发布器
-- [x] 开发数据订阅器
-- [x] 集成到数据管道
-
-**预期成果**:
-- ✅ Kafka服务运行正常
-- ✅ 支持数据发布和订阅
-- ✅ 支持数据回放
-
----
-
-## 五、成本估算
-
-### 硬件成本
-
-**个人开发场景**:
-- CPU: 4核
-- 内存: 8GB
-- 成本: 云服务器 ¥200/月
-
-### 学习成本
-
-- Kafka基础: 3天
-- Python客户端开发: 1天
-- **总计**: 4天
-
----
-
-## 六、相关文档
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **Apache Kafka** | 3.6+ | 消息队列 | [官方文档](https://kafka.apache.org/documentation/) |
-| **kafka-python** | 2.0+ | Python客户端 | [官方文档](https://kafka-python.readthedocs.io/) |
-
----
-
-## 📝 变更历史
+## 📋 变更历史
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|

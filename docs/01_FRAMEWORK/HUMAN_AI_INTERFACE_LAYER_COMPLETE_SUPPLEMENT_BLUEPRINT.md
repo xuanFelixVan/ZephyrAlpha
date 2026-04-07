@@ -1,11 +1,6 @@
 ---
 module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
 
-responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
-
 # 人机交互层完整补充蓝图
 > **核心职责**: Human Ai Interface Layer Complete Supplement蓝图设计
 > **职责边界**: 

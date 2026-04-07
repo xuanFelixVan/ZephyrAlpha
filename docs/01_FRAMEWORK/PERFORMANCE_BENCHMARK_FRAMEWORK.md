@@ -1,9 +1,5 @@
 ---
 standard_type: ææ¯è§è?applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
-responsibility:
-  - 因子计算
-  - 绩效分析
-  - 系统架构
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­æ¶æå¸?version: 1.0.0
 module_id: PERFORMANCE_BENCHMARK_FRAMEWORK

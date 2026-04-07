@@ -1,9 +1,4 @@
 ---
-responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
-
 module_id: POST_QUANTUM_CRYPTOGRAPHY_BLUEPRINT_001
 version: 1.0.0
 status: Active

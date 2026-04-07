@@ -1,9 +1,4 @@
 ---
-responsibility:
-  - 因子计算
-  - 风险预算
-  - 数据质量
-
 module_id: HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_001
 version: 1.0.0
 status: Active

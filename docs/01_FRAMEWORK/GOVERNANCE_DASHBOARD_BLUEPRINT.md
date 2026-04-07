@@ -5,10 +5,6 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
-responsibility:
-  - 数据质量
-  - 因子计算
-  - 组合优化
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 治理仪表板系统
