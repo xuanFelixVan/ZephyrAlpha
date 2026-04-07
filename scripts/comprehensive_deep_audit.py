@@ -398,12 +398,12 @@ class ComprehensiveDeepAudit:
             "duplicate_files": self.duplicate_files[:20],
             "overlapping_responsibility": [
                 {
-                    "responsibility": item["responsibility"],
-                    "file_count": len(item["files"]),
-                    "files": item["files"][:5]
+                    "responsibility": resp,
+                    "file_count": len(files),
+                    "files": files[:5]
                 }
-                for item in self.responsibility_map.items()
-                if len(item[1]) > 3 and item[0] not in ['扩展功能、辅助模块', '核心功能、主模块']
+                for resp, files in self.responsibility_map.items()
+                if len(files) > 3 and resp not in ['扩展功能、辅助模块', '核心功能、主模块']
             ][:10]
         }
         
