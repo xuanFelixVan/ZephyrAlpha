@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CORRELATION_PREDICTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ layer: Layer 3 (策略层)
 
 
 
-# 相关性预测模型蓝?
+# 相关性预测模型蓝图
 > **核心职责**: 提供correlation prediction blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Correlation Prediction蓝图设计相关内容

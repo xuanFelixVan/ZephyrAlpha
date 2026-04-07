@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 04_EXECUTION_INDEX
 version: 1.0.0
 status: Active
@@ -87,7 +87,7 @@ implementation_status: 活跃维护---
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| README | 执行层概?| ⭐⭐⭐⭐?|
+| README | 执行层概述| ⭐⭐⭐⭐?|
 | [信号生成](./signal_generation.md) | 信号生成机制 | ⭐⭐⭐⭐ |
 
 ### 事件引擎

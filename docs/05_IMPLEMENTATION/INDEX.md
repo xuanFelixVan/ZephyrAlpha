@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_IMPLEMENTATION_001
 version: 1.0.1
 status: Active
@@ -82,7 +82,7 @@ implementation_status: 活跃维护---
 ### 开发指标
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| 开发概述 | 开发概?| ⭐⭐⭐⭐?|
+| 开发概述 | 开发概述| ⭐⭐⭐⭐?|
 | [开发标准](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 开发标?| ⭐⭐⭐⭐?|
 | [设计原则](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) | 设计原则 | ⭐⭐⭐⭐ |
 | [代码质量](./02_DEVELOPMENT/CODE_QUALITY.md) | 代码质量标准 | ⭐⭐⭐⭐ |

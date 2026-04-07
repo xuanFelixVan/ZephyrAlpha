@@ -6,14 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 因子定义标准
-  - 因子分类体系
-  - 因子注册规范
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 01_STANDARDS 标准文档
 
 > **核心职责**: 因子定义、分类、注册等标准规范

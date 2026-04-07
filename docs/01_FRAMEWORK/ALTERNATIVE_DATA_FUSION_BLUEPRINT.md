@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALTERNATIVE_DATA_FUSION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -80,7 +80,7 @@ layer: Layer 0 (数据源层)
 
 - **网络流量**: 电商销售预?- **气象数据**: 农产品、能源预?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

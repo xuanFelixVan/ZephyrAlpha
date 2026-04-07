@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 联邦查询引擎
-  - 多源数据整合
-  - 查询优化策略
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # Data Federation
 

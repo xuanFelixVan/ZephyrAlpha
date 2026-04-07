@@ -11,10 +11,10 @@ responsibility:
   - 风险归因分析
   - 风险分解
   - 风险贡献计算
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
-﻿---
+---
 responsibility:
 - 风险归因系统
 - 风险分解

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_PREPROCESSING_IMPROVEMENT_PLAN
 version: 1.0.0
 status: Active
@@ -428,7 +428,7 @@ responsibility:
 | 版本 | 时间 | 主要内容 |
 |------|------|---------|
 | **v1.1** | Month 4 | 性能优化和Bug修复 |
-| **v1.2** | Month 5 | 新增功能和优?|
+| **v1.2** | Month 5 | 新增功能和优化|
 | **v2.0** | Month 6 | 重大版本升级 |
 
 ---

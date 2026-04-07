@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 生命周期策略
-  - 数据过期处理
-  - 存储成本优化
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # Data Lifecycle Management
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ACTIVE_LEARNING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -80,7 +80,7 @@ layer: Layer 3 (策略层)
 
 - **不确定性采?*: 基于模型不确定?- **多样性采?*: 保持样本多样?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -92,7 +92,7 @@ layer: Layer 3 (策略层)
 
 | **模型性能** | 相同标注下更新|
 
-| **迭代加?* | 加速模型迭?|
+| **迭代加?* | 加速模型迭代|
 
 
 
@@ -230,7 +230,7 @@ class ActiveLearning:
 
             model: 当前模型
 
-            labeled_data: 已标注数?            new_labels: 新指标            
+            labeled_data: 已标注数据            new_labels: 新指标            
 
         Returns:
 

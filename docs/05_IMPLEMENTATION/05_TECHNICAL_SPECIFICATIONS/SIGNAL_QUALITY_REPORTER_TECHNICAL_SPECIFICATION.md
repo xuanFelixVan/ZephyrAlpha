@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-## 一、概?
+## 一、概述
 ### 1.1 模块定位
 
 **模块ID**: SIGNAL_QUALITY_REPORTER_001

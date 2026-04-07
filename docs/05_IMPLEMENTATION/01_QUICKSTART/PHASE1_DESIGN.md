@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PHASE1_DESIGN
 version: 1.0.0
 status: Active
@@ -762,7 +762,7 @@ backtest:
 
 ## 5. 运行脚本
 
-### 5.1 命令行运?
+### 5.1 命令行运行
 
 ```bash
 # 基本运行
@@ -870,7 +870,7 @@ python src/main.py --code 000001.SZ --commission 0.001
 学完Phase 1后，您可?
 
 1. **修改策略参数**: 尝试不同的均线周期组?
-2. **添加新策?*: 在strategies目录创建新策?
+2. **添加新策?*: 在strategies目录创建新策略
 3. **学习因子选股**: 进入Phase 2
 
 ---

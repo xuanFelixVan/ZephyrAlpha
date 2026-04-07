@@ -12,7 +12,7 @@ responsibility:
   - 风险分散评估
   - 集中度分析
   - 分散化优化
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

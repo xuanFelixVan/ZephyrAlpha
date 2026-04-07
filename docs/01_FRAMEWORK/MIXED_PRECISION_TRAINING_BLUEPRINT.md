@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MIXED_PRECISION_TRAINING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -77,7 +77,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

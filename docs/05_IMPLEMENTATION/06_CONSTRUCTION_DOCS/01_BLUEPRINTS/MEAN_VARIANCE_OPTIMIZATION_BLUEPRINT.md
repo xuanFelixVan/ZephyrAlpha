@@ -13,7 +13,7 @@ responsibility:
   - 有效前沿计算
   - 最优权重求解
   - 风险收益权衡
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

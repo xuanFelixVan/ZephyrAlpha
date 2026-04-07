@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONSTRAINTS_SOLVER_TECHNICAL_SPECIFICATION_ARCHIVED
 version: 1.0.0
 status: Active
@@ -46,7 +46,7 @@ implementation_status: 进行?
   - 约束求解效率：需要高效求解满足约束的?
 - **预期?*: 
   - 建立统一的约束管理机?
-  - 提供约束冲突检测能?
+  - 提供约束冲突检测能力
   - 实现约束优先级管?
   - 支持高效约束求解
 
@@ -1037,7 +1037,7 @@ def test_constraints_solver_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 约束定义 | 定义正确 | 单元测试 |
 | 约束验证 | 验证正确 | 单元测试 |
@@ -1064,7 +1064,7 @@ def test_constraints_solver_integration():
 ### 10.1 Phase 1: 核心功能开?(3?
 - **Day 1**: 约束定义器、约束验证器
 - **Day 2**: 冲突检测器、优先级管理?
-- **Day 3**: 求解引擎、放松管理器、集成测?
+- **Day 3**: 求解引擎、放松管理器、集成测试
 
 ---
 

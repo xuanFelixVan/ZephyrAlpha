@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXPERIMENT_TRACKING
 version: 1.0.0
 status: Active
@@ -701,7 +701,7 @@ class TestWandbIntegration:
         assert study.best_value > 0
 ```
 
-### 10.4 端到端测?
+### 10.4 端到端测试
 
 ```python
 # tests/e2e/test_experiment_e2e.py
@@ -816,7 +816,7 @@ class MetricRecord(BaseModel):
 ```
 
 
-## 12. wandb最佳实?
+## 12. wandb最佳实现
 
 ### 12.1 项目组织
 
@@ -884,7 +884,7 @@ wandb:
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-29 | 初始版本 |
-| v1.1 | 2026-03-29 | 补充测试策略、数据模型、最佳实?|
+| v1.1 | 2026-03-29 | 补充测试策略、数据模型、最佳实现|
 
 
 **维护?*: 清风量化系统

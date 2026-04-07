@@ -12,7 +12,7 @@ responsibility:
   - 压力测试
   - 情景归因
   - 情景报告生成
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

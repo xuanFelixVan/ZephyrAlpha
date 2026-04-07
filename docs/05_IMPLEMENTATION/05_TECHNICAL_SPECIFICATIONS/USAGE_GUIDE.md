@@ -1,4 +1,4 @@
----
+﻿---
 module_id: USAGE_GUIDE
 version: 1.0.0
 status: Active
@@ -166,7 +166,7 @@ df = pd.DataFrame(results).T
 print(df)
 ```
 
-### 2.4 最佳实?
+### 2.4 最佳实现
 **?推荐做法**:
 ```python
 analyzer = ScenarioAnalyzer(config={
@@ -260,7 +260,7 @@ print(f"最严重情景: {comprehensive_result.worst_case_scenario}")
 print(f"建议: {comprehensive_result.recommendations}")
 ```
 
-### 3.5 最佳实?
+### 3.5 最佳实现
 **?推荐做法**:
 ```python
 reporter = StressTestReporter(config={
@@ -369,7 +369,7 @@ ws = websocket.WebSocketApp(
 ws.run_forever()
 ```
 
-### 4.5 最佳实?
+### 4.5 最佳实现
 **?推荐做法**:
 ```python
 reporter = RealTimeRiskReporter(config={
@@ -445,7 +445,7 @@ print(f"整体评估: {fused_report.overall_assessment}")
 print(f"行动? {fused_report.action_items}")
 ```
 
-### 5.2 自动化融合流?
+### 5.2 自动化融合流程
 ```python
 from zephyr_alpha.reports import FusionScheduler
 
@@ -463,7 +463,7 @@ scheduler.schedule_fusion(
 scheduler.start()
 ```
 
-### 5.3 最佳实?
+### 5.3 最佳实现
 **?推荐做法**:
 ```python
 fusion = MultiTimeframeReportFusion(config={
@@ -513,7 +513,7 @@ print(f"警告策略: {len(lifecycle_report.warning_strategies)}")
 print(f"平均夏普: {lifecycle_report.performance_summary['avg_sharpe']:.2f}")
 ```
 
-### 6.2 策略退役流?
+### 6.2 策略退役流程
 ```python
 strategy_id = "STRAT_002"
 
@@ -532,7 +532,7 @@ print(f"历史表现: {retirement_report.historical_performance}")
 print(f"经验教训: {retirement_report.lessons_learned}")
 ```
 
-### 6.3 最佳实?
+### 6.3 最佳实现
 **?推荐做法**:
 ```python
 reporter = StrategyLifecycleReporter(config={
@@ -588,7 +588,7 @@ reporter.compliance_checker.add_custom_rule(
 )
 ```
 
-### 7.3 最佳实?
+### 7.3 最佳实现
 **?推荐做法**:
 ```python
 reporter = RegulatoryReporter(config={
@@ -646,7 +646,7 @@ print(f"决策路径: {sample_explanation.decision_path}")
 print(f"置信? {sample_explanation.confidence:.2%}")
 ```
 
-### 8.3 最佳实?
+### 8.3 最佳实现
 **?推荐做法**:
 ```python
 reporter = AIExplainabilityReporter(config={
@@ -720,7 +720,7 @@ for opportunity in optimization_report.opportunities:
     print(f"潜在节省: {opportunity.potential_saving:,.2f}")
 ```
 
-### 9.3 最佳实?
+### 9.3 最佳实现
 **?推荐做法**:
 ```python
 reporter = ExecutionCostReporter(config={
@@ -828,7 +828,7 @@ scheduler.start()
 
 ---
 
-## 十一、性能优化最佳实?
+## 十一、性能优化最佳实现
 ### 11.1 缓存策略
 
 ```python
@@ -922,7 +922,7 @@ reporter = RealTimeRiskReporter(log_level='DEBUG')
 
 ---
 
-## 十三、安全最佳实?
+## 十三、安全最佳实现
 ### 13.1 访问控制
 
 ```python

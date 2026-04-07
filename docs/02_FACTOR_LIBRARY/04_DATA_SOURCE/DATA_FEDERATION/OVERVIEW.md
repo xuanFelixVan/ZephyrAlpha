@@ -6,15 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 联邦查询引擎
-  - 多源数据整合
-  - 查询优化策略
+  - 模块概览
+  - 核心概念
+  - 关键流程
 standard_type: 概览文档
 applicable_scope: 因子库数据源层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 数据联邦概览
 
 > **核心职责**: 联邦查询引擎、多源数据整合、查询优化策略

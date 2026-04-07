@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TACTICS_YOUZI_OTHER_L_001
 version: 3.0.1
 status: Active
@@ -39,7 +39,7 @@ implementation_status: 进行?
 
 ## 1. 乔帮主完整策略体?(S106)
 
-> **来源**：附录BS - 乔帮主完整量化策略体?
+> **来源**：附录BS - 乔帮主完整量化策略体系
 >
 > **核心**：从1万到10亿的游资成长之路
 
@@ -347,7 +347,7 @@ class SmallCrocodileAntiPackage:
 
 ## 3. Asking/局部炒单策?(S108)
 
-> **来源**：附录BT - Asking/局部炒单量化策?
+> **来源**：附录BT - Asking/局部炒单量化策略
 
 ### S108A: Asking核心理念
 

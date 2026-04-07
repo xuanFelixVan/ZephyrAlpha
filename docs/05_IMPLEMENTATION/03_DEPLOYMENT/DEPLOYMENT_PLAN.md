@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEPLOYMENT_PLAN
 version: 1.0.0
 status: Active
@@ -64,7 +64,7 @@ responsibility:
 **任务**:
 - [ ] 构建Docker镜像
 - [ ] 部署DataHub模块
-- [ ] 部署FactorCalculator模块 (8个实?
+- [ ] 部署FactorCalculator模块 (8个实现
 - [ ] 部署StrategyEngine模块
 - [ ] 部署TradeExecutor模块
 - [ ] 部署RiskMonitor模块
@@ -95,7 +95,7 @@ responsibility:
 **目标**: 准备历史数据和配?
 
 **任务**:
-- [ ] 下载5年历史数?
+- [ ] 下载5年历史数据
 - [ ] 数据清洗和预处理
 - [ ] 计算历史因子
 - [ ] 数据验证和备?
@@ -124,7 +124,7 @@ responsibility:
 
 ### 阶段6: 上线运维 (?1?)
 
-**目标**: 系统上线和运?
+**目标**: 系统上线和运行
 
 **任务**:
 - [ ] 模拟交易验证
@@ -251,7 +251,7 @@ kubectl apply -f k8s/
 
 1. **??*: PostgreSQL、Redis、Kafka
 2. **??*: DataHub、ConfigManager、LogManager
-3. **??*: FactorCalculator (8个实?、RiskManager
+3. **??*: FactorCalculator (8个实现、RiskManager
 4. **??*: StrategyEngine、PortfolioOptimizer
 5. **??*: TradeExecutor、RiskMonitor、PerformanceAnalyzer
 6. **??*: AlertManager、MetricsCollector、EventBus
@@ -272,8 +272,8 @@ kubectl apply -f k8s/
 ### 数据库检查
 
 - [ ] PostgreSQL启动成功
-- [ ] 数据库创建完?
-- [ ] 表结构创建完?
+- [ ] 数据库创建完整
+- [ ] 表结构创建完整
 - [ ] 索引创建完成
 - [ ] 备份策略配置完成
 
@@ -372,7 +372,7 @@ kubectl apply -f k8s/
 **总部署周?*: 10-11?
 
 
-## 8. 版本控制与备份策?
+## 8. 版本控制与备份策略
 
 ### 8.1 Git版本控制规范
 
@@ -426,28 +426,28 @@ git prune                    # 清理松散对象
 ```
 
 
-## 9. 部署后优?
+## 9. 部署后优化
 
 ### 性能优化
 
-- 数据库查询优?
+- 数据库查询优化
 - 缓存策略优化
 - 网络传输优化
 - 计算算法优化
 
 ### 成本优化
 
-- 资源利用率优?
+- 资源利用率优化
 - 存储成本优化
 - 网络成本优化
 - 人力成本优化
 
-### 可靠性优?
+### 可靠性优化
 
 - 故障转移优化
 - 备份策略优化
 - 监控告警优化
-- 应急预案优?
+- 应急预案优化
 
 
 ## 10. 1?AI模式简化部?

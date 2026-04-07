@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEVELOPER_RULES
 version: 1.0.0
 status: Active
@@ -83,7 +83,7 @@ implementation_status: 进行?---
 - 测试规范（测试文件位置、命名、覆盖率要求?
 - 文件归属检查清单
 
-### 2. 开发工作流?
+### 2. 开发工作流程
 
 **文件**: [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md)  
 **版本**: v5.3  
@@ -98,7 +98,7 @@ implementation_status: 进行?---
 - 版本控制（分支策略、版本号规范、标签管理）
 - 代码审查（审查要点、审查流程）
 
-### 3. 设计原则与系统架?
+### 3. 设计原则与系统架构
 
 **文件**: [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md)  
 **版本**: v5.3  
@@ -136,7 +136,7 @@ implementation_status: 进行?---
 | 三、代码指标| DEVELOPMENT_STANDARDS.md | 三、代码指标|
 | 四、配置管?| DEVELOPMENT_STANDARDS.md | 四、配置管?|
 | 五、测试规范| DEVELOPMENT_STANDARDS.md | 五、测试规范|
-| 六、工作流?| DEVELOPMENT_WORKFLOW.md | 一、开发流?|
+| 六、工作流程| DEVELOPMENT_WORKFLOW.md | 一、开发流程|
 | 七、提交规范| DEVELOPMENT_WORKFLOW.md | 二、提交规范|
 | 八、依赖管?| DEVELOPMENT_WORKFLOW.md | 三、依赖管?|
 | 九、日志规范| DEVELOPMENT_WORKFLOW.md | 四、日志规范|
@@ -144,7 +144,7 @@ implementation_status: 进行?---
 | 十、开源优先原?| DESIGN_PRINCIPLES.md | 二、开源优先原?|
 | 十、容错与恢复机制 | DESIGN_PRINCIPLES.md | 三、容错与恢复机制 |
 | 十、Graceful Shutdown | DESIGN_PRINCIPLES.md | 四、优雅关闭机?|
-| 十、系统自愈能?| DESIGN_PRINCIPLES.md | 五、系统自愈能?|
+| 十、系统自愈能力| DESIGN_PRINCIPLES.md | 五、系统自愈能力|
 | 十、性能指标要求 | DESIGN_PRINCIPLES.md | 六、性能指标要求 |
 
 

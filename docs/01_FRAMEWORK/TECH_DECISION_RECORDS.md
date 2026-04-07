@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECH_DECISION_RECORDS
 version: 1.0.0
 status: Active
@@ -243,7 +243,7 @@ implementation_status: 蓝图设计完成
 
 **决策背景**?- 需要支持深度学习模型（LSTM、Transformer等）
 - 需要支持传统机器学习模型（随机森林、XGBoost等）
-- 需要灵活的模型定制和调试能?
+- 需要灵活的模型定制和调试能力
 **备选方案对?*?
 | 维度 | PyTorch + scikit-learn | TensorFlow + scikit-learn | JAX + scikit-learn |
 |------|----------------------|--------------------------|-------------------|

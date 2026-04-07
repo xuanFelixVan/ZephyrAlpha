@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONSTRUCTION_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -304,7 +304,7 @@ implementation_status: [实施状态]
 | `standard_type` | ?| 字符?| 文档类型 |
 | `applicable_scope` | ?| 字符?| 适用范围 |
 | `compliance_level` | ?| 字符?| 合规级别 |
-| `parent_document` | ?| 相对路径 | 父文档路?|
+| `parent_document` | ?| 相对路径 | 父文档路径|
 | `implementation_status` | ?| 字符?| 实施?|
 
 ---
@@ -515,7 +515,7 @@ LS d:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\
 |--------|------|--------|---------|
 | 文件位置 | 符合文件夹结构规范| ?| 🔴 阻断 |
 | 文件命名 | 符合命名规范 | ?| 🔴 阻断 |
-| 文档元数?| 必需字段完整 | ?| 🔴 阻断 |
+| 文档元数据| 必需字段完整 | ?| 🔴 阻断 |
 | 代码注释 | 关键函数有注?| ?| 🟡 警告 |
 | 导入顺序 | 标准库→第三方→本地 | ?| 🟡 警告 |
 

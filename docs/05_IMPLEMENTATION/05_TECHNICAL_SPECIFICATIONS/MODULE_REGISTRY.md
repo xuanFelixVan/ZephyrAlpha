@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_REGISTRY
 version: 1.0.0
 status: Active
@@ -72,7 +72,7 @@ responsibility:
 | DATACLEANER_001 | 数据清洗?| 数据清洗、缺失值处?| Active |
 | DATAVALIDATOR_001 | 数据验证?| 数据质量验证 | Active |
 | DATANORMALIZER_001 | 数据标准化器 | 数据标准化、归一?| Active |
-| ASHARE_HISTORICAL_001 | A股历史数?| A股历史数据管?| Active |
+| ASHARE_HISTORICAL_001 | A股历史数据| A股历史数据管?| Active |
 
 ### 2.3 Layer 2 - Alpha因子?
 | 模块ID | 模块名称 | 核心职责 | 状态|

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -49,7 +49,7 @@ implementation_status: 设计阶段
 
 **技术痛?*?- 无智能执行算法引擎（VWAP/TWAP/IS/POV?- 无市场冲击预测和控制机制
 - 无实时执行监控和动态调整能?- 无执行算法性能评估和优化系统
-**预期?*?- 降低执行成本60-80%（从0.5-1.0%降至0.1-0.3%?- 提高大额订单执行效率，减少市场冲?- 实现执行过程的实时监控和动态优?- 为策略提供专业机构级的执行能?
+**预期?*?- 降低执行成本60-80%（从0.5-1.0%降至0.1-0.3%?- 提高大额订单执行效率，减少市场冲?- 实现执行过程的实时监控和动态优?- 为策略提供专业机构级的执行能力
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 5 - 策略执行层（微观执行层）
 
@@ -57,7 +57,7 @@ implementation_status: 设计阶段
 
 **架构角色**: 
 - 作为微观执行层的核心组件，为大额订单提供智能执行能力
-- 作为成本控制的关键环节，最小化交易成本和市场冲?- 作为执行质量保障系统，提供实时监控和动态调整能?
+- 作为成本控制的关键环节，最小化交易成本和市场冲?- 作为执行质量保障系统，提供实时监控和动态调整能力
 ### 1.3 版本信息与变更记?
 | 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
@@ -165,7 +165,7 @@ class ExecutionResult:
     executed_quantity: int
     execution_rate: float
     avg_execution_price: float
-    target_price: float  # VWAP/TWAP等基准价?    slippage_bps: float  # 滑点（基点）
+    target_price: float  # VWAP/TWAP等基准价值    slippage_bps: float  # 滑点（基点）
     execution_cost: float  # 执行成本
     market_impact: float  # 市场冲击
     execution_time: timedelta
@@ -190,7 +190,7 @@ class SmartExecutionEngineAPI(ABC):
         Args:
             symbol: 股票代码
             side: 买卖方向
-            quantity: 总数?            algorithm: 执行算法类型
+            quantity: 总数据            algorithm: 执行算法类型
             duration_minutes: 执行时长（分钟）
             participation_rate: 参与率（POV算法?            urgency: 紧急流程            price_limit: 价格限制
             
@@ -296,7 +296,7 @@ class SmartExecutionEngineAPI(ABC):
             market_conditions: 市场条件
             
         Returns:
-            AlgorithmType: 最优算法类?        """
+            AlgorithmType: 最优算法类别        """
         pass
     
     @abstractmethod

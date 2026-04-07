@@ -6,14 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 因子性能监控
-  - 因子预警管理
-  - 因子报告生成
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 07_FACTOR_MONITORING 因子监控
 
 > **核心职责**: 因子性能监控、预警和报告

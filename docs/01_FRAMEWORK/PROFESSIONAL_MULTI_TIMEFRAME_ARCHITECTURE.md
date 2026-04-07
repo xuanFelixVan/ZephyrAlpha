@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE
 version: 1.0.0
 status: Active
@@ -55,7 +55,7 @@ responsibility:
 
 **融合三大机构模式**?
 ?
-交易团??多策略模块协?
+交易团??多策略模块协作
 
 ### 1.2
 ?
@@ -238,7 +238,7 @@ class AllWeatherOptimizer:
 执?|
 额收益(Alpha)生成，战术调?|
 | **风险目标** | 风险调整后收益最大化 |
-| **调整频率** | 日度信号生成，周度参数优?|
+| **调整频率** | 日度信号生成，周度参数优化|
 
 ### 3.2 核心组件
 
@@ -914,7 +914,7 @@ class UnifiedDataInfrastructure:
         return fresh_data
 ```
 
-### 5.2 多时间框架风控体?
+### 5.2 多时间框架风控体系
 
 ```python
 class MultiTimeframeRiskSystem:
@@ -1044,9 +1044,9 @@ class FullCyclePerformanceAttribution:
 
 ---
 
-## 🚀 架构迁移与实施路?
+## 🚀 架构迁移与实施路径
 
-### 6.1 阶段式迁移策?
+### 6.1 阶段式迁移策略
 
 |------|------|------|------------|
 | **阶段1** | 1-2个月 | 架构设计与基础框架 | 1. 完整架构文档<br>2. 数据基础设施升级<br>3. 基础接口定义 |
@@ -1057,7 +1057,7 @@ class FullCyclePerformanceAttribution:
 
 | 组件类别 | 推荐技?| 替代方案 | 选择理由 |
 |----------|----------|----------|----------|
-| **数据处理** | Apache Spark + Delta Lake | Dask + Parquet | 大规模时间序列处理能?|
+| **数据处理** | Apache Spark + Delta Lake | Dask + Parquet | 大规模时间序列处理能力|
 | **实时计算** | Apache Flink | Kafka Streams | 低延迟流处理，状态管?|
 | **时序数据?* | InfluxDB + QuestDB | TimescaleDB | 高频数据存储与查?|
 | **机器学习** | PyTorch + Qlib | TensorFlow + Alphalens | 量化专用，因子研究友?|
@@ -1073,13 +1073,13 @@ class FullCyclePerformanceAttribution:
 | **
 机会捕捉** | 20-30% | 80-90% | 提升3-4?|
 | **风险响应速度** | 分钟?| 秒级 | 提升60?|
-| **策略容量** | 10-20个策?| 100+策略 | 提升5-10?|
+| **策略容量** | 10-20个策略| 100+策略 | 提升5-10?|
 | **回测速度** | 小时?| 分钟?| 提升10-60?|
 | **系统可用?* | 95% | 99.9% | 提升至机构级 |
 
 ---
 
-## 📋 总结：专业机构级架构的核心价?
+## 📋 总结：专业机构级架构的核心价值
 
 ### 7.1 架构优势总结
 

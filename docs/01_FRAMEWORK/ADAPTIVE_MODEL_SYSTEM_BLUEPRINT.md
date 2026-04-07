@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ADAPTIVE_MODEL_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -165,7 +165,7 @@ Two Sigma自适应架构:
 
 ```
 
-┌─────────────────────────────────────────────────────────────────??                   统一自适应模型系统架构                         ?├─────────────────────────────────────────────────────────────────??                                                                ?? Layer 1: 市场感知?                                           ??     ├── RegimeDetector (市场状态识别器)                         ??     ├── FeatureMonitor (特征监控?                             ??     ├── PerformanceTracker (性能追踪?                         ??     └── AnomalyDetector (异常检测器)                            ??                                                                ?? Layer 2: 模型管理?                                           ??     ├── ModelPool (模型?                                      ??     ├── ModelSelector (模型选择?                              ??     ├── ModelRegistry (模型注册?                              ??     └── ModelVersionControl (模型版本管理)                      ??                                                                ?? Layer 3: 集成决策?                                           ??     ├── EnsembleManager (集成管理?                            ??     ├── WeightOptimizer (权重优化?                            ??     ├── ConfidenceCalculator (置信度计算器)                     ??     └── DecisionAggregator (决策聚合?                         ??                                                                ?? Layer 4: 自我优化?                                           ??     ├── PerformanceAnalyzer (性能分析?                        ??     ├── HyperparameterTuner (超参数调优器)                      ??     ├── AutoRetrainer (自动重训练器)                            ??     └── ModelUpdater (模型更新?                               ??                                                                ?? Layer 5: 监控反馈?                                           ??     ├── RealTimeMonitor (实时监控?                            ??     ├── DriftDetector (漂移检测器)                              ??     ├── AlertGenerator (告警生成?                             ??     └── FeedbackCollector (反馈收集成                          ??                                                                ?└─────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────??                   统一自适应模型系统架构                         ?├─────────────────────────────────────────────────────────────────??                                                                ?? Layer 1: 市场感知?                                           ??     ├── RegimeDetector (市场状态识别器)                         ??     ├── FeatureMonitor (特征监控?                             ??     ├── PerformanceTracker (性能追踪?                         ??     └── AnomalyDetector (异常检测器)                            ??                                                                ?? Layer 2: 模型管理?                                           ??     ├── ModelPool (模型?                                      ??     ├── ModelSelector (模型选择?                              ??     ├── ModelRegistry (模型注册?                              ??     └── ModelVersionControl (模型版本管理)                      ??                                                                ?? Layer 3: 集成决策略                                           ??     ├── EnsembleManager (集成管理?                            ??     ├── WeightOptimizer (权重优化?                            ??     ├── ConfidenceCalculator (置信度计算器)                     ??     └── DecisionAggregator (决策聚合?                         ??                                                                ?? Layer 4: 自我优化?                                           ??     ├── PerformanceAnalyzer (性能分析?                        ??     ├── HyperparameterTuner (超参数调优器)                      ??     ├── AutoRetrainer (自动重训练器)                            ??     └── ModelUpdater (模型更新?                               ??                                                                ?? Layer 5: 监控反馈?                                           ??     ├── RealTimeMonitor (实时监控?                            ??     ├── DriftDetector (漂移检测器)                              ??     ├── AlertGenerator (告警生成?                             ??     └── FeedbackCollector (反馈收集成                          ??                                                                ?└─────────────────────────────────────────────────────────────────?```
 
 
 
@@ -715,7 +715,7 @@ class PerformanceMonitor:
 
 
 
-### 3.2 自动重训练流?
+### 3.2 自动重训练流程
 
 ```python
 
@@ -993,9 +993,9 @@ class AdaptiveMLPipeline:
 
 | **hmmlearn** | HMM模型 | 2.6k+ | 成熟稳定,易于使用 |
 
-| **Optuna** | 超参数优?| 8k+ | 业界标准,高效 |
+| **Optuna** | 超参数优化| 8k+ | 业界标准,高效 |
 
-| **MLflow** | 模型管理 | 17k+ | 功能全面,生态完?|
+| **MLflow** | 模型管理 | 17k+ | 功能全面,生态完整|
 
 | **DVC** | 数据版本控制 | 12k+ | 与MLflow配合 |
 

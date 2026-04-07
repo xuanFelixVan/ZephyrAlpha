@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CANDLE_PATTERNS
 version: 1.0.0
 status: Active
@@ -341,7 +341,7 @@ def _classify_doji(self, candle: Candle) -> str:
 
 ### 4.1 吞没形?(Engulfing Pattern)
 
-**定义**: 第二根蜡烛的实体完全"吞没"第一根蜡烛的实体?
+**定义**: 第二根蜡烛的实体完全"吞没"第一根蜡烛的实体系
 
 **看涨吞没 (Bullish Engulfing)**:
 ```python

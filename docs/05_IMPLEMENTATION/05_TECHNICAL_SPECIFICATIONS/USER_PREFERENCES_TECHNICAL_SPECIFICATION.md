@@ -1,4 +1,4 @@
----
+﻿---
 module_id: USER_PREFERENCES_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -121,4 +121,4 @@ class UserPreference:
 
 ---
 
-**文档状?*: ?已完?
+**文档状?*: ?已完整

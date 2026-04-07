@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -42,7 +42,7 @@ responsibility_boundary: |
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
 ---
 
-# 实时风险监控仪表板蓝?> **版本**: v1.0.1
+# 实时风险监控仪表板蓝图> **版本**: v1.0.1
 > **核心职责**: Realtime Risk Monitoring蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Realtime Risk Monitoring蓝图设计相关内容
@@ -128,7 +128,7 @@ Two Sigma实时风险监控体系:
 
 ```python
 class VaRCalculator:
-    """VaR计算?- 实时计算风险价?""
+    """VaR计算?- 实时计算风险价值""
     
     def __init__(self):
         self.confidence_levels = [0.95, 0.99]
@@ -156,7 +156,7 @@ class VaRCalculator:
                 confidence=confidence
             )
         
-        # 3. 计算CVaR (条件风险价?
+        # 3. 计算CVaR (条件风险价值
         cvar_values = {}
         for confidence in self.confidence_levels:
             cvar_values[f'CVaR_{int(confidence*100)}'] = self._calculate_cvar(
@@ -356,7 +356,7 @@ class CorrelationCalculator:
         - expr: "factor_exposure_size"
           legendFormat: "规模"
         - expr: "factor_exposure_value"
-          legendFormat: "价?
+          legendFormat: "价值
         - expr: "factor_exposure_momentum"
           legendFormat: "动量"
           
@@ -409,14 +409,14 @@ class RiskHeatmapGenerator:
         self.risk_levels = ['low', 'medium', 'high', 'critical']
         
     def generate_heatmap(self, risk_data: Dict) -> HeatmapData:
-        """生成风险热力图数?""
+        """生成风险热力图数据""
         
         heatmap_matrix = []
         
         for dimension in self.risk_dimensions:
             row = []
             for level in self.risk_levels:
-                # 计算该维度该风险等级的股票数?                count = len([
+                # 计算该维度该风险等级的股票数据                count = len([
                     stock for stock, risk in risk_data.items()
                     if risk['dimension'] == dimension and risk['level'] == level
                 ])

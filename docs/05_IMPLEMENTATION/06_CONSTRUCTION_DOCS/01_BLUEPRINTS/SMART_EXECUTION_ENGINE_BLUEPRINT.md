@@ -23,6 +23,11 @@ layer: Layer 6 (组合优化层)
 > **职责边界**: 
 > - ✅ 本文档负责：智能执行引擎、执行算法、成本优化
 > - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
+> 
+> **上游模块**: 
+> - 策略引擎（STRATEGY_ENGINE_001）：提供交易信号和订单请求
+> - 风险控制模块（RISK_CONTROL_001）：提供风险限制和约束条件
+> - 数据源管理模块：提供市场数据和成交量数据
 
 智能运行和操作引擎，构建和执行智能交易执行策略，包括VWAP、TWAP、IS等算法交易策略，优化交易执行成本和市场冲击。
 ## 设计目标
@@ -483,7 +488,62 @@ class VolumePredictor:
 
 
 
-## 6. 实施技术栈
+## 6. 开源方案选型
+
+### 推荐方案: Zipline + QuantLib
+
+| 属性 | 详情 |
+|------|------|
+| **Zipline** | Quantopian出品的回测框架，17k+ Stars |
+| **QuantLib** | 金融计算库，4k+ Stars |
+| **pyalgotrade** | 算法交易框架，4k+ Stars |
+| **License** | Apache 2.0 / BSD |
+| **语言** | Python / C++ |
+
+**选择理由**:
+1. **Zipline**: Quantopian出品，功能强大，支持多种执行算法
+2. **QuantLib**: 金融计算库，提供完整的金融工具和算法
+3. **pyalgotrade**: 轻量级算法交易框架，易于使用
+4. **社区活跃**: 总计25k+ Stars，社区支持好
+5. **个人友好**: 免费开源，适合个人使用
+
+**对比其他方案**:
+
+| 方案 | Stars | 优点 | 缺点 | 推荐度 |
+|------|-------|------|------|--------|
+| **Zipline** | 17k+ | Quantopian出品、功能强大 | 不支持实盘、维护较少 | ⭐⭐⭐⭐ |
+| **QuantLib** | 4k+ | 金融计算完整、专业 | 学习曲线陡峭 | ⭐⭐⭐⭐ |
+| **pyalgotrade** | 4k+ | 轻量级、易使用 | 功能相对简单 | ⭐⭐⭐⭐ |
+| **自研** | - | 完全定制 | 开发成本高 | ⭐⭐⭐ |
+
+**最终选择**: Zipline（参考实现） + QuantLib（金融计算） + 自研核心逻辑
+
+**开源集成方案**:
+```python
+from zipline.api import order, order_target_percent
+from zipline.finance.execution import LimitOrder, MarketOrder
+import QuantLib as ql
+
+class SmartExecutionStrategy:
+    """智能执行策略 - 基于Zipline和QuantLib"""
+    
+    def __init__(self):
+        self.execution_algorithms = {
+            'TWAP': self.twap_execution,
+            'VWAP': self.vwap_execution,
+            'IS': self.implementation_shortfall
+        }
+        
+    def twap_execution(self, order, time_window):
+        """TWAP算法 - 基于QuantLib"""
+        pass
+        
+    def vwap_execution(self, order, time_window):
+        """VWAP算法 - 基于QuantLib"""
+        pass
+```
+
+## 7. 实施技术栈
 
 ### 6.1 语言与框架
 | 类别 | 技术选型 | 版本要求 | 说明 |
@@ -605,38 +665,79 @@ class TestSmartExecutionEngine:
 
 
 
-## 10. 实施路线
-### 10.1 Phase 1: TWAP算法实现（1周）
+## 10. 实施路线（个人开发优化版）
 
-**目标**: 实现基础TWAP算法
+### 10.1 Phase 1: 核心功能（Week 1-2，共10天）
+
+**目标**: 实现基础TWAP算法和执行框架
 
 **任务清单**:
-1. 设计订单数据结构
-2. 实现订单拆分逻辑
-3. 实现子订单执行
-4. 实现执行监控
+- [ ] 安装和配置Zipline、QuantLib
+- [ ] 设计订单数据结构（Order、SubOrder、ExecutionResult）
+- [ ] 实现TWAP算法（基于QuantLib）
+- [ ] 实现订单拆分逻辑
+- [ ] 实现执行监控
+- [ ] 编写单元测试
 
 **交付物**:
 - TWAP算法实现代码
-- 技术文档
-### 10.2 Phase 2: VWAP算法实现（1周）
+- 订单数据结构
+- 执行监控模块
+- 单元测试覆盖率≥80%
 
-**目标**: 实现VWAP算法
+**个人开发建议**:
+- 使用Zipline作为参考实现，不要从零开始
+- 优先实现TWAP算法（最简单、最实用）
+- 使用SQLite存储执行记录（简化部署）
+
+### 10.2 Phase 2: 高级功能（Week 3-4，共10天）
+
+**目标**: 实现VWAP算法和成交量预测
 
 **任务清单**:
-1. 实现成交量预测模块
-2. 实现VWAP订单拆分
-3. 实现VWAP执行逻辑
-5. 性能优化
+- [ ] 实现成交量预测模块（基于历史数据）
+- [ ] 实现VWAP算法（基于QuantLib）
+- [ ] 实现动态调整功能
+- [ ] 集成到策略引擎
+- [ ] 编写集成测试
 
 **交付物**:
 - VWAP算法实现代码
+- 成交量预测模块
+- 动态调整功能
+- 集成测试覆盖率≥70%
 
-### 10.3 Phase 3: 高级功能实现（可选）
+**个人开发建议**:
+- 成交量预测可以使用简单的ARIMA模型
+- 动态调整功能可以后续优化
+- 优先保证核心功能稳定
 
-**目标**: 实现IS/POV算法和自适应算法
+### 10.3 Phase 3: 优化完善（可选，Week 5-6）
+
+**目标**: 实现IS/POV算法和性能优化
 
 **任务清单**:
+- [ ] 实现IS算法（Implementation Shortfall）
+- [ ] 实现POV算法（Percentage of Volume）
+- [ ] 实现自适应算法
+- [ ] 性能优化和测试
+- [ ] 文档完善
+
+**交付物**:
+- 高级算法实现代码
+- 性能优化报告
+- 完整文档
+
+**个人开发建议**:
+- 这部分是可选的，根据实际需求决定
+- IS和POV算法可以参考学术论文
+- 性能优化可以放在最后
+
+**总工时估算**: 
+- Phase 1: 10天（核心功能）
+- Phase 2: 10天（高级功能）
+- Phase 3: 10天（可选优化）
+- **总计**: 20-30天（根据个人情况调整）
 1. 📝 实现IS算法
 2. 📝 实现POV算法
 3. 📝 实现自适应算法

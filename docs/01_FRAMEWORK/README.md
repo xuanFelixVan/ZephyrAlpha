@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -43,23 +43,23 @@ implementation_status: 进行?---
 
 ---
 
-## 一、文档概?
+## 一、文档概述
 
 | 文档 | 职责 | 说明 |
 |------|------|------|
 | **ARCHITECTURE.md** | Layer 0-11统一架构 | 分层架构、模块映射、技术选型 |
 | **MARKET_REGIME.md** | 市场状态识?| 大盘择时、状态分类、策略映?|
-| **HUMAN_AI_FLOW.md** | 人机协作流程 | 授权机制、AI角色定义、决策流?|
+| **HUMAN_AI_FLOW.md** | 人机协作流程 | 授权机制、AI角色定义、决策流程|
 | **TECH_STACK.md** | 技术栈选择 | 数据?回测/可视?AI/存储选型 |
 | **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | 数据源层专业实施蓝图 | P0/P1/P2三级模块设计?个月实施计划、专业机构对接|
 | **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方?| 6个适合个人开发的模块?周实施计划、低成本轻量级方?|
 | **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** |
-| **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝?| 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
+| **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝图| 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
 | **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架?| 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
 
 ---
 
-## 二、核心概?
+## 二、核心概述
 
 ### 2.1 Layer 0-11 架构
 
@@ -84,7 +84,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 | 原则 | 说明 |
 |------|------|
 | **人授权AI执行** | 人做决策，AI执行 |
-| **可回测优?* | 稳定策略才实?|
+| **可回测优?* | 稳定策略才实现|
 | **AI
 助不替?* | AI提供建议，人最终决?|
 

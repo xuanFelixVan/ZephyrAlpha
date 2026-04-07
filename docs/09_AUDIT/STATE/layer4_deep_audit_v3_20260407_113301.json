@@ -224,7 +224,7 @@
         "issue": "死链接",
         "description": "链接指向不存在的文件: ./LAYER_8_MASTER_BLUEPRINT.md",
         "link": "./LAYER_8_MASTER_BLUEPRINT.md",
-        "link_text": "Layer 8æ»ä½èå¾"
+        "link_text": "Layer 8æ»ä½èå¾"
       },
       {
         "doc": "docs\\01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
@@ -301,7 +301,7 @@
         "issue": "死链接",
         "description": "链接指向不存在的文件: ../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
         "link": "../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
-        "link_text": "ä¸ä¸å¤æ¶é´æ¡æ¶æ¶æ"
+        "link_text": "ä¸ä¸å¤æ¶é´æ¡æ¶æ¶æ"
       },
       {
         "doc": "docs\\01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md",

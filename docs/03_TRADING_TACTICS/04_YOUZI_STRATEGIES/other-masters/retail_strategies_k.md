@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_04_YOUZI_STRATEGIES_RETAIL_STRATEGIES_K
 version: 1.0.0
 status: Active
@@ -132,7 +132,7 @@ class DragonPullbackStrategy:
 
 > 来源：附录CB
 >
-> 热点优先级量化体?
+> 热点优先级量化体系
 
 ### 2.1 优先级规范
 
@@ -325,7 +325,7 @@ class PioneerDragonIdentifier:
 >
 > 目标价计算量?
 
-### 6.1 比价?
+### 6.1 比价值
 
 ```python
 class TargetPriceCalculationSystem:
@@ -426,7 +426,7 @@ class DailyReviewQuantifier:
 
 > 来源：附录凡倍无?
 >
-> 凡倍无名量化体?
+> 凡倍无名量化体系
 
 ### 8.1 核心量化策略
 

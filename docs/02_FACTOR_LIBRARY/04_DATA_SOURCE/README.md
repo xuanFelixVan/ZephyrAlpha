@@ -6,15 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 数据源层整体说明
-  - 数据获取架构介绍
-  - 数据治理框架说明
+  - 模块说明
+  - 使用指南
+  - 快速开始
 standard_type: 说明文档
 applicable_scope: 因子库数据源层
 compliance_level: 专业标准
 parent_document: ./INDEX.md
 ---
-
 # 04_DATA_SOURCE 数据源层
 
 > **核心职责**: 数据源层是因子库的基础设施，负责数据获取、清洗、存储和治理

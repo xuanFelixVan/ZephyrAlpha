@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_SPEC
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ responsibility:
 ---
 ---
 
-??---
+---
 module_id: TECH_SPEC_MARKET_PARTICIPANT_SIM_001
 version: 1.0.0
 status: Active
@@ -33,7 +33,8 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
-applicable_scope: 全系?compliance_level: 专业标准
+applicable_scope: 全系统
+compliance_level: 专业标准
 parent_document: ../PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 implementation_status: 设计阶段
 ---
@@ -47,75 +48,82 @@ implementation_status: 设计阶段
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **技术评审官**: Spec-Approver (审批智能?
+> **技术评审官**: Spec-Approver（审批智能体）
 > **核心理念**: 桥水经济范式 + 文艺复兴统计套利 + 个人AI维护模式
-> **目标**: 实现国家队、主力、散户三类市场参与者行为模?提升策略预测准确?
+> **目标**: 实现国家队、主力、散户三类市场参与者行为模型，提升策略预测准确率
 ---
 
-## 📋 一、概?
+## 📋 一、概述
 ### 1.1 设计背景
 
 **问题陈述**:
-- 传统量化策略仅基于历史价格和因子,忽略了市场参与者行为对价格的影?- A股市场具有明显的"国家队干??主力控盘"?散户羊群"特征
+- 传统量化策略仅基于历史价格和因子,忽略了市场参与者行为对价格的影响。
+- A股市场具有明显的「国家队干预、主力控盘、散户羊群」特征
 - 缺乏对市场微观结构和参与者博弈行为的建模
 
 **解决方案**:
 - 引入**多智能体市场模拟系统**,模拟三类市场参与者的交易行为
-- 基于**强化学习+LLM**构建智能体决策模?- 与现有三级时间框架架构无缝集成
+- 基于**强化学习+LLM**构建智能体决策模型。
+-  与现有三级时间框架架构无缝集成
 **预期收益**:
-- 提升策略信号准确?15-25%
-- 降低最大回?10-20%
-- 增强系统对极端市场情况的适应?- 为投资决策提供市场博弈视?
-### 1.2 技术定?
+- 提升策略信号准确率 15-25%
+- 降低最大回撤 10-20%
+- 增强系统对极端市场情况的适应性。
+-  为投资决策提供市场博弈视角
+### 1.2 技术定位
 | 维度 | 定位 |
 |------|------|
-| **架构层级** | Layer 2.5: 市场微观结构?新增) |
-| **时间框架** | 中观策略?日度/周度) + 微观执行?日内) |
-| **核心价?* | 提供市场参与者行为预?增强Alpha信号 |
-| **参考模?* | 桥水市场状态识?+ 文艺复兴统计套利 + Two Sigma多智能体 |
+| **架构层级** | Layer 2.5: 市场微观结构（新增） |
+| **时间框架** | 中观策略（日度/周度) + 微观执行（日内） |
+| **核心价值** | 提供市场参与者行为预测，增强Alpha信号 |
+| **参考模型** | 桥水市场状态识别 + 文艺复兴统计套利 + Two Sigma多智能体 |
 
 ### 1.3 版本信息
 
 | 项目 | 内容 |
 |------|------|
-| **版本?* | v1.0.0 |
+| **版本** | v1.0.0 |
 | **创建日期** | 2026-04-02 |
-| **最后更?* | 2026-04-02 |
-| **维护?* | 首席技术评审官 |
-| **评审状?* | 待评?|
+| **最后更新** | 2026-04-02 |
+| **维护人** | 首席技术评审官 |
+| **评审状态** | 待评审 |
 
 ---
 
-## 🏛?二、详细架构设计
-### 2.1 整体架构?
+## 🏛 二、详细架构设计
+### 2.1 整体架构
 ```
-┌─────────────────────────────────────────────────────────────────────────────??                   市场参与者行为模拟系统架?                                ?├─────────────────────────────────────────────────────────────────────────────??                                                                            ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?                   数据输入?(Data Input Layer)                      ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?龙虎榜数?(游资动向、机构买?                                     ? ?? ? ?Level-2行情 (订单簿、逐笔成交)                                      ? ?? ? ?融资融券数据 (杠杆资金动向)                                         ? ?? ? ?新闻舆情数据 (市场情绪)                                             ? ?? ? ?宏观政策数据 (国家队干预信?                                       ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               智能体管理层 (Agent Management Layer)                   ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ?                                                                       ? ?? ? ┌────────────────? ┌────────────────? ┌────────────────?        ? ?? ? ?国家队智能体   ? ?主力/游资智能体│  ?散户智能?    ?        ? ?? ? ?               ? ?               ? ?               ?        ? ?? ? ??政策驱动     ? ??资金优势     ? ??羊群效应     ?        ? ?? ? ??稳定市场     ? ??信息优势     ? ??情绪驱动     ?        ? ?? ? ??长期持有     ? ??操盘策略     ? ??追涨杀?    ?        ? ?? ? ?               ? ?               ? ?               ?        ? ?? ? ?技术实?      ? ?技术实?      ? ?技术实?      ?        ? ?? ? ?规则引擎+LLM   ? ?RL+LLM混合     ? ?行为金融模型   ?        ? ?? ? └────────────────? └────────────────? └────────────────?        ? ?? ?                                                                       ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               市场模拟引擎 (Market Simulation Engine)                 ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?订单簿模拟器 (Order Book Simulator)                                ? ?? ? ?价格发现机制 (Price Discovery Mechanism)                           ? ?? ? ?市场冲击模型 (Market Impact Model)                                 ? ?? ? ?流动性模?(Liquidity Simulation)                                  ? ?? ? ?事件驱动架构 (Event-Driven Architecture)                           ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               信号输出?(Signal Output Layer)                        ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?市场状态预?(Market State Prediction)                             ? ?? ? ?主力资金流向预测 (Capital Flow Prediction)                         ? ?? ? ?价格冲击预测 (Price Impact Prediction)                             ? ?? ? ?风险事件预警 (Risk Event Warning)                                  ? ?? ? ?策略建议信号 (Strategy Suggestion Signals)                         ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               集成接口?(Integration Interface Layer)                ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?与中观策略层集成 (Alpha信号增强)                                    ? ?? ? ?与微观执行层集成 (执行时机优化)                                     ? ?? ? ?与风控系统集?(风险预警)                                           ? ?? ? ?与AI报告层集?(博弈分析报告)                                       ? ?? └──────────────────────────────────────────────────────────────────────? ??                                                                            ?└─────────────────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────────────────??                   市场参与者行为模拟系统架构                                ?├─────────────────────────────────────────────────────────────────────────────??                                                                            ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?                   数据输入层(Data Input Layer)                      ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?龙虎榜数据(游资动向、机构买卖）                                     ? ?? ? ?Level-2行情 (订单簿、逐笔成交)                                      ? ?? ? ?融资融券数据 (杠杆资金动向)                                         ? ?? ? ?新闻舆情数据 (市场情绪)                                             ? ?? ? ?宏观政策数据 (国家队干预信号）                                       ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               智能体管理层 (Agent Management Layer)                   ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ?                                                                       ? ?? ? ┌────────────────? ┌────────────────? ┌────────────────?        ? ?? ? ?国家队智能体   ? ?主力/游资智能体│  ?散户智能体    ?        ? ?? ? ?               ? ?               ? ?               ?        ? ?? ? ??政策驱动     ? ??资金优势     ? ??羊群效应     ?        ? ?? ? ??稳定市场     ? ??信息优势     ? ??情绪驱动     ?        ? ?? ? ??长期持有     ? ??操盘策略     ? ??追涨杀跌    ?        ? ?? ? ?               ? ?               ? ?               ?        ? ?? ? ?技术实现      ? ?技术实现      ? ?技术实现      ?        ? ?? ? ?规则引擎+LLM   ? ?RL+LLM混合     ? ?行为金融模型   ?        ? ?? ? └────────────────? └────────────────? └────────────────?        ? ?? ?                                                                       ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               市场模拟引擎 (Market Simulation Engine)                 ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?订单簿模拟器 (Order Book Simulator)                                ? ?? ? ?价格发现机制 (Price Discovery Mechanism)                           ? ?? ? ?市场冲击模型 (Market Impact Model)                                 ? ?? ? ?流动性模型(Liquidity Simulation)                                  ? ?? ? ?事件驱动架构 (Event-Driven Architecture)                           ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               信号输出层(Signal Output Layer)                        ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?市场状态预测(Market State Prediction)                             ? ?? ? ?主力资金流向预测 (Capital Flow Prediction)                         ? ?? ? ?价格冲击预测 (Price Impact Prediction)                             ? ?? ? ?风险事件预警 (Risk Event Warning)                                  ? ?? ? ?策略建议信号 (Strategy Suggestion Signals)                         ? ?? └──────────────────────────────────────────────────────────────────────? ??                                   ?                                       ?? ┌──────────────────────────────────────────────────────────────────────? ?? ?               集成接口层(Integration Interface Layer)                ? ?? ├──────────────────────────────────────────────────────────────────────? ?? ? ?与中观策略层集成 (Alpha信号增强)                                    ? ?? ? ?与微观执行层集成 (执行时机优化)                                     ? ?? ? ?与风控系统集成(风险预警)                                           ? ?? ? ?与 AI 报告层集成(博弈分析报告)                                       ? ?? └──────────────────────────────────────────────────────────────────────? ??                                                                            ?└─────────────────────────────────────────────────────────────────────────────?```
 
-### 2.2 Layer定位与职?
-| Layer | 职责 | 智能体类?| 时间框架 |
+### 2.2 Layer 定位与职责
+| Layer | 职责 | 智能体类型 | 时间框架 |
 |-------|------|-----------|----------|
-| **Layer 2.5** | 市场微观结构模拟 | 三类智能?| 日度/日内 |
-| **Layer 2** | Alpha因子计算 | 因子?| 日度 |
-| **Layer 3** | 舆情分析 | 舆情智能?| 实时 |
+| **Layer 2.5** | 市场微观结构模拟 | 三类智能体 | 日度/日内 |
+| **Layer 2** | Alpha因子计算 | 因子引擎 | 日度 |
+| **Layer 3** | 舆情分析 | 舆情智能体 | 实时 |
 | **Layer 5** | 策略执行 | 策略引擎 | 日度/日内 |
 
 **职责边界**:
-- **不负?*: 策略逻辑开发、组合优化、交易执?- **负责**: 市场参与者行为建模、市场状态预测、博弈分?
+- **不负责**: 策略逻辑开发、组合优化、交易执行。
+- **负责**: 市场参与者行为建模、市场状态预测、博弈分析
 ### 2.3 核心组件设计
 
 #### 2.3.1 国家队智能体 (National Team Agent)
 
-**设计理念**: 基于政策信号和市场稳定目?模拟国家队干预行?
+**设计理念**: 基于政策信号和市场稳定目标，模拟国家队干预行为
 ```python
 class NationalTeamAgent(BaseAgent):
     """国家队智能体
     
     索引: AGENT.NATIONAL_TEAM.001
-    职责: 模拟国家?证金、汇金、社?的市场干预行?    特点: 政策驱动、市场稳定目标、长期持?    
+    职责: 模拟国家队（证金、汇金、社?的市场干预行为    特点: 政策驱动、市场稳定目标、长期持有
+    
     行为模式:
     1. 市场暴跌时买入蓝筹股稳定市场
     2. 市场过热时适度减持降温
-    3. 重大政策出台时配合政策方?    4. 长期持有,不频繁交?    """
+    3. 重大政策出台时配合政策方向
+    4. 长期持有,不频繁交易
+    """
     
     def __init__(self, config: NationalTeamConfig):
         self.config = config
@@ -128,15 +136,20 @@ class NationalTeamAgent(BaseAgent):
         """生成交易决策
         
         决策流程:
-        1. 检测政策信?        2. 评估市场稳定?        3. 规则引擎生成基础决策
+        1. 检测政策信号
+        2. 评估市场稳定性
+        3. 规则引擎生成基础决策
         4. LLM优化决策理由
-        5. 返回最终决?        """
-        # 1. 检测政策信?        policy_signals = self.policy_signal_detector.detect(
+        5. 返回最终决策
+        """
+        # 1. 检测政策信号
+        policy_signals = self.policy_signal_detector.detect(
             news_data=market_state.news,
             macro_data=market_state.macro_indicators
         )
         
-        # 2. 评估市场稳定?        stability_score = self.market_stability_monitor.evaluate(
+        # 2. 评估市场稳定性
+        stability_score = self.market_stability_monitor.evaluate(
             price_data=market_state.prices,
             volatility=market_state.volatility,
             sentiment=market_state.sentiment
@@ -169,47 +182,51 @@ class NationalTeamAgent(BaseAgent):
         )
 ```
 
-**技术实?*:
-- **规则引擎**: 70%权重(政策信号、市场稳定性指?
-- **LLM辅助**: 30%权重(决策理由生成、异常情况处?
-- **数据?*: 宏观政策新闻、市场波动率、蓝筹股资金流向
+**技术实现**:
+- **规则引擎**: 70%权重(政策信号、市场稳定性指标）
+- **LLM辅助**: 30%权重(决策理由生成、异常情况处理）
+- **数据源**: 宏观政策新闻、市场波动率、蓝筹股资金流向
 
 **参数配置**:
 ```yaml
 national_team_agent:
   intervention_threshold:
     market_drop: -0.05  # 市场下跌5%触发干预
-    volatility_spike: 2.0  # 波动率超?倍标准差
+    volatility_spike: 2.0  # 波动率超过 2 倍标准差
     sentiment_panic: -0.8  # 情绪指数低于-0.8
   
   target_stocks:
-    - category: "蓝筹?
+    - category: "蓝筹股"
       weight: 0.6
-    - category: "金融?
+    - category: "金融股"
       weight: 0.3
     - category: "政策支持板块"
       weight: 0.1
   
   position_limit:
-    max_single_stock: 0.05  # 单只股票最大持?%
-    max_total: 0.15  # 总持仓最?5%
+    max_single_stock: 0.05  # 单只股票最大持仓 %
+    max_total: 0.15  # 总持仓最大 15%
   
   holding_period:
-    min_days: 90  # 最小持?0?    avg_days: 180  # 平均持有180?```
+    min_days: 90  # 最小持有 90 天
+    avg_days: 180  # 平均持有 180 天
+```
 
-#### 2.3.2 主力/游资智能?(Institutional/Hot Money Agent)
+#### 2.3.2 主力/游资智能体(Institutional/Hot Money Agent)
 
-**设计理念**: 基于资金优势和信息优?模拟主力操盘行为
+**设计理念**: 基于资金优势和信息优势，模拟主力操盘行为
 
 ```python
 class InstitutionalAgent(BaseAgent):
-    """主力/游资智能?    
+    """主力/游资智能体    
     索引: AGENT.INSTITUTIONAL.001
-    职责: 模拟主力资金(机构、游?的操盘行?    特点: 资金优势、信息优势、操盘策?    
+    职责: 模拟主力资金(机构、游资）的操盘行为
+    特点: 资金优势、信息优势、操盘策略
+    
     行为模式:
     1. 吸筹阶段: 低位缓慢建仓,控制价格波动
     2. 洗盘阶段: 震荡洗出散户,提高持仓成本
-    3. 拉升阶段: 快速拉?吸引散户跟风
+    3. 拉升阶段: 快速拉升，吸引散户跟风
     4. 出货阶段: 高位震荡出货,制造假突破
     """
     
@@ -227,7 +244,8 @@ class InstitutionalAgent(BaseAgent):
         1. 分析市场微观结构
         2. RL模型生成基础动作
         3. LLM优化策略
-        4. 返回最终决?        """
+        4. 返回最终决策
+        """
         # 1. 分析市场微观结构
         microstructure = self.market_microstructure_analyzer.analyze(
             order_book=market_state.order_book,
@@ -257,11 +275,15 @@ class InstitutionalAgent(BaseAgent):
         )
     
     def _build_state_vector(self, market_state, microstructure) -> np.ndarray:
-        """构建状态向?        
-        状态维?
-        1. 价格相关: 收益率、波动率、动?        2. 成交量相? 换手率、量价关?        3. 订单簿相? 买卖盘比例、订单不平衡
+        """构建状态向量        
+        状态维度
+        1. 价格相关: 收益率、波动率、动量
+        2. 成交量相关：换手率、量价关系
+        3. 订单簿相关：买卖盘比例、订单不平衡
         4. 资金流向: 主力资金净流入、散户资金净流入
-        5. 情绪指标: 舆情得分、市场热?        6. 持仓状? 当前仓位、盈亏比?        """
+        5. 情绪指标: 舆情得分、市场热度
+        6. 持仓状态：当前仓位、盈亏比例
+        """
         features = []
         
         # 价格特征
@@ -269,10 +291,12 @@ class InstitutionalAgent(BaseAgent):
         features.append(market_state.volatility)
         features.append(market_state.momentum)
         
-        # 成交量特?        features.append(market_state.turnover_rate)
+        # 成交量特征
+        features.append(market_state.turnover_rate)
         features.append(market_state.volume_price_correlation)
         
-        # 订单簿特?        features.append(microstructure.bid_ask_imbalance)
+        # 订单簿特征
+        features.append(microstructure.bid_ask_imbalance)
         features.append(microstructure.order_book_depth)
         
         # 资金流向
@@ -283,16 +307,17 @@ class InstitutionalAgent(BaseAgent):
         features.append(market_state.sentiment_score)
         features.append(market_state.market_heat)
         
-        # 持仓状?        features.append(self.portfolio.position_ratio)
+        # 持仓状态
+        features.append(self.portfolio.position_ratio)
         features.append(self.portfolio.pnl_ratio)
         
         return np.array(features)
 ```
 
-**技术实?*:
-- **强化学习**: 60%权重(SAC算法,学习最优操盘策?
-- **LLM策略**: 40%权重(策略优化、异常情况处?
-- **训练数据**: 龙虎榜历史数据、Level-2行情、资金流向数?
+**技术实现**:
+- **强化学习**: 60%权重(SAC算法,学习最优操盘策略
+- **LLM策略**: 40%权重(策略优化、异常情况处理）
+- **训练数据**: 龙虎榜历史数据、Level-2行情、资金流向数据
 **参数配置**:
 ```yaml
 institutional_agent:
@@ -332,18 +357,21 @@ institutional_agent:
     tau: 0.005
 ```
 
-#### 2.3.3 散户智能?(Retail Investor Agent)
+#### 2.3.3 散户智能体(Retail Investor Agent)
 
-**设计理念**: 基于行为金融学理?模拟散户羊群效应和情绪驱动行?
+**设计理念**: 基于行为金融学理论，模拟散户羊群效应和情绪驱动行为
 ```python
 class RetailInvestorAgent(BaseAgent):
-    """散户智能?    
+    """散户智能体
+    
     索引: AGENT.RETAIL.001
     职责: 模拟散户投资者的交易行为
-    特点: 羊群效应、情绪驱动、追涨杀?    
+    特点: 羊群效应、情绪驱动、追涨杀跌    
     行为模式:
-    1. 羊群效应: 跟随主流资金和热点题?    2. 过度自信: 高估自己的判断能?    3. 损失厌恶: 过早卖出盈利股票,过久持有亏损股票
-    4. 处置效应: 倾向于实现收?避免实现损失
+    1. 羊群效应: 跟随主流资金和热点题材
+    2. 过度自信: 高估自己的判断能力
+    3. 损失厌恶: 过早卖出盈利股票,过久持有亏损股票
+    4. 处置效应: 倾向于实现收益，避免实现损失
     """
     
     def __init__(self, config: RetailInvestorConfig):
@@ -357,8 +385,10 @@ class RetailInvestorAgent(BaseAgent):
         
         决策流程:
         1. 分析市场情绪
-        2. 检测羊群行?        3. 行为金融模型生成决策
-        4. 返回最终决?        """
+        2. 检测羊群行为
+        3. 行为金融模型生成决策
+        4. 返回最终决策
+        """
         # 1. 分析市场情绪
         sentiment = self.sentiment_analyzer.analyze(
             news=market_state.news,
@@ -366,7 +396,8 @@ class RetailInvestorAgent(BaseAgent):
             search_trends=market_state.search_trends
         )
         
-        # 2. 检测羊群行?        herding_signals = self.herding_detector.detect(
+        # 2. 检测羊群行为
+        herding_signals = self.herding_detector.detect(
             capital_flow=market_state.capital_flow,
             hot_sectors=market_state.hot_sectors,
             volume surge=market_state.volume_surge_stocks
@@ -390,31 +421,33 @@ class RetailInvestorAgent(BaseAgent):
         )
 ```
 
-**技术实?*:
-- **行为金融模型**: 80%权重(羊群效应、过度自信、损失厌?
-- **情绪分析**: 20%权重(舆情、社交媒体、搜索趋?
-- **数据?*: 股吧、雪球、东方财富股吧、搜索指?
+**技术实现**:
+- **行为金融模型**: 80%权重(羊群效应、过度自信、损失厌恶）
+- **情绪分析**: 20%权重(舆情、社交媒体、搜索趋势）
+- **数据源**: 股吧、雪球、东方财富股吧、搜索指数）
 **参数配置**:
 ```yaml
 retail_investor_agent:
   behavioral_biases:
     herding_coefficient: 0.6  # 羊群效应强度
     overconfidence: 0.4  # 过度自信程度
-    loss_aversion: 2.25  # 损失厌恶系数(标准?
+    loss_aversion: 2.25  # 损失厌恶系数(标准值）
     disposition_effect: 0.7  # 处置效应强度
   
   sentiment_sensitivity:
-    positive_threshold: 0.3  # 正面情绪阈?    negative_threshold: -0.3  # 负面情绪阈?    reaction_delay: [0, 3]  # 反应延迟(?
+    positive_threshold: 0.3  # 正面情绪阈值
+    negative_threshold: -0.3  # 负面情绪阈值
+    reaction_delay: [0, 3]  # 反应延迟（天）
   
   trading_pattern:
     holding_period:
       profit: [1, 10]  # 盈利股票持有1-10?      loss: [10, 60]  # 亏损股票持有10-60?    
     position_sizing:
-      method: "all_in"  # 散户倾向于全?      max_stocks: 5  # 最多持?只股?    
+      method: "all_in"  # 散户倾向于全仓      max_stocks: 5  # 最多持有 5 只股票    
     stop_loss_take_profit:
-      stop_loss: -0.20  # 止损?20%
-      take_profit: 0.30  # 止盈?0%
-      execution_rate: 0.3  # 执行?0%(散户纪律性差)
+      stop_loss: -0.20  # 止损 -20%
+      take_profit: 0.30  # 止盈 30%
+      execution_rate: 0.3  # 执行率 30%(散户纪律性差)
 ```
 
 ### 2.4 市场模拟引擎设计
@@ -424,8 +457,9 @@ class MarketSimulationEngine:
     """市场模拟引擎
     
     索引: ENGINE.MARKET_SIM.001
-    职责: 整合三类智能?模拟市场交易过程
-    特点: 订单簿驱动、价格发现机制、市场冲击模?    """
+    职责: 整合三类智能体，模拟市场交易过程
+    特点: 订单簿驱动、价格发现机制、市场冲击模型
+    """
     
     def __init__(self, config: MarketSimConfig):
         self.config = config
@@ -444,10 +478,12 @@ class MarketSimulationEngine:
         """模拟市场交易
         
         模拟流程:
-        1. 初始化市场状?        2. 各智能体生成交易决策
+        1. 初始化市场状态
+        2. 各智能体生成交易决策
         3. 订单提交到订单簿
         4. 价格发现机制撮合交易
-        5. 更新市场状?        6. 重复步骤2-5
+        5. 更新市场状态
+        6. 重复步骤2-5
         7. 返回模拟结果
         """
         market_state = initial_state
@@ -472,7 +508,8 @@ class MarketSimulationEngine:
             # 4. 计算市场冲击
             market_impact = self.market_impact.calculate(trades, market_state)
             
-            # 5. 更新市场状?            market_state = self._update_market_state(
+            # 5. 更新市场状态
+            market_state = self._update_market_state(
                 market_state, trades, market_impact
             )
             
@@ -494,7 +531,7 @@ class MarketSimulationEngine:
 
 #### 2.4.1 订单撮合算法设计 ?**IMP-001补充**
 
-**算法原理**: 价格优先、时间优?
+**算法原理**: 价格优先、时间优化
 ```python
 class OrderMatchingAlgorithm:
     """订单撮合算法
@@ -639,7 +676,7 @@ class GameEquilibriumAlgorithm:
     
     索引: ALGORITHM.GAME_EQUILIBRIUM.001
     原理: 多智能体博弈的纳什均衡求解
-    复杂? O(n^m) - n为策略数，m为智能体?    """
+    复杂? O(n^m) - n为策略数，m为智能体系    """
     
     def find_nash_equilibrium(self, 
                              agents: List[Agent],
@@ -649,7 +686,7 @@ class GameEquilibriumAlgorithm:
         算法原理:
         1. 定义每个智能体的策略空间
         2. 计算每个智能体的支付函数（收益函数）
-        3. 迭代求解最优响应策?        4. 收敛到纳什均衡
+        3. 迭代求解最优响应策略        4. 收敛到纳什均衡
         
         数学模型:
         - 策略空间: S_i = {s_i1, s_i2, ..., s_in}
@@ -698,7 +735,7 @@ class GameEquilibriumAlgorithm:
                            agent: Agent,
                            strategies: dict,
                            market_state: MarketState) -> Strategy:
-        """找到最优响应策?        
+        """找到最优响应策略        
         方法: 遍历所有可能的策略，选择收益最大的
         """
         best_strategy = None
@@ -789,7 +826,7 @@ class MarketState:
     """市场状态数据结束""
     timestamp: datetime
     prices: pd.DataFrame  # 股票价格数据
-    volumes: pd.DataFrame  # 成交量数?    order_book: Dict[str, OrderBook]  # 订单簿数?    trade_flow: pd.DataFrame  # 逐笔成交数据
+    volumes: pd.DataFrame  # 成交量数据    order_book: Dict[str, OrderBook]  # 订单簿数据    trade_flow: pd.DataFrame  # 逐笔成交数据
     capital_flow: pd.DataFrame  # 资金流向数据
     sentiment: SentimentIndicators  # 情绪指标
     news: List[NewsItem]  # 新闻数据
@@ -801,7 +838,7 @@ class AgentDecision:
     action: str  # BUY/SELL/HOLD
     target_stocks: List[str]  # 目标股票列表
     position_size: Dict[str, float]  # 各股票仓位大?    confidence: float  # 决策置信?    reasoning: str  # 决策理由
-    agent_type: str  # 智能体类?    timestamp: datetime  # 时间?    
+    agent_type: str  # 智能体类别    timestamp: datetime  # 时间?    
 @dataclass
 class SimulationResult:
     """模拟结果数据结构"""
@@ -826,7 +863,7 @@ class MarketParticipantSimulatorInterface:
             current_state: 当前市场状态            prediction_horizon: 预测时长(?
             
         返回:
-            MarketStatePrediction: 市场状态预?        """
+            MarketStatePrediction: 市场状态预测        """
         pass
     
     def predict_capital_flow(self, 
@@ -875,11 +912,11 @@ class FactorOutput:
     factor_name: str  # 因子名称
     factor_id: str  # 因子ID (? FACTOR.INSTITUTIONAL.001)
     timestamp: datetime  # 时间?    value: float  # 因子?    confidence: float  # 置信?[0, 1]
-    metadata: FactorMetadata  # 元数?
+    metadata: FactorMetadata  # 元数据
 @dataclass
 class FactorMetadata:
-    """因子元数?""
-    agent_type: str  # 智能体类?    data_source: str  # 数据?    calculation_method: str  # 计算方法
+    """因子元数据""
+    agent_type: str  # 智能体类别    data_source: str  # 数据?    calculation_method: str  # 计算方法
     lookback_period: int  # 回溯?    update_frequency: str  # 更新频率
     factor_category: str  # 因子类别
     factor_description: str  # 因子描述
@@ -890,7 +927,7 @@ class FactorMetadata:
 ```
 /factors/institutional_activity_factor/
     ├── 2026-04-03.parquet  # 因子数据
-    └── metadata.json       # 元数?```
+    └── metadata.json       # 元数据```
 
 **Parquet文件结构**:
 ```
@@ -959,7 +996,7 @@ class FactorStorageInterface:
 | **因子IC** | |IC| > 0.03 | IC分析 |
 | **因子覆盖?* | > 80% | 覆盖率统?|
 | **因子单调?* | 单调递增/递减 | 分组测试 |
-| **因子稳定?* | IC_IR > 0.5 | 稳定性测?|
+| **因子稳定?* | IC_IR > 0.5 | 稳定性测试|
 
 ### 3.5 信号输出格式定义 ?**IMP-003补充**
 
@@ -1135,7 +1172,7 @@ class RiskControlInterface:
 
 | 数据类型 | 存储方案 | 更新频率 | 保留期限 |
 |---------|---------|---------|---------|
-| **龙虎榜数?* | MySQL + Parquet | 日度 | 3?|
+| **龙虎榜数据* | MySQL + Parquet | 日度 | 3?|
 | **Level-2行情** | HDF5 + Redis | 实时 | 3个月 |
 | **融资融券数据** | MySQL | 日度 | 3?|
 | **新闻舆情数据** | MongoDB | 实时 | 1?|
@@ -1150,14 +1187,14 @@ class RiskControlInterface:
 
 ---
 
-## 🧪 五、测试策?
+## 🧪 五、测试策略
 ### 5.1 单元测试
 
 | 测试模块 | 测试内容 | 覆盖率要?|
 |---------|---------|-----------|
 | **国家队智能体** | 政策信号检测、市场稳定性评估、决策生?| ?5% |
 | **主力智能?* | RL模型决策、LLM策略优化、状态向量构?| ?5% |
-| **散户智能?* | 行为金融模型、情绪分析、羊群检查| ?5% |
+| **散户智能体* | 行为金融模型、情绪分析、羊群检查| ?5% |
 | **市场模拟引擎** | 订单撮合、价格发现、市场冲击计划| ?0% |
 
 ### 5.2 集成测试
@@ -1181,12 +1218,12 @@ class RiskControlInterface:
 
 #### 5.4.1 回测数据准备
 
-**数据范围**: 2020-01-01 ?2025-12-31 (5年历史数?
+**数据范围**: 2020-01-01 ?2025-12-31 (5年历史数据
 
 | 数据类型 | 数据?| 字段要求 | 质量标准 |
 |---------|--------|---------|---------|
 | **历史行情** | iFind | 开高低收、成交量、成交额 | 缺失?< 1% |
-| **龙虎榜数?* | iFind | 机构买入、机构卖出、游资买入、游资卖?| 覆盖?> 90% |
+| **龙虎榜数据* | iFind | 机构买入、机构卖出、游资买入、游资卖?| 覆盖?> 90% |
 | **北向资金** | iFind | 日度流入流出、持股变?| 完整?100% |
 | **融资融券** | iFind | 融资余额、融券余?| 完整?100% |
 | **新闻舆情** | iFind | 新闻标题、新闻内容、情感指标| 覆盖?> 80% |
@@ -1261,11 +1298,11 @@ class AgentBehaviorValidator:
 ```
 
 **验收标准**:
-| 智能体类?| 行为相似度目?| 关键验证?|
+| 智能体类别| 行为相似度目?| 关键验证?|
 |-----------|--------------|-----------|
 | **国家队智能体** | ?75% | 政策信号识别、市场干预时?|
 | **主力智能?* | ?70% | 吸筹-洗盘-拉升-出货周期 |
-| **散户智能?* | ?65% | 羊群效应、追涨杀跌行?|
+| **散户智能体* | ?65% | 羊群效应、追涨杀跌行?|
 | **外资智能?* | ?70% | 北向资金流向预测 |
 | **保险资金智能?* | ?70% | 长期配置行为 |
 
@@ -1371,7 +1408,7 @@ class MarketSimulationValidator:
 | **收益指标** | 年化收益?| > 15% | 沪深300 (8%) |
 | **风险指标** | 最大回?| < 15% | 沪深300 (20%) |
 | **风险调整收益** | 夏普比率 | > 1.5 | 沪深300 (0.8) |
-| **稳定性指?* | 卡尔玛比?| > 1.0 | 沪深300 (0.4) |
+| **稳定性指标）* | 卡尔玛比?| > 1.0 | 沪深300 (0.4) |
 | **胜率指标** | 盈利交易占比 | > 55% | - |
 
 **回测报告模板**:
@@ -1390,7 +1427,7 @@ class MarketSimulationValidator:
 | 最大回?| -12.3% | -20.5% | +8.2% |
 | 夏普比率 | 1.85 | 0.82 | +1.03 |
 
-## 3. 智能体贡献分?| 智能体类?| 信号准确?| 盈利贡献 | 使用频率 |
+## 3. 智能体贡献分?| 智能体类型 | 信号准确?| 盈利贡献 | 使用频率 |
 |-----------|-----------|---------|---------|
 | 外资智能?| 72% | +5.2% | 45% |
 | 主力智能?| 68% | +3.8% | 35% |
@@ -1410,7 +1447,7 @@ class MarketSimulationValidator:
 | **智能体行为相似度** | ?70% | 行为验证 |
 | **市场模拟准确?* | 价格误差 < 5% | 模拟验证 |
 | **策略绩效** | 夏普比率 > 1.5 | 策略回测 |
-| **系统稳定?* | 724小时无故?| 稳定性测?|
+| **系统稳定?* | 724小时无故?| 稳定性测试|
 
 ---
 
@@ -1419,7 +1456,7 @@ class MarketSimulationValidator:
 ### 6.1 技术风?
 | 风险等级 | 风险?| 缓解措施 |
 |---------|-------|---------|
-| **P1** | RL模型训练不稳?| 使用预训练模?微调,增加训练数据 |
+| **P1** | RL模型训练不稳定| 使用预训练模?微调,增加训练数据 |
 | **P1** | LLM推理延迟?| 使用GLM-4.7-Flash(快速版),缓存常见决策 |
 | **P2** | 数据质量问题 | 多数据源交叉验证,数据清洗流程 |
 | **P2** | 模拟结果偏差 | 定期校准模型,引入真实市场反馈 |
@@ -1432,7 +1469,7 @@ class MarketSimulationValidator:
 | **数据约束** | Level-2数据获取成本?| 使用开源数?模拟数据,逐步接入真实数据 |
 | **计算约束** | RL训练需要大量计算资?| 使用云服?分批训练 |
 | **时间约束** | 个人开发时间有?| AI辅助开?优先核心功能 |
-| **技能约?* | 强化学习专业知识不足 | 使用成熟开源框?学习社区最佳实?|
+| **技能约?* | 强化学习专业知识不足 | 使用成熟开源框?学习社区最佳实现|
 
 ---
 
@@ -1443,7 +1480,7 @@ class MarketSimulationValidator:
 |---------|---------|---------|
 | **国家队智能体** | 能识别政策信?生成合理干预决策 | 单元测试+人工审核 |
 | **主力智能?* | RL模型收敛,决策符合操盘逻辑 | 回测验证+绩效评估 |
-| **散户智能?* | 行为模式符合行为金融学理?| 统计检?专家评审 |
+| **散户智能体* | 行为模式符合行为金融学理?| 统计检?专家评审 |
 | **市场模拟引擎** | 模拟结果与真实市场相关性≥0.6 | 相关性分?可视化对接|
 
 ### 7.2 性能验收标准
@@ -1508,7 +1545,7 @@ class MarketSimulationValidator:
 **任务清单**:
 - [ ] 与中观策略层集成
 - [ ] 与微观执行层集成
-- [ ] 与风控系统集?- [ ] 性能优化
+- [ ] 与风控系统集成- [ ] 性能优化
 - [ ] 压力测试
 
 **交付?*:
@@ -1520,7 +1557,7 @@ class MarketSimulationValidator:
 
 ### 8.4 Phase 4: 验证与上?(Month 5-6)
 
-**目标**: 验证系统效果并上线运?
+**目标**: 验证系统效果并上线运行
 **任务清单**:
 - [ ] 历史回测验证
 - [ ] 实盘模拟测试
@@ -1563,7 +1600,7 @@ class MarketSimulationValidator:
   - Phase 1-4 详细实施步骤
   - 工作量估算和里流程
 - **MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md** - 实施指南
-  - 开发环境配?  - 代码示例和最佳实?
+  - 开发环境配?  - 代码示例和最佳实现
 - **MARKET_PARTICIPANT_SIMULATION_INTEGRATION_ARCHITECTURE.md** - 集成架构
   - 与现有系统的集成方案
   - 数据流和接口设计
@@ -1579,9 +1616,9 @@ class MarketSimulationValidator:
 ## 📝 十、变更记?
 | 版本 | 日期 | 变更内容 | 作?|
 |------|------|----------|------|
-| v1.0 | 2026-04-02 | 初始版本,完整技术规格书 | Spec-Approver (审批智能? |
-| v1.1 | 2026-04-02 | 补充三个必须改进项设计文?| Spec-Approver (审批智能? |
+| v1.0 | 2026-04-02 | 初始版本,完整技术规格书 | Spec-Approver（审批智能体） |
+| v1.1 | 2026-04-02 | 补充三个必须改进项设计文?| Spec-Approver（审批智能体） |
 
 ---
 
-**版本**: v1.1 | **更新**: 2026-04-02 | **状?*: ?已完?
+**版本**: v1.1 | **更新**: 2026-04-02 | **状?*: ?已完整

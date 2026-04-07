@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -249,7 +249,7 @@ class MarketImpactModelAPI(ABC):
         更新模型
         
         Args:
-            new_data: 新数?            retrain: 是否重新训练
+            new_data: 新数据            retrain: 是否重新训练
             
         Returns:
             bool: 更新是否成功

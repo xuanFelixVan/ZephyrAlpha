@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEWS_STOCK_MATCHER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -499,7 +499,7 @@ def test_news_stock_matcher_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 实体识别 | 识别正确 | 单元测试 |
 | 关联匹配 | 匹配正确 | 单元测试 |
@@ -524,7 +524,7 @@ def test_news_stock_matcher_integration():
 
 ### 10.1 Phase 1: 核心功能开?(2?
 - **Day 1**: 实体识别、关联匹?
-- **Day 2**: 强度评估、测试、优?
+- **Day 2**: 强度评估、测试、优化
 
 ---
 

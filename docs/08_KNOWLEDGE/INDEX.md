@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 08_KNOWLEDGE_INDEX
 version: 1.0.0
 status: Active
@@ -36,7 +36,7 @@ implementation_status: 已完?tags: ["知识?, "索引", "导航"]
 **文档所有?*: 首席知识?
 ---
 
-## 📚 知识库概?
+## 📚 知识库概述
 ### 知识库定?
 **核心定位**: 专业量化机构知识管理中心
 

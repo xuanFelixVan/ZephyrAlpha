@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 回测框架设计
-  - 回测流程管理
-  - 回测结果分析
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # 05 Backtest
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 07_RESEARCH_INDEX
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ responsibility:
 applicable_scope: 研究支持
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完?
+implementation_status: 已完整
 ---
 ---
 

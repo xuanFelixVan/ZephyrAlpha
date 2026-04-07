@@ -12,7 +12,7 @@ responsibility:
   - 不确定性建模
   - 鲁棒解求解
   - 参数敏感性
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

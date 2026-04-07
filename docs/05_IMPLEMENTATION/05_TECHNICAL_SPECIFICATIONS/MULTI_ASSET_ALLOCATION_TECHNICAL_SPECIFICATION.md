@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ responsibility:
 
 > 清风量化系统 v5.3 - 多资产类别配置详细技术设计> **索引**: `MULTI_ASSET_ALLOCATION_SPEC_001`
 > **开发时?*: 80h
-> **核心定位**: 跨资产风险平价配置，全天候策略实?
+> **核心定位**: 跨资产风险平价配置，全天候策略实现
 ---
 
 ## 1. 概述
@@ -196,7 +196,7 @@ def risk_parity_allocation(
 
 ```python
 class TestMultiAssetAllocation:
-    """多资产配置测?""
+    """多资产配置测试""
     
     def test_risk_parity(self):
         """测试风险平价"""
@@ -214,7 +214,7 @@ class TestMultiAssetAllocation:
         assert all(abs(rc - 1/3) < 0.01 for rc in risk_contribs)
     
     def test_all_weather(self):
-        """测试全天候策?""
+        """测试全天候策略""
         regime_probs = pd.Series([0.25, 0.25, 0.25, 0.25],
                                 index=['扩张', '滞胀', '衰退', '复苏'])
         

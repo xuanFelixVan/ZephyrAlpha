@@ -12,7 +12,7 @@ responsibility:
   - 流动性建模
   - 流动性约束成本控制
   - 流动性风险
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

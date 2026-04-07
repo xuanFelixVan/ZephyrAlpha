@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -104,7 +104,7 @@ implementation_status: 进行?
 - **Layer归属**: Layer 4 - 机器学习?
 - **职责范围**: Transformer模型构建、训练、预测、评估、部?
 - **上下层接?*: 
-  - 上层依赖: Layer 2 因子?(提供多因子数?
+  - 上层依赖: Layer 2 因子?(提供多因子数据
   - 下层依赖: Layer 5 策略引擎 (接收预测信号)
 
 ### 2.3 模块职责与边界定?
@@ -680,7 +680,7 @@ def test_transformer_model_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 模型构建 | 构建正确 | 单元测试 |
 | 多头注意?| 计算正确 | 单元测试 |
@@ -707,8 +707,8 @@ def test_transformer_model_integration():
 - **Day 1**: 模型构建、输入嵌?
 - **Day 2**: 多头注意力、位置编?
 - **Day 3**: 编码器层、前馈网?
-- **Day 4**: 训练流程、预测流?
-- **Day 5**: 集成测试、优?
+- **Day 4**: 训练流程、预测流程
+- **Day 5**: 集成测试、优化
 
 ---
 

@@ -12,7 +12,7 @@ responsibility:
   - 资产权重调整
   - 市场环境适应
   - 配置策略优化
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

@@ -6,14 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 使用指南编写
-  - FAQ维护
-  - 最佳实践总结
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 10_MANUAL 使用手册
 
 > **核心职责**: 因子库使用指南、FAQ和最佳实践

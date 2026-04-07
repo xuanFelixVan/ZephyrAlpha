@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_REBALANCING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -298,7 +298,7 @@ class RebalanceEnv(gym.Env):
 
 ```python
 class TestPortfolioRebalancing:
-    """组合再平衡测?""
+    """组合再平衡测试""
     
     def test_should_rebalance(self):
         """测试再平衡决?""

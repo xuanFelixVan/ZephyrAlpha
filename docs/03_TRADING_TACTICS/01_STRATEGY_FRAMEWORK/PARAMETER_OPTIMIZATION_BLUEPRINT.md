@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ implementation_status: 设计阶段
 ---
 
 
-# 参数优化系统技术蓝?
+# 参数优化系统技术蓝图
 > **核心职责**: Parameter Optimization蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Parameter Optimization蓝图设计相关内容
@@ -53,11 +53,11 @@ implementation_status: 设计阶段
 
 ### 1.1 核心设计目标
 
-| 目标 | 优先?| 技术实?|
+| 目标 | 优先?| 技术实现|
 |------|--------|----------|
 | **多算法支?* | P0 | 网格搜索、贝叶斯优化、遗传算法、随机搜?|
 | **过拟合防?* | P0 | 样本外测试、交叉验证、正则化、早停机?|
-| **并行计算优化** | P1 | 多进程并行优化、结果缓存、增量优?|
+| **并行计算优化** | P1 | 多进程并行优化、结果缓存、增量优化|
 | **用户友好配置** | P1 | YAML配置文件、自然语言参数范围定义 |
 | **AI辅助优化** | P2 | AI推荐参数范围、自动超参数调优 |
 | **可视化分?* | P2 | 参数敏感度热力图、优化过程可视化 |
@@ -185,7 +185,7 @@ class OptimizationController:
                 time_range=self.config.time_range
             )
             
-            # 2. 计算目标函数?            if self.config.objective == "sharpe_ratio":
+            # 2. 计算目标函数据            if self.config.objective == "sharpe_ratio":
                 score = result.metrics.get("sharpe_ratio", 0)
             elif self.config.objective == "calmar_ratio":
                 score = result.metrics.get("calmar_ratio", 0)
@@ -332,7 +332,7 @@ class SmartGridSearchOptimizer:
         
         # 生成拉丁超立方设计        lhs = lhs(n_params, samples=n_samples, criterion='maximin')
         
-        # 将设计点映射到实际参数?        samples = []
+        # 将设计点映射到实际参数据        samples = []
         for i in range(n_samples):
             params = {}
             for j, param_name in enumerate(param_names):
@@ -367,7 +367,7 @@ class BayesianOptimizer:
         
     def optimize(self, objective_func: Callable, param_space: ParameterSpace,
                 env: OptimizationEnv) -> BayesianOptimizationResult:
-        """执行贝叶斯优?""
+        """执行贝叶斯优化""
         
         # 1. 创建Optuna研究
         self.study = optuna.create_study(
@@ -519,7 +519,7 @@ class TimeSeriesCrossValidator:
                        purge_gap: int = 5) -> List[Tuple]:
         """净化交叉验证：在训练集和测试集之间添加间隔
         
-        防止信息泄露，适用于事件驱动策?        """
+        防止信息泄露，适用于事件驱动策略        """
         splits = []
         n_samples = len(data)
         test_samples = int(n_samples * self.test_size)
@@ -770,7 +770,7 @@ python parameter_optimizer.py suggest \
 request = """
 请优化我的移动均线策略参数：
 1. 快线周期??0天，希望找到最佳?2. 慢线周期?0?00天，要比快线?3. 需要成交量过滤：当成交量超?0日均?.5倍时才交?4. 优化目标：最大化夏普比率，同时控制最大回撤不超过20%
-5. 使用贝叶斯优化，最多尝?00组参?6. 要防止过拟合，使?0%的数据做样本外测?"""
+5. 使用贝叶斯优化，最多尝?00组参?6. 要防止过拟合，使?0%的数据做样本外测试"""
 
 # AI解析并生成优化配?config = nlp_optimization_parser.parse(request)
 result = optimizer.optimize(config)

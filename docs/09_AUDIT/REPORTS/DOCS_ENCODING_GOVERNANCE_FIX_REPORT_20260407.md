@@ -98,6 +98,17 @@ responsibility:
 - 统计输出：
   - `docs/09_AUDIT/STATE/cjk_question_mark_stats_after_rules.json`
 
+#### 已执行：治理补全推进（第三阶段，进行中）
+
+本阶段目标是：在不盲猜语义、不破坏代码块/链接/图表的前提下，持续降低治理验收范围内的 `汉字?` 命中数量，并对 Top 命中文档做定向“结构修复 + 高置信度回填”。
+
+- **规则集扩展**：已对 `scripts/fix_cjk_question_mark_governed.py` 追加更高频的断裂词尾与短语级规则（如“蓝图/概述/策略/优化/测试/迭代/实现/数据/体系/价值/缺失/稳定/运行”等），并多轮执行以滚动消减。
+- **定向修复（Top 文件优先）**：
+  - `docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md`：清理重复 YAML 头，修复关键字段与标题断裂，`汉字?` 已清到 0。
+  - `docs/04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md`：清理重复 YAML 头并回填常见断裂，`汉字?` 已显著下降（仍有剩余，继续治理）。
+  - 其他 Top 文件（如 `AI_STRATEGY_AUTOMATION_BLUEPRINT.md`、`DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md`）已开始进行结构性修复与回填，后续将继续按命中数优先级推进。
+- **最新待补全清单**：`docs/09_AUDIT/STATE/cjk_question_mark_todo_scoped.json`（会随每轮治理实时刷新，用于追踪 Top 优先级与剩余样例）。
+
 建议处理方式：
 - 先对 **蓝图类文档**（`docs/**/BLUEPRINTS/**`）按优先级（P0/P1）做模板回填与关键段落补全。
 - 对“目录/章节/表格骨架”先修成可读，再补语义，不要盲猜具体数据或结论。

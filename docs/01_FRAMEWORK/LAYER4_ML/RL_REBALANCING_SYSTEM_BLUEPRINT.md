@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RL_REBALANCING_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,7 +37,7 @@ responsibility:
 ### 1.1 业务背景与价值主?
 **业务需?*?- 当前系统调仓决策基于固定规则，无法适应复杂多变的市场环?- 缺乏基于市场状态动态调整调仓策略的能力
 - 需要实现专业机构的智能调仓能力，提升组合表?
-**价值主?*?- 实现基于强化学习的智能调仓决策（决策准确率≥70%?- 提升组合夏普比率（≥2.5?- 降低交易成本（交易成本降低≥20%?- 实现自适应市场环境的动态调仓策?
+**价值主?*?- 实现基于强化学习的智能调仓决策（决策准确率≥70%?- 提升组合夏普比率（≥2.5?- 降低交易成本（交易成本降低≥20%?- 实现自适应市场环境的动态调仓策略
 ### 1.2 技术定位与架构层归属
 
 **Layer定位**: Layer 6 - 组合优化层（决策优化层）
@@ -110,7 +110,7 @@ class PortfolioRebalancingEnv(gym.Env):
     
     索引: RL_REBALANCING_001-M01
     职责: 构建强化学习交易环境
-    输入: 市场数据、组合数?    输出: 状态、奖励、是否结束    """
+    输入: 市场数据、组合数据    输出: 状态、奖励、是否结束    """
     
     def __init__(self, config: EnvConfig):
         super(PortfolioRebalancingEnv, self).__init__()
@@ -158,7 +158,7 @@ class PortfolioRebalancingEnv(gym.Env):
         
     def _get_state_dim(self) -> int:
         """获取状态空间维?""
-        # 市场?+ 组合?+ 风险?+ 成本?        market_dim = self.n_assets * 10  # 价格、收益率、波动率?        portfolio_dim = self.n_assets * 2  # 权重、价?        risk_dim = 4  # VaR, CVaR, 回撤, 杠杆
+        # 市场?+ 组合?+ 风险?+ 成本?        market_dim = self.n_assets * 10  # 价格、收益率、波动率?        portfolio_dim = self.n_assets * 2  # 权重、价值        risk_dim = 4  # VaR, CVaR, 回撤, 杠杆
         cost_dim = 2  # 交易成本、滑?        
         return market_dim + portfolio_dim + risk_dim + cost_dim
     
@@ -189,7 +189,7 @@ class PortfolioRebalancingEnv(gym.Env):
         """
         # 1. 解码动作（转换为权重调整?        weight_adjustment = action * 0.1  # 限制调整幅度
         
-        # 2. 计算新权?        new_weights = self.weights + weight_adjustment
+        # 2. 计算新权限        new_weights = self.weights + weight_adjustment
         new_weights = np.clip(new_weights, 0, 1)  # 不允许做?        new_weights = new_weights / new_weights.sum()  # 归一?        
         # 3. 计算交易成本
         turnover = np.abs(new_weights - self.weights).sum()
@@ -379,7 +379,7 @@ from stable_baselines3.common.callbacks import EvalCallback
 import torch as th
 
 class PPORebalancingAgent:
-    """PPO调仓智能?    
+    """PPO调仓智能力    
     索引: RL_REBALANCING_001-M02
     职责: 使用PPO算法训练调仓决策模型
     输入: 交易环境
@@ -467,7 +467,7 @@ class PPORebalancingAgent:
         """预测动作
         
         Args:
-            observation: 观测?            deterministic: 是否确定性策?            
+            observation: 观测试            deterministic: 是否确定性策略            
         Returns:
             action: 动作
             state: 隐状态（None?        """
@@ -495,7 +495,7 @@ class PPORebalancingAgent:
 from stable_baselines3 import SAC
 
 class SACRebalancingAgent:
-    """SAC调仓智能?    
+    """SAC调仓智能力    
     索引: RL_REBALANCING_001-M03
     职责: 使用SAC算法训练调仓决策模型
     输入: 交易环境
@@ -616,7 +616,7 @@ class DynamicRewardFunction:
             
         Returns:
             float: 动态奖?        """
-        # 1. 根据市场状态调整权?        self._adjust_weights(market_state)
+        # 1. 根据市场状态调整权限        self._adjust_weights(market_state)
         
         # 2. 计算收益奖励
         return_reward = self._calculate_return_reward(portfolio_return)
@@ -640,7 +640,7 @@ class DynamicRewardFunction:
         return total_reward
     
     def _adjust_weights(self, market_state: Dict[str, float]):
-        """根据市场状态调整奖励权?""
+        """根据市场状态调整奖励权限""
         volatility = market_state.get('volatility', 0.02)
         trend = market_state.get('trend', 0.0)
         
@@ -650,7 +650,7 @@ class DynamicRewardFunction:
         else:
             self.reward_weights['risk'] = 0.5
         
-        # 趋势市场：增加收益权?        if abs(trend) > 0.01:
+        # 趋势市场：增加收益权限        if abs(trend) > 0.01:
             self.reward_weights['return'] = 1.2
         else:
             self.reward_weights['return'] = 1.0
@@ -928,7 +928,7 @@ class RLRebalancingSystem:
         self.train_env = PortfolioRebalancingEnv(config.train_env_config)
         self.eval_env = PortfolioRebalancingEnv(config.eval_env_config)
         
-        # 构建智能?        if config.algorithm == 'PPO':
+        # 构建智能力        if config.algorithm == 'PPO':
             self.agent = PPORebalancingAgent(config.ppo_config)
         elif config.algorithm == 'SAC':
             self.agent = SACRebalancingAgent(config.sac_config)
@@ -947,7 +947,7 @@ class RLRebalancingSystem:
         
         Args:
             total_timesteps: 总训练步?            optimize_hyperparams: 是否优化超参?        """
-        # 超参数优?        if optimize_hyperparams:
+        # 超参数优化        if optimize_hyperparams:
             best_params = self.optimizer.optimize(
                 n_trials=50,
                 algorithm=self.config.algorithm
@@ -965,7 +965,7 @@ class RLRebalancingSystem:
         """预测动作
         
         Args:
-            observation: 观测?            
+            observation: 观测试            
         Returns:
             np.ndarray: 动作
         """

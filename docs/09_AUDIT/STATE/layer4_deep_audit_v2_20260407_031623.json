@@ -8369,7 +8369,7 @@
       {
         "doc": "docs\\06_ARCHIVE\\strategy_pool.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #1-策略池概�?\n2. [策略分类体系](#2-策略分类体系",
+        "description": "链接指向不存在的文件: #1-策略池概?\n2. [策略分类体系](#2-策略分类体系",
         "severity": "高"
       },
       {
@@ -8393,7 +8393,7 @@
       {
         "doc": "docs\\06_ARCHIVE\\strategy_pool.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #6-策略池配�?\n7. [游资量化策略库](#7-游资量化策略�?\n8. [行业精选策略库](#8-行业精选策略库",
+        "description": "链接指向不存在的文件: #6-策略池配?\n7. [游资量化策略库](#7-游资量化策略?\n8. [行业精选策略库](#8-行业精选策略库",
         "severity": "高"
       },
       {
@@ -8405,19 +8405,19 @@
       {
         "doc": "docs\\06_ARCHIVE\\system_enhancement_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #2-多维度量化监控系�?\n3. [股票强度分析体系](#3-股票强度分析体系",
+        "description": "链接指向不存在的文件: #2-多维度量化监控系?\n3. [股票强度分析体系](#3-股票强度分析体系",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\tactics_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #1-技术指标详细参数体�?\n2. [形态识别分类体系](#2-形态识别分类体�?\n3. [交易复盘量化体系](#3-交易复盘量化体系",
+        "description": "链接指向不存在的文件: #1-技术指标详细参数体?\n2. [形态识别分类体系](#2-形态识别分类体?\n3. [交易复盘量化体系](#3-交易复盘量化体系",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\tactics_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #4-涨停板量化复盘体�?\n5. [AI量化策略整合体系](#5-ai量化策略整合体系",
+        "description": "链接指向不存在的文件: #4-涨停板量化复盘体?\n5. [AI量化策略整合体系](#5-ai量化策略整合体系",
         "severity": "高"
       },
       {
@@ -8441,7 +8441,7 @@
       {
         "doc": "docs\\06_ARCHIVE\\tactics_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #9-牛熊市量能周�?\n\n***\n\n## 1. 技术指标详细参数体�?\n\n> 本章来源：附录E - 技术指标详细参数体�?\n\n### 1.1 趋势类指�?\n\n| 指标 | 计算公式 | 用�?| 常用参数 |\n|------|----------|------|----------|\n| 移动平均�?(MA",
+        "description": "链接指向不存在的文件: #9-牛熊市量能周?\n\n***\n\n## 1. 技术指标详细参数体?\n\n> 本章来源：附录E - 技术指标详细参数体?\n\n### 1.1 趋势类指?\n\n| 指标 | 计算公式 | 用?| 常用参数 |\n|------|----------|------|----------|\n| 移动平均?(MA",
         "severity": "高"
       },
       {
@@ -8453,13 +8453,13 @@
       {
         "doc": "docs\\06_ARCHIVE\\technical_documentation.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #2-全成本模�?\n3. [分布式计算架构](#3-分布式计算架�?\n4. [A股基础交易规则](#4-aba交易规则",
+        "description": "链接指向不存在的文件: #2-全成本模?\n3. [分布式计算架构](#3-分布式计算架?\n4. [A股基础交易规则](#4-aba交易规则",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\technical_documentation.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #5-barra风险优化�?\n\n***\n\n## 1. 标准化JSON输出Schema\n\n> 本章来源：附录I - 标准化JSON输出Schema\n\n### 1.1 通用响应包装\n\n```json\n{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\"version\", \"timestamp\", \"layer\", \"status\", \"data\"],\n  \"properties\": {\n    \"version\": {\n      \"type\": \"string\",\n      \"description\": \"协议版本\",\n      \"example\": \"1.0\"\n    },\n    \"timestamp\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\",\n      \"description\": \"输出时间�?\n    },\n    \"layer\": {\n      \"type\": \"string\",\n      \"enum\": [\"pre_market\", \"alpha\", \"risk\", \"portfolio\", \"execution\", \"monitor\", \"attribution\"],\n      \"description\": \"层级标识\"\n    },\n    \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\"success\", \"warning\", \"error\"],\n      \"description\": \"执行状�?\n    },\n    \"error\": {\n      \"type\": \"object\",\n      \"description\": \"错误信息（当status为error时）\",\n      \"properties\": {\n        \"code\": {\"type\": \"integer\"},\n        \"message\": {\"type\": \"string\"}\n      }\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"description\": \"业务数据负载\"\n    }\n  }\n}\n```\n\n### 1.2 前置层输出Schema\n\n```json\n{\n  \"前置层输�?: {\n    \"version\": \"string\",\n    \"timestamp\": \"string\",\n    \"market_state_prob\": {\n      \"P_牛市\": \"number (0-1",
+        "description": "链接指向不存在的文件: #5-barra风险优化?\n\n***\n\n## 1. 标准化JSON输出Schema\n\n> 本章来源：附录I - 标准化JSON输出Schema\n\n### 1.1 通用响应包装\n\n```json\n{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"type\": \"object\",\n  \"required\": [\"version\", \"timestamp\", \"layer\", \"status\", \"data\"],\n  \"properties\": {\n    \"version\": {\n      \"type\": \"string\",\n      \"description\": \"协议版本\",\n      \"example\": \"1.0\"\n    },\n    \"timestamp\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\",\n      \"description\": \"输出时间?\n    },\n    \"layer\": {\n      \"type\": \"string\",\n      \"enum\": [\"pre_market\", \"alpha\", \"risk\", \"portfolio\", \"execution\", \"monitor\", \"attribution\"],\n      \"description\": \"层级标识\"\n    },\n    \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\"success\", \"warning\", \"error\"],\n      \"description\": \"执行状?\n    },\n    \"error\": {\n      \"type\": \"object\",\n      \"description\": \"错误信息（当status为error时）\",\n      \"properties\": {\n        \"code\": {\"type\": \"integer\"},\n        \"message\": {\"type\": \"string\"}\n      }\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"description\": \"业务数据负载\"\n    }\n  }\n}\n```\n\n### 1.2 前置层输出Schema\n\n```json\n{\n  \"前置层输?: {\n    \"version\": \"string\",\n    \"timestamp\": \"string\",\n    \"market_state_prob\": {\n      \"P_牛市\": \"number (0-1",
         "severity": "高"
       },
       {
@@ -8783,7 +8783,7 @@
       {
         "doc": "docs\\10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #ä¸æ°æ®æºæ©å±æ¨¡åææ¯è§æ ?\n2. [æ·±åº¦å­¦ä¹ æ\næåææ¨¡åææ¯è§æ ¼](#äºæ·±åº¦å­¦ä¹ æ\næåææ¨¡åææ¯è§æ ?\n3. [å®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ¼](#ä¸å®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ?\n4. [æ°æ®å­å\n¸](#åæ°æ®å­å\n?\n5. [API接口规范](#五api接口规范",
+        "description": "链接指向不存在的文件: #ä¸æ°æ®æºæ©å±æ¨¡åææ¯è§æ ?\n2. [æ·±åº¦å­¦ä¹ æ\næåææ¨¡åææ¯è§æ ¼](#äºæ·±åº¦å­¦ä¹ æ\næåææ¨¡åææ¯è§æ ?\n3. [å®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ¼](#ä¸å®æ¶é¢è­¦ç³»ç»æ¨¡åææ¯è§æ ?\n4. [æ°æ®å­å\n¸](#åæ°æ®å­å\n?\n5. [API接口规范](#五api接口规范",
         "severity": "高"
       },
       {
@@ -8801,7 +8801,7 @@
       {
         "doc": "docs\\10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #å\n«éè¯¯å¤çè§è?\n---\n## ããç¯å¢åå¤?\n> **éè¦æç¤º**: å¨å¼å§å®æ½åï¼è¯·å\nå®æç¯å¢åå¤å·¥ä½ãè¯¦ç»çç¯å¢åå¤æ­¥éª¤è¯·åèåæ¨¡åèå¾ææ¡£ï¼?\n### 0.1 æ°æ®æºæ©å±æ¨¡åç¯å¢åå¤?\n**åèææ¡?*: [å¦ç±»æ°æ®éææ¨¡åèå¾](./DATA_SOURCE_EXTENSION_BLUEPRINT.md#50-ç¯å¢åå¤",
+        "description": "链接指向不存在的文件: #å\n«éè¯¯å¤çè§è?\n---\n## ããç¯å¢åå¤?\n> **éè¦æç¤º**: å¨å¼å§å®æ½åï¼è¯·å\nå®æç¯å¢åå¤å·¥ä½ãè¯¦ç»çç¯å¢åå¤æ­¥éª¤è¯·åèåæ¨¡åèå¾ææ¡£ï¼?\n### 0.1 æ°æ®æºæ©å±æ¨¡åç¯å¢åå¤?\n**åèææ¡?*: [å¦ç±»æ°æ®éææ¨¡åèå¾](./DATA_SOURCE_EXTENSION_BLUEPRINT.md#50-ç¯å¢åå¤",
         "severity": "高"
       },
       {
@@ -8813,7 +8813,7 @@
       {
         "doc": "docs\\10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: ./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-ç¯å¢åå¤",
+        "description": "链接指向不存在的文件: ./REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md#50-ç¯å¢åå¤",
         "severity": "高"
       },
       {
@@ -9047,7 +9047,7 @@
       {
         "doc": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #1-因子研究方法�?\n2. [因子分类体系](#2-因子分类体系",
+        "description": "链接指向不存在的文件: #1-因子研究方法?\n2. [因子分类体系](#2-因子分类体系",
         "severity": "高"
       },
       {
@@ -9065,13 +9065,13 @@
       {
         "doc": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #5-数据源因子体�?\n6. [Table1.xls补充因子](#216-table1xls补充因子",
+        "description": "链接指向不存在的文件: #5-数据源因子体?\n6. [Table1.xls补充因子](#216-table1xls补充因子",
         "severity": "高"
       },
       {
         "doc": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #1-因子研究方法�?\n2. [因子分类体系](#2-因子分类体系",
+        "description": "链接指向不存在的文件: #1-因子研究方法?\n2. [因子分类体系](#2-因子分类体系",
         "severity": "高"
       },
       {
@@ -9089,7 +9089,7 @@
       {
         "doc": "docs\\02_FACTOR_LIBRARY\\10_MANUAL\\factor_library_manual.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #5-数据源因子体�?\n6. [Table1.xls补充因子](#216-table1xls补充因子",
+        "description": "链接指向不存在的文件: #5-数据源因子体?\n6. [Table1.xls补充因子](#216-table1xls补充因子",
         "severity": "高"
       },
       {
@@ -12737,13 +12737,13 @@
       {
         "doc": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\data_consistency\\COMPENSATING_TRANSACTION_DESIGN.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md",
+        "description": "链接指向不存在的文件: ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md",
         "severity": "高"
       },
       {
         "doc": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\data_consistency\\COMPENSATING_TRANSACTION_DESIGN.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md",
+        "description": "链接指向不存在的文件: Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md",
         "severity": "高"
       },
       {
@@ -12773,7 +12773,7 @@
       {
         "doc": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\web_interface\\API_INTERFACE_SPECIFICATION.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md",
+        "description": "链接指向不存在的文件: ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ?md",
         "severity": "高"
       },
       {
@@ -13229,13 +13229,13 @@
       {
         "doc": "docs\\06_ARCHIVE\\20260404_market_participant_consolidation\\ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰2ﻟ؟ﺝﻟ؟۰ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﺅﺟ?\n\n---\n\n## ﻭ ﻛﺕﻙﮔ۸ﮒﺎﮔﭦﻟﺛﻛﺛﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰\n\n### 3.1 ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﺅﺟ?(Insurance Fund Agent",
+        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰2ﻟ؟ﺝﻟ؟۰ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﺅﺟ?\n\n---\n\n## ﻭ ﻛﺕﻙﮔ۸ﮒﺎﮔﭦﻟﺛﻛﺛﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰\n\n### 3.1 ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﺅﺟ?(Insurance Fund Agent",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\20260404_market_participant_consolidation\\ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰3ﻟ؟ﺝﻟ؟۰ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﺅﺟ?\n\n---\n\n### 3.2 ﻛﭦ۶ﻛﺕﻟﭖﮔ؛ﮔﭦﻟﺛﺅﺟ?(Industrial Capital Agent",
+        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰3ﻟ؟ﺝﻟ؟۰ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﺅﺟ?\n\n---\n\n### 3.2 ﻛﭦ۶ﻛﺕﻟﭖﮔ؛ﮔﭦﻟﺛﺅﺟ?(Industrial Capital Agent",
         "severity": "高"
       },
       {
@@ -14831,91 +14831,91 @@
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ",
+        "description": "链接指向不存在的文件: #1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #2-agentﮔﭘﮔ",
+        "description": "链接指向不存在的文件: #2-agentﮔﭘﮔ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #3-ﮔ۷۰ﮒﻝ؟۰ﻝ",
+        "description": "链接指向不存在的文件: #3-ﮔ۷۰ﮒﻝ؟۰ﻝ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #4-ﮒﺓ۴ﮒﺓﻠﮔ",
+        "description": "链接指向不存在的文件: #4-ﮒﺓ۴ﮒﺓﻠﮔ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #5-ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ",
+        "description": "链接指向不存在的文件: #5-ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #6-ﮒ؟ﮒ۷ﮔﭦﮒﭘ",
+        "description": "链接指向不存在的文件: #6-ﮒ؟ﮒ۷ﮔﭦﮒﭘ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #7-ﮔ۶ﻟﺛﻛﺙﮒ",
+        "description": "链接指向不存在的文件: #7-ﮔ۶ﻟﺛﻛﺙﮒ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_QUANT_AGENT.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #8-ﮔﭖﻟﺁﮔﺗﮔ۰",
+        "description": "链接指向不存在的文件: #8-ﮔﭖﻟﺁﮔﺗﮔ۰",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ",
+        "description": "链接指向不存在的文件: #1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #2-ﮒﻟﺛﻟ؟ﺝﻟ؟۰",
+        "description": "链接指向不存在的文件: #2-ﮒﻟﺛﻟ؟ﺝﻟ؟۰",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #3-ﮔﮔﺁﮔﭘﮔ?\n- [4. ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰](#4-ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰",
+        "description": "链接指向不存在的文件: #3-ﮔﮔﺁﮔﭘﮔ?\n- [4. ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰](#4-ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #5-ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﻟ؟?\n- [6. ﻠﻝﺛ؟ﻝ؟۰ﻝ](#6-ﻠﻝﺛ؟ﻝ؟۰ﻝ",
+        "description": "链接指向不存在的文件: #5-ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﻟ؟?\n- [6. ﻠﻝﺛ؟ﻝ؟۰ﻝ](#6-ﻠﻝﺛ؟ﻝ؟۰ﻝ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #7-ﻠﻟﺁﺁﮒ۳ﻝ",
+        "description": "链接指向不存在的文件: #7-ﻠﻟﺁﺁﮒ۳ﻝ",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #8-ﮔﭖﻟﺁﮔﺗﮔ۰",
+        "description": "链接指向不存在的文件: #8-ﮔﭖﻟﺁﮔﺗﮔ۰",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\L11_TEXT_DRIVER.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #9-ﻠ۷ﻝﺛﺎﮔﺗﮔ۰",
+        "description": "链接指向不存在的文件: #9-ﻠ۷ﻝﺛﺎﮔﺗﮔ۰",
         "severity": "高"
       },
       {
@@ -15065,13 +15065,13 @@
       {
         "doc": "docs\\06_ARCHIVE\\integrated_documents\\20260403_market_simulation\\MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰2ﻟ؟ﺝﻟ؟۰ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﻝ?\n\n---\n\n### 2.2 ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛ?(Insurance Fund Agent",
+        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰2ﻟ؟ﺝﻟ؟۰ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﻝ?\n\n---\n\n### 2.2 ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛ?(Insurance Fund Agent",
         "severity": "高"
       },
       {
         "doc": "docs\\06_ARCHIVE\\integrated_documents\\20260403_market_simulation\\MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰3ﻟ؟ﺝﻟ؟۰ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﻝ?\n\n---\n\n## ﻭ ﻛﺕﻙﮔﺑﮔﺍﮒﻝﮔﭘﮔﮒﺝ\n\n### 3.1 ﮒ؟ﮔﺑﮔﭦﻟﺛﻛﺛﮔﭘﮔ?\n```\nﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?         Layer 2.5: ﮒﺕﮒﭦﮒﻛﺕﻟﮔ۷۰ﮔﮒﺎ (v1.1",
+        "description": "链接指向不存在的文件: #ﻛﭨﭨﮒ۰3ﻟ؟ﺝﻟ؟۰ﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛﮒ؟ﮔﺑﮒ؟ﻝ?\n\n---\n\n## ﻭ ﻛﺕﻙﮔﺑﮔﺍﮒﻝﮔﭘﮔﮒﺝ\n\n### 3.1 ﮒ؟ﮔﺑﮔﭦﻟﺛﻛﺛﮔﭘﮔ?\n```\nﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?         Layer 2.5: ﮒﺕﮒﭦﮒﻛﺕﻟﮔ۷۰ﮔﮒﺎ (v1.1",
         "severity": "高"
       },
       {
@@ -16019,13 +16019,13 @@
       {
         "doc": "docs\\09_AUDIT\\WORKFLOWS\\DOC_CREATION_WORKFLOW.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: ﻟﺓﺁﮒﺝ",
+        "description": "链接指向不存在的文件: ﻟﺓﺁﮒﺝ",
         "severity": "高"
       },
       {
         "doc": "docs\\09_AUDIT\\WORKFLOWS\\DOC_CREATION_WORKFLOW.md",
         "issue": "死链接",
-        "description": "链接指向不存在的文件: ﻟﺓﺁﮒﺝ",
+        "description": "链接指向不存在的文件: ﻟﺓﺁﮒﺝ",
         "severity": "高"
       },
       {

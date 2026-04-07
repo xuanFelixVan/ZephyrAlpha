@@ -6,17 +6,17 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 因子库SITEMAP文档
+  - 因子库站点地图
+  - 文档导航索引
+  - 阅读路径指引
 ---
-
 # SITEMAP
 
----|
-responsibility:
-  - 提供02 Factor Library相关文档支持
+## 📋 概述
 
-module_id: 02_FACTOR_LIBRARY_001
-------|
+提供因子库所有文档的站点地图和导航索引，帮助用户快速定位所需文档。
+
+
 | ĵ | 6?| ض |
 | ļ | 2?|  |
 | һĿ?| 8?|  |

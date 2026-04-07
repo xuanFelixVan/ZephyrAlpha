@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_README
 version: 1.0.0
 status: Active
@@ -64,7 +64,7 @@ implementation_status: 进行?---
 | 文档 | 说明 |
 |------|------|
 | [INDEX.md](INDEX.md) | 策略索引 |
-| STRATEGY_ENGINE_BLUEPRINT.md | 策略引擎开发蓝?|
+| STRATEGY_ENGINE_BLUEPRINT.md | 策略引擎开发蓝图|
 | Strategy_Spec_S001.md | S001策略规格 |
 | parameter_management.md | 参数管理 |
 | OPTIMIZATION_REPORT.md | 优化报告 |
@@ -72,7 +72,7 @@ implementation_status: 进行?---
 
 ---
 
-## 策略池概?
+## 策略池概述
 | 策略ID | 策略类型 | 状态|
 |--------|----------|------|
 | S001-S030 | 短线策略 | 活跃 |

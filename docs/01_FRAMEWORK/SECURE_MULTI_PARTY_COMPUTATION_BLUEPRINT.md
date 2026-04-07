@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -74,7 +74,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -142,7 +142,7 @@ class SecureMultiPartyComputation:
 
         Args:
 
-            num_parties: 参与方数?            protocol: 协议类型 ('sss', 'gmw', 'bgw')
+            num_parties: 参与方数据            protocol: 协议类型 ('sss', 'gmw', 'bgw')
 
             security_param: 安全参数
 

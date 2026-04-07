@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_A
 version: 1.0.0
 status: Active
@@ -56,7 +56,7 @@ implementation_status: 进行?---
 
 ***
 
-## 1. Asking（邱宝裕）核心策?
+## 1. Asking（邱宝裕）核心策略
 
 ### S011: 只做超强势股策略
 
@@ -295,7 +295,7 @@ class SentimentReversalStrategy(BaseStrategy):
 
 ***
 
-### S018: 情绪两分法策?
+### S018: 情绪两分法策略
 
 | 属?| 内容 |
 |------|------|
@@ -368,7 +368,7 @@ class SentimentTwoDivisionsStrategy(BaseStrategy):
 
 ***
 
-### S019: 情绪六分法策?
+### S019: 情绪六分法策略
 
 | 属?| 内容 |
 |------|------|
@@ -450,7 +450,7 @@ class SentimentSixDivisionsStrategy(BaseStrategy):
 
 ***
 
-### S020: 弱势转折点搏击策?
+### S020: 弱势转折点搏击策略
 
 | 属?| 内容 |
 |------|------|
@@ -530,12 +530,12 @@ class WeakMarketTurnStrategy(BaseStrategy):
 
 ## 3. 五日线战?
 
-### T011: 五日线趋势策?
+### T011: 五日线趋势策略
 
 | 属?| 内容 |
 |------|------|
 | 策略编号 | T011 |
-| 策略名称 | 五日线趋势策?|
+| 策略名称 | 五日线趋势策略|
 | 来源 | 明王心法 |
 | 适用市场 | 牛市、震荡市 |
 | 风险等级 | ?|

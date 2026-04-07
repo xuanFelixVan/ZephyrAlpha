@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROBABILISTIC_FORECASTING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -26,7 +26,7 @@ responsibility:
   - 提供probabilistic forecasting technical specification的技术规格和实现细节
 applicable_scope: 概率预测与不确定性量?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
-implementation_status: 技术规格设计完?
+implementation_status: 技术规格设计完整
 ---
 ---
 
@@ -108,7 +108,7 @@ import torch.nn.functional as F
 
 
 class UncertaintyType(Enum):
-    """不确定性类?""
+    """不确定性类别""
     ALEATORIC = "aleatoric"
     EPISTEMIC = "epistemic"
     TOTAL = "total"
@@ -539,7 +539,7 @@ class QuantileRegression:
 
 
 class ProbabilisticForecaster:
-    """概率预测?    
+    """概率预测试    
     统一的概率预测接口    """
     
     def __init__(self, config: Dict[str, Any]):
@@ -624,7 +624,7 @@ class ProbabilisticForecaster:
         
         Args:
             X: 输入数据
-            y: 真实?            method: 预测方法
+            y: 真实现            method: 预测方法
             
         Returns:
             CalibrationResult: 校准结果
@@ -673,7 +673,7 @@ class ProbabilisticForecaster:
         
         Args:
             X: 输入数据
-            y: 真实?            model_id: 模型ID
+            y: 真实现            model_id: 模型ID
             
         Returns:
             Dict: 概率预测报告

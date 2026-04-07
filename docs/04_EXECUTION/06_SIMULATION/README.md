@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 04_EXECUTION_06_SIMULATION_README
 version: 1.0.0
 status: Active
@@ -908,7 +908,7 @@ def example_simulation():
 |------|------|----------|----------|
 | **vn.py** | 生产级主引擎 | A股实?模拟、机构级交易 |  |
 | **RQAlpha** | 专业回测引擎 | A股深度回测、策略研?|  |
-| **Backtrader** | 功能补充引擎 | 多资产测试、高级订单类?|  |
+| **Backtrader** | 功能补充引擎 | 多资产测试、高级订单类别|  |
 
 ### 9.2 统一接口设计
 
@@ -930,7 +930,7 @@ def example_simulation():
 
 详细配置参见?
 
-### 9.4 完整多引擎蓝?
+### 9.4 完整多引擎蓝图
 
 完整的多引擎架构设计、实施路线图、性能测试方案详见?
 **MULTI_ENGINE_BLUEPRINT.md**

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DAILY_REPORTER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ responsibility:
 standard_type: 专业量化机构技术规?applicable_scope: Layer 7 - AI报告?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
-implementation_status: 待实?
+implementation_status: 待实现
 ---
 ---
 
@@ -368,7 +368,7 @@ class ReportInput:
 今日账户总资?**1,234,567.89**，日收益?**+1.23%**，累计收益率 **+23.45%**?市场整体震荡上行，沪?00指数上涨0.89%?
 ### 关键指标
 
-| 指标 | 数?| 目标 | 状态|
+| 指标 | 数据| 目标 | 状态|
 |------|------|------|------|
 | 日收益率 | +1.23% | >0% | ?达标 |
 | 最大回?| -3.45% | <-5% | ?达标 |
@@ -524,7 +524,7 @@ class ReportSecurity:
 ```python
 @dataclass
 class ReportMetadata:
-    """报告元数?    
+    """报告元数据    
     索引: L7.RPT.DLY.001-M01
     """
     report_id: str
@@ -602,7 +602,7 @@ class ReportStorage:
         """删除报告
         
         - 删除报告文件
-        - 删除元数?        - 记录删除日志
+        - 删除元数据        - 记录删除日志
         """
         pass
     
@@ -990,10 +990,10 @@ loguru = ">=0.7"
 
 ```python
 class TestDailyReporterIntegration:
-    """日报生成器集成测?""
+    """日报生成器集成测试""
     
     def test_end_to_end_report_generation(self):
-        """端到端报告生成测?""
+        """端到端报告生成测试""
         reporter = DailyReporter(test_config)
         
         report = reporter.generate_daily_report(

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_README_3
 version: 1.0.0
 status: Active
@@ -137,7 +137,7 @@ NozyIO通过四层可视化编辑系统，让用户通过拖拽、连线、配�
 └─────────────────────────────────────────────────────────────?
 ```
 
-### 2.3 支持的因子类?
+### 2.3 支持的因子类别
 
 #### 技术指标模块
 
@@ -526,7 +526,7 @@ BacktestResult = {
 | 端点 | 方法 | 说明 |
 |------|------|------|
 | `/api/v1/strategies` | GET | 获取策略列表 |
-| `/api/v1/strategies` | POST | 创建新策?|
+| `/api/v1/strategies` | POST | 创建新策略|
 | `/api/v1/strategies/{id}` | GET | 获取策略详情 |
 | `/api/v1/strategies/{id}` | PUT | 更新策略 |
 | `/api/v1/strategies/{id}/signal` | POST | 生成信号 |

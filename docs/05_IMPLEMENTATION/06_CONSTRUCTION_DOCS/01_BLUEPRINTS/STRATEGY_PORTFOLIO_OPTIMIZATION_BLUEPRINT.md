@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
 - 策略组合优化
 - 策略权重分配
@@ -13,7 +13,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_SPEC_S001
 version: 1.0.0
 status: Active
@@ -137,7 +137,7 @@ print(f"Signal: {signal}, Confidence: {confidence:.2%}")
 | timestamp | string | ISO 8601时间?|
 | symbol | string | 股票代码（如000001.SZ?|
 | ohlcv | object | OHLCV数据 |
-| ohlcv.close | float | 收盘?|
+| ohlcv.close | float | 收盘|
 | ohlcv.volume | int | 成交?|
 
 ### 4.2 输出信号
@@ -237,7 +237,7 @@ if price_change > 10%:  # 单根K线涨?10%
 
 - ⚠️ 该策略在趋势市表现良好，在震荡市容易产生虚假信号
 - ⚠️ 需要配合市场状态识别模块（Layer 1）使?
-- ⚠️ 参数需要根据不同标的进行优?
+- ⚠️ 参数需要根据不同标的进行优化
 - ⚠️ 需要定期回测验证，至少每月一?
 
 

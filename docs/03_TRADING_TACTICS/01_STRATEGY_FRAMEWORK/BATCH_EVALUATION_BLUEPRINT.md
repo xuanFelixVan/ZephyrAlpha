@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BATCH_EVALUATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ implementation_status: 设计阶段
 ---
 
 
-# 批量策略评估系统技术蓝?
+# 批量策略评估系统技术蓝图
 > **核心职责**: Batch Evaluation蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Batch Evaluation蓝图设计相关内容
@@ -53,7 +53,7 @@ implementation_status: 设计阶段
 
 ### 1.1 核心设计目标
 
-| 目标 | 优先?| 技术实?|
+| 目标 | 优先?| 技术实现|
 |------|--------|----------|
 | **120+策略并行回测** | P0 | 多进程池 + 任务队列 + 结果聚合 |
 | **标准化绩效指?* | P0 | 夏普比率、最大回撤、胜率、盈亏比?0+指标 |
@@ -391,7 +391,7 @@ Level 1: 内存缓存 (LRU策略)
   ├─ 技术指标计算结束  └─ 因子数据
 
 Level 2: 磁盘缓存 (Parquet格式)
-  ├─ 预处理后的数?  ├─ 回测中间结果
+  ├─ 预处理后的数据  ├─ 回测中间结果
   └─ 绩效指标缓存
 
 Level 3: 共享内存 (多进程共?
@@ -421,7 +421,7 @@ def optimize_task_grouping(strategies: List[StrategyConfig]) -> List[StrategyGro
 
 **内存使用监控**?```python
 class MemoryAwareScheduler:
-    """内存感知调度?""
+    """内存感知调度""
     
     def schedule_tasks(self, tasks: List[EvaluationTask], 
                       available_memory: int) -> List[List[EvaluationTask]]:

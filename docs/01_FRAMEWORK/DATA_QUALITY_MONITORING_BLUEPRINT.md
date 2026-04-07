@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -215,11 +215,11 @@ class CompletenessChecker:
 
     def check_completeness(self, data: pd.DataFrame) -> CompletenessResult:
 
-        """检查数据完?""
+        """检查数据完整""
 
         
 
-        # 1. 检查关键字段缺?        missing_stats = {}
+        # 1. 检查关键字段缺失        missing_stats = {}
 
         for field in self.critical_fields:
 
@@ -241,7 +241,7 @@ class CompletenessChecker:
 
         
 
-        # 2. 检查时间序列完?        expected_dates = self._get_expected_dates(data.index[0], data.index[-1])
+        # 2. 检查时间序列完整        expected_dates = self._get_expected_dates(data.index[0], data.index[-1])
 
         actual_dates = set(data.index)
 

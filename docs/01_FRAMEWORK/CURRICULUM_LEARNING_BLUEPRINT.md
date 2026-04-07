@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CURRICULUM_LEARNING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -78,7 +78,7 @@ layer: Layer 3 (策略层)
 
 - **训练调度**: 动态调整训练顺?- **收敛加?*: 加速模型收?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

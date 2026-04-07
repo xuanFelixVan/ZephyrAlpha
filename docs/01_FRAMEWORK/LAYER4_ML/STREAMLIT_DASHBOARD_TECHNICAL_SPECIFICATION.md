@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STREAMLIT_DASHBOARD_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ responsibility:
 standard_type: 专业量化机构技术规?applicable_scope: Layer 8 - 人机交互?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
-implementation_status: 待实?
+implementation_status: 待实现
 ---
 ---
 
@@ -44,7 +44,7 @@ implementation_status: 待实?
 
 ### 1.1 设计背景
 
-StreamlitDashboard是Layer 8（人机交互层）的核心模块，负责量化系统的可视化展示和用户交互。该模块基于Streamlit框架构建，提供直观、交互式的仪表板界面，支持实时数据展示、策略监控、风险分析、报告查看等功能?
+StreamlitDashboard是Layer 8（人机交互层）的核心模块，负责量化系统的可视化展示和用户交互。该模块基于Streamlit框架构建，提供直观、交互式的仪表板界面，支持实时数据展示、策略监控、风险分析、报告查看等功能力
 ### 1.2 技术定?
 | 维度 | 定位 |
 |------|------|
@@ -304,7 +304,7 @@ class UserInteractionAPI:
         参数:
             module_name: 模块名称
             param_name: 参数名称
-            param_value: 参数?            
+            param_value: 参数据            
         返回:
             bool: 是否成功
         """
@@ -454,14 +454,14 @@ class DashboardSecurity:
     def authenticate_user(username: str, password: str) -> bool:
         """用户认证
         
-        - 验证用户名密?        - 检查访问权?        """
+        - 验证用户名密?        - 检查访问权限        """
         pass
     
     @staticmethod
     def authorize_access(user: str, resource: str) -> bool:
         """访问授权
         
-        - 检查用户权?        - 验证资源访问权限
+        - 检查用户权限        - 验证资源访问权限
         """
         pass
     
@@ -770,7 +770,7 @@ class PageRenderer:
 |------|--------|----------|------|
 | **refresh_interval** | 30 | 10-60 | 数据刷新间隔（秒?|
 | **cache_ttl** | 300 | 60-600 | 缓存有效期（秒） |
-| **max_items_per_page** | 100 | 50-200 | 每页最大显示数?|
+| **max_items_per_page** | 100 | 50-200 | 每页最大显示数据|
 | **chart_height** | 400 | 300-600 | 图表高度（像素） |
 
 ### 5.3 测试用例
@@ -864,10 +864,10 @@ loguru = ">=0.7"
 
 ```python
 class TestDashboardIntegration:
-    """仪表板集成测?""
+    """仪表板集成测试""
     
     def test_end_to_end_page_rendering(self):
-        """端到端页面渲染测?""
+        """端到端页面渲染测试""
         dashboard = StreamlitDashboard(test_config)
         
         dashboard.render_page(PageType.OVERVIEW)

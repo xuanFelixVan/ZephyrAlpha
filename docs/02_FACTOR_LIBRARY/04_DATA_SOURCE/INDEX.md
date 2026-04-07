@@ -6,15 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 数据源目录索引与导航
-  - 数据获取、清洗、存储模块协调
-  - 数据质量监控与治理
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库数据源层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 04_DATA_SOURCE 数据源目录索引
 
 > **核心职责**: 数据源目录导航、模块索引、数据治理协调

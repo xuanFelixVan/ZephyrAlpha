@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_AGENT_FRAMEWORK_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -76,7 +76,7 @@ AI Agent框架是构建智能代理的核心基础设施?
 
 - **记忆系统**: 长短期记忆管?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

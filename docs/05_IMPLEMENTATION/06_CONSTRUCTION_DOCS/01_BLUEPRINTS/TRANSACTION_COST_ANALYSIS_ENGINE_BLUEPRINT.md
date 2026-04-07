@@ -12,7 +12,7 @@ responsibility:
   - 交易成本分析优化
 owner: 实施团队
 compliance_level: 专业标准
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 08_HUMAN_AI_INTERFACE_24_RISK_DASHBOARD_001
 - [Grafana官方文档](https://grafana.com/docs/)
 - [PostgreSQL官方文档](https://www.postgresql.org/docs/)

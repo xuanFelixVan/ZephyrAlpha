@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GRADIENT_CHECKPOINTING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -80,7 +80,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -92,7 +92,7 @@ layer: Layer 4 (机器学习层)
 
 | **成本** | 降低硬件门槛 |
 
-| **灵活** | 可配置策?|
+| **灵活** | 可配置策略|
 
 
 

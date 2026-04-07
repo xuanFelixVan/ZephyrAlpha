@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -37,19 +37,19 @@ implementation_status: 设计阶段
 
 > 清风量化系统 v5.3 - 流动性管理系统详细技术设计> **索引**: `LIQUIDITY_MGMT_001`
 > **开发时?*: 80h
-> **核心定位**: 监控资金流动性，预测资金需求，优化资金配置，实现桥水模式的流动性管理能?
+> **核心定位**: 监控资金流动性，预测资金需求，优化资金配置，实现桥水模式的流动性管理能力
 ---
 
 ## 1. 概述
 
 ### 1.1 设计背景与业务目?
-**业务需?*?- 当前系统缺乏流动性管理能力，无法预测资金需?- 资金使用效率低，闲置资金过多或资金紧?- 缺乏流动性风险预警机?- 需要实现桥水模式的流动性管理能?
+**业务需?*?- 当前系统缺乏流动性管理能力，无法预测资金需?- 资金使用效率低，闲置资金过多或资金紧?- 缺乏流动性风险预警机?- 需要实现桥水模式的流动性管理能力
 **技术痛?*?- 无资金流动性监控系?- 无现金流预测模型
 - 无流动性风险预警机?- 无资金优化配置系统
 **预期?*?- 实时监控资金流动性，提前预警资金风险
 - 预测资金需求，优化资金配置
 - 提高资金使用效率20-30%
-- 实现桥水模式的流动性管理能?
+- 实现桥水模式的流动性管理能力
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 5 - 策略执行层（中观策略层）
 
@@ -206,7 +206,7 @@ class LiquidityMonitorResult:
     frozen_fund: float               # 冻结资金
     total_asset: float               # 总资?    cash_ratio: float                # 现金比例
     turnover_ratio: float            # 周转?    liquidity_ratio: float           # 流动比率
-    daily_inflow: float              # 日流?    daily_outflow: float             # 日流?    net_flow: float                  # 净流量
+    daily_inflow: float              # 日流程    daily_outflow: float             # 日流程    net_flow: float                  # 净流量
     risk_level: str                  # 风险级别（LOW/MEDIUM/HIGH?    risk_score: float                # 风险得分?-100?    timestamp: datetime              # 时间?```
 
 #### 3.2.2 现金流预测数据格?
@@ -401,7 +401,7 @@ class CashFlowPredictor:
         """
         简单现金流预测（历史平均法?        
         步骤:
-        1. 计算历史平均日流?        2. 计算历史平均日流?        3. 预测未来每日现金?        
+        1. 计算历史平均日流程        2. 计算历史平均日流程        3. 预测未来每日现金?        
         复杂?
         - 时间复杂? O(N)，N为历史数据量
         - 空间复杂? O(N)
@@ -523,7 +523,7 @@ class LiquidityRiskAssessor:
 
 ```python
 class TestTurnoverRatioCalculator:
-    """周转率计算单元测?""
+    """周转率计算单元测试""
     
     def test_turnover_ratio_calculation(self):
         """测试周转率计划""
@@ -534,7 +534,7 @@ class TestTurnoverRatioCalculator:
         pass
 
 class TestCashFlowPredictor:
-    """现金流预测单元测?""
+    """现金流预测单元测试""
     
     def test_simple_prediction(self):
         """测试简单预?""
@@ -549,7 +549,7 @@ class TestCashFlowPredictor:
 
 ```python
 class TestLiquidityManagementSystem:
-    """流动性管理系统集成测?""
+    """流动性管理系统集成测试""
     
     def test_end_to_end_monitoring(self):
         """测试端到端监控""

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_01_DATABASE_DESIGN_DOCUMENT
 version: 1.0.0
 status: Active
@@ -86,7 +86,7 @@ implementation_status: 进行?
 
 ---
 
-## 1. 数据库概?
+## 1. 数据库概述
 
 ### 1.1 技术选型
 
@@ -161,7 +161,7 @@ clickhouse:
 
 ### 2.1 账户管理模块
 
-#### 2.1.1 账户?(accounts) ?已优?
+#### 2.1.1 账户?(accounts) ?已优化
 
 **表说?*: 存储交易账户的基本信息和资金状态
 
@@ -187,7 +187,7 @@ clickhouse:
 | status | VARCHAR(20) | NOT NULL | 'active' | 账户状态（active/frozen/closed?|
 | created_at | TIMESTAMP | NOT NULL | NOW() | 创建时间 |
 | updated_at | TIMESTAMP | NOT NULL | NOW() | 更新时间 |
-| metadata | JSONB | - | '{}' | 扩展元数?|
+| metadata | JSONB | - | '{}' | 扩展元数据|
 
 **索引设计（专业标准）**:
 ```sql
@@ -218,7 +218,7 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('active', 'frozen', 'closed'))
 
 ---
 
-#### 2.1.2 账户快照?(account_snapshots) ?已优?
+#### 2.1.2 账户快照?(account_snapshots) ?已优化
 
 **表说?*: 记录账户资金状态的每日快照，用于历史追溯和性能分析
 
@@ -284,7 +284,7 @@ FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 
 ### 2.2 持仓管理模块
 
-#### 2.2.1 持仓?(positions) ?已优?
+#### 2.2.1 持仓?(positions) ?已优化
 
 **表说?*: 存储当前持仓信息和实时盈?
 
@@ -351,7 +351,7 @@ ADD CONSTRAINT chk_position_pct_range CHECK (position_pct >= 0 AND position_pct 
 
 ---
 
-#### 2.2.2 持仓历史?(position_history) ?已优?
+#### 2.2.2 持仓历史?(position_history) ?已优化
 
 **表说?*: 记录持仓变更历史，用于追溯和审计
 
@@ -367,8 +367,8 @@ ADD CONSTRAINT chk_position_pct_range CHECK (position_pct >= 0 AND position_pct 
 | account_id | BIGINT | NOT NULL | - | 账户ID |
 | stock_code | VARCHAR(20) | NOT NULL | - | 股票代码 |
 | change_type | VARCHAR(20) | NOT NULL | - | 变更类型（buy/sell/dividend/split?|
-| quantity_before | BIGINT | NOT NULL | - | 变更前数?|
-| quantity_after | BIGINT | NOT NULL | - | 变更后数?|
+| quantity_before | BIGINT | NOT NULL | - | 变更前数据|
+| quantity_after | BIGINT | NOT NULL | - | 变更后数据|
 | quantity_change | BIGINT | NOT NULL | - | 数量变化 |
 | price | DECIMAL(12,4) | NOT NULL | - | 交易价格 |
 | amount | DECIMAL(20,4) | NOT NULL | - | 交易金额 |
@@ -405,7 +405,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
 
 ### 2.3 订单管理模块
 
-#### 2.3.1 订单?(orders) ?已优?
+#### 2.3.1 订单?(orders) ?已优化
 
 **表说?*: 存储订单信息和执行状态
 
@@ -441,7 +441,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
 | created_at | TIMESTAMP | NOT NULL | NOW() | 创建时间 |
 | updated_at | TIMESTAMP | NOT NULL | NOW() | 更新时间 |
 | filled_at | TIMESTAMP | - | NULL | 成交时间 |
-| metadata | JSONB | - | '{}' | 扩展元数?|
+| metadata | JSONB | - | '{}' | 扩展元数据|
 
 **索引设计（专业标准）**:
 ```sql
@@ -485,7 +485,7 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('pending', 'submitted', 'parti
 
 ---
 
-#### 2.3.2 交易记录?(trades) ?已优?
+#### 2.3.2 交易记录?(trades) ?已优化
 
 **表说?*: 存储每笔交易的详细记?
 
@@ -563,7 +563,7 @@ FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 
 ### 2.4 信号管理模块
 
-#### 2.4.1 信号?(signals) ?已优?
+#### 2.4.1 信号?(signals) ?已优化
 
 **表说?*: 存储策略产生的交易信?
 
@@ -588,7 +588,7 @@ FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 | generated_at | TIMESTAMP | NOT NULL | NOW() | 生成时间 |
 | expired_at | TIMESTAMP | - | NULL | 过期时间 |
 | created_at | TIMESTAMP | NOT NULL | NOW() | 创建时间 |
-| metadata | JSONB | - | '{}' | 扩展元数?|
+| metadata | JSONB | - | '{}' | 扩展元数据|
 
 **索引设计（专业标准）**:
 ```sql
@@ -673,7 +673,7 @@ FOREIGN KEY (engine_id) REFERENCES engines(engine_id) ON DELETE CASCADE;
 
 ---
 
-#### 2.5.3 Saga事务?(saga_transactions) ?已优?
+#### 2.5.3 Saga事务?(saga_transactions) ?已优化
 
 **表说?*: 存储Saga分布式事务的状态
 
@@ -719,7 +719,7 @@ CREATE INDEX idx_saga_transactions_started_at ON saga_transactions(started_at DE
 | check_code | VARCHAR(50) | NOT NULL, UNIQUE | - | 检查编?|
 | account_id | BIGINT | NOT NULL | - | 账户ID |
 | order_id | BIGINT | - | NULL | 订单ID |
-| check_type | VARCHAR(50) | NOT NULL | - | 检查类?|
+| check_type | VARCHAR(50) | NOT NULL | - | 检查类别|
 | check_result | VARCHAR(20) | NOT NULL | - | 检查结果（pass/fail/warning?|
 | risk_level | VARCHAR(20) | NOT NULL | - | 风险等级 |
 | message | TEXT | - | NULL | 检查消?|
@@ -785,7 +785,7 @@ FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
 
 ### 2.7 系统监控模块
 
-#### 2.7.1 系统指标?(system_metrics) ?已优?
+#### 2.7.1 系统指标?(system_metrics) ?已优化
 
 **表说?*: 存储系统性能指标
 
@@ -866,7 +866,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 | **次要金额** | DECIMAL(18,2) | DECIMAL(20,4) | 统一标准，避免精度损?|
 | **费用金额** | DECIMAL(10,2) | DECIMAL(12,4) | 精度提升，支持精确计划|
 
-### 3.2 百分比字段优?
+### 3.2 百分比字段优化
 
 | 字段类型 | 优化?| 优化?| 理由 |
 |----------|--------|--------|------|
@@ -985,7 +985,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 | 监管要求 | 具体规定 | 当前设计 | 符合?|
 |----------|----------|----------|--------|
-| **交易日志完整** | 完整保留 | 日志表设计完?| ?符合 |
+| **交易日志完整** | 完整保留 | 日志表设计完整| ?符合 |
 | **审计追溯** | 可追?| 审计字段完整 | ?符合 |
 
 ---
@@ -1048,9 +1048,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 ### 11.1 立即执行
 
-1. ?数据类型优化已完?
-2. ?分区策略优化已完?
-3. ?索引策略优化已完?
+1. ?数据类型优化已完整
+2. ?分区策略优化已完整
+3. ?索引策略优化已完整
 4. ?表结构优化已完成
 
 ### 11.2 后续设计任务
@@ -1061,6 +1061,6 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 ---
 
-**版本**: 2.0.0 | **更新日期**: 2026-04-02 | **状?*: ?已优? 
+**版本**: 2.0.0 | **更新日期**: 2026-04-02 | **状?*: ?已优化 
 **专业标准符合?*: 96% | **达标状?*: ?达标  
 **下一?*: 生成DDL脚本 ?开始P0-2数据字典设计

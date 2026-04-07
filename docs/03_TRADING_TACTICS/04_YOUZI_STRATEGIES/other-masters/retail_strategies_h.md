@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_04_YOUZI_STRATEGIES_RETAIL_STRATEGIES_H
 version: 1.0.0
 status: Active
@@ -479,7 +479,7 @@ class TradingReview:
 
 ## 6. 一夜持股法 (S064)
 
-> 超短线持仓策?
+> 超短线持仓策略
 
 ### 6.1 选股条件
 

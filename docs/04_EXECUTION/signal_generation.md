@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_GENERATION
 version: 1.0.0
 status: Active
@@ -178,7 +178,7 @@ class WeightedSignalSynthesizer:
         return result.fillna(0)
 ```
 
-### 4.2 动态权?
+### 4.2 动态权限
 
 ```python
 class DynamicWeightSynthesizer:

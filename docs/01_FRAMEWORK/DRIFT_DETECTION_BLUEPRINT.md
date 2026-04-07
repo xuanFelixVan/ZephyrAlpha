@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DRIFT_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -74,7 +74,7 @@ responsibility:
 
 
 
-## 📊 一、概?
+## 📊 一、概述
 
 ### 1.1 设计背景与业务目?
 
@@ -138,7 +138,7 @@ responsibility:
 
 
 
-**漂移检测实?*?- 检测特征分布变?- 检测预测分布变?- 动态调整模型权?
+**漂移检测实?*?- 检测特征分布变?- 检测预测分布变?- 动态调整模型权限
 
 **关键技?*?- KS检验和PSI计算
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEDERATED_LEARNING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -80,7 +80,7 @@ layer: Layer 4 (机器学习层)
 
 - **跨机构合?*: 支持跨机构合?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -88,7 +88,7 @@ layer: Layer 4 (机器学习层)
 
 | **隐私保护** | 数据不出本地 |
 
-| **数据丰富** | 多方数据价?|
+| **数据丰富** | 多方数据价值|
 
 | **合规?* | 满足数据法规 |
 
@@ -170,7 +170,7 @@ class FederatedLearning:
 
             aggregation_method: 聚合方法
 
-            num_clients: 客户端数?            local_epochs: 本地训练轮数
+            num_clients: 客户端数据            local_epochs: 本地训练轮数
 
         """
 

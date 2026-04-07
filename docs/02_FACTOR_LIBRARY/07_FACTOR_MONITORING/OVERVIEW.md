@@ -6,12 +6,15 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 因子监控概览文档
+  - 模块概览
+  - 核心概念
+  - 关键流程
+  - 核心概念
+  - 关键流程
 standard_type: 概览文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 因子监控概览
 
 > **核心职责**: 因子性能监控系统，提供预警管理和报告生成功能。

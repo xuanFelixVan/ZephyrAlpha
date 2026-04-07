@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-AI_WORKFLOW 文档 U+FFFD（�）内容级修复器（高置信度替换 + 结构化清理）
+AI_WORKFLOW 文档 U+FFFD（\\ufffd）内容级修复器（高置信度替换 + 结构化清理）
 
 目标：
-- 优先修复 YAML 元数据、标题、目录锚点、列表符号位中的 `�`
+- 优先修复 YAML 元数据、标题、目录锚点、列表符号位中的 U+FFFD（\\ufffd）
 - 仅做“可从上下文明确推断”的替换；无法推断的保留给后续人工逐点处理
 
 用法：
@@ -20,7 +20,7 @@ import argparse
 import pathlib
 import re
 
-REP = "\ufffd"  # '�'
+REP = "\ufffd"  # U+FFFD
 
 
 def repair_text(text: str) -> str:
@@ -29,9 +29,9 @@ def repair_text(text: str) -> str:
     text = re.sub(r"(?m)^standard_type:\s*专业机构级蓝\ufffd\?\s*$", "standard_type: 专业机构级蓝图", text)
     text = re.sub(r"(?m)^standard_type:\s*专业机构级索\ufffd\?\s*$", "standard_type: 专业机构级索引", text)
 
-    # 2) 列表符号：`- �?**xxx**` -> `- ✅ **xxx**`
+    # 2) 列表符号：`- \\ufffd?**xxx**` -> `- ✅ **xxx**`
     text = re.sub(r"(?m)^(\s*[-*]\s*)\ufffd\?\s*(\*\*)", r"\1✅ \2", text)
-    # 行内：`�?**` -> `✅ **`
+    # 行内：`\\ufffd?**` -> `✅ **`
     text = text.replace("\ufffd?**", "✅ **")
 
     # 3) 常见短语（局部片段修复）
@@ -55,7 +55,7 @@ def repair_text(text: str) -> str:
     for a, b in phrase_map:
         text = text.replace(a, b)
 
-    # 4) 通用清理：大量场景表现为 `�?`（替换字符+问号残渣）
+    # 4) 通用清理：大量场景表现为 `\\ufffd?`（替换字符+问号残渣）
     #    这里将其移除，避免残留破坏可读性/锚点。
     text = text.replace("\ufffd?", "")
 

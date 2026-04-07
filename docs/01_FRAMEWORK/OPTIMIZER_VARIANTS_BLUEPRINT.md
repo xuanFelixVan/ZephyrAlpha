@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OPTIMIZER_VARIANTS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,7 +37,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-# 优化器变体蓝?
+# 优化器变体蓝图
 > **核心职责**: 提供optimizer variants blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Optimizer Variants蓝图设计相关内容

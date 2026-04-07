@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_04_YOUZI_STRATEGIES_RETAIL_STRATEGIES_I
 version: 1.0.0
 status: Active
@@ -49,7 +49,7 @@ implementation_status: 进行?---
 
 > 来源：附录BD
 >
-> 动态仓位管理策?
+> 动态仓位管理策略
 
 ### 1.1 仓位计算核心
 
@@ -114,7 +114,7 @@ class DragonFlyTigerPosition:
 
 > 来源：附录BE
 >
-> 二板定龙头策?
+> 二板定龙头策略
 
 ### 2.1 二板定龙头量?
 
@@ -266,7 +266,7 @@ class AilinCoreStrategy:
 
 > 来源：附录BG
 >
-> 超短线操作体?
+> 超短线操作体系
 
 ### 4.1 超短线核?
 

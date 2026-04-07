@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 07_RESEARCH_04_EXPERIMENT_TRACKING_EXPERIMENT_TRACKING
 version: 1.0.0
 status: Active
@@ -479,7 +479,7 @@ experiment_tracking:
 | 接口 | 说明 |
 |------|------|
 | **上游接口** | 所有研?回测函数（通过装饰器） |
-| **下游接口** | 研究报告、策略迭?|
+| **下游接口** | 研究报告、策略迭代|
 | **存储格式** | JSONL文件（每行一个实验） |
 
 ---

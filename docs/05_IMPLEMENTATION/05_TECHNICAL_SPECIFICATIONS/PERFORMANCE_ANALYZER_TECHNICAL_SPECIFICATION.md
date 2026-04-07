@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERFORMANCE_ANALYZER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -1030,7 +1030,7 @@ def test_performance_analyzer_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 绩效指标计算 | 计算正确 | 单元测试 |
 | 风险指标计算 | 计算正确 | 单元测试 |
@@ -1057,7 +1057,7 @@ def test_performance_analyzer_integration():
 ### 10.1 Phase 1: 核心功能开?(3?
 - **Day 1**: 收益指标计算器、风险指标计算器
 - **Day 2**: 风险调整指标计算器、归因分析器
-- **Day 3**: 报告生成器、可视化生成器、集成测?
+- **Day 3**: 报告生成器、可视化生成器、集成测试
 
 ---
 

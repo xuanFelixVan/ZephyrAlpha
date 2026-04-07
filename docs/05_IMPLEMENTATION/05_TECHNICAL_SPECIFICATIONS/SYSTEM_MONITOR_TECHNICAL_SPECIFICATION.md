@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_MONITOR_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -139,4 +139,4 @@ class SystemStatus:
 
 ---
 
-**文档状?*: ?已完?
+**文档状?*: ?已完整

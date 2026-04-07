@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EVENT_BUS
 version: 1.0.0
 status: Active
@@ -344,7 +344,7 @@ class EventBus:
 
 ---
 
-## 3. 预定义事件类?
+## 3. 预定义事件类别
 
 ```python
 class EventTypes:

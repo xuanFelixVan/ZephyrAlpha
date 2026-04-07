@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -49,7 +49,7 @@ responsibility:
 - 因子筛选机制缺失，导致因子在不同市场状态下表现不稳?- 需要建立动态因子管理体系，实现因子的持续优化和迭代
 
 **技术痛?*?- 因子库规模小，覆盖面不足
-- 无动态因子筛选机?- 无因子有效性监?- 无因子衰减预测能?
+- 无动态因子筛选机?- 无因子有效性监?- 无因子衰减预测能力
 **预期?*?- 建立包含5700+因子的因子库
 - 实现因子动态筛选（IC均值≥0.03?- 实现因子衰减预测（提?-2周预警）
 - 提升策略夏普比率至≥2.0
@@ -566,7 +566,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 ```python
 class FactorDecayPredictor:
-    """因子衰减预测?""
+    """因子衰减预测试""
     
     def predict_decay(self, factor_name: str,
                      performance_history: pd.DataFrame,

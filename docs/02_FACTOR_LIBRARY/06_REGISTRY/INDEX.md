@@ -6,14 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 因子注册管理
-  - 因子版本控制
-  - 因子生命周期管理
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 06_REGISTRY 因子注册表
 
 > **核心职责**: 因子注册、版本管理和生命周期管理

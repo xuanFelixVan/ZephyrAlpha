@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_G
 version: 1.0.0
 status: Active
@@ -230,7 +230,7 @@ class FamousAssassinSystem(BaseStrategy):
 
 ## 3. 实战案例涨停启明?
 
-### S052: 涨停启明星策?
+### S052: 涨停启明星策略
 
 | 属?| 内容 |
 |------|------|
@@ -545,7 +545,7 @@ class WanShiHuTimingSystem(BaseStrategy):
 
 ***
 
-## 6. 职业炒手王元杰策?
+## 6. 职业炒手王元杰策略
 
 ### S055: 职业炒手完整策略
 
@@ -615,7 +615,7 @@ class ProfessionalTraderSystem(BaseStrategy):
 | 条件 | 标准 |
 |------|------|
 | 连续涨停 | ??|
-| 跟风股数?| ??|
+| 跟风股数据| ??|
 
 ***
 
@@ -626,7 +626,7 @@ class ProfessionalTraderSystem(BaseStrategy):
 | 属?| 内容 |
 |------|------|
 | 策略编号 | S056 |
-| 策略名称 | 小鳄鱼补充策?|
+| 策略名称 | 小鳄鱼补充策略|
 | 来源 | 小鳄鱼等 |
 | 适用市场 | 强势市场 |
 | 风险等级 | ?|
@@ -683,7 +683,7 @@ class YoungCrocodileSupplement(BaseStrategy):
 
 ***
 
-## 8. 凡倍无名策?
+## 8. 凡倍无名策略
 
 ### S057: 凡倍无名次新股二板
 

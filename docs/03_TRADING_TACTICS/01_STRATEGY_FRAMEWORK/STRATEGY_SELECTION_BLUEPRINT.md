@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_SELECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ implementation_status: 设计阶段
 ---
 
 
-# 策略排名与选择系统技术蓝?
+# 策略排名与选择系统技术蓝图
 > **核心职责**: Strategy Selection蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Strategy Selection蓝图设计相关内容
@@ -55,10 +55,10 @@ implementation_status: 设计阶段
 
 ### 1.1 核心设计目标
 
-| 目标 | 优先?| 技术实?|
+| 目标 | 优先?| 技术实现|
 |------|--------|----------|
 | **多维度评分体?* | P0 | 收益、风险、稳定性、适应性等20+维度评分 |
-| **动态权重调?* | P0 | 基于市场状态、风险偏好动态调整评分权?|
+| **动态权重调?* | P0 | 基于市场状态、风险偏好动态调整评分权限|
 | **策略相关性分?* | P1 | 收益相关性矩阵、风险分散度计算 |
 | **AI辅助决策** | P1 | AI推荐策略组合、风险评估、市场匹配度分析 |
 | **实时性能监控** | P2 | 策略运行状态监控、性能衰减检查|
@@ -73,7 +73,7 @@ implementation_status: 设计阶段
 |----------|----------|----------|
 | **BatchEvaluation系统** | 绩效数据?| 获取策略历史绩效数据 |
 | **ParameterOptimization系统** | 参数优化结果 | 获取最优参数配?|
-| **StrategyEngine核心** | 策略元数?| 获取策略类型、参数空间等信息 |
+| **StrategyEngine核心** | 策略元数据| 获取策略类型、参数空间等信息 |
 | **MarketStateDetector** | 市场状态输?| 获取当前市场状态（牛市/熊市/震荡市） |
 
 
@@ -126,7 +126,7 @@ class TOPSISEvaluator:
         6. 计算相对接近度并排序
         """
         
-        # 1. 构建决策矩阵（策? 准则?        decision_matrix = self._build_decision_matrix(strategies, criteria_matrix)
+        # 1. 构建决策矩阵（策略 准则?        decision_matrix = self._build_decision_matrix(strategies, criteria_matrix)
         
         # 2. 标准化决策矩阵（消除量纲影响?        normalized_matrix = self.normalizer.normalize(decision_matrix)
         
@@ -157,7 +157,7 @@ class TOPSISEvaluator:
         """默认评分权重分配"""
         return {
             'sharpe_ratio': 0.25,      # 夏普比率：收益风险平?            'max_drawdown': 0.20,       # 最大回撤：风险控制
-            'annual_return': 0.15,      # 年化收益：盈利能?            'win_rate': 0.10,           # 胜率：交易质?            'stability_score': 0.10,    # 稳定性：绩效一致?            'adaptability_score': 0.10, # 适应性：市场环境适应能力
+            'annual_return': 0.15,      # 年化收益：盈利能力            'win_rate': 0.10,           # 胜率：交易质?            'stability_score': 0.10,    # 稳定性：绩效一致?            'adaptability_score': 0.10, # 适应性：市场环境适应能力
             'complexity_score': 0.05,   # 复杂度：策略简洁?            'turnover': 0.05           # 换手率：交易成本考虑
         }
         
@@ -204,7 +204,7 @@ class DynamicWeightOptimizer:
     """动态权重优化器
     
     索引: STRAT.SELECTION.001-M02
-    职责: 基于市场状态和用户偏好动态调整评分权?    特点: 自适应权重分配，提高策略选择准确?    """
+    职责: 基于市场状态和用户偏好动态调整评分权限    特点: 自适应权重分配，提高策略选择准确?    """
     
     def __init__(self, market_state_detector: MarketStateDetector,
                 user_preference_store: UserPreferenceStore):
@@ -295,7 +295,7 @@ class DynamicWeightOptimizer:
         # 根据市场状态选择权重模板
         template = weight_templates.get(market_state.name, weight_templates['range_market'])
         
-        # 根据市场状态强度调整权?        strength_factor = market_state.strength  # 0-1之间的强度?        adjusted_weights = {}
+        # 根据市场状态强度调整权限        strength_factor = market_state.strength  # 0-1之间的强度        adjusted_weights = {}
         
         for criterion, base_weight in template.items():
             if criterion in ['max_drawdown', 'stability_score']:
@@ -309,7 +309,7 @@ class DynamicWeightOptimizer:
             else:
                 adjusted = base_weight
                 
-            adjusted_weights[criterion] = min(adjusted, 0.5)  # 限制单指标最大权?            
+            adjusted_weights[criterion] = min(adjusted, 0.5)  # 限制单指标最大权限            
         return adjusted_weights
         
     def _adjust_for_user_preferences(self, base_weights: Dict[str, float],
@@ -353,14 +353,14 @@ class DynamicWeightOptimizer:
         """
         
         if len(self.weight_history) < 10:
-            return weights  # 历史数据不足，返回原始权?            
+            return weights  # 历史数据不足，返回原始权限            
         # 分析历史权重表现
         performance_by_weight = self._analyze_weight_performance()
         
         # 找出表现最好的权重模式
         best_pattern = self._find_best_weight_pattern(performance_by_weight)
         
-        # 混合当前权重和历史最佳权?        learning_rate = 0.3  # 学习?        learned_weights = {}
+        # 混合当前权重和历史最佳权限        learning_rate = 0.3  # 学习?        learned_weights = {}
         
         for criterion in weights.keys():
             if criterion in best_pattern:
@@ -579,7 +579,7 @@ class StrategyCorrelationAnalyzer:
         
         recommendations = []
         
-        # 推荐1：避免选择高度相关的策?        for group in high_corr_groups:
+        # 推荐1：避免选择高度相关的策略        for group in high_corr_groups:
             if len(group) > 1:
                 recommendations.append(
                     Recommendation(
@@ -688,7 +688,7 @@ class AIStrategyRecommender:
         else:  # 平衡?            n_strategies = min(4, len(strategies))
             diversification_weight = 0.5
             
-        # 选择策略并分配权?        selected = []
+        # 选择策略并分配权限        selected = []
         weights = []
         
         for i, (strategy, score) in enumerate(sorted_strategies[:n_strategies * 2]):
@@ -701,7 +701,7 @@ class AIStrategyRecommender:
                 weight = score / sum(s for _, s in sorted_strategies[:n_strategies * 2])
                 weights.append(weight)
                 
-        # 归一化权?        if weights:
+        # 归一化权限        if weights:
             total_weight = sum(weights)
             weights = [w / total_weight for w in weights]
             
@@ -756,7 +756,7 @@ class AIStrategyRecommender:
         # 策略选择理由
         top_strategy = portfolio.strategies[0]
         explanations.append(
-            f"首选策?{top_strategy.name}，因为其在当前{risk_assessment.current_market_state}市场环境下表现稳?
+            f"首选策?{top_strategy.name}，因为其在当前{risk_assessment.current_market_state}市场环境下表现稳定
         )
         
         return "?.join(explanations)

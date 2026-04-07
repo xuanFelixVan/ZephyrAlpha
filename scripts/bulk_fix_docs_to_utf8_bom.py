@@ -7,7 +7,7 @@
 特点：
 - 智能尝试解码：utf-8 / utf-8-sig / gb18030 / gbk / cp1252 / latin-1
 - 典型 mojibake 反转：对“é¦–å¸­...” 这类文本尝试 latin1->utf8 反转
-- 控制字符修复：对 `æ` 这类混入 U+0080..U+009F 的行做按字节反转尝试
+- 控制字符修复：对混入 U+0080..U+009F 的行做按字节反转尝试
 """
 
 from __future__ import annotations
@@ -102,7 +102,7 @@ def normalize_text(text: str) -> str:
         if cand is not None and cjk_count(cand) > cjk_count(text):
             text = cand
 
-    # 行级控制字符修复（针对 `æ` 一类）
+    # 行级控制字符修复（针对混入控制字符的一类）
     text = linewise_fix_ctrl(text)
     return text
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GRAPH_NEURAL_NETWORK_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -79,7 +79,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -195,17 +195,17 @@ class GraphNeuralNetwork:
 
     ) -> Data:
 
-        """构建图数?        
+        """构建图数据        
 
         Args:
 
             nodes: 节点数据
 
-            edges: 边数?            
+            edges: 边数据            
 
         Returns:
 
-            Data: PyG图数?        """
+            Data: PyG图数据        """
 
         pass
 
@@ -223,7 +223,7 @@ class GraphNeuralNetwork:
 
         Args:
 
-            graph: 图数?            
+            graph: 图数据            
 
         Returns:
 

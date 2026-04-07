@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_C
 version: 1.0.0
 status: Active
@@ -46,7 +46,7 @@ responsibility:
 
 ## 1. 赵老哥龙头战法
 
-### S021: 二板定龙头策?
+### S021: 二板定龙头策略
 
 | 属?| 内容 |
 |------|------|
@@ -137,7 +137,7 @@ class SecondBoardDragonStrategy(BaseStrategy):
 
 ***
 
-### S022: 新题材判断策?
+### S022: 新题材判断策略
 
 | 属?| 内容 |
 |------|------|
@@ -209,7 +209,7 @@ class NewThemeQuantifier(BaseStrategy):
 
 ## 2. 情绪周期五阶段量?
 
-### S023: 情绪周期五阶段策?
+### S023: 情绪周期五阶段策略
 
 | 属?| 内容 |
 |------|------|
@@ -853,7 +853,7 @@ class DayTradingPositionStrategy(BaseStrategy):
 **量化规则**?
 
 **买入信号**?
-- 技术信号：分时指标金叉 + 盘口支持（MACD金叉 + 买盘占优?
+- 技术信号：分时指标金叉 + 盘口支持（MACD金叉 + 买盘占优化
 - 资金信号：分钟级资金持续流入（连??分钟净流入?
 - 波动信号：波动率回归到均值以下（波动?< 20日均值?.8?
 - 协同信号：与日线趋势方向一致（日线看多 + 分钟回调买点?

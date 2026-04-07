@@ -6,15 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 数据契约定义
-  - 数据接口规范
-  - 契约验证机制
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库数据源层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 数据契约索引
 
 > **核心职责**: 数据契约定义、数据接口规范、契约验证机制

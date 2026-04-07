@@ -6,11 +6,16 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - Alpha因子索引维护
-  - Alpha因子分类管理
-  - Alpha因子性能跟踪
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # 02_ALPHA_FACTORS_INDEX
+
+## 📋 概述
+
+Alpha因子索引模块的说明文档，包含因子分类和索引信息。
+
 
 此目录正在整合中，文档数量较少。
 

@@ -5,7 +5,7 @@
 最终收尾清理：消灭 docs/ Markdown 中的编码伪影
 
 目标（面向“中文乱码”体验）：
-- 移除所有 U+FFFD（�）替换字符（这些字符代表已不可逆丢失的字节）
+- 移除所有 U+FFFD（\\ufffd）替换字符（这些字符代表已不可逆丢失的字节）
 - 尽可能反转 mojibake 文本回中文（latin1->utf8）
 
 注意：
@@ -49,7 +49,7 @@ def reverse_bytes_to_utf8(s: str) -> str | None:
 
 def reverse_utf8_latin1_roundtrip(s: str) -> str | None:
     """
-    处理“Unicode 形态的 mojibake”（如 è´è´£）：
+    处理“Unicode 形态的 mojibake”（例如一些看似 latin-1 字节渲染出来的乱码片段）：
     - 将字符串按 UTF-8 编码得到字节
     - 将这些字节按 latin-1 解码成 0..255 的“字节文本”
     - 再做 bytes->utf8 反转

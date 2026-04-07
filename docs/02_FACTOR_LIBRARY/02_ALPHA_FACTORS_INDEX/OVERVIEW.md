@@ -6,12 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - Alpha因子索引概览文档
+  - 模块概览
+  - 核心概念
+  - 关键流程
 standard_type: 概览文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # Alpha因子索引概览
 
 > **核心职责**: Alpha因子索引和分类文档，跟踪Alpha因子的性能表现。

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -79,7 +79,7 @@ AI模式识别引擎，负责利用机器学习技术识别市场交易模式，
 ### 2.3 数据流设?
 ```
 原始数据 ?特征工程 ?特征嵌入 ?模型训练 ?模型推理
-    ?          ?          ?          ?          ?数据验证   特征选择   时序编码   超参数优? 信号生成
+    ?          ?          ?          ?          ?数据验证   特征选择   时序编码   超参数优化 信号生成
     ?          ?          ?          ?          ?数据清洗   特征标准? 批量处理   模型验证   结果输出
 ```
 
@@ -327,7 +327,7 @@ class FeatureEngineer:
     """特征工程模块
     
     索引: AI_PATTERN_001-M03
-    职责: 提取技术指标、市场微观结构、情绪等多维度特?    输入: 原始市场数据 (OHLCV, 情绪数据, 基本面数?
+    职责: 提取技术指标、市场微观结构、情绪等多维度特?    输入: 原始市场数据 (OHLCV, 情绪数据, 基本面数据
     输出: 特征矩阵 (n_samples, feature_dim)
     """
     
@@ -599,8 +599,8 @@ class ModelEnsembler:
         self.weights = self._initialize_weights()
         
     def _initialize_weights(self) -> Dict[str, float]:
-        """初始化模型权?        
-        基于验证集性能动态调整权?        """
+        """初始化模型权限        
+        基于验证集性能动态调整权限        """
         return {
             'lstm_short': 0.2,
             'lstm_mid': 0.3,
@@ -670,7 +670,7 @@ class ModelEnsembler:
     def update_weights(self, validation_performance: Dict[str, float]):
         """更新模型权重
         
-        基于验证集性能动态调整权?        
+        基于验证集性能动态调整权限        
         Args:
             validation_performance: 各模型在验证集上的准确率
         """

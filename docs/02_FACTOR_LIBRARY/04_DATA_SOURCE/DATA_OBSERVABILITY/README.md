@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 可观测性框架
-  - 指标收集分析
-  - 问题诊断工具
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # Data Observability
 

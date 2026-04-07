@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TEST_FRAMEWORK
 version: 1.0.0
 status: Active
@@ -251,7 +251,7 @@ class TestFactorCalculator:
             assert result.iloc[-1] is not None or pd.isna(result.iloc[-1])
 ```
 
-### 3.3 风险管理器测?
+### 3.3 风险管理器测试
 
 ```python
 # tests/unit/modules/test_risk_manager.py

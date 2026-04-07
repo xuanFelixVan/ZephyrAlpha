@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEATURE_SELECTION_AUTOMATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ layer: Layer 3 (策略层)
 
 
 
-# 特征选择自动化蓝?
+# 特征选择自动化蓝图
 > **核心职责**: Feature Selection Automation蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Feature Selection Automation蓝图设计相关内容
@@ -78,7 +78,7 @@ layer: Layer 3 (策略层)
 
 - **可解释?*: 提升模型可解释?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -35,7 +35,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 ---
-# 批处理推理优化蓝?
+# 批处理推理优化蓝图
 > **核心职责**: Batch Inference Optimization蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Batch Inference Optimization蓝图设计相关内容

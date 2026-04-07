@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_D
 version: 1.0.0
 status: Active
@@ -56,9 +56,9 @@ implementation_status: 进行?---
 
 ***
 
-## 1. Asking局部炒单策?
+## 1. Asking局部炒单策略
 
-### S029: Asking局部炒单策?
+### S029: Asking局部炒单策略
 
 | 属?| 内容 |
 |------|------|
@@ -69,7 +69,7 @@ implementation_status: 进行?---
 | 风险等级 | ?|
 | 持仓周期 | 1-3?|
 
-**核心理念**：只做模式内交易，控制回撤，赚钱靠运气，亏钱靠实?
+**核心理念**：只做模式内交易，控制回撤，赚钱靠运气，亏钱靠实现
 
 **量化规则**?
 - 只做强势股（涨幅>5%?
@@ -217,9 +217,9 @@ class AskingScalpingStrategy(BaseStrategy):
 
 ***
 
-## 2. 令胡冲超跌反弹策?
+## 2. 令胡冲超跌反弹策略
 
-### S030: 令胡冲超跌反弹策?
+### S030: 令胡冲超跌反弹策略
 
 | 属?| 内容 |
 |------|------|
@@ -369,9 +369,9 @@ class LingHuChongReboundStrategy(BaseStrategy):
 
 ***
 
-## 3. 92科比价值投资策?
+## 3. 92科比价值投资策略
 
-### S031: 92科比价值投资策?
+### S031: 92科比价值投资策略
 
 | 属?| 内容 |
 |------|------|
@@ -505,7 +505,7 @@ class ValueInvestorStrategy(BaseStrategy):
 - 总分?.6
 
 **持有条件**?
-- 基本面稳?
+- 基本面稳定
 - 估值未高估（PE<20?
 - 无重大利?
 

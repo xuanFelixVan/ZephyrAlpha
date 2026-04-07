@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_ARCHIVE
 version: 1.0.0
 status: Active
@@ -74,7 +74,7 @@ responsibility:
 | 原模块| 原因 | 替代方案 |
 |--------|------|----------|
 | 完整监控大屏 | 异常告警即可 | 简化告?|
-| 完整Ops平台(K8s+ELK) | Docker Compose足够 | 简化运?|
+| 完整Ops平台(K8s+ELK) | Docker Compose足够 | 简化运行|
 | 灾备恢复系统 | git+备份足够 | 简单备?|
 
 ### 用户体验域（工程量过大）

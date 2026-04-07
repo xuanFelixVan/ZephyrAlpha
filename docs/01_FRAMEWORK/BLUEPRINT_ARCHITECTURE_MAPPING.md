@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_ARCHITECTURE_MAPPING
 version: 1.0.0
 status: Active
@@ -112,7 +112,7 @@ layer: Layer 2 (Alpha因子层)
 | 业务模块 | 技术模块| Layer | 职责 |
 |---------|---------|-------|------|
 | 统一数据基础设施 | UnifiedDataInfrastructure | Layer 0-1 | 多时间框架数据管?|
-| 多时间框架风控体?| MultiTimeframeRiskSystem | Layer 0-11 | 分层风险控制 |
+| 多时间框架风控体系| MultiTimeframeRiskSystem | Layer 0-11 | 分层风险控制 |
 |
 | 人机协同决策界面 | HumanAIDecisionInterface | Layer 8 | 授权/监控/报告 |
 

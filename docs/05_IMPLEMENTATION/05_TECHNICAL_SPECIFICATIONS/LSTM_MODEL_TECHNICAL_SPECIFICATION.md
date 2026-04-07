@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LSTM_MODEL_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -606,7 +606,7 @@ def test_lstm_model_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 模型构建 | 构建正确 | 单元测试 |
 | 模型训练 | 训练正确 | 单元测试 |
@@ -633,7 +633,7 @@ def test_lstm_model_integration():
 - **Day 1**: 模型构建、前向传?
 - **Day 2**: 训练流程、优化器
 - **Day 3**: 预测流程、评?
-- **Day 4**: 集成测试、优?
+- **Day 4**: 集成测试、优化
 
 ---
 

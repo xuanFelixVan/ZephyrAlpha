@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARBITRAGE_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-# 套利检测模型蓝?
+# 套利检测模型蓝图
 > **核心职责**: 提供arbitrage detection blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Arbitrage Detection蓝图设计相关内容
@@ -80,7 +80,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -160,7 +160,7 @@ class ArbitrageDetectionModel:
 
         Args:
 
-            prices: 各市场价?            
+            prices: 各市场价值            
 
         Returns:
 

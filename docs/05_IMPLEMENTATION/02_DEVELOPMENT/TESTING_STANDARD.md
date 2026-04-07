@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TESTING_STANDARD
 version: 1.0.0
 status: Active
@@ -181,7 +181,7 @@ class TestTrendFactor:
 
 ## 3. 集成测试规范
 
-### 3.1 回测流水线集成测?
+### 3.1 回测流水线集成测试
 
 ```python
 # tests/integration/test_backtest_pipeline.py

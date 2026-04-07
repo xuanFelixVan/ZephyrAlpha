@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_DESIGN
 version: 1.0.0
 status: Active
@@ -825,7 +825,7 @@ print(f"选中{len(selected_stocks)}只股? {selected_stocks}")
 
 学完因子计算后，您可以：
 
-1. **进行IC分析**: 评估因子的预测能?
+1. **进行IC分析**: 评估因子的预测能力
 2. **组合更多因子**: 尝试不同的因子组?
 3. **进入Phase 2**: 完整选股回测
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXPERIMENT_TRACKING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -86,7 +86,7 @@ responsibility_boundary: |
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 
@@ -194,7 +194,7 @@ class ExperimentTracker:
 
     ) -> str:
 
-        """开始实验运?        
+        """开始实验运行        
 
         Args:
 

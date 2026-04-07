@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PATH_STANDARD
 version: 1.0.0
 status: Active
@@ -22,7 +22,7 @@ standard_type: 专业量化机构实施标准
 applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 已完?
+implementation_status: 已完整
 ---
 ---
 
@@ -47,7 +47,7 @@ implementation_status: 已完?
 
 | 规范 | 要求 | 示例 |
 |------|------|------|
-| 编号前缀 | 使用2位数?| `00_`, `01_`, `02_` |
+| 编号前缀 | 使用2位数据| `00_`, `01_`, `02_` |
 | 英文命名 | 小写字母+下划?| `factor_library`, `trading_tactics` |
 | 避免中文 | 跨平台兼容性问?| ?避免使用中文目录?|
 | 禁止空格 | 路径中无空格 | ?避免 `my docs` |
@@ -201,7 +201,7 @@ import sys
 sys.path.insert(0, "D:\\project\\src")
 ```
 
-### 4.3 配置文件中路?
+### 4.3 配置文件中路径
 
 ```yaml
 # ?config/system.yaml
@@ -253,7 +253,7 @@ def cleanup_temp():
 
 ### 6.2 路径引用检查
 
-- [ ] 是否使用相对路径而非绝对路径?
+- [ ] 是否使用相对路径而非绝对路路径
 - [ ] 是否使用 `pathlib` 而非字符串拼接？
 - [ ] 是否避免硬编码路径？
 - [ ] 文档内链接是否正确？

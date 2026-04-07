@@ -6,12 +6,15 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 治理框架概览文档
+  - 模块概览
+  - 核心概念
+  - 关键流程
+  - 核心概念
+  - 关键流程
 standard_type: 概览文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 治理框架概览
 
 > **核心职责**: 因子库治理框架，包括文档管理规范、质量监控流程和持续改进机制。

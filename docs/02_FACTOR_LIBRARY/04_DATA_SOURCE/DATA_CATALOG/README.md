@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 数据目录维护
-  - 数据元数据管理
-  - 数据血缘追踪
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # Data Catalog
 

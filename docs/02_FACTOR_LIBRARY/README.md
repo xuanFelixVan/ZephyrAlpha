@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 因子库整体架构设计
-  - 因子计算流程管理
-  - 因子质量监控
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # 02 Factor Library
 

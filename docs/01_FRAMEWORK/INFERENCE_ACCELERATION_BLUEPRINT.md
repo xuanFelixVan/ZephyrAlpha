@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INFERENCE_ACCELERATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -34,7 +34,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 ---
-# 推理加速引擎蓝?
+# 推理加速引擎蓝图
 > **核心职责**: 提供inference acceleration blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Inference Acceleration蓝图设计相关内容
@@ -73,7 +73,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

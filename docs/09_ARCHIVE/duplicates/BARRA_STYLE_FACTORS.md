@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
 > **核心职责**: Barra风格因子体系定义（A股适配版），涉及风格因子
 > **职责边界**:
@@ -260,7 +260,7 @@ def calc_dividend_factor(stock_df):
 | VALUE | 15% | 价值投资核?|
 | MOM | 20% | 动量效应最?|
 | QUAL | 15% | 质量选股核心 |
-| VOL | 10% | 低波动稳?|
+| VOL | 10% | 低波动稳定|
 | GROW | 10% | 成长性配?|
 | EARN | 5% | 盈利辅助 |
 | LEVER | 5% | 杠杆参?|

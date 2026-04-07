@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -75,7 +75,7 @@ layer: Layer 4 (机器学习层)
 
 - **合规要求**: 满足最严格的隐私法?
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

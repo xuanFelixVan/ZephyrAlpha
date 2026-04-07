@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUICK_REFERENCE
 version: 1.0.0
 status: Active
@@ -374,7 +374,7 @@ pip install -r requirements.txt
 python src/main.py --mode production
 ```
 
-### Q: 如何运行回测?
+### Q: 如何运行回测试
 
 ```bash
 python scripts/backtest.py \
@@ -397,7 +397,7 @@ tail -f logs/error.log
 tail -f logs/trading.log
 ```
 
-### Q: 如何更新策略参数?
+### Q: 如何更新策略参数据
 
 ```python
 from qingfeng.modules import StrategyEngine
@@ -429,7 +429,7 @@ kubectl logs -f deployment/qingfeng-datahub
 
 ## 5. 性能优化建议
 
-### 数据库优?
+### 数据库优化
 
 ```sql
 -- 创建索引

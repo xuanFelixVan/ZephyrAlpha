@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -122,4 +122,4 @@ class Feedback:
 
 ---
 
-**文档状?*: ?已完?
+**文档状?*: ?已完整

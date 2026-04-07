@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 05_IMPLEMENTATION_01_QUICKSTART_ROADMAP
 version: 1.0.0
 status: Active
@@ -90,10 +90,10 @@ implementation_status: 进行?
 
 ---
 
-## Phase 1: Backtrader回测框架 (3-5? ?文档已完?
+## Phase 1: Backtrader回测框架 (3-5? ?文档已完整
 
 ### 目标
-- 编写并运行第一个量化策?
+- 编写并运行第一个量化策略
 - 理解回测报告
 - 学会修改策略参数
 
@@ -126,7 +126,7 @@ python src/main.py --code 000001.SZ --start 2024-01-01 --end 2024-12-31
 
 ---
 
-## Phase 2: 因子选股 (5-10? 📖 文档已完?
+## Phase 2: 因子选股 (5-10? 📖 文档已完整
 
 ### 目标
 - 理解什么是因子
@@ -209,12 +209,12 @@ for date in trading_dates:
 ### 目标
 - 选择券商API
 - 对接实盘账户
-- 小资金实盘测?
+- 小资金实盘测试
 - 建立风控机制
 
 ### 检查清单
 - [ ] 券商API对接完成
-- [ ] 小资金实盘测?
+- [ ] 小资金实盘测试
 - [ ] 风控机制建立
 - [ ] 监控告警配置
 

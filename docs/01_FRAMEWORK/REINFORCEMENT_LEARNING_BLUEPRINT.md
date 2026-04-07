@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REINFORCEMENT_LEARNING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -76,7 +76,7 @@ responsibility:
 
 
 
-## 📊 一、概?
+## 📊 一、概述
 
 ### 1.1 设计背景与业务目?
 
@@ -160,7 +160,7 @@ responsibility:
 
 **强化学习实践**?- RL用于动态风险控?- RL用于市场冲击最小化
 
-- RL用于最优执行路?
+- RL用于最优执行路径
 
 **关键技?*?- 实时风险监控
 
@@ -488,7 +488,7 @@ class TradingEnvironment(gym.Env):
 
     def _calculate_portfolio_value(self) -> float:
 
-        """计算组合价?""
+        """计算组合价值""
 
         return self.cash + self.position * self._get_current_price()
 
@@ -586,7 +586,7 @@ class RLAgent(ABC):
 
 class DQNAgent(RLAgent):
 
-    """DQN智能?""
+    """DQN智能力""
 
     
 
@@ -772,7 +772,7 @@ class DQNAgent(RLAgent):
 
 class PPOAgent(RLAgent):
 
-    """PPO智能?""
+    """PPO智能力""
 
     
 

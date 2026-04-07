@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 风险因子定义
-  - 风险因子计算
-  - 风险因子监控
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # 03 Risk Factors
 

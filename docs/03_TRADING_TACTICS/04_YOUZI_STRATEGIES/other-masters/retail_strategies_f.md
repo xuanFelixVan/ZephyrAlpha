@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_F
 version: 1.0.0
 status: Active
@@ -153,9 +153,9 @@ class TopTraderMindsetSystem(BaseStrategy):
 
 ***
 
-## 2. 涨停板量化复盘体?
+## 2. 涨停板量化复盘体系
 
-### S043: 涨停板量化复盘策?
+### S043: 涨停板量化复盘策略
 
 | 属?| 内容 |
 |------|------|
@@ -461,7 +461,7 @@ class FiveDayLineStrategy(BaseStrategy):
 
 ***
 
-## 5. 龙飞虎动态仓位策?
+## 5. 龙飞虎动态仓位策略
 
 ### S046: 龙飞虎动态仓位管?
 
@@ -740,7 +740,7 @@ class ElaineFuturesSystem(BaseStrategy):
 
 ***
 
-## 8. 独股一箭策?
+## 8. 独股一箭策略
 
 ### S049: 独股一箭超短线
 

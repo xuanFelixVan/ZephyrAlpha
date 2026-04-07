@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BACKDOOR_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -35,7 +35,7 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 ---
-# 后门检测蓝?
+# 后门检测蓝图
 > **核心职责**: 提供backdoor detection blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Backdoor Detection蓝图设计相关内容
@@ -78,7 +78,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

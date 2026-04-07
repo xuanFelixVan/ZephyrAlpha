@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_DECISION_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ implementation_status: 设计阶段
 layer: Layer 2 (Alpha因子层)
 ---
 
-# Layer 11: 战略决策层蓝?
+# Layer 11: 战略决策层蓝图
 > **核心职责**: Strategic Decision Layer蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Strategic Decision Layer蓝图设计相关内容
@@ -51,7 +51,7 @@ layer: Layer 2 (Alpha因子层)
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
-> **实施周期**: 2?> **目标**: 构建专业级战略决策体系，对标桥水、文艺复兴战略决策能?
+> **实施周期**: 2?> **目标**: 构建专业级战略决策体系，对标桥水、文艺复兴战略决策能力
 ---
 
 ## 📋 执行摘要
@@ -62,7 +62,7 @@ Layer 11战略决策层是清风量化系统?*战略大脑**，负责：
 - 战略资产配置决策（季?年度资产配置?- 风险预算分配决策（跨策略风险预算?- 投资策略选择决策（策略组合优化）
 - 战略调整决策（市场环境变化应对）
 
-### 个人使用价?
+### 个人使用价值
 | 价值维?| 专业机构实践 | 个人实现方式 | 价值评?|
 |---------|-------------|-------------|---------|
 | **战略资产配置** | 投资委员会决?| AI辅助决策+人工确认 | ⭐⭐⭐⭐?|
@@ -108,7 +108,7 @@ from enum import Enum
 
 class AllocationType(Enum):
     """配置类型"""
-    STRATEGIC = "strategic"      # 战略配置（季?年度?    TACTICAL = "tactical"        # 战术配置（月?周度?    DYNAMIC = "dynamic"          # 动态配置（实时调整?
+    STRATEGIC = "strategic"      # 战略配置（季?年度    TACTICAL = "tactical"        # 战术配置（月?周度    DYNAMIC = "dynamic"          # 动态配置（实时调整?
 @dataclass
 class AssetAllocation:
     """资产配置"""
@@ -241,7 +241,7 @@ class EconomicRegimeDetector:
         
         经济数据?        {economic_data.tail(20).to_string()}
         
-        HMM模型预测?        当前范式：{current_regime}
+        HMM模型预测试        当前范式：{current_regime}
         范式概率：{regime_probs}
         
         请输出：

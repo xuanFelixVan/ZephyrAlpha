@@ -35,6 +35,44 @@ LINKY_RE = re.compile(r"(https?://|\]\(|\]\(#)")
 SEP = r"(?=$|[\s，。；：:、)\]】}＞>\"'`|])"
 
 RULES: list[tuple[re.Pattern[str], str]] = [
+    # 更高频的蓝图/规范类断裂（优先放前面）
+    (re.compile(rf"蓝\?{SEP}"), "蓝图"),
+    (re.compile(rf"概\?{SEP}"), "概述"),
+    (re.compile(rf"策\?{SEP}"), "策略"),
+    (re.compile(rf"优\?{SEP}"), "优化"),
+    (re.compile(rf"测\?{SEP}"), "测试"),
+    (re.compile(rf"迭\?{SEP}"), "迭代"),
+    (re.compile(rf"流\?{SEP}"), "流程"),
+    (re.compile(rf"路\?{SEP}"), "路径"),
+    (re.compile(rf"径\?{SEP}"), "路径"),
+    (re.compile(rf"盘\?{SEP}"), "盘"),
+    (re.compile(rf"档\?{SEP}"), "文档"),
+    (re.compile(rf"实\?{SEP}"), "实现"),
+    (re.compile(rf"数\?{SEP}"), "数据"),
+    (re.compile(rf"图\?{SEP}"), "图表"),
+    # 更具体的高置信度短语（放在通用规则之前）
+    (re.compile(rf"数据引\?{SEP}"), "数据引擎"),
+    (re.compile(rf"数据湖架\?{SEP}"), "数据湖架构"),
+    (re.compile(rf"技术架\?{SEP}"), "技术架构"),
+    (re.compile(rf"系统架\?{SEP}"), "系统架构"),
+    (re.compile(rf"值\?{SEP}"), "值"),
+    (re.compile(rf"度\?{SEP}"), "度"),
+
+    # 业务/文档常见高频断裂（相对高置信度）
+    (re.compile(rf"能\?{SEP}"), "能力"),
+    (re.compile(rf"类\?{SEP}"), "类别"),
+    (re.compile(rf"体\?{SEP}"), "体系"),
+    (re.compile(rf"价\?{SEP}"), "价值"),
+    (re.compile(rf"完\?{SEP}"), "完整"),
+    (re.compile(rf"缺\?{SEP}"), "缺失"),
+    (re.compile(rf"稳\?{SEP}"), "稳定"),
+    (re.compile(rf"运\?{SEP}"), "运行"),
+    (re.compile(rf"权\?{SEP}"), "权限"),
+    (re.compile(rf"审\?{SEP}"), "审计"),
+    (re.compile(rf"协\?{SEP}"), "协作"),
+    # 短语级兜底
+    (re.compile(rf"合规审\?{SEP}"), "合规审计"),
+
     (re.compile(rf"设\?{SEP}"), "设计"),
     (re.compile(rf"设\?\*{SEP}"), "设计"),
     (re.compile(rf"计\?{SEP}"), "计划"),
@@ -61,7 +99,8 @@ RULES: list[tuple[re.Pattern[str], str]] = [
     (re.compile(rf"节\?{SEP}"), "节奏"),
     (re.compile(rf"库\?{SEP}"), "库"),
     (re.compile(rf"顶\?{SEP}"), "顶层"),
-    (re.compile(rf"档\?{SEP}"), "档案"),
+    # 注意：单字“档?”在语料里既可能是“文档”，也可能是“档案”。
+    # 前面已优先将其映射为“文档”，这里不再重复二次映射，避免同一行被来回替换。
     (re.compile(rf"迁\?{SEP}"), "迁移"),
     # 常见“系统/接口/指标/流程”类断裂（单字系?易误伤，放最后且仅在“中文+系?”）
     (re.compile(rf"系\?{SEP}"), "系统"),

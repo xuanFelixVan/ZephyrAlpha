@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTH
 version: 1.0.0
 status: Active
@@ -40,7 +40,7 @@ implementation_status: 进行?---
 
 
 
-# 简化认证模块蓝?
+# 简化认证模块蓝图
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 07_RESEARCH_02_EXPLORATORY_ANALYSIS_CORRELATION_ANALYSIS
 version: 1.0.0
 status: Active
@@ -53,7 +53,7 @@ implementation_status: 进行?
 
 ---
 
-## 2. 相关性类?
+## 2. 相关性类别
 
 | 类型 | 说明 | 应用场景 |
 |------|------|----------|
@@ -277,7 +277,7 @@ class RollingCorrelation:
 
 ## 6. 相关性矩阵可视化
 
-### 6.1 热力图数?
+### 6.1 热力图数据
 
 ```python
 class CorrelationHeatmap:

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
 > **核心职责**: 申万行业因子体系定义，涉及申万行业因子
 > **职责边界**:
@@ -191,7 +191,7 @@ def calc_industry_return(self, industry_stocks, price_df):
     return pd.Series(industry_returns)
 ```
 
-### 3.3 行业市值权?
+### 3.3 行业市值权限
 
 ```python
 def calc_industry_market_weight(self, trade_date):

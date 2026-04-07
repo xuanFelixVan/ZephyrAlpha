@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DAILY_PORTFOLIO_OPTIMIZER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -54,9 +54,9 @@ responsibility:
 **模块类别**: 核心模块
 
 **架构角色**: 
-- 作为文艺复兴模式的核心组件，将Alpha信号转化为组合权?
+- 作为文艺复兴模式的核心组件，将Alpha信号转化为组合权限
 - 作为组合优化层的风险控制，确保组合风险在可控范围内
-- 为执行层提供目标组合权?
+- 为执行层提供目标组合权限
 ### 1.3 版本信息与变更记?
 | 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
@@ -340,7 +340,7 @@ CREATE TABLE portfolio_constraints (
 ### 4.3 数据流设?
 ```
 数据?(Layer 0)
-    ├── 历史收益率数?    ├── 因子暴露数据
+    ├── 历史收益率数据    ├── 因子暴露数据
     └── Alpha信号数据
           ?风险模型估计 (Layer 2-4)
     ├── 协方差矩阵估?    ├── 因子风险模型
@@ -460,7 +460,7 @@ class PortfolioOptimizer:
             constraints: 约束条件
             
         Returns:
-            Dict[str, float]: 最优权?        """
+            Dict[str, float]: 最优权限        """
         from scipy.optimize import minimize
         
         cov_matrix = risk_model['covariance_matrix']
@@ -521,7 +521,7 @@ def risk_parity_optimization(self, risk_model: Dict[str, any],
         risk_budget: 风险预算(?
         
     Returns:
-        Dict[str, float]: 最优权?    """
+        Dict[str, float]: 最优权限    """
     from scipy.optimize import minimize
     
     cov_matrix = risk_model['covariance_matrix']

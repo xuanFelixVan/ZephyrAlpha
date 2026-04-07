@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NOTIFICATION_SYSTEM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ responsibility:
 standard_type: 专业量化机构技术规?applicable_scope: Layer 8 - 人机交互?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
-implementation_status: 待实?
+implementation_status: 待实现
 ---
 ---
 
@@ -297,7 +297,7 @@ class NotificationSecurity:
     @staticmethod
     def validate_recipient(recipient: str, channel: NotificationChannel) -> bool:
         """验证接收?        
-        - 检查接收者格?        - 检查接收者权?        """
+        - 检查接收者格?        - 检查接收者权限        """
         pass
     
     @staticmethod
@@ -419,7 +419,7 @@ class NotificationRouter:
     ) -> List[NotificationMessage]:
         """路由通知
         
-        算法复杂? O(n), n为规则数?        
+        算法复杂? O(n), n为规则数据        
         参数:
             event_type: 事件类型
             event_data: 事件数据

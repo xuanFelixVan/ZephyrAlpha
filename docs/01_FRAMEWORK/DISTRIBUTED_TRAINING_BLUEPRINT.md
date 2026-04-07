@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DISTRIBUTED_TRAINING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,7 +39,7 @@ layer: Layer 3 (策略层)
 
 
 
-# 分布式训练框架蓝?
+# 分布式训练框架蓝图
 > **核心职责**: 提供distributed training blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Distributed Training蓝图设计相关内容
@@ -78,7 +78,7 @@ layer: Layer 3 (策略层)
 
 
 
-### 1.2 业务价?
+### 1.2 业务价值
 
 | 价值维?| 具体收益 |
 

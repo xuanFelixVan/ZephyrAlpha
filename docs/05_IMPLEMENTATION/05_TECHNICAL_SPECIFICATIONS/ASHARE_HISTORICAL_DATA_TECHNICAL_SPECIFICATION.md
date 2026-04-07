@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ASHARE_HISTORICAL_DATA_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -278,7 +278,7 @@ class AShareHistoricalDataManager:
 | 日线数据导入速度 | > 1000股票/分钟 | 批量导入测试 |
 | 分钟数据导入速度 | > 500股票/分钟 | 批量导入测试 |
 | 单股票查询时?| < 100ms | 日线数据一?|
-| 批量查询时间 | < 5?| 100股票一年数?|
+| 批量查询时间 | < 5?| 100股票一年数据|
 | 财务数据查询时间 | < 2?| 单股票所有报告|
 | 缓存命中?| ?85% | 热点数据查询 |
 | 存储压缩?| ?70% | Parquet压缩 |
@@ -338,7 +338,7 @@ class FinancialData:
 | 日线数据 | Parquet | 列式存储 | 按股票代码分?|
 | 分钟数据 | Parquet | 列式存储 | 按股票代?日期分区 |
 | 财务数据 | SQLite | 关系统| 主键索引 |
-| 元数?| SQLite | 关系统| 主键索引 |
+| 元数据| SQLite | 关系统| 主键索引 |
 | 热点数据 | Redis | KV存储 | TTL缓存 |
 
 #### 4.2.2 Parquet文件组织
@@ -540,7 +540,7 @@ def test_query_performance():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 数据导入 | 正确导入各类数据 | 单元测试 |
 | 数据查询 | 正确查询历史数据 | 集成测试 |
@@ -603,7 +603,7 @@ ashare_data:
 | 错误?| 错误类型 | 错误描述 | 处理方式 |
 |--------|----------|----------|----------|
 | ERR_ASHARE_001 | DataImportError | 数据导入失败 | 记录日志，跳过错误文?|
-| ERR_ASHARE_002 | DataQueryError | 数据查询失败 | 返回空数?|
+| ERR_ASHARE_002 | DataQueryError | 数据查询失败 | 返回空数据|
 | ERR_ASHARE_003 | DataFormatError | 数据格式错误 | 数据清洗 |
 | ERR_ASHARE_004 | DataQualityError | 数据质量问题 | 生成质量报告 |
 | ERR_ASHARE_005 | StorageError | 存储错误 | 清理空间，重?|

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_TEMPLATES
 version: 1.0.0
 status: Active
@@ -308,7 +308,7 @@ class DonchianChannelStrategy(StrategyBase):
 
 ## 4. 均值回归策略模块
 
-### 4.1 布林带回归策?
+### 4.1 布林带回归策略
 
 ```python
 class BollingerBandReversionStrategy(StrategyBase):

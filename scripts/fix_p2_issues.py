@@ -27,11 +27,7 @@ def fix_encoding_issues(content: str) -> str:
     """修复编码问题"""
     # 替换常见的乱码字符
     replacements = {
-        '�': '',
-        '�': '',
-        '�': '',
-        '�': '',
-        '�': '',
+        '\ufffd': '',
     }
     
     for old, new in replacements.items():
@@ -211,8 +207,8 @@ def fix_document_quality():
             original_content = content
             yaml_header = extract_yaml_header(content)
             
-            # 1. 修复编码问题
-            if '�' in content or '�' in content:
+            # 1. 修复编码问题（U+FFFD 替换字符）
+            if '\ufffd' in content:
                 content = fix_encoding_issues(content)
                 stats["encoding_fixed"] += 1
                 print(f"✅ 修复编码问题: {filepath.name}")

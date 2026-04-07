@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_ANALYZER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ responsibility:
 standard_type: 专业量化机构技术规?applicable_scope: Layer 7 - AI报告?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
-implementation_status: 待实?
+implementation_status: 待实现
 ---
 ---
 
@@ -473,7 +473,7 @@ class MarketDataInput:
 | 指标 | 目指标| 说明 |
 |------|--------|------|
 | **分析生成时间** | ?0?| 从数据采集到分析完成 |
-| **数据采集时间** | ??| 从上游模块获取所有数?|
+| **数据采集时间** | ??| 从上游模块获取所有数据|
 | **AI解读时间** | ?0?| LLM生成市场解读 |
 | **并发支持** | ?0 | 同时分析请求数量 |
 
@@ -1135,7 +1135,7 @@ class TestMarketAnalyzerIntegration:
 |--------|----------|----------|----------|
 | **R001** | LLM API调用失败或超?| P1 | 实现重试机制、降级方?|
 | **R002** | 上游数据源不可用 | P1 | 实现数据缓存、降级方?|
-| **R003** | 分析结果不准?| P2 | 算法验证、人工审?|
+| **R003** | 分析结果不准?| P2 | 算法验证、人工审计|
 | **R004** | 市场风格识别错误 | P2 | 多维度验证、人工确?|
 
 ### 8.2 实施风险
@@ -1167,7 +1167,7 @@ class TestMarketAnalyzerIntegration:
 
 ### 9.1 功能验收
 
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | **市场分析** | 准确分析市场走势、板块轮?| 数据验证 |
 | **情绪分析** | 准确计算市场情绪指标 | 数据验证 |
@@ -1217,7 +1217,7 @@ class TestMarketAnalyzerIntegration:
 
 ### 10.2 Phase 2: 集成与测试（2天）
 
-**目标**: 完成系统集成和测?
+**目标**: 完成系统集成和测试
 | 任务 | 工时 | 交付?|
 |------|------|--------|
 | 上游模块集成 | 1?| 集成接口 |

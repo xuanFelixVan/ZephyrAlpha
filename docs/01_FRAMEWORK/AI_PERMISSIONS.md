@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_PERMISSIONS
 version: 1.0.0
 status: Active
@@ -64,7 +64,7 @@ implementation_status: 进行?---
 | `docs/02_FACTOR_LIBRARY/02_ALPHA_FACTORS/` | Alpha因子定义 | 新增因子、更新因子公?|
 | `docs/02_FACTOR_LIBRARY/05_BACKTEST/` | 回测报告 | 新增回测结果、IC分析 |
 | `docs/03_TRADING_TACTICS/` | 交易策略文档 | 新增策略、更新策略说?|
-| `src/modules/` | 模块实现代码 | 编写模块代码、单元测?|
+| `src/modules/` | 模块实现代码 | 编写模块代码、单元测试|
 | `tests/` | 测试代码 | 编写测试用例 |
 | `notebooks/` | Jupyter分析 | 创建分析笔记?|
 | `docs/CHANGELOG.md` | 变更日志 | 记录修改内容 |
@@ -160,7 +160,7 @@ implementation_status: 进行?---
 
 **如需修改**: 
 1. 提出修改建议
-2. 由人工审?
+2. 由人工审计
 3. 更新 `System_Manifest.md`
 4. 升级接口版本?
 
@@ -206,11 +206,11 @@ implementation_status: 进行?---
 
 **权限**: 🔒 只读
 
-**原因**: 配置文件控制系统行为，修改需要人工审?
+**原因**: 配置文件控制系统行为，修改需要人工审计
 
 **如需修改**:
 1. 提出修改建议
-2. 由人工审?
+2. 由人工审计
 3. 更新 `CONTEXT_SNAPSHOT.json`
 
 ### 5.2 回测数据（`02_FACTOR_LIBRARY/05_BACKTEST/`?
@@ -300,7 +300,7 @@ implementation_status: 进行?---
 3. 更新 `AI_Permissions.md`
 4. 更新 `CONTEXT_SNAPSHOT.json`
 5. 执行操作
-6. 恢复原权?
+6. 恢复原权限
 
 
 ## 10. 常见问题

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SECURITY_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -84,7 +84,7 @@ implementation_status: 设计阶段
 1. 系统扩展到多用户
 2. 接入真实券商API
 3. 处理敏感财务数据
-4. 需要合规审?
+4. 需要合规审计
 
 ---
 

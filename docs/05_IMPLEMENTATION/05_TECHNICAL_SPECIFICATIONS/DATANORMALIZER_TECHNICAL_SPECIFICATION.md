@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATANORMALIZER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -48,12 +48,12 @@ implementation_status: 进行?
   - 提供多种标准化方法，适应不同数据特点
   - 确保训练集和测试集标准化一?
   - 提升模型训练效果和因子分析准?
-  - 建立标准化质量评估体?
+  - 建立标准化质量评估体系
 
 ### 1.2 技术定位与架构层归?
 - **Layer定位**: Layer 1 - 数据预处理层 (符合ARCHITECTURE.md定义)
 - **模块类别**: 核心数据预处理模块
-- **架构角色**: Layer 1核心组件，为模型训练提供标准化输入数?
+- **架构角色**: Layer 1核心组件，为模型训练提供标准化输入数据
 
 ### 1.3 版本信息
 | 版本 | 日期 | ?| 变更说明 | ?|
@@ -103,8 +103,8 @@ implementation_status: 进行?
 - **Layer归属**: Layer 1 - 数据预处理层
 - **职责范围**: 负责数据标准化、归一化、数据转?
 - **上下层接?*: 
-  - 上层依赖: Layer 2 因子计算引擎、Layer 4 机器学习?(提供标准化数?
-  - 下层依赖: Layer 1 DataCleaner (接收清洗后数?
+  - 上层依赖: Layer 2 因子计算引擎、Layer 4 机器学习?(提供标准化数据
+  - 下层依赖: Layer 1 DataCleaner (接收清洗后数据
 
 ### 2.3 模块职责与边界定?
 - **核心职责**: 数据标准化、归一化、数据转换、质量评?
@@ -531,7 +531,7 @@ def test_normalizer_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | Z-score标准?| 均值≈0，标准差? | 单元测试 |
 | Min-Max标准?| 数据在指定范围内 | 单元测试 |
@@ -601,7 +601,7 @@ data_normalizer:
 ### B. 错误码定?
 | 错误?| 错误类型 | 错误描述 | 处理方式 |
 |--------|----------|----------|----------|
-| ERR_NORM_001 | NormalizationError | 标准化失?| 记录日志，返回原始数?|
+| ERR_NORM_001 | NormalizationError | 标准化失?| 记录日志，返回原始数据|
 | ERR_NORM_002 | InvalidMethodError | 标准化方法不支持 | 使用默认方法 |
 | ERR_NORM_003 | InvalidParamsError | 标准化参数无?| 使用默认参数 |
 | ERR_NORM_004 | DataLeakageError | 数据泄露风险 | 终止操作 |

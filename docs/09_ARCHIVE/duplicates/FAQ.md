@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 responsibility:
 - 管理因子库
@@ -94,11 +94,11 @@ owner: 文档管理团队
 3. 定义风险控制（止损、止盈、仓位）
 4. 定义异常处理
 5. ?`03_TRADING_TACTICS/` 中创建策略文?
-6. ?`CHANGELOG.md` 中记录新增策?
+6. ?`CHANGELOG.md` 中记录新增策略
 
 详见: Strategy_Spec_S001.md
 
-### Q9: 如何运行策略回测?
+### Q9: 如何运行策略回测试
 
 **A**:
 
@@ -130,7 +130,7 @@ owner: 文档管理团队
 | 数据类型 | 存储位置 | 格式 |
 |---------|---------|------|
 | 原始数据 | `data/raw/{type}/{year}/` | Parquet |
-| 处理后数?| `data/processed/` | Parquet + SQLite |
+| 处理后数据| `data/processed/` | Parquet + SQLite |
 | 因子数据 | `data/factors/{factor_id}/` | Parquet |
 | 信号数据 | `data/signals/` | SQLite |
 | 订单数据 | `data/orders/` | SQLite |
@@ -175,7 +175,7 @@ owner: 文档管理团队
 3. ?`02_FACTOR_LIBRARY/04_DATA_SOURCE/` 中记录数据源信息
 4. ?`CHANGELOG.md` 中记录新增数据源
 
-### Q16: 如何修改风控参数?
+### Q16: 如何修改风控参数据
 
 **A**:
 
@@ -287,7 +287,7 @@ owner: 文档管理团队
 
 1. 检查策略定义是否正?
 2. 检查回测参数是否合?
-3. 检查历史数据是否完?
+3. 检查历史数据是否完整
 4. 查看日志文件获取错误信息
 
 ## 其他

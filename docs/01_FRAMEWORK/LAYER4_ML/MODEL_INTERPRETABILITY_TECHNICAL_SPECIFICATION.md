@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_INTERPRETABILITY_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -28,7 +28,7 @@ responsibility:
   - 提供model interpretability technical specification的技术规格和实现细节
 applicable_scope: 模型可解释性系?compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/MODEL_INTERPRETABILITY_BLUEPRINT.md
-implementation_status: 技术规格设计完?
+implementation_status: 技术规格设计完整
 ---
 ---
 
@@ -118,7 +118,7 @@ class ExplanationType(Enum):
 
 
 class VisualizationType(Enum):
-    """可视化类?""
+    """可视化类别""
     SHAP_SUMMARY = "shap_summary"
     FEATURE_IMPORTANCE = "feature_importance"
     PARTIAL_DEPENDENCE = "partial_dependence"
@@ -183,7 +183,7 @@ class DecisionExplanation:
 class SHAPExplainer:
     """SHAP解释?    
     基于SHAP (SHapley Additive exPlanations) 的模型解释器
-    提供全局和局部解释能?    """
+    提供全局和局部解释能力    """
     
     def __init__(self, model: Any, background_data: pd.DataFrame):
         self.model = model
@@ -311,7 +311,7 @@ class SHAPExplainer:
         return (float(ci[0]), float(ci[1]))
     
     def _prepare_summary_plot_data(self, shap_values: np.ndarray, X: pd.DataFrame) -> Dict[str, Any]:
-        """准备摘要图数?""
+        """准备摘要图数据""
         return {
             "shap_values": shap_values.tolist(),
             "feature_names": X.columns.tolist(),
@@ -344,7 +344,7 @@ class LIMEExplainer:
         """局部解释        
         Args:
             sample: 单个样本
-            num_features: 解释的特征数?            
+            num_features: 解释的特征数据            
         Returns:
             LIMEExplanation: LIME解释
         """
@@ -492,7 +492,7 @@ class DecisionExplainer:
         """生成决策解释
         
         Args:
-            prediction: 预测?            feature_importance: 特征重要性列?            context: 上下文信?            
+            prediction: 预测试            feature_importance: 特征重要性列?            context: 上下文信?            
         Returns:
             DecisionExplanation: 决策解释
         """
@@ -546,7 +546,7 @@ class DecisionExplainer:
         prediction: float,
         factors: List[FeatureImportance]
     ) -> Dict[str, Any]:
-        """准备可视化数?""
+        """准备可视化数据""
         return {
             "type": "bar",
             "data": {
@@ -671,7 +671,7 @@ class ModelInterpretabilityService:
         return report
     
     def _prepare_importance_chart(self, importance: List[FeatureImportance]) -> Dict[str, Any]:
-        """准备重要性图表数?""
+        """准备重要性图表数据""
         return {
             "type": "horizontal_bar",
             "data": {

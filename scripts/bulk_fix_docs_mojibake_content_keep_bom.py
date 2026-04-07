@@ -5,7 +5,7 @@
 在保持 UTF-8 with BOM（utf-8-sig）不变的前提下，批量修复 docs/ 下 Markdown 内容中的 mojibake。
 
 适用场景：
-- 文件编码已经是 UTF-8/UTF-8-SIG，但正文出现 `é¦–å¸­...`、`ä¸€...`、`âœ...`、`æ...` 等乱码
+- 文件编码已经是 UTF-8/UTF-8-SIG，但正文出现 `é¦–å¸­...`、`ä¸€...`、`âœ...` 等乱码
   （通常是“UTF-8 字节被当成 latin-1/cp1252 文本写入”的结果）。
 
 策略（逐行保守修复）：
@@ -95,7 +95,7 @@ def fix_text(text: str) -> tuple[str, int]:
             changed += 1
             continue
 
-        # Path B: mojibake already stored as Unicode text (e.g. "è´è´£")
+        # Path B: mojibake already stored as Unicode text (e.g. a latin-1-like garbled fragment)
         # This can often be reversed by latin1->utf8 on the UTF-8 bytes of the string.
         try:
             b = line.encode("utf-8")

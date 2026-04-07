@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONTHLY_REPORTER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ responsibility:
 standard_type: 专业量化机构技术规?applicable_scope: Layer 7 - AI报告?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../ARCHITECTURE.md
-implementation_status: 待实?
+implementation_status: 待实现
 ---
 ---
 
@@ -389,7 +389,7 @@ class MonthlyReportInput:
 2026?月，账户总资?**1,345,678.90**，月收益?**+8.92%**，累计收益率 **+34.57%**?本月跑赢沪深300指数 **+3.21%**，夏普比?**2.56**，最大回?**-4.12%**?
 ### 关键指标
 
-| 指标 | 本月数?| 上月数?| 环比变化 | 状态|
+| 指标 | 本月数据| 上月数据| 环比变化 | 状态|
 |------|----------|----------|----------|------|
 | 月收益率 | +8.92% | +5.67% | +3.25% | ?改善 |
 | 夏普比率 | 2.56 | 2.34 | +0.22 | ?改善 |
@@ -565,7 +565,7 @@ class MonthlyReportSecurity:
 ```python
 @dataclass
 class MonthlyReportMetadata:
-    """月报元数?    
+    """月报元数据    
     索引: L7.RPT.MTH.001-M01
     """
     report_id: str
@@ -644,7 +644,7 @@ class MonthlyReportStorage:
         """删除报告
         
         - 删除报告文件
-        - 删除元数?        - 记录删除日志
+        - 删除元数据        - 记录删除日志
         """
         pass
     
@@ -1146,10 +1146,10 @@ scipy = ">=1.10"
 
 ```python
 class TestMonthlyReporterIntegration:
-    """月报生成器集成测?""
+    """月报生成器集成测试""
     
     def test_end_to_end_report_generation(self):
-        """端到端报告生成测?""
+        """端到端报告生成测试""
         reporter = MonthlyReporter(test_config)
         
         report = reporter.generate_monthly_report(

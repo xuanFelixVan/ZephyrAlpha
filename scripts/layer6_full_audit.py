@@ -136,7 +136,7 @@ for file in files:
     garbled_patterns = [
         r'å',
         r'æ',
-        r'',
+        r'\\x8d',
         r'\ufffd',
         r'？\*',
         r'？\|',

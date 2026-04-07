@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FEATURE_STORE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -82,7 +82,7 @@ responsibility:
 
 
 
-## 📊 一、概?
+## 📊 一、概述
 
 ### 1.1 设计背景与业务目?
 
@@ -224,7 +224,7 @@ responsibility:
 
 原始数据 ?特征定义 ?特征计算 ?特征存储 ?特征服务
 
-    ?          ?          ?          ?  数据?    元数?    离线/在线    API查询
+    ?          ?          ?          ?  数据?    元数据    离线/在线    API查询
 
 ```
 

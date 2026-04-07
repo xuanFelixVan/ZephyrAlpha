@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_VALIDATION_REPORT
 version: 1.0.0
 status: Active
@@ -80,7 +80,7 @@ implementation_status: 设计阶段---
 | [docs\06_ARCHIVE\main\BLUEPRINTS\03_SECURITY_BLUEPRINT.md](../06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md) | 51.6 | 7 | 15 | 2 | 3 | 3 | 🔶 一?|
 | [docs\06_ARCHIVE\main\BLUEPRINTS\04_API_INTEGRATION_BLUEPRINT.md](../06_ARCHIVE/main/BLUEPRINTS/04_API_INTEGRATION_BLUEPRINT.md) | 51.6 | 7 | 15 | 2 | 3 | 3 | 🔶 一?|
 | [docs\05_IMPLEMENTATION\99_ARCHIVE\SECURITY_BLUEPRINT.md](../05_IMPLEMENTATION/99_ARCHIVE/SECURITY_BLUEPRINT.md) | 48.4 | 7 | 15 | 2 | 4 | 2 | ?需改进 |
-| ... 和其?8 个蓝?| ... | ... | ... | ... | ... | ... | ... |
+| ... 和其?8 个蓝图| ... | ... | ... | ... | ... | ... | ... |
 
 ## 📈 规则通过率统?
 | 规则类别 | 总规则数 | 通过规则?| 通过?|

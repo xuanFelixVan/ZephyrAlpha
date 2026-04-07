@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ORDER_GENERATION_ALGORITHMS
 version: 1.0.0
 status: Active
@@ -57,7 +57,7 @@ implementation_status: 进行?
 
 ## 2. 订单类型
 
-### 2.1 市价?
+### 2.1 市价值
 
 ```python
 class MarketOrder:
@@ -67,7 +67,7 @@ class MarketOrder:
     direction: str  # 'buy' / 'sell'
 ```
 
-### 2.2 限价?
+### 2.2 限价值
 
 ```python
 class LimitOrder:
@@ -125,7 +125,7 @@ class TWAPExecutor:
         return self.start_time + timedelta(minutes=(slice_idx + 1) * self.slice_interval)
 ```
 
-### 3.2 VWAP (成交量加权平均价?
+### 3.2 VWAP (成交量加权平均价值
 
 ```python
 class VWAPExecutor:

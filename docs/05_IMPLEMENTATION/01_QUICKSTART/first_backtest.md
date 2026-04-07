@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FIRST_BACKTEST
 version: 1.0.0
 status: Active
@@ -191,7 +191,7 @@ python scripts/download_data.py --symbol IF
 **可能原因**:
 1. 数据文件不存?
 2. 策略未激?
-3. 时间范围无数?
+3. 时间范围无数据
 
 **检查步?*:
 ```bash

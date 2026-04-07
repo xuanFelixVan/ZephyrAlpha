@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 数据质量画像
-  - 数据特征分析
-  - 数据统计报告
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # Data Profiling
 

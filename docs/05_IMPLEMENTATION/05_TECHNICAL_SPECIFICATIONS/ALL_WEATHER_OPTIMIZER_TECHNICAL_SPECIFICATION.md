@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -603,7 +603,7 @@ class BlackLittermanModel:
 
 ### 6.1 编程语言与框架版?| 技术组?| 版本 | 选择理由 | 替代方案 |
 |----------|------|----------|----------|
-| Python | 3.11+ | 生态系统完?| - |
+| Python | 3.11+ | 生态系统完整| - |
 | riskfolio-lib | 5.0+ | 风险平价专业?| PyPortfolioOpt |
 | PyPortfolioOpt | 1.5+ | 组合优化标准?| - |
 | cvxpy | 1.3+ | 凸优化框?| scipy.optimize |
@@ -658,7 +658,7 @@ def test_risk_parity_optimization():
 - Week 1: 风险平价优化器实?- Week 2: Black-Litterman模型实现
 
 ### Phase 2: 集成与测?(2?
-- Week 3: 与经济范式引擎集?- Week 4: 回测验证与优?
+- Week 3: 与经济范式引擎集?- Week 4: 回测验证与优化
 ---
 
 **评审结论**: ?批准实施  

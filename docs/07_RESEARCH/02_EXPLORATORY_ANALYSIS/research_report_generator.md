@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_REPORT_GENERATOR
 version: 1.0.0
 status: Active
@@ -281,7 +281,7 @@ class AIConclusionGenerator:
 
 ---
 
-## 5. 自动化运?
+## 5. 自动化运行
 
 ```python
 #每日报告生成脚本
@@ -382,7 +382,7 @@ report_generation:
 | 接口 | 说明 |
 |------|------|
 | **上游接口** | IC分析、分组回测、因子监控|
-| **下游接口** | 研究笔记、策略迭?|
+| **下游接口** | 研究笔记、策略迭代|
 | **输入格式** | IC指标、回测结果、参数配?|
 | **输出格式** | Markdown报告文件 |
 

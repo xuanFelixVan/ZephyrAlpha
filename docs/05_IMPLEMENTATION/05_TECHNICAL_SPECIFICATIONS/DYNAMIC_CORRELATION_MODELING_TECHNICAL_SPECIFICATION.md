@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -57,7 +57,7 @@ implementation_status: 设计阶段
 
 ### 1.2 技术目?
 - **准确?*: 相关性预测误?< 0.1
-- **效率**: 单次计算时间 < 2秒（100资产?- **鲁棒?*: 处理极端市场相关性突?- **可扩展?*: 支持多资产类?
+- **效率**: 单次计算时间 < 2秒（100资产?- **鲁棒?*: 处理极端市场相关性突?- **可扩展?*: 支持多资产类别
 ---
 
 ## 2. 接口定义

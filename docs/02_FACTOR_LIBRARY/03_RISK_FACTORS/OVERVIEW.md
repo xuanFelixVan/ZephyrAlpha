@@ -6,12 +6,15 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 风险因子概览文档
+  - 模块概览
+  - 核心概念
+  - 关键流程
+  - 核心概念
+  - 关键流程
 standard_type: 概览文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 风险因子概览
 
 > **核心职责**: 风险因子定义、计算和监控文档，管理风险暴露因子。

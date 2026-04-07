@@ -6,44 +6,19 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 05_BACKTEST目录BACKTEST_REORGANIZATION文档
+  - 回测模块重组
+  - 目录结构优化
+  - 迁移检查清单
 ---
-
 # BACKTEST_REORGANIZATION
 
----
+## 📋 概述
 
+记录回测模块的重组过程，包括目录结构优化和迁移检查清单。
 
-responsibility:
-  - 提供05 Backtest相关文档支持
-
-module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
----|
-| **对象** | 单个因子 | 完整策略 |
-| **目的** | 验证因子预测能力 | 验证策略交易表现 |
-| **指标** | IC值、相关?| 夏普比、最大回撤、胜?|
-| **频率** | 因子更新时验证| 策略运行后验证|
-| **位置** | `ic_reports/` | `strategy_reports/` |
-
-## 迁移检查清单
-
-- [ ] 创建 `ic_reports/` 目录
-- [ ] 创建 `strategy_reports/` 目录
-- [ ] 迁移 `PE_TTM_IC.md` ?`ic_reports/`
-- [ ] 迁移 `CORRELATION_MATRIX.md` ?`ic_reports/`
-- [ ] 创建 `ic_reports/README.md`
-- [ ] 创建 `strategy_reports/README.md`
-- [ ] 更新 `02_FACTOR_LIBRARY/00_INDEX/README.md`
-- [ ] 更新 `System_Manifest.md`
-- [ ] 更新 `CHANGELOG.md`
-
-**版本**: 1.0 | **更新**: 2026-03-28
 
 ---
 
-## 变更记录
-
-| 版本 | 日期 | 变更内容 | 变更人 |
-|------|------|----------|--------|
+------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
 

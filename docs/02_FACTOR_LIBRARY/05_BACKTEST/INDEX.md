@@ -6,14 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 回测框架设计
-  - 回测流程管理
-  - 回测结果分析
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库
 compliance_level: 专业标准
 ---
-
 # 05_BACKTEST 回测系统
 
 > **核心职责**: 因子回测框架、流程和结果分析

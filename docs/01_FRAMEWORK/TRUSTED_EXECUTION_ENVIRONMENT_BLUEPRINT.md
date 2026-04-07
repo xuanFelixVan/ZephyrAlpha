@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -90,7 +90,7 @@ responsibility_boundary: |
 
 
 
-## 2. 技术类?
+## 2. 技术类别
 
 | 技?| 说明 | 适用场景 |
 

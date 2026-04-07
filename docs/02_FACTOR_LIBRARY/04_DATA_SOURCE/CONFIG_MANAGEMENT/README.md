@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 配置文件管理
-  - 配置版本控制
-  - 配置变更追踪
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
 # Config Management
 

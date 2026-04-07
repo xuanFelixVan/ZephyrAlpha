@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
 > **核心职责**: 知识管理体系和方法论，涉及知识管理蓝图
 > **职责边界**:
@@ -47,9 +47,9 @@ owner: 文档管理团队
 | 策略知识 | 策略逻辑、参数、表?| AI自动提取 |
 | 教训知识 | 失败原因、注意事?| 人工整理+AI辅助 |
 | 市场知识 | 市场状态、季节性、事?| AI自动提取 |
-| 代码知识 | 代码片段、最佳实?| AI自动注释 |
+| 代码知识 | 代码片段、最佳实现| AI自动注释 |
 
-## 3. 知识库实?
+## 3. 知识库实现
 
 ### 3.1 向量数据库选型
 
@@ -57,7 +57,7 @@ owner: 文档管理团队
 |------|------|--------|
 | **Chroma** | 轻量级，易用，免?| ⭐⭐⭐⭐?|
 | FAISS | Facebook开源，高性能 | ⭐⭐⭐⭐ |
-| Milvus | 功能强大，需要运?| ⭐⭐?|
+| Milvus | 功能强大，需要运行| ⭐⭐?|
 
 **选择**: Chroma (个人使用足够简?
 
@@ -677,10 +677,10 @@ class TestKnowledgeIntegration:
 # tests/e2e/test_knowledge_e2e.py
 
 class TestKnowledgeE2E:
-    """知识管理端到端测?""
+    """知识管理端到端测试""
 
     def test_research_to_knowledge_flow(self):
-        """测试从研究到知识的完整流?""
+        """测试从研究到知识的完整流程""
         # 1. 提交研究任务
         response = client.post("/api/v1/agent/research", json={
             "objective": "研究MACD因子"

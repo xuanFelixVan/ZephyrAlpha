@@ -66,8 +66,8 @@ def check_document_quality(filepath: Path, content: str) -> Dict:
     if not re.search(r'^#\s+', content, re.MULTILINE):
         issues.append("缺少主标题")
     
-    # 检查编码问题
-    if '�' in content or '�' in content:
+    # 检查编码问题（U+FFFD 替换字符）
+    if '\ufffd' in content:
         issues.append("存在编码问题")
     
     # 检查空行过多

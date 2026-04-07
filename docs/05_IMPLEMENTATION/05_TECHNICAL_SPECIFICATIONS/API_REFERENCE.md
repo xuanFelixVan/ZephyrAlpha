@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_REFERENCE
 version: 1.0.0
 status: Active
@@ -102,7 +102,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 |--------|-----------|------|
 | INVALID_PARAMETER | 400 | 参数错误 |
 | UNAUTHORIZED | 401 | 未授?|
-| FORBIDDEN | 403 | 无权?|
+| FORBIDDEN | 403 | 无权限|
 | NOT_FOUND | 404 | 资源不存?|
 | INTERNAL_ERROR | 500 | 内部错误 |
 
@@ -118,7 +118,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | portfolio_id | string | ?| 投资组合ID |
 | scenario_type | string | ?| 情景类型（见情景类型表） |
@@ -213,7 +213,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 **描述**: 执行压力测试并生成报告
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | portfolio_id | string | ?| 投资组合ID |
 | test_type | string | ?| 测试类型（historical/hypothetical/reverse/comprehensive?|
@@ -227,7 +227,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 | historical | 历史情景测试 | 使用历史危机数据 |
 | hypothetical | 假设情景测试 | 自定义极端情?|
 | reverse | 反向压力测试 | 寻找导致破产的情?|
-| comprehensive | 综合测试 | 执行所有类型测?|
+| comprehensive | 综合测试 | 执行所有类型测试|
 
 **请求示例**:
 ```json
@@ -392,7 +392,7 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | portfolio_id | string | ?| 投资组合ID |
 | start_date | string | ?| 开始日期（YYYY-MM-DD?|
@@ -431,7 +431,7 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | macro_report_id | string | ?| 宏观报告ID |
 | strategy_report_id | string | ?| 策略报告ID |
@@ -485,7 +485,7 @@ ws.onmessage = (event) => {
 
 **路径参数**:
 
-| 参数?| 类型 | 描述 |
+| 参数据| 类型 | 描述 |
 |--------|------|------|
 | layer_type | string | 层类型（macro/strategy/execution?|
 
@@ -595,7 +595,7 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | portfolio_id | string | ?| 投资组合ID |
 | reporting_period | string | ?| 报告期间 |
@@ -668,7 +668,7 @@ ws.onmessage = (event) => {
 **描述**: 生成AI决策可解释性报告
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | model_id | string | ?| 模型ID |
 | sample_ids | array | ?| 样本ID列表，默认分析全?|
@@ -742,7 +742,7 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | portfolio_id | string | ?| 投资组合ID |
 | start_date | string | ?| 开始日?|
@@ -817,7 +817,7 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | report_type | string | ?| 报告类型 |
 | start_date | string | ?| 开始日?|
@@ -830,7 +830,7 @@ ws.onmessage = (event) => {
 
 **请求参数**:
 
-| 参数?| 类型 | 必填 | 描述 |
+| 参数据| 类型 | 必填 | 描述 |
 |--------|------|------|------|
 | format | string | ?| 下载格式（json/pdf/markdown?|
 
@@ -891,7 +891,7 @@ const ws = client.realtimeRiske.subscribe((data) => {
 
 ---
 
-## 十二、最佳实?
+## 十二、最佳实现
 ### 12.1 性能优化建议
 
 1. **批量请求**: 使用批量接口减少网络开销

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 03_TRADING_TACTICS_99_ARCHIVE_TECHNICAL_INDICATORS
 version: 1.0.0
 status: Active
@@ -41,14 +41,14 @@ parent_document: ../INDEX.md
 implementation_status: 进行?---
 
 
-# 技术指标参数体?
+# 技术指标参数体系
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 核心技术指标量化体?
+> 核心技术指标量化体系
 >
 > **配套文档**?
 > - 主文档：[../../INDEX.md](../INDEX.md)

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEV_SETUP
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ implementation_status: 进行?---
 完成本指南后，你将：
 -  拥有完整?Python 开发环?
 -  能够运行项目代码
--  可以开始编写策?
+-  可以开始编写策略
 
 ---
 

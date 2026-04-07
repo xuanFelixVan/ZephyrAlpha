@@ -3,7 +3,7 @@ module_id: 09_AUDIT_PROCEDURES_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
   - PROCEDURES目录索引
@@ -14,7 +14,7 @@ module_id: 09_AUDIT_PROCEDURES_INDEX_PROCEDURES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -43,8 +43,8 @@ compliance_level: 专业标准---
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 3 |
-| **活跃模块** | 3 |
+| **文档总数** | 5 |
+| **活跃模块** | 5 |
 | **更新频率** | 按需更新 |
 
 ---
@@ -56,6 +56,8 @@ compliance_level: 专业标准---
 - Ai Audit Guidelines - `AUDIT_PROC_AI_GUIDELINES_001`
 - Audit Execution Procedures - `AUDIT_EXECUTION_PROCEDURES`
 - Personal Audit Workflow - `AUDIT_PROC_PERSONAL_WF_001`
+- [全系统文档审计方案（分批目录）](./FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) - `AUDIT_PLAN_FULL_SYSTEM_20260408`
+- [全系统文档审计全案（含重复处理办法 + 清单引用）](./FULL_SYSTEM_AUDIT_COMPLETE_CASE_20260408.md) - `AUDIT_COMPLETE_CASE_FULL_SYSTEM_20260408`
 
 ---
 
@@ -80,6 +82,7 @@ compliance_level: 专业标准---
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
+| v1.0.1 | 2026-04-08 | 增加审计全案与子目录文件清单引用 | 系统维护者 |
 
 ---
 

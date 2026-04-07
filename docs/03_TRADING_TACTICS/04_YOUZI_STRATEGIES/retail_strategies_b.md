@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_B
 version: 1.0.0
 status: Active
@@ -55,7 +55,7 @@ implementation_status: 进行?---
 
 ## 1. 赵老哥核心策略
 
-### S014: 二板定龙头策?
+### S014: 二板定龙头策略
 
 | 属?| 内容 |
 |------|------|
@@ -120,7 +120,7 @@ class SecondBoardDragonStrategy(BaseStrategy):
 
 ***
 
-### S016: 新题材判断策?
+### S016: 新题材判断策略
 
 | 属?| 内容 |
 |------|------|
@@ -175,9 +175,9 @@ class NewThemeStrategy(BaseStrategy):
 
 ***
 
-## 2. 独股一箭核心策?
+## 2. 独股一箭核心策略
 
-### S015: 独股一箭策?
+### S015: 独股一箭策略
 
 | 属?| 内容 |
 |------|------|
@@ -254,9 +254,9 @@ class DuguYijianStrategy(BaseStrategy):
 
 ***
 
-## 3. 反弹三定律策?
+## 3. 反弹三定律策略
 
-### M009: 反弹三定律策?
+### M009: 反弹三定律策略
 
 | 属?| 内容 |
 |------|------|
@@ -316,9 +316,9 @@ class ReboundThreeLawsStrategy(BaseStrategy):
 
 ***
 
-## 4. 退神稳定复利风控策?
+## 4. 退神稳定复利风控策略
 
-### R001: 动态仓位管理策?
+### R001: 动态仓位管理策略
 
 | 属?| 内容 |
 |------|------|
@@ -456,9 +456,9 @@ class StableCompoundStrategy(BaseStrategy):
 
 ***
 
-## 5. 下跌三阶段策?
+## 5. 下跌三阶段策略
 
-### M010: 下跌三阶段策?
+### M010: 下跌三阶段策略
 
 | 属?| 内容 |
 |------|------|

@@ -18,7 +18,7 @@ responsibility:
   - 优化流程协调
   - 优化结果整合
   - 多目标优化支持
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 

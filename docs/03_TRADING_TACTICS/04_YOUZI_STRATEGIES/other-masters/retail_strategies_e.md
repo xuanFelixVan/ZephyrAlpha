@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_E
 version: 1.0.0
 status: Active
@@ -58,7 +58,7 @@ implementation_status: 进行?---
 
 ## 1. 陈兄波段操作策略
 
-### S032: 陈兄/安子元波段操作策?
+### S032: 陈兄/安子元波段操作策略
 
 | 属?| 内容 |
 |------|------|
@@ -344,7 +344,7 @@ class FirstLimitUpQuantifier(BaseStrategy):
 
 ***
 
-## 3. 灯芯人情绪周期策?
+## 3. 灯芯人情绪周期策略
 
 ### S034: 山西L/灯芯人情绪周期
 
@@ -702,7 +702,7 @@ class FoshanTraderSystem(BaseStrategy):
 
 ***
 
-## 6. 金田路游资策?
+## 6. 金田路游资策略
 
 ### S037: 金田路涨停板敢死?
 
@@ -783,7 +783,7 @@ class JinTianRoadSystem(BaseStrategy):
 
 ***
 
-## 7. 作手新一/小鳄鱼策?
+## 7. 作手新一/小鳄鱼策略
 
 ### S038: 新生代游资量?
 
@@ -919,7 +919,7 @@ class ThreeTypesOfLimitUp(BaseStrategy):
 
 ***
 
-## 9. 市场炒作六阶段策?
+## 9. 市场炒作六阶段策略
 
 ### S040: 市场炒作六阶段量?
 
@@ -932,7 +932,7 @@ class ThreeTypesOfLimitUp(BaseStrategy):
 | 风险等级 | ?|
 | 持仓周期 | 阶段相关 |
 
-**核心理念**：识别市场炒作所处阶段，根据阶段调整仓位和策?
+**核心理念**：识别市场炒作所处阶段，根据阶段调整仓位和策略
 
 **量化规则**?
 - 启动阶段：首板涨幅≥9.5%，连板股??

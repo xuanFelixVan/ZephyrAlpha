@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME_SYSTEM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -38,7 +38,7 @@ responsibility:
 
 > 清风量化系统 v5.3 - 市场状态识别系统详细技术设计> **索引**: `MARKET_REGIME_001`
 > **开发时?*: 160h
-> **核心定位**: 基于HMM模型和技术指标融合识别市场状态，为文艺复兴模式提供市场环境判断能?
+> **核心定位**: 基于HMM模型和技术指标融合识别市场状态，为文艺复兴模式提供市场环境判断能力
 ---
 
 ## 1. 概述
@@ -114,7 +114,7 @@ import pandas as pd
 class MarketDataInput:
     """市场数据输入"""
     price_data: pd.DataFrame             # 价格数据 (OHLCV)
-    volume_data: pd.DataFrame            # 成交量数?    technical_indicators: Dict[str, pd.Series]  # 技术指?    microstructure_data: Optional[Dict]  # 市场微观结构数据
+    volume_data: pd.DataFrame            # 成交量数据    technical_indicators: Dict[str, pd.Series]  # 技术指?    microstructure_data: Optional[Dict]  # 市场微观结构数据
     timestamp: datetime                  # 时间?
 @dataclass
 class MarketStateOutput:
@@ -125,7 +125,7 @@ class MarketStateOutput:
     liquidity_score: float               # 流动性评?[0, 1]
     confidence: float                    # 置信?[0, 1]
     duration_estimate: int               # 持续时间估计(?
-    transition_probability: Dict[str, float]  # 状态转换概?    recommended_strategies: List[str]    # 推荐策略
+    transition_probability: Dict[str, float]  # 状态转换概述    recommended_strategies: List[str]    # 推荐策略
     timestamp: datetime                  # 时间?
 class IMarketRegimeSystem(ABC):
     """市场状态识别系统接口""
@@ -146,11 +146,11 @@ class IMarketRegimeSystem(ABC):
     
     @abstractmethod
     def get_regime_probability(self, regime: str) -> float:
-        """获取状态概?        
+        """获取状态概述        
         Args:
             regime: 市场?            
         Returns:
-            float: 状态概?        """
+            float: 状态概述        """
         pass
     
     @abstractmethod
@@ -160,7 +160,7 @@ class IMarketRegimeSystem(ABC):
             horizon_days: 预测时间范围(?
             
         Returns:
-            Dict[str, float]: 各状态转换概?        """
+            Dict[str, float]: 各状态转换概述        """
         pass
     
     @abstractmethod
@@ -171,7 +171,7 @@ class IMarketRegimeSystem(ABC):
             start_date: 开始日?            end_date: 结束日期
             
         Returns:
-            pd.DataFrame: 状态历史数?        """
+            pd.DataFrame: 状态历史数据        """
         pass
 ```
 
@@ -543,7 +543,7 @@ def test_market_regime_identification():
 
 | 约束类型 | 约束内容 | 应对策略 |
 |---------|---------|---------|
-| **数据约束** | 需要至?年历史数?| 分阶段实施，先积累数?|
+| **数据约束** | 需要至?年历史数据| 分阶段实施，先积累数据|
 | **计算约束** | HMM训练需要较多计算资?| 使用云计算资?|
 | **时间约束** | 识别延迟必须??| 优化算法、使用缓存|
 

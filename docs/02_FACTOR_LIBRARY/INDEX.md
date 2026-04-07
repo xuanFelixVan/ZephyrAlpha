@@ -6,9 +6,10 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 提供02 Factor Library索引导航
+  - 目录导航
+  - 模块索引
+  - 职责协调
 ---
-
 # 02 Factor Library 索引
 
 ## 📋 概述

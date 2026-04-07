@@ -6,15 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 实时监控仪表板
-  - 性能指标收集
-  - 告警规则配置
+  - 目录导航
+  - 模块索引
+  - 职责协调
 standard_type: 索引文档
 applicable_scope: 因子库数据源层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 增强数据监控索引
 
 > **核心职责**: 实时监控仪表板、性能指标收集、告警规则配置
