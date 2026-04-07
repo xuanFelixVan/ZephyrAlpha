@@ -10,7 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 流动性约束优化
   - 流动性建模
-  - 交易成本控制
+  - 流动性约束成本控制
   - 流动性风险
 layer: Layer 5.2 (组合优化)
 ---

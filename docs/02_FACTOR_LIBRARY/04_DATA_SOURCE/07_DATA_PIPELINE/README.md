@@ -14,20 +14,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class DataSourceType(Enum):
     AKSHARE = "akshare"
     TUSHARE = "tushare"
     IFIND = "ifind"
     CHOICE = "choice"
 
-
 class DataQuality(Enum):
     EXCELLENT = "excellent"
     GOOD = "good"
     ACCEPTABLE = "acceptable"
     POOR = "poor"
-
 
 @dataclass
 class DataRequest:
@@ -38,7 +35,6 @@ class DataRequest:
     source_priority: List[DataSourceType]
     timeout: int = 30
     retry_count: int = 3
-
 
 @dataclass
 class DataResponse:

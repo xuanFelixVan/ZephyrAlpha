@@ -1,5 +1,6 @@
 ---
 
+module_id: 08_HUMAN_AI_INTERFACE_INDEX_TEMPLATE
 ## 📝 注意事项
 
 1. **保留核心信息**: YAML头部、文档列表必须保留

@@ -1,14 +1,10 @@
 ---
 
-
-
-
 # 因子库手?v3.2
 > **核心职责**: 因子库操作手册和使用指南，涉及因子库手
 > **职责边界**: 
 > - ✅ 本文档负责：因子库操作手册和使用指南相关内容
 > - ❌ 本文档不负责：具体实现细节、其他模块内容
-
 
 > 清风量化多策略系统的因子研究方法论与分类体系
 >
@@ -90,7 +86,8 @@ def calculate_ic(factor_df: pd.DataFrame, return_df: pd.DataFrame,
     计算因子IC序列
 
     Parameters:
-    -----------
+    --------
+---
     factor_df : pd.DataFrame
         因子值，index为日期，columns为股票代?
     return_df : pd.DataFrame
@@ -99,7 +96,8 @@ def calculate_ic(factor_df: pd.DataFrame, return_df: pd.DataFrame,
         'pearson' ?'spearman'
 
     Returns:
-    --------
+    -----
+---
     pd.Series: IC时间序列
     """
     ic_series = []

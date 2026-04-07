@@ -1,12 +1,4 @@
 ---
-
-# 因子标准规范目录索引
-
-> 因子库标准规范模块的导航和索引
-
-
-
-﻿---
 module_id: STANDARDS_INDEX_001
 version: 1.0.0
 status: Active
@@ -17,9 +9,8 @@ responsibility:
   - 目录导航与文档索引管理与优化维护
 standard_type: 索引文档
 applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
+compliance_level: 专业标准
+---
 
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护者**: 首席文档架构师
 

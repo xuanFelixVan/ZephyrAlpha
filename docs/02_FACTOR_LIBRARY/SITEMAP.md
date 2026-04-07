@@ -11,10 +11,8 @@ responsibility:
   - 因子研究与管理框架设计与优化维护
 standard_type: 通用文档
 applicable_scope: 全系统
-compliance_level: 专业标准---
-
-
-
+compliance_level: 专业标准
+---
 
 # ĵͼ (SITEMAP)
 > **核心职责**: ĵͼ (SITEMAP)的定义、实现和应用
@@ -22,13 +20,11 @@ compliance_level: 专业标准---
 > - ✅ 本文档负责：文档位置导航和结构地图相关内容
 > - ❌ 本文档不负责：具体实现细节、其他模块内容
 
-
 > ϵͳ v5.3 ĵ?
 >
 > **ְ**:
 > - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) = ڣ5ӵ?
 > - **?* = ͼȲο
-
 
 ## ?? ĵλ (v5.3)
 
@@ -57,7 +53,6 @@ docs/
  ?/ ͼ ?
 ```
 
-
 ## ???;?
 
 ### 
@@ -67,7 +62,6 @@ docs/
 2. Ķ 00_OVERVIEW/README.md - ϵͳ (10)
 3. Ķ 05_IMPLEMENTATION/01_QUICKSTART/README.md - ٿ?(15)
 
-
 ### Ҫܹ
 
 **ܹѧϰ** (2Сʱ):
@@ -75,7 +69,6 @@ docs/
 2. Ķ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ͳһܹ (30)
 3. Ķ 01_FRAMEWORK/README.md - ĵ (20)
 4. Ķ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ嵥 (20)
-
 
 ### Ҫ?
 
@@ -87,7 +80,6 @@ docs/
 5. Ķ  - ?(1Сʱ)
 6. ʵдԴ (1.5Сʱ)
 
-
 ### Ҫϵͳ
 
 **** (3Сʱ):
@@ -95,14 +87,12 @@ docs/
 2. Ķ [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 𷽰 (30)
 3. ִвű (2Сʱ)
 
-
 ### ⰲ?
 
 **ȫѧϰ** (1.5Сʱ):
 1. Ķ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ嵥 (20)
 2. Ķ [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - ȫ淶 (25)
 3. Ķ [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - ֤Ȩ (20)
-
 
 ### ?
 
@@ -121,7 +111,6 @@ docs/
 4. ѭ: [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) -  (10)
 5. Ʊ (30-60)
 
-
 ## ?? Ŀ?(v5.3)
 
 ### 00_OVERVIEW/ - ϵͳ
@@ -132,7 +121,6 @@ docs/
 |  | ģ | 15 |
 | CHANGELOG.md | 汾ʷѺϲ?| 5 |
 
-
 ### 01_FRAMEWORK/ - ܶ
 
 | ļ | ˵ | Ķʱ |
@@ -142,7 +130,6 @@ docs/
 | MARKET_REGIME.md | г״̬ʶ?| 20 |
 | HUMAN_AI_FLOW.md | ˻Э | 15 |
 | TECH_STACK.md | ջѡ | 15 |
-
 
 ### 02_FACTOR_LIBRARY/ - ?
 
@@ -156,7 +143,6 @@ docs/
 | 06_REGISTRY/ | ע |
 | 07_FACTOR_MONITORING/ |  |
 | 10_MANUAL/ | ӿ?|
-
 
 ### 03_TRADING_TACTICS/ - ?
 
@@ -173,7 +159,6 @@ docs/
 | 07_ORDER_GENERATION/ |  |
 | 09_RISK_RULES/ | չ |
 
-
 ### 04_EXECUTION/ - ִ
 
 | Ŀ | ˵ |
@@ -186,7 +171,6 @@ docs/
 | 05_RISK_ENGINE/ |  |
 | 06_SIMULATION/ |  |
 
-
 ### 05_IMPLEMENTATION/ - ʵʩָ
 
 | Ŀ | ˵ |
@@ -198,7 +182,6 @@ docs/
 | 07_OPERATIONS/ | άֲ |
 | 99_ARCHIVE/ | 鵵 |
 
-
 ### 06_ARCHIVE/ - 鵵
 
 | Ŀ/ļ | ˵ |
@@ -209,7 +192,6 @@ docs/
 | factor-library/ | ӿ?|
 | tactics_manual.md | v1.0սֲ |
 | technical_documentation.md | v1.0?|
-
 
 ### 07_RESEARCH/ - AIо
 
@@ -228,7 +210,6 @@ docs/
 | INDEX_AUDIT.md | Żҳ |
 | STANDARDS/ | Ʊ׼ |
 | PROCEDURES/ | Ƴ |
-
 
 ## ?? ؼʲ
 
@@ -286,7 +267,6 @@ docs/
 - [09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md) - AIָ
 - [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - 
 
-
 ## ?? ĵͳ (v5.3)
 
 |  |  | ˵ |
@@ -295,7 +275,6 @@ docs/
 | ļ | 2?|  |
 | һĿ?| 8?|  |
 | **?* | **~80+ĵ** | v5.0?0?|
-
 
 ## ?? ƼĶ˳
 
@@ -321,7 +300,6 @@ docs/
 2. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md (30)
 3. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30)
 4. CHANGELOG.md (15)
-
 
 ## ?? ĵϵ?
 
@@ -360,7 +338,6 @@ INDEX.md (?
      09_AUDIT/ (ϵͳ)
 ```
 
-
 ## ?? ƶ˷?
 
 ĵ֧Markdownʽƽ̨?
@@ -368,7 +345,6 @@ INDEX.md (?
 - GitLab (߲鿴)
 - ر༭?(VS CodeSublime?
 - MarkdownĶ?(TyporaObsidian?
-
 
 **?*: 2026-03-31
 **ά?*: ϵͳ

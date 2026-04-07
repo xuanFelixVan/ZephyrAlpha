@@ -7,7 +7,6 @@
 > - ✅ 本文档负责：数据采集架构设计和多数据源接入方案
 > - ❌ 本文档不负责：其他模块内容
 
-
 ## 文档职责说明
 
 **本文档职责**: 数据采集技术实现
@@ -31,7 +30,6 @@
 > **开发时间**: 35h
 > **核心定位**: 实现"多数据源 → 自动采集 → 智能清洗 → 统一存储"的完整数据Pipeline
 
-
 ## 1. 设计原则
 
 | 原则 | 说明 |
@@ -40,7 +38,6 @@
 | **Prefect调度** | 使用Prefect自动调度数据采集任务 |
 | **异常自动处理** | 数据异常自动检测和处理 |
 | **断点可续** | 采集失败后从断点继续 |
-
 
 ## 2. 数据源架构
 
@@ -79,7 +76,6 @@ DATA_TYPES = {
     }
 }
 ```
-
 
 ## 3. 核心实现
 
@@ -285,7 +281,6 @@ class DataQualityChecker:
         )
 ```
 
-
 ## 4. Prefect调度
 
 ### 4.1 调度配置
@@ -347,7 +342,6 @@ def minute_data_collection_flow():
 | 财务采集 | 20:00 | 每日 | 盘后财务数据 |
 | 指数采集 | 18:30 | 每日 | 收盘后指数 |
 
-
 ## 5. 数据存储
 
 ### 5.1 存储架构
@@ -394,7 +388,6 @@ class DataStorage:
             if data['date'].min() < (datetime.now() - relativedelta(years=2)):
                 self.s3.save(data, f"ohlcv/{symbol}/{freq}")
 ```
-
 
 ## 6. API接口
 
@@ -447,7 +440,6 @@ class DataAPI:
         pass
 ```
 
-
 ## 7. 监控指标
 
 | 指标 | 说明 | 阈值 |
@@ -456,7 +448,6 @@ class DataAPI:
 | data_quality_score | 数据质量评分 | >90% |
 | data_freshness | 数据新鲜度 | <30min |
 | storage_usage | 存储使用率 | <80% |
-
 
 ## 8. 开发任务分解
 
@@ -472,14 +463,12 @@ class DataAPI:
 | 存储模块 | 4h | Redis/PostgreSQL/Parquet |
 | API层 | 3h | REST API |
 
-
 ## 9. 更新记录
 
 | 版本 | 日期 | 变更内容 |
 |------|------|----------|
 | v1.0 | 2026-03-29 | 初始版本 |
 | v1.1 | 2026-04-05 | 添加文档职责说明章节，明确与DATA_REQUIREMENTS.md的职责边界 |
-
 
 **维护者**: 清风量化系统
 **索引**: `DATA.001`
